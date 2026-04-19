@@ -3,7 +3,6 @@ using System.Security.Claims;
 using CP6.Core.EFDbContext;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
-// RabbitMQService 已在 CP6.Core.Utilities 命名空间（通过 using CP6.Core.Utilities 引入）
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
