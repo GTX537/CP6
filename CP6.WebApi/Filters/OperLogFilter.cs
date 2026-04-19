@@ -85,13 +85,29 @@ public class OperLogFilter : IAsyncActionFilter
         if (_mq.IsConnected)
         {
             // MQ 可用 → 异步发消息（不阻塞当前请求）
-            await _mq.PublishAsync(RabbitMQService.OperLogQueue, log);
+            try
+            {
+                await _mq.PublishAsync(RabbitMQService.OperLogQueue, log);
+            }
+            catch (Exception ex)
+            {
+                // 可接入本地日志(如NLog/Serilog)或控制台，防止序列化/网络异常导致业务中断
+                Console.WriteLine($"[OperLog] MQ发布日志失败: {ex.Message}");
+            }
         }
         else
         {
             // MQ 不可用 → 降级为直接写 DB
-            _context.Sys_OperLogs.Add(log);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Sys_OperLogs.Add(log);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // 降级写DB失败时，作为旁路逻辑，绝不能影响主业务接口的正常响应
+                Console.WriteLine($"[OperLog] 降级写入DB日志失败: {ex.Message}");
+            }
         }
     }
 }

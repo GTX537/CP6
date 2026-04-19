@@ -104,15 +104,25 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="中分類" prop="productCategoryMid" :required="isRequired('productCategoryMid')">
-            <el-select v-model="form.productCategoryMid" :disabled="isDisabled('productCategoryMid')" clearable>
-              <el-option v-for="o in codes.categoryMid" :key="o.code" :value="o.code" :label="o.name" />
+            <el-select
+              v-model="form.productCategoryMid"
+              :disabled="isDisabled('productCategoryMid') || !form.productCategoryBig"
+              :placeholder="!form.productCategoryBig ? '先に大分類を選択' : ''"
+              clearable
+            >
+              <el-option v-for="o in filteredCategoryMid" :key="o.code" :value="o.code" :label="o.name" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="小分類">
-            <el-select v-model="form.productCategorySml" :disabled="isDisabled('productCategorySml')" clearable>
-              <el-option v-for="o in codes.categorySml" :key="o.code" :value="o.code" :label="o.name" />
+            <el-select
+              v-model="form.productCategorySml"
+              :disabled="isDisabled('productCategorySml') || !form.productCategoryMid"
+              :placeholder="!form.productCategoryMid ? '先に中分類を選択' : ''"
+              clearable
+            >
+              <el-option v-for="o in filteredCategorySml" :key="o.code" :value="o.code" :label="o.name" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -495,6 +505,52 @@ const codes = ref({
 
 // 联动
 const { onBladeBlur, onEstimateQtyBlur } = useStep1Linkage(form, staffs)
+
+// 製品区分 大→中→小 级联过滤（基于 Attr1 = 親 Code）
+const filteredCategoryMid = computed(() => {
+  const parent = form.value.productCategoryBig
+  if (!parent) return codes.value.categoryMid
+  return codes.value.categoryMid.filter((c) => c.attr1 === parent)
+})
+
+const filteredCategorySml = computed(() => {
+  const parent = form.value.productCategoryMid
+  if (!parent) return codes.value.categorySml
+  return codes.value.categorySml.filter((c) => c.attr1 === parent)
+})
+
+// 大分類变化时清空中/小；中分類变化时清空小
+watch(
+  () => form.value.productCategoryBig,
+  (cur, prev) => {
+    if (prev === undefined) return
+    if (cur === prev) return
+    // 如果当前中分類不再属于新大分類，则清空
+    const mid = form.value.productCategoryMid
+    if (mid) {
+      const stillValid = codes.value.categoryMid.some((c) => c.code === mid && c.attr1 === cur)
+      if (!stillValid) {
+        form.value.productCategoryMid = ''
+        form.value.productCategorySml = ''
+      }
+    }
+  },
+)
+
+watch(
+  () => form.value.productCategoryMid,
+  (cur, prev) => {
+    if (prev === undefined) return
+    if (cur === prev) return
+    const sml = form.value.productCategorySml
+    if (sml) {
+      const stillValid = codes.value.categorySml.some((c) => c.code === sml && c.attr1 === cur)
+      if (!stillValid) {
+        form.value.productCategorySml = ''
+      }
+    }
+  },
+)
 
 // 脏值监听
 watch(

@@ -554,6 +554,42 @@ using (var scope = app.Services.CreateScope())
         );
         db.SaveChanges();
     }
+
+    // 幂等补种：如果存在旧的 "ProductCategory" 单层数据，迁移到 3 层级联
+    if (db.MasterGenericCodes.Any(x => x.GroupCode == "ProductCategory")
+        && !db.MasterGenericCodes.Any(x => x.GroupCode == "ProductCategoryBig"))
+    {
+        // 删除旧单层
+        var legacy = db.MasterGenericCodes.Where(x => x.GroupCode == "ProductCategory").ToList();
+        db.MasterGenericCodes.RemoveRange(legacy);
+
+        // 追加 3 层级联
+        db.MasterGenericCodes.AddRange(
+            new MasterGenericCode { GroupCode = "ProductCategoryBig", Code = "A", Name = "段ボール箱", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategoryBig", Code = "B", Name = "紙箱",       SortOrder = 2 },
+            new MasterGenericCode { GroupCode = "ProductCategoryBig", Code = "C", Name = "トレー",     SortOrder = 3 },
+
+            new MasterGenericCode { GroupCode = "ProductCategoryMid", Code = "A01", Name = "A式箱",     Attr1 = "A", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategoryMid", Code = "A02", Name = "B式箱",     Attr1 = "A", SortOrder = 2 },
+            new MasterGenericCode { GroupCode = "ProductCategoryMid", Code = "A03", Name = "ワンタッチ", Attr1 = "A", SortOrder = 3 },
+            new MasterGenericCode { GroupCode = "ProductCategoryMid", Code = "B01", Name = "化粧箱",     Attr1 = "B", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategoryMid", Code = "B02", Name = "贈答箱",     Attr1 = "B", SortOrder = 2 },
+            new MasterGenericCode { GroupCode = "ProductCategoryMid", Code = "C01", Name = "食品トレー", Attr1 = "C", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategoryMid", Code = "C02", Name = "工業トレー", Attr1 = "C", SortOrder = 2 },
+
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "A0101", Name = "標準A式",     Attr1 = "A01", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "A0102", Name = "半差し込み", Attr1 = "A01", SortOrder = 2 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "A0201", Name = "標準B式",     Attr1 = "A02", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "A0301", Name = "ワンタッチ底", Attr1 = "A03", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "B0101", Name = "白色化粧箱", Attr1 = "B01", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "B0102", Name = "色付化粧箱", Attr1 = "B01", SortOrder = 2 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "B0201", Name = "贈答化粧箱", Attr1 = "B02", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "C0101", Name = "浅型トレー", Attr1 = "C01", SortOrder = 1 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "C0102", Name = "深型トレー", Attr1 = "C01", SortOrder = 2 },
+            new MasterGenericCode { GroupCode = "ProductCategorySml", Code = "C0201", Name = "工業標準",   Attr1 = "C02", SortOrder = 1 }
+        );
+        db.SaveChanges();
+    }
 }
 
 app.UseCors("AllowAll");
