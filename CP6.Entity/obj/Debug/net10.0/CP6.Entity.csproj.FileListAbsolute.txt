@@ -1,0 +1,12 @@
+D:\CP6\CP6.Entity\bin\Debug\net10.0\CP6.Entity.deps.json
+D:\CP6\CP6.Entity\bin\Debug\net10.0\CP6.Entity.dll
+D:\CP6\CP6.Entity\bin\Debug\net10.0\CP6.Entity.pdb
+D:\CP6\CP6.Entity\obj\Debug\net10.0\CP6.Entity.GeneratedMSBuildEditorConfig.editorconfig
+D:\CP6\CP6.Entity\obj\Debug\net10.0\CP6.Entity.AssemblyInfoInputs.cache
+D:\CP6\CP6.Entity\obj\Debug\net10.0\CP6.Entity.AssemblyInfo.cs
+D:\CP6\CP6.Entity\obj\Debug\net10.0\CP6.Entity.csproj.CoreCompileInputs.cache
+D:\CP6\CP6.Entity\obj\Debug\net10.0\CP6.Entity.dll
+D:\CP6\CP6.Entity\obj\Debug\net10.0\refint\CP6.Entity.dll
+D:\CP6\CP6.Entity\obj\Debug\net10.0\CP6.Entity.pdb
+D:\CP6\CP6.Entity\obj\Debug\net10.0\ref\CP6.Entity.dll
+D:\CP6\CP6.Entity\obj\Debug\net10.0\CP6.Entity.csproj.AssemblyReference.cache

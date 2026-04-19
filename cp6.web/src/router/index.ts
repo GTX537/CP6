@@ -1,0 +1,130 @@
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+
+// 路由路径 → 组件的映射表（所有可能的页面）
+const viewModules: Record<string, () => Promise<any>> = {
+  '/dashboard': () => import('@/views/DashboardView.vue'),
+  '/article': () => import('@/views/ArticleView.vue'),
+  '/role': () => import('@/views/RoleView.vue'),
+  '/menu': () => import('@/views/MenuView.vue'),
+  '/permission': () => import('@/views/PermissionView.vue'),
+  '/user': () => import('@/views/UserView.vue'),
+  '/lang': () => import('@/views/LangView.vue'),
+  '/dict': () => import('@/views/DictView.vue'),
+  '/operlog': () => import('@/views/OperLogView.vue'),
+  '/estimate-calc': () => import('@/views/EstimateCalcView.vue'),
+  '/estimate-calc-list': () => import('@/views/EstimateCalcListView.vue'),
+}
+
+// 静态路由：只有登录页和Layout壳子
+const staticRoutes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/LoginView.vue')
+  },
+  {
+    path: '/',
+    name: 'layout',
+    component: () => import('@/views/LayoutView.vue'),
+    children: [] // 动态填充
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: staticRoutes
+})
+
+// 标记是否已加载过动态路由
+let dynamicRoutesAdded = false
+
+/**
+ * 根据菜单列表动态添加路由
+ * menus 格式: [{ id, menuName, routePath, icon, parentId, orderNo }]
+ */
+export function addDynamicRoutes(menus: any[]) {
+  // 先找到有 routePath 的菜单
+  const routeMenus = menus.filter(m => m.routePath && viewModules[m.routePath])
+
+  // 第一个有效路由作为默认跳转
+  const firstRoute = routeMenus[0]?.routePath || '/login'
+
+  routeMenus.forEach(menu => {
+    const route: RouteRecordRaw = {
+      path: menu.routePath.replace(/^\//, ''), // 去掉开头的 /，变成相对路径
+      name: menu.routePath.replace(/^\//, ''),
+      component: viewModules[menu.routePath]
+    }
+    // 添加为 layout 的子路由
+    router.addRoute('layout', route)
+  })
+
+  // 更新 layout 的 redirect 为第一个有效页面
+  // 通过添加一个带 redirect 的新 layout 路由来覆盖
+  router.removeRoute('layout')
+  router.addRoute({
+    path: '/',
+    name: 'layout',
+    component: () => import('@/views/LayoutView.vue'),
+    redirect: firstRoute,
+    children: routeMenus.map(menu => ({
+      path: menu.routePath.replace(/^\//, ''),
+      name: menu.routePath.replace(/^\//, ''),
+      component: viewModules[menu.routePath]
+    }))
+  })
+
+  dynamicRoutesAdded = true
+}
+
+/**
+ * 重置路由（退出登录时调用）
+ */
+export function resetRoutes() {
+  dynamicRoutesAdded = false
+  // 移除 layout 下的所有子路由
+  router.removeRoute('layout')
+  router.addRoute({
+    path: '/',
+    name: 'layout',
+    component: () => import('@/views/LayoutView.vue'),
+    children: []
+  })
+}
+
+// 路由守卫
+router.beforeEach((to, _from, next) => {
+  const token = localStorage.getItem('token')
+
+  // 1. 去登录页，放行
+  if (to.path === '/login') {
+    next()
+    return
+  }
+
+  // 2. 没有 token，跳登录
+  if (!token) {
+    next('/login')
+    return
+  }
+
+  // 3. 有 token 但还没加载动态路由（页面刷新的情况）
+  if (!dynamicRoutesAdded) {
+    const menusStr = localStorage.getItem('menus')
+    if (menusStr) {
+      const menus = JSON.parse(menusStr)
+      addDynamicRoutes(menus)
+      // 重新导航到目标页面（因为路由刚添加，需要重新匹配）
+      next({ ...to, replace: true })
+      return
+    } else {
+      next('/login')
+      return
+    }
+  }
+
+  // 4. 路由已加载，正常放行
+  next()
+})
+
+export default router

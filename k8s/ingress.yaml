@@ -1,0 +1,57 @@
+# ===== Ingress — 外部访问入口（L7 反向代理）=====
+#
+# 面试要点：
+# 1. Ingress 是 K8S 的 HTTP 路由层（相当于集群级别的 Nginx）
+#    - 一个 Ingress 可以路由到多个 Service
+#    - 支持域名路由、路径路由、TLS 终止
+# 2. Ingress Controller：Ingress 只是规则定义，需要 Controller 执行
+#    常见：Nginx Ingress Controller、Traefik、Kong
+# 3. 对比 Service 类型：
+#    - ClusterIP：集群内部 → Service 互相调用
+#    - NodePort：节点端口 → 开发/测试用
+#    - LoadBalancer：云厂商 LB → 生产环境（贵）
+#    - Ingress：L7 路由 → 生产环境推荐（一个 LB 路由多个服务）
+# 4. MOM 系统：不同子系统（设备管理/报警/看板）用不同 path 路由
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cp6-ingress
+  namespace: cp6
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    # WebSocket 支持（SignalR 需要）
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # 标准注解方式启用 WebSocket（不需要 snippet）
+    nginx.ingress.kubernetes.io/websocket-services: "cp6-api"
+spec:
+  ingressClassName: nginx
+  rules:
+    # 域名路由：cp6.local → 前端
+    - host: cp6.local
+      http:
+        paths:
+          # /api 和 /hubs 路由到后端 API
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-api
+                port:
+                  number: 5000
+          - path: /hubs
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-api
+                port:
+                  number: 5000
+          # 其他路径路由到前端 Nginx
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-web
+                port:
+                  number: 80

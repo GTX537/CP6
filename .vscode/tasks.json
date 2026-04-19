@@ -1,0 +1,56 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Backend: .NET API",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["run", "--project", "CP6.WebApi", "--urls", "http://localhost:9991"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Building\\.\\.\\.$",
+          "endsPattern": "^.*Now listening on.*$"
+        }
+      },
+      "presentation": {
+        "label": "Backend",
+        "group": "dev",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Frontend: Vite",
+      "type": "shell",
+      "command": "npx vite --host 0.0.0.0 --port 5173",
+      "options": {
+        "cwd": "${workspaceFolder}/cp6.web"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*VITE.*$",
+          "endsPattern": "^.*ready in.*$"
+        }
+      },
+      "presentation": {
+        "label": "Frontend",
+        "group": "dev",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Start All",
+      "dependsOn": ["Backend: .NET API", "Frontend: Vite"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}

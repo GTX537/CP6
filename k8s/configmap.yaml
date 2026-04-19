@@ -1,0 +1,67 @@
+# ===== ConfigMap — 非敏感配置 =====
+#
+# 面试要点：
+# 1. ConfigMap vs Secret：
+#    - ConfigMap：非敏感配置（连接地址、端口、日志级别）
+#    - Secret：敏感数据（密码、Token、证书），Base64 编码存储
+# 2. 配置与镜像分离：同一个镜像在 dev/prod 用不同 ConfigMap
+# 3. 注入方式：环境变量（envFrom）或 挂载为文件（volumeMount）
+# 4. MOM 系统中：设备连接参数、采集频率等都放 ConfigMap
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cp6-config
+  namespace: cp6
+data:
+  # .NET 环境标识
+  ASPNETCORE_ENVIRONMENT: "Docker"
+
+  # appsettings 覆盖（K8S 中服务名 = Service name）
+  # K8S Service 自动解析：cp6-db → Pod IP
+  ConnectionStrings__DefaultConnection: "Server=cp6-db;Database=CP6DB;User Id=sa;Password=Cp6@Docker2024!;TrustServerCertificate=True;MultipleActiveResultSets=True"
+  ConnectionStrings__Redis: "cp6-redis:6379"
+
+  # RabbitMQ 连接
+  RabbitMQ__HostName: "cp6-mq"
+  RabbitMQ__Port: "5672"
+  RabbitMQ__UserName: "cp6"
+
+  # Nginx 配置（挂载到前端容器）
+  nginx.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+        root /usr/share/nginx/html;
+        index index.html;
+
+        gzip on;
+        gzip_types text/plain text/css application/json application/javascript text/xml;
+        gzip_min_length 1000;
+
+        location /api/ {
+            proxy_pass http://cp6-api:5000;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+        location /hubs/ {
+            proxy_pass http://cp6-api:5000;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_cache_bypass $http_upgrade;
+        }
+
+        location /assets/ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+    }

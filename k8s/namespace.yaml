@@ -1,0 +1,15 @@
+# ===== Namespace — K8S 资源隔离 =====
+#
+# 面试要点：
+# 1. Namespace 是 K8S 的"虚拟集群"，把资源分组隔离
+# 2. 类比：部门隔离 — dev / staging / production 各自独立
+# 3. 同 namespace 内的 Pod 可用服务名直接通信
+#    跨 namespace 需要 <svc>.<namespace>.svc.cluster.local
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cp6
+  labels:
+    app: cp6
+    purpose: learning-k8s

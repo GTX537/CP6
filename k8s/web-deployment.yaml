@@ -1,0 +1,80 @@
+# ===== Vue Frontend (Nginx) — Deployment + Service =====
+#
+# 面试要点：
+# 1. ConfigMap 挂载为文件：nginx.conf 从 ConfigMap 注入到容器
+#    不用重新构建镜像就能修改 Nginx 配置
+# 2. 前端是纯静态无状态服务，适合多副本 + HPA
+# 3. Service type: NodePort — 把前端暴露到节点端口供外部访问
+#    生产环境用 Ingress + LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cp6-web
+  namespace: cp6
+  labels:
+    app: cp6-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cp6-web
+  template:
+    metadata:
+      labels:
+        app: cp6-web
+    spec:
+      containers:
+        - name: nginx
+          image: cp6-web:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "20m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          # 挂载 ConfigMap 中的 nginx.conf 覆盖默认配置
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: nginx.conf          # 只挂载单个文件
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: cp6-config
+            items:
+              - key: nginx.conf            # ConfigMap 中的 key
+                path: nginx.conf           # 挂载后的文件名
+
+---
+# NodePort Service：外部可通过 <NodeIP>:30080 访问前端
+apiVersion: v1
+kind: Service
+metadata:
+  name: cp6-web
+  namespace: cp6
+spec:
+  selector:
+    app: cp6-web
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080          # 固定节点端口（范围 30000-32767）
+  type: NodePort

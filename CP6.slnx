@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CP6.Core/CP6.Core.csproj" />
+  <Project Path="CP6.Entity/CP6.Entity.csproj" />
+  <Project Path="CP6.Tests/CP6.Tests.csproj" />
+  <Project Path="CP6.WebApi/CP6.WebApi.csproj" />
+</Solution>

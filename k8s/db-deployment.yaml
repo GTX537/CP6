@@ -1,0 +1,113 @@
+# ===== SQL Server — Deployment + Service + PVC =====
+#
+# 面试要点：
+# 1. Deployment vs StatefulSet：
+#    - Deployment：无状态应用（API、Web）— Pod 可随意调度
+#    - StatefulSet：有状态应用（DB）— Pod 有固定标识和存储
+#    这里为学习简化用 Deployment + PVC，生产环境 DB 应用 StatefulSet
+# 2. PersistentVolumeClaim (PVC)：
+#    - 声明"我要 2GB 存储"，K8S 自动分配 PersistentVolume
+#    - 类比：租房合同（PVC）→ 房子（PV）→ 实际磁盘（StorageClass）
+# 3. readinessProbe vs livenessProbe：
+#    - readinessProbe：就绪探针 — 失败则不接收流量（还在启动中）
+#    - livenessProbe：存活探针 — 失败则重启 Pod（已经挂了）
+# 4. resources 资源限制：防止单个 Pod 耗尽节点资源
+
+---
+# 持久化存储声明
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cp6-db-pvc
+  namespace: cp6
+spec:
+  accessModes:
+    - ReadWriteOnce            # 单节点读写（DB 不需要多节点挂载）
+  resources:
+    requests:
+      storage: 2Gi             # 申请 2GB 存储
+
+---
+# Deployment：管理 SQL Server Pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cp6-db
+  namespace: cp6
+  labels:
+    app: cp6-db
+spec:
+  replicas: 1                  # 数据库只跑 1 个副本
+  selector:
+    matchLabels:
+      app: cp6-db
+  # 数据库必须用 Recreate 策略（不能两个实例同时写一个存储）
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: cp6-db
+    spec:
+      containers:
+        - name: mssql
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: "Developer"
+            - name: MSSQL_SA_PASSWORD
+              valueFrom:
+                secretKeyRef:          # 从 Secret 读取密码
+                  name: cp6-secret
+                  key: SA_PASSWORD
+          # 资源限制（面试高频：防止 OOM Kill）
+          resources:
+            requests:                  # 最低保障
+              memory: "512Mi"
+              cpu: "250m"
+            limits:                    # 最大上限
+              memory: "2Gi"
+              cpu: "1000m"
+          # 存活探针：tcpSocket 检查端口是否可达
+          # 注意：K8S exec probe 不支持 $(ENV_VAR) 变量替换
+          # 所以改用 tcpSocket，这也是生产环境更常用的方式
+          livenessProbe:
+            tcpSocket:
+              port: 1433
+            initialDelaySeconds: 60    # SQL Server 启动慢，等 60 秒
+            periodSeconds: 10
+            failureThreshold: 10
+          # 就绪探针：端口就绪后才接收流量
+          readinessProbe:
+            tcpSocket:
+              port: 1433
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            failureThreshold: 15
+          # 挂载持久化存储
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/opt/mssql
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: cp6-db-pvc
+
+---
+# Service：让其他 Pod 通过 "cp6-db:1433" 访问
+apiVersion: v1
+kind: Service
+metadata:
+  name: cp6-db
+  namespace: cp6
+spec:
+  selector:
+    app: cp6-db
+  ports:
+    - port: 1433               # Service 端口
+      targetPort: 1433         # Pod 端口
+  type: ClusterIP              # 集群内部访问（DB 不暴露外部）

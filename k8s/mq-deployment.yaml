@@ -1,0 +1,100 @@
+# ===== RabbitMQ — Deployment + Service + PVC =====
+#
+# 面试要点：
+# 1. RabbitMQ 暴露两个端口：5672 (AMQP 协议) + 15672 (管理面板)
+# 2. Secret 注入密码：环境变量引用 secretKeyRef
+# 3. NodePort Service：把管理面板暴露到节点端口，方便调试
+#    - ClusterIP：仅集群内 → NodePort：节点端口 → LoadBalancer：云厂商 LB
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cp6-mq-pvc
+  namespace: cp6
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cp6-mq
+  namespace: cp6
+  labels:
+    app: cp6-mq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cp6-mq
+  template:
+    metadata:
+      labels:
+        app: cp6-mq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3-management-alpine
+          ports:
+            - containerPort: 5672
+              name: amqp
+            - containerPort: 15672
+              name: management
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: "cp6"
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cp6-secret
+                  key: RABBITMQ_PASSWORD
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          # 改用 tcpSocket（diagnostics 命令在资源有限时容易超时）
+          readinessProbe:
+            tcpSocket:
+              port: 5672
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 5672
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 10
+          volumeMounts:
+            - name: mq-storage
+              mountPath: /var/lib/rabbitmq
+      volumes:
+        - name: mq-storage
+          persistentVolumeClaim:
+            claimName: cp6-mq-pvc
+
+---
+# AMQP 端口 — 集群内访问
+apiVersion: v1
+kind: Service
+metadata:
+  name: cp6-mq
+  namespace: cp6
+spec:
+  selector:
+    app: cp6-mq
+  ports:
+    - port: 5672
+      targetPort: 5672
+      name: amqp
+    - port: 15672
+      targetPort: 15672
+      name: management
+  type: ClusterIP

@@ -1,0 +1,124 @@
+# ===== .NET API — Deployment + Service + HPA =====
+#
+# 面试要点：
+# 1. initContainers：在主容器启动前执行（等 DB 就绪）
+#    类比：工厂开工前先检查原材料到齐
+# 2. envFrom + configMapRef：一次注入整个 ConfigMap 的所有键值
+# 3. imagePullPolicy: Never（minikube 本地镜像，不从远程拉取）
+# 4. HPA (HorizontalPodAutoscaler)：
+#    - CPU 超过 70% → 自动扩容（最多 5 个副本）
+#    - CPU 降下来 → 自动缩容（最少 2 个副本）
+#    - MOM 系统面试重点：设备上报高峰期自动扩容处理服务
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cp6-api
+  namespace: cp6
+  labels:
+    app: cp6-api
+spec:
+  replicas: 2                  # 初始 2 个副本（高可用）
+  selector:
+    matchLabels:
+      app: cp6-api
+  # 滚动更新策略（面试要点：零停机部署）
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1              # 更新时最多多出 1 个 Pod
+      maxUnavailable: 0        # 更新时不允许有不可用 Pod → 零停机
+  template:
+    metadata:
+      labels:
+        app: cp6-api
+    spec:
+      # 初始化容器：等待 DB 端口就绪后再启动主容器
+      # 使用 busybox 的 nc 命令检查 TCP 连通性（轻量可靠）
+      initContainers:
+        - name: wait-for-db
+          image: busybox:latest
+          command: ['sh', '-c',
+            'until nc -z cp6-db 1433; do echo "Waiting for DB..."; sleep 3; done; echo "DB is ready!"']
+      containers:
+        - name: api
+          image: cp6-api:latest
+          imagePullPolicy: Never    # 使用本地构建的镜像（minikube）
+          ports:
+            - containerPort: 5000
+          # 从 ConfigMap 注入所有环境变量
+          envFrom:
+            - configMapRef:
+                name: cp6-config
+          # 从 Secret 单独注入密码
+          env:
+            - name: RabbitMQ__Password
+              valueFrom:
+                secretKeyRef:
+                  name: cp6-secret
+                  key: RABBITMQ_PASSWORD
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          # 就绪探针：TCP 端口就绪后接收流量
+          readinessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          # 存活探针：端口不通则重启
+          livenessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 5
+
+---
+# Service：ClusterIP，前端 Nginx 通过 cp6-api:5000 访问
+apiVersion: v1
+kind: Service
+metadata:
+  name: cp6-api
+  namespace: cp6
+spec:
+  selector:
+    app: cp6-api
+  ports:
+    - port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+# HPA — 自动水平扩缩容（面试核心知识点）
+#
+# 工作原理：
+# 1. Metrics Server 采集 Pod CPU/Memory 指标
+# 2. HPA Controller 每 15 秒检查一次
+# 3. 当前 CPU > targetCPUUtilizationPercentage → 扩容
+# 4. 公式：期望副本数 = ceil(当前副本数 × 当前指标值 / 目标指标值)
+#    例如：2 个 Pod 各 85% CPU → ceil(2 × 85/70) = ceil(2.43) = 3 个
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cp6-api-hpa
+  namespace: cp6
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cp6-api
+  minReplicas: 2               # 最少 2 个（保证高可用）
+  maxReplicas: 5               # 最多 5 个（控制成本）
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70    # CPU 平均使用率超过 70% 就扩容

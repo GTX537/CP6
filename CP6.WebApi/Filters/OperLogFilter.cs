@@ -1,0 +1,98 @@
+using System.Diagnostics;
+using System.Security.Claims;
+using CP6.Core.EFDbContext;
+using CP6.Core.Utilities;
+using CP6.Entity.DomainModels;
+// RabbitMQService 已在 CP6.Core.Utilities 命名空间（通过 using CP6.Core.Utilities 引入）
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+namespace CP6.WebApi.Filters;
+
+/// <summary>
+/// 操作日志 ActionFilter（支持 RabbitMQ 异步写入）
+///
+/// 改造思路：
+/// - RabbitMQ 可用 → 发消息到队列（非阻塞，Consumer 异步写 DB）
+/// - RabbitMQ 不可用 → 降级为直接写 DB（保证日志不丢失）
+///
+/// 面试要点：
+/// 1. 消息队列实现"异步解耦"：日志写入不影响接口响应时间
+/// 2. 降级策略：MQ 挂了不影响业务，fallback 到同步模式
+/// 3. MOM 系统中同样模式：设备数据上报 → MQ → 异步入库
+/// </summary>
+public class OperLogFilter : IAsyncActionFilter
+{
+    private readonly CP6Context _context;
+    private readonly RabbitMQService _mq;
+
+    public OperLogFilter(CP6Context context, RabbitMQService mq)
+    {
+        _context = context;
+        _mq = mq;
+    }
+
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    {
+        var stopwatch = Stopwatch.StartNew();
+
+        string? requestBody = null;
+        if (context.HttpContext.Request.Method is "POST" or "PUT" or "DELETE")
+        {
+            var args = context.ActionArguments;
+            if (args.Count > 0)
+            {
+                requestBody = System.Text.Json.JsonSerializer.Serialize(args);
+                if (requestBody.Length > 2000)
+                    requestBody = requestBody[..2000] + "...(truncated)";
+            }
+        }
+
+        var resultContext = await next();
+        stopwatch.Stop();
+
+        var method = context.HttpContext.Request.Method;
+        var path = context.HttpContext.Request.Path.Value ?? "";
+        if (method == "GET"
+            || path.Contains("/api/operlog", StringComparison.OrdinalIgnoreCase)
+            || path.Contains("/api/auth", StringComparison.OrdinalIgnoreCase))
+            return;
+
+        var userName = context.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+        var controllerName = context.RouteData.Values["controller"]?.ToString();
+        var actionName = context.RouteData.Values["action"]?.ToString();
+        var clientIp = context.HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        var statusCode = 200;
+        if (resultContext.Exception != null)
+            statusCode = 500;
+        else if (resultContext.Result is ObjectResult objResult)
+            statusCode = objResult.StatusCode ?? 200;
+
+        var log = new Sys_OperLog
+        {
+            UserName = userName,
+            HttpMethod = method,
+            RequestUrl = path,
+            Controller = controllerName,
+            Action = actionName,
+            RequestBody = requestBody,
+            StatusCode = statusCode,
+            ElapsedMs = stopwatch.ElapsedMilliseconds,
+            ClientIp = clientIp,
+            CreateDate = DateTime.Now
+        };
+
+        if (_mq.IsConnected)
+        {
+            // MQ 可用 → 异步发消息（不阻塞当前请求）
+            await _mq.PublishAsync(RabbitMQService.OperLogQueue, log);
+        }
+        else
+        {
+            // MQ 不可用 → 降级为直接写 DB
+            _context.Sys_OperLogs.Add(log);
+            await _context.SaveChangesAsync();
+        }
+    }
+}

@@ -1,0 +1,19 @@
+# .NET
+**/bin/
+**/obj/
+**/.vs/
+
+# Node
+**/node_modules/
+**/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+**/Dockerfile
+**/.dockerignore
+docker-compose*.yml

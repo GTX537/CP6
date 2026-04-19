@@ -1,0 +1,82 @@
+# ===== Redis — Deployment + Service + PVC =====
+#
+# 面试要点：
+# 1. Redis 在 K8S 中通常用 Deployment（单副本）或 Helm Chart（集群模式）
+# 2. Service type: ClusterIP — 只在集群内部访问
+# 3. 资源限制：Redis 是内存型，limits.memory 很关键
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cp6-redis-pvc
+  namespace: cp6
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cp6-redis
+  namespace: cp6
+  labels:
+    app: cp6-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cp6-redis
+  template:
+    metadata:
+      labels:
+        app: cp6-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          # Redis 就绪探针
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
+      volumes:
+        - name: redis-storage
+          persistentVolumeClaim:
+            claimName: cp6-redis-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cp6-redis
+  namespace: cp6
+spec:
+  selector:
+    app: cp6-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+  type: ClusterIP

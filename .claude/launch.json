@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "CP6 Backend (.NET WebApi)",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "CP6.WebApi", "--urls", "http://localhost:9991"],
+      "port": 9991
+    },
+    {
+      "name": "CP6 Frontend (Vue/Vite)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "cp6.web"],
+      "port": 5173
+    }
+  ]
+}
