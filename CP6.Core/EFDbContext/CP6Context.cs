@@ -75,6 +75,17 @@ public class CP6Context : DbContext
     /// <summary>汎用マスタ（通用代码）</summary>
     public DbSet<MasterGenericCode> MasterGenericCodes { get; set; }
 
+    // ───── MSBBPA030 御見積書 ─────
+
+    /// <summary>御見積書 主表</summary>
+    public DbSet<Quotation> Quotations { get; set; }
+
+    /// <summary>御見積書 ⇄ 見積計算書 关联表</summary>
+    public DbSet<QuotationCalc> QuotationCalcs { get; set; }
+
+    /// <summary>御見積書 明細(印字用)</summary>
+    public DbSet<QuotationDetail> QuotationDetails { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -117,6 +128,41 @@ public class CP6Context : DbContext
         modelBuilder.Entity<MasterGenericCode>(e =>
         {
             e.HasIndex(x => new { x.GroupCode, x.Code }).IsUnique();
+        });
+
+        // 御見積書：QtnNo 唯一；子表级联加载
+        modelBuilder.Entity<Quotation>(e =>
+        {
+            e.HasIndex(x => x.QtnNo).IsUnique();
+            e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => new { x.QtnIssueDate, x.IsDeleted });
+            e.HasIndex(x => new { x.BaseCd, x.StaffCd });
+
+            // 業務键關聯（非 FK，方便软删与迁移）
+            e.HasMany(x => x.Calcs)
+                .WithOne()
+                .HasForeignKey(p => p.QtnNo)
+                .HasPrincipalKey(x => x.QtnNo)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(x => x.Details)
+                .WithOne()
+                .HasForeignKey(p => p.QtnNo)
+                .HasPrincipalKey(x => x.QtnNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // 御見積書×見積計算書 中间表：复合唯一
+        modelBuilder.Entity<QuotationCalc>(e =>
+        {
+            e.HasIndex(x => new { x.QtnNo, x.QtnCalcNo }).IsUnique();
+            e.HasIndex(x => x.QtnCalcNo);
+        });
+
+        // 御見積書明細：QtnNo + DetailNo 唯一
+        modelBuilder.Entity<QuotationDetail>(e =>
+        {
+            e.HasIndex(x => new { x.QtnNo, x.DetailNo }).IsUnique();
         });
     }
 }

@@ -4,6 +4,7 @@ using CP6.Core.EFDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CP6.Core.Migrations
 {
     [DbContext(typeof(CP6Context))]
-    partial class CP6ContextModelSnapshot : ModelSnapshot
+    [Migration("20260420121204_FixQtnCalcNoMaxLength")]
+    partial class FixQtnCalcNoMaxLength
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -474,8 +477,8 @@ namespace CP6.Core.Migrations
 
                     b.Property<string>("QtnCalcNo")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()

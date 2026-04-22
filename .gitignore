@@ -101,3 +101,9 @@ appsettings.Local.json
 .env
 .env.local
 .env.*.local
+
+# ============================================================
+# Generated / transient dev artifacts
+# ============================================================
+openapi.json
+backend.log

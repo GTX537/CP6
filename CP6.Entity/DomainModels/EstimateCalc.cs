@@ -15,9 +15,9 @@ namespace CP6.Entity.DomainModels;
 public class EstimateCalc : BaseBizEntity
 {
     // ───── 业务主键 ─────
-    /// <summary>見積計算書NO（XXXXXXXX-NN，10 字符）</summary>
+    /// <summary>見積計算書NO（XXXXXXXX-NN，11 字符：8 位主番 + '-' + 2 位枝番）</summary>
     [Required]
-    [MaxLength(10)]
+    [MaxLength(11)]
     public string QtnCalcNo { get; set; } = string.Empty;
 
     /// <summary>主番（NUMERIC 8）</summary>
@@ -27,7 +27,7 @@ public class EstimateCalc : BaseBizEntity
     public int QtnCalcNoBranch { get; set; }
 
     /// <summary>コピー来源 NO</summary>
-    [MaxLength(10)]
+    [MaxLength(11)]
     public string? RefQtnCalcNo { get; set; }
 
     /// <summary>製品 CD（Rev4 扩展至 15 位）</summary>

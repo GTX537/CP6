@@ -4,6 +4,7 @@ using CP6.Core.EFDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CP6.Core.Migrations
 {
     [DbContext(typeof(CP6Context))]
-    partial class CP6ContextModelSnapshot : ModelSnapshot
+    [Migration("20260420115704_AddQuotationMSBBPA030")]
+    partial class AddQuotationMSBBPA030
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,8 +319,8 @@ namespace CP6.Core.Migrations
 
                     b.Property<string>("QtnCalcNo")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("QtnCalcNoBranch")
                         .HasColumnType("int");
@@ -337,8 +340,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(1)");
 
                     b.Property<string>("RefQtnCalcNo")
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -474,8 +477,8 @@ namespace CP6.Core.Migrations
 
                     b.Property<string>("QtnCalcNo")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -890,8 +893,8 @@ namespace CP6.Core.Migrations
 
                     b.Property<string>("QtnNo")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("QtnNoBranch")
                         .HasColumnType("int");
@@ -960,8 +963,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("RefQtnNo")
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1031,13 +1034,13 @@ namespace CP6.Core.Migrations
 
                     b.Property<string>("QtnCalcNo")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("QtnNo")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1095,13 +1098,13 @@ namespace CP6.Core.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("QtnCalcNo")
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("QtnNo")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<decimal?>("Quantity")
                         .HasColumnType("decimal(12,2)");
@@ -1112,8 +1115,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<string>("Unit")
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<decimal?>("UnitPrice")
                         .HasColumnType("decimal(15,4)");

@@ -65,6 +65,9 @@ builder.Services.AddScoped<IService<Article>, ArticleService>();
 builder.Services.AddScoped<IEstimateCalcService, EstimateCalcService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 
+// 4.2 MSBBPA030/040 御見積書 相关服务
+builder.Services.AddScoped<IQuotationService, QuotationService>();
+
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
