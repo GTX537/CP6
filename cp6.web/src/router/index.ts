@@ -15,12 +15,19 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/estimate-calc-list': () => import('@/views/EstimateCalcListView.vue'),
 }
 
-// 静态路由：只有登录页和Layout壳子
+// 静态路由：登录页 / Layout壳子 / 独立窗口
 const staticRoutes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'login',
     component: () => import('@/views/LoginView.vue')
+  },
+  // 独立窗口（popup）模式：不走 LayoutView，没有侧边栏/头部
+  {
+    path: '/estimate-calc/window',
+    name: 'estimate-calc-window',
+    component: () => import('@/views/EstimateCalcView.vue'),
+    meta: { standalone: true, title: '見積計算書' }
   },
   {
     path: '/',
@@ -108,7 +115,13 @@ router.beforeEach((to, _from, next) => {
     return
   }
 
-  // 3. 有 token 但还没加载动态路由（页面刷新的情况）
+  // 3. 独立窗口（popup）：已有 token 即可，不依赖动态菜单
+  if (to.meta?.standalone) {
+    next()
+    return
+  }
+
+  // 4. 有 token 但还没加载动态路由（页面刷新的情况）
   if (!dynamicRoutesAdded) {
     const menusStr = localStorage.getItem('menus')
     if (menusStr) {
@@ -123,7 +136,7 @@ router.beforeEach((to, _from, next) => {
     }
   }
 
-  // 4. 路由已加载，正常放行
+  // 5. 路由已加载，正常放行
   next()
 })
 

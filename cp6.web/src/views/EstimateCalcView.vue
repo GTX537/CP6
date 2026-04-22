@@ -77,7 +77,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from 'vue'
+import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useEstimateStore } from '@/stores/estimate'
 import { useFieldControl } from '@/composables/useFieldControl'
@@ -89,8 +90,23 @@ import Step2Processes from './estimate/Step2Processes.vue'
 import Step3Result from './estimate/Step3Result.vue'
 
 const store = useEstimateStore()
+const route = useRoute()
 const { buttonVisibility } = useFieldControl()
 const { handle: handleConflict } = useConflictHandler()
+
+// 独立窗口模式（popup 打开时 standalone=true）
+const isStandalone = computed(() => !!route.meta?.standalone)
+
+// 向父窗口广播保存/删除成功，便于列表自动刷新
+function notifyOpener(type: 'saved' | 'deleted') {
+  try {
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage({ source: 'cp6-estimate', type }, window.location.origin)
+    }
+  } catch {
+    // 跨源或已关闭则忽略
+  }
+}
 
 const step1Ref = ref<InstanceType<typeof Step1BasicInfo> | null>(null)
 const searchNo = ref('')
@@ -226,6 +242,7 @@ async function onSave() {
         store.loadBasicInfo(res.data)
         store.setOperationType(OperationType.Edit)
         ElMessage.success('保存成功')
+        notifyOpener('saved')
       }
     } else if (store.isEdit) {
       const no = store.basicInfo.qtnCalcNo!
@@ -233,6 +250,7 @@ async function onSave() {
       if (res.code === 0) {
         store.loadBasicInfo(res.data)
         ElMessage.success('保存成功')
+        notifyOpener('saved')
       }
     }
   } catch (e) {
@@ -257,6 +275,7 @@ async function onDelete() {
     if (res.code === 0) {
       ElMessage.success('删除成功')
       store.reset()
+      notifyOpener('deleted')
     }
   } catch (e) {
     const handled = await handleConflict(e)
@@ -267,6 +286,17 @@ async function onDelete() {
 }
 
 function onReset() {
+  // 独立窗口：直接关闭窗口
+  if (isStandalone.value) {
+    if (store.isDirty) {
+      ElMessageBox.confirm('当前修改尚未保存，确认关闭？', '确认', { type: 'warning' })
+        .then(() => window.close())
+        .catch(() => {})
+    } else {
+      window.close()
+    }
+    return
+  }
   store.reset()
   searchNo.value = ''
 }
@@ -275,6 +305,59 @@ function onReset() {
 onBeforeUnmount(() => {
   // 防止离开后下次再进带脏数据
   store.$reset?.()
+})
+
+// ============== URL 参数驱动（独立窗口时用）==============
+// URL 示例：
+//   /estimate-calc/window?op=new
+//   /estimate-calc/window?op=view&no=00000003-01
+//   /estimate-calc/window?op=edit&no=00000003-01
+//   /estimate-calc/window?op=copy&no=00000003-01
+onMounted(async () => {
+  const opParam = String(route.query.op || '').toLowerCase()
+  const noParam = route.query.no ? String(route.query.no) : ''
+
+  const opMap: Record<string, OperationType> = {
+    new: OperationType.New,
+    edit: OperationType.Edit,
+    view: OperationType.View,
+    delete: OperationType.Delete,
+    copy: OperationType.Copy,
+  }
+  const op = opMap[opParam]
+  if (op == null) return // 无 query → 走默认（store 初始值）
+
+  store.reset()
+
+  if (op === OperationType.New) {
+    store.setOperationType(OperationType.New)
+  } else if (noParam) {
+    try {
+      loading.value = true
+      const res = await estimateCalcApi.getByNo(noParam, op === OperationType.View)
+      if (res.code === 0) {
+        store.loadBasicInfo(res.data)
+        store.setOperationType(op)
+      } else {
+        ElMessage.warning(res.message || `No=${noParam} 未找到`)
+      }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 标题：独立窗口时改为更有区分度的标题
+  if (isStandalone.value) {
+    const labels: Record<number, string> = {
+      [OperationType.New]: '新規',
+      [OperationType.Edit]: '編集',
+      [OperationType.View]: '照会',
+      [OperationType.Delete]: '削除',
+      [OperationType.Copy]: '流用',
+    }
+    const title = `見積計算書 - ${labels[op] ?? ''}${noParam ? ` - ${noParam}` : ''}`
+    try { document.title = title } catch {}
+  }
 })
 </script>
 

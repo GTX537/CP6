@@ -87,18 +87,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue'
 import { estimateCalcApi } from '@/api/estimateCalc'
 import { masterApi } from '@/api/master'
-import { useEstimateStore } from '@/stores/estimate'
-import { OperationType } from '@/types/estimateCalc'
 import type { EstimateCalcListItem, MasterBase, EstimateCalcQuery } from '@/types/estimateCalc'
-
-const router = useRouter()
-const store = useEstimateStore()
 
 const loading = ref(false)
 const rows = ref<EstimateCalcListItem[]>([])
@@ -155,31 +149,30 @@ function onReset() {
   loadData()
 }
 
-/** 跳转到编辑页，设置操作种别并加载数据 */
-async function gotoDetail(row: EstimateCalcListItem, op: OperationType) {
-  try {
-    const res = await estimateCalcApi.getByNo(row.qtnCalcNo)
-    if (res.code !== 0) {
-      ElMessage.warning(res.message)
-      return
-    }
-    store.reset()
-    store.loadBasicInfo(res.data)
-    store.setOperationType(op)
-    router.push('/estimate-calc')
-  } catch (e) {
-    console.error(e)
+/**
+ * 以新页签打开見積計算書编辑页
+ * 保存/删除后父页签自动刷新列表（通过 postMessage）
+ * 注意：不传 features 字符串，浏览器会按"新标签页"处理而非弹窗
+ */
+function openInWindow(op: 'new' | 'view' | 'edit' | 'copy', no?: string) {
+  const qs = new URLSearchParams({ op })
+  if (no) qs.set('no', no)
+  const url = `${window.location.origin}/estimate-calc/window?${qs.toString()}`
+
+  const win = window.open(url, '_blank')
+  if (!win) {
+    ElMessage.warning('新页签被浏览器拦截，请允许本站点打开新页签后再试')
   }
 }
 
 function onView(row: EstimateCalcListItem) {
-  gotoDetail(row, OperationType.View)
+  openInWindow('view', row.qtnCalcNo)
 }
 function onEdit(row: EstimateCalcListItem) {
-  gotoDetail(row, OperationType.Edit)
+  openInWindow('edit', row.qtnCalcNo)
 }
 function onCopy(row: EstimateCalcListItem) {
-  gotoDetail(row, OperationType.Copy)
+  openInWindow('copy', row.qtnCalcNo)
 }
 async function onDelete(row: EstimateCalcListItem) {
   try {
@@ -201,14 +194,26 @@ async function onDelete(row: EstimateCalcListItem) {
 }
 
 function onNew() {
-  store.reset()
-  store.setOperationType(OperationType.New)
-  router.push('/estimate-calc')
+  openInWindow('new')
+}
+
+// 监听子窗口保存/删除消息，自动刷新列表
+function handleMessage(e: MessageEvent) {
+  if (e.origin !== window.location.origin) return
+  const data = e.data
+  if (data?.source === 'cp6-estimate' && (data.type === 'saved' || data.type === 'deleted')) {
+    loadData()
+  }
 }
 
 onMounted(async () => {
+  window.addEventListener('message', handleMessage)
   const [baseRes] = await Promise.all([masterApi.getBases(), loadData()])
   bases.value = baseRes.data ?? []
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('message', handleMessage)
 })
 </script>
 
