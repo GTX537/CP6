@@ -13,6 +13,10 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/operlog': () => import('@/views/OperLogView.vue'),
   '/estimate-calc': () => import('@/views/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/EstimateCalcListView.vue'),
+  '/quotation': () => import('@/views/QuotationView.vue'),
+  '/quotation-list': () => import('@/views/QuotationListView.vue'),
+  '/product': () => import('@/views/ProductMasterView.vue'),
+  '/product-list': () => import('@/views/ProductMasterListView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口
@@ -28,6 +32,18 @@ const staticRoutes: RouteRecordRaw[] = [
     name: 'estimate-calc-window',
     component: () => import('@/views/EstimateCalcView.vue'),
     meta: { standalone: true, title: '見積計算書' }
+  },
+  {
+    path: '/quotation/window',
+    name: 'quotation-window',
+    component: () => import('@/views/QuotationView.vue'),
+    meta: { standalone: true, title: '御見積書' }
+  },
+  {
+    path: '/product/window',
+    name: 'product-window',
+    component: () => import('@/views/ProductMasterView.vue'),
+    meta: { standalone: true, title: '製品マスタ' }
   },
   {
     path: '/',

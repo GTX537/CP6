@@ -50,4 +50,34 @@ public class MasterDataController : ControllerBase
         var list = await _service.GetGenericCodesAsync(groupCode);
         return Ok(new { code = 0, message = "OK", data = list });
     }
+
+    /// <summary>
+    /// GET /api/master/lookup/customer  得意先ルックアップ（Master Popup 共通）
+    /// </summary>
+    /// <remarks>MSBBPACOM 共通設計書 §項目定義 「テ:取引先マスタ」 パターン</remarks>
+    [HttpGet("lookup/customer")]
+    public async Task<IActionResult> LookupCustomer(
+        [FromQuery] string? keyword,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var result = await _service.SearchCustomersAsync(keyword, page, pageSize);
+        return Ok(new { code = 0, message = "OK", data = result });
+    }
+
+    /// <summary>
+    /// GET /api/master/lookup/product  製品マスタルックアップ（Master Popup 共通）
+    /// </summary>
+    /// <remarks>セット品検索 / 既存製品参照に共用</remarks>
+    [HttpGet("lookup/product")]
+    public async Task<IActionResult> LookupProduct(
+        [FromQuery] string? keyword,
+        [FromQuery] string? customerCd,
+        [FromQuery] bool onlyApproved = false,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var result = await _service.SearchProductsAsync(keyword, customerCd, onlyApproved, page, pageSize);
+        return Ok(new { code = 0, message = "OK", data = result });
+    }
 }

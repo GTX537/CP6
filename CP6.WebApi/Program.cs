@@ -68,6 +68,11 @@ builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 // 4.2 MSBBPA030/040 御見積書 相关服务
 builder.Services.AddScoped<IQuotationService, QuotationService>();
 
+// 4.3 MSBBPA050/060 Web 製品マスタ 相关服务
+builder.Services.AddScoped<IProductService, ProductService>();
+// 仕掛チェック：mcframe7 連携無し時は NoOp 実装（Phase 3 で実装差替え）
+builder.Services.AddScoped<IWipCheckService, NoOpWipCheckService>();
+
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -127,7 +132,11 @@ using (var scope = app.Services.CreateScope())
             new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true },
             new Sys_Menu { MenuId = 200, MenuName = "販売管理", Icon = "ShoppingBag", OrderNo = 200, Enable = true },
             new Sys_Menu { MenuId = 201, MenuName = "見積計算書 照会", RoutePath = "/estimate-calc-list", Icon = "List", ParentId = 200, OrderNo = 201, Enable = true },
-            new Sys_Menu { MenuId = 202, MenuName = "見積計算書 登録", RoutePath = "/estimate-calc", Icon = "Money", ParentId = 200, OrderNo = 202, Enable = true }
+            new Sys_Menu { MenuId = 202, MenuName = "見積計算書 登録", RoutePath = "/estimate-calc", Icon = "Money", ParentId = 200, OrderNo = 202, Enable = true },
+            new Sys_Menu { MenuId = 203, MenuName = "御見積書 一覧", RoutePath = "/quotation-list", Icon = "Tickets", ParentId = 200, OrderNo = 203, Enable = true },
+            new Sys_Menu { MenuId = 204, MenuName = "御見積書 登録", RoutePath = "/quotation", Icon = "EditPen", ParentId = 200, OrderNo = 204, Enable = true },
+            new Sys_Menu { MenuId = 205, MenuName = "製品マスタ 一覧", RoutePath = "/product-list", Icon = "Goods", ParentId = 200, OrderNo = 205, Enable = true },
+            new Sys_Menu { MenuId = 206, MenuName = "製品マスタ 登録", RoutePath = "/product", Icon = "Box", ParentId = 200, OrderNo = 206, Enable = true }
         );
 
         // 管理员角色 RoleId = 1
@@ -147,7 +156,11 @@ using (var scope = app.Services.CreateScope())
             new Sys_RoleMenu { RoleId = 1, MenuId = 107 },
             new Sys_RoleMenu { RoleId = 1, MenuId = 200 },
             new Sys_RoleMenu { RoleId = 1, MenuId = 201 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 202 }
+            new Sys_RoleMenu { RoleId = 1, MenuId = 202 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 203 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 204 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 205 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 206 }
         );
 
         // 管理员账号绑定 RoleId = 1
@@ -208,6 +221,32 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 202, MenuName = "見積計算書 登録", RoutePath = "/estimate-calc", Icon = "Money", ParentId = 200, OrderNo = 202, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 202 });
+        db.SaveChanges();
+    }
+    // MSBBPA030 / MSBBPA040 御見積書 一覧 / 登録
+    if (!db.Sys_Menus.Any(m => m.MenuId == 203))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 203, MenuName = "御見積書 一覧", RoutePath = "/quotation-list", Icon = "Tickets", ParentId = 200, OrderNo = 203, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 203 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 204))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 204, MenuName = "御見積書 登録", RoutePath = "/quotation", Icon = "EditPen", ParentId = 200, OrderNo = 204, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 204 });
+        db.SaveChanges();
+    }
+    // MSBBPA050 / MSBBPA060 製品マスタ 登録 / 一覧
+    if (!db.Sys_Menus.Any(m => m.MenuId == 205))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 205, MenuName = "製品マスタ 一覧", RoutePath = "/product-list", Icon = "Goods", ParentId = 200, OrderNo = 205, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 205 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 206))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 206, MenuName = "製品マスタ 登録", RoutePath = "/product", Icon = "Box", ParentId = 200, OrderNo = 206, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 206 });
         db.SaveChanges();
     }
 

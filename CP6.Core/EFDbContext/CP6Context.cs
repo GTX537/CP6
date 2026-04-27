@@ -86,6 +86,23 @@ public class CP6Context : DbContext
     /// <summary>御見積書 明細(印字用)</summary>
     public DbSet<QuotationDetail> QuotationDetails { get; set; }
 
+    // ───── MSBBPA050 Web 製品マスタ ─────
+
+    /// <summary>製品基本マスタ</summary>
+    public DbSet<ProductMaster> ProductMasters { get; set; }
+
+    /// <summary>製品加工工程マスタ</summary>
+    public DbSet<ProductProcess> ProductProcesses { get; set; }
+
+    /// <summary>製品加工材料マスタ</summary>
+    public DbSet<ProductMaterial> ProductMaterials { get; set; }
+
+    /// <summary>製品ロット別単価マスタ</summary>
+    public DbSet<ProductLotPrice> ProductLotPrices { get; set; }
+
+    /// <summary>製品連産品マスタ</summary>
+    public DbSet<ProductCoProduct> ProductCoProducts { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -163,6 +180,73 @@ public class CP6Context : DbContext
         modelBuilder.Entity<QuotationDetail>(e =>
         {
             e.HasIndex(x => new { x.QtnNo, x.DetailNo }).IsUnique();
+        });
+
+        // ───── MSBBPA050 Web 製品マスタ ─────
+
+        // 製品基本マスタ：ProductCd 唯一；得意先・親案件・ステータスで检索
+        modelBuilder.Entity<ProductMaster>(e =>
+        {
+            e.HasIndex(x => x.ProductCd).IsUnique();
+            e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => new { x.SetProductCd, x.IsDeleted });
+            e.HasIndex(x => new { x.QuotationNo, x.IsDeleted });
+            e.HasIndex(x => new { x.EstimateCalcNo, x.IsDeleted });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.ProjectNoParent, x.ProjectNoChild });
+            e.HasIndex(x => x.ItemCd);
+
+            // 子表级联加载（业务键关联，不走 FK，以便软删除/迁移）
+            e.HasMany(x => x.Processes)
+                .WithOne()
+                .HasForeignKey(p => p.ProductCd)
+                .HasPrincipalKey(x => x.ProductCd)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(x => x.Materials)
+                .WithOne()
+                .HasForeignKey(p => p.ProductCd)
+                .HasPrincipalKey(x => x.ProductCd)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(x => x.LotPrices)
+                .WithOne()
+                .HasForeignKey(p => p.ProductCd)
+                .HasPrincipalKey(x => x.ProductCd)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(x => x.CoProducts)
+                .WithOne()
+                .HasForeignKey(p => p.ProductCd)
+                .HasPrincipalKey(x => x.ProductCd)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // 製品加工工程：ProductCd + TaskCd 唯一
+        modelBuilder.Entity<ProductProcess>(e =>
+        {
+            e.HasIndex(x => new { x.ProductCd, x.TaskCd }).IsUnique();
+            e.HasIndex(x => new { x.ProductCd, x.SortOrder });
+            e.HasIndex(x => x.ProcessCd);
+        });
+
+        // 製品加工材料：ProductCd + ProcessCd + MaterialCd 唯一
+        modelBuilder.Entity<ProductMaterial>(e =>
+        {
+            e.HasIndex(x => new { x.ProductCd, x.ProcessCd, x.MaterialCd }).IsUnique();
+            e.HasIndex(x => new { x.ProductCd, x.SortOrder });
+        });
+
+        // 製品ロット別単価：ProductCd + DetailNo 唯一
+        modelBuilder.Entity<ProductLotPrice>(e =>
+        {
+            e.HasIndex(x => new { x.ProductCd, x.DetailNo }).IsUnique();
+        });
+
+        // 製品連産品：ProductCd + ProcessCd + RowNo 唯一
+        modelBuilder.Entity<ProductCoProduct>(e =>
+        {
+            e.HasIndex(x => new { x.ProductCd, x.ProcessCd, x.RowNo }).IsUnique();
         });
     }
 }
