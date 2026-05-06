@@ -103,6 +103,38 @@ public class CP6Context : DbContext
     /// <summary>製品連産品マスタ</summary>
     public DbSet<ProductCoProduct> ProductCoProducts { get; set; }
 
+    // ───── MSBBPA070/080/090 受注 ─────
+
+    /// <summary>受注ヘッダー</summary>
+    public DbSet<Order> Orders { get; set; }
+
+    /// <summary>受注明細</summary>
+    public DbSet<OrderDetail> OrderDetails { get; set; }
+
+    /// <summary>受注加工工程</summary>
+    public DbSet<OrderProcess> OrderProcesses { get; set; }
+
+    /// <summary>受注工程備考</summary>
+    public DbSet<OrderProcessNote> OrderProcessNotes { get; set; }
+
+    /// <summary>受注加工材料</summary>
+    public DbSet<OrderMaterial> OrderMaterials { get; set; }
+
+    // ───── MSBBPA100/110/120 取引先 / FSC ─────
+
+    /// <summary>Web 取引先マスタ（PA110/PA120）</summary>
+    public DbSet<BusinessPartner> BusinessPartners { get; set; }
+
+    /// <summary>FSC 製品化チェックシート発行履歴（PA100）</summary>
+    public DbSet<FscChecklist> FscChecklists { get; set; }
+
+    // ───── MSBBPA130 シート単価 ─────
+    public DbSet<SheetUnitPrice> SheetUnitPrices { get; set; }
+    public DbSet<SheetUnitPriceEstimate> SheetUnitPriceEstimates { get; set; }
+
+    // ───── MSBBPA140/150 木型・版型管理マスタ ─────
+    public DbSet<PlateMold> PlateMolds { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -247,6 +279,149 @@ public class CP6Context : DbContext
         modelBuilder.Entity<ProductCoProduct>(e =>
         {
             e.HasIndex(x => new { x.ProductCd, x.ProcessCd, x.RowNo }).IsUnique();
+        });
+
+        // ───── MSBBPA070/080/090 受注 ─────
+
+        // 受注ヘッダー：WebOrderNo 唯一；得意先/受注日/受注区分で検索
+        modelBuilder.Entity<Order>(e =>
+        {
+            e.HasIndex(x => x.WebOrderNo).IsUnique();
+            e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => new { x.OrderDate, x.IsDeleted });
+            e.HasIndex(x => new { x.OrderType, x.IsDeleted });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => x.McOrderNo);
+
+            // 子表级联加载（业务键关联）
+            e.HasMany(x => x.Details)
+                .WithOne(d => d.Order)
+                .HasForeignKey(d => d.WebOrderNo)
+                .HasPrincipalKey(x => x.WebOrderNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // 受注明細：WebOrderNo + WebOrderDetailNo 唯一；検索用 index 多数
+        modelBuilder.Entity<OrderDetail>(e =>
+        {
+            e.HasIndex(x => new { x.WebOrderNo, x.WebOrderDetailNo }).IsUnique();
+            e.HasIndex(x => x.HaibaiNo1);
+            e.HasIndex(x => new { x.HaibaiNo2, x.HaibaiNo3 });
+            e.HasIndex(x => x.ProductCd);
+            e.HasIndex(x => x.ItemCd);
+            e.HasIndex(x => new { x.CustomerDeliveryDate, x.IsDeleted });
+            e.HasIndex(x => new { x.ProductCatBig, x.ProductCatMid, x.ProductCatSml });
+            e.HasIndex(x => new { x.ApprovalStatus, x.IsDeleted });
+            e.HasIndex(x => new { x.McTransferFlg, x.IsDeleted });
+
+            // 工程・備考・材料 子表（業務键 — WebOrderNo + WebOrderDetailNo + ProductCd）
+            e.HasMany(x => x.Processes)
+                .WithOne()
+                .HasForeignKey(p => new { p.WebOrderNo, p.WebOrderDetailNo, p.ProductCd })
+                .HasPrincipalKey(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.ProductCd })
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(x => x.ProcessNotes)
+                .WithOne()
+                .HasForeignKey(p => new { p.WebOrderNo, p.WebOrderDetailNo, p.ProductCd })
+                .HasPrincipalKey(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.ProductCd })
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(x => x.Materials)
+                .WithOne()
+                .HasForeignKey(p => new { p.WebOrderNo, p.WebOrderDetailNo, p.ProductCd })
+                .HasPrincipalKey(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.ProductCd })
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // OrderDetail の (WebOrderNo, WebOrderDetailNo, ProductCd) を主体キー扱いするための一意制約
+        modelBuilder.Entity<OrderDetail>()
+            .HasIndex(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.ProductCd })
+            .IsUnique()
+            .HasDatabaseName("UX_OrderDetail_OrderProduct");
+
+        // 受注加工工程：(WebOrderNo, WebOrderDetailNo, ProductCd, OperationCd) 唯一
+        modelBuilder.Entity<OrderProcess>(e =>
+        {
+            e.HasIndex(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.ProductCd, x.OperationCd }).IsUnique();
+            e.HasIndex(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.SortOrder });
+            e.HasIndex(x => x.ProcessCd);
+        });
+
+        // 受注工程備考：(WebOrderNo, WebOrderDetailNo, ProductCd, OperationCd) 唯一
+        modelBuilder.Entity<OrderProcessNote>(e =>
+        {
+            e.HasIndex(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.ProductCd, x.OperationCd }).IsUnique();
+        });
+
+        // 受注加工材料：(WebOrderNo, WebOrderDetailNo, ProductCd, ProcessCd, MaterialCd) 唯一
+        modelBuilder.Entity<OrderMaterial>(e =>
+        {
+            e.HasIndex(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.ProductCd, x.ProcessCd, x.MaterialCd }).IsUnique();
+            e.HasIndex(x => new { x.WebOrderNo, x.WebOrderDetailNo, x.SortOrder });
+        });
+
+        // ───── MSBBPA110/120 Web 取引先マスタ ─────
+
+        // 取引先：BpCd 唯一；検索条件で多用される列に index
+        modelBuilder.Entity<BusinessPartner>(e =>
+        {
+            e.HasIndex(x => x.BpCd).IsUnique();
+            e.HasIndex(x => new { x.BaseCd, x.IsDeleted });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => x.SalesStaffCd);
+            e.HasIndex(x => x.BusinessStaffCd);
+            e.HasIndex(x => x.AreaCd);
+            e.HasIndex(x => x.CustomerFlg);
+            e.HasIndex(x => x.SupplierFlg);
+            e.HasIndex(x => new { x.CreateDate, x.IsDeleted });
+        });
+
+        // ───── MSBBPA100 FSC チェックシート発行履歴 ─────
+
+        modelBuilder.Entity<FscChecklist>(e =>
+        {
+            e.HasIndex(x => x.FscManagementNo).IsUnique();
+            e.HasIndex(x => new { x.QtnNo, x.QtnCalcNo });
+            e.HasIndex(x => new { x.IssueDate, x.IsDeleted });
+        });
+
+        // ───── MSBBPA130 シート単価 — 13 項目複合 PK ─────
+        modelBuilder.Entity<SheetUnitPrice>(e =>
+        {
+            e.HasIndex(x => new {
+                x.RevisionDate, x.BaseCd, x.CustomerCd, x.SheetFlute,
+                x.PaperCdF, x.PrintCdF, x.EmbossCdF,
+                x.PaperCdC, x.PrintCdC, x.EmbossCdC,
+                x.PaperCdB, x.PrintCdB, x.EmbossCdB,
+            }).IsUnique().HasDatabaseName("UX_SheetUnitPrice_Pk13");
+            e.HasIndex(x => new { x.BaseCd, x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => x.RevisionDate);
+        });
+        modelBuilder.Entity<SheetUnitPriceEstimate>(e =>
+        {
+            e.HasIndex(x => new {
+                x.RevisionDate, x.BaseCd, x.CustomerCd, x.SheetFlute,
+                x.PaperCdF, x.PrintCdF, x.EmbossCdF,
+                x.PaperCdC, x.PrintCdC, x.EmbossCdC,
+                x.PaperCdB, x.PrintCdB, x.EmbossCdB,
+            }).IsUnique().HasDatabaseName("UX_SheetUnitPriceEst_Pk13");
+            e.HasIndex(x => new { x.BaseCd, x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => x.RevisionDate);
+        });
+
+        // ───── MSBBPA140/150 木型・版型管理マスタ ─────
+        modelBuilder.Entity<PlateMold>(e =>
+        {
+            e.HasIndex(x => new { x.WdPtnNo, x.WdRev }).IsUnique();
+            e.HasIndex(x => new { x.BaseCd, x.IsDeleted });
+            e.HasIndex(x => x.CustomerCd);
+            e.HasIndex(x => x.SupplierCd);
+            e.HasIndex(x => x.RepresentativeProductCd);
+            e.HasIndex(x => new { x.StDate, x.EndDate });
+            e.HasIndex(x => x.PlaceCd);
+            e.HasIndex(x => x.ProcessCd);
+            e.HasIndex(x => x.TypeClass);
         });
     }
 }

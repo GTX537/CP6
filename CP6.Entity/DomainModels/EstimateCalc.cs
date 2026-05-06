@@ -225,6 +225,16 @@ public class EstimateCalc : BaseBizEntity
     [Column(TypeName = "decimal(15,4)")] public decimal? EstimateUnitPrice { get; set; }
     [Column(TypeName = "decimal(15,4)")] public decimal? ConfirmedUnitPrice { get; set; }
 
+    // ───── PA100 FSC 関連（仕様書 §5） ─────
+    /// <summary>FSC 管理 NO（PA100 で発行時に採番）</summary>
+    [MaxLength(20)] public string? FscManagementNo { get; set; }
+
+    /// <summary>合計金額（見積金額の合計）</summary>
+    [Column(TypeName = "decimal(15,4)")] public decimal? TotalAmount { get; set; }
+
+    /// <summary>ステータス：0=未確定 / 1=確定 / 9=削除</summary>
+    public int Status { get; set; } = 0;
+
     // ───── 导航属性 ─────
     /// <summary>工程明细（级联）</summary>
     public List<EstimateCalcProcess> Processes { get; set; } = new();

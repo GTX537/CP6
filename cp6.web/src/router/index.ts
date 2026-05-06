@@ -17,6 +17,15 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/quotation-list': () => import('@/views/QuotationListView.vue'),
   '/product': () => import('@/views/ProductMasterView.vue'),
   '/product-list': () => import('@/views/ProductMasterListView.vue'),
+  '/order': () => import('@/views/OrderEntryView.vue'),
+  '/order-list': () => import('@/views/OrderListView.vue'),
+  '/order-price-correction': () => import('@/views/OrderPriceCorrectionView.vue'),
+  '/business-partner': () => import('@/views/BusinessPartnerView.vue'),
+  '/business-partner-list': () => import('@/views/BusinessPartnerListView.vue'),
+  '/fsc-checklist': () => import('@/views/FscChecklistView.vue'),
+  '/sheet-unit-price': () => import('@/views/SheetUnitPriceView.vue'),
+  '/plate-mold': () => import('@/views/PlateMoldView.vue'),
+  '/plate-mold-list': () => import('@/views/PlateMoldListView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口
@@ -44,6 +53,18 @@ const staticRoutes: RouteRecordRaw[] = [
     name: 'product-window',
     component: () => import('@/views/ProductMasterView.vue'),
     meta: { standalone: true, title: '製品マスタ' }
+  },
+  {
+    path: '/order/window',
+    name: 'order-window',
+    component: () => import('@/views/OrderEntryView.vue'),
+    meta: { standalone: true, title: '受注入力' }
+  },
+  {
+    path: '/business-partner/window',
+    name: 'business-partner-window',
+    component: () => import('@/views/BusinessPartnerView.vue'),
+    meta: { standalone: true, title: '取引先マスタ' }
   },
   {
     path: '/',

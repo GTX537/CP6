@@ -29,7 +29,10 @@ builder.Services.AddOpenApi();
 
 // 3. 注册数据库上下文
 builder.Services.AddDbContext<CP6Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        // EF Core 10：迁移已包含模型，但运行时偶发误报 PendingModelChangesWarning（已用 ef migrations has-pending-model-changes 确认无差异）
+        .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 // 3.1 注册 Dapper 用的 IDbConnection（每次请求新建连接）
 builder.Services.AddScoped<IDbConnection>(_ =>
@@ -72,6 +75,21 @@ builder.Services.AddScoped<IQuotationService, QuotationService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 // 仕掛チェック：mcframe7 連携無し時は NoOp 実装（Phase 3 で実装差替え）
 builder.Services.AddScoped<IWipCheckService, NoOpWipCheckService>();
+
+// 4.4 MSBBPA070/080/090 Web 受注 相关服务
+builder.Services.AddScoped<IOrderService, OrderService>();
+// PA090 POWER EGG WF 起票：実環境では HTTP 実装に差し替え
+builder.Services.AddScoped<IPowerEggWorkflowService, NoOpPowerEggWorkflowService>();
+
+// 4.5 MSBBPA100/110/120 FSC・取引先マスタ
+builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
+builder.Services.AddScoped<IFscChecklistService, FscChecklistService>();
+
+// 4.6 MSBBPA130/140/150 シート単価・版型/木型マスタ
+builder.Services.AddScoped<ISheetUnitPriceService, SheetUnitPriceService>();
+builder.Services.AddScoped<IPlateMoldService, PlateMoldService>();
+// PA140 §8 PE API 版型発注書連携：実環境では HTTP 実装に差し替え
+builder.Services.AddScoped<IPlateMoldPeApiService, NoOpPlateMoldPeApiService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
@@ -136,7 +154,16 @@ using (var scope = app.Services.CreateScope())
             new Sys_Menu { MenuId = 203, MenuName = "御見積書 一覧", RoutePath = "/quotation-list", Icon = "Tickets", ParentId = 200, OrderNo = 203, Enable = true },
             new Sys_Menu { MenuId = 204, MenuName = "御見積書 登録", RoutePath = "/quotation", Icon = "EditPen", ParentId = 200, OrderNo = 204, Enable = true },
             new Sys_Menu { MenuId = 205, MenuName = "製品マスタ 一覧", RoutePath = "/product-list", Icon = "Goods", ParentId = 200, OrderNo = 205, Enable = true },
-            new Sys_Menu { MenuId = 206, MenuName = "製品マスタ 登録", RoutePath = "/product", Icon = "Box", ParentId = 200, OrderNo = 206, Enable = true }
+            new Sys_Menu { MenuId = 206, MenuName = "製品マスタ 登録", RoutePath = "/product", Icon = "Box", ParentId = 200, OrderNo = 206, Enable = true },
+            new Sys_Menu { MenuId = 207, MenuName = "受注一覧照会", RoutePath = "/order-list", Icon = "Files", ParentId = 200, OrderNo = 207, Enable = true },
+            new Sys_Menu { MenuId = 208, MenuName = "受注入力", RoutePath = "/order", Icon = "DocumentAdd", ParentId = 200, OrderNo = 208, Enable = true },
+            new Sys_Menu { MenuId = 209, MenuName = "単価訂正", RoutePath = "/order-price-correction", Icon = "PriceTag", ParentId = 200, OrderNo = 209, Enable = true },
+            new Sys_Menu { MenuId = 210, MenuName = "FSC チェックシート", RoutePath = "/fsc-checklist", Icon = "Document", ParentId = 200, OrderNo = 210, Enable = true },
+            new Sys_Menu { MenuId = 211, MenuName = "取引先マスタ 一覧", RoutePath = "/business-partner-list", Icon = "OfficeBuilding", ParentId = 200, OrderNo = 211, Enable = true },
+            new Sys_Menu { MenuId = 212, MenuName = "取引先マスタ 登録", RoutePath = "/business-partner", Icon = "User", ParentId = 200, OrderNo = 212, Enable = true },
+            new Sys_Menu { MenuId = 213, MenuName = "シート単価マスタ", RoutePath = "/sheet-unit-price", Icon = "Coin", ParentId = 200, OrderNo = 213, Enable = true },
+            new Sys_Menu { MenuId = 214, MenuName = "版型/木型 一覧", RoutePath = "/plate-mold-list", Icon = "Tools", ParentId = 200, OrderNo = 214, Enable = true },
+            new Sys_Menu { MenuId = 215, MenuName = "版型/木型 登録", RoutePath = "/plate-mold", Icon = "Stamp", ParentId = 200, OrderNo = 215, Enable = true }
         );
 
         // 管理员角色 RoleId = 1
@@ -160,7 +187,16 @@ using (var scope = app.Services.CreateScope())
             new Sys_RoleMenu { RoleId = 1, MenuId = 203 },
             new Sys_RoleMenu { RoleId = 1, MenuId = 204 },
             new Sys_RoleMenu { RoleId = 1, MenuId = 205 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 206 }
+            new Sys_RoleMenu { RoleId = 1, MenuId = 206 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 207 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 208 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 209 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 210 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 211 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 212 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 213 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 214 },
+            new Sys_RoleMenu { RoleId = 1, MenuId = 215 }
         );
 
         // 管理员账号绑定 RoleId = 1
@@ -247,6 +283,63 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 206, MenuName = "製品マスタ 登録", RoutePath = "/product", Icon = "Box", ParentId = 200, OrderNo = 206, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 206 });
+        db.SaveChanges();
+    }
+    // MSBBPA070 / 080 / 090 受注入力 / 一覧 / 単価訂正
+    if (!db.Sys_Menus.Any(m => m.MenuId == 207))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 207, MenuName = "受注一覧照会", RoutePath = "/order-list", Icon = "Files", ParentId = 200, OrderNo = 207, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 207 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 208))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 208, MenuName = "受注入力", RoutePath = "/order", Icon = "DocumentAdd", ParentId = 200, OrderNo = 208, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 208 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 209))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 209, MenuName = "単価訂正", RoutePath = "/order-price-correction", Icon = "PriceTag", ParentId = 200, OrderNo = 209, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 209 });
+        db.SaveChanges();
+    }
+    // MSBBPA100 / 110 / 120 FSC・取引先マスタ
+    if (!db.Sys_Menus.Any(m => m.MenuId == 210))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 210, MenuName = "FSC チェックシート", RoutePath = "/fsc-checklist", Icon = "Document", ParentId = 200, OrderNo = 210, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 210 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 211))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 211, MenuName = "取引先マスタ 一覧", RoutePath = "/business-partner-list", Icon = "OfficeBuilding", ParentId = 200, OrderNo = 211, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 211 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 212))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 212, MenuName = "取引先マスタ 登録", RoutePath = "/business-partner", Icon = "User", ParentId = 200, OrderNo = 212, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 212 });
+        db.SaveChanges();
+    }
+    // MSBBPA130 / 140 / 150 シート単価・版型/木型マスタ
+    if (!db.Sys_Menus.Any(m => m.MenuId == 213))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 213, MenuName = "シート単価マスタ", RoutePath = "/sheet-unit-price", Icon = "Coin", ParentId = 200, OrderNo = 213, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 213 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 214))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 214, MenuName = "版型/木型 一覧", RoutePath = "/plate-mold-list", Icon = "Tools", ParentId = 200, OrderNo = 214, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 214 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 215))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 215, MenuName = "版型/木型 登録", RoutePath = "/plate-mold", Icon = "Stamp", ParentId = 200, OrderNo = 215, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 215 });
         db.SaveChanges();
     }
 

@@ -1,0 +1,256 @@
+<template>
+  <div class="order-entry">
+    <!-- ヘッダー：操作種別 + WebOrderNo + ステップバー -->
+    <el-card shadow="never" class="header-card">
+      <div class="header-row">
+        <div class="header-left">
+          <el-tag :type="opTagType" size="large" effect="dark">{{ opLabel }}</el-tag>
+          <span v-if="store.order.webOrderNo" class="web-order-no">
+            Web受注NO: {{ store.order.webOrderNo }}
+          </span>
+          <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">自動採番待ち</el-tag>
+          <el-tag v-if="store.order.status === 9" type="success" size="small">mc転送済</el-tag>
+          <el-tag v-if="store.order.mcTransferFlg" type="info" size="small">mc連携</el-tag>
+        </div>
+        <div class="header-right">
+          <el-radio-group v-model="opModel" size="small" :disabled="hasNoOrder">
+            <el-radio-button :value="OrderOperationType.New">登録</el-radio-button>
+            <el-radio-button :value="OrderOperationType.Edit" :disabled="hasNoOrder">訂正</el-radio-button>
+            <el-radio-button :value="OrderOperationType.Delete" :disabled="hasNoOrder">削除</el-radio-button>
+            <el-radio-button :value="OrderOperationType.View" :disabled="hasNoOrder">参照</el-radio-button>
+          </el-radio-group>
+        </div>
+      </div>
+
+      <el-steps :active="store.currentStep - 1" finish-status="success" class="step-bar">
+        <el-step title="基本情報・受注明細" description="Step 1" />
+        <el-step title="基本情報・構成・備考" description="Step 2" />
+        <el-step title="工程情報・材料設定" description="Step 3" />
+      </el-steps>
+    </el-card>
+
+    <!-- 検索：手配NO で既存受注読込 -->
+    <el-card shadow="never" class="search-card" v-if="!store.isNew">
+      <el-form inline>
+        <el-form-item label="Web受注NO">
+          <el-input v-model="searchNo" placeholder="例: WO20260501000001" clearable style="width: 240px" />
+        </el-form-item>
+        <el-form-item label="手配NO1">
+          <el-input v-model="searchHaibaiNo1" clearable style="width: 200px" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onLoad" :loading="loading">読込</el-button>
+          <el-button @click="onNewClick">新規</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+
+    <!-- ステップ内容 -->
+    <div class="step-content">
+      <Step1HeaderAndDetails v-if="store.currentStep === 1" />
+      <Step2BasicInfo v-else-if="store.currentStep === 2" />
+      <Step3ProcessInfo v-else />
+    </div>
+
+    <!-- 底部 -->
+    <el-card shadow="never" class="footer-card">
+      <div class="btn-row">
+        <el-button v-if="store.currentStep > 1" @click="onPrev">前へ</el-button>
+        <el-button v-if="store.currentStep < 3" type="primary" @click="onNext">次へ</el-button>
+        <el-button v-if="canSave" type="success" :loading="saving" @click="onSave">保存</el-button>
+        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onDelete">削除実行</el-button>
+        <el-button @click="onReset">クリア</el-button>
+      </div>
+    </el-card>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useOrderStore } from '@/stores/order'
+import { OrderOperationType } from '@/types/order'
+import { orderApi } from '@/api/order'
+import Step1HeaderAndDetails from './order/Step1HeaderAndDetails.vue'
+import Step2BasicInfo from './order/Step2BasicInfo.vue'
+import Step3ProcessInfo from './order/Step3ProcessInfo.vue'
+
+const store = useOrderStore()
+
+const searchNo = ref('')
+const searchHaibaiNo1 = ref('')
+const loading = ref(false)
+const saving = ref(false)
+
+const hasNoOrder = computed(() => !store.order.webOrderNo)
+const canSave = computed(() => store.canEdit)
+
+const opModel = computed({
+  get: () => store.operationType,
+  set: v => store.setOperationType(v),
+})
+
+const opLabel = computed(() => {
+  switch (store.operationType) {
+    case OrderOperationType.New: return '登録'
+    case OrderOperationType.Edit: return '訂正'
+    case OrderOperationType.Delete: return '削除'
+    case OrderOperationType.View: return '参照'
+    default: return ''
+  }
+})
+const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'>(() => {
+  switch (store.operationType) {
+    case OrderOperationType.New: return 'primary'
+    case OrderOperationType.Edit: return 'warning'
+    case OrderOperationType.Delete: return 'danger'
+    case OrderOperationType.View: return 'info'
+    default: return 'info'
+  }
+})
+
+async function onLoad() {
+  loading.value = true
+  try {
+    if (searchNo.value) {
+      const res = await orderApi.getByWebOrderNo(searchNo.value)
+      if (res.code === 0 && res.data) {
+        store.loadFromDto(res.data)
+        store.setOperationType(OrderOperationType.Edit)
+        ElMessage.success('受注を読込みました')
+      }
+    } else if (searchHaibaiNo1.value) {
+      const res = await orderApi.lookupByHaibaiNo(searchHaibaiNo1.value)
+      if (res.code === 0 && res.data) {
+        store.loadFromDto(res.data)
+        store.setOperationType(OrderOperationType.Edit)
+        ElMessage.success('手配NOから受注を読込みました')
+      }
+    } else {
+      ElMessage.warning('Web受注NO または 手配NO1 を入力してください')
+    }
+  } catch {
+    /* http interceptor */
+  } finally {
+    loading.value = false
+  }
+}
+
+function onNewClick() {
+  store.reset()
+  store.setOperationType(OrderOperationType.New)
+}
+
+function onPrev() {
+  if (store.currentStep > 1) store.setStep((store.currentStep - 1) as 1 | 2 | 3)
+}
+
+async function onNext() {
+  // Step 1 → Step 2 / Step 2 → Step 3 共通：明細選択行が必要
+  if (store.currentStep === 1) {
+    if (store.order.details.length === 0) {
+      ElMessage.warning('部材一覧に少なくとも 1 行追加してください')
+      return
+    }
+    if (store.currentDetailIndex < 0) {
+      // 最初の行を選択
+      store.currentDetailIndex = 0
+    }
+  }
+  if (store.currentStep < 3) {
+    store.setStep((store.currentStep + 1) as 1 | 2 | 3)
+  }
+}
+
+function validateAll(): boolean {
+  const o = store.order
+  if (!o.customerCd?.trim()) { ElMessage.error('得意先 CD は必須です'); return false }
+  if (!o.orderType?.trim()) { ElMessage.error('受注区分は必須です'); return false }
+  if (o.details.length === 0) { ElMessage.error('登録する明細がありません'); return false }
+  for (const d of o.details) {
+    if (!d.productCd?.trim()) { ElMessage.error(`明細 ${d.webOrderDetailNo}: 製品 CD は必須です`); return false }
+  }
+  return true
+}
+
+async function onSave() {
+  if (!validateAll()) return
+  // 与信チェック（W：確認後続行可）
+  try {
+    const totalAmount = store.order.details.reduce((s, d) => s + (d.amount ?? 0), 0)
+    const credit = await orderApi.creditCheck(store.order.customerCd, totalAmount)
+    if (credit.code === 0 && credit.data?.isOver) {
+      try {
+        await ElMessageBox.confirm(credit.data.message ?? '与信限度額を超えています。受注継続しますか？', '確認', {
+          confirmButtonText: 'はい', cancelButtonText: 'いいえ', type: 'warning',
+        })
+      } catch { return }
+    }
+  } catch { /* 無視可：与信 API 失敗時 */ }
+
+  saving.value = true
+  try {
+    const dto = store.buildDto()
+    if (store.isNew) {
+      const res = await orderApi.create(dto)
+      if (res.code === 0 && res.data) {
+        store.loadFromDto(res.data)
+        store.setOperationType(OrderOperationType.Edit)
+        ElMessage.success('登録しました')
+      }
+    } else if (store.isEdit && store.order.webOrderNo) {
+      const res = await orderApi.update(store.order.webOrderNo, dto)
+      if (res.code === 0 && res.data) {
+        store.loadFromDto(res.data)
+        ElMessage.success('訂正しました')
+      }
+    }
+  } catch {
+    /* http interceptor */
+  } finally {
+    saving.value = false
+  }
+}
+
+async function onDelete() {
+  if (!store.order.webOrderNo) return
+  try {
+    await ElMessageBox.confirm(
+      `Web受注NO ${store.order.webOrderNo} を削除します（軟削除）。よろしいですか？`,
+      '削除確認', { type: 'warning' },
+    )
+  } catch { return }
+  saving.value = true
+  try {
+    const res = await orderApi.remove(store.order.webOrderNo, store.order.rowVersion)
+    if (res.code === 0) {
+      ElMessage.success('削除しました')
+      store.reset()
+    }
+  } catch { /* */ } finally {
+    saving.value = false
+  }
+}
+
+async function onReset() {
+  if (store.isDirty) {
+    try {
+      await ElMessageBox.confirm('未保存の変更があります。クリアしますか？', '確認', { type: 'warning' })
+    } catch { return }
+  }
+  store.reset()
+  searchNo.value = ''
+  searchHaibaiNo1.value = ''
+}
+</script>
+
+<style scoped>
+.order-entry { padding: 16px; }
+.header-card, .search-card, .footer-card { margin-bottom: 12px; }
+.header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.header-left { display: flex; gap: 12px; align-items: center; }
+.web-order-no { font-weight: 600; font-size: 14px; }
+.step-bar { margin-top: 8px; }
+.step-content { min-height: 400px; }
+.btn-row { display: flex; gap: 8px; justify-content: flex-end; }
+</style>

@@ -34,4 +34,7 @@ public class QuotationCalc : BaseBizEntity
 
     /// <summary>マスタ確定日</summary>
     public DateTime? MasterConfirmDate { get; set; }
+
+    /// <summary>FSC 管理 NO（PA100 で発行時に確定 FLG=1 行へ書込）</summary>
+    [MaxLength(20)] public string? FscManagementNo { get; set; }
 }
