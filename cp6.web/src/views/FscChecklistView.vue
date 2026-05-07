@@ -115,7 +115,7 @@ onMounted(async () => {
     const r = await fscApi.getFormats()
     if (r.code === 0 && r.data) {
       formats.value = r.data
-      if (formats.value.length > 0) formatName.value = formats.value[0].name
+      if (formats.value.length > 0) formatName.value = formats.value[0]!.name
     }
   } catch { /* */ }
 })
@@ -177,7 +177,7 @@ async function onIssue() {
       ElMessage.success(`${r.data.issuedCount} 件のチェックシートを発行しました`)
       // Excel ダウンロード（最初の 1 件をブラウザで開く）
       if (r.data.items.length > 0) {
-        const first = r.data.items[0]
+        const first = r.data.items[0]!
         if (first.content) {
           const bytes = atob(first.content)
           const arr = new Uint8Array(bytes.length)

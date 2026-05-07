@@ -98,7 +98,7 @@ export function addDynamicRoutes(menus: any[]) {
       path: menu.routePath.replace(/^\//, ''), // 去掉开头的 /，变成相对路径
       name: menu.routePath.replace(/^\//, ''),
       component: viewModules[menu.routePath]
-    }
+    } as RouteRecordRaw
     // 添加为 layout 的子路由
     router.addRoute('layout', route)
   })
@@ -115,7 +115,7 @@ export function addDynamicRoutes(menus: any[]) {
       path: menu.routePath.replace(/^\//, ''),
       name: menu.routePath.replace(/^\//, ''),
       component: viewModules[menu.routePath]
-    }))
+    })) as RouteRecordRaw[]
   })
 
   dynamicRoutesAdded = true

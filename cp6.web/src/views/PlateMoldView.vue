@@ -211,13 +211,16 @@ const opLabel = computed(() => ({
   [PlateMoldOperationType.Delete]: '削除',
   [PlateMoldOperationType.View]: '参照',
 }[store.operationType] ?? ''))
-const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'>(() => ({
-  [PlateMoldOperationType.Register]: 'primary',
-  [PlateMoldOperationType.Revise]: 'warning',
-  [PlateMoldOperationType.Edit]: 'warning',
-  [PlateMoldOperationType.Delete]: 'danger',
-  [PlateMoldOperationType.View]: 'info',
-}[store.operationType] ?? 'info'))
+const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'>(() => {
+  const map: Record<number, 'primary' | 'warning' | 'danger' | 'info' | 'success'> = {
+    [PlateMoldOperationType.Register]: 'primary',
+    [PlateMoldOperationType.Revise]: 'warning',
+    [PlateMoldOperationType.Edit]: 'warning',
+    [PlateMoldOperationType.Delete]: 'danger',
+    [PlateMoldOperationType.View]: 'info',
+  }
+  return map[store.operationType] ?? 'info'
+})
 
 async function onLoadByEstimate() {
   if (!searchEstimate.value) { ElMessage.warning('決定見積NO を入力してください'); return }

@@ -271,7 +271,7 @@ async function onPickedProduct(item: CustomerLookupItem | ProductLookupItem) {
 }
 
 function onPickCustomer(item: CustomerLookupItem | ProductLookupItem) {
-  if (!('customerCd' in item)) return
+  if (!('customerCd' in item) || !item.customerCd) return
   store.order.customerCd = item.customerCd
   store.markDirty()
 }

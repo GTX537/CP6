@@ -318,7 +318,7 @@ async function runAllValidations(): Promise<boolean> {
   // ロット昇順
   const qtys = store.lotPrices.map(p => p.lotQty)
   for (let i = 1; i < qtys.length; i++) {
-    if (qtys[i] <= qtys[i - 1]) {
+    if ((qtys[i] ?? 0) <= (qtys[i - 1] ?? 0)) {
       ElMessage.error(`ロット別単価: ロット数量は昇順である必要があります（行${i + 1}）`)
       return false
     }

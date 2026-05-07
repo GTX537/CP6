@@ -61,7 +61,7 @@ export const useOrderStore = defineStore('order', () => {
   const currentDetailIndex = ref<number>(-1)
   const currentDetail = computed<OrderDetailDto | null>(() => {
     if (currentDetailIndex.value < 0 || currentDetailIndex.value >= order.value.details.length) return null
-    return order.value.details[currentDetailIndex.value]
+    return order.value.details[currentDetailIndex.value] ?? null
   })
 
   // ───── 業務状態 ─────
@@ -159,8 +159,8 @@ export const useOrderStore = defineStore('order', () => {
     if (idx < 0) return
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
     if (swapIdx < 0 || swapIdx >= order.value.details.length) return
-    const a = order.value.details[idx]
-    const b = order.value.details[swapIdx]
+    const a = order.value.details[idx]!
+    const b = order.value.details[swapIdx]!
     const tmp = a.webOrderDetailNo
     a.webOrderDetailNo = b.webOrderDetailNo
     b.webOrderDetailNo = tmp

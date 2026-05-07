@@ -100,7 +100,7 @@ function methodColor(method: string) {
 async function loadData() {
   loading.value = true
   try {
-    const res = await operLogApi.getList({ page: page.value, pageSize: pageSize.value, keyword: keyword.value })
+    const res = await operLogApi.getList({ page: page.value, pageSize: pageSize.value, keyword: keyword.value }) as any
     tableData.value = res.rows
     total.value = res.total
   } finally {

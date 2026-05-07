@@ -211,8 +211,8 @@ export const useProductMasterStore = defineStore('productMaster', () => {
     if (idx < 0) return
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
     if (swapIdx < 0 || swapIdx >= members.value.length) return
-    const a = members.value[idx]
-    const b = members.value[swapIdx]
+    const a = members.value[idx]!
+    const b = members.value[swapIdx]!
     // 行番号を入れ替え
     const tmp = a.rowNo
     a.rowNo = b.rowNo

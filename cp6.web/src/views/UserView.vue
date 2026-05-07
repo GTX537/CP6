@@ -25,7 +25,7 @@ const columns = computed<ColumnConfig[]>(() => [
 ])
 
 onMounted(async () => {
-  const res = await roleApi.getAll()
+  const res = await roleApi.getAll() as any
   roleOptions.value = res.map((r: any) => ({ label: r.roleName, value: r.roleId }))
 })
 </script>

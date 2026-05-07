@@ -66,7 +66,7 @@
 
       <el-table
         :data="rows" border stripe size="small" max-height="600" style="width: 100%"
-        highlight-current-row @current-change="r => selectedRow = r"
+        highlight-current-row @current-change="(r: PlateMoldListItemDto | null) => selectedRow = r"
       >
         <el-table-column prop="rowNo" label="NO" width="60" align="center" />
         <el-table-column label="発行" width="60" align="center">
