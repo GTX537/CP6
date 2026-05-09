@@ -444,6 +444,23 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "nav.104", ZhCN = "用户管理", ZhTW = "使用者管理", En = "Users", Ja = "ユーザー管理", Ko = "사용자 관리" },
             new Sys_Lang { LangKey = "nav.105", ZhCN = "多语言管理", ZhTW = "多語言管理", En = "Languages", Ja = "多言語管理", Ko = "다국어 관리" },
             new Sys_Lang { LangKey = "nav.2", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
+            // 販売管理 (PA010〜PA150)
+            new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理",          ZhTW = "銷售管理",          En = "Sales",                  Ja = "販売管理",                Ko = "판매 관리" },
+            new Sys_Lang { LangKey = "nav.201", ZhCN = "报价计算单 照会",    ZhTW = "報價計算單 照會",    En = "Estimate Calc Inquiry",  Ja = "見積計算書 照会",         Ko = "견적계산서 조회" },
+            new Sys_Lang { LangKey = "nav.202", ZhCN = "报价计算单 登记",    ZhTW = "報價計算單 登記",    En = "Estimate Calc Entry",    Ja = "見積計算書 登録",         Ko = "견적계산서 등록" },
+            new Sys_Lang { LangKey = "nav.203", ZhCN = "正式报价单 一览",    ZhTW = "正式報價單 一覽",    En = "Quotation List",         Ja = "御見積書 一覧",           Ko = "견적서 목록" },
+            new Sys_Lang { LangKey = "nav.204", ZhCN = "正式报价单 登记",    ZhTW = "正式報價單 登記",    En = "Quotation Entry",        Ja = "御見積書 登録",           Ko = "견적서 등록" },
+            new Sys_Lang { LangKey = "nav.205", ZhCN = "产品主数据 一览",    ZhTW = "產品主資料 一覽",    En = "Product Master List",    Ja = "製品マスタ 一覧",         Ko = "제품 마스터 목록" },
+            new Sys_Lang { LangKey = "nav.206", ZhCN = "产品主数据 登记",    ZhTW = "產品主資料 登記",    En = "Product Master Entry",   Ja = "製品マスタ 登録",         Ko = "제품 마스터 등록" },
+            new Sys_Lang { LangKey = "nav.207", ZhCN = "订单一览查询",       ZhTW = "訂單一覽查詢",       En = "Order Inquiry",          Ja = "受注一覧照会",            Ko = "수주 일람 조회" },
+            new Sys_Lang { LangKey = "nav.208", ZhCN = "订单录入",           ZhTW = "訂單錄入",           En = "Order Entry",            Ja = "受注入力",                Ko = "수주 입력" },
+            new Sys_Lang { LangKey = "nav.209", ZhCN = "单价订正",           ZhTW = "單價訂正",           En = "Price Correction",       Ja = "単価訂正",                Ko = "단가 수정" },
+            new Sys_Lang { LangKey = "nav.210", ZhCN = "FSC 检查清单",       ZhTW = "FSC 檢查清單",       En = "FSC Checklist",          Ja = "FSC チェックシート",      Ko = "FSC 체크시트" },
+            new Sys_Lang { LangKey = "nav.211", ZhCN = "交易先主数据 一览",  ZhTW = "交易夥伴主資料 一覽", En = "Business Partner List",  Ja = "取引先マスタ 一覧",       Ko = "거래처 마스터 목록" },
+            new Sys_Lang { LangKey = "nav.212", ZhCN = "交易先主数据 登记",  ZhTW = "交易夥伴主資料 登記", En = "Business Partner Entry", Ja = "取引先マスタ 登録",       Ko = "거래처 마스터 등록" },
+            new Sys_Lang { LangKey = "nav.213", ZhCN = "纸板单价主数据",     ZhTW = "紙板單價主資料",     En = "Sheet Unit Price",       Ja = "シート単価マスタ",        Ko = "시트 단가 마스터" },
+            new Sys_Lang { LangKey = "nav.214", ZhCN = "版型/木型 一览",     ZhTW = "版型/木型 一覽",     En = "Plate/Mold List",        Ja = "版型/木型 一覧",          Ko = "판형/목형 목록" },
+            new Sys_Lang { LangKey = "nav.215", ZhCN = "版型/木型 登记",     ZhTW = "版型/木型 登記",     En = "Plate/Mold Entry",       Ja = "版型/木型 登録",          Ko = "판형/목형 등록" },
             new Sys_Lang { LangKey = "dashboard.title", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             new Sys_Lang { LangKey = "dashboard.todayOps", ZhCN = "今日操作", ZhTW = "今日操作", En = "Today Ops", Ja = "本日の操作", Ko = "오늘 작업" },
             new Sys_Lang { LangKey = "dashboard.weekOps", ZhCN = "本周操作", ZhTW = "本週操作", En = "Week Ops", Ja = "今週の操作", Ko = "이번주 작업" },
@@ -491,6 +508,131 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "operlog.time", ZhCN = "操作时间", ZhTW = "操作時間", En = "Time", Ja = "操作時間", Ko = "시간" },
             new Sys_Lang { LangKey = "operlog.detail", ZhCN = "详情", ZhTW = "詳情", En = "Detail", Ja = "詳細", Ko = "상세" },
             new Sys_Lang { LangKey = "operlog.requestBody", ZhCN = "请求参数", ZhTW = "請求參數", En = "Request Body", Ja = "リクエスト", Ko = "요청 본문" }
+        );
+        db.SaveChanges();
+    }
+
+    // 販売管理 i18n 扩展 Phase 3（PA010/030/100/130/140/150 等）— sentinel: sales.fsc.format
+    if (!db.Sys_Langs.Any(l => l.LangKey == "sales.fsc.format"))
+    {
+        db.Sys_Langs.AddRange(
+            // 见积计算书 / 御见积书 ────
+            new Sys_Lang { LangKey = "sales.qtn.calcInquiry",   ZhCN = "见积计算书 照会", ZhTW = "見積計算書 照會",  En = "Estimate Calc Inquiry",Ja = "見積計算書 照会", Ko = "견적계산서 조회" },
+            new Sys_Lang { LangKey = "sales.qtn.calcEntry",     ZhCN = "见积计算书 登录", ZhTW = "見積計算書 登錄",  En = "Estimate Calc Entry", Ja = "見積計算書 登録",  Ko = "견적계산서 등록" },
+            new Sys_Lang { LangKey = "sales.qtn.qtnList",       ZhCN = "御见积书 一览",  ZhTW = "御見積書 一覽",   En = "Quotation List",      Ja = "御見積書 一覧",   Ko = "견적서 목록" },
+            new Sys_Lang { LangKey = "sales.qtn.qtnEntry",      ZhCN = "御见积书 登录",  ZhTW = "御見積書 登錄",   En = "Quotation Entry",     Ja = "御見積書 登録",   Ko = "견적서 등록" },
+            new Sys_Lang { LangKey = "sales.qtn.qtnDate",       ZhCN = "见积日",         ZhTW = "見積日",          En = "Quotation Date",      Ja = "見積日",          Ko = "견적일" },
+            new Sys_Lang { LangKey = "sales.qtn.issueDate",     ZhCN = "发行日",         ZhTW = "發行日",          En = "Issue Date",          Ja = "発行日",          Ko = "발행일" },
+            new Sys_Lang { LangKey = "sales.qtn.relatedCalcs",  ZhCN = "关联见积计算书", ZhTW = "關聯見積計算書",  En = "Related Calcs",       Ja = "関連見積書",      Ko = "관련 계산서" },
+            new Sys_Lang { LangKey = "sales.qtn.headerCase",    ZhCN = "抬头/案件",     ZhTW = "抬頭/案件",       En = "Header / Case",       Ja = "ヘッダー/案件",   Ko = "머리글/사안" },
+            new Sys_Lang { LangKey = "sales.qtn.printDetail",   ZhCN = "打印明细",      ZhTW = "列印明細",        En = "Print Detail",        Ja = "印字明細",        Ko = "인쇄 명세" },
+            new Sys_Lang { LangKey = "sales.qtn.calcAdd",       ZhCN = "添加计算书",    ZhTW = "新增計算書",      En = "Add Calc",            Ja = "計算書追加",      Ko = "계산서 추가" },
+
+            // FSC ────
+            new Sys_Lang { LangKey = "sales.fsc.title",         ZhCN = "FSC 检查清单",   ZhTW = "FSC 檢查清單",   En = "FSC Checklist",       Ja = "FSC チェックシート", Ko = "FSC 체크시트" },
+            new Sys_Lang { LangKey = "sales.fsc.format",        ZhCN = "输出格式",       ZhTW = "輸出格式",       En = "Output Format",       Ja = "出力フォーマット", Ko = "출력 형식" },
+            new Sys_Lang { LangKey = "sales.fsc.unissued",      ZhCN = "未发行",         ZhTW = "未發行",         En = "Unissued",            Ja = "未発行",          Ko = "미발행" },
+            new Sys_Lang { LangKey = "sales.fsc.issued",        ZhCN = "已发行",         ZhTW = "已發行",         En = "Issued",              Ja = "発行済",          Ko = "발행 완료" },
+            new Sys_Lang { LangKey = "sales.fsc.mgmtNo",        ZhCN = "FSC 管理 NO",   ZhTW = "FSC 管理 NO",   En = "FSC Management NO",   Ja = "FSC 管理 NO",     Ko = "FSC 관리 NO" },
+            new Sys_Lang { LangKey = "sales.fsc.case",          ZhCN = "案件 NO",       ZhTW = "案件 NO",       En = "Case NO",             Ja = "案件 No",         Ko = "사안 NO" },
+            new Sys_Lang { LangKey = "sales.fsc.itemName1",     ZhCN = "客户品名 1",    ZhTW = "客戶品名 1",    En = "Customer Item 1",     Ja = "顧客品名 1",      Ko = "고객 품명 1" },
+            new Sys_Lang { LangKey = "sales.fsc.itemName2",     ZhCN = "客户品名 2",    ZhTW = "客戶品名 2",    En = "Customer Item 2",     Ja = "顧客品名 2",      Ko = "고객 품명 2" },
+            new Sys_Lang { LangKey = "sales.fsc.totalAmount",   ZhCN = "合计金额",      ZhTW = "合計金額",      En = "Total Amount",        Ja = "合計金額",        Ko = "합계 금액" },
+            new Sys_Lang { LangKey = "sales.fsc.estimateQty",   ZhCN = "见积数",        ZhTW = "見積數",        En = "Estimate Qty",        Ja = "見積数",          Ko = "견적 수량" },
+            new Sys_Lang { LangKey = "sales.fsc.confirmed",     ZhCN = "已确认",        ZhTW = "已確認",        En = "Confirmed",           Ja = "確定",            Ko = "확정됨" },
+            new Sys_Lang { LangKey = "sales.fsc.notConfirmed",  ZhCN = "未确认",        ZhTW = "未確認",        En = "Not Confirmed",       Ja = "未",              Ko = "미확정" },
+
+            // シート単価 ────
+            new Sys_Lang { LangKey = "sales.sup.title",         ZhCN = "纸板单价主数据", ZhTW = "紙板單價主資料",En = "Sheet Unit Price",    Ja = "シート単価マスタ", Ko = "시트 단가 마스터" },
+            new Sys_Lang { LangKey = "sales.sup.baseDate",      ZhCN = "基准日",         ZhTW = "基準日",        En = "Base Date",           Ja = "基準日",          Ko = "기준일" },
+            new Sys_Lang { LangKey = "sales.sup.importDiv",     ZhCN = "导入区分",       ZhTW = "匯入區分",      En = "Import Div",          Ja = "取込区分",        Ko = "가져오기 구분" },
+            new Sys_Lang { LangKey = "sales.sup.divStandard",   ZhCN = "纸板单价",       ZhTW = "紙板單價",      En = "Sheet Unit Price",    Ja = "シート単価",      Ko = "시트 단가" },
+            new Sys_Lang { LangKey = "sales.sup.divEstimate",   ZhCN = "纸板单价(见积用)",ZhTW = "紙板單價(見積用)",En = "Sheet Unit Price (Est.)",Ja = "シート単価(見積用)",Ko = "시트 단가(견적용)" },
+            new Sys_Lang { LangKey = "sales.sup.opType",        ZhCN = "操作类型",       ZhTW = "操作類型",      En = "Operation",           Ja = "操作種別",        Ko = "작업 종류" },
+            new Sys_Lang { LangKey = "sales.sup.import",        ZhCN = "导入",           ZhTW = "匯入",          En = "Import",              Ja = "登録",            Ko = "가져오기" },
+            new Sys_Lang { LangKey = "sales.sup.refer",         ZhCN = "查看",           ZhTW = "檢視",          En = "Refer",               Ja = "参照",            Ko = "조회" },
+            new Sys_Lang { LangKey = "sales.sup.filePath",      ZhCN = "文件路径",       ZhTW = "檔案路徑",      En = "File Path",           Ja = "ファイルパス",    Ko = "파일 경로" },
+            new Sys_Lang { LangKey = "sales.sup.selectExcel",   ZhCN = "选择 Excel",    ZhTW = "選擇 Excel",   En = "Select Excel",        Ja = "Excel 選択",      Ko = "Excel 선택" },
+            new Sys_Lang { LangKey = "sales.sup.flute",         ZhCN = "段",             ZhTW = "段",            En = "Flute",               Ja = "段",              Ko = "단" },
+            new Sys_Lang { LangKey = "sales.sup.front",         ZhCN = "表",             ZhTW = "表",            En = "Front",               Ja = "表",              Ko = "표" },
+            new Sys_Lang { LangKey = "sales.sup.middle",        ZhCN = "中",             ZhTW = "中",            En = "Middle",              Ja = "中",              Ko = "중" },
+            new Sys_Lang { LangKey = "sales.sup.back",          ZhCN = "裏",             ZhTW = "裏",            En = "Back",                Ja = "裏",              Ko = "이" },
+            new Sys_Lang { LangKey = "sales.sup.paper",         ZhCN = "原纸",           ZhTW = "原紙",          En = "Paper",               Ja = "原紙",            Ko = "원지" },
+            new Sys_Lang { LangKey = "sales.sup.print",         ZhCN = "印刷",           ZhTW = "印刷",          En = "Print",               Ja = "印刷",            Ko = "인쇄" },
+            new Sys_Lang { LangKey = "sales.sup.emboss",        ZhCN = "压花",           ZhTW = "壓花",          En = "Emboss",              Ja = "エンボス",        Ko = "엠보싱" },
+            new Sys_Lang { LangKey = "sales.sup.revisionDate",  ZhCN = "改定日",         ZhTW = "改定日",        En = "Revision Date",       Ja = "改定日",          Ko = "개정일" },
+            new Sys_Lang { LangKey = "sales.sup.allSelect",     ZhCN = "全选/全否",      ZhTW = "全選/全否",     En = "Select / Clear All",  Ja = "全選択/全解除",   Ko = "전체 선택/해제" },
+
+            // 版型 / 木型 ────
+            new Sys_Lang { LangKey = "sales.pm.title",          ZhCN = "版型/木型",     ZhTW = "版型/木型",     En = "Plate / Mold",        Ja = "版型/木型",       Ko = "판형/목형" },
+            new Sys_Lang { LangKey = "sales.pm.list",           ZhCN = "版型/木型 一览", ZhTW = "版型/木型 一覽",En = "Plate/Mold List",     Ja = "版型/木型 一覧",  Ko = "판형/목형 목록" },
+            new Sys_Lang { LangKey = "sales.pm.entry",          ZhCN = "版型/木型 登录", ZhTW = "版型/木型 登錄",En = "Plate/Mold Entry",    Ja = "版型/木型 登録",  Ko = "판형/목형 등록" },
+            new Sys_Lang { LangKey = "sales.pm.no",             ZhCN = "版型 NO",       ZhTW = "版型 NO",       En = "Plate NO",            Ja = "版型 NO",         Ko = "판형 NO" },
+            new Sys_Lang { LangKey = "sales.pm.name",           ZhCN = "版型名",        ZhTW = "版型名",        En = "Plate Name",          Ja = "版型名",          Ko = "판형명" },
+            new Sys_Lang { LangKey = "sales.pm.class",          ZhCN = "版型分类",      ZhTW = "版型分類",      En = "Plate Class",         Ja = "版型分類",        Ko = "판형 분류" },
+            new Sys_Lang { LangKey = "sales.pm.newVersion",     ZhCN = "新版区分",      ZhTW = "新版區分",      En = "New Ver. Div",        Ja = "新版区分",        Ko = "신판 구분" },
+            new Sys_Lang { LangKey = "sales.pm.process",        ZhCN = "工程",          ZhTW = "工程",          En = "Process",             Ja = "工程",            Ko = "공정" },
+            new Sys_Lang { LangKey = "sales.pm.location",       ZhCN = "场所",          ZhTW = "場所",          En = "Location",            Ja = "場所",            Ko = "위치" },
+            new Sys_Lang { LangKey = "sales.pm.shelfLine",      ZhCN = "棚位",          ZhTW = "棚位",          En = "Shelf Line",          Ja = "棚・ライン",      Ko = "선반 라인" },
+            new Sys_Lang { LangKey = "sales.pm.passCount",      ZhCN = "通过次数",      ZhTW = "通過次數",      En = "Pass Count",          Ja = "通し数",          Ko = "통과 횟수" },
+            new Sys_Lang { LangKey = "sales.pm.limitPass",      ZhCN = "极限通过次数",  ZhTW = "極限通過次數",  En = "Limit Pass",          Ja = "限界通し数",      Ko = "한계 통과" },
+            new Sys_Lang { LangKey = "sales.pm.lastUsedDate",   ZhCN = "最后使用日",    ZhTW = "最後使用日",    En = "Last Used Date",      Ja = "最終使用実績日",  Ko = "마지막 사용일" },
+            new Sys_Lang { LangKey = "sales.pm.arrivalDate",    ZhCN = "入货日",        ZhTW = "入貨日",        En = "Arrival Date",        Ja = "入荷日",          Ko = "입고일" },
+            new Sys_Lang { LangKey = "sales.pm.dispScheduled",  ZhCN = "废弃预定日",    ZhTW = "廢棄預定日",    En = "Disposal Date",       Ja = "廃棄予定日",      Ko = "폐기 예정일" },
+            new Sys_Lang { LangKey = "sales.pm.returnScheduled",ZhCN = "退还预定日",    ZhTW = "退還預定日",    En = "Return Sched. Date",  Ja = "返却予定日",      Ko = "반환 예정일" },
+            new Sys_Lang { LangKey = "sales.pm.returnDate",     ZhCN = "退还日",        ZhTW = "退還日",        En = "Return Date",         Ja = "返却日",          Ko = "반환일" },
+            new Sys_Lang { LangKey = "sales.pm.applyStartDate", ZhCN = "适用开始日",    ZhTW = "適用開始日",    En = "Apply Start Date",    Ja = "適用開始日",      Ko = "적용 시작일" },
+            new Sys_Lang { LangKey = "sales.pm.applyEndDate",   ZhCN = "适用结束日",    ZhTW = "適用結束日",    En = "Apply End Date",      Ja = "適用終了日",      Ko = "적용 종료일" },
+            new Sys_Lang { LangKey = "sales.pm.onlyLatestRev",  ZhCN = "仅最新 Rev",   ZhTW = "僅最新 Rev",   En = "Latest Rev Only",     Ja = "最新Revのみ",     Ko = "최신 Rev만" },
+            new Sys_Lang { LangKey = "sales.pm.estimateNo",     ZhCN = "决定见积 NO",   ZhTW = "決定見積 NO",   En = "Decision Estimate NO",Ja = "決定見積 NO",     Ko = "확정 견적 NO" },
+            new Sys_Lang { LangKey = "sales.pm.repProductCd",   ZhCN = "代表产品 CD",   ZhTW = "代表產品 CD",   En = "Repr. Product CD",    Ja = "代表製品 CD",     Ko = "대표 제품 CD" },
+            new Sys_Lang { LangKey = "sales.pm.salesAvailable", ZhCN = "销售可否区分",  ZhTW = "銷售可否區分",  En = "Sales Available",     Ja = "売上可否区分",    Ko = "매출 가능 여부" },
+            new Sys_Lang { LangKey = "sales.pm.endProcessLoc",  ZhCN = "最终加工场所",  ZhTW = "最終加工場所",  En = "Final Process Loc.",  Ja = "最終加工場所",    Ko = "최종 가공 장소" },
+            new Sys_Lang { LangKey = "sales.pm.lastUsedActual", ZhCN = "实际日(最后使用)",ZhTW = "實際日(最後使用)",En = "Actual (Last Used)",Ja = "実績日(最終使用)",Ko = "실적일(마지막 사용)" }
+        );
+        db.SaveChanges();
+    }
+
+    // 販売管理 i18n 扩展（Phase 2 追加 keys）— sentinel: sales.role.customer
+    if (!db.Sys_Langs.Any(l => l.LangKey == "sales.role.customer"))
+    {
+        db.Sys_Langs.AddRange(
+            // Step 标题
+            new Sys_Lang { LangKey = "sales.step.partsSelect",   ZhCN = "部材选择",     ZhTW = "部材選擇",     En = "Parts Select",       Ja = "部材選択",     Ko = "부재 선택" },
+            new Sys_Lang { LangKey = "sales.step.detail",        ZhCN = "明细",         ZhTW = "明細",         En = "Detail",             Ja = "明細",         Ko = "명세" },
+            // List 通用
+            new Sys_Lang { LangKey = "sales.list.totalCount",    ZhCN = "合计 {n} 件",  ZhTW = "合計 {n} 件",  En = "Total {n} items",    Ja = "合計 {n} 件",  Ko = "합계 {n} 건" },
+            new Sys_Lang { LangKey = "sales.list.no",            ZhCN = "序号",         ZhTW = "序號",         En = "No",                 Ja = "No",           Ko = "번호" },
+            new Sys_Lang { LangKey = "sales.list.action",        ZhCN = "操作",         ZhTW = "操作",         En = "Action",             Ja = "操作",         Ko = "작업" },
+            new Sys_Lang { LangKey = "sales.list.detail",        ZhCN = "详情",         ZhTW = "詳情",         En = "Detail",             Ja = "詳細",         Ko = "상세" },
+            new Sys_Lang { LangKey = "sales.list.openDetail",    ZhCN = "打开详情",     ZhTW = "開啟詳情",     En = "Open Detail",        Ja = "詳細を開く",   Ko = "상세 열기" },
+            // 搜索条件
+            new Sys_Lang { LangKey = "sales.search.dateFrom",    ZhCN = "起始日期",     ZhTW = "起始日期",     En = "Date From",          Ja = "日付 FROM",    Ko = "시작일" },
+            new Sys_Lang { LangKey = "sales.search.dateTo",      ZhCN = "结束日期",     ZhTW = "結束日期",     En = "Date To",            Ja = "日付 TO",      Ko = "종료일" },
+            new Sys_Lang { LangKey = "sales.search.from",        ZhCN = "FROM",         ZhTW = "FROM",         En = "From",               Ja = "FROM",         Ko = "FROM" },
+            new Sys_Lang { LangKey = "sales.search.to",          ZhCN = "TO",           ZhTW = "TO",           En = "To",                 Ja = "TO",           Ko = "TO" },
+            new Sys_Lang { LangKey = "sales.search.required",    ZhCN = "必填",         ZhTW = "必填",         En = "Required",           Ja = "必須",         Ko = "필수" },
+            // 业务角色
+            new Sys_Lang { LangKey = "sales.role.customer",      ZhCN = "客户",         ZhTW = "客戶",         En = "Customer",           Ja = "得意先",       Ko = "거래처" },
+            new Sys_Lang { LangKey = "sales.role.ar",            ZhCN = "应收",         ZhTW = "應收",         En = "Accounts Rec.",      Ja = "売掛先",       Ko = "외상매출처" },
+            new Sys_Lang { LangKey = "sales.role.billing",       ZhCN = "请款",         ZhTW = "請款",         En = "Billing",            Ja = "請求先",       Ko = "청구처" },
+            new Sys_Lang { LangKey = "sales.role.receipt",       ZhCN = "收款",         ZhTW = "收款",         En = "Receipt",            Ja = "入金先",       Ko = "입금처" },
+            new Sys_Lang { LangKey = "sales.role.delivery",      ZhCN = "纳品",         ZhTW = "納品",         En = "Delivery",           Ja = "納品先",       Ko = "납품처" },
+            new Sys_Lang { LangKey = "sales.role.creditMgmt",    ZhCN = "信用管理",     ZhTW = "信用管理",     En = "Credit Mgmt",        Ja = "与信管理",     Ko = "신용 관리" },
+            new Sys_Lang { LangKey = "sales.role.supplier",      ZhCN = "供应商",       ZhTW = "供應商",       En = "Supplier",           Ja = "発注先",       Ko = "공급사" },
+            new Sys_Lang { LangKey = "sales.role.ap",            ZhCN = "应付",         ZhTW = "應付",         En = "Accounts Pay.",      Ja = "買掛先",       Ko = "외상매입처" },
+            new Sys_Lang { LangKey = "sales.role.paymentSch",    ZhCN = "付款计划",     ZhTW = "付款計劃",     En = "Payment Sched.",     Ja = "支払予定管理先",Ko = "지급 예정" },
+            new Sys_Lang { LangKey = "sales.role.payment",       ZhCN = "付款",         ZhTW = "付款",         En = "Payment",            Ja = "支払先",       Ko = "지급처" },
+            new Sys_Lang { LangKey = "sales.role.maker",         ZhCN = "厂商",         ZhTW = "廠商",         En = "Maker",              Ja = "メーカ",       Ko = "제조사" },
+            // 单价订正
+            new Sys_Lang { LangKey = "sales.pc.before",          ZhCN = "变更前",       ZhTW = "變更前",       En = "Before",             Ja = "変更前",       Ko = "변경 전" },
+            new Sys_Lang { LangKey = "sales.pc.after",           ZhCN = "变更后",       ZhTW = "變更後",       En = "After",              Ja = "変更後",       Ko = "변경 후" },
+            new Sys_Lang { LangKey = "sales.pc.reason",          ZhCN = "变更理由",     ZhTW = "變更理由",     En = "Change Reason",      Ja = "単価変更理由", Ko = "변경 사유" },
+            new Sys_Lang { LangKey = "sales.pc.provisional",     ZhCN = "暂定价",       ZhTW = "暫定價",       En = "Provisional",        Ja = "仮単価",       Ko = "잠정가" },
+            new Sys_Lang { LangKey = "sales.pc.updateSelected",  ZhCN = "更新选中行",   ZhTW = "更新選取行",   En = "Update Selected",    Ja = "選択行を更新", Ko = "선택 행 업데이트" },
+            // 受注一览
+            new Sys_Lang { LangKey = "sales.order.consignedSale",ZhCN = "代销",         ZhTW = "代銷",         En = "Consigned",          Ja = "預り売上",     Ko = "위탁 매출" },
+            new Sys_Lang { LangKey = "sales.order.mcUntransferred",ZhCN = "未转送",     ZhTW = "未轉送",       En = "Not Transferred",    Ja = "mc未転送",     Ko = "미전송" }
         );
         db.SaveChanges();
     }
@@ -552,6 +694,192 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "dashboard.methodDist", ZhCN = "方法分布", ZhTW = "方法分佈", En = "Method Distribution", Ja = "メソッド分布", Ko = "메서드 분포" },
             new Sys_Lang { LangKey = "dashboard.noData", ZhCN = "暂无数据", ZhTW = "暫無資料", En = "No data", Ja = "データなし", Ko = "데이터 없음" },
             new Sys_Lang { LangKey = "dashboard.count", ZhCN = "次数", ZhTW = "次數", En = "Count", Ja = "回数", Ko = "횟수" }
+        );
+        db.SaveChanges();
+    }
+
+    // 販売管理 通用 i18n（操作模式 / 按钮 / Section / 错误消息 / 业务术语）
+    if (!db.Sys_Langs.Any(l => l.LangKey == "sales.op.register"))
+    {
+        db.Sys_Langs.AddRange(
+            // 操作模式 ────────────────────
+            new Sys_Lang { LangKey = "sales.op.register",     ZhCN = "登记",     ZhTW = "登記",     En = "New",          Ja = "登録",       Ko = "등록" },
+            new Sys_Lang { LangKey = "sales.op.edit",         ZhCN = "修正",     ZhTW = "修正",     En = "Edit",         Ja = "訂正",       Ko = "수정" },
+            new Sys_Lang { LangKey = "sales.op.copy",         ZhCN = "复制",     ZhTW = "複製",     En = "Copy",         Ja = "流用",       Ko = "복사" },
+            new Sys_Lang { LangKey = "sales.op.view",         ZhCN = "查看",     ZhTW = "檢視",     En = "View",         Ja = "参照",       Ko = "조회" },
+            new Sys_Lang { LangKey = "sales.op.delete",       ZhCN = "删除",     ZhTW = "刪除",     En = "Delete",       Ja = "削除",       Ko = "삭제" },
+            new Sys_Lang { LangKey = "sales.op.revise",       ZhCN = "改定",     ZhTW = "改定",     En = "Revise",       Ja = "改定",       Ko = "개정" },
+            new Sys_Lang { LangKey = "sales.op.preregister",  ZhCN = "事前登记", ZhTW = "事前登記", En = "Pre-Register", Ja = "事前登録",   Ko = "사전등록" },
+
+            // 通用按钮 ────────────────────
+            new Sys_Lang { LangKey = "sales.btn.new",         ZhCN = "新建",     ZhTW = "新建",     En = "New",          Ja = "新規",       Ko = "신규" },
+            new Sys_Lang { LangKey = "sales.btn.save",        ZhCN = "保存",     ZhTW = "儲存",     En = "Save",         Ja = "保存",       Ko = "저장" },
+            new Sys_Lang { LangKey = "sales.btn.register",    ZhCN = "登记",     ZhTW = "登記",     En = "Register",     Ja = "登録",       Ko = "등록" },
+            new Sys_Lang { LangKey = "sales.btn.delete",      ZhCN = "删除执行", ZhTW = "刪除執行", En = "Delete",       Ja = "削除実行",   Ko = "삭제 실행" },
+            new Sys_Lang { LangKey = "sales.btn.cancel",      ZhCN = "取消",     ZhTW = "取消",     En = "Cancel",       Ja = "キャンセル", Ko = "취소" },
+            new Sys_Lang { LangKey = "sales.btn.clear",       ZhCN = "清空",     ZhTW = "清空",     En = "Clear",        Ja = "クリア",     Ko = "지우기" },
+            new Sys_Lang { LangKey = "sales.btn.search",      ZhCN = "检索",     ZhTW = "檢索",     En = "Search",       Ja = "検索",       Ko = "검색" },
+            new Sys_Lang { LangKey = "sales.btn.show",        ZhCN = "显示",     ZhTW = "顯示",     En = "Show",         Ja = "表示",       Ko = "표시" },
+            new Sys_Lang { LangKey = "sales.btn.load",        ZhCN = "读取",     ZhTW = "讀取",     En = "Load",         Ja = "読込",       Ko = "불러오기" },
+            new Sys_Lang { LangKey = "sales.btn.import",      ZhCN = "导入",     ZhTW = "匯入",     En = "Import",       Ja = "引入",       Ko = "가져오기" },
+            new Sys_Lang { LangKey = "sales.btn.export",      ZhCN = "导出",     ZhTW = "匯出",     En = "Export",       Ja = "出力",       Ko = "내보내기" },
+            new Sys_Lang { LangKey = "sales.btn.exportCsv",   ZhCN = "CSV 导出", ZhTW = "CSV 匯出", En = "CSV Export",   Ja = "CSV 出力",   Ko = "CSV 내보내기" },
+            new Sys_Lang { LangKey = "sales.btn.issue",       ZhCN = "发行",     ZhTW = "發行",     En = "Issue",        Ja = "発行",       Ko = "발행" },
+            new Sys_Lang { LangKey = "sales.btn.confirm",     ZhCN = "确认",     ZhTW = "確認",     En = "Confirm",      Ja = "確認",       Ko = "확인" },
+            new Sys_Lang { LangKey = "sales.btn.confirmReg",  ZhCN = "确认登记", ZhTW = "確認登記", En = "Confirm",      Ja = "確認登録",   Ko = "확정 등록" },
+            new Sys_Lang { LangKey = "sales.btn.confirmCancel",ZhCN = "取消确认",ZhTW = "取消確認", En = "Unconfirm",    Ja = "確認取消",   Ko = "확정 취소" },
+            new Sys_Lang { LangKey = "sales.btn.next",        ZhCN = "下一步",   ZhTW = "下一步",   En = "Next",         Ja = "次へ",       Ko = "다음" },
+            new Sys_Lang { LangKey = "sales.btn.prev",        ZhCN = "上一步",   ZhTW = "上一步",   En = "Previous",     Ja = "前へ",       Ko = "이전" },
+            new Sys_Lang { LangKey = "sales.btn.addRow",      ZhCN = "添加行",   ZhTW = "新增行",   En = "Add Row",      Ja = "行追加",     Ko = "행 추가" },
+            new Sys_Lang { LangKey = "sales.btn.delRow",      ZhCN = "删除行",   ZhTW = "刪除行",   En = "Delete Row",   Ja = "行削除",     Ko = "행 삭제" },
+            new Sys_Lang { LangKey = "sales.btn.copyRow",     ZhCN = "复制行",   ZhTW = "複製行",   En = "Copy Row",     Ja = "行コピー",   Ko = "행 복사" },
+            new Sys_Lang { LangKey = "sales.btn.label",       ZhCN = "标签发行", ZhTW = "標籤發行", En = "Label",        Ja = "ラベル発行", Ko = "라벨 발행" },
+            new Sys_Lang { LangKey = "sales.btn.purchaseOrder",ZhCN = "采购订单",ZhTW = "採購訂單", En = "Purchase Order",Ja = "版型発注書",Ko = "구매 주문서" },
+            new Sys_Lang { LangKey = "sales.btn.update",      ZhCN = "更新",     ZhTW = "更新",     En = "Update",       Ja = "更新",       Ko = "업데이트" },
+            new Sys_Lang { LangKey = "sales.btn.selectReturn", ZhCN = "选择并返回", ZhTW = "選擇並返回", En = "Select & Return", Ja = "選択して戻る", Ko = "선택 후 돌아가기" },
+            new Sys_Lang { LangKey = "sales.btn.openView",    ZhCN = "以查看模式打开", ZhTW = "以檢視模式開啟", En = "Open in View Mode", Ja = "参照モードで開く", Ko = "조회 모드로 열기" },
+
+            // 业务通用术语 ────────────────────
+            new Sys_Lang { LangKey = "sales.term.base",       ZhCN = "据点",     ZhTW = "據點",     En = "Base",         Ja = "拠点",       Ko = "거점" },
+            new Sys_Lang { LangKey = "sales.term.staff",      ZhCN = "担当者",   ZhTW = "擔當者",   En = "Staff",        Ja = "担当者",     Ko = "담당자" },
+            new Sys_Lang { LangKey = "sales.term.customer",   ZhCN = "客户",     ZhTW = "客戶",     En = "Customer",     Ja = "得意先",     Ko = "거래처" },
+            new Sys_Lang { LangKey = "sales.term.customerCd", ZhCN = "客户 CD",  ZhTW = "客戶 CD",  En = "Customer CD",  Ja = "得意先 CD",  Ko = "거래처 CD" },
+            new Sys_Lang { LangKey = "sales.term.supplier",   ZhCN = "供应商",   ZhTW = "供應商",   En = "Supplier",     Ja = "発注先",     Ko = "공급사" },
+            new Sys_Lang { LangKey = "sales.term.deliveryTo", ZhCN = "纳品先",   ZhTW = "納品先",   En = "Delivery To",  Ja = "納品先",     Ko = "납품처" },
+            new Sys_Lang { LangKey = "sales.term.salesStaff", ZhCN = "营业担当", ZhTW = "業務擔當", En = "Sales Staff",  Ja = "営業担当",   Ko = "영업 담당" },
+            new Sys_Lang { LangKey = "sales.term.businessStaff",ZhCN = "业务担当",ZhTW = "業務擔當",En = "Business Staff",Ja = "業務担当",  Ko = "업무 담당" },
+            new Sys_Lang { LangKey = "sales.term.product",    ZhCN = "产品",     ZhTW = "產品",     En = "Product",      Ja = "製品",       Ko = "제품" },
+            new Sys_Lang { LangKey = "sales.term.productCd",  ZhCN = "产品 CD",  ZhTW = "產品 CD",  En = "Product CD",   Ja = "製品 CD",    Ko = "제품 CD" },
+            new Sys_Lang { LangKey = "sales.term.itemCd",     ZhCN = "品目 CD",  ZhTW = "品目 CD",  En = "Item CD",      Ja = "品目 CD",    Ko = "품목 CD" },
+            new Sys_Lang { LangKey = "sales.term.orderType",  ZhCN = "受注区分", ZhTW = "受注區分", En = "Order Type",   Ja = "受注区分",   Ko = "수주 구분" },
+            new Sys_Lang { LangKey = "sales.term.orderDate",  ZhCN = "受注日",   ZhTW = "受注日",   En = "Order Date",   Ja = "受注日",     Ko = "수주일" },
+            new Sys_Lang { LangKey = "sales.term.deliveryDate",ZhCN = "客户纳期",ZhTW = "客戶納期", En = "Delivery Date",Ja = "客先納期",   Ko = "납기일" },
+            new Sys_Lang { LangKey = "sales.term.orderSheet", ZhCN = "订单 NO",  ZhTW = "訂單 NO",  En = "Order Sheet NO",Ja = "注文書 NO", Ko = "주문서 NO" },
+            new Sys_Lang { LangKey = "sales.term.haibaiNo",   ZhCN = "手配 NO",  ZhTW = "手配 NO",  En = "Arrange NO",   Ja = "手配 NO",    Ko = "수배 NO" },
+            new Sys_Lang { LangKey = "sales.term.amount",     ZhCN = "金额",     ZhTW = "金額",     En = "Amount",       Ja = "金額",       Ko = "금액" },
+            new Sys_Lang { LangKey = "sales.term.qty",        ZhCN = "数量",     ZhTW = "數量",     En = "Quantity",     Ja = "数量",       Ko = "수량" },
+            new Sys_Lang { LangKey = "sales.term.unit",       ZhCN = "单位",     ZhTW = "單位",     En = "Unit",         Ja = "単位",       Ko = "단위" },
+            new Sys_Lang { LangKey = "sales.term.unitPrice",  ZhCN = "单价",     ZhTW = "單價",     En = "Unit Price",   Ja = "単価",       Ko = "단가" },
+            new Sys_Lang { LangKey = "sales.term.indPrice",   ZhCN = "个别单价", ZhTW = "個別單價", En = "Ind. Price",   Ja = "個別単価",   Ko = "개별 단가" },
+            new Sys_Lang { LangKey = "sales.term.setPrice",   ZhCN = "套装单价", ZhTW = "套裝單價", En = "Set Price",    Ja = "セット単価", Ko = "세트 단가" },
+            new Sys_Lang { LangKey = "sales.term.special",    ZhCN = "特价",     ZhTW = "特價",     En = "Special",      Ja = "特値",       Ko = "특가" },
+            new Sys_Lang { LangKey = "sales.term.status",     ZhCN = "状态",     ZhTW = "狀態",     En = "Status",       Ja = "ステータス", Ko = "상태" },
+            new Sys_Lang { LangKey = "sales.term.qtnNo",      ZhCN = "见积NO",   ZhTW = "見積NO",   En = "Quotation NO", Ja = "御見積書 NO",Ko = "견적서 NO" },
+            new Sys_Lang { LangKey = "sales.term.calcNo",     ZhCN = "计算书NO", ZhTW = "計算書NO", En = "Calc NO",      Ja = "見積計算書 NO",Ko = "계산서 NO" },
+            new Sys_Lang { LangKey = "sales.term.fsc",        ZhCN = "FSC",      ZhTW = "FSC",      En = "FSC",          Ja = "FSC",        Ko = "FSC" },
+            new Sys_Lang { LangKey = "sales.term.rev",        ZhCN = "Rev",      ZhTW = "Rev",      En = "Rev",          Ja = "Rev",        Ko = "Rev" },
+            new Sys_Lang { LangKey = "sales.term.bp",         ZhCN = "交易先",   ZhTW = "交易夥伴", En = "Partner",      Ja = "取引先",     Ko = "거래처" },
+            new Sys_Lang { LangKey = "sales.term.bpCd",       ZhCN = "交易先 CD",ZhTW = "交易夥伴 CD",En = "Partner CD", Ja = "取引先 CD",  Ko = "거래처 CD" },
+            new Sys_Lang { LangKey = "sales.term.bpName",     ZhCN = "交易先名", ZhTW = "交易夥伴名稱",En = "Partner Name",Ja = "取引先名",  Ko = "거래처명" },
+
+            // Section / Step 名 ────────────────────
+            new Sys_Lang { LangKey = "sales.section.basicInfo",  ZhCN = "基本信息",     ZhTW = "基本資訊",     En = "Basic Info",         Ja = "基本情報",     Ko = "기본 정보" },
+            new Sys_Lang { LangKey = "sales.section.composition",ZhCN = "构成信息",     ZhTW = "構成資訊",     En = "Composition",        Ja = "構成情報",     Ko = "구성 정보" },
+            new Sys_Lang { LangKey = "sales.section.process",    ZhCN = "工程信息",     ZhTW = "工程資訊",     En = "Process Info",       Ja = "工程情報",     Ko = "공정 정보" },
+            new Sys_Lang { LangKey = "sales.section.material",   ZhCN = "材料设定",     ZhTW = "材料設定",     En = "Material Setup",     Ja = "材料設定",     Ko = "재료 설정" },
+            new Sys_Lang { LangKey = "sales.section.lotPrice",   ZhCN = "批量单价",     ZhTW = "批量單價",     En = "Lot Pricing",        Ja = "ロット単価",   Ko = "로트 단가" },
+            new Sys_Lang { LangKey = "sales.section.notes",      ZhCN = "备注",         ZhTW = "備註",         En = "Notes",              Ja = "備考",         Ko = "비고" },
+            new Sys_Lang { LangKey = "sales.section.purchase",   ZhCN = "采购信息",     ZhTW = "採購資訊",     En = "Purchase Info",      Ja = "仕入情報",     Ko = "매입 정보" },
+            new Sys_Lang { LangKey = "sales.section.attachment", ZhCN = "附带信息",     ZhTW = "附帶資訊",     En = "Attachments",        Ja = "添付情報",     Ko = "첨부 정보" },
+            new Sys_Lang { LangKey = "sales.section.required",   ZhCN = "必要件",       ZhTW = "必要件",       En = "Required Items",     Ja = "必要物",       Ko = "필수 항목" },
+            new Sys_Lang { LangKey = "sales.section.history",    ZhCN = "历史记录",     ZhTW = "歷史記錄",     En = "History",            Ja = "過去履歴",     Ko = "이력" },
+            new Sys_Lang { LangKey = "sales.section.partsList",  ZhCN = "部材一览",     ZhTW = "部材一覽",     En = "Parts List",         Ja = "部材一覧",     Ko = "부재 목록" },
+            new Sys_Lang { LangKey = "sales.section.orderDetail",ZhCN = "受注明细",     ZhTW = "受注明細",     En = "Order Detail",       Ja = "受注明細",     Ko = "수주 명세" },
+            new Sys_Lang { LangKey = "sales.section.searchCond", ZhCN = "检索条件",     ZhTW = "檢索條件",     En = "Search",             Ja = "検索条件",     Ko = "검색 조건" },
+            new Sys_Lang { LangKey = "sales.section.advSearch",  ZhCN = "详细检索",     ZhTW = "詳細檢索",     En = "Advanced Search",    Ja = "詳細検索",     Ko = "고급 검색" },
+
+            // 通用消息 ────────────────────
+            new Sys_Lang { LangKey = "sales.msg.saveSuccess",    ZhCN = "保存成功",     ZhTW = "儲存成功",     En = "Saved successfully", Ja = "保存しました", Ko = "저장되었습니다" },
+            new Sys_Lang { LangKey = "sales.msg.deleteSuccess",  ZhCN = "删除成功",     ZhTW = "刪除成功",     En = "Deleted successfully",Ja = "削除しました",Ko = "삭제되었습니다" },
+            new Sys_Lang { LangKey = "sales.msg.deleteConfirm",  ZhCN = "确认删除？",   ZhTW = "確認刪除？",   En = "Confirm delete?",    Ja = "削除しますか？",Ko = "삭제하시겠습니까?" },
+            new Sys_Lang { LangKey = "sales.msg.unsavedChanges", ZhCN = "存在未保存的修改，是否舍弃？",ZhTW = "存在未儲存的修改，是否捨棄？",En = "Unsaved changes. Discard?", Ja = "未保存の変更があります。破棄しますか？",Ko = "저장되지 않은 변경사항이 있습니다. 폐기할까요?" },
+            new Sys_Lang { LangKey = "sales.msg.loadSuccess",    ZhCN = "读取成功",     ZhTW = "讀取成功",     En = "Loaded",             Ja = "読込みました", Ko = "불러왔습니다" },
+            new Sys_Lang { LangKey = "sales.msg.confirmTitle",   ZhCN = "确认",         ZhTW = "確認",         En = "Confirm",            Ja = "確認",         Ko = "확인" },
+
+            // 通用错误 ────────────────────
+            new Sys_Lang { LangKey = "sales.err.E10008",         ZhCN = "无检索结果",   ZhTW = "無檢索結果",   En = "No results found",   Ja = "検索結果がありません", Ko = "검색 결과가 없습니다" },
+            new Sys_Lang { LangKey = "sales.err.E10009",         ZhCN = "未选择行",     ZhTW = "未選擇行",     En = "No row selected",    Ja = "選択行がありません",   Ko = "선택된 행이 없습니다" },
+            new Sys_Lang { LangKey = "sales.err.E10010",         ZhCN = "无发行对象",   ZhTW = "無發行對象",   En = "No issue target",    Ja = "発行対象がありません", Ko = "발행 대상이 없습니다" },
+            new Sys_Lang { LangKey = "sales.err.E10022",         ZhCN = "必填项未输入", ZhTW = "必填項未輸入", En = "Required field empty",Ja = "必須項目に値が指定されていません", Ko = "필수 항목이 입력되지 않았습니다" },
+            new Sys_Lang { LangKey = "sales.err.E10023",         ZhCN = "数据已被更新", ZhTW = "資料已被更新", En = "Already updated",    Ja = "すでに更新済みです", Ko = "이미 업데이트되었습니다" },
+            new Sys_Lang { LangKey = "sales.err.E10030",         ZhCN = "请至少选择一项",ZhTW = "請至少選擇一項",En = "Select at least one",Ja = "いずれかを選択してください", Ko = "하나 이상 선택하세요" },
+            new Sys_Lang { LangKey = "sales.err.E10036",         ZhCN = "请按 FROM≦TO 输入",ZhTW = "請按 FROM≦TO 輸入",En = "FROM must be ≤ TO",Ja = "FROM≦TO の関係で指定してください", Ko = "FROM ≤ TO 관계로 입력하세요" },
+            new Sys_Lang { LangKey = "sales.err.W10002",         ZhCN = "其他用户已更新该数据，请重新读取",ZhTW = "其他用戶已更新該資料，請重新讀取",En = "Modified by another user, please reload", Ja = "他の処理によって更新されています(W10002)", Ko = "다른 사용자가 업데이트했습니다. 다시 불러오세요" },
+
+            // 状态 ────────────────────
+            new Sys_Lang { LangKey = "sales.status.draft",       ZhCN = "草稿",         ZhTW = "草稿",         En = "Draft",              Ja = "未確認",       Ko = "초안" },
+            new Sys_Lang { LangKey = "sales.status.confirmed",   ZhCN = "已确认",       ZhTW = "已確認",       En = "Confirmed",          Ja = "確認済",       Ko = "확정됨" },
+            new Sys_Lang { LangKey = "sales.status.pendingApproval",ZhCN = "审批中",    ZhTW = "審批中",       En = "Pending Approval",   Ja = "承認待ち",     Ko = "승인 대기" },
+            new Sys_Lang { LangKey = "sales.status.approved",    ZhCN = "已审批",       ZhTW = "已審批",       En = "Approved",           Ja = "承認済",       Ko = "승인됨" },
+            new Sys_Lang { LangKey = "sales.status.transferred", ZhCN = "已转送",       ZhTW = "已轉送",       En = "Transferred",        Ja = "mc転送済",     Ko = "전송됨" },
+            new Sys_Lang { LangKey = "sales.status.notRegistered",ZhCN = "未登记",      ZhTW = "未登記",       En = "Not Registered",     Ja = "未作成",       Ko = "미등록" },
+            new Sys_Lang { LangKey = "sales.status.autoNumber",  ZhCN = "等待自动编号", ZhTW = "等待自動編號", En = "Awaiting auto-number",Ja = "自動採番待ち", Ko = "자동 채번 대기" },
+
+            // Step 标题（PA050 5 步 / PA070 3 步）────
+            new Sys_Lang { LangKey = "sales.step.partsSelect",   ZhCN = "部材选择",     ZhTW = "部材選擇",     En = "Parts Select",       Ja = "部材選択",     Ko = "부재 선택" },
+            new Sys_Lang { LangKey = "sales.step.detail",        ZhCN = "明细",         ZhTW = "明細",         En = "Detail",             Ja = "明細",         Ko = "명세" },
+
+            // 一览页通用 ────
+            new Sys_Lang { LangKey = "sales.list.totalCount",    ZhCN = "合计 {n} 件",  ZhTW = "合計 {n} 件",  En = "Total {n} items",    Ja = "合計 {n} 件",  Ko = "합계 {n} 건" },
+            new Sys_Lang { LangKey = "sales.list.no",            ZhCN = "序号",         ZhTW = "序號",         En = "No",                 Ja = "No",           Ko = "번호" },
+            new Sys_Lang { LangKey = "sales.list.action",        ZhCN = "操作",         ZhTW = "操作",         En = "Action",             Ja = "操作",         Ko = "작업" },
+            new Sys_Lang { LangKey = "sales.list.detail",        ZhCN = "详情",         ZhTW = "詳情",         En = "Detail",             Ja = "詳細",         Ko = "상세" },
+            new Sys_Lang { LangKey = "sales.list.openDetail",    ZhCN = "打开详情",     ZhTW = "開啟詳情",     En = "Open Detail",        Ja = "詳細を開く",   Ko = "상세 열기" },
+
+            // 检索条件常用 ────
+            new Sys_Lang { LangKey = "sales.search.dateFrom",    ZhCN = "起始日期",     ZhTW = "起始日期",     En = "Date From",          Ja = "日付 FROM",    Ko = "시작일" },
+            new Sys_Lang { LangKey = "sales.search.dateTo",      ZhCN = "结束日期",     ZhTW = "結束日期",     En = "Date To",            Ja = "日付 TO",      Ko = "종료일" },
+            new Sys_Lang { LangKey = "sales.search.from",        ZhCN = "FROM",         ZhTW = "FROM",         En = "From",               Ja = "FROM",         Ko = "FROM" },
+            new Sys_Lang { LangKey = "sales.search.to",          ZhCN = "TO",           ZhTW = "TO",           En = "To",                 Ja = "TO",           Ko = "TO" },
+            new Sys_Lang { LangKey = "sales.search.required",    ZhCN = "必填",         ZhTW = "必填",         En = "Required",           Ja = "必須",         Ko = "필수" },
+
+            // 业务角色 / 属性 ────
+            new Sys_Lang { LangKey = "sales.role.customer",      ZhCN = "客户",         ZhTW = "客戶",         En = "Customer",           Ja = "得意先",       Ko = "거래처" },
+            new Sys_Lang { LangKey = "sales.role.ar",            ZhCN = "应收",         ZhTW = "應收",         En = "Accounts Rec.",      Ja = "売掛先",       Ko = "외상매출처" },
+            new Sys_Lang { LangKey = "sales.role.billing",       ZhCN = "请款",         ZhTW = "請款",         En = "Billing",            Ja = "請求先",       Ko = "청구처" },
+            new Sys_Lang { LangKey = "sales.role.receipt",       ZhCN = "收款",         ZhTW = "收款",         En = "Receipt",            Ja = "入金先",       Ko = "입금처" },
+            new Sys_Lang { LangKey = "sales.role.delivery",      ZhCN = "纳品",         ZhTW = "納品",         En = "Delivery",           Ja = "納品先",       Ko = "납품처" },
+            new Sys_Lang { LangKey = "sales.role.creditMgmt",    ZhCN = "信用管理",     ZhTW = "信用管理",     En = "Credit Mgmt",        Ja = "与信管理",     Ko = "신용 관리" },
+            new Sys_Lang { LangKey = "sales.role.supplier",      ZhCN = "供应商",       ZhTW = "供應商",       En = "Supplier",           Ja = "発注先",       Ko = "공급사" },
+            new Sys_Lang { LangKey = "sales.role.ap",            ZhCN = "应付",         ZhTW = "應付",         En = "Accounts Pay.",      Ja = "買掛先",       Ko = "외상매입처" },
+            new Sys_Lang { LangKey = "sales.role.paymentSch",    ZhCN = "付款计划",     ZhTW = "付款計劃",     En = "Payment Sched.",     Ja = "支払予定管理先",Ko = "지급 예정" },
+            new Sys_Lang { LangKey = "sales.role.payment",       ZhCN = "付款",         ZhTW = "付款",         En = "Payment",            Ja = "支払先",       Ko = "지급처" },
+            new Sys_Lang { LangKey = "sales.role.maker",         ZhCN = "厂商",         ZhTW = "廠商",         En = "Maker",              Ja = "メーカ",       Ko = "제조사" },
+
+            // 单价订正专用 ────
+            new Sys_Lang { LangKey = "sales.pc.before",          ZhCN = "变更前",       ZhTW = "變更前",       En = "Before",             Ja = "変更前",       Ko = "변경 전" },
+            new Sys_Lang { LangKey = "sales.pc.after",           ZhCN = "变更后",       ZhTW = "變更後",       En = "After",              Ja = "変更後",       Ko = "변경 후" },
+            new Sys_Lang { LangKey = "sales.pc.reason",          ZhCN = "变更理由",     ZhTW = "變更理由",     En = "Change Reason",      Ja = "単価変更理由", Ko = "변경 사유" },
+            new Sys_Lang { LangKey = "sales.pc.provisional",     ZhCN = "暂定价",       ZhTW = "暫定價",       En = "Provisional",        Ja = "仮単価",       Ko = "잠정가" },
+            new Sys_Lang { LangKey = "sales.pc.updateSelected",  ZhCN = "更新选中行",   ZhTW = "更新選取行",   En = "Update Selected",    Ja = "選択行を更新", Ko = "선택 행 업데이트" },
+
+            // 受注一览专用 ────
+            new Sys_Lang { LangKey = "sales.order.consignedSale",ZhCN = "代销",         ZhTW = "代銷",         En = "Consigned",          Ja = "預り売上",     Ko = "위탁 매출" },
+            new Sys_Lang { LangKey = "sales.order.mcUntransferred",ZhCN = "未转送",     ZhTW = "未轉送",       En = "Not Transferred",    Ja = "mc未転送",     Ko = "미전송" }
+        );
+        db.SaveChanges();
+    }
+
+    // 販売管理菜单 i18n（PA010〜PA150） — 已存在 DB 的补充
+    if (!db.Sys_Langs.Any(l => l.LangKey == "nav.200"))
+    {
+        db.Sys_Langs.AddRange(
+            new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理",          ZhTW = "銷售管理",          En = "Sales",                  Ja = "販売管理",                Ko = "판매 관리" },
+            new Sys_Lang { LangKey = "nav.201", ZhCN = "报价计算单 照会",    ZhTW = "報價計算單 照會",    En = "Estimate Calc Inquiry",  Ja = "見積計算書 照会",         Ko = "견적계산서 조회" },
+            new Sys_Lang { LangKey = "nav.202", ZhCN = "报价计算单 登记",    ZhTW = "報價計算單 登記",    En = "Estimate Calc Entry",    Ja = "見積計算書 登録",         Ko = "견적계산서 등록" },
+            new Sys_Lang { LangKey = "nav.203", ZhCN = "正式报价单 一览",    ZhTW = "正式報價單 一覽",    En = "Quotation List",         Ja = "御見積書 一覧",           Ko = "견적서 목록" },
+            new Sys_Lang { LangKey = "nav.204", ZhCN = "正式报价单 登记",    ZhTW = "正式報價單 登記",    En = "Quotation Entry",        Ja = "御見積書 登録",           Ko = "견적서 등록" },
+            new Sys_Lang { LangKey = "nav.205", ZhCN = "产品主数据 一览",    ZhTW = "產品主資料 一覽",    En = "Product Master List",    Ja = "製品マスタ 一覧",         Ko = "제품 마스터 목록" },
+            new Sys_Lang { LangKey = "nav.206", ZhCN = "产品主数据 登记",    ZhTW = "產品主資料 登記",    En = "Product Master Entry",   Ja = "製品マスタ 登録",         Ko = "제품 마스터 등록" },
+            new Sys_Lang { LangKey = "nav.207", ZhCN = "订单一览查询",       ZhTW = "訂單一覽查詢",       En = "Order Inquiry",          Ja = "受注一覧照会",            Ko = "수주 일람 조회" },
+            new Sys_Lang { LangKey = "nav.208", ZhCN = "订单录入",           ZhTW = "訂單錄入",           En = "Order Entry",            Ja = "受注入力",                Ko = "수주 입력" },
+            new Sys_Lang { LangKey = "nav.209", ZhCN = "单价订正",           ZhTW = "單價訂正",           En = "Price Correction",       Ja = "単価訂正",                Ko = "단가 수정" },
+            new Sys_Lang { LangKey = "nav.210", ZhCN = "FSC 检查清单",       ZhTW = "FSC 檢查清單",       En = "FSC Checklist",          Ja = "FSC チェックシート",      Ko = "FSC 체크시트" },
+            new Sys_Lang { LangKey = "nav.211", ZhCN = "交易先主数据 一览",  ZhTW = "交易夥伴主資料 一覽", En = "Business Partner List",  Ja = "取引先マスタ 一覧",       Ko = "거래처 마스터 목록" },
+            new Sys_Lang { LangKey = "nav.212", ZhCN = "交易先主数据 登记",  ZhTW = "交易夥伴主資料 登記", En = "Business Partner Entry", Ja = "取引先マスタ 登録",       Ko = "거래처 마스터 등록" },
+            new Sys_Lang { LangKey = "nav.213", ZhCN = "纸板单价主数据",     ZhTW = "紙板單價主資料",     En = "Sheet Unit Price",       Ja = "シート単価マスタ",        Ko = "시트 단가 마스터" },
+            new Sys_Lang { LangKey = "nav.214", ZhCN = "版型/木型 一览",     ZhTW = "版型/木型 一覽",     En = "Plate/Mold List",        Ja = "版型/木型 一覧",          Ko = "판형/목형 목록" },
+            new Sys_Lang { LangKey = "nav.215", ZhCN = "版型/木型 登记",     ZhTW = "版型/木型 登記",     En = "Plate/Mold Entry",       Ja = "版型/木型 登録",          Ko = "판형/목형 등록" }
         );
         db.SaveChanges();
     }

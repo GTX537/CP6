@@ -3,32 +3,32 @@
     <!-- 查询区 -->
     <el-card shadow="never" class="search-card">
       <el-form inline :model="query" @submit.prevent="onSearch">
-        <el-form-item label="見積No">
+        <el-form-item :label="t('sales.term.calcNo')">
           <el-input v-model="query.qtnCalcNo" placeholder="例: 00000001" clearable style="width: 180px" />
         </el-form-item>
-        <el-form-item label="顧客">
-          <el-input v-model="query.customerCd" placeholder="顧客コード" clearable style="width: 160px" />
+        <el-form-item :label="t('sales.term.customer')">
+          <el-input v-model="query.customerCd" :placeholder="t('sales.term.customer') + ' CD'" clearable style="width: 160px" />
         </el-form-item>
-        <el-form-item label="拠点">
+        <el-form-item :label="t('sales.term.base')">
           <el-select v-model="query.baseCd" placeholder="全部" clearable style="width: 160px">
             <el-option v-for="b in bases" :key="b.baseCd" :value="b.baseCd" :label="`${b.baseCd} ${b.baseName}`" />
           </el-select>
         </el-form-item>
-        <el-form-item label="見積日">
+        <el-form-item :label="t('sales.qtn.qtnDate')">
           <el-date-picker
             v-model="dateRange"
             type="daterange"
             value-format="YYYY-MM-DD"
             range-separator="~"
-            start-placeholder="開始日"
-            end-placeholder="終了日"
+            :start-placeholder="t('sales.search.dateFrom')"
+            :end-placeholder="t('sales.search.dateTo')"
             style="width: 260px"
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="onSearch">検索</el-button>
-          <el-button :icon="RefreshLeft" @click="onReset">クリア</el-button>
-          <el-button type="success" :icon="Plus" @click="onNew">新規作成</el-button>
+          <el-button type="primary" :icon="Search" @click="onSearch">{{ t('sales.btn.search') }}</el-button>
+          <el-button :icon="RefreshLeft" @click="onReset">{{ t('sales.btn.clear') }}</el-button>
+          <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -43,30 +43,30 @@
         style="width: 100%"
         @row-dblclick="(row: EstimateCalcListItem) => onView(row)"
       >
-        <el-table-column prop="qtnCalcNo" label="見積No" width="140" />
-        <el-table-column prop="qtnDate" label="見積日" width="110">
+        <el-table-column prop="qtnCalcNo" :label="t('sales.term.calcNo')" width="140" />
+        <el-table-column prop="qtnDate" :label="t('sales.qtn.qtnDate')" width="110">
           <template #default="{ row }">{{ fmtDate(row.qtnDate) }}</template>
         </el-table-column>
-        <el-table-column prop="qtnBaseCd" label="拠点" width="80" />
-        <el-table-column prop="staffCd" label="担当" width="90" />
-        <el-table-column prop="customerCd" label="顧客" width="120" />
+        <el-table-column prop="qtnBaseCd" :label="t('sales.term.base')" width="80" />
+        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="90" />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="120" />
         <el-table-column prop="customerProductName1" label="顧客品名" min-width="200" show-overflow-tooltip />
-        <el-table-column prop="orderQty" label="受注数" width="100" align="right">
+        <el-table-column prop="orderQty" :label="t('sales.term.qty')" width="100" align="right">
           <template #default="{ row }">{{ fmtNum(row.orderQty) }}</template>
         </el-table-column>
-        <el-table-column prop="estimateUnitPrice" label="見積単価" width="120" align="right">
+        <el-table-column prop="estimateUnitPrice" :label="t('sales.term.unitPrice')" width="120" align="right">
           <template #default="{ row }">{{ fmtMoney(row.estimateUnitPrice) }}</template>
         </el-table-column>
         <el-table-column prop="qtnDiv" label="見積区分" width="100" />
         <el-table-column prop="modifyDate" label="最終更新" width="160">
           <template #default="{ row }">{{ fmtDateTime(row.modifyDate || row.createDate) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column :label="t('sales.list.action')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="onView(row)">照会</el-button>
-            <el-button link type="warning" @click="onEdit(row)">編集</el-button>
-            <el-button link type="success" @click="onCopy(row)">流用</el-button>
-            <el-button link type="danger" @click="onDelete(row)">削除</el-button>
+            <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
+            <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+            <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+            <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -88,6 +88,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue'
 import { estimateCalcApi } from '@/api/estimateCalc'

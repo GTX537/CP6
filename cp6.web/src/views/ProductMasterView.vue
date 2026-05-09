@@ -19,33 +19,33 @@
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="hasNoCd">
-            <el-radio-button :value="ProductOperationType.New">新規</el-radio-button>
-            <el-radio-button :value="ProductOperationType.Edit" :disabled="hasNoCd">訂正</el-radio-button>
-            <el-radio-button :value="ProductOperationType.Copy" :disabled="hasNoCd">流用</el-radio-button>
-            <el-radio-button :value="ProductOperationType.View" :disabled="hasNoCd">参照</el-radio-button>
-            <el-radio-button :value="ProductOperationType.Delete" :disabled="hasNoCd">削除</el-radio-button>
+            <el-radio-button :value="ProductOperationType.New">{{ t('sales.btn.new') }}</el-radio-button>
+            <el-radio-button :value="ProductOperationType.Edit" :disabled="hasNoCd">{{ t('sales.op.edit') }}</el-radio-button>
+            <el-radio-button :value="ProductOperationType.Copy" :disabled="hasNoCd">{{ t('sales.op.copy') }}</el-radio-button>
+            <el-radio-button :value="ProductOperationType.View" :disabled="hasNoCd">{{ t('sales.op.view') }}</el-radio-button>
+            <el-radio-button :value="ProductOperationType.Delete" :disabled="hasNoCd">{{ t('sales.op.delete') }}</el-radio-button>
           </el-radio-group>
         </div>
       </div>
 
       <el-steps :active="store.currentStep - 1" finish-status="success" class="step-bar">
-        <el-step title="部材一覧" description="Step 1" />
-        <el-step title="基本情報" description="Step 2" />
-        <el-step title="工程情報" description="Step 3" />
-        <el-step title="材料設定" description="Step 4" />
-        <el-step title="ロット単価/その他" description="Step 5" />
+        <el-step :title="t('sales.section.partsList')" description="Step 1" />
+        <el-step :title="t('sales.section.basicInfo')" description="Step 2" />
+        <el-step :title="t('sales.section.process')" description="Step 3" />
+        <el-step :title="t('sales.section.material')" description="Step 4" />
+        <el-step :title="t('sales.section.lotPrice')" description="Step 5" />
       </el-steps>
     </el-card>
 
     <!-- 查询入力：按 製品 CD 加载 -->
     <el-card shadow="never" class="search-card" v-if="!store.isNew">
       <el-form inline>
-        <el-form-item label="製品CD">
+        <el-form-item :label="t('sales.term.productCd')">
           <el-input v-model="searchCd" placeholder="例: 0000000010001" clearable style="width: 220px" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadByCd" :loading="loading">読込</el-button>
-          <el-button @click="onNewClick">新規</el-button>
+          <el-button type="primary" @click="loadByCd" :loading="loading">{{ t('sales.btn.load') }}</el-button>
+          <el-button @click="onNewClick">{{ t('sales.btn.new') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -62,25 +62,25 @@
     <!-- 底部操作按钮 -->
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
-        <el-button v-if="store.currentStep > 1" @click="onPrev">前へ</el-button>
+        <el-button v-if="store.currentStep > 1" @click="onPrev">{{ t('sales.btn.prev') }}</el-button>
         <el-button
           v-if="store.currentStep < 5"
           type="primary"
           @click="onNext"
-        >次へ</el-button>
+        >{{ t('sales.btn.next') }}</el-button>
         <el-button
           v-if="canSave"
           type="success"
           :loading="saving"
           @click="onSave"
-        >保存</el-button>
+        >{{ t('sales.btn.save') }}</el-button>
         <el-button
           v-if="store.isDelete"
           type="danger"
           :loading="saving"
           @click="onDelete"
-        >削除実行</el-button>
-        <el-button @click="onReset">{{ isStandalone ? '閉じる' : 'クリア' }}</el-button>
+        >{{ t('sales.btn.delete') }}</el-button>
+        <el-button @click="onReset">{{ isStandalone ? '閉じる' : t('sales.btn.clear') }}</el-button>
       </div>
     </el-card>
   </div>
@@ -88,6 +88,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useProductMasterStore } from '@/stores/productMaster'
@@ -100,6 +101,7 @@ import Step3ProcessInfo from './product/Step3ProcessInfo.vue'
 import Step4MaterialSetting from './product/Step4MaterialSetting.vue'
 import Step5LotPriceOther from './product/Step5LotPriceOther.vue'
 
+const { t } = useI18n()
 const store = useProductMasterStore()
 const route = useRoute()
 const { handle: handleConflict } = useProductConflictHandler()
@@ -126,11 +128,11 @@ const canSave = computed(() => store.canEdit)
 
 const opLabel = computed(() => {
   switch (store.operationType) {
-    case ProductOperationType.New: return '新規'
-    case ProductOperationType.Edit: return '訂正'
-    case ProductOperationType.Copy: return '流用'
-    case ProductOperationType.View: return '参照'
-    case ProductOperationType.Delete: return '削除'
+    case ProductOperationType.New: return t('sales.btn.new')
+    case ProductOperationType.Edit: return t('sales.op.edit')
+    case ProductOperationType.Copy: return t('sales.op.copy')
+    case ProductOperationType.View: return t('sales.op.view')
+    case ProductOperationType.Delete: return t('sales.op.delete')
     default: return ''
   }
 })
@@ -401,7 +403,10 @@ function onReset() {
   searchCd.value = ''
 }
 
-onBeforeUnmount(() => { store.$reset?.() })
+onBeforeUnmount(() => {
+  // setup-style store には $reset 無 → 自前 reset() を呼ぶ
+  if (typeof store.reset === 'function') store.reset()
+})
 
 // URL 参数驱动（独立窗口）
 // /product/window?op=new

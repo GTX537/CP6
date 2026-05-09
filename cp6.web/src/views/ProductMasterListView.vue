@@ -3,15 +3,15 @@
     <!-- 検索エリア -->
     <el-card shadow="never" class="search-card">
       <el-form inline :model="query" @submit.prevent="onSearch">
-        <el-form-item label="製品CD">
-          <el-input v-model="query.productCdFrom" placeholder="From" clearable style="width: 160px" />
+        <el-form-item :label="t('sales.term.productCd')">
+          <el-input v-model="query.productCdFrom" :placeholder="t('sales.search.from')" clearable style="width: 160px" />
           <span style="margin: 0 4px">~</span>
-          <el-input v-model="query.productCdTo" placeholder="To" clearable style="width: 160px" />
+          <el-input v-model="query.productCdTo" :placeholder="t('sales.search.to')" clearable style="width: 160px" />
         </el-form-item>
         <el-form-item label="セット製品CD">
           <el-input v-model="query.setProductCd" clearable style="width: 160px" />
         </el-form-item>
-        <el-form-item label="顧客CD">
+        <el-form-item :label="t('sales.term.customer') + ' CD'">
           <el-input v-model="query.customerCd" clearable style="width: 140px" />
         </el-form-item>
         <el-form-item label="親案件">
@@ -20,10 +20,10 @@
         <el-form-item label="子案件">
           <el-input v-model="query.projectNoChild" clearable style="width: 120px" />
         </el-form-item>
-        <el-form-item label="御見積書NO">
+        <el-form-item :label="t('sales.term.qtnNo')">
           <el-input v-model="query.quotationNo" clearable style="width: 140px" />
         </el-form-item>
-        <el-form-item label="見積計算書NO">
+        <el-form-item :label="t('sales.term.calcNo')">
           <el-input v-model="query.estimateCalcNo" clearable style="width: 140px" />
         </el-form-item>
         <el-form-item label="顧客品名1">
@@ -41,12 +41,12 @@
             type="daterange"
             value-format="YYYY-MM-DD"
             range-separator="~"
-            start-placeholder="From"
-            end-placeholder="To"
+            :start-placeholder="t('sales.search.from')"
+            :end-placeholder="t('sales.search.to')"
             style="width: 260px"
           />
         </el-form-item>
-        <el-form-item label="ステータス">
+        <el-form-item :label="t('sales.term.status')">
           <el-checkbox-group v-model="statusSel">
             <el-checkbox :value="0">未承認</el-checkbox>
             <el-checkbox :value="1">承認待</el-checkbox>
@@ -54,10 +54,10 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="onSearch">検索</el-button>
-          <el-button :icon="RefreshLeft" @click="onReset">クリア</el-button>
-          <el-button type="success" :icon="Plus" @click="onNew">新規登録</el-button>
-          <el-button :icon="Download" :loading="exporting" @click="onExportCsv">CSV出力</el-button>
+          <el-button type="primary" :icon="Search" @click="onSearch">{{ t('sales.btn.search') }}</el-button>
+          <el-button :icon="RefreshLeft" @click="onReset">{{ t('sales.btn.clear') }}</el-button>
+          <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
+          <el-button :icon="Download" :loading="exporting" @click="onExportCsv">{{ t('sales.btn.exportCsv') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -72,18 +72,18 @@
         style="width: 100%"
         @row-dblclick="(row: ProductListItemDto) => onView(row)"
       >
-        <el-table-column prop="productCd" label="製品CD" width="160" fixed="left" />
+        <el-table-column prop="productCd" :label="t('sales.term.productCd')" width="160" fixed="left" />
         <el-table-column prop="setProductCd" label="セット製品CD" width="140" />
         <el-table-column prop="setProductName" label="セット品名" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="customerCd" label="顧客CD" width="100" />
-        <el-table-column prop="customerName" label="顧客名" min-width="160" show-overflow-tooltip />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer') + ' CD'" width="100" />
+        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" min-width="160" show-overflow-tooltip />
         <el-table-column prop="customerItemName1" label="顧客品名1" min-width="160" show-overflow-tooltip />
         <el-table-column prop="customerItemName2" label="顧客品名2" min-width="140" show-overflow-tooltip />
         <el-table-column prop="projectNoParent" label="親案件" width="100" />
         <el-table-column prop="projectNoChild" label="子案件" width="100" />
-        <el-table-column prop="quotationNo" label="御見積書NO" width="120" />
-        <el-table-column prop="estimateCalcNo" label="見積計算書NO" width="130" />
-        <el-table-column label="状態" width="100">
+        <el-table-column prop="quotationNo" :label="t('sales.term.qtnNo')" width="120" />
+        <el-table-column prop="estimateCalcNo" :label="t('sales.term.calcNo')" width="130" />
+        <el-table-column :label="t('sales.term.status')" width="100">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
           </template>
@@ -103,12 +103,12 @@
         <el-table-column label="更新日" width="160">
           <template #default="{ row }">{{ fmtDt(row.modifyDate) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="280" fixed="right">
+        <el-table-column :label="t('sales.list.action')" width="280" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="onView(row)">参照</el-button>
-            <el-button link type="warning" @click="onEdit(row)">訂正</el-button>
-            <el-button link type="success" @click="onCopy(row)">流用</el-button>
-            <el-button link type="danger" @click="onDelete(row)">削除</el-button>
+            <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
+            <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+            <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+            <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -130,6 +130,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, RefreshLeft, Plus, Check, Link, Download } from '@element-plus/icons-vue'
 import { productApi } from '@/api/product'
@@ -166,7 +169,7 @@ function fmtDt(v?: string) {
   return v ? v.replace('T', ' ').slice(0, 16) : ''
 }
 function statusLabel(s: number): string {
-  return s === 9 ? '承認済' : s === 1 ? '承認待' : '未作成'
+  return s === 9 ? t('sales.status.approved') : s === 1 ? t('sales.status.pendingApproval') : t('sales.status.notRegistered')
 }
 function statusTagType(s: number): 'info' | 'warning' | 'success' {
   return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'

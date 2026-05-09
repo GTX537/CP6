@@ -5,35 +5,35 @@
       <div class="header-row">
         <div class="header-left">
           <el-tag :type="opTagType" size="large" effect="dark">{{ opLabel }}</el-tag>
-          <span v-if="store.dto.wdPtnNo" class="key">版型NO: {{ store.dto.wdPtnNo }} / Rev {{ store.dto.wdRev }}</span>
-          <el-tag v-else-if="store.isRegister" type="info" size="small">自動採番待ち</el-tag>
-          <el-tag v-if="store.dto.status === 9" type="success" size="small">mc転送済</el-tag>
+          <span v-if="store.dto.wdPtnNo" class="key">{{ t('sales.pm.no') }}: {{ store.dto.wdPtnNo }} / {{ t('sales.term.rev') }} {{ store.dto.wdRev }}</span>
+          <el-tag v-else-if="store.isRegister" type="info" size="small">{{ t('sales.status.autoNumber') }}</el-tag>
+          <el-tag v-if="store.dto.status === 9" type="success" size="small">{{ t('sales.status.transferred') }}</el-tag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small">
-            <el-radio-button :value="PlateMoldOperationType.Register">登録</el-radio-button>
-            <el-radio-button :value="PlateMoldOperationType.Revise">改定</el-radio-button>
-            <el-radio-button :value="PlateMoldOperationType.Edit">訂正</el-radio-button>
-            <el-radio-button :value="PlateMoldOperationType.Delete" :disabled="!store.isAdmin">削除</el-radio-button>
-            <el-radio-button :value="PlateMoldOperationType.View">参照</el-radio-button>
+            <el-radio-button :value="PlateMoldOperationType.Register">{{ t('sales.op.register') }}</el-radio-button>
+            <el-radio-button :value="PlateMoldOperationType.Revise">{{ t('sales.op.revise') }}</el-radio-button>
+            <el-radio-button :value="PlateMoldOperationType.Edit">{{ t('sales.op.edit') }}</el-radio-button>
+            <el-radio-button :value="PlateMoldOperationType.Delete" :disabled="!store.isAdmin">{{ t('sales.op.delete') }}</el-radio-button>
+            <el-radio-button :value="PlateMoldOperationType.View">{{ t('sales.op.view') }}</el-radio-button>
           </el-radio-group>
         </div>
       </div>
       <el-form inline size="small" label-width="100px" style="margin-top: 8px;">
-        <el-form-item v-if="!store.isRegister" label="版型NO">
+        <el-form-item v-if="!store.isRegister" :label="t('sales.pm.no')">
           <el-input v-model="searchNo" style="width: 200px" />
         </el-form-item>
-        <el-form-item v-if="!store.isRegister" label="Rev">
+        <el-form-item v-if="!store.isRegister" :label="t('sales.term.rev')">
           <el-input-number v-model="searchRev" :controls="false" :min="1" style="width: 100px" />
         </el-form-item>
         <el-form-item v-if="!store.isRegister">
-          <el-button type="primary" @click="onLoadByNo" :loading="loading">読込</el-button>
+          <el-button type="primary" @click="onLoadByNo" :loading="loading">{{ t('sales.btn.load') }}</el-button>
         </el-form-item>
-        <el-form-item v-if="store.isRegister" label="決定見積NO">
+        <el-form-item v-if="store.isRegister" :label="t('sales.pm.estimateNo')">
           <el-input v-model="searchEstimate" style="width: 200px" />
         </el-form-item>
         <el-form-item v-if="store.isRegister">
-          <el-button type="primary" @click="onLoadByEstimate" :loading="loading">引入</el-button>
+          <el-button type="primary" @click="onLoadByEstimate" :loading="loading">{{ t('sales.btn.import') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -41,14 +41,14 @@
     <!-- 基本情報 -->
     <el-card shadow="never">
       <el-tabs v-model="tab">
-        <el-tab-pane label="基本情報" name="basic">
+        <el-tab-pane :label="t('sales.section.basicInfo')" name="basic">
           <el-form :model="store.dto" :disabled="store.isPageReadOnly" label-width="120px" size="small" inline>
-            <el-form-item label="拠点" required><el-input v-model="store.dto.baseCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="決定見積NO" required><el-input v-model="store.dto.decisionEstimateNo" :disabled="!store.canEdit" style="width: 200px" /></el-form-item>
-            <el-form-item label="版型名" required>
+            <el-form-item :label="t('sales.term.base')" required><el-input v-model="store.dto.baseCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.estimateNo')" required><el-input v-model="store.dto.decisionEstimateNo" :disabled="!store.canEdit" style="width: 200px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.name')" required>
               <el-input v-model="store.dto.vrsnName" :disabled="!store.canEditVrsnName" style="width: 240px" />
             </el-form-item>
-            <el-form-item label="売上可否区分">
+            <el-form-item :label="t('sales.pm.salesAvailable')">
               <el-select v-model="store.dto.earningsCd" :disabled="!store.canEdit" clearable style="width: 140px">
                 <el-option label="可(1)" value="1" />
                 <el-option label="不可(2)" value="2" />
@@ -57,14 +57,14 @@
                 <el-option label="後報(5)" value="5" />
               </el-select>
             </el-form-item>
-            <el-form-item label="手配NO"><el-input v-model="store.dto.arrangeNo" disabled style="width: 200px" /></el-form-item>
-            <el-form-item label="Rev"><el-input-number v-model="store.dto.wdRev" disabled :controls="false" style="width: 100px" /></el-form-item>
-            <el-form-item label="新版区分"><el-input v-model="store.dto.newVerCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="適用開始日" required><el-date-picker v-model="store.dto.stDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item label="適用終了日"><el-date-picker v-model="store.dto.endDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item label="得意先" required><el-input v-model="store.dto.customerCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
-            <el-form-item label="代表製品CD" required><el-input v-model="store.dto.representativeProductCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
-            <el-form-item label="工程">
+            <el-form-item :label="t('sales.term.haibaiNo')"><el-input v-model="store.dto.arrangeNo" disabled style="width: 200px" /></el-form-item>
+            <el-form-item :label="t('sales.term.rev')"><el-input-number v-model="store.dto.wdRev" disabled :controls="false" style="width: 100px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.newVersion')"><el-input v-model="store.dto.newVerCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.applyStartDate')" required><el-date-picker v-model="store.dto.stDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.applyEndDate')"><el-date-picker v-model="store.dto.endDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('sales.term.customer')" required><el-input v-model="store.dto.customerCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.repProductCd')" required><el-input v-model="store.dto.representativeProductCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.process')">
               <el-select v-model="store.dto.processCd" :disabled="!store.canEdit" clearable style="width: 160px" @change="store.autoTypeClassFromProcess">
                 <el-option label="フレキソ印刷(0300)" value="0300" />
                 <el-option label="オフセット印刷(0450)" value="0450" />
@@ -72,13 +72,13 @@
                 <el-option label="箔押(0650)" value="0650" />
               </el-select>
             </el-form-item>
-            <el-form-item label="版型分類"><el-input v-model="store.dto.typeClass" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="最終加工場所"><el-input v-model="store.dto.endPlaceCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="実績日(最終使用)"><el-date-picker v-model="store.dto.achieveDate" type="date" value-format="YYYY-MM-DD" disabled style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.class')"><el-input v-model="store.dto.typeClass" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.endProcessLoc')"><el-input v-model="store.dto.endPlaceCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.lastUsedActual')"><el-date-picker v-model="store.dto.achieveDate" type="date" value-format="YYYY-MM-DD" disabled style="width: 150px" /></el-form-item>
           </el-form>
         </el-tab-pane>
 
-        <el-tab-pane label="構成情報" name="comp">
+        <el-tab-pane :label="t('sales.section.composition')" name="comp">
           <el-form :model="store.dto" :disabled="store.isPageReadOnly" label-width="120px" size="small" inline>
             <el-form-item label="シート段"><el-input v-model="store.dto.sheetFlute" disabled style="width: 100px" placeholder="製品マスタ参照" /></el-form-item>
             <el-form-item label="原紙 表/中/裏">
@@ -98,7 +98,7 @@
             <el-form-item label="本数"><el-input-number v-model="store.dto.bookQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
             <el-form-item label="フレキソ版厚"><el-input-number v-model="store.dto.flexoThick" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
             <el-form-item label="シリンダーサイズ"><el-input-number v-model="store.dto.cylinderSize" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="発注先" required><el-input v-model="store.dto.supplierCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
+            <el-form-item :label="t('sales.term.supplier')" required><el-input v-model="store.dto.supplierCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
             <el-form-item label="加工予定先"><el-input v-model="store.dto.processDestination" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
             <el-form-item label="納期"><el-date-picker v-model="store.dto.deliveryDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
             <el-form-item label="入荷実績日"><el-date-picker v-model="store.dto.arrivalActualDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
@@ -110,20 +110,20 @@
             <el-form-item label="置き版"><el-input v-model="store.dto.standingCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
             <el-form-item label="ハンマー"><el-input v-model="store.dto.hammerCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
             <el-form-item label="見落とし型"><el-input v-model="store.dto.oversightCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="場所"><el-input v-model="store.dto.placeCd" disabled style="width: 130px" placeholder="システム管理" /></el-form-item>
-            <el-form-item label="棚・ライン"><el-input v-model="store.dto.shelfLineCd" disabled style="width: 130px" placeholder="システム管理" /></el-form-item>
-            <el-form-item label="通し数"><el-input-number v-model="store.dto.wdQty" disabled :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="限界通し数"><el-input-number v-model="store.dto.limitWdQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 130px" /></el-form-item>
-            <el-form-item label="廃棄予定日"><el-date-picker v-model="store.dto.dispScheduleDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item label="返却予定日"><el-date-picker v-model="store.dto.returnScheduleDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item label="返却日"><el-date-picker v-model="store.dto.returnDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.location')"><el-input v-model="store.dto.placeCd" disabled style="width: 130px" placeholder="システム管理" /></el-form-item>
+            <el-form-item :label="t('sales.pm.shelfLine')"><el-input v-model="store.dto.shelfLineCd" disabled style="width: 130px" placeholder="システム管理" /></el-form-item>
+            <el-form-item :label="t('sales.pm.passCount')"><el-input-number v-model="store.dto.wdQty" disabled :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.limitPass')"><el-input-number v-model="store.dto.limitWdQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.dispScheduled')"><el-date-picker v-model="store.dto.dispScheduleDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.returnScheduled')"><el-date-picker v-model="store.dto.returnScheduleDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.returnDate')"><el-date-picker v-model="store.dto.returnDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
             <el-form-item label="返却理由"><el-input v-model="store.dto.returnReason" :disabled="!store.canEdit" style="width: 240px" /></el-form-item>
             <el-form-item label="備考"><el-input v-model="store.dto.memo" :disabled="!store.canEdit" type="textarea" :rows="2" style="width: 480px" /></el-form-item>
             <el-form-item label="売上備考"><el-input v-model="store.dto.salesNote" :disabled="!store.canEdit" type="textarea" :rows="2" style="width: 480px" /></el-form-item>
           </el-form>
         </el-tab-pane>
 
-        <el-tab-pane label="添付情報" name="attach">
+        <el-tab-pane :label="t('sales.section.attachment')" name="attach">
           <el-form :model="store.dto" :disabled="store.isPageReadOnly" label-width="120px" size="small">
             <el-row :gutter="8">
               <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoSheetFront" :disabled="!store.canEdit">表図面</el-checkbox></el-col>
@@ -138,7 +138,7 @@
           </el-form>
         </el-tab-pane>
 
-        <el-tab-pane label="必要物" name="need">
+        <el-tab-pane :label="t('sales.section.required')" name="need">
           <el-form :model="store.dto" :disabled="store.isPageReadOnly" label-width="120px" size="small" inline>
             <el-form-item label="タタキ"><el-input-number v-model="store.dto.needDraft" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
             <el-form-item label="マイラー"><el-input-number v-model="store.dto.needMylar" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
@@ -152,17 +152,17 @@
           </el-form>
         </el-tab-pane>
 
-        <el-tab-pane v-if="!store.isRegister" :label="`過去履歴 (${store.history.length})`" name="history">
+        <el-tab-pane v-if="!store.isRegister" :label="`${t('sales.section.history')} (${store.history.length})`" name="history">
           <el-table :data="store.history" border size="small" style="width: 100%">
-            <el-table-column prop="wdRev" label="Rev" width="80" align="center" />
-            <el-table-column prop="stDate" label="適用開始日" width="120" />
-            <el-table-column prop="endDate" label="適用終了日" width="120" />
-            <el-table-column prop="supplierCd" label="発注先" width="120" />
-            <el-table-column prop="supplierName" label="発注先名" min-width="160" />
-            <el-table-column prop="wdQty" label="通し数" width="100" align="right" />
-            <el-table-column prop="dispScheduleDate" label="廃棄予定日" width="120" />
-            <el-table-column prop="returnScheduleDate" label="返却予定日" width="120" />
-            <el-table-column prop="returnDate" label="返却日" width="120" />
+            <el-table-column prop="wdRev" :label="t('sales.term.rev')" width="80" align="center" />
+            <el-table-column prop="stDate" :label="t('sales.pm.applyStartDate')" width="120" />
+            <el-table-column prop="endDate" :label="t('sales.pm.applyEndDate')" width="120" />
+            <el-table-column prop="supplierCd" :label="t('sales.term.supplier')" width="120" />
+            <el-table-column prop="supplierName" :label="t('sales.term.supplier')" min-width="160" />
+            <el-table-column prop="wdQty" :label="t('sales.pm.passCount')" width="100" align="right" />
+            <el-table-column prop="dispScheduleDate" :label="t('sales.pm.dispScheduled')" width="120" />
+            <el-table-column prop="returnScheduleDate" :label="t('sales.pm.returnScheduled')" width="120" />
+            <el-table-column prop="returnDate" :label="t('sales.pm.returnDate')" width="120" />
             <el-table-column prop="returnReason" label="返却理由" min-width="160" />
           </el-table>
         </el-tab-pane>
@@ -171,11 +171,11 @@
 
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
-        <el-button v-if="store.isView" :icon="Document" @click="onIssueLabel">ラベル発行</el-button>
-        <el-button v-if="store.isView" :icon="Document" @click="onPurchaseOrder">版型発注書</el-button>
-        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onSave">削除実行</el-button>
-        <el-button v-else-if="store.canEdit" type="success" :loading="saving" @click="onSave">登録</el-button>
-        <el-button @click="onClear">クリア</el-button>
+        <el-button v-if="store.isView" :icon="Document" @click="onIssueLabel">{{ t('sales.btn.label') }}</el-button>
+        <el-button v-if="store.isView" :icon="Document" @click="onPurchaseOrder">{{ t('sales.btn.purchaseOrder') }}</el-button>
+        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onSave">{{ t('sales.btn.delete') }}</el-button>
+        <el-button v-else-if="store.canEdit" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
+        <el-button @click="onClear">{{ t('sales.btn.clear') }}</el-button>
       </div>
     </el-card>
   </div>
@@ -183,12 +183,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Document } from '@element-plus/icons-vue'
 import { usePlateMoldStore } from '@/stores/plateMold'
 import { PlateMoldOperationType } from '@/types/plateMold'
 import { plateMoldApi } from '@/api/plateMold'
 
+const { t } = useI18n()
 const store = usePlateMoldStore()
 const tab = ref('basic')
 const searchNo = ref('')
@@ -205,11 +207,11 @@ const opModel = computed({
   },
 })
 const opLabel = computed(() => ({
-  [PlateMoldOperationType.Register]: '登録',
-  [PlateMoldOperationType.Revise]: '改定',
-  [PlateMoldOperationType.Edit]: '訂正',
-  [PlateMoldOperationType.Delete]: '削除',
-  [PlateMoldOperationType.View]: '参照',
+  [PlateMoldOperationType.Register]: t('sales.op.register'),
+  [PlateMoldOperationType.Revise]: t('sales.op.revise'),
+  [PlateMoldOperationType.Edit]: t('sales.op.edit'),
+  [PlateMoldOperationType.Delete]: t('sales.op.delete'),
+  [PlateMoldOperationType.View]: t('sales.op.view'),
 }[store.operationType] ?? ''))
 const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'>(() => {
   const map: Record<number, 'primary' | 'warning' | 'danger' | 'info' | 'success'> = {
@@ -223,21 +225,21 @@ const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'
 })
 
 async function onLoadByEstimate() {
-  if (!searchEstimate.value) { ElMessage.warning('決定見積NO を入力してください'); return }
+  if (!searchEstimate.value) { ElMessage.warning(t('sales.err.E10022')); return }
   loading.value = true
   try {
     const r = await plateMoldApi.getByEstimateCalc(searchEstimate.value)
     if (r.code === 0 && r.data) {
       store.loadFromDto(r.data)
-      ElMessage.success('見積計算書から引入しました')
+      ElMessage.success(t('sales.msg.loadSuccess'))
     } else {
-      ElMessage.info('E10008: 検索結果がありません')
+      ElMessage.info(t('sales.err.E10008'))
     }
   } finally { loading.value = false }
 }
 
 async function onLoadByNo() {
-  if (!searchNo.value) { ElMessage.warning('版型NO を入力してください'); return }
+  if (!searchNo.value) { ElMessage.warning(t('sales.err.E10022')); return }
   loading.value = true
   try {
     const r = await plateMoldApi.getByNo(searchNo.value, searchRev.value)
@@ -245,9 +247,9 @@ async function onLoadByNo() {
       store.loadFromDto(r.data)
       const h = await plateMoldApi.history(searchNo.value)
       if (h.code === 0 && h.data) store.history = h.data
-      ElMessage.success('版型データを読込みました')
+      ElMessage.success(t('sales.msg.loadSuccess'))
     } else {
-      ElMessage.info('E10008: 検索結果がありません')
+      ElMessage.info(t('sales.err.E10008'))
     }
   } finally { loading.value = false }
 }
@@ -256,14 +258,14 @@ async function onSave() {
   if (store.isDelete) {
     try {
       await ElMessageBox.confirm(
-        `版型 ${store.dto.wdPtnNo} Rev ${store.dto.wdRev} を削除します。よろしいですか？`,
-        '削除確認', { type: 'warning' }
+        `${t('sales.msg.deleteConfirm')} (${store.dto.wdPtnNo} ${t('sales.term.rev')} ${store.dto.wdRev})`,
+        t('sales.msg.confirmTitle'), { type: 'warning' }
       )
     } catch { return }
     saving.value = true
     try {
       const r = await plateMoldApi.remove(store.dto.wdPtnNo!, store.dto.wdRev, store.dto.rowVersion)
-      if (r.code === 0) { ElMessage.success('削除しました'); store.reset() }
+      if (r.code === 0) { ElMessage.success(t('sales.msg.deleteSuccess')); store.reset() }
     } finally { saving.value = false }
     return
   }
@@ -272,7 +274,7 @@ async function onSave() {
     if (store.isRegister) {
       const r = await plateMoldApi.create(store.dto)
       if (r.code === 0 && r.data) {
-        ElMessage.success(`登録しました：${r.data.wdPtnNo} / Rev ${r.data.wdRev} / 手配NO ${r.data.orderLink.arrangeNo}`)
+        ElMessage.success(`${t('sales.msg.saveSuccess')}: ${r.data.wdPtnNo} / ${t('sales.term.rev')} ${r.data.wdRev}`)
         // 結果を反映して訂正モードへ
         store.dto.wdPtnNo = r.data.wdPtnNo
         store.dto.wdRev = r.data.wdRev
@@ -282,13 +284,13 @@ async function onSave() {
     } else if (store.isRevise) {
       const r = await plateMoldApi.revise(store.dto.wdPtnNo!, store.dto)
       if (r.code === 0 && r.data) {
-        ElMessage.success(`改定しました：Rev ${r.data.wdRev}`)
+        ElMessage.success(`${t('sales.op.revise')}: ${t('sales.term.rev')} ${r.data.wdRev}`)
         store.dto.wdRev = r.data.wdRev
         store.setOperationType(PlateMoldOperationType.Edit)
       }
     } else if (store.isEdit) {
       const r = await plateMoldApi.update(store.dto.wdPtnNo!, store.dto.wdRev, store.dto)
-      if (r.code === 0) ElMessage.success('訂正しました')
+      if (r.code === 0) ElMessage.success(t('sales.msg.saveSuccess'))
     }
   } finally { saving.value = false }
 }

@@ -3,48 +3,48 @@
     <!-- 検索条件 -->
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
-        <el-form-item label="拠点" required>
-          <el-input v-model="query.baseCd" style="width: 120px" placeholder="必須" />
+        <el-form-item :label="t('sales.term.base')" required>
+          <el-input v-model="query.baseCd" style="width: 120px" :placeholder="t('sales.search.required')" />
         </el-form-item>
-        <el-form-item label="得意先 FROM">
+        <el-form-item :label="t('sales.term.customer') + ' ' + t('sales.search.from')">
           <el-input v-model="query.customerCd" style="width: 130px" />
         </el-form-item>
-        <el-form-item label="得意先 TO">
+        <el-form-item :label="t('sales.term.customer') + ' ' + t('sales.search.to')">
           <el-input v-model="query.customerCdTo" style="width: 130px" />
         </el-form-item>
-        <el-form-item label="受注日 FROM">
+        <el-form-item :label="t('sales.term.orderDate') + ' ' + t('sales.search.from')">
           <el-date-picker v-model="query.orderDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
-        <el-form-item label="受注日 TO">
+        <el-form-item :label="t('sales.term.orderDate') + ' ' + t('sales.search.to')">
           <el-date-picker v-model="query.orderDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
-        <el-form-item label="手配NO1">
+        <el-form-item :label="t('sales.term.haibaiNo') + '1'">
           <el-input v-model="query.haibaiNo1" style="width: 150px" />
         </el-form-item>
-        <el-form-item label="製品CD">
+        <el-form-item :label="t('sales.term.productCd')">
           <el-input v-model="query.productCd" style="width: 130px" />
         </el-form-item>
         <el-form-item label="顧客品名">
           <el-input v-model="query.customerItemName" style="width: 200px" />
         </el-form-item>
-        <el-form-item label="数量 FROM-TO">
+        <el-form-item :label="t('sales.term.qty') + ' FROM-TO'">
           <el-input-number v-model="query.qtyFrom" :precision="2" :controls="false" style="width: 110px" />
           〜
           <el-input-number v-model="query.qtyTo" :precision="2" :controls="false" style="width: 110px" />
         </el-form-item>
-        <el-form-item label="金額 FROM-TO">
+        <el-form-item :label="t('sales.term.amount') + ' FROM-TO'">
           <el-input-number v-model="query.amountFrom" :precision="0" :controls="false" style="width: 130px" />
           〜
           <el-input-number v-model="query.amountTo" :precision="0" :controls="false" style="width: 130px" />
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="query.onlyProvisional">仮単価のみ</el-checkbox>
+          <el-checkbox v-model="query.onlyProvisional">{{ t('sales.pc.provisional') }}</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="search" :loading="loading">検索</el-button>
-          <el-button @click="resetQuery">クリア</el-button>
+          <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
+          <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
           <el-button type="success" @click="onSubmit" :loading="submitting" :disabled="selectedRows.length === 0">
-            選択行を更新（{{ selectedRows.length }} 件）
+            {{ t('sales.pc.updateSelected') }}（{{ selectedRows.length }}）
           </el-button>
         </el-form-item>
       </el-form>
@@ -124,7 +124,10 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
+const { t } = useI18n()
 import { Warning } from '@element-plus/icons-vue'
 import { orderApi } from '@/api/order'
 import type {
@@ -152,7 +155,7 @@ function onSelectionChange(sel: OrderPriceCorrectionItemDto[]) {
 
 async function search() {
   if (!query.baseCd) {
-    ElMessage.warning('E10022: 拠点は必須です')
+    ElMessage.warning(t('sales.err.E10022') + ': ' + t('sales.term.base'))
     return
   }
   loading.value = true
@@ -161,7 +164,7 @@ async function search() {
     if (res.code === 0 && res.data) {
       rows.value = res.data.rows
       total.value = res.data.total
-      if (rows.value.length === 0) ElMessage.info('E10008: 検索結果がありません')
+      if (rows.value.length === 0) ElMessage.info(t('sales.err.E10008'))
     }
   } catch { /* */ } finally {
     loading.value = false
@@ -180,7 +183,7 @@ function resetQuery() {
 
 async function onSubmit() {
   if (selectedRows.value.length === 0) {
-    ElMessage.warning('更新対象の行を選択してください')
+    ElMessage.warning(t('sales.err.E10009'))
     return
   }
   try {

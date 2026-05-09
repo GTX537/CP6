@@ -20,13 +20,14 @@ export default defineConfig({
     port: 5173,
     strictPort: false,
     // 把 /api 请求代理到后端，避免跨域问题
+    // 環境変数 VITE_API_TARGET で切替（既定: 開発時 dotnet run = 5177 / Docker = 9991）
     proxy: {
       '/api': {
-        target: 'http://localhost:9991',
+        target: process.env.VITE_API_TARGET || 'http://localhost:5177',
         changeOrigin: true,
       },
       '/hubs': {
-        target: 'http://localhost:9991',
+        target: process.env.VITE_API_TARGET || 'http://localhost:5177',
         changeOrigin: true,
         ws: true,  // 支持 WebSocket
       }

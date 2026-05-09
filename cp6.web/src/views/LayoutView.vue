@@ -14,7 +14,7 @@
       >
         <template v-for="menu in menuTree" :key="menu.id">
           <!-- 有子菜单 -->
-          <el-sub-menu v-if="menu.children?.length" :index="menu.id">
+          <el-sub-menu v-if="menu.children?.length" :index="String(menu.id)">
             <template #title>
               <el-icon><component :is="menu.icon || 'Folder'" /></el-icon>
               <span>{{ te('nav.' + menu.id) ? t('nav.' + menu.id) : menu.menuName }}</span>
@@ -53,7 +53,13 @@
         <el-button link @click="handleLogout">{{ $t('layout.logout') }}</el-button>
       </el-header>
       <el-main>
-        <RouterView />
+        <!-- transition mode="out-in" 強制：先卸载旧组件、再挂载新组件 -->
+        <!-- これで「旧コンポーネントの parentNode が null」エラーを回避 -->
+        <RouterView v-slot="{ Component }">
+          <Transition name="fade" mode="out-in">
+            <component :is="Component" v-if="Component" />
+          </Transition>
+        </RouterView>
       </el-main>
     </el-container>
   </el-container>

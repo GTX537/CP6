@@ -2,36 +2,36 @@
   <div class="fsc-view">
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="120px" size="small" inline>
-        <el-form-item label="拠点" required>
-          <el-input v-model="query.baseCd" placeholder="必須" style="width: 130px" />
+        <el-form-item :label="t('sales.term.base')" required>
+          <el-input v-model="query.baseCd" :placeholder="t('sales.search.required')" style="width: 130px" />
         </el-form-item>
-        <el-form-item label="担当者">
+        <el-form-item :label="t('sales.term.staff')">
           <el-input v-model="query.staffCd" style="width: 130px" />
         </el-form-item>
-        <el-form-item label="作成日 FROM">
+        <el-form-item :label="t('sales.qtn.issueDate') + ' ' + t('sales.search.from')">
           <el-date-picker v-model="query.issueDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
-        <el-form-item label="作成日 TO">
+        <el-form-item :label="t('sales.qtn.issueDate') + ' ' + t('sales.search.to')">
           <el-date-picker v-model="query.issueDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
-        <el-form-item label="御見積書 FROM"><el-input v-model="query.qtnNoFrom" style="width: 150px" /></el-form-item>
-        <el-form-item label="御見積書 TO"><el-input v-model="query.qtnNoTo" style="width: 150px" /></el-form-item>
-        <el-form-item label="得意先"><el-input v-model="query.customerCd" style="width: 150px" /></el-form-item>
-        <el-form-item label="案件 No"><el-input v-model="query.projectNo" style="width: 150px" /></el-form-item>
-        <el-form-item label="ステータス">
-          <el-checkbox v-model="query.includeUnissued">未発行</el-checkbox>
-          <el-checkbox v-model="query.includeIssued">発行済</el-checkbox>
+        <el-form-item :label="t('sales.term.qtnNo') + ' ' + t('sales.search.from')"><el-input v-model="query.qtnNoFrom" style="width: 150px" /></el-form-item>
+        <el-form-item :label="t('sales.term.qtnNo') + ' ' + t('sales.search.to')"><el-input v-model="query.qtnNoTo" style="width: 150px" /></el-form-item>
+        <el-form-item :label="t('sales.term.customer')"><el-input v-model="query.customerCd" style="width: 150px" /></el-form-item>
+        <el-form-item :label="t('sales.fsc.case')"><el-input v-model="query.projectNo" style="width: 150px" /></el-form-item>
+        <el-form-item :label="t('sales.term.status')">
+          <el-checkbox v-model="query.includeUnissued">{{ t('sales.fsc.unissued') }}</el-checkbox>
+          <el-checkbox v-model="query.includeIssued">{{ t('sales.fsc.issued') }}</el-checkbox>
         </el-form-item>
-        <el-form-item label="出力フォーマット" required>
-          <el-select v-model="formatName" placeholder="必須" clearable style="width: 220px">
+        <el-form-item :label="t('sales.fsc.format')" required>
+          <el-select v-model="formatName" :placeholder="t('sales.search.required')" clearable style="width: 220px">
             <el-option v-for="f in formats" :key="f.name" :label="f.name" :value="f.name" />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="search" :loading="loading">検索</el-button>
-          <el-button @click="resetQuery">クリア</el-button>
+          <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
+          <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
           <el-button type="success" :icon="Document" @click="onIssue" :loading="issuing" :disabled="checkedCount === 0">
-            発行（{{ checkedCount }} 件）
+            {{ t('sales.btn.issue') }}（{{ checkedCount }}）
           </el-button>
         </el-form-item>
       </el-form>
@@ -39,38 +39,38 @@
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">合計 {{ total }} 件</el-tag>
-        <el-tag v-if="checkedCount > 0" type="success" size="small" style="margin-left: 8px;">発行☑ {{ checkedCount }} 件</el-tag>
+        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
+        <el-tag v-if="checkedCount > 0" type="success" size="small" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600">
-        <el-table-column prop="rowNo" label="NO" width="60" align="center" />
-        <el-table-column prop="staffCd" label="担当" width="100" />
-        <el-table-column prop="staffName" label="担当者名" width="120" />
-        <el-table-column prop="customerCd" label="得意先" width="100" />
-        <el-table-column prop="customerName" label="得意先名" width="160" />
-        <el-table-column prop="projectNo" label="案件NO" width="120" />
-        <el-table-column prop="qtnNo" label="御見積書NO" width="130" />
-        <el-table-column prop="qtnIssueDate" label="発行日" width="110">
+        <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
+        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="100" />
+        <el-table-column prop="staffName" :label="t('sales.term.staff') + t('sales.term.bpName').slice(-1)" width="120" />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" />
+        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" width="160" />
+        <el-table-column prop="projectNo" :label="t('sales.fsc.case')" width="120" />
+        <el-table-column prop="qtnNo" :label="t('sales.term.qtnNo')" width="130" />
+        <el-table-column prop="qtnIssueDate" :label="t('sales.qtn.issueDate')" width="110">
           <template #default="{ row }">{{ row.qtnIssueDate?.slice(0, 10) }}</template>
         </el-table-column>
-        <el-table-column prop="customerItemName1" label="顧客品名1" min-width="160" />
-        <el-table-column prop="customerItemName2" label="顧客品名2" min-width="160" />
-        <el-table-column prop="quantity" label="見積数" width="100" align="right" />
-        <el-table-column prop="unitPrice" label="単価" width="120" align="right" />
-        <el-table-column prop="amount" label="金額" width="120" align="right" />
-        <el-table-column prop="totalAmount" label="合計金額" width="130" align="right" />
-        <el-table-column label="ステータス" width="100" align="center">
+        <el-table-column prop="customerItemName1" :label="t('sales.fsc.itemName1')" min-width="160" />
+        <el-table-column prop="customerItemName2" :label="t('sales.fsc.itemName2')" min-width="160" />
+        <el-table-column prop="quantity" :label="t('sales.fsc.estimateQty')" width="100" align="right" />
+        <el-table-column prop="unitPrice" :label="t('sales.term.unitPrice')" width="120" align="right" />
+        <el-table-column prop="amount" :label="t('sales.term.amount')" width="120" align="right" />
+        <el-table-column prop="totalAmount" :label="t('sales.fsc.totalAmount')" width="130" align="right" />
+        <el-table-column :label="t('sales.term.status')" width="100" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'info'" size="small">{{ row.status === 1 ? '確定' : '未' }}</el-tag>
+            <el-tag :type="row.status === 1 ? 'success' : 'info'" size="small">{{ row.status === 1 ? t('sales.fsc.confirmed') : t('sales.fsc.notConfirmed') }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="発行☑" width="80" align="center">
+        <el-table-column :label="t('sales.btn.issue') + '☑'" width="80" align="center">
           <template #default="{ row }">
             <el-checkbox v-model="row.issue" />
           </template>
         </el-table-column>
-        <el-table-column prop="fscManagementNo" label="FSC管理NO" width="130" />
-        <el-table-column label="発行済" width="80" align="center">
+        <el-table-column prop="fscManagementNo" :label="t('sales.fsc.mgmtNo')" width="130" />
+        <el-table-column :label="t('sales.fsc.issued')" width="80" align="center">
           <template #default="{ row }">
             <el-tag v-if="row.issuedLabel" type="success" size="small">{{ row.issuedLabel }}</el-tag>
           </template>
@@ -92,10 +92,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Document } from '@element-plus/icons-vue'
 import { fscApi } from '@/api/fsc'
 import type { FscChecklistQueryDto, FscChecklistItemDto, FscFormat } from '@/types/fsc'
+
+const { t } = useI18n()
 
 const query = reactive<FscChecklistQueryDto>({
   includeUnissued: true, includeIssued: false,

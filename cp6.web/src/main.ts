@@ -14,6 +14,17 @@ async function bootstrap() {
 
   const app = createApp(App)
 
+  // 全局错误处理：吞掉「parentNode of null」类的瞬态 patch 错误，避免整树崩溃
+  app.config.errorHandler = (err, _instance, info) => {
+    const msg = (err as Error)?.message ?? String(err)
+    // Vue 3 patch 阶段瞬态错误（路由切换时偶发）
+    if (/Cannot read properties of null \(reading '(parentNode|subTree|el)'\)/.test(msg)) {
+      console.warn('[Recoverable patch error swallowed]', info, msg)
+      return
+    }
+    console.error('[Vue error]', info, err)
+  }
+
   app.use(createPinia())
   app.use(router)
   app.use(i18n)

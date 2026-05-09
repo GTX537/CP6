@@ -13,31 +13,31 @@
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="hasNoNumber">
-            <el-radio-button :value="OperationType.New">新建</el-radio-button>
-            <el-radio-button :value="OperationType.Edit" :disabled="hasNoNumber">编辑</el-radio-button>
-            <el-radio-button :value="OperationType.Copy" :disabled="hasNoNumber">流用</el-radio-button>
-            <el-radio-button :value="OperationType.View" :disabled="hasNoNumber">查看</el-radio-button>
-            <el-radio-button :value="OperationType.Delete" :disabled="hasNoNumber">删除</el-radio-button>
+            <el-radio-button :value="OperationType.New">{{ t('sales.btn.new') }}</el-radio-button>
+            <el-radio-button :value="OperationType.Edit" :disabled="hasNoNumber">{{ t('sales.op.edit') }}</el-radio-button>
+            <el-radio-button :value="OperationType.Copy" :disabled="hasNoNumber">{{ t('sales.op.copy') }}</el-radio-button>
+            <el-radio-button :value="OperationType.View" :disabled="hasNoNumber">{{ t('sales.op.view') }}</el-radio-button>
+            <el-radio-button :value="OperationType.Delete" :disabled="hasNoNumber">{{ t('sales.op.delete') }}</el-radio-button>
           </el-radio-group>
         </div>
       </div>
 
       <el-steps :active="store.currentStep - 1" finish-status="success" class="step-bar">
-        <el-step title="基本信息" description="Step 1" />
-        <el-step title="工程明细" description="Step 2" />
-        <el-step title="计算结果" description="Step 3" />
+        <el-step :title="t('sales.section.basicInfo')" description="Step 1" />
+        <el-step :title="t('sales.section.process')" description="Step 2" />
+        <el-step :title="t('sales.list.detail')" description="Step 3" />
       </el-steps>
     </el-card>
 
     <!-- 查询入力：按 No 加载 -->
     <el-card shadow="never" class="search-card" v-if="!store.isNew">
       <el-form inline>
-        <el-form-item label="見積計算書No">
+        <el-form-item :label="t('sales.term.calcNo')">
           <el-input v-model="searchNo" placeholder="例: 00000001-01" clearable style="width: 200px" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadByNo" :loading="loading">読込</el-button>
-          <el-button @click="onNewClick">新規</el-button>
+          <el-button type="primary" @click="loadByNo" :loading="loading">{{ t('sales.btn.load') }}</el-button>
+          <el-button @click="onNewClick">{{ t('sales.btn.new') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -52,13 +52,13 @@
     <!-- 底部操作按钮 -->
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
-        <el-button v-if="store.currentStep > 1" @click="onPrev">上一步</el-button>
+        <el-button v-if="store.currentStep > 1" @click="onPrev">{{ t('sales.btn.prev') }}</el-button>
         <el-button
           v-if="btn.next && store.currentStep < 3"
           type="primary"
           @click="onNext"
         >
-          下一步
+          {{ t('sales.btn.next') }}
         </el-button>
         <el-button
           v-if="btn.save"
@@ -66,11 +66,11 @@
           :loading="saving"
           @click="onSave"
         >
-          保存
+          {{ t('sales.btn.save') }}
         </el-button>
-        <el-button v-if="btn.del" type="danger" :loading="saving" @click="onDelete">删除</el-button>
-        <el-button v-if="btn.close" @click="onReset">关闭</el-button>
-        <el-button v-if="btn.cancel && !btn.close" @click="onReset">取消</el-button>
+        <el-button v-if="btn.del" type="danger" :loading="saving" @click="onDelete">{{ t('sales.op.delete') }}</el-button>
+        <el-button v-if="btn.close" @click="onReset">{{ t('sales.btn.cancel') }}</el-button>
+        <el-button v-if="btn.cancel && !btn.close" @click="onReset">{{ t('sales.btn.cancel') }}</el-button>
       </div>
     </el-card>
   </div>
@@ -78,8 +78,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
+const { t } = useI18n()
 import { useEstimateStore } from '@/stores/estimate'
 import { useFieldControl } from '@/composables/useFieldControl'
 import { useConflictHandler } from '@/composables/useConflictHandler'
@@ -123,11 +126,11 @@ const btn = computed(() => buttonVisibility.value)
 
 const opLabel = computed(() => {
   switch (store.operationType) {
-    case OperationType.New: return '新規'
-    case OperationType.Edit: return '編集'
-    case OperationType.Copy: return '流用'
-    case OperationType.View: return '照会'
-    case OperationType.Delete: return '削除'
+    case OperationType.New: return t('sales.op.register')
+    case OperationType.Edit: return t('sales.op.edit')
+    case OperationType.Copy: return t('sales.op.copy')
+    case OperationType.View: return t('sales.op.view')
+    case OperationType.Delete: return t('sales.op.delete')
     default: return ''
   }
 })
@@ -149,7 +152,7 @@ async function onOpChange(target: OperationType) {
   // 有未保存修改，确认
   if (store.isDirty) {
     try {
-      await ElMessageBox.confirm('当前修改尚未保存，继续切换将丢弃？', '确认', {
+      await ElMessageBox.confirm(t('sales.msg.unsavedChanges'), t('sales.msg.confirmTitle'), {
         type: 'warning',
       })
     } catch {
@@ -174,7 +177,7 @@ async function onOpChange(target: OperationType) {
       const res = await estimateCalcApi.copy(store.basicInfo.qtnCalcNo)
       if (res.code === 0) {
         store.loadBasicInfo(res.data)
-        ElMessage.success('已生成流用副本')
+        ElMessage.success(t('sales.msg.loadSuccess'))
       }
     } finally {
       loading.value = false
@@ -186,7 +189,7 @@ async function onOpChange(target: OperationType) {
   if (target === OperationType.Delete || target === OperationType.View || target === OperationType.Edit) {
     // 若页面没数据但切到编辑/删除/查看，提示输入 No
     if (!store.basicInfo.qtnCalcNo) {
-      ElMessage.info('请先输入見積計算書No並读取')
+      ElMessage.info(t('sales.err.E10022'))
       store.setOperationType(from)
     }
   }
@@ -194,7 +197,7 @@ async function onOpChange(target: OperationType) {
 
 async function loadByNo() {
   if (!searchNo.value) {
-    ElMessage.warning('请输入見積計算書No')
+    ElMessage.warning(t('sales.err.E10022'))
     return
   }
   try {
@@ -202,7 +205,7 @@ async function loadByNo() {
     const res = await estimateCalcApi.getByNo(searchNo.value)
     if (res.code === 0) {
       store.loadBasicInfo(res.data)
-      ElMessage.success('读取成功')
+      ElMessage.success(t('sales.msg.loadSuccess'))
     } else {
       ElMessage.warning(res.message)
     }
@@ -241,7 +244,7 @@ async function onSave() {
       if (res.code === 0) {
         store.loadBasicInfo(res.data)
         store.setOperationType(OperationType.Edit)
-        ElMessage.success('保存成功')
+        ElMessage.success(t('sales.msg.saveSuccess'))
         notifyOpener('saved')
       }
     } else if (store.isEdit) {
@@ -249,7 +252,7 @@ async function onSave() {
       const res = await estimateCalcApi.update(no, store.basicInfo)
       if (res.code === 0) {
         store.loadBasicInfo(res.data)
-        ElMessage.success('保存成功')
+        ElMessage.success(t('sales.msg.saveSuccess'))
         notifyOpener('saved')
       }
     }
@@ -263,7 +266,7 @@ async function onSave() {
 
 async function onDelete() {
   try {
-    await ElMessageBox.confirm(`删除 ${store.basicInfo.qtnCalcNo} 后不可恢复（软删除），确定？`, '确认删除', {
+    await ElMessageBox.confirm(`${t('sales.msg.deleteConfirm')} (${store.basicInfo.qtnCalcNo})`, t('sales.msg.confirmTitle'), {
       type: 'warning',
     })
   } catch {
@@ -273,7 +276,7 @@ async function onDelete() {
     saving.value = true
     const res = await estimateCalcApi.remove(store.basicInfo.qtnCalcNo!, store.basicInfo.rowVersion)
     if (res.code === 0) {
-      ElMessage.success('删除成功')
+      ElMessage.success(t('sales.msg.deleteSuccess'))
       store.reset()
       notifyOpener('deleted')
     }
@@ -289,7 +292,7 @@ function onReset() {
   // 独立窗口：直接关闭窗口
   if (isStandalone.value) {
     if (store.isDirty) {
-      ElMessageBox.confirm('当前修改尚未保存，确认关闭？', '确认', { type: 'warning' })
+      ElMessageBox.confirm(t('sales.msg.unsavedChanges'), t('sales.msg.confirmTitle'), { type: 'warning' })
         .then(() => window.close())
         .catch(() => {})
     } else {
@@ -301,10 +304,10 @@ function onReset() {
   searchNo.value = ''
 }
 
-// 页面卸载时 reset
+// 页面卸载时 reset（setup-style store なので $reset は無し → 自前の reset() を呼ぶ）
 onBeforeUnmount(() => {
   // 防止离开后下次再进带脏数据
-  store.$reset?.()
+  if (typeof store.reset === 'function') store.reset()
 })
 
 // ============== URL 参数驱动（独立窗口时用）==============
@@ -339,7 +342,7 @@ onMounted(async () => {
         store.loadBasicInfo(res.data)
         store.setOperationType(op)
       } else {
-        ElMessage.warning(res.message || `No=${noParam} 未找到`)
+        ElMessage.warning(res.message || `No=${noParam} not found`)
       }
     } finally {
       loading.value = false
@@ -349,13 +352,13 @@ onMounted(async () => {
   // 标题：独立窗口时改为更有区分度的标题
   if (isStandalone.value) {
     const labels: Record<number, string> = {
-      [OperationType.New]: '新規',
-      [OperationType.Edit]: '編集',
-      [OperationType.View]: '照会',
-      [OperationType.Delete]: '削除',
-      [OperationType.Copy]: '流用',
+      [OperationType.New]: t('sales.op.register'),
+      [OperationType.Edit]: t('sales.op.edit'),
+      [OperationType.View]: t('sales.op.view'),
+      [OperationType.Delete]: t('sales.op.delete'),
+      [OperationType.Copy]: t('sales.op.copy'),
     }
-    const title = `見積計算書 - ${labels[op] ?? ''}${noParam ? ` - ${noParam}` : ''}`
+    const title = `${t('sales.term.calcNo')} - ${labels[op] ?? ''}${noParam ? ` - ${noParam}` : ''}`
     try { document.title = title } catch {}
   }
 })

@@ -3,23 +3,23 @@
     <!-- 検索エリア -->
     <el-card shadow="never" class="search-card">
       <el-form inline :model="query" @submit.prevent="onSearch">
-        <el-form-item label="御見積書No">
-          <el-input v-model="query.qtnNoFrom" placeholder="From" clearable style="width: 140px" />
+        <el-form-item :label="t('sales.term.qtnNo')">
+          <el-input v-model="query.qtnNoFrom" :placeholder="t('sales.search.from')" clearable style="width: 140px" />
           <span style="margin: 0 4px">~</span>
-          <el-input v-model="query.qtnNoTo" placeholder="To" clearable style="width: 140px" />
+          <el-input v-model="query.qtnNoTo" :placeholder="t('sales.search.to')" clearable style="width: 140px" />
         </el-form-item>
-        <el-form-item label="発行日">
+        <el-form-item :label="t('sales.qtn.issueDate')">
           <el-date-picker
             v-model="dateRange"
             type="daterange"
             value-format="YYYY-MM-DD"
             range-separator="~"
-            start-placeholder="開始日"
-            end-placeholder="終了日"
+            :start-placeholder="t('sales.search.dateFrom')"
+            :end-placeholder="t('sales.search.dateTo')"
             style="width: 260px"
           />
         </el-form-item>
-        <el-form-item label="拠点">
+        <el-form-item :label="t('sales.term.base')">
           <el-select v-model="query.baseCd" placeholder="全部" clearable style="width: 160px">
             <el-option
               v-for="b in bases"
@@ -29,11 +29,11 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="担当">
-          <el-input v-model="query.staffCd" placeholder="担当CD" clearable style="width: 120px" />
+        <el-form-item :label="t('sales.term.staff')">
+          <el-input v-model="query.staffCd" :placeholder="t('sales.term.staff') + ' CD'" clearable style="width: 120px" />
         </el-form-item>
-        <el-form-item label="顧客">
-          <el-input v-model="query.customerCd" placeholder="顧客CD" clearable style="width: 140px" />
+        <el-form-item :label="t('sales.term.customer')">
+          <el-input v-model="query.customerCd" :placeholder="t('sales.term.customer') + ' CD'" clearable style="width: 140px" />
         </el-form-item>
         <el-form-item label="親案件">
           <el-input v-model="query.projectNoParent" clearable style="width: 120px" />
@@ -41,17 +41,17 @@
         <el-form-item label="品名">
           <el-input v-model="query.customerProductName1" clearable style="width: 200px" />
         </el-form-item>
-        <el-form-item label="ステータス">
+        <el-form-item :label="t('sales.term.status')">
           <el-checkbox-group v-model="statusSel">
-            <el-checkbox value="0">未承認</el-checkbox>
-            <el-checkbox value="9">承認済</el-checkbox>
-            <el-checkbox value="C">見積確定済</el-checkbox>
+            <el-checkbox value="0">{{ t('sales.fsc.notConfirmed') }}</el-checkbox>
+            <el-checkbox value="9">{{ t('sales.status.approved') }}</el-checkbox>
+            <el-checkbox value="C">{{ t('sales.status.confirmed') }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="onSearch">検索</el-button>
-          <el-button :icon="RefreshLeft" @click="onReset">クリア</el-button>
-          <el-button type="success" :icon="Plus" @click="onNew">新規作成</el-button>
+          <el-button type="primary" :icon="Search" @click="onSearch">{{ t('sales.btn.search') }}</el-button>
+          <el-button :icon="RefreshLeft" @click="onReset">{{ t('sales.btn.clear') }}</el-button>
+          <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -66,12 +66,12 @@
         style="width: 100%"
         @row-dblclick="(row: QuotationListItem) => onView(row)"
       >
-        <el-table-column prop="qtnNo" label="御見積書No" width="120" fixed="left" />
-        <el-table-column prop="qtnIssueDate" label="発行日" width="110">
+        <el-table-column prop="qtnNo" :label="t('sales.term.qtnNo')" width="120" fixed="left" />
+        <el-table-column prop="qtnIssueDate" :label="t('sales.qtn.issueDate')" width="110">
           <template #default="{ row }">{{ fmtDate(row.qtnIssueDate) }}</template>
         </el-table-column>
-        <el-table-column prop="baseCd" label="拠点" width="70" />
-        <el-table-column prop="staffCd" label="担当" width="80">
+        <el-table-column prop="baseCd" :label="t('sales.term.base')" width="70" />
+        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="80">
           <template #default="{ row }">
             <el-tooltip v-if="row.staffName" :content="row.staffName" placement="top">
               <span>{{ row.staffCd }}</span>
@@ -79,37 +79,37 @@
             <span v-else>{{ row.staffCd }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="customerCd" label="顧客CD" width="90" />
-        <el-table-column prop="customerName" label="顧客名" min-width="160" show-overflow-tooltip />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer') + ' CD'" width="90" />
+        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" min-width="160" show-overflow-tooltip />
         <el-table-column prop="projectNoParent" label="親案件" width="110" />
         <el-table-column prop="projectNoChild" label="子案件" width="110" />
         <el-table-column prop="itemName1" label="品名1" min-width="160" show-overflow-tooltip />
         <el-table-column label="初行数量" width="100" align="right">
           <template #default="{ row }">{{ fmtNum(row.firstQuantity) }}</template>
         </el-table-column>
-        <el-table-column label="初行単価" width="110" align="right">
+        <el-table-column :label="'初行' + t('sales.term.unitPrice')" width="110" align="right">
           <template #default="{ row }">{{ fmtMoney(row.firstUnitPrice) }}</template>
         </el-table-column>
-        <el-table-column label="初行金額" width="130" align="right">
+        <el-table-column :label="'初行' + t('sales.term.amount')" width="130" align="right">
           <template #default="{ row }">{{ fmtMoney(row.firstAmount) }}</template>
         </el-table-column>
-        <el-table-column label="合計金額" width="130" align="right">
+        <el-table-column :label="t('sales.fsc.totalAmount')" width="130" align="right">
           <template #default="{ row }">{{ fmtMoney(row.totalAmount) }}</template>
         </el-table-column>
-        <el-table-column label="状態" width="100">
+        <el-table-column :label="t('sales.term.status')" width="100">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" size="small">
               {{ row.status }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="320" fixed="right">
+        <el-table-column :label="t('sales.list.action')" width="320" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="onView(row)">照会</el-button>
-            <el-button link type="warning" @click="onEdit(row)">訂正</el-button>
-            <el-button link type="success" @click="onCopy(row)">流用</el-button>
-            <el-button link type="info" @click="onIssue(row)">発行</el-button>
-            <el-button link type="danger" @click="onDelete(row)">削除</el-button>
+            <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
+            <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+            <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+            <el-button link type="info" @click="onIssue(row)">{{ t('sales.btn.issue') }}</el-button>
+            <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -131,6 +131,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue'
 import { quotationApi } from '@/api/quotation'

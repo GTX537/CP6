@@ -2,71 +2,71 @@
   <div class="bp-list">
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
-        <el-divider content-position="left">属性 FLG（1 つ以上必須）</el-divider>
+        <el-divider content-position="left">{{ t('sales.search.required') }} FLG</el-divider>
         <div class="flg-row">
-          <el-checkbox v-model="query.includeCustomer">得意先</el-checkbox>
-          <el-checkbox v-model="query.includeAccountsReceivable">売掛先</el-checkbox>
-          <el-checkbox v-model="query.includeBilling">請求先</el-checkbox>
-          <el-checkbox v-model="query.includeReceipt">入金先</el-checkbox>
-          <el-checkbox v-model="query.includeDelivery">納品先</el-checkbox>
-          <el-checkbox v-model="query.includeCreditMgmt">与信管理先</el-checkbox>
-          <el-checkbox v-model="query.includeSupplier">発注先</el-checkbox>
-          <el-checkbox v-model="query.includeAccountsPayable">買掛先</el-checkbox>
-          <el-checkbox v-model="query.includePaymentSchedule">支払予定管理先</el-checkbox>
-          <el-checkbox v-model="query.includePayment">支払先</el-checkbox>
-          <el-checkbox v-model="query.includeMaker">メーカ</el-checkbox>
+          <el-checkbox v-model="query.includeCustomer">{{ t('sales.role.customer') }}</el-checkbox>
+          <el-checkbox v-model="query.includeAccountsReceivable">{{ t('sales.role.ar') }}</el-checkbox>
+          <el-checkbox v-model="query.includeBilling">{{ t('sales.role.billing') }}</el-checkbox>
+          <el-checkbox v-model="query.includeReceipt">{{ t('sales.role.receipt') }}</el-checkbox>
+          <el-checkbox v-model="query.includeDelivery">{{ t('sales.role.delivery') }}</el-checkbox>
+          <el-checkbox v-model="query.includeCreditMgmt">{{ t('sales.role.creditMgmt') }}</el-checkbox>
+          <el-checkbox v-model="query.includeSupplier">{{ t('sales.role.supplier') }}</el-checkbox>
+          <el-checkbox v-model="query.includeAccountsPayable">{{ t('sales.role.ap') }}</el-checkbox>
+          <el-checkbox v-model="query.includePaymentSchedule">{{ t('sales.role.paymentSch') }}</el-checkbox>
+          <el-checkbox v-model="query.includePayment">{{ t('sales.role.payment') }}</el-checkbox>
+          <el-checkbox v-model="query.includeMaker">{{ t('sales.role.maker') }}</el-checkbox>
         </div>
 
-        <el-divider content-position="left">基本条件</el-divider>
+        <el-divider content-position="left">{{ t('sales.section.searchCond') }}</el-divider>
         <el-form-item label="登録日 FROM"><el-date-picker v-model="query.registeredDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" /></el-form-item>
         <el-form-item label="登録日 TO"><el-date-picker v-model="query.registeredDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" /></el-form-item>
-        <el-form-item label="取引先"><el-input v-model="query.bpCd" style="width: 160px" /></el-form-item>
-        <el-form-item label="取引先名"><el-input v-model="query.bpName" style="width: 200px" /></el-form-item>
+        <el-form-item :label="t('sales.term.bp')"><el-input v-model="query.bpCd" style="width: 160px" /></el-form-item>
+        <el-form-item :label="t('sales.term.bpName')"><el-input v-model="query.bpName" style="width: 200px" /></el-form-item>
         <el-form-item label="法人番号"><el-input v-model="query.ein" style="width: 160px" /></el-form-item>
         <el-form-item label="標準企業コード"><el-input v-model="query.stdCoCd" style="width: 160px" /></el-form-item>
         <el-form-item label="郵便番号"><el-input v-model="query.zipCd" style="width: 130px" /></el-form-item>
         <el-form-item label="住所(LIKE)"><el-input v-model="query.addr" style="width: 200px" /></el-form-item>
         <el-form-item label="TEL"><el-input v-model="query.tel" style="width: 160px" /></el-form-item>
-        <el-form-item label="営業担当"><el-input v-model="query.salesStaffCd" style="width: 130px" /></el-form-item>
-        <el-form-item label="業務担当"><el-input v-model="query.businessStaffCd" style="width: 130px" /></el-form-item>
+        <el-form-item :label="t('sales.term.salesStaff')"><el-input v-model="query.salesStaffCd" style="width: 130px" /></el-form-item>
+        <el-form-item :label="t('sales.term.businessStaff')"><el-input v-model="query.businessStaffCd" style="width: 130px" /></el-form-item>
 
         <el-collapse v-model="advOpen" style="width: 100%">
-          <el-collapse-item title="詳細：取引先分類 1〜10" name="adv">
+          <el-collapse-item :title="t('sales.section.advSearch') + '：取引先分類 1〜10'" name="adv">
             <el-form-item v-for="i in 10" :key="i" :label="`分類${i}`">
               <el-input v-model="(query as any)[`bpClass${String(i).padStart(2,'0')}`]" style="width: 110px" />
             </el-form-item>
           </el-collapse-item>
         </el-collapse>
 
-        <el-form-item label="ステータス">
-          <el-checkbox v-model="query.includePreRegistered">事前登録</el-checkbox>
-          <el-checkbox v-model="query.includeRegistered">本登録</el-checkbox>
+        <el-form-item :label="t('sales.term.status')">
+          <el-checkbox v-model="query.includePreRegistered">{{ t('sales.op.preregister') }}</el-checkbox>
+          <el-checkbox v-model="query.includeRegistered">{{ t('sales.op.register') }}</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="search" :loading="loading">検索</el-button>
-          <el-button @click="resetQuery">クリア</el-button>
-          <el-button :icon="Download" @click="exportCsv" :loading="exporting">CSV 出力</el-button>
+          <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
+          <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
+          <el-button :icon="Download" @click="exportCsv" :loading="exporting">{{ t('sales.btn.exportCsv') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">合計 {{ total }} 件</el-tag>
-        <el-button v-if="selectedRow" type="primary" link size="small" style="margin-left: 12px" @click="goView">参照モードで開く</el-button>
+        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
+        <el-button v-if="selectedRow" type="primary" link size="small" style="margin-left: 12px" @click="goView">{{ t('sales.btn.openView') }}</el-button>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" highlight-current-row @current-change="onCurrentChange">
-        <el-table-column prop="rowNo" label="№" width="60" align="center" />
-        <el-table-column label="ステータス" width="100">
+        <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
+        <el-table-column :label="t('sales.term.status')" width="100">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="bpCd" label="取引先" width="120" />
-        <el-table-column prop="bpName" label="取引先名" min-width="200" />
+        <el-table-column prop="bpCd" :label="t('sales.term.bp')" width="120" />
+        <el-table-column prop="bpName" :label="t('sales.term.bpName')" min-width="200" />
         <el-table-column prop="bpAbbrev" label="略称" width="120" />
-        <el-table-column prop="salesStaffCd" label="営業担当" width="120" />
-        <el-table-column prop="businessStaffCd" label="業務担当" width="120" />
+        <el-table-column prop="salesStaffCd" :label="t('sales.term.salesStaff')" width="120" />
+        <el-table-column prop="businessStaffCd" :label="t('sales.term.businessStaff')" width="120" />
         <el-table-column prop="ein" label="法人番号" width="140" />
         <el-table-column prop="stdCoCd" label="標準企業" width="140" />
         <el-table-column prop="addr1" label="住所1" width="120" />
@@ -103,12 +103,14 @@
 
 <script setup lang="ts">
 import { ref, reactive, h } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Download, Check } from '@element-plus/icons-vue'
 import { bpApi } from '@/api/businessPartner'
 import type { BpQueryDto, BpListItemDto } from '@/types/businessPartner'
 
+const { t } = useI18n()
 const router = useRouter()
 
 // 简易内联组件：FLG 图标
@@ -137,8 +139,8 @@ async function search() {
     || query.includeReceipt || query.includeDelivery || query.includeCreditMgmt
     || query.includeSupplier || query.includeAccountsPayable || query.includePaymentSchedule
     || query.includePayment || query.includeMaker
-  if (!anyFlg) { ElMessage.warning('E10030: 属性 FLG のいずれかを選択してください'); return }
-  if (!query.includePreRegistered && !query.includeRegistered) { ElMessage.warning('E10030: ステータスのいずれかを選択してください'); return }
+  if (!anyFlg) { ElMessage.warning(t('sales.err.E10030') + ': FLG'); return }
+  if (!query.includePreRegistered && !query.includeRegistered) { ElMessage.warning(t('sales.err.E10030') + ': ' + t('sales.term.status')); return }
 
   loading.value = true
   try {
@@ -146,7 +148,7 @@ async function search() {
     if (r.code === 0 && r.data) {
       rows.value = r.data.rows
       total.value = r.data.total
-      if (rows.value.length === 0) ElMessage.info('E10008: 検索結果がありません')
+      if (rows.value.length === 0) ElMessage.info(t('sales.err.E10008'))
     }
   } finally {
     loading.value = false
@@ -189,7 +191,7 @@ function goView() {
 }
 
 function statusLabel(s: number): string {
-  return s === 0 ? '事前登録' : s === 1 ? '本登録' : s === 9 ? '削除済' : '-'
+  return s === 0 ? t('sales.op.preregister') : s === 1 ? t('sales.op.register') : s === 9 ? t('sales.op.delete') : '-'
 }
 function statusTagType(s: number): 'info' | 'success' | 'danger' {
   return s === 0 ? 'info' : s === 1 ? 'success' : 'danger'

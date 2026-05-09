@@ -8,24 +8,24 @@
           <span v-if="store.order.webOrderNo" class="web-order-no">
             Web受注NO: {{ store.order.webOrderNo }}
           </span>
-          <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">自動採番待ち</el-tag>
-          <el-tag v-if="store.order.status === 9" type="success" size="small">mc転送済</el-tag>
+          <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">{{ t('sales.status.autoNumber') }}</el-tag>
+          <el-tag v-if="store.order.status === 9" type="success" size="small">{{ t('sales.status.transferred') }}</el-tag>
           <el-tag v-if="store.order.mcTransferFlg" type="info" size="small">mc連携</el-tag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="hasNoOrder">
-            <el-radio-button :value="OrderOperationType.New">登録</el-radio-button>
-            <el-radio-button :value="OrderOperationType.Edit" :disabled="hasNoOrder">訂正</el-radio-button>
-            <el-radio-button :value="OrderOperationType.Delete" :disabled="hasNoOrder">削除</el-radio-button>
-            <el-radio-button :value="OrderOperationType.View" :disabled="hasNoOrder">参照</el-radio-button>
+            <el-radio-button :value="OrderOperationType.New">{{ t('sales.op.register') }}</el-radio-button>
+            <el-radio-button :value="OrderOperationType.Edit" :disabled="hasNoOrder">{{ t('sales.op.edit') }}</el-radio-button>
+            <el-radio-button :value="OrderOperationType.Delete" :disabled="hasNoOrder">{{ t('sales.op.delete') }}</el-radio-button>
+            <el-radio-button :value="OrderOperationType.View" :disabled="hasNoOrder">{{ t('sales.op.view') }}</el-radio-button>
           </el-radio-group>
         </div>
       </div>
 
       <el-steps :active="store.currentStep - 1" finish-status="success" class="step-bar">
-        <el-step title="基本情報・受注明細" description="Step 1" />
-        <el-step title="基本情報・構成・備考" description="Step 2" />
-        <el-step title="工程情報・材料設定" description="Step 3" />
+        <el-step :title="t('sales.section.basicInfo') + '・' + t('sales.section.orderDetail')" description="Step 1" />
+        <el-step :title="t('sales.section.basicInfo') + '・' + t('sales.section.composition') + '・' + t('sales.section.notes')" description="Step 2" />
+        <el-step :title="t('sales.section.process') + '・' + t('sales.section.material')" description="Step 3" />
       </el-steps>
     </el-card>
 
@@ -35,12 +35,12 @@
         <el-form-item label="Web受注NO">
           <el-input v-model="searchNo" placeholder="例: WO20260501000001" clearable style="width: 240px" />
         </el-form-item>
-        <el-form-item label="手配NO1">
+        <el-form-item :label="t('sales.term.haibaiNo') + '1'">
           <el-input v-model="searchHaibaiNo1" clearable style="width: 200px" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onLoad" :loading="loading">読込</el-button>
-          <el-button @click="onNewClick">新規</el-button>
+          <el-button type="primary" @click="onLoad" :loading="loading">{{ t('sales.btn.load') }}</el-button>
+          <el-button @click="onNewClick">{{ t('sales.btn.new') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -55,11 +55,11 @@
     <!-- 底部 -->
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
-        <el-button v-if="store.currentStep > 1" @click="onPrev">前へ</el-button>
-        <el-button v-if="store.currentStep < 3" type="primary" @click="onNext">次へ</el-button>
-        <el-button v-if="canSave" type="success" :loading="saving" @click="onSave">保存</el-button>
-        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onDelete">削除実行</el-button>
-        <el-button @click="onReset">クリア</el-button>
+        <el-button v-if="store.currentStep > 1" @click="onPrev">{{ t('sales.btn.prev') }}</el-button>
+        <el-button v-if="store.currentStep < 3" type="primary" @click="onNext">{{ t('sales.btn.next') }}</el-button>
+        <el-button v-if="canSave" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.save') }}</el-button>
+        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onDelete">{{ t('sales.btn.delete') }}</el-button>
+        <el-button @click="onReset">{{ t('sales.btn.clear') }}</el-button>
       </div>
     </el-card>
   </div>
@@ -67,6 +67,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useOrderStore } from '@/stores/order'
 import { OrderOperationType } from '@/types/order'
@@ -75,6 +76,7 @@ import Step1HeaderAndDetails from './order/Step1HeaderAndDetails.vue'
 import Step2BasicInfo from './order/Step2BasicInfo.vue'
 import Step3ProcessInfo from './order/Step3ProcessInfo.vue'
 
+const { t } = useI18n()
 const store = useOrderStore()
 
 const searchNo = ref('')
@@ -92,10 +94,10 @@ const opModel = computed({
 
 const opLabel = computed(() => {
   switch (store.operationType) {
-    case OrderOperationType.New: return '登録'
-    case OrderOperationType.Edit: return '訂正'
-    case OrderOperationType.Delete: return '削除'
-    case OrderOperationType.View: return '参照'
+    case OrderOperationType.New: return t('sales.op.register')
+    case OrderOperationType.Edit: return t('sales.op.edit')
+    case OrderOperationType.Delete: return t('sales.op.delete')
+    case OrderOperationType.View: return t('sales.op.view')
     default: return ''
   }
 })
@@ -117,14 +119,14 @@ async function onLoad() {
       if (res.code === 0 && res.data) {
         store.loadFromDto(res.data)
         store.setOperationType(OrderOperationType.Edit)
-        ElMessage.success('受注を読込みました')
+        ElMessage.success(t('sales.msg.loadSuccess'))
       }
     } else if (searchHaibaiNo1.value) {
       const res = await orderApi.lookupByHaibaiNo(searchHaibaiNo1.value)
       if (res.code === 0 && res.data) {
         store.loadFromDto(res.data)
         store.setOperationType(OrderOperationType.Edit)
-        ElMessage.success('手配NOから受注を読込みました')
+        ElMessage.success(t('sales.msg.loadSuccess'))
       }
     } else {
       ElMessage.warning('Web受注NO または 手配NO1 を入力してください')
@@ -164,11 +166,11 @@ async function onNext() {
 
 function validateAll(): boolean {
   const o = store.order
-  if (!o.customerCd?.trim()) { ElMessage.error('得意先 CD は必須です'); return false }
-  if (!o.orderType?.trim()) { ElMessage.error('受注区分は必須です'); return false }
-  if (o.details.length === 0) { ElMessage.error('登録する明細がありません'); return false }
+  if (!o.customerCd?.trim()) { ElMessage.error(t('sales.err.E10022') + ': ' + t('sales.term.customerCd')); return false }
+  if (!o.orderType?.trim()) { ElMessage.error(t('sales.err.E10022') + ': ' + t('sales.term.orderType')); return false }
+  if (o.details.length === 0) { ElMessage.error(t('sales.err.E10009')); return false }
   for (const d of o.details) {
-    if (!d.productCd?.trim()) { ElMessage.error(`明細 ${d.webOrderDetailNo}: 製品 CD は必須です`); return false }
+    if (!d.productCd?.trim()) { ElMessage.error(t('sales.err.E10022') + `: ${d.webOrderDetailNo} - ` + t('sales.term.productCd')); return false }
   }
   return true
 }
@@ -196,13 +198,13 @@ async function onSave() {
       if (res.code === 0 && res.data) {
         store.loadFromDto(res.data)
         store.setOperationType(OrderOperationType.Edit)
-        ElMessage.success('登録しました')
+        ElMessage.success(t('sales.msg.saveSuccess'))
       }
     } else if (store.isEdit && store.order.webOrderNo) {
       const res = await orderApi.update(store.order.webOrderNo, dto)
       if (res.code === 0 && res.data) {
         store.loadFromDto(res.data)
-        ElMessage.success('訂正しました')
+        ElMessage.success(t('sales.msg.saveSuccess'))
       }
     }
   } catch {
@@ -224,7 +226,7 @@ async function onDelete() {
   try {
     const res = await orderApi.remove(store.order.webOrderNo, store.order.rowVersion)
     if (res.code === 0) {
-      ElMessage.success('削除しました')
+      ElMessage.success(t('sales.msg.deleteSuccess'))
       store.reset()
     }
   } catch { /* */ } finally {
@@ -235,7 +237,7 @@ async function onDelete() {
 async function onReset() {
   if (store.isDirty) {
     try {
-      await ElMessageBox.confirm('未保存の変更があります。クリアしますか？', '確認', { type: 'warning' })
+      await ElMessageBox.confirm(t('sales.msg.unsavedChanges'), t('sales.msg.confirmTitle'), { type: 'warning' })
     } catch { return }
   }
   store.reset()

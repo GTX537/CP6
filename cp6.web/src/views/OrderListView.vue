@@ -3,43 +3,43 @@
     <!-- 検索条件 -->
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
-        <el-form-item label="拠点">
+        <el-form-item :label="t('sales.term.base')">
           <el-input v-model="query.baseCd" style="width: 120px" />
         </el-form-item>
-        <el-form-item label="得意先 FROM">
+        <el-form-item :label="t('sales.term.customer') + ' ' + t('sales.search.from')">
           <el-input v-model="query.customerCd" style="width: 130px" />
         </el-form-item>
-        <el-form-item label="得意先 TO">
+        <el-form-item :label="t('sales.term.customer') + ' ' + t('sales.search.to')">
           <el-input v-model="query.customerCdTo" style="width: 130px" />
         </el-form-item>
-        <el-form-item label="受注区分">
+        <el-form-item :label="t('sales.term.orderType')">
           <el-input v-model="query.orderType" style="width: 100px" />
         </el-form-item>
-        <el-form-item label="受注日 FROM">
+        <el-form-item :label="t('sales.term.orderDate') + ' ' + t('sales.search.from')">
           <el-date-picker v-model="query.orderDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
-        <el-form-item label="受注日 TO">
+        <el-form-item :label="t('sales.term.orderDate') + ' ' + t('sales.search.to')">
           <el-date-picker v-model="query.orderDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
-        <el-form-item label="客先納期 FROM">
+        <el-form-item :label="t('sales.term.deliveryDate') + ' ' + t('sales.search.from')">
           <el-date-picker v-model="query.deliveryDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
-        <el-form-item label="客先納期 TO">
+        <el-form-item :label="t('sales.term.deliveryDate') + ' ' + t('sales.search.to')">
           <el-date-picker v-model="query.deliveryDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
 
         <el-collapse v-model="advancedOpen" style="width: 100%">
-          <el-collapse-item title="詳細検索" name="adv">
-            <el-form-item label="手配NO1 FROM">
+          <el-collapse-item :title="t('sales.section.advSearch')" name="adv">
+            <el-form-item :label="t('sales.term.haibaiNo') + '1 ' + t('sales.search.from')">
               <el-input v-model="query.haibaiNo1From" style="width: 150px" />
             </el-form-item>
-            <el-form-item label="手配NO1 TO">
+            <el-form-item :label="t('sales.term.haibaiNo') + '1 ' + t('sales.search.to')">
               <el-input v-model="query.haibaiNo1To" style="width: 150px" />
             </el-form-item>
-            <el-form-item label="注文書NO">
+            <el-form-item :label="t('sales.term.orderSheet')">
               <el-input v-model="query.orderSheetNo" style="width: 150px" />
             </el-form-item>
-            <el-form-item label="製品CD">
+            <el-form-item :label="t('sales.term.productCd')">
               <el-input v-model="query.productCd" style="width: 150px" />
             </el-form-item>
             <el-form-item label="顧客品名">
@@ -64,16 +64,16 @@
               <el-input v-model="query.carrier" style="width: 130px" />
             </el-form-item>
             <el-form-item>
-              <el-checkbox v-model="query.onlyConsignedSales">預り売上のみ</el-checkbox>
-              <el-checkbox v-model="query.onlyMcUntransferred">mc未転送のみ</el-checkbox>
+              <el-checkbox v-model="query.onlyConsignedSales">{{ t('sales.order.consignedSale') }}</el-checkbox>
+              <el-checkbox v-model="query.onlyMcUntransferred">{{ t('sales.order.mcUntransferred') }}</el-checkbox>
             </el-form-item>
           </el-collapse-item>
         </el-collapse>
 
         <el-form-item>
-          <el-button type="primary" @click="search" :loading="loading">検索</el-button>
-          <el-button @click="resetQuery">クリア</el-button>
-          <el-button :icon="Download" @click="exportCsv" :loading="exporting">CSV出力</el-button>
+          <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
+          <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
+          <el-button :icon="Download" @click="exportCsv" :loading="exporting">{{ t('sales.btn.exportCsv') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -81,13 +81,13 @@
     <!-- 結果 -->
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">合計 {{ total }} 件</el-tag>
+        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600">
-        <el-table-column prop="rowNo" label="No" width="60" align="center" />
-        <el-table-column prop="customerCd" label="得意先" width="100" />
-        <el-table-column prop="customerName" label="得意先名" width="160" />
-        <el-table-column prop="salesPersonName" label="担当者" width="120" />
+        <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" />
+        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" width="160" />
+        <el-table-column prop="salesPersonName" :label="t('sales.term.staff')" width="120" />
         <el-table-column prop="orderSheetNo" label="注文書NO" width="120" />
         <el-table-column prop="haibaiNo1" label="手配NO1" width="140" />
         <el-table-column prop="defectiveHaibaiNo" label="不適合手配NO" width="140" />
@@ -134,12 +134,14 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Download, Check } from '@element-plus/icons-vue'
 import { orderApi } from '@/api/order'
 import type { OrderQueryDto, OrderListItemDto } from '@/types/order'
 
+const { t } = useI18n()
 const router = useRouter()
 
 const query = reactive<OrderQueryDto>({
@@ -159,7 +161,7 @@ async function search() {
     if (res.code === 0 && res.data) {
       rows.value = res.data.rows
       total.value = res.data.total
-      if (rows.value.length === 0) ElMessage.info('E10008: 検索結果がありません')
+      if (rows.value.length === 0) ElMessage.info(t('sales.err.E10008'))
     }
   } catch { /* */ } finally {
     loading.value = false

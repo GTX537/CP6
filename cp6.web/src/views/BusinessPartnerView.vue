@@ -5,26 +5,26 @@
       <div class="header-row">
         <el-tag :type="opTagType" size="large" effect="dark">{{ opLabel }}</el-tag>
         <el-radio-group v-model="opModel" size="small">
-          <el-radio-button :value="BpOperationType.PreRegister">事前登録</el-radio-button>
-          <el-radio-button :value="BpOperationType.Register">登録</el-radio-button>
-          <el-radio-button :value="BpOperationType.Edit" :disabled="!hasLoaded">訂正</el-radio-button>
-          <el-radio-button :value="BpOperationType.Delete" :disabled="!hasLoaded || !store.isAdmin">削除</el-radio-button>
-          <el-radio-button :value="BpOperationType.View" :disabled="!hasLoaded">参照</el-radio-button>
+          <el-radio-button :value="BpOperationType.PreRegister">{{ t('sales.op.preregister') }}</el-radio-button>
+          <el-radio-button :value="BpOperationType.Register">{{ t('sales.op.register') }}</el-radio-button>
+          <el-radio-button :value="BpOperationType.Edit" :disabled="!hasLoaded">{{ t('sales.op.edit') }}</el-radio-button>
+          <el-radio-button :value="BpOperationType.Delete" :disabled="!hasLoaded || !store.isAdmin">{{ t('sales.op.delete') }}</el-radio-button>
+          <el-radio-button :value="BpOperationType.View" :disabled="!hasLoaded">{{ t('sales.op.view') }}</el-radio-button>
         </el-radio-group>
-        <el-tag v-if="store.bp.status === 0" type="info" size="small">事前登録</el-tag>
-        <el-tag v-else-if="store.bp.status === 1" type="success" size="small">本登録</el-tag>
-        <el-tag v-else-if="store.bp.status === 9" type="danger" size="small">削除済</el-tag>
+        <el-tag v-if="store.bp.status === 0" type="info" size="small">{{ t('sales.op.preregister') }}</el-tag>
+        <el-tag v-else-if="store.bp.status === 1" type="success" size="small">{{ t('sales.op.register') }}</el-tag>
+        <el-tag v-else-if="store.bp.status === 9" type="danger" size="small">{{ t('sales.op.delete') }}</el-tag>
       </div>
 
       <el-form inline size="small" style="margin-top: 8px">
-        <el-form-item label="取引先 CD" required>
+        <el-form-item :label="t('sales.term.bpCd')" required>
           <el-input v-model="store.bp.bpCd" :disabled="!isCdEditable" style="width: 200px" />
-          <el-button v-if="!store.isPreReg && !store.isReg" type="primary" size="small" :loading="loading" @click="onLoad" style="margin-left: 4px">読込</el-button>
+          <el-button v-if="!store.isPreReg && !store.isReg" type="primary" size="small" :loading="loading" @click="onLoad" style="margin-left: 4px">{{ t('sales.btn.load') }}</el-button>
         </el-form-item>
-        <el-form-item label="取引先名">
+        <el-form-item :label="t('sales.term.bpName')">
           <el-input v-model="store.bp.bpName" :disabled="!store.canEdit" style="width: 280px" />
         </el-form-item>
-        <el-form-item label="拠点 CD" required>
+        <el-form-item :label="t('sales.term.base') + ' CD'" required>
           <el-input v-model="store.bp.baseCd" :disabled="!store.canEdit" style="width: 140px" />
         </el-form-item>
       </el-form>
@@ -33,17 +33,17 @@
     <!-- Tab 1: 基本情報 + 取引分類 ；Tab 2 以降: 9 個の属性 Tab -->
     <el-tabs v-model="activeTab" type="border-card" style="margin-top: 12px">
       <!-- Tab1 -->
-      <el-tab-pane label="基本情報・取引分類" name="basic">
+      <el-tab-pane :label="t('sales.section.basicInfo')" name="basic">
         <BasicInfoTab :store="store" />
       </el-tab-pane>
 
       <!-- 9 個の動的 Tab — FLG=ON で表示 -->
-      <el-tab-pane v-if="store.bp.customerFlg" label="得意先" name="customer"><CustomerTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.customerFlg" :label="t('sales.term.customer')" name="customer"><CustomerTab :store="store" /></el-tab-pane>
       <el-tab-pane v-if="store.bp.accountsReceivableFlg" label="売掛先" name="ar"><ArTab :store="store" /></el-tab-pane>
       <el-tab-pane v-if="store.bp.billingFlg" label="請求先" name="billing"><BillingTab :store="store" /></el-tab-pane>
       <el-tab-pane v-if="store.bp.receiptFlg" label="入金先" name="receipt"><ReceiptTab :store="store" /></el-tab-pane>
-      <el-tab-pane v-if="store.bp.deliveryFlg" label="納品先" name="delivery"><DeliveryTab :store="store" /></el-tab-pane>
-      <el-tab-pane v-if="store.bp.supplierFlg" label="発注先" name="supplier"><SupplierTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.deliveryFlg" :label="t('sales.term.deliveryTo')" name="delivery"><DeliveryTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.supplierFlg" :label="t('sales.term.supplier')" name="supplier"><SupplierTab :store="store" /></el-tab-pane>
       <el-tab-pane v-if="store.bp.accountsPayableFlg" label="買掛先" name="ap"><ApTab :store="store" /></el-tab-pane>
       <el-tab-pane v-if="store.bp.paymentScheduleFlg" label="支払予定管理先" name="paySch"><PaySchTab :store="store" /></el-tab-pane>
       <el-tab-pane v-if="store.bp.paymentFlg" label="支払先" name="payment"><PaymentTab :store="store" /></el-tab-pane>
@@ -52,9 +52,9 @@
     <!-- Footer -->
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
-        <el-button @click="onClear">クリア</el-button>
-        <el-button v-if="store.canEdit" type="primary" :loading="saving" @click="onSave">登録</el-button>
-        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onDelete">削除実行</el-button>
+        <el-button @click="onClear">{{ t('sales.btn.clear') }}</el-button>
+        <el-button v-if="store.canEdit" type="primary" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
+        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onDelete">{{ t('sales.btn.delete') }}</el-button>
       </div>
     </el-card>
   </div>
@@ -62,6 +62,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useBpStore } from '@/stores/businessPartner'
 import { bpApi } from '@/api/businessPartner'
@@ -77,6 +78,7 @@ import ApTab from './bp/ApTab.vue'
 import PaySchTab from './bp/PaySchTab.vue'
 import PaymentTab from './bp/PaymentTab.vue'
 
+const { t } = useI18n()
 const store = useBpStore()
 const activeTab = ref<string>('basic')
 const loading = ref(false)
@@ -98,11 +100,11 @@ const opModel = computed({
 
 const opLabel = computed(() => {
   switch (store.operationType) {
-    case BpOperationType.PreRegister: return '事前登録'
-    case BpOperationType.Register: return '登録'
-    case BpOperationType.Edit: return '訂正'
-    case BpOperationType.Delete: return '削除'
-    case BpOperationType.View: return '参照'
+    case BpOperationType.PreRegister: return t('sales.op.preregister')
+    case BpOperationType.Register: return t('sales.op.register')
+    case BpOperationType.Edit: return t('sales.op.edit')
+    case BpOperationType.Delete: return t('sales.op.delete')
+    case BpOperationType.View: return t('sales.op.view')
   }
   return ''
 })
@@ -131,9 +133,9 @@ async function onLoad() {
     if (r.code === 0 && r.data) {
       store.loadFromDto(r.data)
       hasLoaded.value = true
-      ElMessage.success('取引先を読込みました')
+      ElMessage.success(t('sales.msg.loadSuccess'))
     } else {
-      ElMessage.warning('E10008: 検索結果がありません')
+      ElMessage.warning(t('sales.err.E10008'))
     }
   } finally {
     loading.value = false
@@ -162,14 +164,14 @@ async function onSave() {
       if (r.code === 0 && r.data) {
         store.loadFromDto(r.data)
         hasLoaded.value = true
-        ElMessage.success('登録しました')
+        ElMessage.success(t('sales.msg.saveSuccess'))
         store.setOperationType(BpOperationType.Edit)
       }
     } else if (store.isEdit) {
       const r = await bpApi.update(store.bp.bpCd, store.bp)
       if (r.code === 0 && r.data) {
         store.loadFromDto(r.data)
-        ElMessage.success('訂正しました')
+        ElMessage.success(t('sales.msg.saveSuccess'))
       }
     }
   } finally {
@@ -188,7 +190,7 @@ async function onDelete() {
   try {
     const r = await bpApi.remove(store.bp.bpCd, store.bp.rowVersion)
     if (r.code === 0) {
-      ElMessage.success('削除しました')
+      ElMessage.success(t('sales.msg.deleteSuccess'))
       store.reset()
       hasLoaded.value = false
     }
@@ -200,7 +202,7 @@ async function onDelete() {
 async function onClear() {
   if (store.isDirty) {
     try {
-      await ElMessageBox.confirm('未保存の変更があります。クリアしますか？', '確認', { type: 'warning' })
+      await ElMessageBox.confirm(t('sales.msg.unsavedChanges'), t('sales.msg.confirmTitle'), { type: 'warning' })
     } catch { return }
   }
   store.reset()
