@@ -25,14 +25,13 @@ builder.Services.AddControllers(options =>
 builder.Services.AddSignalR();
 
 // 2. 注册 Swagger
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // 3. 注册数据库上下文
 builder.Services.AddDbContext<CP6Context>(options =>
     options
-        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-        // EF Core 10：迁移已包含模型，但运行时偶发误报 PendingModelChangesWarning（已用 ef migrations has-pending-model-changes 确认无差异）
-        .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // 3.1 注册 Dapper 用的 IDbConnection（每次请求新建连接）
 builder.Services.AddScoped<IDbConnection>(_ =>
@@ -123,7 +122,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 // 7. 初始化种子数据（首次启动时自动创建）

@@ -8,7 +8,7 @@
 # 3. EXPOSE 声明端口，实际映射在 docker-compose 中配置
 
 # ===== Stage 1: Build =====
-FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # 先复制项目文件，还原依赖（利用 Docker 层缓存）
@@ -22,7 +22,7 @@ COPY . .
 RUN dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o /app/publish --no-restore
 
 # ===== Stage 2: Runtime =====
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
 # 从构建阶段复制编译产物
