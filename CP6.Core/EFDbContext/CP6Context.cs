@@ -1,4 +1,5 @@
 using CP6.Entity.DomainModels;
+using CP6.Entity.DomainModels.Mes;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.EFDbContext;
@@ -134,6 +135,28 @@ public class CP6Context : DbContext
 
     // ───── MSBBPA140/150 木型・版型管理マスタ ─────
     public DbSet<PlateMold> PlateMolds { get; set; }
+
+    // ───── MSBBME010〜090 MES 製造執行 ─────
+    /// <summary>製造指図ヘッダ（ME020）</summary>
+    public DbSet<WorkOrder> WorkOrders { get; set; }
+    /// <summary>製造指図工程明細</summary>
+    public DbSet<WorkOrderProcess> WorkOrderProcesses { get; set; }
+    /// <summary>製造指図材料明細</summary>
+    public DbSet<WorkOrderMaterial> WorkOrderMaterials { get; set; }
+    /// <summary>製造実績（ME040）</summary>
+    public DbSet<ProductionResult> ProductionResults { get; set; }
+    /// <summary>品質検査ヘッダ（ME060）</summary>
+    public DbSet<QualityInspection> QualityInspections { get; set; }
+    /// <summary>品質検査項目明細</summary>
+    public DbSet<QualityInspectionItem> QualityInspectionItems { get; set; }
+    /// <summary>不良品記録（ME080）</summary>
+    public DbSet<DefectRecord> DefectRecords { get; set; }
+    /// <summary>検査項目テンプレート</summary>
+    public DbSet<InspectionTemplate> InspectionTemplates { get; set; }
+    /// <summary>不良分類マスタ</summary>
+    public DbSet<DefectCategory> DefectCategories { get; set; }
+    /// <summary>MES採番管理</summary>
+    public DbSet<MesSequence> MesSequences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -422,6 +445,114 @@ public class CP6Context : DbContext
             e.HasIndex(x => x.PlaceCd);
             e.HasIndex(x => x.ProcessCd);
             e.HasIndex(x => x.TypeClass);
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBME010〜090 MES 製造執行
+        // ═══════════════════════════════════════════════════════════
+
+        // 製造指図ヘッダ：WORK_ORDER_NO 唯一
+        modelBuilder.Entity<WorkOrder>(e =>
+        {
+            e.HasIndex(x => x.WorkOrderNo).IsUnique();
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.ProductCd, x.IsDeleted });
+            e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => new { x.DeliveryDate, x.IsDeleted });
+            e.HasIndex(x => x.WebOrderNo);
+
+            // 子表 — 業務键 WORK_ORDER_NO 級聯
+            e.HasMany(x => x.Processes)
+                .WithOne()
+                .HasForeignKey(p => p.WorkOrderNo)
+                .HasPrincipalKey(x => x.WorkOrderNo)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(x => x.Materials)
+                .WithOne()
+                .HasForeignKey(p => p.WorkOrderNo)
+                .HasPrincipalKey(x => x.WorkOrderNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // 指図工程：(WORK_ORDER_NO, PROCESS_CD, TASK_CD) 唯一
+        modelBuilder.Entity<WorkOrderProcess>(e =>
+        {
+            e.HasIndex(x => new { x.WorkOrderNo, x.ProcessCd, x.TaskCd }).IsUnique();
+            e.HasIndex(x => new { x.WorkOrderNo, x.SortOrder });
+            e.HasIndex(x => x.ProcessStatus);
+            e.HasIndex(x => x.MachineCd);
+            e.HasIndex(x => x.WgCd);
+        });
+
+        // 指図材料：(WORK_ORDER_NO, PROCESS_CD, MATERIAL_CD) 唯一
+        modelBuilder.Entity<WorkOrderMaterial>(e =>
+        {
+            e.HasIndex(x => new { x.WorkOrderNo, x.ProcessCd, x.MaterialCd }).IsUnique();
+            e.HasIndex(x => new { x.WorkOrderNo, x.SortOrder });
+        });
+
+        // 製造実績：RESULT_NO 唯一 + 検索 index
+        modelBuilder.Entity<ProductionResult>(e =>
+        {
+            e.HasIndex(x => x.ResultNo).IsUnique();
+            e.HasIndex(x => new { x.WorkOrderNo, x.ProcessCd, x.IsDeleted });
+            e.HasIndex(x => new { x.OperatorCd, x.IsDeleted });
+            e.HasIndex(x => new { x.ActualStartTime, x.IsDeleted });
+            e.HasIndex(x => new { x.ActualEndTime, x.IsDeleted });
+            e.HasIndex(x => x.ResultType);
+        });
+
+        // 品質検査ヘッダ：INSPECTION_NO 唯一
+        modelBuilder.Entity<QualityInspection>(e =>
+        {
+            e.HasIndex(x => x.InspectionNo).IsUnique();
+            e.HasIndex(x => new { x.WorkOrderNo, x.IsDeleted });
+            e.HasIndex(x => new { x.InspectionDate, x.IsDeleted });
+            e.HasIndex(x => x.OverallResult);
+
+            e.HasMany(x => x.Items)
+                .WithOne()
+                .HasForeignKey(p => p.InspectionNo)
+                .HasPrincipalKey(x => x.InspectionNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // 品質検査項目明細：(INSPECTION_NO + ITEM_SEQ_NO) 唯一
+        modelBuilder.Entity<QualityInspectionItem>(e =>
+        {
+            e.HasIndex(x => new { x.InspectionNo, x.ItemSeqNo }).IsUnique();
+        });
+
+        // 不良品：DEFECT_NO 唯一
+        modelBuilder.Entity<DefectRecord>(e =>
+        {
+            e.HasIndex(x => x.DefectNo).IsUnique();
+            e.HasIndex(x => new { x.WorkOrderNo, x.IsDeleted });
+            e.HasIndex(x => new { x.CategoryCd, x.DetailCd });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.OccurDate, x.IsDeleted });
+        });
+
+        // 検査項目テンプレート：(TEMPLATE_CD + ITEM_SEQ_NO) 唯一
+        modelBuilder.Entity<InspectionTemplate>(e =>
+        {
+            e.HasIndex(x => new { x.TemplateCd, x.ItemSeqNo }).IsUnique();
+            e.HasIndex(x => new { x.TemplateCd, x.ActiveFlg });
+            e.HasIndex(x => x.ProcessCd);
+        });
+
+        // 不良分類：(CATEGORY_CD + DETAIL_CD) 唯一
+        modelBuilder.Entity<DefectCategory>(e =>
+        {
+            e.HasIndex(x => new { x.CategoryCd, x.DetailCd }).IsUnique();
+            e.HasIndex(x => x.ActiveFlg);
+        });
+
+        // MES採番管理：(SEQ_KEY + SEQ_DATE) 唯一
+        modelBuilder.Entity<MesSequence>(e =>
+        {
+            e.HasIndex(x => new { x.SeqKey, x.SeqDate }).IsUnique();
         });
     }
 }

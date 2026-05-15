@@ -1,0 +1,890 @@
+MSBBME
+MES 製造執行系統
+详细需求规格文档
+— 可直接用于编写代码的最终版本 —
+属性
+内容
+功能ID
+MSBBME010~MSBBME090
+所属模块
+MES 製造執行系統（Manufacturing Execution System）
+目标技术栈
+Vue 3 + TypeScript + Element Plus + Pinia / .NET 8/10 Web API + EF Core / SQL Server
+文档版本
+V1.0（独立 MES 原型，Web画面手动录入）
+与ERP衍接
+PA070受注 → ME020製造指図 → ME040実績報告 → ME060品質検査
+目　录
+第1章  MES模块总体架构与业务定位
+1.1  功能目的
+MES模块（MSBBME系列）是CP6系统在ERP销售管理（PA系列）基础上向制造执行层的延伸。ERP负责“卖什么”和“卖给谁”，MES负责“怎么做”和“做得怎么样”。本模块为独立MES原型，先不与mcframe7集成，后续可通过数据库视图或API对接。
+1.2  业务流程定位
+【ERP 販売管理（既存PA系列）】
+  PA010 見積計算書入力 → PA020 一覧 → PA030 御見積書登録
+       ↓ 見積確定
+  PA050 製品マスタ登録（工程・材料・単価）
+       ↓
+  PA070 受注入力 → PA080 受注一覧
+       ↓ 受注確定
+════════════════════════════════════════
+【MES 製造執行（新規 ME系列）】
+  ME010 生産計画ボード（排程可視化）
+       ↓
+  ME020 製造指図入力 ← 从PA070受注自動生成 or 手動作成
+  ME030 製造指図一覧照会
+       ↓ 指図発行
+  ME040 製造実績入力（各工程の開始/完了/数量報告）
+  ME050 製造実績一覧照会
+       ↓ 工程完了
+  ME060 品質検査入力
+  ME070 品質検査一覧照会
+  ME080 不良品管理
+       ↓
+  ME090 MESダッシュボード（全体可視化）
+1.3  MES模块一览
+功能ID
+功能名称
+类型
+复杂度
+核心特征
+MSBBME010
+生産計画ボード
+排程看板
+★★★高
+ガントチャート + ドラッグ排程
+MSBBME020
+製造指図入力
+CRUD+向导
+★★★高
+3页向导；受注自動展開
+MSBBME030
+製造指図一览照会
+查询
+★★中
+多条件検索 + CSV出力
+MSBBME040
+製造実績入力
+录入
+★★★高
+工程別実績入力；ロス率自動計算
+MSBBME050
+製造実績一览照会
+查询
+★★中
+多条件検索 + 工程進捗一览
+MSBBME060
+品質検査入力
+CRUD
+★★中
+検査項目マスタ連動；合否自動判定
+MSBBME070
+品質検査一览照会
+查询
+★中
+多条件検索 + 合格率統計
+MSBBME080
+不良品管理
+CRUD
+★★中
+不良原因分類 + 是正処置 + ステータス追跡
+MSBBME090
+MESダッシュボード
+統計可視化
+★★★高
+リアルタイム工程進捗 + KPIチャート
+1.4  制造工单状态机（指図ステータス遷移）
+0:下書き → 1:確定済み → 2:発行済み → 3:着手中 → 4:完了 → 6:検査済み
+                                     ↕
+                                5:中断中
+                              9:取消（特殊権限）
+1.5  操作种别（全MES画面共通）
+操作种別
+中文
+説明
+登録
+新建
+手動で新規作成
+訂正
+修改
+既存レコードの修正（ステータス条件あり）
+削除
+删除
+論理削除（DEL_FLG=1）；発行済み以降は削除不可
+参照
+查看
+全フィールドReadOnly
+第2章  MSBBME010 — 生産計画ボード
+2.1  功能概述
+生産計画ボードは、受注済みの製造指図を工程×時間軸のガントチャートで可視化し、手動で生産順序の調整（ドラッグ＆ドロップ）を行う画面。PA050で定義された生産並び順（製造順優先項目1～8）を初期配置の基準とする。
+2.2  画面区域结构
+区域
+説明
+フィルタ区
+期間(DateRange) / 工程CD(MultiSelect) / WG(Select) / ステータス(CheckBox群)
+ガントチャート区
+横軸=時間、縦軸=工程(号機単位)、バー=製造指図。色=ステータス
+詳細パネル区
+バー選択時：指図NO/製品名/得意先/納期/進捗率/残数量
+凡例区
+ステータス色凡例 + KPIサマリ
+2.3  ガントチャート仕様
+項目
+仕様
+時間粒度
+日表示(1マス=1時間) / 週表示(1マス=1日) / 月表示(1マス=1日)
+バー長さ
+指図の計画開始日時 ～ 計画完了日時
+実績オーバレイ
+計画バーの上に実績バーを重ねて表示
+ドラッグ＆ドロップ
+バーを横方向にドラッグ → 計画日時変更（ステータス=0/1のみ）
+縦ドラッグ
+別号機行にドラッグ → 号機変更（同WG内のみ）
+自動配置
+PA050の製造順優先項目1~8に基づいてソート＆再配置
+制約表示
+前後工程の依存関係を矢印線で表示
+納期ライン
+受注の客先納期を赤い縦線で表示
+2.4  API
+Method
+URL
+説明
+GET
+/api/mes/planning-board
+ガントチャート用データ取得
+PUT
+/api/mes/planning-board/reschedule
+バーのドラッグ後の日時更新
+POST
+/api/mes/planning-board/auto-arrange
+自動配置実行
+GET
+/api/mes/planning-board/kpi
+KPIサマリ
+第3章  MSBBME020 — 製造指図入力
+3.1  功能概述
+製造指図入力は、受注データ（PA070）から製造指図（工単）を作成・管理する画面。PA050の製品マスタに定義された工程ルーティングと材料構成を展開し、各工程の計画日時・号機・数量を設定する。3页向导式設計。
+3.2  操作种別
+操作种別
+第1頁検索対象
+制約
+登録
+手配NO(PA070) or 手動
+受注から自動展開 or 空指図作成
+訂正
+指図NO
+ステータス=0/1のみ訂正可
+削除
+指図NO
+ステータス=0/1のみ削除可
+参照
+指図NO or 手配NO
+全フィールドReadOnly
+3.3  3页向导总体架构
+步骤
+页面名称
+核心内容
+导航
+1
+指図基本情報
+指図NO / 受注情報 / 製品情報 / 納期 / 生産数量 / 優先度
+【次画面→】
+2
+工程計画
+工程一覧(PA050から展開) / 計画日時 / 号機 / 前後依存
+【←戻る】【次画面→】
+3
+材料手配 + 保存
+材料一覧(PA050から展開) / 手配状況 / 指図発行
+【←戻る】【保存】【指図発行】
+3.4  第1页 — 指図基本情報
+3.4.1  画面字段
+字段名
+日文名
+控件
+必须
+DB字段
+説明
+workOrderNo
+指図NO
+文本
+自動
+WORK_ORDER_NO
+PK；WOYYYYMMDD-NNNN
+workOrderStatus
+指図ステータス
+只读Tag
+—
+STATUS
+0~9; 色分け表示
+orderNo
+手配NO
+AutoComplete
+R(登録時)
+ORDER_NO1/2/3
+PA070受注の手配NO
+productCd
+製品CD
+只読
+R
+PRODUCT_CD
+PA050製品マスタ
+productionQty
+生産数量
+数字
+R
+PRODUCTION_QTY
+初期値=受注数量×(1+標準ロス率)
+deliveryDate
+客先納期
+DatePicker
+R
+DELIVERY_DATE
+PA070受注の客先納期
+planStartDate
+計画開始日
+DatePicker
+R
+PLAN_START_DATE
+納期-総 LTで自動計算
+planEndDate
+計画完了日
+DatePicker
+R
+PLAN_END_DATE
+納期-1
+priority
+優先度
+Select
+—
+PRIORITY
+1=通常 2=急ぎ 3=特急
+lotNo
+ロットNO
+文本
+—
+LOT_NO
+製造ロット番号
+baseCd
+拠点CD
+Select
+R
+BASE_CD
+初期値=ログイン拠点
+3.4.2  第1页校验
+No
+校验项
+消息
+消息ID
+1
+手配NO必須（登録時）
+手配NOが未入力です。
+ME-MSG-001
+2
+生産数量>0
+生産数量は0より大きい値を入力してください。
+ME-MSG-002
+3
+計画開始日≤計画完了日
+計画開始日は計画完了日以前を指定してください。
+ME-MSG-003
+4
+計画完了日≤客先納期
+計画完了日が客先納期を超えています。よろしいですか？
+ME-MSG-004(W)
+5
+同一手配NOの指図重複
+該当手配NOは既に指図が作成されています。
+ME-MSG-005
+第4章  MSBBME030 — 製造指図一览照会
+製造指図の多条件検索＋一览表示。照会モードと検索モードを支持。一览25列：指図NO / ステータス / 優先度 / 手配NO / 製品CD / 製品名 / 得意先 / 生産数量 / 完了数量 / 進捗率 / 客先納期 / 計画開始日 / 計画完了日 / 実績開始日 / 実績完了日 / 遅延日数 / 工程数 / 完了工程数 / 不良数合計 / ロットNO / 拠点 / 登録日 / 備考。検索条件は12項目（拠点 / 指図NO / 手配NO / 製品CD / 得意先 / 納期 / 計画開始日 / ステータス / 優先度 / 工程CD / WG / 遅延のみ）。
+第5章  MSBBME040 — 製造実績入力
+5.1  功能概述
+各工程の製造実績（開始/完了/数量/不良）を入力する画面。1指図の全工程を一画面で管理。
+5.2  実績入力区字段
+字段名
+日文名
+控件
+必须
+説明
+operatorCd
+作業者CD
+AutoComplete
+R
+担当者マスタから選択
+actualStartTime
+実績開始日時
+DateTimePicker
+R(開始時)
+「開始」ボタンで現在時刻セット
+actualEndTime
+実績完了日時
+DateTimePicker
+R(完了時)
+「完了」ボタンで現在時刻セット
+goodQty
+良品数
+数字
+R(完了時)
+正整数
+defectQty
+不良数
+数字
+—
+初期値=0
+actualLossRate
+実績ロス率(%)
+只読数字
+—
+=defectQty/totalQty×100
+defectReasonCd
+不良理由CD
+Select
+条件R
+不良数>0時必須
+suspendReasonCd
+中断理由CD
+Select
+条件R
+中断報告時必須
+resultNote
+実績備考
+TextArea
+—
+100文字
+5.3  操作ボタン処理
+ボタン
+前提条件
+処理
+開始
+工程ステータス=0(未着手)
+actualStartTime=NOW；工程→ 1(着手中)；指図→ 3(着手中)
+中断
+工程ステータス=1(着手中)
+中断理由必須；工程→ 3(中断)；指図→ 5(中断中)
+中断解除
+工程ステータス=3(中断)
+工程→ 1(着手中)；指図→ 3(着手中)
+完了
+工程ステータス=1(着手中)
+良品数必須；actualEndTime=NOW；工程→ 2(完了)
+📌 全工程のステータス=2(完了) の場合：指図ステータス → 4(完了)
+5.4  校验规则
+No
+校验项
+消息
+消息ID
+1
+作業者CD必須
+作業者が未入力です。
+ME-MSG-011
+2
+良品数必須(完了時)
+良品数が未入力です。
+ME-MSG-012
+3
+良品数+不良数 ≤ 計画数×1.5
+生産数量が計画数を大幅に超過しています。
+ME-MSG-013(W)
+4
+不良数>0 + 不良理由未選択
+不良理由が未選択です。
+ME-MSG-014
+5
+前工程未完了
+前工程[{processName}]が完了していません。
+ME-MSG-015(W)
+6
+完了日時<開始日時
+完了日時は開始日時以降を指定してください。
+ME-MSG-016
+第6章  MSBBME060 — 品質検査入力
+6.1  功能概述
+製造完了後の品質検査を記録する画面。検査項目マスタに基づいて検査記録を入力し、合否を判定。不合格品は自動的にME080（不良品管理）へ起票。
+6.2  基本情報字段
+字段名
+日文名
+控件
+必须
+説明
+inspectionNo
+検査NO
+文本
+自動
+QCYYYYMMDDーNNNN形式
+workOrderNo
+指図NO
+AutoComplete
+R
+→ME030検索
+processCode
+工程CD
+Select
+R
+指図NO入力時、工程候補を連動表示
+inspectionDate
+検査日
+DatePicker
+R
+初期値=本日
+inspectorCd
+検査者CD
+AutoComplete
+R
+担当者マスタ
+inspectionType
+検査種類
+Select
+R
+1=受入 2=工程内 3=最終 4=出荷前
+overallResult
+総合判定
+Select
+—
+自動判定+手動上書き可
+dispositionAction
+処置内容
+Select
+—
+不合格時：1=手直し 2=特別採用 3=返品 4=廃棄
+6.3  合否自動判定ロジック
+IF 上限値 IS NOT NULL AND 下限値 IS NOT NULL THEN
+    IF 計測値 >= 下限値 AND 計測値 <= 上限値 THEN 合格
+    ELSE 不合格
+ELSE IF 規格値 IS NOT NULL THEN
+    IF 計測値 = 規格値 THEN 合格 ELSE 不合格
+ELSE 手動判定
+総合合否 = 全項目が合格 → 合格 / 1項目でも不合格 → 不合格
+第7章  MSBBME080 — 不良品管理
+不良品の発生記録・原因分析・是正処置の追跡管理画面。ステータス遷移：0:起票済み → 1:分析中 → 2:是正中 → 3:完了
+7.1  不良分類マスタ（汎用マスタ ME-M002）
+大分類CD
+大分類名
+小分類例
+D01
+寸法不良
+巾寸法外れ / 流れ寸法外れ / 型ズレ
+D02
+印刷不良
+色差 / 見当ズレ / インキ飛び / 汚れ / 抜け
+D03
+貼合不良
+段つぶれ / 接着不良 / 反り / ブリスター
+D04
+トムソン不良
+抜きズレ / 罫線割れ / バリ / 角切れ
+D05
+グルア不良
+接着不良 / 位置ズレ / 糊はみ出し
+D06
+材料不良
+原紙不良 / インキ不良 / 糊不良
+D07
+その他
+作業ミス / 設備故障 / その他
+第8章  MSBBME090 — MESダッシュボード
+8.1  ウィジェット構成
+ウィジェット
+種類
+内容
+本日の生産サマリ
+KPIカード×4
+指図件数(着手中/完了) / 良品数合計 / 不良率(%) / 遅延件数
+工程別進捗
+横棒グラフ
+各工程の「未着手/着手中/完了」件数積み上げ
+納期遅延アラート
+テーブル
+計画完了日<今日 AND ステータス≠完了 のリスト
+日別生産推移
+折線グラフ
+過去30日の日別良品数/不良数推移
+不良TOP5
+円グラフ
+不良分類CD別の発生件数TOP5
+工程稼働状況
+ヒートマップ
+号機×時間帯の稼働率
+直近完了指図
+テーブル
+直近10件の完了指図
+📌 ダッシュボードは60秒間隔で自動更新（ポーリング）。遅延アラートは10秒間隔。
+第9章  データベース表設計（10張表）
+詳細なDDLスクリプトは別途提供のSQLファイルを参照。以下は各テーブルの概要。
+No
+テーブル名
+日文名
+PK
+主なFK
+1
+T_WorkOrder
+製造指図ヘッダ
+WORK_ORDER_NO
+PRODUCT_CD→PA050
+2
+T_WorkOrderProcess
+指図工程明細
+WORK_ORDER_NO + PROCESS_CD + TASK_CD
+WORK_ORDER_NO→T_WorkOrder
+3
+T_WorkOrderMaterial
+指図材料明細
+WORK_ORDER_NO + PROCESS_CD + MATERIAL_CD
+WORK_ORDER_NO→T_WorkOrder
+4
+T_ProductionResult
+製造実績
+RESULT_NO
+WORK_ORDER_NO→T_WorkOrder
+5
+T_QualityInspection
+品質検査ヘッダ
+INSPECTION_NO
+WORK_ORDER_NO→T_WorkOrder
+6
+T_QualityInspectionItem
+品質検査項目明細
+INSPECTION_NO + ITEM_SEQ_NO
+INSPECTION_NO→T_QualityInspection
+7
+T_DefectRecord
+不良品記録
+DEFECT_NO
+WORK_ORDER_NO→T_WorkOrder
+8
+M_InspectionTemplate
+検査項目テンプレート
+TEMPLATE_CD + ITEM_SEQ_NO
+—
+9
+M_DefectCategory
+不良分類マスタ
+CATEGORY_CD + DETAIL_CD
+—
+10
+T_MesSequence
+MES採番管理
+SEQ_KEY + SEQ_DATE
+—
+9.2  ER関係図
+【ERP既存テーブル】                【MES新規テーブル】
+T_ProductMaster (PA050)           T_WorkOrder
+  ├─ PRODUCT_CD ──────FK────→  PRODUCT_CD
+  │                                  │
+T_ProductProcess (PA050)            ├── T_WorkOrderProcess
+  ├─ 工程ルーティング ─(展開)─→  │
+  │                                  ├── T_WorkOrderMaterial
+T_ProductMaterial (PA050)           │
+  ├─ 材料構成 ───(展開)─→     ├── T_ProductionResult
+  │                                  │
+Web受注 (PA070)                     ├── T_QualityInspection
+  ├─ ORDER_NO ─────FK─────→  │     └── T_QualityInspectionItem
+                                     │
+                                     └── T_DefectRecord
+第10章  API接口設計
+10.1  製造指図 API
+Method
+URL
+説明
+GET
+/api/mes/work-orders/{no}
+単条指図查詢(含工程+材料)
+GET
+/api/mes/work-orders
+一览查詢(ME030用)
+POST
+/api/mes/work-orders
+新建指図(全3表)
+PUT
+/api/mes/work-orders/{no}
+修正指図
+DELETE
+/api/mes/work-orders/{no}
+論理削除
+POST
+/api/mes/work-orders/{no}/issue
+指図発行(ステータス→2)
+POST
+/api/mes/work-orders/expand-from-order
+受注から指図自動展開
+10.2  製造実績 API
+Method
+URL
+説明
+GET
+/api/mes/production-results
+実績一览(ME050用)
+POST
+/api/mes/production-results
+実績報告(新規)
+POST
+/api/mes/production-results/start
+工程開始報告
+POST
+/api/mes/production-results/suspend
+工程中断報告
+POST
+/api/mes/production-results/resume
+中断解除
+POST
+/api/mes/production-results/complete
+工程完了報告
+10.3  品質検査 API
+Method
+URL
+説明
+GET
+/api/mes/inspections/{no}
+検査詳細(項目含む)
+GET
+/api/mes/inspections
+検査一览(ME070用)
+POST
+/api/mes/inspections
+新規検査登録
+PUT
+/api/mes/inspections/{no}
+検査訂正
+GET
+/api/mes/inspection-templates/{cd}
+検査項目テンプレート取得
+10.4  不良品管理 / ダッシュボード API
+Method
+URL
+説明
+GET
+/api/mes/defects
+不良品一览
+POST
+/api/mes/defects
+手動起票
+PUT
+/api/mes/defects/{no}
+更新(原因分析/是正処置)
+GET
+/api/mes/dashboard/summary
+本日KPIサマリ
+GET
+/api/mes/dashboard/process-progress
+工程別進捗
+GET
+/api/mes/dashboard/delay-alerts
+遅延アラート一览
+GET
+/api/mes/dashboard/daily-trend?days=30
+日別生産推移
+GET
+/api/mes/dashboard/defect-top5
+不良TOP5
+第11章  Vue3前端组件設計
+11.1  目录结构
+views/mes/
+├── dashboard/
+│   └── MesDashboard.vue            # ME090
+├── planning/
+│   └── PlanningBoard.vue            # ME010
+├── work-order/
+│   ├── WorkOrderPage.vue            # ME020 路由入口
+│   ├── steps/
+│   │   ├── WoStep1BasicInfo.vue     # 第1页
+│   │   ├── WoStep2ProcessPlan.vue   # 第2页
+│   │   └── WoStep3MaterialConfirm.vue # 第3页
+│   └── WorkOrderList.vue            # ME030
+├── production/
+│   ├── ProductionResultEntry.vue    # ME040
+│   └── ProductionResultList.vue     # ME050
+├── quality/
+│   ├── QualityInspectionEntry.vue   # ME060
+│   └── QualityInspectionList.vue    # ME070
+├── defect/
+│   └── DefectManagement.vue         # ME080
+├── composables/
+│   ├── useWorkOrder.ts
+│   ├── useProductionResult.ts
+│   ├── useQualityInspection.ts
+│   ├── useDefectManagement.ts
+│   ├── useMesDashboard.ts
+│   └── usePlanningBoard.ts
+└── types/
+    └── mes.ts                       # 全MES TS型定義
+第12章  与ERP模块（PA系列）のデータ衍接
+12.1  データフロー
+データ流向
+内容
+PA070受注 → ME020指図
+手配NOで受注データを引入、工程・材料を自動展開
+PA050製品マスタ → ME020
+工程ルーティング(T_ProductProcess) + 材料構成(T_ProductMaterial) + 生産並び順
+PA050仕掛チェック ← MES
+ME側の指図ステータスを参照する新SQLを追加（V_MesWipCheckビュー）
+共通マスタ共用
+M038工程CD / M114材料設定順 / 担当者マスタ / 拠点別工程設定
+12.2  PA050仕掛チェック拡張SQL
+-- Level MES: MES指図発行済みチェック
+SELECT wo.WORK_ORDER_NO
+FROM T_WorkOrder wo
+WHERE wo.PRODUCT_CD = :productCd
+  AND wo.STATUS IN (2, 3, 5)  -- 発行済/着手中/中断中
+  AND wo.DEL_FLG = 0
+-- → レコードが存在する場合：
+--   「MES製造指図が発行済みのため変更できません。」
+第13章  消息一览（全部消息）
+消息ID
+种别
+触发画面
+消息内容
+ME-MSG-001
+E
+ME020第1页
+手配NOが未入力です。
+ME-MSG-002
+E
+ME020第1页
+生産数量は0より大きい値を入力してください。
+ME-MSG-003
+E
+ME020第1页
+計画開始日は計画完了日以前を指定してください。
+ME-MSG-004
+W
+ME020第1页
+計画完了日が客先納期を超えています。よろしいですか？
+ME-MSG-005
+E
+ME020第1页
+該当手配NOは既に指図が作成されています。
+ME-MSG-006
+E
+ME020第2页
+登録する工程がありません。
+ME-MSG-007
+E
+ME020第2页
+同一の工程コード・作業CDが含まれます。
+ME-MSG-008
+E
+ME020第2页
+工程がループしています。
+ME-MSG-009
+E
+ME020第2页
+最終工程が複数になっています。
+ME-MSG-010
+E
+ME020第2页
+指定号機では取り扱えない巾・流れです。
+ME-MSG-011
+E
+ME040
+作業者が未入力です。
+ME-MSG-012
+E
+ME040
+良品数が未入力です。
+ME-MSG-013
+W
+ME040
+生産数量が計画数を大幅に超過しています。
+ME-MSG-014
+E
+ME040
+不良理由が未選択です。
+ME-MSG-015
+W
+ME040
+前工程[{name}]が完了していません。
+ME-MSG-016
+E
+ME040
+完了日時は開始日時以降を指定してください。
+ME-MSG-020
+E
+ME060
+指図NOが未入力です。
+ME-MSG-021
+E
+ME060
+検査者が未入力です。
+ME-MSG-022
+W
+ME060
+未入力の検査項目があります。
+ME-MSG-023
+E
+ME060
+不合格の場合、処置内容を選択してください。
+ME-MSG-024
+E
+ME060
+判定理由を入力してください。
+ME-MSG-030
+E
+ME080
+不良分類が未選択です。
+ME-MSG-031
+E
+ME080
+不良内容が未入力です。
+ME-MSG-040
+I
+共通
+検索結果がありません。
+ME-MSG-041
+I
+共通
+保存が完了しました。
+ME-MSG-042
+E
+共通
+このステータスでは操作できません。
+ME-MSG-043
+E
+共通
+すでに更新済みです。再検索してください。
+第14章  画面跳转関係
+来源
+目标
+触発
+传递数据
+ME010
+ME020 指図詳細
+バー右クリック
+指図NO（参照モード）
+ME010
+ME040 実績入力
+バー右クリック
+指図NO
+ME020
+PA080 受注一览
+手配NO検索ボタン
+検索モード → 手配NO返却
+ME030
+ME020 指図詳細
+指図詳細ボタン
+指図NO+参照
+ME030
+ME040 実績入力
+実績入力ボタン
+指図NO
+ME040
+ME060 品質検査
+全工程完了後
+指図NO+工程CD
+ME040
+ME080 不良品起票
+不良数>0時
+指図NO+工程CD+不良数
+ME060
+ME080 不良品起票
+不合格判定時
+検査NO+指図NO
+ME090
+ME030 指図一览
+遅延アラート行
+指図NO
+PA050
+仕掛チェック拡張
+訂正/削除時
+製品CD → MES指図有無
+— 文档结束  MSBBME MES製造執行系統 详细需求规格文档 V1.0 —

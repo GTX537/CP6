@@ -26,6 +26,11 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/sheet-unit-price': () => import('@/views/SheetUnitPriceView.vue'),
   '/plate-mold': () => import('@/views/PlateMoldView.vue'),
   '/plate-mold-list': () => import('@/views/PlateMoldListView.vue'),
+  // ───── MES 製造執行 (MSBBME020/030/040/050) ─────
+  '/mes/work-order': () => import('@/views/mes/WorkOrderEntryView.vue'),
+  '/mes/work-order-list': () => import('@/views/mes/WorkOrderListView.vue'),
+  '/mes/production-result': () => import('@/views/mes/ProductionResultEntryView.vue'),
+  '/mes/production-result-list': () => import('@/views/mes/ProductionResultListView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口

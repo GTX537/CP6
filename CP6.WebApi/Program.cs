@@ -90,6 +90,11 @@ builder.Services.AddScoped<IPlateMoldService, PlateMoldService>();
 // PA140 §8 PE API 版型発注書連携：実環境では HTTP 実装に差し替え
 builder.Services.AddScoped<IPlateMoldPeApiService, NoOpPlateMoldPeApiService>();
 
+// 4.7 MSBBME010〜090 MES 製造執行 相关服务
+builder.Services.AddScoped<CP6.Core.Services.Mes.IMesSequenceService, CP6.Core.Services.Mes.MesSequenceService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IWorkOrderService, CP6.Core.Services.Mes.WorkOrderService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IProductionResultService, CP6.Core.Services.Mes.ProductionResultService>();
+
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -340,6 +345,40 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 215, MenuName = "版型/木型 登録", RoutePath = "/plate-mold", Icon = "Stamp", ParentId = 200, OrderNo = 215, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 215 });
+        db.SaveChanges();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  MSBBME010〜090 MES 製造執行 菜单
+    // ═══════════════════════════════════════════════════════════
+    if (!db.Sys_Menus.Any(m => m.MenuId == 300))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 300, MenuName = "製造執行(MES)", Icon = "SetUp", OrderNo = 300, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 300 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 302))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 302, MenuName = "製造指図 入力", RoutePath = "/mes/work-order", Icon = "DocumentAdd", ParentId = 300, OrderNo = 302, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 302 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 303))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 303, MenuName = "製造指図 一覧", RoutePath = "/mes/work-order-list", Icon = "Files", ParentId = 300, OrderNo = 303, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 303 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 304))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 304, MenuName = "製造実績 入力", RoutePath = "/mes/production-result", Icon = "EditPen", ParentId = 300, OrderNo = 304, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 304 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 305))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 305, MenuName = "製造実績 一覧", RoutePath = "/mes/production-result-list", Icon = "DataLine", ParentId = 300, OrderNo = 305, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 305 });
         db.SaveChanges();
     }
 
