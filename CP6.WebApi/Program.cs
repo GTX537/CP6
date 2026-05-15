@@ -94,6 +94,8 @@ builder.Services.AddScoped<IPlateMoldPeApiService, NoOpPlateMoldPeApiService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesSequenceService, CP6.Core.Services.Mes.MesSequenceService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IWorkOrderService, CP6.Core.Services.Mes.WorkOrderService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IProductionResultService, CP6.Core.Services.Mes.ProductionResultService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IQualityInspectionService, CP6.Core.Services.Mes.QualityInspectionService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IDefectRecordService, CP6.Core.Services.Mes.DefectRecordService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
@@ -379,6 +381,85 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 305, MenuName = "製造実績 一覧", RoutePath = "/mes/production-result-list", Icon = "DataLine", ParentId = 300, OrderNo = 305, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 305 });
+        db.SaveChanges();
+    }
+    // ME060 / 070 / 080
+    if (!db.Sys_Menus.Any(m => m.MenuId == 306))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 306, MenuName = "品質検査 入力", RoutePath = "/mes/quality-inspection", Icon = "Operation", ParentId = 300, OrderNo = 306, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 306 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 307))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 307, MenuName = "品質検査 一覧", RoutePath = "/mes/quality-inspection-list", Icon = "Histogram", ParentId = 300, OrderNo = 307, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 307 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 308))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 308, MenuName = "不良品管理", RoutePath = "/mes/defect", Icon = "Warning", ParentId = 300, OrderNo = 308, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 308 });
+        db.SaveChanges();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  不良分類マスタ (M_DefectCategory / ME-M002) seed 数据 — 仕様書 §7.1
+    // ─────────────────────────────────────────────────────────────
+    if (!db.DefectCategories.Any())
+    {
+        var now = DateTime.Now;
+        var seedDefects = new (string Cat, string CatName, string Detail, string DetailName)[]
+        {
+            // D01 寸法不良
+            ("D01", "寸法不良", "01", "巾寸法外れ"),
+            ("D01", "寸法不良", "02", "流れ寸法外れ"),
+            ("D01", "寸法不良", "03", "型ズレ"),
+            // D02 印刷不良
+            ("D02", "印刷不良", "01", "色差"),
+            ("D02", "印刷不良", "02", "見当ズレ"),
+            ("D02", "印刷不良", "03", "インキ飛び"),
+            ("D02", "印刷不良", "04", "汚れ"),
+            ("D02", "印刷不良", "05", "抜け"),
+            // D03 貼合不良
+            ("D03", "貼合不良", "01", "段つぶれ"),
+            ("D03", "貼合不良", "02", "接着不良"),
+            ("D03", "貼合不良", "03", "反り"),
+            ("D03", "貼合不良", "04", "ブリスター"),
+            // D04 トムソン不良
+            ("D04", "トムソン不良", "01", "抜きズレ"),
+            ("D04", "トムソン不良", "02", "罫線割れ"),
+            ("D04", "トムソン不良", "03", "バリ"),
+            ("D04", "トムソン不良", "04", "角切れ"),
+            // D05 グルア不良
+            ("D05", "グルア不良", "01", "接着不良"),
+            ("D05", "グルア不良", "02", "位置ズレ"),
+            ("D05", "グルア不良", "03", "糊はみ出し"),
+            // D06 材料不良
+            ("D06", "材料不良", "01", "原紙不良"),
+            ("D06", "材料不良", "02", "インキ不良"),
+            ("D06", "材料不良", "03", "糊不良"),
+            // D07 その他
+            ("D07", "その他", "01", "作業ミス"),
+            ("D07", "その他", "02", "設備故障"),
+            ("D07", "その他", "99", "その他"),
+        };
+
+        int sort = 1;
+        foreach (var (cat, catName, detail, detailName) in seedDefects)
+        {
+            db.DefectCategories.Add(new CP6.Entity.DomainModels.Mes.DefectCategory
+            {
+                CategoryCd = cat,
+                DetailCd = detail,
+                CategoryName = catName,
+                DetailName = detailName,
+                SortOrder = sort++,
+                ActiveFlg = true,
+                Creator = "system",
+                CreateDate = now,
+            });
+        }
         db.SaveChanges();
     }
 

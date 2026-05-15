@@ -6,6 +6,12 @@ import type {
   ProductionResultRequest,
   ProductionResultSearchQuery,
   ExpandFromOrderRequest,
+  QualityInspectionDto,
+  QualityInspectionSearchQuery,
+  InspectionTemplateDto,
+  DefectRecordDto,
+  DefectRecordSearchQuery,
+  DefectCategoryDto,
   MesPagedResult,
 } from '@/types/mes'
 
@@ -104,5 +110,77 @@ export const productionResultApi = {
   /** ME040 — 数量報告 */
   report(req: ProductionResultRequest) {
     return http.post<any, Api<{ resultNo: string }>>('/mes/production-results', req)
+  },
+}
+
+// ─────────────────────────────────────────────────────────────
+// MSBBME060 / 070 — 品質検査
+// ─────────────────────────────────────────────────────────────
+export const qualityInspectionApi = {
+  /** ME070 — 一覧 */
+  search(query: QualityInspectionSearchQuery) {
+    return http.get<any, Api<MesPagedResult<QualityInspectionDto>>>('/mes/inspections', {
+      params: query,
+    })
+  },
+
+  /** ME060 — 単条 */
+  get(no: string) {
+    return http.get<any, Api<QualityInspectionDto>>(`/mes/inspections/${encodeURIComponent(no)}`)
+  },
+
+  /** ME060 — 新規登録 */
+  create(dto: QualityInspectionDto) {
+    return http.post<any, Api<{ inspectionNo: string }>>('/mes/inspections', dto)
+  },
+
+  /** ME060 — 訂正 */
+  update(no: string, dto: QualityInspectionDto) {
+    return http.put<any, Api<unknown>>(`/mes/inspections/${encodeURIComponent(no)}`, dto)
+  },
+
+  /** ME060 — 検査項目テンプレート取得 */
+  getTemplate(cd: string) {
+    return http.get<any, Api<InspectionTemplateDto[]>>(
+      `/mes/inspections/templates/${encodeURIComponent(cd)}`
+    )
+  },
+
+  /** ME060 — 全テンプレートCD一覧 */
+  getAllTemplateCodes() {
+    return http.get<any, Api<string[]>>('/mes/inspections/templates')
+  },
+}
+
+// ─────────────────────────────────────────────────────────────
+// MSBBME080 — 不良品管理
+// ─────────────────────────────────────────────────────────────
+export const defectRecordApi = {
+  search(query: DefectRecordSearchQuery) {
+    return http.get<any, Api<MesPagedResult<DefectRecordDto>>>('/mes/defects', {
+      params: query,
+      paramsSerializer: { indexes: null },
+    })
+  },
+
+  get(no: string) {
+    return http.get<any, Api<DefectRecordDto>>(`/mes/defects/${encodeURIComponent(no)}`)
+  },
+
+  create(dto: DefectRecordDto) {
+    return http.post<any, Api<{ defectNo: string }>>('/mes/defects', dto)
+  },
+
+  update(no: string, dto: DefectRecordDto) {
+    return http.put<any, Api<unknown>>(`/mes/defects/${encodeURIComponent(no)}`, dto)
+  },
+
+  delete(no: string) {
+    return http.delete<any, Api<unknown>>(`/mes/defects/${encodeURIComponent(no)}`)
+  },
+
+  /** 不良分類マスタ */
+  getCategories() {
+    return http.get<any, Api<DefectCategoryDto[]>>('/mes/defects/categories')
   },
 }

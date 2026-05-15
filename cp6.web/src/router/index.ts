@@ -31,6 +31,10 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/mes/work-order-list': () => import('@/views/mes/WorkOrderListView.vue'),
   '/mes/production-result': () => import('@/views/mes/ProductionResultEntryView.vue'),
   '/mes/production-result-list': () => import('@/views/mes/ProductionResultListView.vue'),
+  // ───── MES 品質・不良 (MSBBME060/070/080) ─────
+  '/mes/quality-inspection': () => import('@/views/mes/QualityInspectionEntryView.vue'),
+  '/mes/quality-inspection-list': () => import('@/views/mes/QualityInspectionListView.vue'),
+  '/mes/defect': () => import('@/views/mes/DefectManagementView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口

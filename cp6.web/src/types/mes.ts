@@ -206,3 +206,168 @@ export interface MesPagedResult<T> {
   pageSize: number
   items: T[]
 }
+
+// ─────────────────────────────────────────────────────────────
+// MSBBME060 / 070 — 品質検査
+// ─────────────────────────────────────────────────────────────
+
+export const INSPECTION_TYPE_OPTIONS = [
+  { value: 1, label: '受入' },
+  { value: 2, label: '工程内' },
+  { value: 3, label: '最終' },
+  { value: 4, label: '出荷前' },
+]
+
+export const OVERALL_RESULT_OPTIONS = [
+  { value: 1, label: '合格', color: '#67C23A' },
+  { value: 2, label: '不合格', color: '#F56C6C' },
+  { value: 9, label: '保留', color: '#E6A23C' },
+]
+
+export const DISPOSITION_OPTIONS = [
+  { value: 1, label: '手直し' },
+  { value: 2, label: '特別採用' },
+  { value: 3, label: '返品' },
+  { value: 4, label: '廃棄' },
+]
+
+export const ITEM_RESULT_OPTIONS = [
+  { value: 1, label: '合格' },
+  { value: 2, label: '不合格' },
+  { value: 9, label: '保留' },
+]
+
+export interface QualityInspectionItemDto {
+  id?: string
+  inspectionNo: string
+  itemSeqNo: number
+  itemName?: string | null
+  inspectionMethod?: string | null
+  standardValue?: number | null
+  upperLimit?: number | null
+  lowerLimit?: number | null
+  measuredValue?: number | null
+  measuredText?: string | null
+  result?: number | null
+  unit?: string | null
+  remarks?: string | null
+}
+
+export interface QualityInspectionDto {
+  id?: string
+  inspectionNo: string
+  workOrderNo: string
+  productCd?: string | null
+  productName?: string | null
+  processCd?: string | null
+  processName?: string | null
+  inspectionDate: string
+  inspectorCd: string
+  inspectorName?: string | null
+  inspectionType: number
+  templateCd?: string | null
+  inspectionQty?: number | null
+  sampleQty?: number | null
+  overallResult?: number | null
+  dispositionAction?: number | null
+  judgmentReason?: string | null
+  remarks?: string | null
+  createDate?: string
+  itemCount: number
+  passCount: number
+  passRate: number
+  items: QualityInspectionItemDto[]
+}
+
+export interface InspectionTemplateDto {
+  id?: string
+  templateCd: string
+  itemSeqNo: number
+  templateName?: string | null
+  itemName: string
+  inspectionMethod?: string | null
+  standardValue?: number | null
+  upperLimit?: number | null
+  lowerLimit?: number | null
+  unit?: string | null
+  processCd?: string | null
+  requiredFlg: boolean
+  activeFlg: boolean
+}
+
+export interface QualityInspectionSearchQuery {
+  inspectionNo?: string
+  workOrderNo?: string
+  processCd?: string
+  inspectorCd?: string
+  inspectionType?: number
+  overallResult?: number
+  dateFrom?: string
+  dateTo?: string
+  pageIndex?: number
+  pageSize?: number
+}
+
+// ─────────────────────────────────────────────────────────────
+// MSBBME080 — 不良品管理
+// ─────────────────────────────────────────────────────────────
+
+export const DEFECT_STATUS_OPTIONS = [
+  { value: 0, label: '起票済み', color: '#909399' },
+  { value: 1, label: '分析中', color: '#409EFF' },
+  { value: 2, label: '是正中', color: '#E6A23C' },
+  { value: 3, label: '完了', color: '#67C23A' },
+]
+
+export interface DefectRecordDto {
+  id?: string
+  defectNo: string
+  workOrderNo: string
+  productCd?: string | null
+  productName?: string | null
+  processCd?: string | null
+  processName?: string | null
+  inspectionNo?: string | null
+  occurDate: string
+  reporterCd?: string | null
+  reporterName?: string | null
+  categoryCd: string
+  categoryName?: string | null
+  detailCd?: string | null
+  detailName?: string | null
+  defectQty: number
+  defectDescription: string
+  causeAnalysis?: string | null
+  correctiveAction?: string | null
+  assigneeCd?: string | null
+  assigneeName?: string | null
+  dueDate?: string | null
+  completedDate?: string | null
+  status: number
+  remarks?: string | null
+  createDate?: string
+}
+
+export interface DefectRecordSearchQuery {
+  defectNo?: string
+  workOrderNo?: string
+  processCd?: string
+  categoryCd?: string
+  detailCd?: string
+  statuses?: number[]
+  assigneeCd?: string
+  occurDateFrom?: string
+  occurDateTo?: string
+  pageIndex?: number
+  pageSize?: number
+}
+
+export interface DefectCategoryDto {
+  id?: string
+  categoryCd: string
+  detailCd: string
+  categoryName?: string | null
+  detailName?: string | null
+  sortOrder: number
+  activeFlg: boolean
+}
