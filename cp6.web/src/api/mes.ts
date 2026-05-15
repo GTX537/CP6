@@ -12,6 +12,18 @@ import type {
   DefectRecordDto,
   DefectRecordSearchQuery,
   DefectCategoryDto,
+  PlanningBarDto,
+  PlanningBoardQuery,
+  PlanningKpiDto,
+  RescheduleRequest,
+  AutoArrangeRequest,
+  MesDashboardSummaryDto,
+  ProcessProgressDto,
+  DelayAlertDto,
+  DailyTrendDto,
+  DefectTop5Dto,
+  RecentCompletedDto,
+  MachineHeatmapDto,
   MesPagedResult,
 } from '@/types/mes'
 
@@ -182,5 +194,55 @@ export const defectRecordApi = {
   /** 不良分類マスタ */
   getCategories() {
     return http.get<any, Api<DefectCategoryDto[]>>('/mes/defects/categories')
+  },
+}
+
+// ─────────────────────────────────────────────────────────────
+// MSBBME010 — 生産計画ボード
+// ─────────────────────────────────────────────────────────────
+export const planningBoardApi = {
+  getBars(query: PlanningBoardQuery) {
+    return http.get<any, Api<PlanningBarDto[]>>('/mes/planning-board', {
+      params: query,
+      paramsSerializer: { indexes: null },
+    })
+  },
+  getKpi(query: PlanningBoardQuery) {
+    return http.get<any, Api<PlanningKpiDto>>('/mes/planning-board/kpi', {
+      params: query,
+    })
+  },
+  reschedule(req: RescheduleRequest) {
+    return http.put<any, Api<unknown>>('/mes/planning-board/reschedule', req)
+  },
+  autoArrange(req: AutoArrangeRequest) {
+    return http.post<any, Api<{ changed: number }>>('/mes/planning-board/auto-arrange', req)
+  },
+}
+
+// ─────────────────────────────────────────────────────────────
+// MSBBME090 — MES ダッシュボード
+// ─────────────────────────────────────────────────────────────
+export const mesDashboardApi = {
+  summary() {
+    return http.get<any, Api<MesDashboardSummaryDto>>('/mes/dashboard/summary')
+  },
+  processProgress() {
+    return http.get<any, Api<ProcessProgressDto[]>>('/mes/dashboard/process-progress')
+  },
+  delayAlerts(top = 50) {
+    return http.get<any, Api<DelayAlertDto[]>>('/mes/dashboard/delay-alerts', { params: { top } })
+  },
+  dailyTrend(days = 30) {
+    return http.get<any, Api<DailyTrendDto[]>>('/mes/dashboard/daily-trend', { params: { days } })
+  },
+  defectTop5() {
+    return http.get<any, Api<DefectTop5Dto[]>>('/mes/dashboard/defect-top5')
+  },
+  recentCompleted(top = 10) {
+    return http.get<any, Api<RecentCompletedDto[]>>('/mes/dashboard/recent-completed', { params: { top } })
+  },
+  machineHeatmap(days = 7) {
+    return http.get<any, Api<MachineHeatmapDto[]>>('/mes/dashboard/machine-heatmap', { params: { days } })
   },
 }

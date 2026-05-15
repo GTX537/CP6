@@ -371,3 +371,126 @@ export interface DefectCategoryDto {
   sortOrder: number
   activeFlg: boolean
 }
+
+// ─────────────────────────────────────────────────────────────
+// MSBBME010 — 生産計画ボード
+// ─────────────────────────────────────────────────────────────
+
+export interface PlanningBarDto {
+  id: string
+  workOrderNo: string
+  productCd: string
+  productName?: string | null
+  customerCd?: string | null
+  processCd: string
+  taskCd: string
+  processName?: string | null
+  machineCd?: string | null
+  wgCd?: string | null
+  sortOrder: number
+  processStatus: number
+  workOrderStatus: number
+  priority: number
+  planStartTime?: string | null
+  planEndTime?: string | null
+  actualStartTime?: string | null
+  actualEndTime?: string | null
+  deliveryDate?: string | null
+  planQty?: number | null
+  goodQty: number
+  defectQty: number
+}
+
+export interface PlanningBoardQuery {
+  dateFrom?: string
+  dateTo?: string
+  processCd?: string
+  wgCd?: string
+  machineCd?: string
+  statuses?: number[]
+  baseCd?: string
+}
+
+export interface PlanningKpiDto {
+  totalOrders: number
+  inProgressOrders: number
+  completedOrders: number
+  delayedOrders: number
+  completionRate: number
+  avgDelayDays: number
+}
+
+export interface RescheduleRequest {
+  id: string
+  planStartTime: string
+  planEndTime: string
+  machineCd?: string | null
+}
+
+export interface AutoArrangeRequest {
+  baseDate: string
+  wgCd?: string
+  processCd?: string
+  defaultHoursPerJob?: number
+}
+
+// ─────────────────────────────────────────────────────────────
+// MSBBME090 — ダッシュボード
+// ─────────────────────────────────────────────────────────────
+
+export interface MesDashboardSummaryDto {
+  inProgressCount: number
+  completedCount: number
+  totalGoodQty: number
+  totalDefectQty: number
+  defectRate: number
+  delayedCount: number
+}
+
+export interface ProcessProgressDto {
+  processCd: string
+  processName?: string | null
+  notStarted: number
+  inProgress: number
+  completed: number
+}
+
+export interface DelayAlertDto {
+  workOrderNo: string
+  productCd?: string | null
+  productName?: string | null
+  customerCd?: string | null
+  planEndDate?: string | null
+  deliveryDate?: string | null
+  delayDays: number
+  status: number
+  progressRate: number
+}
+
+export interface DailyTrendDto {
+  date: string
+  goodQty: number
+  defectQty: number
+}
+
+export interface DefectTop5Dto {
+  categoryCd: string
+  categoryName?: string | null
+  count: number
+  qty: number
+}
+
+export interface RecentCompletedDto {
+  workOrderNo: string
+  productCd?: string | null
+  productName?: string | null
+  productionQty: number
+  completedQty: number
+  actualEndDate?: string | null
+}
+
+export interface MachineHeatmapDto {
+  machineCd: string
+  hour: number
+  count: number
+}

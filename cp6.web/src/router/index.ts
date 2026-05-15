@@ -35,6 +35,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/mes/quality-inspection': () => import('@/views/mes/QualityInspectionEntryView.vue'),
   '/mes/quality-inspection-list': () => import('@/views/mes/QualityInspectionListView.vue'),
   '/mes/defect': () => import('@/views/mes/DefectManagementView.vue'),
+  // ───── MES 計画・ダッシュボード (MSBBME010/090) ─────
+  '/mes/planning-board': () => import('@/views/mes/PlanningBoardView.vue'),
+  '/mes/dashboard': () => import('@/views/mes/MesDashboardView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口

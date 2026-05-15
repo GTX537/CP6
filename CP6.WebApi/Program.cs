@@ -96,6 +96,8 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IWorkOrderService, CP6.Core.Ser
 builder.Services.AddScoped<CP6.Core.Services.Mes.IProductionResultService, CP6.Core.Services.Mes.ProductionResultService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IQualityInspectionService, CP6.Core.Services.Mes.QualityInspectionService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IDefectRecordService, CP6.Core.Services.Mes.DefectRecordService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IPlanningBoardService, CP6.Core.Services.Mes.PlanningBoardService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IMesDashboardService, CP6.Core.Services.Mes.MesDashboardService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
@@ -400,6 +402,19 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 308, MenuName = "不良品管理", RoutePath = "/mes/defect", Icon = "Warning", ParentId = 300, OrderNo = 308, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 308 });
+        db.SaveChanges();
+    }
+    // ME010 / ME090
+    if (!db.Sys_Menus.Any(m => m.MenuId == 301))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 301, MenuName = "生産計画ボード", RoutePath = "/mes/planning-board", Icon = "Calendar", ParentId = 300, OrderNo = 301, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 301 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 309))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 309, MenuName = "MESダッシュボード", RoutePath = "/mes/dashboard", Icon = "PieChart", ParentId = 300, OrderNo = 309, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 309 });
         db.SaveChanges();
     }
 
