@@ -16,13 +16,15 @@ public class ProductionResultService : IProductionResultService
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
     private readonly IWorkOrderService _woService;
+    private readonly IMesNotifier _notifier;
     private const string ResultSeqKey = "PR";
 
-    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService)
+    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier)
     {
         _db = db;
         _seq = seq;
         _woService = woService;
+        _notifier = notifier;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -223,6 +225,17 @@ public class ProductionResultService : IProductionResultService
 
         await _db.SaveChangesAsync();
         await tx.CommitAsync();
+
+        // SignalR 実時間推送（コミット後）
+        try
+        {
+            await _notifier.NotifyProductionReportedAsync(req.WorkOrderNo, req.ProcessCd, req.GoodQty, req.DefectQty);
+            // 指図ステータス遷移の場合も別途通知
+            if (resultType == 1 || resultType == 2 || resultType == 3 || resultType == 4)
+                await _notifier.NotifyWorkOrderStatusChangedAsync(req.WorkOrderNo, wo.Status);
+        }
+        catch { /* notifier 失敗は業務に影響させない */ }
+
         return resultNo;
     }
 

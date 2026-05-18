@@ -158,6 +158,14 @@ public class CP6Context : DbContext
     /// <summary>MES採番管理</summary>
     public DbSet<MesSequence> MesSequences { get; set; }
 
+    // ───── MES Phase 4：設備管理 / OEE ─────
+    /// <summary>設備マスタ</summary>
+    public DbSet<Machine> Machines { get; set; }
+    /// <summary>設備停止記録</summary>
+    public DbSet<MachineDowntime> MachineDowntimes { get; set; }
+    /// <summary>OEE 日次集計</summary>
+    public DbSet<OeeDaily> OeeDailies { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -553,6 +561,37 @@ public class CP6Context : DbContext
         modelBuilder.Entity<MesSequence>(e =>
         {
             e.HasIndex(x => new { x.SeqKey, x.SeqDate }).IsUnique();
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MES Phase 4：設備管理 / OEE
+        // ═══════════════════════════════════════════════════════════
+
+        // 設備マスタ：MachineCd 唯一
+        modelBuilder.Entity<Machine>(e =>
+        {
+            e.HasIndex(x => x.MachineCd).IsUnique();
+            e.HasIndex(x => new { x.ProcessCd, x.ActiveFlg });
+            e.HasIndex(x => new { x.WgCd, x.ActiveFlg });
+            e.HasIndex(x => new { x.Status, x.ActiveFlg });
+            e.HasIndex(x => x.BaseCd);
+        });
+
+        // 設備停止記録：DowntimeNo 唯一
+        modelBuilder.Entity<MachineDowntime>(e =>
+        {
+            e.HasIndex(x => x.DowntimeNo).IsUnique();
+            e.HasIndex(x => new { x.MachineCd, x.StartTime });
+            e.HasIndex(x => new { x.MachineCd, x.EndTime });
+            e.HasIndex(x => new { x.DowntimeType, x.IsDeleted });
+            e.HasIndex(x => x.WorkOrderNo);
+        });
+
+        // OEE 日次：(OeeDate + MachineCd) 唯一
+        modelBuilder.Entity<OeeDaily>(e =>
+        {
+            e.HasIndex(x => new { x.OeeDate, x.MachineCd }).IsUnique();
+            e.HasIndex(x => new { x.MachineCd, x.OeeDate });
         });
     }
 }
