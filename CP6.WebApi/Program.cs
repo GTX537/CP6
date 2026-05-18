@@ -101,6 +101,13 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IMesDashboardService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMachineService, CP6.Core.Services.Mes.MachineService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IOeeService, CP6.Core.Services.Mes.OeeService>();
 
+// MES 実時間通知（SignalR 実装）
+builder.Services.AddScoped<CP6.Core.Services.Mes.IMesNotifier, CP6.WebApi.Services.SignalRMesNotifier>();
+
+// MES BackgroundService（多線程）
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.OeeCalculationService>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.MachineStatusMonitor>();
+
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -1255,5 +1262,6 @@ app.MapControllers();
 
 // SignalR Hub 路由
 app.MapHub<NotifyHub>("/hubs/notify");
+app.MapHub<CP6.WebApi.Hubs.MesHub>("/hubs/mes");
 
 app.Run();

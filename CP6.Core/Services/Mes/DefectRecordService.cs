@@ -15,12 +15,14 @@ public class DefectRecordService : IDefectRecordService
 {
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
+    private readonly IMesNotifier _notifier;
     private const string DfSeqKey = "DF";
 
-    public DefectRecordService(CP6Context db, IMesSequenceService seq)
+    public DefectRecordService(CP6Context db, IMesSequenceService seq, IMesNotifier notifier)
     {
         _db = db;
         _seq = seq;
+        _notifier = notifier;
     }
 
     public async Task<DefectRecordDto?> GetByNoAsync(string defectNo)
@@ -97,6 +99,9 @@ public class DefectRecordService : IDefectRecordService
             CreateDate = now,
         });
         await _db.SaveChangesAsync();
+
+        try { await _notifier.NotifyDefectIssuedAsync(no, dto.WorkOrderNo, dto.CategoryCd); } catch { }
+
         return no;
     }
 

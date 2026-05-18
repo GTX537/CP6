@@ -10,12 +10,14 @@ public class MachineService : IMachineService
 {
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
+    private readonly IMesNotifier _notifier;
     private const string DowntimeSeqKey = "DT";
 
-    public MachineService(CP6Context db, IMesSequenceService seq)
+    public MachineService(CP6Context db, IMesSequenceService seq, IMesNotifier notifier)
     {
         _db = db;
         _seq = seq;
+        _notifier = notifier;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -147,6 +149,7 @@ public class MachineService : IMachineService
         m.Modifier = userName;
         m.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
+        try { await _notifier.NotifyMachineStatusChangedAsync(machineCd, status); } catch { }
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -231,6 +234,12 @@ public class MachineService : IMachineService
         }
 
         await _db.SaveChangesAsync();
+        try
+        {
+            await _notifier.NotifyDowntimeRegisteredAsync(no, dto.MachineCd, dto.DowntimeType);
+            if (machine != null) await _notifier.NotifyMachineStatusChangedAsync(machine.MachineCd, machine.Status);
+        }
+        catch { }
         return no;
     }
 
