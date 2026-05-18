@@ -98,6 +98,8 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IQualityInspectionService, CP6.
 builder.Services.AddScoped<CP6.Core.Services.Mes.IDefectRecordService, CP6.Core.Services.Mes.DefectRecordService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IPlanningBoardService, CP6.Core.Services.Mes.PlanningBoardService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesDashboardService, CP6.Core.Services.Mes.MesDashboardService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IMachineService, CP6.Core.Services.Mes.MachineService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IOeeService, CP6.Core.Services.Mes.OeeService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
@@ -415,6 +417,62 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 309, MenuName = "MESダッシュボード", RoutePath = "/mes/dashboard", Icon = "PieChart", ParentId = 300, OrderNo = 309, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 309 });
+        db.SaveChanges();
+    }
+    // MES Phase 4：設備管理 / OEE / Control Tower
+    if (!db.Sys_Menus.Any(m => m.MenuId == 310))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 310, MenuName = "設備管理", RoutePath = "/mes/machine-list", Icon = "Monitor", ParentId = 300, OrderNo = 310, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 310 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 311))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 311, MenuName = "OEE 分析", RoutePath = "/mes/oee", Icon = "TrendCharts", ParentId = 300, OrderNo = 311, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 311 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 312))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 312, MenuName = "Control Tower 大屏", RoutePath = "/mes/control-tower", Icon = "Aim", ParentId = 300, OrderNo = 312, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 312 });
+        db.SaveChanges();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  設備マスタ サンプル seed
+    // ─────────────────────────────────────────────────────────────
+    if (!db.Machines.Any())
+    {
+        var now = DateTime.Now;
+        var seedMachines = new (string Cd, string Name, string Type, string Process, string Wg, decimal CapPerHour, decimal CycleSec)[]
+        {
+            ("M001", "印刷機 4色 #1",  "PRINT",  "P01", "WG-PRINT", 6000m, 0.6m),
+            ("M002", "印刷機 4色 #2",  "PRINT",  "P01", "WG-PRINT", 6000m, 0.6m),
+            ("M003", "貼合機 #1",      "LAMINAT","P02", "WG-LAMI",  3000m, 1.2m),
+            ("M004", "トムソン #1",    "DIECUT", "P03", "WG-DIE",   2400m, 1.5m),
+            ("M005", "トムソン #2",    "DIECUT", "P03", "WG-DIE",   2400m, 1.5m),
+            ("M006", "グルア #1",      "GLUE",   "P04", "WG-GLUE",  1800m, 2.0m),
+        };
+        foreach (var (cd, name, type, proc, wg, cap, cycle) in seedMachines)
+        {
+            db.Machines.Add(new CP6.Entity.DomainModels.Mes.Machine
+            {
+                MachineCd = cd,
+                MachineName = name,
+                MachineType = type,
+                ProcessCd = proc,
+                WgCd = wg,
+                Status = 0,
+                PlannedRunMinutesPerDay = 480,
+                CapacityPerHour = cap,
+                StandardCycleSec = cycle,
+                ActiveFlg = true,
+                InstallDate = DateTime.Today.AddYears(-3),
+                Creator = "system",
+                CreateDate = now,
+            });
+        }
         db.SaveChanges();
     }
 

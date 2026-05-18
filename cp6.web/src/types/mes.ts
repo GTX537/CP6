@@ -494,3 +494,112 @@ export interface MachineHeatmapDto {
   hour: number
   count: number
 }
+
+// ─────────────────────────────────────────────────────────────
+// MES Phase 4 — 設備管理 / OEE
+// ─────────────────────────────────────────────────────────────
+
+export const MACHINE_STATUS_OPTIONS = [
+  { value: 0, label: '停止', color: '#909399', light: 'gray' },
+  { value: 1, label: '稼働中', color: '#67C23A', light: 'green' },
+  { value: 2, label: '故障', color: '#F56C6C', light: 'red' },
+  { value: 3, label: 'メンテ', color: '#E6A23C', light: 'yellow' },
+  { value: 4, label: '段取り', color: '#409EFF', light: 'blue' },
+]
+
+export const DOWNTIME_TYPE_OPTIONS = [
+  { value: 1, label: '計画停止' },
+  { value: 2, label: '故障' },
+  { value: 3, label: '材料待ち' },
+  { value: 4, label: '作業者不在' },
+  { value: 9, label: 'その他' },
+]
+
+export interface MachineDto {
+  id?: string
+  machineCd: string
+  machineName: string
+  machineType?: string | null
+  processCd?: string | null
+  wgCd?: string | null
+  baseCd?: string | null
+  status: number
+  plannedRunMinutesPerDay: number
+  standardCycleSec?: number | null
+  capacityPerHour?: number | null
+  installDate?: string | null
+  lastMaintenanceDate?: string | null
+  nextMaintenanceDate?: string | null
+  manufacturer?: string | null
+  model?: string | null
+  remarks?: string | null
+  activeFlg: boolean
+  currentWorkOrderNo?: string | null
+  currentProcessCd?: string | null
+  todayOee?: number | null
+}
+
+export interface MachineDowntimeDto {
+  id?: string
+  downtimeNo: string
+  machineCd: string
+  machineName?: string | null
+  workOrderNo?: string | null
+  startTime: string
+  endTime?: string | null
+  downtimeMinutes?: number | null
+  downtimeType: number
+  reasonCd?: string | null
+  description?: string | null
+  operatorCd?: string | null
+  recoveryOperatorCd?: string | null
+  remarks?: string | null
+  createDate?: string
+}
+
+export interface MachineSearchQuery {
+  machineCd?: string
+  processCd?: string
+  wgCd?: string
+  baseCd?: string
+  statuses?: number[]
+  activeOnly?: boolean
+}
+
+export interface DowntimeSearchQuery {
+  machineCd?: string
+  dateFrom?: string
+  dateTo?: string
+  downtimeType?: number
+  onlyOpen?: boolean
+  pageIndex?: number
+  pageSize?: number
+}
+
+export interface OeeDailyDto {
+  id?: string
+  oeeDate: string
+  machineCd: string
+  machineName?: string | null
+  plannedRunMinutes: number
+  actualRunMinutes: number
+  downtimeMinutes: number
+  goodQty: number
+  defectQty: number
+  availability: number
+  performance: number
+  quality: number
+  oee: number
+  remarks?: string | null
+}
+
+export interface OeeSearchQuery {
+  machineCd?: string
+  dateFrom?: string
+  dateTo?: string
+}
+
+export interface OeeRecalcRequest {
+  targetDate: string
+  machineCd?: string
+}

@@ -24,6 +24,13 @@ import type {
   DefectTop5Dto,
   RecentCompletedDto,
   MachineHeatmapDto,
+  MachineDto,
+  MachineDowntimeDto,
+  MachineSearchQuery,
+  DowntimeSearchQuery,
+  OeeDailyDto,
+  OeeSearchQuery,
+  OeeRecalcRequest,
   MesPagedResult,
 } from '@/types/mes'
 
@@ -244,5 +251,68 @@ export const mesDashboardApi = {
   },
   machineHeatmap(days = 7) {
     return http.get<any, Api<MachineHeatmapDto[]>>('/mes/dashboard/machine-heatmap', { params: { days } })
+  },
+}
+
+// ─────────────────────────────────────────────────────────────
+// MES Phase 4 — 設備管理
+// ─────────────────────────────────────────────────────────────
+export const machineApi = {
+  search(query: MachineSearchQuery) {
+    return http.get<any, Api<MachineDto[]>>('/mes/machines', {
+      params: query,
+      paramsSerializer: { indexes: null },
+    })
+  },
+  get(cd: string) {
+    return http.get<any, Api<MachineDto>>(`/mes/machines/${encodeURIComponent(cd)}`)
+  },
+  create(dto: MachineDto) {
+    return http.post<any, Api<{ machineCd: string }>>('/mes/machines', dto)
+  },
+  update(cd: string, dto: MachineDto) {
+    return http.put<any, Api<unknown>>(`/mes/machines/${encodeURIComponent(cd)}`, dto)
+  },
+  delete(cd: string) {
+    return http.delete<any, Api<unknown>>(`/mes/machines/${encodeURIComponent(cd)}`)
+  },
+  changeStatus(cd: string, status: number) {
+    return http.post<any, Api<unknown>>(`/mes/machines/${encodeURIComponent(cd)}/status`, { status })
+  },
+
+  // ─── 停止記録 ───
+  searchDowntimes(query: DowntimeSearchQuery) {
+    return http.get<any, Api<MesPagedResult<MachineDowntimeDto>>>('/mes/machines/downtimes', {
+      params: query,
+    })
+  },
+  registerDowntime(dto: MachineDowntimeDto) {
+    return http.post<any, Api<{ downtimeNo: string }>>('/mes/machines/downtimes', dto)
+  },
+  closeDowntime(no: string, endTime: string, recoveryOperatorCd?: string) {
+    return http.post<any, Api<unknown>>(
+      `/mes/machines/downtimes/${encodeURIComponent(no)}/close`,
+      { endTime, recoveryOperatorCd }
+    )
+  },
+}
+
+// ─────────────────────────────────────────────────────────────
+// MES Phase 4 — OEE
+// ─────────────────────────────────────────────────────────────
+export const oeeApi = {
+  search(query: OeeSearchQuery) {
+    return http.get<any, Api<OeeDailyDto[]>>('/mes/oee', { params: query })
+  },
+  today(machineCd?: string) {
+    return http.get<any, Api<OeeDailyDto[]>>('/mes/oee/today', { params: { machineCd } })
+  },
+  trend(days = 30, machineCd?: string) {
+    return http.get<any, Api<Record<string, OeeDailyDto[]>>>('/mes/oee/trend', {
+      params: { days, machineCd },
+    })
+  },
+  recalculate(req: OeeRecalcRequest) {
+    return http.post<any, Api<{ recalculated: number }>>('/mes/oee/recalculate', req)
   },
 }

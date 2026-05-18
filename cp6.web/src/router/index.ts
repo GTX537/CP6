@@ -38,6 +38,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   // ───── MES 計画・ダッシュボード (MSBBME010/090) ─────
   '/mes/planning-board': () => import('@/views/mes/PlanningBoardView.vue'),
   '/mes/dashboard': () => import('@/views/mes/MesDashboardView.vue'),
+  // ───── MES Phase 4：設備・OEE・大屏 ─────
+  '/mes/machine-list': () => import('@/views/mes/MachineListView.vue'),
+  '/mes/oee': () => import('@/views/mes/OeeAnalysisView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口
