@@ -1,54 +1,37 @@
-# ===== Docker Compose — CP6 全栈容器化 =====
-#
-# 启动命令：docker compose up -d --build
-# 停止命令：docker compose down
-# 查看日志：docker compose logs -f cp6-api
-#
-# 面试要点：
-# 1. Docker Compose 管理多容器应用，一键启动整个技术栈
-# 2. depends_on + healthcheck 控制启动顺序（DB 就绪后才启动 API）
-# 3. 容器间通过服务名通信（如 cp6-api 访问 cp6-db:1433）
-# 4. volumes 持久化数据（容器删除后数据不丢失）
-# 5. environment 注入配置（覆盖 appsettings.json）
-
 services:
-  # ===== SQL Server 数据库 =====
   cp6-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: cp6-db
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "Cp6@Docker2024!"    # SA 密码（需要复杂度）
-      MSSQL_PID: "Developer"                   # 开发者免费版
-    ports:
-      - "1433:1433"        # 映射到宿主机，方便用 SSMS 连接调试
+      MSSQL_SA_PASSWORD: "Cp6@Docker2024!"
+      MSSQL_PID: "Developer"
     volumes:
-      - cp6-db-data:/var/opt/mssql    # 持久化数据库文件
+      - cp6-db-data:/var/opt/mssql
     healthcheck:
-      # 每 5 秒检查 SQL Server 是否就绪
-      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "Cp6@Docker2024!" -C -Q "SELECT 1" -b
-      interval: 5s
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Cp6@Docker2024!' -C -Q 'SELECT 1' -b"
+        ]
+      interval: 10s
       timeout: 5s
       retries: 20
-      start_period: 30s
+      start_period: 40s
     restart: unless-stopped
 
-  # ===== Redis 缓存 =====
   cp6-redis:
     image: redis:7-alpine
     container_name: cp6-redis
-    ports:
-      - "6379:6379"
     volumes:
       - cp6-redis-data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
+      interval: 10s
       timeout: 3s
       retries: 10
     restart: unless-stopped
 
-  # ===== RabbitMQ 消息队列 =====
   cp6-mq:
     image: rabbitmq:3-management-alpine
     container_name: cp6-mq
@@ -56,52 +39,47 @@ services:
       RABBITMQ_DEFAULT_USER: "cp6"
       RABBITMQ_DEFAULT_PASS: "cp6pass"
     ports:
-      - "5672:5672"        # AMQP 协议端口（程序连接用）
-      - "15672:15672"      # 管理面板（浏览器访问 http://localhost:15672）
+      - "15672:15672"
     volumes:
       - cp6-mq-data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 15
-      start_period: 15s
+      start_period: 20s
     restart: unless-stopped
 
-  # ===== .NET Backend =====
   cp6-api:
     build:
-      context: .                       # 构建上下文是项目根目录
+      context: .
       dockerfile: CP6.WebApi/Dockerfile
     container_name: cp6-api
     environment:
-      # 使用 Docker 专用配置文件
       ASPNETCORE_ENVIRONMENT: "Docker"
     ports:
-      - "9991:5000"        # 宿主机 9991 → 容器 5000
+      - "9991:5000"
     depends_on:
       cp6-db:
-        condition: service_healthy     # 等 DB 健康检查通过才启动
+        condition: service_healthy
       cp6-redis:
-        condition: service_healthy     # 等 Redis 就绪
+        condition: service_healthy
       cp6-mq:
-        condition: service_healthy     # 等 RabbitMQ 就绪
+        condition: service_healthy
     restart: unless-stopped
 
-  # ===== Vue Frontend (Nginx) =====
   cp6-web:
     build:
       context: ./cp6.web
       dockerfile: Dockerfile
     container_name: cp6-web
     ports:
-      - "8080:80"          # 宿主机 8080 → 容器 Nginx 80
+      - "8080:80"
     depends_on:
       - cp6-api
     restart: unless-stopped
 
-# ===== 持久化卷 =====
 volumes:
-  cp6-db-data:       # SQL Server 数据持久化
-  cp6-redis-data:    # Redis 数据持久化
-  cp6-mq-data:       # RabbitMQ 数据持久化
+  cp6-db-data:
+  cp6-redis-data:
+  cp6-mq-data:
