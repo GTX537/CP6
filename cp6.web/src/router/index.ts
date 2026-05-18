@@ -41,6 +41,8 @@ const viewModules: Record<string, () => Promise<any>> = {
   // ───── MES Phase 4：設備・OEE・大屏 ─────
   '/mes/machine-list': () => import('@/views/mes/MachineListView.vue'),
   '/mes/oee': () => import('@/views/mes/OeeAnalysisView.vue'),
+  // Control Tower 大屏は standalone モード、下の staticRoutes も参照
+  '/mes/control-tower': () => import('@/views/mes/ControlTowerView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口
@@ -80,6 +82,13 @@ const staticRoutes: RouteRecordRaw[] = [
     name: 'business-partner-window',
     component: () => import('@/views/BusinessPartnerView.vue'),
     meta: { standalone: true, title: '取引先マスタ' }
+  },
+  // MES Control Tower 全屏大屏（独立路由、Layout 無し）
+  {
+    path: '/mes/control-tower/standalone',
+    name: 'mes-control-tower-standalone',
+    component: () => import('@/views/mes/ControlTowerView.vue'),
+    meta: { standalone: true, title: 'MES Control Tower' }
   },
   {
     path: '/',
