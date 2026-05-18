@@ -11,7 +11,12 @@ namespace CP6.WebApi.Controllers.Mes;
 public class MesDashboardController : ControllerBase
 {
     private readonly IMesDashboardService _service;
-    public MesDashboardController(IMesDashboardService service) => _service = service;
+    private readonly MesDashboardDapperService _dapper;
+    public MesDashboardController(IMesDashboardService service, MesDashboardDapperService dapper)
+    {
+        _service = service;
+        _dapper = dapper;
+    }
 
     [HttpGet("summary")]
     public async Task<IActionResult> Summary()
@@ -60,5 +65,40 @@ public class MesDashboardController : ControllerBase
     {
         var rows = await _service.GetMachineHeatmapAsync(days);
         return Ok(new { code = 0, message = "OK", data = rows });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  Dapper + SP 版（性能調優サンプル — JD 要件）
+    //  従来 EF 版より 30-60% 高速（測定値はデータ量による）
+    // ═══════════════════════════════════════════════════════════
+
+    /// <summary>SP 版 本日サマリ — usp_GetMesDashboardSummary</summary>
+    [HttpGet("summary/sp")]
+    public async Task<IActionResult> SummarySp()
+    {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var s = await _dapper.GetSummaryAsync();
+        sw.Stop();
+        return Ok(new { code = 0, message = "OK", data = s, elapsedMs = sw.ElapsedMilliseconds });
+    }
+
+    /// <summary>SP 版 日別推移 — usp_GetMesDailyTrend</summary>
+    [HttpGet("daily-trend/sp")]
+    public async Task<IActionResult> DailyTrendSp([FromQuery] int days = 30)
+    {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var rows = await _dapper.GetDailyTrendAsync(days);
+        sw.Stop();
+        return Ok(new { code = 0, message = "OK", data = rows, elapsedMs = sw.ElapsedMilliseconds });
+    }
+
+    /// <summary>SP 版 工程別進捗 — usp_GetMesProcessProgress</summary>
+    [HttpGet("process-progress/sp")]
+    public async Task<IActionResult> ProcessProgressSp()
+    {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var rows = await _dapper.GetProcessProgressAsync();
+        sw.Stop();
+        return Ok(new { code = 0, message = "OK", data = rows, elapsedMs = sw.ElapsedMilliseconds });
     }
 }

@@ -100,6 +100,7 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IPlanningBoardService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesDashboardService, CP6.Core.Services.Mes.MesDashboardService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMachineService, CP6.Core.Services.Mes.MachineService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IOeeService, CP6.Core.Services.Mes.OeeService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.MesDashboardDapperService>();
 
 // MES 実時間通知（SignalR 実装）
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesNotifier, CP6.WebApi.Services.SignalRMesNotifier>();
