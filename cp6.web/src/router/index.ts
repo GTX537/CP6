@@ -43,6 +43,53 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/mes/oee': () => import('@/views/mes/OeeAnalysisView.vue'),
   // Control Tower 大屏は standalone モード、下の staticRoutes も参照
   '/mes/control-tower': () => import('@/views/mes/ControlTowerView.vue'),
+  // ───── WMS 倉庫管理 Phase 1 (MSBBWM010/020) ─────
+  '/wms/warehouse': () => import('@/views/wms/WarehouseListView.vue'),
+  '/wms/stock': () => import('@/views/wms/StockQueryView.vue'),
+  // ───── WMS Phase 2 入庫 (MSBBWM030/040) ─────
+  '/wms/inbound-order-list': () => import('@/views/wms/InboundOrderListView.vue'),
+  '/wms/inbound-order': () => import('@/views/wms/InboundOrderView.vue'),
+  '/wms/inbound-receipt': () => import('@/views/wms/InboundReceiptView.vue'),
+  // ───── WMS Phase 3 出庫 (MSBBWM050/070/080) ─────
+  '/wms/outbound-order-list': () => import('@/views/wms/OutboundOrderListView.vue'),
+  '/wms/outbound-order': () => import('@/views/wms/OutboundOrderView.vue'),
+  // ───── WMS Phase 4 棚卸・ダッシュボード (MSBBWM090/-DASH) ─────
+  '/wms/stock-take-list': () => import('@/views/wms/StockTakeListView.vue'),
+  '/wms/stock-take': () => import('@/views/wms/StockTakeView.vue'),
+  '/wms/dashboard': () => import('@/views/wms/WmsDashboardView.vue'),
+  // ───── WMS Core 補完 ─────
+  '/wms/location': () => import('@/views/wms/LocationListView.vue'),
+  // ───── Phase WM-3 後続実装予定（占位） ─────
+  '/wms/product-inbound':      () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/shipping-order-list':  () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/shipping-order':       () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/picking':              () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/packaging':            () => import('@/views/wms/WmsPlaceholderView.vue'),
+  // ───── Phase WM-5 拡張機能 ─────
+  '/wms/inspection':           () => import('@/views/wms/QcInspectionView.vue'),
+  '/wms/rma':                  () => import('@/views/wms/RmaView.vue'),
+  '/wms/expiry':               () => import('@/views/wms/ExpiryView.vue'),
+  // 残りの Phase WM-5 は引き続き Placeholder
+  '/wms/slotting':             () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/replenish':            () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/cross-dock':           () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/kit':                  () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/lot-trace':            () => import('@/views/wms/WmsPlaceholderView.vue'),
+  // ───── Phase WM-6 業界特化（占位） ─────
+  '/wms/paper-roll':           () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/remnant':              () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/plate-mold-stock':     () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/ink-lot':              () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/pallet':               () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/vmi':                  () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/sample-stock':         () => import('@/views/wms/WmsPlaceholderView.vue'),
+  // ───── Phase WM-7 連携（占位） ─────
+  '/wms/mobile-task':          () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/wcs-task':             () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/carrier':              () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/iot-monitor':          () => import('@/views/wms/WmsPlaceholderView.vue'),
+  // ───── Phase WM-8 帳票（占位） ─────
+  '/wms/report-center':        () => import('@/views/wms/WmsPlaceholderView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口
