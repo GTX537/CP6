@@ -1,0 +1,1896 @@
+MSBBWM
+WMS 倉庫管理システム
+详细需求规格文档
+— 可直接用于编写代码的最终版本 —
+属性
+内容
+功能ID
+MSBBWM010~MSBBWM090
+所属模块
+WMS 倉庫管理システム（Warehouse Management System）
+目标技术栈
+Vue 3 + TypeScript + Element Plus + Pinia / .NET 8/10 Web API + EF Core + Dapper / SQL Server
+文档版本
+V1.0（独立 WMS 原型、ERP/MES と疎結合）
+与ERP・MESの衍接
+PA070受注 → WM070出荷指示 → WM080出荷実績
+ME020製造指図 → WM050出庫指示（材料引当）
+ME040製造実績 → WM060製品入庫（完成品上架）
+共通マスタ：PA050製品マスタ・拠点・担当者・取引先
+目　录
+第1章  WMS模块总体架构与业务定位
+1.1  功能目的
+WMSモジュール（MSBBWM系列）はCP6システムにおいて、ERP販売管理（PA系列）と MES製造執行（ME系列）の間に位置し、"物がどこに・いくつ・誰が動かしたか" を一元管理する。ERPは"売る/作る"を決め、MESは"作り方"を実行し、WMSは"在庫の現実"を保持する。本モジュールは独立WMS原型で、後続でmcframe7倉庫モジュール、又は外部WCSとAPI連携可。
+1.2  业务流程定位
+【ERP 販売管理（既存PA系列）】
+  PA070 受注入力
+       ↓ 受注確定
+══════════════════════════════════════════════════════
+【WMS 倉庫管理（新規 WM系列）】
+  WM010 倉庫・ロケーションマスタ
+       ↓
+  WM030 入庫予定登録 ─→ WM040 入庫実績入力（原紙・資材受入）
+                              ↓
+                          T_Stock 更新
+                              ↑
+       ┌──────────────────────┤
+       │                      │
+  MES 製造指図確定            MES 製造実績完了
+       ↓                      ↓
+  WM050 出庫指示（材料引当）   WM060 製品入庫（完成品上架）
+       ↓                      │
+   ピッキング → 工場         │
+       │                      ↓
+       └────────→ 在庫トランザクション T_StockTransaction
+                              ↑
+  PA070 受注確定 ─→ WM070 出荷指示 ─→ WM080 出荷実績（梱包・出荷確定）
+
+  WM020 在庫照会（全社库存一目了然）
+  WM090 棚卸（実地棚卸 + 差異調整）
+  WM-DASH WMSダッシュボード（在庫回転率・滞留品・KPI）
+1.3  WMS模块一览
+功能ID
+功能名称
+类型
+复杂度
+核心特征
+MSBBWM010
+倉庫・ロケーションマスタ
+CRUD
+★★中
+階層構造（倉庫→ゾーン→棚→棚段→ビン）；ZPL バーコード出力
+MSBBWM020
+在庫照会
+查询
+★★中
+多次元検索；ロット別・棚別・賞味期限別；CSV出力
+MSBBWM030
+入庫予定登録
+CRUD+向导
+★★中
+発注書取込 or 手動；明細N行；バーコード受入予備
+MSBBWM040
+入庫実績入力
+录入
+★★★高
+予定参照 or 直入；ロット採番；自動棚配置；StockTxn 写込
+MSBBWM050
+出庫指示（生産材料）
+CRUD
+★★★高
+MES指図から自動展開；FIFO/LIFO引当；引当数量計算
+MSBBWM060
+製品入庫
+录入
+★★中
+MES実績完了から自動生成；製品 ロット引継；棚配置
+MSBBWM070
+出荷指示・ピッキング
+CRUD+作業
+★★★高
+受注から展開；ピッキングリスト印刷；ハンディ連携想定
+MSBBWM080
+出荷実績・梱包確定
+录入
+★★★高
+ピッキング検証；梱包NO採番；出荷確定→StockTxn
+MSBBWM090
+棚卸（実地棚卸）
+作業
+★★★高
+棚卸計画→カウント→差異承認→在庫調整
+MSBBWM-DASH
+WMSダッシュボード
+統計可視化
+★★中
+在庫金額・回転日数・滞留品・出荷予定 KPIチャート
+1.4  在庫トランザクション種別（全 WMS 画面共通）
+TXN_TYPE
+中文
+発生元画面
+在庫影響
+IN
+入庫
+WM040 / WM060
++Qty
+OUT
+出庫
+WM050 確定 / WM080 出荷確定
+-Qty
+MOVE
+棚移動
+WM020 棚移動ボタン
+源-Qty / 先+Qty
+ADJ
+調整（棚卸差異）
+WM090
++/-Qty（差異分）
+RSV
+引当
+WM050 / WM070
+AvailableQty -Qty（PhysicalQty 不変）
+UNRSV
+引当解除
+WM050 / WM070 取消
+AvailableQty +Qty
+1.5  指示ステータス遷移
+入庫予定（WM030）：
+0:下書き → 1:確定済 → 2:入庫中（部分入庫）→ 3:完了 → 9:取消
+出庫指示（WM050/WM070）：
+0:下書き → 1:確定済 → 2:引当済 → 3:ピッキング中 → 4:出庫完了 → 9:取消
+棚卸（WM090）：
+0:計画 → 1:カウント中 → 2:差異確認中 → 3:承認待ち → 4:完了 → 9:取消
+1.6  操作种别（全 WMS 画面共通）
+操作种別
+中文
+説明
+登録
+新建
+手動で新規作成
+訂正
+修改
+既存レコードの修正（ステータス条件あり）
+削除
+删除
+論理削除（DEL_FLG=1）；確定済以降は削除不可
+参照
+查看
+全フィールドReadOnly
+確定
+确定
+ステータス遷移；後続業務へ進む
+取消
+取消
+特殊権限要；後工程未着手の場合のみ
+第2章  MSBBWM010 — 倉庫・ロケーションマスタ
+2.1  功能概述
+倉庫およびロケーション（棚位）の階層マスタを管理する。階層は5段で、 倉庫 → ゾーン → 通路 → 棚 → ビン（最小単位）。バーコード（CODE128 or QR）を発行し、ハンディスキャンに対応する。
+2.2  画面区域结构
+区域
+説明
+左：倉庫ツリー区
+倉庫一覧 → ゾーン → 通路 → 棚 → ビン の折りたたみツリー
+右上：詳細編集区
+選択ノードの属性編集
+右下：在庫プレビュー区
+選択ロケーションの現在の在庫一覧（読み取り専用）
+ツールバー
+新規ノード追加・削除・バーコード一括出力・CSVインポート
+2.3  倉庫マスタ字段
+字段名
+日文名
+控件
+必须
+DB字段
+説明
+warehouseCd
+倉庫CD
+文本
+R
+WAREHOUSE_CD
+PK；3桁英数字
+warehouseName
+倉庫名
+文本
+R
+WAREHOUSE_NAME
+全角50文字
+warehouseType
+倉庫区分
+Select
+R
+WAREHOUSE_TYPE
+1=原材料 2=半製品 3=完成品 4=不良品 5=外注
+baseCd
+拠点CD
+Select
+R
+BASE_CD
+拠点マスタ参照
+addressText
+住所
+文本
+—
+ADDRESS_TEXT
+備考用
+manager
+責任者
+AutoComplete
+—
+MANAGER_CD
+担当者マスタ参照
+allowNegative
+マイナス在庫許可
+Switch
+—
+ALLOW_NEGATIVE
+既定 OFF
+2.4  ロケーション字段
+字段名
+日文名
+控件
+必须
+DB字段
+説明
+locationCd
+ロケーションCD
+文本
+R
+LOCATION_CD
+業務PK；倉庫CD＋ゾーン＋通路＋棚＋ビン
+parentLocationCd
+親ロケーション
+Select
+—
+PARENT_LOC_CD
+階層構造（NULL = 倉庫直下）
+locationLevel
+階層レベル
+只読
+—
+LOCATION_LEVEL
+1=ゾーン 2=通路 3=棚 4=棚段 5=ビン
+xCoord, yCoord, zCoord
+座標 X/Y/Z
+数字
+—
+X/Y/Z_COORD
+地図表示用（任意）
+capacityQty
+最大収容数
+数字
+—
+CAPACITY_QTY
+0=制限なし
+allowedProductType
+収容可能区分
+MultiSelect
+—
+ALLOWED_TYPE
+原材料/半製品/成品の制限
+isPickable
+ピッキング可
+Switch
+R
+IS_PICKABLE
+初期=ON
+isBlocked
+凍結中
+Switch
+—
+IS_BLOCKED
+ON時：入出庫禁止
+barcode
+バーコード
+只読
+—
+BARCODE
+保存時に自動生成
+2.5  校验规则
+No
+校验项
+消息
+消息ID
+1
+倉庫CD重複
+倉庫CD[{cd}]は既に登録されています。
+WM-MSG-001
+2
+階層レベル＞5
+ロケーション階層は5段までです。
+WM-MSG-002
+3
+親ロケーション凍結中
+親ロケーションが凍結中のため作成できません。
+WM-MSG-003
+4
+削除時：在庫残あり
+当該ロケーションに在庫が残っているため削除できません。
+WM-MSG-004
+2.6  API
+Method
+URL
+説明
+GET
+/api/wms/warehouse
+倉庫一覧
+GET
+/api/wms/warehouse/{cd}/tree
+配下ロケーションのツリー取得
+POST
+/api/wms/warehouse
+倉庫新規
+PUT
+/api/wms/warehouse/{cd}
+倉庫更新
+POST
+/api/wms/location
+ロケーション新規
+PUT
+/api/wms/location/{id}
+ロケーション更新
+DELETE
+/api/wms/location/{id}
+ロケーション論理削除
+POST
+/api/wms/location/barcode-batch
+バーコード一括ZPL出力
+第3章  MSBBWM020 — 在庫照会
+3.1  功能概述
+全社の在庫状況を多次元で照会する画面。検索条件12項目・一覧18列。明細から StockTransaction（在庫トランザクション履歴）にドリルダウン可能。棚移動操作もここから起票する。
+3.2  検索条件
+拠点CD / 倉庫CD / ロケーションCD / 製品CD / 製品名(LIKE) / 製品区分 / ロットNO / 賞味期限(範囲) / 在庫数下限 / 在庫数上限 / 滞留日数下限 / 凍結中のみ
+3.3  一覧列（18列）
+拠点 / 倉庫 / ロケーション / 製品CD / 製品名 / 製品区分 / ロットNO / 入庫日 / 賞味期限 / 物理在庫 / 引当数量 / 利用可能在庫 / 単位 / 単価 / 在庫金額 / 滞留日数 / 直近入出庫日 / 状態
+3.4  ドリルダウン
+行クリック → 当該（製品×ロケーション×ロット）のトランザクション履歴ダイアログ
+  - 列：日時 / 区分(IN/OUT/MOVE/ADJ) / 数量 / 関連伝票NO / 担当者 / 備考
+3.5  棚移動機能
+複数行選択 → 「棚移動」ボタン → 移動先ロケーション指定 → 移動数量入力
+  - 種別 MOVE のトランザクション 2 件（源 OUT / 先 IN）を生成
+  - 引当中（AllocatedQty > 0）の在庫は移動不可（要先解除）
+3.6  API
+Method
+URL
+説明
+GET
+/api/wms/stock
+在庫一覧（多条件 + ページング）
+GET
+/api/wms/stock/{stockId}/history
+当該在庫のトランザクション履歴
+POST
+/api/wms/stock/move
+棚移動
+GET
+/api/wms/stock/export
+CSV出力
+3.7  校验规则
+No
+校验项
+消息
+消息ID
+1
+移動先＝移動元
+移動先は移動元と異なるロケーションを指定してください。
+WM-MSG-010
+2
+移動数量 > 利用可能在庫
+移動数量が利用可能在庫を超えています。
+WM-MSG-011
+3
+凍結中ロケーションへの移動
+移動先ロケーションが凍結中です。
+WM-MSG-012
+第4章  MSBBWM030 — 入庫予定登録
+4.1  功能概述
+原紙・副資材・購入品の入庫予定を登録する。発注書 CSV 取込、又は手動登録の 2 モード。明細単位で予定数量・到着予定日・予定ロケーションを管理する。
+4.2  画面字段（ヘッダ）
+字段名
+日文名
+控件
+必须
+DB字段
+inboundNo
+入庫予定NO
+文本
+自動
+INBOUND_NO
+PK；INYYYYMMDD-NNNN
+inboundType
+入庫区分
+Select
+R
+INBOUND_TYPE
+1=購買入庫 2=外注戻入 3=返品入庫 9=その他
+supplierCd
+仕入先CD
+AutoComplete
+R
+SUPPLIER_CD
+取引先マスタ
+poNo
+発注書NO
+文本
+—
+PO_NO
+PA060発注（将来連携）
+expectedArrivalDate
+入荷予定日
+DatePicker
+R
+EXPECTED_ARRIVAL
+warehouseCd
+入庫倉庫
+Select
+R
+WAREHOUSE_CD
+status
+ステータス
+只読Tag
+—
+STATUS
+0~9
+4.3  明細字段（N行）
+productCd / productName / lotNo / expectedQty / unitCd / expectedLocation / unitPrice / 備考
+4.4  操作ボタン
+登録 / 訂正（ステータス=0/1）/ 削除（ステータス=0）/ 確定（→1）/ 取消（→9）/ CSV取込
+4.5  校验
+No
+校验項
+消息
+消息ID
+1
+明細0行
+入庫明細が1件もありません。
+WM-MSG-020
+2
+予定数量≤0
+予定数量は0より大きい値を入力してください。
+WM-MSG-021
+3
+製品CDマスタ無
+製品CD[{cd}]が製品マスタに存在しません。
+WM-MSG-022
+4
+入荷予定日＜今日
+入荷予定日が過去日です。よろしいですか？
+WM-MSG-023(W)
+4.6  API
+GET /api/wms/inbound-order             一覧
+GET /api/wms/inbound-order/{no}        詳細
+POST /api/wms/inbound-order            新規
+PUT /api/wms/inbound-order/{no}        更新
+POST /api/wms/inbound-order/{no}/confirm  確定
+POST /api/wms/inbound-order/{no}/cancel   取消
+POST /api/wms/inbound-order/import     CSV取込
+第5章  MSBBWM040 — 入庫実績入力
+5.1  功能概述
+実際の入庫作業を登録し、在庫を増やす画面。入庫予定参照 or 直接登録（緊急入庫）の 2 モード。確定時に StockTransaction (TXN_TYPE=IN) と Stock テーブル更新を 1 トランザクションで実行。
+5.2  操作モード
+モード
+説明
+予定参照
+WM030 で確定済の入庫予定NOを検索 → 明細を読込 → 実績数量・ロット・ロケーション入力
+直入
+予定なしで直接入庫（社内振替・サンプル等）
+5.3  画面字段
+inboundReceiptNo （RCYYYYMMDD-NNNN、自動採番）
+inboundNo（参照モード時のみ）
+receiveDate（既定 NOW）
+operatorCd（既定 ログインユーザ）
+明細：productCd / lotNo（自動採番可）/ expectedQty / receivedQty / locationCd / 単価 / 備考
+5.4  ロット採番ルール
+未指定の場合：LOT_YYYYMMDD_{受入連番3桁}
+製品マスタ.LotControlType = "自動採番" の製品のみ自動付与
+"指定" の場合は手入力必須
+5.5  自動棚配置
+製品マスタの DefaultWarehouseCd / DefaultLocationCd を初期値として配置
+ロケーション凍結中 or 残容量不足の場合：警告 + 代替候補ロケーション提示
+5.6  操作ボタン
+登録（→ Stock+/StockTxn IN 確定）/ 一時保存 / 取消
+5.7  校验
+No
+校验項
+消息
+消息ID
+1
+受入数量 > 予定数量＋10%
+受入数量が予定数量を大幅に超過しています（{percent}%超）。
+WM-MSG-030(W)
+2
+受入数量＝0
+受入数量を入力してください。
+WM-MSG-031
+3
+ロケーション凍結中
+ロケーション[{cd}]は凍結中です。
+WM-MSG-032
+4
+製品とロケーション区分不一致
+ロケーション[{cd}]は当該製品区分を収容できません。
+WM-MSG-033
+5
+ロットNO重複
+ロットNO[{lot}]は既に登録されています。
+WM-MSG-034
+5.8  API
+POST /api/wms/inbound-receipt          受入登録（→確定）
+GET  /api/wms/inbound-receipt/{no}     詳細参照
+POST /api/wms/inbound-receipt/reverse  受入取消（StockTxn を逆仕訳）
+第6章  MSBBWM050 — 出庫指示（生産材料）
+6.1  功能概述
+MES製造指図（WorkOrder）の確定時に、必要材料の出庫指示を自動生成する画面。手動起票も可能。引当（Reserve）→ ピッキング → 出庫確定の 3 段階処理。引当方式は FIFO（先入先出）を既定とし、製品マスタで LIFO/期限優先に切替可。
+6.2  自動展開フロー
+MES WM050
+ME020 製造指図確定
+   ↓ POST /api/mes/work-order/{no}/confirm
+   ↓   サービス層で OutboundOrderService.CreateFromWorkOrder(wo) を呼ぶ
+   ↓
+T_OutboundOrder ヘッダ生成 + 明細展開（WorkOrderMaterial 単位）
+   ↓
+状態 0:下書き
+6.3  画面字段（ヘッダ）
+outboundNo（OUT-YYYYMMDD-NNNN、自動）
+outboundType（1=生産材料 2=出荷 3=社内振替 9=その他）
+workOrderNo（FK → MES）
+warehouseCd
+plannedDate
+status（0~9）
+6.4  明細
+productCd / requiredQty / allocatedQty / pickedQty / unitCd / lotNo（引当時自動）/ locationCd（引当時自動）
+6.5  引当アルゴリズム（FIFO 例）
+1. 対象製品の Stock を AvailableQty>0 で抽出
+2. ORDER BY ReceiveDate ASC, ExpiryDate ASC（FIFO + 期限優先）
+3. ロット単位で順次引当 → StockTransaction (TXN_TYPE=RSV) 発行
+4. AvailableQty 不足の場合：部分引当 or 全件失敗（製品マスタ設定）
+5. 引当完了 → 指示ステータス=2（引当済）
+6.6  操作ボタン
+登録 / 確定（→1）/ 引当実行（→2）/ ピッキング開始（→3）/ 出庫確定（→4、Stock-/StockTxn OUT）/ 引当解除（→1）/ 取消
+6.7  校验
+No
+校验項
+消息
+消息ID
+1
+利用可能在庫不足
+製品[{cd}]の利用可能在庫が不足しています（必要:{req} 在庫:{avail}）。
+WM-MSG-040
+2
+出庫数量 > 引当数量
+出庫数量が引当数量を超えています。
+WM-MSG-041
+3
+凍結中ロケーション
+ロケーション[{cd}]は凍結中のため出庫できません。
+WM-MSG-042
+4
+ステータス制約
+当該ステータスでは{action}操作はできません。
+WM-MSG-043
+6.8  API
+POST /api/wms/outbound-order               新規
+POST /api/wms/outbound-order/from-wo/{wo}  MES指図から自動展開
+POST /api/wms/outbound-order/{no}/allocate 引当実行
+POST /api/wms/outbound-order/{no}/release  引当解除
+POST /api/wms/outbound-order/{no}/ship     出庫確定
+GET  /api/wms/outbound-order               一覧
+第7章  MSBBWM060 — 製品入庫（完成品上架）
+7.1  功能概述
+MES製造実績（ProductionResult）の指図完了時に、完成品の在庫計上を自動生成する。半製品入庫も同様。手動起票も可能。
+7.2  自動展開
+ME040 全工程完了 → 指図ステータス=4（完了） → WMS WM060 製品入庫レコード自動生成 → 担当者確認 → 確定で Stock+ / StockTxn IN
+7.3  画面字段
+inboundReceiptNo（RC-、自動）
+sourceType（"PRODUCTION"）/ workOrderNo / productCd / lotNo（指図のロットNO引継）
+goodQty（指図の累計良品数）/ locationCd（製品マスタ既定）
+inspectionStatus（"検査済" or "未検査"）/ 検査NO（ME060 連携）
+7.4  特殊規則
+1. 品質検査未済（inspectionStatus=未検査）の場合：保留倉庫に入庫
+2. 検査合格後（ME060 で合格判定）：自動で正規倉庫へ MOVE
+3. 検査不合格：不良品倉庫へ MOVE + WM050 出庫指示で工程戻し可
+7.5  API
+POST /api/wms/product-inbound/from-wo/{wo}   指図完了から自動生成
+POST /api/wms/product-inbound/{no}/confirm   入庫確定
+POST /api/wms/product-inbound/auto-move      検査結果による倉庫移動
+第8章  MSBBWM070 — 出荷指示・ピッキング
+8.1  功能概述
+PA070受注の出荷予定日に基づいて、出荷指示を生成。ピッキングリストを印刷し、現場での集荷作業を支援する。波次（Wave）集約・順路最適化機能を備える。
+8.2  自動展開
+受注確定 OR スケジュールバッチで 出荷予定日-1日 になった時点で自動生成可
+（バッチ設定：WMS ダッシュボードの "未着手出荷予定" 通知から手動起票も可）
+8.3  画面字段
+shippingNo（SHIP-YYYYMMDD-NNNN）
+webOrderNo（FK → T_Order）/ customerCd / shippingDate / 配送業者 / 配送先住所
+明細：productCd / orderedQty / pickedQty / shippedQty / lotNo / locationCd
+8.4  Wave（波次）機能
+複数出荷指示をグループ化 → 1 枚のピッキングリストへ集約
+  - 同一倉庫・同一配送業者・同一日付でグループ化推奨
+  - 順路最適化：ロケーション X/Y 座標で最短経路ソート
+  - ピッキング作業者は 1 度に複数顧客分を集荷可能
+8.5  ピッキング作業画面（タブレット想定）
+- 大きなロケーション表示 + 製品画像
+- "ロケーション確認 → 製品スキャン → 数量入力" の 3 ステップ
+- 数量不一致の場合は理由コード必須
+- 「保留」「欠品」「代替品」アクション
+8.6  API
+POST /api/wms/shipping-order/from-order/{webOrderNo}  受注から展開
+POST /api/wms/shipping-order/{no}/allocate            引当
+POST /api/wms/shipping-wave                           Wave 編成
+POST /api/wms/shipping-wave/{id}/pick-list            ピッキングリスト出力
+POST /api/wms/picking/scan                            スキャン1件登録
+第9章  MSBBWM080 — 出荷実績・梱包確定
+9.1  功能概述
+ピッキング完了後、梱包し最終確定する画面。梱包NO（パッケージNO）採番、重量・サイズ実測、配送業者送り状情報を登録。確定で Stock- / StockTxn OUT。
+9.2  画面字段
+packageNo（PKG-YYYYMMDD-NNNN）
+shippingNo（参照）
+caseQty（ケース数）/ totalWeight（kg）/ totalVolume（m3）
+carrierCd / trackingNo / departureTime
+明細：shippedQty が一致しているか自動チェック
+9.3  確定処理
+- 出荷指示の status=4（出荷完了）
+- 各明細について Stock-{qty} / StockTransaction TXN_TYPE=OUT
+- 引当中（RSV）残量を相殺（UNRSV せず直接 OUT）
+- 受注（PA070）の出荷ステータス更新（API コールバック）
+9.4  校验
+No
+校验項
+消息
+消息ID
+1
+梱包数量＞ピッキング数量
+梱包数量がピッキング数量を超えています。
+WM-MSG-050
+2
+追跡NO重複
+追跡NO[{no}]は既に他出荷で使用されています。
+WM-MSG-051
+3
+重量0
+総重量を入力してください。
+WM-MSG-052
+9.5  API
+POST /api/wms/package                    梱包NO採番
+POST /api/wms/shipping-order/{no}/confirm 出荷確定（→4）
+第10章  MSBBWM090 — 棚卸（実地棚卸）
+10.1  功能概述
+定期 / 臨時棚卸を計画 → 実地カウント → 差異承認 → 在庫調整までを一貫管理。サイクル棚卸（一部範囲のみ）・全棚卸の両方をサポート。
+10.2  棚卸ヘッダ
+stockTakeNo（ST-YYYYMMDD-NNN）
+stockTakeType（1=全棚卸 2=サイクル棚卸 3=臨時）
+plannedDate / actualDate / status（0~9）
+範囲：warehouseCd / locationCd（複数選択）/ productCategory
+10.3  処理フロー
+Phase 1: 計画
+  - 範囲指定 → 帳簿在庫スナップショット作成 → T_StockTakeDetail 生成（BookQty 固定）
+  - status=0 → 1（カウント中）
+  - 対象 Stock は "棚卸中フラグ" ON（出庫禁止）
+
+Phase 2: カウント
+  - 担当者が現場でカウント → T_StockTakeDetail.CountedQty 入力
+  - ハンディスキャン or 手入力（Element Plus テーブル直接編集）
+  - 全明細入力完了 → status=2（差異確認中）
+
+Phase 3: 差異承認
+  - 差異 = CountedQty - BookQty
+  - 差異 0 ：自動承認
+  - 差異 ≠ 0 ：理由コード入力必須 + 上長承認（差異金額>閾値の場合）
+  - status=3（承認待ち）→ 承認者が一覧画面で一括承認 → 4
+
+Phase 4: 在庫調整
+  - 承認済明細について TXN_TYPE=ADJ 発行
+  - Stock.PhysicalQty = CountedQty （絶対値で上書き）
+  - 棚卸中フラグ OFF
+10.4  画面字段（明細）
+locationCd / productCd / lotNo / bookQty / countedQty / diffQty / diffReason / diffAmount / approvalStatus
+10.5  校验
+No
+校验項
+消息
+消息ID
+1
+カウント未入力
+未カウントの明細があります（{n}件）。
+WM-MSG-060
+2
+差異あり＋理由未入力
+差異あり明細に理由コードを入力してください。
+WM-MSG-061
+3
+差異金額超過＋上長未承認
+差異金額が閾値を超えています。上長承認が必要です。
+WM-MSG-062
+10.6  API
+POST /api/wms/stock-take                作成（範囲指定）
+POST /api/wms/stock-take/{no}/snapshot  帳簿スナップショット
+PUT  /api/wms/stock-take-detail         カウント入力（複数件）
+POST /api/wms/stock-take/{no}/approve   承認
+POST /api/wms/stock-take/{no}/adjust    調整反映
+第11章  MSBBWM-DASH — WMSダッシュボード
+11.1  KPIカード
+- 総在庫金額（円）
+- 在庫品目数（SKU数）
+- 平均在庫回転日数
+- 滞留品（90日以上動きなし）件数・金額
+- 今日の入庫予定 / 出荷予定件数
+- ロケーション利用率（%）
+11.2  チャート区域
+- 月次入出庫推移（StackedBar）
+- ABC分析（パレート図）
+- 倉庫別在庫金額分布（円グラフ）
+- 滞留日数分布（ヒストグラム）
+- リアルタイム入出庫イベントタイムライン（SignalR push）
+11.3  アラート区
+- 在庫切れ間近（安全在庫割れ）
+- 賞味期限間近（30日以内）
+- 棚卸差異未承認
+- 入庫予定遅延（予定日-3日以上経過）
+11.4  API
+GET /api/wms/dashboard/kpi
+GET /api/wms/dashboard/trend?days=30
+GET /api/wms/dashboard/abc
+GET /api/wms/dashboard/alerts
+（Dapper による集約クエリ + CacheService で 60秒キャッシュ）
+第12章  実体テーブル設計（CP6.Entity/DomainModels/Wms/）
+12.1  テーブル一覧（14テーブル）
+T_Warehouse                  倉庫マスタ
+T_Location                   ロケーションマスタ（階層）
+T_Stock                      在庫実況（製品×ロケーション×ロット 単位 UNIQUE）
+T_StockTransaction           在庫トランザクション（IN/OUT/MOVE/ADJ/RSV/UNRSV）
+T_InboundOrder               入庫予定ヘッダ
+T_InboundOrderDetail         入庫予定明細
+T_InboundReceipt             入庫実績
+T_InboundReceiptDetail       入庫実績明細
+T_OutboundOrder              出庫指示ヘッダ（生産材料 + 出荷共通）
+T_OutboundOrderDetail        出庫指示明細
+T_ShippingPackage            出荷梱包
+T_StockTake                  棚卸ヘッダ
+T_StockTakeDetail            棚卸明細
+T_WmsSequence                採番マスタ（IN/RC/OUT/SHIP/PKG/ST 前缀）
+12.2  T_Stock 重要設計
+- 業務 PK：(WarehouseCd, LocationCd, ProductCd, LotNo)
+- PhysicalQty（物理在庫）／ AllocatedQty（引当中）／ AvailableQty = Physical - Allocated（計算列 or 都度算出）
+- RowVersion (rowversion) ：楽観ロック必須
+- 直接 UPDATE 禁止、StockMovementService 経由のみ
+- インデックス：ProductCd / WarehouseCd / LotNo / ExpiryDate
+12.3  T_StockTransaction 重要設計
+- 不変（Immutable）レコード：INSERT のみ、UPDATE/DELETE 禁止
+- 必須項目：TxnType / WarehouseCd / LocationCd / ProductCd / LotNo / Qty / TxnDateTime / RelatedNo / OperatorCd
+- インデックス：TxnDateTime DESC / ProductCd+LotNo / RelatedNo
+- 集計レポートはこのテーブルを唯一の真実とする
+12.4  全テーブル共通
+- BaseBizEntity 継承（Id (Guid) / Creator / CreateDate / Modifier / ModifyDate / DEL_FLG / BaseCd）
+- 数量列は decimal(21,8) 統一（MES と同じ）
+- 業務NO（*No）はユニーク制約
+第13章  バックエンド実装構成（CP6.WebApi/Controllers/Wms/）
+13.1  Controller 一覧（9 個）
+WarehouseController        WM010 倉庫・ロケーション
+StockController            WM020 在庫照会・棚移動
+InboundOrderController     WM030 入庫予定
+InboundReceiptController   WM040 入庫実績
+OutboundOrderController    WM050 出庫指示（生産材料 + 出荷を共有）
+ProductInboundController   WM060 製品入庫
+ShippingOrderController    WM070 出荷指示・ピッキング
+StockTakeController        WM090 棚卸
+WmsDashboardController     WM-DASH ダッシュボード
+13.2  Service 一覧（CP6.Core/Services/Wms/）
+StockMovementService       唯一の Stock 書込口（Transaction + RowVersion 楽観ロック）
+AllocationService          引当アルゴリズム（FIFO/LIFO/期限優先）
+LocationService            ロケーションツリー・容量チェック
+WmsSequenceService         業務NO採番（DB シーケンスベース）
+WmsBackgroundService       自動展開（出荷予定生成・滞留品検知）
+13.3  StockMovementService 中核メソッド
+public async Task ApplyAsync(StockTransaction txn, CancellationToken ct)
+  → using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+  → 1. 対象 Stock を SELECT FOR UPDATE 相当（RowVersion チェック）
+  → 2. ALLOW_NEGATIVE=false かつ AvailableQty < 0 になる場合は throw InsufficientStockException
+  → 3. Stock 更新 + StockTransaction INSERT
+  → 4. SaveChanges → tx.Commit
+  → 5. RabbitMQ "cp6.wms.stockchanged" 発行（後段 SignalR でダッシュボード更新）
+13.4  既存基盤との接続
+- 全 Controller は IService<T> パターン継承（ServiceBase override）
+- 操作ログ：OperLogFilter 自動取得（既存）
+- 認可：[Authorize(Roles="...")]（既存 JWT 基盤）
+- キャッシュ：在庫照会・ダッシュボードは CacheService.GetOrSetAsync
+- メッセージング：在庫変動イベントは RabbitMQService → cp6.wms.stockchanged キュー
+- SignalR：NotifyHub に "StockChanged" / "InboundAlert" / "ShipmentReady" イベント追加
+第14章  フロントエンド実装構成（cp6.web/src/）
+14.1  ディレクトリ
+src/
+├── api/wms/
+│   ├── warehouse.ts
+│   ├── location.ts
+│   ├── stock.ts
+│   ├── inboundOrder.ts
+│   ├── inboundReceipt.ts
+│   ├── outboundOrder.ts
+│   ├── productInbound.ts
+│   ├── shippingOrder.ts
+│   ├── stockTake.ts
+│   └── wmsDashboard.ts
+├── views/wms/
+│   ├── WarehouseListView.vue        # WM010
+│   ├── WarehouseDetailView.vue
+│   ├── LocationTreeView.vue
+│   ├── StockQueryView.vue           # WM020
+│   ├── StockHistoryDialog.vue
+│   ├── StockMoveDialog.vue
+│   ├── InboundOrderListView.vue     # WM030
+│   ├── InboundOrderView.vue
+│   ├── InboundReceiptView.vue       # WM040
+│   ├── OutboundOrderListView.vue    # WM050
+│   ├── OutboundOrderView.vue
+│   ├── ProductInboundView.vue       # WM060
+│   ├── ShippingOrderListView.vue    # WM070
+│   ├── ShippingOrderView.vue
+│   ├── PickingView.vue              # WM070 タブレット
+│   ├── PackagingView.vue            # WM080
+│   ├── StockTakeListView.vue        # WM090
+│   ├── StockTakeView.vue
+│   ├── StockTakeCountView.vue
+│   └── WmsDashboardView.vue         # WM-DASH
+├── components/wms/
+│   ├── LocationTree.vue
+│   ├── ProductPicker.vue
+│   ├── BarcodeScanner.vue           # WebUSB / カメラ
+│   └── StockBadge.vue
+├── composables/
+│   ├── useStockQuery.ts
+│   ├── useInboundFlow.ts
+│   ├── useOutboundFlow.ts
+│   ├── useStockTake.ts
+│   └── useWmsDashboard.ts
+└── types/
+    └── wms.ts
+14.2  動的ルーティング
+router/index.ts の viewModules マップに10エントリ追加：
+'/wms/warehouse': () => import('@/views/wms/WarehouseListView.vue')
+'/wms/stock':     () => import('@/views/wms/StockQueryView.vue')
+... (他 8 件)
+Sys_Menu シードデータに "WMS" ノードを追加（PA系列・ME系列 と並列）。
+14.3  SignalR 受信
+NotifyHub の以下イベントを Dashboard / 在庫照会で listen：
+- StockChanged（任意在庫変動）→ 当該行の数量を局所更新
+- InboundAlert（入庫遅延）→ ヘッダにバッジ表示
+- ShipmentReady（出荷準備完了）→ トースト通知
+第15章  ERP・MESモジュールとの衍接
+15.1  データフロー
+データ流向
+内容
+PA050 製品マスタ → WMS
+製品マスタに DefaultWarehouseCd / DefaultLocationCd / LotControlType / SafetyStockQty 列を追加
+PA070 受注確定 → WM070
+受注確定 hook で OutboundOrderService.CreateFromOrder(order) を呼ぶ
+ME020 製造指図確定 → WM050
+WorkOrderController.Confirm で OutboundOrderService.CreateFromWorkOrder(wo) を呼ぶ
+ME040 製造実績完了 → WM060
+ProductionResultController で 指図完了時 ProductInboundService.CreateFromProduction(wo) を呼ぶ
+ME060 品質検査結果 → WM060
+検査合格：保留倉庫→正規倉庫 MOVE / 不合格：保留→不良品倉庫 MOVE
+PA050 仕掛チェック ← WMS
+製品の入出庫履歴 / 在庫残あり製品は製品マスタ削除不可
+15.2  ProductMaster への追加列（マイグレーション）
+DefaultWarehouseCd  nvarchar(3)   null   既定入庫倉庫
+DefaultLocationCd   nvarchar(30)  null   既定棚位
+LotControlType      int           not    1=指定 2=自動採番 3=不要
+SafetyStockQty      decimal(21,8) null   安全在庫
+ReorderPointQty     decimal(21,8) null   発注点
+15.3  受注ステータス連携
+T_Order に WmsShippingStatus 列追加（0=未指示 1=指示済 2=ピッキング中 3=出荷済）。
+WM080 出荷確定時に PA070 を 3=出荷済に更新（CallBack）。
+第16章  消息一览（全部消息）
+消息ID
+种别
+触发画面
+消息内容
+WM-MSG-001
+E
+WM010
+倉庫CD[{cd}]は既に登録されています。
+WM-MSG-002
+E
+WM010
+ロケーション階層は5段までです。
+WM-MSG-003
+E
+WM010
+親ロケーションが凍結中のため作成できません。
+WM-MSG-004
+E
+WM010
+当該ロケーションに在庫が残っているため削除できません。
+WM-MSG-010
+E
+WM020
+移動先は移動元と異なるロケーションを指定してください。
+WM-MSG-011
+E
+WM020
+移動数量が利用可能在庫を超えています。
+WM-MSG-012
+E
+WM020
+移動先ロケーションが凍結中です。
+WM-MSG-020
+E
+WM030
+入庫明細が1件もありません。
+WM-MSG-021
+E
+WM030
+予定数量は0より大きい値を入力してください。
+WM-MSG-022
+E
+WM030
+製品CD[{cd}]が製品マスタに存在しません。
+WM-MSG-023
+W
+WM030
+入荷予定日が過去日です。よろしいですか？
+WM-MSG-030
+W
+WM040
+受入数量が予定数量を大幅に超過しています（{percent}%超）。
+WM-MSG-031
+E
+WM040
+受入数量を入力してください。
+WM-MSG-032
+E
+WM040
+ロケーション[{cd}]は凍結中です。
+WM-MSG-033
+E
+WM040
+ロケーション[{cd}]は当該製品区分を収容できません。
+WM-MSG-034
+E
+WM040
+ロットNO[{lot}]は既に登録されています。
+WM-MSG-040
+E
+WM050
+製品[{cd}]の利用可能在庫が不足しています（必要:{req} 在庫:{avail}）。
+WM-MSG-041
+E
+WM050
+出庫数量が引当数量を超えています。
+WM-MSG-042
+E
+WM050
+ロケーション[{cd}]は凍結中のため出庫できません。
+WM-MSG-043
+E
+共通
+当該ステータスでは{action}操作はできません。
+WM-MSG-050
+E
+WM080
+梱包数量がピッキング数量を超えています。
+WM-MSG-051
+E
+WM080
+追跡NO[{no}]は既に他出荷で使用されています。
+WM-MSG-052
+E
+WM080
+総重量を入力してください。
+WM-MSG-060
+E
+WM090
+未カウントの明細があります（{n}件）。
+WM-MSG-061
+E
+WM090
+差異あり明細に理由コードを入力してください。
+WM-MSG-062
+W
+WM090
+差異金額が閾値を超えています。上長承認が必要です。
+WM-MSG-070
+I
+共通
+検索結果がありません。
+WM-MSG-071
+I
+共通
+保存が完了しました。
+WM-MSG-072
+E
+共通
+すでに更新済みです。再検索してください。
+第17章  画面跳转関係
+来源
+目标
+触発
+传递数据
+WM020
+StockHistoryDialog
+行クリック
+stockId
+WM020
+WM-MOVE Dialog
+棚移動ボタン
+選択行リスト
+WM030
+WM040
+入庫実績入力ボタン
+入庫予定NO
+WM050
+ME020
+指図詳細ボタン
+指図NO（参照モード）
+WM050
+WM020
+在庫確認ボタン
+製品CD（検索条件）
+WM070
+PA080
+受注詳細ボタン
+WebOrderNo（参照モード）
+WM070
+PickingView
+ピッキング開始ボタン
+WaveId
+WM080
+PA080
+受注更新通知
+WebOrderNo
+WM090
+StockTakeCountView
+カウント開始ボタン
+StockTakeNo
+WM-DASH
+WM030
+入庫予定遅延カード
+ステータス=1 + 遅延フィルタ
+WM-DASH
+WM050
+在庫切れアラート
+製品CD
+PA050
+製品マスタ削除制約
+削除時
+製品CD → 在庫残・履歴チェック
+第18章  実装フェーズ計画
+Phase WM-1（地基・1週間）：
+  - T_Warehouse / T_Location / T_Stock / T_StockTransaction エンティティ
+  - DbContext + EF Migration AddWms
+  - StockMovementService + AllocationService（FIFO のみ）
+  - 単体テスト：並行減在庫・楽観ロック・マイナス在庫禁止
+  - WM010 倉庫マスタ Controller + View
+Phase WM-2（入庫チェーン・1週間）：
+  - WM030 入庫予定 + WM040 入庫実績
+  - 在庫照会 WM020（読み取りのみ）
+  - "発注 → 入庫 → 在庫確認" 一気通貫テスト
+Phase WM-3（出庫チェーン・2週間）：
+  - WM050 出庫指示 + ME020 連携 hook
+  - WM060 製品入庫 + ME040 連携 hook
+  - WM070 出荷指示 + PA070 連携 hook
+  - WM080 出荷実績 + 梱包
+  - PickingView タブレット UI
+Phase WM-4（棚卸 & 看板・1週間）：
+  - WM090 棚卸全フロー
+  - WM-DASH ダッシュボード + SignalR 連携
+  - ProductMaster 拡張列マイグレーション
+  - PA050 仕掛チェック WMS 追加 SQL
+  - 結合テスト + ドキュメント
+合計：約 5 週間（1人想定）／ 2.5 週間（2人並行）
+══════════════════════════════════════════════════════════════════
+第二部 拡張モジュール（V1.1 追加）
+══════════════════════════════════════════════════════════════════
+第19章  WMS拡張機能群一览（MSBBWM100~MSBBWM170）
+19.1  拡張モジュール一覧
+功能ID
+功能名称
+类型
+复杂度
+核心特征
+MSBBWM100
+入荷検品（QC受入）
+作業
+★★★高
+ASN照合・サンプリング検査・保留倉庫
+MSBBWM110
+自動棚配置・スロッティング
+最適化
+★★★高
+ABC分類×フリーロケーション×重量バランス
+MSBBWM120
+補充指示（リプレニッシュ）
+バッチ
+★★中
+ピッキング棚→保管棚 自動補充
+MSBBWM130
+クロスドッキング
+作業
+★★★高
+入庫→検品→直接出荷（棚を経由しない）
+MSBBWM140
+キッティング・組立
+CRUD+作業
+★★★高
+複数SKU→1セット品 / バラシ（反組立）
+MSBBWM150
+返品管理（RMA）
+CRUD+作業
+★★★高
+顧客返品受入→検査→再出荷/廃棄/修理
+MSBBWM160
+ロット追溯・回収管理
+查询+作業
+★★★高
+ロット双方向追溯（仕入→製造→出荷顧客）
+MSBBWM170
+賞味期限・FEFO管理
+査詢+作業
+★★中
+期限切れアラート・自動廃棄起票
+第20章  MSBBWM100 — 入荷検品（QC受入）
+20.1  功能概述
+仕入先からの到着品に対し、ASN（事前出荷通知）と現品照合 + 数量検査 + 品質サンプリング検査を行う画面。WM030/WM040の間に挟まる "受入精査" 工程。検品結果により：合格→正規入庫、保留→QC保留倉庫、不合格→返品起票。
+20.2  画面構造
+区域
+説明
+ASN照合区
+入庫予定NO / 仕入先 / 予定数量 と現品の照合
+数量検査区
+実数カウント / 過不足・破損数の登録
+品質検査区
+サンプリング表（AQL方式）/ 検査項目チェックリスト / 写真添付
+判定区
+合格 / 条件付合格 / 保留 / 不合格 / 仕入先即返品
+20.3  検査区画振分
+判定結果
+振分先
+後続動作
+合格
+正規倉庫
+WM040入庫実績へ自動連携
+条件付合格
+保留倉庫
+品質会議承認待ち→個別判断
+保留
+QC保留倉庫
+詳細検査→再判定
+不合格
+不良品倉庫
+WM150 返品起票 + 仕入先クレーム
+即返品
+出荷準備区
+そのまま運転手に持ち帰らせる（書類のみ）
+20.4  サンプリング設計
+- AQL（受入品質限界）方式：JIS Z 9015 準拠
+- ロットサイズ → 抜取り個数を自動計算
+- 製品マスタの InspectionLevel（通常検査/きつい検査/ゆるい検査）に従う
+20.5  画面字段
+inspectionNo（QC-YYYYMMDD-NNNN）/ inboundNo / supplierCd / arrivalDateTime / inspectorCd
+明細：productCd / expectedQty / receivedQty / acceptedQty / rejectedQty / pendingQty / defectReasonCd / photoUrls[] / inspectionItems[]
+20.6  API
+POST /api/wms/inspection                    検品開始
+PUT  /api/wms/inspection/{no}/item          検査項目入力
+POST /api/wms/inspection/{no}/judge         最終判定
+POST /api/wms/inspection/{no}/photo         写真アップロード
+20.7  消息
+WM-MSG-100  E  検査項目未入力があります。
+WM-MSG-101  W  サンプル数が AQL 規定値を下回っています。
+WM-MSG-102  E  判定理由を入力してください。
+第21章  MSBBWM110 — 自動棚配置・スロッティング
+21.1  功能概述
+入庫時に "どの棚に置くか" を AI/ルールで自動決定する機能。さらに定期的に "置き場所最適化（Slotting Optimization）" を実行し、棚を組み直す提案を出す。
+21.2  自動棚配置アルゴリズム（入庫時リアルタイム）
+判定優先順位：
+  1. 製品マスタ DefaultLocationCd が指定 → そこへ（空き容量チェック）
+  2. ABC分類（過去90日出荷頻度）：
+     - A品（上位20%）→ ゴールデンゾーン（腰高さ、ピッキング動線短）
+     - B品（中位30%）→ ミドルゾーン
+     - C品（下位50%）→ 高所/奥棚
+  3. 重量バランス：重い物 → 下段、軽い物 → 上段
+  4. 製品区分制約：冷蔵→冷蔵庫、危険物→専用区画
+  5. 同一製品の既存棚に空きあり → 集約優先
+  6. 上記すべて失格 → 最寄りの空き棚（ロケーションツリー幅優先探索）
+21.3  Slotting Optimization（定期最適化）
+- 月次バッチで実行（手動起動も可）
+- 過去N日の入出庫履歴を分析
+- 移動コスト（移動本数×重量）vs 改善効果（ピッキング距離短縮）を計算
+- 提案レポート出力 → 管理者承認 → 棚移動指示一括生成
+21.4  ABC分析計算式
+  出荷数 / 出荷金額 / 出荷件数 の 3 種選択可
+  累計構成比 0~80% → A、80~95% → B、95~100% → C
+21.5  画面
+- ABC分析結果一覧（製品×現在ロケーション×推奨ロケーション×移動メリットスコア）
+- ヒートマップ：ピッキング頻度の高い棚を赤、低い棚を青で表示
+21.6  API
+POST /api/wms/slotting/recommend         入庫1件の推奨ロケーション返却
+POST /api/wms/slotting/abc-analyze       ABC分析実行
+POST /api/wms/slotting/optimize          最適化提案生成
+POST /api/wms/slotting/apply/{planId}    提案を棚移動指示に変換
+第22章  MSBBWM120 — 補充指示（リプレニッシュ）
+22.1  功能概述
+ピッキング棚（前棚）の在庫が下限を割った場合、保管棚（後棚）から補充する指示を自動生成する。日次バッチ + リアルタイムトリガの2方式。
+22.2  ロケーション 2 層モデル
+区分
+特徴
+ピッキング棚（FORWARD）
+作業者が拾う前棚。少量を在庫
+保管棚（RESERVE）
+バルク保管。大ロット
+22.3  補充トリガ
+- バッチ：日次 6:00 に全製品スキャン → ピッキング棚 < MinQty → 補充指示生成
+- リアルタイム：ピッキング作業中 → スキャン後の在庫 < MinQty → SignalR push
+- 出荷指示展開時：今日の出荷必要数 > ピッキング棚在庫 → 先回り補充
+22.4  画面字段
+replenishNo（RPL-YYYYMMDD-NNNN）/ priority（1=至急 2=通常）
+明細：productCd / fromLocation（保管棚） / toLocation（ピッキング棚） / qty / status
+22.5  API
+POST /api/wms/replenish/scan                バッチ補充指示生成
+POST /api/wms/replenish/{no}/execute        補充実行（StockTxn MOVE 2件）
+GET  /api/wms/replenish/pending             未実行一覧
+第23章  MSBBWM130 — クロスドッキング
+23.1  功能概述
+入庫品をいったん棚に置かず、そのまま出荷ドックへ転送する高効率モード。受注引当との連動が肝。
+23.2  処理パターン
+パターン
+説明
+事前計画型
+受注 → 入庫予定とマッチング → 入庫時にクロスドック対象とマーク
+機会型
+入庫時に未引当受注を検索 → 該当あれば運用判断でクロスドック振替
+23.3  画面字段
+crossDockNo（XD-YYYYMMDD-NNNN）/ inboundNo / shippingNo（突合済出荷指示）
+明細：productCd / qty / fromDock / toDock / 担当者
+23.4  作業フロー
+1. 入庫品が荷降ろし
+2. システムが入庫予定をスキャン → クロスドック候補表示
+3. 担当者が承認 → 在庫を一切経由せず StockTxn 1件（IN+OUT を結合する仮想科目）or 0件
+4. 出荷ドックへ運搬・即出荷
+23.5  会計処理
+- 通常 IN→OUT で 2 件の StockTxn を発行（在庫滞留時間ほぼ 0）
+- 監査要件で許可されれば "XDOCK" 種別を新設し 1 件で完結（オプション）
+第24章  MSBBWM140 — キッティング・組立
+24.1  功能概述
+複数の単品在庫を組み合わせて「セット品」として新しい SKU を作成する機能。逆方向（バラシ／反組立）も対応。
+24.2  典型ユースケース
+- 段ボール本体 + 緩衝材 + 説明書 + 印刷ラベル → "出荷キット"
+- 季節キャンペーン用詰合せ
+- 修理交換部品セット
+24.3  キット BOM（部品構成）
+- T_KitMaster：キットSKU + 構成部品（製品CD×数量）×N
+- 製品マスタ拡張：IsKitItem フラグ
+24.4  組立処理
+1. キット生産指示作成（kitOrderNo + 数量）
+2. 構成部品が全部 在庫あり をチェック（不足部品リスト表示）
+3. 部品 OUT トランザクション × N
+4. キット品 IN トランザクション × 1
+5. ロットNO は構成部品の最古ロットを継承（追溯性確保）
+24.5  反組立（バラシ）
+- 既存キット品 → バラシ → 部品 N 種類に戻す
+- 中身を取出し再販売する場合に使用
+- 厳密にはロット情報失われる → 「再加工ロット」採番
+24.6  API
+POST /api/wms/kit-order                  組立指示作成
+POST /api/wms/kit-order/{no}/assemble    組立実行
+POST /api/wms/kit-order/{no}/disassemble バラシ実行
+第25章  MSBBWM150 — 返品管理（RMA）
+25.1  功能概述
+顧客返品の受付（RMA：Return Merchandise Authorization）→ 入庫検査 → 処理判定（再販/修理/廃棄）の一連を管理。
+25.2  RMA ライフサイクル
+0:申請受付 → 1:RMA番号発行 → 2:返品入庫 → 3:検査中 → 4:判定済 → 5:後処理完了 → 9:キャンセル
+25.3  処理判定区分
+判定
+後続処理
+再販可
+正規倉庫へ MOVE
+要修理
+修理倉庫へ MOVE → 修理指示連携
+スクラップ
+廃棄処理 → ADJ で在庫除去
+仕入先返品
+WM-Supplier-Return 起票
+25.4  画面字段
+rmaNo（RMA-YYYYMMDD-NNNN）/ customerCd / originalShippingNo / returnReason / returnDate
+明細：productCd / lotNo / qty / condition（新品/未使用/開封済/破損）/ judgement / 処理先locationCd
+25.5  会計連携
+- 返金処理：PA070受注の返金フラグ更新（API）
+- 不良品在庫評価減（移動平均原価で評価額計算）
+25.6  消息
+WM-MSG-150  E  原出荷NOが見つかりません。
+WM-MSG-151  W  保証期間外の返品です。
+WM-MSG-152  E  判定理由を入力してください。
+第26章  MSBBWM160 — ロット追溯・回収管理
+26.1  功能概述
+ある製品ロットが「どの仕入ロット → どの製造指図 → どの顧客へ出荷されたか」を双方向追溯する画面。製品回収（リコール）発生時の影響範囲特定に必須。
+26.2  追溯方向
+方向
+出発点
+ゴール
+順追溯（Forward）
+仕入ロットNO
+出荷した顧客一覧
+逆追溯（Backward）
+出荷した製品ロットNO
+使用した仕入ロット一覧
+両方向（Bi-directional）
+任意ロットNO
+上下流すべて
+26.3  追溯ツリー
+T_StockTransaction を再帰的に辿る：
+  - IN（仕入入庫）→ OUT（材料出庫）→ ME040生産（指図ロット紐付）
+  - → 製品 IN（完成品入庫）→ OUT（出荷）→ 顧客
+26.4  リコール処理
+1. リコール対象ロット指定
+2. 順追溯で出荷顧客リスト取得
+3. 在庫保有量計算（顧客先 + 自社在庫）
+4. リコール書類自動生成（顧客別）
+5. 返品RMA を自動起票（WM150 連携）
+6. 該当ロットの全Stockに "REC" フラグ立て → 出荷禁止
+26.5  画面
+- 追溯ツリー（折りたたみ式、各ノードは StockTransaction）
+- ガントチャート（時系列追溯）
+- 影響顧客マップ（地理可視化）
+26.6  API
+GET /api/wms/trace/forward/{lotNo}      順追溯
+GET /api/wms/trace/backward/{lotNo}     逆追溯
+GET /api/wms/trace/full/{lotNo}         両方向
+POST /api/wms/recall                    リコール起票
+第27章  MSBBWM170 — 賞味期限・FEFO管理
+27.1  功能概述
+有効期限のある製品（インキ・接着剤・特殊紙等）の期限管理。FEFO（First Expired First Out）引当を実現。
+27.2  期限管理対象
+- 製品マスタ HasExpiryDate フラグで対象判定
+- 入庫時に ExpiryDate 必須入力（製造日 + 賞味日数で自動計算可）
+27.3  アラート設定（製品マスタ）
+- 期限N日前で黄色警告
+- 期限M日前で赤色警告
+- 期限切れ → 自動凍結 + 廃棄起票
+27.4  FEFO引当（WM050 引当アルゴリズム拡張）
+ORDER BY ExpiryDate ASC, ReceiveDate ASC
+（期限優先→ FIFO がタイブレーク）
+27.5  廃棄処理
+- 期限切れ Stock 自動検出（日次バッチ）
+- "廃棄候補一覧" 画面で確認 → 担当者承認 → ADJ で在庫除去
+- 廃棄理由・廃棄方法・金額損失を記録
+27.6  API
+GET  /api/wms/expiry/alert              期限切迫アラート一覧
+POST /api/wms/expiry/dispose            廃棄一括実行
+══════════════════════════════════════════════════════════════════
+第28章  業界特化機能群（紙器包装業）一览
+══════════════════════════════════════════════════════════════════
+28.1  紙器包装業 WMS 特有モジュール一覧
+功能ID
+功能名称
+类型
+复杂度
+核心特征
+MSBBWM200
+原紙ロール管理
+CRUD+作業
+★★★高
+巾・流れ・残米長・芯径管理
+MSBBWM210
+残材・端材管理
+CRUD
+★★★高
+裁断後の使えるサイズ判定・再利用引当
+MSBBWM220
+印版・木型倉庫
+CRUD
+★★中
+T_PlateMold連携・経時劣化管理
+MSBBWM230
+インキ・接着剤管理
+CRUD
+★★★高
+ロット混合計算・賞味期限・色番号管理
+MSBBWM240
+完成品段ボール保管
+CRUD
+★★中
+パレット束ね・崩れ防止・出荷待機ゾーン
+MSBBWM250
+客先預り在庫（VMI）
+CRUD+査詢
+★★★高
+所有権=顧客、保管料計算・補充発注連動
+MSBBWM260
+試作・サンプル在庫
+CRUD
+★★中
+試作品ロット・営業貸出履歴
+第29章  MSBBWM200 — 原紙ロール管理
+29.1  功能概述
+段ボール原紙（ライナー・中芯）のロール単位管理。各ロールは独立した在庫単位として "巾(mm) × 流れ目 × 残米長(m) × 芯径(inch)" で管理する。残米管理が肝。
+29.2  ロール属性
+字段名
+日文名
+DB字段
+説明
+rollNo
+ロールNO
+ROLL_NO
+PK；ROLLYYYYMMDD-NNNNN
+paperGrade
+紙質コード
+PAPER_GRADE
+K280 / K210 / SK / 等
+widthMm
+巾(mm)
+WIDTH_MM
+905 / 1100 / 1310 / 等（mcframe7互換）
+basisWeight
+連量(g/m2)
+BASIS_WEIGHT
+220 / 280 / 等
+grainDirection
+流れ目
+GRAIN_DIR
+T目 / Y目
+originalLengthM
+入庫時米長(m)
+ORIGINAL_LEN_M
+remainingLengthM
+残米長(m)
+REMAINING_LEN_M
+使用都度減算
+coreDiameterInch
+芯径(inch)
+CORE_DIAMETER
+3 / 5
+mfgDate
+製造年月日
+MFG_DATE
+紙質劣化追跡
+mfgLotNo
+製造ロットNO
+MFG_LOT_NO
+製紙会社のロット
+supplierRollNo
+仕入先ロールNO
+SUPPLIER_ROLL_NO
+仕入先側の識別NO
+locationCd
+保管位置
+LOCATION_CD
+原紙ヤード内
+status
+状態
+STATUS
+0=在庫 1=使用中 2=残米 3=端切れ廃棄
+29.3  使用消費フロー
+1. 製造指図発行 → 必要巾・流れ・必要長を計算
+2. 適合ロール候補抽出（巾≥必要巾 AND 流れ一致 AND 残米≥必要長）
+3. 残米最小のロール優先選択（端材を作らない）
+4. 製造実績登録時に消費長を入力 → 残米更新
+5. 残米 < 製品マスタ "残米廃棄閾値" → status=3（廃棄）+ 重量ベース廃棄損計上
+29.4  巾割り（スリッター）
+- 大巾ロール（例 2200mm）→ スリッターで 905mm×2 + 390mm（端材）にカット
+- 元ロール OUT、新規ロール 2 本 IN、端材1本 IN（WM210連携）
+29.5  在庫照会拡張
+- 巾別在庫表（行=紙質×連量、列=巾サイズ、セル=ロール本数+総米長）
+- ヒートマップで在庫過多・不足を可視化
+29.6  API
+POST /api/wms/paper-roll                  ロール入庫
+PUT  /api/wms/paper-roll/{no}/consume     消費（残米更新）
+POST /api/wms/paper-roll/{no}/slit        スリッター（巾割り）
+GET  /api/wms/paper-roll/match            条件適合ロール検索
+GET  /api/wms/paper-roll/stock-matrix     巾別在庫マトリクス
+29.7  消息
+WM-MSG-200  E  適合する原紙ロールがありません（巾{w}・流れ{g}・必要長{l}）。
+WM-MSG-201  W  残米が閾値を下回りました。
+WM-MSG-202  E  消費長が残米長を超えています。
+第30章  MSBBWM210 — 残材・端材管理
+30.1  功能概述
+製造工程で発生した「使えるサイズの残り」を再利用可能在庫として管理。完全廃棄前に再利用機会を最大化する。
+30.2  残材種別
+- 端ロール残米：原紙ロールの残り（→ WM200連携）
+- 打抜き残：シート抜き加工後の使えるサイズ
+- 試刷り残：色合わせ・トライアル用
+- 余剰生産：受注数より多く作った成品
+30.3  再利用ルール
+- 残材登録時にサイズ・状態を記録
+- 同一サイズ製品の受注発生時に "残材優先引当" 推奨
+- 60日経過で自動廃棄候補化（WM170連携）
+30.4  画面字段
+remnantNo（RMN-YYYYMMDD-NNNNN）/ sourceType / sourceOrderNo / sizeWidth / sizeHeight / paperGrade / qty / condition / locationCd
+30.5  API
+POST /api/wms/remnant                残材登録
+GET  /api/wms/remnant/match          受注条件で再利用可残材検索
+第31章  MSBBWM220 — 印版・木型倉庫
+31.1  功能概述
+既存の T_PlateMold（印版・木型マスタ）を WMS と統合し、物理保管位置・貸出履歴・経時劣化を管理。
+31.2  T_PlateMold への拡張列
+locationCd        保管棚位
+lastUsedDate      最終使用日
+usageCount        累計使用回数
+conditionLevel    劣化レベル（1=良好 5=要交換）
+inspectionDate    次回点検日
+31.3  貸出・返却管理
+- 製造指図発行 → 必要な印版/木型を倉庫から払出 → PlateMoldCheckout テーブル記録
+- 使用後返却 → conditionLevel 再評価 → 次回点検日設定
+- 5回使用毎に点検必須（製品マスタで頻度設定）
+31.4  ロケーション特殊性
+- 木型：寝かせ保管・温湿度管理
+- 印版：垂直保管・遮光
+- 棚マスタに保管条件タグ追加
+31.5  API
+GET  /api/wms/plate-mold/checkout-status  全数現在貸出状況
+POST /api/wms/plate-mold/checkout         払出
+POST /api/wms/plate-mold/return           返却 + 状態評価
+第32章  MSBBWM230 — インキ・接着剤管理
+32.1  功能概述
+インキ・接着剤等の液体資材は ロット混合・賞味期限・色番号管理 が必要。一般在庫と分離管理。
+32.2  特殊管理項目
+- 色番号（色見本との対応）：DIC-XXX / Pantone-XXX
+- 開封状態：未開封 / 開封済（開封後は別ロット扱い）
+- 賞味期限：未開封180日 / 開封後30日 等
+- 粘度・固形分等の物性データ
+32.3  ロット混合
+- 旧ロット残量 + 新ロットを混合使用する場合
+- 新たに「混合ロット」を採番、原ロット2件は OUT、混合ロット1件は IN
+- 賞味期限は「より早い方」を継承
+32.4  色合わせ実績
+- 色合わせ毎に消費量・配合比を記録
+- 顧客名 + 色番号 で過去配合履歴検索可能（営業/技術部門が再利用）
+32.5  API
+POST /api/wms/ink/mix                混合ロット作成
+POST /api/wms/ink/color-match-record 色合わせ実績登録
+GET  /api/wms/ink/color-history      色配合履歴検索
+第33章  MSBBWM240 — 完成品段ボール保管
+33.1  功能概述
+完成段ボール製品はパレット単位で保管。「段積み崩れ防止」「FIFO厳守」「出荷待機ゾーン管理」が肝。
+33.2  パレット管理
+- パレットNOで束ね管理（PLT-YYYYMMDD-NNNNN）
+- 1パレット = 1製品1ロット（混載禁止が原則）
+- 段積み制限（重量・高さ）を製品マスタで定義
+33.3  出荷待機ゾーン
+- 受注の出荷予定日に近づいた製品 → 「出荷待機ゾーン」へ前出し
+- ピッキング動線短縮
+- 日次バッチ + 手動移動の併用
+33.4  画面
+- 倉庫マップ（2D俯瞰）+ パレット配置可視化
+- 色：A品=赤、B品=黄、C品=青、出荷待機=緑
+33.5  API
+POST /api/wms/pallet                     パレット組成
+POST /api/wms/pallet/{no}/move           パレット移動
+GET  /api/wms/warehouse/{cd}/map         倉庫マップ
+第34章  MSBBWM250 — 客先預り在庫（VMI）
+34.1  功能概述
+顧客が所有する在庫を当社倉庫で預かる業態（VMI：Vendor Managed Inventory / 客先預り）。所有権は顧客にあり、出荷指示は顧客側システムからトリガされる。
+34.2  特殊性
+- T_Stock の OwnerType 列追加（"SELF" / "CUSTOMER"）
+- 自社在庫と物理的に同じ棚でも論理的に分離
+- 在庫評価額に算入しない（会計上は預り資産）
+34.3  業務フロー
+1. 顧客が当社で生産 → 完成品入庫時に "VMI" 区分マーク
+2. 顧客側システムが在庫照会 API を叩く（権限制御）
+3. 顧客が出荷要求 → 当社が出荷作業のみ実行
+4. 月次：保管料 + 出荷作業料を顧客請求
+34.4  保管料計算
+- 日単位保管料 × 平均在庫日数 × 単価
+- パレット数ベース or 容積ベース選択可
+- 月次バッチで集計レポート生成
+34.5  API
+GET  /api/wms/vmi/stock/{customerCd}      顧客別VMI在庫
+POST /api/wms/vmi/ship-request            顧客からの出荷要求受付
+GET  /api/wms/vmi/billing/{yearMonth}     月次保管料計算
+第35章  MSBBWM260 — 試作・サンプル在庫
+35.1  功能概述
+試作品・営業サンプル・展示会用品の小口在庫を一般在庫と分離管理。営業部門への貸出履歴も追跡。
+35.2  特殊管理項目
+- sampleType（試作/営業サンプル/展示会/苦情品再現）
+- 関連プロジェクト
+- 貸出先（営業担当・顧客）
+- 返却期限・実返却日
+35.3  画面
+- サンプル一覧（小ロット高頻度・写真付き）
+- 貸出ボード（カンバン形式：在庫中/貸出中/返却遅延）
+35.4  API
+GET  /api/wms/sample                 一覧
+POST /api/wms/sample/checkout        貸出
+POST /api/wms/sample/return          返却
+══════════════════════════════════════════════════════════════════
+第36章  連携・モバイル機能群
+══════════════════════════════════════════════════════════════════
+36.1  連携モジュール一覧
+功能ID
+功能名称
+类型
+复杂度
+核心特征
+MSBBWM300
+RFハンディ・モバイルWMS
+モバイル
+★★★高
+バーコードスキャン・現場端末作業
+MSBBWM310
+WCS/自動倉庫連携
+連携
+★★★高
+AGV・AS/RS・コンベア指令
+MSBBWM320
+配送業者API連携
+連携
+★★中
+ヤマト・佐川・福通の送り状API
+MSBBWM330
+IoT温湿度モニタリング
+連携
+★★中
+MQTT + 警報・記録保存
+第37章  MSBBWM300 — RFハンディ・モバイルWMS
+37.1  功能概述
+倉庫現場で使うハンディスキャナ／タブレット用の Web アプリ。PC 版とは別 URL（/m/...）で軽量UI。
+37.2  対応作業
+- 入庫検品スキャン
+- 棚配置スキャン（製品+棚位 2回スキャン）
+- ピッキング作業（リスト指示→スキャン確認）
+- 棚卸カウント
+- 棚移動
+- ラベル発行
+37.3  技術スタック
+- PWA（Progressive Web App）：オフライン対応・カメラスキャン
+- WebSocket：作業指示リアルタイム push
+- ServiceWorker：通信断時はローカル保存→復旧時送信
+37.4  画面設計
+- 大ボタン（手袋着用想定）
+- 音声＋振動フィードバック
+- 1画面1作業（迷わせない）
+37.5  認証
+- 個人ID + PINコード簡易ログイン
+- 又は社員証 NFC タップ
+37.6  API
+モバイル専用 endpoints：
+POST /api/wms/mobile/scan              スキャン1件処理
+GET  /api/wms/mobile/task              当該作業者の指示一覧
+POST /api/wms/mobile/task/{id}/done    作業完了
+第38章  MSBBWM310 — WCS/自動倉庫連携
+38.1  功能概述
+自動倉庫機器（AS/RS・AGV・コンベア・自動仕分け機）の制御システム（WCS）と連携。WMSは "何を" "どこへ" を指示し、WCSが "どう運ぶか" を実行。
+38.2  連携方式
+方式
+プロトコル
+用途
+RESTful API
+HTTPS
+入出庫指示・状況問合せ
+MQTT
+TCP
+リアルタイムイベント（搬送完了・異常）
+OPC UA
+産業標準
+PLC直接連携（オプション）
+38.3  指示送信
+WMS出庫指示 → WCS指令変換 → AGV/AS-RS → 完了 push → WMS在庫更新
+38.4  異常処理
+- AGV故障：再ルーティング指示 or 人手介入要請
+- 棚崩れ検知：該当棚を凍結 + 棚卸トリガ
+- WCS応答遅延：30秒タイムアウトで人手切替
+38.5  API
+POST /api/wms/wcs/task                    搬送指示送信
+POST /api/wms/wcs/callback                WCSからの完了通知
+GET  /api/wms/wcs/equipment-status        機器稼働状況
+第39章  MSBBWM320 — 配送業者API連携
+39.1  対応業者
+- ヤマト運輸（B2 クラウド API）
+- 佐川急便（e飛伝Pro API）
+- 福山通運（i-Cargo API）
+- 自社便（独自）
+39.2  機能
+- 送り状番号発番
+- 集荷依頼
+- 配達状況追跡（顧客自社サイト連携用）
+- 運賃見積
+- 不在持戻り通知
+39.3  API
+POST /api/wms/carrier/label              送り状発行
+GET  /api/wms/carrier/tracking/{trkNo}   追跡状況
+POST /api/wms/carrier/pickup-request     集荷依頼
+第40章  MSBBWM330 — IoT温湿度モニタリング
+40.1  功能概述
+原紙ヤード・インキ庫など、温湿度管理が品質に直結する区画に IoT センサーを設置し、データ収集・警報・記録を行う。
+40.2  データフロー
+センサー → MQTTブローカー → CP6 Subscriber → SQL Server → ダッシュボード
+40.3  警報条件
+- 温度: 範囲外 5分継続 → メール + SignalR 通知
+- 湿度: 急変（10分で±15%RH）→ 警告
+- センサー無応答: 15分 → 故障警報
+40.4  記録保存
+- 1分粒度生データ → 30日保持
+- 1時間平均 → 1年保持
+- 1日平均 → 永続保持（監査・トレーサビリティ）
+40.5  画面
+- リアルタイム計器表示（ゲージ・トレンド線）
+- 履歴グラフ（期間指定）
+- 警報履歴
+40.6  API
+POST /api/wms/iot/data                  センサーデータ受信（内部用）
+GET  /api/wms/iot/realtime/{zoneId}     リアルタイム値
+GET  /api/wms/iot/history               履歴クエリ
+══════════════════════════════════════════════════════════════════
+第41章  帳票・分析機能群（WM-RPT）
+══════════════════════════════════════════════════════════════════
+41.1  帳票一覧
+帳票ID
+名称
+出力形式
+頻度
+核心
+WM-RPT-01
+在庫月報
+PDF/Excel
+月次
+棚卸基準・移動平均原価・期末在庫
+WM-RPT-02
+ABC分析レポート
+Excel
+随時
+品目別出荷頻度・金額構成比
+WM-RPT-03
+滞留品レポート
+Excel
+週次
+90日以上動きなし品リスト
+WM-RPT-04
+入出庫実績帳
+Excel
+日/月
+全 StockTransaction のドリルダウン
+WM-RPT-05
+在庫評価レポート
+Excel
+月次
+評価方法（移動平均/先入先出/個別法）
+WM-RPT-06
+ロット追溯履歴書
+PDF
+随時
+監査・リコール用エビデンス
+WM-RPT-07
+棚卸差異報告書
+PDF
+棚卸時
+差異一覧 + 承認サイン欄
+WM-RPT-08
+VMI 月次保管料明細
+Excel
+月次
+顧客別請求根拠
+WM-RPT-09
+原紙ロール棚卸表
+Excel
+月次
+ロール本数・米長・重量
+WM-RPT-10
+作業者生産性レポート
+Excel
+週次
+ピッキング件数・所要時間・誤出荷率
+41.2  共通仕様
+- 出力前にプレビュー画面（条件確認）
+- 非同期生成（大量データは Hangfire ジョブ）
+- 生成完了 → SignalR 通知 + ダウンロード可
+- 過去30回分の生成履歴保存
+41.3  API
+POST /api/wms/report/{rptId}/generate     生成開始
+GET  /api/wms/report/job/{jobId}          生成ステータス
+GET  /api/wms/report/download/{fileId}    ダウンロード
+══════════════════════════════════════════════════════════════════
+第42章  拡張データモデル（追加テーブル）
+══════════════════════════════════════════════════════════════════
+42.1  追加テーブル一覧（V1.1 で追加）
+T_QualityInspection            入荷検品ヘッダ（WM100）
+T_QualityInspectionItem        検品項目明細
+T_SlottingPlan                 スロッティング最適化提案
+T_ReplenishOrder               補充指示
+T_CrossDockOrder               クロスドック指示
+T_KitMaster                    キット品マスタ
+T_KitOrder                     キット組立指示
+T_RmaHeader                    RMA返品ヘッダ
+T_RmaDetail                    RMA返品明細
+T_PaperRoll                    原紙ロール（業界特化）
+T_Remnant                      残材・端材
+T_InkLot                       インキ・接着剤ロット
+T_InkColorMatchHistory         色合わせ履歴
+T_Pallet                       パレット組成
+T_VmiStock                     VMI在庫拡張
+T_SampleCheckout               サンプル貸出履歴
+T_PlateMoldCheckout            印版・木型貸出履歴
+T_MobileTask                   モバイル作業指示
+T_WcsTask                      WCS搬送指示
+T_CarrierLabel                 送り状履歴
+T_IotSensorData                IoTセンサー履歴
+T_IotAlarm                     IoT警報履歴
+T_ReportJob                    帳票生成ジョブ
+42.2  T_StockTransaction 拡張列
+ReceiptInspectionNo nvarchar(20) null   検品NO（WM100）
+KitOrderNo          nvarchar(20) null   キット組立指示NO
+RmaNo               nvarchar(20) null   返品NO
+CrossDockFlag       bit          null   クロスドック実施フラグ
+OwnerType           nvarchar(10) null   SELF / CUSTOMER（VMI）
+OwnerCd             nvarchar(20) null   VMI 客先CD
+PaperRollNo         nvarchar(20) null   原紙ロールNO
+ConsumedLengthM     decimal(21,8) null  原紙消費長
+42.3  T_Stock 拡張列
+OwnerType / OwnerCd                     VMI 用
+PaperRollNo                             ロール単位在庫
+KitConstituentFlag                      キット構成品フラグ
+RecallFlag                              リコール対象
+══════════════════════════════════════════════════════════════════
+第43章  更新版 実装フェーズ計画（V1.1）
+══════════════════════════════════════════════════════════════════
+43.1  全体ロードマップ
+Phase
+内容
+週数
+備考
+Phase WM-1
+地基（Stock + Txn + Location）
+1
+旧 V1.0 と同じ
+Phase WM-2
+入庫チェーン（WM030/040）
+1
+旧 V1.0 と同じ
+Phase WM-3
+出庫チェーン（WM050/060/070/080）
+2
+旧 V1.0 と同じ
+Phase WM-4
+棚卸 + ダッシュボード
+1
+旧 V1.0 と同じ
+Phase WM-5
+入荷検品 + スロッティング（WM100/110）
+2
+拡張第1弾
+Phase WM-6
+補充 + クロスドック + キッティング（WM120/130/140）
+2
+拡張第2弾
+Phase WM-7
+返品 + 追溯 + FEFO（WM150/160/170）
+2
+拡張第3弾
+Phase WM-8
+原紙ロール + 残材（WM200/210）
+2
+紙器業特化
+Phase WM-9
+印版 + インキ + パレット（WM220/230/240）
+2
+紙器業特化
+Phase WM-10
+VMI + サンプル（WM250/260）
+1
+紙器業特化
+Phase WM-11
+モバイル（WM300）
+2
+PWA + オフライン
+Phase WM-12
+WCS連携（WM310）
+2
+ハードウェア有無で要否判断
+Phase WM-13
+配送業者API + IoT（WM320/330）
+2
+外部連携
+Phase WM-14
+帳票群（WM-RPT01~10）
+2
+Hangfire + Excel/PDF
+合計
+−
+24週（約6ヶ月）1人想定 / 12週 2人並行
+43.2  優先順位推奨
+必須 MUST：Phase WM-1 ～ WM-4（4週、コアWMS）
+重要 SHOULD：Phase WM-5 ～ WM-7（6週、業務拡張）
+特化 COULD：Phase WM-8 ～ WM-10（5週、紙器業務適応）
+将来 WILL：Phase WM-11 ～ WM-14（8週、連携基盤）
+43.3  V1.0 → V1.1 移行への影響
+- 既存 Phase WM-1 ～ WM-4 の設計には変更なし
+- T_Stock / T_StockTransaction の拡張列は NULL 許容で後追い追加可
+- 既存 API のシグネチャ変更なし（後方互換）
+- 拡張モジュールは独立 Controller/Service として追加
+— 文档结束  MSBBWM WMS 倉庫管理システム 详细需求规格文档 V1.1 —
