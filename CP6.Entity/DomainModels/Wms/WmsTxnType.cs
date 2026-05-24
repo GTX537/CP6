@@ -192,3 +192,22 @@ public static class RmaJudgement
     public const string Scrap = "SCRAP";                   // 廃棄 → ADJ で除去
     public const string SupplierReturn = "SUPPLIER_RETURN"; // 仕入先返品
 }
+
+/// <summary>
+/// キット組立指示 方向（§24 / WM140）
+/// </summary>
+public static class KitOrderDirection
+{
+    public const string Assemble = "ASSEMBLE";       // 組立：部品 OUT + キット品 IN
+    public const string Disassemble = "DISASSEMBLE"; // バラシ：キット品 OUT + 部品 IN
+}
+
+/// <summary>
+/// キット組立指示 ステータス
+/// </summary>
+public static class KitOrderStatus
+{
+    public const int Draft = 0;       // 下書き
+    public const int Executed = 1;    // 実行済
+    public const int Cancelled = 9;   // 取消
+}

@@ -69,12 +69,12 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wms/inspection':           () => import('@/views/wms/QcInspectionView.vue'),
   '/wms/rma':                  () => import('@/views/wms/RmaView.vue'),
   '/wms/expiry':               () => import('@/views/wms/ExpiryView.vue'),
+  '/wms/lot-trace':            () => import('@/views/wms/LotTraceView.vue'),
+  '/wms/kit':                  () => import('@/views/wms/KitView.vue'),
   // 残りの Phase WM-5 は引き続き Placeholder
   '/wms/slotting':             () => import('@/views/wms/WmsPlaceholderView.vue'),
   '/wms/replenish':            () => import('@/views/wms/WmsPlaceholderView.vue'),
   '/wms/cross-dock':           () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/kit':                  () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/lot-trace':            () => import('@/views/wms/WmsPlaceholderView.vue'),
   // ───── Phase WM-6 業界特化（占位） ─────
   '/wms/paper-roll':           () => import('@/views/wms/WmsPlaceholderView.vue'),
   '/wms/remnant':              () => import('@/views/wms/WmsPlaceholderView.vue'),

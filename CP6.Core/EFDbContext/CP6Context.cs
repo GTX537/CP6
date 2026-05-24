@@ -213,6 +213,14 @@ public class CP6Context : DbContext
     /// <summary>RMA返品明細</summary>
     public DbSet<RmaDetail> RmaDetails { get; set; }
 
+    // ───── MSBBWM140 WMS キッティング ─────
+    /// <summary>キット品マスタ</summary>
+    public DbSet<KitMaster> KitMasters { get; set; }
+    /// <summary>キット品 構成部品（BOM）</summary>
+    public DbSet<KitMasterComponent> KitMasterComponents { get; set; }
+    /// <summary>キット 組立/バラシ指示</summary>
+    public DbSet<KitOrder> KitOrders { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -817,6 +825,30 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.RmaNo, x.LineNo }).IsUnique();
             e.HasIndex(x => new { x.ProductCd, x.LotNo });
             e.HasIndex(x => x.Judgement);
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM140 キッティング
+        // ═══════════════════════════════════════════════════════════
+
+        modelBuilder.Entity<KitMaster>(e =>
+        {
+            e.HasIndex(x => x.KitSku).IsUnique();
+            e.HasIndex(x => new { x.ActiveFlg, x.IsDeleted });
+        });
+
+        modelBuilder.Entity<KitMasterComponent>(e =>
+        {
+            e.HasIndex(x => new { x.KitSku, x.LineNo }).IsUnique();
+            e.HasIndex(x => x.ComponentProductCd);
+        });
+
+        modelBuilder.Entity<KitOrder>(e =>
+        {
+            e.HasIndex(x => x.KitOrderNo).IsUnique();
+            e.HasIndex(x => new { x.KitSku, x.IsDeleted });
+            e.HasIndex(x => new { x.Direction, x.Status });
+            e.HasIndex(x => new { x.ExecutedAt, x.IsDeleted });
         });
     }
 }

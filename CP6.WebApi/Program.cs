@@ -124,6 +124,12 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IRmaService, CP6.Core.Services.
 // 4.14 WMS SignalR 通知（依存逆転 — Core は IWmsNotifier のみ依存、SignalR 実装は WebApi 層）
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsNotifier, CP6.WebApi.Services.SignalRWmsNotifier>();
 
+// 4.15 MSBBWM160 ロット追溯（純クエリ、新規テーブルなし）
+builder.Services.AddScoped<CP6.Core.Services.Wms.ILotTraceService, CP6.Core.Services.Wms.LotTraceService>();
+
+// 4.16 MSBBWM140 キッティング・組立
+builder.Services.AddScoped<CP6.Core.Services.Wms.IKittingService, CP6.Core.Services.Wms.KittingService>();
+
 // 4.12 WM-3.5 WMS 自動展開フック（MES IssueAsync / PA CreateAsync 後に自動発火）
 // appsettings.json の WmsBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
 var wmsBridgeEnabled = builder.Configuration.GetValue<bool?>("WmsBridge:Enabled") ?? true;

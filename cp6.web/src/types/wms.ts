@@ -417,6 +417,57 @@ export interface RmaDispositionInput {
   destLocationCd?: string
 }
 
+// ───────── ロット追溯（WM160） ─────────
+
+export interface LotTraceNode {
+  txnNo: string
+  txnType: string
+  txnAt: string
+  warehouseCd: string
+  locationCd: string
+  qty: number
+  relatedNo?: string
+  relatedType?: string
+  operatorCd?: string
+  remark?: string
+}
+
+export interface LotAffectedCustomer {
+  outboundNo: string
+  webOrderNo?: string
+  customerCd?: string
+  customerName?: string
+  qty: number
+  shippedAt: string
+}
+
+export interface LotAffectedSupplier {
+  inboundNo: string
+  supplierCd?: string
+  supplierName?: string
+  qty: number
+  receivedAt: string
+}
+
+export interface LotTraceResult {
+  productCd: string
+  lotNo: string
+  direction: 'FORWARD' | 'BACKWARD'
+  nodes: LotTraceNode[]
+  affectedCustomers: LotAffectedCustomer[]
+  affectedSuppliers: LotAffectedSupplier[]
+}
+
+export interface LotStockSummary {
+  productCd: string
+  lotNo: string
+  totalPhysicalQty: number
+  totalAvailableQty: number
+  locationCount: number
+  recallFlag: boolean
+  expiryDate?: string
+}
+
 // ───────── 棚卸（WM090） ─────────
 
 export interface StockTake {
@@ -531,4 +582,51 @@ export interface WmsAlerts {
     status: number
   }>
   pendingApprovalStockTakeCount: number
+}
+
+// ───────── キッティング（WM140） ─────────
+
+export interface KitMaster {
+  id?: string
+  kitSku: string
+  kitName: string
+  defaultWarehouseCd?: string
+  remarks?: string
+  activeFlg: boolean
+  components: KitMasterComponent[]
+}
+
+export interface KitMasterComponent {
+  lineNo: number
+  componentProductCd: string
+  componentName?: string
+  requiredQty: number
+  unitCd?: string
+  remarks?: string
+}
+
+export interface KitOrder {
+  id?: string
+  kitOrderNo?: string
+  kitSku: string
+  kitName?: string
+  qty: number
+  direction: 'ASSEMBLE' | 'DISASSEMBLE'
+  warehouseCd: string
+  kitLocationCd: string
+  kitLotNo?: string
+  status: number
+  operatorCd?: string
+  remarks?: string
+  executedTxnNos?: string
+  executedAt?: string
+}
+
+export interface KitOrderSearchQuery {
+  kitOrderNo?: string
+  kitSku?: string
+  direction?: string
+  status?: number
+  page?: number
+  pageSize?: number
 }
