@@ -102,6 +102,40 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IMachineService, CP6.Core.Servi
 builder.Services.AddScoped<CP6.Core.Services.Mes.IOeeService, CP6.Core.Services.Mes.OeeService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.MesDashboardDapperService>();
 
+// 4.8 MSBBWM010〜090 WMS 倉庫管理 Phase 1 コア
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsSequenceService, CP6.Core.Services.Wms.WmsSequenceService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IStockMovementService, CP6.Core.Services.Wms.StockMovementService>();
+
+// 4.9 MSBBWM030/040 WMS Phase 2 入庫
+builder.Services.AddScoped<CP6.Core.Services.Wms.IInboundService, CP6.Core.Services.Wms.InboundService>();
+
+// 4.10 MSBBWM050/070/080 WMS Phase 3 出庫・出荷
+builder.Services.AddScoped<CP6.Core.Services.Wms.IOutboundService, CP6.Core.Services.Wms.OutboundService>();
+
+// 4.11 MSBBWM090 + WM-DASH WMS Phase 4 棚卸・ダッシュボード
+builder.Services.AddScoped<CP6.Core.Services.Wms.IStockTakeService, CP6.Core.Services.Wms.StockTakeService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsDashboardService, CP6.Core.Services.Wms.WmsDashboardService>();
+
+// 4.13 MSBBWM100/150/170 WMS Phase 5 拡張（QC検品 + RMA + FEFO期限）
+builder.Services.AddScoped<CP6.Core.Services.Wms.IExpiryService, CP6.Core.Services.Wms.ExpiryService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IQcInspectionService, CP6.Core.Services.Wms.QcInspectionService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IRmaService, CP6.Core.Services.Wms.RmaService>();
+
+// 4.14 WMS SignalR 通知（依存逆転 — Core は IWmsNotifier のみ依存、SignalR 実装は WebApi 層）
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsNotifier, CP6.WebApi.Services.SignalRWmsNotifier>();
+
+// 4.12 WM-3.5 WMS 自動展開フック（MES IssueAsync / PA CreateAsync 後に自動発火）
+// appsettings.json の WmsBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
+var wmsBridgeEnabled = builder.Configuration.GetValue<bool?>("WmsBridge:Enabled") ?? true;
+if (wmsBridgeEnabled)
+{
+    builder.Services.AddScoped<CP6.Core.Services.IWmsBridgeHook, CP6.Core.Services.Wms.WmsBridgeHook>();
+}
+else
+{
+    builder.Services.AddScoped<CP6.Core.Services.IWmsBridgeHook, CP6.Core.Services.NoOpWmsBridgeHook>();
+}
+
 // MES 実時間通知（SignalR 実装）
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesNotifier, CP6.WebApi.Services.SignalRMesNotifier>();
 
@@ -1264,5 +1298,6 @@ app.MapControllers();
 // SignalR Hub 路由
 app.MapHub<NotifyHub>("/hubs/notify");
 app.MapHub<CP6.WebApi.Hubs.MesHub>("/hubs/mes");
+app.MapHub<CP6.WebApi.Hubs.WmsHub>("/hubs/wms");
 
 app.Run();

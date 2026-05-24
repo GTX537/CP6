@@ -12,12 +12,14 @@ public class WorkOrderService : IWorkOrderService
 {
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
+    private readonly IWmsBridgeHook _wmsBridge;
     private const string WorkOrderSeqKey = "WO";
 
-    public WorkOrderService(CP6Context db, IMesSequenceService seq)
+    public WorkOrderService(CP6Context db, IMesSequenceService seq, IWmsBridgeHook wmsBridge)
     {
         _db = db;
         _seq = seq;
+        _wmsBridge = wmsBridge;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -335,6 +337,9 @@ public class WorkOrderService : IWorkOrderService
         wo.Modifier = userName;
         wo.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
+
+        // WM-3.5：WMS 自動展開フック（best-effort、失敗しても発行は成功とする）
+        await _wmsBridge.OnWorkOrderIssuedAsync(workOrderNo, userName);
     }
 
     public Task<string> NextSequenceAsync() => _seq.NextAsync(WorkOrderSeqKey);

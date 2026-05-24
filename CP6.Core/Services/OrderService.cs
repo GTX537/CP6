@@ -20,16 +20,18 @@ public class OrderService : IOrderService
 {
     private readonly CP6Context _db;
     private readonly IPowerEggWorkflowService _powerEgg;
+    private readonly IWmsBridgeHook _wmsBridge;
     /// <summary>WebOrderNo 採番プレフィックス（業務 ID 識別子）</summary>
     private const string WebOrderPrefix = "WO";
     private const string McNullVal = "MCNULLVAL";
     /// <summary>1 受注当たりの最大明細行数</summary>
     private const int MaxDetailLimit = 500;
 
-    public OrderService(CP6Context db, IPowerEggWorkflowService powerEgg)
+    public OrderService(CP6Context db, IPowerEggWorkflowService powerEgg, IWmsBridgeHook wmsBridge)
     {
         _db = db;
         _powerEgg = powerEgg;
+        _wmsBridge = wmsBridge;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -198,6 +200,10 @@ public class OrderService : IOrderService
         }
 
         await _db.SaveChangesAsync();
+
+        // WM-3.5：WMS 自動展開フック（best-effort、失敗しても受注作成は成功とする）
+        await _wmsBridge.OnOrderCreatedAsync(webOrderNo, userName);
+
         return webOrderNo;
     }
 

@@ -1,5 +1,6 @@
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Mes;
+using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.EFDbContext;
@@ -165,6 +166,52 @@ public class CP6Context : DbContext
     public DbSet<MachineDowntime> MachineDowntimes { get; set; }
     /// <summary>OEE 日次集計</summary>
     public DbSet<OeeDaily> OeeDailies { get; set; }
+
+    // ───── MSBBWM010〜090 WMS Phase 1 コア ─────
+    /// <summary>倉庫マスタ（WM010）</summary>
+    public DbSet<Warehouse> Warehouses { get; set; }
+    /// <summary>ロケーション（棚位）マスタ（WM010）</summary>
+    public DbSet<Location> Locations { get; set; }
+    /// <summary>在庫実況（WM020 + 全 WMS 中核）</summary>
+    public DbSet<Stock> Stocks { get; set; }
+    /// <summary>在庫トランザクション（不可変ログ）</summary>
+    public DbSet<StockTransaction> StockTransactions { get; set; }
+    /// <summary>WMS 採番管理</summary>
+    public DbSet<WmsSequence> WmsSequences { get; set; }
+
+    // ───── MSBBWM030/040 WMS Phase 2 入庫 ─────
+    /// <summary>入庫予定ヘッダ（WM030）</summary>
+    public DbSet<InboundOrder> InboundOrders { get; set; }
+    /// <summary>入庫予定明細</summary>
+    public DbSet<InboundOrderDetail> InboundOrderDetails { get; set; }
+    /// <summary>入庫実績ヘッダ（WM040）</summary>
+    public DbSet<InboundReceipt> InboundReceipts { get; set; }
+    /// <summary>入庫実績明細</summary>
+    public DbSet<InboundReceiptDetail> InboundReceiptDetails { get; set; }
+
+    // ───── MSBBWM050/070/080 WMS Phase 3 出庫 ─────
+    /// <summary>出庫指示ヘッダ（WM050/070 共有）</summary>
+    public DbSet<OutboundOrder> OutboundOrders { get; set; }
+    /// <summary>出庫指示明細</summary>
+    public DbSet<OutboundOrderDetail> OutboundOrderDetails { get; set; }
+    /// <summary>出荷梱包（WM080）</summary>
+    public DbSet<ShippingPackage> ShippingPackages { get; set; }
+
+    // ───── MSBBWM090 WMS Phase 4 棚卸 ─────
+    /// <summary>棚卸ヘッダ（WM090）</summary>
+    public DbSet<StockTake> StockTakes { get; set; }
+    /// <summary>棚卸明細</summary>
+    public DbSet<StockTakeDetail> StockTakeDetails { get; set; }
+
+    // ───── MSBBWM100/150 WMS Phase 5 拡張（QC検品 + RMA返品） ─────
+    /// <summary>入荷検品ヘッダ（WM100）</summary>
+    public DbSet<QcInspection> QcInspections { get; set; }
+    /// <summary>入荷検品明細</summary>
+    public DbSet<QcInspectionItem> QcInspectionItems { get; set; }
+    /// <summary>RMA返品ヘッダ（WM150）</summary>
+    public DbSet<RmaHeader> RmaHeaders { get; set; }
+    /// <summary>RMA返品明細</summary>
+    public DbSet<RmaDetail> RmaDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -592,6 +639,184 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => new { x.OeeDate, x.MachineCd }).IsUnique();
             e.HasIndex(x => new { x.MachineCd, x.OeeDate });
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM010〜090 WMS Phase 1 コア
+        // ═══════════════════════════════════════════════════════════
+
+        // 倉庫マスタ：WarehouseCd 唯一
+        modelBuilder.Entity<Warehouse>(e =>
+        {
+            e.HasIndex(x => x.WarehouseCd).IsUnique();
+            e.HasIndex(x => new { x.BaseCd, x.IsDeleted });
+            e.HasIndex(x => new { x.WarehouseType, x.IsDeleted });
+        });
+
+        // ロケーション：LocationCd 唯一；倉庫+親ツリー；製品検索
+        modelBuilder.Entity<Location>(e =>
+        {
+            e.HasIndex(x => x.LocationCd).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.ParentLocationCd });
+            e.HasIndex(x => new { x.WarehouseCd, x.IsBlocked, x.IsPickable });
+            e.HasIndex(x => x.Barcode);
+        });
+
+        // 在庫：(Warehouse, Location, Product, Lot) 業務 UK；FEFO / 製品検索用 index
+        modelBuilder.Entity<Stock>(e =>
+        {
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd, x.ProductCd, x.LotNo })
+                .IsUnique()
+                .HasDatabaseName("UX_Stock_WLPL");
+            e.HasIndex(x => new { x.ProductCd, x.ExpiryDate });
+            e.HasIndex(x => new { x.ProductCd, x.OwnerType, x.OwnerCd });
+            e.HasIndex(x => new { x.WarehouseCd, x.IsDeleted });
+            e.HasIndex(x => new { x.PaperRollNo });
+        });
+
+        // トランザクション：TxnNo 唯一；履歴照会・ロット追溯・伝票逆引き
+        modelBuilder.Entity<StockTransaction>(e =>
+        {
+            e.HasIndex(x => x.TxnNo).IsUnique();
+            e.HasIndex(x => x.TxnDateTime);
+            e.HasIndex(x => new { x.ProductCd, x.LotNo, x.TxnDateTime });
+            e.HasIndex(x => new { x.RelatedType, x.RelatedNo });
+            e.HasIndex(x => new { x.TxnType, x.TxnDateTime });
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd, x.TxnDateTime });
+        });
+
+        // 採番：(Prefix, DateKey) 唯一
+        modelBuilder.Entity<WmsSequence>(e =>
+        {
+            e.HasIndex(x => new { x.Prefix, x.DateKey }).IsUnique();
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM030/040 WMS Phase 2 入庫
+        // ═══════════════════════════════════════════════════════════
+
+        // 入庫予定：InboundNo 業務一意 + 検索 index
+        modelBuilder.Entity<InboundOrder>(e =>
+        {
+            e.HasIndex(x => x.InboundNo).IsUnique();
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.SupplierCd, x.IsDeleted });
+            e.HasIndex(x => new { x.ExpectedArrivalDate, x.IsDeleted });
+            e.HasIndex(x => new { x.WarehouseCd, x.IsDeleted });
+        });
+
+        // 入庫予定明細：(InboundNo, LineNo) 一意
+        modelBuilder.Entity<InboundOrderDetail>(e =>
+        {
+            e.HasIndex(x => new { x.InboundNo, x.LineNo }).IsUnique();
+            e.HasIndex(x => x.ProductCd);
+        });
+
+        // 入庫実績：ReceiptNo 一意 + 検索 index
+        modelBuilder.Entity<InboundReceipt>(e =>
+        {
+            e.HasIndex(x => x.ReceiptNo).IsUnique();
+            e.HasIndex(x => new { x.InboundNo, x.IsDeleted });
+            e.HasIndex(x => new { x.WorkOrderNo, x.IsDeleted });
+            e.HasIndex(x => new { x.ReceiveDateTime, x.IsDeleted });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+        });
+
+        // 入庫実績明細：(ReceiptNo, LineNo) 一意
+        modelBuilder.Entity<InboundReceiptDetail>(e =>
+        {
+            e.HasIndex(x => new { x.ReceiptNo, x.LineNo }).IsUnique();
+            e.HasIndex(x => new { x.ProductCd, x.LotNo });
+            e.HasIndex(x => x.StockTxnNo);
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM050/070/080 WMS Phase 3 出庫
+        // ═══════════════════════════════════════════════════════════
+
+        // 出庫指示：OutboundNo 業務一意
+        modelBuilder.Entity<OutboundOrder>(e =>
+        {
+            e.HasIndex(x => x.OutboundNo).IsUnique();
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.OutboundType, x.Status });
+            e.HasIndex(x => new { x.WorkOrderNo, x.IsDeleted });
+            e.HasIndex(x => new { x.WebOrderNo, x.IsDeleted });
+            e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => new { x.PlannedDate, x.IsDeleted });
+        });
+
+        // 出庫指示明細：(OutboundNo, LineNo) 一意
+        modelBuilder.Entity<OutboundOrderDetail>(e =>
+        {
+            e.HasIndex(x => new { x.OutboundNo, x.LineNo }).IsUnique();
+            e.HasIndex(x => new { x.ProductCd, x.LotNo });
+            e.HasIndex(x => x.AllocateTxnNo);
+            e.HasIndex(x => x.ShipTxnNo);
+        });
+
+        // 出荷梱包：PackageNo 業務一意
+        modelBuilder.Entity<ShippingPackage>(e =>
+        {
+            e.HasIndex(x => x.PackageNo).IsUnique();
+            e.HasIndex(x => x.OutboundNo);
+            e.HasIndex(x => x.TrackingNo);
+            e.HasIndex(x => new { x.CarrierCd, x.DepartureTime });
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM090 WMS Phase 4 棚卸
+        // ═══════════════════════════════════════════════════════════
+
+        modelBuilder.Entity<StockTake>(e =>
+        {
+            e.HasIndex(x => x.StockTakeNo).IsUnique();
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.TargetWarehouseCd, x.IsDeleted });
+            e.HasIndex(x => new { x.PlannedDate, x.IsDeleted });
+        });
+
+        modelBuilder.Entity<StockTakeDetail>(e =>
+        {
+            e.HasIndex(x => new { x.StockTakeNo, x.LineNo }).IsUnique();
+            e.HasIndex(x => x.StockId);
+            e.HasIndex(x => new { x.ProductCd, x.LotNo });
+            e.HasIndex(x => x.ApprovalStatus);
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM100/150 WMS Phase 5 拡張
+        // ═══════════════════════════════════════════════════════════
+
+        modelBuilder.Entity<QcInspection>(e =>
+        {
+            e.HasIndex(x => x.InspectionNo).IsUnique();
+            e.HasIndex(x => new { x.InboundNo, x.IsDeleted });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.ArrivalDateTime, x.IsDeleted });
+            e.HasIndex(x => x.SupplierCd);
+        });
+
+        modelBuilder.Entity<QcInspectionItem>(e =>
+        {
+            e.HasIndex(x => new { x.InspectionNo, x.LineNo }).IsUnique();
+            e.HasIndex(x => x.ProductCd);
+        });
+
+        modelBuilder.Entity<RmaHeader>(e =>
+        {
+            e.HasIndex(x => x.RmaNo).IsUnique();
+            e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => new { x.OriginalShippingNo, x.IsDeleted });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.AppliedDate, x.IsDeleted });
+        });
+
+        modelBuilder.Entity<RmaDetail>(e =>
+        {
+            e.HasIndex(x => new { x.RmaNo, x.LineNo }).IsUnique();
+            e.HasIndex(x => new { x.ProductCd, x.LotNo });
+            e.HasIndex(x => x.Judgement);
         });
     }
 }
