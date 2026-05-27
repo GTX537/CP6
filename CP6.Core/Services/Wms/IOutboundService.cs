@@ -25,6 +25,11 @@ public interface IOutboundService
     Task AllocateAsync(string outboundNo, string? userName);
 
     /// <summary>
+    /// ピッキング開始：状态 2 Allocated → 3 Picking。スキャン式作業画面の入口。
+    /// </summary>
+    Task StartPickingAsync(string outboundNo, string? userName);
+
+    /// <summary>
     /// 出庫確定（OUT トランザクション発行 + ShippingPackage 自動生成（出荷区分時のみ））。
     /// </summary>
     /// <returns>出荷区分の場合は PackageNo、それ以外は null</returns>

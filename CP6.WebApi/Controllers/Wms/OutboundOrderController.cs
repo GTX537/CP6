@@ -100,6 +100,18 @@ public class OutboundOrderController : ControllerBase
         catch (InvalidOperationException ex)  { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
+    /// <summary>ピッキング開始（Allocated → Picking）</summary>
+    [HttpPost("{no}/start-picking")]
+    public async Task<IActionResult> StartPicking(string no)
+    {
+        try
+        {
+            await _svc.StartPickingAsync(no, CurrentUser);
+            return Ok(new { code = 0, message = "WM-MSG-071" });
+        }
+        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+    }
+
     /// <summary>出庫確定（OUT + 出荷区分なら梱包採番）</summary>
     [HttpPost("{no}/ship")]
     public async Task<IActionResult> Ship(string no, [FromBody] ShipRequest req)

@@ -130,6 +130,30 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.ILotTraceService, CP6.Core.Serv
 // 4.16 MSBBWM140 キッティング・組立
 builder.Services.AddScoped<CP6.Core.Services.Wms.IKittingService, CP6.Core.Services.Wms.KittingService>();
 
+// 4.17 MSBBWM110/120/130 Logistics（スロッティング + 補充 + クロスドック）
+builder.Services.AddScoped<CP6.Core.Services.Wms.ICrossDockService, CP6.Core.Services.Wms.CrossDockService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IReplenishService, CP6.Core.Services.Wms.ReplenishService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ISlottingService, CP6.Core.Services.Wms.SlottingService>();
+
+// 4.18 MSBBWM200/230/240/250 紙器業特化（原紙ロール + インキ + パレット + VMI）
+builder.Services.AddScoped<CP6.Core.Services.Wms.IPaperRollService, CP6.Core.Services.Wms.PaperRollService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IInkService, CP6.Core.Services.Wms.InkService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IPalletService, CP6.Core.Services.Wms.PalletService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IVmiService, CP6.Core.Services.Wms.VmiService>();
+
+// 4.19 MSBBWM210/220/260 紙器業特化 第2弾（残材 + 印版・木型 + サンプル）
+builder.Services.AddScoped<CP6.Core.Services.Wms.IRemnantService, CP6.Core.Services.Wms.RemnantService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IPlateMoldService, CP6.Core.Services.Wms.PlateMoldService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ISampleStockService, CP6.Core.Services.Wms.SampleStockService>();
+
+// 4.20 MSBBWM900 帳票センター
+builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.Services.Wms.ReportCenterService>();
+
+// 4.21 MSBBWM310/320/330 連携・モバイル・IoT
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.Wms.IotService>();
+
 // 4.12 WM-3.5 WMS 自動展開フック（MES IssueAsync / PA CreateAsync 後に自動発火）
 // appsettings.json の WmsBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
 var wmsBridgeEnabled = builder.Configuration.GetValue<bool?>("WmsBridge:Enabled") ?? true;

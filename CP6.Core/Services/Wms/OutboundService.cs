@@ -279,6 +279,25 @@ public class OutboundService : IOutboundService
     }
 
     // ═══════════════════════════════════════════════════════════
+    //  StartPicking — Allocated → Picking 状态遷移
+    // ═══════════════════════════════════════════════════════════
+
+    public async Task StartPickingAsync(string outboundNo, string? userName)
+    {
+        var header = await _db.OutboundOrders
+            .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
+            ?? throw new InvalidOperationException("WM-MSG-070");
+
+        if (header.Status != OutboundOrderStatus.Allocated)
+            throw new InvalidOperationException("WM-MSG-043: 引当済でないためピッキング開始不可");
+
+        header.Status = OutboundOrderStatus.Picking;
+        header.Modifier = userName;
+        header.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+    }
+
+    // ═══════════════════════════════════════════════════════════
     //  Allocate（FIFO + 期限優先）
     // ═══════════════════════════════════════════════════════════
 

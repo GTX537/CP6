@@ -29,6 +29,10 @@ export const outboundOrderApi = {
   allocate(no: string) {
     return http.post<any, WmsApi<void>>(`/wms/outbound-order/${encodeURIComponent(no)}/allocate`)
   },
+  /** ピッキング開始（Allocated → Picking） */
+  startPicking(no: string) {
+    return http.post<any, WmsApi<void>>(`/wms/outbound-order/${encodeURIComponent(no)}/start-picking`)
+  },
   /** 出庫確定（OUT + 梱包採番） */
   ship(no: string, req: ShipRequest = {}) {
     return http.post<any, WmsApi<{ packageNo: string | null }>>(

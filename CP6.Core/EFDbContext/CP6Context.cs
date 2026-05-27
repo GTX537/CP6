@@ -221,6 +221,44 @@ public class CP6Context : DbContext
     /// <summary>キット 組立/バラシ指示</summary>
     public DbSet<KitOrder> KitOrders { get; set; }
 
+    // ───── MSBBWM110/120/130 WMS Logistics（スロッティング + 補充 + クロスドック） ─────
+    /// <summary>クロスドック指示（WM130）</summary>
+    public DbSet<CrossDockOrder> CrossDockOrders { get; set; }
+    /// <summary>補充指示（WM120）</summary>
+    public DbSet<ReplenishOrder> ReplenishOrders { get; set; }
+    /// <summary>スロッティング最適化（WM110）</summary>
+    public DbSet<SlottingPlan> SlottingPlans { get; set; }
+
+    // ───── MSBBWM200/230/240/250 WMS 紙器業特化 ─────
+    /// <summary>原紙ロール（WM200）</summary>
+    public DbSet<PaperRoll> PaperRolls { get; set; }
+    /// <summary>インキ・接着剤 ロット（WM230）</summary>
+    public DbSet<InkLot> InkLots { get; set; }
+    /// <summary>インキ色合せ履歴</summary>
+    public DbSet<InkColorMatchHistory> InkColorMatchHistories { get; set; }
+    /// <summary>パレット（WM240）</summary>
+    public DbSet<Pallet> Pallets { get; set; }
+    /// <summary>VMI 月次保管料（WM250）</summary>
+    public DbSet<VmiBilling> VmiBillings { get; set; }
+
+    // ───── MSBBWM210/220/260 WMS 紙器業特化 第2弾 ─────
+    /// <summary>残材（WM210）</summary>
+    public DbSet<RemnantMaterial> RemnantMaterials { get; set; }
+    /// <summary>印版・木型（WM220）</summary>
+    public DbSet<PlateMoldStock> PlateMoldStocks { get; set; }
+    /// <summary>サンプル品（WM260）</summary>
+    public DbSet<SampleStock> SampleStocks { get; set; }
+
+    // ───── MSBBWM310/320/330 WMS 連携・モバイル・IoT ─────
+    /// <summary>WCS タスク（WM310）</summary>
+    public DbSet<WcsTask> WcsTasks { get; set; }
+    /// <summary>配送業者 シップメント（WM320）</summary>
+    public DbSet<CarrierShipment> CarrierShipments { get; set; }
+    /// <summary>IoT センサ マスタ（WM330）</summary>
+    public DbSet<IotSensor> IotSensors { get; set; }
+    /// <summary>IoT センサ 計測値</summary>
+    public DbSet<IotSensorReading> IotSensorReadings { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -849,6 +887,153 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.KitSku, x.IsDeleted });
             e.HasIndex(x => new { x.Direction, x.Status });
             e.HasIndex(x => new { x.ExecutedAt, x.IsDeleted });
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM110/120/130 Logistics
+        // ═══════════════════════════════════════════════════════════
+
+        modelBuilder.Entity<CrossDockOrder>(e =>
+        {
+            e.HasIndex(x => x.XDockNo).IsUnique();
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.InboundNo, x.IsDeleted });
+            e.HasIndex(x => new { x.OutboundNo, x.IsDeleted });
+            e.HasIndex(x => new { x.ProductCd, x.IsDeleted });
+        });
+
+        modelBuilder.Entity<ReplenishOrder>(e =>
+        {
+            e.HasIndex(x => x.ReplenishNo).IsUnique();
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.ProductCd, x.IsDeleted });
+            e.HasIndex(x => new { x.WarehouseCd, x.Status });
+            e.HasIndex(x => new { x.Priority, x.Status });
+        });
+
+        modelBuilder.Entity<SlottingPlan>(e =>
+        {
+            e.HasIndex(x => x.SlottingPlanNo).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.IsDeleted });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.AnalyzedAt, x.IsDeleted });
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM200/230/240/250 紙器業特化
+        // ═══════════════════════════════════════════════════════════
+
+        // 原紙ロール：(紙質, 巾, 流れ) で適合検索が頻繁
+        modelBuilder.Entity<PaperRoll>(e =>
+        {
+            e.HasIndex(x => x.RollNo).IsUnique();
+            e.HasIndex(x => new { x.PaperGrade, x.WidthMm, x.GrainDirection, x.Status });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd });
+            e.HasIndex(x => x.RemainingLengthM);
+        });
+
+        modelBuilder.Entity<InkLot>(e =>
+        {
+            e.HasIndex(x => x.InkLotNo).IsUnique();
+            e.HasIndex(x => x.ColorCode);
+            e.HasIndex(x => new { x.InkType, x.IsDeleted });
+            e.HasIndex(x => new { x.ExpiryDate, x.IsDeleted });
+            e.HasIndex(x => new { x.OpenStatus, x.IsDeleted });
+        });
+
+        modelBuilder.Entity<InkColorMatchHistory>(e =>
+        {
+            e.HasIndex(x => x.MatchNo).IsUnique();
+            e.HasIndex(x => new { x.CustomerCd, x.ColorCode });
+            e.HasIndex(x => x.MatchedAt);
+        });
+
+        modelBuilder.Entity<Pallet>(e =>
+        {
+            e.HasIndex(x => x.PalletNo).IsUnique();
+            e.HasIndex(x => new { x.ProductCd, x.LotNo });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd });
+            e.HasIndex(x => x.ShippedOutboundNo);
+        });
+
+        modelBuilder.Entity<VmiBilling>(e =>
+        {
+            e.HasIndex(x => x.BillingNo).IsUnique();
+            e.HasIndex(x => new { x.CustomerCd, x.YearMonth }).IsUnique();
+            e.HasIndex(x => x.YearMonth);
+            e.HasIndex(x => x.Confirmed);
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM210/220/260 紙器業特化 第2弾
+        // ═══════════════════════════════════════════════════════════
+
+        // 残材：サイズ範囲検索 + 素材区分で再利用候補絞り込み
+        modelBuilder.Entity<RemnantMaterial>(e =>
+        {
+            e.HasIndex(x => x.RemnantNo).IsUnique();
+            e.HasIndex(x => new { x.MaterialType, x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.WidthMm, x.LengthMm });
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd });
+            e.HasIndex(x => x.SourceWorkOrderNo);
+            e.HasIndex(x => x.SourceRollNo);
+        });
+
+        // 印版・木型：顧客×製品で検索、寿命警報
+        modelBuilder.Entity<PlateMoldStock>(e =>
+        {
+            e.HasIndex(x => x.PlateNo).IsUnique();
+            e.HasIndex(x => new { x.CustomerCd, x.ProductCd });
+            e.HasIndex(x => new { x.PlateType, x.Status, x.IsDeleted });
+            e.HasIndex(x => x.NextMaintenanceDate);
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd });
+        });
+
+        // サンプル：顧客×種別、未返却検索
+        modelBuilder.Entity<SampleStock>(e =>
+        {
+            e.HasIndex(x => x.SampleNo).IsUnique();
+            e.HasIndex(x => new { x.CustomerCd, x.SampleType });
+            e.HasIndex(x => new { x.Status, x.IsDeleted });
+            e.HasIndex(x => x.ExpectedReturnDate);
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd });
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  MSBBWM310/320/330 連携・モバイル・IoT
+        // ═══════════════════════════════════════════════════════════
+
+        modelBuilder.Entity<WcsTask>(e =>
+        {
+            e.HasIndex(x => x.TaskNo).IsUnique();
+            e.HasIndex(x => new { x.Status, x.Priority, x.IsDeleted });
+            e.HasIndex(x => x.DeviceCd);
+            e.HasIndex(x => new { x.RelatedNo, x.RelatedType });
+            e.HasIndex(x => x.CreatedAt);
+        });
+
+        modelBuilder.Entity<CarrierShipment>(e =>
+        {
+            e.HasIndex(x => x.ShipmentNo).IsUnique();
+            e.HasIndex(x => x.PackageNo);
+            e.HasIndex(x => x.TrackingNo);
+            e.HasIndex(x => new { x.CarrierCd, x.Status, x.IsDeleted });
+            e.HasIndex(x => x.CustomerCd);
+        });
+
+        modelBuilder.Entity<IotSensor>(e =>
+        {
+            e.HasIndex(x => x.SensorId).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd });
+            e.HasIndex(x => new { x.SensorType, x.IsEnabled });
+        });
+
+        modelBuilder.Entity<IotSensorReading>(e =>
+        {
+            e.HasIndex(x => new { x.SensorId, x.ReadAt });
+            e.HasIndex(x => x.IsAlert);
         });
     }
 }

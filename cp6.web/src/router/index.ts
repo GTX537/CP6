@@ -60,36 +60,35 @@ const viewModules: Record<string, () => Promise<any>> = {
   // ───── WMS Core 補完 ─────
   '/wms/location': () => import('@/views/wms/LocationListView.vue'),
   // ───── Phase WM-3 後続実装予定（占位） ─────
-  '/wms/product-inbound':      () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/shipping-order-list':  () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/shipping-order':       () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/picking':              () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/packaging':            () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/product-inbound':      () => import('@/views/wms/ProductionInboundView.vue'),
+  '/wms/shipping-order-list':  () => import('@/views/wms/OutboundOrderListView.vue'),
+  '/wms/shipping-order':       () => import('@/views/wms/OutboundOrderView.vue'),
+  '/wms/picking':              () => import('@/views/wms/PickingWorkView.vue'),
+  '/wms/packaging':            () => import('@/views/wms/PackingShipView.vue'),
   // ───── Phase WM-5 拡張機能 ─────
   '/wms/inspection':           () => import('@/views/wms/QcInspectionView.vue'),
   '/wms/rma':                  () => import('@/views/wms/RmaView.vue'),
   '/wms/expiry':               () => import('@/views/wms/ExpiryView.vue'),
   '/wms/lot-trace':            () => import('@/views/wms/LotTraceView.vue'),
   '/wms/kit':                  () => import('@/views/wms/KitView.vue'),
-  // 残りの Phase WM-5 は引き続き Placeholder
-  '/wms/slotting':             () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/replenish':            () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/cross-dock':           () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/slotting':             () => import('@/views/wms/SlottingView.vue'),
+  '/wms/replenish':            () => import('@/views/wms/ReplenishView.vue'),
+  '/wms/cross-dock':           () => import('@/views/wms/CrossDockView.vue'),
   // ───── Phase WM-6 業界特化（占位） ─────
   '/wms/paper-roll':           () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/remnant':              () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/plate-mold-stock':     () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/ink-lot':              () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/pallet':               () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/vmi':                  () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/sample-stock':         () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/remnant':              () => import('@/views/wms/RemnantView.vue'),
+  '/wms/plate-mold-stock':     () => import('@/views/wms/PlateMoldView.vue'),
+  '/wms/ink-lot':              () => import('@/views/wms/InkLotView.vue'),
+  '/wms/pallet':               () => import('@/views/wms/PalletView.vue'),
+  '/wms/vmi':                  () => import('@/views/wms/VmiView.vue'),
+  '/wms/sample-stock':         () => import('@/views/wms/SampleStockView.vue'),
   // ───── Phase WM-7 連携（占位） ─────
-  '/wms/mobile-task':          () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/wcs-task':             () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/carrier':              () => import('@/views/wms/WmsPlaceholderView.vue'),
-  '/wms/iot-monitor':          () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/mobile-task':          () => import('@/views/wms/MobileTaskView.vue'),
+  '/wms/wcs-task':             () => import('@/views/wms/WcsTaskView.vue'),
+  '/wms/carrier':              () => import('@/views/wms/CarrierView.vue'),
+  '/wms/iot-monitor':          () => import('@/views/wms/IotMonitorView.vue'),
   // ───── Phase WM-8 帳票（占位） ─────
-  '/wms/report-center':        () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/report-center':        () => import('@/views/wms/ReportCenterView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口

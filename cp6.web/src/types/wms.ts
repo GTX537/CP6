@@ -630,3 +630,540 @@ export interface KitOrderSearchQuery {
   page?: number
   pageSize?: number
 }
+
+// ───────── クロスドック（WM130） ─────────
+
+export interface CrossDockOrder {
+  id?: string
+  xdockNo?: string
+  inboundNo?: string
+  outboundNo?: string
+  productCd: string
+  productName?: string
+  qty: number
+  supplierCd?: string
+  customerCd?: string
+  fromDock?: string
+  toDock?: string
+  warehouseCd: string
+  tempLocationCd: string
+  lotNo: string
+  status: number  // 0/1/9
+  inTxnNo?: string
+  outTxnNo?: string
+  executedAt?: string
+  operatorCd?: string
+  remarks?: string
+}
+
+export interface CrossDockSearchQuery {
+  xdockNo?: string
+  productCd?: string
+  inboundNo?: string
+  outboundNo?: string
+  status?: number
+  page?: number
+  pageSize?: number
+}
+
+// ───────── 補充指示（WM120） ─────────
+
+export interface ReplenishOrder {
+  id?: string
+  replenishNo?: string
+  priority: number  // 1=至急 2=通常
+  productCd: string
+  productName?: string
+  warehouseCd: string
+  fromLocationCd: string
+  toLocationCd: string
+  lotNo: string
+  qty: number
+  unitCd?: string
+  triggerType: 'BATCH' | 'MANUAL' | 'ALERT'
+  status: number  // 0/1/9
+  outTxnNo?: string
+  inTxnNo?: string
+  executedAt?: string
+  operatorCd?: string
+  remarks?: string
+}
+
+export interface ReplenishSearchQuery {
+  replenishNo?: string
+  productCd?: string
+  warehouseCd?: string
+  status?: number
+  priority?: number
+  page?: number
+  pageSize?: number
+}
+
+// ───────── スロッティング（WM110） ─────────
+
+export interface SlottingPlan {
+  id?: string
+  slottingPlanNo: string
+  warehouseCd: string
+  analysisDays: number
+  txnSampleCount: number
+  analyzedAt?: string
+  status: number  // 0/1/2/9
+  recommendationCount: number
+  approverCd?: string
+  recommendationsJson?: string
+  remarks?: string
+}
+
+export interface SlottingRecommendation {
+  productCd: string
+  outCount: number
+  outQty: number
+  abcRank: 'A' | 'B' | 'C'
+  currentLocationCd?: string
+  recommendedLocationPattern?: string
+  needsRelocation: boolean
+}
+
+export interface SlottingPlanResult {
+  plan: SlottingPlan
+  recommendations: SlottingRecommendation[]
+}
+
+// ───────── 原紙ロール（WM200） ─────────
+
+export interface PaperRoll {
+  id?: string
+  rollNo: string
+  paperGrade: string
+  widthMm: number
+  basisWeight: number
+  grainDirection: 'T' | 'Y'
+  originalLengthM: number
+  remainingLengthM: number
+  coreDiameterInch: number
+  mfgDate?: string
+  mfgLotNo?: string
+  supplierRollNo?: string
+  locationCd: string
+  warehouseCd: string
+  status: number  // 0/1/2/3
+  parentRollNo?: string
+  disposeThresholdM?: number
+  remarks?: string
+}
+
+export interface PaperRollSearchQuery {
+  rollNo?: string
+  paperGrade?: string
+  widthMm?: number
+  grainDirection?: string
+  status?: number
+  warehouseCd?: string
+  page?: number
+  pageSize?: number
+}
+
+export interface SlitRequest {
+  parentRollNo: string
+  childWidths: number[]
+  keepRemnant: boolean
+}
+
+// ───────── インキ（WM230） ─────────
+
+export interface InkLot {
+  id?: string
+  inkLotNo: string
+  colorCode: string
+  inkType: string
+  openStatus: 'UNOPENED' | 'OPENED'
+  expiryDate: string
+  quantity: number
+  unitCd: string
+  viscosityCp?: number
+  solidContent?: number
+  parentLotNoA?: string
+  parentLotNoB?: string
+  locationCd?: string
+  supplierCd?: string
+  remarks?: string
+}
+
+export interface InkLotSearchQuery {
+  inkLotNo?: string
+  colorCode?: string
+  inkType?: string
+  openStatus?: string
+  expiringWithin30Days?: boolean
+  page?: number
+  pageSize?: number
+}
+
+export interface InkColorMatchHistory {
+  id?: string
+  matchNo: string
+  customerCd: string
+  customerName?: string
+  colorCode: string
+  formulaJson?: string
+  consumedQty: number
+  matchedAt: string
+  operatorCd?: string
+  remarks?: string
+}
+
+export interface MixInkRequest {
+  parentLotNoA: string
+  parentQtyA: number
+  parentLotNoB: string
+  parentQtyB: number
+  newColorCode?: string
+  newLocationCd?: string
+  remarks?: string
+}
+
+// ───────── パレット（WM240） ─────────
+
+export interface Pallet {
+  id?: string
+  palletNo: string
+  productCd: string
+  productName?: string
+  lotNo: string
+  cartonQty: number
+  weightKg?: number
+  heightMm?: number
+  maxStackLayers?: number
+  warehouseCd: string
+  locationCd: string
+  status: number  // 0/1/2/3
+  shippedOutboundNo?: string
+  remarks?: string
+}
+
+export interface PalletSearchQuery {
+  palletNo?: string
+  productCd?: string
+  lotNo?: string
+  warehouseCd?: string
+  status?: number
+  page?: number
+  pageSize?: number
+}
+
+// ───────── VMI（WM250） ─────────
+
+export interface VmiCustomerSummary {
+  customerCd: string
+  customerName?: string
+  skuCount: number
+  totalPhysicalQty: number
+  totalAllocatedQty: number
+  totalAvailableQty: number
+  estimatedValue?: number
+}
+
+export interface VmiStockDetail {
+  productCd: string
+  lotNo: string
+  warehouseCd: string
+  locationCd: string
+  physicalQty: number
+  availableQty: number
+  receiveDate?: string
+  expiryDate?: string
+}
+
+export interface VmiBilling {
+  id?: string
+  billingNo: string
+  customerCd: string
+  customerName?: string
+  yearMonth: string
+  skuCount: number
+  beginQty: number
+  endQty: number
+  avgQty: number
+  dailyStorageRate: number
+  billingAmount: number
+  calculatedAt: string
+  confirmed: boolean
+  remarks?: string
+}
+
+// ───────── 残材（WM210） ─────────
+
+export interface RemnantMaterial {
+  id?: string
+  remnantNo: string
+  materialType: string  // PAPER / FILM / OTHER
+  materialGrade?: string
+  widthMm: number
+  lengthMm: number
+  thicknessUm?: number
+  quantity: number
+  unitCd: string
+  sourceWorkOrderNo?: string
+  sourceRollNo?: string
+  warehouseCd: string
+  locationCd: string
+  status: number  // 0/1/2/3
+  reservedFor?: string
+  registeredAt: string
+  remarks?: string
+}
+
+export interface RemnantSearchQuery {
+  remnantNo?: string
+  materialType?: string
+  materialGrade?: string
+  status?: number
+  warehouseCd?: string
+  sourceWorkOrderNo?: string
+  sourceRollNo?: string
+  page?: number
+  pageSize?: number
+}
+
+// ───────── 印版・木型（WM220） ─────────
+
+export interface PlateMoldStock {
+  id?: string
+  plateNo: string
+  plateType: string  // PLATE / MOLD / CYL / OTHER
+  customerCd?: string
+  customerName?: string
+  productCd?: string
+  productName?: string
+  colorCount?: number
+  sizeNote?: string
+  madeDate?: string
+  madeCost?: number
+  maxShots?: number
+  usedShots: number
+  lastUsedAt?: string
+  nextMaintenanceDate?: string
+  warehouseCd?: string
+  locationCd?: string
+  status: number  // 0/1/2/3
+  remarks?: string
+}
+
+export interface PlateMoldSearchQuery {
+  plateNo?: string
+  plateType?: string
+  customerCd?: string
+  productCd?: string
+  status?: number
+  page?: number
+  pageSize?: number
+}
+
+// ───────── サンプル（WM260） ─────────
+
+export interface SampleStock {
+  id?: string
+  sampleNo: string
+  sampleType: string  // PROTO / COLOR / DUMMY / OTHER
+  customerCd?: string
+  customerName?: string
+  productCd?: string
+  productName?: string
+  quantity: number
+  unitCd: string
+  warehouseCd?: string
+  locationCd?: string
+  status: number  // 0/1/2/3
+  lentTo?: string
+  lentAt?: string
+  expectedReturnDate?: string
+  returnedAt?: string
+  registeredAt: string
+  remarks?: string
+}
+
+export interface SampleSearchQuery {
+  sampleNo?: string
+  sampleType?: string
+  customerCd?: string
+  productCd?: string
+  status?: number
+  overdueOnly?: boolean
+  page?: number
+  pageSize?: number
+}
+
+// ───────── 帳票センター（WM900） ─────────
+
+export interface MonthlyStockReportRow {
+  yearMonth: string
+  warehouseCd: string
+  productCd: string
+  physicalQty: number
+  allocatedQty: number
+  availableQty: number
+  estimatedValue?: number
+  lotCount: number
+}
+
+export interface AbcAnalysisRow {
+  productCd: string
+  outCount: number
+  outQty: number
+  cumulativeRatio?: number
+  abcRank: string  // A / B / C
+}
+
+export interface DeadStockRow {
+  warehouseCd: string
+  locationCd: string
+  productCd: string
+  lotNo: string
+  physicalQty: number
+  lastMovedAt?: string
+  idleDays: number
+  estimatedValue?: number
+}
+
+export interface InboundHistoryRow {
+  txnNo: string
+  txnDateTime: string
+  warehouseCd: string
+  locationCd: string
+  productCd: string
+  lotNo: string
+  qty: number
+  relatedNo?: string
+  relatedType?: string
+  operatorCd?: string
+}
+
+export interface OutboundHistoryRow {
+  txnNo: string
+  txnDateTime: string
+  warehouseCd: string
+  locationCd: string
+  productCd: string
+  lotNo: string
+  qty: number
+  relatedNo?: string
+  relatedType?: string
+  operatorCd?: string
+}
+
+// ───────── WCS タスク（WM310） ─────────
+
+export interface WcsTask {
+  id?: string
+  taskNo: string
+  taskType: string  // MOVE/PICK/PUT/COUNT
+  priority: number
+  status: number    // 0/1/2/3/9
+  deviceCd?: string
+  relatedNo?: string
+  relatedType?: string
+  fromWarehouseCd?: string
+  fromLocationCd?: string
+  toWarehouseCd?: string
+  toLocationCd?: string
+  productCd?: string
+  lotNo?: string
+  qty?: number
+  unitCd?: string
+  createdAt: string
+  dispatchedAt?: string
+  startedAt?: string
+  completedAt?: string
+  errorMessage?: string
+  remarks?: string
+}
+
+export interface WcsTaskSearchQuery {
+  taskNo?: string
+  taskType?: string
+  deviceCd?: string
+  status?: number
+  relatedNo?: string
+  page?: number
+  pageSize?: number
+}
+
+// ───────── Carrier 配送業者（WM320） ─────────
+
+export interface CarrierShipment {
+  id?: string
+  shipmentNo: string
+  packageNo: string
+  carrierCd: string  // YAMATO/SAGAWA/JP/SELF/OTHER
+  trackingNo: string
+  serviceType?: string
+  status: number     // 0/1/2/3/9
+  customerCd?: string
+  shipToAddress?: string
+  shipToName?: string
+  shipToTel?: string
+  weightKg?: number
+  carrierFee?: number
+  pickedUpAt?: string
+  deliveredAt?: string
+  eventsJson?: string
+  apiRefId?: string
+  remarks?: string
+}
+
+export interface CarrierSearchQuery {
+  shipmentNo?: string
+  packageNo?: string
+  trackingNo?: string
+  carrierCd?: string
+  customerCd?: string
+  status?: number
+  page?: number
+  pageSize?: number
+}
+
+export interface CarrierEvent {
+  ts: string
+  location?: string
+  status?: string
+  message?: string
+}
+
+// ───────── IoT センサ（WM330） ─────────
+
+export interface IotSensor {
+  id?: string
+  sensorId: string
+  sensorType: string  // TEMP/HUMID/SHOCK/SHELF
+  sensorName?: string
+  warehouseCd: string
+  locationCd?: string
+  unit?: string
+  minThreshold?: number
+  maxThreshold?: number
+  isEnabled: boolean
+  lastValue?: number
+  lastReadAt?: string
+  remarks?: string
+}
+
+export interface IotSensorReading {
+  id?: string
+  sensorId: string
+  readAt: string
+  value: number
+  isAlert: boolean
+  alertMessage?: string
+}
+
+export interface IotAlert {
+  sensorId: string
+  sensorName?: string
+  sensorType: string
+  warehouseCd: string
+  locationCd?: string
+  lastValue: number
+  lastReadAt: string
+  alertMessage?: string
+}
