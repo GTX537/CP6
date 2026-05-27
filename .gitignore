@@ -107,3 +107,8 @@ appsettings.Local.json
 # ============================================================
 openapi.json
 backend.log
+
+# Claude Code worktrees & temp probes
+.claude/worktrees/
+tmp-*.js
+docs/_manual_render/
