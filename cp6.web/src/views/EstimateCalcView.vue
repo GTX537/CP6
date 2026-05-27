@@ -1,10 +1,10 @@
 <template>
-  <div class="estimate-calc">
+  <div class="estimate-calc" :class="{ 'is-mobile': isMobile }">
     <!-- 顶部：操作种别 + 採番号 + 步骤条 -->
     <el-card shadow="never" class="header-card">
       <div class="header-row">
         <div class="header-left">
-          <el-tag :type="opTagType" size="large" effect="dark">
+          <el-tag :type="opTagType" :size="isMobile ? 'default' : 'large'" effect="dark">
             {{ opLabel }}
           </el-tag>
           <span v-if="store.basicInfo.qtnCalcNo" class="qtn-no">
@@ -22,10 +22,15 @@
         </div>
       </div>
 
-      <el-steps :active="store.currentStep - 1" finish-status="success" class="step-bar">
-        <el-step :title="t('sales.section.basicInfo')" description="Step 1" />
-        <el-step :title="t('sales.section.process')" description="Step 2" />
-        <el-step :title="t('sales.list.detail')" description="Step 3" />
+      <el-steps
+        :active="store.currentStep - 1"
+        finish-status="success"
+        class="step-bar"
+        :simple="isMobile"
+      >
+        <el-step :title="isMobile ? '基本' : t('sales.section.basicInfo')" :description="isMobile ? '' : 'Step 1'" />
+        <el-step :title="isMobile ? '工程' : t('sales.section.process')" :description="isMobile ? '' : 'Step 2'" />
+        <el-step :title="isMobile ? '結果' : t('sales.list.detail')" :description="isMobile ? '' : 'Step 3'" />
       </el-steps>
     </el-card>
 
@@ -73,6 +78,7 @@
         <el-button v-if="btn.cancel && !btn.close" @click="onReset">{{ t('sales.btn.cancel') }}</el-button>
       </div>
     </el-card>
+    <div v-if="isMobile" class="mobile-footer-spacer" />
   </div>
 </template>
 
@@ -91,7 +97,9 @@ import { estimateCalcApi } from '@/api/estimateCalc'
 import Step1BasicInfo from './estimate/Step1BasicInfo.vue'
 import Step2Processes from './estimate/Step2Processes.vue'
 import Step3Result from './estimate/Step3Result.vue'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
+const { isMobile } = useBreakpoint()
 const store = useEstimateStore()
 const route = useRoute()
 const { buttonVisibility } = useFieldControl()
@@ -403,5 +411,74 @@ onMounted(async () => {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
+
+/* ============ 手机端优化 ============ */
+.estimate-calc.is-mobile {
+  padding: 10px;
+  padding-bottom: 80px; /* sticky footer 占位 */
+  gap: 10px;
+}
+.estimate-calc.is-mobile .header-card :deep(.el-card__body),
+.estimate-calc.is-mobile .search-card :deep(.el-card__body) {
+  padding: 10px 12px;
+}
+.estimate-calc.is-mobile .header-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.estimate-calc.is-mobile .header-left {
+  font-size: 13px;
+  gap: 8px;
+}
+.estimate-calc.is-mobile .qtn-no {
+  font-size: 14px;
+}
+.estimate-calc.is-mobile .header-right :deep(.el-radio-group) {
+  display: flex;
+  width: 100%;
+}
+.estimate-calc.is-mobile .header-right :deep(.el-radio-button) {
+  flex: 1;
+}
+.estimate-calc.is-mobile .header-right :deep(.el-radio-button__inner) {
+  width: 100%;
+  padding: 8px 2px;
+  font-size: 12px;
+}
+.estimate-calc.is-mobile .step-bar {
+  margin-top: 4px;
+}
+.estimate-calc.is-mobile .step-content {
+  min-height: 200px;
+}
+/* sticky footer */
+.estimate-calc.is-mobile .footer-card {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  border-radius: 0;
+  z-index: 50;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.estimate-calc.is-mobile .footer-card :deep(.el-card__body) {
+  padding: 10px 12px;
+}
+.estimate-calc.is-mobile .btn-row {
+  justify-content: stretch;
+  gap: 6px;
+}
+.estimate-calc.is-mobile .btn-row :deep(.el-button) {
+  flex: 1;
+  margin-left: 0 !important;
+  min-width: 0;
+  padding: 8px 4px;
+}
+.mobile-footer-spacer { height: 20px; }
 </style>

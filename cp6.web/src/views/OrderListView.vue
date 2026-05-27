@@ -83,7 +83,9 @@
       <div style="margin-bottom: 8px;">
         <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
       </div>
-      <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600">
+
+      <!-- 桌面端：完整表格 -->
+      <el-table v-if="!isMobile" :data="rows" border stripe size="small" style="width: 100%" max-height="600">
         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
         <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" />
         <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" width="160" />
@@ -118,12 +120,54 @@
         </el-table-column>
       </el-table>
 
+      <!-- 手机端：卡片列表 -->
+      <div v-else class="order-card-list">
+        <el-empty v-if="!rows.length && !loading" :image-size="80" :description="t('sales.err.E10008')" />
+        <div
+          v-for="row in rows"
+          :key="row.webOrderNo"
+          class="order-card"
+          @click="goDetail(row)"
+        >
+          <div class="order-card-head">
+            <div class="order-card-customer">{{ row.customerName || row.customerCd }}</div>
+            <div class="order-card-amount">¥{{ formatAmount(row.amount) }}</div>
+          </div>
+          <div class="order-card-row">
+            <span class="lbl">注文書NO</span>
+            <span class="val">{{ row.orderSheetNo || '—' }}</span>
+          </div>
+          <div class="order-card-row">
+            <span class="lbl">手配NO1</span>
+            <span class="val">{{ row.haibaiNo1 || '—' }}</span>
+          </div>
+          <div class="order-card-row">
+            <span class="lbl">受注日 / 納期</span>
+            <span class="val">{{ row.orderDate }} → {{ row.customerDeliveryDate }}</span>
+          </div>
+          <div class="order-card-row">
+            <span class="lbl">製品CD</span>
+            <span class="val">{{ row.productCd || '—' }}</span>
+          </div>
+          <div class="order-card-row">
+            <span class="lbl">数量</span>
+            <span class="val">{{ row.quantity }} {{ row.qtyUnit }}</span>
+          </div>
+          <div v-if="row.consignedSalesFlg === '1'" class="order-card-flag">
+            <el-tag type="success" size="small">預り売上</el-tag>
+          </div>
+        </div>
+      </div>
+
       <el-pagination
         v-model:current-page="query.page"
         v-model:page-size="query.pageSize"
         :total="total"
         :page-sizes="[50, 100, 200]"
-        layout="total, sizes, prev, pager, next, jumper"
+        :layout="isMobile ? 'prev, pager, next' : 'total, sizes, prev, pager, next, jumper'"
+        :pager-count="isMobile ? 5 : 7"
+        :small="isMobile"
+        background
         style="margin-top: 12px; justify-content: flex-end"
         @current-change="search"
         @size-change="search"
@@ -140,9 +184,18 @@ import { ElMessage } from 'element-plus'
 import { Download, Check } from '@element-plus/icons-vue'
 import { orderApi } from '@/api/order'
 import type { OrderQueryDto, OrderListItemDto } from '@/types/order'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { t } = useI18n()
 const router = useRouter()
+const { isMobile } = useBreakpoint()
+
+function formatAmount(v: any): string {
+  if (v == null || v === '') return '0'
+  const n = Number(v)
+  if (!isFinite(n)) return String(v)
+  return n.toLocaleString()
+}
 
 const query = reactive<OrderQueryDto>({
   page: 1,
@@ -200,4 +253,75 @@ function goDetail(row: OrderListItemDto) {
 <style scoped>
 .order-list { padding: 16px; }
 .search-card { margin-bottom: 12px; }
+
+/* 移动卡片 */
+.order-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.order-card {
+  background: #fff;
+  border: 1px solid #ebeef5;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+  position: relative;
+}
+.order-card:active {
+  box-shadow: 0 2px 8px rgba(64,158,255,0.15);
+}
+.order-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #ebeef5;
+  gap: 8px;
+}
+.order-card-customer {
+  font-weight: 600;
+  font-size: 15px;
+  color: #303133;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.order-card-amount {
+  font-weight: 600;
+  font-size: 16px;
+  color: #f56c6c;
+  flex-shrink: 0;
+}
+.order-card-row {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  padding: 3px 0;
+  line-height: 1.5;
+}
+.order-card-row .lbl {
+  color: #909399;
+  min-width: 88px;
+  flex-shrink: 0;
+}
+.order-card-row .val {
+  color: #303133;
+  flex: 1;
+  word-break: break-all;
+  font-size: 13px;
+}
+.order-card-flag {
+  margin-top: 8px;
+}
+
+@media (max-width: 767px) {
+  .order-list { padding: 12px; }
+  .search-card :deep(.el-card__body) {
+    padding: 12px;
+  }
+}
 </style>

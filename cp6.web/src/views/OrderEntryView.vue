@@ -1,10 +1,10 @@
 <template>
-  <div class="order-entry">
+  <div class="order-entry" :class="{ 'is-mobile': isMobile }">
     <!-- ヘッダー：操作種別 + WebOrderNo + ステップバー -->
     <el-card shadow="never" class="header-card">
       <div class="header-row">
         <div class="header-left">
-          <el-tag :type="opTagType" size="large" effect="dark">{{ opLabel }}</el-tag>
+          <el-tag :type="opTagType" :size="isMobile ? 'default' : 'large'" effect="dark">{{ opLabel }}</el-tag>
           <span v-if="store.order.webOrderNo" class="web-order-no">
             Web受注NO: {{ store.order.webOrderNo }}
           </span>
@@ -22,10 +22,16 @@
         </div>
       </div>
 
-      <el-steps :active="store.currentStep - 1" finish-status="success" class="step-bar">
-        <el-step :title="t('sales.section.basicInfo') + '・' + t('sales.section.orderDetail')" description="Step 1" />
-        <el-step :title="t('sales.section.basicInfo') + '・' + t('sales.section.composition') + '・' + t('sales.section.notes')" description="Step 2" />
-        <el-step :title="t('sales.section.process') + '・' + t('sales.section.material')" description="Step 3" />
+      <!-- 桌面端：完整 steps；手机端：紧凑 simple 模式 -->
+      <el-steps
+        :active="store.currentStep - 1"
+        finish-status="success"
+        class="step-bar"
+        :simple="isMobile"
+      >
+        <el-step :title="isMobile ? 'Step 1' : t('sales.section.basicInfo') + '・' + t('sales.section.orderDetail')" :description="isMobile ? '' : 'Step 1'" />
+        <el-step :title="isMobile ? 'Step 2' : t('sales.section.basicInfo') + '・' + t('sales.section.composition') + '・' + t('sales.section.notes')" :description="isMobile ? '' : 'Step 2'" />
+        <el-step :title="isMobile ? 'Step 3' : t('sales.section.process') + '・' + t('sales.section.material')" :description="isMobile ? '' : 'Step 3'" />
       </el-steps>
     </el-card>
 
@@ -62,6 +68,8 @@
         <el-button @click="onReset">{{ t('sales.btn.clear') }}</el-button>
       </div>
     </el-card>
+    <!-- 手机端底部安全占位（避免内容被 sticky footer 遮挡） -->
+    <div v-if="isMobile" class="footer-spacer" />
   </div>
 </template>
 
@@ -75,9 +83,11 @@ import { orderApi } from '@/api/order'
 import Step1HeaderAndDetails from './order/Step1HeaderAndDetails.vue'
 import Step2BasicInfo from './order/Step2BasicInfo.vue'
 import Step3ProcessInfo from './order/Step3ProcessInfo.vue'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { t } = useI18n()
 const store = useOrderStore()
+const { isMobile } = useBreakpoint()
 
 const searchNo = ref('')
 const searchHaibaiNo1 = ref('')
@@ -250,9 +260,61 @@ async function onReset() {
 .order-entry { padding: 16px; }
 .header-card, .search-card, .footer-card { margin-bottom: 12px; }
 .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.header-left { display: flex; gap: 12px; align-items: center; }
+.header-left { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .web-order-no { font-weight: 600; font-size: 14px; }
 .step-bar { margin-top: 8px; }
 .step-content { min-height: 400px; }
-.btn-row { display: flex; gap: 8px; justify-content: flex-end; }
+.btn-row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+/* 手机端 */
+.order-entry.is-mobile {
+  padding: 12px;
+  padding-bottom: 100px; /* sticky footer 占位 */
+}
+.order-entry.is-mobile .header-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+.order-entry.is-mobile .header-left {
+  font-size: 13px;
+}
+.order-entry.is-mobile .web-order-no {
+  font-size: 13px;
+}
+.order-entry.is-mobile .header-right :deep(.el-radio-group) {
+  display: flex;
+  width: 100%;
+}
+.order-entry.is-mobile .header-right :deep(.el-radio-button) {
+  flex: 1;
+}
+.order-entry.is-mobile .header-right :deep(.el-radio-button__inner) {
+  width: 100%;
+  padding: 8px 4px;
+  font-size: 12px;
+}
+.order-entry.is-mobile .footer-card {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  border-radius: 0;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+}
+.order-entry.is-mobile .footer-card :deep(.el-card__body) {
+  padding: 10px 12px;
+}
+.order-entry.is-mobile .btn-row {
+  justify-content: stretch;
+  gap: 6px;
+}
+.order-entry.is-mobile .btn-row :deep(.el-button) {
+  flex: 1;
+  margin-left: 0 !important;
+}
+.footer-spacer { height: 20px; }
 </style>

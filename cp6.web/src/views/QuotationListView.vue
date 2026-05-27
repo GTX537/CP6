@@ -58,7 +58,9 @@
 
     <!-- 一覧 -->
     <el-card shadow="never" class="table-card">
+      <!-- 桌面端：完整表格 -->
       <el-table
+        v-if="!isMobile"
         :data="rows"
         v-loading="loading"
         stripe
@@ -114,13 +116,46 @@
         </el-table-column>
       </el-table>
 
+      <!-- 手机端：卡片列表 -->
+      <div v-else class="mobile-card-list" v-loading="loading">
+        <el-empty v-if="!rows.length && !loading" :image-size="80" />
+        <div
+          v-for="row in rows"
+          :key="row.qtnNo"
+          class="mobile-card"
+          @click="onView(row)"
+        >
+          <div class="mc-head">
+            <div class="mc-no">{{ row.qtnNo }}</div>
+            <el-tag :type="statusTagType(row.status) as any" size="small">{{ row.status }}</el-tag>
+          </div>
+          <div class="mc-title">{{ row.customerName || row.customerCd }}</div>
+          <div class="mc-meta">
+            <span>{{ fmtDate(row.qtnIssueDate) }}</span>
+            <span class="mc-price">合計: ¥{{ fmtMoney(row.totalAmount) }}</span>
+          </div>
+          <div v-if="row.itemName1" class="mc-meta">
+            <span class="mc-truncate">品: {{ row.itemName1 }}</span>
+          </div>
+          <div class="mc-actions" @click.stop>
+            <el-button link type="warning" size="small" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+            <el-button link type="success" size="small" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+            <el-button link type="info" size="small" @click="onIssue(row)">{{ t('sales.btn.issue') }}</el-button>
+            <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
+          </div>
+        </div>
+      </div>
+
       <div class="pagination">
         <el-pagination
           v-model:current-page="query.page"
           v-model:page-size="query.pageSize"
           :total="total"
           :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next"
+          :layout="isMobile ? 'prev, pager, next' : 'total, sizes, prev, pager, next'"
+          :pager-count="isMobile ? 5 : 7"
+          :small="isMobile"
+          background
           @current-change="loadData"
           @size-change="loadData"
         />
@@ -140,6 +175,9 @@ import { quotationApi } from '@/api/quotation'
 import { masterApi } from '@/api/master'
 import type { QuotationListItem, QuotationQuery } from '@/types/quotation'
 import type { MasterBase } from '@/types/estimateCalc'
+import { useBreakpoint } from '@/composables/useBreakpoint'
+
+const { isMobile } = useBreakpoint()
 
 const loading = ref(false)
 const rows = ref<QuotationListItem[]>([])
@@ -349,5 +387,76 @@ onBeforeUnmount(() => {
 .pagination {
   margin-top: 12px;
   text-align: right;
+}
+
+/* 手机卡片 */
+.mobile-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mobile-card {
+  background: #fff;
+  border: 1px solid #ebeef5;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+.mobile-card:active {
+  box-shadow: 0 2px 8px rgba(64,158,255,0.15);
+}
+.mc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.mc-no {
+  font-weight: 600;
+  font-size: 15px;
+  color: #303133;
+}
+.mc-title {
+  font-size: 14px;
+  color: #303133;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mc-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #909399;
+  padding: 2px 0;
+}
+.mc-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mc-price {
+  color: #f56c6c;
+  font-weight: 600;
+}
+.mc-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #ebeef5;
+}
+
+@media (max-width: 767px) {
+  .quotation-list {
+    padding: 12px;
+  }
+  .pagination {
+    text-align: center;
+  }
 }
 </style>

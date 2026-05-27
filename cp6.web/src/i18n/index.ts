@@ -10,26 +10,15 @@ export const langOptions = [
   { label: '한국어', value: 'ko' },
 ]
 
-// 将扁平的 { "login.title": "xxx" } 转成嵌套的 { login: { title: "xxx" } }
-function flatToNested(flat: Record<string, string>): Record<string, any> {
-  const result: Record<string, any> = {}
-  for (const [key, value] of Object.entries(flat)) {
-    const parts = key.split('.')
-    let current: Record<string, any> = result
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!current[parts[i]!]) current[parts[i]!] = {}
-      current = current[parts[i]!]
-    }
-    const lastKey = parts[parts.length - 1]!
-    current[lastKey] = value
-  }
-  return result
-}
-
+// flatJson:true により、{"a.b.c":"v"} のキーをドット区切りのまま検索できる。
+// シード SQL に "wms.pack.title" と "wms.pack.title.packages" のような
+// 葉と枝が衝突するキーが含まれており、嵌套化（flatToNested）すると
+// 「Cannot create property X on string」で失敗していたためフラットに切替。
 const i18n = createI18n({
   legacy: false,
-  locale: localStorage.getItem('lang') || 'zh-CN',
-  fallbackLocale: 'zh-CN',
+  locale: localStorage.getItem('lang') || 'ja',
+  fallbackLocale: 'ja',
+  flatJson: true,
   messages: {},
 })
 
@@ -37,10 +26,9 @@ const i18n = createI18n({
 export async function loadLang(langCode: string) {
   try {
     const flat: any = await http.get(`/lang/${langCode}`)
-    const nested = flatToNested(flat)
-    i18n.global.setLocaleMessage(langCode, nested)
-  } catch {
-    console.warn(`Failed to load language: ${langCode}`)
+    i18n.global.setLocaleMessage(langCode, flat)
+  } catch (e) {
+    console.error(`[loadLang] FAILED to load language: ${langCode}`, e)
   }
 }
 
@@ -53,7 +41,7 @@ export async function changeLang(langCode: string) {
 
 // 初始化：加载当前语言
 export async function initI18n() {
-  const lang = localStorage.getItem('lang') || 'zh-CN'
+  const lang = localStorage.getItem('lang') || 'ja'
   await loadLang(lang)
 }
 

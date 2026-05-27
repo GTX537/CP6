@@ -1,12 +1,12 @@
 <template>
-  <div class="quotation-view">
+  <div class="quotation-view" :class="{ 'is-mobile': isMobile }">
     <!-- ============ Top bar：操作种别 + No + 状态 ============ -->
     <el-card shadow="never" class="header-card">
       <div class="header-row">
         <div class="header-left">
-          <el-tag :type="opTagType" size="large" effect="dark">{{ opLabel }}</el-tag>
+          <el-tag :type="opTagType" :size="isMobile ? 'default' : 'large'" effect="dark">{{ opLabel }}</el-tag>
           <span v-if="form.qtnNo" class="qtn-no">御見積書 No. {{ form.qtnNo }}</span>
-          <el-tag v-if="statusLabel" :type="statusTagType" effect="plain" size="large">
+          <el-tag v-if="statusLabel" :type="statusTagType" effect="plain" :size="isMobile ? 'small' : 'large'">
             {{ statusLabel }}
           </el-tag>
         </div>
@@ -470,7 +470,9 @@ import type {
 import { QuotationOperationType } from '@/types/quotation'
 import type { MasterBase, MasterStaff } from '@/types/estimateCalc'
 import type { AxiosError } from 'axios'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
+const { isMobile } = useBreakpoint()
 const Op = QuotationOperationType
 const route = useRoute()
 const router = useRouter()
@@ -1150,5 +1152,72 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
+}
+
+/* ============ 手机端优化 ============ */
+.quotation-view.is-mobile {
+  padding: 10px;
+  padding-bottom: 80px;
+  gap: 10px;
+}
+.quotation-view.is-mobile .header-card :deep(.el-card__body),
+.quotation-view.is-mobile .search-card :deep(.el-card__body),
+.quotation-view.is-mobile .body-card :deep(.el-card__body) {
+  padding: 10px 12px;
+}
+.quotation-view.is-mobile .header-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+.quotation-view.is-mobile .header-left {
+  font-size: 13px;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.quotation-view.is-mobile .qtn-no {
+  font-size: 14px;
+}
+.quotation-view.is-mobile .header-right :deep(.el-radio-group) {
+  display: flex;
+  width: 100%;
+}
+.quotation-view.is-mobile .header-right :deep(.el-radio-button) {
+  flex: 1;
+}
+.quotation-view.is-mobile .header-right :deep(.el-radio-button__inner) {
+  width: 100%;
+  padding: 8px 2px;
+  font-size: 12px;
+}
+.quotation-view.is-mobile .footer-card {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  border-radius: 0;
+  z-index: 50;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.quotation-view.is-mobile .footer-card :deep(.el-card__body) {
+  padding: 10px 12px;
+}
+.quotation-view.is-mobile .btn-row {
+  justify-content: stretch;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.quotation-view.is-mobile .btn-row :deep(.el-button) {
+  flex: 1 1 auto;
+  margin-left: 0 !important;
+  min-width: 0;
+  padding: 8px 6px;
+}
+/* tabs 在手机端紧凑 */
+.quotation-view.is-mobile :deep(.el-tabs__item) {
+  padding: 0 10px;
+  font-size: 13px;
 }
 </style>
