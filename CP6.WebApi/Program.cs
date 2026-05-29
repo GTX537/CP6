@@ -26,7 +26,11 @@ builder.Services.AddSignalR();
 
 // 2. 注册 Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    // 完全修飾名で schemaId を一意化（入れ子型 DeleteRequest 等の衝突回避）
+    c.CustomSchemaIds(t => (t.FullName ?? t.Name).Replace("+", "."));
+});
 
 // 3. 注册数据库上下文
 builder.Services.AddDbContext<CP6Context>(options =>
@@ -153,6 +157,9 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.Wms.IotService>();
+
+// 4.22 MSBBWM300 モバイル作業指示（RFハンディ）
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileService, CP6.Core.Services.Wms.MobileService>();
 
 // 4.12 WM-3.5 WMS 自動展開フック（MES IssueAsync / PA CreateAsync 後に自動発火）
 // appsettings.json の WmsBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。

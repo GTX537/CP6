@@ -432,3 +432,33 @@ public static class IotSensorType
     public const string Shock       = "SHOCK";  // 衝撃 G
     public const string Shelf       = "SHELF";  // 棚センサ ON/OFF
 }
+
+/// <summary>
+/// モバイル作業指示 ステータス（§37 / WM300）
+/// </summary>
+public static class MobileTaskStatus
+{
+    public const int Pending    = 0;  // 未着手
+    public const int InProgress = 1;  // 進行中
+    public const int Completed  = 2;  // 完了
+    public const int Cancelled  = 9;  // 取消
+}
+
+/// <summary>モバイル作業指示 種別</summary>
+public static class MobileTaskType
+{
+    public const string Receive = "RECEIVE";   // 入庫検品スキャン
+    public const string Putaway = "PUTAWAY";   // 棚配置（製品+棚位 2スキャン）
+    public const string Pick    = "PICK";      // ピッキング
+    public const string Count   = "COUNT";     // 棚卸カウント
+    public const string Move    = "MOVE";      // 棚移動
+    public const string Label   = "LABEL";     // ラベル発行
+}
+
+/// <summary>モバイル スキャン解決種別（barcode resolve 結果）</summary>
+public static class MobileScanKind
+{
+    public const string Location = "LOCATION";  // ロケーションCD と一致
+    public const string Product  = "PRODUCT";   // 製品CD（在庫）と一致
+    public const string Unknown  = "UNKNOWN";   // 解決不能
+}

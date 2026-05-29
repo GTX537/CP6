@@ -75,7 +75,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wms/replenish':            () => import('@/views/wms/ReplenishView.vue'),
   '/wms/cross-dock':           () => import('@/views/wms/CrossDockView.vue'),
   // ───── Phase WM-6 業界特化（占位） ─────
-  '/wms/paper-roll':           () => import('@/views/wms/WmsPlaceholderView.vue'),
+  '/wms/paper-roll':           () => import('@/views/wms/PaperRollView.vue'),
   '/wms/remnant':              () => import('@/views/wms/RemnantView.vue'),
   '/wms/plate-mold-stock':     () => import('@/views/wms/PlateMoldView.vue'),
   '/wms/ink-lot':              () => import('@/views/wms/InkLotView.vue'),

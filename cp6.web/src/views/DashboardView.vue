@@ -172,11 +172,11 @@ function revealDashboard() {
 
 async function loadData() {
   try {
-    const res = await dashboardApi.getSummary()
-    summary.value = res.data.summary
-    topControllers.value = res.data.topControllers
-    trend.value = res.data.trend
-    methods.value = res.data.methods
+    const res = await dashboardApi.getSummary() as any
+    summary.value = res.summary
+    topControllers.value = res.topControllers
+    trend.value = res.trend
+    methods.value = res.methods
   } finally {
     revealDashboard()
   }

@@ -14,26 +14,11 @@
         active-text-color="#409eff"
         router
       >
-        <template v-for="menu in menuTree" :key="menu.id">
-          <el-sub-menu v-if="menu.children?.length" :index="String(menu.id)">
-            <template #title>
-              <el-icon><component :is="menu.icon || 'Folder'" /></el-icon>
-              <span>{{ te('nav.' + menu.id) ? t('nav.' + menu.id) : menu.menuName }}</span>
-            </template>
-            <el-menu-item
-              v-for="child in menu.children"
-              :key="child.id"
-              :index="child.routePath"
-            >
-              <el-icon><component :is="child.icon || 'Document'" /></el-icon>
-              <span>{{ te('nav.' + child.id) ? t('nav.' + child.id) : child.menuName }}</span>
-            </el-menu-item>
-          </el-sub-menu>
-          <el-menu-item v-else :index="menu.routePath">
-            <el-icon><component :is="menu.icon || 'Document'" /></el-icon>
-            <span>{{ te('nav.' + menu.id) ? t('nav.' + menu.id) : menu.menuName }}</span>
-          </el-menu-item>
-        </template>
+        <menu-tree-item
+          v-for="menu in menuTree"
+          :key="menu.id"
+          :node="menu"
+        />
       </el-menu>
     </el-aside>
 
@@ -66,26 +51,11 @@
             router
             @select="drawerOpen = false"
           >
-            <template v-for="menu in menuTree" :key="menu.id">
-              <el-sub-menu v-if="menu.children?.length" :index="String(menu.id)">
-                <template #title>
-                  <el-icon><component :is="menu.icon || 'Folder'" /></el-icon>
-                  <span>{{ te('nav.' + menu.id) ? t('nav.' + menu.id) : menu.menuName }}</span>
-                </template>
-                <el-menu-item
-                  v-for="child in menu.children"
-                  :key="child.id"
-                  :index="child.routePath"
-                >
-                  <el-icon><component :is="child.icon || 'Document'" /></el-icon>
-                  <span>{{ te('nav.' + child.id) ? t('nav.' + child.id) : child.menuName }}</span>
-                </el-menu-item>
-              </el-sub-menu>
-              <el-menu-item v-else :index="menu.routePath">
-                <el-icon><component :is="menu.icon || 'Document'" /></el-icon>
-                <span>{{ te('nav.' + menu.id) ? t('nav.' + menu.id) : menu.menuName }}</span>
-              </el-menu-item>
-            </template>
+            <menu-tree-item
+              v-for="menu in menuTree"
+              :key="menu.id"
+              :node="menu"
+            />
           </el-menu>
         </div>
 
@@ -166,6 +136,7 @@ import { Menu, User, SwitchButton } from '@element-plus/icons-vue'
 import { langOptions, changeLang } from '@/i18n'
 import { resetRoutes } from '@/router'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import MenuTreeItem from '@/components/MenuTreeItem.vue'
 
 const { locale, t, te } = useI18n()
 const route = useRoute()

@@ -259,6 +259,10 @@ public class CP6Context : DbContext
     /// <summary>IoT センサ 計測値</summary>
     public DbSet<IotSensorReading> IotSensorReadings { get; set; }
 
+    // ───── MSBBWM300 WMS モバイル作業指示 ─────
+    /// <summary>モバイル作業指示（WM300）</summary>
+    public DbSet<MobileTask> MobileTasks { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -1034,6 +1038,15 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => new { x.SensorId, x.ReadAt });
             e.HasIndex(x => x.IsAlert);
+        });
+
+        modelBuilder.Entity<MobileTask>(e =>
+        {
+            e.HasIndex(x => x.MobileTaskNo).IsUnique();
+            e.HasIndex(x => new { x.AssignedTo, x.Status, x.IsDeleted });
+            e.HasIndex(x => new { x.TaskType, x.Status });
+            e.HasIndex(x => new { x.Priority, x.Status });
+            e.HasIndex(x => x.RelatedNo);
         });
     }
 }

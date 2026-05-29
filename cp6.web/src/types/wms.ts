@@ -1167,3 +1167,73 @@ export interface IotAlert {
   lastReadAt: string
   alertMessage?: string
 }
+
+// ───────── モバイル作業指示（WM300） ─────────
+
+export interface MobileTask {
+  id?: string
+  mobileTaskNo: string
+  taskType: string            // RECEIVE/PUTAWAY/PICK/COUNT/MOVE/LABEL
+  assignedTo?: string
+  priority: number            // 1=至急 2=通常
+  status: number              // 0=未着手 1=進行中 2=完了 9=取消
+  relatedNo?: string
+  relatedType?: string
+  productCd?: string
+  productName?: string
+  lotNo?: string
+  warehouseCd?: string
+  fromLocationCd?: string
+  toLocationCd?: string
+  qty: number
+  scannedQty: number
+  unitCd?: string
+  instruction?: string
+  startedAt?: string
+  doneAt?: string
+  remarks?: string
+}
+
+export interface MobileTaskQuery {
+  assignedTo?: string
+  taskType?: string
+  status?: number
+  openOnly?: boolean
+  page?: number
+  pageSize?: number
+}
+
+export interface MobileStockLine {
+  warehouseCd: string
+  locationCd: string
+  productCd: string
+  lotNo: string
+  physicalQty: number
+  availableQty: number
+  unitCd?: string
+  expiryDate?: string
+}
+
+export interface MobileScanResult {
+  kind: string                // LOCATION/PRODUCT/UNKNOWN
+  barcode: string
+  locationCd?: string
+  locationName?: string
+  isBlocked?: boolean
+  productCd?: string
+  stocks: MobileStockLine[]
+  matched?: boolean
+  message?: string
+}
+
+export interface MobileScanRequest {
+  barcode: string
+  taskNo?: string
+  warehouseCd?: string
+}
+
+export interface MobileCompleteRequest {
+  scannedQty?: number
+  toLocationCd?: string
+  remarks?: string
+}

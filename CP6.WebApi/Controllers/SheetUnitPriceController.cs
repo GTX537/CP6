@@ -37,7 +37,7 @@ public class SheetUnitPriceController : ControllerBase
     [HttpPost("import")]
     [RequestSizeLimit(50_000_000)] // 50 MB
     public async Task<IActionResult> Import(
-        [FromForm] IFormFile file,
+        IFormFile file,
         [FromForm] DateTime baseDate,
         [FromForm] string baseCd,
         [FromForm] SheetPriceImportDiv importDiv = SheetPriceImportDiv.Standard)
