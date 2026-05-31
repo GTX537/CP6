@@ -38,12 +38,28 @@ public class OperLogFilter : IAsyncActionFilter
         string? requestBody = null;
         if (context.HttpContext.Request.Method is "POST" or "PUT" or "DELETE")
         {
-            var args = context.ActionArguments;
+            // シリアライズ不可な引数（CancellationToken / IFormFile / Stream 等）は除外する。
+            // 除外しないと CancellationToken.WaitHandle.Handle(IntPtr) で
+            // NotSupportedException が起き、本来の業務 API まで 500 になる。
+            var args = context.ActionArguments
+                .Where(kv => kv.Value is not CancellationToken
+                             && kv.Value is not IFormFile
+                             && kv.Value is not IFormFileCollection
+                             && kv.Value is not Stream)
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
             if (args.Count > 0)
             {
-                requestBody = System.Text.Json.JsonSerializer.Serialize(args);
-                if (requestBody.Length > 2000)
-                    requestBody = requestBody[..2000] + "...(truncated)";
+                // ログ採取は旁路処理。万一シリアライズに失敗しても業務を止めない。
+                try
+                {
+                    requestBody = System.Text.Json.JsonSerializer.Serialize(args);
+                    if (requestBody.Length > 2000)
+                        requestBody = requestBody[..2000] + "...(truncated)";
+                }
+                catch (Exception ex)
+                {
+                    requestBody = $"(serialize failed: {ex.GetType().Name})";
+                }
             }
         }
 

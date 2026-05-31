@@ -28,6 +28,13 @@ public interface IInboundService
     /// </summary>
     /// <returns>採番された ReceiptNo</returns>
     Task<string> ConfirmReceiptAsync(InboundReceiptDto dto, string? userName);
+
+    /// <summary>
+    /// MES完成品入庫（WM060）：製造指図の完了良品数を完成品倉庫へ自動入庫する。
+    /// 同一指図の PRODUCTION 入庫実績が既にあれば二重入庫を防止（冪等）。
+    /// </summary>
+    /// <returns>採番された ReceiptNo</returns>
+    Task<string> CreateFinishedGoodsFromWorkOrderAsync(string workOrderNo, decimal goodQty, string? userName);
 }
 
 // ───────── DTOs ─────────

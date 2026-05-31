@@ -34,6 +34,14 @@ public class PlateMoldController : ControllerBase
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
+    [HttpGet("by-product/{productCd}")]
+    public async Task<IActionResult> ByProduct(string productCd)
+    {
+        var dto = await _service.GetCompositionByProductAsync(productCd);
+        if (dto == null) return Ok(new { code = 0, message = "E10008: 検索結果がありません", data = (object?)null });
+        return Ok(new { code = 0, message = "OK", data = dto });
+    }
+
     [HttpGet("{wdPtnNo}")]
     public async Task<IActionResult> GetByNo(string wdPtnNo, [FromQuery] int? rev = null)
     {

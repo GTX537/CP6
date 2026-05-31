@@ -36,7 +36,7 @@ public class WmsBridgeHookTests
         mockOutbound.Setup(o => o.CreateFromWorkOrderAsync("WO001", It.IsAny<string>()))
             .ReturnsAsync("OUT20260523-00001");
 
-        var hook = new WmsBridgeHook(mockOutbound.Object, NullLogger);
+        var hook = new WmsBridgeHook(mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
         var result = await hook.OnWorkOrderIssuedAsync("WO001", "u");
 
         Assert.True(result.Success);
@@ -51,7 +51,7 @@ public class WmsBridgeHookTests
         mockOutbound.Setup(o => o.CreateFromWorkOrderAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ThrowsAsync(new InvalidOperationException("既に展開済"));
 
-        var hook = new WmsBridgeHook(mockOutbound.Object, NullLogger);
+        var hook = new WmsBridgeHook(mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
         var result = await hook.OnWorkOrderIssuedAsync("WO001", "u");
 
         Assert.False(result.Success);
@@ -65,7 +65,7 @@ public class WmsBridgeHookTests
         mockOutbound.Setup(o => o.CreateFromWorkOrderAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ThrowsAsync(new TimeoutException("DB 接続失敗"));
 
-        var hook = new WmsBridgeHook(mockOutbound.Object, NullLogger);
+        var hook = new WmsBridgeHook(mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
 
         // 例外は伝播せず、Failed 結果として返る
         var result = await hook.OnWorkOrderIssuedAsync("WO001", "u");
@@ -80,7 +80,7 @@ public class WmsBridgeHookTests
         mockOutbound.Setup(o => o.CreateFromOrderAsync("WO_PA001", It.IsAny<string>()))
             .ReturnsAsync("OUT20260523-00002");
 
-        var hook = new WmsBridgeHook(mockOutbound.Object, NullLogger);
+        var hook = new WmsBridgeHook(mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
         var result = await hook.OnOrderCreatedAsync("WO_PA001", "u");
 
         Assert.True(result.Success);

@@ -37,3 +37,10 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# Playwright E2E（会話状態・テスト成果物。コミット対象は config/spec のみ）
+/e2e/.auth/
+/e2e/report/
+/test-results/
+/playwright-report/
+/playwright/.cache/

@@ -4,6 +4,7 @@ using CP6.Core.EFDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CP6.Core.Migrations
 {
     [DbContext(typeof(CP6Context))]
-    partial class CP6ContextModelSnapshot : ModelSnapshot
+    [Migration("20260530154659_AddOrderShipmentTracking")]
+    partial class AddOrderShipmentTracking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -956,8 +959,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("ProductCategorySml")
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("ProductShape1")
                         .HasMaxLength(4)
@@ -3127,8 +3130,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("ProductCatSml")
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("ProductCd")
                         .IsRequired()
@@ -4490,8 +4493,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("ProductCatSml")
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("ProductCd")
                         .IsRequired()

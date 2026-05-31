@@ -19,7 +19,7 @@
       <el-form inline size="small" style="margin-top: 8px">
         <el-form-item :label="t('sales.term.bpCd')" required>
           <el-input v-model="store.bp.bpCd" :disabled="!isCdEditable" style="width: 200px" />
-          <el-button v-if="!store.isPreReg && !store.isReg" type="primary" size="small" :loading="loading" @click="onLoad" style="margin-left: 4px">{{ t('sales.btn.load') }}</el-button>
+          <el-button v-if="!store.isPreReg && !store.isReg" type="primary" size="small" :loading="loading" @click="onLoad()" style="margin-left: 4px">{{ t('sales.btn.load') }}</el-button>
         </el-form-item>
         <el-form-item :label="t('sales.term.bpName')">
           <el-input v-model="store.bp.bpName" :disabled="!store.canEdit" style="width: 280px" />
@@ -61,7 +61,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useBpStore } from '@/stores/businessPartner'
@@ -79,6 +80,7 @@ import PaySchTab from './bp/PaySchTab.vue'
 import PaymentTab from './bp/PaymentTab.vue'
 
 const { t } = useI18n()
+const route = useRoute()
 const store = useBpStore()
 const activeTab = ref<string>('basic')
 const loading = ref(false)
@@ -122,10 +124,16 @@ const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'
 // 取引先 CD は事前登録/登録時のみ入力可（仕様書 §7）
 const isCdEditable = computed(() => store.isPreReg || store.isReg)
 
-async function onLoad() {
+async function onLoad(skipDirtyCheck = false) {
   if (!store.bp.bpCd) {
     ElMessage.warning('取引先 CD を入力してください')
     return
+  }
+  // 未保存の編集がある状態で再読込すると編集内容が失われるため確認する
+  if (!skipDirtyCheck && store.isDirty) {
+    try {
+      await ElMessageBox.confirm(t('sales.msg.unsavedChanges'), t('sales.msg.confirmTitle'), { type: 'warning' })
+    } catch { return }
   }
   loading.value = true
   try {
@@ -141,6 +149,20 @@ async function onLoad() {
     loading.value = false
   }
 }
+
+// 一覧画面からの遷移：route.query.bpCd で自動ロード、mode で参照/訂正を設定
+onMounted(async () => {
+  const bpCd = route.query.bpCd as string | undefined
+  if (!bpCd) return
+  store.bp.bpCd = bpCd
+  await onLoad()
+  if (hasLoaded.value) {
+    const mode = route.query.mode === 'edit'
+      ? BpOperationType.Edit
+      : BpOperationType.View
+    store.setOperationType(mode)
+  }
+})
 
 async function onSave() {
   // 必須/9 FLG チェック
@@ -174,6 +196,21 @@ async function onSave() {
         ElMessage.success(t('sales.msg.saveSuccess'))
       }
     }
+  } catch (e: any) {
+    // 楽観ロック競合（409/E10034）：interceptor は 409 を黙殺するため、ここで明示通知する
+    const status = e?.response?.status
+    if (status === 409) {
+      const msg = e?.response?.data?.message
+        || 'E10034: すでに他のユーザーに更新されています。最新を再取得してください'
+      try {
+        await ElMessageBox.confirm(
+          `${msg}\n最新データを再取得しますか？（現在の編集内容は破棄されます）`,
+          '更新競合', { type: 'warning', confirmButtonText: '再取得', cancelButtonText: 'キャンセル' },
+        )
+        await onLoad(true)  // 確認済みのため dirty 再確認はスキップ。最新 rowVersion で再読込（再編集すれば保存可能）
+      } catch { /* キャンセル時は編集内容を保持 */ }
+    }
+    // 401 / その他のステータスは interceptor 側で通知済みのため二重表示しない
   } finally {
     saving.value = false
   }

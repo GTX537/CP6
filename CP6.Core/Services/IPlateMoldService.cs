@@ -14,6 +14,9 @@ public interface IPlateMoldService
     /// <summary>決定見積 NO で検索（基本情報＋構成情報を引入）— 仕様書 §3 NO.1</summary>
     Task<PlateMoldDto?> GetByEstimateNoAsync(string decisionEstimateNo);
 
+    /// <summary>代表製品CD で製品マスタを参照し構成情報（段/原紙/印刷/エンボス/メーカ F・C・B）を引入 — 仕様書 §3 NO.1 第2ブロック（Rev3.0 で木型・版型マスタ→製品マスタ参照に変更）</summary>
+    Task<PlateMoldDto?> GetCompositionByProductAsync(string productCd);
+
     /// <summary>過去履歴一覧（版型 NO の全 Rev）</summary>
     Task<List<PlateMoldHistoryItemDto>> GetHistoryAsync(string wdPtnNo);
 
@@ -48,6 +51,9 @@ public interface IPlateMoldService
 public interface IPlateMoldPeApiService
 {
     Task<PlateMoldPeApiResultDto> SendAsync(PlateMoldDto dto, CancellationToken ct = default);
+
+    /// <summary>版型発注書の削除連携（削除モード時）。実環境では削除区分付きで PE へ送信。</summary>
+    Task<PlateMoldPeApiResultDto> SendDeleteAsync(PlateMoldDto dto, CancellationToken ct = default);
 }
 
 public class NoOpPlateMoldPeApiService : IPlateMoldPeApiService
@@ -62,5 +68,13 @@ public class NoOpPlateMoldPeApiService : IPlateMoldPeApiService
             dto.BaseCd, dto.CustomerCd, dto.SupplierCd, dto.WdPtnNo, dto.WdRev,
             dto.DecisionAmount, dto.PurchaseAmount, dto.DeliveryDate);
         return Task.FromResult(new PlateMoldPeApiResultDto { Ok = true, Message = "PE-API stub 送信成功（53 項）" });
+    }
+
+    public Task<PlateMoldPeApiResultDto> SendDeleteAsync(PlateMoldDto dto, CancellationToken ct = default)
+    {
+        _logger.LogInformation(
+            "[PE-API stub] 版型発注書【削除】 拠点={BaseCd} 得意先={Customer} 版型NO={WdPtnNo}/Rev{Rev}",
+            dto.BaseCd, dto.CustomerCd, dto.WdPtnNo, dto.WdRev);
+        return Task.FromResult(new PlateMoldPeApiResultDto { Ok = true, Message = "PE-API stub 削除送信成功" });
     }
 }

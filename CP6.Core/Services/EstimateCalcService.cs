@@ -240,6 +240,31 @@ public class EstimateCalcService : IEstimateCalcService
             }
         }
 
+        // ── 補充（MSBBPA130 連携）：見積用シート単価マスタが優先 ──
+        // 得意先 × 段 × 原紙構成(表) が一致する「見積用シート単価」(基準日時点の最新改定)が存在する場合、
+        // 汎用コード(Paper)の既定単価より顧客交渉済みのシート単価を優先採用する。
+        // これが PA130 設計書の本来の目的（シート単価マスタ → 見積算価への反映）。
+        if (!string.IsNullOrWhiteSpace(dto.CustomerCd) && !string.IsNullOrWhiteSpace(dto.SheetFlute))
+        {
+            var baseCd = !string.IsNullOrWhiteSpace(dto.QtnBaseCd) ? dto.QtnBaseCd : dto.OrderBaseCd;
+            var today = DateTime.Today;
+            var sheetPrice = await _db.SheetUnitPriceEstimates.AsNoTracking()
+                .Where(x => !x.IsDeleted
+                    && x.BaseCd == baseCd
+                    && x.CustomerCd == dto.CustomerCd
+                    && x.SheetFlute == dto.SheetFlute
+                    && (dto.PaperCdF == null || x.PaperCdF == dto.PaperCdF)
+                    && x.RevisionDate <= today)
+                .OrderByDescending(x => x.RevisionDate)
+                .Select(x => (decimal?)x.UnitPrice)
+                .FirstOrDefaultAsync();
+            if (sheetPrice is decimal sp && sp > 0)
+            {
+                paperPrice = sp;
+                paperSource = $"見積用シート単価マスタ(得意先{dto.CustomerCd}/段{dto.SheetFlute}/原紙{dto.PaperCdF})={sp}";
+            }
+        }
+
         // 查主数据：段成率（M067）
         decimal yieldRate = yieldRateFallback;
         string yieldSource = "fallback 1.00";

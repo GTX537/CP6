@@ -46,7 +46,7 @@ public class OrderDetail : BaseBizEntity
     // ───── 製品区分（自動判定） ─────
     [MaxLength(4)] public string? ProductCatBig { get; set; }
     [MaxLength(4)] public string? ProductCatMid { get; set; }
-    [MaxLength(4)] public string? ProductCatSml { get; set; }
+    [MaxLength(6)] public string? ProductCatSml { get; set; }
 
     // ───── 顧客・品名 ─────
     [MaxLength(100)] public string? CustomerItemName1 { get; set; }
@@ -203,6 +203,16 @@ public class OrderDetail : BaseBizEntity
     [MaxLength(200)] public string? PriceChangeReason { get; set; }
     /// <summary>承認状況（PA090 単価訂正用：0=未/1=承認依頼中/9=承認済）</summary>
     public int? ApprovalStatus { get; set; }
+
+    // ───── 出荷実績（WMS出荷確定 → ERP回写 / Phase4）─────
+    /// <summary>累計出荷数（WMS出荷確定で加算）</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? ShippedQty { get; set; }
+    /// <summary>出荷ステータス：0=未出荷 / 5=一部出荷 / 9=出荷済</summary>
+    public int ShipStatus { get; set; } = 0;
+    /// <summary>最終出荷日時</summary>
+    public DateTime? LastShipDate { get; set; }
+    /// <summary>最終出荷の出庫指示NO</summary>
+    [MaxLength(20)] public string? LastOutboundNo { get; set; }
 
     // ───── ナビゲーション ─────
     public Order? Order { get; set; }

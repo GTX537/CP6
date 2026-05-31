@@ -72,6 +72,13 @@ public class Order : BaseBizEntity
     /// <summary>mcframe7 転送FLG（FALSE=未転送）</summary>
     public bool McTransferFlg { get; set; } = false;
 
+    // ───── 出荷実績（WMS出荷確定 → ERP回写 / Phase4）─────
+    /// <summary>出荷ステータス：0=未出荷 / 5=一部出荷 / 9=出荷済</summary>
+    public int ShipStatus { get; set; } = 0;
+
+    /// <summary>実出荷日時（WMS出荷確定で記録。ユーザ入力の ShipDateTime とは別管理）</summary>
+    public DateTime? ActualShipDate { get; set; }
+
     // ───── メモ ─────
     [MaxLength(100)] public string? Memo1 { get; set; }
     [MaxLength(100)] public string? Memo2 { get; set; }

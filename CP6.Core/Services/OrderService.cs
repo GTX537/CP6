@@ -21,17 +21,19 @@ public class OrderService : IOrderService
     private readonly CP6Context _db;
     private readonly IPowerEggWorkflowService _powerEgg;
     private readonly IWmsBridgeHook _wmsBridge;
+    private readonly IMesBridgeHook _mesBridge;
     /// <summary>WebOrderNo 採番プレフィックス（業務 ID 識別子）</summary>
     private const string WebOrderPrefix = "WO";
     private const string McNullVal = "MCNULLVAL";
     /// <summary>1 受注当たりの最大明細行数</summary>
     private const int MaxDetailLimit = 500;
 
-    public OrderService(CP6Context db, IPowerEggWorkflowService powerEgg, IWmsBridgeHook wmsBridge)
+    public OrderService(CP6Context db, IPowerEggWorkflowService powerEgg, IWmsBridgeHook wmsBridge, IMesBridgeHook? mesBridge = null)
     {
         _db = db;
         _powerEgg = powerEgg;
         _wmsBridge = wmsBridge;
+        _mesBridge = mesBridge ?? new NoOpMesBridgeHook();
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -203,6 +205,9 @@ public class OrderService : IOrderService
 
         // WM-3.5：WMS 自動展開フック（best-effort、失敗しても受注作成は成功とする）
         await _wmsBridge.OnOrderCreatedAsync(webOrderNo, userName);
+
+        // Phase1：MES 製造指図 自動展開フック（既定無効・MesBridge:Enabled=true で有効化、best-effort）
+        await _mesBridge.OnOrderCreatedAsync(webOrderNo, userName);
 
         return webOrderNo;
     }
@@ -1197,6 +1202,8 @@ public class OrderService : IOrderService
         Memo2 = h.Memo2,
         Memo3 = h.Memo3,
         RowVersion = h.RowVersion,
+        ShipStatus = h.ShipStatus,
+        ActualShipDate = h.ActualShipDate,
     };
 
     private static OrderDetailDto DetailToDto(OrderDetail d) => new()
@@ -1261,6 +1268,10 @@ public class OrderService : IOrderService
         ProvisionalPriceFlg = d.ProvisionalPriceFlg,
         PriceChangeReason = d.PriceChangeReason,
         ApprovalStatus = d.ApprovalStatus,
+        ShippedQty = d.ShippedQty,
+        ShipStatus = d.ShipStatus,
+        LastShipDate = d.LastShipDate,
+        LastOutboundNo = d.LastOutboundNo,
     };
 
     private static OrderDetail DtoToDetail(OrderDetailDto d) => new()

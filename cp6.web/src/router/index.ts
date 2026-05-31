@@ -2,30 +2,32 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
-  '/dashboard': () => import('@/views/DashboardView.vue'),
-  '/article': () => import('@/views/ArticleView.vue'),
-  '/role': () => import('@/views/RoleView.vue'),
-  '/menu': () => import('@/views/MenuView.vue'),
-  '/permission': () => import('@/views/PermissionView.vue'),
-  '/user': () => import('@/views/UserView.vue'),
-  '/lang': () => import('@/views/LangView.vue'),
-  '/dict': () => import('@/views/DictView.vue'),
-  '/operlog': () => import('@/views/OperLogView.vue'),
-  '/estimate-calc': () => import('@/views/EstimateCalcView.vue'),
-  '/estimate-calc-list': () => import('@/views/EstimateCalcListView.vue'),
-  '/quotation': () => import('@/views/QuotationView.vue'),
-  '/quotation-list': () => import('@/views/QuotationListView.vue'),
-  '/product': () => import('@/views/ProductMasterView.vue'),
-  '/product-list': () => import('@/views/ProductMasterListView.vue'),
-  '/order': () => import('@/views/OrderEntryView.vue'),
-  '/order-list': () => import('@/views/OrderListView.vue'),
-  '/order-price-correction': () => import('@/views/OrderPriceCorrectionView.vue'),
-  '/business-partner': () => import('@/views/BusinessPartnerView.vue'),
-  '/business-partner-list': () => import('@/views/BusinessPartnerListView.vue'),
-  '/fsc-checklist': () => import('@/views/FscChecklistView.vue'),
-  '/sheet-unit-price': () => import('@/views/SheetUnitPriceView.vue'),
-  '/plate-mold': () => import('@/views/PlateMoldView.vue'),
-  '/plate-mold-list': () => import('@/views/PlateMoldListView.vue'),
+  '/dashboard': () => import('@/views/dashboard/DashboardView.vue'),
+  // ───── PMS システム管理 (100~199) ─────
+  '/article': () => import('@/views/pms/ArticleView.vue'),
+  '/role': () => import('@/views/pms/RoleView.vue'),
+  '/menu': () => import('@/views/pms/MenuView.vue'),
+  '/permission': () => import('@/views/pms/PermissionView.vue'),
+  '/user': () => import('@/views/pms/UserView.vue'),
+  '/lang': () => import('@/views/pms/LangView.vue'),
+  '/dict': () => import('@/views/pms/DictView.vue'),
+  '/operlog': () => import('@/views/pms/OperLogView.vue'),
+  // ───── ERP 販売・製品 (200~299) ─────
+  '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
+  '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),
+  '/quotation': () => import('@/views/erp/QuotationView.vue'),
+  '/quotation-list': () => import('@/views/erp/QuotationListView.vue'),
+  '/product': () => import('@/views/erp/ProductMasterView.vue'),
+  '/product-list': () => import('@/views/erp/ProductMasterListView.vue'),
+  '/order': () => import('@/views/erp/OrderEntryView.vue'),
+  '/order-list': () => import('@/views/erp/OrderListView.vue'),
+  '/order-price-correction': () => import('@/views/erp/OrderPriceCorrectionView.vue'),
+  '/business-partner': () => import('@/views/erp/BusinessPartnerView.vue'),
+  '/business-partner-list': () => import('@/views/erp/BusinessPartnerListView.vue'),
+  '/fsc-checklist': () => import('@/views/erp/FscChecklistView.vue'),
+  '/sheet-unit-price': () => import('@/views/erp/SheetUnitPriceView.vue'),
+  '/plate-mold': () => import('@/views/erp/PlateMoldView.vue'),
+  '/plate-mold-list': () => import('@/views/erp/PlateMoldListView.vue'),
   // ───── MES 製造執行 (MSBBME020/030/040/050) ─────
   '/mes/work-order': () => import('@/views/mes/WorkOrderEntryView.vue'),
   '/mes/work-order-list': () => import('@/views/mes/WorkOrderListView.vue'),
@@ -102,31 +104,31 @@ const staticRoutes: RouteRecordRaw[] = [
   {
     path: '/estimate-calc/window',
     name: 'estimate-calc-window',
-    component: () => import('@/views/EstimateCalcView.vue'),
+    component: () => import('@/views/erp/EstimateCalcView.vue'),
     meta: { standalone: true, title: '見積計算書' }
   },
   {
     path: '/quotation/window',
     name: 'quotation-window',
-    component: () => import('@/views/QuotationView.vue'),
+    component: () => import('@/views/erp/QuotationView.vue'),
     meta: { standalone: true, title: '御見積書' }
   },
   {
     path: '/product/window',
     name: 'product-window',
-    component: () => import('@/views/ProductMasterView.vue'),
+    component: () => import('@/views/erp/ProductMasterView.vue'),
     meta: { standalone: true, title: '製品マスタ' }
   },
   {
     path: '/order/window',
     name: 'order-window',
-    component: () => import('@/views/OrderEntryView.vue'),
+    component: () => import('@/views/erp/OrderEntryView.vue'),
     meta: { standalone: true, title: '受注入力' }
   },
   {
     path: '/business-partner/window',
     name: 'business-partner-window',
-    component: () => import('@/views/BusinessPartnerView.vue'),
+    component: () => import('@/views/erp/BusinessPartnerView.vue'),
     meta: { standalone: true, title: '取引先マスタ' }
   },
   // MES Control Tower 全屏大屏（独立路由、Layout 無し）

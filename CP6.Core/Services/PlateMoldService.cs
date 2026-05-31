@@ -53,10 +53,34 @@ public class PlateMoldService : IPlateMoldService
             VrsnName = calc.CustomerProductName1 ?? "",
             CustomerCd = calc.CustomerCd ?? "",
             CustomerName = customerName,
-            // 構成情報スナップショット — 製品マスタ参照（Rev3.0 変更）。簡略実装で計算書からは引入しない
+            // 構成情報スナップショット — 代表製品CD 選択時に GetCompositionByProductAsync で製品マスタ参照から引入（Rev3.0 変更）
             StDate = DateTime.Today,
             EndDate = DateTime.Today.AddYears(10),
         };
+    }
+
+    public async Task<PlateMoldDto?> GetCompositionByProductAsync(string productCd)
+    {
+        if (string.IsNullOrWhiteSpace(productCd)) return null;
+
+        // 仕様書 §3 NO.1 第2ブロック — 代表製品CD 入力選択時、製品マスタ参照から構成情報を引入（Rev3.0）
+        var p = await _db.ProductMasters.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ProductCd == productCd && !x.IsDeleted);
+        if (p == null) return null;
+
+        var dto = new PlateMoldDto { RepresentativeProductCd = p.ProductCd };
+        ApplyCompositionFromProduct(dto, p);
+        return dto;
+    }
+
+    /// <summary>製品マスタの段ボール・原紙構成（段/原紙/印刷/エンボス/メーカ F・C・B）を DTO へ反映。
+    /// 製品マスタは中層メーカ CD（MakerCdC）を持たないため null とする。</summary>
+    private static void ApplyCompositionFromProduct(PlateMoldDto dto, ProductMaster p)
+    {
+        dto.SheetFlute = p.SheetFlute;
+        dto.PaperCdF = p.PaperCdF; dto.PrintCdF = p.PrintCdF; dto.EmbossCdF = p.EmbossCdF; dto.MakerCdF = p.MakerCdF;
+        dto.PaperCdC = p.PaperCdC; dto.PrintCdC = p.PrintCdC; dto.EmbossCdC = p.EmbossCdC; dto.MakerCdC = null;
+        dto.PaperCdB = p.PaperCdB; dto.PrintCdB = p.PrintCdB; dto.EmbossCdB = p.EmbossCdB; dto.MakerCdB = p.MakerCdB;
     }
 
     public async Task<List<PlateMoldHistoryItemDto>> GetHistoryAsync(string wdPtnNo)
@@ -196,6 +220,10 @@ public class PlateMoldService : IPlateMoldService
         ent.Modifier = userName;
         ent.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
+
+        // 仕様書 §12 処理概要(訂正) — 連携済の版型受注を更新し、PE API を再送信
+        await RelinkOrderOnUpdateAsync(ent, userName);
+        await _peApi.SendAsync(EntityToDto(ent));
     }
 
     public async Task DeleteAsync(string wdPtnNo, int wdRev, byte[]? rowVersion, string? userName)
@@ -208,6 +236,95 @@ public class PlateMoldService : IPlateMoldService
         ent.IsDeleted = true;
         ent.Modifier = userName;
         ent.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+
+        // 仕様書 §12 処理概要(削除) — 連携済の版型受注を論理削除し、PE API へ削除連携
+        await LogicalDeleteLinkedOrderAsync(ent.ArrangeNo, userName);
+        await _peApi.SendDeleteAsync(EntityToDto(ent));
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  版型受注 連携（訂正/削除時のカスケード）
+    // ═══════════════════════════════════════════════════════════
+
+    /// <summary>訂正時 — 連携済 受注明細を最新内容で更新。連携が見つからない場合は新規連携を生成。</summary>
+    private async Task RelinkOrderOnUpdateAsync(PlateMold ent, string? userName)
+    {
+        if (string.IsNullOrEmpty(ent.ArrangeNo))
+        {
+            // 連携実績なし → 新規に版型受注を生成
+            var link = await CreatePlateMoldOrderAsync(ent, userName);
+            ent.ArrangeNo = link.ArrangeNo;
+            await _db.SaveChangesAsync();
+            return;
+        }
+
+        var now = DateTime.Now;
+        var detail = await _db.OrderDetails
+            .FirstOrDefaultAsync(d => d.HaibaiNo1 == ent.ArrangeNo && !d.IsDeleted);
+        if (detail == null)
+        {
+            // 連携先が消えている → 再生成
+            var link = await CreatePlateMoldOrderAsync(ent, userName);
+            ent.ArrangeNo = link.ArrangeNo;
+            await _db.SaveChangesAsync();
+            return;
+        }
+
+        // 受注明細 — 訂正された版型情報を反映
+        detail.HaibaiNo2 = ent.CustomerCd;
+        detail.HaibaiNo3 = ent.DecisionEstimateNo;
+        detail.CustomerItemName1 = ent.VrsnName;
+        detail.CpItemName1 = ent.VrsnName;
+        detail.IndividualUnitPrice = ent.DecisionAmount;
+        detail.Amount = ent.DecisionAmount;
+        detail.DeliveryCd = ent.CustomerCd;
+        detail.CustomerDeliveryDate = ent.DeliveryDate;
+        detail.SalesAvailable = ent.EarningsCd;
+        detail.Modifier = userName;
+        detail.ModifyDate = now;
+
+        // 受注ヘッダ — 得意先/納期を同期
+        var header = await _db.Orders
+            .FirstOrDefaultAsync(o => o.WebOrderNo == detail.WebOrderNo && !o.IsDeleted);
+        if (header != null)
+        {
+            header.CustomerCd = ent.CustomerCd;
+            header.CustomerDeliveryDate = ent.DeliveryDate;
+            header.Modifier = userName;
+            header.ModifyDate = now;
+        }
+        await _db.SaveChangesAsync();
+    }
+
+    /// <summary>削除時 — 連携済 受注ヘッダ・明細を論理削除。</summary>
+    private async Task LogicalDeleteLinkedOrderAsync(string? arrangeNo, string? userName)
+    {
+        if (string.IsNullOrEmpty(arrangeNo)) return;
+        var now = DateTime.Now;
+
+        var detail = await _db.OrderDetails
+            .FirstOrDefaultAsync(d => d.HaibaiNo1 == arrangeNo && !d.IsDeleted);
+        if (detail == null) return;
+
+        detail.IsDeleted = true;
+        detail.Modifier = userName;
+        detail.ModifyDate = now;
+
+        // 同一受注の明細が他に無ければヘッダも論理削除
+        var hasOtherDetail = await _db.OrderDetails
+            .AnyAsync(d => d.WebOrderNo == detail.WebOrderNo && d.WebOrderDetailNo != detail.WebOrderDetailNo && !d.IsDeleted);
+        if (!hasOtherDetail)
+        {
+            var header = await _db.Orders
+                .FirstOrDefaultAsync(o => o.WebOrderNo == detail.WebOrderNo && !o.IsDeleted);
+            if (header != null)
+            {
+                header.IsDeleted = true;
+                header.Modifier = userName;
+                header.ModifyDate = now;
+            }
+        }
         await _db.SaveChangesAsync();
     }
 

@@ -27,6 +27,12 @@ public interface IWmsBridgeHook
     /// PA 受注作成後の WMS 出荷指示自動生成。
     /// </summary>
     Task<WmsBridgeResult> OnOrderCreatedAsync(string webOrderNo, string? userName);
+
+    /// <summary>
+    /// MES 製造指図 全工程完了時の WMS 完成品入庫自動生成。
+    /// 失敗時は例外を握り潰して Skipped/Failed を返す。成功時は採番された ReceiptNo を OutboundNo に格納。
+    /// </summary>
+    Task<WmsBridgeResult> OnProductionCompletedAsync(string workOrderNo, decimal goodQty, string? userName);
 }
 
 /// <summary>
@@ -55,5 +61,8 @@ public class NoOpWmsBridgeHook : IWmsBridgeHook
         => Task.FromResult(WmsBridgeResult.Skipped("WmsBridge:Enabled=false"));
 
     public Task<WmsBridgeResult> OnOrderCreatedAsync(string webOrderNo, string? userName)
+        => Task.FromResult(WmsBridgeResult.Skipped("WmsBridge:Enabled=false"));
+
+    public Task<WmsBridgeResult> OnProductionCompletedAsync(string workOrderNo, decimal goodQty, string? userName)
         => Task.FromResult(WmsBridgeResult.Skipped("WmsBridge:Enabled=false"));
 }

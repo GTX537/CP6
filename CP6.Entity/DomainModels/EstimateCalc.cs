@@ -78,8 +78,8 @@ public class EstimateCalc : BaseBizEntity
     [MaxLength(4)]
     public string? ProductCategoryMid { get; set; }
 
-    /// <summary>製品区分（小）- 第 3 页填</summary>
-    [MaxLength(4)]
+    /// <summary>製品区分（小）- 第 3 页填（小分類码为 5 字符如 A0101）</summary>
+    [MaxLength(6)]
     public string? ProductCategorySml { get; set; }
 
     /// <summary>顧客品名1（画面 32、DB 100）</summary>

@@ -48,6 +48,12 @@ public class OrderDto
     public bool McTransferFlg { get; set; }
     public string? McOrderNo { get; set; }
     public byte[]? RowVersion { get; set; }
+
+    // ───── 出荷実績（WMS出荷確定 → ERP回写 / Phase4）─────
+    /// <summary>出荷ステータス：0=未出荷 / 5=一部出荷 / 9=出荷済</summary>
+    public int ShipStatus { get; set; }
+    /// <summary>実出荷日時（WMS出荷確定で記録）</summary>
+    public DateTime? ActualShipDate { get; set; }
 }
 
 /// <summary>受注明細 1 行（製品単位）</summary>
@@ -210,6 +216,16 @@ public class OrderDetailDto
     public bool ProvisionalPriceFlg { get; set; }
     public string? PriceChangeReason { get; set; }
     public int? ApprovalStatus { get; set; }
+
+    // ───── 出荷実績（WMS出荷確定 → ERP回写 / Phase4）─────
+    /// <summary>累計出荷数</summary>
+    public decimal? ShippedQty { get; set; }
+    /// <summary>出荷ステータス：0=未出荷 / 5=一部出荷 / 9=出荷済</summary>
+    public int ShipStatus { get; set; }
+    /// <summary>最終出荷日時</summary>
+    public DateTime? LastShipDate { get; set; }
+    /// <summary>最終出庫指示NO</summary>
+    public string? LastOutboundNo { get; set; }
 
     /// <summary>第3画面 工程情報（明細単位）</summary>
     public List<OrderProcessDto> Processes { get; set; } = new();

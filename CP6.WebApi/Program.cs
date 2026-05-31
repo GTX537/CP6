@@ -173,6 +173,30 @@ else
     builder.Services.AddScoped<CP6.Core.Services.IWmsBridgeHook, CP6.Core.Services.NoOpWmsBridgeHook>();
 }
 
+// 4.13 WMS→ERP 逆方向フック（OutboundService.ShipAsync 後に受注へ出荷実績を回写）
+// appsettings.json の ErpBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
+var erpBridgeEnabled = builder.Configuration.GetValue<bool?>("ErpBridge:Enabled") ?? true;
+if (erpBridgeEnabled)
+{
+    builder.Services.AddScoped<CP6.Core.Services.IErpBridgeHook, CP6.Core.Services.Wms.ErpBridgeHook>();
+}
+else
+{
+    builder.Services.AddScoped<CP6.Core.Services.IErpBridgeHook, CP6.Core.Services.NoOpErpBridgeHook>();
+}
+
+// 4.14 ERP→MES 前方向フック（OrderService.CreateAsync 後に受注を製造指図へ自動展開）
+// appsettings.json の MesBridge:Enabled で切替（既定 false＝手動展開を既定動作として維持）。
+var mesBridgeEnabled = builder.Configuration.GetValue<bool?>("MesBridge:Enabled") ?? false;
+if (mesBridgeEnabled)
+{
+    builder.Services.AddScoped<CP6.Core.Services.IMesBridgeHook, CP6.Core.Services.Mes.MesBridgeHook>();
+}
+else
+{
+    builder.Services.AddScoped<CP6.Core.Services.IMesBridgeHook, CP6.Core.Services.NoOpMesBridgeHook>();
+}
+
 // MES 実時間通知（SignalR 実装）
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesNotifier, CP6.WebApi.Services.SignalRMesNotifier>();
 
@@ -238,7 +262,7 @@ using (var scope = app.Services.CreateScope())
             new Sys_Menu { MenuId = 105, MenuName = "多语言管理", RoutePath = "/lang", Icon = "ChatLineSquare", ParentId = 100, OrderNo = 105, Enable = true },
             new Sys_Menu { MenuId = 106, MenuName = "数据字典", RoutePath = "/dict", Icon = "Collection", ParentId = 100, OrderNo = 106, Enable = true },
             new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true },
-            new Sys_Menu { MenuId = 200, MenuName = "販売管理", Icon = "ShoppingBag", OrderNo = 200, Enable = true },
+            new Sys_Menu { MenuId = 200, MenuName = "販売管理(ERP)", Icon = "ShoppingBag", OrderNo = 200, Enable = true },
             new Sys_Menu { MenuId = 201, MenuName = "見積計算書 照会", RoutePath = "/estimate-calc-list", Icon = "List", ParentId = 200, OrderNo = 201, Enable = true },
             new Sys_Menu { MenuId = 202, MenuName = "見積計算書 登録", RoutePath = "/estimate-calc", Icon = "Money", ParentId = 200, OrderNo = 202, Enable = true },
             new Sys_Menu { MenuId = 203, MenuName = "御見積書 一覧", RoutePath = "/quotation-list", Icon = "Tickets", ParentId = 200, OrderNo = 203, Enable = true },
@@ -333,7 +357,7 @@ using (var scope = app.Services.CreateScope())
     // MSBBPA010 販売管理 菜单（父）+ 見積計算書 照会/登録（子）
     if (!db.Sys_Menus.Any(m => m.MenuId == 200))
     {
-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 200, MenuName = "販売管理", Icon = "ShoppingBag", OrderNo = 200, Enable = true });
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 200, MenuName = "販売管理(ERP)", Icon = "ShoppingBag", OrderNo = 200, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 200 });
         db.SaveChanges();
     }
@@ -717,7 +741,7 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "nav.105", ZhCN = "多语言管理", ZhTW = "多語言管理", En = "Languages", Ja = "多言語管理", Ko = "다국어 관리" },
             new Sys_Lang { LangKey = "nav.2", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             // 販売管理 (PA010〜PA150)
-            new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理",          ZhTW = "銷售管理",          En = "Sales",                  Ja = "販売管理",                Ko = "판매 관리" },
+            new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理(ERP)",      ZhTW = "銷售管理(ERP)",      En = "Sales (ERP)",            Ja = "販売管理(ERP)",           Ko = "판매 관리(ERP)" },
             new Sys_Lang { LangKey = "nav.201", ZhCN = "报价计算单 照会",    ZhTW = "報價計算單 照會",    En = "Estimate Calc Inquiry",  Ja = "見積計算書 照会",         Ko = "견적계산서 조회" },
             new Sys_Lang { LangKey = "nav.202", ZhCN = "报价计算单 登记",    ZhTW = "報價計算單 登記",    En = "Estimate Calc Entry",    Ja = "見積計算書 登録",         Ko = "견적계산서 등록" },
             new Sys_Lang { LangKey = "nav.203", ZhCN = "正式报价单 一览",    ZhTW = "正式報價單 一覽",    En = "Quotation List",         Ja = "御見積書 一覧",           Ko = "견적서 목록" },
@@ -1136,7 +1160,7 @@ using (var scope = app.Services.CreateScope())
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.200"))
     {
         db.Sys_Langs.AddRange(
-            new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理",          ZhTW = "銷售管理",          En = "Sales",                  Ja = "販売管理",                Ko = "판매 관리" },
+            new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理(ERP)",      ZhTW = "銷售管理(ERP)",      En = "Sales (ERP)",            Ja = "販売管理(ERP)",           Ko = "판매 관리(ERP)" },
             new Sys_Lang { LangKey = "nav.201", ZhCN = "报价计算单 照会",    ZhTW = "報價計算單 照會",    En = "Estimate Calc Inquiry",  Ja = "見積計算書 照会",         Ko = "견적계산서 조회" },
             new Sys_Lang { LangKey = "nav.202", ZhCN = "报价计算单 登记",    ZhTW = "報價計算單 登記",    En = "Estimate Calc Entry",    Ja = "見積計算書 登録",         Ko = "견적계산서 등록" },
             new Sys_Lang { LangKey = "nav.203", ZhCN = "正式报价单 一览",    ZhTW = "正式報價單 一覽",    En = "Quotation List",         Ja = "御見積書 一覧",           Ko = "견적서 목록" },

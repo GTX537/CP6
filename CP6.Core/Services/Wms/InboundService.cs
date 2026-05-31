@@ -415,6 +415,53 @@ public class InboundService : IInboundService
         return receiptNo;
     }
 
+    // ───────── WM060 MES完成品入庫（ERP→MES→WMS 接缝）─────────
+
+    private const string FinishedGoodsWarehouse = "W01";       // 既定完成品倉庫（OutboundService と整合）
+    private const string FinishedGoodsLocation = "W01-FG";     // 既定完成品受入ロケーション
+
+    public async Task<string> CreateFinishedGoodsFromWorkOrderAsync(string workOrderNo, decimal goodQty, string? userName)
+    {
+        if (string.IsNullOrWhiteSpace(workOrderNo))
+            throw new InvalidOperationException("指図NOは必須です");
+        if (goodQty <= 0)
+            throw new InvalidOperationException($"指図 [{workOrderNo}] の完成品数量が 0 のため入庫対象なし");
+
+        // 二重入庫防止：同一指図の PRODUCTION 入庫実績が既にあればスキップ
+        var existing = await _db.InboundReceipts.AsNoTracking()
+            .AnyAsync(x => x.WorkOrderNo == workOrderNo
+                && x.SourceType == InboundSourceType.Production && !x.IsDeleted);
+        if (existing)
+            throw new InvalidOperationException($"WM-MSG-043: 指図 [{workOrderNo}] の完成品入庫は既に登録済みです");
+
+        var wo = await _db.WorkOrders.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.WorkOrderNo == workOrderNo && !x.IsDeleted)
+            ?? throw new InvalidOperationException($"指図 [{workOrderNo}] が見つかりません");
+
+        var dto = new InboundReceiptDto
+        {
+            SourceType = InboundSourceType.Production,
+            WorkOrderNo = workOrderNo,
+            WarehouseCd = FinishedGoodsWarehouse,
+            ReceiveDateTime = DateTime.Now,
+            OperatorCd = userName,
+            Remarks = $"MES完成品自動入庫 from {workOrderNo}",
+            Details = new List<InboundReceiptDetailDto>
+            {
+                new()
+                {
+                    LineNo = 1,
+                    ProductCd = wo.ProductCd,
+                    ProductName = wo.ProductName,
+                    LotNo = !string.IsNullOrWhiteSpace(wo.LotNo) ? wo.LotNo! : workOrderNo,
+                    ReceivedQty = goodQty,
+                    LocationCd = FinishedGoodsLocation,
+                }
+            }
+        };
+        return await ConfirmReceiptAsync(dto, userName);
+    }
+
     // ───────── バリデーション ─────────
 
     private static void ValidateOrder(InboundOrderDto dto)

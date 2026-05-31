@@ -319,4 +319,41 @@ public class EstimateCalcServiceTests
         Assert.All(r.AmountRows, row => Assert.Equal(0m, row.UnitPrice));
         Assert.All(r.AmountRows, row => Assert.Equal(0m, row.Amount));
     }
+
+    // ===== 小分類列宽回归（migration WidenProductCategorySml） =====
+    //
+    // 缺陷：小分類主数据码为 5 字符（如 A0101），原列 nvarchar(4) 在真实 SQL Server
+    // 上保存任意小分類都会 500 截断。修复：三张表的小分類列拓宽到 nvarchar(6)。
+    // InMemory 不强制 MaxLength，无法直接复现截断，故改为断言 EF 模型元数据里的
+    // 列最大长度 >= 5（直接反映 [MaxLength] 特性，修复前=4 会让本测试失败）。
+
+    [Theory]
+    [InlineData(typeof(EstimateCalc), "ProductCategorySml")]
+    [InlineData(typeof(OrderDetail), "ProductCatSml")]
+    [InlineData(typeof(ProductMaster), "ProductCatSml")]
+    public void ProductCategorySml_ColumnLength_ShouldFitFiveCharCode(Type entityType, string propName)
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var prop = db.Model.FindEntityType(entityType)?.FindProperty(propName);
+        Assert.NotNull(prop);
+        var maxLen = prop!.GetMaxLength();
+        Assert.NotNull(maxLen);
+        // 小分類码最长 5 字符（A0101），列宽必须 >= 5，否则保存会截断
+        Assert.True(maxLen >= 5, $"{entityType.Name}.{propName} 最大长度={maxLen}，需 >= 5 以容纳 5 字符小分類码");
+    }
+
+    [Fact]
+    public async Task CreateAsync_FiveCharProductCategorySml_ShouldRoundTripIntact()
+    {
+        var svc = CreateService(out _);
+        var dto = NewDto();
+        dto.ProductCategorySml = "A0101";   // 5 字符小分類码
+
+        var no = await svc.CreateAsync(dto, "admin");
+
+        var fresh = await svc.GetByNoAsync(no);
+        Assert.NotNull(fresh);
+        // 必须原样回读，不能被截断成 "A010"
+        Assert.Equal("A0101", fresh!.ProductCategorySml);
+    }
 }

@@ -17,14 +17,16 @@ public class ProductionResultService : IProductionResultService
     private readonly IMesSequenceService _seq;
     private readonly IWorkOrderService _woService;
     private readonly IMesNotifier _notifier;
+    private readonly IWmsBridgeHook _wmsBridge;
     private const string ResultSeqKey = "PR";
 
-    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier)
+    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge)
     {
         _db = db;
         _seq = seq;
         _woService = woService;
         _notifier = notifier;
+        _wmsBridge = wmsBridge;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -120,6 +122,7 @@ public class ProductionResultService : IProductionResultService
             ?? throw new InvalidOperationException("ME-MSG-040");
 
         var now = DateTime.Now;
+        var justCompleted = false; // 本実績で全工程完了に遷移したか（WMS完成品入庫トリガ）
 
         await using var tx = await _db.Database.BeginTransactionAsync();
 
@@ -173,6 +176,7 @@ public class ProductionResultService : IProductionResultService
                 {
                     wo.Status = 4;
                     wo.ActualEndDate = now;
+                    justCompleted = true;
                 }
                 break;
             case 5: // 数量報告
@@ -235,6 +239,10 @@ public class ProductionResultService : IProductionResultService
                 await _notifier.NotifyWorkOrderStatusChangedAsync(req.WorkOrderNo, wo.Status);
         }
         catch { /* notifier 失敗は業務に影響させない */ }
+
+        // ERP→MES→WMS 接缝：全工程完了時、完成品（累計良品数）を WMS へ自動入庫（best-effort）
+        if (justCompleted)
+            await _wmsBridge.OnProductionCompletedAsync(req.WorkOrderNo, wo.CompletedQty, userName);
 
         return resultNo;
     }

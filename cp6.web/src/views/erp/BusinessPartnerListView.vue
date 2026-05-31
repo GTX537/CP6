@@ -54,6 +54,7 @@
       <div style="margin-bottom: 8px;">
         <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
         <el-button v-if="selectedRow" type="primary" link size="small" style="margin-left: 12px" @click="goView">{{ t('sales.btn.openView') }}</el-button>
+        <el-button v-if="selectedRow" type="warning" link size="small" style="margin-left: 4px" @click="goEdit">{{ t('sales.op.edit') }}</el-button>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" highlight-current-row @current-change="onCurrentChange">
         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
@@ -188,6 +189,11 @@ function onCurrentChange(row: BpListItemDto | null) {
 function goView() {
   if (!selectedRow.value) return
   router.push({ path: '/business-partner', query: { bpCd: selectedRow.value.bpCd, mode: 'view' } })
+}
+
+function goEdit() {
+  if (!selectedRow.value) return
+  router.push({ path: '/business-partner', query: { bpCd: selectedRow.value.bpCd, mode: 'edit' } })
 }
 
 function statusLabel(s: number): string {

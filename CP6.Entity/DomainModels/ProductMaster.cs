@@ -171,7 +171,7 @@ public class ProductMaster : BaseBizEntity
     /// <summary>製品区分_大（工程により自動判定）</summary>
     [MaxLength(4)] public string? ProductCatBig { get; set; }
     [MaxLength(4)] public string? ProductCatMid { get; set; }
-    [MaxLength(4)] public string? ProductCatSml { get; set; }
+    [MaxLength(6)] public string? ProductCatSml { get; set; }
 
     /// <summary>売価区分：1=ｾｯﾄｳﾘ / 2=ﾀﾝﾋﾟﾝｳﾘ / 3=ｱｿｰﾄ</summary>
     [Required, MaxLength(1)]

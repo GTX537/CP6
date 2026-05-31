@@ -21,16 +21,18 @@ public class OutboundService : IOutboundService
     private readonly IWmsSequenceService _seq;
     private readonly IStockMovementService _stock;
     private readonly IWmsNotifier _notifier;
+    private readonly IErpBridgeHook _erpBridge;
 
     private const string OrderPrefix = "OUT";
     private const string PackagePrefix = "PKG";
 
-    public OutboundService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, IWmsNotifier? notifier = null)
+    public OutboundService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, IWmsNotifier? notifier = null, IErpBridgeHook? erpBridge = null)
     {
         _db = db;
         _seq = seq;
         _stock = stock;
         _notifier = notifier ?? new NoOpWmsNotifier();
+        _erpBridge = erpBridge ?? new NoOpErpBridgeHook();
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -445,6 +447,13 @@ public class OutboundService : IOutboundService
 
         try { await _notifier.NotifyOutboundShippedAsync(outboundNo, packageNo); }
         catch { /* best-effort */ }
+
+        // WMS→ERP 接缝：出荷区分の出庫確定 → 受注へ出荷実績を回写（best-effort）
+        if (header.OutboundType == OutboundType.Shipping && !string.IsNullOrWhiteSpace(header.WebOrderNo))
+        {
+            try { await _erpBridge.OnShipmentConfirmedAsync(outboundNo, userName); }
+            catch { /* best-effort：回写失敗は出荷確定を失敗させない */ }
+        }
 
         return packageNo;
     }

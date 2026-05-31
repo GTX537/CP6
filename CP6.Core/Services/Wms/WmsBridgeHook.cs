@@ -8,11 +8,13 @@ namespace CP6.Core.Services.Wms;
 public class WmsBridgeHook : IWmsBridgeHook
 {
     private readonly IOutboundService _outbound;
+    private readonly IInboundService _inbound;
     private readonly ILogger<WmsBridgeHook> _logger;
 
-    public WmsBridgeHook(IOutboundService outbound, ILogger<WmsBridgeHook> logger)
+    public WmsBridgeHook(IOutboundService outbound, IInboundService inbound, ILogger<WmsBridgeHook> logger)
     {
         _outbound = outbound;
+        _inbound = inbound;
         _logger = logger;
     }
 
@@ -54,6 +56,27 @@ public class WmsBridgeHook : IWmsBridgeHook
         catch (Exception ex)
         {
             _logger.LogError(ex, "[WMS-Bridge] 受注 {Order} 自動展開で予期せぬエラー", webOrderNo);
+            return WmsBridgeResult.Failed(ex.Message);
+        }
+    }
+
+    public async Task<WmsBridgeResult> OnProductionCompletedAsync(string workOrderNo, decimal goodQty, string? userName)
+    {
+        try
+        {
+            var no = await _inbound.CreateFinishedGoodsFromWorkOrderAsync(workOrderNo, goodQty, userName);
+            _logger.LogInformation("[WMS-Bridge] 指図 {Wo} 完了 → 完成品入庫 {ReceiptNo} 自動生成（良品 {Qty}）", workOrderNo, no, goodQty);
+            return WmsBridgeResult.Ok(no);
+        }
+        catch (InvalidOperationException ex)
+        {
+            // 既に入庫済 / 良品 0 等の業務エラー
+            _logger.LogWarning("[WMS-Bridge] 指図 {Wo} 完成品入庫スキップ: {Msg}", workOrderNo, ex.Message);
+            return WmsBridgeResult.Skipped(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[WMS-Bridge] 指図 {Wo} 完成品入庫で予期せぬエラー", workOrderNo);
             return WmsBridgeResult.Failed(ex.Message);
         }
     }
