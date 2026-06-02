@@ -21,9 +21,9 @@
         <div class="success-burst"></div>
         <div class="card-header">
           <div class="brand-chip">CP6</div>
-          <p class="card-eyebrow">Welcome Back</p>
+          <p class="card-eyebrow">{{ $t('login.welcomeBack') }}</p>
           <h2 class="login-title">{{ $t('login.title') }}</h2>
-          <p class="login-subtitle">输入账号信息后进入系统工作台。</p>
+          <p class="login-subtitle">{{ $t('login.subtitle') }}</p>
         </div>
 
         <el-form ref="formRef" :model="form" :rules="rules" label-width="0" class="login-form">
@@ -67,13 +67,13 @@
               :loading="loading"
               @click="handleLogin"
             >
-              {{ loginSuccess ? 'Entering Workspace...' : $t('login.button') }}
+              {{ loginSuccess ? $t('login.entering') : $t('login.button') }}
             </el-button>
           </el-form-item>
         </el-form>
 
         <div class="lang-switch">
-          <span class="lang-label">Language</span>
+          <span class="lang-label">{{ $t('login.language') }}</span>
           <el-popover
             v-model:visible="langMenuOpen"
             placement="top"
@@ -97,7 +97,7 @@
             </template>
 
             <div class="lang-menu-panel">
-              <div class="lang-menu-title">Select language</div>
+              <div class="lang-menu-title">{{ $t('login.selectLanguage') }}</div>
               <div class="lang-menu">
                 <button
                   v-for="item in langOptions"

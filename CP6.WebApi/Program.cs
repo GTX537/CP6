@@ -782,8 +782,18 @@ using (var scope = app.Services.CreateScope())
 
     // ERP/MES 画面ラベルの多言語シード（日文原文＝キー）。既存キーはスキップして冪等にアップサート。
     {
+        // ログイン画面など、追加の UI 文言（ドット区切りキー、5 言語）
+        var extraUi = new[]
+        {
+            new Sys_Lang { LangKey = "login.subtitle", ZhCN = "输入账号信息后进入系统工作台。", ZhTW = "輸入帳號資訊後進入系統工作台。", En = "Enter your credentials to access the workspace.", Ja = "アカウント情報を入力してワークスペースへ進みます。", Ko = "계정 정보를 입력하여 워크스페이스로 들어갑니다." },
+            new Sys_Lang { LangKey = "login.welcomeBack", ZhCN = "欢迎回来", ZhTW = "歡迎回來", En = "Welcome Back", Ja = "おかえりなさい", Ko = "다시 오신 것을 환영합니다" },
+            new Sys_Lang { LangKey = "login.entering", ZhCN = "正在进入工作台…", ZhTW = "正在進入工作台…", En = "Entering Workspace...", Ja = "ワークスペースへ移動中…", Ko = "워크스페이스로 이동 중…" },
+            new Sys_Lang { LangKey = "login.language", ZhCN = "语言", ZhTW = "語言", En = "Language", Ja = "言語", Ko = "언어" },
+            new Sys_Lang { LangKey = "login.selectLanguage", ZhCN = "选择语言", ZhTW = "選擇語言", En = "Select language", Ja = "言語を選択", Ko = "언어 선택" },
+        };
+
         var existingKeys = db.Sys_Langs.Select(l => l.LangKey).ToHashSet();
-        var toAdd = CP6.WebApi.Seed.I18nLabelSeed.Items
+        var toAdd = CP6.WebApi.Seed.I18nLabelSeed.Items.Concat(extraUi)
             .Where(i => !existingKeys.Contains(i.LangKey))
             .ToList();
         if (toAdd.Count > 0)
@@ -805,6 +815,15 @@ using (var scope = app.Services.CreateScope())
             }
         }
         db.SaveChanges();
+
+        // 新增/修正词条后清除 Redis 语言缓存（lang:*），否则旧缓存（TTL 1h）会让新词条迟迟不显示。
+        try
+        {
+            var cache = scope.ServiceProvider.GetRequiredService<CacheService>();
+            foreach (var code in new[] { "zh-CN", "zh-TW", "en", "ja", "ko" })
+                cache.RemoveAsync(CacheService.LangKeyPrefix + code).GetAwaiter().GetResult();
+        }
+        catch { /* 缓存清理失败不应阻断启动 */ }
     }
 
     // 补充：已有数据库追加导航菜单词条
