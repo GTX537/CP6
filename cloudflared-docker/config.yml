@@ -1,0 +1,12 @@
+tunnel: 675bc4d4-18b5-41ac-9724-894c86be91c5
+credentials-file: /etc/cloudflared/675bc4d4-18b5-41ac-9724-894c86be91c5.json
+# 本机/容器网络 TCP 7844(http2) 被拦，QUIC(UDP 7844) 可通 → 用 quic
+protocol: quic
+
+# 容器内通过 docker 网络名直达后端/前端（无需经宿主机端口）
+ingress:
+  - hostname: api.cp6.uk
+    service: http://cp6-api:5000
+  - hostname: cp6.uk
+    service: http://cp6-web:80
+  - service: http_status:404

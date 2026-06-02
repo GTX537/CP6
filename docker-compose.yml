@@ -113,6 +113,18 @@ services:
       - cp6-api
     restart: unless-stopped
 
+  # 内网穿透：cloudflared 连接器（容器内出网，绕过宿主机 TUN 代理）
+  cp6-cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cp6-cloudflared
+    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./cloudflared-docker:/etc/cloudflared:ro
+    depends_on:
+      - cp6-web
+      - cp6-api
+    restart: unless-stopped
+
 volumes:
   cp6-db-data:
   cp6-redis-data:

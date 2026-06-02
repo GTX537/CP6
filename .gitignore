@@ -112,3 +112,6 @@ backend.log
 .claude/worktrees/
 tmp-*.js
 docs/_manual_render/
+
+# Cloudflare Tunnel 凭证（密钥，禁止提交）
+cloudflared-docker/*.json
