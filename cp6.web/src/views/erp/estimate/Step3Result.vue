@@ -4,11 +4,11 @@
     <el-card shadow="never" class="calc-bar">
       <el-row :gutter="12" align="middle">
         <el-col :span="6">
-          <el-form-item label="見積区分" label-width="90">
+          <el-form-item :label="t('見積区分')" label-width="90">
             <el-select v-model="form.qtnDiv" :disabled="isPageReadOnly" clearable size="small">
-              <el-option value="A" label="A 積算" />
-              <el-option value="B" label="B 実績" />
-              <el-option value="C" label="C 概算" />
+              <el-option value="A" :label="t('A 積算')" />
+              <el-option value="B" :label="t('B 実績')" />
+              <el-option value="C" :label="t('C 概算')" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -26,12 +26,12 @@
         <span class="title">計算結果</span>
       </template>
       <el-descriptions :column="4" border size="small">
-        <el-descriptions-item label="見積面積(m²)">{{ fmtNum(result.estimateSqm, 4) }}</el-descriptions-item>
-        <el-descriptions-item label="標準原価">{{ fmtMoney(result.standardUnitPrice) }}</el-descriptions-item>
-        <el-descriptions-item label="見積単価">
+        <el-descriptions-item :label="t('見積面積(m²)')">{{ fmtNum(result.estimateSqm, 4) }}</el-descriptions-item>
+        <el-descriptions-item :label="t('標準原価')">{{ fmtMoney(result.standardUnitPrice) }}</el-descriptions-item>
+        <el-descriptions-item :label="t('見積単価')">
           <span class="highlight">{{ fmtMoney(result.estimateUnitPrice) }}</span>
         </el-descriptions-item>
-        <el-descriptions-item label="確定単価">
+        <el-descriptions-item :label="t('確定単価')">
           <el-input-number
             v-model="form.confirmedUnitPrice"
             :min="0"
@@ -52,13 +52,13 @@
       </template>
       <el-table :data="result.amountRows" size="small" border stripe style="width: 100%">
         <el-table-column prop="index" label="#" width="60" align="center" />
-        <el-table-column prop="qty" label="数量" align="right">
+        <el-table-column prop="qty" :label="t('数量')" align="right">
           <template #default="{ row }">{{ fmtNum(row.qty, 0) }}</template>
         </el-table-column>
-        <el-table-column prop="unitPrice" label="単価" align="right">
+        <el-table-column prop="unitPrice" :label="t('単価')" align="right">
           <template #default="{ row }">{{ fmtMoney(row.unitPrice) }}</template>
         </el-table-column>
-        <el-table-column prop="amount" label="金額" align="right">
+        <el-table-column prop="amount" :label="t('金額')" align="right">
           <template #default="{ row }">{{ fmtMoney(row.amount) }}</template>
         </el-table-column>
       </el-table>
@@ -81,6 +81,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ElMessage } from 'element-plus'

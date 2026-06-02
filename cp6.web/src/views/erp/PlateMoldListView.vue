@@ -67,40 +67,41 @@
       <el-table
         :data="rows" border stripe size="small" max-height="600" style="width: 100%"
         highlight-current-row @current-change="(r: PlateMoldListItemDto | null) => selectedRow = r"
+        @sort-change="onSortChange"
       >
         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
         <el-table-column :label="t('sales.btn.issue')" width="60" align="center">
           <template #default="{ row }"><el-checkbox v-model="row.issue" /></template>
         </el-table-column>
-        <el-table-column prop="wdPtnNo" :label="t('sales.pm.no')" width="160" fixed="left" />
-        <el-table-column prop="vrsnName" :label="t('sales.pm.name')" min-width="160" fixed="left" />
-        <el-table-column prop="wdRev" :label="t('sales.term.rev')" width="60" align="center" />
-        <el-table-column prop="typeClass" :label="t('sales.pm.class')" width="100" />
-        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" />
+        <el-table-column prop="wdPtnNo" :label="t('sales.pm.no')" width="160" fixed="left" sortable="custom" />
+        <el-table-column prop="vrsnName" :label="t('sales.pm.name')" min-width="160" fixed="left" sortable="custom" />
+        <el-table-column prop="wdRev" :label="t('sales.term.rev')" width="60" align="center" sortable="custom" />
+        <el-table-column prop="typeClass" :label="t('sales.pm.class')" width="100" sortable="custom" />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" sortable="custom" />
         <el-table-column prop="customerName" :label="t('sales.term.customer')" width="160" />
-        <el-table-column prop="representativeProductCd" :label="t('sales.term.productCd')" width="130" />
+        <el-table-column prop="representativeProductCd" :label="t('sales.term.productCd')" width="130" sortable="custom" />
         <el-table-column prop="representativeProductName" :label="t('sales.term.product')" min-width="200" />
-        <el-table-column prop="wdQty" :label="t('sales.pm.passCount')" width="100" align="right" />
-        <el-table-column prop="limitWdQty" :label="t('sales.pm.limitPass')" width="110" align="right" />
-        <el-table-column prop="achieveDate" :label="t('sales.pm.lastUsedDate')" width="130">
+        <el-table-column prop="wdQty" :label="t('sales.pm.passCount')" width="100" align="right" sortable="custom" />
+        <el-table-column prop="limitWdQty" :label="t('sales.pm.limitPass')" width="110" align="right" sortable="custom" />
+        <el-table-column prop="achieveDate" :label="t('sales.pm.lastUsedDate')" width="130" sortable="custom">
           <template #default="{ row }">{{ row.achieveDate?.slice(0, 10) }}</template>
         </el-table-column>
-        <el-table-column prop="supplierCd" :label="t('sales.term.supplier')" width="100" />
+        <el-table-column prop="supplierCd" :label="t('sales.term.supplier')" width="100" sortable="custom" />
         <el-table-column prop="supplierName" :label="t('sales.term.supplier')" width="160" />
-        <el-table-column prop="arrivalActualDate" :label="t('sales.pm.arrivalDate')" width="120">
+        <el-table-column prop="arrivalActualDate" :label="t('sales.pm.arrivalDate')" width="120" sortable="custom">
           <template #default="{ row }">{{ row.arrivalActualDate?.slice(0, 10) }}</template>
         </el-table-column>
-        <el-table-column prop="dispScheduleDate" :label="t('sales.pm.dispScheduled')" width="120">
+        <el-table-column prop="dispScheduleDate" :label="t('sales.pm.dispScheduled')" width="120" sortable="custom">
           <template #default="{ row }">{{ row.dispScheduleDate?.slice(0, 10) }}</template>
         </el-table-column>
-        <el-table-column prop="returnScheduleDate" :label="t('sales.pm.returnScheduled')" width="120">
+        <el-table-column prop="returnScheduleDate" :label="t('sales.pm.returnScheduled')" width="120" sortable="custom">
           <template #default="{ row }">{{ row.returnScheduleDate?.slice(0, 10) }}</template>
         </el-table-column>
-        <el-table-column prop="returnDate" :label="t('sales.pm.returnDate')" width="120">
+        <el-table-column prop="returnDate" :label="t('sales.pm.returnDate')" width="120" sortable="custom">
           <template #default="{ row }">{{ row.returnDate?.slice(0, 10) }}</template>
         </el-table-column>
         <el-table-column prop="returnReason" label="返却理由" min-width="160" />
-        <el-table-column prop="processCd" :label="t('sales.pm.process')" width="100" />
+        <el-table-column prop="processCd" :label="t('sales.pm.process')" width="100" sortable="custom" />
         <el-table-column prop="placeCd" :label="t('sales.pm.location')" width="100" />
         <el-table-column prop="shelfLineCd" :label="t('sales.pm.shelfLine')" width="120" />
         <el-table-column prop="newVerCd" :label="t('sales.pm.newVersion')" width="100" />
@@ -149,6 +150,7 @@ const router = useRouter()
 
 const query = reactive<PlateMoldQueryDto>({
   onlyLatestRev: true, page: 1, pageSize: 100,
+  sortField: '', sortOrder: '',
 })
 const advOpen = ref<string[]>([])
 const rows = ref<PlateMoldListItemDto[]>([])
@@ -160,6 +162,13 @@ const selectedRow = ref<PlateMoldListItemDto | null>(null)
 
 const isPickerMode = computed(() => route.query.picker === '1')
 const checkedCount = computed(() => rows.value.filter(r => r.issue).length)
+
+function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+  query.sortField = order ? prop : ''
+  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+  query.page = 1
+  search()
+}
 
 async function search() {
   // FROM ≤ TO チェック（簡易：5 ペア）

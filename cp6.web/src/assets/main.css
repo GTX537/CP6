@@ -331,3 +331,17 @@ body,
 .cp6-fab .el-icon {
   font-size: 24px;
 }
+
+/* ---------- 表格选中行高亮（highlight-current-row）---------- */
+/* 默认的浅蓝太淡，统一改为醒目的蓝色 + 左侧主题蓝强调条，盖过斑马纹/悬停 */
+.el-table__body tr.current-row > td.el-table__cell,
+.el-table__body tr.current-row:hover > td.el-table__cell,
+.el-table__body tr.el-table__row--striped.current-row > td.el-table__cell {
+  background-color: #a0cfff !important;
+}
+.el-table__body tr.current-row > td.el-table__cell:first-child {
+  box-shadow: inset 4px 0 0 0 #409eff !important;
+}
+.el-table__body tr.current-row > td.el-table__cell {
+  font-weight: 600;
+}

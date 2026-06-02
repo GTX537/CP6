@@ -144,6 +144,11 @@ public class QuotationQuery
 
     /// <summary>ステータス：任意组合 ["0","9","C"]，对应 未承認/承認済/見積確定済</summary>
     public List<string>? Statuses { get; set; }
+
+    /// <summary>排序列（前端 el-table prop，白名单内才生效）</summary>
+    public string? SortField { get; set; }
+    /// <summary>排序方向：asc / desc</summary>
+    public string? SortOrder { get; set; }
 }
 
 /// <summary>御見積書一覧行（MSBBPA040 返回）</summary>

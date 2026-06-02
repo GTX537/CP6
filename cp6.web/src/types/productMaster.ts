@@ -268,6 +268,8 @@ export interface ProductQuery {
   modifyDateFrom?: string
   modifyDateTo?: string
   statuses?: number[]
+  sortField?: string
+  sortOrder?: string
 }
 
 /** 仕掛チェック 結果（10 章） */

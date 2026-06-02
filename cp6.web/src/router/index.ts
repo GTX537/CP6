@@ -4,7 +4,6 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 const viewModules: Record<string, () => Promise<any>> = {
   '/dashboard': () => import('@/views/dashboard/DashboardView.vue'),
   // ───── PMS システム管理 (100~199) ─────
-  '/article': () => import('@/views/pms/ArticleView.vue'),
   '/role': () => import('@/views/pms/RoleView.vue'),
   '/menu': () => import('@/views/pms/MenuView.vue'),
   '/permission': () => import('@/views/pms/PermissionView.vue'),

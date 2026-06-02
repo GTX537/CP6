@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels;
 public class EstimateCalcProcess : BaseBizEntity
 {
     /// <summary>所属見積計算書 NO（外键到 EstimateCalc.QtnCalcNo）</summary>
-    [Required, MaxLength(11)]
+    [Required, MaxLength(20)]
     public string QtnCalcNo { get; set; } = string.Empty;
 
     /// <summary>行序号（同一 QtnCalcNo 内唯一）</summary>

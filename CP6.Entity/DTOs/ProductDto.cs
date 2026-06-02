@@ -306,6 +306,11 @@ public class ProductQuery
     public DateTime? ModifyDateFrom { get; set; }
     public DateTime? ModifyDateTo { get; set; }
     public List<int>? Statuses { get; set; }
+
+    /// <summary>排序列（前端 el-table prop，白名单内才生效）</summary>
+    public string? SortField { get; set; }
+    /// <summary>排序方向：asc / desc</summary>
+    public string? SortOrder { get; set; }
 }
 
 /// <summary>仕掛チェック結果（10章）</summary>

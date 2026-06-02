@@ -38,7 +38,7 @@
     <el-card shadow="never" class="search-card" v-if="!store.isNew">
       <el-form inline>
         <el-form-item :label="t('sales.term.calcNo')">
-          <el-input v-model="searchNo" placeholder="例: 00000001-01" clearable style="width: 200px" />
+          <el-input v-model="searchNo" :placeholder="t('例: 00000001-01')" clearable style="width: 200px" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="loadByNo" :loading="loading">{{ t('sales.btn.load') }}</el-button>

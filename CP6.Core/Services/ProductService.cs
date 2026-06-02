@@ -25,6 +25,24 @@ public class ProductService : IProductService
     //  分页一覧（MSBBPA060）
     // ═══════════════════════════════════════════════════════════
 
+    /// <summary>製品一覧 排序白名单（前端 el-table prop → ProductMaster 属性名）</summary>
+    private static readonly IReadOnlyDictionary<string, string> ProductSortMap =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["productCd"] = "ProductCd",
+            ["setProductCd"] = "SetProductCd",
+            ["setProductName"] = "SetProductName",
+            ["customerCd"] = "CustomerCd",
+            ["customerItemName1"] = "CustomerItemName1",
+            ["customerItemName2"] = "CustomerItemName2",
+            ["projectNoParent"] = "ProjectNoParent",
+            ["projectNoChild"] = "ProjectNoChild",
+            ["quotationNo"] = "QuotationNo",
+            ["estimateCalcNo"] = "EstimateCalcNo",
+            ["status"] = "Status",
+            ["modifyDate"] = "ModifyDate",
+        };
+
     public async Task<(List<ProductListItemDto>, int)> GetPageListAsync(ProductQuery query)
     {
         var q = _db.ProductMasters.AsNoTracking().Where(x => !x.IsDeleted);
@@ -70,8 +88,10 @@ public class ProductService : IProductService
 
         var total = await q.CountAsync();
 
+        q = QuerySort.Apply(q, query.SortField, query.SortOrder, ProductSortMap,
+            s => s.OrderBy(x => x.ProductCd));
+
         var page = await q
-            .OrderBy(x => x.ProductCd)
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
             .Select(x => new ProductListItemDto
@@ -153,7 +173,7 @@ public class ProductService : IProductService
 
         // 採番：ItemCd は全部材で共有；Branch1 は行番ごと
         var seq = await NextSequenceAsync();
-        var itemCd = seq;            // 11 桁
+        var itemCd = seq;            // 13 桁（PRD+年月+自増）
         // セット製品 CD = 親（行 1）の ProductCd を全行で共有
         var setProductCd = $"{itemCd}0001";
 
@@ -313,19 +333,9 @@ public class ProductService : IProductService
 
     public async Task<string> NextSequenceAsync()
     {
-        // ProductCd 11 桁分（先頭部）= ItemCd の最大値 + 1
-        // 全行の最大 ItemCd を取得（軟删除含む — 採番空き穴防止）
-        var maxItem = await _db.ProductMasters
-            .Select(x => x.ItemCd)
-            .Where(c => c != null && c.Length == 11)
-            .OrderByDescending(c => c)
-            .FirstOrDefaultAsync();
-
-        long next = 1;
-        if (!string.IsNullOrEmpty(maxItem) && long.TryParse(maxItem, out var v))
-            next = v + 1;
-
-        return next.ToString("D11");
+        // 品目コード = 機能コード(PRD)+年(4)+月(2)+自増(4)=13桁（永不重置）
+        var (no, _) = await DocNumber.NextAsync(_db, "PRD");
+        return no;
     }
 
     // ═══════════════════════════════════════════════════════════

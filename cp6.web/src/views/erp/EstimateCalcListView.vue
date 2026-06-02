@@ -4,13 +4,13 @@
     <el-card shadow="never" class="search-card">
       <el-form inline :model="query" @submit.prevent="onSearch">
         <el-form-item :label="t('sales.term.calcNo')">
-          <el-input v-model="query.qtnCalcNo" placeholder="例: 00000001" clearable style="width: 180px" />
+          <el-input v-model="query.qtnCalcNo" :placeholder="t('例: 00000001')" clearable style="width: 180px" />
         </el-form-item>
         <el-form-item :label="t('sales.term.customer')">
           <el-input v-model="query.customerCd" :placeholder="t('sales.term.customer') + ' CD'" clearable style="width: 160px" />
         </el-form-item>
         <el-form-item :label="t('sales.term.base')">
-          <el-select v-model="query.baseCd" placeholder="全部" clearable style="width: 160px">
+          <el-select v-model="query.baseCd" :placeholder="t('全部')" clearable style="width: 160px">
             <el-option v-for="b in bases" :key="b.baseCd" :value="b.baseCd" :label="`${b.baseCd} ${b.baseName}`" />
           </el-select>
         </el-form-item>
@@ -44,23 +44,24 @@
         border
         style="width: 100%"
         @row-dblclick="(row: EstimateCalcListItem) => onView(row)"
+        @sort-change="onSortChange"
       >
-        <el-table-column prop="qtnCalcNo" :label="t('sales.term.calcNo')" width="140" />
-        <el-table-column prop="qtnDate" :label="t('sales.qtn.qtnDate')" width="110">
+        <el-table-column prop="qtnCalcNo" :label="t('sales.term.calcNo')" width="140" sortable="custom" />
+        <el-table-column prop="qtnDate" :label="t('sales.qtn.qtnDate')" width="110" sortable="custom">
           <template #default="{ row }">{{ fmtDate(row.qtnDate) }}</template>
         </el-table-column>
-        <el-table-column prop="qtnBaseCd" :label="t('sales.term.base')" width="80" />
-        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="90" />
-        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="120" />
-        <el-table-column prop="customerProductName1" label="顧客品名" min-width="200" show-overflow-tooltip />
-        <el-table-column prop="orderQty" :label="t('sales.term.qty')" width="100" align="right">
+        <el-table-column prop="qtnBaseCd" :label="t('sales.term.base')" width="80" sortable="custom" />
+        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="90" sortable="custom" />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="120" sortable="custom" />
+        <el-table-column prop="customerProductName1" :label="t('顧客品名')" min-width="200" show-overflow-tooltip sortable="custom" />
+        <el-table-column prop="orderQty" :label="t('sales.term.qty')" width="100" align="right" sortable="custom">
           <template #default="{ row }">{{ fmtNum(row.orderQty) }}</template>
         </el-table-column>
-        <el-table-column prop="estimateUnitPrice" :label="t('sales.term.unitPrice')" width="120" align="right">
+        <el-table-column prop="estimateUnitPrice" :label="t('sales.term.unitPrice')" width="120" align="right" sortable="custom">
           <template #default="{ row }">{{ fmtMoney(row.estimateUnitPrice) }}</template>
         </el-table-column>
-        <el-table-column prop="qtnDiv" label="見積区分" width="100" />
-        <el-table-column prop="modifyDate" label="最終更新" width="160">
+        <el-table-column prop="qtnDiv" :label="t('見積区分')" width="100" sortable="custom" />
+        <el-table-column prop="modifyDate" :label="t('最終更新')" width="160" sortable="custom">
           <template #default="{ row }">{{ fmtDateTime(row.modifyDate || row.createDate) }}</template>
         </el-table-column>
         <el-table-column :label="t('sales.list.action')" width="260" fixed="right">
@@ -148,8 +149,18 @@ const query = reactive<EstimateCalcQuery>({
   baseCd: '',
   dateFrom: '',
   dateTo: '',
+  sortField: '',
+  sortOrder: '',
 })
 const dateRange = ref<[string, string] | null>(null)
+
+// 表头点击排序：Element Plus 传 { prop, order: 'ascending'|'descending'|null }
+function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+  query.sortField = order ? prop : ''
+  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+  query.page = 1
+  loadData()
+}
 
 const fmtDate = (v?: string) => (v ? v.slice(0, 10) : '')
 const fmtDateTime = (v?: string) => (v ? v.replace('T', ' ').slice(0, 19) : '')

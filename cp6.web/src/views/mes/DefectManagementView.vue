@@ -2,32 +2,32 @@
   <div class="defect-management">
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
-        <el-form-item label="不良NO">
+        <el-form-item :label="t('不良NO')">
           <el-input v-model="query.defectNo" style="width: 170px;" />
         </el-form-item>
-        <el-form-item label="指図NO">
+        <el-form-item :label="t('指図NO')">
           <el-input v-model="query.workOrderNo" style="width: 170px;" />
         </el-form-item>
-        <el-form-item label="大分類">
+        <el-form-item :label="t('大分類')">
           <el-select v-model="query.categoryCd" clearable style="width: 150px;" @change="onCategoryChange">
             <el-option v-for="c in categories" :key="c" :label="`${c} - ${categoryNameMap[c]}`" :value="c" />
           </el-select>
         </el-form-item>
-        <el-form-item label="小分類">
+        <el-form-item :label="t('小分類')">
           <el-select v-model="query.detailCd" clearable style="width: 150px;">
             <el-option v-for="d in detailsByCategory" :key="d.detailCd" :label="`${d.detailCd} - ${d.detailName}`" :value="d.detailCd" />
           </el-select>
         </el-form-item>
-        <el-form-item label="担当者CD">
+        <el-form-item :label="t('担当者CD')">
           <el-input v-model="query.assigneeCd" style="width: 130px;" />
         </el-form-item>
-        <el-form-item label="発生日 From">
+        <el-form-item :label="t('発生日 From')">
           <el-date-picker v-model="query.occurDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px;" />
         </el-form-item>
-        <el-form-item label="発生日 To">
+        <el-form-item :label="t('発生日 To')">
           <el-date-picker v-model="query.occurDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px;" />
         </el-form-item>
-        <el-form-item label="ステータス">
+        <el-form-item :label="t('ステータス')">
           <el-checkbox-group v-model="query.statuses">
             <el-checkbox v-for="s in DEFECT_STATUS_OPTIONS" :key="s.value" :value="s.value">{{ s.label }}</el-checkbox>
           </el-checkbox-group>
@@ -46,36 +46,36 @@
         <el-tag size="small">合計 {{ total }} 件</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%;" max-height="600">
-        <el-table-column prop="defectNo" label="不良NO" width="160" fixed />
-        <el-table-column label="ステータス" width="100" align="center">
+        <el-table-column prop="defectNo" :label="t('不良NO')" width="160" fixed />
+        <el-table-column :label="t('ステータス')" width="100" align="center">
           <template #default="{ row }">
             <el-tag :color="getStatusColor(row.status)" effect="dark" size="small">{{ getStatusLabel(row.status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="workOrderNo" label="指図NO" width="160" />
-        <el-table-column prop="productName" label="製品名" min-width="160" />
-        <el-table-column prop="processCd" label="工程" width="80" />
-        <el-table-column label="大分類" width="120">
+        <el-table-column prop="workOrderNo" :label="t('指図NO')" width="160" />
+        <el-table-column prop="productName" :label="t('製品名')" min-width="160" />
+        <el-table-column prop="processCd" :label="t('工程')" width="80" />
+        <el-table-column :label="t('大分類')" width="120">
           <template #default="{ row }">{{ row.categoryCd }} {{ row.categoryName }}</template>
         </el-table-column>
-        <el-table-column label="小分類" width="160">
+        <el-table-column :label="t('小分類')" width="160">
           <template #default="{ row }">{{ row.detailCd }} {{ row.detailName }}</template>
         </el-table-column>
-        <el-table-column prop="defectQty" label="不良数" width="100" align="right" />
-        <el-table-column prop="occurDate" label="発生日" width="110">
+        <el-table-column prop="defectQty" :label="t('不良数')" width="100" align="right" />
+        <el-table-column prop="occurDate" :label="t('発生日')" width="110">
           <template #default="{ row }">{{ formatDate(row.occurDate) }}</template>
         </el-table-column>
-        <el-table-column prop="reporterCd" label="発見者" width="100" />
-        <el-table-column prop="assigneeCd" label="担当者" width="100" />
-        <el-table-column label="処置期限" width="110">
+        <el-table-column prop="reporterCd" :label="t('発見者')" width="100" />
+        <el-table-column prop="assigneeCd" :label="t('担当者')" width="100" />
+        <el-table-column :label="t('処置期限')" width="110">
           <template #default="{ row }">{{ formatDate(row.dueDate) }}</template>
         </el-table-column>
-        <el-table-column label="完了日" width="110">
+        <el-table-column :label="t('完了日')" width="110">
           <template #default="{ row }">{{ formatDate(row.completedDate) }}</template>
         </el-table-column>
-        <el-table-column prop="inspectionNo" label="検査NO" width="160" />
-        <el-table-column prop="defectDescription" label="不良内容" min-width="220" />
-        <el-table-column label="操作" width="160" align="center" fixed="right">
+        <el-table-column prop="inspectionNo" :label="t('検査NO')" width="160" />
+        <el-table-column prop="defectDescription" :label="t('不良内容')" min-width="220" />
+        <el-table-column :label="t('操作')" width="160" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="openEdit(row)">編集</el-button>
             <el-button link type="danger" size="small" @click="onDelete(row)">削除</el-button>
@@ -102,34 +102,34 @@
       <el-form :model="form" label-width="110px" size="small">
         <el-row :gutter="16">
           <el-col :span="12">
-            <el-form-item label="指図NO" required>
+            <el-form-item :label="t('指図NO')" required>
               <el-input v-model="form.workOrderNo" :disabled="!!form.defectNo" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="工程CD">
+            <el-form-item :label="t('工程CD')">
               <el-input v-model="form.processCd" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="発生日">
+            <el-form-item :label="t('発生日')">
               <el-date-picker v-model="form.occurDate" type="date" value-format="YYYY-MM-DD" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="発見者CD">
+            <el-form-item :label="t('発見者CD')">
               <el-input v-model="form.reporterCd" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="不良大分類" required>
+            <el-form-item :label="t('不良大分類')" required>
               <el-select v-model="form.categoryCd" filterable @change="onFormCategoryChange">
                 <el-option v-for="c in categories" :key="c" :label="`${c} - ${categoryNameMap[c]}`" :value="c" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="不良小分類">
+            <el-form-item :label="t('不良小分類')">
               <el-select v-model="form.detailCd" clearable filterable>
                 <el-option v-for="d in formDetailsByCategory" :key="d.detailCd"
                   :label="`${d.detailCd} - ${d.detailName}`" :value="d.detailCd" />
@@ -137,54 +137,54 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="不良数" required>
+            <el-form-item :label="t('不良数')" required>
               <el-input-number v-model="form.defectQty" :min="0" :precision="2" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="ステータス">
+            <el-form-item :label="t('ステータス')">
               <el-select v-model="form.status">
                 <el-option v-for="o in DEFECT_STATUS_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="不良内容" required>
+            <el-form-item :label="t('不良内容')" required>
               <el-input v-model="form.defectDescription" type="textarea" :rows="2" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="原因分析(5Why)">
+            <el-form-item :label="t('原因分析(5Why)')">
               <el-input v-model="form.causeAnalysis" type="textarea" :rows="3" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="是正処置">
+            <el-form-item :label="t('是正処置')">
               <el-input v-model="form.correctiveAction" type="textarea" :rows="3" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="担当者CD">
+            <el-form-item :label="t('担当者CD')">
               <el-input v-model="form.assigneeCd" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="処置期限">
+            <el-form-item :label="t('処置期限')">
               <el-date-picker v-model="form.dueDate" type="date" value-format="YYYY-MM-DD" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="完了日">
+            <el-form-item :label="t('完了日')">
               <el-date-picker v-model="form.completedDate" type="date" value-format="YYYY-MM-DD" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="検査NO">
+            <el-form-item :label="t('検査NO')">
               <el-input v-model="form.inspectionNo" :disabled="!!form.defectNo" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="備考">
+            <el-form-item :label="t('備考')">
               <el-input v-model="form.remarks" type="textarea" :rows="2" />
             </el-form-item>
           </el-col>
@@ -199,6 +199,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { defectRecordApi } from '@/api/mes'

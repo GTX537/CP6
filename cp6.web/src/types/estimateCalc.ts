@@ -158,6 +158,8 @@ export interface EstimateCalcQuery {
   baseCd?: string
   dateFrom?: string
   dateTo?: string
+  sortField?: string
+  sortOrder?: string
 }
 
 /** 列表行（与后端 EstimateCalcListItem 对齐） */

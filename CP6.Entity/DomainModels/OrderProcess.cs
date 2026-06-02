@@ -19,7 +19,7 @@ public class OrderProcess : BaseBizEntity
     public int WebOrderDetailNo { get; set; }
 
     /// <summary>製品コード</summary>
-    [Required, MaxLength(15)]
+    [Required, MaxLength(20)]
     public string ProductCd { get; set; } = string.Empty;
 
     /// <summary>作業コード（mc 工程コード；PK4）</summary>

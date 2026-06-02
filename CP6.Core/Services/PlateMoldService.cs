@@ -330,25 +330,35 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task<string> NextSequenceAsync()
     {
-        var datePart = DateTime.Now.ToString("yyyyMMdd");
-        var prefix = WdPtnPrefix + datePart;
-        var maxToday = await _db.PlateMolds
-            .Where(x => x.WdPtnNo.StartsWith(prefix))
-            .OrderByDescending(x => x.WdPtnNo)
-            .Select(x => x.WdPtnNo)
-            .FirstOrDefaultAsync();
-        int next = 1;
-        if (!string.IsNullOrEmpty(maxToday) && maxToday.Length >= prefix.Length + 6)
-        {
-            if (int.TryParse(maxToday.Substring(prefix.Length, 6), out var n))
-                next = n + 1;
-        }
-        return $"{prefix}{next:D6}";
+        // 木型・版型 NO = 機能コード(MLD)+年(4)+月(2)+自増(4)=13桁
+        var (no, _) = await DocNumber.NextAsync(_db, "MLD");
+        return no;
     }
 
     // ═══════════════════════════════════════════════════════════
     //  PA150 一覧
     // ═══════════════════════════════════════════════════════════
+
+    /// <summary>抜型一覧 排序白名单（前端 el-table prop → PlateMold 属性名）</summary>
+    private static readonly IReadOnlyDictionary<string, string> PlateMoldSortMap =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["wdPtnNo"] = "WdPtnNo",
+            ["wdRev"] = "WdRev",
+            ["vrsnName"] = "VrsnName",
+            ["typeClass"] = "TypeClass",
+            ["customerCd"] = "CustomerCd",
+            ["representativeProductCd"] = "RepresentativeProductCd",
+            ["wdQty"] = "WdQty",
+            ["limitWdQty"] = "LimitWdQty",
+            ["achieveDate"] = "AchieveDate",
+            ["supplierCd"] = "SupplierCd",
+            ["arrivalActualDate"] = "ArrivalActualDate",
+            ["dispScheduleDate"] = "DispScheduleDate",
+            ["returnScheduleDate"] = "ReturnScheduleDate",
+            ["returnDate"] = "ReturnDate",
+            ["processCd"] = "ProcessCd",
+        };
 
     public async Task<(List<PlateMoldListItemDto>, int)> SearchAsync(PlateMoldQueryDto query)
     {
@@ -367,8 +377,8 @@ public class PlateMoldService : IPlateMoldService
             total = latest.Count;
             if (query.MaxRows.HasValue && total > query.MaxRows.Value)
                 throw new InvalidOperationException($"E10013: 検索件数の上限値を超えました（{total} > {query.MaxRows}）");
-            rows = latest
-                .OrderBy(x => x.WdPtnNo).ThenBy(x => x.WdRev)
+            rows = QuerySort.Apply(latest.AsQueryable(), query.SortField, query.SortOrder, PlateMoldSortMap,
+                    s => s.OrderBy(x => x.WdPtnNo).ThenBy(x => x.WdRev))
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToList();
@@ -378,8 +388,8 @@ public class PlateMoldService : IPlateMoldService
             total = await q.CountAsync();
             if (query.MaxRows.HasValue && total > query.MaxRows.Value)
                 throw new InvalidOperationException($"E10013: 検索件数の上限値を超えました（{total} > {query.MaxRows}）");
-            rows = await q
-                .OrderBy(x => x.WdPtnNo).ThenBy(x => x.WdRev)
+            rows = await QuerySort.Apply(q, query.SortField, query.SortOrder, PlateMoldSortMap,
+                    s => s.OrderBy(x => x.WdPtnNo).ThenBy(x => x.WdRev))
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToListAsync();
@@ -611,18 +621,8 @@ public class PlateMoldService : IPlateMoldService
     {
         var now = DateTime.Now;
 
-        // 版型受注 NO 採番
-        var datePart = now.ToString("yyyyMMdd");
-        var prefix = "WO" + datePart;
-        var maxToday = await _db.Orders
-            .Where(x => x.WebOrderNo.StartsWith(prefix))
-            .OrderByDescending(x => x.WebOrderNo)
-            .Select(x => x.WebOrderNo)
-            .FirstOrDefaultAsync();
-        int next = 1;
-        if (!string.IsNullOrEmpty(maxToday) && maxToday.Length >= prefix.Length + 6)
-            if (int.TryParse(maxToday.Substring(prefix.Length, 6), out var n)) next = n + 1;
-        var webOrderNo = $"{prefix}{next:D6}";
+        // 版型受注 NO 採番（受注と同一機能コード ORD：13桁）
+        var (webOrderNo, _) = await DocNumber.NextAsync(_db, "ORD");
 
         // T_Order — 1〜17 項
         var header = new Order

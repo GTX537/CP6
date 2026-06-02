@@ -224,17 +224,11 @@ public class FscChecklistService : IFscChecklistService
 
     private async Task<string> NextFscNoAsync(string prefix)
     {
-        var maxNo = await _db.FscChecklists.AsNoTracking()
-            .Where(x => x.FscManagementNo.StartsWith(prefix))
-            .OrderByDescending(x => x.FscManagementNo)
-            .Select(x => x.FscManagementNo)
-            .FirstOrDefaultAsync();
-        var seq = 1;
-        if (!string.IsNullOrWhiteSpace(maxNo))
-        {
-            if (int.TryParse(maxNo[prefix.Length..], out var n)) seq = n + 1;
-        }
-        return $"{prefix}{seq:D8}";
+        // FSC 管理 NO = 機能コード(3)+年(4)+月(2)+自増(4)=13桁（永不重置）
+        var code = (string.IsNullOrWhiteSpace(prefix) ? "FSC" : prefix).ToUpperInvariant();
+        if (code.Length > 3) code = code[..3];
+        var (no, _) = await DocNumber.NextAsync(_db, code);
+        return no;
     }
 
     private async Task<byte[]> BuildExcelOrFallbackAsync(

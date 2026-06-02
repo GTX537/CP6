@@ -33,7 +33,7 @@ public class WorkOrder : BaseBizEntity
     [MaxLength(20)] public string? CustomerCd { get; set; }
 
     /// <summary>製品CD（FK → T_ProductMaster）</summary>
-    [Required, MaxLength(15)]
+    [Required, MaxLength(20)]
     public string ProductCd { get; set; } = string.Empty;
 
     /// <summary>製品名</summary>

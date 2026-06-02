@@ -188,7 +188,8 @@ public class WmsBridgeHookTests
 
         var no = await svc.CreateAsync(dto, "tester");
 
-        Assert.StartsWith("WO", no);
+        // 受注番号は新採番 ORD{yyyyMM}{NNNN} 例 ORD2026050001
+        Assert.StartsWith($"ORD{DateTime.Today:yyyyMM}", no);
         mockBridge.Verify(b => b.OnOrderCreatedAsync(no, "tester"), Times.Once);
     }
 }

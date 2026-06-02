@@ -59,13 +59,25 @@ else
 }
 builder.Services.AddSingleton<CacheService>();
 
-// 3.3 注册 RabbitMQ（消息队列）
+// 3.3 操作日志 = Kafka 专任（高吞吐・append-only・可保留可回放的审计流）
+//  - 生产者 KafkaProducerService 实现 IOperLogTransport；OperLogFilter 注入单一通道。
+//  - Kafka 消费者是唯一落库担当；不可用时 Filter 降级直接写 DB。
+builder.Services.AddSingleton<KafkaProducerService>();
+builder.Services.AddSingleton<IOperLogTransport>(sp => sp.GetRequiredService<KafkaProducerService>());
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.KafkaOperLogConsumer>();
+
+// 操作日志保留期清理（默认 7 天，OperLog:RetentionDays 可配置）
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.OperLogCleanupService>();
+
+// 3.4 RabbitMQ = 业务事件通知/告警 专任（低频・确实配信・可路由可重试）
+//  - RabbitMQService 实现 INotificationPublisher（出荷完了・棚卸差異 等业务事件）。
+//  - NotificationConsumer 消费 cp6.notification → SignalR(NotifyHub) fanout，可扩展邮件/Webhook。
 builder.Services.AddSingleton<RabbitMQService>();
-builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.OperLogConsumer>();
+builder.Services.AddSingleton<INotificationPublisher>(sp => sp.GetRequiredService<RabbitMQService>());
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.NotificationConsumer>();
 
 // 4. 注册仓储和服务（依赖注入）
 builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
-builder.Services.AddScoped<IService<Article>, ArticleService>();
 
 // 4.1 MSBBPA010 見積計算書 相关服务
 builder.Services.AddScoped<IEstimateCalcService, EstimateCalcService>();
@@ -252,7 +264,6 @@ using (var scope = app.Services.CreateScope())
     {
         // 菜单ID和角色ID都是自定义的，手动指定
         db.Sys_Menus.AddRange(
-            new Sys_Menu { MenuId = 1, MenuName = "文章管理", RoutePath = "/article", Icon = "Document", OrderNo = 1, Enable = true },
             new Sys_Menu { MenuId = 2, MenuName = "仪表盘", RoutePath = "/dashboard", Icon = "Odometer", OrderNo = 0, Enable = true },
             new Sys_Menu { MenuId = 100, MenuName = "系统管理", Icon = "Setting", OrderNo = 100, Enable = true },
             new Sys_Menu { MenuId = 101, MenuName = "角色管理", RoutePath = "/role", Icon = "UserFilled", ParentId = 100, OrderNo = 101, Enable = true },
@@ -285,7 +296,6 @@ using (var scope = app.Services.CreateScope())
 
         // 给管理员角色分配所有菜单
         db.Sys_RoleMenus.AddRange(
-            new Sys_RoleMenu { RoleId = 1, MenuId = 1 },
             new Sys_RoleMenu { RoleId = 1, MenuId = 2 },
             new Sys_RoleMenu { RoleId = 1, MenuId = 100 },
             new Sys_RoleMenu { RoleId = 1, MenuId = 101 },
@@ -732,7 +742,6 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "lang.ja", ZhCN = "日语", ZhTW = "日語", En = "Japanese", Ja = "日本語", Ko = "일본어" },
             new Sys_Lang { LangKey = "lang.ko", ZhCN = "韩语", ZhTW = "韓語", En = "Korean", Ja = "韓国語", Ko = "한국어" },
             // 导航菜单翻译 nav.{menuId}
-            new Sys_Lang { LangKey = "nav.1", ZhCN = "文章管理", ZhTW = "文章管理", En = "Articles", Ja = "記事管理", Ko = "기사 관리" },
             new Sys_Lang { LangKey = "nav.100", ZhCN = "系统管理", ZhTW = "系統管理", En = "System", Ja = "システム管理", Ko = "시스템 관리" },
             new Sys_Lang { LangKey = "nav.101", ZhCN = "角色管理", ZhTW = "角色管理", En = "Roles", Ja = "役割管理", Ko = "역할 관리" },
             new Sys_Lang { LangKey = "nav.102", ZhCN = "菜单管理", ZhTW = "選單管理", En = "Menus", Ja = "メニュー管理", Ko = "메뉴 관리" },
@@ -762,7 +771,6 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "dashboard.weekOps", ZhCN = "本周操作", ZhTW = "本週操作", En = "Week Ops", Ja = "今週の操作", Ko = "이번주 작업" },
             new Sys_Lang { LangKey = "dashboard.totalOps", ZhCN = "总操作数", ZhTW = "總操作數", En = "Total Ops", Ja = "総操作数", Ko = "총 작업수" },
             new Sys_Lang { LangKey = "dashboard.totalUsers", ZhCN = "用户数", ZhTW = "使用者數", En = "Users", Ja = "ユーザー数", Ko = "사용자수" },
-            new Sys_Lang { LangKey = "dashboard.totalArticles", ZhCN = "文章数", ZhTW = "文章數", En = "Articles", Ja = "記事数", Ko = "기사수" },
             new Sys_Lang { LangKey = "dashboard.topControllers", ZhCN = "操作排行", ZhTW = "操作排行", En = "Top Controllers", Ja = "操作ランキング", Ko = "작업 순위" },
             new Sys_Lang { LangKey = "dashboard.trend", ZhCN = "7日趋势", ZhTW = "7日趨勢", En = "7-Day Trend", Ja = "7日間推移", Ko = "7일 추이" },
             new Sys_Lang { LangKey = "dashboard.methodDist", ZhCN = "方法分布", ZhTW = "方法分佈", En = "Method Distribution", Ja = "メソッド分布", Ko = "메서드 분포" },
@@ -772,11 +780,37 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
+    // ERP/MES 画面ラベルの多言語シード（日文原文＝キー）。既存キーはスキップして冪等にアップサート。
+    {
+        var existingKeys = db.Sys_Langs.Select(l => l.LangKey).ToHashSet();
+        var toAdd = CP6.WebApi.Seed.I18nLabelSeed.Items
+            .Where(i => !existingKeys.Contains(i.LangKey))
+            .ToList();
+        if (toAdd.Count > 0)
+        {
+            db.Sys_Langs.AddRange(toAdd);
+            db.SaveChanges();
+        }
+
+        // vue-i18n の特殊文字（@ | { }）はメッセージ編集でコンパイル失敗→画面/タブが空白になる。
+        // 該当キーは転義済みシード値へ強制同期して歴史的な未転義データを修正（対象は極少数）。
+        var specialChars = new[] { '@', '|', '{', '}' };
+        foreach (var it in CP6.WebApi.Seed.I18nLabelSeed.Items)
+        {
+            if (it.LangKey.IndexOfAny(specialChars) < 0) continue;
+            var row = db.Sys_Langs.FirstOrDefault(l => l.LangKey == it.LangKey);
+            if (row != null)
+            {
+                row.ZhCN = it.ZhCN; row.ZhTW = it.ZhTW; row.En = it.En; row.Ja = it.Ja; row.Ko = it.Ko;
+            }
+        }
+        db.SaveChanges();
+    }
+
     // 补充：已有数据库追加导航菜单词条
-    if (!db.Sys_Langs.Any(l => l.LangKey == "nav.1"))
+    if (!db.Sys_Langs.Any(l => l.LangKey == "nav.100"))
     {
         db.Sys_Langs.AddRange(
-            new Sys_Lang { LangKey = "nav.1", ZhCN = "文章管理", ZhTW = "文章管理", En = "Articles", Ja = "記事管理", Ko = "기사 관리" },
             new Sys_Lang { LangKey = "nav.100", ZhCN = "系统管理", ZhTW = "系統管理", En = "System", Ja = "システム管理", Ko = "시스템 관리" },
             new Sys_Lang { LangKey = "nav.101", ZhCN = "角色管理", ZhTW = "角色管理", En = "Roles", Ja = "役割管理", Ko = "역할 관리" },
             new Sys_Lang { LangKey = "nav.102", ZhCN = "菜单管理", ZhTW = "選單管理", En = "Menus", Ja = "メニュー管理", Ko = "메뉴 관리" },
@@ -984,12 +1018,60 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "dashboard.weekOps", ZhCN = "本周操作", ZhTW = "本週操作", En = "Week Ops", Ja = "今週の操作", Ko = "이번주 작업" },
             new Sys_Lang { LangKey = "dashboard.totalOps", ZhCN = "总操作数", ZhTW = "總操作數", En = "Total Ops", Ja = "総操作数", Ko = "총 작업수" },
             new Sys_Lang { LangKey = "dashboard.totalUsers", ZhCN = "用户数", ZhTW = "使用者數", En = "Users", Ja = "ユーザー数", Ko = "사용자수" },
-            new Sys_Lang { LangKey = "dashboard.totalArticles", ZhCN = "文章数", ZhTW = "文章數", En = "Articles", Ja = "記事数", Ko = "기사수" },
             new Sys_Lang { LangKey = "dashboard.topControllers", ZhCN = "操作排行", ZhTW = "操作排行", En = "Top Controllers", Ja = "操作ランキング", Ko = "작업 순위" },
             new Sys_Lang { LangKey = "dashboard.trend", ZhCN = "7日趋势", ZhTW = "7日趨勢", En = "7-Day Trend", Ja = "7日間推移", Ko = "7일 추이" },
             new Sys_Lang { LangKey = "dashboard.methodDist", ZhCN = "方法分布", ZhTW = "方法分佈", En = "Method Distribution", Ja = "メソッド分布", Ko = "메서드 분포" },
             new Sys_Lang { LangKey = "dashboard.noData", ZhCN = "暂无数据", ZhTW = "暫無資料", En = "No data", Ja = "データなし", Ko = "데이터 없음" },
             new Sys_Lang { LangKey = "dashboard.count", ZhCN = "次数", ZhTW = "次數", En = "Count", Ja = "回数", Ko = "횟수" }
+        );
+        db.SaveChanges();
+    }
+
+    // 业务经营总览 仪表盘 i18n（幂等：以 dashboard.todayOrders 为哨兵）
+    if (!db.Sys_Langs.Any(l => l.LangKey == "dashboard.todayOrders"))
+    {
+        db.Sys_Langs.AddRange(
+            // ── KPI 卡 ──
+            new Sys_Lang { LangKey = "dashboard.overview",        ZhCN = "业务经营总览", ZhTW = "業務經營總覽", En = "Business Overview", Ja = "業務経営総覧", Ko = "비즈니스 개요" },
+            new Sys_Lang { LangKey = "dashboard.todayOrders",     ZhCN = "今日受注",   ZhTW = "今日受注",   En = "Today Orders",    Ja = "今日の受注",   Ko = "오늘 수주" },
+            new Sys_Lang { LangKey = "dashboard.monthOrders",     ZhCN = "本月受注",   ZhTW = "本月受注",   En = "Month Orders",    Ja = "今月の受注",   Ko = "당월 수주" },
+            new Sys_Lang { LangKey = "dashboard.activeWorkOrders",ZhCN = "在制指令",   ZhTW = "在製指令",   En = "Active WO",       Ja = "製造中指図",   Ko = "제조중 지시" },
+            new Sys_Lang { LangKey = "dashboard.monthCompleted",  ZhCN = "本月完工",   ZhTW = "本月完工",   En = "Completed (M)",   Ja = "今月完成",     Ko = "당월 완성" },
+            new Sys_Lang { LangKey = "dashboard.pendingOutbound", ZhCN = "待出货",     ZhTW = "待出貨",     En = "Pending Ship",    Ja = "出荷待ち",     Ko = "출하 대기" },
+            new Sys_Lang { LangKey = "dashboard.stockWarnings",   ZhCN = "库存预警",   ZhTW = "庫存預警",   En = "Stock Alerts",    Ja = "在庫警告",     Ko = "재고 경고" },
+            new Sys_Lang { LangKey = "dashboard.pendingApprovals",ZhCN = "待审批",     ZhTW = "待審批",     En = "Pending Approval",Ja = "承認待ち",     Ko = "승인 대기" },
+            new Sys_Lang { LangKey = "dashboard.totalProducts",   ZhCN = "产品总数",   ZhTW = "產品總數",   En = "Products",        Ja = "製品マスタ数", Ko = "제품 수" },
+            // ── 快捷入口 ──
+            new Sys_Lang { LangKey = "dashboard.quickEntry",      ZhCN = "快捷入口",   ZhTW = "快捷入口",   En = "Quick Entry",     Ja = "クイック入力", Ko = "빠른 입력" },
+            new Sys_Lang { LangKey = "dashboard.qOrder",          ZhCN = "受注入力",   ZhTW = "受注入力",   En = "New Order",       Ja = "受注入力",     Ko = "수주 입력" },
+            new Sys_Lang { LangKey = "dashboard.qWorkOrder",      ZhCN = "制造指令",   ZhTW = "製造指令",   En = "Work Order",      Ja = "製造指図",     Ko = "제조 지시" },
+            new Sys_Lang { LangKey = "dashboard.qInbound",        ZhCN = "入库实绩",   ZhTW = "入庫實績",   En = "Inbound",         Ja = "入庫実績",     Ko = "입고 실적" },
+            new Sys_Lang { LangKey = "dashboard.qOutbound",       ZhCN = "出库指示",   ZhTW = "出庫指示",   En = "Outbound",        Ja = "出庫指示",     Ko = "출고 지시" },
+            new Sys_Lang { LangKey = "dashboard.qStock",          ZhCN = "库存照会",   ZhTW = "庫存照會",   En = "Stock Query",     Ja = "在庫照会",     Ko = "재고 조회" },
+            new Sys_Lang { LangKey = "dashboard.qStockTake",      ZhCN = "盘点",       ZhTW = "盤點",       En = "Stock Take",      Ja = "棚卸",         Ko = "재고 실사" },
+            // ── 面板标题 ──
+            new Sys_Lang { LangKey = "dashboard.recentOrders",    ZhCN = "最近受注",   ZhTW = "最近受注",   En = "Recent Orders",   Ja = "最近の受注",   Ko = "최근 수주" },
+            new Sys_Lang { LangKey = "dashboard.workOrderStatus", ZhCN = "制造进度",   ZhTW = "製造進度",   En = "WO Status",       Ja = "製造ステータス",Ko = "제조 상태" },
+            new Sys_Lang { LangKey = "dashboard.liveFeed",        ZhCN = "实时业务通知", ZhTW = "即時業務通知", En = "Live Notifications", Ja = "リアルタイム通知", Ko = "실시간 알림" },
+            new Sys_Lang { LangKey = "dashboard.waitingFeed",     ZhCN = "等待业务通知…", ZhTW = "等待業務通知…", En = "Waiting for activity…", Ja = "業務通知を待機中…", Ko = "알림 대기 중…" },
+            // ── 表格列 ──
+            new Sys_Lang { LangKey = "dashboard.orderNo",         ZhCN = "受注NO",     ZhTW = "受注NO",     En = "Order No",        Ja = "受注NO",       Ko = "수주 NO" },
+            new Sys_Lang { LangKey = "dashboard.customer",        ZhCN = "得意先",     ZhTW = "得意先",     En = "Customer",        Ja = "得意先",       Ko = "거래처" },
+            new Sys_Lang { LangKey = "dashboard.qty",             ZhCN = "数量",       ZhTW = "數量",       En = "Qty",             Ja = "数量",         Ko = "수량" },
+            new Sys_Lang { LangKey = "dashboard.shipStatus",      ZhCN = "出货状态",   ZhTW = "出貨狀態",   En = "Ship Status",     Ja = "出荷状態",     Ko = "출하 상태" },
+            // ── 出荷ステータス ──
+            new Sys_Lang { LangKey = "dashboard.ship0",           ZhCN = "未出货",     ZhTW = "未出貨",     En = "Unshipped",       Ja = "未出荷",       Ko = "미출하" },
+            new Sys_Lang { LangKey = "dashboard.ship5",           ZhCN = "部分出货",   ZhTW = "部分出貨",   En = "Partial",         Ja = "一部出荷",     Ko = "일부 출하" },
+            new Sys_Lang { LangKey = "dashboard.ship9",           ZhCN = "已出货",     ZhTW = "已出貨",     En = "Shipped",         Ja = "出荷済",       Ko = "출하 완료" },
+            // ── 製造指図ステータス ──
+            new Sys_Lang { LangKey = "dashboard.wo0",             ZhCN = "草稿",       ZhTW = "草稿",       En = "Draft",           Ja = "下書き",       Ko = "초안" },
+            new Sys_Lang { LangKey = "dashboard.wo1",             ZhCN = "已确定",     ZhTW = "已確定",     En = "Confirmed",       Ja = "確定済",       Ko = "확정" },
+            new Sys_Lang { LangKey = "dashboard.wo2",             ZhCN = "已发行",     ZhTW = "已發行",     En = "Issued",          Ja = "発行済",       Ko = "발행" },
+            new Sys_Lang { LangKey = "dashboard.wo3",             ZhCN = "进行中",     ZhTW = "進行中",     En = "In Progress",     Ja = "着手中",       Ko = "진행중" },
+            new Sys_Lang { LangKey = "dashboard.wo4",             ZhCN = "已完成",     ZhTW = "已完成",     En = "Completed",       Ja = "完了",         Ko = "완료" },
+            new Sys_Lang { LangKey = "dashboard.wo5",             ZhCN = "中断中",     ZhTW = "中斷中",     En = "Suspended",       Ja = "中断中",       Ko = "중단중" },
+            new Sys_Lang { LangKey = "dashboard.wo6",             ZhCN = "已检验",     ZhTW = "已檢驗",     En = "Inspected",       Ja = "検査済",       Ko = "검사완료" },
+            new Sys_Lang { LangKey = "dashboard.wo9",             ZhCN = "已取消",     ZhTW = "已取消",     En = "Cancelled",       Ja = "取消",         Ko = "취소" }
         );
         db.SaveChanges();
     }

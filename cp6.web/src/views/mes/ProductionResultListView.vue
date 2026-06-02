@@ -2,24 +2,24 @@
   <div class="production-result-list">
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
-        <el-form-item label="指図NO">
+        <el-form-item :label="t('指図NO')">
           <el-input v-model="query.workOrderNo" style="width: 200px;" />
         </el-form-item>
-        <el-form-item label="工程CD">
+        <el-form-item :label="t('工程CD')">
           <el-input v-model="query.processCd" style="width: 150px;" />
         </el-form-item>
-        <el-form-item label="作業者CD">
+        <el-form-item :label="t('作業者CD')">
           <el-input v-model="query.operatorCd" style="width: 150px;" />
         </el-form-item>
-        <el-form-item label="実績種別">
+        <el-form-item :label="t('実績種別')">
           <el-select v-model="query.resultType" clearable style="width: 130px;">
             <el-option v-for="o in RESULT_TYPE_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="日付 From">
+        <el-form-item :label="t('日付 From')">
           <el-date-picker v-model="query.dateFrom" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 200px;" />
         </el-form-item>
-        <el-form-item label="日付 To">
+        <el-form-item :label="t('日付 To')">
           <el-date-picker v-model="query.dateTo" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 200px;" />
         </el-form-item>
         <el-form-item>
@@ -35,36 +35,36 @@
         <el-tag size="small">合計 {{ total }} 件</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%;" max-height="600">
-        <el-table-column prop="resultNo" label="実績NO" width="160" fixed />
-        <el-table-column prop="workOrderNo" label="指図NO" width="160" />
-        <el-table-column prop="productName" label="製品名" min-width="160" />
-        <el-table-column prop="processCd" label="工程CD" width="110" />
-        <el-table-column prop="processName" label="工程名" width="120" />
-        <el-table-column label="実績種別" width="100" align="center">
+        <el-table-column prop="resultNo" :label="t('実績NO')" width="160" fixed />
+        <el-table-column prop="workOrderNo" :label="t('指図NO')" width="160" />
+        <el-table-column prop="productName" :label="t('製品名')" min-width="160" />
+        <el-table-column prop="processCd" :label="t('工程CD')" width="110" />
+        <el-table-column prop="processName" :label="t('工程名')" width="120" />
+        <el-table-column :label="t('実績種別')" width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="getResultTypeTag(row.resultType)" size="small">
               {{ getResultTypeLabel(row.resultType) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="operatorCd" label="作業者CD" width="120" />
-        <el-table-column prop="operatorName" label="作業者名" width="120" />
-        <el-table-column prop="machineCd" label="号機" width="110" />
-        <el-table-column label="実績開始" width="160">
+        <el-table-column prop="operatorCd" :label="t('作業者CD')" width="120" />
+        <el-table-column prop="operatorName" :label="t('作業者名')" width="120" />
+        <el-table-column prop="machineCd" :label="t('号機')" width="110" />
+        <el-table-column :label="t('実績開始')" width="160">
           <template #default="{ row }">{{ formatDateTime(row.actualStartTime) }}</template>
         </el-table-column>
-        <el-table-column label="実績完了" width="160">
+        <el-table-column :label="t('実績完了')" width="160">
           <template #default="{ row }">{{ formatDateTime(row.actualEndTime) }}</template>
         </el-table-column>
-        <el-table-column prop="goodQty" label="良品数" width="100" align="right" />
-        <el-table-column prop="defectQty" label="不良数" width="100" align="right" />
-        <el-table-column prop="actualLossRate" label="ロス率(%)" width="100" align="right">
+        <el-table-column prop="goodQty" :label="t('良品数')" width="100" align="right" />
+        <el-table-column prop="defectQty" :label="t('不良数')" width="100" align="right" />
+        <el-table-column prop="actualLossRate" :label="t('ロス率(%)')" width="100" align="right">
           <template #default="{ row }">{{ row.actualLossRate ?? '-' }}</template>
         </el-table-column>
-        <el-table-column prop="defectReasonCd" label="不良理由" width="100" />
-        <el-table-column prop="suspendReasonCd" label="中断理由" width="100" />
-        <el-table-column prop="resultNote" label="備考" min-width="160" />
-        <el-table-column label="登録日時" width="160">
+        <el-table-column prop="defectReasonCd" :label="t('不良理由')" width="100" />
+        <el-table-column prop="suspendReasonCd" :label="t('中断理由')" width="100" />
+        <el-table-column prop="resultNote" :label="t('備考')" min-width="160" />
+        <el-table-column :label="t('登録日時')" width="160">
           <template #default="{ row }">{{ formatDateTime(row.createDate) }}</template>
         </el-table-column>
       </el-table>
@@ -86,6 +86,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { productionResultApi } from '@/api/mes'

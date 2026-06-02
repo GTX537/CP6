@@ -41,7 +41,7 @@
     <el-card shadow="never" class="search-card" v-if="!store.isNew">
       <el-form inline>
         <el-form-item :label="t('sales.term.productCd')">
-          <el-input v-model="searchCd" placeholder="例: 0000000010001" clearable style="width: 220px" />
+          <el-input v-model="searchCd" :placeholder="t('例: 0000000010001')" clearable style="width: 220px" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="loadByCd" :loading="loading">{{ t('sales.btn.load') }}</el-button>

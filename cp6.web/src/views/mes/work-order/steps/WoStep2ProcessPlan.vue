@@ -5,25 +5,25 @@
       <el-button size="small" :icon="Sort" @click="autoSort">並び順 再付番</el-button>
     </div>
     <el-table :data="model" border stripe size="small" style="width: 100%;">
-      <el-table-column label="順" width="60" align="center">
+      <el-table-column :label="t('順')" width="60" align="center">
         <template #default="{ row }">{{ row.sortOrder }}</template>
       </el-table-column>
-      <el-table-column label="工程CD" width="120">
+      <el-table-column :label="t('工程CD')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.processCd" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="作業CD" width="120">
+      <el-table-column :label="t('作業CD')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.taskCd" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="工程名" min-width="160">
+      <el-table-column :label="t('工程名')" min-width="160">
         <template #default="{ row }">
           <el-input v-model="row.processName" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="号機/発注先CD" width="160">
+      <el-table-column :label="t('号機/発注先CD')" width="160">
         <template #default="{ row }">
           <el-input v-model="row.machineCd" size="small" />
         </template>
@@ -33,34 +33,34 @@
           <el-input v-model="row.wgCd" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="計画開始日時" width="180">
+      <el-table-column :label="t('計画開始日時')" width="180">
         <template #default="{ row }">
           <el-date-picker v-model="row.planStartTime" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" size="small" style="width: 100%;" />
         </template>
       </el-table-column>
-      <el-table-column label="計画完了日時" width="180">
+      <el-table-column :label="t('計画完了日時')" width="180">
         <template #default="{ row }">
           <el-date-picker v-model="row.planEndTime" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" size="small" style="width: 100%;" />
         </template>
       </el-table-column>
-      <el-table-column label="計画数量" width="100">
+      <el-table-column :label="t('計画数量')" width="100">
         <template #default="{ row }">
           <el-input-number v-model="row.planQty" :min="0" :precision="0" size="small" style="width: 100%;" />
         </template>
       </el-table-column>
-      <el-table-column label="LT(日)" width="80">
+      <el-table-column :label="t('LT(日)')" width="80">
         <template #default="{ row }">
           <el-input-number v-model="row.leadTime" :min="0" :precision="1" size="small" style="width: 100%;" />
         </template>
       </el-table-column>
-      <el-table-column label="状態" width="90" align="center">
+      <el-table-column :label="t('状態')" width="90" align="center">
         <template #default="{ row }">
           <el-tag :color="getStatusColor(row.processStatus)" effect="dark" size="small">
             {{ getStatusLabel(row.processStatus) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="80" align="center">
+      <el-table-column :label="t('操作')" width="80" align="center">
         <template #default="{ $index }">
           <el-button link type="danger" size="small" @click="removeRow($index)">削除</el-button>
         </template>
@@ -70,6 +70,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { computed } from 'vue'
 import { Plus, Sort } from '@element-plus/icons-vue'
 import { PROCESS_STATUS_OPTIONS, type WorkOrderProcessDto } from '@/types/mes'

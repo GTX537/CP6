@@ -20,7 +20,7 @@
           />
         </el-form-item>
         <el-form-item :label="t('sales.term.base')">
-          <el-select v-model="query.baseCd" placeholder="全部" clearable style="width: 160px">
+          <el-select v-model="query.baseCd" :placeholder="t('全部')" clearable style="width: 160px">
             <el-option
               v-for="b in bases"
               :key="b.baseCd"
@@ -35,10 +35,10 @@
         <el-form-item :label="t('sales.term.customer')">
           <el-input v-model="query.customerCd" :placeholder="t('sales.term.customer') + ' CD'" clearable style="width: 140px" />
         </el-form-item>
-        <el-form-item label="親案件">
+        <el-form-item :label="t('親案件')">
           <el-input v-model="query.projectNoParent" clearable style="width: 120px" />
         </el-form-item>
-        <el-form-item label="品名">
+        <el-form-item :label="t('品名')">
           <el-input v-model="query.customerProductName1" clearable style="width: 200px" />
         </el-form-item>
         <el-form-item :label="t('sales.term.status')">
@@ -67,13 +67,14 @@
         border
         style="width: 100%"
         @row-dblclick="(row: QuotationListItem) => onView(row)"
+        @sort-change="onSortChange"
       >
-        <el-table-column prop="qtnNo" :label="t('sales.term.qtnNo')" width="120" fixed="left" />
-        <el-table-column prop="qtnIssueDate" :label="t('sales.qtn.issueDate')" width="110">
+        <el-table-column prop="qtnNo" :label="t('sales.term.qtnNo')" width="120" fixed="left" sortable="custom" />
+        <el-table-column prop="qtnIssueDate" :label="t('sales.qtn.issueDate')" width="110" sortable="custom">
           <template #default="{ row }">{{ fmtDate(row.qtnIssueDate) }}</template>
         </el-table-column>
-        <el-table-column prop="baseCd" :label="t('sales.term.base')" width="70" />
-        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="80">
+        <el-table-column prop="baseCd" :label="t('sales.term.base')" width="70" sortable="custom" />
+        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="80" sortable="custom">
           <template #default="{ row }">
             <el-tooltip v-if="row.staffName" :content="row.staffName" placement="top">
               <span>{{ row.staffCd }}</span>
@@ -81,12 +82,12 @@
             <span v-else>{{ row.staffCd }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="customerCd" :label="t('sales.term.customer') + ' CD'" width="90" />
-        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="projectNoParent" label="親案件" width="110" />
-        <el-table-column prop="projectNoChild" label="子案件" width="110" />
-        <el-table-column prop="itemName1" label="品名1" min-width="160" show-overflow-tooltip />
-        <el-table-column label="初行数量" width="100" align="right">
+        <el-table-column prop="customerCd" :label="t('sales.term.customer') + ' CD'" width="90" sortable="custom" />
+        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" min-width="160" show-overflow-tooltip sortable="custom" />
+        <el-table-column prop="projectNoParent" :label="t('親案件')" width="110" sortable="custom" />
+        <el-table-column prop="projectNoChild" :label="t('子案件')" width="110" sortable="custom" />
+        <el-table-column prop="itemName1" :label="t('品名1')" min-width="160" show-overflow-tooltip />
+        <el-table-column :label="t('初行数量')" width="100" align="right">
           <template #default="{ row }">{{ fmtNum(row.firstQuantity) }}</template>
         </el-table-column>
         <el-table-column :label="'初行' + t('sales.term.unitPrice')" width="110" align="right">
@@ -95,7 +96,7 @@
         <el-table-column :label="'初行' + t('sales.term.amount')" width="130" align="right">
           <template #default="{ row }">{{ fmtMoney(row.firstAmount) }}</template>
         </el-table-column>
-        <el-table-column :label="t('sales.fsc.totalAmount')" width="130" align="right">
+        <el-table-column prop="totalAmount" :label="t('sales.fsc.totalAmount')" width="130" align="right" sortable="custom">
           <template #default="{ row }">{{ fmtMoney(row.totalAmount) }}</template>
         </el-table-column>
         <el-table-column :label="t('sales.term.status')" width="100">
@@ -200,9 +201,18 @@ const query = reactive<QuotationQuery>({
   issueDateFrom: '',
   issueDateTo: '',
   statuses: [],
+  sortField: '',
+  sortOrder: '',
 })
 const dateRange = ref<[string, string] | null>(null)
 const statusSel = ref<string[]>([])
+
+function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+  query.sortField = order ? prop : ''
+  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+  query.page = 1
+  loadData()
+}
 
 watch(statusSel, v => (query.statuses = v.length ? [...v] : undefined))
 

@@ -12,19 +12,22 @@ public class WmsSequenceService : IWmsSequenceService
     private readonly CP6Context _db;
     public WmsSequenceService(CP6Context db) => _db = db;
 
+    /// <summary>全期間スコープを表す番兵（永不重置）</summary>
+    private const string GlobalScope = "*";
+
     public async Task<string> NextAsync(string prefix, DateTime? date = null)
     {
         var d = (date ?? DateTime.Today).Date;
         var px = prefix.ToUpperInvariant();
-        var dateKey = d.ToString("yyyyMMdd");
 
+        // 年月で 0 戻ししないため、日付ではなく全期間スコープで採番管理
         var seq = await _db.WmsSequences
-            .FirstOrDefaultAsync(x => x.Prefix == px && x.DateKey == dateKey);
+            .FirstOrDefaultAsync(x => x.Prefix == px && x.DateKey == GlobalScope);
 
         int next;
         if (seq == null)
         {
-            seq = new WmsSequence { Prefix = px, DateKey = dateKey, NextNo = 1 };
+            seq = new WmsSequence { Prefix = px, DateKey = GlobalScope, NextNo = 1 };
             _db.WmsSequences.Add(seq);
             next = 1;
         }
@@ -35,6 +38,6 @@ public class WmsSequenceService : IWmsSequenceService
         }
 
         await _db.SaveChangesAsync();
-        return $"{px}{dateKey}-{next:D5}";
+        return $"{px}{d:yyyyMM}{next:D4}";
     }
 }

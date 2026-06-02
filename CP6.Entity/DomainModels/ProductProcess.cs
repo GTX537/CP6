@@ -14,7 +14,7 @@ namespace CP6.Entity.DomainModels;
 public class ProductProcess : BaseBizEntity
 {
     /// <summary>製品コード（FK → T_ProductMaster.ProductCd）</summary>
-    [Required, MaxLength(15)]
+    [Required, MaxLength(20)]
     public string ProductCd { get; set; } = string.Empty;
 
     /// <summary>作業コード（業務 PK2、mcframe7 の工程コードに相当）</summary>

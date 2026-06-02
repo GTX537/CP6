@@ -2,13 +2,13 @@
   <div class="oee-analysis">
     <el-card shadow="never" class="search-card">
       <el-form inline size="small">
-        <el-form-item label="設備CD">
-          <el-select v-model="machineCd" clearable filterable style="width: 200px;" placeholder="全設備">
+        <el-form-item :label="t('設備CD')">
+          <el-select v-model="machineCd" clearable filterable style="width: 200px;" :placeholder="t('全設備')">
             <el-option v-for="m in allMachines" :key="m.machineCd"
               :label="`${m.machineCd} - ${m.machineName}`" :value="m.machineCd" />
           </el-select>
         </el-form-item>
-        <el-form-item label="期間">
+        <el-form-item :label="t('期間')">
           <el-date-picker v-model="dateRange" type="daterange" value-format="YYYY-MM-DD" style="width: 280px;" />
         </el-form-item>
         <el-form-item>
@@ -92,27 +92,27 @@
     <el-card shadow="never" style="margin-top: 12px;">
       <template #header>OEE 日次データ</template>
       <el-table :data="rows" border stripe size="small" max-height="500">
-        <el-table-column label="日付" width="110">
+        <el-table-column :label="t('日付')" width="110">
           <template #default="{ row }">{{ formatDate(row.oeeDate) }}</template>
         </el-table-column>
-        <el-table-column prop="machineCd" label="設備CD" width="100" />
-        <el-table-column prop="machineName" label="設備名" min-width="160" />
-        <el-table-column prop="plannedRunMinutes" label="計画(分)" width="100" align="right" />
-        <el-table-column prop="actualRunMinutes" label="実稼働(分)" width="110" align="right" />
-        <el-table-column prop="downtimeMinutes" label="停止(分)" width="100" align="right" />
-        <el-table-column prop="goodQty" label="良品" width="100" align="right" />
-        <el-table-column prop="defectQty" label="不良" width="100" align="right" />
-        <el-table-column label="可用率" width="120">
+        <el-table-column prop="machineCd" :label="t('設備CD')" width="100" />
+        <el-table-column prop="machineName" :label="t('設備名')" min-width="160" />
+        <el-table-column prop="plannedRunMinutes" :label="t('計画(分)')" width="100" align="right" />
+        <el-table-column prop="actualRunMinutes" :label="t('実稼働(分)')" width="110" align="right" />
+        <el-table-column prop="downtimeMinutes" :label="t('停止(分)')" width="100" align="right" />
+        <el-table-column prop="goodQty" :label="t('良品')" width="100" align="right" />
+        <el-table-column prop="defectQty" :label="t('不良')" width="100" align="right" />
+        <el-table-column :label="t('可用率')" width="120">
           <template #default="{ row }">
             <el-progress :percentage="Math.round(row.availability)" :stroke-width="10" :color="'#409EFF'" />
           </template>
         </el-table-column>
-        <el-table-column label="性能" width="120">
+        <el-table-column :label="t('性能')" width="120">
           <template #default="{ row }">
             <el-progress :percentage="Math.round(row.performance)" :stroke-width="10" :color="'#E6A23C'" />
           </template>
         </el-table-column>
-        <el-table-column label="品質" width="120">
+        <el-table-column :label="t('品質')" width="120">
           <template #default="{ row }">
             <el-progress :percentage="Math.round(row.quality)" :stroke-width="10" :color="'#67C23A'" />
           </template>
@@ -128,6 +128,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { machineApi, oeeApi } from '@/api/mes'

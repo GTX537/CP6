@@ -14,7 +14,7 @@ namespace CP6.Entity.DomainModels;
 public class ProductLotPrice : BaseBizEntity
 {
     /// <summary>製品コード（FK + PK1）</summary>
-    [Required, MaxLength(15)]
+    [Required, MaxLength(20)]
     public string ProductCd { get; set; } = string.Empty;
 
     /// <summary>明細NO（PK2、行番号）</summary>

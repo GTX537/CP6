@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace CP6.WebApi.Controllers;
 
 /// <summary>
-/// 仪表盘 — Dapper 聚合查询 + Redis 缓存
+/// 仪表盘 — 业务经营总览（ERP / MES / WMS 横断 KPI）
 ///
-/// 面试要点：
-/// 1. Dapper 适合复杂 SQL（报表/统计），EF Core 适合 CRUD
-/// 2. 统计结果用缓存（1分钟），避免每次刷新都查DB
-/// 3. Dapper + Cache 组合 = 高性能报表方案
+/// 设计要点：
+/// 1. 用 Dapper 做跨表聚合（报表/统计场景），EF Core 负责 CRUD。
+/// 2. 登录落地页：一眼看清今日经营状态（受注・製造・出荷・在庫・承認）。
+/// 3. 统计结果缓存 1 分钟，避免每次刷新都打 DB。
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -29,7 +29,7 @@ public class DashboardController : ControllerBase
     }
 
     /// <summary>
-    /// 获取仪表盘汇总数据（缓存1分钟）
+    /// 获取业务经营总览数据（缓存 1 分钟）
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetSummary()
@@ -37,58 +37,62 @@ public class DashboardController : ControllerBase
         var result = await _cache.GetOrSetAsync(CacheService.DashboardKey, async () =>
         {
             var today = DateTime.Today;
-            var weekStart = today.AddDays(-(int)today.DayOfWeek + (int)DayOfWeek.Monday);
-            if (today.DayOfWeek == DayOfWeek.Sunday) weekStart = weekStart.AddDays(-7);
+            var monthStart = new DateTime(today.Year, today.Month, 1);
 
-            const string sql = @"
+            // ───── 核心 KPI（一次往返聚合）─────
+            const string kpiSql = @"
                 SELECT
-                    (SELECT COUNT(*) FROM Sys_OperLogs WHERE CreateDate >= @Today) AS TodayOps,
-                    (SELECT COUNT(*) FROM Sys_OperLogs WHERE CreateDate >= @WeekStart) AS WeekOps,
-                    (SELECT COUNT(*) FROM Sys_OperLogs) AS TotalOps,
-                    (SELECT COUNT(*) FROM Sys_Users) AS TotalUsers,
-                    (SELECT COUNT(*) FROM Articles) AS TotalArticles";
+                    (SELECT COUNT(*) FROM T_Order        WHERE CreateDate >= @Today)                              AS TodayOrders,
+                    (SELECT COUNT(*) FROM T_Order        WHERE CreateDate >= @MonthStart)                         AS MonthOrders,
+                    (SELECT COUNT(*) FROM T_WorkOrder    WHERE Status BETWEEN 1 AND 5)                            AS ActiveWorkOrders,
+                    (SELECT COUNT(*) FROM T_WorkOrder    WHERE Status IN (4,6) AND ActualEndDate >= @MonthStart)  AS MonthCompleted,
+                    (SELECT COUNT(*) FROM T_OutboundOrder WHERE Status BETWEEN 1 AND 3)                           AS PendingOutbound,
+                    (SELECT COUNT(*) FROM T_Stock        WHERE AvailableQty <= 0)                                 AS StockWarnings,
+                    (SELECT COUNT(*) FROM T_ProductMaster WHERE Status = 0)
+                        + (SELECT COUNT(*) FROM T_StockTake WHERE Status = 3)                                     AS PendingApprovals,
+                    (SELECT COUNT(*) FROM T_ProductMaster)                                                        AS TotalProducts";
 
-            var summary = await _db.QueryFirstAsync<SummaryDto>(sql, new { Today = today, WeekStart = weekStart });
+            var summary = await _db.QueryFirstAsync<SummaryDto>(kpiSql, new { Today = today, MonthStart = monthStart });
 
-            const string topControllersSql = @"
-                SELECT TOP 5 Controller AS Name, COUNT(*) AS Count
-                FROM Sys_OperLogs
-                WHERE Controller IS NOT NULL
-                GROUP BY Controller
-                ORDER BY Count DESC";
-            var topControllers = (await _db.QueryAsync<NameCountDto>(topControllersSql)).ToList();
+            // ───── 最近の受注（TOP 8）─────
+            const string recentOrdersSql = @"
+                SELECT TOP 8
+                    WebOrderNo, CustomerCd, Quantity, OrderDate, ShipStatus
+                FROM T_Order
+                ORDER BY CreateDate DESC";
+            var recentOrders = (await _db.QueryAsync<RecentOrderDto>(recentOrdersSql)).ToList();
 
-            const string trendSql = @"
-                SELECT CONVERT(varchar(10), CreateDate, 23) AS Date, COUNT(*) AS Count
-                FROM Sys_OperLogs
-                WHERE CreateDate >= @Start
-                GROUP BY CONVERT(varchar(10), CreateDate, 23)
-                ORDER BY Date";
-            var trend = (await _db.QueryAsync<DateCountDto>(trendSql, new { Start = today.AddDays(-6) })).ToList();
+            // ───── 製造指図ステータス分布 ─────
+            const string woStatusSql = @"
+                SELECT Status, COUNT(*) AS Count
+                FROM T_WorkOrder
+                GROUP BY Status
+                ORDER BY Status";
+            var workOrderStatus = (await _db.QueryAsync<StatusCountDto>(woStatusSql)).ToList();
 
-            const string methodSql = @"
-                SELECT HttpMethod AS Name, COUNT(*) AS Count
-                FROM Sys_OperLogs
-                WHERE HttpMethod IS NOT NULL
-                GROUP BY HttpMethod
-                ORDER BY Count DESC";
-            var methods = (await _db.QueryAsync<NameCountDto>(methodSql)).ToList();
-
-            return new DashboardData(summary, topControllers, trend, methods);
-        }, TimeSpan.FromMinutes(1));  // 统计数据缓存1分钟
+            return new DashboardData(summary, recentOrders, workOrderStatus);
+        }, TimeSpan.FromMinutes(1));
 
         return Ok(new
         {
             result!.Summary,
-            result.TopControllers,
-            result.Trend,
-            result.Methods
+            result.RecentOrders,
+            result.WorkOrderStatus
         });
     }
 
-    // DTO 定义
-    public record SummaryDto(int TodayOps, int WeekOps, int TotalOps, int TotalUsers, int TotalArticles);
-    public record NameCountDto(string Name, int Count);
-    public record DateCountDto(string Date, int Count);
-    public record DashboardData(SummaryDto Summary, List<NameCountDto> TopControllers, List<DateCountDto> Trend, List<NameCountDto> Methods);
+    // ───── DTO 定义 ─────
+    public record SummaryDto(
+        int TodayOrders,
+        int MonthOrders,
+        int ActiveWorkOrders,
+        int MonthCompleted,
+        int PendingOutbound,
+        int StockWarnings,
+        int PendingApprovals,
+        int TotalProducts);
+
+    public record RecentOrderDto(string WebOrderNo, string? CustomerCd, decimal? Quantity, DateTime? OrderDate, int ShipStatus);
+    public record StatusCountDto(int Status, int Count);
+    public record DashboardData(SummaryDto Summary, List<RecentOrderDto> RecentOrders, List<StatusCountDto> WorkOrderStatus);
 }

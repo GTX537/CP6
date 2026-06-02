@@ -50,11 +50,11 @@
             </el-form-item>
             <el-form-item :label="t('sales.pm.salesAvailable')">
               <el-select v-model="store.dto.earningsCd" :disabled="!store.canEdit" clearable style="width: 140px">
-                <el-option label="可(1)" value="1" />
-                <el-option label="不可(2)" value="2" />
-                <el-option label="商品込(3)" value="3" />
-                <el-option label="社内処理(4)" value="4" />
-                <el-option label="後報(5)" value="5" />
+                <el-option :label="t('可(1)')" value="1" />
+                <el-option :label="t('不可(2)')" value="2" />
+                <el-option :label="t('商品込(3)')" value="3" />
+                <el-option :label="t('社内処理(4)')" value="4" />
+                <el-option :label="t('後報(5)')" value="5" />
               </el-select>
             </el-form-item>
             <el-form-item :label="t('sales.term.haibaiNo')"><el-input v-model="store.dto.arrangeNo" disabled style="width: 200px" /></el-form-item>
@@ -66,10 +66,10 @@
             <el-form-item :label="t('sales.pm.repProductCd')" required><el-input v-model="store.dto.representativeProductCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
             <el-form-item :label="t('sales.pm.process')">
               <el-select v-model="store.dto.processCd" :disabled="!store.canEdit" clearable style="width: 160px" @change="store.autoTypeClassFromProcess">
-                <el-option label="フレキソ印刷(0300)" value="0300" />
-                <el-option label="オフセット印刷(0450)" value="0450" />
-                <el-option label="トムソン(0600)" value="0600" />
-                <el-option label="箔押(0650)" value="0650" />
+                <el-option :label="t('フレキソ印刷(0300)')" value="0300" />
+                <el-option :label="t('オフセット印刷(0450)')" value="0450" />
+                <el-option :label="t('トムソン(0600)')" value="0600" />
+                <el-option :label="t('箔押(0650)')" value="0650" />
               </el-select>
             </el-form-item>
             <el-form-item :label="t('sales.pm.class')"><el-input v-model="store.dto.typeClass" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
@@ -80,46 +80,46 @@
 
         <el-tab-pane :label="t('sales.section.composition')" name="comp">
           <el-form :model="store.dto" :disabled="store.isPageReadOnly" label-width="120px" size="small" inline>
-            <el-form-item label="シート段"><el-input v-model="store.dto.sheetFlute" disabled style="width: 100px" placeholder="製品マスタ参照" /></el-form-item>
-            <el-form-item label="原紙 表/中/裏">
-              <el-input v-model="store.dto.paperCdF" placeholder="表" disabled style="width: 100px" />
-              <el-input v-model="store.dto.paperCdC" placeholder="中" disabled style="width: 100px; margin-left: 4px" />
-              <el-input v-model="store.dto.paperCdB" placeholder="裏" disabled style="width: 100px; margin-left: 4px" />
+            <el-form-item :label="t('シート段')"><el-input v-model="store.dto.sheetFlute" disabled style="width: 100px" :placeholder="t('製品マスタ参照')" /></el-form-item>
+            <el-form-item :label="t('原紙 表/中/裏')">
+              <el-input v-model="store.dto.paperCdF" :placeholder="t('表')" disabled style="width: 100px" />
+              <el-input v-model="store.dto.paperCdC" :placeholder="t('中')" disabled style="width: 100px; margin-left: 4px" />
+              <el-input v-model="store.dto.paperCdB" :placeholder="t('裏')" disabled style="width: 100px; margin-left: 4px" />
             </el-form-item>
-            <el-form-item label="抜方向"><el-input v-model="store.dto.extractionDirect" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="複版"><el-checkbox v-model="store.dto.duplicatePlateFlg" :disabled="!store.canEdit">複版あり</el-checkbox></el-form-item>
-            <el-form-item label="シート寸法 巾"><el-input-number v-model="store.dto.sheetWidth" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="シート寸法 流れ"><el-input-number v-model="store.dto.sheetFlow" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="刃渡り 巾"><el-input-number v-model="store.dto.bladeWidth" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="刃渡り 流れ"><el-input-number v-model="store.dto.bladeFlow" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="付数"><el-input-number v-model="store.dto.compositionQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="個数"><el-input-number v-model="store.dto.mfgQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="1" style="width: 110px" /></el-form-item>
-            <el-form-item label="色数"><el-input-number v-model="store.dto.colorQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="本数"><el-input-number v-model="store.dto.bookQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="フレキソ版厚"><el-input-number v-model="store.dto.flexoThick" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="シリンダーサイズ"><el-input-number v-model="store.dto.cylinderSize" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('抜方向')"><el-input v-model="store.dto.extractionDirect" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('複版')"><el-checkbox v-model="store.dto.duplicatePlateFlg" :disabled="!store.canEdit">複版あり</el-checkbox></el-form-item>
+            <el-form-item :label="t('シート寸法 巾')"><el-input-number v-model="store.dto.sheetWidth" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('シート寸法 流れ')"><el-input-number v-model="store.dto.sheetFlow" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('刃渡り 巾')"><el-input-number v-model="store.dto.bladeWidth" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('刃渡り 流れ')"><el-input-number v-model="store.dto.bladeFlow" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('付数')"><el-input-number v-model="store.dto.compositionQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('個数')"><el-input-number v-model="store.dto.mfgQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="1" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('色数')"><el-input-number v-model="store.dto.colorQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('本数')"><el-input-number v-model="store.dto.bookQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('フレキソ版厚')"><el-input-number v-model="store.dto.flexoThick" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('シリンダーサイズ')"><el-input-number v-model="store.dto.cylinderSize" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('sales.term.supplier')" required><el-input v-model="store.dto.supplierCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
-            <el-form-item label="加工予定先"><el-input v-model="store.dto.processDestination" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
-            <el-form-item label="納期"><el-date-picker v-model="store.dto.deliveryDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item label="入荷実績日"><el-date-picker v-model="store.dto.arrivalActualDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item label="見積価格"><el-input-number v-model="store.dto.estimateAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="売上決定価格"><el-input-number v-model="store.dto.decisionAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="仕入予定金額"><el-input-number v-model="store.dto.purchaseAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item label="売上日"><el-date-picker v-model="store.dto.salesDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item label="落丁型"><el-input v-model="store.dto.strippingCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="置き版"><el-input v-model="store.dto.standingCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="ハンマー"><el-input v-model="store.dto.hammerCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item label="見落とし型"><el-input v-model="store.dto.oversightCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item :label="t('sales.pm.location')"><el-input v-model="store.dto.placeCd" disabled style="width: 130px" placeholder="システム管理" /></el-form-item>
-            <el-form-item :label="t('sales.pm.shelfLine')"><el-input v-model="store.dto.shelfLineCd" disabled style="width: 130px" placeholder="システム管理" /></el-form-item>
+            <el-form-item :label="t('加工予定先')"><el-input v-model="store.dto.processDestination" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
+            <el-form-item :label="t('納期')"><el-date-picker v-model="store.dto.deliveryDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('入荷実績日')"><el-date-picker v-model="store.dto.arrivalActualDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('見積価格')"><el-input-number v-model="store.dto.estimateAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('売上決定価格')"><el-input-number v-model="store.dto.decisionAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('仕入予定金額')"><el-input-number v-model="store.dto.purchaseAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('売上日')"><el-date-picker v-model="store.dto.salesDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
+            <el-form-item :label="t('落丁型')"><el-input v-model="store.dto.strippingCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('置き版')"><el-input v-model="store.dto.standingCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('ハンマー')"><el-input v-model="store.dto.hammerCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('見落とし型')"><el-input v-model="store.dto.oversightCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('sales.pm.location')"><el-input v-model="store.dto.placeCd" disabled style="width: 130px" :placeholder="t('システム管理')" /></el-form-item>
+            <el-form-item :label="t('sales.pm.shelfLine')"><el-input v-model="store.dto.shelfLineCd" disabled style="width: 130px" :placeholder="t('システム管理')" /></el-form-item>
             <el-form-item :label="t('sales.pm.passCount')"><el-input-number v-model="store.dto.wdQty" disabled :controls="false" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('sales.pm.limitPass')"><el-input-number v-model="store.dto.limitWdQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('sales.pm.dispScheduled')"><el-date-picker v-model="store.dto.dispScheduleDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
             <el-form-item :label="t('sales.pm.returnScheduled')"><el-date-picker v-model="store.dto.returnScheduleDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
             <el-form-item :label="t('sales.pm.returnDate')"><el-date-picker v-model="store.dto.returnDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item label="返却理由"><el-input v-model="store.dto.returnReason" :disabled="!store.canEdit" style="width: 240px" /></el-form-item>
-            <el-form-item label="備考"><el-input v-model="store.dto.memo" :disabled="!store.canEdit" type="textarea" :rows="2" style="width: 480px" /></el-form-item>
-            <el-form-item label="売上備考"><el-input v-model="store.dto.salesNote" :disabled="!store.canEdit" type="textarea" :rows="2" style="width: 480px" /></el-form-item>
+            <el-form-item :label="t('返却理由')"><el-input v-model="store.dto.returnReason" :disabled="!store.canEdit" style="width: 240px" /></el-form-item>
+            <el-form-item :label="t('備考')"><el-input v-model="store.dto.memo" :disabled="!store.canEdit" type="textarea" :rows="2" style="width: 480px" /></el-form-item>
+            <el-form-item :label="t('売上備考')"><el-input v-model="store.dto.salesNote" :disabled="!store.canEdit" type="textarea" :rows="2" style="width: 480px" /></el-form-item>
           </el-form>
         </el-tab-pane>
 
@@ -140,15 +140,15 @@
 
         <el-tab-pane :label="t('sales.section.required')" name="need">
           <el-form :model="store.dto" :disabled="store.isPageReadOnly" label-width="120px" size="small" inline>
-            <el-form-item label="タタキ"><el-input-number v-model="store.dto.needDraft" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="マイラー"><el-input-number v-model="store.dto.needMylar" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="ゲラ刷り"><el-input-number v-model="store.dto.needGalley" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="校正"><el-input-number v-model="store.dto.needProof" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="青焼"><el-input-number v-model="store.dto.needBlueprint" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="カンプ"><el-input-number v-model="store.dto.needComp" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="印刷設計書"><el-input-number v-model="store.dto.needDesignSheet" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item label="その他名称"><el-input v-model="store.dto.needOtherName" :disabled="!store.canEdit" style="width: 200px" /></el-form-item>
-            <el-form-item label="その他"><el-input v-model="store.dto.needOther" :disabled="!store.canEdit" style="width: 200px" /></el-form-item>
+            <el-form-item :label="t('タタキ')"><el-input-number v-model="store.dto.needDraft" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('マイラー')"><el-input-number v-model="store.dto.needMylar" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('ゲラ刷り')"><el-input-number v-model="store.dto.needGalley" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('校正')"><el-input-number v-model="store.dto.needProof" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('青焼')"><el-input-number v-model="store.dto.needBlueprint" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('カンプ')"><el-input-number v-model="store.dto.needComp" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('印刷設計書')"><el-input-number v-model="store.dto.needDesignSheet" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
+            <el-form-item :label="t('その他名称')"><el-input v-model="store.dto.needOtherName" :disabled="!store.canEdit" style="width: 200px" /></el-form-item>
+            <el-form-item :label="t('その他')"><el-input v-model="store.dto.needOther" :disabled="!store.canEdit" style="width: 200px" /></el-form-item>
           </el-form>
         </el-tab-pane>
 
@@ -163,7 +163,7 @@
             <el-table-column prop="dispScheduleDate" :label="t('sales.pm.dispScheduled')" width="120" />
             <el-table-column prop="returnScheduleDate" :label="t('sales.pm.returnScheduled')" width="120" />
             <el-table-column prop="returnDate" :label="t('sales.pm.returnDate')" width="120" />
-            <el-table-column prop="returnReason" label="返却理由" min-width="160" />
+            <el-table-column prop="returnReason" :label="t('返却理由')" min-width="160" />
           </el-table>
         </el-tab-pane>
       </el-tabs>

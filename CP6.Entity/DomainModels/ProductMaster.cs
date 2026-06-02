@@ -15,8 +15,8 @@ namespace CP6.Entity.DomainModels;
 public class ProductMaster : BaseBizEntity
 {
     // ───── 業務主キー ─────
-    /// <summary>製品コード（15 桁、業務 PK、自動採番）</summary>
-    [Required, MaxLength(15)]
+    /// <summary>製品コード（機能コード+年月+自増13桁 + 枝番4桁=17桁、業務 PK、自動採番）</summary>
+    [Required, MaxLength(20)]
     public string ProductCd { get; set; } = string.Empty;
 
     /// <summary>品目コード（mcframe7 連携用：=製品コード連番部分）</summary>
@@ -41,20 +41,20 @@ public class ProductMaster : BaseBizEntity
     [MaxLength(15)] public string? ProjectNoMaterial { get; set; }
 
     /// <summary>御見積書NO</summary>
-    [MaxLength(11)] public string? QuotationNo { get; set; }
+    [MaxLength(20)] public string? QuotationNo { get; set; }
 
     /// <summary>見積計算書NO</summary>
-    [MaxLength(11)] public string? EstimateCalcNo { get; set; }
+    [MaxLength(20)] public string? EstimateCalcNo { get; set; }
 
     /// <summary>参照元_見積計算書NO（コピー元）</summary>
-    [MaxLength(11)] public string? RefEstimateCalcNo { get; set; }
+    [MaxLength(20)] public string? RefEstimateCalcNo { get; set; }
 
     // ───── 顧客・セット情報 ─────
     [Required, MaxLength(20)]
     public string CustomerCd { get; set; } = string.Empty;
 
     /// <summary>セット製品CD（部材全行共通のセットCD）</summary>
-    [Required, MaxLength(15)]
+    [Required, MaxLength(20)]
     public string SetProductCd { get; set; } = string.Empty;
 
     /// <summary>セット品名</summary>

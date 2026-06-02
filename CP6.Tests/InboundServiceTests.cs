@@ -73,8 +73,10 @@ public class InboundServiceTests
         Assert.StartsWith("IN", no1);
         Assert.StartsWith("IN", no2);
         Assert.NotEqual(no1, no2);
-        Assert.EndsWith("-00001", no1);
-        Assert.EndsWith("-00002", no2);
+        // 新形式：IN{yyyyMM}{NNNN} 例 IN2026050001（永不重置）
+        Assert.EndsWith("0001", no1);
+        Assert.EndsWith("0002", no2);
+        Assert.StartsWith($"IN{DateTime.Today:yyyyMM}", no1);
         Assert.Equal(2, db.InboundOrders.Count());
     }
 

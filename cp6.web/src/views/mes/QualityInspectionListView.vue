@@ -2,32 +2,32 @@
   <div class="quality-inspection-list">
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
-        <el-form-item label="検査NO">
+        <el-form-item :label="t('検査NO')">
           <el-input v-model="query.inspectionNo" style="width: 180px;" />
         </el-form-item>
-        <el-form-item label="指図NO">
+        <el-form-item :label="t('指図NO')">
           <el-input v-model="query.workOrderNo" style="width: 180px;" />
         </el-form-item>
-        <el-form-item label="工程CD">
+        <el-form-item :label="t('工程CD')">
           <el-input v-model="query.processCd" style="width: 130px;" />
         </el-form-item>
-        <el-form-item label="検査者CD">
+        <el-form-item :label="t('検査者CD')">
           <el-input v-model="query.inspectorCd" style="width: 130px;" />
         </el-form-item>
-        <el-form-item label="検査種類">
+        <el-form-item :label="t('検査種類')">
           <el-select v-model="query.inspectionType" clearable style="width: 130px;">
             <el-option v-for="o in INSPECTION_TYPE_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="総合判定">
+        <el-form-item :label="t('総合判定')">
           <el-select v-model="query.overallResult" clearable style="width: 130px;">
             <el-option v-for="o in OVERALL_RESULT_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="検査日 From">
+        <el-form-item :label="t('検査日 From')">
           <el-date-picker v-model="query.dateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px;" />
         </el-form-item>
-        <el-form-item label="検査日 To">
+        <el-form-item :label="t('検査日 To')">
           <el-date-picker v-model="query.dateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px;" />
         </el-form-item>
         <el-form-item>
@@ -44,27 +44,27 @@
         <el-tag size="small">合計 {{ total }} 件</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%;" max-height="600">
-        <el-table-column prop="inspectionNo" label="検査NO" width="160" fixed />
-        <el-table-column prop="workOrderNo" label="指図NO" width="160" />
-        <el-table-column prop="productCd" label="製品CD" width="130" />
-        <el-table-column prop="productName" label="製品名" min-width="160" />
-        <el-table-column prop="processCd" label="工程" width="100" />
-        <el-table-column label="検査種類" width="100" align="center">
+        <el-table-column prop="inspectionNo" :label="t('検査NO')" width="160" fixed />
+        <el-table-column prop="workOrderNo" :label="t('指図NO')" width="160" />
+        <el-table-column prop="productCd" :label="t('製品CD')" width="130" />
+        <el-table-column prop="productName" :label="t('製品名')" min-width="160" />
+        <el-table-column prop="processCd" :label="t('工程')" width="100" />
+        <el-table-column :label="t('検査種類')" width="100" align="center">
           <template #default="{ row }">{{ getTypeLabel(row.inspectionType) }}</template>
         </el-table-column>
-        <el-table-column prop="inspectionDate" label="検査日" width="110">
+        <el-table-column prop="inspectionDate" :label="t('検査日')" width="110">
           <template #default="{ row }">{{ formatDate(row.inspectionDate) }}</template>
         </el-table-column>
-        <el-table-column prop="inspectorCd" label="検査者" width="100" />
-        <el-table-column label="項目数 / 合格" width="120" align="center">
+        <el-table-column prop="inspectorCd" :label="t('検査者')" width="100" />
+        <el-table-column :label="t('項目数 / 合格')" width="120" align="center">
           <template #default="{ row }">{{ row.passCount }} / {{ row.itemCount }}</template>
         </el-table-column>
-        <el-table-column label="合格率" width="140" align="center">
+        <el-table-column :label="t('合格率')" width="140" align="center">
           <template #default="{ row }">
             <el-progress :percentage="row.passRate || 0" :stroke-width="10" />
           </template>
         </el-table-column>
-        <el-table-column label="総合判定" width="100" align="center">
+        <el-table-column :label="t('総合判定')" width="100" align="center">
           <template #default="{ row }">
             <el-tag v-if="row.overallResult" :color="getResultColor(row.overallResult)" effect="dark" size="small">
               {{ getResultLabel(row.overallResult) }}
@@ -72,13 +72,13 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="処置" width="110" align="center">
+        <el-table-column :label="t('処置')" width="110" align="center">
           <template #default="{ row }">{{ getDispositionLabel(row.dispositionAction) }}</template>
         </el-table-column>
-        <el-table-column label="登録日時" width="160">
+        <el-table-column :label="t('登録日時')" width="160">
           <template #default="{ row }">{{ formatDateTime(row.createDate) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="100" align="center" fixed="right">
+        <el-table-column :label="t('操作')" width="100" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="goDetail(row)">詳細</el-button>
           </template>
@@ -102,6 +102,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'

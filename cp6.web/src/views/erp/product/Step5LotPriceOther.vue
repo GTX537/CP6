@@ -1,6 +1,6 @@
 <template>
   <el-card shadow="never">
-    <el-divider content-position="left">ロット別単価</el-divider>
+    <el-divider content-position="left">{{ t('ロット別単価') }}</el-divider>
 
     <div style="margin-bottom: 8px; display: flex; gap: 8px; align-items: center">
       <el-button
@@ -24,7 +24,7 @@
       max-height="500"
     >
       <el-table-column prop="detailNo" label="No" width="60" align="center" />
-      <el-table-column label="ロット数量" width="120">
+      <el-table-column :label="t('ロット数量')" width="120">
         <template #default="{ row }">
           <el-input-number
             v-model="row.lotQty"
@@ -37,7 +37,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="現単価" width="120">
+      <el-table-column :label="t('現単価')" width="120">
         <template #default="{ row }">
           <el-input-number
             v-model="row.currentUnitPrice"
@@ -49,7 +49,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="現セット価格" width="130">
+      <el-table-column :label="t('現セット価格')" width="130">
         <template #default="{ row }">
           <el-input-number
             v-model="row.currentSetPrice"
@@ -61,7 +61,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="現価格適用日" width="140">
+      <el-table-column :label="t('現価格適用日')" width="140">
         <template #default="{ row }">
           <el-date-picker
             v-model="row.currentPriceDate"
@@ -73,7 +73,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="新単価" width="120">
+      <el-table-column :label="t('新単価')" width="120">
         <template #default="{ row }">
           <el-input-number
             v-model="row.newUnitPrice"
@@ -85,7 +85,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="新セット価格" width="130">
+      <el-table-column :label="t('新セット価格')" width="130">
         <template #default="{ row }">
           <el-input-number
             v-model="row.newSetPrice"
@@ -97,7 +97,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="新価格適用日" width="140">
+      <el-table-column :label="t('新価格適用日')" width="140">
         <template #default="{ row }">
           <el-date-picker
             v-model="row.newPriceDate"
@@ -109,7 +109,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="購入単価" width="120">
+      <el-table-column :label="t('購入単価')" width="120">
         <template #default="{ row }">
           <el-input-number
             v-model="row.purchasePrice"
@@ -121,12 +121,12 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="価格根拠" min-width="160">
+      <el-table-column :label="t('価格根拠')" min-width="160">
         <template #default="{ row }">
           <el-input v-model="row.priceApplyBasis" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="80" align="center" fixed="right">
+      <el-table-column :label="t('操作')" width="80" align="center" fixed="right">
         <template #default="{ $index }">
           <el-button
             link
@@ -139,7 +139,7 @@
       </el-table-column>
     </el-table>
 
-    <el-divider content-position="left">その他情報</el-divider>
+    <el-divider content-position="left">{{ t('その他情報') }}</el-divider>
 
     <el-form
       :model="store.basicInfo"
@@ -150,17 +150,17 @@
     >
       <el-row :gutter="16">
         <el-col :span="8">
-          <el-form-item label="購入先業者">
+          <el-form-item :label="t('購入先業者')">
             <el-input v-model="store.basicInfo.purchaseVendor" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="固定出荷区分">
+          <el-form-item :label="t('固定出荷区分')">
             <el-input v-model="store.basicInfo.fixedShipment" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="納入予備">
+          <el-form-item :label="t('納入予備')">
             <el-input-number
               v-model="store.basicInfo.deliveryReserve"
               :precision="0"
@@ -171,7 +171,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="営業サンプル">
+          <el-form-item :label="t('営業サンプル')">
             <el-input-number
               v-model="store.basicInfo.salesSample"
               :precision="0"
@@ -182,27 +182,27 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="設計提案 NO">
+          <el-form-item :label="t('設計提案 NO')">
             <el-input v-model="store.basicInfo.designProposalNo" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="受注種別">
+          <el-form-item :label="t('受注種別')">
             <el-input v-model="store.basicInfo.orderType" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="商品大分類">
+          <el-form-item :label="t('商品大分類')">
             <el-input v-model="store.basicInfo.productCatBig" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="商品中分類">
+          <el-form-item :label="t('商品中分類')">
             <el-input v-model="store.basicInfo.productCatMid" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="商品小分類">
+          <el-form-item :label="t('商品小分類')">
             <el-input v-model="store.basicInfo.productCatSml" />
           </el-form-item>
         </el-col>
@@ -210,7 +210,7 @@
     </el-form>
 
     <!-- 仕掛チェック 結果（mcframe7 連携無し時は常に level=0） -->
-    <el-divider content-position="left">仕掛チェック</el-divider>
+    <el-divider content-position="left">{{ t('仕掛チェック') }}</el-divider>
     <el-alert
       v-if="store.wipCheckResult"
       :type="alertType"
@@ -230,6 +230,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'

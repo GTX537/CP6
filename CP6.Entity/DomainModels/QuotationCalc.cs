@@ -15,12 +15,12 @@ public class QuotationCalc : BaseBizEntity
 {
     /// <summary>御見積書NO（复合主键一部分；FK → T_Quotation）</summary>
     [Required]
-    [MaxLength(11)]
+    [MaxLength(20)]
     public string QtnNo { get; set; } = string.Empty;
 
     /// <summary>見積計算書NO（复合主键一部分；FK → T_EstimateCalc）</summary>
     [Required]
-    [MaxLength(11)]
+    [MaxLength(20)]
     public string QtnCalcNo { get; set; } = string.Empty;
 
     /// <summary>見積確認FLG：0/9</summary>

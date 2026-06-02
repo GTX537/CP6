@@ -155,6 +155,8 @@ export interface QuotationQuery {
   customerProductName2?: string
   /** ["0","9","C"] */
   statuses?: string[]
+  sortField?: string
+  sortOrder?: string
 }
 
 /** 関連見積計算書 候选 */

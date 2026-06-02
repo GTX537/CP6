@@ -245,6 +245,8 @@ export interface BpQueryDto {
   page?: number
   pageSize?: number
   maxRows?: number
+  sortField?: string
+  sortOrder?: string
 }
 
 export interface BpListItemDto {

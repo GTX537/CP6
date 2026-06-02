@@ -8,14 +8,14 @@
       size="small"
       inline
     >
-      <el-form-item label="製品 CD">
-        <el-input v-model="store.productCd" :disabled="!store.isPkEditable" placeholder="新規時自動採番" style="width: 200px" />
+      <el-form-item :label="t('製品 CD')">
+        <el-input v-model="store.productCd" :disabled="!store.isPkEditable" :placeholder="t('新規時自動採番')" style="width: 200px" />
       </el-form-item>
-      <el-form-item label="セット製品 CD">
+      <el-form-item :label="t('セット製品 CD')">
         <el-input
           v-model="store.basicInfo.setProductCd"
           :disabled="!store.canEdit"
-          placeholder="親製品 CD"
+          :placeholder="t('親製品 CD')"
           style="width: 240px"
         >
           <template #append>
@@ -23,10 +23,10 @@
           </template>
         </el-input>
       </el-form-item>
-      <el-form-item label="セット品名">
+      <el-form-item :label="t('セット品名')">
         <el-input v-model="store.basicInfo.setProductName" :disabled="!store.canEdit" style="width: 280px" />
       </el-form-item>
-      <el-form-item label="得意先 CD">
+      <el-form-item :label="t('得意先 CD')">
         <el-input
           v-model="store.basicInfo.customerCd"
           :disabled="!store.canEdit"
@@ -37,10 +37,10 @@
           </template>
         </el-input>
       </el-form-item>
-      <el-form-item label="親案件 NO">
+      <el-form-item :label="t('親案件 NO')">
         <el-input v-model="parentProjectInput" :disabled="!store.canEdit" style="width: 160px" />
       </el-form-item>
-      <el-form-item label="御見積書 NO">
+      <el-form-item :label="t('御見積書 NO')">
         <el-input v-model="quotationNoInput" :disabled="!store.canEdit" style="width: 200px">
           <template #append>
             <el-button :icon="Search" @click="onLoadFromQuotation">引入</el-button>
@@ -49,7 +49,7 @@
       </el-form-item>
     </el-form>
 
-    <el-divider content-position="left">部材一覧</el-divider>
+    <el-divider content-position="left">{{ t('部材一覧') }}</el-divider>
 
     <!-- ============ 部材一覧 ============ -->
     <div style="margin-bottom: 8px">
@@ -105,39 +105,39 @@
       style="width: 100%"
       size="small"
       @current-change="onCurrentRowChange">
-      <el-table-column prop="rowNo" label="行" width="60" align="center" />
-      <el-table-column prop="productCd" label="製品 CD" width="160" />
-      <el-table-column label="御見積書 NO" width="160">
+      <el-table-column prop="rowNo" :label="t('行')" width="60" align="center" />
+      <el-table-column prop="productCd" :label="t('製品 CD')" width="160" />
+      <el-table-column :label="t('御見積書 NO')" width="160">
         <template #default="{ row }">
           <el-input v-model="row.quotationNo" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="見積計算書 NO" width="160">
+      <el-table-column :label="t('見積計算書 NO')" width="160">
         <template #default="{ row }">
           <el-input v-model="row.estimateCalcNo" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="親案件" width="120">
+      <el-table-column :label="t('親案件')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.projectNoParent" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="子案件" width="120">
+      <el-table-column :label="t('子案件')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.projectNoChild" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="部材案件" width="120">
+      <el-table-column :label="t('部材案件')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.projectNoMaterial" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="顧客品名 1" min-width="160">
+      <el-table-column :label="t('顧客品名 1')" min-width="160">
         <template #default="{ row }">
           <el-input v-model="row.customerProductName1" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="状態" width="90">
+      <el-table-column :label="t('状態')" width="90">
         <template #default="{ row }">
           <el-tag size="small" :type="statusTagType(row.status)">{{ statusLabel(row.status) }}</el-tag>
         </template>
@@ -148,13 +148,13 @@
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column label="連携" width="60" align="center">
+      <el-table-column :label="t('連携')" width="60" align="center">
         <template #default="{ row }">
           <el-icon v-if="row.masterLinked" color="#409eff"><Link /></el-icon>
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="80" align="center" fixed="right">
+      <el-table-column :label="t('操作')" width="80" align="center" fixed="right">
         <template #default="{ row }">
           <el-button
             link
@@ -185,6 +185,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus, Check, Link, Delete, Top, Bottom, RefreshLeft, Document } from '@element-plus/icons-vue'

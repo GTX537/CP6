@@ -39,14 +39,14 @@
 
       <!-- 9 個の動的 Tab — FLG=ON で表示 -->
       <el-tab-pane v-if="store.bp.customerFlg" :label="t('sales.term.customer')" name="customer"><CustomerTab :store="store" /></el-tab-pane>
-      <el-tab-pane v-if="store.bp.accountsReceivableFlg" label="売掛先" name="ar"><ArTab :store="store" /></el-tab-pane>
-      <el-tab-pane v-if="store.bp.billingFlg" label="請求先" name="billing"><BillingTab :store="store" /></el-tab-pane>
-      <el-tab-pane v-if="store.bp.receiptFlg" label="入金先" name="receipt"><ReceiptTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.accountsReceivableFlg" :label="t('売掛先')" name="ar"><ArTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.billingFlg" :label="t('請求先')" name="billing"><BillingTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.receiptFlg" :label="t('入金先')" name="receipt"><ReceiptTab :store="store" /></el-tab-pane>
       <el-tab-pane v-if="store.bp.deliveryFlg" :label="t('sales.term.deliveryTo')" name="delivery"><DeliveryTab :store="store" /></el-tab-pane>
       <el-tab-pane v-if="store.bp.supplierFlg" :label="t('sales.term.supplier')" name="supplier"><SupplierTab :store="store" /></el-tab-pane>
-      <el-tab-pane v-if="store.bp.accountsPayableFlg" label="買掛先" name="ap"><ApTab :store="store" /></el-tab-pane>
-      <el-tab-pane v-if="store.bp.paymentScheduleFlg" label="支払予定管理先" name="paySch"><PaySchTab :store="store" /></el-tab-pane>
-      <el-tab-pane v-if="store.bp.paymentFlg" label="支払先" name="payment"><PaymentTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.accountsPayableFlg" :label="t('買掛先')" name="ap"><ApTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.paymentScheduleFlg" :label="t('支払予定管理先')" name="paySch"><PaySchTab :store="store" /></el-tab-pane>
+      <el-tab-pane v-if="store.bp.paymentFlg" :label="t('支払先')" name="payment"><PaymentTab :store="store" /></el-tab-pane>
     </el-tabs>
 
     <!-- Footer -->

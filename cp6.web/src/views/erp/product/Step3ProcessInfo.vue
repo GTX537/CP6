@@ -27,12 +27,12 @@
       max-height="600"
     >
       <el-table-column prop="sortOrder" label="No" width="60" align="center" />
-      <el-table-column label="作業CD" width="100">
+      <el-table-column :label="t('作業CD')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.taskCd" :disabled="!store.canEdit" size="small" maxlength="4" />
         </template>
       </el-table-column>
-      <el-table-column label="工程CD" width="100">
+      <el-table-column :label="t('工程CD')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.processCd" :disabled="!store.canEdit" size="small" maxlength="4" />
         </template>
@@ -42,23 +42,23 @@
           <el-input v-model="row.wgCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="機械/外注" width="160">
+      <el-table-column :label="t('機械/外注')" width="160">
         <template #default="{ row }">
           <el-input v-model="row.machineOrVendor" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="機械固定" width="80" align="center">
+      <el-table-column :label="t('機械固定')" width="80" align="center">
         <template #default="{ row }">
           <el-checkbox v-model="row.machineFixedFlg" :disabled="!store.canEdit" />
         </template>
       </el-table-column>
-      <el-table-column label="納入区分" width="100">
+      <el-table-column :label="t('納入区分')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.cpDeliveryDiv" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
       <!-- 工程仕様 1〜10 折叠到一个 popover -->
-      <el-table-column label="仕様 1〜10" width="120" align="center">
+      <el-table-column :label="t('仕様 1〜10')" width="120" align="center">
         <template #default="{ row, $index }">
           <el-popover :width="320" trigger="click" placement="bottom-start">
             <template #reference>
@@ -77,22 +77,22 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="製版1" width="100">
+      <el-table-column :label="t('製版1')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.plateNo1" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="製版2" width="100">
+      <el-table-column :label="t('製版2')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.plateNo2" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="副資材1" width="100">
+      <el-table-column :label="t('副資材1')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.consumable1" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="購入単価" width="100">
+      <el-table-column :label="t('購入単価')" width="100">
         <template #default="{ row }">
           <el-input-number
             v-model="row.purchasePrice"
@@ -104,7 +104,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="固定費" width="100">
+      <el-table-column :label="t('固定費')" width="100">
         <template #default="{ row }">
           <el-input-number
             v-model="row.fixedPrice"
@@ -116,7 +116,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="ロス率%" width="90">
+      <el-table-column :label="t('ロス率%')" width="90">
         <template #default="{ row }">
           <el-input-number
             v-model="row.lossRate"
@@ -128,7 +128,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="台数" width="80">
+      <el-table-column :label="t('台数')" width="80">
         <template #default="{ row }">
           <el-input-number
             v-model="row.machineCount"
@@ -140,7 +140,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="LT(日)" width="80">
+      <el-table-column :label="t('LT(日)')" width="80">
         <template #default="{ row }">
           <el-input-number
             v-model="row.leadTime"
@@ -152,13 +152,13 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="保管先" width="100">
+      <el-table-column :label="t('保管先')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.storageDest" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
       <!-- 製造順優先 1〜8 折叠 -->
-      <el-table-column label="製造順 1〜8" width="120" align="center">
+      <el-table-column :label="t('製造順 1〜8')" width="120" align="center">
         <template #default="{ row, $index }">
           <el-popover :width="320" trigger="click" placement="bottom-start">
             <template #reference>
@@ -177,7 +177,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="連産品" width="100" align="center" fixed="right">
+      <el-table-column :label="t('連産品')" width="100" align="center" fixed="right">
         <template #default="{ row }">
           <el-button
             size="small"
@@ -188,7 +188,7 @@
           >開く</el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="100" align="center" fixed="right">
+      <el-table-column :label="t('操作')" width="100" align="center" fixed="right">
         <template #default="{ row, $index }">
           <el-button
             link
@@ -226,12 +226,12 @@
       </div>
       <el-table :data="currentCoList" border stripe size="small" style="width: 100%">
         <el-table-column prop="rowNo" label="No" width="60" align="center" />
-        <el-table-column label="連産品名" min-width="180">
+        <el-table-column :label="t('連産品名')" min-width="180">
           <template #default="{ row }">
             <el-input v-model="row.coProductName" :disabled="!store.canEdit" size="small" />
           </template>
         </el-table-column>
-        <el-table-column label="比率" width="120">
+        <el-table-column :label="t('比率')" width="120">
           <template #default="{ row }">
             <el-input-number
               v-model="row.qtyRatio"
@@ -245,12 +245,12 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="次工程CD" width="120">
+        <el-table-column :label="t('次工程CD')" width="120">
           <template #default="{ row }">
             <el-input v-model="row.nextProcessCd" :disabled="!store.canEdit" size="small" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="80" align="center">
+        <el-table-column :label="t('操作')" width="80" align="center">
           <template #default="{ row }">
             <el-button
               link
@@ -270,6 +270,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'

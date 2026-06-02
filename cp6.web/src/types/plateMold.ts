@@ -170,6 +170,8 @@ export interface PlateMoldQueryDto {
   page?: number
   pageSize?: number
   maxRows?: number
+  sortField?: string
+  sortOrder?: string
 }
 
 export interface PlateMoldListItemDto {

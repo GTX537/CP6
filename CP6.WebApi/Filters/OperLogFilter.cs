@@ -9,26 +9,34 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace CP6.WebApi.Filters;
 
 /// <summary>
-/// 操作日志 ActionFilter（支持 RabbitMQ 异步写入）
+/// 操作日志 ActionFilter（操作ログ = Kafka 専任）
 ///
-/// 改造思路：
-/// - RabbitMQ 可用 → 发消息到队列（非阻塞，Consumer 异步写 DB）
-/// - RabbitMQ 不可用 → 降级为直接写 DB（保证日志不丢失）
+/// 設計：操作ログは高スループット・append-only・保持/再生が要る監査ストリーム →
+///       Kafka が機能適性で最適。生産者は IOperLogTransport（Kafka 実装）へ投げる。
+/// - Kafka 就绪 → 投递到 topic（PrimaryTransport な議論は不要、唯一の落库担当）。
+/// - Kafka 不可用 → 降级直接写 DB（保证日志不丢）。
+/// - OperLog:IncludeGet=true → 连 GET 查询也记录（"任何操作都记录"）。
 ///
-/// 面试要点：
-/// 1. 消息队列实现"异步解耦"：日志写入不影响接口响应时间
-/// 2. 降级策略：MQ 挂了不影响业务，fallback 到同步模式
-/// 3. MOM 系统中同样模式：设备数据上报 → MQ → 异步入库
+/// （RabbitMQ は業務イベント通知/アラート専任へ転用。本フィルタは関与しない。）
+///
+/// 始终跳过：/api/auth（防密码泄露）、/api/operlog（防自我递归）。
 /// </summary>
 public class OperLogFilter : IAsyncActionFilter
 {
     private readonly CP6Context _context;
-    private readonly RabbitMQService _mq;
+    private readonly IOperLogTransport _transport;
+    private readonly bool _includeGet;
 
-    public OperLogFilter(CP6Context context, RabbitMQService mq)
+    public OperLogFilter(
+        CP6Context context,
+        IOperLogTransport transport,
+        IConfiguration config)
     {
         _context = context;
-        _mq = mq;
+        _transport = transport;
+
+        var section = config.GetSection("OperLog");
+        _includeGet = section.GetValue<bool?>("IncludeGet") ?? false;
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -68,9 +76,14 @@ public class OperLogFilter : IAsyncActionFilter
 
         var method = context.HttpContext.Request.Method;
         var path = context.HttpContext.Request.Path.Value ?? "";
-        if (method == "GET"
-            || path.Contains("/api/operlog", StringComparison.OrdinalIgnoreCase)
+
+        // 始终跳过：登录（防密码泄露）与日志接口自身（防递归）
+        if (path.Contains("/api/operlog", StringComparison.OrdinalIgnoreCase)
             || path.Contains("/api/auth", StringComparison.OrdinalIgnoreCase))
+            return;
+
+        // GET 默认不记录；OperLog:IncludeGet=true 时才记录（"任何操作都记录"）
+        if (method == "GET" && !_includeGet)
             return;
 
         var userName = context.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
@@ -98,22 +111,24 @@ public class OperLogFilter : IAsyncActionFilter
             CreateDate = DateTime.Now
         };
 
-        if (_mq.IsConnected)
+        // 投递到 Kafka（操作ログ専任通道）
+        var published = false;
+        if (_transport.IsConnected)
         {
-            // MQ 可用 → 异步发消息（不阻塞当前请求）
             try
             {
-                await _mq.PublishAsync(RabbitMQService.OperLogQueue, log);
+                await _transport.PublishAsync(log);
+                published = true;
             }
             catch (Exception ex)
             {
-                // 可接入本地日志(如NLog/Serilog)或控制台，防止序列化/网络异常导致业务中断
-                Console.WriteLine($"[OperLog] MQ发布日志失败: {ex.Message}");
+                Console.WriteLine($"[OperLog] 通道 {_transport.Name} 投递失败: {ex.Message}");
             }
         }
-        else
+
+        // Kafka 不可用 → 降级直接写 DB（保证日志不丢失）
+        if (!published)
         {
-            // MQ 不可用 → 降级为直接写 DB
             try
             {
                 _context.Sys_OperLogs.Add(log);
@@ -121,7 +136,7 @@ public class OperLogFilter : IAsyncActionFilter
             }
             catch (Exception ex)
             {
-                // 降级写DB失败时，作为旁路逻辑，绝不能影响主业务接口的正常响应
+                // 降级写 DB 失败也只作旁路记录，绝不影响主业务接口
                 Console.WriteLine($"[OperLog] 降级写入DB日志失败: {ex.Message}");
             }
         }

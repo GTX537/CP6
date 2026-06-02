@@ -244,6 +244,21 @@ public class BusinessPartnerService : IBusinessPartnerService
     //  PA120 一覧
     // ═══════════════════════════════════════════════════════════
 
+    /// <summary>取引先一覧 排序白名单（前端 el-table prop → BusinessPartner 属性名）</summary>
+    private static readonly IReadOnlyDictionary<string, string> BpSortMap =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["status"] = "Status",
+            ["bpCd"] = "BpCd",
+            ["bpName"] = "BpName",
+            ["bpAbbrev"] = "BpAbbrev",
+            ["salesStaffCd"] = "SalesStaffCd",
+            ["businessStaffCd"] = "BusinessStaffCd",
+            ["ein"] = "Ein",
+            ["stdCoCd"] = "StdCoCd",
+            ["createDate"] = "CreateDate",
+        };
+
     public async Task<(List<BpListItemDto>, int)> SearchAsync(BpQueryDto q)
     {
         var iq = _db.BusinessPartners.AsNoTracking().Where(x => !x.IsDeleted);
@@ -308,8 +323,9 @@ public class BusinessPartnerService : IBusinessPartnerService
         if (q.MaxRows.HasValue && total > q.MaxRows.Value)
             throw new InvalidOperationException($"E10013: 検索件数が上限 {q.MaxRows.Value} 件を超えました（{total} 件）");
 
+        iq = QuerySort.Apply(iq, q.SortField, q.SortOrder, BpSortMap, s => s.OrderBy(x => x.BpCd));
+
         var rows = await iq
-            .OrderBy(x => x.BpCd)
             .Skip((q.Page - 1) * q.PageSize)
             .Take(q.PageSize)
             .Select(x => new BpListItemDto

@@ -8,69 +8,69 @@
       size="small"
       inline
     >
-      <el-form-item label="受注区分">
-        <el-select v-model="store.order.orderType" :disabled="!store.canEdit" placeholder="区分" style="width: 160px">
-          <el-option label="加工製品(10)" value="10" />
-          <el-option label="シート受注(20)" value="20" />
-          <el-option label="商品(30)" value="30" />
-          <el-option label="原紙(40)" value="40" />
-          <el-option label="購買品(50)" value="50" />
-          <el-option label="経費品(60)" value="60" />
-          <el-option label="版型(70)" value="70" />
-          <el-option label="輪切り(80)" value="80" />
-          <el-option label="有償支給(90)" value="90" />
+      <el-form-item :label="t('受注区分')">
+        <el-select v-model="store.order.orderType" :disabled="!store.canEdit" :placeholder="t('区分')" style="width: 160px">
+          <el-option :label="t('加工製品(10)')" value="10" />
+          <el-option :label="t('シート受注(20)')" value="20" />
+          <el-option :label="t('商品(30)')" value="30" />
+          <el-option :label="t('原紙(40)')" value="40" />
+          <el-option :label="t('購買品(50)')" value="50" />
+          <el-option :label="t('経費品(60)')" value="60" />
+          <el-option :label="t('版型(70)')" value="70" />
+          <el-option :label="t('輪切り(80)')" value="80" />
+          <el-option :label="t('有償支給(90)')" value="90" />
         </el-select>
       </el-form-item>
-      <el-form-item label="得意先 CD">
+      <el-form-item :label="t('得意先 CD')">
         <el-input v-model="store.order.customerCd" :disabled="!store.canEdit" style="width: 200px">
           <template #append>
             <el-button :icon="Search" :disabled="!store.canEdit" @click="customerPickerVisible = true" />
           </template>
         </el-input>
       </el-form-item>
-      <el-form-item label="受注部門">
+      <el-form-item :label="t('受注部門')">
         <el-input v-model="store.order.orderDepartment" :disabled="!store.canEdit" style="width: 140px" />
       </el-form-item>
-      <el-form-item label="受注日">
+      <el-form-item :label="t('受注日')">
         <el-date-picker v-model="store.order.orderDate" type="date" :disabled="!store.canEdit" value-format="YYYY-MM-DD" style="width: 150px" />
       </el-form-item>
-      <el-form-item label="客先納期">
+      <el-form-item :label="t('客先納期')">
         <el-date-picker v-model="store.order.customerDeliveryDate" type="date" :disabled="!store.canEdit" value-format="YYYY-MM-DD" style="width: 150px" />
       </el-form-item>
-      <el-form-item label="数量">
+      <el-form-item :label="t('数量')">
         <el-input-number v-model="store.order.quantity" :disabled="!store.canEdit" :precision="2" style="width: 120px" />
       </el-form-item>
-      <el-form-item label="注文書 NO">
+      <el-form-item :label="t('注文書 NO')">
         <el-input v-model="store.order.orderSheetNo" :disabled="!store.canEdit" style="width: 160px" />
       </el-form-item>
-      <el-form-item label="先方担当">
+      <el-form-item :label="t('先方担当')">
         <el-input v-model="store.order.customerContact" :disabled="!store.canEdit" style="width: 140px" />
       </el-form-item>
-      <el-form-item label="宛名">
+      <el-form-item :label="t('宛名')">
         <el-input v-model="store.order.addressee" :disabled="!store.canEdit" style="width: 180px" />
       </el-form-item>
-      <el-form-item label="運送会社">
+      <el-form-item :label="t('運送会社')">
         <el-input v-model="store.order.carrier" :disabled="!store.canEdit" style="width: 140px" />
       </el-form-item>
-      <el-form-item label="出荷日時">
+      <el-form-item :label="t('出荷日時')">
         <el-input v-model="store.order.shipDateTime" placeholder="YYYY/MM/DD HH:MM" :disabled="!store.canEdit" style="width: 180px" />
       </el-form-item>
-      <el-form-item label="出荷条件">
+      <el-form-item :label="t('出荷条件')">
         <el-input v-model="store.order.shipCondition" :disabled="!store.canEdit" style="width: 140px" />
       </el-form-item>
-      <el-form-item label="売価区分">
+      <el-form-item :label="t('売価区分')">
         <el-select v-model="store.order.salesPriceDiv" :disabled="!store.canEdit" style="width: 140px">
-          <el-option label="個別単価" value="1" />
-          <el-option label="セット単価" value="2" />
+          <el-option :label="t('個別単価')" value="1" />
+          <el-option :label="t('セット単価')" value="2" />
         </el-select>
       </el-form-item>
     </el-form>
 
-    <el-divider content-position="left">受注明細（部材一覧）</el-divider>
+    <el-divider content-position="left">{{ t('受注明細（部材一覧）') }}</el-divider>
 
     <!-- ============ ツールバー ============ -->
     <div style="margin-bottom: 8px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-      <el-input v-model="memberProductCd" placeholder="製品 CD で部材引入" clearable style="width: 220px" size="small" :disabled="!store.canEdit">
+      <el-input v-model="memberProductCd" :placeholder="t('製品 CD で部材引入')" clearable style="width: 220px" size="small" :disabled="!store.canEdit">
         <template #append>
           <el-button :icon="Search" :disabled="!store.canEdit" @click="onLookupMembers">引入</el-button>
         </template>
@@ -94,8 +94,8 @@
       @current-change="onCurrentRowChange"
     >
       <el-table-column prop="webOrderDetailNo" label="No" width="60" align="center" />
-      <el-table-column prop="haibaiNo1" label="手配NO1" width="160" />
-      <el-table-column prop="productCd" label="製品 CD" width="140">
+      <el-table-column prop="haibaiNo1" :label="t('手配NO1')" width="160" />
+      <el-table-column prop="productCd" :label="t('製品 CD')" width="140">
         <template #default="{ row }">
           <el-input v-model="row.productCd" :disabled="!store.canEdit" size="small">
             <template #append>
@@ -104,57 +104,57 @@
           </el-input>
         </template>
       </el-table-column>
-      <el-table-column label="製品名" min-width="180">
+      <el-table-column :label="t('製品名')" min-width="180">
         <template #default="{ row }">
           <el-input v-model="row.cpItemName1" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="単位" width="80">
+      <el-table-column :label="t('単位')" width="80">
         <template #default="{ row }">
           <el-input v-model="row.qtyUnit" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="数量" width="100">
+      <el-table-column :label="t('数量')" width="100">
         <template #default="{ row }">
           <el-input-number v-model="row.quantity" :disabled="!store.canEdit" :precision="2" :controls="false" size="small" style="width: 95px" @change="onQtyOrPriceChange(row)" />
         </template>
       </el-table-column>
-      <el-table-column label="特値" width="60" align="center">
+      <el-table-column :label="t('特値')" width="60" align="center">
         <template #default="{ row }">
           <el-checkbox v-model="row.specialPriceFlg" true-value="1" false-value="0" :disabled="!store.canEdit" />
         </template>
       </el-table-column>
-      <el-table-column label="個別単価" width="120">
+      <el-table-column :label="t('個別単価')" width="120">
         <template #default="{ row }">
           <el-input-number v-model="row.individualUnitPrice" :disabled="!store.canEdit || row.specialPriceFlg !== '1'" :precision="4" :controls="false" size="small" style="width: 115px" @change="onQtyOrPriceChange(row)" />
         </template>
       </el-table-column>
-      <el-table-column label="セット単価" width="120">
+      <el-table-column :label="t('セット単価')" width="120">
         <template #default="{ row }">
           <el-input-number v-model="row.setUnitPrice" :disabled="!store.canEdit || row.specialPriceFlg !== '1'" :precision="4" :controls="false" size="small" style="width: 115px" @change="onQtyOrPriceChange(row)" />
         </template>
       </el-table-column>
-      <el-table-column label="金額" width="120">
+      <el-table-column :label="t('金額')" width="120">
         <template #default="{ row }">
           <span>{{ row.amount?.toFixed(2) ?? '-' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="手配区分" width="100">
+      <el-table-column :label="t('手配区分')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.haibaiKbn" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="納品先" width="120">
+      <el-table-column :label="t('納品先')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.deliveryCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="預り" width="60" align="center">
+      <el-table-column :label="t('預り')" width="60" align="center">
         <template #default="{ row }">
           <el-checkbox v-model="row.consignedSalesFlg" true-value="1" false-value="0" :disabled="!store.canEdit" />
         </template>
       </el-table-column>
-      <el-table-column label="ステータス" width="100">
+      <el-table-column :label="t('ステータス')" width="100">
         <template #default="{ row }">
           <el-tag size="small" :type="statusTagType(row.status)">{{ statusLabel(row.status) }}</el-tag>
         </template>
@@ -179,6 +179,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus, Delete, Top, Bottom, CopyDocument, RefreshLeft } from '@element-plus/icons-vue'

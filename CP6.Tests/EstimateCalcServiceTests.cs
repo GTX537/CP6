@@ -66,9 +66,10 @@ public class EstimateCalcServiceTests
         var no1 = await svc.CreateAsync(NewDto(), "admin");
         var no2 = await svc.CreateAsync(NewDto(), "admin");
 
-        // Assert - 采番是 00000001-01 / 00000002-01
-        Assert.Equal("00000001-01", no1);
-        Assert.Equal("00000002-01", no2);
+        // Assert - 采番是 EMC{yyyyMM}0001-01 / EMC{yyyyMM}0002-01（功能码3+年月+自增4+枝番）
+        var ym = DateTime.Today.ToString("yyyyMM");
+        Assert.Equal($"EMC{ym}0001-01", no1);
+        Assert.Equal($"EMC{ym}0002-01", no2);
         Assert.Equal(2, await db.EstimateCalcs.CountAsync());
     }
 
@@ -195,7 +196,7 @@ public class EstimateCalcServiceTests
         var newNo = await svc.CopyAsync(sourceNo, "admin");
 
         Assert.NotEqual(sourceNo, newNo);
-        Assert.Equal("00000002-01", newNo);
+        Assert.Equal($"EMC{DateTime.Today:yyyyMM}0002-01", newNo);
 
         var copied = await svc.GetByNoAsync(newNo);
         Assert.NotNull(copied);
@@ -355,5 +356,20 @@ public class EstimateCalcServiceTests
         Assert.NotNull(fresh);
         // 必须原样回读，不能被截断成 "A010"
         Assert.Equal("A0101", fresh!.ProductCategorySml);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ProCd_ShouldRoundTripIntact()
+    {
+        // 回归：原 EstimateCalcDto 缺 ProCd 字段，UI 必填(MSG-111)的商品コード被后端静默丢弃
+        var svc = CreateService(out _);
+        var dto = NewDto();
+        dto.ProCd = "HND-BOX-A001";
+
+        var no = await svc.CreateAsync(dto, "admin");
+
+        var fresh = await svc.GetByNoAsync(no);
+        Assert.NotNull(fresh);
+        Assert.Equal("HND-BOX-A001", fresh!.ProCd);
     }
 }

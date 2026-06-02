@@ -17,7 +17,7 @@ public class Quotation : BaseBizEntity
     // ───── 业务主键 ─────
     /// <summary>御見積書NO（10 字符，自动采番）</summary>
     [Required]
-    [MaxLength(11)]
+    [MaxLength(20)]
     public string QtnNo { get; set; } = string.Empty;
 
     /// <summary>主番（NUMERIC 8）——用于采番排序</summary>
@@ -27,7 +27,7 @@ public class Quotation : BaseBizEntity
     public int QtnNoBranch { get; set; }
 
     /// <summary>コピー来源 NO</summary>
-    [MaxLength(11)]
+    [MaxLength(20)]
     public string? RefQtnNo { get; set; }
 
     // ───── ヘッダー区 ─────

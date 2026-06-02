@@ -19,11 +19,11 @@ public class FscChecklist : BaseBizEntity
     public string FscManagementNo { get; set; } = string.Empty;
 
     /// <summary>御見積書 NO</summary>
-    [Required, MaxLength(11)]
+    [Required, MaxLength(20)]
     public string QtnNo { get; set; } = string.Empty;
 
     /// <summary>見積計算書 NO</summary>
-    [Required, MaxLength(11)]
+    [Required, MaxLength(20)]
     public string QtnCalcNo { get; set; } = string.Empty;
 
     /// <summary>得意先 CD</summary>

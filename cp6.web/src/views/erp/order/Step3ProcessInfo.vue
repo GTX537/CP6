@@ -11,7 +11,7 @@
     </div>
 
     <!-- 工程情報 -->
-    <el-divider content-position="left">工程情報</el-divider>
+    <el-divider content-position="left">{{ t('工程情報') }}</el-divider>
     <div style="margin-bottom: 8px">
       <el-button-group>
         <el-button :icon="Plus" size="small" :disabled="!store.canEdit" @click="addProcess">行追加</el-button>
@@ -24,12 +24,12 @@
       style="width: 100%"
       @current-change="onProcCurrent"
     >
-      <el-table-column label="工程CD" width="120">
+      <el-table-column :label="t('工程CD')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.processCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="作業CD" width="120">
+      <el-table-column :label="t('作業CD')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.operationCd" :disabled="!store.canEdit" size="small" />
         </template>
@@ -39,32 +39,32 @@
           <el-input v-model="row.workingGroupCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="号機/外注先" width="120">
+      <el-table-column :label="t('号機/外注先')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.machineOrVendor" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="仕入単価" width="110">
+      <el-table-column :label="t('仕入単価')" width="110">
         <template #default="{ row }">
           <el-input-number v-model="row.purchaseUnitPrice" :disabled="!store.canEdit" :precision="2" :controls="false" size="small" style="width: 100px" />
         </template>
       </el-table-column>
-      <el-table-column label="ロス率" width="90">
+      <el-table-column :label="t('ロス率')" width="90">
         <template #default="{ row }">
           <el-input-number v-model="row.lossRate" :disabled="!store.canEdit" :precision="2" :controls="false" size="small" style="width: 80px" />
         </template>
       </el-table-column>
-      <el-table-column label="台数" width="80">
+      <el-table-column :label="t('台数')" width="80">
         <template #default="{ row }">
           <el-input-number v-model="row.machineCount" :disabled="!store.canEdit" :precision="2" :controls="false" size="small" style="width: 70px" />
         </template>
       </el-table-column>
-      <el-table-column label="LT(日)" width="80">
+      <el-table-column :label="t('LT(日)')" width="80">
         <template #default="{ row }">
           <el-input-number v-model="row.leadTimeDays" :disabled="!store.canEdit" :precision="0" :controls="false" size="small" style="width: 70px" />
         </template>
       </el-table-column>
-      <el-table-column label="加工予定日" width="120">
+      <el-table-column :label="t('加工予定日')" width="120">
         <template #default="{ row }">
           <span>{{ row.scheduledDate ?? '-' }}</span>
         </template>
@@ -72,19 +72,19 @@
     </el-table>
 
     <!-- 工程備考 -->
-    <el-divider content-position="left">工程備考</el-divider>
+    <el-divider content-position="left">{{ t('工程備考') }}</el-divider>
     <el-table :data="detail.processNotes" border stripe size="small" style="width: 100%">
-      <el-table-column label="作業CD" width="120">
+      <el-table-column :label="t('作業CD')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.operationCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="工程備考1" min-width="200">
+      <el-table-column :label="t('工程備考1')" min-width="200">
         <template #default="{ row }">
           <el-input v-model="row.note1" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="工程備考2" min-width="200">
+      <el-table-column :label="t('工程備考2')" min-width="200">
         <template #default="{ row }">
           <el-input v-model="row.note2" :disabled="!store.canEdit" size="small" />
         </template>
@@ -92,7 +92,7 @@
     </el-table>
 
     <!-- 材料設定 -->
-    <el-divider content-position="left">材料設定</el-divider>
+    <el-divider content-position="left">{{ t('材料設定') }}</el-divider>
     <div style="margin-bottom: 8px">
       <el-button-group>
         <el-button :icon="Plus" size="small" :disabled="!store.canEdit" @click="addMaterial">行追加</el-button>
@@ -100,40 +100,40 @@
       </el-button-group>
     </div>
     <el-table :data="detail.materials" border stripe size="small" highlight-current-row style="width: 100%" @current-change="onMatCurrent">
-      <el-table-column label="工程CD" width="120">
+      <el-table-column :label="t('工程CD')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.processCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="材料CD" width="120">
+      <el-table-column :label="t('材料CD')" width="120">
         <template #default="{ row }">
           <el-input v-model="row.materialCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="材料区分" width="120">
+      <el-table-column :label="t('材料区分')" width="120">
         <template #default="{ row }">
           <el-select v-model="row.materialTypeDiv" :disabled="!store.canEdit" size="small" style="width: 110px">
-            <el-option label="仕掛品(1)" value="1" />
-            <el-option label="連産品(2)" value="2" />
-            <el-option label="原料(3)" value="3" />
-            <el-option label="印刷原紙(4)" value="4" />
+            <el-option :label="t('仕掛品(1)')" value="1" />
+            <el-option :label="t('連産品(2)')" value="2" />
+            <el-option :label="t('原料(3)')" value="3" />
+            <el-option :label="t('印刷原紙(4)')" value="4" />
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="受給区分" width="120">
+      <el-table-column :label="t('受給区分')" width="120">
         <template #default="{ row }">
           <el-select v-model="row.supplyDiv" :disabled="!store.canEdit" size="small" style="width: 110px">
-            <el-option label="無償支給(1)" value="1" />
-            <el-option label="有償支給(2)" value="2" />
+            <el-option :label="t('無償支給(1)')" value="1" />
+            <el-option :label="t('有償支給(2)')" value="2" />
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="受給単価" width="120">
+      <el-table-column :label="t('受給単価')" width="120">
         <template #default="{ row }">
           <el-input-number v-model="row.supplyUnitPrice" :disabled="!store.canEdit" :precision="2" :controls="false" size="small" style="width: 110px" />
         </template>
       </el-table-column>
-      <el-table-column label="並び順" width="80">
+      <el-table-column :label="t('並び順')" width="80">
         <template #default="{ row }">
           <el-input-number v-model="row.sortOrder" :disabled="!store.canEdit" :precision="0" :controls="false" size="small" style="width: 70px" />
         </template>
@@ -141,7 +141,7 @@
     </el-table>
 
     <!-- 明細切替 -->
-    <el-divider content-position="left">明細切替</el-divider>
+    <el-divider content-position="left">{{ t('明細切替') }}</el-divider>
     <el-radio-group v-model="store.currentDetailIndex" size="small">
       <el-radio-button v-for="(d, i) in store.order.details" :key="d.webOrderDetailNo" :value="i">
         No.{{ d.webOrderDetailNo }} {{ d.productCd }}
@@ -152,6 +152,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { computed, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus, Delete, Download } from '@element-plus/icons-vue'

@@ -18,7 +18,7 @@ public class OrderProcessNote : BaseBizEntity
 
     public int WebOrderDetailNo { get; set; }
 
-    [Required, MaxLength(15)]
+    [Required, MaxLength(20)]
     public string ProductCd { get; set; } = string.Empty;
 
     [Required, MaxLength(15)]

@@ -2,7 +2,7 @@ namespace CP6.Core.Services.Wms;
 
 /// <summary>
 /// WMS 業務NO 採番サービス。
-/// 形式：{Prefix}{yyyyMMdd}-{NNNNN}（例：TXN20260522-00001）
+/// 形式（全社統一）：{Prefix}{yyyyMM}{NNNN}（永不重置／例：TXN2026050001）
 /// </summary>
 public interface IWmsSequenceService
 {

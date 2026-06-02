@@ -39,11 +39,43 @@ services:
       RABBITMQ_DEFAULT_USER: "cp6"
       RABBITMQ_DEFAULT_PASS: "cp6pass"
     ports:
+      - "5672:5672"
       - "15672:15672"
     volumes:
       - cp6-mq-data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+    restart: unless-stopped
+
+  cp6-kafka:
+    image: apache/kafka:3.8.0
+    container_name: cp6-kafka
+    environment:
+      # KRaft 模式（无 ZooKeeper），单节点 broker + controller 合一
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@cp6-kafka:9093"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      # 双 listener：PLAINTEXT 给 compose 内部（cp6-api），EXTERNAL 给宿主机 dotnet run
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:29092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://cp6-kafka:9092,EXTERNAL://localhost:29092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    ports:
+      - "29092:29092"
+    volumes:
+      - cp6-kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 15
@@ -66,6 +98,8 @@ services:
         condition: service_healthy
       cp6-mq:
         condition: service_healthy
+      cp6-kafka:
+        condition: service_healthy
     restart: unless-stopped
 
   cp6-web:
@@ -83,3 +117,4 @@ volumes:
   cp6-db-data:
   cp6-redis-data:
   cp6-mq-data:
+  cp6-kafka-data:

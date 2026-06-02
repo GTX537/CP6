@@ -2,16 +2,16 @@
   <div class="machine-list">
     <el-card shadow="never" class="search-card">
       <el-form :model="query" inline size="small">
-        <el-form-item label="設備CD">
+        <el-form-item :label="t('設備CD')">
           <el-input v-model="query.machineCd" style="width: 150px;" />
         </el-form-item>
-        <el-form-item label="工程CD">
+        <el-form-item :label="t('工程CD')">
           <el-input v-model="query.processCd" style="width: 130px;" />
         </el-form-item>
         <el-form-item label="WG">
           <el-input v-model="query.wgCd" style="width: 130px;" />
         </el-form-item>
-        <el-form-item label="状態">
+        <el-form-item :label="t('状態')">
           <el-checkbox-group v-model="query.statuses">
             <el-checkbox v-for="o in MACHINE_STATUS_OPTIONS" :key="o.value" :value="o.value">{{ o.label }}</el-checkbox>
           </el-checkbox-group>
@@ -46,36 +46,36 @@
     <!-- 一覧表 -->
     <el-card shadow="never" style="margin-top: 12px;">
       <el-table :data="rows" border stripe size="small">
-        <el-table-column prop="machineCd" label="設備CD" width="120" />
-        <el-table-column prop="machineName" label="設備名" min-width="180" />
-        <el-table-column prop="machineType" label="種別" width="120" />
-        <el-table-column prop="processCd" label="工程CD" width="100" />
+        <el-table-column prop="machineCd" :label="t('設備CD')" width="120" />
+        <el-table-column prop="machineName" :label="t('設備名')" min-width="180" />
+        <el-table-column prop="machineType" :label="t('種別')" width="120" />
+        <el-table-column prop="processCd" :label="t('工程CD')" width="100" />
         <el-table-column prop="wgCd" label="WG" width="100" />
-        <el-table-column label="状態" width="100" align="center">
+        <el-table-column :label="t('状態')" width="100" align="center">
           <template #default="{ row }">
             <el-tag :color="getStatusColor(row.status)" effect="dark" size="small">{{ getStatusLabel(row.status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="capacityPerHour" label="能力/h" width="100" align="right" />
-        <el-table-column prop="plannedRunMinutesPerDay" label="計画稼働分/日" width="120" align="right" />
-        <el-table-column label="本日OEE" width="100" align="center">
+        <el-table-column prop="capacityPerHour" :label="t('能力/h')" width="100" align="right" />
+        <el-table-column prop="plannedRunMinutesPerDay" :label="t('計画稼働分/日')" width="120" align="right" />
+        <el-table-column :label="t('本日OEE')" width="100" align="center">
           <template #default="{ row }">
             <span v-if="row.todayOee != null">{{ row.todayOee }}%</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="現在指図" width="160">
+        <el-table-column :label="t('現在指図')" width="160">
           <template #default="{ row }">{{ row.currentWorkOrderNo || '-' }}</template>
         </el-table-column>
-        <el-table-column label="次回メンテ" width="120">
+        <el-table-column :label="t('次回メンテ')" width="120">
           <template #default="{ row }">{{ formatDate(row.nextMaintenanceDate) }}</template>
         </el-table-column>
-        <el-table-column label="有効" width="70" align="center">
+        <el-table-column :label="t('有効')" width="70" align="center">
           <template #default="{ row }">
             <el-icon v-if="row.activeFlg" color="#67C23A"><Check /></el-icon>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" align="center" fixed="right">
+        <el-table-column :label="t('操作')" width="220" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="openEdit(row)">編集</el-button>
             <el-button link type="warning" size="small" @click="openDowntime(row)">停止登録</el-button>
@@ -90,22 +90,22 @@
       <el-form :model="form" label-width="120px" size="small">
         <el-row :gutter="12">
           <el-col :span="12">
-            <el-form-item label="設備CD" required>
+            <el-form-item :label="t('設備CD')" required>
               <el-input v-model="form.machineCd" :disabled="isEdit" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="設備名" required>
+            <el-form-item :label="t('設備名')" required>
               <el-input v-model="form.machineName" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="種別">
+            <el-form-item :label="t('種別')">
               <el-input v-model="form.machineType" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="工程CD">
+            <el-form-item :label="t('工程CD')">
               <el-input v-model="form.processCd" />
             </el-form-item>
           </el-col>
@@ -115,64 +115,64 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="拠点CD">
+            <el-form-item :label="t('拠点CD')">
               <el-input v-model="form.baseCd" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="計画稼働(分/日)">
+            <el-form-item :label="t('計画稼働(分/日)')">
               <el-input-number v-model="form.plannedRunMinutesPerDay" :min="0" :step="60" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="能力(個/時間)">
+            <el-form-item :label="t('能力(個/時間)')">
               <el-input-number v-model="form.capacityPerHour" :min="0" :precision="2" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="標準サイクル(秒)">
+            <el-form-item :label="t('標準サイクル(秒)')">
               <el-input-number v-model="form.standardCycleSec" :min="0" :precision="4" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="導入日">
+            <el-form-item :label="t('導入日')">
               <el-date-picker v-model="form.installDate" type="date" value-format="YYYY-MM-DD" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="最終メンテ日">
+            <el-form-item :label="t('最終メンテ日')">
               <el-date-picker v-model="form.lastMaintenanceDate" type="date" value-format="YYYY-MM-DD" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="次回メンテ予定">
+            <el-form-item :label="t('次回メンテ予定')">
               <el-date-picker v-model="form.nextMaintenanceDate" type="date" value-format="YYYY-MM-DD" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="メーカ">
+            <el-form-item :label="t('メーカ')">
               <el-input v-model="form.manufacturer" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="型番">
+            <el-form-item :label="t('型番')">
               <el-input v-model="form.model" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="状態">
+            <el-form-item :label="t('状態')">
               <el-select v-model="form.status" style="width: 100%;">
                 <el-option v-for="o in MACHINE_STATUS_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="有効FLG">
+            <el-form-item :label="t('有効FLG')">
               <el-switch v-model="form.activeFlg" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="備考">
+            <el-form-item :label="t('備考')">
               <el-input v-model="form.remarks" type="textarea" :rows="2" />
             </el-form-item>
           </el-col>
@@ -185,29 +185,29 @@
     </el-dialog>
 
     <!-- 停止登録 ダイアログ -->
-    <el-dialog v-model="dtDialogVisible" title="設備停止登録" width="600px">
+    <el-dialog v-model="dtDialogVisible" :title="t('設備停止登録')" width="600px">
       <el-form :model="dtForm" label-width="120px" size="small">
-        <el-form-item label="設備CD">
+        <el-form-item :label="t('設備CD')">
           <el-tag>{{ dtForm.machineCd }}</el-tag>
         </el-form-item>
-        <el-form-item label="停止区分" required>
+        <el-form-item :label="t('停止区分')" required>
           <el-select v-model="dtForm.downtimeType" style="width: 100%;">
             <el-option v-for="o in DOWNTIME_TYPE_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="停止開始日時" required>
+        <el-form-item :label="t('停止開始日時')" required>
           <el-date-picker v-model="dtForm.startTime" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%;" />
         </el-form-item>
-        <el-form-item label="停止終了日時">
-          <el-date-picker v-model="dtForm.endTime" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%;" placeholder="空＝継続中" />
+        <el-form-item :label="t('停止終了日時')">
+          <el-date-picker v-model="dtForm.endTime" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%;" :placeholder="t('空＝継続中')" />
         </el-form-item>
-        <el-form-item label="関連指図NO">
+        <el-form-item :label="t('関連指図NO')">
           <el-input v-model="dtForm.workOrderNo" />
         </el-form-item>
-        <el-form-item label="担当者CD">
+        <el-form-item :label="t('担当者CD')">
           <el-input v-model="dtForm.operatorCd" />
         </el-form-item>
-        <el-form-item label="停止内容">
+        <el-form-item :label="t('停止内容')">
           <el-input v-model="dtForm.description" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
@@ -220,6 +220,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'

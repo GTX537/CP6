@@ -18,14 +18,14 @@
         </div>
 
         <el-divider content-position="left">{{ t('sales.section.searchCond') }}</el-divider>
-        <el-form-item label="登録日 FROM"><el-date-picker v-model="query.registeredDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" /></el-form-item>
-        <el-form-item label="登録日 TO"><el-date-picker v-model="query.registeredDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" /></el-form-item>
+        <el-form-item :label="t('登録日 FROM')"><el-date-picker v-model="query.registeredDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" /></el-form-item>
+        <el-form-item :label="t('登録日 TO')"><el-date-picker v-model="query.registeredDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" /></el-form-item>
         <el-form-item :label="t('sales.term.bp')"><el-input v-model="query.bpCd" style="width: 160px" /></el-form-item>
         <el-form-item :label="t('sales.term.bpName')"><el-input v-model="query.bpName" style="width: 200px" /></el-form-item>
-        <el-form-item label="法人番号"><el-input v-model="query.ein" style="width: 160px" /></el-form-item>
-        <el-form-item label="標準企業コード"><el-input v-model="query.stdCoCd" style="width: 160px" /></el-form-item>
-        <el-form-item label="郵便番号"><el-input v-model="query.zipCd" style="width: 130px" /></el-form-item>
-        <el-form-item label="住所(LIKE)"><el-input v-model="query.addr" style="width: 200px" /></el-form-item>
+        <el-form-item :label="t('法人番号')"><el-input v-model="query.ein" style="width: 160px" /></el-form-item>
+        <el-form-item :label="t('標準企業コード')"><el-input v-model="query.stdCoCd" style="width: 160px" /></el-form-item>
+        <el-form-item :label="t('郵便番号')"><el-input v-model="query.zipCd" style="width: 130px" /></el-form-item>
+        <el-form-item :label="t('住所(LIKE)')"><el-input v-model="query.addr" style="width: 200px" /></el-form-item>
         <el-form-item label="TEL"><el-input v-model="query.tel" style="width: 160px" /></el-form-item>
         <el-form-item :label="t('sales.term.salesStaff')"><el-input v-model="query.salesStaffCd" style="width: 130px" /></el-form-item>
         <el-form-item :label="t('sales.term.businessStaff')"><el-input v-model="query.businessStaffCd" style="width: 130px" /></el-form-item>
@@ -56,37 +56,37 @@
         <el-button v-if="selectedRow" type="primary" link size="small" style="margin-left: 12px" @click="goView">{{ t('sales.btn.openView') }}</el-button>
         <el-button v-if="selectedRow" type="warning" link size="small" style="margin-left: 4px" @click="goEdit">{{ t('sales.op.edit') }}</el-button>
       </div>
-      <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" highlight-current-row @current-change="onCurrentChange">
+      <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" highlight-current-row @current-change="onCurrentChange" @sort-change="onSortChange">
         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
-        <el-table-column :label="t('sales.term.status')" width="100">
+        <el-table-column prop="status" :label="t('sales.term.status')" width="100" sortable="custom">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="bpCd" :label="t('sales.term.bp')" width="120" />
-        <el-table-column prop="bpName" :label="t('sales.term.bpName')" min-width="200" />
-        <el-table-column prop="bpAbbrev" label="略称" width="120" />
-        <el-table-column prop="salesStaffCd" :label="t('sales.term.salesStaff')" width="120" />
-        <el-table-column prop="businessStaffCd" :label="t('sales.term.businessStaff')" width="120" />
-        <el-table-column prop="ein" label="法人番号" width="140" />
-        <el-table-column prop="stdCoCd" label="標準企業" width="140" />
-        <el-table-column prop="addr1" label="住所1" width="120" />
-        <el-table-column prop="addr2" label="住所2" width="120" />
-        <el-table-column label="得" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.customerFlg" /></template></el-table-column>
-        <el-table-column label="売" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.accountsReceivableFlg" /></template></el-table-column>
-        <el-table-column label="請" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.billingFlg" /></template></el-table-column>
-        <el-table-column label="入" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.receiptFlg" /></template></el-table-column>
-        <el-table-column label="納" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.deliveryFlg" /></template></el-table-column>
-        <el-table-column label="信" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.creditMgmtFlg" /></template></el-table-column>
-        <el-table-column label="発" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.supplierFlg" /></template></el-table-column>
-        <el-table-column label="買" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.accountsPayableFlg" /></template></el-table-column>
-        <el-table-column label="予" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.paymentScheduleFlg" /></template></el-table-column>
-        <el-table-column label="払" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.paymentFlg" /></template></el-table-column>
-        <el-table-column label="メ" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.makerFlg" /></template></el-table-column>
-        <el-table-column prop="createDate" label="登録日" width="110">
+        <el-table-column prop="bpCd" :label="t('sales.term.bp')" width="120" sortable="custom" />
+        <el-table-column prop="bpName" :label="t('sales.term.bpName')" min-width="200" sortable="custom" />
+        <el-table-column prop="bpAbbrev" :label="t('略称')" width="120" sortable="custom" />
+        <el-table-column prop="salesStaffCd" :label="t('sales.term.salesStaff')" width="120" sortable="custom" />
+        <el-table-column prop="businessStaffCd" :label="t('sales.term.businessStaff')" width="120" sortable="custom" />
+        <el-table-column prop="ein" :label="t('法人番号')" width="140" sortable="custom" />
+        <el-table-column prop="stdCoCd" :label="t('標準企業')" width="140" sortable="custom" />
+        <el-table-column prop="addr1" :label="t('住所1')" width="120" />
+        <el-table-column prop="addr2" :label="t('住所2')" width="120" />
+        <el-table-column :label="t('得')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.customerFlg" /></template></el-table-column>
+        <el-table-column :label="t('売')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.accountsReceivableFlg" /></template></el-table-column>
+        <el-table-column :label="t('請')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.billingFlg" /></template></el-table-column>
+        <el-table-column :label="t('入')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.receiptFlg" /></template></el-table-column>
+        <el-table-column :label="t('納')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.deliveryFlg" /></template></el-table-column>
+        <el-table-column :label="t('信')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.creditMgmtFlg" /></template></el-table-column>
+        <el-table-column :label="t('発')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.supplierFlg" /></template></el-table-column>
+        <el-table-column :label="t('買')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.accountsPayableFlg" /></template></el-table-column>
+        <el-table-column :label="t('予')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.paymentScheduleFlg" /></template></el-table-column>
+        <el-table-column :label="t('払')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.paymentFlg" /></template></el-table-column>
+        <el-table-column :label="t('メ')" width="44" align="center"><template #default="{ row }"><FlgIcon :on="row.makerFlg" /></template></el-table-column>
+        <el-table-column prop="createDate" :label="t('登録日')" width="110" sortable="custom">
           <template #default="{ row }">{{ row.createDate?.slice(0, 10) }}</template>
         </el-table-column>
-        <el-table-column prop="creator" label="登録担当" width="110" />
+        <el-table-column prop="creator" :label="t('登録担当')" width="110" />
       </el-table>
 
       <el-pagination
@@ -126,6 +126,7 @@ const query = reactive<BpQueryDto>({
   includePayment: true, includeMaker: true,
   includePreRegistered: true, includeRegistered: true,
   page: 1, pageSize: 100,
+  sortField: '', sortOrder: '',
 })
 const advOpen = ref<string[]>([])
 const rows = ref<BpListItemDto[]>([])
@@ -154,6 +155,13 @@ async function search() {
   } finally {
     loading.value = false
   }
+}
+
+function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+  query.sortField = order ? prop : ''
+  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+  query.page = 1
+  search()
 }
 
 function resetQuery() {

@@ -360,23 +360,9 @@ public class OrderService : IOrderService
 
     public async Task<string> NextSequenceAsync()
     {
-        // WebOrderNo = "WO" + 14桁数値（YYYYMMDD + 6桁連番）
-        var datePart = DateTime.Now.ToString("yyyyMMdd");
-        var prefix = WebOrderPrefix + datePart;
-
-        var maxToday = await _db.Orders
-            .Where(x => x.WebOrderNo.StartsWith(prefix))
-            .OrderByDescending(x => x.WebOrderNo)
-            .Select(x => x.WebOrderNo)
-            .FirstOrDefaultAsync();
-
-        int next = 1;
-        if (!string.IsNullOrEmpty(maxToday) && maxToday.Length >= prefix.Length + 6)
-        {
-            if (int.TryParse(maxToday.Substring(prefix.Length, 6), out var n))
-                next = n + 1;
-        }
-        return $"{prefix}{next:D6}";
+        // WebOrderNo = 機能コード(ORD)+年(4)+月(2)+自増(4)=13桁
+        var (no, _) = await DocNumber.NextAsync(_db, "ORD");
+        return no;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -654,24 +640,43 @@ public class OrderService : IOrderService
     //  PA080 一覧照会
     // ═══════════════════════════════════════════════════════════
 
+    /// <summary>受注一覧 排序白名单（前端 el-table prop → OrderDetail 属性路径）</summary>
+    private static readonly IReadOnlyDictionary<string, string> OrderSortMap =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["customerCd"] = "HaibaiNo2",
+            ["haibaiNo1"] = "HaibaiNo1",
+            ["defectiveHaibaiNo"] = "DefectiveHaibaiNo",
+            ["mcOrderNo"] = "McOrderNo",
+            ["customerDeliveryDate"] = "CustomerDeliveryDate",
+            ["productCd"] = "ProductCd",
+            ["itemCd"] = "ItemCd",
+            ["sheetFlute"] = "SheetFlute",
+            ["quantity"] = "Quantity",
+            ["individualUnitPrice"] = "IndividualUnitPrice",
+            ["setUnitPrice"] = "SetUnitPrice",
+            ["amount"] = "Amount",
+            ["slipNote"] = "SlipNote",
+        };
+
     public async Task<(List<OrderListItemDto>, int)> SearchOrdersAsync(OrderQueryDto query)
     {
         var q = BuildOrderListQuery(query);
         var total = await q.CountAsync();
 
+        var ordered = QuerySort.Apply(q, query.SortField, query.SortOrder, OrderSortMap,
+            s => s.OrderBy(x => x.HaibaiNo2).ThenBy(x => x.HaibaiNo1)
+                  .ThenBy(x => x.WebOrderNo).ThenBy(x => x.WebOrderDetailNo));
+
         if (query.MaxRows.HasValue && total > query.MaxRows.Value)
         {
             // E10013：強制截断
-            var rows = await ProjectListAsync(q.OrderBy(x => x.HaibaiNo2).ThenBy(x => x.HaibaiNo1)
-                .ThenBy(x => x.WebOrderNo).ThenBy(x => x.WebOrderDetailNo)
-                .Take(query.MaxRows.Value));
+            var rows = await ProjectListAsync(ordered.Take(query.MaxRows.Value));
             NumberRows(rows);
             return (rows, total);
         }
 
-        var page = await ProjectListAsync(q
-            .OrderBy(x => x.HaibaiNo2).ThenBy(x => x.HaibaiNo1)
-            .ThenBy(x => x.WebOrderNo).ThenBy(x => x.WebOrderDetailNo)
+        var page = await ProjectListAsync(ordered
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize));
         // 行番号の付与（ページ局所）

@@ -8,42 +8,38 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace CP6.Tests;
 
 /// <summary>
-/// OperLogFilter 单元测试（用 Moq 模拟 RabbitMQ）
+/// OperLogFilter 单元测试（操作ログ = Kafka 専任）
 ///
-/// 面试要点：
-/// 1. Moq 框架的核心 API：
-///    - Mock&lt;T&gt;() 创建模拟对象
-///    - Setup() 配置方法/属性返回值
-///    - Verify() 验证方法是否被调用
-/// 2. 测试 ActionFilter 需要手动构造 ActionExecutingContext（模拟 HTTP 请求）
-/// 3. 降级策略测试：MQ 可用走 MQ，MQ 不可用走 DB
+/// 要点：
+/// 1. OperLogFilter は単一 IOperLogTransport（Kafka 実装）へ投げる。
+/// 2. transport 就绪 → 投递；不可用 → 降级写 DB（保证不丢）。
+/// 3. /api/auth・/api/operlog は常にスキップ。GET は OperLog:IncludeGet=true のみ記録。
 /// </summary>
 public class OperLogFilterTests
 {
-    // 创建空配置（RabbitMQ 未配置 → 构造函数安全退出，IsConnected=false）
-    private static readonly IConfiguration _emptyConfig =
-        new ConfigurationBuilder().AddInMemoryCollection().Build();
-    private static readonly NullLogger<RabbitMQService> _nullLogger = new();
-
-    /// <summary>
-    /// 创建 Mock 的 RabbitMQService（可自定义 IsConnected）
-    /// </summary>
-    private static Mock<RabbitMQService> CreateMockMq(bool isConnected)
+    /// <summary>构造仅含 IncludeGet 开关的配置（默认 false，GET 不记录）。</summary>
+    private static IConfiguration BuildConfig(bool includeGet = false)
     {
-        var mock = new Mock<RabbitMQService>(_emptyConfig, _nullLogger);
-        mock.Setup(m => m.IsConnected).Returns(isConnected);
-        if (isConnected)
-        {
-            mock.Setup(m => m.PublishAsync(
-                It.IsAny<string>(), It.IsAny<Sys_OperLog>()))
-                .Returns(Task.CompletedTask);
-        }
+        return new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["OperLog:IncludeGet"] = includeGet ? "true" : "false"
+            })
+            .Build();
+    }
+
+    /// <summary>创建 Mock 的 IOperLogTransport（可自定义 IsConnected）。</summary>
+    private static Mock<IOperLogTransport> CreateMockTransport(bool isConnected)
+    {
+        var mock = new Mock<IOperLogTransport>();
+        mock.SetupGet(m => m.Name).Returns("Kafka");
+        mock.SetupGet(m => m.IsConnected).Returns(isConnected);
+        mock.Setup(m => m.PublishAsync(It.IsAny<Sys_OperLog>())).Returns(Task.CompletedTask);
         return mock;
     }
 
@@ -94,13 +90,13 @@ public class OperLogFilterTests
     }
 
     [Fact]
-    public async Task POST_WhenMqDisconnected_ShouldWriteToDb()
+    public async Task POST_WhenTransportDisconnected_ShouldWriteToDb()
     {
-        // Arrange：MQ 不可用 → 应该降级到直接写 DB
+        // Arrange：Kafka 不可用 → 应该降级到直接写 DB
         var context = TestHelper.CreateInMemoryContext();
-        var mockMq = CreateMockMq(isConnected: false);
+        var kafka = CreateMockTransport(isConnected: false);
 
-        var filter = new OperLogFilter(context, mockMq.Object);
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig());
         var (ctx, next) = CreateMockContext();
 
         // Act
@@ -114,49 +110,64 @@ public class OperLogFilterTests
         Assert.Equal("testUser", log.UserName);
         Assert.Equal("Dict", log.Controller);
 
-        // Verify：MQ 的 PublishAsync 没有被调用
-        mockMq.Verify(m => m.PublishAsync(
-            It.IsAny<string>(), It.IsAny<Sys_OperLog>()), Times.Never);
+        // Verify：通道没有被投递
+        kafka.Verify(m => m.PublishAsync(It.IsAny<Sys_OperLog>()), Times.Never);
     }
 
     [Fact]
-    public async Task POST_WhenMqConnected_ShouldPublishToMq()
+    public async Task POST_WhenTransportConnected_ShouldPublishAndSkipDb()
     {
-        // Arrange：MQ 可用 → 应该发消息到 MQ，不写 DB
+        // Arrange：Kafka 可用 → 投 Kafka，不写 DB
         var context = TestHelper.CreateInMemoryContext();
-        var mockMq = CreateMockMq(isConnected: true);
+        var kafka = CreateMockTransport(isConnected: true);
 
-        var filter = new OperLogFilter(context, mockMq.Object);
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig());
         var (ctx, next) = CreateMockContext();
 
         // Act
         await filter.OnActionExecutionAsync(ctx, next);
 
-        // Assert：DB 中没有写入日志（走了 MQ）
+        // Assert：DB 中没有写入日志（走了 Kafka）
         Assert.Equal(0, context.Sys_OperLogs.Count());
 
-        // Verify：PublishAsync 被调用了 1 次，队列名正确
-        mockMq.Verify(m => m.PublishAsync(
-            RabbitMQService.OperLogQueue, It.IsAny<Sys_OperLog>()), Times.Once);
+        // Verify：投递了 1 次
+        kafka.Verify(m => m.PublishAsync(It.IsAny<Sys_OperLog>()), Times.Once);
     }
 
     [Fact]
-    public async Task GET_ShouldBeSkipped()
+    public async Task GET_WithoutIncludeGet_ShouldBeSkipped()
     {
-        // Arrange：GET 请求不应该记录日志
+        // Arrange：默认 IncludeGet=false → GET 请求不应该记录日志
         var context = TestHelper.CreateInMemoryContext();
-        var mockMq = CreateMockMq(isConnected: false);
+        var kafka = CreateMockTransport(isConnected: false);
 
-        var filter = new OperLogFilter(context, mockMq.Object);
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig(includeGet: false));
         var (ctx, next) = CreateMockContext(method: "GET", path: "/api/dict/getTypes");
 
         // Act
         await filter.OnActionExecutionAsync(ctx, next);
 
-        // Assert：DB 无日志，MQ 也没调用
+        // Assert：DB 无日志，通道也没调用
         Assert.Equal(0, context.Sys_OperLogs.Count());
-        mockMq.Verify(m => m.PublishAsync(
-            It.IsAny<string>(), It.IsAny<Sys_OperLog>()), Times.Never);
+        kafka.Verify(m => m.PublishAsync(It.IsAny<Sys_OperLog>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GET_WithIncludeGet_ShouldBeRecorded()
+    {
+        // Arrange：IncludeGet=true → GET 也记录（"任何操作都记录"）
+        var context = TestHelper.CreateInMemoryContext();
+        var kafka = CreateMockTransport(isConnected: false);
+
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig(includeGet: true));
+        var (ctx, next) = CreateMockContext(method: "GET", path: "/api/dict/getTypes");
+
+        // Act
+        await filter.OnActionExecutionAsync(ctx, next);
+
+        // Assert：通道断开 → 降级写 DB，GET 被记录
+        Assert.Equal(1, context.Sys_OperLogs.Count());
+        Assert.Equal("GET", context.Sys_OperLogs.First().HttpMethod);
     }
 
     [Fact]
@@ -164,9 +175,9 @@ public class OperLogFilterTests
     {
         // Arrange：/api/auth/login 不应该记录日志（防止密码泄露）
         var context = TestHelper.CreateInMemoryContext();
-        var mockMq = CreateMockMq(isConnected: false);
+        var kafka = CreateMockTransport(isConnected: false);
 
-        var filter = new OperLogFilter(context, mockMq.Object);
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig());
         var (ctx, next) = CreateMockContext(method: "POST", path: "/api/auth/login");
 
         // Act
@@ -181,9 +192,9 @@ public class OperLogFilterTests
     {
         // Arrange：/api/operlog 自身的操作不应该记录（避免死循环）
         var context = TestHelper.CreateInMemoryContext();
-        var mockMq = CreateMockMq(isConnected: false);
+        var kafka = CreateMockTransport(isConnected: false);
 
-        var filter = new OperLogFilter(context, mockMq.Object);
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig());
         var (ctx, next) = CreateMockContext(method: "DELETE", path: "/api/operlog/delete");
 
         // Act

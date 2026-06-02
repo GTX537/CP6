@@ -264,6 +264,11 @@ public class BpQueryDto
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 100;
     public int? MaxRows { get; set; }
+
+    /// <summary>排序列（前端 el-table prop，白名单内才生效）</summary>
+    public string? SortField { get; set; }
+    /// <summary>排序方向：asc / desc</summary>
+    public string? SortOrder { get; set; }
 }
 
 public class BpListItemDto

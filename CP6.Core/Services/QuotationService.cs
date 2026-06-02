@@ -11,7 +11,7 @@ namespace CP6.Core.Services;
 /// <remarks>
 /// - 软删除：IsDeleted 标记，不物理删除
 /// - 乐观锁：依赖 EF RowVersion；冲突抛 DbUpdateConcurrencyException
-/// - 采番：XXXXXXXX-01 ～ 99999999-99；主番 = MAX(QtnNoMain) + 1
+/// - 采番：QTN + 年(4) + 月(2) + 自増(4) = 13桁 + 枝番 "-01"（永不重置；DocNumber 経由）
 /// - 確定登録済的記录拒绝訂正/削除（MSG-004）
 /// </remarks>
 public class QuotationService : IQuotationService
@@ -20,6 +20,21 @@ public class QuotationService : IQuotationService
 
     /// <summary>見積計算書决定状态：QtnDiv = "20"</summary>
     private const string QtnDivDecided = "20";
+
+    /// <summary>一覧排序白名单：前端列 prop → 实体属性（仅主表字段，明细派生列不支持）</summary>
+    private static readonly IReadOnlyDictionary<string, string> QuotationSortMap =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["qtnNo"] = nameof(Quotation.QtnNo),
+            ["qtnIssueDate"] = nameof(Quotation.QtnIssueDate),
+            ["baseCd"] = nameof(Quotation.BaseCd),
+            ["staffCd"] = nameof(Quotation.StaffCd),
+            ["customerCd"] = nameof(Quotation.CustomerCd),
+            ["customerName"] = nameof(Quotation.CustomerName),
+            ["projectNoParent"] = nameof(Quotation.ProjectNoParent),
+            ["projectNoChild"] = nameof(Quotation.ProjectNoChild),
+            ["totalAmount"] = nameof(Quotation.TotalAmount),
+        };
 
     public QuotationService(CP6Context db)
     {
@@ -80,8 +95,9 @@ public class QuotationService : IQuotationService
         var total = await q.CountAsync();
 
         // 先取分页主表记录，再批量拉第 1 行明细做展示
+        q = QuerySort.Apply(q, query.SortField, query.SortOrder, QuotationSortMap,
+            s => s.OrderBy(x => x.StaffCd).ThenBy(x => x.CustomerCd).ThenBy(x => x.QtnNo));
         var page = await q
-            .OrderBy(x => x.StaffCd).ThenBy(x => x.CustomerCd).ThenBy(x => x.QtnNo)
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
             .Select(x => new
@@ -176,11 +192,9 @@ public class QuotationService : IQuotationService
 
     public async Task<string> CreateAsync(QuotationDto dto, string? userName)
     {
-        var nextMain = (await _db.Quotations.MaxAsync(x => (int?)x.QtnNoMain) ?? 0) + 1;
-        if (nextMain > 99_999_999)
-            throw new InvalidOperationException("御見積書NO 主番已达上限 99999999");
-
-        var qtnNo = $"{nextMain:D8}-01";
+        // 采番：機能コード(QTN)+年(4)+月(2)+自増(4)=13桁；訂正/コピー用に枝番 -01 を付与
+        var (mainNo, nextMain) = await DocNumber.NextAsync(_db, "QTN");
+        var qtnNo = $"{mainNo}-01";
 
         var entity = new Quotation
         {
@@ -386,8 +400,8 @@ public class QuotationService : IQuotationService
             .FirstOrDefaultAsync(x => x.QtnNo == sourceQtnNo && !x.IsDeleted)
             ?? throw new KeyNotFoundException($"源御見積書不存在: {sourceQtnNo}");
 
-        var nextMain = (await _db.Quotations.MaxAsync(x => (int?)x.QtnNoMain) ?? 0) + 1;
-        var newNo = $"{nextMain:D8}-01";
+        var (mainNo, nextMain) = await DocNumber.NextAsync(_db, "QTN");
+        var newNo = $"{mainNo}-01";
 
         var clone = new Quotation
         {

@@ -27,13 +27,13 @@
       max-height="600"
     >
       <el-table-column prop="sortOrder" label="No" width="60" align="center" />
-      <el-table-column label="工程CD" width="120">
+      <el-table-column :label="t('工程CD')" width="120">
         <template #default="{ row }">
           <el-select
             v-model="row.processCd"
             :disabled="!store.canEdit"
             size="small"
-            placeholder="選択"
+            :placeholder="t('選択')"
             style="width: 100%"
           >
             <el-option
@@ -45,12 +45,12 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="材料CD" width="180">
+      <el-table-column :label="t('材料CD')" width="180">
         <template #default="{ row }">
           <el-input v-model="row.materialCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="材料区分" width="120">
+      <el-table-column :label="t('材料区分')" width="120">
         <template #default="{ row }">
           <el-select
             v-model="row.materialTypeDiv"
@@ -58,9 +58,9 @@
             size="small"
             style="width: 100%"
           >
-            <el-option label="主材料" value="1" />
-            <el-option label="副資材" value="2" />
-            <el-option label="梱包材" value="3" />
+            <el-option :label="t('主材料')" value="1" />
+            <el-option :label="t('副資材')" value="2" />
+            <el-option :label="t('梱包材')" value="3" />
           </el-select>
         </template>
       </el-table-column>
@@ -69,7 +69,7 @@
           <el-input v-model="row.itemCd" :disabled="!store.canEdit" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="支給区分" width="120">
+      <el-table-column :label="t('支給区分')" width="120">
         <template #default="{ row }">
           <el-select
             v-model="row.supplyDiv"
@@ -78,13 +78,13 @@
             clearable
             style="width: 100%"
           >
-            <el-option label="自社購入" value="0" />
-            <el-option label="顧客支給" value="1" />
-            <el-option label="無償支給" value="2" />
+            <el-option :label="t('自社購入')" value="0" />
+            <el-option :label="t('顧客支給')" value="1" />
+            <el-option :label="t('無償支給')" value="2" />
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="支給単価" width="140">
+      <el-table-column :label="t('支給単価')" width="140">
         <template #default="{ row }">
           <el-input-number
             v-model="row.supplyPrice"
@@ -96,7 +96,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="100" align="center" fixed="right">
+      <el-table-column :label="t('操作')" width="100" align="center" fixed="right">
         <template #default="{ $index }">
           <el-button
             link
@@ -112,6 +112,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'

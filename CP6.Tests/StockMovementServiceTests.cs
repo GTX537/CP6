@@ -292,8 +292,10 @@ public class StockMovementServiceTests
         var n2 = await seq.NextAsync("TXN");
         var n3 = await seq.NextAsync("TXN");
 
-        Assert.EndsWith("-00001", n1);
-        Assert.EndsWith("-00002", n2);
-        Assert.EndsWith("-00003", n3);
+        // 新形式：{prefix}{yyyyMM}{NNNN} 例 TXN2026050001（永不重置）
+        Assert.EndsWith("0001", n1);
+        Assert.EndsWith("0002", n2);
+        Assert.EndsWith("0003", n3);
+        Assert.StartsWith($"TXN{DateTime.Today:yyyyMM}", n1);
     }
 }

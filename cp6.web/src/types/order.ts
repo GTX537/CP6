@@ -321,6 +321,8 @@ export interface OrderQueryDto {
   page?: number
   pageSize?: number
   maxRows?: number
+  sortField?: string
+  sortOrder?: string
 }
 
 export interface OrderListItemDto {

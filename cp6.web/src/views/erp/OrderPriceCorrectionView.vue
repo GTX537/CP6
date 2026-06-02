@@ -24,7 +24,7 @@
         <el-form-item :label="t('sales.term.productCd')">
           <el-input v-model="query.productCd" style="width: 130px" />
         </el-form-item>
-        <el-form-item label="顧客品名">
+        <el-form-item :label="t('顧客品名')">
           <el-input v-model="query.customerItemName" style="width: 200px" />
         </el-form-item>
         <el-form-item :label="t('sales.term.qty') + ' FROM-TO'">
@@ -61,51 +61,51 @@
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" @selection-change="onSelectionChange">
         <el-table-column type="selection" width="50" />
         <el-table-column prop="rowNo" label="No" width="60" align="center" />
-        <el-table-column label="状態" width="80" align="center">
+        <el-table-column :label="t('状態')" width="80" align="center">
           <template #default="{ row }">
             <el-tag :type="approvalTagType(row.approvalStatus)" size="small">{{ approvalLabel(row.approvalStatus) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="customerCd" label="得意先" width="100" />
-        <el-table-column prop="customerName" label="得意先名" width="160" />
-        <el-table-column prop="salesPersonName" label="売上担当" width="120" />
-        <el-table-column prop="orderSheetNo" label="注文書NO" width="120" />
-        <el-table-column prop="haibaiNo1" label="手配NO1" width="140" />
-        <el-table-column prop="productCd" label="製品CD" width="140" />
-        <el-table-column prop="cpItemName1" label="品名1" min-width="160" />
-        <el-table-column prop="orderDate" label="受注日" width="100" />
-        <el-table-column prop="customerDeliveryDate" label="客先納期" width="100" />
-        <el-table-column prop="quantity" label="数量" width="100" align="right" />
-        <el-table-column prop="qtyUnit" label="単位" width="60" />
-        <el-table-column prop="individualUnitPriceBefore" label="個別単価(変更前)" width="130" align="right" />
-        <el-table-column prop="setUnitPriceBefore" label="セット単価(変更前)" width="130" align="right" />
-        <el-table-column prop="unitPriceUnit" label="単位" width="60" />
-        <el-table-column label="個別単価(変更後)" width="140">
+        <el-table-column prop="customerCd" :label="t('得意先')" width="100" />
+        <el-table-column prop="customerName" :label="t('得意先名')" width="160" />
+        <el-table-column prop="salesPersonName" :label="t('売上担当')" width="120" />
+        <el-table-column prop="orderSheetNo" :label="t('注文書NO')" width="120" />
+        <el-table-column prop="haibaiNo1" :label="t('手配NO1')" width="140" />
+        <el-table-column prop="productCd" :label="t('製品CD')" width="140" />
+        <el-table-column prop="cpItemName1" :label="t('品名1')" min-width="160" />
+        <el-table-column prop="orderDate" :label="t('受注日')" width="100" />
+        <el-table-column prop="customerDeliveryDate" :label="t('客先納期')" width="100" />
+        <el-table-column prop="quantity" :label="t('数量')" width="100" align="right" />
+        <el-table-column prop="qtyUnit" :label="t('単位')" width="60" />
+        <el-table-column prop="individualUnitPriceBefore" :label="t('個別単価(変更前)')" width="130" align="right" />
+        <el-table-column prop="setUnitPriceBefore" :label="t('セット単価(変更前)')" width="130" align="right" />
+        <el-table-column prop="unitPriceUnit" :label="t('単位')" width="60" />
+        <el-table-column :label="t('個別単価(変更後)')" width="140">
           <template #default="{ row }">
             <el-input-number v-model="row.individualUnitPriceAfter" :disabled="!isRowSelected(row)" :precision="4" :controls="false" size="small" style="width: 130px" />
           </template>
         </el-table-column>
-        <el-table-column label="セット単価(変更後)" width="140">
+        <el-table-column :label="t('セット単価(変更後)')" width="140">
           <template #default="{ row }">
             <el-input-number v-model="row.setUnitPriceAfter" :disabled="!isRowSelected(row)" :precision="4" :controls="false" size="small" style="width: 130px" />
           </template>
         </el-table-column>
-        <el-table-column label="特値" width="60" align="center">
+        <el-table-column :label="t('特値')" width="60" align="center">
           <template #default="{ row }">
             <el-checkbox v-model="row.specialPriceFlg" true-value="1" false-value="0" :disabled="!isRowSelected(row)" />
           </template>
         </el-table-column>
-        <el-table-column label="仮単価" width="60" align="center">
+        <el-table-column :label="t('仮単価')" width="60" align="center">
           <template #default="{ row }">
             <el-icon v-if="row.provisionalPriceFlg" color="#e6a23c"><Warning /></el-icon>
           </template>
         </el-table-column>
-        <el-table-column label="単価変更理由" min-width="180">
+        <el-table-column :label="t('単価変更理由')" min-width="180">
           <template #default="{ row }">
             <el-input v-model="row.priceChangeReason" :disabled="!isRowSelected(row)" size="small" />
           </template>
         </el-table-column>
-        <el-table-column prop="amount" label="金額" width="130" align="right" />
+        <el-table-column prop="amount" :label="t('金額')" width="130" align="right" />
       </el-table>
 
       <el-pagination

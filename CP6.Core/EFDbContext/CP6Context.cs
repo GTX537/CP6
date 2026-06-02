@@ -16,11 +16,6 @@ public class CP6Context : DbContext
     }
 
     /// <summary>
-    /// 文章表
-    /// </summary>
-    public DbSet<Article> Articles { get; set; }
-
-    /// <summary>
     /// 用户表
     /// </summary>
     public DbSet<Sys_User> Sys_Users { get; set; }
@@ -129,6 +124,9 @@ public class CP6Context : DbContext
 
     /// <summary>FSC 製品化チェックシート発行履歴（PA100）</summary>
     public DbSet<FscChecklist> FscChecklists { get; set; }
+
+    /// <summary>全社統一採番カウンタ（機能コード+年月+自増13桁）</summary>
+    public DbSet<DocSequence> DocSequences { get; set; }
 
     // ───── MSBBPA130 シート単価 ─────
     public DbSet<SheetUnitPrice> SheetUnitPrices { get; set; }
@@ -286,6 +284,12 @@ public class CP6Context : DbContext
         modelBuilder.Entity<EstimateCalcProcess>(e =>
         {
             e.HasIndex(x => new { x.QtnCalcNo, x.SeqNo }).IsUnique();
+        });
+
+        // 全社統一採番カウンタ：FuncCode 唯一
+        modelBuilder.Entity<DocSequence>(e =>
+        {
+            e.HasIndex(x => x.FuncCode).IsUnique();
         });
 
         // 拠点：BaseCd 唯一

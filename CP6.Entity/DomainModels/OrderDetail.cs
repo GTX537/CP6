@@ -34,7 +34,7 @@ public class OrderDetail : BaseBizEntity
 
     // ───── 製品キー（mcframe7 連携） ─────
     /// <summary>製品コード（15桁；製品マスタ参照）</summary>
-    [Required, MaxLength(15)]
+    [Required, MaxLength(20)]
     public string ProductCd { get; set; } = string.Empty;
 
     /// <summary>品目コード（mcframe7 連携用、システム自動）</summary>
@@ -142,12 +142,12 @@ public class OrderDetail : BaseBizEntity
     [MaxLength(15)] public string? ProjectNoParent { get; set; }
     [MaxLength(15)] public string? ProjectNoChild { get; set; }
     [MaxLength(15)] public string? ProjectNoMaterial { get; set; }
-    [MaxLength(11)] public string? QuotationNo { get; set; }
-    [MaxLength(11)] public string? EstimateCalcNo { get; set; }
-    [MaxLength(11)] public string? RefEstimateCalcNo { get; set; }
+    [MaxLength(20)] public string? QuotationNo { get; set; }
+    [MaxLength(20)] public string? EstimateCalcNo { get; set; }
+    [MaxLength(20)] public string? RefEstimateCalcNo { get; set; }
 
     // ───── セット品管理 ─────
-    [MaxLength(15)] public string? SetProductCd { get; set; }
+    [MaxLength(20)] public string? SetProductCd { get; set; }
     [MaxLength(100)] public string? SetProductName { get; set; }
     /// <summary>親子区分：0=親 / 1=子</summary>
     [MaxLength(1)] public string? ParentChildDiv { get; set; }

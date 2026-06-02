@@ -15,7 +15,7 @@ public class QuotationDetail : BaseBizEntity
 {
     /// <summary>御見積書NO（复合主键一部分；FK → T_Quotation）</summary>
     [Required]
-    [MaxLength(11)]
+    [MaxLength(20)]
     public string QtnNo { get; set; } = string.Empty;
 
     /// <summary>明細NO（行序号；复合主键一部分）</summary>
@@ -49,6 +49,6 @@ public class QuotationDetail : BaseBizEntity
     public bool PrintTotalFlg { get; set; } = true;
 
     /// <summary>关联の見積計算書NO（「使用」チェック自動設定、手工追加时为空）</summary>
-    [MaxLength(11)]
+    [MaxLength(20)]
     public string? QtnCalcNo { get; set; }
 }

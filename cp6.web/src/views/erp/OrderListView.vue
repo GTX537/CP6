@@ -42,25 +42,25 @@
             <el-form-item :label="t('sales.term.productCd')">
               <el-input v-model="query.productCd" style="width: 150px" />
             </el-form-item>
-            <el-form-item label="顧客品名">
+            <el-form-item :label="t('顧客品名')">
               <el-input v-model="query.customerItemName" style="width: 200px" />
             </el-form-item>
-            <el-form-item label="シート段">
+            <el-form-item :label="t('シート段')">
               <el-input v-model="query.sheetFlute" style="width: 100px" />
             </el-form-item>
-            <el-form-item label="原紙CD">
+            <el-form-item :label="t('原紙CD')">
               <el-input v-model="query.paperCd" style="width: 130px" />
             </el-form-item>
-            <el-form-item label="印刷CD">
+            <el-form-item :label="t('印刷CD')">
               <el-input v-model="query.printCd" style="width: 130px" />
             </el-form-item>
-            <el-form-item label="エンボスCD">
+            <el-form-item :label="t('エンボスCD')">
               <el-input v-model="query.embossCd" style="width: 130px" />
             </el-form-item>
-            <el-form-item label="メーカCD">
+            <el-form-item :label="t('メーカCD')">
               <el-input v-model="query.makerCd" style="width: 130px" />
             </el-form-item>
-            <el-form-item label="運送会社">
+            <el-form-item :label="t('運送会社')">
               <el-input v-model="query.carrier" style="width: 130px" />
             </el-form-item>
             <el-form-item>
@@ -85,35 +85,35 @@
       </div>
 
       <!-- 桌面端：完整表格 -->
-      <el-table v-if="!isMobile" :data="rows" border stripe size="small" style="width: 100%" max-height="600">
+      <el-table v-if="!isMobile" :data="rows" border stripe size="small" style="width: 100%" max-height="600" @sort-change="onSortChange">
         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
-        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" sortable="custom" />
         <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" width="160" />
         <el-table-column prop="salesPersonName" :label="t('sales.term.staff')" width="120" />
-        <el-table-column prop="orderSheetNo" label="注文書NO" width="120" />
-        <el-table-column prop="haibaiNo1" label="手配NO1" width="140" />
-        <el-table-column prop="defectiveHaibaiNo" label="不適合手配NO" width="140" />
-        <el-table-column prop="mcOrderNo" label="注文NO(mc)" width="140" />
-        <el-table-column prop="orderDate" label="受注日" width="100" />
-        <el-table-column prop="customerDeliveryDate" label="客先納期" width="100" />
-        <el-table-column prop="productCd" label="製品CD" width="140" />
-        <el-table-column prop="cpItemOrComposition" label="CP品名/構成" min-width="180" />
-        <el-table-column prop="sheetFlute" label="段" width="60" />
-        <el-table-column prop="compositionF" label="表(構成)" width="140" />
-        <el-table-column prop="compositionC" label="中(構成)" width="140" />
-        <el-table-column prop="compositionB" label="裏(構成)" width="140" />
-        <el-table-column prop="quantity" label="数量" width="100" align="right" />
-        <el-table-column prop="qtyUnit" label="単位" width="60" />
-        <el-table-column prop="individualUnitPrice" label="個別単価" width="120" align="right" />
-        <el-table-column prop="setUnitPrice" label="セット単価" width="120" align="right" />
-        <el-table-column prop="amount" label="受注金額" width="130" align="right" />
-        <el-table-column label="預り売上" width="80" align="center">
+        <el-table-column prop="orderSheetNo" :label="t('注文書NO')" width="120" />
+        <el-table-column prop="haibaiNo1" :label="t('手配NO1')" width="140" sortable="custom" />
+        <el-table-column prop="defectiveHaibaiNo" :label="t('不適合手配NO')" width="140" sortable="custom" />
+        <el-table-column prop="mcOrderNo" :label="t('注文NO(mc)')" width="140" sortable="custom" />
+        <el-table-column prop="orderDate" :label="t('受注日')" width="100" />
+        <el-table-column prop="customerDeliveryDate" :label="t('客先納期')" width="100" sortable="custom" />
+        <el-table-column prop="productCd" :label="t('製品CD')" width="140" sortable="custom" />
+        <el-table-column prop="cpItemOrComposition" :label="t('CP品名/構成')" min-width="180" />
+        <el-table-column prop="sheetFlute" :label="t('段')" width="60" sortable="custom" />
+        <el-table-column prop="compositionF" :label="t('表(構成)')" width="140" />
+        <el-table-column prop="compositionC" :label="t('中(構成)')" width="140" />
+        <el-table-column prop="compositionB" :label="t('裏(構成)')" width="140" />
+        <el-table-column prop="quantity" :label="t('数量')" width="100" align="right" sortable="custom" />
+        <el-table-column prop="qtyUnit" :label="t('単位')" width="60" />
+        <el-table-column prop="individualUnitPrice" :label="t('個別単価')" width="120" align="right" sortable="custom" />
+        <el-table-column prop="setUnitPrice" :label="t('セット単価')" width="120" align="right" sortable="custom" />
+        <el-table-column prop="amount" :label="t('受注金額')" width="130" align="right" sortable="custom" />
+        <el-table-column :label="t('預り売上')" width="80" align="center">
           <template #default="{ row }">
             <el-icon v-if="row.consignedSalesFlg === '1'" color="#67c23a"><Check /></el-icon>
           </template>
         </el-table-column>
-        <el-table-column prop="slipNote" label="伝票備考" min-width="160" />
-        <el-table-column label="操作" width="100" align="center" fixed="right">
+        <el-table-column prop="slipNote" :label="t('伝票備考')" min-width="160" sortable="custom" />
+        <el-table-column :label="t('操作')" width="100" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="goDetail(row)">詳細</el-button>
           </template>
@@ -200,6 +200,8 @@ function formatAmount(v: any): string {
 const query = reactive<OrderQueryDto>({
   page: 1,
   pageSize: 100,
+  sortField: '',
+  sortOrder: '',
 })
 const advancedOpen = ref<string[]>([])
 const rows = ref<OrderListItemDto[]>([])
@@ -243,6 +245,13 @@ async function exportCsv() {
   } catch { /* */ } finally {
     exporting.value = false
   }
+}
+
+function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+  query.sortField = order ? prop : ''
+  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+  query.page = 1
+  search()
 }
 
 function goDetail(row: OrderListItemDto) {

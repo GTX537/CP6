@@ -8,9 +8,9 @@ namespace CP6.Core.Services.Mes;
 /// MES 採番管理サービス実装
 /// </summary>
 /// <remarks>
-/// 採番形式：{Prefix}{yyyyMMdd}-{NNNN}
-/// 例：WO20260515-0001 / PR20260515-0002 / QC20260515-0001 / DF20260515-0001
-/// 並行安全：UPDATE 行ロック（SQL Server）/ ExecuteUpdateAsync を使用
+/// 採番形式（全社統一）：{機能コード}{yyyyMM}{NNNN}（永不重置・グローバル累計）
+/// 例：WO2026050001 / PR2026050002 / QC2026050001 / DF2026050001
+/// SeqDate は "*"（全期間スコープ）固定。年月で 0 戻ししない。
 /// </remarks>
 public class MesSequenceService : IMesSequenceService
 {
@@ -18,15 +18,17 @@ public class MesSequenceService : IMesSequenceService
 
     public MesSequenceService(CP6Context db) => _db = db;
 
+    /// <summary>全期間スコープを表す番兵（永不重置）</summary>
+    private const string GlobalScope = "*";
+
     public async Task<string> NextAsync(string seqKey, DateTime? date = null)
     {
         var d = (date ?? DateTime.Today).Date;
         var key = seqKey.ToUpperInvariant();
-        var dateStr = d.ToString("yyyy-MM-dd");
 
-        // 採番行を取得 or 新規作成
+        // 採番行を取得 or 新規作成（年月で 0 戻ししないため日付ではなく全期間スコープで管理）
         var seq = await _db.MesSequences
-            .FirstOrDefaultAsync(x => x.SeqKey == key && x.SeqDate == dateStr);
+            .FirstOrDefaultAsync(x => x.SeqKey == key && x.SeqDate == GlobalScope);
 
         int next;
         if (seq == null)
@@ -34,7 +36,7 @@ public class MesSequenceService : IMesSequenceService
             seq = new MesSequence
             {
                 SeqKey = key,
-                SeqDate = dateStr,
+                SeqDate = GlobalScope,
                 CurrentValue = 1,
             };
             _db.MesSequences.Add(seq);
@@ -47,6 +49,6 @@ public class MesSequenceService : IMesSequenceService
         }
 
         await _db.SaveChangesAsync();
-        return $"{key}{d:yyyyMMdd}-{next:D4}";
+        return $"{key}{d:yyyyMM}{next:D4}";
     }
 }

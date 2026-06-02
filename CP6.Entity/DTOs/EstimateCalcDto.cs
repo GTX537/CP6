@@ -28,6 +28,8 @@ public class EstimateCalcDto
     public string QtnBaseCd { get; set; } = string.Empty;
     public string OrderBaseCd { get; set; } = string.Empty;
     public string StaffCd { get; set; } = string.Empty;
+    /// <summary>商品コード（UI 必填 MSG-111，对应 EstimateCalc.ProCd）</summary>
+    public string? ProCd { get; set; }
     public string? CustomerCd { get; set; }
     public string? ProjectNoParent { get; set; }
     public string? ProjectNoChild { get; set; }
@@ -149,6 +151,11 @@ public class EstimateCalcQuery
     public string? BaseCd { get; set; }
     public DateTime? DateFrom { get; set; }
     public DateTime? DateTo { get; set; }
+
+    /// <summary>排序列（前端 el-table prop，白名单内才生效）</summary>
+    public string? SortField { get; set; }
+    /// <summary>排序方向：asc / desc（兼容 ascending/descending）</summary>
+    public string? SortOrder { get; set; }
 }
 
 /// <summary>計算結果（Calculate 接口响应体）</summary>

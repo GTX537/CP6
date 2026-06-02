@@ -11,7 +11,7 @@ namespace CP6.Core.Services;
 /// <remarks>
 /// - 软删除：所有写操作不走 RepositoryBase.DeleteAsync，而是置 IsDeleted=true
 /// - 乐观锁：依赖 EF 的 RowVersion；版本冲突抛 DbUpdateConcurrencyException
-/// - 采番：XXXXXXXX-01 ～ 99999999-99；登録/コピー时主番+1，枝番默认 01
+/// - 采番：EMC + 年(4) + 月(2) + 自増(4) = 13桁 + 枝番 "-01"（永不重置；DocNumber 経由）
 /// </remarks>
 public class EstimateCalcService : IEstimateCalcService
 {
@@ -21,6 +21,22 @@ public class EstimateCalcService : IEstimateCalcService
     {
         _db = db;
     }
+
+    /// <summary>一覧排序白名单：前端列 prop → 实体属性</summary>
+    private static readonly IReadOnlyDictionary<string, string> EstimateCalcSortMap =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["qtnCalcNo"] = nameof(EstimateCalc.QtnCalcNo),
+            ["qtnDate"] = nameof(EstimateCalc.QtnDate),
+            ["qtnBaseCd"] = nameof(EstimateCalc.QtnBaseCd),
+            ["staffCd"] = nameof(EstimateCalc.StaffCd),
+            ["customerCd"] = nameof(EstimateCalc.CustomerCd),
+            ["customerProductName1"] = nameof(EstimateCalc.CustomerProductName1),
+            ["orderQty"] = nameof(EstimateCalc.OrderQty),
+            ["estimateUnitPrice"] = nameof(EstimateCalc.EstimateUnitPrice),
+            ["qtnDiv"] = nameof(EstimateCalc.QtnDiv),
+            ["modifyDate"] = nameof(EstimateCalc.ModifyDate),
+        };
 
     public async Task<(List<EstimateCalcListItem>, int)> GetPageListAsync(EstimateCalcQuery query)
     {
@@ -38,8 +54,9 @@ public class EstimateCalcService : IEstimateCalcService
             q = q.Where(x => x.QtnDate <= query.DateTo.Value);
 
         var total = await q.CountAsync();
+        q = QuerySort.Apply(q, query.SortField, query.SortOrder, EstimateCalcSortMap,
+            s => s.OrderByDescending(x => x.QtnDate).ThenByDescending(x => x.QtnCalcNo));
         var rows = await q
-            .OrderByDescending(x => x.QtnDate).ThenByDescending(x => x.QtnCalcNo)
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
             .Select(x => new EstimateCalcListItem
@@ -71,12 +88,9 @@ public class EstimateCalcService : IEstimateCalcService
 
     public async Task<string> CreateAsync(EstimateCalcDto dto, string? userName)
     {
-        // 采番：主番 = MAX(QtnCalcNoMain) + 1；枝番固定 01
-        var nextMain = (await _db.EstimateCalcs.MaxAsync(x => (int?)x.QtnCalcNoMain) ?? 0) + 1;
-        if (nextMain > 99_999_999)
-            throw new InvalidOperationException("見積計算書NO 主番已达上限 99999999");
-
-        var qtnCalcNo = $"{nextMain:D8}-01";
+        // 采番：機能コード(EMC)+年(4)+月(2)+自増(4)=13桁；訂正/コピー用に枝番 -01 を付与
+        var (mainNo, nextMain) = await DocNumber.NextAsync(_db, "EMC");
+        var qtnCalcNo = $"{mainNo}-01";
 
         var entity = new EstimateCalc
         {
@@ -170,8 +184,8 @@ public class EstimateCalcService : IEstimateCalcService
             .FirstOrDefaultAsync(x => x.QtnCalcNo == sourceQtnCalcNo && !x.IsDeleted)
             ?? throw new KeyNotFoundException($"源見積計算書不存在: {sourceQtnCalcNo}");
 
-        var nextMain = (await _db.EstimateCalcs.MaxAsync(x => (int?)x.QtnCalcNoMain) ?? 0) + 1;
-        var newNo = $"{nextMain:D8}-01";
+        var (mainNo, nextMain) = await DocNumber.NextAsync(_db, "EMC");
+        var newNo = $"{mainNo}-01";
 
         var dto = ToDto(source);
         dto.QtnCalcNo = newNo;
@@ -335,6 +349,7 @@ public class EstimateCalcService : IEstimateCalcService
         e.QtnBaseCd = d.QtnBaseCd;
         e.OrderBaseCd = d.OrderBaseCd;
         e.StaffCd = d.StaffCd;
+        e.ProCd = d.ProCd;
         e.CustomerCd = d.CustomerCd;
         e.ProjectNoParent = d.ProjectNoParent;
         e.ProjectNoChild = d.ProjectNoChild;
@@ -416,6 +431,7 @@ public class EstimateCalcService : IEstimateCalcService
         QtnBaseCd = e.QtnBaseCd,
         OrderBaseCd = e.OrderBaseCd,
         StaffCd = e.StaffCd,
+        ProCd = e.ProCd,
         CustomerCd = e.CustomerCd,
         ProjectNoParent = e.ProjectNoParent,
         ProjectNoChild = e.ProjectNoChild,

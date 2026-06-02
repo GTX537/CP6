@@ -3,27 +3,27 @@
     <!-- 検索 + KPI -->
     <el-card shadow="never" class="header-card">
       <el-form :model="query" inline size="small">
-        <el-form-item label="拠点CD">
+        <el-form-item :label="t('拠点CD')">
           <el-input v-model="query.baseCd" style="width: 120px;" />
         </el-form-item>
-        <el-form-item label="期間">
+        <el-form-item :label="t('期間')">
           <el-date-picker v-model="dateRange" type="daterange" value-format="YYYY-MM-DD" start-placeholder="開始" end-placeholder="終了" style="width: 280px;" />
         </el-form-item>
-        <el-form-item label="工程CD">
+        <el-form-item :label="t('工程CD')">
           <el-input v-model="query.processCd" style="width: 120px;" />
         </el-form-item>
         <el-form-item label="WG">
           <el-input v-model="query.wgCd" style="width: 100px;" />
         </el-form-item>
-        <el-form-item label="号機">
+        <el-form-item :label="t('号機')">
           <el-input v-model="query.machineCd" style="width: 120px;" />
         </el-form-item>
-        <el-form-item label="ステータス">
+        <el-form-item :label="t('ステータス')">
           <el-checkbox-group v-model="query.statuses">
             <el-checkbox v-for="o in PROCESS_STATUS_OPTIONS" :key="o.value" :value="o.value">{{ o.label }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="表示単位">
+        <el-form-item :label="t('表示単位')">
           <el-radio-group v-model="viewMode" size="small">
             <el-radio-button value="day">日</el-radio-button>
             <el-radio-button value="week">週</el-radio-button>
@@ -133,24 +133,24 @@
     </el-card>
 
     <!-- バー編集 ダイアログ -->
-    <el-dialog v-model="dialogVisible" title="工程編集" width="500px">
+    <el-dialog v-model="dialogVisible" :title="t('工程編集')" width="500px">
       <el-form v-if="editing" :model="editing" label-width="120px" size="small">
-        <el-form-item label="指図NO">
+        <el-form-item :label="t('指図NO')">
           <el-tag>{{ editing.workOrderNo }}</el-tag>
         </el-form-item>
-        <el-form-item label="工程">
+        <el-form-item :label="t('工程')">
           <span>{{ editing.processCd }} - {{ editing.processName }}</span>
         </el-form-item>
-        <el-form-item label="号機CD">
+        <el-form-item :label="t('号機CD')">
           <el-input v-model="editing.machineCd" />
         </el-form-item>
-        <el-form-item label="計画開始日時">
+        <el-form-item :label="t('計画開始日時')">
           <el-date-picker v-model="editing.planStartTime" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%;" />
         </el-form-item>
-        <el-form-item label="計画完了日時">
+        <el-form-item :label="t('計画完了日時')">
           <el-date-picker v-model="editing.planEndTime" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 100%;" />
         </el-form-item>
-        <el-form-item label="状態">
+        <el-form-item :label="t('状態')">
           <el-tag>{{ getStatusLabel(editing.processStatus) }}</el-tag>
         </el-form-item>
       </el-form>
@@ -163,6 +163,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { MagicStick } from '@element-plus/icons-vue'

@@ -38,8 +38,8 @@
     <!-- 検索：手配NO で既存受注読込 -->
     <el-card shadow="never" class="search-card" v-if="!store.isNew">
       <el-form inline>
-        <el-form-item label="Web受注NO">
-          <el-input v-model="searchNo" placeholder="例: WO20260501000001" clearable style="width: 240px" />
+        <el-form-item :label="t('Web受注NO')">
+          <el-input v-model="searchNo" :placeholder="t('例: WO20260501000001')" clearable style="width: 240px" />
         </el-form-item>
         <el-form-item :label="t('sales.term.haibaiNo') + '1'">
           <el-input v-model="searchHaibaiNo1" clearable style="width: 200px" />

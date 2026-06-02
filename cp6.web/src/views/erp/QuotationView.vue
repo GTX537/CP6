@@ -25,10 +25,10 @@
     <!-- ============ 检索区（非新规时） ============ -->
     <el-card v-if="op !== Op.New" shadow="never" class="search-card">
       <el-form inline>
-        <el-form-item label="御見積書No">
+        <el-form-item :label="t('御見積書No')">
           <el-input
             v-model="searchNo"
-            placeholder="例: Q00000001"
+            :placeholder="t('例: Q00000001')"
             clearable
             style="width: 200px"
             @keyup.enter="loadByNo"
@@ -54,11 +54,11 @@
       >
         <el-tabs v-model="activeTab" type="border-card" class="qtn-tabs">
           <!-- Tab1: ヘッダー ================================ -->
-          <el-tab-pane label="① ヘッダー / 案件" name="header">
-            <el-divider content-position="left">拠点・担当</el-divider>
+          <el-tab-pane :label="t('① ヘッダー / 案件')" name="header">
+            <el-divider content-position="left">{{ t('拠点・担当') }}</el-divider>
             <el-row :gutter="12">
               <el-col :span="8">
-                <el-form-item label="拠点" prop="baseCd" required>
+                <el-form-item :label="t('拠点')" prop="baseCd" required>
                   <el-select v-model="form.baseCd" :disabled="isPkRo" clearable>
                     <el-option
                       v-for="b in bases"
@@ -70,7 +70,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="担当者" prop="staffCd" required>
+                <el-form-item :label="t('担当者')" prop="staffCd" required>
                   <el-select
                     v-model="form.staffCd"
                     :disabled="isPkRo || !form.baseCd"
@@ -86,36 +86,36 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="参照元No">
+                <el-form-item :label="t('参照元No')">
                   <el-input v-model="form.refQtnNo" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
 
-            <el-divider content-position="left">顧客・案件</el-divider>
+            <el-divider content-position="left">{{ t('顧客・案件') }}</el-divider>
             <el-row :gutter="12">
               <el-col :span="8">
-                <el-form-item label="顧客コード" prop="customerCd" required>
+                <el-form-item :label="t('顧客コード')" prop="customerCd" required>
                   <el-input v-model="form.customerCd" :disabled="isPkRo" />
                 </el-form-item>
               </el-col>
               <el-col :span="16">
-                <el-form-item label="顧客名">
+                <el-form-item :label="t('顧客名')">
                   <el-input v-model="form.customerName" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="親案件No">
+                <el-form-item :label="t('親案件No')">
                   <el-input v-model="form.projectNoParent" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="子案件No">
+                <el-form-item :label="t('子案件No')">
                   <el-input v-model="form.projectNoChild" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="材質No">
+                <el-form-item :label="t('材質No')">
                   <el-input v-model="form.projectNoMaterial" />
                 </el-form-item>
               </el-col>
@@ -124,12 +124,12 @@
             <el-divider content-position="left">FSC</el-divider>
             <el-row :gutter="12">
               <el-col :span="8">
-                <el-form-item label="FSC管理No">
+                <el-form-item :label="t('FSC管理No')">
                   <el-input v-model="form.fscMgmtNo" />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="CoC確認日">
+                <el-form-item :label="t('CoC確認日')">
                   <el-date-picker
                     v-model="form.fscChecklistDate"
                     type="date"
@@ -140,27 +140,27 @@
               </el-col>
             </el-row>
 
-            <el-divider content-position="left">発行・金額</el-divider>
+            <el-divider content-position="left">{{ t('発行・金額') }}</el-divider>
             <el-row :gutter="12">
               <el-col :span="6">
-                <el-form-item label="御見積書発行日">
-                  <el-input :value="fmtDate(form.qtnIssueDate)" disabled placeholder="発行後に自動設定" />
+                <el-form-item :label="t('御見積書発行日')">
+                  <el-input :value="fmtDate(form.qtnIssueDate)" disabled :placeholder="t('発行後に自動設定')" />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="計算書発行日">
+                <el-form-item :label="t('計算書発行日')">
                   <el-input :value="fmtDate(form.calcIssueDate)" disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="合計金額">
+                <el-form-item :label="t('合計金額')">
                   <el-input :value="fmtMoney(form.totalAmount)" disabled>
                     <template #append>円</template>
                   </el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="合計印字">
+                <el-form-item :label="t('合計印字')">
                   <el-switch v-model="form.printTotalFlg" />
                 </el-form-item>
               </el-col>
@@ -168,42 +168,42 @@
           </el-tab-pane>
 
           <!-- Tab2: 御見積書ヘッダー + 備考 15 =========== -->
-          <el-tab-pane label="② 御見積書" name="quotation">
-            <el-divider content-position="left">御見積書ヘッダー</el-divider>
+          <el-tab-pane :label="t('② 御見積書')" name="quotation">
+            <el-divider content-position="left">{{ t('御見積書ヘッダー') }}</el-divider>
             <el-row :gutter="12">
               <el-col :span="12">
-                <el-form-item label="担当者名">
+                <el-form-item :label="t('担当者名')">
                   <el-input v-model="form.contactPerson" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="納入場所">
+                <el-form-item :label="t('納入場所')">
                   <el-input v-model="form.deliveryLocation" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="納期">
+                <el-form-item :label="t('納期')">
                   <el-input v-model="form.deliveryDeadline" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="運賃">
+                <el-form-item :label="t('運賃')">
                   <el-input v-model="form.freight" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="支払条件">
+                <el-form-item :label="t('支払条件')">
                   <el-input v-model="form.paymentCondition" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="見積有効期限">
+                <el-form-item :label="t('見積有効期限')">
                   <el-input v-model="form.validityPeriod" />
                 </el-form-item>
               </el-col>
             </el-row>
 
-            <el-divider content-position="left">備考（15 行）</el-divider>
+            <el-divider content-position="left">{{ t('備考（15 行）') }}</el-divider>
             <el-row :gutter="8">
               <el-col v-for="(_, i) in 15" :key="i" :span="12">
                 <el-form-item :label="`備考${String(i + 1).padStart(2, '0')}`" label-width="80px">
@@ -237,7 +237,7 @@
               v-loading="loadingCalcs"
               style="margin-top: 8px"
             >
-              <el-table-column label="使用" width="70" align="center">
+              <el-table-column :label="t('使用')" width="70" align="center">
                 <template #default="{ row }">
                   <el-checkbox
                     :model-value="isLinked(row.qtnCalcNo)"
@@ -246,24 +246,24 @@
                   />
                 </template>
               </el-table-column>
-              <el-table-column prop="qtnCalcNo" label="見積計算書No" width="140" />
-              <el-table-column prop="qtnCalcDate" label="見積日" width="110">
+              <el-table-column prop="qtnCalcNo" :label="t('見積計算書No')" width="140" />
+              <el-table-column prop="qtnCalcDate" :label="t('見積日')" width="110">
                 <template #default="{ row }">{{ fmtDate(row.qtnCalcDate) }}</template>
               </el-table-column>
-              <el-table-column prop="customerProductName1" label="顧客品名1" min-width="180" show-overflow-tooltip />
-              <el-table-column prop="customerProductName2" label="顧客品名2" min-width="160" show-overflow-tooltip />
-              <el-table-column prop="estimateQty" label="数量" width="100" align="right">
+              <el-table-column prop="customerProductName1" :label="t('顧客品名1')" min-width="180" show-overflow-tooltip />
+              <el-table-column prop="customerProductName2" :label="t('顧客品名2')" min-width="160" show-overflow-tooltip />
+              <el-table-column prop="estimateQty" :label="t('数量')" width="100" align="right">
                 <template #default="{ row }">{{ fmtNum(row.estimateQty) }}</template>
               </el-table-column>
-              <el-table-column prop="confirmedUnitPrice" label="単価" width="110" align="right">
+              <el-table-column prop="confirmedUnitPrice" :label="t('単価')" width="110" align="right">
                 <template #default="{ row }">{{ fmtMoney(row.confirmedUnitPrice) }}</template>
               </el-table-column>
-              <el-table-column prop="unit" label="単位" width="80" />
-              <el-table-column prop="amount" label="金額" width="130" align="right">
+              <el-table-column prop="unit" :label="t('単位')" width="80" />
+              <el-table-column prop="amount" :label="t('金額')" width="130" align="right">
                 <template #default="{ row }">{{ fmtMoney(row.amount) }}</template>
               </el-table-column>
-              <el-table-column prop="qtnDiv" label="区分" width="90" />
-              <el-table-column v-if="op === Op.Confirm" label="確定" width="70" align="center">
+              <el-table-column prop="qtnDiv" :label="t('区分')" width="90" />
+              <el-table-column v-if="op === Op.Confirm" :label="t('確定')" width="70" align="center">
                 <template #default="{ row }">
                   <el-checkbox
                     v-if="isLinked(row.qtnCalcNo)"
@@ -304,17 +304,17 @@
               style="margin-top: 8px"
             >
               <el-table-column label="No" prop="detailNo" width="60" align="center" />
-              <el-table-column label="品名1" min-width="200">
+              <el-table-column :label="t('品名1')" min-width="200">
                 <template #default="{ row }">
                   <el-input v-model="row.itemName1" :disabled="isPageReadOnly" size="small" />
                 </template>
               </el-table-column>
-              <el-table-column label="品名2" min-width="160">
+              <el-table-column :label="t('品名2')" min-width="160">
                 <template #default="{ row }">
                   <el-input v-model="row.itemName2" :disabled="isPageReadOnly" size="small" />
                 </template>
               </el-table-column>
-              <el-table-column label="数量" width="120" align="right">
+              <el-table-column :label="t('数量')" width="120" align="right">
                 <template #default="{ row }">
                   <el-input-number
                     v-model="row.quantity"
@@ -327,7 +327,7 @@
                   />
                 </template>
               </el-table-column>
-              <el-table-column label="単価" width="140" align="right">
+              <el-table-column :label="t('単価')" width="140" align="right">
                 <template #default="{ row }">
                   <el-input-number
                     v-model="row.unitPrice"
@@ -340,29 +340,29 @@
                   />
                 </template>
               </el-table-column>
-              <el-table-column label="単位" width="90">
+              <el-table-column :label="t('単位')" width="90">
                 <template #default="{ row }">
                   <el-input v-model="row.unit" :disabled="isPageReadOnly" size="small" />
                 </template>
               </el-table-column>
-              <el-table-column label="金額" width="140" align="right">
+              <el-table-column :label="t('金額')" width="140" align="right">
                 <template #default="{ row }">
                   {{ fmtMoney(row.amount) }}
                 </template>
               </el-table-column>
-              <el-table-column label="合計印字" width="90" align="center">
+              <el-table-column :label="t('合計印字')" width="90" align="center">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.printTotalFlg" :disabled="isPageReadOnly" />
                 </template>
               </el-table-column>
-              <el-table-column label="関連見積No" width="130">
+              <el-table-column :label="t('関連見積No')" width="130">
                 <template #default="{ row }">
                   <el-text v-if="row.qtnCalcNo" size="small" type="info">
                     {{ row.qtnCalcNo }}
                   </el-text>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="80" align="center" fixed="right">
+              <el-table-column :label="t('操作')" width="80" align="center" fixed="right">
                 <template #default="{ $index, row }">
                   <el-button
                     link
@@ -383,15 +383,15 @@
           </el-tab-pane>
 
           <!-- Tab5: 提出用計算書 ============================ -->
-          <el-tab-pane label="⑤ 提出用計算書" name="submit">
+          <el-tab-pane :label="t('⑤ 提出用計算書')" name="submit">
             <el-row :gutter="12">
               <el-col :span="24">
-                <el-form-item label="寸法印字">
+                <el-form-item :label="t('寸法印字')">
                   <el-input v-model="form.dimensionPrint" />
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-divider content-position="left">計算書メモ（8 行）</el-divider>
+            <el-divider content-position="left">{{ t('計算書メモ（8 行）') }}</el-divider>
             <el-row :gutter="8">
               <el-col v-for="(_, i) in 8" :key="i" :span="12">
                 <el-form-item :label="`メモ${String(i + 1).padStart(2, '0')}`" label-width="80px">
@@ -402,14 +402,14 @@
           </el-tab-pane>
 
           <!-- Tab6: メモ ============================= -->
-          <el-tab-pane label="⑥ メモ" name="memo">
-            <el-form-item label="メモ 1">
+          <el-tab-pane :label="t('⑥ メモ')" name="memo">
+            <el-form-item :label="t('メモ 1')">
               <el-input v-model="form.memo1" type="textarea" :rows="3" maxlength="500" show-word-limit />
             </el-form-item>
-            <el-form-item label="メモ 2">
+            <el-form-item :label="t('メモ 2')">
               <el-input v-model="form.memo2" type="textarea" :rows="3" maxlength="500" show-word-limit />
             </el-form-item>
-            <el-form-item label="メモ 3">
+            <el-form-item :label="t('メモ 3')">
               <el-input v-model="form.memo3" type="textarea" :rows="3" maxlength="500" show-word-limit />
             </el-form-item>
           </el-tab-pane>
@@ -456,6 +456,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'

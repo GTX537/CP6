@@ -8,16 +8,16 @@
           <span style="margin: 0 4px">~</span>
           <el-input v-model="query.productCdTo" :placeholder="t('sales.search.to')" clearable style="width: 160px" />
         </el-form-item>
-        <el-form-item label="セット製品CD">
+        <el-form-item :label="t('セット製品CD')">
           <el-input v-model="query.setProductCd" clearable style="width: 160px" />
         </el-form-item>
         <el-form-item :label="t('sales.term.customer') + ' CD'">
           <el-input v-model="query.customerCd" clearable style="width: 140px" />
         </el-form-item>
-        <el-form-item label="親案件">
+        <el-form-item :label="t('親案件')">
           <el-input v-model="query.projectNoParent" clearable style="width: 120px" />
         </el-form-item>
-        <el-form-item label="子案件">
+        <el-form-item :label="t('子案件')">
           <el-input v-model="query.projectNoChild" clearable style="width: 120px" />
         </el-form-item>
         <el-form-item :label="t('sales.term.qtnNo')">
@@ -26,16 +26,16 @@
         <el-form-item :label="t('sales.term.calcNo')">
           <el-input v-model="query.estimateCalcNo" clearable style="width: 140px" />
         </el-form-item>
-        <el-form-item label="顧客品名1">
+        <el-form-item :label="t('顧客品名1')">
           <el-input v-model="query.customerItemName1" clearable style="width: 200px" />
         </el-form-item>
-        <el-form-item label="顧客品名2">
+        <el-form-item :label="t('顧客品名2')">
           <el-input v-model="query.customerItemName2" clearable style="width: 160px" />
         </el-form-item>
-        <el-form-item label="設計提案NO">
+        <el-form-item :label="t('設計提案NO')">
           <el-input v-model="query.designProposalNo" clearable style="width: 140px" />
         </el-form-item>
-        <el-form-item label="更新日">
+        <el-form-item :label="t('更新日')">
           <el-date-picker
             v-model="modifyDateRange"
             type="daterange"
@@ -71,19 +71,20 @@
         border
         style="width: 100%"
         @row-dblclick="(row: ProductListItemDto) => onView(row)"
+        @sort-change="onSortChange"
       >
-        <el-table-column prop="productCd" :label="t('sales.term.productCd')" width="160" fixed="left" />
-        <el-table-column prop="setProductCd" label="セット製品CD" width="140" />
-        <el-table-column prop="setProductName" label="セット品名" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="customerCd" :label="t('sales.term.customer') + ' CD'" width="100" />
+        <el-table-column prop="productCd" :label="t('sales.term.productCd')" width="160" fixed="left" sortable="custom" />
+        <el-table-column prop="setProductCd" :label="t('セット製品CD')" width="140" sortable="custom" />
+        <el-table-column prop="setProductName" :label="t('セット品名')" min-width="180" show-overflow-tooltip sortable="custom" />
+        <el-table-column prop="customerCd" :label="t('sales.term.customer') + ' CD'" width="100" sortable="custom" />
         <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="customerItemName1" label="顧客品名1" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="customerItemName2" label="顧客品名2" min-width="140" show-overflow-tooltip />
-        <el-table-column prop="projectNoParent" label="親案件" width="100" />
-        <el-table-column prop="projectNoChild" label="子案件" width="100" />
-        <el-table-column prop="quotationNo" :label="t('sales.term.qtnNo')" width="120" />
-        <el-table-column prop="estimateCalcNo" :label="t('sales.term.calcNo')" width="130" />
-        <el-table-column :label="t('sales.term.status')" width="100">
+        <el-table-column prop="customerItemName1" :label="t('顧客品名1')" min-width="160" show-overflow-tooltip sortable="custom" />
+        <el-table-column prop="customerItemName2" :label="t('顧客品名2')" min-width="140" show-overflow-tooltip sortable="custom" />
+        <el-table-column prop="projectNoParent" :label="t('親案件')" width="100" sortable="custom" />
+        <el-table-column prop="projectNoChild" :label="t('子案件')" width="100" sortable="custom" />
+        <el-table-column prop="quotationNo" :label="t('sales.term.qtnNo')" width="120" sortable="custom" />
+        <el-table-column prop="estimateCalcNo" :label="t('sales.term.calcNo')" width="130" sortable="custom" />
+        <el-table-column prop="status" :label="t('sales.term.status')" width="100" sortable="custom">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
           </template>
@@ -94,13 +95,13 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="MC転送" width="80" align="center">
+        <el-table-column :label="t('MC転送')" width="80" align="center">
           <template #default="{ row }">
             <el-icon v-if="row.mcTransferFlg" color="#409eff"><Link /></el-icon>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="更新日" width="160">
+        <el-table-column prop="modifyDate" :label="t('更新日')" width="160" sortable="custom">
           <template #default="{ row }">{{ fmtDt(row.modifyDate) }}</template>
         </el-table-column>
         <el-table-column :label="t('sales.list.action')" width="280" fixed="right">
@@ -160,6 +161,8 @@ const query = reactive<ProductQuery>({
   modifyDateFrom: '',
   modifyDateTo: '',
   statuses: [],
+  sortField: '',
+  sortOrder: '',
 })
 const statusSel = ref<number[]>([])
 const modifyDateRange = ref<[string, string] | null>(null)
@@ -173,6 +176,13 @@ function statusLabel(s: number): string {
 }
 function statusTagType(s: number): 'info' | 'warning' | 'success' {
   return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'
+}
+
+function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+  query.sortField = order ? prop : ''
+  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+  query.page = 1
+  loadData()
 }
 
 async function loadData() {
