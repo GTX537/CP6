@@ -78,7 +78,7 @@ public class WmsErpClosedLoopTests
         var stock = new StockMovementService(db, wmsSeq);
         var inbound = new InboundService(db, wmsSeq, stock);
         var outbound = new OutboundService(db, wmsSeq, stock);
-        var wmsBridge = new WmsBridgeHook(outbound, inbound, NullLogger<WmsBridgeHook>.Instance);
+        var wmsBridge = new WmsBridgeHook(db, outbound, inbound, NullLogger<WmsBridgeHook>.Instance);
 
         var mesSeq = new MesSequenceService(db);
         var woService = new WorkOrderService(db, mesSeq, new NoOpWmsBridgeHook());
@@ -285,7 +285,7 @@ public class WmsErpClosedLoopTests
         // 実サービス直結：発行 → WmsBridge → 材料出庫指示 自動展開
         var inbound = new InboundService(db, seq, stock);
         var outbound = new OutboundService(db, seq, stock);
-        var wmsBridge = new WmsBridgeHook(outbound, inbound, NullLogger<WmsBridgeHook>.Instance);
+        var wmsBridge = new WmsBridgeHook(db, outbound, inbound, NullLogger<WmsBridgeHook>.Instance);
         var woService = new WorkOrderService(db, new MesSequenceService(db), wmsBridge);
 
         await woService.IssueAsync("WO_MAT01", "tester");

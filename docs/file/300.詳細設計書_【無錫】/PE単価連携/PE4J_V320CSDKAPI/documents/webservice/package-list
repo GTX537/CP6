@@ -1,0 +1,6 @@
+net.poweregg.web.app.schedule.webservice
+net.poweregg.web.engine.dataflow.webservice
+net.poweregg.web.engine.navigation.portal.webservice
+net.poweregg.web.engine.organization.webservice
+net.poweregg.web.engine.point.webservice
+net.poweregg.web.engine.security.webservice

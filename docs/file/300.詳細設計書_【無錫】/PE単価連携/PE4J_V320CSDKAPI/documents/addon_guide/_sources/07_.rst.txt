@@ -1,0 +1,1322 @@
+==============================================
+POWER EGG JSFコンポーネントの利用方法
+==============================================
+
+POWER EGG3.0では、日付や社員などのデータを入力・表示するときに
+各プログラムで共通的に利用するための共通部品をJSFコンポーネントと
+して提供しています。
+
+この章では、それらの共通部品の利用方法について解説します。
+
+POWER EGG JSFコンポーネントを利用する場合は、Facelet xhtmlのhtml宣言部で、
+
+.. code-block :: html
+
+ xmlns:p=http://www.poweregg.net/jsf/html
+
+
+という記述を追加する必要があります。
+
+日付入力(inputDate)
+============================
+
+日付の入力を行うための部品です。入力域の右側にカレンダーから日付を
+選択するためのアイコンが描画され、カレンダーからの日付選択も行えます。
+
+入力された日付は、java.util.Dateオブジェクトとして格納されます。
+
+Dateオブジェクトの時間フィールドは常に”00:00:00,000”になります。
+
+.. image:: image/7-1.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputDate />
+
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  "id","","String","id属性, name属性にも出力されます"
+  rendered,　,Boolean,falseの場合は描画されない。デフォルトはtrue
+  value,　,Date,入力された日付
+  valueChangeListner,　,リスナー,　
+  binding,　,　,　
+  converter,　,Converter,　
+  required,　,Boolean,入力必須の場合はtrue
+  validator,　,Validator,　
+  immediate,　,Boolean,　
+  styleClass,　,String,　
+  style,　,String,　
+  onclick,　,String,　
+  ondblclick,　,String,　
+  onmousedown,　,String,　
+  onmouseup,　,String,　
+  onmouseover,　,String,　
+  onmousemove,　,String,　
+  onmouseout,　,String,　
+  onkeypress,　,String,　
+  onkeydown,　,String,　
+  onkeyup,　,String,　
+  onfocus,　,String,　
+  onblur,　,String,　
+  onchange,　,String,　
+  onselect,　,String,　
+  dir,　,String,　
+  disabled,　,Boolean,　
+  readonly,　,Boolean,　
+  tabindex,　,String,　
+  title,　,String,　
+  firstDayOfWeek,　,int,"週の開始曜日（0:月曜、6:日曜）
+  デフォルト：0"
+  autocomplete,　,String,デフォルト: off
+  corpId,　,String,　
+  inputMode,　,String,"年月入力の場合は""month""
+  年月日入力の場合は""date""
+  省略値は""date"""
+
+
+日付時刻入力(inputDateTime)
+====================================
+
+.. image:: image/7-2.png
+
+日付 + 時刻 の入力を行うテキストボックスを描画します。
+
+日付入力域の右側にカレンダーから日付を選択するためのアイコン、
+時刻入力域の右側に時刻選択のためのアイコンが描画され、
+カレンダーおよび時刻選択ダイアログからの日時選択も行えます。
+
+入力された日付は、java.util.Dateオブジェクトとして格納されます
+
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputDateTime />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id, ,String,"id属性, name属性にも出力されます"
+  rendered, ,Boolean,falseの場合は描画されない。デフォルトはtrue
+  value, ,Date,入力された日付
+  valueChangeListner, ,リスナー, 
+  binding, , , 
+  converter, ,Converter, 
+  required, ,Boolean,入力必須の場合はtrue
+  validator, ,Validator, 
+  immediate, ,Boolean, 
+  styleClass, ,String, 
+  style, ,String, 
+  onclick, ,String, 
+  ondblclick, ,String, 
+  onmousedown, ,String, 
+  onmouseup, ,String, 
+  onmouseover, ,String, 
+  onmousemove, ,String, 
+  onmouseout, ,String, 
+  onkeypress, ,String, 
+  onkeydown, ,String, 
+  onkeyup, ,String, 
+  onfocus, ,String, 
+  onblur, ,String, 
+  onchange, ,String, 
+  onselect, ,String, 
+  dir, ,String, 
+  disabled, ,Boolean, 
+  readonly, ,Boolean, 
+  tabindex, ,String, 
+  title, ,String, 
+  displayStartTime, ,String,デフォルト開始範囲時刻
+  displayEndTime, ,String,デフォルト終了範囲時刻
+  displayInterval, ,String,連続の時刻の差
+  autocomplete, ,String,デフォルト: off
+  corpId, ,String, 
+
+
+日付範囲入力(inputDateRange)
+======================================
+
+日付範囲の入力を行う部品です。年月(yyyy/mm)または年月日
+(yyyy/mm/dd)のどちらかの入力モードを選択できます。
+
+年月日入力モードの場合は、日付期間を選択するためのカレンダーアイコンが表示されます。
+
+入力された日付は、fromDate, toDateの２つのDateオブジェクトをプロパティに持つ
+net.poweregg.util.DateRangeオブジェクトとして格納されます。
+
+格納されるDateの時刻は、開始日は"00:00:00"、終了日は"23:59:59"固定となります。
+
+また、年月日入力モードの場合は、「最近１ヶ月」などの簡易入力モードの指定が可能です。
+
+
+.. image:: image/7-3.png
+
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputDateRange />
+
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id, ,String,"id属性, name属性にも出力されます"
+  rendered, ,Boolean,falseの場合は描画されない。デフォルトはtrue
+  immediate, ,Boolean,省略値はfalse
+  inputMode, ,String,"年月入力の場合は""month""
+  年月日入力の場合は""date""
+  省略値は""date"""
+  simpleInputSupport, ,Boolean,"簡易入力モードを有効にするかどうか
+  inputModeが""date""の場合のみ有効
+  省略値はfalse"
+  value, ,DateRange,入力された日付
+  valueChangeListner, ,リスナー, 
+  binding, , , 
+  required, ,Boolean,入力必須の場合はtrue
+  validator, ,Validator, 
+  converter, ,Converter, 
+  styleClass, ,String, 
+  style, ,String, 
+  dir, ,String, 
+  disabled, ,Boolean, 
+  readonly, ,Boolean, 
+  tabindex, ,String, 
+  title, ,String, 
+  firstDayOfWeek, ,int,週の開始曜日（0:月曜、6:日曜）
+  デフォルト：0
+  autocomplete, ,String,デフォルト: off
+  corpId, ,String, 
+  recentValue, ,int,"inputModeが""date""の場合のみ有効。デフォルト:1"
+  nowrap, ,Boolean,デフォルト: false
+  autoAjust,,Boolean,true: 終了日自動調整許可
+  false: 自動調整不可
+  default: false
+  useUnlimited,,Boolean,"true: 無期限を表示
+  false: 無期限は表示しない
+  default: false"
+
+
+数値入力(inputNumber)
+==============================
+
+数値データを入力するための部品です。
+
+
+.. image:: image/7-4.png
+
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputNumber />
+
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+  
+  id, , String, "id属性, name属性にも出力されます"
+  rendered, , Boolean, falseの場合は描画されない。デフォルトはtrue
+  immediate, , Boolean, 
+  value, , BigDecimal, 入力された数値
+  size, , int, size属性
+  converter, , , 
+  converterMessage, , String, コンバーターでエラーが発生したときのメッセージ
+  validator, , , 
+  validatorMessage, , String, バリデータでエラーが発生したときのメッセージ
+  valueChangeListner, , リスナー, 
+  binding, , , 
+  required, , Boolean, 入力必須の場合はtrue
+  minus, , Boolean, マイナス値の入力を許可する場合はtrue(デフォルトは、false マイナス入力不可）
+  styleClass, , String, CSSのclass属性
+  style, , String, CSSのstyle属性
+  dec, , Boolean, 小数点付きの数値の入力を認めるか
+  digitsBeforePoint, , String, 整数部の桁数
+  digitsAfterPoint, , String, 小数部の桁数
+  groupingUsed, , Boolean, falseの場合は、カンマ編集されない.デフォルトはtrue
+  align, , String, """left"" or ""right"" デフォルトは ""right"" "
+  readonly, , String, 
+  tabindex, , String, 
+  onclick, , String, 
+  ondblclick, , String, 
+  onmousedown, , String, 
+  onmouseup, , String, 
+  onmouseover, , String, 
+  onmousemove, , String, 
+  onmouseout, , String, 
+  onkeypress, , String, 
+  onkeydown, , String, 
+  onkeyup, , String, 
+  onfocus, , String, 
+  onblur, , String, 
+  onchange, , String, 
+  onselect, , String, 
+  title, , String, 
+
+
+1行テキスト入力(inputText)
+===================================
+
+１行テキスト入力を行うテキストボックスを描画します。(<input type="text">)
+
+maxlengthを指定した場合、入力データのバイト数がmaxlengthを超えていないか
+ヴァリデーションが行われます。
+
+.. image:: image/7-5.png
+
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputText />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,"id属性, name属性にも出力されます"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  immediate,,Boolean,
+  required,,Boolean,入力必須の場合はtrue
+  value,,Date,入力された日付
+  valueChangeListner,,リスナー,
+  binding,,,
+  converter,,Converter,
+  converterMessage,,String,
+  validator,,Validator,
+  validatorMessage,,String,
+  styleClass,,String,
+  style,,String,
+  onclick,,String,
+  ondblclick,,String,
+  onmousedown,,String,
+  onmouseup,,String,
+  onmouseover,,String,
+  onmousemove,,String,
+  onmouseout,,String,
+  onkeypress,,String,
+  onkeydown,,String,
+  onkeyup,,String,
+  onfocus,,String,
+  onblur,,String,
+  onchange,,String,
+  onselect,,String,
+  dir,,String,
+  disabled,,boolean,
+  readonly,,boolean,
+  tabindex,,String,
+  size,,int,
+  minlength,,int,"最低限入力可能バイト数
+  デフォルト：NULL"
+  maxlength,,int,入力可能バイト数
+  lang,,String,
+  accesskey,,String,
+  inputMode,,String,"入力モード（日本語、英数字…）
+  デフォルト：null
+  inputMode = ""X"":半角の数字・英字・記号のみ入力出来る。
+  記号はシングルクオーテーション(')、ダブルクオーテーション("")、カンマ(,)を入力不可にする
+  inputMode=""9"":数字（0-9)だけが入力出来る"
+  title,,String,
+
+
+複数行テキスト入力(inputTextarea)
+==========================================
+
+複数行テキスト入力を行うテキストエリアを描画します。(<textarea>)
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputTextarea />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+  
+  id,,String,"id属性, name属性にも出力されます"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  immediate,,Boolean,
+  required,,Boolean,入力必須の場合はtrue
+  requiredMessage,,String,"入力されていない時のメッセージ
+  指定しない場合はデフォルトメッセージが表示される"
+  value,,Date,入力された日付
+  valueChangeListner,,リスナー,
+  binding,,,
+  converter,,Converter,
+  converterMessage,,String,
+  validator,,Validator,
+  validatorMessage,,String,
+  cols,,int,1行の桁数
+  rows,,int,テキストエリアの行数
+  styleClass,,String,
+  style,,String,
+  onclick,,String,
+  ondblclick,,String,
+  onmousedown,,String,
+  onmouseup,,String,
+  onmouseover,,String,
+  onmousemove,,String,
+  onmouseout,,String,
+  onkeypress,,String,
+  onkeydown,,String,
+  onkeyup,,String,
+  onfocus,,String,
+  onblur,,String,
+  onchange,,String,
+  onselect,,String,
+  dir,,String,
+  disabled,,boolean,
+  readonly,,boolean,
+  tabindex,,String,
+  maxlength,,int,入力可能バイト数
+  lang,,String,
+  wrap,,String,
+  accesskey,,String,
+  title,,String,
+
+
+単一社員選択(selectEmp)
+===============================
+
+組織図から社員を一人選択します。
+選択した社員は、net.poweregg.ui.param.EmpParam オブジェクトとして格納されます。
+
+.. image :: image/7-7.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:selectEmp />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+  
+  id,,String,"id属性, name属性にも出力されます"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  immediate,,Boolean,
+  required,,Boolean,入力必須の場合はtrue
+  dateId,,String,"社員選択の基準日となるコンポーネントのid
+  省略した場合は、システム日付を基準として社員選択します。"
+  corpId,,String,"選択対象の会社の会社ID
+  省略した場合は、全ての会社から選択可能になります。"
+  value,,EmpParam,選択された社員
+  useMyMember,,boolean,"デフォルト：true
+  falseを設定する場合、マイメンバーリンクをレンダリングしない"
+  styleClass,,String,
+  nowrap,,boolean,デフォルト：false
+
+
+複数社員選択(selectEmps)
+================================
+
+組織図から社員を複数選択します。
+選択した社員は、net.poweregg.ui.param.EmpParam オブジェクトのリストとして格納されます。
+
+.. image :: image/7-8.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:selectEmps />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+  
+  id,,String,"id属性, name属性にも出力されます"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  immediate,,Boolean,
+  required,,Boolean,入力必須の場合はtrue
+  dateId,,String,"社員選択の基準日となるコンポーネントのid
+  省略した場合は、システム日付を基準として社員選択します。"
+  corpId,,String,"選択対象の会社の会社ID.省略した場合は、全ての会社から選択可能になります。"
+  value,,ArrayList,選択された社員(EmpParam)のリスト
+  styleClass,,String,
+  maxEmps,,int,"選択できる最大社員数
+  省略した場合は制限なし"
+  nowrap,,boolean,デフォルト：true
+
+部門選択(selectDept)
+============================
+
+部門を選択します。
+選択した部門は、net.poweregg.ui.param.DeptParamオブジェクトとして格納されます。
+
+
+.. image :: image/7-9.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:selectDept />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+  
+  id,,String,"id属性, name属性にも出力されます"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  styleClass,,String,
+  required,,Boolean,入力必須の場合はtrue
+  dateId,,String,"社員選択の基準日となるコンポーネントのid
+  省略した場合は、システム日付を基準として部門を選択します。"
+  baseDate,,Date,
+  corpId,,String,"選択対象の会社の会社ID
+  省略した場合は、全ての会社から選択可能になります。"
+  nowrap,,boolean,"デフォルト:true
+  falseの場合、左ペインにレンダラーされる
+  trueの場合、右ペインにレンダラーされる"
+  value,,DeptParam,選択された部門
+
+
+申請部門選択(selectApplyDept)
+=======================================
+
+申請部門を選択します。
+選択した部門は、net.poweregg.ui.param.DeptParamオブジェクトとして格納されます。
+
+
+.. image :: image/7-10.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:selectApplyDept />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+  
+  id,,String,"id属性, name属性にも出力されます"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  immediate,,Boolean,
+  required,,Boolean,入力必須の場合はtrue
+  dateId,,String,"社員選択の基準日となるコンポーネントのid
+  省略した場合は、システム日付を基準として部門を選択します。"
+  corpId,,String,"選択対象の会社の会社ID
+  省略した場合は、全ての会社から選択可能になります。"
+  nowrap,,boolean,"デフォルト:true
+  falseの場合、左ペインにレンダラーされる
+  trueの場合、右ペインにレンダラーされる"
+  value,,DeptParam,選択された申請部門
+
+
+添付ファイル入力(inputAttachFile)
+===============================================
+
+添付ファイルを入力する機能を提供します。
+選択されたファイルは、net.poweregg.ui.param.AttachFile
+オブジェクトのリストとして格納されます。
+
+.. image :: image/7-11.png
+
+HTML5対応のブラウザを利用している場合は、HTML5対応のドラッグ
+&ドロップによるファイル添付ウィンドウが開きます。
+
+また、ドラッグ＆ドロップによるファイル添付はシステム設定で切替が可能であるので、
+実行環境によってどの画面が開くかは異なります。
+
+.. image :: image/7-11-1.png
+
+ドラッグ&ドロップのファイル添付を利用しない設定の場合は、上記の画面となります。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputAttachFile />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,"id属性, name属性にも出力されます"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  immediate,,Boolean,
+  required,,Boolean,入力必須の場合はtrue
+  value,,ArrayList,AttachFilleオブジェクトのリスト
+  maxfiles,,int,添付可能なファイル数（省略値した場合は0:チェックしない）
+  maxsize,,long,一度の操作で添付可能なサイズの最大値（単位:KB） 0の場合は無制限。未指定の場合は、システムデフォルト値
+
+
+グループ選択(selectGroup)
+====================================
+
+グループを選択します。
+選択したグループは、net.poweregg.ui.param.GroupParamオブジェクトとして格納されます。
+
+.. image :: image/7-12.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:selectGroup />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,"id属性, name属性にも出力されます"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  styleClass,,String,
+  required,,Boolean,入力必須の場合はtrue
+  dateId,,String,"グループ選択の基準日となるコンポーネントのid
+  省略した場合は、システム日付を基準としてグループを選択します。"
+  baseDate,,Date,
+  disabled,,boolean,"trueの場合：クリック不可能
+  デフォルト:false"
+  nowrap,,boolean,"デフォルト:true
+  falseの場合、左ペインにレンダラーされる
+  trueの場合、右ペインにレンダラーされる"
+  corpId,,String,"選択対象の会社の会社ID
+  省略した場合は、全ての会社から選択可能になります。"
+  workflowUseFlag,,Boolean,"ワーフロー使用区分
+  true:使用する のみを表示する
+  false:使用しない のみを表示する
+  デフォルト: null なら、両方表示する"
+  value,,GroupParam,選択されたグループ
+
+
+ラベル描画(outputLabel)
+===================================
+
+<label>タグを生成します。for属性で指定されたコンポーネントの
+label属性がnullの場合は、コンポーネントのlabel属性にラベルの
+valueに設定されている値をセットします。
+
+また、for属性で指定されたコンポーネントのrequired属性が
+"true"の場合は、入力必須マークを自動描画します。
+
+.. image:: image/7-13.png
+
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:outputLabel/>
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  value,,String,ラベルとして表示する文字列
+  for,,String,ラベルの対象となるコンポーネントのid
+  binding,,,
+  style,,String,style属性
+  styleClass,,String,class属性
+  title,,String,ラベルのtitle
+  roundDiv,,boolean,"ラベルを<div>タグで囲むかどうか
+  デフォルトはfalse
+  主にコントローラー領域で使う場合に指定する"
+  divStyleClass,,String,ラベルを囲む<div>のclass
+  divStyle,,String,ラベルを囲む<div>のstyle
+  onclick,,String,ラベルのonclickイベントハンドラ
+
+
+コマンドボタン(commandButton)
+==========================================
+
+アイコン付き、またはアイコン無しのボタンを描画します。
+生成されるタグは<button>タグとなります。
+
+.. image :: image/7-14.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:commandButton />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,"id属性"
+  rendered,,boolean,"falseの場合は描画されない。デフォルトはtrue"
+  label,,String,"ボタンに表示するラベル"
+  buttonClass,,String,"生成される<button>タグのclass。
+  デフォルトは""normal""。
+  デフォルトボタンの場合は""default""を指定する。
+  label属性の文字数が5文字以下の場合は、""fixed""が追加される。"
+  spanClass,,String,"ボタンの文字列の<span>に指定するクラス。
+  デフォルトでは、labelの文字数が2文字以下の場合に""wide""が設定される"
+  img,,String,"ボタンに表示するアイコン画像。
+  ""/""から指定した場合はContextRootからのパスに変換される。"
+  immediate,,boolean,<h:commandButton>と同じ
+  value,,,
+  action,,EL,ボタンが押された時に動作させるマネージドビーンのメソッド
+  actionListner,,,
+  binding,,UIComponent,
+  type,,String,"<button>タグのtype属性に設定される
+  ""submit"" or ""reset"" or ""button""
+  デフォルトは""submit"" "
+  styleClass,,String,
+  onclick,,String,
+  ondblclick,,String,
+  onmousedown,,String,
+  onmouseup,,String,
+  onmouseover,,String,
+  onmousemove,,String,
+  onmouseout,,String,
+  onkeypress,,String,
+  onkeydown,,String,
+  onkeyup,,String,
+  onfocus,,String,
+  onblur,,String,
+  disabled,,,
+  lang,,String,
+  dir,,String,
+  tabindex,,String,
+  accesskey,,String,
+  title,,String,
+  style,,String,
+  confirmFlag,,boolean,"リンクをクリックした後、確認ダイアログを表示するかどうかのフラグです。
+  デフォルト：false（ダイアログが出ない）"
+  confirmTitle,,String,ダイアログのタイトル
+  confirmMessage,,String,ダイアログの確認メッセージ
+  cancelButton,,boolean,"cancelButton=trueの場合：キャンセル確認画面を表示する
+  デフォルト：false"
+  progress,,boolean,"デフォルト：true
+  progress=trueの場合、ボタンをクリックした後、処理中画面を表示する"
+
+
+コマンドリンク(commandLink)
+=======================================
+
+サーバーのbeanのメソッドを実行するリンクを生成します。
+描画は<a>タグとなりますが、リンククリック時、フォームがPOSTされます。
+
+img属性を指定することで、リンクにアイコンをつけることができます。
+
+なお、左ペインに配置した場合と右ペインに配置した場合では表現が
+変わります。
+
+左ペインに配置した場合(ボタン風に表示されます)
+
+.. image :: image/7-15.png
+
+右ペインに配置した場合(通常のリンクとして表示されます)
+
+.. image :: image/7-15-2.png
+
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:commandLink />
+
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  label,,String,ボタンに表示するラベル
+  linkClass,,String,生成される<a>タグのclass。
+  spanClass,,String,
+  img,,String,"コマンドと共に表示する画像ファイル
+  value属性が指定されていない場合は、画像だけが表示される。
+  ""/""から指定した場合はContextRootからのパスに変換される。"
+  imgRenderd,,,アイコン画像を表示するかしないかを指定します。
+  value,,String,リンク文字列として表示されます
+  action,,EL,リンクがクリックされたときに動作させるメソッド
+  immediate,,Boolean,
+  binding,,,
+  onclick,,String,
+  ondblclick,,String,
+  onmousedown,,String,
+  onmouseup,,String,
+  onmouseover,,String,
+  onmousemove,,String,
+  onmouseout,,String,
+  onkeypress,,String,
+  onkeydown,,String,
+  onkeyup,,String,
+  onfocus,,String,
+  onblur,,String,
+  disabled,,Boolean,
+  alt,,String,
+  lang,,String,
+  dir,,String,
+  tabindex,,String,
+  accesskey,,String,
+  title,,String,
+  style,,String,
+  confirmFlag,,boolean,"リンクをクリックした後、確認ダイアログを表示するかどうかのフラグです。
+  デフォルト：false（ダイアログが出ない）"
+  confirmTitle,,String,ダイアログのタイトル
+  confirmMessage,,String,ダイアログの確認メッセージ
+  progress,,boolean,"デフォルト：true
+  progress=trueの場合、リンクをクリックした後、処理中という画面を表示する"
+
+
+社員表示(outputEmp)
+=============================
+
+画面上に社員名を出力する際に利用します。
+
+このコンポーネントを利用することで、社員名の左アイコン、
+社員名クリック時のコンテキストメニューの描画等が行われます。　
+
+.. image :: image/7-16.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:outputEmp />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  value,,Employee,表示対象の社員オブジェクト
+  displayName,,String,指定されない場合：上記の社員オブジェクトの社員名を使う
+  styleClass,,String,
+  style,,String,
+
+
+複数社員表示(outputEmps)
+=====================================
+
+スケジュールの予約確認画面などで複数の社員を出力する際に利用します。
+社員名の左アイコン、社員名クリック時のコンテキストメニューの描画等が行われます。
+携帯メール受信設定表示機能や、一定社員数を超えているときのスクロールバー表示機能も持っています。
+
+.. image :: image/7-17.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:outputEmps />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  value,,List<Employee>,表示対象の社員オブジェクトのリスト
+  scrollThreshold,,int,"スクロールバーを表示するしきい値。
+  表示対象社員数が、この値を越えたときは、この値の行数以上表示行数は増えず
+  にスクロールバーが表示されます。デフォルトは、10です。
+  0を指定した場合は行数は固定されず、全ての社員が表示されます。"
+  displayMailReceiveSetting,,boolean,"メール受信設定を表示するかどうか。
+  デフォルトはfalse"
+  styleClass,,String,
+  style,,String,
+
+
+添付ファイル表示(outputAttachFile)
+==============================================
+
+添付ファイルをダウンロードするためのリンクを描画します。
+
+添付ファイルのリストは、net.poweregg.ui.param.AttachFile
+オブジェクトのリストとして設定します。
+
+.. image :: image/7-18.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:outputAttachFile />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+  
+  id,,String,id属性
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  value,,List<AttachFile>,表示対象の添付ファイルオブジェクトのリスト
+  scrollThreshold,,int,"スクロールバーを表示するしきい値。
+  表示対象ファイル数が、この値を越えたときは、この値の行数以上は表示行数は増えずに
+  スクロールバーが表示されます。デフォルトは、10です。
+  0を指定した場合は行数は固定されず、全てのファイルが表示されます。"
+  styleClass,,String,
+  style,,String,
+
+
+テキスト表示(outputText)
+===================================
+
+テキストを表示します。指定バイト数で表示するテキストを短縮したり、
+テキスト内の改行コードを<br />に置き換える機能を提供します。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:outputText />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  size,,int,"sizeを指定し、テキストのバイト数>sizeの場合：sizeで指定したバイトまで表示する。
+  カットした場合、文字列の後ろに、""…""を表示します。"
+  value,,String,
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  replaceBr,,boolean,"デフォルト：false
+  trueの場合：テキスト内のCRLF(\\r\\n)をhtmlの改行（<br/>）に変換する"
+  escape,,boolean,デフォルト：true
+  htmlToString,,boolean,"デフォルト：false
+  trueの場合、ブロック要素の終了タグを<br/>に変換し、それ以外のタグを除去する。"
+
+
+メールリンク表示(outputMailLink)
+=============================================
+
+メールアドレスをリンクとして表示します。通常は、"mailto:"タグが生成されます。
+
+.. image :: image/7-20.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:outputAttachFile />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,
+  rendered,,boolean,
+  value,,String,メールアドレス
+
+
+タブ領域パネル(panelTabs)
+====================================
+
+タブを格納するパネル領域を描画します。
+
+このタグはコンテナタグであり、実際のタブは、<p:tab>で指定します。
+
+.. image :: image/7-21.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:panelTabs />
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  rendered,,boolean,falseの場合は描画されない。デフォルトはtrue
+
+.. csv-table :: ファセット
+  :header: "ファセット", "説明"
+  :widths: 16, 40
+  
+  setting,タブ領域右側の設定操作部分
+
+
+タブ(tab)
+=======================
+
+タブを描画します。このタグは、panelTabsタグの中に記述しなければなりません。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:tab />
+
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  label,,String,タブの文字
+  selected,,boolean,"選択状態かどうかを設定する(true:選択状態）
+  選択状態タブはクリックできなくなります。"
+  action,,EL,タブがクリックされた時のアクション
+  immediate,,boolean,
+  rendered,,boolean,falseの場合は描画されない。デフォルトはtrue
+
+
+コントローラー領域パネル(panelController)
+====================================================
+
+画面左のコントローラー領域を描画します。
+
+領域の展開・縮小を行うためのアイコンも自動的に作成されます。
+
+.. image :: image/7-23.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:panelController>
+
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  collapse,,Boolean,"折りたたんだ状態で描画する場合はtrue
+  デフォルトはfalse"
+  rendered,,Boolean,"falseの場合は描画されない。デフォルトはtrue"
+  widthMode,,String,"コントローラーの幅
+  “small” : 標準（小）
+  “middle”: 中
+  “large” : 大
+  指定しない場合はユーザ設定に従う"
+
+
+メイン領域パネル(panelMain)
+==========================================
+
+画面のメイン領域を描画します。
+facetとして、タイトル領域、メッセージ領域、上下ナビ領域を持ちます。
+
+.. image :: image/7-24.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:panelMain>
+
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  label,,String,タブの文字
+  selected,,boolean,"選択状態かどうかを設定する(true:選択状態）
+  選択状態タブはクリックできなくなります。"
+  requiredGuidance,,EL,"""\*は入力必須です""のガイダンスを表示するかどうか"
+  action,,EL,タブがクリックされた時のアクション
+  immediate,,boolean,
+  rendered,,boolean,falseの場合は描画されない。デフォルトはtrue
+
+.. csv-table :: ファセット
+  :header: "ファセット", "説明"
+  :widths: 16, 40
+  
+  title,タイトル領域
+  messages,メッセージ領域
+  navi-upper-left,上部ナビゲーション領域の左側
+  navi-upper-right,上部ナビゲーション領域の右側
+  navi-bottom-left,下部ナビゲーション領域の左側
+  navi-bottom-right,下部ナビゲーション領域の右側
+
+
+検索条件パネル(panelSearchBox)
+==========================================
+
+コントローラー領域内の検索条件入力域を描画します。
+
+.. image :: image/7-25.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:panelMain>
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  title,,String,検索条件パネルのタイトル部分の文字列
+  style,,Boolean,CSSスタイル属性
+  styleClass,,Boolean,CSSクラス属性
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+
+
+折りたたみ可能パネル(panelCollapsible)
+=================================================
+
+折りたたみ可能なパネルを描画します。
+
+.. image :: image/7-26-1.png
+
+.. image :: image/7-26-2.png
+
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:panelCollapsible >
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  collapse,,Boolean,"折りたたんだ状態の場合はtrue
+  デフォルトはfalse"
+  collapseLabel,,String,折りたたんだ状態の時に表示される文字列
+  expandLabel,,String,展開した状態の時に表示される文字列
+  collapseImage,,String,"折りたたんだ状態の時に表示される画像のパス
+  ""/""から指定した場合は、コンテキストルート配下のパスに変換されます。
+  指定しなかった場合、デフォルトの三角イメージが表示されます。"
+  expandImage,,String,"展開した状態の時に表示される画像のパス
+  ""/""から指定した場合は、コンテキストルート配下のパスに変換されます。
+  指定しなかった場合、デフォルトの三角イメージが表示されます。"
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+
+
+アコーディオンパネル(panelAccordion)
+================================================
+
+折りたたみ可能なアコーディオンパネルを描画します。
+
+アコーディオンパネル内には、複数のパネルを配置できます。
+
+.. image :: image/7-27.png
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:panelCollapsible >
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  expandIndex,,Integer,"アコーディオンパネルに含まれるパネルのうち、
+  展開しているパネルの0から始まるインデックスを指定します。
+  指定しない場合及び指定したインデックスに該当するパネルが存在しない場合は、
+  先頭（0番目）のパネルが展開された状態で表示されます。"
+  styleClass,,String,CSSのスタイルクラス
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+
+
+アコーディオンパネルコンテンツ領域(panelAccordionContent)
+=======================================================================
+
+アコーディオンパネルの折りたたみ可能な一つの領域を描画します。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:panelCollapsible >
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  title,,String,領域のタブに表示される文字列を指定します。
+  renderd,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  style,,String,style属性
+  styleClass,,String,class属性
+
+
+ＤＩＶ領域(div)
+=============================
+
+<div>タグを生成します。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:div >
+
+.. csv-table :: パラメタ
+  :header: "属性", "必須", "データ型", "説明"
+  :widths: 10, 6, 10, 30
+
+  id,,String,id属性
+  rendered,,Boolean,falseの場合は描画されない。デフォルトはtrue
+  style,,String,style属性
+  styleClass,,String,class属性
+
+
+ＨＴＭＬヘッダ(head)
+=================================
+
+htmlの<head>を生成します。
+共通スタイルシートやページ内で利用されている他のコンポーネントが必要
+とする外部スクリプトファイルを読み込むタグが自動生成されます。
+
+アプリケーション固有で利用する外部スクリプトファイルは、
+通常の<head>同様に、この要素の子要素として指定できます。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:div>
+
+.. csv-table :: パラメタ
+    :header: "属性", "必須", "データ型", "説明"
+    :widths: 10, 6, 10, 30
+
+    id,,String,id属性
+    title,,String,titleタグに指定する値
+    noCache,,boolean,クライアントでのキャッシュを無効にするタグを付加するかどうか指定します。デフォルトはtrueです。
+
+
+HTMLボディ描画(body)
+====================================
+
+htmlの<body>タグを生成します。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:body >
+
+.. csv-table :: パラメタ
+    :header: "属性", "必須", "データ型", "説明"
+    :widths: 10, 6, 10, 30
+
+    なし,,,
+
+日付時刻コンバータ
+=================================
+
+java.util.Dateオブジェクトを、"yyyy/mm/dd (day) hh:mm" 
+形式の文字列に変換するコンバータです。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <f:converter converterId="net.poweregg.faces.DateTimeConverter" />
+
+
+日付コンバータ
+============================
+
+java.util.Dateオブジェクトを、"yyyy/mm/dd (day)" 
+形式の文字列に変換するコンバータです。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <f:converter converterId="net.poweregg.faces.DateConverter" />
+
+
+テーブル列のラジオボタン選択（dataTableSelectOneRadio）
+==================================================================
+
+テーブルの特定の列を選択するためのラジオボタンです。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:dataTableSelectOneRadio>
+
+.. csv-table :: パラメタ
+    :header: "属性", "必須", "データ型", "説明"
+    :widths: 10, 6, 10, 30
+
+    id,,String,id属性
+    rendered,,Boolean,
+    immediate,,boolean,
+    name,,,
+    value,,,
+    itemValue,,String,"テーブルのインデックスです。
+    itemValue=valueの場合にラジオボタンが選択された状態になります"
+    itemLabel,,String,ラジオボタンのラベル
+
+
+時刻範囲入力（inputTimeRange）
+========================================
+
+HH:MM形式で時刻範囲を入力する部品です。
+
+入力された時刻は、"HHMM"の文字列のリストとして格納されます。
+（リストの要素は、開始時刻と終了時刻の２つ）
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputTimeRange>
+
+.. csv-table :: パラメタ
+    :header: "属性", "必須", "データ型", "説明"
+    :widths: 10, 6, 10, 30
+
+    id,,String,id属性
+    rendered,,Boolean,
+    immediate,,Boolean,
+    required,,Boolean,必須の場合はtrue
+    value,,,
+    valueChangeListner,,リスナー,
+    displayStartTime,,String,"選択ウィンドウの表示開始時刻。省略値は""0800"" "
+    displayEndTime,,String,"選択ウィンドウの表示終了時刻省略値は、displayStartTimeの24時間後"
+    displayInterval,,String,"選択ウィンドウに表示する時刻の単位"
+    validateRange,,Boolean,"入力時刻の大小チェック（開始時刻<=終了時刻）を行う場合はtrue。デフォルトはtrue"
+    autoAjust,,Boolean,"true: 終了日自動調整許可, false: 自動調整不可 default: false"
+
+
+時刻入力（inputTime）
+=================================
+
+HH:MM形式で時刻を入力する部品です。
+
+入力された時刻は、"HHMM"の文字列として格納されます。
+
+呼び出し方法
+
+.. code-block :: html
+
+ <p:inputTime>
+
+.. csv-table :: パラメタ
+    :header: "属性", "必須", "データ型", "説明"
+    :widths: 10, 6, 10, 30
+
+    Id,,String,id属性
+    rendered,,Boolean,
+    immediate,,Boolean,
+    required,,Boolean,必須の場合はtrue
+    value,,,
+    valueChangeListner,,リスナー,
+    displayStartTime,,String,"選択ウィンドウの表示開始時刻.省略値は""0800"" "
+    displayEndTime,,String,"選択ウィンドウの表示終了時刻.省略値は、displayStartTimeの24時間後"
+    displayInterval,,String,"選択ウィンドウに表示する時刻の単位"
+
+

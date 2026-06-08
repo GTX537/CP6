@@ -1,0 +1,3306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>13. REST WebデータベースAPI &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="14. REST 組織情報API" href="12_2_rest_organization.html" />
+    <link rel="prev" title="12. REST API 共通" href="12_0_rest_common.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">13. REST WebデータベースAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#web-get">13.1. Webデータベース：レコードの取得（GET）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#http">13.1.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uri">13.1.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">13.1.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#query">13.1.4. 「query」パラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#items">13.1.5. 「items」パラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#order">13.1.6. 「order」パラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">13.1.7. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">13.1.8. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#web-post">13.2. Webデータベース：レコードの登録（POST）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">13.2.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">13.2.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">13.2.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">13.2.4. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">13.2.5. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#web-put">13.3. Webデータベース：レコードの更新（PUT）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">13.3.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">13.3.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">13.3.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">13.3.4. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">13.3.5. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#web-delete">13.4. Webデータベース：レコードの削除（DELETE）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">13.4.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">13.4.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">13.4.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">13.4.4. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">13.4.5. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#web">13.5. Webデータベース：フィールド形式</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id19">13.5.1. システム標準項目</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">13.5.2. ユーザ定義項目</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#webdb">13.5.3. WebDBのフィールド毎の利用可能な検索条件演算子</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">13.6. Webデータベース：フィールド定義の取得（GET）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id22">13.6.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">13.6.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">13.6.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">13.6.4. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">13.6.5. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">13.6.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id27">13.7. Webデータベース：レコード件数の取得（GET）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id28">13.7.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id29">13.7.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30">13.7.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31">13.7.4. WebDBのフィールド毎の利用可能な比較演算子コード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id32">13.7.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id33">13.7.6. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34">13.7.7. レスポンスの例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">13. </span>REST WebデータベースAPI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="rest-webapi">
+<h1><span class="section-number">13. </span>REST WebデータベースAPI<a class="headerlink" href="#rest-webapi" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="web-get">
+<h2><span class="section-number">13.1. </span>Webデータベース：レコードの取得（GET）<a class="headerlink" href="#web-get" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>レコードをクエリで条件を指定して取得できます。</p>
+<ul class="simple">
+<li><p>一度に取得できるレコードは 100件までです。（100件以上取得する場合は
+レコードの取得範囲を変えて複数回実行してください）</p></li>
+<li><p>ソート順に指定できるフィールドはフィールド設定で「ソート対象」を指定できるフィールドです。</p></li>
+<li><p>検索条件の指定方法、検索条件に指定できるフィールド、論理演算子、比較演算子は絞り込み条件と同じです。</p></li>
+</ul>
+<img alt="_images/12-1.png" src="_images/12-1.png" />
+<p>以降、①は「ブロック毎の論理演算子」、②は「フィールド毎の論理演算子」と記述します。</p>
+<div class="section" id="http">
+<h3><span class="section-number">13.1.1. </span>HTTPメソッド<a class="headerlink" href="#http" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="uri">
+<h3><span class="section-number">13.1.2. </span>URI<a class="headerlink" href="#uri" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic simple">
+<li><p>パラメータを HTTP のクエリ文字列で送信する場合</p></li>
+</ol>
+<blockquote>
+<div><p>http(s)://(POWER EGGサーバ)/pe4j/api/rest/v1/xdb/q/records.json</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>パラメータを JSON形式で送信する場合</p></li>
+</ol>
+<blockquote>
+<div><p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/xdb/records.json</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>GETでのリクエストボディの指定をサポートしていないクライアントでは使用できません</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h3><span class="section-number">13.1.3. </span>リクエストパラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>省略可</p></td>
+<td><p>システム区分を指定します。（0:WebDB,1:汎用申請,2:CRM）
+※省略時は0が指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名を指定します。（(親フォルダ名)/(フォルダ名)/(データベース名)）</p></td>
+</tr>
+<tr class="row-even"><td><p>query</p></td>
+<td><p>JSON形式の配列</p></td>
+<td><p>省略可</p></td>
+<td><p>レスポンスに含めるレコードの条件を指定するクエリ文字列を指定します。
+※省略時は全レコードが対象になります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>order</p></td>
+<td><p>JSON形式の配列</p></td>
+<td><p>省略可</p></td>
+<td><p>レコードの並び順を指定します。
+※省略時はNoの昇順でソートされます。</p></td>
+</tr>
+<tr class="row-even"><td><p>limit</p></td>
+<td><p>数値</p></td>
+<td><p>省略可</p></td>
+<td><p>指定した数だけ、レコードを返却します。
+※省略時は100が指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>offset</p></td>
+<td><p>数値</p></td>
+<td><p>省略可</p></td>
+<td><p>指定した数だけ、出力するレコードをスキップします。
+※省略時は0が指定されます。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="query">
+<h3><span class="section-number">13.1.4. </span>「query」パラメータ<a class="headerlink" href="#query" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 10%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>blockConj</p></td>
+<td><p>文字列</p></td>
+<td><p>省略可</p></td>
+<td><p>ブロック毎の論理演算子を指定します。（&quot;and&quot;,&quot;or&quot;）
+※省略時は&quot;and&quot;が指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>itemConj</p></td>
+<td><p>文字列</p></td>
+<td><p>省略可</p></td>
+<td><p>フィールド毎の論理演算子を指定します。（&quot;and&quot;,&quot;or&quot;）
+※省略時は&quot;and&quot;が指定されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>items</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>検索条件を指定します・</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="items">
+<h3><span class="section-number">13.1.5. </span>「items」パラメータ<a class="headerlink" href="#items" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 10%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>field</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>検索条件に指定するフィールド名を指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>opr</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>比較演算子を指定します。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>比較演算子</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>=</p></td>
+<td><p>同じ</p></td>
+</tr>
+<tr class="row-odd"><td><p>!=</p></td>
+<td><p>異なる</p></td>
+</tr>
+<tr class="row-even"><td><p>^</p></td>
+<td><p>始まる</p></td>
+</tr>
+<tr class="row-odd"><td><p>~</p></td>
+<td><p>含む</p></td>
+</tr>
+<tr class="row-even"><td><p>!~</p></td>
+<td><p>含まない</p></td>
+</tr>
+<tr class="row-odd"><td><p>&gt;</p></td>
+<td><p>より大きい</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;</p></td>
+<td><p>より小さい</p></td>
+</tr>
+<tr class="row-odd"><td><p>&gt;=</p></td>
+<td><p>以上</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;=</p></td>
+<td><p>以下</p></td>
+</tr>
+<tr class="row-odd"><td><p>n</p></td>
+<td><p>未入力</p></td>
+</tr>
+<tr class="row-even"><td><p>!n</p></td>
+<td><p>入力済</p></td>
+</tr>
+<tr class="row-odd"><td><p>~=</p></td>
+<td><p>配下（部門選択で利用）</p></td>
+</tr>
+<tr class="row-even"><td><p>c=</p></td>
+<td><p>企業が同じ（お客様選択で利用）</p></td>
+</tr>
+<tr class="row-odd"><td><p>b=</p></td>
+<td><p>部門が同じ（お客様選択で利用）</p></td>
+</tr>
+<tr class="row-even"><td><p>e=</p></td>
+<td><p>担当者が同じ（お客様選択で利用）</p></td>
+</tr>
+<tr class="row-odd"><td><p>true</p></td>
+<td><p>チェック済（フラグで利用）</p></td>
+</tr>
+<tr class="row-even"><td><p>false</p></td>
+<td><p>未チェック （フラグで利用）</p></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><p>code</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>検索条件にDB参照、DB参照コード入力、
+WebDB参照、WebDB参照コード入力を使用する場合に指定します。
+（true:コードで比較,false:名称で比較）
+※省略時はfalseが指定されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td><p>文字列</p></td>
+<td><p>省略可</p></td>
+<td><p>検索する文字列を指定します。
+oprによって、必須/任意が切り替わります</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド</p></th>
+<th class="head"><p>指定方法</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>日付、申請日、決裁日</p></td>
+<td><p>YYYY-MM-DD形式で指定
+例）2015-02-05</p></td>
+</tr>
+<tr class="row-odd"><td><p>年月</p></td>
+<td><p>YYYY-MM形式で指定
+例）2015-02</p></td>
+</tr>
+<tr class="row-even"><td><p>時刻</p></td>
+<td><p>HH:MM形式で指定
+例）10:00</p></td>
+</tr>
+<tr class="row-odd"><td><p>日付時刻、&quot;日付時刻計算</p></td>
+<td><p>YYYY-MM-DDTHH:MM±HH:MM形式で指定</p></td>
+</tr>
+<tr class="row-even"><td><p>例）2015-02-05T10:30+09:00&quot;</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>登録日時、&quot;最終更新日時</p></td>
+<td><p>YYYY-MM-DDTHH:MM:SS±HH:MM形式で指定</p></td>
+</tr>
+<tr class="row-even"><td><p>例）2015-02-05T10:30:15+09:00&quot;</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>会社選択</p></td>
+<td><p>外部会社コードを指定
+例）friend00</p></td>
+</tr>
+<tr class="row-even"><td><p>部門選択、申請部門</p></td>
+<td><p>(外部会社コード):(外部部門コード1)形式で指定
+例）friend00:eigyo</p></td>
+</tr>
+<tr class="row-odd"><td><p>社員選択、複数社員選択</p></td>
+<td><p>(外部会社コード):(外部社員コード1)形式で指定
+例）friend00:ooishi</p></td>
+</tr>
+<tr class="row-even"><td><p>商品選択</p></td>
+<td><p>(外部会社コード):(商品コード)形式で指定
+例）friend00:poweregg</p></td>
+</tr>
+<tr class="row-odd"><td><p>お客様選択、顧客リレーション</p></td>
+<td><p>(企業ID):(部署ID):(担当者ID)形式で指定
+例）1:2:3</p></td>
+</tr>
+<tr class="row-even"><td><p>登録者、最終更新者、申請者、決裁者</p></td>
+<td><p>ユーザIDを指定
+例）ooishi</p></td>
+</tr>
+<tr class="row-odd"><td><p>それ以外</p></td>
+<td><p>文字列を指定</p></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="order">
+<h3><span class="section-number">13.1.6. </span>「order」パラメータ<a class="headerlink" href="#order" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 10%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>field</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ソート条件するフィールド名を指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>desc</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>並び順を指定します。（true:降順,false:昇順）
+※省略時はfalseが指定されます。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h3><span class="section-number">13.1.7. </span>リクエストの例<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic simple">
+<li><p>レコード取得条件</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>対象のデータベースは「ﾌﾟﾛｾｽ管理型/クレーム管理」</p></li>
+<li><p>並び順は「No」の「降順」</p></li>
+<li><p>レコードの取得範囲は「50」件目から「100」件</p></li>
+<li><p>検索条件は以下のとおり</p></li>
+</ul>
+<img alt="_images/12-2.png" src="_images/12-2.png" />
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>パラメータを HTTP のクエリ文字列で送信する場合</p></li>
+</ol>
+<blockquote>
+<div><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">system</span><span class="o">=</span><span class="mi">0</span><span class="o">&amp;</span><span class="n">database</span><span class="o">=%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">8</span><span class="n">C</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">9</span><span class="n">F</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">9</span><span class="n">B</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">AE</span><span class="o">%</span><span class="n">A1</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="mi">90</span><span class="o">%</span><span class="mi">86</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="mi">9</span><span class="n">E</span><span class="o">%</span><span class="mi">8</span><span class="n">B</span><span class="o">%</span><span class="mi">2</span><span class="n">F</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">82</span><span class="o">%</span><span class="n">AF</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">AC</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">BC</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">A0</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">AE</span><span class="o">%</span><span class="n">A1</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="mi">90</span><span class="o">%</span><span class="mi">86</span><span class="n">DB</span><span class="o">&amp;</span><span class="n">query</span><span class="o">=%</span><span class="mi">5</span><span class="n">B</span><span class="o">%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">itemConj</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="ow">and</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">items</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">5</span><span class="n">B</span><span class="o">%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">field</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="mi">8</span><span class="n">F</span><span class="o">%</span><span class="mi">97</span><span class="o">%</span><span class="n">E4</span><span class="o">%</span><span class="n">BB</span><span class="o">%</span><span class="mi">98</span><span class="o">%</span><span class="n">E8</span><span class="o">%</span><span class="mi">80</span><span class="o">%</span><span class="mi">85</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">opr</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">D</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">value</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="n">friend00</span><span class="o">%</span><span class="mi">3</span><span class="n">Aooki</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">field</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="n">E9</span><span class="o">%</span><span class="mi">80</span><span class="o">%</span><span class="n">B2</span><span class="o">%</span><span class="n">E6</span><span class="o">%</span><span class="mi">8</span><span class="n">D</span><span class="o">%</span><span class="mi">97</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="mi">8</span><span class="n">C</span><span class="o">%</span><span class="n">BA</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="mi">88</span><span class="o">%</span><span class="mi">86</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">opr</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">21</span><span class="o">%</span><span class="mi">3</span><span class="n">D</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">value</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">82</span><span class="o">%</span><span class="n">AF</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">AC</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">BC</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">A0</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="n">AF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="n">BF</span><span class="o">%</span><span class="mi">9</span><span class="n">C</span><span class="o">%</span><span class="n">E6</span><span class="o">%</span><span class="n">B8</span><span class="o">%</span><span class="mi">88</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">%</span><span class="mi">5</span><span class="n">D</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">blockConj</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="ow">and</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">itemConj</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="ow">or</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">items</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">5</span><span class="n">B</span><span class="o">%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">field</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="n">AF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="n">BF</span><span class="o">%</span><span class="mi">9</span><span class="n">C</span><span class="o">%</span><span class="n">E9</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">A8</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">B2</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">opr</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">D</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">value</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="n">friend00</span><span class="o">%</span><span class="mi">3</span><span class="n">Aeigyo</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">field</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="n">AF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="n">BF</span><span class="o">%</span><span class="mi">9</span><span class="n">C</span><span class="o">%</span><span class="n">E9</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">A8</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">B2</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="mi">22</span><span class="n">opr</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="n">n</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">%</span><span class="mi">5</span><span class="n">D</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">%</span><span class="mi">5</span><span class="n">D</span><span class="o">&amp;</span><span class="n">order</span><span class="o">=%</span><span class="mi">5</span><span class="n">B</span><span class="o">%</span><span class="mi">7</span><span class="n">B</span><span class="o">%</span><span class="mi">22</span><span class="n">field</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">22</span><span class="n">No</span><span class="o">%</span><span class="mi">22</span><span class="o">%</span><span class="mi">2</span><span class="n">C</span><span class="o">%</span><span class="n">E2</span><span class="o">%</span><span class="mi">80</span><span class="o">%</span><span class="mi">9</span><span class="n">Ddesc</span><span class="o">%</span><span class="n">E2</span><span class="o">%</span><span class="mi">80</span><span class="o">%</span><span class="mi">9</span><span class="n">D</span><span class="o">%</span><span class="mi">3</span><span class="n">Atrue</span><span class="o">%</span><span class="mi">7</span><span class="n">D</span><span class="o">%</span><span class="mi">5</span><span class="n">D</span><span class="o">&amp;</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="o">&amp;</span><span class="n">offset</span><span class="o">=</span><span class="mi">50</span>
+</pre></div>
+</div>
+<p>＜URLエンコーディングする前＞</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>system=0&amp;database=ﾌﾟﾛｾｽ管理型/クレーム管理DB&amp;query=[{&quot;itemConj&quot;:&quot;and&quot;,&quot;items&quot;:[{&quot;field&quot;:&quot;受付者&quot;,&quot;opr&quot;:&quot;=&quot;,&quot;value&quot;:&quot;friend00:ooki&quot;},{&quot;field&quot;:&quot;進捗区分&quot;,&quot;opr&quot;:&quot;!=&quot;,&quot;value&quot;:&quot;クレーム対応済&quot;}]},{&quot;blockConj&quot;:&quot;and&quot;,&quot;itemConj&quot;:&quot;or&quot;,&quot;items&quot;:[{&quot;field&quot;:&quot;対応部署&quot;,&quot;opr&quot;:&quot;=&quot;,&quot;value&quot;:&quot;friend00:eigyo&quot;},{&quot;field&quot;:&quot;対応部署&quot;,&quot;opr&quot;:&quot;n&quot;}]}]&amp;order=[{&quot;field&quot;:&quot;No&quot;,”desc”:true}]&amp;limit=100&amp;offset=50
+</pre></div>
+</div>
+<p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/xdb/q/records.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>パラメータを JSON形式で送信する場合</p></li>
+</ol>
+<blockquote>
+<div><p>リクエストヘッダの例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/xdb/records.json HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+Content-Type: application/json
+
+※Content-Type に application/json を指定して下さい。
+指定しない場合は JSON が解釈できないため、実行時エラーとなります。
+</pre></div>
+</div>
+<p>リクエストボディの例</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;system&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;database&quot;</span><span class="p">:</span> <span class="s2">&quot;ﾌﾟﾛｾｽ管理型/クレーム管理DB&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;query&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;itemConj&quot;</span><span class="p">:</span> <span class="s2">&quot;and&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;受付者&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;opr&quot;</span><span class="p">:</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00:ooki&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;進捗区分&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;opr&quot;</span><span class="p">:</span> <span class="s2">&quot;!=&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;クレーム対応済&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;blockConj&quot;</span><span class="p">:</span> <span class="s2">&quot;and&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;itemConj&quot;</span><span class="p">:</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;対応部署&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;opr&quot;</span><span class="p">:</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00:eigyo&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;対応部署&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;opr&quot;</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;order&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="nt">&quot;offset&quot;</span><span class="p">:</span> <span class="mi">50</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id3">
+<h3><span class="section-number">13.1.8. </span>レスポンスの例<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>レコードのリストが JSON 配列で返されます。</p>
+<p>※各フィールドの形式については後述「 フィールド形式」をご確認ください</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;count&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nt">&quot;records&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;No&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">85</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;登録日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-15T19:21:14+09:00&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;登録者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">87</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;最終更新日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">88</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-15T19:21:14+09:00&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;最終更新者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">89</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;受付日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-10T10:00+09:00&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;受付者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;お客様&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;日之出食品株式会社 岸様&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;進捗区分&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;クレーム対応済&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;対策部署&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">51</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;営業部&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;添付ファイル&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">55</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="nt">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;Od/bdrkdy3ZfD4NaYGHGxQJXeyXzYZRxhDp+LU+CFDmpP5FI2bx7Y4MqOO8bTQ3p&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;問い合わせ.xslx&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="mi">120000</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;details&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;対応日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-11T14:00+09:00&quot;</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;対応者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo1&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooki&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大木　明&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;対応内容&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;初期対応&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;対応日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-12T16:00+09:00&quot;</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;対応者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo1&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;doi&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;土井　勤&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;対応内容&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;お詫び&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;No&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">85</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;登録日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-15T19:21:14+09:00&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;登録者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">87</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;最終更新日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">88</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-15T19:21:14+09:00&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;最終更新者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">89</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;受付日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-10T10:00+09:00&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;受付者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;梨田　義男&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;お客様&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;株式会社ザッツ製作所様&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;進捗区分&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;クレーム対応中&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;対策部署&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">51</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                    <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="kc">null</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;添付ファイル&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">55</span><span class="p">,</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">[]</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;details&quot;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="web-post">
+<h2><span class="section-number">13.2. </span>Webデータベース：レコードの登録（POST）<a class="headerlink" href="#web-post" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>1件のレコードを登録できます。</p>
+<div class="section" id="id4">
+<h3><span class="section-number">13.2.1. </span>HTTPメソッド<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>POST</p>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">13.2.2. </span>URI<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/xdb/record.json</p>
+</div>
+<div class="section" id="id6">
+<h3><span class="section-number">13.2.3. </span>リクエストパラメータ<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>省略可</p></td>
+<td><p>システム区分を指定します。（0:WebDB,2:CRM）
+※省略時は0が指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名を指定します。（(親フォルダ名)/(フォルダ名)/(データベース名)）</p></td>
+</tr>
+<tr class="row-even"><td><p>notification</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>通知の有無を指定します。
+（true:通知する,false:通知しない）
+※省略時はfalseが指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>notifyfollow</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>フォロー通知の有無を指定します。
+（true:通知する,false:通知しない）
+※省略時はfalseが指定されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>external</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>外部連携（アドオン呼び出し）の有無を指定します。
+（true:実行する,false:実行しない）
+※省略時はtrueが指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>record</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>レコードの情報（フィールド名とフィールドの値）をオブジェクトで指定します。
+※フィールド値の仕様についてはフィールドの形式により異なります。 詳細については、後述「フィールド形式」をご確認ください。
+※明細行（details）は省略可能です。</p></td>
+</tr>
+</tbody>
+</table>
+<p>リクエストボディの構造</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;system&quot;</span><span class="o">:</span> <span class="p">(</span><span class="nx">システム区分</span><span class="p">),</span>
+    <span class="s2">&quot;database&quot;</span><span class="o">:</span> <span class="s2">&quot;(データベース名)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;notification&quot;</span><span class="o">:</span> <span class="p">(</span><span class="nx">通知の有無</span><span class="p">),</span>
+    <span class="s2">&quot;notifyfollow&quot;</span><span class="o">:</span> <span class="p">(</span><span class="nx">フォロー通知の有無</span><span class="p">),</span>
+    <span class="s2">&quot;external&quot;</span><span class="o">:</span> <span class="p">(</span><span class="nx">外部連携の有無</span><span class="p">),</span>
+    <span class="s2">&quot;record&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;(フィールド名)&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="s2">&quot;(フィールド値)&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;details&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;(明細行フィールド名)&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="s2">&quot;(フィールド値)&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3><span class="section-number">13.2.4. </span>リクエストの例<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic simple">
+<li><p>レコード登録条件</p></li>
+</ol>
+<blockquote>
+<div><ul>
+<li><p>対象のデータベースは「プロセス管理型/クレーム管理」</p></li>
+<li><p>通知の有無は「通知する」</p></li>
+<li><p>フォロー通知の有無は「通知しない」</p></li>
+<li><p>外部連携の有無は「実行しない」</p></li>
+<li><p>登録するフィールドは以下のとおり</p>
+<blockquote>
+<div><p>レコード</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 30%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド名</p></th>
+<th class="head"><p>フィールド型</p></th>
+<th class="head"><p>値</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>登録日時</p></td>
+<td><p>(システム標準項目)</p></td>
+<td><p>2015-01-15T19:21:14+09:00</p></td>
+</tr>
+<tr class="row-odd"><td><p>登録者</p></td>
+<td><p>(システム標準項目)</p></td>
+<td><p>大石 学(ooishi)</p></td>
+</tr>
+<tr class="row-even"><td><p>最終更新日時</p></td>
+<td><p>(システム標準項目)</p></td>
+<td><p>2015-01-15T19:21:14+09:00</p></td>
+</tr>
+<tr class="row-odd"><td><p>最終更新者</p></td>
+<td><p>(システム標準項目)</p></td>
+<td><p>大石 学(ooishi)</p></td>
+</tr>
+<tr class="row-even"><td><p>受付日時</p></td>
+<td><p>日付時刻選択</p></td>
+<td><p>2015-01-10T10:00+09:00</p></td>
+</tr>
+<tr class="row-odd"><td><p>受付者</p></td>
+<td><p>社員選択</p></td>
+<td><p>フレンド商事(friend00)
+システム室(system)</p></td>
+</tr>
+<tr class="row-even"><td><p>梨田 義男(nakanishi)</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>進捗区分</p></td>
+<td><p>ラジオボタン</p></td>
+<td><p>クレーム対応済</p></td>
+</tr>
+<tr class="row-even"><td><p>お客様</p></td>
+<td><p>文字列（1行）</p></td>
+<td><p>日之出食品株式会社 岸様</p></td>
+</tr>
+<tr class="row-odd"><td><p>対策部署</p></td>
+<td><p>部署選択</p></td>
+<td><p>フレンド商事(friend00)
+営業部(eigyo)</p></td>
+</tr>
+<tr class="row-even"><td><p>添付ファイル</p></td>
+<td><p>添付ファイル</p></td>
+<td><p>問い合わせ.xlsx(74b2a870-6bd4-413c-a467-c4c83f6da1f0)
+※添付ファイルを登録する場合は事前に「ファイルアップロードAPI」にて、fileKeyを取得する必要があります。</p></td>
+</tr>
+</tbody>
+</table>
+<p>＜明細行:1件目＞</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 30%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド名</p></th>
+<th class="head"><p>フィールド型</p></th>
+<th class="head"><p>値</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>対応日時</p></td>
+<td><p>日付時刻選択</p></td>
+<td><p>2015-01-11T14:00+09:00</p></td>
+</tr>
+<tr class="row-odd"><td><p>対応者</p></td>
+<td><p>社員選択</p></td>
+<td><p>フレンド商事(friend00)
+第一営業課(eigyo1)
+大木 明(ooki)</p></td>
+</tr>
+<tr class="row-even"><td><p>対応内容</p></td>
+<td><p>文字列（複数行）</p></td>
+<td><p>初期対応</p></td>
+</tr>
+</tbody>
+</table>
+<p>＜明細行:2件目＞</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 30%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド名</p></th>
+<th class="head"><p>フィールド型</p></th>
+<th class="head"><p>値</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>対応日時</p></td>
+<td><p>日付時刻選択</p></td>
+<td><p>2015-01-12T16:00+09:00</p></td>
+</tr>
+<tr class="row-odd"><td><p>対応者</p></td>
+<td><p>社員選択</p></td>
+<td><p>フレンド商事(friend00)
+第一営業課(eigyo1)
+土井 勤(doi)</p></td>
+</tr>
+<tr class="row-even"><td><p>対応内容</p></td>
+<td><p>文字列（複数行）</p></td>
+<td><p>お詫び</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<ol class="arabic" start="2">
+<li><p>リクエストヘッダの例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">xdb</span><span class="o">/</span><span class="n">record</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>Content-Type に application/json を指定して下さい。
+指定しない場合は JSON が解釈できないため、実行時エラーとなります。</p>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>リクエストボディの例</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;system&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;database&quot;</span><span class="p">:</span> <span class="s2">&quot;ﾌﾟﾛｾｽ管理型/クレーム管理DB&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;notification&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;notifyfollow&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;external&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;record&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;登録日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-15T19:21:14+09:00&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;登録者&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;最終更新日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-15T19:21:14+09:00&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;最終更新者&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;受付日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-10T10:00+09:00&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;受付者&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;nakanishi&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;お客様&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;日之出食品株式会社 岸様&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;進捗区分&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;クレーム対応済&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;対策部署&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;添付ファイル&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;74b2a870-6bd4-413c-a467-c4c83f6da1f0&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;details&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;対応日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-11T14:00+09:00&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;対応者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo1&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooki&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;対応内容&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;初期対応&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;対応日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-12T16:00+09:00&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;対応者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo1&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;doi&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;対応内容&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;お詫び&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id8">
+<h3><span class="section-number">13.2.5. </span>レスポンスの例<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>登録したレコードのNoが返されます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>※外部連携を実行する場合に「レコードの登録、変更、削除時」の処理で警告が返された場合は警告メッセージが設定されます。:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;警告メッセージ&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="web-put">
+<h2><span class="section-number">13.3. </span>Webデータベース：レコードの更新（PUT）<a class="headerlink" href="#web-put" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>1件のレコードを更新できます。</p>
+<div class="section" id="id9">
+<h3><span class="section-number">13.3.1. </span>HTTPメソッド<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>PUT</p>
+</div>
+<div class="section" id="id10">
+<h3><span class="section-number">13.3.2. </span>URI<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/xdb/record.json</p>
+</div>
+<div class="section" id="id11">
+<h3><span class="section-number">13.3.3. </span>リクエストパラメータ<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>省略可</p></td>
+<td><p>システム区分を指定します。（0:WebDB,2:CRM）
+※省略時は0が指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名を指定します。（(親フォルダ名)/(フォルダ名)/(データベース名)）</p></td>
+</tr>
+<tr class="row-even"><td><p>notification</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>通知の有無を指定します。（true:通知する,false:通知しない）
+※省略時はfalseが指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>notifyfollow</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>フォロー通知の有無を指定します。（true:通知する,false:通知しない）
+※省略時はfalseが指定されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>external</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>外部連携（アドオン呼び出し）の有無を指定します。（true:実行する,false:実行しない）
+※省略時はtrueが指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>No</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>レコードNoを指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>record</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>レコードの情報（フィールド名とフィールドの値）をオブジェクトで指定します。
+※フィールド値の仕様についてはフィールドの形式により異なります。 詳細については、後述「フィールド形式」をご確認ください。
+※明細行（details）は省略可能です。
+※明細行は全置換されます。（差分で更新できません）</p></td>
+</tr>
+</tbody>
+</table>
+<p>リクエストボディの構造</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;system&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">システム区分</span><span class="p">),</span>
+    <span class="s2">&quot;database&quot;</span><span class="p">:</span> <span class="s2">&quot;(データベース名)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;notification&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">通知の有無</span><span class="p">),</span>
+    <span class="s2">&quot;notifyfollow&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">フォロー通知の有無</span><span class="p">),</span>
+    <span class="s2">&quot;external&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">外部連携の有無</span><span class="p">),</span>
+    <span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">レコードNo</span><span class="p">),</span>
+    <span class="s2">&quot;record&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(フィールド値)&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;(明細行フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(フィールド値)&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3><span class="section-number">13.3.4. </span>リクエストの例<a class="headerlink" href="#id12" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic simple">
+<li><p>レコード更新条件</p></li>
+</ol>
+<blockquote>
+<div><ul>
+<li><p>対象のデータベースは「ﾌﾟﾛｾｽ管理型/クレーム管理」</p></li>
+<li><p>通知の有無は「通知する」</p></li>
+<li><p>フォロー通知の有無は「通知しない」</p></li>
+<li><p>外部連携の有無は「実行しない」</p></li>
+<li><p>更新するレコードNoは「1」</p></li>
+<li><p>更新するフィールドは以下のとおり</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 30%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド名</p></th>
+<th class="head"><p>フィールド型</p></th>
+<th class="head"><p>値</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>最終更新日時</p></td>
+<td><p>(システム標準項目)</p></td>
+<td><p>2015-01-20T10:05:14+09:00</p></td>
+</tr>
+<tr class="row-odd"><td><p>最終更新者</p></td>
+<td><p>(システム標準項目)</p></td>
+<td><p>中西 義男(nakanishi)</p></td>
+</tr>
+<tr class="row-even"><td><p>進捗区分</p></td>
+<td><p>ラジオボタン</p></td>
+<td><p>対策検討依頼済</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div></blockquote>
+<ol class="arabic" start="2">
+<li><p>リクエストヘッダの例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PUT</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">xdb</span><span class="o">/</span><span class="n">record</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>Content-Type に application/json を指定して下さい。
+指定しない場合は JSON が解釈できないため、実行時エラーとなります。</p>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>リクエストボディの例</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;system&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;database&quot;</span><span class="p">:</span> <span class="s2">&quot;ﾌﾟﾛｾｽ管理型/クレーム管理DB&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;notification&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;notifyfollow&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;external&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;No&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;record&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;最終更新日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-20T10:05:14+09:00&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;最終更新者&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;nakanishi&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;進捗区分&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;対策検討依頼済&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id13">
+<h3><span class="section-number">13.3.5. </span>レスポンスの例<a class="headerlink" href="#id13" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>処理成功時は空の JSON データが返されます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>外部連携を実行する場合に「レコードの登録、変更、削除時」
+の処理で警告が返された場合は警告メッセージが返されます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;警告メッセージ&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="web-delete">
+<h2><span class="section-number">13.4. </span>Webデータベース：レコードの削除（DELETE）<a class="headerlink" href="#web-delete" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>1件のレコードを削除できます。</p>
+<div class="section" id="id14">
+<h3><span class="section-number">13.4.1. </span>HTTPメソッド<a class="headerlink" href="#id14" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>DELETE</p>
+</div>
+<div class="section" id="id15">
+<h3><span class="section-number">13.4.2. </span>URI<a class="headerlink" href="#id15" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>パラメータを HTTP のクエリ文字列で送信する場合</p>
+<p>http(s)://(POWER EGGサーバ)/pe4j/api/rest/v1/xdb/q/record.json</p>
+</li>
+<li><p>パラメータを JSON形式で送信する場合</p>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/xdb/record.json</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id16">
+<h3><span class="section-number">13.4.3. </span>リクエストパラメータ<a class="headerlink" href="#id16" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>省略可</p></td>
+<td><p>システム区分を指定します。（0:WebDB,2:CRM）
+※省略時は0が指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名を指定します。（(親フォルダ名)/(フォルダ名)/(データベース名))</p></td>
+</tr>
+<tr class="row-even"><td><p>notification</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>通知の有無を指定します。（true:通知する,false:通知しない）
+※省略時はfalseが指定されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>external</p></td>
+<td><p>真偽値</p></td>
+<td><p>省略可</p></td>
+<td><p>外部連携（アドオン呼び出し）の有無を指定します。
+（true:実行する,false:実行しない）
+※省略時はtrueが指定されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>No</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>レコードNoを指定します。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id17">
+<h3><span class="section-number">13.4.4. </span>リクエストの例<a class="headerlink" href="#id17" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic simple">
+<li><p>レコード更新条件</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>対象のデータベースは「ﾌﾟﾛｾｽ管理型/クレーム管理」</p></li>
+<li><p>通知の有無は「通知しない」</p></li>
+<li><p>外部連携の有無は「実行する」</p></li>
+<li><p>削除するレコードNoは「1」</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>パラメータを HTTP のクエリ文字列で送信する場合</p></li>
+</ol>
+<blockquote>
+<div><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">system</span><span class="o">=</span><span class="mi">0</span><span class="o">&amp;</span><span class="n">database</span><span class="o">=%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">8</span><span class="n">C</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">9</span><span class="n">F</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">9</span><span class="n">B</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">AE</span><span class="o">%</span><span class="n">A1</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="mi">90</span><span class="o">%</span><span class="mi">86</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="mi">9</span><span class="n">E</span><span class="o">%</span><span class="mi">8</span><span class="n">B</span><span class="o">%</span><span class="mi">2</span><span class="n">F</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">82</span><span class="o">%</span><span class="n">AF</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">AC</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">BC</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">A0</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">AE</span><span class="o">%</span><span class="n">A1</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="mi">90</span><span class="o">%</span><span class="mi">86</span><span class="n">DB</span><span class="o">&amp;</span><span class="n">notification</span><span class="o">=</span><span class="n">false</span><span class="o">&amp;</span><span class="n">external</span><span class="o">=</span><span class="n">true</span><span class="o">&amp;</span><span class="n">No</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DELETE /pe4j/api/rest/v1/com/q/record.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>Content-Typeヘッダは不要です。</p>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>パラメータを JSON形式で送信する場合</p></li>
+</ol>
+<blockquote>
+<div><p>リクエストヘッダの例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DELETE</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">com</span><span class="o">/</span><span class="n">record</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>Content-Type に application/json を指定して下さい。
+指定しない場合は JSON が解釈できないため、実行時エラーとなります。</p>
+</div>
+<p>リクエストボディの例</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;system&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;database&quot;</span><span class="p">:</span> <span class="s2">&quot;ﾌﾟﾛｾｽ管理型/クレーム管理DB&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;notification&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;external&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;No&quot;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id18">
+<h3><span class="section-number">13.4.5. </span>レスポンスの例<a class="headerlink" href="#id18" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>処理成功時は空の JSON データが返されます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>外部連携を実行する場合に「レコードの登録、変更、削除時」
+の処理で警告が返された場合は警告メッセージが返されます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;警告メッセージ&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="web">
+<h2><span class="section-number">13.5. </span>Webデータベース：フィールド形式<a class="headerlink" href="#web" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>フィールドは以下のようなJSON形式になります。</p>
+<p>type と value の部分がフィールドの型によって異なります。</p>
+<p>なお、登録、更新APIでJSONデータを送信する場合、
+「value」パラメータのみ送信してください。
+「type」パラメータは必要ありません。</p>
+<div class="section" id="id19">
+<h3><span class="section-number">13.5.1. </span>システム標準項目<a class="headerlink" href="#id19" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 6%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド型</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>No</p></td>
+<td><p>85</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">85</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">No</span><span class="p">[</span><span class="n">数値</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>登録日時</p></td>
+<td><p>86</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;登録日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DDTHH:MM:SS±HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;登録日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DDTHH:MM:SS±HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>登録者</p></td>
+<td><p>87</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;登録者&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">87</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[ユーザID])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[社員名])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;登録者&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[ユーザID])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>最終更新日時</p></td>
+<td><p>88</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;最終更新日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">88</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DDTHH:MM:SS±HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;最終更新日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DDTHH:MM:SS±HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>最終更新者</p></td>
+<td><p>89</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;最終更新者&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">89</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[ユーザID])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[社員名])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;最終更新者&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[ユーザID])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>申請受付番号</p></td>
+<td><p>90</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;申請受付番号&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">申請受付番号</span><span class="p">[</span><span class="n">数値</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>申請者</p></td>
+<td><p>91</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;申請者&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">91</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[社員ID])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[社員名])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>申請日</p></td>
+<td><p>92</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;申請日&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">92</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DD])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>申請部門</p></td>
+<td><p>93</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;申請部門&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[部門ID])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[部門名(略称)])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>決裁状況</p></td>
+<td><p>94</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;決裁状況&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">94</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[状況区分])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>決裁者</p></td>
+<td><p>95</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;決裁者&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">95</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[社員ID])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[社員名])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>決裁日</p></td>
+<td><p>96</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;決裁日&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">96</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DD])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>申請番号</p></td>
+<td><p>97</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;申請番号&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(申請番号)&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>申請件名</p></td>
+<td><p>100</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;申請件名&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値)&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>顧客リレーション</p></td>
+<td><p>53</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;顧客リレーション&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">53</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;enterpriseID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">企業ID</span><span class="p">]),</span>
+        <span class="s2">&quot;postID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">部署ID</span><span class="p">]),</span>
+        <span class="s2">&quot;personID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">担当者ID</span><span class="p">]),</span>
+        <span class="s2">&quot;enterpriseName&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[企業名])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;postName&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[部署名])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;personName&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[担当者名])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;顧客リレーション&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;enterpriseID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">企業ID</span><span class="p">]),</span>
+        <span class="s2">&quot;postID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">部署ID</span><span class="p">]),</span>
+        <span class="s2">&quot;personID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">担当者ID</span><span class="p">])</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id20">
+<h3><span class="section-number">13.5.2. </span>ユーザ定義項目<a class="headerlink" href="#id20" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 6%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド型</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>文字列（1行）</p></td>
+<td><p>1</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>数値</p></td>
+<td><p>2</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>日付</p></td>
+<td><p>5</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DD])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DD])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>年月</p></td>
+<td><p>6</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>時刻</p></td>
+<td><p>9</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>文字列（複数行）</p></td>
+<td><p>11</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>自動計算</p></td>
+<td><p>12</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>自動採番</p></td>
+<td><p>13</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>注意: 登録時に自動採番項目のフィールドを指定しない場合、自動採番項目に値は設定されません。
+また、登録、更新時にはvalueで指定した値ではなく、システム側で採番された値で更新されます。</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>リッチテキスト</p></td>
+<td><p>14</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>フラグ</p></td>
+<td><p>20</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">true</span><span class="o">/</span><span class="n">false</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">true</span><span class="o">/</span><span class="n">false</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>チェックボックス</p></td>
+<td><p>21</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:[</span>
+        <span class="s2">&quot;(入力値1[文字列])&quot;</span><span class="p">,</span> <span class="o">...</span> <span class="s2">&quot;(入力値n[文字列])&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:[</span>
+        <span class="s2">&quot;(入力値1[文字列])&quot;</span><span class="p">,</span> <span class="o">...</span> <span class="s2">&quot;(入力値n[文字列])&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>ラジオボタン</p></td>
+<td><p>22</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>ドロップダウン</p></td>
+<td><p>23</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[文字列])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>ＤＢ参照</p></td>
+<td><p>24</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[名称])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[コード])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>ＤＢ参照コード入力</p></td>
+<td><p>25</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[名称])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[コード])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>WebDB参照</p></td>
+<td><p>26</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[名称])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[コード])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>WebDB参照コード入力</p></td>
+<td><p>27</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[名称])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[コード])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>会社選択</p></td>
+<td><p>31</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[会社名(略称)])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>部門選択</p></td>
+<td><p>51</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">51</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部部門コード1])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[部門名(略称)])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部部門コード1])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>社員選択</p></td>
+<td><p>52</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部部門コード1])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部社員コード1])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[社員名])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部部門コード1])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部社員コード1])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>お客様選択</p></td>
+<td><p>53</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">53</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;enterpriseID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">企業ID</span><span class="p">]),</span>
+        <span class="s2">&quot;postID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">部署ID</span><span class="p">]),</span>
+        <span class="s2">&quot;personID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">担当者ID</span><span class="p">]),</span>
+        <span class="s2">&quot;enterpriseName&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[企業名])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;postName&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[部署名])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;personName&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[担当者名])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;enterpriseID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">企業ID</span><span class="p">]),</span>
+        <span class="s2">&quot;postID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">部署ID</span><span class="p">]),</span>
+        <span class="s2">&quot;personID&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">担当者ID</span><span class="p">])</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>商品選択</p></td>
+<td><p>54</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">54</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;commodityCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[商品コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span>　<span class="s2">&quot;(入力値[商品名])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;commodityCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[商品コード]&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>添付ファイル</p></td>
+<td><p>55</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">55</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[fileKey])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[ファイル名])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値1</span><span class="p">[</span><span class="n">ファイルサイズ</span><span class="p">])</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[fileKey])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[ファイル名])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値n</span><span class="p">[</span><span class="n">ファイルサイズ</span><span class="p">])</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[fileKey])&quot;</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+        <span class="p">{</span>
+        <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[fileKey])&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>イメージ</p></td>
+<td><p>56</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">56</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[fileKey])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[ファイル名])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">ファイルサイズ</span><span class="p">])</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[fileKey])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>ＵＲＬ</p></td>
+<td><p>57</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">57</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[URL])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[URL文字列])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[URL])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[URL文字列])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>日付時刻</p></td>
+<td><p>58</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DDTHH:MM±HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DDTHH:MM±HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>時間量</p></td>
+<td><p>59</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">59</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">(</span><span class="n">分換算</span><span class="p">)])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">(</span><span class="n">分換算</span><span class="p">)])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>時間量計算</p></td>
+<td><p>60</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">(</span><span class="n">分換算</span><span class="p">)])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">数値</span><span class="p">(</span><span class="n">分換算</span><span class="p">)])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>日付時刻計算</p></td>
+<td><p>61</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">61</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DDTHH:MM±HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[YYYY-MM-DDTHH:MM±HH:MM])&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>複数社員選択</p></td>
+<td><p>62</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">62</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[外部会社コード])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[外部部門コード1])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[外部社員コード1])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[社員名])&quot;</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[外部会社コード])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[外部部門コード1])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[外部社員コード1])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[社員名])&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[外部会社コード])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[外部部門コード1])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値1[外部社員コード1])&quot;</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[外部会社コード])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[外部部門コード1])&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値n[外部社員コード1])&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>スタンプ</p></td>
+<td><p>63</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">63</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[スタンプ名])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部部門コード1])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部社員コード1])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[社員名])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[スタンプ処理日[YYYY-MM-DDTHH:MM±HH:MM]])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[スタンプ名])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部会社コード])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[外部部門コード1])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値 外部社員コード1])&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;(入力値[スタンプ処理日[YYYY-MM-DDTHH:MM±HH:MM]])&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>WebDB間連携</p></td>
+<td><p>64</p></td>
+<td><ul>
+<li><p>取得時のレスポンスのデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">コード</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>登録・更新時のリクエストデータ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;(フィールド名)&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">入力値</span><span class="p">[</span><span class="n">コード</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="webdb">
+<h3><span class="section-number">13.5.3. </span>WebDBのフィールド毎の利用可能な検索条件演算子<a class="headerlink" href="#webdb" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 51%" />
+<col style="width: 20%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド形式</p></th>
+<th class="head"><p>比較方法</p></th>
+<th class="head"><p>比較条件 (演算子)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="2"><p>すべての型</p></td>
+<td rowspan="2"></td>
+<td><p>未入力 (n)</p></td>
+</tr>
+<tr class="row-odd"><td><p>入力済 (!n)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="5"><p>文字列一行, DB参照, DB参照コード入力
+, WebDB参照, WebDB参照コード入力,
+DB間連携, URL, 申請番号, 申請件名</p></td>
+<td rowspan="5"><p>文字比較</p></td>
+<td><p>と同じ (=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる (!=)</p></td>
+</tr>
+<tr class="row-even"><td><p>で始まる (^)</p></td>
+</tr>
+<tr class="row-odd"><td><p>を含む (~)</p></td>
+</tr>
+<tr class="row-even"><td><p>を含まない (!~)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>文字列複数行</p></td>
+<td rowspan="3"><p>文字比較</p></td>
+<td><p>で始まる (^)</p></td>
+</tr>
+<tr class="row-even"><td><p>を含む (~)</p></td>
+</tr>
+<tr class="row-odd"><td><p>を含まない (!~)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>ラジオボタン, ドロップダウン,
+会社選択、商品選択、スタンプ、
+決裁状況</p></td>
+<td rowspan="2"><p>文字比較</p></td>
+<td><p>と同じ (=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる (!=)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>リッチテキスト、チェックボックス</p></td>
+<td rowspan="2"><p>文字比較</p></td>
+<td><p>を含む (~)</p></td>
+</tr>
+<tr class="row-odd"><td><p>を含まない (!~)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="6"><p>数値、自動計算、自動採番、時間量、
+時間量計算、レコードNo、申請受付番号</p></td>
+<td rowspan="6"><p>数値比較</p></td>
+<td><p>と同じ (=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる  (!=)</p></td>
+</tr>
+<tr class="row-even"><td><p>より大きい (&gt;)</p></td>
+</tr>
+<tr class="row-odd"><td><p>より小さい (&lt;)</p></td>
+</tr>
+<tr class="row-even"><td><p>以上 (&gt;=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>以下 (&lt;=)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="4"><p>日付、年月、時刻、日付時刻、
+日付時刻計算、登録日時、
+最終更新日時、申請日、決裁日</p></td>
+<td rowspan="4"><p>日付比較</p></td>
+<td><p>と同じ (=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる  (!=)</p></td>
+</tr>
+<tr class="row-even"><td><p>以降 (&gt;=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>以前 (&lt;=)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>フラグ</p></td>
+<td rowspan="2"><p>フラグ</p></td>
+<td><p>チェック済み (true)</p></td>
+</tr>
+<tr class="row-odd"><td><p>未チェック (false)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>社員選択、登録者、最終更新者、
+申請者、決裁者</p></td>
+<td rowspan="2"><p>社員比較</p></td>
+<td><p>と同じ (=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる  (!=)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="3"><p>部門選択、申請部門</p></td>
+<td rowspan="3"><p>部門比較</p></td>
+<td><p>と同じ (=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる  (!=)</p></td>
+</tr>
+<tr class="row-even"><td><p>配下 (^=)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>複数社員選択</p></td>
+<td rowspan="2"><p>複数社員選択</p></td>
+<td><p>を含む (~)</p></td>
+</tr>
+<tr class="row-even"><td><p>を含まない (!~)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>お客様選択、顧客リレーション</p></td>
+<td rowspan="3"><p>お客様選択</p></td>
+<td><p>企業が同じ (c=)</p></td>
+</tr>
+<tr class="row-even"><td><p>部署が同じ (b=)</p></td>
+</tr>
+<tr class="row-odd"><td><p>担当者が同じ (e=)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id21">
+<h2><span class="section-number">13.6. </span>Webデータベース：フィールド定義の取得（GET）<a class="headerlink" href="#id21" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>指定されたシステム区分、データベース名のデータベースに登録されている
+フィールド定義を一覧で取得できます。</p>
+<div class="section" id="id22">
+<h3><span class="section-number">13.6.1. </span>HTTPメソッド<a class="headerlink" href="#id22" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="id23">
+<h3><span class="section-number">13.6.2. </span>URI<a class="headerlink" href="#id23" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><p>http(s)://(POWER EGGサーバ)/pe4j/api/rest/v1/xdb/q/fields.json</p>
+</div></blockquote>
+</div>
+<div class="section" id="id24">
+<h3><span class="section-number">13.6.3. </span>リクエストパラメータ<a class="headerlink" href="#id24" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>システム区分を指定します。（0:WebDB,1:汎用申請,2:CRM）</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名を指定します。（(親フォルダ名)/(フォルダ名)/(データベース名)）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id25">
+<h3><span class="section-number">13.6.4. </span>リクエストの例<a class="headerlink" href="#id25" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic simple">
+<li><p>レコード取得条件</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>対象のデータベースは「ﾌﾟﾛｾｽ管理型/クレーム管理」</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>パラメータを HTTP のクエリ文字列で送信する場合</p></li>
+</ol>
+<blockquote>
+<div><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">system</span><span class="o">=</span><span class="mi">0</span><span class="o">&amp;</span><span class="n">database</span><span class="o">=%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">8</span><span class="n">C</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">9</span><span class="n">F</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="mi">9</span><span class="n">B</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">BE</span><span class="o">%</span><span class="n">EF</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">BD</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">AE</span><span class="o">%</span><span class="n">A1</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="mi">90</span><span class="o">%</span><span class="mi">86</span><span class="o">%</span><span class="n">E5</span><span class="o">%</span><span class="mi">9</span><span class="n">E</span><span class="o">%</span><span class="mi">8</span><span class="n">B</span><span class="o">%</span><span class="mi">2</span><span class="n">F</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">82</span><span class="o">%</span><span class="n">AF</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">AC</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">BC</span><span class="o">%</span><span class="n">E3</span><span class="o">%</span><span class="mi">83</span><span class="o">%</span><span class="n">A0</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="n">AE</span><span class="o">%</span><span class="n">A1</span><span class="o">%</span><span class="n">E7</span><span class="o">%</span><span class="mi">90</span><span class="o">%</span><span class="mi">86</span><span class="n">DB</span>
+</pre></div>
+</div>
+<p>＜URLエンコーディングする前＞</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">system</span><span class="o">=</span><span class="mi">0</span><span class="o">&amp;</span><span class="n">database</span><span class="o">=</span><span class="n">ﾌﾟﾛｾｽ管理型</span><span class="o">/</span><span class="n">クレーム管理DB</span>
+</pre></div>
+</div>
+<p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/xdb/q/fields.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</div></blockquote>
+</div>
+<div class="section" id="json">
+<h3><span class="section-number">13.6.5. </span>レスポンス(JSON)<a class="headerlink" href="#json" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>フィールドID</p></td>
+</tr>
+<tr class="row-odd"><td><p>fieldName</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>フィールド名</p></td>
+</tr>
+<tr class="row-even"><td><p>fieldType</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>フィールド型</p></td>
+</tr>
+<tr class="row-odd"><td><p>itemClass</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>項目種別 (0：システム項目、1：ユーザ定義項目)</p></td>
+</tr>
+<tr class="row-even"><td><p>required</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>必須フラグ (0：必須ではない、1：必須)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id26">
+<h3><span class="section-number">13.6.6. </span>レスポンスの例<a class="headerlink" href="#id26" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>レコードのリストが JSON 配列で返されます。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">7283</span><span class="p">,</span>
+            <span class="nt">&quot;fieldName&quot;</span><span class="p">:</span> <span class="s2">&quot;品目番号&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;fieldType&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;itemClass&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">7284</span><span class="p">,</span>
+            <span class="nt">&quot;fieldName&quot;</span><span class="p">:</span> <span class="s2">&quot;番号&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;fieldType&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;itemClass&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">7285</span><span class="p">,</span>
+            <span class="nt">&quot;fieldName&quot;</span><span class="p">:</span> <span class="s2">&quot;必須項目&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;fieldType&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;itemClass&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id27">
+<h2><span class="section-number">13.7. </span>Webデータベース：レコード件数の取得（GET）<a class="headerlink" href="#id27" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>指定されたデータベースIDのデータベースに登録されている
+条件に合致するレコードの件数を取得できます。</p>
+<div class="section" id="id28">
+<h3><span class="section-number">13.7.1. </span>HTTPメソッド<a class="headerlink" href="#id28" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="id29">
+<h3><span class="section-number">13.7.2. </span>URI<a class="headerlink" href="#id29" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><p>http(s)://(POWER EGGサーバ)/pe4j/api/rest/v1/xdb/q/recordcount.json</p>
+</div></blockquote>
+</div>
+<div class="section" id="id30">
+<h3><span class="section-number">13.7.3. </span>リクエストパラメータ<a class="headerlink" href="#id30" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>レコード件数を取得する対象のデータベースが配置されている会社の外部会社コードを指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部社員コード１を指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>p1</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>データベースIDを指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>p2</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>一覧表示画面定義IDを指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>p3</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>絞り込み条件IDを指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>p4</p></td>
+<td><p>文字列</p></td>
+<td><p>省略可</p></td>
+<td><p>フィールド定義のID$フィールドの値$比較演算子コード(ConditionType 0～99) を指定します。
+比較演算子コードの詳細は「WebDBのフィールド毎の利用可能な比較演算子コード」を参照してください。複数の条件を指定する場合は|で繋げます。すべてAND条件となります。(OR条件は指定不可）</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>データベースID、一覧表示画面定義ID、絞り込み条件IDは、レコード一覧画面の「この情報のURL」から確認が可能です。</p>
+<p>例）/XDB/XDB0102l.jsf?p1=101134&amp;p2=1334&amp;p3=1174</p>
+<ul class="simple">
+<li><p>データベースID⇒p1=101134</p></li>
+<li><p>一覧表示画面定義ID⇒p2=1306</p></li>
+<li><p>絞り込み条件ID⇒p3=1174</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id31">
+<h3><span class="section-number">13.7.4. </span>WebDBのフィールド毎の利用可能な比較演算子コード<a class="headerlink" href="#id31" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 14%" />
+<col style="width: 23%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールド形式</p></th>
+<th class="head"><p>比較方法</p></th>
+<th class="head"><p>比較条件 (演算子)</p></th>
+<th class="head"><p>比較演算子コード</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="2"><p>すべての型
+(チェックボックス、申請番号、
+申請件名を除く)</p></td>
+<td rowspan="2"></td>
+<td><p>未入力 (n)</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>入力済 (!n)</p></td>
+<td><p>99</p></td>
+</tr>
+<tr class="row-even"><td rowspan="5"><p>文字列一行、URL</p></td>
+<td rowspan="5"><p>文字比較</p></td>
+<td><p>と同じ (=)</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる (!=)</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>で始まる (^)</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-odd"><td><p>を含む (~)</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-even"><td><p>を含まない (!~)</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>文字列複数行</p></td>
+<td rowspan="3"><p>文字比較</p></td>
+<td><p>で始まる (^)</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>を含む (~)</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>を含まない (!~)</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>ラジオボタン、ドロップダウン、
+DB参照、DB参照コード入力、
+WebDB参照、WebDB参照コード入力、
+決裁状況、WebDB間連携項目、スタンプ</p></td>
+<td rowspan="2"><p>文字比較</p></td>
+<td><p>と同じ (=)</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる (!=)</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>リッチテキスト、チェックボックス</p></td>
+<td rowspan="2"><p>文字比較</p></td>
+<td><p>を含む (~)</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>を含まない (!~)</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-even"><td rowspan="6"><p>数値、自動計算、自動採番、
+時間量、時間量計算、レコードNo、
+申請受付番号</p></td>
+<td rowspan="6"><p>数値比較</p></td>
+<td><p>と同じ (=)</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる  (!=)</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>より大きい (&gt;)</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-odd"><td><p>より小さい (&lt;)</p></td>
+<td><p>7</p></td>
+</tr>
+<tr class="row-even"><td><p>以上 (&gt;=)</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-odd"><td><p>以下 (&lt;=)</p></td>
+<td><p>9</p></td>
+</tr>
+<tr class="row-even"><td rowspan="4"><p>日付、年月、時刻、日付時刻、
+日付時刻計算、登録日時、
+最終更新日時、申請日、決裁日</p></td>
+<td rowspan="4"><p>日付比較</p></td>
+<td><p>と同じ (=)</p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-odd"><td><p>と異なる  (!=)</p></td>
+<td><p>11</p></td>
+</tr>
+<tr class="row-even"><td><p>以降 (&gt;=)</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-odd"><td><p>以前 (&lt;=)</p></td>
+<td><p>9</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>フラグ</p></td>
+<td rowspan="2"><p>フラグ</p></td>
+<td><p>チェック済み (true)</p></td>
+<td><p>12</p></td>
+</tr>
+<tr class="row-odd"><td><p>未チェック (false)</p></td>
+<td><p>13</p></td>
+</tr>
+<tr class="row-even"><td><p>申請番号、申請件名</p></td>
+<td><p>文字比較</p></td>
+<td><p>と同じ (=)</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>DB参照, DB参照コード入力, WebDB参照, WebDB参照コード入力, WebDB間連携項目の項目はコード値での比較となります。</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id32">
+<h3><span class="section-number">13.7.5. </span>リクエストの例<a class="headerlink" href="#id32" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic simple">
+<li><p>件数取得条件</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>対象のデータベースはデータベースID=123456</p></li>
+<li><p>一覧表示画面定義は一覧表示画面定義ID=1431</p></li>
+<li><p>絞り込み条件は絞り込み条件ID=1001</p></li>
+<li><p>フィールド条件はフィールド定義ID=249（形式：数値）、フィールドの値=1000</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>パラメータを HTTP のクエリ文字列で送信する場合</p></li>
+</ol>
+<blockquote>
+<div><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">corpId</span><span class="o">=</span><span class="n">friend00</span><span class="o">&amp;</span><span class="n">empCode</span><span class="o">=</span><span class="n">ooishi</span><span class="o">&amp;</span><span class="n">p1</span><span class="o">=</span><span class="mi">123456</span><span class="o">&amp;</span><span class="n">p2</span><span class="o">=</span><span class="mi">1431</span><span class="o">&amp;</span><span class="n">p3</span><span class="o">=</span><span class="mi">1001</span><span class="o">&amp;</span><span class="n">p4</span><span class="o">=</span><span class="mi">249</span><span class="o">%</span><span class="mi">241000</span><span class="o">%</span><span class="mi">241</span>
+</pre></div>
+</div>
+<p>＜URLエンコーディングする前＞</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>corpId=friend00&amp;empCode=ooishi&amp;p1=123456&amp;p2=1431&amp;p3=1001&amp;p4=249$1000$1
+</pre></div>
+</div>
+<p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/xdb/q/recordcount.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</div></blockquote>
+</div>
+<div class="section" id="id33">
+<h3><span class="section-number">13.7.6. </span>レスポンス(JSON)<a class="headerlink" href="#id33" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>recordCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>条件に合致するレコード件数</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id34">
+<h3><span class="section-number">13.7.7. </span>レスポンスの例<a class="headerlink" href="#id34" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>レコードの件数が JSON 形式で返されます。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;recordCount&quot;</span><span class="p">:</span> <span class="mi">8</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="12_2_rest_organization.html" class="btn btn-neutral float-right" title="14. REST 組織情報API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="12_0_rest_common.html" class="btn btn-neutral float-left" title="12. REST API 共通" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

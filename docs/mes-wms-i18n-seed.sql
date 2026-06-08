@@ -7,7 +7,7 @@
  *   - LayoutView.vue は `nav.{MenuId}` を i18n キーとしてメニュー名を翻訳。
  *   - 該当キーが Sys_Langs に無い場合は `Sys_Menus.MenuName`（単一言語、現状は日本語）に
  *     fallback するため、言語切替が効かなくなる。
- *   - 本スクリプトで MES (nav.300~312) + WMS (nav.400~481) を 5 言語（zh-CN / zh-TW / en / ja / ko）で補完。
+ *   - 本スクリプトで MES (nav.300~312) + WMS (nav.400~483) を 5 言語（zh-CN / zh-TW / en / ja / ko）で補完。
  *
  * 冪等性：
  *   - MERGE 文。LangKey 一致時は 5 列を上書き、無ければ INSERT。
@@ -116,11 +116,13 @@ INSERT INTO #i18n VALUES
   (N'nav.464', N'IoT 温湿度监控',     N'IoT 溫濕度監控',        N'IoT Temp/Humidity',           N'IoT温湿度モニタ',              N'IoT 온습도 모니터');
 
 /* ─────────────────────────────────────────────────────
- * WMS 帳票分析 — nav.480 ~ 481
+ * WMS 帳票分析 — nav.480 ~ 483
  * ─────────────────────────────────────────────────── */
 INSERT INTO #i18n VALUES
   (N'nav.480', N'报表分析',           N'報表分析',              N'Reports & Analytics',         N'帳票分析',                      N'장표 분석'),
-  (N'nav.481', N'报表中心',           N'報表中心',              N'Report Center',               N'帳票センター',                  N'장표 센터');
+  (N'nav.481', N'报表中心',           N'報表中心',              N'Report Center',               N'帳票センター',                  N'장표 센터'),
+  (N'nav.482', N'接口健康监控',       N'介面健康監控',          N'Bridge Health',               N'連携ヘルス監視',                N'연계 상태 모니터'),
+  (N'nav.483', N'库存滞留报表',       N'庫存滯留報表',          N'Stock Dwell Report',          N'在庫滞留レポート',              N'재고 체류 리포트');
 
 /* ─────────────────────────────────────────────────────
  * MERGE：既存は更新、無ければ追加

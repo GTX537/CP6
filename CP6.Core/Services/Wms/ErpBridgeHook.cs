@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,50 +10,69 @@ namespace CP6.Core.Services.Wms;
 /// <see cref="IErpBridgeHook"/> の標準実装。WMS 出荷確定 → ERP 受注 出荷実績回写。
 /// </summary>
 /// <remarks>
+/// Phase 6: <see cref="BridgeHookBase"/> 継承で IntegrationEvent 持久化を追加。
 /// 出庫指示NO から OutboundOrder/明細・対応する受注を解決し、
 /// 受注明細の累計出荷数・出荷ステータス・最終出荷日を更新、受注ヘッダにロールアップする。
 /// 出庫明細↔受注明細の対応は WebOrderNo + ProductCd で照合（同一製品が複数明細にある場合は
 /// 未充足の明細へ順次充当）。
 /// </remarks>
-public class ErpBridgeHook : IErpBridgeHook
+public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
 {
-    private readonly CP6Context _db;
-    private readonly ILogger<ErpBridgeHook> _logger;
-
     public ErpBridgeHook(CP6Context db, ILogger<ErpBridgeHook> logger)
+        : base(db, logger)
     {
-        _db = db;
-        _logger = logger;
     }
 
     public async Task<ErpBridgeResult> OnShipmentConfirmedAsync(string outboundNo, string? userName)
     {
+        var corrId = Guid.NewGuid();
+        var payload = new { outboundNo, userName };
         try
         {
-            var ob = await _db.OutboundOrders.AsNoTracking()
+            var ob = await Db.OutboundOrders.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted);
             if (ob == null)
-                return ErpBridgeResult.Skipped($"出庫指示 [{outboundNo}] が見つかりません");
+            {
+                var msg = $"出庫指示 [{outboundNo}] が見つかりません";
+                await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                return ErpBridgeResult.Skipped(msg);
+            }
 
             // 出荷区分かつ受注紐付きのみ回写対象（材料出庫等は対象外）
             if (ob.OutboundType != OutboundType.Shipping || string.IsNullOrWhiteSpace(ob.WebOrderNo))
-                return ErpBridgeResult.Skipped("出荷区分かつ受注紐付きの出庫ではありません");
+            {
+                var msg = "出荷区分かつ受注紐付きの出庫ではありません";
+                await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                return ErpBridgeResult.Skipped(msg);
+            }
 
             var webOrderNo = ob.WebOrderNo!;
 
-            var shippedLines = await _db.OutboundOrderDetails.AsNoTracking()
+            var shippedLines = await Db.OutboundOrderDetails.AsNoTracking()
                 .Where(d => d.OutboundNo == outboundNo && !d.IsDeleted && d.ShippedQty > 0)
                 .OrderBy(d => d.LineNo)
                 .ToListAsync();
             if (shippedLines.Count == 0)
-                return ErpBridgeResult.Skipped("出荷数のある明細がありません");
+            {
+                var msg = "出荷数のある明細がありません";
+                await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                return ErpBridgeResult.Skipped(msg);
+            }
 
-            var order = await _db.Orders
+            var order = await Db.Orders
                 .FirstOrDefaultAsync(o => o.WebOrderNo == webOrderNo && !o.IsDeleted);
             if (order == null)
-                return ErpBridgeResult.Skipped($"受注 [{webOrderNo}] が見つかりません");
+            {
+                var msg = $"受注 [{webOrderNo}] が見つかりません";
+                await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                return ErpBridgeResult.Skipped(msg);
+            }
 
-            var orderDetails = await _db.OrderDetails
+            var orderDetails = await Db.OrderDetails
                 .Where(d => d.WebOrderNo == webOrderNo && !d.IsDeleted)
                 .OrderBy(d => d.WebOrderDetailNo)
                 .ToListAsync();
@@ -96,16 +116,136 @@ public class ErpBridgeHook : IErpBridgeHook
             order.Modifier = userName;
             order.ModifyDate = now;
 
-            await _db.SaveChangesAsync();
+            await Db.SaveChangesAsync();
 
-            _logger.LogInformation("[ERP-Bridge] 出庫 {Outbound} → 受注 {Order} 出荷実績回写（ShipStatus={Status}）",
+            Logger.LogInformation("[ERP-Bridge] 出庫 {Outbound} → 受注 {Order} 出荷実績回写（ShipStatus={Status}）",
                 outboundNo, webOrderNo, order.ShipStatus);
+            await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+                outboundNo, webOrderNo, IntegrationEventStatus.Success, null, corrId, payload);
             return ErpBridgeResult.Ok(webOrderNo);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "[ERP-Bridge] 出庫 {Outbound} の受注回写で予期せぬエラー", outboundNo);
+            Logger.LogError(ex, "[ERP-Bridge] 出庫 {Outbound} の受注回写で予期せぬエラー", outboundNo);
+            await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+                outboundNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
             return ErpBridgeResult.Failed(ex.Message);
         }
     }
+
+    public async Task<ErpBridgeResult> OnReturnConfirmedAsync(string rmaNo, string? userName)
+    {
+        var corrId = Guid.NewGuid();
+        var payload = new { rmaNo, userName };
+        try
+        {
+            var rma = await Db.RmaHeaders.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted);
+            if (rma == null)
+            {
+                const string msg = "WM-MSG-RMA-404";
+                await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
+                    rmaNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                return ErpBridgeResult.Skipped(msg);
+            }
+
+            var details = await Db.RmaDetails.AsNoTracking()
+                .Where(d => d.RmaNo == rmaNo && !d.IsDeleted)
+                .OrderBy(d => d.LineNo)
+                .ToListAsync();
+            if (details.Count == 0)
+                throw new InvalidOperationException("WM-MSG-020");
+
+            var webOrderNo = await ResolveWebOrderNoAsync(rma);
+            var now = DateTime.Now;
+            var firstCreditNoteNo = string.Empty;
+
+            foreach (var detail in details)
+            {
+                OrderDetail? orderDetail = null;
+                if (!string.IsNullOrWhiteSpace(webOrderNo))
+                {
+                    orderDetail = await Db.OrderDetails
+                        .Where(d => d.WebOrderNo == webOrderNo && d.ProductCd == detail.ProductCd && !d.IsDeleted)
+                        .OrderBy(d => d.WebOrderDetailNo)
+                        .FirstOrDefaultAsync();
+                }
+
+                if (orderDetail == null)
+                {
+                    Logger.LogWarning(
+                        "[ERP-Bridge] RMA {RmaNo} OrderDetail not found for WebOrderNo={WebOrderNo}, ProductCd={ProductCd}, LotNo={LotNo}",
+                        rmaNo, webOrderNo, detail.ProductCd, detail.LotNo);
+                }
+                else
+                {
+                    orderDetail.ReturnedQty = (orderDetail.ReturnedQty ?? 0m) + detail.Qty;
+                    orderDetail.Modifier = userName;
+                    orderDetail.ModifyDate = now;
+                }
+
+                var creditNoteNo = NewCreditNoteNo();
+                if (string.IsNullOrEmpty(firstCreditNoteNo))
+                    firstCreditNoteNo = creditNoteNo;
+
+                Db.CreditNotes.Add(new CreditNote
+                {
+                    CreditNoteNo = creditNoteNo,
+                    WebOrderNo = webOrderNo,
+                    RmaNo = rmaNo,
+                    Type = CreditNoteType.Refund,
+                    CustomerCd = rma.CustomerCd,
+                    ProductCd = detail.ProductCd,
+                    LotNo = detail.LotNo,
+                    Qty = detail.Qty,
+                    Reason = rma.ReturnReason,
+                    IssueDate = DateTime.Today,
+                    Creator = userName,
+                    CreateDate = now,
+                });
+            }
+
+            await Db.SaveChangesAsync();
+
+            Logger.LogInformation(
+                "[ERP-Bridge] RMA {RmaNo} -> {Count} credit notes generated, returned qty back-written",
+                rmaNo, details.Count);
+            await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
+                rmaNo, string.IsNullOrEmpty(firstCreditNoteNo) ? null : firstCreditNoteNo,
+                IntegrationEventStatus.Success, null, corrId, payload);
+            return ErpBridgeResult.Ok(rmaNo);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Logger.LogWarning("[ERP-Bridge] RMA {RmaNo} credit-note bridge skipped: {Msg}", rmaNo, ex.Message);
+            await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
+                rmaNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload);
+            return ErpBridgeResult.Skipped(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "[ERP-Bridge] RMA {RmaNo} credit-note bridge failed", rmaNo);
+            await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
+                rmaNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
+            return ErpBridgeResult.Failed(ex.Message);
+        }
+    }
+
+    private async Task<string?> ResolveWebOrderNoAsync(RmaHeader rma)
+    {
+        if (string.IsNullOrWhiteSpace(rma.OriginalShippingNo))
+            return null;
+
+        var outbound = await Db.OutboundOrders.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.OutboundNo == rma.OriginalShippingNo && !x.IsDeleted);
+        if (!string.IsNullOrWhiteSpace(outbound?.WebOrderNo))
+            return outbound.WebOrderNo;
+
+        return rma.OriginalShippingNo.StartsWith("WEB", StringComparison.OrdinalIgnoreCase)
+            ? rma.OriginalShippingNo
+            : null;
+    }
+
+    private static string NewCreditNoteNo()
+        => $"CN{DateTime.Today:yyyyMMdd}-{Guid.NewGuid().ToString()[..4].ToUpperInvariant()}";
 }

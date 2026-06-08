@@ -1,0 +1,43 @@
+flowchart TB
+    subgraph SYS[系统基础 PMS]
+        AUTH[认证 JWT]
+        USR[用户/角色/菜单/字典/多语言]
+        OPL[操作日志 OperLogFilter]
+    end
+
+    subgraph ERP[销售管理 PA]
+        BP[取引先]
+        EST[見積計算]
+        QTN[御見積]
+        PRD[製品マスタ]
+        ORD[受注]
+        FSC[FSC]
+        SUP[シート単価]
+        PLT[版型/木型]
+    end
+
+    subgraph MES[製造執行 ME]
+        PLAN[生産計画ボード]
+        WO[製造指図]
+        PR[製造実績]
+        QI[品質検査]
+        DEF[不良管理]
+        MCH[設備/OEE]
+        DASH_M[MES Dashboard]
+    end
+
+    subgraph WMS[倉庫管理 WM ~MSBBWM~]
+        WHS[倉庫/Location]
+        STK[在庫/Transaction]
+        IN[入庫指示·実績]
+        OUT[出庫指示·出荷]
+        TAKE[棚卸]
+        REPL[補充]
+        EXT[拡張: Kit/Pallet/Slotting/QC/Lot/Expiry/Ink/Paper/Sample/Remnant]
+        IND[業界連携: WCS/IoT/RMA/VMI/Mobile/Report]
+    end
+
+    ERP --> MES
+    MES --> WMS
+    ERP --> WMS
+    WMS -.出荷実績回写.-> ERP

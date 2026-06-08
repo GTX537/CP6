@@ -29,6 +29,19 @@ public interface IWorkOrderService
     /// <summary>ME020 — 指図発行（Status → 2）</summary>
     Task IssueAsync(string workOrderNo, string? userName);
 
+    /// <summary>
+    /// ME020 Phase 6 — 受注取消連動：指図取消（Status → 7=Cancelled）
+    /// </summary>
+    /// <remarks>
+    /// 制約：Status &gt;= InProgress(3) は取消不可（既に着手済のため）
+    /// 既存材料引当は本メソッドでは解除しない。上位 IOrderCancelBridgeHook が
+    /// 先に関連 OutboundOrder を取消す（OutboundService.CancelOrderAsync が自動 UNRSV）
+    /// ことで在庫整合を保証する。本メソッドは Status 遷移のみ責任を持つ。
+    /// </remarks>
+    /// <returns>true=取消成功 / false=既に Cancelled（冪等）</returns>
+    /// <exception cref="InvalidOperationException">指図不在、または Status &gt;= 3</exception>
+    Task<bool> CancelAsync(string workOrderNo, string reason, string? userName);
+
     /// <summary>ME020 — 受注（PA070）から指図自動展開（工程ルーティング+材料構成を PA050 から展開）</summary>
     Task<List<string>> ExpandFromOrderAsync(ExpandFromOrderRequest req, string? userName);
 

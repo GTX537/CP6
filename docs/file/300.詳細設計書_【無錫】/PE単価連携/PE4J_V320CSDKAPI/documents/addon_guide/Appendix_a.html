@@ -1,0 +1,413 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>25. 付録A 過去のバージョンからの変更点 &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="26. 付録B アドオン開発環境の作成(Eclipse)" href="Appendix_b.html" />
+    <link rel="prev" title="24. その他の注意事項" href="16_.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">25. 付録A 過去のバージョンからの変更点</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v2-0v2-0-1">25.1. V2.0からV2.0.1の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-0sr1v2-1">25.2. V2.0SR1からV2.1の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-1v2-2">25.3. V2.1からV2.2の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-2v2-3">25.4. V2.2からV2.3の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-3v2-4">25.5. V2.3からV2.4の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-4v2-5">25.6. V2.4からV2.5の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-5v2-6">25.7. V2.5からV2.6の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-6v2-7">25.8. V2.6からV2.7の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-7v2-8">25.9. V2.7からV2.8の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-8v2-8c">25.10. V2.8からV2.8cの変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-8cv2-10c">25.11. V2.8cからV2.10cの変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-10cv2-11c">25.12. V2.10cからV2.11cの変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-11cv3-0">25.13. V2.11cからV3.0の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0cv3-1">25.14. V3.0cからV3.1の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-1cv3-2c">25.15. V3.1cからV3.2cの変更点</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">25. </span>付録A 過去のバージョンからの変更点</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="a">
+<h1><span class="section-number">25. </span>付録A 過去のバージョンからの変更点<a class="headerlink" href="#a" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="v2-0v2-0-1">
+<h2><span class="section-number">25.1. </span>V2.0からV2.0.1の変更点<a class="headerlink" href="#v2-0v2-0-1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>Webサービスが利用可能になりました。</p></li>
+</ul>
+</div>
+<div class="section" id="v2-0sr1v2-1">
+<h2><span class="section-number">25.2. </span>V2.0SR1からV2.1の変更点<a class="headerlink" href="#v2-0sr1v2-1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>dataTableSelectOneRadioを追加</p></li>
+<li><p>inputTimeRangeを追加</p></li>
+</ul>
+</div>
+<div class="section" id="v2-1v2-2">
+<h2><span class="section-number">25.3. </span>V2.1からV2.2の変更点<a class="headerlink" href="#v2-1v2-2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>inputAttachFileの画面をV2.2で追加されたアップロードアプレットに置き換え</p></li>
+</ul>
+</div>
+<div class="section" id="v2-2v2-3">
+<h2><span class="section-number">25.4. </span>V2.2からV2.3の変更点<a class="headerlink" href="#v2-2v2-3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>palenControllerの引数を追加</p></li>
+<li><p>inputTimeを追加</p></li>
+<li><p>URL型事後処理の記述を追加</p></li>
+<li><p>POWER EGG2.0ワークフローWebサービスを追加</p></li>
+</ul>
+</div>
+<div class="section" id="v2-3v2-4">
+<h2><span class="section-number">25.5. </span>V2.3からV2.4の変更点<a class="headerlink" href="#v2-3v2-4" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>変更点はありません。</p></li>
+</ul>
+</div>
+<div class="section" id="v2-4v2-5">
+<h2><span class="section-number">25.6. </span>V2.4からV2.5の変更点<a class="headerlink" href="#v2-4v2-5" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>カレンダーイベント関連APIを追加</p></li>
+<li><p>ログインパスワード同期インターフェースを追加</p></li>
+</ul>
+</div>
+<div class="section" id="v2-5v2-6">
+<h2><span class="section-number">25.7. </span>V2.5からV2.6の変更点<a class="headerlink" href="#v2-5v2-6" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>inputDateRangeにuseUnlimitedパラメタを追加</p></li>
+<li><p>inputTextでは改行のみの入力は未入力として判定するように変更されました。</p></li>
+<li><p>カレンダーAPIの戻り値であるDateDtoのgetDayメソッドの戻り値の型が
+intからIntegerに変更されました。（V2.3より）</p></li>
+</ul>
+</div>
+<div class="section" id="v2-6v2-7">
+<h2><span class="section-number">25.8. </span>V2.6からV2.7の変更点<a class="headerlink" href="#v2-6v2-7" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>Oracle Application Serverのサポートは終了しました。</p></li>
+<li><p>ファイル添付部品では、HTML5対応ブラウザを利用している場合は、
+Javaアプレットによるドラッグ＆ドロップで無く、HTML5の
+ドラッグ＆ドロップのファイル添付ウィンドウが開くようになりました。</p></li>
+</ul>
+</div>
+<div class="section" id="v2-7v2-8">
+<h2><span class="section-number">25.9. </span>V2.7からV2.8の変更点<a class="headerlink" href="#v2-7v2-8" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p>【V2.7以降】net.poweregg.engine.customer.IPost#getPostの非互換（V1互換API）</p>
+<p>管理単位を追加したことにともない、IPost.getPostを実行すると
+「RuntimeException: UnitId can’t be null.」が発生します。</p>
+<p>＜対応方法＞</p>
+<p>CT2_SFA_TRANSFERテーブルに以下のレコードを追加してください</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>管理会社ID（ManageCorpID）= 0000000000</p></li>
+<li><p>管理単位ID（UnitID） = 1</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>【V2.7以降】net,poweregg.api.todo.TodoAPI#resistの非互換</p>
+<blockquote>
+<div><p>内容欄の書式をテキストエリアからリッチテキストに変更したことにともない、
+改行コードが「\r\n」から「&lt;br/&gt;」になりました。</p>
+<p>これにより、V2.7以降、内容に改行コードが含まれている場合は改行されなくなります</p>
+<p>＜対応方法＞</p>
+<p>改行コードを「&lt;br/&gt;」に置換後、APIを呼び出すように変更してください</p>
+</div></blockquote>
+</li>
+<li><p>net.poweregg.utils.DateUtils#fomratDateYMDの変更</p>
+<p>第2引数及び第3引数に“”を指定した場合に戻り値のフォーマットが変更されました</p>
+<ul class="simple">
+<li><p>Ver2.4~Ver2.7の場合：yyyy/MM/dd(E)</p></li>
+<li><p>Ver2.8の場合： yyyyMMdd</p></li>
+</ul>
+</li>
+<li><p>RESTful WebサービスAPIを追加</p></li>
+<li><p>Webデータベースの外部連携処理を追加</p></li>
+</ul>
+</div>
+<div class="section" id="v2-8v2-8c">
+<h2><span class="section-number">25.10. </span>V2.8からV2.8cの変更点<a class="headerlink" href="#v2-8v2-8c" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>開発・実行に必要なJDKのバージョンがJDK5からJDK6に変更になりました。</p></li>
+</ul>
+</div>
+<div class="section" id="v2-8cv2-10c">
+<h2><span class="section-number">25.11. </span>V2.8cからV2.10cの変更点<a class="headerlink" href="#v2-8cv2-10c" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>開発・実行に必要なJDKのバージョンがJDK6からJDK8に変更になりました。</p></li>
+<li><p>開発フレームワークがJavaEE7に変更になりました。</p></li>
+</ul>
+</div>
+<div class="section" id="v2-10cv2-11c">
+<h2><span class="section-number">25.12. </span>V2.10cからV2.11cの変更点<a class="headerlink" href="#v2-10cv2-11c" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>ワークフローのURL事後処理のパラメタが追加されました。</p></li>
+</ul>
+</div>
+<div class="section" id="v2-11cv3-0">
+<h2><span class="section-number">25.13. </span>V2.11cからV3.0の変更点<a class="headerlink" href="#v2-11cv3-0" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>REST APIの種類が追加されました。</p>
+<ul>
+<li><p>組織</p></li>
+<li><p>アシストメッセージ</p></li>
+<li><p>スケジュール</p></li>
+<li><p>社内メール</p></li>
+<li><p>作業</p></li>
+<li><p>ワークフロー</p></li>
+</ul>
+</li>
+<li><p>Payara Serverのバージョンが4.1.1.163から4.1.2.181に変更されました。</p></li>
+<li><p>対応するSymfowareのバージョンとしてV12.3が追加されました。</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0cv3-1">
+<h2><span class="section-number">25.14. </span>V3.0cからV3.1の変更点<a class="headerlink" href="#v3-0cv3-1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>APIの追加・変更はありません</p></li>
+</ul>
+</div>
+<div class="section" id="v3-1cv3-2c">
+<h2><span class="section-number">25.15. </span>V3.1cからV3.2cの変更点<a class="headerlink" href="#v3-1cv3-2c" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>REST API呼び出し時にサーバー側で内部エラーが発生したときに返却される &quot;WSA99999SE&quot; のメッセージの
+detailsに、サーバーのスタックトレースはセットしないように変更されました。(脆弱性対応)</p></li>
+<li><p>社内メール送信のREST-APIにBCCを指定するためのパラメタが追加されました。</p></li>
+<li><p>ワークフローのREST-APIに強制否認・差戻しを追加しました。</p></li>
+<li><p>HTTP DELETEメソッドでの呼び出しに関する注意事項を記載しました。</p></li>
+<li><p>RESTのワークフロー申請APIでxslFileNameを指定しない場合、スマートフォンの承認画面でもcontentXmlに
+指定したxhtmlが表示され、承認できるようになりました。</p></li>
+<li><p>組織図連携のREST-APIを追加しました。</p></li>
+<li><p>スケジュール取得のREST-APIを追加しました。</p></li>
+<li><p>ワークフローのREST-APIにPDF申請を追加しました。</p></li>
+<li><p>WebDBのフィールド定義取得、レコード件数取得のREST-APIを追加しました。</p></li>
+<li><p>処理権限変更のREST-APIを追加しました。</p></li>
+<li><p>アドオン開発環境の作成で利用するEclipseのバージョンを4.7に変更しました。</p></li>
+<li><p>Webデータベース外部参照のWebAPI連携を追加しました。</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Appendix_b.html" class="btn btn-neutral float-right" title="26. 付録B アドオン開発環境の作成(Eclipse)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="16_.html" class="btn btn-neutral float-left" title="24. その他の注意事項" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

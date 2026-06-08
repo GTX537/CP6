@@ -1,6 +1,8 @@
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CP6.Core.Services.Wms;
 
@@ -10,13 +12,27 @@ public class RmaService : IRmaService
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IStockMovementService _stock;
+    private readonly IErpBridgeHook _erpBridge;
+    private readonly ILogger<RmaService> _logger;
     private const string Prefix = "RMA";
 
     public RmaService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock)
+        : this(db, seq, stock, new NoOpErpBridgeHook(), NullLogger<RmaService>.Instance)
+    {
+    }
+
+    public RmaService(
+        CP6Context db,
+        IWmsSequenceService seq,
+        IStockMovementService stock,
+        IErpBridgeHook erpBridge,
+        ILogger<RmaService>? logger = null)
     {
         _db = db;
         _seq = seq;
         _stock = stock;
+        _erpBridge = erpBridge;
+        _logger = logger ?? NullLogger<RmaService>.Instance;
     }
 
     public async Task<List<RmaHeader>> SearchAsync(RmaSearchQuery q)
@@ -227,6 +243,20 @@ public class RmaService : IRmaService
         h.Status = RmaStatus.Closed;
         h.Modifier = userName; h.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
+
+        try
+        {
+            var result = await _erpBridge.OnReturnConfirmedAsync(rmaNo, userName);
+            if (!result.Success)
+            {
+                _logger.LogWarning("[RMA] ERP return bridge did not complete for {RmaNo}: {Message}",
+                    rmaNo, result.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "[RMA] ERP return bridge failed after RMA close for {RmaNo}", rmaNo);
+        }
     }
 
     public async Task CancelAsync(string rmaNo, string? userName)

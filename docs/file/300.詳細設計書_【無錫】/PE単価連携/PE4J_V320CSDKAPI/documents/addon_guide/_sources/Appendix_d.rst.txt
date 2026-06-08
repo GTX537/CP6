@@ -1,0 +1,288 @@
+====================================
+付録D,サンプルアプリケーション
+====================================
+
+サンプルアプリケーションの説明
+======================================
+
+このサンプルアプリケーションでは、社員の給与振込口座申請を題材としています。
+
+画面イメージ
+-------------------
+
+①申請画面
+
+.. image :: image/C-1.png
+ 
+②承認時画面
+
+.. image :: image/C-2.png
+
+
+機能の概要
+-------------------
+
+- 給与振込口座の申請を行うことができます。
+- 既に口座が登録されていれば、その口座の情報を初期値として表示します。
+- 振込先銀行の選択は、銀行選択部品で行います。
+- 申請した内容は、ワークフローエンジンを通して決裁されます。
+- 申請が決裁された時点で、申請した口座を本人の振込口座としてデータベースを更新します。
+
+
+設計情報
+-------------------
+
+（１）ワークフロー関連
+
+・申請様式として"9001"番を使用します。
+
+・申請時の条件区分値は"1"を使用します。
+
+
+ 
+（２）テーブルレイアウト
+
+   　テーブル名：UT2_EMP_ACCOUNT
+
+.. csv-table::
+    :header: No,項目名,列名,データ型,桁数,NULL,共通番号,備考
+    :widths: 4,15,15,15,10,5,5,25
+    
+    1,社員ＩＤ,EmpID,BIGINT,10,No,,
+    2,会社ＩＤ,CorpID,VARCHAR,10,,,
+    3,申請受付番号,AppRecepNo,BIGINT,11,,,
+    4,文書管理番号,DocMangNo,BIGINT,11,,,XML文書管理用
+    5,現在給与第一口座,,,,,,
+    6,銀行コード,PSBankCode1,CHAR,4,,,ＺＴ銀行
+    7,銀行支店コード,PSBranchCode1,CHAR,3,,,ＺＴ銀行
+    8,銀行預金種目,PSDepositType1,VARCHAR,10,,1428,1:普通 2:当座 9:他
+    9,銀行口座番号,PSAccountNo1,VARCHAR,7,,,
+    10,現在給与第二口座,,,,,,
+    11,銀行コード,PSBankCode2,CHAR,4,,,ＺＴ銀行
+    12,銀行支店コード,PSBranchCode2,CHAR,3,,,ＺＴ銀行
+    13,銀行預金種目,PSDepositType2,VARCHAR,10,,1428,1:普通 2:当座 9:他
+    14,銀行口座番号,PSAccountNo2,VARCHAR,7,,,
+    15,振込額定額,PSFixedAmount,NUMERIC,11,,,
+    16,現在賞与第一口座,,,,,,
+    17,銀行コード,PBBankCode1,CHAR,4,,,ＺＴ銀行
+    18,銀行支店コード,PBBranchCode1,CHAR,3,,,ＺＴ銀行
+    19,銀行預金種目,PBDepositType1,VARCHAR,10,,1428,1:普通 2:当座 9:他
+    20,銀行口座番号,PBAccountNo1,VARCHAR,7,,,
+    21,現在賞与第二口座,,,,,,
+    22,銀行コード,PBBankCode2,CHAR,4,,,ＺＴ銀行
+    23,銀行支店コード,PBBranchCode2,CHAR,3,,,ＺＴ銀行
+    24,銀行預金種目,PBDepositType2,VARCHAR,10,,1428,1:普通 2:当座 9:他
+    25,銀行口座番号,PBAccountNo2,VARCHAR,7,,,
+    26,振込額定額,PBFixedAmount,NUMERIC,11,,,
+    27,申込給与第一口座,,,,,,
+    28,銀行コード,ASBankCode1,CHAR,4,,,ＺＴ銀行
+    29,銀行支店コード,ASBranchCode1,CHAR,3,,,ＺＴ銀行
+    30,銀行預金種目,ASDepositType1,VARCHAR,10,,1428,1:普通 2:当座 9:他
+    31,銀行口座番号,ASAccountNo1,VARCHAR,7,,,
+    32,申込給与第二口座,,,,,,
+    33,銀行コード,ASBankCode2,CHAR,4,,,ＺＴ銀行
+    34,銀行支店コード,ASBranchCode2,CHAR,3,,,ＺＴ銀行
+    35,銀行預金種目,ASDepositType2,VARCHAR,10,,1428,1:普通 2:当座 9:他
+    36,銀行口座番号,ASAccountNo2,VARCHAR,7,,,
+    37,振込額定額,ASFixedAmount,NUMERIC,11,,,
+    38,申込賞与第一口座,,,,,,
+    39,銀行コード,ABBankCode1,CHAR,4,,,ＺＴ銀行
+    40,銀行支店コード,ABBranchCode1,CHAR,3,,,ＺＴ銀行
+    41,銀行預金種目,ABDepositType1,VARCHAR,10,,1428,1:普通 2:当座 9:他
+    42,銀行口座番号,ABAccountNo1,INTEGER,7,,,
+    43,申込賞与第二口座,,,,,,
+    44,銀行コード,ABBankCode2,CHAR,4,,,ＺＴ銀行
+    45,銀行支店コード,ABBranchCode2,CHAR,3,,,ＺＴ銀行
+    46,銀行預金種目,ABDepositType2,VARCHAR,10,,1428,1:普通 2:当座 9:他
+    47,銀行口座番号,ABAccountNo2,VARCHAR,7,,,
+    48,振込額定額,ABFixedAmount,NUMERIC,11,,,
+    49,更新回数,UpdateCounter,BIGINT,11,,,
+    50,最終更新日時,Lastupadte,TIMESTAMP,,,,
+
+
+ 
+（３）プログラム一覧
+
+UAP0101e.xhtml : 申請入力画面
+
+UAP0102c.xhtml : 申請確認画面
+
+アプリケーションビーン
+
+sample.empaccount.UAP01Bean
+
+エンティティクラス
+
+sample.empaccount.entity.EmpAccount
+
+サービスクラス
+
+sample.empaccount.EmpAccountService
+
+sample.empaccount. EmpAccountServiceBean
+
+事後処理クラス
+
+sample.empaccount.UAP01AfterFlow
+
+SDKサンプルプロジェクトのビルド
+==================================
+
+SDKサンプルプロジェクトのEclipseへの取り込み
+-----------------------------------------------
+
+#. Eclipseで「ファイル」-「インポート」を実行します。
+
+#. 既存プロジェクトをワークスペースへを選択します。
+
+#. アーカイブ・ファイルの選択で"sdksample.zip"を選択します。
+
+#. インポートしたプロジェクトディレクトリ配下にpe4j-earディレクトリを作成し、
+   pe4j-ear.earをjarコマンドで展開します。
+
+    .. code ::
+
+        pe4j-ear> jar xvf pe4j-ear.ear
+
+#. インポートしたプロジェクトディレクトリ配下に pe4j-webappディレクトリを作成し、
+   pe4j-ear/pe4j-webapp.warをjarコマンドやzip展開ツールで展開します
+
+#. インポートしたプロジェクトディレクトリ配下に pe4j-engineディレクトリを作成し、
+   pe4j-ear/pe4j-engine.jarをjarコマンドやzip展開ツールで展開します
+
+#. インポートしたプロジェクトディレクトリ配下にpe4j-jpa-mainディレクトリを作成し、
+   pe4j-ear/lib/pe4j-jpa-main.jarをjarコマンドやzip展開ツールで展開します
+
+#. プロジェクトをリフレッシュします。
+
+.. note ::
+
+    展開元ファイル(.ear,.jar,.war)は展開後削除してください。
+
+SDKサンプルプロジェクトのビルド
+---------------------------------
+
+#. persistence.xmlの編集
+
+    アドオンで作成したエンティティを有効にするため、pe4j-jpa-main/META-INF/
+    persistence.xmlにアドオンエンティティが格納されているjarファイルを登録します。
+
+    .. code ::
+
+        <!-- sdksample -->
+        <jar-file>empAccount-entity.jar</jar-file>
+
+#. application.xmlの編集
+
+    アドオンのEJBを有効にするため、pe4j-ear/META-INF/application.xmlにアドオン
+    のejb-jarを登録します。
+
+    .. code ::
+
+        <module>
+            <ejb>empAccount-ejb.jar</ejb>
+        </module>
+
+#. web.xmlの編集
+
+    アドオンで作成したJSFのナビゲーション定義を参照するため、
+    pe4j-webapp/WEB-INF/web.xmlのjavax.faces.CONFIG_FILES定義にアドオン開発
+    したナビゲーション定義ファイルを追加します。
+
+    .. code ::
+
+        <context-param>
+            <param-name>javax.faces.CONFIG_FILES</param-name>
+            <param-value>/WEB-INF/faces-config.xml,
+                ...
+                ...
+                /WEB-INF/navigations/UAP01Bean.xml
+            </param-value>
+        </context-param>
+
+    .. note ::
+
+        既存の定義を削除するとPOWER EGGが正しく動作しなくなります。
+        アドオンの定義を追加するだけにしてください。
+
+#. pe4j-earのビルド
+
+    build.xmlのallターゲットを実行し、アドオンが組み込まれたpe4j-earを生成します。
+    実行後、プロジェクトディレクトリの配下にpe4j-ear.earが作成されます。
+
+#. pe4j-earの配備
+
+    生成されたpe4j-earをGlassFishにデプロイします。
+    配備の方法については、「付録B. アドオン開発環境の作成」
+    を参照してください。
+    
+
+配備後の設定
+-----------------
+
+#. アドオン用テーブルの作成
+
+    POWER EGGのデータベースにアドオン用のテーブルを作成します。
+
+    SQLがsdksample/sqlフォルダに格納されているので、PSQLコマンド等
+    で実行し、テーブルを作成してください。
+
+#. 申請様式の登録
+
+    サンプル申請用の申請様式を登録します。
+
+    - 様式コード：9100
+    - 様式名称：給与振込口座申請
+    - ルート判定条件：区分値
+    - ルートタイプ：申請
+    - 採番ルール：標準採番ルール
+
+    .. note ::
+
+        「http://ホスト名:ポート/pe4j/」から管理者ユーザにてログインを行って操作してください。
+        
+        デモキットのデータを利用している場合、「ユーザID:ooishi / パスワード:123」でログインできます。
+
+    .. note ::
+
+        「申請様式の登録」～「申請種別の登録」は「システム設定 > 汎用申請の設定」配下のメニューから設定できます。
+
+#. 登録した様式に対して、「決裁」事後処理を登録します
+
+    - 実行時のタイミング：決裁
+    - 処理種別：Java
+    - 処理名：sample.empaccount.UAP01AfterFlow
+    - 実行区分：実行する
+
+#. 申請種別の登録
+
+    登録した様式に対して申請種別を登録します
+
+    - 種別名：給与振込口座申請
+    - 区分：1
+
+#. システム管理の「処理の登録」を利用して処理を登録します
+
+    - 処理名：給与振込口座申請
+    - URLの前に"/pe4j"を付けるにチェック
+    - URL：UAP/UAP0101e.jsf
+
+    .. note ::
+
+        「処理の登録」および「メニューの登録」は「システム設定 > システム共通 > メニューの設定」から設定できます。
+
+#. システム管理のメニューの登録を利用して、登録した処理をメニューに割り当
+   てます。
+
+    .. note ::
+
+        登録したメニューは再度ログインすることで利用可能となります。
+
+
+ソースコード
+=======================
+
+サンプルアプリケーションのソースコードは、SDKのCD-ROMの
+sample_sourceフォルダに格納されていますので、
+そちらを参照してください。 
+

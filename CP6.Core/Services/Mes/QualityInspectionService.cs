@@ -1,7 +1,11 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Mes;
+using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CP6.Core.Services.Mes;
 
@@ -21,12 +25,20 @@ public class QualityInspectionService : IQualityInspectionService
 {
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
+    private readonly IStockQcService? _stockQc;
+    private readonly ILogger<QualityInspectionService> _logger;
     private const string QcSeqKey = "QC";
 
-    public QualityInspectionService(CP6Context db, IMesSequenceService seq)
+    public QualityInspectionService(
+        CP6Context db,
+        IMesSequenceService seq,
+        IStockQcService? stockQc = null,
+        ILogger<QualityInspectionService>? logger = null)
     {
         _db = db;
         _seq = seq;
+        _stockQc = stockQc;
+        _logger = logger ?? NullLogger<QualityInspectionService>.Instance;
     }
 
     public async Task<QualityInspectionDto?> GetByNoAsync(string inspectionNo)
@@ -218,6 +230,12 @@ public class QualityInspectionService : IQualityInspectionService
 
         await _db.SaveChangesAsync();
         await tx.CommitAsync();
+
+        if (qi.OverallResult == 2 && !string.IsNullOrWhiteSpace(qi.WorkOrderNo))
+        {
+            await TryMarkLinkedStockFailedAsync(qi.WorkOrderNo, no, userName);
+        }
+
         return no;
     }
 
@@ -303,6 +321,41 @@ public class QualityInspectionService : IQualityInspectionService
     // ═══════════════════════════════════════════════════════════
 
     /// <summary>合否自動判定（仕様書 §6.3）</summary>
+    private async Task TryMarkLinkedStockFailedAsync(string workOrderNo, string inspectionNo, string? userName)
+    {
+        if (_stockQc == null)
+        {
+            _logger.LogWarning(
+                "[QualityInspection] Stock QC service not configured; skipped auto FAILED mark for WO {WorkOrderNo}, inspection {InspectionNo}",
+                workOrderNo,
+                inspectionNo);
+            return;
+        }
+
+        try
+        {
+            var affected = await _stockQc.MarkLinkedStockByWorkOrderAsync(
+                workOrderNo,
+                StockQcStatus.Failed,
+                $"QC NG: inspection {inspectionNo}",
+                userName);
+
+            _logger.LogInformation(
+                "[QualityInspection] Auto-marked {Count} stock rows FAILED for WO {WorkOrderNo}, inspection {InspectionNo}",
+                affected,
+                workOrderNo,
+                inspectionNo);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "[QualityInspection] Failed to auto-mark linked stock for WO {WorkOrderNo}, inspection {InspectionNo}; QI save remains committed",
+                workOrderNo,
+                inspectionNo);
+        }
+    }
+
     private static void AutoJudge(QualityInspectionDto dto)
     {
         if (dto.Items == null || dto.Items.Count == 0) return;

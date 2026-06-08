@@ -17,3 +17,9 @@
 **/Dockerfile
 **/.dockerignore
 docker-compose*.yml
+
+# Local secrets (绝不入镜像！否则覆盖 docker-compose env vars)
+**/appsettings.Local.json
+**/appsettings.*.local.json
+**/.env
+**/.env.local

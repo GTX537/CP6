@@ -45,7 +45,8 @@ public class MesBridgeHookTests
         mockWo.Setup(s => s.ExpandFromOrderAsync(It.IsAny<ExpandFromOrderRequest>(), It.IsAny<string>()))
             .ReturnsAsync(new List<string> { "WO20260101-0001", "WO20260101-0002" });
 
-        var hook = new MesBridgeHook(mockWo.Object, NullLogger);
+        using var db = NewDb();
+        var hook = new MesBridgeHook(db, mockWo.Object, NullLogger);
         var result = await hook.OnOrderCreatedAsync("WO_PA001", "u");
 
         Assert.True(result.Success);
@@ -60,7 +61,8 @@ public class MesBridgeHookTests
         mockWo.Setup(s => s.ExpandFromOrderAsync(It.IsAny<ExpandFromOrderRequest>(), It.IsAny<string>()))
             .ThrowsAsync(new InvalidOperationException("ME-MSG-005")); // 既に指図あり
 
-        var hook = new MesBridgeHook(mockWo.Object, NullLogger);
+        using var db = NewDb();
+        var hook = new MesBridgeHook(db, mockWo.Object, NullLogger);
         var result = await hook.OnOrderCreatedAsync("WO_PA001", "u");
 
         Assert.False(result.Success);
@@ -74,7 +76,8 @@ public class MesBridgeHookTests
         mockWo.Setup(s => s.ExpandFromOrderAsync(It.IsAny<ExpandFromOrderRequest>(), It.IsAny<string>()))
             .ThrowsAsync(new TimeoutException("DB 接続失敗"));
 
-        var hook = new MesBridgeHook(mockWo.Object, NullLogger);
+        using var db = NewDb();
+        var hook = new MesBridgeHook(db, mockWo.Object, NullLogger);
         var result = await hook.OnOrderCreatedAsync("WO_PA001", "u");
 
         Assert.False(result.Success);
@@ -108,7 +111,7 @@ public class MesBridgeHookTests
 
         // 実 WorkOrderService を直結（WMS 連動は NoOp）
         var woService = new WorkOrderService(db, new MesSequenceService(db), new NoOpWmsBridgeHook());
-        var mesBridge = new MesBridgeHook(woService, NullLogger);
+        var mesBridge = new MesBridgeHook(db, woService, NullLogger);
 
         var mockPe = new Mock<IPowerEggWorkflowService>();
         var svc = new OrderService(db, mockPe.Object, new NoOpWmsBridgeHook(), mesBridge);

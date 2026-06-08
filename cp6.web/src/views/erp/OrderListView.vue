@@ -113,9 +113,26 @@
           </template>
         </el-table-column>
         <el-table-column prop="slipNote" :label="t('伝票備考')" min-width="160" sortable="custom" />
-        <el-table-column :label="t('操作')" width="100" align="center" fixed="right">
+        <el-table-column :label="t('操作')" width="230" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="goDetail(row)">詳細</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              :icon="Connection"
+              @click.stop="goTrace(row.webOrderNo)"
+            >
+              {{ t('erp.orderTrace.btn.trace') }}
+            </el-button>
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click.stop="openCancelDialog(row)"
+            >
+              {{ t('sales.cancel.btn') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -156,6 +173,11 @@
           <div v-if="row.consignedSalesFlg === '1'" class="order-card-flag">
             <el-tag type="success" size="small">預り売上</el-tag>
           </div>
+          <div class="order-card-actions" @click.stop>
+            <el-button link type="primary" size="small" :icon="Connection" @click="goTrace(row.webOrderNo)">
+              {{ t('erp.orderTrace.btn.trace') }}
+            </el-button>
+          </div>
         </div>
       </div>
 
@@ -173,6 +195,14 @@
         @size-change="search"
       />
     </el-card>
+
+    <!-- Phase 6 受注取消ダイアログ -->
+    <OrderCancelDialog
+      v-if="cancelDialogVisible"
+      v-model="cancelDialogVisible"
+      :web-order-no="cancelTargetWebOrderNo"
+      @cancelled="onCancelled"
+    />
   </div>
 </template>
 
@@ -181,10 +211,11 @@ import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Download, Check } from '@element-plus/icons-vue'
+import { Download, Check, Connection } from '@element-plus/icons-vue'
 import { orderApi } from '@/api/order'
 import type { OrderQueryDto, OrderListItemDto } from '@/types/order'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import OrderCancelDialog from './OrderCancelDialog.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -208,6 +239,21 @@ const rows = ref<OrderListItemDto[]>([])
 const total = ref(0)
 const loading = ref(false)
 const exporting = ref(false)
+
+// Phase 6 取消ダイアログ
+const cancelDialogVisible = ref(false)
+const cancelTargetWebOrderNo = ref('')
+
+function openCancelDialog(row: OrderListItemDto) {
+  cancelTargetWebOrderNo.value = row.webOrderNo
+  cancelDialogVisible.value = true
+}
+
+function onCancelled() {
+  ElMessage.success(t('sales.cancel.successMsg'))
+  // 重新查询列表
+  search()
+}
 
 async function search() {
   loading.value = true
@@ -256,6 +302,10 @@ function onSortChange({ prop, order }: { prop: string; order: string | null }) {
 
 function goDetail(row: OrderListItemDto) {
   router.push({ path: '/order', query: { webOrderNo: row.webOrderNo } })
+}
+
+function goTrace(webOrderNo: string) {
+  router.push({ path: '/erp/order-trace', query: { webOrderNo } })
 }
 </script>
 
@@ -324,6 +374,12 @@ function goDetail(row: OrderListItemDto) {
   font-size: 13px;
 }
 .order-card-flag {
+  margin-top: 8px;
+}
+
+.order-card-actions {
+  display: flex;
+  justify-content: flex-end;
   margin-top: 8px;
 }
 

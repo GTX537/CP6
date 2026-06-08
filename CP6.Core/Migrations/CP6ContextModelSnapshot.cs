@@ -694,6 +694,88 @@ namespace CP6.Core.Migrations
                     b.ToTable("T_WebBusinessPartner");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.CreditNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CreditNoteNo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CustomerCd")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LotNo")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductCd")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("Qty")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("RmaNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("WebOrderNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreditNoteNo")
+                        .IsUnique();
+
+                    b.HasIndex("WebOrderNo");
+
+                    b.ToTable("T_CreditNote");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.DocSequence", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1323,6 +1405,90 @@ namespace CP6.Core.Migrations
                     b.HasIndex("QtnNo", "QtnCalcNo");
 
                     b.ToTable("T_FscChecklist");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.IntegrationEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("HookName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastError")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NextRetryAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PayloadJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SourceModule")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("SourceNo")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("TargetModule")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("TargetNo")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CorrelationId");
+
+                    b.HasIndex("SourceNo", "HookName");
+
+                    b.HasIndex("Status", "NextRetryAt");
+
+                    b.ToTable("T_IntegrationEvent");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.MasterBase", b =>
@@ -2692,6 +2858,13 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Carrier")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -2755,6 +2928,11 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("OrderType")
                         .IsRequired()
                         .HasMaxLength(4)
@@ -2802,6 +2980,8 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("OrderDate", "IsDeleted");
 
+                    b.HasIndex("OrderStatus", "IsDeleted");
+
                     b.HasIndex("OrderType", "IsDeleted");
 
                     b.HasIndex("Status", "IsDeleted");
@@ -2820,6 +3000,9 @@ namespace CP6.Core.Migrations
 
                     b.Property<int?>("ApprovalStatus")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("BackorderQty")
+                        .HasColumnType("decimal(21,8)");
 
                     b.Property<decimal?>("BladeFlow")
                         .HasColumnType("decimal(21,8)");
@@ -3191,6 +3374,9 @@ namespace CP6.Core.Migrations
                     b.Property<string>("RemfgNote")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("ReturnedQty")
+                        .HasColumnType("decimal(21,8)");
 
                     b.Property<decimal?>("RollMeter")
                         .HasColumnType("decimal(21,8)");
@@ -5770,6 +5956,9 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<bool>("IsAlert")
+                        .HasColumnType("bit");
+
                     b.Property<string>("RequestBody")
                         .HasColumnType("nvarchar(max)");
 
@@ -5785,6 +5974,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IsAlert", "CreateDate");
 
                     b.ToTable("Sys_OperLogs");
                 });
@@ -7075,6 +7266,82 @@ namespace CP6.Core.Migrations
                     b.HasIndex("WarehouseCd", "IsBlocked", "IsPickable");
 
                     b.ToTable("T_Location");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.MaterialShortage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AvailableQty")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("DetectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LotNo")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductCd")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("RelatedOutboundNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("RequiredQty")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("WorkOrderNo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkOrderNo");
+
+                    b.HasIndex("Status", "DetectedAt");
+
+                    b.ToTable("T_MaterialShortage");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.MobileTask", b =>
@@ -8615,6 +8882,13 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("QcStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("PENDING");
+
                     b.Property<bool>("RecallFlag")
                         .HasColumnType("bit");
 
@@ -8641,6 +8915,8 @@ namespace CP6.Core.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PaperRollNo");
+
+                    b.HasIndex("QcStatus");
 
                     b.HasIndex("ProductCd", "ExpiryDate");
 

@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    participant U as 営業 UI
+    participant ERP as OrderService
+    participant HOOK as IOrderCancelBridgeHook
+    participant MES as WorkOrderService
+    participant WMS as OutboundService
+    participant DB as T_IntegrationEvent
+
+    U->>ERP: CancelAsync(webOrderNo, reason)
+    ERP->>ERP: 状态机校验（Shipped 拒绝）
+    ERP->>DB: INSERT IntegrationEvent(Pending, ORDER_CANCEL)
+    ERP->>HOOK: OnOrderCancelledAsync(webOrderNo)
+
+    HOOK->>MES: 查询关联 WO 状态
+    MES-->>HOOK: WO list（每个含 Status）
+    HOOK->>WMS: 查询关联 Outbound 状态
+    WMS-->>HOOK: Outbound list
+
+    alt 全部可自动取消（WO Status<2, Outbound Status<3）
+        HOOK->>MES: WorkOrderService.CancelAsync(woNo)
+        HOOK->>WMS: OutboundService.CancelOrderAsync(outboundNo)
+        HOOK-->>ERP: PartialCancelResult { AutoHandled=true }
+        ERP->>DB: UPDATE IntegrationEvent(Success)
+    else 有半路状态（WO Status≥2 或 Outbound Picking）
+        HOOK-->>ERP: PartialCancelResult { NeedsDecision=true, items=[...] }
+        ERP-->>U: HTTP 200 + Body 含半路明细
+        Note over U: 前端弹窗显示状态，営業决策
+        U->>ERP: CancelAsync(webOrderNo, force=true)
+        ERP->>HOOK: 强制路径（含 force）
+    end

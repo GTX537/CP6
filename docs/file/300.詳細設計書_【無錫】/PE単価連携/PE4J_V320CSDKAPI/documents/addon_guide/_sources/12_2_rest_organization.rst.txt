@@ -1,0 +1,1774 @@
+===============================
+REST 組織情報API
+===============================
+
+
+社員情報取得(GET)
+=================================================
+
+引数で指定した社員の情報を1件取得します。
+
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/employee.json
+
+
+リクエストパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    baseDate,日付,必須,組織の発令日を決定するための基準日です。この日付時点の組織図が対象となります。
+    corpCode,文字列,必須,"基準日時点で社員が所属する会社の外部会社コードを指定します。"
+    empCode1,文字列,"省略可","基準日時点でのcorpCodeの会社での外部社員コード１を指定します。"
+    empCode2,文字列,"省略可","基準日時点でのcorpCodeの会社での外部社員コード２を指定します。"
+
+.. note ::
+
+    empCode1、empCode2のどちらか、または両方を指定する必要があります
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    userid,文字列,必須,ログインユーザID
+    empName, 文字列, 必須, 社員名
+    nameFurigana, 文字列, , 社員名ふりがな
+    mailAddress, 文字列, ,メールアドレス
+    mobilePhoneNo, 文字列, ,携帯電話番号
+    mobileMailAddress, 文字列, , 携帯メールアドレス（非公開に設定されてる場合はnull）
+    retireDate, 日付, , 退職日
+    expireDate, 日付, , ID有効期限
+    belongToDepts, JSON, 必須, 所属情報の配列（パラメタで指定された会社以外の所属は含まない）
+
+所属情報（belongToDepts）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    announceDate,日付,必須,基準日時点での発令日
+    deptCode1, 文字列, , 外部部門コード１
+    deptCode2, 文字列, , 外部部門コード２
+    deptName, 文字列, 必須, 部門名
+    empCode1, 文字列, , 外部社員コード１
+    empCode2, 文字列, , 外部社員コード２
+    titleCode, 文字列, , 外部役職コード
+    titleName, 文字列, , 役職名
+    deliberationOrder, 数値, , 承認順位
+    isMainBelong, 真偽型, 必須, "true:主所属 false:兼務"
+
+リクエストの例
+-------------------------------
+
+- "friend00"という外部会社コードの会社で外部社員コード１が"114403"の社員の情報を取得する
+
+- HTTPのクエリ文字列の例 ::
+
+    baseDate=2018-06-16&corpCode=friend00&empCode1=114403
+
+- リクエストヘッダを含んだ例 :: 
+
+    GET /pe4j/api/rest/v1/organization/employee.json?(HTTPのクエリ文字列) HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+
+  ※Content-Typeヘッダは不要です。
+
+
+レスポンスの例
+---------------------------
+
+取得した社員情報が返却されます。兼務している場合は、belongToDeptsに複数の所属がセットされます。 ::
+
+    {
+        "userId": "t.yamada",
+        "empName": "山田　武",
+        "nameFurigana": "やまだ　たけし",
+        "mailAddress": "tyamada@friendcorp.co.jp",
+        "mobilePhoneNo": "0904453XXXX",
+        "mobileMailAddress": null,
+        "retireDate": null,
+        "expireDate": null,
+        "belongToDepts": [
+            {
+                "announceDate": "2017-04-01",
+                "deptCode1": "0310",
+                "deptCode2": null,
+                "deptName": "営業部",
+                "empCode1": "114403",
+                "empCode2": null,
+                "titleCode": "03",
+                "titleName": "部長",
+                "deliberationOrder": 1,
+                "isMainBelong": true
+            },
+            {
+                "announceDate": "2017-04-01",
+                "deptCode1": "0311",
+                "deptCode2": null,
+                "deptName": "営業課",
+                "empCode1": "114403",
+                "empCode2": null,
+                "titleCode": "04",
+                "titleName": "課長",
+                "deliberationOrder": 1,
+                "isMainBelong": false
+            }
+        ]
+    }
+
+
+部門情報取得(GET)
+=================================================
+
+引数で指定した部門の情報を1件取得します。
+
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/department.json
+
+
+リクエストパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    baseDate,日付,必須,組織の発令日を決定するための基準日です。この日付時点の組織図が対象となります。
+    corpCode,文字列,必須,"基準日時点での部門が存在する会社の外部会社コードを指定します。"
+    deptCode1,文字列,省略可,基準日時点でのcorpCodeの会社での外部部門コード１
+    deptCode2,文字列,省略可,基準日時点でのcorpCodeの会社での外部部門コード２
+    lowerDept,真偽値, ,"true：配下部門を取得する false：自部門のみ取得する（省略値）"
+
+.. note ::
+
+    deptCode1、deptCode2のどちらか、または両方を指定する必要があります
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    announceDate,日付,必須,基準日時点での発令日
+    dept, JSON, 必須, 自部門の部門情報
+    lowerDepts, JSON, , "配下部門情報の配列。再帰的に末端の部門まで取得される。配下部門を取得しない場合、存在しない場合は空の配列。"
+
+
+部門情報（dept、lowerDepts）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    deptId,数値,必須,部門ID
+    aboveDeptId, 数値, , "上位部門の部門ID。上位部門が存在しない場合はnull"
+    deptCode1, 文字列, , 外部部門コード１
+    deptCode2, 文字列, , 外部部門コード２
+    deptName, 文字列, 必須, 部門名称
+    deptShortName, 文字列, 必須, 部門略称
+    deptKana, 文字列, ,部門フリガナ
+    address, 文字列, ,住所
+    tel, 文字列, ,電話番号
+    fax, 文字列, ,FAX番号
+    location,文字列, ,地区名
+    deptLevel,数値,必須,組織階層レベル
+    deptClass,文字列,必須,"“1”:通常部門 “2”:申請部門"
+    decide,真偽値,必須,"true:自部門での決裁可 false:自部門での決裁不可（上位委譲）"
+
+リクエストの例
+-------------------------------
+
+- "friend00"という外部会社コードの会社で外部部門コード１が"300"の部門の情報を配下部門を含んで取得する
+
+- HTTPのクエリ文字列の例 ::
+
+    baseDate=2018-06-16&corpCode=friend00&deptCode1=300&lowerDept=true
+
+- リクエストヘッダを含んだ例 :: 
+
+    GET /pe4j/api/rest/v1/organization/department.json?(HTTPのクエリ文字列) HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+
+  ※Content-Typeヘッダは不要です。
+
+
+レスポンスの例
+---------------------------
+
+取得した部門情報が返却されます。 ::
+
+    {
+        "announceDate": "2017-04-01",
+        "dept": {
+            "deptId": 24,
+            "aboveDeptId": 13,
+            "deptCode1": "300",
+            "deptCode2": null,
+            "deptName": "北陸営業部",
+            "deptShortName": "北営）",
+            "deptKana": "ホクリクエイギョウブ",
+            "address": "金沢市玉川町１－５",
+            "tel": "076-233-XXXX",
+            "fax": "076-233-YYYY",
+            "location": "金沢",
+            "deptLevel": 2,
+            "deptClass": "1",
+            "decide": true
+        },
+        "lowerDept": [
+            {
+                "deptId": 38,
+                "aboveDeptId": 24,
+                "deptCode1": "310",
+                "deptCode2": null,
+                "deptName": "北陸営業一課",
+                "deptShortName": "営一",
+                "deptKana": "ホクリクエイギョウ１カ",
+                "address": "金沢市玉川町１－５",
+                "tel": "076-233-XXXX",
+                "fax": "076-233-YYYY",
+                "location": "金沢",
+                "deptLevel": 3,
+                "deptClass": "1",
+                "decide": true
+            },
+            {
+                "deptId": 39,
+                "aboveDeptId": 24,
+                "deptCode1": "320",
+                "deptCode2": null,
+                "deptName": "北陸営業二課",
+                "deptShortName": "営二",
+                "deptKana": "ホクリクエイギョウ２カ",
+                "address": "金沢市玉川町１－５",
+                "tel": "076-233-XXXX",
+                "fax": "076-233-YYYY",
+                "location": "金沢",
+                "deptLevel": 3,
+                "deptClass": "1",
+                "decide": true
+            }
+        ]
+    }
+
+
+社員情報登録更新(PUT)
+=================================================
+
+社員の情報(更新キーはユーザID)を登録・更新します。
+
+登録、更新を行う社員をリクエストボディに設定してください。
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/employee.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    rbody,JSON,必須,社員情報の配列
+
+rbodyで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    userId,文字列,必須,ユーザID
+    empName,文字列,(※1)(※2),氏名
+    empNameKana,文字列,(※1)(※2),フリガナ
+    loginPass,文字列,(※2),ログインパスワード
+    appPass,文字列,(※2),承認パスワード
+    mailAdr,文字列,,メールアドレス
+    popServer,文字列,,メールサーバー
+    popUser,文字列,,メールアカウント
+    mailPass,文字列,(※2),メールパスワード
+    mPhoneno,文字列,,携帯番号
+    mMailAdr,文字列,,携帯電話メールアドレス
+    adrOpenClass,文字列,,携帯電話メールアドレス公開区分(1:公開する 0:公開しない)
+    extno,文字列,,内線番号
+    expire,日付,,ID有効期限
+    retireDate,日付,,退職日
+    remark1,文字列,,メモ1
+    remark2,文字列,,メモ2
+    remark3,文字列,,メモ3
+    passExpire,日付,,パスワード失効日
+    ls01,文字列,,ライセンス01(1:使用する 0:使用しない)
+    ls02,文字列,,ライセンス02(1:使用する 0:使用しない)
+    ls03,文字列,,ライセンス03(1:使用する 0:使用しない)
+    ls04,文字列,,ライセンス04(1:使用する 0:使用しない)
+    ls05,文字列,,ライセンス05(1:使用する 0:使用しない)
+    ls06,文字列,,ライセンス06(1:使用する 0:使用しない)
+    ls07,文字列,,ライセンス07(1:使用する 0:使用しない)
+    ls08,文字列,,ライセンス08(1:使用する 0:使用しない)
+    ls09,文字列,,ライセンス09(1:使用する 0:使用しない)
+    ls10,文字列,,ライセンス10(1:使用する 0:使用しない)
+
+| ※1：登録時は必須。
+| ※2：更新時にパラメタの指定があった場合は必須。
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    beforeCount,数値,必須,更新前件数(退職済、ID有効期限を過ぎているデータを含む)
+    inputCount,数値,必須,ボディの件数
+    registCount,数値,必須,登録件数
+    updateCount,数値,必須,更新件数
+    afterCount,数値,必須,更新後件数(退職済、ID有効期限を過ぎているデータを含む)
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+リクエストの例
+-------------------------------
+
+1. リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/employee.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+2. リクエストボディ
+
+- ボディ（登録）※1件目は全項目を指定、2件目は一部項目を指定 :: 
+
+    {
+        rbody: [
+            {
+                "userId": "imaoka",
+                "empName": "今岡　修三",
+                "empNameKana": "イマオカ　シュウゾウ",
+                "loginPass": "123",
+                "appPass": "123",
+                "mailAdr": "imaoka@friend.com",
+                "popServer": "smtp.friend.com",
+                "popUser": "pop.friend.com",
+                "mailPass": "123",
+                "mPhoneno": "090-1111-2222",
+                "mMailAdr": "imaoka@mobile.com",
+                "adrOpenClass": "1",
+                "extno": "1234",
+                "expire": "",
+                "retireDate": "",
+                "remark1": "",
+                "remark2": "",
+                "remark3": "",
+                "passExpire": "",
+                "ls01": "0",
+                "ls02": "0",
+                "ls03": "1",
+                "ls04": "0",
+                "ls05": "0",
+                "ls06": "1",
+                "ls07": "0",
+                "ls08": "0",
+                "ls09": "0",
+                "ls10": "0"
+
+            },
+            {
+                "userId": "ooki",
+                "empName": "大木　明",
+                "empNameKana": "オオキ　アキラ",
+                "loginPass": "123",
+                "mPhoneno": "090-3333-4444",
+                "adrOpenClass": "1",
+                "extno": "1234",
+                "ls01": "0",
+                "ls02": "0",
+                "ls03": "1",
+                "ls04": "0",
+                "ls05": "0"
+            }
+        ]
+    }
+
+
+- ボディ（更新）※更新対象項目のみを指定 ::
+    
+    {
+        rbody: [
+            {
+                "userId": "imaoka",
+                "loginPass": "456"
+            },
+            {
+                "userId": "ooki",
+                "retireDate": "2019-09-30"
+            }
+        ]
+    }
+
+
+レスポンスの例
+---------------------------
+
+- 正常時 ::
+    
+    {
+        "beforeCount": 5,
+        "inputCount": 3,
+        "registCount": 1,
+        "updateCount": 2,
+        "afterCount": 6
+    }
+
+- 異常時 ::
+    
+    {
+        "beforeCount": 5,
+        "inputCount": 3,
+        "registCount": 0,
+        "updateCount": 0,
+        "afterCount": 5,
+        "errorInfo": [
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（userId=imaoka）",
+                "details": "パラメタを指定してください。（empNameKana）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（userId=imaoka）",
+                "details": "パラメタは日付(YYYY-MM-DD)で指定してください。（expire）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（userId=doi）",
+                "details": "empNameのサイズが最大値を超えています。（最大値＝120、データサイズ＝150）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "同一ユーザIDがJSON内に複数存在します。（userId=imaoka）",
+                "details": ""
+            }
+        ]
+    }        
+
+
+地区情報登録更新(PUT)
+=================================================
+
+地区の情報(更新キーは外部地区コード)を登録・更新します。
+
+有効なすべての地区情報の一覧をリクエストボディに設定してください。
+
+更新前に有効となっており、リクエストボディに存在しない地区は無効扱いとなります。
+
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/location.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    rbody,JSON,必須,地区情報の配列
+
+rbodyで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    fLocationCode,文字列,必須,外部地区コード
+    locationName,文字列,(※1)(※2),地区名称
+
+| ※1：登録時は必須。
+| ※2：更新時にパラメタの指定があった場合は必須。
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    beforeCount,数値,必須,更新前件数(無効データも含む)
+    inputCount,数値,必須,ボディの件数
+    registCount,数値,必須,登録件数
+    updateCount,数値,必須,更新件数
+    afterCount,数値,必須,更新後件数(無効データも含む)
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/location.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        rbody: [
+            {
+                "fLocationCode": "tokyo",
+                "locationName": "東京"
+            },
+            {
+                "fLocationCode": "oosaka"
+            }
+        ]
+    }
+
+レスポンスの例
+---------------------------
+
+- 正常時 ::
+    
+    {
+        "beforeCount": 5,
+        "inputCount": 2,
+        "registCount": 2,
+        "updateCount": 0,
+        "afterCount": 7
+    }
+
+- 異常時 ::
+    
+    {
+        "beforeCount": 5,
+        "inputCount": 3,
+        "registCount": 0,
+        "updateCount": 0,
+        "afterCount": 5,
+        "errorInfo": [
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fLocationCode=tokyo）",
+                "details": "locationNameのサイズが最大値を超えています。（最大値＝120、データサイズ＝150）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fLocationCode=oosaka）",
+                "details": "パラメタを指定してください。（locationName）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "同一外部地区コードがJSON内に複数存在します。（fLocationCode=tokyo）",
+                "details": ""
+            }
+        ]
+    }        
+
+
+役職情報登録更新(PUT)
+=================================================
+
+役職の情報(更新キーは外部会社コード、外部役職コード)を登録・更新します。
+
+有効なすべての役職情報の一覧をリクエストボディに設定してください。
+
+更新前に有効となっており、リクエストボディに存在しない役職は無効扱いとなります。
+
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/titleclass.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード
+    rbody,JSON,必須,役職情報の配列
+
+rbodyで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    fTitleCode,文字列,必須,外部役職コード
+    titleName,文字列,(※1)(※2),役職名
+
+| ※1：登録時は必須。
+| ※2：更新時にパラメタの指定があった場合は必須。
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    beforeCount,数値,必須,更新前件数(無効データも含む)
+    inputCount,数値,必須,ボディの件数
+    registCount,数値,必須,登録件数
+    updateCount,数値,必須,更新件数
+    afterCount,数値,必須,更新後件数(無効データも含む)
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/titleclass.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        "corpId":"friend",
+        "rbody": [
+            {
+                "fTitleCode": "100",
+                "titleName": "社長"
+            },
+            {
+                "ftitleCode": "120"
+            }
+        ]
+    }
+
+レスポンスの例
+---------------------------
+
+- 正常時 ::
+    
+    {
+        "beforeCount": 5,
+        "inputCount": 2,
+        "registCount": 2,
+        "updateCount": 0,
+        "afterCount": 7
+    }
+
+- 異常時 ::
+    
+    {
+        "beforeCount": 5,
+        "inputCount": 3,
+        "registCount": 0,
+        "updateCount": 0,
+        "afterCount": 5,
+        "errorInfo": [
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fTitleCode=100）",
+                "details": "titleNameのサイズが最大値を超えています。（最大値＝80、データサイズ＝90）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fTitleCode=120）",
+                "details": "パラメタを指定してください。（titleName）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "同一外部役職コードがJSON内に複数存在します。（fTitleCode=100）",
+                "details": ""
+            }
+        ]
+    }        
+
+
+社員区分情報登録更新(PUT)
+=================================================
+
+社員区分の情報(更新キーは外部会社コード、外部社員区分コード)を登録・更新します。
+
+有効なすべての社員区分情報の一覧をリクエストボディに設定してください。
+
+更新前に有効となっており、リクエストボディに存在しない社員区分は無効扱いとなります。
+
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/empclass.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード
+    rbody,JSON,必須,社員区分情報の配列
+
+rbodyで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    fClassCode,文字列,必須,外部社員区分コード
+    className,文字列,(※1)(※2),社員区分名
+
+| ※1：登録時は必須。
+| ※2：更新時にパラメタの指定があった場合は必須。
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    beforeCount,数値,必須,更新前件数(無効データも含む)
+    inputCount,数値,必須,ボディの件数
+    registCount,数値,必須,登録件数
+    updateCount,数値,必須,更新件数
+    afterCount,数値,必須,更新後件数(無効データも含む)
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/empclass.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        "corpId":"friend",
+        "rbody": [
+            {
+                "fClassCode": "1",
+                "className": "正社員"
+            },
+            {
+                "fClassCode": "2"
+            }
+        ]
+    }
+
+レスポンスの例
+---------------------------
+
+- 正常時 ::
+    
+    {
+        "beforeCount": 5,
+        "inputCount": 2,
+        "registCount": 2,
+        "updateCount": 0,
+        "afterCount": 7
+    }
+
+- 異常時 ::
+    
+    {
+        "beforeCount": 5,
+        "inputCount": 3,
+        "registCount": 0,
+        "updateCount": 0,
+        "afterCount": 5,
+        "errorInfo": [
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fClassCode=1）",
+                "details": "fClassCodeのサイズが最大値を超えています。（最大値＝20、データサイズ＝22）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fClassCode=1）",
+                "details": "パラメタを指定してください。（className）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fClassCode=2）",
+                "details": "fClassCodeのサイズが最大値を超えています。（最大値＝20、データサイズ＝22）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "同一外部社員区分コードがJSON内に複数存在します。（fClassCode=1）",
+                "details": ""
+            }
+
+        ]
+    }        
+
+
+組織図連携
+=================================================
+
+| 発令予定の組織図（部門階層、社員所属、審議者）情報を登録します。
+| 組織図情報については、以下の流れで順に処理を呼び出す必要があります。
+| 
+|   Step1：予定組織図の作成
+|     →会社、発令日をパラメタとして、現行組織図をコピーして予定組織図を仮データを作成します。
+| 
+|   Step2：部門情報登録更新
+|     →部門情報をを予定組織図の仮データに更新します。
+|       更新を行う場合は更新対象の部門のみではなく、すべての部門情報をリクエストボディにセットする必要があります
+| 
+|   Step3：社員所属情報登録更新
+|     →社員の所属情報を予定組織図の仮データに更新します。
+|       更新を行う場合は異動対象社員のすべての所属情報（兼務を含む）をリクエストボディにセットする必要があります
+| 
+|   Step4：審議者情報登録更新
+|     →部門の審議者情報を予定組織図の仮データに更新します。
+|       更新を行う場合は更新対象部門のすべての審議者情報をリクエストボディにセットする必要があります
+| 
+|   Step9：予定組織図の作成完了
+|     →予定組織図の仮データを予定組織図情報として更新します。
+| 
+| Step2～Step4にてエラーが発生した場合には「StepZ：予定組織図の破棄」を呼び出し、予定組織図の仮データを破棄してください。
+
+Step1：予定組織図の作成(PUT)
+-------------------------------------------------
+
+会社、発令日をパラメタとして、現行組織図をコピーして予定組織図を仮データを作成します。
+
+
+HTTPメソッド
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PUT
+
+URI
+^^^^^^^^^^^^^^^^
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/orgimport.json
+
+
+リクエストボディ(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード
+    aDate,日付,必須,発令日（YYYY-MM-DD形式）
+    nowOption,文字列,必須,現行組織図有無 (0：現行組織図なし(会社として新規)、1：現行組織図あり)
+    option,文字列,必須,作成オプション (0：エラーとする、1：予定組織図を破棄する)
+
+
+レスポンス(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    jobId,数値,必須,ジョブID（Step2以降で使用）
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+リクエストの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/orgimport.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        "corpId": "friend",
+        "aDate": "2019-09-30",
+        "nowOption": "1",
+        "option": "0"
+    }
+
+レスポンスの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- 正常時 ::
+    
+    {
+        "jobId": 10
+    }
+
+- 異常時 ::
+    
+    {
+        "errorInfo": [
+            {
+                "code": "WSA00030SE",
+                "message": "現行組織図が存在します。",
+                "details": ""
+            }
+        ]
+    }
+
+
+Step2：部門情報登録更新(PUT)
+-------------------------------------------------
+
+部門情報をを予定組織図の仮データに更新します。
+
+
+HTTPメソッド
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PUT
+
+URI
+^^^^^^^^^^^^^^^^
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/department.json
+
+
+リクエストボディ(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード
+    jobId,数値,必須,ジョブID
+    rbody,JSON,必須,部門情報の配列
+
+rbodyで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    fDeptCode1,文字列,必須,外部部門コード1 (キー項目)
+    fDeptCode2,文字列,,外部部門コード2
+    deptClass,文字列,必須,部門種別 (1：部門、2：申請部門)
+    deptName,文字列,(※1)(※2),部門名称
+    deptShortName,文字列,(※1)(※2),部門略称名
+    deptKana,文字列,,フリガナ
+    remark1,文字列,,メモ1
+    remark2,文字列,,メモ2
+    remark3,文字列,,メモ3
+    decide,文字列,,決裁権限（0:なし、1:あり）
+    address,文字列,,住所
+    tel,文字列,,電話番号
+    fax,文字列,,FAX番号
+    fLocationCode,文字列,,地区コード
+    deptLevel,数値,,組織階層レベル
+    aboveDeptCode,文字列,,上位部門コード
+    dispOrder,数値,必須,表示順
+
+| ※1：登録時は必須。
+| ※2：更新時にパラメタの指定があった場合は必須。
+
+レスポンス(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    inputCount,数値,必須,ボディ.rbodyの件数（部門数）
+    registCount,数値,必須,登録件数（登録対象となったボディ.rbodyの件数）
+    updateCount,数値,必須,更新件数（更新対象となったボディ.rbodyの件数）
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+リクエストの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/department.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        "corpId": "friend",
+        "jobId": 10,
+        "rbody": [
+            {
+                "fDeptCode1": "1110",
+                "fDeptCode2": null,
+                "deptClass": "1",
+                "deptName": "首都圏第一営業部",
+                "deptShortName": "首営部一",
+                "deptKana": "フリガナ",
+                "remark1": "memo1",
+                "remark2": null,
+                "remark3": null,
+                "decide": "1",
+                "address": "東京都千代田区神田神保町2-6-36",
+                "tel": "03-2222-3333",
+                "fax": "03-2222-4444",
+                "fLocationCode": "tokyo",
+                "deptLevel": 3,
+                "aboveDeptCode": "1100",
+                "dispOrder": 1
+            },
+            {
+                "fDeptCode1": "1110",
+                "fDeptCode2": null,
+                "deptClass": "1",
+                "deptName": "首都圏第二営業部",
+                "deptShortName": "首営部二",
+                "decide": "1",
+                "deptLevel": 3,
+                "aboveDeptCode": "1100",
+                "dispOrder": 2
+            }
+        ]
+    }
+
+レスポンスの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- 正常時 ::
+    
+    {
+        "inputCount": 5,
+        "registCount": 2,
+        "updateCount": 3
+    }
+
+- 異常時 ::
+    
+    {
+        "inputCount": 3,
+        "registCount": 0,
+        "updateCount": 0,
+        "errorInfo": [
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1100）",
+                "details": "パラメタを指定してください。（deptClass）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1100）",
+                "details": "パラメタは数値で指定してください。（deptLevel）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1110）",
+                "details": "fDeptCode2のサイズが最大値を超えています。（最大値＝20、データサイズ＝30）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1100）",
+                "details": "部門種別には1か2を指定してください。（fDeptCode1=1110、deptClass=3）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "件数が100を超えているため、処理できません。",
+                "details": ""
+            }
+        ]
+    }
+
+
+Step3：社員所属情報登録更新(PUT)
+-------------------------------------------------
+
+社員の所属情報を予定組織図の仮データに更新します。
+
+
+HTTPメソッド
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PUT
+
+URI
+^^^^^^^^^^^^^^^^
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/belong.json
+
+
+リクエストボディ(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード
+    jobId,数値,必須,ジョブID
+    rbody,JSON,必須,部門情報の配列
+
+
+rbodyで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    userId,文字列,必須,ユーザID (キー項目)
+    fEmpCode1,文字列,,外部連携社員コード1
+    fEmpCode2,文字列,,外部連携社員コード2
+    detail,JSON,(※1),社員所属情報詳細の配列
+
+| ※1：登録、更新時は必須。
+
+detailで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    fDeptCode1,文字列,必須,外部部門コード (キー項目)
+    fClassCode,文字列,,外部社員区分コード
+    fTitleCode,文字列,必須,外部役職コード
+    belongClass,文字列,必須,兼務区分 (0：主所属 1：兼務)
+    fAppDeptCode1,文字列,必須,外部申請部門コード
+    remark1,文字列,,メモ1
+    remark2,文字列,,メモ2
+    remark3,文字列,,メモ3
+
+
+レスポンス(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    inputCount,数値,必須,ボディ.rbodyの件数（異動対象の社員数となる）※所属削除となるデータも含まれる
+    inputDtlCount,数値,必須,ボディ.rbody.detailの件数（異動対象の所属データの件数となる）※所属削除となるデータは含まない
+    registDtlCount,数値,必須,登録件数（登録対象となったボディ.rbody.detailの件数）
+    updateDtlCount,数値,必須,更新件数（更新対象となったボディ.rbody.detailの件数）
+    exclusionCount,数値,必須,除外件数（除外対象となったボディ.rbodyの件数）
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+リクエストの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/belong.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        "corpId": "friend",
+        "jobId": 10,
+        "rbody": [
+            {
+                "userId": "imaoka",
+                "fEmpCode1": "fr-imaoka",
+                "fEmpCode2": null,
+                "detail": [
+                    {
+                        "fDeptCode1": "1100",
+                        "fClassCode": "1",
+                        "fTitleCode": "200",
+                        "belongClass": "0",
+                        "fAppDeptCode1": "1100",
+                        "remark1": "memo1",
+                        "remark2": null,
+                        "remark3": null
+                    },
+                    {
+                        "fDeptCode1": "1110",
+                        "fClassCode": "1",
+                        "fTitleCode": "210",
+                        "belongClass": "1",
+                        "fAppDeptCode1": "1110"
+                    }
+                ]
+            },
+            {
+                "userId": "doi",
+                "detail": [
+                ]
+            }
+        ]
+    }
+
+レスポンスの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- 正常時 ::
+    
+    {
+        "inputCount": 5,
+        "inputDtlCount": 8,
+        "registDtlCount": 2,
+        "updateDtlCount": 6,
+        "exclusionCount": 1
+    }
+
+- 異常時 ::
+    
+    {
+        "inputCount": 5,
+        "inputDtlCount": 8,
+        "registDtlCount": 0,
+        "updateDtlCount": 0,
+        "exclusionCount": 0,
+        "errorInfo": [
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（userId=imaoka、fDeptCode1=1100）",
+                "details": "パラメタを指定してください。（fTitleCode）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（userId=imaoka、fDeptCode1=1100）",
+                "details": " belongClassのサイズが最大値を超えています。（最大値＝1、データサイズ＝2）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（userId=imaoka、fDeptCode1=1110）",
+                "details": " belongClassのサイズが最大値を超えています。（最大値＝1、データサイズ＝2）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（userId=doi、fDeptCode1=1110）",
+                "details": " 兼務区分には1か2を指定してください。（userId=doi、fDeptCode1=1110、belongClass=0）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（userId=doi、fDeptCode1=1110）",
+                "details": "同一ユーザで外部部門コードが重複しています。（userId=doi、fDeptCode1=1110）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "件数が100を超えているため、処理できません。",
+                "details": ""
+            }
+        ]
+    }
+
+
+Step4：審議者情報登録更新(PUT)
+-------------------------------------------------
+
+部門の審議者情報を予定組織図の仮データに更新します。
+
+
+HTTPメソッド
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PUT
+
+URI
+^^^^^^^^^^^^^^^^
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/deliberation.json
+
+
+リクエストボディ(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード
+    jobId,数値,必須,ジョブID
+    rbody,JSON,必須,審議者情報の配列
+
+rbodyで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    fDeptCode1,文字列,,外部連携社員コード1
+    detail,JSON,(※1),審議者情報詳細の配列
+
+| ※1：登録、更新時は必須。
+
+detailで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appOrder,数値,必須,承認順序
+    appDeptCode1,文字列,必須,承認者外部部門コード
+    appUserId,文字列,必須,承認者ユーザID
+    p1DeptCode1,文字列,,代行者1外部部門コード
+    p1UserId,文字列,,代行者1ユーザID
+    p2DeptCode1,文字列,,代行者2外部部門コード
+    p2UserId,文字列,,代行者2ユーザID
+    p3DeptCode1,文字列,,代行者3外部部門コード
+    p3UserId,文字列,,代行者3ユーザID
+
+レスポンス(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    inputCount,数値,必須,ボディ.rbodyの件数（異動対象の部門数となる）※審議者削除となるデータも含まれる
+    inputDtlCount,数値,必須,ボディ.rbody.detailの件数（異動対象の審議者データの件数となる）※審議者削除となるデータは含まない
+    registDtlCount,数値,必須,登録件数（登録対象となったボディ.rbody.detailの件数）
+    updateDtlCount,数値,必須,更新件数（更新対象となったボディ.rbody.detailの件数）
+    exclusionCount,数値,必須,除外件数（除外対象となったボディ.rbodyの件数）
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+リクエストの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/deliberation.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        "corpId": "friend",
+        "jobId": 10,
+        "rbody": [
+            {
+                "fDeptCode1": "1110",
+                "detail": [
+                    {
+                        "appOrder": 1,
+                        "appDeptCode1": "1110",
+                        "appUserId": "imaoka",
+                        "p1DeptCode1": "1111",
+                        "p1UserId": "doi",
+                        "p2DeptCode1": null,
+                        "p2UserId": null,
+                        "p3DeptCode1": null,
+                        "p3UserId": null
+                    },
+                    {
+                        "appOrder": 2,
+                        "appDeptCode1": "1110",
+                        "appUserId": "imaoka",
+                        "p1DeptCode1": "1112",
+                        "p1UserId": "ooki",
+                        "p2DeptCode1": null,
+                        "p2UserId": null,
+                        "p3DeptCode1": null,
+                        "p3UserId": null
+                    }
+                ]
+            },
+            {
+                "fDeptCode1": "1190",
+                "detail": [
+                ]
+            }
+        ]
+    }
+
+レスポンスの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- 正常時 ::
+    
+    {
+        "inputCount": 5,
+        "inputDtlCount": 8,
+        "registDtlCount": 2,
+        "updateDtlCount": 6,
+        "exclusionCount": 1
+    }
+
+- 異常時 ::
+    
+    {
+        {
+        "inputCount": 5,
+        "inputDtlCount": 8,
+        "registDtlCount": 0,
+        "updateDtlCount": 0,
+        "exclusionCount": 0,
+        "errorInfo": [
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1110、appOrder=1）",
+                "details": "パラメタを指定してください。（appDeptCode1）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1110、appOrder=1）",
+                "details": "パラメタを指定してください。（appUserId）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1110、appOrder=2）",
+                "details": "パラメタを指定してください。（appDeptCode1）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1110、appOrder=1）",
+                "details": "代行者１のユーザIDが存在しないか誤っています。（fDeptCode1=1110、appOrder=1、p1UserId=nishi）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（fDeptCode1=1110、appOrder=1）",
+                "details": "同一外部申請部門で承認順序が重複しています。（fDeptCode1=1110、appOrder=1）"
+            },
+            {
+                "code": " WSA00030SE ",
+                "message": "件数が100を超えているため、処理できません。",
+                "details": ""
+            }
+        ]
+    }
+
+
+Step9：予定組織図の作成完了(PUT)
+-------------------------------------------------
+
+予定組織図の仮データを予定組織図情報として更新します。
+
+
+HTTPメソッド
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PUT
+
+URI
+^^^^^^^^^^^^^^^^
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/orgimportfin.json
+
+
+リクエストボディ(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード
+    jobId,数値,必須,ジョブID
+
+レスポンス(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    aDate,日付,,発令日
+    changeInfo,JSON,,更新情報（部門の削除や所属の変更に伴い、自動変更を行った情報）
+    addInfo,JSON,,追加情報（作成完了後に審議者が不在となった部門と所属社員が0名となった部門、グループの情報）
+    errorInfo,JSON,,エラー情報
+
+
+changeInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+addInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+
+リクエストの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/orgimportfin.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        "corpId": "friend",
+        "jobId": 10
+
+    }
+
+レスポンスの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- 正常時 ::
+    
+    {
+        "aDate": "2019-09-30",
+        "changeInfo": [
+            {
+                "code": "Group（B-1-1）",
+                "message": "削除部門内の組織図グループを上位部門なしのグループに変更しました。",
+                "details": "部門=大阪営業所、グループ=大阪委員会"
+            },
+            {
+                "code": "MainBelong（B-2-1）",
+                "message": "主所属情報が削除されたため、設定しました。",
+                "details": "社員=真弓　昌孝、削除所属部門=大阪営業所、変更後主所属部門=名古屋営業所"
+            }
+        ],
+        "addInfo": [
+            {
+                "code": "Dept（EmpNothing）",
+                "message": "所属社員が設定されていません。",
+                "details": "部門=東日本営業部"
+            },
+            {
+                "code": "Dept（DelibNothing）",
+                "message": "審議者が設定されていません。",
+                "details": "部門=東日本営業部"
+            }
+        ]
+    }
+
+- 異常時 ::
+    
+    {
+        "errorInfo": [
+            {
+                "code": "WSA00030SE ",
+                "message": "インポート処理にてエラーが発生しているため予定組織図の作成完了処理を実行できません。システム管理者に問い合わせてください。",
+                "details": ""
+            }
+        ]
+    }
+
+
+StepZ：予定組織図の破棄(PUT)
+-------------------------------------------------
+
+予定組織図の仮データを破棄します。
+
+
+HTTPメソッド
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PUT
+
+URI
+^^^^^^^^^^^^^^^^
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/orgimportdel.json
+
+
+リクエストボディ(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード
+    jobId,数値,必須,ジョブID
+
+レスポンス(JSON)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    aDate,日付,,発令日
+    errorInfo,JSON,,エラー情報
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,文字列,必須,詳細
+
+
+リクエストの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/organization/orgimportdel.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ :: 
+
+    {
+        "corpId": "friend",
+        "jobId": 10
+    }
+
+レスポンスの例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- 正常時 ::
+    
+    {
+        "aDate": "2019-09-30"
+    }
+
+- 異常時 ::
+    
+    {
+        "errorInfo": [
+            {
+                "code": "WSA00030SE",
+                "message": "無効なジョブIDです。システム管理者に問い合わせてください。",
+                "details": ""
+            }
+        ]
+    }

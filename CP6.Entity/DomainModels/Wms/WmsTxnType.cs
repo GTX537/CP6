@@ -87,6 +87,7 @@ public static class OutboundOrderStatus
     public const int Allocated = 2;   // 引当済
     public const int Picking = 3;     // ピッキング中
     public const int Completed = 4;   // 出庫完了
+    public const int PartialAllocated = 5; // 材料不足バックフローあり
     public const int Cancelled = 9;   // 取消
 }
 

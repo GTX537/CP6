@@ -1,0 +1,481 @@
+===============================
+REST スケジュールAPI
+===============================
+
+
+予定区分一覧取得(GET)
+=================================================
+
+POWER EGGに登録されている予定区分の情報を全件取得します。
+ここで取得した予定区分のIDを、スケジュール登録時やスケジュール更新時に利用します。
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/schedule/schedulePlanClasses.json
+
+
+リクエストパラメタ
+----------------------------------
+
+なし
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    schedulePlanClasses,JSON,必須,予定区分の配列
+
+
+schedulePlanClassesのJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    schedulePlanClassId,数値,必須,予定区分ID
+    className,文字列,,予定区分名
+
+
+レスポンスの例
+---------------------------
+
+システムに登録されているスケジュール予定区分のリストが返却されます。 ::
+
+    {
+        "schedulePlanClasses": [
+            {
+                "schedulePlanClassId": "0",
+                "className": ""
+            },
+            {
+                "schedulePlanClassId": "1",
+                "className": "会議"
+            },
+            {
+                "schedulePlanClassId": "2",
+                "className": "訪問"
+            }
+        ]
+    }
+
+
+スケジュール登録(POST)
+=================================================
+
+スケジュールを1件登録します。
+
+
+HTTPメソッド
+---------------------------
+
+POST
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/schedule/schedule.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,メッセージの宛先社員の会社の外部会社コード。 
+    empCode,文字列,必須,"登録社員の外部社員コード１"
+    fromDate,日付,"必須","開始日付"
+    fromTime,文字列, , 開始時刻(HHMM形式)
+    toDate,日付,,終了日付
+    toTime,文字列,,終了時刻(HHMM形式)
+    schedulePlanClassId,数値,必須,予定区分ID
+    subject,文字列,必須,件名
+    content,文字列,,内容
+    isPublic,真偽値,,true:公開スケジュール(省略値) false:非公開スケジュール
+    attaches,JSON,,添付ファイル。ファイルアップロードAPIでアップロードしたfilekeyの配列で指定。
+    references, JSON, , relativeurlの配列
+    canModify,真偽値, ,ユーザによる変更を許可するかどうかを指定。true：変更可能（省略値） false：変更不可
+    isBanner, 真偽値, ,true：バナースケジュール false：通常スケジュール（省略値）
+
+referencesで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    relationUrl,URL,必須,関連情報のURL
+    urlComment,文字列,,関連情報URLコメント
+
+レスポンス(JSON)
+----------------------------------
+
+登録したスケジュールのIDが返却されます。
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    id,数値,必須,登録したスケジュールデータのID
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/schedule/schedule.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "corpId": "friend",
+        "empCode": "ooishi1",
+        "fromDate": "2018-04-01",
+        "fromTime": "1000",
+        "toTime": "1100",
+        "schedulePlanClassId": 3,
+        "subject": "入社式",
+        "attaches": [
+            {
+                "fileKey": "afksjslkdfja-ksjflaj-skdjfalk"
+            }
+        ]
+    }
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "id": 3421568
+    }
+
+
+スケジュール更新(PUT)
+=================================================
+
+登録済みのスケジュールを更新します。
+
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/schedule/schedule.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    id,数値,必須,更新するスケジュールのID
+    fromDate,日付,"必須","開始日付"
+    fromTime,文字列, , 開始時刻(HHMM形式)
+    toDate,日付,,終了日付
+    toTime,文字列,,終了時刻(HHMM形式)
+    schedulePlanClassId,数値,必須,予定区分ID
+    subject,文字列,必須,件名
+    content,文字列,,内容
+    isPublic,真偽値,,true:公開スケジュール(省略値) false:非公開スケジュール
+    attaches,JSON,,添付ファイル。ファイルアップロードAPIでアップロードしたfilekeyの配列で指定。
+    references, JSON, , relativeurlの配列
+    canModify,真偽値, ,ユーザによる変更を許可するかどうかを指定。true：変更可能（省略値） false：変更不可
+    isBanner, 真偽値, ,true：バナースケジュール false：通常スケジュール（省略値）
+
+referencesで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    relationUrl,URL,必須,関連情報のURL
+    urlComment,文字列,,関連情報URLコメント
+
+レスポンス(JSON)
+----------------------------------
+
+なし
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    PUT /pe4j/api/rest/v1/schedule/schedule.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "id": 3421568,
+        "fromDate": "2018-04-01",
+        "fromTime": "1000",
+        "toTime": "1100",
+        "schedulePlanClassId": 3,
+        "subject": "入社式",
+        "attaches": [
+            {
+                "fileKey": "afksjslkdfja-ksjflaj-skdjfalk"
+            }
+        ]
+    }
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {}
+
+
+スケジュール削除(DELETE)
+=================================================
+
+登録済みのスケジュールを削除します。
+
+
+HTTPメソッド
+---------------------------
+
+DELETE
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/schedule/schedule.json
+
+
+クエリパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    id,数値, ,削除するスケジュールのID
+
+レスポンス
+----------------------------------
+
+なし
+
+リクエストの例
+-------------------------------
+
+- HTTPのクエリ文字列の例 ::
+
+    id=3421568
+
+- リクエストヘッダを含んだ例 :: 
+
+    DELETE /pe4j/api/rest/v1/schedule/schedule.json?(HTTPのクエリ文字列) HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+
+  ※Content-Typeヘッダは不要です。
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {}
+
+
+
+スケジュール情報取得(GET)
+=================================================
+
+POWER EGGに登録されているスケジュール情報のうち、指定した会社、社員、期間の
+スケジュール情報の一覧を取得します。
+
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/schedule/schedules.json
+
+
+リクエストパラメタ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,"取得対象の社員が所属する会社の外部会社コード"
+    empCode,文字列,必須,"取得対象の外部社員コード１"
+    fromDate,日付,省略可,"検索開始日(yyyy-MM-dd)
+    (未指定の場合はシステム日付として処理を行う)"
+    toDate,日付,省略可,"検索終了日(yyyy-MM-dd)
+    (未指定の場合はシステム日付として処理を行う)"
+    needParticipantName,数値,省略可,"参加社員名要否フラグ
+    (1:参加社員名を返却する  0:参加社員名を返却しない)
+    (未指定の場合は0として処理を行う)"
+    needResourceName,数値,省略可,"予約施設名要否フラグ(1:予約施設名を返却する  0:予約施設名を返却しない)(未指定の場合は0として処理を行う)"
+    includingNonParticipation,数値,省略可,"不参加を含むフラグ(1:不参加も含んで返却する  0:不参加も含んで返却しない) (未指定の場合は0として処理を行う)"
+
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    GET /pe4j/api/rest/v1/schedule/schedule.json HTTP/1.1
+    Host: XXXXXXX.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+
+  ※Content-Typeヘッダは不要です。
+
+    ＜パラメタ指定例＞
+    /pe4j/api/rest/v1/schedule/schedules.json?corpId=friend00&empCode=ooishi1&fromDate=2018-08-01&
+    toDate=2018-08-01&needParticipantName=1&needResourceName=1&includingNonParticipation=1
+
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    count,JSON,必須,"取得したデータ件数"
+    schedules,JSON,必須,"取得したスケジュール情報の配列"
+
+
+schedulesのJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    schid,数値,,"スケジュールID"
+    scheduleType,数値,,"予定種別"
+    fromDate,日付,,"開始日時"
+    fromTime,文字列,,"開始時刻   バナースケジュールや時刻なしスケジュールの場合は編集されません。"
+    toDate,文字列,,"終了日時"
+    toTime,文字列,,"終了時刻    バナースケジュールや時刻なしスケジュールの場合は編集されません。"
+    subject,文字列,,"件名"
+    schedulePlanClassId,数値,,"予定区分ID"
+    schedulePlanClassName,文字列,,"予定区分"
+    content,文字列,,"内容"
+    place,文字列,,"場所"
+    publicState,数値,,"公開区分
+    (1:公開, 0:非公開)"
+    status,数値,,"取得対象社員の参加状況    (0:登録者本人 1:未確認　2:保留  3:出席(承認)　4:欠席(否認)  5:出席取消(削除)  9:変更不可(他システムで登録したスケジュール))"
+    participants,JSON,,"参加社員名、参加状況      参加社員名要否フラグを1で指定した場合に編集されます。"
+    resourceNames,配列（文字列）,,"施設、備品名   予約施設名要否フラグが1の場合に編集されます。"
+
+
+参加社員名、参加状況（participants）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    empName,文字列,,"参加社員名"
+    status,数値,,"参加者の参加状況"
+
+
+
+レスポンスの例
+---------------------------
+
+POWER EGGに登録されているスケジュール情報のうち、指定した会社、社員、期間の
+スケジュール情報のリストが JSON 配列で返されます。
+
+.. code-block :: json
+
+    {
+        "count": 2,
+        "schedules": [
+            {
+                "schid": 1001,
+                "scheduleType": 0,
+                "fromDate": "2015-06-11",
+                "fromTime": "1000",
+                "toDate": "2015-06-11",
+                "toTime": "1200",
+                "subject": "営業会議",
+                "schedulePlanClassId": 1,
+                "schedulePlanClassName": "会議",
+                "content": "スケジュールの内容",
+                "place": "本社",
+                "publicState": 1,
+                "status": 0,
+                "participants": [
+                    {
+                        "empName": "大石　学",
+                        "status": 3
+                    },
+                    {
+                        "empName":  "友野　力",
+                        "status":  4
+                    }
+                ],
+                "resourceNames": [
+                    "第一会議室"
+                ]
+            },
+            {
+                "schid": 1002,
+                "scheduleType": 0,
+                "fromDate": "2015-06-11",
+                "fromTime": "1200",
+                "toDate": "2015-06-11",
+                "toTime": "1500",
+                "subject": "全体会議",
+                "schedulePlanClassId": 1,
+                "schedulePlanClassName": "会議",
+                "content": "スケジュールの内容",
+                "place": "本社",
+                "publicState": 1,
+                "status": 0,
+                "participants": [
+                    {
+                        "empName": "大石　学",
+                        "status": 3
+                    },
+                    {
+                        "empName":  "友野　力",
+                        "status":  4
+                    }
+                ],
+                "resourceNames": [
+                    "第一会議室"
+                ]
+            }
+        ]
+    }

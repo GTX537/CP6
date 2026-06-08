@@ -481,4 +481,66 @@ export interface LeadTimeRequestDto {
   wgCd?: string
 }
 
+// ─────── Phase 6 受注取消 ───────
+
+export type CancelOutcome = 'Cancelled' | 'NeedsDecision' | 'Rejected' | 'PartiallyCancelled'
+
+export interface WorkOrderProbe {
+  workOrderNo: string
+  status: number
+  autoCancellable: boolean
+  cancelled?: boolean | null
+  message?: string | null
+}
+
+export interface OutboundProbe {
+  outboundNo: string
+  status: number
+  outboundType: number
+  autoCancellable: boolean
+  cancelled?: boolean | null
+  message?: string | null
+}
+
+export interface OrderCancelResult {
+  outcome: CancelOutcome
+  message?: string | null
+  relatedWorkOrders: WorkOrderProbe[]
+  relatedOutbounds: OutboundProbe[]
+  correlationId: string
+}
+
+// ─────── Phase 8 受注済未出荷 Dashboard ───────
+
+export interface UnshippedOrderItemDto {
+  webOrderNo: string
+  customerCd: string
+  customerName?: string | null
+  orderDate?: string | null
+  customerDeliveryDate?: string | null
+  orderStatus: string  // CONFIRMED / IN_PRODUCTION / PARTIALLY_CANCELLED
+  shipStatus: number   // 0 / 5 / 9
+  orderedQty: number
+  shippedQty: number
+  remainingQty: number
+  isOverdue: boolean
+  daysUntilDue?: number | null
+  mesStatusSummary?: string | null
+  wmsStatusSummary?: string | null
+}
+
+export interface UnshippedOrderQuery {
+  customerCd?: string
+  onlyOverdue?: boolean
+  page: number
+  pageSize: number
+  sortField?: string  // "deliveryDate" / "orderDate" / "remainingQty"
+  sortOrder?: 'asc' | 'desc'
+}
+
+export interface PagedResult<T> {
+  rows: T[]
+  total: number
+}
+
 export type { ApiResult }

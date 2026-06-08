@@ -1,0 +1,449 @@
+付録F. JavaEE5+SeamからJavaEE7への移行
+=============================================
+
+POWER EGG2.0 Ver2.10c以降では、Ver2.8c及びVer2.9までのフレーム
+ワークであるJavaEE5+JBoss SeamからJavaEE7標準フレームワークに変更されて
+います。
+
+このフレームワーク変更に伴い、Ver2.8までのPOWER EGG用に開発
+したJavaアドオンはソースコードの書き換えを行い、Java EE7に
+移行する必要があります。
+
+この章では、フレームワーク移行に関する主なポイントについて
+記述します。
+
+- SeamアプリケーションのCDIへの移行
+- JSFバージョンアップ(1.2 --> 2.2), RichFacesバージョンアップ, html5への移行
+- 画面遷移定義の移行(JBoss pageflow --> JSF page navigation)
+- JPAのバージョンアップ(Toplink essentials --> Eclipselink)
+- その他留意事項
+
+SeamアプリケーションのCDIへの移行
+------------------------------------
+
+Seamアプリケーションとして開発されたアドオンは、Java EE標準の
+CDI(Contexts and Dependency Injection)に移行します。
+
+1. Statefull Session Beanとして開発されているアプリケーション
+   は、CDIのJavaクラスに移行します。
+
+    移行前
+
+    .. code ::
+        
+        import javax.ejb.Stateful;
+        import org.jboss.seam.annotations.Name;
+        import org.jboss.seam.annotations.Scope;
+        import org.jboss.seam.ejb.SeamInterceptor;
+
+        @Stateful
+        @Name("ORG10Bean")
+        @Scope(ScopeType.CONVERSATION)
+        @Interceptors(SeamInterceptor.class)
+        public class ORG10Bean implements ORG10Local {
+
+    移行後
+    
+    .. code ::
+
+        import javax.inject.Named;
+        import javax.enterprise.context.ConversationScoped;
+        import net.poweregg.annotations.PEIntercepter;
+
+        @Named("ORG10Bean")
+        @ConversationScoped
+        @PEIntercepter
+        public class ORG10Bean implements Serializable {
+
+    xhtmlとの変数のやり取りのために@In, @Outのアノテーションを利用していた
+    場合は、getter, setterメソッドを追加し、getter, setterでの変数アクセス
+    に変更します。(xhtmlのEL式の変更も必要です)
+    
+    .. note ::
+
+        @PEIntercepterアノテーションを付けると、ビーンアクセスの際に、
+        自動的にConversationの開始が行われます。
+        アプリケーションロジック内で、Conversationの開始・終了を制御
+        する場合は、@PEIntercepterアノテーションは必要ありません。
+
+    移行前
+
+    .. code :: 
+
+        @Out
+        private String corpShortName;
+
+    移行後
+    
+    .. code ::
+
+        private String corpShortName;
+
+        public String getCorpShortName() {
+            return this.corpShortName;
+        }
+
+        public void setCorpShortName(String corpShortName) {
+            this.corpShortName = corpShortName;
+        }
+
+2. アノテーションの変更
+
+    JBoss Seamで提供されていたアノテーションは利用できないので、
+    CDIのアノテーションもしくは、POWER EGGが準備しているSeam互換
+    の部品を利用するアノテーションに書き換えます。
+
+    a. ログインユーザ情報のインジェクト
+
+    移行前
+
+    .. code ::
+
+        import org.jboss.seam.annotations.In;
+
+        @In
+        privete LoginUser loginUser
+
+    移行後
+    
+    .. code ::
+
+        import javax.inject.Inject;
+        import net.poweregg.annotations.Login;
+
+        @Inject @Login
+        privete LoginUser loginUser
+
+    b. リクエストパラメタの受け取り(@RequestParameter)
+    
+    移行前
+
+    .. code ::
+
+        import org.jboss.seam.annotations.web.RequestParameter;
+        
+        @RequestParameter
+        private String EmpID;
+
+    移行後
+
+    .. code ::
+
+        import net.poweregg.annotations.RequestParameter;
+        
+        @RequestParameter
+        private String EmpID;
+
+    c. FacesMassages
+
+    移行前
+
+    .. code ::
+
+        @In(create = true)
+        private transient FacesMessages facesMessages;
+
+    移行後
+
+    .. code ::
+
+        import net.poweregg.seam.faces.FacesMessages;
+
+        @Inject
+        private transient FacesMessages facesMessages;
+
+    d. リテラル定義の取得
+
+    移行前
+
+    .. code ::
+
+        @In
+        Map<String, String> messages;
+
+    移行後
+
+    .. code ::
+
+        import net.poweregg.annotations.Single;
+
+        @Inject @Single
+        private transient Map<String, String> messages;
+
+    e. Removeアノテーション
+
+    移行前
+
+    .. code ::
+
+        import javax.ejb.Remove;
+
+        @Remove
+        public void destroy() {
+
+    移行後
+
+    .. code ::
+
+        import javax.annotation.PreDestroy;
+
+        @PreDestroy
+        public void destroy() {
+
+    f. Resourceアノテーション
+
+        @Resourceアノテーションでデータソースをインジェクションしている場合、
+        @Resource (name="jdbc/pe4jds")から、@Resource(mappedName="jdbc/pe4jds")
+        に記述を変更する必要があります。
+
+    g. DataFlowHelperの利用
+
+    DataFlowHelperは、StateFull BeanからCDI Beanに変更されているので、
+    インターフェースでなく、BeanをInjectするように修正してください。
+
+    移行前
+
+    .. code ::
+
+        import net.poweregg.dataflow.DataFlowHelper;
+
+        @In
+        private DataFlowHelper dataflowHelper;
+
+    移行後
+
+    .. code ::
+
+        import net.poweregg.dataflow.DataFlowHelperBean;
+
+        @In
+        private DataFlowHelperBean dataflowHelper;
+    
+    
+JSF, RichFacesバージョンアップ, html5への移行
+-----------------------------------------------
+
+Ver2.10c以降では、利用するJSFのバージョンが2.2に変更になりました。
+また、利用しているオープンソースのJSFコンポーネントである
+richfacesも4.5にバージョンアップしています。
+この変更に伴い、xhtmlを移行する必要があります。
+
+
+1. html宣言部
+
+    - DOCTYPE宣言をhtml5に変更
+    - xmlネームスペースを変更
+
+    移行前
+
+    .. code ::
+
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml"
+            xmlns:ui="http://java.sun.com/jsf/facelets"
+            xmlns:p="http://www.poweregg.net/jsf/html"
+            xmlns:f="http://java.sun.com/jsf/core"
+            xmlns:rich="http://richfaces.org/rich"
+            xmlns:h="http://java.sun.com/jsf/html"
+            xmlns:c="http://java.sun.com/jstl/core"
+            xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
+
+    移行後
+
+    .. code ::
+
+        <!DOCTYPE html>
+        <html xmlns="http://www.w3.org/1999/xhtml"
+            xmlns:a4j="http://richfaces.org/a4j"
+            xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+            xmlns:f="http://xmlns.jcp.org/jsf/core"
+            xmlns:h="http://xmlns.jcp.org/jsf/html"
+            xmlns:p="http://www.poweregg.net/jsf/html"
+            xmlns:rich="http://richfaces.org/rich"
+            xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+2. EL式の変更
+
+アプリケーションのCDIへの移行に伴い、EL式でSeamコンポーネントによって
+@Outされた変数を参照していた箇所は、CDI Beanのsetter, getterメソッド
+でアクセスするように変更する必要があります。
+
+    移行前
+
+    .. code ::
+
+        <p:outputText value="#{corpShortName}" />
+
+
+    移行後
+
+    .. code ::
+
+        <p:outputText value="#{ORG01Bean.corpShortName}" />
+
+3. Ajax処理の移行
+
+richfacesのバージョンアップにより、ajax関連のタグが変更されていますので、
+移行が必要になります。
+
+    - <a4j:support>を<f:ajax>または<a4j:ajax>に移行
+
+4. Seam Remotingの移行
+
+JBoss Seamが提供していたAjaxのためのSeam Remotingは利用できませんので、
+Seam Remoting機能を利用してサーバーロジックをJavaScriptから呼び出して
+いる場合は、JAX-RSなど他の方法に移行する必要があります。
+
+5. rich:subTable
+
+xhtmlで<rich:subTable>を利用している場合は、<rich:collapsibleSubTable>
+などの他のタグに移行する必要があります。
+
+
+画面遷移定義の移行
+--------------------
+
+Ver2.9までJSFの画面遷移はJBoss Seamのpages.xmlとJPDL Pageflowを利用していましたが、
+V2.10cからは、JSF標準のPage Navigation(<navigation-rule>)に変更になりました。
+
+アドオンプログラムの画面遷移についてもJSF標準のnavigation-ruleの記述に
+変更する必要があります。
+
+.. note ::
+
+    画面遷移の移行に伴い、Seamのpages.xml, JPDL Pageflowで利用できた
+    画面遷移定義ファイルからのJavaコンポーネントメソッドの実行は行う
+    ことができなくなります。
+    ページフロー内でJavaメソッドを呼び出していた場合は、JSF facelets
+    の viewAction 等に移行する必要があります。
+
+.. note ::
+
+    JPDL PageFlowからJSFのPage Navigationへの変更に伴い、JPDLでは実現できていた
+    画面遷移状態と遷移先やアクションの制御はできなくなっています。
+    このため、ブラウザの「戻る」ボタンで前の画面に戻った後に別のアクションを実行
+    した場合等に、JPDL PageFlowでは「操作をやり直してください。」というメッセージ
+    が表示され、意図しない画面遷移はできないようになっていましたが、JSF Page Navigation
+    では、このメッセージは表示されず次のアクションが行えてしまいます。
+    この問題に対処するため、「Ver2.10c 修正パッチ3」で<p:head>タグを利用している場合は
+    ブラウザの「戻る」ボタンで前の画面に戻れないようにする対処を行っています。
+
+JPAのバージョンアップ
+--------------------------
+
+1. NativeQueryの戻り値の型変更への対応
+
+    JPAのNativeQueryを利用し、かつ戻り値としてエンティティ以外の
+    値を受け取っている場合（例：select count(*) の結果など）は、
+    Query.getResultList()の結果の戻り値の型が変わっているので
+    プログラムを変更する必要があります。
+
+    変更前
+
+    .. code ::
+
+        Query query = em.createNativeQuery(
+            "SELECT COUNT(DISTINCT Id)"
+            +  " FROM Table_A"
+            +  " WHERE Table_A.cond1 <= ?1"
+            );
+        query.setParameter(1, id);
+        List<List<Object>> queried = query.getResultList();
+        List<Long> results = new ArrayList<Long>();
+        for (List<Object> partOf : queried) {
+            results.add(Long.parseLong(partOf.get(0).toString()));
+        }
+ 
+    変更後
+
+    .. code ::
+
+        Query query = em.createNativeQuery(
+            "SELECT COUNT(DISTINCT Id)"
+            +  " FROM Table_A"
+            +  " WHERE Table_A.cond1 <= ?1"
+            );
+        query.setParameter(1, id);
+        List<List<Object>> queried = query.getResultList();
+        List<Long> queried = query.getResultList();
+
+2. 主キー値が0のエンティティは利用できない
+
+    eclipselinkでは、主キーに0以下の値を持つエンティティは利用できません。
+    主キー値として0以下の値を利用している場合は変更する必要があります。
+
+3. エンティティのアノテーション
+
+    エンティティ間のリレーションについて、記述を変更しないと
+    動作しないケースがあるので注意が必要です。
+
+    動作しないケース（例）
+
+    .. code ::
+
+        class Vacation{
+
+            @OneToOne(fetch=FetchType.EAGER)
+            @JoinColumn(name="APPRECPNO",insertable=false)
+            private ApplicationStatus appStatus;
+        }
+
+    上記のケースで、アプリケーションから、
+    vacation.setAppStatusメソッドでAPPRECPNOを更新していた
+    場合、toplink essentialsでは動作していましたが、eclipselink
+    では更新に失敗します。
+
+    このような場合は、別途APPRECPNOにマッピングした変数を作成し、
+    アプリケーションから更新する必要があります。
+
+    修正例
+
+    .. code ::
+
+        class Vacation{
+
+            @Column(name = "APPRECPNO")
+            private Long apprecpNo;
+
+            @OneToOne(fetch=FetchType.EAGER)
+            @JoinColumn(name="APPRECPNO",insertable=false, updatable=false)
+            private ApplicationStatus appStatus;
+        }
+
+
+申請事後処理、組込みアシストメッセージ等EJBをlookupしている処理
+-----------------------------------------------------------------
+
+POWEREGG V2.8cまでは、申請事後処理や組込みアシストメッセージの
+アドオンでEJBをlookupして利用するために、pe4j-engine.jarやpe4j-app.jarの
+META-INF/ejb-jar.xmlにejb-local-refの定義の追加が必要でしたが、
+JavaEE6からPortable Global JNDI Nameの規約が制定されたため、
+ejb-local-refを定義しなくてもEJBをLookupすることが可能になりました。
+
+ejbをlookupしている箇所では、ejb-local-defに定義した名称でなく、
+Portable Global JNDI Nameを利用してlookupするように変更してください。
+
+.. note ::
+
+    Java EE7ではEJBをlookupするときにはglobal jndi nameを利用します。
+    このglobal jndi nameはデプロイしているアプリケーション名で変わるので、
+    PC用のpe4j-earとスマートフォン用のpe4s-earでは異なったjndi名になります。
+    スマートフォンや携帯版のearにも組み込みアシストメッセージを組み込み、
+    EJBを参照する場合はこの点に注意してください。
+
+
+その他留意事項
+------------------
+
+1. Glassfish V4のクラスローダへの対応
+
+    Glassfish V3からクラスローダの動作が変更になっており、ear/libフォルダは、
+    earアプリケーションの親クラスローダで読み込まれるようになっているため、
+    ear/libフォルダに配置したjarファイルのクラスから、ejb-jarファイル内の
+    クラスへのアクセスができなくなっています。（ClassNotFoundException, 
+    NoClassDefFoundErrorが発生)
+
+    アドオンアプリケーションでear/libフォルダに配置したjarのクラスから
+    ejb-jar内のクラスを参照している場合はアプリケーションの構成変更など
+    の対応が必要です。
+

@@ -1,3 +1,4 @@
+using CP6.Core.EFDbContext;
 using CP6.Core.Services;
 using CP6.Core.Services.Mes;
 using CP6.Core.Services.Wms;
@@ -7,6 +8,7 @@ using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DTOs;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 
 namespace CP6.Tests;
@@ -27,6 +29,16 @@ public class WmsBridgeHookTests
     private static Microsoft.Extensions.Logging.ILogger<WmsBridgeHook> NullLogger
         => Microsoft.Extensions.Logging.Abstractions.NullLogger<WmsBridgeHook>.Instance;
 
+    /// <summary>Phase 6: BridgeHookBase が IntegrationEvent 持久化に DbContext を必要とするため</summary>
+    private static CP6Context NewDb()
+    {
+        var options = new DbContextOptionsBuilder<CP6Context>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+            .Options;
+        return new CP6Context(options);
+    }
+
     // ───────── WmsBridgeHook（標準実装） ─────────
 
     [Fact]
@@ -36,7 +48,8 @@ public class WmsBridgeHookTests
         mockOutbound.Setup(o => o.CreateFromWorkOrderAsync("WO001", It.IsAny<string>()))
             .ReturnsAsync("OUT20260523-00001");
 
-        var hook = new WmsBridgeHook(mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
+        using var db = NewDb();
+        var hook = new WmsBridgeHook(db, mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
         var result = await hook.OnWorkOrderIssuedAsync("WO001", "u");
 
         Assert.True(result.Success);
@@ -51,7 +64,8 @@ public class WmsBridgeHookTests
         mockOutbound.Setup(o => o.CreateFromWorkOrderAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ThrowsAsync(new InvalidOperationException("既に展開済"));
 
-        var hook = new WmsBridgeHook(mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
+        using var db = NewDb();
+        var hook = new WmsBridgeHook(db, mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
         var result = await hook.OnWorkOrderIssuedAsync("WO001", "u");
 
         Assert.False(result.Success);
@@ -65,7 +79,8 @@ public class WmsBridgeHookTests
         mockOutbound.Setup(o => o.CreateFromWorkOrderAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ThrowsAsync(new TimeoutException("DB 接続失敗"));
 
-        var hook = new WmsBridgeHook(mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
+        using var db = NewDb();
+        var hook = new WmsBridgeHook(db, mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
 
         // 例外は伝播せず、Failed 結果として返る
         var result = await hook.OnWorkOrderIssuedAsync("WO001", "u");
@@ -80,7 +95,8 @@ public class WmsBridgeHookTests
         mockOutbound.Setup(o => o.CreateFromOrderAsync("WO_PA001", It.IsAny<string>()))
             .ReturnsAsync("OUT20260523-00002");
 
-        var hook = new WmsBridgeHook(mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
+        using var db = NewDb();
+        var hook = new WmsBridgeHook(db, mockOutbound.Object, new Mock<IInboundService>().Object, NullLogger);
         var result = await hook.OnOrderCreatedAsync("WO_PA001", "u");
 
         Assert.True(result.Success);

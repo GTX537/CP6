@@ -1,0 +1,27 @@
+// D:/file/CPXWEB/msbb-web/tsconfig.app.json
+
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client", "element-plus/global"], 
+    
+    // ===================================
+    // ✨ 关键修正：路径别名配置 ✨
+    // ===================================
+    "baseUrl": ".", // 告诉 TS 基础路径是项目根目录
+    "paths": {
+      "@/*": ["src/*"] // 告诉 TS @/ 应该解析为 src/ 
+    },
+    // ===================================
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+}

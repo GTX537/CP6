@@ -1,0 +1,513 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>POWER EGG3.0 Ver3.2c SDK アドオン開発マニュアル &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="1. アドオン開発について" href="01_.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>POWER EGG3.0 Ver3.2c SDK アドオン開発マニュアル</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="power-egg3-0-ver3-2c-sdk">
+<h1>POWER EGG3.0 Ver3.2c SDK アドオン開発マニュアル<a class="headerlink" href="#power-egg3-0-ver3-2c-sdk" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>本書はPOWER EGG3.0 Ver3.2c上でアドオンアプリケーションを開発される方
+を対象に、POWER EGGが提供している各種のAPIとその利用方法について説明
+しています。</p>
+<p>POWER EGG3.0 Ver3.2c上でアドオンアプリケーションを開発するためには、
+Java言語、JavaServer Faces、Java Servlet API、Java Server Pages、
+Enterprise Java BeansなどのJava EE7プログラミングに関する知識が
+必要となりますが、本書ではそれらに関する知識は既に保有されているもの
+として記述しています。</p>
+<p>本資料が、みなさまのシステム開発の一助になることを願っております。</p>
+<p>2020年11月
+ディサークル株式会社</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_.html#id2">1.1. アドオン開発の考え方</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_.html#id3">1.2. 開発手順</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="04_.html#power-egg3-0-ver3-2c">4.1. POWER EGG3.0 Ver3.2cが採用している開発フレームワーク</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_.html#id2">4.2. データベースアクセス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_.html#id3">4.3. アプリケーションロジック</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_.html#id4">4.4. プレゼンテーション</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="05_.html#id2">5.1. 命名規約</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_.html#id5">5.2. コーディング規約</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="06_.html#id1">6.1. 共通処理エンジン</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_.html#id3">6.2. 連番管理API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_.html#id6">6.3. ワークフローエンジンAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_.html#id9">6.4. 添付ファイル操作API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_.html#id11">6.5. アシストメッセージエンジンAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_.html#id14">6.6. 組織情報エンジンAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_.html#id15">6.7. 権限管理エンジンAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_.html#id20">6.8. ナレッジポイントエンジン</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputdate">7.1. 日付入力(inputDate)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputdatetime">7.2. 日付時刻入力(inputDateTime)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputdaterange">7.3. 日付範囲入力(inputDateRange)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputnumber">7.4. 数値入力(inputNumber)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputtext">7.5. 1行テキスト入力(inputText)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputtextarea">7.6. 複数行テキスト入力(inputTextarea)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#selectemp">7.7. 単一社員選択(selectEmp)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#selectemps">7.8. 複数社員選択(selectEmps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#selectdept">7.9. 部門選択(selectDept)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#selectapplydept">7.10. 申請部門選択(selectApplyDept)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputattachfile">7.11. 添付ファイル入力(inputAttachFile)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#selectgroup">7.12. グループ選択(selectGroup)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#outputlabel">7.13. ラベル描画(outputLabel)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#commandbutton">7.14. コマンドボタン(commandButton)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#commandlink">7.15. コマンドリンク(commandLink)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#outputemp">7.16. 社員表示(outputEmp)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#outputemps">7.17. 複数社員表示(outputEmps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#outputattachfile">7.18. 添付ファイル表示(outputAttachFile)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#outputtext">7.19. テキスト表示(outputText)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#outputmaillink">7.20. メールリンク表示(outputMailLink)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#paneltabs">7.21. タブ領域パネル(panelTabs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#tab">7.22. タブ(tab)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#panelcontroller">7.23. コントローラー領域パネル(panelController)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#panelmain">7.24. メイン領域パネル(panelMain)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#panelsearchbox">7.25. 検索条件パネル(panelSearchBox)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#panelcollapsible">7.26. 折りたたみ可能パネル(panelCollapsible)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#panelaccordion">7.27. アコーディオンパネル(panelAccordion)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#panelaccordioncontent">7.28. アコーディオンパネルコンテンツ領域(panelAccordionContent)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#div-div">7.29. ＤＩＶ領域(div)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#html-head">7.30. ＨＴＭＬヘッダ(head)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#html-body">7.31. HTMLボディ描画(body)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#id1">7.32. 日付時刻コンバータ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#id2">7.33. 日付コンバータ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#datatableselectoneradio">7.34. テーブル列のラジオボタン選択（dataTableSelectOneRadio）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputtimerange">7.35. 時刻範囲入力（inputTimeRange）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_.html#inputtime">7.36. 時刻入力（inputTime）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="08_.html#web">8.1. 開発資産のWEBアプリケーションサーバへの配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_.html#id1">8.2. POWER EGGメニューへの組み込み</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="09_.html#power-egg3-0">9.1. POWER EGG3.0のセッション管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_.html#cdi">9.2. CDIコンポーネントでのログイン中ユーザ情報の取得</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_.html#httpsession">9.3. HttpSessionからのログイン中ユーザ情報の取得</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_.html#id2">9.4. クッキーからのログイン中ユーザー情報の取得</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="10_.html#id2">10.1. インターフェースクラス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_.html#id3">10.2. パスワード変更時の動作</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="11_.html#web">11.1. ワークフローWebサービス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11_.html#id3">11.2. スケジュールWebサービス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11_.html#id9">11.3. アシストメッセージWebサービス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11_.html#id12">11.4. 組織情報Webサービス</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_0_rest_common.html#id1">12.1. REST API（共通仕様）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_0_rest_common.html#post">12.2. ファイルアップロード（POST）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_0_rest_common.html#get">12.3. ファイルダウンロード（GET）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_1_rest_webdb.html#web-get">13.1. Webデータベース：レコードの取得（GET）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_1_rest_webdb.html#web-post">13.2. Webデータベース：レコードの登録（POST）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_1_rest_webdb.html#web-put">13.3. Webデータベース：レコードの更新（PUT）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_1_rest_webdb.html#web-delete">13.4. Webデータベース：レコードの削除（DELETE）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_1_rest_webdb.html#web">13.5. Webデータベース：フィールド形式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_1_rest_webdb.html#id21">13.6. Webデータベース：フィールド定義の取得（GET）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_1_rest_webdb.html#id27">13.7. Webデータベース：レコード件数の取得（GET）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_2_rest_organization.html#get">14.1. 社員情報取得(GET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_2_rest_organization.html#id4">14.2. 部門情報取得(GET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_2_rest_organization.html#put">14.3. 社員情報登録更新(PUT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_2_rest_organization.html#id17">14.4. 地区情報登録更新(PUT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_2_rest_organization.html#id24">14.5. 役職情報登録更新(PUT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_2_rest_organization.html#id31">14.6. 社員区分情報登録更新(PUT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_2_rest_organization.html#id38">14.7. 組織図連携</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_3_rest_assistmessage.html#post">15.1. アシストメッセージ登録(POST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_3_rest_assistmessage.html#delete">15.2. アシストメッセージ削除(DELETE)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_4_rest_schedule.html#get">16.1. 予定区分一覧取得(GET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_4_rest_schedule.html#post">16.2. スケジュール登録(POST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_4_rest_schedule.html#put">16.3. スケジュール更新(PUT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_4_rest_schedule.html#delete">16.4. スケジュール削除(DELETE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_4_rest_schedule.html#id21">16.5. スケジュール情報取得(GET)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_5_rest_bap.html#post">17.1. 社内メール送信(POST)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_6_rest_todo.html#get">18.1. 優先度一覧取得(GET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_6_rest_todo.html#post">18.2. 作業登録(POST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_6_rest_todo.html#put">18.3. 作業更新(PUT)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#post">19.1. 申請(POST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#pdf-post">19.2. PDF申請(POST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#put">19.3. 取り下げ(PUT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#get">19.4. 申請書データ取得(GET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#id22">19.5. 起案内容差替え(PUT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#delete">19.6. 案件データ削除(DELETE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#id35">19.7. コメント取得(GET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#id42">19.8. コメント登録(POST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#id49">19.9. ルートシミュレーション(GET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_7_rest_workflow.html#id56">19.10. 強制否認・差戻し(PUT)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="13_webdb_cooperation.html#id1">20.1. 事前準備</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_webdb_cooperation.html#http">20.2. アドオン処理の呼び出し（HTTPリクエスト）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_webdb_cooperation.html#id5">20.3. アドオン処理の結果の受け取り（HTTPレスポンス）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_webdb_cooperation.html#id8">20.4. 入力チェック時にアドオン処理を呼び出す</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_webdb_cooperation.html#id16">20.5. レコード登録、更新、削除時にアドオン処理を呼び出す</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_webdb_cooperation.html#id27">20.6. スタンプ押下、取消時にアドオン処理を呼び出す</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="16_webdb_externaldb_webapi.html#id1">21.1. 事前準備</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_webdb_externaldb_webapi.html#dbrestapi">21.2. 外部DB参照定義取得RESTAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_webdb_externaldb_webapi.html#id6">21.3. 外部DB参照検索RESTAPI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="14_logging.html#id1">22.1. ログ管理機能の概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14_logging.html#id2">22.2. ログAPI利用のための準備</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14_logging.html#id3">22.3. アプリケーションからのログの記録</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="15_rest_authorityproc.html#post">23.1. 処理権限設定(POST)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="16_.html#id2">24.1. ログインしていない状態でアクセスする資産がある場合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_.html#interstage">24.2. 本稼働環境がInterstageの場合の注意事項</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-0v2-0-1">25.1. V2.0からV2.0.1の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-0sr1v2-1">25.2. V2.0SR1からV2.1の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-1v2-2">25.3. V2.1からV2.2の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-2v2-3">25.4. V2.2からV2.3の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-3v2-4">25.5. V2.3からV2.4の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-4v2-5">25.6. V2.4からV2.5の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-5v2-6">25.7. V2.5からV2.6の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-6v2-7">25.8. V2.6からV2.7の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-7v2-8">25.9. V2.7からV2.8の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-8v2-8c">25.10. V2.8からV2.8cの変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-8cv2-10c">25.11. V2.8cからV2.10cの変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-10cv2-11c">25.12. V2.10cからV2.11cの変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v2-11cv3-0">25.13. V2.11cからV3.0の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v3-0cv3-1">25.14. V3.0cからV3.1の変更点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_a.html#v3-1cv3-2c">25.15. V3.1cからV3.2cの変更点</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_b.html#id1">26.1. 必要ソフトウェア</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_b.html#id2">26.2. 開発マシン用推奨ハードウェアスペック</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_b.html#paraya-server">26.3. Paraya Serverのインストール</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_b.html#payara-serverpower-egg">26.4. Payara ServerへのPOWER EGGの配備</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_b.html#id3">26.5. Payara ServerからのPOWER EGGの配備解除</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_b.html#ear">26.6. earの置き換え</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_b.html#parara-server-glassfish">26.7. Parara Server(Glassfish)に関する情報について</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_b.html#eclipsepayara-server">26.8. EclipseからのPayara Server起動設定</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_c.html#glassfish-payara">27.1. Glassfish(Payara)をサーバーとして利用している場合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_c.html#interstage">27.2. Interstageをサーバとして利用している場合</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_d.html#id1">28.1. サンプルアプリケーションの説明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_d.html#sdk">28.2. SDKサンプルプロジェクトのビルド</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_d.html#id7">28.3. ソースコード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#id1">29.1. データ型の移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#sqljava">29.2. SQL・Javaプログラムの移植</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#jpa">29.3. JPAエンティティ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#id2">29.4. トリガー/ストアドプロシージャ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#id3">29.5. トランザクション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#temorary-table">29.6. 一時表(Temorary table)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#sql">29.7. SQLエラーコードの差異</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#id4">29.8. 全文検索機能</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_e_mig2pgsql.html#id5">29.9. データの移行</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_f_mig2jee7.html#seamcdi">30.1. SeamアプリケーションのCDIへの移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_f_mig2jee7.html#jsf-richfaces-html5">30.2. JSF, RichFacesバージョンアップ, html5への移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_f_mig2jee7.html#id1">30.3. 画面遷移定義の移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_f_mig2jee7.html#jpa">30.4. JPAのバージョンアップ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_f_mig2jee7.html#ejblookup">30.5. 申請事後処理、組込みアシストメッセージ等EJBをlookupしている処理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_f_mig2jee7.html#id2">30.6. その他留意事項</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_h.html#id1">32.1. 申請アプリケーションとワークフローエンジンのクラス関係図</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_h.html#id2">32.2. 申請処理のシーケンス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_h.html#id5">32.3. 申請内容表示処理のシーケンス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_h.html#id6">32.4. 取下げ処理のシーケンス</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_i.html#id1">33.1. クラス関係図</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_i.html#id2">33.2. 添付ファイル処理のシーケンス(新規登録時)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Appendix_i.html#id5">33.3. 添付ファイル処理のシーケンス(追加・削除)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="01_.html" class="btn btn-neutral float-right" title="1. アドオン開発について" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

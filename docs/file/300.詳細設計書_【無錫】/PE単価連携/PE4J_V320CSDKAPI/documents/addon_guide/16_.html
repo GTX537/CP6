@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>24. その他の注意事項 &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="25. 付録A 過去のバージョンからの変更点" href="Appendix_a.html" />
+    <link rel="prev" title="23. REST 処理権限API" href="15_rest_authorityproc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">24. その他の注意事項</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">24.1. ログインしていない状態でアクセスする資産がある場合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interstage">24.2. 本稼働環境がInterstageの場合の注意事項</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">24. </span>その他の注意事項</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><span class="section-number">24. </span>その他の注意事項<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id2">
+<h2><span class="section-number">24.1. </span>ログインしていない状態でアクセスする資産がある場合<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>POWER EGGにログインしていない状態で/pe4j/以下のURLにアクセスした場合、
+一部の画面を除き、POWER EGGのログインを求める画面が表示されます。</p>
+<p>スタートアップナビに配置するポートレット上で動作するアドオンなど、
+ログインしていない状態で表示する必要のある画面については、
+設定ファイルweb.xmlで下記の設定を行ってください。</p>
+<p>web.xml 内に下記のような定義があります。</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;filter&gt;</span>
+  <span class="nt">&lt;filter-name&gt;</span>URLDirectAccessFilter<span class="nt">&lt;/filter-name&gt;</span>
+  <span class="nt">&lt;filter-class&gt;</span>net.poweregg.filter.URLDirectAccessFilter<span class="nt">&lt;/filter-class&gt;</span>
+  <span class="nt">&lt;init-param&gt;</span>
+  <span class="nt">&lt;param-name&gt;</span>path-mapping<span class="nt">&lt;/param-name&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>
+      /QST/QST0110d.jsf
+      /KBB/KBB1110d.jsf
+      /KFR/KFR1112d.jsf
+      /BAP/BAP0111d.jsf
+      /FAP/FAP0030.jsf
+    <span class="nt">&lt;/param-value&gt;</span>
+  <span class="nt">&lt;/init-param&gt;</span>
+  <span class="nt">&lt;init-param&gt;</span>
+    <span class="nt">&lt;param-name&gt;</span>nocheck-url-pattern<span class="nt">&lt;/param-name&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>
+    <span class="nt">&lt;/param-value&gt;</span>
+  <span class="nt">&lt;/init-param&gt;</span>
+<span class="nt">&lt;/filter&gt;</span>
+</pre></div>
+</div>
+<p>ここで、下記の例のように認証がない状態でアクセスする
+URL のパターン（正規表現）を記述してください。</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;init-param&gt;</span>
+  <span class="nt">&lt;param-name&gt;</span>nocheck-url-pattern<span class="nt">&lt;/param-name&gt;</span>
+  <span class="nt">&lt;param-value&gt;</span>
+    /UAP/test1\.jsf
+    /servlet/com\.d-circle\.test\..*
+  <span class="nt">&lt;/param-value&gt;</span>
+<span class="nt">&lt;/init-param&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="interstage">
+<h2><span class="section-number">24.2. </span>本稼働環境がInterstageの場合の注意事項<a class="headerlink" href="#interstage" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>アドオン開発はGlassfish(payara)で行い、本番実行環境はInterstageである場合、
+Interstageとpayaraでは動作に非互換がある場合があるので、必ず本番環境と
+同じ環境で最終動作確認を行うようにしてください。</p>
+<p>当社で確認している差異には、以下のようなものがあります。</p>
+<ul class="simple">
+<li><p>Interstageの場合、jaxrsのWebサービスが利用しているPOJOのクラスで&#64;ContextアノテーションによるHttpServletRequestのインジェクションが動作しない場合がある</p></li>
+<li><p>Interstageの場合、JPAの遅延ロードで処理される関係エンティティのリストをstream APIで処理すると期待した結果が得られない</p></li>
+<li><p>Interstageとpayaraのクラスローダの差異により、payaraでは参照できるクラスがInterstageでは参照できずにエラーが発生する場合がある</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Appendix_a.html" class="btn btn-neutral float-right" title="25. 付録A 過去のバージョンからの変更点" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="15_rest_authorityproc.html" class="btn btn-neutral float-left" title="23. REST 処理権限API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -15,6 +15,10 @@ import type {
   OrderWipCheckResultDto,
   CreditCheckResultDto,
   LeadTimeRequestDto,
+  OrderCancelResult,
+  UnshippedOrderItemDto,
+  UnshippedOrderQuery,
+  PagedResult,
 } from '@/types/order'
 
 // MSBBPA070 / 080 / 090 Web 受注 API
@@ -45,6 +49,36 @@ export const orderApi = {
     return http.delete<any, ApiResult<null>>(
       `/orders/${encodeURIComponent(no)}`,
       { params: { rowVersion } }
+    )
+  },
+
+  // ─────── Phase 6 — 受注取消（反向級联） ───────
+  /**
+   * 取消受注。
+   * - force=false（既定）: 探查模式 — 仅返回关联 WO/Outbound 现状，DB 不变
+   * - force=true: 强制实施 — 通过 Bridge Hook 反向级联取消
+   *
+   * Outcome 取值：
+   * - Cancelled: 全部成功取消
+   * - PartiallyCancelled: 一部分项目无法取消（半路状态），已取消的项已落库
+   * - NeedsDecision: force=false 时探测到半路状态，等待营业决策
+   * - Rejected: 状态机拒绝（已 Shipped / 已 Cancelled / ShipStatus>=5）
+   */
+  cancel(no: string, reason: string, force: boolean = false) {
+    return http.post<any, ApiResult<OrderCancelResult>>(
+      `/orders/${encodeURIComponent(no)}/cancel`,
+      { reason, force }
+    )
+  },
+
+  // ─────── Phase 8 受注済未出荷 ───────
+  /**
+   * 检索还未出齐的 Order。后端会自动 join WO/Outbound 拼出 MES/WMS summary。
+   */
+  searchUnshipped(query: UnshippedOrderQuery) {
+    return http.post<any, ApiResult<PagedResult<UnshippedOrderItemDto>>>(
+      '/orders/unshipped/search',
+      query
     )
   },
 

@@ -47,4 +47,21 @@ export const stockApi = {
       params: query,
     })
   },
+
+  // ─────── Phase 7 Gap 1.3 QC ステータス ───────
+  /** 在庫 1 件の QC ステータスを設定（PENDING/PASSED/FAILED/HOLD） */
+  setQcStatus(stockId: string, newStatus: string, reason?: string) {
+    return http.post<any, WmsApi<{ stockId: string; qcStatus: string }>>(
+      `/wms/stock-qc/${stockId}/set`,
+      { newStatus, reason },
+    )
+  },
+
+  /** 製造指図に紐づく全 Stock を一括 QC ステータス更新 */
+  setQcStatusByWorkOrder(workOrderNo: string, newStatus: string, reason?: string) {
+    return http.post<any, WmsApi<{ workOrderNo: string; affected: number }>>(
+      `/wms/stock-qc/by-work-order/${encodeURIComponent(workOrderNo)}`,
+      { newStatus, reason },
+    )
+  },
 }

@@ -14,6 +14,10 @@ using CP6.WebApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 本地凭证覆盖（appsettings.Local.json 在 .gitignore，绝不入仓库）。
+// 加载顺序：appsettings.json → appsettings.{Env}.json → appsettings.Local.json → env vars
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 // 1. 注册控制器（全局注册 OperLogFilter）
 builder.Services.AddScoped<OperLogFilter>();
 builder.Services.AddControllers(options =>
@@ -93,6 +97,12 @@ builder.Services.AddScoped<IWipCheckService, NoOpWipCheckService>();
 
 // 4.4 MSBBPA070/080/090 Web 受注 相关服务
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IUnshippedOrderService, UnshippedOrderService>();
+builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
+builder.Services.AddScoped<IBridgeHealthService, BridgeHealthService>();
+builder.Services.AddScoped<IOrderTraceService, OrderTraceService>();
+builder.Services.AddScoped<IBackorderService, BackorderService>();
+builder.Services.AddScoped<IOtdReportService, OtdReportService>();
 // PA090 POWER EGG WF 起票：実環境では HTTP 実装に差し替え
 builder.Services.AddScoped<IPowerEggWorkflowService, NoOpPowerEggWorkflowService>();
 
@@ -121,6 +131,10 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.MesDashboardDapperService>();
 // 4.8 MSBBWM010〜090 WMS 倉庫管理 Phase 1 コア
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsSequenceService, CP6.Core.Services.Wms.WmsSequenceService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IStockMovementService, CP6.Core.Services.Wms.StockMovementService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IStockQcService, CP6.Core.Services.Wms.StockQcService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IStockDwellService, CP6.Core.Services.Wms.StockDwellService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMaterialShortageService, CP6.Core.Services.Wms.MaterialShortageService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMaterialShortageNotifier, CP6.Core.Services.Wms.MaterialShortageNotifier>();
 
 // 4.9 MSBBWM030/040 WMS Phase 2 入庫
 builder.Services.AddScoped<CP6.Core.Services.Wms.IInboundService, CP6.Core.Services.Wms.InboundService>();
@@ -215,6 +229,35 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IMesNotifier, CP6.WebApi.Servic
 // MES BackgroundService（多線程）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.OeeCalculationService>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.MachineStatusMonitor>();
+
+// ─────────────────────────────────────────────────────────────
+// 4.15 Phase 6 — 受注取消連動 + IntegrationEvent 持久化 + 自動リトライ
+// ─────────────────────────────────────────────────────────────
+
+// 4.15.1 受注取消 Bridge Hook（OrderService.CancelAsync の反向級联）
+// appsettings.json の OrderCancelBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
+var orderCancelBridgeEnabled = builder.Configuration.GetValue<bool?>("OrderCancelBridge:Enabled") ?? true;
+if (orderCancelBridgeEnabled)
+{
+    builder.Services.AddScoped<CP6.Core.Services.IOrderCancelBridgeHook, CP6.Core.Services.OrderCancelBridgeHook>();
+}
+else
+{
+    builder.Services.AddScoped<CP6.Core.Services.IOrderCancelBridgeHook, CP6.Core.Services.NoOpOrderCancelBridgeHook>();
+}
+
+// 4.15.2 IntegrationEvent 配置（appsettings.json の IntegrationEvent 段から）
+builder.Services.Configure<CP6.Core.Options.IntegrationEventOptions>(
+    builder.Configuration.GetSection("IntegrationEvent"));
+
+// 4.15.3 IntegrationEvent Dispatcher（HookName → 元 hook 経路）
+builder.Services.AddScoped<CP6.Core.Services.IIntegrationEventDispatcher, CP6.Core.Services.IntegrationEventDispatcher>();
+
+// 4.15.4 DeadLetter 通知（SignalR + Sys_OperLog 双通知）
+builder.Services.AddScoped<CP6.Core.Services.IDeadLetterNotifier, CP6.Core.Services.DeadLetterNotifier>();
+
+// 4.15.5 Retry Worker — 60s ごとに Failed + NextRetryAt 到期 のイベントをリトライ
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEventRetryWorker>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");

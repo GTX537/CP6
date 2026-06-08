@@ -1,0 +1,1364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>20. Webデータベースの外部システム連携 &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="21. Webデータベース外部DB参照のWebAPI連携" href="16_webdb_externaldb_webapi.html" />
+    <link rel="prev" title="19. REST ワークフローAPI" href="12_7_rest_workflow.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">20. Webデータベースの外部システム連携</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">20.1. 事前準備</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#http">20.2. アドオン処理の呼び出し（HTTPリクエスト）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">20.2.1. リクエストヘッダ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">20.2.2. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">20.2.3. リクエスト例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">20.3. アドオン処理の結果の受け取り（HTTPレスポンス）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">20.3.1. レスポンスパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">20.3.2. レスポンス例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">20.4. 入力チェック時にアドオン処理を呼び出す</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">20.4.1. Webデータベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">20.4.2. 汎用申請データベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#crm">20.4.3. CRMデータベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">20.4.4. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#record">20.4.5. 「record」パラメータ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">20.5. レコード登録、更新、削除時にアドオン処理を呼び出す</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id17">20.5.1. Webデータベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22">20.5.2. 汎用申請データベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">20.5.3. CRMデータベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">20.5.4. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">20.5.5. 「record」パラメータ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id27">20.6. スタンプ押下、取消時にアドオン処理を呼び出す</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id28">20.6.1. Webデータベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id29">20.6.2. CRMデータベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30">20.6.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31">20.6.4. 「record」パラメータ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">20. </span>Webデータベースの外部システム連携</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="web">
+<h1><span class="section-number">20. </span>Webデータベースの外部システム連携<a class="headerlink" href="#web" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Webデータベースの操作に応じて、アドオン処理を呼び出すことができます。
+これにより以下のことが実現できるようになります。</p>
+<ul class="simple">
+<li><p>データベースの設定では実現できない項目間の関連チェック</p></li>
+<li><p>外部システム（データベース）を利用した業務チェック</p></li>
+<li><p>外部システム（データベース）の同時更新</p></li>
+</ul>
+<div class="section" id="id1">
+<h2><span class="section-number">20.1. </span>事前準備<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>アドオン処理を呼び出すためには、データベースの登録メニューにある「外部連携設定」を設定する必要があります。</p>
+<p>この画面では以下の項目を設定します（※詳細は「ユーザーズマニュアル」を確認してください）</p>
+<ul class="simple">
+<li><p>連携先URL：Webデータベースの操作後に呼び出すURL</p></li>
+<li><p>HTTPヘッダ：HTTPヘッダに追加するパラメータ</p></li>
+<li><p>接続タイムアウト：接続が確立するまでのタイムアウト時間</p></li>
+<li><p>読込タイムアウト：接続後、データを取得するまでのタイムアウト時間</p></li>
+<li><p>連携タイミング：アドオン処理を呼び出すタイミング</p></li>
+</ul>
+</div>
+<div class="section" id="http">
+<h2><span class="section-number">20.2. </span>アドオン処理の呼び出し（HTTPリクエスト）<a class="headerlink" href="#http" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Webデータベースのレコード操作後に設定したURLに対してPOSTリクエストを送信します。</p>
+<div class="section" id="id2">
+<h3><span class="section-number">20.2.1. </span>リクエストヘッダ<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ヘッダ名</p></th>
+<th class="head"><p>内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Host</p></td>
+<td><p>「外部連携設定」で設定した連携先URLのサーバ名もしくはIPアドレス</p></td>
+</tr>
+<tr class="row-odd"><td><p>Content-Type</p></td>
+<td><p>application/json</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>「外部連携設定」でHTTPヘッダを設定している場合は付加されます</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h3><span class="section-number">20.2.2. </span>リクエストパラメータ<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>レコードの情報がリクエストボディに設定されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 16%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>設定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>システム区分（0:WebDB,1:汎用申請,2:CRM）</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名（(親フォルダ名)/(フォルダ名)/(データベース名)）</p></td>
+</tr>
+<tr class="row-even"><td><p>screen</p></td>
+<td><p>文字列</p></td>
+<td><p>任意</p></td>
+<td><p>表示編集画面名</p></td>
+</tr>
+<tr class="row-odd"><td><p>event</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>処理タイミング（C:入力チェック,U:レコード更新,S:スタンプ更新）</p></td>
+</tr>
+<tr class="row-even"><td><p>process</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>CRUD（C:登録,U:更新,D:削除）</p></td>
+</tr>
+<tr class="row-odd"><td><p>stamp</p></td>
+<td><p>文字列</p></td>
+<td><p>任意</p></td>
+<td><p>押下したスタンプの文字列</p></td>
+</tr>
+<tr class="row-even"><td><p>record</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>レコード情報
+※各フィールドの形式はWebデータベースのRestful API（レコード取得）のレスポンスデータと同じです。</p></td>
+</tr>
+<tr class="row-odd"><td><p>loginUser</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>ログインユーザ情報（ユーザID,社員名）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id4">
+<h3><span class="section-number">20.2.3. </span>リクエスト例<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>リクエストヘッダの例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">addon</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">gaibu</span><span class="o">-</span><span class="n">system</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+<span class="n">Add</span><span class="o">-</span><span class="n">Header</span><span class="p">:</span> <span class="n">hogehoge</span>
+</pre></div>
+</div>
+<p>リクエストボディの例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;system&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;database&quot;</span><span class="p">:</span> <span class="s2">&quot;ﾌﾟﾛｾｽ管理型/クレーム管理DB&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;screen&quot;</span><span class="p">:</span> <span class="s2">&quot;クレーム情報入力&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="s2">&quot;U&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;process&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stamp&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;record&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">85</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;登録日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">86</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-15T19:21:14+09:00&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;登録者&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">87</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;最終更新日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">88</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-15T19:21:14+09:00&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;最終更新者&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">89</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;進捗区分&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;クレーム対応済&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;受付日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-10T10:00+09:00&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;受付者&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;対策部署&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">51</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;営業部&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;対応日時&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-01-11T14:00+09:00&quot;</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;対応者&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;corpCode&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooki&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大木　明&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;対応内容&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;初期対応&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;loginUser&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;大石　学&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2><span class="section-number">20.3. </span>アドオン処理の結果の受け取り（HTTPレスポンス）<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>アドオンの処理結果をレスポンスボディで受け取り、処理の継続・中止を判断します。</p>
+<div class="section" id="id6">
+<h3><span class="section-number">20.3.1. </span>レスポンスパラメータ<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 16%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>設定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>result</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>処理結果を指定します。（S:正常終了,W:警告終了,E:エラー終了）</p></td>
+</tr>
+<tr class="row-odd"><td><p>messages</p></td>
+<td><p>文字列の配列</p></td>
+<td><p>省略可</p></td>
+<td><p>処理結果のメッセージを指定します。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id7">
+<h3><span class="section-number">20.3.2. </span>レスポンス例<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;受付日に未来日が入力されています。&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;進捗区分が対応済の場合は対策部署を指定してください。&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2><span class="section-number">20.4. </span>入力チェック時にアドオン処理を呼び出す<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>レコードの入力チェック時にアドオン処理が呼び出されます。</p>
+<div class="section" id="id9">
+<h3><span class="section-number">20.4.1. </span>Webデータベース<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アドオン処理が呼び出されるタイミングと動作</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 19%" />
+<col style="width: 14%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>画面/機能</p></th>
+<th class="head"><p>操作/処理</p></th>
+<th class="head"><p>process</p></th>
+<th class="head"><p>アドオンの処理結果にともなう動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="6"><p>レコード登録</p></td>
+<td rowspan="3"><p>[確認]ボタン</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="3"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード登録確認画面に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード登録確認画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード登録確認画面に進まず、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p>C(参照登録)</p></td>
+</tr>
+<tr class="row-even"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>[確認せずに登録]
+ボタン</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="3"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新処理に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新処理に進む</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード登録確認画面に進まず、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"><td><p>C(参照登録)</p></td>
+</tr>
+<tr class="row-odd"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>CSV取込み <a class="footnote-reference brackets" href="#f1" id="id10">1</a></p></td>
+<td rowspan="2"><p>入力チェック</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="2"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新処理に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新処理に進む</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新処理に進まず、
+処理結果メッセージを出力し、次の
+レコードが処理される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-even"><td><p>Restful API:登録
+<a class="footnote-reference brackets" href="#f1" id="id11">1</a></p></td>
+<td><p>入力チェック</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="2"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新処理に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新処理に進む</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新処理に進まず、
+処理結果メッセージを出力し、次の
+レコードが処理される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Restful API:更新
+<a class="footnote-reference brackets" href="#f1" id="id12">1</a></p></td>
+<td><p>入力チェック</p></td>
+<td><p>U(更新)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id13">
+<h3><span class="section-number">20.4.2. </span>汎用申請データベース<a class="headerlink" href="#id13" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アドオン処理が呼び出されるタイミングと動作</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 19%" />
+<col style="width: 14%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>画面/機能</p></th>
+<th class="head"><p>操作/処理</p></th>
+<th class="head"><p>process</p></th>
+<th class="head"><p>アドオンの処理結果にともなう動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="3"><p>申請入力</p></td>
+<td rowspan="3"><p>[確認]ボタン</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="3"><p>S(正常終了):</p>
+<blockquote>
+<div><p>申請確認画面に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>申請確認画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>申請確認画面に進まず、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p>C(参照登録)</p></td>
+</tr>
+<tr class="row-even"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>追記入力</p></td>
+<td rowspan="2"><p>[確認]ボタン</p></td>
+<td><p>U(更新)</p></td>
+<td rowspan="2"><p>S(正常終了):</p>
+<blockquote>
+<div><p>追記確認画面に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>追記確認画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>追記確認画面に進まず、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"><td><p>C(新規登録)</p></td>
+</tr>
+<tr class="row-odd"><td><p>CSV取込み <a class="footnote-reference brackets" href="#f1" id="id14">1</a></p></td>
+<td><p>入力チェック</p></td>
+<td><p>C(新規登録)</p></td>
+<td><p>S(正常終了):</p>
+<blockquote>
+<div><p>申請(レコード更新)処理に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>申請(レコード更新)処理に進む</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>申請(レコード更新)処理に進まず、
+処理結果メッセージを出力し、次の
+レコードが処理される</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="crm">
+<h3><span class="section-number">20.4.3. </span>CRMデータベース<a class="headerlink" href="#crm" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アドオン処理が呼び出されるタイミングと動作</p>
+<blockquote>
+<div><p>Webデータベースと同じ</p>
+</div></blockquote>
+</div>
+<div class="section" id="id15">
+<h3><span class="section-number">20.4.4. </span>リクエストパラメータ<a class="headerlink" href="#id15" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>レコードの情報がリクエストボディに設定されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 16%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>設定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>'0'(WebDB) or '1'(汎用申請) or '2'(CRM)が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名が設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>screen</p></td>
+<td><p>文字列</p></td>
+<td><p>任意</p></td>
+<td><p>表示編集画面名が設定されます
+※Webデータベース、CRMデータベースのCSV取込、Restful API実行時はnullが編集されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>event</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>'C'(入力チェック)が設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>process</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>'C'(登録) or 'U'(更新)が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>stamp</p></td>
+<td><p>文字列</p></td>
+<td><p>任意</p></td>
+<td><p>nullが設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>record</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>レコード情報が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>loginUser</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>ログインユーザ情報が設定されます（ユーザID,社員名）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="record">
+<h3><span class="section-number">20.4.5. </span>「record」パラメータ<a class="headerlink" href="#record" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>システム標準項目</p>
+<blockquote>
+<div><p>「No」のみ設定されます。（他のフィールドは設定されません）</p>
+<ul class="simple">
+<li><p>C(新規登録,参照登録)      ：nullが設定</p></li>
+<li><p>U(更新)                     ：更新対象のレコードNoが設定</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>ユーザ定義項目</p>
+<blockquote>
+<div><p>入力項目のみ設定されます。（入力項目以外は設定されません）</p>
+<ul class="simple">
+<li><p>画面入力                      ：入力画面に配置されているフィールドが設定</p></li>
+<li><p>CSV取込                     ：タイトル行に指定されているフィールドが設定</p></li>
+<li><p>Restful API               ：リクエストボディに指定されているフィールドが設定</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>明細行</p>
+<blockquote>
+<div><p>明細行に定義されているすべてのフィールドが設定されます。</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id16">
+<h2><span class="section-number">20.5. </span>レコード登録、更新、削除時にアドオン処理を呼び出す<a class="headerlink" href="#id16" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>レコードの更新処理時にアドオン処理が呼び出されます。</p>
+<div class="section" id="id17">
+<h3><span class="section-number">20.5.1. </span>Webデータベース<a class="headerlink" href="#id17" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アドオン処理が呼び出されるタイミングと動作</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 19%" />
+<col style="width: 14%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>画面/機能</p></th>
+<th class="head"><p>操作/処理</p></th>
+<th class="head"><p>process</p></th>
+<th class="head"><p>アドオンの処理結果にともなう動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="3"><p>レコード登録</p></td>
+<td rowspan="3"><p>[確認せずに登録]
+ボタン</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="3"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新後、レコード一覧画面に
+進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新後、レコード一覧画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p>C(参照登録)</p></td>
+</tr>
+<tr class="row-even"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>レコード登録確認</p></td>
+<td rowspan="3"><p>[登録]ボタン</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="3"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新後、レコード一覧画面に
+進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新後、レコード一覧画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"><td><p>C(参照登録)</p></td>
+</tr>
+<tr class="row-odd"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-even"><td><p>レコード削除確認</p></td>
+<td><p>[確定]ボタン</p></td>
+<td><p>D(削除)</p></td>
+<td><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード削除後、レコード一覧画面に
+進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード削除後、レコード一覧画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード削除を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>CSV取込み <a class="footnote-reference brackets" href="#f1" id="id18">1</a></p></td>
+<td rowspan="2"><p>更新処理</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="2"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新後、次のレコードを処理する</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新後、処理結果メッセージを
+出力し、次のレコードを処理する</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新を取りやめ、
+処理結果メッセージを出力し、次の
+レコードが処理される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Restful API:登録
+<a class="footnote-reference brackets" href="#f1" id="id19">1</a></p></td>
+<td><p>登録処理</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="3"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新後、処理結果が返却される</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新後、処理結果メッセージが
+返却される</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新を取りやめ、
+処理結果メッセージが返却される
+レコードが処理される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"><td><p>Restful API:更新
+<a class="footnote-reference brackets" href="#f1" id="id20">1</a></p></td>
+<td><p>更新処理</p></td>
+<td><p>U(更新)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Restful API:削除
+<a class="footnote-reference brackets" href="#f1" id="id21">1</a></p></td>
+<td></td>
+<td><p>D(削除)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id22">
+<h3><span class="section-number">20.5.2. </span>汎用申請データベース<a class="headerlink" href="#id22" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アドオン処理が呼び出されるタイミングと動作</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 19%" />
+<col style="width: 14%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>画面/機能</p></th>
+<th class="head"><p>操作/処理</p></th>
+<th class="head"><p>process</p></th>
+<th class="head"><p>アドオンの処理結果にともなう動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="3"><p>申請確認</p></td>
+<td rowspan="3"><p>[申請]ボタン</p></td>
+<td><p>C(新規登録)</p></td>
+<td rowspan="3"><p>S(正常終了):</p>
+<blockquote>
+<div><p>申請後、レコード一覧画面に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>申請後、レコード一覧画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>申請を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p>C(参照登録)</p></td>
+</tr>
+<tr class="row-even"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>申請入力</p></td>
+<td rowspan="3"><p>[一時保存]ボタン</p></td>
+<td><p>U(更新)</p></td>
+<td rowspan="3"><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新後、一時保存一覧画面に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新後、一時保存一覧画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"><td><p>C(参照登録)</p></td>
+</tr>
+<tr class="row-odd"><td><p>U(更新)</p></td>
+</tr>
+<tr class="row-even"><td><p>追記確認</p></td>
+<td><p>[確定]ボタン</p></td>
+<td><p>U(更新)</p></td>
+<td><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新後、画面を閉じる</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新後、画面を閉じる</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p>削除確認</p></td>
+<td><p>[削除]ボタン</p></td>
+<td><p>D(削除)</p></td>
+<td><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード削除後、一覧画面に進む</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード削除後、一覧画面に進む
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード削除を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"><td><p>CSV取込み <a class="footnote-reference brackets" href="#f1" id="id23">1</a></p></td>
+<td><p>更新処理</p></td>
+<td><p>C(新規登録)</p></td>
+<td><p>S(正常終了):</p>
+<blockquote>
+<div><p>申請後、次のレコードが処理される</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>申請後、処理結果メッセージを
+出力し、次のレコードが処理される</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>申請を取りやめ、
+処理結果メッセージを出力し、次の
+レコードが処理される</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id24">
+<h3><span class="section-number">20.5.3. </span>CRMデータベース<a class="headerlink" href="#id24" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アドオン処理が呼び出されるタイミングと動作</p>
+<blockquote>
+<div><p>Webデータベースと同じ</p>
+</div></blockquote>
+</div>
+<div class="section" id="id25">
+<h3><span class="section-number">20.5.4. </span>リクエストパラメータ<a class="headerlink" href="#id25" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>レコードの情報がリクエストボディに設定されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 16%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>設定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>”'0’(WebDB) or '1'(汎用申請) or '2'(CRM)が設定されます&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名が設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>screen</p></td>
+<td><p>文字列</p></td>
+<td><p>任意</p></td>
+<td><p>表示編集画面名が設定されます
+※Webデータベース、CRMデータベースのCSV取込、Restful API実行時はnullが編集されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>event</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>'U'(レコード更新)が設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>process</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>'C'(登録) or 'U'(更新) or 'D'(削除)が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>stamp</p></td>
+<td><p>文字列</p></td>
+<td><p>任意</p></td>
+<td><p>nullが設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>record</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>レコード情報が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>loginUser</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>ログインユーザ情報が設定されます（ユーザID,社員名）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id26">
+<h3><span class="section-number">20.5.5. </span>「record」パラメータ<a class="headerlink" href="#id26" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>システム標準項目</p>
+<blockquote>
+<div><p>以下の項目が設定されます。</p>
+<ul class="simple">
+<li><p>No</p></li>
+<li><p>登録日時</p></li>
+<li><p>登録者</p></li>
+<li><p>最終更新日時</p></li>
+<li><p>更新者</p></li>
+<li><p>申請受付番号（汎用申請データベースのみ）</p></li>
+<li><p>顧客リレーション（CRMデータベースのみ）</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>ユーザ定義項目</p>
+<blockquote>
+<div><p>データベースに定義されているすべての項目が設定されます。</p>
+</div></blockquote>
+</li>
+<li><p>明細行</p>
+<blockquote>
+<div><p>明細行に定義されているすべてのフィールドが設定されます。</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id27">
+<h2><span class="section-number">20.6. </span>スタンプ押下、取消時にアドオン処理を呼び出す<a class="headerlink" href="#id27" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>スタンプの更新処理時にアドオン処理が呼び出されます。</p>
+<div class="section" id="id28">
+<h3><span class="section-number">20.6.1. </span>Webデータベース<a class="headerlink" href="#id28" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アドオン処理が呼び出されるタイミングと動作</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 19%" />
+<col style="width: 14%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>画面/機能</p></th>
+<th class="head"><p>操作/処理</p></th>
+<th class="head"><p>process</p></th>
+<th class="head"><p>アドオンの処理結果にともなう動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="2"><p>レコード内容表示</p></td>
+<td><p>[スタンプ]ボタン</p></td>
+<td><p>U(更新)</p></td>
+<td><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新後、画面が再表示される</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新後、画面が再表示される
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p>[取消]リンク</p></td>
+<td><p>U(更新)</p></td>
+<td><p>S(正常終了):</p>
+<blockquote>
+<div><p>レコード更新後、画面が再表示される</p>
+</div></blockquote>
+<p>W(警告終了):</p>
+<blockquote>
+<div><p>レコード更新後、画面が再表示される
+(処理結果メッセージが表示される)</p>
+</div></blockquote>
+<p>E(エラー終了):</p>
+<blockquote>
+<div><p>レコード更新を取りやめ、
+処理結果メッセージが画面に表示される</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id29">
+<h3><span class="section-number">20.6.2. </span>CRMデータベース<a class="headerlink" href="#id29" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アドオン処理が呼び出されるタイミングと動作</p>
+<p>Webデータベースと同じ</p>
+</div>
+<div class="section" id="id30">
+<h3><span class="section-number">20.6.3. </span>リクエストパラメータ<a class="headerlink" href="#id30" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>レコードの情報がリクエストボディに設定されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 16%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>設定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>system</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>'0'(WebDB) or '2'(CRM)が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>データベース名が設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>screen</p></td>
+<td><p>文字列</p></td>
+<td><p>任意</p></td>
+<td><p>表示編集画面名が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>event</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>'S'(スタンプ更新)が設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>process</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>'U'(更新) or 'D'(削除)が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>stamp</p></td>
+<td><p>文字列</p></td>
+<td><p>任意</p></td>
+<td><p>押下したスタンプのボタン名が設定されます</p></td>
+</tr>
+<tr class="row-even"><td><p>record</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>レコード情報が設定されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>loginUser</p></td>
+<td><p>Object</p></td>
+<td><p>必須</p></td>
+<td><p>ログインユーザ情報が設定されます（ユーザID,社員名）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id31">
+<h3><span class="section-number">20.6.4. </span>「record」パラメータ<a class="headerlink" href="#id31" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>システム標準項目</p>
+<blockquote>
+<div><p>以下の項目が設定されます。</p>
+<ul class="simple">
+<li><p>No</p></li>
+<li><p>登録日時</p></li>
+<li><p>登録者</p></li>
+<li><p>最終更新日時</p></li>
+<li><p>更新者</p></li>
+<li><p>申請受付番号（汎用申請データベースのみ）</p></li>
+<li><p>顧客リレーション（CRMデータベースのみ）</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>ユーザ定義項目</p>
+<blockquote>
+<div><p>データベースに定義されているすべての項目が設定されます。</p>
+</div></blockquote>
+</li>
+<li><p>明細行</p>
+<blockquote>
+<div><p>明細行に定義されているすべてのフィールドが設定されます。</p>
+</div></blockquote>
+</li>
+</ul>
+<p class="rubric">脚注</p>
+<dl class="footnote brackets">
+<dt class="label" id="f1"><span class="brackets">1</span><span class="fn-backref">(<a href="#id10">1</a>,<a href="#id11">2</a>,<a href="#id12">3</a>,<a href="#id14">4</a>,<a href="#id18">5</a>,<a href="#id19">6</a>,<a href="#id20">7</a>,<a href="#id21">8</a>,<a href="#id23">9</a>)</span></dt>
+<dd><p>実行パラメータにより実行可否を制御できます</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="16_webdb_externaldb_webapi.html" class="btn btn-neutral float-right" title="21. Webデータベース外部DB参照のWebAPI連携" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="12_7_rest_workflow.html" class="btn btn-neutral float-left" title="19. REST ワークフローAPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

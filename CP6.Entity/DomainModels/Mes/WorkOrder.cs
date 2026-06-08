@@ -82,3 +82,37 @@ public class WorkOrder : BaseBizEntity
     public List<WorkOrderProcess> Processes { get; set; } = new();
     public List<WorkOrderMaterial> Materials { get; set; } = new();
 }
+
+/// <summary>
+/// <see cref="WorkOrder.Status"/> 指図ステータス 取値常量（Phase 6 整理 — 既存約定を Code 化）
+/// </summary>
+public static class WorkOrderStatus
+{
+    /// <summary>下書き（CreateAsync 初期、未確定）</summary>
+    public const int Draft = 0;
+
+    /// <summary>確定済（受注展開直後）</summary>
+    public const int Confirmed = 1;
+
+    /// <summary>発行済（IssueAsync 後、工場が着手可能）</summary>
+    public const int Issued = 2;
+
+    /// <summary>着手中（少なくとも 1 工程の実績登録あり）</summary>
+    public const int InProgress = 3;
+
+    /// <summary>完了（全工程完了）</summary>
+    public const int Completed = 4;
+
+    /// <summary>中断中</summary>
+    public const int Interrupted = 5;
+
+    /// <summary>検査済</summary>
+    public const int Inspected = 6;
+
+    /// <summary>取消（受注取消連動 / 手動取消）</summary>
+    public const int Cancelled = 9;
+
+    /// <summary>取消可能か判定：Draft/Confirmed/Issued のみ取消可（InProgress 以降は不可）</summary>
+    public static bool IsCancellable(int status) =>
+        status == Draft || status == Confirmed || status == Issued;
+}

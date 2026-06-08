@@ -55,9 +55,17 @@
             <el-tag v-if="row.recallFlag" type="danger" size="small">{{ t('wms.stock.flag.recall') }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="t('wms.common.action')" width="120" fixed="right">
+        <el-table-column :label="t('wms.stock.col.qc')" width="100">
+          <template #default="{ row }">
+            <el-tag :type="qcTagOf(row.qcStatus)" size="small">
+              {{ t(`wms.stock.qc.${row.qcStatus || 'PENDING'}`) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('wms.common.action')" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="openHistory(row)">{{ t('wms.common.history') }}</el-button>
+            <el-button link type="warning" size="small" @click="openQcDialog(row)">{{ t('wms.stock.qc.btn') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -68,6 +76,44 @@
         @current-change="reload" @size-change="reload"
       />
     </el-card>
+
+    <!-- Phase 7 Gap 1.3 — QC 状态设置弹窗 -->
+    <el-dialog v-model="qcDialogVisible" :title="t('wms.stock.qc.dlgTitle')" width="520">
+      <div v-if="qcTarget" style="margin-bottom: 12px; padding: 8px 12px; background: #f5f7fa; border-radius: 4px; font-size: 13px">
+        <div><strong>{{ t('wms.common.product') }}</strong>: {{ qcTarget.productCd }} / <strong>{{ t('wms.common.lot') }}</strong>: {{ qcTarget.lotNo }}</div>
+        <div><strong>{{ t('wms.common.warehouse') }}</strong>: {{ qcTarget.warehouseCd }} / <strong>{{ t('wms.common.location') }}</strong>: {{ qcTarget.locationCd }}</div>
+        <div><strong>{{ t('wms.stock.qc.current') }}</strong>: <el-tag :type="qcTagOf(qcTarget.qcStatus)" size="small">{{ t(`wms.stock.qc.${qcTarget.qcStatus || 'PENDING'}`) }}</el-tag></div>
+      </div>
+
+      <el-form label-position="top">
+        <el-form-item :label="t('wms.stock.qc.newStatus')" required>
+          <el-radio-group v-model="qcNewStatus">
+            <el-radio-button value="PENDING">{{ t('wms.stock.qc.PENDING') }}</el-radio-button>
+            <el-radio-button value="PASSED">{{ t('wms.stock.qc.PASSED') }}</el-radio-button>
+            <el-radio-button value="FAILED">{{ t('wms.stock.qc.FAILED') }}</el-radio-button>
+            <el-radio-button value="HOLD">{{ t('wms.stock.qc.HOLD') }}</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item :label="t('wms.stock.qc.reason')">
+          <el-input
+            v-model="qcReason"
+            type="textarea"
+            :rows="2"
+            maxlength="200"
+            show-word-limit
+            :placeholder="t('wms.stock.qc.reasonPlaceholder')"
+          />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="qcDialogVisible = false" :disabled="qcSaving">{{ t('wms.common.cancel') }}</el-button>
+        <el-button type="primary" :loading="qcSaving" :disabled="!qcNewStatus" @click="onQcSave">
+          {{ t('wms.common.confirm') }}
+        </el-button>
+      </template>
+    </el-dialog>
 
     <el-dialog v-model="historyVisible" :title="t('wms.stock.dlg.history')" width="900">
       <div v-if="historyStock" style="margin-bottom: 8px">
@@ -99,6 +145,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 import { stockApi } from '@/api/wms/stock'
 import type { Stock, StockTransaction } from '@/types/wms'
 
@@ -160,6 +207,51 @@ async function openHistory(row: Stock) {
   const res = await stockApi.history(row.id, 365)
   historyTxns.value = res.data.transactions
   historyVisible.value = true
+}
+
+// ───── Phase 7 Gap 1.3 QC ステータス設定 ─────
+const qcDialogVisible = ref(false)
+const qcTarget = ref<Stock | null>(null)
+const qcNewStatus = ref<string>('')
+const qcReason = ref('')
+const qcSaving = ref(false)
+
+function qcTagOf(s?: string): 'success' | 'danger' | 'warning' | 'info' {
+  switch (s) {
+    case 'PASSED': return 'success'
+    case 'FAILED': return 'danger'
+    case 'HOLD': return 'warning'
+    case 'PENDING':
+    default: return 'info'
+  }
+}
+
+function openQcDialog(row: Stock) {
+  qcTarget.value = row
+  qcNewStatus.value = row.qcStatus || 'PENDING'
+  qcReason.value = ''
+  qcDialogVisible.value = true
+}
+
+async function onQcSave() {
+  if (!qcTarget.value || !qcNewStatus.value) return
+  qcSaving.value = true
+  try {
+    const res = await stockApi.setQcStatus(qcTarget.value.id, qcNewStatus.value, qcReason.value || undefined)
+    if (res.code === 0 && res.data) {
+      ElMessage.success(t('wms.stock.qc.savedMsg'))
+      qcDialogVisible.value = false
+      // 局部更新 + 列表全刷新
+      if (qcTarget.value) qcTarget.value.qcStatus = res.data.qcStatus
+      await reload()
+    } else {
+      ElMessage.error(res.message || 'Unknown error')
+    }
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? 'Network error')
+  } finally {
+    qcSaving.value = false
+  }
 }
 
 onMounted(reload)

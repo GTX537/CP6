@@ -1,0 +1,1064 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6. POWER EGG3.0エンジンと開発のためのAPI &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="7. POWER EGG JSFコンポーネントの利用方法" href="07_.html" />
+    <link rel="prev" title="5. アドオン開発における規約" href="05_.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. POWER EGG3.0エンジンと開発のためのAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">6.1. 共通処理エンジン</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#api">6.1.1. カレンダーAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.1.2. 区分管理API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">6.2. 連番管理API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.2.1. 連番管理レコードの追加</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.2.2. アプリケーションでの連番の採番</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">6.3. ワークフローエンジンAPI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#apply">6.3.1. 申請（applyメソッド）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#findapplicationformbyrecepno">6.3.2. 決裁状況の問い合わせ（findApplicationFormByRecepNoメソッド）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">6.3.3. 事後処理の組み込み</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#url">6.3.4. 補足情報URL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">6.3.5. 申請番号採番インターフェース</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">6.4. 添付ファイル操作API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">6.4.1. 添付ファイルを扱うプログラムの開発</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">6.5. アシストメッセージエンジンAPI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">6.5.1. アシストメッセージの書き込みと更新・削除</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">6.5.2. ナビビュー表示のタイミングで動的に呼び出されるメッセージ生成プログラムの組み込み</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csv">6.5.3. CSV形式ファイルからの一括でのアシストメッセージ生成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">6.6. 組織情報エンジンAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">6.7. 権限管理エンジンAPI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">6.7.1. 権限の基本的な構造</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">6.7.2. 権限レベルについて</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">6.7.3. デフォルト権限について</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">6.7.4. アプリケーションでの利用方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">6.8. ナレッジポイントエンジン</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id21">6.8.1. ナレッジポイントを利用するための準備</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22">6.8.2. ナレッジポイントの加算</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">6. </span>POWER EGG3.0エンジンと開発のためのAPI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="power-egg3-0api">
+<h1><span class="section-number">6. </span>POWER EGG3.0エンジンと開発のためのAPI<a class="headerlink" href="#power-egg3-0api" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id1">
+<h2><span class="section-number">6.1. </span>共通処理エンジン<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>このパッケージでは、カレンダー、区分など各サブシステムで共通に扱うデータを管理しています。</p>
+<div class="section" id="api">
+<h3><span class="section-number">6.1.1. </span>カレンダーAPI<a class="headerlink" href="#api" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>EJB：    net.poweregg.common.CalendarService</p>
+<p>カレンダーAPIでは、特定年月日の属性情報を管理する機能を提供します。
+管理している属性は、以下の通りです。</p>
+<ul class="simple">
+<li><p>休日フラグ</p></li>
+<li><p>イベント名称</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3><span class="section-number">6.1.2. </span>区分管理API<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>EJB:    net.poweregg.common.ClassificationService</p>
+<p>区分管理APIはアプリケーション毎の設定情報や区分項目を管理するために利用できます。</p>
+<p>（例）商談レベル【Ａ、Ｂ、Ｃ...等】</p>
+<p>区分情報は、会社番号、共通番号、区分番号のセットで識別されます。</p>
+<p>会社毎に管理する必要のない区分情報は会社番号として全社共通（&quot;0000000000&quot;）を利用します。</p>
+<p>共通番号は区分値をまとめるための単位として利用します。例えば、
+商談レベルは共通番号&quot;0608&quot;として管理されています。</p>
+<p>アドオンアプリケーションで区分管理EJBを利用する場合は、
+共通番号として&quot;9000&quot;～&quot;9999&quot;番までの番号を利用してください。</p>
+<p>※共通番号データ、区分データを登録する際は、SQL*Plusなどを利用してデータベースに登録してください。</p>
+<p>区分管理APIで管理しているデータは、メソッド呼び出しの他にJSP内でTagLibを使うことでも利用することができます。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">6.2. </span>連番管理API<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>EJB:    net.poweregg.common.SlipNumberService</p>
+<p>連番管理APIでは、アプリケーションで必要な各種の一意な連番を生成するための機能を提供します。</p>
+<div class="section" id="id4">
+<h3><span class="section-number">6.2.1. </span>連番管理レコードの追加<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アプリケーションから連番管理エンジンを利用するには、ＺＴ伝票番号テーブル
+(ZT2_SLIPNO)にあらかじめ管理レコードを追加しておく必要があります。</p>
+<table class="colwidths-given docutils align-default" id="id23">
+<caption><span class="caption-text">ZT2_SLIPNOテーブルのレイアウト</span><a class="headerlink" href="#id23" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>項目名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CORPID</p></td>
+<td><p>可変長文字10桁</p></td>
+<td><p>対象となる会社IDを指定します。
+会社に関係なく共通の連番を利用する場合は、全社共通ID(&quot;0000000000&quot;)を指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>PROCNO</p></td>
+<td><p>文字 4桁</p></td>
+<td><p>連番を特定する番号を指定します。
+0～8999まではシステムで予約されていますので、アドオンアプリケーションで
+は9000以降の番号を利用してください。</p></td>
+</tr>
+<tr class="row-even"><td><p>SLIPNO</p></td>
+<td><p>数値12桁</p></td>
+<td><p>採番済みの最新の番号が入ります。
+データを初期セットするときは、最初に付く番号を指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>ADCLASS</p></td>
+<td><p>文字1桁</p></td>
+<td><p>連番生成時の区分を指定します。
+※(&quot;0&quot;=単純連番、&quot;1&quot;=上4桁西暦年、&quot;2&quot;=上6桁西暦年月)</p></td>
+</tr>
+<tr class="row-even"><td><p>STARTNO</p></td>
+<td><p>数値12桁</p></td>
+<td><p>連番部の開始番号を指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>ENDNO</p></td>
+<td><p>数値12桁</p></td>
+<td><p>連番部の終了番号を指定します。</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>ADCLASSと生成される連番との関係</p></li>
+</ul>
+<blockquote>
+<div><ul>
+<li><p>例１）ADCLASS=0, STARTNO=1, ENDNO=999の場合</p>
+<p>番号は 1から振られ、999までいくと1に戻ります。</p>
+</li>
+<li><p>例２）ADCLASS=1, STARTNO=1,ENONO=999, 現在西暦2001年の場合</p>
+<p>番号は2001001から振られ、2001999までいくと2001001に戻ります。
+2002年になると連番部に関わらず2002001より付番します。</p>
+</li>
+<li><p>例３）ADCLASS=2, STARTNO=1, ENDNO=999, 現在2001年3月の場合</p>
+<p>番号は200103001から振られ、200103999までいくと200103001に戻ります。
+2001年4月になると、連番部に関わらず200104001より付番します。</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">6.2.2. </span>アプリケーションでの連番の採番<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アプリケーションで連番を採番するには、連番管理EJBのfindConsecutivenessNo()
+メソッドを利用します。</p>
+<p>例）全社共通で、プロセス番号(PROCNO)=9000の連番を取得する場合</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.common.SlipNumberService</span><span class="p">;</span>
+  <span class="p">...</span>
+<span class="c1">// SlipNumber EJBのインスタンスを取得</span>
+<span class="nd">@EJB</span>
+<span class="n">SlipNumberService</span> <span class="n">slipno</span><span class="p">;</span>
+<span class="c1">// 連番を取得</span>
+<span class="n">Long</span> <span class="n">number</span> <span class="o">=</span> <span class="n">slipno</span><span class="p">.</span><span class="na">findConConsecutivenessNo</span><span class="p">(</span><span class="s">&quot;0000000000&quot;</span><span class="p">,</span> <span class="s">&quot;9000&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>データベースデータの主キーなどの番号を生成するために連番管理EJB
+を利用することは推奨しません。
+連番管理EJBでは連番を生成するために、内部の管理情報に排他ロックを
+掛けているので、多重度が増えた場合にボトルネックになる可能性があります。
+データベースの主キーはデータベースのシーケンスを利用してください。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2><span class="section-number">6.3. </span>ワークフローエンジンAPI<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>EJB:    net.poweregg.dataflow.DataFlowService</p>
+<p>CDIアプリケーション用ヘルパーコンポーネント: DataFlowHelper</p>
+<p>POWER EGG3.0では、情報を指定されたルートに従ってフローさせるための
+ワークフローエンジンを提供しています。</p>
+<p>POWER EGG3.0でワークフローさせるデータはXML形式となっています。
+アドオンアプリケーションがワークフローエンジンを利用するには、
+アプリケーション内でXMLデータを作成し、そのデータを文書として
+登録した後にワークフローさせます。</p>
+<p>POWER EGGの決裁画面ではXMLデータをXSLTプロセッサを通して
+HTML化したものを表示するので、アドオン開発者はワークフローさせる
+XMLデータとHTML変換のためのXSLデータを設計する必要があります。</p>
+<p>XSLデータは、PEWEBインストールディレクトリのappLib\XSLフォルダにファイルとして配置します。</p>
+<p>スマートフォン用のXSLファイルを別途作成することで、
+決裁画面をスマートフォンに表示することも
+可能です。</p>
+<p>スマートフォン用のXSLファイルはファイル名の末尾に
+「_smartphone」と付与してください。</p>
+<p>CDIアプリケーションからは、DataFlowHelperコンポーネントを利用する事
+で比較的容易にワークフローアプリケーションを作成することができます。</p>
+<p>DataFlowHelperを利用した申請アプリケーションのクラス図、
+シーケンスについては、付録を参照してください。</p>
+<div class="section" id="apply">
+<h3><span class="section-number">6.3.1. </span>申請（applyメソッド）<a class="headerlink" href="#apply" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アプリケーションが作成したXML形式の文書データをフローさせるためのメソッドです。
+フローさせる文書データは、あらかじめ文書管理エンジンに登録されている必要
+があります。</p>
+<p>文書管理エンジンへの文書の登録については、文書管理エンジンの説明部分を参照してください。</p>
+</div>
+<div class="section" id="findapplicationformbyrecepno">
+<h3><span class="section-number">6.3.2. </span>決裁状況の問い合わせ（findApplicationFormByRecepNoメソッド）<a class="headerlink" href="#findapplicationformbyrecepno" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>申請中の案件データの処理状況を確認するためのメソッドです。</p>
+</div>
+<div class="section" id="id7">
+<h3><span class="section-number">6.3.3. </span>事後処理の組み込み<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>ワークフローアプリケーションによっては、承認されたとき、決裁されたときなど、
+ワークフロー中にイベントが発生したタイミングでデータ更新処理などを行わなけ
+ればならない場合が有ります。データフローエンジンでは、このようなアプリケー
+ション固有の更新処理（事後処理）を組み込むためのインターフェースを提供して
+います。事後処理はJavaで開発し、POWER EGGに組込みタイプと、
+Webアプリとして開発しPOWER EGGからCGIで呼び出されるものの2種類があります。</p>
+<p>（１）Javaインターフェースによる事後処理（IProcAfterFlowインターフェース）</p>
+<p>Javaインターフェースによる事後処理プログラムでは、net.poweregg.dataflow.IProcAfterFlow
+インターフェースをインプリメントし、doProcess(Long appRecepNo, Integer historyNo, String status)
+メソッド内で行いたい処理を記述します。</p>
+<p>事後処理プログラムでアドオンのEJBを呼び出す場合、
+Portable Global JNDI Nameを使ってEJBをlookupしてください。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>POWEREGG V2.8cまでは、pe4j-engine.jar/META-INF/ejb-jar.xmlに
+ejb-local-refの定義の追加が必要でしたが、JavaEE6からPortable
+Global JNDI Nameの規約が制定されたため、ejb-local-refを定義
+しなくてもEJBをLookupすることが可能になりました。</p>
+</div>
+<p>（２）URLインターフェースによる事後処理</p>
+<p>URLインターフェースによる事後処理は、決裁時など指定したタイミングで
+POWER EGGサーバーから指定されたURLに対して”POST”で呼び出されます。
+事後処理側の処理が正常終了した場合は、必ずHTTPステータス200を返却してください。
+200以外のステータスの場合、POWER EGG側は事後処理が異常終了したものとみなし、
+承認処理を失敗させます。</p>
+<p>なお、POWER EGGサーバーからURL事後処理に渡すデータの文字コードは”UTF-8”です。</p>
+<p>呼び出し時の引数は以下の通りです。</p>
+<table class="colwidths-given docutils align-default" id="id24">
+<caption><span class="caption-text">事後処理のパラメタ</span><a class="headerlink" href="#id24" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 63%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメタ名</p></th>
+<th class="head"><p>パラメタの内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>APPRECPNO</p></td>
+<td><p>申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>HISTORYNO</p></td>
+<td><p>履歴番号</p></td>
+</tr>
+<tr class="row-even"><td><p>STATUS</p></td>
+<td><p>決裁ステータス</p></td>
+</tr>
+<tr class="row-odd"><td><p>TITLE</p></td>
+<td><p>件名</p></td>
+</tr>
+<tr class="row-even"><td><p>APPLYDATE</p></td>
+<td><p>申請日</p></td>
+</tr>
+<tr class="row-odd"><td><p>CORPID</p></td>
+<td><p>表示対象申請文書の申請会社ID</p></td>
+</tr>
+<tr class="row-even"><td><p>ACCESSKEY</p></td>
+<td><p>poweregg.propertiesの &quot;WF_URL_AFTERFLOW_ACCESSKEY&quot; 変数に設定されている文字列。簡易認証に利用可能</p></td>
+</tr>
+<tr class="row-odd"><td><p>APPLICATIONNO</p></td>
+<td><p>申請番号</p></td>
+</tr>
+<tr class="row-even"><td><p>EMPNAME</p></td>
+<td><p>最終処理社員名(グループ1名の場合はグループ名)</p></td>
+</tr>
+<tr class="row-odd"><td><p>BELONGDEPTNAME</p></td>
+<td><p>最終処理部門名(グループ1名の場合は空)</p></td>
+</tr>
+<tr class="row-even"><td><p>BELONGTITLENAME</p></td>
+<td><p>最終処理者役職名(グループ1名の場合は空)</p></td>
+</tr>
+<tr class="row-odd"><td><p>PROXYFLAG</p></td>
+<td><p>代行フラグ(0:本人が処理,1:代行処理)、グループ1名の場合は0</p></td>
+</tr>
+<tr class="row-even"><td><p>PROXYEMPNAME</p></td>
+<td><p>代行処理者社員名(グループ1名の場合は処理社員名)</p></td>
+</tr>
+<tr class="row-odd"><td><p>PROXYDEPTNAME</p></td>
+<td><p>代行処理者部門名(グループ1名の場合は処理社員部門名)</p></td>
+</tr>
+<tr class="row-even"><td><p>PROXYTITLENAME</p></td>
+<td><p>代行処理者役職名(グループ1名の場合は処理社員役職名)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="url">
+<h3><span class="section-number">6.3.4. </span>補足情報URL<a class="headerlink" href="#url" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>ワークフロー中の申請書を承認するときに、決裁の参考情報となる補足情報を表示
+するためのWebアプリケーションを開発し、POWER EGGでの承認時に表示させることができます。</p>
+<p>補足情報の表示は、承認画面の補足情報リンクをクリックすることで行います。</p>
+<p>この補足情報URLは申請様式毎に指定することが出来ます。
+POWER EGGでは、補足情報URLが設定されている申請様式の補足情報リンクをクリックしたときに、
+起案番号などのパラメタを付加して設定されているURLを表示します。</p>
+<p>補足情報URL起動時にPOWER EGGから付加されるパラメタは以下のとおりです。
+（大文字、小文字の違いに注意してください）</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメタ名</p></th>
+<th class="head"><p>内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>パラメタ名</p></td>
+<td><p>パラメタの内容</p></td>
+</tr>
+<tr class="row-odd"><td><p>appRecpNo</p></td>
+<td><p>申請受付番号</p></td>
+</tr>
+<tr class="row-even"><td><p>corpID</p></td>
+<td><p>表示対象申請文書の申請会社ID（旧バージョン互換用）</p></td>
+</tr>
+<tr class="row-odd"><td><p>applyNo</p></td>
+<td><p>表示対象申請文書の起案番号（旧バージョン互換用）</p></td>
+</tr>
+<tr class="row-even"><td><p>historyNo</p></td>
+<td><p>表示対象申請文書の履歴番号</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id8">
+<h3><span class="section-number">6.3.5. </span>申請番号採番インターフェース<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>POWER EGG標準の採番ルールでは対応できない申請番号を付けたい場合、
+申請番号を採番するJavaクラスを開発することができます。</p>
+<p>申請番号採番アドオンモジュールは、net.poweregg.dataflow.AppNoGenerator
+インターフェースをインプリメントし、generateNoメソッドを実装してください。</p>
+<p>開発した申請番号採番モジュールは、「採番ルールの登録」画面で登録します。</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h2><span class="section-number">6.4. </span>添付ファイル操作API<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>EJB:    net.poweregg.stock.FileAttachmentService</p>
+<p>Word, Excel等のバイナリデータの添付ファイルのデータベースへの登録・削除を行う機能を提供します。</p>
+<div class="section" id="id10">
+<h3><span class="section-number">6.4.1. </span>添付ファイルを扱うプログラムの開発<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>添付ファイルの処理をアドオンアプリケーションに組み込むには、
+添付ファイルJSFコンポーネント、添付ファイル操作APIを組み合わせて利用します。</p>
+<p>利用するJSFコンポーネントは、inputAttachFile, outputAttachFileです。</p>
+<p>（１）JSFでの設定</p>
+<p>添付ファイルを扱うJSFでは、以下のタグ指定を使用します。</p>
+<p>タグパラメタの詳細については、第８章のJSFコンポーネントの説明を参照してください。</p>
+<p>①添付ファイルの登録、修正、削除を行う場合は、inputAttachFileコンポーネントを、
+添付ファイルを組み込みたい箇所に指定します。</p>
+<p>（記述例）</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputAttachFile</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;#{Bean.attachFiles}&quot;</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<p>このタグでは、添付ファイルの入力域を生成し、ユーザが指定した添付ファイルを、
+net.poweregg.ui.param.AttachFile型のオブジェクトとして、
+JSFマネージドビーンのプロパティにセットします。</p>
+<p>②添付ファイルへのリンクを表示する場合は、outputAttachFileタグを該当の箇所に指定します。</p>
+<p>（記述例）</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:outputAttachFile</span> <span class="na">value</span><span class="o">=</span><span class="s">”#{Bean.attachFile}”/</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>（２）添付ファイル登録時のアプリケーションビーンでの処理</p>
+<p>添付ファイルを扱うアプリケーションでは、前述のJSFコンポーネントによって
+マネージドビーンのプロパティにセットされたAttachFileオブジェクトを利用して、
+データベースへの添付ファイルの登録を行います。</p>
+<p>そのときの処理手順は、以下のようになります。</p>
+<p>①添付ファイルオブジェクトの取得</p>
+<p>inputAttachFileのvalue属性で指定した変数に添付ファイルを表現する
+AttachFileオブジェクトのリストがJSFによりセットされます。</p>
+<p>（添付ファイルの取得）</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// この変数に添付ファイルがセットされる.</span>
+<span class="n">AttachFile</span> <span class="n">attachFile</span><span class="p">;</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAttachFile</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">AttachFile</span><span class="o">&gt;</span> <span class="n">attachFile</span> <span class="p">{</span>
+   <span class="k">this</span><span class="p">.</span><span class="na">attachFile</span> <span class="o">=</span> <span class="n">attachFile</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>②添付ファイル登録APIの呼び出し</p>
+<p>AttachFileを引数として、FileAttachmentService#saveAttachFiles()を呼び出します。</p>
+<p>このメソッドを呼び出すことにより、サーバー上に一時保存されている
+添付ファイルがデータベースに登録され、データベースに登録済みのAttachFile
+オブジェクトが戻されます。</p>
+<p>データベースに登録済みのAttachFileオブジェクトにはデータベース上の
+文書ID(docid)がセットされます。</p>
+<p>（添付ファイルの登録処理呼び出し例）</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@EJB</span>
+<span class="n">FileAttachmentService</span> <span class="n">fileAttachmentService</span><span class="p">;</span>
+
+<span class="c1">// 添付ファイルの登録</span>
+<span class="n">attachFile</span> <span class="o">=</span> <span class="n">fileAttachmentService</span><span class="p">.</span><span class="na">saveAttachFiles</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="n">attachFiles</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>アプリケーションで添付ファイルを扱う場合は、
+②で戻される添付オブジェクトの文書IDを保持しておく必要があります。</p>
+<p>親文書と関連づけされている場合は、親文書の文書IDを保持しておけば、
+後で親文書のIDから添付ファイルのIDを取得することができます。</p>
+</div>
+</div>
+<div class="section" id="id11">
+<h2><span class="section-number">6.5. </span>アシストメッセージエンジンAPI<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>アシストメッセージエンジンでは、複数の方法によって個々のユーザのナビビュー
+に表示されるアシストメッセージを制御することができます。</p>
+<div class="section" id="id12">
+<h3><span class="section-number">6.5.1. </span>アシストメッセージの書き込みと更新・削除<a class="headerlink" href="#id12" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アシストメッセージをメッセージ単位で書き込んだり、削除したりするためのAPIです。
+net.poweregg.assistmsg.ExternalMessageServiceとして提供されます。</p>
+<p>このAPIでは</p>
+<ol class="loweralpha simple">
+<li><p>アシストメッセージの書き込み、</p></li>
+<li><p>アシストメッセージの削除（メッセージ単位または識別名単位）、</p></li>
+<li><p>アシストメッセージの更新、</p></li>
+<li><p>メッセージ宛先の追加</p></li>
+</ol>
+<p>を機能として提供しています。</p>
+</div>
+<div class="section" id="id13">
+<h3><span class="section-number">6.5.2. </span>ナビビュー表示のタイミングで動的に呼び出されるメッセージ生成プログラムの組み込み<a class="headerlink" href="#id13" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>このAPIを利用すると利用者がナビビューの表示を更新したタイミングで
+動的に生成されるアシストメッセージを作成することができます。</p>
+<p>アシストメッセージを生成するプログラムは、
+net.poweregg.web.engine.navigation.portal.LocalizedAssistableまたは
+net.poweregg.nnv.view.workspace.LocalizedAssistableLocalインターフェースを
+実装する形で作成し、POWER EGGシステムに組み込みます。</p>
+<p>通常のJavaクラスとして作成する場合は、LocalizedAssistableを継承し
+EJBとして作成する場合はLocalizedAssistableLocalを継承してください。</p>
+<p>POWER EGGに組み込まれたプログラムは、利用者がナビビューを表示した
+タイミングでPOWER EGGから動的に呼び出されます。</p>
+<p>作成したプログラムのPOWER EGGへの登録は、ZT2_MESSENGER_LIBテーブルに
+レコードを追加することによって行います。</p>
+<p>（メンテナンスアプリケーションは提供されていませんので、
+データベースの対話型ユーティリティ等を利用して直接テーブルにレコードを挿入してください）</p>
+<table class="colwidths-given docutils align-default" id="id25">
+<caption><span class="caption-text">ZT2_MESSENGER_LIBテーブルのレイアウト</span><a class="headerlink" href="#id25" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 33%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>項目名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CLASSNAME</p></td>
+<td><p>可変長文字150桁</p></td>
+<td><p>作成したプログラム名をFQDNで入力します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>PRIORITY</p></td>
+<td><p>数値 10桁</p></td>
+<td><p>プログラムの優先度を設定します。
+優先度は数が小さいほど高くなります。</p></td>
+</tr>
+<tr class="row-even"><td><p>DELETABLE</p></td>
+<td><p>文字 1桁</p></td>
+<td><p>現在のバージョンでは使用していません。
+&quot;0&quot;をセットしてください。</p></td>
+</tr>
+</tbody>
+</table>
+<p>メッセージ生成プログラムでアドオンのEJBを呼び出す場合、
+Potable Global JNDI Nameを使ってEJBをlookupしてください。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>POWEREGG V2.8cまでは、pe4j-app.jar/META-INF/ejb-jar.xmlに
+ejb-local-refの定義の追加が必要でしたが、JavaEE6からPortable
+Global JNDI Nameの規約が制定されたため、ejb-local-refを定義
+しなくてもEJBをLookupすることが可能になりました。</p>
+</div>
+</div>
+<div class="section" id="csv">
+<h3><span class="section-number">6.5.3. </span>CSV形式ファイルからの一括でのアシストメッセージ生成<a class="headerlink" href="#csv" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>POWER EGGの持つメッセージ生成エンジンを利用して、規定されたCSV形式の
+データからアシストメッセージを生成するための連携方法です。</p>
+<p>CSVデータからのアシストメッセージの生成は、POWER EGGが標準で持っている
+メッセージエンジンを通して行われます。</p>
+<p>メッセージエンジンでは、メッセージが作成される条件やメッセージ出力先社員
+（本人、上司など）をあらかじめ登録されているルール（アシストメッセージパターン）
+から読みとり、アシストメッセージを作成します。</p>
+<p>※この方式を利用したアシストメッセージ作成の詳細については、POWER EGG3.0管理者マニュアルを参照してください。</p>
+</div>
+</div>
+<div class="section" id="id14">
+<h2><span class="section-number">6.6. </span>組織情報エンジンAPI<a class="headerlink" href="#id14" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>EJB:    net.poweregg.organization.OrganizationService</p>
+<p>組織情報エンジンでは、POWER EGG組織データベースが保持している各種の
+組織に関する情報を参照するためのAPIを提供しています。</p>
+<p>　APIの種類、詳細については、APIリファレンスを参照してください。</p>
+<p>　例）組織エンジンを利用する際の記述</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.organization.*</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="c1">// 組織エンジンのインスタンスを取得</span>
+<span class="nd">@EJB</span>
+<span class="n">OrganizationService</span> <span class="n">orgobj</span><span class="p">;</span>
+
+<span class="c1">// 社員情報取得メソッドを実行</span>
+<span class="n">Employee</span> <span class="n">employee</span> <span class="o">=</span> <span class="n">orgobj</span><span class="p">.</span><span class="na">findEmployee</span><span class="p">(</span><span class="n">hoge</span><span class="p">.</span><span class="na">getEmpID</span><span class="p">());</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h2><span class="section-number">6.7. </span>権限管理エンジンAPI<a class="headerlink" href="#id15" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>EJB:    net.poweregg.security.AuthorityService</p>
+<p>権限管理エンジンでは、POWER EGG内の各種の権限（メニュー、掲示板、文書等）に
+関する操作とチェックを行うためのAPIを提供しています。</p>
+<p>POWER EGG内では、権限は 1～9の権限レベルで管理されており、
+9以外の権限レベルは、権限を利用するアプリケーションで
+自由に設定・利用できるように設計されています。</p>
+<p>アプリケーションでは、権限管理を行いたいデータに対して
+権限管理エンジンにより取得した権限管理番号を保持しておき、
+ユーザからのデータ要求時に権限エンジンにユーザが対象の権限を
+保持しているかどうか問い合わせることによって権限有無の判定を行います。</p>
+<div class="section" id="id16">
+<h3><span class="section-number">6.7.1. </span>権限の基本的な構造<a class="headerlink" href="#id16" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default" id="id26">
+<caption><span class="caption-text">権限の基本的な構造</span><a class="headerlink" href="#id26" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 4%" />
+<col style="width: 19%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>権限会社</p></th>
+<th class="head"><p>権限単位</p></th>
+<th class="head"></th>
+<th class="head"><p>権限対象</p></th>
+<th class="head"><p>権限レベル</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>全会社(&quot;0000000000&quot;)</p></td>
+<td><p>基本</p></td>
+<td><p>0</p></td>
+<td><p>全会社の全社員</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>グループ</p></td>
+<td><p>1</p></td>
+<td><p>全会社の特定のグループ</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>地区</p></td>
+<td><p>2</p></td>
+<td><p>全会社の特定の地区</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>社員</p></td>
+<td><p>3</p></td>
+<td><p>全会社の特定の社員</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-even"><td><p>特定会社（会社番号）</p></td>
+<td><p>基本</p></td>
+<td><p>0</p></td>
+<td><p>該当する会社の全社員</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>グループ</p></td>
+<td><p>1</p></td>
+<td><p>該当する会社の特定のグループ</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>地区</p></td>
+<td><p>2</p></td>
+<td><p>該当する会社の特定の地区</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>社員</p></td>
+<td><p>3</p></td>
+<td><p>該当する会社の特定の社員</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>役職</p></td>
+<td><p>4</p></td>
+<td><p>該当する会社の特定の役職</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>部門</p></td>
+<td><p>5</p></td>
+<td><p>該当する会社の特定の部門</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>部門上位</p></td>
+<td><p>6</p></td>
+<td><p>該当する会社の特定の部門及びその上位組織</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>部門配下</p></td>
+<td><p>7</p></td>
+<td><p>該当する会社の特定の部門及びその下位組織</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>社員区分</p></td>
+<td><p>8</p></td>
+<td><p>該当する会社の特定の社員区分</p></td>
+<td><p>1～8</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>役職上位</p></td>
+<td><p>9</p></td>
+<td><p>該当する会社の特定の役職及びその役職の上位の役職（役職の並び順で判定）</p></td>
+<td><p>1～8</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>権限レベル=9はシステムで予約されており、「権限なし」という権限レベルです。</p></li>
+<li><p>複数のレベルに該当する場合、もっともレベルの高いものが優先されます。
+よって、権限なしが設定されていると、その他の権限は無効となります。</p></li>
+<li><p>権限会社が全会社の場合、設定できる権限単位は基本権限、ロール、
+地区、社員の４つに限定されます。</p></li>
+<li><p>権限単位が基本権限、ロール、地区、社員の場合、権限会社を全会社とするか、
+特定会社とするかで大きな違いがあります。例えば、特定会社でＡさんに設定された権限は、
+Ａさんが他の会社に異動になれば無効となります。
+しかし、全会社でＡさんに設定された権限は、Ａさんがどの会社に所属していても有効です。</p></li>
+</ul>
+</div>
+<div class="section" id="id17">
+<h3><span class="section-number">6.7.2. </span>権限レベルについて<a class="headerlink" href="#id17" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>権限レベルは処理単位で自由に設定可能です。ただし、設定できるのは1～8までの８種類で、
+「権限なし」は9で固定です。</p>
+<p>権限レベルの数字が大きいほど、権限の適用範囲が大きくなるように権限レベルを設定します。</p>
+<p>（例）</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>一般文書 権限レベル</p></th>
+<th class="head"><p>掲示板 権限レベル</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>参照可 1</p></td>
+<td><p>参照可 1</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>参照投稿可 2</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>管理者 8</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id18">
+<h3><span class="section-number">6.7.3. </span>デフォルト権限について<a class="headerlink" href="#id18" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アプリケーションでは、ユーザが明示的に権限設定を行わなかった場合に
+利用するデフォルトの権限を設定することができます。</p>
+<p>デフォルト権限は処理単位で自由に設定することができます。</p>
+<p>デフォルト権限では以下の４種類から選択し、権限レベルを指定します。</p>
+<p>（１）登録者のみ</p>
+<blockquote>
+<div><p>権限単位は「社員」・権限対象がログインユーザ社員の権限が作成されます。</p>
+</div></blockquote>
+<p>（２）社外秘</p>
+<blockquote>
+<div><p>対象会社がログインユーザ社員の所属会社で権限単位「基本」の権限が作成されます。</p>
+</div></blockquote>
+<p>（３）部外秘</p>
+<blockquote>
+<div><p>対象会社がログインユーザ社員の所属会社で権限単位が「部門」、権限対象がログインユーザの部門の権限が作成されます。</p>
+</div></blockquote>
+<p>（４）全会社公開</p>
+<blockquote>
+<div><p>対象会社が全会社で権限単位が「基本」の権限が作成されます。</p>
+</div></blockquote>
+<p>デフォルト権限を登録する際は、手作業でデータベース(ZT2_DEFAULT_AUTHORITY)にレコードを登録してください。</p>
+<p>アドオンアプリケーションで利用できる権限レコードの処理番号は、90001～99999です。
+そのうち手作業で登録できるのは90001～95000で95001から99999までは自動採番される番号です。</p>
+<p>また、手作業でデフォルト権限レコードを登録する場合は、権限名称を管理している
+ZT2_AUTHORITY_LEVELにもデータを登録する必要があります。</p>
+<table class="colwidths-given docutils align-default" id="id27">
+<caption><span class="caption-text">ZT2_DEFAULT_AUTHORITYテーブルのレイアウト</span><a class="headerlink" href="#id27" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 33%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>項目名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PROCESSNO</p></td>
+<td><p>可変長文字10桁</p></td>
+<td><p>処理番号を指定します。手作業でデータを登録する場合は、&quot;90000&quot;～&quot;95000&quot;
+までの値を指定してください。（必須）</p></td>
+</tr>
+<tr class="row-odd"><td><p>PROCESSNAME</p></td>
+<td><p>可変長文字 60桁</p></td>
+<td><p>権限対象処理名を指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>DEFAULTAUTHORITY</p></td>
+<td><p>文字 1桁</p></td>
+<td><p>デフォルト権限の付与単位を指定します。
+（&quot;1&quot;=登録者のみ、&quot;2&quot;=社外秘、&quot;3&quot;=部外秘、&quot;4&quot;=全会社公開）</p></td>
+</tr>
+<tr class="row-odd"><td><p>DEFAULTAUTHORITYLEVEL</p></td>
+<td><p>数値 1桁</p></td>
+<td><p>デフォルトの権限レベルを1～8までの数値で指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>DEFINITIONCLASS</p></td>
+<td><p>文字 1桁</p></td>
+<td><p>&quot;1&quot;をセットしてください。</p></td>
+</tr>
+<tr class="row-odd"><td><p>LASTUPDATE</p></td>
+<td><p>日付</p></td>
+<td><p>登録日時を設定します。</p></td>
+</tr>
+</tbody>
+</table>
+<table class="colwidths-given docutils align-default" id="id28">
+<caption><span class="caption-text">ZT2_AUTHORITY_LEVELテーブルのレイアウト</span><a class="headerlink" href="#id28" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 33%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>項目名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PROCESSNO</p></td>
+<td><p>可変長文字10桁</p></td>
+<td><p>ZT_DEFAULT_AUTHORITYに登録した処理番号を指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>AUTHORITYLEVEL</p></td>
+<td><p>数値 1桁</p></td>
+<td><p>権限レベルを指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>AUTHORITYLEVELNAME</p></td>
+<td><p>可変長文字 60桁</p></td>
+<td><p>権限レベルの名称を指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>LASTUPDATE</p></td>
+<td><p>日付</p></td>
+<td><p>登録日時を設定します。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id19">
+<h3><span class="section-number">6.7.4. </span>アプリケーションでの利用方法<a class="headerlink" href="#id19" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アプリケーションで利用者の権限を判定する必要がある場合は、
+権限を設定する対象となるデータに対して、権限ハンドルを設定する必要があります。</p>
+<p>（１）権限設定部品の呼び出し</p>
+<p>権限の設定には、権限設定部品を利用します。
+アプリケーションから権限設定部品を利用するための規約は、以下の通りです。</p>
+<p>①アプリケーションでは、設定済み権限の一覧を表示するために、
+/ZSC/ZSC2001l.xhtmlをインクルードする。</p>
+<p>②権限一覧を表示するまえに、AuthorityService#findAuthorityDtoを
+呼び出して画面表示および権限設定画面用のDTOを生成する。</p>
+<p>③②で取得したauthorityDtoを &#64;Injectで権限設定画面とやり取りする。</p>
+<p>（２）権限管理番号の取得</p>
+<p>権限管理番号を取得する際は、権限管理エンジンのsaveAuthorityメソッドを呼び出します。
+メソッドの引数として、（１）のauthorityDtoを渡すことで、
+メモリ上で編集した権限情報がデータベースに格納され、権限オブジェクト(Auhority)が戻されます。</p>
+<p>各アプリケーションでは、権限オブジェクトを自身のデータに関連させ、権限判定に利用します。</p>
+</div>
+</div>
+<div class="section" id="id20">
+<h2><span class="section-number">6.8. </span>ナレッジポイントエンジン<a class="headerlink" href="#id20" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>EJB:    net.poweregg.point.KnowledgePointService</p>
+<p>ナレッジポイントエンジンでは、利用者のナレッジポイントを管理する機能を提供しています。
+アドオンアプリケーションではナレッジポイントの登録や、蓄積されているポイント
+の参照を行うことができます。</p>
+<div class="section" id="id21">
+<h3><span class="section-number">6.8.1. </span>ナレッジポイントを利用するための準備<a class="headerlink" href="#id21" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アプリケーションでナレッジポイントを加算するためには、
+まずナレッジポイントを発生させる対象となるアクションの管理情報を
+POWER EGGに登録する必要があります。</p>
+<p>管理情報の登録は、POWER EGGのシステム管理メニューにある
+「ポイント管理の設定」プログラムを利用して行います。</p>
+<p>管理情報の分類コードは、第１分類と第２分類から構成されています。</p>
+<p>アドオンシステムでナレッジポイント管理情報を登録する場合は、
+第１分類として&quot;U&quot;で始まるコードを利用してください。
+なお、第２分類は任意に指定することができます。</p>
+</div>
+<div class="section" id="id22">
+<h3><span class="section-number">6.8.2. </span>ナレッジポイントの加算<a class="headerlink" href="#id22" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アプリケーションでナレッジポイントを加算するには、KnowledgePointService
+のaddPointメソッドを利用します。</p>
+<p>例）ポイント管理分類コード &quot;UAP01&quot;-&quot;0001&quot;のポイントを加算する</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.point.KnowledgePointService</span><span class="p">;</span>
+<span class="p">..</span>
+<span class="c1">// KnowledgePoint EJBのインスタンスを取得</span>
+<span class="nd">@EJB</span>
+<span class="n">KnowledgePointService</span> <span class="n">kp</span><span class="p">;</span>
+
+<span class="c1">// ポイントを加算</span>
+<span class="n">kp</span><span class="p">.</span><span class="na">addPoints</span><span class="p">(</span>
+                <span class="n">login</span><span class="p">.</span><span class="na">getDeptID</span><span class="p">(),</span>  <span class="c1">//ポイント加算対象の部門ID</span>
+                <span class="n">login</span><span class="p">.</span><span class="na">getEmpID</span><span class="p">(),</span>  <span class="c1">//ポイント加算対象の社員ID</span>
+                <span class="s">&quot;UAP01&quot;</span><span class="p">,</span>   <span class="c1">// 第１分類</span>
+                <span class="s">&quot;0001&quot;</span><span class="p">,);</span>   <span class="c1">// 第２分類</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="07_.html" class="btn btn-neutral float-right" title="7. POWER EGG JSFコンポーネントの利用方法" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="05_.html" class="btn btn-neutral float-left" title="5. アドオン開発における規約" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

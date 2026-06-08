@@ -22,18 +22,25 @@ public class OrderService : IOrderService
     private readonly IPowerEggWorkflowService _powerEgg;
     private readonly IWmsBridgeHook _wmsBridge;
     private readonly IMesBridgeHook _mesBridge;
+    private readonly IOrderCancelBridgeHook _cancelBridge;
     /// <summary>WebOrderNo 採番プレフィックス（業務 ID 識別子）</summary>
     private const string WebOrderPrefix = "WO";
     private const string McNullVal = "MCNULLVAL";
     /// <summary>1 受注当たりの最大明細行数</summary>
     private const int MaxDetailLimit = 500;
 
-    public OrderService(CP6Context db, IPowerEggWorkflowService powerEgg, IWmsBridgeHook wmsBridge, IMesBridgeHook? mesBridge = null)
+    public OrderService(
+        CP6Context db,
+        IPowerEggWorkflowService powerEgg,
+        IWmsBridgeHook wmsBridge,
+        IMesBridgeHook? mesBridge = null,
+        IOrderCancelBridgeHook? cancelBridge = null)
     {
         _db = db;
         _powerEgg = powerEgg;
         _wmsBridge = wmsBridge;
         _mesBridge = mesBridge ?? new NoOpMesBridgeHook();
+        _cancelBridge = cancelBridge ?? new NoOpOrderCancelBridgeHook();
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -352,6 +359,69 @@ public class OrderService : IOrderService
                 .SetProperty(x => x.ModifyDate, now));
 
         await _db.SaveChangesAsync();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    //  Phase 6 受注取消 — 状態機 + Bridge Hook 反向級联
+    // ═══════════════════════════════════════════════════════════
+
+    public async Task<OrderCancelResult> CancelAsync(string webOrderNo, string reason, bool force, string? userName)
+    {
+        if (string.IsNullOrWhiteSpace(webOrderNo))
+            throw new ArgumentException("webOrderNo required", nameof(webOrderNo));
+        if (string.IsNullOrWhiteSpace(reason))
+            throw new ArgumentException("reason required (監査用)", nameof(reason));
+
+        var correlationId = Guid.NewGuid();
+
+        var order = await _db.Orders.FirstOrDefaultAsync(x => x.WebOrderNo == webOrderNo && !x.IsDeleted);
+        if (order == null)
+            return OrderCancelResult.Rejected(correlationId, $"PA-MSG-CANCEL-404: 受注 {webOrderNo} 不在");
+
+        // ───── 状態機ガード ─────
+        if (order.OrderStatus == OrderLifecycleStatus.Cancelled)
+            return OrderCancelResult.Rejected(correlationId, "PA-MSG-CANCEL-001: 既に取消済");
+
+        if (order.OrderStatus == OrderLifecycleStatus.Shipped)
+            return OrderCancelResult.Rejected(correlationId, "PA-MSG-CANCEL-002: 出荷済の受注は取消不可");
+
+        // ShipStatus が一部出荷 (5) 以上の場合も rejected
+        if (order.ShipStatus >= 5)
+            return OrderCancelResult.Rejected(correlationId,
+                $"PA-MSG-CANCEL-003: 出荷実績あり (ShipStatus={order.ShipStatus}) — 取消不可");
+
+        // ───── 1段階：探査モード ─────
+        var probe = await _cancelBridge.OnOrderCancelledAsync(webOrderNo, force: false, userName, correlationId);
+
+        var allAutoCancellable =
+            probe.WorkOrders.All(w => w.AutoCancellable)
+            && probe.Outbounds.All(o => o.AutoCancellable);
+
+        if (!force && !allAutoCancellable)
+        {
+            // 半路状態あり — 営業に確認を求める
+            return OrderCancelResult.NeedsDecision(correlationId, probe.WorkOrders, probe.Outbounds);
+        }
+
+        // ───── 2段階：実施モード ─────
+        var cascade = await _cancelBridge.OnOrderCancelledAsync(webOrderNo, force: true, userName, correlationId);
+
+        // ───── Order ヘッダ更新 ─────
+        var now = DateTime.Now;
+        order.OrderStatus = cascade.FullyCascaded
+            ? OrderLifecycleStatus.Cancelled
+            : OrderLifecycleStatus.PartiallyCancelled;
+        order.CancelledAt = now;
+        order.CancelReason = reason;
+        order.Modifier = userName;
+        order.ModifyDate = now;
+        await _db.SaveChangesAsync();
+
+        return cascade.FullyCascaded
+            ? OrderCancelResult.Cancelled(correlationId, cascade.WorkOrders, cascade.Outbounds,
+                "全関連 WO/Outbound 取消完了")
+            : OrderCancelResult.PartiallyCancelled(correlationId, cascade.WorkOrders, cascade.Outbounds,
+                "一部の関連項目は取消不可または失敗 — Probe 詳細参照");
     }
 
     // ═══════════════════════════════════════════════════════════

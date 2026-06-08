@@ -1,0 +1,122 @@
+============================================
+ログインしているユーザ情報の取得
+============================================
+
+POWER EGG3.0のセッション管理
+==============================
+
+Webブラウザで動作するHTTPプロトコルを利用するシステムでは、
+ユーザの一連の操作を管理するためのセッション管理機構が必要になります。
+
+POWER EGG3.0では、J2EEのサーブレットAPIで用意されているセッション
+管理機構を利用してログイン中のユーザの識別を行っています。
+
+また、同一のサーバ、Webアプリケーション以外のアプリケーションとの
+ログインユーザ情報の連携を行うため、ログインユーザ情報をブラウザの
+クッキーとしてセットする機能が追加されています。
+
+CDIコンポーネントでのログイン中ユーザ情報の取得
+======================================================
+
+CDIアプリケーションとして開発したアプリケーションでは、
+@Inアノテーションによってログイン中ユーザ情報を取得することができます。
+
+LoginUserオブジェクトの取得例（CDIアプリケーション）
+
+.. code-block :: java
+
+ import net.poweregg.web.engine.navigation.LoginUser;
+ 
+ @Inject @Login
+ LoginUser loginUser;
+
+
+HttpSessionからのログイン中ユーザ情報の取得
+======================================================
+
+アドオンアプリケーションはJ2EEのjavax.servlet.http.HttpSession
+オブジェクトから現在操作を行っているユーザの情報を取得することができます。
+
+このユーザ情報は、net.poweregg.web.engine.navigation.LoginUser
+というJavaオブジェクトとして取得できます。このオブジェクトは
+”loginUser”という名称でセッションに格納されています。
+
+LoginUserオブジェクトには、ログイン中のユーザのID、名称、部門情報などが格納されています。
+
+LoginUserオブジェクトに格納されている情報の詳細については、APIリファレンスを参照してください。
+
+LoginUserオブジェクトの取得例（サーブレット）
+
+.. code-block :: java
+
+    import net.poweregg.web.engine.navigation.LoginUser;
+
+    HttpSession session = request.getSession(false);
+    LoginUser loginuser = (LoginUser)session.getObject("loginUser");
+    if (loginuser == null) {
+        // ログインしていない
+    } else {
+        // オブジェクトがあるのでログインしている
+        Long empid = loginuser.getEmpid(); // ログイン中ユーザーのEmpIDの取得
+        String corpid = loginuser.getCorpID(); // 会社IDの取得
+    }
+
+LoginUserオブジェクトの取得例（JSP）
+
+
+.. code-block :: jsp
+
+    <%-- オブジェクトの宣言 --%>
+    <jsp:useBean id=”loginUser” class=”net.poweregg.web.engine.navigation.LoginUser scope=”session” />
+    <%
+    if (loginUser == null) {
+        // ログインしていない
+    } else {
+        // オブジェクトがあるのでログインしている
+        Long empid = loginuser.getEmpid(); // ログイン中ユーザーのEmpIDの取得
+        String corpid = loginuser.getCorpID(); // 会社IDの取得
+    }
+    %>
+
+
+クッキーからのログイン中ユーザー情報の取得
+====================================================
+
+ユーザーがPOWER EGGにログインしたときにブラウザにクッキーをセットするようになっています。
+
+他のWebシステムではこのクッキーを読み取ることでPOWEREGGに
+ログインしているユーザーの情報を取得して利用することができます。
+
+ブラウザにセットされるクッキーの仕様は以下のとおりです。
+
+.. csv-table :: 
+    :header: 属性, 値
+    :widths: 20, 50
+
+    キーの名前：,peuser
+    値：,"キー名=値を、”&”で結合したものがセットされます。
+    値はURLEncode＋Shift_JIS(Cp943C)でエンコーディングされています。
+
+    :cCorpId: ログイン中会社番号
+    :cDivId: ログイン中部門番号
+    :cEmpId: ログイン社員番号
+    :cUserId: ログインID
+    :cUserName: 社員名
+    :cDivName: ログイン中部門正式名称
+    :cEmpId1: 外部社員番号１
+    :cEmpId2: 外部社員番号２
+    :cDivId1: ログイン中部門の外部部門番号１
+    :cDivId2: ログイン中部門の外部部門番号２
+    :cTitleClass: ログイン中部門での役職区分
+    :cTitleName: ログイン中部門での役職名
+    "
+    Domain：,poweregg.propertiesのusercookie.domainに設定されている値がセットされます。
+    Path：,poweregg.propertiesのusercookie.pathに設定されている値
+    有効期限(Expire)：,ブラウザ終了時にクリアされるよう設定されません。
+
+Cookieのセットとクリアのタイミングは以下のとおりです。
+
+:セット: ログインが成功したとき及び所属の切り替えを行ったとき
+:クリア: ナビビューの終了ボタンを押したとき
+
+

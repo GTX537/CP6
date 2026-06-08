@@ -1,0 +1,2418 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>19. REST ワークフローAPI &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="20. Webデータベースの外部システム連携" href="13_webdb_cooperation.html" />
+    <link rel="prev" title="18. REST 作業API" href="12_6_rest_todo.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">19. REST ワークフローAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#post">19.1. 申請(POST)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#http">19.1.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uri">19.1.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">19.1.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">19.1.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">19.1.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">19.1.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pdf-post">19.2. PDF申請(POST)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">19.2.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">19.2.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">19.2.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">19.2.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">19.2.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">19.2.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#put">19.3. 取り下げ(PUT)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">19.3.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">19.3.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">19.3.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">19.3.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">19.3.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">19.3.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#get">19.4. 申請書データ取得(GET)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">19.4.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">19.4.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">19.4.3. クエリパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">19.4.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">19.4.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">19.4.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">19.5. 起案内容差替え(PUT)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id23">19.5.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">19.5.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">19.5.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">19.5.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">19.5.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">19.5.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#delete">19.6. 案件データ削除(DELETE)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id29">19.6.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30">19.6.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31">19.6.3. クエリパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id32">19.6.4. レスポンス</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id33">19.6.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34">19.6.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id35">19.7. コメント取得(GET)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id36">19.7.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id37">19.7.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id38">19.7.3. クエリパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id39">19.7.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id40">19.7.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id41">19.7.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id42">19.8. コメント登録(POST)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id43">19.8.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id44">19.8.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id45">19.8.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id46">19.8.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id47">19.8.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id48">19.8.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id49">19.9. ルートシミュレーション(GET)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id50">19.9.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id51">19.9.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id52">19.9.3. クエリパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id53">19.9.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id54">19.9.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id55">19.9.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id56">19.10. 強制否認・差戻し(PUT)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id57">19.10.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id58">19.10.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id59">19.10.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id60">19.10.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id61">19.10.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id62">19.10.6. レスポンスの例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">19. </span>REST ワークフローAPI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="rest-api">
+<h1><span class="section-number">19. </span>REST ワークフローAPI<a class="headerlink" href="#rest-api" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="post">
+<h2><span class="section-number">19.1. </span>申請(POST)<a class="headerlink" href="#post" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ワークフロー文書の申請を行います。</p>
+<div class="section" id="http">
+<h3><span class="section-number">19.1.1. </span>HTTPメソッド<a class="headerlink" href="#http" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>POST</p>
+</div>
+<div class="section" id="uri">
+<h3><span class="section-number">19.1.2. </span>URI<a class="headerlink" href="#uri" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/apply.json</p>
+</div>
+<div class="section" id="json">
+<h3><span class="section-number">19.1.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#json" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>申請受付番号。再申請の場合にのみ指定します。新規申請の場合はセットしないでください。</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部会社コード</p></td>
+</tr>
+<tr class="row-even"><td><p>deptCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部部門コード１</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部社員コード１</p></td>
+</tr>
+<tr class="row-even"><td><p>appliedDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>申請日</p></td>
+</tr>
+<tr class="row-odd"><td><p>baseForm</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請様式コード</p></td>
+</tr>
+<tr class="row-even"><td><p>condition1</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>条件区分値１。
+申請様式のルート判定条件が「区分値」の場合は区分値を設定します。
+申請様式のルート判定条件が「条件値」の場合は条件値を設定します。
+申請様式のルート判定条件が「区分値＋条件値」の場合は条件値を設定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>condition2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>条件区分値２。
+申請様式のルート判定条件が「区分値＋条件値」の場合は区分値を設定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>priority</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>&quot;0001&quot;...通常（省略値）、&quot;0002&quot;...緊急</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>件名</p></td>
+</tr>
+<tr class="row-even"><td><p>contentXml</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請内容本文(xmlまたはxhtml)
+xhtmlを渡す場合、head,bodyなどのタグは含まないdiv要素内のxhtmlをセットしてください。</p></td>
+</tr>
+<tr class="row-odd"><td><p>xslFileName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>起案内容を表示する際のXSLTで利用するXSLファイル名
+（ファイルはあらかじめPEWEB\appLib\XSLフォルダに格納しておく必要があります。
+※POWER EGG Open CloudではXSLフォルダにファイルを追加できないので、このパラメタは利用できません）
+このパラメタが未指定の場合はcontentXmlで指定した内容がそのまま起案内容として表示されます。
+スマートフォンでもcontentXmlで指定した内容がそのまま表示されますので、スマートフォンでも
+起案内容が期待通り表示できるかご確認ください。</p></td>
+</tr>
+<tr class="row-even"><td><p>attachments</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>ファイルアップロードAPIでアップロードした添付ファイルのfileKeyの配列。</p></td>
+</tr>
+<tr class="row-odd"><td><p>relativeurls</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>関連情報URL(relativeurlの配列)</p></td>
+</tr>
+<tr class="row-even"><td><p>proxyCorpId</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部会社コードをセット</p></td>
+</tr>
+<tr class="row-odd"><td><p>proxyDeptCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部部門コード1をセット</p></td>
+</tr>
+<tr class="row-even"><td><p>proxyEmpCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部社員コード1をセット</p></td>
+</tr>
+<tr class="row-odd"><td><p>routeModified</p></td>
+<td><p>真偽値</p></td>
+<td></td>
+<td><p>ルート変更を行う場合はtrue、省略値はfalse。trueを指定した場合
+「保留」状態で申請されるのでユーザは画面から保留状態の申請を開き、ルート設定後に申請を行う必要があります。</p></td>
+</tr>
+<tr class="row-even"><td><p>autoRouting</p></td>
+<td><p>真偽値</p></td>
+<td></td>
+<td><p>ワークフロールートを設定から自動生成するかどうかを指定する。
+デフォルトはtrue。falseを指定した場合はルート生成は行われないので、
+addUsersToHead, addUsersToEnd等でルートを指定する必要があります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>addUsersToHead</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>生成されたルートの先頭に追加する承認者をセットします。</p></td>
+</tr>
+<tr class="row-even"><td><p>addUsersToEnd</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>生成されたルートの後ろに追加する承認者をセットします。</p></td>
+</tr>
+<tr class="row-odd"><td><p>addUsersToRoute</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>指定された位置に挿入する承認者をセットします。</p></td>
+</tr>
+</tbody>
+</table>
+<p>relativeurlsで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>relationUrl</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>関連情報のURL</p></td>
+</tr>
+<tr class="row-odd"><td><p>urlComment</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>関連情報URLコメント</p></td>
+</tr>
+</tbody>
+</table>
+<p>addUsersToHead, addUsersToEnd, addUsersToRouteで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>authority</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ルート上の権限（”0001”:審議、”0002”:回覧、”0004”:同報）</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>追加ユーザの外部会社コード</p></td>
+</tr>
+<tr class="row-even"><td><p>deptCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>追加ユーザの所属部門の外部部門コード1</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>追加ユーザの外部社員コード1</p></td>
+</tr>
+<tr class="row-even"><td><p>approvalOrder</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>追加ユーザの承認順序。addUsersToRouteの場合のみ指定します。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id1">
+<h3><span class="section-number">19.1.4. </span>レスポンス(JSON)<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>申請案件の管理番号(appRecpNo)が返却されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>historyNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>履歴番号</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h3><span class="section-number">19.1.5. </span>リクエストの例<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">apply</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;appliedDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-06-15&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;baseForm&quot;</span><span class="p">:</span> <span class="s2">&quot;A001&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;condition1&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;テスト申請&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;contentXml&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;doc&gt;申請内容&lt;/doc&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;afksjslkdfja-ksjflaj-skdjfalk&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h3><span class="section-number">19.1.6. </span>レスポンスの例<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;historyNo&quot;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="pdf-post">
+<h2><span class="section-number">19.2. </span>PDF申請(POST)<a class="headerlink" href="#pdf-post" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>PDFファイルを申請本文としたワークフロー文書の申請を行います。</p>
+<div class="section" id="id4">
+<h3><span class="section-number">19.2.1. </span>HTTPメソッド<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>POST</p>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">19.2.2. </span>URI<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/pdfapply.json</p>
+</div>
+<div class="section" id="id6">
+<h3><span class="section-number">19.2.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>申請受付番号。再申請の場合にのみ指定します。新規申請の場合はセットしないでください。</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部会社コード</p></td>
+</tr>
+<tr class="row-even"><td><p>deptCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部部門コード１</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部社員コード１</p></td>
+</tr>
+<tr class="row-even"><td><p>appliedDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>申請日</p></td>
+</tr>
+<tr class="row-odd"><td><p>baseForm</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請様式コード</p></td>
+</tr>
+<tr class="row-even"><td><p>condition1</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>条件区分値１。
+申請様式のルート判定条件が「区分値」の場合は区分値を設定します。
+申請様式のルート判定条件が「条件値」の場合は条件値を設定します。
+申請様式のルート判定条件が「区分値＋条件値」の場合は条件値を設定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>condition2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>条件区分値２。
+申請様式のルート判定条件が「区分値＋条件値」の場合は区分値を設定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>priority</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>&quot;0001&quot;...通常（省略値）、&quot;0002&quot;...緊急</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>件名</p></td>
+</tr>
+<tr class="row-even"><td><p>contentPdf</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ファイルアップロードAPIでアップロードしたPDF申請本文ファイルのfileKeyの配列</p></td>
+</tr>
+<tr class="row-odd"><td><p>attachments</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>ファイルアップロードAPIでアップロードした添付ファイルのfileKeyの配列。</p></td>
+</tr>
+<tr class="row-even"><td><p>relativeurls</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>関連情報URL(relativeurlの配列)</p></td>
+</tr>
+<tr class="row-odd"><td><p>proxyCorpId</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部会社コードをセット</p></td>
+</tr>
+<tr class="row-even"><td><p>proxyDeptCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部部門コード1をセット</p></td>
+</tr>
+<tr class="row-odd"><td><p>proxyEmpCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部社員コード1をセット</p></td>
+</tr>
+<tr class="row-even"><td><p>routeModified</p></td>
+<td><p>真偽値</p></td>
+<td></td>
+<td><p>ルート変更を行う場合はtrue、省略値はfalse。trueを指定した場合
+「保留」状態で申請されるのでユーザは画面から保留状態の申請を開き、ルート設定後に申請を行う必要があります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>autoRouting</p></td>
+<td><p>真偽値</p></td>
+<td></td>
+<td><p>ワークフロールートを設定から自動生成するかどうかを指定する。
+デフォルトはtrue。falseを指定した場合はルート生成は行われないので、
+addUsersToHead, addUsersToEnd等でルートを指定する必要があります。</p></td>
+</tr>
+<tr class="row-even"><td><p>addUsersToHead</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>生成されたルートの先頭に追加する承認者をセットします。</p></td>
+</tr>
+<tr class="row-odd"><td><p>addUsersToEnd</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>生成されたルートの後ろに追加する承認者をセットします。</p></td>
+</tr>
+<tr class="row-even"><td><p>addUsersToRoute</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>指定された位置に挿入する承認者をセットします。</p></td>
+</tr>
+</tbody>
+</table>
+<p>relativeurlsで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>relationUrl</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>関連情報のURL</p></td>
+</tr>
+<tr class="row-odd"><td><p>urlComment</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>関連情報URLコメント</p></td>
+</tr>
+</tbody>
+</table>
+<p>addUsersToHead, addUsersToEnd, addUsersToRouteで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>authority</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ルート上の権限（”0001”:審議、”0002”:回覧、”0004”:同報）</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>追加ユーザの外部会社コード</p></td>
+</tr>
+<tr class="row-even"><td><p>deptCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>追加ユーザの所属部門の外部部門コード1</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>追加ユーザの外部社員コード1</p></td>
+</tr>
+<tr class="row-even"><td><p>approvalOrder</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>追加ユーザの承認順序。addUsersToRouteの場合のみ指定します。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id7">
+<h3><span class="section-number">19.2.4. </span>レスポンス(JSON)<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>申請案件の管理番号(appRecpNo)が返却されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>historyNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>履歴番号</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id8">
+<h3><span class="section-number">19.2.5. </span>リクエストの例<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">pdfapply</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;appliedDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-06-15&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;baseForm&quot;</span><span class="p">:</span> <span class="s2">&quot;A001&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;condition1&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;テスト申請&quot;</span><span class="p">,</span>
+
+    <span class="s2">&quot;contentPdf&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="n">fileKey</span><span class="p">:</span><span class="s2">&quot;derfghbfdesd-esvbhjk-lkihgfvb&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;afksjslkdfja-ksjflaj-skdjfalk&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h3><span class="section-number">19.2.6. </span>レスポンスの例<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;historyNo&quot;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="put">
+<h2><span class="section-number">19.3. </span>取り下げ(PUT)<a class="headerlink" href="#put" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>申請中のワークフロー案件を取り下げます。</p>
+<div class="section" id="id10">
+<h3><span class="section-number">19.3.1. </span>HTTPメソッド<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>PUT</p>
+</div>
+<div class="section" id="id11">
+<h3><span class="section-number">19.3.2. </span>URI<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/withdraw.json</p>
+</div>
+<div class="section" id="id12">
+<h3><span class="section-number">19.3.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id12" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>取下げする案件の申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部会社コード</p></td>
+</tr>
+<tr class="row-even"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部社員コード1（代行で申請した案件の場合は代行者の外部社員コード1でも良い）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id13">
+<h3><span class="section-number">19.3.4. </span>レスポンス(JSON)<a class="headerlink" href="#id13" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>申請案件の管理番号(appRecpNo)とワークフローのステータスが返却されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>historyNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>履歴番号</p></td>
+</tr>
+<tr class="row-even"><td><p>status</p></td>
+<td><p>文字</p></td>
+<td><p>必須</p></td>
+<td><p>取り下げた申請書のワークフローステータスコード</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id14">
+<h3><span class="section-number">19.3.5. </span>リクエストの例<a class="headerlink" href="#id14" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">withdraw</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi1&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h3><span class="section-number">19.3.6. </span>レスポンスの例<a class="headerlink" href="#id15" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;historyNo&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;1003&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="get">
+<h2><span class="section-number">19.4. </span>申請書データ取得(GET)<a class="headerlink" href="#get" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>申請書データを1件取得します。</p>
+<div class="section" id="id16">
+<h3><span class="section-number">19.4.1. </span>HTTPメソッド<a class="headerlink" href="#id16" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="id17">
+<h3><span class="section-number">19.4.2. </span>URI<a class="headerlink" href="#id17" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/applicationForm.json</p>
+</div>
+<div class="section" id="id18">
+<h3><span class="section-number">19.4.3. </span>クエリパラメータ<a class="headerlink" href="#id18" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>取得する案件の申請受付番号。</p></td>
+</tr>
+<tr class="row-odd"><td><p>historyNo</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>取得する案件の履歴番号（指定しない場合は最新の履歴を取得）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id19">
+<h3><span class="section-number">19.4.4. </span>レスポンス(JSON)<a class="headerlink" href="#id19" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>申請案件の情報がJSONで返却されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>historyNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>履歴番号</p></td>
+</tr>
+<tr class="row-even"><td><p>flowType</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>“0001”:申請、“0002”:回覧、“0003”:同報</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>申請会社の外部コード ※外部コードが設定されていない場合はnull</p></td>
+</tr>
+<tr class="row-even"><td><p>deptCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>申請部門の外部部門コード1 ※外部コードが設定されていない場合はnull</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>申請者の外部社員コード1 ※外部コードが設定されていない場合はnull</p></td>
+</tr>
+<tr class="row-even"><td><p>appliedDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>申請書の申請日</p></td>
+</tr>
+<tr class="row-odd"><td><p>baseForm</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請書の様式コード</p></td>
+</tr>
+<tr class="row-even"><td><p>baseFormName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請書の様式名</p></td>
+</tr>
+<tr class="row-odd"><td><p>detailFormId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>申請書の申請種別ID</p></td>
+</tr>
+<tr class="row-even"><td><p>detailFormName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請書の申請種別名</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請書の件名</p></td>
+</tr>
+<tr class="row-even"><td><p>priority</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請書の優先度（”0001”:通常、”0002”:緊急）</p></td>
+</tr>
+<tr class="row-odd"><td><p>contentXml</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>起案内容</p></td>
+</tr>
+<tr class="row-even"><td><p>xslFileName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>起案内容表示用のXSLファイル名</p></td>
+</tr>
+<tr class="row-odd"><td><p>status</p></td>
+<td><p>文字</p></td>
+<td><p>必須</p></td>
+<td><p>ワークフローステータスコード
+”0005”:審議中、”0008”:回覧中、“1001”:未申請、”1003”:取下げ、”1004”:差戻し、
+”1005”:差戻し保留、”1010”:決裁取消、”2006”:否認、
+”2007”:決裁、”2008”:条件付決裁、”2009”:回覧完了、“3010”:完結</p></td>
+</tr>
+<tr class="row-even"><td><p>approvedDate</p></td>
+<td><p>日付時刻</p></td>
+<td></td>
+<td><p>申請書の決裁日付時刻</p></td>
+</tr>
+<tr class="row-odd"><td><p>proxyCorpId</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部会社コード</p></td>
+</tr>
+<tr class="row-even"><td><p>proxyDeptCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部部門コード1</p></td>
+</tr>
+<tr class="row-odd"><td><p>proxyEmpCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代理申請の場合、代理申請者の外部社員コード1</p></td>
+</tr>
+<tr class="row-even"><td><p>lastProcAppRoute</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>最終処理者のルート情報</p></td>
+</tr>
+<tr class="row-odd"><td><p>decisionAppRoute</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>決裁者のルート情報</p></td>
+</tr>
+<tr class="row-even"><td><p>cancelAppRoute</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>決裁取消者のルート情報</p></td>
+</tr>
+<tr class="row-odd"><td><p>currentAppRoute</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>現在処理者のルート情報</p></td>
+</tr>
+<tr class="row-even"><td><p>attachments</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>申請書の添付ファイルのfileKeyの配列</p></td>
+</tr>
+<tr class="row-odd"><td><p>relationUrls</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>関連情報URLの配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>ルート情報（lastProcAppRoute, decisionAppRoute, cancelAppRoute, currentAppRoute）のJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>approvalOrder</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>承認順序</p></td>
+</tr>
+<tr class="row-odd"><td><p>authority</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>権限
+“0000”: 申請、”0001”:審議、”0002”:回覧、”0003”:決裁、”0004”:同報、”0005”:戻り、
+“0006”:合議受付、”0007”:合議、”0008”:合議審議、”0009”:審査、”0011”:受付</p></td>
+</tr>
+<tr class="row-even"><td><p>result</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>“1”:承認､確認､決裁した  “2”:差戻した  “3”:否認した  “5”:決裁取消した  “6”:条件付決裁した null:未処理</p></td>
+</tr>
+<tr class="row-odd"><td><p>approvalTargetDateTime</p></td>
+<td><p>日付時刻</p></td>
+<td></td>
+<td><p>審議決裁対象となった日付時刻</p></td>
+</tr>
+<tr class="row-even"><td><p>procDatetime</p></td>
+<td><p>日付時刻</p></td>
+<td></td>
+<td><p>処理日付時刻。未処理の場合はnull</p></td>
+</tr>
+<tr class="row-odd"><td><p>skipped</p></td>
+<td><p>真偽値</p></td>
+<td><p>必須</p></td>
+<td><p>後閲されている場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>proxyFlag</p></td>
+<td><p>真偽値</p></td>
+<td><p>必須</p></td>
+<td><p>代行処理された場合はtrue</p></td>
+</tr>
+<tr class="row-odd"><td><p>personType</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>“1”:社員 “2”:グループ</p></td>
+</tr>
+<tr class="row-even"><td><p>empType</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>“1”:一般社員 “2”:組織審議者 “3”:合議組織　“4”:並行審議者 ※personType=”1”の場合のみセット</p></td>
+</tr>
+<tr class="row-odd"><td><p>empName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>処理者社員名（personType=”2”の場合はグループ名）</p></td>
+</tr>
+<tr class="row-even"><td><p>corpName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>処理者会社名(personType=”1”の場合のみセット)</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>処理者部門名(personType=”1”の場合のみセット)</p></td>
+</tr>
+<tr class="row-even"><td><p>titleName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>処理者役職名(personType=”1”の場合のみセット)</p></td>
+</tr>
+<tr class="row-odd"><td><p>proxyEmpName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者社員名(personType=”2”の場合は実際に処理した社員名)</p></td>
+</tr>
+<tr class="row-even"><td><p>proxyCorpName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者会社名(personType=”2”の場合は実際に処理した社員の会社名)</p></td>
+</tr>
+<tr class="row-odd"><td><p>proxyDeptName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者部門名(personType=”2”の場合は実際に処理した社員の部門名)</p></td>
+</tr>
+<tr class="row-even"><td><p>proxyTitleName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者役職名(personType=”2”の場合は実際に処理した社員の役職名)</p></td>
+</tr>
+</tbody>
+</table>
+<p>relativeurlsのJSON型</p>
+<blockquote>
+<div><p>申請と同じ</p>
+</div></blockquote>
+</div>
+<div class="section" id="id20">
+<h3><span class="section-number">19.4.5. </span>リクエストの例<a class="headerlink" href="#id20" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">appRecpNo</span><span class="o">=</span><span class="mi">1001</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/workflow/applicationForm.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id21">
+<h3><span class="section-number">19.4.6. </span>レスポンスの例<a class="headerlink" href="#id21" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;historyNo&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;flowType&quot;</span><span class="p">:</span> <span class="s2">&quot;1001&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend00&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;1900&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;nakanishi&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;appliedDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-02&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;baseForm&quot;</span><span class="p">:</span> <span class="s2">&quot;Z002&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;baseFormName&quot;</span><span class="p">:</span> <span class="s2">&quot;稟議書&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;detailFormId&quot;</span><span class="p">:</span> <span class="mi">348</span><span class="p">,</span>
+    <span class="s2">&quot;detailFormName&quot;</span><span class="p">:</span> <span class="s2">&quot;申請種別A&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;申請件名&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="s2">&quot;0001&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;contentXml&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;doc&gt;申請本文&lt;/doc&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;xslFileName&quot;</span><span class="p">:</span> <span class="s2">&quot;addonApp1.xsl&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;2007&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;approvedDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-03&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;proxyCorpId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;proxyDeptCode&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;proxyEmpCode&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;lastProcAppRoute&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;approvalOrder&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;authority&quot;</span><span class="p">:</span> <span class="s2">&quot;0003&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;approvalTargetDateTime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-02T17:10:20+09:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;procDatetime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-03T09:08:25+09:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+        <span class="s2">&quot;proxyFlag&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+        <span class="s2">&quot;personType&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;empType&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;友野　力&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;corpName&quot;</span><span class="p">:</span> <span class="s2">&quot;フレンド商事&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;本社&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;titleName&quot;</span><span class="p">:</span> <span class="s2">&quot;社長&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;proxyEmpName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;proxyCorpName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;proxyDeptName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;proxyTitleName&quot;</span><span class="p">:</span> <span class="n">null</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;decisionAppRoute&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;approvalOrder&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;authority&quot;</span><span class="p">:</span> <span class="s2">&quot;0003&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;approvalTargetDateTime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-02T17:10:20+09:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;procDatetime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-03T09:08:25+09:00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+        <span class="s2">&quot;proxyFlag&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+        <span class="s2">&quot;personType&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;empType&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;友野　力&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;corpName&quot;</span><span class="p">:</span> <span class="s2">&quot;フレンド商事&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;本社&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;titleName&quot;</span><span class="p">:</span> <span class="s2">&quot;社長&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;proxyEmpName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;proxyCorpName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;proxyDeptName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;proxyTitleName&quot;</span><span class="p">:</span> <span class="n">null</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;cancelAppRoute&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;currentAppRoute&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;Od/bdrkdy3ZfD4NaYGHGxQJXeyXzYZRxhDp+LU+CFDmpP5FI2bx7Y4MqOO8bTQ3p&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;relativeUrls&quot;</span><span class="p">:</span> <span class="n">null</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="id22">
+<h2><span class="section-number">19.5. </span>起案内容差替え(PUT)<a class="headerlink" href="#id22" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>申請中のワークフローの起案内容を差し替えます。</p>
+<div class="section" id="id23">
+<h3><span class="section-number">19.5.1. </span>HTTPメソッド<a class="headerlink" href="#id23" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>PUT</p>
+</div>
+<div class="section" id="id24">
+<h3><span class="section-number">19.5.2. </span>URI<a class="headerlink" href="#id24" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/content.json</p>
+</div>
+<div class="section" id="id25">
+<h3><span class="section-number">19.5.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id25" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>起案内容を差し替える案件の申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>contentXml</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請内容本文(xmlまたはxhtml)
+xhtmlを渡す場合、head,bodyなどのタグは含まないdiv要素内のxhtmlを渡す。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id26">
+<h3><span class="section-number">19.5.4. </span>レスポンス(JSON)<a class="headerlink" href="#id26" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>なし</p>
+</div>
+<div class="section" id="id27">
+<h3><span class="section-number">19.5.5. </span>リクエストの例<a class="headerlink" href="#id27" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">content</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;contentXml&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;doc&gt;申請内容&lt;/doc&gt;&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id28">
+<h3><span class="section-number">19.5.6. </span>レスポンスの例<a class="headerlink" href="#id28" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="delete">
+<h2><span class="section-number">19.6. </span>案件データ削除(DELETE)<a class="headerlink" href="#delete" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>申請済みのワークフロー案件データを削除します。</p>
+<p>このAPIで案件データを削除するとデータベースから物理的に申請データ及び
+承認履歴が削除されます。
+削除は、申請案件を申請受付番号を複数指定して削除する方法か、
+申請様式と日付範囲を指定して削除する方法のいずれかの方法で行えます。</p>
+<div class="section" id="id29">
+<h3><span class="section-number">19.6.1. </span>HTTPメソッド<a class="headerlink" href="#id29" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>DELETE</p>
+</div>
+<div class="section" id="id30">
+<h3><span class="section-number">19.6.2. </span>URI<a class="headerlink" href="#id30" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/applicationForm.json</p>
+</div>
+<div class="section" id="id31">
+<h3><span class="section-number">19.6.3. </span>クエリパラメータ<a class="headerlink" href="#id31" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNos</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>削除する案件の申請受付番号。複数の場合は半角カンマで区切る。</p></td>
+</tr>
+<tr class="row-odd"><td><p>baseForm</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>削除する案件の申請様式コード</p></td>
+</tr>
+<tr class="row-even"><td><p>startDate</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>削除する案件の申請日付範囲（開始）。この日付を条件に含む</p></td>
+</tr>
+<tr class="row-odd"><td><p>endDate</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>削除する案件の申請日付範囲（終了）。この日付を条件に含む</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id32">
+<h3><span class="section-number">19.6.4. </span>レスポンス<a class="headerlink" href="#id32" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>なし</p>
+</div>
+<div class="section" id="id33">
+<h3><span class="section-number">19.6.5. </span>リクエストの例<a class="headerlink" href="#id33" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">appRecpNos</span><span class="o">=</span><span class="mi">1001</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/workflow/applicationForm.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id34">
+<h3><span class="section-number">19.6.6. </span>レスポンスの例<a class="headerlink" href="#id34" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="id35">
+<h2><span class="section-number">19.7. </span>コメント取得(GET)<a class="headerlink" href="#id35" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>申請書につけられたコメントを取得します。</p>
+<div class="section" id="id36">
+<h3><span class="section-number">19.7.1. </span>HTTPメソッド<a class="headerlink" href="#id36" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="id37">
+<h3><span class="section-number">19.7.2. </span>URI<a class="headerlink" href="#id37" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/commentTree.json</p>
+</div>
+<div class="section" id="id38">
+<h3><span class="section-number">19.7.3. </span>クエリパラメータ<a class="headerlink" href="#id38" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>コメントを取得する案件の申請受付番号。</p></td>
+</tr>
+<tr class="row-odd"><td><p>historyNo</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>コメントを取得する案件の履歴番号（指定しない場合は最新の履歴を取得）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id39">
+<h3><span class="section-number">19.7.4. </span>レスポンス(JSON)<a class="headerlink" href="#id39" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>申請案件の情報がJSONで返却されます。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>comments</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>コメント情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>コメント情報（comments）のJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>コメントを一意に識別するID</p></td>
+</tr>
+<tr class="row-odd"><td><p>comment</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コメント文字列（改行は\r\n)</p></td>
+</tr>
+<tr class="row-even"><td><p>parentCommentId</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>親コメントのID(自身が先頭コメントの場合はnull)</p></td>
+</tr>
+<tr class="row-odd"><td><p>userId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>発言者のログインユーザID</p></td>
+</tr>
+<tr class="row-even"><td><p>empName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>発言者の社員名</p></td>
+</tr>
+<tr class="row-odd"><td><p>commentDatetime</p></td>
+<td><p>日付時刻</p></td>
+<td><p>必須</p></td>
+<td><p>コメント日付時刻</p></td>
+</tr>
+<tr class="row-even"><td><p>attachments</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>コメントに添付されたファイルのfileKeyの配列</p></td>
+</tr>
+<tr class="row-odd"><td><p>deleted</p></td>
+<td><p>真偽値</p></td>
+<td><p>必須</p></td>
+<td><p>削除されたコメントの場合はtrue</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id40">
+<h3><span class="section-number">19.7.5. </span>リクエストの例<a class="headerlink" href="#id40" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">appRecpNo</span><span class="o">=</span><span class="mi">1001</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/workflow/commentTree.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id41">
+<h3><span class="section-number">19.7.6. </span>レスポンスの例<a class="headerlink" href="#id41" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;comments&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">123456</span><span class="p">,</span>
+            <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;コメントA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parentCommentId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;syainA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;社員Ａ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;commentDatetime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-02T17:10:20+09:00&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deleted&quot;</span><span class="p">:</span> <span class="n">false</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">123457</span><span class="p">,</span>
+            <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;コメントA-1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parentCommentId&quot;</span><span class="p">:</span> <span class="mi">123456</span><span class="p">,</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;syainB&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;社員Ｂ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;commentDatetime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-03T11:15:22+09:00&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deleted&quot;</span><span class="p">:</span> <span class="n">false</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">123459</span><span class="p">,</span>
+            <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;コメントA-1-1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parentCommentId&quot;</span><span class="p">:</span> <span class="mi">123457</span><span class="p">,</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;syainA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;社員Ａ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;commentDatetime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-03T11:17:08+09:00&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deleted&quot;</span><span class="p">:</span> <span class="n">false</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">123460</span><span class="p">,</span>
+            <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;コメントA-2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parentCommentId&quot;</span><span class="p">:</span> <span class="mi">123456</span><span class="p">,</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;syainA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;社員Ａ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;commentDatetime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-03T11:20:41+09:00&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deleted&quot;</span><span class="p">:</span> <span class="n">false</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">123458</span><span class="p">,</span>
+            <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;コメントB&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parentCommentId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;syainB&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;社員Ｂ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;commentDatetime&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-10-03T11:15:22+09:00&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;Od/bdrkdy3ZfD4NaYGHGxQJXeyXzYZRxhDp+LU+CFDmpP5FI2bx7Y4MqOO8bTQ3p&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;deleted&quot;</span><span class="p">:</span> <span class="n">false</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="id42">
+<h2><span class="section-number">19.8. </span>コメント登録(POST)<a class="headerlink" href="#id42" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ワークフロー案件にコメントを登録します。</p>
+<div class="section" id="id43">
+<h3><span class="section-number">19.8.1. </span>HTTPメソッド<a class="headerlink" href="#id43" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>POST</p>
+</div>
+<div class="section" id="id44">
+<h3><span class="section-number">19.8.2. </span>URI<a class="headerlink" href="#id44" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/comment.json</p>
+</div>
+<div class="section" id="id45">
+<h3><span class="section-number">19.8.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id45" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>コメントを登録する案件の申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>historyNo</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>コメントを登録する案件の履歴番号。未指定の場合は最新の履歴にコメントを登録</p></td>
+</tr>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コメントを登録する社員の会社の外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コメントを登録する社員の外部社員コード1（代行で申請した案件の場合は代行者の外部社員コード1でも良い）</p></td>
+</tr>
+<tr class="row-even"><td><p>comment</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コメント文字列（改行は\r\n）</p></td>
+</tr>
+<tr class="row-odd"><td><p>attachments</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>fileKeyの配列
+あらかじめファイルアップロードAPIでファイルをアップロードしておく必要がある</p></td>
+</tr>
+<tr class="row-even"><td><p>parentCommentId</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>返信コメントの場合、親コメントのIDを指定する</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id46">
+<h3><span class="section-number">19.8.4. </span>レスポンス(JSON)<a class="headerlink" href="#id46" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>コメントを登録した申請書のappRecpNo</p></td>
+</tr>
+<tr class="row-odd"><td><p>historyNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>コメントを登録した履歴の番号</p></td>
+</tr>
+<tr class="row-even"><td><p>commentId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>登録したコメントのId</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id47">
+<h3><span class="section-number">19.8.5. </span>リクエストの例<a class="headerlink" href="#id47" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">comment</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;テストコメント&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;afksjslkdfja-ksjflaj-skdjfalk&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;parentCommentId&quot;</span><span class="p">:</span> <span class="mi">12345</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id48">
+<h3><span class="section-number">19.8.6. </span>レスポンスの例<a class="headerlink" href="#id48" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;historyNo&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;commentId&quot;</span><span class="p">:</span> <span class="mi">12346</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="id49">
+<h2><span class="section-number">19.9. </span>ルートシミュレーション(GET)<a class="headerlink" href="#id49" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ワークフローのルート情報をシミュレーションします。
+ルート確認画面でルート確認するのと同等の機能を提供します。</p>
+<div class="section" id="id50">
+<h3><span class="section-number">19.9.1. </span>HTTPメソッド<a class="headerlink" href="#id50" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="id51">
+<h3><span class="section-number">19.9.2. </span>URI<a class="headerlink" href="#id51" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/simulation.json</p>
+</div>
+<div class="section" id="id52">
+<h3><span class="section-number">19.9.3. </span>クエリパラメータ<a class="headerlink" href="#id52" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請者の外部部門コード１</p></td>
+</tr>
+<tr class="row-even"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>申請者の外部社員コード１</p></td>
+</tr>
+<tr class="row-odd"><td><p>appliedDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>申請日</p></td>
+</tr>
+<tr class="row-even"><td><p>baseForm</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請様式コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>condition1</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>条件区分値１。
+申請様式のルート判定条件が「区分値」の場合は区分値を設定します。
+申請様式のルート判定条件が「条件値」の場合は条件値を設定します。
+申請様式のルート判定条件が「区分値＋条件値」の場合は条件値を設定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>condition2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>条件区分値２。
+申請様式のルート判定条件が「区分値＋条件値」の場合は区分値を設定します。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id53">
+<h3><span class="section-number">19.9.4. </span>レスポンス(JSON)<a class="headerlink" href="#id53" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>routeName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ルート名</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>会社名</p></td>
+</tr>
+<tr class="row-even"><td><p>baseFormName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請様式名</p></td>
+</tr>
+<tr class="row-odd"><td><p>flowType</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>フロー種別.。“0001”:申請　“0002”:回覧</p></td>
+</tr>
+<tr class="row-even"><td><p>flowTypeName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>フロー種別名</p></td>
+</tr>
+<tr class="row-odd"><td><p>detailForm</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請種別</p></td>
+</tr>
+<tr class="row-even"><td><p>detailFormName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>申請種別名</p></td>
+</tr>
+<tr class="row-odd"><td><p>availableDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>申請種別の適用日</p></td>
+</tr>
+<tr class="row-even"><td><p>routeList</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>ルート情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>routeListのJSON型</p>
+<p>deptLevelからtitleNameまでの値については、derivationTypeによって値が
+セットされる場合とされない場合があります。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>flowOrder</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>承認順序</p></td>
+</tr>
+<tr class="row-odd"><td><p>derivationType</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ルート生成種別
+“1”:組織図　“2”:合議組織　“3”:申請部品（社員）　“4”:申請部品（グループ）　“6”:申請部品（申請部門審議者）
+“7”:申請者　“8”:申請部品（グループ全員）　“9”:申請部品（申請部門全員）　“10”:申請者部門全員（部門）
+“11”:申請者部門全員（申請部門）　“12”:申請部品（グループ並行審議）</p></td>
+</tr>
+<tr class="row-even"><td><p>authority</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>権限コード
+“0001”:審議　“0002”:回覧　“0003”:決裁　“0004”:同報　“0005”:戻り　“0006:合議受付　“0007”:合議　“0008”:合議審議
+“0009”:審査　“0011”:受付</p></td>
+</tr>
+<tr class="row-odd"><td><p>authorityName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>権限名</p></td>
+</tr>
+<tr class="row-even"><td><p>deptLevel</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>組織階層レベル</p></td>
+</tr>
+<tr class="row-odd"><td><p>confOrgName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>合議組織名</p></td>
+</tr>
+<tr class="row-even"><td><p>partsName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ルート部品名</p></td>
+</tr>
+<tr class="row-odd"><td><p>groupId</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>グループID</p></td>
+</tr>
+<tr class="row-even"><td><p>groupName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>グループ名</p></td>
+</tr>
+<tr class="row-odd"><td><p>empId</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>社員ID</p></td>
+</tr>
+<tr class="row-even"><td><p>empName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>社員名</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>所属会社ID</p></td>
+</tr>
+<tr class="row-even"><td><p>corpName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>所属会社名</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptId</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>所属部門ID</p></td>
+</tr>
+<tr class="row-even"><td><p>deptName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>所属部門名</p></td>
+</tr>
+<tr class="row-odd"><td><p>titleName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>役職名</p></td>
+</tr>
+<tr class="row-even"><td><p>invalid</p></td>
+<td><p>真偽型</p></td>
+<td></td>
+<td><p>true：申請日時点で社員が部門に所属していない　false:所属している</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id54">
+<h3><span class="section-number">19.9.5. </span>リクエストの例<a class="headerlink" href="#id54" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">corpId</span><span class="o">=</span><span class="n">friend</span><span class="o">&amp;</span><span class="n">deptCode</span><span class="o">=</span><span class="mi">1001</span><span class="o">&amp;</span><span class="n">empCode</span><span class="o">=</span><span class="n">ooki</span><span class="o">&amp;</span><span class="n">appliedDate</span><span class="o">=</span><span class="mi">2018</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">01</span><span class="o">&amp;</span><span class="n">baseForm</span><span class="o">=</span><span class="n">Z001</span><span class="o">&amp;</span><span class="n">condition1</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/workflow/simulation.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id55">
+<h3><span class="section-number">19.9.6. </span>レスポンスの例<a class="headerlink" href="#id55" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;routeName&quot;</span><span class="p">:</span> <span class="s2">&quot;【回覧】組織Lv5+支援G&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;corpName&quot;</span><span class="p">:</span> <span class="s2">&quot;フレンド商事&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;baseFormName&quot;</span><span class="p">:</span> <span class="s2">&quot;報告書&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;flowType&quot;</span><span class="p">:</span> <span class="s2">&quot;0002&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;flowTypeName&quot;</span><span class="p">:</span> <span class="s2">&quot;回覧&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;detailForm&quot;</span><span class="p">:</span> <span class="s2">&quot;101856&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;detailFormName&quot;</span><span class="p">:</span> <span class="s2">&quot;営業日報&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;avalableDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-04-01&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;routeList&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;flowOrder&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;derivationType&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;authority&quot;</span><span class="p">:</span> <span class="s2">&quot;0002&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;authorityName&quot;</span><span class="p">:</span> <span class="s2">&quot;回覧&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptLevel&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">&quot;confOrgName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;partsName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;groupId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;groupName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;empId&quot;</span><span class="p">:</span> <span class="mi">1012</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;土井　明&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;0001&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;corpName&quot;</span><span class="p">:</span> <span class="s2">&quot;フレンド商事&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptId&quot;</span><span class="p">:</span> <span class="mi">4523</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;営業１課&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;titleName&quot;</span><span class="p">:</span> <span class="s2">&quot;課長&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;invalid&quot;</span><span class="p">:</span> <span class="n">null</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;flowOrder&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;derivationType&quot;</span><span class="p">:</span> <span class="s2">&quot;4&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;authority&quot;</span><span class="p">:</span> <span class="s2">&quot;0002&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;authorityName&quot;</span><span class="p">:</span> <span class="s2">&quot;回覧&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptLevel&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;confOrgName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;partsName&quot;</span><span class="p">:</span> <span class="s2">&quot;営業支援G回覧&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;groupId&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
+            <span class="s2">&quot;groupName&quot;</span><span class="p">:</span> <span class="s2">&quot;営業支援グループ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;corpName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deptId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;titleName&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;invalid&quot;</span><span class="p">:</span> <span class="n">null</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="id56">
+<h2><span class="section-number">19.10. </span>強制否認・差戻し(PUT)<a class="headerlink" href="#id56" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>一旦決裁された案件を強制的に否認・差戻しします。
+否認・差戻しを実施する人は審査権限として決裁者の直後に挿入されます。
+決裁状態または完結状態にある最終履歴のみ更新可能です。
+否認・差戻しにより、事後処理が起動されます。
+同時にコメントを登録することが可能です。</p>
+<div class="section" id="id57">
+<h3><span class="section-number">19.10.1. </span>HTTPメソッド<a class="headerlink" href="#id57" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>PUT</p>
+</div>
+<div class="section" id="id58">
+<h3><span class="section-number">19.10.2. </span>URI<a class="headerlink" href="#id58" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/rejectAfterFlow.json</p>
+</div>
+<div class="section" id="id59">
+<h3><span class="section-number">19.10.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id59" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>強制否認・差戻しする案件の申請受付番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>result</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>否認の場合は&quot;3&quot;、差戻しの場合は&quot;2&quot;</p></td>
+</tr>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>処理者の会社の外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>処理者の所属部門の外部部門コード1</p></td>
+</tr>
+<tr class="row-even"><td><p>empCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>処理者の外部社員コード1</p></td>
+</tr>
+<tr class="row-odd"><td><p>baseDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>組織図検索基準日</p></td>
+</tr>
+<tr class="row-even"><td><p>comment</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>コメント文字列（改行は\r\n）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id60">
+<h3><span class="section-number">19.10.4. </span>レスポンス(JSON)<a class="headerlink" href="#id60" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appRecpNo</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>申請書のappRecpNo</p></td>
+</tr>
+<tr class="row-odd"><td><p>status</p></td>
+<td><p>文字</p></td>
+<td><p>必須</p></td>
+<td><p>処理後の申請書のワークフローステータスコード。ステータスコードについては
+申請書データ取得APIのレスポンスを参照してください。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id61">
+<h3><span class="section-number">19.10.5. </span>リクエストの例<a class="headerlink" href="#id61" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PUT</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">workflow</span><span class="o">/</span><span class="n">rejectAfterFlow</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;deptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;eigyo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;empCode&quot;</span><span class="p">:</span> <span class="s2">&quot;ooishi1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;baseDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-06-15&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;否認コメント&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id62">
+<h3><span class="section-number">19.10.6. </span>レスポンスの例<a class="headerlink" href="#id62" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;appRecpNo&quot;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span>
+    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;2009&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="13_webdb_cooperation.html" class="btn btn-neutral float-right" title="20. Webデータベースの外部システム連携" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="12_6_rest_todo.html" class="btn btn-neutral float-left" title="18. REST 作業API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

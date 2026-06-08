@@ -1,0 +1,157 @@
+======================================
+付録I, 添付ファイル処理共通シーケンス
+======================================
+
+クラス関係図
+===============
+
+.. uml ::
+
+    class "申請アプリケーション" as AppBean
+    class "申請データ添付コネクタ" as appDocConnEntity {
+        id : Long
+        dataId : Long
+        docId : Long
+    }
+    class AttachFile
+    interface FileAttachmentService {
+        +getAttachFiles(List attachDocIds) : List
+        +savaAttachFiles(List oldAttachFiles, List currentAttachFiles) : List
+        +deleteBinaryData(Long docId) : int
+        +deleteAttacheFiles(List docIds) : int
+    }
+
+    AppBean ..> AttachFile : <<use>>
+    AppBean ..> FileAttachmentService : <<use>>
+    FileAttachmentService ..> AttachFile : <<use>>
+    AppBean ..> appDocConnEntity : <<use>>
+
+
+添付ファイル処理のシーケンス(新規登録時)
+==========================================
+
+入力から確認まで
+----------------------
+
+.. uml ::
+
+    participant 入力画面 as inputxhtml
+    participant "<p:inputAttachFile>" as inputAttachFile
+    participant 申請アプリケーションBean as AppBean
+    participant DataflowHelperBean as DataflowHelper
+    participant FileAttachmentService
+
+    inputxhtml -> inputAttachFile : xhtmlで部品を利用
+    inputAttachFile -> inputAttachFile : ファイルアップロード\n一時ファイル作成
+    inputAttachFile -> AppBean : List<AttacheFile>
+    note over AppBean
+        入力画面の添付ファイル入力部品(InputAttachFile)
+        によって、添付ファイルがサーバーの一時
+        ディレクトリに書き込まれ、
+        AttachFileオブジェクトが生成される。
+        生成されたAttachFileは、Value Bindingにより
+        クラスの該当フィールドにセットされる.
+    end note
+    inputxhtml -> AppBean : [確認]ボタン
+    AppBean -> DataflowHelper : setAttachment(List<AttachFile>)
+    AppBean -> DataflowHelper : prepareApply()
+    
+確認から登録まで
+------------------------
+
+.. uml ::
+
+    participant 確認画面 as confirmxhtml
+    participant 申請アプリケーションBean as AppBean
+    participant DataflowHelperBean as DataflowHelper
+    participant FileAttachmentService
+
+    confirmxhtml -> AppBean : [申請]ボタン
+    AppBean -> FileAttachmentService : saveAttachFiles(List oldAttachmentDocIds,\n List<AttachFile> newAttachFiles)
+    note over FileAttachmentService
+        引数で受け取ったリスト内のAttachFileの中で
+        DBに登録されていないデータ(docIdがnull)
+        をデータベースに登録する.
+        新規登録のときは、oldAttachmentDocIdsにはnull
+        または空のリストを設定する.
+    end note
+    FileAttachmentService -> FileAttachmentService : Write data to database.
+    AppBean <- FileAttachmentService : List<AttachFile>
+    note over FileAttachmentService
+        データベース登録状態のAttachFileのリストを戻す.
+    end note
+    AppBean -> DataflowHelper : commitApply()
+
+添付ファイル処理のシーケンス(追加・削除)
+==========================================
+
+.. uml ::
+
+    participant "画面" as xhtml
+    participant "<p:inputAttachFile>" as inputAttachFile
+    participant 申請アプリケーションBean as AppBean
+    participant DataflowHelperBean as DataflowHelper
+    participant FileAttachmentService
+
+    note over xhtml
+        一覧画面
+    end note
+    xhtml -> AppBean : [件名]クリック
+    AppBean -> AppBean : データ読み込み
+    AppBean -> DataflowHelper : loadApplication()
+    AppBean -> xhtml : 詳細表示画面に遷移
+    note over xhtml
+        詳細表示画面
+    end note
+    xhtml -> AppBean : [変更]ボタン
+    AppBean -> AppBean : 登録済みの添付\nコネクタから\n添付文書のIDの\nリストを作成
+    AppBean -> FileAttachmentService : getAttachFiles(List docIds)
+    note over FileAttachmentService
+        添付ファイル文書IDの
+        リストを元にデータベース
+        にアクセスし、
+        AttachFileのリストを
+        作成する.
+    end note
+    AppBean <- FileAttachmentService : List<AttachFile>
+    xhtml <- AppBean : 入力画面に遷移
+    note over xhtml
+        入力画面
+    end note
+    xhtml -> inputAttachFile : List<AttachFile>を\nInputAttachFileに渡し、\n添付ファイル一覧\nを描画する
+    xhtml -> inputAttachFile : [削除]、[追加]
+    note over inputAttachFile
+        InputAttachFileの機能により、
+        添付ファイルの削除、追加を行う
+    end note
+    inputAttachFile -> inputAttachFile : AttachFileを編集
+    inputAttachFile -> AppBean : List<AttachFile>\nを変数にセット
+    note over AppBean
+        追加、変更後のAttachFileが
+        変数にセットされる
+    end note
+    xhtml -> AppBean : [確認]ボタン
+    AppBean -> DataflowHelper : setAppRecpNo()
+    AppBean -> DataflowHelper : setAttachments\n(List<AttachFile>)
+    AppBean -> DataflowHelper : prepareApply
+    xhtml <- AppBean : 確認画面に遷移
+    note over xhtml
+        申請確認画面
+    end note
+    xhtml -> AppBean : [申請]ボタン
+    AppBean -> FileAttachmentService : saveAttachments()
+    note over FileAttachmentService
+        変更前の添付文書IDのリストと、
+        変更後の添付ファイルリスト
+        を受け取り、データベースを
+        更新した後、文書ID付のAttachFile
+        を戻す。
+        変更前添付ファイルに存在し、
+        変更後添付ファイルリスト
+        に存在しないデータは削除される。
+        新規登録した添付ファイルはデータ
+        ベースに登録される。
+    end note
+    AppBean <- FileAttachmentService : List<AttachFile>
+    AppBean -> DataflowHelper : commitApply()
+

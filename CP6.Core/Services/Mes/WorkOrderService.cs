@@ -345,6 +345,39 @@ public class WorkOrderService : IWorkOrderService
     public Task<string> NextSequenceAsync() => _seq.NextAsync(WorkOrderSeqKey);
 
     // ═══════════════════════════════════════════════════════════
+    //  ME020 Phase 6 — 受注取消連動：指図取消
+    // ═══════════════════════════════════════════════════════════
+
+    public async Task<bool> CancelAsync(string workOrderNo, string reason, string? userName)
+    {
+        if (string.IsNullOrWhiteSpace(workOrderNo))
+            throw new ArgumentException("workOrderNo required", nameof(workOrderNo));
+        if (string.IsNullOrWhiteSpace(reason))
+            throw new ArgumentException("reason required (監査用)", nameof(reason));
+
+        var wo = await _db.WorkOrders.FirstOrDefaultAsync(x => x.WorkOrderNo == workOrderNo && !x.IsDeleted)
+            ?? throw new InvalidOperationException("ME-MSG-043: 指図不在");
+
+        // 冪等：既に取消済なら何もしない
+        if (wo.Status == WorkOrderStatus.Cancelled) return false;
+
+        // 取消可判定：InProgress(3) 以降は不可
+        if (!WorkOrderStatus.IsCancellable(wo.Status))
+            throw new InvalidOperationException(
+                $"ME-MSG-CANCEL-001: 着手済の指図は取消不可 (Status={wo.Status})");
+
+        wo.Status = WorkOrderStatus.Cancelled;
+        wo.Modifier = userName;
+        wo.ModifyDate = DateTime.Now;
+        // Remarks に取消理由追記（既存値があれば改行で append）
+        var stamp = $"[CANCELLED {DateTime.Now:yyyy-MM-dd HH:mm} by {userName ?? "system"}] {reason}";
+        wo.Remarks = string.IsNullOrWhiteSpace(wo.Remarks) ? stamp : $"{wo.Remarks}\n{stamp}";
+
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    // ═══════════════════════════════════════════════════════════
     //  ME020 — 受注 → 指図 自動展開
     // ═══════════════════════════════════════════════════════════
 

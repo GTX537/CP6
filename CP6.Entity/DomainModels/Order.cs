@@ -79,6 +79,24 @@ public class Order : BaseBizEntity
     /// <summary>実出荷日時（WMS出荷確定で記録。ユーザ入力の ShipDateTime とは別管理）</summary>
     public DateTime? ActualShipDate { get; set; }
 
+    // ───── 受注ライフサイクル（Phase 6 取消链）─────
+    /// <summary>
+    /// 受注ライフサイクル状態：Confirmed / InProduction / Shipped / Cancelled / PartiallyCancelled
+    /// </summary>
+    /// <remarks>
+    /// 既存の <see cref="Status"/>（mc転送）とは別軸の独立フィールド。
+    /// 取値常量は <see cref="OrderLifecycleStatus"/> 参照。
+    /// </remarks>
+    [MaxLength(20)]
+    public string OrderStatus { get; set; } = OrderLifecycleStatus.Confirmed;
+
+    /// <summary>取消時刻（UTC、CancelAsync 成功時に記録）</summary>
+    public DateTime? CancelledAt { get; set; }
+
+    /// <summary>取消理由（必須 — 監査用、OperLog にも別途記録）</summary>
+    [MaxLength(200)]
+    public string? CancelReason { get; set; }
+
     // ───── メモ ─────
     [MaxLength(100)] public string? Memo1 { get; set; }
     [MaxLength(100)] public string? Memo2 { get; set; }
@@ -86,4 +104,25 @@ public class Order : BaseBizEntity
 
     // ───── ナビゲーションプロパティ ─────
     public List<OrderDetail> Details { get; set; } = new();
+}
+
+/// <summary>
+/// <see cref="Order.OrderStatus"/> 受注ライフサイクル状態 取値常量（Phase 6）
+/// </summary>
+public static class OrderLifecycleStatus
+{
+    /// <summary>確定済（受注作成直後の既定値）</summary>
+    public const string Confirmed = "CONFIRMED";
+
+    /// <summary>製造中（MES に展開済 / WO 着手後）</summary>
+    public const string InProduction = "IN_PRODUCTION";
+
+    /// <summary>出荷済（WMS 出荷確定後、Phase 4 ErpBridge 回写経由）</summary>
+    public const string Shipped = "SHIPPED";
+
+    /// <summary>取消完了（全関連 WO/Outbound も取消済）</summary>
+    public const string Cancelled = "CANCELLED";
+
+    /// <summary>一部取消（半路状態 — 一部の WO/Outbound は既に着手のため未取消）</summary>
+    public const string PartiallyCancelled = "PARTIALLY_CANCELLED";
 }

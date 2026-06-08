@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>10. ログインパスワード変更同期インターフェース &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="11. XML Webサービス" href="11_.html" />
+    <link rel="prev" title="9. ログインしているユーザ情報の取得" href="09_.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. ログインパスワード変更同期インターフェース</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">10.1. インターフェースクラス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">10.2. パスワード変更時の動作</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">10. </span>ログインパスワード変更同期インターフェース</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><span class="section-number">10. </span>ログインパスワード変更同期インターフェース<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>POWER EGGのログインパスワードが変更された際、他システムのパスワードを
+変更するためのプラグインモジュールを呼び出すためのインターフェースです。</p>
+<p>このインターフェースは、ログインパスワード変更のみを対象とし、
+ワークフローの承認パスワードの変更については対象外です。</p>
+<p>プラグインモジュールの組み込みは、poweregg.propertiesに以下の定義を
+追加することによって行います。</p>
+<p>定義が存在しない場合はPOWER EGGのログインパスワード変更処理のみが実行されます。</p>
+<p>このインターフェースを実装したプラグインは、POWER EGGシステムに付き１つのみ定義可能です。</p>
+<p>【poweregg.properties設定】
+キー      値
+PASSWORD_SYNC_PLUGIN    ログインパスワード変更同期インターフェースを実装しているクラス名
+このキーが定義されている場合に、以下の追加設定に応じてパスワード変更同期を行う。
+PASSWORD_SYNC_ON_ADMIN  システム管理者によるパスワード変更時にログインパスワード変更同期を行うか行わないかを設定する。
+“true” または “false”で指定する。デフォルト値は”false”
+PASSWORD_SYNC_ON_USER   ユーザによるパスワード変更時にログインパスワード変更同期を行うか行わないかを設定する。
+“true” または “false”で指定する。デフォルト値は”false”</p>
+<div class="section" id="id2">
+<h2><span class="section-number">10.1. </span>インターフェースクラス<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>パスワード変更インターフェースは、
+net.poweregg.api.security.LoginPasswordSyncInterfaceです。
+プラグインモジュールはこのクラスをインプリメントし、
+changePasswordメソッドを実装する必要があります。</p>
+<p>なお、プラグインモジュールは、パスワードの変更結果を
+net.poweregg.api.security.LoginPasswordSyncResult
+クラスとして返却する必要があります。</p>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">10.2. </span>パスワード変更時の動作<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>POWER EGGでは、ログインパスワード変更操作が行われた際、
+次の順序でログインパスワード変更同期処理を実行します。</p>
+<p>パスワード文字列の妥当性チェックを行う（標準処理）</p>
+<p>※ユーザによるパスワード変更操作が行われた場合のみ実施され、
+社員の登録画面からのパスワード変更時、
+MIUからのパスワード変更時は妥当性チェックは実施されません。</p>
+<p>poweregg.propertiesの”PASSWORD_SYNC_PLUGIN”キーを検索し、
+値が存在した場合は、設定されている値をクラス名として
+Class.forNameメソッドを用いてクラスのインスタンスを作成し、
+LoginPasswordSyncInterfaceにキャストします。</p>
+<p>インスタンス生成に失敗した場合は「パスワード連携モジュール({0})の
+インスタンス化に失敗しました」のメッセージを持つRuntimeExceptionをスローします。</p>
+<p>作成したインスタンスが、LoginPasswordSyncInterfaceにキャストできない場合は、
+「パスワード連携モジュールで指定されたクラス({0})がインターフェースを
+実装していません。」のメッセージを持つRuntimeExceptionをスローします。</p>
+<p>※メッセージ内の{0}はpoweregg.propertiesのPASSWORD_SYNC_PLUGINの値</p>
+<p>パスワード変更同期実行判定（※１）を行い、同期実行の場合インスタンス化
+したクラスのchangePasswordメソッドを呼び出します。</p>
+<p>戻り値(LoginPasswordSyncResult)に応じて次の処理を行います。</p>
+<ul class="simple">
+<li><p>戻り値がnullの場合、「パスワード連携モジュールの戻り値がnull」
+のメッセージを持つRuntimeExceptionをスローする。</p></li>
+<li><p>LoginPasswordSyncResult#getStatusCode()が -20 の場合はパスワード
+妥当性検証エラーとし、POWER EGGのパスワード変更は行わない。（※２）</p></li>
+<li><p>LoginPasswordSyncResult#getStatusCode()が -20 以外の場合は
+#isRollback()の値を調べ、trueの場合はPOWER EGGのパスワード変更は行わず、
+ユーザ画面にエラーメッセージを表示する。#isRollBack()がfalseの場合は、
+POWER EGGのパスワード変更を行い、ユーザ画面に正常終了メッセージを表示する。（※２）</p></li>
+</ul>
+<table class="colwidths-given docutils align-default" id="id4">
+<caption><span class="caption-text">※１ パスワード変更同期実行判定</span><a class="headerlink" href="#id4" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>画面の操作</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>社員登録画面でログインパスワードを変更した</p></td>
+<td><p>poweregg.propertiesの
+PASSWORD_SYNC_ON_ADMINがtrueの場合のみ同期実行する</p></td>
+</tr>
+<tr class="row-odd"><td><p>MIU社員インポートでログインパスワードを変更した</p></td>
+<td><p>同期実行しない</p></td>
+</tr>
+<tr class="row-even"><td><p>ユーザ画面からのログインパスワード変更
+（個人設定、パスワード期限切れ警告、パスワード期限切れ画面）</p></td>
+<td><p>poweregg.propertiesのPASSWORD_SYNC_ON_USERがtrueの場合のみ同期実行する</p></td>
+</tr>
+</tbody>
+</table>
+<table class="colwidths-given docutils align-default" id="id5">
+<caption><span class="caption-text">※２ ユーザ画面に表示するエラーメッセージ</span><a class="headerlink" href="#id5" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>statusCode</p></th>
+<th class="head"><p>エラーメッセージ</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>-20</p></td>
+<td><p>パスワードに使用できない文字が含まれています。</p></td>
+</tr>
+<tr class="row-odd"><td><p>-21かつisRollback=true</p></td>
+<td><p>外部システムの制約により、パスワード更新に失敗しました。{0}</p></td>
+</tr>
+<tr class="row-even"><td><p>-21かつisRollback=false</p></td>
+<td><p>外部システムのパスワード変更が失敗したため、
+POWER EGGのみログインパスワードを更新しました。{0}</p></td>
+</tr>
+<tr class="row-odd"><td><p>isRollback=true かつ
+上記以外のステータスコード</p></td>
+<td><p>外部システムからの通知により、パスワード更新を行いませんでした。{0}</p></td>
+</tr>
+</tbody>
+</table>
+<p>{0}：プラグインモジュール側でLoginPasswordSyncResult#setExecMessage()により、エラー詳細内容を設定することにより表示されます</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="11_.html" class="btn btn-neutral float-right" title="11. XML Webサービス" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="09_.html" class="btn btn-neutral float-left" title="9. ログインしているユーザ情報の取得" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

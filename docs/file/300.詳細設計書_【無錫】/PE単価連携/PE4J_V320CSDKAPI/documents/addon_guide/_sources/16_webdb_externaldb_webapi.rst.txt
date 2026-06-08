@@ -1,0 +1,257 @@
+=====================================
+Webデータベース外部DB参照のWebAPI連携
+=====================================
+
+外部DB参照定義の設定において、JDBCによる接続に加えて、WebAPIによる接続が
+可能となりました。その場合、以下の2種類のWebAPIを別途、実装する必要があります。
+
+- 外部DB参照定義取得RESTAPI
+- 外部DB参照検索RESTAPI
+
+
+外部DB参照定義の設定に関する詳細は「ユーザーズマニュアル　データベース作成編」-
+「2.7 外部DB参照定義」-「WEB API連携の外部DB参照定義を登録する」を参照ください。
+
+
+事前準備
+==========
+
+WebAPI連携を利用時には、AES共通鍵による暗号化を行うために暗号化のキーを事前に設定する必要があります。
+PE4J\\PEWEB\\properteis\\poweregg.properteisに、以下の内容を追加します。
+設定後、POWER EGGのサービスを再起動する必要があります。
+
+ 【追加内容】
+  ① 鍵
+	名前：WEBDB_AES_COMMON_KEY_SECRET
+	値　：32文字任意の文字列(半角英数字)を設定してください。
+
+  ② 初期ベクトル(IV)
+	名前：WEBDB_AES_COMMON_KEY_IV
+	値　：16文字任意の文字列(半角英数字)を設定してください。
+
+  例）
+	WEBDB_AES_COMMON_KEY_SECRET=PowerEgg20200424Abcdefghijklmnop
+	WEBDB_AES_COMMON_KEY_IV=AbcdEFGhijk01234
+
+
+
+
+外部DB参照定義取得RESTAPI
+==============================================================
+
+Webデータベースの外部DB参照定義項目でWebAPI連携の項目を作成する際、 
+連携先の定義を取得するために、設定したURLに対しGETリクエストを送信します。
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(連携先URLのサーバ名もしくはIPアドレス) /api/dbreferenceDef
+
+リクエストヘッダ
+-------------------
+
+.. csv-table :: 
+    :header: ヘッダ名,内容
+    :widths: 40,60
+
+    Host,「外部連携設定」で設定した連携先URLのサーバ名もしくはIPアドレス
+    Content-Type, "application/json"
+
+.. note ::
+
+    「外部連携設定」でHTTPヘッダを設定している場合は付加されます
+
+リクエストパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    －,－,－,－
+
+リクエスト例
+---------------------------
+
+リクエストヘッダの例
+
+.. code :: 
+
+    GET /api/dbreferenceDef HTTP/1.1
+    Host: gaibu-system.poweregg.net
+    Content-Type: application/json
+    Add-Header: hogehoge
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    dbreferenceDef, JSON, 必須, DB参照情報を設定します。
+
+DB参照情報（dbreferenceDef）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    codeColumnLabel,文字列,必須,コード項目の表示文字列を設定します。
+    nameColumnLabel,文字列,必須,名称項目の表示文字列を設定します。
+    optionItems,JSON,省略可,追加項目情報の配列を設定します。(最大100項目まで)
+
+追加項目情報（optionItems）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    itemName,文字列,省略可,追加項目列名を設定します。
+    itemLabel, 文字列,省略可,追加項目ラベルを設定します。
+
+レスポンス例
+------------------------
+
+.. code ::
+
+    {
+      "dbreferenceDef": {
+        "codeColumnLabel": "店CIF",
+        "nameColumnLabel": "顧客名",
+        "optionItems": [
+          {
+            "itemName": "telno",
+            "itemLabel": "電話番号"
+          }
+        ]
+      }
+    }
+
+
+外部DB参照検索RESTAPI
+==============================================================
+
+WebデータベースのWebAPI連携型の外部DB参照項目をユーザが入力する時に、 
+設定したURLに対しGETリクエストを送信します。
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(連携先URLのサーバ名もしくはIPアドレス) /api/dbreferenceQuery
+
+リクエストヘッダ
+-------------------
+
+.. csv-table :: 
+    :header: ヘッダ名,内容
+    :widths: 40,60
+
+    Host,「外部連携設定」で設定した連携先URLのサーバ名もしくはIPアドレス
+    Content-Type, "application/json"
+
+.. note ::
+
+    「外部連携設定」でHTTPヘッダを設定している場合は付加されます
+
+リクエストパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,modeに依存,"コードを直接して検索する場合に指定します。"
+    keyword,文字列,modeに依存,"データ参照ウィンドウでキーワード検索したときに指定します。"
+    mode,文字列,"省略可","テスト接続用かを判断するパラメタです。（0:本番接続,1:テスト接続）
+    ※省略時は0として扱います。"
+
+.. note ::
+
+    modeが0の場合、keyword、もしくは、codeのどちらかが必須で設定されます。
+    modeが1の場合、code、keywordは両方設定されません。
+
+リクエストの例
+----------------------------
+
+1. 外部DB参照検索条件
+
+  - 検索対象のキーワードは「大石」
+  - 本番接続での検索
+
+2. パラメータを HTTP のクエリ文字列で送信する場合
+
+  HTTPのクエリ文字列の例 ::
+
+    keyword=%E5%A4%A7%E7%9F%B3&mode=0
+
+  ＜URLエンコーディングする前＞ ::
+
+    keyword=大石&mode=0
+
+  リクエストヘッダを含んだ例 ::
+
+    GET /api/dbreferenceQuery?(HTTPのクエリ文字列) HTTP/1.1
+    Host: gaibu-system.poweregg.net
+    Content-Type: application/json
+    Add-Header: hogehoge
+
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    data, JSON, 必須, DB検索結果の配列を設定します。
+
+DB検索結果（data）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    codeValue,文字列,必須,コード値を設定します。
+    nameValue,文字列,必須,名称値を設定します。
+    optionItems,JSON,省略可,追加項目情報の配列を設定します。(最大100項目まで)
+
+追加項目情報（optionItems）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    itemName,文字列,省略可,追加項目のフィールド名を設定します。
+    itemValue, 文字列,省略可,追加項目の値を設定します。
+
+レスポンス例
+------------------------
+
+.. code ::
+
+    {
+      "data": [
+       {
+        "codeValue": "5726890",
+        "nameValue": "鈴木　真一",
+        "optionItems": [
+         {
+            "itemName": "telno",
+            "itemValue": "012-3456-7890"
+         }
+        ]
+       }
+      ]
+    }

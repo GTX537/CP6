@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>26. 付録B アドオン開発環境の作成(Eclipse) &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="27. 付録C 開発したpe4j-earのサーバーへのデプロイ" href="Appendix_c.html" />
+    <link rel="prev" title="25. 付録A 過去のバージョンからの変更点" href="Appendix_a.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">26. 付録B アドオン開発環境の作成(Eclipse)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">26.1. 必要ソフトウェア</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">26.2. 開発マシン用推奨ハードウェアスペック</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#paraya-server">26.3. Paraya Serverのインストール</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#payara-serverpower-egg">26.4. Payara ServerへのPOWER EGGの配備</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">26.5. Payara ServerからのPOWER EGGの配備解除</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ear">26.6. earの置き換え</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parara-server-glassfish">26.7. Parara Server(Glassfish)に関する情報について</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#eclipsepayara-server">26.8. EclipseからのPayara Server起動設定</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">26. </span>付録B アドオン開発環境の作成(Eclipse)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="b-eclipse">
+<h1><span class="section-number">26. </span>付録B アドオン開発環境の作成(Eclipse)<a class="headerlink" href="#b-eclipse" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>この章ではEclipse(4.7), Payara Server4.1.2.181を使ってアドオン開発環境
+を作成する手順について記述します。</p>
+<div class="section" id="id1">
+<h2><span class="section-number">26.1. </span>必要ソフトウェア<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p>JDK1.8(Update 122以上)</p>
+<blockquote>
+<div><p>アドオンのコンパイル、Payara Serverの起動に必要です。</p>
+</div></blockquote>
+</li>
+<li><p>Eclipse 4.7 Oxygen</p>
+<blockquote>
+<div><p>ソースコードの編集等に利用します。
+<a class="reference external" href="http://mergedoc.osdn.jp/">http://mergedoc.osdn.jp/</a> 等から、Java開発に対応したものをダウンロード
+し、展開してください。</p>
+</div></blockquote>
+</li>
+<li><p>Payara Server</p>
+<blockquote>
+<div><p>Glassfish Open Source Editionを元にしたアプリケーションサーバーです。
+POWER EGG3.0 Ver3.2cでは、Payara Server 4.1.2.182で動作確認
+を行っています。
+Payara Serverは以下のURLからダウンロード可能です。</p>
+<p><a class="reference external" href="http://www.payara.fish/all_downloads">http://www.payara.fish/all_downloads</a></p>
+<p>「Download Payara Server Community」ボタン ＞ 「Download from Maven」ボタン ＞ 「Payara Distributions」リンク ＞ 「Payara Server」リンク ＞ 「Version 4.1.2.181」リンク ＞ 「Files/View All」 ＞ リンク「payara-4.1.2.181.zip」リンク</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>「<a class="reference external" href="https://repo1.maven.org/maven2/fish/payara/distributions/payara/4.1.2.181/">https://repo1.maven.org/maven2/fish/payara/distributions/payara/4.1.2.181/</a>」からもダウンロードが可能です。</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Symfoware Server V12.1またはV12.3</p>
+<blockquote>
+<div><p>POWER EGG3.0 Ver3.2cが対応しているデータベースです。</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">26.2. </span>開発マシン用推奨ハードウェアスペック<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>CPU : Core i5以上を推奨</p></li>
+<li><p>Memory: 4GB以上を推奨</p></li>
+</ul>
+</div>
+<div class="section" id="paraya-server">
+<h2><span class="section-number">26.3. </span>Paraya Serverのインストール<a class="headerlink" href="#paraya-server" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>事前にJDK1.8(Update 122以上）をインストールしてください</p></li>
+</ul>
+<ol class="arabic">
+<li><p>payara-4.1.2.181.zipをC:\に展開します。</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>展開後、C:\payara41フォルダ内に、以下のファイル・フォルダが存在している事を確認
+してください。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">bin</span><span class="o">/</span>
+<span class="n">glassfish</span><span class="o">/</span>
+<span class="n">javadb</span><span class="o">/</span>
+<span class="n">mq</span><span class="o">/</span>
+<span class="n">README</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>展開後、C:\payara41\binフォルダをパスに追加し、asadminコマンドを利用できるように
+してください。</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>JDBCドライバのコピー</p>
+<blockquote>
+<div><p>postgresql-jdbc41.jarをpayara41/glassfish/domains/domain1/lib/extフォルダにコピーします。
+JDBCドライバのファイルは、Symfowareのインストールフォルダのjdbc/libフォルダに存在しています。</p>
+</div></blockquote>
+</li>
+<li><p>Payara Serverの起動</p>
+<blockquote>
+<div><p>以下のコマンドを実行し、glassfishを起動します。:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">start</span><span class="o">-</span><span class="n">domain</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>JVMオプションの設定</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>-clientを除去し、-serverを追加</p></li>
+<li><p>-Xmx512mを除去し、-Xms1024m, -Xmx1024mを追加</p></li>
+<li><p>-Xrsを追加し、ログオフ時にJavaプロセスが終了しないようにする</p></li>
+<li><p>-XX:MaxPermSize=192mを除去し、-XX:MetaspaceSize=384mを追加</p></li>
+<li><p>-XX:+UseCompressedOopsを追加(これを設定するとヒープが32G未満の場合にポインタが32ビットになる)</p></li>
+<li><p>-Dsun.nio.cs.mapを追加(JIS文字コードのマッピングを変更)</p></li>
+<li><p>-Djava.net.preferIPv4Stack=trueを追加(IPV4を利用する)</p></li>
+<li><p>-Dorg.jboss.weld.conversation.concurrentAccessTimeout=60000を追加</p></li>
+</ul>
+<p>コマンド</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">delete</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="o">-</span><span class="n">client</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="o">-</span><span class="n">server</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="o">-</span><span class="n">Xrs</span>
+<span class="n">asadmin</span> <span class="n">delete</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="o">-</span><span class="n">Xmx512m</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="o">-</span><span class="n">Xms512m</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="o">-</span><span class="n">Xmx1024m</span>
+<span class="n">asadmin</span> <span class="n">delete</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="s1">&#39;-XX:MaxPermSize=192m&#39;</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="s1">&#39;-XX:MetaspaceSize=384m&#39;</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="s1">&#39;-XX:+UseCompressedOops&#39;</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="s1">&#39;-XX:+HeapDumpOnOutOfMemoryError&#39;</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="s1">&#39;-Dsun.nio.cs.map=x-windows-iso2022jp/ISO-2022-JP&#39;</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="s1">&#39;-Djava.net.preferIPv4Stack=true&#39;</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jvm</span><span class="o">-</span><span class="n">options</span> <span class="o">--</span> <span class="s1">&#39;-Dorg.jboss.weld.conversation.concurrentAccessTimeout=60000&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>ログ設定</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ログファイルは毎日ローテーションする</p></li>
+<li><p>ログファイルの履歴は30ファイルとする</p></li>
+<li><p>ログファイルの最大サイズは1GBまで</p></li>
+<li><p>ログは1440分(1日)毎に切り替える</p></li>
+<li><p>&quot;timeMillis&quot;,&quot;levelValue&quot;はログには記録しない</p></li>
+</ul>
+<p>コマンド</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="nb">set</span><span class="o">-</span><span class="n">log</span><span class="o">-</span><span class="n">attributes</span> <span class="n">com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">enterprise</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">GFFileHandler</span><span class="o">.</span><span class="n">rotationOnDateChange</span><span class="o">=</span><span class="n">true</span>
+<span class="n">asadmin</span> <span class="nb">set</span><span class="o">-</span><span class="n">log</span><span class="o">-</span><span class="n">attributes</span> <span class="n">com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">enterprise</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">GFFileHandler</span><span class="o">.</span><span class="n">maxHistoryFiles</span><span class="o">=</span><span class="mi">30</span>
+<span class="n">asadmin</span> <span class="nb">set</span><span class="o">-</span><span class="n">log</span><span class="o">-</span><span class="n">attributes</span> <span class="n">com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">enterprise</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">GFFileHandler</span><span class="o">.</span><span class="n">rotationLimitInBytes</span><span class="o">=</span><span class="mi">1000000000</span>
+<span class="n">asadmin</span> <span class="nb">set</span><span class="o">-</span><span class="n">log</span><span class="o">-</span><span class="n">attributes</span> <span class="n">com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">enterprise</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">GFFileHandler</span><span class="o">.</span><span class="n">rotationTimelimitInMinutes</span><span class="o">=</span><span class="mi">1440</span>
+<span class="n">asadmin</span> <span class="nb">set</span><span class="o">-</span><span class="n">log</span><span class="o">-</span><span class="n">attributes</span> <span class="n">com</span><span class="o">.</span><span class="n">sun</span><span class="o">.</span><span class="n">enterprise</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">GFFileHandler</span><span class="o">.</span><span class="n">excludeFields</span><span class="o">=</span><span class="n">timeMillis</span><span class="p">,</span><span class="n">levelValue</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>JDBCリソースの作成</p>
+<blockquote>
+<div><p>コネクションプール(pe4jConnectionPool)の作成</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jdbc</span><span class="o">-</span><span class="n">connection</span><span class="o">-</span><span class="n">pool</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">datasourceclassname</span> <span class="n">org</span><span class="o">.</span><span class="n">postgresql</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">PGSimpleDataSource</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">restype</span> <span class="n">javax</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">DataSource</span>  <span class="o">^</span>
+<span class="o">--</span><span class="n">steadypoolsize</span> <span class="mi">1</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">maxpoolsize</span> <span class="mi">10</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">maxwait</span> <span class="mi">60000</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">poolresize</span> <span class="mi">2</span>  <span class="o">^</span>
+<span class="o">--</span><span class="n">idletimeout</span> <span class="mi">300</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">isconnectvalidatereq</span><span class="o">=</span><span class="n">true</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">validationmethod</span> <span class="n">table</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">validationtable</span> <span class="n">zu2_slipno</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">failconnection</span><span class="o">=</span><span class="n">false</span> <span class="o">^</span>
+<span class="o">--</span><span class="nb">property</span> <span class="n">portNUmber</span><span class="o">=</span><span class="mi">27500</span><span class="p">:</span><span class="n">databaseName</span><span class="o">=</span><span class="n">pe20db</span><span class="p">:</span><span class="n">serverName</span><span class="o">=</span><span class="n">symfoserver</span><span class="p">:</span><span class="n">user</span><span class="o">=</span><span class="n">pe20</span><span class="p">:</span><span class="n">password</span><span class="o">=</span><span class="n">jupiter</span><span class="p">:</span><span class="n">maxStatements</span><span class="o">=</span><span class="mi">100</span> <span class="o">^</span>
+<span class="n">pe4jConnectionPool</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>--propertyパラメタの値は環境に合わせて変更が必要です。</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>portnumber: データベースのポート番号</p></li>
+<li><p>databaseName: データベース名</p></li>
+<li><p>serverName: データベースサーバーのサーバー名またはIPアドレス</p></li>
+<li><p>user: データベース接続ユーザ</p></li>
+<li><p>password: データベース接続パスワード</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>接続プールのping(接続確認を行うには以下のコマンドを実行します.</p>
+<p>asadmin ping-connection-pool pe4jConnectionPool</p>
+</div>
+<p>データソース(pe4jds)の作成</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jdbc</span><span class="o">-</span><span class="n">resource</span> <span class="o">--</span><span class="n">connectionpoolid</span> <span class="n">pe4jConnectionPool</span> <span class="n">jdbc</span><span class="o">/</span><span class="n">pe4jds</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>JMSリソースの作成</p>
+<blockquote>
+<div><p>Connection Factory(BatchQueueFactory)作成</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jms</span><span class="o">-</span><span class="n">resource</span> <span class="o">--</span><span class="n">restype</span> <span class="n">javax</span><span class="o">.</span><span class="n">jms</span><span class="o">.</span><span class="n">ConnectionFactory</span> <span class="n">jms</span><span class="o">/</span><span class="n">BatchQueueFactory</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jms</span><span class="o">-</span><span class="n">resource</span> <span class="o">--</span><span class="n">restype</span> <span class="n">javax</span><span class="o">.</span><span class="n">jms</span><span class="o">.</span><span class="n">ConnectionFactory</span> <span class="n">jms</span><span class="o">/</span><span class="n">PWJobQueueFactory</span>
+</pre></div>
+</div>
+<p>Destination Resource(BatchJobQueue)作成</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jmsdest</span> <span class="o">--</span><span class="n">desttype</span> <span class="n">queue</span> <span class="o">--</span><span class="nb">property</span> <span class="n">maxNumMsgs</span><span class="o">=</span><span class="mi">100</span><span class="p">:</span><span class="n">maxBytesPerMsg</span><span class="o">=</span><span class="mi">100</span><span class="n">k</span> <span class="n">Batchjobqueue</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jms</span><span class="o">-</span><span class="n">resource</span> <span class="o">--</span><span class="n">restype</span> <span class="n">javax</span><span class="o">.</span><span class="n">jms</span><span class="o">.</span><span class="n">Queue</span> <span class="o">--</span><span class="nb">property</span> <span class="n">Name</span><span class="o">=</span><span class="n">Batchjobqueue</span> <span class="n">jms</span><span class="o">/</span><span class="n">BatchJobQueue</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jmsdest</span> <span class="o">--</span><span class="n">desttype</span> <span class="n">queue</span> <span class="o">--</span><span class="nb">property</span> <span class="n">maxNumMsgs</span><span class="o">=</span><span class="mi">100</span><span class="p">:</span><span class="n">maxBytesPerMsg</span><span class="o">=</span><span class="mi">100</span><span class="n">k</span> <span class="n">PWJobQueue</span>
+<span class="n">asadmin</span> <span class="n">create</span><span class="o">-</span><span class="n">jms</span><span class="o">-</span><span class="n">resource</span> <span class="o">--</span><span class="n">restype</span> <span class="n">javax</span><span class="o">.</span><span class="n">jms</span><span class="o">.</span><span class="n">Queue</span> <span class="o">--</span><span class="nb">property</span> <span class="n">Name</span><span class="o">=</span><span class="n">PWJobQueue</span> <span class="n">jms</span><span class="o">/</span><span class="n">PWJobQueue</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>EJBコンテナの設定</p>
+<blockquote>
+<div><p>EJBタイマーサービスのデータソースとして&quot;jdbc/pe4jds&quot;を設定します。:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="nb">set</span> <span class="n">server</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">ejb</span><span class="o">-</span><span class="n">container</span><span class="o">.</span><span class="n">ejb</span><span class="o">-</span><span class="n">timer</span><span class="o">-</span><span class="n">service</span><span class="o">.</span><span class="n">timer</span><span class="o">-</span><span class="n">datasource</span><span class="o">=</span><span class="n">jdbc</span><span class="o">/</span><span class="n">pe4jds</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>http-thread-poolの設定変更</p>
+<blockquote>
+<div><p>Paraya Serverのデフォルトでは、HTTP接続を処理するためのスレッドプールのサイズが5であり、
+サーバー資源を有効に利用するために設定を変更します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="nb">set</span> <span class="n">server</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">thread</span><span class="o">-</span><span class="n">pools</span><span class="o">.</span><span class="n">thread</span><span class="o">-</span><span class="n">pool</span><span class="o">.</span><span class="n">http</span><span class="o">-</span><span class="n">thread</span><span class="o">-</span><span class="n">pool</span><span class="o">.</span><span class="n">max</span><span class="o">-</span><span class="n">thread</span><span class="o">-</span><span class="n">pool</span><span class="o">-</span><span class="n">size</span><span class="o">=</span><span class="mi">64</span>
+<span class="n">asadmin</span> <span class="nb">set</span> <span class="n">server</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">thread</span><span class="o">-</span><span class="n">pools</span><span class="o">.</span><span class="n">thread</span><span class="o">-</span><span class="n">pool</span><span class="o">.</span><span class="n">http</span><span class="o">-</span><span class="n">thread</span><span class="o">-</span><span class="n">pool</span><span class="o">.</span><span class="n">min</span><span class="o">-</span><span class="n">thread</span><span class="o">-</span><span class="n">pool</span><span class="o">-</span><span class="n">size</span><span class="o">=</span><span class="mi">16</span>
+<span class="n">asadmin</span> <span class="nb">set</span> <span class="n">server</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">thread</span><span class="o">-</span><span class="n">pools</span><span class="o">.</span><span class="n">thread</span><span class="o">-</span><span class="n">pool</span><span class="o">.</span><span class="n">http</span><span class="o">-</span><span class="n">thread</span><span class="o">-</span><span class="n">pool</span><span class="o">.</span><span class="n">max</span><span class="o">-</span><span class="n">queue</span><span class="o">-</span><span class="n">size</span><span class="o">=</span><span class="mi">200</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>HTTPポートの変更(オプション)</p>
+<blockquote>
+<div><p>デフォルトでは、8080ポートでアクセスするようになっています。
+httpリスナーのポートを変更したい場合は、以下のコマンドを実行します。（例では8081ポートを利用する
+ように指定しています）</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="nb">set</span> <span class="n">server</span><span class="o">.</span><span class="n">network</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">network</span><span class="o">-</span><span class="n">listeners</span><span class="o">.</span><span class="n">network</span><span class="o">-</span><span class="n">listener</span><span class="o">.</span><span class="n">http</span><span class="o">-</span><span class="n">listener</span><span class="o">-</span><span class="mf">1.</span><span class="n">port</span><span class="o">=</span><span class="mi">8081</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>payara serverの再起動</p>
+<blockquote>
+<div><p>以下のコマンドを実行してPayara Serverを再起動します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">stop</span><span class="o">-</span><span class="n">domain</span> <span class="n">domain1</span>
+
+<span class="n">asadmin</span> <span class="n">start</span><span class="o">-</span><span class="n">domain</span> <span class="n">domain1</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>起動している場合、「<a class="reference external" href="http:/">http:/</a>/ホスト名:ポート/」にてpayara serverのindexページが表示されます。</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>POWER EGG WEBのインストール先(PEWEB)の以下のフォルダをローカルマシンにコピーします
+(例:C:\DEV\PEWEB)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>appLib</p></li>
+<li><p>batch</p></li>
+<li><p>cert</p></li>
+<li><p>PDF</p></li>
+<li><p>properties</p></li>
+<li><p>UPLOAD</p></li>
+<li><p>TENPU</p></li>
+<li><p>wkhtmltox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>POWER EGG WEBのインストール先(EX-KEIHIWEB)の以下のフォルダをローカルマシンにコピーします
+(例:C:\DEV\EX-KEIHIWEB)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>appLib</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>コピーしたフォルダに合わせてproperties\poweregg.propertiesに記述されている以下のパスを変更します</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>UPLOAD_DIR</p></li>
+<li><p>TENPU_DIR</p></li>
+<li><p>PDF_FIR</p></li>
+<li><p>BATCH_LOG_DEST</p></li>
+<li><p>APNS_CER_PATH</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>パスの区切り文字は&quot;/&quot;(スラッシュ)または&quot;\\&quot;(バックスラッシュ２つ)にしてください。</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>properties\log4j.propertiesを編集し、ログの出力先を変更します</p></li>
+<li><p>コピーしたフォルダに合わせてproperties\wkhtmltopdf.propertiesに記述されている以下のパスを変更します</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>wkhtmltopdf.library.path</p></li>
+<li><p>wkhtmltopdf.font.path</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>POWER EGG WEBのインストール先(PEWEB)の以下のフォルダをPayara Serverのドキュメントルート(payara41\glassfish\domains\domain1\docroot)にコピーします</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ClientApp</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="payara-serverpower-egg">
+<h2><span class="section-number">26.4. </span>Payara ServerへのPOWER EGGの配備<a class="headerlink" href="#payara-serverpower-egg" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>POWER EGGの配備(デプロイ)はコマンドラインから行います。
+コマンドプロンプトを開き、pe4j-ear.earファイルが存在しているフォルダに移動した後に
+以下のコマンドを実行してください。(pe4j-ear.earファイルについては、事前にPOWER EGG WEBのインストール先より入手してください)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">deploy</span> <span class="o">--</span><span class="n">name</span> <span class="n">pe4j</span><span class="o">-</span><span class="n">ear</span> <span class="o">^</span>
+<span class="o">--</span><span class="n">libraries</span> <span class="n">C</span><span class="p">:</span><span class="o">/</span><span class="n">DEV</span><span class="o">/</span><span class="n">PEWEB</span><span class="o">/</span><span class="n">appLib</span><span class="p">,</span><span class="n">C</span><span class="p">:</span><span class="o">/</span><span class="n">DEV</span><span class="o">/</span><span class="n">EX</span><span class="o">-</span><span class="n">KEIHIWEB</span><span class="o">/</span><span class="n">appLib</span><span class="p">,</span><span class="n">C</span><span class="p">:</span><span class="o">/</span><span class="n">DEV</span><span class="o">/</span><span class="n">PEWEB</span><span class="o">/</span><span class="n">properties</span> <span class="o">^</span>
+<span class="n">pe4j</span><span class="o">-</span><span class="n">ear</span><span class="o">.</span><span class="n">ear</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>payara serverでは、glassfish v2にあった&quot;classpath surfix&quot;の機能は提供されていません。</p>
+<p>このため、デプロイ時に毎回 --libraries パラメタでアプリケーションが利用する資源を
+指定する必要があります。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>データベースに接続できる状態でデプロイをしないとエラーになります。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">26.5. </span>Payara ServerからのPOWER EGGの配備解除<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>以下のコマンドを実行します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asadmin</span> <span class="n">undeploy</span> <span class="n">pe4j</span><span class="o">-</span><span class="n">ear</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ear">
+<h2><span class="section-number">26.6. </span>earの置き換え<a class="headerlink" href="#ear" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>一旦配備したearを置き換える場合、配備解除と配備を行うことになりますが、
+一旦サーバーを再起動しないと2回目の配備がエラーになる場合があるので注意してください。</p>
+<blockquote>
+<div><p>以下の順でコマンドを実行します。</p>
+<ol class="arabic simple">
+<li><p>asadmin undeploy pe4j-ear</p></li>
+<li><p>asadmin stop-domain domain1</p></li>
+<li><p>asadmin start-domain domain1</p></li>
+<li><p>asadmin deploy ...</p></li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="parara-server-glassfish">
+<h2><span class="section-number">26.7. </span>Parara Server(Glassfish)に関する情報について<a class="headerlink" href="#parara-server-glassfish" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Payara ServerはGlassfish Open Source Editionをベースにしているので、
+基本的に、Glassfishと同様の管理方法になります。</p>
+<p>Glassfish V4のマニュアルは、以下のリンクから確認できます。</p>
+<p><a class="reference external" href="https://glassfish.java.net/documentation.html">https://glassfish.java.net/documentation.html</a></p>
+</div>
+<div class="section" id="eclipsepayara-server">
+<h2><span class="section-number">26.8. </span>EclipseからのPayara Server起動設定<a class="headerlink" href="#eclipsepayara-server" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ol class="arabic">
+<li><p>Glassfishサーバーアダプタのインストール</p>
+<blockquote>
+<div><p>Eclipseから、Payara Serverを起動するには、Eclipseのメニューから
+「ウィンドウ」-「設定」で設定ウィンドウを開き、左の一覧から
+「サーバー」-「ランタイム環境」を選択して、「追加」ボタンを
+クリックし、Glassfishのアダプタをインストールします。</p>
+<img alt="_images/B-1.png" src="_images/B-1.png" />
+<p>設定ウィンドウが表示されるので、Glasfish Locationに
+&quot;C:/payara41/glassfish&quot;を指定し、「完了」ボタンをクリックします。</p>
+<img alt="_images/B-2.png" src="_images/B-2.png" />
+</div></blockquote>
+</li>
+<li><p>サーバーの追加</p>
+<blockquote>
+<div><ul>
+<li><p>「ウィンドウ」-「ビューの表示」-「その他」-「サーバー」を選択してサーバービューを表示します。</p></li>
+<li><p>サーバービューで、右クリックし、「新規」-「サーバー」を選択します</p></li>
+<li><p>新規サーバの定義ウィンドウで、サーバータイプに&quot;Glassfish 4&quot;を選択し、
+ホスト名には、localhostを入力し、「次へ」をクリックします。</p>
+<blockquote>
+<div><img alt="_images/B-3.png" src="_images/B-3.png" />
+</div></blockquote>
+</li>
+<li><p>Glassfish locatioに &quot;C:/payara41/glassfish&quot;を指定し、「次へ」をクリックします。</p></li>
+<li><p>「完了」をクリックします</p>
+<blockquote>
+<div><img alt="_images/B-4.png" src="_images/B-4.png" />
+</div></blockquote>
+</li>
+<li><p>サーバービューで登録したGlassFishを選択し、右クリックから「開く」を選択</p></li>
+<li><p>タイムアウト設定の開始を600秒に設定し、保存します。</p>
+<blockquote>
+<div><img alt="_images/B-5.png" src="_images/B-5.png" />
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Paraya Serverのデバッグ起動</p>
+<blockquote>
+<div><ul>
+<li><p>サーバービューのデバッグアイコンをクリックすることでPayara Severをデバッグ
+モードで起動できます。</p>
+<blockquote>
+<div><img alt="_images/B-7.png" src="_images/B-7.png" />
+</div></blockquote>
+</li>
+<li><p>ソースコードにブレークポイントを設定する場合は、登録したサーバーの
+起動構成プロパティを開き、「ソース」タブでアドオンのプロジェクトを
+追加してください。</p>
+<blockquote>
+<div><img alt="_images/B-6.png" src="_images/B-6.png" />
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>Glassfishの管理ポートやデバッグポートがウィルス対策ソフトなど
+により遮断される場合があります。
+Eclipseからの起動に失敗した場合はウィルス対策ソフトの設定を
+確認いただくか手動でglassfishサーバの起動、停止を実施して下さい。</p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Appendix_c.html" class="btn btn-neutral float-right" title="27. 付録C 開発したpe4j-earのサーバーへのデプロイ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Appendix_a.html" class="btn btn-neutral float-left" title="25. 付録A 過去のバージョンからの変更点" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

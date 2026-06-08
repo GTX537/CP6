@@ -67,4 +67,22 @@ public class Stock : BaseBizEntity
 
     /// <summary>原紙ロールNO（§29 連携、null の場合は通常在庫）</summary>
     [MaxLength(20)] public string? PaperRollNo { get; set; }
+
+    /// <summary>
+    /// QC status (Phase 7 Gap 1.3): PENDING/PASSED are allocatable, FAILED/HOLD are blocked.
+    /// </summary>
+    [Required, MaxLength(10)]
+    public string QcStatus { get; set; } = StockQcStatus.Pending;
+}
+
+public static class StockQcStatus
+{
+    public const string Pending = "PENDING";
+    public const string Passed = "PASSED";
+    public const string Failed = "FAILED";
+    public const string Hold = "HOLD";
+
+    /// <summary>Phase 7 allocation rule: PENDING and PASSED are OK; FAILED and HOLD are blocked.</summary>
+    public static bool IsAllocatable(string status) =>
+        status == Pending || status == Passed;
 }

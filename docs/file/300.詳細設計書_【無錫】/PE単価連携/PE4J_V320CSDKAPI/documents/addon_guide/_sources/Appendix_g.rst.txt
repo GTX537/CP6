@@ -1,0 +1,44 @@
+====================================
+付録G, 権限設定共通シーケンス
+====================================
+
+.. uml ::
+
+    participant アプリケーション画面 as xhtml
+    participant 権限設定画面 as zsc2002e
+    participant アプリケーションBean as AppBean
+    participant ZSC20Bean
+    participant AutorityServiceBean
+    AppBean -> AppBean : @Inject AuthorityDto authorityDto
+    AppBean --> AutorityServiceBean : findAuthorityDto(LoginUser loginUser, String processNo, Long authorityId)
+    note over AutorityServiceBean
+        ①ZT2_DEFAULT_AUTHORITYから処理名を取得
+        ②authorityIdの値によって以下を行う
+          (a) authorityId != nullの場合:
+            ZT2_AUTHORITY_DETAILSからデータを検索し、
+            AuthorityDtoを編集する
+          (b) authorityId == nullの場合:
+            processNoを利用してZT2_DEFAULT_AUTHORITYから
+            データを検索し、AuthorityDtoを編集する
+    end note
+    AutorityServiceBean -> AppBean : AuthorityDto
+    AppBean -> xhtml : 画面に遷移
+    note over xhtml 
+        アプリケーション画面は権限一覧画面
+        (ZSC2001l.xhtml)をインクルードする
+        パラメタ:
+        rootScreen : 権限設定画面で「確定」
+        ボタンを押したときのoutcomeの値
+    end note
+    xhtml -> ZSC20Bean : 権限一覧にある「権限を設定」リンクをクリック
+    ZSC20Bean -> ZSC20Bean : @Inject AuthorityDto
+    ZSC20Bean -> zsc2002e : 設定画面表示
+    zsc2002e -> ZSC20Bean : 「確定」ボタン押下
+    ZSC20Bean -> xhtml : ZSC2001lのoutcomeパラメタをリターン
+    xhtml -> AppBean : 「確定」、「登録」等
+    AppBean -> AutorityServiceBean : saveAuthority(authorityDto)
+    note over AutorityServiceBean
+      ZT2_AURHORITYとZT2_AUTHORITY_DETAILSの
+      データを更新する
+    end note
+    AutorityServiceBean -> AppBean : Authority Entity

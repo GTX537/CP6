@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    participant U as 営業
+    participant ERP as PA OrderService
+    participant MESH as IMesBridgeHook
+    participant MES as MES WorkOrderService
+    participant WMSH as IWmsBridgeHook
+    participant WMS as WMS Outbound/InboundService
+    participant ERPH as IErpBridgeHook
+
+    U->>ERP: CreateAsync(受注)
+    ERP-->>MESH: OnOrderCreated(webOrderNo)
+    MESH->>MES: ExpandFromOrderAsync
+    MES-->>MESH: WorkOrderNo
+    ERP-->>WMSH: OnOrderCreated(webOrderNo)
+    WMSH->>WMS: 生成出荷指示
+    Note over MES: 工場担当が指図発行
+    MES->>WMSH: OnWorkOrderIssued(workOrderNo)
+    WMSH->>WMS: 生成材料出庫指示
+    Note over MES: 工程実績 → 全工程完了
+    MES->>WMSH: OnProductionCompleted(workOrderNo, goodQty)
+    WMSH->>WMS: 完成品自動入庫
+    Note over WMS: ピッキング → 梱包 → 出荷
+    WMS->>ERPH: OnShipmentConfirmed(outboundNo)
+    ERPH->>ERP: 受注明細 出荷実績回写

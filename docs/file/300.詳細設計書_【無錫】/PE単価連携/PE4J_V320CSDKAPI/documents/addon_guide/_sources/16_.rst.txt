@@ -1,0 +1,66 @@
+============================
+その他の注意事項
+============================
+
+ログインしていない状態でアクセスする資産がある場合
+==========================================================
+
+POWER EGGにログインしていない状態で/pe4j/以下のURLにアクセスした場合、
+一部の画面を除き、POWER EGGのログインを求める画面が表示されます。
+
+スタートアップナビに配置するポートレット上で動作するアドオンなど、
+ログインしていない状態で表示する必要のある画面については、
+設定ファイルweb.xmlで下記の設定を行ってください。
+
+web.xml 内に下記のような定義があります。
+
+.. code-block:: xml
+
+  <filter>
+    <filter-name>URLDirectAccessFilter</filter-name>
+    <filter-class>net.poweregg.filter.URLDirectAccessFilter</filter-class>
+    <init-param>
+    <param-name>path-mapping</param-name>
+      <param-value>
+        /QST/QST0110d.jsf
+        /KBB/KBB1110d.jsf
+        /KFR/KFR1112d.jsf
+        /BAP/BAP0111d.jsf
+        /FAP/FAP0030.jsf
+      </param-value>
+    </init-param>
+    <init-param>
+      <param-name>nocheck-url-pattern</param-name>
+      <param-value>
+      </param-value>
+    </init-param>
+  </filter>
+
+
+ここで、下記の例のように認証がない状態でアクセスする
+URL のパターン（正規表現）を記述してください。
+
+.. code-block :: xml
+
+  <init-param>
+    <param-name>nocheck-url-pattern</param-name>
+    <param-value>
+      /UAP/test1\.jsf
+      /servlet/com\.d-circle\.test\..*
+    </param-value>
+  </init-param>
+
+
+本稼働環境がInterstageの場合の注意事項
+==========================================================
+
+アドオン開発はGlassfish(payara)で行い、本番実行環境はInterstageである場合、
+Interstageとpayaraでは動作に非互換がある場合があるので、必ず本番環境と
+同じ環境で最終動作確認を行うようにしてください。
+
+当社で確認している差異には、以下のようなものがあります。
+
+- Interstageの場合、jaxrsのWebサービスが利用しているPOJOのクラスで@ContextアノテーションによるHttpServletRequestのインジェクションが動作しない場合がある
+- Interstageの場合、JPAの遅延ロードで処理される関係エンティティのリストをstream APIで処理すると期待した結果が得られない
+- Interstageとpayaraのクラスローダの差異により、payaraでは参照できるクラスがInterstageでは参照できずにエラーが発生する場合がある
+

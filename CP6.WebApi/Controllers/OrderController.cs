@@ -344,6 +344,43 @@ public class OrderController : ControllerBase
         }
         return true;
     }
+
+    // ═══════════════════════════════════════════════════════════
+    //  Phase 6 — 受注取消（反向級联）
+    // ═══════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// 受注取消 — POST /api/orders/{webOrderNo}/cancel
+    /// </summary>
+    /// <remarks>
+    /// force=false（既定）: 探査モード — 関連 WO/Outbound の現状を返すのみ、DB 未変更。
+    ///   半路状態あれば Outcome=NeedsDecision、画面で確認後 force=true で再呼出。
+    /// force=true: 強制実施 — Bridge Hook 経由で全自動取消可能な WO/Outbound を取消。
+    /// </remarks>
+    [HttpPost("{webOrderNo}/cancel")]
+    public async Task<IActionResult> Cancel(string webOrderNo, [FromBody] OrderCancelRequest req)
+    {
+        if (req == null || string.IsNullOrWhiteSpace(req.Reason))
+        {
+            return BadRequest(new { code = 400, message = "取消理由（reason）は必須です" });
+        }
+
+        var result = await _service.CancelAsync(webOrderNo, req.Reason, req.Force, CurrentUser);
+        return Ok(new { code = 0, message = "OK", data = result });
+    }
+}
+
+/// <summary>受注取消リクエスト（Phase 6）</summary>
+public class OrderCancelRequest
+{
+    /// <summary>取消理由（必須、監査用）</summary>
+    public string Reason { get; set; } = string.Empty;
+
+    /// <summary>
+    /// false=探査モード（DB 未変更、半路状態あれば NeedsDecision を返す）/
+    /// true=強制実施（半路状態でも自動取消可能な項目は全部取消）
+    /// </summary>
+    public bool Force { get; set; } = false;
 }
 
 /// <summary>加工予定日計算リクエスト</summary>

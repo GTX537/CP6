@@ -1,0 +1,21 @@
+=======================================
+POWER EGG3.0のアーキテクチャー
+=======================================
+
+POWER EGGは、プレゼンテーション層(JSF,Facelet)、アプリケーション
+ロジック層（CDI Bean）、
+API層（ステートレスセッションEJB, CDI Bean）、Data層（データベース）の
+４層で構成されています。
+
+以下の図は、POWER EGG3.0がどのように動作しているかを表しています。
+
+.. blockdiag ::
+
+    xhtml [shape = box];
+    CDIBean [label="CDI Bean", shape = box];
+    SLSB [label="Stateless Session Bean", shape=box];
+    Database [shape=flowchart.database]
+
+    xhtml -> CDIBean -> SLSB -> Database
+
+

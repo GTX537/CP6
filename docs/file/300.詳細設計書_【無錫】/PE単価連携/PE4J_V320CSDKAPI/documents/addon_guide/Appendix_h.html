@@ -1,0 +1,490 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>32. 付録H, 申請処理共通シーケンス &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="33. 付録I, 添付ファイル処理共通シーケンス" href="Appendix_i.html" />
+    <link rel="prev" title="31. 付録G, 権限設定共通シーケンス" href="Appendix_g.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">32. 付録H, 申請処理共通シーケンス</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">32.1. 申請アプリケーションとワークフローエンジンのクラス関係図</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">32.2. 申請処理のシーケンス</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">32.2.1. 申請入力から申請確認まで</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">32.2.2. 申請確認から申請まで</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">32.3. 申請内容表示処理のシーケンス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">32.4. 取下げ処理のシーケンス</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">32. </span>付録H, 申請処理共通シーケンス</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="h">
+<h1><span class="section-number">32. </span>付録H, 申請処理共通シーケンス<a class="headerlink" href="#h" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id1">
+<h2><span class="section-number">32.1. </span>申請アプリケーションとワークフローエンジンのクラス関係図<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p class="plantuml">
+<img src="_images/plantuml-863d7375d17315bb5d05a1eb3871f71f75097b9d.png" alt="class &quot;申請アプリケーション&quot; as AppBean
+note top of AppBean
+    交通費申請、購入申請などの
+    申請アプリケーションの
+    コンポーネントクラス
+end note
+note right of AppBean
+    申請アプリケーションから、DataflowHelperを利用する場合の
+    コーディングは以下のように行う.
+    public class IAP01Bean {
+    &#64;Inject
+    DataflowHelperBean dataflowHelper;
+    }
+end note
+class &quot;申請データエンティティ&quot; as appEntity
+class ApplicationStatus {
+  appRecpNo : Long
+  +getStatus() : String
+  +getStatusName() : String
+  +isReAppliable() : boolean
+}
+note bottom of ApplicationStatus
+    申請状況を照会するためのエンティティ.
+    申請アプリケーションのエンティティと、
+    申請受付番号(appRecpNo)で
+    1対1のリレーションを持つ
+end note
+class ApplyException
+class DataFlowException
+class DataflowHelperBean {
+  +prepareApply() : Long
+  +clearApplyParameter() : void
+  +apply() : Long
+  +setBaseForm(String baseform) : void
+  +setApplyDate(Data applydate) : void
+  +setApplyContent(String contentXML) : void
+  +setAttachments(List attachments) : void
+  +setRelativeURLs(List relativeURLList) : void
+  +setApplyCondition(String condition) : void
+  +setTitle(String title) : void
+  +setHighPriority()  : void
+  +setIgnoreAutoRouting(boolean ignoreAutoRouting) : void
+  +addUserToHead(String corpid, Long deptid, Long empid) : void
+  +addUserToEnd(String corpid, Long deptid, Long empid) : void
+  +setRouteEdit(boolean routeEdit) : void
+  +reset() : void
+  +setAppRecpNo(Long appRecpNo) : void
+  +setXslFileName(Stringin xslFileName) : void
+  +setMsgConfirmWithdraw(String msg) : void
+}
+note right of DataflowHelperBean
+    申請アプリケーションからの
+    ワークフローエンジン利用
+    のためのヘルパーコンポーネント
+end note
+interface DataFlowService
+
+AppBean ..&gt; DataflowHelperBean : &lt;&lt;use&gt;&gt;
+DataFlowException &lt;|-- ApplyException
+DataflowHelperBean ..&gt; ApplyException : &lt;&lt;use&gt;&gt;
+DataflowHelperBean ..&gt; DataFlowException : &lt;&lt;use&gt;&gt;
+DataflowHelperBean ..&gt; DataFlowService : &lt;&lt;use&gt;&gt;
+AppBean ..&gt; appEntity : &lt;&lt;use&gt;&gt;
+appEntity &quot;1&quot; *--&gt; &quot;1&quot; ApplicationStatus"/>
+</p>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">32.2. </span>申請処理のシーケンス<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="id3">
+<h3><span class="section-number">32.2.1. </span>申請入力から申請確認まで<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p class="plantuml">
+<img src="_images/plantuml-64d30ef1b5fc7a1b2c6b02028de7a4e2ec1644cc.png" alt="participant 申請入力画面 as applyxhtml
+note over applyxhtml
+    例)購入申請
+end note
+participant 申請アプリケーションBean as AppBean
+participant 申請アプリサービスBean as AppServiceBean
+participant DataflowHelperBean as DataflowHelper
+note over DataflowHelper
+    申請アプリケーションはDataflowHelperコンポーネントを
+    &#64;Injectアノテーションで生成する
+end note
+AppBean -&gt; DataflowHelper : &#64;Inject
+applyxhtml -&gt; AppBean : [確認]ボタン
+note over DataflowHelper
+    申請入力の[確認]ボタンが押されたとき、申請アプリケーション
+    はDataflowHelperに申請に必要な情報をセットし、
+    prepareApplyメソッドを呼び出して、申請受付番号を取得する.
+end note
+AppBean -&gt; DataflowHelper : 様式コードをセット
+AppBean -&gt; DataflowHelper : 申請者情報,申請日をセット
+AppBean -&gt; DataflowHelper : ルート判定条件をセット
+AppBean -&gt; DataflowHelper : 申請本文XMLをセット
+AppBean -&gt; DataflowHelper : XSLファイル名をセット
+note over DataflowHelper
+    申請本文XMLをHTMLに変換するためのXSLファイルのファイル
+    名をセットする.
+    ここでセットするXSLファイルは、クラスパスの&quot;/XSLT&quot;ディレクトリ
+    に存在しなければならないので、あらかじめ配置しておくこと.
+    XSLはhtml全体でなく本文部分の要素のみを生成するものを作成.
+end note
+AppBean -&gt; DataflowHelper : 以前の申請受付番号をセット
+AppBean -&gt; DataflowHelper : ルート変更できるかをセット
+note over DataflowHelper
+    申請確認画面からルート変更する
+    ことができるかどうかをセットする.
+end note
+AppBean -&gt; DataflowHelper : prepareApply
+DataflowHelper -&gt; DataflowHelper : ルート情報・起案内容HTML生成
+AppBean &lt;- DataflowHelper : 申請受付番号
+applyxhtml &lt;- AppBean : 申請確認画面に遷移"/>
+</p>
+</div>
+<div class="section" id="id4">
+<h3><span class="section-number">32.2.2. </span>申請確認から申請まで<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p class="plantuml">
+<img src="_images/plantuml-98aeff823536eb0476f012fe254ee50deace07de.png" alt="participant 申請確認画面 as confirmxhtml
+participant 申請アプリケーションBean as AppBean
+participant 申請アプリサービスBean as AppServiceBean
+participant DataflowHelperBean as DataflowHelper
+participant ルート変更画面 as routechangexhtml
+AppBean -&gt; DataflowHelper : &#64;Inject
+confirmxhtml -&gt; DataflowHelper : 起案内容・ルート情報取得
+confirmxhtml &lt;- DataflowHelper : 起案内容HTML・ルート情報
+note over confirmxhtml
+    申請確認画面にincludeされた
+    ワークフロー画面部品は
+    DataflowHelperから申請本文、
+    ルート情報を取得して表示する.
+end note
+confirmxhtml -&gt; DataflowHelper : [ルート変更]ボタン
+DataflowHelper -&gt; routechangexhtml : ルート変更画面に遷移
+note over routechangexhtml
+    ルート変更画面はデータフロー
+    ヘルパーと会話し、ルート情報
+    の編集を行う.
+end note
+DataflowHelper &lt;- routechangexhtml : ルート追加・変更操作
+DataflowHelper &lt;- routechangexhtml : [確定]ボタン
+confirmxhtml &lt;- DataflowHelper : 申請確認画面に戻る
+confirmxhtml -&gt; AppBean : [申請]ボタン
+AppBean -&gt; AppServiceBean : 入力データを保存
+AppBean -&gt; DataflowHelper : 申請を確定する(commitApply)
+DataflowHelper -&gt; DataflowHelper : 申請データをDBに保存し\nワークフローを開始
+AppBean -&gt; DataflowHelper : ヘルパーの状態をリセットする
+note over AppBean
+    申請エラーが無ければ、ヘルパー
+    をリセットする
+end note
+DataflowHelper -&gt; DataflowHelper : 内部のデータを破棄する
+note over DataflowHelper
+    リセット命令が呼び出されたら、申請パラメタ、
+    ルート情報などの内部データを破棄し、
+    コンポーネントを初期化する
+end note
+AppBean --&gt; confirmxhtml : 一覧画面に遷移する"/>
+</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h2><span class="section-number">32.3. </span>申請内容表示処理のシーケンス<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p class="plantuml">
+<img src="_images/plantuml-9708076caa42bad38296e259137a29507db25a24.png" alt="participant 画面 as display
+participant 申請アプリケーションBean as AppBean
+participant 申請アプリサービスBean as AppServiceBean
+participant DataflowHelperBean as DataflowHelper
+AppBean -&gt; DataflowHelper : &#64;Inject
+display -&gt; AppBean : [件名]リンククリック
+AppBean -&gt; AppServiceBean : データを読み込む
+AppBean &lt;- AppServiceBean : 読み込んだデータ
+AppBean -&gt; DataflowHelper : loadApplicationForm(申請受付番号)
+note over DataflowHelper
+    引数で指定された申請受付番号の
+    詳細表示画面 申請データ、
+    承認状況を読み込む
+end note
+AppBean -&gt; display : 「詳細表示」画面に遷移
+note over display
+    詳細表示画面は、申請データ
+    表示用部品をincludeし、
+    案件を画面に表示する
+end note
+display -&gt; DataflowHelper : 取下げ、コメント追加等
+note over display
+    申請データ表示用部品はDataflowHelperと
+    会話し、[取下]や[コメント追加]、
+    [ルート変更]などの機能を提供する.
+end note
+display -&gt; AppBean : [前]、[次]リンククリック
+AppBean -&gt; AppServiceBean : データを読み込む
+AppBean &lt;- AppServiceBean : 読み込んだデータ
+AppBean -&gt; DataflowHelper : loadApplicationForm(申請受付番号)
+AppBean -&gt; display : 再表示"/>
+</p>
+</div>
+<div class="section" id="id6">
+<h2><span class="section-number">32.4. </span>取下げ処理のシーケンス<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p class="plantuml">
+<img src="_images/plantuml-6dec8899dedf5bb650dca2d56401fd4826c088f7.png" alt="participant 詳細表示画面 as display
+participant 案件表示画面部品 as partshtml
+participant 削除取下確認 as confirmdisplay
+participant 申請アプリケーションBean as AppBean
+participant DataflowHelperBean as DataflowHelper
+AppBean -&gt; DataflowHelper : &#64;Inject
+AppBean -&gt; DataflowHelper : 取下確認時に表示する\nメッセージをセット
+note over DataflowHelper
+    案件表示画面部品で「取下げ」ボタンが押された時に
+    取下げ確認画面に表示するためのメッセージ文字列
+    を設定する.
+    設定しない場合は、エンジン固定のメッセージになる
+end note
+display -&gt; partshtml : &lt;ui:include&gt;
+partshtml -&gt; DataflowHelper : [取下]ボタン
+DataflowHelper -&gt; DataflowHelper : パスワードチェック
+note over DataflowHelper
+    DataflowHelperは入力されたパスワードが
+    正しいかチェックし、取下げできる場合は、
+    &quot;confirmWithdraw&quot;の文字列を返す.
+    パスワードが正しくない場合は、
+    facesMessageに、パスワードエラー
+    メッセージをセットして、nullを戻す.
+end note
+display &lt;- DataflowHelper : &quot;confirmWidhdraw&quot;
+note over display
+    申請アプリケーションのページフロー定義
+    で、詳細表示画面に&quot;confirmWithdraw&quot;
+    で取下げ確認画面に遷移する記述を
+    行う.
+end note
+display -&gt; confirmdisplay : 削除取下確認画面に遷移
+confirmdisplay -&gt; AppBean : [取下]ボタン
+AppBean -&gt; DataflowHelper : widhdraw()
+DataflowHelper -&gt; DataflowHelper : 取下更新
+AppBean -&gt; confirmdisplay : 一覧画面に遷移"/>
+</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Appendix_i.html" class="btn btn-neutral float-right" title="33. 付録I, 添付ファイル処理共通シーケンス" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Appendix_g.html" class="btn btn-neutral float-left" title="31. 付録G, 権限設定共通シーケンス" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

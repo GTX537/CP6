@@ -1,0 +1,62 @@
+.. Developer's Manual documentation master file, created by
+   sphinx-quickstart on Fri Sep  2 16:12:14 2016.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+=================================================
+POWER EGG3.0 Ver3.2c SDK アドオン開発マニュアル
+=================================================
+
+本書はPOWER EGG3.0 Ver3.2c上でアドオンアプリケーションを開発される方
+を対象に、POWER EGGが提供している各種のAPIとその利用方法について説明
+しています。
+
+POWER EGG3.0 Ver3.2c上でアドオンアプリケーションを開発するためには、
+Java言語、JavaServer Faces、Java Servlet API、Java Server Pages、
+Enterprise Java BeansなどのJava EE7プログラミングに関する知識が
+必要となりますが、本書ではそれらに関する知識は既に保有されているもの
+として記述しています。
+
+本資料が、みなさまのシステム開発の一助になることを願っております。
+
+2020年11月
+ディサークル株式会社
+
+.. toctree::
+   :maxdepth: 2
+   :numbered:
+
+   01_
+   02_
+   03_
+   04_
+   05_
+   06_
+   07_
+   08_
+   09_
+   10_
+   11_
+   12_0_rest_common
+   12_1_rest_webdb
+   12_2_rest_organization
+   12_3_rest_assistmessage
+   12_4_rest_schedule
+   12_5_rest_bap
+   12_6_rest_todo
+   12_7_rest_workflow
+   13_webdb_cooperation
+   16_webdb_externaldb_webapi
+   14_logging
+   15_rest_authorityproc
+   16_
+   Appendix_a
+   Appendix_b
+   Appendix_c
+   Appendix_d
+   Appendix_e_mig2pgsql
+   Appendix_f_mig2jee7
+   Appendix_g
+   Appendix_h
+   Appendix_i
+

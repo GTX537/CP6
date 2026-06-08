@@ -22,17 +22,28 @@ public class OutboundService : IOutboundService
     private readonly IStockMovementService _stock;
     private readonly IWmsNotifier _notifier;
     private readonly IErpBridgeHook _erpBridge;
+    private readonly IMaterialShortageService? _shortage;
+    private readonly IMaterialShortageNotifier? _shortageNotifier;
 
     private const string OrderPrefix = "OUT";
     private const string PackagePrefix = "PKG";
 
-    public OutboundService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, IWmsNotifier? notifier = null, IErpBridgeHook? erpBridge = null)
+    public OutboundService(
+        CP6Context db,
+        IWmsSequenceService seq,
+        IStockMovementService stock,
+        IWmsNotifier? notifier = null,
+        IErpBridgeHook? erpBridge = null,
+        IMaterialShortageService? shortage = null,
+        IMaterialShortageNotifier? shortageNotifier = null)
     {
         _db = db;
         _seq = seq;
         _stock = stock;
         _notifier = notifier ?? new NoOpWmsNotifier();
         _erpBridge = erpBridge ?? new NoOpErpBridgeHook();
+        _shortage = shortage;
+        _shortageNotifier = shortageNotifier;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -317,6 +328,7 @@ public class OutboundService : IOutboundService
             .OrderBy(d => d.LineNo)
             .ToListAsync();
 
+        var anyShortage = false;
         foreach (var d in details)
         {
             var needed = d.RequiredQty - d.AllocatedQty;
@@ -329,12 +341,42 @@ public class OutboundService : IOutboundService
                             && !s.IsDeleted
                             && !s.RecallFlag
                             && s.AvailableQty >= needed
-                            && s.OwnerType == StockOwnerType.Self)
+                            && s.OwnerType == StockOwnerType.Self
+                            && s.QcStatus != StockQcStatus.Failed
+                            && s.QcStatus != StockQcStatus.Hold)
                 .OrderBy(s => s.ExpiryDate ?? DateTime.MaxValue)
                 .ThenBy(s => s.ReceiveDate ?? DateTime.MaxValue)
                 .ThenBy(s => s.LotNo)
-                .FirstOrDefaultAsync()
-                ?? throw new InsufficientStockException(d.ProductCd, d.LotNo ?? "", needed, 0m);
+                .FirstOrDefaultAsync();
+
+            if (candidate == null)
+            {
+                if (header.OutboundType == OutboundType.Material && _shortage != null)
+                {
+                    await _shortage.CreateAsync(new MaterialShortage
+                    {
+                        Id = Guid.NewGuid(),
+                        WorkOrderNo = header.WorkOrderNo ?? "",
+                        RelatedOutboundNo = outboundNo,
+                        ProductCd = d.ProductCd,
+                        LotNo = d.LotNo,
+                        RequiredQty = needed,
+                        AvailableQty = 0m,
+                        DetectedAt = DateTime.UtcNow,
+                        Status = MaterialShortageStatus.Open,
+                        Creator = userName ?? "system",
+                        CreateDate = DateTime.Now,
+                    });
+                    if (_shortageNotifier != null)
+                    {
+                        await _shortageNotifier.NotifyAsync(header.WorkOrderNo ?? "", d.ProductCd, needed);
+                    }
+                    anyShortage = true;
+                    continue;
+                }
+
+                throw new InsufficientStockException(d.ProductCd, d.LotNo ?? "", needed, 0m);
+            }
 
             // 引当（RSV）
             var txnNo = await _stock.ApplyAsync(new StockMovementRequest
@@ -364,7 +406,7 @@ public class OutboundService : IOutboundService
             d.ModifyDate = DateTime.Now;
         }
 
-        header.Status = OutboundOrderStatus.Allocated;
+        header.Status = anyShortage ? OutboundOrderStatus.PartialAllocated : OutboundOrderStatus.Allocated;
         header.Modifier = userName;
         header.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();

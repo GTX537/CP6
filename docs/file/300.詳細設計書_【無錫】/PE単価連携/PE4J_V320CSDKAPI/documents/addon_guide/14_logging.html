@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>22. ログAPI &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="23. REST 処理権限API" href="15_rest_authorityproc.html" />
+    <link rel="prev" title="21. Webデータベース外部DB参照のWebAPI連携" href="16_webdb_externaldb_webapi.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">22. ログAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">22.1. ログ管理機能の概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">22.2. ログAPI利用のための準備</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">22.3. アプリケーションからのログの記録</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">22. </span>ログAPI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api">
+<h1><span class="section-number">22. </span>ログAPI<a class="headerlink" href="#api" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>アプリケーションからデータベース上のテーブルにログを記録するためのログAPIが提供されます。</p>
+<p>この章では、アドオンアプリケーションからログAPIを利用する方法について説明します。</p>
+<div class="section" id="id1">
+<h2><span class="section-number">22.1. </span>ログ管理機能の概要<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<img alt="_images/14-1.png" src="_images/14-1.png" />
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 22%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No</p></th>
+<th class="head"><p>処理名</p></th>
+<th class="head"><p>処理内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>各プログラム</p></td>
+<td><p>ログ情報をログ共通関数に引き渡す</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>ログ共通関数</p></td>
+<td><p>・受け取ったログ情報をログデータに出力する
+・ログ環境定義を参照し、カテゴリ毎の出力有無、出力先等を決定する。
+・ログフォーマット定義データをもとに、メッセージの編集を行う。</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>ログ環境設定</p></td>
+<td><p>カテゴリ毎の出力有無、出力範囲、出力先を設定する</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>システム環境の設定（ログ情報）</p></td>
+<td><p>ログ自動削除の設定等、ログに関する環境設定を行う。</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>ログ照会</p></td>
+<td><p>・入力された検索条件に基づき、ログデータの照会を行う。
+・照会データを、CSVファイルへ出力可能。
+・定型的な検索条件の登録・編集が可能。</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>ログ削除</p></td>
+<td><p>指定された条件のログデータを削除する。</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>ログ自動削除</p></td>
+<td><p>夜間バッチで動作し、システム環境に設定された条件に基づきログデータの削除および削除データの保管を行う。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">22.2. </span>ログAPI利用のための準備<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ログAPIを利用するための事前準備事項は以下のとおりです。</p>
+<ol class="arabic simple">
+<li><p>ログカテゴリの決定</p></li>
+</ol>
+<p>ログを記録するためには、アプリケーションのためのログカテゴリを決定し、
+ログ環境設定情報をPOWER EGGに登録する必要があります。</p>
+<p>ログカテゴリは、アドオン規約に従って、先頭が”U”で始まる3文字の
+カテゴリコードにします。</p>
+<p>なお、ログカテゴリ毎の設定は、システム管理メニューの「ログ環境設定」画面で行います。</p>
+<ol class="arabic simple" start="2">
+<li><p>メッセージコードの決定とメッセージ定義ファイルの作成</p></li>
+</ol>
+<p>アプリケーションのログカテゴリを決定したら、記録するログメッセージ毎
+のメッセージコード・メッセージ文字列を設計し、
+メッセージ定義ファイルを作成します。</p>
+<p>【メッセージコードの書式】</p>
+<p>カテゴリコード + メッセージ番号 + ログ種類区分 + ログレベル</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><th class="stub"><p>カテゴリコード</p></th>
+<td><p>英大文字３文字のカテゴリコード</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>メッセージ番号</p></th>
+<td><p>数字5桁のメッセージを識別するための連番</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>ログ種類区分</p></th>
+<td><p>U:ユーザ操作、A:システム管理者操作、S:システム・API</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>ログレベル</p></th>
+<td><p>I:情報レベル、W:警告レベル、E:エラーレベル</p></td>
+</tr>
+</tbody>
+</table>
+<p>例）COM00010UI</p>
+<p>【メッセージ文字列】</p>
+<p>メッセージ文字列は、java.text.MessageFormatで規定されている方法で設計します。</p>
+<p>【メッセージ定義ファイル】</p>
+<p>メッセージ定義ファイルは、javaのpropertiesファイル形式で作成します。</p>
+<p>メッセージ内に日本語が含まれる場合、navive2asciiなどで変換しなければなりません。</p>
+<p>ファイル名は、”カテゴリコード” + _MESSAGES_ja_JP.propertiesとします。</p>
+<p>例）COM_MESSAGES_ja_JP.properties</p>
+<p>作成したメッセージ定義ファイルは、アプリケーションサーバのクラスパスが設
+定されているディレクトリ内に配置します。</p>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">22.3. </span>アプリケーションからのログの記録<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>アプリケーションからログAPIでログを記録する際は、
+net.poweregg.common.log.Loggerオブジェクトを取得し、
+Loggerオブジェクトのlogメソッドを呼び出してログを記録します。</p>
+<p>＜＜ログ書き込みコーディング例＞＞</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>public class Appli1 {
+  private Logger  nnvlogger=LogFactory.getLogger(“NNV”);  // &lt;--①
+  public int login(HttpServletRequest request) {
+     // ログイン処理
+     Object[] logParameters = new Object[4];
+     logParameters[0] = “ooishi”;
+     logParameters[1] = “フレンド商事”;
+     logParameters[2]= “システム部”;
+     logParameters[3]=“係”;
+     nnvlogger.log(“NNV00010UI”, logParameters, request); // &lt;--②
+</pre></div>
+</div>
+<p>①... NNVカテゴリのロガーをファクトリから取得し、クラス変数に格納しておく</p>
+<p>②... ログ編集に使用する可変パラメタを編集し、メッセージコードとともに、ログ書き込みメソッドを呼び出す。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>log()メソッドには引数の異なる複数種類が存在</p>
+<ul>
+<li><p>requestを受け取るもの</p>
+<p>HttpRequestが利用可能な場所で利用</p>
+</li>
+<li><p>会社ID, 社員ID, IPアドレスを受け取るもの</p>
+<p>HttpRequestを使えない場所で利用</p>
+</li>
+</ul>
+<p>プログラムを動作させる前に「ログカテゴリの設定」画面でログカテゴリを登録しておく必要があります。
+ログカテゴリが登録されていない状態でプログラムを配備・動作させるとLogFactory.getLoggerの部分で
+エラーが発生し、アプリケーションの起動に失敗します。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="15_rest_authorityproc.html" class="btn btn-neutral float-right" title="23. REST 処理権限API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="16_webdb_externaldb_webapi.html" class="btn btn-neutral float-left" title="21. Webデータベース外部DB参照のWebAPI連携" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

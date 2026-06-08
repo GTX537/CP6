@@ -85,6 +85,8 @@ IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 415)
     INSERT INTO Sys_Menus VALUES (415, N'棚卸 作業',            N'/wms/stock-take',         N'Operation',      400, 415, 1, SYSDATETIME());
 IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 416)
     INSERT INTO Sys_Menus VALUES (416, N'WMSダッシュボード',    N'/wms/dashboard',          N'DataAnalysis',   400, 416, 1, SYSDATETIME());
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 417)
+    INSERT INTO Sys_Menus VALUES (417, N'材料欠品管理',          N'/wms/material-shortage', N'Warning',        400, 417, 1, SYSDATETIME());
 
 /* ------------------------------------------------------------
  * 3. 拡張機能 (Phase WM-5 ~ WM-7)  MenuId 420~439
@@ -154,6 +156,10 @@ IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 480)
 
 IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 481)
     INSERT INTO Sys_Menus VALUES (481, N'帳票センター',         N'/wms/report-center',      N'Printer',        480, 481, 1, SYSDATETIME());
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 482)
+    INSERT INTO Sys_Menus VALUES (482, N'連携ヘルス監視',       N'/wms/bridge-health',      N'Monitor',        480, 482, 1, SYSDATETIME());
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 483)
+    INSERT INTO Sys_Menus VALUES (483, N'在庫滞留レポート',       N'/wms/stock-dwell',        N'TrendCharts',    480, 483, 1, SYSDATETIME());
 
 /* ------------------------------------------------------------
  * 7. 管理者ロール (RoleId=1) に全 WMS メニューを付与

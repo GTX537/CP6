@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>30. 付録F. JavaEE5+SeamからJavaEE7への移行 &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="31. 付録G, 権限設定共通シーケンス" href="Appendix_g.html" />
+    <link rel="prev" title="29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行" href="Appendix_e_mig2pgsql.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#seamcdi">30.1. SeamアプリケーションのCDIへの移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jsf-richfaces-html5">30.2. JSF, RichFacesバージョンアップ, html5への移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">30.3. 画面遷移定義の移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jpa">30.4. JPAのバージョンアップ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ejblookup">30.5. 申請事後処理、組込みアシストメッセージ等EJBをlookupしている処理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">30.6. その他留意事項</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">30. </span>付録F. JavaEE5+SeamからJavaEE7への移行</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="f-javaee5-seamjavaee7">
+<h1><span class="section-number">30. </span>付録F. JavaEE5+SeamからJavaEE7への移行<a class="headerlink" href="#f-javaee5-seamjavaee7" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>POWER EGG2.0 Ver2.10c以降では、Ver2.8c及びVer2.9までのフレーム
+ワークであるJavaEE5+JBoss SeamからJavaEE7標準フレームワークに変更されて
+います。</p>
+<p>このフレームワーク変更に伴い、Ver2.8までのPOWER EGG用に開発
+したJavaアドオンはソースコードの書き換えを行い、Java EE7に
+移行する必要があります。</p>
+<p>この章では、フレームワーク移行に関する主なポイントについて
+記述します。</p>
+<ul class="simple">
+<li><p>SeamアプリケーションのCDIへの移行</p></li>
+<li><p>JSFバージョンアップ(1.2 --&gt; 2.2), RichFacesバージョンアップ, html5への移行</p></li>
+<li><p>画面遷移定義の移行(JBoss pageflow --&gt; JSF page navigation)</p></li>
+<li><p>JPAのバージョンアップ(Toplink essentials --&gt; Eclipselink)</p></li>
+<li><p>その他留意事項</p></li>
+</ul>
+<div class="section" id="seamcdi">
+<h2><span class="section-number">30.1. </span>SeamアプリケーションのCDIへの移行<a class="headerlink" href="#seamcdi" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Seamアプリケーションとして開発されたアドオンは、Java EE標準の
+CDI(Contexts and Dependency Injection)に移行します。</p>
+<ol class="arabic">
+<li><p>Statefull Session Beanとして開発されているアプリケーション
+は、CDIのJavaクラスに移行します。</p>
+<blockquote>
+<div><p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">javax.ejb.Stateful</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.jboss.seam.annotations.Name</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.jboss.seam.annotations.Scope</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.jboss.seam.ejb.SeamInterceptor</span><span class="p">;</span>
+
+<span class="nd">@Stateful</span>
+<span class="nd">@Name</span><span class="p">(</span><span class="s2">&quot;ORG10Bean&quot;</span><span class="p">)</span>
+<span class="nd">@Scope</span><span class="p">(</span><span class="n">ScopeType</span><span class="o">.</span><span class="n">CONVERSATION</span><span class="p">)</span>
+<span class="nd">@Interceptors</span><span class="p">(</span><span class="n">SeamInterceptor</span><span class="o">.</span><span class="n">class</span><span class="p">)</span>
+<span class="n">public</span> <span class="k">class</span> <span class="nc">ORG10Bean</span> <span class="n">implements</span> <span class="n">ORG10Local</span> <span class="p">{</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">javax.inject.Named</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">javax.enterprise.context.ConversationScoped</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">net.poweregg.annotations.PEIntercepter</span><span class="p">;</span>
+
+<span class="nd">@Named</span><span class="p">(</span><span class="s2">&quot;ORG10Bean&quot;</span><span class="p">)</span>
+<span class="nd">@ConversationScoped</span>
+<span class="nd">@PEIntercepter</span>
+<span class="n">public</span> <span class="k">class</span> <span class="nc">ORG10Bean</span> <span class="n">implements</span> <span class="n">Serializable</span> <span class="p">{</span>
+</pre></div>
+</div>
+<p>xhtmlとの変数のやり取りのために&#64;In, &#64;Outのアノテーションを利用していた
+場合は、getter, setterメソッドを追加し、getter, setterでの変数アクセス
+に変更します。(xhtmlのEL式の変更も必要です)</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>&#64;PEIntercepterアノテーションを付けると、ビーンアクセスの際に、
+自動的にConversationの開始が行われます。
+アプリケーションロジック内で、Conversationの開始・終了を制御
+する場合は、&#64;PEIntercepterアノテーションは必要ありません。</p>
+</div>
+<p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@Out</span>
+<span class="n">private</span> <span class="n">String</span> <span class="n">corpShortName</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">private</span> <span class="n">String</span> <span class="n">corpShortName</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="n">String</span> <span class="n">getCorpShortName</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">corpShortName</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">public</span> <span class="n">void</span> <span class="n">setCorpShortName</span><span class="p">(</span><span class="n">String</span> <span class="n">corpShortName</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">this</span><span class="o">.</span><span class="n">corpShortName</span> <span class="o">=</span> <span class="n">corpShortName</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>アノテーションの変更</p>
+<blockquote>
+<div><p>JBoss Seamで提供されていたアノテーションは利用できないので、
+CDIのアノテーションもしくは、POWER EGGが準備しているSeam互換
+の部品を利用するアノテーションに書き換えます。</p>
+<ol class="loweralpha simple">
+<li><p>ログインユーザ情報のインジェクト</p></li>
+</ol>
+<p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.jboss.seam.annotations.In</span><span class="p">;</span>
+
+<span class="nd">@In</span>
+<span class="n">privete</span> <span class="n">LoginUser</span> <span class="n">loginUser</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">javax.inject.Inject</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">net.poweregg.annotations.Login</span><span class="p">;</span>
+
+<span class="nd">@Inject</span> <span class="nd">@Login</span>
+<span class="n">privete</span> <span class="n">LoginUser</span> <span class="n">loginUser</span>
+</pre></div>
+</div>
+<ol class="loweralpha simple" start="2">
+<li><p>リクエストパラメタの受け取り(&#64;RequestParameter)</p></li>
+</ol>
+<p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">org.jboss.seam.annotations.web.RequestParameter</span><span class="p">;</span>
+
+<span class="nd">@RequestParameter</span>
+<span class="n">private</span> <span class="n">String</span> <span class="n">EmpID</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.annotations.RequestParameter</span><span class="p">;</span>
+
+<span class="nd">@RequestParameter</span>
+<span class="n">private</span> <span class="n">String</span> <span class="n">EmpID</span><span class="p">;</span>
+</pre></div>
+</div>
+<ol class="loweralpha simple" start="3">
+<li><p>FacesMassages</p></li>
+</ol>
+<p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@In</span><span class="p">(</span><span class="n">create</span> <span class="o">=</span> <span class="n">true</span><span class="p">)</span>
+<span class="n">private</span> <span class="n">transient</span> <span class="n">FacesMessages</span> <span class="n">facesMessages</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.seam.faces.FacesMessages</span><span class="p">;</span>
+
+<span class="nd">@Inject</span>
+<span class="n">private</span> <span class="n">transient</span> <span class="n">FacesMessages</span> <span class="n">facesMessages</span><span class="p">;</span>
+</pre></div>
+</div>
+<ol class="loweralpha simple" start="4">
+<li><p>リテラル定義の取得</p></li>
+</ol>
+<p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@In</span>
+<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">messages</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.annotations.Single</span><span class="p">;</span>
+
+<span class="nd">@Inject</span> <span class="nd">@Single</span>
+<span class="n">private</span> <span class="n">transient</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">messages</span><span class="p">;</span>
+</pre></div>
+</div>
+<ol class="loweralpha simple" start="5">
+<li><p>Removeアノテーション</p></li>
+</ol>
+<p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">javax.ejb.Remove</span><span class="p">;</span>
+
+<span class="nd">@Remove</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">destroy</span><span class="p">()</span> <span class="p">{</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">javax.annotation.PreDestroy</span><span class="p">;</span>
+
+<span class="nd">@PreDestroy</span>
+<span class="n">public</span> <span class="n">void</span> <span class="n">destroy</span><span class="p">()</span> <span class="p">{</span>
+</pre></div>
+</div>
+<ol class="loweralpha" start="6">
+<li><p>Resourceアノテーション</p>
+<blockquote>
+<div><p>&#64;Resourceアノテーションでデータソースをインジェクションしている場合、
+&#64;Resource (name=&quot;jdbc/pe4jds&quot;)から、&#64;Resource(mappedName=&quot;jdbc/pe4jds&quot;)
+に記述を変更する必要があります。</p>
+</div></blockquote>
+</li>
+<li><p>DataFlowHelperの利用</p></li>
+</ol>
+<p>DataFlowHelperは、StateFull BeanからCDI Beanに変更されているので、
+インターフェースでなく、BeanをInjectするように修正してください。</p>
+<p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.dataflow.DataFlowHelper</span><span class="p">;</span>
+
+<span class="nd">@In</span>
+<span class="n">private</span> <span class="n">DataFlowHelper</span> <span class="n">dataflowHelper</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.dataflow.DataFlowHelperBean</span><span class="p">;</span>
+
+<span class="nd">@In</span>
+<span class="n">private</span> <span class="n">DataFlowHelperBean</span> <span class="n">dataflowHelper</span><span class="p">;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="jsf-richfaces-html5">
+<h2><span class="section-number">30.2. </span>JSF, RichFacesバージョンアップ, html5への移行<a class="headerlink" href="#jsf-richfaces-html5" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Ver2.10c以降では、利用するJSFのバージョンが2.2に変更になりました。
+また、利用しているオープンソースのJSFコンポーネントである
+richfacesも4.5にバージョンアップしています。
+この変更に伴い、xhtmlを移行する必要があります。</p>
+<ol class="arabic">
+<li><p>html宣言部</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>DOCTYPE宣言をhtml5に変更</p></li>
+<li><p>xmlネームスペースを変更</p></li>
+</ul>
+<p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;
+    xmlns:ui=&quot;http://java.sun.com/jsf/facelets&quot;
+    xmlns:p=&quot;http://www.poweregg.net/jsf/html&quot;
+    xmlns:f=&quot;http://java.sun.com/jsf/core&quot;
+    xmlns:rich=&quot;http://richfaces.org/rich&quot;
+    xmlns:h=&quot;http://java.sun.com/jsf/html&quot;
+    xmlns:c=&quot;http://java.sun.com/jstl/core&quot;
+    xmlns:a4j=&quot;https://ajax4jsf.dev.java.net/ajax&quot;&gt;
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;
+    xmlns:a4j=&quot;http://richfaces.org/a4j&quot;
+    xmlns:c=&quot;http://xmlns.jcp.org/jsp/jstl/core&quot;
+    xmlns:f=&quot;http://xmlns.jcp.org/jsf/core&quot;
+    xmlns:h=&quot;http://xmlns.jcp.org/jsf/html&quot;
+    xmlns:p=&quot;http://www.poweregg.net/jsf/html&quot;
+    xmlns:rich=&quot;http://richfaces.org/rich&quot;
+    xmlns:ui=&quot;http://xmlns.jcp.org/jsf/facelets&quot;&gt;
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>EL式の変更</p></li>
+</ol>
+<p>アプリケーションのCDIへの移行に伴い、EL式でSeamコンポーネントによって
+&#64;Outされた変数を参照していた箇所は、CDI Beanのsetter, getterメソッド
+でアクセスするように変更する必要があります。</p>
+<blockquote>
+<div><p>移行前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">p</span><span class="p">:</span><span class="n">outputText</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;#</span><span class="si">{corpShortName}</span><span class="s2">&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>移行後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">p</span><span class="p">:</span><span class="n">outputText</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;#</span><span class="si">{ORG01Bean.corpShortName}</span><span class="s2">&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>Ajax処理の移行</p></li>
+</ol>
+<p>richfacesのバージョンアップにより、ajax関連のタグが変更されていますので、
+移行が必要になります。</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>&lt;a4j:support&gt;を&lt;f:ajax&gt;または&lt;a4j:ajax&gt;に移行</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p>Seam Remotingの移行</p></li>
+</ol>
+<p>JBoss Seamが提供していたAjaxのためのSeam Remotingは利用できませんので、
+Seam Remoting機能を利用してサーバーロジックをJavaScriptから呼び出して
+いる場合は、JAX-RSなど他の方法に移行する必要があります。</p>
+<ol class="arabic simple" start="5">
+<li><p>rich:subTable</p></li>
+</ol>
+<p>xhtmlで&lt;rich:subTable&gt;を利用している場合は、&lt;rich:collapsibleSubTable&gt;
+などの他のタグに移行する必要があります。</p>
+</div>
+<div class="section" id="id1">
+<h2><span class="section-number">30.3. </span>画面遷移定義の移行<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Ver2.9までJSFの画面遷移はJBoss Seamのpages.xmlとJPDL Pageflowを利用していましたが、
+V2.10cからは、JSF標準のPage Navigation(&lt;navigation-rule&gt;)に変更になりました。</p>
+<p>アドオンプログラムの画面遷移についてもJSF標準のnavigation-ruleの記述に
+変更する必要があります。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>画面遷移の移行に伴い、Seamのpages.xml, JPDL Pageflowで利用できた
+画面遷移定義ファイルからのJavaコンポーネントメソッドの実行は行う
+ことができなくなります。
+ページフロー内でJavaメソッドを呼び出していた場合は、JSF facelets
+の viewAction 等に移行する必要があります。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>JPDL PageFlowからJSFのPage Navigationへの変更に伴い、JPDLでは実現できていた
+画面遷移状態と遷移先やアクションの制御はできなくなっています。
+このため、ブラウザの「戻る」ボタンで前の画面に戻った後に別のアクションを実行
+した場合等に、JPDL PageFlowでは「操作をやり直してください。」というメッセージ
+が表示され、意図しない画面遷移はできないようになっていましたが、JSF Page Navigation
+では、このメッセージは表示されず次のアクションが行えてしまいます。
+この問題に対処するため、「Ver2.10c 修正パッチ3」で&lt;p:head&gt;タグを利用している場合は
+ブラウザの「戻る」ボタンで前の画面に戻れないようにする対処を行っています。</p>
+</div>
+</div>
+<div class="section" id="jpa">
+<h2><span class="section-number">30.4. </span>JPAのバージョンアップ<a class="headerlink" href="#jpa" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ol class="arabic">
+<li><p>NativeQueryの戻り値の型変更への対応</p>
+<blockquote>
+<div><p>JPAのNativeQueryを利用し、かつ戻り値としてエンティティ以外の
+値を受け取っている場合（例：select count(*) の結果など）は、
+Query.getResultList()の結果の戻り値の型が変わっているので
+プログラムを変更する必要があります。</p>
+<p>変更前</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Query</span> <span class="n">query</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="n">createNativeQuery</span><span class="p">(</span>
+    <span class="s2">&quot;SELECT COUNT(DISTINCT Id)&quot;</span>
+    <span class="o">+</span>  <span class="s2">&quot; FROM Table_A&quot;</span>
+    <span class="o">+</span>  <span class="s2">&quot; WHERE Table_A.cond1 &lt;= ?1&quot;</span>
+    <span class="p">);</span>
+<span class="n">query</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="p">);</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span> <span class="n">queried</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">getResultList</span><span class="p">();</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="n">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">partOf</span> <span class="p">:</span> <span class="n">queried</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Long</span><span class="o">.</span><span class="n">parseLong</span><span class="p">(</span><span class="n">partOf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">toString</span><span class="p">()));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>変更後</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Query</span> <span class="n">query</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="n">createNativeQuery</span><span class="p">(</span>
+    <span class="s2">&quot;SELECT COUNT(DISTINCT Id)&quot;</span>
+    <span class="o">+</span>  <span class="s2">&quot; FROM Table_A&quot;</span>
+    <span class="o">+</span>  <span class="s2">&quot; WHERE Table_A.cond1 &lt;= ?1&quot;</span>
+    <span class="p">);</span>
+<span class="n">query</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="p">);</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span> <span class="n">queried</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">getResultList</span><span class="p">();</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">queried</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">getResultList</span><span class="p">();</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>主キー値が0のエンティティは利用できない</p>
+<blockquote>
+<div><p>eclipselinkでは、主キーに0以下の値を持つエンティティは利用できません。
+主キー値として0以下の値を利用している場合は変更する必要があります。</p>
+</div></blockquote>
+</li>
+<li><p>エンティティのアノテーション</p>
+<blockquote>
+<div><p>エンティティ間のリレーションについて、記述を変更しないと
+動作しないケースがあるので注意が必要です。</p>
+<p>動作しないケース（例）</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Vacation</span><span class="p">{</span>
+
+    <span class="nd">@OneToOne</span><span class="p">(</span><span class="n">fetch</span><span class="o">=</span><span class="n">FetchType</span><span class="o">.</span><span class="n">EAGER</span><span class="p">)</span>
+    <span class="nd">@JoinColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;APPRECPNO&quot;</span><span class="p">,</span><span class="n">insertable</span><span class="o">=</span><span class="n">false</span><span class="p">)</span>
+    <span class="n">private</span> <span class="n">ApplicationStatus</span> <span class="n">appStatus</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上記のケースで、アプリケーションから、
+vacation.setAppStatusメソッドでAPPRECPNOを更新していた
+場合、toplink essentialsでは動作していましたが、eclipselink
+では更新に失敗します。</p>
+<p>このような場合は、別途APPRECPNOにマッピングした変数を作成し、
+アプリケーションから更新する必要があります。</p>
+<p>修正例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Vacation</span><span class="p">{</span>
+
+    <span class="nd">@Column</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;APPRECPNO&quot;</span><span class="p">)</span>
+    <span class="n">private</span> <span class="n">Long</span> <span class="n">apprecpNo</span><span class="p">;</span>
+
+    <span class="nd">@OneToOne</span><span class="p">(</span><span class="n">fetch</span><span class="o">=</span><span class="n">FetchType</span><span class="o">.</span><span class="n">EAGER</span><span class="p">)</span>
+    <span class="nd">@JoinColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;APPRECPNO&quot;</span><span class="p">,</span><span class="n">insertable</span><span class="o">=</span><span class="n">false</span><span class="p">,</span> <span class="n">updatable</span><span class="o">=</span><span class="n">false</span><span class="p">)</span>
+    <span class="n">private</span> <span class="n">ApplicationStatus</span> <span class="n">appStatus</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="ejblookup">
+<h2><span class="section-number">30.5. </span>申請事後処理、組込みアシストメッセージ等EJBをlookupしている処理<a class="headerlink" href="#ejblookup" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>POWEREGG V2.8cまでは、申請事後処理や組込みアシストメッセージの
+アドオンでEJBをlookupして利用するために、pe4j-engine.jarやpe4j-app.jarの
+META-INF/ejb-jar.xmlにejb-local-refの定義の追加が必要でしたが、
+JavaEE6からPortable Global JNDI Nameの規約が制定されたため、
+ejb-local-refを定義しなくてもEJBをLookupすることが可能になりました。</p>
+<p>ejbをlookupしている箇所では、ejb-local-defに定義した名称でなく、
+Portable Global JNDI Nameを利用してlookupするように変更してください。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>Java EE7ではEJBをlookupするときにはglobal jndi nameを利用します。
+このglobal jndi nameはデプロイしているアプリケーション名で変わるので、
+PC用のpe4j-earとスマートフォン用のpe4s-earでは異なったjndi名になります。
+スマートフォンや携帯版のearにも組み込みアシストメッセージを組み込み、
+EJBを参照する場合はこの点に注意してください。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">30.6. </span>その他留意事項<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ol class="arabic">
+<li><p>Glassfish V4のクラスローダへの対応</p>
+<blockquote>
+<div><p>Glassfish V3からクラスローダの動作が変更になっており、ear/libフォルダは、
+earアプリケーションの親クラスローダで読み込まれるようになっているため、
+ear/libフォルダに配置したjarファイルのクラスから、ejb-jarファイル内の
+クラスへのアクセスができなくなっています。（ClassNotFoundException,
+NoClassDefFoundErrorが発生)</p>
+<p>アドオンアプリケーションでear/libフォルダに配置したjarのクラスから
+ejb-jar内のクラスを参照している場合はアプリケーションの構成変更など
+の対応が必要です。</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Appendix_g.html" class="btn btn-neutral float-right" title="31. 付録G, 権限設定共通シーケンス" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Appendix_e_mig2pgsql.html" class="btn btn-neutral float-left" title="29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

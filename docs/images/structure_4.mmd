@@ -1,0 +1,13 @@
+erDiagram
+    Order ||--o{ WorkOrder : "ExpandFromOrder（MesBridgeHook）"
+    WorkOrder ||--|{ WorkOrderProcess : "工程"
+    WorkOrder ||--|{ WorkOrderMaterial : "必要材料"
+    WorkOrder ||--o{ ProductionResult : "工程別実績"
+    WorkOrder ||--o{ QualityInspection : "検査結果"
+    WorkOrder ||--o{ DefectRecord : "不良品"
+    QualityInspection ||--|{ QualityInspectionItem : "項目"
+    InspectionTemplate ||--o{ QualityInspection : "テンプレート"
+    DefectCategory ||--o{ DefectRecord : "分類"
+    Machine ||--o{ WorkOrderProcess : "号機割当"
+    Machine ||--o{ MachineDowntime : "停止履歴"
+    Machine ||--o{ OeeDaily : "日次集計"

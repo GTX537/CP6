@@ -25,6 +25,19 @@ public interface IOrderService
     /// <summary>削除（DELETE）— 軟削除</summary>
     Task DeleteAsync(string webOrderNo, byte[]? rowVersion, string? userName);
 
+    /// <summary>
+    /// 受注取消（Phase 6）— 関連 MES 指図 / WMS 出庫指示の反向級联含む。
+    /// </summary>
+    /// <param name="webOrderNo">受注NO</param>
+    /// <param name="reason">取消理由（必須、監査用）</param>
+    /// <param name="force">
+    /// false=二段確認モード：半路状態あれば NeedsDecision を返し DB 未変更。
+    /// true=強制実施モード：可能な全 WO/Outbound を取消（OrderCancelBridgeHook 経由）。
+    /// </param>
+    /// <param name="userName">操作者</param>
+    /// <returns>状態機判定結果（Cancelled / NeedsDecision / Rejected / PartiallyCancelled）</returns>
+    Task<OrderCancelResult> CancelAsync(string webOrderNo, string reason, bool force, string? userName);
+
     /// <summary>採番 — 次の WebOrderNo を発行</summary>
     Task<string> NextSequenceAsync();
 

@@ -1,0 +1,271 @@
+===============================
+REST 作業API
+===============================
+
+
+優先度一覧取得(GET)
+=================================================
+
+POWER EGGに登録されている作業の優先度の情報を全件取得します。
+ここで取得した優先度区分を、作業登録時や作業更新時に利用します。
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/todo/priorities.json
+
+
+リクエストパラメタ
+----------------------------------
+
+なし
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    priorities,JSON,必須,優先度情報の配列
+
+
+prioritiesのJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    priorityCode,文字列,必須,優先度区分
+    priorityName,文字列,必須,優先度名称
+
+
+レスポンスの例
+---------------------------
+
+::
+
+    {
+        "priorities": [
+            {
+                "priorityCode": "1",
+                "priorityName": "通常"
+            },
+            {
+                "priorityCode": "2",
+                "priorityName": "優先"
+            },
+            {
+                "priorityCode": "3",
+                "priorityName": "緊急"
+            }
+        ]
+    }
+
+
+作業登録(POST)
+=================================================
+
+作業を1件登録します。
+
+
+HTTPメソッド
+---------------------------
+
+POST
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/todo/todo.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    subject,文字列,必須,件名
+    priority,文字列,必須,優先度区分
+    deadline,日付,,期限
+    fromDate,日付,,着手日
+    content,文字列,,内容
+    isPublic,真偽値,,true:公開作業(省略値) false:非公開作業
+    targetEmployees,JSON,,targetEmployeeの配列。指定しない場合は依頼元社員が使用される。
+    requesterCorpId,文字列,,依頼元社員の所属外部会社コード
+    requesterEmpCode,文字列,,依頼元社員の外部社員コード１
+    attaches,JSON,,添付ファイル。ファイルアップロードAPIでアップロードしたfilekeyの配列で指定。
+    references, JSON, , relativeurlの配列
+
+
+targetEmployeesで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,依頼先社員の所属外部会社コード
+    empCode,文字列,必須,依頼先社員の外部社員コード1
+
+
+referencesで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    relationUrl,URL,必須,関連情報のURL
+    urlComment,文字列,,関連情報URLコメント
+
+
+レスポンス(JSON)
+----------------------------------
+
+登録した作業のIDが返却されます。
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    id,数値,必須,登録した作業データのID
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/todo/todo.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "subject": "〇〇社向け提案書作成",
+        "priority": "2",
+        "deadline": "2018-01-19",
+        "targetEmployees": [
+            {
+                "corpId": "friend",
+                "empCode": "ooishi1"
+            },
+            {
+                "corpId": "friend",
+                "empCode": "yamada"
+            }
+        ],
+        "requesterCorpId": "friend",
+        "requesterEmpCode": "imaoka"
+    }
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "id": 3421568
+    }
+
+
+作業更新(PUT)
+=================================================
+
+登録済みの作業を更新します。
+
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/todo/todo.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    id,数値,必須,更新する作業のID
+    subject,文字列,必須,件名
+    priority,文字列,必須,優先度区分
+    deadline,日付,,期限
+    fromDate,日付,,着手日
+    content,文字列,,内容
+    isPublic,真偽値,,true:公開作業(省略値) false:非公開作業
+    targetEmployees,JSON,,targetEmployeeの配列。指定しない場合は依頼元社員が使用される。
+    requesterCorpId,文字列,,依頼元社員の所属外部会社コード
+    requesterEmpCode,文字列,,依頼元社員の外部社員コード１
+    attaches,JSON,,添付ファイル。ファイルアップロードAPIでアップロードしたfilekeyの配列で指定。
+    references, JSON, , relativeurlの配列
+
+targetEmployeesで指定するJSON型
+
+  作業登録と同じ
+
+referencesで指定するJSON型
+
+  作業登録と同じ
+
+
+レスポンス(JSON)
+----------------------------------
+
+なし
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/todo/todo.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "id": 3421568,
+        "priority": "3",
+        "deadline": "2018-01-15",
+        "targetEmployees": [
+            {
+                "corpId": "friend",
+                "empCode": "ooishi1"
+            },
+            {
+                "corpId": "friend",
+                "empCode": "yamada"
+            },
+            {
+                "corpId": "friend",
+                "empCode": "suzuki"
+            }
+        ]
+    }
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {}
+

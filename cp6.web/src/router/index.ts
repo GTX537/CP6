@@ -21,6 +21,10 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/order': () => import('@/views/erp/OrderEntryView.vue'),
   '/order-list': () => import('@/views/erp/OrderListView.vue'),
   '/order-price-correction': () => import('@/views/erp/OrderPriceCorrectionView.vue'),
+  '/erp/order-trace': () => import('@/views/erp/OrderTraceView.vue'),
+  '/erp/credit-note': () => import('@/views/erp/CreditNoteListView.vue'),
+  '/erp/backorder': () => import('@/views/erp/BackorderListView.vue'),
+  '/erp/otd-report': () => import('@/views/erp/OtdReportView.vue'),
   '/business-partner': () => import('@/views/erp/BusinessPartnerView.vue'),
   '/business-partner-list': () => import('@/views/erp/BusinessPartnerListView.vue'),
   '/fsc-checklist': () => import('@/views/erp/FscChecklistView.vue'),
@@ -58,6 +62,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wms/stock-take-list': () => import('@/views/wms/StockTakeListView.vue'),
   '/wms/stock-take': () => import('@/views/wms/StockTakeView.vue'),
   '/wms/dashboard': () => import('@/views/wms/WmsDashboardView.vue'),
+  '/wms/bridge-health': () => import('@/views/wms/BridgeHealthView.vue'),
+  '/wms/material-shortage': () => import('@/views/wms/MaterialShortageView.vue'),
+  '/wms/stock-dwell': () => import('@/views/wms/StockDwellView.vue'),
   // ───── WMS Core 補完 ─────
   '/wms/location': () => import('@/views/wms/LocationListView.vue'),
   // ───── Phase WM-3 後続実装予定（占位） ─────

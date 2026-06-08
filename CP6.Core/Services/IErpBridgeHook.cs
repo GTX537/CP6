@@ -23,6 +23,11 @@ public interface IErpBridgeHook
     /// 出荷区分（OutboundType=Shipping）かつ WebOrderNo 紐付きでない場合は Skipped。
     /// </summary>
     Task<ErpBridgeResult> OnShipmentConfirmedAsync(string outboundNo, string? userName);
+
+    /// <summary>
+    /// WMS RMA confirmed -> ERP CreditNote back-write.
+    /// </summary>
+    Task<ErpBridgeResult> OnReturnConfirmedAsync(string rmaNo, string? userName);
 }
 
 /// <summary>
@@ -48,5 +53,8 @@ public class ErpBridgeResult
 public class NoOpErpBridgeHook : IErpBridgeHook
 {
     public Task<ErpBridgeResult> OnShipmentConfirmedAsync(string outboundNo, string? userName)
+        => Task.FromResult(ErpBridgeResult.Skipped("ErpBridge:Enabled=false"));
+
+    public Task<ErpBridgeResult> OnReturnConfirmedAsync(string rmaNo, string? userName)
         => Task.FromResult(ErpBridgeResult.Skipped("ErpBridge:Enabled=false"));
 }

@@ -113,9 +113,56 @@ backend.log
 tmp-*.js
 docs/_manual_render/
 
-# Cloudflare Tunnel 凭证（密钥，禁止提交）
-cloudflared-docker/*.json
+# Cloudflare Tunnel 凭证（密钥，禁止提交）— 整个目录都忽略
+cloudflared-docker/
 
 # Claude 临时工作目录与 Office 锁文件
 tmp/
 ~$*
+
+# ============================================================
+# Secrets / Local overrides — 绝不提交
+# ============================================================
+.env
+.env.local
+.env.*.local
+appsettings.Local.json
+appsettings.Production.json
+appsettings.*.local.json
+*.pfx
+*.key
+*.pem
+secret.local.yaml
+secrets.local.yaml
+
+# Generic credential files
+**/credentials.json
+**/credentials.yaml
+**/*.credentials
+**/*-credentials.json
+
+# 部署脚本（含真实服务器/IP/SSH）— 各 dev 本地维护，不入仓
+deploy-to-server.ps1
+deploy-to-*.ps1
+deploy-to-*.sh
+redeploy-*.bat
+redeploy-*.ps1
+start-tunnel.bat
+
+# 根目录运行日志
+/backend.err.log
+/frontend.err.log
+/frontend.log
+/cloudflared.log
+/cloudflared.err.log
+/redeploy.log
+/redeploy.err.log
+*.err.log
+
+# 超 GitHub 100MB 限制的二进制（drainage iOS 包 / 単体試験要領書 Excel）
+docs/file/drainage/
+docs/file/500.単体試験要領書_【無錫】/
+docs/file/**/*.ipa
+docs/file/**/*.xlsx
+# 兜底：任何超 50MB 的二进制都建议走 LFS
+*.ipa

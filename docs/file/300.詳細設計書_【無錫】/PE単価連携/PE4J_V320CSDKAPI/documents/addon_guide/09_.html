@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>9. ログインしているユーザ情報の取得 &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="10. ログインパスワード変更同期インターフェース" href="10_.html" />
+    <link rel="prev" title="8. アドオンシステムのPOWER EGGへの組み込み" href="08_.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. ログインしているユーザ情報の取得</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#power-egg3-0">9.1. POWER EGG3.0のセッション管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cdi">9.2. CDIコンポーネントでのログイン中ユーザ情報の取得</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#httpsession">9.3. HttpSessionからのログイン中ユーザ情報の取得</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">9.4. クッキーからのログイン中ユーザー情報の取得</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">9. </span>ログインしているユーザ情報の取得</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1><span class="section-number">9. </span>ログインしているユーザ情報の取得<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="power-egg3-0">
+<h2><span class="section-number">9.1. </span>POWER EGG3.0のセッション管理<a class="headerlink" href="#power-egg3-0" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Webブラウザで動作するHTTPプロトコルを利用するシステムでは、
+ユーザの一連の操作を管理するためのセッション管理機構が必要になります。</p>
+<p>POWER EGG3.0では、J2EEのサーブレットAPIで用意されているセッション
+管理機構を利用してログイン中のユーザの識別を行っています。</p>
+<p>また、同一のサーバ、Webアプリケーション以外のアプリケーションとの
+ログインユーザ情報の連携を行うため、ログインユーザ情報をブラウザの
+クッキーとしてセットする機能が追加されています。</p>
+</div>
+<div class="section" id="cdi">
+<h2><span class="section-number">9.2. </span>CDIコンポーネントでのログイン中ユーザ情報の取得<a class="headerlink" href="#cdi" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>CDIアプリケーションとして開発したアプリケーションでは、
+&#64;Inアノテーションによってログイン中ユーザ情報を取得することができます。</p>
+<p>LoginUserオブジェクトの取得例（CDIアプリケーション）</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.web.engine.navigation.LoginUser</span><span class="p">;</span>
+
+<span class="nd">@Inject</span> <span class="nd">@Login</span>
+<span class="n">LoginUser</span> <span class="n">loginUser</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="httpsession">
+<h2><span class="section-number">9.3. </span>HttpSessionからのログイン中ユーザ情報の取得<a class="headerlink" href="#httpsession" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>アドオンアプリケーションはJ2EEのjavax.servlet.http.HttpSession
+オブジェクトから現在操作を行っているユーザの情報を取得することができます。</p>
+<p>このユーザ情報は、net.poweregg.web.engine.navigation.LoginUser
+というJavaオブジェクトとして取得できます。このオブジェクトは
+”loginUser”という名称でセッションに格納されています。</p>
+<p>LoginUserオブジェクトには、ログイン中のユーザのID、名称、部門情報などが格納されています。</p>
+<p>LoginUserオブジェクトに格納されている情報の詳細については、APIリファレンスを参照してください。</p>
+<p>LoginUserオブジェクトの取得例（サーブレット）</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">net.poweregg.web.engine.navigation.LoginUser</span><span class="p">;</span>
+
+<span class="n">HttpSession</span> <span class="n">session</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="na">getSession</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="n">LoginUser</span> <span class="n">loginuser</span> <span class="o">=</span> <span class="p">(</span><span class="n">LoginUser</span><span class="p">)</span><span class="n">session</span><span class="p">.</span><span class="na">getObject</span><span class="p">(</span><span class="s">&quot;loginUser&quot;</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">loginuser</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ログインしていない</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// オブジェクトがあるのでログインしている</span>
+    <span class="n">Long</span> <span class="n">empid</span> <span class="o">=</span> <span class="n">loginuser</span><span class="p">.</span><span class="na">getEmpid</span><span class="p">();</span> <span class="c1">// ログイン中ユーザーのEmpIDの取得</span>
+    <span class="n">String</span> <span class="n">corpid</span> <span class="o">=</span> <span class="n">loginuser</span><span class="p">.</span><span class="na">getCorpID</span><span class="p">();</span> <span class="c1">// 会社IDの取得</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>LoginUserオブジェクトの取得例（JSP）</p>
+<div class="highlight-jsp notranslate"><div class="highlight"><pre><span></span><span class="k">&lt;%-</span><span class="o">-</span> <span class="n">オブジェクトの宣言</span> <span class="o">--</span><span class="k">%&gt;</span>
+<span class="k">&lt;jsp:useBean id=”loginUser” class=”net.poweregg.web.engine.navigation.LoginUser scope=”session” /&gt;</span>
+<span class="k">&lt;%</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">loginUser</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ログインしていない</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// オブジェクトがあるのでログインしている</span>
+    <span class="n">Long</span> <span class="n">empid</span> <span class="o">=</span> <span class="n">loginuser</span><span class="p">.</span><span class="na">getEmpid</span><span class="p">();</span> <span class="c1">// ログイン中ユーザーのEmpIDの取得</span>
+    <span class="n">String</span> <span class="n">corpid</span> <span class="o">=</span> <span class="n">loginuser</span><span class="p">.</span><span class="na">getCorpID</span><span class="p">();</span> <span class="c1">// 会社IDの取得</span>
+<span class="p">}</span>
+<span class="k">%&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">9.4. </span>クッキーからのログイン中ユーザー情報の取得<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ユーザーがPOWER EGGにログインしたときにブラウザにクッキーをセットするようになっています。</p>
+<p>他のWebシステムではこのクッキーを読み取ることでPOWEREGGに
+ログインしているユーザーの情報を取得して利用することができます。</p>
+<p>ブラウザにセットされるクッキーの仕様は以下のとおりです。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>値</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>キーの名前：</p></td>
+<td><p>peuser</p></td>
+</tr>
+<tr class="row-odd"><td><p>値：</p></td>
+<td><p>キー名=値を、”&amp;”で結合したものがセットされます。
+値はURLEncode＋Shift_JIS(Cp943C)でエンコーディングされています。</p>
+<dl class="field-list simple">
+<dt class="field-odd">cCorpId</dt>
+<dd class="field-odd"><p>ログイン中会社番号</p>
+</dd>
+<dt class="field-even">cDivId</dt>
+<dd class="field-even"><p>ログイン中部門番号</p>
+</dd>
+<dt class="field-odd">cEmpId</dt>
+<dd class="field-odd"><p>ログイン社員番号</p>
+</dd>
+<dt class="field-even">cUserId</dt>
+<dd class="field-even"><p>ログインID</p>
+</dd>
+<dt class="field-odd">cUserName</dt>
+<dd class="field-odd"><p>社員名</p>
+</dd>
+<dt class="field-even">cDivName</dt>
+<dd class="field-even"><p>ログイン中部門正式名称</p>
+</dd>
+<dt class="field-odd">cEmpId1</dt>
+<dd class="field-odd"><p>外部社員番号１</p>
+</dd>
+<dt class="field-even">cEmpId2</dt>
+<dd class="field-even"><p>外部社員番号２</p>
+</dd>
+<dt class="field-odd">cDivId1</dt>
+<dd class="field-odd"><p>ログイン中部門の外部部門番号１</p>
+</dd>
+<dt class="field-even">cDivId2</dt>
+<dd class="field-even"><p>ログイン中部門の外部部門番号２</p>
+</dd>
+<dt class="field-odd">cTitleClass</dt>
+<dd class="field-odd"><p>ログイン中部門での役職区分</p>
+</dd>
+<dt class="field-even">cTitleName</dt>
+<dd class="field-even"><p>ログイン中部門での役職名</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td><p>Domain：</p></td>
+<td><p>poweregg.propertiesのusercookie.domainに設定されている値がセットされます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>Path：</p></td>
+<td><p>poweregg.propertiesのusercookie.pathに設定されている値</p></td>
+</tr>
+<tr class="row-even"><td><p>有効期限(Expire)：</p></td>
+<td><p>ブラウザ終了時にクリアされるよう設定されません。</p></td>
+</tr>
+</tbody>
+</table>
+<p>Cookieのセットとクリアのタイミングは以下のとおりです。</p>
+<dl class="field-list simple">
+<dt class="field-odd">セット</dt>
+<dd class="field-odd"><p>ログインが成功したとき及び所属の切り替えを行ったとき</p>
+</dd>
+<dt class="field-even">クリア</dt>
+<dd class="field-even"><p>ナビビューの終了ボタンを押したとき</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="10_.html" class="btn btn-neutral float-right" title="10. ログインパスワード変更同期インターフェース" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="08_.html" class="btn btn-neutral float-left" title="8. アドオンシステムのPOWER EGGへの組み込み" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

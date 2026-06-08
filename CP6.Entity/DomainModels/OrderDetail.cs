@@ -213,6 +213,10 @@ public class OrderDetail : BaseBizEntity
     public DateTime? LastShipDate { get; set; }
     /// <summary>最終出荷の出庫指示NO</summary>
     [MaxLength(20)] public string? LastOutboundNo { get; set; }
+    /// <summary>RMA 確定で加算される累計返品数</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? ReturnedQty { get; set; }
+    /// <summary>Backorder or closed remaining quantity handled by ERP.</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? BackorderQty { get; set; }
 
     // ───── ナビゲーション ─────
     public Order? Order { get; set; }

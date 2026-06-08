@@ -1,0 +1,1125 @@
+===============================
+REST ワークフローAPI
+===============================
+
+
+申請(POST)
+=================================================
+
+ワークフロー文書の申請を行います。
+
+
+HTTPメソッド
+---------------------------
+
+POST
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/apply.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,,申請受付番号。再申請の場合にのみ指定します。新規申請の場合はセットしないでください。
+    corpId,文字列,必須,申請者の外部会社コード
+    deptCode,文字列,必須,申請者の外部部門コード１
+    empCode,文字列,必須,申請者の外部社員コード１
+    appliedDate,日付,必須,申請日
+    baseForm,文字列,必須,申請様式コード
+    condition1,文字列,必須,"条件区分値１。
+    申請様式のルート判定条件が「区分値」の場合は区分値を設定します。
+    申請様式のルート判定条件が「条件値」の場合は条件値を設定します。
+    申請様式のルート判定条件が「区分値＋条件値」の場合は条件値を設定します。"
+    condition2,文字列,,"条件区分値２。
+    申請様式のルート判定条件が「区分値＋条件値」の場合は区分値を設定します。"
+    priority,文字列,,"""0001""...通常（省略値）、""0002""...緊急"
+    title,文字列,必須,件名
+    contentXml,文字列,必須,"申請内容本文(xmlまたはxhtml)
+    xhtmlを渡す場合、head,bodyなどのタグは含まないdiv要素内のxhtmlをセットしてください。"
+    xslFileName,文字列,,"起案内容を表示する際のXSLTで利用するXSLファイル名
+    （ファイルはあらかじめPEWEB\\appLib\\XSLフォルダに格納しておく必要があります。
+    ※POWER EGG Open CloudではXSLフォルダにファイルを追加できないので、このパラメタは利用できません）
+    このパラメタが未指定の場合はcontentXmlで指定した内容がそのまま起案内容として表示されます。
+    スマートフォンでもcontentXmlで指定した内容がそのまま表示されますので、スマートフォンでも
+    起案内容が期待通り表示できるかご確認ください。"
+    attachments,JSON,,ファイルアップロードAPIでアップロードした添付ファイルのfileKeyの配列。
+    relativeurls,JSON,,関連情報URL(relativeurlの配列)
+    proxyCorpId,文字列,,代理申請の場合、代理申請者の外部会社コードをセット
+    proxyDeptCode,文字列,,代理申請の場合、代理申請者の外部部門コード1をセット
+    proxyEmpCode,文字列,,代理申請の場合、代理申請者の外部社員コード1をセット
+    routeModified,真偽値,,"ルート変更を行う場合はtrue、省略値はfalse。trueを指定した場合
+    「保留」状態で申請されるのでユーザは画面から保留状態の申請を開き、ルート設定後に申請を行う必要があります。"
+    autoRouting,真偽値,,"ワークフロールートを設定から自動生成するかどうかを指定する。
+    デフォルトはtrue。falseを指定した場合はルート生成は行われないので、
+    addUsersToHead, addUsersToEnd等でルートを指定する必要があります。"
+    addUsersToHead,JSON,,生成されたルートの先頭に追加する承認者をセットします。
+    addUsersToEnd,JSON,,生成されたルートの後ろに追加する承認者をセットします。
+    addUsersToRoute,JSON,,指定された位置に挿入する承認者をセットします。
+
+
+relativeurlsで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    relationUrl,文字列,必須,関連情報のURL
+    urlComment,文字列,,関連情報URLコメント
+
+
+addUsersToHead, addUsersToEnd, addUsersToRouteで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    authority,文字列,必須,"ルート上の権限（”0001”:審議、”0002”:回覧、”0004”:同報）"
+    corpId,文字列,必須,追加ユーザの外部会社コード
+    deptCode,文字列,必須,追加ユーザの所属部門の外部部門コード1
+    empCode,文字列,必須,追加ユーザの外部社員コード1
+    approvalOrder,数値,,追加ユーザの承認順序。addUsersToRouteの場合のみ指定します。
+
+
+レスポンス(JSON)
+----------------------------------
+
+申請案件の管理番号(appRecpNo)が返却されます。
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,申請受付番号
+    historyNo,数値,必須,履歴番号
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/workflow/apply.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "corpId": "friend",
+        "deptCode": "eigyo",
+        "empCode": "ooishi1",
+        "appliedDate": "2017-06-15",
+        "baseForm": "A001",
+        "condition1": "1",
+        "title": "テスト申請",
+        "contentXml": "<doc>申請内容</doc>",
+        "attachments": [
+            {
+                "fileKey": "afksjslkdfja-ksjflaj-skdjfalk"
+            }
+        ]
+    }
+
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "appRecpNo": 1001,
+        "historyNo": 1
+    }
+
+
+PDF申請(POST)
+=================================================
+
+PDFファイルを申請本文としたワークフロー文書の申請を行います。
+
+
+HTTPメソッド
+---------------------------
+
+POST
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/pdfapply.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,,申請受付番号。再申請の場合にのみ指定します。新規申請の場合はセットしないでください。
+    corpId,文字列,必須,申請者の外部会社コード
+    deptCode,文字列,必須,申請者の外部部門コード１
+    empCode,文字列,必須,申請者の外部社員コード１
+    appliedDate,日付,必須,申請日
+    baseForm,文字列,必須,申請様式コード
+    condition1,文字列,必須,"条件区分値１。
+    申請様式のルート判定条件が「区分値」の場合は区分値を設定します。
+    申請様式のルート判定条件が「条件値」の場合は条件値を設定します。
+    申請様式のルート判定条件が「区分値＋条件値」の場合は条件値を設定します。"
+    condition2,文字列,,"条件区分値２。
+    申請様式のルート判定条件が「区分値＋条件値」の場合は区分値を設定します。"
+    priority,文字列,,"""0001""...通常（省略値）、""0002""...緊急"
+    title,文字列,必須,件名
+    contentPdf,文字列,必須,ファイルアップロードAPIでアップロードしたPDF申請本文ファイルのfileKeyの配列
+    attachments,JSON,,ファイルアップロードAPIでアップロードした添付ファイルのfileKeyの配列。
+	relativeurls,JSON,,関連情報URL(relativeurlの配列)
+    proxyCorpId,文字列,,代理申請の場合、代理申請者の外部会社コードをセット
+    proxyDeptCode,文字列,,代理申請の場合、代理申請者の外部部門コード1をセット
+    proxyEmpCode,文字列,,代理申請の場合、代理申請者の外部社員コード1をセット
+    routeModified,真偽値,,"ルート変更を行う場合はtrue、省略値はfalse。trueを指定した場合
+    「保留」状態で申請されるのでユーザは画面から保留状態の申請を開き、ルート設定後に申請を行う必要があります。"
+    autoRouting,真偽値,,"ワークフロールートを設定から自動生成するかどうかを指定する。
+    デフォルトはtrue。falseを指定した場合はルート生成は行われないので、
+    addUsersToHead, addUsersToEnd等でルートを指定する必要があります。"
+    addUsersToHead,JSON,,生成されたルートの先頭に追加する承認者をセットします。
+    addUsersToEnd,JSON,,生成されたルートの後ろに追加する承認者をセットします。
+    addUsersToRoute,JSON,,指定された位置に挿入する承認者をセットします。
+
+
+relativeurlsで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    relationUrl,文字列,必須,関連情報のURL
+    urlComment,文字列,,関連情報URLコメント
+
+
+addUsersToHead, addUsersToEnd, addUsersToRouteで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    authority,文字列,必須,"ルート上の権限（”0001”:審議、”0002”:回覧、”0004”:同報）"
+    corpId,文字列,必須,追加ユーザの外部会社コード
+    deptCode,文字列,必須,追加ユーザの所属部門の外部部門コード1
+    empCode,文字列,必須,追加ユーザの外部社員コード1
+    approvalOrder,数値,,追加ユーザの承認順序。addUsersToRouteの場合のみ指定します。
+
+
+レスポンス(JSON)
+----------------------------------
+
+申請案件の管理番号(appRecpNo)が返却されます。
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,申請受付番号
+    historyNo,数値,必須,履歴番号
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/workflow/pdfapply.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "corpId": "friend",
+        "deptCode": "eigyo",
+        "empCode": "ooishi1",
+        "appliedDate": "2017-06-15",
+        "baseForm": "A001",
+        "condition1": "1",
+        "title": "テスト申請",
+
+        "contentPdf": [
+            {
+                fileKey:"derfghbfdesd-esvbhjk-lkihgfvb"
+            }
+        ],
+        "attachments": [
+            {
+                "fileKey": "afksjslkdfja-ksjflaj-skdjfalk"
+            }
+        ]
+    }
+
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "appRecpNo": 1001,
+        "historyNo": 1
+    }
+
+
+取り下げ(PUT)
+=================================================
+
+申請中のワークフロー案件を取り下げます。
+
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/withdraw.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,取下げする案件の申請受付番号
+    corpId,文字列,必須,申請者の外部会社コード
+    empCode,文字列,必須,申請者の外部社員コード1（代行で申請した案件の場合は代行者の外部社員コード1でも良い）
+
+
+レスポンス(JSON)
+----------------------------------
+
+申請案件の管理番号(appRecpNo)とワークフローのステータスが返却されます。
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,申請受付番号
+    historyNo,数値,必須,履歴番号
+    status,文字,必須,取り下げた申請書のワークフローステータスコード
+
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/workflow/withdraw.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "appRecpNo": 1001,
+        "corpId": "friend",
+        "empCode": "ooishi1"
+    }
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "appRecpNo": 1001,
+        "historyNo": 1,
+        "status": "1003"
+    }
+
+
+申請書データ取得(GET)
+=================================================
+
+申請書データを1件取得します。
+
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/applicationForm.json
+
+
+クエリパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,取得する案件の申請受付番号。
+    historyNo,数値, ,"取得する案件の履歴番号（指定しない場合は最新の履歴を取得）"
+
+
+レスポンス(JSON)
+----------------------------------
+
+申請案件の情報がJSONで返却されます。
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,申請受付番号
+    historyNo,数値,必須,履歴番号
+    flowType,文字列,必須,"“0001”:申請、“0002”:回覧、“0003”:同報"
+    corpId,文字列,, 申請会社の外部コード ※外部コードが設定されていない場合はnull
+    deptCode,文字列,,申請部門の外部部門コード1 ※外部コードが設定されていない場合はnull
+    empCode,文字列,,申請者の外部社員コード1 ※外部コードが設定されていない場合はnull
+    appliedDate,日付,必須,申請書の申請日
+    baseForm,文字列,必須,申請書の様式コード
+    baseFormName,文字列,必須,申請書の様式名
+    detailFormId,数値,必須,申請書の申請種別ID
+    detailFormName,文字列,必須,申請書の申請種別名
+    title,文字列,必須,申請書の件名
+    priority,文字列,必須,"申請書の優先度（”0001”:通常、”0002”:緊急）"
+    contentXml,文字列,必須,起案内容
+    xslFileName,文字列,,起案内容表示用のXSLファイル名
+    status,文字,必須,"ワークフローステータスコード
+    ”0005”:審議中、”0008”:回覧中、“1001”:未申請、”1003”:取下げ、”1004”:差戻し、
+    ”1005”:差戻し保留、”1010”:決裁取消、”2006”:否認、
+    ”2007”:決裁、”2008”:条件付決裁、”2009”:回覧完了、“3010”:完結"
+    approvedDate,日付時刻,,申請書の決裁日付時刻
+    proxyCorpId,文字列,,代理申請の場合、代理申請者の外部会社コード
+    proxyDeptCode,文字列,,代理申請の場合、代理申請者の外部部門コード1
+    proxyEmpCode,文字列,,代理申請の場合、代理申請者の外部社員コード1
+    lastProcAppRoute,JSON,必須,最終処理者のルート情報
+    decisionAppRoute,JSON,,決裁者のルート情報
+    cancelAppRoute,JSON,,決裁取消者のルート情報
+    currentAppRoute,JSON,,現在処理者のルート情報
+    attachments,JSON,,申請書の添付ファイルのfileKeyの配列
+    relationUrls,JSON,,関連情報URLの配列
+
+
+ルート情報（lastProcAppRoute, decisionAppRoute, cancelAppRoute, currentAppRoute）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    approvalOrder,数値,必須,承認順序
+    authority,文字列,必須,"権限
+    “0000”: 申請、”0001”:審議、”0002”:回覧、”0003”:決裁、”0004”:同報、”0005”:戻り、
+    “0006”:合議受付、”0007”:合議、”0008”:合議審議、”0009”:審査、”0011”:受付"
+    result,文字列,,"“1”:承認､確認､決裁した  “2”:差戻した  “3”:否認した  “5”:決裁取消した  “6”:条件付決裁した null:未処理"
+    approvalTargetDateTime,日付時刻,,審議決裁対象となった日付時刻
+    procDatetime,日付時刻,,処理日付時刻。未処理の場合はnull
+    skipped,真偽値,必須,後閲されている場合はtrue
+    proxyFlag,真偽値,必須,代行処理された場合はtrue
+    personType,文字列,必須,"“1”:社員 “2”:グループ"
+    empType,文字列,,"“1”:一般社員 “2”:組織審議者 “3”:合議組織　“4”:並行審議者 ※personType=”1”の場合のみセット"
+    empName,文字列,必須,処理者社員名（personType=”2”の場合はグループ名）
+    corpName,文字列,,処理者会社名(personType=”1”の場合のみセット)
+    deptName,文字列,,処理者部門名(personType=”1”の場合のみセット)
+    titleName,文字列,,処理者役職名(personType=”1”の場合のみセット)
+    proxyEmpName,文字列,,代行者社員名(personType=”2”の場合は実際に処理した社員名)
+    proxyCorpName,文字列,,代行者会社名(personType=”2”の場合は実際に処理した社員の会社名)
+    proxyDeptName,文字列,,代行者部門名(personType=”2”の場合は実際に処理した社員の部門名)
+    proxyTitleName,文字列,,代行者役職名(personType=”2”の場合は実際に処理した社員の役職名)
+
+relativeurlsのJSON型
+
+  申請と同じ
+
+
+リクエストの例
+-------------------------------
+
+- HTTPのクエリ文字列の例 ::
+
+    appRecpNo=1001
+
+- リクエストヘッダを含んだ例 :: 
+
+    GET /pe4j/api/rest/v1/workflow/applicationForm.json?(HTTPのクエリ文字列) HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+
+  ※Content-Typeヘッダは不要です。
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "appRecpNo": 1001,
+        "historyNo": 1,
+        "flowType": "1001",
+        "corpId": "friend00",
+        "deptCode": "1900",
+        "empCode": "nakanishi",
+        "appliedDate": "2017-10-02",
+        "baseForm": "Z002",
+        "baseFormName": "稟議書",
+        "detailFormId": 348,
+        "detailFormName": "申請種別A",
+        "title": "申請件名",
+        "priority": "0001",
+        "contentXml": "<doc>申請本文</doc>",
+        "xslFileName": "addonApp1.xsl",
+        "status": "2007",
+        "approvedDate": "2017-10-03",
+        "proxyCorpId": null,
+        "proxyDeptCode": null,
+        "proxyEmpCode": null,
+        "lastProcAppRoute": {
+            "approvalOrder": 3,
+            "authority": "0003",
+            "result": "1",
+            "approvalTargetDateTime": "2017-10-02T17:10:20+09:00",
+            "procDatetime": "2017-10-03T09:08:25+09:00",
+            "skipped": false,
+            "proxyFlag": false,
+            "personType": "1",
+            "empType": "2",
+            "empName": "友野　力",
+            "corpName": "フレンド商事",
+            "deptName": "本社",
+            "titleName": "社長",
+            "proxyEmpName": null,
+            "proxyCorpName": null,
+            "proxyDeptName": null,
+            "proxyTitleName": null
+        },
+        "decisionAppRoute": {
+            "approvalOrder": 3,
+            "authority": "0003",
+            "result": "1",
+            "approvalTargetDateTime": "2017-10-02T17:10:20+09:00",
+            "procDatetime": "2017-10-03T09:08:25+09:00",
+            "skipped": false,
+            "proxyFlag": false,
+            "personType": "1",
+            "empType": "2",
+            "empName": "友野　力",
+            "corpName": "フレンド商事",
+            "deptName": "本社",
+            "titleName": "社長",
+            "proxyEmpName": null,
+            "proxyCorpName": null,
+            "proxyDeptName": null,
+            "proxyTitleName": null
+        },
+        "cancelAppRoute": null,
+        "currentAppRoute": null,
+        "attachments": [
+            {
+                "fileKey": "Od/bdrkdy3ZfD4NaYGHGxQJXeyXzYZRxhDp+LU+CFDmpP5FI2bx7Y4MqOO8bTQ3p"
+            }
+        ],
+        "relativeUrls": null
+    }
+
+
+起案内容差替え(PUT)
+=================================================
+
+申請中のワークフローの起案内容を差し替えます。
+
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/content.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,起案内容を差し替える案件の申請受付番号
+    contentXml,文字列,必須,"申請内容本文(xmlまたはxhtml)
+    xhtmlを渡す場合、head,bodyなどのタグは含まないdiv要素内のxhtmlを渡す。"
+
+
+レスポンス(JSON)
+----------------------------------
+
+なし
+
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/workflow/content.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "appRecpNo": 1001,
+        "contentXml": "<doc>申請内容</doc>"
+    }
+
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {}
+
+
+案件データ削除(DELETE)
+=================================================
+
+申請済みのワークフロー案件データを削除します。
+
+このAPIで案件データを削除するとデータベースから物理的に申請データ及び
+承認履歴が削除されます。
+削除は、申請案件を申請受付番号を複数指定して削除する方法か、
+申請様式と日付範囲を指定して削除する方法のいずれかの方法で行えます。
+
+HTTPメソッド
+---------------------------
+
+DELETE
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/applicationForm.json
+
+
+クエリパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNos,数値, ,削除する案件の申請受付番号。複数の場合は半角カンマで区切る。
+    baseForm,文字列,,削除する案件の申請様式コード
+    startDate,日付,,削除する案件の申請日付範囲（開始）。この日付を条件に含む
+    endDate,日付,,削除する案件の申請日付範囲（終了）。この日付を条件に含む
+
+
+レスポンス
+----------------------------------
+
+なし
+
+リクエストの例
+-------------------------------
+
+- HTTPのクエリ文字列の例 ::
+
+    appRecpNos=1001
+
+- リクエストヘッダを含んだ例 :: 
+
+    GET /pe4j/api/rest/v1/workflow/applicationForm.json?(HTTPのクエリ文字列) HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+
+  ※Content-Typeヘッダは不要です。
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {}
+
+
+コメント取得(GET)
+=================================================
+
+申請書につけられたコメントを取得します。
+
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/commentTree.json
+
+
+クエリパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値, 必須,コメントを取得する案件の申請受付番号。
+    historyNo,数値, ,"コメントを取得する案件の履歴番号（指定しない場合は最新の履歴を取得）"
+
+
+レスポンス(JSON)
+----------------------------------
+
+申請案件の情報がJSONで返却されます。
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    comments,JSON,必須,コメント情報の配列
+
+コメント情報（comments）のJSON型
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    id,数値,必須,コメントを一意に識別するID
+    comment,文字列,必須,コメント文字列（改行は\\r\\n)
+    parentCommentId,数値,,親コメントのID(自身が先頭コメントの場合はnull)
+    userId,文字列,必須,発言者のログインユーザID
+    empName,文字列,必須,発言者の社員名
+    commentDatetime,日付時刻,必須,コメント日付時刻
+    attachments,JSON,,コメントに添付されたファイルのfileKeyの配列
+    deleted,真偽値,必須,削除されたコメントの場合はtrue
+
+リクエストの例
+-------------------------------
+
+- HTTPのクエリ文字列の例 ::
+
+    appRecpNo=1001
+
+- リクエストヘッダを含んだ例 :: 
+
+    GET /pe4j/api/rest/v1/workflow/commentTree.json?(HTTPのクエリ文字列) HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+
+  ※Content-Typeヘッダは不要です。
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "comments": [
+            {
+                "id": 123456,
+                "comment": "コメントA",
+                "parentCommentId": null,
+                "userId": "syainA",
+                "empName": "社員Ａ",
+                "commentDatetime": "2017-10-02T17:10:20+09:00",
+                "attachments": null,
+                "deleted": false
+            },
+            {
+                "id": 123457,
+                "comment": "コメントA-1",
+                "parentCommentId": 123456,
+                "userId": "syainB",
+                "empName": "社員Ｂ",
+                "commentDatetime": "2017-10-03T11:15:22+09:00",
+                "attachments": null,
+                "deleted": false
+            },
+            {
+                "id": 123459,
+                "comment": "コメントA-1-1",
+                "parentCommentId": 123457,
+                "userId": "syainA",
+                "empName": "社員Ａ",
+                "commentDatetime": "2017-10-03T11:17:08+09:00",
+                "attachments": null,
+                "deleted": false
+            },
+            {
+                "id": 123460,
+                "comment": "コメントA-2",
+                "parentCommentId": 123456,
+                "userId": "syainA",
+                "empName": "社員Ａ",
+                "commentDatetime": "2017-10-03T11:20:41+09:00",
+                "attachments": null,
+                "deleted": false
+            },
+            {
+                "id": 123458,
+                "comment": "コメントB",
+                "parentCommentId": null,
+                "userId": "syainB",
+                "empName": "社員Ｂ",
+                "commentDatetime": "2017-10-03T11:15:22+09:00",
+                "attachments": [
+                    {
+                        "fileKey": "Od/bdrkdy3ZfD4NaYGHGxQJXeyXzYZRxhDp+LU+CFDmpP5FI2bx7Y4MqOO8bTQ3p"
+                    }
+                ],
+                "deleted": false
+            }
+        ]
+    }
+
+
+
+コメント登録(POST)
+=================================================
+
+ワークフロー案件にコメントを登録します。
+
+
+HTTPメソッド
+---------------------------
+
+POST
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/comment.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,コメントを登録する案件の申請受付番号
+    historyNo,数値,,コメントを登録する案件の履歴番号。未指定の場合は最新の履歴にコメントを登録
+    corpId,文字列,必須,コメントを登録する社員の会社の外部会社コード
+    empCode,文字列,必須,コメントを登録する社員の外部社員コード1（代行で申請した案件の場合は代行者の外部社員コード1でも良い）
+    comment,文字列,必須,コメント文字列（改行は\\r\\n）
+    attachments,JSON,,"fileKeyの配列
+    あらかじめファイルアップロードAPIでファイルをアップロードしておく必要がある"
+    parentCommentId,数値,,返信コメントの場合、親コメントのIDを指定する
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,コメントを登録した申請書のappRecpNo
+    historyNo,数値,必須,コメントを登録した履歴の番号
+    commentId,数値,必須,登録したコメントのId
+
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/workflow/comment.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "appRecpNo": 1001,
+        "corpId": "friend",
+        "empCode": "ooishi1",
+        "comment": "テストコメント",
+        "attachments": [
+            {
+                "fileKey": "afksjslkdfja-ksjflaj-skdjfalk"
+            }
+        ],
+        "parentCommentId": 12345
+    }
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "appRecpNo": 1001,
+        "historyNo": 1,
+        "commentId": 12346
+    }
+
+
+ルートシミュレーション(GET)
+=================================================
+
+ワークフローのルート情報をシミュレーションします。
+ルート確認画面でルート確認するのと同等の機能を提供します。
+
+
+HTTPメソッド
+---------------------------
+
+GET
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/simulation.json
+
+
+クエリパラメータ
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,申請者の外部会社コード
+    deptCode,文字列,必須,申請者の外部部門コード１
+    empCode,文字列,,申請者の外部社員コード１
+    appliedDate,日付,必須,申請日
+    baseForm,文字列,必須,申請様式コード
+    condition1,文字列,必須,"条件区分値１。
+    申請様式のルート判定条件が「区分値」の場合は区分値を設定します。
+    申請様式のルート判定条件が「条件値」の場合は条件値を設定します。
+    申請様式のルート判定条件が「区分値＋条件値」の場合は条件値を設定します。"
+    condition2,文字列,,"条件区分値２。
+    申請様式のルート判定条件が「区分値＋条件値」の場合は区分値を設定します。"
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    routeName,文字列,必須,ルート名
+    corpName,文字列,必須,会社名
+    baseFormName,文字列,必須,申請様式名
+    flowType,文字列,必須,"フロー種別.。“0001”:申請　“0002”:回覧"
+    flowTypeName,文字列,必須,フロー種別名
+    detailForm,文字列,必須,申請種別
+    detailFormName,文字列,必須,申請種別名
+    availableDate,日付,必須,申請種別の適用日
+    routeList,JSON,必須,ルート情報の配列
+
+routeListのJSON型
+
+deptLevelからtitleNameまでの値については、derivationTypeによって値が
+セットされる場合とされない場合があります。
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    flowOrder,数値,必須,承認順序
+    derivationType,文字列,必須,"ルート生成種別
+    “1”:組織図　“2”:合議組織　“3”:申請部品（社員）　“4”:申請部品（グループ）　“6”:申請部品（申請部門審議者）
+    “7”:申請者　“8”:申請部品（グループ全員）　“9”:申請部品（申請部門全員）　“10”:申請者部門全員（部門）
+    “11”:申請者部門全員（申請部門）　“12”:申請部品（グループ並行審議）"
+    authority,文字列,必須,"権限コード
+    “0001”:審議　“0002”:回覧　“0003”:決裁　“0004”:同報　“0005”:戻り　“0006:合議受付　“0007”:合議　“0008”:合議審議
+    “0009”:審査　“0011”:受付"
+    authorityName,文字列,必須,権限名
+    deptLevel,数値,,組織階層レベル
+    confOrgName,文字列,,合議組織名
+    partsName,文字列,,ルート部品名
+    groupId,数値,,グループID
+    groupName,文字列,,グループ名
+    empId,数値,,社員ID
+    empName,文字列,,社員名
+    corpId,文字列,,所属会社ID
+    corpName,文字列,,所属会社名
+    deptId,数値,,所属部門ID
+    deptName,文字列,,所属部門名
+    titleName,文字列,,役職名
+    invalid,真偽型,,true：申請日時点で社員が部門に所属していない　false:所属している
+
+リクエストの例
+-------------------------------
+
+- HTTPのクエリ文字列の例 ::
+
+    corpId=friend&deptCode=1001&empCode=ooki&appliedDate=2018-06-01&baseForm=Z001&condition1=1
+
+- リクエストヘッダを含んだ例 :: 
+
+    GET /pe4j/api/rest/v1/workflow/simulation.json?(HTTPのクエリ文字列) HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+
+  ※Content-Typeヘッダは不要です。
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "routeName": "【回覧】組織Lv5+支援G",
+        "corpName": "フレンド商事",
+        "baseFormName": "報告書",
+        "flowType": "0002",
+        "flowTypeName": "回覧",
+        "detailForm": "101856",
+        "detailFormName": "営業日報",
+        "avalableDate": "2015-04-01",
+        "routeList": [
+            {
+                "flowOrder": 1,
+                "derivationType": "1",
+                "authority": "0002",
+                "authorityName": "回覧",
+                "deptLevel": 5,
+                "confOrgName": null,
+                "partsName": null,
+                "groupId": null,
+                "groupName": null,
+                "empId": 1012,
+                "empName": "土井　明",
+                "corpId": "0001",
+                "corpName": "フレンド商事",
+                "deptId": 4523,
+                "deptName": "営業１課",
+                "titleName": "課長",
+                "invalid": null
+            },
+            {
+                "flowOrder": 2,
+                "derivationType": "4",
+                "authority": "0002",
+                "authorityName": "回覧",
+                "deptLevel": null,
+                "confOrgName": null,
+                "partsName": "営業支援G回覧",
+                "groupId": 21,
+                "groupName": "営業支援グループ",
+                "empId": null,
+                "empName": null,
+                "corpId": null,
+                "corpName": null,
+                "deptId": null,
+                "deptName": null,
+                "titleName": null,
+                "invalid": null
+            }
+        ]
+    }
+
+強制否認・差戻し(PUT)
+=================================================
+
+一旦決裁された案件を強制的に否認・差戻しします。
+否認・差戻しを実施する人は審査権限として決裁者の直後に挿入されます。
+決裁状態または完結状態にある最終履歴のみ更新可能です。
+否認・差戻しにより、事後処理が起動されます。
+同時にコメントを登録することが可能です。
+
+
+HTTPメソッド
+---------------------------
+
+PUT
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/workflow/rejectAfterFlow.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,強制否認・差戻しする案件の申請受付番号
+    result,文字列,必須,否認の場合は"3"、差戻しの場合は"2"
+    corpId,文字列,必須,処理者の会社の外部会社コード
+    deptCode,文字列,必須, 処理者の所属部門の外部部門コード1
+    empCode,文字列,必須,処理者の外部社員コード1
+    baseDate,日付,必須,組織図検索基準日
+    comment,文字列,,コメント文字列（改行は\\r\\n）
+
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    appRecpNo,数値,必須,申請書のappRecpNo
+    status,文字,必須, "処理後の申請書のワークフローステータスコード。ステータスコードについては
+    申請書データ取得APIのレスポンスを参照してください。"
+
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    PUT /pe4j/api/rest/v1/workflow/rejectAfterFlow.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "appRecpNo": 1001,
+        "result": "3",
+        "corpId": "friend",
+        "deptCode": "eigyo",
+        "empCode": "ooishi1",
+        "baseDate": "2017-06-15",
+        "comment": "否認コメント"
+    }
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {
+        "appRecpNo": 1001,
+        "status": "2009"
+    }

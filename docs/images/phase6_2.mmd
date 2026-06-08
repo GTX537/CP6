@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    participant H as 任意 Bridge Hook
+    participant DB as T_IntegrationEvent
+    participant W as IntegrationEventRetryWorker
+    participant N as DeadLetterNotifier
+    participant SH as SignalR / Sys_OperLog
+
+    Note over H: 三段式：先写表 → 调用 → 更新状态
+    H->>DB: INSERT(Pending, payload, correlation)
+    H->>H: try { Execute() }
+    alt 成功
+        H->>DB: UPDATE Status=Success
+    else 失败
+        H->>DB: UPDATE Status=Failed, NextRetryAt
+    end
+
+    loop 每分钟
+        W->>DB: SELECT WHERE Status=Failed AND NextRetryAt<=now
+        W->>H: 重试 hook 调用
+        alt 成功
+            W->>DB: UPDATE Status=Success
+        else 仍失败且 Attempts>=Max
+            W->>DB: UPDATE Status=DeadLetter
+            W->>N: 触发告警
+            N->>SH: SignalR 推 WmsDashboard
+            N->>SH: 写 Sys_OperLog(IsAlert=true)
+        end
+    end

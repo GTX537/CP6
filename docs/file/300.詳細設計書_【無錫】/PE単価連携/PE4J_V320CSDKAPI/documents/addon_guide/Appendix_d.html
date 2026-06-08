@@ -1,0 +1,945 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>28. 付録D,サンプルアプリケーション &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行" href="Appendix_e_mig2pgsql.html" />
+    <link rel="prev" title="27. 付録C 開発したpe4j-earのサーバーへのデプロイ" href="Appendix_c.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">28. 付録D,サンプルアプリケーション</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">28.1. サンプルアプリケーションの説明</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">28.1.1. 画面イメージ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">28.1.2. 機能の概要</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">28.1.3. 設計情報</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sdk">28.2. SDKサンプルプロジェクトのビルド</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sdkeclipse">28.2.1. SDKサンプルプロジェクトのEclipseへの取り込み</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">28.2.2. SDKサンプルプロジェクトのビルド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">28.2.3. 配備後の設定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">28.3. ソースコード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">28. </span>付録D,サンプルアプリケーション</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="d">
+<h1><span class="section-number">28. </span>付録D,サンプルアプリケーション<a class="headerlink" href="#d" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id1">
+<h2><span class="section-number">28.1. </span>サンプルアプリケーションの説明<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>このサンプルアプリケーションでは、社員の給与振込口座申請を題材としています。</p>
+<div class="section" id="id2">
+<h3><span class="section-number">28.1.1. </span>画面イメージ<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>①申請画面</p>
+<img alt="_images/C-1.png" src="_images/C-1.png" />
+<p>②承認時画面</p>
+<img alt="_images/C-2.png" src="_images/C-2.png" />
+</div>
+<div class="section" id="id3">
+<h3><span class="section-number">28.1.2. </span>機能の概要<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul class="simple">
+<li><p>給与振込口座の申請を行うことができます。</p></li>
+<li><p>既に口座が登録されていれば、その口座の情報を初期値として表示します。</p></li>
+<li><p>振込先銀行の選択は、銀行選択部品で行います。</p></li>
+<li><p>申請した内容は、ワークフローエンジンを通して決裁されます。</p></li>
+<li><p>申請が決裁された時点で、申請した口座を本人の振込口座としてデータベースを更新します。</p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3><span class="section-number">28.1.3. </span>設計情報<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>（１）ワークフロー関連</p>
+<p>・申請様式として&quot;9001&quot;番を使用します。</p>
+<p>・申請時の条件区分値は&quot;1&quot;を使用します。</p>
+<p>（２）テーブルレイアウト</p>
+<blockquote>
+<div><p>テーブル名：UT2_EMP_ACCOUNT</p>
+</div></blockquote>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 4%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 11%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>No</p></th>
+<th class="head"><p>項目名</p></th>
+<th class="head"><p>列名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>桁数</p></th>
+<th class="head"><p>NULL</p></th>
+<th class="head"><p>共通番号</p></th>
+<th class="head"><p>備考</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>社員ＩＤ</p></td>
+<td><p>EmpID</p></td>
+<td><p>BIGINT</p></td>
+<td><p>10</p></td>
+<td><p>No</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>会社ＩＤ</p></td>
+<td><p>CorpID</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>申請受付番号</p></td>
+<td><p>AppRecepNo</p></td>
+<td><p>BIGINT</p></td>
+<td><p>11</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>文書管理番号</p></td>
+<td><p>DocMangNo</p></td>
+<td><p>BIGINT</p></td>
+<td><p>11</p></td>
+<td></td>
+<td></td>
+<td><p>XML文書管理用</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>現在給与第一口座</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>銀行コード</p></td>
+<td><p>PSBankCode1</p></td>
+<td><p>CHAR</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>銀行支店コード</p></td>
+<td><p>PSBranchCode1</p></td>
+<td><p>CHAR</p></td>
+<td><p>3</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>銀行預金種目</p></td>
+<td><p>PSDepositType1</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>1428</p></td>
+<td><p>1:普通 2:当座 9:他</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>銀行口座番号</p></td>
+<td><p>PSAccountNo1</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>7</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>現在給与第二口座</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>銀行コード</p></td>
+<td><p>PSBankCode2</p></td>
+<td><p>CHAR</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>銀行支店コード</p></td>
+<td><p>PSBranchCode2</p></td>
+<td><p>CHAR</p></td>
+<td><p>3</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>銀行預金種目</p></td>
+<td><p>PSDepositType2</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>1428</p></td>
+<td><p>1:普通 2:当座 9:他</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>銀行口座番号</p></td>
+<td><p>PSAccountNo2</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>7</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>振込額定額</p></td>
+<td><p>PSFixedAmount</p></td>
+<td><p>NUMERIC</p></td>
+<td><p>11</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>16</p></td>
+<td><p>現在賞与第一口座</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>17</p></td>
+<td><p>銀行コード</p></td>
+<td><p>PBBankCode1</p></td>
+<td><p>CHAR</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-odd"><td><p>18</p></td>
+<td><p>銀行支店コード</p></td>
+<td><p>PBBranchCode1</p></td>
+<td><p>CHAR</p></td>
+<td><p>3</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-even"><td><p>19</p></td>
+<td><p>銀行預金種目</p></td>
+<td><p>PBDepositType1</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>1428</p></td>
+<td><p>1:普通 2:当座 9:他</p></td>
+</tr>
+<tr class="row-odd"><td><p>20</p></td>
+<td><p>銀行口座番号</p></td>
+<td><p>PBAccountNo1</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>7</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>21</p></td>
+<td><p>現在賞与第二口座</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>22</p></td>
+<td><p>銀行コード</p></td>
+<td><p>PBBankCode2</p></td>
+<td><p>CHAR</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-even"><td><p>23</p></td>
+<td><p>銀行支店コード</p></td>
+<td><p>PBBranchCode2</p></td>
+<td><p>CHAR</p></td>
+<td><p>3</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-odd"><td><p>24</p></td>
+<td><p>銀行預金種目</p></td>
+<td><p>PBDepositType2</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>1428</p></td>
+<td><p>1:普通 2:当座 9:他</p></td>
+</tr>
+<tr class="row-even"><td><p>25</p></td>
+<td><p>銀行口座番号</p></td>
+<td><p>PBAccountNo2</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>7</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>26</p></td>
+<td><p>振込額定額</p></td>
+<td><p>PBFixedAmount</p></td>
+<td><p>NUMERIC</p></td>
+<td><p>11</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>27</p></td>
+<td><p>申込給与第一口座</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>28</p></td>
+<td><p>銀行コード</p></td>
+<td><p>ASBankCode1</p></td>
+<td><p>CHAR</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-even"><td><p>29</p></td>
+<td><p>銀行支店コード</p></td>
+<td><p>ASBranchCode1</p></td>
+<td><p>CHAR</p></td>
+<td><p>3</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-odd"><td><p>30</p></td>
+<td><p>銀行預金種目</p></td>
+<td><p>ASDepositType1</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>1428</p></td>
+<td><p>1:普通 2:当座 9:他</p></td>
+</tr>
+<tr class="row-even"><td><p>31</p></td>
+<td><p>銀行口座番号</p></td>
+<td><p>ASAccountNo1</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>7</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>32</p></td>
+<td><p>申込給与第二口座</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>33</p></td>
+<td><p>銀行コード</p></td>
+<td><p>ASBankCode2</p></td>
+<td><p>CHAR</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-odd"><td><p>34</p></td>
+<td><p>銀行支店コード</p></td>
+<td><p>ASBranchCode2</p></td>
+<td><p>CHAR</p></td>
+<td><p>3</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-even"><td><p>35</p></td>
+<td><p>銀行預金種目</p></td>
+<td><p>ASDepositType2</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>1428</p></td>
+<td><p>1:普通 2:当座 9:他</p></td>
+</tr>
+<tr class="row-odd"><td><p>36</p></td>
+<td><p>銀行口座番号</p></td>
+<td><p>ASAccountNo2</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>7</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>37</p></td>
+<td><p>振込額定額</p></td>
+<td><p>ASFixedAmount</p></td>
+<td><p>NUMERIC</p></td>
+<td><p>11</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>38</p></td>
+<td><p>申込賞与第一口座</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>39</p></td>
+<td><p>銀行コード</p></td>
+<td><p>ABBankCode1</p></td>
+<td><p>CHAR</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-odd"><td><p>40</p></td>
+<td><p>銀行支店コード</p></td>
+<td><p>ABBranchCode1</p></td>
+<td><p>CHAR</p></td>
+<td><p>3</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-even"><td><p>41</p></td>
+<td><p>銀行預金種目</p></td>
+<td><p>ABDepositType1</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>1428</p></td>
+<td><p>1:普通 2:当座 9:他</p></td>
+</tr>
+<tr class="row-odd"><td><p>42</p></td>
+<td><p>銀行口座番号</p></td>
+<td><p>ABAccountNo1</p></td>
+<td><p>INTEGER</p></td>
+<td><p>7</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>43</p></td>
+<td><p>申込賞与第二口座</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>44</p></td>
+<td><p>銀行コード</p></td>
+<td><p>ABBankCode2</p></td>
+<td><p>CHAR</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-even"><td><p>45</p></td>
+<td><p>銀行支店コード</p></td>
+<td><p>ABBranchCode2</p></td>
+<td><p>CHAR</p></td>
+<td><p>3</p></td>
+<td></td>
+<td></td>
+<td><p>ＺＴ銀行</p></td>
+</tr>
+<tr class="row-odd"><td><p>46</p></td>
+<td><p>銀行預金種目</p></td>
+<td><p>ABDepositType2</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>10</p></td>
+<td></td>
+<td><p>1428</p></td>
+<td><p>1:普通 2:当座 9:他</p></td>
+</tr>
+<tr class="row-even"><td><p>47</p></td>
+<td><p>銀行口座番号</p></td>
+<td><p>ABAccountNo2</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>7</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>48</p></td>
+<td><p>振込額定額</p></td>
+<td><p>ABFixedAmount</p></td>
+<td><p>NUMERIC</p></td>
+<td><p>11</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>49</p></td>
+<td><p>更新回数</p></td>
+<td><p>UpdateCounter</p></td>
+<td><p>BIGINT</p></td>
+<td><p>11</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>50</p></td>
+<td><p>最終更新日時</p></td>
+<td><p>Lastupadte</p></td>
+<td><p>TIMESTAMP</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>（３）プログラム一覧</p>
+<p>UAP0101e.xhtml : 申請入力画面</p>
+<p>UAP0102c.xhtml : 申請確認画面</p>
+<p>アプリケーションビーン</p>
+<p>sample.empaccount.UAP01Bean</p>
+<p>エンティティクラス</p>
+<p>sample.empaccount.entity.EmpAccount</p>
+<p>サービスクラス</p>
+<p>sample.empaccount.EmpAccountService</p>
+<p>sample.empaccount. EmpAccountServiceBean</p>
+<p>事後処理クラス</p>
+<p>sample.empaccount.UAP01AfterFlow</p>
+</div>
+</div>
+<div class="section" id="sdk">
+<h2><span class="section-number">28.2. </span>SDKサンプルプロジェクトのビルド<a class="headerlink" href="#sdk" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="sdkeclipse">
+<h3><span class="section-number">28.2.1. </span>SDKサンプルプロジェクトのEclipseへの取り込み<a class="headerlink" href="#sdkeclipse" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>Eclipseで「ファイル」-「インポート」を実行します。</p></li>
+<li><p>既存プロジェクトをワークスペースへを選択します。</p></li>
+<li><p>アーカイブ・ファイルの選択で&quot;sdksample.zip&quot;を選択します。</p></li>
+<li><p>インポートしたプロジェクトディレクトリ配下にpe4j-earディレクトリを作成し、
+pe4j-ear.earをjarコマンドで展開します。</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pe4j</span><span class="o">-</span><span class="n">ear</span><span class="o">&gt;</span> <span class="n">jar</span> <span class="n">xvf</span> <span class="n">pe4j</span><span class="o">-</span><span class="n">ear</span><span class="o">.</span><span class="n">ear</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>インポートしたプロジェクトディレクトリ配下に pe4j-webappディレクトリを作成し、
+pe4j-ear/pe4j-webapp.warをjarコマンドやzip展開ツールで展開します</p></li>
+<li><p>インポートしたプロジェクトディレクトリ配下に pe4j-engineディレクトリを作成し、
+pe4j-ear/pe4j-engine.jarをjarコマンドやzip展開ツールで展開します</p></li>
+<li><p>インポートしたプロジェクトディレクトリ配下にpe4j-jpa-mainディレクトリを作成し、
+pe4j-ear/lib/pe4j-jpa-main.jarをjarコマンドやzip展開ツールで展開します</p></li>
+<li><p>プロジェクトをリフレッシュします。</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>展開元ファイル(.ear,.jar,.war)は展開後削除してください。</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">28.2.2. </span>SDKサンプルプロジェクトのビルド<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>persistence.xmlの編集</p>
+<blockquote>
+<div><p>アドオンで作成したエンティティを有効にするため、pe4j-jpa-main/META-INF/
+persistence.xmlにアドオンエンティティが格納されているjarファイルを登録します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- sdksample --&gt;
+&lt;jar-file&gt;empAccount-entity.jar&lt;/jar-file&gt;
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>application.xmlの編集</p>
+<blockquote>
+<div><p>アドオンのEJBを有効にするため、pe4j-ear/META-INF/application.xmlにアドオン
+のejb-jarを登録します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">ejb</span><span class="o">&gt;</span><span class="n">empAccount</span><span class="o">-</span><span class="n">ejb</span><span class="o">.</span><span class="n">jar</span><span class="o">&lt;/</span><span class="n">ejb</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">module</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>web.xmlの編集</p>
+<blockquote>
+<div><p>アドオンで作成したJSFのナビゲーション定義を参照するため、
+pe4j-webapp/WEB-INF/web.xmlのjavax.faces.CONFIG_FILES定義にアドオン開発
+したナビゲーション定義ファイルを追加します。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">context</span><span class="o">-</span><span class="n">param</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">param</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="n">javax</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">CONFIG_FILES</span><span class="o">&lt;/</span><span class="n">param</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">param</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;/</span><span class="n">WEB</span><span class="o">-</span><span class="n">INF</span><span class="o">/</span><span class="n">faces</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">xml</span><span class="p">,</span>
+        <span class="o">...</span>
+        <span class="o">...</span>
+        <span class="o">/</span><span class="n">WEB</span><span class="o">-</span><span class="n">INF</span><span class="o">/</span><span class="n">navigations</span><span class="o">/</span><span class="n">UAP01Bean</span><span class="o">.</span><span class="n">xml</span>
+    <span class="o">&lt;/</span><span class="n">param</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">context</span><span class="o">-</span><span class="n">param</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>既存の定義を削除するとPOWER EGGが正しく動作しなくなります。
+アドオンの定義を追加するだけにしてください。</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>pe4j-earのビルド</p>
+<blockquote>
+<div><p>build.xmlのallターゲットを実行し、アドオンが組み込まれたpe4j-earを生成します。
+実行後、プロジェクトディレクトリの配下にpe4j-ear.earが作成されます。</p>
+</div></blockquote>
+</li>
+<li><p>pe4j-earの配備</p>
+<blockquote>
+<div><p>生成されたpe4j-earをGlassFishにデプロイします。
+配備の方法については、「付録B. アドオン開発環境の作成」
+を参照してください。</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="id6">
+<h3><span class="section-number">28.2.3. </span>配備後の設定<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>アドオン用テーブルの作成</p>
+<blockquote>
+<div><p>POWER EGGのデータベースにアドオン用のテーブルを作成します。</p>
+<p>SQLがsdksample/sqlフォルダに格納されているので、PSQLコマンド等
+で実行し、テーブルを作成してください。</p>
+</div></blockquote>
+</li>
+<li><p>申請様式の登録</p>
+<blockquote>
+<div><p>サンプル申請用の申請様式を登録します。</p>
+<ul class="simple">
+<li><p>様式コード：9100</p></li>
+<li><p>様式名称：給与振込口座申請</p></li>
+<li><p>ルート判定条件：区分値</p></li>
+<li><p>ルートタイプ：申請</p></li>
+<li><p>採番ルール：標準採番ルール</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>「<a class="reference external" href="http:/">http:/</a>/ホスト名:ポート/pe4j/」から管理者ユーザにてログインを行って操作してください。</p>
+<p>デモキットのデータを利用している場合、「ユーザID:ooishi / パスワード:123」でログインできます。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>「申請様式の登録」～「申請種別の登録」は「システム設定 &gt; 汎用申請の設定」配下のメニューから設定できます。</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>登録した様式に対して、「決裁」事後処理を登録します</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>実行時のタイミング：決裁</p></li>
+<li><p>処理種別：Java</p></li>
+<li><p>処理名：sample.empaccount.UAP01AfterFlow</p></li>
+<li><p>実行区分：実行する</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>申請種別の登録</p>
+<blockquote>
+<div><p>登録した様式に対して申請種別を登録します</p>
+<ul class="simple">
+<li><p>種別名：給与振込口座申請</p></li>
+<li><p>区分：1</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>システム管理の「処理の登録」を利用して処理を登録します</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>処理名：給与振込口座申請</p></li>
+<li><p>URLの前に&quot;/pe4j&quot;を付けるにチェック</p></li>
+<li><p>URL：UAP/UAP0101e.jsf</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>「処理の登録」および「メニューの登録」は「システム設定 &gt; システム共通 &gt; メニューの設定」から設定できます。</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>システム管理のメニューの登録を利用して、登録した処理をメニューに割り当
+てます。</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>登録したメニューは再度ログインすることで利用可能となります。</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="id7">
+<h2><span class="section-number">28.3. </span>ソースコード<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>サンプルアプリケーションのソースコードは、SDKのCD-ROMの
+sample_sourceフォルダに格納されていますので、
+そちらを参照してください。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Appendix_e_mig2pgsql.html" class="btn btn-neutral float-right" title="29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Appendix_c.html" class="btn btn-neutral float-left" title="27. 付録C 開発したpe4j-earのサーバーへのデプロイ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+@Msbb.Api_HostAddress = http://localhost:5059
+
+GET {{Msbb.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

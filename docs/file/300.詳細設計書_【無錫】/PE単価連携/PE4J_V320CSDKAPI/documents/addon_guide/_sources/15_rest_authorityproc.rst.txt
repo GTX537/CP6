@@ -1,0 +1,144 @@
+===============================
+REST 処理権限API
+===============================
+
+
+処理権限設定(POST)
+=================================================
+
+処理に対する権限情報の設定を行います。
+
+
+HTTPメソッド
+---------------------------
+
+POST
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/security/authorityproc.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    procGroupName,文字列,必須,処理グループ名
+    procName,文字列,必須,処理名
+    rbody,JSON,必須,権限情報の配列
+
+rbodyで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,外部会社コード（全社共通の場合は"0000000000"）
+    authUnit1,数値,必須,権限単位１ (※1)
+    authTarget1,文字列,必須,権限対象１ (※1)
+    authUnit2,数値,,権限単位２ (※1)
+    authTarget2,文字列,,権限対象２ (※1)
+    authUnit3,数値,,権限単位３ (※1)
+    authTarget3,文字列,,権限対象３ (※1)
+    authLevel,数値,必須,1：使用可、9：非公開
+
+※1 権限単位、権限対象の設定について(ボディ.rbody.authorityUnitの値により、設定するauthirityTargetの値が異なる)
+
+.. csv-table ::
+    :header: authorityUnit,authorityTarget,備考
+    :widths: 35,35,55
+
+    0：基本,"\-",
+    20：地区,外部地区コード,
+    30：役職,外部役職コード,
+    40：特定役職上位,外部役職コード,
+    50：部門,外部部門コード１,
+    60：特定部門上位,外部部門コード１,
+    70：特定部門配下,外部部門コード１,
+    80：社員区分,外部社員区分コード,
+    90：社員,ユーザID,
+
+レスポンス(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,データ型,必須,説明
+    :widths: 15,15,15,55
+
+    inputCount,数値,必須,ボディ.rbodyの件数
+    updateCount,数値,必須,更新件数
+    errorInfo,JSON,,エラー情報（エラーレスポンスの情報を出力する。異常時のみ必須。）
+
+errorInfoで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    code,文字列,必須,コード
+    message,文字列,必須,メッセージ
+    details,,必須,詳細
+
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/security/authorityproc.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 23b2a870-6bd4-413c-a467-c4c83f6da1f0
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "procGroupName": "申請画面アドオン",
+        "procName": "異動届申請",
+        "rbody": [
+            {
+                "corpId": "friend",
+                "authUnit1": 0,
+                "authLevel": 1
+            },
+            {
+                "corpId": "friend",
+                "authUnit1": 70,
+                "authTarget1": "1190",
+                "authUnit2": 80,
+                "authTarget2": "9",
+                "authLevel": 9
+            }
+        ]
+    }
+
+レスポンスの例
+---------------------------
+
+
+- 正常時 ::
+    
+    {
+        "inputCount": 5,
+        "updateCount": 6
+    }
+
+- 異常時 ::
+    
+    {
+        "inputCount": 5,
+        "updateCount": 6,
+        "errorInfo": [
+            {
+                "code": " WSA00030SE ",
+                "message": "パラメタに誤りがあります。（procGroupName=グループウェア（一般）、procName=スケジュール",
+                "details": "会社情報が取得できません。（corpId=friend99）"
+            }
+        ]
+    }
+
+

@@ -1,0 +1,95 @@
+===============================
+REST 社内メールAPI
+===============================
+
+
+社内メール送信(POST)
+=================================================
+
+社内メールを1通送信します。
+
+HTTPメソッド
+---------------------------
+
+POST
+
+URI
+----------------
+
+http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/mail/mail.json
+
+
+リクエストボディ(JSON)
+----------------------------------
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    sendToEmployees,JSON,必須,宛先(To)社員情報の配列
+    copyToEmployees,JSON,,同報(Cc)社員情報の配列
+    bccEmployees,JSON,,Bcc社員情報の配列
+    senderEmployee,JSON,"必須","送信元社員情報"
+    fromTime,文字列, , 開始時刻(HHMM形式)
+    subject,文字列,必須,件名
+    content,文字列,,"本文。
+    xhtmlを渡す場合、head,bodyなどのタグは含まないdiv要素内のxhtmlを渡す。"
+    isSendToMobile,真偽値,,true：携帯メールを送信する false：送信しない
+    attachments,JSON,,添付ファイル。ファイルアップロードAPIでアップロードしたfilekeyの配列で指定。
+    permitAddTarget, JSON, , true：宛先の追加を許可する false：許可しない
+
+sendToEmployees, copyToEmployees, bccEmployees, senderEmployeeで指定するJSON型
+
+.. csv-table ::
+    :header: パラメータ名,指定する値,必須,説明
+    :widths: 15,15,15,55
+
+    corpId,文字列,必須,対象社員の所属外部会社コード
+    empNumber1,文字列,必須,対象社員の外部社員コード１
+
+レスポンス(JSON)
+----------------------------------
+
+なし
+
+
+リクエストの例
+-------------------------------
+
+- リクエストヘッダ :: 
+
+    POST /pe4j/api/rest/v1/mail/mail.json HTTP/1.1
+    Host: pe280demo.poweregg.net
+    X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+    Content-Type: application/json
+
+- リクエストボディ ::
+
+    {
+        "sendToEmployees": [
+            {
+                "corpId": "friend",
+                "empNumber1": "ooishi1"
+            },
+            {
+                "corpId": "friend",
+                "empNumber1": "yamada"
+            }
+        ],
+        "senderEmployee": {
+            "corpId": "friend",
+            "empNumber1": "sysadmin"
+        },
+        "subject": "〇〇処理が終了しました",
+        "content": "開始日時:2018-01-15 07:00:00\r\n終了日時:2018-01-15 07:12:42\r\n終了コード:0",
+        "isSendToMobile": "false",
+        "permitAddTarget": "true"
+    }
+
+
+レスポンスの例
+---------------------------
+
+ ::
+
+    {}

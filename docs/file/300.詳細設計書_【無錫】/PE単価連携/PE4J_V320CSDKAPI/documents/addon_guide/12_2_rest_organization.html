@@ -1,0 +1,3605 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>14. REST 組織情報API &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="15. REST アシストメッセージAPI" href="12_3_rest_assistmessage.html" />
+    <link rel="prev" title="13. REST WebデータベースAPI" href="12_1_rest_webdb.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">14. REST 組織情報API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#get">14.1. 社員情報取得(GET)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#http">14.1.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uri">14.1.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">14.1.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">14.1.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">14.1.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">14.1.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">14.2. 部門情報取得(GET)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">14.2.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">14.2.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">14.2.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">14.2.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">14.2.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">14.2.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#put">14.3. 社員情報登録更新(PUT)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">14.3.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">14.3.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">14.3.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">14.3.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">14.3.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">14.3.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">14.4. 地区情報登録更新(PUT)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">14.4.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">14.4.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">14.4.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">14.4.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22">14.4.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">14.4.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">14.5. 役職情報登録更新(PUT)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id25">14.5.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">14.5.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27">14.5.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28">14.5.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id29">14.5.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30">14.5.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id31">14.6. 社員区分情報登録更新(PUT)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id32">14.6.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id33">14.6.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34">14.6.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id35">14.6.4. レスポンス(JSON)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id36">14.6.5. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id37">14.6.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id38">14.7. 組織図連携</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step1-put">14.7.1. Step1：予定組織図の作成(PUT)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id39">14.7.1.1. HTTPメソッド</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id40">14.7.1.2. URI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id41">14.7.1.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id42">14.7.1.4. レスポンス(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id43">14.7.1.5. リクエストの例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id44">14.7.1.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#step2-put">14.7.2. Step2：部門情報登録更新(PUT)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id45">14.7.2.1. HTTPメソッド</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id46">14.7.2.2. URI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id47">14.7.2.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id48">14.7.2.4. レスポンス(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id49">14.7.2.5. リクエストの例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id50">14.7.2.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#step3-put">14.7.3. Step3：社員所属情報登録更新(PUT)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id51">14.7.3.1. HTTPメソッド</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id52">14.7.3.2. URI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id53">14.7.3.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id54">14.7.3.4. レスポンス(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id55">14.7.3.5. リクエストの例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id56">14.7.3.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#step4-put">14.7.4. Step4：審議者情報登録更新(PUT)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id57">14.7.4.1. HTTPメソッド</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id58">14.7.4.2. URI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id59">14.7.4.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id60">14.7.4.4. レスポンス(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id61">14.7.4.5. リクエストの例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id62">14.7.4.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#step9-put">14.7.5. Step9：予定組織図の作成完了(PUT)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id63">14.7.5.1. HTTPメソッド</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id64">14.7.5.2. URI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id65">14.7.5.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id66">14.7.5.4. レスポンス(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id67">14.7.5.5. リクエストの例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id68">14.7.5.6. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#stepz-put">14.7.6. StepZ：予定組織図の破棄(PUT)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id69">14.7.6.1. HTTPメソッド</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id70">14.7.6.2. URI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id71">14.7.6.3. リクエストボディ(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id72">14.7.6.4. レスポンス(JSON)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id73">14.7.6.5. リクエストの例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id74">14.7.6.6. レスポンスの例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">14. </span>REST 組織情報API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="rest-api">
+<h1><span class="section-number">14. </span>REST 組織情報API<a class="headerlink" href="#rest-api" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="get">
+<h2><span class="section-number">14.1. </span>社員情報取得(GET)<a class="headerlink" href="#get" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>引数で指定した社員の情報を1件取得します。</p>
+<div class="section" id="http">
+<h3><span class="section-number">14.1.1. </span>HTTPメソッド<a class="headerlink" href="#http" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="uri">
+<h3><span class="section-number">14.1.2. </span>URI<a class="headerlink" href="#uri" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/employee.json</p>
+</div>
+<div class="section" id="id1">
+<h3><span class="section-number">14.1.3. </span>リクエストパラメータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>baseDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>組織の発令日を決定するための基準日です。この日付時点の組織図が対象となります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>基準日時点で社員が所属する会社の外部会社コードを指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>empCode1</p></td>
+<td><p>文字列</p></td>
+<td><p>省略可</p></td>
+<td><p>基準日時点でのcorpCodeの会社での外部社員コード１を指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode2</p></td>
+<td><p>文字列</p></td>
+<td><p>省略可</p></td>
+<td><p>基準日時点でのcorpCodeの会社での外部社員コード２を指定します。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>empCode1、empCode2のどちらか、または両方を指定する必要があります</p>
+</div>
+</div>
+<div class="section" id="json">
+<h3><span class="section-number">14.1.4. </span>レスポンス(JSON)<a class="headerlink" href="#json" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>userid</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ログインユーザID</p></td>
+</tr>
+<tr class="row-odd"><td><p>empName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>社員名</p></td>
+</tr>
+<tr class="row-even"><td><p>nameFurigana</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>社員名ふりがな</p></td>
+</tr>
+<tr class="row-odd"><td><p>mailAddress</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メールアドレス</p></td>
+</tr>
+<tr class="row-even"><td><p>mobilePhoneNo</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>携帯電話番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>mobileMailAddress</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>携帯メールアドレス（非公開に設定されてる場合はnull）</p></td>
+</tr>
+<tr class="row-even"><td><p>retireDate</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>退職日</p></td>
+</tr>
+<tr class="row-odd"><td><p>expireDate</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>ID有効期限</p></td>
+</tr>
+<tr class="row-even"><td><p>belongToDepts</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>所属情報の配列（パラメタで指定された会社以外の所属は含まない）</p></td>
+</tr>
+</tbody>
+</table>
+<p>所属情報（belongToDepts）のJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>announceDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>基準日時点での発令日</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptCode1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部部門コード１</p></td>
+</tr>
+<tr class="row-even"><td><p>deptCode2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部部門コード２</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>部門名</p></td>
+</tr>
+<tr class="row-even"><td><p>empCode1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部社員コード１</p></td>
+</tr>
+<tr class="row-odd"><td><p>empCode2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部社員コード２</p></td>
+</tr>
+<tr class="row-even"><td><p>titleCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部役職コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>titleName</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>役職名</p></td>
+</tr>
+<tr class="row-even"><td><p>deliberationOrder</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>承認順位</p></td>
+</tr>
+<tr class="row-odd"><td><p>isMainBelong</p></td>
+<td><p>真偽型</p></td>
+<td><p>必須</p></td>
+<td><p>true:主所属 false:兼務</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h3><span class="section-number">14.1.5. </span>リクエストの例<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>&quot;friend00&quot;という外部会社コードの会社で外部社員コード１が&quot;114403&quot;の社員の情報を取得する</p></li>
+<li><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">baseDate</span><span class="o">=</span><span class="mi">2018</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">16</span><span class="o">&amp;</span><span class="n">corpCode</span><span class="o">=</span><span class="n">friend00</span><span class="o">&amp;</span><span class="n">empCode1</span><span class="o">=</span><span class="mi">114403</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/organization/employee.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h3><span class="section-number">14.1.6. </span>レスポンスの例<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>取得した社員情報が返却されます。兼務している場合は、belongToDeptsに複数の所属がセットされます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;t.yamada&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;山田　武&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nameFurigana&quot;</span><span class="p">:</span> <span class="s2">&quot;やまだ　たけし&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mailAddress&quot;</span><span class="p">:</span> <span class="s2">&quot;tyamada@friendcorp.co.jp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mobilePhoneNo&quot;</span><span class="p">:</span> <span class="s2">&quot;0904453XXXX&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mobileMailAddress&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;retireDate&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;expireDate&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+    <span class="s2">&quot;belongToDepts&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;announceDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-04-01&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;0310&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;営業部&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;114403&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;titleCode&quot;</span><span class="p">:</span> <span class="s2">&quot;03&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;titleName&quot;</span><span class="p">:</span> <span class="s2">&quot;部長&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deliberationOrder&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;isMainBelong&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;announceDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-04-01&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;0311&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;営業課&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;114403&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;titleCode&quot;</span><span class="p">:</span> <span class="s2">&quot;04&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;titleName&quot;</span><span class="p">:</span> <span class="s2">&quot;課長&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deliberationOrder&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;isMainBelong&quot;</span><span class="p">:</span> <span class="n">false</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2><span class="section-number">14.2. </span>部門情報取得(GET)<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>引数で指定した部門の情報を1件取得します。</p>
+<div class="section" id="id5">
+<h3><span class="section-number">14.2.1. </span>HTTPメソッド<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="id6">
+<h3><span class="section-number">14.2.2. </span>URI<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/department.json</p>
+</div>
+<div class="section" id="id7">
+<h3><span class="section-number">14.2.3. </span>リクエストパラメータ<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>baseDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>組織の発令日を決定するための基準日です。この日付時点の組織図が対象となります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>基準日時点での部門が存在する会社の外部会社コードを指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>deptCode1</p></td>
+<td><p>文字列</p></td>
+<td><p>省略可</p></td>
+<td><p>基準日時点でのcorpCodeの会社での外部部門コード１</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptCode2</p></td>
+<td><p>文字列</p></td>
+<td><p>省略可</p></td>
+<td><p>基準日時点でのcorpCodeの会社での外部部門コード２</p></td>
+</tr>
+<tr class="row-even"><td><p>lowerDept</p></td>
+<td><p>真偽値</p></td>
+<td></td>
+<td><p>true：配下部門を取得する false：自部門のみ取得する（省略値）</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>deptCode1、deptCode2のどちらか、または両方を指定する必要があります</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h3><span class="section-number">14.2.4. </span>レスポンス(JSON)<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>announceDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>基準日時点での発令日</p></td>
+</tr>
+<tr class="row-odd"><td><p>dept</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>自部門の部門情報</p></td>
+</tr>
+<tr class="row-even"><td><p>lowerDepts</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>配下部門情報の配列。再帰的に末端の部門まで取得される。配下部門を取得しない場合、存在しない場合は空の配列。</p></td>
+</tr>
+</tbody>
+</table>
+<p>部門情報（dept、lowerDepts）のJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>deptId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>部門ID</p></td>
+</tr>
+<tr class="row-odd"><td><p>aboveDeptId</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>上位部門の部門ID。上位部門が存在しない場合はnull</p></td>
+</tr>
+<tr class="row-even"><td><p>deptCode1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部部門コード１</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptCode2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部部門コード２</p></td>
+</tr>
+<tr class="row-even"><td><p>deptName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>部門名称</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptShortName</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>部門略称</p></td>
+</tr>
+<tr class="row-even"><td><p>deptKana</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>部門フリガナ</p></td>
+</tr>
+<tr class="row-odd"><td><p>address</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>住所</p></td>
+</tr>
+<tr class="row-even"><td><p>tel</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>電話番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>fax</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>FAX番号</p></td>
+</tr>
+<tr class="row-even"><td><p>location</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>地区名</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptLevel</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>組織階層レベル</p></td>
+</tr>
+<tr class="row-even"><td><p>deptClass</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>“1”:通常部門 “2”:申請部門</p></td>
+</tr>
+<tr class="row-odd"><td><p>decide</p></td>
+<td><p>真偽値</p></td>
+<td><p>必須</p></td>
+<td><p>true:自部門での決裁可 false:自部門での決裁不可（上位委譲）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id9">
+<h3><span class="section-number">14.2.5. </span>リクエストの例<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>&quot;friend00&quot;という外部会社コードの会社で外部部門コード１が&quot;300&quot;の部門の情報を配下部門を含んで取得する</p></li>
+<li><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">baseDate</span><span class="o">=</span><span class="mi">2018</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">16</span><span class="o">&amp;</span><span class="n">corpCode</span><span class="o">=</span><span class="n">friend00</span><span class="o">&amp;</span><span class="n">deptCode1</span><span class="o">=</span><span class="mi">300</span><span class="o">&amp;</span><span class="n">lowerDept</span><span class="o">=</span><span class="n">true</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/organization/department.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h3><span class="section-number">14.2.6. </span>レスポンスの例<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>取得した部門情報が返却されます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;announceDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-04-01&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dept&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;deptId&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s2">&quot;aboveDeptId&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s2">&quot;deptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;300&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+        <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;北陸営業部&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptShortName&quot;</span><span class="p">:</span> <span class="s2">&quot;北営）&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptKana&quot;</span><span class="p">:</span> <span class="s2">&quot;ホクリクエイギョウブ&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;金沢市玉川町１－５&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tel&quot;</span><span class="p">:</span> <span class="s2">&quot;076-233-XXXX&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fax&quot;</span><span class="p">:</span> <span class="s2">&quot;076-233-YYYY&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;金沢&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;deptLevel&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;deptClass&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;decide&quot;</span><span class="p">:</span> <span class="n">true</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;lowerDept&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;deptId&quot;</span><span class="p">:</span> <span class="mi">38</span><span class="p">,</span>
+            <span class="s2">&quot;aboveDeptId&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;310&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;北陸営業一課&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptShortName&quot;</span><span class="p">:</span> <span class="s2">&quot;営一&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptKana&quot;</span><span class="p">:</span> <span class="s2">&quot;ホクリクエイギョウ１カ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;金沢市玉川町１－５&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tel&quot;</span><span class="p">:</span> <span class="s2">&quot;076-233-XXXX&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fax&quot;</span><span class="p">:</span> <span class="s2">&quot;076-233-YYYY&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;金沢&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptLevel&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;deptClass&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;decide&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;deptId&quot;</span><span class="p">:</span> <span class="mi">39</span><span class="p">,</span>
+            <span class="s2">&quot;aboveDeptId&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;320&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;北陸営業二課&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptShortName&quot;</span><span class="p">:</span> <span class="s2">&quot;営二&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptKana&quot;</span><span class="p">:</span> <span class="s2">&quot;ホクリクエイギョウ２カ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;金沢市玉川町１－５&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tel&quot;</span><span class="p">:</span> <span class="s2">&quot;076-233-XXXX&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fax&quot;</span><span class="p">:</span> <span class="s2">&quot;076-233-YYYY&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;金沢&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptLevel&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;deptClass&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;decide&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="put">
+<h2><span class="section-number">14.3. </span>社員情報登録更新(PUT)<a class="headerlink" href="#put" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>社員の情報(更新キーはユーザID)を登録・更新します。</p>
+<p>登録、更新を行う社員をリクエストボディに設定してください。</p>
+<div class="section" id="id11">
+<h3><span class="section-number">14.3.1. </span>HTTPメソッド<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>PUT</p>
+</div>
+<div class="section" id="id12">
+<h3><span class="section-number">14.3.2. </span>URI<a class="headerlink" href="#id12" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/employee.json</p>
+</div>
+<div class="section" id="id13">
+<h3><span class="section-number">14.3.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id13" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rbody</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>社員情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>rbodyで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>userId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ユーザID</p></td>
+</tr>
+<tr class="row-odd"><td><p>empName</p></td>
+<td><p>文字列</p></td>
+<td><p>(※1)(※2)</p></td>
+<td><p>氏名</p></td>
+</tr>
+<tr class="row-even"><td><p>empNameKana</p></td>
+<td><p>文字列</p></td>
+<td><p>(※1)(※2)</p></td>
+<td><p>フリガナ</p></td>
+</tr>
+<tr class="row-odd"><td><p>loginPass</p></td>
+<td><p>文字列</p></td>
+<td><p>(※2)</p></td>
+<td><p>ログインパスワード</p></td>
+</tr>
+<tr class="row-even"><td><p>appPass</p></td>
+<td><p>文字列</p></td>
+<td><p>(※2)</p></td>
+<td><p>承認パスワード</p></td>
+</tr>
+<tr class="row-odd"><td><p>mailAdr</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メールアドレス</p></td>
+</tr>
+<tr class="row-even"><td><p>popServer</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メールサーバー</p></td>
+</tr>
+<tr class="row-odd"><td><p>popUser</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メールアカウント</p></td>
+</tr>
+<tr class="row-even"><td><p>mailPass</p></td>
+<td><p>文字列</p></td>
+<td><p>(※2)</p></td>
+<td><p>メールパスワード</p></td>
+</tr>
+<tr class="row-odd"><td><p>mPhoneno</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>携帯番号</p></td>
+</tr>
+<tr class="row-even"><td><p>mMailAdr</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>携帯電話メールアドレス</p></td>
+</tr>
+<tr class="row-odd"><td><p>adrOpenClass</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>携帯電話メールアドレス公開区分(1:公開する 0:公開しない)</p></td>
+</tr>
+<tr class="row-even"><td><p>extno</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>内線番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>expire</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>ID有効期限</p></td>
+</tr>
+<tr class="row-even"><td><p>retireDate</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>退職日</p></td>
+</tr>
+<tr class="row-odd"><td><p>remark1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ1</p></td>
+</tr>
+<tr class="row-even"><td><p>remark2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ2</p></td>
+</tr>
+<tr class="row-odd"><td><p>remark3</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ3</p></td>
+</tr>
+<tr class="row-even"><td><p>passExpire</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>パスワード失効日</p></td>
+</tr>
+<tr class="row-odd"><td><p>ls01</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス01(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-even"><td><p>ls02</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス02(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ls03</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス03(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-even"><td><p>ls04</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス04(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ls05</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス05(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-even"><td><p>ls06</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス06(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ls07</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス07(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-even"><td><p>ls08</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス08(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ls09</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス09(1:使用する 0:使用しない)</p></td>
+</tr>
+<tr class="row-even"><td><p>ls10</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>ライセンス10(1:使用する 0:使用しない)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line">※1：登録時は必須。</div>
+<div class="line">※2：更新時にパラメタの指定があった場合は必須。</div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3><span class="section-number">14.3.4. </span>レスポンス(JSON)<a class="headerlink" href="#id14" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>beforeCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新前件数(退職済、ID有効期限を過ぎているデータを含む)</p></td>
+</tr>
+<tr class="row-odd"><td><p>inputCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディの件数</p></td>
+</tr>
+<tr class="row-even"><td><p>registCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>登録件数</p></td>
+</tr>
+<tr class="row-odd"><td><p>updateCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新件数</p></td>
+</tr>
+<tr class="row-even"><td><p>afterCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新後件数(退職済、ID有効期限を過ぎているデータを含む)</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id15">
+<h3><span class="section-number">14.3.5. </span>リクエストの例<a class="headerlink" href="#id15" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic">
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">employee</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p></li>
+</ol>
+<ul>
+<li><p>ボディ（登録）※1件目は全項目を指定、2件目は一部項目を指定</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="n">rbody</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;imaoka&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;今岡　修三&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empNameKana&quot;</span><span class="p">:</span> <span class="s2">&quot;イマオカ　シュウゾウ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loginPass&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;appPass&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mailAdr&quot;</span><span class="p">:</span> <span class="s2">&quot;imaoka@friend.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;popServer&quot;</span><span class="p">:</span> <span class="s2">&quot;smtp.friend.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;popUser&quot;</span><span class="p">:</span> <span class="s2">&quot;pop.friend.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mailPass&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mPhoneno&quot;</span><span class="p">:</span> <span class="s2">&quot;090-1111-2222&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mMailAdr&quot;</span><span class="p">:</span> <span class="s2">&quot;imaoka@mobile.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;adrOpenClass&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;extno&quot;</span><span class="p">:</span> <span class="s2">&quot;1234&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;expire&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;retireDate&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;remark1&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;remark2&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;remark3&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;passExpire&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls01&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls02&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls03&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls04&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls05&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls06&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls07&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls08&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls09&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls10&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span>
+
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;ooki&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empName&quot;</span><span class="p">:</span> <span class="s2">&quot;大木　明&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;empNameKana&quot;</span><span class="p">:</span> <span class="s2">&quot;オオキ　アキラ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loginPass&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mPhoneno&quot;</span><span class="p">:</span> <span class="s2">&quot;090-3333-4444&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;adrOpenClass&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;extno&quot;</span><span class="p">:</span> <span class="s2">&quot;1234&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls01&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls02&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls03&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls04&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ls05&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>ボディ（更新）※更新対象項目のみを指定</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="n">rbody</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;imaoka&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loginPass&quot;</span><span class="p">:</span> <span class="s2">&quot;456&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;ooki&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;retireDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-09-30&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id16">
+<h3><span class="section-number">14.3.6. </span>レスポンスの例<a class="headerlink" href="#id16" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;beforeCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;afterCount&quot;</span><span class="p">:</span> <span class="mi">6</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;beforeCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;afterCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（userId=imaoka）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（empNameKana）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（userId=imaoka）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタは日付(YYYY-MM-DD)で指定してください。（expire）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（userId=doi）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;empNameのサイズが最大値を超えています。（最大値＝120、データサイズ＝150）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;同一ユーザIDがJSON内に複数存在します。（userId=imaoka）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id17">
+<h2><span class="section-number">14.4. </span>地区情報登録更新(PUT)<a class="headerlink" href="#id17" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>地区の情報(更新キーは外部地区コード)を登録・更新します。</p>
+<p>有効なすべての地区情報の一覧をリクエストボディに設定してください。</p>
+<p>更新前に有効となっており、リクエストボディに存在しない地区は無効扱いとなります。</p>
+<div class="section" id="id18">
+<h3><span class="section-number">14.4.1. </span>HTTPメソッド<a class="headerlink" href="#id18" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>PUT</p>
+</div>
+<div class="section" id="id19">
+<h3><span class="section-number">14.4.2. </span>URI<a class="headerlink" href="#id19" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/location.json</p>
+</div>
+<div class="section" id="id20">
+<h3><span class="section-number">14.4.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id20" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rbody</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>地区情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>rbodyで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fLocationCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部地区コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>locationName</p></td>
+<td><p>文字列</p></td>
+<td><p>(※1)(※2)</p></td>
+<td><p>地区名称</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line">※1：登録時は必須。</div>
+<div class="line">※2：更新時にパラメタの指定があった場合は必須。</div>
+</div>
+</div>
+<div class="section" id="id21">
+<h3><span class="section-number">14.4.4. </span>レスポンス(JSON)<a class="headerlink" href="#id21" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>beforeCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新前件数(無効データも含む)</p></td>
+</tr>
+<tr class="row-odd"><td><p>inputCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディの件数</p></td>
+</tr>
+<tr class="row-even"><td><p>registCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>登録件数</p></td>
+</tr>
+<tr class="row-odd"><td><p>updateCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新件数</p></td>
+</tr>
+<tr class="row-even"><td><p>afterCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新後件数(無効データも含む)</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id22">
+<h3><span class="section-number">14.4.5. </span>リクエストの例<a class="headerlink" href="#id22" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">location</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="n">rbody</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fLocationCode&quot;</span><span class="p">:</span> <span class="s2">&quot;tokyo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;locationName&quot;</span><span class="p">:</span> <span class="s2">&quot;東京&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fLocationCode&quot;</span><span class="p">:</span> <span class="s2">&quot;oosaka&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id23">
+<h3><span class="section-number">14.4.6. </span>レスポンスの例<a class="headerlink" href="#id23" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;beforeCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;afterCount&quot;</span><span class="p">:</span> <span class="mi">7</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;beforeCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;afterCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fLocationCode=tokyo）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;locationNameのサイズが最大値を超えています。（最大値＝120、データサイズ＝150）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fLocationCode=oosaka）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（locationName）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;同一外部地区コードがJSON内に複数存在します。（fLocationCode=tokyo）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id24">
+<h2><span class="section-number">14.5. </span>役職情報登録更新(PUT)<a class="headerlink" href="#id24" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>役職の情報(更新キーは外部会社コード、外部役職コード)を登録・更新します。</p>
+<p>有効なすべての役職情報の一覧をリクエストボディに設定してください。</p>
+<p>更新前に有効となっており、リクエストボディに存在しない役職は無効扱いとなります。</p>
+<div class="section" id="id25">
+<h3><span class="section-number">14.5.1. </span>HTTPメソッド<a class="headerlink" href="#id25" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>PUT</p>
+</div>
+<div class="section" id="id26">
+<h3><span class="section-number">14.5.2. </span>URI<a class="headerlink" href="#id26" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/titleclass.json</p>
+</div>
+<div class="section" id="id27">
+<h3><span class="section-number">14.5.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id27" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>rbody</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>役職情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>rbodyで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fTitleCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部役職コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>titleName</p></td>
+<td><p>文字列</p></td>
+<td><p>(※1)(※2)</p></td>
+<td><p>役職名</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line">※1：登録時は必須。</div>
+<div class="line">※2：更新時にパラメタの指定があった場合は必須。</div>
+</div>
+</div>
+<div class="section" id="id28">
+<h3><span class="section-number">14.5.4. </span>レスポンス(JSON)<a class="headerlink" href="#id28" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>beforeCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新前件数(無効データも含む)</p></td>
+</tr>
+<tr class="row-odd"><td><p>inputCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディの件数</p></td>
+</tr>
+<tr class="row-even"><td><p>registCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>登録件数</p></td>
+</tr>
+<tr class="row-odd"><td><p>updateCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新件数</p></td>
+</tr>
+<tr class="row-even"><td><p>afterCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新後件数(無効データも含む)</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id29">
+<h3><span class="section-number">14.5.5. </span>リクエストの例<a class="headerlink" href="#id29" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">titleclass</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span><span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rbody&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fTitleCode&quot;</span><span class="p">:</span> <span class="s2">&quot;100&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;titleName&quot;</span><span class="p">:</span> <span class="s2">&quot;社長&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;ftitleCode&quot;</span><span class="p">:</span> <span class="s2">&quot;120&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id30">
+<h3><span class="section-number">14.5.6. </span>レスポンスの例<a class="headerlink" href="#id30" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;beforeCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;afterCount&quot;</span><span class="p">:</span> <span class="mi">7</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;beforeCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;afterCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fTitleCode=100）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;titleNameのサイズが最大値を超えています。（最大値＝80、データサイズ＝90）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fTitleCode=120）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（titleName）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;同一外部役職コードがJSON内に複数存在します。（fTitleCode=100）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id31">
+<h2><span class="section-number">14.6. </span>社員区分情報登録更新(PUT)<a class="headerlink" href="#id31" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>社員区分の情報(更新キーは外部会社コード、外部社員区分コード)を登録・更新します。</p>
+<p>有効なすべての社員区分情報の一覧をリクエストボディに設定してください。</p>
+<p>更新前に有効となっており、リクエストボディに存在しない社員区分は無効扱いとなります。</p>
+<div class="section" id="id32">
+<h3><span class="section-number">14.6.1. </span>HTTPメソッド<a class="headerlink" href="#id32" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>PUT</p>
+</div>
+<div class="section" id="id33">
+<h3><span class="section-number">14.6.2. </span>URI<a class="headerlink" href="#id33" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/empclass.json</p>
+</div>
+<div class="section" id="id34">
+<h3><span class="section-number">14.6.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id34" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>rbody</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>社員区分情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>rbodyで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fClassCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部社員区分コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>className</p></td>
+<td><p>文字列</p></td>
+<td><p>(※1)(※2)</p></td>
+<td><p>社員区分名</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line">※1：登録時は必須。</div>
+<div class="line">※2：更新時にパラメタの指定があった場合は必須。</div>
+</div>
+</div>
+<div class="section" id="id35">
+<h3><span class="section-number">14.6.4. </span>レスポンス(JSON)<a class="headerlink" href="#id35" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>beforeCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新前件数(無効データも含む)</p></td>
+</tr>
+<tr class="row-odd"><td><p>inputCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディの件数</p></td>
+</tr>
+<tr class="row-even"><td><p>registCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>登録件数</p></td>
+</tr>
+<tr class="row-odd"><td><p>updateCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新件数</p></td>
+</tr>
+<tr class="row-even"><td><p>afterCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新後件数(無効データも含む)</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id36">
+<h3><span class="section-number">14.6.5. </span>リクエストの例<a class="headerlink" href="#id36" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">empclass</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span><span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rbody&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fClassCode&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;className&quot;</span><span class="p">:</span> <span class="s2">&quot;正社員&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fClassCode&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id37">
+<h3><span class="section-number">14.6.6. </span>レスポンスの例<a class="headerlink" href="#id37" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;beforeCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;afterCount&quot;</span><span class="p">:</span> <span class="mi">7</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;beforeCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;afterCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fClassCode=1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;fClassCodeのサイズが最大値を超えています。（最大値＝20、データサイズ＝22）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fClassCode=1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（className）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fClassCode=2）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;fClassCodeのサイズが最大値を超えています。（最大値＝20、データサイズ＝22）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;同一外部社員区分コードがJSON内に複数存在します。（fClassCode=1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id38">
+<h2><span class="section-number">14.7. </span>組織図連携<a class="headerlink" href="#id38" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="line-block">
+<div class="line">発令予定の組織図（部門階層、社員所属、審議者）情報を登録します。</div>
+<div class="line">組織図情報については、以下の流れで順に処理を呼び出す必要があります。</div>
+<div class="line"><br /></div>
+<div class="line-block">
+<div class="line">Step1：予定組織図の作成</div>
+<div class="line-block">
+<div class="line">→会社、発令日をパラメタとして、現行組織図をコピーして予定組織図を仮データを作成します。</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">Step2：部門情報登録更新</div>
+<div class="line-block">
+<div class="line">→部門情報をを予定組織図の仮データに更新します。</div>
+<div class="line-block">
+<div class="line">更新を行う場合は更新対象の部門のみではなく、すべての部門情報をリクエストボディにセットする必要があります</div>
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="line">Step3：社員所属情報登録更新</div>
+<div class="line-block">
+<div class="line">→社員の所属情報を予定組織図の仮データに更新します。</div>
+<div class="line-block">
+<div class="line">更新を行う場合は異動対象社員のすべての所属情報（兼務を含む）をリクエストボディにセットする必要があります</div>
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="line">Step4：審議者情報登録更新</div>
+<div class="line-block">
+<div class="line">→部門の審議者情報を予定組織図の仮データに更新します。</div>
+<div class="line-block">
+<div class="line">更新を行う場合は更新対象部門のすべての審議者情報をリクエストボディにセットする必要があります</div>
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="line">Step9：予定組織図の作成完了</div>
+<div class="line-block">
+<div class="line">→予定組織図の仮データを予定組織図情報として更新します。</div>
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="line">Step2～Step4にてエラーが発生した場合には「StepZ：予定組織図の破棄」を呼び出し、予定組織図の仮データを破棄してください。</div>
+</div>
+<div class="section" id="step1-put">
+<h3><span class="section-number">14.7.1. </span>Step1：予定組織図の作成(PUT)<a class="headerlink" href="#step1-put" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>会社、発令日をパラメタとして、現行組織図をコピーして予定組織図を仮データを作成します。</p>
+<div class="section" id="id39">
+<h4><span class="section-number">14.7.1.1. </span>HTTPメソッド<a class="headerlink" href="#id39" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>PUT</p>
+</div>
+<div class="section" id="id40">
+<h4><span class="section-number">14.7.1.2. </span>URI<a class="headerlink" href="#id40" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/orgimport.json</p>
+</div>
+<div class="section" id="id41">
+<h4><span class="section-number">14.7.1.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id41" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>aDate</p></td>
+<td><p>日付</p></td>
+<td><p>必須</p></td>
+<td><p>発令日（YYYY-MM-DD形式）</p></td>
+</tr>
+<tr class="row-even"><td><p>nowOption</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>現行組織図有無 (0：現行組織図なし(会社として新規)、1：現行組織図あり)</p></td>
+</tr>
+<tr class="row-odd"><td><p>option</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>作成オプション (0：エラーとする、1：予定組織図を破棄する)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id42">
+<h4><span class="section-number">14.7.1.4. </span>レスポンス(JSON)<a class="headerlink" href="#id42" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>jobId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ジョブID（Step2以降で使用）</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id43">
+<h4><span class="section-number">14.7.1.5. </span>リクエストの例<a class="headerlink" href="#id43" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">orgimport</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;aDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-09-30&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nowOption&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;option&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id44">
+<h4><span class="section-number">14.7.1.6. </span>レスポンスの例<a class="headerlink" href="#id44" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;jobId&quot;</span><span class="p">:</span> <span class="mi">10</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;WSA00030SE&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;現行組織図が存在します。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="step2-put">
+<h3><span class="section-number">14.7.2. </span>Step2：部門情報登録更新(PUT)<a class="headerlink" href="#step2-put" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>部門情報をを予定組織図の仮データに更新します。</p>
+<div class="section" id="id45">
+<h4><span class="section-number">14.7.2.1. </span>HTTPメソッド<a class="headerlink" href="#id45" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>PUT</p>
+</div>
+<div class="section" id="id46">
+<h4><span class="section-number">14.7.2.2. </span>URI<a class="headerlink" href="#id46" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/department.json</p>
+</div>
+<div class="section" id="id47">
+<h4><span class="section-number">14.7.2.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id47" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>jobId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ジョブID</p></td>
+</tr>
+<tr class="row-even"><td><p>rbody</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>部門情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>rbodyで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fDeptCode1</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部部門コード1 (キー項目)</p></td>
+</tr>
+<tr class="row-odd"><td><p>fDeptCode2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部部門コード2</p></td>
+</tr>
+<tr class="row-even"><td><p>deptClass</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>部門種別 (1：部門、2：申請部門)</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptName</p></td>
+<td><p>文字列</p></td>
+<td><p>(※1)(※2)</p></td>
+<td><p>部門名称</p></td>
+</tr>
+<tr class="row-even"><td><p>deptShortName</p></td>
+<td><p>文字列</p></td>
+<td><p>(※1)(※2)</p></td>
+<td><p>部門略称名</p></td>
+</tr>
+<tr class="row-odd"><td><p>deptKana</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>フリガナ</p></td>
+</tr>
+<tr class="row-even"><td><p>remark1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ1</p></td>
+</tr>
+<tr class="row-odd"><td><p>remark2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ2</p></td>
+</tr>
+<tr class="row-even"><td><p>remark3</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ3</p></td>
+</tr>
+<tr class="row-odd"><td><p>decide</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>決裁権限（0:なし、1:あり）</p></td>
+</tr>
+<tr class="row-even"><td><p>address</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>住所</p></td>
+</tr>
+<tr class="row-odd"><td><p>tel</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>電話番号</p></td>
+</tr>
+<tr class="row-even"><td><p>fax</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>FAX番号</p></td>
+</tr>
+<tr class="row-odd"><td><p>fLocationCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>地区コード</p></td>
+</tr>
+<tr class="row-even"><td><p>deptLevel</p></td>
+<td><p>数値</p></td>
+<td></td>
+<td><p>組織階層レベル</p></td>
+</tr>
+<tr class="row-odd"><td><p>aboveDeptCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>上位部門コード</p></td>
+</tr>
+<tr class="row-even"><td><p>dispOrder</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>表示順</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line">※1：登録時は必須。</div>
+<div class="line">※2：更新時にパラメタの指定があった場合は必須。</div>
+</div>
+</div>
+<div class="section" id="id48">
+<h4><span class="section-number">14.7.2.4. </span>レスポンス(JSON)<a class="headerlink" href="#id48" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inputCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディ.rbodyの件数（部門数）</p></td>
+</tr>
+<tr class="row-odd"><td><p>registCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>登録件数（登録対象となったボディ.rbodyの件数）</p></td>
+</tr>
+<tr class="row-even"><td><p>updateCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新件数（更新対象となったボディ.rbodyの件数）</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id49">
+<h4><span class="section-number">14.7.2.5. </span>リクエストの例<a class="headerlink" href="#id49" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">department</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;jobId&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;rbody&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1110&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fDeptCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deptClass&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;首都圏第一営業部&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptShortName&quot;</span><span class="p">:</span> <span class="s2">&quot;首営部一&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptKana&quot;</span><span class="p">:</span> <span class="s2">&quot;フリガナ&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;remark1&quot;</span><span class="p">:</span> <span class="s2">&quot;memo1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;remark2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;remark3&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;decide&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;東京都千代田区神田神保町2-6-36&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tel&quot;</span><span class="p">:</span> <span class="s2">&quot;03-2222-3333&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fax&quot;</span><span class="p">:</span> <span class="s2">&quot;03-2222-4444&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fLocationCode&quot;</span><span class="p">:</span> <span class="s2">&quot;tokyo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptLevel&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;aboveDeptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;1100&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dispOrder&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1110&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fDeptCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;deptClass&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="p">:</span> <span class="s2">&quot;首都圏第二営業部&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptShortName&quot;</span><span class="p">:</span> <span class="s2">&quot;首営部二&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;decide&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deptLevel&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;aboveDeptCode&quot;</span><span class="p">:</span> <span class="s2">&quot;1100&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dispOrder&quot;</span><span class="p">:</span> <span class="mi">2</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id50">
+<h4><span class="section-number">14.7.2.6. </span>レスポンスの例<a class="headerlink" href="#id50" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;registCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;updateCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1100）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（deptClass）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1100）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタは数値で指定してください。（deptLevel）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1110）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;fDeptCode2のサイズが最大値を超えています。（最大値＝20、データサイズ＝30）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1100）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;部門種別には1か2を指定してください。（fDeptCode1=1110、deptClass=3）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;件数が100を超えているため、処理できません。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="step3-put">
+<h3><span class="section-number">14.7.3. </span>Step3：社員所属情報登録更新(PUT)<a class="headerlink" href="#step3-put" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>社員の所属情報を予定組織図の仮データに更新します。</p>
+<div class="section" id="id51">
+<h4><span class="section-number">14.7.3.1. </span>HTTPメソッド<a class="headerlink" href="#id51" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>PUT</p>
+</div>
+<div class="section" id="id52">
+<h4><span class="section-number">14.7.3.2. </span>URI<a class="headerlink" href="#id52" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/belong.json</p>
+</div>
+<div class="section" id="id53">
+<h4><span class="section-number">14.7.3.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id53" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>jobId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ジョブID</p></td>
+</tr>
+<tr class="row-even"><td><p>rbody</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>部門情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>rbodyで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>userId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ユーザID (キー項目)</p></td>
+</tr>
+<tr class="row-odd"><td><p>fEmpCode1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部連携社員コード1</p></td>
+</tr>
+<tr class="row-even"><td><p>fEmpCode2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部連携社員コード2</p></td>
+</tr>
+<tr class="row-odd"><td><p>detail</p></td>
+<td><p>JSON</p></td>
+<td><p>(※1)</p></td>
+<td><p>社員所属情報詳細の配列</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line">※1：登録、更新時は必須。</div>
+</div>
+<p>detailで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fDeptCode1</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部部門コード (キー項目)</p></td>
+</tr>
+<tr class="row-odd"><td><p>fClassCode</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部社員区分コード</p></td>
+</tr>
+<tr class="row-even"><td><p>fTitleCode</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部役職コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>belongClass</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>兼務区分 (0：主所属 1：兼務)</p></td>
+</tr>
+<tr class="row-even"><td><p>fAppDeptCode1</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部申請部門コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>remark1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ1</p></td>
+</tr>
+<tr class="row-even"><td><p>remark2</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ2</p></td>
+</tr>
+<tr class="row-odd"><td><p>remark3</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>メモ3</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id54">
+<h4><span class="section-number">14.7.3.4. </span>レスポンス(JSON)<a class="headerlink" href="#id54" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inputCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディ.rbodyの件数（異動対象の社員数となる）※所属削除となるデータも含まれる</p></td>
+</tr>
+<tr class="row-odd"><td><p>inputDtlCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディ.rbody.detailの件数（異動対象の所属データの件数となる）※所属削除となるデータは含まない</p></td>
+</tr>
+<tr class="row-even"><td><p>registDtlCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>登録件数（登録対象となったボディ.rbody.detailの件数）</p></td>
+</tr>
+<tr class="row-odd"><td><p>updateDtlCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新件数（更新対象となったボディ.rbody.detailの件数）</p></td>
+</tr>
+<tr class="row-even"><td><p>exclusionCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>除外件数（除外対象となったボディ.rbodyの件数）</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id55">
+<h4><span class="section-number">14.7.3.5. </span>リクエストの例<a class="headerlink" href="#id55" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">belong</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;jobId&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;rbody&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;imaoka&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fEmpCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;fr-imaoka&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fEmpCode2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+            <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;fDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1100&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fClassCode&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fTitleCode&quot;</span><span class="p">:</span> <span class="s2">&quot;200&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;belongClass&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fAppDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1100&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;remark1&quot;</span><span class="p">:</span> <span class="s2">&quot;memo1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;remark2&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+                    <span class="s2">&quot;remark3&quot;</span><span class="p">:</span> <span class="n">null</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;fDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1110&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fClassCode&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fTitleCode&quot;</span><span class="p">:</span> <span class="s2">&quot;210&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;belongClass&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;fAppDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1110&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;userId&quot;</span><span class="p">:</span> <span class="s2">&quot;doi&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id56">
+<h4><span class="section-number">14.7.3.6. </span>レスポンスの例<a class="headerlink" href="#id56" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputDtlCount&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;registDtlCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;updateDtlCount&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;exclusionCount&quot;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputDtlCount&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;registDtlCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;updateDtlCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;exclusionCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（userId=imaoka、fDeptCode1=1100）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（fTitleCode）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（userId=imaoka、fDeptCode1=1100）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot; belongClassのサイズが最大値を超えています。（最大値＝1、データサイズ＝2）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（userId=imaoka、fDeptCode1=1110）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot; belongClassのサイズが最大値を超えています。（最大値＝1、データサイズ＝2）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（userId=doi、fDeptCode1=1110）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot; 兼務区分には1か2を指定してください。（userId=doi、fDeptCode1=1110、belongClass=0）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（userId=doi、fDeptCode1=1110）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;同一ユーザで外部部門コードが重複しています。（userId=doi、fDeptCode1=1110）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;件数が100を超えているため、処理できません。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="step4-put">
+<h3><span class="section-number">14.7.4. </span>Step4：審議者情報登録更新(PUT)<a class="headerlink" href="#step4-put" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>部門の審議者情報を予定組織図の仮データに更新します。</p>
+<div class="section" id="id57">
+<h4><span class="section-number">14.7.4.1. </span>HTTPメソッド<a class="headerlink" href="#id57" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>PUT</p>
+</div>
+<div class="section" id="id58">
+<h4><span class="section-number">14.7.4.2. </span>URI<a class="headerlink" href="#id58" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/deliberation.json</p>
+</div>
+<div class="section" id="id59">
+<h4><span class="section-number">14.7.4.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id59" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>jobId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ジョブID</p></td>
+</tr>
+<tr class="row-even"><td><p>rbody</p></td>
+<td><p>JSON</p></td>
+<td><p>必須</p></td>
+<td><p>審議者情報の配列</p></td>
+</tr>
+</tbody>
+</table>
+<p>rbodyで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fDeptCode1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>外部連携社員コード1</p></td>
+</tr>
+<tr class="row-odd"><td><p>detail</p></td>
+<td><p>JSON</p></td>
+<td><p>(※1)</p></td>
+<td><p>審議者情報詳細の配列</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line">※1：登録、更新時は必須。</div>
+</div>
+<p>detailで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>appOrder</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>承認順序</p></td>
+</tr>
+<tr class="row-odd"><td><p>appDeptCode1</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>承認者外部部門コード</p></td>
+</tr>
+<tr class="row-even"><td><p>appUserId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>承認者ユーザID</p></td>
+</tr>
+<tr class="row-odd"><td><p>p1DeptCode1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者1外部部門コード</p></td>
+</tr>
+<tr class="row-even"><td><p>p1UserId</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者1ユーザID</p></td>
+</tr>
+<tr class="row-odd"><td><p>p2DeptCode1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者2外部部門コード</p></td>
+</tr>
+<tr class="row-even"><td><p>p2UserId</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者2ユーザID</p></td>
+</tr>
+<tr class="row-odd"><td><p>p3DeptCode1</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者3外部部門コード</p></td>
+</tr>
+<tr class="row-even"><td><p>p3UserId</p></td>
+<td><p>文字列</p></td>
+<td></td>
+<td><p>代行者3ユーザID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id60">
+<h4><span class="section-number">14.7.4.4. </span>レスポンス(JSON)<a class="headerlink" href="#id60" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inputCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディ.rbodyの件数（異動対象の部門数となる）※審議者削除となるデータも含まれる</p></td>
+</tr>
+<tr class="row-odd"><td><p>inputDtlCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ボディ.rbody.detailの件数（異動対象の審議者データの件数となる）※審議者削除となるデータは含まない</p></td>
+</tr>
+<tr class="row-even"><td><p>registDtlCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>登録件数（登録対象となったボディ.rbody.detailの件数）</p></td>
+</tr>
+<tr class="row-odd"><td><p>updateDtlCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>更新件数（更新対象となったボディ.rbody.detailの件数）</p></td>
+</tr>
+<tr class="row-even"><td><p>exclusionCount</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>除外件数（除外対象となったボディ.rbodyの件数）</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id61">
+<h4><span class="section-number">14.7.4.5. </span>リクエストの例<a class="headerlink" href="#id61" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">deliberation</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;jobId&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;rbody&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1110&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;appOrder&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">&quot;appDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1110&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;appUserId&quot;</span><span class="p">:</span> <span class="s2">&quot;imaoka&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;p1DeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1111&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;p1UserId&quot;</span><span class="p">:</span> <span class="s2">&quot;doi&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;p2DeptCode1&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+                    <span class="s2">&quot;p2UserId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+                    <span class="s2">&quot;p3DeptCode1&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+                    <span class="s2">&quot;p3UserId&quot;</span><span class="p">:</span> <span class="n">null</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;appOrder&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="s2">&quot;appDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1110&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;appUserId&quot;</span><span class="p">:</span> <span class="s2">&quot;imaoka&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;p1DeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1112&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;p1UserId&quot;</span><span class="p">:</span> <span class="s2">&quot;ooki&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;p2DeptCode1&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+                    <span class="s2">&quot;p2UserId&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+                    <span class="s2">&quot;p3DeptCode1&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+                    <span class="s2">&quot;p3UserId&quot;</span><span class="p">:</span> <span class="n">null</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;fDeptCode1&quot;</span><span class="p">:</span> <span class="s2">&quot;1190&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id62">
+<h4><span class="section-number">14.7.4.6. </span>レスポンスの例<a class="headerlink" href="#id62" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputDtlCount&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;registDtlCount&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;updateDtlCount&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;exclusionCount&quot;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="p">{</span>
+    <span class="s2">&quot;inputCount&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;inputDtlCount&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;registDtlCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;updateDtlCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;exclusionCount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1110、appOrder=1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（appDeptCode1）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1110、appOrder=1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（appUserId）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1110、appOrder=2）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタを指定してください。（appDeptCode1）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1110、appOrder=1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;代行者１のユーザIDが存在しないか誤っています。（fDeptCode1=1110、appOrder=1、p1UserId=nishi）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パラメタに誤りがあります。（fDeptCode1=1110、appOrder=1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;同一外部申請部門で承認順序が重複しています。（fDeptCode1=1110、appOrder=1）&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot; WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;件数が100を超えているため、処理できません。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="step9-put">
+<h3><span class="section-number">14.7.5. </span>Step9：予定組織図の作成完了(PUT)<a class="headerlink" href="#step9-put" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>予定組織図の仮データを予定組織図情報として更新します。</p>
+<div class="section" id="id63">
+<h4><span class="section-number">14.7.5.1. </span>HTTPメソッド<a class="headerlink" href="#id63" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>PUT</p>
+</div>
+<div class="section" id="id64">
+<h4><span class="section-number">14.7.5.2. </span>URI<a class="headerlink" href="#id64" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/orgimportfin.json</p>
+</div>
+<div class="section" id="id65">
+<h4><span class="section-number">14.7.5.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id65" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>jobId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ジョブID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id66">
+<h4><span class="section-number">14.7.5.4. </span>レスポンス(JSON)<a class="headerlink" href="#id66" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>aDate</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>発令日</p></td>
+</tr>
+<tr class="row-odd"><td><p>changeInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>更新情報（部門の削除や所属の変更に伴い、自動変更を行った情報）</p></td>
+</tr>
+<tr class="row-even"><td><p>addInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>追加情報（作成完了後に審議者が不在となった部門と所属社員が0名となった部門、グループの情報）</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>changeInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+<p>addInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id67">
+<h4><span class="section-number">14.7.5.5. </span>リクエストの例<a class="headerlink" href="#id67" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">orgimportfin</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;jobId&quot;</span><span class="p">:</span> <span class="mi">10</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id68">
+<h4><span class="section-number">14.7.5.6. </span>レスポンスの例<a class="headerlink" href="#id68" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;aDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-09-30&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;changeInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;Group（B-1-1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;削除部門内の組織図グループを上位部門なしのグループに変更しました。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;部門=大阪営業所、グループ=大阪委員会&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;MainBelong（B-2-1）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;主所属情報が削除されたため、設定しました。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;社員=真弓　昌孝、削除所属部門=大阪営業所、変更後主所属部門=名古屋営業所&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;addInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;Dept（EmpNothing）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;所属社員が設定されていません。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;部門=東日本営業部&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;Dept（DelibNothing）&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;審議者が設定されていません。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;部門=東日本営業部&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;WSA00030SE &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;インポート処理にてエラーが発生しているため予定組織図の作成完了処理を実行できません。システム管理者に問い合わせてください。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="stepz-put">
+<h3><span class="section-number">14.7.6. </span>StepZ：予定組織図の破棄(PUT)<a class="headerlink" href="#stepz-put" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>予定組織図の仮データを破棄します。</p>
+<div class="section" id="id69">
+<h4><span class="section-number">14.7.6.1. </span>HTTPメソッド<a class="headerlink" href="#id69" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>PUT</p>
+</div>
+<div class="section" id="id70">
+<h4><span class="section-number">14.7.6.2. </span>URI<a class="headerlink" href="#id70" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/organization/orgimportdel.json</p>
+</div>
+<div class="section" id="id71">
+<h4><span class="section-number">14.7.6.3. </span>リクエストボディ(JSON)<a class="headerlink" href="#id71" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>外部会社コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>jobId</p></td>
+<td><p>数値</p></td>
+<td><p>必須</p></td>
+<td><p>ジョブID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id72">
+<h4><span class="section-number">14.7.6.4. </span>レスポンス(JSON)<a class="headerlink" href="#id72" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>aDate</p></td>
+<td><p>日付</p></td>
+<td></td>
+<td><p>発令日</p></td>
+</tr>
+<tr class="row-odd"><td><p>errorInfo</p></td>
+<td><p>JSON</p></td>
+<td></td>
+<td><p>エラー情報</p></td>
+</tr>
+</tbody>
+</table>
+<p>errorInfoで指定するJSON型</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>詳細</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id73">
+<h4><span class="section-number">14.7.6.5. </span>リクエストの例<a class="headerlink" href="#id73" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">organization</span><span class="o">/</span><span class="n">orgimportdel</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">23</span><span class="n">b2a870</span><span class="o">-</span><span class="mi">6</span><span class="n">bd4</span><span class="o">-</span><span class="mi">413</span><span class="n">c</span><span class="o">-</span><span class="n">a467</span><span class="o">-</span><span class="n">c4c83f6da1f0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストボディ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;corpId&quot;</span><span class="p">:</span> <span class="s2">&quot;friend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;jobId&quot;</span><span class="p">:</span> <span class="mi">10</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id74">
+<h4><span class="section-number">14.7.6.6. </span>レスポンスの例<a class="headerlink" href="#id74" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<ul>
+<li><p>正常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;aDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-09-30&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>異常時</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;errorInfo&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;WSA00030SE&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;無効なジョブIDです。システム管理者に問い合わせてください。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="12_3_rest_assistmessage.html" class="btn btn-neutral float-right" title="15. REST アシストメッセージAPI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="12_1_rest_webdb.html" class="btn btn-neutral float-left" title="13. REST WebデータベースAPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

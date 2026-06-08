@@ -1,0 +1,86 @@
+==============================================
+付録C 開発したpe4j-earのサーバーへのデプロイ
+==============================================
+
+この章ではアドオン開発したpe4j-ear.earを運用サーバーにデプロイする手順について説明します。
+
+Glassfish(Payara)をサーバーとして利用している場合
+----------------------------------------------------
+
+#. pe4j-ear.ear をPE4J\\PEWEB\\ear フォルダにコピーします。
+
+    ※ 既にあるファイルはバックアップ等を行ってください。
+
+#. コマンドプロンプトを開き PE4J\\PEWEB\\insttool フォルダに移動します。
+
+#. 状況に応じて、デプロイのためのコマンドを実行してください。
+
+【すでに ear が配備済みの場合】
+
+    下記コマンドを実行してpe4j-earを再デプロイします。 ::
+
+        inst pe4j-1.reDeploy
+        inst pe4j-2.reDeploy ※POWER EGGのプロセス数が2の場合のみ
+
+【ear が配備解除された状態の場合】
+
+    下記の手順を順に実行してください。
+
+    サービスを停止 ::
+
+        inst pe4j-1.stopSVC
+        inst pe4j-2.stopSVC  ※POWER EGGのプロセス数が2の場合のみ
+
+    ※ 既に停止している場合はエラーが発生しますが無視してください。
+
+    以下の2つのキャッシュフォルダを削除してください。
+
+    - PE4J\\payara41\\glassfish\\domains\\pe4j-1\\generated
+    - PE4J\\payara41\\glassfish\\domains\\pe4j-1\\osgi-cache
+
+    POWER EGGのプロセス数が2の場合は、以下のキャッシュフォルダも削除してください。
+
+    - PE4J\\payara41\\glassfish\\domains\\pe4j-2\\generated
+    - PE4J\\payara41\\glassfish\\domains\\pe4j-2\\osgi-cache
+
+    サービスを起動してデプロイ ::
+
+        inst pe4j-1.startSVC
+        inst pe4j-1.deploy
+        inst pe4j-2.startSVC  ※POWER EGGのプロセス数が2の場合のみ
+        inst pe4j-2.deploy    ※POWER EGGのプロセス数が2の場合のみ
+
+
+Interstageをサーバとして利用している場合
+-------------------------------------------
+
+#. pe4j-ear.ear をPE4J\\PEWEB\\ear フォルダにコピーします。
+
+    ※ 既にあるファイルはバックアップ等を行ってください。
+
+#. コマンドプロンプトを開き PE4J\\PEWEB\\insttool フォルダに移動します。
+
+#. 状況に応じて、デプロイのためのコマンドを実行してください。
+
+【すでに ear が配備済みの場合】
+
+    下記コマンドを実行してpe4j-earを再デプロイします。 ::
+
+        inst pe4j.reDeploy
+
+【ear が配備解除された状態の場合】
+
+    下記の手順を順に実行してください。
+
+    pe4jクラスタを停止 ::
+
+        inst pe4j.stopCluster        
+
+    キャッシュフォルダを削除 ::
+
+        inst deleteCacheAll
+
+    デプロイしてクラスタを起動 ::
+
+        inst pe4j.deploy
+        inst pe4j.startCluster

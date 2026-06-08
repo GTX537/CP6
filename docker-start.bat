@@ -16,7 +16,7 @@ echo [4/4] Done!
 echo.
 echo   Frontend:  http://localhost:8080
 echo   Backend:   http://localhost:9991
-echo   SQL Server: localhost,1433  (sa / Cp6@Docker2024!)
+echo   SQL Server: localhost,1433  (sa / see .env MSSQL_SA_PASSWORD)
 echo   Redis:     localhost:6379
 echo.
 pause

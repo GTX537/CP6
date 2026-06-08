@@ -1,0 +1,617 @@
+付録E. OracleデータベースからPostgreSQL(Symfoware)への移行
+============================================================
+
+POWER EGG2.0 Ver2.10cでは、Ver2.8からVer2.8cで行われたデータベースの
+変更(Oracle -> PostgreSQL)の他に、Javaフレームワークの変更(JavaEE5 + 
+JBoss seam --> JavaEE7)が行われています。
+
+Ver2.8, Ver2.9以前のPOWER EGGを対象に開発したアドオンプログラムを、Ver3.2c
+に対応させるためには、データベースの移行とJavaフレームワークの移行
+を行う必要があります。
+
+データ型の移行
+---------------
+
+OracleとPostgreSQLでは、利用可能なデータ型に差異があります。
+既存のOracleアドオンをPostgreSQLに移植するには、テーブルの列の
+型を見直す必要があります。
+
+- NUMBER型
+
+    Oracleでは基本的にNUMBER型を利用していますが、PostgreSQLでは、
+    整数、小数点付きなどでデータ型が異なります。
+    特に、整数を格納する型としてはSMALLINT, INTEGER, BIGINT等格納可能な
+    数値範囲で複数のデータ型がありますので、必要な精度に応じてデータ型
+    を変更してください。
+
+- NUMBER(1)またはCHAR(1)をJavaのBooleanにマッピングしている場合
+
+    OracleでNUMBER(1)またはCHAR(1)の列をEntityマッピングでBoolean
+    にマッピングしている場合、PostgreSQLのデータ型はbooleanに移行
+    します。
+
+- VARCHAR2型
+
+    OracleのVARCHAR2はVARCHARに移行します。
+    なお、OracleのVARCHAR2はバイト数で列長を指定しますが、PostgreSQL
+    では、文字数となります。
+
+- BLOB型
+
+    OracleのBLOB型はLargeObject(OID型)に移行します。
+    PostgreSQLではBYTEAという型もあり、バイナリデータを格納できますが、
+    BYTEA型にサイズの大きなバイナリデータを格納すると、SELECT等のSQLを
+    発行したときにデータがDBサーバーのメモリ上に読み込まれ、DBサーバーの
+    メモリ不足によるシステム障害等が発生する可能性があるので、BYTEAでなく
+    OID側に移行することを推奨します。
+    なお、OID型に移行した場合はプログラムコードにOID型のデータ操作を行う
+    ための命令を追加する必要がありますが、詳細についてはPostgreSQLのマニュアル
+    をご確認ください。
+
+- CLOB
+
+    CLOBはTEXT型に移行します。
+
+- DATE
+
+    Oracleでは、DATE型の列に、秒までの精度の日時を格納できますが、
+    PostgreSQLのDATE型は、日付の精度までしか格納できません。
+    Oracleで時刻までの精度でDATE型を利用している場合、PostgreSQL
+    ではDATE型でなくDATETIME型を利用する必要があります。
+
+
+
+SQL・Javaプログラムの移植
+---------------------------
+
+OracleとPostgreSQLの間のSQLの互換性は高いですが、一部非互換があります。
+非互換があるSQL記述の変更が必要になります。
+
+この節では主な書き換えポイントについて記述します。
+
+#. 暗黙の型変換
+
+    - Oracle
+
+    .. code :: SQL
+
+        String sql = 
+        "SELECT Z.* FROM ZT2_CLASS Z " +
+        " WHERE Z.COMMONNO = ?1 AND   Z.USAGEFLAG = 1 " +
+        " ORDER BY Z.LISTORDER ASC";
+        Query query = em.createNativeQuery(sql,ClassInfo.class);
+
+    - PostgreSQL
+
+    .. code :: SQL
+
+        String sql = 
+        "SELECT Z.* FROM ZT2_CLASS Z " +
+        " WHERE Z.COMMONNO = ?1 AND   Z.USAGEFLAG = ‘1’ " +
+        " ORDER BY Z.LISTORDER ASC";
+        Query query = em.createNativeQuery(sql,ClassInfo.class);
+
+    .. note ::
+
+        Oracleでは、文字列型(CHAR)の項目の条件に数値で = 1などを指定していて
+        もエラーになりませんが、PostgreSQLは以下の様な型変換エラーになるので
+        該当の箇所を修正する必要があります。
+
+        ERROR: operator does not exist: character = integer
+        ヒント: No operator matches the given name and argument type(s). 
+        You might need to add explicit type casts.
+
+#. Native Queryからの戻り値の違いの修正
+
+    - Oracle
+
+    .. code :: sql
+
+        String sql = “select count(*) from ht2_employee”;
+        Vector result = (Vector)em.createNativeQuery(query).getSingleResult();
+        return ((BigDecimal)result.get(0)).longValue();
+
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        String sql = “select count(*) from ht2_employee”;
+        Vector result = (Vector)em.createNativeQuery(query).getSingleResult();
+        return ((Long)result.get(0)).longValue();
+
+    .. note ::
+
+        PostgreSQLでは、select countのSQLのNativeQueryの結果はBigDecimalでなくLong
+        になります。修正しないとClassCastExceptionが発生します。
+
+#. ROWNUMを利用しているSQLの移植
+
+    - Oracle
+
+    .. code :: sql
+
+        SELECT …  WHERE ROWNUM < 2
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        SELECT … LIMIT 1 OFFSET 0
+
+#. 再帰SQL
+
+    Oracleで"connect by prior"句を利用し、再帰SQLを実行している場合、
+    PostgreSQLでは、"with recursive"句を利用したSQLに書き換える必要があります。
+
+    - Oracle
+
+    .. code :: sql
+
+        SELECT 
+            LEVEL, 
+            ZT2_MY_MENU.* 
+        FROM 
+            ZT2_MY_MENU  
+        WHERE 
+            ACTIONTYPE = '2' AND EMPID = ?1 
+        START WITH 
+            PARENTMENUID = 0 AND MENUID <> ?2 
+        CONNECT BY PRIOR 
+            MENUID = PARENTMENUID  AND MENUID <> ?2 
+        ORDER SIBLINGS BY ZT2_MY_MENU.DISPORDER
+
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        WITH RECURSIVE tmp AS ( 
+        select  menuid, empid .. ,row_number() over(order by disporder) as rn from zt2_my_menu), 
+        rec(menuid , empid …, path , sortarray) as ( 
+        select menuid , empid …, array[menuid] 
+        , array[rn] from tmp where actiontype='2'  
+        and parentmenuid=0 
+        and empid=?1 
+        union all 
+        select b.menuid, b.empid …, a.path || b.menuid , a.sortarray || b.rn from rec a, tmp b WHERE a.menuid=b.parentmenuid 
+        ) select array_length(path,1) as level, menuid 
+        … from rec order by sortarray; 
+
+#. 日付、時刻の演算
+
+    Oralceは、DATE, DATETIMEに対して +1 などの演算が可能ですが、
+    PostgreSQLでは、明示的にinterval型にキャストしないと計算できません。
+
+    - Oracle
+
+    .. code :: sql
+
+        TO_CHAR(CONVERTENDDATETIME - 1, 'YYYYMMDD')
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        TO_CHAR(CONVERTENDDATETIME - cast('1 days' as interval), 'YYYYMMDD')
+
+    ADD_MONTH関数はPostgreSQLにはありませんので、intervalを利用した計算に書きかえます。
+
+    - Oracle
+
+    .. code :: sql
+
+        select to_char(add_months(sysdate, 1), 'YYYY/MM/DD') from dual;
+    
+    - PostgreSQL
+
+    .. code :: sql
+
+        select to_char(clock_timestamp() + interval '1 months', 'YYYY/MM/DD');
+
+#. DUAL表を利用している部分
+
+    PostgreSQLにはDUAL表は存在せず、FROMをつけずに直接値をSELECTします。
+
+    - Oracle
+
+    .. code :: sql
+
+        SELECT ‘1’ FROM DUAL;
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        SELECT ‘1’;
+    
+#. (+)による外部結合
+
+    PostgreSQLでは、"(+)"を利用した外部結合はサポートしていないので、
+    OUTER JOINを使ったSQLに書き換える必要があります。
+
+#. BLOB(LargeObject)へのJavaからのアクセス
+
+    PostgreSQLでは、バイナリデータはLargeObject(OID型)に格納します。
+    LargeObjectに格納されているデータの取得は基本的にOracleの
+    BLOB型に格納されているデータの取得と同一です。
+    
+    差異がある部分としては、LargeObjectのデータはデータベース上の
+    特殊な領域に格納されるため、データの登録、削除
+    はOID型の列を保持しているテーブルへの書き込みとは別に
+    行う必要があるという点です。
+
+    POWER EGGでは、OID型のバイナリデータの主キー(OID値)の管理に
+    "qs2_lob_oid"というシーケンスを利用しています。
+
+    LargeObjectデータを新規に登録する場合は、lo_create()というPostgreSQLの
+    関数を利用します。
+
+    また、LargeObjectのデータを削除する場合は、lo_unlink()というPostgreSQLの
+    関数を利用します。
+
+    lo_unlink()を呼び出さずに、OID型の値を保持しているレコードを削除すると、
+    登録済みのLargeObjectは削除されずデータベースに残り続けるので注意してください。
+    
+#. DECODE関数
+
+    DECODE関数はPostgreSQLには無いので、DECODEを利用している場合は、
+    CASE文に書き換える必要があります。
+
+    - Oracle
+
+    .. code :: sql
+
+        DECODE(A,’B’,’C’,’D’);
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        CASE A WHEN ‘B’ THEN ‘C’ ELSE ‘D’ END;
+    
+#. NVL関数
+
+    NVL関数はPostgreSQLには無いので、COLLEASE関数に書き換えます。
+
+    - Oracle
+
+    .. code :: sql
+
+        NVL(COLA, ‘B’)
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        COLLEASE(COLA, ‘B’)
+
+#. COUNTへのORDER句の付与
+
+    Oracleでは、SELECT COUNT(*) に ORDER BYがあってもエラーになりませんが、
+    PostgreSQLではエラーになります。
+
+#. TO_CHAR関数
+
+    PostgreSQLでは、TO_CHAR関数の引数の型を明確に指定しないとエラーが発生します。
+    特に、パラメタクエリを利用している場合は注意が必要です。
+
+    - Oracle
+
+    .. code :: sql
+
+        DELETE FROM KT2_RESOURCE_RSV_DETAILS t0 WHERE t0.SCHID 
+        IN (SELECT  KT2_RESOURCE_RESERVE.Id FROM KT2_RESOURCE_RESERVE 
+         WHERE KT2_RESOURCE_RESERVE.SCHID IN 
+           (SELECT KT2_SCHEDULE_INFO.ID  FROM KT2_SCHEDULE_INFO 
+            WHERE KT2_SCHEDULE_INFO.ID = ?  
+            AND TO_CHAR(KT2_SCHEDULE_INFO.STARTDATETIME, 'yyyyMMdd') = TO_CHAR(?, 'yyyyMMdd')))
+        bind => [15839, 2015-12-22]
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        DELETE FROM KT2_RESOURCE_RSV_DETAILS t0 WHERE t0.SCHID 
+        IN (SELECT  KT2_RESOURCE_RESERVE.Id FROM KT2_RESOURCE_RESERVE 
+         WHERE KT2_RESOURCE_RESERVE.SCHID IN 
+           (SELECT KT2_SCHEDULE_INFO.ID  FROM KT2_SCHEDULE_INFO 
+            WHERE KT2_SCHEDULE_INFO.ID = ? 
+            AND TO_CHAR(KT2_SCHEDULE_INFO.STARTDATETIME, 'yyyyMMdd') = TO_CHAR(cast(? As timestamp), 'yyyyMMdd')))
+        bind => [15839, 2015-12-22]
+    
+    .. note ::
+
+        キャストしない場合、以下の様なエラーが発生します。
+
+        ERROR: function to_char(unknown, unknown) is not unique
+
+        ヒント: Could not choose a best candidate function. 
+        You might need to add explicit type casts.
+
+#. UPDATE文のSETでエリアスを利用している
+
+    Oracleでは以下のSQLはエラーになりませんが、PostgreSQLではエラーが発生
+    するので、SETで利用しているエリアスを除去する必要があります。
+
+    .. code :: sql
+
+        UPDATE 
+        KT2_SCHEDULE_PARTICIPANT p 
+        SET 
+        p.ABORTSTATE = '1', 
+        LASTUPDATE = systimestamp
+        WHERE p.SCHID = ?1
+
+    修正後
+
+    .. code :: sql
+
+        UPDATE 
+        KT2_SCHEDULE_PARTICIPANT p 
+        SET 
+        ABORTSTATE = '1', 
+        LASTUPDATE = systimestamp
+        WHERE p.SCHID = ?1
+
+    .. note ::
+        該当箇所を修正しないと、以下の様なエラーが発生します。
+
+        ERROR: column "p" of relation "kt2_schedule_participant" does not exist
+
+#. SYSDATE
+
+    SQL内でSYSDATEを利用している箇所は、clock_timestamp()に書き換える必要があります。
+
+#. シーケンス値の取得 
+
+    - Oracle
+
+    .. code :: sql
+
+        SELECT SEQNAME.NEXTVAL FROM DUAL;
+
+    - PostgreSQL
+
+    .. code :: sql
+
+        SELECT nextval(‘SEQNAME’);
+
+#. MINUS利用箇所
+
+    MINUSはEXCEPTに変更する必要があります。
+
+    - Oracle
+
+    .. code :: sql
+
+        SELECT * FROM TAB1
+        MINUS 
+        SELECT * FROM TAB1 WHERE …
+
+    - PostgreSQL
+
+        SELECT * FROM TAB1
+        EXCEPT
+        SELECT * FROM TAB1 WHERE …
+
+#. nullと空文字の違い
+
+    Oracleでは、NULLと空文字は同じに扱われますが、PostgreSQLでは明確に
+    区別されます。
+
+    例えば、Oracleでは、 insert tab1(a,b) values ('',null)のSQLを実行した
+    結果、aとbの両方のカラムにnullがセットされますが、PostgreSQLの場合、
+    aには''が、bにはnullがセットされます。
+
+    プログラム内でNULLと空文字を明確に異なるものとして処理する必要があります。
+
+#. 小数点ありの数値をJavaでtoString()した際の結果の差異
+
+    例えば、テーブルが以下の様な定義の場合、JPAエンティティでは
+    BigDecimalにマッピングしますが、取得したBigDecimalをtoString()した
+    際の結果がOracleとPostgreSQLでは異なるので、注意が必要です。
+
+    テーブル定義がNUMBER(13,3)の場合
+
+    Oracle: "1"
+
+    PostgreSQL: "1.000"
+
+#. 副問合せを利用している場合の別名付け
+
+    PostgreSQLでは、サブクエリには別名を付与する必要があります。
+
+    - Oracle
+
+    .. code ::
+
+        SELECT A.*
+        FROM A, (SELECT B.* FROM B WHERE ...) 
+
+    - PostgreSQL
+
+    .. code ::
+
+        SELECT A.*
+        FROM A, (SELECT B.* FROM B WHERE ...) AS sub
+
+        SELECT A.*
+        FROM A, (SELECT B.* FROM B WHERE ...) sub
+
+#. SELECT, UPDATE等のSQL文でのパラメタクエリでNULLがバインディングされる場合、キャストが必要
+
+    - Oracle
+
+    .. code ::
+
+        SELECT * FROM  HT2_EMPLOYEE WHERE EMPID = ?
+
+    上記のSQLで、パラメタにNULLが渡される場合、PostgreSQLではエラーが発生するので
+    明示的に型を指定する必要があります。
+
+    - PostgreSQL
+
+    .. code ::
+
+        SELECT * FROM  HT2_EMPLOYEE WHERE EMPID = CAST(? AS BIGINT)
+
+
+#. JPAエンティティとデータベースとのマッピングで利用しているデータ型
+
+    PostgreSQLはOracleに比べ、自動型変換が行われないので、JPAエンティティ
+    のJavaデータ型と、マッピングしているテーブルのデータ型が不一致な場合は、
+    修正が必要です。修正は、(1)Javaデータ型変更、(2)テーブルデータ型変更
+    のいずれかの方法で行うことになります。
+
+    .. csv-table ::
+        :header: "テーブル列名", "PostgreSQLデータ型", "Javaデータ型"
+        :widths: 20, 20, 20
+
+        "InputLen", "SMALLINT", "String"
+
+    上記のように、データベース上では数値型のデータをJavaエンティティで
+    文字型にマッピングしている場合、Oracleではエラーになりませんが、
+    PostgreSQLでは、データアクセス時に実行時エラーが発生します。
+
+#. テーブル存在確認等のためのビュー表
+
+    OracleとPostgreSQLでは、DBMSが表や列、インデックスなどの情報を管理している
+    ディクショナリ（カタログ）の名前や構造が異なるので、プログラム内でOracleの
+    ディクショナリ表にアクセスしている場合は移植が必要になります。
+
+#. SELECT FOR UPDATE
+
+    SELECT FOR UPDATE のSQLを発行する際、OracleはOF句でロックする列名を指定します
+    が、PostgreSQLではテーブル名を指定する必要があります。
+
+#. エリアスでの予約語の利用
+
+    OracleのSELECT文のテーブルのエリアスにtable, binary, limit等の予約語を利用している
+    場合、PostgreSQLではエラーが発生します。
+
+    .. code :: sql
+
+        SELECT * FROM A AS table
+
+#. Javaプログラム内でのSQLエラーの取得
+
+    Javaプログラム内でSQLExceptionをキャッチした後に、エラーコードを確認する場合、
+    SQLException.getErrorCode()でなくSQLException.getSQLState()を利用する必要があります。
+
+JPAエンティティ
+----------------
+
+#. OracleとPostgreSQLのスキーマオブジェクト名の大文字と小文字の違い
+
+    Oracleでは、テーブル名、列名等のスキーマオブジェクトは大文字で管理されていますが、
+    PostgreSQLでは、小文字で管理されています。
+
+    この違いにより、JPAのエンティティマッピングで利用している列名部分等は英大文字から
+    英小文字に変更する必要があります。
+
+    - テーブル名 @Table
+    - 列名 @Column
+    - シーケンス名 @GeneratedValue
+    - ResultSetMapping
+
+- Native Quecyの結果の取得（Javaデータ型）
+
+- ResultSet Mapping
+
+    JPAのリザルトセットマッピングでもデータベース列名は小文字に書き換える必要があります。
+
+トリガー/ストアドプロシージャ
+-------------------------------
+
+アプリケーションで、OracleのPL/SQLを利用してトリガーやストアドプロシージャを作成している
+場合は、PostgreSQLのPL/PGSQLに移植する必要があります。
+
+トランザクション
+-------------------
+
+#. DDL発行時の動作の違い
+
+    Oracleでは、"create table"などのDDLを発行した際、暗黙でトランザクション
+    がコミットされますが、PostgreSQLではDDLもトランザクションの一部となります。
+    プログラム内で、create tableなどのDDLを発行している場合は、注意が必要です。
+
+#. トランザクション中にSQLエラーが発生した場合の挙動
+
+    Oracleでは、トランザクション内でSQLエラーが発生した場合でも、最終的に
+    commitする事でエラーが発生しなかったSQLによる変更が確定できますが、
+    PostgreSQLの場合、デフォルトではトランザクション全体がロールバックされ
+    ます。
+
+    プログラム内でSQL例外をキャッチし、エラー部分のみロールバックしたい場合は、
+    以下のようにsavepointを設定するコードを記述する必要があります。
+
+    .. code :: java
+
+        Connection con = null;
+        PreparedStatement stm1 = null;
+        PreparedStatement stm2 = null;
+        Savepoint sp = null;
+        //Step 1
+        try {
+            con = ds.getConnection();
+            sp = con.setSavepoint();
+            stm1 = con.prepareStatement("DELETE FROM A WHERE ID = 2");
+            stm1.executeUpdate();
+        } catch(SQLException sqle) {
+            //NOP
+            try {
+                con.rollback(sp);
+            } catch (SQLException e) {
+                // NOP
+            }
+        } finally {
+            try {
+                con.release(sp);
+            } catch (SQLException e) {
+                // NOP
+            }
+            DBUtil.close(stm1);
+            DBUtil.close(con);
+        }
+
+        //Step 2
+        try {
+            con = ds.getConnection();
+            stm2 = con.prepareStatement("DELETE FROM A WHERE ID = 3");
+            stm2.executeUpdate();
+        } catch(SQLException sqle) {
+            //NOP
+        } finally {
+            DBUtil.close(stm2);
+            DBUtil.close(con);
+        }
+
+
+一時表(Temorary table)
+-------------------------
+
+PostgreSQLにも一時表(Temporary table)は存在しますが、Oracleと異なり、
+Global Temporary tableはありません。PostgreSQLでは一時表はトランザクション
+が終了すると消滅してしまいます。
+このため、帳票等で一時表を利用している場合は、プログラム内で毎回
+"create table"のSQLを発行する必要があります。
+
+SQLエラーコードの差異
+-----------------------
+
+プログラム内で、SQLのエラーコードを判定している場合、OracleとPostgreSQL
+ではエラーコードが異なりますので、移植が必要です。
+
+全文検索機能
+--------------
+
+PostgreSQLには、OracleのOracle Textに相当する全文検索機能は存在しませんので、
+別の方法で全文検索を行う必要があります。
+
+データの移行
+--------------
+
+Oracleデータベース版からPOWER EGG3.0にバージョンアップするための
+データ移行ツールを提供していますので、そちらを利用してデータベース
+の移行を行ってください。

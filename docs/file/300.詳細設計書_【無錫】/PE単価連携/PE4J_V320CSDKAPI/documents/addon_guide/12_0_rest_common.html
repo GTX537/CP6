@@ -1,0 +1,649 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>12. REST API 共通 &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="13. REST WebデータベースAPI" href="12_1_rest_webdb.html" />
+    <link rel="prev" title="11. XML Webサービス" href="11_.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. REST API 共通</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">12.1. REST API（共通仕様）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">12.1.1. プロトコル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">12.1.2. フォーマット</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">12.1.3. 文字コード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">12.1.4. エスケープ文字</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">12.1.5. 日付フォーマット</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">12.1.6. ユーザ認証</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">12.1.7. リクエストヘッダ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">12.1.8. レスポンス</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete">12.1.9. DELETEメソッドの呼び出しに関する注意事項</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#post">12.2. ファイルアップロード（POST）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#http">12.2.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uri">12.2.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">12.2.3. リクエスト形式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">12.2.4. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">12.2.5. レスポンスの例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#get">12.3. ファイルダウンロード（GET）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">12.3.1. HTTPメソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">12.3.2. URI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">12.3.3. リクエストパラメータ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">12.3.4. リクエストの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">12.3.5. レスポンスの形式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">12. </span>REST API 共通</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="rest-api">
+<h1><span class="section-number">12. </span>REST API 共通<a class="headerlink" href="#rest-api" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>POWER EGG2.0ではAPIをJavaネイティブまたはSOAP Webサービスとして提供していました</p>
+<p>Ver.2.8以降からはAPIをより容易に利用できるように、Restful Webサービスとして利用できるようになっています。</p>
+<div class="section" id="id1">
+<h2><span class="section-number">12.1. </span>REST API（共通仕様）<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="id2">
+<h3><span class="section-number">12.1.1. </span>プロトコル<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>HTTP または HTTPS</p>
+</div>
+<div class="section" id="id3">
+<h3><span class="section-number">12.1.2. </span>フォーマット<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>JSON</p>
+</div>
+<div class="section" id="id4">
+<h3><span class="section-number">12.1.3. </span>文字コード<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>UTF-8</p>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">12.1.4. </span>エスケープ文字<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>「\」を使用します。</p>
+</div>
+<div class="section" id="id6">
+<h3><span class="section-number">12.1.5. </span>日付フォーマット<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>日付、時刻、日時、日時分フィールドのデータを扱う場合、
+それぞれ以下のフォーマットの文字列で指定する必要があります。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 38%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>フィールドタイプ</p></th>
+<th class="head"><p>フォーマット</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>日付</p></td>
+<td><p>YYYY-MM-DD</p></td>
+<td><p>UTCに変換されません。</p></td>
+</tr>
+<tr class="row-odd"><td><p>時刻</p></td>
+<td><p>HH:MM</p></td>
+<td><p>UTCに変換されません。</p></td>
+</tr>
+<tr class="row-even"><td><p>日時</p></td>
+<td><p>YYYY-MM-DDTHH:MM±HH:MM
+or YYYY-MM-DDTHH:MMZ</p></td>
+<td><p>「YYYY-MM-DD」と「HH:MM」の間の「T」は固定値です。
+「Z」はUTCを表します。</p>
+<p>日本時間（JST）の2016年2月5日14時00分は次のように表せます。</p>
+<p>例）「2016-02-05T14:00+09:00」または「2016-02-05T05:00Z」</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>日時分</p></td>
+<td><p>YYYY-MM-DDTHH:MM:SS±HH:MM
+or YYYY-MM-DDTHH:MM:SSZ</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id7">
+<h3><span class="section-number">12.1.6. </span>ユーザ認証<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>APIを実行するリクエストには、認証キーをリクエストヘッダに追加する必要があります。
+認証キーは「Webサービス認証キー発行」画面で発行します。
+※詳細については「管理者マニュアル」をご確認ください</p>
+</div>
+<div class="section" id="id8">
+<h3><span class="section-number">12.1.7. </span>リクエストヘッダ<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>送信するリクエストには以下のリクエストヘッダを指定します。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ヘッダ名</p></th>
+<th class="head"><p>内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Host</p></td>
+<td><p>POWER EGGサーバ名もしくはIPアドレス</p></td>
+</tr>
+<tr class="row-odd"><td><p>Content-Type</p></td>
+<td><p>&quot;application/json&quot;
+※リクエストボディにJSON文字列を格納する場合のみ指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>X-API-Key</p></td>
+<td><p>「Webサービス認証キー発行」画面で発行したAPIキー</p></td>
+</tr>
+</tbody>
+</table>
+<p>例）リクエストヘッダ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3><span class="section-number">12.1.8. </span>レスポンス<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>HTTPステータスコードが「200」「201」であれば正常終了、それ以外はエラー終了です。</p>
+<p>正常終了のHTTPステータスコード</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 27%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ステータスコード</p></th>
+<th class="head"><p>HTTPメソッド</p></th>
+<th class="head"><p>内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>200(OK)</p></td>
+<td><p>GET / PUT / DELETE</p></td>
+<td><p>リクエストが成功した</p></td>
+</tr>
+<tr class="row-odd"><td><p>201(Created)</p></td>
+<td><p>POST</p></td>
+<td><p>リソース作成リクエストが成功した</p></td>
+</tr>
+</tbody>
+</table>
+<p>異常終了のHTTPステータスコード</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 27%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ステータスコード</p></th>
+<th class="head"><p>種別</p></th>
+<th class="head"><p>例</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>400(BAD REQUEST)</p></td>
+<td><p>バリデーションエラー</p></td>
+<td><ul class="simple">
+<li><p>リクエストヘッダのチェック</p></li>
+<li><p>リクエストボディのチェック</p></li>
+<li><p>入力データ（入力、桁数等）のチェック</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>401(UNAUTHORIZED)</p></td>
+<td><p>認証エラー</p></td>
+<td><ul class="simple">
+<li><p>認証キーでの認証チェック</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>403(FORBIDDEN)</p></td>
+<td><p>権限チェックエラー</p></td>
+<td><ul class="simple">
+<li><p>認証キーでの権限チェック</p></li>
+<li><p>POWER EGGのライセンスチェック</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>409(CONFLICT)</p></td>
+<td><p>重複エラー</p></td>
+<td><ul class="simple">
+<li><p>キー項目の重複チェック</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>500(INTERNAL SERVER ERROR)</p></td>
+<td><p>その他</p></td>
+<td><ul class="simple">
+<li><p>システムエラー</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>エラー時には下記情報を含むJSONデータをレスポンスとして受け取ります。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>エラーコードです。問い合わせの際に利用します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>message</p></td>
+<td><p>エラーメッセージが表示されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>details</p></td>
+<td><p>エラーの詳細メッセージが表示されます。</p></td>
+</tr>
+</tbody>
+</table>
+<p>例）エラーレスポンス</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;WSA01213SE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;フィールド値を正しく指定してください。&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;社員名を必ず入力してください。&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;住所は半角200文字以内で入力してください。&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete">
+<h3><span class="section-number">12.1.9. </span>DELETEメソッドの呼び出しに関する注意事項<a class="headerlink" href="#delete" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アプリケーションサーバーによって、DELETEメソッドではbodyでのパラメタ指定は行えない
+場合があります。(Interstage等）</p>
+<p>この場合は、bodyでのパラメタ渡しでなく、クエリ文字列でパラメタを渡すようにしてください。</p>
+</div>
+</div>
+<div class="section" id="post">
+<h2><span class="section-number">12.2. </span>ファイルアップロード（POST）<a class="headerlink" href="#post" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ファイルを添付するためにファイルをアップロードするAPIです。</p>
+<ul class="simple">
+<li><p>アップロードされたファイルのファイルキーを利用して、ファイルを添付できます。</p></li>
+<li><p>一度にアップロードできるファイルは一つです。</p></li>
+</ul>
+<div class="section" id="http">
+<h3><span class="section-number">12.2.1. </span>HTTPメソッド<a class="headerlink" href="#http" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>POST</p>
+</div>
+<div class="section" id="uri">
+<h3><span class="section-number">12.2.2. </span>URI<a class="headerlink" href="#uri" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>http(s)://(POWER EGGサーバ)/pe4j/api/rest/v1/com/file.json</p>
+</div>
+<div class="section" id="id10">
+<h3><span class="section-number">12.2.3. </span>リクエスト形式<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>リクエストは multipart/form-data 形式で送信します。</p>
+<p>※詳細は RFC1867、RFC2388 を参照してください。</p>
+</li>
+<li><p>ファイル名は Content-Disposition 内のfilenameで指定して下さい。</p>
+<p>※日本語ファイル名の場合は UTF8 でエンコードした内容を指定して下さい。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3><span class="section-number">12.2.4. </span>リクエストの例<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>ファイル内容が「test」の test.txt ファイルを送信した場合:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POST</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">com</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">multipart</span><span class="o">/</span><span class="n">form</span><span class="o">-</span><span class="n">data</span><span class="p">;</span> <span class="n">boundary</span><span class="o">=---------------------------</span><span class="n">bee48a285354</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Length</span><span class="p">:</span> <span class="mi">188</span>
+
+<span class="o">-----------------------------</span><span class="n">bee48a285354</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Disposition</span><span class="p">:</span> <span class="n">form</span><span class="o">-</span><span class="n">data</span><span class="p">;</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;file&quot;</span><span class="p">;</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;test.txt&quot;</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">text</span><span class="o">/</span><span class="n">plain</span>
+
+<span class="n">test</span>
+
+<span class="o">-----------------------------</span><span class="n">bee48a285354</span><span class="o">--</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3><span class="section-number">12.2.5. </span>レスポンスの例<a class="headerlink" href="#id12" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アップロードされたファイルのファイルキーが返されます。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;74b2a870-6bd4-413c-a467-c4c83f6da1f0&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>※添付ファイルを登録する場合はこのファイルキーを使用します。</p>
+</div>
+</div>
+<div class="section" id="get">
+<h2><span class="section-number">12.3. </span>ファイルダウンロード（GET）<a class="headerlink" href="#get" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>添付ファイルをダウンロードする API です。</p>
+<div class="section" id="id13">
+<h3><span class="section-number">12.3.1. </span>HTTPメソッド<a class="headerlink" href="#id13" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>GET</p>
+</div>
+<div class="section" id="id14">
+<h3><span class="section-number">12.3.2. </span>URI<a class="headerlink" href="#id14" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul>
+<li><p>パラメータを HTTP のクエリ文字列で送信する場合</p>
+<p>http(s)://(POWER EGGサーバ)/pe4j/api/rest/v1/com/q/file.json</p>
+</li>
+<li><p>パラメータを JSON形式で送信する場合</p>
+<p>http(s)://(POWER EGGサーバ) /pe4j/api/rest/v1/com/file.json</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>GETでのリクエストボディの指定をサポートしていないクライアントでは使用できません</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h3><span class="section-number">12.3.3. </span>リクエストパラメータ<a class="headerlink" href="#id15" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>ダウンロードするファイルを特定するファイルキーを指定します。</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 30%" />
+<col style="width: 10%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>パラメータ名</p></th>
+<th class="head"><p>指定する値</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fileKey</p></td>
+<td><p>文字列</p></td>
+<td><p>必須</p></td>
+<td><p>ダウンロードするファイルのファイルキーを指定します。（添付ファイルが登録されているデータを検索したときに返却されます）</p></td>
+</tr>
+</tbody>
+</table>
+<p>※ファイルのアップロード時にレスポンスで返却されるファイルキーとは異なるため注意してください。</p>
+</div>
+<div class="section" id="id16">
+<h3><span class="section-number">12.3.4. </span>リクエストの例<a class="headerlink" href="#id16" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ol class="arabic simple">
+<li><p>パラメータを HTTP のクエリ文字列で送信する場合</p></li>
+</ol>
+<ul>
+<li><p>HTTPのクエリ文字列の例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fileKey</span><span class="o">=</span><span class="n">Od</span><span class="o">/</span><span class="n">bdrkdy3ZfD4NaYGHGxQJXeyXzYZRxhDp</span><span class="o">+</span><span class="n">LU</span><span class="o">+</span><span class="n">CFDmpP5FI2bx7Y4MqOO8bTQ3p</span>
+</pre></div>
+</div>
+</li>
+<li><p>リクエストヘッダを含んだ例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET /pe4j/api/rest/v1/com/q/file.json?(HTTPのクエリ文字列) HTTP/1.1
+Host: pe280demo.poweregg.net
+X-API-Key: 7706d1ce-01a0-463b-a162-d389cec21eb1
+</pre></div>
+</div>
+<p>※Content-Typeヘッダは不要です。</p>
+</li>
+</ul>
+<ol class="arabic simple" start="2">
+<li><p>パラメータを JSON形式で送信する場合</p></li>
+</ol>
+<ul>
+<li><p>リクエストヘッダの例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">pe4j</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">rest</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">com</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">json</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">pe280demo</span><span class="o">.</span><span class="n">poweregg</span><span class="o">.</span><span class="n">net</span>
+<span class="n">X</span><span class="o">-</span><span class="n">API</span><span class="o">-</span><span class="n">Key</span><span class="p">:</span> <span class="mi">7706</span><span class="n">d1ce</span><span class="o">-</span><span class="mi">01</span><span class="n">a0</span><span class="o">-</span><span class="mi">463</span><span class="n">b</span><span class="o">-</span><span class="n">a162</span><span class="o">-</span><span class="n">d389cec21eb1</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>※Content-Type に application/json を指定して下さい。
+指定しない場合は JSON が解釈できないため、実行時エラーとなります。</p>
+</li>
+<li><p>リクエストボディの例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;fileKey&quot;</span><span class="p">:</span> <span class="s2">&quot;Od/bdrkdy3ZfD4NaYGHGxQJXeyXzYZRxhDp+LU+CFDmpP5FI2bx7Y4MqOO8bTQ3p&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id17">
+<h3><span class="section-number">12.3.5. </span>レスポンスの形式<a class="headerlink" href="#id17" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Content-TypeにMIMEタイプ、Content-Disposition 内のfilenameにファイル名が入り、
+レスポンスボディにファイルの内容がセットされます。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="12_1_rest_webdb.html" class="btn btn-neutral float-right" title="13. REST WebデータベースAPI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="11_.html" class="btn btn-neutral float-left" title="11. XML Webサービス" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

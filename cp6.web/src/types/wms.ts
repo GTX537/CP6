@@ -13,6 +13,39 @@ export interface WmsPaged<T> {
   items: T[]
 }
 
+export interface BridgeHealthMetrics {
+  windowStartUtc: string
+  windowEndUtc: string
+  hooks: BridgeHookStats[]
+  queueDepth: number
+  deadLetterCount: number
+  deadLetters: DeadLetterItem[]
+}
+
+export interface BridgeHookStats {
+  hookName: string
+  sourceModule: string
+  targetModule: string
+  totalCount: number
+  successCount: number
+  skippedCount: number
+  failedCount: number
+  deadLetterCount: number
+  successRate: number
+}
+
+export interface DeadLetterItem {
+  eventId: string
+  hookName: string
+  sourceModule: string
+  targetModule: string
+  sourceNo: string
+  targetNo?: string
+  attempts: number
+  lastError?: string
+  createDate: string
+}
+
 // ───────── 倉庫マスタ ─────────
 
 export interface Warehouse {
@@ -68,7 +101,11 @@ export interface Stock {
   ownerType: string // SELF / CUSTOMER
   ownerCd?: string
   paperRollNo?: string
+  /** Phase 7 Gap 1.3 QC ステータス: PENDING / PASSED / FAILED / HOLD */
+  qcStatus?: string
 }
+
+export type StockQcStatusKey = 'PENDING' | 'PASSED' | 'FAILED' | 'HOLD'
 
 export interface StockTransaction {
   id: string

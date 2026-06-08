@@ -1,0 +1,3665 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7. POWER EGG JSFコンポーネントの利用方法 &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="8. アドオンシステムのPOWER EGGへの組み込み" href="08_.html" />
+    <link rel="prev" title="6. POWER EGG3.0エンジンと開発のためのAPI" href="06_.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. POWER EGG JSFコンポーネントの利用方法</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#inputdate">7.1. 日付入力(inputDate)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputdatetime">7.2. 日付時刻入力(inputDateTime)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputdaterange">7.3. 日付範囲入力(inputDateRange)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputnumber">7.4. 数値入力(inputNumber)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputtext">7.5. 1行テキスト入力(inputText)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputtextarea">7.6. 複数行テキスト入力(inputTextarea)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#selectemp">7.7. 単一社員選択(selectEmp)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#selectemps">7.8. 複数社員選択(selectEmps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#selectdept">7.9. 部門選択(selectDept)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#selectapplydept">7.10. 申請部門選択(selectApplyDept)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputattachfile">7.11. 添付ファイル入力(inputAttachFile)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#selectgroup">7.12. グループ選択(selectGroup)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputlabel">7.13. ラベル描画(outputLabel)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandbutton">7.14. コマンドボタン(commandButton)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandlink">7.15. コマンドリンク(commandLink)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputemp">7.16. 社員表示(outputEmp)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputemps">7.17. 複数社員表示(outputEmps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputattachfile">7.18. 添付ファイル表示(outputAttachFile)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputtext">7.19. テキスト表示(outputText)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputmaillink">7.20. メールリンク表示(outputMailLink)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#paneltabs">7.21. タブ領域パネル(panelTabs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tab">7.22. タブ(tab)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panelcontroller">7.23. コントローラー領域パネル(panelController)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panelmain">7.24. メイン領域パネル(panelMain)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panelsearchbox">7.25. 検索条件パネル(panelSearchBox)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panelcollapsible">7.26. 折りたたみ可能パネル(panelCollapsible)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panelaccordion">7.27. アコーディオンパネル(panelAccordion)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panelaccordioncontent">7.28. アコーディオンパネルコンテンツ領域(panelAccordionContent)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#div-div">7.29. ＤＩＶ領域(div)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-head">7.30. ＨＴＭＬヘッダ(head)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-body">7.31. HTMLボディ描画(body)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">7.32. 日付時刻コンバータ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">7.33. 日付コンバータ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#datatableselectoneradio">7.34. テーブル列のラジオボタン選択（dataTableSelectOneRadio）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputtimerange">7.35. 時刻範囲入力（inputTimeRange）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputtime">7.36. 時刻入力（inputTime）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">7. </span>POWER EGG JSFコンポーネントの利用方法</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="power-egg-jsf">
+<h1><span class="section-number">7. </span>POWER EGG JSFコンポーネントの利用方法<a class="headerlink" href="#power-egg-jsf" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>POWER EGG3.0では、日付や社員などのデータを入力・表示するときに
+各プログラムで共通的に利用するための共通部品をJSFコンポーネントと
+して提供しています。</p>
+<p>この章では、それらの共通部品の利用方法について解説します。</p>
+<p>POWER EGG JSFコンポーネントを利用する場合は、Facelet xhtmlのhtml宣言部で、</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span>xmlns:p=http://www.poweregg.net/jsf/html
+</pre></div>
+</div>
+<p>という記述を追加する必要があります。</p>
+<div class="section" id="inputdate">
+<h2><span class="section-number">7.1. </span>日付入力(inputDate)<a class="headerlink" href="#inputdate" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>日付の入力を行うための部品です。入力域の右側にカレンダーから日付を
+選択するためのアイコンが描画され、カレンダーからの日付選択も行えます。</p>
+<p>入力された日付は、java.util.Dateオブジェクトとして格納されます。</p>
+<p>Dateオブジェクトの時間フィールドは常に”00:00:00,000”になります。</p>
+<img alt="_images/7-1.png" src="_images/7-1.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputDate</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id3">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id3" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td><p></p></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td><p></p></td>
+<td><p>Date</p></td>
+<td><p>入力された日付</p></td>
+</tr>
+<tr class="row-odd"><td><p>valueChangeListner</p></td>
+<td><p></p></td>
+<td><p>リスナー</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>binding</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>converter</p></td>
+<td><p></p></td>
+<td><p>Converter</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>required</p></td>
+<td><p></p></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-odd"><td><p>validator</p></td>
+<td><p></p></td>
+<td><p>Validator</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td><p></p></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onclick</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ondblclick</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmousedown</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseup</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseover</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmousemove</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseout</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeypress</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeydown</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeyup</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onfocus</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onblur</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onchange</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onselect</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>dir</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>disabled</p></td>
+<td><p></p></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>readonly</p></td>
+<td><p></p></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>tabindex</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>firstDayOfWeek</p></td>
+<td><p></p></td>
+<td><p>int</p></td>
+<td><p>週の開始曜日（0:月曜、6:日曜）
+デフォルト：0</p></td>
+</tr>
+<tr class="row-odd"><td><p>autocomplete</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td><p>デフォルト: off</p></td>
+</tr>
+<tr class="row-even"><td><p>corpId</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>inputMode</p></td>
+<td><p></p></td>
+<td><p>String</p></td>
+<td><p>年月入力の場合は&quot;month&quot;
+年月日入力の場合は&quot;date&quot;
+省略値は&quot;date&quot;</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="inputdatetime">
+<h2><span class="section-number">7.2. </span>日付時刻入力(inputDateTime)<a class="headerlink" href="#inputdatetime" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<img alt="_images/7-2.png" src="_images/7-2.png" />
+<p>日付 + 時刻 の入力を行うテキストボックスを描画します。</p>
+<p>日付入力域の右側にカレンダーから日付を選択するためのアイコン、
+時刻入力域の右側に時刻選択のためのアイコンが描画され、
+カレンダーおよび時刻選択ダイアログからの日時選択も行えます。</p>
+<p>入力された日付は、java.util.Dateオブジェクトとして格納されます</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputDateTime</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id4">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id4" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>Date</p></td>
+<td><p>入力された日付</p></td>
+</tr>
+<tr class="row-odd"><td><p>valueChangeListner</p></td>
+<td></td>
+<td><p>リスナー</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>binding</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>converter</p></td>
+<td></td>
+<td><p>Converter</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-odd"><td><p>validator</p></td>
+<td></td>
+<td><p>Validator</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ondblclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmousedown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseover</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmousemove</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseout</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeypress</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeydown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeyup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onfocus</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onblur</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onchange</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onselect</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>dir</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>disabled</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>readonly</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>tabindex</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>displayStartTime</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>デフォルト開始範囲時刻</p></td>
+</tr>
+<tr class="row-odd"><td><p>displayEndTime</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>デフォルト終了範囲時刻</p></td>
+</tr>
+<tr class="row-even"><td><p>displayInterval</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>連続の時刻の差</p></td>
+</tr>
+<tr class="row-odd"><td><p>autocomplete</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>デフォルト: off</p></td>
+</tr>
+<tr class="row-even"><td><p>corpId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="inputdaterange">
+<h2><span class="section-number">7.3. </span>日付範囲入力(inputDateRange)<a class="headerlink" href="#inputdaterange" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>日付範囲の入力を行う部品です。年月(yyyy/mm)または年月日
+(yyyy/mm/dd)のどちらかの入力モードを選択できます。</p>
+<p>年月日入力モードの場合は、日付期間を選択するためのカレンダーアイコンが表示されます。</p>
+<p>入力された日付は、fromDate, toDateの２つのDateオブジェクトをプロパティに持つ
+net.poweregg.util.DateRangeオブジェクトとして格納されます。</p>
+<p>格納されるDateの時刻は、開始日は&quot;00:00:00&quot;、終了日は&quot;23:59:59&quot;固定となります。</p>
+<p>また、年月日入力モードの場合は、「最近１ヶ月」などの簡易入力モードの指定が可能です。</p>
+<img alt="_images/7-3.png" src="_images/7-3.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputDateRange</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id5">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id5" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>省略値はfalse</p></td>
+</tr>
+<tr class="row-odd"><td><p>inputMode</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>年月入力の場合は&quot;month&quot;
+年月日入力の場合は&quot;date&quot;
+省略値は&quot;date&quot;</p></td>
+</tr>
+<tr class="row-even"><td><p>simpleInputSupport</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>簡易入力モードを有効にするかどうか
+inputModeが&quot;date&quot;の場合のみ有効
+省略値はfalse</p></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td></td>
+<td><p>DateRange</p></td>
+<td><p>入力された日付</p></td>
+</tr>
+<tr class="row-even"><td><p>valueChangeListner</p></td>
+<td></td>
+<td><p>リスナー</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>binding</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-odd"><td><p>validator</p></td>
+<td></td>
+<td><p>Validator</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>converter</p></td>
+<td></td>
+<td><p>Converter</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>dir</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>disabled</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>readonly</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>tabindex</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>firstDayOfWeek</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>週の開始曜日（0:月曜、6:日曜）</p></td>
+</tr>
+<tr class="row-odd"><td><p>デフォルト：0</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>autocomplete</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>デフォルト: off</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>recentValue</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>inputModeが&quot;date&quot;の場合のみ有効。デフォルト:1</p></td>
+</tr>
+<tr class="row-odd"><td><p>nowrap</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>デフォルト: false</p></td>
+</tr>
+<tr class="row-even"><td><p>autoAjust</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>true: 終了日自動調整許可</p></td>
+</tr>
+<tr class="row-odd"><td><p>false: 自動調整不可</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>default: false</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>useUnlimited</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>true: 無期限を表示
+false: 無期限は表示しない
+default: false</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="inputnumber">
+<h2><span class="section-number">7.4. </span>数値入力(inputNumber)<a class="headerlink" href="#inputnumber" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>数値データを入力するための部品です。</p>
+<img alt="_images/7-4.png" src="_images/7-4.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputNumber</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id6">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id6" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td></td>
+<td><p>BigDecimal</p></td>
+<td><p>入力された数値</p></td>
+</tr>
+<tr class="row-even"><td><p>size</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>size属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>converter</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>converterMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>コンバーターでエラーが発生したときのメッセージ</p></td>
+</tr>
+<tr class="row-odd"><td><p>validator</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>validatorMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>バリデータでエラーが発生したときのメッセージ</p></td>
+</tr>
+<tr class="row-odd"><td><p>valueChangeListner</p></td>
+<td></td>
+<td><p>リスナー</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>binding</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>minus</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>マイナス値の入力を許可する場合はtrue(デフォルトは、false マイナス入力不可）</p></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>CSSのclass属性</p></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>CSSのstyle属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>dec</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>小数点付きの数値の入力を認めるか</p></td>
+</tr>
+<tr class="row-even"><td><p>digitsBeforePoint</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>整数部の桁数</p></td>
+</tr>
+<tr class="row-odd"><td><p>digitsAfterPoint</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>小数部の桁数</p></td>
+</tr>
+<tr class="row-even"><td><p>groupingUsed</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は、カンマ編集されない.デフォルトはtrue</p></td>
+</tr>
+<tr class="row-odd"><td><p>align</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>&quot;left&quot; or &quot;right&quot; デフォルトは &quot;right&quot;</p></td>
+</tr>
+<tr class="row-even"><td><p>readonly</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>tabindex</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>ondblclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmousedown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseover</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmousemove</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseout</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeypress</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeydown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeyup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onfocus</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onblur</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onchange</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onselect</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="inputtext">
+<h2><span class="section-number">7.5. </span>1行テキスト入力(inputText)<a class="headerlink" href="#inputtext" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>１行テキスト入力を行うテキストボックスを描画します。(&lt;input type=&quot;text&quot;&gt;)</p>
+<p>maxlengthを指定した場合、入力データのバイト数がmaxlengthを超えていないか
+ヴァリデーションが行われます。</p>
+<img alt="_images/7-5.png" src="_images/7-5.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputText</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id7">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id7" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>Date</p></td>
+<td><p>入力された日付</p></td>
+</tr>
+<tr class="row-odd"><td><p>valueChangeListner</p></td>
+<td></td>
+<td><p>リスナー</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>binding</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>converter</p></td>
+<td></td>
+<td><p>Converter</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>converterMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>validator</p></td>
+<td></td>
+<td><p>Validator</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>validatorMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ondblclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmousedown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseover</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmousemove</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseout</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeypress</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeydown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeyup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onfocus</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onblur</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onchange</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onselect</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>dir</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>disabled</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>readonly</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>tabindex</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>size</p></td>
+<td></td>
+<td><p>int</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>minlength</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>最低限入力可能バイト数
+デフォルト：NULL</p></td>
+</tr>
+<tr class="row-odd"><td><p>maxlength</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>入力可能バイト数</p></td>
+</tr>
+<tr class="row-even"><td><p>lang</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>accesskey</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>inputMode</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>入力モード（日本語、英数字…）
+デフォルト：null
+inputMode = &quot;X&quot;:半角の数字・英字・記号のみ入力出来る。
+記号はシングルクオーテーション(')、ダブルクオーテーション(&quot;)、カンマ(,)を入力不可にする
+inputMode=&quot;9&quot;:数字（0-9)だけが入力出来る</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="inputtextarea">
+<h2><span class="section-number">7.6. </span>複数行テキスト入力(inputTextarea)<a class="headerlink" href="#inputtextarea" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>複数行テキスト入力を行うテキストエリアを描画します。(&lt;textarea&gt;)</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputTextarea</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id8">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id8" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>requiredMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>入力されていない時のメッセージ
+指定しない場合はデフォルトメッセージが表示される</p></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td></td>
+<td><p>Date</p></td>
+<td><p>入力された日付</p></td>
+</tr>
+<tr class="row-even"><td><p>valueChangeListner</p></td>
+<td></td>
+<td><p>リスナー</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>binding</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>converter</p></td>
+<td></td>
+<td><p>Converter</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>converterMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>validator</p></td>
+<td></td>
+<td><p>Validator</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>validatorMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>cols</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>1行の桁数</p></td>
+</tr>
+<tr class="row-odd"><td><p>rows</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>テキストエリアの行数</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>ondblclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmousedown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseover</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmousemove</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseout</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeypress</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeydown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeyup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onfocus</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onblur</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onchange</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onselect</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>dir</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>disabled</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>readonly</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>tabindex</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>maxlength</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>入力可能バイト数</p></td>
+</tr>
+<tr class="row-odd"><td><p>lang</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>wrap</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>accesskey</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="selectemp">
+<h2><span class="section-number">7.7. </span>単一社員選択(selectEmp)<a class="headerlink" href="#selectemp" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>組織図から社員を一人選択します。
+選択した社員は、net.poweregg.ui.param.EmpParam オブジェクトとして格納されます。</p>
+<img alt="_images/7-7.png" src="_images/7-7.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:selectEmp</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id9">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id9" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>dateId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>社員選択の基準日となるコンポーネントのid
+省略した場合は、システム日付を基準として社員選択します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択対象の会社の会社ID
+省略した場合は、全ての会社から選択可能になります。</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>EmpParam</p></td>
+<td><p>選択された社員</p></td>
+</tr>
+<tr class="row-odd"><td><p>useMyMember</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト：true
+falseを設定する場合、マイメンバーリンクをレンダリングしない</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>nowrap</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト：false</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="selectemps">
+<h2><span class="section-number">7.8. </span>複数社員選択(selectEmps)<a class="headerlink" href="#selectemps" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>組織図から社員を複数選択します。
+選択した社員は、net.poweregg.ui.param.EmpParam オブジェクトのリストとして格納されます。</p>
+<img alt="_images/7-8.png" src="_images/7-8.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:selectEmps</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id10">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id10" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>dateId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>社員選択の基準日となるコンポーネントのid
+省略した場合は、システム日付を基準として社員選択します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択対象の会社の会社ID.省略した場合は、全ての会社から選択可能になります。</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>ArrayList</p></td>
+<td><p>選択された社員(EmpParam)のリスト</p></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>maxEmps</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>選択できる最大社員数
+省略した場合は制限なし</p></td>
+</tr>
+<tr class="row-odd"><td><p>nowrap</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト：true</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="selectdept">
+<h2><span class="section-number">7.9. </span>部門選択(selectDept)<a class="headerlink" href="#selectdept" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>部門を選択します。
+選択した部門は、net.poweregg.ui.param.DeptParamオブジェクトとして格納されます。</p>
+<img alt="_images/7-9.png" src="_images/7-9.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:selectDept</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id11">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id11" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>dateId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>社員選択の基準日となるコンポーネントのid
+省略した場合は、システム日付を基準として部門を選択します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>baseDate</p></td>
+<td></td>
+<td><p>Date</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>corpId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択対象の会社の会社ID
+省略した場合は、全ての会社から選択可能になります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>nowrap</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト:true
+falseの場合、左ペインにレンダラーされる
+trueの場合、右ペインにレンダラーされる</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>DeptParam</p></td>
+<td><p>選択された部門</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="selectapplydept">
+<h2><span class="section-number">7.10. </span>申請部門選択(selectApplyDept)<a class="headerlink" href="#selectapplydept" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>申請部門を選択します。
+選択した部門は、net.poweregg.ui.param.DeptParamオブジェクトとして格納されます。</p>
+<img alt="_images/7-10.png" src="_images/7-10.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:selectApplyDept</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id12">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id12" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>dateId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>社員選択の基準日となるコンポーネントのid
+省略した場合は、システム日付を基準として部門を選択します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>corpId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択対象の会社の会社ID
+省略した場合は、全ての会社から選択可能になります。</p></td>
+</tr>
+<tr class="row-even"><td><p>nowrap</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト:true
+falseの場合、左ペインにレンダラーされる
+trueの場合、右ペインにレンダラーされる</p></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td></td>
+<td><p>DeptParam</p></td>
+<td><p>選択された申請部門</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="inputattachfile">
+<h2><span class="section-number">7.11. </span>添付ファイル入力(inputAttachFile)<a class="headerlink" href="#inputattachfile" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>添付ファイルを入力する機能を提供します。
+選択されたファイルは、net.poweregg.ui.param.AttachFile
+オブジェクトのリストとして格納されます。</p>
+<img alt="_images/7-11.png" src="_images/7-11.png" />
+<p>HTML5対応のブラウザを利用している場合は、HTML5対応のドラッグ
+&amp;ドロップによるファイル添付ウィンドウが開きます。</p>
+<p>また、ドラッグ＆ドロップによるファイル添付はシステム設定で切替が可能であるので、
+実行環境によってどの画面が開くかは異なります。</p>
+<img alt="_images/7-11-1.png" src="_images/7-11-1.png" />
+<p>ドラッグ&amp;ドロップのファイル添付を利用しない設定の場合は、上記の画面となります。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputAttachFile</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id13">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id13" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>ArrayList</p></td>
+<td><p>AttachFilleオブジェクトのリスト</p></td>
+</tr>
+<tr class="row-odd"><td><p>maxfiles</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>添付可能なファイル数（省略値した場合は0:チェックしない）</p></td>
+</tr>
+<tr class="row-even"><td><p>maxsize</p></td>
+<td></td>
+<td><p>long</p></td>
+<td><p>一度の操作で添付可能なサイズの最大値（単位:KB） 0の場合は無制限。未指定の場合は、システムデフォルト値</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="selectgroup">
+<h2><span class="section-number">7.12. </span>グループ選択(selectGroup)<a class="headerlink" href="#selectgroup" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>グループを選択します。
+選択したグループは、net.poweregg.ui.param.GroupParamオブジェクトとして格納されます。</p>
+<img alt="_images/7-12.png" src="_images/7-12.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:selectGroup</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id14">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id14" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性, name属性にも出力されます</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>dateId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>グループ選択の基準日となるコンポーネントのid
+省略した場合は、システム日付を基準としてグループを選択します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>baseDate</p></td>
+<td></td>
+<td><p>Date</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>disabled</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>trueの場合：クリック不可能
+デフォルト:false</p></td>
+</tr>
+<tr class="row-odd"><td><p>nowrap</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト:true
+falseの場合、左ペインにレンダラーされる
+trueの場合、右ペインにレンダラーされる</p></td>
+</tr>
+<tr class="row-even"><td><p>corpId</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択対象の会社の会社ID
+省略した場合は、全ての会社から選択可能になります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>workflowUseFlag</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>ワーフロー使用区分
+true:使用する のみを表示する
+false:使用しない のみを表示する
+デフォルト: null なら、両方表示する</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>GroupParam</p></td>
+<td><p>選択されたグループ</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputlabel">
+<h2><span class="section-number">7.13. </span>ラベル描画(outputLabel)<a class="headerlink" href="#outputlabel" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>&lt;label&gt;タグを生成します。for属性で指定されたコンポーネントの
+label属性がnullの場合は、コンポーネントのlabel属性にラベルの
+valueに設定されている値をセットします。</p>
+<p>また、for属性で指定されたコンポーネントのrequired属性が
+&quot;true&quot;の場合は、入力必須マークを自動描画します。</p>
+<img alt="_images/7-13.png" src="_images/7-13.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:outputLabel</span><span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id15">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id15" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ラベルとして表示する文字列</p></td>
+</tr>
+<tr class="row-odd"><td><p>for</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ラベルの対象となるコンポーネントのid</p></td>
+</tr>
+<tr class="row-even"><td><p>binding</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>style属性</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>class属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ラベルのtitle</p></td>
+</tr>
+<tr class="row-even"><td><p>roundDiv</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>ラベルを&lt;div&gt;タグで囲むかどうか
+デフォルトはfalse
+主にコントローラー領域で使う場合に指定する</p></td>
+</tr>
+<tr class="row-odd"><td><p>divStyleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ラベルを囲む&lt;div&gt;のclass</p></td>
+</tr>
+<tr class="row-even"><td><p>divStyle</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ラベルを囲む&lt;div&gt;のstyle</p></td>
+</tr>
+<tr class="row-odd"><td><p>onclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ラベルのonclickイベントハンドラ</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="commandbutton">
+<h2><span class="section-number">7.14. </span>コマンドボタン(commandButton)<a class="headerlink" href="#commandbutton" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>アイコン付き、またはアイコン無しのボタンを描画します。
+生成されるタグは&lt;button&gt;タグとなります。</p>
+<img alt="_images/7-14.png" src="_images/7-14.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:commandButton</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id16">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id16" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>label</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ボタンに表示するラベル</p></td>
+</tr>
+<tr class="row-odd"><td><p>buttonClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>生成される&lt;button&gt;タグのclass。
+デフォルトは&quot;normal&quot;。
+デフォルトボタンの場合は&quot;default&quot;を指定する。
+label属性の文字数が5文字以下の場合は、&quot;fixed&quot;が追加される。</p></td>
+</tr>
+<tr class="row-even"><td><p>spanClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ボタンの文字列の&lt;span&gt;に指定するクラス。
+デフォルトでは、labelの文字数が2文字以下の場合に&quot;wide&quot;が設定される</p></td>
+</tr>
+<tr class="row-odd"><td><p>img</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ボタンに表示するアイコン画像。
+&quot;/&quot;から指定した場合はContextRootからのパスに変換される。</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>&lt;h:commandButton&gt;と同じ</p></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>action</p></td>
+<td></td>
+<td><p>EL</p></td>
+<td><p>ボタンが押された時に動作させるマネージドビーンのメソッド</p></td>
+</tr>
+<tr class="row-odd"><td><p>actionListner</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>binding</p></td>
+<td></td>
+<td><p>UIComponent</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>type</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>&lt;button&gt;タグのtype属性に設定される
+&quot;submit&quot; or &quot;reset&quot; or &quot;button&quot;
+デフォルトは&quot;submit&quot;</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ondblclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmousedown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseover</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmousemove</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseout</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeypress</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeydown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeyup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onfocus</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onblur</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>disabled</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>lang</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>dir</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>tabindex</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>accesskey</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>confirmFlag</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>リンクをクリックした後、確認ダイアログを表示するかどうかのフラグです。
+デフォルト：false（ダイアログが出ない）</p></td>
+</tr>
+<tr class="row-odd"><td><p>confirmTitle</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ダイアログのタイトル</p></td>
+</tr>
+<tr class="row-even"><td><p>confirmMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ダイアログの確認メッセージ</p></td>
+</tr>
+<tr class="row-odd"><td><p>cancelButton</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>cancelButton=trueの場合：キャンセル確認画面を表示する
+デフォルト：false</p></td>
+</tr>
+<tr class="row-even"><td><p>progress</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト：true
+progress=trueの場合、ボタンをクリックした後、処理中画面を表示する</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="commandlink">
+<h2><span class="section-number">7.15. </span>コマンドリンク(commandLink)<a class="headerlink" href="#commandlink" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>サーバーのbeanのメソッドを実行するリンクを生成します。
+描画は&lt;a&gt;タグとなりますが、リンククリック時、フォームがPOSTされます。</p>
+<p>img属性を指定することで、リンクにアイコンをつけることができます。</p>
+<p>なお、左ペインに配置した場合と右ペインに配置した場合では表現が
+変わります。</p>
+<p>左ペインに配置した場合(ボタン風に表示されます)</p>
+<img alt="_images/7-15.png" src="_images/7-15.png" />
+<p>右ペインに配置した場合(通常のリンクとして表示されます)</p>
+<img alt="_images/7-15-2.png" src="_images/7-15-2.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:commandLink</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id17">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id17" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>label</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ボタンに表示するラベル</p></td>
+</tr>
+<tr class="row-odd"><td><p>linkClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>生成される&lt;a&gt;タグのclass。</p></td>
+</tr>
+<tr class="row-even"><td><p>spanClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>img</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>コマンドと共に表示する画像ファイル
+value属性が指定されていない場合は、画像だけが表示される。
+&quot;/&quot;から指定した場合はContextRootからのパスに変換される。</p></td>
+</tr>
+<tr class="row-even"><td><p>imgRenderd</p></td>
+<td></td>
+<td></td>
+<td><p>アイコン画像を表示するかしないかを指定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>リンク文字列として表示されます</p></td>
+</tr>
+<tr class="row-even"><td><p>action</p></td>
+<td></td>
+<td><p>EL</p></td>
+<td><p>リンクがクリックされたときに動作させるメソッド</p></td>
+</tr>
+<tr class="row-odd"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>binding</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ondblclick</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmousedown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmouseup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseover</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onmousemove</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onmouseout</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeypress</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onkeydown</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onkeyup</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>onfocus</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>onblur</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>disabled</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>alt</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>lang</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>dir</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>tabindex</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>accesskey</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>confirmFlag</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>リンクをクリックした後、確認ダイアログを表示するかどうかのフラグです。
+デフォルト：false（ダイアログが出ない）</p></td>
+</tr>
+<tr class="row-even"><td><p>confirmTitle</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ダイアログのタイトル</p></td>
+</tr>
+<tr class="row-odd"><td><p>confirmMessage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ダイアログの確認メッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>progress</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト：true
+progress=trueの場合、リンクをクリックした後、処理中という画面を表示する</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputemp">
+<h2><span class="section-number">7.16. </span>社員表示(outputEmp)<a class="headerlink" href="#outputemp" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>画面上に社員名を出力する際に利用します。</p>
+<p>このコンポーネントを利用することで、社員名の左アイコン、
+社員名クリック時のコンテキストメニューの描画等が行われます。</p>
+<img alt="_images/7-16.png" src="_images/7-16.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:outputEmp</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id18">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id18" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>Employee</p></td>
+<td><p>表示対象の社員オブジェクト</p></td>
+</tr>
+<tr class="row-odd"><td><p>displayName</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>指定されない場合：上記の社員オブジェクトの社員名を使う</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputemps">
+<h2><span class="section-number">7.17. </span>複数社員表示(outputEmps)<a class="headerlink" href="#outputemps" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>スケジュールの予約確認画面などで複数の社員を出力する際に利用します。
+社員名の左アイコン、社員名クリック時のコンテキストメニューの描画等が行われます。
+携帯メール受信設定表示機能や、一定社員数を超えているときのスクロールバー表示機能も持っています。</p>
+<img alt="_images/7-17.png" src="_images/7-17.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:outputEmps</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id19">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id19" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>List&lt;Employee&gt;</p></td>
+<td><p>表示対象の社員オブジェクトのリスト</p></td>
+</tr>
+<tr class="row-odd"><td><p>scrollThreshold</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>スクロールバーを表示するしきい値。
+表示対象社員数が、この値を越えたときは、この値の行数以上表示行数は増えず
+にスクロールバーが表示されます。デフォルトは、10です。
+0を指定した場合は行数は固定されず、全ての社員が表示されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>displayMailReceiveSetting</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>メール受信設定を表示するかどうか。
+デフォルトはfalse</p></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputattachfile">
+<h2><span class="section-number">7.18. </span>添付ファイル表示(outputAttachFile)<a class="headerlink" href="#outputattachfile" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>添付ファイルをダウンロードするためのリンクを描画します。</p>
+<p>添付ファイルのリストは、net.poweregg.ui.param.AttachFile
+オブジェクトのリストとして設定します。</p>
+<img alt="_images/7-18.png" src="_images/7-18.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:outputAttachFile</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id20">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id20" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>List&lt;AttachFile&gt;</p></td>
+<td><p>表示対象の添付ファイルオブジェクトのリスト</p></td>
+</tr>
+<tr class="row-odd"><td><p>scrollThreshold</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>スクロールバーを表示するしきい値。
+表示対象ファイル数が、この値を越えたときは、この値の行数以上は表示行数は増えずに
+スクロールバーが表示されます。デフォルトは、10です。
+0を指定した場合は行数は固定されず、全てのファイルが表示されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputtext">
+<h2><span class="section-number">7.19. </span>テキスト表示(outputText)<a class="headerlink" href="#outputtext" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>テキストを表示します。指定バイト数で表示するテキストを短縮したり、
+テキスト内の改行コードを&lt;br /&gt;に置き換える機能を提供します。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:outputText</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id21">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id21" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>size</p></td>
+<td></td>
+<td><p>int</p></td>
+<td><p>sizeを指定し、テキストのバイト数&gt;sizeの場合：sizeで指定したバイトまで表示する。
+カットした場合、文字列の後ろに、&quot;…&quot;を表示します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-odd"><td><p>replaceBr</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト：false
+trueの場合：テキスト内のCRLF(\r\n)をhtmlの改行（&lt;br/&gt;）に変換する</p></td>
+</tr>
+<tr class="row-even"><td><p>escape</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト：true</p></td>
+</tr>
+<tr class="row-odd"><td><p>htmlToString</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>デフォルト：false
+trueの場合、ブロック要素の終了タグを&lt;br/&gt;に変換し、それ以外のタグを除去する。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputmaillink">
+<h2><span class="section-number">7.20. </span>メールリンク表示(outputMailLink)<a class="headerlink" href="#outputmaillink" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>メールアドレスをリンクとして表示します。通常は、&quot;mailto:&quot;タグが生成されます。</p>
+<img alt="_images/7-20.png" src="_images/7-20.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:outputAttachFile</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id22">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id22" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>メールアドレス</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="paneltabs">
+<h2><span class="section-number">7.21. </span>タブ領域パネル(panelTabs)<a class="headerlink" href="#paneltabs" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>タブを格納するパネル領域を描画します。</p>
+<p>このタグはコンテナタグであり、実際のタブは、&lt;p:tab&gt;で指定します。</p>
+<img alt="_images/7-21.png" src="_images/7-21.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:panelTabs</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id23">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id23" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+</tbody>
+</table>
+<table class="colwidths-given docutils align-default" id="id24">
+<caption><span class="caption-text">ファセット</span><a class="headerlink" href="#id24" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ファセット</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>setting</p></td>
+<td><p>タブ領域右側の設定操作部分</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="tab">
+<h2><span class="section-number">7.22. </span>タブ(tab)<a class="headerlink" href="#tab" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>タブを描画します。このタグは、panelTabsタグの中に記述しなければなりません。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:tab</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id25">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id25" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>label</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>タブの文字</p></td>
+</tr>
+<tr class="row-even"><td><p>selected</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>選択状態かどうかを設定する(true:選択状態）
+選択状態タブはクリックできなくなります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>action</p></td>
+<td></td>
+<td><p>EL</p></td>
+<td><p>タブがクリックされた時のアクション</p></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="panelcontroller">
+<h2><span class="section-number">7.23. </span>コントローラー領域パネル(panelController)<a class="headerlink" href="#panelcontroller" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>画面左のコントローラー領域を描画します。</p>
+<p>領域の展開・縮小を行うためのアイコンも自動的に作成されます。</p>
+<img alt="_images/7-23.png" src="_images/7-23.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:panelController</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id26">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id26" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>collapse</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>折りたたんだ状態で描画する場合はtrue
+デフォルトはfalse</p></td>
+</tr>
+<tr class="row-even"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-odd"><td><p>widthMode</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>コントローラーの幅
+“small” : 標準（小）
+“middle”: 中
+“large” : 大
+指定しない場合はユーザ設定に従う</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="panelmain">
+<h2><span class="section-number">7.24. </span>メイン領域パネル(panelMain)<a class="headerlink" href="#panelmain" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>画面のメイン領域を描画します。
+facetとして、タイトル領域、メッセージ領域、上下ナビ領域を持ちます。</p>
+<img alt="_images/7-24.png" src="_images/7-24.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:panelMain</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id27">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id27" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>label</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>タブの文字</p></td>
+</tr>
+<tr class="row-even"><td><p>selected</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>選択状態かどうかを設定する(true:選択状態）
+選択状態タブはクリックできなくなります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>requiredGuidance</p></td>
+<td></td>
+<td><p>EL</p></td>
+<td><p>&quot;*は入力必須です&quot;のガイダンスを表示するかどうか</p></td>
+</tr>
+<tr class="row-even"><td><p>action</p></td>
+<td></td>
+<td><p>EL</p></td>
+<td><p>タブがクリックされた時のアクション</p></td>
+</tr>
+<tr class="row-odd"><td><p>immediate</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>rendered</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+</tbody>
+</table>
+<table class="colwidths-given docutils align-default" id="id28">
+<caption><span class="caption-text">ファセット</span><a class="headerlink" href="#id28" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ファセット</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>title</p></td>
+<td><p>タイトル領域</p></td>
+</tr>
+<tr class="row-odd"><td><p>messages</p></td>
+<td><p>メッセージ領域</p></td>
+</tr>
+<tr class="row-even"><td><p>navi-upper-left</p></td>
+<td><p>上部ナビゲーション領域の左側</p></td>
+</tr>
+<tr class="row-odd"><td><p>navi-upper-right</p></td>
+<td><p>上部ナビゲーション領域の右側</p></td>
+</tr>
+<tr class="row-even"><td><p>navi-bottom-left</p></td>
+<td><p>下部ナビゲーション領域の左側</p></td>
+</tr>
+<tr class="row-odd"><td><p>navi-bottom-right</p></td>
+<td><p>下部ナビゲーション領域の右側</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="panelsearchbox">
+<h2><span class="section-number">7.25. </span>検索条件パネル(panelSearchBox)<a class="headerlink" href="#panelsearchbox" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>コントローラー領域内の検索条件入力域を描画します。</p>
+<img alt="_images/7-25.png" src="_images/7-25.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:panelMain</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id29">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id29" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>検索条件パネルのタイトル部分の文字列</p></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>CSSスタイル属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>CSSクラス属性</p></td>
+</tr>
+<tr class="row-even"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="panelcollapsible">
+<h2><span class="section-number">7.26. </span>折りたたみ可能パネル(panelCollapsible)<a class="headerlink" href="#panelcollapsible" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>折りたたみ可能なパネルを描画します。</p>
+<img alt="_images/7-26-1.png" src="_images/7-26-1.png" />
+<img alt="_images/7-26-2.png" src="_images/7-26-2.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:panelCollapsible</span> <span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id30">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id30" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>collapse</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>折りたたんだ状態の場合はtrue
+デフォルトはfalse</p></td>
+</tr>
+<tr class="row-even"><td><p>collapseLabel</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>折りたたんだ状態の時に表示される文字列</p></td>
+</tr>
+<tr class="row-odd"><td><p>expandLabel</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>展開した状態の時に表示される文字列</p></td>
+</tr>
+<tr class="row-even"><td><p>collapseImage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>折りたたんだ状態の時に表示される画像のパス
+&quot;/&quot;から指定した場合は、コンテキストルート配下のパスに変換されます。
+指定しなかった場合、デフォルトの三角イメージが表示されます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>expandImage</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>展開した状態の時に表示される画像のパス
+&quot;/&quot;から指定した場合は、コンテキストルート配下のパスに変換されます。
+指定しなかった場合、デフォルトの三角イメージが表示されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="panelaccordion">
+<h2><span class="section-number">7.27. </span>アコーディオンパネル(panelAccordion)<a class="headerlink" href="#panelaccordion" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>折りたたみ可能なアコーディオンパネルを描画します。</p>
+<p>アコーディオンパネル内には、複数のパネルを配置できます。</p>
+<img alt="_images/7-27.png" src="_images/7-27.png" />
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:panelCollapsible</span> <span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id31">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id31" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>expandIndex</p></td>
+<td></td>
+<td><p>Integer</p></td>
+<td><p>アコーディオンパネルに含まれるパネルのうち、
+展開しているパネルの0から始まるインデックスを指定します。
+指定しない場合及び指定したインデックスに該当するパネルが存在しない場合は、
+先頭（0番目）のパネルが展開された状態で表示されます。</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>CSSのスタイルクラス</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="panelaccordioncontent">
+<h2><span class="section-number">7.28. </span>アコーディオンパネルコンテンツ領域(panelAccordionContent)<a class="headerlink" href="#panelaccordioncontent" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>アコーディオンパネルの折りたたみ可能な一つの領域を描画します。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:panelCollapsible</span> <span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id32">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id32" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>領域のタブに表示される文字列を指定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>renderd</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-odd"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>style属性</p></td>
+</tr>
+<tr class="row-even"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>class属性</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="div-div">
+<h2><span class="section-number">7.29. </span>ＤＩＶ領域(div)<a class="headerlink" href="#div-div" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>&lt;div&gt;タグを生成します。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:div</span> <span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id33">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id33" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>falseの場合は描画されない。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>style</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>style属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>styleClass</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>class属性</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="html-head">
+<h2><span class="section-number">7.30. </span>ＨＴＭＬヘッダ(head)<a class="headerlink" href="#html-head" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>htmlの&lt;head&gt;を生成します。
+共通スタイルシートやページ内で利用されている他のコンポーネントが必要
+とする外部スクリプトファイルを読み込むタグが自動生成されます。</p>
+<p>アプリケーション固有で利用する外部スクリプトファイルは、
+通常の&lt;head&gt;同様に、この要素の子要素として指定できます。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id34">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id34" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>title</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>titleタグに指定する値</p></td>
+</tr>
+<tr class="row-even"><td><p>noCache</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td><p>クライアントでのキャッシュを無効にするタグを付加するかどうか指定します。デフォルトはtrueです。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="html-body">
+<h2><span class="section-number">7.31. </span>HTMLボディ描画(body)<a class="headerlink" href="#html-body" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>htmlの&lt;body&gt;タグを生成します。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:body</span> <span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id35">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id35" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>なし</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id1">
+<h2><span class="section-number">7.32. </span>日付時刻コンバータ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>java.util.Dateオブジェクトを、&quot;yyyy/mm/dd (day) hh:mm&quot;
+形式の文字列に変換するコンバータです。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">f:converter</span> <span class="na">converterId</span><span class="o">=</span><span class="s">&quot;net.poweregg.faces.DateTimeConverter&quot;</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">7.33. </span>日付コンバータ<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>java.util.Dateオブジェクトを、&quot;yyyy/mm/dd (day)&quot;
+形式の文字列に変換するコンバータです。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">f:converter</span> <span class="na">converterId</span><span class="o">=</span><span class="s">&quot;net.poweregg.faces.DateConverter&quot;</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="datatableselectoneradio">
+<h2><span class="section-number">7.34. </span>テーブル列のラジオボタン選択（dataTableSelectOneRadio）<a class="headerlink" href="#datatableselectoneradio" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>テーブルの特定の列を選択するためのラジオボタンです。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:dataTableSelectOneRadio</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id36">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id36" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>name</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>itemValue</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>テーブルのインデックスです。
+itemValue=valueの場合にラジオボタンが選択された状態になります</p></td>
+</tr>
+<tr class="row-even"><td><p>itemLabel</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>ラジオボタンのラベル</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="inputtimerange">
+<h2><span class="section-number">7.35. </span>時刻範囲入力（inputTimeRange）<a class="headerlink" href="#inputtimerange" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>HH:MM形式で時刻範囲を入力する部品です。</p>
+<p>入力された時刻は、&quot;HHMM&quot;の文字列のリストとして格納されます。
+（リストの要素は、開始時刻と終了時刻の２つ）</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputTimeRange</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id37">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id37" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>valueChangeListner</p></td>
+<td></td>
+<td><p>リスナー</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>displayStartTime</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択ウィンドウの表示開始時刻。省略値は&quot;0800&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>displayEndTime</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択ウィンドウの表示終了時刻省略値は、displayStartTimeの24時間後</p></td>
+</tr>
+<tr class="row-even"><td><p>displayInterval</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択ウィンドウに表示する時刻の単位</p></td>
+</tr>
+<tr class="row-odd"><td><p>validateRange</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>入力時刻の大小チェック（開始時刻&lt;=終了時刻）を行う場合はtrue。デフォルトはtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>autoAjust</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>true: 終了日自動調整許可, false: 自動調整不可 default: false</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="inputtime">
+<h2><span class="section-number">7.36. </span>時刻入力（inputTime）<a class="headerlink" href="#inputtime" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>HH:MM形式で時刻を入力する部品です。</p>
+<p>入力された時刻は、&quot;HHMM&quot;の文字列として格納されます。</p>
+<p>呼び出し方法</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p:inputTime</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<table class="colwidths-given docutils align-default" id="id38">
+<caption><span class="caption-text">パラメタ</span><a class="headerlink" href="#id38" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 11%" />
+<col style="width: 18%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>必須</p></th>
+<th class="head"><p>データ型</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Id</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>id属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>rendered</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>immediate</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>required</p></td>
+<td></td>
+<td><p>Boolean</p></td>
+<td><p>必須の場合はtrue</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>valueChangeListner</p></td>
+<td></td>
+<td><p>リスナー</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>displayStartTime</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択ウィンドウの表示開始時刻.省略値は&quot;0800&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>displayEndTime</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択ウィンドウの表示終了時刻.省略値は、displayStartTimeの24時間後</p></td>
+</tr>
+<tr class="row-even"><td><p>displayInterval</p></td>
+<td></td>
+<td><p>String</p></td>
+<td><p>選択ウィンドウに表示する時刻の単位</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="08_.html" class="btn btn-neutral float-right" title="8. アドオンシステムのPOWER EGGへの組み込み" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="06_.html" class="btn btn-neutral float-left" title="6. POWER EGG3.0エンジンと開発のためのAPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

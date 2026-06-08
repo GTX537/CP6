@@ -67,4 +67,10 @@ public class Sys_OperLog
     /// 操作时间
     /// </summary>
     public DateTime CreateDate { get; set; } = DateTime.Now;
+
+    /// <summary>
+    /// 告警标记（Phase 6）：true=需运维关注（如 IntegrationEvent DeadLetter）
+    /// OperLog 查询 UI 可按此过滤
+    /// </summary>
+    public bool IsAlert { get; set; } = false;
 }

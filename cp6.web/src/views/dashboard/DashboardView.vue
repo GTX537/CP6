@@ -139,16 +139,185 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- Phase 8 — 受注済未出荷 Dashboard (Gap 3.4) -->
+    <el-row :gutter="16" style="margin-top: 16px">
+      <el-col :xs="24" :sm="24" :md="24" :lg="24" class="dash-col reveal-item" style="--delay: 880ms">
+        <el-card shadow="hover" class="dash-panel">
+          <template #header>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+              <span>
+                {{ t('dashboard.unshipped.title') }}
+                <el-tag v-if="unshippedTotal > 0" size="small" type="warning" style="margin-left: 8px">
+                  {{ unshippedTotal }}
+                </el-tag>
+              </span>
+              <div style="display: flex; gap: 12px; align-items: center">
+                <el-switch
+                  v-model="onlyOverdue"
+                  :active-text="t('dashboard.unshipped.onlyOverdue')"
+                  @change="loadUnshipped"
+                />
+                <el-button :icon="Refresh" size="small" @click="loadUnshipped" :loading="unshippedLoading" />
+              </div>
+            </div>
+          </template>
+
+          <el-table
+            v-if="unshippedRows.length && !isMobile"
+            :data="unshippedRows"
+            stripe
+            size="small"
+            @row-click="goOrderDetail"
+            style="cursor: pointer"
+          >
+            <el-table-column prop="webOrderNo" :label="t('dashboard.unshipped.no')" min-width="130" />
+            <el-table-column :label="t('dashboard.unshipped.customer')" min-width="120">
+              <template #default="{ row }">
+                {{ row.customerName || row.customerCd }}
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('dashboard.unshipped.deliveryDate')" min-width="140">
+              <template #default="{ row }">
+                <span :class="{ 'overdue-text': row.isOverdue }">
+                  {{ fmtDate(row.customerDeliveryDate) }}
+                </span>
+                <el-tag
+                  v-if="row.isOverdue"
+                  type="danger"
+                  size="small"
+                  style="margin-left: 6px"
+                >
+                  {{ t('dashboard.unshipped.overdue') }}
+                </el-tag>
+                <el-tag
+                  v-else-if="row.daysUntilDue !== null && row.daysUntilDue !== undefined && row.daysUntilDue <= 3"
+                  type="warning"
+                  size="small"
+                  style="margin-left: 6px"
+                >
+                  D-{{ row.daysUntilDue }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('dashboard.unshipped.status')" min-width="120">
+              <template #default="{ row }">
+                <el-tag :type="orderLifecycleColor(row.orderStatus)" size="small">
+                  {{ t(`dashboard.unshipped.lifecycle.${row.orderStatus}`) }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('dashboard.unshipped.qty')" width="170" align="right">
+              <template #default="{ row }">
+                {{ fmtQty(row.shippedQty) }} / {{ fmtQty(row.orderedQty) }}
+                <span style="color: #f56c6c; margin-left: 4px">(-{{ fmtQty(row.remainingQty) }})</span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('dashboard.unshipped.mes')" min-width="180">
+              <template #default="{ row }">
+                <span style="font-size: 12px; color: #606266">{{ row.mesStatusSummary || '—' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('dashboard.unshipped.wms')" min-width="180">
+              <template #default="{ row }">
+                <span style="font-size: 12px; color: #606266">{{ row.wmsStatusSummary || '—' }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <!-- 手机端简化列表 -->
+          <div v-else-if="unshippedRows.length && isMobile" class="simple-list">
+            <div
+              v-for="row in unshippedRows"
+              :key="row.webOrderNo"
+              class="simple-row"
+              @click="goOrderDetail(row)"
+              style="cursor: pointer"
+            >
+              <span class="simple-row-name">
+                {{ row.webOrderNo }} — {{ row.customerName || row.customerCd }}
+              </span>
+              <el-tag v-if="row.isOverdue" type="danger" size="small">
+                {{ t('dashboard.unshipped.overdue') }}
+              </el-tag>
+            </div>
+          </div>
+
+          <el-empty v-else :description="t('dashboard.noData')" :image-size="60" />
+
+          <el-pagination
+            v-if="unshippedTotal > unshippedQuery.pageSize"
+            v-model:current-page="unshippedQuery.page"
+            v-model:page-size="unshippedQuery.pageSize"
+            :page-sizes="[10, 25, 50, 100]"
+            :total="unshippedTotal"
+            layout="total, sizes, prev, pager, next"
+            small
+            background
+            style="margin-top: 12px; justify-content: flex-end"
+            @current-change="loadUnshipped"
+            @size-change="loadUnshipped"
+          />
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="16" style="margin-top: 16px">
+      <el-col :xs="24" :sm="24" :md="24" :lg="24" class="dash-col reveal-item" style="--delay: 960ms">
+        <el-card shadow="hover" class="dash-panel">
+          <template #header>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+              <span>
+                {{ t('dashboard.stockDwell.title') }}
+                <el-tag
+                  v-if="(stockDwellSummary?.over90Qty || 0) > 0"
+                  size="small"
+                  type="danger"
+                  style="margin-left: 8px"
+                >
+                  {{ fmtQty(stockDwellSummary?.over90Qty) }}
+                </el-tag>
+              </span>
+              <div style="display: flex; gap: 12px; align-items: center">
+                <el-button :icon="Refresh" size="small" @click="loadStockDwell" :loading="stockDwellLoading" />
+                <el-button link type="primary" @click="go('/wms/stock-dwell')">
+                  {{ t('dashboard.stockDwell.open') }}
+                </el-button>
+              </div>
+            </div>
+          </template>
+
+          <div v-if="stockDwellRows.length" class="stock-dwell-widget">
+            <div v-for="row in stockDwellRows" :key="row.groupKey" class="stock-dwell-widget-row">
+              <span class="stock-dwell-widget-name">{{ row.groupLabel }}</span>
+              <span class="stock-dwell-widget-qty">{{ fmtQty(row.bucketOver90Qty) }}</span>
+              <el-progress
+                :percentage="stockDwellPercent(row.bucketOver90Qty)"
+                :stroke-width="12"
+                :show-text="false"
+              />
+            </div>
+          </div>
+
+          <el-empty v-else :description="t('dashboard.noData')" :image-size="60" />
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { Refresh } from '@element-plus/icons-vue'
 import { dashboardApi } from '@/api/dashboard'
+import { orderApi } from '@/api/order'
+import { stockDwellApi } from '@/api/wms/stockDwell'
 import { getConnection, startConnection } from '@/utils/signalr'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/order'
+import type { StockDwellRow, StockDwellSummary } from '@/types/stockDwell'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -268,6 +437,96 @@ function fmtTime(d?: string) {
   return `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`
 }
 
+function fmtDate(d?: string | null) {
+  if (!d) return '—'
+  const dt = new Date(d)
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+}
+
+function todayString() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+// ───── Phase 8 受注済未出荷 widget ─────
+const unshippedRows = ref<UnshippedOrderItemDto[]>([])
+const unshippedTotal = ref(0)
+const unshippedLoading = ref(false)
+const onlyOverdue = ref(false)
+const unshippedQuery = reactive<UnshippedOrderQuery>({
+  page: 1,
+  pageSize: 10,
+  sortField: 'deliveryDate',
+  sortOrder: 'asc',
+})
+
+async function loadUnshipped() {
+  unshippedLoading.value = true
+  try {
+    const res = await orderApi.searchUnshipped({
+      ...unshippedQuery,
+      onlyOverdue: onlyOverdue.value || undefined,
+    })
+    if (res.code === 0 && res.data) {
+      // codex 后端用 PagedResultDto<T>（Items / Total / PageIndex / PageSize），
+      // 与 PagedResult<T>（rows / total）字段名不同。兼容两种形状。
+      const d: any = res.data
+      unshippedRows.value = d.items ?? d.rows ?? []
+      unshippedTotal.value = d.total ?? 0
+    }
+  } catch {
+    /* 静默：axios 拦截器已经弹了 toast；这里不要再弹避免双重提示 */
+  } finally {
+    unshippedLoading.value = false
+  }
+}
+
+function goOrderDetail(row: UnshippedOrderItemDto) {
+  router.push(`/order?webOrderNo=${encodeURIComponent(row.webOrderNo)}`)
+}
+
+// ───── T13 stock dwell widget ─────
+const stockDwellSummary = ref<StockDwellSummary | null>(null)
+const stockDwellLoading = ref(false)
+const stockDwellRows = computed<StockDwellRow[]>(() =>
+  (stockDwellSummary.value?.rows ?? [])
+    .filter(row => Number(row.bucketOver90Qty || 0) > 0)
+    .slice(0, 6),
+)
+const maxStockDwellOver90 = computed(() =>
+  Math.max(...stockDwellRows.value.map(row => Number(row.bucketOver90Qty || 0)), 1),
+)
+
+function stockDwellPercent(qty: number) {
+  return Math.round((Number(qty || 0) / maxStockDwellOver90.value) * 100)
+}
+
+async function loadStockDwell() {
+  stockDwellLoading.value = true
+  try {
+    const res = await stockDwellApi.summary({
+      groupBy: 'product',
+      asOfDate: todayString(),
+    })
+    if (res.code === 0 && res.data) {
+      stockDwellSummary.value = res.data
+    }
+  } catch {
+    /* axios interceptor already shows the error toast. */
+  } finally {
+    stockDwellLoading.value = false
+  }
+}
+
+function orderLifecycleColor(s: string): 'success' | 'warning' | 'danger' | 'info' | '' {
+  switch (s) {
+    case 'CONFIRMED': return 'info'
+    case 'IN_PRODUCTION': return 'warning'
+    case 'PARTIALLY_CANCELLED': return 'danger'
+    default: return ''
+  }
+}
+
 function revealDashboard() {
   if (dashboardReady.value) return
   requestAnimationFrame(() => { dashboardReady.value = true })
@@ -279,6 +538,10 @@ async function loadData() {
     summary.value = res.summary
     recentOrders.value = res.recentOrders || []
     workOrderStatus.value = res.workOrderStatus || []
+    // Phase 8 widget は loadData() に組み込まない:
+    // dashboard 主体は NewOperLog SignalR push で頻繁にリフレッシュされる。
+    // unshipped widget は別系統（onMounted で一度 + 手動 refresh ボタンのみ）に切り離して、
+    // 1 リクエスト → OperLog → SignalR → loadData の正回归ループを回避する。
   } finally {
     revealDashboard()
   }
@@ -286,6 +549,9 @@ async function loadData() {
 
 onMounted(async () => {
   await loadData()
+  // Phase 8 widget の初回ロードは独立にトリガー（loadData の SignalR ループに巻き込まれない）
+  loadUnshipped()
+  loadStockDwell()
 
   try {
     await startConnection()
@@ -522,6 +788,33 @@ onUnmounted(() => {
   margin-right: 8px;
 }
 
+.stock-dwell-widget {
+  display: grid;
+  gap: 12px;
+}
+
+.stock-dwell-widget-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 110px minmax(160px, 260px);
+  align-items: center;
+  gap: 12px;
+}
+
+.stock-dwell-widget-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #303133;
+  font-size: 13px;
+}
+
+.stock-dwell-widget-qty {
+  color: #d93026;
+  font-weight: 650;
+  font-size: 13px;
+  text-align: right;
+}
+
 @keyframes dashboard-rise {
   from {
     opacity: 0;
@@ -552,6 +845,14 @@ onUnmounted(() => {
 @media (max-width: 991px) {
   .quick-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stock-dwell-widget-row {
+    grid-template-columns: 1fr 92px;
+  }
+
+  .stock-dwell-widget-row :deep(.el-progress) {
+    grid-column: 1 / -1;
   }
 }
 

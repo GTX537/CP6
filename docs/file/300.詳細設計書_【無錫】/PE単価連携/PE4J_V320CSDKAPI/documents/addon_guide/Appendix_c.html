@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>27. 付録C 開発したpe4j-earのサーバーへのデプロイ &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="28. 付録D,サンプルアプリケーション" href="Appendix_d.html" />
+    <link rel="prev" title="26. 付録B アドオン開発環境の作成(Eclipse)" href="Appendix_b.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#glassfish-payara">27.1. Glassfish(Payara)をサーバーとして利用している場合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interstage">27.2. Interstageをサーバとして利用している場合</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">27. </span>付録C 開発したpe4j-earのサーバーへのデプロイ</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="c-pe4j-ear">
+<h1><span class="section-number">27. </span>付録C 開発したpe4j-earのサーバーへのデプロイ<a class="headerlink" href="#c-pe4j-ear" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>この章ではアドオン開発したpe4j-ear.earを運用サーバーにデプロイする手順について説明します。</p>
+<div class="section" id="glassfish-payara">
+<h2><span class="section-number">27.1. </span>Glassfish(Payara)をサーバーとして利用している場合<a class="headerlink" href="#glassfish-payara" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ol class="arabic">
+<li><p>pe4j-ear.ear をPE4J\PEWEB\ear フォルダにコピーします。</p>
+<blockquote>
+<div><p>※ 既にあるファイルはバックアップ等を行ってください。</p>
+</div></blockquote>
+</li>
+<li><p>コマンドプロンプトを開き PE4J\PEWEB\insttool フォルダに移動します。</p></li>
+<li><p>状況に応じて、デプロイのためのコマンドを実行してください。</p></li>
+</ol>
+<p>【すでに ear が配備済みの場合】</p>
+<blockquote>
+<div><p>下記コマンドを実行してpe4j-earを再デプロイします。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>inst pe4j-1.reDeploy
+inst pe4j-2.reDeploy ※POWER EGGのプロセス数が2の場合のみ
+</pre></div>
+</div>
+</div></blockquote>
+<p>【ear が配備解除された状態の場合】</p>
+<blockquote>
+<div><p>下記の手順を順に実行してください。</p>
+<p>サービスを停止</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>inst pe4j-1.stopSVC
+inst pe4j-2.stopSVC  ※POWER EGGのプロセス数が2の場合のみ
+</pre></div>
+</div>
+<p>※ 既に停止している場合はエラーが発生しますが無視してください。</p>
+<p>以下の2つのキャッシュフォルダを削除してください。</p>
+<ul class="simple">
+<li><p>PE4J\payara41\glassfish\domains\pe4j-1\generated</p></li>
+<li><p>PE4J\payara41\glassfish\domains\pe4j-1\osgi-cache</p></li>
+</ul>
+<p>POWER EGGのプロセス数が2の場合は、以下のキャッシュフォルダも削除してください。</p>
+<ul class="simple">
+<li><p>PE4J\payara41\glassfish\domains\pe4j-2\generated</p></li>
+<li><p>PE4J\payara41\glassfish\domains\pe4j-2\osgi-cache</p></li>
+</ul>
+<p>サービスを起動してデプロイ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>inst pe4j-1.startSVC
+inst pe4j-1.deploy
+inst pe4j-2.startSVC  ※POWER EGGのプロセス数が2の場合のみ
+inst pe4j-2.deploy    ※POWER EGGのプロセス数が2の場合のみ
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="interstage">
+<h2><span class="section-number">27.2. </span>Interstageをサーバとして利用している場合<a class="headerlink" href="#interstage" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ol class="arabic">
+<li><p>pe4j-ear.ear をPE4J\PEWEB\ear フォルダにコピーします。</p>
+<blockquote>
+<div><p>※ 既にあるファイルはバックアップ等を行ってください。</p>
+</div></blockquote>
+</li>
+<li><p>コマンドプロンプトを開き PE4J\PEWEB\insttool フォルダに移動します。</p></li>
+<li><p>状況に応じて、デプロイのためのコマンドを実行してください。</p></li>
+</ol>
+<p>【すでに ear が配備済みの場合】</p>
+<blockquote>
+<div><p>下記コマンドを実行してpe4j-earを再デプロイします。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inst</span> <span class="n">pe4j</span><span class="o">.</span><span class="n">reDeploy</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>【ear が配備解除された状態の場合】</p>
+<blockquote>
+<div><p>下記の手順を順に実行してください。</p>
+<p>pe4jクラスタを停止</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inst</span> <span class="n">pe4j</span><span class="o">.</span><span class="n">stopCluster</span>
+</pre></div>
+</div>
+<p>キャッシュフォルダを削除</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inst</span> <span class="n">deleteCacheAll</span>
+</pre></div>
+</div>
+<p>デプロイしてクラスタを起動</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inst</span> <span class="n">pe4j</span><span class="o">.</span><span class="n">deploy</span>
+<span class="n">inst</span> <span class="n">pe4j</span><span class="o">.</span><span class="n">startCluster</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Appendix_d.html" class="btn btn-neutral float-right" title="28. 付録D,サンプルアプリケーション" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Appendix_b.html" class="btn btn-neutral float-left" title="26. 付録B アドオン開発環境の作成(Eclipse)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

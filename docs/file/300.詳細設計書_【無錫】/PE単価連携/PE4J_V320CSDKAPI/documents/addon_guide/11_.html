@@ -1,0 +1,667 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>11. XML Webサービス &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="12. REST API 共通" href="12_0_rest_common.html" />
+    <link rel="prev" title="10. ログインパスワード変更同期インターフェース" href="10_.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">11. XML Webサービス</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#web">11.1. ワークフローWebサービス</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">11.1.1. ワークフローWebサービスの利用方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#web-power-egg-v1web">11.1.2. ワークフローWebサービスの機能(POWER EGG V1互換Webサービス)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xml-applywithxml">11.1.2.1. XML文書のワークフロー申請（applyWithXML）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#applywithbinary">11.1.2.2. バイナリ文書のワークフロー申請（applyWithBinary）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">11.1.2.3. 文書識別情報の登録</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xsl">11.1.2.4. スタイルシート(XSL)の指定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getapplicationform">11.1.2.5. 案件情報取得（getApplicationForm）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rejectafterflowbycode">11.1.2.6. 決裁済み案件の強制否認・差し戻し（rejectAfterFlowByCode）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#replacemainbinarys-replacemainxml">11.1.2.7. ワークフロー文書内容の差替え（replaceMainBinarys, replaceMainXML）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getroutelist">11.1.2.8. 決裁ルート情報取得（GetRouteList）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getstatus">11.1.2.9. 決裁状況の取得（GetStatus）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#registercomment">11.1.2.10. コメントの登録（RegisterComment）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getcommenttree">11.1.2.11. コメント内容の取得（GetCommentTree）</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#web-power-egg-v2-web">11.1.3. ワークフローWebサービスの機能(POWER EGG V2 Webサービス)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apply">11.1.3.1. 申請（apply）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#findsimulation">11.1.3.2. 申請ルートシミュレート（findSimulation）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#withdraw">11.1.3.3. 取下げ（withdraw）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">11.2. スケジュールWebサービス</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">11.2.1. スケジュールWebサービスの利用方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">11.2.2. スケジュールWebサービスの機能</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id6">11.2.2.1. スケジュールの登録</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">11.2.2.2. スケジュールの更新</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">11.2.2.3. スケジュールの削除</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">11.3. アシストメッセージWebサービス</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">11.3.1. アシストメッセージWebサービスの利用方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">11.3.2. アシストメッセージWebサービスの機能</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#registermessage">11.3.2.1. アシストメッセージの登録（registerMessage）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deletemessagebyid">11.3.2.2. アシストメッセージの削除（メッセージ管理番号指定）（deleteMessageById）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id-deletemessagebyprocessid">11.3.2.3. アシストメッセージの削除（プロセスID指定）（deleteMessageByProcessId）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">11.4. 組織情報Webサービス</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">11.4.1. 組織情報Webサービスの利用方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">11.4.2. 組織情報Webサービスの機能</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#getdeptinfo">11.4.2.1. 部門情報の取得（getDeptInfo）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getempinfo">11.4.2.2. 社員情報の取得（getEmpInfo）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getunderdept">11.4.2.3. 配下部門情報の取得（getUnderDept）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_i.html">33. 付録I, 添付ファイル処理共通シーケンス</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">11. </span>XML Webサービス</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="xml-web">
+<h1><span class="section-number">11. </span>XML Webサービス<a class="headerlink" href="#xml-web" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>POWER EGG3.0はJava言語で開発されていますので、Javaで開発されている
+システムとは容易に連携可能ですが .NET等の他の言語で開発されたシステム
+との連携はこれまで困難でした。</p>
+<p>そこで .NETベースのシステムとの連携を容易なものとするため、
+一部のAPIがXML Webサービスとして利用できるようになっています。</p>
+<p>また、POWER EGG3.0からREST型のWebサービスも提供しており、今後は
+REST型のWebサービスを拡充していく方針ですので、新規に連携機能を
+開発される場合は、REST型のWebサービスを利用されることをお勧めします。</p>
+<p class="plantuml">
+<img src="_images/plantuml-92263fb9234e1cda804a59cb359eea67f232ca2c.png" alt="node &quot;POWER EGG&quot; {
+    [Apache Axis]
+    [JAX WS]
+    [WebServiceクラス]
+    [APIクラス]
+}
+
+node &quot;Java, .net等のプログラム&quot; {
+    [client]
+}
+
+[client] .. [Apache Axis] : HTTP
+[client] .. [JAX WS] : HTTP
+[Apache Axis] .. [WebServiceクラス]
+[JAX WS] .. [WebServiceクラス]
+[WebServiceクラス] .. [APIクラス]"/>
+</p>
+<div class="section" id="web">
+<h2><span class="section-number">11.1. </span>ワークフローWebサービス<a class="headerlink" href="#web" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>POWER EGGでは、ワークフローの一部のAPIがWebサービスとして
+利用可能になっています。(POWER EGG V1互換Webサービス)</p>
+<p>また、Ver2.3から申請受付番号を戻り値とする新しいWebサービス
+が利用可能です。</p>
+<p>Ver2.3以降は新しいWebサービスを利用することを推奨します。(POWER EGG V2 Webサービス)</p>
+<div class="section" id="id1">
+<h3><span class="section-number">11.1.1. </span>ワークフローWebサービスの利用方法<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>ワークフローWebサービスのWSDLは
+<a class="reference external" href="http:/">http:/</a>/&lt;powereggサーバー&gt;/pe4j/services/DataFlowService?wsdl
+のURLで取得できます。
+また、Ver2.3から追加されているWebサービスのWSDLは
+<a class="reference external" href="http:/">http:/</a>/&lt;powereggサーバー&gt;/pe4j/webservice/DataFlowWS?wsdl
+のURLで取得できます。</p>
+<p>Visual Studio.NETなどでWebサービスを利用する場合は、
+Web参照として上記のURLを指定することでWebサービスが利用できるようになります。</p>
+</div>
+<div class="section" id="web-power-egg-v1web">
+<h3><span class="section-number">11.1.2. </span>ワークフローWebサービスの機能(POWER EGG V1互換Webサービス)<a class="headerlink" href="#web-power-egg-v1web" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>ワークフローWebサービスでは以下の機能が提供されています。
+引数などの詳細については、APIリファレンスを参照してください。</p>
+<div class="section" id="xml-applywithxml">
+<h4><span class="section-number">11.1.2.1. </span>XML文書のワークフロー申請（applyWithXML）<a class="headerlink" href="#xml-applywithxml" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>DataFlowEngineEJB#applyメソッドをWebサービス経由で利用するAPIです。
+起案内容の申請本文としてxmlデータを、添付ファイルとして複数のバイト列を受け取り、
+ワークフローを開始します。</p>
+<p>申請者や申請元部門はPOWEREGGの外部コードを指定するという点がEJBのAPIと
+異なっています。
+POWEREGG内部コードへの変換はWebサービス内で行われます。</p>
+</div>
+<div class="section" id="applywithbinary">
+<h4><span class="section-number">11.1.2.2. </span>バイナリ文書のワークフロー申請（applyWithBinary）<a class="headerlink" href="#applywithbinary" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>applyWithXMLではxmlデータを申請本文として受け取りますが、
+このAPIでは、PDFファイルなどのバイナリデータを申請本文として受け取ります。</p>
+<p>POWER EGGのワークフローエンジンでは申請本文はXMLファイルでなくて
+はならないためこのAPIを利用するには、バイナリデータに対応する申請XMLを
+生成するためのJavaクラスも開発し事前にPOWER EGGに組み込んでおく必要があります。</p>
+<p>XML生成クラスは net.poweregg.web.engine.dataflow.webservice.IntXMLGeneration
+インターフェースを実装したクラスとして開発します。</p>
+<p>開発したXML生成クラスは、WebアプリケーションのCLASSPATHに登録し、
+ZT2_CLASSテーブルにレコードを登録することによりPOWER EGGに組み込みます。</p>
+<p>ワークフローWebサービスは、バイナリデータ申請が呼び出されたとき、
+このレコードを読み込み、XML生成クラスのメソッドを呼び出して申請XMLを生成します。</p>
+<table class="colwidths-given docutils align-default" id="id15">
+<caption><span class="caption-text">ZT2_CLASSに登録する情報</span><a class="headerlink" href="#id15" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>列名</p></th>
+<th class="head"><p>設定内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CORPID</p></td>
+<td><p>'0000000000'</p></td>
+</tr>
+<tr class="row-odd"><td><p>COMMONNO</p></td>
+<td><p>'1206'</p></td>
+</tr>
+<tr class="row-even"><td><p>CLASSNO</p></td>
+<td><p>開発したXML生成クラスが対応する「申請様式」の様式コード</p></td>
+</tr>
+<tr class="row-odd"><td><p>CLASSNAME</p></td>
+<td><p>開発したXML生成クラスのクラス名</p></td>
+</tr>
+<tr class="row-even"><td><p>NUMDATA1</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-odd"><td><p>NUMDATA2</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-even"><td><p>NUMDATA3</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-odd"><td><p>CHARDATA1</p></td>
+<td><p>開発したXML生成クラスのクラス名</p></td>
+</tr>
+<tr class="row-even"><td><p>CHARDATA2</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-odd"><td><p>CHARDATA3</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-even"><td><p>MODCLASS</p></td>
+<td><p>'0'</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h4><span class="section-number">11.1.2.3. </span>文書識別情報の登録<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>Webサービスを利用して申請する場合、申請時のパラメタで指定する
+文書識別コード(docClassOfMailXml)に該当するデータを
+QT2_DOCUMENT_CLASSテーブルに登録しておく必要があります。</p>
+<p>この文書識別コードは、次に述べるスタイルシート情報との関連づけに利用されます。</p>
+<table class="colwidths-given docutils align-default" id="id16">
+<caption><span class="caption-text">QT2_DOCUMENT_CLASSに登録する情報</span><a class="headerlink" href="#id16" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>列名</p></th>
+<th class="head"><p>設定内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>DOCCLASSID</p></td>
+<td><p>900以降の任意の数値</p></td>
+</tr>
+<tr class="row-odd"><td><p>DOCIDNAME</p></td>
+<td><p>文書識別コードの名称</p></td>
+</tr>
+<tr class="row-even"><td><p>CLIPFLAG</p></td>
+<td><p>0固定</p></td>
+</tr>
+<tr class="row-odd"><td><p>USAGEFLAG</p></td>
+<td><p>0固定</p></td>
+</tr>
+<tr class="row-even"><td><p>DOCSTORAGEFORMAT</p></td>
+<td><p>2固定</p></td>
+</tr>
+<tr class="row-odd"><td><p>SYSTEMFLAG</p></td>
+<td><p>1固定</p></td>
+</tr>
+<tr class="row-even"><td><p>REGFLAG</p></td>
+<td><p>0固定</p></td>
+</tr>
+<tr class="row-odd"><td><p>FILEEXTENTION</p></td>
+<td><p>'xml'固定</p></td>
+</tr>
+<tr class="row-even"><td><p>MODDATE</p></td>
+<td><p>null</p></td>
+</tr>
+<tr class="row-odd"><td><p>MODEMPNO</p></td>
+<td><p>null</p></td>
+</tr>
+<tr class="row-even"><td><p>DELETEFLAG</p></td>
+<td><p>'0'固定</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="xsl">
+<h4><span class="section-number">11.1.2.4. </span>スタイルシート(XSL)の指定<a class="headerlink" href="#xsl" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>ワークフローデータは審議・決裁画面に表示されるとき、
+XSLファイルによってHTMLに変換されます。</p>
+<p>このとき利用されるXSLファイルをZT2_CLASSに登録する必要があります。</p>
+<p>XSLデータは、PEWEBインストールディレクトリのappLib\XSLフォルダにファイルとして配置します。</p>
+<table class="colwidths-given docutils align-default" id="id17">
+<caption><span class="caption-text">ZT2_CLASSに登録する情報</span><a class="headerlink" href="#id17" title="このテーブルへのパーマリンク">¶</a></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>列名</p></th>
+<th class="head"><p>設定内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CORPID</p></td>
+<td><p>'0000000000'</p></td>
+</tr>
+<tr class="row-odd"><td><p>COMMONNO</p></td>
+<td><p>'1211'</p></td>
+</tr>
+<tr class="row-even"><td><p>CLASSNO</p></td>
+<td><p>申請XMLの文書識別番号(QT2_DOCUMENT_CLASSに登録したコード）</p></td>
+</tr>
+<tr class="row-odd"><td><p>CLASSNAME</p></td>
+<td><p>任意の文字列</p></td>
+</tr>
+<tr class="row-even"><td><p>NUMDATA1</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-odd"><td><p>NUMDATA2</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-even"><td><p>NUMDATA3</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-odd"><td><p>CHARDATA1</p></td>
+<td><p>XSLファイル名</p></td>
+</tr>
+<tr class="row-even"><td><p>CHARDATA2</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-odd"><td><p>CHARDATA3</p></td>
+<td><p>Null</p></td>
+</tr>
+<tr class="row-even"><td><p>MODCLASS</p></td>
+<td><p>'0'</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="getapplicationform">
+<h4><span class="section-number">11.1.2.5. </span>案件情報取得（getApplicationForm）<a class="headerlink" href="#getapplicationform" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>申請案件に関する情報を取得するためのAPIです。</p>
+<p>このAPIはDataFlowEngineEJB#getApplicationFormをWebサービス経由で呼び出すAPIです。</p>
+</div>
+<div class="section" id="rejectafterflowbycode">
+<h4><span class="section-number">11.1.2.6. </span>決裁済み案件の強制否認・差し戻し（rejectAfterFlowByCode）<a class="headerlink" href="#rejectafterflowbycode" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>一旦決裁された申請案件を強制的に否認・差し戻しするためのAPIです。</p>
+<p>DataFlowEngineEJB#rejectAfterFlowByCodeに該当します。</p>
+</div>
+<div class="section" id="replacemainbinarys-replacemainxml">
+<h4><span class="section-number">11.1.2.7. </span>ワークフロー文書内容の差替え（replaceMainBinarys, replaceMainXML）<a class="headerlink" href="#replacemainbinarys-replacemainxml" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>一旦申請した申請書の内容を差替えるためのAPIです。</p>
+</div>
+<div class="section" id="getroutelist">
+<h4><span class="section-number">11.1.2.8. </span>決裁ルート情報取得（GetRouteList）<a class="headerlink" href="#getroutelist" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>申請した申請書のワークフロールート情報を取得します。</p>
+</div>
+<div class="section" id="getstatus">
+<h4><span class="section-number">11.1.2.9. </span>決裁状況の取得（GetStatus）<a class="headerlink" href="#getstatus" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>申請書の決裁状況を取得します。</p>
+</div>
+<div class="section" id="registercomment">
+<h4><span class="section-number">11.1.2.10. </span>コメントの登録（RegisterComment）<a class="headerlink" href="#registercomment" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>申請書にコメントを登録します。</p>
+</div>
+<div class="section" id="getcommenttree">
+<h4><span class="section-number">11.1.2.11. </span>コメント内容の取得（GetCommentTree）<a class="headerlink" href="#getcommenttree" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>申請書に付けられているコメントの情報を取得します。</p>
+</div>
+</div>
+<div class="section" id="web-power-egg-v2-web">
+<h3><span class="section-number">11.1.3. </span>ワークフローWebサービスの機能(POWER EGG V2 Webサービス)<a class="headerlink" href="#web-power-egg-v2-web" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>POWER EGG V2ワークフローWebサービスでは以下の機能が提供されています。
+引数などの詳細については、APIリファレンスを参照してください。</p>
+<div class="section" id="apply">
+<h4><span class="section-number">11.1.3.1. </span>申請（apply）<a class="headerlink" href="#apply" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>DataFlowService#applyメソッドをWebサービス経由で利用するAPIです。</p>
+<p>起案内容の申請本文としてxmlデータ及びスタイルシートファイル名を、
+添付ファイルとして複数のバイト列を受け取り、ワークフローを開始します。</p>
+<p>申請者や申請元部門はPOWEREGGの外部コードを指定するという点がEJBのAPIと異なっています。</p>
+<p>POWEREGG内部コードへの変換はWebサービス内で行われます。
+申請が成功した場合は申請受付番号が返却されます。</p>
+</div>
+<div class="section" id="findsimulation">
+<h4><span class="section-number">11.1.3.2. </span>申請ルートシミュレート（findSimulation）<a class="headerlink" href="#findsimulation" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>申請時に利用される決裁ルート情報を取得します。</p>
+<p>申請前にどのようなルートでワークフローするのかを調べることができます。</p>
+</div>
+<div class="section" id="withdraw">
+<h4><span class="section-number">11.1.3.3. </span>取下げ（withdraw）<a class="headerlink" href="#withdraw" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>申請中の案件を取り下げます。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">11.2. </span>スケジュールWebサービス<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>スケジュール登録、更新、削除を行うWebサービスです。</p>
+<div class="section" id="id4">
+<h3><span class="section-number">11.2.1. </span>スケジュールWebサービスの利用方法<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>スケジュールWebサービスのWSDLは
+<a class="reference external" href="http:/">http:/</a>/&lt;powereggサーバー&gt;/pe4j/services/ScheduleService?wsdl
+のURLで取得できます。</p>
+<p>Visual Studio.NETなどでWebサービスを利用する場合は、
+Web参照として上記のURLを指定することでWebサービスが利用できるようになります。</p>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">11.2.2. </span>スケジュールWebサービスの機能<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>スケジュールWebサービスでは以下の機能が提供されています。
+引数などの詳細については、APIリファレンスを参照してください。</p>
+<div class="section" id="id6">
+<h4><span class="section-number">11.2.2.1. </span>スケジュールの登録<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>ある社員のスケジュールを1件登録します。
+登録に成功すると、登録したスケジュールの管理番号が戻されます。</p>
+</div>
+<div class="section" id="id7">
+<h4><span class="section-number">11.2.2.2. </span>スケジュールの更新<a class="headerlink" href="#id7" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>既に登録されているスケジュールを変更します。</p>
+</div>
+<div class="section" id="id8">
+<h4><span class="section-number">11.2.2.3. </span>スケジュールの削除<a class="headerlink" href="#id8" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>既に登録されているスケジュールを削除します。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2><span class="section-number">11.3. </span>アシストメッセージWebサービス<a class="headerlink" href="#id9" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>外部アシストメッセージの登録、更新、削除を行うWebサービスです。</p>
+<div class="section" id="id10">
+<h3><span class="section-number">11.3.1. </span>アシストメッセージWebサービスの利用方法<a class="headerlink" href="#id10" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アシストメッセージWebサービスのWSDLは
+<a class="reference external" href="http:/">http:/</a>/&lt;powereggサーバー&gt;/pe4j/services/ExternalMessageService?wsdl
+のURLで取得できます。</p>
+<p>Visual Studio.NETなどでWebサービスを利用する場合は、
+Web参照として上記のURLを指定することでWebサービスが利用できるようになります。</p>
+</div>
+<div class="section" id="id11">
+<h3><span class="section-number">11.3.2. </span>アシストメッセージWebサービスの機能<a class="headerlink" href="#id11" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>アシストメッセージWebサービスでは以下の機能が提供されています。
+引数などの詳細については、APIリファレンスを参照してください。</p>
+<div class="section" id="registermessage">
+<h4><span class="section-number">11.3.2.1. </span>アシストメッセージの登録（registerMessage）<a class="headerlink" href="#registermessage" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>ある社員へのアシストメッセージを1件登録します。</p>
+<p>登録に成功すると、登録したメッセージの管理番号が戻されます。</p>
+</div>
+<div class="section" id="deletemessagebyid">
+<h4><span class="section-number">11.3.2.2. </span>アシストメッセージの削除（メッセージ管理番号指定）（deleteMessageById）<a class="headerlink" href="#deletemessagebyid" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>指定された管理番号のメッセージを削除します。</p>
+</div>
+<div class="section" id="id-deletemessagebyprocessid">
+<h4><span class="section-number">11.3.2.3. </span>アシストメッセージの削除（プロセスID指定）（deleteMessageByProcessId）<a class="headerlink" href="#id-deletemessagebyprocessid" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>指定されたプロセスIDを持つメッセージを全て削除します。</p>
+</div>
+</div>
+</div>
+<div class="section" id="id12">
+<h2><span class="section-number">11.4. </span>組織情報Webサービス<a class="headerlink" href="#id12" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>組織情報の取得を行うWebサービスです。</p>
+<div class="section" id="id13">
+<h3><span class="section-number">11.4.1. </span>組織情報Webサービスの利用方法<a class="headerlink" href="#id13" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>組織情報WebサービスのWSDLは
+<a class="reference external" href="http:/">http:/</a>/&lt;powereggサーバー&gt;/pe4j/services/OrganizationService?wsdl
+のURLで取得できます。</p>
+<p>Visual Studio.NETなどでWebサービスを利用する場合は、
+Web参照として上記のURLを指定することでWebサービスが利用できるようになります。</p>
+</div>
+<div class="section" id="id14">
+<h3><span class="section-number">11.4.2. </span>組織情報Webサービスの機能<a class="headerlink" href="#id14" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>組織情報Webサービスでは以下の機能が提供されています。</p>
+<p>引数などの詳細については、APIリファレンスを参照してください。</p>
+<div class="section" id="getdeptinfo">
+<h4><span class="section-number">11.4.2.1. </span>部門情報の取得（getDeptInfo）<a class="headerlink" href="#getdeptinfo" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>外部部門コードを元に、基準日時点での部門情報を取得します。</p>
+</div>
+<div class="section" id="getempinfo">
+<h4><span class="section-number">11.4.2.2. </span>社員情報の取得（getEmpInfo）<a class="headerlink" href="#getempinfo" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>外部社員コードを元に所属情報を含む社員情報を取得します。</p>
+</div>
+<div class="section" id="getunderdept">
+<h4><span class="section-number">11.4.2.3. </span>配下部門情報の取得（getUnderDept）<a class="headerlink" href="#getunderdept" title="このヘッドラインへのパーマリンク">¶</a></h4>
+<p>基準日時点で指定された部門の配下に存在する部門の配列を取得します。</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="12_0_rest_common.html" class="btn btn-neutral float-right" title="12. REST API 共通" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="10_.html" class="btn btn-neutral float-left" title="10. ログインパスワード変更同期インターフェース" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

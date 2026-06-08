@@ -55,6 +55,10 @@ public class CP6Context : DbContext
     /// </summary>
     public DbSet<Sys_OperLog> Sys_OperLogs { get; set; }
 
+    // ───── Phase 6 跨模块集成事件 ─────
+    /// <summary>跨模块 Bridge Hook 持久化记录（重试 / DLQ / trace 基础）</summary>
+    public DbSet<IntegrationEvent> IntegrationEvents { get; set; }
+
     // ───── MSBBPA010 見積計算書 ─────
 
     /// <summary>見積計算書 主表</summary>
@@ -107,6 +111,9 @@ public class CP6Context : DbContext
 
     /// <summary>受注明細</summary>
     public DbSet<OrderDetail> OrderDetails { get; set; }
+
+    /// <summary>RMA 返品に対する ERP CreditNote</summary>
+    public DbSet<CreditNote> CreditNotes { get; set; }
 
     /// <summary>受注加工工程</summary>
     public DbSet<OrderProcess> OrderProcesses { get; set; }
@@ -194,6 +201,8 @@ public class CP6Context : DbContext
     public DbSet<OutboundOrderDetail> OutboundOrderDetails { get; set; }
     /// <summary>出荷梱包（WM080）</summary>
     public DbSet<ShippingPackage> ShippingPackages { get; set; }
+    /// <summary>材料不足バックフロー</summary>
+    public DbSet<MaterialShortage> MaterialShortages { get; set; }
 
     // ───── MSBBWM090 WMS Phase 4 棚卸 ─────
     /// <summary>棚卸ヘッダ（WM090）</summary>
@@ -472,6 +481,12 @@ public class CP6Context : DbContext
             .IsUnique()
             .HasDatabaseName("UX_OrderDetail_OrderProduct");
 
+        modelBuilder.Entity<CreditNote>(e =>
+        {
+            e.HasIndex(x => x.CreditNoteNo).IsUnique();
+            e.HasIndex(x => x.WebOrderNo);
+        });
+
         // 受注加工工程：(WebOrderNo, WebOrderDetailNo, ProductCd, OperationCd) 唯一
         modelBuilder.Entity<OrderProcess>(e =>
         {
@@ -726,6 +741,8 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.ProductCd, x.OwnerType, x.OwnerCd });
             e.HasIndex(x => new { x.WarehouseCd, x.IsDeleted });
             e.HasIndex(x => new { x.PaperRollNo });
+            e.Property(x => x.QcStatus).HasMaxLength(10).HasDefaultValue(StockQcStatus.Pending).IsRequired();
+            e.HasIndex(x => x.QcStatus);
         });
 
         // トランザクション：TxnNo 唯一；履歴照会・ロット追溯・伝票逆引き
@@ -816,6 +833,12 @@ public class CP6Context : DbContext
             e.HasIndex(x => x.OutboundNo);
             e.HasIndex(x => x.TrackingNo);
             e.HasIndex(x => new { x.CarrierCd, x.DepartureTime });
+        });
+
+        modelBuilder.Entity<MaterialShortage>(e =>
+        {
+            e.HasIndex(x => new { x.Status, x.DetectedAt });
+            e.HasIndex(x => x.WorkOrderNo);
         });
 
         // ═══════════════════════════════════════════════════════════
@@ -1051,6 +1074,32 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.TaskType, x.Status });
             e.HasIndex(x => new { x.Priority, x.Status });
             e.HasIndex(x => x.RelatedNo);
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  Phase 6 跨模块集成事件 + 受注ライフサイクル + 告警索引
+        // ═══════════════════════════════════════════════════════════
+
+        modelBuilder.Entity<IntegrationEvent>(e =>
+        {
+            // Worker 扫表主用：过滤 Failed + NextRetryAt 到期
+            e.HasIndex(x => new { x.Status, x.NextRetryAt });
+            // 端到端 trace：按 CorrelationId 串起整条业务链
+            e.HasIndex(x => x.CorrelationId);
+            // 按业务号查询历史 hook 调用
+            e.HasIndex(x => new { x.SourceNo, x.HookName });
+        });
+
+        modelBuilder.Entity<Order>(e =>
+        {
+            // OrderStatus 是 Phase 6 新增；按 lifecycle status 检索受注（如「Cancellable 一覧」）
+            e.HasIndex(x => new { x.OrderStatus, x.IsDeleted });
+        });
+
+        modelBuilder.Entity<Sys_OperLog>(e =>
+        {
+            // 告警 OperLog 快速过滤（IntegrationEvent DeadLetter 写入时 IsAlert=true）
+            e.HasIndex(x => new { x.IsAlert, x.CreateDate });
         });
     }
 }

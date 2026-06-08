@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>33. 付録I, 添付ファイル処理共通シーケンス &mdash; アドオン開発マニュアル 3.2c ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="prev" title="32. 付録H, 申請処理共通シーケンス" href="Appendix_h.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> アドオン開発マニュアル
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_.html">1. アドオン開発について</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_.html">2. 開発に必要な環境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_.html">3. POWER EGG3.0のアーキテクチャー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_.html">4. フレームワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_.html">5. アドオン開発における規約</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_.html">6. POWER EGG3.0エンジンと開発のためのAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_.html">7. POWER EGG JSFコンポーネントの利用方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_.html">8. アドオンシステムのPOWER EGGへの組み込み</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_.html">9. ログインしているユーザ情報の取得</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_.html">10. ログインパスワード変更同期インターフェース</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_.html">11. XML Webサービス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_0_rest_common.html">12. REST API 共通</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_1_rest_webdb.html">13. REST WebデータベースAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_2_rest_organization.html">14. REST 組織情報API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_3_rest_assistmessage.html">15. REST アシストメッセージAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_4_rest_schedule.html">16. REST スケジュールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_5_rest_bap.html">17. REST 社内メールAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_6_rest_todo.html">18. REST 作業API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_7_rest_workflow.html">19. REST ワークフローAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_webdb_cooperation.html">20. Webデータベースの外部システム連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_webdb_externaldb_webapi.html">21. Webデータベース外部DB参照のWebAPI連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_logging.html">22. ログAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_rest_authorityproc.html">23. REST 処理権限API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_.html">24. その他の注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_a.html">25. 付録A 過去のバージョンからの変更点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_b.html">26. 付録B アドオン開発環境の作成(Eclipse)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_c.html">27. 付録C 開発したpe4j-earのサーバーへのデプロイ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_d.html">28. 付録D,サンプルアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_e_mig2pgsql.html">29. 付録E. OracleデータベースからPostgreSQL(Symfoware)への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_f_mig2jee7.html">30. 付録F. JavaEE5+SeamからJavaEE7への移行</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_g.html">31. 付録G, 権限設定共通シーケンス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_h.html">32. 付録H, 申請処理共通シーケンス</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">33. 付録I, 添付ファイル処理共通シーケンス</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">33.1. クラス関係図</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">33.2. 添付ファイル処理のシーケンス(新規登録時)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">33.2.1. 入力から確認まで</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">33.2.2. 確認から登録まで</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">33.3. 添付ファイル処理のシーケンス(追加・削除)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">アドオン開発マニュアル</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">33. </span>付録I, 添付ファイル処理共通シーケンス</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="i">
+<h1><span class="section-number">33. </span>付録I, 添付ファイル処理共通シーケンス<a class="headerlink" href="#i" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id1">
+<h2><span class="section-number">33.1. </span>クラス関係図<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p class="plantuml">
+<img src="_images/plantuml-e42c73e748cf393c17d9966ab9618fbeb6221692.png" alt="class &quot;申請アプリケーション&quot; as AppBean
+class &quot;申請データ添付コネクタ&quot; as appDocConnEntity {
+    id : Long
+    dataId : Long
+    docId : Long
+}
+class AttachFile
+interface FileAttachmentService {
+    +getAttachFiles(List attachDocIds) : List
+    +savaAttachFiles(List oldAttachFiles, List currentAttachFiles) : List
+    +deleteBinaryData(Long docId) : int
+    +deleteAttacheFiles(List docIds) : int
+}
+
+AppBean ..&gt; AttachFile : &lt;&lt;use&gt;&gt;
+AppBean ..&gt; FileAttachmentService : &lt;&lt;use&gt;&gt;
+FileAttachmentService ..&gt; AttachFile : &lt;&lt;use&gt;&gt;
+AppBean ..&gt; appDocConnEntity : &lt;&lt;use&gt;&gt;"/>
+</p>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">33.2. </span>添付ファイル処理のシーケンス(新規登録時)<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="id3">
+<h3><span class="section-number">33.2.1. </span>入力から確認まで<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p class="plantuml">
+<img src="_images/plantuml-dcf0960f8612aa3fa26dbe9c533e81abe8772995.png" alt="participant 入力画面 as inputxhtml
+participant &quot;&lt;p:inputAttachFile&gt;&quot; as inputAttachFile
+participant 申請アプリケーションBean as AppBean
+participant DataflowHelperBean as DataflowHelper
+participant FileAttachmentService
+
+inputxhtml -&gt; inputAttachFile : xhtmlで部品を利用
+inputAttachFile -&gt; inputAttachFile : ファイルアップロード\n一時ファイル作成
+inputAttachFile -&gt; AppBean : List&lt;AttacheFile&gt;
+note over AppBean
+    入力画面の添付ファイル入力部品(InputAttachFile)
+    によって、添付ファイルがサーバーの一時
+    ディレクトリに書き込まれ、
+    AttachFileオブジェクトが生成される。
+    生成されたAttachFileは、Value Bindingにより
+    クラスの該当フィールドにセットされる.
+end note
+inputxhtml -&gt; AppBean : [確認]ボタン
+AppBean -&gt; DataflowHelper : setAttachment(List&lt;AttachFile&gt;)
+AppBean -&gt; DataflowHelper : prepareApply()"/>
+</p>
+</div>
+<div class="section" id="id4">
+<h3><span class="section-number">33.2.2. </span>確認から登録まで<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p class="plantuml">
+<img src="_images/plantuml-faf058d901b16e22db287c5d0ede9f32f960cbd8.png" alt="participant 確認画面 as confirmxhtml
+participant 申請アプリケーションBean as AppBean
+participant DataflowHelperBean as DataflowHelper
+participant FileAttachmentService
+
+confirmxhtml -&gt; AppBean : [申請]ボタン
+AppBean -&gt; FileAttachmentService : saveAttachFiles(List oldAttachmentDocIds,\n List&lt;AttachFile&gt; newAttachFiles)
+note over FileAttachmentService
+    引数で受け取ったリスト内のAttachFileの中で
+    DBに登録されていないデータ(docIdがnull)
+    をデータベースに登録する.
+    新規登録のときは、oldAttachmentDocIdsにはnull
+    または空のリストを設定する.
+end note
+FileAttachmentService -&gt; FileAttachmentService : Write data to database.
+AppBean &lt;- FileAttachmentService : List&lt;AttachFile&gt;
+note over FileAttachmentService
+    データベース登録状態のAttachFileのリストを戻す.
+end note
+AppBean -&gt; DataflowHelper : commitApply()"/>
+</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h2><span class="section-number">33.3. </span>添付ファイル処理のシーケンス(追加・削除)<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p class="plantuml">
+<img src="_images/plantuml-40b23c3af0cf5dce2029d2bafd799b0bb842b78e.png" alt="participant &quot;画面&quot; as xhtml
+participant &quot;&lt;p:inputAttachFile&gt;&quot; as inputAttachFile
+participant 申請アプリケーションBean as AppBean
+participant DataflowHelperBean as DataflowHelper
+participant FileAttachmentService
+
+note over xhtml
+    一覧画面
+end note
+xhtml -&gt; AppBean : [件名]クリック
+AppBean -&gt; AppBean : データ読み込み
+AppBean -&gt; DataflowHelper : loadApplication()
+AppBean -&gt; xhtml : 詳細表示画面に遷移
+note over xhtml
+    詳細表示画面
+end note
+xhtml -&gt; AppBean : [変更]ボタン
+AppBean -&gt; AppBean : 登録済みの添付\nコネクタから\n添付文書のIDの\nリストを作成
+AppBean -&gt; FileAttachmentService : getAttachFiles(List docIds)
+note over FileAttachmentService
+    添付ファイル文書IDの
+    リストを元にデータベース
+    にアクセスし、
+    AttachFileのリストを
+    作成する.
+end note
+AppBean &lt;- FileAttachmentService : List&lt;AttachFile&gt;
+xhtml &lt;- AppBean : 入力画面に遷移
+note over xhtml
+    入力画面
+end note
+xhtml -&gt; inputAttachFile : List&lt;AttachFile&gt;を\nInputAttachFileに渡し、\n添付ファイル一覧\nを描画する
+xhtml -&gt; inputAttachFile : [削除]、[追加]
+note over inputAttachFile
+    InputAttachFileの機能により、
+    添付ファイルの削除、追加を行う
+end note
+inputAttachFile -&gt; inputAttachFile : AttachFileを編集
+inputAttachFile -&gt; AppBean : List&lt;AttachFile&gt;\nを変数にセット
+note over AppBean
+    追加、変更後のAttachFileが
+    変数にセットされる
+end note
+xhtml -&gt; AppBean : [確認]ボタン
+AppBean -&gt; DataflowHelper : setAppRecpNo()
+AppBean -&gt; DataflowHelper : setAttachments\n(List&lt;AttachFile&gt;)
+AppBean -&gt; DataflowHelper : prepareApply
+xhtml &lt;- AppBean : 確認画面に遷移
+note over xhtml
+    申請確認画面
+end note
+xhtml -&gt; AppBean : [申請]ボタン
+AppBean -&gt; FileAttachmentService : saveAttachments()
+note over FileAttachmentService
+    変更前の添付文書IDのリストと、
+    変更後の添付ファイルリスト
+    を受け取り、データベースを
+    更新した後、文書ID付のAttachFile
+    を戻す。
+    変更前添付ファイルに存在し、
+    変更後添付ファイルリスト
+    に存在しないデータは削除される。
+    新規登録した添付ファイルはデータ
+    ベースに登録される。
+end note
+AppBean &lt;- FileAttachmentService : List&lt;AttachFile&gt;
+AppBean -&gt; DataflowHelper : commitApply()"/>
+</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="Appendix_h.html" class="btn btn-neutral float-left" title="32. 付録H, 申請処理共通シーケンス" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, D-CIRCLE, INC.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

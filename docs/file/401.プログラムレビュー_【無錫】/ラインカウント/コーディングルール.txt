@@ -1,0 +1,24 @@
+＜コーディングルール＞
+
+■追加する場合
+
+	//CUSTOM_MDSOL_CP1_START ADD yyyy/mm/dd 【開発要件】【開発会社】
+	  [コーディング]
+	//CUSTOM_MDSOL_CP1_END ADD yyyy/mm/dd 【開発要件】【開発会社】
+ 
+(例)
+	//CUSTOM_MDSOL_CP1_START ADD 2022/10/27 導入時開発 TBK
+	  [コーディング]
+	//CUSTOM_MDSOL_CP1_END ADD 2022/10/27 導入時開発 TBK
+
+■削除(コメント化)する場合
+	//CUSTOM_MDSOL_CP1_START DEL yyyy/mm/dd 【開発要件】【開発会社】
+	  [コーディング]
+	//CUSTOM_MDSOL_CP1_END DEL yyyy/mm/dd 【開発要件】【開発会社】
+
+(例)
+	//CUSTOM_MDSOL_CP1_START DEL 2022/10/27 導入時開発 TBK
+	  [コーディング]
+	//CUSTOM_MDSOL_CP1_END DEL 2022/10/27 導入時開発 TBK
+
+

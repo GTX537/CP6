@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="../Msbb.Api/Msbb.Api.csproj" />
+  <Project Path="../Msbb.Application/Msbb.Application.csproj" />
+  <Project Path="../Msbb.Domain/Msbb.Domain.csproj" />
+  <Project Path="../Msbb.Infrastructure/Msbb.Infrastructure.csproj" />
+  <Project Path="MsbbSolution.csproj" />
+</Solution>
