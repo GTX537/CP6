@@ -62,6 +62,15 @@ public class Order : BaseBizEntity
     /// <summary>売価区分：1=個別単価 / 2=セット単価</summary>
     [MaxLength(1)] public string? SalesPriceDiv { get; set; }
 
+    // ───── 多通貨（Gap 4.3）─────
+    /// <summary>受注通貨CD（受注時に得意先通貨を凍結。既定 JPY）</summary>
+    [Required, MaxLength(3)]
+    public string CurrencyCd { get; set; } = FxConstants.BaseCurrency;
+
+    /// <summary>凍結為替レート（外貨1単位あたり基軸通貨額。JPY 受注は 1.0）</summary>
+    [Column(TypeName = "decimal(18,6)")]
+    public decimal FxRate { get; set; } = 1m;
+
     // ───── mcframe7 連携 ─────
     /// <summary>受注NO（mc 連携キー；新規=NULL or "*"）</summary>
     [MaxLength(20)] public string? McOrderNo { get; set; }

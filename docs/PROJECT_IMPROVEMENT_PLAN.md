@@ -120,7 +120,7 @@
 |---|---|---|
 | **3.1 受注→出荷 Lead Time / OTD 报表** | `Order.OrderDate/RequestDate` + `OutboundOrder.ShippedDate` | ReportCenter 按客户/产品分组，输出准时率 + 平均延迟 |
 | **3.2 在庫滞留分析** | `Stock.ReceiveDate` | 「滞留 Top 50」+ Dashboard widget：`(now - ReceiveDate) > 30/60/90 天` 分桶 |
-| **3.3 生產計画達成率** | `WorkOrder.PlannedQty` + `ProductionResult.GoodQty` | 「指図達成率」报表 + 日 KPI 卡片 |
+| **3.3 生產計画達成率** ✅ | `WorkOrder.ProductionQty` + `WorkOrder.CompletedQty`(良品累計) | **完成**：`PlanAchievementService`（製品/月/得意先で達成率・不良率集計）+ `/mes/plan-achievement` 报表 + KPI 卡 + CSV。menu 313 |
 | **3.4 受注済未出荷 dashboard（最高商业价值）** | 跨 Order/WorkOrder/OutboundOrder | 营业首页 widget：列受注号、客户、应交期、当前状态（在 MES 哪个工程/WMS 哪个状态），含「催货」按钮（SignalR 推工厂） |
 
 ---
@@ -141,9 +141,10 @@
   2. 新表 `T_OutboundRoutingRule`（客户区域 / 产品类别 → 首选仓）
   3. 引当排序：RoutingRule → WarehousePriority → FEFO
 
-#### Gap 4.3 — 多币种 / 汇率冻结 [P2]
+#### Gap 4.3 — 多币种 / 汇率冻结 [P2] ✅ 完成（2026-06-09）
 - **现状**：日本企业系统但有海外客户场景。`Order.UnitPrice` 是单一货币。
 - **设计**：受注时按 `BusinessPartner.CurrencyCd` + `T_FxRate` 当日汇率冻结到 `Order.FxRate`，回写时按冻结汇率换算
+- **实现**：新表 `T_FxRate`（基轴 JPY，Rate=JPY/外币）+ `BusinessPartner.CurrencyCd` + `Order.CurrencyCd/FxRate`。`OrderService.CreateAsync` 经可选注入的 `IFxRateService.ResolveForCustomerAsync` 冻结当日（基准日以前最新）汇率；外币无登记汇率则报错，JPY/未设定→(JPY,1.0) 故既有受注测试零影响。`FxRateService` 含 CRUD + resolve；`FxRateController`；前端 `/erp/fx-rate` 汇率维护页 + 受注一覧通貨列。迁移 `Gap43AddFxRate`。
 
 ---
 

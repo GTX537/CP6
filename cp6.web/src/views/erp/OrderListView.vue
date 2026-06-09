@@ -107,6 +107,12 @@
         <el-table-column prop="individualUnitPrice" :label="t('個別単価')" width="120" align="right" sortable="custom" />
         <el-table-column prop="setUnitPrice" :label="t('セット単価')" width="120" align="right" sortable="custom" />
         <el-table-column prop="amount" :label="t('受注金額')" width="130" align="right" sortable="custom" />
+        <el-table-column :label="t('通貨')" width="110" align="center">
+          <template #default="{ row }">
+            <span>{{ row.currencyCd || 'JPY' }}</span>
+            <span v-if="row.currencyCd && row.currencyCd !== 'JPY'" class="fx-rate-hint"> @{{ row.fxRate }}</span>
+          </template>
+        </el-table-column>
         <el-table-column :label="t('預り売上')" width="80" align="center">
           <template #default="{ row }">
             <el-icon v-if="row.consignedSalesFlg === '1'" color="#67c23a"><Check /></el-icon>

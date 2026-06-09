@@ -23,6 +23,7 @@ public class OrderService : IOrderService
     private readonly IWmsBridgeHook _wmsBridge;
     private readonly IMesBridgeHook _mesBridge;
     private readonly IOrderCancelBridgeHook _cancelBridge;
+    private readonly IFxRateService? _fxRate;
     /// <summary>WebOrderNo 採番プレフィックス（業務 ID 識別子）</summary>
     private const string WebOrderPrefix = "WO";
     private const string McNullVal = "MCNULLVAL";
@@ -34,13 +35,15 @@ public class OrderService : IOrderService
         IPowerEggWorkflowService powerEgg,
         IWmsBridgeHook wmsBridge,
         IMesBridgeHook? mesBridge = null,
-        IOrderCancelBridgeHook? cancelBridge = null)
+        IOrderCancelBridgeHook? cancelBridge = null,
+        IFxRateService? fxRate = null)
     {
         _db = db;
         _powerEgg = powerEgg;
         _wmsBridge = wmsBridge;
         _mesBridge = mesBridge ?? new NoOpMesBridgeHook();
         _cancelBridge = cancelBridge ?? new NoOpOrderCancelBridgeHook();
+        _fxRate = fxRate;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -124,6 +127,15 @@ public class OrderService : IOrderService
 
         var webOrderNo = await NextSequenceAsync();
         var now = DateTime.Now;
+        var orderDate = dto.OrderDate ?? now.Date;
+
+        // 多通貨（Gap 4.3）：得意先通貨の当日レートを凍結。基軸/未設定は (JPY, 1.0)。
+        var currencyCd = FxConstants.BaseCurrency;
+        var fxRate = 1m;
+        if (_fxRate != null)
+        {
+            (currencyCd, fxRate) = await _fxRate.ResolveForCustomerAsync(dto.CustomerCd, orderDate);
+        }
 
         // ───── ヘッダー ─────
         var header = new Order
@@ -132,7 +144,9 @@ public class OrderService : IOrderService
             CustomerCd = dto.CustomerCd,
             OrderType = dto.OrderType,
             OrderDepartment = dto.OrderDepartment,
-            OrderDate = dto.OrderDate ?? now.Date,
+            OrderDate = orderDate,
+            CurrencyCd = currencyCd,
+            FxRate = fxRate,
             CustomerDeliveryDate = dto.CustomerDeliveryDate,
             Quantity = dto.Quantity,
             OrderSheetNo = dto.OrderSheetNo,
@@ -1204,7 +1218,7 @@ public class OrderService : IOrderService
 
     private async Task<List<OrderListItemDto>> ProjectListAsync(IQueryable<OrderDetail> q)
     {
-        return await q.Select(x => new OrderListItemDto
+        var rows = await q.Select(x => new OrderListItemDto
         {
             CustomerCd = x.HaibaiNo2,
             OrderSheetNo = null,
@@ -1236,6 +1250,29 @@ public class OrderService : IOrderService
             WebOrderNo = x.WebOrderNo,
             WebOrderDetailNo = x.WebOrderDetailNo,
         }).ToListAsync();
+
+        // 多通貨（Gap 4.3）：通貨・凍結レートはヘッダ側にあるため補完
+        var nos = rows.Select(r => r.WebOrderNo).Distinct().ToList();
+        if (nos.Count > 0)
+        {
+            var headers = await _db.Orders.AsNoTracking()
+                .Where(o => nos.Contains(o.WebOrderNo))
+                .Select(o => new { o.WebOrderNo, o.CurrencyCd, o.FxRate })
+                .ToListAsync();
+            var map = headers
+                .GroupBy(h => h.WebOrderNo)
+                .ToDictionary(g => g.Key, g => g.First());
+            foreach (var r in rows)
+            {
+                if (map.TryGetValue(r.WebOrderNo, out var h))
+                {
+                    r.CurrencyCd = h.CurrencyCd;
+                    r.FxRate = h.FxRate;
+                }
+            }
+        }
+
+        return rows;
     }
 
     private static void NumberRows(List<OrderListItemDto> rows)
@@ -1279,6 +1316,8 @@ public class OrderService : IOrderService
         RowVersion = h.RowVersion,
         ShipStatus = h.ShipStatus,
         ActualShipDate = h.ActualShipDate,
+        CurrencyCd = h.CurrencyCd,
+        FxRate = h.FxRate,
     };
 
     private static OrderDetailDto DetailToDto(OrderDetail d) => new()

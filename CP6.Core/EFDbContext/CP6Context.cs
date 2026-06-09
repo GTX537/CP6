@@ -205,6 +205,8 @@ public class CP6Context : DbContext
     public DbSet<MaterialShortage> MaterialShortages { get; set; }
     /// <summary>出庫ルーティングルール（多倉庫引当 Gap 4.2 / T14）</summary>
     public DbSet<OutboundRoutingRule> OutboundRoutingRules { get; set; }
+    /// <summary>為替レートマスタ（多通貨 Gap 4.3）</summary>
+    public DbSet<FxRate> FxRates { get; set; }
 
     // ───── MSBBWM090 WMS Phase 4 棚卸 ─────
     /// <summary>棚卸ヘッダ（WM090）</summary>
@@ -851,6 +853,14 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.Enabled, x.SortOrder });
             e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
             e.HasIndex(x => x.TargetWarehouseCd);
+        });
+
+        modelBuilder.Entity<FxRate>(e =>
+        {
+            e.HasIndex(x => new { x.CurrencyCd, x.RateDate });
+            // Order の凍結レート既定（既存行の backfill も基軸通貨 1.0 に揃える）
+            modelBuilder.Entity<Order>().Property(x => x.CurrencyCd).HasDefaultValue(FxConstants.BaseCurrency);
+            modelBuilder.Entity<Order>().Property(x => x.FxRate).HasDefaultValue(1m);
         });
 
         // ═══════════════════════════════════════════════════════════

@@ -1,3 +1,5 @@
+using CP6.Entity.DomainModels;
+
 namespace CP6.Entity.DTOs;
 
 /// <summary>受注操作種別（MSBBPA070 §2.1 操作種別切替処理）</summary>
@@ -54,6 +56,12 @@ public class OrderDto
     public int ShipStatus { get; set; }
     /// <summary>実出荷日時（WMS出荷確定で記録）</summary>
     public DateTime? ActualShipDate { get; set; }
+
+    // ───── 多通貨（Gap 4.3、サーバ側で凍結。読取専用）─────
+    /// <summary>受注通貨CD（既定 JPY）</summary>
+    public string CurrencyCd { get; set; } = FxConstants.BaseCurrency;
+    /// <summary>凍結為替レート（外貨1単位あたり基軸通貨額）</summary>
+    public decimal FxRate { get; set; } = 1m;
 }
 
 /// <summary>受注明細 1 行（製品単位）</summary>
@@ -422,6 +430,12 @@ public class OrderListItemDto
     public string? DeliveryNote { get; set; }
     public string WebOrderNo { get; set; } = string.Empty;
     public int WebOrderDetailNo { get; set; }
+
+    // ───── 多通貨（Gap 4.3、ヘッダから補完）─────
+    /// <summary>受注通貨CD（既定 JPY）</summary>
+    public string? CurrencyCd { get; set; }
+    /// <summary>凍結為替レート</summary>
+    public decimal? FxRate { get; set; }
 }
 
 /// <summary>仕掛チェック結果（与 PA050 共用）</summary>

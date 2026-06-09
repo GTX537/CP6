@@ -104,6 +104,8 @@ builder.Services.AddScoped<IBridgeHealthService, BridgeHealthService>();
 builder.Services.AddScoped<IOrderTraceService, OrderTraceService>();
 builder.Services.AddScoped<IBackorderService, BackorderService>();
 builder.Services.AddScoped<IOtdReportService, OtdReportService>();
+// Gap 4.3 多通貨 — 為替レート（受注時凍結 + マスタ CRUD）
+builder.Services.AddScoped<IFxRateService, FxRateService>();
 // PA090 POWER EGG WF 起票：実環境では HTTP 実装に差し替え
 builder.Services.AddScoped<IPowerEggWorkflowService, NoOpPowerEggWorkflowService>();
 
@@ -128,6 +130,8 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IMesDashboardService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMachineService, CP6.Core.Services.Mes.MachineService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IOeeService, CP6.Core.Services.Mes.OeeService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.MesDashboardDapperService>();
+// Gap 3.3 生産計画達成率レポート
+builder.Services.AddScoped<CP6.Core.Services.Mes.IPlanAchievementService, CP6.Core.Services.Mes.PlanAchievementService>();
 
 // 4.8 MSBBWM010〜090 WMS 倉庫管理 Phase 1 コア
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsSequenceService, CP6.Core.Services.Wms.WmsSequenceService>();
@@ -612,6 +616,13 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 312, MenuName = "Control Tower 大屏", RoutePath = "/mes/control-tower", Icon = "Aim", ParentId = 300, OrderNo = 312, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 312 });
+        db.SaveChanges();
+    }
+    // Gap 3.3 生産計画達成率レポート
+    if (!db.Sys_Menus.Any(m => m.MenuId == 313))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 313, MenuName = "生産計画達成率", RoutePath = "/mes/plan-achievement", Icon = "DataLine", ParentId = 300, OrderNo = 313, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 313 });
         db.SaveChanges();
     }
 

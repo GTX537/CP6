@@ -25,6 +25,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/erp/credit-note': () => import('@/views/erp/CreditNoteListView.vue'),
   '/erp/backorder': () => import('@/views/erp/BackorderListView.vue'),
   '/erp/otd-report': () => import('@/views/erp/OtdReportView.vue'),
+  '/erp/fx-rate': () => import('@/views/erp/FxRateView.vue'),
   '/business-partner': () => import('@/views/erp/BusinessPartnerView.vue'),
   '/business-partner-list': () => import('@/views/erp/BusinessPartnerListView.vue'),
   '/fsc-checklist': () => import('@/views/erp/FscChecklistView.vue'),
@@ -46,6 +47,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   // ───── MES Phase 4：設備・OEE・大屏 ─────
   '/mes/machine-list': () => import('@/views/mes/MachineListView.vue'),
   '/mes/oee': () => import('@/views/mes/OeeAnalysisView.vue'),
+  '/mes/plan-achievement': () => import('@/views/mes/PlanAchievementView.vue'),
   // Control Tower 大屏は standalone モード、下の staticRoutes も参照
   '/mes/control-tower': () => import('@/views/mes/ControlTowerView.vue'),
   // ───── WMS 倉庫管理 Phase 1 (MSBBWM010/020) ─────
