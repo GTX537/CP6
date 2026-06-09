@@ -24,6 +24,7 @@ public class OutboundService : IOutboundService
     private readonly IErpBridgeHook _erpBridge;
     private readonly IMaterialShortageService? _shortage;
     private readonly IMaterialShortageNotifier? _shortageNotifier;
+    private readonly IOutboundRoutingService? _routing;
 
     private const string OrderPrefix = "OUT";
     private const string PackagePrefix = "PKG";
@@ -35,7 +36,8 @@ public class OutboundService : IOutboundService
         IWmsNotifier? notifier = null,
         IErpBridgeHook? erpBridge = null,
         IMaterialShortageService? shortage = null,
-        IMaterialShortageNotifier? shortageNotifier = null)
+        IMaterialShortageNotifier? shortageNotifier = null,
+        IOutboundRoutingService? routing = null)
     {
         _db = db;
         _seq = seq;
@@ -44,6 +46,7 @@ public class OutboundService : IOutboundService
         _erpBridge = erpBridge ?? new NoOpErpBridgeHook();
         _shortage = shortage;
         _shortageNotifier = shortageNotifier;
+        _routing = routing;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -106,6 +109,7 @@ public class OutboundService : IOutboundService
                 ShippedQty = d.ShippedQty,
                 LotNo = d.LotNo,
                 LocationCd = d.LocationCd,
+                WarehouseCd = d.WarehouseCd,
                 UnitCd = d.UnitCd,
                 UnitPrice = d.UnitPrice,
                 AllocateTxnNo = d.AllocateTxnNo,
@@ -268,7 +272,7 @@ public class OutboundService : IOutboundService
                 await _stock.ApplyAsync(new StockMovementRequest
                 {
                     TxnType = WmsTxnType.UNRSV,
-                    WarehouseCd = header.WarehouseCd,
+                    WarehouseCd = d.WarehouseCd ?? header.WarehouseCd,
                     LocationCd = d.LocationCd ?? "",
                     ProductCd = d.ProductCd,
                     LotNo = d.LotNo ?? "",
@@ -314,6 +318,27 @@ public class OutboundService : IOutboundService
     //  Allocate（FIFO + 期限優先）
     // ═══════════════════════════════════════════════════════════
 
+    /// <summary>
+    /// 指定倉庫内で、需要量を単一ロットで賄える在庫を FEFO（期限→受入日→ロット）で 1 行探す。
+    /// QC・リコール・所有者・利用可能数の各条件は従来と同一。多倉庫ルーティングの各倉庫評価で使用。
+    /// </summary>
+    private Task<Stock?> FindCandidateStockAsync(string warehouseCd, string productCd, decimal needed)
+    {
+        return _db.Stocks
+            .Where(s => s.ProductCd == productCd
+                        && s.WarehouseCd == warehouseCd
+                        && !s.IsDeleted
+                        && !s.RecallFlag
+                        && s.AvailableQty >= needed
+                        && s.OwnerType == StockOwnerType.Self
+                        && s.QcStatus != StockQcStatus.Failed
+                        && s.QcStatus != StockQcStatus.Hold)
+            .OrderBy(s => s.ExpiryDate ?? DateTime.MaxValue)
+            .ThenBy(s => s.ReceiveDate ?? DateTime.MaxValue)
+            .ThenBy(s => s.LotNo)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task AllocateAsync(string outboundNo, string? userName)
     {
         var header = await _db.OutboundOrders
@@ -334,20 +359,24 @@ public class OutboundService : IOutboundService
             var needed = d.RequiredQty - d.AllocatedQty;
             if (needed <= 0) continue;
 
-            // FIFO + 期限優先：単一の Stock 行で需要を賄えるものを探す
-            var candidate = await _db.Stocks
-                .Where(s => s.ProductCd == d.ProductCd
-                            && s.WarehouseCd == header.WarehouseCd
-                            && !s.IsDeleted
-                            && !s.RecallFlag
-                            && s.AvailableQty >= needed
-                            && s.OwnerType == StockOwnerType.Self
-                            && s.QcStatus != StockQcStatus.Failed
-                            && s.QcStatus != StockQcStatus.Hold)
-                .OrderBy(s => s.ExpiryDate ?? DateTime.MaxValue)
-                .ThenBy(s => s.ReceiveDate ?? DateTime.MaxValue)
-                .ThenBy(s => s.LotNo)
-                .FirstOrDefaultAsync();
+            // 多倉庫ルーティング（Gap 4.2 / T14）：候補倉庫を優先順に解決し、
+            // 各倉庫内で FEFO（期限→受入日→ロット）で単一 Stock 行を探す。最初に賄える倉庫を採用。
+            var candidateWarehouses = _routing != null
+                ? await _routing.ResolveCandidateWarehousesAsync(
+                    header.CustomerCd, d.ProductCd, header.OutboundType, header.WarehouseCd)
+                : new List<string> { header.WarehouseCd };
+
+            Stock? candidate = null;
+            string chosenWarehouse = header.WarehouseCd;
+            foreach (var wh in candidateWarehouses)
+            {
+                candidate = await FindCandidateStockAsync(wh, d.ProductCd, needed);
+                if (candidate != null)
+                {
+                    chosenWarehouse = wh;
+                    break;
+                }
+            }
 
             if (candidate == null)
             {
@@ -378,11 +407,11 @@ public class OutboundService : IOutboundService
                 throw new InsufficientStockException(d.ProductCd, d.LotNo ?? "", needed, 0m);
             }
 
-            // 引当（RSV）
+            // 引当（RSV）— 実際に引き当てた倉庫(chosenWarehouse)で発行
             var txnNo = await _stock.ApplyAsync(new StockMovementRequest
             {
                 TxnType = WmsTxnType.RSV,
-                WarehouseCd = header.WarehouseCd,
+                WarehouseCd = chosenWarehouse,
                 LocationCd = candidate.LocationCd,
                 ProductCd = candidate.ProductCd,
                 LotNo = candidate.LotNo,
@@ -392,11 +421,12 @@ public class OutboundService : IOutboundService
                 RelatedNo = outboundNo,
                 RelatedType = "OUTBOUND",
                 OperatorCd = userName,
-                Remark = $"引当 {outboundNo} 行 {d.LineNo}",
+                Remark = $"引当 {outboundNo} 行 {d.LineNo} @{chosenWarehouse}",
             });
 
-            // 明細に引当結果を反映
+            // 明細に引当結果を反映（実引当倉庫を記録 → Ship/Cancel が参照）
             d.AllocatedQty += needed;
+            d.WarehouseCd = chosenWarehouse;
             d.LotNo = candidate.LotNo;
             d.LocationCd = candidate.LocationCd;
             d.UnitCd ??= candidate.UnitCd;
@@ -439,10 +469,11 @@ public class OutboundService : IOutboundService
             if (shipQty <= 0) continue;
 
             // 出庫（OUT）— OUT が AllocatedQty も同時に減らすので、UNRSV は不要
+            //  多倉庫ルーティング：引当時に確定した実倉庫(d.WarehouseCd)から出庫。旧データは header にフォールバック。
             var txnNo = await _stock.ApplyAsync(new StockMovementRequest
             {
                 TxnType = WmsTxnType.OUT,
-                WarehouseCd = header.WarehouseCd,
+                WarehouseCd = d.WarehouseCd ?? header.WarehouseCd,
                 LocationCd = d.LocationCd ?? "",
                 ProductCd = d.ProductCd,
                 LotNo = d.LotNo ?? "",

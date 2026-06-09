@@ -50,6 +50,13 @@ public class OutboundOrderDetail : BaseBizEntity
     /// <summary>引当ロケーションCD（引当時に Stock からコピー）</summary>
     [MaxLength(30)] public string? LocationCd { get; set; }
 
+    /// <summary>
+    /// 実引当倉庫CD（多倉庫ルーティング Gap 4.2 / T14）。
+    /// ヘッダの WarehouseCd と異なる倉庫から引き当てた場合に実倉庫を記録。
+    /// 出庫(Ship)・取消(Cancel)はこの値を優先（null は旧データ＝ヘッダ倉庫にフォールバック）。
+    /// </summary>
+    [MaxLength(10)] public string? WarehouseCd { get; set; }
+
     /// <summary>単位CD</summary>
     [MaxLength(10)] public string? UnitCd { get; set; }
 

@@ -65,6 +65,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wms/bridge-health': () => import('@/views/wms/BridgeHealthView.vue'),
   '/wms/material-shortage': () => import('@/views/wms/MaterialShortageView.vue'),
   '/wms/stock-dwell': () => import('@/views/wms/StockDwellView.vue'),
+  '/wms/outbound-routing': () => import('@/views/wms/OutboundRoutingView.vue'),
   // ───── WMS Core 補完 ─────
   '/wms/location': () => import('@/views/wms/LocationListView.vue'),
   // ───── Phase WM-3 後続実装予定（占位） ─────

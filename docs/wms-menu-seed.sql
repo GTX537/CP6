@@ -162,6 +162,12 @@ IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 483)
     INSERT INTO Sys_Menus VALUES (483, N'在庫滞留レポート',       N'/wms/stock-dwell',        N'TrendCharts',    480, 483, 1, SYSDATETIME());
 
 /* ------------------------------------------------------------
+ * 6.1 多倉庫ルーティング設定 (Gap 4.2 / T14)  MenuId 419
+ * ------------------------------------------------------------ */
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 419)
+    INSERT INTO Sys_Menus VALUES (419, N'出庫ルーティング',     N'/wms/outbound-routing',   N'Switch',         400, 419, 1, SYSDATETIME());
+
+/* ------------------------------------------------------------
  * 7. 管理者ロール (RoleId=1) に全 WMS メニューを付与
  * ------------------------------------------------------------ */
 INSERT INTO Sys_RoleMenus (RoleId, MenuId)

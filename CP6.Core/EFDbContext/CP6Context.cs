@@ -203,6 +203,8 @@ public class CP6Context : DbContext
     public DbSet<ShippingPackage> ShippingPackages { get; set; }
     /// <summary>材料不足バックフロー</summary>
     public DbSet<MaterialShortage> MaterialShortages { get; set; }
+    /// <summary>出庫ルーティングルール（多倉庫引当 Gap 4.2 / T14）</summary>
+    public DbSet<OutboundRoutingRule> OutboundRoutingRules { get; set; }
 
     // ───── MSBBWM090 WMS Phase 4 棚卸 ─────
     /// <summary>棚卸ヘッダ（WM090）</summary>
@@ -720,6 +722,9 @@ public class CP6Context : DbContext
             e.HasIndex(x => x.WarehouseCd).IsUnique();
             e.HasIndex(x => new { x.BaseCd, x.IsDeleted });
             e.HasIndex(x => new { x.WarehouseType, x.IsDeleted });
+            // 多倉庫ルーティング（T14）：既存行の backfill も既定 100 で揃える
+            e.Property(x => x.OutboundPriority).HasDefaultValue(100);
+            e.HasIndex(x => x.OutboundPriority);
         });
 
         // ロケーション：LocationCd 唯一；倉庫+親ツリー；製品検索
@@ -839,6 +844,13 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => new { x.Status, x.DetectedAt });
             e.HasIndex(x => x.WorkOrderNo);
+        });
+
+        modelBuilder.Entity<OutboundRoutingRule>(e =>
+        {
+            e.HasIndex(x => new { x.Enabled, x.SortOrder });
+            e.HasIndex(x => new { x.CustomerCd, x.IsDeleted });
+            e.HasIndex(x => x.TargetWarehouseCd);
         });
 
         // ═══════════════════════════════════════════════════════════

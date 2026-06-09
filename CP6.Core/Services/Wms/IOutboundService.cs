@@ -89,6 +89,8 @@ public class OutboundOrderDetailDto
     public decimal ShippedQty { get; set; }
     public string? LotNo { get; set; }
     public string? LocationCd { get; set; }
+    /// <summary>実引当倉庫CD（多倉庫ルーティング T14）</summary>
+    public string? WarehouseCd { get; set; }
     public string? UnitCd { get; set; }
     public decimal? UnitPrice { get; set; }
     public string? AllocateTxnNo { get; set; }

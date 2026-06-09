@@ -24,6 +24,12 @@ public class Warehouse : BaseBizEntity
     /// <summary>倉庫区分（<see cref="WarehouseType"/>）</summary>
     public int WarehouseType { get; set; } = 1;
 
+    /// <summary>
+    /// 出庫引当の倉庫優先度（小さいほど優先、既定 100）。
+    /// 多倉庫ルーティング（Gap 4.2 / T14）の第2優先キー：ルール未ヒット時の倉庫選択順。
+    /// </summary>
+    public int OutboundPriority { get; set; } = 100;
+
     /// <summary>所属拠点CD</summary>
     [MaxLength(10)] public string? BaseCd { get; set; }
 

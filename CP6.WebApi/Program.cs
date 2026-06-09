@@ -11,6 +11,7 @@ using Microsoft.Data.SqlClient;
 using CP6.Core.Utilities;
 using CP6.WebApi.Filters;
 using CP6.WebApi.Hubs;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -142,6 +143,19 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IInboundService, CP6.Core.Servi
 // 4.10 MSBBWM050/070/080 WMS Phase 3 出庫・出荷
 builder.Services.AddScoped<CP6.Core.Services.Wms.IOutboundService, CP6.Core.Services.Wms.OutboundService>();
 
+// 4.10.1 Gap 4.2 / T14 — 多倉庫ルーティング（出庫引当の倉庫候補解決）
+// appsettings.json の OutboundRouting:Enabled で切替（既定 false＝従来の単一倉庫引当を維持）。
+// 無効時は NoOp 実装でヘッダ倉庫のみを返すため、既存挙動・テストに影響なし。
+var outboundRoutingEnabled = builder.Configuration.GetValue<bool?>("OutboundRouting:Enabled") ?? false;
+if (outboundRoutingEnabled)
+{
+    builder.Services.AddScoped<CP6.Core.Services.Wms.IOutboundRoutingService, CP6.Core.Services.Wms.OutboundRoutingService>();
+}
+else
+{
+    builder.Services.AddScoped<CP6.Core.Services.Wms.IOutboundRoutingService, CP6.Core.Services.Wms.NoOpOutboundRoutingService>();
+}
+
 // 4.11 MSBBWM090 + WM-DASH WMS Phase 4 棚卸・ダッシュボード
 builder.Services.AddScoped<CP6.Core.Services.Wms.IStockTakeService, CP6.Core.Services.Wms.StockTakeService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsDashboardService, CP6.Core.Services.Wms.WmsDashboardService>();
@@ -258,6 +272,12 @@ builder.Services.AddScoped<CP6.Core.Services.IDeadLetterNotifier, CP6.Core.Servi
 
 // 4.15.5 Retry Worker — 60s ごとに Failed + NextRetryAt 到期 のイベントをリトライ
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEventRetryWorker>();
+
+// 4.15.6 T15 / Gap 2.3 — Prometheus /metrics（ブリッジ業務指標）
+//  - Snapshot Provider は T_IntegrationEvent を scrape 毎に集計（DB が単一の真実・再起動で値が消えない）。
+//  - Collector は prometheus-net BeforeCollect への薄いアダプタ（Singleton）。
+builder.Services.AddScoped<CP6.Core.Services.IBridgeMetricsSnapshotProvider, CP6.Core.Services.BridgeMetricsSnapshotProvider>();
+builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
@@ -1496,6 +1516,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("AllowAll");
+
+// T15 / Gap 2.3 — HTTP リクエスト指標を収集（http_request_duration_seconds 等）。
+// UseRouting 後・エンドポイント前に挿入。
+app.UseHttpMetrics();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
@@ -1504,5 +1529,9 @@ app.MapControllers();
 app.MapHub<NotifyHub>("/hubs/notify");
 app.MapHub<CP6.WebApi.Hubs.MesHub>("/hubs/mes");
 app.MapHub<CP6.WebApi.Hubs.WmsHub>("/hubs/wms");
+
+// T15 / Gap 2.3 — Prometheus 公開エンドポイント /metrics ＋ ブリッジ業務指標コレクタ起動
+app.MapMetrics();   // GET /metrics（Prometheus テキスト形式）
+app.Services.GetRequiredService<CP6.WebApi.Observability.BridgeMetricsCollector>().Register();
 
 app.Run();
