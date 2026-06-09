@@ -1,7 +1,7 @@
 import http from '../http'
 import type {
   StockTake, StockTakePlanRequest, StockTakeCountInput, StockTakeSearchQuery, WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 export const stockTakeApi = {
   search(q: StockTakeSearchQuery = {}) {

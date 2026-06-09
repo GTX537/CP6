@@ -91,8 +91,8 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { Search, RefreshLeft } from '@element-plus/icons-vue'
-import { masterApi } from '@/api/master'
-import type { CustomerLookupItem, ProductLookupItem } from '@/api/master'
+import { masterApi } from '@/api/erp/master'
+import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
 
 type LookupKind = 'customer' | 'product'
 

@@ -144,7 +144,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { List, Refresh } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
-import type { OutboundOrder, OutboundOrderDetail } from '@/types/wms'
+import type { OutboundOrder, OutboundOrderDetail } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

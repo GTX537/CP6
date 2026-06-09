@@ -1,5 +1,5 @@
 import http from '../http'
-import type { BridgeHealthMetrics, WmsApi } from '@/types/wms'
+import type { BridgeHealthMetrics, WmsApi } from '@/types/wms/wms'
 
 export const bridgeHealthApi = {
   metrics() {

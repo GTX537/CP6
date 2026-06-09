@@ -129,11 +129,11 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 
 const { t } = useI18n()
 import { Warning } from '@element-plus/icons-vue'
-import { orderApi } from '@/api/order'
+import { orderApi } from '@/api/erp/order'
 import type {
   OrderPriceCorrectionQueryDto,
   OrderPriceCorrectionItemDto,
-} from '@/types/order'
+} from '@/types/erp/order'
 
 const query = reactive<OrderPriceCorrectionQueryDto>({
   page: 1,

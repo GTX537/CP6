@@ -3,7 +3,7 @@ import type {
   MonthlyStockReportRow, AbcAnalysisRow, DeadStockRow,
   InboundHistoryRow, OutboundHistoryRow,
   WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 export const reportApi = {
   monthlyStock(yearMonth: string, warehouseCd?: string) {

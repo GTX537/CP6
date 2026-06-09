@@ -110,7 +110,7 @@ import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { lotTraceApi } from '@/api/wms/lotTrace'
-import type { LotTraceResult, LotStockSummary } from '@/types/wms'
+import type { LotTraceResult, LotStockSummary } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

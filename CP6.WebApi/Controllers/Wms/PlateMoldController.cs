@@ -1,6 +1,9 @@
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+// ERP にも同名 PlateMold（版型/木型マスタ）が存在するため WMS 側へ明示エイリアス
+using IPlateMoldService = CP6.Core.Services.Wms.IPlateMoldService;
+using PlateMoldDto = CP6.Core.Services.Wms.PlateMoldDto;
 
 namespace CP6.WebApi.Controllers.Wms;
 

@@ -4,7 +4,7 @@ import type {
   PlateMoldStock, PlateMoldSearchQuery,
   SampleStock, SampleSearchQuery,
   WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 export const remnantApi = {
   search(q: RemnantSearchQuery = {}) {

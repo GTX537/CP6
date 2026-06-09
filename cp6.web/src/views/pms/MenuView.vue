@@ -62,7 +62,7 @@ import { useI18n } from 'vue-i18n'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance } from 'element-plus'
-import { menuApi } from '@/api/menu'
+import { menuApi } from '@/api/sys/menu'
 
 const { t } = useI18n()
 

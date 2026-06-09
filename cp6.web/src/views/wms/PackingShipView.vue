@@ -148,7 +148,7 @@ import { Box, Van, Check, List, Refresh } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import http from '@/api/http'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
-import type { OutboundOrder, ShipRequest, WmsApi } from '@/types/wms'
+import type { OutboundOrder, ShipRequest, WmsApi } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const saving = ref(false)

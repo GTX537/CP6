@@ -1,9 +1,9 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { h } from 'vue'
 import type { AxiosError } from 'axios'
-import { productApi } from '@/api/product'
+import { productApi } from '@/api/erp/product'
 import { useProductMasterStore } from '@/stores/productMaster'
-import { ProductOperationType } from '@/types/productMaster'
+import { ProductOperationType } from '@/types/erp/productMaster'
 
 interface ApiErrBody {
   code?: number

@@ -26,7 +26,7 @@ import { useI18n } from 'vue-i18n'
 import { Back } from '@element-plus/icons-vue'
 import VolTable from '@/components/VolTable.vue'
 import type { ColumnConfig } from '@/components/VolTable.vue'
-import { dictTypeApi, dictDataApi } from '@/api/dict'
+import { dictTypeApi, dictDataApi } from '@/api/sys/dict'
 
 const { t } = useI18n()
 

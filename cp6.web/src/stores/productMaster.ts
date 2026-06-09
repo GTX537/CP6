@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { ProductOperationType } from '@/types/productMaster'
+import { ProductOperationType } from '@/types/erp/productMaster'
 import type {
   ProductDto,
   ProductMemberDto,
@@ -10,7 +10,7 @@ import type {
   ProductLotPriceDto,
   ProductCoProductDto,
   WipCheckResultDto,
-} from '@/types/productMaster'
+} from '@/types/erp/productMaster'
 
 /** 空 BasicInfo 工厂 */
 function emptyBasicInfo(): ProductBasicInfoDto {

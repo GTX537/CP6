@@ -138,7 +138,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { computed, watch } from 'vue'
 import { useOrderStore } from '@/stores/order'
-import { orderApi } from '@/api/order'
+import { orderApi } from '@/api/erp/order'
 
 const store = useOrderStore()
 const detail = computed(() => store.currentDetail)

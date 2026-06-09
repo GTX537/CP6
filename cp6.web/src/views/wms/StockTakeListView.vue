@@ -88,7 +88,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { stockTakeApi } from '@/api/wms/stockTake'
-import type { StockTake, StockTakeSearchQuery, StockTakePlanRequest } from '@/types/wms'
+import type { StockTake, StockTakeSearchQuery, StockTakePlanRequest } from '@/types/wms/wms'
 
 const router = useRouter()
 const { t } = useI18n()

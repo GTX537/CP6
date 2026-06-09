@@ -1,5 +1,5 @@
 import http from '../http'
-import type { InboundOrder, InboundOrderSearchQuery, WmsApi } from '@/types/wms'
+import type { InboundOrder, InboundOrderSearchQuery, WmsApi } from '@/types/wms/wms'
 
 export const inboundOrderApi = {
   /** 検索 */

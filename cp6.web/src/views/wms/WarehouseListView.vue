@@ -73,7 +73,7 @@ import { ref, onMounted, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { warehouseApi } from '@/api/wms/warehouse'
-import type { Warehouse } from '@/types/wms'
+import type { Warehouse } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

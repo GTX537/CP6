@@ -1,5 +1,5 @@
 import http from '../http'
-import type { ExpiryStock, ExpiryDisposeRequest, WmsApi } from '@/types/wms'
+import type { ExpiryStock, ExpiryDisposeRequest, WmsApi } from '@/types/wms/wms'
 
 export const expiryApi = {
   expiring(days = 30, warehouseCd?: string) {

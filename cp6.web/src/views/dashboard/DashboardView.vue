@@ -311,13 +311,13 @@ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { Refresh } from '@element-plus/icons-vue'
-import { dashboardApi } from '@/api/dashboard'
-import { orderApi } from '@/api/order'
+import { dashboardApi } from '@/api/sys/dashboard'
+import { orderApi } from '@/api/erp/order'
 import { stockDwellApi } from '@/api/wms/stockDwell'
 import { getConnection, startConnection } from '@/utils/signalr'
 import { useBreakpoint } from '@/composables/useBreakpoint'
-import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/order'
-import type { StockDwellRow, StockDwellSummary } from '@/types/stockDwell'
+import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/erp/order'
+import type { StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
 
 const { t } = useI18n()
 const router = useRouter()

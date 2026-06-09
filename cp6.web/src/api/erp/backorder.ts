@@ -5,7 +5,7 @@ import type {
   BackorderActionResult,
   BackorderQueueItem,
   BackorderQueueQuery,
-} from '@/types/backorder'
+} from '@/types/erp/backorder'
 
 export const backorderApi = {
   queue(query: BackorderQueueQuery) {

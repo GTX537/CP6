@@ -90,8 +90,8 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { productionResultApi } from '@/api/mes'
-import { RESULT_TYPE_OPTIONS, type ProductionResultDto, type ProductionResultSearchQuery } from '@/types/mes'
+import { productionResultApi } from '@/api/mes/mes'
+import { RESULT_TYPE_OPTIONS, type ProductionResultDto, type ProductionResultSearchQuery } from '@/types/mes/mes'
 
 const loading = ref(false)
 const rows = ref<ProductionResultDto[]>([])

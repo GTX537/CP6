@@ -193,7 +193,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
-import { mesDashboardApi } from '@/api/mes'
+import { mesDashboardApi } from '@/api/mes/mes'
 import type {
   MesDashboardSummaryDto,
   ProcessProgressDto,
@@ -202,7 +202,7 @@ import type {
   DelayAlertDto,
   RecentCompletedDto,
   MachineHeatmapDto,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 
 // ─── KPI ───
 const summary = reactive<MesDashboardSummaryDto>({

@@ -1,5 +1,5 @@
 import http from '../http'
-import type { RmaHeader, RmaSearchQuery, RmaDispositionInput, WmsApi } from '@/types/wms'
+import type { RmaHeader, RmaSearchQuery, RmaDispositionInput, WmsApi } from '@/types/wms/wms'
 
 export const rmaApi = {
   search(query: RmaSearchQuery = {}) {

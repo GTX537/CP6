@@ -178,7 +178,7 @@ import { useI18n } from 'vue-i18n'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { stockDwellApi } from '@/api/wms/stockDwell'
 import { useBreakpoint } from '@/composables/useBreakpoint'
-import type { StockDwellQuery, StockDwellRow, StockDwellSummary } from '@/types/stockDwell'
+import type { StockDwellQuery, StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
 
 const { t } = useI18n()
 const { isMobile } = useBreakpoint()

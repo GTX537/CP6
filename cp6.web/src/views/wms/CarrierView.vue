@@ -123,7 +123,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { carrierApi } from '@/api/wms/connectivity'
-import type { CarrierShipment, CarrierSearchQuery, CarrierEvent } from '@/types/wms'
+import type { CarrierShipment, CarrierSearchQuery, CarrierEvent } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const query = reactive<CarrierSearchQuery>({ pageSize: 100 })

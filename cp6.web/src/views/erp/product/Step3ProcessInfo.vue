@@ -276,7 +276,7 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { useProductMasterStore } from '@/stores/productMaster'
-import type { ProductProcessDto, ProductCoProductDto } from '@/types/productMaster'
+import type { ProductProcessDto, ProductCoProductDto } from '@/types/erp/productMaster'
 
 const store = useProductMasterStore()
 

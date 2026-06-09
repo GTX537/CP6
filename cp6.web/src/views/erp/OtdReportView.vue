@@ -124,7 +124,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Download, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
 import { otdReportApi } from '@/api/erp/otdReport'
-import type { OtdReportGroupBy, OtdReportQuery, OtdReportRow, OtdReportSummary } from '@/types/otdReport'
+import type { OtdReportGroupBy, OtdReportQuery, OtdReportRow, OtdReportSummary } from '@/types/erp/otdReport'
 
 const { t } = useI18n()
 

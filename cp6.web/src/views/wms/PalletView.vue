@@ -102,7 +102,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { palletApi } from '@/api/wms/paperIndustry'
-import type { Pallet, PalletSearchQuery } from '@/types/wms'
+import type { Pallet, PalletSearchQuery } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const query = reactive<PalletSearchQuery>({ pageSize: 100 })

@@ -96,7 +96,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { stockTakeApi } from '@/api/wms/stockTake'
-import type { StockTake, StockTakeDetail, StockTakeCountInput } from '@/types/wms'
+import type { StockTake, StockTakeDetail, StockTakeCountInput } from '@/types/wms/wms'
 
 const route = useRoute()
 const router = useRouter()

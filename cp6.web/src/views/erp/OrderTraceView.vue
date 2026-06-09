@@ -119,7 +119,7 @@ import {
   WarningFilled,
 } from '@element-plus/icons-vue'
 import { orderTraceApi } from '@/api/erp/orderTrace'
-import type { OrderTrace, OrderTraceTimelineItem } from '@/types/orderTrace'
+import type { OrderTrace, OrderTraceTimelineItem } from '@/types/erp/orderTrace'
 
 const { t } = useI18n()
 const route = useRoute()

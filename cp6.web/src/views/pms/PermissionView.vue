@@ -46,8 +46,8 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import type { ElTree } from 'element-plus'
-import { roleApi } from '@/api/role'
-import { menuApi } from '@/api/menu'
+import { roleApi } from '@/api/sys/role'
+import { menuApi } from '@/api/sys/menu'
 
 const { t } = useI18n()
 

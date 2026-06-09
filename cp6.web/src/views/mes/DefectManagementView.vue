@@ -203,13 +203,13 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { defectRecordApi } from '@/api/mes'
+import { defectRecordApi } from '@/api/mes/mes'
 import {
   DEFECT_STATUS_OPTIONS,
   type DefectRecordDto,
   type DefectRecordSearchQuery,
   type DefectCategoryDto,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 
 const loading = ref(false)
 const saving = ref(false)

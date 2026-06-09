@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { OperationType, type FieldState } from '@/types/estimateCalc'
+import { OperationType, type FieldState } from '@/types/erp/estimateCalc'
 import { useEstimateStore } from '@/stores/estimate'
 
 /**

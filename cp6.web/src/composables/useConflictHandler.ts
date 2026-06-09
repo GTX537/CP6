@@ -1,9 +1,9 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { h } from 'vue'
 import type { AxiosError } from 'axios'
-import { estimateCalcApi } from '@/api/estimateCalc'
+import { estimateCalcApi } from '@/api/erp/estimateCalc'
 import { useEstimateStore } from '@/stores/estimate'
-import { OperationType } from '@/types/estimateCalc'
+import { OperationType } from '@/types/erp/estimateCalc'
 
 interface ApiErrBody {
   code?: number

@@ -108,7 +108,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { inboundOrderApi } from '@/api/wms/inboundOrder'
-import type { InboundOrder, InboundOrderDetail } from '@/types/wms'
+import type { InboundOrder, InboundOrderDetail } from '@/types/wms/wms'
 
 const route = useRoute()
 const router = useRouter()

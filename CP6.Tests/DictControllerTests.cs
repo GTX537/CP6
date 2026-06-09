@@ -1,5 +1,6 @@
 using CP6.Entity.DomainModels;
 using CP6.WebApi.Controllers;
+using CP6.WebApi.Controllers.Sys;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CP6.Tests;

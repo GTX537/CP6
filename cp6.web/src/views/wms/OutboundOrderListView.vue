@@ -83,7 +83,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
-import type { OutboundOrder, OutboundOrderSearchQuery } from '@/types/wms'
+import type { OutboundOrder, OutboundOrderSearchQuery } from '@/types/wms/wms'
 
 const router = useRouter()
 const { t } = useI18n()

@@ -1,5 +1,5 @@
 import type { FormRules } from 'element-plus'
-import type { EstimateCalcDto } from '@/types/estimateCalc'
+import type { EstimateCalcDto } from '@/types/erp/estimateCalc'
 
 /**
  * 基本信息（Step 1）校验规则

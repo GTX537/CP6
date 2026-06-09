@@ -247,7 +247,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { kittingApi } from '@/api/wms/kitting'
-import type { KitMaster, KitMasterComponent, KitOrder, KitOrderSearchQuery } from '@/types/wms'
+import type { KitMaster, KitMasterComponent, KitOrder, KitOrderSearchQuery } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

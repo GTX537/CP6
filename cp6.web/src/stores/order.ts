@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { OrderOperationType } from '@/types/order'
+import { OrderOperationType } from '@/types/erp/order'
 import type {
   OrderDto,
   OrderDetailDto,
@@ -8,7 +8,7 @@ import type {
   OrderMaterialDto,
   OrderProcessNoteDto,
   OrderWipCheckResultDto,
-} from '@/types/order'
+} from '@/types/erp/order'
 
 /** 空 OrderDto 工厂 */
 function emptyOrder(): OrderDto {

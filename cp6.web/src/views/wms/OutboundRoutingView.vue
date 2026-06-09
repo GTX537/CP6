@@ -139,7 +139,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { outboundRoutingApi } from '@/api/wms/outboundRouting'
 import { warehouseApi } from '@/api/wms/warehouse'
-import type { OutboundRoutingRule } from '@/types/outboundRouting'
+import type { OutboundRoutingRule } from '@/types/wms/outboundRouting'
 
 const { t } = useI18n()
 

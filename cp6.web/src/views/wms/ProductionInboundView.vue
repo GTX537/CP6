@@ -109,7 +109,7 @@ import { ElMessage } from 'element-plus'
 import { Box, Aim, Check, List, Refresh } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { inboundReceiptApi } from '@/api/wms/inboundReceipt'
-import type { InboundReceipt } from '@/types/wms'
+import type { InboundReceipt } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const saving = ref(false)

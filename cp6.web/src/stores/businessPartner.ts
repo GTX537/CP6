@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { BpOperationType } from '@/types/businessPartner'
-import type { BusinessPartnerDto } from '@/types/businessPartner'
+import { BpOperationType } from '@/types/erp/businessPartner'
+import type { BusinessPartnerDto } from '@/types/erp/businessPartner'
 
 /** 空 BP DTO 工厂（仕様書 §6.6 共通初期値含む） */
 function emptyBp(): BusinessPartnerDto {

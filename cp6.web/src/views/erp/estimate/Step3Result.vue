@@ -89,8 +89,8 @@ import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import { useEstimateStore } from '@/stores/estimate'
 import { useFieldControl } from '@/composables/useFieldControl'
-import { estimateCalcApi } from '@/api/estimateCalc'
-import type { EstimateCalcResult } from '@/types/estimateCalc'
+import { estimateCalcApi } from '@/api/erp/estimateCalc'
+import type { EstimateCalcResult } from '@/types/erp/estimateCalc'
 
 const store = useEstimateStore()
 const { basicInfo } = storeToRefs(store)

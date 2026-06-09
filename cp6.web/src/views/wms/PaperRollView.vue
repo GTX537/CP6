@@ -119,7 +119,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { paperRollApi } from '@/api/wms/paperIndustry'
-import type { PaperRoll, PaperRollSearchQuery } from '@/types/wms'
+import type { PaperRoll, PaperRollSearchQuery } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const query = reactive<PaperRollSearchQuery>({ pageSize: 100 })

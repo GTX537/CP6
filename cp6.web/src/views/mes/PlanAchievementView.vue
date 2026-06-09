@@ -122,7 +122,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Download, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
 import { planAchievementApi } from '@/api/mes/planAchievement'
-import type { PlanAchievementGroupBy, PlanAchievementQuery, PlanAchievementSummary } from '@/types/planAchievement'
+import type { PlanAchievementGroupBy, PlanAchievementQuery, PlanAchievementSummary } from '@/types/mes/planAchievement'
 
 const { t } = useI18n()
 

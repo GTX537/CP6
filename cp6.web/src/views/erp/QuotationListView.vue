@@ -172,10 +172,10 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue'
-import { quotationApi } from '@/api/quotation'
-import { masterApi } from '@/api/master'
-import type { QuotationListItem, QuotationQuery } from '@/types/quotation'
-import type { MasterBase } from '@/types/estimateCalc'
+import { quotationApi } from '@/api/erp/quotation'
+import { masterApi } from '@/api/erp/master'
+import type { QuotationListItem, QuotationQuery } from '@/types/erp/quotation'
+import type { MasterBase } from '@/types/erp/estimateCalc'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { isMobile } = useBreakpoint()

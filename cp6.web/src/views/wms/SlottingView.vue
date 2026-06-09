@@ -121,7 +121,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { slottingApi } from '@/api/wms/logistics'
-import type { SlottingPlan, SlottingPlanResult } from '@/types/wms'
+import type { SlottingPlan, SlottingPlanResult } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const mode = ref<'list' | 'detail'>('list')

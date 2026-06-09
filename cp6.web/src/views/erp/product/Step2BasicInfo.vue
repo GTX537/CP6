@@ -329,9 +329,9 @@ import { computed, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import { useProductMasterStore } from '@/stores/productMaster'
-import { productApi } from '@/api/product'
+import { productApi } from '@/api/erp/product'
 import MasterReferenceDialog from '@/components/master/MasterReferenceDialog.vue'
-import type { CustomerLookupItem, ProductLookupItem } from '@/api/master'
+import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
 
 const store = useProductMasterStore()
 

@@ -134,8 +134,8 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { orderApi } from '@/api/order'
-import type { OrderCancelResult } from '@/types/order'
+import { orderApi } from '@/api/erp/order'
+import type { OrderCancelResult } from '@/types/erp/order'
 
 const { t } = useI18n()
 

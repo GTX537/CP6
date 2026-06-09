@@ -181,7 +181,7 @@ import { ref, reactive, onMounted, onBeforeUnmount, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { wmsDashboardApi } from '@/api/wms/wmsDashboard'
-import type { WmsKpi, WmsTrendPoint, WmsWarehouseValue, WmsAlerts } from '@/types/wms'
+import type { WmsKpi, WmsTrendPoint, WmsWarehouseValue, WmsAlerts } from '@/types/wms/wms'
 import { getWmsConnection, startWmsConnection, type StockChangedPayload, type InboundReceivedPayload, type OutboundShippedPayload } from '@/utils/wmsHub'
 import * as signalR from '@microsoft/signalr'
 

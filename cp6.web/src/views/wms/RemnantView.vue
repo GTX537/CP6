@@ -133,7 +133,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { remnantApi } from '@/api/wms/paperIndustry2'
-import type { RemnantMaterial, RemnantSearchQuery } from '@/types/wms'
+import type { RemnantMaterial, RemnantSearchQuery } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const query = reactive<RemnantSearchQuery>({ pageSize: 100 })

@@ -161,7 +161,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { qcInspectionApi } from '@/api/wms/qcInspection'
-import type { QcInspection, QcInspectionSearchQuery, QcJudgeRequest } from '@/types/wms'
+import type { QcInspection, QcInspectionSearchQuery, QcJudgeRequest } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

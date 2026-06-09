@@ -461,16 +461,16 @@ const { t } = useI18n()
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { quotationApi } from '@/api/quotation'
-import { masterApi } from '@/api/master'
+import { quotationApi } from '@/api/erp/quotation'
+import { masterApi } from '@/api/erp/master'
 import type {
   QuotationDto,
   QuotationCalcCandidate,
   QuotationCalcDto,
   QuotationDetailDto,
-} from '@/types/quotation'
-import { QuotationOperationType } from '@/types/quotation'
-import type { MasterBase, MasterStaff } from '@/types/estimateCalc'
+} from '@/types/erp/quotation'
+import { QuotationOperationType } from '@/types/erp/quotation'
+import type { MasterBase, MasterStaff } from '@/types/erp/estimateCalc'
 import type { AxiosError } from 'axios'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 

@@ -1,5 +1,5 @@
 import http from '../http'
-import type { ApiResult, PlanAchievementQuery, PlanAchievementSummary } from '@/types/planAchievement'
+import type { ApiResult, PlanAchievementQuery, PlanAchievementSummary } from '@/types/mes/planAchievement'
 
 export const planAchievementApi = {
   summary(query: PlanAchievementQuery) {

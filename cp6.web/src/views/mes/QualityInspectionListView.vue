@@ -107,14 +107,14 @@ const { t } = useI18n()
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { qualityInspectionApi } from '@/api/mes'
+import { qualityInspectionApi } from '@/api/mes/mes'
 import {
   INSPECTION_TYPE_OPTIONS,
   OVERALL_RESULT_OPTIONS,
   DISPOSITION_OPTIONS,
   type QualityInspectionDto,
   type QualityInspectionSearchQuery,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 
 const router = useRouter()
 const loading = ref(false)

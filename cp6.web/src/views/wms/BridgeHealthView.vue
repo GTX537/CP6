@@ -118,7 +118,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { BellFilled, CircleCheckFilled, Refresh, WarningFilled } from '@element-plus/icons-vue'
 import { bridgeHealthApi } from '@/api/wms/bridgeHealth'
-import type { BridgeHealthMetrics } from '@/types/wms'
+import type { BridgeHealthMetrics } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

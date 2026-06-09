@@ -187,8 +187,8 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Document } from '@element-plus/icons-vue'
 import { usePlateMoldStore } from '@/stores/plateMold'
-import { PlateMoldOperationType } from '@/types/plateMold'
-import { plateMoldApi } from '@/api/plateMold'
+import { PlateMoldOperationType } from '@/types/erp/plateMold'
+import { plateMoldApi } from '@/api/erp/plateMold'
 
 const { t } = useI18n()
 const store = usePlateMoldStore()

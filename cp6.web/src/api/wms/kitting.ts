@@ -1,5 +1,5 @@
 import http from '../http'
-import type { KitMaster, KitOrder, KitOrderSearchQuery, WmsApi } from '@/types/wms'
+import type { KitMaster, KitOrder, KitOrderSearchQuery, WmsApi } from '@/types/wms/wms'
 
 export const kittingApi = {
   searchMasters(keyword?: string) {

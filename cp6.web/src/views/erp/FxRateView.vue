@@ -68,7 +68,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fxRateApi } from '@/api/erp/fxRate'
-import type { FxRate } from '@/types/fxRate'
+import type { FxRate } from '@/types/erp/fxRate'
 
 const { t } = useI18n()
 

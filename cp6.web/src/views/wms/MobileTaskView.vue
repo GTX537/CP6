@@ -143,7 +143,7 @@ import { useRouter } from 'vue-router'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
 import { inboundReceiptApi } from '@/api/wms/inboundReceipt'
 import { mobileApi } from '@/api/wms/mobile'
-import type { OutboundOrder, InboundReceipt, MobileTask, MobileScanResult } from '@/types/wms'
+import type { OutboundOrder, InboundReceipt, MobileTask, MobileScanResult } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const router = useRouter()

@@ -146,7 +146,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { rmaApi } from '@/api/wms/rma'
-import type { RmaHeader, RmaDetail, RmaSearchQuery, RmaDispositionInput } from '@/types/wms'
+import type { RmaHeader, RmaDetail, RmaSearchQuery, RmaDispositionInput } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

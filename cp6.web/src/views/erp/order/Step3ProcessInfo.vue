@@ -158,8 +158,8 @@ import { computed, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus, Delete, Download } from '@element-plus/icons-vue'
 import { useOrderStore } from '@/stores/order'
-import { orderApi } from '@/api/order'
-import type { OrderProcessDto, OrderMaterialDto } from '@/types/order'
+import { orderApi } from '@/api/erp/order'
+import type { OrderProcessDto, OrderMaterialDto } from '@/types/erp/order'
 
 const store = useOrderStore()
 const detail = computed(() => store.currentDetail)

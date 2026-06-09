@@ -155,7 +155,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
-import type { OutboundOrder, OutboundOrderDetail, ShipRequest } from '@/types/wms'
+import type { OutboundOrder, OutboundOrderDetail, ShipRequest } from '@/types/wms/wms'
 
 const route = useRoute()
 const router = useRouter()

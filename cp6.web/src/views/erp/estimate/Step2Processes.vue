@@ -107,8 +107,8 @@ import { Plus, Delete } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import { useEstimateStore } from '@/stores/estimate'
 import { useFieldControl } from '@/composables/useFieldControl'
-import { masterApi } from '@/api/master'
-import type { EstimateCalcProcessDto, MasterGenericCode } from '@/types/estimateCalc'
+import { masterApi } from '@/api/erp/master'
+import type { EstimateCalcProcessDto, MasterGenericCode } from '@/types/erp/estimateCalc'
 import RecycleLawDialog from '@/components/estimate/RecycleLawDialog.vue'
 
 const store = useEstimateStore()

@@ -9,8 +9,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import VolTable from '@/components/VolTable.vue'
 import type { ColumnConfig } from '@/components/VolTable.vue'
-import { userApi } from '@/api/user'
-import { roleApi } from '@/api/role'
+import { userApi } from '@/api/sys/user'
+import { roleApi } from '@/api/sys/role'
 
 const { t } = useI18n()
 const roleOptions = ref<{ label: string; value: number }[]>([])

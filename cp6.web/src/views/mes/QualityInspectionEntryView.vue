@@ -205,7 +205,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Search, Plus, MagicStick, Download } from '@element-plus/icons-vue'
-import { qualityInspectionApi, workOrderApi } from '@/api/mes'
+import { qualityInspectionApi, workOrderApi } from '@/api/mes/mes'
 import {
   INSPECTION_TYPE_OPTIONS,
   OVERALL_RESULT_OPTIONS,
@@ -214,7 +214,7 @@ import {
   type QualityInspectionDto,
   type QualityInspectionItemDto,
   type WorkOrderProcessDto,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 
 const route = useRoute()
 const saving = ref(false)

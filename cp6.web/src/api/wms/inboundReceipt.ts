@@ -1,5 +1,5 @@
 import http from '../http'
-import type { InboundReceipt, InboundReceiptSearchQuery, WmsApi } from '@/types/wms'
+import type { InboundReceipt, InboundReceiptSearchQuery, WmsApi } from '@/types/wms/wms'
 
 export const inboundReceiptApi = {
   search(query: InboundReceiptSearchQuery = {}) {

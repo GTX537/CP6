@@ -5,7 +5,7 @@ import type {
   Pallet, PalletSearchQuery,
   VmiCustomerSummary, VmiStockDetail, VmiBilling,
   WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 export const paperRollApi = {
   search(q: PaperRollSearchQuery = {}) {

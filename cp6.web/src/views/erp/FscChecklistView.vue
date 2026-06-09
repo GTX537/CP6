@@ -95,8 +95,8 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Document } from '@element-plus/icons-vue'
-import { fscApi } from '@/api/fsc'
-import type { FscChecklistQueryDto, FscChecklistItemDto, FscFormat } from '@/types/fsc'
+import { fscApi } from '@/api/erp/fsc'
+import type { FscChecklistQueryDto, FscChecklistItemDto, FscFormat } from '@/types/erp/fsc'
 
 const { t } = useI18n()
 

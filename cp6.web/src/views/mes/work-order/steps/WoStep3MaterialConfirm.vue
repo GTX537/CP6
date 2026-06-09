@@ -74,7 +74,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
-import type { WorkOrderMaterialDto } from '@/types/mes'
+import type { WorkOrderMaterialDto } from '@/types/mes/mes'
 
 const props = defineProps<{
   modelValue: WorkOrderMaterialDto[]

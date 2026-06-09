@@ -1,5 +1,5 @@
 import http from '../http'
-import type { OutboundRoutingRule, WmsApi } from '@/types/outboundRouting'
+import type { OutboundRoutingRule, WmsApi } from '@/types/wms/outboundRouting'
 
 export const outboundRoutingApi = {
   list(includeDisabled = true) {

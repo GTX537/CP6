@@ -136,8 +136,8 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, RefreshLeft, Plus, Check, Link, Download } from '@element-plus/icons-vue'
-import { productApi } from '@/api/product'
-import type { ProductListItemDto, ProductQuery } from '@/types/productMaster'
+import { productApi } from '@/api/erp/product'
+import type { ProductListItemDto, ProductQuery } from '@/types/erp/productMaster'
 
 const loading = ref(false)
 const exporting = ref(false)

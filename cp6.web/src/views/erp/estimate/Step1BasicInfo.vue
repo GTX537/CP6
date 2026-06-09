@@ -471,8 +471,8 @@ import { useEstimateStore } from '@/stores/estimate'
 import { useFieldControl } from '@/composables/useFieldControl'
 import { useStep1Validation } from '@/composables/useValidation'
 import { useStep1Linkage } from '@/composables/useLinkage'
-import { masterApi } from '@/api/master'
-import type { MasterBase, MasterStaff, MasterGenericCode } from '@/types/estimateCalc'
+import { masterApi } from '@/api/erp/master'
+import type { MasterBase, MasterStaff, MasterGenericCode } from '@/types/erp/estimateCalc'
 
 const store = useEstimateStore()
 const { basicInfo } = storeToRefs(store)

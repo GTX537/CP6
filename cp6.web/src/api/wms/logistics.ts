@@ -3,7 +3,7 @@ import type {
   CrossDockOrder, CrossDockSearchQuery,
   ReplenishOrder, ReplenishSearchQuery,
   SlottingPlan, SlottingPlanResult, WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 export const crossDockApi = {
   search(q: CrossDockSearchQuery = {}) {

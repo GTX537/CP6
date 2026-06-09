@@ -210,11 +210,11 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileService, CP6.Core.Servic
 var wmsBridgeEnabled = builder.Configuration.GetValue<bool?>("WmsBridge:Enabled") ?? true;
 if (wmsBridgeEnabled)
 {
-    builder.Services.AddScoped<CP6.Core.Services.IWmsBridgeHook, CP6.Core.Services.Wms.WmsBridgeHook>();
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsBridgeHook, CP6.Core.Services.Wms.WmsBridgeHook>();
 }
 else
 {
-    builder.Services.AddScoped<CP6.Core.Services.IWmsBridgeHook, CP6.Core.Services.NoOpWmsBridgeHook>();
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsBridgeHook, CP6.Core.Services.Integration.NoOpWmsBridgeHook>();
 }
 
 // 4.13 WMS→ERP 逆方向フック（OutboundService.ShipAsync 後に受注へ出荷実績を回写）
@@ -222,11 +222,11 @@ else
 var erpBridgeEnabled = builder.Configuration.GetValue<bool?>("ErpBridge:Enabled") ?? true;
 if (erpBridgeEnabled)
 {
-    builder.Services.AddScoped<CP6.Core.Services.IErpBridgeHook, CP6.Core.Services.Wms.ErpBridgeHook>();
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IErpBridgeHook, CP6.Core.Services.Wms.ErpBridgeHook>();
 }
 else
 {
-    builder.Services.AddScoped<CP6.Core.Services.IErpBridgeHook, CP6.Core.Services.NoOpErpBridgeHook>();
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IErpBridgeHook, CP6.Core.Services.Integration.NoOpErpBridgeHook>();
 }
 
 // 4.14 ERP→MES 前方向フック（OrderService.CreateAsync 後に受注を製造指図へ自動展開）
@@ -234,11 +234,11 @@ else
 var mesBridgeEnabled = builder.Configuration.GetValue<bool?>("MesBridge:Enabled") ?? false;
 if (mesBridgeEnabled)
 {
-    builder.Services.AddScoped<CP6.Core.Services.IMesBridgeHook, CP6.Core.Services.Mes.MesBridgeHook>();
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IMesBridgeHook, CP6.Core.Services.Mes.MesBridgeHook>();
 }
 else
 {
-    builder.Services.AddScoped<CP6.Core.Services.IMesBridgeHook, CP6.Core.Services.NoOpMesBridgeHook>();
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IMesBridgeHook, CP6.Core.Services.Integration.NoOpMesBridgeHook>();
 }
 
 // MES 実時間通知（SignalR 実装）
@@ -257,11 +257,11 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.MachineStatusMon
 var orderCancelBridgeEnabled = builder.Configuration.GetValue<bool?>("OrderCancelBridge:Enabled") ?? true;
 if (orderCancelBridgeEnabled)
 {
-    builder.Services.AddScoped<CP6.Core.Services.IOrderCancelBridgeHook, CP6.Core.Services.OrderCancelBridgeHook>();
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IOrderCancelBridgeHook, CP6.Core.Services.Integration.OrderCancelBridgeHook>();
 }
 else
 {
-    builder.Services.AddScoped<CP6.Core.Services.IOrderCancelBridgeHook, CP6.Core.Services.NoOpOrderCancelBridgeHook>();
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IOrderCancelBridgeHook, CP6.Core.Services.Integration.NoOpOrderCancelBridgeHook>();
 }
 
 // 4.15.2 IntegrationEvent 配置（appsettings.json の IntegrationEvent 段から）
@@ -269,10 +269,10 @@ builder.Services.Configure<CP6.Core.Options.IntegrationEventOptions>(
     builder.Configuration.GetSection("IntegrationEvent"));
 
 // 4.15.3 IntegrationEvent Dispatcher（HookName → 元 hook 経路）
-builder.Services.AddScoped<CP6.Core.Services.IIntegrationEventDispatcher, CP6.Core.Services.IntegrationEventDispatcher>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IIntegrationEventDispatcher, CP6.Core.Services.Integration.IntegrationEventDispatcher>();
 
 // 4.15.4 DeadLetter 通知（SignalR + Sys_OperLog 双通知）
-builder.Services.AddScoped<CP6.Core.Services.IDeadLetterNotifier, CP6.Core.Services.DeadLetterNotifier>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IDeadLetterNotifier, CP6.Core.Services.Integration.DeadLetterNotifier>();
 
 // 4.15.5 Retry Worker — 60s ごとに Failed + NextRetryAt 到期 のイベントをリトライ
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEventRetryWorker>();
@@ -280,7 +280,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEvent
 // 4.15.6 T15 / Gap 2.3 — Prometheus /metrics（ブリッジ業務指標）
 //  - Snapshot Provider は T_IntegrationEvent を scrape 毎に集計（DB が単一の真実・再起動で値が消えない）。
 //  - Collector は prometheus-net BeforeCollect への薄いアダプタ（Singleton）。
-builder.Services.AddScoped<CP6.Core.Services.IBridgeMetricsSnapshotProvider, CP6.Core.Services.BridgeMetricsSnapshotProvider>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IBridgeMetricsSnapshotProvider, CP6.Core.Services.Integration.BridgeMetricsSnapshotProvider>();
 builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>();
 
 // 5. 配置 JWT 认证

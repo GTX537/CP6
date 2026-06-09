@@ -7,7 +7,7 @@ import type {
   StockMoveRequest,
   WmsApi,
   WmsPaged,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 export const stockApi = {
   /** 在庫照会 */

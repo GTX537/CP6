@@ -1,7 +1,7 @@
 import http from '../http'
 import type {
   OutboundOrder, OutboundOrderSearchQuery, ShipRequest, WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 export const outboundOrderApi = {
   search(query: OutboundOrderSearchQuery = {}) {

@@ -117,14 +117,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Back } from '@element-plus/icons-vue'
-import { mesDashboardApi, machineApi } from '@/api/mes'
+import { mesDashboardApi, machineApi } from '@/api/mes/mes'
 import {
   MACHINE_STATUS_OPTIONS,
   type MesDashboardSummaryDto,
   type DailyTrendDto,
   type DelayAlertDto,
   type MachineDto,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 import { getMesHub, startMesHub, stopMesHub } from '@/utils/mesHub'
 
 const summary = reactive<MesDashboardSummaryDto>({

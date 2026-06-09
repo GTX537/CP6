@@ -161,7 +161,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { vmiApi } from '@/api/wms/paperIndustry'
-import type { VmiCustomerSummary, VmiStockDetail, VmiBilling } from '@/types/wms'
+import type { VmiCustomerSummary, VmiStockDetail, VmiBilling } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const activeTab = ref<'customers' | 'details' | 'billings'>('customers')

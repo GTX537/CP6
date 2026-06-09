@@ -1,5 +1,5 @@
 import http from '../http'
-import type { Warehouse, WmsLocation, WmsApi } from '@/types/wms'
+import type { Warehouse, WmsLocation, WmsApi } from '@/types/wms/wms'
 
 export const warehouseApi = {
   /** 倉庫一覧 */

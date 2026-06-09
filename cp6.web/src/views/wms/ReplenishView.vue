@@ -99,7 +99,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { replenishApi } from '@/api/wms/logistics'
-import type { ReplenishOrder, ReplenishSearchQuery } from '@/types/wms'
+import type { ReplenishOrder, ReplenishSearchQuery } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const query = reactive<ReplenishSearchQuery>({ pageSize: 100 })

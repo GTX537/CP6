@@ -132,8 +132,8 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
-import { machineApi, oeeApi } from '@/api/mes'
-import type { MachineDto, OeeDailyDto } from '@/types/mes'
+import { machineApi, oeeApi } from '@/api/mes/mes'
+import type { MachineDto, OeeDailyDto } from '@/types/mes/mes'
 
 const loading = ref(false)
 const recalcing = ref(false)

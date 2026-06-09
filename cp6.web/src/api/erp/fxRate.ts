@@ -1,5 +1,5 @@
 import http from '../http'
-import type { FxRate, WmsApi } from '@/types/fxRate'
+import type { FxRate, WmsApi } from '@/types/erp/fxRate'
 
 export const fxRateApi = {
   list(currencyCd?: string) {

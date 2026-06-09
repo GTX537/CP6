@@ -225,14 +225,14 @@ const { t } = useI18n()
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'
-import { machineApi } from '@/api/mes'
+import { machineApi } from '@/api/mes/mes'
 import {
   MACHINE_STATUS_OPTIONS,
   DOWNTIME_TYPE_OPTIONS,
   type MachineDto,
   type MachineSearchQuery,
   type MachineDowntimeDto,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 
 const loading = ref(false)
 const saving = ref(false)

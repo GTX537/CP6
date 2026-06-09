@@ -141,8 +141,8 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'
-import { plateMoldApi } from '@/api/plateMold'
-import type { PlateMoldQueryDto, PlateMoldListItemDto } from '@/types/plateMold'
+import { plateMoldApi } from '@/api/erp/plateMold'
+import type { PlateMoldQueryDto, PlateMoldListItemDto } from '@/types/erp/plateMold'
 
 const { t } = useI18n()
 const route = useRoute()

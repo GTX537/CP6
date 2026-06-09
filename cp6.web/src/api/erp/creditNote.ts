@@ -1,5 +1,5 @@
 import http from '../http'
-import type { ApiResult, CreditNoteListItem, CreditNotePaged, CreditNoteQuery } from '@/types/creditNote'
+import type { ApiResult, CreditNoteListItem, CreditNotePaged, CreditNoteQuery } from '@/types/erp/creditNote'
 
 export const creditNoteApi = {
   search(query: CreditNoteQuery) {

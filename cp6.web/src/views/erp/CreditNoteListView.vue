@@ -151,7 +151,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { creditNoteApi } from '@/api/erp/creditNote'
 import { useBreakpoint } from '@/composables/useBreakpoint'
-import type { CreditNoteListItem, CreditNoteQuery, CreditNoteType } from '@/types/creditNote'
+import type { CreditNoteListItem, CreditNoteQuery, CreditNoteType } from '@/types/erp/creditNote'
 
 const { t } = useI18n()
 const router = useRouter()

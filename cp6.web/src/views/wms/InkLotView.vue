@@ -185,7 +185,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { inkApi } from '@/api/wms/paperIndustry'
-import type { InkLot, InkLotSearchQuery, InkColorMatchHistory, MixInkRequest } from '@/types/wms'
+import type { InkLot, InkLotSearchQuery, InkColorMatchHistory, MixInkRequest } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const activeTab = ref<'lots' | 'matches'>('lots')

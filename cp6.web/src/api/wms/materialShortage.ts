@@ -5,7 +5,7 @@ import type {
   MaterialShortagePaged,
   MaterialShortageQuery,
   WmsApi,
-} from '@/types/materialShortage'
+} from '@/types/wms/materialShortage'
 
 export const materialShortageApi = {
   search(query: MaterialShortageQuery = {}) {

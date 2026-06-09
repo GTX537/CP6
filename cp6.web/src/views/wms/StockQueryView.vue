@@ -147,7 +147,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { stockApi } from '@/api/wms/stock'
-import type { Stock, StockTransaction } from '@/types/wms'
+import type { Stock, StockTransaction } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

@@ -109,7 +109,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { sampleApi } from '@/api/wms/paperIndustry2'
-import type { SampleStock, SampleSearchQuery } from '@/types/wms'
+import type { SampleStock, SampleSearchQuery } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const query = reactive<SampleSearchQuery>({ pageSize: 100, overdueOnly: false })

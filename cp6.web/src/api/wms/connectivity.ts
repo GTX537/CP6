@@ -4,7 +4,7 @@ import type {
   CarrierShipment, CarrierSearchQuery, CarrierEvent,
   IotSensor, IotSensorReading, IotAlert,
   WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 // ───────── WCS タスク ─────────
 

@@ -59,7 +59,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { inboundOrderApi } from '@/api/wms/inboundOrder'
-import type { InboundOrder, InboundOrderSearchQuery } from '@/types/wms'
+import type { InboundOrder, InboundOrderSearchQuery } from '@/types/wms/wms'
 
 const router = useRouter()
 const { t } = useI18n()

@@ -133,7 +133,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { materialShortageApi } from '@/api/wms/materialShortage'
-import type { MaterialShortage, MaterialShortageQuery, MaterialShortageStatus } from '@/types/materialShortage'
+import type { MaterialShortage, MaterialShortageQuery, MaterialShortageStatus } from '@/types/wms/materialShortage'
 
 const { t } = useI18n()
 

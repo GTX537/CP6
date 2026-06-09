@@ -1,6 +1,10 @@
 using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
+// ERP にも同名 PlateMold があるため WMS 側へ明示エイリアス
+using PlateMoldDto = CP6.Core.Services.Wms.PlateMoldDto;
+using IPlateMoldService = CP6.Core.Services.Wms.IPlateMoldService;
+using PlateMoldService = CP6.Core.Services.Wms.PlateMoldService;
 
 namespace CP6.Tests;
 

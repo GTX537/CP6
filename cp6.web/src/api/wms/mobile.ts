@@ -3,7 +3,7 @@ import type {
   MobileTask, MobileTaskQuery,
   MobileScanRequest, MobileScanResult, MobileCompleteRequest,
   WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 // ───────── モバイル作業指示（WM300） ─────────
 

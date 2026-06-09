@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { PlateMoldOperationType } from '@/types/plateMold'
-import type { PlateMoldDto, PlateMoldHistoryItemDto } from '@/types/plateMold'
+import { PlateMoldOperationType } from '@/types/erp/plateMold'
+import type { PlateMoldDto, PlateMoldHistoryItemDto } from '@/types/erp/plateMold'
 
 function emptyDto(): PlateMoldDto {
   const today = new Date().toISOString().slice(0, 10)

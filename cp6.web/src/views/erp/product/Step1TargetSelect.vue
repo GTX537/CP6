@@ -190,11 +190,11 @@ const { t } = useI18n()
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus, Check, Link, Delete, Top, Bottom, RefreshLeft, Document } from '@element-plus/icons-vue'
-import type { ProductMemberDto } from '@/types/productMaster'
+import type { ProductMemberDto } from '@/types/erp/productMaster'
 import { useProductMasterStore } from '@/stores/productMaster'
-import { productApi } from '@/api/product'
+import { productApi } from '@/api/erp/product'
 import MasterReferenceDialog from '@/components/master/MasterReferenceDialog.vue'
-import type { CustomerLookupItem, ProductLookupItem } from '@/api/master'
+import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
 
 const store = useProductMasterStore()
 

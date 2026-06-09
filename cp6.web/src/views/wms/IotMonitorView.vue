@@ -121,7 +121,7 @@ import { ElMessage } from 'element-plus'
 import { Refresh, MagicStick } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { iotApi } from '@/api/wms/connectivity'
-import type { IotSensor, IotSensorReading, IotAlert } from '@/types/wms'
+import type { IotSensor, IotSensorReading, IotAlert } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const loading = ref(false)

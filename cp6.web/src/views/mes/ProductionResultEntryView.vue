@@ -123,14 +123,14 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
-import { workOrderApi, productionResultApi } from '@/api/mes'
+import { workOrderApi, productionResultApi } from '@/api/mes/mes'
 import {
   WORK_ORDER_STATUS_OPTIONS,
   PROCESS_STATUS_OPTIONS,
   type WorkOrderDto,
   type WorkOrderProcessDto,
   type ProductionResultRequest,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 
 const route = useRoute()
 const workOrderNo = ref('')

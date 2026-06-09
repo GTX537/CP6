@@ -150,13 +150,13 @@ const { t } = useI18n()
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { workOrderApi } from '@/api/mes'
+import { workOrderApi } from '@/api/mes/mes'
 import {
   WORK_ORDER_STATUS_OPTIONS,
   PRIORITY_OPTIONS,
   type WorkOrderDto,
   type WorkOrderSearchQuery,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 
 const router = useRouter()
 const loading = ref(false)

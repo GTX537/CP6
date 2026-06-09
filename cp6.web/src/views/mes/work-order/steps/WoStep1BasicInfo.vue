@@ -118,7 +118,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { computed } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { PRIORITY_OPTIONS, type WorkOrderDto } from '@/types/mes'
+import { PRIORITY_OPTIONS, type WorkOrderDto } from '@/types/mes/mes'
 
 const props = defineProps<{
   modelValue: WorkOrderDto

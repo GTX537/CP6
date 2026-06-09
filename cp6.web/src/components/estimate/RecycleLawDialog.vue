@@ -96,8 +96,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { masterApi } from '@/api/master'
-import type { MasterGenericCode } from '@/types/estimateCalc'
+import { masterApi } from '@/api/erp/master'
+import type { MasterGenericCode } from '@/types/erp/estimateCalc'
 
 interface Props {
   modelValue: boolean

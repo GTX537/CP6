@@ -56,7 +56,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { expiryApi } from '@/api/wms/expiry'
-import type { ExpiryStock } from '@/types/wms'
+import type { ExpiryStock } from '@/types/wms/wms'
 
 const { t } = useI18n()
 

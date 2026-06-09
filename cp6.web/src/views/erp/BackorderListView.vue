@@ -164,7 +164,7 @@ import { ElMessage } from 'element-plus'
 import { Check, CopyDocument, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
 import { backorderApi } from '@/api/erp/backorder'
 import { useBreakpoint } from '@/composables/useBreakpoint'
-import type { BackorderQueueItem, BackorderQueueQuery } from '@/types/backorder'
+import type { BackorderQueueItem, BackorderQueueQuery } from '@/types/erp/backorder'
 
 type BackorderAction = 'close' | 'split'
 

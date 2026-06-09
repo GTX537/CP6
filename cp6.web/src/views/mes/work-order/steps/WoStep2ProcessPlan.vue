@@ -74,7 +74,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { computed } from 'vue'
 import { Plus, Sort } from '@element-plus/icons-vue'
-import { PROCESS_STATUS_OPTIONS, type WorkOrderProcessDto } from '@/types/mes'
+import { PROCESS_STATUS_OPTIONS, type WorkOrderProcessDto } from '@/types/mes/mes'
 
 const props = defineProps<{
   modelValue: WorkOrderProcessDto[]

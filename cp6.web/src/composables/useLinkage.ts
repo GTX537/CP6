@@ -1,7 +1,7 @@
 import { watch } from 'vue'
 import type { Ref } from 'vue'
-import type { EstimateCalcDto, MasterStaff } from '@/types/estimateCalc'
-import { masterApi } from '@/api/master'
+import type { EstimateCalcDto, MasterStaff } from '@/types/erp/estimateCalc'
+import { masterApi } from '@/api/erp/master'
 
 /**
  * Step1 联动 composable

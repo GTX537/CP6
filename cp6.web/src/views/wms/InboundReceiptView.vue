@@ -112,7 +112,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { inboundReceiptApi } from '@/api/wms/inboundReceipt'
 import { inboundOrderApi } from '@/api/wms/inboundOrder'
-import type { InboundReceipt, InboundReceiptDetail } from '@/types/wms'
+import type { InboundReceipt, InboundReceiptDetail } from '@/types/wms/wms'
 
 const route = useRoute()
 const router = useRouter()

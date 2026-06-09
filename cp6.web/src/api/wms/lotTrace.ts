@@ -1,5 +1,5 @@
 import http from '../http'
-import type { LotTraceResult, LotStockSummary, WmsApi } from '@/types/wms'
+import type { LotTraceResult, LotStockSummary, WmsApi } from '@/types/wms/wms'
 
 export const lotTraceApi = {
   forward(productCd: string, lotNo: string) {

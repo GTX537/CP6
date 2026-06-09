@@ -185,10 +185,10 @@ import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus, Delete, Top, Bottom, CopyDocument, RefreshLeft } from '@element-plus/icons-vue'
 import { useOrderStore } from '@/stores/order'
-import { orderApi } from '@/api/order'
+import { orderApi } from '@/api/erp/order'
 import MasterReferenceDialog from '@/components/master/MasterReferenceDialog.vue'
-import type { CustomerLookupItem, ProductLookupItem } from '@/api/master'
-import type { OrderDetailDto } from '@/types/order'
+import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
+import type { OrderDetailDto } from '@/types/erp/order'
 
 const store = useOrderStore()
 

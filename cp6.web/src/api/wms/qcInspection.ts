@@ -2,7 +2,7 @@ import http from '../http'
 import type {
   QcInspection, QcInspectionItem, QcInspectionSearchQuery,
   QcJudgeRequest, QcJudgeResult, WmsApi,
-} from '@/types/wms'
+} from '@/types/wms/wms'
 
 export const qcInspectionApi = {
   search(query: QcInspectionSearchQuery = {}) {

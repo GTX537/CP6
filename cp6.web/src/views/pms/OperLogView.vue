@@ -78,7 +78,7 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
-import { operLogApi } from '@/api/operlog'
+import { operLogApi } from '@/api/sys/operlog'
 
 const { t } = useI18n()
 

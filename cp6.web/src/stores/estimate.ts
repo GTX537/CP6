@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { OperationType } from '@/types/estimateCalc'
-import type { EstimateCalcDto, EstimateCalcProcessDto } from '@/types/estimateCalc'
+import { OperationType } from '@/types/erp/estimateCalc'
+import type { EstimateCalcDto, EstimateCalcProcessDto } from '@/types/erp/estimateCalc'
 
 /** 新建时的默认值 */
 function emptyEstimate(): EstimateCalcDto {

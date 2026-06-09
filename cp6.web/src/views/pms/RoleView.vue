@@ -9,7 +9,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import VolTable from '@/components/VolTable.vue'
 import type { ColumnConfig } from '@/components/VolTable.vue'
-import { roleApi } from '@/api/role'
+import { roleApi } from '@/api/sys/role'
 
 const { t } = useI18n()
 

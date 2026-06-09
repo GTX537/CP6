@@ -150,7 +150,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { plateMoldApi } from '@/api/wms/paperIndustry2'
-import type { PlateMoldStock, PlateMoldSearchQuery } from '@/types/wms'
+import type { PlateMoldStock, PlateMoldSearchQuery } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const query = reactive<PlateMoldSearchQuery>({ pageSize: 100 })

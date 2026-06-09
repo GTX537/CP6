@@ -108,8 +108,8 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Download, Check } from '@element-plus/icons-vue'
-import { bpApi } from '@/api/businessPartner'
-import type { BpQueryDto, BpListItemDto } from '@/types/businessPartner'
+import { bpApi } from '@/api/erp/businessPartner'
+import type { BpQueryDto, BpListItemDto } from '@/types/erp/businessPartner'
 
 const { t } = useI18n()
 const router = useRouter()

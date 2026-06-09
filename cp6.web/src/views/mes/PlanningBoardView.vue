@@ -168,13 +168,13 @@ const { t } = useI18n()
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { MagicStick } from '@element-plus/icons-vue'
-import { planningBoardApi } from '@/api/mes'
+import { planningBoardApi } from '@/api/mes/mes'
 import {
   PROCESS_STATUS_OPTIONS,
   type PlanningBarDto,
   type PlanningBoardQuery,
   type PlanningKpiDto,
-} from '@/types/mes'
+} from '@/types/mes/mes'
 
 const loading = ref(false)
 const arranging = ref(false)

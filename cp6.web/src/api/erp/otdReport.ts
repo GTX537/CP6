@@ -1,5 +1,5 @@
 import http from '../http'
-import type { ApiResult, OtdReportQuery, OtdReportSummary } from '@/types/otdReport'
+import type { ApiResult, OtdReportQuery, OtdReportSummary } from '@/types/erp/otdReport'
 
 export const otdReportApi = {
   summary(query: OtdReportQuery) {
