@@ -1,10 +1,12 @@
 # CP6 项目结构总览（PROJECT STRUCTURE）
 
 > **范围**：代码架构 + 业务流程 + 模块清单 + 数据模型 ER，四合一参考图。
-> **状态**：截至 2026-06-03。代码盘点：4 个 .NET 项目 + 1 个 Vue3 前端、53 个 Controller、~70 个 Entity、~85 个前端 view、192/192 测试通过。
-> **与既存文档的关系**：
+> **状态**：截至 2026-06-13。代码盘点：4 个 .NET 项目 + 1 个 Vue3 前端、**66 个 Controller、~110 个前端 view**。已实现 = 进销存(MSBB)+生产(MES)+物流(WMS)+ERP→MES→WMS 闭环(Phase 1-4)。
+> **与既存/战略文档的关系**：
+> - `README.md` — 项目入口 + 文档地图导航。
+> - `docs/00-功能盘点.md` / `docs/00-执行计划总盘.md` / `docs/00-product-blueprint.md` — **战略三件套**：现状缺口 / 16 份实施计划+执行顺序 / 建设蓝图。
 > - `DEVELOPMENT-GUIDE.md` — 教程视角（怎么搭起来）。本文是参考视角（现状有什么、怎么连）。
-> - `docs/business-flow-walkthrough.md` — Phase 1 时期的业务流（部分已过时，WMS Phase 2~4 当时标 "未实装"，本文反映闭环 Phase 1-4 完成后的现状）。
+> - `docs/manuals/business-flow-walkthrough.md` — Phase 1 业务流（部分过时；2026-06-13 整理后移入 docs/manuals/）。
 > - `docs/MSBBWM_Requirements.txt` / `docs/MES_Requirements.txt` — 需求规格底稿。
 
 ---
@@ -13,15 +15,17 @@
 
 ```
 D:\CP6\
-├── CP6.Entity/          # 实体层  — DomainModels(BaseBizEntity / Sys_ / Erp / Mes / Wms) + DTOs
-├── CP6.Core/            # 核心层  — Services + BridgeHooks + EFDbContext(CP6Context) + Generic Repository
-├── CP6.WebApi/          # API 层  — Controllers(根 / Mes/ / Wms/) + SignalR Hubs + Filters + Program.cs DI
-├── CP6.Tests/           # 测试层  — xUnit + Moq（192 用例，覆盖 Service 关键路径）
-├── cp6.web/             # 前端    — Vue 3 + TS + Element Plus + Pinia + vue-i18n + Vite + Playwright
-├── docs/                # 文档    — 需求规格 + 业务手册 + i18n/menu 种子 SQL
+├── CP6.Entity/          # 实体层  — DomainModels/{Common,Sys,Erp,Mes,Wms,Integration} + DTOs（folder=namespace）
+├── CP6.Core/            # 核心层  — Services/{...} + BridgeHooks + EFDbContext(CP6Context) + Migrations + Options + BaseProvider + Utilities
+├── CP6.WebApi/          # API 层  — Controllers/{Erp,Mes,Wms,Sys,Integration} + BackgroundServices + Hubs(SignalR) + Filters + Observability + Program.cs DI
+├── CP6.Tests/           # 测试层  — xUnit + EF Core InMemory
+├── cp6.web/             # 前端    — src/{views,api,stores,types,components,composables,i18n,router}/<module>（Vue3+TS+Element Plus+Pinia+vue-i18n+Vite+Playwright）
+├── docs/                # 文档    — 见下"文档地图"（整理后：00 战略 / superpowers 计划spec / 各模块丛书 / detailed-spec / seeds / manuals / archive / file[本地源]）
 ├── k8s/ + docker-*.yml  # 部署    — Docker Compose 单机 / K8s 集群 / cloudflared 隧道
 └── CP6.slnx             # .NET solution（4 个 csproj）
 ```
+
+> **文档地图（docs/，2026-06-13 整理）**：`00-{功能盘点,执行计划总盘,product-blueprint}`(战略三件套) · `superpowers/{specs,plans}`(设计spec+16份实施计划) · `{pub,finance,oa,procurement,space,approval}`(新模块丛书) · `detailed-spec`(MSBB逆向) · `seeds`(SQL种子) · `manuals`(操作手册) · `archive`(历史笔记) · `{oa,learning,learning-basics}`(教材) · `file`(原始設計書源,本地gitignore)。详见 `README.md` 文档地图表。
 
 ### 分层依赖（严格单向）
 
