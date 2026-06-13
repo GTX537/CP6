@@ -87,6 +87,24 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
 // 4.0 PUB 章00 组织模型
 builder.Services.AddScoped<CP6.Core.Services.Sys.IDeptService, CP6.Core.Services.Sys.DeptService>();
 
+// 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
+builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
+builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
+builder.Services.AddScoped<CP6.Core.Services.Sys.IPermissionAggregator, CP6.Core.Services.Sys.PermissionAggregator>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentPermissionContext, CP6.Core.Services.Sys.CurrentPermissionContext>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IUserRoleService, CP6.Core.Services.Sys.UserRoleService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IPermissionService, CP6.Core.Services.Sys.PermissionService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IRolePermService, CP6.Core.Services.Sys.RolePermService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IDataScopeFilter, CP6.Core.Services.Sys.DataScopeFilter>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IFieldPermService, CP6.Core.Services.Sys.FieldPermService>();
+// 章03 数据权限资源注册（业务实体接 IDataScoped 后即生效；范围 1本人/2本部门/3及下级/4自定义/5全部）
+CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2, 3, 4, 5 }, 2);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
+// 章04 字段权限资源/字段注册（业务返回 DTO 贴 [FieldMask] 后即生效）
+CP6.Core.Services.Sys.FieldRegistry.Register("order",
+    new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"),
+    new CP6.Core.Services.Sys.FieldRegistry.Field("Amount", "金額"));
+
 // 4.1 MSBBPA010 見積計算書 相关服务
 builder.Services.AddScoped<IEstimateCalcService, EstimateCalcService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
@@ -421,6 +439,35 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 108, MenuName = "部门管理", RoutePath = "/pub/dept", Icon = "OfficeBuilding", ParentId = 100, OrderNo = 108, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 108 });
+        db.SaveChanges();
+    }
+    // PUB 章02 功能权限：角色功能权限菜单
+    if (!db.Sys_Menus.Any(m => m.MenuId == 109))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 109, MenuName = "功能权限", RoutePath = "/pub/role-perm", Icon = "Key", ParentId = 100, OrderNo = 109, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 109 });
+        db.SaveChanges();
+    }
+    // PUB 章03 数据权限：数据权限菜单
+    if (!db.Sys_Menus.Any(m => m.MenuId == 110))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 110, MenuName = "数据权限", RoutePath = "/pub/data-scope", Icon = "Files", ParentId = 100, OrderNo = 110, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 110 });
+        db.SaveChanges();
+    }
+    // PUB 章04 字段权限：字段权限菜单
+    if (!db.Sys_Menus.Any(m => m.MenuId == 111))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 111, MenuName = "字段权限", RoutePath = "/pub/field-perm", Icon = "Lock", ParentId = 100, OrderNo = 111, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 111 });
+        db.SaveChanges();
+    }
+    // PUB 章02 资源键回填（B1-D2）：给现有菜单按 RoutePath 派生稳定 MenuKey（权限资源键前缀）
+    var menusNoKey = db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null).ToList();
+    if (menusNoKey.Count > 0)
+    {
+        foreach (var m in menusNoKey)
+            m.MenuKey = m.RoutePath!.Trim('/').Replace('/', '-');   // "/pub/dept" → "pub-dept"
         db.SaveChanges();
     }
     if (!db.Sys_Menus.Any(m => m.MenuId == 106))

@@ -4,6 +4,11 @@
     <ProjectReference Include="..\CP6.Entity\CP6.Entity.csproj" />
   </ItemGroup>
 
+  <!-- PUB 权限引擎需 ASP.NET 共享框架：IMemoryCache / IHttpContextAccessor / MVC 授权·结果过滤器 / IActionResult -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="2.6.1" />
     <PackageReference Include="Dapper" Version="2.1.72" />

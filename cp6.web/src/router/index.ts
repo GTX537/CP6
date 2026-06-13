@@ -12,6 +12,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/dict': () => import('@/views/pms/DictView.vue'),
   '/operlog': () => import('@/views/pms/OperLogView.vue'),
   '/pub/dept': () => import('@/views/pms/DeptTreeView.vue'),   // PUB 章00 组织模型
+  '/pub/role-perm': () => import('@/views/pms/RolePermView.vue'),   // PUB 章02 角色功能权限
+  '/pub/data-scope': () => import('@/views/pms/DataScopeView.vue'),   // PUB 章03 数据权限
+  '/pub/field-perm': () => import('@/views/pms/FieldPermView.vue'),   // PUB 章04 字段权限
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),

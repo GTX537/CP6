@@ -29,6 +29,13 @@ public class Sys_Menu
     public string? RoutePath { get; set; }
 
     /// <summary>
+    /// 稳定业务键（PUB 章02 权限资源键前缀，如 order）。
+    /// 资源键 = MenuKey:ActionCode，不用易变的 MenuId/名称。唯一（过滤 null）。
+    /// </summary>
+    [MaxLength(100)]
+    public string? MenuKey { get; set; }
+
+    /// <summary>
     /// 图标
     /// </summary>
     [MaxLength(100)]

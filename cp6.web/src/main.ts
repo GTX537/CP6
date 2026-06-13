@@ -8,6 +8,8 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import router from './router'
 import i18n, { initI18n } from './i18n'
+import { permission } from './directives/permission'
+import { usePermissionStore } from './stores/permission'
 
 async function bootstrap() {
   // 先从API加载翻译数据
@@ -35,7 +37,13 @@ async function bootstrap() {
     app.component(key, component)
   }
 
+  // PUB 章02：注册 v-permission 指令
+  app.directive('permission', permission)
+
   app.mount('#app')
+
+  // 已登录则预拉当前用户操作权（v-permission 数据源）；未登录会静默失败
+  usePermissionStore().loadMyActions()
 }
 
 bootstrap()

@@ -4,6 +4,7 @@ using CP6.Core.EFDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CP6.Core.Migrations
 {
     [DbContext(typeof(CP6Context))]
-    partial class CP6ContextModelSnapshot : ModelSnapshot
+    [Migration("20260613175034_PubB2FunctionPerm")]
+    partial class PubB2FunctionPerm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6227,94 +6230,6 @@ namespace CP6.Core.Migrations
                         .HasDatabaseName("UX_Sys_RoleAction_RoleMenuAction");
 
                     b.ToTable("Sys_RoleAction");
-                });
-
-            modelBuilder.Entity("CP6.Entity.DomainModels.Sys.Sys_RoleDataScope", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Creator")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("CustomDeptIds")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Modifier")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifyDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ResourceKey")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ScopeType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId", "ResourceKey")
-                        .IsUnique()
-                        .HasDatabaseName("UX_Sys_RoleDataScope_RoleResource");
-
-                    b.ToTable("Sys_RoleDataScope");
-                });
-
-            modelBuilder.Entity("CP6.Entity.DomainModels.Sys.Sys_RoleFieldPerm", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Access")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Creator")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FieldName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Modifier")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifyDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ResourceKey")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId", "ResourceKey", "FieldName")
-                        .IsUnique()
-                        .HasDatabaseName("UX_Sys_RoleFieldPerm_RoleResourceField");
-
-                    b.ToTable("Sys_RoleFieldPerm");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Sys.Sys_RoleMenu", b =>

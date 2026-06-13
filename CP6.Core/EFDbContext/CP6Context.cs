@@ -41,6 +41,31 @@ public class CP6Context : DbContext
     public DbSet<Sys_RoleMenu> Sys_RoleMenus { get; set; }
 
     /// <summary>
+    /// 用户-角色 中间表 —— PUB 章01 多角色 RBAC
+    /// </summary>
+    public DbSet<Sys_UserRole> Sys_UserRoles { get; set; }
+
+    /// <summary>
+    /// 菜单操作点 —— PUB 章02 功能权限
+    /// </summary>
+    public DbSet<Sys_MenuAction> Sys_MenuActions { get; set; }
+
+    /// <summary>
+    /// 角色-操作点 授权 —— PUB 章02 功能权限
+    /// </summary>
+    public DbSet<Sys_RoleAction> Sys_RoleActions { get; set; }
+
+    /// <summary>
+    /// 角色数据范围 —— PUB 章03 数据权限
+    /// </summary>
+    public DbSet<Sys_RoleDataScope> Sys_RoleDataScopes { get; set; }
+
+    /// <summary>
+    /// 角色字段权限 —— PUB 章04 字段权限
+    /// </summary>
+    public DbSet<Sys_RoleFieldPerm> Sys_RoleFieldPerms { get; set; }
+
+    /// <summary>
     /// 多语言词条表
     /// </summary>
     public DbSet<Sys_Lang> Sys_Langs { get; set; }
@@ -291,6 +316,44 @@ public class CP6Context : DbContext
             e.HasIndex(x => x.ParentId);              // 取直接下级
         });
         modelBuilder.Entity<Sys_User>().HasIndex(x => x.DeptId);   // 按部门取人（DataScope）
+
+        // PUB 章01 多角色：用户-角色中间表（B1-D1 RoleId int；B1-D3 章09 再加 TenantId）
+        modelBuilder.Entity<Sys_UserRole>(e =>
+        {
+            e.HasIndex(x => new { x.UserId, x.RoleId }).IsUnique();   // 防重复授予同一角色
+            e.HasIndex(x => x.UserId);                               // 按用户取全部角色
+        });
+        // PUB 章02 资源键：菜单稳定业务键唯一（NULL 不计入，过滤式唯一索引）
+        modelBuilder.Entity<Sys_Menu>()
+            .HasIndex(x => x.MenuKey).IsUnique()
+            .HasFilter("[MenuKey] IS NOT NULL");
+
+        // PUB 章02 功能权限：操作点 + 角色授权
+        modelBuilder.Entity<Sys_MenuAction>(e =>
+        {
+            e.HasIndex(x => new { x.MenuId, x.ActionCode }).IsUnique()
+                .HasDatabaseName("UX_Sys_MenuAction_MenuAction");
+        });
+        modelBuilder.Entity<Sys_RoleAction>(e =>
+        {
+            e.HasIndex(x => new { x.RoleId, x.MenuId, x.ActionCode }).IsUnique()
+                .HasDatabaseName("UX_Sys_RoleAction_RoleMenuAction");
+            e.HasIndex(x => x.RoleId).HasDatabaseName("IX_Sys_RoleAction_Role");
+        });
+
+        // PUB 章03 数据权限：角色数据范围（资源键 + 角色 唯一）
+        modelBuilder.Entity<Sys_RoleDataScope>(e =>
+        {
+            e.HasIndex(x => new { x.RoleId, x.ResourceKey }).IsUnique()
+                .HasDatabaseName("UX_Sys_RoleDataScope_RoleResource");
+        });
+
+        // PUB 章04 字段权限：角色字段访问级（角色 + 资源 + 字段 唯一）
+        modelBuilder.Entity<Sys_RoleFieldPerm>(e =>
+        {
+            e.HasIndex(x => new { x.RoleId, x.ResourceKey, x.FieldName }).IsUnique()
+                .HasDatabaseName("UX_Sys_RoleFieldPerm_RoleResourceField");
+        });
 
         // 見積計算書：QtnCalcNo 唯一
         modelBuilder.Entity<EstimateCalc>(e =>

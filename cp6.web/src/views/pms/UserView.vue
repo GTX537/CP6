@@ -1,17 +1,43 @@
 <template>
   <div>
-    <VolTable :columns="columns" :api="userApi" />
+    <VolTable :columns="columns" :api="userApi">
+      <template #extra-actions="{ row }">
+        <el-button link type="warning" @click="openRoleDialog(row)">角色</el-button>
+      </template>
+    </VolTable>
+
+    <!-- PUB 章01：用户角色分配（多角色 + 主角色） -->
+    <el-dialog v-model="roleDialogVisible" :title="`分配角色 — ${roleDialogUserName}`" width="600px">
+      <el-transfer
+        v-model="assignedRoleIds"
+        :data="transferData"
+        :titles="['可选角色', '已分配']"
+        filterable
+      />
+      <div style="margin-top: 16px;">
+        <span style="margin-right: 8px;">主角色（默认/显示用）：</span>
+        <el-select v-model="primaryRoleId" placeholder="选择主角色" clearable style="width: 240px;">
+          <el-option v-for="r in primaryRoleOptions" :key="r.value" :label="r.label" :value="r.value" />
+        </el-select>
+      </div>
+      <template #footer>
+        <el-button @click="roleDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="saveRoles">保存</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 import VolTable from '@/components/VolTable.vue'
 import type { ColumnConfig } from '@/components/VolTable.vue'
 import { userApi } from '@/api/sys/user'
 import { roleApi } from '@/api/sys/role'
 import { deptApi } from '@/api/sys/dept'
+import { userRoleApi } from '@/api/sys/userRole'
 
 const { t } = useI18n()
 const roleOptions = ref<{ label: string; value: number }[]>([])
@@ -37,6 +63,37 @@ function flattenDept(nodes: any[], acc: { label: string; value: string }[] = [])
     if (n.children?.length) flattenDept(n.children, acc)
   }
   return acc
+}
+
+// ───── PUB 章01 角色分配对话框 ─────
+const roleDialogVisible = ref(false)
+const roleDialogUserId = ref<string>('')
+const roleDialogUserName = ref<string>('')
+const assignedRoleIds = ref<number[]>([])
+const primaryRoleId = ref<number | null>(null)
+
+const transferData = computed(() => roleOptions.value.map(r => ({ key: r.value, label: r.label })))
+// 主角色只能从已分配角色里选
+const primaryRoleOptions = computed(() => roleOptions.value.filter(r => assignedRoleIds.value.includes(r.value)))
+
+// 取消勾选某角色后，若它正是主角色则清空主角色
+watch(assignedRoleIds, (ids) => {
+  if (primaryRoleId.value != null && !ids.includes(primaryRoleId.value)) primaryRoleId.value = null
+})
+
+async function openRoleDialog(row: any) {
+  roleDialogUserId.value = row.id
+  roleDialogUserName.value = row.nickName || row.userName
+  const cur = await userRoleApi.get(row.id)
+  assignedRoleIds.value = cur.roleIds ?? []
+  primaryRoleId.value = cur.primaryRoleId ?? null
+  roleDialogVisible.value = true
+}
+
+async function saveRoles() {
+  await userRoleApi.save(roleDialogUserId.value, assignedRoleIds.value, primaryRoleId.value)
+  ElMessage.success('角色已保存')
+  roleDialogVisible.value = false
 }
 
 onMounted(async () => {
