@@ -38,6 +38,13 @@ public class CurrentPermissionContext : ICurrentPermissionContext
         }) ?? throw new InvalidOperationException("权限上下文构建失败");
     }
 
+    public Task<UserPermissionContext> PrewarmAsync(Guid userId) =>
+        _cache.GetOrCreateAsync(CacheKey(userId), async e =>
+        {
+            e.SlidingExpiration = TimeSpan.FromMinutes(30);
+            return await _agg.BuildAsync(userId);
+        })!;
+
     public void Invalidate(Guid userId) => _cache.Remove(CacheKey(userId));
 
     public void InvalidateByRole(int roleId)

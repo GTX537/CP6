@@ -92,6 +92,23 @@ public class CurrentPermissionContextTests
     }
 
     [Fact]
+    public async Task Prewarm_CachesForSubsequentGet()
+    {
+        using var db = NewDb();
+        var uid = Guid.NewGuid();
+        db.Sys_Users.Add(new Sys_User { Id = uid, UserName = "u1", Password = "x" });
+        await db.SaveChangesAsync();
+
+        var agg = new CountingAggregator();
+        var cache = new MemoryCache(new MemoryCacheOptions());
+        var sut = new CurrentPermissionContext(HttpAs("u1"), cache, db, agg);
+
+        await sut.PrewarmAsync(uid);   // 登录预热：build + 缓存
+        await sut.GetAsync();          // 同用户请求 → 命中缓存
+        Assert.Equal(1, agg.Calls);    // 只 build 一次
+    }
+
+    [Fact]
     public async Task GetAsync_NotLoggedIn_Throws()
     {
         using var db = NewDb();

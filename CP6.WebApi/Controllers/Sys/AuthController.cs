@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,13 @@ public class AuthController : ControllerBase
 {
     private readonly CP6Context _context;
     private readonly IConfiguration _config;
+    private readonly ICurrentPermissionContext _perm;
 
-    public AuthController(CP6Context context, IConfiguration config)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm)
     {
         _context = context;
         _config = config;
+        _perm = perm;
     }
 
     /// <summary>
@@ -55,21 +58,22 @@ public class AuthController : ControllerBase
             audience: jwt["Audience"]!,
             expireMinutes: int.Parse(jwt["ExpireMinutes"]!));
 
-        // 4. 查询用户的菜单权限
-        var menus = new List<object>();
-        if (user.RoleId.HasValue)
-        {
-            var menuIds = await _context.Sys_RoleMenus
-                .Where(rm => rm.RoleId == user.RoleId.Value)
-                .Select(rm => rm.MenuId)
-                .ToListAsync();
+        // 4. 登录聚合（PUB 章09）：预热权限上下文（多角色聚合 + 缓存），首请求免重建
+        var ctx = await _perm.PrewarmAsync(user.Id);
 
-            menus = await _context.Sys_Menus
-                .Where(m => menuIds.Contains(m.MenuId) && m.Enable)
-                .OrderBy(m => m.OrderNo)
-                .Select(m => new { id = m.MenuId, m.MenuName, m.RoutePath, m.Icon, m.ParentId, m.OrderNo } as object)
-                .ToListAsync();
-        }
+        // 4.1 菜单按全部角色聚合（多角色 RBAC，取并集）
+        var roleIds = ctx.RoleIds;
+        var menuIds = await _context.Sys_RoleMenus
+            .Where(rm => roleIds.Contains(rm.RoleId))
+            .Select(rm => rm.MenuId)
+            .Distinct()
+            .ToListAsync();
+
+        var menus = await _context.Sys_Menus
+            .Where(m => menuIds.Contains(m.MenuId) && m.Enable)
+            .OrderBy(m => m.OrderNo)
+            .Select(m => new { id = m.MenuId, m.MenuName, m.RoutePath, m.Icon, m.ParentId, m.OrderNo } as object)
+            .ToListAsync();
 
         // 5. 返回 Token、用户信息和菜单权限
         return Ok(new

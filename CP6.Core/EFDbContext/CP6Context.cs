@@ -1,5 +1,6 @@
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Mes;
+using CP6.Entity.DomainModels.Pub;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,6 +65,22 @@ public class CP6Context : DbContext
     /// 角色字段权限 —— PUB 章04 字段权限
     /// </summary>
     public DbSet<Sys_RoleFieldPerm> Sys_RoleFieldPerms { get; set; }
+
+    /// <summary>
+    /// 富采番规则 —— PUB 章05 公共模组
+    /// </summary>
+    public DbSet<Pub_DocSequence> Pub_DocSequences { get; set; }
+
+    /// <summary>
+    /// 统一附件 —— PUB 章06 公共模组
+    /// </summary>
+    public DbSet<Pub_Attachment> Pub_Attachments { get; set; }
+
+    /// <summary>代码生成 — 表元数据 —— PUB 章08</summary>
+    public DbSet<GenTable> Pub_GenTables { get; set; }
+
+    /// <summary>代码生成 — 列元数据 —— PUB 章08</summary>
+    public DbSet<GenColumn> Pub_GenColumns { get; set; }
 
     /// <summary>
     /// 多语言词条表
@@ -353,6 +370,30 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => new { x.RoleId, x.ResourceKey, x.FieldName }).IsUnique()
                 .HasDatabaseName("UX_Sys_RoleFieldPerm_RoleResourceField");
+        });
+
+        // PUB 章05 富采番：业务键唯一
+        modelBuilder.Entity<Pub_DocSequence>(e =>
+        {
+            e.HasIndex(x => x.BizKey).IsUnique().HasDatabaseName("UX_Pub_DocSequence_BizKey");
+        });
+
+        // PUB 章06 附件：按业务取附件 + 按 hash 秒传/引用计数 + 草稿 token
+        modelBuilder.Entity<Pub_Attachment>(e =>
+        {
+            e.HasIndex(x => new { x.BizType, x.BizId }).HasDatabaseName("IX_Pub_Attachment_Biz");
+            e.HasIndex(x => x.FileHash).HasDatabaseName("IX_Pub_Attachment_Hash");
+            e.HasIndex(x => x.DraftToken).HasDatabaseName("IX_Pub_Attachment_Draft");
+        });
+
+        // PUB 章08 代码生成元数据
+        modelBuilder.Entity<GenTable>(e =>
+        {
+            e.HasIndex(x => x.EntityName).IsUnique().HasDatabaseName("UX_Pub_GenTable_Entity");
+        });
+        modelBuilder.Entity<GenColumn>(e =>
+        {
+            e.HasIndex(x => new { x.GenTableId, x.Sort }).HasDatabaseName("IX_Pub_GenColumn_Table");
         });
 
         // 見積計算書：QtnCalcNo 唯一

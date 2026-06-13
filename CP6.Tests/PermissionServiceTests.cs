@@ -10,6 +10,7 @@ public class PermissionServiceTests
         private readonly UserPermissionContext _ctx;
         public StubCurrent(UserPermissionContext ctx) => _ctx = ctx;
         public Task<UserPermissionContext> GetAsync() => Task.FromResult(_ctx);
+        public Task<UserPermissionContext> PrewarmAsync(Guid userId) => Task.FromResult(_ctx);
         public void Invalidate(Guid userId) { }
         public void InvalidateByRole(int roleId) { }
     }

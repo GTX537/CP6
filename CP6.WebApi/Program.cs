@@ -93,6 +93,26 @@ builder.Services.AddHttpContextAccessor();          // 解析当前请求登录�
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPermissionAggregator, CP6.Core.Services.Sys.PermissionAggregator>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentPermissionContext, CP6.Core.Services.Sys.CurrentPermissionContext>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IUserRoleService, CP6.Core.Services.Sys.UserRoleService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IDictService, CP6.Core.Services.Sys.DictService>();   // PUB 章05 字典缓存翻译
+builder.Services.AddScoped<CP6.Core.Services.Pub.ISeqService, CP6.Core.Services.Pub.SeqService>();     // PUB 章05 富采番
+builder.Services.AddScoped<CP6.Core.Services.Pub.IExcelService, CP6.Core.Services.Pub.ExcelService>(); // PUB 章07 Excel 导入导出
+builder.Services.AddSingleton<CP6.Core.Services.Pub.CodeGenService>();                                 // PUB 章08 代码生成（无状态）
+// PUB 章06 附件存储（v1 本地盘；Storage:Provider 预留 OSS/MinIO）
+builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileStore>(_ =>
+{
+    var root = builder.Configuration["Storage:LocalRoot"]
+        ?? Path.Combine(builder.Environment.ContentRootPath, "App_Data", "uploads");
+    return new CP6.Core.Services.Pub.LocalFileStore(root);
+});
+builder.Services.AddScoped<CP6.Core.Services.Pub.IAttachmentService>(sp =>
+{
+    var maxMb = builder.Configuration.GetValue<int?>("Attachment:MaxSizeMb") ?? 20;
+    var exts = builder.Configuration.GetSection("Attachment:AllowedExt").Get<string[]>();
+    return new CP6.Core.Services.Pub.AttachmentService(
+        sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Pub.IFileStore>(),
+        maxMb, exts);
+});
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPermissionService, CP6.Core.Services.Sys.PermissionService>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IRolePermService, CP6.Core.Services.Sys.RolePermService>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IDataScopeFilter, CP6.Core.Services.Sys.DataScopeFilter>();
@@ -460,6 +480,20 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 111, MenuName = "字段权限", RoutePath = "/pub/field-perm", Icon = "Lock", ParentId = 100, OrderNo = 111, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 111 });
+        db.SaveChanges();
+    }
+    // PUB 章05 公共模组：采番规则菜单
+    if (!db.Sys_Menus.Any(m => m.MenuId == 112))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 112, MenuName = "采番规则", RoutePath = "/pub/seq", Icon = "Ticket", ParentId = 100, OrderNo = 112, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 112 });
+        db.SaveChanges();
+    }
+    // PUB 章08 代码生成菜单
+    if (!db.Sys_Menus.Any(m => m.MenuId == 113))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 113, MenuName = "代码生成", RoutePath = "/pub/codegen", Icon = "MagicStick", ParentId = 100, OrderNo = 113, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 113 });
         db.SaveChanges();
     }
     // PUB 章02 资源键回填（B1-D2）：给现有菜单按 RoutePath 派生稳定 MenuKey（权限资源键前缀）

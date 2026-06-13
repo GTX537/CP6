@@ -24,6 +24,7 @@ public class RolePermServiceTests
         private readonly UserPermissionContext _ctx;
         public SpyCurrent(UserPermissionContext? ctx = null) => _ctx = ctx ?? new UserPermissionContext();
         public Task<UserPermissionContext> GetAsync() => Task.FromResult(_ctx);
+        public Task<UserPermissionContext> PrewarmAsync(Guid userId) => Task.FromResult(_ctx);
         public void Invalidate(Guid userId) { }
         public void InvalidateByRole(int roleId) => InvalidatedRoles.Add(roleId);
     }

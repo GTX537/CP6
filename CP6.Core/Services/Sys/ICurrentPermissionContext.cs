@@ -10,6 +10,9 @@ public interface ICurrentPermissionContext
     /// <summary>取当前请求用户的权限上下文（缓存命中或重建）。未登录 / 用户不存在抛异常。</summary>
     Task<UserPermissionContext> GetAsync();
 
+    /// <summary>登录预热：按 userId 构建并缓存上下文（首请求免重建）。返回聚合结果。</summary>
+    Task<UserPermissionContext> PrewarmAsync(Guid userId);
+
     /// <summary>用户角色发生变更 → 失效该用户缓存（下次重建）。</summary>
     void Invalidate(Guid userId);
 

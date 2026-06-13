@@ -47,6 +47,7 @@ public class UserRoleServiceTests
     {
         public List<Guid> Invalidated { get; } = new();
         public Task<UserPermissionContext> GetAsync() => throw new NotImplementedException();
+        public Task<UserPermissionContext> PrewarmAsync(Guid userId) => GetAsync();
         public void Invalidate(Guid userId) => Invalidated.Add(userId);
         public void InvalidateByRole(int roleId) { }
     }
