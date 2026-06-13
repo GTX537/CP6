@@ -21,6 +21,11 @@ public class CP6Context : DbContext
     public DbSet<Sys_User> Sys_Users { get; set; }
 
     /// <summary>
+    /// 部门（组织树）—— PUB 章00 组织模型
+    /// </summary>
+    public DbSet<Sys_Dept> Sys_Depts { get; set; }
+
+    /// <summary>
     /// 角色表
     /// </summary>
     public DbSet<Sys_Role> Sys_Roles { get; set; }
@@ -277,6 +282,15 @@ public class CP6Context : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // PUB 章00 组织模型：部门树索引（B0-D1 本阶段不带 TenantId，DeptCode 单列唯一；多租户后升级为 (TenantId,DeptCode)）
+        modelBuilder.Entity<Sys_Dept>(e =>
+        {
+            e.HasIndex(x => x.DeptCode).IsUnique();   // 部门编码唯一
+            e.HasIndex(x => x.Path);                  // 子树前缀匹配
+            e.HasIndex(x => x.ParentId);              // 取直接下级
+        });
+        modelBuilder.Entity<Sys_User>().HasIndex(x => x.DeptId);   // 按部门取人（DataScope）
 
         // 見積計算書：QtnCalcNo 唯一
         modelBuilder.Entity<EstimateCalc>(e =>

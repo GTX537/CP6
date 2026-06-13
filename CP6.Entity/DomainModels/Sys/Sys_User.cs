@@ -36,4 +36,16 @@ public class Sys_User : BaseEntity
     /// 是否启用
     /// </summary>
     public bool Enable { get; set; } = true;
+
+    // ───── PUB 章00 组织模型：补三字段（数据权限 + 审批路由用）─────
+
+    /// <summary>所属部门 → Sys_Dept.Id（PUB 数据权限"本部门"用）</summary>
+    public Guid? DeptId { get; set; }
+
+    /// <summary>直属上级 → Sys_User.Id（OA"直属上级"审批路由用）</summary>
+    public Guid? ManagerId { get; set; }
+
+    /// <summary>邮箱（通知用）</summary>
+    [MaxLength(100)]
+    public string? Email { get; set; }
 }
