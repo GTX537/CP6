@@ -37,6 +37,9 @@ public class UserController : ControllerBase
                 u.NickName,
                 u.RoleId,
                 u.Enable,
+                u.DeptId,       // PUB 章00 组织字段
+                u.ManagerId,
+                u.Email,
                 u.Creator,
                 u.CreateDate
             })
@@ -68,6 +71,9 @@ public class UserController : ControllerBase
         existing.NickName = entity.NickName;
         existing.RoleId = entity.RoleId;
         existing.Enable = entity.Enable;
+        existing.DeptId = entity.DeptId;       // PUB 章00 组织字段
+        existing.ManagerId = entity.ManagerId;
+        existing.Email = entity.Email;
         existing.ModifyDate = DateTime.Now;
 
         // 密码非空才更新
