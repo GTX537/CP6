@@ -84,6 +84,9 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.NotificationCons
 // 4. 注册仓储和服务（依赖注入）
 builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
 
+// 4.0 PUB 章00 组织模型
+builder.Services.AddScoped<CP6.Core.Services.Sys.IDeptService, CP6.Core.Services.Sys.DeptService>();
+
 // 4.1 MSBBPA010 見積計算書 相关服务
 builder.Services.AddScoped<IEstimateCalcService, EstimateCalcService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
