@@ -114,7 +114,7 @@ if (-not $SkipMigration) {
 # ─────────────────────────────────────────────────────────────
 if (-not $SkipSeed -and $sqlcmd) {
     Write-Step "2. WMS メニュー シード投入"
-    $seedSql = Join-Path $ProjectRoot "docs\wms-menu-seed.sql"
+    $seedSql = Join-Path $ProjectRoot "docs\seeds\wms-menu-seed.sql"
     if (-not (Test-Path $seedSql)) {
         Write-Err "シードファイルが見つかりません: $seedSql"
         exit 1
@@ -131,7 +131,7 @@ if (-not $SkipSeed -and $sqlcmd) {
     Write-Ok "メニュー 41 件（ID 400~499）投入完了"
 
     # 2b. MES + WMS i18n 词条（nav.300~312 + nav.400~481）
-    $i18nSql = Join-Path $ProjectRoot "docs\mes-wms-i18n-seed.sql"
+    $i18nSql = Join-Path $ProjectRoot "docs\seeds\mes-wms-i18n-seed.sql"
     if (Test-Path $i18nSql) {
         Write-Host "  i18n 词条投入中（MES + WMS、5 言語）..."
         sqlcmd -S $SqlServer -d $Database -E -f 65001 -i $i18nSql -b
@@ -145,8 +145,8 @@ if (-not $SkipSeed -and $sqlcmd) {
     }
 } elseif (-not $SkipSeed) {
     Write-Warn "sqlcmd が無いため、シードはスキップします。手動で SSMS で以下を実行してください："
-    Write-Warn "  1) docs\wms-menu-seed.sql"
-    Write-Warn "  2) docs\mes-wms-i18n-seed.sql"
+    Write-Warn "  1) docs\seeds\wms-menu-seed.sql"
+    Write-Warn "  2) docs\seeds\mes-wms-i18n-seed.sql"
 } else {
     Write-Warn "シード スキップ"
 }

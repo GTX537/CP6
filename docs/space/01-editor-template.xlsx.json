@@ -1,0 +1,113 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":78}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 01 · 编辑器框架 + 模板化生成","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · P1 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-01 编辑器框架 + 模板化生成"],
+          ["技术栈","Vue3 + TS + Konva.js(2D画布) + Pinia / .NET8 + EF Core"],
+          ["命名空间","cp6.web/src/space-editor + views/space/editor / CP6.Core/Services/Space"],
+          ["落地决策","D1 2D俯视建模 / D3 参数化盒体 / D7 采纳反向建模入口 / 模板化生成为主·受控自由布局为辅"],
+          ["题眼","01 造几何，03 给编码，04 发 WMS；本章产出库位 LocationCode 一律为空，留给编码引擎"]
+        ]}
+      ]
+    },
+    {
+      "name": "货架模板参数",
+      "cols": [{"i":1,"w":18},{"i":2,"w":14},{"i":3,"w":58}],
+      "cells": [{"r":1,"c":1,"v":"Space_Template.Params JSON（TemplateType=1 货架）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["字段","示例","说明"],"rows":[
+          ["cols","6","列数（沿货架长度）"],
+          ["levels","4","层数（垂直）"],
+          ["depthCount","1","深度格数（前后排）"],
+          ["cellW","1200","单格宽 mm"],
+          ["cellH","1500","单格高 mm"],
+          ["cellD","1000","单格深 mm"],
+          ["defaultRotation","0","默认偏航角"],
+          ["产出","—","1 货架 + cols·levels·depthCount 个库位（草稿态、空码）"]
+        ]}
+      ]
+    },
+    {
+      "name": "库区模板参数",
+      "cols": [{"i":1,"w":20},{"i":2,"w":14},{"i":3,"w":58}],
+      "cells": [{"r":1,"c":1,"v":"Space_Template.Params JSON（TemplateType=2 库区/排架，批量主力）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["字段","示例","说明"],"rows":[
+          ["rackTemplate","{...}","内嵌货架模板参数"],
+          ["rows","4","货架排数"],
+          ["racksPerRow","10","每排货架数"],
+          ["rowGap","2800","排间距 mm（= 巷道宽）"],
+          ["rackGap","100","同排货架间隙 mm"],
+          ["aisleBetweenRows","true","排间自动生成巷道(Aisle) + 中心线"],
+          ["orientation","H","阵列朝向 H 水平 / V 垂直"],
+          ["产出","—","rows·racksPerRow 货架 + 各库位 +（可选）排间巷道，全草稿态"],
+          ["模板性质","—","参数快照非活引用：生成后货架/库位独立；改模板不回溯已生成对象"]
+        ]}
+      ]
+    },
+    {
+      "name": "生成流程与校验",
+      "cols": [{"i":1,"w":40},{"i":2,"w":60}],
+      "cells": [{"r":1,"c":1,"v":"模板化批量生成 流程 + 校验","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["步骤","说明"],"rows":[
+          ["1 选模板","货架/库区"],
+          ["2 落点","点击=单架；框选矩形=库区阵列铺满"],
+          ["3 预览","幽灵图形（半透明，未落库）"],
+          ["4 生成","纯函数 genRack 产草稿对象 Rack[]+Location[]（Status=0, LocationCode=null, CodeOrigin=1, Placed=true）"],
+          ["5 保存","整层差量 POST /scene 落库（乐观锁）"]
+        ]},
+        {"startR":10,"startC":1,"header":["校验","处理"],"rows":[
+          ["落点超出 Zone 多边形","W-SPACE-101 警告（允许越界，最终归属按 Zone 选择）"],
+          ["货架与既有货架重叠","W-SPACE-102 碰撞提示（不阻断，02 可手工挪）"],
+          ["阵列规模 > 阈值(如 5000 库位)","W-SPACE-103 二次确认（防误框选铺满卡顿）"],
+          ["未选目标 Zone","E-SPACE-101 阻断（货架 ZoneId 必填）"]
+        ]}
+      ]
+    },
+    {
+      "name": "图层与画布",
+      "cols": [{"i":1,"w":18},{"i":2,"w":24},{"i":3,"w":12},{"i":4,"w":40}],
+      "cells": [{"r":1,"c":1,"v":"2D 俯视画布 图层（Konva）","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["图层","内容","可选中","说明"],"rows":[
+          ["UnderlayLayer","底图","否","最底，半透明；消费 Floor.UnderlayScale/Offset 描图参照"],
+          ["GridLayer","网格","否","参考线，随 zoom 自适应"],
+          ["ZoneLayer","库区多边形","是","按 ZoneType 着色"],
+          ["AisleLayer","巷道面 + 中心线","是","中心线虚线"],
+          ["RackLayer","货架(俯视矩形含RotationZ)","是","主操作对象"],
+          ["MarkerLayer","打点标注","是","02 章交互"],
+          ["库位","不单独画在 2D","—","万级图元会拖垮；俯视下货架矩形内网格线表达；单库位可视化在 3D(05/06)"]
+        ]}
+      ]
+    },
+    {
+      "name": "采纳反向建模",
+      "cols": [{"i":1,"w":24},{"i":2,"w":24},{"i":3,"w":52}],
+      "cells": [
+        {"r":1,"c":1,"v":"D7 采纳态反向建模入口（先有码、后有几何）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["步骤","说明",""],"rows":[
+          ["① 采纳导入(04)","现有 WMS 编码 → Location(Status=1, Placed=false, CodeOrigin=2, 无几何)",""],
+          ["② 拉待绑列表","GET /location/unplaced?floorId=",""],
+          ["③ 摆货架","第5章模板生成几何，但库位先不自动建码",""],
+          ["④ 绑定","格口(col,level,depth) ←→ 既有冻结码；自动按顺序预匹配 + 人工校正",""],
+          ["⑤ 提交","回填 RackId/FloorId/索引/坐标/尺寸, Placed=true；LocationId 与 Code 不变，不触发发布",""]
+        ]},
+        {"startR":10,"startC":1,"header":["绑定差异","含义","处理"],"rows":[
+          ["有几何无码","货架格口没有可绑既有码","标黄；可转生成新码(CodeOrigin=1)或留空"],
+          ["有码无几何","待绑列表剩余未绑的码","标红；补摆货架格口或确认废弃"],
+          ["数量不匹配","货架格数 ≠ 待绑码数","汇总提示，逐个核对"]
+        ]}
+      ]
+    }
+  ]
+}

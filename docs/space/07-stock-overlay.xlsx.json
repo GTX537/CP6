@@ -1,0 +1,164 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":84}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 07 · 实时库存叠加","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · P2 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-07 实时库存叠加"],
+          ["里程碑","P2（3D上看真实库存：空/满/锁定/在拣 + 库容率 + 按物料定位）"],
+          ["技术栈",".NET8 IWmsStockQuery契约(WMS实现) + Vue3/Three.js(复用05 setInstanceColor、06定位)"],
+          ["命名空间","CP6.Core/Services/Space/IWmsStockQuery.cs + space-viewer/overlay + views/space/viewer"],
+          ["落地决策","D5 同步只读批量+按需快照(A)+可选轮询(无推送·间隔下限·可见区裁剪) / D8 P2半=按物料定位"],
+          ["题眼","P1看空间结构(灰盒)，P2看里面有什么货；只读WMS、着Space的色，不写任何库存"]
+        ]}
+      ]
+    },
+    {
+      "name": "IWmsStockQuery契约",
+      "cols": [{"i":1,"w":24},{"i":2,"w":80}],
+      "cells": [
+        {"r":1,"c":1,"v":"IWmsStockQuery 契约（Space侧定义，WMS实现）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"单向·同步·只读；契约在消费者(Space)侧，无反向编译依赖；join一律按 LocationCode","merge":"A2:B2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["方法","签名/说明"],"rows":[
+          ["① 批量查库存","GetStockByLocationsAsync(tenantId, IReadOnlyCollection<string> locationCodes, ct) → IReadOnlyList<WmsStockDto>"],
+          ["用途①","叠加主力；04的单条停用校验=codes单元素特例"],
+          ["② 按物料反查","FindLocationsAsync(tenantId, StockLocateQuery query, ct) → IReadOnlyList<WmsLocationHit>（D8 P2，第6章）"]
+        ]},
+        {"startR":9,"startC":1,"header":["WmsStockDto 字段","说明"],"rows":[
+          ["LocationCode","join key"],
+          ["BinStatus","0空 1有货 2满 3锁定 4在拣（与README§六、04一致，WMS映射成5态）"],
+          ["Qty","当前库存量(基本单位)"],
+          ["Capacity","库容(可空，WMS有则给，算利用率用)"],
+          ["TopMaterial","占位主物料(可空，信息卡/着色预留)"],
+          ["字段预留","温区/锁定原因/批次数等，v1不消费(YAGNI)"]
+        ]},
+        {"startR":17,"startC":1,"header":["批量是硬要求","说明"],"rows":[
+          ["禁逐个","万级库位绝不逐个查(N次RPC必崩)"],
+          ["一次一批","传当前可见区编码，WMS一次返回，往返压到批次级"],
+          ["批上限","每批≤1000编码，超出Space侧分批并发(受控并发数)"]
+        ]}
+      ]
+    },
+    {
+      "name": "刷新机制D5",
+      "cols": [{"i":1,"w":20},{"i":2,"w":84}],
+      "cells": [
+        {"r":1,"c":1,"v":"刷新机制（D5：按需快照A + 可选轮询 + 可见区裁剪 + 无推送）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["机制","做法"],"rows":[
+          ["无推送(v1)","WMS不主动推，Space按需拉；实时推送留P3+(YAGNI)"],
+          ["按需快照(A主力)","进页/切层建图完成/点刷新/相机停稳→收集可见区编码→批量查→着色+缓存快照(带时间戳)"],
+          ["快照本质","某一刻的照片，UI显刷新时间，用户知道非毫秒级实时"],
+          ["可选轮询(默认关)","每interval拉可见区快照，interval≥下限(如5s防打爆WMS)"],
+          ["轮询暂停","相机移动中暂停(取景未定查了白查)，停稳恢复；离页/切后台停"],
+          ["间隔下限","强制(用户配更小也夹到下限)"],
+          ["可见区裁剪(贯穿)","每次只查当前层∩视锥内(或当前LOD可见)库位，与05分桶/剔除天然契合(取可见桶)"]
+        ]}
+      ]
+    },
+    {
+      "name": "状态着色",
+      "cols": [{"i":1,"w":14},{"i":2,"w":18},{"i":3,"w":18},{"i":4,"w":50}],
+      "cells": [
+        {"r":1,"c":1,"v":"状态着色（BinStatus → instanceColor，固定默认色 + 字段预留）","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["BinStatus","含义","默认色v1","备注"],"rows":[
+          ["0 空","无货","绿","—"],
+          ["1 有货","部分占用","蓝","—"],
+          ["2 满","占满","红","—"],
+          ["3 锁定","冻结/盘点锁","灰","—"],
+          ["4 在拣","拣货作业中","黄","—"],
+          ["着色方式","—","—","调05 setInstanceColor(locationId,color) 改实例色不重建几何，批量刷后requestRender一次"],
+          ["YAGNI","—","—","色板写死前端常量，留colorScheme配置位，未来租户自定义配色，v1不做配置UI"]
+        ]},
+        {"startR":12,"startC":1,"header":["着色模式","着色依据","切换",""],"rows":[
+          ["状态模式(默认)","BinStatus→上表色","图例随模式显示色含义",""],
+          ["利用率热力","OccupiedRatio→热力渐变(第5)","用缓存快照重着色不重拉",""],
+          ["结构模式(关叠加)","回05默认灰","纯看结构",""],
+          ["未放置","Placed=false不在3D中→不着色","—",""],
+          ["无数据","WMS未返回该编码→标无数据中性色+信息卡注明","—",""]
+        ]}
+      ]
+    },
+    {
+      "name": "库容利用率",
+      "cols": [{"i":1,"w":18},{"i":2,"w":86}],
+      "cells": [
+        {"r":1,"c":1,"v":"库容利用率（库位/货架/库区聚合热力）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["层级","计算"],"rows":[
+          ["库位利用率","Qty / Capacity（Capacity有值时；无则按BinStatus粗估：空=0/有货=0.5/满=1）"],
+          ["货架利用率","Σ库位Qty / Σ库位Capacity（聚合该货架已放置库位）"],
+          ["库区利用率","同理聚合到Zone"],
+          ["热力映射","[0,1]映射冷→暖渐变(蓝→黄→红)，一眼看哪片满了"],
+          ["计算位置","前端用快照数据算(库位级已在手)，不额外请求WMS"],
+          ["聚合视图","库位级每盒按自身率着色；货架/库区级(远LOD)按聚合率着色"],
+          ["LOD联动","远看库区热力分布、近看单格，与05 LOD联动(远聚合近明细)"]
+        ]}
+      ]
+    },
+    {
+      "name": "按物料定位",
+      "cols": [{"i":1,"w":18},{"i":2,"w":86}],
+      "cells": [
+        {"r":1,"c":1,"v":"按物料/批次/容器定位（D8 P2半，复用06定位）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"哪个库位有这个料=WMS库存真相，查了才知道→P2；不重造定位，复用06飞行","merge":"A2:B2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["流程 locateByStock(query)","说明"],"rows":[
+          ["1 反查","FindLocationsAsync(tenantId,{materialNo|lot|container})→命中库位列表[{locationCode,floorId,qty}]"],
+          ["2 未命中","I-SPACE-701「无库位存放该物料」"],
+          ["3 命中N个","高亮全部命中(05 setInstanceColor)+列候选清单(编码+量+楼层)，跨层按楼层分组"],
+          ["点某条","复用06 locate(该code)：切层+飞行+高亮"],
+          ["巡航","下一个/上一个在命中集间巡航(复用06飞行)"],
+          ["关键复用","只把06入口从输入编码换成 物料→WMS反查编码→喂06 locate"],
+          ["命中可视化","命中整批高亮，非命中可选变暗/半透明聚焦"],
+          ["大命中集","料铺满半仓→限高亮+列表分页+按量/楼层排序，避免满屏高亮失意义"]
+        ]}
+      ]
+    },
+    {
+      "name": "信息卡降级API消息",
+      "cols": [{"i":1,"w":22},{"i":2,"w":40},{"i":3,"w":42}],
+      "cells": [
+        {"r":1,"c":1,"v":"选中信息卡叠库存 / 性能降级 / API / 消息","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["信息卡库存行(接06)","内容",""],"rows":[
+          ["数据时间","库存(数据时间14:32:05)——带时间戳提示非实时",""],
+          ["库位状态","满(红)",""],
+          ["库存量","48 / 容量50(利用率96%)",""],
+          ["主物料","纸箱-A4-5层",""],
+          ["查法","选中单库位按需查该编码或用快照缓存；hover tooltip可选叠状态+量(轻量)",""]
+        ]},
+        {"startR":9,"startC":1,"header":["性能/降级机制","做法",""],"rows":[
+          ["可见区裁剪","只查当前层∩可见桶编码，不全量",""],
+          ["批量查询","一批编码一次RPC，超上限分批并发(受控)",""],
+          ["快照缓存","切着色模式/算利用率/开信息卡都用缓存不重拉",""],
+          ["轮询节流","间隔下限+相机移动暂停",""],
+          ["WMS慢/不可用","超时降级：保留上次快照+标陈旧W-SPACE-701，不阻断3D浏览",""],
+          ["降级原则","库存是叠加增强，WMS不可用时P1结构浏览必须照常，07失败不拖垮05/06",""]
+        ]},
+        {"startR":16,"startC":1,"header":["API/消息","类型","说明"],"rows":[
+          ["GET /floor/{id}/stock?bbox=","HTTP","可见区库存快照(服务端调IWmsStockQuery批量)"],
+          ["GET /stock/locate?material=&lot=&container=","HTTP","按物料反查库位(调FindLocationsAsync)"],
+          ["W-SPACE-701","Warn","库存获取失败显上次快照(可能陈旧)"],
+          ["I-SPACE-701","Info","无库位存放该物料/批次/容器"],
+          ["I-SPACE-702","Info","找到N个库位(M层)，点击定位"],
+          ["I-SPACE-703","Info","库存已刷新(数据时间hh:mm:ss)"],
+          ["W-SPACE-702","Warn","命中库位过多，仅高亮前K个"]
+        ]}
+      ]
+    }
+  ]
+}

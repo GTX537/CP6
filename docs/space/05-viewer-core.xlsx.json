@@ -1,0 +1,130 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":78}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 05 · 3D 渲染内核 space-viewer","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · P1 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-05 3D 渲染内核 space-viewer"],
+          ["技术栈","Vue3 + TS + Three.js(WebGL)；独立 space-viewer 组件层，与编辑器解耦"],
+          ["命名空间","cp6.web/src/space-viewer + views/space/viewer"],
+          ["落地决策","D1 3D只读浏览 / D2 单仓~1万库位 InstancedMesh基线(Medium) / D3 纯参数化盒体零素材 / Y-up适配"],
+          ["题眼","05只读渲染(消费/scene不写几何)；坐标适配+实例化+剔除+标签虚拟化夯实渲染地基；交互在06、着色在07"]
+        ]}
+      ]
+    },
+    {
+      "name": "坐标适配映射",
+      "cols": [{"i":1,"w":16},{"i":2,"w":34},{"i":3,"w":24},{"i":4,"w":24}],
+      "cells": [
+        {"r":1,"c":1,"v":"坐标系与单位适配（唯一收口点）","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"数据模型不迁就渲染库；适配只在 space-viewer 内部做一次","merge":"A2:D2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["维度","数据(00§2)","Three.js默认","适配"],"rows":[
+          ["上方向","Z 轴向上","Y 轴向上","轴重映射"],
+          ["单位","mm(整数)","米(浮点)","÷1000 缩放"],
+          ["实现","—","—","SceneRoot.scale=0.001 + rotation.x=-π/2"],
+          ["映射","data(X,Y,Z)","→ world(X, Z, -Y)","右手系保持"],
+          ["RotationZ","绕数据Z轴偏航","→ 绕Three Y轴","放进SceneRoot后自动，无需逐对象换算"],
+          ["反算","world坐标","→ data mm","sceneRoot.worldToLocal()，拾取链(06)用"]
+        ]}
+      ]
+    },
+    {
+      "name": "分桶与drawcall",
+      "cols": [{"i":1,"w":24},{"i":2,"w":76}],
+      "cells": [
+        {"r":1,"c":1,"v":"InstancedMesh 分桶（D2 万级库位）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["要点","说明"],"rows":[
+          ["为何实例化","万级库位每个一Mesh=万级draw call必卡；InstancedMesh合并为一次draw call，每实例一Matrix4"],
+          ["几何复用","全场景一个 UNIT_BOX(1mm³)，库位/货架格复用，靠实例非均匀scale撑尺寸→零额外geometry内存"],
+          ["分桶键","ZoneId(库区)——单超大InstancedMesh无法按实例剔除，分桶让视锥剔除以库区粒度生效"],
+          ["单桶draw call","= 1（桶内实例=该区库位数 百~千级）"],
+          ["桶过大","开放区>N实例再二次网格细分"],
+          ["实例↔库位","维护 instanceId↔LocationId 双向表(拾取06用)"],
+          ["着色维度","同桶内 instanceColor 按库存状态逐实例上色(07)，不增draw call"],
+          ["只渲染","Placed=true 库位(采纳态未放置无几何不进场景)"]
+        ]}
+      ]
+    },
+    {
+      "name": "LOD与剔除",
+      "cols": [{"i":1,"w":18},{"i":2,"w":50},{"i":3,"w":24}],
+      "cells": [
+        {"r":1,"c":1,"v":"视锥剔除 + LOD 三档","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["距离档","显示","目的"],"rows":[
+          ["远(俯瞰整层)","库区色块+货架轮廓；库位桶隐藏/合并货架级色块","远处看不清单格，省渲染"],
+          ["中","货架框+库位格(实例盒)","主浏览距离"],
+          ["近","库位格+标签+07状态色","看具体库位"]
+        ]},
+        {"startR":8,"startC":1,"header":["机制","做法"],"rows":[
+          ["视锥剔除","每桶维护包围盒；FrustumCuller每帧(节流)测各桶，bucket.visible=inFrustum"],
+          ["LOD","LodController按相机距离切档；档位切换滞回(hysteresis)防抖"],
+          ["叠加","先剔除(视锥外不算)，再对可见桶定LOD"]
+        ]}
+      ]
+    },
+    {
+      "name": "标签虚拟化",
+      "cols": [{"i":1,"w":24},{"i":2,"w":76}],
+      "cells": [
+        {"r":1,"c":1,"v":"标签虚拟化（库位编码标签按需渲染）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["要点","说明"],"rows":[
+          ["问题","万级库位每个建CSS2D/Sprite标签→DOM/精灵爆炸、文字重叠"],
+          ["策略","可见(视锥内)∧近(相机距离<labelDist)∧屏幕去重(网格分桶每格≤K个)，才渲染"],
+          ["对象池","固定上限(如200个)循环复用DOM/Sprite，绝不随库位数增长"],
+          ["更新","每帧节流(如100ms或相机停稳)更新可见标签集"],
+          ["货架级标签","RackCode数量小，可常显或中LOD显"],
+          ["渲染方式","Medium默认CSS2DRenderer(HTML清晰可选)，超量回退Sprite(纯GPU)"]
+        ]}
+      ]
+    },
+    {
+      "name": "性能基线",
+      "cols": [{"i":1,"w":18},{"i":2,"w":60}],
+      "cells": [
+        {"r":1,"c":1,"v":"Medium tier 性能基线（D2）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["指标","目标"],"rows":[
+          ["库位规模","单仓 ~1万库位(基线)，峰值留余量"],
+          ["draw call","主要来自库位桶(≈库区数 几十级)+货架+结构，总计百级以内"],
+          ["帧率","主浏览距离 ≥50-60fps(中端独显/集显)"],
+          ["首屏建图","分批 ≤2-3s 可交互(边建边显进度)"],
+          ["标签","同屏 ≤200个(对象池上限)，不随库位数增长"],
+          ["按需渲染","相机不动、无动画时不重绘，CPU/GPU归零"],
+          ["超出基线","多仓/10万级=P2+优化(更激进LOD、流式加载、Web Worker建图)"]
+        ]}
+      ]
+    },
+    {
+      "name": "ViewerHandle句柄",
+      "cols": [{"i":1,"w":32},{"i":2,"w":44},{"i":3,"w":18}],
+      "cells": [
+        {"r":1,"c":1,"v":"对外 API（ViewerHandle，给06/07/08挂点）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["方法/事件","说明","给谁"],"rows":[
+          ["load(floorId)/dispose()","加载/释放某层场景","浏览页"],
+          ["getSceneRoot()","取适配根容器(挂自定义对象)","06/07/08"],
+          ["worldToData(v3)/dataToWorld(xyz)","坐标适配互转","06拾取"],
+          ["instanceToLocation(meshId,instanceId)","实例→LocationId","06拾取"],
+          ["setInstanceColor(locationId,color)","按库位改实例色(不重建)","07库存着色"],
+          ["requestRender()","触发一次按需渲染","07/08"],
+          ["onReady/onProgress","建图完成/进度事件","浏览页"]
+        ]}
+      ]
+    }
+  ]
+}

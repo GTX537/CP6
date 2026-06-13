@@ -1,0 +1,118 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":78}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 03 · 可配置库位编码引擎","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · P1 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-03 可配置编码引擎"],
+          ["命名空间","CP6.Core/Services/Space/CodeEngineService.cs / cp6.web/src/views/space/code-rule"],
+          ["落地决策","D4 发布即冻结(冻编码不冻几何) / D7 采纳绑既有码不重编 / Aisle条件段变长 / 作用域规则必须产出租户全局唯一码"],
+          ["题眼","03 只生产 LocationCode(写Status=0草稿)，冻结在04；采纳码CodeOrigin=2外部真相，03跳过不碰"]
+        ]}
+      ]
+    },
+    {
+      "name": "Segments字段",
+      "cols": [{"i":1,"w":14},{"i":2,"w":16},{"i":3,"w":60}],
+      "cells": [{"r":1,"c":1,"v":"Space_CodeRule.Segments 单段结构（JSON 数组，顺序即段序）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["字段","示例","说明"],"rows":[
+          ["key","rack","段标识（唯一）"],
+          ["name","货架号","显示名（预览/校验用）"],
+          ["source","rack-seq","取值源类型（见取值源表）"],
+          ["width","2","补零宽度（0=不补）"],
+          ["pad","0","补齐字符，默认 '0'"],
+          ["start","1","序号类起始值（*-seq 生效）"],
+          ["step","1","序号步长"],
+          ["sep","-","本段【后】的分隔符（末段通常空）"],
+          ["upper","true","字母是否大写"],
+          ["fixedValue","WH","source=fixed 时的固定文本"],
+          ["optional","false","是否条件段（true=对应层级缺失时整段含sep一并跳过）"]
+        ]}
+      ]
+    },
+    {
+      "name": "取值源一览",
+      "cols": [{"i":1,"w":16},{"i":2,"w":30},{"i":3,"w":48}],
+      "cells": [
+        {"r":1,"c":1,"v":"取值源 source 一览（码源 vs 序号源）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["source","取值","类别/说明"],"rows":[
+          ["fixed","fixedValue 固定文本","码源（如仓库代号 WH）"],
+          ["site-code","所属 Site.Code","码源 站点编码段"],
+          ["floor-level","所属 Floor.Level","码源 楼层号（按 width 补零）"],
+          ["zone-code","所属 Zone.Code","码源 库区业务码"],
+          ["zone-seq","库区在层内序号","序号源 1,2,3…(start/step/width)"],
+          ["aisle-code","所属 Aisle.Code","码源 ★条件段：无巷道跳过"],
+          ["aisle-seq","巷道在库区内序号","序号源 ★条件段"],
+          ["rack-code","所属 Rack.RackCode","码源 货架业务码(01批量生成给的建议值)"],
+          ["rack-seq","货架在父(Aisle或Zone)内序号","序号源"],
+          ["col","库位列索引 Col","序号源"],
+          ["level","库位层索引 Level","序号源"],
+          ["depth","库位深索引 Depth","序号源"]
+        ]}
+      ]
+    },
+    {
+      "name": "变长路径成码",
+      "cols": [{"i":1,"w":18},{"i":2,"w":34},{"i":3,"w":30},{"i":4,"w":20}],
+      "cells": [
+        {"r":1,"c":1,"v":"Aisle 条件段与变长路径","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"条件段 optional:true，aisle==null 时整段连同 sep 一并跳过","merge":"A2:D2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["场景","路径","成码示例","说明"],"rows":[
+          ["有巷道库区","区-巷-架-层-位","A-02-03-02-05","完整 5 段"],
+          ["无巷道库区","区-架-层-位","A-03-02-05","巷段及其 sep 整体消失"],
+          ["唯一性陷阱","—","—","无巷道区 区-架-层-位 不能与有巷道区某 区-巷-架-层-位 拼出相同串"],
+          ["解法","rack-seq 须 Zone 级编号","—","静态预检 E-303 拦下（第6章）"]
+        ]}
+      ]
+    },
+    {
+      "name": "唯一性预检矩阵",
+      "cols": [{"i":1,"w":28},{"i":2,"w":44},{"i":3,"w":26}],
+      "cells": [
+        {"r":1,"c":1,"v":"租户全局唯一双防线","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["静态预检(生成前)","判定","失败"],"rows":[
+          ["含足够上层段","分段含能区分到 Zone 的段(zone-code/zone-seq 或 site+floor)","E-SPACE-303"],
+          ["条件段下 rack 编号粒度","含 optional 巷道段则 rack-seq 须 Zone 级编号","E-SPACE-303"],
+          ["段完备","至少含到库位粒度(col/level/depth)","E-SPACE-306"],
+          ["多规则一致性","命中多套库区规则时各码空间不重叠","E-SPACE-303"]
+        ]},
+        {"startR":9,"startC":1,"header":["生成后校验(事务内)","动作","失败"],"rows":[
+          ["批内自检","code 去重","E-SPACE-304(附冲突对)"],
+          ["库内比对","与已存在非空码交集","E-SPACE-304，整事务回滚"],
+          ["DB 兜底","过滤唯一索引 UX_..._Code","并发撞→E-009/304"]
+        ]}
+      ]
+    },
+    {
+      "name": "重排两阶段",
+      "cols": [{"i":1,"w":16},{"i":2,"w":70}],
+      "cells": [
+        {"r":1,"c":1,"v":"草稿批量重排（避开 SQL Server 唯一索引中途违约）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["阶段","动作"],"rows":[
+          ["阶段1 置空","UPDATE SET LocationCode=NULL WHERE TenantId=@t AND Status=0 AND CodeOrigin=1 AND <作用域> —— 全置空，过滤唯一索引不约束 NULL"],
+          ["阶段2 赋值","按层级遍历算新码，批量 UPDATE 赋值（赋值前已过唯一校验）"],
+          ["回滚","阶段2 任一冲突→整事务回滚，码回到重排前"]
+        ]},
+        {"startR":7,"startC":1,"header":["模式","用途"],"rows":[
+          ["fill-empty(默认)","只对 LocationCode IS NULL 草稿生成，不扰动既有草稿码（加货架后局部补码）"],
+          ["rebuild","全量重排（阶段1+2）；改规则后引导用户用此"],
+          ["豁免","已发布码(Status≥1)冻结、采纳码(CodeOrigin=2)外部既有，均不在 WHERE 内"]
+        ]}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":84}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 08 · 高级可视化","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · P3 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-08 高级可视化"],
+          ["里程碑","P3（拣货路径3D动画 + 作业热图 + 设备联动占位）"],
+          ["技术栈","Vue3/Three.js(路径/动画/热图) + .NET8(IWmsPickTaskQuery/IWmsWorkloadQuery契约)"],
+          ["命名空间","space-viewer/advanced + CP6.Core/Services/Space(查询契约·Space侧)"],
+          ["落地决策","拣货路径消费Aisle中心线走巷道(不穿墙) / 热图复用07着色+WMS统计 / 设备v1仅占位"],
+          ["题眼","P1看结构·P2看库存·P3看作业怎么发生；全是只读演示增强，把空间+数据+时间讲成故事"]
+        ]}
+      ]
+    },
+    {
+      "name": "成熟度边界",
+      "cols": [{"i":1,"w":20},{"i":2,"w":16},{"i":3,"w":60}],
+      "cells": [
+        {"r":1,"c":1,"v":"本章能力成熟度与边界","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["能力","v1成熟度","说明"],"rows":[
+          ["拣货路径动画","做实","消费WMS拣货任务+Aisle中心线，路径规划+动画"],
+          ["作业热图","做实","消费WMS作业频次统计，复用07热力着色"],
+          ["设备联动","占位","接口/挂点预留+静态示意；真接AGV/设备实时流=P3+"]
+        ]},
+        {"startR":8,"startC":1,"header":["定位原则","说明",""],"rows":[
+          ["演示与洞察非执行","不下发拣货指令、不调度设备，只把WMS已有作业数据在3D中回放/呈现",""],
+          ["全章只读可降级","失败不影响P1/P2",""]
+        ]}
+      ]
+    },
+    {
+      "name": "拣货路径动画",
+      "cols": [{"i":1,"w":18},{"i":2,"w":86}],
+      "cells": [
+        {"r":1,"c":1,"v":"拣货路径动画（消费Aisle中心线）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["数据流","说明"],"rows":[
+          ["1 取任务","IWmsPickTaskQuery.GetPickPathAsync(taskNo)→有序库位编码序列[code1,code2,…]"],
+          ["2 解坐标","解析每code的AbsXYZ(Space自有,00)"],
+          ["3 规划","沿Aisle中心线把相邻拣货点连成不穿墙路径(第3章)"],
+          ["4 动画","小车/光点沿路径跑，按序点亮拣货库位+顺序编号牌"],
+          ["拣货顺序","默认采用WMS给的顺序(已优化)；可选按沿巷道最短重排做对比(标注仅可视化重排不回写)"]
+        ]},
+        {"startR":10,"startC":1,"header":["动画元素","表现"],"rows":[
+          ["路径线","沿巷道中心线折线/平滑曲线，高亮色，可显总距离"],
+          ["移动体","小车/光点匀速或按节奏移动(可调速/暂停/步进)"],
+          ["拣货点","到达时库位高亮脉冲+顺序号牌(1,2,3…)+(接07)显拣货量"],
+          ["相机","可选跟随巡游(复用06补间)或固定俯视看全程"],
+          ["播放控制","播放/暂停/步进/调速/重播；多任务叠多条路径(不同色)"]
+        ]},
+        {"startR":17,"startC":1,"header":["与Aisle中心线","说明"],"rows":[
+          ["必须走巷道","00§5 Aisle Centerline，不能两库位直连(穿货架/墙不真实)——兑现00存中心线的下游用途"],
+          ["无巷道区","退化为到该区入口直线+区内就近，或标注该区无巷道路径近似直连"]
+        ]}
+      ]
+    },
+    {
+      "name": "路径规划中心线图",
+      "cols": [{"i":1,"w":22},{"i":2,"w":82}],
+      "cells": [
+        {"r":1,"c":1,"v":"路径规划（库位→巷道中心线图→最短巡游）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["步骤","做法"],"rows":[
+          ["构建图G(一次缓存)","把当前层所有Aisle Centerline连成图G，楼层级缓存，几何不变复用"],
+          ["节点","中心线端点 / 交叉点 / 库位接入点(库位投影到最近中心线的垂足)"],
+          ["边","中心线段(权重=段长mm)+交叉口连接"],
+          ["单段 pathBetween(A,B)","a'=A接入点、b'=B接入点；G上Dijkstra/A*求a'→b'最短路→中心线折线；首尾接库位↔接入点短直线"],
+          ["整条路径","依次pathBetween(code_i,code_{i+1})拼接"],
+          ["算在前端","中心线图数据量小(一层几十段)；大图可服务端预算"],
+          ["降级","中心线缺失/不连通→该段退化直连+W-SPACE-801，不中断动画"],
+          ["精度取舍","路径只为可视化演示非作业指令，近似可接受不追求作业级精确"]
+        ]}
+      ]
+    },
+    {
+      "name": "作业热图",
+      "cols": [{"i":1,"w":16},{"i":2,"w":34},{"i":3,"w":34}],
+      "cells": [
+        {"r":1,"c":1,"v":"作业热图（频次→热力，复用07着色）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["数据与着色","说明",""],"rows":[
+          ["数据源","IWmsWorkloadQuery.GetWorkloadAsync(floorId,时间窗)→[{locationCode,opCount}]",""],
+          ["opCount","该库位在时间窗内出入库/拣货次数",""],
+          ["着色","归一化opCount→热力色(冷→暖)→05 setInstanceColor(复用07机制不重建)",""],
+          ["复用07","着色/裁剪/LOD聚合全复用，只换数据源(频次vs库存)和色映射",""],
+          ["时间窗","今日/本周/自定义；聚合到货架/库区看忙区分布(远LOD)",""]
+        ]},
+        {"startR":9,"startC":1,"header":["对比维度","07利用率热力","08作业热图"],"rows":[
+          ["数据","当前库存占用率(静态快照)","作业频次(时间窗累计)"],
+          ["回答","哪里满了","哪里最忙"],
+          ["数据源","IWmsStockQuery","IWmsWorkloadQuery"],
+          ["关系","—","不同着色模式，共用同一着色管线(07§4.2加一个作业热图模式)"]
+        ]}
+      ]
+    },
+    {
+      "name": "设备联动占位",
+      "cols": [{"i":1,"w":20},{"i":2,"w":84}],
+      "cells": [
+        {"r":1,"c":1,"v":"设备联动（v1占位：接口预留 + 静态示意）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"v1仅占位，不接真实设备实时流；真联动=P3+","merge":"A2:B2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["占位内容","说明"],"rows":[
+          ["渲染挂点","SceneRoot下预留DeviceLayer，放设备图元(AGV/堆垛机/输送线，D3参数化盒体零素材)"],
+          ["静态示意","手工/示例数据摆几个设备图标(演示用)，标注示意未接实时"],
+          ["接口预留","定义IWmsDeviceQuery(占位签名)，WMS暂返回空/桩数据"]
+        ]},
+        {"startR":8,"startC":1,"header":["未来(P3+，不在v1)","说明"],"rows":[
+          ["实时位置流","接WMS/WCS设备实时位置(轮询/推送)→设备图元实时移动"],
+          ["路径叠加","AGV路径与拣货路径叠加；设备状态(忙/闲/故障)着色"],
+          ["不返工","v1把位置留成可注入数据点，未来换实时源即可，架构不返工"],
+          ["为何占位非砍","商用底座远期卖点，留挂点+示意保证演示能讲到、架构能接入，但不投实时集成成本(YAGNI)"]
+        ]}
+      ]
+    },
+    {
+      "name": "契约族性能API消息",
+      "cols": [{"i":1,"w":26},{"i":2,"w":36},{"i":3,"w":42}],
+      "cells": [
+        {"r":1,"c":1,"v":"查询契约族 / 性能降级 / API / 消息","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"沿用07单向只读手法，新增3契约(设备占位)，与IWmsStockQuery构成只读查询契约族","merge":"A2:C2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["契约(Space定义WMS实现)","签名/DTO",""],"rows":[
+          ["IWmsPickTaskQuery","GetPickPathAsync(tenantId,taskNo)→PickPathDto{taskNo,items:[{seq,locationCode,qty,materialNo}]}",""],
+          ["IWmsWorkloadQuery","GetWorkloadAsync(tenantId,floorId,window)→[WorkloadDto{locationCode,opCount}]",""],
+          ["IWmsDeviceQuery(占位)","GetDevicesAsync(tenantId,floorId)→[DeviceDto{deviceId,type,locationCode|absXYZ,status}] v1桩/空",""],
+          ["共性","全部纯读·单向·join按库位编码/楼层；Space只依赖抽象无反向编译依赖",""]
+        ]},
+        {"startR":9,"startC":1,"header":["性能/降级","做法",""],"rows":[
+          ["动画按需渲染","播放时才持续requestRender；暂停/无动画即停渲染",""],
+          ["中心线图缓存","路径图楼层级缓存，几何不变复用",""],
+          ["大路径简化","拣货点百级→路径线抽稀+移动体跳关键点，避免每帧重算",""],
+          ["热图复用07","着色/裁剪/LOD全复用，不另造管线",""],
+          ["WMS不可用","路径/热图/设备查询失败→该高级功能降级提示，不影响P1/P2",""]
+        ]},
+        {"startR":15,"startC":1,"header":["API/消息","类型/种别","说明"],"rows":[
+          ["GET /floor/{id}/pick-path?taskNo=","HTTP","取拣货路径(调IWmsPickTaskQuery+解析AbsXYZ)"],
+          ["GET /floor/{id}/workload?from=&to=","HTTP","取作业热图数据(调IWmsWorkloadQuery)"],
+          ["GET /floor/{id}/devices","HTTP占位","取设备示意(v1空/示例)"],
+          ["W-SPACE-801","Warn","巷道路径不连通，近似直连显示"],
+          ["I-SPACE-801","Info","拣货路径：N个拣货点，总距离D米"],
+          ["W-SPACE-802","Warn","高级可视化数据获取失败"],
+          ["I-SPACE-802","Info","作业热图(时间窗from~to)已加载"],
+          ["I-SPACE-803","Info","设备联动为演示示意(未接实时)"]
+        ]}
+      ]
+    }
+  ]
+}

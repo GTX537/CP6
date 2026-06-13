@@ -1,0 +1,109 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":78}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 00 · 数据模型与坐标系底座","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 细分丛书 · P1 地基 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-00 数据模型与坐标系底座"],
+          ["里程碑","P1 地基（编辑器/编码/渲染/发布全模块从此长出）"],
+          ["技术栈",".NET8 + EF Core + SQL Server / 全表 TenantId（多租户 SaaS）"],
+          ["命名空间","CP6.Entity/DomainModels/Space"],
+          ["落地决策","D1 2D建模 / D3 参数化盒体 / D4 GUID稳定主键·发布冻结 / D7 采纳态反向建模 / Aisle条件父级 / 每Floor局部系·mm·Z-up·RotationZ"],
+          ["题眼","几何永远可动（货架可挪），但 LocationId 与库位编码一经发布即冻结，join key 永不漂移"]
+        ]}
+      ]
+    },
+    {
+      "name": "9表一览",
+      "cols": [{"i":1,"w":18},{"i":2,"w":14},{"i":3,"w":58},{"i":4,"w":18}],
+      "cells": [{"r":1,"c":1,"v":"Space 数据模型 9 表","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["表名","层级","关键字段","父级"],"rows":[
+          ["Space_Site","站点/仓库","TenantId, Code, Name, 地理信息","—"],
+          ["Space_Floor","楼层","SiteId, Level, 层高, 底图(UnderlayScale/Offset), OriginX/Y","Site"],
+          ["Space_Zone","库区","FloorId, Code, ZoneType(存储/收货/发货/分拣/通道), 多边形几何","Floor"],
+          ["Space_Aisle","巷道(可选)","ZoneId, 多边形几何 + Centerline 中心线","Zone（条件父级）"],
+          ["Space_Rack","货架","ZoneId(必填)/AisleId(可空), TemplateId, X/Y/RotationZ, Cols/Levels/DepthCount, CellW/H/D, RackCode, RowVersion","Zone/Aisle"],
+          ["Space_Location","库位 ★join key","RackId(可空), FloorId(冗余可空), LocationCode(可空), Col/Level/Depth, AbsX/Y/Z, Status, Placed, CodeOrigin, Version, RowVersion","Rack"],
+          ["Space_Template","模板","TemplateType(1货架/2库区), Params JSON","TenantId"],
+          ["Space_CodeRule","编码规则","ScopeType(0租户/1楼层/2库区), ScopeId, Segments JSON, IsDefault","TenantId"],
+          ["Space_Marker","打点/标注","FloorId, X/Y/Z, Type, Text","Floor"]
+        ]}
+      ]
+    },
+    {
+      "name": "坐标系约定",
+      "cols": [{"i":1,"w":22},{"i":2,"w":78}],
+      "cells": [{"r":1,"c":1,"v":"坐标系与单位约定（数据模型不迁就渲染库）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["维度","约定"],"rows":[
+          ["坐标系归属","每 Floor 一个局部坐标系；原点取楼层参考角(0,0)；各 Floor 独立不共享世界系"],
+          ["单位","mm（整数，仓库尺度上万）"],
+          ["轴向","Z 轴向上（X/Y 地面、Z 高度）；space-viewer 内部适配 Three.js Y-up（05 章），数据不迁就渲染库"],
+          ["旋转","RotationZ 偏航角（绕 Z 轴），浮点；货架绕锚点角旋转"],
+          ["货架锚点","Rack.X/Y = 货架原点角（角点锚）；旋转绕该角；库位偏移从原点角量起"],
+          ["绝对坐标缓存","Location.AbsX/Y/Z = 库位中心 floor 局部系绝对坐标，缓存值；随几何变更重算；未放置为 NULL"],
+          ["computeAbs 公式","AbsX = Rack.X + (localX·cosθ − localY·sinθ)；θ=RotationZ；供拾取(06)/叠加(07) 零计算 join"],
+          ["为何局部系","各层独立建模/渲染/切换；原点稳定、坐标值小、对齐直观；跨层不需统一世界坐标（按库位编码 join）"]
+        ]}
+      ]
+    },
+    {
+      "name": "库位状态机",
+      "cols": [{"i":1,"w":12},{"i":2,"w":16},{"i":3,"w":12},{"i":4,"w":14},{"i":5,"w":12},{"i":6,"w":44}],
+      "cells": [
+        {"r":1,"c":1,"v":"生命周期 Status × 放置维度 Placed（正交）","bold":true,"size":12,"merge":"A1:F1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"Placed=false ⇔ RackId=null；落库不变量 Placed==(RackId!=null)","merge":"A2:F2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["Status","编码","几何","放置","发布","说明"],"rows":[
+          ["0 草稿","可空/可重排/可删","可改","通常已放置","未发布","建模自由区"],
+          ["1 已发布","非空·冻结","仍可改(重算缓存)","已放置 或 采纳待放置","已同步 WMS","join key 生效"],
+          ["2 停用","冻结","可改","—","发停用事件","须先经 IWmsStockQuery 校验 0 库存(D6/04)"]
+        ]},
+        {"startR":9,"startC":1,"header":["维度","语义"],"rows":[
+          ["新建→草稿","生成码；编码可重排/可空/可删，几何随意改"],
+          ["草稿→已发布","04 章过冻结闸门；之后编码非空冻结、几何仍可动（D4 冻编码不冻几何）"],
+          ["采纳直入已发布·未放置","CodeOrigin=2 导入；有冻结码无几何；反向建模绑货架后 Placed=true，编码与 LocationId 不变"],
+          ["已发布→停用","D6：前置 0 库存校验 + WMS 侧 TOCTOU 再检查"],
+          ["Version","按 LocationId 维度递增；每次发布/停用 +1；WMS 逐库位检测陈旧更新"],
+          ["CodeOrigin","1 引擎生成 / 2 采纳导入（04 对账依据）"]
+        ]}
+      ]
+    },
+    {
+      "name": "发布触发表",
+      "cols": [{"i":1,"w":40},{"i":2,"w":34},{"i":3,"w":20},{"i":4,"w":34}],
+      "cells": [{"r":1,"c":1,"v":"几何/放置变更 → 是否发布 WMS（D4 技术兑现）","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["变更","重算范围","是否发布","理由"],"rows":[
+          ["货架移动/旋转/改尺寸","该货架下全部库位 AbsX/Y/Z","否","纯几何，载荷无几何，join key 不漂移"],
+          ["货架增删格子(改 Cols/Levels/Depth)","新增库位补码/删除库位停用","是","库位增删/停用（04 章）"],
+          ["采纳态绑定货架(D7 未放置→已放置)","回填 RackId/FloorId/索引/坐标/尺寸, Placed=true","否","编码早已发布冻结，几何回填不改 join key"],
+          ["库区/巷道多边形调整","不影响库位坐标(库位锚在货架)","否","—"]
+        ]}
+      ]
+    },
+    {
+      "name": "关键索引与删除",
+      "cols": [{"i":1,"w":46},{"i":2,"w":54}],
+      "cells": [{"r":1,"c":1,"v":"关键索引 + 删除策略 + 可空设计","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["索引/约束","说明"],"rows":[
+          ["UX_Space_Location_Tenant_Code (过滤唯一)","ON (TenantId, LocationCode) WHERE LocationCode IS NOT NULL —— 草稿空码不互撞、重排可先置NULL、非空码租户内唯一"],
+          ["IX_Space_Location_Status","ON (TenantId, Status)"],
+          ["IX_Space_CodeRule_Scope","ON (TenantId, ScopeType, ScopeId)"],
+          ["RowVersion (Rack/Location)","乐观并发戳；编辑器多人协作 + 货架批量重算库位防丢更新"],
+          ["LocationCode 可空","解决草稿期两问题：①生成前空码不撞 ②批量重排交换码先置NULL避开SQL Server唯一索引无延迟校验中途违约"],
+          ["RackId 可空","兑现 D7：采纳态有冻结码无几何（RackId/FloorId/索引/坐标全空、Placed=false），绑定后回填"],
+          ["删除策略","Restrict / SetNull（模板删 SetNull 不影响已生成几何；删巷道/货架触已发布库位的护栏见 04 §7）"]
+        ]}
+      ]
+    }
+  ]
+}

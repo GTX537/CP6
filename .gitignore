@@ -166,3 +166,8 @@ docs/file/**/*.ipa
 docs/file/**/*.xlsx
 # 兜底：任何超 50MB 的二进制都建议走 LFS
 *.ipa
+
+# ── 2026-06-13 整理：工作区产物 + 大体量本地参考源 ──
+/*.png
+/openapi.json
+docs/file/

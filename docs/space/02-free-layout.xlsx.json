@@ -1,0 +1,114 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":78}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 02 · 受控自由布局交互","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · P1 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-02 受控自由布局交互"],
+          ["技术栈","Vue3 + TS + Konva(Transformer/事件/拖拽) + Pinia / 复用 01 useEditorStore"],
+          ["命名空间","cp6.web/src/space-editor/interact + command"],
+          ["落地决策","受控自由布局=模板生成为主·手工精修为辅；不做完整自由绘制"],
+          ["题眼","02 只改几何位姿与标注(Rack.X/Y/RotationZ、Marker)；库位坐标是派生(保存时00§6.2重算)；绝不在02改库位编码或单库位坐标"]
+        ]}
+      ]
+    },
+    {
+      "name": "交互矩阵",
+      "cols": [{"i":1,"w":16},{"i":2,"w":40},{"i":3,"w":20},{"i":4,"w":12}],
+      "cells": [{"r":1,"c":1,"v":"七件交互 → 工具 / Command / 入栈","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["交互","行为","Command","入栈"],"rows":[
+          ["选择","点选/框选/加减选（纯交互态）","—","否"],
+          ["拖拽移动","单个/多选整体平移 + 捕捉","MoveRackCmd / BatchCmd","是"],
+          ["旋转","Transformer 改 RotationZ + 角度吸附","RotateRackCmd","是"],
+          ["打点","点击落 Marker / 拖动 / 改文本 / 删","Add/Move/Edit/DeleteMarkerCmd","是"],
+          ["捕捉对齐","吸附网格/货架边/巷道中心线/等距分布","（结果入对应 Cmd）","读操作不单独入栈"],
+          ["碰撞提示","OBB+SAT 重叠/越界着色","—","否"],
+          ["撤销/重做","Command 双栈 + BatchCmd 分组","CommandStack","—"]
+        ]}
+      ]
+    },
+    {
+      "name": "快捷键",
+      "cols": [{"i":1,"w":28},{"i":2,"w":50}],
+      "cells": [{"r":1,"c":1,"v":"快捷键","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["键","动作"],"rows":[
+          ["Ctrl+Z / Ctrl+Y(或 Ctrl+Shift+Z)","撤销 / 重做"],
+          ["Delete","删除选中集"],
+          ["Ctrl+A","全选当前图层可选对象"],
+          ["Esc","取消当前手势 / 退出 MarkerTool / 清选"],
+          ["Ctrl(按住)","临时关捕捉（自由微调）"],
+          ["Shift / Alt(框选时)","追加 / 移除选择"],
+          ["Ctrl+单击 / Shift+单击","切换选中 / 追加选中"]
+        ]}
+      ]
+    },
+    {
+      "name": "Command清单",
+      "cols": [{"i":1,"w":20},{"i":2,"w":40},{"i":3,"w":40}],
+      "cells": [{"r":1,"c":1,"v":"Command 命令模式清单","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["Command","do / undo","备注"],"rows":[
+          ["MoveRackCmd","改 Rack.X/Y / 回起点","merge() 同货架连续微拖合一条；不重算库位(保存时服务端算)"],
+          ["RotateRackCmd","改 RotationZ / 回原角","Transformer 禁缩放；角度吸附 0/15/30/45/90°"],
+          ["AddMarkerCmd","push Marker / filter 移除","—"],
+          ["MoveMarkerCmd","改 Marker X/Y","走捕捉"],
+          ["EditMarkerCmd","改 Text/Type","双击编辑"],
+          ["DeleteCmd","删货架/Marker(含快照)","undo 需完整快照原样恢复"],
+          ["BatchCmd","children 顺序 do / 逆序 undo","多选拖拽·对齐分布=一次 undo 整组回退"]
+        ]},
+        {"startR":12,"startC":1,"header":["CommandStack","说明",""],"rows":[
+          ["exec","do→压undo栈→清redo栈；尝试与栈顶 merge",""],
+          ["undo/redo","双栈；容量上限100，超出丢最旧",""],
+          ["保存关系","undo操作Pinia+dirty集；保存后不清栈；刷新页面栈清空(不持久化)",""]
+        ]}
+      ]
+    },
+    {
+      "name": "捕捉规则",
+      "cols": [{"i":1,"w":18},{"i":2,"w":36},{"i":3,"w":46}],
+      "cells": [
+        {"r":1,"c":1,"v":"捕捉对齐（受控核心）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"阈值用屏幕像素(如8px)定义，换算到世界mm随zoom变化","merge":"A2:C2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["类型","吸附目标","说明"],"rows":[
+          ["网格吸附","snapStep 网格交点(默认100/1000mm)","最基础，随 zoom 选档"],
+          ["货架边吸附","邻近货架的边/角","相邻货架贴齐成排，间隙=rackGap"],
+          ["巷道中心线吸附","邻近 Aisle 中心线","货架排沿巷道对齐"],
+          ["同行对齐","选中集/邻近货架同一 X 或 Y","拖动显红色 guide line"]
+        ]},
+        {"startR":10,"startC":1,"header":["批操作(选≥3)","行为"],"rows":[
+          ["左/右/顶/底对齐","选中集对齐到极值边（BatchCmd）"],
+          ["水平/垂直等距分布","首尾固定中间均匀（BatchCmd）"],
+          ["设为同一旋转角","统一 RotationZ（BatchCmd）"]
+        ]}
+      ]
+    },
+    {
+      "name": "碰撞越界",
+      "cols": [{"i":1,"w":22},{"i":2,"w":40},{"i":3,"w":24}],
+      "cells": [
+        {"r":1,"c":1,"v":"碰撞检测与越界提示（实时·不阻断）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["提示","判定","视觉"],"rows":[
+          ["货架重叠","两货架俯视 OBB(含旋转)相交，分离轴定理 SAT","重叠货架描红边 + W-SPACE-202"],
+          ["超出 Zone","货架包围盒不完全落在所属 Zone 多边形内","货架描黄边 + W-SPACE-201"],
+          ["Marker 落货架上","允许","无提示"]
+        ]},
+        {"startR":8,"startC":1,"header":["要点","说明"],"rows":[
+          ["为什么 OBB+SAT","货架有 RotationZ，轴对齐 AABB 旋转后会误判"],
+          ["检测范围","仅移动/旋转中对象 vs 邻近桶内对象，避免全场两两比较"],
+          ["只提示不阻断","商用底座允许临时不规整；保存时作警告不阻断；真正规整闸门在 03 编码/04 发布"]
+        ]}
+      ]
+    }
+  ]
+}

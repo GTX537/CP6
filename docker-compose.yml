@@ -118,7 +118,7 @@ services:
       - cp6-api
     restart: unless-stopped
 
-  # 内网穿透：cloudflared 连接器（容器内出网，绕过宿主机 TUN 代理）
+  # 内网穿透：cloudflared 连接器
   # 凭证文件 cloudflared-docker/*.json 在 .gitignore，永不入仓库（仅本地）
   cp6-cloudflared:
     image: cloudflare/cloudflared:latest

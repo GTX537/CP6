@@ -1,7 +1,8 @@
 tunnel: 675bc4d4-18b5-41ac-9724-894c86be91c5
 credentials-file: /etc/cloudflared/675bc4d4-18b5-41ac-9724-894c86be91c5.json
-# 本机/容器网络 TCP 7844(http2) 被拦，QUIC(UDP 7844) 可通 → 用 quic
-protocol: quic
+# 让 cloudflared 自检 QUIC/HTTP2 哪个能通，不强制协议
+# protocol: quic   ← 2026-06-04 用 QUIC 通过；现在也尝试自动
+# protocol: http2
 
 # 容器内通过 docker 网络名直达后端/前端（无需经宿主机端口）
 ingress:

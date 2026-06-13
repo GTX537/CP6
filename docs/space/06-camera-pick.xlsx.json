@@ -1,0 +1,168 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":82}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 06 · 相机 / 拾取 / 导航 / 定位","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · P1 收官 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-06 相机 / 拾取 / 导航 / 定位"],
+          ["里程碑","P1 收官（建仓→生成→编码→3D浏览→按编码定位→发布WMS 闭环达成）"],
+          ["技术栈","Vue3 + TS + Three.js（Raycaster / GPU拾取 / 相机补间）；建在 05 ViewerHandle 上"],
+          ["命名空间","space-viewer/navigate（相机/拾取/定位）+ views/space/viewer（搜索框/信息卡/楼层切换）"],
+          ["落地决策","D1 3D只读(拾取不改几何) / D8 定位P1半=按库位编码 / 包围盒粗筛+GPU/射线精拾"],
+          ["题眼","05把场景画出来，06让用户走动·点中·找到东西；全程只读；按物料/批次找货归07"]
+        ]}
+      ]
+    },
+    {
+      "name": "相机控制",
+      "cols": [{"i":1,"w":20},{"i":2,"w":40},{"i":3,"w":40}],
+      "cells": [
+        {"r":1,"c":1,"v":"相机控制（轨道 / 投影 / 预设 / 补间）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["要点","说明",""],"rows":[
+          ["轨道控制","OrbitControls：左键旋转·右键/中键平移·滚轮缩放，带阻尼(damping)顺滑",""],
+          ["约束","俯仰角限制(不翻到楼层下)·缩放上下限(防穿模/飞太远)·平移限楼层包围盒附近",""],
+          ["target","当前楼层包围盒中心或选中对象，旋转绕它",""]
+        ]},
+        {"startR":8,"startC":1,"header":["投影模式","用途","默认"],"rows":[
+          ["透视 PerspectiveCamera","沉浸式3D浏览(近大远小)","✓ 默认"],
+          ["正交 OrthographicCamera","俯视/正视看布局(无透视畸变，便于对位)","切换"],
+          ["切换","透视↔正交保持视线方向与取景，补间过渡防跳变","—"]
+        ]},
+        {"startR":13,"startC":1,"header":["视角预设","视角","触发"],"rows":[
+          ["俯视 Top","正上方俯瞰整层(接近2D平面图)","补间飞行"],
+          ["等轴 Iso","45°斜俯(最常用浏览角)","补间飞行"],
+          ["正视 Front/Side","沿X/Y轴正看(看货架立面分层)","补间飞行"],
+          ["复位 Home","回整层概览默认机位","补间飞行"]
+        ]},
+        {"startR":19,"startC":1,"header":["相机补间 flyTo","说明",""],"rows":[
+          ["签名","flyTo(camPos, target, duration=600ms, easing=easeInOutCubic)",""],
+          ["每帧","插值 camera.position 与 controls.target → controls.update() → viewer.requestRender()",""],
+          ["复用","定位(第6章)/视角预设/聚焦选中 的共用基础设施",""],
+          ["打断","飞行中暂停轨道输入，结束恢复；可被新飞行/用户操作打断",""]
+        ]}
+      ]
+    },
+    {
+      "name": "拾取链路",
+      "cols": [{"i":1,"w":24},{"i":2,"w":80}],
+      "cells": [
+        {"r":1,"c":1,"v":"拾取链路（→ 库位编码，扛万级）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"终点=库位编码(join key)：屏幕坐标→命中实例→instanceId→(05双向表)→LocationId→LocationCode","merge":"A2:B2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["两级拾取","做法"],"rows":[
+          ["① 包围盒粗筛(桶级)","射线先测各Zone桶包围盒→命中候选桶集(通常1~2个)，远处/视锥外桶直接排除"],
+          ["② 桶内精拾 A 射线","raycaster.intersectObject(候选桶 InstancedMesh)→intersection.instanceId（默认）"],
+          ["② 桶内精拾 B GPU","实例编码成唯一颜色渲到离屏RT，读鼠标像素→解码instanceId（高密/超大场景）"],
+          ["收尾","instanceId → 05 instanceToLocation(meshId,instanceId) → LocationId → 查 LocationCode"],
+          ["粗筛价值","不全量射线测试万级实例，先砍到候选桶O(桶数)，再只对候选桶精拾→拾取恒定快"],
+          ["A vs B","Medium默认A(候选桶已压到百~千级足够快)；密集误差大切B(O(1)像素读取精确)"]
+        ]},
+        {"startR":12,"startC":1,"header":["拾取优先级 / 结果","说明"],"rows":[
+          ["优先级","优先命中库位格；被遮挡/远LOD隐藏退而命中货架；再退命中库区面/打点"],
+          ["与LOD一致","远档库位桶隐藏(05§6.2)时拾取落到货架级——看不见的拾不到"],
+          ["PickResult","kind(location/rack/zone/marker) + locationId/Code + rackId/Code + zoneId"],
+          ["worldPoint","Three世界命中点"],
+          ["dataPoint","经05 worldToData反算回mm数据坐标(显示坐标/与AbsXYZ校验)"]
+        ]}
+      ]
+    },
+    {
+      "name": "hover选中信息卡",
+      "cols": [{"i":1,"w":18},{"i":2,"w":86}],
+      "cells": [
+        {"r":1,"c":1,"v":"hover 高亮 / click 选中 / 信息卡（全程只读）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["行为","说明"],"rows":[
+          ["hover","鼠标移动节流(~50ms)拾取；命中库位→临时高亮该实例(改instanceColor，移出复原)"],
+          ["hover轻量","不开信息卡，仅高亮+浮动tooltip(显库位编码)"],
+          ["复原记原色","07状态色场景下hover复原回状态色而非默认色"],
+          ["click","单击命中→选中态：高亮(描边/亮色，区别hover)+弹信息卡"],
+          ["选中唯一","再点别处换选，点空白清选；选中驱动聚焦选中(第7章)"],
+          ["只读保证","只改instanceColor(视觉)+显信息卡，绝不改几何/编码/Status(D1)；高亮色不入持久化"]
+        ]},
+        {"startR":11,"startC":1,"header":["信息卡字段","内容"],"rows":[
+          ["库位编码","A-03-02-05"],
+          ["层级路径","站点WH1 / 1层 / 库区A /(无巷道) / 货架R03 / 第2列 第2层 第1深（变长，无巷道跳过）"],
+          ["状态/来源","已发布(Status=1) ／ 引擎生成(CodeOrigin=1)"],
+          ["坐标","(absX, absY, absZ) mm"],
+          ["07接入后叠","库存量 / 库位状态(空/满/锁定)"]
+        ]}
+      ]
+    },
+    {
+      "name": "楼层切换",
+      "cols": [{"i":1,"w":22},{"i":2,"w":82}],
+      "cells": [
+        {"r":1,"c":1,"v":"楼层切换与多层导航","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["要点","说明"],"rows":[
+          ["楼层列表","侧栏列当前Site的楼层(Floor.Level排序)"],
+          ["切层","点某层→viewer.dispose()旧层→viewer.load(floorId)新层(05§8.3)"],
+          ["重建场景","每Floor局部坐标系独立(00§2)，切层=重建，相机复位到新层概览机位"],
+          ["进度/防抖","切层显加载进度(05 onProgress)；连点只切最后一个"],
+          ["跨层状态","切层默认清选中(对象属上层)；定位目标在别层→先切层再飞行(第6.2)"],
+          ["多层概览(P1+)","楼层堆叠层片俯视预览，点层片进入；v1可简化为侧栏列表，堆叠预览留后续"]
+        ]}
+      ]
+    },
+    {
+      "name": "按编码定位",
+      "cols": [{"i":1,"w":18},{"i":2,"w":86}],
+      "cells": [
+        {"r":1,"c":1,"v":"按库位编码定位（D8 的 P1 半）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"},
+        {"r":2,"c":1,"v":"只需Space自有数据(库位表有code+AbsXYZ+floorId)，P1即可闭环；按物料/批次找货=07先问WMS","merge":"A2:B2","fill":"#FFF2CC"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"header":["定位流程 locate(code)","说明"],"rows":[
+          ["1 查位置","GET /location/locate?code= → {locationId, floorId, absX/Y/Z, placed}"],
+          ["2 异常","未找到→E-SPACE-601；未放置(Placed=false采纳态无几何)→W-SPACE-601"],
+          ["3 跨层","目标在别层→先viewer.load(目标floorId)(第5章)，等建图完成"],
+          ["4 飞行","dataToWorld(absXYZ)(05)→相机flyTo(第2.4)该库位上方斜视机位"],
+          ["5 到达","选中该库位+高亮闪烁(脉冲数次)+弹信息卡(第4.2)"],
+          ["输入形态","精确编码(唯一)直接定位；前缀/模糊(如A-03-*)返候选列表选一个再定位"],
+          ["扫码","扫码枪/手输同一入口(库位编码是join key，扫码即输码)"],
+          ["跨层卖点","无论库位在哪层都一步到位——P1核心卖点之一；切层失败/无权限提示"]
+        ]}
+      ]
+    },
+    {
+      "name": "视角API消息",
+      "cols": [{"i":1,"w":20},{"i":2,"w":40},{"i":3,"w":44}],
+      "cells": [
+        {"r":1,"c":1,"v":"视角辅助 / API / 消息一览","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["视角辅助","行为",""],"rows":[
+          ["聚焦选中 Focus","flyTo选中对象，target设为它，按对象包围盒算合适距离",""],
+          ["视角复位 Home","flyTo整层概览默认机位",""],
+          ["整层概览 Overview","正交俯视铺满整层(接近2D平面图)",""],
+          ["双击聚焦","双击任意对象=click选中+Focus",""],
+          ["高亮闪烁","定位/搜索命中时脉冲高亮数次引导视线，再恢复选中态高亮",""]
+        ]},
+        {"startR":10,"startC":1,"header":["API端点","方法","说明"],"rows":[
+          ["/location/locate?code=","GET","按编码精确定位→{locationId,floorId,absX/Y/Z,placed,status}"],
+          ["/location/search?prefix=&floorId=","GET","编码前缀/模糊搜索→候选列表(编码+路径摘要)，按LIKE"],
+          ["/location/{id}/detail","GET","信息卡详情(编码+变长路径+Status+CodeOrigin+坐标)"],
+          ["/floor/{id}/scene","GET","场景数据(复用05/01，切层加载用)"]
+        ]},
+        {"startR":16,"startC":1,"header":["消息ID","种别","内容/触发"],"rows":[
+          ["E-SPACE-601","Error","无此库位编码 / locate未命中"],
+          ["W-SPACE-601","Warn","该库位尚未放置无法定位 / 命中Placed=false"],
+          ["I-SPACE-601","Info","已定位到库位{code}({floor}层) / 飞行完成"],
+          ["I-SPACE-602","Info","找到N个匹配库位请选择 / 模糊多命中"],
+          ["W-SPACE-602","Warn","切换楼层中请稍候 / 跨层定位触发切层"]
+        ]}
+      ]
+    }
+  ]
+}

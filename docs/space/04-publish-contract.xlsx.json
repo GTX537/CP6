@@ -1,0 +1,128 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":78}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 04 · 库位发布与 WMS 集成契约","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · P1 收尾 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-04 库位发布与 WMS 集成契约"],
+          ["技术栈",".NET8 + EF Core；复用 CP6 既有 T_IntegrationEvent + BridgeHookBase + Dispatcher + 重试Worker/死信"],
+          ["命名空间","CP6.Core/Services/Space/LocationPublishService.cs + Integration(SPACE→WMS路由)"],
+          ["落地决策","D4 发布即冻结(冻编码不冻几何·纯几何不发布) / D6 停用前置0库存+TOCTOU WMS再检查 / 变长路径 / 单向低耦合契约在消费者侧"],
+          ["题眼","Space发库位目录主数据(编码+变长路径+属性)，绝不发几何；冻编码不冻几何"]
+        ]}
+      ]
+    },
+    {
+      "name": "事件载荷字段",
+      "cols": [{"i":1,"w":16},{"i":2,"w":24},{"i":3,"w":56}],
+      "cells": [
+        {"r":1,"c":1,"v":"LocationPublished 事件载荷（PayloadJson）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["字段","示例","说明"],"rows":[
+          ["batchNo","LPUB-20260613-0001","发布批号(采番，≤30字符，非裸GUID)；= IntegrationEvent.SourceNo"],
+          ["tenantId","GUID","租户，WMS 按此隔离"],
+          ["publishedBy","zhangsan","发布人(补溯源；基建缺口 Creator硬编码system)"],
+          ["item.op","UPSERT | DEACTIVATE","建立更新 / 停用"],
+          ["item.locationId","GUID","★稳定主键，终生不变"],
+          ["item.locationCode","A-03-02-05","★join key，发布后冻结"],
+          ["item.codeOrigin","1 / 2","引擎生成 / 采纳（对账）"],
+          ["item.version","7","★按 LocationId 递增，WMS 幂等判据"],
+          ["item.path","{siteCode,floorLevel,zoneCode,aisleCode:null,rackCode,col,level,depth}","★变长层级路径(跳Aisle)；辅助元数据，不参与 join"],
+          ["item.attrs","{sizeW,sizeH,sizeD}","纯业务属性；★无绝对坐标/几何"]
+        ]}
+      ]
+    },
+    {
+      "name": "发布触发矩阵",
+      "cols": [{"i":1,"w":40},{"i":2,"w":18},{"i":3,"w":16},{"i":4,"w":22}],
+      "cells": [{"r":1,"c":1,"v":"发布触发点（D4 表的兑现）","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"}],
+      "tables": [
+        {"startR":3,"startC":1,"header":["动作","Status变化","发布?","Op"],"rows":[
+          ["草稿首次发布(过闸门)","0→1","是","UPSERT"],
+          ["已发布库位编码变更","—","不可能(改→E-004)","—"],
+          ["货架移动/旋转/改尺寸(纯几何)","不变","否","—"],
+          ["货架增格→新库位","新库位 0→1","是","UPSERT"],
+          ["货架减格→删已发布库位","1→2","是","DEACTIVATE"],
+          ["采纳态绑定货架(D7)","不变","否(几何回填不改join key)","—"],
+          ["库区/巷道多边形调整","不变","否","—"],
+          ["库位停用(人工/减格)","1→2","是(先过D6)","DEACTIVATE"]
+        ]}
+      ]
+    },
+    {
+      "name": "D6停用双校验",
+      "cols": [{"i":1,"w":24},{"i":2,"w":40},{"i":3,"w":36}],
+      "cells": [
+        {"r":1,"c":1,"v":"停用与库存冲突（D6 双重校验）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["环节","动作","失败处理"],"rows":[
+          ["① Space前置校验","发停用前 IWmsStockQuery.GetStock(code) 查库存","qty>0→E-SPACE-401 阻断，不发事件"],
+          ["② WMS消费再校验(TOCTOU)","收 DEACTIVATE→再查一次实时库存","库存>0→拒绝，逐项 rejected→事件Skipped+原因"],
+          ["被拒回滚","—","Space 回滚本地 Status→1，W-SPACE-404 提示"],
+          ["权威","WMS侧再校验","库存真相在WMS；Space前置只是友好提示"]
+        ]}
+      ]
+    },
+    {
+      "name": "删除护栏决策",
+      "cols": [{"i":1,"w":20},{"i":2,"w":30},{"i":3,"w":50}],
+      "cells": [
+        {"r":1,"c":1,"v":"删巷道/货架与已发布库位（下游待办①已落实）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["删除对象","其下有已发布库位","处理"],"rows":[
+          ["删 Aisle","有","默认 Restrict，阻断 E-SPACE-402"],
+          ["删 Rack","有","默认 Restrict，阻断 E-SPACE-403(须先停用)"],
+          ["删巷道/货架","全是草稿(Status=0)","允许，连带删库位"]
+        ]},
+        {"startR":8,"startC":1,"header":["放行路径","动作","适用"],"rows":[
+          ["A 先停用再删","逐个 DEACTIVATE(过库存校验)→全停用后删","库位真的要废弃"],
+          ["B re-publish 改挂","改挂新巷道/货架(几何回填,code不变)，发UPSERT只更新path元数据,Version+1","库位还在用、巷道重命名/重组"],
+          ["B 精髓","LocationCode 全程不变","只刷WMS辅助path，不动join key；区别于纯几何不发布(path变更要发)"]
+        ]}
+      ]
+    },
+    {
+      "name": "采纳对账差异",
+      "cols": [{"i":1,"w":24},{"i":2,"w":30},{"i":3,"w":46}],
+      "cells": [
+        {"r":1,"c":1,"v":"存量采纳对账（CodeOrigin=2）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["采纳导入","说明",""],"rows":[
+          ["adopt","每条建 Location(Status=1,Placed=false,CodeOrigin=2,RackId=null,无几何)",""],
+          ["不回发 WMS","码本就来自WMS；仅在Space建影子目录进待绑列表",""],
+          ["编码冲突","与既有非空码撞→E-SPACE-008，跳过报告",""]
+        ]},
+        {"startR":7,"startC":1,"header":["对账差异","含义","处理"],"rows":[
+          ["WMS有/Space无","漏采纳","补 adopt 导入"],
+          ["Space有/WMS无","采纳了WMS已删的码","标记、人工确认是否停用"],
+          ["两边都有属性不一致","尺寸等元数据偏差","以约定方为准(库存属性WMS/几何Space)"]
+        ]}
+      ]
+    },
+    {
+      "name": "集成基建复用",
+      "cols": [{"i":1,"w":40},{"i":2,"w":60}],
+      "cells": [
+        {"r":1,"c":1,"v":"接入 CP6 既有集成基建（不另造总线）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["既有件","复用方式"],"rows":[
+          ["T_IntegrationEvent","持久化事件，三段式 Pending→Success/Skipped/Failed→Dead/Compensated"],
+          ["BridgeHookBase.PersistEventAsync","Space发布hook继承，落事件+设重试"],
+          ["IntegrationEventDispatcher","新增路由 SPACE|WMS|OnLocationPublishedAsync"],
+          ["重试Worker+死信+IDeadLetterNotifier","每60s扫Failed退避；SignalR+Sys_OperLog告警"],
+          ["WMS幂等upsert","按 locationId(非code)关联；version<=lastVersion→Skip；至少一次投递安全"]
+        ]}
+      ]
+    }
+  ]
+}

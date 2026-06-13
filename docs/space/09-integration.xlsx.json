@@ -1,0 +1,149 @@
+{
+  "sheets": [
+    {
+      "name": "封面",
+      "cols": [{"i":1,"w":22},{"i":2,"w":84}],
+      "cells": [
+        {"r":1,"c":1,"v":"Space 09 · 多租户与 CP6 接入","bold":true,"size":14,"merge":"A1:B1","fill":"#1F4E78","fontColor":"#FFFFFF","align":"center"},
+        {"r":2,"c":1,"v":"CP6 空间数字底座 · 接入收尾 · 配套 xlsx","merge":"A2:B2","align":"center","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":4,"startC":1,"headerFill":"#1F4E78","header":["项目","内容"],"rows":[
+          ["章节ID","SPACE-09 多租户与 CP6 接入"],
+          ["里程碑","收尾(总装进CP6：多租户隔离+权限接PUB+登录/菜单+DI/迁移/事件路由；完成=单租户端到端跑通)"],
+          ["技术栈",".NET8+EF Core(迁移/DI/多租户过滤) + Vue3(菜单/路由) + 复用PUB/TenantId/IntegrationEvent"],
+          ["命名空间","CP6.Entity/DomainModels/Space + CP6.Core/Services/Space + views/space + space-viewer"],
+          ["落地决策","全表TenantId / 权限接PUB四粒度 / 编码规则按租户 / Space独立顶级模块(与ERP/MES/WMS/OA/PUB平级)"],
+          ["题眼","前8章做能力，本章接进CP6这台车；不发明新能力，只做总装+清单，勾完即单租户端到端跑通"]
+        ]}
+      ]
+    },
+    {
+      "name": "多租户隔离",
+      "cols": [{"i":1,"w":18},{"i":2,"w":50},{"i":3,"w":36}],
+      "cells": [
+        {"r":1,"c":1,"v":"多租户隔离（全表 TenantId + EF 全局过滤）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["要点","说明",""],"rows":[
+          ["全表TenantId","9表+发布批/事件全带TenantId(00§3 BaseEntity已含)",""],
+          ["EF全局过滤","HasQueryFilter(e=>e.TenantId==_currentTenant)，任何查询自动按租户切片，绝不裸查跨租户",""]
+        ]},
+        {"startR":7,"startC":1,"header":["跨租户串号场景","防线","章"],"rows":[
+          ["场景导入","全ID重映射+注入当前TenantId","01§7.2"],
+          ["编码唯一","(TenantId,LocationCode)过滤唯一索引","00/03"],
+          ["库存查询","IWmsStockQuery传TenantId，WMS按租户隔离","07"],
+          ["发布事件","payload带tenantId，WMS按租户建bin","04"],
+          ["自检要点","每个查询/写入路径经租户过滤；导入/发布/跨模块调用显式带TenantId","—"]
+        ]}
+      ]
+    },
+    {
+      "name": "权限接PUB",
+      "cols": [{"i":1,"w":26},{"i":2,"w":18},{"i":3,"w":40}],
+      "cells": [
+        {"r":1,"c":1,"v":"权限接 PUB（功能/数据/字段四粒度，不自造）","bold":true,"size":12,"merge":"A1:C1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["功能权限点(示例)","粒度","章"],"rows":[
+          ["Space.Editor.View / Edit","页面/按钮","01/02建模精修"],
+          ["Space.Template.Manage","按钮","01模板CRUD"],
+          ["Space.Code.Generate","按钮","03生成/重排编码"],
+          ["Space.Publish / Deactivate","按钮","04发布/停用(高危)"],
+          ["Space.Adopt / Import","按钮","04/01采纳/导入"],
+          ["Space.Viewer.View","页面","05/06 3D浏览"],
+          ["Space.Stock.View","按钮","07库存叠加"],
+          ["高危独立授权","—","发布/停用/删除/采纳必须独立权限点，不与浏览混授"]
+        ]},
+        {"startR":12,"startC":1,"header":["数据/字段权限","说明",""],"rows":[
+          ["数据行","场景/库位查询接PUB数据权限(按Sys_Dept等)，用户只见有权Site/Floor",""],
+          ["字段","敏感字段(成本/容量)按PUB字段权限控可见性(v1多为预留)",""],
+          ["跨层定位","06受数据权限：无权楼层不可达、不可定位",""]
+        ]}
+      ]
+    },
+    {
+      "name": "登录菜单路由",
+      "cols": [{"i":1,"w":16},{"i":2,"w":88}],
+      "cells": [
+        {"r":1,"c":1,"v":"登录 / 菜单 / 路由接入（第六个顶级模块）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["要点","说明"],"rows":[
+          ["顶级模块","Space是CP6第六个顶级模块(与ERP/MES/WMS/OA/PUB平级；命名空间⊥菜单分组)"],
+          ["菜单分组","空间数字底座(顶级)→空间建模(01/02)·编码规则(03)·库位发布(04)·3D浏览(05/06/07/08)"],
+          ["登录","复用CP6登录/鉴权；登录后按PUB权限渲染Space菜单项"],
+          ["菜单","CP6菜单表注册Space节点(按权限点显隐)"],
+          ["前端路由","cp6.web注册/space/*(editor/code-rule/publish/viewer)"],
+          ["多语言","Space菜单/界面文案接CP6 i18n(沿用i18n迁移指南)"]
+        ]}
+      ]
+    },
+    {
+      "name": "DI装配迁移",
+      "cols": [{"i":1,"w":22},{"i":2,"w":82}],
+      "cells": [
+        {"r":1,"c":1,"v":"DI 注册 / 事件路由 / WMS契约 / 数据库迁移","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["DI/装配","说明"],"rows":[
+          ["服务DI","Template/Scene/SceneIo(01)·CodeEngine(03)·LocationPublish(04)·定位查询(06) 全AddScoped；Repo复用CP6泛型仓储+租户过滤"],
+          ["事件路由","RouteKey(SPACE,WMS,OnLocationPublishedAsync)→IWms…Consumer；SpaceBridgeHook继承BridgeHookBase，复用重试Worker/死信/IDeadLetterNotifier"],
+          ["WMS契约DI","IWmsStockQuery(07/04)·IWmsPickTaskQuery(08)·IWmsWorkloadQuery(08)·IWmsDeviceQuery(08桩) 绑WMS实现"],
+          ["低耦合","Space只依赖抽象；编译期不引用WMS实现程序集(单向)"]
+        ]},
+        {"startR":8,"startC":1,"header":["数据库迁移","说明"],"rows":[
+          ["9表","Space_Site/Floor/Zone/Aisle/Rack/Location/Template/CodeRule/Marker"],
+          ["关键索引","UX_Space_Location_Tenant_Code(过滤唯一)·IX_Location_Status·IX_CodeRule_Scope·各表TenantId索引·Rack/Location RowVersion"],
+          ["外键策略","00定义Restrict/SetNull(+04§7删巷道/货架护栏应用层补)"],
+          ["迁移命令","dotnet ef migrations add Space_Init (CP6.Core)，并入CP6迁移链"],
+          ["种子","每租户一条ScopeType=0 IsDefault兜底编码规则(03§2.3)+系统预置货架/库区模板库(01§4.3)"],
+          ["SaaS模式","单库多租户、共享schema、按TenantId隔离、统一升级"]
+        ]},
+        {"startR":15,"startC":1,"header":["租户化","说明"],"rows":[
+          ["编码规则(03)","按TenantId隔离；每租户至少一条默认规则；作用域规则含租户上层段保证全局唯一"],
+          ["模板(01)","货架/库区模板租户级；系统预置可被租户clone到自己名下再改"],
+          ["场景复制(01)","跨租户导入强制ID重映射+注入当前TenantId+清编码/状态→草稿(防串号)"]
+        ]}
+      ]
+    },
+    {
+      "name": "接入清单checklist",
+      "cols": [{"i":1,"w":24},{"i":2,"w":80}],
+      "cells": [
+        {"r":1,"c":1,"v":"接入清单（勾完=单租户端到端跑通）","bold":true,"size":12,"merge":"A1:B1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["分类","检查项"],"rows":[
+          ["数据库","□ Space_Init迁移已应用(9表+索引+唯一/状态/作用域索引)  □ 每租户种子:默认编码规则+预置模板库"],
+          ["多租户","□ 9表+发布批/事件全带TenantId  □ EF全局过滤生效(抽查任意查询自动切租户)  □ 导入/发布/库存查询显式带TenantId"],
+          ["权限PUB","□ 功能权限点注册(建模/模板/编码/发布/停用/采纳/浏览/库存)  □ 高危独立授权  □ 场景/库位查询接数据权限(按Sys_Dept)"],
+          ["接入","□ Space菜单节点注册(顶级，按权限显隐)  □ /space/*路由+i18n文案  □ 登录后可见可达"],
+          ["装配DI","□ Space Services注入(Template/Scene/CodeEngine/Publish/定位)  □ SPACE|WMS事件路由+SpaceBridgeHook  □ IWmsStockQuery/PickTask/Workload/Device绑WMS实现(Device可桩)"],
+          ["冒烟(单租户)","□ 建Site/Floor→2D模板生成货架/库位(01)  □ 精修对齐(02)→生成编码(03过唯一校验)  □ 发布(04过code-precheck闸门)→WMS收到LocationPublished  □ 3D浏览(05)→按编码定位(06)  □ (P2)库存叠加着色(07)+按物料定位  □ (P3)拣货路径动画+作业热图(08，WMS数据就绪时)"]
+        ]}
+      ]
+    },
+    {
+      "name": "消息丛书收官",
+      "cols": [{"i":1,"w":16},{"i":2,"w":14},{"i":3,"w":40},{"i":4,"w":34}],
+      "cells": [
+        {"r":1,"c":1,"v":"消息一览 / 丛书收官","bold":true,"size":12,"merge":"A1:D1","fill":"#DDEBF7"}
+      ],
+      "tables": [
+        {"startR":3,"startC":1,"header":["消息ID","种别","内容","触发"],"rows":[
+          ["E-SPACE-901","Error","无权访问该空间模块功能","PUB功能权限校验失败"],
+          ["E-SPACE-902","Error","无权访问该楼层/库区数据","PUB数据权限拦截(跨层定位等)"],
+          ["W-SPACE-901","Warn","当前租户尚未配置编码规则，已用默认规则","租户缺规则回落种子默认"],
+          ["I-SPACE-901","Info","Space模块接入校验通过","接入清单冒烟全过"]
+        ]},
+        {"startR":9,"startC":1,"header":["阶段","章","完成标志"],"rows":[
+          ["P1建模底座","00·01·02·03·04·05·06","建仓→生成→编码→发布→3D浏览→按编码定位"],
+          ["P2实时叠加","07库存叠加","3D看真实库存+按物料定位+库容率"],
+          ["P3高级可视化","08路径动画/热图/设备占位","拣货路径3D动画+作业热图"],
+          ["收尾接入","09多租户与CP6接入","多租户隔离+权限+单租户端到端跑通"]
+        ]}
+      ]
+    }
+  ]
+}
