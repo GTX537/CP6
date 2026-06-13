@@ -416,6 +416,13 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
         db.SaveChanges();
     }
+    // PUB 章00 组织模型：部门管理菜单
+    if (!db.Sys_Menus.Any(m => m.MenuId == 108))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 108, MenuName = "部门管理", RoutePath = "/pub/dept", Icon = "OfficeBuilding", ParentId = 100, OrderNo = 108, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 108 });
+        db.SaveChanges();
+    }
     if (!db.Sys_Menus.Any(m => m.MenuId == 106))
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 106, MenuName = "数据字典", RoutePath = "/dict", Icon = "Collection", ParentId = 100, OrderNo = 106, Enable = true });

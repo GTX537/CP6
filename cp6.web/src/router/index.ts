@@ -11,6 +11,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/lang': () => import('@/views/pms/LangView.vue'),
   '/dict': () => import('@/views/pms/DictView.vue'),
   '/operlog': () => import('@/views/pms/OperLogView.vue'),
+  '/pub/dept': () => import('@/views/pms/DeptTreeView.vue'),   // PUB 章00 组织模型
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),
