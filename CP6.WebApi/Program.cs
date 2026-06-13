@@ -87,6 +87,9 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
 // 4.0 PUB 章00 组织模型
 builder.Services.AddScoped<CP6.Core.Services.Sys.IDeptService, CP6.Core.Services.Sys.DeptService>();
 
+// 4.0a OA(Wf) 阶段1 运行时
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverResolver, CP6.Core.Services.Wf.ApproverResolver>(); // 章01 审批人解析（消费 PUB 组织）
+
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
 builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
