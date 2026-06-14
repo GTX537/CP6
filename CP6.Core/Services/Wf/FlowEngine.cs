@@ -15,7 +15,14 @@ public class FlowEngine : IFlowEngine
 
     private readonly CP6Context _db;
     private readonly IApproverResolver _approver;
-    public FlowEngine(CP6Context db, IApproverResolver approver) { _db = db; _approver = approver; }
+    private readonly IWfNotifier _notifier;
+
+    public FlowEngine(CP6Context db, IApproverResolver approver, IWfNotifier? notifier = null)
+    {
+        _db = db;
+        _approver = approver;
+        _notifier = notifier ?? new NullWfNotifier();   // 无 SignalR 环境/单测 → 空推送
+    }
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
     {
@@ -128,7 +135,7 @@ public class FlowEngine : IFlowEngine
 
         foreach (var uid in res.ApproverIds.Distinct())
         {
-            _db.Wf_FlowTasks.Add(new Wf_FlowTask
+            var task = new Wf_FlowTask
             {
                 Id = Guid.NewGuid(),
                 InstanceId = inst.Id,
@@ -136,7 +143,9 @@ public class FlowEngine : IFlowEngine
                 AssigneeId = uid,
                 Status = FlowTaskStatus.Pending,
                 Countersign = node.Countersign,
-            });
+            };
+            _db.Wf_FlowTasks.Add(task);
+            await _notifier.TodoCreatedAsync(uid, inst.Id, task.Id, inst.FlowKey);   // 推送待办（空实现=no-op）
         }
     }
 
