@@ -124,16 +124,16 @@ onMounted(async () => {
 })
 
 async function search() {
-  if (!query.baseCd) { ElMessage.warning('E10022: 拠点を指定してください'); return }
+  if (!query.baseCd) { ElMessage.warning(t('拠点を指定してください')); return }
   if (!query.includeUnissued && !query.includeIssued) {
-    ElMessage.warning('E10030: ステータスのいずれかを選択してください'); return
+    ElMessage.warning(t('ステータスのいずれかを選択してください')); return
   }
   // FROM ≤ TO
   if (query.issueDateFrom && query.issueDateTo && query.issueDateFrom > query.issueDateTo) {
-    ElMessage.warning('E10036: 御見積書作成日は FROM ≤ TO で指定してください'); return
+    ElMessage.warning(t('御見積書作成日は FROM ≤ TO で指定してください')); return
   }
   if (query.qtnNoFrom && query.qtnNoTo && query.qtnNoFrom > query.qtnNoTo) {
-    ElMessage.warning('E10036: 御見積書 NO は FROM ≤ TO で指定してください'); return
+    ElMessage.warning(t('御見積書 NO は FROM ≤ TO で指定してください')); return
   }
 
   loading.value = true
@@ -142,7 +142,7 @@ async function search() {
     if (r.code === 0 && r.data) {
       rows.value = r.data.rows
       total.value = r.data.total
-      if (rows.value.length === 0) ElMessage.info('E10008: 検索結果がありません')
+      if (rows.value.length === 0) ElMessage.info(t('検索結果がありません'))
     }
   } finally {
     loading.value = false
@@ -162,12 +162,12 @@ function resetQuery() {
 }
 
 async function onIssue() {
-  if (!formatName.value) { ElMessage.warning('E10022: 出力フォーマットを選択してください'); return }
+  if (!formatName.value) { ElMessage.warning(t('出力フォーマットを選択してください')); return }
   const checked = rows.value.filter(r => r.issue)
-  if (checked.length === 0) { ElMessage.warning('発行☑の行がありません'); return }
+  if (checked.length === 0) { ElMessage.warning(t('発行☑の行がありません')); return }
 
   try {
-    await ElMessageBox.confirm(`${checked.length} 件のチェックシートを発行します。よろしいですか？`, '確認', { type: 'warning' })
+    await ElMessageBox.confirm(t('{n} 件のチェックシートを発行します。よろしいですか？', { n: checked.length }), t('確認'), { type: 'warning' })
   } catch { return }
 
   issuing.value = true
@@ -177,7 +177,7 @@ async function onIssue() {
       targets: checked.map(c => ({ qtnNo: c.qtnNo, qtnCalcNo: c.qtnCalcNo, customerCd: c.customerCd, staffCd: c.staffCd })),
     })
     if (r.code === 0 && r.data) {
-      ElMessage.success(`${r.data.issuedCount} 件のチェックシートを発行しました`)
+      ElMessage.success(t('{n} 件のチェックシートを発行しました', { n: r.data.issuedCount }))
       // Excel ダウンロード（最初の 1 件をブラウザで開く）
       if (r.data.items.length > 0) {
         const first = r.data.items[0]!

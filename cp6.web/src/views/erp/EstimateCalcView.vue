@@ -28,9 +28,9 @@
         class="step-bar"
         :simple="isMobile"
       >
-        <el-step :title="isMobile ? '基本' : t('sales.section.basicInfo')" :description="isMobile ? '' : 'Step 1'" />
-        <el-step :title="isMobile ? '工程' : t('sales.section.process')" :description="isMobile ? '' : 'Step 2'" />
-        <el-step :title="isMobile ? '結果' : t('sales.list.detail')" :description="isMobile ? '' : 'Step 3'" />
+        <el-step :title="isMobile ? t('基本') : t('sales.section.basicInfo')" :description="isMobile ? '' : 'Step 1'" />
+        <el-step :title="isMobile ? t('工程') : t('sales.section.process')" :description="isMobile ? '' : 'Step 2'" />
+        <el-step :title="isMobile ? t('結果') : t('sales.list.detail')" :description="isMobile ? '' : 'Step 3'" />
       </el-steps>
     </el-card>
 

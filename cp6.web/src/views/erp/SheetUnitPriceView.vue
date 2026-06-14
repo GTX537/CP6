@@ -144,13 +144,13 @@ async function onFileChange(file: { raw: File }) {
       if (r.data.hasDuplicates) {
         try {
           await ElMessageBox.confirm(
-            'E10101: 同じデータが登録されています。上書きしますか。',
+            t('同じデータが登録されています。上書きしますか。'),
             t('sales.msg.confirmTitle'), { type: 'warning' }
           )
         } catch { rows.value = []; return }
       }
       rows.value = r.data.rows.map(row => ({ ...row, selected: true }))
-      ElMessage.success(`${rows.value.length} 件のデータを取込みました`)
+      ElMessage.success(t('{n} 件のデータを取込みました', { n: rows.value.length }))
     }
   } finally {
     loading.value = false
@@ -174,7 +174,7 @@ async function onSearch() {
 async function onUpdate() {
   if (checkedCount.value === 0) { ElMessage.warning(t('sales.err.E10009')); return }
   try {
-    await ElMessageBox.confirm(`${checkedCount.value} 件を更新します。よろしいですか？`, t('sales.msg.confirmTitle'), { type: 'warning' })
+    await ElMessageBox.confirm(t('{n} 件を更新します。よろしいですか？', { n: checkedCount.value }), t('sales.msg.confirmTitle'), { type: 'warning' })
   } catch { return }
   updating.value = true
   try {
@@ -183,7 +183,7 @@ async function onUpdate() {
       rows: rows.value,
     })
     if (r.code === 0 && r.data) {
-      ElMessage.success(`${r.data.updated} 件を更新しました`)
+      ElMessage.success(t('{n} 件を更新しました', { n: r.data.updated }))
       rows.value = []
       selectedFile.value = null
     }

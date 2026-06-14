@@ -1023,7 +1023,9 @@ using (var scope = app.Services.CreateScope())
         };
 
         var existingKeys = db.Sys_Langs.Select(l => l.LangKey).ToHashSet();
-        var toAdd = CP6.WebApi.Seed.I18nLabelSeed.Items.Concat(extraUi)
+        var toAdd = CP6.WebApi.Seed.I18nLabelSeed.Items
+            .Concat(extraUi)
+            .Concat(CP6.WebApi.Seed.I18nErpScreenSeed.Items)   // 遗留① ERP 旧画面词条
             .Where(i => !existingKeys.Contains(i.LangKey))
             .ToList();
         if (toAdd.Count > 0)

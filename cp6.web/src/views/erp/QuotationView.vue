@@ -5,18 +5,18 @@
       <div class="header-row">
         <div class="header-left">
           <el-tag :type="opTagType" :size="isMobile ? 'default' : 'large'" effect="dark">{{ opLabel }}</el-tag>
-          <span v-if="form.qtnNo" class="qtn-no">御見積書 No. {{ form.qtnNo }}</span>
+          <span v-if="form.qtnNo" class="qtn-no">{{ t('御見積書 No.') }} {{ form.qtnNo }}</span>
           <el-tag v-if="statusLabel" :type="statusTagType" effect="plain" :size="isMobile ? 'small' : 'large'">
             {{ statusLabel }}
           </el-tag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="!form.qtnNo && op !== 10">
-            <el-radio-button :value="Op.New">新規</el-radio-button>
-            <el-radio-button :value="Op.Edit" :disabled="!form.qtnNo">訂正</el-radio-button>
-            <el-radio-button :value="Op.Copy" :disabled="!form.qtnNo">流用</el-radio-button>
-            <el-radio-button :value="Op.View" :disabled="!form.qtnNo">照会</el-radio-button>
-            <el-radio-button :value="Op.Delete" :disabled="!form.qtnNo">削除</el-radio-button>
+            <el-radio-button :value="Op.New">{{ t('新規') }}</el-radio-button>
+            <el-radio-button :value="Op.Edit" :disabled="!form.qtnNo">{{ t('訂正') }}</el-radio-button>
+            <el-radio-button :value="Op.Copy" :disabled="!form.qtnNo">{{ t('流用') }}</el-radio-button>
+            <el-radio-button :value="Op.View" :disabled="!form.qtnNo">{{ t('照会') }}</el-radio-button>
+            <el-radio-button :value="Op.Delete" :disabled="!form.qtnNo">{{ t('削除') }}</el-radio-button>
           </el-radio-group>
         </div>
       </div>
@@ -35,8 +35,8 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="loadByNo">読込</el-button>
-          <el-button @click="onNewClick">新規</el-button>
+          <el-button type="primary" :loading="loading" @click="loadByNo">{{ t('読込') }}</el-button>
+          <el-button @click="onNewClick">{{ t('新規') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -155,7 +155,7 @@
               <el-col :span="6">
                 <el-form-item :label="t('合計金額')">
                   <el-input :value="fmtMoney(form.totalAmount)" disabled>
-                    <template #append>円</template>
+                    <template #append>{{ t('円') }}</template>
                   </el-input>
                 </el-form-item>
               </el-col>
@@ -206,7 +206,7 @@
             <el-divider content-position="left">{{ t('備考（15 行）') }}</el-divider>
             <el-row :gutter="8">
               <el-col v-for="(_, i) in 15" :key="i" :span="12">
-                <el-form-item :label="`備考${String(i + 1).padStart(2, '0')}`" label-width="80px">
+                <el-form-item :label="`${t('備考')}${String(i + 1).padStart(2, '0')}`" label-width="80px">
                   <el-input v-model="form.qtnNotes[i]" maxlength="100" show-word-limit />
                 </el-form-item>
               </el-col>
@@ -216,16 +216,16 @@
           <!-- Tab3: 関連見積計算書 ========================= -->
           <el-tab-pane name="calcs">
             <template #label>
-              <span>③ 関連見積計算書</span>
+              <span>{{ t('③ 関連見積計算書') }}</span>
               <el-badge v-if="form.calcs.length" :value="form.calcs.length" class="tab-badge" />
             </template>
 
             <div class="toolbar">
               <el-button size="small" :loading="loadingCalcs" @click="refreshCalcCandidates">
-                候補再取得
+                {{ t('候補再取得') }}
               </el-button>
               <el-text type="info" size="small" style="margin-left: 8px">
-                顧客コード + 案件No（親/子/材質）を変更すると自動リフレッシュ
+                {{ t('顧客コード + 案件No（親/子/材質）を変更すると自動リフレッシュ') }}
               </el-text>
             </div>
 
@@ -275,7 +275,7 @@
 
             <el-empty
               v-if="!loadingCalcs && calcCandidates.length === 0"
-              description="顧客・案件を設定してください"
+              :description="t('顧客・案件を設定してください')"
               :image-size="60"
             />
           </el-tab-pane>
@@ -283,16 +283,16 @@
           <!-- Tab4: 印刷明细 ============================== -->
           <el-tab-pane name="details">
             <template #label>
-              <span>④ 印刷明細</span>
+              <span>{{ t('④ 印刷明細') }}</span>
               <el-badge v-if="form.details.length" :value="form.details.length" class="tab-badge" />
             </template>
 
             <div class="toolbar">
               <el-button size="small" type="primary" :disabled="isPageReadOnly" @click="addDetailRow">
-                + 行追加
+                {{ t('+ 行追加') }}
               </el-button>
               <el-button size="small" :disabled="isPageReadOnly" @click="recalcTotalAmount">
-                合計再計算
+                {{ t('合計再計算') }}
               </el-button>
             </div>
 
@@ -371,14 +371,14 @@
                     :disabled="isPageReadOnly || !!row.qtnCalcNo"
                     @click="removeDetailRow($index)"
                   >
-                    削除
+                    {{ t('削除') }}
                   </el-button>
                 </template>
               </el-table-column>
             </el-table>
 
             <div v-if="form.details.length === 0" style="text-align:center; padding: 16px; color:#909399">
-              明細がありません。「使用」チェック or 「行追加」で明細を追加してください。
+              {{ t('明細がありません。「使用」チェック or 「行追加」で明細を追加してください。') }}
             </div>
           </el-tab-pane>
 
@@ -394,7 +394,7 @@
             <el-divider content-position="left">{{ t('計算書メモ（8 行）') }}</el-divider>
             <el-row :gutter="8">
               <el-col v-for="(_, i) in 8" :key="i" :span="12">
-                <el-form-item :label="`メモ${String(i + 1).padStart(2, '0')}`" label-width="80px">
+                <el-form-item :label="`${t('メモ')}${String(i + 1).padStart(2, '0')}`" label-width="80px">
                   <el-input v-model="form.calcNotes[i]" maxlength="100" show-word-limit />
                 </el-form-item>
               </el-col>
@@ -421,7 +421,7 @@
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
         <el-button v-if="showSave" type="success" :loading="saving" @click="onSave">
-          保存
+          {{ t('保存') }}
         </el-button>
         <el-button
           v-if="showConfirm"
@@ -429,14 +429,14 @@
           :loading="saving"
           @click="onConfirm"
         >
-          確定登録
+          {{ t('確定登録') }}
         </el-button>
         <el-button
           v-if="showCancelConfirm"
           :loading="saving"
           @click="onCancelConfirm"
         >
-          確定取消
+          {{ t('確定取消') }}
         </el-button>
         <el-button
           v-if="showIssue"
@@ -444,12 +444,12 @@
           :loading="saving"
           @click="onIssue"
         >
-          発行
+          {{ t('発行') }}
         </el-button>
         <el-button v-if="showDelete" type="danger" :loading="saving" @click="onDelete">
-          削除
+          {{ t('削除') }}
         </el-button>
-        <el-button @click="onClose">{{ isStandalone ? '閉じる' : '戻る' }}</el-button>
+        <el-button @click="onClose">{{ isStandalone ? t('閉じる') : t('戻る') }}</el-button>
       </div>
     </el-card>
   </div>
@@ -517,9 +517,9 @@ function emptyForm(): QuotationDto {
 const form = reactive<QuotationDto>(emptyForm())
 
 const rules: FormRules = {
-  baseCd: [{ required: true, message: '拠点を選択してください', trigger: 'change' }],
-  staffCd: [{ required: true, message: '担当者を選択してください', trigger: 'change' }],
-  customerCd: [{ required: true, message: '顧客コードを入力してください', trigger: 'blur' }],
+  baseCd: [{ required: true, message: t('拠点を選択してください'), trigger: 'change' }],
+  staffCd: [{ required: true, message: t('担当者を選択してください'), trigger: 'change' }],
+  customerCd: [{ required: true, message: t('顧客コードを入力してください'), trigger: 'blur' }],
 }
 
 // ============== Computed ==============
@@ -539,9 +539,9 @@ const isPkRo = computed(() => isEdit.value || isView.value || isDelete.value)
 /** 承認/確定状态标签 */
 const isConfirmed = computed(() => form.masterConfirmFlg >= 2)
 const statusLabel = computed(() => {
-  if (form.masterConfirmFlg >= 2) return '見積確定済'
-  if (form.estimateCheckFlg >= 1) return '承認済'
-  if (form.qtnNo) return '未承認'
+  if (form.masterConfirmFlg >= 2) return t('見積確定済')
+  if (form.estimateCheckFlg >= 1) return t('承認済')
+  if (form.qtnNo) return t('未承認')
   return ''
 })
 const statusTagType = computed<'info' | 'success' | 'warning' | 'primary'>(() => {
@@ -552,13 +552,13 @@ const statusTagType = computed<'info' | 'success' | 'warning' | 'primary'>(() =>
 
 const opLabel = computed(() => {
   switch (op.value) {
-    case Op.New: return '新規'
-    case Op.Edit: return '訂正'
-    case Op.Copy: return '流用'
-    case Op.View: return '照会'
-    case Op.Delete: return '削除'
-    case Op.Confirm: return '確定登録'
-    case Op.CancelConfirm: return '確定取消'
+    case Op.New: return t('新規')
+    case Op.Edit: return t('訂正')
+    case Op.Copy: return t('流用')
+    case Op.View: return t('照会')
+    case Op.Delete: return t('削除')
+    case Op.Confirm: return t('確定登録')
+    case Op.CancelConfirm: return t('確定取消')
     default: return ''
   }
 })
@@ -762,7 +762,7 @@ watch(
 // ============== 读取 / 切换 op ==============
 async function loadByNo() {
   if (!searchNo.value) {
-    ElMessage.warning('御見積書Noを入力してください')
+    ElMessage.warning(t('御見積書Noを入力してください'))
     return
   }
   try {
@@ -772,7 +772,7 @@ async function loadByNo() {
       loadForm(res.data)
       await nextTick()
       await refreshCalcCandidates()
-      ElMessage.success('読込成功')
+      ElMessage.success(t('読込成功'))
     } else {
       ElMessage.warning(res.message)
     }
@@ -791,7 +791,7 @@ async function onOpChange(target: QuotationOperationType) {
       if (res.code === 0) {
         loadForm(res.data)
         op.value = Op.Edit // 流用後は編集モード扱い
-        ElMessage.success('流用副本を生成しました')
+        ElMessage.success(t('流用副本を生成しました'))
         await refreshCalcCandidates()
       }
     } finally {
