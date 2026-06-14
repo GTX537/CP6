@@ -29,5 +29,9 @@ public interface IJournalEntryService
     /// <summary>驳回（PendingReview→Rejected + 原因）。</summary>
     Task<FinResult> RejectAsync(Guid entryId, string reason);
 
-    // 红冲 ReverseAsync 见 B-3（追加到本接口）
+    /// <summary>
+    /// 红冲（章01 §6）。只 Posted 可红冲；生成借贷对调的反向凭证，原凭证→Reversed，互指。
+    /// autoPost=true（系统触发，如出货取消/付款撤销）→ 红冲直过；false（手工红冲）→ 待复核。
+    /// </summary>
+    Task<FinResult> ReverseAsync(Guid entryId, string makerId, string reason, bool autoPost = false);
 }

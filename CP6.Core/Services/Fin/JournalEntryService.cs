@@ -130,6 +130,57 @@ public class JournalEntryService : IJournalEntryService
         return FinResult.Pass();
     }
 
+    public async Task<FinResult> ReverseAsync(Guid entryId, string makerId, string reason, bool autoPost = false)
+    {
+        var origin = await GetAsync(entryId);
+        if (origin == null) return FinResult.Fail("E-FIN-130");
+        if (origin.Status != JournalStatus.Posted) return FinResult.Fail("E-FIN-120");   // 只有已过账可红冲
+
+        var now = DateTime.Now;
+        var reversal = new JournalEntry
+        {
+            Id = Guid.NewGuid(),
+            VoucherDate = origin.VoucherDate,
+            PeriodId = origin.PeriodId,
+            No = await _seq.NextAsync(SeqKey, origin.VoucherDate),
+            Source = VoucherSource.Reversal,
+            SourceDocNo = origin.No,
+            ReverseOfId = origin.Id,
+            Description = $"红冲 {origin.No}：{reason}",
+            // ★ 红冲跟随触发源：系统触发自动过账，手工触发走复核（与正向凭证同一原则）
+            Status = autoPost ? JournalStatus.Posted : JournalStatus.PendingReview,
+            AutoPosted = autoPost,
+            MakerId = autoPost ? SystemUser : makerId,
+            MakerAt = now,
+            CheckerId = autoPost ? SystemUser : null,
+            CheckerAt = autoPost ? now : null,
+            Creator = makerId,
+            CreateDate = now,
+            Lines = origin.Lines.Select(l => new JournalLine
+            {
+                AccountId = l.AccountId,
+                Debit = l.Credit,      // ← 借贷对调
+                Credit = l.Debit,
+                PartnerId = l.PartnerId,
+                CostObjectType = l.CostObjectType,
+                CostObjectId = l.CostObjectId,
+                CostCenterId = l.CostCenterId,
+                CurrencyCd = l.CurrencyCd,
+                FxRate = l.FxRate,
+                OrigAmount = l.OrigAmount,
+                Memo = l.Memo,
+            }).ToList(),
+        };
+        NormalizeLines(reversal);
+
+        origin.ReversedById = reversal.Id;
+        origin.Status = JournalStatus.Reversed;
+        origin.ModifyDate = now;
+        _db.JournalEntries.Add(reversal);
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
     /// <summary>给分录补行号并挂上头 Id。</summary>
     private static void NormalizeLines(JournalEntry entry)
     {
