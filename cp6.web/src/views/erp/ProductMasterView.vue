@@ -158,7 +158,7 @@ function notifyOpener(type: 'saved' | 'deleted') {
 async function onOpChange(target: ProductOperationType) {
   if (store.isDirty) {
     try {
-      await ElMessageBox.confirm('当前修改尚未保存，继续切换将丢弃？', t('確認'), { type: 'warning' })
+      await ElMessageBox.confirm(t('当前修改尚未保存，继续切换将丢弃？'), t('確認'), { type: 'warning' })
     } catch { return }
   }
   const from = store.operationType

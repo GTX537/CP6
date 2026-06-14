@@ -4,7 +4,7 @@
 import i18n from '@/i18n'
 import { useI18n } from 'vue-i18n'
 
-/** DB(Sys_Lang) 中现存的全部词条 key（2960 个）。 */
+/** DB(Sys_Lang) 中现存的全部词条 key（2962 个）。 */
 export type MessageKey =
   | '(ファイルなし)'
   | '(未設定)'
@@ -2304,6 +2304,7 @@ export type MessageKey =
   | '建物など'
   | '开始导入'
   | '引入'
+  | '当前修改尚未保存，继续切换将丢弃？'
   | '当前流水'
   | '当前节点'
   | '形状1'
@@ -2714,6 +2715,7 @@ export type MessageKey =
   | '良品'
   | '良品数'
   | '色数'
+  | '节点'
   | '菜单与操作点（未勾选菜单则其操作点禁用）'
   | '落丁型'
   | '行'

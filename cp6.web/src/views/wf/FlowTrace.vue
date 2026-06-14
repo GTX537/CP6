@@ -8,7 +8,7 @@
         placement="top"
         :type="dotType(h.action)"
       >
-        <div class="trace-action">{{ actionText(h.action) }} · 节点 {{ h.nodeId }}</div>
+        <div class="trace-action">{{ actionText(h.action) }} · {{ t('节点') }} {{ h.nodeId }}</div>
         <div v-if="h.comment" class="trace-comment">{{ h.comment }}</div>
       </el-timeline-item>
     </el-timeline>
