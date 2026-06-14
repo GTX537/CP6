@@ -327,6 +327,14 @@ public class CP6Context : DbContext
     public DbSet<Wf_FormDef> Wf_FormDefs { get; set; }
     /// <summary>表单数据（OA 章02，JSON 列）</summary>
     public DbSet<Wf_FormData> Wf_FormDatas { get; set; }
+    /// <summary>流程定义（OA 章03，节点/边 schema JSON）</summary>
+    public DbSet<Wf_FlowDef> Wf_FlowDefs { get; set; }
+    /// <summary>流程实例（OA 章03，状态机状态载体）</summary>
+    public DbSet<Wf_FlowInstance> Wf_FlowInstances { get; set; }
+    /// <summary>流程待办任务（OA 章03，会签多条/节点）</summary>
+    public DbSet<Wf_FlowTask> Wf_FlowTasks { get; set; }
+    /// <summary>流程审批痕迹（OA 章03，仅追加时间线）</summary>
+    public DbSet<Wf_FlowHistory> Wf_FlowHistories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -412,6 +420,26 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => x.FormKey).HasDatabaseName("IX_Wf_FormData_FormKey");
             e.HasIndex(x => x.BizId).HasDatabaseName("IX_Wf_FormData_Biz");
+        });
+
+        // OA 章03 流程引擎：FlowKey 唯一；任务按 实例+节点 / 处理人+状态 取（待办中心高频）
+        modelBuilder.Entity<Wf_FlowDef>(e =>
+        {
+            e.HasIndex(x => x.FlowKey).IsUnique().HasDatabaseName("UX_Wf_FlowDef_FlowKey");
+        });
+        modelBuilder.Entity<Wf_FlowInstance>(e =>
+        {
+            e.HasIndex(x => x.StarterId).HasDatabaseName("IX_Wf_FlowInstance_Starter");   // 我的申请
+            e.HasIndex(x => new { x.FlowKey, x.Status }).HasDatabaseName("IX_Wf_FlowInstance_FlowStatus");
+        });
+        modelBuilder.Entity<Wf_FlowTask>(e =>
+        {
+            e.HasIndex(x => new { x.InstanceId, x.NodeId }).HasDatabaseName("IX_Wf_FlowTask_InstanceNode");  // 会签判定取本节点全部任务
+            e.HasIndex(x => new { x.AssigneeId, x.Status }).HasDatabaseName("IX_Wf_FlowTask_AssigneeStatus"); // 待办中心
+        });
+        modelBuilder.Entity<Wf_FlowHistory>(e =>
+        {
+            e.HasIndex(x => x.InstanceId).HasDatabaseName("IX_Wf_FlowHistory_Instance");  // 审批痕迹时间线
         });
 
         // 見積計算書：QtnCalcNo 唯一
