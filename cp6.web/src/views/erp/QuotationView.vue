@@ -805,7 +805,7 @@ async function onOpChange(target: QuotationOperationType) {
   }
   // 他のモードでは No 必須
   if ((target === Op.Edit || target === Op.View || target === Op.Delete) && !form.qtnNo) {
-    ElMessage.info('先に御見積書Noを入力して「読込」してください')
+    ElMessage.info(t('先に御見積書Noを入力して「読込」してください'))
     op.value = from
     return
   }
@@ -822,7 +822,7 @@ function onNewClick() {
 async function onSave() {
   const ok = await formRef.value?.validate().catch(() => false)
   if (!ok) {
-    ElMessage.warning('必須項目を入力してください')
+    ElMessage.warning(t('必須項目を入力してください'))
     return
   }
   try {
@@ -832,14 +832,14 @@ async function onSave() {
       if (res.code === 0) {
         loadForm(res.data)
         op.value = Op.Edit
-        ElMessage.success('登録しました')
+        ElMessage.success(t('登録しました'))
         notifyOpener('saved')
       }
     } else if (isEdit.value) {
       const res = await quotationApi.update(form.qtnNo!, cleanPayload())
       if (res.code === 0) {
         loadForm(res.data)
-        ElMessage.success('更新しました')
+        ElMessage.success(t('更新しました'))
         notifyOpener('saved')
       }
     }
@@ -853,8 +853,8 @@ async function onSave() {
 async function onDelete() {
   try {
     await ElMessageBox.confirm(
-      `御見積書 ${form.qtnNo} を論理削除します。削除後は復旧できません。よろしいですか？`,
-      '削除確認',
+      t('御見積書 {no} を論理削除します。削除後は復旧できません。よろしいですか？', { no: form.qtnNo }),
+      t('削除確認'),
       { type: 'warning' }
     )
   } catch {
@@ -864,7 +864,7 @@ async function onDelete() {
     saving.value = true
     const res = await quotationApi.remove(form.qtnNo!, form.rowVersion)
     if (res.code === 0) {
-      ElMessage.success('削除しました')
+      ElMessage.success(t('削除しました'))
       notifyOpener('deleted')
       resetForm()
       op.value = Op.New
@@ -880,7 +880,7 @@ async function onConfirm() {
   // 确认モードに入っていない場合は切替
   if (op.value !== Op.Confirm) {
     op.value = Op.Confirm
-    ElMessage.info('確定する見積計算書にチェックを入れてから、もう一度「確定登録」を押してください')
+    ElMessage.info(t('確定する見積計算書にチェックを入れてから、もう一度「確定登録」を押してください'))
     // 既に関連する行を初期にチェック
     form.calcs.forEach(c => (confirmSelection[c.qtnCalcNo] = false))
     activeTab.value = 'calcs'
@@ -891,7 +891,7 @@ async function onConfirm() {
     .filter(([, v]) => v)
     .map(([k]) => k)
   if (picked.length === 0) {
-    ElMessage.warning('確定する見積計算書を1件以上選択してください')
+    ElMessage.warning(t('確定する見積計算書を1件以上選択してください'))
     return
   }
   try {
@@ -903,7 +903,7 @@ async function onConfirm() {
     if (res.code === 0) {
       loadForm(res.data)
       op.value = Op.Edit
-      ElMessage.success('確定登録しました')
+      ElMessage.success(t('確定登録しました'))
       notifyOpener('saved')
     }
   } catch (e) {
@@ -916,8 +916,8 @@ async function onConfirm() {
 async function onCancelConfirm() {
   try {
     await ElMessageBox.confirm(
-      `御見積書 ${form.qtnNo} の確定を取消します。よろしいですか？`,
-      '確定取消',
+      t('御見積書 {no} の確定を取消します。よろしいですか？', { no: form.qtnNo }),
+      t('確定取消'),
       { type: 'warning' }
     )
   } catch {
@@ -929,7 +929,7 @@ async function onCancelConfirm() {
     if (res.code === 0) {
       loadForm(res.data)
       op.value = Op.Edit
-      ElMessage.success('確定を取消しました')
+      ElMessage.success(t('確定を取消しました'))
       notifyOpener('saved')
     }
   } catch (e) {
@@ -942,14 +942,14 @@ async function onCancelConfirm() {
 async function onIssue() {
   try {
     const { value: choices } = await ElMessageBox.prompt(
-      '発行する帳票を選択してください',
-      '発行',
+      t('発行する帳票を選択してください'),
+      t('発行'),
       {
         inputType: 'text',
         inputValue: 'Q,SC,C',
-        inputPlaceholder: 'Q=御見積書 / SC=提出用計算書 / C=計算書（カンマ区切り）',
-        confirmButtonText: '発行',
-        cancelButtonText: 'キャンセル',
+        inputPlaceholder: t('Q=御見積書 / SC=提出用計算書 / C=計算書（カンマ区切り）'),
+        confirmButtonText: t('発行'),
+        cancelButtonText: t('キャンセル'),
       }
     )
     const set = new Set(String(choices).split(',').map(s => s.trim().toUpperCase()))
@@ -960,7 +960,7 @@ async function onIssue() {
       issueCalc: set.has('C'),
     })
     if (res.code === 0) {
-      ElMessage.success(`発行しました：${res.data.files.join(' , ') || '(ファイルなし)'}`)
+      ElMessage.success(t('発行しました：{files}', { files: res.data.files.join(' , ') || '—' }))
       // 発行日が更新されるので再読込
       if (form.qtnNo) {
         const r = await quotationApi.getByNo(form.qtnNo)
@@ -981,11 +981,11 @@ async function handleConflict(err: unknown): Promise<boolean> {
   const body = axErr.response?.data
   try {
     await ElMessageBox({
-      title: '排他制御エラー',
-      message: `[${body?.msgId ?? 'MSG-W10002'}] ${body?.message ?? '他のユーザが更新しました'}`,
+      title: t('排他制御エラー'),
+      message: `[${body?.msgId ?? 'MSG-W10002'}] ${body?.message ?? t('他のユーザが更新しました')}`,
       type: 'warning',
-      confirmButtonText: '最新版を取得',
-      cancelButtonText: 'キャンセル',
+      confirmButtonText: t('最新版を取得'),
+      cancelButtonText: t('キャンセル'),
       showCancelButton: true,
     })
     if (form.qtnNo) {
@@ -993,7 +993,7 @@ async function handleConflict(err: unknown): Promise<boolean> {
       if (r.code === 0) {
         loadForm(r.data)
         op.value = Op.Edit
-        ElMessage.success('最新データを取得しました。もう一度保存してください')
+        ElMessage.success(t('最新データを取得しました。もう一度保存してください'))
       }
     }
   } catch {
@@ -1084,7 +1084,7 @@ onMounted(async () => {
         op.value = target
         await refreshCalcCandidates()
       } else {
-        ElMessage.warning(res.message || `No=${noParam} が未登録です`)
+        ElMessage.warning(res.message || t('No={no} が未登録です', { no: noParam }))
       }
     } finally {
       loading.value = false
@@ -1093,14 +1093,14 @@ onMounted(async () => {
 
   if (isStandalone.value) {
     const labels: Record<number, string> = {
-      [Op.New]: '新規',
-      [Op.Edit]: '訂正',
-      [Op.View]: '照会',
-      [Op.Delete]: '削除',
-      [Op.Copy]: '流用',
-      [Op.Confirm]: '確定登録',
+      [Op.New]: t('新規'),
+      [Op.Edit]: t('訂正'),
+      [Op.View]: t('照会'),
+      [Op.Delete]: t('削除'),
+      [Op.Copy]: t('流用'),
+      [Op.Confirm]: t('確定登録'),
     }
-    document.title = `御見積書 - ${labels[op.value] ?? ''}${noParam ? ` - ${noParam}` : ''}`
+    document.title = `${t('御見積書')} - ${labels[op.value] ?? ''}${noParam ? ` - ${noParam}` : ''}`
   }
 })
 
