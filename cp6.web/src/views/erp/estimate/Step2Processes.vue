@@ -2,18 +2,18 @@
   <el-card shadow="never">
     <template #header>
       <div class="card-header">
-        <span class="title">工程明細</span>
+        <span class="title">{{ t('工程明細') }}</span>
         <div class="header-actions">
           <el-button type="primary" :icon="Plus" size="small" :disabled="isPageReadOnly" @click="onAdd">
-            行追加
+            {{ t('行追加') }}
           </el-button>
           <el-button type="danger" :icon="Delete" size="small" :disabled="isPageReadOnly || !selected.length" @click="onRemoveSelected">
-            選択削除
+            {{ t('選択削除') }}
           </el-button>
           <el-divider direction="vertical" />
-          <el-button size="small" @click="openRecycleA" :disabled="isPageReadOnly">リサイクル法A</el-button>
-          <el-button size="small" @click="openRecycleB" :disabled="isPageReadOnly">リサイクル法B</el-button>
-          <el-button size="small" @click="openRecycleC" :disabled="isPageReadOnly">リサイクル法C</el-button>
+          <el-button size="small" @click="openRecycleA" :disabled="isPageReadOnly">{{ t('リサイクル法A') }}</el-button>
+          <el-button size="small" @click="openRecycleB" :disabled="isPageReadOnly">{{ t('リサイクル法B') }}</el-button>
+          <el-button size="small" @click="openRecycleC" :disabled="isPageReadOnly">{{ t('リサイクル法C') }}</el-button>
         </div>
       </div>
     </template>
@@ -28,15 +28,15 @@
       @selection-change="onSelectionChange"
     >
       <el-table-column type="selection" width="40" />
-      <el-table-column prop="seqNo" label="順番" width="60" align="center" />
-      <el-table-column label="工程" width="160">
+      <el-table-column prop="seqNo" :label="t('順番')" width="60" align="center" />
+      <el-table-column :label="t('工程')" width="160">
         <template #default="{ row }">
           <el-select v-model="row.processCd" :disabled="isPageReadOnly" clearable size="small" @change="onProcessChange(row)">
             <el-option v-for="o in processCodes" :key="o.code" :value="o.code" :label="`${o.code} ${o.name}`" />
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="作業" width="160">
+      <el-table-column :label="t('作業')" width="160">
         <template #default="{ row }">
           <el-input v-model="row.taskName" :disabled="isPageReadOnly" size="small" />
         </template>
@@ -46,12 +46,12 @@
           <el-input v-model="row.wgCd" :disabled="isPageReadOnly" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="製造拠点" width="100">
+      <el-table-column :label="t('製造拠点')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.mfgLocation" :disabled="isPageReadOnly" size="small" />
         </template>
       </el-table-column>
-      <el-table-column v-for="i in 3" :key="`spec${i}`" :label="`規格${i}`" width="180">
+      <el-table-column v-for="i in 3" :key="`spec${i}`" :label="t('規格{n}', { n: i })" width="180">
         <template #default="{ row }">
           <div class="spec-cell">
             <el-input
@@ -73,26 +73,26 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="版No" width="100">
+      <el-table-column :label="t('版No')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.plateNo" :disabled="isPageReadOnly" size="small" />
         </template>
       </el-table-column>
-      <el-table-column label="工程備考" min-width="220">
+      <el-table-column :label="t('工程備考')" min-width="220">
         <template #default="{ row }">
-          <el-input v-model="row.procNote1" :disabled="isPageReadOnly" size="small" placeholder="備考1" />
-          <el-input v-model="row.procNote2" :disabled="isPageReadOnly" size="small" placeholder="備考2" style="margin-top: 4px" />
+          <el-input v-model="row.procNote1" :disabled="isPageReadOnly" size="small" :placeholder="t('備考1')" />
+          <el-input v-model="row.procNote2" :disabled="isPageReadOnly" size="small" :placeholder="t('備考2')" style="margin-top: 4px" />
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="100" fixed="right">
+      <el-table-column :label="t('操作')" width="100" fixed="right">
         <template #default="{ row, $index }">
-          <el-button link type="danger" size="small" :disabled="isPageReadOnly" @click="onRemoveRow($index)">削除</el-button>
+          <el-button link type="danger" size="small" :disabled="isPageReadOnly" @click="onRemoveRow($index)">{{ t('削除') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div v-if="!rows.length" class="empty-hint">
-      <el-empty description="まだ工程がありません。『行追加』で追加してください" :image-size="80" />
+      <el-empty :description="t('まだ工程がありません。『行追加』で追加してください')" :image-size="80" />
     </div>
 
     <!-- リサイクル法 弹窗 -->
@@ -101,6 +101,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus, Delete } from '@element-plus/icons-vue'
@@ -203,13 +205,13 @@ function onRecycleConfirm(payload: any) {
     payload.items.forEach((item: any) => {
       const maxSeq = rows.value.reduce((m, r) => Math.max(m, r.seqNo), 0)
       const r = newRow(maxSeq + 1)
-      r.processName = `ﾘｻｲｸﾙ法${recycleType.value} - ${item.name}`
+      r.processName = t('ﾘｻｲｸﾙ法{type} - {name}', { type: recycleType.value, name: item.name })
       r.procNote1 = item.note ?? ''
       rows.value.push(r)
     })
     store.markDirty()
   }
-  ElMessage.success(`リサイクル法${recycleType.value} 適用完了`)
+  ElMessage.success(t('リサイクル法{type} 適用完了', { type: recycleType.value }))
 }
 
 onMounted(async () => {

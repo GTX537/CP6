@@ -19,8 +19,9 @@ if (!existsSync(SNAP)) {
 }
 const keys = JSON.parse(readFileSync(SNAP, 'utf-8'))
 
-// 每个 key 转成 TS 字符串字面量（转义反斜杠与单引号）
-const union = keys.map((k) => `  | '${String(k).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`).join('\n')
+// 每个 key 转成 TS 字符串字面量（转义反斜杠/单引号/换行/回车，防 key 含特殊字符破坏生成的 TS）
+const esc = (k) => String(k).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r/g, '\\r').replace(/\n/g, '\\n')
+const union = keys.map((k) => `  | '${esc(k)}'`).join('\n')
 
 const banner = `// ⚠️ 自动生成，请勿手改。来源：npm run i18n:gen-types（读取 keys.generated.json）。\n// i18n 优化 P2：key 类型安全（opt-in，用 tt() 触发编译期校验）。\n`
 

@@ -1,12 +1,12 @@
 <template>
   <el-card shadow="never" v-if="detail">
     <div style="margin-bottom: 12px;">
-      <el-tag size="small">明細 No.{{ detail.webOrderDetailNo }} - {{ detail.productCd || '製品 CD 未選択' }}</el-tag>
+      <el-tag size="small">{{ t('明細 No.{no} - {cd}', { no: detail.webOrderDetailNo, cd: detail.productCd || t('製品 CD 未選択') }) }}</el-tag>
       <el-tag v-if="!isCompositionEditable" type="info" size="small" style="margin-left: 8px;">
-        構成・工程 参照のみ（受注区分: {{ store.order.orderType }}）
+        {{ t('構成・工程 参照のみ（受注区分: {type}）', { type: store.order.orderType }) }}
       </el-tag>
       <el-tag v-else type="success" size="small" style="margin-left: 8px;">
-        シート受注 → 構成・工程編集可
+        {{ t('シート受注 → 構成・工程編集可') }}
       </el-tag>
     </div>
 
@@ -130,7 +130,7 @@
       </el-radio-button>
     </el-radio-group>
   </el-card>
-  <el-empty v-else description="部材一覧で行を選択してください" />
+  <el-empty v-else :description="t('部材一覧で行を選択してください')" />
 </template>
 
 <script setup lang="ts">

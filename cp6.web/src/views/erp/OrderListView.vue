@@ -121,7 +121,7 @@
         <el-table-column prop="slipNote" :label="t('伝票備考')" min-width="160" sortable="custom" />
         <el-table-column :label="t('操作')" width="230" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="goDetail(row)">詳細</el-button>
+            <el-button link type="primary" size="small" @click="goDetail(row)">{{ t('詳細') }}</el-button>
             <el-button
               link
               type="primary"
@@ -157,27 +157,27 @@
             <div class="order-card-amount">{{ formatCurrency(row.amount) }}</div>
           </div>
           <div class="order-card-row">
-            <span class="lbl">注文書NO</span>
+            <span class="lbl">{{ t('注文書NO') }}</span>
             <span class="val">{{ row.orderSheetNo || '—' }}</span>
           </div>
           <div class="order-card-row">
-            <span class="lbl">手配NO1</span>
+            <span class="lbl">{{ t('手配NO1') }}</span>
             <span class="val">{{ row.haibaiNo1 || '—' }}</span>
           </div>
           <div class="order-card-row">
-            <span class="lbl">受注日 / 納期</span>
+            <span class="lbl">{{ t('受注日 / 納期') }}</span>
             <span class="val">{{ row.orderDate }} → {{ row.customerDeliveryDate }}</span>
           </div>
           <div class="order-card-row">
-            <span class="lbl">製品CD</span>
+            <span class="lbl">{{ t('製品CD') }}</span>
             <span class="val">{{ row.productCd || '—' }}</span>
           </div>
           <div class="order-card-row">
-            <span class="lbl">数量</span>
+            <span class="lbl">{{ t('数量') }}</span>
             <span class="val">{{ row.quantity }} {{ row.qtyUnit }}</span>
           </div>
           <div v-if="row.consignedSalesFlg === '1'" class="order-card-flag">
-            <el-tag type="success" size="small">預り売上</el-tag>
+            <el-tag type="success" size="small">{{ t('預り売上') }}</el-tag>
           </div>
           <div class="order-card-actions" @click.stop>
             <el-button link type="primary" size="small" :icon="Connection" @click="goTrace(row.webOrderNo)">

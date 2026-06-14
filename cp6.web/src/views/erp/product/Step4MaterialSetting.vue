@@ -7,14 +7,14 @@
         size="small"
         :disabled="!store.canEdit"
         @click="addMaterial"
-      >材料行追加</el-button>
+      >{{ t('材料行追加') }}</el-button>
       <el-button
         size="small"
         :disabled="!store.canEdit || store.materials.length === 0"
         @click="reSort"
-      >並び順再採番</el-button>
+      >{{ t('並び順再採番') }}</el-button>
       <span style="color: #909399; font-size: 12px">
-        ※ 材料区分: 1=主材料 / 2=副資材 / 3=梱包材
+        {{ t('※ 材料区分: 1=主材料 / 2=副資材 / 3=梱包材') }}
       </span>
     </div>
 
@@ -104,7 +104,7 @@
             size="small"
             :disabled="!store.canEdit"
             @click="removeMaterial($index)"
-          >削除</el-button>
+          >{{ t('削除') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -151,22 +151,22 @@ function reSort() {
     m.sortOrder = (i + 1) * 10
   })
   store.markDirty()
-  ElMessage.success('並び順を再採番しました')
+  ElMessage.success(t('並び順を再採番しました'))
 }
 
 defineExpose({
   validate(): boolean {
     for (const m of store.materials) {
       if (!m.processCd) {
-        ElMessage.error('材料行: 工程CDを選択してください')
+        ElMessage.error(t('材料行: 工程CDを選択してください'))
         return false
       }
       if (!m.materialCd) {
-        ElMessage.error('材料行: 材料CDを入力してください')
+        ElMessage.error(t('材料行: 材料CDを入力してください'))
         return false
       }
       if (!m.materialTypeDiv) {
-        ElMessage.error('材料行: 材料区分を選択してください')
+        ElMessage.error(t('材料行: 材料区分を選択してください'))
         return false
       }
     }

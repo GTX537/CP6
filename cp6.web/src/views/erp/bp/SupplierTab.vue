@@ -12,7 +12,7 @@
       </el-select>
     </el-form-item>
     <el-form-item :label="t('下請対象')">
-      <el-checkbox v-model="store.bp.subcontractTargetFlg" :disabled="!store.canEdit || !store.isOutsourcing">下請対象</el-checkbox>
+      <el-checkbox v-model="store.bp.subcontractTargetFlg" :disabled="!store.canEdit || !store.isOutsourcing">{{ t('下請対象') }}</el-checkbox>
     </el-form-item>
     <el-form-item :label="t('外注単価区分')">
       <el-input v-model="store.bp.subcontractPriceDiv" :disabled="!store.canEdit || !store.isOutsourcing" style="width: 140px" />
@@ -21,16 +21,16 @@
       <el-input v-model="store.bp.supplyPostingDiv" :disabled="!store.canEdit || !store.isOutsourcing" style="width: 140px" />
     </el-form-item>
     <el-form-item :label="t('支給単価変更許可')">
-      <el-checkbox v-model="store.bp.supplyPriceChangeAllowFlg" :disabled="!store.canEdit || !store.isOutsourcing">支給単価変更許可</el-checkbox>
+      <el-checkbox v-model="store.bp.supplyPriceChangeAllowFlg" :disabled="!store.canEdit || !store.isOutsourcing">{{ t('支給単価変更許可') }}</el-checkbox>
     </el-form-item>
 
     <el-divider content-position="left">{{ t('共通初期値') }}</el-divider>
-    <el-form-item :label="t('納期回答確認')"><el-checkbox v-model="store.bp.deliveryConfirmFlg" :disabled="!store.canEdit">確認FLG</el-checkbox></el-form-item>
+    <el-form-item :label="t('納期回答確認')"><el-checkbox v-model="store.bp.deliveryConfirmFlg" :disabled="!store.canEdit">{{ t('確認FLG') }}</el-checkbox></el-form-item>
     <el-form-item :label="t('仕入金額端数')"><el-input v-model="store.bp.purchaseFractionDiv" :disabled="!store.canEdit" style="width: 100px" /></el-form-item>
     <el-form-item :label="t('仕入税額端数')"><el-input v-model="store.bp.purchaseTaxFractionDiv" :disabled="!store.canEdit" style="width: 100px" /></el-form-item>
     <el-form-item :label="t('仕入税')"><el-input v-model="store.bp.purchaseTaxCd" :disabled="!store.canEdit" style="width: 120px" /></el-form-item>
     <el-form-item :label="t('仕入税優先')">
-      <el-checkbox v-model="store.bp.purchaseTaxPriorityFlg" :disabled="!store.canEdit">優先FLG</el-checkbox>
+      <el-checkbox v-model="store.bp.purchaseTaxPriorityFlg" :disabled="!store.canEdit">{{ t('優先FLG') }}</el-checkbox>
     </el-form-item>
     <el-form-item :label="t('発注先カレンダ')"><el-input v-model="store.bp.supplierCalendarCd" :disabled="!store.canEdit" style="width: 120px" /></el-form-item>
     <el-form-item :label="t('支給積送管理区分')"><el-input v-model="store.bp.supplyConsignDiv" :disabled="!store.canEdit" style="width: 100px" /></el-form-item>

@@ -8,14 +8,14 @@
             {{ opLabel }}
           </el-tag>
           <span v-if="store.productCd" class="product-cd">
-            製品CD: {{ store.productCd }}
+            {{ t('製品CD') }}: {{ store.productCd }}
           </span>
           <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">
-            自動採番待ち
+            {{ t('自動採番待ち') }}
           </el-tag>
-          <el-tag v-if="store.status === 1" type="warning" size="small">承認待ち</el-tag>
-          <el-tag v-else-if="store.status === 9" type="success" size="small">承認済</el-tag>
-          <el-tag v-if="store.mcTransferFlg" type="info" size="small">mc転送済</el-tag>
+          <el-tag v-if="store.status === 1" type="warning" size="small">{{ t('承認待ち') }}</el-tag>
+          <el-tag v-else-if="store.status === 9" type="success" size="small">{{ t('承認済') }}</el-tag>
+          <el-tag v-if="store.mcTransferFlg" type="info" size="small">{{ t('mc転送済') }}</el-tag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="hasNoCd">
@@ -80,7 +80,7 @@
           :loading="saving"
           @click="onDelete"
         >{{ t('sales.btn.delete') }}</el-button>
-        <el-button @click="onReset">{{ isStandalone ? '閉じる' : t('sales.btn.clear') }}</el-button>
+        <el-button @click="onReset">{{ isStandalone ? t('閉じる') : t('sales.btn.clear') }}</el-button>
       </div>
     </el-card>
   </div>
@@ -158,7 +158,7 @@ function notifyOpener(type: 'saved' | 'deleted') {
 async function onOpChange(target: ProductOperationType) {
   if (store.isDirty) {
     try {
-      await ElMessageBox.confirm('当前修改尚未保存，继续切换将丢弃？', '確認', { type: 'warning' })
+      await ElMessageBox.confirm('当前修改尚未保存，继续切换将丢弃？', t('確認'), { type: 'warning' })
     } catch { return }
   }
   const from = store.operationType
@@ -177,7 +177,7 @@ async function onOpChange(target: ProductOperationType) {
       if (res.code === 0) {
         store.loadFromDto(res.data)
         store.setOperationType(ProductOperationType.Copy)
-        ElMessage.success('流用副本を生成しました')
+        ElMessage.success(t('流用副本を生成しました'))
       }
     } finally { loading.value = false }
     return
@@ -187,7 +187,7 @@ async function onOpChange(target: ProductOperationType) {
     || target === ProductOperationType.View
     || target === ProductOperationType.Edit) {
     if (!store.productCd) {
-      ElMessage.info('まず製品CDを入力して読み込みしてください')
+      ElMessage.info(t('まず製品CDを入力して読み込みしてください'))
       store.setOperationType(from)
     }
   }
@@ -195,7 +195,7 @@ async function onOpChange(target: ProductOperationType) {
 
 async function loadByCd() {
   if (!searchCd.value) {
-    ElMessage.warning('製品CDを入力してください')
+    ElMessage.warning(t('製品CDを入力してください'))
     return
   }
   try {
@@ -203,7 +203,7 @@ async function loadByCd() {
     const res = await productApi.getByCd(searchCd.value, store.isView || store.isDelete)
     if (res.code === 0) {
       store.loadFromDto(res.data)
-      ElMessage.success('読み込み成功')
+      ElMessage.success(t('読み込み成功'))
     } else {
       ElMessage.warning(res.message)
     }
@@ -257,7 +257,7 @@ async function runAllValidations(): Promise<boolean> {
 
   // Msg 7 (E10007): 登録する部材がありません — Step 1 の部材一覧が空はエラー
   if (store.members.length === 0) {
-    ElMessage.error('登録する部材がありません（Step 1 部材一覧に少なくとも 1 行追加してください）')
+    ElMessage.error(t('登録する部材がありません（Step 1 部材一覧に少なくとも 1 行追加してください）'))
     return false
   }
 
@@ -265,9 +265,9 @@ async function runAllValidations(): Promise<boolean> {
   if (store.processes.length === 0) {
     try {
       await ElMessageBox.confirm(
-        '工程・作業がありません。このまま保存しますか？',
-        '確認',
-        { confirmButtonText: 'OK', cancelButtonText: 'キャンセル', type: 'warning' },
+        t('工程・作業がありません。このまま保存しますか？'),
+        t('確認'),
+        { confirmButtonText: 'OK', cancelButtonText: t('キャンセル'), type: 'warning' },
       )
     } catch { return false }
   }
@@ -276,9 +276,9 @@ async function runAllValidations(): Promise<boolean> {
   if (store.lotPrices.length === 0) {
     try {
       await ElMessageBox.confirm(
-        'ロット別単価がありません。このまま保存しますか？',
-        '確認',
-        { confirmButtonText: 'OK', cancelButtonText: 'キャンセル', type: 'warning' },
+        t('ロット別単価がありません。このまま保存しますか？'),
+        t('確認'),
+        { confirmButtonText: 'OK', cancelButtonText: t('キャンセル'), type: 'warning' },
       )
     } catch { return false }
   }
@@ -286,15 +286,15 @@ async function runAllValidations(): Promise<boolean> {
   // Step2: 必須項目（現在 Step2 を表示中ならそのコンポーネントを使用、それ以外は同等のロジック）
   const b = store.basicInfo
   if (!b.customerCd || !b.customerCd.trim()) {
-    ElMessage.error('基本情報: 得意先 CD は必須です（Step 2）')
+    ElMessage.error(t('基本情報: 得意先 CD は必須です（Step 2）'))
     return false
   }
   if (!b.customerItemName1 || !b.customerItemName1.trim()) {
-    ElMessage.error('基本情報: 顧客品名 1 は必須です（Step 2）')
+    ElMessage.error(t('基本情報: 顧客品名 1 は必須です（Step 2）'))
     return false
   }
   if (!(b.setRatio > 0)) {
-    ElMessage.error('基本情報: セット比率は 0 より大きい値を入力してください（Step 2）')
+    ElMessage.error(t('基本情報: セット比率は 0 より大きい値を入力してください（Step 2）'))
     return false
   }
 
@@ -313,7 +313,7 @@ async function runAllValidations(): Promise<boolean> {
   }
   for (const m of store.materials) {
     if (!m.processCd || !m.materialCd || !m.materialTypeDiv) {
-      ElMessage.error('材料設定: 必須項目（工程CD/材料CD/材料区分）が未入力です')
+      ElMessage.error(t('材料設定: 必須項目（工程CD/材料CD/材料区分）が未入力です'))
       return false
     }
   }
@@ -321,7 +321,7 @@ async function runAllValidations(): Promise<boolean> {
   const qtys = store.lotPrices.map(p => p.lotQty)
   for (let i = 1; i < qtys.length; i++) {
     if ((qtys[i] ?? 0) <= (qtys[i - 1] ?? 0)) {
-      ElMessage.error(`ロット別単価: ロット数量は昇順である必要があります（行${i + 1}）`)
+      ElMessage.error(t('ロット別単価: ロット数量は昇順である必要があります（行{row}）', { row: i + 1 }))
       return false
     }
   }
@@ -342,7 +342,7 @@ async function onSave() {
         store.setOperationType(ProductOperationType.Edit)
         // 仕掛チェック実行（mcframe7 連携無し → 常に level=0）
         await runWipCheck()
-        ElMessage.success('保存しました')
+        ElMessage.success(t('保存しました'))
         notifyOpener('saved')
       }
     } else if (store.isEdit) {
@@ -351,7 +351,7 @@ async function onSave() {
       if (res.code === 0) {
         store.loadFromDto(res.data)
         await runWipCheck()
-        ElMessage.success('保存しました')
+        ElMessage.success(t('保存しました'))
         notifyOpener('saved')
       }
     }
@@ -366,8 +366,8 @@ async function onSave() {
 async function onDelete() {
   try {
     await ElMessageBox.confirm(
-      `製品CD ${store.productCd} を削除します（軟削除）。よろしいですか？`,
-      '削除確認',
+      t('製品CD {cd} を削除します（軟削除）。よろしいですか？', { cd: store.productCd }),
+      t('削除確認'),
       { type: 'warning' },
     )
   } catch { return }
@@ -375,7 +375,7 @@ async function onDelete() {
     saving.value = true
     const res = await productApi.remove(store.productCd!, store.rowVersion)
     if (res.code === 0) {
-      ElMessage.success('削除しました')
+      ElMessage.success(t('削除しました'))
       store.reset()
       notifyOpener('deleted')
       if (isStandalone.value) {
@@ -391,7 +391,7 @@ async function onDelete() {
 function onReset() {
   if (isStandalone.value) {
     if (store.isDirty) {
-      ElMessageBox.confirm('未保存の変更があります。閉じますか？', '確認', { type: 'warning' })
+      ElMessageBox.confirm(t('未保存の変更があります。閉じますか？'), t('確認'), { type: 'warning' })
         .then(() => window.close())
         .catch(() => {})
     } else {
@@ -438,7 +438,7 @@ onMounted(async () => {
       if (res.code === 0) {
         store.members = res.data ?? []
         store.markDirty()
-        ElMessage.success(`${store.members.length} 件の部材を引入しました`)
+        ElMessage.success(t('{count} 件の部材を引入しました', { count: store.members.length }))
       }
     } finally { loading.value = false }
   } else if (op !== ProductOperationType.New && cdParam) {
@@ -456,13 +456,13 @@ onMounted(async () => {
 
   if (isStandalone.value) {
     const labels: Record<number, string> = {
-      [ProductOperationType.New]: '新規',
-      [ProductOperationType.Edit]: '訂正',
-      [ProductOperationType.View]: '参照',
-      [ProductOperationType.Delete]: '削除',
-      [ProductOperationType.Copy]: '流用',
+      [ProductOperationType.New]: t('新規'),
+      [ProductOperationType.Edit]: t('訂正'),
+      [ProductOperationType.View]: t('参照'),
+      [ProductOperationType.Delete]: t('削除'),
+      [ProductOperationType.Copy]: t('流用'),
     }
-    const title = `製品マスタ - ${labels[op] ?? ''}${cdParam ? ` - ${cdParam}` : ''}`
+    const title = `${t('製品マスタ')} - ${labels[op] ?? ''}${cdParam ? ` - ${cdParam}` : ''}`
     try { document.title = title } catch {}
   }
 })

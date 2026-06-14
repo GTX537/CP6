@@ -100,21 +100,21 @@
         <el-table-column prop="returnDate" :label="t('sales.pm.returnDate')" width="120" sortable="custom">
           <template #default="{ row }">{{ row.returnDate?.slice(0, 10) }}</template>
         </el-table-column>
-        <el-table-column prop="returnReason" label="返却理由" min-width="160" />
+        <el-table-column prop="returnReason" :label="t('返却理由')" min-width="160" />
         <el-table-column prop="processCd" :label="t('sales.pm.process')" width="100" sortable="custom" />
         <el-table-column prop="placeCd" :label="t('sales.pm.location')" width="100" />
         <el-table-column prop="shelfLineCd" :label="t('sales.pm.shelfLine')" width="120" />
         <el-table-column prop="newVerCd" :label="t('sales.pm.newVersion')" width="100" />
-        <el-table-column prop="bladeWidth" label="刃渡(巾)" width="100" align="right" />
-        <el-table-column prop="bladeFlow" label="刃渡(流れ)" width="100" align="right" />
-        <el-table-column prop="compositionQty" label="付数" width="80" align="right" />
-        <el-table-column prop="mfgQty" label="個数" width="80" align="right" />
-        <el-table-column prop="colorQty" label="色数" width="80" align="right" />
-        <el-table-column prop="strippingCd" label="落丁型" width="100" />
-        <el-table-column prop="standingCd" label="置き版" width="100" />
-        <el-table-column prop="hammerCd" label="ハンマー" width="100" />
-        <el-table-column prop="oversightCd" label="見落とし型" width="110" />
-        <el-table-column prop="memo" label="備考" min-width="160" />
+        <el-table-column prop="bladeWidth" :label="t('刃渡(巾)')" width="100" align="right" />
+        <el-table-column prop="bladeFlow" :label="t('刃渡(流れ)')" width="100" align="right" />
+        <el-table-column prop="compositionQty" :label="t('付数')" width="80" align="right" />
+        <el-table-column prop="mfgQty" :label="t('個数')" width="80" align="right" />
+        <el-table-column prop="colorQty" :label="t('色数')" width="80" align="right" />
+        <el-table-column prop="strippingCd" :label="t('落丁型')" width="100" />
+        <el-table-column prop="standingCd" :label="t('置き版')" width="100" />
+        <el-table-column prop="hammerCd" :label="t('ハンマー')" width="100" />
+        <el-table-column prop="oversightCd" :label="t('見落とし型')" width="110" />
+        <el-table-column prop="memo" :label="t('備考')" min-width="160" />
         <el-table-column :label="t('sales.list.action')" width="100" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="goView(row)">{{ t('sales.list.detail') }}</el-button>

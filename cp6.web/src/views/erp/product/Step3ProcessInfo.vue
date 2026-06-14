@@ -7,14 +7,14 @@
         size="small"
         :disabled="!store.canEdit"
         @click="addProcess"
-      >工程行追加</el-button>
+      >{{ t('工程行追加') }}</el-button>
       <el-button
         size="small"
         :disabled="!store.canEdit || store.processes.length === 0"
         @click="reSort"
-      >並び順再採番</el-button>
+      >{{ t('並び順再採番') }}</el-button>
       <span style="color: #909399; font-size: 12px">
-        ※ 工程CD 0600/0601/0602（トムソン系）は連産品ボタンが活性化
+        {{ t('※ 工程CD 0600/0601/0602（トムソン系）は連産品ボタンが活性化') }}
       </span>
     </div>
 
@@ -68,7 +68,7 @@
             </template>
             <div>
               <el-form label-width="60px" size="small" :disabled="!store.canEdit">
-                <el-form-item v-for="i in 10" :key="i" :label="`仕様${i}`">
+                <el-form-item v-for="i in 10" :key="i" :label="t('仕様{n}', { n: i })">
                   <el-input v-model="row.specs[i - 1]" size="small" />
                 </el-form-item>
               </el-form>
@@ -168,7 +168,7 @@
             </template>
             <div>
               <el-form label-width="80px" size="small" :disabled="!store.canEdit">
-                <el-form-item v-for="i in 8" :key="i" :label="`優先${i}`">
+                <el-form-item v-for="i in 8" :key="i" :label="t('優先{n}', { n: i })">
                   <el-input v-model="row.manufOrderPrios[i - 1]" size="small" />
                 </el-form-item>
               </el-form>
@@ -185,7 +185,7 @@
             type="primary"
             :disabled="!isCoProductable(row)"
             @click="openCoProductDialog(row)"
-          >開く</el-button>
+          >{{ t('開く') }}</el-button>
         </template>
       </el-table-column>
       <el-table-column :label="t('操作')" width="100" align="center" fixed="right">
@@ -196,7 +196,7 @@
             size="small"
             :disabled="!store.canEdit"
             @click="removeProcess($index)"
-          >削除</el-button>
+          >{{ t('削除') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -204,7 +204,7 @@
     <!-- ============== 連産品 Popup ============== -->
     <el-dialog
       v-model="coDlgVisible"
-      :title="`連産品 - 工程CD ${currentProcessCd}`"
+      :title="t('連産品 - 工程CD {cd}', { cd: currentProcessCd })"
       width="780px"
       :close-on-click-modal="false"
     >
@@ -215,7 +215,7 @@
           size="small"
           :disabled="!store.canEdit"
           @click="addCoProduct"
-        >行追加</el-button>
+        >{{ t('行追加') }}</el-button>
         <el-tag
           :type="coRatioOk ? 'success' : 'danger'"
           size="small"
@@ -258,12 +258,12 @@
               size="small"
               :disabled="!store.canEdit"
               @click="removeCoProduct(row.rowNo)"
-            >削除</el-button>
+            >{{ t('削除') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <template #footer>
-        <el-button @click="coDlgVisible = false">閉じる</el-button>
+        <el-button @click="coDlgVisible = false">{{ t('閉じる') }}</el-button>
       </template>
     </el-dialog>
   </el-card>
@@ -288,11 +288,11 @@ function isCoProductable(row: ProductProcessDto): boolean {
 
 function specsSummary(row: ProductProcessDto): string {
   const filled = (row.specs || []).filter(s => s != null && s !== '').length
-  return filled === 0 ? '未入力' : `${filled} / 10`
+  return filled === 0 ? t('未入力') : `${filled} / 10`
 }
 function priosSummary(row: ProductProcessDto): string {
   const filled = (row.manufOrderPrios || []).filter(s => s != null && s !== '').length
-  return filled === 0 ? '未入力' : `${filled} / 8`
+  return filled === 0 ? t('未入力') : `${filled} / 8`
 }
 
 function addProcess() {
@@ -320,7 +320,7 @@ function reSort() {
     p.sortOrder = (i + 1) * 10
   })
   store.markDirty()
-  ElMessage.success('並び順を再採番しました')
+  ElMessage.success(t('並び順を再採番しました'))
 }
 
 // ============== 連産品 Dialog ==============

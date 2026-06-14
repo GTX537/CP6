@@ -87,7 +87,7 @@
               <el-input v-model="store.dto.paperCdB" :placeholder="t('裏')" disabled style="width: 100px; margin-left: 4px" />
             </el-form-item>
             <el-form-item :label="t('抜方向')"><el-input v-model="store.dto.extractionDirect" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
-            <el-form-item :label="t('複版')"><el-checkbox v-model="store.dto.duplicatePlateFlg" :disabled="!store.canEdit">複版あり</el-checkbox></el-form-item>
+            <el-form-item :label="t('複版')"><el-checkbox v-model="store.dto.duplicatePlateFlg" :disabled="!store.canEdit">{{ t('複版あり') }}</el-checkbox></el-form-item>
             <el-form-item :label="t('シート寸法 巾')"><el-input-number v-model="store.dto.sheetWidth" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('シート寸法 流れ')"><el-input-number v-model="store.dto.sheetFlow" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('刃渡り 巾')"><el-input-number v-model="store.dto.bladeWidth" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
@@ -126,12 +126,12 @@
         <el-tab-pane :label="t('sales.section.attachment')" name="attach">
           <el-form :model="store.dto" :disabled="store.isPageReadOnly" label-width="120px" size="small">
             <el-row :gutter="8">
-              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoSheetFront" :disabled="!store.canEdit">表図面</el-checkbox></el-col>
-              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoSheetBack" :disabled="!store.canEdit">裏図面</el-checkbox></el-col>
-              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoActual" :disabled="!store.canEdit">現物</el-checkbox></el-col>
-              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoBaseplate" :disabled="!store.canEdit">版下</el-checkbox></el-col>
-              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoPositive" :disabled="!store.canEdit">ポジ</el-checkbox></el-col>
-              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoNegative" :disabled="!store.canEdit">ネガ</el-checkbox></el-col>
+              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoSheetFront" :disabled="!store.canEdit">{{ t('表図面') }}</el-checkbox></el-col>
+              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoSheetBack" :disabled="!store.canEdit">{{ t('裏図面') }}</el-checkbox></el-col>
+              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoActual" :disabled="!store.canEdit">{{ t('現物') }}</el-checkbox></el-col>
+              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoBaseplate" :disabled="!store.canEdit">{{ t('版下') }}</el-checkbox></el-col>
+              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoPositive" :disabled="!store.canEdit">{{ t('ポジ') }}</el-checkbox></el-col>
+              <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoNegative" :disabled="!store.canEdit">{{ t('ネガ') }}</el-checkbox></el-col>
               <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoMo" :disabled="!store.canEdit">MO</el-checkbox></el-col>
               <el-col :span="6"><el-checkbox v-model="store.dto.atachInfoFd" :disabled="!store.canEdit">FD</el-checkbox></el-col>
             </el-row>
@@ -310,7 +310,7 @@ async function onIssueLabel() {
 
 function onPurchaseOrder() {
   // PE 版型発注書 URL（仕様書 §12 — 環境固有）
-  ElMessage.info(`版型発注書を表示します（PE 連携 URL — 環境設定が必要）。版型: ${store.dto.wdPtnNo} / Rev ${store.dto.wdRev}`)
+  ElMessage.info(t('版型発注書を表示します（PE 連携 URL — 環境設定が必要）。版型: {no} / Rev {rev}', { no: store.dto.wdPtnNo, rev: store.dto.wdRev }))
 }
 </script>
 

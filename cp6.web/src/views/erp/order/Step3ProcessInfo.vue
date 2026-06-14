@@ -1,12 +1,12 @@
 <template>
   <el-card shadow="never" v-if="detail">
     <div style="margin-bottom: 12px;">
-      <el-tag size="small">明細 No.{{ detail.webOrderDetailNo }} - {{ detail.productCd }}</el-tag>
+      <el-tag size="small">{{ t('明細 No.{no} - {cd}', { no: detail.webOrderDetailNo, cd: detail.productCd }) }}</el-tag>
       <el-button size="small" type="primary" :icon="Download" :disabled="!store.canEdit" style="margin-left: 12px" @click="onLookupProcesses">
-        製品工程マスタから引入
+        {{ t('製品工程マスタから引入') }}
       </el-button>
       <el-button size="small" :icon="Download" :disabled="!store.canEdit" @click="onLookupMaterials">
-        製品材料マスタから引入
+        {{ t('製品材料マスタから引入') }}
       </el-button>
     </div>
 
@@ -14,8 +14,8 @@
     <el-divider content-position="left">{{ t('工程情報') }}</el-divider>
     <div style="margin-bottom: 8px">
       <el-button-group>
-        <el-button :icon="Plus" size="small" :disabled="!store.canEdit" @click="addProcess">行追加</el-button>
-        <el-button :icon="Delete" size="small" :disabled="!store.canEdit || selectedProcIdx < 0" @click="removeProcess">行削除</el-button>
+        <el-button :icon="Plus" size="small" :disabled="!store.canEdit" @click="addProcess">{{ t('行追加') }}</el-button>
+        <el-button :icon="Delete" size="small" :disabled="!store.canEdit || selectedProcIdx < 0" @click="removeProcess">{{ t('行削除') }}</el-button>
       </el-button-group>
     </div>
     <el-table
@@ -95,8 +95,8 @@
     <el-divider content-position="left">{{ t('材料設定') }}</el-divider>
     <div style="margin-bottom: 8px">
       <el-button-group>
-        <el-button :icon="Plus" size="small" :disabled="!store.canEdit" @click="addMaterial">行追加</el-button>
-        <el-button :icon="Delete" size="small" :disabled="!store.canEdit || selectedMatIdx < 0" @click="removeMaterial">行削除</el-button>
+        <el-button :icon="Plus" size="small" :disabled="!store.canEdit" @click="addMaterial">{{ t('行追加') }}</el-button>
+        <el-button :icon="Delete" size="small" :disabled="!store.canEdit || selectedMatIdx < 0" @click="removeMaterial">{{ t('行削除') }}</el-button>
       </el-button-group>
     </div>
     <el-table :data="detail.materials" border stripe size="small" highlight-current-row style="width: 100%" @current-change="onMatCurrent">
@@ -148,7 +148,7 @@
       </el-radio-button>
     </el-radio-group>
   </el-card>
-  <el-empty v-else description="部材一覧で行を選択してください" />
+  <el-empty v-else :description="t('部材一覧で行を選択してください')" />
 </template>
 
 <script setup lang="ts">
@@ -218,7 +218,7 @@ function removeMaterial() {
 
 async function onLookupProcesses() {
   if (!detail.value?.productCd) {
-    ElMessage.warning('製品 CD を入力してください')
+    ElMessage.warning(t('製品 CD を入力してください'))
     return
   }
   try {
@@ -226,14 +226,14 @@ async function onLookupProcesses() {
     if (res.code === 0 && res.data) {
       detail.value.processes = res.data
       store.markDirty()
-      ElMessage.success(`${res.data.length} 件の工程を引入しました`)
+      ElMessage.success(t('{n} 件の工程を引入しました', { n: res.data.length }))
     }
   } catch { /* */ }
 }
 
 async function onLookupMaterials() {
   if (!detail.value?.productCd) {
-    ElMessage.warning('製品 CD を入力してください')
+    ElMessage.warning(t('製品 CD を入力してください'))
     return
   }
   try {
@@ -241,7 +241,7 @@ async function onLookupMaterials() {
     if (res.code === 0 && res.data) {
       detail.value.materials = res.data
       store.markDirty()
-      ElMessage.success(`${res.data.length} 件の材料を引入しました`)
+      ElMessage.success(t('{n} 件の材料を引入しました', { n: res.data.length }))
     }
   } catch { /* */ }
 }

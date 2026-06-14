@@ -14,7 +14,7 @@
         </el-col>
         <el-col :span="18" class="right-btns">
           <el-button type="primary" :icon="Refresh" :loading="calculating" :disabled="isPageReadOnly" @click="runCalc">
-            再計算
+            {{ t('再計算') }}
           </el-button>
         </el-col>
       </el-row>
@@ -23,7 +23,7 @@
     <!-- 計算摘要 -->
     <el-card shadow="never" class="summary-card">
       <template #header>
-        <span class="title">計算結果</span>
+        <span class="title">{{ t('計算結果') }}</span>
       </template>
       <el-descriptions :column="4" border size="small">
         <el-descriptions-item :label="t('見積面積(m²)')">{{ fmtNum(result.estimateSqm, 4) }}</el-descriptions-item>
@@ -48,7 +48,7 @@
     <!-- 見積り数量×単価×合计 -->
     <el-card shadow="never" class="amount-card">
       <template #header>
-        <span class="title">見積り数量別金額</span>
+        <span class="title">{{ t('見積り数量別金額') }}</span>
       </template>
       <el-table :data="result.amountRows" size="small" border stripe style="width: 100%">
         <el-table-column prop="index" label="#" width="60" align="center" />
@@ -63,18 +63,18 @@
         </el-table-column>
       </el-table>
       <div v-if="!result.amountRows.length" class="empty">
-        <el-empty description="未計算、または 見積り数量が未入力" :image-size="60" />
+        <el-empty :description="t('未計算、または 見積り数量が未入力')" :image-size="60" />
       </div>
     </el-card>
 
     <!-- 計算ロジック透明化 -->
     <el-card shadow="never" class="notes-card">
       <template #header>
-        <span class="title">計算ロジック</span>
+        <span class="title">{{ t('計算ロジック') }}</span>
       </template>
       <ul class="notes">
         <li v-for="(line, i) in result.notes" :key="i">{{ line }}</li>
-        <li v-if="!result.notes.length" style="color:#999">未計算</li>
+        <li v-if="!result.notes.length" style="color:#999">{{ t('未計算') }}</li>
       </ul>
     </el-card>
   </div>
@@ -131,7 +131,7 @@ async function runCalc() {
         form.value.confirmedUnitPrice = res.data.confirmedUnitPrice
       }
       store.calcResult = res.data as any
-      ElMessage.success('計算完了')
+      ElMessage.success(t('計算完了'))
     }
   } finally {
     calculating.value = false

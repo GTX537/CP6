@@ -43,7 +43,7 @@
       <el-form-item :label="t('御見積書 NO')">
         <el-input v-model="quotationNoInput" :disabled="!store.canEdit" style="width: 200px">
           <template #append>
-            <el-button :icon="Search" @click="onLoadFromQuotation">引入</el-button>
+            <el-button :icon="Search" @click="onLoadFromQuotation">{{ t('引入') }}</el-button>
           </template>
         </el-input>
       </el-form-item>
@@ -60,13 +60,13 @@
           size="small"
           :disabled="!store.canEdit"
           @click="store.addMember()"
-        >行追加</el-button>
+        >{{ t('行追加') }}</el-button>
         <el-button
           :icon="Delete"
           size="small"
           :disabled="!store.canEdit || !selectedRowNo"
           @click="onRemoveSelected"
-        >行削除</el-button>
+        >{{ t('行削除') }}</el-button>
         <el-button
           :icon="Top"
           size="small"
@@ -84,16 +84,16 @@
           size="small"
           :disabled="!store.canEdit"
           @click="onClearForm"
-        >クリア</el-button>
+        >{{ t('クリア') }}</el-button>
         <el-button
           :icon="Document"
           size="small"
           :disabled="!selectedRowNo || !selectedEstimateCalcNo"
           @click="onOpenEstimateDetail"
-        >見積詳細</el-button>
+        >{{ t('見積詳細') }}</el-button>
       </el-button-group>
       <el-tag v-if="store.wipCheckResult" :type="wipTagType" size="small" style="margin-left: 12px">
-        仕掛チェック: {{ wipLabel }}
+        {{ t('仕掛チェック') }}: {{ wipLabel }}
       </el-tag>
     </div>
 
@@ -162,7 +162,7 @@
             size="small"
             :disabled="!store.canEdit"
             @click="store.removeMember(row.rowNo)"
-          >削除</el-button>
+          >{{ t('削除') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -268,15 +268,15 @@ function onMoveSelected(direction: 'up' | 'down') {
 async function onClearForm() {
   try {
     await ElMessageBox.confirm(
-      '入力中の内容をすべてクリアします。よろしいですか？',
-      '確認',
-      { confirmButtonText: 'OK', cancelButtonText: 'キャンセル', type: 'warning' },
+      t('入力中の内容をすべてクリアします。よろしいですか？'),
+      t('確認'),
+      { confirmButtonText: 'OK', cancelButtonText: t('キャンセル'), type: 'warning' },
     )
     store.clearForm()
     quotationNoInput.value = ''
     parentProjectInput.value = ''
     selectedRowNo.value = null
-    ElMessage.success('クリアしました')
+    ElMessage.success(t('クリアしました'))
   } catch {
     /* user cancelled */
   }
@@ -284,7 +284,7 @@ async function onClearForm() {
 
 function onOpenEstimateDetail() {
   if (!selectedEstimateCalcNo.value) {
-    ElMessage.warning('見積計算書 NO が設定された行を選択してください')
+    ElMessage.warning(t('見積計算書 NO が設定された行を選択してください'))
     return
   }
   // 見積詳細画面 (MSBBPA040) は外部画面のため別ウィンドウで開く想定
@@ -293,7 +293,7 @@ function onOpenEstimateDetail() {
 }
 
 function statusLabel(s: number): string {
-  return s === 9 ? '承認済' : s === 1 ? '承認待' : '未作成'
+  return s === 9 ? t('承認済') : s === 1 ? t('承認待') : t('未作成')
 }
 function statusTagType(s: number): 'info' | 'warning' | 'success' {
   return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'
@@ -307,15 +307,15 @@ const wipTagType = computed<'success' | 'warning' | 'danger'>(() => {
 })
 const wipLabel = computed(() => {
   const lv = store.wipCheckResult?.level ?? 0
-  if (lv === 0) return '問題なし'
-  if (lv === 1) return '警告（続行可）'
-  if (lv === 2) return 'エラー（確定済）'
-  return 'エラー（指図済）'
+  if (lv === 0) return t('問題なし')
+  if (lv === 1) return t('警告（続行可）')
+  if (lv === 2) return t('エラー（確定済）')
+  return t('エラー（指図済）')
 })
 
 async function onLoadFromQuotation() {
   if (!quotationNoInput.value) {
-    ElMessage.warning('御見積書 NO を入力してください')
+    ElMessage.warning(t('御見積書 NO を入力してください'))
     return
   }
   try {
@@ -323,7 +323,7 @@ async function onLoadFromQuotation() {
     if (res.code === 0) {
       store.members = res.data ?? []
       store.markDirty()
-      ElMessage.success(`${store.members.length} 件の部材を引入しました`)
+      ElMessage.success(t('{count} 件の部材を引入しました', { count: store.members.length }))
     }
   } catch {
     /* http interceptor toast */

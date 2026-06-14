@@ -363,7 +363,7 @@
       <el-row :gutter="12">
         <el-col v-for="i in 10" :key="i" :span="4">
           <el-checkbox v-model="form.strategicDivs![i - 1]" :disabled="isDisabled('strategicDivs')">
-            戦略 {{ String(i).padStart(2, '0') }}
+            {{ t('戦略 {n}', { n: String(i).padStart(2, '0') }) }}
           </el-checkbox>
         </el-col>
       </el-row>
@@ -372,7 +372,7 @@
       <el-divider content-position="left">{{ t('見積り数量・パレット') }}</el-divider>
       <el-row :gutter="12">
         <el-col v-for="i in 8" :key="i" :span="6">
-          <el-form-item :label="`数量${i}`">
+          <el-form-item :label="t('数量{n}', { n: i })">
             <el-input-number
               v-model="form.estimateQtys![i - 1]"
               :min="0"
@@ -384,7 +384,7 @@
           </el-form-item>
         </el-col>
         <el-col v-for="i in 8" :key="`p${i}`" :span="6">
-          <el-form-item :label="`ﾊﾟﾚｯﾄ${i}`">
+          <el-form-item :label="t('ﾊﾟﾚｯﾄ{n}', { n: i })">
             <el-input-number
               v-model="form.palletCnts![i - 1]"
               :min="0"

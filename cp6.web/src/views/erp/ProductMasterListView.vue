@@ -48,9 +48,9 @@
         </el-form-item>
         <el-form-item :label="t('sales.term.status')">
           <el-checkbox-group v-model="statusSel">
-            <el-checkbox :value="0">未承認</el-checkbox>
-            <el-checkbox :value="1">承認待</el-checkbox>
-            <el-checkbox :value="9">承認済/転送済</el-checkbox>
+            <el-checkbox :value="0">{{ t('未承認') }}</el-checkbox>
+            <el-checkbox :value="1">{{ t('承認待') }}</el-checkbox>
+            <el-checkbox :value="9">{{ t('承認済/転送済') }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
@@ -245,7 +245,7 @@ function openInWindow(opc: 'new' | 'view' | 'edit' | 'copy' | 'delete', cd?: str
   const url = `${window.location.origin}/product/window?${qs.toString()}`
   const w = window.open(url, '_blank')
   if (!w) {
-    ElMessage.warning('新しいタブがブロックされました。このサイトに対してポップアップを許可してください')
+    ElMessage.warning(t('新しいタブがブロックされました。このサイトに対してポップアップを許可してください'))
   }
 }
 
@@ -278,7 +278,7 @@ async function onExportCsv() {
     link.click()
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
-    ElMessage.success('CSV を出力しました')
+    ElMessage.success(t('CSV を出力しました'))
   } catch {
     /* http interceptor toast */
   } finally {
@@ -293,20 +293,20 @@ function onNew() { openInWindow('new') }
 
 async function onDelete(row: ProductListItemDto) {
   if (row.mcTransferFlg) {
-    ElMessage.warning('mc転送済の製品は削除できません')
+    ElMessage.warning(t('mc転送済の製品は削除できません'))
     return
   }
   try {
     await ElMessageBox.confirm(
-      `${row.productCd} を削除します（論理削除・復旧不可）。よろしいですか？`,
-      '削除確認',
+      t('{cd} を削除します（論理削除・復旧不可）。よろしいですか？', { cd: row.productCd }),
+      t('削除確認'),
       { type: 'warning' },
     )
   } catch { return }
   try {
     const res = await productApi.remove(row.productCd)
     if (res.code === 0) {
-      ElMessage.success('削除しました')
+      ElMessage.success(t('削除しました'))
       loadData()
     }
   } catch { /* interceptor toast */ }

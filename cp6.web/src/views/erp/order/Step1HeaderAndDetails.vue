@@ -72,16 +72,16 @@
     <div style="margin-bottom: 8px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
       <el-input v-model="memberProductCd" :placeholder="t('製品 CD で部材引入')" clearable style="width: 220px" size="small" :disabled="!store.canEdit">
         <template #append>
-          <el-button :icon="Search" :disabled="!store.canEdit" @click="onLookupMembers">引入</el-button>
+          <el-button :icon="Search" :disabled="!store.canEdit" @click="onLookupMembers">{{ t('引入') }}</el-button>
         </template>
       </el-input>
       <el-button-group>
-        <el-button type="primary" :icon="Plus" size="small" :disabled="!store.canEdit" @click="store.addDetail()">行追加</el-button>
-        <el-button :icon="Delete" size="small" :disabled="!store.canEdit || !selectedRowNo" @click="onRemove">行削除</el-button>
-        <el-button :icon="CopyDocument" size="small" :disabled="!canCopy" @click="onCopy">行コピー</el-button>
+        <el-button type="primary" :icon="Plus" size="small" :disabled="!store.canEdit" @click="store.addDetail()">{{ t('行追加') }}</el-button>
+        <el-button :icon="Delete" size="small" :disabled="!store.canEdit || !selectedRowNo" @click="onRemove">{{ t('行削除') }}</el-button>
+        <el-button :icon="CopyDocument" size="small" :disabled="!canCopy" @click="onCopy">{{ t('行コピー') }}</el-button>
         <el-button :icon="Top" size="small" :disabled="!canMoveUp" @click="onMove('up')">▲</el-button>
         <el-button :icon="Bottom" size="small" :disabled="!canMoveDown" @click="onMove('down')">▼</el-button>
-        <el-button :icon="RefreshLeft" size="small" :disabled="!store.canEdit" @click="onClear">クリア</el-button>
+        <el-button :icon="RefreshLeft" size="small" :disabled="!store.canEdit" @click="onClear">{{ t('クリア') }}</el-button>
       </el-button-group>
     </div>
 
@@ -230,12 +230,12 @@ function onMove(dir: 'up' | 'down') {
 
 async function onClear() {
   try {
-    await ElMessageBox.confirm('入力中の内容をすべてクリアします。よろしいですか？', '確認', {
-      confirmButtonText: 'OK', cancelButtonText: 'キャンセル', type: 'warning',
+    await ElMessageBox.confirm(t('入力中の内容をすべてクリアします。よろしいですか？'), t('確認'), {
+      confirmButtonText: 'OK', cancelButtonText: t('キャンセル'), type: 'warning',
     })
     store.clearForm()
     selectedRowNo.value = null
-    ElMessage.success('クリアしました')
+    ElMessage.success(t('クリアしました'))
   } catch { /* */ }
 }
 
@@ -286,7 +286,7 @@ async function onLookupMembers() {
     if (res.code === 0 && res.data) {
       const rows = res.data
       if (rows.length === 0) {
-        ElMessage.warning('該当する部材がありません')
+        ElMessage.warning(t('該当する部材がありません'))
         return
       }
       // 既存明細をクリアして引入結果を入れる
@@ -302,13 +302,13 @@ async function onLookupMembers() {
         materials: [],
       }))
       store.markDirty()
-      ElMessage.success(`${rows.length} 件の部材を引入しました`)
+      ElMessage.success(t('{n} 件の部材を引入しました', { n: rows.length }))
     }
   } catch { /* */ }
 }
 
 function statusLabel(s: number): string {
-  return s === 9 ? 'mc転送済' : s === 1 ? '承認待' : '未'
+  return s === 9 ? t('mc転送済') : s === 1 ? t('承認待') : t('未')
 }
 function statusTagType(s: number): 'info' | 'warning' | 'success' {
   return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'

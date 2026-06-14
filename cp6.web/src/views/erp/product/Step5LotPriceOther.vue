@@ -9,9 +9,9 @@
         size="small"
         :disabled="!store.canEdit"
         @click="addLotPrice"
-      >行追加</el-button>
+      >{{ t('行追加') }}</el-button>
       <span style="color: #909399; font-size: 12px">
-        ※ 現在価格は表示用、新価格は次回適用 — 適用日付を必ず入力
+        {{ t('※ 現在価格は表示用、新価格は次回適用 — 適用日付を必ず入力') }}
       </span>
     </div>
 
@@ -134,7 +134,7 @@
             size="small"
             :disabled="!store.canEdit"
             @click="removeLotPrice($index)"
-          >削除</el-button>
+          >{{ t('削除') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -221,11 +221,11 @@
     >
       <template v-if="store.wipCheckResult.wipHandleNumbers?.length">
         <div style="margin-top: 8px; font-size: 12px">
-          関連仕掛番号: {{ store.wipCheckResult.wipHandleNumbers.join(', ') }}
+          {{ t('関連仕掛番号') }}: {{ store.wipCheckResult.wipHandleNumbers.join(', ') }}
         </div>
       </template>
     </el-alert>
-    <el-empty v-else description="未実行（保存時に自動実行）" :image-size="60" />
+    <el-empty v-else :description="t('未実行（保存時に自動実行）')" :image-size="60" />
   </el-card>
 </template>
 
@@ -247,10 +247,10 @@ const alertType = computed<'success' | 'warning' | 'error'>(() => {
 })
 const alertTitle = computed(() => {
   const lv = store.wipCheckResult?.level ?? 0
-  if (lv === 0) return '仕掛なし — 保存可能'
-  if (lv === 1) return '仕掛あり（警告）— 確認のうえ続行'
-  if (lv === 2) return 'エラー — 仕掛確定済'
-  return 'エラー — 仕掛指図済'
+  if (lv === 0) return t('仕掛なし — 保存可能')
+  if (lv === 1) return t('仕掛あり（警告）— 確認のうえ続行')
+  if (lv === 2) return t('エラー — 仕掛確定済')
+  return t('エラー — 仕掛指図済')
 })
 
 function addLotPrice() {
@@ -275,7 +275,7 @@ defineExpose({
     const qtys = store.lotPrices.map(p => p.lotQty)
     for (let i = 1; i < qtys.length; i++) {
       if ((qtys[i] ?? 0) <= (qtys[i - 1] ?? 0)) {
-        ElMessage.error(`ロット別単価: ロット数量は昇順である必要があります（行${i + 1}）`)
+        ElMessage.error(t('ロット別単価: ロット数量は昇順である必要があります（行{row}）', { row: i + 1 }))
         return false
       }
     }

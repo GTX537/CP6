@@ -32,7 +32,7 @@
 
         <el-collapse v-model="advOpen" style="width: 100%">
           <el-collapse-item :title="t('sales.section.advSearch') + '：取引先分類 1〜10'" name="adv">
-            <el-form-item v-for="i in 10" :key="i" :label="`分類${i}`">
+            <el-form-item v-for="i in 10" :key="i" :label="t('分類{n}', { n: i })">
               <el-input v-model="(query as any)[`bpClass${String(i).padStart(2,'0')}`]" style="width: 110px" />
             </el-form-item>
           </el-collapse-item>

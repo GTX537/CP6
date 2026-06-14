@@ -53,9 +53,9 @@
     <!-- 結果 -->
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">合計 {{ total }} 件</el-tag>
+        <el-tag size="small">{{ t('合計 {n} 件', { n: total }) }}</el-tag>
         <el-tag v-if="selectedRows.length > 0" type="success" size="small" style="margin-left: 8px;">
-          選択中 {{ selectedRows.length }} 件
+          {{ t('選択中 {n} 件', { n: selectedRows.length }) }}
         </el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" @selection-change="onSelectionChange">
@@ -188,8 +188,8 @@ async function onSubmit() {
   }
   try {
     await ElMessageBox.confirm(
-      `${selectedRows.value.length} 件の単価訂正を実行します。よろしいですか？`,
-      '確認', { type: 'warning' },
+      t('{n} 件の単価訂正を実行します。よろしいですか？', { n: selectedRows.value.length }),
+      t('確認'), { type: 'warning' },
     )
   } catch { return }
 
@@ -207,9 +207,9 @@ async function onSubmit() {
       })),
     })
     if (res.code === 0 && res.data) {
-      ElMessage.success(`更新: ${res.data.updatedCount} 件 / WF 起票: ${res.data.wfRequestedCount} 件`)
+      ElMessage.success(t('更新: {updated} 件 / WF 起票: {wf} 件', { updated: res.data.updatedCount, wf: res.data.wfRequestedCount }))
       if (res.data.conflictedKeys.length > 0) {
-        ElMessage.warning(`競合: ${res.data.conflictedKeys.join(', ')}`)
+        ElMessage.warning(t('競合: {keys}', { keys: res.data.conflictedKeys.join(', ') }))
       }
       await search()
       selectedRows.value = []
@@ -220,9 +220,9 @@ async function onSubmit() {
 }
 
 function approvalLabel(s?: number): string {
-  if (s === 1) return '承認依頼中'
-  if (s === 9) return '承認済'
-  return '未'
+  if (s === 1) return t('承認依頼中')
+  if (s === 9) return t('承認済')
+  return t('未')
 }
 function approvalTagType(s?: number): 'info' | 'warning' | 'success' {
   if (s === 1) return 'warning'

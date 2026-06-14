@@ -126,7 +126,7 @@ const isCdEditable = computed(() => store.isPreReg || store.isReg)
 
 async function onLoad(skipDirtyCheck = false) {
   if (!store.bp.bpCd) {
-    ElMessage.warning('取引先 CD を入力してください')
+    ElMessage.warning(t('取引先 CD を入力してください'))
     return
   }
   // 未保存の編集がある状態で再読込すると編集内容が失われるため確認する
@@ -166,15 +166,15 @@ onMounted(async () => {
 
 async function onSave() {
   // 必須/9 FLG チェック
-  if (!store.bp.bpName?.trim()) { ElMessage.error('E10022: 取引先名は必須です'); return }
-  if (!store.bp.baseCd?.trim()) { ElMessage.error('E10022: 拠点 CD は必須です'); return }
-  if (!store.hasAnyFlg) { ElMessage.error('E10030: 9 個の属性 FLG のいずれかを選択してください'); return }
+  if (!store.bp.bpName?.trim()) { ElMessage.error(t('取引先名は必須です')); return }
+  if (!store.bp.baseCd?.trim()) { ElMessage.error(t('拠点 CD は必須です')); return }
+  if (!store.hasAnyFlg) { ElMessage.error(t('9 個の属性 FLG のいずれかを選択してください')); return }
 
   // 訂正時 FLG 変更不可フロントガード
   if (store.isEdit) {
     const changed = store.flgChangedOnEdit()
     if (changed.length > 0) {
-      ElMessage.error(`E10033: 以下の FLG は訂正時に変更できません: ${changed.join(', ')}`)
+      ElMessage.error(t('以下の FLG は訂正時に変更できません: {list}', { list: changed.join(', ') }))
       return
     }
   }
@@ -201,11 +201,11 @@ async function onSave() {
     const status = e?.response?.status
     if (status === 409) {
       const msg = e?.response?.data?.message
-        || 'E10034: すでに他のユーザーに更新されています。最新を再取得してください'
+        || t('すでに他のユーザーに更新されています。最新を再取得してください')
       try {
         await ElMessageBox.confirm(
-          `${msg}\n最新データを再取得しますか？（現在の編集内容は破棄されます）`,
-          '更新競合', { type: 'warning', confirmButtonText: '再取得', cancelButtonText: 'キャンセル' },
+          msg + '\n' + t('最新データを再取得しますか？（現在の編集内容は破棄されます）'),
+          t('更新競合'), { type: 'warning', confirmButtonText: t('再取得'), cancelButtonText: t('キャンセル') },
         )
         await onLoad(true)  // 確認済みのため dirty 再確認はスキップ。最新 rowVersion で再読込（再編集すれば保存可能）
       } catch { /* キャンセル時は編集内容を保持 */ }
@@ -219,8 +219,8 @@ async function onSave() {
 async function onDelete() {
   try {
     await ElMessageBox.confirm(
-      `取引先 ${store.bp.bpCd} を削除します。よろしいですか？`,
-      '削除確認', { type: 'warning' },
+      t('取引先 {cd} を削除します。よろしいですか？', { cd: store.bp.bpCd }),
+      t('削除確認'), { type: 'warning' },
     )
   } catch { return }
   saving.value = true

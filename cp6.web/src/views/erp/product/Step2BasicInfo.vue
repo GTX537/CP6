@@ -2,7 +2,7 @@
   <el-card shadow="never">
     <!-- 見積計算書 NO による基本情報引入 -->
     <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center" v-if="store.canEdit">
-      <span style="font-weight: 600">見積計算書 NO 引入：</span>
+      <span style="font-weight: 600">{{ t('見積計算書 NO 引入：') }}</span>
       <el-input
         v-model="estimateCalcNoInput"
         size="small"
@@ -10,9 +10,9 @@
         clearable
         style="width: 200px"
       />
-      <el-button size="small" type="primary" :icon="Search" @click="onLoadFromEstimateCalc">引入</el-button>
+      <el-button size="small" type="primary" :icon="Search" @click="onLoadFromEstimateCalc">{{ t('引入') }}</el-button>
       <span style="color: #909399; font-size: 12px">
-        ※ 見積計算書から基本情報を読み込みます（既存の入力値は上書きされます）
+        {{ t('※ 見積計算書から基本情報を読み込みます（既存の入力値は上書きされます）') }}
       </span>
     </div>
 
@@ -178,7 +178,7 @@
           <el-form-item :label="t('数量単位')">
             <el-tooltip
               v-if="store.basicInfo.isReadOnlyByOrder"
-              content="受注実績があるため変更できません"
+              :content="t('受注実績があるため変更できません')"
               placement="top"
             >
               <el-input v-model="store.basicInfo.qtyUnit" disabled :placeholder="t('受注後変更不可')" />
@@ -195,7 +195,7 @@
           <el-form-item :label="t('単価単位')">
             <el-tooltip
               v-if="store.basicInfo.isReadOnlyByOrder"
-              content="受注実績があるため変更できません"
+              :content="t('受注実績があるため変更できません')"
               placement="top"
             >
               <el-input v-model="store.basicInfo.unitPriceUnit" disabled />
@@ -365,7 +365,7 @@ const strategicSel = computed<number[]>({
 
 async function onLoadFromEstimateCalc() {
   if (!estimateCalcNoInput.value) {
-    ElMessage.warning('見積計算書 NO を入力してください')
+    ElMessage.warning(t('見積計算書 NO を入力してください'))
     return
   }
   try {
@@ -378,9 +378,9 @@ async function onLoadFromEstimateCalc() {
         strategicDivs: res.data.strategicDivs ?? store.basicInfo.strategicDivs ?? Array(10).fill(false),
       }
       store.markDirty()
-      ElMessage.success('見積計算書から基本情報を引入しました')
+      ElMessage.success(t('見積計算書から基本情報を引入しました'))
     } else {
-      ElMessage.warning(res.message || '見積計算書が見つかりません')
+      ElMessage.warning(res.message || t('見積計算書が見つかりません'))
     }
   } catch {
     /* http interceptor toast */
@@ -398,23 +398,23 @@ defineExpose({
   validate(): boolean {
     const b = store.basicInfo
     if (!b.customerCd || !b.customerCd.trim()) {
-      ElMessage.error('基本情報: 得意先 CD は必須です')
+      ElMessage.error(t('基本情報: 得意先 CD は必須です'))
       return false
     }
     if (!b.customerItemName1 || !b.customerItemName1.trim()) {
-      ElMessage.error('基本情報: 顧客品名 1 は必須です')
+      ElMessage.error(t('基本情報: 顧客品名 1 は必須です'))
       return false
     }
     if (!['0', '1'].includes(b.parentChildDiv)) {
-      ElMessage.error('基本情報: 親子区分の値が不正です')
+      ElMessage.error(t('基本情報: 親子区分の値が不正です'))
       return false
     }
     if (!['1', '2', '3'].includes(b.salesPriceDiv)) {
-      ElMessage.error('基本情報: 売価区分の値が不正です')
+      ElMessage.error(t('基本情報: 売価区分の値が不正です'))
       return false
     }
     if (!(b.setRatio > 0)) {
-      ElMessage.error('基本情報: セット比率は 0 より大きい数値で入力してください')
+      ElMessage.error(t('基本情報: セット比率は 0 より大きい数値で入力してください'))
       return false
     }
     return true

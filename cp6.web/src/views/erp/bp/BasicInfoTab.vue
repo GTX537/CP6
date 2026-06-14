@@ -25,26 +25,26 @@
 
     <el-divider content-position="left">{{ t('9 個の属性 FLG（Tab 表示制御）') }}</el-divider>
     <div class="flg-grid">
-      <el-checkbox v-model="store.bp.customerFlg" :disabled="!flgEditable">得意先</el-checkbox>
-      <el-checkbox v-model="store.bp.accountsReceivableFlg" :disabled="!flgEditable">売掛先</el-checkbox>
-      <el-checkbox v-model="store.bp.billingFlg" :disabled="!flgEditable">請求先</el-checkbox>
-      <el-checkbox v-model="store.bp.receiptFlg" :disabled="!flgEditable">入金先</el-checkbox>
-      <el-checkbox v-model="store.bp.deliveryFlg" :disabled="!flgEditable">納品先</el-checkbox>
-      <el-checkbox v-model="store.bp.supplierFlg" :disabled="!flgEditable">発注先</el-checkbox>
-      <el-checkbox v-model="store.bp.accountsPayableFlg" :disabled="!flgEditable">買掛先</el-checkbox>
-      <el-checkbox v-model="store.bp.paymentScheduleFlg" :disabled="!flgEditable">支払予定管理先</el-checkbox>
-      <el-checkbox v-model="store.bp.paymentFlg" :disabled="!flgEditable">支払先</el-checkbox>
-      <el-checkbox v-model="store.bp.creditMgmtFlg" :disabled="!flgEditable">与信管理先</el-checkbox>
-      <el-checkbox v-model="store.bp.makerFlg" :disabled="!flgEditable">メーカ</el-checkbox>
-      <el-checkbox v-model="store.bp.paidSupplyFlg" :disabled="!flgEditable || !store.isOutsourcing">有償支給先</el-checkbox>
-      <el-checkbox v-model="store.bp.rebuyObligationFlg" :disabled="!flgEditable || !store.isOutsourcing">買戻義務</el-checkbox>
+      <el-checkbox v-model="store.bp.customerFlg" :disabled="!flgEditable">{{ t('得意先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.accountsReceivableFlg" :disabled="!flgEditable">{{ t('売掛先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.billingFlg" :disabled="!flgEditable">{{ t('請求先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.receiptFlg" :disabled="!flgEditable">{{ t('入金先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.deliveryFlg" :disabled="!flgEditable">{{ t('納品先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.supplierFlg" :disabled="!flgEditable">{{ t('発注先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.accountsPayableFlg" :disabled="!flgEditable">{{ t('買掛先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.paymentScheduleFlg" :disabled="!flgEditable">{{ t('支払予定管理先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.paymentFlg" :disabled="!flgEditable">{{ t('支払先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.creditMgmtFlg" :disabled="!flgEditable">{{ t('与信管理先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.makerFlg" :disabled="!flgEditable">{{ t('メーカ') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.paidSupplyFlg" :disabled="!flgEditable || !store.isOutsourcing">{{ t('有償支給先') }}</el-checkbox>
+      <el-checkbox v-model="store.bp.rebuyObligationFlg" :disabled="!flgEditable || !store.isOutsourcing">{{ t('買戻義務') }}</el-checkbox>
     </div>
     <el-alert v-if="store.isEdit && flgChanged.length > 0" type="warning" show-icon style="margin-top: 8px" :closable="false">
-      訂正時に変更不可：{{ flgChanged.join(', ') }} （MSG-018）
+      {{ t('訂正時に変更不可：{list} （MSG-018）', { list: flgChanged.join(', ') }) }}
     </el-alert>
 
     <el-divider content-position="left">{{ t('取引先分類 1〜10') }}</el-divider>
-    <el-form-item v-for="i in 10" :key="i" :label="`分類${i}`">
+    <el-form-item v-for="i in 10" :key="i" :label="t('分類{n}', { n: i })">
       <el-input v-model="(store.bp as any)[`bpClass${String(i).padStart(2,'0')}`]" :disabled="!store.canEdit" style="width: 130px" />
     </el-form-item>
 

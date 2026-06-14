@@ -6,11 +6,11 @@
         <div class="header-left">
           <el-tag :type="opTagType" :size="isMobile ? 'default' : 'large'" effect="dark">{{ opLabel }}</el-tag>
           <span v-if="store.order.webOrderNo" class="web-order-no">
-            Web受注NO: {{ store.order.webOrderNo }}
+            {{ t('Web受注NO') }}: {{ store.order.webOrderNo }}
           </span>
           <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">{{ t('sales.status.autoNumber') }}</el-tag>
           <el-tag v-if="store.order.status === 9" type="success" size="small">{{ t('sales.status.transferred') }}</el-tag>
-          <el-tag v-if="store.order.mcTransferFlg" type="info" size="small">mc連携</el-tag>
+          <el-tag v-if="store.order.mcTransferFlg" type="info" size="small">{{ t('mc連携') }}</el-tag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="hasNoOrder">
@@ -139,7 +139,7 @@ async function onLoad() {
         ElMessage.success(t('sales.msg.loadSuccess'))
       }
     } else {
-      ElMessage.warning('Web受注NO または 手配NO1 を入力してください')
+      ElMessage.warning(t('Web受注NO または 手配NO1 を入力してください'))
     }
   } catch {
     /* http interceptor */
@@ -161,7 +161,7 @@ async function onNext() {
   // Step 1 → Step 2 / Step 2 → Step 3 共通：明細選択行が必要
   if (store.currentStep === 1) {
     if (store.order.details.length === 0) {
-      ElMessage.warning('部材一覧に少なくとも 1 行追加してください')
+      ElMessage.warning(t('部材一覧に少なくとも 1 行追加してください'))
       return
     }
     if (store.currentDetailIndex < 0) {
@@ -193,8 +193,8 @@ async function onSave() {
     const credit = await orderApi.creditCheck(store.order.customerCd, totalAmount)
     if (credit.code === 0 && credit.data?.isOver) {
       try {
-        await ElMessageBox.confirm(credit.data.message ?? '与信限度額を超えています。受注継続しますか？', '確認', {
-          confirmButtonText: 'はい', cancelButtonText: 'いいえ', type: 'warning',
+        await ElMessageBox.confirm(credit.data.message ?? t('与信限度額を超えています。受注継続しますか？'), t('確認'), {
+          confirmButtonText: t('はい'), cancelButtonText: t('いいえ'), type: 'warning',
         })
       } catch { return }
     }
@@ -228,8 +228,8 @@ async function onDelete() {
   if (!store.order.webOrderNo) return
   try {
     await ElMessageBox.confirm(
-      `Web受注NO ${store.order.webOrderNo} を削除します（軟削除）。よろしいですか？`,
-      '削除確認', { type: 'warning' },
+      t('Web受注NO {no} を削除します（軟削除）。よろしいですか？', { no: store.order.webOrderNo }),
+      t('削除確認'), { type: 'warning' },
     )
   } catch { return }
   saving.value = true

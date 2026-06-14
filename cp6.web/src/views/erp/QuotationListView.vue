@@ -90,10 +90,10 @@
         <el-table-column :label="t('初行数量')" width="100" align="right">
           <template #default="{ row }">{{ fmtNum(row.firstQuantity) }}</template>
         </el-table-column>
-        <el-table-column :label="'初行' + t('sales.term.unitPrice')" width="110" align="right">
+        <el-table-column :label="t('初行') + t('sales.term.unitPrice')" width="110" align="right">
           <template #default="{ row }">{{ fmtMoney(row.firstUnitPrice) }}</template>
         </el-table-column>
-        <el-table-column :label="'初行' + t('sales.term.amount')" width="130" align="right">
+        <el-table-column :label="t('初行') + t('sales.term.amount')" width="130" align="right">
           <template #default="{ row }">{{ fmtMoney(row.firstAmount) }}</template>
         </el-table-column>
         <el-table-column prop="totalAmount" :label="t('sales.fsc.totalAmount')" width="130" align="right" sortable="custom">
@@ -133,10 +133,10 @@
           <div class="mc-title">{{ row.customerName || row.customerCd }}</div>
           <div class="mc-meta">
             <span>{{ fmtDate(row.qtnIssueDate) }}</span>
-            <span class="mc-price">合計: ¥{{ fmtMoney(row.totalAmount) }}</span>
+            <span class="mc-price">{{ t('合計: ¥{amount}', { amount: fmtMoney(row.totalAmount) }) }}</span>
           </div>
           <div v-if="row.itemName1" class="mc-meta">
-            <span class="mc-truncate">品: {{ row.itemName1 }}</span>
+            <span class="mc-truncate">{{ t('品: {name}', { name: row.itemName1 }) }}</span>
           </div>
           <div class="mc-actions" @click.stop>
             <el-button link type="warning" size="small" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
@@ -292,7 +292,7 @@ function openInWindow(opc: 'new' | 'view' | 'edit' | 'copy', no?: string) {
   const url = `${window.location.origin}/quotation/window?${qs.toString()}`
   const w = window.open(url, '_blank')
   if (!w) {
-    ElMessage.warning('新しいタブがブロックされました。このサイトに対してポップアップを許可してください')
+    ElMessage.warning(t('新しいタブがブロックされました。このサイトに対してポップアップを許可してください'))
   }
 }
 
@@ -312,14 +312,14 @@ function onNew() {
 async function onIssue(row: QuotationListItem) {
   try {
     const { value: choices } = await ElMessageBox.prompt(
-      `${row.qtnNo} を発行します。対象を選択してください`,
-      '発行',
+      t('{no} を発行します。対象を選択してください', { no: row.qtnNo }),
+      t('発行'),
       {
         inputType: 'text',
         inputValue: 'Q,SC,C',
-        inputPlaceholder: 'Q=御見積書 / SC=提出用計算書 / C=計算書（カンマ区切り）',
-        confirmButtonText: '発行',
-        cancelButtonText: 'キャンセル',
+        inputPlaceholder: t('Q=御見積書 / SC=提出用計算書 / C=計算書（カンマ区切り）'),
+        confirmButtonText: t('発行'),
+        cancelButtonText: t('キャンセル'),
       }
     )
     const set = new Set(String(choices).split(',').map(s => s.trim().toUpperCase()))
@@ -329,7 +329,7 @@ async function onIssue(row: QuotationListItem) {
       issueCalc: set.has('C'),
     })
     if (res.code === 0) {
-      ElMessage.success(`発行しました: ${res.data.files.join(' , ') || '(ファイルなし)'}`)
+      ElMessage.success(t('発行しました: {files}', { files: res.data.files.join(' , ') || t('(ファイルなし)') }))
       loadData()
     }
   } catch {
@@ -339,13 +339,13 @@ async function onIssue(row: QuotationListItem) {
 
 async function onDelete(row: QuotationListItem) {
   if (row.status === '見積確定済') {
-    ElMessage.warning('確定済の御見積書は削除できません。先に確定取消してください')
+    ElMessage.warning(t('確定済の御見積書は削除できません。先に確定取消してください'))
     return
   }
   try {
     await ElMessageBox.confirm(
-      `${row.qtnNo} を削除します（論理削除・復旧不可）。よろしいですか？`,
-      '削除確認',
+      t('{no} を削除します（論理削除・復旧不可）。よろしいですか？', { no: row.qtnNo }),
+      t('削除確認'),
       { type: 'warning' }
     )
   } catch {
@@ -354,7 +354,7 @@ async function onDelete(row: QuotationListItem) {
   try {
     const res = await quotationApi.remove(row.qtnNo)
     if (res.code === 0) {
-      ElMessage.success('削除しました')
+      ElMessage.success(t('削除しました'))
       loadData()
     }
   } catch {

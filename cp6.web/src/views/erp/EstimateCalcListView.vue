@@ -89,12 +89,12 @@
           </div>
           <div class="mc-title">{{ row.customerProductName1 || '—' }}</div>
           <div class="mc-meta">
-            <span>客: {{ row.customerCd || '—' }}</span>
-            <span>拠点: {{ row.qtnBaseCd || '—' }}</span>
+            <span>{{ t('客') }}: {{ row.customerCd || '—' }}</span>
+            <span>{{ t('拠点') }}: {{ row.qtnBaseCd || '—' }}</span>
           </div>
           <div class="mc-meta">
-            <span>数量: {{ fmtNum(row.orderQty) }}</span>
-            <span class="mc-price">単価: ¥{{ fmtMoney(row.estimateUnitPrice) }}</span>
+            <span>{{ t('数量') }}: {{ fmtNum(row.orderQty) }}</span>
+            <span class="mc-price">{{ t('単価') }}: ¥{{ fmtMoney(row.estimateUnitPrice) }}</span>
           </div>
           <div class="mc-actions" @click.stop>
             <el-button link type="warning" size="small" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
@@ -228,7 +228,7 @@ function onCopy(row: EstimateCalcListItem) {
 }
 async function onDelete(row: EstimateCalcListItem) {
   try {
-    await ElMessageBox.confirm(`削除 ${row.qtnCalcNo} ? （論理削除、復旧不可）`, '確認', {
+    await ElMessageBox.confirm(t('削除 {no} ? （論理削除、復旧不可）', { no: row.qtnCalcNo }), t('確認'), {
       type: 'warning',
     })
   } catch {
@@ -237,7 +237,7 @@ async function onDelete(row: EstimateCalcListItem) {
   try {
     const res = await estimateCalcApi.remove(row.qtnCalcNo)
     if (res.code === 0) {
-      ElMessage.success('削除完了')
+      ElMessage.success(t('削除完了'))
       loadData()
     }
   } catch {
