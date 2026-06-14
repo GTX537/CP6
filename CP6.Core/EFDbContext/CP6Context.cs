@@ -360,6 +360,11 @@ public class CP6Context : DbContext
             .HasIndex(x => x.MenuKey).IsUnique()
             .HasFilter("[MenuKey] IS NOT NULL");
 
+        // i18n 优化 P1：多语言词条 key 唯一（根治「重复 key 静默覆盖」）。
+        // 现宽表过渡，唯一约束仅在 LangKey；P3 窄表迁移后改 UNIQUE(TenantId, LangKey, LangCode)。
+        modelBuilder.Entity<Sys_Lang>()
+            .HasIndex(x => x.LangKey).IsUnique().HasDatabaseName("UX_Sys_Lang_LangKey");
+
         // PUB 章02 功能权限：操作点 + 角色授权
         modelBuilder.Entity<Sys_MenuAction>(e =>
         {

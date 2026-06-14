@@ -87,8 +87,9 @@ public class LangController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Add([FromBody] Sys_Lang entity)
     {
+        // i18n 优化 P1 样例：抛错误码而非日文/中文字面量，由 BizExceptionMiddleware 按请求 culture 本地化。
         if (await _context.Sys_Langs.AnyAsync(l => l.LangKey == entity.LangKey))
-            return BadRequest(new { message = "词条Key已存在" });
+            throw new CP6.WebApi.Localization.BizException("lang.keyExists");
 
         _context.Sys_Langs.Add(entity);
         await _context.SaveChangesAsync();

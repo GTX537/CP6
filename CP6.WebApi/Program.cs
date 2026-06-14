@@ -64,6 +64,15 @@ else
 }
 builder.Services.AddSingleton<CacheService>();
 
+// 3.2.1 i18n 优化 P1：DB 支持的本地化（IStringLocalizer 读 Sys_Lang，复用 CacheService）。
+//  - DbStringLocalizer 可 Singleton（缓存未命中时经 IServiceScopeFactory 取 scoped DbContext）。
+//  - 同时覆盖 IStringLocalizerFactory，使 IStringLocalizer<T> 也复用同一张 Sys_Lang。
+builder.Services.AddLocalization();
+builder.Services.AddSingleton<CP6.WebApi.Localization.DbStringLocalizer>();
+builder.Services.AddSingleton<Microsoft.Extensions.Localization.IStringLocalizerFactory, CP6.WebApi.Localization.DbStringLocalizerFactory>();
+builder.Services.AddSingleton<Microsoft.Extensions.Localization.IStringLocalizer>(
+    sp => sp.GetRequiredService<CP6.WebApi.Localization.DbStringLocalizer>());
+
 // 3.3 操作日志 = Kafka 专任（高吞吐・append-only・可保留可回放的审计流）
 //  - 生产者 KafkaProducerService 实现 IOperLogTransport；OperLogFilter 注入单一通道。
 //  - Kafka 消费者是唯一落库担当；不可用时 Filter 降级直接写 DB。
@@ -963,6 +972,9 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "login.entering", ZhCN = "正在进入工作台…", ZhTW = "正在進入工作台…", En = "Entering Workspace...", Ja = "ワークスペースへ移動中…", Ko = "워크스페이스로 이동 중…" },
             new Sys_Lang { LangKey = "login.language", ZhCN = "语言", ZhTW = "語言", En = "Language", Ja = "言語", Ko = "언어" },
             new Sys_Lang { LangKey = "login.selectLanguage", ZhCN = "选择语言", ZhTW = "選擇語言", En = "Select language", Ja = "言語を選択", Ko = "언어 선택" },
+            // i18n 优化 P1：后端错误码（DbStringLocalizer / BizException 用，无前缀的纯码）
+            new Sys_Lang { LangKey = "E10022", ZhCN = "必填项未输入", ZhTW = "必填項未輸入", En = "Required field is empty", Ja = "必須項目に値が指定されていません", Ko = "필수 항목이 입력되지 않았습니다" },
+            new Sys_Lang { LangKey = "lang.keyExists", ZhCN = "词条 Key 已存在", ZhTW = "詞條 Key 已存在", En = "Language key already exists", Ja = "ラベルキーは既に存在します", Ko = "라벨 키가 이미 존재합니다" },
         };
 
         var existingKeys = db.Sys_Langs.Select(l => l.LangKey).ToHashSet();
@@ -1632,6 +1644,28 @@ app.UseCors("AllowAll");
 app.UseHttpMetrics();
 
 app.UseAuthentication();
+
+// i18n 优化 P1：请求本地化。culture 来源优先级 = 用户偏好(JWT 'lang' claim) > ?culture= > Cookie > Accept-Language > 默认 ja。
+// 必须在 UseAuthentication 之后（读 claim 需 User 已认证），且在 BizExceptionMiddleware 之外（更早），
+// 以保证异常上抛被捕获时 culture 仍然有效。
+{
+    var supportedCultures = new[] { "ja", "zh-CN", "zh-TW", "en", "ko" };
+    var locOptions = new Microsoft.AspNetCore.Builder.RequestLocalizationOptions()
+        .SetDefaultCulture("ja")
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+    locOptions.RequestCultureProviders.Insert(0, new Microsoft.AspNetCore.Localization.CustomRequestCultureProvider(ctx =>
+    {
+        var lang = ctx.User?.FindFirst("lang")?.Value;
+        return Task.FromResult<Microsoft.AspNetCore.Localization.ProviderCultureResult?>(
+            string.IsNullOrEmpty(lang) ? null : new Microsoft.AspNetCore.Localization.ProviderCultureResult(lang));
+    }));
+    app.UseRequestLocalization(locOptions);
+}
+
+// i18n 优化 P1：BizException → 本地化消息（须在 UseRequestLocalization 之后）。
+app.UseMiddleware<CP6.WebApi.Middleware.BizExceptionMiddleware>();
+
 app.UseAuthorization();
 app.MapControllers();
 
