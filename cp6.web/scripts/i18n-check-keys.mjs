@@ -1,9 +1,10 @@
 /**
- * i18n 优化 P2：CI 缺 key 校验。
- * 扫描 src 下所有 .vue/.ts 里的静态 t('…') / $t('…') / t("…") 引用，
- * 比对 src/i18n/keys.generated.json 快照；引用了但快照里没有的 key → 报告并以非零退出（CI gate）。
+ * i18n 优化 P2/⑥：CI 缺 key 校验（前端 + 后端）。
+ * - 前端：扫 cp6.web/src 的 t('…') / $t('…')。
+ * - 后端(⑥)：扫 CP6.WebApi / CP6.Core 的 _localizer["…"] / localizer["…"] / BizException("…")。
+ * 比对 src/i18n/keys.generated.json 快照；引用了但快照缺失 → 报告并非零退出（CI gate）。
  *
- * 仅校验“字面量 key”；动态 t(变量) / t(`模板${x}`) 无法静态判定，跳过并计数。
+ * 仅校验“字面量 key”；动态调用无法静态判定，跳过并计数。
  * 快照由 `npm run i18n:pull` 生成（需后端运行）。CI 用提交的快照，无需 DB。
  */
 import { readFileSync, existsSync } from 'node:fs'
@@ -56,7 +57,46 @@ for (const f of files) {
   }
 }
 
-console.log(`[i18n:check] 扫描 ${files.length} 文件；字面量 t() 引用 ${refCount}；动态 t(变量) 约 ${dynamicCount}（跳过）；快照 key ${known.size}`)
+console.log(`[i18n:check] 前端：扫 ${files.length} 文件；字面量 t() 引用 ${refCount}；动态 t(变量) 约 ${dynamicCount}（跳过）；快照 key ${known.size}`)
+
+// ── ⑥ 后端 C# key 校验 ──────────────────────────────────────────
+const REPO = resolve(__dirname, '../..')
+function walkCs(dir, acc = []) {
+  let entries
+  try { entries = readdirSync(dir) } catch { return acc }
+  for (const name of entries) {
+    if (name === 'bin' || name === 'obj' || name === 'Migrations') continue
+    const p = join(dir, name)
+    let st
+    try { st = statSync(p) } catch { continue }
+    if (st.isDirectory()) walkCs(p, acc)
+    else if (name.endsWith('.cs')) acc.push(p)
+  }
+  return acc
+}
+// _localizer["KEY"] / localizer["KEY"] / BizException("KEY") —— 仅字面量
+const RE_LOC = /localizer\s*\[\s*"((?:\\.|[^"])*)"\s*\]/g
+const RE_BIZ = /BizException\(\s*"((?:\\.|[^"])*)"/g
+let csFileCount = 0
+let csRefCount = 0
+for (const root of ['CP6.WebApi', 'CP6.Core']) {
+  for (const f of walkCs(join(REPO, root))) {
+    csFileCount++
+    const code = readFileSync(f, 'utf-8')
+    for (const re of [RE_LOC, RE_BIZ]) {
+      for (const m of code.matchAll(re)) {
+        const key = m[1]
+        csRefCount++
+        if (!known.has(key)) {
+          const rel = (root + '/' + f.slice(join(REPO, root).length + 1)).replace(/\\/g, '/')
+          if (!missing.has(key)) missing.set(key, new Set())
+          missing.get(key).add(rel)
+        }
+      }
+    }
+  }
+}
+console.log(`[i18n:check] 后端：扫 ${csFileCount} 个 .cs；_localizer/BizException 字面量引用 ${csRefCount}`)
 
 if (missing.size === 0) {
   console.log('[i18n:check] ✅ 无缺失 key')
