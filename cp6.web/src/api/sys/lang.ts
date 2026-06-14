@@ -12,5 +12,15 @@ export const langApi = {
   },
   del(ids: number[]) {
     return http.delete('/lang', { data: ids })
-  }
+  },
+  // i18n 优化 P4 发布模式
+  publish() {
+    return http.post('/lang/publish')
+  },
+  rollback(version: string) {
+    return http.post('/lang/publish/rollback', { version })
+  },
+  manifest() {
+    return http.get('/lang/manifest')
+  },
 }

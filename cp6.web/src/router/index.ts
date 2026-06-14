@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { ensureNamespacesForPath } from '@/i18n'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
@@ -227,7 +228,7 @@ export function resetRoutes() {
 }
 
 // 路由守卫
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const token = localStorage.getItem('token')
 
   // 1. 去登录页，放行
@@ -244,6 +245,8 @@ router.beforeEach((to, _from, next) => {
 
   // 3. 独立窗口（popup）：已有 token 即可，不依赖动态菜单
   if (to.meta?.standalone) {
+    // i18n 优化 P4：进内容页前确保该路由所需语言命名空间已就绪（失败已在内部兜底全量）。
+    await ensureNamespacesForPath(to.path)
     next()
     return
   }
@@ -263,7 +266,8 @@ router.beforeEach((to, _from, next) => {
     }
   }
 
-  // 5. 路由已加载，正常放行
+  // 5. 路由已加载：先确保命名空间就绪再放行（i18n 优化 P4 懒加载）。
+  await ensureNamespacesForPath(to.path)
   next()
 })
 

@@ -1,6 +1,8 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
+using CP6.WebApi.Localization;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +15,13 @@ public class LangController : ControllerBase
 {
     private readonly CP6Context _context;
     private readonly CacheService _cache;
+    private readonly LangPublishService _publish;
 
-    public LangController(CP6Context context, CacheService cache)
+    public LangController(CP6Context context, CacheService cache, LangPublishService publish)
     {
         _context = context;
         _cache = cache;
+        _publish = publish;
     }
 
     /// <summary>
@@ -61,6 +65,69 @@ public class LangController : ControllerBase
 
         return Ok(dict);
     }
+
+    /// <summary>
+    /// i18n 优化 P4 懒加载：按命名空间取词条。
+    /// ns = 单命名空间（如 wms）→ 首段==ns 的 key；ns = _core → 非大模块(wms/sales/erp/mes)的全部(含无点日文 key)。
+    /// 与全局 feed 一样只取全局值(TenantId=null)，复用缓存（键 lang:ns:{ns}:{code}）。
+    /// </summary>
+    [HttpGet("{lang}/ns/{ns}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetByLangNamespace(string lang, string ns)
+    {
+        var cacheKey = $"{CacheService.LangKeyPrefix}ns:{ns}:{lang}";
+        var dict = await _cache.GetOrSetAsync(cacheKey, async () =>
+        {
+            var items = await _context.Sys_Langs.AsNoTracking().Where(l => l.TenantId == null).ToListAsync();
+            IEnumerable<Sys_Lang> filtered = ns == "_core"
+                ? items.Where(i => !LangColumn.LazyNamespaces.Contains(LangColumn.Namespace(i.LangKey)))
+                : items.Where(i => string.Equals(LangColumn.Namespace(i.LangKey), ns, StringComparison.OrdinalIgnoreCase));
+            return LangColumn.ToDict(filtered, lang);
+        }, TimeSpan.FromHours(1));
+        return Ok(dict);
+    }
+
+    /// <summary>i18n 优化 P4 发布模式：当前已发布版本指针（未发布过返回 version=null）。前端拉它再取版本化静态包。</summary>
+    [HttpGet("manifest")]
+    [AllowAnonymous]
+    public IActionResult GetManifest()
+    {
+        Response.Headers.CacheControl = "no-cache";   // 版本指针必须实时
+        var m = _publish.GetManifest();
+        return Ok(m ?? new LangManifest { Version = "" });
+    }
+
+    /// <summary>i18n 优化 P4 发布模式：取某版本某语言的已发布静态包（不可变长缓存，便于浏览器/CDN 缓存）。</summary>
+    [HttpGet("published/{version}/{lang}")]
+    [AllowAnonymous]
+    public IActionResult GetPublished(string version, string lang)
+    {
+        var json = _publish.ReadPublished(version, lang);
+        if (json == null) return NotFound();
+        Response.Headers.CacheControl = "public, max-age=31536000, immutable";   // 版本化 URL → 永久缓存
+        return Content(json, "application/json; charset=utf-8");
+    }
+
+    /// <summary>i18n 优化 P4 发布模式：触发一次发布（导出版本化静态包 + 更新 manifest）。</summary>
+    [HttpPost("publish")]
+    [Authorize]
+    public async Task<IActionResult> Publish()
+    {
+        var version = await _publish.PublishAsync(User?.Identity?.Name, DateTime.Now);
+        return Ok(new { code = 0, message = "OK", data = new { version } });
+    }
+
+    /// <summary>i18n 优化 P4 发布模式：回滚 manifest 指向某历史版本（旧静态包仍在）。</summary>
+    [HttpPost("publish/rollback")]
+    [Authorize]
+    public IActionResult Rollback([FromBody] RollbackRequest req)
+    {
+        var ok = _publish.Rollback(req.Version, User?.Identity?.Name, DateTime.Now);
+        return ok ? Ok(new { code = 0, message = "OK", data = new { version = req.Version } })
+                  : BadRequest(new { code = 400, message = "version not found" });
+    }
+
+    public class RollbackRequest { public string Version { get; set; } = ""; }
 
     /// <summary>
     /// 获取所有词条列表（管理页面用，不缓存）
@@ -152,9 +219,13 @@ public class LangController : ControllerBase
     private async Task InvalidateLangCache()
     {
         var langCodes = new[] { "zh-CN", "zh-TW", "en", "ja", "ko" };
+        // i18n 优化 P4：连带清理懒加载分包缓存（_core + 大模块命名空间），否则编辑后分包仍旧。
+        var namespaces = new[] { "_core", "wms", "sales", "erp", "mes" };
         foreach (var code in langCodes)
         {
             await _cache.RemoveAsync(CacheService.LangKeyPrefix + code);
+            foreach (var ns in namespaces)
+                await _cache.RemoveAsync($"{CacheService.LangKeyPrefix}ns:{ns}:{code}");
         }
     }
 }

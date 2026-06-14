@@ -4,7 +4,7 @@
 import i18n from '@/i18n'
 import { useI18n } from 'vue-i18n'
 
-/** DB(Sys_Lang) 中现存的全部词条 key（2283 个）。 */
+/** DB(Sys_Lang) 中现存的全部词条 key（2288 个）。 */
 export type MessageKey =
   | '0=未手配'
   | '0=親'
@@ -244,11 +244,16 @@ export type MessageKey =
   | 'erp.otdReport.kpi.totalShipped'
   | 'erp.otdReport.msg.exported'
   | 'erp.otdReport.title'
+  | 'lang.currentVersion'
   | 'lang.en'
   | 'lang.ja'
   | 'lang.keyExists'
   | 'lang.ko'
   | 'lang.langKey'
+  | 'lang.notPublished'
+  | 'lang.publish'
+  | 'lang.publishFailed'
+  | 'lang.publishSuccess'
   | 'lang.title'
   | 'lang.zhCN'
   | 'lang.zhTW'

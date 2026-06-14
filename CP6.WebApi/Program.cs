@@ -73,6 +73,9 @@ builder.Services.AddSingleton<Microsoft.Extensions.Localization.IStringLocalizer
 builder.Services.AddSingleton<Microsoft.Extensions.Localization.IStringLocalizer>(
     sp => sp.GetRequiredService<CP6.WebApi.Localization.DbStringLocalizer>());
 
+// 3.2.2 i18n 优化 P4：发布模式（版本化静态包导出 + manifest）。
+builder.Services.AddSingleton<CP6.WebApi.Services.LangPublishService>();
+
 // 3.3 操作日志 = Kafka 专任（高吞吐・append-only・可保留可回放的审计流）
 //  - 生产者 KafkaProducerService 实现 IOperLogTransport；OperLogFilter 注入单一通道。
 //  - Kafka 消费者是唯一落库担当；不可用时 Filter 降级直接写 DB。
@@ -981,6 +984,12 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "table.batchSelect", ZhCN = "批量选择", ZhTW = "批量選擇", En = "Batch Select", Ja = "一括選択", Ko = "일괄 선택" },
             new Sys_Lang { LangKey = "wms.common.close", ZhCN = "关闭", ZhTW = "關閉", En = "Close", Ja = "閉じる", Ko = "닫기" },
             new Sys_Lang { LangKey = "通貨", ZhCN = "货币", ZhTW = "貨幣", En = "Currency", Ja = "通貨", Ko = "통화" },
+            // i18n 优化 P4：LangView 发布模式管理条
+            new Sys_Lang { LangKey = "lang.currentVersion", ZhCN = "当前发布版本", ZhTW = "目前發佈版本", En = "Current Version", Ja = "現在の公開版", Ko = "현재 게시 버전" },
+            new Sys_Lang { LangKey = "lang.notPublished", ZhCN = "未发布", ZhTW = "未發佈", En = "Not Published", Ja = "未公開", Ko = "미게시" },
+            new Sys_Lang { LangKey = "lang.publish", ZhCN = "发布", ZhTW = "發佈", En = "Publish", Ja = "公開", Ko = "게시" },
+            new Sys_Lang { LangKey = "lang.publishSuccess", ZhCN = "发布成功", ZhTW = "發佈成功", En = "Published", Ja = "公開しました", Ko = "게시되었습니다" },
+            new Sys_Lang { LangKey = "lang.publishFailed", ZhCN = "发布失败", ZhTW = "發佈失敗", En = "Publish failed", Ja = "公開に失敗しました", Ko = "게시 실패" },
         };
 
         var existingKeys = db.Sys_Langs.Select(l => l.LangKey).ToHashSet();

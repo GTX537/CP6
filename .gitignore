@@ -171,3 +171,7 @@ docs/file/**/*.xlsx
 /*.png
 /openapi.json
 docs/file/
+
+# i18n 优化 P4：发布模式生成的版本化静态包（产物，非源码）
+CP6.WebApi/wwwroot/i18n/
+.gstack/
