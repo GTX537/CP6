@@ -1,11 +1,11 @@
 <template>
   <div style="padding: 20px">
-    <h2>角色功能权限（菜单 + 操作点）</h2>
+    <h2>{{ t('角色功能权限（菜单 + 操作点）') }}</h2>
 
     <div style="display: flex; gap: 20px">
       <!-- 左：角色 -->
       <el-card style="width: 280px">
-        <template #header>选择角色</template>
+        <template #header>{{ t('选择角色') }}</template>
         <el-radio-group v-model="selectedRoleId" @change="loadRolePerm">
           <el-radio
             v-for="role in roles"
@@ -20,8 +20,8 @@
       <el-card style="flex: 1">
         <template #header>
           <div style="display: flex; justify-content: space-between; align-items: center">
-            <span>菜单与操作点（未勾选菜单则其操作点禁用）</span>
-            <el-button type="primary" :disabled="!selectedRoleId" @click="save">保存</el-button>
+            <span>{{ t('菜单与操作点（未勾选菜单则其操作点禁用）') }}</span>
+            <el-button type="primary" :disabled="!selectedRoleId" @click="save">{{ t('保存') }}</el-button>
           </div>
         </template>
         <el-tree
@@ -55,6 +55,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import type { ElTree } from 'element-plus'
 import { roleApi } from '@/api/sys/role'
@@ -62,6 +63,7 @@ import { menuApi } from '@/api/sys/menu'
 import { rolePermApi } from '@/api/sys/rolePerm'
 import type { MenuActionFullDto } from '@/types/sys/rolePerm'
 
+const { t } = useI18n()
 const roles = ref<any[]>([])
 const selectedRoleId = ref<number | null>(null)
 const menuTree = ref<any[]>([])
@@ -128,7 +130,7 @@ async function save() {
     .map(k => { const [mid, code] = k.split(':'); return { menuId: Number(mid), actionCode: code ?? '' } })
     .filter(a => menuSet.has(a.menuId))   // 只保留已授菜单的操作（满足后端 E-PUB-021）
   await rolePermApi.saveRolePerm(selectedRoleId.value!, { menuIds, actions })
-  ElMessage.success('已保存')
+  ElMessage.success(t('已保存'))
 }
 
 onMounted(loadData)

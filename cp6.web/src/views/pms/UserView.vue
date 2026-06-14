@@ -2,27 +2,27 @@
   <div>
     <VolTable :columns="columns" :api="userApi">
       <template #extra-actions="{ row }">
-        <el-button link type="warning" @click="openRoleDialog(row)">角色</el-button>
+        <el-button link type="warning" @click="openRoleDialog(row)">{{ t('角色') }}</el-button>
       </template>
     </VolTable>
 
     <!-- PUB 章01：用户角色分配（多角色 + 主角色） -->
-    <el-dialog v-model="roleDialogVisible" :title="`分配角色 — ${roleDialogUserName}`" width="600px">
+    <el-dialog v-model="roleDialogVisible" :title="t('分配角色 — {name}', { name: roleDialogUserName })" width="600px">
       <el-transfer
         v-model="assignedRoleIds"
         :data="transferData"
-        :titles="['可选角色', '已分配']"
+        :titles="[t('可选角色'), t('已分配')]"
         filterable
       />
       <div style="margin-top: 16px;">
-        <span style="margin-right: 8px;">主角色（默认/显示用）：</span>
-        <el-select v-model="primaryRoleId" placeholder="选择主角色" clearable style="width: 240px;">
+        <span style="margin-right: 8px;">{{ t('主角色（默认/显示用）：') }}</span>
+        <el-select v-model="primaryRoleId" :placeholder="t('选择主角色')" clearable style="width: 240px;">
           <el-option v-for="r in primaryRoleOptions" :key="r.value" :label="r.label" :value="r.value" />
         </el-select>
       </div>
       <template #footer>
-        <el-button @click="roleDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="saveRoles">保存</el-button>
+        <el-button @click="roleDialogVisible = false">{{ t('取消') }}</el-button>
+        <el-button type="primary" @click="saveRoles">{{ t('保存') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -50,9 +50,9 @@ const columns = computed<ColumnConfig[]>(() => [
   { prop: 'nickName', label: t('user.nickName') },
   { prop: 'roleId', label: t('user.role'), formType: 'select', options: roleOptions.value },
   // PUB 章00 组织字段（表单可填，列表默认隐藏部门/上级，邮箱展示）
-  { prop: 'deptId', label: '所属部门', formType: 'select', options: deptOptions.value, tableHidden: true },
-  { prop: 'managerId', label: '直属上级', formType: 'select', options: userOptions.value, tableHidden: true },
-  { prop: 'email', label: '邮箱' },
+  { prop: 'deptId', label: t('所属部门'), formType: 'select', options: deptOptions.value, tableHidden: true },
+  { prop: 'managerId', label: t('直属上级'), formType: 'select', options: userOptions.value, tableHidden: true },
+  { prop: 'email', label: t('邮箱') },
   { prop: 'enable', label: t('user.enable'), width: 80, type: 'switch', formType: 'switch' },
   { prop: 'createDate', label: t('user.createDate'), width: 180, formType: 'none' }
 ])
@@ -92,7 +92,7 @@ async function openRoleDialog(row: any) {
 
 async function saveRoles() {
   await userRoleApi.save(roleDialogUserId.value, assignedRoleIds.value, primaryRoleId.value)
-  ElMessage.success('角色已保存')
+  ElMessage.success(t('角色已保存'))
   roleDialogVisible.value = false
 }
 

@@ -1,41 +1,41 @@
 <template>
   <div class="my-applications">
-    <div class="page-header"><h2>我的申请</h2></div>
+    <div class="page-header"><h2>{{ t('我的申请') }}</h2></div>
 
     <el-card shadow="never" class="table-card">
       <div class="table-toolbar">
-        <el-tag size="small">共 {{ rows.length }} 条</el-tag>
+        <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
         <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
       </div>
 
       <el-table :data="rows" border stripe size="small" max-height="620" v-loading="loading">
-        <el-table-column prop="flowKey" label="流程" width="180" />
-        <el-table-column prop="currentNode" label="当前节点" width="150" />
-        <el-table-column label="状态" width="110">
+        <el-table-column prop="flowKey" :label="t('流程')" width="180" />
+        <el-table-column prop="currentNode" :label="t('当前节点')" width="150" />
+        <el-table-column :label="t('状态')" width="110">
           <template #default="{ row }">
             <el-tag :type="statusTag(row.status)" size="small">{{ statusText(row.status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="发起时间" width="170">
+        <el-table-column :label="t('发起时间')" width="170">
           <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column :label="t('操作')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link size="small" @click="openTrace(row)">痕迹</el-button>
+            <el-button type="primary" link size="small" @click="openTrace(row)">{{ t('痕迹') }}</el-button>
             <el-button
               v-if="row.status === 0"
               type="warning"
               link
               size="small"
               @click="withdraw(row)"
-            >撤回</el-button>
+            >{{ t('撤回') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-empty v-if="!rows.length && !loading" description="暂无申请" :image-size="80" />
+      <el-empty v-if="!rows.length && !loading" :description="t('暂无申请')" :image-size="80" />
     </el-card>
 
-    <el-dialog v-model="traceVisible" title="审批痕迹" width="520px">
+    <el-dialog v-model="traceVisible" :title="t('审批痕迹')" width="520px">
       <FlowTrace v-if="traceVisible" :instance-id="traceId" />
     </el-dialog>
   </div>
@@ -43,6 +43,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import FlowTrace from './FlowTrace.vue'
@@ -53,6 +54,8 @@ import {
   type ElTagType,
   type MyApplicationItem,
 } from '@/types/wf/wf'
+
+const { t } = useI18n()
 
 const rows = ref<MyApplicationItem[]>([])
 const loading = ref(false)
@@ -76,12 +79,12 @@ function openTrace(row: MyApplicationItem) {
 
 async function withdraw(row: MyApplicationItem) {
   try {
-    await ElMessageBox.confirm('确认撤回该申请？', '撤回', { type: 'warning' })
+    await ElMessageBox.confirm(t('确认撤回该申请？'), t('撤回'), { type: 'warning' })
   } catch {
     return // 用户取消
   }
   await flowApi.withdraw(row.instanceId)
-  ElMessage.success('已撤回')
+  ElMessage.success(t('已撤回'))
   await load()
 }
 

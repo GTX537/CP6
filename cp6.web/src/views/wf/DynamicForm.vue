@@ -67,8 +67,11 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { FormSchema, FormFieldDef, FieldMask } from '@/types/wf/wf'
+
+const { t } = useI18n()
 
 /**
  * Schema 驱动动态表单（OA 章02 B-2）。按 field.type 映射 element-plus 控件；
@@ -97,9 +100,9 @@ const rules = computed<FormRules>(() => {
     if (perm === 'hidden' || perm === 'readonly') continue // 不可编辑字段不校验
     const list: FormRules[string] = []
     const label = f.label || f.name
-    if (f.required) list.push({ required: true, message: `${label}必填`, trigger: 'blur' })
-    if (f.maxLength) list.push({ max: f.maxLength, message: `${label}最多 ${f.maxLength} 字`, trigger: 'blur' })
-    if (f.pattern) list.push({ pattern: new RegExp(f.pattern), message: `${label}格式不符`, trigger: 'blur' })
+    if (f.required) list.push({ required: true, message: t('{label}必填', { label }), trigger: 'blur' })
+    if (f.maxLength) list.push({ max: f.maxLength, message: t('{label}最多 {n} 字', { label, n: f.maxLength }), trigger: 'blur' })
+    if (f.pattern) list.push({ pattern: new RegExp(f.pattern), message: t('{label}格式不符', { label }), trigger: 'blur' })
     if (list.length) r[f.name] = list
   }
   return r

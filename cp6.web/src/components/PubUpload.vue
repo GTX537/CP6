@@ -8,23 +8,23 @@
       drag
     >
       <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
-      <div class="el-upload__text">拖拽文件到此或<em>点击上传</em></div>
+      <div class="el-upload__text">{{ t('拖拽文件到此或') }}<em>{{ t('点击上传') }}</em></div>
       <template #tip>
-        <div class="el-upload__tip">单文件 ≤ {{ maxSize }}MB<span v-if="accept">，类型：{{ accept }}</span></div>
+        <div class="el-upload__tip">{{ t('单文件 ≤ {n}MB', { n: maxSize }) }}<span v-if="accept">{{ t('，类型：{accept}', { accept }) }}</span></div>
       </template>
     </el-upload>
 
     <el-table v-if="fileList.length" :data="fileList" size="small" style="margin-top: 10px">
-      <el-table-column prop="fileName" label="文件名" show-overflow-tooltip />
-      <el-table-column label="大小" width="100">
+      <el-table-column prop="fileName" :label="t('文件名')" show-overflow-tooltip />
+      <el-table-column :label="t('大小')" width="100">
         <template #default="{ row }">{{ humanSize(row.size) }}</template>
       </el-table-column>
-      <el-table-column prop="uploader" label="上传人" width="120" />
-      <el-table-column label="操作" width="180">
+      <el-table-column prop="uploader" :label="t('上传人')" width="120" />
+      <el-table-column :label="t('操作')" width="180">
         <template #default="{ row }">
-          <el-button link type="primary" @click="download(row)">下载</el-button>
-          <el-button link type="primary" @click="preview(row)">预览</el-button>
-          <el-button link type="danger" @click="remove(row)">删除</el-button>
+          <el-button link type="primary" @click="download(row)">{{ t('下载') }}</el-button>
+          <el-button link type="primary" @click="preview(row)">{{ t('预览') }}</el-button>
+          <el-button link type="danger" @click="remove(row)">{{ t('删除') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -33,9 +33,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { attachmentApi } from '@/api/pub/attachment'
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<{
   bizType: string
@@ -69,14 +72,14 @@ async function reload() {
 async function customUpload(option: any) {
   const file: File = option.file
   if (file.size > props.maxSize * 1024 * 1024) {
-    ElMessage.error(`文件超过 ${props.maxSize}MB`)
+    ElMessage.error(t('文件超过 {n}MB', { n: props.maxSize }))
     option.onError?.(new Error('oversize'))
     return
   }
   try {
     const res: any = await attachmentApi.upload(file, props.bizType, props.bizId, draftToken.value)
     option.onSuccess?.(res)
-    ElMessage.success('上传成功')
+    ElMessage.success(t('上传成功'))
     if (props.bizId) await reload()
     else if (res?.data) fileList.value.push(res.data)   // 草稿期本地维护列表
   } catch (e) {
@@ -95,9 +98,9 @@ async function preview(row: any) {
 }
 
 async function remove(row: any) {
-  await ElMessageBox.confirm('确定删除该附件？', '提示', { type: 'warning' })
+  await ElMessageBox.confirm(t('确定删除该附件？'), t('提示'), { type: 'warning' })
   await attachmentApi.remove(row.id)
-  ElMessage.success('已删除')
+  ElMessage.success(t('已删除'))
   if (props.bizId) await reload()
   else fileList.value = fileList.value.filter(f => f.id !== row.id)
 }
