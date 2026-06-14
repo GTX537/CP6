@@ -1,4 +1,5 @@
 using CP6.Entity.DomainModels;
+using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DomainModels.Pub;
 using CP6.Entity.DomainModels.Wf;
@@ -336,6 +337,12 @@ public class CP6Context : DbContext
     /// <summary>流程审批痕迹（OA 章03，仅追加时间线）</summary>
     public DbSet<Wf_FlowHistory> Wf_FlowHistories { get; set; }
 
+    // ───── 财务（Fin）章01 总账内核 ─────
+    /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
+    public DbSet<GlAccount> GlAccounts { get; set; }
+    /// <summary>成本中心（章01，机台/工序/部门分析维度）</summary>
+    public DbSet<CostCenter> CostCenters { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -450,6 +457,26 @@ public class CP6Context : DbContext
         modelBuilder.Entity<Wf_FlowHistory>(e =>
         {
             e.HasIndex(x => x.InstanceId).HasDatabaseName("IX_Wf_FlowHistory_Instance");  // 审批痕迹时间线
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        //  财务（Fin）章01 总账内核
+        // ═══════════════════════════════════════════════════════════
+
+        // 会计科目：Code 唯一（单模板包部署）；Role 锚点供自动凭证查找；ParentId 取子科目
+        modelBuilder.Entity<GlAccount>(e =>
+        {
+            e.HasIndex(x => x.Code).IsUnique();
+            e.HasIndex(x => x.Role);
+            e.HasIndex(x => x.ParentId);
+            e.HasIndex(x => new { x.StandardScheme, x.IsActive });
+        });
+
+        // 成本中心：Code 唯一
+        modelBuilder.Entity<CostCenter>(e =>
+        {
+            e.HasIndex(x => x.Code).IsUnique();
+            e.HasIndex(x => x.ParentId);
         });
 
         // 見積計算書：QtnCalcNo 唯一
