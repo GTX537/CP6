@@ -1,6 +1,7 @@
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DomainModels.Pub;
+using CP6.Entity.DomainModels.Wf;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
@@ -321,6 +322,12 @@ public class CP6Context : DbContext
     /// <summary>モバイル作業指示（WM300）</summary>
     public DbSet<MobileTask> MobileTasks { get; set; }
 
+    // ───── OA(Wf) 阶段1 运行时 ─────
+    /// <summary>表单定义（OA 章02，JSON 列）</summary>
+    public DbSet<Wf_FormDef> Wf_FormDefs { get; set; }
+    /// <summary>表单数据（OA 章02，JSON 列）</summary>
+    public DbSet<Wf_FormData> Wf_FormDatas { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -394,6 +401,17 @@ public class CP6Context : DbContext
         modelBuilder.Entity<GenColumn>(e =>
         {
             e.HasIndex(x => new { x.GenTableId, x.Sort }).HasDatabaseName("IX_Pub_GenColumn_Table");
+        });
+
+        // OA 章02 表单引擎：FormKey 唯一（本阶段全局；多租户后升 (TenantId,FormKey)）；FormData 按 FormKey/BizId 取
+        modelBuilder.Entity<Wf_FormDef>(e =>
+        {
+            e.HasIndex(x => x.FormKey).IsUnique().HasDatabaseName("UX_Wf_FormDef_FormKey");
+        });
+        modelBuilder.Entity<Wf_FormData>(e =>
+        {
+            e.HasIndex(x => x.FormKey).HasDatabaseName("IX_Wf_FormData_FormKey");
+            e.HasIndex(x => x.BizId).HasDatabaseName("IX_Wf_FormData_Biz");
         });
 
         // 見積計算書：QtnCalcNo 唯一
