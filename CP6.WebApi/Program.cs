@@ -536,6 +536,31 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 105 });
         db.SaveChanges();
     }
+    // i18n 优化 ③：激活 lang 管理页功能权限（首次启用 action 权限子系统）。
+    // ActionKeys 计算过滤 MenuKey==null，故菜单105必须有 MenuKey（既有库无 key 需补）。幂等。
+    {
+        var langMenu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == 105);
+        if (langMenu != null && string.IsNullOrEmpty(langMenu.MenuKey))
+        {
+            langMenu.MenuKey = "lang";
+            db.SaveChanges();
+        }
+        var langActions = new[]
+        {
+            new { Code = "update", Name = "编辑" },
+            new { Code = "delete", Name = "删除" },
+            new { Code = "review", Name = "审校" },
+            new { Code = "publish", Name = "发布" },
+        };
+        foreach (var a in langActions)
+        {
+            if (!db.Sys_MenuActions.Any(x => x.MenuId == 105 && x.ActionCode == a.Code))
+                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = 105, ActionCode = a.Code, ActionName = a.Name, Sort = 0 });
+            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == 105 && x.ActionCode == a.Code))
+                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = 105, ActionCode = a.Code });
+        }
+        db.SaveChanges();
+    }
     if (!db.Sys_Menus.Any(m => m.MenuId == 104))
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 104, MenuName = "用户管理", RoutePath = "/user", Icon = "User", ParentId = 100, OrderNo = 104, Enable = true });

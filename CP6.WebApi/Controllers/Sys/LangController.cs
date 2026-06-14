@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
@@ -121,6 +122,7 @@ public class LangController : ControllerBase
     /// <summary>i18n 优化 P4 发布模式：触发一次发布（导出版本化静态包 + 更新 manifest）。</summary>
     [HttpPost("publish")]
     [Authorize]
+    [RequirePermission("lang", "publish")]
     public async Task<IActionResult> Publish()
     {
         var version = await _publish.PublishAsync(User?.Identity?.Name, DateTime.Now);
@@ -130,6 +132,7 @@ public class LangController : ControllerBase
     /// <summary>i18n 优化 P4 发布模式：回滚 manifest 指向某历史版本（旧静态包仍在）。</summary>
     [HttpPost("publish/rollback")]
     [Authorize]
+    [RequirePermission("lang", "publish")]
     public IActionResult Rollback([FromBody] RollbackRequest req)
     {
         var ok = _publish.Rollback(req.Version, User?.Identity?.Name, DateTime.Now);
@@ -143,6 +146,7 @@ public class LangController : ControllerBase
     /// ids 为空/缺省 = 审校全部 draft 词条。</summary>
     [HttpPost("review")]
     [Authorize]
+    [RequirePermission("lang", "review")]
     public async Task<IActionResult> Review([FromBody] int[]? ids)
     {
         var rows = (ids != null && ids.Length > 0)
@@ -186,6 +190,7 @@ public class LangController : ControllerBase
 
     [HttpPost]
     [Authorize]
+    [RequirePermission("lang", "update")]
     public async Task<IActionResult> Add([FromBody] Sys_Lang entity)
     {
         // i18n 优化 P1 样例：抛错误码而非日文/中文字面量，由 BizExceptionMiddleware 按请求 culture 本地化。
@@ -208,6 +213,7 @@ public class LangController : ControllerBase
 
     [HttpPut]
     [Authorize]
+    [RequirePermission("lang", "update")]
     public async Task<IActionResult> Update([FromBody] Sys_Lang entity)
     {
         var existing = await _context.Sys_Langs.FindAsync(entity.Id);
@@ -234,6 +240,7 @@ public class LangController : ControllerBase
 
     [HttpDelete]
     [Authorize]
+    [RequirePermission("lang", "delete")]
     public async Task<IActionResult> Delete([FromBody] int[] ids)
     {
         var entities = await _context.Sys_Langs.Where(l => ids.Contains(l.Id)).ToListAsync();
