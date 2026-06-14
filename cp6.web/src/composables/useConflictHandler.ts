@@ -1,5 +1,6 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { h } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { AxiosError } from 'axios'
 import { estimateCalcApi } from '@/api/erp/estimateCalc'
 import { useEstimateStore } from '@/stores/estimate'
@@ -25,6 +26,7 @@ interface ApiErrBody {
  */
 export function useConflictHandler() {
   const store = useEstimateStore()
+  const { t } = useI18n()
 
   /**
    * 捕获 axios 错误；若 status=409，弹冲突对话框并返回 true（已处理）；
@@ -36,20 +38,20 @@ export function useConflictHandler() {
     if (status !== 409) return false
 
     const body = axErr.response?.data
-    const msg = body?.message ?? '更新が競合しました。'
+    const msg = body?.message ?? t('更新が競合しました。')
     const msgId = body?.msgId ?? 'MSG-W10002'
 
     try {
       await ElMessageBox({
-        title: '排他制御エラー',
+        title: t('排他制御エラー'),
         message: h('div', null, [
           h('p', null, `[${msgId}] ${msg}`),
           h('p', { style: 'color:#909399;font-size:12px;margin-top:8px' },
-            '他のユーザーが先に更新しています。最新版を読み込んで再編集してください。'),
+            t('他のユーザーが先に更新しています。最新版を読み込んで再編集してください。')),
         ]),
         type: 'warning',
-        confirmButtonText: '最新版を取得',
-        cancelButtonText: 'キャンセル',
+        confirmButtonText: t('最新版を取得'),
+        cancelButtonText: t('キャンセル'),
         showCancelButton: true,
         customClass: 'msbbpa010-conflict-dialog',
       })
@@ -65,11 +67,11 @@ export function useConflictHandler() {
       if (res.code === 0) {
         store.loadBasicInfo(res.data)
         store.setOperationType(OperationType.Edit)
-        ElMessage.success('最新データを取得しました。もう一度保存してください')
+        ElMessage.success(t('最新データを取得しました。もう一度保存してください'))
       }
     } catch (e) {
       console.error('重新拉取失败', e)
-      ElMessage.error('最新版の取得に失敗しました')
+      ElMessage.error(t('最新版の取得に失敗しました'))
     }
     return true
   }

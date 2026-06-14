@@ -79,6 +79,10 @@ public static class I18nErpScreenSeed
         new Sys_Lang { LangKey = "他のユーザが更新しました", ZhCN = "其他用户已更新", ZhTW = "其他使用者已更新", En = "Updated by another user", Ja = "他のユーザが更新しました", Ko = "다른 사용자가 업데이트했습니다" },
         new Sys_Lang { LangKey = "最新版を取得", ZhCN = "获取最新版", ZhTW = "取得最新版", En = "Get Latest", Ja = "最新版を取得", Ko = "최신 버전 가져오기" },
         new Sys_Lang { LangKey = "最新データを取得しました。もう一度保存してください", ZhCN = "已获取最新数据，请重新保存", ZhTW = "已取得最新資料，請重新儲存", En = "Latest data loaded. Please save again", Ja = "最新データを取得しました。もう一度保存してください", Ko = "최신 데이터를 가져왔습니다. 다시 저장하세요" },
+        // ① 补：楽観排他 composable 对话框（useConflictHandler / useProductConflictHandler）
+        new Sys_Lang { LangKey = "更新が競合しました。", ZhCN = "更新发生冲突。", ZhTW = "更新發生衝突。", En = "Update conflict occurred.", Ja = "更新が競合しました。", Ko = "업데이트가 충돌했습니다." },
+        new Sys_Lang { LangKey = "他のユーザーが先に更新しています。最新版を読み込んで再編集してください。", ZhCN = "其他用户已先行更新，请加载最新版后重新编辑。", ZhTW = "其他使用者已先行更新，請載入最新版後重新編輯。", En = "Another user has already updated this. Please load the latest version and edit again.", Ja = "他のユーザーが先に更新しています。最新版を読み込んで再編集してください。", Ko = "다른 사용자가 먼저 업데이트했습니다. 최신 버전을 불러와 다시 편집하세요." },
+        new Sys_Lang { LangKey = "最新版の取得に失敗しました", ZhCN = "获取最新版失败", ZhTW = "取得最新版失敗", En = "Failed to get the latest version", Ja = "最新版の取得に失敗しました", Ko = "최신 버전 가져오기에 실패했습니다" },
         new Sys_Lang { LangKey = "先に御見積書Noを入力して「読込」してください", ZhCN = "请先输入报价单 No. 并「读取」", ZhTW = "請先輸入報價單 No. 並「讀取」", En = "Enter Quotation No. and 'Load' first", Ja = "先に御見積書Noを入力して「読込」してください", Ko = "먼저 견적서 No.를 입력하고 '불러오기' 하세요" },
         new Sys_Lang { LangKey = "確定する見積計算書にチェックを入れてから、もう一度「確定登録」を押してください", ZhCN = "请先勾选要确定的估算计算书，再点「确定登记」", ZhTW = "請先勾選要確定的估算計算書，再點「確定登記」", En = "Check estimate sheets to confirm, then click 'Confirm'", Ja = "確定する見積計算書にチェックを入れてから、もう一度「確定登録」を押してください", Ko = "확정할 견적 계산서를 체크한 후 '확정 등록'을 누르세요" },
         new Sys_Lang { LangKey = "確定する見積計算書を1件以上選択してください", ZhCN = "请至少选择一件要确定的估算计算书", ZhTW = "請至少選擇一件要確定的估算計算書", En = "Select at least one estimate sheet to confirm", Ja = "確定する見積計算書を1件以上選択してください", Ko = "확정할 견적 계산서를 1건 이상 선택하세요" },

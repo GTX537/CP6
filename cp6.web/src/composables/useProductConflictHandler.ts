@@ -1,5 +1,6 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { h } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { AxiosError } from 'axios'
 import { productApi } from '@/api/erp/product'
 import { useProductMasterStore } from '@/stores/productMaster'
@@ -20,6 +21,7 @@ interface ApiErrBody {
  */
 export function useProductConflictHandler() {
   const store = useProductMasterStore()
+  const { t } = useI18n()
 
   async function handle(err: unknown): Promise<boolean> {
     const axErr = err as AxiosError<ApiErrBody>
@@ -27,20 +29,20 @@ export function useProductConflictHandler() {
     if (status !== 409) return false
 
     const body = axErr.response?.data
-    const msg = body?.message ?? '更新が競合しました。'
+    const msg = body?.message ?? t('更新が競合しました。')
     const msgId = body?.msgId ?? 'MSG-W10002'
 
     try {
       await ElMessageBox({
-        title: '排他制御エラー',
+        title: t('排他制御エラー'),
         message: h('div', null, [
           h('p', null, `[${msgId}] ${msg}`),
           h('p', { style: 'color:#909399;font-size:12px;margin-top:8px' },
-            '他のユーザーが先に更新しています。最新版を読み込んで再編集してください。'),
+            t('他のユーザーが先に更新しています。最新版を読み込んで再編集してください。')),
         ]),
         type: 'warning',
-        confirmButtonText: '最新版を取得',
-        cancelButtonText: 'キャンセル',
+        confirmButtonText: t('最新版を取得'),
+        cancelButtonText: t('キャンセル'),
         showCancelButton: true,
       })
     } catch {
@@ -54,11 +56,11 @@ export function useProductConflictHandler() {
       if (res.code === 0) {
         store.loadFromDto(res.data)
         store.setOperationType(ProductOperationType.Edit)
-        ElMessage.success('最新データを取得しました。もう一度保存してください')
+        ElMessage.success(t('最新データを取得しました。もう一度保存してください'))
       }
     } catch (e) {
       console.error('再取得失敗', e)
-      ElMessage.error('最新版の取得に失敗しました')
+      ElMessage.error(t('最新版の取得に失敗しました'))
     }
     return true
   }
