@@ -19,11 +19,13 @@ public class LangPublishService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IWebHostEnvironment _env;
+    private readonly IConfiguration _config;
 
-    public LangPublishService(IServiceScopeFactory scopeFactory, IWebHostEnvironment env)
+    public LangPublishService(IServiceScopeFactory scopeFactory, IWebHostEnvironment env, IConfiguration config)
     {
         _scopeFactory = scopeFactory;
         _env = env;
+        _config = config;
     }
 
     private string RootDir => Path.Combine(_env.ContentRootPath, "wwwroot", "i18n");
@@ -38,7 +40,9 @@ public class LangPublishService
 
         using var scope = _scopeFactory.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<CP6Context>();
-        var items = await ctx.Sys_Langs.AsNoTracking().Where(l => l.TenantId == null).ToListAsync();
+        var q = ctx.Sys_Langs.AsNoTracking().Where(l => l.TenantId == null);
+        if (_config.GetValue<bool>("I18n:ServeReviewedOnly")) q = q.Where(l => l.Status == "reviewed");  // i18n 优化 P5
+        var items = await q.ToListAsync();
 
         foreach (var lang in LangColumn.Codes)
         {

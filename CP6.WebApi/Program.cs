@@ -990,6 +990,11 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "lang.publish", ZhCN = "发布", ZhTW = "發佈", En = "Publish", Ja = "公開", Ko = "게시" },
             new Sys_Lang { LangKey = "lang.publishSuccess", ZhCN = "发布成功", ZhTW = "發佈成功", En = "Published", Ja = "公開しました", Ko = "게시되었습니다" },
             new Sys_Lang { LangKey = "lang.publishFailed", ZhCN = "发布失败", ZhTW = "發佈失敗", En = "Publish failed", Ja = "公開に失敗しました", Ko = "게시 실패" },
+            // i18n 优化 P5：审校工作流
+            new Sys_Lang { LangKey = "lang.status", ZhCN = "状态", ZhTW = "狀態", En = "Status", Ja = "状態", Ko = "상태" },
+            new Sys_Lang { LangKey = "lang.reviewDrafts", ZhCN = "审校草稿", ZhTW = "審校草稿", En = "Review Drafts", Ja = "下書きを審査", Ko = "초안 검수" },
+            new Sys_Lang { LangKey = "lang.reviewDone", ZhCN = "已审校 {n} 条", ZhTW = "已審校 {n} 筆", En = "Reviewed {n} entries", Ja = "{n} 件を審査済みにしました", Ko = "{n}건 검수 완료" },
+            new Sys_Lang { LangKey = "lang.reviewFailed", ZhCN = "审校失败", ZhTW = "審校失敗", En = "Review failed", Ja = "審査に失敗しました", Ko = "검수 실패" },
         };
 
         var existingKeys = db.Sys_Langs.Select(l => l.LangKey).ToHashSet();

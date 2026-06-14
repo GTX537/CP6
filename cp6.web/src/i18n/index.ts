@@ -1,13 +1,14 @@
 import { createI18n } from 'vue-i18n'
 import http from '@/api/http'
 
-// 语言选项列表
+// 语言选项列表（i18n 优化 P5：仅 dev 构建追加伪本地化 QA 语言）
 export const langOptions = [
   { label: '简体中文', value: 'zh-CN' },
   { label: '繁體中文', value: 'zh-TW' },
   { label: 'English', value: 'en' },
   { label: '日本語', value: 'ja' },
   { label: '한국어', value: 'ko' },
+  ...(import.meta.env.DEV ? [{ label: '🔣 Pseudo (QA)', value: 'pseudo' }] : []),
 ]
 
 // i18n 优化 P2：显式回退链（缺失逐级回退，而非一律回 ja）。
@@ -149,15 +150,59 @@ async function loadNamespace(lang: string, ns: string) {
   }
 }
 
+// ── i18n 优化 P5：伪本地化质量门（dev-only QA 语言）─────────────────
+// 把 en 文案重音化 + 加括号 + 加长 ~40%。用途：①未翻译/硬编码文案不会变形 → 一眼裸露；
+// ②加长文本撑出布局，揪文本溢出。{占位} 不变形。
+const PSEUDO_MAP: Record<string, string> = {
+  a: 'å', b: 'ƀ', c: 'ç', d: 'ð', e: 'é', f: 'ƒ', g: 'ĝ', h: 'ĥ', i: 'í', j: 'ĵ', k: 'ķ', l: 'ļ', m: 'ɱ',
+  n: 'ñ', o: 'ö', p: 'þ', q: 'ǫ', r: 'ŕ', s: 'š', t: 'ţ', u: 'ü', v: 'ṽ', w: 'ŵ', x: 'ẋ', y: 'ý', z: 'ž',
+  A: 'Å', B: 'Ɓ', C: 'Ç', D: 'Ð', E: 'É', F: 'Ƒ', G: 'Ĝ', H: 'Ĥ', I: 'Í', J: 'Ĵ', K: 'Ķ', L: 'Ļ', M: 'Ɱ',
+  N: 'Ñ', O: 'Ö', P: 'Þ', Q: 'Ǫ', R: 'Ŕ', S: 'Š', T: 'Ţ', U: 'Ü', V: 'Ṽ', W: 'Ŵ', X: 'Ẋ', Y: 'Ý', Z: 'Ž',
+}
+function pseudoize(v: string): string {
+  let out = ''
+  let i = 0
+  while (i < v.length) {
+    const ch = v.charAt(i)
+    if (ch === '{') {
+      const end = v.indexOf('}', i)
+      if (end >= 0) { out += v.slice(i, end + 1); i = end + 1; continue } // 保留 {占位}
+    }
+    out += PSEUDO_MAP[ch] ?? ch
+    i++
+  }
+  const base = out.replace(/\{[^}]*\}/g, '')
+  const pad = '·'.repeat(Math.max(1, Math.ceil(base.length * 0.4)))
+  return `⟦${out}${pad}⟧`
+}
+async function loadPseudo() {
+  if (loadedPacks.has('pseudo:_full')) return
+  try {
+    // 直接拉「原始」en 字典（值为字符串）。不能用 getLocaleMessage('en')——vue-i18n 会把消息编译成对象。
+    const flat: any = await http.get('/lang/en')
+    const pseudo: Record<string, string> = {}
+    for (const k in flat) {
+      const v = flat[k]
+      pseudo[k] = typeof v === 'string' ? pseudoize(v) : v
+    }
+    i18n.global.setLocaleMessage('pseudo', pseudo)
+    loadedPacks.add('pseudo:_full')
+  } catch (e) {
+    console.error('[i18n] loadPseudo failed', e)
+  }
+}
+
 /** 加载某语言的基础包（按模式）。 */
 async function loadBase(lang: string) {
-  if (MODE === 'publish') await loadPublished(lang)
+  if (lang === 'pseudo') await loadPseudo()
+  else if (MODE === 'publish') await loadPublished(lang)
   else await loadCore(lang)
 }
 
 /** 路由守卫调用：确保目标路径所需命名空间已就绪（含当前语言 + 回退链语言）。 */
 export async function ensureNamespacesForPath(path: string) {
   const lang = (i18n.global.locale as any).value as string
+  if (lang === 'pseudo') return // 伪本地化整包已含全部
   const nsList = namespacesForPath(path)
   if (MODE === 'publish' || nsList.length === 0) {
     // publish 模式整包已含全部；无映射的路由 _core 已覆盖。无需额外加载。
@@ -174,6 +219,13 @@ export async function ensureNamespacesForPath(path: string) {
 
 // 切换语言：载新语言基础包 + 已访问过的大模块 ns + 回退链基础包。
 export async function changeLang(langCode: string) {
+  // i18n 优化 P5：伪本地化是整包(en 底)，无需 ns/回退链加载。
+  if (langCode === 'pseudo') {
+    await loadPseudo()
+    i18n.global.locale.value = 'pseudo'
+    localStorage.setItem('lang', 'pseudo')
+    return
+  }
   const langs = [langCode, ...(fallbackChain[langCode] || [])]
   await Promise.all(langs.map((l) => loadBase(l)))
   await Promise.all(

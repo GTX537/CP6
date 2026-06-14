@@ -16,13 +16,18 @@ public class LangController : ControllerBase
     private readonly CP6Context _context;
     private readonly CacheService _cache;
     private readonly LangPublishService _publish;
+    private readonly IConfiguration _config;
 
-    public LangController(CP6Context context, CacheService cache, LangPublishService publish)
+    public LangController(CP6Context context, CacheService cache, LangPublishService publish, IConfiguration config)
     {
         _context = context;
         _cache = cache;
         _publish = publish;
+        _config = config;
     }
+
+    /// <summary>i18n 优化 P5：是否只下发已审校词条（serve reviewed-only 质量门）。默认 false=全部下发，零行为变化。</summary>
+    private bool ReviewedOnly => _config.GetValue<bool>("I18n:ServeReviewedOnly");
 
     /// <summary>
     /// 按语言代码获取所有翻译（前端加载用，不需要登录）
@@ -43,7 +48,10 @@ public class LangController : ControllerBase
         {
             // i18n 优化 P3：前端全局语言包只取全局值（TenantId=null），不泄露租户覆盖。
             // 缓存键 lang:{code} 与 DbStringLocalizer 全局字典共用，两侧一致。
-            var items = await _context.Sys_Langs.Where(l => l.TenantId == null).ToListAsync();
+            // i18n 优化 P5：可选只下发已审校（默认关）。
+            var q = _context.Sys_Langs.Where(l => l.TenantId == null);
+            if (ReviewedOnly) q = q.Where(l => l.Status == "reviewed");
+            var items = await q.ToListAsync();
             var result = new Dictionary<string, string>();
 
             foreach (var item in items)
@@ -78,7 +86,9 @@ public class LangController : ControllerBase
         var cacheKey = $"{CacheService.LangKeyPrefix}ns:{ns}:{lang}";
         var dict = await _cache.GetOrSetAsync(cacheKey, async () =>
         {
-            var items = await _context.Sys_Langs.AsNoTracking().Where(l => l.TenantId == null).ToListAsync();
+            var q = _context.Sys_Langs.AsNoTracking().Where(l => l.TenantId == null);
+            if (ReviewedOnly) q = q.Where(l => l.Status == "reviewed");   // i18n 优化 P5：可选审校门控
+            var items = await q.ToListAsync();
             IEnumerable<Sys_Lang> filtered = ns == "_core"
                 ? items.Where(i => !LangColumn.LazyNamespaces.Contains(LangColumn.Namespace(i.LangKey)))
                 : items.Where(i => string.Equals(LangColumn.Namespace(i.LangKey), ns, StringComparison.OrdinalIgnoreCase));
@@ -128,6 +138,28 @@ public class LangController : ControllerBase
     }
 
     public class RollbackRequest { public string Version { get; set; } = ""; }
+
+    /// <summary>i18n 优化 P5：审校动作 —— 标记为已审校（draft→reviewed）+ 记审计 + 清缓存。
+    /// ids 为空/缺省 = 审校全部 draft 词条。</summary>
+    [HttpPost("review")]
+    [Authorize]
+    public async Task<IActionResult> Review([FromBody] int[]? ids)
+    {
+        var rows = (ids != null && ids.Length > 0)
+            ? await _context.Sys_Langs.Where(l => ids.Contains(l.Id)).ToListAsync()
+            : await _context.Sys_Langs.Where(l => l.Status != "reviewed").ToListAsync();
+        var now = DateTime.Now;
+        var by = User?.Identity?.Name;
+        foreach (var r in rows)
+        {
+            r.Status = "reviewed";
+            r.UpdatedBy = by;
+            r.UpdatedAt = now;
+        }
+        var count = await _context.SaveChangesAsync();
+        await InvalidateLangCache();
+        return Ok(new { code = 0, message = "OK", data = new { count = rows.Count } });
+    }
 
     /// <summary>
     /// 获取所有词条列表（管理页面用，不缓存）

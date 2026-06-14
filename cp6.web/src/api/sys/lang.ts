@@ -13,6 +13,10 @@ export const langApi = {
   del(ids: number[]) {
     return http.delete('/lang', { data: ids })
   },
+  // i18n 优化 P5：审校（ids 空 = 审校全部草稿）
+  review(ids: number[] = []) {
+    return http.post('/lang/review', ids)
+  },
   // i18n 优化 P4 发布模式
   publish() {
     return http.post('/lang/publish')
