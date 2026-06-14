@@ -27,7 +27,8 @@ public class AttachmentController : ControllerBase
 
     /// <summary>上传（multipart）。bizId 已知直传；草稿期传 draftToken。</summary>
     [HttpPost("upload")]
-    public async Task<IActionResult> Upload([FromForm] IFormFile file, [FromForm] string bizType,
+    [Consumes("multipart/form-data")]   // Swashbuckle 生成 multipart/IFormFile 操作所需
+    public async Task<IActionResult> Upload(IFormFile file, [FromForm] string bizType,
         [FromForm] string? bizId, [FromForm] string? draftToken)
     {
         if (file == null || file.Length == 0) return BadRequest(new { code = 400, message = "空文件" });
