@@ -4,7 +4,7 @@
 import i18n from '@/i18n'
 import { useI18n } from 'vue-i18n'
 
-/** DB(Sys_Lang) 中现存的全部词条 key（2953 个）。 */
+/** DB(Sys_Lang) 中现存的全部词条 key（2957 个）。 */
 export type MessageKey =
   | '(ファイルなし)'
   | '(未設定)'
@@ -2437,6 +2437,7 @@ export type MessageKey =
   | '新規作成'
   | '新規時自動採番'
   | '新規検査'
+  | '新页签被浏览器拦截，请允许本站点打开新页签后再试'
   | '日'
   | '日付'
   | '日付 From'
@@ -2450,6 +2451,7 @@ export type MessageKey =
   | '明細切替'
   | '是正処置'
   | '显示名'
+  | '暂无审批痕迹'
   | '暂无待办'
   | '暂无申请'
   | '更新: {updated} 件 / WF 起票: {wf} 件'
@@ -2613,6 +2615,7 @@ export type MessageKey =
   | '発行後に自動設定'
   | '発見者'
   | '発見者CD'
+  | '登录已过期，请重新登录'
   | '登録'
   | '登録しました'
   | '登録しました（{downtimeNo}）'
@@ -2837,6 +2840,7 @@ export type MessageKey =
   | '警告'
   | '警告（続行可）'
   | '访问级'
+  | '请求失败'
   | '请输入部门名称'
   | '请输入部门编码'
   | '販売分析 1〜3'

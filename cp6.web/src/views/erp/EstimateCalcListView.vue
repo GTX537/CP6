@@ -213,7 +213,7 @@ function openInWindow(op: 'new' | 'view' | 'edit' | 'copy', no?: string) {
 
   const win = window.open(url, '_blank')
   if (!win) {
-    ElMessage.warning('新页签被浏览器拦截，请允许本站点打开新页签后再试')
+    ElMessage.warning(t('新页签被浏览器拦截，请允许本站点打开新页签后再试'))
   }
 }
 

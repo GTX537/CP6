@@ -163,5 +163,10 @@ public static class I18nCnScreenSeed
         new Sys_Lang { LangKey = "驳回", ZhCN = "驳回", ZhTW = "駁回", En = "Reject", Ja = "却下", Ko = "반려" },
         new Sys_Lang { LangKey = "（根部门）", ZhCN = "（根部门）", ZhTW = "（根部門）", En = "(Root Department)", Ja = "（ルート部門）", Ko = "(루트 부서)" },
         new Sys_Lang { LangKey = "，类型：{accept}", ZhCN = "，类型：{accept}", ZhTW = "，類型：{accept}", En = ", type: {accept}", Ja = "、種類：{accept}", Ko = ", 유형: {accept}" },
+        // ⑦ 补：散落零星硬编码中文（FlowTrace 空态 / http 拦截器全局错误 / 列表新页签拦截）
+        new Sys_Lang { LangKey = "暂无审批痕迹", ZhCN = "暂无审批痕迹", ZhTW = "暫無審批痕跡", En = "No approval history yet", Ja = "承認履歴はありません", Ko = "결재 이력이 없습니다" },
+        new Sys_Lang { LangKey = "登录已过期，请重新登录", ZhCN = "登录已过期，请重新登录", ZhTW = "登入已過期，請重新登入", En = "Your session has expired. Please log in again.", Ja = "ログインの有効期限が切れました。再度ログインしてください。", Ko = "로그인이 만료되었습니다. 다시 로그인해 주세요." },
+        new Sys_Lang { LangKey = "请求失败", ZhCN = "请求失败", ZhTW = "請求失敗", En = "Request failed", Ja = "リクエストに失敗しました", Ko = "요청에 실패했습니다" },
+        new Sys_Lang { LangKey = "新页签被浏览器拦截，请允许本站点打开新页签后再试", ZhCN = "新页签被浏览器拦截，请允许本站点打开新页签后再试", ZhTW = "新分頁被瀏覽器攔截，請允許本網站開啟新分頁後再試", En = "The new tab was blocked by your browser. Please allow this site to open new tabs and try again.", Ja = "新しいタブがブラウザにブロックされました。本サイトの新しいタブを許可してから再度お試しください。", Ko = "새 탭이 브라우저에 의해 차단되었습니다. 이 사이트의 새 탭을 허용한 후 다시 시도해 주세요." },
     };
 }

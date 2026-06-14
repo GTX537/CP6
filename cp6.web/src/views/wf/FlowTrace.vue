@@ -12,14 +12,17 @@
         <div v-if="h.comment" class="trace-comment">{{ h.comment }}</div>
       </el-timeline-item>
     </el-timeline>
-    <el-empty v-else description="暂无审批痕迹" :image-size="80" />
+    <el-empty v-else :description="t('暂无审批痕迹')" :image-size="80" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { flowApi } from '@/api/wf/flow'
 import { FLOW_ACTION_TEXT, type FlowHistory } from '@/types/wf/wf'
+
+const { t } = useI18n()
 
 /** 审批痕迹时间线（OA 章04 D-3）。按 instanceId 拉 flow/instance 详情的 history。 */
 const props = defineProps<{ instanceId: string }>()
