@@ -112,6 +112,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IGlAccountService, CP6.Core.Ser
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinSequenceService, CP6.Core.Services.Fin.FinSequenceService>(); // 章01 §4 凭证采番（GL-yyyy-MM-NNNNN）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFiscalPeriodService, CP6.Core.Services.Fin.FiscalPeriodService>(); // 章02 §1 会计期间（财年起始月可配）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IJournalEntryService, CP6.Core.Services.Fin.JournalEntryService>(); // 章01 §5/§6 凭证：借贷恒等+maker-checker+红冲
+builder.Services.AddScoped<CP6.Core.Services.Fin.ITrialBalanceService, CP6.Core.Services.Fin.TrialBalanceService>(); // 章02 §2 三栏试算平衡表
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
