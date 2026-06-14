@@ -58,7 +58,7 @@
     <el-dialog v-model="bridgeDialog" :title="t('wms.outbound.bridge.title')" width="500">
       <el-form size="small" label-width="160px">
         <el-form-item :label="t('wms.outbound.bridge.fromWo')">
-          <el-input v-model="bridgeWoNo" placeholder="例: WO20260522-0001">
+          <el-input v-model="bridgeWoNo" :placeholder="t('例: {sample}', { sample: 'WO20260522-0001' })">
             <template #append>
               <el-button type="primary" @click="onBridgeWo" :loading="bridging">{{ t('wms.common.expand') }}</el-button>
             </template>
@@ -66,7 +66,7 @@
         </el-form-item>
         <el-divider />
         <el-form-item :label="t('wms.outbound.bridge.fromOrder')">
-          <el-input v-model="bridgeOrderNo" placeholder="例: O20260522-0001">
+          <el-input v-model="bridgeOrderNo" :placeholder="t('例: {sample}', { sample: 'O20260522-0001' })">
             <template #append>
               <el-button type="primary" @click="onBridgeOrder" :loading="bridging">{{ t('wms.common.expand') }}</el-button>
             </template>

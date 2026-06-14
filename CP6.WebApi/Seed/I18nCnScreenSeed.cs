@@ -171,5 +171,15 @@ public static class I18nCnScreenSeed
         // ⑦ 终扫补：ProductMasterView 切换确认 / FlowTrace 节点 标签
         new Sys_Lang { LangKey = "当前修改尚未保存，继续切换将丢弃？", ZhCN = "当前修改尚未保存，继续切换将丢弃？", ZhTW = "目前修改尚未儲存，繼續切換將捨棄？", En = "Current changes are unsaved. Switching will discard them. Continue?", Ja = "現在の変更は未保存です。切り替えると破棄されますが、続行しますか？", Ko = "현재 변경 사항이 저장되지 않았습니다. 전환하면 삭제됩니다. 계속하시겠습니까?" },
         new Sys_Lang { LangKey = "节点", ZhCN = "节点", ZhTW = "節點", En = "Node", Ja = "ノード", Ko = "노드" },
+        // 全扫净·中文非视图：wf 流程状态/动作(types/wf/wf.ts，消费点包t) + 默认文件名 + WMS 例:占位
+        new Sys_Lang { LangKey = "进行中", ZhCN = "进行中", ZhTW = "進行中", En = "In Progress", Ja = "進行中", Ko = "진행 중" },
+        new Sys_Lang { LangKey = "通过", ZhCN = "通过", ZhTW = "通過", En = "Approved", Ja = "承認", Ko = "승인" },
+        new Sys_Lang { LangKey = "挂起", ZhCN = "挂起", ZhTW = "掛起", En = "Suspended", Ja = "保留", Ko = "보류" },
+        new Sys_Lang { LangKey = "提交", ZhCN = "提交", ZhTW = "提交", En = "Submit", Ja = "提出", Ko = "제출" },
+        new Sys_Lang { LangKey = "挂起待指派", ZhCN = "挂起待指派", ZhTW = "掛起待指派", En = "Suspended (pending assignment)", Ja = "保留（割当待ち）", Ko = "보류 (배정 대기)" },
+        new Sys_Lang { LangKey = "结束", ZhCN = "结束", ZhTW = "結束", En = "End", Ja = "終了", Ko = "종료" },
+        new Sys_Lang { LangKey = "导出.xlsx", ZhCN = "导出.xlsx", ZhTW = "匯出.xlsx", En = "Export.xlsx", Ja = "エクスポート.xlsx", Ko = "내보내기.xlsx" },
+        new Sys_Lang { LangKey = "导入模板.xlsx", ZhCN = "导入模板.xlsx", ZhTW = "匯入範本.xlsx", En = "ImportTemplate.xlsx", Ja = "インポートテンプレート.xlsx", Ko = "가져오기템플릿.xlsx" },
+        new Sys_Lang { LangKey = "例: {sample}", ZhCN = "例: {sample}", ZhTW = "例: {sample}", En = "e.g.: {sample}", Ja = "例: {sample}", Ko = "예: {sample}" },
     };
 }

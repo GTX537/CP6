@@ -66,7 +66,7 @@
           <el-input v-model="planForm.targetWarehouseCd" maxlength="10" />
         </el-form-item>
         <el-form-item :label="t('wms.stocktake.fld.targetLocPrefix')">
-          <el-input v-model="planForm.targetLocationPrefix" placeholder="例: A-01-" maxlength="30" />
+          <el-input v-model="planForm.targetLocationPrefix" :placeholder="t('例: {sample}', { sample: 'A-01-' })" maxlength="30" />
         </el-form-item>
         <el-form-item :label="t('wms.stocktake.fld.targetProduct')"><el-input v-model="planForm.targetProductCd" maxlength="20" /></el-form-item>
         <el-form-item :label="t('wms.stocktake.fld.threshold')">

@@ -89,7 +89,7 @@ async function withdraw(row: MyApplicationItem) {
 }
 
 function statusText(s: number): string {
-  return FLOW_INSTANCE_STATUS[s] || String(s)
+  return FLOW_INSTANCE_STATUS[s] ? t(FLOW_INSTANCE_STATUS[s]) : String(s)
 }
 function statusTag(s: number): ElTagType {
   return FLOW_INSTANCE_STATUS_TAG[s] || 'info'

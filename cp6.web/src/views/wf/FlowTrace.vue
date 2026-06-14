@@ -42,7 +42,7 @@ async function load() {
 }
 
 function actionText(a: string): string {
-  return FLOW_ACTION_TEXT[a] || a
+  return FLOW_ACTION_TEXT[a] ? t(FLOW_ACTION_TEXT[a]) : a
 }
 
 function dotType(a: string): 'primary' | 'success' | 'warning' | 'danger' | 'info' {

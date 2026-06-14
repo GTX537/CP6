@@ -122,7 +122,7 @@
     <el-dialog v-model="bridgeDialog" :title="t('wms.qc.btn.fromInbound')" width="500">
       <el-form size="small" label-width="160px">
         <el-form-item :label="t('wms.inbound.fld.no')">
-          <el-input v-model="bridgeInboundNo" placeholder="例: IN20260523-00001">
+          <el-input v-model="bridgeInboundNo" :placeholder="t('例: {sample}', { sample: 'IN20260523-00001' })">
             <template #append>
               <el-button type="primary" @click="onBridge" :loading="bridging">{{ t('wms.common.expand') }}</el-button>
             </template>

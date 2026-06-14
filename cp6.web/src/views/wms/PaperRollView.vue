@@ -99,7 +99,7 @@
           <el-input v-model="slitForm.parentRollNo" :placeholder="t('wms.paperRoll.msg.parentHint')" maxlength="25" />
         </el-form-item>
         <el-form-item :label="t('wms.paperRoll.fld.childWidths')">
-          <el-input v-model="slitChildWidthsStr" placeholder="例: 905,390" />
+          <el-input v-model="slitChildWidthsStr" :placeholder="t('例: {sample}', { sample: '905,390' })" />
           <span style="color: #999">{{ t('wms.paperRoll.msg.widthsHint') }}</span>
         </el-form-item>
         <el-form-item :label="t('wms.paperRoll.fld.keepRemnant')">
