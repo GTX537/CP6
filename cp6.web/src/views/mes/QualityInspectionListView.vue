@@ -16,12 +16,12 @@
         </el-form-item>
         <el-form-item :label="t('検査種類')">
           <el-select v-model="query.inspectionType" clearable style="width: 130px;">
-            <el-option v-for="o in INSPECTION_TYPE_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+            <el-option v-for="o in INSPECTION_TYPE_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('総合判定')">
           <el-select v-model="query.overallResult" clearable style="width: 130px;">
-            <el-option v-for="o in OVERALL_RESULT_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+            <el-option v-for="o in OVERALL_RESULT_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('検査日 From')">
@@ -135,12 +135,12 @@ const defaultQuery = (): QualityInspectionSearchQuery => ({
 })
 const query = reactive<QualityInspectionSearchQuery>(defaultQuery())
 
-function getTypeLabel(v: number) { return INSPECTION_TYPE_OPTIONS.find(o => o.value === v)?.label ?? `${v}` }
-function getResultLabel(v: number) { return OVERALL_RESULT_OPTIONS.find(o => o.value === v)?.label ?? '' }
+function getTypeLabel(v: number) { return t(INSPECTION_TYPE_OPTIONS.find(o => o.value === v)?.label ?? `${v}`) }
+function getResultLabel(v: number) { return t(OVERALL_RESULT_OPTIONS.find(o => o.value === v)?.label ?? '') }
 function getResultColor(v: number) { return OVERALL_RESULT_OPTIONS.find(o => o.value === v)?.color ?? '#909399' }
 function getDispositionLabel(v: number | null | undefined) {
   if (!v) return '-'
-  return DISPOSITION_OPTIONS.find(o => o.value === v)?.label ?? `${v}`
+  return t(DISPOSITION_OPTIONS.find(o => o.value === v)?.label ?? `${v}`)
 }
 function formatDate(v?: string | null) { return v ? v.substring(0, 10) : '' }
 function formatDateTime(v?: string | null) { return v ? v.substring(0, 16).replace('T', ' ') : '' }

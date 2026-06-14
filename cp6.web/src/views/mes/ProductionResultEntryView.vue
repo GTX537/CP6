@@ -166,13 +166,13 @@ const dialogTitle = computed(() => {
 })
 
 function getStatusLabel(v: number) {
-  return WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`
+  return t(WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`)
 }
 function getStatusColor(v: number) {
   return WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.color ?? '#909399'
 }
 function getProcStatusLabel(v: number) {
-  return PROCESS_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`
+  return t(PROCESS_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`)
 }
 function getProcStatusColor(v: number) {
   return PROCESS_STATUS_OPTIONS.find(s => s.value === v)?.color ?? '#909399'

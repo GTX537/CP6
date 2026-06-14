@@ -49,7 +49,7 @@
           <el-col :span="6">
             <el-form-item :label="t('検査種類')" required>
               <el-select v-model="form.inspectionType">
-                <el-option v-for="o in INSPECTION_TYPE_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+                <el-option v-for="o in INSPECTION_TYPE_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -147,7 +147,7 @@
           <el-table-column :label="t('判定')" width="100" align="center">
             <template #default="{ row }">
               <el-select v-model="row.result" size="small" clearable style="width: 100%;">
-                <el-option v-for="o in ITEM_RESULT_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+                <el-option v-for="o in ITEM_RESULT_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
               </el-select>
             </template>
           </el-table-column>
@@ -169,14 +169,14 @@
           <el-col :span="6">
             <el-form-item :label="t('総合判定')">
               <el-select v-model="form.overallResult" clearable :placeholder="t('自動判定')">
-                <el-option v-for="o in OVERALL_RESULT_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+                <el-option v-for="o in OVERALL_RESULT_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item :label="t('処置内容')" :required="form.overallResult === 2">
               <el-select v-model="form.dispositionAction" clearable :disabled="form.overallResult !== 2">
-                <el-option v-for="o in DISPOSITION_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+                <el-option v-for="o in DISPOSITION_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -251,7 +251,7 @@ const form = reactive<QualityInspectionDto>(emptyForm())
 const isEdit = computed(() => !!form.inspectionNo)
 
 function getResultLabel(v: number | null | undefined) {
-  return OVERALL_RESULT_OPTIONS.find(o => o.value === v)?.label ?? ''
+  return t(OVERALL_RESULT_OPTIONS.find(o => o.value === v)?.label ?? '')
 }
 function getResultColor(v: number | null | undefined) {
   return OVERALL_RESULT_OPTIONS.find(o => o.value === v)?.color ?? '#909399'

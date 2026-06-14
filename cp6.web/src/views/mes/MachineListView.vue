@@ -13,7 +13,7 @@
         </el-form-item>
         <el-form-item :label="t('状態')">
           <el-checkbox-group v-model="query.statuses">
-            <el-checkbox v-for="o in MACHINE_STATUS_OPTIONS" :key="o.value" :value="o.value">{{ o.label }}</el-checkbox>
+            <el-checkbox v-for="o in MACHINE_STATUS_OPTIONS" :key="o.value" :value="o.value">{{ t(o.label) }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
@@ -162,7 +162,7 @@
           <el-col :span="12">
             <el-form-item :label="t('状態')">
               <el-select v-model="form.status" style="width: 100%;">
-                <el-option v-for="o in MACHINE_STATUS_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+                <el-option v-for="o in MACHINE_STATUS_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -192,7 +192,7 @@
         </el-form-item>
         <el-form-item :label="t('停止区分')" required>
           <el-select v-model="dtForm.downtimeType" style="width: 100%;">
-            <el-option v-for="o in DOWNTIME_TYPE_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+            <el-option v-for="o in DOWNTIME_TYPE_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('停止開始日時')" required>
@@ -264,7 +264,7 @@ const emptyDt = (): MachineDowntimeDto => ({
 })
 const dtForm = reactive<MachineDowntimeDto>(emptyDt())
 
-function getStatusLabel(v: number) { return MACHINE_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}` }
+function getStatusLabel(v: number) { return t(MACHINE_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}`) }
 function getStatusColor(v: number) { return MACHINE_STATUS_OPTIONS.find(o => o.value === v)?.color ?? '#909399' }
 function getLight(v: number) { return MACHINE_STATUS_OPTIONS.find(o => o.value === v)?.light ?? 'gray' }
 function formatDate(v?: string | null) { return v ? v.substring(0, 10) : '' }

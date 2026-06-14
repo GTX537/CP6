@@ -14,7 +14,7 @@
       <el-col :span="8">
         <el-form-item :label="t('優先度')">
           <el-select v-model="model.priority" :disabled="!isEditable">
-            <el-option v-for="o in PRIORITY_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+            <el-option v-for="o in PRIORITY_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
           </el-select>
         </el-form-item>
       </el-col>

@@ -20,7 +20,7 @@
         </el-form-item>
         <el-form-item :label="t('ステータス')">
           <el-checkbox-group v-model="query.statuses">
-            <el-checkbox v-for="o in PROCESS_STATUS_OPTIONS" :key="o.value" :value="o.value">{{ o.label }}</el-checkbox>
+            <el-checkbox v-for="o in PROCESS_STATUS_OPTIONS" :key="o.value" :value="o.value">{{ t(o.label) }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item :label="t('表示単位')">
@@ -68,7 +68,7 @@
       <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
         <strong>{{ t('凡例：') }}</strong>
         <span v-for="o in PROCESS_STATUS_OPTIONS" :key="o.value" class="legend-item">
-          <span class="legend-color" :style="{ background: o.color }"></span>{{ o.label }}
+          <span class="legend-color" :style="{ background: o.color }"></span>{{ t(o.label) }}
         </span>
         <span class="legend-item">
           <span class="legend-color legend-actual"></span>{{ t('実績 overlay') }}
@@ -254,7 +254,7 @@ function getWeek(d: Date): number {
 }
 
 function getStatusLabel(v: number) {
-  return PROCESS_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}`
+  return t(PROCESS_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}`)
 }
 function getStatusColor(v: number) {
   return PROCESS_STATUS_OPTIONS.find(o => o.value === v)?.color ?? '#909399'

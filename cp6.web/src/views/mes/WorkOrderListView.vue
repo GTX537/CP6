@@ -32,7 +32,7 @@
         </el-form-item>
         <el-form-item :label="t('優先度')">
           <el-select v-model="query.priority" clearable style="width: 100px">
-            <el-option v-for="o in PRIORITY_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+            <el-option v-for="o in PRIORITY_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('工程CD')">
@@ -43,7 +43,7 @@
         </el-form-item>
         <el-form-item :label="t('ステータス')">
           <el-checkbox-group v-model="query.statuses">
-            <el-checkbox v-for="s in WORK_ORDER_STATUS_OPTIONS" :key="s.value" :value="s.value">{{ s.label }}</el-checkbox>
+            <el-checkbox v-for="s in WORK_ORDER_STATUS_OPTIONS" :key="s.value" :value="s.value">{{ t(s.label) }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
@@ -185,7 +185,7 @@ const defaultQuery = (): WorkOrderSearchQuery => ({
 const query = reactive<WorkOrderSearchQuery>(defaultQuery())
 
 function getStatusLabel(v: number) {
-  return WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`
+  return t(WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`)
 }
 function getStatusColor(v: number) {
   return WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.color ?? '#909399'

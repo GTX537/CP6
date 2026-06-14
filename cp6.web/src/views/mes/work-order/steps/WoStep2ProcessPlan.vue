@@ -124,7 +124,7 @@ function autoSort() {
 }
 
 function getStatusLabel(v: number) {
-  return PROCESS_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`
+  return t(PROCESS_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`)
 }
 function getStatusColor(v: number) {
   return PROCESS_STATUS_OPTIONS.find(s => s.value === v)?.color ?? '#909399'

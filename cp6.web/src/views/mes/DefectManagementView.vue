@@ -29,7 +29,7 @@
         </el-form-item>
         <el-form-item :label="t('ステータス')">
           <el-checkbox-group v-model="query.statuses">
-            <el-checkbox v-for="s in DEFECT_STATUS_OPTIONS" :key="s.value" :value="s.value">{{ s.label }}</el-checkbox>
+            <el-checkbox v-for="s in DEFECT_STATUS_OPTIONS" :key="s.value" :value="s.value">{{ t(s.label) }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
@@ -144,7 +144,7 @@
           <el-col :span="12">
             <el-form-item :label="t('ステータス')">
               <el-select v-model="form.status">
-                <el-option v-for="o in DEFECT_STATUS_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+                <el-option v-for="o in DEFECT_STATUS_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -274,7 +274,7 @@ const emptyForm = (): DefectRecordDto => ({
 
 const form = reactive<DefectRecordDto>(emptyForm())
 
-function getStatusLabel(v: number) { return DEFECT_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}` }
+function getStatusLabel(v: number) { return t(DEFECT_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}`) }
 function getStatusColor(v: number) { return DEFECT_STATUS_OPTIONS.find(o => o.value === v)?.color ?? '#909399' }
 function formatDate(v?: string | null) { return v ? v.substring(0, 10) : '' }
 

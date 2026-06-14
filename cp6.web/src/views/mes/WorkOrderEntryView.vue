@@ -108,7 +108,7 @@ const isEdit = computed(() => !!form.workOrderNo)
 const canIssue = computed(() => isEdit.value && (form.status === 0 || form.status === 1))
 
 function getStatusLabel(v: number) {
-  return WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`
+  return t(WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`)
 }
 function getStatusColor(v: number) {
   return WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.color ?? '#909399'

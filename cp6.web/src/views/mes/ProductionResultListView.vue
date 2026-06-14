@@ -13,7 +13,7 @@
         </el-form-item>
         <el-form-item :label="t('実績種別')">
           <el-select v-model="query.resultType" clearable style="width: 130px;">
-            <el-option v-for="o in RESULT_TYPE_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
+            <el-option v-for="o in RESULT_TYPE_OPTIONS" :key="o.value" :label="t(o.label)" :value="o.value" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('日付 From')">
@@ -110,7 +110,7 @@ const defaultQuery = (): ProductionResultSearchQuery => ({
 const query = reactive<ProductionResultSearchQuery>(defaultQuery())
 
 function getResultTypeLabel(v: number) {
-  return RESULT_TYPE_OPTIONS.find(o => o.value === v)?.label ?? `${v}`
+  return t(RESULT_TYPE_OPTIONS.find(o => o.value === v)?.label ?? `${v}`)
 }
 function getResultTypeTag(v: number) {
   const map: Record<number, string> = { 1: 'primary', 2: 'warning', 3: 'success', 4: 'success', 5: 'info' }

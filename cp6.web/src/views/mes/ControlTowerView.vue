@@ -160,7 +160,7 @@ const goodPoints = computed(() => trend.value.map((p, i) => `${trendX(i)},${tren
 const defectPoints = computed(() => trend.value.map((p, i) => `${trendX(i)},${trendY(p.defectQty)}`).join(' '))
 
 // ─── 設備グリッド ───
-function getStatusLabel(v: number) { return MACHINE_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}` }
+function getStatusLabel(v: number) { return t(MACHINE_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}`) }
 function getLight(v: number) { return MACHINE_STATUS_OPTIONS.find(o => o.value === v)?.light ?? 'gray' }
 
 // ─── 実時間イベント ───
