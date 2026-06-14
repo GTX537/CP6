@@ -219,5 +219,6 @@ public static class I18nErpScreen2Seed
         new Sys_Lang { LangKey = "工程CD {pcd} の連産品比率合計が 1.0 ではありません（現:{sum}）", ZhCN = "工序CD {pcd} 的联产品比率合计不是 1.0（当前:{sum}）", ZhTW = "工序CD {pcd} 的聯產品比率合計不是 1.0（目前:{sum}）", En = "Co-product ratio total for process CD {pcd} is not 1.0 (current: {sum})", Ja = "工程CD {pcd} の連産品比率合計が 1.0 ではありません（現:{sum}）", Ko = "공정CD {pcd}의 연산품 비율 합계가 1.0이 아닙니다 (현재:{sum})" },
         new Sys_Lang { LangKey = "製品CD={cd} 未找到", ZhCN = "产品CD={cd} 未找到", ZhTW = "產品CD={cd} 未找到", En = "Product CD={cd} not found", Ja = "製品CD={cd} が見つかりません", Ko = "제품CD={cd}을(를) 찾을 수 없습니다" },
         new Sys_Lang { LangKey = "：取引先分類 1〜10", ZhCN = "：客户分类 1〜10", ZhTW = "：交易對象分類 1〜10", En = ": Partner Category 1-10", Ja = "：取引先分類 1〜10", Ko = ": 거래처 분류 1〜10" },
+        new Sys_Lang { LangKey = "合計", ZhCN = "合计", ZhTW = "合計", En = "Total", Ja = "合計", Ko = "합계" },
     };
 }

@@ -4,7 +4,7 @@
 import i18n from '@/i18n'
 import { useI18n } from 'vue-i18n'
 
-/** DB(Sys_Lang) 中现存的全部词条 key（3039 个）。 */
+/** DB(Sys_Lang) 中现存的全部词条 key（3040 个）。 */
 export type MessageKey =
   | '(=1.0 必須)'
   | '(ファイルなし)'
@@ -2198,6 +2198,7 @@ export type MessageKey =
   | '合格数'
   | '合格率'
   | '合格率(%)'
+  | '合計'
   | '合計 {n} 件'
   | '合計 {total} 件'
   | '合計: ¥{amount}'

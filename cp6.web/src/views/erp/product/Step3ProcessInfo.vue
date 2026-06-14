@@ -221,7 +221,7 @@
           size="small"
           style="margin-left: 12px"
         >
-          QtyRatio合計: {{ coRatioSum.toFixed(4) }} {{ coRatioOk ? '✓' : t('(=1.0 必須)') }}
+          QtyRatio{{ t('合計') }}: {{ coRatioSum.toFixed(4) }} {{ coRatioOk ? '✓' : t('(=1.0 必須)') }}
         </el-tag>
       </div>
       <el-table :data="currentCoList" border stripe size="small" style="width: 100%">
