@@ -81,4 +81,11 @@ public class FiscalPeriodService : IFiscalPeriodService
         if (month < 1) { month = 12; year -= 1; }
         return await _db.FiscalPeriods.FirstOrDefaultAsync(x => x.Year == year && x.Month == month);
     }
+
+    public async Task<List<FiscalPeriod>> ListAsync(int? year = null)
+    {
+        var q = _db.FiscalPeriods.AsQueryable();
+        if (year is int y) q = q.Where(x => x.Year == y);
+        return await q.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).ToListAsync();
+    }
 }

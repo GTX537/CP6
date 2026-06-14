@@ -24,4 +24,7 @@ public interface IFiscalPeriodService
 
     /// <summary>上一日历月期间（不跳月结账判定用）；不存在返回 null。</summary>
     Task<FiscalPeriod?> PreviousAsync(Guid periodId);
+
+    /// <summary>期间列表（可按日历年过滤），按 年/月 倒序。</summary>
+    Task<List<FiscalPeriod>> ListAsync(int? year = null);
 }
