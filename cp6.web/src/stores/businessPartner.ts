@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import i18n from '@/i18n'
 import { BpOperationType } from '@/types/erp/businessPartner'
 import type { BusinessPartnerDto } from '@/types/erp/businessPartner'
 
@@ -99,8 +100,9 @@ export const useBpStore = defineStore('businessPartner', () => {
     const o = original.value
     const c = bp.value
     const out: string[] = []
+    // label 为日文原文＝i18n key；store 非组件上下文，用全局 i18n.global.t
     const cmp = (k: keyof BusinessPartnerDto, label: string) => {
-      if (o[k] !== c[k]) out.push(label)
+      if (o[k] !== c[k]) out.push(i18n.global.t(label))
     }
     cmp('customerFlg', '得意先FLG')
     cmp('accountsReceivableFlg', '売掛先FLG')
