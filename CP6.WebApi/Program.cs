@@ -679,6 +679,40 @@ using (var scope = app.Services.CreateScope())
     }
 
     // ═══════════════════════════════════════════════════════════
+    //  财务（Fin）总账内核 菜单（章01+02）
+    // ═══════════════════════════════════════════════════════════
+    if (!db.Sys_Menus.Any(m => m.MenuId == 600))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 600, MenuName = "财务管理(Fin)", Icon = "Money", OrderNo = 250, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 600 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 601))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 601, MenuName = "会计科目", RoutePath = "/fin/account", Icon = "Collection", ParentId = 600, OrderNo = 251, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 601 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 602))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 602, MenuName = "记账凭证", RoutePath = "/fin/journal", Icon = "Document", ParentId = 600, OrderNo = 252, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 602 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 603))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 603, MenuName = "试算平衡表", RoutePath = "/fin/trial-balance", Icon = "Histogram", ParentId = 600, OrderNo = 253, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 603 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 604))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 604, MenuName = "会计期间/月结", RoutePath = "/fin/period", Icon = "Calendar", ParentId = 600, OrderNo = 254, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 604 });
+        db.SaveChanges();
+    }
+
+    // ═══════════════════════════════════════════════════════════
     //  MSBBME010〜090 MES 製造執行 菜单
     // ═══════════════════════════════════════════════════════════
     if (!db.Sys_Menus.Any(m => m.MenuId == 300))
@@ -1039,6 +1073,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nMiscScreenSeed.Items)  // 遗留① 组件/WMS/MES步骤 杂项词条
             .Concat(CP6.WebApi.Seed.I18nCnScreenSeed.Items)    // 遗留⑦ PMS/wf/Pub 中文画面词条
             .Concat(CP6.WebApi.Seed.I18nBackendMsgSeed.Items)  // 后端控制器 return 型响应文案
+            .Concat(CP6.WebApi.Seed.I18nFinScreenSeed.Items)   // 财务 GL 内核 4 视图 + nav.6xx + E-FIN-* 错误码
             .Where(i => !existingKeys.Contains(i.LangKey))
             .ToList();
         if (toAdd.Count > 0)

@@ -36,7 +36,10 @@ http.interceptors.response.use(
       // 乐观锁冲突：由调用方自己决定如何提示用户（弹对话框 / 重新拉取等）
       // 这里不自动 toast，避免和业务级对话框重复
     } else {
-      ElMessage.error(error.response?.data?.message || error.response?.data?.title || t('请求失败'))
+      // 后端业务错误码（如 E-FIN-107 / E-PUB-001）走 i18n 翻译为友好文案；
+      // 自由文本 message 因 key 不存在原样返回（flatJson 缺失回退=key 本身），安全。
+      const raw = error.response?.data?.message
+      ElMessage.error((raw ? t(raw) : '') || error.response?.data?.title || t('请求失败'))
     }
     return Promise.reject(error)
   }

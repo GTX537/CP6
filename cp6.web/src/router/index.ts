@@ -21,6 +21,11 @@ const viewModules: Record<string, () => Promise<any>> = {
   // ───── OA 审批工作流 (Wf) ─────
   '/wf/todo': () => import('@/views/wf/TodoCenter.vue'),               // OA 章04 待办中心
   '/wf/my-applications': () => import('@/views/wf/MyApplications.vue'), // OA 章04 我的申请
+  // ───── 财务 (Fin) 总账内核 ─────
+  '/fin/account': () => import('@/views/fin/GlAccountView.vue'),          // 章01 会计科目
+  '/fin/journal': () => import('@/views/fin/JournalEntryView.vue'),       // 章01 记账凭证
+  '/fin/trial-balance': () => import('@/views/fin/TrialBalanceView.vue'), // 章02 试算平衡表
+  '/fin/period': () => import('@/views/fin/PeriodCloseView.vue'),         // 章02 期间/月结
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),
