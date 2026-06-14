@@ -12,27 +12,27 @@
           <el-date-picker v-model="dateRange" type="daterange" value-format="YYYY-MM-DD" style="width: 280px;" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="loadAll">検索</el-button>
-          <el-button type="success" :loading="recalcing" @click="onRecalc">本日 OEE 再計算</el-button>
+          <el-button type="primary" :loading="loading" @click="loadAll">{{ t('検索') }}</el-button>
+          <el-button type="success" :loading="recalcing" @click="onRecalc">{{ t('本日 OEE 再計算') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <!-- 本日 OEE カード -->
     <el-card shadow="never" class="today-card">
-      <template #header>本日リアルタイム OEE</template>
+      <template #header>{{ t('本日リアルタイム OEE') }}</template>
       <div class="oee-cards">
         <div v-for="o in todayOee" :key="o.machineCd" class="oee-card">
           <div class="oee-cd">{{ o.machineCd }} {{ o.machineName }}</div>
           <div class="oee-main" :style="{ color: oeeColor(o.oee) }">{{ o.oee }}%</div>
           <div class="oee-sub">
-            <div>可用率 <strong>{{ o.availability }}%</strong></div>
-            <div>性能 <strong>{{ o.performance }}%</strong></div>
-            <div>品質 <strong>{{ o.quality }}%</strong></div>
+            <div>{{ t('可用率') }} <strong>{{ o.availability }}%</strong></div>
+            <div>{{ t('性能') }} <strong>{{ o.performance }}%</strong></div>
+            <div>{{ t('品質') }} <strong>{{ o.quality }}%</strong></div>
           </div>
           <div class="oee-detail">
-            <span>稼働 {{ o.actualRunMinutes }}/{{ o.plannedRunMinutes }}分</span>
-            <span style="margin-left: 8px;">良品 {{ o.goodQty }} / 不良 {{ o.defectQty }}</span>
+            <span>{{ t('稼働') }} {{ o.actualRunMinutes }}/{{ o.plannedRunMinutes }}{{ t('分') }}</span>
+            <span style="margin-left: 8px;">{{ t('良品') }} {{ o.goodQty }} / {{ t('不良') }} {{ o.defectQty }}</span>
           </div>
         </div>
       </div>
@@ -42,15 +42,15 @@
     <el-card shadow="never" style="margin-top: 12px;">
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>OEE 推移（過去 {{ trendDays }} 日）</span>
+          <span>{{ t('OEE 推移（過去 {trendDays} 日）', { trendDays }) }}</span>
           <el-radio-group v-model="trendDays" size="small" @change="loadTrend">
-            <el-radio-button :value="7">7日</el-radio-button>
-            <el-radio-button :value="14">14日</el-radio-button>
-            <el-radio-button :value="30">30日</el-radio-button>
+            <el-radio-button :value="7">{{ t('7日') }}</el-radio-button>
+            <el-radio-button :value="14">{{ t('14日') }}</el-radio-button>
+            <el-radio-button :value="30">{{ t('30日') }}</el-radio-button>
           </el-radio-group>
         </div>
       </template>
-      <div v-if="trendMachines.length === 0" class="empty">データなし</div>
+      <div v-if="trendMachines.length === 0" class="empty">{{ t('データなし') }}</div>
       <svg v-else :viewBox="'0 0 ' + chartW + ' ' + chartH" :width="chartW" :height="chartH" style="max-width: 100%;">
         <!-- グリッド & Y軸 -->
         <g v-for="i in 6" :key="'gy'+i">
@@ -90,7 +90,7 @@
 
     <!-- OEE 一覧表 -->
     <el-card shadow="never" style="margin-top: 12px;">
-      <template #header>OEE 日次データ</template>
+      <template #header>{{ t('OEE 日次データ') }}</template>
       <el-table :data="rows" border stripe size="small" max-height="500">
         <el-table-column :label="t('日付')" width="110">
           <template #default="{ row }">{{ formatDate(row.oeeDate) }}</template>
@@ -220,7 +220,7 @@ async function onRecalc() {
       targetDate: new Date().toISOString().slice(0, 10),
       machineCd: machineCd.value,
     })
-    ElMessage.success(`${r.data?.recalculated} 件再計算しました`)
+    ElMessage.success(t('{count} 件再計算しました', { count: r.data?.recalculated }))
     await loadAll()
   } finally {
     recalcing.value = false

@@ -17,27 +17,27 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="query.activeOnly">有効のみ</el-checkbox>
+          <el-checkbox v-model="query.activeOnly">{{ t('有効のみ') }}</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="search">検索</el-button>
-          <el-button @click="reset">クリア</el-button>
-          <el-button type="success" @click="openCreate">新規</el-button>
+          <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
+          <el-button @click="reset">{{ t('クリア') }}</el-button>
+          <el-button type="success" @click="openCreate">{{ t('新規') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <!-- 設備状態グリッド（緑灯/赤灯） -->
     <el-card shadow="never" class="grid-card">
-      <template #header>設備稼働状態グリッド</template>
-      <div v-if="rows.length === 0" class="empty">データなし</div>
+      <template #header>{{ t('設備稼働状態グリッド') }}</template>
+      <div v-if="rows.length === 0" class="empty">{{ t('データなし') }}</div>
       <div v-else class="status-grid">
         <div v-for="m in rows" :key="m.machineCd" class="machine-cell" :class="'light-' + getLight(m.status)"
           @click="openEdit(m)">
           <div class="machine-cd">{{ m.machineCd }}</div>
           <div class="machine-name">{{ m.machineName }}</div>
           <div class="machine-status">{{ getStatusLabel(m.status) }}</div>
-          <div v-if="m.currentWorkOrderNo" class="machine-wo">指図 {{ m.currentWorkOrderNo }}</div>
+          <div v-if="m.currentWorkOrderNo" class="machine-wo">{{ t('指図') }} {{ m.currentWorkOrderNo }}</div>
           <div v-if="m.todayOee != null" class="machine-oee">OEE {{ m.todayOee }}%</div>
         </div>
       </div>
@@ -77,16 +77,16 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="220" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">編集</el-button>
-            <el-button link type="warning" size="small" @click="openDowntime(row)">停止登録</el-button>
-            <el-button link type="danger" size="small" @click="onDelete(row)">削除</el-button>
+            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('編集') }}</el-button>
+            <el-button link type="warning" size="small" @click="openDowntime(row)">{{ t('停止登録') }}</el-button>
+            <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
     <!-- 設備編集 ダイアログ -->
-    <el-dialog v-model="dialogVisible" :title="form.machineCd && isEdit ? '設備編集' : '設備新規'" width="700px" @closed="resetForm">
+    <el-dialog v-model="dialogVisible" :title="form.machineCd && isEdit ? t('設備編集') : t('設備新規')" width="700px" @closed="resetForm">
       <el-form :model="form" label-width="120px" size="small">
         <el-row :gutter="12">
           <el-col :span="12">
@@ -179,8 +179,8 @@
         </el-row>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">キャンセル</el-button>
-        <el-button type="primary" :loading="saving" @click="onSave">保存</el-button>
+        <el-button @click="dialogVisible = false">{{ t('キャンセル') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
       </template>
     </el-dialog>
 
@@ -212,8 +212,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dtDialogVisible = false">キャンセル</el-button>
-        <el-button type="primary" :loading="saving" @click="onRegisterDowntime">登録</el-button>
+        <el-button @click="dtDialogVisible = false">{{ t('キャンセル') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="onRegisterDowntime">{{ t('登録') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -300,17 +300,17 @@ function resetForm() { Object.assign(form, emptyForm()) }
 
 async function onSave() {
   if (!form.machineCd || !form.machineName) {
-    ElMessage.error('設備CDと設備名は必須です')
+    ElMessage.error(t('設備CDと設備名は必須です'))
     return
   }
   saving.value = true
   try {
     if (isEdit.value) {
       await machineApi.update(form.machineCd, form)
-      ElMessage.success('ME-MSG-041: 更新しました')
+      ElMessage.success(t('ME-MSG-041: 更新しました'))
     } else {
       await machineApi.create(form)
-      ElMessage.success('ME-MSG-041: 登録しました')
+      ElMessage.success(t('ME-MSG-041: 登録しました'))
     }
     dialogVisible.value = false
     search()
@@ -321,9 +321,9 @@ async function onSave() {
 
 async function onDelete(row: MachineDto) {
   try {
-    await ElMessageBox.confirm(`設備 ${row.machineCd} を削除しますか？`, '確認', { type: 'warning' })
+    await ElMessageBox.confirm(t('設備 {machineCd} を削除しますか？', { machineCd: row.machineCd }), t('確認'), { type: 'warning' })
     await machineApi.delete(row.machineCd)
-    ElMessage.success('削除しました')
+    ElMessage.success(t('削除しました'))
     search()
   } catch (e) { /* cancelled */ }
 }
@@ -338,7 +338,7 @@ async function onRegisterDowntime() {
   saving.value = true
   try {
     const res = await machineApi.registerDowntime(dtForm)
-    ElMessage.success(`登録しました（${res.data?.downtimeNo}）`)
+    ElMessage.success(t('登録しました（{downtimeNo}）', { downtimeNo: res.data?.downtimeNo }))
     dtDialogVisible.value = false
     search()
   } finally {

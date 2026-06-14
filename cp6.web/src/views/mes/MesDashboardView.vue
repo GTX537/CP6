@@ -3,21 +3,21 @@
     <!-- 本日 KPI -->
     <div class="kpi-row">
       <div class="kpi-card kpi-blue">
-        <div class="kpi-label">着手中 指図</div>
+        <div class="kpi-label">{{ t('着手中 指図') }}</div>
         <div class="kpi-value">{{ summary.inProgressCount }}</div>
-        <div class="kpi-sub">本日完了 {{ summary.completedCount }}</div>
+        <div class="kpi-sub">{{ t('本日完了') }} {{ summary.completedCount }}</div>
       </div>
       <div class="kpi-card kpi-green">
-        <div class="kpi-label">本日 良品数</div>
+        <div class="kpi-label">{{ t('本日 良品数') }}</div>
         <div class="kpi-value">{{ summary.totalGoodQty }}</div>
       </div>
       <div class="kpi-card kpi-red">
-        <div class="kpi-label">本日 不良率</div>
+        <div class="kpi-label">{{ t('本日 不良率') }}</div>
         <div class="kpi-value">{{ summary.defectRate }}%</div>
-        <div class="kpi-sub">不良 {{ summary.totalDefectQty }}</div>
+        <div class="kpi-sub">{{ t('不良') }} {{ summary.totalDefectQty }}</div>
       </div>
       <div class="kpi-card kpi-orange">
-        <div class="kpi-label">遅延件数</div>
+        <div class="kpi-label">{{ t('遅延件数') }}</div>
         <div class="kpi-value">{{ summary.delayedCount }}</div>
       </div>
     </div>
@@ -26,15 +26,15 @@
       <!-- 工程別進捗（横棒積上） -->
       <el-col :span="12">
         <el-card shadow="never" class="chart-card">
-          <template #header>工程別進捗</template>
-          <div v-if="processProgress.length === 0" class="empty">データなし</div>
+          <template #header>{{ t('工程別進捗') }}</template>
+          <div v-if="processProgress.length === 0" class="empty">{{ t('データなし') }}</div>
           <div v-else class="process-bars">
             <div v-for="p in processProgress" :key="p.processCd" class="proc-row">
               <div class="proc-label">{{ p.processCd }} {{ p.processName || '' }}</div>
               <div class="proc-bar" :style="{ background: '#f5f5f5' }">
-                <div class="proc-seg" :style="{ width: pct(p, 'completed') + '%', background: '#67C23A' }" :title="`完了 ${p.completed}`"></div>
-                <div class="proc-seg" :style="{ width: pct(p, 'inProgress') + '%', background: '#E6A23C' }" :title="`着手中 ${p.inProgress}`"></div>
-                <div class="proc-seg" :style="{ width: pct(p, 'notStarted') + '%', background: '#909399' }" :title="`未着手 ${p.notStarted}`"></div>
+                <div class="proc-seg" :style="{ width: pct(p, 'completed') + '%', background: '#67C23A' }" :title="t('完了 {n}', { n: p.completed })"></div>
+                <div class="proc-seg" :style="{ width: pct(p, 'inProgress') + '%', background: '#E6A23C' }" :title="t('着手中 {n}', { n: p.inProgress })"></div>
+                <div class="proc-seg" :style="{ width: pct(p, 'notStarted') + '%', background: '#909399' }" :title="t('未着手 {n}', { n: p.notStarted })"></div>
               </div>
               <div class="proc-count">
                 <span style="color: #67C23A;">{{ p.completed }}</span> /
@@ -49,8 +49,8 @@
       <!-- 不良 TOP5（円グラフ） -->
       <el-col :span="12">
         <el-card shadow="never" class="chart-card">
-          <template #header>不良 TOP5（過去30日）</template>
-          <div v-if="defectTop5.length === 0" class="empty">データなし</div>
+          <template #header>{{ t('不良 TOP5（過去30日）') }}</template>
+          <div v-if="defectTop5.length === 0" class="empty">{{ t('データなし') }}</div>
           <div v-else style="display: flex; align-items: center; gap: 16px;">
             <svg :width="200" :height="200" viewBox="0 0 200 200">
               <g v-for="(slice, i) in pieSlices" :key="i">
@@ -61,7 +61,7 @@
               <div v-for="(slice, i) in pieSlices" :key="i" class="legend-row">
                 <span class="dot" :style="{ background: slice.color }"></span>
                 <span class="legend-name">{{ slice.label }}</span>
-                <span class="legend-val">{{ slice.value }}件</span>
+                <span class="legend-val">{{ slice.value }}{{ t('件') }}</span>
               </div>
             </div>
           </div>
@@ -75,15 +75,15 @@
         <el-card shadow="never" class="chart-card">
           <template #header>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span>日別生産推移</span>
+              <span>{{ t('日別生産推移') }}</span>
               <el-radio-group v-model="trendDays" size="small" @change="loadTrend">
-                <el-radio-button :value="7">7日</el-radio-button>
-                <el-radio-button :value="14">14日</el-radio-button>
-                <el-radio-button :value="30">30日</el-radio-button>
+                <el-radio-button :value="7">{{ t('7日') }}</el-radio-button>
+                <el-radio-button :value="14">{{ t('14日') }}</el-radio-button>
+                <el-radio-button :value="30">{{ t('30日') }}</el-radio-button>
               </el-radio-group>
             </div>
           </template>
-          <div v-if="dailyTrend.length === 0" class="empty">データなし</div>
+          <div v-if="dailyTrend.length === 0" class="empty">{{ t('データなし') }}</div>
           <svg v-else :viewBox="'0 0 ' + chartW + ' ' + chartH" :width="chartW" :height="chartH" style="max-width: 100%;">
             <!-- グリッド線 -->
             <line v-for="i in 4" :key="i" x1="40" :x2="chartW - 10"
@@ -103,10 +103,10 @@
             <!-- 点 -->
             <g v-for="(p, i) in dailyTrend" :key="'p'+i">
               <circle :cx="pointX(i)" :cy="pointY(p.goodQty)" r="3" fill="#67C23A">
-                <title>{{ p.date }}: 良品{{ p.goodQty }} / 不良{{ p.defectQty }}</title>
+                <title>{{ t('{date}: 良品{good} / 不良{defect}', { date: p.date, good: p.goodQty, defect: p.defectQty }) }}</title>
               </circle>
               <circle :cx="pointX(i)" :cy="pointY(p.defectQty)" r="3" fill="#F56C6C">
-                <title>{{ p.date }}: 良品{{ p.goodQty }} / 不良{{ p.defectQty }}</title>
+                <title>{{ t('{date}: 良品{good} / 不良{defect}', { date: p.date, good: p.goodQty, defect: p.defectQty }) }}</title>
               </circle>
             </g>
             <!-- X軸ラベル（隔列） -->
@@ -118,8 +118,8 @@
             </text>
           </svg>
           <div style="margin-top: 8px; font-size: 12px;">
-            <span style="color: #67C23A;">●</span> 良品数
-            <span style="color: #F56C6C; margin-left: 16px;">●</span> 不良数
+            <span style="color: #67C23A;">●</span> {{ t('良品数') }}
+            <span style="color: #F56C6C; margin-left: 16px;">●</span> {{ t('不良数') }}
           </div>
         </el-card>
       </el-col>
@@ -129,8 +129,8 @@
       <!-- 工程稼働ヒートマップ -->
       <el-col :span="12">
         <el-card shadow="never" class="chart-card">
-          <template #header>工程稼働ヒートマップ（過去7日, 号機×時間帯）</template>
-          <div v-if="heatmap.length === 0" class="empty">データなし</div>
+          <template #header>{{ t('工程稼働ヒートマップ（過去7日, 号機×時間帯）') }}</template>
+          <div v-if="heatmap.length === 0" class="empty">{{ t('データなし') }}</div>
           <div v-else class="heatmap">
             <div class="heatmap-header">
               <div class="heat-row-label"></div>
@@ -140,7 +140,7 @@
               <div class="heat-row-label">{{ m }}</div>
               <div v-for="h in 24" :key="h" class="heat-cell"
                 :style="{ background: heatColor(getHeat(m, h - 1)) }"
-                :title="`${m} ${h - 1}時: ${getHeat(m, h - 1)}件`">
+                :title="t('{m} {h}時: {n}件', { m, h: h - 1, n: getHeat(m, h - 1) })">
               </div>
             </div>
           </div>
@@ -150,19 +150,19 @@
       <!-- 納期遅延アラート -->
       <el-col :span="12">
         <el-card shadow="never" class="chart-card">
-          <template #header>納期遅延アラート（{{ delayAlerts.length }}件）</template>
+          <template #header>{{ t('納期遅延アラート（{n}件）', { n: delayAlerts.length }) }}</template>
           <el-table :data="delayAlerts" border stripe size="small" max-height="320">
-            <el-table-column prop="workOrderNo" label="指図NO" width="140" />
-            <el-table-column prop="productName" label="製品名" min-width="120" />
-            <el-table-column label="計画完了日" width="110">
+            <el-table-column prop="workOrderNo" :label="t('指図NO')" width="140" />
+            <el-table-column prop="productName" :label="t('製品名')" min-width="120" />
+            <el-table-column :label="t('計画完了日')" width="110">
               <template #default="{ row }">{{ formatDate(row.planEndDate) }}</template>
             </el-table-column>
-            <el-table-column label="遅延" width="80" align="center">
+            <el-table-column :label="t('遅延')" width="80" align="center">
               <template #default="{ row }">
-                <el-tag type="danger" size="small">{{ row.delayDays }}日</el-tag>
+                <el-tag type="danger" size="small">{{ row.delayDays }}{{ t('日') }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="進捗" width="100">
+            <el-table-column :label="t('進捗')" width="100">
               <template #default="{ row }">{{ row.progressRate }}%</template>
             </el-table-column>
           </el-table>
@@ -174,14 +174,14 @@
       <!-- 直近完了 -->
       <el-col :span="24">
         <el-card shadow="never" class="chart-card">
-          <template #header>直近完了指図（{{ recentCompleted.length }}件）</template>
+          <template #header>{{ t('直近完了指図（{n}件）', { n: recentCompleted.length }) }}</template>
           <el-table :data="recentCompleted" border stripe size="small">
-            <el-table-column prop="workOrderNo" label="指図NO" width="160" />
-            <el-table-column prop="productCd" label="製品CD" width="140" />
-            <el-table-column prop="productName" label="製品名" min-width="180" />
-            <el-table-column prop="productionQty" label="生産数量" width="110" align="right" />
-            <el-table-column prop="completedQty" label="完了数量" width="110" align="right" />
-            <el-table-column label="完了日時" width="170">
+            <el-table-column prop="workOrderNo" :label="t('指図NO')" width="160" />
+            <el-table-column prop="productCd" :label="t('製品CD')" width="140" />
+            <el-table-column prop="productName" :label="t('製品名')" min-width="180" />
+            <el-table-column prop="productionQty" :label="t('生産数量')" width="110" align="right" />
+            <el-table-column prop="completedQty" :label="t('完了数量')" width="110" align="right" />
+            <el-table-column :label="t('完了日時')" width="170">
               <template #default="{ row }">{{ formatDateTime(row.actualEndDate) }}</template>
             </el-table-column>
           </el-table>
@@ -192,6 +192,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { mesDashboardApi } from '@/api/mes/mes'
 import type {

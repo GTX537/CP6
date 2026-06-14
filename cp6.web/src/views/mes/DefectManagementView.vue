@@ -33,17 +33,17 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="search">検索</el-button>
-          <el-button @click="reset">クリア</el-button>
-          <el-button type="success" @click="openCreate">手動起票</el-button>
-          <el-button type="warning" @click="exportCsv">CSV出力</el-button>
+          <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
+          <el-button @click="reset">{{ t('クリア') }}</el-button>
+          <el-button type="success" @click="openCreate">{{ t('手動起票') }}</el-button>
+          <el-button type="warning" @click="exportCsv">{{ t('CSV出力') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">合計 {{ total }} 件</el-tag>
+        <el-tag size="small">{{ t('合計 {total} 件', { total }) }}</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%;" max-height="600">
         <el-table-column prop="defectNo" :label="t('不良NO')" width="160" fixed />
@@ -77,8 +77,8 @@
         <el-table-column prop="defectDescription" :label="t('不良内容')" min-width="220" />
         <el-table-column :label="t('操作')" width="160" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">編集</el-button>
-            <el-button link type="danger" size="small" @click="onDelete(row)">削除</el-button>
+            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('編集') }}</el-button>
+            <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -98,7 +98,7 @@
     </el-card>
 
     <!-- 編集ダイアログ -->
-    <el-dialog v-model="dialogVisible" :title="form.defectNo ? '不良品 編集' : '不良品 手動起票'" width="800px" @closed="resetForm">
+    <el-dialog v-model="dialogVisible" :title="form.defectNo ? t('不良品 編集') : t('不良品 手動起票')" width="800px" @closed="resetForm">
       <el-form :model="form" label-width="110px" size="small">
         <el-row :gutter="16">
           <el-col :span="12">
@@ -191,8 +191,8 @@
         </el-row>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">キャンセル</el-button>
-        <el-button type="primary" :loading="saving" @click="onSave">保存</el-button>
+        <el-button @click="dialogVisible = false">{{ t('キャンセル') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -315,18 +315,18 @@ function resetForm() {
 }
 
 async function onSave() {
-  if (!form.workOrderNo) { ElMessage.error('指図NOを入力してください'); return }
-  if (!form.categoryCd) { ElMessage.error('ME-MSG-030: 不良分類が未選択です'); return }
-  if (!form.defectDescription) { ElMessage.error('ME-MSG-031: 不良内容が未入力です'); return }
+  if (!form.workOrderNo) { ElMessage.error(t('指図NOを入力してください')); return }
+  if (!form.categoryCd) { ElMessage.error(t('ME-MSG-030: 不良分類が未選択です')); return }
+  if (!form.defectDescription) { ElMessage.error(t('ME-MSG-031: 不良内容が未入力です')); return }
 
   saving.value = true
   try {
     if (form.defectNo) {
       await defectRecordApi.update(form.defectNo, form)
-      ElMessage.success('ME-MSG-041: 更新しました')
+      ElMessage.success(t('ME-MSG-041: 更新しました'))
     } else {
       const res = await defectRecordApi.create(form)
-      ElMessage.success(`ME-MSG-041: 起票しました（${res.data?.defectNo}）`)
+      ElMessage.success(t('ME-MSG-041: 起票しました（{defectNo}）', { defectNo: res.data?.defectNo }))
     }
     dialogVisible.value = false
     search()
@@ -337,16 +337,16 @@ async function onSave() {
 
 async function onDelete(row: DefectRecordDto) {
   try {
-    await ElMessageBox.confirm(`不良 ${row.defectNo} を削除しますか？`, '確認', { type: 'warning' })
+    await ElMessageBox.confirm(t('不良 {defectNo} を削除しますか？', { defectNo: row.defectNo }), t('確認'), { type: 'warning' })
     await defectRecordApi.delete(row.defectNo)
-    ElMessage.success('削除しました')
+    ElMessage.success(t('削除しました'))
     search()
   } catch (e) { /* cancelled */ }
 }
 
 function exportCsv() {
-  if (rows.value.length === 0) { ElMessage.warning('検索結果がありません'); return }
-  const headers = ['不良NO', 'ステータス', '指図NO', '製品名', '工程', '大分類', '小分類', '不良数', '発生日', '発見者', '担当者', '処置期限', '完了日', '検査NO', '不良内容', '原因分析', '是正処置']
+  if (rows.value.length === 0) { ElMessage.warning(t('検索結果がありません')); return }
+  const headers = [t('不良NO'), t('ステータス'), t('指図NO'), t('製品名'), t('工程'), t('大分類'), t('小分類'), t('不良数'), t('発生日'), t('発見者'), t('担当者'), t('処置期限'), t('完了日'), t('検査NO'), t('不良内容'), t('原因分析'), t('是正処置')]
   const lines = rows.value.map(r => [
     r.defectNo, getStatusLabel(r.status), r.workOrderNo, r.productName || '', r.processCd || '',
     `${r.categoryCd} ${r.categoryName || ''}`, `${r.detailCd || ''} ${r.detailName || ''}`.trim(),

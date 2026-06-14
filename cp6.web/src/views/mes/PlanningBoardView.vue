@@ -7,7 +7,7 @@
           <el-input v-model="query.baseCd" style="width: 120px;" />
         </el-form-item>
         <el-form-item :label="t('期間')">
-          <el-date-picker v-model="dateRange" type="daterange" value-format="YYYY-MM-DD" start-placeholder="開始" end-placeholder="終了" style="width: 280px;" />
+          <el-date-picker v-model="dateRange" type="daterange" value-format="YYYY-MM-DD" :start-placeholder="t('開始')" :end-placeholder="t('終了')" style="width: 280px;" />
         </el-form-item>
         <el-form-item :label="t('工程CD')">
           <el-input v-model="query.processCd" style="width: 120px;" />
@@ -25,39 +25,39 @@
         </el-form-item>
         <el-form-item :label="t('表示単位')">
           <el-radio-group v-model="viewMode" size="small">
-            <el-radio-button value="day">日</el-radio-button>
-            <el-radio-button value="week">週</el-radio-button>
-            <el-radio-button value="month">月</el-radio-button>
+            <el-radio-button value="day">{{ t('日') }}</el-radio-button>
+            <el-radio-button value="week">{{ t('週') }}</el-radio-button>
+            <el-radio-button value="month">{{ t('月') }}</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="reload">検索</el-button>
-          <el-button @click="resetQuery">クリア</el-button>
-          <el-button type="warning" :icon="MagicStick" :loading="arranging" @click="onAutoArrange">自動配置</el-button>
+          <el-button type="primary" :loading="loading" @click="reload">{{ t('検索') }}</el-button>
+          <el-button @click="resetQuery">{{ t('クリア') }}</el-button>
+          <el-button type="warning" :icon="MagicStick" :loading="arranging" @click="onAutoArrange">{{ t('自動配置') }}</el-button>
         </el-form-item>
       </el-form>
 
       <!-- KPI 4 カード -->
       <div class="kpi-row">
         <div class="kpi-card kpi-blue">
-          <div class="kpi-label">総指図件数</div>
+          <div class="kpi-label">{{ t('総指図件数') }}</div>
           <div class="kpi-value">{{ kpi.totalOrders }}</div>
         </div>
         <div class="kpi-card kpi-orange">
-          <div class="kpi-label">着手中</div>
+          <div class="kpi-label">{{ t('着手中') }}</div>
           <div class="kpi-value">{{ kpi.inProgressOrders }}</div>
         </div>
         <div class="kpi-card kpi-green">
-          <div class="kpi-label">完了</div>
+          <div class="kpi-label">{{ t('完了') }}</div>
           <div class="kpi-value">{{ kpi.completedOrders }}</div>
         </div>
         <div class="kpi-card kpi-red">
-          <div class="kpi-label">遅延</div>
+          <div class="kpi-label">{{ t('遅延') }}</div>
           <div class="kpi-value">{{ kpi.delayedOrders }}</div>
-          <div class="kpi-sub">平均 {{ kpi.avgDelayDays }} 日</div>
+          <div class="kpi-sub">{{ t('平均') }} {{ kpi.avgDelayDays }} {{ t('日') }}</div>
         </div>
         <div class="kpi-card kpi-purple">
-          <div class="kpi-label">完了率</div>
+          <div class="kpi-label">{{ t('完了率') }}</div>
           <div class="kpi-value">{{ kpi.completionRate }}%</div>
         </div>
       </div>
@@ -66,15 +66,15 @@
     <!-- 凡例 -->
     <el-card shadow="never" style="margin-top: 8px;">
       <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
-        <strong>凡例：</strong>
+        <strong>{{ t('凡例：') }}</strong>
         <span v-for="o in PROCESS_STATUS_OPTIONS" :key="o.value" class="legend-item">
           <span class="legend-color" :style="{ background: o.color }"></span>{{ o.label }}
         </span>
         <span class="legend-item">
-          <span class="legend-color legend-actual"></span>実績 overlay
+          <span class="legend-color legend-actual"></span>{{ t('実績 overlay') }}
         </span>
         <span class="legend-item">
-          <span class="legend-color" style="background: #F56C6C; width: 4px;"></span>納期ライン
+          <span class="legend-color" style="background: #F56C6C; width: 4px;"></span>{{ t('納期ライン') }}
         </span>
       </div>
     </el-card>
@@ -84,7 +84,7 @@
       <div v-loading="loading" class="gantt-container">
         <!-- 列ヘッダ：日付 -->
         <div class="gantt-header" :style="{ width: bodyWidth + 'px' }">
-          <div class="header-left">号機 / 工程</div>
+          <div class="header-left">{{ t('号機 / 工程') }}</div>
           <div class="header-right">
             <div class="header-tick" v-for="(t, i) in ticks" :key="i" :style="{ left: (i * cellWidth) + 'px', width: cellWidth + 'px' }">
               {{ t.label }}
@@ -112,7 +112,7 @@
             <div v-for="(b, bi) in group.bars" :key="'a-' + b.id">
               <div v-if="b.actualStartTime" class="bar actual-bar"
                 :style="actualBarStyle(b, bi)"
-                :title="'実績: ' + formatDateTime(b.actualStartTime) + ' ~ ' + formatDateTime(b.actualEndTime)">
+                :title="t('実績: {start} ~ {end}', { start: formatDateTime(b.actualStartTime), end: formatDateTime(b.actualEndTime) })">
               </div>
             </div>
 
@@ -120,14 +120,14 @@
             <div v-for="(b, bi) in group.bars" :key="'d-' + b.id">
               <div v-if="b.deliveryDate" class="deadline-line"
                 :style="deadlineStyle(b)"
-                :title="'納期: ' + formatDate(b.deliveryDate)">
+                :title="t('納期: {date}', { date: formatDate(b.deliveryDate) })">
               </div>
             </div>
           </div>
         </div>
 
         <div v-if="bars.length === 0 && !loading" class="empty">
-          <el-empty description="表示できる工程がありません" />
+          <el-empty :description="t('表示できる工程がありません')" />
         </div>
       </div>
     </el-card>
@@ -155,8 +155,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">キャンセル</el-button>
-        <el-button type="primary" :loading="saving" @click="onReschedule" :disabled="!canEdit">保存</el-button>
+        <el-button @click="dialogVisible = false">{{ t('キャンセル') }}</el-button>
+        <el-button type="primary" :loading="saving" @click="onReschedule" :disabled="!canEdit">{{ t('保存') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -239,7 +239,7 @@ const bodyWidth = computed(() => 200 + ticks.value.length * cellWidth.value)
 const machineGroups = computed(() => {
   const map: Record<string, PlanningBarDto[]> = {}
   for (const b of bars.value) {
-    const m = b.machineCd || '(未設定)'
+    const m = b.machineCd || t('(未設定)')
     ;(map[m] ??= []).push(b)
   }
   return Object.entries(map).map(([machine, list]) => ({
@@ -313,14 +313,14 @@ function deadlineStyle(b: PlanningBarDto) {
 
 function barTooltip(b: PlanningBarDto): string {
   return [
-    `指図: ${b.workOrderNo}`,
-    `製品: ${b.productCd} ${b.productName || ''}`,
-    `工程: ${b.processCd} ${b.processName || ''}`,
-    `号機: ${b.machineCd || '-'}`,
-    `計画: ${formatDateTime(b.planStartTime)} ~ ${formatDateTime(b.planEndTime)}`,
-    b.actualStartTime ? `実績: ${formatDateTime(b.actualStartTime)} ~ ${formatDateTime(b.actualEndTime)}` : '',
-    `状態: ${getStatusLabel(b.processStatus)}`,
-    `進捗: ${b.goodQty}/${b.planQty || '?'} 不良 ${b.defectQty}`,
+    t('指図: {no}', { no: b.workOrderNo }),
+    t('製品: {cd} {name}', { cd: b.productCd, name: b.productName || '' }),
+    t('工程: {cd} {name}', { cd: b.processCd, name: b.processName || '' }),
+    t('号機: {cd}', { cd: b.machineCd || '-' }),
+    t('計画: {start} ~ {end}', { start: formatDateTime(b.planStartTime), end: formatDateTime(b.planEndTime) }),
+    b.actualStartTime ? t('実績: {start} ~ {end}', { start: formatDateTime(b.actualStartTime), end: formatDateTime(b.actualEndTime) }) : '',
+    t('状態: {status}', { status: getStatusLabel(b.processStatus) }),
+    t('進捗: {good}/{plan} 不良 {defect}', { good: b.goodQty, plan: b.planQty || '?', defect: b.defectQty }),
   ].filter(Boolean).join('\n')
 }
 
@@ -348,7 +348,7 @@ function resetQuery() {
 
 async function onAutoArrange() {
   try {
-    await ElMessageBox.confirm('未着手の工程に対し優先度+納期で自動配置します。続行しますか？', '確認', { type: 'info' })
+    await ElMessageBox.confirm(t('未着手の工程に対し優先度+納期で自動配置します。続行しますか？'), t('確認'), { type: 'info' })
     arranging.value = true
     const res = await planningBoardApi.autoArrange({
       baseDate: new Date().toISOString().slice(0, 10),
@@ -356,7 +356,7 @@ async function onAutoArrange() {
       processCd: query.processCd,
       defaultHoursPerJob: 2,
     })
-    ElMessage.success(`${res.data?.changed ?? 0}件の工程を自動配置しました`)
+    ElMessage.success(t('{n}件の工程を自動配置しました', { n: res.data?.changed ?? 0 }))
     await reload()
   } catch (e) { /* cancelled */ } finally { arranging.value = false }
 }
@@ -376,7 +376,7 @@ function onBarClick(b: PlanningBarDto) {
 async function onReschedule() {
   if (!editing.value) return
   if (!editing.value.planStartTime || !editing.value.planEndTime) {
-    ElMessage.error('計画日時を入力してください')
+    ElMessage.error(t('計画日時を入力してください'))
     return
   }
   saving.value = true
@@ -387,7 +387,7 @@ async function onReschedule() {
       planEndTime: editing.value.planEndTime,
       machineCd: editing.value.machineCd,
     })
-    ElMessage.success('ME-MSG-041: 保存しました')
+    ElMessage.success(t('ME-MSG-041: 保存しました'))
     dialogVisible.value = false
     await reload()
   } finally {

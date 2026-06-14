@@ -4,9 +4,9 @@
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <el-tag size="large">{{ isEdit ? '訂正' : '新規' }}</el-tag>
+            <el-tag size="large">{{ isEdit ? t('訂正') : t('新規') }}</el-tag>
             <span style="margin-left: 12px; font-weight: 600;">
-              製造指図入力 (MSBBME020)
+              {{ t('製造指図入力') }} (MSBBME020)
               <span v-if="form.workOrderNo" style="margin-left: 12px; color: #409EFF;">
                 {{ form.workOrderNo }}
               </span>
@@ -17,16 +17,16 @@
             </el-tag>
           </div>
           <div>
-            <el-button @click="$router.back()">戻る</el-button>
+            <el-button @click="$router.back()">{{ t('戻る') }}</el-button>
           </div>
         </div>
       </template>
 
       <!-- ステップバー -->
       <el-steps :active="step" finish-status="success" align-center style="margin-bottom: 20px;">
-        <el-step title="指図基本情報" description="第1页：基本情報" />
-        <el-step title="工程計画" description="第2页：工程一覧" />
-        <el-step title="材料手配 + 保存" description="第3页：材料一覧" />
+        <el-step :title="t('指図基本情報')" :description="t('第1页：基本情報')" />
+        <el-step :title="t('工程計画')" :description="t('第2页：工程一覧')" />
+        <el-step :title="t('材料手配 + 保存')" :description="t('第3页：材料一覧')" />
       </el-steps>
 
       <!-- 第1页 -->
@@ -46,11 +46,11 @@
       />
 
       <div style="margin-top: 24px; text-align: right;">
-        <el-button v-if="step > 0" @click="step--">← 戻る</el-button>
-        <el-button v-if="step < 2" type="primary" @click="next">次画面 →</el-button>
+        <el-button v-if="step > 0" @click="step--">← {{ t('戻る') }}</el-button>
+        <el-button v-if="step < 2" type="primary" @click="next">{{ t('次画面') }} →</el-button>
         <template v-if="step === 2">
-          <el-button type="primary" :loading="saving" @click="onSave">保存</el-button>
-          <el-button v-if="canIssue" type="success" :loading="saving" @click="onIssue">指図発行</el-button>
+          <el-button type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+          <el-button v-if="canIssue" type="success" :loading="saving" @click="onIssue">{{ t('指図発行') }}</el-button>
         </template>
       </div>
     </el-card>
@@ -58,6 +58,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -123,8 +125,8 @@ async function loadByNo(no: string) {
 async function onExpandFromOrder(webOrderNo: string) {
   try {
     await ElMessageBox.confirm(
-      `受注 ${webOrderNo} から製造指図を自動展開します。よろしいですか？`,
-      '確認',
+      t('受注 {webOrderNo} から製造指図を自動展開します。よろしいですか？', { webOrderNo }),
+      t('確認'),
       { type: 'info' }
     )
     saving.value = true
@@ -132,7 +134,7 @@ async function onExpandFromOrder(webOrderNo: string) {
     const nos = res.data?.workOrderNos || []
     const first = nos[0]
     if (first) {
-      ElMessage.success(`${nos.length}件の指図を作成しました：${nos.join(', ')}`)
+      ElMessage.success(t('{count}件の指図を作成しました：{nos}', { count: nos.length, nos: nos.join(', ') }))
       await loadByNo(first)
     }
   } catch (e) {
@@ -144,19 +146,19 @@ async function onExpandFromOrder(webOrderNo: string) {
 
 function validateStep1(): boolean {
   if (!isEdit.value && !form.orderNo1 && !form.orderNo2 && !form.orderNo3 && !form.webOrderNo && !form.productCd) {
-    ElMessage.error('ME-MSG-001: 手配NO or 製品CD が未入力です')
+    ElMessage.error(t('ME-MSG-001: 手配NO or 製品CD が未入力です'))
     return false
   }
   if (form.productionQty <= 0) {
-    ElMessage.error('ME-MSG-002: 生産数量は0より大きい値を入力してください')
+    ElMessage.error(t('ME-MSG-002: 生産数量は0より大きい値を入力してください'))
     return false
   }
   if (form.planStartDate && form.planEndDate && form.planStartDate > form.planEndDate) {
-    ElMessage.error('ME-MSG-003: 計画開始日は計画完了日以前を指定してください')
+    ElMessage.error(t('ME-MSG-003: 計画開始日は計画完了日以前を指定してください'))
     return false
   }
   if (form.planEndDate && form.deliveryDate && form.planEndDate > form.deliveryDate) {
-    ElMessageBox.confirm('ME-MSG-004: 計画完了日が客先納期を超えています。よろしいですか？', '警告', {
+    ElMessageBox.confirm(t('ME-MSG-004: 計画完了日が客先納期を超えています。よろしいですか？'), t('警告'), {
       type: 'warning',
     }).then(() => { step.value = 1 }).catch(() => {})
     return false
@@ -166,7 +168,7 @@ function validateStep1(): boolean {
 
 function validateStep2(): boolean {
   if (!form.processes || form.processes.length === 0) {
-    ElMessage.error('ME-MSG-006: 登録する工程がありません')
+    ElMessage.error(t('ME-MSG-006: 登録する工程がありません'))
     return false
   }
   // 重複チェック
@@ -174,7 +176,7 @@ function validateStep2(): boolean {
   for (const p of form.processes) {
     const k = `${p.processCd}|${p.taskCd}`
     if (keys.has(k)) {
-      ElMessage.error('ME-MSG-007: 同一の工程コード・作業CDが含まれます')
+      ElMessage.error(t('ME-MSG-007: 同一の工程コード・作業CDが含まれます'))
       return false
     }
     keys.add(k)
@@ -195,12 +197,12 @@ async function onSave() {
   try {
     if (isEdit.value) {
       await workOrderApi.update(form.workOrderNo, form)
-      ElMessage.success('ME-MSG-041: 保存が完了しました')
+      ElMessage.success(t('ME-MSG-041: 保存が完了しました'))
       await loadByNo(form.workOrderNo)
     } else {
       const res = await workOrderApi.create(form)
       const no = res.data?.workOrderNo
-      ElMessage.success(`ME-MSG-041: 保存が完了しました（${no}）`)
+      ElMessage.success(t('ME-MSG-041: 保存が完了しました（{no}）', { no }))
       if (no) await loadByNo(no)
     }
   } finally {
@@ -210,12 +212,12 @@ async function onSave() {
 
 async function onIssue() {
   try {
-    await ElMessageBox.confirm('指図を発行します。発行後は基本情報・工程・材料の編集ができません。よろしいですか？', '確認', {
+    await ElMessageBox.confirm(t('指図を発行します。発行後は基本情報・工程・材料の編集ができません。よろしいですか？'), t('確認'), {
       type: 'warning',
     })
     saving.value = true
     await workOrderApi.issue(form.workOrderNo)
-    ElMessage.success('指図を発行しました')
+    ElMessage.success(t('指図を発行しました'))
     await loadByNo(form.workOrderNo)
   } catch (e) {
     // cancelled

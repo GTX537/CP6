@@ -31,17 +31,17 @@
           <el-date-picker v-model="query.dateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px;" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="search">検索</el-button>
-          <el-button @click="reset">クリア</el-button>
-          <el-button type="success" @click="goNew">新規検査</el-button>
-          <el-button type="warning" @click="exportCsv">CSV出力</el-button>
+          <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
+          <el-button @click="reset">{{ t('クリア') }}</el-button>
+          <el-button type="success" @click="goNew">{{ t('新規検査') }}</el-button>
+          <el-button type="warning" @click="exportCsv">{{ t('CSV出力') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">合計 {{ total }} 件</el-tag>
+        <el-tag size="small">{{ t('合計 {n} 件', { n: total }) }}</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%;" max-height="600">
         <el-table-column prop="inspectionNo" :label="t('検査NO')" width="160" fixed />
@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="100" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="goDetail(row)">詳細</el-button>
+            <el-button link type="primary" size="small" @click="goDetail(row)">{{ t('詳細') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -168,10 +168,10 @@ function goDetail(row: QualityInspectionDto) {
 
 function exportCsv() {
   if (rows.value.length === 0) {
-    ElMessage.warning('検索結果がありません')
+    ElMessage.warning(t('検索結果がありません'))
     return
   }
-  const headers = ['検査NO', '指図NO', '製品CD', '製品名', '工程', '検査種類', '検査日', '検査者', '項目数', '合格数', '合格率(%)', '総合判定', '処置']
+  const headers = [t('検査NO'), t('指図NO'), t('製品CD'), t('製品名'), t('工程'), t('検査種類'), t('検査日'), t('検査者'), t('項目数'), t('合格数'), t('合格率(%)'), t('総合判定'), t('処置')]
   const lines = rows.value.map(r => [
     r.inspectionNo, r.workOrderNo, r.productCd || '', r.productName || '', r.processCd || '',
     getTypeLabel(r.inspectionType), formatDate(r.inspectionDate), r.inspectorCd,

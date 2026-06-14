@@ -21,24 +21,24 @@
     <div class="grid">
       <!-- 左上：KPI -->
       <div class="quad q-kpi">
-        <div class="quad-title">本日 KPI</div>
+        <div class="quad-title">{{ t('本日 KPI') }}</div>
         <div class="kpi-grid">
           <div class="kpi-cell blue">
-            <div class="cell-label">着手中 指図</div>
+            <div class="cell-label">{{ t('着手中 指図') }}</div>
             <div class="cell-value">{{ summary.inProgressCount }}</div>
-            <div class="cell-sub">完了 {{ summary.completedCount }}</div>
+            <div class="cell-sub">{{ t('完了') }} {{ summary.completedCount }}</div>
           </div>
           <div class="kpi-cell green">
-            <div class="cell-label">良品数</div>
+            <div class="cell-label">{{ t('良品数') }}</div>
             <div class="cell-value">{{ summary.totalGoodQty }}</div>
           </div>
           <div class="kpi-cell red">
-            <div class="cell-label">不良率</div>
+            <div class="cell-label">{{ t('不良率') }}</div>
             <div class="cell-value">{{ summary.defectRate }}%</div>
-            <div class="cell-sub">不良 {{ summary.totalDefectQty }}</div>
+            <div class="cell-sub">{{ t('不良') }} {{ summary.totalDefectQty }}</div>
           </div>
           <div class="kpi-cell orange">
-            <div class="cell-label">遅延件数</div>
+            <div class="cell-label">{{ t('遅延件数') }}</div>
             <div class="cell-value">{{ summary.delayedCount }}</div>
           </div>
         </div>
@@ -46,7 +46,7 @@
 
       <!-- 右上：設備状態グリッド -->
       <div class="quad q-machines">
-        <div class="quad-title">設備状態 ({{ machines.length }} 台)</div>
+        <div class="quad-title">{{ t('設備状態 ({n} 台)', { n: machines.length }) }}</div>
         <div class="machine-grid">
           <div v-for="m in machines" :key="m.machineCd"
             class="m-cell"
@@ -61,7 +61,7 @@
 
       <!-- 左下：日次生産推移 -->
       <div class="quad q-trend">
-        <div class="quad-title">日別生産推移（14日）</div>
+        <div class="quad-title">{{ t('日別生産推移（14日）') }}</div>
         <svg v-if="trend.length > 0" :viewBox="'0 0 ' + trendW + ' ' + trendH" preserveAspectRatio="none" class="trend-svg">
           <g v-for="i in 4" :key="'gy'+i">
             <line x1="0" :x2="trendW"
@@ -76,16 +76,16 @@
           </g>
         </svg>
         <div class="trend-legend">
-          <span><span class="dot" style="background:#67C23A;"></span>良品</span>
-          <span><span class="dot" style="background:#F56C6C;"></span>不良</span>
+          <span><span class="dot" style="background:#67C23A;"></span>{{ t('良品') }}</span>
+          <span><span class="dot" style="background:#F56C6C;"></span>{{ t('不良') }}</span>
         </div>
       </div>
 
       <!-- 右下：実時間イベント + 遅延アラート -->
       <div class="quad q-events">
         <div class="quad-title">
-          リアルタイムイベント
-          <span class="event-count">最新 {{ events.length }} 件</span>
+          {{ t('リアルタイムイベント') }}
+          <span class="event-count">{{ t('最新 {n} 件', { n: events.length }) }}</span>
         </div>
         <div class="event-list">
           <transition-group name="event">
@@ -95,19 +95,19 @@
               <span class="ev-msg">{{ ev.msg }}</span>
             </div>
           </transition-group>
-          <div v-if="events.length === 0" class="empty">イベント待機中...</div>
+          <div v-if="events.length === 0" class="empty">{{ t('イベント待機中...') }}</div>
         </div>
 
         <div class="quad-title" style="margin-top: 12px;">
-          納期遅延 TOP 5
+          {{ t('納期遅延 TOP 5') }}
         </div>
         <div class="delay-list">
           <div v-for="d in delayAlerts.slice(0, 5)" :key="d.workOrderNo" class="delay-row">
             <span class="d-no">{{ d.workOrderNo }}</span>
             <span class="d-name">{{ d.productName || '-' }}</span>
-            <span class="d-days">遅延 {{ d.delayDays }}日</span>
+            <span class="d-days">{{ t('遅延 {n}日', { n: d.delayDays }) }}</span>
           </div>
-          <div v-if="delayAlerts.length === 0" class="empty">遅延なし</div>
+          <div v-if="delayAlerts.length === 0" class="empty">{{ t('遅延なし') }}</div>
         </div>
       </div>
     </div>
@@ -115,6 +115,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Back } from '@element-plus/icons-vue'
 import { mesDashboardApi, machineApi } from '@/api/mes/mes'
@@ -201,21 +203,21 @@ async function setupHub() {
   hub.onclose(() => { hubConnected.value = false })
 
   hub.on('ProductionReported', (p: { workOrderNo: string; processCd: string; goodQty: number; defectQty: number }) => {
-    pushEvent('prod', '実績', `${p.workOrderNo} / ${p.processCd}: 良品 ${p.goodQty} 不良 ${p.defectQty}`)
+    pushEvent('prod', t('実績'), t('{no} / {process}: 良品 {good} 不良 {defect}', { no: p.workOrderNo, process: p.processCd, good: p.goodQty, defect: p.defectQty }))
     loadAll() // 軽量再取得
   })
   hub.on('DefectIssued', (p: { defectNo: string; workOrderNo: string; categoryCd: string }) => {
-    pushEvent('defect', '不良', `${p.defectNo} (${p.categoryCd}) at ${p.workOrderNo}`)
+    pushEvent('defect', t('不良'), `${p.defectNo} (${p.categoryCd}) at ${p.workOrderNo}`)
   })
   hub.on('MachineStatusChanged', (p: { machineCd: string; newStatus: number }) => {
-    pushEvent('machine', '設備', `${p.machineCd} → ${getStatusLabel(p.newStatus)}`)
+    pushEvent('machine', t('設備'), `${p.machineCd} → ${getStatusLabel(p.newStatus)}`)
     refreshMachines()
   })
   hub.on('WorkOrderStatusChanged', (p: { workOrderNo: string; newStatus: number }) => {
-    pushEvent('wo', '指図', `${p.workOrderNo} ステータス ${p.newStatus}`)
+    pushEvent('wo', t('指図'), t('{no} ステータス {status}', { no: p.workOrderNo, status: p.newStatus }))
   })
   hub.on('DowntimeRegistered', (p: { downtimeNo: string; machineCd: string; downtimeType: number }) => {
-    pushEvent('downtime', '停止', `${p.machineCd} 停止登録 (${p.downtimeNo})`)
+    pushEvent('downtime', t('停止'), t('{machine} 停止登録 ({no})', { machine: p.machineCd, no: p.downtimeNo }))
   })
 
   await startMesHub()

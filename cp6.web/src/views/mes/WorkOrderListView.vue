@@ -47,13 +47,13 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="query.delayedOnly">遅延のみ</el-checkbox>
+          <el-checkbox v-model="query.delayedOnly">{{ t('遅延のみ') }}</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="search">検索</el-button>
-          <el-button @click="resetQuery">クリア</el-button>
-          <el-button type="success" @click="onCreate">新規作成</el-button>
-          <el-button type="warning" @click="exportCsv">CSV出力</el-button>
+          <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
+          <el-button @click="resetQuery">{{ t('クリア') }}</el-button>
+          <el-button type="success" @click="onCreate">{{ t('新規作成') }}</el-button>
+          <el-button type="warning" @click="exportCsv">{{ t('CSV出力') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -61,7 +61,7 @@
     <!-- 結果 -->
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">合計 {{ total }} 件</el-tag>
+        <el-tag size="small">{{ t('合計 {total} 件', { total }) }}</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600">
         <el-table-column prop="workOrderNo" :label="t('指図NO')" width="160" fixed />
@@ -74,9 +74,9 @@
         </el-table-column>
         <el-table-column :label="t('優先度')" width="80" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.priority === 3" type="danger" size="small">特急</el-tag>
-            <el-tag v-else-if="row.priority === 2" type="warning" size="small">急ぎ</el-tag>
-            <span v-else>通常</span>
+            <el-tag v-if="row.priority === 3" type="danger" size="small">{{ t('特急') }}</el-tag>
+            <el-tag v-else-if="row.priority === 2" type="warning" size="small">{{ t('急ぎ') }}</el-tag>
+            <span v-else>{{ t('通常') }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="orderNo1" :label="t('手配NO')" width="140" />
@@ -107,7 +107,7 @@
         </el-table-column>
         <el-table-column :label="t('遅延')" width="80" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.delayDays > 0" type="danger" size="small">{{ row.delayDays }}日</el-tag>
+            <el-tag v-if="row.delayDays > 0" type="danger" size="small">{{ row.delayDays }}{{ t('日') }}</el-tag>
             <span v-else>-</span>
           </template>
         </el-table-column>
@@ -121,9 +121,9 @@
         <el-table-column prop="baseCd" :label="t('拠点')" width="80" />
         <el-table-column :label="t('操作')" width="180" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="goDetail(row)">詳細</el-button>
-            <el-button link type="success" size="small" @click="goResult(row)">実績</el-button>
-            <el-button v-if="row.status <= 1" link type="danger" size="small" @click="onDelete(row)">削除</el-button>
+            <el-button link type="primary" size="small" @click="goDetail(row)">{{ t('詳細') }}</el-button>
+            <el-button link type="success" size="small" @click="goResult(row)">{{ t('実績') }}</el-button>
+            <el-button v-if="row.status <= 1" link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -225,11 +225,11 @@ function goResult(row: WorkOrderDto) {
 
 async function onDelete(row: WorkOrderDto) {
   try {
-    await ElMessageBox.confirm(`指図 ${row.workOrderNo} を削除しますか？`, '確認', {
+    await ElMessageBox.confirm(t('指図 {workOrderNo} を削除しますか？', { workOrderNo: row.workOrderNo }), t('確認'), {
       type: 'warning',
     })
     await workOrderApi.delete(row.workOrderNo)
-    ElMessage.success('削除しました')
+    ElMessage.success(t('削除しました'))
     search()
   } catch (e: any) {
     if (e === 'cancel') return
@@ -238,10 +238,10 @@ async function onDelete(row: WorkOrderDto) {
 
 function exportCsv() {
   if (rows.value.length === 0) {
-    ElMessage.warning('検索結果がありません')
+    ElMessage.warning(t('検索結果がありません'))
     return
   }
-  const headers = ['指図NO', 'ステータス', '優先度', '手配NO', '製品CD', '製品名', '得意先', '生産数量', '完了数量', '進捗率', '客先納期', '計画開始', '計画完了', '実績開始', '実績完了', '遅延日数', '工程数', '完了工程数', '不良数', 'ロットNO', '拠点']
+  const headers = [t('指図NO'), t('ステータス'), t('優先度'), t('手配NO'), t('製品CD'), t('製品名'), t('得意先'), t('生産数量'), t('完了数量'), t('進捗率'), t('客先納期'), t('計画開始'), t('計画完了'), t('実績開始'), t('実績完了'), t('遅延日数'), t('工程数'), t('完了工程数'), t('不良数'), t('ロットNO'), t('拠点')]
   const lines = rows.value.map(r => [
     r.workOrderNo, getStatusLabel(r.status), r.priority, r.orderNo1 || '', r.productCd, r.productName || '',
     r.customerCd || '', r.productionQty, r.completedQty, r.progressRate,

@@ -23,16 +23,16 @@
           <el-date-picker v-model="query.dateTo" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss" style="width: 200px;" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="search">検索</el-button>
-          <el-button @click="reset">クリア</el-button>
-          <el-button type="warning" @click="exportCsv">CSV出力</el-button>
+          <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
+          <el-button @click="reset">{{ t('クリア') }}</el-button>
+          <el-button type="warning" @click="exportCsv">{{ t('CSV出力') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">合計 {{ total }} 件</el-tag>
+        <el-tag size="small">{{ t('合計 {n} 件', { n: total }) }}</el-tag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%;" max-height="600">
         <el-table-column prop="resultNo" :label="t('実績NO')" width="160" fixed />
@@ -138,10 +138,10 @@ function reset() {
 
 function exportCsv() {
   if (rows.value.length === 0) {
-    ElMessage.warning('検索結果がありません')
+    ElMessage.warning(t('検索結果がありません'))
     return
   }
-  const headers = ['実績NO', '指図NO', '製品名', '工程CD', '工程名', '実績種別', '作業者CD', '作業者名', '号機', '実績開始', '実績完了', '良品数', '不良数', 'ロス率(%)', '不良理由', '中断理由', '備考']
+  const headers = [t('実績NO'), t('指図NO'), t('製品名'), t('工程CD'), t('工程名'), t('実績種別'), t('作業者CD'), t('作業者名'), t('号機'), t('実績開始'), t('実績完了'), t('良品数'), t('不良数'), t('ロス率(%)'), t('不良理由'), t('中断理由'), t('備考')]
   const lines = rows.value.map(r => [
     r.resultNo, r.workOrderNo, r.productName || '', r.processCd, r.processName || '',
     getResultTypeLabel(r.resultType), r.operatorCd, r.operatorName || '', r.machineCd || '',

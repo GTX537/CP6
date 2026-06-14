@@ -4,9 +4,9 @@
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <el-tag size="large">{{ isEdit ? '訂正' : '新規' }}</el-tag>
+            <el-tag size="large">{{ isEdit ? t('訂正') : t('新規') }}</el-tag>
             <span style="margin-left: 12px; font-weight: 600;">
-              品質検査入力 (MSBBME060)
+              {{ t('品質検査入力') }} (MSBBME060)
               <span v-if="form.inspectionNo" style="margin-left: 12px; color: #409EFF;">{{ form.inspectionNo }}</span>
             </span>
             <el-tag v-if="form.overallResult"
@@ -15,17 +15,17 @@
             </el-tag>
           </div>
           <div>
-            <el-button @click="$router.back()">戻る</el-button>
+            <el-button @click="$router.back()">{{ t('戻る') }}</el-button>
           </div>
         </div>
       </template>
 
       <!-- 基本情報 -->
       <el-form :model="form" label-width="120px" size="small">
-        <el-divider content-position="left">基本情報</el-divider>
+        <el-divider content-position="left">{{ t('基本情報') }}</el-divider>
         <el-row :gutter="16">
           <el-col :span="6">
-            <el-form-item label="指図NO" required>
+            <el-form-item :label="t('指図NO')" required>
               <el-input v-model="form.workOrderNo" :disabled="isEdit">
                 <template #append>
                   <el-button :icon="Search" @click="loadWorkOrder" :disabled="!form.workOrderNo" />
@@ -34,7 +34,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="工程CD">
+            <el-form-item :label="t('工程CD')">
               <el-select v-model="form.processCd" clearable filterable>
                 <el-option v-for="p in workOrderProcesses" :key="p.processCd"
                   :label="`${p.processCd} - ${p.processName}`" :value="p.processCd" />
@@ -42,51 +42,51 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="検査日" required>
+            <el-form-item :label="t('検査日')" required>
               <el-date-picker v-model="form.inspectionDate" type="date" value-format="YYYY-MM-DD" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="検査種類" required>
+            <el-form-item :label="t('検査種類')" required>
               <el-select v-model="form.inspectionType">
                 <el-option v-for="o in INSPECTION_TYPE_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="検査者CD" required>
+            <el-form-item :label="t('検査者CD')" required>
               <el-input v-model="form.inspectorCd" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="検査者名">
+            <el-form-item :label="t('検査者名')">
               <el-input v-model="form.inspectorName" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="テンプレートCD">
-              <el-select v-model="form.templateCd" clearable filterable placeholder="選択してテンプレ引入">
+            <el-form-item :label="t('テンプレートCD')">
+              <el-select v-model="form.templateCd" clearable filterable :placeholder="t('選択してテンプレ引入')">
                 <el-option v-for="cd in templateCodes" :key="cd" :label="cd" :value="cd" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" size="small" :icon="Download" @click="loadTemplate" :disabled="!form.templateCd">テンプレ引入</el-button>
+              <el-button type="primary" size="small" :icon="Download" @click="loadTemplate" :disabled="!form.templateCd">{{ t('テンプレ引入') }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="検査対象数量">
+            <el-form-item :label="t('検査対象数量')">
               <el-input-number v-model="form.inspectionQty" :min="0" :precision="0" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="サンプル数">
+            <el-form-item :label="t('サンプル数')">
               <el-input-number v-model="form.sampleQty" :min="0" :precision="0" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="製品情報">
+            <el-form-item :label="t('製品情報')">
               <span>{{ form.productCd }} / {{ form.productName }}</span>
             </el-form-item>
           </el-col>
@@ -94,106 +94,106 @@
 
         <!-- 検査項目一覧 -->
         <el-divider content-position="left">
-          検査項目（合格 {{ form.passCount }} / 全 {{ form.itemCount }}、合格率 {{ form.passRate }}%）
+          {{ t('検査項目（合格 {passCount} / 全 {itemCount}、合格率 {passRate}%）', { passCount: form.passCount, itemCount: form.itemCount, passRate: form.passRate }) }}
         </el-divider>
         <div style="margin-bottom: 8px;">
-          <el-button type="primary" size="small" :icon="Plus" @click="addItem">項目追加</el-button>
-          <el-button size="small" :icon="MagicStick" @click="autoJudgeAll">全項目 自動判定</el-button>
+          <el-button type="primary" size="small" :icon="Plus" @click="addItem">{{ t('項目追加') }}</el-button>
+          <el-button size="small" :icon="MagicStick" @click="autoJudgeAll">{{ t('全項目 自動判定') }}</el-button>
         </div>
         <el-table :data="form.items" border stripe size="small" style="width: 100%;">
-          <el-table-column label="順" width="60" align="center">
+          <el-table-column :label="t('順')" width="60" align="center">
             <template #default="{ row }">{{ row.itemSeqNo }}</template>
           </el-table-column>
-          <el-table-column label="検査項目名" min-width="160">
+          <el-table-column :label="t('検査項目名')" min-width="160">
             <template #default="{ row }">
               <el-input v-model="row.itemName" size="small" />
             </template>
           </el-table-column>
-          <el-table-column label="検査方法" min-width="140">
+          <el-table-column :label="t('検査方法')" min-width="140">
             <template #default="{ row }">
               <el-input v-model="row.inspectionMethod" size="small" />
             </template>
           </el-table-column>
-          <el-table-column label="規格値" width="110">
+          <el-table-column :label="t('規格値')" width="110">
             <template #default="{ row }">
               <el-input-number v-model="row.standardValue" :precision="4" controls-position="right" size="small" style="width: 100%;" />
             </template>
           </el-table-column>
-          <el-table-column label="下限" width="110">
+          <el-table-column :label="t('下限')" width="110">
             <template #default="{ row }">
               <el-input-number v-model="row.lowerLimit" :precision="4" controls-position="right" size="small" style="width: 100%;" />
             </template>
           </el-table-column>
-          <el-table-column label="上限" width="110">
+          <el-table-column :label="t('上限')" width="110">
             <template #default="{ row }">
               <el-input-number v-model="row.upperLimit" :precision="4" controls-position="right" size="small" style="width: 100%;" />
             </template>
           </el-table-column>
-          <el-table-column label="計測値" width="110">
+          <el-table-column :label="t('計測値')" width="110">
             <template #default="{ row }">
               <el-input-number v-model="row.measuredValue" :precision="4" controls-position="right" size="small" style="width: 100%;" @change="judgeItem(row)" />
             </template>
           </el-table-column>
-          <el-table-column label="計測(文字)" width="120">
+          <el-table-column :label="t('計測(文字)')" width="120">
             <template #default="{ row }">
               <el-input v-model="row.measuredText" size="small" />
             </template>
           </el-table-column>
-          <el-table-column label="単位" width="80">
+          <el-table-column :label="t('単位')" width="80">
             <template #default="{ row }">
               <el-input v-model="row.unit" size="small" />
             </template>
           </el-table-column>
-          <el-table-column label="判定" width="100" align="center">
+          <el-table-column :label="t('判定')" width="100" align="center">
             <template #default="{ row }">
               <el-select v-model="row.result" size="small" clearable style="width: 100%;">
                 <el-option v-for="o in ITEM_RESULT_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="備考" min-width="140">
+          <el-table-column :label="t('備考')" min-width="140">
             <template #default="{ row }">
               <el-input v-model="row.remarks" size="small" />
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="80" align="center">
+          <el-table-column :label="t('操作')" width="80" align="center">
             <template #default="{ $index }">
-              <el-button link type="danger" size="small" @click="removeItem($index)">削除</el-button>
+              <el-button link type="danger" size="small" @click="removeItem($index)">{{ t('削除') }}</el-button>
             </template>
           </el-table-column>
         </el-table>
 
         <!-- 総合判定 -->
-        <el-divider content-position="left">総合判定</el-divider>
+        <el-divider content-position="left">{{ t('総合判定') }}</el-divider>
         <el-row :gutter="16">
           <el-col :span="6">
-            <el-form-item label="総合判定">
-              <el-select v-model="form.overallResult" clearable placeholder="自動判定">
+            <el-form-item :label="t('総合判定')">
+              <el-select v-model="form.overallResult" clearable :placeholder="t('自動判定')">
                 <el-option v-for="o in OVERALL_RESULT_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="処置内容" :required="form.overallResult === 2">
+            <el-form-item :label="t('処置内容')" :required="form.overallResult === 2">
               <el-select v-model="form.dispositionAction" clearable :disabled="form.overallResult !== 2">
                 <el-option v-for="o in DISPOSITION_OPTIONS" :key="o.value" :label="o.label" :value="o.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="判定理由">
+            <el-form-item :label="t('判定理由')">
               <el-input v-model="form.judgmentReason" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="備考">
+            <el-form-item :label="t('備考')">
               <el-input v-model="form.remarks" type="textarea" :rows="2" />
             </el-form-item>
           </el-col>
         </el-row>
 
         <div style="text-align: right; margin-top: 12px;">
-          <el-button type="primary" :loading="saving" @click="onSave">保存</el-button>
+          <el-button type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
         </div>
       </el-form>
     </el-card>
@@ -203,6 +203,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Search, Plus, MagicStick, Download } from '@element-plus/icons-vue'
 import { qualityInspectionApi, workOrderApi } from '@/api/mes/mes'
@@ -217,6 +218,7 @@ import {
 } from '@/types/mes/mes'
 
 const route = useRoute()
+const { t } = useI18n()
 const saving = ref(false)
 const templateCodes = ref<string[]>([])
 const workOrderProcesses = ref<WorkOrderProcessDto[]>([])
@@ -276,7 +278,7 @@ async function loadTemplate() {
   const res = await qualityInspectionApi.getTemplate(form.templateCd)
   const tpl = res.data || []
   if (tpl.length === 0) {
-    ElMessage.warning('テンプレートに項目がありません')
+    ElMessage.warning(t('テンプレートに項目がありません'))
     return
   }
   form.items = tpl.map(t => ({
@@ -293,7 +295,7 @@ async function loadTemplate() {
     unit: t.unit,
     remarks: null,
   }))
-  ElMessage.success(`${tpl.length}件の項目を引入しました`)
+  ElMessage.success(t('{cnt}件の項目を引入しました', { cnt: tpl.length }))
 }
 
 async function loadByNo(no: string) {
@@ -359,26 +361,26 @@ function computeStats() {
 }
 
 async function onSave() {
-  if (!form.workOrderNo) { ElMessage.error('ME-MSG-020: 指図NOが未入力です'); return }
-  if (!form.inspectorCd) { ElMessage.error('ME-MSG-021: 検査者が未入力です'); return }
+  if (!form.workOrderNo) { ElMessage.error(t('ME-MSG-020: 指図NOが未入力です')); return }
+  if (!form.inspectorCd) { ElMessage.error(t('ME-MSG-021: 検査者が未入力です')); return }
   if (form.overallResult === 2 && !form.dispositionAction) {
-    ElMessage.error('ME-MSG-023: 不合格の場合、処置内容を選択してください')
+    ElMessage.error(t('ME-MSG-023: 不合格の場合、処置内容を選択してください'))
     return
   }
   if (form.items.some(i => i.measuredValue == null && !i.measuredText)) {
-    ElMessage.warning('ME-MSG-022: 未入力の検査項目があります（このまま保存します）')
+    ElMessage.warning(t('ME-MSG-022: 未入力の検査項目があります（このまま保存します）'))
   }
 
   saving.value = true
   try {
     if (isEdit.value) {
       await qualityInspectionApi.update(form.inspectionNo, form)
-      ElMessage.success('ME-MSG-041: 保存が完了しました')
+      ElMessage.success(t('ME-MSG-041: 保存が完了しました'))
       await loadByNo(form.inspectionNo)
     } else {
       const res = await qualityInspectionApi.create(form)
       const no = res.data?.inspectionNo
-      ElMessage.success(`ME-MSG-041: 保存が完了しました（${no}）`)
+      ElMessage.success(t('ME-MSG-041: 保存が完了しました（{no}）', { no }))
       if (no) await loadByNo(no)
     }
   } finally {

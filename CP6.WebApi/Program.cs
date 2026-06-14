@@ -1026,6 +1026,7 @@ using (var scope = app.Services.CreateScope())
         var toAdd = CP6.WebApi.Seed.I18nLabelSeed.Items
             .Concat(extraUi)
             .Concat(CP6.WebApi.Seed.I18nErpScreenSeed.Items)   // 遗留① ERP 旧画面词条
+            .Concat(CP6.WebApi.Seed.I18nMesScreenSeed.Items)   // 遗留① MES 画面词条
             .Where(i => !existingKeys.Contains(i.LangKey))
             .ToList();
         if (toAdd.Count > 0)
