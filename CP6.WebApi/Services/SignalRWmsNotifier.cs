@@ -2,6 +2,7 @@ using CP6.Core.Services.Wms;
 using CP6.Core.Utilities;
 using CP6.WebApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Localization;
 
 namespace CP6.WebApi.Services;
 
@@ -18,15 +19,18 @@ public class SignalRWmsNotifier : IWmsNotifier
     private readonly IHubContext<WmsHub> _hub;
     private readonly INotificationPublisher _notifier;
     private readonly ILogger<SignalRWmsNotifier> _logger;
+    private readonly IStringLocalizer _localizer;
 
     public SignalRWmsNotifier(
         IHubContext<WmsHub> hub,
         INotificationPublisher notifier,
-        ILogger<SignalRWmsNotifier> logger)
+        ILogger<SignalRWmsNotifier> logger,
+        IStringLocalizer localizer)
     {
         _hub = hub;
         _notifier = notifier;
         _logger = logger;
+        _localizer = localizer;
     }
 
     /// <summary>業務通知を best-effort で発行（失敗しても本処理・SignalR 配信は止めない）。</summary>
@@ -65,8 +69,8 @@ public class SignalRWmsNotifier : IWmsNotifier
         {
             EventType = "InboundReceived",
             Level = "Info",
-            Title = "入庫完了",
-            Message = $"入庫受領 {receiptNo}（倉庫 {warehouseCd}）が完了しました。",
+            Title = _localizer["入庫完了"],
+            Message = _localizer["入庫受領 {0}（倉庫 {1}）が完了しました。", receiptNo, warehouseCd],
             Source = "WMS",
             RefNo = receiptNo
         });
@@ -81,9 +85,10 @@ public class SignalRWmsNotifier : IWmsNotifier
         {
             EventType = "OutboundShipped",
             Level = "Info",
-            Title = "出荷完了",
-            Message = $"出荷指示 {outboundNo} の出荷が完了しました" +
-                      (string.IsNullOrEmpty(packageNo) ? "。" : $"（荷姿 {packageNo}）。"),
+            Title = _localizer["出荷完了"],
+            Message = string.IsNullOrEmpty(packageNo)
+                ? _localizer["出荷指示 {0} の出荷が完了しました。", outboundNo]
+                : _localizer["出荷指示 {0} の出荷が完了しました（荷姿 {1}）。", outboundNo, packageNo],
             Source = "WMS",
             RefNo = outboundNo
         });
@@ -99,8 +104,8 @@ public class SignalRWmsNotifier : IWmsNotifier
         {
             EventType = "StockTakeCompleted",
             Level = diffLines > 0 ? "Warning" : "Info",
-            Title = diffLines > 0 ? "棚卸差異あり" : "棚卸完了",
-            Message = $"棚卸 {stockTakeNo} が完了しました（差異 {diffLines} 件）。",
+            Title = diffLines > 0 ? _localizer["棚卸差異あり"] : _localizer["棚卸完了"],
+            Message = _localizer["棚卸 {0} が完了しました（差異 {1} 件）。", stockTakeNo, diffLines],
             Source = "WMS",
             RefNo = stockTakeNo
         });

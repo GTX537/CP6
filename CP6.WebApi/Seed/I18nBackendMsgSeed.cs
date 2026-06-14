@@ -44,5 +44,14 @@ public static class I18nBackendMsgSeed
         new Sys_Lang { LangKey = "保存成功", ZhCN = "保存成功", ZhTW = "儲存成功", En = "Saved successfully", Ja = "保存しました", Ko = "저장되었습니다" },
         new Sys_Lang { LangKey = "用户名已存在", ZhCN = "用户名已存在", ZhTW = "使用者名稱已存在", En = "Username already exists", Ja = "ユーザー名が既に存在します", Ko = "사용자 이름이 이미 존재합니다" },
         new Sys_Lang { LangKey = "E10023: すでに更新済みです。再検索してください。版型・木型No:{0} Rev:{1}", ZhCN = "E10023: 已被更新，请重新检索。版型·木型No:{0} Rev:{1}", ZhTW = "E10023: 已被更新，請重新檢索。版型·木型No:{0} Rev:{1}", En = "E10023: Already updated. Please search again. Plate/Mold No:{0} Rev:{1}", Ja = "E10023: すでに更新済みです。再検索してください。版型・木型No:{0} Rev:{1}", Ko = "E10023: 이미 업데이트되었습니다. 다시 검색하세요. 판형·목형No:{0} Rev:{1}" },
+        // SignalR WMS 业务推送通知(SignalRWmsNotifier)：Title + Message(位置参数)
+        new Sys_Lang { LangKey = "入庫完了", ZhCN = "入库完成", ZhTW = "入庫完成", En = "Inbound Completed", Ja = "入庫完了", Ko = "입고 완료" },
+        new Sys_Lang { LangKey = "出荷完了", ZhCN = "出货完成", ZhTW = "出貨完成", En = "Shipment Completed", Ja = "出荷完了", Ko = "출하 완료" },
+        new Sys_Lang { LangKey = "棚卸差異あり", ZhCN = "盘点有差异", ZhTW = "盤點有差異", En = "Stocktake Discrepancy", Ja = "棚卸差異あり", Ko = "재고조사 차이 있음" },
+        new Sys_Lang { LangKey = "棚卸完了", ZhCN = "盘点完成", ZhTW = "盤點完成", En = "Stocktake Completed", Ja = "棚卸完了", Ko = "재고조사 완료" },
+        new Sys_Lang { LangKey = "入庫受領 {0}（倉庫 {1}）が完了しました。", ZhCN = "入库收货 {0}（仓库 {1}）已完成。", ZhTW = "入庫收貨 {0}（倉庫 {1}）已完成。", En = "Inbound receipt {0} (warehouse {1}) is completed.", Ja = "入庫受領 {0}（倉庫 {1}）が完了しました。", Ko = "입고 수령 {0}(창고 {1})이(가) 완료되었습니다." },
+        new Sys_Lang { LangKey = "出荷指示 {0} の出荷が完了しました。", ZhCN = "出货指示 {0} 的出货已完成。", ZhTW = "出貨指示 {0} 的出貨已完成。", En = "Shipment for outbound order {0} is completed.", Ja = "出荷指示 {0} の出荷が完了しました。", Ko = "출하 지시 {0}의 출하가 완료되었습니다." },
+        new Sys_Lang { LangKey = "出荷指示 {0} の出荷が完了しました（荷姿 {1}）。", ZhCN = "出货指示 {0} 的出货已完成（包装 {1}）。", ZhTW = "出貨指示 {0} 的出貨已完成（包裝 {1}）。", En = "Shipment for outbound order {0} is completed (package {1}).", Ja = "出荷指示 {0} の出荷が完了しました（荷姿 {1}）。", Ko = "출하 지시 {0}의 출하가 완료되었습니다(포장 {1})." },
+        new Sys_Lang { LangKey = "棚卸 {0} が完了しました（差異 {1} 件）。", ZhCN = "盘点 {0} 已完成（差异 {1} 项）。", ZhTW = "盤點 {0} 已完成（差異 {1} 項）。", En = "Stocktake {0} is completed ({1} discrepancies).", Ja = "棚卸 {0} が完了しました（差異 {1} 件）。", Ko = "재고조사 {0}이(가) 완료되었습니다(차이 {1}건)." },
     };
 }
