@@ -12,7 +12,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Route("api/fsc-checklists")]
 [Authorize]
-public class FscChecklistController : ControllerBase
+public class FscChecklistController : LocalizedControllerBase
 {
     private readonly IFscChecklistService _service;
 
@@ -66,7 +66,7 @@ public class FscChecklistController : ControllerBase
     public async Task<IActionResult> Download(string fscManagementNo)
     {
         var r = await _service.DownloadAsync(fscManagementNo);
-        if (r == null) return NotFound(new { code = 404, message = "発行履歴が見つかりません" });
+        if (r == null) return NotFound(new { code = 404, message = Localizer["発行履歴が見つかりません"] });
         var (content, fileName) = r.Value;
         // 真正の Excel テンプレートが存在する場合はそのまま、無ければ plain-text fallback
         var contentType = fileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase)

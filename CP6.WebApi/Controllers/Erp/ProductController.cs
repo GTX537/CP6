@@ -12,7 +12,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Route("api/products")]
 [Authorize]
-public class ProductController : ControllerBase
+public class ProductController : LocalizedControllerBase
 {
     private readonly IProductService _service;
     private readonly IWipCheckService _wipCheckService;
@@ -56,7 +56,7 @@ public class ProductController : ControllerBase
     {
         var info = await _service.GetBasicInfoByEstimateCalcAsync(no);
         if (info == null)
-            return NotFound(new { code = 404, message = "見積計算書が見つかりません" });
+            return NotFound(new { code = 404, message = Localizer["見積計算書が見つかりません"] });
         return Ok(new { code = 0, message = "OK", data = info });
     }
 
@@ -84,7 +84,7 @@ public class ProductController : ControllerBase
     {
         var dto = await _service.GetByCdAsync(cd, includeDeleted);
         if (dto == null)
-            return NotFound(new { code = 404, message = "製品マスタが未登録です。" });
+            return NotFound(new { code = 404, message = Localizer["製品マスタが未登録です。"] });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -116,7 +116,7 @@ public class ProductController : ControllerBase
             return Conflict(new
             {
                 code = 409,
-                message = "更新対象が、他の処理によって更新されています。最新情報を取得してください。",
+                message = Localizer["更新対象が、他の処理によって更新されています。最新情報を取得してください。"],
                 msgId = "MSG-W10002"
             });
         }
@@ -137,7 +137,7 @@ public class ProductController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict(new { code = 409, message = "排他锁冲突", msgId = "MSG-W10002" });
+            return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
         }
     }
 

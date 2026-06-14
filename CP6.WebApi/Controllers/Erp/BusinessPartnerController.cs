@@ -13,7 +13,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Route("api/business-partners")]
 [Authorize]
-public class BusinessPartnerController : ControllerBase
+public class BusinessPartnerController : LocalizedControllerBase
 {
     private readonly IBusinessPartnerService _service;
 
@@ -30,7 +30,7 @@ public class BusinessPartnerController : ControllerBase
     {
         var dto = await _service.GetByCdAsync(bpCd, includeDeleted);
         if (dto == null)
-            return Ok(new { code = 404, message = "E10008: 検索結果がありません", data = (object?)null });
+            return Ok(new { code = 404, message = Localizer["E10008: 検索結果がありません"], data = (object?)null });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -70,7 +70,7 @@ public class BusinessPartnerController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict(new { code = 409, message = "E10034: すでに更新済みです。再検索してください", msgId = "E10034" });
+            return Conflict(new { code = 409, message = Localizer["E10034: すでに更新済みです。再検索してください"], msgId = "E10034" });
         }
         catch (InvalidOperationException ex)
         {
@@ -94,7 +94,7 @@ public class BusinessPartnerController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict(new { code = 409, message = "E10034: すでに更新済みです" });
+            return Conflict(new { code = 409, message = Localizer["E10034: すでに更新済みです"] });
         }
         catch (KeyNotFoundException ex)
         {

@@ -11,7 +11,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Authorize]
 [Route("api/sheet-unit-prices")]
-public class SheetUnitPriceController : ControllerBase
+public class SheetUnitPriceController : LocalizedControllerBase
 {
     private readonly ISheetUnitPriceService _service;
     public SheetUnitPriceController(ISheetUnitPriceService service) { _service = service; }
@@ -43,7 +43,7 @@ public class SheetUnitPriceController : ControllerBase
         [FromForm] SheetPriceImportDiv importDiv = SheetPriceImportDiv.Standard)
     {
         if (file == null || file.Length == 0)
-            return BadRequest(new { code = 400, message = "E10097: ファイルが選択されていません" });
+            return BadRequest(new { code = 400, message = Localizer["E10097: ファイルが選択されていません"] });
         using var stream = file.OpenReadStream();
         var result = await _service.ImportExcelAsync(stream, baseDate, baseCd, importDiv);
         return Ok(new { code = 0, message = "OK", data = result });

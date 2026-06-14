@@ -10,7 +10,7 @@ namespace CP6.WebApi.Controllers.Pub;
 [ApiController]
 [Route("api/pub/seq")]
 [Authorize]
-public class SeqController : ControllerBase
+public class SeqController : LocalizedControllerBase
 {
     private readonly CP6Context _db;
     public SeqController(CP6Context db) => _db = db;
@@ -31,7 +31,7 @@ public class SeqController : ControllerBase
     public async Task<IActionResult> Add([FromBody] Pub_DocSequence entity)
     {
         if (await _db.Pub_DocSequences.AnyAsync(x => x.BizKey == entity.BizKey))
-            return BadRequest(new { message = "业务键已存在" });
+            return BadRequest(new { message = Localizer["业务键已存在"] });
         entity.CreateDate = DateTime.Now;
         _db.Pub_DocSequences.Add(entity);
         await _db.SaveChangesAsync();

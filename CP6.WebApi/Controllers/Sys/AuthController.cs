@@ -14,7 +14,7 @@ namespace CP6.WebApi.Controllers.Sys;
 [ApiController]
 [Route("api/[controller]")]
 [AllowAnonymous]
-public class AuthController : ControllerBase
+public class AuthController : LocalizedControllerBase
 {
     private readonly CP6Context _context;
     private readonly IConfiguration _config;
@@ -39,14 +39,14 @@ public class AuthController : ControllerBase
             .FirstOrDefaultAsync(u => u.UserName == request.UserName);
 
         if (user == null)
-            return BadRequest(new { message = "用户名不存在" });
+            return BadRequest(new { message = Localizer["用户名不存在"] });
 
         // 2. 验证密码（简单对比，生产环境应用哈希）
         if (user.Password != request.Password)
-            return BadRequest(new { message = "密码错误" });
+            return BadRequest(new { message = Localizer["密码错误"] });
 
         if (!user.Enable)
-            return BadRequest(new { message = "账号已被禁用" });
+            return BadRequest(new { message = Localizer["账号已被禁用"] });
 
         // 3. 生成 JWT Token
         var jwt = _config.GetSection("JWT");

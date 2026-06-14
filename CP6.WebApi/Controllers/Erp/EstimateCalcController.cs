@@ -12,7 +12,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Route("api/estimate-calcs")]
 [Authorize]
-public class EstimateCalcController : ControllerBase
+public class EstimateCalcController : LocalizedControllerBase
 {
     private readonly IEstimateCalcService _service;
 
@@ -42,7 +42,7 @@ public class EstimateCalcController : ControllerBase
     public async Task<IActionResult> Get(string no, [FromQuery] bool includeDeleted = false)
     {
         var dto = await _service.GetByNoAsync(no, includeDeleted);
-        if (dto == null) return NotFound(new { code = 404, message = "見積計算書NOが未登録です。", msgId = "MSG-102" });
+        if (dto == null) return NotFound(new { code = 404, message = Localizer["見積計算書NOが未登録です。"], msgId = "MSG-102" });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -80,7 +80,7 @@ public class EstimateCalcController : ControllerBase
             return Conflict(new
             {
                 code = 409,
-                message = "更新対象が、他の処理によって更新されています。最新情報を取得してください。",
+                message = Localizer["更新対象が、他の処理によって更新されています。最新情報を取得してください。"],
                 msgId = "MSG-W10002"
             });
         }
@@ -105,7 +105,7 @@ public class EstimateCalcController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict(new { code = 409, message = "排他锁冲突", msgId = "MSG-W10002" });
+            return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
         }
     }
 

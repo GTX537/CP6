@@ -9,7 +9,7 @@ namespace CP6.WebApi.Controllers.Sys;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class RoleController : ControllerBase
+public class RoleController : LocalizedControllerBase
 {
     private readonly CP6Context _context;
 
@@ -110,6 +110,6 @@ public class RoleController : ControllerBase
         _context.Sys_RoleMenus.AddRange(newMappings);
 
         await _context.SaveChangesAsync();
-        return Ok(new { message = "保存成功" });
+        return Ok(new { message = Localizer["保存成功"] });
     }
 }

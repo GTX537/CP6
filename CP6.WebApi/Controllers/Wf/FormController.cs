@@ -9,7 +9,7 @@ namespace CP6.WebApi.Controllers.Wf;
 [ApiController]
 [Route("api/wf")]
 [Authorize]
-public class FormController : ControllerBase
+public class FormController : LocalizedControllerBase
 {
     private readonly IFormService _svc;
     public FormController(IFormService svc) => _svc = svc;
@@ -29,7 +29,7 @@ public class FormController : ControllerBase
     public async Task<IActionResult> GetDef(string formKey)
     {
         var def = await _svc.GetDefAsync(formKey);
-        return def is null ? NotFound(new { code = 404, message = "表单定义不存在" }) : Ok2(def);
+        return def is null ? NotFound(new { code = 404, message = Localizer["表单定义不存在"] }) : Ok2(def);
     }
 
     [HttpPost("form/data")]

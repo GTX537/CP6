@@ -10,7 +10,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Route("api/master")]
 [Authorize]
-public class MasterDataController : ControllerBase
+public class MasterDataController : LocalizedControllerBase
 {
     private readonly IMasterDataService _service;
 
@@ -45,7 +45,7 @@ public class MasterDataController : ControllerBase
     public async Task<IActionResult> GetGenericCodes([FromQuery] string groupCode)
     {
         if (string.IsNullOrWhiteSpace(groupCode))
-            return BadRequest(new { code = 400, message = "groupCode 不能为空" });
+            return BadRequest(new { code = 400, message = Localizer["groupCode 不能为空"] });
 
         var list = await _service.GetGenericCodesAsync(groupCode);
         return Ok(new { code = 0, message = "OK", data = list });

@@ -12,7 +12,7 @@ namespace CP6.WebApi.Controllers.Wf;
 [ApiController]
 [Route("api/wf")]
 [Authorize]
-public class FlowController : ControllerBase
+public class FlowController : LocalizedControllerBase
 {
     private readonly IFlowEngine _engine;
     private readonly IFlowDefService _defSvc;
@@ -43,7 +43,7 @@ public class FlowController : ControllerBase
     public async Task<IActionResult> GetDef(string flowKey)
     {
         var def = await _defSvc.GetDefAsync(flowKey);
-        return def is null ? NotFound(new { code = 404, message = "流程定义不存在" }) : Ok2(def);
+        return def is null ? NotFound(new { code = 404, message = Localizer["流程定义不存在"] }) : Ok2(def);
     }
 
     // ── 起流程 / 办理 ──
@@ -78,7 +78,7 @@ public class FlowController : ControllerBase
     public async Task<IActionResult> Instance(Guid id)
     {
         var detail = await _defSvc.GetInstanceDetailAsync(id);
-        return detail is null ? NotFound(new { code = 404, message = "流程实例不存在" }) : Ok2(detail);
+        return detail is null ? NotFound(new { code = 404, message = Localizer["流程实例不存在"] }) : Ok2(detail);
     }
 
     public record FlowDefReq(string FlowKey, string FlowName, string FormKey, string SchemaJson);

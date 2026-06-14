@@ -10,7 +10,7 @@ namespace CP6.WebApi.Controllers.Sys;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class DictController : ControllerBase
+public class DictController : LocalizedControllerBase
 {
     private readonly CP6Context _context;
     private readonly CacheService _cache;
@@ -44,7 +44,7 @@ public class DictController : ControllerBase
     public async Task<IActionResult> AddType([FromBody] Sys_DictType entity)
     {
         if (await _context.Sys_DictTypes.AnyAsync(t => t.TypeCode == entity.TypeCode))
-            return BadRequest(new { message = "类型编码已存在" });
+            return BadRequest(new { message = Localizer["类型编码已存在"] });
 
         entity.CreateDate = DateTime.Now;
         _context.Sys_DictTypes.Add(entity);

@@ -74,8 +74,8 @@ function walkCs(dir, acc = []) {
   }
   return acc
 }
-// _localizer["KEY"] / localizer["KEY"] / BizException("KEY") —— 仅字面量
-const RE_LOC = /localizer\s*\[\s*"((?:\\.|[^"])*)"\s*\]/g
+// _localizer["KEY"] / localizer["KEY"] / Localizer["KEY"] (控制器基类) / BizException("KEY") —— 仅字面量
+const RE_LOC = /localizer\s*\[\s*"((?:\\.|[^"])*)"\s*\]/gi
 const RE_BIZ = /BizException\(\s*"((?:\\.|[^"])*)"/g
 let csFileCount = 0
 let csRefCount = 0

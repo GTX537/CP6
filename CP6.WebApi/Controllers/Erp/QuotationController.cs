@@ -12,7 +12,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Route("api/quotations")]
 [Authorize]
-public class QuotationController : ControllerBase
+public class QuotationController : LocalizedControllerBase
 {
     private readonly IQuotationService _service;
 
@@ -43,7 +43,7 @@ public class QuotationController : ControllerBase
     {
         var dto = await _service.GetByNoAsync(no, includeDeleted);
         if (dto == null)
-            return NotFound(new { code = 404, message = "御見積書NOが未登録です。", msgId = "MSG-102" });
+            return NotFound(new { code = 404, message = Localizer["御見積書NOが未登録です。"], msgId = "MSG-102" });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -86,7 +86,7 @@ public class QuotationController : ControllerBase
             return Conflict(new
             {
                 code = 409,
-                message = "更新対象が、他の処理によって更新されています。最新情報を取得してください。",
+                message = Localizer["更新対象が、他の処理によって更新されています。最新情報を取得してください。"],
                 msgId = "MSG-W10002"
             });
         }
@@ -114,7 +114,7 @@ public class QuotationController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict(new { code = 409, message = "排他锁冲突", msgId = "MSG-W10002" });
+            return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
         }
     }
 
@@ -163,7 +163,7 @@ public class QuotationController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict(new { code = 409, message = "排他锁冲突", msgId = "MSG-W10002" });
+            return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
         }
     }
 
@@ -190,7 +190,7 @@ public class QuotationController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict(new { code = 409, message = "排他锁冲突", msgId = "MSG-W10002" });
+            return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
         }
     }
 

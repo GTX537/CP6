@@ -12,7 +12,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Route("api/orders")]
 [Authorize]
-public class OrderController : ControllerBase
+public class OrderController : LocalizedControllerBase
 {
     private readonly IOrderService _service;
 
@@ -40,11 +40,11 @@ public class OrderController : ControllerBase
     public async Task<IActionResult> GetByHaibaiNo([FromQuery] string? no1, [FromQuery] string? no2, [FromQuery] string? no3)
     {
         if (string.IsNullOrWhiteSpace(no1) && string.IsNullOrWhiteSpace(no2) && string.IsNullOrWhiteSpace(no3))
-            return BadRequest(new { code = 400, message = "手配NO 1〜3 のいずれかを指定してください。" });
+            return BadRequest(new { code = 400, message = Localizer["手配NO 1〜3 のいずれかを指定してください。"] });
 
         var dto = await _service.LookupByHaibaiNoAsync(no1, no2, no3);
         if (dto == null)
-            return NotFound(new { code = 404, message = "E10008: 検索結果がありません" });
+            return NotFound(new { code = 404, message = Localizer["E10008: 検索結果がありません"] });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -62,7 +62,7 @@ public class OrderController : ControllerBase
     {
         var dto = await _service.LookupProductMasterForDetailAsync(cd);
         if (dto == null)
-            return NotFound(new { code = 404, message = "E10008: 製品マスタが見つかりません" });
+            return NotFound(new { code = 404, message = Localizer["E10008: 製品マスタが見つかりません"] });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -160,8 +160,8 @@ public class OrderController : ControllerBase
     public async Task<IActionResult> SearchList([FromQuery] OrderQueryDto query)
     {
         // FROM≦TO バリデーション（E10036）
-        if (!ValidateFromTo(query.OrderDateFrom, query.OrderDateTo, out var msg)) return BadRequest(new { code = 400, message = msg });
-        if (!ValidateFromTo(query.DeliveryDateFrom, query.DeliveryDateTo, out msg)) return BadRequest(new { code = 400, message = msg });
+        if (!ValidateFromTo(query.OrderDateFrom, query.OrderDateTo, out var msg)) return BadRequest(new { code = 400, message = Localizer[msg] });
+        if (!ValidateFromTo(query.DeliveryDateFrom, query.DeliveryDateTo, out msg)) return BadRequest(new { code = 400, message = Localizer[msg] });
 
         var (rows, total) = await _service.SearchOrdersAsync(query);
         return Ok(new { code = 0, message = "OK", data = new { rows, total } });
@@ -181,7 +181,7 @@ public class OrderController : ControllerBase
     public async Task<IActionResult> ExportReport([FromBody] ReportRequest req)
     {
         if (req?.Keys == null || req.Keys.Count == 0)
-            return BadRequest(new { code = 400, message = "E10010: 発行対象がありません" });
+            return BadRequest(new { code = 400, message = Localizer["E10010: 発行対象がありません"] });
         var bytes = await _service.ExportOrderReportPdfAsync(req.Keys);
         var filename = $"order_report_{DateTime.Now:yyyyMMdd_HHmmss}.txt"; // 簡易版は txt として返す
         return File(bytes, "text/plain; charset=utf-8", filename);
@@ -195,12 +195,12 @@ public class OrderController : ControllerBase
     [HttpGet("price-correction/list")]
     public async Task<IActionResult> SearchPriceCorrection([FromQuery] OrderPriceCorrectionQueryDto query)
     {
-        if (!ValidateFromTo(query.OrderDateFrom, query.OrderDateTo, out var msg)) return BadRequest(new { code = 400, message = msg });
-        if (!ValidateFromTo(query.DeliveryDateFrom, query.DeliveryDateTo, out msg)) return BadRequest(new { code = 400, message = msg });
+        if (!ValidateFromTo(query.OrderDateFrom, query.OrderDateTo, out var msg)) return BadRequest(new { code = 400, message = Localizer[msg] });
+        if (!ValidateFromTo(query.DeliveryDateFrom, query.DeliveryDateTo, out msg)) return BadRequest(new { code = 400, message = Localizer[msg] });
         if (query.QtyFrom.HasValue && query.QtyTo.HasValue && query.QtyFrom > query.QtyTo)
-            return BadRequest(new { code = 400, message = "E10036: 数量 FROM≦TO の関係で指定してください" });
+            return BadRequest(new { code = 400, message = Localizer["E10036: 数量 FROM≦TO の関係で指定してください"] });
         if (query.AmountFrom.HasValue && query.AmountTo.HasValue && query.AmountFrom > query.AmountTo)
-            return BadRequest(new { code = 400, message = "E10036: 金額 FROM≦TO の関係で指定してください" });
+            return BadRequest(new { code = 400, message = Localizer["E10036: 金額 FROM≦TO の関係で指定してください"] });
 
         try
         {
@@ -237,7 +237,7 @@ public class OrderController : ControllerBase
             return Conflict(new
             {
                 code = 409,
-                message = "W10002: 更新対象が他の処理によって更新されています",
+                message = Localizer["W10002: 更新対象が他の処理によって更新されています"],
                 msgId = "MSG-W10002"
             });
         }
@@ -253,7 +253,7 @@ public class OrderController : ControllerBase
     {
         var dto = await _service.GetByWebOrderNoAsync(webOrderNo, includeDeleted);
         if (dto == null)
-            return NotFound(new { code = 404, message = "受注が見つかりません" });
+            return NotFound(new { code = 404, message = Localizer["受注が見つかりません"] });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -292,7 +292,7 @@ public class OrderController : ControllerBase
             return Conflict(new
             {
                 code = 409,
-                message = "W10002: 更新対象が他の処理によって更新されています",
+                message = Localizer["W10002: 更新対象が他の処理によって更新されています"],
                 msgId = "MSG-W10002"
             });
         }
@@ -326,7 +326,7 @@ public class OrderController : ControllerBase
             return Conflict(new
             {
                 code = 409,
-                message = "W10002: 更新対象が他の処理によって更新されています",
+                message = Localizer["W10002: 更新対象が他の処理によって更新されています"],
                 msgId = "MSG-W10002"
             });
         }
@@ -362,7 +362,7 @@ public class OrderController : ControllerBase
     {
         if (req == null || string.IsNullOrWhiteSpace(req.Reason))
         {
-            return BadRequest(new { code = 400, message = "取消理由（reason）は必須です" });
+            return BadRequest(new { code = 400, message = Localizer["取消理由（reason）は必須です"] });
         }
 
         var result = await _service.CancelAsync(webOrderNo, req.Reason, req.Force, CurrentUser);

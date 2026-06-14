@@ -9,7 +9,7 @@ namespace CP6.WebApi.Controllers.Sys;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class UserController : ControllerBase
+public class UserController : LocalizedControllerBase
 {
     private readonly CP6Context _context;
 
@@ -52,7 +52,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Add([FromBody] Sys_User entity)
     {
         if (await _context.Sys_Users.AnyAsync(u => u.UserName == entity.UserName))
-            return BadRequest(new { message = "用户名已存在" });
+            return BadRequest(new { message = Localizer["用户名已存在"] });
 
         entity.CreateDate = DateTime.Now;
         _context.Sys_Users.Add(entity);

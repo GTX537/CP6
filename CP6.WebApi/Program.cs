@@ -1030,6 +1030,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nErpScreen2Seed.Items)  // 遗留① ERP 画面词条(第2批)
             .Concat(CP6.WebApi.Seed.I18nMiscScreenSeed.Items)  // 遗留① 组件/WMS/MES步骤 杂项词条
             .Concat(CP6.WebApi.Seed.I18nCnScreenSeed.Items)    // 遗留⑦ PMS/wf/Pub 中文画面词条
+            .Concat(CP6.WebApi.Seed.I18nBackendMsgSeed.Items)  // 后端控制器 return 型响应文案
             .Where(i => !existingKeys.Contains(i.LangKey))
             .ToList();
         if (toAdd.Count > 0)

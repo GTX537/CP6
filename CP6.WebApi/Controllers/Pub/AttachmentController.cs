@@ -10,7 +10,7 @@ namespace CP6.WebApi.Controllers.Pub;
 [ApiController]
 [Route("api/pub/attachment")]
 [Authorize]
-public class AttachmentController : ControllerBase
+public class AttachmentController : LocalizedControllerBase
 {
     private readonly IAttachmentService _svc;
     private readonly IPermissionService _perm;
@@ -31,7 +31,7 @@ public class AttachmentController : ControllerBase
     public async Task<IActionResult> Upload(IFormFile file, [FromForm] string bizType,
         [FromForm] string? bizId, [FromForm] string? draftToken)
     {
-        if (file == null || file.Length == 0) return BadRequest(new { code = 400, message = "空文件" });
+        if (file == null || file.Length == 0) return BadRequest(new { code = 400, message = Localizer["空文件"] });
         try
         {
             using var s = file.OpenReadStream();

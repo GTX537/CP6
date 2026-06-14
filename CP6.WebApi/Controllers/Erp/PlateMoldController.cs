@@ -12,7 +12,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Authorize]
 [Route("api/plate-molds")]
-public class PlateMoldController : ControllerBase
+public class PlateMoldController : LocalizedControllerBase
 {
     private readonly IPlateMoldService _service;
     public PlateMoldController(IPlateMoldService service) { _service = service; }
@@ -30,7 +30,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> ByEstimate(string calcNo)
     {
         var dto = await _service.GetByEstimateNoAsync(calcNo);
-        if (dto == null) return Ok(new { code = 0, message = "E10008: 検索結果がありません", data = (object?)null });
+        if (dto == null) return Ok(new { code = 0, message = Localizer["E10008: 検索結果がありません"], data = (object?)null });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -38,7 +38,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> ByProduct(string productCd)
     {
         var dto = await _service.GetCompositionByProductAsync(productCd);
-        if (dto == null) return Ok(new { code = 0, message = "E10008: 検索結果がありません", data = (object?)null });
+        if (dto == null) return Ok(new { code = 0, message = Localizer["E10008: 検索結果がありません"], data = (object?)null });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -46,7 +46,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> GetByNo(string wdPtnNo, [FromQuery] int? rev = null)
     {
         var dto = await _service.GetByNoAsync(wdPtnNo, rev);
-        if (dto == null) return Ok(new { code = 0, message = "E10008: 検索結果がありません", data = (object?)null });
+        if (dto == null) return Ok(new { code = 0, message = Localizer["E10008: 検索結果がありません"], data = (object?)null });
         return Ok(new { code = 0, message = "OK", data = dto });
     }
 
@@ -108,7 +108,7 @@ public class PlateMoldController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict(new { code = 409, message = $"E10023: すでに更新済みです。再検索してください。版型・木型No:{wdPtnNo} Rev:{wdRev}" });
+            return Conflict(new { code = 409, message = Localizer["E10023: すでに更新済みです。再検索してください。版型・木型No:{0} Rev:{1}", wdPtnNo, wdRev] });
         }
     }
 
@@ -143,7 +143,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> Label([FromBody] LabelRequest req)
     {
         if (req?.Targets == null || req.Targets.Count == 0)
-            return BadRequest(new { code = 400, message = "E10010: 発行対象がありません" });
+            return BadRequest(new { code = 400, message = Localizer["E10010: 発行対象がありません"] });
         var bytes = await _service.IssueLabelCsvAsync(
             req.Targets.Select(t => (t.WdPtnNo, t.WdRev)));
         var fn = $"plate-mold-labels_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
