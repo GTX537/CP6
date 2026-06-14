@@ -342,6 +342,12 @@ public class CP6Context : DbContext
     public DbSet<GlAccount> GlAccounts { get; set; }
     /// <summary>成本中心（章01，机台/工序/部门分析维度）</summary>
     public DbSet<CostCenter> CostCenters { get; set; }
+    /// <summary>记账凭证头（章01，maker-checker 状态机 + 红冲）</summary>
+    public DbSet<JournalEntry> JournalEntries { get; set; }
+    /// <summary>记账凭证分录行（章01，借贷本位币 decimal）</summary>
+    public DbSet<JournalLine> JournalLines { get; set; }
+    /// <summary>财务采番计数器（章01，凭证号按月采番）</summary>
+    public DbSet<FinSequence> FinSequences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -477,6 +483,36 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => x.Code).IsUnique();
             e.HasIndex(x => x.ParentId);
+        });
+
+        // 记账凭证头：No 唯一 + 期间/状态检索 + 红冲互指
+        modelBuilder.Entity<JournalEntry>(e =>
+        {
+            e.HasIndex(x => x.No).IsUnique();
+            e.HasIndex(x => new { x.PeriodId, x.Status });
+            e.HasIndex(x => x.Status);
+            e.HasIndex(x => x.VoucherDate);
+            e.HasIndex(x => x.ReverseOfId);
+
+            // 分录行级联：FK = EntryId（凭证删除时行随删；业务上凭证不删，红冲产生新凭证）
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.EntryId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // 凭证分录行：按凭证 + 科目检索（试算/余额滚算用）
+        modelBuilder.Entity<JournalLine>(e =>
+        {
+            e.HasIndex(x => x.EntryId);
+            e.HasIndex(x => x.AccountId);
+            e.HasIndex(x => x.CostCenterId);
+        });
+
+        // 财务采番：(SeqKey + SeqDate) 唯一
+        modelBuilder.Entity<FinSequence>(e =>
+        {
+            e.HasIndex(x => new { x.SeqKey, x.SeqDate }).IsUnique();
         });
 
         // 見積計算書：QtnCalcNo 唯一
