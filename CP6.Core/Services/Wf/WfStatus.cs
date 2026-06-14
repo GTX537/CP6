@@ -1,0 +1,20 @@
+namespace CP6.Core.Services.Wf;
+
+/// <summary>流程实例状态（Wf_FlowInstance.Status）。</summary>
+public static class FlowInstanceStatus
+{
+    public const int Running = 0;     // 进行中
+    public const int Approved = 1;    // 通过（走到 end）
+    public const int Rejected = 2;    // 驳回（会签判否）
+    public const int Withdrawn = 3;   // 撤回（发起人主动）
+    public const int Suspended = 4;   // 挂起待指派（审批人算不出）
+}
+
+/// <summary>流程任务状态（Wf_FlowTask.Status）。!=Pending 即"已办"，是幂等闸门依据。</summary>
+public static class FlowTaskStatus
+{
+    public const int Pending = 0;     // 待办
+    public const int Approved = 1;    // 同意
+    public const int Rejected = 2;    // 驳回
+    public const int Cancelled = 3;   // 作废（节点已决/实例撤回时清在途）
+}
