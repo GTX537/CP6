@@ -4,8 +4,9 @@
 import i18n from '@/i18n'
 import { useI18n } from 'vue-i18n'
 
-/** DB(Sys_Lang) 中现存的全部词条 key（3007 个）。 */
+/** DB(Sys_Lang) 中现存的全部词条 key（3011 个）。 */
 export type MessageKey =
+  | '(=1.0 必須)'
   | '(ファイルなし)'
   | '(未設定)'
   | '(自動)'
@@ -2301,6 +2302,7 @@ export type MessageKey =
   | '工程'
   | '工程: {cd} {name}'
   | '工程CD'
+  | '工程CD {pcd} の連産品比率合計が 1.0 ではありません（現:{sum}）'
   | '工程・作業がありません。このまま保存しますか？'
   | '工程中断'
   | '工程備考'
@@ -2781,6 +2783,7 @@ export type MessageKey =
   | '製品: {cd} {name}'
   | '製品CD'
   | '製品CD {cd} を削除します（軟削除）。よろしいですか？'
+  | '製品CD={cd} 未找到'
   | '製品CDを入力してください'
   | '製品マスタ'
   | '製品マスタ 参照'
@@ -3010,6 +3013,7 @@ export type MessageKey =
   | '（根部门）'
   | '（空=元入庫予定の倉庫）'
   | '，类型：{accept}'
+  | '：取引先分類 1〜10'
   | 'ﾊﾟﾚｯﾄ{n}'
   | 'ﾒｰｶ(表)'
   | 'ﾘｻｲｸﾙ法{type} - {name}'

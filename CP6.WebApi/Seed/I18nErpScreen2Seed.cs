@@ -214,5 +214,10 @@ public static class I18nErpScreen2Seed
         new Sys_Lang { LangKey = "メーカFLG", ZhCN = "制造商FLG", ZhTW = "製造商FLG", En = "Maker FLG", Ja = "メーカFLG", Ko = "제조사FLG" },
         new Sys_Lang { LangKey = "有償支給先FLG", ZhCN = "有偿供给方FLG", ZhTW = "有償供給對象FLG", En = "Paid Supply FLG", Ja = "有償支給先FLG", Ko = "유상지급처FLG" },
         new Sys_Lang { LangKey = "買戻義務FLG", ZhCN = "买回义务FLG", ZhTW = "買回義務FLG", En = "Buyback Obligation FLG", Ja = "買戻義務FLG", Ko = "환매의무FLG" },
+        // 全扫净①·零星 ERP：连产品比率/产品未找到/取引先分类后缀
+        new Sys_Lang { LangKey = "(=1.0 必須)", ZhCN = "(=1.0 必填)", ZhTW = "(=1.0 必填)", En = "(=1.0 required)", Ja = "(=1.0 必須)", Ko = "(=1.0 필수)" },
+        new Sys_Lang { LangKey = "工程CD {pcd} の連産品比率合計が 1.0 ではありません（現:{sum}）", ZhCN = "工序CD {pcd} 的联产品比率合计不是 1.0（当前:{sum}）", ZhTW = "工序CD {pcd} 的聯產品比率合計不是 1.0（目前:{sum}）", En = "Co-product ratio total for process CD {pcd} is not 1.0 (current: {sum})", Ja = "工程CD {pcd} の連産品比率合計が 1.0 ではありません（現:{sum}）", Ko = "공정CD {pcd}의 연산품 비율 합계가 1.0이 아닙니다 (현재:{sum})" },
+        new Sys_Lang { LangKey = "製品CD={cd} 未找到", ZhCN = "产品CD={cd} 未找到", ZhTW = "產品CD={cd} 未找到", En = "Product CD={cd} not found", Ja = "製品CD={cd} が見つかりません", Ko = "제품CD={cd}을(를) 찾을 수 없습니다" },
+        new Sys_Lang { LangKey = "：取引先分類 1〜10", ZhCN = "：客户分类 1〜10", ZhTW = "：交易對象分類 1〜10", En = ": Partner Category 1-10", Ja = "：取引先分類 1〜10", Ko = ": 거래처 분류 1〜10" },
     };
 }

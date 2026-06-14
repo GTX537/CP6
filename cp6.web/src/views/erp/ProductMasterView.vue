@@ -306,7 +306,7 @@ async function runAllValidations(): Promise<boolean> {
     }
     for (const [pcd, sum] of groupSums) {
       if (Math.abs(sum - 1) > 0.0001) {
-        ElMessage.error(`工程CD ${pcd} の連産品比率合計が 1.0 ではありません（現:${sum.toFixed(4)}）`)
+        ElMessage.error(t('工程CD {pcd} の連産品比率合計が 1.0 ではありません（現:{sum}）', { pcd, sum: sum.toFixed(4) }))
         return false
       }
     }
@@ -449,7 +449,7 @@ onMounted(async () => {
         store.loadFromDto(res.data)
         store.setOperationType(op)
       } else {
-        ElMessage.warning(res.message || `製品CD=${cdParam} 未找到`)
+        ElMessage.warning(res.message || t('製品CD={cd} 未找到', { cd: cdParam }))
       }
     } finally { loading.value = false }
   }

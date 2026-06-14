@@ -221,7 +221,7 @@
           size="small"
           style="margin-left: 12px"
         >
-          QtyRatio合計: {{ coRatioSum.toFixed(4) }} {{ coRatioOk ? '✓' : '(=1.0 必須)' }}
+          QtyRatio合計: {{ coRatioSum.toFixed(4) }} {{ coRatioOk ? '✓' : t('(=1.0 必須)') }}
         </el-tag>
       </div>
       <el-table :data="currentCoList" border stripe size="small" style="width: 100%">
@@ -373,7 +373,7 @@ defineExpose({
     }
     for (const [pcd, sum] of groupSums) {
       if (Math.abs(sum - 1) > 0.0001) {
-        ElMessage.error(`工程CD ${pcd} の連産品比率合計が 1.0 ではありません（現:${sum.toFixed(4)}）`)
+        ElMessage.error(t('工程CD {pcd} の連産品比率合計が 1.0 ではありません（現:{sum}）', { pcd, sum: sum.toFixed(4) }))
         return false
       }
     }
