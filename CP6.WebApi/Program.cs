@@ -975,6 +975,12 @@ using (var scope = app.Services.CreateScope())
             // i18n 优化 P1：后端错误码（DbStringLocalizer / BizException 用，无前缀的纯码）
             new Sys_Lang { LangKey = "E10022", ZhCN = "必填项未输入", ZhTW = "必填項未輸入", En = "Required field is empty", Ja = "必須項目に値が指定されていません", Ko = "필수 항목이 입력되지 않았습니다" },
             new Sys_Lang { LangKey = "lang.keyExists", ZhCN = "词条 Key 已存在", ZhTW = "詞條 Key 已存在", En = "Language key already exists", Ja = "ラベルキーは既に存在します", Ko = "라벨 키가 이미 존재합니다" },
+            // i18n 优化 P2：CI 缺 key 校验抓出的真实缺失 key（补齐 5 语）
+            new Sys_Lang { LangKey = "table.selectAll", ZhCN = "全选", ZhTW = "全選", En = "Select All", Ja = "全選択", Ko = "전체 선택" },
+            new Sys_Lang { LangKey = "table.noData", ZhCN = "暂无数据", ZhTW = "暫無資料", En = "No Data", Ja = "データがありません", Ko = "데이터 없음" },
+            new Sys_Lang { LangKey = "table.batchSelect", ZhCN = "批量选择", ZhTW = "批量選擇", En = "Batch Select", Ja = "一括選択", Ko = "일괄 선택" },
+            new Sys_Lang { LangKey = "wms.common.close", ZhCN = "关闭", ZhTW = "關閉", En = "Close", Ja = "閉じる", Ko = "닫기" },
+            new Sys_Lang { LangKey = "通貨", ZhCN = "货币", ZhTW = "貨幣", En = "Currency", Ja = "通貨", Ko = "통화" },
         };
 
         var existingKeys = db.Sys_Langs.Select(l => l.LangKey).ToHashSet();

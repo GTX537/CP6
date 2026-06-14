@@ -154,7 +154,7 @@
         >
           <div class="order-card-head">
             <div class="order-card-customer">{{ row.customerName || row.customerCd }}</div>
-            <div class="order-card-amount">¥{{ formatAmount(row.amount) }}</div>
+            <div class="order-card-amount">{{ formatCurrency(row.amount) }}</div>
           </div>
           <div class="order-card-row">
             <span class="lbl">注文書NO</span>
@@ -221,18 +221,14 @@ import { Download, Check, Connection } from '@element-plus/icons-vue'
 import { orderApi } from '@/api/erp/order'
 import type { OrderQueryDto, OrderListItemDto } from '@/types/erp/order'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { useFormat } from '@/utils/format'
 import OrderCancelDialog from './OrderCancelDialog.vue'
 
 const { t } = useI18n()
 const router = useRouter()
 const { isMobile } = useBreakpoint()
-
-function formatAmount(v: any): string {
-  if (v == null || v === '') return '0'
-  const n = Number(v)
-  if (!isFinite(n)) return String(v)
-  return n.toLocaleString()
-}
+// i18n 优化 P2 样例：金额走 locale 感知的多币种格式化（默认 JPY）。
+const { formatCurrency } = useFormat()
 
 const query = reactive<OrderQueryDto>({
   page: 1,
