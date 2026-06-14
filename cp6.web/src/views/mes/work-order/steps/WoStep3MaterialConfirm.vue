@@ -1,7 +1,7 @@
 <template>
   <div>
     <div style="margin-bottom: 12px;">
-      <el-button type="primary" size="small" :icon="Plus" @click="addRow">材料追加</el-button>
+      <el-button type="primary" size="small" :icon="Plus" @click="addRow">{{ t('材料追加') }}</el-button>
     </div>
     <el-table :data="model" border stripe size="small" style="width: 100%;">
       <el-table-column :label="t('順')" width="60" align="center">
@@ -62,7 +62,7 @@
       </el-table-column>
       <el-table-column :label="t('操作')" width="80" align="center">
         <template #default="{ $index }">
-          <el-button link type="danger" size="small" @click="removeRow($index)">削除</el-button>
+          <el-button link type="danger" size="small" @click="removeRow($index)">{{ t('削除') }}</el-button>
         </template>
       </el-table-column>
     </el-table>

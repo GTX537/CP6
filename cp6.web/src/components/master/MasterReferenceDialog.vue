@@ -15,24 +15,24 @@
     @open="onOpen"
   >
     <el-form inline @submit.prevent="onSearch" size="small">
-      <el-form-item label="キーワード">
+      <el-form-item :label="t('キーワード')">
         <el-input
           v-model="keyword"
-          placeholder="コード／名称 部分一致"
+          :placeholder="t('コード／名称 部分一致')"
           clearable
           style="width: 280px"
           @keyup.enter="onSearch"
         />
       </el-form-item>
-      <el-form-item v-if="kind === 'product'" label="顧客CD">
-        <el-input v-model="filterCustomerCd" placeholder="任意" clearable style="width: 140px" />
+      <el-form-item v-if="kind === 'product'" :label="t('顧客CD')">
+        <el-input v-model="filterCustomerCd" :placeholder="t('任意')" clearable style="width: 140px" />
       </el-form-item>
       <el-form-item v-if="kind === 'product'">
-        <el-checkbox v-model="onlyApproved">承認済のみ</el-checkbox>
+        <el-checkbox v-model="onlyApproved">{{ t('承認済のみ') }}</el-checkbox>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :icon="Search" @click="onSearch">検索</el-button>
-        <el-button :icon="RefreshLeft" @click="onReset">クリア</el-button>
+        <el-button type="primary" :icon="Search" @click="onSearch">{{ t('検索') }}</el-button>
+        <el-button :icon="RefreshLeft" @click="onReset">{{ t('クリア') }}</el-button>
       </el-form-item>
     </el-form>
 
@@ -46,25 +46,25 @@
       @row-dblclick="onPick"
     >
       <template v-if="kind === 'customer'">
-        <el-table-column prop="customerCd" label="顧客CD" width="120" />
-        <el-table-column prop="customerName" label="顧客名" min-width="220" show-overflow-tooltip />
-        <el-table-column prop="usageCount" label="使用件数" width="100" align="right" />
+        <el-table-column prop="customerCd" :label="t('顧客CD')" width="120" />
+        <el-table-column prop="customerName" :label="t('顧客名')" min-width="220" show-overflow-tooltip />
+        <el-table-column prop="usageCount" :label="t('使用件数')" width="100" align="right" />
       </template>
       <template v-else-if="kind === 'product'">
-        <el-table-column prop="productCd" label="製品CD" width="170" />
-        <el-table-column prop="setProductName" label="セット品名" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="customerCd" label="顧客CD" width="100" />
-        <el-table-column prop="customerItemName1" label="顧客品名1" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="customerItemName2" label="顧客品名2" min-width="140" show-overflow-tooltip />
-        <el-table-column label="状態" width="90">
+        <el-table-column prop="productCd" :label="t('製品CD')" width="170" />
+        <el-table-column prop="setProductName" :label="t('セット品名')" min-width="180" show-overflow-tooltip />
+        <el-table-column prop="customerCd" :label="t('顧客CD')" width="100" />
+        <el-table-column prop="customerItemName1" :label="t('顧客品名1')" min-width="160" show-overflow-tooltip />
+        <el-table-column prop="customerItemName2" :label="t('顧客品名2')" min-width="140" show-overflow-tooltip />
+        <el-table-column :label="t('状態')" width="90">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
           </template>
         </el-table-column>
       </template>
-      <el-table-column label="操作" width="80" fixed="right">
+      <el-table-column :label="t('操作')" width="80" fixed="right">
         <template #default="{ row }">
-          <el-button link type="primary" @click="onPick(row)">選択</el-button>
+          <el-button link type="primary" @click="onPick(row)">{{ t('選択') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -83,16 +83,19 @@
     </div>
 
     <template #footer>
-      <el-button @click="emit('update:modelValue', false)">キャンセル</el-button>
+      <el-button @click="emit('update:modelValue', false)">{{ t('キャンセル') }}</el-button>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Search, RefreshLeft } from '@element-plus/icons-vue'
 import { masterApi } from '@/api/erp/master'
 import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
+
+const { t } = useI18n()
 
 type LookupKind = 'customer' | 'product'
 
@@ -112,7 +115,7 @@ const emit = defineEmits<{
 }>()
 
 const title = computed(() =>
-  props.kind === 'customer' ? '得意先 参照' : '製品マスタ 参照'
+  props.kind === 'customer' ? t('得意先 参照') : t('製品マスタ 参照')
 )
 
 const keyword = ref('')
@@ -125,7 +128,7 @@ const loading = ref(false)
 const rows = ref<(CustomerLookupItem | ProductLookupItem)[]>([])
 
 function statusLabel(s: number): string {
-  return s === 9 ? '承認済' : s === 1 ? '承認待' : '未作成'
+  return s === 9 ? t('承認済') : s === 1 ? t('承認待') : t('未作成')
 }
 function statusTagType(s: number): 'info' | 'warning' | 'success' {
   return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'

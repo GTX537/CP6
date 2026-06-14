@@ -96,7 +96,7 @@ async function onDispose() {
       { type: 'warning' }
     )
     const reason = await ElMessageBox.prompt(t('wms.expiry.msg.reasonAsk'), t('wms.common.confirm'), {
-      inputValue: '賞味期限切れ廃棄',
+      inputValue: t('賞味期限切れ廃棄'),
     }).then(r => r.value).catch(() => null)
     if (reason == null) return
     const res = await expiryApi.dispose({ stockIds: selected.value.map(s => s.stockId), reason })

@@ -32,7 +32,7 @@
         </el-table-column>
         <el-table-column prop="priority" :label="t('wms.wcs.fld.priority')" width="80" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.priority === 3" size="small" type="danger">急</el-tag>
+            <el-tag v-if="row.priority === 3" size="small" type="danger">{{ t('急') }}</el-tag>
             <el-tag v-else-if="row.priority === 2" size="small" type="warning">↑</el-tag>
             <span v-else>—</span>
           </template>

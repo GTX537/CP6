@@ -18,7 +18,7 @@
             <div class="queue-no">{{ o.outboundNo }}</div>
             <div class="queue-meta">
               <el-tag size="small" type="warning">{{ statusName }}</el-tag>
-              <el-tag v-if="o.priority === 3" size="small" type="danger">急</el-tag>
+              <el-tag v-if="o.priority === 3" size="small" type="danger">{{ t('急') }}</el-tag>
             </div>
             <div class="queue-info">{{ o.customerName || o.workOrderNo }}</div>
             <div class="queue-info">📦 {{ (o.details || []).length }} {{ t('wms.pick.fld.lineNo') }}</div>
@@ -75,7 +75,7 @@
             </template>
             <el-form :model="shipForm" label-width="140px" size="default">
               <el-row :gutter="12">
-                <el-col :span="8"><el-form-item :label="t('wms.pack.fld.packageNo') + '(自動)'">
+                <el-col :span="8"><el-form-item :label="t('wms.pack.fld.packageNo') + t('(自動)')">
                   <el-input v-model="autoPkgNo" disabled :placeholder="t('wms.common.optional')" />
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item :label="'CaseQty'">

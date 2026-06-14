@@ -72,7 +72,7 @@
           <div class="task-hd">
             <span class="task-no">{{ m.mobileTaskNo }}</span>
             <div>
-              <el-tag v-if="m.priority === 1" type="danger" size="small" effect="dark" style="margin-right: 4px">至急</el-tag>
+              <el-tag v-if="m.priority === 1" type="danger" size="small" effect="dark" style="margin-right: 4px">{{ t('至急') }}</el-tag>
               <el-tag size="small" :type="mtTagType(m.status)">{{ t('wms.mobile.st.' + m.status) }}</el-tag>
             </div>
           </div>

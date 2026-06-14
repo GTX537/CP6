@@ -147,7 +147,7 @@ const failTarget = ref<CarrierShipment | null>(null)
 const failReason = ref('')
 
 const carrierMap: Record<string, string> = {
-  YAMATO: 'ヤマト運輸', SAGAWA: '佐川急便', JP: '日本郵便', SELF: '自社便', OTHER: 'その他',
+  YAMATO: t('ヤマト運輸'), SAGAWA: t('佐川急便'), JP: t('日本郵便'), SELF: t('自社便'), OTHER: t('その他'),
 }
 
 const statusMap = computed<Record<number, string>>(() => ({

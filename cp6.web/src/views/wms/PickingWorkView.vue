@@ -20,7 +20,7 @@
             <div class="task-no">{{ task.outboundNo }}</div>
             <div class="task-meta">
               <el-tag size="small" :type="task.status === 3 ? 'warning' : 'success'">{{ statusMap[task.status] }}</el-tag>
-              <el-tag v-if="task.priority === 3" size="small" type="danger">急</el-tag>
+              <el-tag v-if="task.priority === 3" size="small" type="danger">{{ t('急') }}</el-tag>
               <el-tag v-else-if="task.priority === 2" size="small" type="warning">↑</el-tag>
             </div>
             <div class="task-info">{{ task.customerName || task.workOrderNo || task.warehouseCd }}</div>
@@ -261,7 +261,7 @@ async function onComplete() {
   if (!current.value) return
   try {
     await ElMessageBox.confirm(`${t('wms.pick.btn.complete')}: ${current.value.outboundNo}`, t('wms.common.confirm'), { type: 'success' })
-    ElMessage.success(`${t('wms.pick.msg.allDone')} — ${t('wms.pack.title')} へ移動`)
+    ElMessage.success(`${t('wms.pick.msg.allDone')} — ${t('{pack} へ移動', { pack: t('wms.pack.title') })}`)
     // ピッキング完了 — Ship/Pack 画面へ遷移するのが理想だが、ここではタスクから外す
     current.value = null
     await reloadTasks()

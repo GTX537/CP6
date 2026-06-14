@@ -142,7 +142,7 @@
           <el-input v-model="judgeForm.reason" type="textarea" :rows="2" />
         </el-form-item>
         <el-form-item v-if="judgeForm.finalJudgement === 'PASS'" :label="t('wms.qc.fld.acceptWh')">
-          <el-input v-model="judgeForm.acceptWarehouseCd" placeholder="（空=元入庫予定の倉庫）" />
+          <el-input v-model="judgeForm.acceptWarehouseCd" :placeholder="t('（空=元入庫予定の倉庫）')" />
         </el-form-item>
         <div v-if="judgeForm.finalJudgement === 'PASS'" style="margin-left: 160px; color: #909399; font-size: 12px">
           {{ t('wms.qc.msg.passAutoReceipt') }}
