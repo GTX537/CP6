@@ -125,7 +125,7 @@ async function save() {
   const menuIds = [...checked, ...half]
   const menuSet = new Set(menuIds)
   const actions = [...checkedActions.value]
-    .map(k => { const [mid, code] = k.split(':'); return { menuId: Number(mid), actionCode: code } })
+    .map(k => { const [mid, code] = k.split(':'); return { menuId: Number(mid), actionCode: code ?? '' } })
     .filter(a => menuSet.has(a.menuId))   // 只保留已授菜单的操作（满足后端 E-PUB-021）
   await rolePermApi.saveRolePerm(selectedRoleId.value!, { menuIds, actions })
   ElMessage.success('已保存')

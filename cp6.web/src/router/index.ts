@@ -17,6 +17,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/pub/field-perm': () => import('@/views/pms/FieldPermView.vue'),   // PUB 章04 字段权限
   '/pub/seq': () => import('@/views/pms/SeqView.vue'),   // PUB 章05 采番规则
   '/pub/codegen': () => import('@/views/pms/CodeGenView.vue'),   // PUB 章08 代码生成器
+  // ───── OA 审批工作流 (Wf) ─────
+  '/wf/todo': () => import('@/views/wf/TodoCenter.vue'),               // OA 章04 待办中心
+  '/wf/my-applications': () => import('@/views/wf/MyApplications.vue'), // OA 章04 我的申请
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),
