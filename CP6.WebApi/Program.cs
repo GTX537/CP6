@@ -1075,6 +1075,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nBackendMsgSeed.Items)  // 后端控制器 return 型响应文案
             .Concat(CP6.WebApi.Seed.I18nFinScreenSeed.Items)   // 财务 GL 内核 4 视图 + nav.6xx + E-FIN-* 错误码
             .Where(i => !existingKeys.Contains(i.LangKey))
+            .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
         if (toAdd.Count > 0)
         {
