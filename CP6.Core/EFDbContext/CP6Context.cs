@@ -348,6 +348,8 @@ public class CP6Context : DbContext
     public DbSet<JournalLine> JournalLines { get; set; }
     /// <summary>财务采番计数器（章01，凭证号按月采番）</summary>
     public DbSet<FinSequence> FinSequences { get; set; }
+    /// <summary>会计期间（章02，月结锁期）</summary>
+    public DbSet<FiscalPeriod> FiscalPeriods { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -513,6 +515,14 @@ public class CP6Context : DbContext
         modelBuilder.Entity<FinSequence>(e =>
         {
             e.HasIndex(x => new { x.SeqKey, x.SeqDate }).IsUnique();
+        });
+
+        // 会计期间：(Year + Month) 唯一 + 财年口径检索
+        modelBuilder.Entity<FiscalPeriod>(e =>
+        {
+            e.HasIndex(x => new { x.Year, x.Month }).IsUnique();
+            e.HasIndex(x => new { x.FiscalYear, x.PeriodNo });
+            e.HasIndex(x => x.Status);
         });
 
         // 見積計算書：QtnCalcNo 唯一
