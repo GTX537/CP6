@@ -360,10 +360,15 @@ public class CP6Context : DbContext
             .HasIndex(x => x.MenuKey).IsUnique()
             .HasFilter("[MenuKey] IS NOT NULL");
 
-        // i18n 优化 P1：多语言词条 key 唯一（根治「重复 key 静默覆盖」）。
-        // 现宽表过渡，唯一约束仅在 LangKey；P3 窄表迁移后改 UNIQUE(TenantId, LangKey, LangCode)。
+        // i18n 优化 P1/P3：多语言词条唯一（根治「重复 key 静默覆盖」）。
+        // P3 加 TenantId 后改 UNIQUE(TenantId, LangKey)：SQL Server 唯一索引把 NULL 视为同值，
+        // 故每个 LangKey 至多一行全局值(TenantId=null) + 各租户各一行覆盖值。
+        // HasFilter(null) 关键：禁掉 EF 对可空列默认加的 [TenantId] IS NOT NULL 过滤——
+        // 否则全局行(TenantId=null)被排除在唯一约束外，全局重复 key 不再被拦。
+        // 无过滤时 SQL Server 把 NULL 视同值，恰好实现「每 key 至多一全局行 + 各租户各一行」。
         modelBuilder.Entity<Sys_Lang>()
-            .HasIndex(x => x.LangKey).IsUnique().HasDatabaseName("UX_Sys_Lang_LangKey");
+            .HasIndex(x => new { x.TenantId, x.LangKey }).IsUnique()
+            .HasFilter(null).HasDatabaseName("UX_Sys_Lang_Tenant_Key");
 
         // PUB 章02 功能权限：操作点 + 角色授权
         modelBuilder.Entity<Sys_MenuAction>(e =>

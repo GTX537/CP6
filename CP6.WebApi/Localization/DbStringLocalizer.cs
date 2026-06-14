@@ -1,34 +1,47 @@
 using System.Globalization;
 using CP6.Core.EFDbContext;
 using CP6.Core.Utilities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
 namespace CP6.WebApi.Localization;
 
 /// <summary>
-/// DB 支持的本地化器（i18n 优化 P1）。
+/// DB 支持的本地化器（i18n 优化 P1 / P3）。
 ///
 /// 设计要点：
-/// 1. 译文唯一事实源 = <c>Sys_Lang</c> 表。与前端 <c>/api/lang/{code}</c> 共用同一张表、
-///    同一 Redis 缓存键 <c>lang:{code}</c>——两侧任一预热即共享，词条变更清缓存两侧同时失效。
-/// 2. 当前请求 culture 由 RequestLocalization 设定（CurrentUICulture），按 culture 取对应语言列；
-///    缺失回退源语言 ja，再缺回退 key 本身（不抛技术串）。完整回退链（ko→en→ja 等）留 P2。
+/// 1. 译文唯一事实源 = <c>Sys_Lang</c> 表。全局值与前端 <c>/api/lang/{code}</c> 共用缓存键 <c>lang:{code}</c>。
+/// 2. 解析回退链（P3）：租户覆盖(TenantId=X) → 全局(null) → 回退语言 → 源语言 ja → key 本身。
+///    每个语言档先查租户覆盖再查全局；语言档顺序由 <see cref="FallbackChain"/> 给出（与前端一致）。
 /// 3. 复用现有 <see cref="CacheService"/>（Cache-Aside，1h TTL）；缓存未命中时用
 ///    <see cref="IServiceScopeFactory"/> 取 scoped <see cref="CP6Context"/>，故本类可安全注册为 Singleton。
+/// 4. 当前租户取 JWT 'tenant' claim（系统单租户时恒 null，仅用全局值；多租户上线即生效）。
 /// </summary>
 public class DbStringLocalizer : IStringLocalizer
 {
     private static readonly string[] SupportedCodes = { "zh-CN", "zh-TW", "en", "ja", "ko" };
-    private const string SourceLang = "ja";   // 源语言（系统原文），最终回退
+    private const string SourceLang = "ja";
+
+    // 回退语言链（与前端 i18n/index.ts fallbackChain 一致），含自身在首位、源语言 ja 兜底。
+    private static readonly Dictionary<string, string[]> FallbackChain = new()
+    {
+        ["zh-CN"] = new[] { "zh-CN", "zh-TW", "ja" },
+        ["zh-TW"] = new[] { "zh-TW", "zh-CN", "ja" },
+        ["en"] = new[] { "en", "ja" },
+        ["ko"] = new[] { "ko", "en", "ja" },
+        ["ja"] = new[] { "ja" },
+    };
 
     private readonly CacheService _cache;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IHttpContextAccessor _http;
 
-    public DbStringLocalizer(CacheService cache, IServiceScopeFactory scopeFactory)
+    public DbStringLocalizer(CacheService cache, IServiceScopeFactory scopeFactory, IHttpContextAccessor http)
     {
         _cache = cache;
         _scopeFactory = scopeFactory;
+        _http = http;
     }
 
     public LocalizedString this[string name]
@@ -51,14 +64,17 @@ public class DbStringLocalizer : IStringLocalizer
     }
 
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-        => GetDict(CurrentLangCode()).Select(kv => new LocalizedString(kv.Key, kv.Value, resourceNotFound: false));
+        => GetGlobalDict(CurrentLangCode()).Select(kv => new LocalizedString(kv.Key, kv.Value, resourceNotFound: false));
 
-    /// <summary>当前 culture 取译文；缺失回退源语言 ja；再缺返回 null（调用方回退 key 本身）。</summary>
+    /// <summary>回退链解析：每语言档先租户覆盖、再全局；档顺序当前→回退→ja；全缺返回 null。</summary>
     private string? Resolve(string key)
     {
-        var code = CurrentLangCode();
-        if (GetDict(code).TryGetValue(key, out var v) && !string.IsNullOrEmpty(v)) return v;
-        if (code != SourceLang && GetDict(SourceLang).TryGetValue(key, out var jv) && !string.IsNullOrEmpty(jv)) return jv;
+        var tenant = CurrentTenantId();
+        foreach (var lang in FallbackChain.TryGetValue(CurrentLangCode(), out var chain) ? chain : new[] { SourceLang })
+        {
+            if (tenant != null && GetTenantDict(lang, tenant.Value).TryGetValue(key, out var tv) && !string.IsNullOrEmpty(tv)) return tv;
+            if (GetGlobalDict(lang).TryGetValue(key, out var gv) && !string.IsNullOrEmpty(gv)) return gv;
+        }
         return null;
     }
 
@@ -68,7 +84,6 @@ public class DbStringLocalizer : IStringLocalizer
         var name = CultureInfo.CurrentUICulture.Name;
         foreach (var c in SupportedCodes)
             if (string.Equals(name, c, StringComparison.OrdinalIgnoreCase)) return c;
-        // 容错：未 clamp 的派生 culture（zh-Hans / en-US 等）
         if (name.StartsWith("zh-Hant", StringComparison.OrdinalIgnoreCase) || name.Contains("TW") || name.Contains("HK")) return "zh-TW";
         if (name.StartsWith("zh", StringComparison.OrdinalIgnoreCase)) return "zh-CN";
         if (name.StartsWith("en", StringComparison.OrdinalIgnoreCase)) return "en";
@@ -76,15 +91,30 @@ public class DbStringLocalizer : IStringLocalizer
         return SourceLang;
     }
 
-    /// <summary>读取某语言全部词条字典（与 LangController 共用缓存键 lang:{code}）。</summary>
-    private Dictionary<string, string> GetDict(string langCode)
+    /// <summary>当前租户 ID（JWT 'tenant' claim）；无/不可解析 → null（仅用全局值）。</summary>
+    private int? CurrentTenantId()
     {
-        var cacheKey = CacheService.LangKeyPrefix + langCode;
+        var raw = _http.HttpContext?.User?.FindFirst("tenant")?.Value;
+        return int.TryParse(raw, out var id) ? id : (int?)null;
+    }
+
+    /// <summary>某语言的全局词条字典（TenantId 为 null）。与 LangController 共用缓存键 lang:{code}。</summary>
+    private Dictionary<string, string> GetGlobalDict(string langCode)
+        => LoadDict(CacheService.LangKeyPrefix + langCode, langCode, tenantId: null);
+
+    /// <summary>某语言、某租户的覆盖词条字典（TenantId = tenantId）。缓存键 lang:t{id}:{code}。</summary>
+    private Dictionary<string, string> GetTenantDict(string langCode, int tenantId)
+        => LoadDict($"{CacheService.LangKeyPrefix}t{tenantId}:{langCode}", langCode, tenantId);
+
+    private Dictionary<string, string> LoadDict(string cacheKey, string langCode, int? tenantId)
+    {
         return _cache.GetOrSetAsync(cacheKey, async () =>
         {
             using var scope = _scopeFactory.CreateScope();
             var ctx = scope.ServiceProvider.GetRequiredService<CP6Context>();
-            var items = await ctx.Sys_Langs.AsNoTracking().ToListAsync();
+            var items = await ctx.Sys_Langs.AsNoTracking()
+                .Where(l => l.TenantId == tenantId)
+                .ToListAsync();
             var result = new Dictionary<string, string>(items.Count);
             foreach (var item in items)
             {

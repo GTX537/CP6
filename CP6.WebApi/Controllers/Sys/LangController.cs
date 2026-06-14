@@ -37,7 +37,9 @@ public class LangController : ControllerBase
         // GetOrSetAsync = Cache-Aside 模式的完整实现
         var dict = await _cache.GetOrSetAsync(cacheKey, async () =>
         {
-            var items = await _context.Sys_Langs.ToListAsync();
+            // i18n 优化 P3：前端全局语言包只取全局值（TenantId=null），不泄露租户覆盖。
+            // 缓存键 lang:{code} 与 DbStringLocalizer 全局字典共用，两侧一致。
+            var items = await _context.Sys_Langs.Where(l => l.TenantId == null).ToListAsync();
             var result = new Dictionary<string, string>();
 
             foreach (var item in items)
@@ -88,9 +90,14 @@ public class LangController : ControllerBase
     public async Task<IActionResult> Add([FromBody] Sys_Lang entity)
     {
         // i18n 优化 P1 样例：抛错误码而非日文/中文字面量，由 BizExceptionMiddleware 按请求 culture 本地化。
-        if (await _context.Sys_Langs.AnyAsync(l => l.LangKey == entity.LangKey))
+        // P3：唯一性按 (TenantId, LangKey)，允许同一 key 的全局值 + 各租户覆盖值并存。
+        if (await _context.Sys_Langs.AnyAsync(l => l.TenantId == entity.TenantId && l.LangKey == entity.LangKey))
             throw new CP6.WebApi.Localization.BizException("lang.keyExists");
 
+        // i18n 优化 P3：手动新增默认 draft（待审校）+ 记审计。
+        entity.Status = "draft";
+        entity.UpdatedBy = User?.Identity?.Name;
+        entity.UpdatedAt = DateTime.Now;
         _context.Sys_Langs.Add(entity);
         await _context.SaveChangesAsync();
 
@@ -113,6 +120,11 @@ public class LangController : ControllerBase
         existing.En = entity.En;
         existing.Ja = entity.Ja;
         existing.Ko = entity.Ko;
+        // i18n 优化 P3：手动编辑视为未审校 → 置 draft（审校通过置 reviewed 留 P5 审校动作）+ 记审计。
+        // TenantId 不在编辑中改（不重挂租户归属）。
+        existing.Status = "draft";
+        existing.UpdatedBy = User?.Identity?.Name;
+        existing.UpdatedAt = DateTime.Now;
 
         await _context.SaveChangesAsync();
 
