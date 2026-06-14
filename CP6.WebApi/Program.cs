@@ -107,6 +107,9 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Servic
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.SignalRWfNotifier>();        // 章04 待办 SignalR 推送（注入给 FlowEngine）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
+// 4.0.2 财务（Fin）章01 总账内核
+builder.Services.AddScoped<CP6.Core.Services.Fin.IGlAccountService, CP6.Core.Services.Fin.GlAccountService>(); // 章01 §3 会计科目 + 多国别模板包
+
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
 builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
