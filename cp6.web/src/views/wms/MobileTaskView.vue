@@ -4,7 +4,7 @@
       <div class="hd-row">
         <div>
           <h2 style="margin: 0">{{ t('wms.mobile.title') }}</h2>
-          <div style="font-size: 12px; color: #909399">{{ new Date().toLocaleString('ja-JP') }}</div>
+          <div style="font-size: 12px; color: #909399">{{ formatDateTime(new Date()) }}</div>
         </div>
         <el-button :icon="Refresh" circle @click="reload" :loading="loading" />
       </div>
@@ -144,6 +144,7 @@ import { outboundOrderApi } from '@/api/wms/outboundOrder'
 import { inboundReceiptApi } from '@/api/wms/inboundReceipt'
 import { mobileApi } from '@/api/wms/mobile'
 import type { OutboundOrder, InboundReceipt, MobileTask, MobileScanResult } from '@/types/wms/wms'
+import { formatDateTime } from '@/utils/format'
 
 const { t } = useI18n()
 const router = useRouter()

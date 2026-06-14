@@ -68,7 +68,7 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('wms.inbound.col.receivedQtyAccum')" width="100" align="right">
-          <template #default="{ row }">{{ Number(row.receivedQty || 0).toLocaleString() }}</template>
+          <template #default="{ row }">{{ formatQty(row.receivedQty || 0) }}</template>
         </el-table-column>
         <el-table-column :label="t('wms.common.unit')" width="80">
           <template #default="{ row }"><el-input v-model="row.unitCd" :disabled="!editable" maxlength="10" /></template>
@@ -109,6 +109,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { inboundOrderApi } from '@/api/wms/inboundOrder'
 import type { InboundOrder, InboundOrderDetail } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const route = useRoute()
 const router = useRouter()

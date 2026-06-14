@@ -162,6 +162,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { vmiApi } from '@/api/wms/paperIndustry'
 import type { VmiCustomerSummary, VmiStockDetail, VmiBilling } from '@/types/wms/wms'
+import { formatQty as fmtQty, formatCurrency } from '@/utils/format'
 
 const { t } = useI18n()
 const activeTab = ref<'customers' | 'details' | 'billings'>('customers')
@@ -182,11 +183,11 @@ const calcForm = reactive({ yearMonth: '', dailyStorageRate: 1.0 })
 
 function formatQty(n: number | undefined | null) {
   if (n == null) return '0'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 2 })
+  return fmtQty(n, 2)
 }
 function formatMoney(n: number | undefined | null) {
   if (n == null) return ''
-  return Number(n).toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })
+  return formatCurrency(n)
 }
 function expiryClass(d: string | undefined) {
   if (!d) return ''

@@ -120,6 +120,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { paperRollApi } from '@/api/wms/paperIndustry'
 import type { PaperRoll, PaperRollSearchQuery } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 const query = reactive<PaperRollSearchQuery>({ pageSize: 100 })
@@ -150,7 +151,7 @@ function statusTagOf(s: number): 'success' | 'primary' | 'warning' | 'danger' {
 }
 function formatQty(n: number | undefined | null) {
   if (n == null) return '0'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 2 })
+  return fmtQty(n, 2)
 }
 
 async function reload() {

@@ -122,6 +122,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Download, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
 import { planAchievementApi } from '@/api/mes/planAchievement'
+import { formatQty as fmtQty } from '@/utils/format'
 import type { PlanAchievementGroupBy, PlanAchievementQuery, PlanAchievementSummary } from '@/types/mes/planAchievement'
 
 const { t } = useI18n()
@@ -229,11 +230,11 @@ function formatPercent(rate: number): string {
 }
 
 function formatNumber(value: number): string {
-  return Number(value || 0).toLocaleString('ja-JP')
+  return fmtQty(Number(value || 0), 0)
 }
 
 function formatQty(value: number): string {
-  return Number(value || 0).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(value || 0, 4)
 }
 
 function addDays(date: Date, days: number): Date {

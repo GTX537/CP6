@@ -179,6 +179,7 @@ import { Refresh, Search } from '@element-plus/icons-vue'
 import { stockDwellApi } from '@/api/wms/stockDwell'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import type { StockDwellQuery, StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 const { isMobile } = useBreakpoint()
@@ -246,12 +247,12 @@ function segmentStyle(qty: number, total: number) {
 
 function formatQty(n: number | null | undefined): string {
   if (n == null) return '-'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 
 function formatAmount(n: number | null | undefined): string {
   if (n == null) return '-'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 0 })
+  return fmtQty(n, 0)
 }
 
 function formatPercent(n: number): string {

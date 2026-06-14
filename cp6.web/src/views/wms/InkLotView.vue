@@ -186,6 +186,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { inkApi } from '@/api/wms/paperIndustry'
 import type { InkLot, InkLotSearchQuery, InkColorMatchHistory, MixInkRequest } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 const activeTab = ref<'lots' | 'matches'>('lots')
@@ -228,7 +229,7 @@ const openMap = computed<Record<string, string>>(() => ({
 
 function formatQty(n: number | undefined | null) {
   if (n == null) return '0'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 3 })
+  return fmtQty(n, 3)
 }
 
 function expiryClass(d: string | undefined) {

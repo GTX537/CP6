@@ -164,6 +164,7 @@ import { ElMessage } from 'element-plus'
 import { Check, CopyDocument, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
 import { backorderApi } from '@/api/erp/backorder'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { formatQty } from '@/utils/format'
 import type { BackorderQueueItem, BackorderQueueQuery } from '@/types/erp/backorder'
 
 type BackorderAction = 'close' | 'split'
@@ -250,11 +251,6 @@ async function submitAction() {
 
 function goOrder(webOrderNo: string) {
   router.push({ path: '/order', query: { webOrderNo } })
-}
-
-function formatQty(value?: number | null): string {
-  if (value == null) return ''
-  return Number(value).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
 }
 
 function formatDate(value?: string): string {

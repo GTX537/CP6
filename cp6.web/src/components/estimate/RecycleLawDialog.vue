@@ -47,7 +47,7 @@
         <el-table-column prop="code" label="コード" width="100" />
         <el-table-column prop="name" label="素材名" min-width="160" />
         <el-table-column prop="rate" label="係数" width="100" align="right">
-          <template #default="{ row }">{{ row.rate.toFixed(3) }}</template>
+          <template #default="{ row }">{{ formatQty(row.rate, 3) }}</template>
         </el-table-column>
         <el-table-column label="数量" width="140">
           <template #default="{ row }">
@@ -97,6 +97,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { masterApi } from '@/api/erp/master'
+import { formatQty, formatNumber } from '@/utils/format'
 import type { MasterGenericCode } from '@/types/erp/estimateCalc'
 
 interface Props {
@@ -161,7 +162,7 @@ const computedCost = computed(() => {
 })
 
 function fmtMoney(v: number) {
-  return v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return formatNumber(v, 'decimal')
 }
 
 function onPaperChange() {

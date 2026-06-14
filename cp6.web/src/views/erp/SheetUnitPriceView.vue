@@ -84,7 +84,7 @@
         <el-table-column prop="printCdB" :label="t('sales.sup.print') + '(' + t('sales.sup.back') + ')'" width="100" />
         <el-table-column prop="embossCdB" :label="t('sales.sup.emboss') + '(' + t('sales.sup.back') + ')'" width="110" />
         <el-table-column prop="unitPrice" :label="t('sales.term.unitPrice')" width="120" align="right">
-          <template #default="{ row }">{{ Number(row.unitPrice).toFixed(2) }}</template>
+          <template #default="{ row }">{{ formatNumber(row.unitPrice, 'decimal') }}</template>
         </el-table-column>
         <el-table-column prop="revisionDate" :label="t('sales.sup.revisionDate')" width="110">
           <template #default="{ row }">{{ row.revisionDate?.slice(0, 10) }}</template>
@@ -100,6 +100,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Upload } from '@element-plus/icons-vue'
 import { sheetUnitPriceApi } from '@/api/erp/sheetUnitPrice'
+import { formatNumber } from '@/utils/format'
 import type { SheetUnitPriceDto, SheetPriceQueryDto } from '@/types/erp/sheetUnitPrice'
 import { SheetPriceImportDiv } from '@/types/erp/sheetUnitPrice'
 

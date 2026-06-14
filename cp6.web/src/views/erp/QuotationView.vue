@@ -473,6 +473,7 @@ import { QuotationOperationType } from '@/types/erp/quotation'
 import type { MasterBase, MasterStaff } from '@/types/erp/estimateCalc'
 import type { AxiosError } from 'axios'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { formatQty, formatNumber } from '@/utils/format'
 
 const { isMobile } = useBreakpoint()
 const Op = QuotationOperationType
@@ -586,12 +587,10 @@ function fmtDate(v?: string) {
   return v ? v.slice(0, 10) : ''
 }
 function fmtNum(v?: number) {
-  return v == null ? '' : v.toLocaleString()
+  return v == null ? '' : formatQty(v)
 }
 function fmtMoney(v?: number) {
-  return v == null
-    ? ''
-    : v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return v == null ? '' : formatNumber(v, 'decimal')
 }
 
 function resetForm() {

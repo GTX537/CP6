@@ -147,6 +147,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { rmaApi } from '@/api/wms/rma'
 import type { RmaHeader, RmaDetail, RmaSearchQuery, RmaDispositionInput } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -189,7 +190,6 @@ const canCancel = computed(() => current.value && current.value.status !== 5 && 
 function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'danger' {
   return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'warning', 4: 'success', 5: 'success', 9: 'danger' } as const)[s as 0] || 'info'
 }
-function formatQty(n: number) { return Number(n || 0).toLocaleString('ja-JP', { maximumFractionDigits: 4 }) }
 
 async function reload() {
   loading.value = true

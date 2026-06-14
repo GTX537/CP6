@@ -126,6 +126,7 @@ import {
   type MachineDto,
 } from '@/types/mes/mes'
 import { getMesHub, startMesHub, stopMesHub } from '@/utils/mesHub'
+import { formatDateTime } from '@/utils/format'
 
 const summary = reactive<MesDashboardSummaryDto>({
   inProgressCount: 0, completedCount: 0, totalGoodQty: 0, totalDefectQty: 0,
@@ -224,10 +225,7 @@ async function setupHub() {
 // ─── Clock ───
 function formatNow() {
   const d = new Date()
-  return d.toLocaleString('ja-JP', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit',
-  })
+  return formatDateTime(d)
 }
 let clockTimer: number | undefined
 

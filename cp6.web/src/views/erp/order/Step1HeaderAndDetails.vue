@@ -136,7 +136,7 @@
       </el-table-column>
       <el-table-column :label="t('金額')" width="120">
         <template #default="{ row }">
-          <span>{{ row.amount?.toFixed(2) ?? '-' }}</span>
+          <span>{{ row.amount != null ? formatNumber(row.amount, 'decimal') : '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="t('手配区分')" width="100">
@@ -186,6 +186,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus, Delete, Top, Bottom, CopyDocument, RefreshLeft } from '@element-plus/icons-vue'
 import { useOrderStore } from '@/stores/order'
 import { orderApi } from '@/api/erp/order'
+import { formatNumber } from '@/utils/format'
 import MasterReferenceDialog from '@/components/master/MasterReferenceDialog.vue'
 import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
 import type { OrderDetailDto } from '@/types/erp/order'

@@ -134,6 +134,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { remnantApi } from '@/api/wms/paperIndustry2'
 import type { RemnantMaterial, RemnantSearchQuery } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 const query = reactive<RemnantSearchQuery>({ pageSize: 100 })
@@ -170,7 +171,7 @@ function statusTagOf(s: number): 'success' | 'warning' | 'info' | 'danger' {
 }
 function formatQty(n: number | undefined | null) {
   if (n == null) return '0'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 
 async function reload() {

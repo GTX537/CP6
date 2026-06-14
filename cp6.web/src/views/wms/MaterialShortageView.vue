@@ -134,6 +134,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { materialShortageApi } from '@/api/wms/materialShortage'
 import type { MaterialShortage, MaterialShortageQuery, MaterialShortageStatus } from '@/types/wms/materialShortage'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -175,7 +176,7 @@ function normalizePaged(res: any) {
 
 function formatQty(n: number | null | undefined): string {
   if (n == null) return ''
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 
 function formatDateTime(value?: string): string {

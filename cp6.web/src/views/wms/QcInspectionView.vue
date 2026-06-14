@@ -162,6 +162,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { qcInspectionApi } from '@/api/wms/qcInspection'
 import type { QcInspection, QcInspectionSearchQuery, QcJudgeRequest } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -204,7 +205,6 @@ function statusTagOf(s: number): 'info' | 'primary' | 'success' | 'danger' {
 function judgementTagOf(j: string): 'success' | 'warning' | 'danger' | 'info' {
   return ({ PASS: 'success', CONDITIONAL: 'warning', HOLD: 'warning', FAIL: 'danger', RETURN: 'danger' } as const)[j as 'PASS'] || 'info'
 }
-function formatQty(n: number) { return Number(n || 0).toLocaleString('ja-JP', { maximumFractionDigits: 4 }) }
 
 async function reload() {
   loading.value = true

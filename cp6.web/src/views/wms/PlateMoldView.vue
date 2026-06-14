@@ -39,7 +39,7 @@
         <el-table-column prop="sizeNote" :label="t('wms.plate.fld.sizeNote')" width="120" />
         <el-table-column :label="t('wms.plate.fld.lifeRatio')" width="180">
           <template #default="{ row }">
-            <div style="font-size: 11px">{{ row.usedShots?.toLocaleString() || 0 }} / {{ row.maxShots?.toLocaleString() || '—' }}</div>
+            <div style="font-size: 11px">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
             <el-progress
               v-if="row.maxShots"
               :percentage="Math.min(100, Math.round((row.usedShots / row.maxShots) * 100))"
@@ -96,7 +96,7 @@
     <el-dialog v-model="useDialog" :title="t('wms.plate.dlg.use') + ' — ' + useTarget?.plateNo" width="420">
       <el-form label-width="140px" size="small">
         <el-form-item :label="t('wms.plate.fld.usedShots')">
-          <el-tag>{{ useTarget?.usedShots?.toLocaleString() || 0 }} / {{ useTarget?.maxShots?.toLocaleString() || '—' }}</el-tag>
+          <el-tag>{{ formatQty(useTarget?.usedShots) || 0 }} / {{ formatQty(useTarget?.maxShots) || '—' }}</el-tag>
         </el-form-item>
         <el-form-item :label="t('wms.plate.fld.shots')" required>
           <el-input-number v-model="useShots" :min="1" controls-position="right" style="width: 100%" />
@@ -134,7 +134,7 @@
         <el-table-column prop="productCd" :label="t('wms.plate.fld.product')" width="120" />
         <el-table-column :label="t('wms.plate.fld.lifeRatio')" min-width="200">
           <template #default="{ row }">
-            <div style="font-size: 11px">{{ row.usedShots?.toLocaleString() || 0 }} / {{ row.maxShots?.toLocaleString() || '—' }}</div>
+            <div style="font-size: 11px">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
             <el-progress v-if="row.maxShots"
               :percentage="Math.min(100, Math.round((row.usedShots / row.maxShots) * 100))"
               :stroke-width="8" :status="lifeStatus(row)" />
@@ -151,6 +151,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { plateMoldApi } from '@/api/wms/paperIndustry2'
 import type { PlateMoldStock, PlateMoldSearchQuery } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 const query = reactive<PlateMoldSearchQuery>({ pageSize: 100 })

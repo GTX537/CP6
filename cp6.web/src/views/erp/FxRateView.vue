@@ -68,6 +68,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fxRateApi } from '@/api/erp/fxRate'
+import { formatQty } from '@/utils/format'
 import type { FxRate } from '@/types/erp/fxRate'
 
 const { t } = useI18n()
@@ -151,7 +152,7 @@ function formatDate(value?: string): string {
 }
 
 function formatRate(value: number): string {
-  return Number(value || 0).toLocaleString('ja-JP', { maximumFractionDigits: 6 })
+  return formatQty(value || 0, 6)
 }
 
 function formatToday(): string {

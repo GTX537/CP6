@@ -35,7 +35,7 @@
         <el-table-column prop="customerCd" :label="t('wms.carrier.fld.customer')" width="100" />
         <el-table-column prop="shipToAddress" :label="t('wms.carrier.fld.address')" min-width="180" show-overflow-tooltip />
         <el-table-column prop="weightKg" :label="t('wms.carrier.fld.weight')" width="90" align="right">
-          <template #default="{ row }">{{ row.weightKg != null ? Number(row.weightKg).toFixed(3) : '' }}</template>
+          <template #default="{ row }">{{ row.weightKg != null ? formatQty(row.weightKg, 3) : '' }}</template>
         </el-table-column>
         <el-table-column prop="pickedUpAt" :label="t('wms.carrier.fld.pickedAt')" width="150" />
         <el-table-column prop="deliveredAt" :label="t('wms.carrier.fld.deliveredAt')" width="150" />
@@ -124,6 +124,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { carrierApi } from '@/api/wms/connectivity'
 import type { CarrierShipment, CarrierSearchQuery, CarrierEvent } from '@/types/wms/wms'
+import { formatQty, formatDateTime } from '@/utils/format'
 
 const { t } = useI18n()
 const query = reactive<CarrierSearchQuery>({ pageSize: 100 })
@@ -168,7 +169,7 @@ function eventType(s?: string): '' | 'primary' | 'success' | 'warning' | 'danger
   return 'primary'
 }
 function formatTs(ts: string) {
-  return new Date(ts).toLocaleString('ja-JP')
+  return formatDateTime(ts)
 }
 
 async function reload() {

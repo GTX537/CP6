@@ -314,6 +314,7 @@ import { Refresh } from '@element-plus/icons-vue'
 import { dashboardApi } from '@/api/sys/dashboard'
 import { orderApi } from '@/api/erp/order'
 import { stockDwellApi } from '@/api/wms/stockDwell'
+import { formatQty } from '@/utils/format'
 import { getConnection, startConnection } from '@/utils/signalr'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/erp/order'
@@ -429,7 +430,7 @@ function alertType(level?: string) {
 
 function fmtQty(q?: number) {
   if (q === null || q === undefined) return '-'
-  return Number(q).toLocaleString()
+  return formatQty(q)
 }
 function fmtTime(d?: string) {
   if (!d) return ''

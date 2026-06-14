@@ -148,6 +148,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { stockApi } from '@/api/wms/stock'
 import type { Stock, StockTransaction } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -173,7 +174,7 @@ const historyTxns = ref<StockTransaction[]>([])
 
 function formatQty(n: number | null | undefined): string {
   if (n == null) return ''
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 
 function txnTagOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {

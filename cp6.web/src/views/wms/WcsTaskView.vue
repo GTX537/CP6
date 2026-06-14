@@ -46,7 +46,7 @@
         </el-table-column>
         <el-table-column prop="productCd" :label="t('wms.common.product')" width="120" />
         <el-table-column prop="qty" :label="t('wms.common.qty')" width="100" align="right">
-          <template #default="{ row }">{{ row.qty != null ? Number(row.qty).toLocaleString() : '' }}</template>
+          <template #default="{ row }">{{ row.qty != null ? formatQty(row.qty) : '' }}</template>
         </el-table-column>
         <el-table-column prop="relatedNo" :label="t('wms.wcs.fld.related')" width="160" />
         <el-table-column prop="createdAt" :label="t('wms.wcs.fld.created')" width="160" />
@@ -131,6 +131,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { wcsApi } from '@/api/wms/connectivity'
 import type { WcsTask, WcsTaskSearchQuery } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 const query = reactive<WcsTaskSearchQuery>({ pageSize: 100 })

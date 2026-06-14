@@ -90,6 +90,7 @@ import { Refresh } from '@element-plus/icons-vue'
 import { useEstimateStore } from '@/stores/estimate'
 import { useFieldControl } from '@/composables/useFieldControl'
 import { estimateCalcApi } from '@/api/erp/estimateCalc'
+import { formatCurrency } from '@/utils/format'
 import type { EstimateCalcResult } from '@/types/erp/estimateCalc'
 
 const store = useEstimateStore()
@@ -112,7 +113,7 @@ function fmtNum(v?: number, digits = 2) {
   return v == null ? '0' : v.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits })
 }
 function fmtMoney(v?: number) {
-  return v == null ? '¥0.00' : '¥' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return v == null ? formatCurrency(0) : formatCurrency(v)
 }
 
 async function runCalc() {

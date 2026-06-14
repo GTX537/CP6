@@ -110,6 +110,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { sampleApi } from '@/api/wms/paperIndustry2'
 import type { SampleStock, SampleSearchQuery } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 const query = reactive<SampleSearchQuery>({ pageSize: 100, overdueOnly: false })
@@ -143,7 +144,7 @@ function statusTagOf(s: number): 'success' | 'warning' | 'primary' | 'info' {
 }
 function formatQty(n: number | undefined | null) {
   if (n == null) return '0'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 function overdueClass(row: SampleStock): string {
   if (row.status !== 1 || !row.expectedReturnDate) return ''

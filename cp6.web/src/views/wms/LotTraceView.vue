@@ -111,6 +111,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { lotTraceApi } from '@/api/wms/lotTrace'
 import type { LotTraceResult, LotStockSummary } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -127,7 +128,6 @@ const affectedList = computed<any[]>(() => {
   return direction.value === 'FORWARD' ? result.value.affectedCustomers : result.value.affectedSuppliers
 })
 
-function formatQty(n: number) { return Number(n || 0).toLocaleString('ja-JP', { maximumFractionDigits: 4 }) }
 function txnTagOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
   return ({ IN: 'success', OUT: 'danger', RSV: 'warning', UNRSV: 'info', MOVE: 'primary', ADJ: 'info' } as const)[t as 'IN'] || 'info'
 }

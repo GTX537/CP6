@@ -151,6 +151,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { creditNoteApi } from '@/api/erp/creditNote'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { formatQty } from '@/utils/format'
 import type { CreditNoteListItem, CreditNoteQuery, CreditNoteType } from '@/types/erp/creditNote'
 
 const { t } = useI18n()
@@ -191,14 +192,9 @@ function formatDate(value?: string): string {
   return value ? value.slice(0, 10) : ''
 }
 
-function formatQty(value?: number | null): string {
-  if (value == null) return ''
-  return Number(value).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
-}
-
 function formatAmount(value?: number | null): string {
   if (value == null) return ''
-  return Number(value).toLocaleString('ja-JP', { maximumFractionDigits: 2 })
+  return formatQty(value, 2)
 }
 
 function truncateReason(value?: string): string {

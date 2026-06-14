@@ -57,6 +57,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { expiryApi } from '@/api/wms/expiry'
 import type { ExpiryStock } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -74,8 +75,7 @@ function dayClass(d: number) {
   if (d < 7) return 'soon'
   return ''
 }
-function formatQty(n: number) { return Number(n || 0).toLocaleString('ja-JP', { maximumFractionDigits: 4 }) }
-function formatMoney(n: number) { return Math.round(Number(n) || 0).toLocaleString('ja-JP') }
+function formatMoney(n: number) { return formatQty(Math.round(Number(n) || 0), 0) }
 
 function onSelectionChange(sel: ExpiryStock[]) { selected.value = sel }
 

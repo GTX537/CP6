@@ -156,6 +156,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
 import type { OutboundOrder, OutboundOrderDetail, ShipRequest } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -200,7 +201,7 @@ function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'd
 }
 function formatQty(n: number | null | undefined): string {
   if (n == null) return '0'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 
 function addLine() {

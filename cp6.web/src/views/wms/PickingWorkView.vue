@@ -145,6 +145,7 @@ import { List, Refresh } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
 import type { OutboundOrder, OutboundOrderDetail } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -189,7 +190,7 @@ const canConfirmPick = computed(() =>
 
 function formatQty(n: number | undefined | null) {
   if (n == null) return '0'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 
 async function reloadTasks() {

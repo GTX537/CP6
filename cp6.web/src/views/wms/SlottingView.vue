@@ -122,6 +122,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { slottingApi } from '@/api/wms/logistics'
 import type { SlottingPlan, SlottingPlanResult } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 const mode = ref<'list' | 'detail'>('list')
@@ -150,7 +151,6 @@ function statusTagOf(s: number): 'info' | 'primary' | 'success' | 'danger' {
 function rankTagOf(r: string): 'success' | 'warning' | 'info' {
   return ({ A: 'success', B: 'warning', C: 'info' } as const)[r as 'A'] || 'info'
 }
-function formatQty(n: number) { return Number(n || 0).toLocaleString('ja-JP', { maximumFractionDigits: 4 }) }
 
 async function reload() {
   loading.value = true

@@ -184,6 +184,7 @@ import { wmsDashboardApi } from '@/api/wms/wmsDashboard'
 import type { WmsKpi, WmsTrendPoint, WmsWarehouseValue, WmsAlerts } from '@/types/wms/wms'
 import { getWmsConnection, startWmsConnection, type StockChangedPayload, type InboundReceivedPayload, type OutboundShippedPayload } from '@/utils/wmsHub'
 import * as signalR from '@microsoft/signalr'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -204,8 +205,7 @@ const trendMax = computed(() => {
 })
 
 function heightOf(qty: number): number { return Math.max(2, (Math.abs(qty) / trendMax.value) * 100) }
-function formatMoney(n: number): string { return Math.round(Number(n) || 0).toLocaleString('ja-JP') }
-function formatQty(n: number): string { return Number(n || 0).toLocaleString('ja-JP', { maximumFractionDigits: 4 }) }
+function formatMoney(n: number): string { return formatQty(Math.round(Number(n) || 0), 0) }
 
 async function loadKpi() { const r = await wmsDashboardApi.kpi(); Object.assign(kpi, r.data) }
 async function loadTrend() { const r = await wmsDashboardApi.trend(trendDays.value); trend.value = r.data }

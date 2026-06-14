@@ -56,6 +56,16 @@ export function formatPercent(v: NumberInput): string {
   return n === null ? '' : (i18n.global as any).n(n, 'percent')
 }
 
+/**
+ * 数量：locale 感知的「最多 maxFrac 位小数、无尾随零」（替代散落各处的
+ * Number(n).toLocaleString('ja-JP', {maximumFractionDigits: N})）。空值返回 ''。
+ */
+export function formatQty(v: NumberInput, maxFrac = 4): string {
+  const n = toNumber(v)
+  if (n === null) return ''
+  return new Intl.NumberFormat(currentLocale(), { maximumFractionDigits: maxFrac }).format(n)
+}
+
 /** 多币种：currency 为 ISO 4217 码（JPY/CNY/USD/...），默认 JPY。 */
 export function formatCurrency(v: NumberInput, currency = 'JPY'): string {
   const n = toNumber(v)

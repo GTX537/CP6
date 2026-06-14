@@ -149,6 +149,7 @@ import { useI18n } from 'vue-i18n'
 import http from '@/api/http'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
 import type { OutboundOrder, ShipRequest, WmsApi } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 const saving = ref(false)
@@ -181,7 +182,7 @@ const carrierMap: Record<string, string> = {
 
 function formatQty(n: number | undefined | null) {
   if (n == null) return ''
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 
 async function reloadQueue() {

@@ -124,6 +124,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Download, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
 import { otdReportApi } from '@/api/erp/otdReport'
+import { formatQty } from '@/utils/format'
 import type { OtdReportGroupBy, OtdReportQuery, OtdReportRow, OtdReportSummary } from '@/types/erp/otdReport'
 
 const { t } = useI18n()
@@ -220,11 +221,11 @@ function formatPercent(rate: number): string {
 }
 
 function formatNumber(value: number): string {
-  return Number(value || 0).toLocaleString('ja-JP')
+  return formatQty(value || 0)
 }
 
 function formatDays(value: number): string {
-  return Number(value || 0).toLocaleString('ja-JP', { maximumFractionDigits: 2 })
+  return formatQty(value || 0, 2)
 }
 
 function addDays(date: Date, days: number): Date {

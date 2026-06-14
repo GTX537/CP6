@@ -97,6 +97,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { stockTakeApi } from '@/api/wms/stockTake'
 import type { StockTake, StockTakeDetail, StockTakeCountInput } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -156,7 +157,7 @@ function approvalTagOf(s: number): 'info' | 'success' | 'danger' {
 }
 function formatQty(n: number | null | undefined): string {
   if (n == null) return '—'
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return fmtQty(n, 4)
 }
 
 function recalcDiff(row: StockTakeDetail) {

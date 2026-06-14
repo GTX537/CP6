@@ -136,6 +136,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { reportApi } from '@/api/wms/reportCenter'
+import { formatQty, formatCurrency } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -169,11 +170,11 @@ const typeMap = computed<Record<ReportType, string>>(() => ({
 
 function fmtQty(n: number | undefined | null) {
   if (n == null) return ''
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 4 })
+  return formatQty(n, 4)
 }
 function fmtMoney(n: number | undefined | null) {
   if (n == null) return ''
-  return Number(n).toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })
+  return formatCurrency(n)
 }
 
 function onTypeChange() { rows.value = [] }

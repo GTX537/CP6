@@ -248,6 +248,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { kittingApi } from '@/api/wms/kitting'
 import type { KitMaster, KitMasterComponent, KitOrder, KitOrderSearchQuery } from '@/types/wms/wms'
+import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 
@@ -347,7 +348,6 @@ const kitLotHint = computed(() => currentOrder.value?.direction === 'DISASSEMBLE
 function orderStatusTagOf(s: number): 'info' | 'success' | 'danger' {
   return ({ 0: 'info', 1: 'success', 9: 'danger' } as const)[s as 0] || 'info'
 }
-function formatQty(n: number) { return Number(n || 0).toLocaleString('ja-JP', { maximumFractionDigits: 4 }) }
 
 async function reloadOrders() {
   orderLoading.value = true

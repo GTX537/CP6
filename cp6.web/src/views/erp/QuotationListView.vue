@@ -177,6 +177,7 @@ import { masterApi } from '@/api/erp/master'
 import type { QuotationListItem, QuotationQuery } from '@/types/erp/quotation'
 import type { MasterBase } from '@/types/erp/estimateCalc'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { formatQty, formatNumber } from '@/utils/format'
 
 const { isMobile } = useBreakpoint()
 
@@ -220,12 +221,10 @@ function fmtDate(v?: string) {
   return v ? v.slice(0, 10) : ''
 }
 function fmtNum(v?: number) {
-  return v == null ? '' : v.toLocaleString()
+  return v == null ? '' : formatQty(v)
 }
 function fmtMoney(v?: number) {
-  return v == null
-    ? ''
-    : v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return v == null ? '' : formatNumber(v, 'decimal')
 }
 function statusTagType(s?: string): 'info' | 'warning' | 'success' {
   if (s === '見積確定済') return 'success'

@@ -103,6 +103,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { palletApi } from '@/api/wms/paperIndustry'
 import type { Pallet, PalletSearchQuery } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
 const query = reactive<PalletSearchQuery>({ pageSize: 100 })
@@ -134,7 +135,7 @@ function statusTagOf(s: number): 'info' | 'success' | 'warning' | 'primary' {
 
 function formatQty(n: number | undefined | null) {
   if (n == null) return ''
-  return Number(n).toLocaleString('ja-JP', { maximumFractionDigits: 2 })
+  return fmtQty(n, 2)
 }
 
 async function reload() {

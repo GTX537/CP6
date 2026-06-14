@@ -133,6 +133,7 @@ import { estimateCalcApi } from '@/api/erp/estimateCalc'
 import { masterApi } from '@/api/erp/master'
 import type { EstimateCalcListItem, MasterBase, EstimateCalcQuery } from '@/types/erp/estimateCalc'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { formatQty, formatNumber } from '@/utils/format'
 
 const { isMobile } = useBreakpoint()
 
@@ -164,9 +165,8 @@ function onSortChange({ prop, order }: { prop: string; order: string | null }) {
 
 const fmtDate = (v?: string) => (v ? v.slice(0, 10) : '')
 const fmtDateTime = (v?: string) => (v ? v.replace('T', ' ').slice(0, 19) : '')
-const fmtNum = (v?: number) => (v == null ? '' : v.toLocaleString())
-const fmtMoney = (v?: number) =>
-  v == null ? '' : v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const fmtNum = (v?: number) => (v == null ? '' : formatQty(v))
+const fmtMoney = (v?: number) => (v == null ? '' : formatNumber(v, 'decimal'))
 
 async function loadData() {
   try {
