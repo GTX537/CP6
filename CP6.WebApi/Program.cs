@@ -117,6 +117,8 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IPeriodCloseService, CP6.Core.S
 builder.Services.AddScoped<CP6.Core.Services.Fin.IAutoVoucherEngine, CP6.Core.Services.Fin.AutoVoucherEngine>(); // 章05 自动凭证引擎（规则即数据→AutoPost）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApInvoiceService, CP6.Core.Services.Fin.ApInvoiceService>(); // 章03 §3① 应付发票录入+过账
 builder.Services.AddScoped<CP6.Core.Services.Fin.IPaymentService, CP6.Core.Services.Fin.PaymentService>(); // 章03 §3② 付款+预付+撤销
+builder.Services.AddScoped<CP6.Core.Services.Fin.IApSettlementService, CP6.Core.Services.Fin.ApSettlementService>(); // 章03 §3③/§4 核销+尾差+汇差
+builder.Services.AddScoped<CP6.Core.Services.Fin.IApReconcileService, CP6.Core.Services.Fin.ApReconcileService>(); // 章03 §4 子账↔GL 勾稽
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
