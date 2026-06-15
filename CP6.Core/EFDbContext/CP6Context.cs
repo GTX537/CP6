@@ -354,6 +354,18 @@ public class CP6Context : DbContext
     public DbSet<PostingRule> PostingRules { get; set; }
     /// <summary>记账规则行（章05，固定角色行 / 单据行透传）</summary>
     public DbSet<PostingRuleLine> PostingRuleLines { get; set; }
+    /// <summary>应付发票（章03）</summary>
+    public DbSet<ApInvoice> ApInvoices { get; set; }
+    /// <summary>应付发票明细行（章03）</summary>
+    public DbSet<ApInvoiceLine> ApInvoiceLines { get; set; }
+    /// <summary>付款单（章03）</summary>
+    public DbSet<Payment> Payments { get; set; }
+    /// <summary>银行账户（章03）</summary>
+    public DbSet<BankAccount> BankAccounts { get; set; }
+    /// <summary>税码（章03）</summary>
+    public DbSet<TaxCode> TaxCodes { get; set; }
+    /// <summary>应付核销（章03）</summary>
+    public DbSet<ApSettlement> ApSettlements { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -552,6 +564,44 @@ public class CP6Context : DbContext
         modelBuilder.Entity<PostingRuleLine>(e =>
         {
             e.HasIndex(x => x.RuleId);
+        });
+
+        // 应付发票（章03）：No 唯一 + 供应商发票号防重（过滤式，红字/空号不约束）+ 检索
+        modelBuilder.Entity<ApInvoice>(e =>
+        {
+            e.HasIndex(x => x.No).IsUnique();
+            e.HasIndex(x => new { x.SupplierId, x.SupplierInvoiceNo })
+                .IsUnique()
+                .HasFilter("[SupplierInvoiceNo] IS NOT NULL AND [IsCreditMemo] = 0")
+                .HasDatabaseName("UX_Fin_ApInvoice_SupplierDupGuard");
+            e.HasIndex(x => x.SupplierId);
+            e.HasIndex(x => x.Status);
+            e.HasIndex(x => x.DueDate);
+
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        modelBuilder.Entity<ApInvoiceLine>(e => e.HasIndex(x => x.InvoiceId));
+
+        // 付款单（章03）：No 唯一 + 按供应商/状态检索
+        modelBuilder.Entity<Payment>(e =>
+        {
+            e.HasIndex(x => x.No).IsUnique();
+            e.HasIndex(x => x.SupplierId);
+            e.HasIndex(x => x.Status);
+        });
+
+        // 银行账户 / 税码：编码唯一
+        modelBuilder.Entity<BankAccount>(e => e.HasIndex(x => x.Code).IsUnique());
+        modelBuilder.Entity<TaxCode>(e => e.HasIndex(x => x.Code).IsUnique());
+
+        // 应付核销（章03）：按付款 / 发票取核销关系
+        modelBuilder.Entity<ApSettlement>(e =>
+        {
+            e.HasIndex(x => x.PaymentId);
+            e.HasIndex(x => x.ApInvoiceId);
         });
 
         // 見積計算書：QtnCalcNo 唯一
