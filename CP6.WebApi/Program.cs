@@ -121,7 +121,12 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IApSettlementService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApReconcileService, CP6.Core.Services.Fin.ApReconcileService>(); // 章03 §4 子账↔GL 勾稽
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApAgingService, CP6.Core.Services.Fin.ApAgingService>(); // 章03 §5 应付账龄
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApMasterService, CP6.Core.Services.Fin.ApMasterService>(); // 章03 银行账户/税码主数据
-builder.Services.AddScoped<CP6.Core.Services.Fin.IArInvoiceService, CP6.Core.Services.Fin.ArInvoiceService>(); // 章04 §2 应收发票+出货自动开票+双凭证
+builder.Services.AddScoped<CP6.Core.Services.Fin.IArInvoiceService, CP6.Core.Services.Fin.ArInvoiceService>(); // 章04 §2 应收发票+出货自动开票+双凭证+销售红字
+builder.Services.AddScoped<CP6.Core.Services.Fin.IReceiptService, CP6.Core.Services.Fin.ReceiptService>(); // 章04 §3 收款+预收+撤销
+builder.Services.AddScoped<CP6.Core.Services.Fin.IArSettlementService, CP6.Core.Services.Fin.ArSettlementService>(); // 章04 §3 应收核销+尾差+汇差
+builder.Services.AddScoped<CP6.Core.Services.Fin.IArReconcileService, CP6.Core.Services.Fin.ArReconcileService>(); // 章04 §3 子账↔GL 勾稽
+builder.Services.AddScoped<CP6.Core.Services.Fin.IArAgingService, CP6.Core.Services.Fin.ArAgingService>(); // 章04 §3 应收账龄
+builder.Services.AddScoped<CP6.Core.Services.Fin.ICreditControlService, CP6.Core.Services.Fin.CreditControlService>(); // 章04 §3 信用控制（出货前反向约束）
 builder.Services.AddScoped<CP6.Core.Services.Integration.IFinBridgeHook, CP6.Core.Services.Fin.FinBridgeHook>(); // F2-D4 出货→AR 自动开票/红冲（Phase6 桥，WMS|FIN 路由）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Services.Fin.IFinAp)sp.GetRequiredService<CP6.Core.Services.Fin.IApInvoiceService>()); // F2-D3 采购对外契约（同一 ApInvoiceService 实例）
 

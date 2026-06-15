@@ -27,10 +27,14 @@ public class PostingRuleSeedTests
         var n1 = PostingRuleSeed.EnsureSeeded(db);
         var n2 = PostingRuleSeed.EnsureSeeded(db);   // 重播
 
-        Assert.Equal(6, n1);
+        Assert.Equal(10, n1);
         Assert.Equal(0, n2);                          // ★ 幂等
-        Assert.Equal(6, db.PostingRules.Count());
-        Assert.All(new[] { "AP.InvoicePosted", "AP.Payment", "AP.Prepayment", "AP.CreditMemo", "AR.Revenue", "AR.Cogs" },
+        Assert.Equal(10, db.PostingRules.Count());
+        Assert.All(new[]
+            {
+                "AP.InvoicePosted", "AP.Payment", "AP.Prepayment", "AP.CreditMemo", "AR.Revenue", "AR.Cogs",
+                "AR.Receipt", "AR.Advance", "AR.CreditMemo", "AR.CogsReversal",
+            },
             et => Assert.True(db.PostingRules.Any(r => r.EventType == et)));
     }
 

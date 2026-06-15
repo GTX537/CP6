@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Fin;
 
 /// <summary>
-/// 记账规则种子（章05 §6）。播种自动凭证引擎要用的标准规则——AP 发票/付款、AR 收入/成本结转。
+/// 记账规则种子（章05 §6）。播种自动凭证引擎要用的标准规则——AP 发票/付款/预付/红字、AR 收入/成本结转/收款/预收/销售红字。
 /// 幂等：按 EventType 判存，已有不重播；规则只引用 <see cref="GlAccount.Role"/> 角色锚点，不绑具体科目，
 /// 故与 COA 模板包（CN-GAAP/INTL）解耦，换模板包零改动。汇差用现成 FX_GAIN/FX_LOSS 角色（核销/重估时挂）。
 /// </summary>
@@ -43,7 +43,7 @@ public static class PostingRuleSeed
         return added;
     }
 
-    /// <summary>四条标准规则的定义（纯内存，便于单测断言）。</summary>
+    /// <summary>标准规则的定义（纯内存，便于单测断言）。</summary>
     public static IEnumerable<PostingRule> BuildRules()
     {
         // AP 发票过账：借 各费用/原材料（单据行透传）+ 借 进项税（0额跳过=不可抵扣）/ 贷 应付（带供应商）
@@ -112,6 +112,51 @@ public static class PostingRuleSeed
             {
                 Role(1, PostingSide.Debit, "COGS", "Amount"),
                 Role(2, PostingSide.Credit, "FG", "Amount"),
+            },
+        };
+
+        // AR 收款：借 银行存款（账户来自事件头 BankGlAccountId）/ 贷 应收（带客户）。与 AP.Payment 镜像反向
+        yield return new PostingRule
+        {
+            EventType = "AR.Receipt", Name = "应收收款", VoucherSource = VoucherSource.AR, IsActive = true,
+            Lines =
+            {
+                Header(1, PostingSide.Debit, "BankGlAccountId", "Amount"),
+                Role(2, PostingSide.Credit, "AR_CONTROL", "Amount", carryPartner: true),
+            },
+        };
+
+        // AR 预收款：借 银行存款（事件头）/ 贷 预收账款（带客户）。与 AP.Prepayment 镜像反向
+        yield return new PostingRule
+        {
+            EventType = "AR.Advance", Name = "应收预收款", VoucherSource = VoucherSource.AR, IsActive = true,
+            Lines =
+            {
+                Header(1, PostingSide.Debit, "BankGlAccountId", "Amount"),
+                Role(2, PostingSide.Credit, "AR_ADVANCE", "Amount", carryPartner: true),
+            },
+        };
+
+        // AR 销售红字（退货冲收入）：借 主营收入 / 借 销项税（0额跳过）/ 贷 应收（带客户）。与 AR.Revenue 镜像反向
+        yield return new PostingRule
+        {
+            EventType = "AR.CreditMemo", Name = "应收销售红字", VoucherSource = VoucherSource.AR, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "REVENUE", "NetAmount"),
+                Role(2, PostingSide.Debit, "TAX_OUTPUT", "TaxAmount"),
+                Role(3, PostingSide.Credit, "AR_CONTROL", "GrossAmount", carryPartner: true),
+            },
+        };
+
+        // AR 销售红字成本回冲（货退回入库）：借 库存商品 FG / 贷 主营成本（来源 Cost，与 AR.Cogs 镜像反向）
+        yield return new PostingRule
+        {
+            EventType = "AR.CogsReversal", Name = "应收成本回冲", VoucherSource = VoucherSource.Cost, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "FG", "Amount"),
+                Role(2, PostingSide.Credit, "COGS", "Amount"),
             },
         };
     }

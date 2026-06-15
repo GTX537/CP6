@@ -85,11 +85,12 @@ public class ArInvoiceService : IArInvoiceService
         if (inv == null) return FinResult.Fail("E-FIN-302");
         if (inv.Status != ArInvoiceStatus.Draft) return FinResult.Fail("E-FIN-303");
 
-        // ① 收入确认（借应收/贷收入+销项税）—— 原币按销售汇率换算
+        // ① 收入确认（借应收/贷收入+销项税）；红字走 AR.CreditMemo（借收入+销项税/贷应收，方向反向冲减应收）
         var rev = new FinBizEvent
         {
-            EventType = "AR.Revenue", Source = VoucherSource.AR, SourceDocNo = inv.No,
-            BizDate = inv.InvoiceDate, PartnerId = inv.CustomerId, Description = $"应收发票 {inv.No}",
+            EventType = inv.IsCreditMemo ? "AR.CreditMemo" : "AR.Revenue", Source = VoucherSource.AR, SourceDocNo = inv.No,
+            BizDate = inv.InvoiceDate, PartnerId = inv.CustomerId,
+            Description = inv.IsCreditMemo ? $"销售红字 {inv.No}" : $"应收发票 {inv.No}",
             CurrencyCd = inv.CurrencyCd, FxRate = string.IsNullOrEmpty(inv.CurrencyCd) ? null : inv.FxRate,
         };
         rev.HeaderAmounts["GrossAmount"] = inv.GrossAmount;
@@ -100,13 +101,13 @@ public class ArInvoiceService : IArInvoiceService
         inv.JournalEntryId = (await _db.JournalEntries.FirstOrDefaultAsync(j =>
             j.Source == VoucherSource.AR && j.SourceDocNo == inv.No && j.Status == JournalStatus.Posted))?.Id;
 
-        // ② 成本结转（借COGS/贷FG）—— 成本为本位币（我方成本，不随销售外币）
+        // ② 成本结转（借COGS/贷FG）；红字走 AR.CogsReversal（借FG/贷COGS，货退回入库）—— 成本为本位币（我方成本，不随销售外币）
         if (inv.CostAmount > 0m)
         {
             var cogs = new FinBizEvent
             {
-                EventType = "AR.Cogs", Source = VoucherSource.Cost, SourceDocNo = inv.No,
-                BizDate = inv.InvoiceDate, Description = $"成本结转 {inv.No}",
+                EventType = inv.IsCreditMemo ? "AR.CogsReversal" : "AR.Cogs", Source = VoucherSource.Cost, SourceDocNo = inv.No,
+                BizDate = inv.InvoiceDate, Description = inv.IsCreditMemo ? $"成本回冲 {inv.No}" : $"成本结转 {inv.No}",
             };
             cogs.HeaderAmounts["Amount"] = inv.CostAmount;
             var r2 = await _engine.GenerateAsync(cogs);
@@ -137,6 +138,37 @@ public class ArInvoiceService : IArInvoiceService
             CostAmount = request.EstimatedCost,
             ShipmentId = request.ShipmentId,
             OrderId = request.OrderId,
+            Lines = request.Lines.Select(l => new ArInvoiceLine
+            {
+                ItemId = l.ItemId, Qty = l.Qty, UnitPrice = l.UnitPrice,
+                Amount = Math.Round(l.Qty * l.UnitPrice, 2, MidpointRounding.AwayFromZero),
+                TaxCodeId = l.TaxCodeId, RevenueAccountId = l.RevenueAccountId, CostCenterId = l.CostCenterId,
+            }).ToList(),
+        };
+
+        var created = await CreateAsync(inv, user);
+        if (!created.Ok) return (created, null, null);
+        var posted = await PostAsync(inv.Id, user);
+        return (posted, inv.Id, inv.No);
+    }
+
+    public async Task<(FinResult Result, Guid? InvoiceId, string? No)> CreateCreditMemoAsync(FinCreditMemoRequest request, string user)
+    {
+        // 幂等：同退货单已开红字→返回既有
+        var existing = await _db.ArInvoices.FirstOrDefaultAsync(x => x.CreditNoteId == request.CreditNoteId && x.IsCreditMemo);
+        if (existing != null) return (FinResult.Pass(), existing.Id, existing.No);
+
+        var inv = new ArInvoice
+        {
+            CustomerId = request.CustomerId,
+            InvoiceDate = request.InvoiceDate,
+            DueDate = request.DueDate,
+            CurrencyCd = request.CurrencyCd,
+            FxRate = request.FxRate ?? 1m,
+            CostAmount = request.EstimatedCost,
+            IsCreditMemo = true,
+            CreditNoteId = request.CreditNoteId,
+            OriginInvoiceId = request.OriginInvoiceId,
             Lines = request.Lines.Select(l => new ArInvoiceLine
             {
                 ItemId = l.ItemId, Qty = l.Qty, UnitPrice = l.UnitPrice,

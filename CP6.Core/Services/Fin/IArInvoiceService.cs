@@ -20,6 +20,9 @@ public interface IArInvoiceService
     /// <summary>出货自动开票（幂等 ShipmentId）：据出货请求建票 + 过账两凭证。返回发票 Id/No。</summary>
     Task<(FinResult Result, Guid? InvoiceId, string? No)> CreateFromShipmentAsync(FinShipmentInvoiceRequest request, string user);
 
+    /// <summary>销售退货红字（幂等 CreditNoteId，接 CP6 CreditNote）：建红字发票 + 过账红冲收入（AR.CreditMemo）+ 成本回冲（AR.CogsReversal）。返回发票 Id/No。</summary>
+    Task<(FinResult Result, Guid? InvoiceId, string? No)> CreateCreditMemoAsync(FinCreditMemoRequest request, string user);
+
     /// <summary>红冲（出货取消）：红冲收入 + 成本两凭证（系统直过）+ 发票 Reversed。</summary>
     Task<FinResult> ReverseAsync(Guid invoiceId, string user, string reason);
 }
@@ -48,4 +51,21 @@ public class FinShipmentInvoiceLine
     public Guid? TaxCodeId { get; set; }
     public Guid? RevenueAccountId { get; set; }
     public Guid? CostCenterId { get; set; }
+}
+
+/// <summary>销售退货红字请求（C-3，据 CP6 CreditNote 数据填）。行结构复用出货明细。</summary>
+public class FinCreditMemoRequest
+{
+    /// <summary>来源销售退货单 CreditNote.Id（幂等防重开红字）</summary>
+    public Guid CreditNoteId { get; set; }
+    public string CustomerId { get; set; } = string.Empty;
+    public DateTime InvoiceDate { get; set; }
+    public DateTime DueDate { get; set; }
+    public string? CurrencyCd { get; set; }
+    public decimal? FxRate { get; set; }
+    /// <summary>退货成本（本位币，回冲 FG）</summary>
+    public decimal EstimatedCost { get; set; }
+    /// <summary>原始应收发票 Id（可选，留痕）</summary>
+    public Guid? OriginInvoiceId { get; set; }
+    public List<FinShipmentInvoiceLine> Lines { get; set; } = new();
 }
