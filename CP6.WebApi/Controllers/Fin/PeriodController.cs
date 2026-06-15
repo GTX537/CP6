@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,9 +33,11 @@ public class PeriodController : ControllerBase
 
     /// <summary>结账（锁期）。</summary>
     [HttpPost("{id}/close")]
+    [RequirePermission("fin-period", "close")]
     public async Task<IActionResult> Close(Guid id) => Fin(await _close.CloseAsync(id, CurrentUser));
 
     /// <summary>反结账（危险动作，限高权限）。</summary>
     [HttpPost("{id}/reopen")]
+    [RequirePermission("fin-period", "reopen")]
     public async Task<IActionResult> Reopen(Guid id) => Fin(await _close.ReopenAsync(id, CurrentUser));
 }

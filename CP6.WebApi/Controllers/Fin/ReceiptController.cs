@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ namespace CP6.WebApi.Controllers.Fin;
 
 /// <summary>
 /// 收款 REST —— 财务章04。/api/fin/ar/receipt。收款/预收过账→撤销红冲；核销（多对多+尾差+汇差）。
-/// 功能权限点（fin.ar.receipt:*）与 [RequirePermission] 在 D-2 统一贴附+seed。
+/// 功能权限（D-2）：变更端点贴 [RequirePermission("fin-ar-receipt", …)]；信用查询同键 check（CreditControlController）。
 /// </summary>
 [ApiController]
 [Route("api/fin/ar/receipt")]
@@ -40,6 +41,7 @@ public class ReceiptController : ControllerBase
 
     /// <summary>收款过账（IsAdvance=true 走预收账款）。返回新 Id。</summary>
     [HttpPost]
+    [RequirePermission("fin-ar-receipt", "add")]
     public async Task<IActionResult> Receive([FromBody] Receipt receipt)
     {
         var r = await _svc.ReceiveAsync(receipt, CurrentUser);
@@ -48,11 +50,13 @@ public class ReceiptController : ControllerBase
 
     /// <summary>撤销收款（解核销→红冲）。</summary>
     [HttpPost("{id}/reverse")]
+    [RequirePermission("fin-ar-receipt", "reverse")]
     public async Task<IActionResult> Reverse(Guid id, [FromBody] ReasonReq r)
         => Fin(await _svc.ReverseReceiptAsync(id, CurrentUser, r.Reason));
 
     /// <summary>核销：把本收款应用到若干发票（可带销售折扣）。</summary>
     [HttpPost("{id}/settle")]
+    [RequirePermission("fin-ar-receipt", "settle")]
     public async Task<IActionResult> Settle(Guid id, [FromBody] SettleReq req)
         => Fin(await _settle.SettleAsync(id, req.Applies, CurrentUser));
 

@@ -765,6 +765,35 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 610 });
         db.SaveChanges();
     }
+    // 财务（Fin）功能权限点（D-2）：GL/AP/AR 变更端点的操作点 seed + 授权 admin(RoleId=1)。
+    // 资源键 = Sys_Menu.MenuKey（由 RoutePath 派生，如 /fin/ar-invoice → fin-ar-invoice）。
+    // PermissionService.HasActionAsync 无 admin 旁路：贴 [RequirePermission] 的端点必须在此 seed+授权，否则 admin 也 403。幂等。
+    {
+        // 确保 Fin 菜单的 MenuKey 已就位（全新库首启时这些菜单在上方 §545 回填之后才创建，故此处补一次，与全局回填同算法）
+        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 610).ToList())
+            fm.MenuKey = fm.RoutePath!.Trim('/').Replace('/', '-');
+        db.SaveChanges();
+
+        // (MenuId, ActionCode, ActionName) —— 与各控制器 [RequirePermission(menuKey, action)] 一一对应
+        var finActions = new (int MenuId, string Code, string Name)[]
+        {
+            (601, "add", "新建"), (601, "edit", "编辑"), (601, "deactivate", "停用"), (601, "import", "导入"),
+            (602, "add", "新建"), (602, "submit", "提交复核"), (602, "post", "过账"), (602, "reject", "驳回"), (602, "reverse", "红冲"),
+            (604, "close", "结账"), (604, "reopen", "反结账"),
+            (605, "add", "新建"), (605, "post", "过账"),
+            (606, "add", "新建"), (606, "settle", "核销"), (606, "reverse", "撤销"), (606, "bank", "银行账户"), (606, "tax", "税码"),
+            (608, "add", "新建"), (608, "post", "过账"), (608, "credit-memo", "销售红字"), (608, "reverse", "红冲"),
+            (609, "add", "新建"), (609, "settle", "核销"), (609, "reverse", "撤销"),
+        };
+        foreach (var (menuId, code, name) in finActions)
+        {
+            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+        }
+        db.SaveChanges();
+    }
 
     // ═══════════════════════════════════════════════════════════
     //  MSBBME010〜090 MES 製造執行 菜单

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,7 @@ public class ApMasterController : ControllerBase
         => Ok2(await _svc.ListBankAccountsAsync(includeInactive));
 
     [HttpPost("bank-account")]
+    [RequirePermission("fin-ap-payment", "bank")]
     public async Task<IActionResult> CreateBank([FromBody] BankAccount bank)
     {
         try { return Ok2(new { id = await _svc.CreateBankAccountAsync(bank, CurrentUser) }); }
@@ -35,6 +37,7 @@ public class ApMasterController : ControllerBase
         => Ok2(await _svc.ListTaxCodesAsync(includeInactive));
 
     [HttpPost("tax-code")]
+    [RequirePermission("fin-ap-payment", "tax")]
     public async Task<IActionResult> CreateTax([FromBody] TaxCode tax)
     {
         try { return Ok2(new { id = await _svc.CreateTaxCodeAsync(tax, CurrentUser) }); }

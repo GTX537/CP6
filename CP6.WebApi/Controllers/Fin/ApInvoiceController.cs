@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ namespace CP6.WebApi.Controllers.Fin;
 
 /// <summary>
 /// 应付发票 REST —— 财务章03。/api/fin/ap/invoice。录入草稿→过账（自动凭证）；账龄/对账查询。
-/// 功能权限点（fin.ap.invoice:*）与 [RequirePermission] 在 D-2 统一贴附+seed，本阶段先 [Authorize]。
+/// 功能权限（D-2）：变更端点贴 [RequirePermission("fin-ap-invoice", …)]；读端点仅 [Authorize]（菜单级已控）。
 /// </summary>
 [ApiController]
 [Route("api/fin/ap/invoice")]
@@ -42,6 +43,7 @@ public class ApInvoiceController : ControllerBase
 
     /// <summary>录入草稿（含红字 IsCreditMemo）。返回新 Id。</summary>
     [HttpPost]
+    [RequirePermission("fin-ap-invoice", "add")]
     public async Task<IActionResult> Create([FromBody] ApInvoice invoice)
     {
         var r = await _svc.CreateAsync(invoice, CurrentUser);
@@ -50,6 +52,7 @@ public class ApInvoiceController : ControllerBase
 
     /// <summary>过账（生成凭证）。</summary>
     [HttpPost("{id}/post")]
+    [RequirePermission("fin-ap-invoice", "post")]
     public async Task<IActionResult> Post(Guid id) => Fin(await _svc.PostAsync(id, CurrentUser));
 
     /// <summary>账龄（按供应商分桶，本位币）。</summary>

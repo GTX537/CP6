@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,8 @@ namespace CP6.WebApi.Controllers.Fin;
 
 /// <summary>
 /// 应收发票 REST —— 财务章04。/api/fin/ar/invoice。录入草稿→过账（收入确认+成本结转双凭证）；
-/// 销售退货红字（接 CreditNote）；账龄/对账查询。功能权限点（fin.ar.invoice:*）在 D-2 统一贴附+seed。
+/// 销售退货红字（接 CreditNote）；账龄/对账查询。
+/// 功能权限（D-2）：变更端点贴 [RequirePermission("fin-ar-invoice", …)]；读端点仅 [Authorize]。
 /// </summary>
 [ApiController]
 [Route("api/fin/ar/invoice")]
@@ -42,6 +44,7 @@ public class ArInvoiceController : ControllerBase
 
     /// <summary>录入草稿。返回新 Id。</summary>
     [HttpPost]
+    [RequirePermission("fin-ar-invoice", "add")]
     public async Task<IActionResult> Create([FromBody] ArInvoice invoice)
     {
         var r = await _svc.CreateAsync(invoice, CurrentUser);
@@ -50,10 +53,12 @@ public class ArInvoiceController : ControllerBase
 
     /// <summary>过账（生成收入+成本双凭证）。</summary>
     [HttpPost("{id}/post")]
+    [RequirePermission("fin-ar-invoice", "post")]
     public async Task<IActionResult> Post(Guid id) => Fin(await _svc.PostAsync(id, CurrentUser));
 
     /// <summary>销售退货红字（接 CreditNote，幂等 CreditNoteId）。返回红字发票 Id/No。</summary>
     [HttpPost("credit-memo")]
+    [RequirePermission("fin-ar-invoice", "credit-memo")]
     public async Task<IActionResult> CreditMemo([FromBody] FinCreditMemoRequest request)
     {
         var (r, id, no) = await _svc.CreateCreditMemoAsync(request, CurrentUser);
@@ -62,6 +67,7 @@ public class ArInvoiceController : ControllerBase
 
     /// <summary>红冲（作废发票，红冲双凭证）。</summary>
     [HttpPost("{id}/reverse")]
+    [RequirePermission("fin-ar-invoice", "reverse")]
     public async Task<IActionResult> Reverse(Guid id, [FromBody] ReasonReq r)
         => Fin(await _svc.ReverseAsync(id, CurrentUser, r.Reason));
 

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.AspNetCore.Authorization;
@@ -34,21 +35,26 @@ public class JournalEntryController : ControllerBase
 
     /// <summary>新建草稿。</summary>
     [HttpPost]
+    [RequirePermission("fin-journal", "add")]
     public async Task<IActionResult> Create([FromBody] JournalEntry entry)
         => Ok2(new { id = await _svc.CreateDraftAsync(entry, CurrentUser) });
 
     [HttpPost("{id}/submit")]
+    [RequirePermission("fin-journal", "submit")]
     public async Task<IActionResult> Submit(Guid id) => Fin(await _svc.SubmitForReviewAsync(id));
 
     /// <summary>过账（过账人=当前登录用户，须≠制单人）。</summary>
     [HttpPost("{id}/post")]
+    [RequirePermission("fin-journal", "post")]
     public async Task<IActionResult> Post(Guid id) => Fin(await _svc.PostAsync(id, CurrentUser));
 
     [HttpPost("{id}/reject")]
+    [RequirePermission("fin-journal", "reject")]
     public async Task<IActionResult> Reject(Guid id, [FromBody] ReasonReq r) => Fin(await _svc.RejectAsync(id, r.Reason));
 
     /// <summary>手工红冲（走复核，autoPost=false）。</summary>
     [HttpPost("{id}/reverse")]
+    [RequirePermission("fin-journal", "reverse")]
     public async Task<IActionResult> Reverse(Guid id, [FromBody] ReasonReq r)
         => Fin(await _svc.ReverseAsync(id, CurrentUser, r.Reason, autoPost: false));
 

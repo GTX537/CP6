@@ -351,5 +351,9 @@ public static class I18nFinScreenSeed
         new Sys_Lang { LangKey = "E-FIN-322", ZhCN = "核销额超过发票欠款", ZhTW = "核銷額超過發票欠款", En = "Settle exceeds invoice open amount", Ja = "消込額が請求未収額を超えています", Ko = "소멸액이 청구 미수액을 초과합니다" },
         new Sys_Lang { LangKey = "E-FIN-323", ZhCN = "有折扣必须指定折扣科目", ZhTW = "有折扣必須指定折扣科目", En = "Discount requires a discount account", Ja = "割引には割引科目が必要です", Ko = "할인에는 할인 계정이 필요합니다" },
         new Sys_Lang { LangKey = "E-FIN-324", ZhCN = "发票须已过账或部分核销", ZhTW = "發票須已過帳或部分核銷", En = "Invoice must be posted or partially settled", Ja = "請求書は記帳済みか一部消込が必要", Ko = "청구서는 전기 또는 부분 소멸 상태여야 합니다" },
+
+        // ── 功能权限操作名（D-2，/pub/role-perm 功能权限页显示用；多数动作名已在上方/他处，仅补缺）──
+        new Sys_Lang { LangKey = "导入", ZhCN = "导入", ZhTW = "匯入", En = "Import", Ja = "インポート", Ko = "가져오기" },
+        new Sys_Lang { LangKey = "提交复核", ZhCN = "提交复核", ZhTW = "提交覆核", En = "Submit for review", Ja = "承認申請", Ko = "검토 요청" },
     };
 }

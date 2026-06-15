@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ namespace CP6.WebApi.Controllers.Fin;
 
 /// <summary>
 /// 付款 REST —— 财务章03。/api/fin/ap/payment。付款/预付过账→撤销红冲；核销（多对多+尾差+汇差）。
-/// 功能权限点（fin.ap.payment:*）与 [RequirePermission] 在 D-2 统一贴附+seed。
+/// 功能权限（D-2）：变更端点贴 [RequirePermission("fin-ap-payment", …)]；银行/税码主数据同键 bank/tax。
 /// </summary>
 [ApiController]
 [Route("api/fin/ap/payment")]
@@ -40,6 +41,7 @@ public class PaymentController : ControllerBase
 
     /// <summary>付款过账（IsPrepayment=true 走预付账款）。返回新 Id。</summary>
     [HttpPost]
+    [RequirePermission("fin-ap-payment", "add")]
     public async Task<IActionResult> Pay([FromBody] Payment payment)
     {
         var r = await _svc.PayAsync(payment, CurrentUser);
@@ -48,11 +50,13 @@ public class PaymentController : ControllerBase
 
     /// <summary>撤销付款（解核销→红冲）。</summary>
     [HttpPost("{id}/reverse")]
+    [RequirePermission("fin-ap-payment", "reverse")]
     public async Task<IActionResult> Reverse(Guid id, [FromBody] ReasonReq r)
         => Fin(await _svc.ReversePaymentAsync(id, CurrentUser, r.Reason));
 
     /// <summary>核销：把本付款应用到若干发票（可带现金折扣）。</summary>
     [HttpPost("{id}/settle")]
+    [RequirePermission("fin-ap-payment", "settle")]
     public async Task<IActionResult> Settle(Guid id, [FromBody] SettleReq req)
         => Fin(await _settle.SettleAsync(id, req.Applies, CurrentUser));
 

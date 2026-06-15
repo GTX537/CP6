@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,7 @@ public class GlAccountController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("fin-account", "add")]
     public async Task<IActionResult> Create([FromBody] GlAccount a)
     {
         try { return Ok2(new { id = await _svc.CreateAsync(a, CurrentUser) }); }
@@ -38,6 +40,7 @@ public class GlAccountController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [RequirePermission("fin-account", "edit")]
     public async Task<IActionResult> Update(Guid id, [FromBody] GlAccount a)
     {
         try { await _svc.UpdateAsync(id, a, CurrentUser); return Ok2(); }
@@ -46,6 +49,7 @@ public class GlAccountController : ControllerBase
 
     /// <summary>停用科目（不删）。</summary>
     [HttpPost("{id}/deactivate")]
+    [RequirePermission("fin-account", "deactivate")]
     public async Task<IActionResult> Deactivate(Guid id)
     {
         try { await _svc.DeactivateAsync(id, CurrentUser); return Ok2(); }
@@ -54,6 +58,7 @@ public class GlAccountController : ControllerBase
 
     /// <summary>导入科目表模板包（scheme=CN-GAAP / INTL）。</summary>
     [HttpPost("import")]
+    [RequirePermission("fin-account", "import")]
     public async Task<IActionResult> Import([FromQuery] string scheme)
     {
         try { return Ok2(new { count = await _svc.ImportTemplateAsync(scheme, CurrentUser) }); }
