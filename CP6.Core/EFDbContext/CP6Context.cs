@@ -350,6 +350,10 @@ public class CP6Context : DbContext
     public DbSet<FinSequence> FinSequences { get; set; }
     /// <summary>会计期间（章02，月结锁期）</summary>
     public DbSet<FiscalPeriod> FiscalPeriods { get; set; }
+    /// <summary>记账规则（章05，自动凭证"规则即数据"）</summary>
+    public DbSet<PostingRule> PostingRules { get; set; }
+    /// <summary>记账规则行（章05，固定角色行 / 单据行透传）</summary>
+    public DbSet<PostingRuleLine> PostingRuleLines { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -523,6 +527,23 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.Year, x.Month }).IsUnique();
             e.HasIndex(x => new { x.FiscalYear, x.PeriodNo });
             e.HasIndex(x => x.Status);
+        });
+
+        // 记账规则（章05）：按 (事件类型 + 启用) 检索；规则行级联随头删
+        modelBuilder.Entity<PostingRule>(e =>
+        {
+            e.HasIndex(x => new { x.EventType, x.IsActive });
+
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.RuleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // 记账规则行（章05）：按规则取行
+        modelBuilder.Entity<PostingRuleLine>(e =>
+        {
+            e.HasIndex(x => x.RuleId);
         });
 
         // 見積計算書：QtnCalcNo 唯一

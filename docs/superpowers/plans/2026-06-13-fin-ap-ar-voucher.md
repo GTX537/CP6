@@ -27,6 +27,26 @@
 
 ---
 
+## ✅ 决策定稿（2026-06-15，用户逐项拍板）
+
+| 决策 | 最终值 |
+|---|---|
+| **F2-D1** | **全外币**：实体原币+本位币(JPY)双金额列 + 已实现汇差 + **期末未实现汇兑重估**。复用现成 `FxRate`（基轴=JPY，受注冻结汇率用法已成熟）。新增 GL 角色 `FX_GAIN_LOSS`。`DiffType.FxDiff` 由占位转实做。 |
+| **F2-D2** | AR 成本结转用**估算成本**起步，章06 落地后自动切真实成本。 |
+| **F2-D3** | **预定义 `IFinAp` 契约接口**（AP 实现，采购 #10 落地接真实）；AP 手工录起步，`PurchaseOrderId` 可空预留。 |
+| **F2-D4** | 异步**新建 `IFinBridgeHook`** + `WMS\|FIN` Dispatcher 路由（复用 Phase6 重试/死信，NoOp 可关）。 |
+| **F2-D5** | Fin 控制器 **day-1 贴 `[RequirePermission]` + 权限点 seed**（含回贴已建的 4 个 GL 控制器，保持模块一致）；TenantId 延 OA 章10。 |
+| **F2-D6** | 复用 `CreditNote` + 补 `ArInvoice.CreditNoteId` 关联；不新建销售红字实体。 |
+
+### 因定稿带来的任务增量（相对初稿）
+- **全外币贯穿 A/B/C**：`FinBizEvent` 带 `CurrencyCd`/`FxRate`；引擎过账原币×汇率→本位币，`JournalLine` 已有原币列(CurrencyCd/FxRate/OrigAmount)直接填；核销时按发票汇率vs收付款汇率差额算**已实现汇兑损益**写 `FX_GAIN_LOSS`。
+- **新增 Task D-1 期末汇兑重估**：挂已建好的章02 `PeriodCloseService`，关账时重估未核销外币 AP/AR 余额→未实现汇兑损益凭证（autoPost）。
+- **Task A-1 增** `IFinAp` 契约接口骨架（D3）。
+- **每个控制器任务增** `[RequirePermission]` + 权限点 seed（D5）。
+- **GL 地基已勘察确认**：Fin 实体继承 `BaseEntity`；DbSet 注册于 `CP6Context` 财务 region 并配索引；`JournalLine` 原币列现成；`IJournalEntryService.AutoPostAsync(JournalEntry)`/`ReverseAsync(id,maker,reason,autoPost)` 即引擎/补偿入口；`GlAccount.Role` 锚点就位。
+
+---
+
 ## File Structure
 
 ### 章05 自动凭证引擎（`Fin` + `Integration`）
