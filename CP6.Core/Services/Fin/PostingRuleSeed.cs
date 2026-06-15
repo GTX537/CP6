@@ -80,6 +80,18 @@ public static class PostingRuleSeed
             },
         };
 
+        // AP 供应商红字：借 应付（带供应商）/ 贷 各费用/原材料（透传）/ 贷 进项税转出（与发票过账镜像）
+        yield return new PostingRule
+        {
+            EventType = "AP.CreditMemo", Name = "应付供应商红字", VoucherSource = VoucherSource.AP, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "AP_CONTROL", "GrossAmount", carryPartner: true),
+                Doc(2, PostingSide.Credit, "ExpenseAccountId", "Amount", carryCostCenter: true),
+                Role(3, PostingSide.Credit, "TAX_INPUT", "TaxAmount"),
+            },
+        };
+
         // AR 收入确认：借 应收（带客户）/ 贷 主营收入 / 贷 销项税（0额跳过）
         yield return new PostingRule
         {

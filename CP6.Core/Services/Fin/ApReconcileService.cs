@@ -16,13 +16,14 @@ public class ApReconcileService : IApReconcileService
 
     public async Task<ApReconcileResult> ReconcileApAsync()
     {
-        // 子账：未结的应付发票（已过账/部分核销）未付余额，按记账汇率折本位币
+        // 子账：未结的应付发票（已过账/部分核销）未付余额，按记账汇率折本位币；红字反向（减少应付）
         var openInvoices = await _db.ApInvoices
             .Where(i => i.Status == ApInvoiceStatus.Posted || i.Status == ApInvoiceStatus.PartiallySettled)
-            .Select(i => new { i.GrossAmount, i.SettledAmount, i.FxRate })
+            .Select(i => new { i.GrossAmount, i.SettledAmount, i.FxRate, i.IsCreditMemo })
             .ToListAsync();
         var subLedger = openInvoices.Sum(i =>
-            Math.Round((i.GrossAmount - i.SettledAmount) * i.FxRate, 2, MidpointRounding.AwayFromZero));
+            Math.Round((i.GrossAmount - i.SettledAmount) * i.FxRate, 2, MidpointRounding.AwayFromZero)
+            * (i.IsCreditMemo ? -1m : 1m));
 
         // GL：AP_CONTROL 控制科目的已过账分录（负债 → 贷−借）
         var apControl = await _db.GlAccounts.FirstOrDefaultAsync(a => a.Role == "AP_CONTROL" && a.IsActive);

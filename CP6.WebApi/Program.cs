@@ -119,6 +119,8 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IApInvoiceService, CP6.Core.Ser
 builder.Services.AddScoped<CP6.Core.Services.Fin.IPaymentService, CP6.Core.Services.Fin.PaymentService>(); // 章03 §3② 付款+预付+撤销
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApSettlementService, CP6.Core.Services.Fin.ApSettlementService>(); // 章03 §3③/§4 核销+尾差+汇差
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApReconcileService, CP6.Core.Services.Fin.ApReconcileService>(); // 章03 §4 子账↔GL 勾稽
+builder.Services.AddScoped<CP6.Core.Services.Fin.IApAgingService, CP6.Core.Services.Fin.ApAgingService>(); // 章03 §5 应付账龄
+builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Services.Fin.IFinAp)sp.GetRequiredService<CP6.Core.Services.Fin.IApInvoiceService>()); // F2-D3 采购对外契约（同一 ApInvoiceService 实例）
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）

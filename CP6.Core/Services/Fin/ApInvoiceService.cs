@@ -8,7 +8,7 @@ namespace CP6.Core.Services.Fin;
 /// 应付发票服务实现（章03 §3①）。
 /// 错误码：201 供应商发票号重复 / 202 发票不存在 / 203 仅草稿可过账 / 204 无明细行。
 /// </summary>
-public class ApInvoiceService : IApInvoiceService
+public class ApInvoiceService : IApInvoiceService, IFinAp
 {
     private readonly CP6Context _db;
     private readonly IAutoVoucherEngine _engine;
@@ -101,7 +101,7 @@ public class ApInvoiceService : IApInvoiceService
 
         var evt = new FinBizEvent
         {
-            EventType = "AP.InvoicePosted",
+            EventType = inv.IsCreditMemo ? "AP.CreditMemo" : "AP.InvoicePosted",
             Source = VoucherSource.AP,
             SourceDocNo = inv.No,
             BizDate = inv.InvoiceDate,
@@ -130,5 +130,46 @@ public class ApInvoiceService : IApInvoiceService
         inv.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
         return FinResult.Pass();
+    }
+
+    // ── IFinAp（F2-D3 采购对外契约）：采购三单匹配后据匹配结果建票并过账 ──
+    public async Task<FinApInvoiceResult> CreateInvoiceFromPurchaseAsync(FinApInvoiceRequest request, string operatorId)
+    {
+        // 幂等：同供应商同发票号已建则返回既有，不重复
+        if (!string.IsNullOrEmpty(request.SupplierInvoiceNo))
+        {
+            var existing = await _db.ApInvoices.FirstOrDefaultAsync(x =>
+                x.SupplierId == request.SupplierId &&
+                x.SupplierInvoiceNo == request.SupplierInvoiceNo && !x.IsCreditMemo);
+            if (existing != null)
+                return new FinApInvoiceResult { Result = FinResult.Pass(), InvoiceId = existing.Id, InvoiceNo = existing.No };
+        }
+
+        var inv = new ApInvoice
+        {
+            SupplierId = request.SupplierId,
+            SupplierInvoiceNo = request.SupplierInvoiceNo,
+            InvoiceDate = request.InvoiceDate,
+            DueDate = request.DueDate,
+            CurrencyCd = request.CurrencyCd,
+            FxRate = request.FxRate ?? 1m,
+            PurchaseOrderId = request.PurchaseOrderId,
+            Lines = request.Lines.Select(l => new ApInvoiceLine
+            {
+                ItemId = l.ItemId,
+                Qty = l.Qty,
+                UnitPrice = l.UnitPrice,
+                Amount = Math.Round(l.Qty * l.UnitPrice, 2, MidpointRounding.AwayFromZero),
+                TaxCodeId = l.TaxCodeId,
+                ExpenseAccountId = l.ExpenseAccountId,
+                CostCenterId = l.CostCenterId,
+            }).ToList(),
+        };
+
+        var created = await CreateAsync(inv, operatorId);
+        if (!created.Ok) return new FinApInvoiceResult { Result = created };
+
+        var posted = await PostAsync(inv.Id, operatorId);
+        return new FinApInvoiceResult { Result = posted, InvoiceId = inv.Id, InvoiceNo = inv.No };
     }
 }
