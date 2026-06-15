@@ -121,6 +121,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IApSettlementService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApReconcileService, CP6.Core.Services.Fin.ApReconcileService>(); // 章03 §4 子账↔GL 勾稽
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApAgingService, CP6.Core.Services.Fin.ApAgingService>(); // 章03 §5 应付账龄
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApMasterService, CP6.Core.Services.Fin.ApMasterService>(); // 章03 银行账户/税码主数据
+builder.Services.AddScoped<CP6.Core.Services.Fin.IArInvoiceService, CP6.Core.Services.Fin.ArInvoiceService>(); // 章04 §2 应收发票+出货自动开票+双凭证
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Services.Fin.IFinAp)sp.GetRequiredService<CP6.Core.Services.Fin.IApInvoiceService>()); // F2-D3 采购对外契约（同一 ApInvoiceService 实例）
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
