@@ -92,6 +92,35 @@ export interface TrialBalance {
   isBalanced: boolean
 }
 
+// ── 三大报表（章08）──
+/** 报表一行（科目级） */
+export interface FinReportLine { code: string; name: string; amount: number }
+/** 资产负债表（期末余额时点数；资产 = 负债+权益+本年利润 必平） */
+export interface BalanceSheet {
+  periodId: string
+  assets: FinReportLine[]
+  liabilities: FinReportLine[]
+  equity: FinReportLine[]
+  currentProfit: number
+  totalAssets: number
+  totalLiabilities: number
+  totalEquity: number
+  totalLiabEquity: number
+  isBalanced: boolean
+}
+/** 损益表（本期发生区间数；毛利=收入−COGS,净利润=毛利−营业费用） */
+export interface IncomeStatement {
+  periodId: string
+  revenueLines: FinReportLine[]
+  costLines: FinReportLine[]
+  expenseLines: FinReportLine[]
+  revenue: number
+  cost: number
+  grossProfit: number
+  operatingExpense: number
+  netProfit: number
+}
+
 // ── 枚举 → 中文标签（中文即 i18n key，视图用 t(label) 翻译）──
 export const ACCOUNT_TYPE_LABEL: Record<number, string> = { 1: '资产', 2: '负债', 3: '权益', 4: '收入', 5: '费用' }
 export const ACCOUNT_SIDE_LABEL: Record<number, string> = { 1: '借', 2: '贷' }

@@ -4,6 +4,7 @@ import type {
   ApInvoice, Payment, SettlementApply, ApAgingRow, ApReconcileResult,
   BankAccount, TaxCode,
   ArInvoice, Receipt, ArAgingRow, ArReconcileResult, CreditCheckResult, FinCreditMemoRequest,
+  BalanceSheet, IncomeStatement,
 } from '@/types/fin/fin'
 
 // 财务 API（/api/fin）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
@@ -170,6 +171,16 @@ export const receiptApi = {
 export const creditApi = {
   check(customerId: string, orderAmount: number) {
     return http.get<any, ApiResp<CreditCheckResult>>('/fin/ar/credit/check', { params: { customerId, orderAmount } })
+  },
+}
+
+/** 财务报表 /api/fin/report（资产负债表/损益表，从科目余额算） */
+export const reportApi = {
+  balanceSheet(periodId: string) {
+    return http.get<any, ApiResp<BalanceSheet>>(`/fin/report/balance-sheet/${periodId}`)
+  },
+  incomeStatement(periodId: string) {
+    return http.get<any, ApiResp<IncomeStatement>>(`/fin/report/income-statement/${periodId}`)
   },
 }
 

@@ -768,6 +768,18 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 610 });
         db.SaveChanges();
     }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 611))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 611, MenuName = "资产负债表", RoutePath = "/fin/balance-sheet", Icon = "Coin", ParentId = 600, OrderNo = 261, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 611 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 612))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 612, MenuName = "损益表", RoutePath = "/fin/income-statement", Icon = "TrendCharts", ParentId = 600, OrderNo = 262, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 612 });
+        db.SaveChanges();
+    }
     // 财务（Fin）功能权限点（D-2）：GL/AP/AR 变更端点的操作点 seed + 授权 admin(RoleId=1)。
     // 资源键 = Sys_Menu.MenuKey（由 RoutePath 派生，如 /fin/ar-invoice → fin-ar-invoice）。
     // PermissionService.HasActionAsync 无 admin 旁路：贴 [RequirePermission] 的端点必须在此 seed+授权，否则 admin 也 403。幂等。

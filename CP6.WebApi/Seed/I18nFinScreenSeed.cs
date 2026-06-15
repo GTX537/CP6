@@ -356,5 +356,26 @@ public static class I18nFinScreenSeed
         // ── 功能权限操作名（D-2，/pub/role-perm 功能权限页显示用；多数动作名已在上方/他处，仅补缺）──
         new Sys_Lang { LangKey = "导入", ZhCN = "导入", ZhTW = "匯入", En = "Import", Ja = "インポート", Ko = "가져오기" },
         new Sys_Lang { LangKey = "提交复核", ZhCN = "提交复核", ZhTW = "提交覆核", En = "Submit for review", Ja = "承認申請", Ko = "검토 요청" },
+
+        // ════════ 三大报表（章08）════════
+        new Sys_Lang { LangKey = "nav.611", ZhCN = "资产负债表", ZhTW = "資產負債表", En = "Balance Sheet", Ja = "貸借対照表", Ko = "재무상태표" },
+        new Sys_Lang { LangKey = "nav.612", ZhCN = "损益表", ZhTW = "損益表", En = "Income Statement", Ja = "損益計算書", Ko = "손익계산서" },
+        new Sys_Lang { LangKey = "资产负债表", ZhCN = "资产负债表", ZhTW = "資產負債表", En = "Balance Sheet", Ja = "貸借対照表", Ko = "재무상태표" },
+        new Sys_Lang { LangKey = "损益表", ZhCN = "损益表", ZhTW = "損益表", En = "Income Statement", Ja = "損益計算書", Ko = "손익계산서" },
+        new Sys_Lang { LangKey = "某时点家底：资产 = 负债 + 所有者权益（含本年利润）", ZhCN = "某时点家底：资产 = 负债 + 所有者权益（含本年利润）", ZhTW = "某時點家底：資產 = 負債 + 所有者權益（含本年利潤）", En = "Net worth at a point in time: Assets = Liabilities + Equity (incl. current profit)", Ja = "一時点の財政状態：資産 = 負債 + 純資産（当期利益含む）", Ko = "시점 재무상태: 자산 = 부채 + 자본(당기순이익 포함)" },
+        new Sys_Lang { LangKey = "一段时间赚了多少：取收入/成本/费用类本期发生额", ZhCN = "一段时间赚了多少：取收入/成本/费用类本期发生额", ZhTW = "一段時間賺了多少：取收入/成本/費用類本期發生額", En = "Earnings over a period: revenue/cost/expense movement", Ja = "一定期間の損益：収益/原価/費用の当期発生額", Ko = "기간 손익: 수익/원가/비용 당기 발생액" },
+        new Sys_Lang { LangKey = "平衡校验", ZhCN = "平衡校验", ZhTW = "平衡校驗", En = "Balance Check", Ja = "残高検証", Ko = "균형 검증" },
+        new Sys_Lang { LangKey = "资产合计", ZhCN = "资产合计", ZhTW = "資產合計", En = "Total Assets", Ja = "資産合計", Ko = "자산 합계" },
+        new Sys_Lang { LangKey = "负债与所有者权益", ZhCN = "负债与所有者权益", ZhTW = "負債與所有者權益", En = "Liabilities & Equity", Ja = "負債及び純資産", Ko = "부채와 자본" },
+        new Sys_Lang { LangKey = "负债与权益合计", ZhCN = "负债与权益合计", ZhTW = "負債與權益合計", En = "Total Liab. & Equity", Ja = "負債純資産合計", Ko = "부채와 자본 합계" },
+        new Sys_Lang { LangKey = "本年利润", ZhCN = "本年利润", ZhTW = "本年利潤", En = "Current Year Profit", Ja = "当期利益", Ko = "당기순이익(누계)" },
+        new Sys_Lang { LangKey = "营业收入", ZhCN = "营业收入", ZhTW = "營業收入", En = "Operating Revenue", Ja = "営業収益", Ko = "영업수익" },
+        new Sys_Lang { LangKey = "减：营业成本", ZhCN = "减：营业成本", ZhTW = "減：營業成本", En = "Less: Operating Cost", Ja = "控除：営業原価", Ko = "차감: 영업원가" },
+        new Sys_Lang { LangKey = "毛利", ZhCN = "毛利", ZhTW = "毛利", En = "Gross Profit", Ja = "売上総利益", Ko = "매출총이익" },
+        new Sys_Lang { LangKey = "减：营业费用", ZhCN = "减：营业费用", ZhTW = "減：營業費用", En = "Less: Operating Expenses", Ja = "控除：営業費用", Ko = "차감: 영업비용" },
+        new Sys_Lang { LangKey = "净利润", ZhCN = "净利润", ZhTW = "淨利潤", En = "Net Profit", Ja = "当期純利益", Ko = "순이익" },
+        new Sys_Lang { LangKey = "收入明细", ZhCN = "收入明细", ZhTW = "收入明細", En = "Revenue Detail", Ja = "収益明細", Ko = "수익 명세" },
+        new Sys_Lang { LangKey = "成本明细", ZhCN = "成本明细", ZhTW = "成本明細", En = "Cost Detail", Ja = "原価明細", Ko = "원가 명세" },
+        new Sys_Lang { LangKey = "费用明细", ZhCN = "费用明细", ZhTW = "費用明細", En = "Expense Detail", Ja = "費用明細", Ko = "비용 명세" },
     };
 }
