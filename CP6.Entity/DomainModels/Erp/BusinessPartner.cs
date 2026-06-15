@@ -36,6 +36,9 @@ public class BusinessPartner : BaseBizEntity
     /// <summary>取引通貨CD（多通貨 Gap 4.3。null/JPY = 基軸通貨。受注時にこの通貨の当日レートを凍結）</summary>
     [MaxLength(3)] public string? CurrencyCd { get; set; }
 
+    /// <summary>信用额度（本位币，AR 信用控制 F2 章04 §3。null/0=不控）</summary>
+    [Column(TypeName = "decimal(18,2)")] public decimal? CreditLimit { get; set; }
+
     // ───── 法人 / 公的番号 ─────
     [MaxLength(20)] public string? StdCoCd { get; set; }
     [MaxLength(13)] public string? Ein { get; set; }

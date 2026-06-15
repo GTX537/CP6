@@ -366,6 +366,14 @@ public class CP6Context : DbContext
     public DbSet<TaxCode> TaxCodes { get; set; }
     /// <summary>应付核销（章03）</summary>
     public DbSet<ApSettlement> ApSettlements { get; set; }
+    /// <summary>应收发票（章04）</summary>
+    public DbSet<ArInvoice> ArInvoices { get; set; }
+    /// <summary>应收发票明细行（章04）</summary>
+    public DbSet<ArInvoiceLine> ArInvoiceLines { get; set; }
+    /// <summary>收款单（章04）</summary>
+    public DbSet<Receipt> Receipts { get; set; }
+    /// <summary>应收核销（章04）</summary>
+    public DbSet<ArSettlement> ArSettlements { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -602,6 +610,40 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => x.PaymentId);
             e.HasIndex(x => x.ApInvoiceId);
+        });
+
+        // 应收发票（章04）：No 唯一 + 出货号防重开票（过滤式幂等）+ 检索
+        modelBuilder.Entity<ArInvoice>(e =>
+        {
+            e.HasIndex(x => x.No).IsUnique();
+            e.HasIndex(x => new { x.ShipmentId })
+                .IsUnique()
+                .HasFilter("[ShipmentId] IS NOT NULL AND [IsCreditMemo] = 0")
+                .HasDatabaseName("UX_Fin_ArInvoice_ShipmentDupGuard");
+            e.HasIndex(x => x.CustomerId);
+            e.HasIndex(x => x.Status);
+            e.HasIndex(x => x.DueDate);
+
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        modelBuilder.Entity<ArInvoiceLine>(e => e.HasIndex(x => x.InvoiceId));
+
+        // 收款单（章04）：No 唯一 + 按客户/状态检索
+        modelBuilder.Entity<Receipt>(e =>
+        {
+            e.HasIndex(x => x.No).IsUnique();
+            e.HasIndex(x => x.CustomerId);
+            e.HasIndex(x => x.Status);
+        });
+
+        // 应收核销（章04）
+        modelBuilder.Entity<ArSettlement>(e =>
+        {
+            e.HasIndex(x => x.ReceiptId);
+            e.HasIndex(x => x.ArInvoiceId);
         });
 
         // 見積計算書：QtnCalcNo 唯一
