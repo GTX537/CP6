@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels;
 
 namespace CP6.Core.Services.Integration;
@@ -45,23 +46,38 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
             var r = await ctx.Erp.OnShipmentConfirmedAsync(p.OutboundNo, p.UserName);
             return r.Success;
         },
+        [RouteKey("WMS", "FIN", "OnShipmentConfirmedAsync")] = async ctx =>
+        {
+            var p = ctx.GetPayload<FinShipmentInvoiceRequest>();
+            var r = await ctx.Fin.OnShipmentConfirmedAsync(p, null);
+            return r.Success;
+        },
+        [RouteKey("WMS", "FIN", "OnShipmentCancelledAsync")] = async ctx =>
+        {
+            var p = ctx.GetPayload<OnShipmentCancelledFinPayload>();
+            var r = await ctx.Fin.OnShipmentCancelledAsync(p.ShipmentId, p.UserName);
+            return r.Success;
+        },
     };
 
     private readonly IMesBridgeHook _mes;
     private readonly IWmsBridgeHook _wms;
     private readonly IErpBridgeHook _erp;
     private readonly IOrderCancelBridgeHook _cancel;
+    private readonly IFinBridgeHook _fin;
 
     public IntegrationEventDispatcher(
         IMesBridgeHook mes,
         IWmsBridgeHook wms,
         IErpBridgeHook erp,
-        IOrderCancelBridgeHook cancel)
+        IOrderCancelBridgeHook cancel,
+        IFinBridgeHook fin)
     {
         _mes = mes;
         _wms = wms;
         _erp = erp;
         _cancel = cancel;
+        _fin = fin;
     }
 
     /// <summary>
@@ -83,7 +99,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         }
 
         var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
-        var context = new DispatchContext(_mes, _wms, _erp, _cancel, payload);
+        var context = new DispatchContext(_mes, _wms, _erp, _cancel, _fin, payload);
         return route(context);
     }
 
@@ -94,12 +110,14 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
             IWmsBridgeHook wms,
             IErpBridgeHook erp,
             IOrderCancelBridgeHook cancel,
+            IFinBridgeHook fin,
             JsonElement payload)
         {
             Mes = mes;
             Wms = wms;
             Erp = erp;
             Cancel = cancel;
+            Fin = fin;
             Payload = payload;
         }
 
@@ -107,6 +125,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         public IWmsBridgeHook Wms { get; }
         public IErpBridgeHook Erp { get; }
         public IOrderCancelBridgeHook Cancel { get; }
+        public IFinBridgeHook Fin { get; }
         public JsonElement Payload { get; }
 
         public T GetPayload<T>()
@@ -143,6 +162,12 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
     private sealed class OnShipmentConfirmedPayload
     {
         public string OutboundNo { get; set; } = string.Empty;
+        public string? UserName { get; set; }
+    }
+
+    private sealed class OnShipmentCancelledFinPayload
+    {
+        public string ShipmentId { get; set; } = string.Empty;
         public string? UserName { get; set; }
     }
 }

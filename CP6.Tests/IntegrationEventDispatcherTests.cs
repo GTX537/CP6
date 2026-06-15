@@ -16,10 +16,11 @@ public class IntegrationEventDispatcherTests
         var wms = new Mock<IWmsBridgeHook>();
         var erp = new Mock<IErpBridgeHook>();
         var cancel = new Mock<IOrderCancelBridgeHook>();
+        var fin = new Mock<IFinBridgeHook>();
         mes.Setup(h => h.OnOrderCreatedAsync("WEB-001", "tester"))
             .ReturnsAsync(MesBridgeResult.Ok(new[] { "WO-001" }));
         var dispatcher = new IntegrationEventDispatcher(
-            mes.Object, wms.Object, erp.Object, cancel.Object);
+            mes.Object, wms.Object, erp.Object, cancel.Object, fin.Object);
 
         var ok = await dispatcher.DispatchAsync(new IntegrationEvent
         {
@@ -40,10 +41,11 @@ public class IntegrationEventDispatcherTests
         var wms = new Mock<IWmsBridgeHook>();
         var erp = new Mock<IErpBridgeHook>();
         var cancel = new Mock<IOrderCancelBridgeHook>();
+        var fin = new Mock<IFinBridgeHook>();
         wms.Setup(h => h.OnProductionCompletedAsync("WO-100", 12.34m, "u1"))
             .ReturnsAsync(WmsBridgeResult.Ok("IN-100"));
         var dispatcher = new IntegrationEventDispatcher(
-            mes.Object, wms.Object, erp.Object, cancel.Object);
+            mes.Object, wms.Object, erp.Object, cancel.Object, fin.Object);
 
         var ok = await dispatcher.DispatchAsync(new IntegrationEvent
         {
@@ -64,7 +66,8 @@ public class IntegrationEventDispatcherTests
             Mock.Of<IMesBridgeHook>(),
             Mock.Of<IWmsBridgeHook>(),
             Mock.Of<IErpBridgeHook>(),
-            Mock.Of<IOrderCancelBridgeHook>());
+            Mock.Of<IOrderCancelBridgeHook>(),
+            Mock.Of<IFinBridgeHook>());
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             dispatcher.DispatchAsync(new IntegrationEvent
@@ -88,7 +91,8 @@ public class IntegrationEventDispatcherTests
             Mock.Of<IMesBridgeHook>(),
             wms.Object,
             Mock.Of<IErpBridgeHook>(),
-            Mock.Of<IOrderCancelBridgeHook>());
+            Mock.Of<IOrderCancelBridgeHook>(),
+            Mock.Of<IFinBridgeHook>());
 
         var ok = await dispatcher.DispatchAsync(new IntegrationEvent
         {
