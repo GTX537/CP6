@@ -377,5 +377,9 @@ public static class I18nFinScreenSeed
         new Sys_Lang { LangKey = "收入明细", ZhCN = "收入明细", ZhTW = "收入明細", En = "Revenue Detail", Ja = "収益明細", Ko = "수익 명세" },
         new Sys_Lang { LangKey = "成本明细", ZhCN = "成本明细", ZhTW = "成本明細", En = "Cost Detail", Ja = "原価明細", Ko = "원가 명세" },
         new Sys_Lang { LangKey = "费用明细", ZhCN = "费用明细", ZhTW = "費用明細", En = "Expense Detail", Ja = "費用明細", Ko = "비용 명세" },
+
+        // ── 成本会计错误码（章06）──
+        new Sys_Lang { LangKey = "E-FIN-401", ZhCN = "工单不存在", ZhTW = "工單不存在", En = "Work order not found", Ja = "製造指図が存在しません", Ko = "작업지시가 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-402", ZhCN = "成本单已结转，不可重归集", ZhTW = "成本單已結轉，不可重歸集", En = "Cost sheet already settled; cannot re-collect", Ja = "原価表は振替済みで再集計できません", Ko = "원가표가 이미 대체되어 재집계할 수 없습니다" },
     };
 }

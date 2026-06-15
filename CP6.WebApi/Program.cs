@@ -128,6 +128,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IArInvoiceService, CP6.Core.Ser
 builder.Services.AddScoped<CP6.Core.Services.Fin.IReceiptService, CP6.Core.Services.Fin.ReceiptService>(); // 章04 §3 收款+预收+撤销
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArSettlementService, CP6.Core.Services.Fin.ArSettlementService>(); // 章04 §3 应收核销+尾差+汇差
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArReconcileService, CP6.Core.Services.Fin.ArReconcileService>(); // 章04 §3 子账↔GL 勾稽
+builder.Services.AddScoped<CP6.Core.Services.Fin.ICostCollectService, CP6.Core.Services.Fin.CostCollectService>(); // 章06 成本归集（料吃MES真实消耗×BOM单价+工费标准估算）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArAgingService, CP6.Core.Services.Fin.ArAgingService>(); // 章04 §3 应收账龄
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICreditControlService, CP6.Core.Services.Fin.CreditControlService>(); // 章04 §3 信用控制（出货前反向约束）
 builder.Services.AddScoped<CP6.Core.Services.Integration.IFinBridgeHook, CP6.Core.Services.Fin.FinBridgeHook>(); // F2-D4 出货→AR 自动开票/红冲（Phase6 桥，WMS|FIN 路由）

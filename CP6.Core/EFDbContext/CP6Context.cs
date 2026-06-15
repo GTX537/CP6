@@ -374,6 +374,10 @@ public class CP6Context : DbContext
     public DbSet<Receipt> Receipts { get; set; }
     /// <summary>应收核销（章04）</summary>
     public DbSet<ArSettlement> ArSettlements { get; set; }
+    /// <summary>成本单（章06，按工单归集料工费 + FG 单位成本）</summary>
+    public DbSet<CostSheet> CostSheets { get; set; }
+    /// <summary>成本归集明细行（章06）</summary>
+    public DbSet<CostSheetLine> CostSheetLines { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
