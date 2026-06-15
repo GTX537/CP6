@@ -130,6 +130,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IArSettlementService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArReconcileService, CP6.Core.Services.Fin.ArReconcileService>(); // 章04 §3 子账↔GL 勾稽
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICostCollectService, CP6.Core.Services.Fin.CostCollectService>(); // 章06 成本归集（料吃MES真实消耗×BOM单价+工费标准估算）
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICostSettleService, CP6.Core.Services.Fin.CostSettleService>(); // 章06 完工结转（料工费→WIP→FG凭证+FG单位成本）
+builder.Services.AddScoped<CP6.Core.Services.Fin.IFinReconciliationService, CP6.Core.Services.Fin.FinReconciliationService>(); // 章10 §5 每日对账（AP/AR子账↔GL+试算平衡）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArAgingService, CP6.Core.Services.Fin.ArAgingService>(); // 章04 §3 应收账龄
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICreditControlService, CP6.Core.Services.Fin.CreditControlService>(); // 章04 §3 信用控制（出货前反向约束）
 builder.Services.AddScoped<CP6.Core.Services.Integration.IFinBridgeHook, CP6.Core.Services.Fin.FinBridgeHook>(); // F2-D4 出货→AR 自动开票/红冲（Phase6 桥，WMS|FIN 路由）
@@ -365,6 +366,9 @@ builder.Services.AddScoped<CP6.Core.Services.Integration.IDeadLetterNotifier, CP
 
 // 4.15.5 Retry Worker — 60s ごとに Failed + NextRetryAt 到期 のイベントをリトライ
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEventRetryWorker>();
+
+// 财务每日对账 worker（章10 §5）：每日跑 AP/AR 子账↔GL + 试算平衡勾稽，不一致告警
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.FinReconciliationWorker>();
 
 // 4.15.6 T15 / Gap 2.3 — Prometheus /metrics（ブリッジ業務指標）
 //  - Snapshot Provider は T_IntegrationEvent を scrape 毎に集計（DB が単一の真実・再起動で値が消えない）。
