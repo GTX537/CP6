@@ -500,6 +500,14 @@ public class CP6Context : DbContext
             e.HasIndex(x => x.VoucherDate);
             e.HasIndex(x => x.ReverseOfId);
 
+            // 章05 自动凭证幂等的 DB 兜底：同一来源单据至多一张已过账自动凭证。
+            // 过滤：Source≠Manual(0) ∧ Status=Posted(2) ∧ SourceDocNo 非空（手工凭证/草稿不约束）。
+            // InMemory 不强制过滤唯一索引，故引擎层另有代码级幂等查重（双保险）。
+            e.HasIndex(x => new { x.Source, x.SourceDocNo })
+                .IsUnique()
+                .HasFilter("[Source] <> 0 AND [Status] = 2 AND [SourceDocNo] IS NOT NULL")
+                .HasDatabaseName("UX_Fin_JournalEntry_AutoVoucherSource");
+
             // 分录行级联：FK = EntryId（凭证删除时行随删；业务上凭证不删，红冲产生新凭证）
             e.HasMany(x => x.Lines)
                 .WithOne()
