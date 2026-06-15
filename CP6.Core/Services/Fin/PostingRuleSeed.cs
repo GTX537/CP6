@@ -69,6 +69,17 @@ public static class PostingRuleSeed
             },
         };
 
+        // AP 预付款：借 预付账款（带供应商）/ 贷 银行存款（账户来自事件头）
+        yield return new PostingRule
+        {
+            EventType = "AP.Prepayment", Name = "应付预付款", VoucherSource = VoucherSource.AP, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "AP_PREPAYMENT", "Amount", carryPartner: true),
+                Header(2, PostingSide.Credit, "BankGlAccountId", "Amount"),
+            },
+        };
+
         // AR 收入确认：借 应收（带客户）/ 贷 主营收入 / 贷 销项税（0额跳过）
         yield return new PostingRule
         {

@@ -116,6 +116,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.ITrialBalanceService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IPeriodCloseService, CP6.Core.Services.Fin.PeriodCloseService>(); // 章02 §3 月结/锁期/反结账
 builder.Services.AddScoped<CP6.Core.Services.Fin.IAutoVoucherEngine, CP6.Core.Services.Fin.AutoVoucherEngine>(); // 章05 自动凭证引擎（规则即数据→AutoPost）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApInvoiceService, CP6.Core.Services.Fin.ApInvoiceService>(); // 章03 §3① 应付发票录入+过账
+builder.Services.AddScoped<CP6.Core.Services.Fin.IPaymentService, CP6.Core.Services.Fin.PaymentService>(); // 章03 §3② 付款+预付+撤销
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）

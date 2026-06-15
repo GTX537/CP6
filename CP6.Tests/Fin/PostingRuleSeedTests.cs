@@ -21,16 +21,16 @@ public class PostingRuleSeedTests
     private static readonly DateTime Biz = new(2026, 6, 15);
 
     [Fact]
-    public void EnsureSeeded_SeedsFourRules_AndIsIdempotent()
+    public void EnsureSeeded_SeedsStandardRules_AndIsIdempotent()
     {
         using var db = NewDb();
         var n1 = PostingRuleSeed.EnsureSeeded(db);
         var n2 = PostingRuleSeed.EnsureSeeded(db);   // 重播
 
-        Assert.Equal(4, n1);
+        Assert.Equal(5, n1);
         Assert.Equal(0, n2);                          // ★ 幂等
-        Assert.Equal(4, db.PostingRules.Count());
-        Assert.All(new[] { "AP.InvoicePosted", "AP.Payment", "AR.Revenue", "AR.Cogs" },
+        Assert.Equal(5, db.PostingRules.Count());
+        Assert.All(new[] { "AP.InvoicePosted", "AP.Payment", "AP.Prepayment", "AR.Revenue", "AR.Cogs" },
             et => Assert.True(db.PostingRules.Any(r => r.EventType == et)));
     }
 

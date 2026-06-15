@@ -48,7 +48,7 @@ public static class FinCoaTemplate
         new("1012", "其他货币资金", AccountType.Asset, Dr, true, 2, ParentCode: "1000"),
         new("1101", "交易性金融资产", AccountType.Asset, Dr, true, 2, ParentCode: "1000"),
         new("1122", "应收账款",   AccountType.Asset, Dr, true, 2, IsControl: true, SubLedgerType: "AR", RequirePartner: true, Role: "AR_CONTROL", ParentCode: "1000"),
-        new("1123", "预付账款",   AccountType.Asset, Dr, true, 2, ParentCode: "1000"),
+        new("1123", "预付账款",   AccountType.Asset, Dr, true, 2, RequirePartner: true, Role: "AP_PREPAYMENT", ParentCode: "1000"),
         new("1131", "应收票据",   AccountType.Asset, Dr, true, 2, ParentCode: "1000"),
         new("1221", "其他应收款", AccountType.Asset, Dr, true, 2, ParentCode: "1000"),
         new("1231", "坏账准备",   AccountType.Asset, Cr, true, 2, ParentCode: "1000"),   // 备抵，贷方余额
