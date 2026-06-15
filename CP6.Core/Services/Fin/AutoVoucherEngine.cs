@@ -6,7 +6,7 @@ namespace CP6.Core.Services.Fin;
 
 /// <summary>
 /// 自动凭证引擎实现（章05 §3/§4）。
-/// 错误码：140 规则未找到 / 141 科目角色解析失败（无 Role 科目且无兜底）。
+/// 错误码：150 规则未找到 / 141 科目角色解析失败（无 Role 科目且无兜底）。
 /// 借贷恒等 / 锁期 / 采番 / maker-checker 全由 <see cref="IJournalEntryService.AutoPostAsync"/> 兜底（双保险）。
 /// </summary>
 public class AutoVoucherEngine : IAutoVoucherEngine
@@ -34,7 +34,7 @@ public class AutoVoucherEngine : IAutoVoucherEngine
         var rule = await _db.PostingRules
             .Include(r => r.Lines)
             .FirstOrDefaultAsync(r => r.EventType == evt.EventType && r.IsActive);
-        if (rule == null) return FinResult.Fail("E-FIN-140", evt.EventType);
+        if (rule == null) return FinResult.Fail("E-FIN-150", evt.EventType);
 
         // —— Step 3 拼凭证 ——
         var entry = new JournalEntry

@@ -26,6 +26,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/fin/journal': () => import('@/views/fin/JournalEntryView.vue'),       // 章01 记账凭证
   '/fin/trial-balance': () => import('@/views/fin/TrialBalanceView.vue'), // 章02 试算平衡表
   '/fin/period': () => import('@/views/fin/PeriodCloseView.vue'),         // 章02 期间/月结
+  '/fin/ap-invoice': () => import('@/views/fin/ApInvoiceView.vue'),       // 章03 应付发票
+  '/fin/ap-payment': () => import('@/views/fin/PaymentView.vue'),         // 章03 付款/核销
+  '/fin/ap-aging': () => import('@/views/fin/ApAgingView.vue'),           // 章03 应付账龄/对账
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),

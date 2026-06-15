@@ -120,6 +120,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IPaymentService, CP6.Core.Servi
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApSettlementService, CP6.Core.Services.Fin.ApSettlementService>(); // 章03 §3③/§4 核销+尾差+汇差
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApReconcileService, CP6.Core.Services.Fin.ApReconcileService>(); // 章03 §4 子账↔GL 勾稽
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApAgingService, CP6.Core.Services.Fin.ApAgingService>(); // 章03 §5 应付账龄
+builder.Services.AddScoped<CP6.Core.Services.Fin.IApMasterService, CP6.Core.Services.Fin.ApMasterService>(); // 章03 银行账户/税码主数据
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Services.Fin.IFinAp)sp.GetRequiredService<CP6.Core.Services.Fin.IApInvoiceService>()); // F2-D3 采购对外契约（同一 ApInvoiceService 实例）
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
@@ -719,6 +720,24 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 604, MenuName = "会计期间/月结", RoutePath = "/fin/period", Icon = "Calendar", ParentId = 600, OrderNo = 254, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 604 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 605))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 605, MenuName = "应付发票", RoutePath = "/fin/ap-invoice", Icon = "Tickets", ParentId = 600, OrderNo = 255, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 605 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 606))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 606, MenuName = "付款/核销", RoutePath = "/fin/ap-payment", Icon = "Wallet", ParentId = 600, OrderNo = 256, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 606 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 607))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 607, MenuName = "应付账龄", RoutePath = "/fin/ap-aging", Icon = "Histogram", ParentId = 600, OrderNo = 257, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 607 });
         db.SaveChanges();
     }
 

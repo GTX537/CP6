@@ -1,6 +1,8 @@
 import http from '../http'
 import type {
   ApiResp, GlAccount, JournalEntry, FiscalPeriod, TrialBalance,
+  ApInvoice, Payment, SettlementApply, ApAgingRow, ApReconcileResult,
+  BankAccount, TaxCode,
 } from '@/types/fin/fin'
 
 // 财务 API（/api/fin）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
@@ -56,6 +58,63 @@ export const journalApi = {
 export const trialBalanceApi = {
   build(periodId: string) {
     return http.get<any, ApiResp<TrialBalance>>(`/fin/trial-balance/${periodId}`)
+  },
+}
+
+/** 应付发票 /api/fin/ap/invoice */
+export const apInvoiceApi = {
+  list(supplierId?: string, status?: number) {
+    return http.get<any, ApiResp<ApInvoice[]>>('/fin/ap/invoice', { params: { supplierId, status } })
+  },
+  get(id: string) {
+    return http.get<any, ApiResp<ApInvoice>>(`/fin/ap/invoice/${id}`)
+  },
+  create(data: ApInvoice) {
+    return http.post<any, ApiResp<{ id: string; no: string }>>('/fin/ap/invoice', data)
+  },
+  post(id: string) {
+    return http.post<any, ApiResp<unknown>>(`/fin/ap/invoice/${id}/post`)
+  },
+  aging(asOf?: string, supplierId?: string) {
+    return http.get<any, ApiResp<ApAgingRow[]>>('/fin/ap/invoice/aging', { params: { asOf, supplierId } })
+  },
+  reconcile() {
+    return http.get<any, ApiResp<ApReconcileResult>>('/fin/ap/invoice/reconcile')
+  },
+}
+
+/** 付款 /api/fin/ap/payment */
+export const paymentApi = {
+  list(supplierId?: string, status?: number) {
+    return http.get<any, ApiResp<Payment[]>>('/fin/ap/payment', { params: { supplierId, status } })
+  },
+  get(id: string) {
+    return http.get<any, ApiResp<Payment>>(`/fin/ap/payment/${id}`)
+  },
+  pay(data: Payment) {
+    return http.post<any, ApiResp<{ id: string; no: string }>>('/fin/ap/payment', data)
+  },
+  reverse(id: string, reason: string) {
+    return http.post<any, ApiResp<unknown>>(`/fin/ap/payment/${id}/reverse`, { reason })
+  },
+  settle(id: string, applies: SettlementApply[]) {
+    return http.post<any, ApiResp<unknown>>(`/fin/ap/payment/${id}/settle`, { applies })
+  },
+}
+
+/** 应付主数据（银行账户/税码）/api/fin/ap/master */
+export const apMasterApi = {
+  bankAccounts(includeInactive = false) {
+    return http.get<any, ApiResp<BankAccount[]>>('/fin/ap/master/bank-account', { params: { includeInactive } })
+  },
+  createBankAccount(data: BankAccount) {
+    return http.post<any, ApiResp<{ id: string }>>('/fin/ap/master/bank-account', data)
+  },
+  taxCodes(includeInactive = false) {
+    return http.get<any, ApiResp<TaxCode[]>>('/fin/ap/master/tax-code', { params: { includeInactive } })
+  },
+  createTaxCode(data: TaxCode) {
+    return http.post<any, ApiResp<{ id: string }>>('/fin/ap/master/tax-code', data)
   },
 }
 
