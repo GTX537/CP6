@@ -381,5 +381,31 @@ public static class I18nFinScreenSeed
         // ── 成本会计错误码（章06）──
         new Sys_Lang { LangKey = "E-FIN-401", ZhCN = "工单不存在", ZhTW = "工單不存在", En = "Work order not found", Ja = "製造指図が存在しません", Ko = "작업지시가 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-402", ZhCN = "成本单已结转，不可重归集", ZhTW = "成本單已結轉，不可重歸集", En = "Cost sheet already settled; cannot re-collect", Ja = "原価表は振替済みで再集計できません", Ko = "원가표가 이미 대체되어 재집계할 수 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-403", ZhCN = "成本单不存在或未归集", ZhTW = "成本單不存在或未歸集", En = "Cost sheet not found or not collected", Ja = "原価表が存在しないか未集計です", Ko = "원가표가 없거나 미집계 상태입니다" },
+
+        // ════════ 成本核算（章06）════════
+        new Sys_Lang { LangKey = "nav.613", ZhCN = "成本核算", ZhTW = "成本核算", En = "Cost Accounting", Ja = "原価計算", Ko = "원가계산" },
+        new Sys_Lang { LangKey = "成本核算", ZhCN = "成本核算", ZhTW = "成本核算", En = "Cost Accounting", Ja = "原価計算", Ko = "원가계산" },
+        new Sys_Lang { LangKey = "料吃MES真实消耗×BOM单价，工费标准估算；完工结转 WIP→FG", ZhCN = "料吃MES真实消耗×BOM单价，工费标准估算；完工结转 WIP→FG", ZhTW = "料吃MES真實消耗×BOM單價，工費標準估算；完工結轉 WIP→FG", En = "Material from MES actual consumption × BOM price, labor/oh standard; settle WIP→FG on completion", Ja = "材料はMES実際消費×BOM単価、工費は標準見積；完成時 仕掛品→製品 振替", Ko = "자재는 MES 실제소비×BOM단가, 공임 표준추정; 완성 시 재공품→제품 대체" },
+        new Sys_Lang { LangKey = "归集成本", ZhCN = "归集成本", ZhTW = "歸集成本", En = "Collect Cost", Ja = "原価集計", Ko = "원가 집계" },
+        new Sys_Lang { LangKey = "归集", ZhCN = "归集", ZhTW = "歸集", En = "Collect", Ja = "集計", Ko = "집계" },
+        new Sys_Lang { LangKey = "成本单号", ZhCN = "成本单号", ZhTW = "成本單號", En = "Cost Sheet No.", Ja = "原価表番号", Ko = "원가표 번호" },
+        new Sys_Lang { LangKey = "工单号", ZhCN = "工单号", ZhTW = "工單號", En = "Work Order No.", Ja = "製造指図番号", Ko = "작업지시 번호" },
+        new Sys_Lang { LangKey = "制品", ZhCN = "制品", ZhTW = "製品", En = "Product", Ja = "製品", Ko = "제품" },
+        new Sys_Lang { LangKey = "完工数", ZhCN = "完工数", ZhTW = "完工數", En = "Completed Qty", Ja = "完成数", Ko = "완성 수량" },
+        new Sys_Lang { LangKey = "实际料", ZhCN = "实际料", ZhTW = "實際料", En = "Actual Material", Ja = "実際材料費", Ko = "실제 자재" },
+        new Sys_Lang { LangKey = "标准料", ZhCN = "标准料", ZhTW = "標準料", En = "Standard Material", Ja = "標準材料費", Ko = "표준 자재" },
+        new Sys_Lang { LangKey = "直接人工", ZhCN = "直接人工", ZhTW = "直接人工", En = "Direct Labor", Ja = "直接労務費", Ko = "직접 노무" },
+        new Sys_Lang { LangKey = "制造费用", ZhCN = "制造费用", ZhTW = "製造費用", En = "Mfg Overhead", Ja = "製造間接費", Ko = "제조간접비" },
+        new Sys_Lang { LangKey = "实际总成本", ZhCN = "实际总成本", ZhTW = "實際總成本", En = "Total Actual Cost", Ja = "実際総原価", Ko = "실제 총원가" },
+        new Sys_Lang { LangKey = "差异", ZhCN = "差异", ZhTW = "差異", En = "Variance", Ja = "差異", Ko = "차이" },
+        new Sys_Lang { LangKey = "FG单位成本", ZhCN = "FG单位成本", ZhTW = "FG單位成本", En = "FG Unit Cost", Ja = "完成品単位原価", Ko = "완제품 단위원가" },
+        new Sys_Lang { LangKey = "暂无成本单", ZhCN = "暂无成本单", ZhTW = "暫無成本單", En = "No cost sheets", Ja = "原価表がありません", Ko = "원가표가 없습니다" },
+        new Sys_Lang { LangKey = "请输入工单号", ZhCN = "请输入工单号", ZhTW = "請輸入工單號", En = "Enter work order no.", Ja = "製造指図番号を入力", Ko = "작업지시 번호를 입력하세요" },
+        new Sys_Lang { LangKey = "标准人工", ZhCN = "标准人工", ZhTW = "標準人工", En = "Standard Labor", Ja = "標準労務費", Ko = "표준 노무" },
+        new Sys_Lang { LangKey = "标准制造费用", ZhCN = "标准制造费用", ZhTW = "標準製造費用", En = "Standard Overhead", Ja = "標準製造間接費", Ko = "표준 제조간접비" },
+        new Sys_Lang { LangKey = "料成本自动取该工单 MES 实际消耗 × BOM 供给单价", ZhCN = "料成本自动取该工单 MES 实际消耗 × BOM 供给单价", ZhTW = "料成本自動取該工單 MES 實際消耗 × BOM 供給單價", En = "Material cost = work order MES actual consumption × BOM supply price", Ja = "材料費は当該指図のMES実際消費×BOM受給単価で自動取得", Ko = "자재비는 해당 지시의 MES 실제소비 × BOM 공급단가로 자동 산출" },
+        new Sys_Lang { LangKey = "已归集", ZhCN = "已归集", ZhTW = "已歸集", En = "Collected", Ja = "集計済", Ko = "집계됨" },
+        new Sys_Lang { LangKey = "已结转", ZhCN = "已结转", ZhTW = "已結轉", En = "Settled", Ja = "振替済", Ko = "대체됨" },
     };
 }

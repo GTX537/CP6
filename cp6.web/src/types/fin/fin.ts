@@ -121,6 +121,43 @@ export interface IncomeStatement {
   netProfit: number
 }
 
+// ── 成本核算（章06）──
+/** 成本归集明细行 */
+export interface CostSheetLine {
+  id?: string
+  lineNo: number
+  element: number       // CostElement: 1直接材料 2直接人工 3制造费用
+  processCd?: string | null
+  materialCd?: string | null
+  materialName?: string | null
+  planQty: number
+  actualQty: number
+  unitPrice: number
+  actualAmount: number
+  standardAmount: number
+}
+/** 成本单（料吃MES真实消耗×BOM单价；计算属性由后端序列化） */
+export interface CostSheet {
+  id?: string
+  no: string
+  workOrderNo: string
+  productCd?: string | null
+  completedQty: number
+  materialActual: number
+  materialStandard: number
+  laborStd: number
+  overheadStd: number
+  status: number        // CostSheetStatus: 0草稿 1已归集 2已结转
+  totalActual: number
+  standardCost: number
+  variance: number
+  fgUnitCost: number
+  lines?: CostSheetLine[]
+}
+export const COST_SHEET_STATUS_LABEL: Record<number, string> = { 0: '草稿', 1: '已归集', 2: '已结转' }
+export const COST_SHEET_STATUS_TAG: Record<number, '' | 'info' | 'success' | 'warning' | 'danger'> = { 0: 'info', 1: 'warning', 2: 'success' }
+export const COST_ELEMENT_LABEL: Record<number, string> = { 1: '直接材料', 2: '直接人工', 3: '制造费用' }
+
 // ── 枚举 → 中文标签（中文即 i18n key，视图用 t(label) 翻译）──
 export const ACCOUNT_TYPE_LABEL: Record<number, string> = { 1: '资产', 2: '负债', 3: '权益', 4: '收入', 5: '费用' }
 export const ACCOUNT_SIDE_LABEL: Record<number, string> = { 1: '借', 2: '贷' }

@@ -129,6 +129,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IReceiptService, CP6.Core.Servi
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArSettlementService, CP6.Core.Services.Fin.ArSettlementService>(); // 章04 §3 应收核销+尾差+汇差
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArReconcileService, CP6.Core.Services.Fin.ArReconcileService>(); // 章04 §3 子账↔GL 勾稽
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICostCollectService, CP6.Core.Services.Fin.CostCollectService>(); // 章06 成本归集（料吃MES真实消耗×BOM单价+工费标准估算）
+builder.Services.AddScoped<CP6.Core.Services.Fin.ICostSettleService, CP6.Core.Services.Fin.CostSettleService>(); // 章06 完工结转（料工费→WIP→FG凭证+FG单位成本）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArAgingService, CP6.Core.Services.Fin.ArAgingService>(); // 章04 §3 应收账龄
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICreditControlService, CP6.Core.Services.Fin.CreditControlService>(); // 章04 §3 信用控制（出货前反向约束）
 builder.Services.AddScoped<CP6.Core.Services.Integration.IFinBridgeHook, CP6.Core.Services.Fin.FinBridgeHook>(); // F2-D4 出货→AR 自动开票/红冲（Phase6 桥，WMS|FIN 路由）
@@ -781,12 +782,18 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 612 });
         db.SaveChanges();
     }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 613))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 613, MenuName = "成本核算", RoutePath = "/fin/cost", Icon = "ScaleToOriginal", ParentId = 600, OrderNo = 263, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 613 });
+        db.SaveChanges();
+    }
     // 财务（Fin）功能权限点（D-2）：GL/AP/AR 变更端点的操作点 seed + 授权 admin(RoleId=1)。
     // 资源键 = Sys_Menu.MenuKey（由 RoutePath 派生，如 /fin/ar-invoice → fin-ar-invoice）。
     // PermissionService.HasActionAsync 无 admin 旁路：贴 [RequirePermission] 的端点必须在此 seed+授权，否则 admin 也 403。幂等。
     {
         // 确保 Fin 菜单的 MenuKey 已就位（全新库首启时这些菜单在上方 §545 回填之后才创建，故此处补一次，与全局回填同算法）
-        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 610).ToList())
+        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 613).ToList())
             fm.MenuKey = fm.RoutePath!.Trim('/').Replace('/', '-');
         db.SaveChanges();
 
@@ -800,6 +807,7 @@ using (var scope = app.Services.CreateScope())
             (606, "add", "新建"), (606, "settle", "核销"), (606, "reverse", "撤销"), (606, "bank", "银行账户"), (606, "tax", "税码"),
             (608, "add", "新建"), (608, "post", "过账"), (608, "credit-memo", "销售红字"), (608, "reverse", "红冲"),
             (609, "add", "新建"), (609, "settle", "核销"), (609, "reverse", "撤销"),
+            (613, "collect", "归集"), (613, "settle", "结转"),
         };
         foreach (var (menuId, code, name) in finActions)
         {

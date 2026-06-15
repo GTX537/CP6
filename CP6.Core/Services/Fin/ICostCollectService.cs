@@ -16,4 +16,7 @@ public interface ICostCollectService
 
     /// <summary>取某工单的成本单（含明细）。</summary>
     Task<CostSheet?> GetByWorkOrderAsync(string workOrderNo);
+
+    /// <summary>成本单列表（按状态可选过滤，不含明细，按创建倒序）。</summary>
+    Task<List<CostSheet>> ListAsync(CostSheetStatus? status = null);
 }

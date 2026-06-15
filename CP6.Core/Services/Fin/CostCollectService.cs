@@ -101,4 +101,11 @@ public class CostCollectService : ICostCollectService
 
     public Task<CostSheet?> GetByWorkOrderAsync(string workOrderNo)
         => _db.CostSheets.Include(s => s.Lines).FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo);
+
+    public async Task<List<CostSheet>> ListAsync(CostSheetStatus? status = null)
+    {
+        var q = _db.CostSheets.AsNoTracking().AsQueryable();
+        if (status is CostSheetStatus s) q = q.Where(x => x.Status == s);
+        return await q.OrderByDescending(x => x.CreateDate).ToListAsync();
+    }
 }

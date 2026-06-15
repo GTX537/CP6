@@ -4,7 +4,7 @@ import type {
   ApInvoice, Payment, SettlementApply, ApAgingRow, ApReconcileResult,
   BankAccount, TaxCode,
   ArInvoice, Receipt, ArAgingRow, ArReconcileResult, CreditCheckResult, FinCreditMemoRequest,
-  BalanceSheet, IncomeStatement,
+  BalanceSheet, IncomeStatement, CostSheet,
 } from '@/types/fin/fin'
 
 // 财务 API（/api/fin）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
@@ -181,6 +181,22 @@ export const reportApi = {
   },
   incomeStatement(periodId: string) {
     return http.get<any, ApiResp<IncomeStatement>>(`/fin/report/income-statement/${periodId}`)
+  },
+}
+
+/** 成本核算 /api/fin/cost（料吃MES真实消耗×BOM单价 + 完工结转WIP→FG） */
+export const costApi = {
+  list(status?: number) {
+    return http.get<any, ApiResp<CostSheet[]>>('/fin/cost', { params: { status } })
+  },
+  get(workOrderNo: string) {
+    return http.get<any, ApiResp<CostSheet>>(`/fin/cost/${workOrderNo}`)
+  },
+  collect(workOrderNo: string, laborStd: number, overheadStd: number) {
+    return http.post<any, ApiResp<unknown>>(`/fin/cost/${workOrderNo}/collect`, { laborStd, overheadStd })
+  },
+  settle(workOrderNo: string) {
+    return http.post<any, ApiResp<unknown>>(`/fin/cost/${workOrderNo}/settle`)
   },
 }
 
