@@ -47,7 +47,7 @@ export interface JournalEntry {
   no?: string
   voucherDate: string
   periodId?: string
-  source: number        // VoucherSource: 0手工 1AP 2AR 3成本 4结转 5红冲
+  source: number        // VoucherSource: 0手工 1AP 2AR 3成本 4结转 5红冲 6汇兑重估
   sourceDocNo?: string | null
   status: number        // JournalStatus: 0草稿 1待复核 2已过账 3已驳回 4已红冲
   description: string
@@ -95,7 +95,7 @@ export interface TrialBalance {
 // ── 枚举 → 中文标签（中文即 i18n key，视图用 t(label) 翻译）──
 export const ACCOUNT_TYPE_LABEL: Record<number, string> = { 1: '资产', 2: '负债', 3: '权益', 4: '收入', 5: '费用' }
 export const ACCOUNT_SIDE_LABEL: Record<number, string> = { 1: '借', 2: '贷' }
-export const VOUCHER_SOURCE_LABEL: Record<number, string> = { 0: '手工', 1: '应付', 2: '应收', 3: '成本', 4: '结转', 5: '红冲' }
+export const VOUCHER_SOURCE_LABEL: Record<number, string> = { 0: '手工', 1: '应付', 2: '应收', 3: '成本', 4: '结转', 5: '红冲', 6: '汇兑重估' }
 export const JOURNAL_STATUS_LABEL: Record<number, string> = { 0: '草稿', 1: '待复核', 2: '已过账', 3: '已驳回', 4: '已红冲' }
 export const JOURNAL_STATUS_TAG: Record<number, '' | 'info' | 'success' | 'warning' | 'danger'> =
   { 0: 'info', 1: 'warning', 2: 'success', 3: 'danger', 4: '' }

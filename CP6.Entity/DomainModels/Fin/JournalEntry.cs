@@ -83,6 +83,8 @@ public enum VoucherSource
     Carryover = 4,
     /// <summary>红冲</summary>
     Reversal = 5,
+    /// <summary>期末未实现汇兑重估（含下期初冲回）</summary>
+    FxReval = 6,
 }
 
 /// <summary>凭证状态机</summary>

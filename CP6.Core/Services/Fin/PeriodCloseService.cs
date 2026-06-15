@@ -14,14 +14,16 @@ public class PeriodCloseService : IPeriodCloseService
     private readonly CP6Context _db;
     private readonly IFiscalPeriodService _periods;
     private readonly ITrialBalanceService _trial;
+    private readonly IFxRevaluationService? _reval;
     private readonly ILogger<PeriodCloseService>? _logger;
 
     public PeriodCloseService(CP6Context db, IFiscalPeriodService periods, ITrialBalanceService trial,
-        ILogger<PeriodCloseService>? logger = null)
+        IFxRevaluationService? reval = null, ILogger<PeriodCloseService>? logger = null)
     {
         _db = db;
         _periods = periods;
         _trial = trial;
+        _reval = reval;
         _logger = logger;
     }
 
@@ -52,6 +54,14 @@ public class PeriodCloseService : IPeriodCloseService
     {
         var check = await PreCloseCheckAsync(periodId);
         if (!check.Ok) return check;
+
+        // ★ 章07 §4：结账前对未结外币 AP/AR 余额做期末未实现汇兑重估（重估凭证落本期 + 冲回凭证落下期初）。
+        // 重估失败（如汇兑科目角色缺失）则阻断结账；期末汇率未登记的币种内部跳过并告警，不阻断。
+        if (_reval != null)
+        {
+            var rr = await _reval.RevalueAsync(periodId, userId);
+            if (!rr.Ok) return rr;
+        }
 
         var p = await _db.FiscalPeriods.FindAsync(periodId);
         p!.Status = PeriodStatus.Closed;

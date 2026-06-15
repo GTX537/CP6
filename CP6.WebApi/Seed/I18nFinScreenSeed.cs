@@ -32,6 +32,7 @@ public static class I18nFinScreenSeed
         new Sys_Lang { LangKey = "应收", ZhCN = "应收", ZhTW = "應收", En = "AR", Ja = "売掛", Ko = "매출채권" },
         new Sys_Lang { LangKey = "结转", ZhCN = "结转", ZhTW = "結轉", En = "Carryover", Ja = "繰越", Ko = "이월" },
         new Sys_Lang { LangKey = "红冲", ZhCN = "红冲", ZhTW = "紅沖", En = "Reversal", Ja = "赤伝（取消）", Ko = "역분개" },
+        new Sys_Lang { LangKey = "汇兑重估", ZhCN = "汇兑重估", ZhTW = "匯兌重估", En = "FX Revaluation", Ja = "為替再評価", Ko = "환율 재평가" },
         new Sys_Lang { LangKey = "草稿", ZhCN = "草稿", ZhTW = "草稿", En = "Draft", Ja = "下書き", Ko = "임시" },
         new Sys_Lang { LangKey = "待复核", ZhCN = "待复核", ZhTW = "待覆核", En = "Pending Review", Ja = "承認待ち", Ko = "검토 대기" },
         new Sys_Lang { LangKey = "已过账", ZhCN = "已过账", ZhTW = "已過帳", En = "Posted", Ja = "記帳済み", Ko = "전기 완료" },
