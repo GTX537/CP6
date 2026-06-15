@@ -97,4 +97,7 @@ public enum RuleLineSource
     FixedRole = 1,
     /// <summary>单据行透传：把事件 DocLines 按 科目+成本中心 分组炸成多条分录（如 借各 ExpenseAccount）</summary>
     DocumentLines = 2,
+    /// <summary>事件头取科目：科目 Id 来自事件头某 Guid 字段（<see cref="LineAccountField"/> 命名该字段，
+    /// 如付款的银行存款科目"BankGlAccountId"）+ 金额取 <see cref="AmountField"/>。银行/现金等"运行时才定科目"的行用。</summary>
+    HeaderAccount = 3,
 }

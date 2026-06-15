@@ -114,6 +114,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IFiscalPeriodService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IJournalEntryService, CP6.Core.Services.Fin.JournalEntryService>(); // 章01 §5/§6 凭证：借贷恒等+maker-checker+红冲
 builder.Services.AddScoped<CP6.Core.Services.Fin.ITrialBalanceService, CP6.Core.Services.Fin.TrialBalanceService>(); // 章02 §2 三栏试算平衡表
 builder.Services.AddScoped<CP6.Core.Services.Fin.IPeriodCloseService, CP6.Core.Services.Fin.PeriodCloseService>(); // 章02 §3 月结/锁期/反结账
+builder.Services.AddScoped<CP6.Core.Services.Fin.IAutoVoucherEngine, CP6.Core.Services.Fin.AutoVoucherEngine>(); // 章05 自动凭证引擎（规则即数据→AutoPost）
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
@@ -395,6 +396,9 @@ using (var scope = app.Services.CreateScope())
 
     // Docker 环境下自动创建数据库并应用所有迁移
     db.Database.Migrate();
+
+    // 章05 自动凭证记账规则种子（幂等，按 EventType 判存；只引用 Role 锚点，与 COA 模板包解耦）
+    CP6.Core.Services.Fin.PostingRuleSeed.EnsureSeeded(db);
 
     if (!db.Sys_Menus.Any())
     {

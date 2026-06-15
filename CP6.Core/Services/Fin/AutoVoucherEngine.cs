@@ -59,6 +59,16 @@ public class AutoVoucherEngine : IAutoVoucherEngine
                 if (orig == 0m) continue;       // 0 额跳过（如本位币无独立进项税行）
                 entry.Lines.Add(BuildLine(rl, aid, Round(orig * rate), orig, evt, isFx, evt.CostCenterId));
             }
+            else if (rl.Source == RuleLineSource.HeaderAccount)
+            {
+                // 科目来自事件头某 Guid 字段（如付款的银行存款科目）
+                var accId = evt.GetGuid(rl.LineAccountField) ?? rl.FallbackAccountId;
+                if (accId is not Guid aid) return FinResult.Fail("E-FIN-141", rl.LineAccountField ?? "");
+
+                var orig = evt.GetAmount(rl.AmountField);
+                if (orig == 0m) continue;
+                entry.Lines.Add(BuildLine(rl, aid, Round(orig * rate), orig, evt, isFx, evt.CostCenterId));
+            }
             else // DocumentLines：按 科目 + 成本中心 分组炸开单据行
             {
                 var groups = evt.DocLines
