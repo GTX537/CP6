@@ -1,6 +1,8 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Fin;
+using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Fin;
+using CP6.Entity.DomainModels.Mes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -25,7 +27,8 @@ public class FinBridgeHookTests
         var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
         var engine = new AutoVoucherEngine(db, journal);
         var ar = new ArInvoiceService(db, engine, journal, new FinSequenceService(db));
-        return new FinBridgeHook(db, ar, NullLogger<FinBridgeHook>.Instance);
+        var cost = new CostCollectService(db, new FinSequenceService(db));
+        return new FinBridgeHook(db, ar, cost, NullLogger<FinBridgeHook>.Instance);
     }
 
     private static FinShipmentInvoiceRequest Req() => new()
@@ -91,5 +94,47 @@ public class FinBridgeHookTests
         var r = await hook.OnShipmentCancelledAsync("NOPE", "wms");
         Assert.False(r.Success);
         Assert.Contains("SKIPPED", r.Message);
+    }
+
+    [Fact]
+    public async Task OnShipmentConfirmed_WithWorkOrder_UsesRealFgUnitCost_NotEstimate()
+    {
+        using var db = NewDb();
+        var hook = await SetupAsync(db);
+        // 成本单：实际总成本 1000 / 完工 10 → FG 单位成本 100
+        db.CostSheets.Add(new CostSheet { Id = Guid.NewGuid(), No = "CS-X", WorkOrderNo = "WOX", CompletedQty = 10m, MaterialActual = 1000m, Status = CostSheetStatus.Collected });
+        await db.SaveChangesAsync();
+
+        var req = new FinShipmentInvoiceRequest
+        {
+            ShipmentId = "OUT-9", WorkOrderNo = "WOX", CustomerId = "CUST1", InvoiceDate = Biz, DueDate = Biz.AddDays(30),
+            EstimatedCost = 700m,   // 应被真实成本覆盖
+            Lines = { new FinShipmentInvoiceLine { ItemId = "P1", Qty = 2, UnitPrice = 1000 } },
+        };
+        var r = await hook.OnShipmentConfirmedAsync(req, "wms");
+        Assert.True(r.Success, r.Message);
+
+        var inv = await db.ArInvoices.SingleAsync(x => x.ShipmentId == "OUT-9");
+        Assert.Equal(200m, inv.CostAmount);   // FG 单位成本 100 × 出货 2，非估算 700
+    }
+
+    [Fact]
+    public async Task OnWorkOrderCompleted_AutoCollectsMaterialCost_PersistsEvent()
+    {
+        using var db = NewDb();
+        var hook = await SetupAsync(db);
+        db.Set<WorkOrder>().Add(new WorkOrder { Id = Guid.NewGuid(), WorkOrderNo = "WO9", ProductCd = "P1", CompletedQty = 10m, Status = WorkOrderStatus.Completed });
+        db.Set<ProductMaterial>().Add(new ProductMaterial { Id = Guid.NewGuid(), ProductCd = "P1", ProcessCd = "OP1", MaterialCd = "M1", SupplyPrice = 5m });
+        db.Set<WorkOrderMaterial>().Add(new WorkOrderMaterial { Id = Guid.NewGuid(), WorkOrderNo = "WO9", ProcessCd = "OP1", MaterialCd = "M1", PlanQty = 100m, ActualQty = 110m });
+        await db.SaveChangesAsync();
+
+        var r = await hook.OnWorkOrderCompletedAsync("WO9", "mes");
+        Assert.True(r.Success, r.Message);
+
+        var cs = await db.CostSheets.SingleAsync(x => x.WorkOrderNo == "WO9");
+        Assert.Equal(550m, cs.MaterialActual);     // 110×5 料真实消耗
+        Assert.Equal(0m, cs.LaborStd);             // 工费留 0 待财务补录
+        Assert.Equal(CostSheetStatus.Collected, cs.Status);   // 仅归集未结转
+        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceModule == "MES" && e.TargetModule == "FIN" && e.SourceNo == "WO9" && e.Status == "SUCCESS"));
     }
 }

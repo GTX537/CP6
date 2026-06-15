@@ -14,6 +14,9 @@ public interface IFinBridgeHook
 
     /// <summary>出货取消后红冲对应应收发票的收入+成本凭证。</summary>
     Task<FinBridgeResult> OnShipmentCancelledAsync(string shipmentId, string? userName);
+
+    /// <summary>MES 工单完工后自动归集成本（料吃真实消耗，工费留 0 待财务补录后结转，章06 A-3）。幂等。</summary>
+    Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName);
 }
 
 /// <summary>Fin 钩子执行结果（对称 WmsBridgeResult）。</summary>
@@ -35,5 +38,8 @@ public class NoOpFinBridgeHook : IFinBridgeHook
         => Task.FromResult(FinBridgeResult.Skipped("FinBridge:Enabled=false"));
 
     public Task<FinBridgeResult> OnShipmentCancelledAsync(string shipmentId, string? userName)
+        => Task.FromResult(FinBridgeResult.Skipped("FinBridge:Enabled=false"));
+
+    public Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName)
         => Task.FromResult(FinBridgeResult.Skipped("FinBridge:Enabled=false"));
 }

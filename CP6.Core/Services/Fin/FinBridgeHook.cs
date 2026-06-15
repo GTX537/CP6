@@ -14,11 +14,13 @@ namespace CP6.Core.Services.Fin;
 public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
 {
     private readonly IArInvoiceService _ar;
+    private readonly ICostCollectService _cost;
 
-    public FinBridgeHook(CP6Context db, IArInvoiceService ar, ILogger<FinBridgeHook> logger)
+    public FinBridgeHook(CP6Context db, IArInvoiceService ar, ICostCollectService cost, ILogger<FinBridgeHook> logger)
         : base(db, logger)
     {
         _ar = ar;
+        _cost = cost;
     }
 
     public async Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
@@ -71,6 +73,29 @@ public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
             Logger.LogError(ex, "[FIN-Bridge] 出货 {Ship} 取消红冲异常", shipmentId);
             await PersistEventAsync("WMS", "FIN", nameof(OnShipmentCancelledAsync),
                 shipmentId, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
+            return FinBridgeResult.Failed(ex.Message);
+        }
+    }
+
+    public async Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName)
+    {
+        var corrId = Guid.NewGuid();
+        var payload = new { workOrderNo, userName };
+        try
+        {
+            // 工费留 0：自动归集只吃料真实消耗，工费/制费由财务补录标准估算后再结转（避免自动塞 0 工费即结转）
+            var r = await _cost.CollectAsync(workOrderNo, 0m, 0m, userName ?? "system");
+            var status = r.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
+            await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                workOrderNo, null, status, r.Ok ? null : r.Code, corrId, payload);
+            if (r.Ok) Logger.LogInformation("[FIN-Bridge] 工单 {Wo} 完工 → 成本自动归集（料真实消耗）", workOrderNo);
+            return r.Ok ? FinBridgeResult.Ok(workOrderNo) : FinBridgeResult.Failed(r.Code ?? "fail");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "[FIN-Bridge] 工单 {Wo} 成本自动归集异常", workOrderNo);
+            await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
             return FinBridgeResult.Failed(ex.Message);
         }
     }

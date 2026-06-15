@@ -128,6 +128,15 @@ public class ArInvoiceService : IArInvoiceService
         var existing = await _db.ArInvoices.FirstOrDefaultAsync(x => x.ShipmentId == request.ShipmentId && !x.IsCreditMemo);
         if (existing != null) return (FinResult.Pass(), existing.Id, existing.No);
 
+        // F3-D3 成本切真实：有来源工单且已归集成本单时，成本 = FG 单位成本 × 出货数；否则回退估算成本
+        var cost = request.EstimatedCost;
+        if (!string.IsNullOrEmpty(request.WorkOrderNo))
+        {
+            var cs = await _db.CostSheets.AsNoTracking().FirstOrDefaultAsync(s => s.WorkOrderNo == request.WorkOrderNo);
+            if (cs != null && cs.FgUnitCost > 0m)
+                cost = Math.Round(cs.FgUnitCost * request.Lines.Sum(l => l.Qty), 2, MidpointRounding.AwayFromZero);
+        }
+
         var inv = new ArInvoice
         {
             CustomerId = request.CustomerId,
@@ -135,7 +144,7 @@ public class ArInvoiceService : IArInvoiceService
             DueDate = request.DueDate,
             CurrencyCd = request.CurrencyCd,
             FxRate = request.FxRate ?? 1m,
-            CostAmount = request.EstimatedCost,
+            CostAmount = cost,
             ShipmentId = request.ShipmentId,
             OrderId = request.OrderId,
             Lines = request.Lines.Select(l => new ArInvoiceLine

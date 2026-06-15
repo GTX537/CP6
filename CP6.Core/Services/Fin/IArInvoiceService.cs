@@ -32,12 +32,14 @@ public class FinShipmentInvoiceRequest
 {
     public string ShipmentId { get; set; } = string.Empty;
     public string? OrderId { get; set; }
+    /// <summary>来源 MES 工单号（可选）。提供且存在成本单时，成本切真实 FG 单位成本×出货数（F3-D3），否则用 <see cref="EstimatedCost"/>。</summary>
+    public string? WorkOrderNo { get; set; }
     public string CustomerId { get; set; } = string.Empty;
     public DateTime InvoiceDate { get; set; }
     public DateTime DueDate { get; set; }
     public string? CurrencyCd { get; set; }
     public decimal? FxRate { get; set; }
-    /// <summary>估算成本（本位币，F2-D2；成本会计 06 章落地后切真实）</summary>
+    /// <summary>估算成本（本位币，F2-D2 起步值；无 <see cref="WorkOrderNo"/> 或无成本单时回退用它）</summary>
     public decimal EstimatedCost { get; set; }
     public List<FinShipmentInvoiceLine> Lines { get; set; } = new();
 }

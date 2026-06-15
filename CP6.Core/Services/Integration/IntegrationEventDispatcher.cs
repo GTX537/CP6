@@ -58,6 +58,12 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
             var r = await ctx.Fin.OnShipmentCancelledAsync(p.ShipmentId, p.UserName);
             return r.Success;
         },
+        [RouteKey("MES", "FIN", "OnWorkOrderCompletedAsync")] = async ctx =>
+        {
+            var p = ctx.GetPayload<OnWorkOrderCompletedFinPayload>();
+            var r = await ctx.Fin.OnWorkOrderCompletedAsync(p.WorkOrderNo, p.UserName);
+            return r.Success;
+        },
     };
 
     private readonly IMesBridgeHook _mes;
@@ -168,6 +174,12 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
     private sealed class OnShipmentCancelledFinPayload
     {
         public string ShipmentId { get; set; } = string.Empty;
+        public string? UserName { get; set; }
+    }
+
+    private sealed class OnWorkOrderCompletedFinPayload
+    {
+        public string WorkOrderNo { get; set; } = string.Empty;
         public string? UserName { get; set; }
     }
 }
