@@ -3,6 +3,7 @@ import type {
   ApiResp, GlAccount, JournalEntry, FiscalPeriod, TrialBalance,
   ApInvoice, Payment, SettlementApply, ApAgingRow, ApReconcileResult,
   BankAccount, TaxCode,
+  ArInvoice, Receipt, ArAgingRow, ArReconcileResult, CreditCheckResult, FinCreditMemoRequest,
 } from '@/types/fin/fin'
 
 // 财务 API（/api/fin）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
@@ -115,6 +116,60 @@ export const apMasterApi = {
   },
   createTaxCode(data: TaxCode) {
     return http.post<any, ApiResp<{ id: string }>>('/fin/ap/master/tax-code', data)
+  },
+}
+
+/** 应收发票 /api/fin/ar/invoice */
+export const arInvoiceApi = {
+  list(customerId?: string, status?: number) {
+    return http.get<any, ApiResp<ArInvoice[]>>('/fin/ar/invoice', { params: { customerId, status } })
+  },
+  get(id: string) {
+    return http.get<any, ApiResp<ArInvoice>>(`/fin/ar/invoice/${id}`)
+  },
+  create(data: ArInvoice) {
+    return http.post<any, ApiResp<{ id: string; no: string }>>('/fin/ar/invoice', data)
+  },
+  post(id: string) {
+    return http.post<any, ApiResp<unknown>>(`/fin/ar/invoice/${id}/post`)
+  },
+  creditMemo(data: FinCreditMemoRequest) {
+    return http.post<any, ApiResp<{ id: string; no: string }>>('/fin/ar/invoice/credit-memo', data)
+  },
+  reverse(id: string, reason: string) {
+    return http.post<any, ApiResp<unknown>>(`/fin/ar/invoice/${id}/reverse`, { reason })
+  },
+  aging(asOf?: string, customerId?: string) {
+    return http.get<any, ApiResp<ArAgingRow[]>>('/fin/ar/invoice/aging', { params: { asOf, customerId } })
+  },
+  reconcile() {
+    return http.get<any, ApiResp<ArReconcileResult>>('/fin/ar/invoice/reconcile')
+  },
+}
+
+/** 收款 /api/fin/ar/receipt */
+export const receiptApi = {
+  list(customerId?: string, status?: number) {
+    return http.get<any, ApiResp<Receipt[]>>('/fin/ar/receipt', { params: { customerId, status } })
+  },
+  get(id: string) {
+    return http.get<any, ApiResp<Receipt>>(`/fin/ar/receipt/${id}`)
+  },
+  receive(data: Receipt) {
+    return http.post<any, ApiResp<{ id: string; no: string }>>('/fin/ar/receipt', data)
+  },
+  reverse(id: string, reason: string) {
+    return http.post<any, ApiResp<unknown>>(`/fin/ar/receipt/${id}/reverse`, { reason })
+  },
+  settle(id: string, applies: SettlementApply[]) {
+    return http.post<any, ApiResp<unknown>>(`/fin/ar/receipt/${id}/settle`, { applies })
+  },
+}
+
+/** 信用控制 /api/fin/ar/credit */
+export const creditApi = {
+  check(customerId: string, orderAmount: number) {
+    return http.get<any, ApiResp<CreditCheckResult>>('/fin/ar/credit/check', { params: { customerId, orderAmount } })
   },
 }
 

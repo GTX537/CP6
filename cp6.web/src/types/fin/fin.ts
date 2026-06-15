@@ -219,3 +219,109 @@ export interface TaxCode {
   recoverable: boolean
   isActive?: boolean
 }
+
+// ───────── 应收 AR（章04）─────────
+
+/** 应收发票行 */
+export interface ArInvoiceLine {
+  id?: string
+  invoiceId?: string
+  lineNo?: number
+  itemId?: string | null
+  qty: number
+  unitPrice: number
+  amount: number
+  taxCodeId?: string | null
+  taxAmount?: number
+  revenueAccountId?: string | null
+  costCenterId?: string | null
+}
+
+/** 应收发票 */
+export interface ArInvoice {
+  id?: string
+  no?: string
+  customerId: string
+  invoiceDate: string
+  dueDate: string
+  currencyCd?: string | null
+  fxRate: number
+  netAmount?: number
+  taxAmount?: number
+  grossAmount?: number
+  settledAmount?: number
+  costAmount?: number
+  status?: number       // ArInvoiceStatus: 0草稿 1已过账 2部分核销 3已核销 4已红冲
+  journalEntryId?: string | null
+  costJournalEntryId?: string | null
+  shipmentId?: string | null
+  orderId?: string | null
+  isCreditMemo?: boolean
+  creditNoteId?: string | null
+  lines: ArInvoiceLine[]
+}
+
+/** 收款单 */
+export interface Receipt {
+  id?: string
+  no?: string
+  customerId: string
+  receiptDate: string
+  currencyCd?: string | null
+  fxRate: number
+  amount: number
+  settledAmount?: number
+  method: number        // PaymentMethod: 1转账 2现金 3票据 9其他
+  bankAccountId: string
+  isAdvance?: boolean
+  status?: number       // ReceiptStatus: 1已过账 2已撤销
+  journalEntryId?: string | null
+}
+
+/** 应收账龄一行 */
+export interface ArAgingRow {
+  customerId: string
+  notDue: number
+  days1To30: number
+  days31To60: number
+  days60Plus: number
+  total: number
+  overdue: number
+}
+
+/** 应收子账↔GL 对账结果 */
+export interface ArReconcileResult {
+  subLedger: number
+  glBalance: number
+  isMatched: boolean
+}
+
+/** 信用校验结果 */
+export interface CreditCheckResult {
+  customerId: string
+  creditLimit: number
+  openAr: number
+  orderAmount: number
+  controlled: boolean
+  exceeded: boolean
+  available: number
+}
+
+/** 销售退货红字请求（接 CreditNote） */
+export interface FinCreditMemoRequest {
+  creditNoteId: string
+  customerId: string
+  invoiceDate: string
+  dueDate: string
+  currencyCd?: string | null
+  fxRate?: number
+  estimatedCost: number
+  originInvoiceId?: string | null
+  lines: { itemId?: string | null; qty: number; unitPrice: number; taxCodeId?: string | null; revenueAccountId?: string | null; costCenterId?: string | null }[]
+}
+
+export const AR_INVOICE_STATUS_LABEL: Record<number, string> = { 0: '草稿', 1: '已过账', 2: '部分核销', 3: '已核销', 4: '已红冲' }
+export const AR_INVOICE_STATUS_TAG: Record<number, '' | 'info' | 'success' | 'warning' | 'danger'> =
+  { 0: 'info', 1: 'success', 2: 'warning', 3: '', 4: 'danger' }
+export const RECEIPT_STATUS_LABEL: Record<number, string> = { 1: '已过账', 2: '已撤销' }
+export const RECEIPT_STATUS_TAG: Record<number, '' | 'info' | 'success' | 'warning' | 'danger'> = { 1: 'success', 2: 'danger' }

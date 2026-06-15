@@ -29,6 +29,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/fin/ap-invoice': () => import('@/views/fin/ApInvoiceView.vue'),       // 章03 应付发票
   '/fin/ap-payment': () => import('@/views/fin/PaymentView.vue'),         // 章03 付款/核销
   '/fin/ap-aging': () => import('@/views/fin/ApAgingView.vue'),           // 章03 应付账龄/对账
+  '/fin/ar-invoice': () => import('@/views/fin/ArInvoiceView.vue'),       // 章04 应收发票/红字
+  '/fin/ar-receipt': () => import('@/views/fin/ReceiptView.vue'),         // 章04 收款/核销
+  '/fin/ar-aging': () => import('@/views/fin/ArAgingView.vue'),           // 章04 应收账龄/对账
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),

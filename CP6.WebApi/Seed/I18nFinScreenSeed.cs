@@ -285,5 +285,71 @@ public static class I18nFinScreenSeed
         new Sys_Lang { LangKey = "E-FIN-224", ZhCN = "发票须已过账或部分核销", ZhTW = "發票須已過帳或部分核銷", En = "Invoice must be posted or partially settled", Ja = "請求書は記帳済みか一部消込が必要", Ko = "청구서는 전기 또는 부분 소멸 상태여야 합니다" },
         new Sys_Lang { LangKey = "E-FIN-230", ZhCN = "银行账户编码重复", ZhTW = "銀行帳戶編碼重複", En = "Duplicate bank account code", Ja = "銀行口座コードが重複しています", Ko = "은행 계좌 코드가 중복됩니다" },
         new Sys_Lang { LangKey = "E-FIN-231", ZhCN = "税码重复", ZhTW = "稅碼重複", En = "Duplicate tax code", Ja = "税コードが重複しています", Ko = "세금 코드가 중복됩니다" },
+
+        // ════════ 应收 AR（章04）════════
+        // ── 菜单 ──
+        new Sys_Lang { LangKey = "nav.608", ZhCN = "应收发票", ZhTW = "應收發票", En = "AR Invoices", Ja = "売掛請求書", Ko = "매출 청구서" },
+        new Sys_Lang { LangKey = "nav.609", ZhCN = "收款/核销", ZhTW = "收款/核銷", En = "Receipts / Settle", Ja = "入金/消込", Ko = "입금/소멸" },
+        new Sys_Lang { LangKey = "nav.610", ZhCN = "应收账龄", ZhTW = "應收帳齡", En = "AR Aging", Ja = "売掛エイジング", Ko = "매출 연령" },
+
+        // ── 通用补充 ──
+        new Sys_Lang { LangKey = "客户", ZhCN = "客户", ZhTW = "客戶", En = "Customer", Ja = "得意先", Ko = "고객" },
+        new Sys_Lang { LangKey = "品目", ZhCN = "品目", ZhTW = "品目", En = "Item", Ja = "品目", Ko = "품목" },
+        new Sys_Lang { LangKey = "品目（可空）", ZhCN = "品目（可空）", ZhTW = "品目（可空）", En = "Item (optional)", Ja = "品目（任意）", Ko = "품목(선택)" },
+        new Sys_Lang { LangKey = "查询", ZhCN = "查询", ZhTW = "查詢", En = "Query", Ja = "照会", Ko = "조회" },
+        new Sys_Lang { LangKey = "结果", ZhCN = "结果", ZhTW = "結果", En = "Result", Ja = "結果", Ko = "결과" },
+
+        // ── 应收发票视图 ──
+        new Sys_Lang { LangKey = "应收发票", ZhCN = "应收发票", ZhTW = "應收發票", En = "AR Invoice", Ja = "売掛請求書", Ko = "매출 청구서" },
+        new Sys_Lang { LangKey = "录入草稿→过账自动生成凭证（借应收/贷收入+销项税）；出货自动开票", ZhCN = "录入草稿→过账自动生成凭证（借应收/贷收入+销项税）；出货自动开票", ZhTW = "錄入草稿→過帳自動產生憑證（借應收/貸收入+銷項稅）；出貨自動開票", En = "Draft → post auto-generates voucher (Dr AR / Cr revenue + output tax); shipment auto-invoices", Ja = "下書き→記帳で自動仕訳（借 売掛/貸 収益+仮受消費税）；出荷で自動起票", Ko = "임시→전기 시 전표 자동 생성(차 매출채권/대 수익+매출세); 출하 시 자동 청구" },
+        new Sys_Lang { LangKey = "当前应收", ZhCN = "当前应收", ZhTW = "當前應收", En = "Open AR", Ja = "売掛残", Ko = "매출채권 잔액" },
+        new Sys_Lang { LangKey = "客户必填", ZhCN = "客户必填", ZhTW = "客戶必填", En = "Customer is required", Ja = "得意先は必須です", Ko = "고객은 필수입니다" },
+        new Sys_Lang { LangKey = "每行金额需大于0", ZhCN = "每行金额需大于0", ZhTW = "每行金額需大於0", En = "Each line amount must be > 0", Ja = "各行の金額は0超が必要", Ko = "각 행 금액은 0보다 커야 합니다" },
+        new Sys_Lang { LangKey = "红冲发票", ZhCN = "红冲发票", ZhTW = "紅沖發票", En = "Reverse Invoice", Ja = "請求書を取消", Ko = "청구서 역분개" },
+        new Sys_Lang { LangKey = "销售红字", ZhCN = "销售红字", ZhTW = "銷售紅字", En = "Sales Credit Memo", Ja = "売上赤伝", Ko = "매출 적색 전표" },
+        new Sys_Lang { LangKey = "已生成红字", ZhCN = "已生成红字", ZhTW = "已產生紅字", En = "Credit memo created", Ja = "赤伝を作成しました", Ko = "적색 전표가 생성되었습니다" },
+        new Sys_Lang { LangKey = "来源出货", ZhCN = "来源出货", ZhTW = "來源出貨", En = "From Shipment", Ja = "出荷から", Ko = "출하에서" },
+        new Sys_Lang { LangKey = "退货成本", ZhCN = "退货成本", ZhTW = "退貨成本", En = "Return COGS", Ja = "返品原価", Ko = "반품 원가" },
+
+        // ── 收款视图 ──
+        new Sys_Lang { LangKey = "收款", ZhCN = "收款", ZhTW = "收款", En = "Receipt", Ja = "入金", Ko = "입금" },
+        new Sys_Lang { LangKey = "收款/预收过账→核销应收（多对多+尾差+汇差）→撤销红冲", ZhCN = "收款/预收过账→核销应收（多对多+尾差+汇差）→撤销红冲", ZhTW = "收款/預收過帳→核銷應收（多對多+尾差+匯差）→撤銷紅沖", En = "Receipt/advance post → settle AR (M:N + write-off + FX) → reverse", Ja = "入金/前受記帳→売掛消込（多対多+差額+為替差）→取消", Ko = "입금/선수 전기→매출 소멸(다대다+차액+환차)→취소" },
+        new Sys_Lang { LangKey = "新建收款", ZhCN = "新建收款", ZhTW = "新建收款", En = "New Receipt", Ja = "入金を新規", Ko = "입금 신규" },
+        new Sys_Lang { LangKey = "收款单号", ZhCN = "收款单号", ZhTW = "收款單號", En = "Receipt No.", Ja = "入金番号", Ko = "입금 번호" },
+        new Sys_Lang { LangKey = "收款日期", ZhCN = "收款日期", ZhTW = "收款日期", En = "Receipt Date", Ja = "入金日", Ko = "입금일" },
+        new Sys_Lang { LangKey = "收款方式", ZhCN = "收款方式", ZhTW = "收款方式", En = "Method", Ja = "入金方法", Ko = "입금 방법" },
+        new Sys_Lang { LangKey = "预收", ZhCN = "预收", ZhTW = "預收", En = "Advance", Ja = "前受", Ko = "선수" },
+        new Sys_Lang { LangKey = "预收款", ZhCN = "预收款", ZhTW = "預收款", En = "Advance Receipt", Ja = "前受金", Ko = "선수금" },
+        new Sys_Lang { LangKey = "预收走预收账款，不冲应收", ZhCN = "预收走预收账款，不冲应收", ZhTW = "預收走預收帳款，不沖應收", En = "Advance credits the advance-received account, not AR", Ja = "前受は前受金へ計上、売掛は相殺しない", Ko = "선수는 선수금에 계상, 매출채권 상계 안 함" },
+        new Sys_Lang { LangKey = "撤销收款", ZhCN = "撤销收款", ZhTW = "撤銷收款", En = "Reverse Receipt", Ja = "入金取消", Ko = "입금 취소" },
+        new Sys_Lang { LangKey = "已收款", ZhCN = "已收款", ZhTW = "已收款", En = "Received", Ja = "入金済", Ko = "입금됨" },
+        new Sys_Lang { LangKey = "客户/银行账户/金额必填", ZhCN = "客户/银行账户/金额必填", ZhTW = "客戶/銀行帳戶/金額必填", En = "Customer / bank account / amount are required", Ja = "得意先/銀行口座/金額は必須", Ko = "고객/은행 계좌/금액 필수" },
+        new Sys_Lang { LangKey = "本单金额", ZhCN = "本单金额", ZhTW = "本單金額", En = "Receipt Amount", Ja = "当該入金額", Ko = "본 전표 금액" },
+        new Sys_Lang { LangKey = "未收合计", ZhCN = "未收合计", ZhTW = "未收合計", En = "Total Open", Ja = "未収合計", Ko = "미수 합계" },
+        new Sys_Lang { LangKey = "收款单 {no} 可用 {amt}", ZhCN = "收款单 {no} 可用 {amt}", ZhTW = "收款單 {no} 可用 {amt}", En = "Receipt {no} available {amt}", Ja = "入金 {no} 利用可能 {amt}", Ko = "입금 {no} 가용 {amt}" },
+
+        // ── 信用控制 ──
+        new Sys_Lang { LangKey = "信用查询", ZhCN = "信用查询", ZhTW = "信用查詢", En = "Credit Check", Ja = "与信照会", Ko = "여신 조회" },
+        new Sys_Lang { LangKey = "信用额度", ZhCN = "信用额度", ZhTW = "信用額度", En = "Credit Limit", Ja = "与信限度額", Ko = "여신 한도" },
+        new Sys_Lang { LangKey = "剩余可用", ZhCN = "剩余可用", ZhTW = "剩餘可用", En = "Available", Ja = "利用可能残", Ko = "가용 한도" },
+        new Sys_Lang { LangKey = "超信用额度", ZhCN = "超信用额度", ZhTW = "超信用額度", En = "Over Credit Limit", Ja = "与信限度超過", Ko = "여신 한도 초과" },
+        new Sys_Lang { LangKey = "额度内", ZhCN = "额度内", ZhTW = "額度內", En = "Within Limit", Ja = "限度内", Ko = "한도 내" },
+        new Sys_Lang { LangKey = "不控制", ZhCN = "不控制", ZhTW = "不控制", En = "No control", Ja = "制御なし", Ko = "통제 안 함" },
+
+        // ── 应收账龄视图 ──
+        new Sys_Lang { LangKey = "应收账龄", ZhCN = "应收账龄", ZhTW = "應收帳齡", En = "AR Aging", Ja = "売掛エイジング", Ko = "매출 연령" },
+
+        // ── AR 业务错误码（语义照后端源码逆向）──
+        new Sys_Lang { LangKey = "E-FIN-302", ZhCN = "应收发票不存在", ZhTW = "應收發票不存在", En = "AR invoice not found", Ja = "売掛請求書が存在しません", Ko = "매출 청구서가 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-303", ZhCN = "发票状态不允许此操作", ZhTW = "發票狀態不允許此操作", En = "Invoice status does not allow this operation", Ja = "請求書の状態がこの操作を許可しません", Ko = "청구서 상태가 이 작업을 허용하지 않습니다" },
+        new Sys_Lang { LangKey = "E-FIN-304", ZhCN = "应收发票无明细行", ZhTW = "應收發票無明細行", En = "AR invoice has no lines", Ja = "売掛請求書に明細がありません", Ko = "매출 청구서에 명세가 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-310", ZhCN = "银行账户不存在", ZhTW = "銀行帳戶不存在", En = "Bank account not found", Ja = "銀行口座が存在しません", Ko = "은행 계좌가 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-311", ZhCN = "收款单不存在", ZhTW = "收款單不存在", En = "Receipt not found", Ja = "入金が存在しません", Ko = "입금이 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-312", ZhCN = "只有已过账收款能撤销/核销", ZhTW = "只有已過帳收款能撤銷/核銷", En = "Only posted receipts can be reversed/settled", Ja = "記帳済みの入金のみ取消/消込できます", Ko = "전기된 입금만 취소/소멸할 수 있습니다" },
+        new Sys_Lang { LangKey = "E-FIN-320", ZhCN = "核销额超过收款余额", ZhTW = "核銷額超過收款餘額", En = "Settle exceeds receipt balance", Ja = "消込額が入金残高を超えています", Ko = "소멸액이 입금 잔액을 초과합니다" },
+        new Sys_Lang { LangKey = "E-FIN-321", ZhCN = "客户与收款不一致", ZhTW = "客戶與收款不一致", En = "Customer mismatch with receipt", Ja = "得意先が入金と一致しません", Ko = "고객이 입금과 일치하지 않습니다" },
+        new Sys_Lang { LangKey = "E-FIN-322", ZhCN = "核销额超过发票欠款", ZhTW = "核銷額超過發票欠款", En = "Settle exceeds invoice open amount", Ja = "消込額が請求未収額を超えています", Ko = "소멸액이 청구 미수액을 초과합니다" },
+        new Sys_Lang { LangKey = "E-FIN-323", ZhCN = "有折扣必须指定折扣科目", ZhTW = "有折扣必須指定折扣科目", En = "Discount requires a discount account", Ja = "割引には割引科目が必要です", Ko = "할인에는 할인 계정이 필요합니다" },
+        new Sys_Lang { LangKey = "E-FIN-324", ZhCN = "发票须已过账或部分核销", ZhTW = "發票須已過帳或部分核銷", En = "Invoice must be posted or partially settled", Ja = "請求書は記帳済みか一部消込が必要", Ko = "청구서는 전기 또는 부분 소멸 상태여야 합니다" },
     };
 }

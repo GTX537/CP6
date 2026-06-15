@@ -747,6 +747,24 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 607 });
         db.SaveChanges();
     }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 608))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 608, MenuName = "应收发票", RoutePath = "/fin/ar-invoice", Icon = "Tickets", ParentId = 600, OrderNo = 258, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 608 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 609))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 609, MenuName = "收款/核销", RoutePath = "/fin/ar-receipt", Icon = "Wallet", ParentId = 600, OrderNo = 259, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 609 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 610))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 610, MenuName = "应收账龄", RoutePath = "/fin/ar-aging", Icon = "Histogram", ParentId = 600, OrderNo = 260, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 610 });
+        db.SaveChanges();
+    }
 
     // ═══════════════════════════════════════════════════════════
     //  MSBBME010〜090 MES 製造執行 菜单
