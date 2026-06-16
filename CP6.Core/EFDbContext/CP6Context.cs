@@ -1561,9 +1561,17 @@ public class CP6Context : DbContext
             var tenantProp = et.FindProperty(nameof(BaseTenantEntity.TenantId));
             if (tenantProp is null) continue;
 
+            // 被 FK 作为主键引用的唯一索引（如父单号 WorkOrderNo/QtnNo/ProductCd 被子表引用）排除：
+            // SQL Server 不允许 DROP 被 FK 依赖的索引；且改 (TenantId, Code) 需把子表 FK 一并改复合键
+            // ——这类父级业务编码留待物理多租户阶段做（本阶段保持全局唯一，已知多租户限制）。
+            var fkPrincipalKeyProps = et.GetReferencingForeignKeys()
+                .Select(fk => fk.PrincipalKey.Properties)
+                .ToList();
+
             foreach (var idx in et.GetIndexes().Where(i => i.IsUnique).ToList())
             {
                 if (idx.Properties.Contains(tenantProp)) continue;   // 已带 TenantId 前缀（如 Sys_Lang）
+                if (fkPrincipalKeyProps.Any(kp => kp.SequenceEqual(idx.Properties))) continue;   // FK 主键依赖，跳过
 
                 var dbName = idx.GetDatabaseName();
                 var filter = idx.GetFilter();

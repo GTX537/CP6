@@ -11,9 +11,9 @@ namespace CP6.Core.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_Sys_OperLogs_IsAlert_CreateDate",
-                table: "Sys_OperLogs");
+            // 用 IF EXISTS 幂等删：该索引在部分环境存在 schema drift（Phase6 迁移已记录应用但实库实际缺失），
+            // 直接 DropIndex 会因索引不存在而中断迁移；存在则照常删，缺失则跳过。
+            migrationBuilder.Sql("DROP INDEX IF EXISTS [IX_Sys_OperLogs_IsAlert_CreateDate] ON [Sys_OperLogs];");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "TenantId",

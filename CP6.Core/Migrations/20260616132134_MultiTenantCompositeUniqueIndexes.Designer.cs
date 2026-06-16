@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CP6.Core.Migrations
 {
     [DbContext(typeof(CP6Context))]
-    [Migration("20260616125622_MultiTenantCompositeUniqueIndexes")]
+    [Migration("20260616132134_MultiTenantCompositeUniqueIndexes")]
     partial class MultiTenantCompositeUniqueIndexes
     {
         /// <inheritdoc />
@@ -1390,13 +1390,12 @@ namespace CP6.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("QtnCalcNo")
+                        .IsUnique();
+
                     b.HasIndex("CustomerCd", "IsDeleted");
 
                     b.HasIndex("QtnDate", "IsDeleted");
-
-                    b.HasIndex("TenantId", "QtnCalcNo")
-                        .IsUnique()
-                        .HasDatabaseName("IX_T_EstimateCalc_QtnCalcNo");
 
                     b.ToTable("T_EstimateCalc");
                 });
@@ -1829,6 +1828,9 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("McOrderNo");
 
+                    b.HasIndex("WebOrderNo")
+                        .IsUnique();
+
                     b.HasIndex("CustomerCd", "IsDeleted");
 
                     b.HasIndex("OrderDate", "IsDeleted");
@@ -1838,10 +1840,6 @@ namespace CP6.Core.Migrations
                     b.HasIndex("OrderType", "IsDeleted");
 
                     b.HasIndex("Status", "IsDeleted");
-
-                    b.HasIndex("TenantId", "WebOrderNo")
-                        .IsUnique()
-                        .HasDatabaseName("IX_T_Order_WebOrderNo");
 
                     b.ToTable("T_Order");
                 });
@@ -2370,7 +2368,7 @@ namespace CP6.Core.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_T_OrderDetail_WebOrderNo_WebOrderDetailNo");
 
-                    b.HasIndex("TenantId", "WebOrderNo", "WebOrderDetailNo", "ProductCd")
+                    b.HasIndex("WebOrderNo", "WebOrderDetailNo", "ProductCd")
                         .IsUnique()
                         .HasDatabaseName("UX_OrderDetail_OrderProduct");
 
@@ -3743,6 +3741,9 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("ItemCd");
 
+                    b.HasIndex("ProductCd")
+                        .IsUnique();
+
                     b.HasIndex("CustomerCd", "IsDeleted");
 
                     b.HasIndex("EstimateCalcNo", "IsDeleted");
@@ -3754,10 +3755,6 @@ namespace CP6.Core.Migrations
                     b.HasIndex("SetProductCd", "IsDeleted");
 
                     b.HasIndex("Status", "IsDeleted");
-
-                    b.HasIndex("TenantId", "ProductCd")
-                        .IsUnique()
-                        .HasDatabaseName("IX_T_ProductMaster_ProductCd");
 
                     b.ToTable("T_ProductMaster");
                 });
@@ -4324,15 +4321,14 @@ namespace CP6.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("QtnNo")
+                        .IsUnique();
+
                     b.HasIndex("BaseCd", "StaffCd");
 
                     b.HasIndex("CustomerCd", "IsDeleted");
 
                     b.HasIndex("QtnIssueDate", "IsDeleted");
-
-                    b.HasIndex("TenantId", "QtnNo")
-                        .IsUnique()
-                        .HasDatabaseName("IX_T_Quotation_QtnNo");
 
                     b.ToTable("T_Quotation");
                 });
@@ -6978,13 +6974,12 @@ namespace CP6.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InspectionNo")
+                        .IsUnique();
+
                     b.HasIndex("OverallResult");
 
                     b.HasIndex("InspectionDate", "IsDeleted");
-
-                    b.HasIndex("TenantId", "InspectionNo")
-                        .IsUnique()
-                        .HasDatabaseName("IX_T_QualityInspection_InspectionNo");
 
                     b.HasIndex("WorkOrderNo", "IsDeleted");
 
@@ -7187,6 +7182,9 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("WebOrderNo");
 
+                    b.HasIndex("WorkOrderNo")
+                        .IsUnique();
+
                     b.HasIndex("CustomerCd", "IsDeleted");
 
                     b.HasIndex("DeliveryDate", "IsDeleted");
@@ -7194,10 +7192,6 @@ namespace CP6.Core.Migrations
                     b.HasIndex("ProductCd", "IsDeleted");
 
                     b.HasIndex("Status", "IsDeleted");
-
-                    b.HasIndex("TenantId", "WorkOrderNo")
-                        .IsUnique()
-                        .HasDatabaseName("IX_T_WorkOrder_WorkOrderNo");
 
                     b.ToTable("T_WorkOrder");
                 });

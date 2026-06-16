@@ -25,8 +25,14 @@ public class TenantUniqueIndexTests
         {
             if (!typeof(BaseTenantEntity).IsAssignableFrom(et.ClrType)) continue;
 
+            // 被 FK 作为主键引用的唯一索引（父级业务编码）按设计保持全局唯一，不在约束内（见 CP6Context 重写循环注释）
+            var fkPrincipalKeyProps = et.GetReferencingForeignKeys()
+                .Select(fk => fk.PrincipalKey.Properties)
+                .ToList();
+
             foreach (var idx in et.GetIndexes().Where(i => i.IsUnique))
             {
+                if (fkPrincipalKeyProps.Any(kp => kp.SequenceEqual(idx.Properties))) continue;
                 if (idx.Properties.Count == 0 || idx.Properties[0].Name != nameof(BaseTenantEntity.TenantId))
                     offenders.Add($"{et.ClrType.Name}: ({string.Join(",", idx.Properties.Select(p => p.Name))})");
             }
