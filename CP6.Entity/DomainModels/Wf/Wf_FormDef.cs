@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 本阶段不带 TenantId（OA 阶段4 多租户统一加）。
 /// </summary>
 [Table("Wf_FormDef")]
-public class Wf_FormDef : BaseEntity
+public class Wf_FormDef : BaseTenantEntity
 {
     /// <summary>表单稳定业务键（本阶段全局唯一；多租户后改租户内唯一）。建后不可改</summary>
     [Required, MaxLength(100)]

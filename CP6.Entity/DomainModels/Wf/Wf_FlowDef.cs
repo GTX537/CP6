@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 绑定一张表单（FormKey）。改版只升 Version，在途实例按其快照运行（阶段1 简化：实例不存 schema 快照，按 FlowKey 取最新——单租户手配场景可接受，多版本并行留扩展）。
 /// </summary>
 [Table("Wf_FlowDef")]
-public class Wf_FlowDef : BaseEntity
+public class Wf_FlowDef : BaseTenantEntity
 {
     /// <summary>流程稳定业务键（本阶段全局唯一）。建后不可改</summary>
     [Required, MaxLength(100)]

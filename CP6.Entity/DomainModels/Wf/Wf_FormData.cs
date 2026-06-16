@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Wf;
 /// （阶段1 BizId 可空，阶段3 接业务后回填流程实例 Id / 业务单号）。
 /// </summary>
 [Table("Wf_FormData")]
-public class Wf_FormData : BaseEntity
+public class Wf_FormData : BaseTenantEntity
 {
     /// <summary>对应表单定义 FormKey</summary>
     [Required, MaxLength(100)]

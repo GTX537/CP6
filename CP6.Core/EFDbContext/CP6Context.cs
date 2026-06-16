@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using CP6.Core.Services.Common;
 using CP6.Entity;
 using CP6.Entity.DomainModels;
@@ -1520,5 +1521,39 @@ public class CP6Context : DbContext
             // 告警 OperLog 快速过滤（IntegrationEvent DeadLetter 写入时 IsAlert=true）
             e.HasIndex(x => new { x.IsAlert, x.CreateDate });
         });
+
+        // ═══════════════════════════════════════════════════════════
+        //  章10 多租户：对所有 BaseTenantEntity 反射批量注册全局查询过滤（防漏命门，OA4-D1/D3）
+        //  WHERE TenantId == CurrentTenantId —— 闭包到本上下文实例，EF 每次查询重读当前租户。
+        // ═══════════════════════════════════════════════════════════
+        foreach (var et in modelBuilder.Model.GetEntityTypes()
+                     .Where(t => typeof(BaseTenantEntity).IsAssignableFrom(t.ClrType) && t.BaseType is null))
+        {
+            var p = Expression.Parameter(et.ClrType, "e");
+            var body = Expression.Equal(
+                Expression.Property(p, nameof(BaseTenantEntity.TenantId)),
+                Expression.Property(Expression.Constant(this), nameof(CurrentTenantId)));
+            modelBuilder.Entity(et.ClrType).HasQueryFilter(Expression.Lambda(body, p));
+        }
+    }
+
+    /// <summary>写入盖章（章10 §4）：新增的 BaseTenantEntity 未显式设租户 → 盖当前租户。</summary>
+    private void StampTenant()
+    {
+        foreach (var e in ChangeTracker.Entries<BaseTenantEntity>())
+            if (e.State == EntityState.Added && e.Entity.TenantId == Guid.Empty)
+                e.Entity.TenantId = CurrentTenantId;
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        StampTenant();   // SaveChanges() 经 base 路由至本重载，无需再覆盖无参版（避免重复盖章）
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        StampTenant();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }

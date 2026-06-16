@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 仅追加、不更新，CreateDate(BaseEntity) = 动作发生时刻。
 /// </summary>
 [Table("Wf_FlowHistory")]
-public class Wf_FlowHistory : BaseEntity
+public class Wf_FlowHistory : BaseTenantEntity
 {
     /// <summary>所属流程实例 → Wf_FlowInstance.Id</summary>
     public Guid InstanceId { get; set; }

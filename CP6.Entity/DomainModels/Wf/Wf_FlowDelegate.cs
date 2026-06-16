@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Wf;
 /// v1 仅"建待办时替换"（存量在途待办转派后续增强）；Scope 预留按流程限定（空=全部流程）。
 /// </summary>
 [Table("Wf_FlowDelegate")]
-public class Wf_FlowDelegate : BaseEntity
+public class Wf_FlowDelegate : BaseTenantEntity
 {
     /// <summary>委托人（原审批人）→ Sys_User.Id</summary>
     public Guid GrantorId { get; set; }

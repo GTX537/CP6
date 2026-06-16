@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Wf;
 /// ConditionJson 预留"按表单字段选不同流程"（v1 直用 FlowKey，条件选流程后续增强）。
 /// </summary>
 [Table("Wf_ApprovalBinding")]
-public class Wf_ApprovalBinding : BaseEntity
+public class Wf_ApprovalBinding : BaseTenantEntity
 {
     /// <summary>业务类型标识（如 "FinJournalPost"、"PO"），与 IApprovalService/IApprovalCallback 对应</summary>
     [Required, MaxLength(50)]

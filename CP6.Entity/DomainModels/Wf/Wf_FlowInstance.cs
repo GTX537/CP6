@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Wf;
 /// VarsJson 存表单字段值快照（条件流转 ConditionEvaluator 的取值源）。全状态落库、幂等可重放。
 /// </summary>
 [Table("Wf_FlowInstance")]
-public class Wf_FlowInstance : BaseEntity
+public class Wf_FlowInstance : BaseTenantEntity
 {
     /// <summary>所属流程定义 FlowKey</summary>
     [Required, MaxLength(100)]

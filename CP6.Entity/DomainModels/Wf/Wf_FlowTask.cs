@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Wf;
 /// Status!=0 即"已办"，是 ActAsync 幂等闸门的依据。
 /// </summary>
 [Table("Wf_FlowTask")]
-public class Wf_FlowTask : BaseEntity
+public class Wf_FlowTask : BaseTenantEntity
 {
     /// <summary>所属流程实例 → Wf_FlowInstance.Id</summary>
     public Guid InstanceId { get; set; }
