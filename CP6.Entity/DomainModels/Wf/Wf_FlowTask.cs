@@ -20,7 +20,7 @@ public class Wf_FlowTask : BaseEntity
     /// <summary>处理人 → Sys_User.Id</summary>
     public Guid AssigneeId { get; set; }
 
-    /// <summary>任务状态：0=待办 1=同意 2=驳回 3=作废(节点已结/撤回时清在途)</summary>
+    /// <summary>任务状态：0=待办 1=同意 2=驳回 3=作废(节点已结/退回时清在途) 4=挂起(前加签时原审批人临时挂起)</summary>
     public int Status { get; set; }
 
     /// <summary>会签规则快照（建任务时从节点复制）：all/any/veto</summary>
@@ -30,4 +30,14 @@ public class Wf_FlowTask : BaseEntity
     /// <summary>处理意见</summary>
     [MaxLength(1000)]
     public string? Comment { get; set; }
+
+    /// <summary>加签来源（章07 §3）：null=正常节点任务；before=前加签(先于原审批人)；after=后加签(后于原审批人)</summary>
+    [MaxLength(20)]
+    public string? AddSignSource { get; set; }
+
+    /// <summary>到期时间（章07 §4 超时扫描依据；空=不限时）</summary>
+    public DateTime? DueAt { get; set; }
+
+    /// <summary>超时是否已处理（幂等：硬动作 approve/reject/escalate 处理过置 true，扫描不再处理）</summary>
+    public bool TimeoutHandled { get; set; }
 }

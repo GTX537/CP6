@@ -338,6 +338,8 @@ public class CP6Context : DbContext
     public DbSet<Wf_FlowHistory> Wf_FlowHistories { get; set; }
     /// <summary>审批绑定（OA 章05 阶段2，业务类型→流程映射）</summary>
     public DbSet<Wf_ApprovalBinding> Wf_ApprovalBindings { get; set; }
+    /// <summary>审批委派（OA 章07 §5，委托人→代理人有效期）</summary>
+    public DbSet<Wf_FlowDelegate> Wf_FlowDelegates { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -491,6 +493,11 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => new { x.InstanceId, x.NodeId }).HasDatabaseName("IX_Wf_FlowTask_InstanceNode");  // 会签判定取本节点全部任务
             e.HasIndex(x => new { x.AssigneeId, x.Status }).HasDatabaseName("IX_Wf_FlowTask_AssigneeStatus"); // 待办中心
+            e.HasIndex(x => new { x.Status, x.DueAt }).HasDatabaseName("IX_Wf_FlowTask_StatusDue");           // 章07 §4 超时扫描
+        });
+        modelBuilder.Entity<Wf_FlowDelegate>(e =>
+        {
+            e.HasIndex(x => new { x.GrantorId, x.Enable }).HasDatabaseName("IX_Wf_FlowDelegate_GrantorEnable"); // 建待办时查委派
         });
         modelBuilder.Entity<Wf_FlowHistory>(e =>
         {

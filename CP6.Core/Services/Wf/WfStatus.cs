@@ -16,5 +16,6 @@ public static class FlowTaskStatus
     public const int Pending = 0;     // 待办
     public const int Approved = 1;    // 同意
     public const int Rejected = 2;    // 驳回
-    public const int Cancelled = 3;   // 作废（节点已决/实例撤回时清在途）
+    public const int Cancelled = 3;   // 作废（节点已决/实例撤回/退回时清在途）
+    public const int Suspended = 4;   // 挂起（前加签时原审批人临时挂起，加签人审完再激活，章07 §3）
 }
