@@ -11,4 +11,11 @@ public interface IFlowEngine
 
     /// <summary>办理任务（同意/驳回）。幂等：已办任务再办无效，不重复流转。</summary>
     Task ActAsync(Guid taskId, Guid actorId, bool approve, string? comment = null);
+
+    /// <summary>
+    /// 退回（章07 §2）：从当前任务退回到目标节点。作废本实例所有在途待办（含挂起的前加签）、
+    /// CurrentNode 回退到目标节点并重建其待办；FlowHistory 追加 sendback（不删历史）。
+    /// 三落点（上一步/指定节点/发起人）只是 targetNodeId 不同。幂等：任务已办则无效。
+    /// </summary>
+    Task SendBackAsync(Guid taskId, Guid actorId, string targetNodeId, string? comment = null);
 }

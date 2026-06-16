@@ -9,7 +9,7 @@ namespace CP6.Core.Services.Wf;
 /// 流程引擎状态机（OA 章03 §4/§5/§6）。SubmitAsync 建实例进首节点；ActAsync 办理(幂等)+会签判定+流转。
 /// 会签三规则 EvaluateNodeCounts 抽为纯静态便于单测。审批人 → IApproverResolver；条件流转 → ConditionEvaluator。
 /// </summary>
-public class FlowEngine : IFlowEngine
+public partial class FlowEngine : IFlowEngine
 {
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
