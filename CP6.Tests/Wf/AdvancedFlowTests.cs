@@ -133,4 +133,101 @@ public class AdvancedFlowTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => Engine(db).SendBackAsync(t1.Id, a, "nope"));
         await Assert.ThrowsAsync<InvalidOperationException>(() => Engine(db).SendBackAsync(t1.Id, a, "end"));
     }
+
+    // ───────────────────────── C-3 加签 ─────────────────────────
+
+    private const string SingleFlowKey = "single";
+
+    /// <summary>单审批人节点 n1(A)→end，默认会签 all。</summary>
+    private static async Task SeedSingleApproverAsync(CP6Context db, Guid a)
+    {
+        var schema = new FlowSchema
+        {
+            Start = "n1",
+            Nodes =
+            {
+                new FlowNode { Id = "n1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = a },
+                new FlowNode { Id = "end", Type = "end" },
+            },
+            Edges = { new FlowEdge { From = "n1", To = "end" } },
+        };
+        db.Wf_FlowDefs.Add(new Wf_FlowDef
+        {
+            Id = Guid.NewGuid(), FlowKey = SingleFlowKey, FlowName = "单审批", FormKey = "test",
+            SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
+        });
+        await db.SaveChangesAsync();
+    }
+
+    [Fact]
+    public async Task AfterAddSign_NodeWaitsForBoth_ThenAdvances()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        var c = Guid.NewGuid();
+        await SeedSingleApproverAsync(db, a);
+        var instId = await Engine(db).SubmitAsync(SingleFlowKey, Guid.NewGuid(), "{}");
+
+        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n1");
+        await Engine(db).AddSignAsync(ta.Id, a, c, "after");   // 后加签 C
+
+        // A 同意 → 节点未流转（C 还没审，会签 all 需全同意）
+        await Engine(db).ActAsync(ta.Id, a, true);
+        var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
+        Assert.Equal(FlowInstanceStatus.Running, inst.Status);
+        Assert.Equal("n1", inst.CurrentNode);
+
+        // 加签人 C 同意 → 节点决出 → 流转 end → 通过
+        var tc = await db.Wf_FlowTasks.SingleAsync(t => t.AddSignSource == "after" && t.Status == FlowTaskStatus.Pending);
+        await Engine(db).ActAsync(tc.Id, c, true);
+        inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
+        Assert.Equal(FlowInstanceStatus.Approved, inst.Status);
+    }
+
+    [Fact]
+    public async Task BeforeAddSign_SuspendsOriginal_ReactivatesAfterAddSigneeApproves()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        var c = Guid.NewGuid();
+        await SeedSingleApproverAsync(db, a);
+        var instId = await Engine(db).SubmitAsync(SingleFlowKey, Guid.NewGuid(), "{}");
+
+        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n1");
+        await Engine(db).AddSignAsync(ta.Id, a, c, "before");   // 前加签 C
+
+        // 原任务挂起，C 待办
+        var taAfter = await db.Wf_FlowTasks.SingleAsync(t => t.Id == ta.Id);
+        Assert.Equal(FlowTaskStatus.Suspended, taAfter.Status);
+
+        // C 同意 → 激活 A 的原任务（Suspended→Pending），节点尚未决出
+        var tc = await db.Wf_FlowTasks.SingleAsync(t => t.AddSignSource == "before");
+        await Engine(db).ActAsync(tc.Id, c, true);
+        taAfter = await db.Wf_FlowTasks.SingleAsync(t => t.Id == ta.Id);
+        Assert.Equal(FlowTaskStatus.Pending, taAfter.Status);
+        var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
+        Assert.Equal(FlowInstanceStatus.Running, inst.Status);
+
+        // A 再同意 → 全同意 → 通过
+        await Engine(db).ActAsync(ta.Id, a, true);
+        inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
+        Assert.Equal(FlowInstanceStatus.Approved, inst.Status);
+    }
+
+    [Fact]
+    public async Task AddSign_InvalidSource_OrNonPending_OrLimit_Throws()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        await SeedSingleApproverAsync(db, a);
+        await Engine(db).SubmitAsync(SingleFlowKey, Guid.NewGuid(), "{}");
+        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n1");
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => Engine(db).AddSignAsync(ta.Id, a, Guid.NewGuid(), "sideways"));
+
+        // 加签到上限：连加 10 个 after，第 11 个抛
+        for (int i = 0; i < 10; i++)
+            await Engine(db).AddSignAsync(ta.Id, a, Guid.NewGuid(), "after");
+        await Assert.ThrowsAsync<InvalidOperationException>(() => Engine(db).AddSignAsync(ta.Id, a, Guid.NewGuid(), "after"));
+    }
 }

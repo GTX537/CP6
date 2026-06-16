@@ -10,6 +10,47 @@ namespace CP6.Core.Services.Wf;
 /// </summary>
 public partial class FlowEngine
 {
+    /// <summary>单个节点加签层数上限（防无限加签，章07 §7）。</summary>
+    private const int MaxAddSignPerNode = 10;
+
+    public async Task<Guid> AddSignAsync(Guid taskId, Guid actorId, Guid addSigneeId, string source, string? comment = null)
+    {
+        var src = (source ?? string.Empty).Trim().ToLowerInvariant();
+        if (src is not ("before" or "after")) throw new InvalidOperationException("加签来源只能是 before 或 after");
+
+        var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
+                   ?? throw new InvalidOperationException("任务不存在");
+        if (task.Status != FlowTaskStatus.Pending) throw new InvalidOperationException("只能在待办任务上加签");
+
+        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
+        if (inst is null || inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("流程已结束，不能加签");
+
+        // 加签层数上限（本节点现有加签任务数）
+        var addSignCount = await _db.Wf_FlowTasks.CountAsync(t =>
+            t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.AddSignSource != null);
+        if (addSignCount >= MaxAddSignPerNode) throw new InvalidOperationException($"加签层数超上限（{MaxAddSignPerNode}）");
+
+        // 前加签：发起加签的原任务挂起，待加签人审完再激活
+        if (src == "before") task.Status = FlowTaskStatus.Suspended;
+
+        var addTask = new Wf_FlowTask
+        {
+            Id = Guid.NewGuid(),
+            InstanceId = inst.Id,
+            NodeId = task.NodeId,
+            AssigneeId = addSigneeId,
+            Status = FlowTaskStatus.Pending,
+            Countersign = task.Countersign,   // 同节点会签规则，计入 EvaluateNodeCounts
+            AddSignSource = src,
+        };
+        _db.Wf_FlowTasks.Add(addTask);
+        AddHistory(inst.Id, task.NodeId, actorId, "addsign", comment ?? $"{(src == "before" ? "前" : "后")}加签 → {addSigneeId}");
+        await _notifier.TodoCreatedAsync(addSigneeId, inst.Id, addTask.Id, inst.FlowKey);
+
+        await _db.SaveChangesAsync();
+        return addTask.Id;
+    }
+
     public async Task SendBackAsync(Guid taskId, Guid actorId, string targetNodeId, string? comment = null)
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)

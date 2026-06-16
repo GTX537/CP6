@@ -69,8 +69,14 @@ public partial class FlowEngine : IFlowEngine
         task.ModifyDate = DateTime.Now;
         AddHistory(inst.Id, task.NodeId, actorId, approve ? "approve" : "reject", comment);
 
-        // 会签判定：取本节点全部任务（含刚改的，identity-map 反映未存修改）
-        var nodeTasks = await _db.Wf_FlowTasks.Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId).ToListAsync();
+        // 前加签人审完 → 激活被挂起的原审批人任务（章07 §3），使其重新可办
+        if (approve && task.AddSignSource == "before")
+            await ReactivateSuspendedAsync(inst.Id, task.NodeId);
+
+        // 会签判定：取本节点在途/已决任务（排除作废，避免退回重入旧轮任务串台；含刚改的，identity-map 反映未存修改）
+        var nodeTasks = await _db.Wf_FlowTasks
+            .Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.Status != FlowTaskStatus.Cancelled)
+            .ToListAsync();
         int approved = nodeTasks.Count(t => t.Status == FlowTaskStatus.Approved);
         int rejected = nodeTasks.Count(t => t.Status == FlowTaskStatus.Rejected);
         var (decided, passed) = EvaluateNodeCounts(approved, rejected, nodeTasks.Count, task.Countersign);
@@ -149,6 +155,12 @@ public partial class FlowEngine : IFlowEngine
         var res = await _approver.ResolveAsync(rule, new ApproverResolveContext { StarterUserId = inst.StarterId });
         if (!res.Resolved) { Suspend(inst, node, res.UnresolvedReason ?? "审批人无法解析"); return; }
 
+        // 重入节点（退回/循环）：先作废上一轮遗留任务，避免会签计票串台
+        var stale = await _db.Wf_FlowTasks
+            .Where(t => t.InstanceId == inst.Id && t.NodeId == node.Id && t.Status != FlowTaskStatus.Cancelled)
+            .ToListAsync();
+        foreach (var t in stale) t.Status = FlowTaskStatus.Cancelled;
+
         foreach (var uid in res.ApproverIds.Distinct())
         {
             var task = new Wf_FlowTask
@@ -187,7 +199,16 @@ public partial class FlowEngine : IFlowEngine
     private static void CancelPendingTasks(IEnumerable<Wf_FlowTask> tasks)
     {
         foreach (var t in tasks)
-            if (t.Status == FlowTaskStatus.Pending) t.Status = FlowTaskStatus.Cancelled;
+            if (t.Status is FlowTaskStatus.Pending or FlowTaskStatus.Suspended) t.Status = FlowTaskStatus.Cancelled;
+    }
+
+    /// <summary>激活节点下被挂起的任务（前加签人审完后，原审批人任务 Suspended→Pending）。</summary>
+    private async Task ReactivateSuspendedAsync(Guid instanceId, string nodeId)
+    {
+        var suspended = await _db.Wf_FlowTasks
+            .Where(t => t.InstanceId == instanceId && t.NodeId == nodeId && t.Status == FlowTaskStatus.Suspended)
+            .ToListAsync();
+        foreach (var t in suspended) t.Status = FlowTaskStatus.Pending;
     }
 
     private void AddHistory(Guid instanceId, string nodeId, Guid actorId, string action, string? comment)

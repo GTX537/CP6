@@ -18,4 +18,11 @@ public interface IFlowEngine
     /// 三落点（上一步/指定节点/发起人）只是 targetNodeId 不同。幂等：任务已办则无效。
     /// </summary>
     Task SendBackAsync(Guid taskId, Guid actorId, string targetNodeId, string? comment = null);
+
+    /// <summary>
+    /// 加签（章07 §3）：在当前任务所在节点加一个实例级临时审批人（不改 FlowDef）。
+    /// after=后加签（与原审批人并存，节点未流转直到加签人也审完）；before=前加签（发起加签的原任务
+    /// 挂起，加签人审完再激活原任务）。加签待办计入会签计票。超加签层数上限抛异常。返回新任务 Id。
+    /// </summary>
+    Task<Guid> AddSignAsync(Guid taskId, Guid actorId, Guid addSigneeId, string source, string? comment = null);
 }
