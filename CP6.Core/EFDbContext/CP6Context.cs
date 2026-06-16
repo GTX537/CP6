@@ -6,6 +6,7 @@ using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DomainModels.Pub;
+using CP6.Entity.DomainModels.Pur;
 using CP6.Entity.DomainModels.Wf;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
@@ -402,6 +403,10 @@ public class CP6Context : DbContext
     /// <summary>成本归集明细行（章06）</summary>
     public DbSet<CostSheetLine> CostSheetLines { get; set; }
 
+    // ───── 采购（Pur）MVP 章01~04 ─────
+    /// <summary>采购价表（章01，供应商×物料阶梯价 + 有效期）</summary>
+    public DbSet<SupplierPrice> SupplierPrices { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -684,6 +689,16 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => x.ReceiptId);
             e.HasIndex(x => x.ArInvoiceId);
+        });
+
+        // ───── 采购（Pur）MVP 章01~04 ─────
+        // 采购价表（章01）：同租户内 (供应商,物料,阶梯量,生效日) 唯一（自动升级为含 TenantId 前缀）+ 带价检索
+        modelBuilder.Entity<SupplierPrice>(e =>
+        {
+            e.HasIndex(x => new { x.SupplierId, x.ItemId, x.MinQty, x.ValidFrom })
+                .IsUnique()
+                .HasDatabaseName("UX_Pur_SupplierPrice_Tier");
+            e.HasIndex(x => new { x.SupplierId, x.ItemId });   // 带价解析主检索
         });
 
         // 見積計算書：QtnCalcNo 唯一

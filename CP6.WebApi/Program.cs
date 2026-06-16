@@ -145,6 +145,9 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.ICreditControlService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Integration.IFinBridgeHook, CP6.Core.Services.Fin.FinBridgeHook>(); // F2-D4 出货→AR 自动开票/红冲（Phase6 桥，WMS|FIN 路由）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Services.Fin.IFinAp)sp.GetRequiredService<CP6.Core.Services.Fin.IApInvoiceService>()); // F2-D3 采购对外契约（同一 ApInvoiceService 实例）
 
+// 4.0.3 采购（Pur）MVP 章01~04：主数据→PO→收货→三单匹配→自动建应付（补全财务 AP 前置）
+builder.Services.AddScoped<CP6.Core.Services.Pur.ISupplierPriceService, CP6.Core.Services.Pur.SupplierPriceService>(); // 章01 §3/§4 采购价表 + 阶梯带价
+
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
 builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
