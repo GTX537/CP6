@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// 资源键 = Sys_Menu.MenuKey + ":" + ActionCode。
 /// </summary>
 [Table("Sys_MenuAction")]
-public class Sys_MenuAction : BaseEntity
+public class Sys_MenuAction : BaseTenantEntity
 {
     /// <summary>所属菜单 → Sys_Menu.MenuId（int，B1-D1）</summary>
     public int MenuId { get; set; }

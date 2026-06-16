@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// 多角色聚合取 MAX（最宽）；ScopeType=4 时 CustomDeptIds 取并集。
 /// </summary>
 [Table("Sys_RoleDataScope")]
-public class Sys_RoleDataScope : BaseEntity
+public class Sys_RoleDataScope : BaseTenantEntity
 {
     /// <summary>角色 → Sys_Role.RoleId（int，B1-D1）</summary>
     public int RoleId { get; set; }

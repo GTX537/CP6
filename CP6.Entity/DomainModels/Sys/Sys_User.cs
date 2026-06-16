@@ -5,7 +5,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// <summary>
 /// 系统用户实体
 /// </summary>
-public class Sys_User : BaseEntity
+public class Sys_User : BaseTenantEntity
 {
     /// <summary>
     /// 用户名（登录账号）

@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// 多租户 TenantId 延后到系统级多租户阶段统一加（与 Sys 家族一致）。
 /// </summary>
 [Table("Sys_Dept")]
-public class Sys_Dept : BaseEntity
+public class Sys_Dept : BaseTenantEntity
 {
     /// <summary>上级部门 Id；根部门为 null</summary>
     public Guid? ParentId { get; set; }

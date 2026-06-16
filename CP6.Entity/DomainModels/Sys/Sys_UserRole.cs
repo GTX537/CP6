@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// 主角色仍记在 <see cref="Sys_User.RoleId"/>（默认 / 显示用），此表存全部角色。
 /// </summary>
 [Table("Sys_UserRole")]
-public class Sys_UserRole : BaseEntity   // Id GUID + Creator/CreateDate/Modifier/ModifyDate
+public class Sys_UserRole : BaseTenantEntity   // Id GUID + 审计字段 + TenantId（章10）
 {
     /// <summary>用户 → Sys_User.Id（Guid）</summary>
     public Guid UserId { get; set; }

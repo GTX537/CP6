@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// 仅记录非默认（受限）字段；未记录字段默认 1=可读写。
 /// </summary>
 [Table("Sys_RoleFieldPerm")]
-public class Sys_RoleFieldPerm : BaseEntity
+public class Sys_RoleFieldPerm : BaseTenantEntity
 {
     /// <summary>角色 → Sys_Role.RoleId（int，B1-D1）</summary>
     public int RoleId { get; set; }

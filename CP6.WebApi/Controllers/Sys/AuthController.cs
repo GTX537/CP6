@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
 using CP6.Entity.DTOs;
@@ -19,12 +20,14 @@ public class AuthController : LocalizedControllerBase
     private readonly CP6Context _context;
     private readonly IConfiguration _config;
     private readonly ICurrentPermissionContext _perm;
+    private readonly ITenantContext _tenant;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant)
     {
         _context = context;
         _config = config;
         _perm = perm;
+        _tenant = tenant;
     }
 
     /// <summary>
@@ -34,8 +37,10 @@ public class AuthController : LocalizedControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        // 1. 查找用户
+        // 1. 查找用户。章10 登录引导：此刻租户未知（无 JWT），用 IgnoreQueryFilters 跨租户按名查找
+        //    （多租户唯一性需登录租户选择器，属后续；单租户/默认下行为不变）。
         var user = await _context.Sys_Users
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(u => u.UserName == request.UserName);
 
         if (user == null)
@@ -48,7 +53,10 @@ public class AuthController : LocalizedControllerBase
         if (!user.Enable)
             return BadRequest(new { message = Localizer["账号已被禁用"] });
 
-        // 3. 生成 JWT Token
+        // 章10：确定当前请求租户为该用户的租户 → 后续权限聚合/菜单查询按其租户正确作用域
+        _tenant.CurrentTenantId = user.TenantId;
+
+        // 3. 生成 JWT Token（带 tenant_id，后续请求由 TenantMiddleware 解析）
         var jwt = _config.GetSection("JWT");
         var token = JwtHelper.GenerateToken(
             userId: user.Id.ToString(),
@@ -56,7 +64,8 @@ public class AuthController : LocalizedControllerBase
             secret: jwt["Secret"]!,
             issuer: jwt["Issuer"]!,
             audience: jwt["Audience"]!,
-            expireMinutes: int.Parse(jwt["ExpireMinutes"]!));
+            expireMinutes: int.Parse(jwt["ExpireMinutes"]!),
+            tenantId: user.TenantId);
 
         // 4. 登录聚合（PUB 章09）：预热权限上下文（多角色聚合 + 缓存），首请求免重建
         var ctx = await _perm.PrewarmAsync(user.Id);
