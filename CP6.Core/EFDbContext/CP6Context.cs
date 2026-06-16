@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using CP6.Core.Services.Common;
 using CP6.Entity;
+using Microsoft.EntityFrameworkCore.Metadata;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Mes;
@@ -1545,6 +1546,36 @@ public class CP6Context : DbContext
                 Expression.Property(p, nameof(BaseTenantEntity.TenantId)),
                 Expression.Property(Expression.Constant(this), nameof(CurrentTenantId)));
             modelBuilder.Entity(et.ClrType).HasQueryFilter(Expression.Lambda(body, p));
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        //  章10 §8（OA4-D2 / C-4）：把所有 BaseTenantEntity 上"全局唯一"索引升级为 (TenantId, ...) 复合唯一。
+        //  与上面注册全局过滤同 philosophy（防漏命门）：租户表的唯一性必须按租户——否则 B 租户无法用与 A
+        //  相同的业务单号/编码/采番。已含 TenantId 的索引（如 Sys_Lang）跳过；只动唯一索引（非唯一查询索引不涉正确性）。
+        //  保留原 DatabaseName 与过滤条件（部分唯一索引如 AP 发票去重 [SupplierInvoiceNo] IS NOT NULL 必须留 filter）。
+        //  默认租户期：全表 TenantId=默认租户，(TenantId,Code) 唯一 ⇔ (Code) 唯一，对存量等价无损。
+        // ═══════════════════════════════════════════════════════════
+        foreach (var et in modelBuilder.Model.GetEntityTypes()
+                     .Where(t => typeof(BaseTenantEntity).IsAssignableFrom(t.ClrType) && t.BaseType is null))
+        {
+            var tenantProp = et.FindProperty(nameof(BaseTenantEntity.TenantId));
+            if (tenantProp is null) continue;
+
+            foreach (var idx in et.GetIndexes().Where(i => i.IsUnique).ToList())
+            {
+                if (idx.Properties.Contains(tenantProp)) continue;   // 已带 TenantId 前缀（如 Sys_Lang）
+
+                var dbName = idx.GetDatabaseName();
+                var filter = idx.GetFilter();
+                var newProps = new List<IMutableProperty> { tenantProp };
+                newProps.AddRange(idx.Properties);
+
+                et.RemoveIndex(idx.Properties);
+                var newIdx = et.AddIndex(newProps);
+                newIdx.IsUnique = true;
+                if (dbName != null) newIdx.SetDatabaseName(dbName);
+                if (filter != null) newIdx.SetFilter(filter);
+            }
         }
     }
 
