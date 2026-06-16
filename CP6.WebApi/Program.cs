@@ -156,6 +156,7 @@ builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IFinApService, CP6.Co
 builder.Services.AddScoped<CP6.Core.Services.Pur.IThreeWayMatchService, CP6.Core.Services.Pur.ThreeWayMatchService>(); // 章04 ★三单匹配→自动建应付/挂起
 builder.Services.AddScoped<CP6.Core.Services.Pur.IPrGenerationService, CP6.Core.Services.Pur.PrGenerationService>(); // 章05 采购申请 PR 需求驱动生成（缺料反流/工单 BOM 缺料）
 builder.Services.AddScoped<CP6.Core.Services.Pur.IPurchaseRequestService, CP6.Core.Services.Pur.PurchaseRequestService>(); // 章05 §4/§5 PR 手工建单 + 送审 + PR→PO 按建议供应商分组转单
+builder.Services.AddScoped<CP6.Core.Services.Pur.IRfqService, CP6.Core.Services.Pur.RfqService>(); // 章06 §2/§3 询价 RFQ 从 PR 发起 + 邀供应商 + 收报价
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）

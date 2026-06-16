@@ -427,6 +427,16 @@ public class CP6Context : DbContext
     /// <summary>采购申请行（章05，估价/建议供应商；转 PO 回填 ConvertedPoNo）</summary>
     public DbSet<PurchaseRequestLine> PurchaseRequestLines { get; set; }
 
+    // ───── 采购（Pur）完整型 章06 询价比价 RFQ ─────
+    /// <summary>询价单头（章06，价格发现：从 PR 发起 + 邀供应商 + 收报价）</summary>
+    public DbSet<Rfq> Rfqs { get; set; }
+    /// <summary>询价行（章06，买什么；SourcePr 行级追溯回 PR）</summary>
+    public DbSet<RfqLine> RfqLines { get; set; }
+    /// <summary>被邀供应商（章06，问谁；复用 BusinessPartner 发注先）</summary>
+    public DbSet<RfqSupplier> RfqSuppliers { get; set; }
+    /// <summary>报价矩阵（章06，各家答什么；(供应商 × 行)）</summary>
+    public DbSet<RfqQuote> RfqQuotes { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -801,6 +811,47 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.PrNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_PrLine_No");
             e.HasIndex(x => x.ItemId);
             e.HasIndex(x => x.ConvertedPoNo);
+        });
+
+        // 询价单（章06）：RfqNo 唯一 + 按状态/来源 PR 检索；行 + 被邀供应商 + 报价矩阵级联（业务键 RfqNo 关联）
+        modelBuilder.Entity<Rfq>(e =>
+        {
+            e.HasIndex(x => x.RfqNo).IsUnique();
+            e.HasIndex(x => x.Status);
+            e.HasIndex(x => x.SourcePrNo);
+
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.RfqNo)
+                .HasPrincipalKey(x => x.RfqNo)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(x => x.Suppliers)
+                .WithOne()
+                .HasForeignKey(s => s.RfqNo)
+                .HasPrincipalKey(x => x.RfqNo)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(x => x.Quotes)
+                .WithOne()
+                .HasForeignKey(q => q.RfqNo)
+                .HasPrincipalKey(x => x.RfqNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        // 询价行（章06）：同 RFQ 内行号唯一 + 按物料检索；按来源 PR 行追溯
+        modelBuilder.Entity<RfqLine>(e =>
+        {
+            e.HasIndex(x => new { x.RfqNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_RfqLine_No");
+            e.HasIndex(x => x.ItemId);
+            e.HasIndex(x => new { x.SourcePrNo, x.SourcePrLineNo });
+        });
+        // 被邀供应商（章06）：同 RFQ 内供应商唯一（幂等防重邀）
+        modelBuilder.Entity<RfqSupplier>(e =>
+        {
+            e.HasIndex(x => new { x.RfqNo, x.SupplierId }).IsUnique().HasDatabaseName("UX_Pur_RfqSupplier");
+        });
+        // 报价矩阵（章06）：(询价单 × 供应商 × 行) 唯一（upsert 锚）
+        modelBuilder.Entity<RfqQuote>(e =>
+        {
+            e.HasIndex(x => new { x.RfqNo, x.SupplierId, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_RfqQuote");
         });
 
         // 見積計算書：QtnCalcNo 唯一
