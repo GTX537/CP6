@@ -14,9 +14,37 @@ export interface FormFieldDef {
   options?: { label: string; value: string | number }[]
 }
 
+/** 规则动作类型（章06 §4）：显隐/必填/禁用(前端)/联动选项(前端)/计算回写 */
+export type RuleAction =
+  | 'show' | 'hide'
+  | 'require' | 'optional'
+  | 'disable' | 'enable'
+  | 'setOptions'
+  | 'compute'
+
+/** 规则动作（命中 when 后依序应用） */
+export interface RuleEffect {
+  action: RuleAction
+  /** 目标字段名 */
+  target: string
+  /** compute 的计算表达式（仅 compute 用，ExpressionEvaluator 语义） */
+  expr?: string
+  /** setOptions 的选项（仅 setOptions 用） */
+  options?: { label: string; value: string | number }[]
+}
+
+/** 表单规则（章06 §4）：when 表达式为真时应用 then 动作。与后端共用同一 schema + 求值器语义 */
+export interface FormRule {
+  /** 触发条件表达式（空=恒成立） */
+  when: string
+  then: RuleEffect[]
+}
+
 /** 表单 schema */
 export interface FormSchema {
   fields: FormFieldDef[]
+  /** 显隐/计算/联动/必填规则（章06，可选） */
+  rules?: FormRule[]
 }
 
 /** 字段权限级别 */

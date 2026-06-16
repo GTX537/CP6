@@ -19,4 +19,10 @@ public interface IFormService
 
     /// <summary>纯校验：返回错误清单（空=通过）。供 SubmitData 与单测复用，不触库。</summary>
     IReadOnlyList<string> ValidateData(string schemaJson, string dataJson);
+
+    /// <summary>
+    /// 服务端规则复算 + 复核（章06 §6，与前端 ruleEngine 同语义）：按 schema.Rules 重算 compute、
+    /// 按生效 required/可见复核。返回 (复算后的 dataJson, 错误清单)。不触库，供 SubmitData 与单测复用。
+    /// </summary>
+    (string dataJson, IReadOnlyList<string> errors) RecomputeAndValidate(string schemaJson, string dataJson);
 }
