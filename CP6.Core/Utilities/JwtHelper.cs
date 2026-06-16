@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CP6.Core.Services.Common;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CP6.Core.Utilities;
@@ -25,13 +26,15 @@ public class JwtHelper
         string secret,
         string issuer,
         string audience,
-        int expireMinutes)
+        int expireMinutes,
+        Guid? tenantId = null)
     {
-        // 1. 把用户信息放入 Claims（Token 中携带的数据）
+        // 1. 把用户信息放入 Claims（Token 中携带的数据）。tenant_id 供 TenantMiddleware 解析当前租户（章10）
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, userId),
-            new Claim(ClaimTypes.Name, userName)
+            new Claim(ClaimTypes.Name, userName),
+            new Claim("tenant_id", (tenantId ?? TenantContext.DefaultTenant).ToString())
         };
 
         // 2. 用密钥创建签名凭证

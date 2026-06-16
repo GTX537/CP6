@@ -148,6 +148,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Service
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
 builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
+builder.Services.AddScoped<CP6.Core.Services.Common.ITenantContext, CP6.Core.Services.Common.TenantContext>(); // 章10 当前租户上下文（TenantMiddleware 写入，CP6Context 过滤/盖章读取）
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPermissionAggregator, CP6.Core.Services.Sys.PermissionAggregator>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentPermissionContext, CP6.Core.Services.Sys.CurrentPermissionContext>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IUserRoleService, CP6.Core.Services.Sys.UserRoleService>();
@@ -1861,6 +1862,9 @@ app.UseCors("AllowAll");
 app.UseHttpMetrics();
 
 app.UseAuthentication();
+
+// 章10 多租户：从 JWT tenant_id 解析当前租户写入 ITenantContext（须在 UseAuthentication 之后，User 已解析）。
+app.UseMiddleware<CP6.WebApi.Middleware.TenantMiddleware>();
 
 // i18n 优化 P1：请求本地化。culture 来源优先级 = 用户偏好(JWT 'lang' claim) > ?culture= > Cookie > Accept-Language > 默认 ja。
 // 必须在 UseAuthentication 之后（读 claim 需 User 已认证），且在 BizExceptionMiddleware 之外（更早），
