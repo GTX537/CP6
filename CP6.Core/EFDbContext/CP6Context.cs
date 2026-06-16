@@ -410,6 +410,10 @@ public class CP6Context : DbContext
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
     /// <summary>采购订单行（章02，★三累计锚 Received/Accepted/Invoiced）</summary>
     public DbSet<PurchaseOrderLine> PurchaseOrderLines { get; set; }
+    /// <summary>收货单头（章03，双基准 + WMS 委托入库）</summary>
+    public DbSet<GoodsReceipt> GoodsReceipts { get; set; }
+    /// <summary>收货单行（章03，回写 PO 三累计锚）</summary>
+    public DbSet<GoodsReceiptLine> GoodsReceiptLines { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -724,6 +728,26 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => new { x.PoNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_PoLine_No");
             e.HasIndex(x => x.ItemId);
+        });
+
+        // 收货单（章03）：GrNo 唯一 + 按 PO/供应商检索；行级联（业务键 GrNo 关联）
+        modelBuilder.Entity<GoodsReceipt>(e =>
+        {
+            e.HasIndex(x => x.GrNo).IsUnique();
+            e.HasIndex(x => x.PoNo);
+            e.HasIndex(x => new { x.SupplierId, x.Status });
+
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.GrNo)
+                .HasPrincipalKey(x => x.GrNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        // 收货单行（章03）：同收货单内行号唯一 + 按 PO 行检索
+        modelBuilder.Entity<GoodsReceiptLine>(e =>
+        {
+            e.HasIndex(x => new { x.GrNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_GrLine_No");
+            e.HasIndex(x => x.PoLineNo);
         });
 
         // 見積計算書：QtnCalcNo 唯一
