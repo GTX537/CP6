@@ -149,6 +149,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Service
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
 builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
 builder.Services.AddScoped<CP6.Core.Services.Common.ITenantContext, CP6.Core.Services.Common.TenantContext>(); // 章10 当前租户上下文（TenantMiddleware 写入，CP6Context 过滤/盖章读取）
+builder.Services.AddScoped<CP6.Core.Services.Common.ITenantEnumerator, CP6.Core.Services.Common.TenantEnumerator>(); // 章10 活跃租户枚举（后台 Worker 按租户循环用）
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPermissionAggregator, CP6.Core.Services.Sys.PermissionAggregator>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentPermissionContext, CP6.Core.Services.Sys.CurrentPermissionContext>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IUserRoleService, CP6.Core.Services.Sys.UserRoleService>();
@@ -429,6 +430,9 @@ using (var scope = app.Services.CreateScope())
 
     // Docker 环境下自动创建数据库并应用所有迁移
     db.Database.Migrate();
+
+    // 章10 默认租户种子（幂等，按 Id 判存）——登记进 Sys_Tenant 注册表供枚举/登录/管理用
+    CP6.Core.Services.Common.TenantSeed.EnsureSeeded(db);
 
     // 章05 自动凭证记账规则种子（幂等，按 EventType 判存；只引用 Role 锚点，与 COA 模板包解耦）
     CP6.Core.Services.Fin.PostingRuleSeed.EnsureSeeded(db);

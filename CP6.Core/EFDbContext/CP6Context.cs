@@ -37,6 +37,11 @@ public class CP6Context : DbContext
     public DbSet<Sys_User> Sys_Users { get; set; }
 
     /// <summary>
+    /// 租户注册表 —— OA 章10 §7 多租户花名册（共享表，Id 即各表 TenantId 来源）
+    /// </summary>
+    public DbSet<Sys_Tenant> Sys_Tenants { get; set; }
+
+    /// <summary>
     /// 部门（组织树）—— PUB 章00 组织模型
     /// </summary>
     public DbSet<Sys_Dept> Sys_Depts { get; set; }
@@ -399,6 +404,10 @@ public class CP6Context : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // OA 章10 §7 租户注册表：租户编码全局唯一（共享表，不带 TenantId，不参与行级过滤）
+        modelBuilder.Entity<Sys_Tenant>()
+            .HasIndex(x => x.TenantCode).IsUnique().HasDatabaseName("UX_Sys_Tenant_Code");
 
         // PUB 章00 组织模型：部门树索引（B0-D1 本阶段不带 TenantId，DeptCode 单列唯一；多租户后升级为 (TenantId,DeptCode)）
         modelBuilder.Entity<Sys_Dept>(e =>
