@@ -39,23 +39,26 @@ public class OeeCalculationService : BackgroundService
         {
             try
             {
-                using var scope = _scopeFactory.CreateScope();
-                var oee = scope.ServiceProvider.GetRequiredService<IOeeService>();
-
                 var today = DateTime.Today;
+                var recalcYesterday = lastDay.HasValue && lastDay.Value < today;
+                var yesterday = today.AddDays(-1);
 
-                // 日付変更検知 → 昨日分を 1 回だけ再計算
-                if (lastDay.HasValue && lastDay.Value < today)
+                // 章10 §5 按租户循环：各租户独立作用域重算其 OEE（T_OeeDaily 是 BaseBizEntity，按租户隔离）
+                await TenantScopeRunner.ForEachTenantAsync(_scopeFactory, async (sp, tenantId, ct) =>
                 {
-                    var yesterday = today.AddDays(-1);
-                    var ny = await oee.RecalculateAsync(new OeeRecalcRequest { TargetDate = yesterday }, "OeeWorker");
-                    _logger.LogInformation("前日 OEE 再計算完了：{Date} {Count}件", yesterday.ToString("yyyy-MM-dd"), ny);
-                }
-                lastDay = today;
+                    var oee = sp.GetRequiredService<IOeeService>();
 
-                // 本日 OEE 再計算
-                var n = await oee.RecalculateAsync(new OeeRecalcRequest { TargetDate = today }, "OeeWorker");
-                _logger.LogDebug("本日 OEE 再計算：{Count}件", n);
+                    if (recalcYesterday)
+                    {
+                        var ny = await oee.RecalculateAsync(new OeeRecalcRequest { TargetDate = yesterday }, "OeeWorker");
+                        _logger.LogInformation("前日 OEE 再計算完了 租户 {Tenant}：{Date} {Count}件", tenantId, yesterday.ToString("yyyy-MM-dd"), ny);
+                    }
+
+                    var n = await oee.RecalculateAsync(new OeeRecalcRequest { TargetDate = today }, "OeeWorker");
+                    _logger.LogDebug("本日 OEE 再計算 租户 {Tenant}：{Count}件", tenantId, n);
+                }, _logger, stoppingToken);
+
+                lastDay = today;
             }
             catch (Exception ex)
             {

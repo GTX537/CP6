@@ -37,66 +37,9 @@ public class MachineStatusMonitor : BackgroundService
         {
             try
             {
-                using var scope = _scopeFactory.CreateScope();
-                var db = scope.ServiceProvider.GetRequiredService<CP6Context>();
-                var notifier = scope.ServiceProvider.GetRequiredService<IMesNotifier>();
-
-                // 稼働中設備
-                var runningMachines = await db.Machines.AsNoTracking()
-                    .Where(m => !m.IsDeleted && m.Status == 1)
-                    .Select(m => m.MachineCd)
-                    .ToListAsync(stoppingToken);
-
-                if (runningMachines.Count == 0)
-                {
-                    await DelaySafe(stoppingToken);
-                    continue;
-                }
-
-                var idleSince = DateTime.Now - IdleThreshold;
-
-                // 各設備の最終実績日時
-                var lastResults = await db.ProductionResults.AsNoTracking()
-                    .Where(r => !r.IsDeleted && r.MachineCd != null && runningMachines.Contains(r.MachineCd!))
-                    .GroupBy(r => r.MachineCd!)
-                    .Select(g => new
-                    {
-                        MachineCd = g.Key,
-                        Last = g.Max(x => x.CreateDate),
-                    })
-                    .ToDictionaryAsync(x => x.MachineCd, x => x.Last, stoppingToken);
-
-                // 直近実績が IdleThreshold 以上前の設備をアイドル判定
-                var idleMachines = runningMachines
-                    .Where(cd => !lastResults.ContainsKey(cd) || lastResults[cd] < idleSince)
-                    .ToList();
-
-                if (idleMachines.Count == 0)
-                {
-                    await DelaySafe(stoppingToken);
-                    continue;
-                }
-
-                // ステータス変更（停止）+ SignalR 通知
-                var tracked = await db.Machines
-                    .Where(m => idleMachines.Contains(m.MachineCd) && m.Status == 1)
-                    .ToListAsync(stoppingToken);
-
-                foreach (var m in tracked)
-                {
-                    m.Status = 0;
-                    m.Modifier = "MachineMonitor";
-                    m.ModifyDate = DateTime.Now;
-                    _logger.LogInformation("設備 {Cd} アイドル検知 → 停止状態に変更", m.MachineCd);
-                }
-                if (tracked.Count > 0)
-                {
-                    await db.SaveChangesAsync(stoppingToken);
-                    foreach (var m in tracked)
-                    {
-                        try { await notifier.NotifyMachineStatusChangedAsync(m.MachineCd, 0); } catch { }
-                    }
-                }
+                // 章10 §5 按租户循环：各租户独立作用域扫各自的稼働中設備（Machine/ProductionResult 按租户隔离）
+                await TenantScopeRunner.ForEachTenantAsync(
+                    _scopeFactory, (sp, _, ct) => ScanTenantAsync(sp, ct), _logger, stoppingToken);
             }
             catch (OperationCanceledException) { break; }
             catch (Exception ex)
@@ -108,6 +51,62 @@ public class MachineStatusMonitor : BackgroundService
         }
 
         _logger.LogInformation("Machine Status Monitor 停止");
+    }
+
+    /// <summary>扫描单个租户作用域下的设备空闲并停机（由 <see cref="TenantScopeRunner"/> 逐租户调用）。</summary>
+    private async Task ScanTenantAsync(IServiceProvider sp, CancellationToken ct)
+    {
+        var db = sp.GetRequiredService<CP6Context>();
+        var notifier = sp.GetRequiredService<IMesNotifier>();
+
+        // 稼働中設備
+        var runningMachines = await db.Machines.AsNoTracking()
+            .Where(m => !m.IsDeleted && m.Status == 1)
+            .Select(m => m.MachineCd)
+            .ToListAsync(ct);
+
+        if (runningMachines.Count == 0) return;
+
+        var idleSince = DateTime.Now - IdleThreshold;
+
+        // 各設備の最終実績日時
+        var lastResults = await db.ProductionResults.AsNoTracking()
+            .Where(r => !r.IsDeleted && r.MachineCd != null && runningMachines.Contains(r.MachineCd!))
+            .GroupBy(r => r.MachineCd!)
+            .Select(g => new
+            {
+                MachineCd = g.Key,
+                Last = g.Max(x => x.CreateDate),
+            })
+            .ToDictionaryAsync(x => x.MachineCd, x => x.Last, ct);
+
+        // 直近実績が IdleThreshold 以上前の設備をアイドル判定
+        var idleMachines = runningMachines
+            .Where(cd => !lastResults.ContainsKey(cd) || lastResults[cd] < idleSince)
+            .ToList();
+
+        if (idleMachines.Count == 0) return;
+
+        // ステータス変更（停止）+ SignalR 通知
+        var tracked = await db.Machines
+            .Where(m => idleMachines.Contains(m.MachineCd) && m.Status == 1)
+            .ToListAsync(ct);
+
+        foreach (var m in tracked)
+        {
+            m.Status = 0;
+            m.Modifier = "MachineMonitor";
+            m.ModifyDate = DateTime.Now;
+            _logger.LogInformation("設備 {Cd} アイドル検知 → 停止状態に変更", m.MachineCd);
+        }
+        if (tracked.Count > 0)
+        {
+            await db.SaveChangesAsync(ct);
+            foreach (var m in tracked)
+            {
+                try { await notifier.NotifyMachineStatusChangedAsync(m.MachineCd, 0); } catch { }
+            }
+        }
     }
 
     private static async Task DelaySafe(CancellationToken ct)
