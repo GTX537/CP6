@@ -1527,8 +1527,10 @@ public class CP6Context : DbContext
 
         modelBuilder.Entity<Sys_OperLog>(e =>
         {
-            // 告警 OperLog 快速过滤（IntegrationEvent DeadLetter 写入时 IsAlert=true）
-            e.HasIndex(x => new { x.IsAlert, x.CreateDate });
+            // 章10 §3 审计日志按租户隔离：手注册全局过滤（int Id 非 BaseTenantEntity，未进反射批量）。
+            // 告警 OperLog 快速过滤（DeadLetter 时 IsAlert=true）的索引补 TenantId 前缀，对齐租户作用域查询。
+            e.HasIndex(x => new { x.TenantId, x.IsAlert, x.CreateDate }).HasDatabaseName("IX_Sys_OperLog_Tenant_Alert");
+            e.HasQueryFilter(x => x.TenantId == CurrentTenantId);
         });
 
         // ═══════════════════════════════════════════════════════════
@@ -1546,10 +1548,15 @@ public class CP6Context : DbContext
         }
     }
 
-    /// <summary>写入盖章（章10 §4）：新增的 BaseTenantEntity 未显式设租户 → 盖当前租户。</summary>
+    /// <summary>写入盖章（章10 §4）：新增的 BaseTenantEntity 未显式设租户 → 盖当前租户。
+    /// Sys_OperLog（int Id 非 BaseTenantEntity）同样盖章：覆盖 DeadLetterNotifier 等未显式设租户的写入路径。</summary>
     private void StampTenant()
     {
         foreach (var e in ChangeTracker.Entries<BaseTenantEntity>())
+            if (e.State == EntityState.Added && e.Entity.TenantId == Guid.Empty)
+                e.Entity.TenantId = CurrentTenantId;
+
+        foreach (var e in ChangeTracker.Entries<Sys_OperLog>())
             if (e.State == EntityState.Added && e.Entity.TenantId == Guid.Empty)
                 e.Entity.TenantId = CurrentTenantId;
     }

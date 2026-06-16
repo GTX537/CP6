@@ -99,6 +99,8 @@ public class OperLogFilter : IAsyncActionFilter
 
         var log = new Sys_OperLog
         {
+            // 章10：在此盖当前请求租户——既覆盖 DB 降级写，也随 Kafka payload 带到消费者落库（消费者 scope 是默认租户）
+            TenantId = _context.CurrentTenantId,
             UserName = userName,
             HttpMethod = method,
             RequestUrl = path,

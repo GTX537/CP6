@@ -13,6 +13,12 @@ public class Sys_OperLog
     public int Id { get; set; }
 
     /// <summary>
+    /// 租户 Id（OA 章10 §3 审计日志按租户隔离）。本表 int Id 非 BaseTenantEntity，故 TenantId 手加：
+    /// 写入由 OperLogFilter / SaveChanges 盖章，查询由 CP6Context 手注册的全局过滤按当前租户隔离。
+    /// </summary>
+    public Guid TenantId { get; set; }
+
+    /// <summary>
     /// 操作人用户名
     /// </summary>
     [MaxLength(100)]

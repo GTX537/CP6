@@ -63,7 +63,10 @@ public class OperLogCleanupService : BackgroundService
             using var scope = _scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<CP6Context>();
 
+            // 章10：保留期清理是按时间的跨租户运维操作 → IgnoreQueryFilters 删所有租户的过期日志
+            // （否则后台默认租户作用域只会删到默认租户的日志）
             var deleted = await db.Sys_OperLogs
+                .IgnoreQueryFilters()
                 .Where(l => l.CreateDate < cutoff)
                 .ExecuteDeleteAsync(stoppingToken);
 
