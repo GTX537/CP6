@@ -406,6 +406,10 @@ public class CP6Context : DbContext
     // ───── 采购（Pur）MVP 章01~04 ─────
     /// <summary>采购价表（章01，供应商×物料阶梯价 + 有效期）</summary>
     public DbSet<SupplierPrice> SupplierPrices { get; set; }
+    /// <summary>采购订单头（章02，三累计锚派生状态 + 冻结汇率）</summary>
+    public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+    /// <summary>采购订单行（章02，★三累计锚 Received/Accepted/Invoiced）</summary>
+    public DbSet<PurchaseOrderLine> PurchaseOrderLines { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -699,6 +703,27 @@ public class CP6Context : DbContext
                 .IsUnique()
                 .HasDatabaseName("UX_Pur_SupplierPrice_Tier");
             e.HasIndex(x => new { x.SupplierId, x.ItemId });   // 带价解析主检索
+        });
+
+        // 采购订单（章02）：PoNo 唯一 + 按供应商/状态检索；行级联（业务键 PoNo 关联，软删/迁移友好）
+        modelBuilder.Entity<PurchaseOrder>(e =>
+        {
+            e.HasIndex(x => x.PoNo).IsUnique();
+            e.HasIndex(x => new { x.SupplierId, x.Status });
+            e.HasIndex(x => x.Status);
+            e.HasIndex(x => x.OrderDate);
+
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.PoNo)
+                .HasPrincipalKey(x => x.PoNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        // 采购订单行（章02）：同 PO 内行号唯一 + 按物料检索（三单匹配按 PoLine 取锚）
+        modelBuilder.Entity<PurchaseOrderLine>(e =>
+        {
+            e.HasIndex(x => new { x.PoNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_PoLine_No");
+            e.HasIndex(x => x.ItemId);
         });
 
         // 見積計算書：QtnCalcNo 唯一

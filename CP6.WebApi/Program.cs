@@ -147,6 +147,8 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Service
 
 // 4.0.3 采购（Pur）MVP 章01~04：主数据→PO→收货→三单匹配→自动建应付（补全财务 AP 前置）
 builder.Services.AddScoped<CP6.Core.Services.Pur.ISupplierPriceService, CP6.Core.Services.Pur.SupplierPriceService>(); // 章01 §3/§4 采购价表 + 阶梯带价
+builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IApprovalService, CP6.Core.Services.Pur.Contracts.StubApprovalService>(); // P-D1 审批委托（桩；OA 引擎接真实流程后换适配器）
+builder.Services.AddScoped<CP6.Core.Services.Pur.IPurchaseOrderService, CP6.Core.Services.Pur.PurchaseOrderService>(); // 章02 PO 建单带出 + 派生状态机 + 送审
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
