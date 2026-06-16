@@ -152,6 +152,8 @@ builder.Services.AddScoped<CP6.Core.Services.Pur.IPurchaseOrderService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsReceiveService, CP6.Core.Services.Pur.Contracts.StubWmsReceiveService>(); // P-D1 WMS 入库委托（桩；WMS 落地后换适配器）
 builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsQcQuery, CP6.Core.Services.Pur.Contracts.StubWmsQcQuery>(); // P-D1 WMS 检收查询（桩=全合格）
 builder.Services.AddScoped<CP6.Core.Services.Pur.IGoodsReceiptService, CP6.Core.Services.Pur.GoodsReceiptService>(); // 章03 双基准收货 + 委托入库 + 回写三累计锚
+builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IFinApService, CP6.Core.Services.Pur.Contracts.FinApServiceAdapter>(); // 章04 建应付适配器（委托财务 IFinAp，借方按 GL 角色 INVENTORY）
+builder.Services.AddScoped<CP6.Core.Services.Pur.IThreeWayMatchService, CP6.Core.Services.Pur.ThreeWayMatchService>(); // 章04 ★三单匹配→自动建应付/挂起
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）

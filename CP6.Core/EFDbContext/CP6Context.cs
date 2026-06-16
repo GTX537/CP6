@@ -414,6 +414,12 @@ public class CP6Context : DbContext
     public DbSet<GoodsReceipt> GoodsReceipts { get; set; }
     /// <summary>收货单行（章03，回写 PO 三累计锚）</summary>
     public DbSet<GoodsReceiptLine> GoodsReceiptLines { get; set; }
+    /// <summary>三单匹配记录（章04，★容差匹配→自动建应付/挂起）</summary>
+    public DbSet<ThreeWayMatch> ThreeWayMatches { get; set; }
+    /// <summary>三单匹配明细（章04，留存发票行+偏差供人工放行重建）</summary>
+    public DbSet<ThreeWayMatchLine> ThreeWayMatchLines { get; set; }
+    /// <summary>三单匹配容差配置（章04，按供应商/全局）</summary>
+    public DbSet<MatchTolerance> MatchTolerances { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -749,6 +755,26 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.GrNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_GrLine_No");
             e.HasIndex(x => x.PoLineNo);
         });
+
+        // 三单匹配（章04）：MatchNo 唯一 + 按 PO/状态检索；行级联（业务键 MatchNo 关联）
+        modelBuilder.Entity<ThreeWayMatch>(e =>
+        {
+            e.HasIndex(x => x.MatchNo).IsUnique();
+            e.HasIndex(x => new { x.PoNo, x.Status });
+            e.HasIndex(x => x.SupplierInvoiceNo);
+
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.MatchNo)
+                .HasPrincipalKey(x => x.MatchNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        modelBuilder.Entity<ThreeWayMatchLine>(e =>
+        {
+            e.HasIndex(x => new { x.MatchNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_TwmLine_No");
+        });
+        // 容差配置（章04）：按供应商检索（null=全局）
+        modelBuilder.Entity<MatchTolerance>(e => e.HasIndex(x => x.SupplierId));
 
         // 見積計算書：QtnCalcNo 唯一
         modelBuilder.Entity<EstimateCalc>(e =>
