@@ -25,4 +25,10 @@ public interface IFlowEngine
     /// 挂起，加签人审完再激活原任务）。加签待办计入会签计票。超加签层数上限抛异常。返回新任务 Id。
     /// </summary>
     Task<Guid> AddSignAsync(Guid taskId, Guid actorId, Guid addSigneeId, string source, string? comment = null);
+
+    /// <summary>
+    /// 登记审批委派（章07 §5）：委托人在有效期内把审批权委派给代理人。引擎建待办时若原审批人处
+    /// 委派期，则把 assignee 替换为代理人并双记痕迹（v1 仅建待办时替换，存量在途待办不转）。返回委派 Id。
+    /// </summary>
+    Task<Guid> SetDelegateAsync(Guid grantorId, Guid delegateId, DateTime validFrom, DateTime validTo, string? scope = null, string? remark = null);
 }

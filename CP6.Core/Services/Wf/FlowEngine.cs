@@ -161,20 +161,42 @@ public partial class FlowEngine : IFlowEngine
             .ToListAsync();
         foreach (var t in stale) t.Status = FlowTaskStatus.Cancelled;
 
+        var dueAt = NodeDueAt(node);
         foreach (var uid in res.ApproverIds.Distinct())
         {
+            var (assignee, delegatedFrom) = await ResolveActualAssigneeAsync(uid);   // 委派期替换为代理人
             var task = new Wf_FlowTask
             {
                 Id = Guid.NewGuid(),
                 InstanceId = inst.Id,
                 NodeId = node.Id,
-                AssigneeId = uid,
+                AssigneeId = assignee,
                 Status = FlowTaskStatus.Pending,
                 Countersign = node.Countersign,
+                DueAt = dueAt,
             };
             _db.Wf_FlowTasks.Add(task);
-            await _notifier.TodoCreatedAsync(uid, inst.Id, task.Id, inst.FlowKey);   // 推送待办（空实现=no-op）
+            if (delegatedFrom is Guid g)
+                AddHistory(inst.Id, node.Id, assignee, "delegate", $"代 {g} 审批");   // 双痕：代理人 + 被代理人
+            await _notifier.TodoCreatedAsync(assignee, inst.Id, task.Id, inst.FlowKey);   // 推送待办（空实现=no-op）
         }
+    }
+
+    /// <summary>节点到期时间（章07 §4）：配齐 TimeoutHours + TimeoutAction 才限时，否则不限时。</summary>
+    private static DateTime? NodeDueAt(FlowNode node)
+        => node.TimeoutHours is int h && h > 0 && !string.IsNullOrWhiteSpace(node.TimeoutAction)
+            ? DateTime.Now.AddHours(h)
+            : null;
+
+    /// <summary>委派替换（章07 §5）：原审批人处有效委派期 → 返回 (代理人, 被代理人)；否则 (原人, null)。</summary>
+    private async Task<(Guid assignee, Guid? delegatedFrom)> ResolveActualAssigneeAsync(Guid approverId)
+    {
+        var now = DateTime.Now;
+        var d = await _db.Wf_FlowDelegates
+            .Where(x => x.GrantorId == approverId && x.Enable && x.ValidFrom <= now && x.ValidTo >= now)
+            .OrderByDescending(x => x.CreateDate)
+            .FirstOrDefaultAsync();
+        return d is null ? (approverId, null) : (d.DelegateId, approverId);
     }
 
     // ── 流转：沿出边按序取首个条件为真者；无匹配则兜底结束 ──

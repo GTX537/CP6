@@ -51,6 +51,29 @@ public partial class FlowEngine
         return addTask.Id;
     }
 
+    public async Task<Guid> SetDelegateAsync(Guid grantorId, Guid delegateId, DateTime validFrom, DateTime validTo,
+        string? scope = null, string? remark = null)
+    {
+        if (grantorId == delegateId) throw new InvalidOperationException("不能委派给自己");
+        if (validTo < validFrom) throw new InvalidOperationException("委派失效时间不能早于生效时间");
+
+        var d = new Wf_FlowDelegate
+        {
+            Id = Guid.NewGuid(),
+            GrantorId = grantorId,
+            DelegateId = delegateId,
+            ValidFrom = validFrom,
+            ValidTo = validTo,
+            Enable = true,
+            Scope = scope,
+            Remark = remark,
+            Creator = grantorId.ToString(),
+        };
+        _db.Wf_FlowDelegates.Add(d);
+        await _db.SaveChangesAsync();
+        return d.Id;
+    }
+
     public async Task SendBackAsync(Guid taskId, Guid actorId, string targetNodeId, string? comment = null)
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)

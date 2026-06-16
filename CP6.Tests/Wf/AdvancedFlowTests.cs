@@ -230,4 +230,52 @@ public class AdvancedFlowTests
             await Engine(db).AddSignAsync(ta.Id, a, Guid.NewGuid(), "after");
         await Assert.ThrowsAsync<InvalidOperationException>(() => Engine(db).AddSignAsync(ta.Id, a, Guid.NewGuid(), "after"));
     }
+
+    // ───────────────────────── C-4 委派 ─────────────────────────
+
+    [Fact]
+    public async Task Delegate_InEffect_SwapsAssignee_DualTrace()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        var b = Guid.NewGuid();
+        await SeedSingleApproverAsync(db, a);
+
+        // A 把审批权委派给 B（有效期覆盖当前）
+        await Engine(db).SetDelegateAsync(a, b, DateTime.Now.AddDays(-1), DateTime.Now.AddDays(1));
+
+        await Engine(db).SubmitAsync(SingleFlowKey, Guid.NewGuid(), "{}");
+
+        var task = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n1");
+        Assert.Equal(b, task.AssigneeId);   // 建待办时换成代理人 B
+        Assert.Equal(1, await db.Wf_FlowHistories.CountAsync(h => h.Action == "delegate"));   // 双痕：代 A 审批
+    }
+
+    [Fact]
+    public async Task Delegate_Expired_NoSwap()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        var b = Guid.NewGuid();
+        await SeedSingleApproverAsync(db, a);
+
+        // 已过期的委派 → 不替换
+        await Engine(db).SetDelegateAsync(a, b, DateTime.Now.AddDays(-5), DateTime.Now.AddDays(-2));
+        await Engine(db).SubmitAsync(SingleFlowKey, Guid.NewGuid(), "{}");
+
+        var task = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n1");
+        Assert.Equal(a, task.AssigneeId);   // 仍是原审批人 A
+        Assert.Equal(0, await db.Wf_FlowHistories.CountAsync(h => h.Action == "delegate"));
+    }
+
+    [Fact]
+    public async Task SetDelegate_SelfOrBadRange_Throws()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            Engine(db).SetDelegateAsync(a, a, DateTime.Now, DateTime.Now.AddDays(1)));   // 委派给自己
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            Engine(db).SetDelegateAsync(a, Guid.NewGuid(), DateTime.Now.AddDays(1), DateTime.Now));   // 失效早于生效
+    }
 }

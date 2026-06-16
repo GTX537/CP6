@@ -33,6 +33,16 @@ public class FlowNode
 
     /// <summary>节点字段权限（D-1）：字段名 → edit | readonly | hidden</summary>
     public Dictionary<string, string>? FieldPerms { get; set; }
+
+    // ── 超时（C-4 / 章07 §4）。配齐 TimeoutHours + TimeoutAction 才生效，建待办时算 DueAt ──
+    /// <summary>超时小时数（建待办后多久到期）；空=不限时</summary>
+    public int? TimeoutHours { get; set; }
+
+    /// <summary>超时动作：remind(软,催办可重复) / approve / reject / escalate(升级给 EscalateTo)</summary>
+    public string? TimeoutAction { get; set; }
+
+    /// <summary>escalate 的升级对象 → Sys_User.Id（仅 TimeoutAction=escalate 用）</summary>
+    public Guid? EscalateTo { get; set; }
 }
 
 public class FlowEdge

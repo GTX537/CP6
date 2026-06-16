@@ -112,6 +112,10 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalService, CP6.Core.Servi
 builder.Services.AddScoped<CP6.Core.Services.Wf.ApprovalDispatcher>();                                          // 章05 §4 终态分发（注入所有 IApprovalCallback）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.JournalApprovalCallback>(); // 章05 §7 财务凭证示范回调（兑现 MVP）
 
+// 4.0c OA(Wf) 阶段3 高级流程（章07）：超时扫描 + Worker（退回/加签/委派为 FlowEngine 自带方法）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Services.Wf.WfTimeoutService>();    // 章07 §4 超时扫描（remind/approve/reject/escalate）
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
+
 // 4.0.2 财务（Fin）章01 总账内核
 builder.Services.AddScoped<CP6.Core.Services.Fin.IGlAccountService, CP6.Core.Services.Fin.GlAccountService>(); // 章01 §3 会计科目 + 多国别模板包
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinSequenceService, CP6.Core.Services.Fin.FinSequenceService>(); // 章01 §4 凭证采番（GL-yyyy-MM-NNNNN）
