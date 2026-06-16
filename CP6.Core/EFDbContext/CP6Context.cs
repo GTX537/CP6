@@ -421,6 +421,12 @@ public class CP6Context : DbContext
     /// <summary>三单匹配容差配置（章04，按供应商/全局）</summary>
     public DbSet<MatchTolerance> MatchTolerances { get; set; }
 
+    // ───── 采购（Pur）完整型 章05 采购申请 PR + 需求驱动 ─────
+    /// <summary>采购申请头（章05，需求入口；手工/缺料/工单驱动）</summary>
+    public DbSet<PurchaseRequest> PurchaseRequests { get; set; }
+    /// <summary>采购申请行（章05，估价/建议供应商；转 PO 回填 ConvertedPoNo）</summary>
+    public DbSet<PurchaseRequestLine> PurchaseRequestLines { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -775,6 +781,27 @@ public class CP6Context : DbContext
         });
         // 容差配置（章04）：按供应商检索（null=全局）
         modelBuilder.Entity<MatchTolerance>(e => e.HasIndex(x => x.SupplierId));
+
+        // 采购申请（章05）：PrNo 唯一 + 按来源/单号检索（需求驱动幂等锚）；行级联（业务键 PrNo 关联）
+        modelBuilder.Entity<PurchaseRequest>(e =>
+        {
+            e.HasIndex(x => x.PrNo).IsUnique();
+            e.HasIndex(x => new { x.Source, x.SourceRefNo });   // 缺料/工单 → PR 幂等防重检索
+            e.HasIndex(x => x.Status);
+
+            e.HasMany(x => x.Lines)
+                .WithOne()
+                .HasForeignKey(l => l.PrNo)
+                .HasPrincipalKey(x => x.PrNo)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        // 采购申请行（章05）：同 PR 内行号唯一 + 按物料检索 + 按转出 PO 检索（追溯需求→订单）
+        modelBuilder.Entity<PurchaseRequestLine>(e =>
+        {
+            e.HasIndex(x => new { x.PrNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_PrLine_No");
+            e.HasIndex(x => x.ItemId);
+            e.HasIndex(x => x.ConvertedPoNo);
+        });
 
         // 見積計算書：QtnCalcNo 唯一
         modelBuilder.Entity<EstimateCalc>(e =>
