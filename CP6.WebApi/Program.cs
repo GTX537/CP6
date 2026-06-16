@@ -848,6 +848,63 @@ using (var scope = app.Services.CreateScope())
     }
 
     // ═══════════════════════════════════════════════════════════
+    //  采购（Pur）MVP 章01~04 菜单（700 组）+ 功能权限点
+    // ═══════════════════════════════════════════════════════════
+    if (!db.Sys_Menus.Any(m => m.MenuId == 700))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 700, MenuName = "采购管理(Pur)", Icon = "ShoppingCart", OrderNo = 245, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 700 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 701))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 701, MenuName = "供应商价表", RoutePath = "/pur/supplier-price", Icon = "PriceTag", ParentId = 700, OrderNo = 701, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 701 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 702))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 702, MenuName = "采购订单", RoutePath = "/pur/po", Icon = "Document", ParentId = 700, OrderNo = 702, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 702 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 703))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 703, MenuName = "采购收货", RoutePath = "/pur/gr", Icon = "Box", ParentId = 700, OrderNo = 703, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 703 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 704))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 704, MenuName = "三单匹配", RoutePath = "/pur/match", Icon = "Connection", ParentId = 700, OrderNo = 704, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 704 });
+        db.SaveChanges();
+    }
+    // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
+    {
+        foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
+            pm.MenuKey = pm.RoutePath!.Trim('/').Replace('/', '-');
+        db.SaveChanges();
+
+        // (MenuId, ActionCode, ActionName) —— 与各控制器 [RequirePermission(menuKey, action)] 一一对应
+        var purActions = new (int MenuId, string Code, string Name)[]
+        {
+            (701, "add", "新增/更新"), (701, "delete", "删除"),
+            (702, "add", "建单"), (702, "submit", "送审"), (702, "cancel", "取消"),
+            (703, "add", "确认收货"), (703, "qc", "检收应用"),
+            (704, "add", "匹配建票"), (704, "release", "放行"), (704, "reject", "拒绝"),
+        };
+        foreach (var (menuId, code, name) in purActions)
+        {
+            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+        }
+        db.SaveChanges();
+    }
+
+    // ═══════════════════════════════════════════════════════════
     //  MSBBME010〜090 MES 製造執行 菜单
     // ═══════════════════════════════════════════════════════════
     if (!db.Sys_Menus.Any(m => m.MenuId == 300))
@@ -1211,6 +1268,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nCnScreenSeed.Items)    // 遗留⑦ PMS/wf/Pub 中文画面词条
             .Concat(CP6.WebApi.Seed.I18nBackendMsgSeed.Items)  // 后端控制器 return 型响应文案
             .Concat(CP6.WebApi.Seed.I18nFinScreenSeed.Items)   // 财务 GL 内核 4 视图 + nav.6xx + E-FIN-* 错误码
+            .Concat(CP6.WebApi.Seed.I18nPurScreenSeed.Items)   // 采购 MVP 4 视图 + nav.70x + E-PUR-* 错误码
             .Concat(CP6.WebApi.Seed.I18nWfDesignerSeed.Items)  // OA 阶段4 自研设计器（表单/流程）画面词条
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
