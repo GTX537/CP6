@@ -1051,6 +1051,8 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "login.success", ZhCN = "登录成功", ZhTW = "登入成功", En = "Login successful", Ja = "ログイン成功", Ko = "로그인 성공" },
             new Sys_Lang { LangKey = "login.usernameRequired", ZhCN = "请输入用户名", ZhTW = "請輸入使用者名稱", En = "Please enter username", Ja = "ユーザー名を入力してください", Ko = "사용자명을 입력하세요" },
             new Sys_Lang { LangKey = "login.passwordRequired", ZhCN = "请输入密码", ZhTW = "請輸入密碼", En = "Please enter password", Ja = "パスワードを入力してください", Ko = "비밀번호를 입력하세요" },
+            new Sys_Lang { LangKey = "login.tenantCode", ZhCN = "租户编码", ZhTW = "租戶編碼", En = "Tenant code", Ja = "テナントコード", Ko = "테넌트 코드" },
+            new Sys_Lang { LangKey = "login.specifyTenant", ZhCN = "指定租户", ZhTW = "指定租戶", En = "Specify tenant", Ja = "テナントを指定", Ko = "테넌트 지정" },
             new Sys_Lang { LangKey = "layout.logout", ZhCN = "退出登录", ZhTW = "登出", En = "Logout", Ja = "ログアウト", Ko = "로그아웃" },
             new Sys_Lang { LangKey = "table.search", ZhCN = "请输入关键词搜索", ZhTW = "請輸入關鍵詞搜尋", En = "Search by keyword", Ja = "キーワードで検索", Ko = "키워드로 검색" },
             new Sys_Lang { LangKey = "table.add", ZhCN = "新增", ZhTW = "新增", En = "Add", Ja = "追加", Ko = "추가" },

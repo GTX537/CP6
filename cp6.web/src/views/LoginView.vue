@@ -58,6 +58,20 @@
               </template>
             </el-input>
           </el-form-item>
+          <el-form-item v-if="showTenant" prop="tenantCode">
+            <el-input
+              v-model="form.tenantCode"
+              :placeholder="$t('login.tenantCode')"
+              :prefix-icon="OfficeBuilding"
+              size="large"
+              @keyup.enter="handleLogin"
+            />
+          </el-form-item>
+          <div v-else class="tenant-toggle-row">
+            <button type="button" class="tenant-toggle" @click="showTenant = true">
+              {{ $t('login.specifyTenant') }}
+            </button>
+          </div>
           <el-form-item class="login-action">
             <el-button
               type="primary"
@@ -124,7 +138,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import type { FormInstance } from 'element-plus'
-import { ArrowDown, Check, Hide, Lock, User, View } from '@element-plus/icons-vue'
+import { ArrowDown, Check, Hide, Lock, OfficeBuilding, User, View } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import http from '@/api/http'
 import { langOptions, changeLang } from '@/i18n'
@@ -142,6 +156,8 @@ const rotateY = ref(0)
 const loginSuccess = ref(false)
 const passwordVisible = ref(false)
 const langMenuOpen = ref(false)
+// 章10 §7 登录租户选择器：默认折叠，同名多租户时后端回 needTenant → 自动展开
+const showTenant = ref(false)
 
 const particles = [
   { id: 1, style: '--size: 10px; --left: 8%; --top: 18%; --duration: 14s; --delay: -2s;' },
@@ -156,7 +172,8 @@ const particles = [
 
 const form = ref({
   userName: '',
-  password: ''
+  password: '',
+  tenantCode: ''
 })
 
 const rules = computed(() => ({
@@ -224,8 +241,9 @@ async function handleLogin() {
     sessionStorage.setItem('cp6-login-transition', 'pending')
     await new Promise(resolve => window.setTimeout(resolve, 700))
     router.push('/')
-  } catch {
-    // 错误由 http.ts 拦截器统一处理
+  } catch (err: any) {
+    // 错误由 http.ts 拦截器统一提示文案；此处仅在"同名多租户"时展开租户编码输入
+    if (err?.response?.data?.needTenant) showTenant.value = true
     loginSuccess.value = false
   } finally {
     loading.value = false
@@ -573,6 +591,27 @@ async function handleLogin() {
   background: rgba(255, 255, 255, 0.08);
   color: #eff7ff;
   transform: scale(1.05);
+}
+
+.tenant-toggle-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -0.4rem 0 0.6rem;
+}
+
+.tenant-toggle {
+  border: 0;
+  background: transparent;
+  color: rgba(239, 247, 255, 0.66);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.1rem 0.2rem;
+  transition: color 0.2s ease;
+}
+
+.tenant-toggle:hover {
+  color: var(--accent, #7dd3fc);
+  text-decoration: underline;
 }
 
 .login-button {

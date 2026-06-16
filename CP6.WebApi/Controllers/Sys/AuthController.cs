@@ -37,11 +37,37 @@ public class AuthController : LocalizedControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        // 1. 查找用户。章10 登录引导：此刻租户未知（无 JWT），用 IgnoreQueryFilters 跨租户按名查找
-        //    （多租户唯一性需登录租户选择器，属后续；单租户/默认下行为不变）。
-        var user = await _context.Sys_Users
-            .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(u => u.UserName == request.UserName);
+        // 1. 章10 §7 登录租户选择器：此刻租户未知（无 JWT），跨租户按名查找用户（IgnoreQueryFilters）。
+        //    提供 TenantCode → 先解析租户并缩到该租户内；否则按名跨租户，唯一即放行、同名多租户要求指定租户。
+        Sys_User? user;
+        if (!string.IsNullOrWhiteSpace(request.TenantCode))
+        {
+            var code = request.TenantCode.Trim();
+            var tenant = await _context.Sys_Tenants
+                .FirstOrDefaultAsync(t => t.TenantCode == code);
+            if (tenant == null)
+                return BadRequest(new { message = Localizer["租户不存在"] });
+            if (!tenant.Enable)
+                return BadRequest(new { message = Localizer["租户已停用"] });
+
+            user = await _context.Sys_Users
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(u => u.UserName == request.UserName && u.TenantId == tenant.Id);
+        }
+        else
+        {
+            var matches = await _context.Sys_Users
+                .IgnoreQueryFilters()
+                .Where(u => u.UserName == request.UserName)
+                .Take(2)   // 只需判定 0 / 1 / 多
+                .ToListAsync();
+
+            if (matches.Count > 1)
+                // 同名用户跨多个租户 → 要求指定租户编码消歧（不泄露具体是哪些租户）
+                return BadRequest(new { message = Localizer["该用户名存在于多个租户，请提供租户编码"], needTenant = true });
+
+            user = matches.FirstOrDefault();
+        }
 
         if (user == null)
             return BadRequest(new { message = Localizer["用户名不存在"] });
@@ -52,6 +78,14 @@ public class AuthController : LocalizedControllerBase
 
         if (!user.Enable)
             return BadRequest(new { message = Localizer["账号已被禁用"] });
+
+        // 未指定 TenantCode 走唯一名命中时，仍要校验该用户的租户未停用
+        if (string.IsNullOrWhiteSpace(request.TenantCode))
+        {
+            var ownTenant = await _context.Sys_Tenants.FirstOrDefaultAsync(t => t.Id == user.TenantId);
+            if (ownTenant is { Enable: false })
+                return BadRequest(new { message = Localizer["租户已停用"] });
+        }
 
         // 章10：确定当前请求租户为该用户的租户 → 后续权限聚合/菜单查询按其租户正确作用域
         _tenant.CurrentTenantId = user.TenantId;
