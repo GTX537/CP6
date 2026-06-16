@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 核销本身不产新凭证（勾稽关系），但尾差（现金折扣/舍入/已实现汇兑损益）写一张差额冲销凭证。
 /// </summary>
 [Table("Fin_ApSettlement")]
-public class ApSettlement : BaseEntity
+public class ApSettlement : BaseTenantEntity
 {
     /// <summary>付款单 Id</summary>
     public Guid PaymentId { get; set; }

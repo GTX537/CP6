@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 与发票记账汇率之差在核销时产生已实现汇兑损益。
 /// </summary>
 [Table("Fin_Payment")]
-public class Payment : BaseEntity
+public class Payment : BaseTenantEntity
 {
     /// <summary>付款单号（采番 PAY-yyyyMM-nnnn）</summary>
     [MaxLength(30)] public string No { get; set; } = string.Empty;

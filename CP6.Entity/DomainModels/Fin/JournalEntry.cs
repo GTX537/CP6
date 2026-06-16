@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 手工凭证强制 maker-checker（过账人≠制单人）；自动凭证可信直过（AutoPosted）。
 /// </summary>
 [Table("Fin_JournalEntry")]
-public class JournalEntry : BaseEntity
+public class JournalEntry : BaseTenantEntity
 {
     /// <summary>凭证号，如 "GL-2026-06-00012"，按期间采番（FinSequence）</summary>
     [MaxLength(30)]

@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 经 ArSettlement 与应收发票多对多核销。全外币：FxRate 为收款日汇率，与发票汇率之差产生已实现汇兑损益。
 /// </summary>
 [Table("Fin_Receipt")]
-public class Receipt : BaseEntity
+public class Receipt : BaseTenantEntity
 {
     /// <summary>收款单号（采番 RCP-yyyyMM-nnnn）</summary>
     [MaxLength(30)] public string No { get; set; } = string.Empty;

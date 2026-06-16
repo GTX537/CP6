@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Pub;
 /// 草稿期 BizId 未定时用 DraftToken 暂存，单据保存后 RebindAsync 回填 BizId。
 /// </summary>
 [Table("Pub_Attachment")]
-public class Pub_Attachment : BaseEntity
+public class Pub_Attachment : BaseTenantEntity
 {
     /// <summary>业务类型（如 order / purchase），= 数据/操作权限资源键</summary>
     [MaxLength(50)]

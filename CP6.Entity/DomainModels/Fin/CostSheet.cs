@@ -10,7 +10,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 差异 = 实际 − 标准（料用量差异：实际用量 vs 计划用量 × 同单价）。WorkOrderNo 软引用 MES 工单。
 /// </summary>
 [Table("Fin_CostSheet")]
-public class CostSheet : BaseEntity
+public class CostSheet : BaseTenantEntity
 {
     /// <summary>成本单号（采番 CS-yyyyMM-nnnn）</summary>
     [MaxLength(30)] public string No { get; set; } = string.Empty;
@@ -61,7 +61,7 @@ public class CostSheet : BaseEntity
 
 /// <summary>成本归集明细行（章06 §4）。每笔料/工/费的来源、用量、单价、金额，可追溯。</summary>
 [Table("Fin_CostSheetLine")]
-public class CostSheetLine : BaseEntity
+public class CostSheetLine : BaseTenantEntity
 {
     /// <summary>所属成本单 Id</summary>
     public Guid CostSheetId { get; set; }

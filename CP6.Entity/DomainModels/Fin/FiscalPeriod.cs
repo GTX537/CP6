@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// Year/Month 保留日历口径。
 /// </summary>
 [Table("Fin_FiscalPeriod")]
-public class FiscalPeriod : BaseEntity
+public class FiscalPeriod : BaseTenantEntity
 {
     /// <summary>财年（可 ≠ 日历年）</summary>
     public int FiscalYear { get; set; }

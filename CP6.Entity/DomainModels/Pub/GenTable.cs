@@ -5,7 +5,7 @@ namespace CP6.Entity.DomainModels.Pub;
 
 /// <summary>代码生成 — 表元数据 —— PUB 章08 §3。</summary>
 [Table("Pub_GenTable")]
-public class GenTable : BaseEntity
+public class GenTable : BaseTenantEntity
 {
     /// <summary>实体类名（如 Demo）</summary>
     [MaxLength(80)] public string EntityName { get; set; } = "";

@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// <see cref="Recoverable"/> 可抵扣性——不可抵扣（false）时税额并入费用科目不单列进项税行。
 /// </summary>
 [Table("Fin_TaxCode")]
-public class TaxCode : BaseEntity
+public class TaxCode : BaseTenantEntity
 {
     /// <summary>税码（唯一，如 "IN10"/"OUT10"）</summary>
     [Required, MaxLength(20)] public string Code { get; set; } = string.Empty;

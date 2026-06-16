@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 业务复合键：SeqKey + SeqDate，例：('GL','2026-06') → 12 → "GL-2026-06-00012"。
 /// </summary>
 [Table("Fin_Sequence")]
-public class FinSequence : BaseEntity
+public class FinSequence : BaseTenantEntity
 {
     /// <summary>采番键（PK1）：GL=总账凭证（后续 AP/AR 各自键）</summary>
     [Required, MaxLength(10)]

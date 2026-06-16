@@ -5,7 +5,7 @@ namespace CP6.Entity.DomainModels.Pub;
 
 /// <summary>代码生成 — 列元数据 —— PUB 章08 §3。</summary>
 [Table("Pub_GenColumn")]
-public class GenColumn : BaseEntity
+public class GenColumn : BaseTenantEntity
 {
     /// <summary>所属表 → GenTable.Id</summary>
     public Guid GenTableId { get; set; }

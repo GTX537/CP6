@@ -13,7 +13,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 本阶段不引入 TenantId（统一在 OA 阶段4 系统级多租户收口）。
 /// </remarks>
 [Table("Fin_PostingRule")]
-public class PostingRule : BaseEntity
+public class PostingRule : BaseTenantEntity
 {
     /// <summary>业务事件类型，如 "AP.InvoicePosted"/"AP.Payment"/"AR.Revenue"/"AR.Cogs"。与 FinBizEvent.EventType 对应</summary>
     [Required, MaxLength(50)]
@@ -39,7 +39,7 @@ public class PostingRule : BaseEntity
 /// ②DocumentLines 透传行——把事件的单据行按 <see cref="LineAccountField"/>(科目)+成本中心分组炸开，金额取 <see cref="LineAmountField"/>。
 /// </summary>
 [Table("Fin_PostingRuleLine")]
-public class PostingRuleLine : BaseEntity
+public class PostingRuleLine : BaseTenantEntity
 {
     /// <summary>所属规则 Id</summary>
     public Guid RuleId { get; set; }

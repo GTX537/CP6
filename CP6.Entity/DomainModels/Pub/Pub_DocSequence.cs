@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Pub;
 /// 与既有静态 <c>DocNumber</c> 并存（不破坏既有调用方）；新模块用 <c>ISeqService</c>。
 /// </summary>
 [Table("Pub_DocSequence")]
-public class Pub_DocSequence : BaseEntity
+public class Pub_DocSequence : BaseTenantEntity
 {
     /// <summary>业务键（如 PO / SO / WO），采番入口标识</summary>
     [MaxLength(50)]

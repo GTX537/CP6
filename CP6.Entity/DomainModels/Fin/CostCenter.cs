@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 机台型成本中心可 <see cref="LinkMachineId"/> 直接挂 MES 的 Machine，OEE/停机与成本归集天然对齐。
 /// </remarks>
 [Table("Fin_CostCenter")]
-public class CostCenter : BaseEntity
+public class CostCenter : BaseTenantEntity
 {
     /// <summary>编码，如 "PRT-01"（印刷机1号）。唯一</summary>
     [Required, MaxLength(30)]

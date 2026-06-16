@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 写一张差额冲销凭证。复用 <see cref="SettlementDiffType"/>。
 /// </summary>
 [Table("Fin_ArSettlement")]
-public class ArSettlement : BaseEntity
+public class ArSettlement : BaseTenantEntity
 {
     /// <summary>收款单 Id</summary>
     public Guid ReceiptId { get; set; }

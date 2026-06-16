@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 本位币 = 原币 × FxRate（GL 凭证里落本位币）。三单匹配前置：<see cref="PurchaseOrderId"/> 预留可空。
 /// </summary>
 [Table("Fin_ApInvoice")]
-public class ApInvoice : BaseEntity
+public class ApInvoice : BaseTenantEntity
 {
     /// <summary>系统发票号（采番 AP-yyyyMM-nnnn）</summary>
     [MaxLength(30)] public string No { get; set; } = string.Empty;
@@ -70,7 +70,7 @@ public class ApInvoice : BaseEntity
 
 /// <summary>应付发票明细行（章03 §2）。每行一个费用/资产科目（借方进项）+ 可选税码。</summary>
 [Table("Fin_ApInvoiceLine")]
-public class ApInvoiceLine : BaseEntity
+public class ApInvoiceLine : BaseTenantEntity
 {
     /// <summary>所属发票 Id</summary>
     public Guid InvoiceId { get; set; }

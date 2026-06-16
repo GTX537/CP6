@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 金额永远存"本位币"在 <see cref="Debit"/>/<see cref="Credit"/>；原币信息单独存（多币种见 07 章）。
 /// </summary>
 [Table("Fin_JournalLine")]
-public class JournalLine : BaseEntity
+public class JournalLine : BaseTenantEntity
 {
     /// <summary>所属凭证头 Id</summary>
     public Guid EntryId { get; set; }

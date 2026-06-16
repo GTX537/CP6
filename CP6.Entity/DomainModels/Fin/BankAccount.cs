@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 付款凭证的贷方银行行据此账户取科目（自动凭证 HeaderAccount 模式）。
 /// </summary>
 [Table("Fin_BankAccount")]
-public class BankAccount : BaseEntity
+public class BankAccount : BaseTenantEntity
 {
     /// <summary>账户编码（唯一）</summary>
     [Required, MaxLength(20)] public string Code { get; set; } = string.Empty;

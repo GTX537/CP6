@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 全外币（F2-D1）：销售金额存原币 + 销售汇率 FxRate；成本 CostAmount 为本位币（我方成本）。
 /// </summary>
 [Table("Fin_ArInvoice")]
-public class ArInvoice : BaseEntity
+public class ArInvoice : BaseTenantEntity
 {
     /// <summary>系统发票号（采番 AR-yyyyMM-nnnn）</summary>
     [MaxLength(30)] public string No { get; set; } = string.Empty;
@@ -64,7 +64,7 @@ public class ArInvoice : BaseEntity
 
 /// <summary>应收发票明细行（章04 §1，镜像 ApInvoiceLine）。每行收入科目（贷方）+ 可选税码。</summary>
 [Table("Fin_ArInvoiceLine")]
-public class ArInvoiceLine : BaseEntity
+public class ArInvoiceLine : BaseTenantEntity
 {
     public Guid InvoiceId { get; set; }
     public int LineNo { get; set; }
