@@ -29,10 +29,13 @@ public class WfTimeoutScanWorker : BackgroundService
             {
                 try
                 {
-                    using var scope = _scopeFactory.CreateScope();
-                    var svc = scope.ServiceProvider.GetRequiredService<IWfTimeoutService>();
-                    var n = await svc.ScanOnceAsync(DateTime.Now, stoppingToken);
-                    if (n > 0) _logger.LogInformation("Wf 超时扫描处理 {Count} 条到期待办", n);
+                    // 章10 §5 按租户循环：每租户独立作用域扫到期待办，处理结果盖章到本租户
+                    await TenantScopeRunner.ForEachTenantAsync(_scopeFactory, async (sp, tenantId, ct) =>
+                    {
+                        var svc = sp.GetRequiredService<IWfTimeoutService>();
+                        var n = await svc.ScanOnceAsync(DateTime.Now, ct);
+                        if (n > 0) _logger.LogInformation("Wf 超时扫描处理租户 {Tenant} {Count} 条到期待办", tenantId, n);
+                    }, _logger, stoppingToken);
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { throw; }
                 catch (Exception ex) { _logger.LogError(ex, "Wf 超时扫描异常"); }

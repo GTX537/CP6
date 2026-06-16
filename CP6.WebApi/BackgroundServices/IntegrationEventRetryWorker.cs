@@ -53,14 +53,21 @@ public class IntegrationEventRetryWorker : BackgroundService
     }
 
     /// <summary>
-    /// Processes one retry scan.
+    /// Processes one retry scan — 按租户循环（章10 §5）：每个租户独立 scope/作用域，
+    /// 派发产生的下游写入盖章到事件所属租户而非默认租户。
     /// </summary>
     public async Task ProcessOnceAsync(CancellationToken ct = default)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<CP6Context>();
-        var dispatcher = scope.ServiceProvider.GetRequiredService<IIntegrationEventDispatcher>();
-        var notifier = scope.ServiceProvider.GetRequiredService<IDeadLetterNotifier>();
+        await TenantScopeRunner.ForEachTenantAsync(
+            _scopeFactory, (sp, _, c) => ProcessTenantOnceAsync(sp, c), _logger, ct);
+    }
+
+    /// <summary>处理单个租户作用域下的到期重试（由 <see cref="TenantScopeRunner"/> 逐租户调用）。</summary>
+    private async Task ProcessTenantOnceAsync(IServiceProvider sp, CancellationToken ct)
+    {
+        var db = sp.GetRequiredService<CP6Context>();
+        var dispatcher = sp.GetRequiredService<IIntegrationEventDispatcher>();
+        var notifier = sp.GetRequiredService<IDeadLetterNotifier>();
 
         var now = DateTime.UtcNow;
         var due = await db.IntegrationEvents

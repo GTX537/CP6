@@ -55,6 +55,9 @@ public class IntegrationEventRetryDeadLetterE2ETests
             sp,
             sp.GetRequiredService<CP6Context>(),
             NullLogger<DeadLetterNotifier>.Instance));
+        // 章10 后台按租户循环：TenantScopeRunner 解析这两个服务（空 Sys_Tenants → 回退默认租户跑一遍）
+        services.AddScoped<CP6.Core.Services.Common.ITenantContext, CP6.Core.Services.Common.TenantContext>();
+        services.AddScoped<CP6.Core.Services.Common.ITenantEnumerator, CP6.Core.Services.Common.TenantEnumerator>();
         return services.BuildServiceProvider();
     }
 

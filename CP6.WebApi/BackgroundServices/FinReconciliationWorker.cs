@@ -41,23 +41,19 @@ public class FinReconciliationWorker : BackgroundService
         }
     }
 
-    /// <summary>跑一次对账并记录结果（异常握住，不让后台服务崩）。</summary>
+    /// <summary>跑一次对账并记录结果——按租户循环（章10 §5）：每租户独立作用域勾稽其子账↔GL。
+    /// 单租户异常由 <see cref="TenantScopeRunner"/> 吞掉记日志，不影响其余租户与宿主。</summary>
     public async Task ProcessOnceAsync(CancellationToken ct = default)
     {
-        try
+        await TenantScopeRunner.ForEachTenantAsync(_scopeFactory, async (sp, tenantId, c) =>
         {
-            using var scope = _scopeFactory.CreateScope();
-            var svc = scope.ServiceProvider.GetRequiredService<IFinReconciliationService>();
+            var svc = sp.GetRequiredService<IFinReconciliationService>();
             var r = await svc.ReconcileAsync();
             if (r.AllClear)
-                _logger.LogInformation("[FinRecon] 每日对账：全部一致");
+                _logger.LogInformation("[FinRecon] 租户 {Tenant} 每日对账：全部一致", tenantId);
             else
-                _logger.LogError("[FinRecon] 每日对账发现 {Count} 项不一致：{Issues}",
-                    r.Issues.Count, string.Join("；", r.Issues.Select(i => $"[{i.Category}] {i.Detail}")));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "[FinRecon] 每日对账执行异常");
-        }
+                _logger.LogError("[FinRecon] 租户 {Tenant} 每日对账发现 {Count} 项不一致：{Issues}",
+                    tenantId, r.Issues.Count, string.Join("；", r.Issues.Select(i => $"[{i.Category}] {i.Detail}")));
+        }, _logger, ct);
     }
 }
