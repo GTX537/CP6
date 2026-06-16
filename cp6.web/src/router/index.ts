@@ -22,6 +22,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wf/todo': () => import('@/views/wf/TodoCenter.vue'),               // OA 章04 待办中心
   '/wf/my-applications': () => import('@/views/wf/MyApplications.vue'), // OA 章04 我的申请
   '/wf/form-designer': () => import('@/views/wf/designer/FormDesigner.vue'), // OA 章09 表单设计器
+  '/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue'), // OA 章09 流程设计器
   // ───── 财务 (Fin) 总账内核 ─────
   '/fin/account': () => import('@/views/fin/GlAccountView.vue'),          // 章01 会计科目
   '/fin/journal': () => import('@/views/fin/JournalEntryView.vue'),       // 章01 记账凭证

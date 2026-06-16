@@ -61,6 +61,47 @@ export interface FlowNodeDef {
   fieldPerms?: Record<string, FieldPerm>
 }
 
+/**
+ * 流程设计态节点（章09 设计器）。x/y 为画布坐标(图与语义分离 OA4-D5)，写进 schema 但运行时
+ * FlowNode 无此属性 → 反序列化自动忽略，不影响 FlowEngine。其余字段与运行时 FlowNode 同名同构。
+ */
+export interface FlowDesignNode {
+  id: string
+  name?: string
+  /** start / approval / end */
+  type: string
+  x: number
+  y: number
+  // ── 审批人规则（approval 用）──
+  approverStrategy?: string // DirectManager/DeptLeader/Role/Specified/Starter
+  approverLevels?: number
+  approverRoleId?: number
+  approverUserId?: string
+  /** 会签：all/any/veto */
+  countersign?: string
+  /** 字段权限：字段名 → edit/readonly/hidden */
+  fieldPerms?: Record<string, string>
+  // ── 超时（章07 §4）──
+  timeoutHours?: number
+  timeoutAction?: string // remind/approve/reject/escalate
+  escalateTo?: string
+}
+
+/** 流程设计态边 */
+export interface FlowDesignEdge {
+  from: string
+  to: string
+  /** 流转条件表达式（空=无条件直达；ExpressionEvaluator 语义） */
+  condition?: string
+}
+
+/** 流程设计态 schema（= 运行时 FlowDef.SchemaJson，含坐标） */
+export interface FlowDesignSchema {
+  start?: string
+  nodes: FlowDesignNode[]
+  edges: FlowDesignEdge[]
+}
+
 /** 待办项（/wf/my-todos） */
 export interface TodoItem {
   taskId: string
