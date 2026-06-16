@@ -107,6 +107,11 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Servic
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.SignalRWfNotifier>();        // 章04 待办 SignalR 推送（注入给 FlowEngine）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
+// 4.0b OA(Wf) 阶段2 集成（章05 ★）：业务接入 OA 的同步回调
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalService, CP6.Core.Services.Wf.ApprovalService>();      // 章05 §2 业务侧入口（按绑定起流程/防重/状态）
+builder.Services.AddScoped<CP6.Core.Services.Wf.ApprovalDispatcher>();                                          // 章05 §4 终态分发（注入所有 IApprovalCallback）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.JournalApprovalCallback>(); // 章05 §7 财务凭证示范回调（兑现 MVP）
+
 // 4.0.2 财务（Fin）章01 总账内核
 builder.Services.AddScoped<CP6.Core.Services.Fin.IGlAccountService, CP6.Core.Services.Fin.GlAccountService>(); // 章01 §3 会计科目 + 多国别模板包
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinSequenceService, CP6.Core.Services.Fin.FinSequenceService>(); // 章01 §4 凭证采番（GL-yyyy-MM-NNNNN）

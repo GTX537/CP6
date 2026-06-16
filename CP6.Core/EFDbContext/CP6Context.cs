@@ -336,6 +336,8 @@ public class CP6Context : DbContext
     public DbSet<Wf_FlowTask> Wf_FlowTasks { get; set; }
     /// <summary>流程审批痕迹（OA 章03，仅追加时间线）</summary>
     public DbSet<Wf_FlowHistory> Wf_FlowHistories { get; set; }
+    /// <summary>审批绑定（OA 章05 阶段2，业务类型→流程映射）</summary>
+    public DbSet<Wf_ApprovalBinding> Wf_ApprovalBindings { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -493,6 +495,10 @@ public class CP6Context : DbContext
         modelBuilder.Entity<Wf_FlowHistory>(e =>
         {
             e.HasIndex(x => x.InstanceId).HasDatabaseName("IX_Wf_FlowHistory_Instance");  // 审批痕迹时间线
+        });
+        modelBuilder.Entity<Wf_ApprovalBinding>(e =>
+        {
+            e.HasIndex(x => x.BizType).IsUnique().HasDatabaseName("UX_Wf_ApprovalBinding_BizType");  // 一种业务类型一条绑定
         });
 
         // ═══════════════════════════════════════════════════════════

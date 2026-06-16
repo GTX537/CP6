@@ -16,12 +16,14 @@ public class FlowEngine : IFlowEngine
     private readonly CP6Context _db;
     private readonly IApproverResolver _approver;
     private readonly IWfNotifier _notifier;
+    private readonly ApprovalDispatcher _dispatcher;
 
-    public FlowEngine(CP6Context db, IApproverResolver approver, IWfNotifier? notifier = null)
+    public FlowEngine(CP6Context db, IApproverResolver approver, IWfNotifier? notifier = null, ApprovalDispatcher? dispatcher = null)
     {
         _db = db;
         _approver = approver;
         _notifier = notifier ?? new NullWfNotifier();   // 无 SignalR 环境/单测 → 空推送
+        _dispatcher = dispatcher ?? new ApprovalDispatcher(Array.Empty<IApprovalCallback>());  // 无业务回调（纯 OA/单测）→ 空分发
     }
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
@@ -47,6 +49,7 @@ public class FlowEngine : IFlowEngine
         AddHistory(inst.Id, first.Id, starterId, "submit", null);
 
         await EnterNodeAsync(inst, schema, first);
+        await DispatchIfFinishedAsync(inst, starterId, null);   // 极少数"起即终态"（如 start→end）也分发，决策人记发起人
         await _db.SaveChangesAsync();
         return inst.Id;
     }
@@ -89,7 +92,20 @@ public class FlowEngine : IFlowEngine
         {
             inst.Status = FlowInstanceStatus.Rejected;
         }
+        await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
         await _db.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// 若实例已达终态（通过/驳回），调终态分发器反向回调业务。<b>必须在最终 SaveChangesAsync 之前调用</b>：
+    /// 回调与本引擎共享 scoped DbContext，回调若抛异常则流程终态与业务变更一并不落库（原子，OA2-D5）。
+    /// </summary>
+    private async Task DispatchIfFinishedAsync(Wf_FlowInstance inst, Guid decidedBy, string? reason)
+    {
+        if (inst.Status == FlowInstanceStatus.Approved)
+            await _dispatcher.OnInstanceFinishedAsync(inst, approved: true, decidedBy, reason: null);
+        else if (inst.Status == FlowInstanceStatus.Rejected)
+            await _dispatcher.OnInstanceFinishedAsync(inst, approved: false, decidedBy, reason);
     }
 
     /// <summary>会签三规则（纯函数）。返回 (是否已决, 是否通过)。</summary>
