@@ -170,7 +170,7 @@ public class FlowEngine : IFlowEngine
     {
         foreach (var edge in schema.Edges.Where(e => e.From == node.Id))
         {
-            if (!ConditionEvaluator.Evaluate(edge.Condition, inst.VarsJson)) continue;
+            if (!ExpressionEvaluator.Evaluate(edge.Condition, inst.VarsJson)) continue;
             var target = FindNode(schema, edge.To);
             if (target is not null) { await EnterNodeAsync(inst, schema, target); return; }
         }
