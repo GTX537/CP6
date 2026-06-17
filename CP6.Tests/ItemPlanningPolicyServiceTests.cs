@@ -1,0 +1,82 @@
+using Microsoft.EntityFrameworkCore;
+
+namespace CP6.Tests;
+
+/// <summary>
+/// 计划主数据 Plan_ItemPlanningPolicy 服务测试（MRP P1 · spec §3.2/§5.3）。
+///
+/// - 取计划参数（安全库存/提前期/批量规则）
+/// - 制造提前期 = ProductProcess.LeadTime 沿路线汇总
+/// - 缺 policy → 默认 lot-for-lot + 提前期 0 + IsDefault 告警
+/// </summary>
+public class ItemPlanningPolicyServiceTests
+{
+    private static ItemPlanningPolicyService CreateService(out CP6.Core.EFDbContext.CP6Context db)
+    {
+        db = TestHelper.CreateInMemoryContext();
+        return new ItemPlanningPolicyService(db);
+    }
+
+    [Fact]
+    public async Task GetPolicy_Existing_ReturnsStored()
+    {
+        var svc = CreateService(out var db);
+        db.ItemPlanningPolicies.Add(new Plan_ItemPlanningPolicy
+        {
+            ItemCd = "RAW-01",
+            SafetyStock = 100,
+            PurchaseLeadDays = 7,
+            LotRule = (int)PlanLotRule.Moq,
+            MoqQty = 500,
+            MakeOrBuy = (int)PlanMakeOrBuy.Buy,
+        });
+        await db.SaveChangesAsync();
+
+        var p = await svc.GetPolicyAsync("RAW-01");
+
+        Assert.False(p.IsDefault);
+        Assert.Equal(100m, p.SafetyStock);
+        Assert.Equal(7m, p.PurchaseLeadDays);
+        Assert.Equal((int)PlanLotRule.Moq, p.LotRule);
+        Assert.Equal(500m, p.MoqQty);
+    }
+
+    [Fact]
+    public async Task GetPolicy_Missing_ReturnsLotForLotDefault()
+    {
+        var svc = CreateService(out _);
+
+        var p = await svc.GetPolicyAsync("UNKNOWN");
+
+        Assert.True(p.IsDefault);
+        Assert.Equal((int)PlanLotRule.LotForLot, p.LotRule);
+        Assert.Equal(0m, p.SafetyStock);
+        Assert.Equal(0m, p.PurchaseLeadDays);
+        Assert.Equal("UNKNOWN", p.ItemCd);
+    }
+
+    [Fact]
+    public async Task GetLeadDays_BuyItem_ReturnsPurchaseLeadDays()
+    {
+        var svc = CreateService(out var db);
+        db.ItemPlanningPolicies.Add(new Plan_ItemPlanningPolicy
+        { ItemCd = "BUY-01", PurchaseLeadDays = 5, MakeOrBuy = (int)PlanMakeOrBuy.Buy });
+        await db.SaveChangesAsync();
+
+        Assert.Equal(5m, await svc.GetLeadDaysAsync("BUY-01"));
+    }
+
+    [Fact]
+    public async Task GetLeadDays_MakeItem_SumsRoutingLeadTime()
+    {
+        var svc = CreateService(out var db);
+        db.ItemPlanningPolicies.Add(new Plan_ItemPlanningPolicy
+        { ItemCd = "MAKE-01", MakeOrBuy = (int)PlanMakeOrBuy.Make });
+        db.ProductProcesses.Add(new ProductProcess { ProductCd = "MAKE-01", TaskCd = "T1", ProcessCd = "P1", LeadTime = 2 });
+        db.ProductProcesses.Add(new ProductProcess { ProductCd = "MAKE-01", TaskCd = "T2", ProcessCd = "P2", LeadTime = 3 });
+        await db.SaveChangesAsync();
+
+        // 制造提前期 = 路线各工程 LeadTime 之和 = 2 + 3 = 5
+        Assert.Equal(5m, await svc.GetLeadDaysAsync("MAKE-01"));
+    }
+}

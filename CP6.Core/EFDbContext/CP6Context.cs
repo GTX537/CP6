@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Mes;
+using CP6.Entity.DomainModels.Plan;
 using CP6.Entity.DomainModels.Pub;
 using CP6.Entity.DomainModels.Pur;
 using CP6.Entity.DomainModels.Wf;
@@ -441,6 +442,10 @@ public class CP6Context : DbContext
     /// <summary>有償支給材（章07，外注 PO Type=2 子表；★IssuedQty 实发锚防吞料）</summary>
     public DbSet<PoConsignMaterial> PoConsignMaterials { get; set; }
 
+    // ───── 计划中台（Plan）P1 MRP 净需求地基 ─────
+    /// <summary>计划主数据：品目计划策略（安全库存/提前期/批量规则/自制采购）</summary>
+    public DbSet<Plan_ItemPlanningPolicy> ItemPlanningPolicies { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -856,6 +861,12 @@ public class CP6Context : DbContext
         modelBuilder.Entity<RfqQuote>(e =>
         {
             e.HasIndex(x => new { x.RfqNo, x.SupplierId, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_RfqQuote");
+        });
+
+        // 计划主数据（Plan P1）：品目计划策略，ItemCd 唯一（按品目取参数锚）
+        modelBuilder.Entity<Plan_ItemPlanningPolicy>(e =>
+        {
+            e.HasIndex(x => x.ItemCd).IsUnique().HasDatabaseName("UX_Plan_ItemPolicy_ItemCd");
         });
 
         // 見積計算書：QtnCalcNo 唯一
