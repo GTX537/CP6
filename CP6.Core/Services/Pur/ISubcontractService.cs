@@ -15,6 +15,9 @@ public interface ISubcontractService
     /// </summary>
     Task<List<PoConsignMaterial>> AddConsignAsync(string poNo, int lineNo, IEnumerable<ConsignMaterialDto> items, string? userName);
 
+    /// <summary>列出外注 PO（Type=2，含成品行），供外注台选单。</summary>
+    Task<List<PurchaseOrder>> ListOrdersAsync();
+
     /// <summary>取某外注 PO（可指定行）的支給材清单。</summary>
     Task<List<PoConsignMaterial>> GetConsignAsync(string poNo, int? lineNo = null);
 
@@ -31,6 +34,57 @@ public interface ISubcontractService
     /// 支給材成本"并入"非"另付"（结转早买料的内部成本，不产生新对外付款）；结果调 <see cref="Contracts.IFinCostService"/> 接财务 06 成本会计。
     /// </summary>
     Task<SubcontractCostResult> CalcFinishedCostAsync(string poNo, int lineNo, decimal finishedQty, string? userName);
+
+    /// <summary>
+    /// 防吞料对账（章07 §6）：成品反推应耗（单耗 = ConsignQty ÷ PO 行计划成品数；应耗 = 单耗 × 实收成品数）
+    /// 对比实发 <see cref="PoConsignMaterial.IssuedQty"/>。差异（实发 − 应耗）超损耗容差 → 标记异常挂起核查
+    /// （外协多领未用 / 私吞 / 报废未报）。返回逐料对账报表，<see cref="ConsignReconcileResult.HasAnomaly"/> 即挂起信号。
+    /// </summary>
+    Task<ConsignReconcileResult> ReconcileConsignAsync(string poNo, int lineNo, decimal finishedQty, decimal tolerancePct, string? userName);
+}
+
+/// <summary>防吞料对账报表（章07 §6）。</summary>
+public class ConsignReconcileResult
+{
+    /// <summary>外注采购订单号</summary>
+    public string PoNo { get; init; } = string.Empty;
+
+    /// <summary>外注成品行号</summary>
+    public int LineNo { get; init; }
+
+    /// <summary>实收成品数（反推应耗的基数）</summary>
+    public decimal FinishedQty { get; init; }
+
+    /// <summary>损耗容差（占应耗比例，如 0.05=5%）</summary>
+    public decimal TolerancePct { get; init; }
+
+    /// <summary>是否有任一支給材超容差（挂起核查信号）</summary>
+    public bool HasAnomaly { get; init; }
+
+    /// <summary>逐料对账明细</summary>
+    public List<ConsignReconcileLine> Lines { get; init; } = new();
+}
+
+/// <summary>防吞料对账逐料明细。</summary>
+public class ConsignReconcileLine
+{
+    /// <summary>支給材物料 CD</summary>
+    public string ConsignItemId { get; init; } = string.Empty;
+
+    /// <summary>实发量（IssuedQty）</summary>
+    public decimal IssuedQty { get; init; }
+
+    /// <summary>应耗量 = 单耗 × 实收成品数</summary>
+    public decimal ExpectedQty { get; init; }
+
+    /// <summary>差异 = 实发 − 应耗（正=多发，含合理损耗）</summary>
+    public decimal Variance { get; init; }
+
+    /// <summary>容许差异 = 应耗 × 容差</summary>
+    public decimal AllowedVariance { get; init; }
+
+    /// <summary>是否超容差（实发多领超损耗 → 异常）</summary>
+    public bool IsAnomaly { get; init; }
 }
 
 /// <summary>外注成品成本核算结果。</summary>

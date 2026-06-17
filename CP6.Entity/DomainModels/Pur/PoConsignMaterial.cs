@@ -39,6 +39,6 @@ public class PoConsignMaterial : BaseBizEntity
     public decimal IssuedQty { get; set; } = 0m;
 
     /// <summary>WMS 出库单号（物理出库委托返回，回填末次发料）</summary>
-    [MaxLength(30)]
+    [MaxLength(40)]
     public string? WmsIssueNo { get; set; }
 }

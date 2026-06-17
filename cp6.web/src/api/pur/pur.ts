@@ -4,6 +4,7 @@ import type {
   GoodsReceipt, GrCreateForm, ThreeWayMatch, MatchInvoiceForm, MatchResult,
   Rfq, RfqQuoteLineForm, RfqSelectionForm,
   PurchaseRequest, PrCreateForm,
+  PoConsignMaterial, ConsignMaterialForm, ConsignIssueForm, SubcontractCostResult, ConsignReconcileResult,
 } from '@/types/pur/pur'
 
 // 采购 API（/api/pur）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
@@ -127,5 +128,27 @@ export const rfqApi = {
   },
   convert(rfqNo: string) {
     return http.post<any, ApiResp<string[]>>(`/pur/rfq/${rfqNo}/convert`)
+  },
+}
+
+/** 外注加工 /api/pur/subcontract（外注 PO → 登记/发支給材(IssuedQty) → 收成品成本(加工费+料) → 防吞料对账） */
+export const subcontractApi = {
+  listOrders() {
+    return http.get<any, ApiResp<PurchaseOrder[]>>('/pur/subcontract/orders')
+  },
+  getConsign(poNo: string, lineNo?: number) {
+    return http.get<any, ApiResp<PoConsignMaterial[]>>(`/pur/subcontract/${poNo}/consign`, { params: { lineNo } })
+  },
+  addConsign(poNo: string, lineNo: number, items: ConsignMaterialForm[]) {
+    return http.post<any, ApiResp<PoConsignMaterial[]>>(`/pur/subcontract/${poNo}/${lineNo}/consign`, items)
+  },
+  issue(poNo: string, lineNo: number, issuances?: ConsignIssueForm[] | null) {
+    return http.post<any, ApiResp<PoConsignMaterial[]>>(`/pur/subcontract/${poNo}/${lineNo}/issue`, issuances ?? null)
+  },
+  finishedCost(poNo: string, lineNo: number, finishedQty: number) {
+    return http.post<any, ApiResp<SubcontractCostResult>>(`/pur/subcontract/${poNo}/${lineNo}/finished-cost`, { finishedQty })
+  },
+  reconcile(poNo: string, lineNo: number, finishedQty: number, tolerancePct: number) {
+    return http.post<any, ApiResp<ConsignReconcileResult>>(`/pur/subcontract/${poNo}/${lineNo}/reconcile`, { finishedQty, tolerancePct })
   },
 }

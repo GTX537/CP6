@@ -898,6 +898,12 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 706 });
         db.SaveChanges();
     }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 707))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 707, MenuName = "外注加工", RoutePath = "/pur/subcontract", Icon = "SetUp", ParentId = 700, OrderNo = 707, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 707 });
+        db.SaveChanges();
+    }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())

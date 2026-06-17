@@ -396,6 +396,137 @@ public class SubcontractServiceTests
         // 支給材（500）不进 AP：AP 仅一行加工费，无支給材物料行
         Assert.DoesNotContain(ap.Lines, l => l.ItemId == Paper);
     }
+
+    // ───── ReconcileConsign（章07 §6）：实发 vs 成品反推应耗，超损耗容差→挂起核查 ─────
+
+    /// <summary>建外注 PO（成品 100）+ 登记支給材（单耗 10：ConsignQty 1000 ÷ 成品 100），发指定实发量。</summary>
+    private static async Task<(SubcontractService svc, string poNo)> SetupForReconcileAsync(CP6Context db, decimal issued, decimal consignQty = 1000m, decimal plannedQty = 100m)
+    {
+        var poNo = await CreateSubcontractPoAsync(db, qty: plannedQty);
+        var svc = NewSvc(db);
+        await svc.AddConsignAsync(poNo, 1, new[] { new ConsignMaterialDto { ConsignItemId = Paper, ConsignQty = consignQty, ConsignUnitCost = 0.5m } }, "u1");
+        await svc.IssueConsignAsync(poNo, 1, new[] { new ConsignIssueDto { ConsignItemId = Paper, Qty = issued } }, "u1");
+        return (svc, poNo);
+    }
+
+    [Fact]
+    public async Task Reconcile_WithinTolerance_NoAnomaly()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        // 单耗 10，成品 100 → 应耗 1000；实发 1020（多 2%），容差 5% → 正常
+        var (svc, poNo) = await SetupForReconcileAsync(db, issued: 1020m);
+
+        var rec = await svc.ReconcileConsignAsync(poNo, 1, finishedQty: 100m, tolerancePct: 0.05m, "u1");
+
+        Assert.False(rec.HasAnomaly);
+        var line = Assert.Single(rec.Lines);
+        Assert.Equal(1000m, line.ExpectedQty);
+        Assert.Equal(1020m, line.IssuedQty);
+        Assert.Equal(20m, line.Variance);
+        Assert.False(line.IsAnomaly);
+    }
+
+    [Fact]
+    public async Task Reconcile_OverTolerance_FlagsAnomaly()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        // 实发 1100（多 10%），容差 5% → 超容差，挂起核查
+        var (svc, poNo) = await SetupForReconcileAsync(db, issued: 1100m);
+
+        var rec = await svc.ReconcileConsignAsync(poNo, 1, finishedQty: 100m, tolerancePct: 0.05m, "u1");
+
+        Assert.True(rec.HasAnomaly);
+        var line = Assert.Single(rec.Lines);
+        Assert.Equal(1000m, line.ExpectedQty);
+        Assert.Equal(100m, line.Variance);          // 多发 100（外协私吞/多领未用）
+        Assert.Equal(50m, line.AllowedVariance);    // 容许 = 1000 × 5%
+        Assert.True(line.IsAnomaly);
+    }
+
+    [Fact]
+    public async Task Reconcile_ProRatesExpectedByFinishedQty()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        // 只收一半成品（50）→ 应耗 = 单耗 10 × 50 = 500；实发 510（多 2%）→ 正常
+        var (svc, poNo) = await SetupForReconcileAsync(db, issued: 510m);
+
+        var rec = await svc.ReconcileConsignAsync(poNo, 1, finishedQty: 50m, tolerancePct: 0.05m, "u1");
+
+        var line = Assert.Single(rec.Lines);
+        Assert.Equal(500m, line.ExpectedQty);       // 按实收成品数反推
+        Assert.False(rec.HasAnomaly);
+    }
+
+    [Fact]
+    public async Task Reconcile_PerMaterial_Independent_OnlyAnomalousFlagged()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var poNo = await CreateSubcontractPoAsync(db, qty: 100m);
+        var svc = NewSvc(db);
+        await svc.AddConsignAsync(poNo, 1, new[]
+        {
+            new ConsignMaterialDto { ConsignItemId = Paper, ConsignQty = 1000m, ConsignUnitCost = 0.5m }, // 单耗 10
+            new ConsignMaterialDto { ConsignItemId = Ink, ConsignQty = 5m, ConsignUnitCost = 20m },        // 单耗 0.05
+        }, "u1");
+        // 纸正常（1010），墨严重超发（10 vs 应耗 5）
+        await svc.IssueConsignAsync(poNo, 1, new[]
+        {
+            new ConsignIssueDto { ConsignItemId = Paper, Qty = 1010m },
+            new ConsignIssueDto { ConsignItemId = Ink, Qty = 10m },
+        }, "u1");
+
+        var rec = await svc.ReconcileConsignAsync(poNo, 1, finishedQty: 100m, tolerancePct: 0.05m, "u1");
+
+        Assert.True(rec.HasAnomaly);
+        Assert.False(rec.Lines.First(l => l.ConsignItemId == Paper).IsAnomaly);
+        Assert.True(rec.Lines.First(l => l.ConsignItemId == Ink).IsAnomaly);  // 墨超发
+    }
+
+    [Fact]
+    public async Task Reconcile_NonPositiveFinishedQty_Rejected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var (svc, poNo) = await SetupForReconcileAsync(db, issued: 1000m);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.ReconcileConsignAsync(poNo, 1, finishedQty: 0m, tolerancePct: 0.05m, "u1"));
+        Assert.Equal("E-PUR-077", ex.Message);
+    }
+
+    [Fact]
+    public async Task Reconcile_NonSubcontractPo_Rejected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var poNo = await CreateSubcontractPoAsync(db, type: 1);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => NewSvc(db).ReconcileConsignAsync(poNo, 1, finishedQty: 100m, tolerancePct: 0.05m, "u1"));
+        Assert.Equal("E-PUR-072", ex.Message);
+    }
+
+    // ───── ListOrders：只列外注 PO（Type=2），含成品行 ─────
+
+    [Fact]
+    public async Task ListOrders_ReturnsSubcontractPosOnly_WithLines()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var subPo = await CreateSubcontractPoAsync(db, type: 2);   // 外注
+        await CreateSubcontractPoAsync(db, type: 1);               // 标准（不应出现）
+
+        var orders = await NewSvc(db).ListOrdersAsync();
+
+        var po = Assert.Single(orders);
+        Assert.Equal(subPo, po.PoNo);
+        Assert.Equal(2, po.Type);
+        Assert.NotEmpty(po.Lines);     // 含成品行
+    }
 }
 
 /// <summary>本测试用建应付桩（记录请求，返回成功）。</summary>

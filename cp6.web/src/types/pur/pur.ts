@@ -317,3 +317,58 @@ export const PR_SOURCE_OPTIONS = [
   { value: 'shortage', label: '缺料反流' },
   { value: 'workorder', label: '工单驱动' },
 ]
+
+// ───── 外注加工（章07）─────
+
+/** 有償支給材（外注 PO 子表） */
+export interface PoConsignMaterial {
+  id?: string
+  poNo?: string
+  lineNo?: number
+  consignItemId: string
+  consignQty: number
+  consignUnitCost: number
+  issuedQty?: number
+  wmsIssueNo?: string | null
+}
+
+/** 登记支給材入参 */
+export interface ConsignMaterialForm {
+  consignItemId: string
+  consignQty: number
+  consignUnitCost: number
+}
+
+/** 分批发料入参 */
+export interface ConsignIssueForm {
+  consignItemId: string
+  qty: number
+}
+
+/** 成品成本核算结果 */
+export interface SubcontractCostResult {
+  processingFee: number
+  consignCost: number
+  finishedCost: number
+  costVoucherNo?: string | null
+}
+
+/** 防吞料对账逐料明细 */
+export interface ConsignReconcileLine {
+  consignItemId: string
+  issuedQty: number
+  expectedQty: number
+  variance: number
+  allowedVariance: number
+  isAnomaly: boolean
+}
+
+/** 防吞料对账报表 */
+export interface ConsignReconcileResult {
+  poNo?: string
+  lineNo?: number
+  finishedQty: number
+  tolerancePct: number
+  hasAnomaly: boolean
+  lines: ConsignReconcileLine[]
+}

@@ -69,6 +69,23 @@ public class SubcontractService : ISubcontractService
     }
 
     /// <inheritdoc />
+    public async Task<List<PurchaseOrder>> ListOrdersAsync()
+    {
+        var pos = await _db.PurchaseOrders
+            .Where(p => p.Type == SubcontractPoType && !p.IsDeleted)
+            .OrderByDescending(p => p.OrderDate).ThenByDescending(p => p.PoNo).ToListAsync();
+        if (pos.Count == 0) return pos;
+
+        var poNos = pos.Select(p => p.PoNo).ToList();
+        var linesByPo = (await _db.PurchaseOrderLines
+                .Where(l => poNos.Contains(l.PoNo) && !l.IsDeleted && l.Status != 9).ToListAsync())
+            .GroupBy(l => l.PoNo).ToDictionary(g => g.Key, g => g.OrderBy(l => l.LineNo).ToList());
+        foreach (var p in pos)
+            p.Lines = linesByPo.TryGetValue(p.PoNo, out var ls) ? ls : new List<PurchaseOrderLine>();
+        return pos;
+    }
+
+    /// <inheritdoc />
     public async Task<List<PoConsignMaterial>> GetConsignAsync(string poNo, int? lineNo = null)
     {
         var q = _db.PoConsignMaterials.Where(c => c.PoNo == poNo && !c.IsDeleted);
@@ -161,6 +178,59 @@ public class SubcontractService : ISubcontractService
             ConsignCost = consignCost,
             FinishedCost = finishedCost,
             CostVoucherNo = posted.CostVoucherNo,
+        };
+    }
+
+    /// <inheritdoc />
+    public async Task<ConsignReconcileResult> ReconcileConsignAsync(string poNo, int lineNo, decimal finishedQty, decimal tolerancePct, string? userName)
+    {
+        if (finishedQty <= 0) throw new InvalidOperationException("E-PUR-077"); // 成品数量须>0
+
+        var po = await _db.PurchaseOrders.FirstOrDefaultAsync(p => p.PoNo == poNo && !p.IsDeleted)
+                 ?? throw new InvalidOperationException("E-PUR-071");   // 外注 PO 不存在
+        if (po.Type != SubcontractPoType) throw new InvalidOperationException("E-PUR-072"); // 非外注 PO（Type≠2）
+
+        var poLine = await _db.PurchaseOrderLines
+            .FirstOrDefaultAsync(l => l.PoNo == poNo && l.LineNo == lineNo && !l.IsDeleted && l.Status != 9)
+            ?? throw new InvalidOperationException("E-PUR-073");        // 外注成品行不存在
+        if (poLine.Qty <= 0) throw new InvalidOperationException("E-PUR-079"); // 计划成品数为 0，无法反推单耗
+
+        var consigns = await _db.PoConsignMaterials
+            .Where(c => c.PoNo == poNo && c.LineNo == lineNo && !c.IsDeleted)
+            .OrderBy(c => c.ConsignItemId).ToListAsync();
+
+        var tol = tolerancePct < 0 ? 0m : tolerancePct;
+        var lines = new List<ConsignReconcileLine>();
+        var hasAnomaly = false;
+        foreach (var c in consigns)
+        {
+            // 单耗 = 计划应发 ÷ 计划成品数；应耗 = 单耗 × 实收成品数（成品反推）
+            var unitUsage = c.ConsignQty / poLine.Qty;
+            var expected = unitUsage * finishedQty;
+            var variance = c.IssuedQty - expected;               // 正=多发（含合理损耗）
+            var allowed = expected * tol;
+            var anomaly = variance > allowed;                    // 多领超损耗 → 私吞/多领未用
+            if (anomaly) hasAnomaly = true;
+
+            lines.Add(new ConsignReconcileLine
+            {
+                ConsignItemId = c.ConsignItemId,
+                IssuedQty = c.IssuedQty,
+                ExpectedQty = expected,
+                Variance = variance,
+                AllowedVariance = allowed,
+                IsAnomaly = anomaly,
+            });
+        }
+
+        return new ConsignReconcileResult
+        {
+            PoNo = poNo,
+            LineNo = lineNo,
+            FinishedQty = finishedQty,
+            TolerancePct = tol,
+            HasAnomaly = hasAnomaly,
+            Lines = lines,
         };
     }
 }
