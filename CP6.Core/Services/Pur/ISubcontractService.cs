@@ -25,6 +25,28 @@ public interface ISubcontractService
     /// 非 null → 仅发指定支給材的指定量（分批/补发）。出库不确认消耗/收入（资产位移非交易）。
     /// </summary>
     Task<List<PoConsignMaterial>> IssueConsignAsync(string poNo, int lineNo, IEnumerable<ConsignIssueDto>? issuances, string? userName);
+
+    /// <summary>
+    /// 收成品成本核算（章07 §5）：成品成本 = 加工费（PO 行 UnitPrice × 成品数）+ 支給材成本（Σ ConsignQty × ConsignUnitCost）。
+    /// 支給材成本"并入"非"另付"（结转早买料的内部成本，不产生新对外付款）；结果调 <see cref="Contracts.IFinCostService"/> 接财务 06 成本会计。
+    /// </summary>
+    Task<SubcontractCostResult> CalcFinishedCostAsync(string poNo, int lineNo, decimal finishedQty, string? userName);
+}
+
+/// <summary>外注成品成本核算结果。</summary>
+public class SubcontractCostResult
+{
+    /// <summary>加工费 = PO 行单价 × 成品数（走 AP 对外付款）</summary>
+    public decimal ProcessingFee { get; init; }
+
+    /// <summary>支給材成本 = Σ ConsignQty × ConsignUnitCost（并入非另付）</summary>
+    public decimal ConsignCost { get; init; }
+
+    /// <summary>成品成本 = 加工费 + 支給材成本</summary>
+    public decimal FinishedCost { get; init; }
+
+    /// <summary>财务成本入账凭证号（接财务 06）</summary>
+    public string? CostVoucherNo { get; init; }
 }
 
 /// <summary>登记支給材入参。</summary>

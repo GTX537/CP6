@@ -12,11 +12,13 @@ public class SubcontractService : ISubcontractService
 
     private readonly CP6Context _db;
     private readonly IWmsIssueService _wmsIssue;
+    private readonly IFinCostService _finCost;
 
-    public SubcontractService(CP6Context db, IWmsIssueService wmsIssue)
+    public SubcontractService(CP6Context db, IWmsIssueService wmsIssue, IFinCostService finCost)
     {
         _db = db;
         _wmsIssue = wmsIssue;
+        _finCost = finCost;
     }
 
     /// <inheritdoc />
@@ -119,5 +121,46 @@ public class SubcontractService : ISubcontractService
 
         await _db.SaveChangesAsync();
         return await GetConsignAsync(poNo, lineNo);
+    }
+
+    /// <inheritdoc />
+    public async Task<SubcontractCostResult> CalcFinishedCostAsync(string poNo, int lineNo, decimal finishedQty, string? userName)
+    {
+        if (finishedQty <= 0) throw new InvalidOperationException("E-PUR-077"); // 成品数量须>0
+
+        var po = await _db.PurchaseOrders.FirstOrDefaultAsync(p => p.PoNo == poNo && !p.IsDeleted)
+                 ?? throw new InvalidOperationException("E-PUR-071");   // 外注 PO 不存在
+        if (po.Type != SubcontractPoType) throw new InvalidOperationException("E-PUR-072"); // 非外注 PO（Type≠2）
+
+        var poLine = await _db.PurchaseOrderLines
+            .FirstOrDefaultAsync(l => l.PoNo == poNo && l.LineNo == lineNo && !l.IsDeleted && l.Status != 9)
+            ?? throw new InvalidOperationException("E-PUR-073");        // 外注成品行不存在
+
+        var consigns = await _db.PoConsignMaterials
+            .Where(c => c.PoNo == poNo && c.LineNo == lineNo && !c.IsDeleted).ToListAsync();
+
+        var processingFee = poLine.UnitPrice * finishedQty;                 // ① 加工费（PO 行单价 × 成品数）
+        var consignCost = consigns.Sum(c => c.ConsignQty * c.ConsignUnitCost); // ② 支給材成本（并入非另付）
+        var finishedCost = processingFee + consignCost;                    // 成品成本 = 加工费 + 支給材成本
+
+        var posted = await _finCost.PostSubcontractCostAsync(new SubcontractCostDto
+        {
+            PoNo = poNo,
+            LineNo = lineNo,
+            FinishedItemId = poLine.ItemId,
+            FinishedQty = finishedQty,
+            ProcessingFee = processingFee,
+            ConsignCost = consignCost,
+            FinishedCost = finishedCost,
+        }, userName);
+        if (!posted.Ok) throw new InvalidOperationException("E-PUR-078"); // 财务成本入账失败
+
+        return new SubcontractCostResult
+        {
+            ProcessingFee = processingFee,
+            ConsignCost = consignCost,
+            FinishedCost = finishedCost,
+            CostVoucherNo = posted.CostVoucherNo,
+        };
     }
 }
