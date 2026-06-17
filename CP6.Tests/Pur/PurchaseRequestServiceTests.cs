@@ -64,6 +64,21 @@ public class PurchaseRequestServiceTests
     }
 
     [Fact]
+    public async Task List_PopulatesLineCounts()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var svc = NewSvc(db);
+        await svc.CreateAsync(NewPrDto(Line(Item1, 10m, 5m, SupA), Line(Item2, 20m, null, null)), "u1"); // 2 行
+
+        db.ChangeTracker.Clear(); // 模拟生产新上下文：禁导航修复，逼 ListAsync 显式载入行数
+        var list = await svc.ListAsync();
+
+        var row = Assert.Single(list);
+        Assert.Equal(2, row.Lines.Count); // 列表行展示「行数」
+    }
+
+    [Fact]
     public async Task Create_NoLines_Rejected()
     {
         using var db = TestHelper.CreateInMemoryContext();

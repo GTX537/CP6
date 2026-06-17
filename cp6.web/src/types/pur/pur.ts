@@ -169,6 +169,50 @@ export interface MatchResult {
   apInvoiceNo?: string | null
 }
 
+/** 采购申请行（章05；SuggestSupplierId 有→PR转PO，空→走询价RFQ；ConvertedPoNo 回填） */
+export interface PurchaseRequestLine {
+  id?: string
+  prNo?: string
+  lineNo?: number
+  itemId: string
+  qty: number
+  unitCd?: string | null
+  requiredDate?: string | null
+  estPrice?: number | null
+  suggestSupplierId?: string | null
+  convertedPoNo?: string | null
+  status?: number
+}
+/** 采购申请头（需求入口：手工/缺料反流/工单驱动） */
+export interface PurchaseRequest {
+  id?: string
+  prNo?: string
+  requesterId?: string | null
+  deptId?: string | null
+  requestDate?: string
+  status?: number
+  source?: string
+  sourceRefNo?: string | null
+  approvalRef?: string | null
+  remarks?: string | null
+  lines: PurchaseRequestLine[]
+}
+/** 建 PR 明细行入参 */
+export interface PrLineCreateForm {
+  itemId: string
+  qty: number
+  unitCd: string | null
+  requiredDate: string | null
+  estPrice: number | null
+  suggestSupplierId: string | null
+}
+/** 建 PR 入参 */
+export interface PrCreateForm {
+  requestDate: string | null
+  remarks: string | null
+  lines: PrLineCreateForm[]
+}
+
 /** 询价行（章06 §2；行级追溯回 PR） */
 export interface RfqLine {
   id?: string
@@ -261,3 +305,15 @@ export const RFQ_STATUS_TAG: Record<number, '' | 'info' | 'success' | 'warning' 
   { 0: 'info', 1: 'warning', 2: 'warning', 3: '', 4: 'success', 8: 'info', 9: 'danger' }
 export const RFQ_INVITE_LABEL: Record<number, string> =
   { 0: '待邀请', 1: '已邀请', 2: '已报价' }
+
+export const PR_STATUS_LABEL: Record<number, string> =
+  { 0: '草稿', 1: '已提交', 2: '已批准', 3: '已拒绝', 4: '已转PO', 9: '关闭' }
+export const PR_STATUS_TAG: Record<number, '' | 'info' | 'success' | 'warning' | 'danger'> =
+  { 0: 'info', 1: 'warning', 2: 'success', 3: 'danger', 4: '', 9: 'info' }
+export const PR_SOURCE_LABEL: Record<string, string> =
+  { manual: '手工录入', shortage: '缺料反流', workorder: '工单驱动' }
+export const PR_SOURCE_OPTIONS = [
+  { value: 'manual', label: '手工录入' },
+  { value: 'shortage', label: '缺料反流' },
+  { value: 'workorder', label: '工单驱动' },
+]

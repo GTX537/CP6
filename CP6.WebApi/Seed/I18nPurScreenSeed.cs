@@ -18,6 +18,7 @@ public static class I18nPurScreenSeed
         new Sys_Lang { LangKey = "nav.703", ZhCN = "采购收货", ZhTW = "採購收貨", En = "Goods Receipt", Ja = "入荷", Ko = "입고" },
         new Sys_Lang { LangKey = "nav.704", ZhCN = "三单匹配", ZhTW = "三單匹配", En = "3-Way Match", Ja = "三方照合", Ko = "3자 대조" },
         new Sys_Lang { LangKey = "nav.705", ZhCN = "询价比价", ZhTW = "詢價比價", En = "RFQ & Comparison", Ja = "見積比較", Ko = "견적 비교" },
+        new Sys_Lang { LangKey = "nav.706", ZhCN = "采购申请", ZhTW = "採購申請", En = "Purchase Request", Ja = "購買申請", Ko = "구매 신청" },
 
         // ── 枚举：采购订单类型 ──
         new Sys_Lang { LangKey = "标准采购", ZhCN = "标准采购", ZhTW = "標準採購", En = "Standard", Ja = "標準購買", Ko = "표준 구매" },
@@ -174,6 +175,39 @@ public static class I18nPurScreenSeed
         new Sys_Lang { LangKey = "无适用采购价", ZhCN = "无适用采购价", ZhTW = "無適用採購價", En = "No applicable purchase price", Ja = "適用可能な購買単価がありません", Ko = "적용 가능한 구매 단가가 없습니다" },
         new Sys_Lang { LangKey = "采购订单号", ZhCN = "采购订单号", ZhTW = "採購訂單號", En = "PO No.", Ja = "発注番号", Ko = "발주번호" },
         new Sys_Lang { LangKey = "否", ZhCN = "否", ZhTW = "否", En = "No", Ja = "いいえ", Ko = "아니오" },
+
+        // ── 采购申请 PR 画面（章05：需求入口 / 手工建单 / 送审 / PR→PO）──
+        new Sys_Lang { LangKey = "采购申请", ZhCN = "采购申请", ZhTW = "採購申請", En = "Purchase Request", Ja = "購買申請", Ko = "구매 신청" },
+        new Sys_Lang { LangKey = "需求入口：手工/缺料/工单 → 送审 → PR转PO(有建议供应商)，无供应商行走询价", ZhCN = "需求入口：手工/缺料/工单 → 送审 → PR转PO(有建议供应商)，无供应商行走询价", ZhTW = "需求入口：手動/缺料/工單 → 送審 → PR轉PO(有建議供應商)，無供應商行走詢價", En = "Demand entry: manual/shortage/work-order → approval → PR-to-PO (with suggested supplier); lines without a supplier go to RFQ", Ja = "需要入口：手動/欠品/製造指図 → 申請 → PRから発注(発注先指定あり)、未指定行は見積へ", Ko = "수요 입력: 수동/결품/작업지시 → 상신 → PR→발주(제안 공급처 있음); 미지정 행은 견적으로" },
+        new Sys_Lang { LangKey = "全部来源", ZhCN = "全部来源", ZhTW = "全部來源", En = "All Sources", Ja = "全ソース", Ko = "전체 출처" },
+        new Sys_Lang { LangKey = "新建申请", ZhCN = "新建申请", ZhTW = "新建申請", En = "New PR", Ja = "申請新規", Ko = "신청 신규" },
+        new Sys_Lang { LangKey = "申请单号", ZhCN = "申请单号", ZhTW = "申請單號", En = "PR No.", Ja = "申請番号", Ko = "신청 번호" },
+        new Sys_Lang { LangKey = "申请日期", ZhCN = "申请日期", ZhTW = "申請日期", En = "Request Date", Ja = "申請日", Ko = "신청일" },
+        new Sys_Lang { LangKey = "申请人", ZhCN = "申请人", ZhTW = "申請人", En = "Requester", Ja = "申請者", Ko = "신청자" },
+        new Sys_Lang { LangKey = "行数", ZhCN = "行数", ZhTW = "行數", En = "Lines", Ja = "明細数", Ko = "행 수" },
+        new Sys_Lang { LangKey = "已提交", ZhCN = "已提交", ZhTW = "已提交", En = "Submitted", Ja = "申請済み", Ko = "상신됨" },
+        new Sys_Lang { LangKey = "已批准", ZhCN = "已批准", ZhTW = "已批准", En = "Approved", Ja = "承認済み", Ko = "승인됨" },
+        new Sys_Lang { LangKey = "已拒绝", ZhCN = "已拒绝", ZhTW = "已拒絕", En = "Rejected", Ja = "却下済み", Ko = "거부됨" },
+        new Sys_Lang { LangKey = "手工录入", ZhCN = "手工录入", ZhTW = "手動錄入", En = "Manual", Ja = "手動入力", Ko = "수동 입력" },
+        new Sys_Lang { LangKey = "缺料反流", ZhCN = "缺料反流", ZhTW = "缺料反流", En = "From Shortage", Ja = "欠品連動", Ko = "결품 연동" },
+        new Sys_Lang { LangKey = "工单驱动", ZhCN = "工单驱动", ZhTW = "工單驅動", En = "From Work Order", Ja = "製造指図連動", Ko = "작업지시 연동" },
+        new Sys_Lang { LangKey = "估价", ZhCN = "估价", ZhTW = "估價", En = "Est. Price", Ja = "見積単価", Ko = "추정 단가" },
+        new Sys_Lang { LangKey = "建议供应商", ZhCN = "建议供应商", ZhTW = "建議供應商", En = "Suggested Supplier", Ja = "推奨仕入先", Ko = "제안 공급처" },
+        new Sys_Lang { LangKey = "留空走询价", ZhCN = "留空走询价", ZhTW = "留空走詢價", En = "Blank → RFQ", Ja = "空欄→見積", Ko = "공란→견적" },
+        new Sys_Lang { LangKey = "待询价", ZhCN = "待询价", ZhTW = "待詢價", En = "Pending RFQ", Ja = "見積待ち", Ko = "견적 대기" },
+        new Sys_Lang { LangKey = "来源单号", ZhCN = "来源单号", ZhTW = "來源單號", En = "Source Ref.", Ja = "起票元番号", Ko = "출처 번호" },
+        new Sys_Lang { LangKey = "单位", ZhCN = "单位", ZhTW = "單位", En = "Unit", Ja = "単位", Ko = "단위" },
+        new Sys_Lang { LangKey = "有建议供应商的行转PO时按供应商分组拆单；留空的行留待询价(RFQ)比价", ZhCN = "有建议供应商的行转PO时按供应商分组拆单；留空的行留待询价(RFQ)比价", ZhTW = "有建議供應商的行轉PO時按供應商分組拆單；留空的行留待詢價(RFQ)比價", En = "Lines with a suggested supplier split into POs by supplier on convert; blank lines wait for RFQ comparison", Ja = "発注先指定ありの行は変換時に仕入先別に分割発注、空欄行は見積比較へ", Ko = "공급처 지정 행은 전환 시 공급처별 분할 발주; 공란 행은 견적 비교 대기" },
+        new Sys_Lang { LangKey = "将有建议供应商的行按供应商分组转为采购订单？", ZhCN = "将有建议供应商的行按供应商分组转为采购订单？", ZhTW = "將有建議供應商的行按供應商分組轉為採購訂單？", En = "Convert lines with a suggested supplier into POs grouped by supplier?", Ja = "発注先指定ありの行を仕入先別に発注へ変換しますか？", Ko = "공급처 지정 행을 공급처별로 발주로 전환하시겠습니까?" },
+
+        // ── E-PUR-* 采购申请 PR 业务错误码（章05）──
+        new Sys_Lang { LangKey = "E-PUR-050", ZhCN = "采购申请至少一行", ZhTW = "採購申請至少一行", En = "PR needs at least one line", Ja = "購買申請には最低1行必要です", Ko = "구매 신청에는 최소 한 행이 필요합니다" },
+        new Sys_Lang { LangKey = "E-PUR-051", ZhCN = "物料必填", ZhTW = "物料必填", En = "Item is required", Ja = "品目は必須です", Ko = "품목은 필수입니다" },
+        new Sys_Lang { LangKey = "E-PUR-052", ZhCN = "仅草稿可送审", ZhTW = "僅草稿可送審", En = "Only drafts can be submitted", Ja = "下書きのみ申請できます", Ko = "초안만 상신할 수 있습니다" },
+        new Sys_Lang { LangKey = "E-PUR-053", ZhCN = "仅已批准可转PO", ZhTW = "僅已批准可轉PO", En = "Only approved PRs can convert to PO", Ja = "承認済みのみ発注へ変換できます", Ko = "승인된 신청만 발주로 전환할 수 있습니다" },
+        new Sys_Lang { LangKey = "E-PUR-054", ZhCN = "无可转行", ZhTW = "無可轉行", En = "No convertible lines", Ja = "変換可能な明細がありません", Ko = "전환 가능한 행이 없습니다" },
+        new Sys_Lang { LangKey = "E-PUR-055", ZhCN = "数量须大于0", ZhTW = "數量須大於0", En = "Qty must be greater than 0", Ja = "数量は0より大きい必要があります", Ko = "수량은 0보다 커야 합니다" },
+        new Sys_Lang { LangKey = "E-PUR-056", ZhCN = "采购申请不存在", ZhTW = "採購申請不存在", En = "PR not found", Ja = "購買申請が存在しません", Ko = "구매 신청이 존재하지 않습니다" },
 
         // ── 询价 RFQ 画面（章06 §2~§6：比价台 / 矩阵 / 邀请 / 报价 / 选定 / 回写 / 转PO）──
         // RFQ 状态枚举（RfqStatus）/ 邀请状态（RfqInviteStatus）标签

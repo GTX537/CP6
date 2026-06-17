@@ -42,7 +42,16 @@ public class PurchaseRequestService : IPurchaseRequestService
         var q = _db.PurchaseRequests.Where(p => !p.IsDeleted);
         if (status.HasValue) q = q.Where(p => p.Status == status.Value);
         if (!string.IsNullOrWhiteSpace(source)) q = q.Where(p => p.Source == source);
-        return await q.OrderByDescending(p => p.RequestDate).ThenByDescending(p => p.PrNo).ToListAsync();
+        var list = await q.OrderByDescending(p => p.RequestDate).ThenByDescending(p => p.PrNo).ToListAsync();
+        if (list.Count == 0) return list;
+
+        // 批量载入明细行（避免 N+1），列表行展示「行数」（生产新上下文不走 EF 导航修复）
+        var prNos = list.Select(p => p.PrNo).ToList();
+        var linesByPr = (await _db.PurchaseRequestLines.Where(l => prNos.Contains(l.PrNo) && !l.IsDeleted).ToListAsync())
+            .GroupBy(l => l.PrNo).ToDictionary(g => g.Key, g => g.OrderBy(l => l.LineNo).ToList());
+        foreach (var p in list)
+            p.Lines = linesByPr.TryGetValue(p.PrNo, out var ls) ? ls : new();
+        return list;
     }
 
     /// <inheritdoc />

@@ -3,6 +3,7 @@ import type {
   ApiResp, SupplierPrice, PurchaseOrder, PoCreateForm,
   GoodsReceipt, GrCreateForm, ThreeWayMatch, MatchInvoiceForm, MatchResult,
   Rfq, RfqQuoteLineForm, RfqSelectionForm,
+  PurchaseRequest, PrCreateForm,
 } from '@/types/pur/pur'
 
 // 采购 API（/api/pur）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
@@ -76,6 +77,25 @@ export const matchApi = {
   },
   reject(matchNo: string, note?: string) {
     return http.post<any, ApiResp<ThreeWayMatch>>(`/pur/match/${matchNo}/reject`, { note })
+  },
+}
+
+/** 采购申请 /api/pur/pr（需求入口：手工建单 + 送审 + PR→PO 按建议供应商分组转单） */
+export const prApi = {
+  list(status?: number, source?: string) {
+    return http.get<any, ApiResp<PurchaseRequest[]>>('/pur/pr', { params: { status, source } })
+  },
+  get(prNo: string) {
+    return http.get<any, ApiResp<PurchaseRequest>>(`/pur/pr/${prNo}`)
+  },
+  create(data: PrCreateForm) {
+    return http.post<any, ApiResp<PurchaseRequest>>('/pur/pr', data)
+  },
+  submit(prNo: string) {
+    return http.post<any, ApiResp<PurchaseRequest>>(`/pur/pr/${prNo}/submit`)
+  },
+  convert(prNo: string) {
+    return http.post<any, ApiResp<string[]>>(`/pur/pr/${prNo}/convert`)
   },
 }
 
