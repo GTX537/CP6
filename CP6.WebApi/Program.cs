@@ -211,6 +211,12 @@ CP6.Core.Services.Sys.FieldRegistry.Register("order",
 // 共享用量内核（見積与 MRP 共消费，spec §4）
 builder.Services.AddScoped<CP6.Core.Services.Common.IMaterialUsageCalculator, CP6.Core.Services.Common.MaterialUsageCalculator>();
 
+// 计划中台（Plan）P1 MRP 净需求地基
+builder.Services.AddScoped<CP6.Core.Services.Plan.IItemPlanningPolicyService, CP6.Core.Services.Plan.ItemPlanningPolicyService>();
+builder.Services.AddScoped<CP6.Core.Services.Plan.ILowLevelCodeService, CP6.Core.Services.Plan.LowLevelCodeService>();
+builder.Services.AddScoped<CP6.Core.Services.Plan.ISupplyService, CP6.Core.Services.Plan.SupplyService>();
+builder.Services.AddScoped<CP6.Core.Services.Plan.IMrpEngine, CP6.Core.Services.Plan.MrpEngine>();
+
 // 4.1 MSBBPA010 見積計算書 相关服务
 builder.Services.AddScoped<IEstimateCalcService, EstimateCalcService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
