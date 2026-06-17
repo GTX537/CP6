@@ -208,4 +208,86 @@ public class RfqService : IRfqService
         await _db.SaveChangesAsync();
         return (await GetAsync(rfqNo))!;
     }
+
+    /// <inheritdoc />
+    public async Task<Rfq> RankQuotesAsync(string rfqNo, DateTime? asOf, string? userName)
+    {
+        var rfq = await _db.Rfqs.FirstOrDefaultAsync(r => r.RfqNo == rfqNo && !r.IsDeleted)
+                  ?? throw new InvalidOperationException("E-PUR-061"); // RFQ 不存在
+
+        var at = asOf ?? DateTime.Now;
+        var quotes = await _db.RfqQuotes
+            .Where(q => q.RfqNo == rfqNo && !q.IsDeleted)
+            .ToListAsync();
+
+        foreach (var lineGroup in quotes.GroupBy(q => q.LineNo))
+        {
+            // 剔除过期（ValidUntil 有值且早于 asOf）→ Rank=0 不参与
+            var expired = lineGroup.Where(q => q.ValidUntil != null && q.ValidUntil < at).ToList();
+            foreach (var e in expired) e.Rank = 0;
+
+            // 非过期者：价格升序 → 交期升序（null 垫底）→ 供应商 CD（稳定）
+            var ranked = lineGroup
+                .Where(q => q.ValidUntil == null || q.ValidUntil >= at)
+                .OrderBy(q => q.QuotedPrice)
+                .ThenBy(q => q.LeadDays ?? int.MaxValue)
+                .ThenBy(q => q.SupplierId)
+                .ToList();
+
+            var rank = 0;
+            foreach (var q in ranked) q.Rank = ++rank;
+        }
+
+        var now = DateTime.Now;
+        rfq.Modifier = userName;
+        rfq.ModifyDate = now;
+        await _db.SaveChangesAsync();
+        return (await GetAsync(rfqNo))!;
+    }
+
+    /// <inheritdoc />
+    public async Task<Rfq> SelectAsync(string rfqNo, IEnumerable<RfqSelectionDto> selections, string? userName)
+    {
+        var rfq = await _db.Rfqs.FirstOrDefaultAsync(r => r.RfqNo == rfqNo && !r.IsDeleted)
+                  ?? throw new InvalidOperationException("E-PUR-061"); // RFQ 不存在
+
+        var now = DateTime.Now;
+        var picks = selections?.ToList() ?? new List<RfqSelectionDto>();
+
+        var quotes = await _db.RfqQuotes
+            .Where(q => q.RfqNo == rfqNo && !q.IsDeleted)
+            .ToListAsync();
+
+        foreach (var pick in picks)
+        {
+            var quote = quotes.FirstOrDefault(q => q.LineNo == pick.LineNo && q.SupplierId == pick.SupplierId)
+                        ?? throw new InvalidOperationException("E-PUR-069"); // 报价不存在
+            if (quote.ValidUntil != null && quote.ValidUntil < now)
+                throw new InvalidOperationException("E-PUR-068"); // 选中报价已过期
+
+            // 一行一选：改选同行先清掉该行先前选中
+            foreach (var sib in quotes.Where(q => q.LineNo == pick.LineNo && q.SupplierId != pick.SupplierId && q.IsSelected))
+            {
+                sib.IsSelected = false;
+                sib.Modifier = userName;
+                sib.ModifyDate = now;
+            }
+            quote.IsSelected = true;
+            quote.Modifier = userName;
+            quote.ModifyDate = now;
+        }
+
+        // 所有询价行都有选中 → 推 Selected
+        var lineNos = await _db.RfqLines
+            .Where(l => l.RfqNo == rfqNo && !l.IsDeleted)
+            .Select(l => l.LineNo).ToListAsync();
+        var selectedLineNos = quotes.Where(q => q.IsSelected).Select(q => q.LineNo).Distinct().ToHashSet();
+        if (lineNos.Count > 0 && lineNos.All(selectedLineNos.Contains))
+            rfq.Status = RfqStatus.Selected;
+
+        rfq.Modifier = userName;
+        rfq.ModifyDate = now;
+        await _db.SaveChangesAsync();
+        return (await GetAsync(rfqNo))!;
+    }
 }

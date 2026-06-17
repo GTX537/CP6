@@ -337,4 +337,236 @@ public class RfqServiceTests
         Assert.Single(inviting);
         Assert.Equal(rfq1.RfqNo, drafts[0].RfqNo);
     }
+
+    // ───── RankQuotes（章06 §4）：按行分组比价；剔除过期；价格优先→同价比交期；Rank 是建议 ─────
+
+    private const string SupC = "SUPC";
+
+    /// <summary>追加第三家发注先 SUPC（默认 Seed 只有 SupA/SupB）。</summary>
+    private static void SeedSupC(CP6Context db)
+    {
+        db.BusinessPartners.Add(new BusinessPartner { BpCd = SupC, BpName = "供应丙", SupplierFlg = true, CurrencyCd = null, PurchasePostingDiv = "2" });
+        db.SaveChanges();
+    }
+
+    [Fact]
+    public async Task Rank_PerLine_ExcludesExpired_PriceFirst()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        SeedSupC(db);
+        var svc = NewSvc(db);
+        var prNo = await CreatePrAsync(db, (Item1, 10m, null)); // 单行 LineNo 1
+        var rfq = await svc.CreateFromPrAsync(prNo, "buyer1");
+        await svc.AddSuppliersAsync(rfq.RfqNo, new[] { SupA, SupB, SupC }, "buyer1");
+
+        var asOf = new DateTime(2026, 6, 16);
+        // 行1: A 报 10（有效）/ B 报 8（已过期）/ C 报 9（有效）
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupA, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 10m, LeadDays = 5, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupB, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 8m, LeadDays = 5, ValidUntil = new DateTime(2026, 6, 1) }, // 过期
+        }, "buyer1");
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupC, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 9m, LeadDays = 5, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+
+        var result = await svc.RankQuotesAsync(rfq.RfqNo, asOf, "buyer1");
+
+        var b = result.Quotes.First(q => q.SupplierId == SupB && q.LineNo == 1);
+        var c = result.Quotes.First(q => q.SupplierId == SupC && q.LineNo == 1);
+        var a = result.Quotes.First(q => q.SupplierId == SupA && q.LineNo == 1);
+        Assert.Equal(0, b.Rank);   // 过期 → 不参与排名
+        Assert.Equal(1, c.Rank);   // 9 最低 → 第一
+        Assert.Equal(2, a.Rank);   // 10 → 第二
+        // Rank 仅是建议，不自动选中
+        Assert.All(result.Quotes, q => Assert.False(q.IsSelected));
+    }
+
+    [Fact]
+    public async Task Rank_SamePrice_BreaksTieByLeadDays()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        SeedSupC(db);
+        var svc = NewSvc(db);
+        var prNo = await CreatePrAsync(db, (Item1, 10m, null));
+        var rfq = await svc.CreateFromPrAsync(prNo, "buyer1");
+        await svc.AddSuppliersAsync(rfq.RfqNo, new[] { SupA, SupB, SupC }, "buyer1");
+
+        var asOf = new DateTime(2026, 6, 16);
+        // 同价 10：A 交期 7 / B 交期 3 / C 交期 null（视为最大，垫底）
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupA, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 10m, LeadDays = 7, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupB, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 10m, LeadDays = 3, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupC, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 10m, LeadDays = null, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+
+        var result = await svc.RankQuotesAsync(rfq.RfqNo, asOf, "buyer1");
+
+        Assert.Equal(1, result.Quotes.First(q => q.SupplierId == SupB).Rank); // 交期 3 最短
+        Assert.Equal(2, result.Quotes.First(q => q.SupplierId == SupA).Rank); // 交期 7
+        Assert.Equal(3, result.Quotes.First(q => q.SupplierId == SupC).Rank); // 交期 null 垫底
+    }
+
+    [Fact]
+    public async Task Rank_PerLine_Independent()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var svc = NewSvc(db);
+        var prNo = await CreatePrAsync(db, (Item1, 10m, null), (Item2, 20m, null)); // 两行
+        var rfq = await svc.CreateFromPrAsync(prNo, "buyer1");
+        await svc.AddSuppliersAsync(rfq.RfqNo, new[] { SupA, SupB }, "buyer1");
+
+        var asOf = new DateTime(2026, 6, 16);
+        // 行1: A 便宜；行2: B 便宜（按行各自排名，不串行）
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupA, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 5m, ValidUntil = new DateTime(2026, 7, 31) },
+            new RfqQuoteLineDto { LineNo = 2, QuotedPrice = 99m, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupB, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 7m, ValidUntil = new DateTime(2026, 7, 31) },
+            new RfqQuoteLineDto { LineNo = 2, QuotedPrice = 12m, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+
+        var result = await svc.RankQuotesAsync(rfq.RfqNo, asOf, "buyer1");
+
+        Assert.Equal(1, result.Quotes.First(q => q.SupplierId == SupA && q.LineNo == 1).Rank);
+        Assert.Equal(2, result.Quotes.First(q => q.SupplierId == SupB && q.LineNo == 1).Rank);
+        Assert.Equal(1, result.Quotes.First(q => q.SupplierId == SupB && q.LineNo == 2).Rank);
+        Assert.Equal(2, result.Quotes.First(q => q.SupplierId == SupA && q.LineNo == 2).Rank);
+    }
+
+    [Fact]
+    public async Task Rank_RfqNotFound_Rejected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => NewSvc(db).RankQuotesAsync("RFQ-NOPE", null, "buyer1"));
+        Assert.Equal("E-PUR-061", ex.Message);
+    }
+
+    // ───── Select（章06 §4）：按行选 + 校验未过期 + 一行一选 + 推 Status ─────
+
+    /// <summary>建一张两行 RFQ，邀 A/B，各报有效价，已比价。返回 RfqNo。</summary>
+    private static async Task<(RfqService svc, string rfqNo)> BuildQuotedRfqAsync(CP6Context db, DateTime asOf)
+    {
+        var svc = NewSvc(db);
+        var prNo = await CreatePrAsync(db, (Item1, 10m, null), (Item2, 20m, null));
+        var rfq = await svc.CreateFromPrAsync(prNo, "buyer1");
+        await svc.AddSuppliersAsync(rfq.RfqNo, new[] { SupA, SupB }, "buyer1");
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupA, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 5m, ValidUntil = new DateTime(2026, 7, 31) },
+            new RfqQuoteLineDto { LineNo = 2, QuotedPrice = 99m, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupB, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 7m, ValidUntil = new DateTime(2026, 7, 31) },
+            new RfqQuoteLineDto { LineNo = 2, QuotedPrice = 12m, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+        await svc.RankQuotesAsync(rfq.RfqNo, asOf, "buyer1");
+        return (svc, rfq.RfqNo);
+    }
+
+    [Fact]
+    public async Task Select_PerLine_DifferentSuppliers_AllSelected_StatusSelected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var asOf = new DateTime(2026, 6, 16);
+        var (svc, rfqNo) = await BuildQuotedRfqAsync(db, asOf);
+
+        // 行1 选 A（便宜），行2 选 B（便宜）——按行拆不同供应商
+        var result = await svc.SelectAsync(rfqNo, new[]
+        {
+            new RfqSelectionDto { LineNo = 1, SupplierId = SupA },
+            new RfqSelectionDto { LineNo = 2, SupplierId = SupB },
+        }, "buyer1");
+
+        Assert.True(result.Quotes.First(q => q.LineNo == 1 && q.SupplierId == SupA).IsSelected);
+        Assert.False(result.Quotes.First(q => q.LineNo == 1 && q.SupplierId == SupB).IsSelected);
+        Assert.True(result.Quotes.First(q => q.LineNo == 2 && q.SupplierId == SupB).IsSelected);
+        Assert.False(result.Quotes.First(q => q.LineNo == 2 && q.SupplierId == SupA).IsSelected);
+        Assert.Equal(RfqStatus.Selected, result.Status); // 两行都选 → 已选定
+    }
+
+    [Fact]
+    public async Task Select_ReselectLine_ClearsPriorSelectionOnSameLine()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var asOf = new DateTime(2026, 6, 16);
+        var (svc, rfqNo) = await BuildQuotedRfqAsync(db, asOf);
+
+        // 行1 先选 A
+        await svc.SelectAsync(rfqNo, new[] { new RfqSelectionDto { LineNo = 1, SupplierId = SupA } }, "buyer1");
+        // 行1 改选 B → A 应被清掉，仅 B 选中
+        var result = await svc.SelectAsync(rfqNo, new[] { new RfqSelectionDto { LineNo = 1, SupplierId = SupB } }, "buyer1");
+
+        Assert.False(result.Quotes.First(q => q.LineNo == 1 && q.SupplierId == SupA).IsSelected);
+        Assert.True(result.Quotes.First(q => q.LineNo == 1 && q.SupplierId == SupB).IsSelected);
+        Assert.Equal(1, result.Quotes.Count(q => q.LineNo == 1 && q.IsSelected)); // 一行一选
+    }
+
+    [Fact]
+    public async Task Select_ExpiredQuote_Throws()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var svc = NewSvc(db);
+        var prNo = await CreatePrAsync(db, (Item1, 10m, null));
+        var rfq = await svc.CreateFromPrAsync(prNo, "buyer1");
+        await svc.AddSuppliersAsync(rfq.RfqNo, new[] { SupA }, "buyer1");
+        // A 报价已过期
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupA, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 8m, ValidUntil = new DateTime(2026, 6, 1) },
+        }, "buyer1");
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.SelectAsync(rfq.RfqNo, new[] { new RfqSelectionDto { LineNo = 1, SupplierId = SupA } }, "buyer1"));
+        Assert.Equal("E-PUR-068", ex.Message);
+    }
+
+    [Fact]
+    public async Task Select_QuoteNotFound_Throws()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var asOf = new DateTime(2026, 6, 16);
+        var (svc, rfqNo) = await BuildQuotedRfqAsync(db, asOf);
+
+        // 行1 没有 SUPC 的报价（SUPC 也没被邀）→ 找不到报价
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.SelectAsync(rfqNo, new[] { new RfqSelectionDto { LineNo = 1, SupplierId = SupC } }, "buyer1"));
+        Assert.Equal("E-PUR-069", ex.Message);
+    }
+
+    [Fact]
+    public async Task Select_RfqNotFound_Rejected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => NewSvc(db).SelectAsync("RFQ-NOPE", new[] { new RfqSelectionDto { LineNo = 1, SupplierId = SupA } }, "buyer1"));
+        Assert.Equal("E-PUR-061", ex.Message);
+    }
 }

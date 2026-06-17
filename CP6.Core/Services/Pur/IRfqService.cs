@@ -32,6 +32,21 @@ public interface IRfqService
     /// 该供应商 InviteStatus → Quoted；RFQ 状态推到 Quoting。供应商未被邀请 → E-PUR-064；报价行非询价行 → E-PUR-065；无报价行 → E-PUR-066。
     /// </summary>
     Task<Rfq> RecordQuoteAsync(string rfqNo, string supplierId, IEnumerable<RfqQuoteLineDto> quoteLines, string? userName);
+
+    /// <summary>
+    /// 比价排名（章06 §4）：按 <see cref="RfqQuote.LineNo"/> 分组横向比价；剔除**过期**报价（ValidUntil &lt; asOf，得 Rank=0 不参与）；
+    /// 非过期者 OrderBy QuotedPrice 升序 → ThenBy LeadDays 升序（null 视为最大、垫底）→ ThenBy SupplierId（稳定）赋 Rank=1,2,3…。
+    /// <b>Rank 仅是建议，不自动置 IsSelected（人拍板，见 <see cref="SelectAsync"/>）。</b>
+    /// asOf 默认 <see cref="DateTime.Now"/>。RFQ 不存在 → E-PUR-061。
+    /// </summary>
+    Task<Rfq> RankQuotesAsync(string rfqNo, DateTime? asOf, string? userName);
+
+    /// <summary>
+    /// 选定（章06 §4）：按行（LineNo, SupplierId）置选中——**可按行拆给不同供应商，一行一选**（改选同行会清掉该行先前选中）；
+    /// 校验该报价存在且**未过期**（ValidUntil &gt;= asOf）。所有询价行都被选中时，RFQ 状态推到 <see cref="RfqStatus.Selected"/>。
+    /// RFQ 不存在 → E-PUR-061；选中报价已过期 → E-PUR-068；报价不存在 → E-PUR-069。
+    /// </summary>
+    Task<Rfq> SelectAsync(string rfqNo, IEnumerable<RfqSelectionDto> selections, string? userName);
 }
 
 /// <summary>收报价单行入参（一行对应一个 RfqLine.LineNo）。</summary>
@@ -51,4 +66,14 @@ public class RfqQuoteLineDto
 
     /// <summary>报价有效期</summary>
     public DateTime? ValidUntil { get; set; }
+}
+
+/// <summary>选定入参（章06 §4）：一条 = 给某询价行选定某供应商的报价。</summary>
+public class RfqSelectionDto
+{
+    /// <summary>询价行号（= RfqLine.LineNo）</summary>
+    public int LineNo { get; set; }
+
+    /// <summary>选定的供应商 CD（= RfqQuote.SupplierId）</summary>
+    public string SupplierId { get; set; } = string.Empty;
 }
