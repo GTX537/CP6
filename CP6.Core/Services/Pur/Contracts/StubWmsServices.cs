@@ -27,3 +27,18 @@ public class StubWmsQcQuery : IWmsQcQuery
     public Task<List<WmsQcVerdict>> QueryByReceiptAsync(string wmsInboundNo)
         => Task.FromResult(new List<WmsQcVerdict>());
 }
+
+/// <summary>
+/// WMS 出库桩（P2-D3，MVP）。返回假出库号 "PUROUT-{RefNo}-{时分秒毫秒}" + 全额实出，不落真实库存。
+/// WMS 落地后以适配器委托真实 OutboundService（Purpose=subcontract 记"在外协"）替换（DI 切换）。
+/// </summary>
+public class StubWmsIssueService : IWmsIssueService
+{
+    /// <inheritdoc />
+    public Task<WmsIssueResult> IssueAsync(WmsIssueRequest request, string? userName)
+        => Task.FromResult(new WmsIssueResult
+        {
+            IssueNo = $"PUROUT-{request.RefNo}-{DateTime.Now:HHmmssfff}",
+            IssuedQty = request.Qty,
+        });
+}

@@ -437,6 +437,10 @@ public class CP6Context : DbContext
     /// <summary>报价矩阵（章06，各家答什么；(供应商 × 行)）</summary>
     public DbSet<RfqQuote> RfqQuotes { get; set; }
 
+    // ───── 采购（Pur）完整型 章07 外注加工 + 有償支給 ─────
+    /// <summary>有償支給材（章07，外注 PO Type=2 子表；★IssuedQty 实发锚防吞料）</summary>
+    public DbSet<PoConsignMaterial> PoConsignMaterials { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
