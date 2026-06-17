@@ -75,6 +75,40 @@ public class SupplierPriceService : ISupplierPriceService
     }
 
     /// <inheritdoc />
+    public async Task<SupplierPrice> UpsertAsync(SupplierPrice price, string? userName)
+    {
+        if (string.IsNullOrWhiteSpace(price.SupplierId)) throw new InvalidOperationException("E-PUR-011"); // 供应商必填
+        if (string.IsNullOrWhiteSpace(price.ItemId)) throw new InvalidOperationException("E-PUR-012");     // 物料必填
+        if (price.Price < 0) throw new InvalidOperationException("E-PUR-013");                              // 单价不可为负
+        if (price.MinQty < 0) throw new InvalidOperationException("E-PUR-014");                             // 阶梯量不可为负
+
+        // 业务键命中 (SupplierId, ItemId, MinQty, ValidFrom)（与唯一索引对齐）→ 原地更新；否则新增
+        var exist = await _db.SupplierPrices.FirstOrDefaultAsync(p => !p.IsDeleted
+            && p.SupplierId == price.SupplierId
+            && p.ItemId == price.ItemId
+            && p.MinQty == price.MinQty
+            && p.ValidFrom == price.ValidFrom);
+
+        if (exist == null)
+        {
+            price.Creator = userName;
+            price.CreateDate = DateTime.Now;
+            _db.SupplierPrices.Add(price);
+            await _db.SaveChangesAsync();
+            return price;
+        }
+
+        exist.Price = price.Price;
+        exist.CurrencyCd = price.CurrencyCd;
+        exist.ValidTo = price.ValidTo;
+        exist.Source = price.Source;
+        exist.Modifier = userName;
+        exist.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+        return exist;
+    }
+
+    /// <inheritdoc />
     public async Task DeleteAsync(Guid id, string? userName)
     {
         var exist = await _db.SupplierPrices.FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted)

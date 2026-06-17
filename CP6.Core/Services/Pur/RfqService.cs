@@ -12,11 +12,15 @@ public class RfqService : IRfqService
 
     private readonly CP6Context _db;
     private readonly ISeqService _seq;
+    private readonly IPurchaseOrderService _po;
+    private readonly ISupplierPriceService _price;
 
-    public RfqService(CP6Context db, ISeqService seq)
+    public RfqService(CP6Context db, ISeqService seq, IPurchaseOrderService po, ISupplierPriceService price)
     {
         _db = db;
         _seq = seq;
+        _po = po;
+        _price = price;
     }
 
     /// <inheritdoc />
@@ -289,5 +293,98 @@ public class RfqService : IRfqService
         rfq.ModifyDate = now;
         await _db.SaveChangesAsync();
         return (await GetAsync(rfqNo))!;
+    }
+
+    /// <inheritdoc />
+    public async Task<Rfq> WriteBackPricesAsync(string rfqNo, string? userName)
+    {
+        var rfq = await _db.Rfqs.FirstOrDefaultAsync(r => r.RfqNo == rfqNo && !r.IsDeleted)
+                  ?? throw new InvalidOperationException("E-PUR-061"); // RFQ 不存在
+
+        var selected = await _db.RfqQuotes
+            .Where(q => q.RfqNo == rfqNo && q.IsSelected && !q.IsDeleted)
+            .ToListAsync();
+        var lineItem = await _db.RfqLines
+            .Where(l => l.RfqNo == rfqNo && !l.IsDeleted)
+            .ToDictionaryAsync(l => l.LineNo, l => l.ItemId);
+
+        var today = DateTime.Now.Date; // 归一到当天 0 点 → 同日重跑业务键命中、幂等不增行
+        foreach (var q in selected)
+        {
+            if (!lineItem.TryGetValue(q.LineNo, out var itemId)) continue;
+            await _price.UpsertAsync(new SupplierPrice
+            {
+                SupplierId = q.SupplierId,
+                ItemId = itemId,
+                Price = q.QuotedPrice,
+                CurrencyCd = q.CurrencyCd,
+                MinQty = 0m,
+                ValidFrom = today,
+                ValidTo = q.ValidUntil,
+                Source = "rfq",                 // ★标明来自询价（与手工维护区分）
+            }, userName);
+        }
+
+        var now = DateTime.Now;
+        rfq.Modifier = userName;
+        rfq.ModifyDate = now;
+        await _db.SaveChangesAsync();
+        return (await GetAsync(rfqNo))!;
+    }
+
+    /// <inheritdoc />
+    public async Task<List<string>> ConvertToPoAsync(string rfqNo, string? userName)
+    {
+        var rfq = await _db.Rfqs.FirstOrDefaultAsync(r => r.RfqNo == rfqNo && !r.IsDeleted)
+                  ?? throw new InvalidOperationException("E-PUR-061"); // RFQ 不存在
+
+        var selected = await _db.RfqQuotes
+            .Where(q => q.RfqNo == rfqNo && q.IsSelected && !q.IsDeleted)
+            .ToListAsync();
+        if (selected.Count == 0) throw new InvalidOperationException("E-PUR-070"); // 无选中报价
+
+        var now = DateTime.Now;
+        // 转 PO 第二道关：选中报价不得已过期（防"选定后才过期"的废价下单）
+        foreach (var q in selected)
+            if (q.ValidUntil != null && q.ValidUntil < now)
+                throw new InvalidOperationException("E-PUR-068"); // 选中报价已过期
+
+        var lines = await _db.RfqLines
+            .Where(l => l.RfqNo == rfqNo && !l.IsDeleted)
+            .ToDictionaryAsync(l => l.LineNo, l => l);
+
+        var poNos = new List<string>();
+        // 按选中供应商分组拆 PO（同供应商的行合一张；不同行可花落不同家）
+        foreach (var grp in selected.GroupBy(q => q.SupplierId))
+        {
+            var dto = new PoCreateDto
+            {
+                SupplierId = grp.Key,
+                Type = 1,
+                OrderDate = rfq.RfqDate,
+                SourceRfqNo = rfqNo,             // 行级追溯回 RFQ
+                Remarks = $"RFQ {rfqNo}",
+                Lines = grp.Select(q => new PoLineCreateDto
+                {
+                    ItemId = lines[q.LineNo].ItemId,
+                    Qty = lines[q.LineNo].Qty,
+                    UnitPrice = q.QuotedPrice,   // ★成交价=询价价，不再走价表取价
+                    RequiredDate = lines[q.LineNo].RequiredDate,
+                }).ToList(),
+            };
+            var po = await _po.CreateAsync(dto, userName);
+            poNos.Add(po.PoNo);
+        }
+
+        // 全部询价行都已选中转出 → RFQ 推 Converted
+        var allLineNos = lines.Keys.ToHashSet();
+        var selectedLineNos = selected.Select(q => q.LineNo).Distinct().ToHashSet();
+        if (allLineNos.Count > 0 && allLineNos.All(selectedLineNos.Contains))
+            rfq.Status = RfqStatus.Converted;
+
+        rfq.Modifier = userName;
+        rfq.ModifyDate = now;
+        await _db.SaveChangesAsync();
+        return poNos;
     }
 }

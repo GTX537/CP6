@@ -19,6 +19,12 @@ public interface ISupplierPriceService
     /// <summary>新增/更新一档价。</summary>
     Task<SupplierPrice> SaveAsync(SupplierPrice price, string? userName);
 
+    /// <summary>
+    /// 按业务键 (SupplierId, ItemId, MinQty, ValidFrom) 幂等回写一档价：命中则原地更新
+    /// (Price/CurrencyCd/ValidTo/Source)，否则新增。RFQ 询价成果回写价表用（采购 章06 §5，Source=rfq）。
+    /// </summary>
+    Task<SupplierPrice> UpsertAsync(SupplierPrice price, string? userName);
+
     /// <summary>删除一档价（软删）。</summary>
     Task DeleteAsync(Guid id, string? userName);
 }

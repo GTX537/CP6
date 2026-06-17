@@ -21,7 +21,10 @@ public class RfqServiceTests
     private const string Item2 = "ITEM2";
     private const string Item3 = "ITEM3";
 
-    private static RfqService NewSvc(CP6Context db) => new(db, new SeqService(db));
+    private static RfqService NewSvc(CP6Context db) => new(db, new SeqService(db),
+        new PurchaseOrderService(db, new SupplierPriceService(db), new FxRateService(db),
+            new SeqService(db), new StubApprovalService()),
+        new SupplierPriceService(db));
 
     private static PurchaseRequestService NewPrSvc(CP6Context db) =>
         new(db, new SeqService(db), new StubApprovalService(),
@@ -567,6 +570,176 @@ public class RfqServiceTests
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => NewSvc(db).SelectAsync("RFQ-NOPE", new[] { new RfqSelectionDto { LineNo = 1, SupplierId = SupA } }, "buyer1"));
+        Assert.Equal("E-PUR-061", ex.Message);
+    }
+
+    // ───── WriteBackPrices（章06 §5）：选中报价回写价表 Source=rfq；落选不写 ─────
+
+    /// <summary>建两行 RFQ → 报价 → 比价 → 行1选A(5)/行2选B(12)。返回 (svc, rfqNo)。</summary>
+    private static async Task<(RfqService svc, string rfqNo)> BuildSelectedRfqAsync(CP6Context db, DateTime asOf)
+    {
+        var (svc, rfqNo) = await BuildQuotedRfqAsync(db, asOf);
+        await svc.SelectAsync(rfqNo, new[]
+        {
+            new RfqSelectionDto { LineNo = 1, SupplierId = SupA }, // A@5（便宜）
+            new RfqSelectionDto { LineNo = 2, SupplierId = SupB }, // B@12（便宜）
+        }, "buyer1");
+        return (svc, rfqNo);
+    }
+
+    [Fact]
+    public async Task WriteBack_OnlySelectedQuotes_UpsertPriceTable_SourceRfq()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var asOf = new DateTime(2026, 6, 16);
+        var (svc, rfqNo) = await BuildSelectedRfqAsync(db, asOf);
+
+        await svc.WriteBackPricesAsync(rfqNo, "buyer1");
+
+        var prices = new SupplierPriceService(db);
+        var aPrices = await prices.ListAsync(SupA);
+        var bPrices = await prices.ListAsync(SupB);
+
+        // 选中：A×Item1@5、B×Item2@12 → 各回写一档，Source=rfq，ValidTo=报价有效期
+        var a1 = Assert.Single(aPrices);
+        Assert.Equal(Item1, a1.ItemId);
+        Assert.Equal(5m, a1.Price);
+        Assert.Equal("rfq", a1.Source);
+        Assert.Equal(new DateTime(2026, 7, 31), a1.ValidTo);
+
+        var b2 = Assert.Single(bPrices);
+        Assert.Equal(Item2, b2.ItemId);
+        Assert.Equal(12m, b2.Price);
+        Assert.Equal("rfq", b2.Source);
+
+        // 落选报价（行1 B@7、行2 A@99）不回写
+        Assert.DoesNotContain(bPrices, p => p.ItemId == Item1);
+        Assert.DoesNotContain(aPrices, p => p.ItemId == Item2);
+    }
+
+    [Fact]
+    public async Task WriteBack_Idempotent_RerunNoDuplicate()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var asOf = new DateTime(2026, 6, 16);
+        var (svc, rfqNo) = await BuildSelectedRfqAsync(db, asOf);
+
+        await svc.WriteBackPricesAsync(rfqNo, "buyer1");
+        await svc.WriteBackPricesAsync(rfqNo, "buyer1"); // 再跑一次（同日同业务键）→ 幂等
+
+        var prices = new SupplierPriceService(db);
+        Assert.Single(await prices.ListAsync(SupA));
+        Assert.Single(await prices.ListAsync(SupB));
+    }
+
+    [Fact]
+    public async Task WriteBack_RfqNotFound_Rejected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => NewSvc(db).WriteBackPricesAsync("RFQ-NOPE", "buyer1"));
+        Assert.Equal("E-PUR-061", ex.Message);
+    }
+
+    // ───── ConvertToPo（章06 §6）：按选中供应商分组、用成交价、推 Converted ─────
+
+    [Fact]
+    public async Task Convert_GroupBySelectedSupplier_UsesQuotedPrice_StatusConverted()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var asOf = new DateTime(2026, 6, 16);
+        var (svc, rfqNo) = await BuildSelectedRfqAsync(db, asOf);
+
+        var poNos = await svc.ConvertToPoAsync(rfqNo, "buyer1");
+
+        Assert.Equal(2, poNos.Count); // 两供应商各一张 PO
+
+        var poA = db.PurchaseOrders.First(p => poNos.Contains(p.PoNo) && p.SupplierId == SupA);
+        var poB = db.PurchaseOrders.First(p => poNos.Contains(p.PoNo) && p.SupplierId == SupB);
+        Assert.Equal(rfqNo, poA.SourceRfqNo); // 行级追溯回 RFQ
+        Assert.Equal(rfqNo, poB.SourceRfqNo);
+
+        var aLine = db.PurchaseOrderLines.Where(l => l.PoNo == poA.PoNo).ToList();
+        var bLine = db.PurchaseOrderLines.Where(l => l.PoNo == poB.PoNo).ToList();
+        Assert.Equal(Item1, Assert.Single(aLine).ItemId);
+        Assert.Equal(5m, aLine[0].UnitPrice);   // ★成交价=询价价，非价表取价
+        Assert.Equal(Item2, Assert.Single(bLine).ItemId);
+        Assert.Equal(12m, bLine[0].UnitPrice);
+
+        Assert.Equal(RfqStatus.Converted, (await svc.GetAsync(rfqNo))!.Status);
+    }
+
+    [Fact]
+    public async Task Convert_SameSupplierMultipleLines_OnePo()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var asOf = new DateTime(2026, 6, 16);
+        var (svc, rfqNo) = await BuildQuotedRfqAsync(db, asOf);
+        // 两行都选 A（行2 A@99 有效）→ 同供应商合一张 PO
+        await svc.SelectAsync(rfqNo, new[]
+        {
+            new RfqSelectionDto { LineNo = 1, SupplierId = SupA },
+            new RfqSelectionDto { LineNo = 2, SupplierId = SupA },
+        }, "buyer1");
+
+        var poNos = await svc.ConvertToPoAsync(rfqNo, "buyer1");
+
+        Assert.Single(poNos);
+        var lines = db.PurchaseOrderLines.Where(l => l.PoNo == poNos[0]).ToList();
+        Assert.Equal(2, lines.Count); // 一张 PO 两行
+    }
+
+    [Fact]
+    public async Task Convert_NoSelection_Rejected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var asOf = new DateTime(2026, 6, 16);
+        var (svc, rfqNo) = await BuildQuotedRfqAsync(db, asOf); // 比价但未选定
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.ConvertToPoAsync(rfqNo, "buyer1"));
+        Assert.Equal("E-PUR-070", ex.Message); // 无选中报价
+    }
+
+    [Fact]
+    public async Task Convert_SelectedButExpiredQuote_Rejected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var svc = NewSvc(db);
+        var prNo = await CreatePrAsync(db, (Item1, 10m, null));
+        var rfq = await svc.CreateFromPrAsync(prNo, "buyer1");
+        await svc.AddSuppliersAsync(rfq.RfqNo, new[] { SupA }, "buyer1");
+        await svc.RecordQuoteAsync(rfq.RfqNo, SupA, new[]
+        {
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 8m, ValidUntil = new DateTime(2026, 7, 31) },
+        }, "buyer1");
+        // 模拟"选定后才过期"：直接置选中 + 改成已过期，转 PO 第二道关应拦
+        var q = db.RfqQuotes.First(x => x.RfqNo == rfq.RfqNo && x.SupplierId == SupA && x.LineNo == 1);
+        q.IsSelected = true;
+        q.ValidUntil = new DateTime(2026, 6, 1);
+        await db.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.ConvertToPoAsync(rfq.RfqNo, "buyer1"));
+        Assert.Equal("E-PUR-068", ex.Message); // 选中报价已过期（转 PO 第二道关）
+    }
+
+    [Fact]
+    public async Task Convert_RfqNotFound_Rejected()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => NewSvc(db).ConvertToPoAsync("RFQ-NOPE", "buyer1"));
         Assert.Equal("E-PUR-061", ex.Message);
     }
 }

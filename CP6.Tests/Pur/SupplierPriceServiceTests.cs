@@ -80,4 +80,46 @@ public class SupplierPriceServiceTests
         Assert.Single(list);
         Assert.Equal("u1", list[0].Creator);
     }
+
+    // ───── UpsertAsync（业务键 SupplierId,ItemId,MinQty,ValidFrom 幂等；RFQ 回写价表用，章06 §5）─────
+
+    [Fact]
+    public async Task Upsert_SameBusinessKey_UpdatesInPlace_NoDuplicate()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        var svc = new SupplierPriceService(db);
+
+        // 第一次：插入（MinQty 缺省 0，ValidFrom=D0）
+        await svc.UpsertAsync(new SupplierPrice
+        {
+            SupplierId = S, ItemId = I, Price = 10m, CurrencyCd = "USD", ValidFrom = D0, Source = "rfq",
+        }, "u1");
+        // 第二次：同业务键(S,I,0,D0)再回写新价 → 原地更新，不新增行
+        await svc.UpsertAsync(new SupplierPrice
+        {
+            SupplierId = S, ItemId = I, Price = 8m, CurrencyCd = "JPY", ValidFrom = D0,
+            ValidTo = new DateTime(2026, 12, 31), Source = "rfq",
+        }, "u2");
+
+        var list = await svc.ListAsync(S);
+        Assert.Single(list);                 // 仍只一行（原地更新）
+        Assert.Equal(8m, list[0].Price);     // 价被更新
+        Assert.Equal("JPY", list[0].CurrencyCd);
+        Assert.Equal(new DateTime(2026, 12, 31), list[0].ValidTo);
+        Assert.Equal("rfq", list[0].Source);
+        Assert.Equal("u2", list[0].Modifier); // 走更新分支
+    }
+
+    [Fact]
+    public async Task Upsert_DifferentValidFrom_InsertsNewRow()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        var svc = new SupplierPriceService(db);
+
+        await svc.UpsertAsync(new SupplierPrice { SupplierId = S, ItemId = I, Price = 10m, ValidFrom = D0, Source = "rfq" }, "u1");
+        await svc.UpsertAsync(new SupplierPrice { SupplierId = S, ItemId = I, Price = 8m, ValidFrom = new DateTime(2026, 5, 1), Source = "rfq" }, "u1");
+
+        var list = await svc.ListAsync(S);
+        Assert.Equal(2, list.Count);  // 不同 ValidFrom → 两档
+    }
 }

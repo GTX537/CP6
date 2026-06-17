@@ -47,6 +47,20 @@ public interface IRfqService
     /// RFQ 不存在 → E-PUR-061；选中报价已过期 → E-PUR-068；报价不存在 → E-PUR-069。
     /// </summary>
     Task<Rfq> SelectAsync(string rfqNo, IEnumerable<RfqSelectionDto> selections, string? userName);
+
+    /// <summary>
+    /// 回写采购价表（章06 §5）：把每条**选中**报价 Upsert 进 <see cref="SupplierPrice"/>（Source=rfq），让询价成果沉淀进价表、
+    /// 下次同物料下单 <c>ResolvePriceAsync</c> 直接命中。Price=QuotedPrice、ValidFrom=今天、ValidTo=报价有效期；按 (供应商,物料,MinQty,ValidFrom) 幂等。
+    /// 落选报价不回写。RFQ 不存在 → E-PUR-061。
+    /// </summary>
+    Task<Rfq> WriteBackPricesAsync(string rfqNo, string? userName);
+
+    /// <summary>
+    /// 选中报价转 PO（章06 §6）：按**选中供应商分组**（同供应商的行合一张 PO，不同行可花落不同家）调用 02 章
+    /// <c>PurchaseOrderService.CreateAsync</c>；价用询价**成交价**（QuotedPrice）非价表取价；PO.SourceRfqNo 追溯回 RFQ；全部转出后 RFQ→Converted。
+    /// RFQ 不存在 → E-PUR-061；无选中报价 → E-PUR-070；选中报价已过期（转 PO 第二道关）→ E-PUR-068。返回新建 PO 单号列表。
+    /// </summary>
+    Task<List<string>> ConvertToPoAsync(string rfqNo, string? userName);
 }
 
 /// <summary>收报价单行入参（一行对应一个 RfqLine.LineNo）。</summary>
