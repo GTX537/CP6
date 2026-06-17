@@ -46,6 +46,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/pur/pr': () => import('@/views/pur/PrView.vue'),                        // 章05 采购申请
   '/pur/subcontract': () => import('@/views/pur/SubcontractView.vue'),      // 章07 外注加工
   '/pur/reconcile': () => import('@/views/pur/PurReconcileView.vue'),       // 章08/09 采购对账
+  // ───── 计划中台 (Plan) P1 MRP ─────
+  '/plan/mrp': () => import('@/views/plan/MrpBoardView.vue'),               // MRP 运算看板
+  '/plan/item-policy': () => import('@/views/plan/ItemPolicyView.vue'),     // 计划主数据
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),

@@ -79,4 +79,47 @@ public class ItemPlanningPolicyServiceTests
         // 制造提前期 = 路线各工程 LeadTime 之和 = 2 + 3 = 5
         Assert.Equal(5m, await svc.GetLeadDaysAsync("MAKE-01"));
     }
+
+    // ── CRUD（主数据维护 UI 支撑）──
+
+    [Fact]
+    public async Task Upsert_Insert_ThenUpdate_SameItemCd()
+    {
+        var svc = CreateService(out var db);
+
+        await svc.UpsertAsync(new Plan_ItemPlanningPolicy { ItemCd = "P-1", SafetyStock = 10, PurchaseLeadDays = 3 }, "admin");
+        await svc.UpsertAsync(new Plan_ItemPlanningPolicy { ItemCd = "P-1", SafetyStock = 99, PurchaseLeadDays = 7 }, "admin");
+
+        var rows = await db.ItemPlanningPolicies.Where(x => x.ItemCd == "P-1" && !x.IsDeleted).ToListAsync();
+        Assert.Single(rows);               // upsert 不重复插入
+        Assert.Equal(99m, rows[0].SafetyStock);
+        Assert.Equal(7m, rows[0].PurchaseLeadDays);
+    }
+
+    [Fact]
+    public async Task List_FiltersByKeyword_ExcludesDeleted()
+    {
+        var svc = CreateService(out var db);
+        await svc.UpsertAsync(new Plan_ItemPlanningPolicy { ItemCd = "RAW-A" }, "admin");
+        await svc.UpsertAsync(new Plan_ItemPlanningPolicy { ItemCd = "RAW-B" }, "admin");
+        await svc.UpsertAsync(new Plan_ItemPlanningPolicy { ItemCd = "FG-1" }, "admin");
+        await svc.DeleteAsync("RAW-B", "admin");
+
+        var raw = await svc.ListAsync("RAW");
+
+        Assert.Single(raw);                // RAW-B 已删 → 仅 RAW-A
+        Assert.Equal("RAW-A", raw[0].ItemCd);
+    }
+
+    [Fact]
+    public async Task Delete_SoftDeletes()
+    {
+        var svc = CreateService(out var db);
+        await svc.UpsertAsync(new Plan_ItemPlanningPolicy { ItemCd = "X" }, "admin");
+
+        await svc.DeleteAsync("X", "admin");
+
+        Assert.True((await db.ItemPlanningPolicies.FirstAsync(x => x.ItemCd == "X")).IsDeleted);
+        Assert.True((await svc.GetPolicyAsync("X")).IsDefault);   // 删后取策略回落默认
+    }
 }

@@ -48,4 +48,51 @@ public class ItemPlanningPolicyService : IItemPlanningPolicyService
         // 采购：直接取采购提前期。
         return policy.PurchaseLeadDays;
     }
+
+    public async Task<List<Plan_ItemPlanningPolicy>> ListAsync(string? keyword)
+    {
+        var q = _db.ItemPlanningPolicies.AsNoTracking().Where(x => !x.IsDeleted);
+        if (!string.IsNullOrWhiteSpace(keyword))
+            q = q.Where(x => x.ItemCd.Contains(keyword));
+        return await q.OrderBy(x => x.ItemCd).ToListAsync();
+    }
+
+    public async Task UpsertAsync(Plan_ItemPlanningPolicy dto, string? user)
+    {
+        if (string.IsNullOrWhiteSpace(dto.ItemCd))
+            throw new InvalidOperationException("E-PLAN-品目必填: ItemCd 不能为空");
+
+        var existing = await _db.ItemPlanningPolicies
+            .FirstOrDefaultAsync(x => x.ItemCd == dto.ItemCd && !x.IsDeleted);
+
+        if (existing == null)
+        {
+            dto.Creator = user;
+            dto.CreateDate = DateTime.Now;
+            _db.ItemPlanningPolicies.Add(dto);
+        }
+        else
+        {
+            existing.SafetyStock = dto.SafetyStock;
+            existing.PurchaseLeadDays = dto.PurchaseLeadDays;
+            existing.LotRule = dto.LotRule;
+            existing.MoqQty = dto.MoqQty;
+            existing.MultipleQty = dto.MultipleQty;
+            existing.MakeOrBuy = dto.MakeOrBuy;
+            existing.Modifier = user;
+            existing.ModifyDate = DateTime.Now;
+        }
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(string itemCd, string? user)
+    {
+        var row = await _db.ItemPlanningPolicies
+            .FirstOrDefaultAsync(x => x.ItemCd == itemCd && !x.IsDeleted)
+            ?? throw new InvalidOperationException("E-PLAN-策略不存在");
+        row.IsDeleted = true;
+        row.Modifier = user;
+        row.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+    }
 }

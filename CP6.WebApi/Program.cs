@@ -930,6 +930,25 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 708 });
         db.SaveChanges();
     }
+    // 计划中台（Plan）P1 MRP 菜单（730 组）—— 置于采购之后（OrderNo 246）
+    if (!db.Sys_Menus.Any(m => m.MenuId == 730))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 730, MenuName = "计划中台(Plan)", Icon = "DataLine", OrderNo = 246, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 730 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 731))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 731, MenuName = "MRP运算看板", RoutePath = "/plan/mrp", Icon = "Histogram", ParentId = 730, OrderNo = 731, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 731 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 732))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 732, MenuName = "计划主数据", RoutePath = "/plan/item-policy", Icon = "Setting", ParentId = 730, OrderNo = 732, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 732 });
+        db.SaveChanges();
+    }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
@@ -1319,6 +1338,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nBackendMsgSeed.Items)  // 后端控制器 return 型响应文案
             .Concat(CP6.WebApi.Seed.I18nFinScreenSeed.Items)   // 财务 GL 内核 4 视图 + nav.6xx + E-FIN-* 错误码
             .Concat(CP6.WebApi.Seed.I18nPurScreenSeed.Items)   // 采购 MVP 4 视图 + nav.70x + E-PUR-* 错误码
+            .Concat(CP6.WebApi.Seed.I18nPlanScreenSeed.Items)  // 计划中台 MRP 看板 + 主数据 + nav.73x + E-PLAN-* 错误码
             .Concat(CP6.WebApi.Seed.I18nWfDesignerSeed.Items)  // OA 阶段4 自研设计器（表单/流程）画面词条
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
