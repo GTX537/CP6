@@ -181,5 +181,8 @@ public static class I18nCnScreenSeed
         new Sys_Lang { LangKey = "导出.xlsx", ZhCN = "导出.xlsx", ZhTW = "匯出.xlsx", En = "Export.xlsx", Ja = "エクスポート.xlsx", Ko = "내보내기.xlsx" },
         new Sys_Lang { LangKey = "导入模板.xlsx", ZhCN = "导入模板.xlsx", ZhTW = "匯入範本.xlsx", En = "ImportTemplate.xlsx", Ja = "インポートテンプレート.xlsx", Ko = "가져오기템플릿.xlsx" },
         new Sys_Lang { LangKey = "例: {sample}", ZhCN = "例: {sample}", ZhTW = "例: {sample}", En = "e.g.: {sample}", Ja = "例: {sample}", Ko = "예: {sample}" },
+        // 登录租户选择器（OA 多租户）：原仅在首次空表 seed 块，已建库不会补；移入增量 seed 确保旧库也有
+        new Sys_Lang { LangKey = "login.tenantCode", ZhCN = "租户编码", ZhTW = "租戶編碼", En = "Tenant code", Ja = "テナントコード", Ko = "테넌트 코드" },
+        new Sys_Lang { LangKey = "login.specifyTenant", ZhCN = "指定租户", ZhTW = "指定租戶", En = "Specify tenant", Ja = "テナントを指定", Ko = "테넌트 지정" },
     };
 }
