@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,14 @@ namespace CP6.Core.Services.Erp;
 public class EstimateCalcService : IEstimateCalcService
 {
     private readonly CP6Context _db;
+    private readonly IMaterialUsageCalculator _usageCalc;
 
-    public EstimateCalcService(CP6Context db)
+    public EstimateCalcService(CP6Context db, IMaterialUsageCalculator? usageCalc = null)
     {
         _db = db;
+        // 默认实例化共享内核：見積与 MRP 共用同一用量公式（spec §4）。
+        // 可选注入便于测试与 DI 覆盖。
+        _usageCalc = usageCalc ?? new MaterialUsageCalculator();
     }
 
     /// <summary>一覧排序白名单：前端列 prop → 实体属性</summary>
@@ -306,8 +311,9 @@ public class EstimateCalcService : IEstimateCalcService
         int processLines = dto.Processes?.Count ?? 0;
         decimal processCost = processLines * processCostPerSheet;
 
-        // 原紙原価 = 単価 × 面積 × 段成率
-        decimal paperCostPerSheet = paperPrice * sheetAreaSqm * yieldRate;
+        // 原紙原価 = 単価 × 用量（用量 = 面積 × 段成率，経由共享内核 spec §4）
+        decimal paperUsagePerSheet = _usageCalc.CalcDimensional(dto.SheetDimW ?? 0, dto.SheetDimF ?? 0, yieldRate, 1);
+        decimal paperCostPerSheet = paperPrice * paperUsagePerSheet;
         decimal stdPrice = paperCostPerSheet + processCost;
 
         result.StandardUnitPrice = Math.Round(stdPrice, 3);
