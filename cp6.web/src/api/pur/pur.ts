@@ -2,6 +2,7 @@ import http from '../http'
 import type {
   ApiResp, SupplierPrice, PurchaseOrder, PoCreateForm,
   GoodsReceipt, GrCreateForm, ThreeWayMatch, MatchInvoiceForm, MatchResult,
+  Rfq, RfqQuoteLineForm, RfqSelectionForm,
 } from '@/types/pur/pur'
 
 // 采购 API（/api/pur）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
@@ -75,5 +76,36 @@ export const matchApi = {
   },
   reject(matchNo: string, note?: string) {
     return http.post<any, ApiResp<ThreeWayMatch>>(`/pur/match/${matchNo}/reject`, { note })
+  },
+}
+
+/** 询价 /api/pur/rfq（价格发现：从PR发起→邀供应商→收报价→比价→选定→回写价表→转PO） */
+export const rfqApi = {
+  list(status?: number) {
+    return http.get<any, ApiResp<Rfq[]>>('/pur/rfq', { params: { status } })
+  },
+  get(rfqNo: string) {
+    return http.get<any, ApiResp<Rfq>>(`/pur/rfq/${rfqNo}`)
+  },
+  createFromPr(prNo: string) {
+    return http.post<any, ApiResp<Rfq>>(`/pur/rfq/from-pr/${prNo}`)
+  },
+  addSuppliers(rfqNo: string, supplierIds: string[]) {
+    return http.post<any, ApiResp<Rfq>>(`/pur/rfq/${rfqNo}/suppliers`, supplierIds)
+  },
+  recordQuote(rfqNo: string, supplierId: string, lines: RfqQuoteLineForm[]) {
+    return http.post<any, ApiResp<Rfq>>(`/pur/rfq/${rfqNo}/quote`, { supplierId, lines })
+  },
+  rank(rfqNo: string, asOf?: string) {
+    return http.post<any, ApiResp<Rfq>>(`/pur/rfq/${rfqNo}/rank`, { asOf })
+  },
+  select(rfqNo: string, selections: RfqSelectionForm[]) {
+    return http.post<any, ApiResp<Rfq>>(`/pur/rfq/${rfqNo}/select`, selections)
+  },
+  writeBack(rfqNo: string) {
+    return http.post<any, ApiResp<Rfq>>(`/pur/rfq/${rfqNo}/writeback`)
+  },
+  convert(rfqNo: string) {
+    return http.post<any, ApiResp<string[]>>(`/pur/rfq/${rfqNo}/convert`)
   },
 }

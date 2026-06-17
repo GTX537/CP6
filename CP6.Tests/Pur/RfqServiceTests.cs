@@ -341,6 +341,24 @@ public class RfqServiceTests
         Assert.Equal(rfq1.RfqNo, drafts[0].RfqNo);
     }
 
+    [Fact]
+    public async Task List_PopulatesLineAndSupplierCounts()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        await SeedAsync(db);
+        var svc = NewSvc(db);
+        var prNo = await CreatePrAsync(db, (Item1, 10m, null), (Item2, 20m, null)); // 2 行
+        var rfq = await svc.CreateFromPrAsync(prNo, "buyer1");
+        await svc.AddSuppliersAsync(rfq.RfqNo, new[] { SupA, SupB, SupB }, "buyer1"); // 2 家（幂等去重）
+
+        db.ChangeTracker.Clear(); // 模拟生产的全新上下文：禁用导航修复，逼 ListAsync 显式载入计数
+        var list = await svc.ListAsync();
+
+        var row = Assert.Single(list);
+        Assert.Equal(2, row.Lines.Count);      // 列表行显示 行数
+        Assert.Equal(2, row.Suppliers.Count);  // 列表行显示 供应商数
+    }
+
     // ───── RankQuotes（章06 §4）：按行分组比价；剔除过期；价格优先→同价比交期；Rank 是建议 ─────
 
     private const string SupC = "SUPC";

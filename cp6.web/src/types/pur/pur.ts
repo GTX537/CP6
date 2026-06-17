@@ -169,6 +169,67 @@ export interface MatchResult {
   apInvoiceNo?: string | null
 }
 
+/** 询价行（章06 §2；行级追溯回 PR） */
+export interface RfqLine {
+  id?: string
+  rfqNo?: string
+  lineNo?: number
+  itemId: string
+  qty: number
+  unitCd?: string | null
+  requiredDate?: string | null
+  sourcePrNo?: string | null
+  sourcePrLineNo?: number | null
+}
+/** 被邀供应商 */
+export interface RfqSupplier {
+  id?: string
+  rfqNo?: string
+  supplierId: string
+  supplierName?: string | null
+  inviteStatus?: number
+}
+/** 报价（供应商×行 矩阵；含比价 Rank / 选中标记） */
+export interface RfqQuote {
+  id?: string
+  rfqNo?: string
+  supplierId: string
+  lineNo: number
+  quotedPrice: number
+  currencyCd?: string | null
+  leadDays?: number | null
+  validUntil?: string | null
+  isSelected?: boolean
+  rank?: number
+}
+/** 询价单头（一头三身：行 + 被邀供应商 + 报价矩阵） */
+export interface Rfq {
+  id?: string
+  rfqNo?: string
+  rfqDate?: string
+  dueDate?: string | null
+  status?: number
+  buyer?: string | null
+  sourcePrNo?: string | null
+  remarks?: string | null
+  lines: RfqLine[]
+  suppliers: RfqSupplier[]
+  quotes: RfqQuote[]
+}
+/** 报价录入行入参（一行对应一个 RfqLine.LineNo） */
+export interface RfqQuoteLineForm {
+  lineNo: number
+  quotedPrice: number
+  currencyCd?: string | null
+  leadDays?: number | null
+  validUntil?: string | null
+}
+/** 选定入参（给某询价行选定某供应商的报价） */
+export interface RfqSelectionForm {
+  lineNo: number
+  supplierId: string
+}
+
 // ── 枚举标签 / 颜色 ──
 export const PO_TYPE_LABEL: Record<number, string> = { 1: '标准采购', 2: '外注委托' }
 export const PO_TYPE_OPTIONS = [
@@ -193,3 +254,10 @@ export const MATCH_STATUS_TAG: Record<number, '' | 'info' | 'success' | 'warning
 export const QC_STATUS_LABEL: Record<string, string> =
   { NONE: '免检', PENDING: '待检', PASS: '合格', FAIL: '不良' }
 export const POSTING_BASIS_LABEL: Record<string, string> = { '1': '着荷基准', '2': '检收基准' }
+
+export const RFQ_STATUS_LABEL: Record<number, string> =
+  { 0: '草稿', 1: '邀请中', 2: '报价中', 3: '已选定', 4: '已转PO', 8: '关闭', 9: '已取消' }
+export const RFQ_STATUS_TAG: Record<number, '' | 'info' | 'success' | 'warning' | 'danger'> =
+  { 0: 'info', 1: 'warning', 2: 'warning', 3: '', 4: 'success', 8: 'info', 9: 'danger' }
+export const RFQ_INVITE_LABEL: Record<number, string> =
+  { 0: '待邀请', 1: '已邀请', 2: '已报价' }

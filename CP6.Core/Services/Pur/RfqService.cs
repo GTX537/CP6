@@ -46,7 +46,22 @@ public class RfqService : IRfqService
     {
         var q = _db.Rfqs.Where(r => !r.IsDeleted);
         if (status.HasValue) q = q.Where(r => r.Status == status.Value);
-        return await q.OrderByDescending(r => r.RfqDate).ThenByDescending(r => r.RfqNo).ToListAsync();
+        var list = await q.OrderByDescending(r => r.RfqDate).ThenByDescending(r => r.RfqNo).ToListAsync();
+        if (list.Count == 0) return list;
+
+        // 批量载入行/被邀供应商（3 次查询，避免 N+1），列表行展示「行数/供应商数」
+        var rfqNos = list.Select(r => r.RfqNo).ToList();
+        var linesByRfq = (await _db.RfqLines.Where(l => rfqNos.Contains(l.RfqNo) && !l.IsDeleted).ToListAsync())
+            .GroupBy(l => l.RfqNo).ToDictionary(g => g.Key, g => g.OrderBy(l => l.LineNo).ToList());
+        var supsByRfq = (await _db.RfqSuppliers.Where(s => rfqNos.Contains(s.RfqNo) && !s.IsDeleted).ToListAsync())
+            .GroupBy(s => s.RfqNo).ToDictionary(g => g.Key, g => g.OrderBy(s => s.SupplierId).ToList());
+
+        foreach (var r in list)
+        {
+            r.Lines = linesByRfq.TryGetValue(r.RfqNo, out var ls) ? ls : new();
+            r.Suppliers = supsByRfq.TryGetValue(r.RfqNo, out var ss) ? ss : new();
+        }
+        return list;
     }
 
     /// <inheritdoc />

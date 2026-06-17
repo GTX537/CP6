@@ -42,6 +42,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/pur/po': () => import('@/views/pur/PurchaseOrderView.vue'),             // 章02 采购订单
   '/pur/gr': () => import('@/views/pur/GoodsReceiptView.vue'),              // 章03 收货
   '/pur/match': () => import('@/views/pur/ThreeWayMatchView.vue'),          // 章04 三单匹配
+  '/pur/rfq': () => import('@/views/pur/RfqView.vue'),                      // 章06 询价比价
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),
