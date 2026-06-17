@@ -216,6 +216,10 @@ builder.Services.AddScoped<CP6.Core.Services.Plan.IItemPlanningPolicyService, CP
 builder.Services.AddScoped<CP6.Core.Services.Plan.ILowLevelCodeService, CP6.Core.Services.Plan.LowLevelCodeService>();
 builder.Services.AddScoped<CP6.Core.Services.Plan.ISupplyService, CP6.Core.Services.Plan.SupplyService>();
 builder.Services.AddScoped<CP6.Core.Services.Plan.IMrpEngine, CP6.Core.Services.Plan.MrpEngine>();
+builder.Services.AddScoped<CP6.Core.Services.Plan.IPlanConvertService, CP6.Core.Services.Plan.PlanConvertService>();
+// 转单契约：P1 桩（采购 PR / MES 工单 真实落地后替换实现，DI 按配置切真实/桩 — MP-D4）
+builder.Services.AddScoped<CP6.Core.Services.Plan.Contracts.IPlanToPrService, CP6.Core.Services.Plan.Contracts.PlanToPrServiceStub>();
+builder.Services.AddScoped<CP6.Core.Services.Plan.Contracts.IPlanToWorkOrderService, CP6.Core.Services.Plan.Contracts.PlanToWorkOrderServiceStub>();
 
 // 4.1 MSBBPA010 見積計算書 相关服务
 builder.Services.AddScoped<IEstimateCalcService, EstimateCalcService>();

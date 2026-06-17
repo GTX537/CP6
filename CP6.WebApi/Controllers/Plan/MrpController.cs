@@ -35,14 +35,18 @@ public class MrpController : ControllerBase
 {
     private readonly IMrpEngine _engine;
     private readonly CP6Context _db;
+    private readonly IPlanConvertService _convert;
 
-    public MrpController(IMrpEngine engine, CP6Context db)
+    public MrpController(IMrpEngine engine, CP6Context db, IPlanConvertService convert)
     {
         _engine = engine;
         _db = db;
+        _convert = convert;
     }
 
+    private string? CurrentUser => User?.Identity?.Name;
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+    private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
 
     /// <summary>运行 MRP（显式需求 或 开口受注派生）→ 返回运算批次。</summary>
     [HttpPost("run")]
@@ -80,6 +84,30 @@ public class MrpController : ControllerBase
         => Ok2(await _db.NetRequirements.AsNoTracking()
             .Where(x => x.MrpRunId == id && !x.IsDeleted)
             .OrderBy(x => x.ItemCd).ToListAsync());
+
+    /// <summary>确认计划订单（建议 → 已确认，进供给）。</summary>
+    [HttpPost("planned-order/{id}/confirm")]
+    public async Task<IActionResult> Confirm(Guid id)
+    {
+        try { await _convert.ConfirmAsync(id, CurrentUser); return Ok2(); }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
+
+    /// <summary>转单（采购类 → PR、生产类 → 工单；回填单号、置已转单）。</summary>
+    [HttpPost("planned-order/{id}/convert")]
+    public async Task<IActionResult> Convert(Guid id)
+    {
+        try { return Ok2(new { docNo = await _convert.ConvertAsync(id, CurrentUser) }); }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
+
+    /// <summary>忽略计划订单（置已忽略，不计供给）。</summary>
+    [HttpPost("planned-order/{id}/ignore")]
+    public async Task<IActionResult> Ignore(Guid id)
+    {
+        try { await _convert.IgnoreAsync(id, CurrentUser); return Ok2(); }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
 
     /// <summary>从开口受注派生需求：OrderDetail 剩余量(Quantity − ShippedQty)，剔除取消/出荷済。</summary>
     private async Task<List<MrpDemand>> BuildFromOpenOrdersAsync()

@@ -16,7 +16,10 @@ public class MrpControllerTests
         db = TestHelper.CreateInMemoryContext();
         var engine = new MrpEngine(db, new MaterialUsageCalculator(), new LowLevelCodeService(),
             new SupplyService(db), new ItemPlanningPolicyService(db));
-        var c = new MrpController(engine, db);
+        var convert = new PlanConvertService(db,
+            new CP6.Core.Services.Plan.Contracts.PlanToPrServiceStub(),
+            new CP6.Core.Services.Plan.Contracts.PlanToWorkOrderServiceStub());
+        var c = new MrpController(engine, db, convert);
         c.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return c;
     }
