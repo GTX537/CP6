@@ -372,3 +372,33 @@ export interface ConsignReconcileResult {
   hasAnomaly: boolean
   lines: ConsignReconcileLine[]
 }
+
+// ───── 采购对账（章08/09）─────
+
+/** PO 三方对账逐行 */
+export interface PoReconcileLine {
+  lineNo: number
+  itemId: string
+  ordered: number
+  received: number
+  accepted: number
+  invoiced: number
+  openToReceive: number
+  openToInvoice: number
+  status: string
+  isIssue: boolean
+}
+
+/** PO 三方对账报表 */
+export interface PoReconcileReport {
+  poNo: string
+  type: number
+  supplierId: string
+  hasIssue: boolean
+  lines: PoReconcileLine[]
+  consignReconciles: ConsignReconcileResult[]
+}
+
+export const RECON_STATUS_TAG: Record<string, '' | 'info' | 'success' | 'warning' | 'danger'> = {
+  完成: 'success', 待收: 'info', 待检: 'warning', 待开票: '', 虚开嫌疑: 'danger', 超量收货: 'danger',
+}

@@ -160,6 +160,13 @@ builder.Services.AddScoped<CP6.Core.Services.Pur.IRfqService, CP6.Core.Services.
 builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsIssueService, CP6.Core.Services.Pur.Contracts.StubWmsIssueService>(); // P2-D3 WMS 出库委托（桩；外注支給材 Purpose=subcontract，WMS 落地后换适配器）
 builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IFinCostService, CP6.Core.Services.Pur.Contracts.StubFinCostService>(); // P2-D2 财务成本入账委托（桩；外注成品成本接财务06，落地后换适配器）
 builder.Services.AddScoped<CP6.Core.Services.Pur.ISubcontractService, CP6.Core.Services.Pur.SubcontractService>(); // 章07 §2/§4/§5 外注加工：登记支給材 + 发料追踪 IssuedQty + 成品成本核算（加工费+支給材并入）
+builder.Services.AddScoped<CP6.Core.Services.Pur.IPurReconcileService, CP6.Core.Services.Pur.PurReconcileService>(); // 章08/09 采购对账：PO↔GR↔AP 三方核对 + 堵三个漏（虚开/超收·重复收货/外协吞料）
+// ── 章08 四同步接口落地说明（采购→外部模块单向委托，DI 按配置切真实/桩；跨模块同步走直线，不走 Phase6 事件[事件仅模块内]）──
+//   ① IWmsReceiveService → StubWmsReceiveService（桩；WMS 入库委托，落地后换适配器，已留 PoNo 钩子）
+//   ② IWmsQcQuery        → StubWmsQcQuery（桩=全合格；WMS 检收查询，落地后委托真实 QcInspectionService）
+//   ③ IWmsIssueService   → StubWmsIssueService（桩；外注支給材出库 Purpose=subcontract，落地后委托真实 OutboundService）
+//   ④ IFinApService      → FinApServiceAdapter（★真实；委托财务 IFinAp 建并过账应付，借方按 GL 角色 INVENTORY）
+//   ⑤ IApprovalService(Pur.Contracts) → StubApprovalService（桩=即时通过；PO/PR 送审，OA 引擎接真实流程后换适配器）
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
 builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
@@ -902,6 +909,12 @@ using (var scope = app.Services.CreateScope())
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 707, MenuName = "外注加工", RoutePath = "/pur/subcontract", Icon = "SetUp", ParentId = 700, OrderNo = 707, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 707 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 708))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 708, MenuName = "采购对账", RoutePath = "/pur/reconcile", Icon = "Finished", ParentId = 700, OrderNo = 708, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 708 });
         db.SaveChanges();
     }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。

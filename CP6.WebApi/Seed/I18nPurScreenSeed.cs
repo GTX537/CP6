@@ -364,5 +364,26 @@ public static class I18nPurScreenSeed
         new Sys_Lang { LangKey = "E-PUR-077", ZhCN = "成品数量须大于0", ZhTW = "成品數量須大於0", En = "Finished qty must be greater than 0", Ja = "完成品数量は0より大きい必要があります", Ko = "완제품 수량은 0보다 커야 합니다" },
         new Sys_Lang { LangKey = "E-PUR-078", ZhCN = "财务成本入账失败", ZhTW = "財務成本入賬失敗", En = "Cost posting to finance failed", Ja = "原価会計への計上に失敗しました", Ko = "원가회계 계상에 실패했습니다" },
         new Sys_Lang { LangKey = "E-PUR-079", ZhCN = "计划成品数为0，无法反推单耗", ZhTW = "計劃成品數為0，無法反推單耗", En = "Planned finished qty is 0; cannot derive unit usage", Ja = "計画完成品数が0のため単位消費を逆算できません", Ko = "계획 완제품 수량이 0이라 단위 소요를 역산할 수 없습니다" },
+
+        // ── 采购对账 画面（章08/09：PO↔GR↔AP 三方核对 + 堵三个漏）──
+        new Sys_Lang { LangKey = "nav.708", ZhCN = "采购对账", ZhTW = "採購對賬", En = "Reconciliation", Ja = "購買照合", Ko = "구매 대조" },
+        new Sys_Lang { LangKey = "采购对账", ZhCN = "采购对账", ZhTW = "採購對賬", En = "Procurement Reconciliation", Ja = "購買照合", Ko = "구매 대조" },
+        new Sys_Lang { LangKey = "完整性收口：PO↔GR↔AP三方核对，堵三个漏(虚开/超收·重复收货/外协吞料)", ZhCN = "完整性收口：PO↔GR↔AP三方核对，堵三个漏(虚开/超收·重复收货/外协吞料)", ZhTW = "完整性收口：PO↔GR↔AP三方核對，堵三個漏(虛開/超收·重複收貨/外協吞料)", En = "Integrity net: PO↔GR↔AP three-way check, plug 3 leaks (false invoice / over-receipt / pilferage)", Ja = "完全性の総仕上げ：PO↔GR↔AP 三方照合、3つの漏れを塞ぐ(架空請求/過入荷/横領)", Ko = "완전성 마무리: PO↔GR↔AP 3자 대조, 3가지 누수 차단(허위 청구/초과 입고/횡령)" },
+        new Sys_Lang { LangKey = "请输入采购订单号", ZhCN = "请输入采购订单号", ZhTW = "請輸入採購訂單號", En = "Enter a PO number", Ja = "発注番号を入力してください", Ko = "발주 번호를 입력하세요" },
+        new Sys_Lang { LangKey = "输入采购订单号后对账", ZhCN = "输入采购订单号后对账", ZhTW = "輸入採購訂單號後對賬", En = "Enter a PO number to reconcile", Ja = "発注番号を入力して照合", Ko = "발주 번호를 입력해 대조" },
+        new Sys_Lang { LangKey = "存在完整性异常，请挂起核查", ZhCN = "存在完整性异常，请挂起核查", ZhTW = "存在完整性異常，請掛起核查", En = "Integrity anomaly found, held for review", Ja = "完全性の異常あり、保留して確認", Ko = "완전성 이상 발견, 보류 검토" },
+        new Sys_Lang { LangKey = "对账正常，三方一致", ZhCN = "对账正常，三方一致", ZhTW = "對賬正常，三方一致", En = "Reconciled OK, three sides match", Ja = "照合正常、三方一致", Ko = "대조 정상, 3자 일치" },
+        new Sys_Lang { LangKey = "支給材防吞料对账", ZhCN = "支給材防吞料对账", ZhTW = "支給材防吞料對賬", En = "Consigned Material Reconciliation", Ja = "支給材横領照合", Ko = "지급재 횡령 대조" },
+        new Sys_Lang { LangKey = "类型", ZhCN = "类型", ZhTW = "類型", En = "Type", Ja = "種別", Ko = "유형" },
+        new Sys_Lang { LangKey = "订购", ZhCN = "订购", ZhTW = "訂購", En = "Ordered", Ja = "発注", Ko = "발주" },
+        new Sys_Lang { LangKey = "收货", ZhCN = "收货", ZhTW = "收貨", En = "Received", Ja = "入荷", Ko = "입고" },
+        new Sys_Lang { LangKey = "开票", ZhCN = "开票", ZhTW = "開票", En = "Invoiced", Ja = "請求", Ko = "청구" },
+        new Sys_Lang { LangKey = "待收", ZhCN = "待收", ZhTW = "待收", En = "Open to Receive", Ja = "入荷待ち", Ko = "입고 대기" },
+        new Sys_Lang { LangKey = "待检", ZhCN = "待检", ZhTW = "待檢", En = "Pending QC", Ja = "検査待ち", Ko = "검사 대기" },
+        new Sys_Lang { LangKey = "待开票", ZhCN = "待开票", ZhTW = "待開票", En = "Open to Invoice", Ja = "請求待ち", Ko = "청구 대기" },
+        new Sys_Lang { LangKey = "诊断", ZhCN = "诊断", ZhTW = "診斷", En = "Diagnosis", Ja = "診断", Ko = "진단" },
+        new Sys_Lang { LangKey = "完成", ZhCN = "完成", ZhTW = "完成", En = "Completed", Ja = "完了", Ko = "완료" },
+        new Sys_Lang { LangKey = "虚开嫌疑", ZhCN = "虚开嫌疑", ZhTW = "虛開嫌疑", En = "False-Invoice Suspect", Ja = "架空請求の疑い", Ko = "허위 청구 의심" },
+        new Sys_Lang { LangKey = "超量收货", ZhCN = "超量收货", ZhTW = "超量收貨", En = "Over-Receipt", Ja = "過入荷", Ko = "초과 입고" },
     };
 }

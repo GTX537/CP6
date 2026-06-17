@@ -5,6 +5,7 @@ import type {
   Rfq, RfqQuoteLineForm, RfqSelectionForm,
   PurchaseRequest, PrCreateForm,
   PoConsignMaterial, ConsignMaterialForm, ConsignIssueForm, SubcontractCostResult, ConsignReconcileResult,
+  PoReconcileReport,
 } from '@/types/pur/pur'
 
 // 采购 API（/api/pur）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
@@ -150,5 +151,12 @@ export const subcontractApi = {
   },
   reconcile(poNo: string, lineNo: number, finishedQty: number, tolerancePct: number) {
     return http.post<any, ApiResp<ConsignReconcileResult>>(`/pur/subcontract/${poNo}/${lineNo}/reconcile`, { finishedQty, tolerancePct })
+  },
+}
+
+/** 采购对账 /api/pur/reconcile（PO↔GR↔AP 三方核对 + 堵三个漏：虚开/超收·重复收货/外协吞料） */
+export const reconcileApi = {
+  reconcile(poNo: string) {
+    return http.get<any, ApiResp<PoReconcileReport>>(`/pur/reconcile/${poNo}`)
   },
 }

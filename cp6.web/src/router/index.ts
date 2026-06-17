@@ -45,6 +45,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/pur/rfq': () => import('@/views/pur/RfqView.vue'),                      // 章06 询价比价
   '/pur/pr': () => import('@/views/pur/PrView.vue'),                        // 章05 采购申请
   '/pur/subcontract': () => import('@/views/pur/SubcontractView.vue'),      // 章07 外注加工
+  '/pur/reconcile': () => import('@/views/pur/PurReconcileView.vue'),       // 章08/09 采购对账
   // ───── ERP 販売・製品 (200~299) ─────
   '/estimate-calc': () => import('@/views/erp/EstimateCalcView.vue'),
   '/estimate-calc-list': () => import('@/views/erp/EstimateCalcListView.vue'),
