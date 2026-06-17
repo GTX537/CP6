@@ -44,4 +44,16 @@ public class ProductMaterial : BaseBizEntity
 
     /// <summary>並び順（システム自動採番）</summary>
     public int SortOrder { get; set; }
+
+    // ───── 用量（MRP P1 · spec §3.1：用量内核入参分流） ─────
+
+    /// <summary>用量区分：1=尺寸驱动（原紙面積×段成率）/ 2=静态定额（UnitUsage×数量）。默认 2。</summary>
+    public int UsageType { get; set; } = 2;
+
+    /// <summary>単耗（仅静态定额料 UsageType=2 时填；尺寸驱动料留空，用量由规格面积算）</summary>
+    [Column(TypeName = "decimal(21,8)")]
+    public decimal? UnitUsage { get; set; }
+
+    /// <summary>単耗単位（m²/枚/kg 等）</summary>
+    [MaxLength(10)] public string? UsageUnit { get; set; }
 }
