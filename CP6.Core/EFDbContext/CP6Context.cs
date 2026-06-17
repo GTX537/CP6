@@ -445,6 +445,14 @@ public class CP6Context : DbContext
     // ───── 计划中台（Plan）P1 MRP 净需求地基 ─────
     /// <summary>计划主数据：品目计划策略（安全库存/提前期/批量规则/自制采购）</summary>
     public DbSet<Plan_ItemPlanningPolicy> ItemPlanningPolicies { get; set; }
+    /// <summary>MRP 运算批次（一次 regenerative 运算）</summary>
+    public DbSet<Plan_MrpRun> MrpRuns { get; set; }
+    /// <summary>计划订单（净需求&gt;0 的供给建议；人确认转 PR/工单）</summary>
+    public DbSet<Plan_PlannedOrder> PlannedOrders { get; set; }
+    /// <summary>钉住关系（计划订单 → 需求来源，全链追溯）</summary>
+    public DbSet<Plan_Pegging> Peggings { get; set; }
+    /// <summary>净需求明细（品目×日桶：毛-供给-净 钻取）</summary>
+    public DbSet<Plan_NetRequirement> NetRequirements { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -867,6 +875,28 @@ public class CP6Context : DbContext
         modelBuilder.Entity<Plan_ItemPlanningPolicy>(e =>
         {
             e.HasIndex(x => x.ItemCd).IsUnique().HasDatabaseName("UX_Plan_ItemPolicy_ItemCd");
+        });
+        // MRP 运算批次：RunNo 唯一
+        modelBuilder.Entity<Plan_MrpRun>(e =>
+        {
+            e.HasIndex(x => x.RunNo).IsUnique().HasDatabaseName("UX_Plan_MrpRun_No");
+            e.HasIndex(x => x.Status);
+        });
+        // 计划订单：按运算批次/品目检索 + 状态（供给判定/复算存活）+ 转出单号追溯
+        modelBuilder.Entity<Plan_PlannedOrder>(e =>
+        {
+            e.HasIndex(x => new { x.MrpRunId, x.ItemCd });
+            e.HasIndex(x => x.Status);
+            e.HasIndex(x => x.ConvertedDocNo);
+            // 已确认/已转单计划订单按 (品目,需求日) 当供给抵扣（scheduled receipt）
+            e.HasIndex(x => new { x.ItemCd, x.Status, x.RequiredDate });
+        });
+        // 钉住：按计划订单检索（追溯需求来源）
+        modelBuilder.Entity<Plan_Pegging>(e => e.HasIndex(x => x.PlannedOrderId));
+        // 净需求明细：按运算批次×品目×日桶钻取
+        modelBuilder.Entity<Plan_NetRequirement>(e =>
+        {
+            e.HasIndex(x => new { x.MrpRunId, x.ItemCd, x.Bucket });
         });
 
         // 見積計算書：QtnCalcNo 唯一
