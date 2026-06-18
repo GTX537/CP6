@@ -456,6 +456,7 @@ public class CP6Context : DbContext
 
     // ───── 工艺路线/成本（A2）─────
     public DbSet<WorkCenter> WorkCenters { get; set; }
+    public DbSet<ProcessCostRate> ProcessCostRates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -882,6 +883,9 @@ public class CP6Context : DbContext
         // 工艺路线/成本（A2）：工作中心，WgCd 唯一（费率/产能挂载点）
         modelBuilder.Entity<WorkCenter>(e =>
             e.HasIndex(x => x.WgCd).IsUnique().HasDatabaseName("UX_Mes_WorkCenter_Wg"));
+        // 工艺路线/成本（A2）：工序费率，(WgCd,ValidFrom) 非唯一检索索引（唯一性由业务期间重叠校验覆盖）
+        modelBuilder.Entity<ProcessCostRate>(e =>
+            e.HasIndex(x => new { x.WgCd, x.ValidFrom }).HasDatabaseName("IX_Mes_ProcessCostRate_Wg_ValidFrom"));
         // MRP 运算批次：RunNo 唯一
         modelBuilder.Entity<Plan_MrpRun>(e =>
         {

@@ -222,6 +222,7 @@ builder.Services.AddScoped<CP6.Core.Services.Plan.Contracts.IPlanToPrService, CP
 builder.Services.AddScoped<CP6.Core.Services.Plan.Contracts.IPlanToWorkOrderService, CP6.Core.Services.Plan.Contracts.PlanToWorkOrderServiceStub>();
 // 工艺路线/成本（A2）：工作中心主数据
 builder.Services.AddScoped<CP6.Core.Services.Mes.IWorkCenterService, CP6.Core.Services.Mes.WorkCenterService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IProcessCostRateService, CP6.Core.Services.Mes.ProcessCostRateService>();
 
 // 4.1 MSBBPA010 見積計算書 相关服务
 builder.Services.AddScoped<IEstimateCalcService, EstimateCalcService>();
