@@ -59,17 +59,17 @@ public class CostSettleService : ICostSettleService
             if (inv == null) return FinResult.Fail("E-FIN-141", "INVENTORY");
             collect.Lines.Add(new JournalLine { AccountId = inv.Value, Credit = sheet.MaterialActual });
         }
-        if (sheet.LaborStd > 0m)
+        if (sheet.LaborActual > 0m)
         {
             var lab = await RoleIdAsync("DIRECT_LABOR");
             if (lab == null) return FinResult.Fail("E-FIN-141", "DIRECT_LABOR");
-            collect.Lines.Add(new JournalLine { AccountId = lab.Value, Credit = sheet.LaborStd });
+            collect.Lines.Add(new JournalLine { AccountId = lab.Value, Credit = sheet.LaborActual });
         }
-        if (sheet.OverheadStd > 0m)
+        if (sheet.OverheadActual > 0m)
         {
             var oh = await RoleIdAsync("MFG_OVERHEAD");
             if (oh == null) return FinResult.Fail("E-FIN-141", "MFG_OVERHEAD");
-            collect.Lines.Add(new JournalLine { AccountId = oh.Value, Credit = sheet.OverheadStd });
+            collect.Lines.Add(new JournalLine { AccountId = oh.Value, Credit = sheet.OverheadActual });
         }
         var r1 = await _journal.AutoPostAsync(collect);
         if (!r1.Ok) return r1;

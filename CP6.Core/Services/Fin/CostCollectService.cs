@@ -90,8 +90,11 @@ public class CostCollectService : ICostCollectService
         sheet.CompletedQty = wo.CompletedQty;
         sheet.MaterialActual = matActual;
         sheet.MaterialStandard = matStd;
-        sheet.LaborStd = laborStd;
-        sheet.OverheadStd = overheadStd;
+        // A2 过渡：interim 阶段 实际额 == 标准额 == 旧估算额（D-2 将由工时×费率重写实际额）
+        sheet.LaborActual = laborStd;
+        sheet.LaborStandard = laborStd;
+        sheet.OverheadActual = overheadStd;
+        sheet.OverheadStandard = overheadStd;
         sheet.Status = CostSheetStatus.Collected;
         foreach (var l in lines) { l.CostSheetId = sheet.Id; sheet.Lines.Add(l); }
 

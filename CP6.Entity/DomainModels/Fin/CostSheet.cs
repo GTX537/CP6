@@ -33,11 +33,17 @@ public class CostSheet : BaseTenantEntity
     /// <summary>标准料成本（Σ 计划用量 × BOM 供给单价，本位币）</summary>
     [Column(TypeName = "decimal(18,2)")] public decimal MaterialStandard { get; set; }
 
-    /// <summary>标准直接人工（估算，本位币；F3-D1）</summary>
-    [Column(TypeName = "decimal(18,2)")] public decimal LaborStd { get; set; }
+    /// <summary>实际直接人工（工时×费率归集，本位币；A2 §3.6）</summary>
+    [Column(TypeName = "decimal(18,2)")] public decimal LaborActual { get; set; }
 
-    /// <summary>标准制造费用（估算，本位币；F3-D1）</summary>
-    [Column(TypeName = "decimal(18,2)")] public decimal OverheadStd { get; set; }
+    /// <summary>标准直接人工（标准工时×费率，本位币；A2 §3.6）</summary>
+    [Column(TypeName = "decimal(18,2)")] public decimal LaborStandard { get; set; }
+
+    /// <summary>实际制造费用（机时×费率归集，本位币；A2 §3.6）</summary>
+    [Column(TypeName = "decimal(18,2)")] public decimal OverheadActual { get; set; }
+
+    /// <summary>标准制造费用（标准机时×费率，本位币；A2 §3.6）</summary>
+    [Column(TypeName = "decimal(18,2)")] public decimal OverheadStandard { get; set; }
 
     /// <summary>状态机</summary>
     public CostSheetStatus Status { get; set; } = CostSheetStatus.Draft;
@@ -46,11 +52,11 @@ public class CostSheet : BaseTenantEntity
     public Guid? JournalEntryId { get; set; }
 
     // ── 计算属性（不持久化）──
-    /// <summary>实际总成本 = 实际料 + 标准工 + 标准费</summary>
-    [NotMapped] public decimal TotalActual => MaterialActual + LaborStd + OverheadStd;
+    /// <summary>实际总成本 = 实际料 + 实际工 + 实际费</summary>
+    [NotMapped] public decimal TotalActual => MaterialActual + LaborActual + OverheadActual;
     /// <summary>标准总成本 = 标准料 + 标准工 + 标准费</summary>
-    [NotMapped] public decimal StandardCost => MaterialStandard + LaborStd + OverheadStd;
-    /// <summary>成本差异 = 实际 − 标准（&gt;0 超支，本例为料用量差异）</summary>
+    [NotMapped] public decimal StandardCost => MaterialStandard + LaborStandard + OverheadStandard;
+    /// <summary>成本差异 = 实际 − 标准（&gt;0 超支）</summary>
     [NotMapped] public decimal Variance => TotalActual - StandardCost;
     /// <summary>FG 完工单位成本 = 实际总成本 / 完工数（完工数为 0 时取 0）</summary>
     [NotMapped] public decimal FgUnitCost => CompletedQty > 0m ? Math.Round(TotalActual / CompletedQty, 4, MidpointRounding.AwayFromZero) : 0m;
@@ -95,6 +101,24 @@ public class CostSheetLine : BaseTenantEntity
 
     /// <summary>标准金额 = 计划用量 × 单价（本位币）</summary>
     [Column(TypeName = "decimal(18,2)")] public decimal StandardAmount { get; set; }
+
+    // ── A2 §3.7 工时追溯字段（料行多为空，工/费行承载）──
+    /// <summary>工时（h）。Labor 行=人工工时；Overhead 行=机时；Material 行空。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? Hours { get; set; }
+    /// <summary>标准工时（h）。Labor 行=标准人工工时；Overhead 行=标准机时。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? StandardHours { get; set; }
+    /// <summary>工作中心 CD（追溯费率来源）。</summary>
+    [MaxLength(10)] public string? WgCd { get; set; }
+    /// <summary>作业/任务 CD。</summary>
+    [MaxLength(50)] public string? TaskCd { get; set; }
+    /// <summary>费率生效日（追溯用了哪版费率）。</summary>
+    public DateTime? RateValidFrom { get; set; }
+    /// <summary>小时来源：Derived/Manual/StandardFallback/LegacyFallback。</summary>
+    [MaxLength(30)] public string? HourSource { get; set; }
+    /// <summary>计算/回退/警告说明。</summary>
+    [MaxLength(500)] public string? CalcNote { get; set; }
+    /// <summary>警告码（无为空）。</summary>
+    [MaxLength(50)] public string? WarningCode { get; set; }
 }
 
 /// <summary>成本单状态机（章06）。</summary>

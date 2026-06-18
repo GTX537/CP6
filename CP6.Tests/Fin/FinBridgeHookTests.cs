@@ -133,7 +133,7 @@ public class FinBridgeHookTests
 
         var cs = await db.CostSheets.SingleAsync(x => x.WorkOrderNo == "WO9");
         Assert.Equal(550m, cs.MaterialActual);     // 110×5 料真实消耗
-        Assert.Equal(0m, cs.LaborStd);             // 工费留 0 待财务补录
+        Assert.Equal(0m, cs.LaborActual);          // 工费留 0 待财务补录
         Assert.Equal(CostSheetStatus.Collected, cs.Status);   // 仅归集未结转
         Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceModule == "MES" && e.TargetModule == "FIN" && e.SourceNo == "WO9" && e.Status == "SUCCESS"));
     }

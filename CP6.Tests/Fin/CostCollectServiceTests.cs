@@ -48,8 +48,8 @@ public class CostCollectServiceTests
         var cs = (await Svc(db).GetByWorkOrderAsync("WO1"))!;
         Assert.Equal(650m, cs.MaterialActual);     // 110×5 + 50×2
         Assert.Equal(600m, cs.MaterialStandard);   // 100×5 + 50×2
-        Assert.Equal(300m, cs.LaborStd);
-        Assert.Equal(200m, cs.OverheadStd);
+        Assert.Equal(300m, cs.LaborActual);
+        Assert.Equal(200m, cs.OverheadActual);
         Assert.Equal(CostSheetStatus.Collected, cs.Status);
     }
 
