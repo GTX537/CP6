@@ -68,4 +68,10 @@ public class ProductionResult : BaseBizEntity
 
     /// <summary>実績備考</summary>
     [MaxLength(200)] public string? ResultNote { get; set; }
+
+    // ───── A2 显式工时覆盖（spec §3.5）─────
+    /// <summary>本次报工人工工时（h，可选；填则本行人工工时用此值）。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? LaborHour { get; set; }
+    /// <summary>本次报工机时（h，可选；填则本行机时用此值）。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? MachineHour { get; set; }
 }

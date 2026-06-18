@@ -77,4 +77,18 @@ public class WorkOrderProcess : BaseBizEntity
 
     /// <summary>備考</summary>
     [MaxLength(200)] public string? Remarks { get; set; }
+
+    // ───── A2 实绩工时（spec §3.4）─────
+    /// <summary>实际机时（h，用于制造费用；按机器区间合并派生，可覆盖）。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? ActualMachineHour { get; set; }
+    /// <summary>实际人工工时（h，用于直接人工；按作业者累加派生，可覆盖）。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? ActualLaborHour { get; set; }
+    /// <summary>工时来源：Derived/Manual/Import/StandardFallback/LegacyFallback。</summary>
+    [MaxLength(30)] public string? ActualHourSource { get; set; }
+    /// <summary>是否人工覆盖（覆盖后重算跳过）。</summary>
+    public bool IsHourOverridden { get; set; } = false;
+    /// <summary>工时覆盖/回退/异常说明。</summary>
+    [MaxLength(500)] public string? HourRemark { get; set; }
+    /// <summary>工时最近计算时间。</summary>
+    public DateTime? HourCalculatedTime { get; set; }
 }
