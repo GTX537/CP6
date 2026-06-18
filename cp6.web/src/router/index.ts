@@ -70,6 +70,9 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/sheet-unit-price': () => import('@/views/erp/SheetUnitPriceView.vue'),
   '/plate-mold': () => import('@/views/erp/PlateMoldView.vue'),
   '/plate-mold-list': () => import('@/views/erp/PlateMoldListView.vue'),
+  // ───── MES 工艺主数据 (A2) ─────
+  '/mes/work-center': () => import('@/views/mes/WorkCenterView.vue'),         // A2 工作中心
+  '/mes/process-cost-rate': () => import('@/views/mes/ProcessCostRateView.vue'), // A2 工序费率
   // ───── MES 製造執行 (MSBBME020/030/040/050) ─────
   '/mes/work-order': () => import('@/views/mes/WorkOrderEntryView.vue'),
   '/mes/work-order-list': () => import('@/views/mes/WorkOrderListView.vue'),

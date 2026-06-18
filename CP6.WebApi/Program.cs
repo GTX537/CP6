@@ -1067,6 +1067,19 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 313 });
         db.SaveChanges();
     }
+    // A2 工艺路线完善：工作中心 + 工序费率 主数据（MES 组 300 子项 314/315）。幂等。
+    if (!db.Sys_Menus.Any(m => m.MenuId == 314))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 314, MenuName = "工作中心", RoutePath = "/mes/work-center", Icon = "Setting", ParentId = 300, OrderNo = 314, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 314 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 315))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 315, MenuName = "工序费率", RoutePath = "/mes/process-cost-rate", Icon = "Money", ParentId = 300, OrderNo = 315, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 315 });
+        db.SaveChanges();
+    }
 
     // ─────────────────────────────────────────────────────────────
     //  設備マスタ サンプル seed
@@ -1342,6 +1355,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nFinScreenSeed.Items)   // 财务 GL 内核 4 视图 + nav.6xx + E-FIN-* 错误码
             .Concat(CP6.WebApi.Seed.I18nPurScreenSeed.Items)   // 采购 MVP 4 视图 + nav.70x + E-PUR-* 错误码
             .Concat(CP6.WebApi.Seed.I18nPlanScreenSeed.Items)  // 计划中台 MRP 看板 + 主数据 + nav.73x + E-PLAN-* 错误码
+            .Concat(CP6.WebApi.Seed.I18nA2ScreenSeed.Items)    // A2 工艺路线 工作中心+工序费率 视图 + nav.31x + E-A2-* 错误码
             .Concat(CP6.WebApi.Seed.I18nWfDesignerSeed.Items)  // OA 阶段4 自研设计器（表单/流程）画面词条
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
