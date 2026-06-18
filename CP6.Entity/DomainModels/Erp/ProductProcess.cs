@@ -90,6 +90,14 @@ public class ProductProcess : BaseBizEntity
     [Column(TypeName = "decimal(21,8)")]
     public decimal? LeadTime { get; set; }
 
+    // ───── A2 标准工时（spec §3.1）─────
+    /// <summary>段取工时（h，固定/批；与数量无关）。标准机时 = SetupHour + 数量 × CycleTime。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? SetupHour { get; set; }
+    /// <summary>单件加工工时（h/件）。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? CycleTime { get; set; }
+    /// <summary>标准作业人数（标准人工工时 = 标准机时 × 人数；空按 1）。</summary>
+    [Column(TypeName = "decimal(21,8)")] public decimal? StandardCrewSize { get; set; }
+
     [MaxLength(100)] public string? ProcessNote1 { get; set; }
     [MaxLength(100)] public string? ProcessNote2 { get; set; }
 
