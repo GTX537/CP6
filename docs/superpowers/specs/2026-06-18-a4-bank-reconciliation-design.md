@@ -35,7 +35,7 @@
 | `VoucherSource` enum | `Fin/JournalEntry.cs` | 现 Manual/AP/AR/Cost/Carryover/Reversal/FxReval=6 → **A4 新增 `BankRecon=7`** |
 | Fin 控制器范式 | `WebApi/Controllers/Fin/` | `[Authorize]`+`[RequirePermission]`，`Ok2(data)`/`Fin(FinResult)`/`CurrentUser` |
 | Fin 菜单 600 组 | `WebApi/Program.cs` | 601~613 已用，**614 空位**给银行对账 |
-| 多租户基类 | `BaseTenantEntity` | `Id`/审计/`TenantId`；唯一索引声明后自动补 `TenantId` 前缀（沿用 A2 机制） |
+| 多租户基类 | `BaseTenantEntity`(`CP6.Entity/BaseTenantEntity.cs`) | =`BaseEntity`(Id/审计)+`TenantId`；**不含 RowVersion/IsDeleted**（已核实；含二者的是 `BaseBizEntity`）。A4 实体继承 `BaseTenantEntity` 并**显式加 `RowVersion`**（§2/§8.3）；唯一索引声明后自动补 `TenantId` 前缀（沿用 A2 机制） |
 | 审计日志 | `Sys_OperLog` | A4 关键操作写审计（§12） |
 | Pub 导入工具 | （Pub 模块，落码时核实） | Excel 解析优先复用；无则加轻量库（§3.6） |
 
@@ -57,11 +57,17 @@
 | `CurrencyCd` | string(3) | 取自 BankAccount（null=本位币） |
 | `OpeningBalance` | decimal(18,2) | 对账单期初余额 |
 | `ClosingBalance` | decimal(18,2) | 对账单期末余额 |
-| `StatementInternalDiff` | decimal(18,2) | = Opening+ΣDeposit−ΣWithdrawal−Closing（自平校验，锁定要求=0） |
-| `ReconciledDiff` | decimal(18,2) | = BankAdjusted−BookAdjusted（§6，锁定要求=0；快照存档） |
 | `Status` | enum `BankStatementStatus` | Open=0 / Locked=1 |
 | `ImportFileName` | string(255)? | 末次导入文件名 |
+| `LockedStatementInternalDiff` | decimal(18,2)? | **锁定快照**：Opening+ΣDeposit−ΣWithdrawal−Closing |
+| `LockedReconciledDiff` | decimal(18,2)? | **锁定快照**：BankAdjusted−BookAdjusted |
+| `LockedBankAdjustedBalance` | decimal(18,2)? | **锁定快照**：银行侧调整后余额 |
+| `LockedBookAdjustedBalance` | decimal(18,2)? | **锁定快照**：账面侧调整后余额 |
+| `LockSnapshotJson` | string(max)? | **锁定快照**：完整调节表 JSON（审计追溯） |
 | `LockedAt`/`LockedBy` | DateTime?/string? | 锁定审计 |
+| `RowVersion` | byte[]? | 乐观并发（§8.3） |
+
+> **重要（实时 vs 快照）**：`StatementInternalDiff`/`ReconciledDiff`/`BankAdjustedBalance`/`BookAdjustedBalance` **不作 BankStatement 长期存储**——Open 态由 `GetReconciliationStatementAsync` / `LockAsync` **实时重算**（不依赖旧值）；上面 `Locked*` 字段仅在 Lock 成功时写入，作锁定时点快照与审计追溯，**非 Open 态实时真相来源**（点 2.2）。
 
 唯一索引：`UX_Fin_BankStatement_AcctPeriod` = (BankAccountId, FiscalPeriodId)（自动补 TenantId 前缀）——**每账户每期一个会话**。
 
@@ -74,7 +80,7 @@
 | `TxnDate` | DateTime | 交易/起息日 |
 | `Direction` | enum `BankLineDirection` | Deposit=1(入,↔银行GL借) / Withdrawal=2(出,↔银行GL贷) |
 | `Amount` | decimal(18,2) | 正数（方向由 Direction） |
-| `SignedAmount` | decimal(18,2) | 派生/物化：Deposit=+Amount, Withdrawal=−Amount（统一求和口径，§4.1） |
+| `SignedAmount` | decimal(18,2) | **只读计算属性 / DB computed column**：Deposit=+Amount，Withdrawal=−Amount（统一求和口径 §4.1）。**禁止前端传入**；若项目习惯物化，则仅后端在 Amount/Direction 变化时统一重算（点 2.1） |
 | `CurrencyCd` | string(3)? | 原币（外币账户），null=本位币 |
 | `Description` | string(500)? | 摘要 |
 | `CounterpartyName` | string(200)? | 对方 |
@@ -90,6 +96,7 @@
 | `RawRowJson` | string(max)? | 原始行 JSON（追溯） |
 | `RawRowHash` | string(64)? | 原始行哈希（强重复判定） |
 | `Fingerprint` | string(128)? | 去重指纹（§3.4） |
+| `RowVersion` | byte[]? | 乐观并发（撮合/改行核心实体，§8.3） |
 
 > **语义**：生成凭证并自动配平后该行 `MatchStatus=Matched`（**不再叫 BankOnly**）；`Category` 仅作差异来源分类。`MarkedPending` = 仅标记未达/待定（不入账）。
 
@@ -104,6 +111,7 @@
 | `StmtSignedSum` | decimal(18,2) | 组内流水行 ΣSignedAmount（=组内凭证行银行侧带方向合计，必相等） |
 | `MatchedAt`/`MatchedBy` | DateTime/string | 审计 |
 | `Note` | string(500)? | 备注 |
+| `RowVersion` | byte[]? | 乐观并发（撮合台核心实体，§8.3） |
 
 约束（服务层强校验）：组内 Σ(流水行 SignedAmount) == Σ(凭证行 银行侧 SignedAmount)，**完全相等**（MVP 无部分匹配/容差，§8.5）。
 
@@ -116,7 +124,7 @@
 | `JournalEntryId` | Guid | 冗余（便于按凭证查/守卫） |
 | `BankSignedAmount` | decimal(18,2) | 该凭证行银行侧带方向金额（Debit=+,Credit=−） |
 
-唯一索引：`UX_Fin_BankReconJournalLink_JL` = (JournalLineId)（自动补 TenantId 前缀）——**一条凭证行只能对账一次**（并发守卫，§8.4）。索引 `IX_..._Group`(MatchGroupId)。
+唯一索引：`UX_Fin_BankReconJournalLink_JL` = (JournalLineId)（自动补 TenantId 前缀）——**一条凭证行只能对账一次**（并发守卫，§8.4）。索引 `IX_..._Group`(MatchGroupId)。**并发保护靠该唯一约束 + 事务，本表不需 RowVersion。**
 
 ### 2.5 `BankImportProfile`（导入列映射模板）`Fin_BankImportProfile`
 
@@ -130,15 +138,16 @@
 | `SkipHeaderRows` | int | 跳过表头行数 |
 | `DateField` | string(40) | 日期列（列号或表头名） |
 | `DateFormat` | string(40) | 如 `yyyy/MM/dd` |
-| `AmountMode` | enum | SignedSingle=1（单列带符号） / DebitCreditColumns=2（借贷双列） |
+| `AmountMode` | enum | SignedSingle=1（单列带符号） / **DepositWithdrawalColumns=2**（入款列/出款列双列） |
 | `AmountField` | string(40)? | SignedSingle 模式金额列 |
-| `DebitField`/`CreditField` | string(40)? | DebitCreditColumns 模式：入款列/出款列 |
+| `DepositAmountField`/`WithdrawalAmountField` | string(40)? | DepositWithdrawalColumns 模式：入款列/出款列。**业务语义命名，不采用银行 Debit/Credit 记账视角**（避免与企业银行 GL 借贷方向混淆，点 9） |
 | `SignRule` | enum | SignedSingle 时：PositiveIsDeposit=1 / PositiveIsWithdrawal=2 |
 | `DescriptionField`/`CounterpartyField`/`RefNoField`/`BalanceField` | string(40)? | 可选映射 |
 | `DecimalSeparator`/`ThousandsSeparator` | string(2) | 金额解析（默认 `.` / `,`） |
 | `IsActive` | bool | 启用 |
+| `RowVersion` | byte[]? | 乐观并发（§8.3） |
 
-> **方向解析规则（必须显式，§3.6）**：DebitCreditColumns 模式——入款列有值=Deposit、出款列有值=Withdrawal；SignedSingle 模式——按 `SignRule` 判定正负对应 Deposit/Withdrawal。
+> **方向解析规则（必须显式，§3.6）**：DepositWithdrawalColumns 模式——入款列(`DepositAmountField`)有值=Deposit、出款列(`WithdrawalAmountField`)有值=Withdrawal；SignedSingle 模式——按 `SignRule` 判定正负对应 Deposit/Withdrawal。
 
 枚举 + 迁移：新增上述 enum；`VoucherSource` 追加 `BankRecon=7`；迁移 `A4BankReconciliation`。
 
@@ -156,7 +165,8 @@ CSV/Excel 导入 **与** 手工录入并存。导入分两步：**Preview（dryR
 - 解析出的明细预览（供前端展示确认）。
 
 ### 3.3 Confirm
-用户确认后落库为 `BankStatementLine`（`Source=Imported`，带 `ImportBatchNo`/`RawRowJson`/`RawRowHash`/`Fingerprint`）。强重复默认跳过，疑似重复默认导入（前端可逐行取舍）。
+Confirm **以 Preview 返回的"可导入行"为基础**落库为 `BankStatementLine`（`Source=Imported`，带 `ImportBatchNo`/`RawRowJson`/`RawRowHash`/`Fingerprint`）。强重复默认跳过，疑似重复默认导入（前端可逐行取舍）。
+**失败行处理（点 8，MVP 简单规则）**：若 Confirm 重新解析时仍存在日期/金额/方向等**致命解析失败**，则**整批 Confirm 拒绝落库**（返回 `E-A4-IMPORT-001`），不落部分行——即"要么全部可导入行落库，要么整批退回"。因此 **A4 不持久化异常导入行、不新增 ImportBatch 表**；`LockAsync` 也无需检查"未处理异常行"（见 §7.1 改写）。
 
 ### 3.4 去重（护栏⑤）
 - `Fingerprint` = hash(TxnDate + Direction + Amount + RefNo + CounterpartyName + Description + BalanceAfter)；`RawRowHash` = hash(原始行文本)。
@@ -225,13 +235,22 @@ CSV/Excel 导入 **与** 手工录入并存。导入分两步：**Preview（dryR
 ## 5. 单边项处理
 
 ### 5.1 银行单边项（流水有、账面无）
-**方式一 — 生成凭证并自动匹配** `GenerateBankOnlyVoucherAsync(流水行[], 对方科目Id或Role, 可选往来)`：
-- Withdrawal（手续费）：借 费用/财务费用、贷 银行GL；Deposit（利息）：借 银行GL、贷 利息收入；
-- 银行侧 = `BankAccount.GlAccountId`；对方科目由用户选或 `PostingRule`/`Role` 默认解析；
-- `FiscalPeriodService.EnsureOpenAsync(TxnDate)` 落期 → `JournalEntryService.AutoPostAsync` 过账，`VoucherSource=BankRecon`；
-- 生成的银行GL凭证行**自动并入匹配组**与该流水行配平 → 流水行 `MatchStatus=Matched`；
-- **幂等（护栏/第8点）**：流水行 `GeneratedJournalEntryId` 非空时再次调用 → 拒 `E-A4-BANKONLY-DUP`；
-- **改错走反冲**：Unmatch → `JournalEntryService.ReverseAsync(原BankRecon凭证)` → 重新生成 → 重匹配；**不物理删已过账凭证**（遵守不可变凭证原则）。
+**方式一 — 生成凭证并自动匹配** `GenerateBankOnlyVoucherAsync(流水行[], 对方科目Id或Role, 可选往来)`
+- 凭证方向：Withdrawal（手续费）借 费用/财务费用、贷 银行GL；Deposit（利息）借 银行GL、贷 利息收入。银行侧 = `BankAccount.GlAccountId`；对方科目由用户选或 `PostingRule`/`Role` 默认解析。
+
+- **批量语义（点 5，MVP）**：**一条银行流水生成一张 BankRecon 凭证**，**不做多行合并凭证**。前端可批量选多条，**后端按行逐条执行，返回逐行结果**。批量入口约束：所有行属同一 `BankStatement`、会话 `Open`、每行 `Unmatched` 或 `MarkedPending`、每行未生成过 BankRecon 凭证。**采用一行一事务逐条执行**：某行失败不回滚已成功行（非 all-or-nothing），逐行返回成功/失败原因。
+
+- **单条事务（点 6，强制）**：对单条流水，下列步骤必须在**同一数据库事务**内完成，任一步失败整体回滚（杜绝"凭证已过账但未匹配"的孤儿态）：
+  1. `FiscalPeriodService.EnsureOpenAsync(TxnDate)` 落期 → `JournalEntryService.AutoPostAsync` 过账，`VoucherSource=BankRecon`；
+  2. 写回 `BankStatementLine.GeneratedJournalEntryId`/`GeneratedAt`/`GeneratedBy`；
+  3. 建 `BankReconMatch`；
+  4. 建 `BankReconJournalLink`（关联新银行GL凭证行）；
+  5. 更新 `BankStatementLine.MatchStatus=Matched`；
+  6. 写 `Sys_OperLog`。
+
+- **幂等（点 8/原护栏）**：流水行 `GeneratedJournalEntryId` 非空时再次调用 → 拒 `E-A4-BANKONLY-DUP`。
+
+- **改错走反冲（点 7）**：科目错时 Unmatch → `JournalEntryService.ReverseAsync(原 BankRecon 凭证)` → 重生成 → 重匹配；**不物理删已过账凭证**（遵守不可变凭证原则）。`GeneratedJournalEntryId` 表示**当前有效**的 BankRecon 凭证：原凭证 Reverse 成功后，先 `Unmatch` 该行 → **清空旧 `GeneratedJournalEntryId`** → 重生成时写入**新 `GeneratedJournalEntryId`**（不被幂等规则挡住）。原凭证↔反冲凭证的追溯走 `JournalEntry.Reversal` 链 + `Sys_OperLog`；**不新增 `ReversedGeneratedJournalEntryId` 字段**（保持模型轻量）。
 
 **方式二 — 仅标记** `MarkBankOnlyAsync(流水行, Category=Pending/…)`：科目未定/暂不入账 → `MatchStatus=MarkedPending`，列入调节表，不生成凭证。
 
@@ -261,23 +280,35 @@ ReconciledDiff == 0  ⇒  允许锁定
 
 `GetReconciliationStatementAsync(statementId)` 返回展示项：对账单期初/期末余额、本期流水收入/支出合计、GL银行科目期末余额、已匹配流水/账面金额、账面单边项(在途存款/未取付支票明细)、银行单边项(已收未入账/已扣未入账明细)、`StatementInternalDiff`、`ReconciledDiff`、`BankAdjustedBalance`、`BookAdjustedBalance`。
 
+**实时重算（点 2.2）**：`GetReconciliationStatementAsync` 与 `LockAsync` **必须实时重算**上述四量，**不读 BankStatement 上的旧值**；`BankStatement.Locked*` 仅在 Lock 时写快照（§2.1/§7.1）。
+
+**外币 GL 银行余额（点 3，关键）**：`GlBankEndingBalance` 的计算口径随账户币种分流——
+- `BankAccount.CurrencyCd` 为本位币或 null：用 `JournalLine.Debit/Credit`（本位币）计算 Σ借−贷 至 `PeriodEnd`。
+- `BankAccount.CurrencyCd` 非本位币：**必须用 `JournalLine.OrigAmount` 按 `BankAccount.CurrencyCd` 计算**；本位币折算额仅作展示，**不参与 `ReconciledDiff`**。若银行 GL 凭证行缺 `OrigAmount` 或 `CurrencyCd` 与账户币种不一致 → 该行不进自动候选(§4.2)，并在人工候选中提示"原币信息异常"。
+- **目的**：避免 USD 对账单余额与 CNY 折算 GL 余额直接相减。
+
 ---
 
 ## 7. 锁定工作流
 
-### 7.1 `LockAsync(statementId)` 校验（全满足才锁）
+### 7.1 `LockAsync(statementId)` 校验（**实时重算**后全满足才锁）
+`LockAsync` 先**实时重算** InternalDiff/ReconciledDiff/BankAdjusted/BookAdjusted（不读旧值），再校验：
 1. `StatementInternalDiff == 0`（Opening+ΣDeposit−ΣWithdrawal==Closing，护栏⑨）；
 2. `ReconciledDiff == 0`；
-3. 无未处理的异常导入行；
+3. 当前会话不存在未确认的导入批次（Confirm 阶段不会落库解析失败行，见 §3.3，故无需检查"异常导入行"，点 8）；
 4. 所有 `BankReconMatch` SignedAmount 合计一致；
 5. 所属 `FiscalPeriod` 仍为 Open。
-失败 → `E-A4-RECON-001`（含差额明细）。前端锁定前必弹**调节表确认对话框**展示 4 个余额量（护栏⑦/§10）。
+失败 → `E-A4-RECON-001`（含差额明细）。
+**锁成功时写快照**：`LockedStatementInternalDiff`/`LockedReconciledDiff`/`LockedBankAdjustedBalance`/`LockedBookAdjustedBalance`/`LockSnapshotJson`/`LockedAt`/`LockedBy`（§2.1）。
+前端锁定前必弹**调节表确认对话框**展示 4 个余额量（护栏⑦/§10）。
 
 ### 7.2 锁后冻结 + 过账守卫（护栏③，关键）
 锁后：`Status=Locked`；`BankStatementLine`/`BankReconMatch`/`Category` 禁增删改。
 **过账守卫**（避免循环依赖，§1）：`JournalEntryService` 的 `AutoPostAsync`/`PostAsync`/`ReverseAsync` 路径，对每条命中"某 `BankAccount.GlAccountId`"的凭证行，**直查同 `CP6Context` 的 `BankStatements`**：若存在覆盖该 (账户所属 FiscalPeriod) 且 `Status=Locked` 的会话 → 拒 `E-A4-RECON-LOCKED-POSTING`。
 - 一个 GL 科目可能被多个 BankAccount 共用 → **守卫按"该科目对应的任一已锁会话"保守阻断**（护栏⑤）。
 - 需先 `Unlock` 才能再过账。
+
+**反冲守卫（点 4，关键）**：`ReverseAsync` 除上面"新反冲凭证落期"的过账守卫外，**还须检查被反冲的原 `JournalLine` 是否已存在 `BankReconJournalLink`**：若原凭证行已被对账、且其 `BankReconMatch` 所属 `BankStatement.Status=Locked` → **禁止反冲**，拒 `E-A4-RECON-LOCKED-REVERSAL`，须先 `Unlock` 原银行对账会话。（防止"锁定对账已成立，却把被对账的原凭证抽掉"。）
 
 ### 7.3 `UnlockAsync(statementId, reason)`
 必填原因；仅当所属 `FiscalPeriod` 仍 Open 时允许（已结账禁，`E-A4-RECON-002`）；写审计（操作人/时间/原因）。
@@ -288,8 +319,8 @@ ReconciledDiff == 0  ⇒  允许锁定
 
 1. **多币种**：以 `BankAccount.CurrencyCd` 为准；外币按原币金额匹配（§4.2 护栏⑨）；银行余额期末汇兑重估沿用现有 `FxRevaluationService`，不在 A4。
 2. **反转凭证**：已反转凭证行不进自动候选；已对账凭证行若需反转 → 先 Unlock 会话再走反冲。
-3. **并发（护栏⑥/§8.4）**：`BankReconJournalLink.JournalLineId` 唯一约束 + 事务内完成 AutoMatch/ManualMatch/Generate，防同一凭证行被多人重复占用；前端遇冲突给提示 + 刷新重试（乐观并发用 `RowVersion`）。
-4. **金额精度**：按 `CurrencyCd` 小数位；默认**完全相等**；无业务容差（任何容差须 `BankReconTolerance` 配置且仅唯一解自动执行——本期不实现）。
+3. **并发（护栏⑥，点 1）**：双层保护——(a) `BankReconJournalLink.JournalLineId` 唯一约束 + 事务内完成 AutoMatch/ManualMatch/Generate，防同一凭证行被多人重复占用；(b) `BankStatement`/`BankStatementLine`/`BankReconMatch`/`BankImportProfile` 的 **`RowVersion` 乐观并发**——前端提交 `Match`/`Unmatch`/`EditLine`/`MarkPending`/`GenerateVoucher` 时**带 RowVersion**；后端版本冲突 → `E-A4-CONCURRENCY-001`，前端提示"当前流水/凭证状态已变化，请刷新候选列表后重试"。`BankStatementLine` 与 `BankReconMatch` 是撮合台并发冲突核心实体。
+4. **金额精度（点 10，统一）**：A4 金额字段**沿用现有 Fin 模块精度 `decimal(18,2)`**（与 `JournalLine.Debit/Credit` 一致）；**匹配比较按系统实际存储精度完全相等**；`CurrencyCd` 小数位**仅用于前端展示格式化**，不改变数据库精度与匹配精度。无业务容差（任何容差须 `BankReconTolerance` 配置且仅唯一解自动执行——本期不实现）。
 5. **MVP 不做部分匹配（护栏⑩）**：所有 `BankReconMatch` 必须 SignedAmount **完全配平**；不支持一条流水部分核销多笔的"部分分配"。
 
 ---
@@ -362,7 +393,7 @@ Seed 默认授 admin；`[RequirePermission]` 贴各端点（`HasActionAsync` 无
 | 编号 | 验收 |
 |---|---|
 | AC-001 | 导入后 `Opening+ΣDeposit−ΣWithdrawal == Closing`（InternalDiff=0），否则不能锁定 |
-| AC-002 | 流水 ↔ 凭证 金额相等 + 日期容差内 → 自动 1:1 匹配 |
+| AC-002 | 流水与凭证 SignedAmount 相等，且在默认候选范围内**唯一命中**时自动 1:1 匹配；**日期接近度仅作候选排序优先级，不作硬性排除**（点 12，与 §4.2 一致） |
 | AC-003 | 一流水 ↔ 多凭证：仅有界求和**唯一解**时自动确认 |
 | AC-004 | 多流水 ↔ 一凭证：仅有界求和**唯一解**时自动确认 |
 | AC-005 | 人工撮合支持 N:M，但 Σ SignedAmount 必须完全相等 |
@@ -372,7 +403,17 @@ Seed 默认授 admin；`[RequirePermission]` 贴各端点（`HasActionAsync` 无
 | AC-009 | 锁定后，禁止向该银行账户对应银行 GL 科目过账本期凭证（`E-A4-RECON-LOCKED-POSTING`，SQLite 层测） |
 | AC-010 | 会计期间已结账后，禁止 Unlock（`E-A4-RECON-002`） |
 
-补充测试：历史未达项(上期凭证行)能进本期候选；已反转凭证行被排除；外币按原币匹配/币种不一致排除；导入指纹去重(强重复跳过/疑似仅警告)；并发同凭证行重复匹配被唯一约束/事务挡住。末尾 **gstack 端到端 QA**（建会话→导入→自动撮合→人工 N:M→生成手续费凭证→调节表平→锁定→验证锁后过账被拒）。
+**补充测试（点 13）**：
+1. **RowVersion 并发冲突**：两用户同时匹配同一流水/凭证，后提交者收到并发/占用错误（`E-A4-CONCURRENCY-001`/`E-A4-MATCH-002`/`E-A4-MATCH-005`）。
+2. **Locked 快照**：`LockAsync` 实时重算并写入 `LockedStatementInternalDiff`/`LockedReconciledDiff`/`LockedBankAdjustedBalance`/`LockedBookAdjustedBalance`/`LockSnapshotJson`。
+3. **外币调节表**：外币账户下 `GlBankEndingBalance` 用 `OrigAmount` 计算；本位币折算额不参与 `ReconciledDiff`；缺原币/币种不符的凭证行排除自动候选。
+4. **Locked reversal**：已锁定对账的原 `JournalLine` 被 `ReverseAsync` 时拒绝，返回 `E-A4-RECON-LOCKED-REVERSAL`（SQLite 层）。
+5. **GenerateBankOnlyVoucher 事务**：模拟过账成功后匹配步骤失败 → 整体回滚，不出现"已过账未匹配"孤儿凭证（SQLite 层）。
+6. **反冲后重生成**：反冲旧 BankRecon 凭证后，允许重新生成新 BankRecon 凭证并写入**新** `GeneratedJournalEntryId`（不被幂等挡）。
+7. **Confirm 导入失败**：Confirm 阶段出现致命解析失败 → 整批拒绝落库（`E-A4-IMPORT-001`），无部分落库。
+8. **ImportProfile 字段方向**：`DepositAmountField`/`WithdrawalAmountField` 解析方向正确，不受银行 Debit/Credit 视角影响。
+
+其他：历史未达项(上期凭证行)能进本期候选；已反转凭证行被排除；导入指纹去重(强重复跳过/疑似仅警告)；并发同凭证行重复匹配被 `UX_..._JL` 唯一约束/事务挡住（SQLite 层）。末尾 **gstack 端到端 QA**（建会话→导入 Preview/Confirm→自动撮合→人工 N:M→生成手续费凭证→调节表平→锁定→验证锁后过账/反冲被拒）。
 
 ---
 
@@ -386,10 +427,14 @@ Seed 默认授 admin；`[RequirePermission]` 贴各端点（`HasActionAsync` 无
 | E-A4-MATCH-002 | 凭证行已被其他匹配组占用 |
 | E-A4-MATCH-003 | 跨账户/跨币种/方向不符，禁止匹配 |
 | E-A4-MATCH-004 | 流水行不属同一会话 / 凭证行非本银行GL科目 |
+| E-A4-MATCH-005 | 流水行已被其他匹配组占用 |
 | E-A4-BANKONLY-DUP | 该流水行已生成 BankRecon 凭证（幂等拒绝） |
+| E-A4-STATEMENT-LOCKED | 会话已锁定，禁止导入/改行/撮合/生成凭证/标记未达 |
 | E-A4-RECON-001 | InternalDiff 或 ReconciledDiff ≠ 0，禁止锁定 |
 | E-A4-RECON-002 | 会计期间已结账，禁止 Unlock |
 | E-A4-RECON-LOCKED-POSTING | 该银行账户本期对账已锁定，禁止过账影响银行GL科目的凭证 |
+| E-A4-RECON-LOCKED-REVERSAL | 被反冲凭证已完成锁定银行对账，必须先 Unlock 对账会话 |
+| E-A4-CONCURRENCY-001 | 当前流水/凭证状态已变化，请刷新后重试（RowVersion 冲突） |
 | W-A4-IMPORT-DUP | 疑似重复行（仅警告，不自动跳过） |
 | W-A4-IMPORT-SKIP | 强重复行已跳过 |
 | W-A4-CAND-NONE | 流水行无自动候选，转人工 |
@@ -398,6 +443,13 @@ Seed 默认授 admin；`[RequirePermission]` 贴各端点（`HasActionAsync` 无
 
 ## 17. 落地顺序建议（供 writing-plans）
 
-A 数据模型 + 迁移（5 实体 + VoucherSource.BankRecon）→ B 导入(Profile + 解析器 + Preview/Confirm + 去重) → C 撮合引擎(SignedAmount + 候选 + Phase1/2 + 人工 N:M + Unmatch) → D 单边项(生成幂等+反冲 / 标记) + 调节表(双向公式) → E 锁定 + 过账守卫(JournalEntryService 钩子) + Unlock → F 权限/审计/API/控制器 → G 前端(撮合台 + 会话 + 模板 + 并发UX + 锁定确认) + 菜单/五语 i18n → H 分层测试(InMemory + SQLite, AC-001~010) + gstack QA。
+- **A 数据模型 + 迁移**：5 实体 + `VoucherSource.BankRecon=7` + **`RowVersion`(4 实体)** + **Lock 快照字段** + **`DepositAmountField`/`WithdrawalAmountField` 命名** + **金额精度统一 decimal(18,2)** + 错误码枚举 / i18n key 预留。
+- **B 导入**：Profile + 解析器 + Preview/Confirm（失败行不落库）+ 指纹去重。
+- **C 撮合引擎**：SignedAmount(计算属性) + 候选(含历史未达/外币原币/反转排除) + Phase1/2(唯一解) + 人工 N:M + Unmatch。
+- **D 单边项 + 调节表**：`GenerateBankOnlyVoucher` **单条事务 + 批量逐行执行 + 反冲后重生成(清空再写新 GeneratedJournalEntryId)** + 标记未达；调节表**双向公式 + 实时重算 + 外币原币口径**。
+- **E 锁定 + 过账守卫**：Post/AutoPost 守卫 + **`ReverseAsync` 对已锁定原凭证的守卫** + Lock **实时重算并写快照** + Unlock(期间未结账)。
+- **F**：操作级权限 + 审计日志 + API/控制器。
+- **G 前端**：撮合台 + 会话 + 模板 + **并发冲突 UX(带 RowVersion+刷新重试)** + **锁定前调节表确认对话框** + 菜单/五语 i18n。
+- **H 分层测试**：SQLite 覆盖唯一约束/并发/锁后过账/**锁定后反冲拒绝**/单边项事务回滚；InMemory 覆盖公式/撮合/状态机；AC-001~010 + 补充 8 用例；gstack 端到端。
 
 > 关联：[[project_finance_module]]（GL/AP/AR/核销/AutoVoucherEngine 现状）、[[project_a2_process_routing]]（同 subagent-driven 落地范式）、[[project_module_taxonomy]]。源 brainstorming 决策 A4-D1~D5 + 用户两轮 review 全采纳。
