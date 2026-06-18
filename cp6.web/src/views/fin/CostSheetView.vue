@@ -23,7 +23,7 @@
           <template #default="{ row }">
             <div class="line-detail" v-loading="row._linesLoading">
               <div class="line-detail-title">{{ t('成本明细行') }}</div>
-              <el-table :data="row.lines || []" border size="small" style="width: 100%">
+              <el-table :data="linesMap[row.workOrderNo] || []" border size="small" style="width: 100%">
                 <el-table-column prop="lineNo" :label="t('行号')" width="60" align="center" />
                 <el-table-column :label="t('要素')" width="90">
                   <template #default="{ row: ln }">{{ t(COST_ELEMENT_LABEL[ln.element] || '') }}</template>
@@ -53,7 +53,7 @@
                   </template>
                 </el-table-column>
               </el-table>
-              <el-empty v-if="!(row.lines && row.lines.length)" :description="t('暂无成本单')" :image-size="60" />
+              <el-empty v-if="!row._linesLoading && !linesMap[row.workOrderNo]?.length" :description="t('暂无成本单')" :image-size="60" />
             </div>
           </template>
         </el-table-column>
@@ -140,6 +140,9 @@ const { t } = useI18n()
 type CostSheetRow = CostSheet & { _linesLoading?: boolean }
 
 const rows = ref<CostSheetRow[]>([])
+// 明细行按工单号存于独立 reactive map（不挂在 row 对象上，避免 el-table 展开行的对象引用与
+// 事件回调 row 不一致导致赋值不渲染）。
+const linesMap = reactive<Record<string, NonNullable<CostSheet['lines']>>>({})
 const status = ref<number | undefined>(undefined)
 const loading = ref(false)
 const collectVisible = ref(false)
@@ -150,6 +153,8 @@ async function load() {
   try {
     const res = await costApi.list(status.value)
     rows.value = res?.data || []
+    // 重新拉列表后清缓存的明细，避免重归集后展示旧明细
+    Object.keys(linesMap).forEach((k) => delete linesMap[k])
   } finally {
     loading.value = false
   }
@@ -171,14 +176,14 @@ async function doCollect() {
   }
 }
 
-// 展开行：列表接口不含明细，首次展开时按工单号懒加载 lines
+// 展开行：列表接口不含明细，首次展开时按工单号懒加载 lines（存入 linesMap，键=工单号）
 async function onExpand(row: CostSheetRow, expanded: CostSheetRow[]) {
   const isOpen = Array.isArray(expanded) ? expanded.includes(row) : !!expanded
-  if (!isOpen || row.lines !== undefined) return
+  if (!isOpen || linesMap[row.workOrderNo] !== undefined) return
   row._linesLoading = true
   try {
     const res = await costApi.get(row.workOrderNo)
-    row.lines = res?.data?.lines || []
+    linesMap[row.workOrderNo] = res?.data?.lines || []
   } finally {
     row._linesLoading = false
   }

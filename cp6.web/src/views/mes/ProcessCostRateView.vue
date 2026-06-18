@@ -17,9 +17,11 @@
         <el-table-column prop="wgCd" :label="t('工作中心')" width="150" show-overflow-tooltip />
         <el-table-column prop="laborRate" :label="t('人工费率')" width="130" align="right" />
         <el-table-column prop="overheadRate" :label="t('制造费率')" width="130" align="right" />
-        <el-table-column prop="validFrom" :label="t('生效日')" width="140" />
-        <el-table-column prop="validTo" :label="t('失效日')" width="140">
-          <template #default="{ row }">{{ row.validTo || t('长期') }}</template>
+        <el-table-column :label="t('生效日')" width="140">
+          <template #default="{ row }">{{ fmtDate(row.validFrom) }}</template>
+        </el-table-column>
+        <el-table-column :label="t('失效日')" width="140">
+          <template #default="{ row }">{{ row.validTo ? fmtDate(row.validTo) : t('长期') }}</template>
         </el-table-column>
         <el-table-column :label="t('操作')" width="140" fixed="right">
           <template #default="{ row }">
@@ -109,6 +111,9 @@ async function submit() {
     saving.value = false
   }
 }
+
+// 生效/失效日为日期字段（后端返 ISO datetime），仅展示日期部分
+function fmtDate(v?: string | null): string { return v ? String(v).slice(0, 10) : '' }
 
 async function doDelete(row: ProcessCostRate) {
   if (!row.id) { ElMessage.warning(t('确认删除')); return }
