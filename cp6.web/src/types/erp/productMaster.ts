@@ -158,6 +158,14 @@ export interface ProductProcessDto {
   lossRate?: number
   machineCount?: number
   leadTime?: number
+
+  /** A2 标准工时（spec §3.1）：段取工时（h，固定/批） */
+  setupHour?: number
+  /** A2：单件加工工时（h/件） */
+  cycleTime?: number
+  /** A2：标准作业人数（标准人工工时 = 标准机时 × 人数；空按 1） */
+  standardCrewSize?: number
+
   processNote1?: string
   processNote2?: string
   storageDest?: string

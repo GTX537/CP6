@@ -122,7 +122,7 @@ export interface IncomeStatement {
 }
 
 // ── 成本核算（章06）──
-/** 成本归集明细行 */
+/** 成本归集明细行（A2 §3.7：工/费行承载工时追溯字段） */
 export interface CostSheetLine {
   id?: string
   lineNo: number
@@ -135,8 +135,17 @@ export interface CostSheetLine {
   unitPrice: number
   actualAmount: number
   standardAmount: number
+  // ── A2 §3.7 工时追溯（料行多为空，工/费行承载）──
+  hours?: number | null
+  standardHours?: number | null
+  wgCd?: string | null
+  taskCd?: string | null
+  rateValidFrom?: string | null
+  hourSource?: string | null
+  calcNote?: string | null
+  warningCode?: string | null
 }
-/** 成本单（料吃MES真实消耗×BOM单价；计算属性由后端序列化） */
+/** 成本单（料吃MES真实消耗×BOM单价；工费工时×费率做真；计算属性由后端序列化） */
 export interface CostSheet {
   id?: string
   no: string
@@ -145,8 +154,10 @@ export interface CostSheet {
   completedQty: number
   materialActual: number
   materialStandard: number
-  laborStd: number
-  overheadStd: number
+  laborActual: number       // A2 §3.6：实际直接人工（工时×费率归集）
+  laborStandard: number     // A2 §3.6：标准直接人工（标准工时×费率）
+  overheadActual: number    // A2 §3.6：实际制造费用（机时×费率归集）
+  overheadStandard: number  // A2 §3.6：标准制造费用（标准机时×费率）
   status: number        // CostSheetStatus: 0草稿 1已归集 2已结转
   totalActual: number
   standardCost: number

@@ -210,6 +210,15 @@ public class ProductProcessDto
     public decimal? LossRate { get; set; }
     public decimal? MachineCount { get; set; }
     public decimal? LeadTime { get; set; }
+
+    // ── A2 标准工时（spec §3.1）──
+    /// <summary>段取工时（h，固定/批）</summary>
+    public decimal? SetupHour { get; set; }
+    /// <summary>单件加工工时（h/件）</summary>
+    public decimal? CycleTime { get; set; }
+    /// <summary>标准作业人数（空按 1）</summary>
+    public decimal? StandardCrewSize { get; set; }
+
     public string? ProcessNote1 { get; set; }
     public string? ProcessNote2 { get; set; }
     public string? StorageDest { get; set; }

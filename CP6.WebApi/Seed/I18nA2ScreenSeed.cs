@@ -31,6 +31,20 @@ public static class I18nA2ScreenSeed
         new Sys_Lang { LangKey = "实际机时", ZhCN = "实际机时", ZhTW = "實際機時", En = "Actual Machine Hours", Ja = "実績機械時間", Ko = "실제 기계 시간" },
         new Sys_Lang { LangKey = "实际人工工时", ZhCN = "实际人工工时", ZhTW = "實際人工工時", En = "Actual Labor Hours", Ja = "実績人工時間", Ko = "실제 인공 시간" },
 
+        // ── E-2 成本单展示：工/费 实际/标准列头 + 明细行追溯列头（料工费成本做真画面）──
+        new Sys_Lang { LangKey = "实际人工", ZhCN = "实际人工", ZhTW = "實際人工", En = "Actual Labor", Ja = "実績人件費", Ko = "실제 인건비" },
+        new Sys_Lang { LangKey = "实际制造费用", ZhCN = "实际制造费用", ZhTW = "實際製造費用", En = "Actual Overhead", Ja = "実績製造間接費", Ko = "실제 제조 간접비" },
+        new Sys_Lang { LangKey = "成本明细行", ZhCN = "成本明细行", ZhTW = "成本明細行", En = "Cost Detail Lines", Ja = "原価明細行", Ko = "원가 명세 행" },
+        new Sys_Lang { LangKey = "要素", ZhCN = "要素", ZhTW = "要素", En = "Element", Ja = "要素", Ko = "요소" },
+        new Sys_Lang { LangKey = "工序", ZhCN = "工序", ZhTW = "工序", En = "Process", Ja = "工程", Ko = "공정" },
+        new Sys_Lang { LangKey = "直接材料", ZhCN = "直接材料", ZhTW = "直接材料", En = "Direct Material", Ja = "直接材料", Ko = "직접 재료" },
+        new Sys_Lang { LangKey = "工时", ZhCN = "工时", ZhTW = "工時", En = "Hours", Ja = "工数", Ko = "공수" },
+        new Sys_Lang { LangKey = "标准工时", ZhCN = "标准工时", ZhTW = "標準工時", En = "Std Hours", Ja = "標準工数", Ko = "표준 공수" },
+        new Sys_Lang { LangKey = "实际金额", ZhCN = "实际金额", ZhTW = "實際金額", En = "Actual Amount", Ja = "実績金額", Ko = "실제 금액" },
+        new Sys_Lang { LangKey = "标准金额", ZhCN = "标准金额", ZhTW = "標準金額", En = "Std Amount", Ja = "標準金額", Ko = "표준 금액" },
+        new Sys_Lang { LangKey = "工时来源", ZhCN = "工时来源", ZhTW = "工時來源", En = "Hour Source", Ja = "工数ソース", Ko = "공수 출처" },
+        new Sys_Lang { LangKey = "警告码", ZhCN = "警告码", ZhTW = "警告碼", En = "Warning Code", Ja = "警告コード", Ko = "경고 코드" },
+
         // ── W-A2-* 迁移/校验告警 + E-A2-* 业务错误码（与 Service 抛出消息整串对齐） ──
         new Sys_Lang { LangKey = "E-A2-WC-001: 工作中心CD必填", ZhCN = "工作中心CD必填", ZhTW = "工作中心CD必填", En = "Work center code required", Ja = "ワークセンターCDは必須です", Ko = "워크센터 코드 필수" },
         new Sys_Lang { LangKey = "E-A2-WC-001: 工作中心不存在", ZhCN = "工作中心不存在", ZhTW = "工作中心不存在", En = "Work center not found", Ja = "ワークセンターが存在しません", Ko = "워크센터 없음" },

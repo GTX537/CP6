@@ -14,7 +14,49 @@
         <el-button size="small" type="primary" @click="openCollect">{{ t('归集成本') }}</el-button>
       </div>
 
-      <el-table :data="rows" border stripe size="small" max-height="600" v-loading="loading">
+      <el-table
+        :data="rows" border stripe size="small" max-height="600" v-loading="loading"
+        row-key="workOrderNo"
+        @expand-change="onExpand"
+      >
+        <el-table-column type="expand">
+          <template #default="{ row }">
+            <div class="line-detail" v-loading="row._linesLoading">
+              <div class="line-detail-title">{{ t('成本明细行') }}</div>
+              <el-table :data="row.lines || []" border size="small" style="width: 100%">
+                <el-table-column prop="lineNo" :label="t('行号')" width="60" align="center" />
+                <el-table-column :label="t('要素')" width="90">
+                  <template #default="{ row: ln }">{{ t(COST_ELEMENT_LABEL[ln.element] || '') }}</template>
+                </el-table-column>
+                <el-table-column prop="processCd" :label="t('工序')" width="80" />
+                <el-table-column prop="wgCd" :label="t('工作中心')" width="90" />
+                <el-table-column :label="t('工时')" width="100" align="right">
+                  <template #default="{ row: ln }">{{ ln.hours != null ? fmtQty(ln.hours) : '-' }}</template>
+                </el-table-column>
+                <el-table-column :label="t('标准工时')" width="100" align="right">
+                  <template #default="{ row: ln }">{{ ln.standardHours != null ? fmtQty(ln.standardHours) : '-' }}</template>
+                </el-table-column>
+                <el-table-column :label="t('单价')" width="120" align="right">
+                  <template #default="{ row: ln }">{{ fmtAmt(ln.unitPrice) }}</template>
+                </el-table-column>
+                <el-table-column :label="t('实际金额')" width="120" align="right">
+                  <template #default="{ row: ln }">{{ fmtAmt(ln.actualAmount) }}</template>
+                </el-table-column>
+                <el-table-column :label="t('标准金额')" width="120" align="right">
+                  <template #default="{ row: ln }">{{ fmtAmt(ln.standardAmount) }}</template>
+                </el-table-column>
+                <el-table-column prop="hourSource" :label="t('工时来源')" width="120" show-overflow-tooltip />
+                <el-table-column :label="t('警告码')" min-width="120">
+                  <template #default="{ row: ln }">
+                    <el-tag v-if="ln.warningCode" type="warning" size="small">{{ ln.warningCode }}</el-tag>
+                    <span v-else>-</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <el-empty v-if="!(row.lines && row.lines.length)" :description="t('暂无成本单')" :image-size="60" />
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="no" :label="t('成本单号')" width="140" />
         <el-table-column prop="workOrderNo" :label="t('工单号')" width="140" />
         <el-table-column prop="productCd" :label="t('制品')" width="100" show-overflow-tooltip />
@@ -27,11 +69,17 @@
         <el-table-column :label="t('标准料')" width="120" align="right">
           <template #default="{ row }">{{ fmtAmt(row.materialStandard) }}</template>
         </el-table-column>
-        <el-table-column :label="t('直接人工')" width="110" align="right">
-          <template #default="{ row }">{{ fmtAmt(row.laborStd) }}</template>
+        <el-table-column :label="t('实际人工')" width="110" align="right">
+          <template #default="{ row }">{{ fmtAmt(row.laborActual) }}</template>
         </el-table-column>
-        <el-table-column :label="t('制造费用')" width="110" align="right">
-          <template #default="{ row }">{{ fmtAmt(row.overheadStd) }}</template>
+        <el-table-column :label="t('标准人工')" width="110" align="right">
+          <template #default="{ row }">{{ fmtAmt(row.laborStandard) }}</template>
+        </el-table-column>
+        <el-table-column :label="t('实际制造费用')" width="120" align="right">
+          <template #default="{ row }">{{ fmtAmt(row.overheadActual) }}</template>
+        </el-table-column>
+        <el-table-column :label="t('标准制造费用')" width="120" align="right">
+          <template #default="{ row }">{{ fmtAmt(row.overheadStandard) }}</template>
         </el-table-column>
         <el-table-column :label="t('实际总成本')" width="130" align="right">
           <template #default="{ row }"><b>{{ fmtAmt(row.totalActual) }}</b></template>
@@ -84,11 +132,14 @@ import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { costApi } from '@/api/fin/fin'
-import { COST_SHEET_STATUS_LABEL, COST_SHEET_STATUS_TAG, type CostSheet } from '@/types/fin/fin'
+import { COST_SHEET_STATUS_LABEL, COST_SHEET_STATUS_TAG, COST_ELEMENT_LABEL, type CostSheet } from '@/types/fin/fin'
 
 const { t } = useI18n()
 
-const rows = ref<CostSheet[]>([])
+// 列表接口不带明细行（lines），展开时按工单号懒加载注入；_linesLoading 为前端临时标记
+type CostSheetRow = CostSheet & { _linesLoading?: boolean }
+
+const rows = ref<CostSheetRow[]>([])
 const status = ref<number | undefined>(undefined)
 const loading = ref(false)
 const collectVisible = ref(false)
@@ -120,6 +171,19 @@ async function doCollect() {
   }
 }
 
+// 展开行：列表接口不含明细，首次展开时按工单号懒加载 lines
+async function onExpand(row: CostSheetRow, expanded: CostSheetRow[]) {
+  const isOpen = Array.isArray(expanded) ? expanded.includes(row) : !!expanded
+  if (!isOpen || row.lines !== undefined) return
+  row._linesLoading = true
+  try {
+    const res = await costApi.get(row.workOrderNo)
+    row.lines = res?.data?.lines || []
+  } finally {
+    row._linesLoading = false
+  }
+}
+
 async function settle(row: CostSheet) {
   const res = await costApi.settle(row.workOrderNo)
   if (res?.code === 0) {
@@ -142,4 +206,6 @@ onMounted(load)
 .table-toolbar { margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
 .over { color: #f56c6c; }
 .under { color: #67c23a; }
+.line-detail { padding: 8px 16px; background: #fafafa; }
+.line-detail-title { font-size: 13px; font-weight: 600; color: #606266; margin-bottom: 8px; }
 </style>

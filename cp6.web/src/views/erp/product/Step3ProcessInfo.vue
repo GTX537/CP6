@@ -152,6 +152,45 @@
           />
         </template>
       </el-table-column>
+      <el-table-column :label="t('段取工时')" width="100">
+        <template #default="{ row }">
+          <el-input-number
+            v-model="row.setupHour"
+            :disabled="!store.canEdit"
+            size="small"
+            :controls="false"
+            :min="0"
+            :precision="4"
+            style="width: 100%"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column :label="t('单件工时')" width="100">
+        <template #default="{ row }">
+          <el-input-number
+            v-model="row.cycleTime"
+            :disabled="!store.canEdit"
+            size="small"
+            :controls="false"
+            :min="0"
+            :precision="4"
+            style="width: 100%"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column :label="t('标准人数')" width="90">
+        <template #default="{ row }">
+          <el-input-number
+            v-model="row.standardCrewSize"
+            :disabled="!store.canEdit"
+            size="small"
+            :controls="false"
+            :min="0"
+            :precision="2"
+            style="width: 100%"
+          />
+        </template>
+      </el-table-column>
       <el-table-column :label="t('保管先')" width="100">
         <template #default="{ row }">
           <el-input v-model="row.storageDest" :disabled="!store.canEdit" size="small" />
