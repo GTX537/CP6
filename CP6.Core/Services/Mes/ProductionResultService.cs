@@ -29,6 +29,19 @@ public class ProductionResultService : IProductionResultService
         _wmsBridge = wmsBridge;
     }
 
+    /// <summary>
+    /// 工時再計算専用の軽量コンストラクタ（spec §4.3）。
+    /// RecalculateProcessHoursAsync は _db のみ使用するため、他依存無しで利用可能。
+    /// </summary>
+    public ProductionResultService(CP6Context db)
+    {
+        _db = db;
+        _seq = null!;
+        _woService = null!;
+        _notifier = null!;
+        _wmsBridge = null!;
+    }
+
     // ═══════════════════════════════════════════════════════════
     //  ME050 — 実績一覧
     // ═══════════════════════════════════════════════════════════
@@ -244,11 +257,99 @@ public class ProductionResultService : IProductionResultService
         if (justCompleted)
             await _wmsBridge.OnProductionCompletedAsync(req.WorkOrderNo, wo.CompletedQty, userName);
 
+        // A2 §4.3：完了(4)/数量報告(5) の後に工序双工時を派生・物化（覆盖態はスキップ）
+        if (resultType == 4 || resultType == 5)
+            await RecalculateProcessHoursAsync(req.WorkOrderNo, req.ProcessCd, req.TaskCd ?? proc.TaskCd, userName);
+
         return resultNo;
     }
 
     public Task<WorkOrderDto?> GetWorkOrderSummaryAsync(string workOrderNo)
         => _woService.GetByNoAsync(workOrderNo);
+
+    // ═══════════════════════════════════════════════════════════
+    //  A2 §4.3 — 報工後の工序双工時派生物化
+    // ═══════════════════════════════════════════════════════════
+
+    /// <summary>報工後に重算し工序双工時を物化（spec §4.3）。覆盖態(IsHourOverridden)はスキップ。</summary>
+    public async Task RecalculateProcessHoursAsync(string workOrderNo, string processCd, string? taskCd, string? user)
+    {
+        var wop = await _db.Set<WorkOrderProcess>()
+            .FirstOrDefaultAsync(x => x.WorkOrderNo == workOrderNo && x.ProcessCd == processCd
+                                      && (taskCd == null || x.TaskCd == taskCd) && !x.IsDeleted);
+        if (wop == null || wop.IsHourOverridden) return;
+
+        // 実績は WO+工程 単位で報告（TaskCd は任意）。指定 taskCd があれば、
+        // 同一 TaskCd または TaskCd 未設定（=工程全体に属す）の行を集計対象とする。
+        var results = await _db.Set<ProductionResult>().AsNoTracking()
+            .Where(r => r.WorkOrderNo == workOrderNo && r.ProcessCd == processCd
+                        && (taskCd == null || r.TaskCd == null || r.TaskCd == taskCd) && !r.IsDeleted)
+            .ToListAsync();
+
+        // 中断区間（2=中断 起、3=中断解除；本行 Start..End を中断区間とみなす。type=2 で End を持てば直接成対）
+        var interrupts = results.Where(r => r.ResultType == 2 && r.ActualStartTime != null && r.ActualEndTime != null)
+            .Select(r => (Start: r.ActualStartTime!.Value, End: r.ActualEndTime!.Value))
+            .Where(iv => iv.End > iv.Start).ToList();
+
+        // 運行行：完了(4)/数量報告(5)、中断行除外
+        var runRows = results.Where(r => r.ResultType is 4 or 5).ToList();
+
+        // 人工工時：作業者ごとに累加（複数人は重複計上）
+        decimal laborHours = 0m;
+        foreach (var r in runRows)
+        {
+            if (r.LaborHour is { } lh) { laborHours += lh; continue; }
+            if (r.ActualStartTime is { } s && r.ActualEndTime is { } e && e > s) laborHours += Span(s, e, interrupts);
+        }
+
+        // 機時：機器区間で合併（同機重複は一度のみ）
+        var machineIntervals = new List<(DateTime S, DateTime E)>();
+        decimal explicitMachine = 0m;
+        foreach (var r in runRows)
+        {
+            if (r.MachineHour is { } mh) { explicitMachine += mh; continue; }
+            if (r.ActualStartTime is { } s && r.ActualEndTime is { } e && e > s)
+                machineIntervals.Add((s, e));
+        }
+        decimal machineHours = explicitMachine + MergedHours(machineIntervals, interrupts);
+
+        wop.ActualLaborHour = decimal.Round(laborHours, 8);
+        wop.ActualMachineHour = decimal.Round(machineHours, 8);
+        wop.ActualHourSource = "Derived";
+        wop.IsHourOverridden = false;
+        wop.HourCalculatedTime = DateTime.Now;
+        wop.Modifier = user; wop.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+    }
+
+    /// <summary>区間の和集合時長（中断控除）。</summary>
+    private static decimal MergedHours(List<(DateTime S, DateTime E)> ivs, List<(DateTime Start, DateTime End)> interrupts)
+    {
+        if (ivs.Count == 0) return 0m;
+        var sorted = ivs.OrderBy(x => x.S).ToList();
+        decimal total = 0m;
+        var curS = sorted[0].S; var curE = sorted[0].E;
+        foreach (var iv in sorted.Skip(1))
+        {
+            if (iv.S <= curE) { if (iv.E > curE) curE = iv.E; }
+            else { total += Span(curS, curE, interrupts); curS = iv.S; curE = iv.E; }
+        }
+        total += Span(curS, curE, interrupts);
+        return total;
+    }
+
+    /// <summary>単一区間 [s,e) の時長から、重なる中断時間を控除した正味時長（負なら 0）。</summary>
+    private static decimal Span(DateTime s, DateTime e, List<(DateTime Start, DateTime End)> interrupts)
+    {
+        var gross = (decimal)(e - s).TotalHours;
+        foreach (var iv in interrupts)
+        {
+            var os = iv.Start > s ? iv.Start : s;
+            var oe = iv.End < e ? iv.End : e;
+            if (oe > os) gross -= (decimal)(oe - os).TotalHours;
+        }
+        return gross < 0 ? 0 : gross;
+    }
 
     // ═══════════════════════════════════════════════════════════
     //  Helper

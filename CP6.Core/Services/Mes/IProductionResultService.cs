@@ -27,4 +27,7 @@ public interface IProductionResultService
 
     /// <summary>ME040 — 指図に紐づく全工程の現在状態を取得（実績入力画面の上部表示）</summary>
     Task<WorkOrderDto?> GetWorkOrderSummaryAsync(string workOrderNo);
+
+    /// <summary>A2 §4.3 — 報工後に工序双工時（実績機時/人工工時）を派生・物化。覆盖態はスキップ。</summary>
+    Task RecalculateProcessHoursAsync(string workOrderNo, string processCd, string? taskCd, string? user);
 }
