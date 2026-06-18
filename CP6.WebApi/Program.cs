@@ -220,6 +220,8 @@ builder.Services.AddScoped<CP6.Core.Services.Plan.IPlanConvertService, CP6.Core.
 // 转单契约：P1 桩（采购 PR / MES 工单 真实落地后替换实现，DI 按配置切真实/桩 — MP-D4）
 builder.Services.AddScoped<CP6.Core.Services.Plan.Contracts.IPlanToPrService, CP6.Core.Services.Plan.Contracts.PlanToPrServiceStub>();
 builder.Services.AddScoped<CP6.Core.Services.Plan.Contracts.IPlanToWorkOrderService, CP6.Core.Services.Plan.Contracts.PlanToWorkOrderServiceStub>();
+// 工艺路线/成本（A2）：工作中心主数据
+builder.Services.AddScoped<CP6.Core.Services.Mes.IWorkCenterService, CP6.Core.Services.Mes.WorkCenterService>();
 
 // 4.1 MSBBPA010 見積計算書 相关服务
 builder.Services.AddScoped<IEstimateCalcService, EstimateCalcService>();

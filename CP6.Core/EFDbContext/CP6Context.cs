@@ -454,6 +454,9 @@ public class CP6Context : DbContext
     /// <summary>净需求明细（品目×日桶：毛-供给-净 钻取）</summary>
     public DbSet<Plan_NetRequirement> NetRequirements { get; set; }
 
+    // ───── 工艺路线/成本（A2）─────
+    public DbSet<WorkCenter> WorkCenters { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -876,6 +879,9 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => x.ItemCd).IsUnique().HasDatabaseName("UX_Plan_ItemPolicy_ItemCd");
         });
+        // 工艺路线/成本（A2）：工作中心，WgCd 唯一（费率/产能挂载点）
+        modelBuilder.Entity<WorkCenter>(e =>
+            e.HasIndex(x => x.WgCd).IsUnique().HasDatabaseName("UX_Mes_WorkCenter_Wg"));
         // MRP 运算批次：RunNo 唯一
         modelBuilder.Entity<Plan_MrpRun>(e =>
         {
