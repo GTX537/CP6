@@ -18,7 +18,7 @@ public class CostCollectServiceTests
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
         .Options);
 
-    private static CostCollectService Svc(CP6Context db) => new(db, new FinSequenceService(db));
+    private static CostCollectService Svc(CP6Context db) => new(db, new FinSequenceService(db), new CP6.Core.Services.Mes.ProcessCostRateService(db));
 
     private static async Task SeedAsync(CP6Context db, decimal m1Actual = 110m)
     {

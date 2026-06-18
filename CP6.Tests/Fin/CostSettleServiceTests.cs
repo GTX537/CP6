@@ -33,7 +33,7 @@ public class CostSettleServiceTests
         return new Kit
         {
             Db = db, Gl = gl,
-            Collect = new CostCollectService(db, new FinSequenceService(db)),
+            Collect = new CostCollectService(db, new FinSequenceService(db), new CP6.Core.Services.Mes.ProcessCostRateService(db)),
             Settle = new CostSettleService(db, journal),
         };
     }

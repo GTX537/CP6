@@ -27,7 +27,7 @@ public class FinBridgeHookTests
         var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
         var engine = new AutoVoucherEngine(db, journal);
         var ar = new ArInvoiceService(db, engine, journal, new FinSequenceService(db));
-        var cost = new CostCollectService(db, new FinSequenceService(db));
+        var cost = new CostCollectService(db, new FinSequenceService(db), new CP6.Core.Services.Mes.ProcessCostRateService(db));
         return new FinBridgeHook(db, ar, cost, NullLogger<FinBridgeHook>.Instance);
     }
 
