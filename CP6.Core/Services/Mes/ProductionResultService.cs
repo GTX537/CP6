@@ -258,8 +258,13 @@ public class ProductionResultService : IProductionResultService
             await _wmsBridge.OnProductionCompletedAsync(req.WorkOrderNo, wo.CompletedQty, userName);
 
         // A2 §4.3：完了(4)/数量報告(5) の後に工序双工時を派生・物化（覆盖態はスキップ）
-        if (resultType == 4 || resultType == 5)
-            await RecalculateProcessHoursAsync(req.WorkOrderNo, req.ProcessCd, req.TaskCd ?? proc.TaskCd, userName);
+        // best-effort（コミット後）：派生失敗は報工本体に影響させない。工時は冪等に後続報工で再計算される
+        try
+        {
+            if (resultType == 4 || resultType == 5)
+                await RecalculateProcessHoursAsync(req.WorkOrderNo, req.ProcessCd, req.TaskCd ?? proc.TaskCd, userName);
+        }
+        catch { /* 工時派生失敗は報工本体に影響させない（後続報工で再計算） */ }
 
         return resultNo;
     }
