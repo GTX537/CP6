@@ -85,6 +85,10 @@ public enum VoucherSource
     Reversal = 5,
     /// <summary>期末未实现汇兑重估（含下期初冲回）</summary>
     FxReval = 6,
+    /// <summary>A3 月末折旧 / 处置月补提折旧汇总凭证</summary>
+    Depreciation = 8,
+    /// <summary>A3 资产处置结转凭证</summary>
+    AssetDisposal = 9,
 }
 
 /// <summary>凭证状态机</summary>
