@@ -403,6 +403,12 @@ public class CP6Context : DbContext
     public DbSet<CostSheet> CostSheets { get; set; }
     /// <summary>成本归集明细行（章06）</summary>
     public DbSet<CostSheetLine> CostSheetLines { get; set; }
+    // ───── 固定资产（A3）─────
+    public DbSet<AssetCategory> AssetCategories { get; set; }
+    public DbSet<AssetCard> AssetCards { get; set; }
+    public DbSet<DepreciationRun> DepreciationRuns { get; set; }
+    public DbSet<DepreciationEntry> DepreciationEntries { get; set; }
+    public DbSet<AssetDisposal> AssetDisposals { get; set; }
 
     // ───── 采购（Pur）MVP 章01~04 ─────
     /// <summary>采购价表（章01，供应商×物料阶梯价 + 有效期）</summary>
@@ -637,6 +643,46 @@ public class CP6Context : DbContext
             e.HasIndex(x => x.EntryId);
             e.HasIndex(x => x.AccountId);
             e.HasIndex(x => x.CostCenterId);
+        });
+
+        // 资产分类：Code 唯一 + 树检索
+        modelBuilder.Entity<AssetCategory>(e =>
+        {
+            e.HasIndex(x => x.Code).IsUnique().HasDatabaseName("UX_Fin_AssetCategory_Code");
+            e.HasIndex(x => x.ParentId);
+        });
+        // 资产卡片：AssetNo 唯一 + 分类/状态/机台检索
+        modelBuilder.Entity<AssetCard>(e =>
+        {
+            e.HasIndex(x => x.AssetNo).IsUnique().HasDatabaseName("UX_Fin_AssetCard_AssetNo");
+            e.HasIndex(x => x.CategoryId);
+            e.HasIndex(x => x.Status);
+            e.HasIndex(x => x.MachineId);
+        });
+        // 折旧批次：每期仅一个【非 Reversed 批量批次】（RunMode∈{1,2,3} ∧ Status≠Reversed(2)）。
+        // 过滤唯一索引（DB 兜底竞态，仿 UX_Fin_JournalEntry_AutoVoucherSource）；DisposalFinal(4) 不在过滤内、不受约束。
+        // 自动补 TenantId 前缀 → (TenantId, FiscalPeriodId) WHERE RunMode IN (1,2,3) AND Status <> 2。
+        modelBuilder.Entity<DepreciationRun>(e =>
+        {
+            e.HasIndex(x => x.FiscalPeriodId).IsUnique()
+                .HasFilter("[RunMode] IN (1,2,3) AND [Status] <> 2")
+                .HasDatabaseName("UX_Fin_DepreciationRun_PeriodSingleBatch");
+            e.HasIndex(x => x.No);
+            e.HasIndex(x => new { x.FiscalPeriodId, x.Status });
+        });
+        // 折旧明细：(RunId, AssetCardId) 唯一 + 资产检索
+        modelBuilder.Entity<DepreciationEntry>(e =>
+        {
+            e.HasIndex(x => new { x.RunId, x.AssetCardId }).IsUnique().HasDatabaseName("UX_Fin_DepreciationEntry_RunAsset");
+            e.HasIndex(x => x.AssetCardId);
+            e.HasIndex(x => new { x.AssetCardId, x.FiscalPeriodId });   // 「本期无非 Reversed 明细」去重键查询
+        });
+        // 处置单：No 唯一 + 资产/状态检索
+        modelBuilder.Entity<AssetDisposal>(e =>
+        {
+            e.HasIndex(x => x.No).IsUnique().HasDatabaseName("UX_Fin_AssetDisposal_No");
+            e.HasIndex(x => x.AssetCardId);
+            e.HasIndex(x => x.Status);
         });
 
         // 财务采番：(SeqKey + SeqDate) 唯一
