@@ -192,4 +192,66 @@ public class BudgetGuardPostingTests
         var entry = await svc.GetAsync(entryId);
         Assert.Equal(JournalStatus.Posted, entry!.Status);
     }
+
+    // ══════════════════════════════════════════════════════════════
+    // AC-011：AutoPostAsync 不经过 BudgetGuard（spec §8-2）
+    // Block 超支的自动凭证（Source=AP）仍应直接过账成功。
+    // ══════════════════════════════════════════════════════════════
+    [Fact]
+    public async Task AutoPostAsync_BlockExceeded_NotGated_Posts()
+    {
+        // 种一个 Block 预算，期预算=100
+        var (db, expenseAcct, cashAcct, _) = await SeedAsync(BudgetControlMode.Block, periodBudget: 100m);
+
+        // 构造自动凭证：Source=AP（非Manual），金额=500，大幅超预算
+        // AutoPostAsync 内部会调用 EnsureOpenAsync 推算 PeriodId，传 VoucherDate 即可
+        var entry = new JournalEntry
+        {
+            Source = VoucherSource.AP,      // 自动凭证，非 Manual
+            VoucherDate = new DateTime(2027, 2, 15),
+            Description = "AP自动凭证（超预算，不拦）",
+            Lines =
+            {
+                new JournalLine { AccountId = expenseAcct, Debit  = 500m },
+                new JournalLine { AccountId = cashAcct,    Credit = 500m },
+            }
+        };
+
+        var svc = Svc(db);
+        var r = await svc.AutoPostAsync(entry);
+
+        // 断言：过账成功（BudgetGuard 不挂 AutoPostAsync）
+        Assert.True(r.Ok, $"AutoPostAsync should not be gated by BudgetGuard; got: {r.Code}");
+        var saved = await svc.GetAsync(entry.Id);
+        Assert.Equal(JournalStatus.Posted, saved!.Status);
+        Assert.True(saved.AutoPosted);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // AC-019：ReverseAsync 不被预算守卫拦截（spec §7 红冲释放预算）
+    // 先在预算内过账，再红冲，红冲应成功（autoPost=true 走直过路径）。
+    // ══════════════════════════════════════════════════════════════
+    [Fact]
+    public async Task ReverseAsync_NotBudgetGated_Succeeds()
+    {
+        // Block 预算，期预算=100；先在预算内过账 80
+        var (db, expenseAcct, cashAcct, periodId) = await SeedAsync(BudgetControlMode.Block, periodBudget: 100m);
+
+        var entryId = await CreatePendingReviewEntry(db, expenseAcct, cashAcct, periodId, 80m);
+        var svc = Svc(db);
+
+        // 过账（80 < 100，放行）
+        var postR = await svc.PostAsync(entryId, "checker");
+        Assert.True(postR.Ok, $"PostAsync within budget should succeed; got: {postR.Code}");
+
+        // 红冲（autoPost=true：系统直过，免复核流程；预算守卫不挂 ReverseAsync）
+        var revR = await svc.ReverseAsync(entryId, "maker", "测试红冲", autoPost: true);
+
+        // 断言：红冲成功，未被预算守卫拦截
+        Assert.True(revR.Ok, $"ReverseAsync should not be gated by BudgetGuard; got: {revR.Code}");
+
+        // 验证原凭证已变为 Reversed
+        var origin = await svc.GetAsync(entryId);
+        Assert.Equal(JournalStatus.Reversed, origin!.Status);
+    }
 }

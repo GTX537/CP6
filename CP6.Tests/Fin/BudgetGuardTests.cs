@@ -131,4 +131,80 @@ public class BudgetGuardTests
         Assert.False(r.Ok);
         Assert.Equal("E-A5-BUDGET-EXCEEDED", r.Code);
     }
+
+    // ══════════════════════════════════════════════════════════════
+    // AC-022：非自然财年（FiscalYear ≠ calendar Year）通过 PeriodId 落期（spec §7.1）
+    // 场景：财年 2027 从 2026-12 开始（PeriodNo=1 = Dec-2026）。
+    //       预算 FiscalYear=2027，期1=100；凭证 VoucherDate=2026-12-15，PeriodId→期1。
+    //       过账 150 → 超 → 守卫拒绝（E-A5-BUDGET-EXCEEDED）。
+    // 若守卫错误地用 VoucherDate.Year(=2026) 查 FiscalYear=2026 的预算，则找不到版本，
+    // 会短路放行（Ok=true）—— 该测试证明必须走 PeriodId.FiscalYear 路径。
+    // ══════════════════════════════════════════════════════════════
+    [Fact]
+    public async Task NonNaturalFiscalYear_GuardResolvesViaFiscalPeriod_Rejected()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+
+        // 费用科目
+        var acct = new GlAccount
+        {
+            Code = "6602", Name = "管理费用",
+            Type = AccountType.Expense, NormalSide = AccountSide.Debit,
+            IsLeaf = true, IsActive = true, StandardScheme = "CN-GAAP"
+        };
+        db.GlAccounts.Add(acct);
+
+        // 非自然财年：FiscalYear=2027，但该财年第1期落在日历 2026-12（PeriodNo=1）
+        var periodDec2026 = new FiscalPeriod
+        {
+            FiscalYear = 2027,   // 财年 2027
+            Year = 2026,         // 日历年 2026
+            Month = 12,          // 日历月 12
+            PeriodNo = 1,        // 财年第1期
+            Status = PeriodStatus.Open,
+            PeriodStart = new DateTime(2026, 12, 1),
+            PeriodEnd = new DateTime(2026, 12, 31)
+        };
+        db.FiscalPeriods.Add(periodDec2026);
+
+        // 预算：FiscalYear=2027，激活版本，Block 模式，年额 = 1200，期1=100
+        var budget = new Budget { No = "BUD-2027-00001", Name = "2027", FiscalYear = 2027, IsActive = true };
+        db.Budgets.Add(budget);
+        var version = new BudgetVersion
+        {
+            BudgetId = budget.Id, VersionNo = 1,
+            Status = BudgetVersionStatus.Approved, IsActive = true,
+            DefaultControlMode = BudgetControlMode.Block,
+            DefaultControlBasis = BudgetControlBasis.Period
+        };
+        db.BudgetVersions.Add(version);
+        await db.SaveChangesAsync();
+
+        var line = new BudgetLine { VersionId = version.Id, AccountId = acct.Id, AnnualAmount = 1200m };
+        line.NormalizeKeys();
+        db.BudgetLines.Add(line);
+        await db.SaveChangesAsync();
+
+        for (int i = 1; i <= 12; i++)
+            db.BudgetLinePeriods.Add(new BudgetLinePeriod { BudgetLineId = line.Id, PeriodNo = i, Amount = 100m });
+        await db.SaveChangesAsync();
+
+        // 凭证：VoucherDate=2026-12-15（日历2026年），PeriodId → 财年2027期1
+        // 过账金额 150 > 期1预算 100 → 应被拒
+        var entry = new JournalEntry
+        {
+            VoucherDate = new DateTime(2026, 12, 15),
+            PeriodId = periodDec2026.Id,             // ← 关键：显式 PeriodId 落财年2027
+            Source = VoucherSource.Manual,
+            Status = JournalStatus.Draft,
+            Lines = new() { new JournalLine { AccountId = acct.Id, Debit = 150m, Credit = 0m } }
+        };
+
+        var r = await BudgetGuard.CheckPostingAsync(db, entry);
+
+        // 若守卫用 VoucherDate.Year=2026 查版本，找不到，会短路 Ok=true（测试失败）
+        // 正确路径：守卫用 PeriodId→FiscalYear=2027，命中版本，150>100 → 拒
+        Assert.False(r.Ok, "守卫应通过 PeriodId 落期到财年2027，超支应被拒绝");
+        Assert.Equal("E-A5-BUDGET-EXCEEDED", r.Code);
+    }
 }
