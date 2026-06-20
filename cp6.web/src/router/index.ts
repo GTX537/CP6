@@ -37,6 +37,10 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/fin/balance-sheet': () => import('@/views/fin/BalanceSheetView.vue'), // 章08 资产负债表
   '/fin/income-statement': () => import('@/views/fin/IncomeStatementView.vue'), // 章08 损益表
   '/fin/cost': () => import('@/views/fin/CostSheetView.vue'),             // 章06 成本核算
+  '/fin/asset-category': () => import('@/views/fin/AssetCategoryView.vue'),   // A3 资产分类
+  '/fin/asset-card': () => import('@/views/fin/AssetCardView.vue'),           // A3 资产卡片
+  '/fin/asset-deprec': () => import('@/views/fin/AssetDepreciationView.vue'), // A3 折旧计提
+  '/fin/asset-disposal': () => import('@/views/fin/AssetDisposalView.vue'),   // A3 资产处置
   // ───── 采购 (Pur) MVP 章01~04 ─────
   '/pur/supplier-price': () => import('@/views/pur/SupplierPriceView.vue'), // 章01 供应商价表
   '/pur/po': () => import('@/views/pur/PurchaseOrderView.vue'),             // 章02 采购订单
