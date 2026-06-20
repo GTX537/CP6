@@ -7,6 +7,21 @@ public static class I18nA3ScreenSeed
 {
     public static readonly Sys_Lang[] Items = new[]
     {
+        // ── 通用操作提示（自然语言 key，fin 模块惯例；操作成功/操作失败 其它 fin 视图亦在用但此前缺词条）──
+        new Sys_Lang { LangKey = "操作成功", ZhCN = "操作成功", ZhTW = "操作成功", En = "Operation succeeded", Ja = "操作が成功しました", Ko = "작업이 성공했습니다" },
+        new Sys_Lang { LangKey = "操作失败", ZhCN = "操作失败", ZhTW = "操作失敗", En = "Operation failed", Ja = "操作に失敗しました", Ko = "작업이 실패했습니다" },
+        new Sys_Lang { LangKey = "试算", ZhCN = "试算", ZhTW = "試算", En = "Trial Run", Ja = "試算", Ko = "시산" },
+
+        // ── 页头标题 + 副标题（仿 fin 视图 page-header 风格）──
+        new Sys_Lang { LangKey = "资产分类", ZhCN = "资产分类", ZhTW = "資產分類", En = "Asset Category", Ja = "資産分類", Ko = "자산 분류" },
+        new Sys_Lang { LangKey = "资产卡片", ZhCN = "资产卡片", ZhTW = "資產卡片", En = "Asset Card", Ja = "資産カード", Ko = "자산 카드" },
+        new Sys_Lang { LangKey = "折旧计提", ZhCN = "折旧计提", ZhTW = "折舊計提", En = "Depreciation", Ja = "減価償却", Ko = "감가상각" },
+        new Sys_Lang { LangKey = "资产处置", ZhCN = "资产处置", ZhTW = "資產處置", En = "Asset Disposal", Ja = "資産処分", Ko = "자산 처분" },
+        new Sys_Lang { LangKey = "资产分类与默认折旧规则（科目锚点）", ZhCN = "资产分类与默认折旧规则（科目锚点）", ZhTW = "資產分類與預設折舊規則（科目錨點）", En = "Asset categories & default depreciation rules (account anchors)", Ja = "資産分類と既定の減価償却ルール（勘定アンカー）", Ko = "자산 분류 및 기본 감가상각 규칙(계정 앵커)" },
+        new Sys_Lang { LangKey = "固定资产卡片台账（原值/累折/净值）", ZhCN = "固定资产卡片台账（原值/累折/净值）", ZhTW = "固定資產卡片台帳（原值/累折/淨值）", En = "Fixed-asset card ledger (cost / accum. deprec. / NBV)", Ja = "固定資産カード台帳（取得原価/減価償却累計/簿価）", Ko = "고정자산 카드 원장(취득원가/감가상각누계/장부가)" },
+        new Sys_Lang { LangKey = "按期试算→计提→过账（汇总凭证）", ZhCN = "按期试算→计提→过账（汇总凭证）", ZhTW = "按期試算→計提→過帳（彙總憑證）", En = "Period preview → accrue → post depreciation (summary voucher)", Ja = "期次ごとの試算→計上→転記（集計仕訳）", Ko = "기간별 시산→계상→전기(집계 전표)" },
+        new Sys_Lang { LangKey = "出售/报废/转让/盘亏（清理结转损益）", ZhCN = "出售/报废/转让/盘亏（清理结转损益）", ZhTW = "出售/報廢/轉讓/盤虧（清理結轉損益）", En = "Sale / scrap / transfer / loss disposal (clearing carry-over)", Ja = "売却/除却/譲渡/棚卸減耗（清算振替損益）", Ko = "매각/폐기/양도/감모 처분(청산 대체 손익)" },
+
         // ── 菜单 ──
         new Sys_Lang { LangKey = "nav.615", ZhCN = "资产分类", ZhTW = "資產分類", En = "Asset Category", Ja = "資産分類", Ko = "자산 분류" },
         new Sys_Lang { LangKey = "nav.616", ZhCN = "资产卡片", ZhTW = "資產卡片", En = "Asset Card", Ja = "資産カード", Ko = "자산 카드" },
