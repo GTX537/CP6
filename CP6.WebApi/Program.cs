@@ -125,6 +125,8 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.ITrialBalanceService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBalanceSheetService, CP6.Core.Services.Fin.BalanceSheetService>(); // 章08 §2 资产负债表（期末余额重组,复用试算表）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IIncomeStatementService, CP6.Core.Services.Fin.IncomeStatementService>(); // 章08 §3 损益表（本期发生）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFxRevaluationService, CP6.Core.Services.Fin.FxRevaluationService>(); // 章07 §4 期末未实现汇兑重估（结账前跑+下期初冲回）
+builder.Services.AddSingleton<CP6.Core.Services.Fin.IDepreciationCalculator, CP6.Core.Services.Fin.DepreciationCalculator>(); // A3 §3.1 折旧引擎纯函数四法
+builder.Services.AddScoped<CP6.Core.Services.Fin.IAssetDepreciationService, CP6.Core.Services.Fin.AssetDepreciationService>(); // A3 §3.2 资产折旧服务（三路：手动/Worker/结账钩子）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IPeriodCloseService, CP6.Core.Services.Fin.PeriodCloseService>(); // 章02 §3 月结/锁期/反结账（结账前调用汇兑重估）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IAutoVoucherEngine, CP6.Core.Services.Fin.AutoVoucherEngine>(); // 章05 自动凭证引擎（规则即数据→AutoPost）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApInvoiceService, CP6.Core.Services.Fin.ApInvoiceService>(); // 章03 §3① 应付发票录入+过账
