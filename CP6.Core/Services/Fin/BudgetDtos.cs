@@ -62,3 +62,39 @@ public class BudgetImportRow
     public bool Ok { get; set; }
     public string? Error { get; set; }
 }
+
+// F-1 预算对比实际报告 DTOs (spec §9)
+public class BudgetVsActualRow
+{
+    public Guid AccountId { get; set; }
+    public string AccountCode { get; set; } = "";
+    public string AccountName { get; set; } = "";
+    public Guid? CostCenterId { get; set; }
+    public string? CostObjectType { get; set; }
+    public string? CostObjectId { get; set; }
+    public decimal Budget { get; set; }
+    public decimal Actual { get; set; }
+    public decimal Variance => Budget - Actual;
+    public decimal? VariancePct => Budget == 0 ? null : Math.Round((Budget - Actual) / Budget * 100, 2);
+    public decimal[] BudgetPeriods { get; set; } = new decimal[12];
+    public decimal[] ActualPeriods { get; set; } = new decimal[12];
+    public bool IsUnbudgeted { get; set; }
+}
+
+public class BudgetVsActualReport
+{
+    public int FiscalYear { get; set; }
+    public Guid? VersionId { get; set; }
+    public List<BudgetVsActualRow> Rows { get; set; } = new();
+    public decimal TotalBudget => Rows.Sum(r => r.Budget);
+    public decimal TotalActual => Rows.Sum(r => r.Actual);
+}
+
+public class BudgetWarningDto
+{
+    public string AccountCode { get; set; } = "";
+    public decimal Budget { get; set; }
+    public decimal Used { get; set; }
+    public decimal Incoming { get; set; }
+    public bool IsBlock { get; set; }
+}
