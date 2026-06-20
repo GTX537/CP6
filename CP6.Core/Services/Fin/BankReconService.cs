@@ -124,7 +124,7 @@ public class BankReconService : IBankReconService
 
             var sols = FindStmtSubsetSums(pool, cand.BankSignedAmount, SubsetSumK);
 
-            if (sols.Count == 1 && sols[0].Count >= 2)   // ≥2 才是 N:1（size==1 已由 Phase1/2 覆盖）
+            if (sols.Count == 1 && sols[0].Count >= 2)   // ≥2 才是 N:1（size==1 已由上方合并的 1:1/1:N 阶段覆盖）
             {
                 await PersistMatchAsync(stmt, sols[0], new[] { cand }, BankReconMatchType.Auto, null, user);
                 occupiedNow.Add(cand.JournalLineId);
