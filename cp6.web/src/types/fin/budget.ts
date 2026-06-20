@@ -90,6 +90,7 @@ export interface BudgetLineDto {
   controlMode?: BudgetControlMode | null
   controlBasis?: BudgetControlBasis | null
   memo?: string | null
+  rowVersion?: number[] | string | null
 }
 
 /** 预算 vs 实际对比行 */

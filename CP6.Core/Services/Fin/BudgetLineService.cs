@@ -46,6 +46,15 @@ public class BudgetLineService : IBudgetLineService
             };
             _db.BudgetLines.Add(line);
         }
+        else if (dto.RowVersion != null)
+        {
+            // Optimistic concurrency: tell EF the client's last-read RowVersion so the UPDATE gains
+            // WHERE RowVersion = @original — throws DbUpdateConcurrencyException on stale reads.
+            // NOTE: EF Core InMemory provider IGNORES concurrency tokens; this only fires on SQL Server.
+            // TODO: version-level concurrency (BudgetVersion.RowVersion) is deferred — line-level is the
+            //       primary multi-editor surface and covers spec §14.3 / AC-017.
+            _db.Entry(line).Property(nameof(BudgetLine.RowVersion)).OriginalValue = dto.RowVersion;
+        }
 
         line.CostCenterId = dto.CostCenterId;
         line.CostObjectType = dto.CostObjectType;
@@ -56,13 +65,20 @@ public class BudgetLineService : IBudgetLineService
         line.ControlBasis = dto.ControlBasis;
         line.Memo = dto.Memo;
 
-        await _db.SaveChangesAsync();   // persist line to get Id
+        try
+        {
+            await _db.SaveChangesAsync();   // persist line to get Id
 
-        _db.BudgetLinePeriods.RemoveRange(_db.BudgetLinePeriods.Where(p => p.BudgetLineId == line.Id));
-        for (int i = 0; i < 12; i++)
-            _db.BudgetLinePeriods.Add(new BudgetLinePeriod { BudgetLineId = line.Id, PeriodNo = i + 1, Amount = periods[i] });
+            _db.BudgetLinePeriods.RemoveRange(_db.BudgetLinePeriods.Where(p => p.BudgetLineId == line.Id));
+            for (int i = 0; i < 12; i++)
+                _db.BudgetLinePeriods.Add(new BudgetLinePeriod { BudgetLineId = line.Id, PeriodNo = i + 1, Amount = periods[i] });
 
-        await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return FinResult.Fail("E-A5-CONCURRENCY-001");
+        }
         return FinResult.Pass();
     }
 

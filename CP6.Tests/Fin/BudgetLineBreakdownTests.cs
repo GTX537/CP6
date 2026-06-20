@@ -128,4 +128,19 @@ public class BudgetLineBreakdownTests
         Assert.Equal(100m, periods[0].Amount);
         Assert.Equal(1200m, periods.Sum(p => p.Amount));
     }
+
+    [Fact]
+    public async Task UpsertLine_WithMatchingRowVersion_UpdatesSuccessfully()
+    {
+        var (db, v, acct) = await SeedAsync();
+        var svc = new BudgetLineService(db);
+        await svc.UpsertLineAsync(new BudgetLineDto { VersionId = v.Id, AccountId = acct, AnnualAmount = 1200m, SpreadMode = "even" });
+        var grid = (await svc.ListLinesAsync(v.Id)).First();
+        // 回传读到的 RowVersion 再次更新 — happy path
+        // 注意：EF Core InMemory provider 不强制并发令牌（忽略 RowVersion），故此测试仅验证
+        // 正常更新路径不报错；真实并发冲突检测仅在 SQL Server 上生效（E-A5-CONCURRENCY-001）。
+        var r = await svc.UpsertLineAsync(new BudgetLineDto { VersionId = v.Id, AccountId = acct, AnnualAmount = 2400m, SpreadMode = "even", RowVersion = grid.RowVersion });
+        Assert.True(r.Ok);
+        Assert.Equal(2400m, (await db.BudgetLines.FirstAsync(l => l.VersionId == v.Id)).AnnualAmount);
+    }
 }

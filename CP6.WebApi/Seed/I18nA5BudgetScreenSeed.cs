@@ -114,5 +114,6 @@ public static class I18nA5BudgetScreenSeed
         new Sys_Lang { LangKey = "E-A5-LINE-404", ZhCN = "预算行不存在", ZhTW = "預算行不存在", En = "Budget line not found", Ja = "予算行が見つかりません", Ko = "예산 행을 찾을 수 없습니다" },
         new Sys_Lang { LangKey = "E-A5-BUDGET-EXCEEDED", ZhCN = "科目 {0} 预算 {1} 已用 {2} 本次 {3} 超出 {4}", ZhTW = "科目 {0} 預算 {1} 已用 {2} 本次 {3} 超出 {4}", En = "Account {0}: budget {1}, used {2}, incoming {3}, over by {4}", Ja = "科目 {0}：予算 {1}、使用済 {2}、今回 {3}、超過 {4}", Ko = "계정 {0}: 예산 {1}, 사용 {2}, 이번 {3}, 초과 {4}" },
         new Sys_Lang { LangKey = "E-A5-IMPORT-001", ZhCN = "Excel导入解析失败，请检查格式", ZhTW = "Excel匯入解析失敗，請檢查格式", En = "Excel import parse failed, please check the file format", Ja = "Excel取込解析に失敗しました。形式を確認してください", Ko = "Excel 가져오기 파싱 실패. 파일 형식을 확인하세요" },
+        new Sys_Lang { LangKey = "E-A5-CONCURRENCY-001", ZhCN = "数据已被他人修改，请刷新后重试", ZhTW = "資料已被他人修改，請重新整理後重試", En = "Record was modified by another user; please refresh and retry", Ja = "他のユーザーにより更新されています。再読み込みしてください", Ko = "다른 사용자가 변경했습니다. 새로고침 후 다시 시도하세요" },
     };
 }
