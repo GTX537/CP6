@@ -230,6 +230,78 @@ public class BankReconMatchTests
         Assert.Equal("E-A4-MATCH-002", r.Code);
     }
 
+    // ── C-3 Bug fixes ──
+
+    /// <summary>Bug2: 外币账户选了原币缺失的凭证行 → 应 return FinResult.Fail("E-A4-MATCH-003") 而非 throw</summary>
+    [Fact]
+    public async Task ManualMatch_ForeignCurrencyMismatch_ReturnsFail()
+    {
+        var (svc, db, stmtId, glId) = await Fixture(acctCcy: "USD");
+        // 流水：外币USD入账 +100
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 100, ccy: "USD");
+        // 凭证行：命中银行GL、Posted，但 OrigAmount == null（外币原币缺失）
+        var jlId = await PostedBankLine(db, glId, new(2026, 6, 4), 700, 0, ccy: null, orig: null);
+        var req = new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { lineId }, JournalLineIds = { jlId } };
+
+        // 必须返回 Fail，不能 throw
+        var ex = await Record.ExceptionAsync(() => svc.ManualMatchAsync(req, null, "admin"));
+        Assert.Null(ex);   // 之前会 throw InvalidOperationException，现在不应抛出
+
+        var r = await svc.ManualMatchAsync(req, null, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-MATCH-003", r.Code);
+
+        // 不应有任何持久化记录
+        Assert.Empty(await db.BankReconMatches.ToListAsync());
+        Assert.Empty(await db.BankReconJournalLinks.ToListAsync());
+        var line = await db.BankStatementLines.FirstAsync(x => x.Id == lineId);
+        Assert.Equal(BankLineMatchStatus.Unmatched, line.MatchStatus);
+    }
+
+    /// <summary>Bug2: 外币账户选了币种不符的凭证行 → 同样 return FinResult.Fail("E-A4-MATCH-003")</summary>
+    [Fact]
+    public async Task ManualMatch_ForeignCurrencyMismatch_WrongCurrency_ReturnsFail()
+    {
+        var (svc, db, stmtId, glId) = await Fixture(acctCcy: "USD");
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 100, ccy: "USD");
+        // 凭证行币种为 EUR（≠ USD）
+        var jlId = await PostedBankLine(db, glId, new(2026, 6, 4), 700, 0, ccy: "EUR", orig: 100m);
+        var req = new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { lineId }, JournalLineIds = { jlId } };
+
+        var ex = await Record.ExceptionAsync(() => svc.ManualMatchAsync(req, null, "admin"));
+        Assert.Null(ex);
+
+        var r = await svc.ManualMatchAsync(req, null, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-MATCH-003", r.Code);
+        Assert.Empty(await db.BankReconMatches.ToListAsync());
+    }
+
+    /// <summary>Bug1+reversal guard: 反转凭证行 → 现有 guard 返回 E-A4-MATCH-003（previously-untested path）</summary>
+    [Fact]
+    public async Task ManualMatch_ReversalEntry_Fails()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 100);
+        // 建一张 Source==Reversal 的凭证（直接设标志位）
+        var entry = new JournalEntry
+        {
+            Id = Guid.NewGuid(), No = "REV-001", VoucherDate = new(2026, 6, 4),
+            Source = VoucherSource.Reversal, Status = JournalStatus.Posted
+        };
+        var jl = new JournalLine { Id = Guid.NewGuid(), EntryId = entry.Id, LineNo = 1, AccountId = glId, Debit = 100 };
+        entry.Lines.Add(jl);
+        entry.Lines.Add(new JournalLine { Id = Guid.NewGuid(), EntryId = entry.Id, LineNo = 2, AccountId = Guid.NewGuid(), Credit = 100 });
+        db.JournalEntries.Add(entry);
+        await db.SaveChangesAsync();
+
+        var req = new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { lineId }, JournalLineIds = { jl.Id } };
+        var r = await svc.ManualMatchAsync(req, null, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-MATCH-003", r.Code);
+        Assert.Empty(await db.BankReconMatches.ToListAsync());
+    }
+
     [Fact]
     public async Task Unmatch_ReleasesLinesAndLinks()
     {

@@ -224,7 +224,7 @@ public class BankReconService : IBankReconService
         if (req.StatementLineIds.Count == 0 || req.JournalLineIds.Count == 0) return FinResult.Fail("E-A4-MATCH-001");
 
         var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId);
-        var isForeign = !string.IsNullOrEmpty(acct.CurrencyCd) && acct.CurrencyCd != "JPY";
+        var isForeign = !FxConstants.IsBase(acct.CurrencyCd);   // Bug1 fix: 与 LoadCandidateRowsAsync 保持一致
 
         // 流水行：同一会话、未占用
         var lines = await _db.BankStatementLines
@@ -246,21 +246,26 @@ public class BankReconService : IBankReconService
             .Where(x => req.JournalLineIds.Contains(x.JournalLineId)).AnyAsync();
         if (alreadyOccupied) return FinResult.Fail("E-A4-MATCH-002");
 
-        // Σ 完全相等（外币按原币）
-        var cands = jls.Select(x =>
+        // Σ 完全相等（外币按原币）；Bug2 fix: 用 foreach 替代 LINQ 投影，确保错误路径 return FinResult.Fail 而非 throw
+        var cands = new List<BankCandidateLine>(jls.Count);
+        decimal bookSum = 0m;
+        foreach (var x in jls)
         {
             decimal signed;
             if (isForeign)
             {
                 if (x.jl.OrigAmount is not decimal orig || x.jl.CurrencyCd != acct.CurrencyCd)
-                    throw new InvalidOperationException("E-A4-MATCH-003");
+                    return FinResult.Fail("E-A4-MATCH-003");   // 缺原币/币种不符 → 优雅失败
                 signed = x.jl.Debit > 0 ? orig : -orig;
             }
-            else signed = x.jl.Debit - x.jl.Credit;
-            return new BankCandidateLine { JournalLineId = x.jl.Id, JournalEntryId = x.je.Id, BankSignedAmount = signed };
-        }).ToList();
+            else
+            {
+                signed = x.jl.Debit - x.jl.Credit;
+            }
+            cands.Add(new BankCandidateLine { JournalLineId = x.jl.Id, JournalEntryId = x.je.Id, BankSignedAmount = signed });
+            bookSum += signed;
+        }
         var stmtSum = lines.Sum(l => l.SignedAmount);
-        var bookSum = cands.Sum(c => c.BankSignedAmount);
         if (stmtSum != bookSum) return FinResult.Fail("E-A4-MATCH-001");
 
         // RowVersion 乐观并发（前端带其中一条流水行版本）
