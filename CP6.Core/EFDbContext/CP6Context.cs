@@ -393,6 +393,11 @@ public class CP6Context : DbContext
     public DbSet<BankReconMatch> BankReconMatches { get; set; }
     public DbSet<BankReconJournalLink> BankReconJournalLinks { get; set; }
     public DbSet<BankImportProfile> BankImportProfiles { get; set; }
+    // ───── 预算（A5）─────
+    public DbSet<Budget> Budgets { get; set; }
+    public DbSet<BudgetVersion> BudgetVersions { get; set; }
+    public DbSet<BudgetLine> BudgetLines { get; set; }
+    public DbSet<BudgetLinePeriod> BudgetLinePeriods { get; set; }
     /// <summary>税码（章03）</summary>
     public DbSet<TaxCode> TaxCodes { get; set; }
     /// <summary>应付核销（章03）</summary>
@@ -773,6 +778,12 @@ public class CP6Context : DbContext
             e.HasIndex(x => x.MatchGroupId).HasDatabaseName("IX_Fin_BankReconJournalLink_Group");
         });
         modelBuilder.Entity<BankReconMatch>(e => e.HasIndex(x => x.StatementId));
+
+        // ── A5 预算 ──
+        modelBuilder.Entity<Budget>().HasIndex(b => b.FiscalYear).IsUnique().HasDatabaseName("UX_Fin_Budget_FiscalYear");
+        modelBuilder.Entity<BudgetVersion>().HasIndex(v => new { v.BudgetId, v.VersionNo }).IsUnique().HasDatabaseName("UX_Fin_BudgetVersion_BudgetNo");
+        modelBuilder.Entity<BudgetLine>().HasIndex(l => new { l.VersionId, l.AccountId, l.CostCenterKey, l.CostObjectTypeKey, l.CostObjectIdKey }).IsUnique().HasDatabaseName("UX_Fin_BudgetLine_Dim");
+        modelBuilder.Entity<BudgetLinePeriod>().HasIndex(p => new { p.BudgetLineId, p.PeriodNo }).IsUnique().HasDatabaseName("UX_Fin_BudgetLinePeriod_LinePeriod");
 
         // 应付核销（章03）：按付款 / 发票取核销关系
         modelBuilder.Entity<ApSettlement>(e =>
