@@ -149,4 +149,46 @@ public class AssetDisposalServiceTests
         var r = await disp.CreateAsync(d, "admin");
         Assert.True(r.Ok, r.Code);
     }
+
+    [Fact] // §13.15 处置反冲还原 PriorStatus（FullyDepreciated 不回 InUse）+ 连带回滚补提
+    public async Task ReverseAsync_RestoresPriorStatus_AndRollsBackFinalAccrual()
+    {
+        var (db, disp, _, june, card) = await SetupAsync(status: AssetStatus.FullyDepreciated, accum: 12000m);
+        var d = new AssetDisposal
+        {
+            AssetCardId = card.Id, DisposalType = AssetDisposalType.Scrap,
+            DisposalDate = new DateTime(2026, 6, 10), FiscalPeriodId = june,
+        };
+        Assert.True((await disp.CreateAsync(d, "admin")).Ok);
+        Assert.True((await disp.ConfirmAsync(d.Id, "admin")).Ok);
+
+        var r = await disp.ReverseAsync(d.Id, "admin", "撤销");
+        Assert.True(r.Ok, r.Code);
+        var saved = await db.AssetDisposals.SingleAsync();
+        Assert.Equal(AssetDisposalStatus.Reversed, saved.Status);
+        var savedCard = await db.AssetCards.FindAsync(card.Id);
+        Assert.Equal(AssetStatus.FullyDepreciated, savedCard!.Status);
+        Assert.Equal(12000m, savedCard.AccumulatedDepreciation);
+    }
+
+    [Fact] // §13.16 反冲次序：批内含已处置资产的批量批次反冲 → FA011
+    public async Task ReverseBatch_WithDisposedAsset_FA011()
+    {
+        var (db, disp, dep, june, card) = await SetupAsync(accum: 1000m);
+        await dep.RunAsync(june, "admin", DepreciationRunMode.Manual);
+        var batch = await db.DepreciationRuns.SingleAsync(x => x.RunMode == DepreciationRunMode.Manual);
+        await dep.PostAsync(batch.Id, "admin");
+
+        var d = new AssetDisposal
+        {
+            AssetCardId = card.Id, DisposalType = AssetDisposalType.Scrap,
+            DisposalDate = new DateTime(2026, 6, 10), FiscalPeriodId = june,
+        };
+        Assert.True((await disp.CreateAsync(d, "admin")).Ok);
+        Assert.True((await disp.ConfirmAsync(d.Id, "admin")).Ok);
+
+        var rev = await dep.ReverseAsync(batch.Id, "admin", "误提");
+        Assert.False(rev.Ok);
+        Assert.Equal("FA011", rev.Code);
+    }
 }

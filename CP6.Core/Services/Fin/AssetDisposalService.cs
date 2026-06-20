@@ -155,7 +155,57 @@ public sealed class AssetDisposalService : IAssetDisposalService
         return FinResult.Pass();
     }
 
-    public Task<FinResult> ReverseAsync(Guid id, string userId, string reason) => throw new NotImplementedException();
+    public async Task<FinResult> ReverseAsync(Guid id, string userId, string reason)
+    {
+        var d = await _db.AssetDisposals.FindAsync(id);
+        if (d == null) return FinResult.Fail("FA006");
+        if (d.Status != AssetDisposalStatus.Confirmed) return FinResult.Fail("FA009");
+
+        DepreciationRun? finalRun = null;
+        if (d.FinalDeprecEntryId != null)
+        {
+            var fe = await _db.DepreciationEntries.FindAsync(d.FinalDeprecEntryId.Value);
+            if (fe != null)
+            {
+                finalRun = await _db.DepreciationRuns.FindAsync(fe.RunId);
+                if (finalRun is { Status: DepreciationRunStatus.Reversed }) return FinResult.Fail("FA011");
+            }
+        }
+
+        if (d.JournalEntryId != null)
+        {
+            var rev = await _journal.ReverseAsync(d.JournalEntryId.Value, userId, reason, autoPost: true);
+            if (!rev.Ok) return rev;
+        }
+
+        var card = await _db.AssetCards.FindAsync(d.AssetCardId);
+
+        if (finalRun != null && finalRun.Status == DepreciationRunStatus.Posted)
+        {
+            if (finalRun.JournalEntryId != null)
+            {
+                var rev2 = await _journal.ReverseAsync(finalRun.JournalEntryId.Value, userId, reason, autoPost: true);
+                if (!rev2.Ok) return rev2;
+            }
+            var fe = await _db.DepreciationEntries.FindAsync(d.FinalDeprecEntryId!.Value);
+            if (card != null && fe != null)
+            {
+                card.AccumulatedDepreciation -= fe.DepreciationAmount;
+                card.DepreciatedPeriods -= 1;
+            }
+            finalRun.Status = DepreciationRunStatus.Reversed;
+            finalRun.ReversedAt = DateTime.Now;
+            finalRun.ReversedBy = userId;
+        }
+
+        if (card != null && d.PriorStatus.HasValue) card.Status = d.PriorStatus.Value;
+        d.Status = AssetDisposalStatus.Reversed;
+        d.ReversedAt = DateTime.Now;
+        d.ReversedBy = userId;
+        d.Reason = reason;
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
 
     public Task<AssetDisposal?> GetAsync(Guid id) => _db.AssetDisposals.FirstOrDefaultAsync(x => x.Id == id);
 
