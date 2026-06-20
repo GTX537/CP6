@@ -53,6 +53,16 @@
                 </el-tag>
               </template>
             </el-table-column>
+            <el-table-column :label="t('操作')" width="80" fixed="right">
+              <template #default="{ row }">
+                <el-button
+                  v-if="row.matchStatus === 1 && row.matchGroupId"
+                  link type="danger" size="small"
+                  @click="openUnmatch(row)">
+                  {{ t('bankrecon.action.unmatch') }}
+                </el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </el-col>
 
@@ -100,10 +110,15 @@
     </el-card>
 
     <!-- 生成凭证对话框 -->
-    <el-dialog v-model="genVoucherVisible" :title="t('bankrecon.btn.genVoucher')" width="480px">
+    <el-dialog v-model="genVoucherVisible" :title="t('bankrecon.btn.genVoucher')" width="480px"
+      @open="loadLeafAccounts">
       <el-form :model="genForm" label-width="120px" size="small">
         <el-form-item :label="t('bankrecon.field.counterAccount')">
-          <el-input v-model="genForm.counterAccountId" :placeholder="t('bankrecon.field.counterAccountHint')" />
+          <el-select v-model="genForm.counterAccountId" filterable style="width:100%"
+            :placeholder="t('bankrecon.field.counterAccountHint')">
+            <el-option v-for="a in leafAccounts" :key="a.id" :value="a.id"
+              :label="`${a.code} ${a.name}`" />
+          </el-select>
         </el-form-item>
         <el-form-item :label="t('bankrecon.field.partner')">
           <el-input v-model="genForm.partnerId" :placeholder="t('bankrecon.field.partnerHint')" />
@@ -133,6 +148,7 @@ import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { bankStatementApi, bankReconApi } from '@/api/fin/bankRecon'
 import type { BankStatement, BankStatementLine, BankCandidateLine, ReconciliationStatement } from '@/types/fin/bankRecon'
+import { glAccountApi } from '@/api/fin/fin'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -154,6 +170,7 @@ const currentLine = ref<BankStatementLine | null>(null)
 const genVoucherVisible = ref(false)
 const genVoucherLoading = ref(false)
 const genForm = reactive({ counterAccountId: '', partnerId: '' })
+const leafAccounts = ref<any[]>([])
 
 // unmatch
 const unmatchVisible = ref(false)
@@ -377,6 +394,19 @@ async function doUnmatch() {
   } catch (e: any) {
     ElMessage.error(e?.response?.data?.message || t('bankrecon.btn.unmatch'))
   }
+}
+
+function openUnmatch(row: BankStatementLine) {
+  unmatchGroupId.value = row.matchGroupId!
+  unmatchVisible.value = true
+}
+
+async function loadLeafAccounts() {
+  if (leafAccounts.value.length) return
+  try {
+    const res = await glAccountApi.list()
+    leafAccounts.value = (res?.data ?? []).filter((a: any) => a.isLeaf)
+  } catch { /* ignore */ }
 }
 
 onMounted(loadAll)

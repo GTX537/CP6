@@ -16,7 +16,71 @@
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
 
-      <el-table :data="rows" border stripe size="small" max-height="520" v-loading="loading" row-key="id">
+      <el-table :data="rows" border stripe size="small" max-height="420" v-loading="loading" row-key="id"
+        @expand-change="onExpandChange" :expand-row-keys="expandedRows">
+        <el-table-column type="expand">
+          <template #default="{ row }">
+            <div class="lines-panel">
+              <div class="table-toolbar">
+                <span class="lines-panel-title">{{ t('bankrecon.panel.bankLines') }}</span>
+                <el-button v-if="row.status === 0" type="primary" size="small" @click="openAddLine(row)">
+                  {{ t('bankrecon.btn.addLine') }}
+                </el-button>
+                <el-button size="small" @click="loadLines(row.id!)">{{ t('刷新') }}</el-button>
+              </div>
+              <el-table
+                :data="linesMap[row.id!] || []"
+                border stripe size="small" max-height="300"
+                v-loading="linesLoadingMap[row.id!]">
+                <el-table-column prop="lineNo" :label="t('bankrecon.field.lineNo')" width="60" align="center" />
+                <el-table-column prop="txnDate" :label="t('bankrecon.field.txnDate')" width="100">
+                  <template #default="{ row: lr }">{{ (lr.txnDate || '').slice(0, 10) }}</template>
+                </el-table-column>
+                <el-table-column :label="t('bankrecon.field.direction')" width="70" align="center">
+                  <template #default="{ row: lr }">
+                    <el-tag :type="lr.direction === 1 ? 'success' : 'danger'" size="small">
+                      {{ lr.direction === 1 ? t('bankrecon.direction.deposit') : t('bankrecon.direction.withdrawal') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="amount" :label="t('bankrecon.field.amount')" width="110" align="right" />
+                <el-table-column prop="refNo" :label="t('bankrecon.field.refNo')" width="120" show-overflow-tooltip />
+                <el-table-column prop="counterpartyName" :label="t('bankrecon.field.counterparty')" width="130" show-overflow-tooltip />
+                <el-table-column prop="description" :label="t('bankrecon.field.description')" min-width="120" show-overflow-tooltip />
+                <el-table-column :label="t('bankrecon.field.source')" width="80" align="center">
+                  <template #default="{ row: lr }">
+                    <el-tag :type="lr.source === 2 ? 'warning' : 'info'" size="small">
+                      {{ lr.source === 2 ? t('bankrecon.source.manual') : t('bankrecon.source.imported') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="t('bankrecon.field.matchStatus')" width="90" align="center">
+                  <template #default="{ row: lr }">
+                    <el-tag :type="MATCH_STATUS_TAG[lr.matchStatus] || 'info'" size="small">
+                      {{ t(MATCH_STATUS_I18N[lr.matchStatus] || 'bankrecon.matchStatus.unmatched') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column :label="t('操作')" width="130" fixed="right">
+                  <template #default="{ row: lr }">
+                    <el-button
+                      link type="primary" size="small"
+                      :disabled="lr.source !== 2 || row.status !== 0"
+                      @click="openEditLine(row, lr)">
+                      {{ t('编辑') }}
+                    </el-button>
+                    <el-button
+                      link type="danger" size="small"
+                      :disabled="lr.source !== 2 || row.status !== 0"
+                      @click="doDeleteLine(row, lr)">
+                      {{ t('删除') }}
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="no" :label="t('bankrecon.field.statementNo')" width="160" />
         <el-table-column prop="bankAccountId" :label="t('bankrecon.field.bankAccount')" width="130" />
         <el-table-column :label="t('bankrecon.field.period')" width="200">
@@ -109,6 +173,38 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 手工行 新建/编辑 对话框 -->
+    <el-dialog v-model="lineDialogVisible" :title="editingLine.id ? t('编辑') : t('bankrecon.btn.addLine')" width="480px">
+      <el-form :model="lineForm" label-width="100px" size="small">
+        <el-form-item :label="t('bankrecon.field.txnDate')">
+          <el-date-picker v-model="lineForm.txnDate" type="date" value-format="YYYY-MM-DD"
+            style="width:100%" :placeholder="t('bankrecon.field.txnDate')" />
+        </el-form-item>
+        <el-form-item :label="t('bankrecon.field.direction')">
+          <el-select v-model="lineForm.direction" style="width:100%">
+            <el-option :value="1" :label="t('bankrecon.direction.deposit')" />
+            <el-option :value="2" :label="t('bankrecon.direction.withdrawal')" />
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="t('bankrecon.field.amount')">
+          <el-input-number v-model="lineForm.amount" :precision="2" :min="0" style="width:100%" />
+        </el-form-item>
+        <el-form-item :label="t('bankrecon.field.refNo')">
+          <el-input v-model="lineForm.refNo" :placeholder="t('bankrecon.field.refNoHint')" />
+        </el-form-item>
+        <el-form-item :label="t('bankrecon.field.counterparty')">
+          <el-input v-model="lineForm.counterpartyName" :placeholder="t('bankrecon.field.counterpartyHint')" />
+        </el-form-item>
+        <el-form-item :label="t('bankrecon.field.description')">
+          <el-input v-model="lineForm.description" :placeholder="t('bankrecon.field.description')" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="lineDialogVisible = false">{{ t('取消') }}</el-button>
+        <el-button type="primary" :loading="lineSaving" @click="doSaveLine">{{ t('保存') }}</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -116,9 +212,9 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { bankStatementApi, bankProfileApi } from '@/api/fin/bankRecon'
-import type { BankStatement, BankImportPreviewResult, BankImportProfile } from '@/types/fin/bankRecon'
+import type { BankStatement, BankStatementLine, BankImportPreviewResult, BankImportProfile } from '@/types/fin/bankRecon'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -127,6 +223,22 @@ const rows = ref<BankStatement[]>([])
 const loading = ref(false)
 const saving = ref(false)
 const filterStatus = ref<number | undefined>(undefined)
+
+// expand rows for lines panel
+const expandedRows = ref<string[]>([])
+const linesMap = ref<Record<string, BankStatementLine[]>>({})
+const linesLoadingMap = ref<Record<string, boolean>>({})
+
+const MATCH_STATUS_TAG: Record<number, '' | 'success' | 'info' | 'warning' | 'danger'> = {
+  0: 'info', 1: 'success', 2: 'warning', 3: 'warning', 4: 'warning',
+}
+const MATCH_STATUS_I18N: Record<number, string> = {
+  0: 'bankrecon.matchStatus.unmatched',
+  1: 'bankrecon.matchStatus.matched',
+  2: 'bankrecon.matchStatus.pending',
+  3: 'bankrecon.matchStatus.pending',
+  4: 'bankrecon.matchStatus.pending',
+}
 
 // 新建会话
 const createVisible = ref(false)
@@ -150,6 +262,20 @@ const profiles = ref<BankImportProfile[]>([])
 const previewing = ref(false)
 const confirming = ref(false)
 
+// 手工行对话框
+const lineDialogVisible = ref(false)
+const lineSaving = ref(false)
+const lineStatementId = ref('')
+const editingLine = reactive<Partial<BankStatementLine>>({})
+const lineForm = reactive<Partial<BankStatementLine>>({
+  txnDate: '',
+  direction: 1,
+  amount: 0,
+  refNo: '',
+  counterpartyName: '',
+  description: '',
+})
+
 async function load() {
   loading.value = true
   try {
@@ -157,6 +283,27 @@ async function load() {
     rows.value = r?.data || []
   } finally {
     loading.value = false
+  }
+}
+
+async function loadLines(statementId: string) {
+  linesLoadingMap.value[statementId] = true
+  try {
+    const r = await bankStatementApi.get(statementId)
+    linesMap.value[statementId] = r?.data?.lines ?? []
+  } finally {
+    linesLoadingMap.value[statementId] = false
+  }
+}
+
+async function onExpandChange(row: BankStatement, expanded: boolean) {
+  if (expanded && row.id) {
+    if (!expandedRows.value.includes(row.id)) {
+      expandedRows.value = [...expandedRows.value, row.id]
+    }
+    await loadLines(row.id)
+  } else if (row.id) {
+    expandedRows.value = expandedRows.value.filter(id => id !== row.id)
   }
 }
 
@@ -240,6 +387,72 @@ async function doConfirm() {
   }
 }
 
+function openAddLine(statement: BankStatement) {
+  lineStatementId.value = statement.id!
+  Object.assign(editingLine, { id: undefined, rowVersion: undefined })
+  Object.assign(lineForm, { txnDate: '', direction: 1, amount: 0, refNo: '', counterpartyName: '', description: '' })
+  lineDialogVisible.value = true
+}
+
+function openEditLine(statement: BankStatement, line: BankStatementLine) {
+  lineStatementId.value = statement.id!
+  Object.assign(editingLine, line)
+  Object.assign(lineForm, {
+    txnDate: line.txnDate,
+    direction: line.direction,
+    amount: line.amount,
+    refNo: line.refNo ?? '',
+    counterpartyName: line.counterpartyName ?? '',
+    description: line.description ?? '',
+  })
+  lineDialogVisible.value = true
+}
+
+async function doSaveLine() {
+  if (!lineForm.txnDate) { ElMessage.warning(t('bankrecon.field.txnDate') + t('必填')); return }
+  if (!lineForm.amount || lineForm.amount <= 0) { ElMessage.warning(t('bankrecon.field.amount') + t('必填')); return }
+  lineSaving.value = true
+  try {
+    let r: any
+    if (editingLine.id) {
+      r = await bankStatementApi.updateLine(lineStatementId.value, editingLine.id, {
+        ...lineForm,
+        source: 2,
+        rowVersion: editingLine.rowVersion ?? undefined,
+      })
+    } else {
+      r = await bankStatementApi.addLine(lineStatementId.value, { ...lineForm, source: 2 })
+    }
+    if (r?.code === 0) {
+      ElMessage.success(t('bankrecon.msg.saved'))
+      lineDialogVisible.value = false
+      await loadLines(lineStatementId.value)
+    } else {
+      ElMessage.error(t(r?.message ?? '操作失败'))
+    }
+  } catch (e: any) {
+    ElMessage.error(t(e?.response?.data?.message ?? '操作失败'))
+  } finally {
+    lineSaving.value = false
+  }
+}
+
+async function doDeleteLine(statement: BankStatement, line: BankStatementLine) {
+  try {
+    await ElMessageBox.confirm(t('bankrecon.msg.deleteLineConfirm'), t('删除'), { type: 'warning' })
+    const r = await bankStatementApi.deleteLine(statement.id!, line.id!)
+    if (r?.code === 0) {
+      ElMessage.success(t('bankrecon.msg.deleted'))
+      await loadLines(statement.id!)
+    } else {
+      ElMessage.error(t(r?.message ?? '操作失败'))
+    }
+  } catch (e: any) {
+    if (e === 'cancel') return
+    ElMessage.error(t(e?.response?.data?.message ?? '操作失败'))
+  }
+}
+
 function goWorkbench(row: BankStatement) {
   router.push({ path: '/fin/bank-reconciliation', query: { id: row.id } })
 }
@@ -254,4 +467,6 @@ onMounted(load)
 .subtitle { color: #909399; font-size: 12px; }
 .table-toolbar { margin-bottom: 8px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .preview-result { margin-top: 8px; }
+.lines-panel { padding: 12px 16px; background: #fafafa; }
+.lines-panel-title { font-weight: 600; font-size: 13px; color: #606266; }
 </style>
