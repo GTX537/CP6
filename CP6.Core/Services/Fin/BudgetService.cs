@@ -163,5 +163,35 @@ public class BudgetService : IBudgetService
     }
 
     // ── C-2 实现 ──
-    internal Task CopyIntoAsync(Guid targetVersionId, Guid? fromVersionId, int? fromActualFiscalYear) => Task.CompletedTask;
+    internal async Task CopyIntoAsync(Guid targetVersionId, Guid? fromVersionId, int? fromActualFiscalYear)
+    {
+        if (fromVersionId.HasValue)
+        {
+            var srcLines = await _db.BudgetLines.AsNoTracking().Where(l => l.VersionId == fromVersionId.Value).ToListAsync();
+            var srcIds = srcLines.Select(l => l.Id).ToList();
+            var srcPeriods = await _db.BudgetLinePeriods.AsNoTracking().Where(p => srcIds.Contains(p.BudgetLineId)).ToListAsync();
+            foreach (var sl in srcLines)
+            {
+                var nl = new BudgetLine
+                {
+                    VersionId = targetVersionId, AccountId = sl.AccountId,
+                    CostCenterId = sl.CostCenterId, CostObjectType = sl.CostObjectType, CostObjectId = sl.CostObjectId,
+                    AnnualAmount = sl.AnnualAmount, ControlMode = sl.ControlMode, ControlBasis = sl.ControlBasis, Memo = sl.Memo,
+                };
+                nl.NormalizeKeys();
+                _db.BudgetLines.Add(nl);
+                await _db.SaveChangesAsync();   // flush each line to get nl.Id before inserting its periods
+                foreach (var p in srcPeriods.Where(p => p.BudgetLineId == sl.Id))
+                    _db.BudgetLinePeriods.Add(new BudgetLinePeriod { BudgetLineId = nl.Id, PeriodNo = p.PeriodNo, Amount = p.Amount });
+            }
+            await _db.SaveChangesAsync();
+        }
+        if (fromActualFiscalYear.HasValue)
+        {
+            await CopyFromActualAsync(targetVersionId, fromActualFiscalYear.Value);
+        }
+    }
+
+    // F-2 实现（上年实际聚合回填）。本任务留空，F-2 接 IBudgetReportService。
+    internal virtual Task CopyFromActualAsync(Guid targetVersionId, int sourceFiscalYear) => Task.CompletedTask;
 }
