@@ -145,3 +145,12 @@ export interface BudgetImportPreviewResult {
   rows: BudgetImportRow[]
   hasFatal: boolean
 }
+
+/** 成本中心（lookup，A5 D2）*/
+export interface CostCenter {
+  id: string
+  code: string
+  name: string
+  type: number    // CostCenterType: 1=Department 2=Process 3=Machine
+  isActive: boolean
+}

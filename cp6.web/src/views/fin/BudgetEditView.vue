@@ -409,9 +409,9 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { budgetApi, budgetVersionApi, budgetLineApi } from '@/api/fin/budget'
+import { budgetApi, budgetVersionApi, budgetLineApi, costCenterApi } from '@/api/fin/budget'
 import { glAccountApi } from '@/api/fin/fin'
-import type { Budget, BudgetVersion, BudgetLineGridRow, BudgetLineDto, BudgetImportPreviewResult } from '@/types/fin/budget'
+import type { Budget, BudgetVersion, BudgetLineGridRow, BudgetLineDto, BudgetImportPreviewResult, CostCenter } from '@/types/fin/budget'
 import {
   BUDGET_VERSION_STATUS_TAG,
   BUDGET_CONTROL_MODE_LABEL,
@@ -453,7 +453,7 @@ const linesLoading = ref(false)
 const saving = ref(false)
 
 const leafAccounts = ref<any[]>([])
-const costCenters = ref<any[]>([])
+const costCenters = ref<CostCenter[]>([])
 
 // 是否草稿状态（行编辑门控）
 const isDraft = computed(() => selectedVersion.value?.status === 0)
@@ -891,10 +891,10 @@ async function loadLeafAccounts() {
 }
 
 async function loadCostCenters() {
-  // Cost centers may be from dept/org API or a dedicated endpoint
-  // Using empty for now — caller can filter by blank=company-level in upsert
-  // If a cost center API is available, wire it here
-  costCenters.value = []
+  try {
+    const res = await costCenterApi.list()
+    costCenters.value = res?.data ?? []
+  } catch { /* ignore — dropdown just shows no options */ }
 }
 
 function accountLabel(id: string): string {

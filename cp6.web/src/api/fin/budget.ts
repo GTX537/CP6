@@ -3,6 +3,7 @@ import type { ApiResp } from '@/types/fin/fin'
 import type {
   Budget, BudgetVersion, BudgetLineGridRow, BudgetLineDto,
   BudgetVsActualReport, BudgetWarningDto, BudgetImportPreviewResult,
+  CostCenter,
 } from '@/types/fin/budget'
 import type { JournalEntry } from '@/types/fin/fin'
 
@@ -87,6 +88,14 @@ export const budgetLineApi = {
     const fd = new FormData(); fd.append('file', file)
     return http.post<any, ApiResp<unknown>>(
       `/fin/budget/lines/import/confirm?versionId=${versionId}`, fd)
+  },
+}
+
+// ── 成本中心查找 ──
+export const costCenterApi = {
+  /** 成本中心列表（A5 D2 lookup）*/
+  list(includeInactive = false) {
+    return http.get<any, ApiResp<CostCenter[]>>('/fin/cost-center', { params: { includeInactive } })
   },
 }
 
