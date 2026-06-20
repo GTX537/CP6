@@ -387,6 +387,12 @@ public class CP6Context : DbContext
     public DbSet<Payment> Payments { get; set; }
     /// <summary>银行账户（章03）</summary>
     public DbSet<BankAccount> BankAccounts { get; set; }
+    // ───── 银行对账（A4）─────
+    public DbSet<BankStatement> BankStatements { get; set; }
+    public DbSet<BankStatementLine> BankStatementLines { get; set; }
+    public DbSet<BankReconMatch> BankReconMatches { get; set; }
+    public DbSet<BankReconJournalLink> BankReconJournalLinks { get; set; }
+    public DbSet<BankImportProfile> BankImportProfiles { get; set; }
     /// <summary>税码（章03）</summary>
     public DbSet<TaxCode> TaxCodes { get; set; }
     /// <summary>应付核销（章03）</summary>
@@ -746,6 +752,27 @@ public class CP6Context : DbContext
         // 银行账户 / 税码：编码唯一
         modelBuilder.Entity<BankAccount>(e => e.HasIndex(x => x.Code).IsUnique());
         modelBuilder.Entity<TaxCode>(e => e.HasIndex(x => x.Code).IsUnique());
+
+        // ───── 银行对账（A4）索引 ─────
+        modelBuilder.Entity<BankStatement>(e =>
+        {
+            // 每账户每期一个会话（自动补 TenantId 前缀 → (TenantId, BankAccountId, FiscalPeriodId)）
+            e.HasIndex(x => new { x.BankAccountId, x.FiscalPeriodId }).IsUnique()
+                .HasDatabaseName("UX_Fin_BankStatement_AcctPeriod");
+            e.HasIndex(x => x.No);
+        });
+        modelBuilder.Entity<BankStatementLine>(e =>
+        {
+            e.HasIndex(x => x.StatementId).HasDatabaseName("IX_Fin_BankStatementLine_Stmt");
+            e.HasIndex(x => new { x.StatementId, x.Fingerprint }).HasDatabaseName("IX_Fin_BankStatementLine_Fingerprint");
+        });
+        modelBuilder.Entity<BankReconJournalLink>(e =>
+        {
+            // 一条凭证行只能对账一次（自动补 TenantId 前缀 → (TenantId, JournalLineId)）
+            e.HasIndex(x => x.JournalLineId).IsUnique().HasDatabaseName("UX_Fin_BankReconJournalLink_JL");
+            e.HasIndex(x => x.MatchGroupId).HasDatabaseName("IX_Fin_BankReconJournalLink_Group");
+        });
+        modelBuilder.Entity<BankReconMatch>(e => e.HasIndex(x => x.StatementId));
 
         // 应付核销（章03）：按付款 / 发票取核销关系
         modelBuilder.Entity<ApSettlement>(e =>
