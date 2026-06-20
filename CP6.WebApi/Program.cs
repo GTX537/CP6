@@ -1387,6 +1387,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nCnScreenSeed.Items)    // 遗留⑦ PMS/wf/Pub 中文画面词条
             .Concat(CP6.WebApi.Seed.I18nBackendMsgSeed.Items)  // 后端控制器 return 型响应文案
             .Concat(CP6.WebApi.Seed.I18nFinScreenSeed.Items)   // 财务 GL 内核 4 视图 + nav.6xx + E-FIN-* 错误码
+            .Concat(CP6.WebApi.Seed.I18nA3ScreenSeed.Items)    // A3 固定资产 4 视图 nav.615-618 + 枚举 + 字段 + FA001-012
             .Concat(CP6.WebApi.Seed.I18nPurScreenSeed.Items)   // 采购 MVP 4 视图 + nav.70x + E-PUR-* 错误码
             .Concat(CP6.WebApi.Seed.I18nPlanScreenSeed.Items)  // 计划中台 MRP 看板 + 主数据 + nav.73x + E-PLAN-* 错误码
             .Concat(CP6.WebApi.Seed.I18nA2ScreenSeed.Items)    // A2 工艺路线 工作中心+工序费率 视图 + nav.31x + E-A2-* 错误码
