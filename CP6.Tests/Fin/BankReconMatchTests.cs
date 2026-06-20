@@ -96,4 +96,76 @@ public class BankReconMatchTests
         Assert.Single(cands);
         Assert.Equal(100m, cands[0].BankSignedAmount);   // 按原币
     }
+
+    [Fact]
+    public async Task AutoMatch_Phase1_UniqueExact_Matches11()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 100);
+        await PostedBankLine(db, glId, new(2026, 6, 4), 100, 0);          // 唯一精确候选
+        var r = await svc.AutoMatchAsync(stmtId, "admin");
+        Assert.True(r.Ok);
+        var line = await db.BankStatementLines.FirstAsync(x => x.Id == lineId);
+        Assert.Equal(BankLineMatchStatus.Matched, line.MatchStatus);
+        Assert.Single(await db.BankReconMatches.ToListAsync());
+        Assert.Single(await db.BankReconJournalLinks.ToListAsync());
+    }
+
+    [Fact]
+    public async Task AutoMatch_Phase1_MultipleCandidates_LeftManual()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 100);
+        await PostedBankLine(db, glId, new(2026, 6, 4), 100, 0);
+        await PostedBankLine(db, glId, new(2026, 6, 6), 100, 0);          // 两候选→不自动
+        await svc.AutoMatchAsync(stmtId, "admin");
+        var line = await db.BankStatementLines.FirstAsync(x => x.Id == lineId);
+        Assert.Equal(BankLineMatchStatus.Unmatched, line.MatchStatus);
+        Assert.Empty(await db.BankReconMatches.ToListAsync());
+    }
+
+    [Fact]
+    public async Task AutoMatch_Phase2_OneToMany_UniqueSubset_Matches()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        // 一笔银行出账 −90 ↔ 两张付款凭证行（−60 + −30），有界子集和唯一解
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 2, 90);
+        await PostedBankLine(db, glId, new(2026, 6, 4), 0, 60);   // 银行侧 −60（Credit）
+        await PostedBankLine(db, glId, new(2026, 6, 4), 0, 30);   // 银行侧 −30
+        var r = await svc.AutoMatchAsync(stmtId, "admin");
+        Assert.True(r.Ok);
+        var line = await db.BankStatementLines.FirstAsync(x => x.Id == lineId);
+        Assert.Equal(BankLineMatchStatus.Matched, line.MatchStatus);
+        Assert.Equal(2, await db.BankReconJournalLinks.CountAsync());
+    }
+
+    [Fact]
+    public async Task AutoMatch_Phase2_MultipleSolutions_LeftManual()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 2, 100);
+        await PostedBankLine(db, glId, new(2026, 6, 4), 0, 100);   // 解1：单行 −100
+        await PostedBankLine(db, glId, new(2026, 6, 4), 0, 60);    // 解2：−60 + −40
+        await PostedBankLine(db, glId, new(2026, 6, 4), 0, 40);
+        await svc.AutoMatchAsync(stmtId, "admin");
+        var line = await db.BankStatementLines.FirstAsync(x => x.Id == lineId);
+        Assert.Equal(BankLineMatchStatus.Unmatched, line.MatchStatus);  // 多解→不自动
+    }
+
+    [Fact]
+    public async Task AutoMatch_Phase2_ManyToOne_UniqueSubset_Matches()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        // 两笔银行入账（+60 + +40）↔ 一张合并收款凭证行（银行侧 +100，Debit），有界子集和唯一解
+        var l1 = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 60);
+        var l2 = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 40);
+        await PostedBankLine(db, glId, new(2026, 6, 4), 100, 0);   // 银行侧 +100（Debit）
+        var r = await svc.AutoMatchAsync(stmtId, "admin");
+        Assert.True(r.Ok);
+        Assert.Equal(BankLineMatchStatus.Matched, (await db.BankStatementLines.FirstAsync(x => x.Id == l1)).MatchStatus);
+        Assert.Equal(BankLineMatchStatus.Matched, (await db.BankStatementLines.FirstAsync(x => x.Id == l2)).MatchStatus);
+        var grp = await db.BankReconMatches.SingleAsync();
+        Assert.Equal(2, await db.BankStatementLines.CountAsync(x => x.MatchGroupId == grp.Id));  // N:1 组含两条流水
+        Assert.Equal(1, await db.BankReconJournalLinks.CountAsync());                            // 单凭证行
+    }
 }

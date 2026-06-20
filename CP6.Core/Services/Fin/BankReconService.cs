@@ -71,8 +71,150 @@ public class BankReconService : IBankReconService
         return list;
     }
 
-    // ── C-2/C-3/D/E 实现 ──
-    public Task<FinResult> AutoMatchAsync(Guid statementId, string? user) => throw new NotImplementedException();
+    // ── C-2: AutoMatchAsync ──
+
+    public async Task<FinResult> AutoMatchAsync(Guid statementId, string? user)
+    {
+        var stmt = await _db.BankStatements.FirstOrDefaultAsync(x => x.Id == statementId);
+        if (stmt == null) return FinResult.Fail("E-A4-MATCH-004");
+        if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+
+        var candidates = await LoadCandidateRowsAsync(stmt, DefaultWindowDays);
+        var occupiedNow = new HashSet<Guid>();   // 本轮已被占用的凭证行（防同轮重复占用）
+
+        var unmatched = await _db.BankStatementLines
+            .Where(x => x.StatementId == statementId && x.MatchStatus == BankLineMatchStatus.Unmatched)
+            .OrderBy(x => x.LineNo).ToListAsync();
+
+        // ── Phase 1 + Phase 2（1:N）合并：有界子集和，唯一解（含 size==1 的精确 1:1 情况）──
+        // 正确性要求：必须在所有子集大小上整体判断唯一性；将 Phase1 与 Phase2 拆开会导致
+        // 「单行精确候选 + 多行组合候选同时满足」时错误地在 Phase1 自动匹配（多解场景）。
+        foreach (var line in unmatched.ToList())
+        {
+            // 同方向且未被本轮占用的候选作为搜索池（按日期接近限 20 条，性能护栏）
+            var pool = candidates
+                .Where(c => !occupiedNow.Contains(c.JournalLineId)
+                            && Math.Sign(c.BankSignedAmount) == Math.Sign(line.SignedAmount))
+                .OrderBy(c => Math.Abs((c.VoucherDate - line.TxnDate).Days))
+                .Take(20)
+                .ToList();
+
+            // 在池中找所有 ΣBankSignedAmount==target 的子集（size 1..K）
+            var solutions = FindSubsetSums(pool, line.SignedAmount, SubsetSumK);
+
+            if (solutions.Count == 1)
+            {
+                // 唯一解（无论 size 1 = Phase1 精确，还是 size ≥2 = Phase2 组合）→ 自动撮合
+                await PersistMatchAsync(stmt, line, solutions[0], BankReconMatchType.Auto, null, user);
+                foreach (var c in solutions[0]) occupiedNow.Add(c.JournalLineId);
+                unmatched.Remove(line);
+            }
+            // 0 解或 ≥2 解 → 留人工
+        }
+
+        // ── Phase 2b：N:1（多流水 ↔ 单凭证，合并收款），唯一解（spec §4.4 / AC-004）──
+        foreach (var cand in candidates.Where(c => !occupiedNow.Contains(c.JournalLineId)).ToList())
+        {
+            // 同方向、剔已占用、按日期接近排序的未匹配流水池
+            var pool = unmatched
+                .Where(l => Math.Sign(l.SignedAmount) == Math.Sign(cand.BankSignedAmount))
+                .OrderBy(l => Math.Abs((l.TxnDate - cand.VoucherDate).Days))
+                .Take(20)
+                .ToList();   // 性能护栏
+
+            var sols = FindStmtSubsetSums(pool, cand.BankSignedAmount, SubsetSumK);
+
+            if (sols.Count == 1 && sols[0].Count >= 2)   // ≥2 才是 N:1（size==1 已由 Phase1/2 覆盖）
+            {
+                await PersistMatchAsync(stmt, sols[0], new[] { cand }, BankReconMatchType.Auto, null, user);
+                occupiedNow.Add(cand.JournalLineId);
+                foreach (var l in sols[0]) unmatched.Remove(l);
+            }
+            // 多解/无解 → 留人工
+        }
+
+        return FinResult.Pass();
+    }
+
+    /// <summary>有界子集和：在 pool 中找 ΣBankSignedAmount==target、大小≤K 的所有子集（绝不无界）。返回全部解（>1 即早停判唯一）。</summary>
+    private static List<List<BankCandidateLine>> FindSubsetSums(List<BankCandidateLine> pool, decimal target, int k)
+    {
+        var solutions = new List<List<BankCandidateLine>>();
+        var current = new List<BankCandidateLine>();
+        void Dfs(int start, decimal sum)
+        {
+            if (current.Count > k) return;
+            if (current.Count >= 1 && sum == target) { solutions.Add(new List<BankCandidateLine>(current)); }
+            if (solutions.Count > 1) return;   // 一旦 >1 解即可早停（只需判定唯一性）
+            for (int i = start; i < pool.Count; i++)
+            {
+                current.Add(pool[i]);
+                Dfs(i + 1, sum + pool[i].BankSignedAmount);
+                current.RemoveAt(current.Count - 1);
+                if (solutions.Count > 1) return;
+            }
+        }
+        Dfs(0, 0m);
+        return solutions;
+    }
+
+    /// <summary>有界子集和（流水侧，N:1 用）：在 pool 中找 ΣSignedAmount==target、大小≤K 的所有子集。返回全部解（>1 即早停判唯一）。</summary>
+    private static List<List<BankStatementLine>> FindStmtSubsetSums(List<BankStatementLine> pool, decimal target, int k)
+    {
+        var solutions = new List<List<BankStatementLine>>();
+        var current = new List<BankStatementLine>();
+        void Dfs(int start, decimal sum)
+        {
+            if (current.Count > k) return;
+            if (current.Count >= 1 && sum == target) solutions.Add(new List<BankStatementLine>(current));
+            if (solutions.Count > 1) return;
+            for (int i = start; i < pool.Count; i++)
+            {
+                current.Add(pool[i]);
+                Dfs(i + 1, sum + pool[i].SignedAmount);
+                current.RemoveAt(current.Count - 1);
+                if (solutions.Count > 1) return;
+            }
+        }
+        Dfs(0, 0m);
+        return solutions;
+    }
+
+    /// <summary>单流水行重载：委托给多流水行版本。</summary>
+    private async Task PersistMatchAsync(BankStatement stmt, BankStatementLine line, IReadOnlyList<BankCandidateLine> cands,
+        BankReconMatchType type, string? note, string? user)
+        => await PersistMatchAsync(stmt, new[] { line }, cands, type, note, user);
+
+    /// <summary>把一组流水行 ↔ 一组凭证候选落库为 BankReconMatch + Link（自动撮合每组独立 SaveChanges）。</summary>
+    private async Task PersistMatchAsync(BankStatement stmt, IReadOnlyList<BankStatementLine> lines,
+        IReadOnlyList<BankCandidateLine> cands, BankReconMatchType type, string? note, string? user)
+    {
+        var stmtSum = lines.Sum(l => l.SignedAmount);
+        var match = new BankReconMatch
+        {
+            Id = Guid.NewGuid(), StatementId = stmt.Id, MatchType = type, StmtSignedSum = stmtSum,
+            MatchedAt = DateTime.Now, MatchedBy = user ?? "system", Note = note,
+            Creator = user, CreateDate = DateTime.Now,
+        };
+        _db.BankReconMatches.Add(match);
+        foreach (var c in cands)
+            _db.BankReconJournalLinks.Add(new BankReconJournalLink
+            {
+                Id = Guid.NewGuid(), MatchGroupId = match.Id, JournalLineId = c.JournalLineId,
+                JournalEntryId = c.JournalEntryId, BankSignedAmount = c.BankSignedAmount,
+                Creator = user, CreateDate = DateTime.Now,
+            });
+        foreach (var l in lines)
+        {
+            var tracked = await _db.BankStatementLines.FirstAsync(x => x.Id == l.Id);
+            tracked.MatchStatus = BankLineMatchStatus.Matched;
+            tracked.MatchGroupId = match.Id;
+            tracked.Modifier = user; tracked.ModifyDate = DateTime.Now;
+        }
+        await _db.SaveChangesAsync();
+    }
+
+    // ── C-3/D/E 实现（占位）──
     public Task<FinResult> ManualMatchAsync(ManualMatchRequest req, byte[]? stmtLineRowVersion, string? user) => throw new NotImplementedException();
     public Task<FinResult> UnmatchAsync(Guid groupId, string? user) => throw new NotImplementedException();
     public Task<List<BankOnlyLineResult>> GenerateBankOnlyVoucherAsync(Guid statementId, List<Guid> lineIds, Guid counterAccountId, string? counterRole, string? partnerId, string? user) => throw new NotImplementedException();
