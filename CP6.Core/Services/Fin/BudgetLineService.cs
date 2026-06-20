@@ -1,3 +1,4 @@
+using ClosedXML.Excel;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
@@ -142,7 +143,55 @@ public class BudgetLineService : IBudgetLineService
         }).ToList();
     }
 
-    // C-3 stubs
-    public Task<BudgetImportPreviewResult> PreviewImportAsync(Guid versionId, Stream excel) => throw new NotImplementedException();
-    public Task<FinResult> ConfirmImportAsync(Guid versionId, Stream excel) => throw new NotImplementedException();
+    // C-3: Excel 导入 — Preview / Confirm
+    public async Task<BudgetImportPreviewResult> PreviewImportAsync(Guid versionId, Stream excel)
+        => await ParseAndValidateAsync(excel);
+
+    public async Task<FinResult> ConfirmImportAsync(Guid versionId, Stream excel)
+    {
+        var v = await _db.BudgetVersions.FindAsync(versionId);
+        if (v == null) return FinResult.Fail("E-A5-VERSION-404");
+        if (v.Status != BudgetVersionStatus.Draft) return FinResult.Fail("E-A5-VERSION-005");
+        var preview = await ParseAndValidateAsync(excel);
+        if (preview.HasFatal) return FinResult.Fail("E-A5-IMPORT-001");
+        foreach (var row in preview.Rows)
+        {
+            var acct = await _db.GlAccounts.FirstAsync(a => a.Code == row.AccountCode);
+            Guid? ccId = row.CostCenterCode == null ? null
+                : (await _db.CostCenters.FirstOrDefaultAsync(c => c.Code == row.CostCenterCode))?.Id;
+            await UpsertLineAsync(new BudgetLineDto {
+                VersionId = versionId, AccountId = acct.Id, CostCenterId = ccId,
+                CostObjectType = string.IsNullOrEmpty(row.CostObjectType) ? null : row.CostObjectType,
+                CostObjectId = string.IsNullOrEmpty(row.CostObjectId) ? null : row.CostObjectId,
+                SpreadMode = "manual", Periods = row.Periods, AnnualAmount = row.Periods.Sum(),
+            });
+        }
+        return FinResult.Pass();
+    }
+
+    private async Task<BudgetImportPreviewResult> ParseAndValidateAsync(Stream excel)
+    {
+        var result = new BudgetImportPreviewResult();
+        using var wb = new XLWorkbook(excel);
+        var ws = wb.Worksheet(1);
+        var acctCodes = await _db.GlAccounts.AsNoTracking()
+            .Where(a => a.IsLeaf && (a.Type == AccountType.Expense || a.Type == AccountType.Revenue))
+            .Select(a => a.Code).ToListAsync();
+        var ccCodes = await _db.CostCenters.AsNoTracking().Select(c => c.Code).ToListAsync();
+        foreach (var xlRow in ws.RowsUsed().Skip(1))   // skip header
+        {
+            var row = new BudgetImportRow { RowNo = xlRow.RowNumber(), Ok = true };
+            row.AccountCode = xlRow.Cell(1).GetString().Trim();
+            row.CostCenterCode = EmptyToNull(xlRow.Cell(2).GetString());
+            row.CostObjectType = EmptyToNull(xlRow.Cell(3).GetString());
+            row.CostObjectId = EmptyToNull(xlRow.Cell(4).GetString());
+            for (int i = 0; i < 12; i++) row.Periods[i] = xlRow.Cell(5 + i).GetValue<decimal>();
+            if (!acctCodes.Contains(row.AccountCode)) { row.Ok = false; row.Error = "E-A5-LINE-002"; }
+            else if (row.CostCenterCode != null && !ccCodes.Contains(row.CostCenterCode)) { row.Ok = false; row.Error = "E-A5-LINE-005"; }
+            else if ((row.CostObjectType == null) != (row.CostObjectId == null)) { row.Ok = false; row.Error = "E-A5-LINE-004"; }
+            result.Rows.Add(row);
+        }
+        return result;
+        static string? EmptyToNull(string s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+    }
 }

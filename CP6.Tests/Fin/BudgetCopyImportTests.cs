@@ -76,4 +76,49 @@ public class BudgetCopyImportTests
         Assert.Equal("WorkOrder", dim.CostObjectTypeKey);
         Assert.Equal("WO-1", dim.CostObjectIdKey);
     }
+
+    // ── C-3: Excel 导入 ──────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task Import_FatalRow_RejectsWholeBatch()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var acct = new GlAccount { Code="6602", Name="管理费用", Type=AccountType.Expense, NormalSide=AccountSide.Debit, IsLeaf=true, IsActive=true };
+        db.GlAccounts.Add(acct);
+        var b = new Budget { No="BUD-2027-00001", Name="2027", FiscalYear=2027, IsActive=true };
+        db.Budgets.Add(b);
+        var v = new BudgetVersion { BudgetId=b.Id, VersionNo=1, Status=BudgetVersionStatus.Draft };
+        db.BudgetVersions.Add(v);
+        await db.SaveChangesAsync();
+        var svc = new BudgetLineService(db);
+
+        using var xls = BudgetExcelFixture.Build(new[] {
+            ("6602", "", "", new decimal[12]),
+            ("9999", "", "", new decimal[12]),   // 科目不存在 → 致命
+        });
+        var r = await svc.ConfirmImportAsync(v.Id, xls);
+        Assert.False(r.Ok);
+        Assert.Equal("E-A5-IMPORT-001", r.Code);
+        Assert.Equal(0, await db.BudgetLines.CountAsync());   // 零持久化
+    }
+
+    [Fact]
+    public async Task Import_AllValid_ConfirmPersists()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var acct = new GlAccount { Code="6602", Name="管理费用", Type=AccountType.Expense, NormalSide=AccountSide.Debit, IsLeaf=true, IsActive=true };
+        db.GlAccounts.Add(acct);
+        var b = new Budget { No="BUD-2027-00001", Name="2027", FiscalYear=2027, IsActive=true };
+        db.Budgets.Add(b);
+        var v = new BudgetVersion { BudgetId=b.Id, VersionNo=1, Status=BudgetVersionStatus.Draft };
+        db.BudgetVersions.Add(v);
+        await db.SaveChangesAsync();
+        var svc = new BudgetLineService(db);
+        var months = new decimal[12]; months[0] = 100m; months[1] = 200m;
+        using var xls = BudgetExcelFixture.Build(new[] { ("6602", "", "", months) });
+        var r = await svc.ConfirmImportAsync(v.Id, xls);
+        Assert.True(r.Ok);
+        var line = await db.BudgetLines.SingleAsync(l => l.VersionId == v.Id);
+        Assert.Equal(300m, line.AnnualAmount);
+    }
 }
