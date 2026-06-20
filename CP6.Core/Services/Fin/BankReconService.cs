@@ -468,6 +468,56 @@ public class BankReconService : IBankReconService
         return dto;
     }
 
-    public Task<FinResult> LockAsync(Guid statementId, string? user) => throw new NotImplementedException();
-    public Task<FinResult> UnlockAsync(Guid statementId, string reason, string? user) => throw new NotImplementedException();
+    public async Task<FinResult> LockAsync(Guid statementId, string? user)
+    {
+        var stmt = await _db.BankStatements.FirstOrDefaultAsync(x => x.Id == statementId);
+        if (stmt == null) return FinResult.Fail("E-A4-MATCH-004");
+        if (stmt.Status == BankStatementStatus.Locked) return FinResult.Pass();   // 幂等
+
+        // ── 实时重算（不读旧值，§7.1）──
+        var recon = await GetReconciliationStatementAsync(statementId);
+
+        // 1. InternalDiff==0
+        if (recon.StatementInternalDiff != 0m) return FinResult.Fail("E-A4-RECON-001", recon.StatementInternalDiff);
+        // 2. ReconciledDiff==0
+        if (recon.ReconciledDiff != 0m) return FinResult.Fail("E-A4-RECON-001", recon.ReconciledDiff);
+        // 3. （Confirm 阶段不落库失败行，故无"未处理异常导入行"检查，§7.1 点3）
+        // 4. 所有 BankReconMatch SignedAmount 合计一致（Σ组内流水 == Σ组内银行侧）
+        var groups = await _db.BankReconMatches.AsNoTracking().Where(x => x.StatementId == statementId).ToListAsync();
+        foreach (var g in groups)
+        {
+            var bookSum = await _db.BankReconJournalLinks.AsNoTracking()
+                .Where(x => x.MatchGroupId == g.Id).SumAsync(x => x.BankSignedAmount);
+            if (g.StmtSignedSum != bookSum) return FinResult.Fail("E-A4-RECON-001", g.Id);
+        }
+        // 5. 所属 FiscalPeriod 仍 Open
+        if (!await _period.IsOpenAsync(stmt.FiscalPeriodId)) return FinResult.Fail("E-A4-RECON-002");
+
+        // ── 写快照（§2.1/§7.1）──
+        stmt.Status = BankStatementStatus.Locked;
+        stmt.LockedStatementInternalDiff = recon.StatementInternalDiff;
+        stmt.LockedReconciledDiff = recon.ReconciledDiff;
+        stmt.LockedBankAdjustedBalance = recon.BankAdjustedBalance;
+        stmt.LockedBookAdjustedBalance = recon.BookAdjustedBalance;
+        stmt.LockSnapshotJson = System.Text.Json.JsonSerializer.Serialize(recon);
+        stmt.LockedAt = DateTime.Now; stmt.LockedBy = user;
+        stmt.Modifier = user; stmt.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    public async Task<FinResult> UnlockAsync(Guid statementId, string reason, string? user)
+    {
+        if (string.IsNullOrWhiteSpace(reason)) return FinResult.Fail("E-A4-RECON-002");
+        var stmt = await _db.BankStatements.FirstOrDefaultAsync(x => x.Id == statementId);
+        if (stmt == null) return FinResult.Fail("E-A4-MATCH-004");
+        if (stmt.Status != BankStatementStatus.Locked) return FinResult.Pass();
+        if (!await _period.IsOpenAsync(stmt.FiscalPeriodId)) return FinResult.Fail("E-A4-RECON-002");   // 已结账禁
+
+        stmt.Status = BankStatementStatus.Open;
+        // 快照保留作历史审计（不清 Locked* 与 LockSnapshotJson）；Unlock 原因走 OperLog（reason 在 RequestBody）
+        stmt.Modifier = user; stmt.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
 }
