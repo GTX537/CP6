@@ -81,4 +81,54 @@ public class BudgetGuardTests
         Assert.False(r.Ok);
         Assert.Equal("E-A5-BUDGET-EXCEEDED", r.Code);
     }
+
+    [Fact]
+    public async Task Warn_ExceedsBudget_NotBlockedByGuard()
+    {
+        // Warn 模式：守卫 blockOnly=true 只拦 Block，Warn 超支透传放行（由报表/预检提示）
+        var (db, acct, pid, _) = await SeedAsync(1200m, BudgetControlMode.Warn, BudgetControlBasis.Period);
+        var r = await BudgetGuard.CheckPostingAsync(db, Entry(acct, pid, 9999m));   // 远超期预算100
+        Assert.True(r.Ok);
+    }
+
+    [Fact]
+    public async Task Revenue_OverTarget_NotBlocked()
+    {
+        // 收入科目不参与硬控制（仅 Expense 预算行被加载）；收入超目标不拦过账
+        var (db, _, pid, _) = await SeedAsync(1200m, BudgetControlMode.Block, BudgetControlBasis.Period);
+        var rev = new GlAccount { Code = "6001", Name = "主营业务收入", Type = AccountType.Revenue, NormalSide = AccountSide.Credit, IsLeaf = true, IsActive = true, StandardScheme = "CN-GAAP" };
+        db.GlAccounts.Add(rev);
+        var v = await db.BudgetVersions.FirstAsync(x => x.IsActive);
+        var revLine = new BudgetLine { VersionId = v.Id, AccountId = rev.Id, AnnualAmount = 1200m, ControlMode = BudgetControlMode.Block };
+        revLine.NormalizeKeys();
+        db.BudgetLines.Add(revLine);
+        await db.SaveChangesAsync();
+        for (int i = 1; i <= 12; i++) db.BudgetLinePeriods.Add(new BudgetLinePeriod { BudgetLineId = revLine.Id, PeriodNo = i, Amount = 100m });
+        await db.SaveChangesAsync();
+        var e = new JournalEntry
+        {
+            VoucherDate = new DateTime(2027, 2, 15), PeriodId = pid, Source = VoucherSource.Manual, Status = JournalStatus.Draft,
+            Lines = new() { new JournalLine { AccountId = rev.Id, Debit = 0m, Credit = 9999m } }
+        };
+        var r = await BudgetGuard.CheckPostingAsync(db, e);
+        Assert.True(r.Ok);
+    }
+
+    [Fact]
+    public async Task MostSpecific_CostCenterBucket_ControlsOverCompanyBucket()
+    {
+        // 公司级桶期预算=10000；新增 cc 专属 Block 桶期预算=300。向该 cc 过账 500 → 命中更具体的 cc 桶 → 拒（虽远低于公司预算）
+        var ccId = Guid.NewGuid();
+        var (db, acct, pid, _) = await SeedAsync(120000m, BudgetControlMode.Block, BudgetControlBasis.Period);
+        var v = await db.BudgetVersions.FirstAsync(x => x.IsActive);
+        var ccLine = new BudgetLine { VersionId = v.Id, AccountId = acct, CostCenterId = ccId, AnnualAmount = 3600m, ControlMode = BudgetControlMode.Block };
+        ccLine.NormalizeKeys();
+        db.BudgetLines.Add(ccLine);
+        await db.SaveChangesAsync();
+        for (int i = 1; i <= 12; i++) db.BudgetLinePeriods.Add(new BudgetLinePeriod { BudgetLineId = ccLine.Id, PeriodNo = i, Amount = 300m });
+        await db.SaveChangesAsync();
+        var r = await BudgetGuard.CheckPostingAsync(db, Entry(acct, pid, 500m, cc: ccId));
+        Assert.False(r.Ok);
+        Assert.Equal("E-A5-BUDGET-EXCEEDED", r.Code);
+    }
 }
