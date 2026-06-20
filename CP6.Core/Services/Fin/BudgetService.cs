@@ -17,11 +17,12 @@ public class BudgetService : IBudgetService
     {
         if (await _db.Budgets.AnyAsync(b => b.FiscalYear == dto.FiscalYear))
             return FinResult<Budget>.Fail("E-A5-BUDGET-001", dto.FiscalYear);
-        var seq = await _seq.NextAsync("BUD", DateTime.Now);
+        var now = DateTime.Now;
+        var seq = await _seq.NextAsync("BUD", now);
         dto.No = $"BUD-{dto.FiscalYear}-{seq.Split('-').Last()}";
         dto.Scope = BudgetScope.PnL;
         dto.IsActive = true;
-        dto.Creator = user; dto.CreateDate = DateTime.Now;
+        dto.Creator = user; dto.CreateDate = now;
         _db.Budgets.Add(dto);
         await _db.SaveChangesAsync();
         return FinResult<Budget>.Pass(dto);
@@ -32,6 +33,7 @@ public class BudgetService : IBudgetService
         var b = await _db.Budgets.FindAsync(id);
         if (b == null) return FinResult.Fail("E-A5-BUDGET-404");
         b.Name = name; b.Description = description;
+        b.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
         return FinResult.Pass();
     }
@@ -78,6 +80,7 @@ public class BudgetService : IBudgetService
         if (v == null) return FinResult.Fail("E-A5-VERSION-404");
         if (v.Status != BudgetVersionStatus.Draft) return FinResult.Fail("E-A5-VERSION-005");
         v.Name = name; v.DefaultControlMode = mode; v.DefaultControlBasis = basis;
+        v.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
         return FinResult.Pass();
     }
