@@ -117,10 +117,14 @@ public class BudgetReportService : IBudgetReportService
             var coId     = g.Key.CostObjectId   ?? "";
 
             // 只在"真实预算桶"中搜索（!k.EndsWith("|UB") 防止误命中已添加的未编预算行）
+            // 最具体匹配：按非通配维度数排序（与 BudgetGuard.MostSpecific 一致）。
+            // ⚠ 不能用 key.Length：成本中心是 Guid，Guid.Empty 与真实 Guid 字符串等长，
+            //   公司级桶与 cc 专属桶 key 等长，length 排序无法区分 cost-center 粒度。
             var matchKey = rows.Keys
                 .Where(k => !k.EndsWith("|UB") &&
                             MatchBucketKey(k, g.Key.AccountId, ccKey, coType, coId))
-                .OrderByDescending(k => k.Length)   // 最长 key = 最具体维度
+                .OrderByDescending(BucketSpecificity)
+                .ThenByDescending(k => k.Length)
                 .FirstOrDefault();
 
             BudgetVsActualRow row;
@@ -182,6 +186,21 @@ public class BudgetReportService : IBudgetReportService
     /// <summary>构造预算桶 key（4 维 pipe 串）。</summary>
     private static string BucketKey(Guid acct, Guid cc, string coType, string coId)
         => $"{acct}|{cc}|{coType}|{coId}";
+
+    /// <summary>
+    /// 预算桶非通配维度数（spec §7.3 最具体匹配，与 BudgetGuard 一致）。
+    /// 成本中心是 Guid，Guid.Empty 与真实 Guid 字符串等长，故不能用 key.Length 判具体度。
+    /// </summary>
+    private static int BucketSpecificity(string budgetKey)
+    {
+        var parts = budgetKey.Split('|');
+        if (parts.Length != 4) return -1;
+        int score = 0;
+        if (Guid.TryParse(parts[1], out var cc) && cc != Guid.Empty) score++;
+        if (parts[2] != "") score++;
+        if (parts[3] != "") score++;
+        return score;
+    }
 
     /// <summary>
     /// 判断预算桶 key 是否能覆盖给定实际维度。
