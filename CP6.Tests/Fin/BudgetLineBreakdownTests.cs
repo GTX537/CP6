@@ -74,4 +74,58 @@ public class BudgetLineBreakdownTests
         Assert.False(r.Ok);
         Assert.Equal("E-A5-VERSION-005", r.Code);
     }
+
+    [Fact]
+    public async Task UpsertLine_SeasonalSpread_WeightedPeriodsSumToAnnual()
+    {
+        var (db, v, acct) = await SeedAsync();
+        var svc = new BudgetLineService(db);
+        // 权重 [2,1×11]，sum=13，年度 1300 → 期1=200、其余=100，合计=1300
+        var weights = new[] { 2m, 1m, 1m, 1m, 1m, 1m, 1m, 1m, 1m, 1m, 1m, 1m };
+        var r = await svc.UpsertLineAsync(new BudgetLineDto {
+            VersionId = v.Id, AccountId = acct, AnnualAmount = 1300m, SpreadMode = "seasonal", Periods = weights
+        });
+        Assert.True(r.Ok);
+        var line = await db.BudgetLines.FirstAsync(l => l.VersionId == v.Id);
+        var periods = await db.BudgetLinePeriods.Where(p => p.BudgetLineId == line.Id).OrderBy(p => p.PeriodNo).ToListAsync();
+        Assert.Equal(200m, periods[0].Amount);
+        Assert.Equal(100m, periods[1].Amount);
+        Assert.Equal(1300m, periods.Sum(p => p.Amount));
+        Assert.Equal(1300m, line.AnnualAmount);
+    }
+
+    [Fact]
+    public async Task UpsertLine_ManualSpread_UsesProvidedPeriodsAndDerivesAnnual()
+    {
+        var (db, v, acct) = await SeedAsync();
+        var svc = new BudgetLineService(db);
+        // 手工逐月，年度额由 Σ 期 自动回填（忽略传入 AnnualAmount）
+        var manual = new[] { 100m, 200m, 300m, 0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m };
+        var r = await svc.UpsertLineAsync(new BudgetLineDto {
+            VersionId = v.Id, AccountId = acct, AnnualAmount = 999m, SpreadMode = "manual", Periods = manual
+        });
+        Assert.True(r.Ok);
+        var line = await db.BudgetLines.FirstAsync(l => l.VersionId == v.Id);
+        var periods = await db.BudgetLinePeriods.Where(p => p.BudgetLineId == line.Id).OrderBy(p => p.PeriodNo).ToListAsync();
+        Assert.Equal(100m, periods[0].Amount);
+        Assert.Equal(300m, periods[2].Amount);
+        Assert.Equal(600m, periods.Sum(p => p.Amount));
+        Assert.Equal(600m, line.AnnualAmount);   // 自动回填，非 999
+    }
+
+    [Fact]
+    public async Task UpsertLine_SeasonalAllZeroWeights_FallsBackToEven()
+    {
+        var (db, v, acct) = await SeedAsync();
+        var svc = new BudgetLineService(db);
+        var zero = new decimal[12];   // 全 0 权重 → 退化均摊
+        var r = await svc.UpsertLineAsync(new BudgetLineDto {
+            VersionId = v.Id, AccountId = acct, AnnualAmount = 1200m, SpreadMode = "seasonal", Periods = zero
+        });
+        Assert.True(r.Ok);
+        var line = await db.BudgetLines.FirstAsync(l => l.VersionId == v.Id);
+        var periods = await db.BudgetLinePeriods.Where(p => p.BudgetLineId == line.Id).OrderBy(p => p.PeriodNo).ToListAsync();
+        Assert.Equal(100m, periods[0].Amount);
+        Assert.Equal(1200m, periods.Sum(p => p.Amount));
+    }
 }
