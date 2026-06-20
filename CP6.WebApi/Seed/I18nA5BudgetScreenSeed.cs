@@ -115,5 +115,22 @@ public static class I18nA5BudgetScreenSeed
         new Sys_Lang { LangKey = "E-A5-BUDGET-EXCEEDED", ZhCN = "科目 {0} 预算 {1} 已用 {2} 本次 {3} 超出 {4}", ZhTW = "科目 {0} 預算 {1} 已用 {2} 本次 {3} 超出 {4}", En = "Account {0}: budget {1}, used {2}, incoming {3}, over by {4}", Ja = "科目 {0}：予算 {1}、使用済 {2}、今回 {3}、超過 {4}", Ko = "계정 {0}: 예산 {1}, 사용 {2}, 이번 {3}, 초과 {4}" },
         new Sys_Lang { LangKey = "E-A5-IMPORT-001", ZhCN = "Excel导入解析失败，请检查格式", ZhTW = "Excel匯入解析失敗，請檢查格式", En = "Excel import parse failed, please check the file format", Ja = "Excel取込解析に失敗しました。形式を確認してください", Ko = "Excel 가져오기 파싱 실패. 파일 형식을 확인하세요" },
         new Sys_Lang { LangKey = "E-A5-CONCURRENCY-001", ZhCN = "数据已被他人修改，请刷新后重试", ZhTW = "資料已被他人修改，請重新整理後重試", En = "Record was modified by another user; please refresh and retry", Ja = "他のユーザーにより更新されています。再読み込みしてください", Ko = "다른 사용자가 변경했습니다. 새로고침 후 다시 시도하세요" },
+        // ── BudgetEditView 补充词条 ──
+        new Sys_Lang { LangKey = "budget.panel.budgets", ZhCN = "预算方案", ZhTW = "預算方案", En = "Budget Plans", Ja = "予算方案", Ko = "예산 방안" },
+        new Sys_Lang { LangKey = "budget.msg.noBudgets", ZhCN = "暂无预算方案，请新建", ZhTW = "暫無預算方案，請新建", En = "No budget plans. Create one to start.", Ja = "予算方案がありません。新規作成してください", Ko = "예산 방안이 없습니다. 생성하세요" },
+        new Sys_Lang { LangKey = "budget.msg.noVersions", ZhCN = "暂无版本，请新建", ZhTW = "暫無版本，請新建", En = "No versions. Create one to start.", Ja = "バージョンがありません。新規作成してください", Ko = "버전이 없습니다. 생성하세요" },
+        new Sys_Lang { LangKey = "budget.msg.selectVersion", ZhCN = "请在左侧选择预算版本以查看明细", ZhTW = "請在左側選擇預算版本以查看明細", En = "Select a budget version on the left to view lines", Ja = "左側でバージョンを選択して明細を表示", Ko = "왼쪽에서 버전을 선택하여 명세를 봅니다" },
+        new Sys_Lang { LangKey = "budget.msg.readOnlyHint", ZhCN = "仅草稿版本可编辑，如需调整请新建版本", ZhTW = "僅草稿版本可編輯，如需調整請新建版本", En = "Only Draft versions are editable. Create a new version to adjust.", Ja = "下書きバージョンのみ編集可能です。調整するには新バージョンを作成してください", Ko = "초안 버전만 편집 가능합니다. 조정이 필요하면 새 버전을 생성하세요" },
+        new Sys_Lang { LangKey = "budget.msg.concurrencyTitle", ZhCN = "并发冲突", ZhTW = "並發衝突", En = "Concurrent Edit Conflict", Ja = "同時編集競合", Ko = "동시 편집 충돌" },
+        new Sys_Lang { LangKey = "budget.msg.required", ZhCN = "为必填项", ZhTW = "為必填項", En = " is required", Ja = "は必須です", Ko = "은(는) 필수 항목입니다" },
+        new Sys_Lang { LangKey = "budget.msg.accountRequired", ZhCN = "请选择科目", ZhTW = "請選擇科目", En = "Please select an account", Ja = "科目を選択してください", Ko = "계정을 선택하세요" },
+        new Sys_Lang { LangKey = "budget.msg.importHasFatal", ZhCN = "预览包含错误行，请修正 Excel 后重新上传", ZhTW = "預覽包含錯誤行，請修正 Excel 後重新上傳", En = "Preview contains errors. Fix the Excel file and re-upload.", Ja = "プレビューにエラー行があります。Excelを修正して再アップロードしてください", Ko = "미리보기에 오류 행이 있습니다. Excel을 수정하여 다시 업로드하세요" },
+        new Sys_Lang { LangKey = "budget.msg.importError", ZhCN = "错误信息", ZhTW = "錯誤訊息", En = "Error", Ja = "エラー", Ko = "오류" },
+        new Sys_Lang { LangKey = "budget.msg.selectAccount", ZhCN = "输入科目编码或名称筛选", ZhTW = "輸入科目編碼或名稱篩選", En = "Type code or name to filter", Ja = "コードまたは名称で絞り込み", Ko = "코드 또는 이름으로 필터" },
+        new Sys_Lang { LangKey = "budget.msg.optionalCompanyLevel", ZhCN = "留空=公司级", ZhTW = "留空=公司級", En = "Leave blank = company level", Ja = "空白=会社全体", Ko = "비워두기=회사 전체" },
+        new Sys_Lang { LangKey = "budget.msg.costObjectTypePlaceholder", ZhCN = "对象类型（选填）", ZhTW = "對象類型（選填）", En = "Object type (optional)", Ja = "対象タイプ（任意）", Ko = "대상 유형 (선택)" },
+        new Sys_Lang { LangKey = "budget.msg.costObjectIdPlaceholder", ZhCN = "对象号（选填）", ZhTW = "對象號（選填）", En = "Object ID (optional)", Ja = "対象ID（任意）", Ko = "대상 ID (선택)" },
+        new Sys_Lang { LangKey = "budget.msg.monthlyBreakdown", ZhCN = "各月金额", ZhTW = "各月金額", En = "Monthly amounts", Ja = "月別金額", Ko = "월별 금액" },
+        new Sys_Lang { LangKey = "budget.field.copyFromNone", ZhCN = "不复制（空白开始）", ZhTW = "不複製（空白開始）", En = "No copy (start blank)", Ja = "コピーなし（空白から開始）", Ko = "복사 없음 (빈 시작)" },
     };
 }

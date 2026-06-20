@@ -44,6 +44,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/fin/bank-reconciliation': () => import('@/views/fin/BankReconciliationView.vue'), // A4 对账撮合台（菜单614）
   '/fin/bank-statement': () => import('@/views/fin/BankStatementView.vue'),           // A4 对账会话
   '/fin/bank-import-profile': () => import('@/views/fin/BankImportProfileView.vue'),  // A4 导入模板
+  '/fin/budget': () => import('@/views/fin/BudgetEditView.vue'),                      // A5 预算编制（菜单622）
   // ───── 采购 (Pur) MVP 章01~04 ─────
   '/pur/supplier-price': () => import('@/views/pur/SupplierPriceView.vue'), // 章01 供应商价表
   '/pur/po': () => import('@/views/pur/PurchaseOrderView.vue'),             // 章02 采购订单
