@@ -3,6 +3,7 @@ using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 
 namespace CP6.Core.Services.Fin;
 
@@ -11,13 +12,15 @@ public class BankReconService : IBankReconService
     private readonly CP6Context _db;
     private readonly IJournalEntryService _journal;    // used by C-2 AutoMatch
     private readonly IFiscalPeriodService _period;     // used by C-2 AutoMatch
+    private readonly ILogger<BankReconService>? _logger;
     private const int DefaultWindowDays = 90;
     private const int SubsetSumK = 8;                  // used by C-2 AutoMatch
     // must exceed the max possible date-distance so amount-match always outranks date-closeness
     private const int AmountMismatchPenalty = 100_000;
 
-    public BankReconService(CP6Context db, IJournalEntryService journal, IFiscalPeriodService period)
-    { _db = db; _journal = journal; _period = period; }
+    public BankReconService(CP6Context db, IJournalEntryService journal, IFiscalPeriodService period,
+        ILogger<BankReconService>? logger = null)
+    { _db = db; _journal = journal; _period = period; _logger = logger; }
 
     public async Task<List<BankCandidateLine>> GetCandidatesAsync(Guid statementId, Guid statementLineId, bool widen)
     {
@@ -368,10 +371,11 @@ public class BankReconService : IBankReconService
                 if (tx != null) await tx.CommitAsync();
                 results.Add(new() { LineId = lineId, Ok = true, JournalEntryId = entry.Id });
             }
-            catch (Exception)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
+                _logger?.LogError(ex, "Bank-only voucher generation failed for line {LineId}", lineId);
                 if (tx != null) await tx.RollbackAsync();
-                results.Add(new() { LineId = lineId, Ok = false, Code = "E-A4-BANKONLY-DUP" });
+                results.Add(new() { LineId = lineId, Ok = false, Code = "E-A4-BANKONLY-FAIL" });
             }
             finally
             {
