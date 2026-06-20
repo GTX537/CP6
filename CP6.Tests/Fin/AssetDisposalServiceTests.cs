@@ -79,6 +79,64 @@ public class AssetDisposalServiceTests
         Assert.Equal(4000m, saved.NetBookValue);
     }
 
+    [Fact] // §13.11 出售结转凭证：1606 行内轧平、借贷平、卡片 Disposed
+    public async Task ConfirmAsync_Sale_BalancedVoucher_CardDisposed()
+    {
+        var (db, disp, _, june, card) = await SetupAsync(accum: 8000m);
+        var bank = (await db.GlAccounts.FirstAsync(a => a.Code == "1002")).Id;
+        var d = new AssetDisposal
+        {
+            AssetCardId = card.Id, DisposalType = AssetDisposalType.Sale,
+            DisposalDate = new DateTime(2026, 6, 10), FiscalPeriodId = june,
+            Proceeds = 5000m, TaxAmount = 650m, ReceiptBankAccountId = bank,
+        };
+        Assert.True((await disp.CreateAsync(d, "admin")).Ok);
+        var r = await disp.ConfirmAsync(d.Id, "admin");
+        Assert.True(r.Ok, r.Code);
+
+        var saved = await db.AssetDisposals.SingleAsync();
+        Assert.Equal(AssetDisposalStatus.Confirmed, saved.Status);
+        Assert.NotNull(saved.JournalEntryId);
+        var je = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.Id == saved.JournalEntryId);
+        Assert.Equal(VoucherSource.AssetDisposal, je.Source);
+        Assert.Equal(je.Lines.Sum(l => l.Debit), je.Lines.Sum(l => l.Credit));
+        var clearing = (await db.GlAccounts.FirstAsync(a => a.Code == "1606")).Id;
+        var clearLines = je.Lines.Where(l => l.AccountId == clearing);
+        Assert.Equal(clearLines.Sum(l => l.Debit), clearLines.Sum(l => l.Credit));
+        var savedCard = await db.AssetCards.FindAsync(card.Id);
+        Assert.Equal(AssetStatus.Disposed, savedCard!.Status);
+        Assert.Equal(AssetStatus.InUse, saved.PriorStatus);
+    }
+
+    [Fact] // §13.14 处置先于批量：Confirm 建 DisposalFinal 补提 → 批量 RunAsync 不被 FA003 阻断、排除该资产
+    public async Task ConfirmThenBatch_DisposalFinalNotBlockingBatch()
+    {
+        var (db, disp, dep, june, card) = await SetupAsync(accum: 1000m);
+        var card2 = new AssetCard
+        {
+            Id = Guid.NewGuid(), AssetNo = "FA-10", Name = "另一台", CategoryId = card.CategoryId,
+            OriginalValue = 12000m, SalvageValue = 0m, Method = DepreciationMethod.StraightLine, UsefulLifeMonths = 12,
+            AcquisitionDate = new DateTime(2025, 6, 1), DepreciationStartPeriod = "2025-07",
+            AccumulatedDepreciation = 1000m, DepreciatedPeriods = 1, Status = AssetStatus.InUse,
+        };
+        db.AssetCards.Add(card2); await db.SaveChangesAsync();
+
+        var d = new AssetDisposal
+        {
+            AssetCardId = card.Id, DisposalType = AssetDisposalType.Scrap,
+            DisposalDate = new DateTime(2026, 6, 10), FiscalPeriodId = june,
+        };
+        Assert.True((await disp.CreateAsync(d, "admin")).Ok);
+        Assert.True((await disp.ConfirmAsync(d.Id, "admin")).Ok);
+
+        var run = await dep.RunAsync(june, "admin", DepreciationRunMode.Manual);
+        Assert.True(run.Ok, run.Code);
+        var batch = await db.DepreciationRuns.SingleAsync(r => r.RunMode == DepreciationRunMode.Manual);
+        Assert.Equal(1, batch.AssetCount);
+        var entry = await db.DepreciationEntries.SingleAsync(e => e.RunId == batch.Id);
+        Assert.Equal(card2.Id, entry.AssetCardId);
+    }
+
     [Fact] // §13.15 完全折旧资产可处置（CreateAsync 不拒）
     public async Task CreateAsync_FullyDepreciated_Allowed()
     {
