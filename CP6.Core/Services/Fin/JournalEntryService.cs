@@ -84,6 +84,9 @@ public class JournalEntryService : IJournalEntryService
         var guard = await BankReconGuard.CheckPostingAsync(_db, e);
         if (!guard.Ok) return guard;
 
+        var budgetGuard = await BudgetGuard.CheckPostingAsync(_db, e);   // A5 §7：手工过账预算硬控制（Block 超支拒）
+        if (!budgetGuard.Ok) return budgetGuard;
+
         e.Status = JournalStatus.Posted;
         e.CheckerId = checkerId;
         e.CheckerAt = DateTime.Now;
