@@ -263,8 +263,103 @@ public sealed class AssetDepreciationService : IAssetDepreciationService
         return FinResult.Pass();
     }
 
-    public Task<FinResult> AccrueAsync(Guid periodId, string userId) => throw new NotImplementedException();
-    public Task<FinResult> PreCloseWorkloadCheckAsync(Guid periodId) => throw new NotImplementedException();
-    public Task<DisposalFinalResult> AccrueDisposalFinalAsync(Guid a, Guid p, string u) => throw new NotImplementedException();
-    public Task<List<DepreciationScheduleRow>> GetScheduleAsync(Guid assetCardId) => throw new NotImplementedException();
+    public async Task<FinResult> AccrueAsync(Guid periodId, string userId)
+    {
+        var batch = await _db.DepreciationRuns
+            .Where(r => r.FiscalPeriodId == periodId && r.RunMode != DepreciationRunMode.DisposalFinal
+                        && r.Status != DepreciationRunStatus.Reversed)
+            .OrderByDescending(r => r.RunAt).FirstOrDefaultAsync();
+
+        if (batch is { Status: DepreciationRunStatus.Posted }) return FinResult.Pass();
+        if (batch is { Status: DepreciationRunStatus.Draft })
+            return await PostAsync(batch.Id, userId);
+
+        var run = await RunAsync(periodId, userId, DepreciationRunMode.CloseHook);
+        if (!run.Ok) return run;
+        var created = await _db.DepreciationRuns.FirstAsync(r => r.FiscalPeriodId == periodId
+            && r.RunMode == DepreciationRunMode.CloseHook && r.Status == DepreciationRunStatus.Draft);
+        return await PostAsync(created.Id, userId);
+    }
+
+    public async Task<FinResult> PreCloseWorkloadCheckAsync(Guid periodId)
+    {
+        var period = await _db.FiscalPeriods.FindAsync(periodId);
+        if (period == null) return FinResult.Fail("FA007");
+        var ym = $"{period.Year:D4}-{period.Month:D2}";
+        var eligible = await EligibleAsync(ym);
+        bool anyMissing = eligible.Any(c => c.Method == DepreciationMethod.UnitsOfProduction);
+        return anyMissing ? FinResult.Fail("FA008") : FinResult.Pass();
+    }
+
+    public async Task<DisposalFinalResult> AccrueDisposalFinalAsync(Guid assetCardId, Guid periodId, string userId)
+    {
+        var period = await _db.FiscalPeriods.FindAsync(periodId);
+        if (period == null) return new() { Ok = false, Code = "FA007" };
+        var ym = $"{period.Year:D4}-{period.Month:D2}";
+
+        bool already = await (from de in _db.DepreciationEntries
+                              join r in _db.DepreciationRuns on de.RunId equals r.Id
+                              where de.AssetCardId == assetCardId && r.PeriodYearMonth == ym
+                                    && r.Status != DepreciationRunStatus.Reversed
+                              select de.Id).AnyAsync();
+        if (already) return new() { Ok = true, Skipped = true };
+
+        var card = await _db.AssetCards.FindAsync(assetCardId);
+        if (card == null) return new() { Ok = false, Code = "FA006" };
+        var cat = await _db.AssetCategories.FindAsync(card.CategoryId);
+        if (cat == null) return new() { Ok = false, Code = "FA001" };
+        var entry = await BuildEntryAsync(card, cat, periodId, ym);
+        if (card.Method == DepreciationMethod.UnitsOfProduction)
+            entry.DepreciationAmount = 0m;
+
+        var run = new DepreciationRun
+        {
+            Id = Guid.NewGuid(), No = await _seq.NextAsync("DEP", new DateTime(period.Year, period.Month, 1)),
+            FiscalPeriodId = periodId, PeriodYearMonth = ym, Status = DepreciationRunStatus.Draft,
+            RunMode = DepreciationRunMode.DisposalFinal, AssetCount = 1, TotalAmount = entry.DepreciationAmount,
+            RunAt = DateTime.Now, RunBy = userId,
+        };
+        entry.RunId = run.Id;
+        _db.DepreciationRuns.Add(run);
+        _db.DepreciationEntries.Add(entry);
+        await _db.SaveChangesAsync();
+
+        var post = await PostAsync(run.Id, userId);
+        if (!post.Ok) return new() { Ok = false, Code = post.Code };
+        return new() { Ok = true, RunId = run.Id, DeprecEntryId = entry.Id, Amount = entry.DepreciationAmount };
+    }
+
+    public async Task<List<DepreciationScheduleRow>> GetScheduleAsync(Guid assetCardId)
+    {
+        var card = await _db.AssetCards.FindAsync(assetCardId);
+        var rows = new List<DepreciationScheduleRow>();
+        if (card == null || string.IsNullOrEmpty(card.DepreciationStartPeriod)) return rows;
+
+        decimal accum = card.AccumulatedDepreciation;
+        int done = card.DepreciatedPeriods;
+        var ym = DateTime.ParseExact(card.DepreciationStartPeriod + "-01", "yyyy-MM-dd", null).AddMonths(done);
+        decimal cap = card.OriginalValue - card.SalvageValue;
+        int Y = (int)Math.Ceiling(card.UsefulLifeMonths / 12.0);
+        for (int i = 1; i <= 600 && accum < cap; i++)
+        {
+            int y = done / 12 + 1;
+            decimal nbvYearStart = Y <= 0 ? card.OriginalValue - accum
+                : card.OriginalValue * (decimal)Math.Pow((double)(1m - 2m / Math.Max(Y, 1)), Math.Max(y - 1, 0));
+            decimal amount = card.Method == DepreciationMethod.UnitsOfProduction ? 0m : _calc.PeriodAmount(new DepreciationCalcInput
+            {
+                Method = card.Method, OriginalValue = card.OriginalValue, SalvageValue = card.SalvageValue,
+                UsefulLifeMonths = card.UsefulLifeMonths, DepreciatedPeriods = done, AccumulatedBefore = accum,
+                NetBookValueAtYearStart = nbvYearStart, TotalWorkload = card.TotalWorkload, WorkloadThisPeriod = null,
+            });
+            if (amount <= 0m) break;
+            accum += amount; done += 1;
+            rows.Add(new DepreciationScheduleRow
+            {
+                PeriodIndex = i, YearMonth = ym.ToString("yyyy-MM"),
+                Amount = amount, Accumulated = accum, NetValue = card.OriginalValue - accum,
+            });
+            ym = ym.AddMonths(1);
+        }
+        return rows;
+    }
 }

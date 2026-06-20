@@ -127,6 +127,39 @@ public class AssetDepreciationServiceTests
         Assert.Equal(1, card.DepreciatedPeriods);
     }
 
+    [Fact] // §13.12 AccrueAsync 三态：无批次→Run+Post；已 Worker Draft→Post 之；已 Posted→Pass
+    public async Task AccrueAsync_ThreeStates()
+    {
+        var (db, svc, june, _) = await SetupAsync();
+        var r1 = await svc.AccrueAsync(june, "admin");
+        Assert.True(r1.Ok, r1.Code);
+        var run = await db.DepreciationRuns.SingleAsync();
+        Assert.Equal(DepreciationRunStatus.Posted, run.Status);
+        Assert.Equal(DepreciationRunMode.CloseHook, run.RunMode);
+        var r3 = await svc.AccrueAsync(june, "admin");
+        Assert.True(r3.Ok);
+        Assert.Equal(1, await db.DepreciationRuns.CountAsync());
+
+        var (db2, svc2, june2, _) = await SetupAsync();
+        await svc2.RunAsync(june2, "worker", DepreciationRunMode.Worker);
+        var r2 = await svc2.AccrueAsync(june2, "admin");
+        Assert.True(r2.Ok, r2.Code);
+        Assert.Equal(1, await db2.DepreciationRuns.CountAsync());
+        Assert.Equal(DepreciationRunStatus.Posted, (await db2.DepreciationRuns.SingleAsync()).Status);
+    }
+
+    [Fact] // §6.1 硬校验：工作量法在用资产本期未录量 → PreCloseWorkloadCheck 返回 FA008
+    public async Task PreCloseWorkloadCheck_UoPMissingWorkload_FA008()
+    {
+        var (db, svc, june, _) = await SetupAsync(method: DepreciationMethod.UnitsOfProduction, life: 0);
+        var card = await db.AssetCards.FirstAsync();
+        card.TotalWorkload = 10000m; card.WorkloadUnit = "件";
+        await db.SaveChangesAsync();
+        var r = await svc.PreCloseWorkloadCheckAsync(june);
+        Assert.False(r.Ok);
+        Assert.Equal("FA008", r.Code);
+    }
+
     [Fact] // §13.10 ReverseAsync：红冲 + 卡片累计/期数原子回滚
     public async Task ReverseAsync_RedInks_AndRollsBackCard()
     {
