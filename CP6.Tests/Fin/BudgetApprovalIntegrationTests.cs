@@ -25,30 +25,25 @@ public class BudgetApprovalIntegrationTests
             .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
-    /// <summary>装配共享同一 DbContext 的全套服务（模拟一次请求 scope）。</summary>
+    /// <summary>极简 IServiceProvider：仅为 BudgetApprovalCallback 延迟解析 IBudgetService（同一 db 实例）。</summary>
+    private sealed class BudgetSpHolder : IServiceProvider
+    {
+        public IBudgetService? Budget;
+        public object? GetService(Type t) => t == typeof(IBudgetService) ? Budget : null;
+    }
+
+    /// <summary>装配共享同一 DbContext 的全套服务（模拟一次请求 scope）。
+    /// 回调经 holder 延迟解析 budget，打破构造期循环（与生产 DI 经 IServiceProvider 同构）。</summary>
     private static (IBudgetService budget, IApprovalService approval, IFlowEngine engine) Build(CP6Context db)
     {
         var seq = new FinSequenceService(db);
-        var dispatcher = new ApprovalDispatcher(new IApprovalCallback[]
-        {
-            new BudgetApprovalCallback(null!)   // 先占位；下面用 budget 真实实例
-        });
-        // 重建 dispatcher 带真实 budget 服务（引用传递，需真实 budget 实例）
-        var engine = new FlowEngine(db, new ApproverResolver(db), notifier: null, dispatcher: null!);
-        // 用真实 ApprovalService（委托 engine）
+        var holder = new BudgetSpHolder();
+        var dispatcher = new ApprovalDispatcher(new IApprovalCallback[] { new BudgetApprovalCallback(holder) });
+        var engine = new FlowEngine(db, new ApproverResolver(db), notifier: null, dispatcher: dispatcher);
         var approval = new ApprovalService(db, engine);
         var budget = new BudgetService(db, seq, approval);
-
-        // 重建 dispatcher 和 engine，绑定真实 budget
-        var realDispatcher = new ApprovalDispatcher(new IApprovalCallback[]
-        {
-            new BudgetApprovalCallback(budget)
-        });
-        var realEngine = new FlowEngine(db, new ApproverResolver(db), notifier: null, dispatcher: realDispatcher);
-        var realApproval = new ApprovalService(db, realEngine);
-        var realBudget = new BudgetService(db, seq, realApproval);
-
-        return (realBudget, realApproval, realEngine);
+        holder.Budget = budget;   // 回调触发时经 holder 取到真实 budget（共享 db）
+        return (budget, approval, engine);
     }
 
     private static async Task SeedFlowAndBindingAsync(CP6Context db, Guid approver)
