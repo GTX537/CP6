@@ -81,6 +81,9 @@ public class JournalEntryService : IJournalEntryService
         var v = await ValidateAsync(e);                                          // 过账前再校一次借贷恒等
         if (!v.Ok) return v;
 
+        var guard = await BankReconGuard.CheckPostingAsync(_db, e);
+        if (!guard.Ok) return guard;
+
         e.Status = JournalStatus.Posted;
         e.CheckerId = checkerId;
         e.CheckerAt = DateTime.Now;
@@ -102,6 +105,9 @@ public class JournalEntryService : IJournalEntryService
         var v = await ValidateAsync(entry);
         if (!v.Ok) return v;
         if (!await _period.IsOpenAsync(entry.PeriodId)) return FinResult.Fail("E-FIN-112");
+
+        var guard = await BankReconGuard.CheckPostingAsync(_db, entry);
+        if (!guard.Ok) return guard;
 
         entry.Status = JournalStatus.Posted;
         entry.AutoPosted = true;
@@ -135,6 +141,9 @@ public class JournalEntryService : IJournalEntryService
         var origin = await GetAsync(entryId);
         if (origin == null) return FinResult.Fail("E-FIN-130");
         if (origin.Status != JournalStatus.Posted) return FinResult.Fail("E-FIN-120");   // 只有已过账可红冲
+
+        var revGuard = await BankReconGuard.CheckReversalAsync(_db, origin);
+        if (!revGuard.Ok) return revGuard;
 
         var now = DateTime.Now;
         var reversal = new JournalEntry
