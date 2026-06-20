@@ -111,11 +111,12 @@ public class BudgetService : IBudgetService
 
         var total = await _db.BudgetLines.Where(l => l.VersionId == versionId).SumAsync(l => l.AnnualAmount);
         var budget = await _db.Budgets.FindAsync(v.BudgetId);
+        if (budget == null) return FinResult.Fail("E-A5-BUDGET-404");
         Guid instanceId;
         try
         {
             instanceId = await _approval.SubmitAsync("A5_Budget", versionId.ToString(), userId,
-                new { fiscalYear = budget!.FiscalYear, versionNo = v.VersionNo, totalAmount = total });
+                new { fiscalYear = budget.FiscalYear, versionNo = v.VersionNo, totalAmount = total });
         }
         catch (InvalidOperationException)   // OA 防重：同 (bizType,bizId) 已有 Running 实例
         {
