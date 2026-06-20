@@ -214,9 +214,88 @@ public class BankReconService : IBankReconService
         await _db.SaveChangesAsync();
     }
 
-    // ── C-3/D/E 实现（占位）──
-    public Task<FinResult> ManualMatchAsync(ManualMatchRequest req, byte[]? stmtLineRowVersion, string? user) => throw new NotImplementedException();
-    public Task<FinResult> UnmatchAsync(Guid groupId, string? user) => throw new NotImplementedException();
+    // ── C-3: ManualMatchAsync + UnmatchAsync ──
+
+    public async Task<FinResult> ManualMatchAsync(ManualMatchRequest req, byte[]? stmtLineRowVersion, string? user)
+    {
+        var stmt = await _db.BankStatements.FirstOrDefaultAsync(x => x.Id == req.StatementId);
+        if (stmt == null) return FinResult.Fail("E-A4-MATCH-004");
+        if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+        if (req.StatementLineIds.Count == 0 || req.JournalLineIds.Count == 0) return FinResult.Fail("E-A4-MATCH-001");
+
+        var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId);
+        var isForeign = !string.IsNullOrEmpty(acct.CurrencyCd) && acct.CurrencyCd != "JPY";
+
+        // 流水行：同一会话、未占用
+        var lines = await _db.BankStatementLines
+            .Where(x => req.StatementLineIds.Contains(x.Id)).ToListAsync();
+        if (lines.Count != req.StatementLineIds.Count || lines.Any(l => l.StatementId != req.StatementId))
+            return FinResult.Fail("E-A4-MATCH-004");
+        if (lines.Any(l => l.MatchStatus == BankLineMatchStatus.Matched)) return FinResult.Fail("E-A4-MATCH-005");
+
+        // 凭证行：命中银行GL、Posted未反转、未占用
+        var jls = await (from jl in _db.JournalLines
+                         join je in _db.JournalEntries on jl.EntryId equals je.Id
+                         where req.JournalLineIds.Contains(jl.Id)
+                         select new { jl, je }).ToListAsync();
+        if (jls.Count != req.JournalLineIds.Count) return FinResult.Fail("E-A4-MATCH-004");
+        if (jls.Any(x => x.jl.AccountId != acct.GlAccountId)) return FinResult.Fail("E-A4-MATCH-004");
+        if (jls.Any(x => x.je.Status != JournalStatus.Posted || x.je.Source == VoucherSource.Reversal))
+            return FinResult.Fail("E-A4-MATCH-003");
+        var alreadyOccupied = await _db.BankReconJournalLinks
+            .Where(x => req.JournalLineIds.Contains(x.JournalLineId)).AnyAsync();
+        if (alreadyOccupied) return FinResult.Fail("E-A4-MATCH-002");
+
+        // Σ 完全相等（外币按原币）
+        var cands = jls.Select(x =>
+        {
+            decimal signed;
+            if (isForeign)
+            {
+                if (x.jl.OrigAmount is not decimal orig || x.jl.CurrencyCd != acct.CurrencyCd)
+                    throw new InvalidOperationException("E-A4-MATCH-003");
+                signed = x.jl.Debit > 0 ? orig : -orig;
+            }
+            else signed = x.jl.Debit - x.jl.Credit;
+            return new BankCandidateLine { JournalLineId = x.jl.Id, JournalEntryId = x.je.Id, BankSignedAmount = signed };
+        }).ToList();
+        var stmtSum = lines.Sum(l => l.SignedAmount);
+        var bookSum = cands.Sum(c => c.BankSignedAmount);
+        if (stmtSum != bookSum) return FinResult.Fail("E-A4-MATCH-001");
+
+        // RowVersion 乐观并发（前端带其中一条流水行版本）
+        if (stmtLineRowVersion != null)
+        {
+            var primary = lines[0];
+            _db.Entry(primary).Property(x => x.RowVersion).OriginalValue = stmtLineRowVersion;
+        }
+        try { await PersistMatchAsync(stmt, lines, cands, BankReconMatchType.Manual, req.Note, user); }
+        catch (DbUpdateConcurrencyException) { return FinResult.Fail("E-A4-CONCURRENCY-001"); }
+        catch (DbUpdateException) { return FinResult.Fail("E-A4-MATCH-002"); }   // 唯一约束(JL占用)兜底
+        return FinResult.Pass();
+    }
+
+    public async Task<FinResult> UnmatchAsync(Guid groupId, string? user)
+    {
+        var match = await _db.BankReconMatches.FirstOrDefaultAsync(x => x.Id == groupId);
+        if (match == null) return FinResult.Fail("E-A4-MATCH-004");
+        var stmt = await _db.BankStatements.FirstAsync(x => x.Id == match.StatementId);
+        if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+
+        var lines = await _db.BankStatementLines.Where(x => x.MatchGroupId == groupId).ToListAsync();
+        foreach (var l in lines)
+        {
+            l.MatchStatus = BankLineMatchStatus.Unmatched;
+            l.MatchGroupId = null;
+            l.Modifier = user; l.ModifyDate = DateTime.Now;
+            // 若组关联了 BankRecon 自动凭证：不自动删凭证（走反冲，§4.5/§5.1）；GeneratedJournalEntryId 由 D-2 反冲流程清
+        }
+        var links = await _db.BankReconJournalLinks.Where(x => x.MatchGroupId == groupId).ToListAsync();
+        _db.BankReconJournalLinks.RemoveRange(links);
+        _db.BankReconMatches.Remove(match);
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
     public Task<List<BankOnlyLineResult>> GenerateBankOnlyVoucherAsync(Guid statementId, List<Guid> lineIds, Guid counterAccountId, string? counterRole, string? partnerId, string? user) => throw new NotImplementedException();
     public Task<FinResult> MarkPendingAsync(Guid statementId, List<Guid> lineIds, BankLineCategory category, byte[]? rowVersion, string? user) => throw new NotImplementedException();
     public Task<ReconciliationStatementDto> GetReconciliationStatementAsync(Guid statementId) => throw new NotImplementedException();

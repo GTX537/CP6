@@ -168,4 +168,82 @@ public class BankReconMatchTests
         Assert.Equal(2, await db.BankStatementLines.CountAsync(x => x.MatchGroupId == grp.Id));  // N:1 组含两条流水
         Assert.Equal(1, await db.BankReconJournalLinks.CountAsync());                            // 单凭证行
     }
+
+    // ── C-3: ManualMatchAsync + UnmatchAsync ──
+
+    [Fact]
+    public async Task ManualMatch_NM_BalancedSum_Succeeds()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        // 客户付1000、银行实收990、手续费10 → +990 流水 ↔ 借银行+1000 + 贷银行−10 净+990
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 990);
+        var jl1 = await PostedBankLine(db, glId, new(2026, 6, 4), 1000, 0);   // +1000
+        var jl2 = await PostedBankLine(db, glId, new(2026, 6, 4), 0, 10);     // −10
+        var req = new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { lineId }, JournalLineIds = { jl1, jl2 } };
+        var r = await svc.ManualMatchAsync(req, null, "admin");
+        Assert.True(r.Ok);
+        Assert.Equal(2, await db.BankReconJournalLinks.CountAsync());
+        var line = await db.BankStatementLines.FirstAsync(x => x.Id == lineId);
+        Assert.Equal(BankLineMatchStatus.Matched, line.MatchStatus);
+    }
+
+    [Fact]
+    public async Task ManualMatch_UnbalancedSum_Fails()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 990);
+        var jl1 = await PostedBankLine(db, glId, new(2026, 6, 4), 1000, 0);
+        var req = new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { lineId }, JournalLineIds = { jl1 } };
+        var r = await svc.ManualMatchAsync(req, null, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-MATCH-001", r.Code);
+    }
+
+    [Fact]
+    public async Task ManualMatch_JlNotBankGl_Fails()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 100);
+        // 凭证行用别的科目
+        var entry = new JournalEntry { Id = Guid.NewGuid(), No = "X", VoucherDate = new(2026, 6, 4), Source = VoucherSource.AP, Status = JournalStatus.Posted };
+        var jl = new JournalLine { Id = Guid.NewGuid(), EntryId = entry.Id, LineNo = 1, AccountId = Guid.NewGuid(), Debit = 100 };
+        entry.Lines.Add(jl); entry.Lines.Add(new JournalLine { Id = Guid.NewGuid(), EntryId = entry.Id, LineNo = 2, AccountId = Guid.NewGuid(), Credit = 100 });
+        db.JournalEntries.Add(entry); await db.SaveChangesAsync();
+        var req = new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { lineId }, JournalLineIds = { jl.Id } };
+        var r = await svc.ManualMatchAsync(req, null, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-MATCH-004", r.Code);
+    }
+
+    [Fact]
+    public async Task ManualMatch_AlreadyOccupied_Fails()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        var l1 = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 100);
+        var jl = await PostedBankLine(db, glId, new(2026, 6, 4), 100, 0);
+        await svc.ManualMatchAsync(new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { l1 }, JournalLineIds = { jl } }, null, "admin");
+        // 第二条流水想再占同一凭证行
+        var l2 = new BankStatementLine { Id = Guid.NewGuid(), StatementId = stmtId, LineNo = 2, TxnDate = new(2026, 6, 6), Direction = BankLineDirection.Deposit, Amount = 100, Source = BankLineSource.Imported };
+        l2.RecomputeSigned(); db.BankStatementLines.Add(l2); await db.SaveChangesAsync();
+        var r = await svc.ManualMatchAsync(new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { l2.Id }, JournalLineIds = { jl } }, null, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-MATCH-002", r.Code);
+    }
+
+    [Fact]
+    public async Task Unmatch_ReleasesLinesAndLinks()
+    {
+        var (svc, db, stmtId, glId) = await Fixture();
+        var lineId = await AddStmtLine(db, stmtId, new(2026, 6, 5), 1, 100);
+        var jl = await PostedBankLine(db, glId, new(2026, 6, 4), 100, 0);
+        await svc.ManualMatchAsync(new ManualMatchRequest { StatementId = stmtId, StatementLineIds = { lineId }, JournalLineIds = { jl } }, null, "admin");
+        var group = await db.BankReconMatches.FirstAsync();
+        var r = await svc.UnmatchAsync(group.Id, "admin");
+        Assert.True(r.Ok);
+        Assert.Empty(await db.BankReconJournalLinks.ToListAsync());
+        Assert.Empty(await db.BankReconMatches.ToListAsync());
+        var line = await db.BankStatementLines.FirstAsync(x => x.Id == lineId);
+        Assert.Equal(BankLineMatchStatus.Unmatched, line.MatchStatus);
+        Assert.Null(line.MatchGroupId);
+    }
 }
