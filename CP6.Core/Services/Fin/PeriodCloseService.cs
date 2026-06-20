@@ -15,15 +15,18 @@ public class PeriodCloseService : IPeriodCloseService
     private readonly IFiscalPeriodService _periods;
     private readonly ITrialBalanceService _trial;
     private readonly IFxRevaluationService? _reval;
+    private readonly IAssetDepreciationService? _deprec;
     private readonly ILogger<PeriodCloseService>? _logger;
 
     public PeriodCloseService(CP6Context db, IFiscalPeriodService periods, ITrialBalanceService trial,
-        IFxRevaluationService? reval = null, ILogger<PeriodCloseService>? logger = null)
+        IFxRevaluationService? reval = null, IAssetDepreciationService? deprec = null,
+        ILogger<PeriodCloseService>? logger = null)
     {
         _db = db;
         _periods = periods;
         _trial = trial;
         _reval = reval;
+        _deprec = deprec;
         _logger = logger;
     }
 
@@ -47,6 +50,13 @@ public class PeriodCloseService : IPeriodCloseService
         var prev = await _periods.PreviousAsync(periodId);
         if (prev is { Status: PeriodStatus.Open }) return FinResult.Fail("E-FIN-145");
 
+        // ④ A3 §6.1 硬预检：工作量法在用资产本期未录工作量 → 硬阻断（结账钩子 Accrue 会触 FA008，前移明示）
+        if (_deprec != null)
+        {
+            var wl = await _deprec.PreCloseWorkloadCheckAsync(periodId);
+            if (!wl.Ok) return wl;
+        }
+
         return FinResult.Pass();
     }
 
@@ -55,8 +65,15 @@ public class PeriodCloseService : IPeriodCloseService
         var check = await PreCloseCheckAsync(periodId);
         if (!check.Ok) return check;
 
+        // ★ A3 §6.1：结账前兜底计提折旧（三态幂等：Posted→Pass / Draft→Post / 无→Run+Post）。失败阻断结账。
+        // 折旧先于汇兑重估，因折旧凭证可能影响外币科目余额（如折旧费用通过损益结转影响留存）。
+        if (_deprec != null)
+        {
+            var dr = await _deprec.AccrueAsync(periodId, userId);
+            if (!dr.Ok) return dr;
+        }
+
         // ★ 章07 §4：结账前对未结外币 AP/AR 余额做期末未实现汇兑重估（重估凭证落本期 + 冲回凭证落下期初）。
-        // 重估失败（如汇兑科目角色缺失）则阻断结账；期末汇率未登记的币种内部跳过并告警，不阻断。
         if (_reval != null)
         {
             var rr = await _reval.RevalueAsync(periodId, userId);
