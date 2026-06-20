@@ -139,10 +139,52 @@ public class BankStatementService : IBankStatementService
         return FinResult.Pass();
     }
 
-    // ── C/D/E 手工行（stubs — 待后续 Phase 实现）──
-    public Task<FinResult> AddLineAsync(Guid statementId, BankStatementLine line, string? user) => throw new NotImplementedException();
-    public Task<FinResult> UpdateLineAsync(Guid statementId, Guid lineId, BankStatementLine line, byte[]? rowVersion, string? user) => throw new NotImplementedException();
-    public Task<FinResult> DeleteLineAsync(Guid statementId, Guid lineId, string? user) => throw new NotImplementedException();
+    // ── 手工行 ──
+    public async Task<FinResult> AddLineAsync(Guid statementId, BankStatementLine line, string? user)
+    {
+        var stmt = await _db.BankStatements.AsNoTracking().FirstOrDefaultAsync(x => x.Id == statementId);
+        if (stmt == null) return FinResult.Fail("E-A4-MATCH-004");
+        if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+        var maxLineNo = await _db.BankStatementLines.Where(x => x.StatementId == statementId).Select(x => (int?)x.LineNo).MaxAsync() ?? 0;
+        line.Id = Guid.NewGuid(); line.StatementId = statementId; line.LineNo = maxLineNo + 1;
+        line.Source = BankLineSource.Manual; line.MatchStatus = BankLineMatchStatus.Unmatched;
+        line.CurrencyCd ??= stmt.CurrencyCd;
+        line.RecomputeSigned();
+        line.Creator = user; line.CreateDate = DateTime.Now;
+        _db.BankStatementLines.Add(line);
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    public async Task<FinResult> UpdateLineAsync(Guid statementId, Guid lineId, BankStatementLine line, byte[]? rowVersion, string? user)
+    {
+        var existing = await _db.BankStatementLines.FirstOrDefaultAsync(x => x.Id == lineId && x.StatementId == statementId);
+        if (existing == null) return FinResult.Fail("E-A4-MATCH-004");
+        var stmt = await _db.BankStatements.AsNoTracking().FirstAsync(x => x.Id == statementId);
+        if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+        if (existing.MatchStatus == BankLineMatchStatus.Matched) return FinResult.Fail("E-A4-MATCH-005");   // 已匹配须先 Unmatch
+        if (rowVersion != null) _db.Entry(existing).Property(x => x.RowVersion).OriginalValue = rowVersion;
+        existing.TxnDate = line.TxnDate; existing.Direction = line.Direction; existing.Amount = line.Amount;
+        existing.Description = line.Description; existing.CounterpartyName = line.CounterpartyName;
+        existing.RefNo = line.RefNo; existing.BalanceAfter = line.BalanceAfter; existing.CurrencyCd = line.CurrencyCd ?? stmt.CurrencyCd;
+        existing.RecomputeSigned();
+        existing.Modifier = user; existing.ModifyDate = DateTime.Now;
+        try { await _db.SaveChangesAsync(); }
+        catch (DbUpdateConcurrencyException) { return FinResult.Fail("E-A4-CONCURRENCY-001"); }
+        return FinResult.Pass();
+    }
+
+    public async Task<FinResult> DeleteLineAsync(Guid statementId, Guid lineId, string? user)
+    {
+        var existing = await _db.BankStatementLines.FirstOrDefaultAsync(x => x.Id == lineId && x.StatementId == statementId);
+        if (existing == null) return FinResult.Fail("E-A4-MATCH-004");
+        var stmt = await _db.BankStatements.AsNoTracking().FirstAsync(x => x.Id == statementId);
+        if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+        if (existing.MatchStatus == BankLineMatchStatus.Matched) return FinResult.Fail("E-A4-MATCH-005");
+        _db.BankStatementLines.Remove(existing);
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
 
     // ── 私有助手 ──
     private async Task<(HashSet<string> Hash, HashSet<string> Fp)> ExistingHashSetsAsync(Guid statementId)

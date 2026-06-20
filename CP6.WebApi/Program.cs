@@ -855,6 +855,13 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 613 });
         db.SaveChanges();
     }
+    // A4 §9：银行对账菜单 614
+    if (!db.Sys_Menus.Any(m => m.MenuId == 614))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 614, MenuName = "银行对账", RoutePath = "/fin/bank-reconciliation", Icon = "Money", ParentId = 600, OrderNo = 270, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 614 });
+        db.SaveChanges();
+    }
     // A3 §10：固定资产 4 菜单（615~618）+ admin 授权
     if (!db.Sys_Menus.Any(m => m.MenuId == 615))
     {
@@ -902,6 +909,10 @@ using (var scope = app.Services.CreateScope())
             (616, "view", "查看"), (616, "add", "新建"), (616, "edit", "编辑"), (616, "activate", "启用"),
             (617, "view", "查看"), (617, "run", "计提"), (617, "post", "过账"), (617, "reverse", "反冲"),
             (618, "view", "查看"), (618, "add", "新建"), (618, "confirm", "确认"), (618, "reverse", "反冲"),
+            // A4 §11 银行对账（614）操作权限点
+            (614, "view", "查看"), (614, "import", "导入"), (614, "match", "撮合"),
+            (614, "generate-voucher", "生成凭证"), (614, "mark-pending", "标记未达"),
+            (614, "lock", "锁定"), (614, "unlock", "解锁"), (614, "profile-manage", "模板维护"),
         };
         foreach (var (menuId, code, name) in finActions)
         {
