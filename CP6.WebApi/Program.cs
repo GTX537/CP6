@@ -855,11 +855,25 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 613 });
         db.SaveChanges();
     }
-    // A4 §9：银行对账菜单 614
+    // A4 §9：银行对账菜单 614（撮合台）+ 619 对账会话 + 620 导入模板。
+    // 路由为菜单驱动注册（router/index.ts addDynamicRoutes 仅给有 Sys_Menu 的 routePath 注册路由）——
+    // 3 个视图须各有菜单，否则会话/模板视图路由不注册 → 白屏不可达。
     if (!db.Sys_Menus.Any(m => m.MenuId == 614))
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 614, MenuName = "银行对账", RoutePath = "/fin/bank-reconciliation", Icon = "Money", ParentId = 600, OrderNo = 270, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 614 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 619))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 619, MenuName = "对账会话", RoutePath = "/fin/bank-statement", Icon = "Tickets", ParentId = 600, OrderNo = 271, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 619 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 620))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 620, MenuName = "导入模板", RoutePath = "/fin/bank-import-profile", Icon = "Postcard", ParentId = 600, OrderNo = 272, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 620 });
         db.SaveChanges();
     }
     // A3 §10：固定资产 4 菜单（615~618）+ admin 授权
@@ -889,7 +903,7 @@ using (var scope = app.Services.CreateScope())
     // PermissionService.HasActionAsync 无 admin 旁路：贴 [RequirePermission] 的端点必须在此 seed+授权，否则 admin 也 403。幂等。
     {
         // 确保 Fin 菜单的 MenuKey 已就位（全新库首启时这些菜单在上方 §545 回填之后才创建，故此处补一次，与全局回填同算法）
-        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 618).ToList())
+        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 620).ToList())
             fm.MenuKey = fm.RoutePath!.Trim('/').Replace('/', '-');
         db.SaveChanges();
 

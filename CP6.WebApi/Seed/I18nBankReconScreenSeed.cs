@@ -8,6 +8,8 @@ public static class I18nBankReconScreenSeed
     public static readonly Sys_Lang[] Items = new[]
     {
         new Sys_Lang { LangKey = "nav.614", ZhCN = "银行对账", ZhTW = "銀行對賬", En = "Bank Reconciliation", Ja = "銀行勘定調整", Ko = "은행 조정" },
+        new Sys_Lang { LangKey = "nav.619", ZhCN = "对账会话", ZhTW = "對賬會話", En = "Recon Sessions", Ja = "照合セッション", Ko = "조정 세션" },
+        new Sys_Lang { LangKey = "nav.620", ZhCN = "导入模板", ZhTW = "匯入範本", En = "Import Profiles", Ja = "インポートテンプレート", Ko = "가져오기 템플릿" },
         // ── 视图标题/页签 ──
         new Sys_Lang { LangKey = "bankrecon.workbench", ZhCN = "对账撮合台", ZhTW = "對賬撮合台", En = "Reconciliation Workbench", Ja = "照合ワークベンチ", Ko = "조정 워크벤치" },
         new Sys_Lang { LangKey = "bankrecon.workbench.subtitle", ZhCN = "流水↔凭证自动/手工撮合，生成凭证/标记未达，调节表核对锁定", ZhTW = "流水↔憑證自動/手工撮合，生成憑證/標記未達，調節表核對鎖定", En = "Bank lines ↔ journal lines auto/manual match, generate vouchers, reconciliation statement & lock", Ja = "明細↔伝票 自動/手動照合・伝票生成・調整表確認・ロック", Ko = "명세↔전표 자동/수동 매칭, 전표 생성, 조정표 확인 잠금" },
