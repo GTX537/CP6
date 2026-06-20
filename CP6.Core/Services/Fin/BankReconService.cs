@@ -384,7 +384,28 @@ public class BankReconService : IBankReconService
         }
         return results;
     }
-    public Task<FinResult> MarkPendingAsync(Guid statementId, List<Guid> lineIds, BankLineCategory category, byte[]? rowVersion, string? user) => throw new NotImplementedException();
+    public async Task<FinResult> MarkPendingAsync(Guid statementId, List<Guid> lineIds, BankLineCategory category, byte[]? rowVersion, string? user)
+    {
+        var stmt = await _db.BankStatements.AsNoTracking().FirstOrDefaultAsync(x => x.Id == statementId);
+        if (stmt == null) return FinResult.Fail("E-A4-MATCH-004");
+        if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+
+        var lines = await _db.BankStatementLines.Where(x => lineIds.Contains(x.Id) && x.StatementId == statementId).ToListAsync();
+        if (lines.Count != lineIds.Count) return FinResult.Fail("E-A4-MATCH-004");
+        if (lines.Any(l => l.MatchStatus == BankLineMatchStatus.Matched)) return FinResult.Fail("E-A4-MATCH-005");
+
+        if (rowVersion != null && lines.Count == 1)
+            _db.Entry(lines[0]).Property(x => x.RowVersion).OriginalValue = rowVersion;
+        foreach (var l in lines)
+        {
+            l.MatchStatus = BankLineMatchStatus.MarkedPending;
+            l.Category = category == BankLineCategory.None ? BankLineCategory.Pending : category;
+            l.Modifier = user; l.ModifyDate = DateTime.Now;
+        }
+        try { await _db.SaveChangesAsync(); }
+        catch (DbUpdateConcurrencyException) { return FinResult.Fail("E-A4-CONCURRENCY-001"); }
+        return FinResult.Pass();
+    }
     public Task<ReconciliationStatementDto> GetReconciliationStatementAsync(Guid statementId) => throw new NotImplementedException();
     public Task<FinResult> LockAsync(Guid statementId, string? user) => throw new NotImplementedException();
     public Task<FinResult> UnlockAsync(Guid statementId, string reason, string? user) => throw new NotImplementedException();

@@ -76,6 +76,31 @@ public class BankOnlyVoucherTests
     }
 
     [Fact]
+    public async Task MarkPending_SetsStatusAndCategory_NoVoucher()
+    {
+        var (svc, db, stmtId, bankGl, feeGl) = await Fixture();
+        var lineId = await Fee(db, stmtId, 10);
+        var r = await svc.MarkPendingAsync(stmtId, new() { lineId }, BankLineCategory.Pending, null, "admin");
+        Assert.True(r.Ok);
+        var line = await db.BankStatementLines.FirstAsync(x => x.Id == lineId);
+        Assert.Equal(BankLineMatchStatus.MarkedPending, line.MatchStatus);
+        Assert.Equal(BankLineCategory.Pending, line.Category);
+        Assert.Null(line.GeneratedJournalEntryId);
+        Assert.Empty(await db.JournalEntries.ToListAsync());
+    }
+
+    [Fact]
+    public async Task MarkPending_AlreadyMatched_Fails()
+    {
+        var (svc, db, stmtId, bankGl, feeGl) = await Fixture();
+        var lineId = await Fee(db, stmtId, 10);
+        await svc.GenerateBankOnlyVoucherAsync(stmtId, new() { lineId }, feeGl, null, null, "admin");
+        var r = await svc.MarkPendingAsync(stmtId, new() { lineId }, BankLineCategory.Pending, null, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-MATCH-005", r.Code);
+    }
+
+    [Fact]
     public async Task RegenerateAfterReverse_ClearsOldId_WritesNew()
     {
         var (svc, db, stmtId, bankGl, feeGl) = await Fixture();
