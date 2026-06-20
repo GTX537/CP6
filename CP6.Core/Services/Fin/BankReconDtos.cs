@@ -46,3 +46,30 @@ public class BankImportParseResult
     public List<BankImportRowError> Errors { get; set; } = new();
     public bool HasFatalParseError => Errors.Count > 0;
 }
+
+/// <summary>账面侧候选凭证行（含银行侧带方向金额 + 排序信号）。</summary>
+public class BankCandidateLine
+{
+    public Guid JournalLineId { get; set; }
+    public Guid JournalEntryId { get; set; }
+    public string EntryNo { get; set; } = string.Empty;
+    public DateTime VoucherDate { get; set; }
+    public decimal BankSignedAmount { get; set; }    // Debit=+,Credit=−（本位币或外币原币按账户币种）
+    public string? CurrencyCd { get; set; }
+    public string? PartnerId { get; set; }
+    public string? Memo { get; set; }
+    public int Rank { get; set; }                    // 排序优先级（越小越优）
+}
+
+/// <summary>人工撮合请求。</summary>
+public class ManualMatchRequest
+{
+    public Guid StatementId { get; set; }
+    public List<Guid> StatementLineIds { get; set; } = new();
+    public List<Guid> JournalLineIds { get; set; } = new();
+    public string? Note { get; set; }
+}
+
+// ── D 阶段占位 DTO（D-1/D-3 填充字段）──
+public class BankOnlyLineResult { public Guid LineId { get; set; } public bool Ok { get; set; } public string? Code { get; set; } public Guid? JournalEntryId { get; set; } }
+public class ReconciliationStatementDto { }   // D-3 填充字段

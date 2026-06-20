@@ -130,6 +130,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IAssetDepreciationService, CP6.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IAssetDisposalService, CP6.Core.Services.Fin.AssetDisposalService>(); // A3 §4 资产处置服务（出售/报废/转让/盘亏，经清理科目结转）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBankStatementImporter, CP6.Core.Services.Fin.BankStatementImporter>(); // A4 §3.6 CSV/Excel 导入解析器
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBankStatementService, CP6.Core.Services.Fin.BankStatementService>(); // A4 §2.5/§3.6 对账会话+导入+Profile CRUD
+builder.Services.AddScoped<CP6.Core.Services.Fin.IBankReconService, CP6.Core.Services.Fin.BankReconService>(); // A4 §4.2/§4.6 候选来源+撮合引擎
 builder.Services.AddScoped<CP6.Core.Services.Fin.IPeriodCloseService, CP6.Core.Services.Fin.PeriodCloseService>(); // 章02 §3 月结/锁期/反结账（结账前调用汇兑重估）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IAutoVoucherEngine, CP6.Core.Services.Fin.AutoVoucherEngine>(); // 章05 自动凭证引擎（规则即数据→AutoPost）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IApInvoiceService, CP6.Core.Services.Fin.ApInvoiceService>(); // 章03 §3① 应付发票录入+过账
