@@ -178,4 +178,33 @@ public class BudgetCopyImportTests
         Assert.False(r.Ok);
         Assert.Equal("E-A5-VERSION-005", r.Code);
     }
+
+    // ── F-2: 上年实际按桶聚合回填 ────────────────────────────────────────────
+
+    [Fact]
+    public async Task CopyFromActual_AggregatesPriorYearPostedIntoNewVersion()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var acct = new GlAccount { Code="6602", Name="管理费用", Type=AccountType.Expense, NormalSide=AccountSide.Debit, IsLeaf=true, IsActive=true, StandardScheme="CN-GAAP" };
+        db.GlAccounts.Add(acct);
+        var p1 = new FiscalPeriod { FiscalYear=2026, Year=2026, Month=1, PeriodNo=1, Status=PeriodStatus.Open, PeriodStart=new(2026,1,1), PeriodEnd=new(2026,1,31) };
+        var p2 = new FiscalPeriod { FiscalYear=2026, Year=2026, Month=2, PeriodNo=2, Status=PeriodStatus.Open, PeriodStart=new(2026,2,1), PeriodEnd=new(2026,2,28) };
+        db.FiscalPeriods.AddRange(p1, p2);
+        var b = new Budget { No="BUD-2027-00001", Name="2027", FiscalYear=2027, IsActive=true };
+        db.Budgets.Add(b);
+        await db.SaveChangesAsync();
+        // 上年(2026)已过账实际：期1=100，期2=200（公司级，无成本中心）
+        db.JournalEntries.Add(new JournalEntry { VoucherDate=new(2026,1,10), PeriodId=p1.Id, Source=VoucherSource.Manual, Status=JournalStatus.Posted, Lines=new(){ new JournalLine { AccountId=acct.Id, Debit=100m, Credit=0m } } });
+        db.JournalEntries.Add(new JournalEntry { VoucherDate=new(2026,2,10), PeriodId=p2.Id, Source=VoucherSource.Manual, Status=JournalStatus.Posted, Lines=new(){ new JournalLine { AccountId=acct.Id, Debit=200m, Credit=0m } } });
+        await db.SaveChangesAsync();
+
+        var svc = new BudgetService(db, new FinSequenceService(db), new StubApprovalForTest());
+        var v = (await svc.CreateVersionAsync(b.Id, "from-actual", "admin", copyFromActualFiscalYear: 2026)).Data!;
+
+        var line = await db.BudgetLines.SingleAsync(l => l.VersionId == v.Id && l.AccountId == acct.Id);
+        var periods = await db.BudgetLinePeriods.Where(p => p.BudgetLineId == line.Id).OrderBy(p => p.PeriodNo).ToListAsync();
+        Assert.Equal(100m, periods[0].Amount);   // 期1
+        Assert.Equal(200m, periods[1].Amount);   // 期2
+        Assert.Equal(300m, line.AnnualAmount);
+    }
 }

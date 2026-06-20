@@ -192,6 +192,24 @@ public class BudgetService : IBudgetService
         }
     }
 
-    // F-2 实现（上年实际聚合回填）。本任务留空，F-2 接 IBudgetReportService。
-    internal virtual Task CopyFromActualAsync(Guid targetVersionId, int sourceFiscalYear) => Task.CompletedTask;
+    // F-2 实现（上年实际聚合回填）。
+    internal virtual async Task CopyFromActualAsync(Guid targetVersionId, int sourceFiscalYear)
+    {
+        var agg = await new BudgetReportService(_db).AggregateActualByBucketAsync(sourceFiscalYear);
+        var lineSvc = new BudgetLineService(_db);
+        foreach (var (key, periods) in agg)
+        {
+            await lineSvc.UpsertLineAsync(new BudgetLineDto
+            {
+                VersionId = targetVersionId,
+                AccountId = key.Item1,
+                CostCenterId = key.Item2 == Guid.Empty ? null : key.Item2,
+                CostObjectType = key.Item3 == "" ? null : key.Item3,
+                CostObjectId = key.Item4 == "" ? null : key.Item4,
+                SpreadMode = "manual",
+                Periods = periods,
+                AnnualAmount = periods.Sum(),
+            });
+        }
+    }
 }

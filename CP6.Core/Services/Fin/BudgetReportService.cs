@@ -172,14 +172,41 @@ public class BudgetReportService : IBudgetReportService
         return rep;
     }
 
-    // ── F-2 stub ────────────────────────────────────────────────────
-    public Task<Dictionary<(Guid acct, Guid cc, string coType, string coId), decimal[]>>
-        AggregateActualByBucketAsync(int fiscalYear) =>
-        throw new NotImplementedException();
+    // ── F-2: 上年实际按桶聚合（12期数组）────────────────────────────
+    public async Task<Dictionary<(Guid acct, Guid cc, string coType, string coId), decimal[]>>
+        AggregateActualByBucketAsync(int fiscalYear)
+    {
+        var actuals = await (
+            from l in _db.JournalLines.AsNoTracking()
+            join e in _db.JournalEntries.AsNoTracking() on l.EntryId equals e.Id
+            join p in _db.FiscalPeriods.AsNoTracking() on e.PeriodId equals p.Id
+            join a in _db.GlAccounts.AsNoTracking() on l.AccountId equals a.Id
+            where e.Status == JournalStatus.Posted && p.FiscalYear == fiscalYear
+                  && (a.Type == AccountType.Expense || a.Type == AccountType.Revenue)
+            select new { l.AccountId, a.Type, l.CostCenterId, l.CostObjectType, l.CostObjectId, l.Debit, l.Credit, p.PeriodNo }
+        ).ToListAsync();
 
-    // ── F-3 stub ────────────────────────────────────────────────────
-    public Task<List<BudgetWarningDto>> PreCheckAsync(JournalEntry entry) =>
-        throw new NotImplementedException();
+        var result = new Dictionary<(Guid, Guid, string, string), decimal[]>();
+        foreach (var x in actuals)
+        {
+            if (x.PeriodNo < 1 || x.PeriodNo > 12) continue;
+            var key = (x.AccountId, x.CostCenterId ?? Guid.Empty, x.CostObjectType ?? "", x.CostObjectId ?? "");
+            if (!result.TryGetValue(key, out var arr)) { arr = new decimal[12]; result[key] = arr; }
+            var amt = x.Type == AccountType.Expense ? x.Debit - x.Credit : x.Credit - x.Debit;
+            arr[x.PeriodNo - 1] += amt;
+        }
+        return result;
+    }
+
+    // ── F-3: 预检全量预警（复用 BudgetEvaluator blockOnly=false）───
+    public async Task<List<BudgetWarningDto>> PreCheckAsync(JournalEntry entry)
+    {
+        var evals = await BudgetEvaluator.EvaluateAsync(_db, entry, blockOnly: false);
+        return evals.Where(e => e.Exceeded).Select(e => new BudgetWarningDto
+        {
+            AccountCode = e.AccountCode, Budget = e.Budget, Used = e.Used, Incoming = e.Incoming, IsBlock = e.IsBlock,
+        }).ToList();
+    }
 
     // ── 辅助 ─────────────────────────────────────────────────────────
 
