@@ -104,4 +104,43 @@ public class AssetDepreciationServiceTests
         var cc = await db.CostCenters.SingleAsync();
         Assert.Equal(cc.Id, entry.CostCenterId);
     }
+
+    [Fact] // §13.9 PostAsync 汇总凭证：借折旧费用×成本中心分行、贷累计折旧、借贷平、回写卡片
+    public async Task PostAsync_BuildsSummaryVoucher_WritesBackCard()
+    {
+        var (db, svc, june, cardId) = await SetupAsync();
+        await svc.RunAsync(june, "admin", DepreciationRunMode.Manual);
+        var run = await db.DepreciationRuns.SingleAsync();
+        var r = await svc.PostAsync(run.Id, "admin");
+        Assert.True(r.Ok, r.Code);
+
+        run = await db.DepreciationRuns.SingleAsync();
+        Assert.Equal(DepreciationRunStatus.Posted, run.Status);
+        Assert.NotNull(run.JournalEntryId);
+        var je = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.Id == run.JournalEntryId);
+        Assert.Equal(VoucherSource.Depreciation, je.Source);
+        Assert.Equal(JournalStatus.Posted, je.Status);
+        Assert.Equal(je.Lines.Sum(l => l.Debit), je.Lines.Sum(l => l.Credit));
+        Assert.Equal(1000m, je.Lines.Sum(l => l.Debit));
+        var card = await db.AssetCards.FindAsync(cardId);
+        Assert.Equal(1000m, card!.AccumulatedDepreciation);
+        Assert.Equal(1, card.DepreciatedPeriods);
+    }
+
+    [Fact] // §13.10 ReverseAsync：红冲 + 卡片累计/期数原子回滚
+    public async Task ReverseAsync_RedInks_AndRollsBackCard()
+    {
+        var (db, svc, june, cardId) = await SetupAsync();
+        await svc.RunAsync(june, "admin", DepreciationRunMode.Manual);
+        var run = await db.DepreciationRuns.SingleAsync();
+        await svc.PostAsync(run.Id, "admin");
+        var r = await svc.ReverseAsync(run.Id, "admin", "误提");
+        Assert.True(r.Ok, r.Code);
+        run = await db.DepreciationRuns.SingleAsync();
+        Assert.Equal(DepreciationRunStatus.Reversed, run.Status);
+        var card = await db.AssetCards.FindAsync(cardId);
+        Assert.Equal(0m, card!.AccumulatedDepreciation);
+        Assert.Equal(0, card.DepreciatedPeriods);
+        Assert.Equal(AssetStatus.InUse, card.Status);
+    }
 }

@@ -141,9 +141,128 @@ public sealed class AssetDepreciationService : IAssetDepreciationService
         return list;
     }
 
-    public Task<FinResult> SetWorkloadAsync(Guid entryId, decimal workload) => throw new NotImplementedException();
-    public Task<FinResult> PostAsync(Guid runId, string userId) => throw new NotImplementedException();
-    public Task<FinResult> ReverseAsync(Guid runId, string userId, string reason) => throw new NotImplementedException();
+    public async Task<FinResult> PostAsync(Guid runId, string userId)
+    {
+        var run = await _db.DepreciationRuns.FindAsync(runId);
+        if (run == null) return FinResult.Fail("FA006");
+        if (run.Status != DepreciationRunStatus.Draft) return FinResult.Fail("FA009");
+        if (run.JournalEntryId != null) return FinResult.Pass();
+
+        var entries = await _db.DepreciationEntries.Where(e => e.RunId == runId).ToListAsync();
+        if (entries.Any(e => e.Method == DepreciationMethod.UnitsOfProduction && e.WorkloadThisPeriod == null))
+            return FinResult.Fail("FA008");
+
+        var period = await _db.FiscalPeriods.FindAsync(run.FiscalPeriodId);
+        var voucherDate = new DateTime(period!.Year, period.Month, 1).AddMonths(1).AddDays(-1);
+
+        // 汇总凭证：借方按 (费用科目, 成本中心) 分组分行；贷方按累计折旧科目分组
+        var lines = new List<JournalLine>();
+        int lineNo = 1;
+        foreach (var g in entries.Where(e => e.DepreciationAmount > 0m)
+                     .GroupBy(e => new { e.DeprecExpenseAccountId, e.CostCenterId }))
+            lines.Add(new JournalLine
+            {
+                LineNo = lineNo++, AccountId = g.Key.DeprecExpenseAccountId,
+                Debit = g.Sum(e => e.DepreciationAmount), Credit = 0m, CostCenterId = g.Key.CostCenterId,
+            });
+        foreach (var g in entries.Where(e => e.DepreciationAmount > 0m).GroupBy(e => e.AccumDeprecAccountId))
+            lines.Add(new JournalLine
+            {
+                LineNo = lineNo++, AccountId = g.Key, Debit = 0m, Credit = g.Sum(e => e.DepreciationAmount),
+            });
+
+        if (lines.Count > 0)
+        {
+            var je = new JournalEntry
+            {
+                Id = Guid.NewGuid(), VoucherDate = voucherDate, Source = VoucherSource.Depreciation,
+                SourceDocNo = run.No, Description = $"月末折旧 {run.PeriodYearMonth}", Lines = lines,
+            };
+            var post = await _journal.AutoPostAsync(je);
+            if (!post.Ok) return post;
+            run.JournalEntryId = je.Id;
+        }
+
+        var cardIds = entries.Select(e => e.AssetCardId).ToList();
+        var cards = await _db.AssetCards.Where(c => cardIds.Contains(c.Id)).ToDictionaryAsync(c => c.Id);
+        foreach (var e in entries)
+        {
+            if (!cards.TryGetValue(e.AssetCardId, out var card)) continue;
+            card.AccumulatedDepreciation += e.DepreciationAmount;
+            card.DepreciatedPeriods += 1;
+            if (card.AccumulatedDepreciation >= card.OriginalValue - card.SalvageValue)
+                card.Status = AssetStatus.FullyDepreciated;
+        }
+        run.Status = DepreciationRunStatus.Posted;
+        run.PostedAt = DateTime.Now;
+        run.PostedBy = userId;
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    public async Task<FinResult> ReverseAsync(Guid runId, string userId, string reason)
+    {
+        var run = await _db.DepreciationRuns.FindAsync(runId);
+        if (run == null) return FinResult.Fail("FA006");
+        if (run.Status != DepreciationRunStatus.Posted) return FinResult.Fail("FA009");
+        if (run.RunMode == DepreciationRunMode.DisposalFinal) return FinResult.Fail("FA011");
+
+        var entries = await _db.DepreciationEntries.Where(e => e.RunId == runId).ToListAsync();
+        var cardIds = entries.Select(e => e.AssetCardId).ToList();
+        bool anyDisposed = await _db.AssetDisposals.AnyAsync(d => cardIds.Contains(d.AssetCardId)
+            && d.Status != AssetDisposalStatus.Reversed);
+        if (anyDisposed) return FinResult.Fail("FA011");
+
+        if (run.JournalEntryId != null)
+        {
+            var rev = await _journal.ReverseAsync(run.JournalEntryId.Value, userId, reason, autoPost: true);
+            if (!rev.Ok) return rev;
+        }
+        var cards = await _db.AssetCards.Where(c => cardIds.Contains(c.Id)).ToDictionaryAsync(c => c.Id);
+        foreach (var e in entries)
+        {
+            if (!cards.TryGetValue(e.AssetCardId, out var card)) continue;
+            card.AccumulatedDepreciation -= e.DepreciationAmount;
+            card.DepreciatedPeriods -= 1;
+            if (card.Status == AssetStatus.FullyDepreciated
+                && card.AccumulatedDepreciation < card.OriginalValue - card.SalvageValue)
+                card.Status = AssetStatus.InUse;
+        }
+        run.Status = DepreciationRunStatus.Reversed;
+        run.ReversedAt = DateTime.Now;
+        run.ReversedBy = userId;
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    public async Task<FinResult> SetWorkloadAsync(Guid entryId, decimal workload)
+    {
+        var entry = await _db.DepreciationEntries.FindAsync(entryId);
+        if (entry == null) return FinResult.Fail("FA006");
+        if (entry.Method != DepreciationMethod.UnitsOfProduction) return FinResult.Fail("FA008");
+        var run = await _db.DepreciationRuns.FindAsync(entry.RunId);
+        if (run == null || run.Status != DepreciationRunStatus.Draft) return FinResult.Fail("FA009");
+        var card = await _db.AssetCards.FindAsync(entry.AssetCardId);
+        if (card == null) return FinResult.Fail("FA006");
+        if (card.TotalWorkload is null or <= 0m) return FinResult.Fail("FA008");
+
+        var amount = _calc.PeriodAmount(new DepreciationCalcInput
+        {
+            Method = DepreciationMethod.UnitsOfProduction, OriginalValue = card.OriginalValue,
+            SalvageValue = card.SalvageValue, UsefulLifeMonths = card.UsefulLifeMonths,
+            DepreciatedPeriods = card.DepreciatedPeriods, AccumulatedBefore = card.AccumulatedDepreciation,
+            TotalWorkload = card.TotalWorkload, WorkloadThisPeriod = workload,
+        });
+        entry.WorkloadThisPeriod = workload;
+        entry.DepreciationAmount = amount;
+        entry.ClosingAccumulated = entry.OpeningAccumulated + amount;
+        entry.ClosingNetValue = entry.OpeningNetValue - amount;
+        run.TotalAmount = await _db.DepreciationEntries.Where(e => e.RunId == run.Id && e.Id != entry.Id)
+            .SumAsync(e => e.DepreciationAmount) + amount;
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
     public Task<FinResult> AccrueAsync(Guid periodId, string userId) => throw new NotImplementedException();
     public Task<FinResult> PreCloseWorkloadCheckAsync(Guid periodId) => throw new NotImplementedException();
     public Task<DisposalFinalResult> AccrueDisposalFinalAsync(Guid a, Guid p, string u) => throw new NotImplementedException();
