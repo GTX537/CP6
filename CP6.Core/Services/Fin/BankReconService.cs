@@ -2,6 +2,7 @@ using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Fin;
 
@@ -301,7 +302,84 @@ public class BankReconService : IBankReconService
         await _db.SaveChangesAsync();
         return FinResult.Pass();
     }
-    public Task<List<BankOnlyLineResult>> GenerateBankOnlyVoucherAsync(Guid statementId, List<Guid> lineIds, Guid counterAccountId, string? counterRole, string? partnerId, string? user) => throw new NotImplementedException();
+    public async Task<List<BankOnlyLineResult>> GenerateBankOnlyVoucherAsync(Guid statementId, List<Guid> lineIds,
+        Guid counterAccountId, string? counterRole, string? partnerId, string? user)
+    {
+        var results = new List<BankOnlyLineResult>();
+        var stmt = await _db.BankStatements.AsNoTracking().FirstOrDefaultAsync(x => x.Id == statementId);
+        if (stmt == null) { foreach (var id in lineIds) results.Add(new() { LineId = id, Ok = false, Code = "E-A4-MATCH-004" }); return results; }
+        if (stmt.Status != BankStatementStatus.Open)
+        { foreach (var id in lineIds) results.Add(new() { LineId = id, Ok = false, Code = "E-A4-STATEMENT-LOCKED" }); return results; }
+
+        var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId);
+        // 对方科目：显式 Id 优先，否则按 Role 解析
+        Guid? counterId = counterAccountId != Guid.Empty ? counterAccountId
+            : (counterRole != null ? (await _db.GlAccounts.FirstOrDefaultAsync(a => a.Role == counterRole && a.IsActive && a.IsLeaf))?.Id : null);
+
+        foreach (var lineId in lineIds)
+        {
+            var line = await _db.BankStatementLines.FirstOrDefaultAsync(x => x.Id == lineId && x.StatementId == statementId);
+            if (line == null) { results.Add(new() { LineId = lineId, Ok = false, Code = "E-A4-MATCH-004" }); continue; }
+            if (line.MatchStatus == BankLineMatchStatus.Matched || line.GeneratedJournalEntryId != null)
+            { results.Add(new() { LineId = lineId, Ok = false, Code = "E-A4-BANKONLY-DUP" }); continue; }   // 幂等
+            if (counterId is not Guid cAcc)
+            { results.Add(new() { LineId = lineId, Ok = false, Code = "E-A4-MATCH-003" }); continue; }
+
+            // ── 单条事务（spec §5.1 点6）：过账→写回→建组→建Link→改状态 任一失败整体回滚 ──
+            // InMemory provider 不支持真实事务 → 检测 ProviderName 后跳过 BeginTransactionAsync
+            var isInMemory = _db.Database.ProviderName?.Contains("InMemory", StringComparison.OrdinalIgnoreCase) == true;
+            IDbContextTransaction? tx = isInMemory ? null : await _db.Database.BeginTransactionAsync();
+            try
+            {
+                await _period.EnsureOpenAsync(line.TxnDate, user);
+                // 凭证方向：Withdrawal 借对方/贷银行；Deposit 借银行/贷对方
+                var bankLine = new JournalLine { AccountId = acct.GlAccountId, PartnerId = null };
+                var counterLine = new JournalLine { AccountId = cAcc, PartnerId = partnerId };
+                if (line.Direction == BankLineDirection.Withdrawal)
+                { counterLine.Debit = line.Amount; bankLine.Credit = line.Amount; }
+                else
+                { bankLine.Debit = line.Amount; counterLine.Credit = line.Amount; }
+
+                var entry = new JournalEntry
+                {
+                    Id = Guid.NewGuid(), VoucherDate = line.TxnDate, Source = VoucherSource.BankRecon,
+                    SourceDocNo = stmt.No, Description = $"银行对账单边项 {stmt.No} 行{line.LineNo}：{line.Description}",
+                    Lines = { bankLine, counterLine },
+                };
+                var post = await _journal.AutoPostAsync(entry);
+                if (!post.Ok) { if (tx != null) await tx.RollbackAsync(); results.Add(new() { LineId = lineId, Ok = false, Code = post.Code }); continue; }
+
+                // 重新取该凭证的银行GL行 Id
+                var newBankJl = await _db.JournalLines.FirstAsync(l => l.EntryId == entry.Id && l.AccountId == acct.GlAccountId);
+
+                line.GeneratedJournalEntryId = entry.Id;
+                line.GeneratedAt = DateTime.Now; line.GeneratedBy = user;
+                line.Category = line.Direction == BankLineDirection.Withdrawal ? BankLineCategory.BankCharge : BankLineCategory.InterestIncome;
+
+                var match = new BankReconMatch { Id = Guid.NewGuid(), StatementId = statementId, MatchType = BankReconMatchType.Auto,
+                    StmtSignedSum = line.SignedAmount, MatchedAt = DateTime.Now, MatchedBy = user ?? "system", Creator = user, CreateDate = DateTime.Now };
+                _db.BankReconMatches.Add(match);
+                _db.BankReconJournalLinks.Add(new BankReconJournalLink { Id = Guid.NewGuid(), MatchGroupId = match.Id,
+                    JournalLineId = newBankJl.Id, JournalEntryId = entry.Id, BankSignedAmount = newBankJl.Debit - newBankJl.Credit, Creator = user, CreateDate = DateTime.Now });
+                line.MatchStatus = BankLineMatchStatus.Matched; line.MatchGroupId = match.Id;
+                line.Modifier = user; line.ModifyDate = DateTime.Now;
+
+                await _db.SaveChangesAsync();
+                if (tx != null) await tx.CommitAsync();
+                results.Add(new() { LineId = lineId, Ok = true, JournalEntryId = entry.Id });
+            }
+            catch (Exception)
+            {
+                if (tx != null) await tx.RollbackAsync();
+                results.Add(new() { LineId = lineId, Ok = false, Code = "E-A4-BANKONLY-DUP" });
+            }
+            finally
+            {
+                tx?.Dispose();
+            }
+        }
+        return results;
+    }
     public Task<FinResult> MarkPendingAsync(Guid statementId, List<Guid> lineIds, BankLineCategory category, byte[]? rowVersion, string? user) => throw new NotImplementedException();
     public Task<ReconciliationStatementDto> GetReconciliationStatementAsync(Guid statementId) => throw new NotImplementedException();
     public Task<FinResult> LockAsync(Guid statementId, string? user) => throw new NotImplementedException();
