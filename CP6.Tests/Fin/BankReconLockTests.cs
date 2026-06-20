@@ -203,4 +203,34 @@ public class BankReconLockTests
         Assert.False(r.Ok);
         Assert.Equal("E-A4-RECON-003", r.Code);
     }
+
+    /// <summary>
+    /// AC-008: ReconciledDiff≠0 禁锁（直接构造不平夹具，spec §15 H-1 Step1）。
+    /// 构造：期初0、流水入50(Unmatched)、期末50 → InternalDiff=0；
+    /// GL 借30（未占用）→ BookOnlyDepositInTransit=30；
+    /// BankAdjusted=50+30=80；BookAdjusted=30+0=30；ReconciledDiff=50≠0 → 禁锁。
+    /// </summary>
+    [Fact]
+    public async Task AC008_ReconciledDiffNonZero_Rejected_DirectFixture()
+    {
+        var (svc, db, stmtId, bankGl, _, _) = await Fixture(0, 0);
+        // 流水：Unmatched 入款 50（计入 TotalDeposit，不计入 BankOnlyDepositNotBooked）
+        var matched = new BankStatementLine { Id = Guid.NewGuid(), StatementId = stmtId, LineNo = 1, TxnDate = new(2026, 6, 5), Direction = BankLineDirection.Deposit, Amount = 50, Source = BankLineSource.Imported, MatchStatus = BankLineMatchStatus.Unmatched };
+        matched.RecomputeSigned(); db.BankStatementLines.Add(matched);
+        // GL：bankGl 借30（未被任何 Link 占用 → BookOnlyDepositInTransit=30）
+        var e = new JournalEntry { Id = Guid.NewGuid(), No = "GL-X", VoucherDate = new(2026, 6, 4), Source = VoucherSource.AP, Status = JournalStatus.Posted };
+        e.Lines.Add(new JournalLine { Id = Guid.NewGuid(), EntryId = e.Id, LineNo = 1, AccountId = bankGl, Debit = 30 });
+        e.Lines.Add(new JournalLine { Id = Guid.NewGuid(), EntryId = e.Id, LineNo = 2, AccountId = Guid.NewGuid(), Credit = 30 });
+        db.JournalEntries.Add(e);
+        // 期末50使 InternalDiff = 0+50-0-50 = 0（通过 InternalDiff 校验，到 ReconciledDiff 校验）
+        var stmt = await db.BankStatements.FirstAsync();
+        stmt.ClosingBalance = 50;
+        await db.SaveChangesAsync();
+        // BankAdjusted = 50 + 30(BookOnlyDIT) - 0 = 80
+        // BookAdjusted = 30(GlEnd) + 0 - 0 = 30
+        // ReconciledDiff = 80 - 30 = 50 ≠ 0 → 返回 E-A4-RECON-001
+        var r = await svc.LockAsync(stmtId, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-RECON-001", r.Code);
+    }
 }
