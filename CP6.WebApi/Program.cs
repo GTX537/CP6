@@ -480,6 +480,9 @@ using (var scope = app.Services.CreateScope())
     // 章05 自动凭证记账规则种子（幂等，按 EventType 判存；只引用 Role 锚点，与 COA 模板包解耦）
     CP6.Core.Services.Fin.PostingRuleSeed.EnsureSeeded(db);
 
+    // A3 §9 固定资产科目对账（既有库补 Role/新增 4 科目；空库由模板导入负责）
+    await CP6.WebApi.Seed.A3AccountSeed.EnsureAsync(db);
+
     if (!db.Sys_Menus.Any())
     {
         // 菜单ID和角色ID都是自定义的，手动指定
@@ -849,12 +852,34 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 613 });
         db.SaveChanges();
     }
+    // A3 §10：固定资产 4 菜单（615~618）+ admin 授权
+    if (!db.Sys_Menus.Any(m => m.MenuId == 615))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 615, MenuName = "资产分类", RoutePath = "/fin/asset-category", Icon = "Postcard", ParentId = 600, OrderNo = 280, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 615 });
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 616))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 616, MenuName = "资产卡片", RoutePath = "/fin/asset-card", Icon = "Tickets", ParentId = 600, OrderNo = 281, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 616 });
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 617))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 617, MenuName = "折旧计提", RoutePath = "/fin/asset-deprec", Icon = "Money", ParentId = 600, OrderNo = 282, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 617 });
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 618))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 618, MenuName = "资产处置", RoutePath = "/fin/asset-disposal", Icon = "Sell", ParentId = 600, OrderNo = 283, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 618 });
+    }
+    db.SaveChanges();
     // 财务（Fin）功能权限点（D-2）：GL/AP/AR 变更端点的操作点 seed + 授权 admin(RoleId=1)。
     // 资源键 = Sys_Menu.MenuKey（由 RoutePath 派生，如 /fin/ar-invoice → fin-ar-invoice）。
     // PermissionService.HasActionAsync 无 admin 旁路：贴 [RequirePermission] 的端点必须在此 seed+授权，否则 admin 也 403。幂等。
     {
         // 确保 Fin 菜单的 MenuKey 已就位（全新库首启时这些菜单在上方 §545 回填之后才创建，故此处补一次，与全局回填同算法）
-        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 613).ToList())
+        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 618).ToList())
             fm.MenuKey = fm.RoutePath!.Trim('/').Replace('/', '-');
         db.SaveChanges();
 
@@ -869,6 +894,11 @@ using (var scope = app.Services.CreateScope())
             (608, "add", "新建"), (608, "post", "过账"), (608, "credit-memo", "销售红字"), (608, "reverse", "红冲"),
             (609, "add", "新建"), (609, "settle", "核销"), (609, "reverse", "撤销"),
             (613, "collect", "归集"), (613, "settle", "结转"),
+            // A3 §7 固定资产 4 菜单（615~618）操作权限点
+            (615, "add", "新建"), (615, "edit", "编辑"), (615, "delete", "删除"),
+            (616, "add", "新建"), (616, "edit", "编辑"), (616, "activate", "启用"),
+            (617, "run", "计提"), (617, "post", "过账"), (617, "reverse", "反冲"),
+            (618, "add", "新建"), (618, "confirm", "确认"), (618, "reverse", "反冲"),
         };
         foreach (var (menuId, code, name) in finActions)
         {
