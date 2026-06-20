@@ -40,7 +40,25 @@ public class BankStatementImporter : IBankStatementImporter
     }
 
     private static BankImportParseResult ParseExcel(BankImportProfile p, Stream file)
-        => throw new InvalidOperationException("E-A4-IMPORT-001: Excel 解析在 B-2 接 ClosedXML");
+    {
+        var result = new BankImportParseResult();
+        using var wb = new ClosedXML.Excel.XLWorkbook(file);
+        var ws = wb.Worksheet(1);
+        int lineNo = 0;
+        foreach (var row in ws.RowsUsed())
+        {
+            lineNo++;
+            if (lineNo <= p.SkipHeaderRows) continue;
+            var cols = row.Cells(1, row.LastCellUsed()?.Address.ColumnNumber ?? 1)
+                .Select(c => c.GetString()).ToArray();
+            if (cols.All(string.IsNullOrWhiteSpace)) continue;
+            var raw = string.Join("", cols);
+            try { result.Rows.Add(MapRow(p, cols, lineNo, raw)); }
+            catch (Exception ex)
+            { result.Errors.Add(new BankImportRowError { SourceLineNo = lineNo, Code = "E-A4-IMPORT-001", RawText = raw, Reason = ex.Message }); }
+        }
+        return result;
+    }
 
     /// <summary>按 Profile 映射一行；方向解析显式（§3.6）。失败抛异常由上层收集。</summary>
     private static BankImportRow MapRow(BankImportProfile p, string[] cols, int lineNo, string raw)

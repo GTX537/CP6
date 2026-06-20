@@ -81,6 +81,89 @@ public class BankStatementImportTests
         Assert.NotNull(all[0].ModifyDate);                        // ModifyDate stamped
     }
 
+    // ── B-2 tests ──
+
+    private static async Task<(BankStatementService svc, Guid stmtId, Guid profId)> Seed(CP6.Core.EFDbContext.CP6Context db)
+    {
+        var svc = new BankStatementService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db), new BankStatementImporter());
+        var period = await new FiscalPeriodService(db, 1).EnsureOpenAsync(new DateTime(2026, 6, 1), "admin");
+        var acct = new BankAccount { Id = Guid.NewGuid(), Code = "B1", Name = "工行", GlAccountId = Guid.NewGuid(), IsActive = true };
+        db.BankAccounts.Add(acct); await db.SaveChangesAsync();
+        var prof = new BankImportProfile { Id = Guid.NewGuid(), Name = "CSV", FileFormat = BankFileFormat.Csv,
+            SkipHeaderRows = 1, DateField = "0", DateFormat = "yyyy/MM/dd",
+            AmountMode = BankAmountMode.DepositWithdrawalColumns, DepositAmountField = "1", WithdrawalAmountField = "2",
+            RefNoField = "3", IsActive = true };
+        db.BankImportProfiles.Add(prof);
+        var r = await svc.CreateAsync(new BankStatement { BankAccountId = acct.Id, FiscalPeriodId = period.Id,
+            OpeningBalance = 0, ClosingBalance = 100 }, "admin");
+        await db.SaveChangesAsync();
+        var stmt = await db.BankStatements.FirstAsync();
+        return (svc, stmt.Id, prof.Id);
+    }
+
+    private static Stream Csv(string body) => new MemoryStream(System.Text.Encoding.UTF8.GetBytes(body));
+
+    [Fact]
+    public async Task Preview_ParsesRows_NoPersist()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var (svc, stmtId, profId) = await Seed(db);
+        var csv = "date,deposit,withdrawal,ref\n2026/06/05,100,,R1\n2026/06/06,,30,R2\n";
+        var prev = await svc.PreviewAsync(stmtId, profId, Csv(csv), "a.csv");
+        Assert.Equal(2, prev.SuccessCount);
+        Assert.Empty(await db.BankStatementLines.ToListAsync());   // 不落库
+    }
+
+    [Fact]
+    public async Task Confirm_PersistsLines_WithSignedAmount()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var (svc, stmtId, profId) = await Seed(db);
+        var csv = "date,deposit,withdrawal,ref\n2026/06/05,100,,R1\n2026/06/06,,30,R2\n";
+        var r = await svc.ConfirmImportAsync(stmtId, profId, Csv(csv), "a.csv", "admin");
+        Assert.True(r.Ok);
+        var lines = await db.BankStatementLines.OrderBy(x => x.LineNo).ToListAsync();
+        Assert.Equal(2, lines.Count);
+        Assert.Equal(100m, lines[0].SignedAmount);     // Deposit +
+        Assert.Equal(-30m, lines[1].SignedAmount);     // Withdrawal −
+        Assert.All(lines, l => Assert.Equal(BankLineSource.Imported, l.Source));
+    }
+
+    [Fact]
+    public async Task Confirm_FatalParseError_RejectsWholeBatch()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var (svc, stmtId, profId) = await Seed(db);
+        var csv = "date,deposit,withdrawal,ref\n2026/06/05,100,,R1\nBADDATE,,30,R2\n";  // 第2行日期坏
+        var r = await svc.ConfirmImportAsync(stmtId, profId, Csv(csv), "a.csv", "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-IMPORT-001", r.Code);
+        Assert.Empty(await db.BankStatementLines.ToListAsync());   // 整批不落库
+    }
+
+    [Fact]
+    public async Task Confirm_StrongDup_Skipped()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var (svc, stmtId, profId) = await Seed(db);
+        var csv = "date,deposit,withdrawal,ref\n2026/06/05,100,,R1\n";
+        await svc.ConfirmImportAsync(stmtId, profId, Csv(csv), "a.csv", "admin");
+        await svc.ConfirmImportAsync(stmtId, profId, Csv(csv), "a.csv", "admin");  // 同行再导
+        Assert.Single(await db.BankStatementLines.ToListAsync());  // 强重复跳过
+    }
+
+    [Fact]
+    public async Task Confirm_NonOpen_Rejected()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var (svc, stmtId, profId) = await Seed(db);
+        var stmt = await db.BankStatements.FirstAsync(); stmt.Status = BankStatementStatus.Locked;
+        await db.SaveChangesAsync();
+        var r = await svc.ConfirmImportAsync(stmtId, profId, Csv("date,deposit,withdrawal,ref\n2026/06/05,1,,R\n"), "a.csv", "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-STATEMENT-LOCKED", r.Code);
+    }
+
     /// <summary>Bug 2 fix: SplitCsv must handle RFC-4180 doubled-quote escape ("") as a literal ".</summary>
     [Fact]
     public void Csv_EscapedQuote_ParsesCorrectly()

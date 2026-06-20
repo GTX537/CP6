@@ -57,14 +57,122 @@ public class BankStatementService : IBankStatementService
         await _db.SaveChangesAsync();
     }
 
-    // ── 会话 / 导入 / 手工行：B-2 + C/F 实现 ──
-    public Task<List<BankStatement>> ListAsync(Guid? bankAccountId, Guid? fiscalPeriodId, BankStatementStatus? status) => throw new NotImplementedException();
-    public Task<BankStatement?> GetAsync(Guid id) => throw new NotImplementedException();
-    public Task<List<BankStatementLine>> GetLinesAsync(Guid statementId) => throw new NotImplementedException();
-    public Task<FinResult> CreateAsync(BankStatement dto, string? user) => throw new NotImplementedException();
-    public Task<BankImportPreviewResult> PreviewAsync(Guid statementId, Guid profileId, Stream file, string fileName) => throw new NotImplementedException();
-    public Task<FinResult> ConfirmImportAsync(Guid statementId, Guid profileId, Stream file, string fileName, string? user) => throw new NotImplementedException();
+    // ── 会话 / 导入 / 手工行：B-2 实现 ──
+
+    public async Task<List<BankStatement>> ListAsync(Guid? bankAccountId, Guid? fiscalPeriodId, BankStatementStatus? status)
+    {
+        var q = _db.BankStatements.AsNoTracking().AsQueryable();
+        if (bankAccountId is Guid b) q = q.Where(x => x.BankAccountId == b);
+        if (fiscalPeriodId is Guid f) q = q.Where(x => x.FiscalPeriodId == f);
+        if (status is BankStatementStatus s) q = q.Where(x => x.Status == s);
+        return await q.OrderByDescending(x => x.PeriodStart).ToListAsync();
+    }
+
+    public Task<BankStatement?> GetAsync(Guid id) => _db.BankStatements.FirstOrDefaultAsync(x => x.Id == id);
+
+    public Task<List<BankStatementLine>> GetLinesAsync(Guid statementId) =>
+        _db.BankStatementLines.AsNoTracking().Where(x => x.StatementId == statementId)
+            .OrderBy(x => x.LineNo).ToListAsync();
+
+    public async Task<FinResult> CreateAsync(BankStatement dto, string? user)
+    {
+        var acct = await _db.BankAccounts.FirstOrDefaultAsync(x => x.Id == dto.BankAccountId && x.IsActive);
+        if (acct == null) return FinResult.Fail("E-A4-MATCH-004");
+        var period = await _db.FiscalPeriods.FirstOrDefaultAsync(x => x.Id == dto.FiscalPeriodId);
+        if (period == null) return FinResult.Fail("E-A4-RECON-002");
+        // 每账户每期一个会话（DB 唯一索引兜底，先内存查）
+        if (await _db.BankStatements.AnyAsync(x => x.BankAccountId == dto.BankAccountId && x.FiscalPeriodId == dto.FiscalPeriodId))
+            return FinResult.Fail("E-A4-MATCH-004");
+        dto.Id = dto.Id == Guid.Empty ? Guid.NewGuid() : dto.Id;
+        dto.No = await _seq.NextAsync("BKR", period.PeriodStart);
+        dto.CurrencyCd = acct.CurrencyCd;
+        dto.PeriodStart = period.PeriodStart; dto.PeriodEnd = period.PeriodEnd;
+        dto.Status = BankStatementStatus.Open;
+        dto.Creator = user; dto.CreateDate = DateTime.Now;
+        _db.BankStatements.Add(dto);
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    public async Task<BankImportPreviewResult> PreviewAsync(Guid statementId, Guid profileId, Stream file, string fileName)
+    {
+        var profile = await _db.BankImportProfiles.AsNoTracking().FirstAsync(x => x.Id == profileId);
+        var parsed = _importer.Parse(profile, file, fileName);
+        return BuildPreview(parsed, await ExistingHashesAsync(statementId));
+    }
+
+    public async Task<FinResult> ConfirmImportAsync(Guid statementId, Guid profileId, Stream file, string fileName, string? user)
+    {
+        var stmt = await _db.BankStatements.FirstOrDefaultAsync(x => x.Id == statementId);
+        if (stmt == null) return FinResult.Fail("E-A4-IMPORT-002");
+        if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+
+        var profile = await _db.BankImportProfiles.AsNoTracking().FirstAsync(x => x.Id == profileId);
+        var parsed = _importer.Parse(profile, file, fileName);
+        if (parsed.HasFatalParseError) return FinResult.Fail("E-A4-IMPORT-001");   // 整批拒绝，无部分落库（§3.3）
+
+        var (existHash, existFp) = await ExistingHashSetsAsync(statementId);
+        var batchNo = await _seq.NextAsync("BKRIMP", DateTime.Today);
+        var maxLineNo = await _db.BankStatementLines.Where(x => x.StatementId == statementId)
+            .Select(x => (int?)x.LineNo).MaxAsync() ?? 0;
+
+        foreach (var r in parsed.Rows)
+        {
+            if (existHash.Contains(r.RawRowHash) || existFp.Contains(r.Fingerprint)) continue;  // 强重复跳过
+            var line = new BankStatementLine
+            {
+                Id = Guid.NewGuid(), StatementId = statementId, LineNo = ++maxLineNo,
+                TxnDate = r.TxnDate, Direction = (BankLineDirection)r.Direction, Amount = r.Amount,
+                CurrencyCd = r.CurrencyCd ?? stmt.CurrencyCd, Description = r.Description,
+                CounterpartyName = r.CounterpartyName, RefNo = r.RefNo, BalanceAfter = r.BalanceAfter,
+                Source = BankLineSource.Imported, MatchStatus = BankLineMatchStatus.Unmatched,
+                ImportBatchNo = batchNo, RawRowJson = r.RawRowJson, RawRowHash = r.RawRowHash, Fingerprint = r.Fingerprint,
+                Creator = user, CreateDate = DateTime.Now,
+            };
+            line.RecomputeSigned();
+            _db.BankStatementLines.Add(line);
+            existHash.Add(r.RawRowHash); existFp.Add(r.Fingerprint);
+        }
+        stmt.ImportFileName = fileName;
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    // ── C/D/E 手工行（stubs — 待后续 Phase 实现）──
     public Task<FinResult> AddLineAsync(Guid statementId, BankStatementLine line, string? user) => throw new NotImplementedException();
     public Task<FinResult> UpdateLineAsync(Guid statementId, Guid lineId, BankStatementLine line, byte[]? rowVersion, string? user) => throw new NotImplementedException();
     public Task<FinResult> DeleteLineAsync(Guid statementId, Guid lineId, string? user) => throw new NotImplementedException();
+
+    // ── 私有助手 ──
+    private async Task<HashSet<string>> ExistingHashesAsync(Guid statementId)
+    {
+        var (h, _) = await ExistingHashSetsAsync(statementId); return h;
+    }
+
+    private async Task<(HashSet<string> Hash, HashSet<string> Fp)> ExistingHashSetsAsync(Guid statementId)
+    {
+        var rows = await _db.BankStatementLines.AsNoTracking().Where(x => x.StatementId == statementId)
+            .Select(x => new { x.RawRowHash, x.Fingerprint }).ToListAsync();
+        return (rows.Where(x => x.RawRowHash != null).Select(x => x.RawRowHash!).ToHashSet(),
+                rows.Where(x => x.Fingerprint != null).Select(x => x.Fingerprint!).ToHashSet());
+    }
+
+    private static BankImportPreviewResult BuildPreview(BankImportParseResult parsed, HashSet<string> existHash)
+    {
+        var res = new BankImportPreviewResult { Errors = parsed.Errors, FailedCount = parsed.Errors.Count };
+        var seenHash = new HashSet<string>(existHash);
+        var seenKey = new HashSet<string>();   // (TxnDate+Direction+Amount+RefNo) 疑似重复键
+        foreach (var r in parsed.Rows)
+        {
+            var key = $"{r.TxnDate:yyyyMMdd}|{r.Direction}|{r.Amount}|{r.RefNo}";
+            if (seenHash.Contains(r.RawRowHash) || seenHash.Contains(r.Fingerprint))
+            { r.DupKind = "Strong"; r.Importable = false; res.StrongDupCount++; }
+            else if (seenKey.Contains(key))
+            { r.DupKind = "Suspected"; r.Importable = true; res.SuspectedDupCount++; }
+            else res.SuccessCount++;
+            seenHash.Add(r.RawRowHash); seenHash.Add(r.Fingerprint); seenKey.Add(key);
+            res.Rows.Add(r);
+        }
+        return res;
+    }
 }
