@@ -114,6 +114,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Serv
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.BudgetApprovalCallback>(); // A5 §8 预算版本审批回调（通过→自动激活/驳回→可重编）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetService, CP6.Core.Services.Fin.BudgetService>();            // A5 预算方案/版本 CRUD + 送审 + OA 回调
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetLineService, CP6.Core.Services.Fin.BudgetLineService>();    // A5 预算行 Upsert/Delete + Excel 导入
+builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetReportService, CP6.Core.Services.Fin.BudgetReportService>(); // A5 预算 vs 实际报告 + 预控预检
 builder.Services.AddScoped<CP6.Core.Services.Fin.FinSequenceService>();                                             // A5 BudgetService ctor 注入具体类型（已注册接口；此处补具体类使 DI 可直接解析）
 
 // 4.0c OA(Wf) 阶段3 高级流程（章07）：超时扫描 + Worker（退回/加签/委派为 FlowEngine 自带方法）
@@ -883,6 +884,27 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 620 });
         db.SaveChanges();
     }
+    // A5 §10：预算管理菜单 621（父）+ 622 预算编制 + 623 执行分析。
+    // 路由为菜单驱动注册（router/index.ts addDynamicRoutes 仅给有 Sys_Menu 的 routePath 注册路由）——
+    // 2 个视图须各有菜单，否则路由不注册 → 白屏不可达（A4 H-3 教训）。
+    if (!db.Sys_Menus.Any(m => m.MenuId == 621))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 621, MenuName = "预算管理", Icon = "DataAnalysis", ParentId = 600, OrderNo = 290, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 621 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 622))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 622, MenuName = "预算编制", RoutePath = "/fin/budget", Icon = "EditPen", ParentId = 621, OrderNo = 291, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 622 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 623))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 623, MenuName = "执行分析", RoutePath = "/fin/budget/vs-actual", Icon = "TrendCharts", ParentId = 621, OrderNo = 292, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 623 });
+        db.SaveChanges();
+    }
     // A3 §10：固定资产 4 菜单（615~618）+ admin 授权
     if (!db.Sys_Menus.Any(m => m.MenuId == 615))
     {
@@ -910,7 +932,7 @@ using (var scope = app.Services.CreateScope())
     // PermissionService.HasActionAsync 无 admin 旁路：贴 [RequirePermission] 的端点必须在此 seed+授权，否则 admin 也 403。幂等。
     {
         // 确保 Fin 菜单的 MenuKey 已就位（全新库首启时这些菜单在上方 §545 回填之后才创建，故此处补一次，与全局回填同算法）
-        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 620).ToList())
+        foreach (var fm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 601 && m.MenuId <= 623).ToList())
             fm.MenuKey = fm.RoutePath!.Trim('/').Replace('/', '-');
         db.SaveChanges();
 
@@ -934,6 +956,9 @@ using (var scope = app.Services.CreateScope())
             (614, "view", "查看"), (614, "import", "导入"), (614, "match", "撮合"),
             (614, "generate-voucher", "生成凭证"), (614, "mark-pending", "标记未达"),
             (614, "lock", "锁定"), (614, "unlock", "解锁"), (614, "profile-manage", "模板维护"),
+            // A5 §12 预算编制（622）操作权限点——所有预算控制器均用 fin-budget 资源键（MenuKey 622="/fin/budget"→"fin-budget"）
+            (622, "view", "查看"), (622, "add", "新建"), (622, "edit", "编辑"), (622, "delete", "删除"),
+            (622, "submit", "送审"), (622, "activate", "激活"), (622, "import", "导入"), (622, "copy", "复制"),
         };
         foreach (var (menuId, code, name) in finActions)
         {
