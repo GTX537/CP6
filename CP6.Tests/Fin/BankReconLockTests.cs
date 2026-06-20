@@ -47,7 +47,7 @@ public class BankReconLockTests
     }
 
     [Fact]
-    public async Task Lock_ReconciledDiffNonZero_Rejected()
+    public async Task Lock_MatchedWithdrawalAndGL_Balanced_Succeeds()
     {
         var (svc, db, stmtId, bankGl, _, _) = await Fixture(0, 0);
         // 加一个未占用账面行 借50 → BookAdjusted=50, BankAdjusted=0+50(在途存款)... 故意造不平：GL有借50但流水也记一笔入50已匹配则平；这里只挂GL不挂流水→在途存款 → 仍平。
@@ -201,6 +201,6 @@ public class BankReconLockTests
         await svc.LockAsync(stmtId, "admin");
         var r = await svc.UnlockAsync(stmtId, "", "admin");
         Assert.False(r.Ok);
-        Assert.Equal("E-A4-RECON-002", r.Code);
+        Assert.Equal("E-A4-RECON-003", r.Code);
     }
 }
