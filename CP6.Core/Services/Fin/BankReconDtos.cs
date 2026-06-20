@@ -72,4 +72,37 @@ public class ManualMatchRequest
 
 // ── D 阶段占位 DTO（D-1/D-3 填充字段）──
 public class BankOnlyLineResult { public Guid LineId { get; set; } public bool Ok { get; set; } public string? Code { get; set; } public Guid? JournalEntryId { get; set; } }
-public class ReconciliationStatementDto { }   // D-3 填充字段
+
+public class ReconciliationStatementDto
+{
+    public Guid StatementId { get; set; }
+    public string? CurrencyCd { get; set; }
+    public decimal OpeningBalance { get; set; }
+    public decimal ClosingBalance { get; set; }
+    public decimal TotalDeposit { get; set; }        // 本期流水入款合计
+    public decimal TotalWithdrawal { get; set; }     // 本期流水出款合计
+    public decimal GlBankEndingBalance { get; set; }  // GL 银行科目期末余额（外币按原币）
+
+    // 账面单边项（账面已记、银行未动）→ 调银行侧
+    public decimal BookOnlyDepositInTransit { get; set; }      // 在途存款（借方未达）
+    public decimal BookOnlyOutstandingPayment { get; set; }    // 未取付支票（贷方未达）
+    public List<ReconLineDetail> BookOnlyDetails { get; set; } = new();
+
+    // 银行单边项（银行已动、账面未记）→ 调账面侧
+    public decimal BankOnlyDepositNotBooked { get; set; }      // 已收未入账
+    public decimal BankOnlyWithdrawalNotBooked { get; set; }   // 已扣未入账
+    public List<ReconLineDetail> BankOnlyDetails { get; set; } = new();
+
+    public decimal StatementInternalDiff { get; set; }   // Opening+ΣDep−ΣWd−Closing
+    public decimal BankAdjustedBalance { get; set; }
+    public decimal BookAdjustedBalance { get; set; }
+    public decimal ReconciledDiff { get; set; }          // BankAdjusted − BookAdjusted
+}
+
+public class ReconLineDetail
+{
+    public string Kind { get; set; } = string.Empty;   // DepositInTransit / OutstandingPayment / DepositNotBooked / WithdrawalNotBooked
+    public DateTime Date { get; set; }
+    public decimal SignedAmount { get; set; }
+    public string? Reference { get; set; }
+}

@@ -406,7 +406,65 @@ public class BankReconService : IBankReconService
         catch (DbUpdateConcurrencyException) { return FinResult.Fail("E-A4-CONCURRENCY-001"); }
         return FinResult.Pass();
     }
-    public Task<ReconciliationStatementDto> GetReconciliationStatementAsync(Guid statementId) => throw new NotImplementedException();
+    public async Task<ReconciliationStatementDto> GetReconciliationStatementAsync(Guid statementId)
+    {
+        var stmt = await _db.BankStatements.AsNoTracking().FirstAsync(x => x.Id == statementId);
+        var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId);
+        var isForeign = !string.IsNullOrEmpty(acct.CurrencyCd) && acct.CurrencyCd != "JPY";
+
+        var lines = await _db.BankStatementLines.AsNoTracking().Where(x => x.StatementId == statementId).ToListAsync();
+        var dto = new ReconciliationStatementDto
+        {
+            StatementId = statementId, CurrencyCd = stmt.CurrencyCd,
+            OpeningBalance = stmt.OpeningBalance, ClosingBalance = stmt.ClosingBalance,
+            TotalDeposit = lines.Where(l => l.Direction == BankLineDirection.Deposit).Sum(l => l.Amount),
+            TotalWithdrawal = lines.Where(l => l.Direction == BankLineDirection.Withdrawal).Sum(l => l.Amount),
+        };
+        dto.StatementInternalDiff = stmt.OpeningBalance + dto.TotalDeposit - dto.TotalWithdrawal - stmt.ClosingBalance;
+
+        // ── GL 银行科目期末余额（外币按原币，§6 点3）──
+        var glRows = await (from jl in _db.JournalLines.AsNoTracking()
+                            join je in _db.JournalEntries.AsNoTracking() on jl.EntryId equals je.Id
+                            where jl.AccountId == acct.GlAccountId
+                                  && je.Status == JournalStatus.Posted
+                                  && je.Source != VoucherSource.Reversal
+                                  && je.VoucherDate <= stmt.PeriodEnd
+                            select new { jl, je }).ToListAsync();
+        decimal SignedOf(decimal debit, decimal credit, decimal? orig, string? ccy)
+        {
+            if (isForeign)
+            {
+                if (orig is not decimal o || ccy != acct.CurrencyCd) return 0m;   // 缺原币/币种不符不计入余额（也排除自动候选）
+                return debit > 0 ? o : -o;
+            }
+            return debit - credit;
+        }
+        dto.GlBankEndingBalance = glRows.Sum(r => SignedOf(r.jl.Debit, r.jl.Credit, r.jl.OrigAmount, r.jl.CurrencyCd));
+
+        // ── 账面单边项：未占用的银行GL凭证行（VoucherDate≤PeriodEnd 且未在 Link 中）──
+        var occupied = await _db.BankReconJournalLinks.AsNoTracking().Select(x => x.JournalLineId).ToListAsync();
+        var occSet = occupied.ToHashSet();
+        foreach (var r in glRows.Where(r => !occSet.Contains(r.jl.Id)))
+        {
+            var signed = SignedOf(r.jl.Debit, r.jl.Credit, r.jl.OrigAmount, r.jl.CurrencyCd);
+            if (signed > 0m) { dto.BookOnlyDepositInTransit += signed; dto.BookOnlyDetails.Add(new() { Kind = "DepositInTransit", Date = r.je.VoucherDate, SignedAmount = signed, Reference = r.je.No }); }
+            else if (signed < 0m) { dto.BookOnlyOutstandingPayment += -signed; dto.BookOnlyDetails.Add(new() { Kind = "OutstandingPayment", Date = r.je.VoucherDate, SignedAmount = signed, Reference = r.je.No }); }
+        }
+
+        // ── 银行单边项：流水 MarkedPending（未入账）= 调账面侧 ──
+        foreach (var l in lines.Where(l => l.MatchStatus == BankLineMatchStatus.MarkedPending))
+        {
+            if (l.Direction == BankLineDirection.Deposit) { dto.BankOnlyDepositNotBooked += l.Amount; dto.BankOnlyDetails.Add(new() { Kind = "DepositNotBooked", Date = l.TxnDate, SignedAmount = l.SignedAmount, Reference = l.RefNo }); }
+            else { dto.BankOnlyWithdrawalNotBooked += l.Amount; dto.BankOnlyDetails.Add(new() { Kind = "WithdrawalNotBooked", Date = l.TxnDate, SignedAmount = l.SignedAmount, Reference = l.RefNo }); }
+        }
+
+        // ── 双向调整后余额（§6 公式）──
+        dto.BankAdjustedBalance = stmt.ClosingBalance + dto.BookOnlyDepositInTransit - dto.BookOnlyOutstandingPayment;
+        dto.BookAdjustedBalance = dto.GlBankEndingBalance + dto.BankOnlyDepositNotBooked - dto.BankOnlyWithdrawalNotBooked;
+        dto.ReconciledDiff = dto.BankAdjustedBalance - dto.BookAdjustedBalance;
+        return dto;
+    }
+
     public Task<FinResult> LockAsync(Guid statementId, string? user) => throw new NotImplementedException();
     public Task<FinResult> UnlockAsync(Guid statementId, string reason, string? user) => throw new NotImplementedException();
 }
