@@ -58,9 +58,11 @@ public static class FinCoaTemplate
         new("1411", "在制品 WIP", AccountType.Asset, Dr, true, 2, IsControl: true, SubLedgerType: "COST", Role: "WIP", ParentCode: "1000"),
         new("1412", "库存商品 FG", AccountType.Asset, Dr, true, 2, IsControl: true, SubLedgerType: "INV", Role: "FG", ParentCode: "1000"),
         new("1471", "存货跌价准备", AccountType.Asset, Cr, true, 2, ParentCode: "1000"),   // 备抵
-        new("1601", "固定资产",   AccountType.Asset, Dr, true),
-        new("1602", "累计折旧",   AccountType.Asset, Cr, true),   // 备抵
+        new("1601", "固定资产",   AccountType.Asset, Dr, true, Role: "FIXED_ASSET"),
+        new("1602", "累计折旧",   AccountType.Asset, Cr, true, Role: "ACCUM_DEPREC"),   // 备抵
+        new("1606", "固定资产清理", AccountType.Asset, Dr, true, Role: "ASSET_CLEARING"),   // A3 §4 处置清理科目
         new("1701", "无形资产",   AccountType.Asset, Dr, true),
+        new("1901", "待处理财产损溢", AccountType.Asset, Dr, true, Role: "PENDING_PROPERTY_LOSS"),   // A3 §4 盘亏清理
 
         // 2 负债类（贷方增）
         new("2000", "流动负债",   AccountType.Liability, Cr, IsLeaf: false),
@@ -86,7 +88,7 @@ public static class FinCoaTemplate
         // 4 收入类（贷方增）
         new("4001", "主营业务收入", AccountType.Revenue, Cr, true, Role: "REVENUE"),
         new("4051", "其他业务收入", AccountType.Revenue, Cr, true),
-        new("4301", "营业外收入", AccountType.Revenue, Cr, true),
+        new("4301", "营业外收入", AccountType.Revenue, Cr, true, Role: "NON_OP_INCOME"),
         new("4401", "汇兑收益",   AccountType.Revenue, Cr, true, Role: "FX_GAIN"),
 
         // 5 成本类（借方增）
@@ -105,7 +107,9 @@ public static class FinCoaTemplate
         new("6002", "管理费用",   AccountType.Expense, Dr, true),
         new("6003", "财务费用",   AccountType.Expense, Dr, true),
         new("6004", "财务费用—汇兑损失", AccountType.Expense, Dr, true, Role: "FX_LOSS"),
+        new("6115", "资产处置损益", AccountType.Expense, Dr, true, Role: "ASSET_DISPOSAL_PL"),   // A3 §4 出售/转让损益
         new("6601", "研发费用",   AccountType.Expense, Dr, true),
+        new("6711", "营业外支出", AccountType.Expense, Dr, true, Role: "NON_OP_EXPENSE"),   // A3 §4 报废净损/盘亏
         new("6801", "所得税费用", AccountType.Expense, Dr, true),
     };
 
