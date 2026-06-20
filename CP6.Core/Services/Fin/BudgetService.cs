@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,9 @@ public class BudgetService : IBudgetService
 {
     private readonly CP6Context _db;
     private readonly FinSequenceService _seq;
-    public BudgetService(CP6Context db, FinSequenceService seq) { _db = db; _seq = seq; }
+    private readonly IApprovalService _approval;
+    public BudgetService(CP6Context db, FinSequenceService seq, IApprovalService approval)
+    { _db = db; _seq = seq; _approval = approval; }
 
     public Task<List<Budget>> ListBudgetsAsync() =>
         _db.Budgets.AsNoTracking().OrderByDescending(b => b.FiscalYear).ToListAsync();
@@ -99,9 +102,65 @@ public class BudgetService : IBudgetService
     }
 
     // ── B-2 实现 ──
-    public Task<FinResult> SubmitForApprovalAsync(Guid versionId, Guid userId, string userName) => throw new NotImplementedException();
-    public Task<FinResult> ActivateAsync(Guid versionId) => throw new NotImplementedException();
-    public Task ActivateFromApprovalAsync(Guid versionId, string decidedBy) => throw new NotImplementedException();
+    public async Task<FinResult> SubmitForApprovalAsync(Guid versionId, Guid userId, string userName)
+    {
+        var v = await _db.BudgetVersions.FindAsync(versionId);
+        if (v == null) return FinResult.Fail("E-A5-VERSION-404");
+        if (v.Status != BudgetVersionStatus.Draft) return FinResult.Fail("E-A5-VERSION-002");
+        if (!await _db.BudgetLines.AnyAsync(l => l.VersionId == versionId)) return FinResult.Fail("E-A5-VERSION-006");
+
+        var total = await _db.BudgetLines.Where(l => l.VersionId == versionId).SumAsync(l => l.AnnualAmount);
+        var budget = await _db.Budgets.FindAsync(v.BudgetId);
+        Guid instanceId;
+        try
+        {
+            instanceId = await _approval.SubmitAsync("A5_Budget", versionId.ToString(), userId,
+                new { fiscalYear = budget!.FiscalYear, versionNo = v.VersionNo, totalAmount = total });
+        }
+        catch (InvalidOperationException)   // OA 防重：同 (bizType,bizId) 已有 Running 实例
+        {
+            return FinResult.Fail("E-A5-VERSION-003");
+        }
+        v.Status = BudgetVersionStatus.PendingApproval;
+        v.ApprovalInstanceId = instanceId;
+        v.ApprovalRef = instanceId.ToString();
+        v.SubmittedAt = DateTime.Now; v.SubmittedBy = userName;
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    public async Task<FinResult> ActivateAsync(Guid versionId)
+    {
+        var v = await _db.BudgetVersions.FindAsync(versionId);
+        if (v == null) return FinResult.Fail("E-A5-VERSION-404");
+        if (v.Status != BudgetVersionStatus.Approved) return FinResult.Fail("E-A5-VERSION-004");
+        await ApplyActivationAsync(v);
+        await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    public async Task ActivateFromApprovalAsync(Guid versionId, string decidedBy)
+    {
+        // OA 回调专用：与引擎共享 DbContext，全程基于已加载实体改值，不自行 SaveChanges
+        var v = await _db.BudgetVersions.FindAsync(versionId);
+        if (v == null) return;
+        if (v.Status == BudgetVersionStatus.Approved || v.IsActive) return;   // 幂等
+        if (v.Status != BudgetVersionStatus.PendingApproval) return;
+        v.Status = BudgetVersionStatus.Approved;
+        v.ApprovedAt = DateTime.Now; v.ApprovedBy = decidedBy;
+        await ApplyActivationAsync(v);
+        // 不 SaveChanges —— 由 OA 引擎统一持久化（同事务原子）
+    }
+
+    /// <summary>清同 Budget 下其它 Active→Archived，本版 IsActive=true。基于已加载实体改值。</summary>
+    private async Task ApplyActivationAsync(BudgetVersion v)
+    {
+        var priorActive = await _db.BudgetVersions
+            .Where(x => x.BudgetId == v.BudgetId && x.IsActive && x.Id != v.Id).ToListAsync();
+        foreach (var p in priorActive) { p.IsActive = false; p.Status = BudgetVersionStatus.Archived; }
+        v.IsActive = true;
+    }
+
     // ── C-2 实现 ──
     internal Task CopyIntoAsync(Guid targetVersionId, Guid? fromVersionId, int? fromActualFiscalYear) => Task.CompletedTask;
 }
