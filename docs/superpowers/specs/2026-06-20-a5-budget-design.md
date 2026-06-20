@@ -568,6 +568,7 @@ house style：`page-header`(h2+subtitle) / `el-card shadow="never"` / `table-too
 | E-A5-LINE-002 | 科目须为末级且属损益类（费用/收入） |
 | E-A5-LINE-003 | 按月分解合计与年度额不一致（落码取自动回填，一般不触发） |
 | E-A5-LINE-004 | 成本对象类型/编号须成对，或期号超 1..12 |
+| E-A5-LINE-005 | 成本中心不存在（Excel 导入引用的成本中心编码未找到） |
 | E-A5-BUDGET-EXCEEDED | 过账超预算（Block 行）：科目 {0} 预算 {1} 已用 {2} 本次 {3} 超出 {4} |
 | E-A5-IMPORT-001 | Excel 含致命错误，整批拒绝 |
 | E-A5-COPY-001 | 复制源不存在或为空 |
