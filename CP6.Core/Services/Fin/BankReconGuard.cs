@@ -30,11 +30,10 @@ public static class BankReconGuard
     public static async Task<FinResult> CheckReversalAsync(CP6Context db, JournalEntry origin)
     {
         var lineIds = origin.Lines.Select(l => l.Id).ToList();
-        var links = await db.BankReconJournalLinks.AsNoTracking()
-            .Where(x => lineIds.Contains(x.JournalLineId)).ToListAsync();
-        if (links.Count == 0) return FinResult.Pass();
-
-        var groupIds = links.Select(x => x.MatchGroupId).Distinct().ToList();
+        var groupIds = await db.BankReconJournalLinks.AsNoTracking()
+            .Where(x => lineIds.Contains(x.JournalLineId))
+            .Select(x => x.MatchGroupId).Distinct().ToListAsync();
+        if (groupIds.Count == 0) return FinResult.Pass();
         var stmtIds = await db.BankReconMatches.AsNoTracking()
             .Where(m => groupIds.Contains(m.Id)).Select(m => m.StatementId).Distinct().ToListAsync();
         var anyLocked = await db.BankStatements.AsNoTracking()

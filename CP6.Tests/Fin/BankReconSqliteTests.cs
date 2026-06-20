@@ -19,13 +19,63 @@ public partial class BankReconSqliteTests
         db.BankAccounts.Add(acct);
         db.BankStatements.Add(new BankStatement { Id = Guid.NewGuid(), No = "BKR-1", BankAccountId = acct.Id, FiscalPeriodId = period.Id, PeriodStart = period.PeriodStart, PeriodEnd = period.PeriodEnd, Status = BankStatementStatus.Locked });
         await db.SaveChangesAsync();
-        var journal = new JournalEntryService(db, periodSvc, new FinSequenceService(db));
         var entry = new JournalEntry { Id = Guid.NewGuid(), VoucherDate = new(2026, 6, 10), Source = VoucherSource.Manual };
         entry.Lines.Add(new JournalLine { AccountId = bankGl, Debit = 100, LineNo = 1 });
         entry.Lines.Add(new JournalLine { AccountId = other, Credit = 100, LineNo = 2 });
         var r = await BankReconGuard.CheckPostingAsync(db, entry);
         Assert.False(r.Ok);
         Assert.Equal("E-A4-RECON-LOCKED-POSTING", r.Code);
+    }
+
+    [Fact]
+    public async Task PostingGuard_NonBankEntry_PassesEndToEnd()
+    {
+        // Arrange: two GL accounts with NO BankAccount mapping
+        var db = TestHelper.CreateInMemoryContext();
+        var periodSvc = new FiscalPeriodService(db, 1);
+        var debitId = Guid.NewGuid(); var creditId = Guid.NewGuid();
+        db.GlAccounts.Add(new GlAccount { Id = debitId, Code = "1122", Name = "应收账款", IsLeaf = true, IsActive = true });
+        db.GlAccounts.Add(new GlAccount { Id = creditId, Code = "6001", Name = "主营收入", IsLeaf = true, IsActive = true });
+        await db.SaveChangesAsync();
+
+        // Use the real JournalEntryService (AutoPostAsync) — exercises the guard hook site
+        var journal = new JournalEntryService(db, periodSvc, new FinSequenceService(db));
+        var entry = new JournalEntry { Id = Guid.NewGuid(), VoucherDate = new(2026, 6, 10), Source = VoucherSource.AP };
+        entry.Lines.Add(new JournalLine { AccountId = debitId, Debit = 200, LineNo = 1 });
+        entry.Lines.Add(new JournalLine { AccountId = creditId, Credit = 200, LineNo = 2 });
+
+        // Act: post through the full service (guard is called inside AutoPostAsync)
+        var r = await journal.AutoPostAsync(entry);
+
+        // Assert: guard must NOT block a non-bank entry
+        Assert.True(r.Ok);
+        Assert.Equal(JournalStatus.Posted, entry.Status);
+    }
+
+    [Fact]
+    public async Task PostingGuard_UnlockedStatement_Passes()
+    {
+        // Arrange: bank GL + bank account + OPEN (not Locked) statement
+        var db = TestHelper.CreateInMemoryContext();
+        var periodSvc = new FiscalPeriodService(db, 1);
+        var period = await periodSvc.EnsureOpenAsync(new DateTime(2026, 6, 1), "admin");
+        var bankGl = Guid.NewGuid(); var other = Guid.NewGuid();
+        db.GlAccounts.Add(new GlAccount { Id = bankGl, Code = "1002", Name = "银行", IsLeaf = true, IsActive = true });
+        db.GlAccounts.Add(new GlAccount { Id = other, Code = "6603", Name = "费用", IsLeaf = true, IsActive = true });
+        var acct = new BankAccount { Id = Guid.NewGuid(), Code = "B1", Name = "工行", GlAccountId = bankGl, IsActive = true };
+        db.BankAccounts.Add(acct);
+        db.BankStatements.Add(new BankStatement { Id = Guid.NewGuid(), No = "BKR-2", BankAccountId = acct.Id, FiscalPeriodId = period.Id, PeriodStart = period.PeriodStart, PeriodEnd = period.PeriodEnd, Status = BankStatementStatus.Open });
+        await db.SaveChangesAsync();
+
+        var entry = new JournalEntry { Id = Guid.NewGuid(), VoucherDate = new(2026, 6, 10), Source = VoucherSource.Manual };
+        entry.Lines.Add(new JournalLine { AccountId = bankGl, Debit = 100, LineNo = 1 });
+        entry.Lines.Add(new JournalLine { AccountId = other, Credit = 100, LineNo = 2 });
+
+        // Act: guard called directly, same as the block test but statement is Open
+        var r = await BankReconGuard.CheckPostingAsync(db, entry);
+
+        // Assert: open statement must NOT block posting
+        Assert.True(r.Ok);
     }
 
     [Fact]
