@@ -1,0 +1,118 @@
+using CP6.Entity.DomainModels.Sys;
+
+namespace CP6.WebApi.Seed;
+
+/// <summary>A5 预算管理 五语词条（菜单/视图/字段/按钮/枚举 + E-A5-* 错误码）。接 Program.cs i18n 链。</summary>
+public static class I18nA5BudgetScreenSeed
+{
+    public static readonly Sys_Lang[] Items = new[]
+    {
+        // ── 菜单导航 nav.621-623 ──
+        new Sys_Lang { LangKey = "nav.621", ZhCN = "预算管理", ZhTW = "預算管理", En = "Budget Mgmt", Ja = "予算管理", Ko = "예산 관리" },
+        new Sys_Lang { LangKey = "nav.622", ZhCN = "预算编制", ZhTW = "預算編制", En = "Budget Planning", Ja = "予算編成", Ko = "예산 편성" },
+        new Sys_Lang { LangKey = "nav.623", ZhCN = "执行分析", ZhTW = "執行分析", En = "Execution Analysis", Ja = "実績分析", Ko = "실적 분석" },
+        // ── 视图标题 ──
+        new Sys_Lang { LangKey = "budget.workbench", ZhCN = "预算工作台", ZhTW = "預算工作台", En = "Budget Workbench", Ja = "予算ワークベンチ", Ko = "예산 워크벤치" },
+        new Sys_Lang { LangKey = "budget.workbench.subtitle", ZhCN = "预算方案管理、版本编制与审批，分期金额录入", ZhTW = "預算方案管理、版本編制與審批，分期金額錄入", En = "Manage budget plans, version drafting & approval, period amounts entry", Ja = "予算方案管理、バージョン編成・承認、期間金額入力", Ko = "예산 방안 관리, 버전 편성·승인, 기간 금액 입력" },
+        new Sys_Lang { LangKey = "budget.vsActual", ZhCN = "执行分析", ZhTW = "執行分析", En = "Budget vs Actual", Ja = "予実分析", Ko = "예실 분석" },
+        new Sys_Lang { LangKey = "budget.vsActual.subtitle", ZhCN = "预算 vs 实际对比报告，差异率预警", ZhTW = "預算 vs 實際對比報告，差異率預警", En = "Budget vs actual comparison report with variance alerts", Ja = "予実対比レポート・差異率アラート", Ko = "예실 대비 보고서 및 차이율 경보" },
+        // ── 字段标签 ──
+        new Sys_Lang { LangKey = "budget.field.budgetNo", ZhCN = "方案编号", ZhTW = "方案編號", En = "Budget No.", Ja = "方案番号", Ko = "방안 번호" },
+        new Sys_Lang { LangKey = "budget.field.budgetName", ZhCN = "方案名称", ZhTW = "方案名稱", En = "Budget Name", Ja = "方案名称", Ko = "방안 이름" },
+        new Sys_Lang { LangKey = "budget.field.fiscalYear", ZhCN = "财年", ZhTW = "財年", En = "Fiscal Year", Ja = "会計年度", Ko = "회계연도" },
+        new Sys_Lang { LangKey = "budget.field.versionNo", ZhCN = "版本号", ZhTW = "版本號", En = "Version No.", Ja = "バージョン番号", Ko = "버전 번호" },
+        new Sys_Lang { LangKey = "budget.field.versionName", ZhCN = "版本名称", ZhTW = "版本名稱", En = "Version Name", Ja = "バージョン名称", Ko = "버전 이름" },
+        new Sys_Lang { LangKey = "budget.field.status", ZhCN = "状态", ZhTW = "狀態", En = "Status", Ja = "ステータス", Ko = "상태" },
+        new Sys_Lang { LangKey = "budget.field.isActive", ZhCN = "已激活", ZhTW = "已激活", En = "Active", Ja = "有効", Ko = "활성" },
+        new Sys_Lang { LangKey = "budget.field.controlMode", ZhCN = "控制模式", ZhTW = "控制模式", En = "Control Mode", Ja = "管理モード", Ko = "통제 모드" },
+        new Sys_Lang { LangKey = "budget.field.controlBasis", ZhCN = "控制口径", ZhTW = "控制口徑", En = "Control Basis", Ja = "管理基準", Ko = "통제 기준" },
+        new Sys_Lang { LangKey = "budget.field.annualAmount", ZhCN = "年度金额", ZhTW = "年度金額", En = "Annual Amount", Ja = "年間金額", Ko = "연간 금액" },
+        new Sys_Lang { LangKey = "budget.field.period", ZhCN = "期间", ZhTW = "期間", En = "Period", Ja = "期間", Ko = "기간" },
+        new Sys_Lang { LangKey = "budget.field.account", ZhCN = "科目", ZhTW = "科目", En = "Account", Ja = "科目", Ko = "계정" },
+        new Sys_Lang { LangKey = "budget.field.costCenter", ZhCN = "成本中心", ZhTW = "成本中心", En = "Cost Center", Ja = "コストセンター", Ko = "원가 센터" },
+        new Sys_Lang { LangKey = "budget.field.costObject", ZhCN = "成本对象", ZhTW = "成本對象", En = "Cost Object", Ja = "原価オブジェクト", Ko = "원가 대상" },
+        new Sys_Lang { LangKey = "budget.field.spreadMode", ZhCN = "分摊模式", ZhTW = "分攤模式", En = "Spread Mode", Ja = "配分モード", Ko = "배분 모드" },
+        new Sys_Lang { LangKey = "budget.field.memo", ZhCN = "备注", ZhTW = "備注", En = "Memo", Ja = "メモ", Ko = "메모" },
+        new Sys_Lang { LangKey = "budget.field.budget", ZhCN = "预算", ZhTW = "預算", En = "Budget", Ja = "予算", Ko = "예산" },
+        new Sys_Lang { LangKey = "budget.field.actual", ZhCN = "实际", ZhTW = "實際", En = "Actual", Ja = "実績", Ko = "실적" },
+        new Sys_Lang { LangKey = "budget.field.variance", ZhCN = "差异", ZhTW = "差異", En = "Variance", Ja = "差異", Ko = "차이" },
+        new Sys_Lang { LangKey = "budget.field.variancePct", ZhCN = "差异率", ZhTW = "差異率", En = "Variance %", Ja = "差異率", Ko = "차이율" },
+        new Sys_Lang { LangKey = "budget.field.executionRate", ZhCN = "执行率", ZhTW = "執行率", En = "Execution Rate", Ja = "執行率", Ko = "집행률" },
+        new Sys_Lang { LangKey = "budget.field.submittedAt", ZhCN = "提交时间", ZhTW = "提交時間", En = "Submitted At", Ja = "提出日時", Ko = "제출 시간" },
+        new Sys_Lang { LangKey = "budget.field.approvedAt", ZhCN = "审批时间", ZhTW = "審批時間", En = "Approved At", Ja = "承認日時", Ko = "승인 시간" },
+        new Sys_Lang { LangKey = "budget.field.creator", ZhCN = "创建人", ZhTW = "建立人", En = "Creator", Ja = "作成者", Ko = "생성자" },
+        new Sys_Lang { LangKey = "budget.field.description", ZhCN = "说明", ZhTW = "說明", En = "Description", Ja = "説明", Ko = "설명" },
+        new Sys_Lang { LangKey = "budget.field.copyFrom", ZhCN = "复制来源", ZhTW = "複製來源", En = "Copy From", Ja = "コピー元", Ko = "복사 출처" },
+        new Sys_Lang { LangKey = "budget.field.copyFromYear", ZhCN = "复制自上年实际", ZhTW = "複製自上年實際", En = "Copy from Prior Year Actual", Ja = "前年実績からコピー", Ko = "전년 실적에서 복사" },
+        new Sys_Lang { LangKey = "budget.field.isUnbudgeted", ZhCN = "无预算科目", ZhTW = "無預算科目", En = "Unbudgeted", Ja = "未予算科目", Ko = "미예산 계정" },
+        new Sys_Lang { LangKey = "budget.field.rejectReason", ZhCN = "驳回原因", ZhTW = "駁回原因", En = "Reject Reason", Ja = "却下理由", Ko = "반려 이유" },
+        // ── 版本状态枚举 ──
+        new Sys_Lang { LangKey = "budget.status.draft", ZhCN = "草稿", ZhTW = "草稿", En = "Draft", Ja = "下書き", Ko = "초안" },
+        new Sys_Lang { LangKey = "budget.status.pendingApproval", ZhCN = "审批中", ZhTW = "審批中", En = "Pending Approval", Ja = "承認中", Ko = "승인 중" },
+        new Sys_Lang { LangKey = "budget.status.approved", ZhCN = "已批准", ZhTW = "已批准", En = "Approved", Ja = "承認済", Ko = "승인됨" },
+        new Sys_Lang { LangKey = "budget.status.rejected", ZhCN = "已驳回", ZhTW = "已駁回", En = "Rejected", Ja = "却下", Ko = "반려됨" },
+        new Sys_Lang { LangKey = "budget.status.archived", ZhCN = "已归档", ZhTW = "已歸檔", En = "Archived", Ja = "アーカイブ済", Ko = "보관됨" },
+        // ── 控制模式枚举 ──
+        new Sys_Lang { LangKey = "budget.controlMode.none", ZhCN = "不控制", ZhTW = "不控制", En = "No Control", Ja = "管理なし", Ko = "통제 없음" },
+        new Sys_Lang { LangKey = "budget.controlMode.warn", ZhCN = "预警", ZhTW = "預警", En = "Warn", Ja = "警告", Ko = "경고" },
+        new Sys_Lang { LangKey = "budget.controlMode.block", ZhCN = "硬控制", ZhTW = "硬控制", En = "Block", Ja = "ブロック", Ko = "차단" },
+        // ── 控制口径枚举 ──
+        new Sys_Lang { LangKey = "budget.controlBasis.ytd", ZhCN = "累计", ZhTW = "累計", En = "YTD", Ja = "累計", Ko = "누적(YTD)" },
+        new Sys_Lang { LangKey = "budget.controlBasis.period", ZhCN = "单期", ZhTW = "單期", En = "Period", Ja = "単期", Ko = "단기" },
+        // ── 分摊模式枚举 ──
+        new Sys_Lang { LangKey = "budget.spreadMode.even", ZhCN = "均摊", ZhTW = "均攤", En = "Even", Ja = "均等配分", Ko = "균등 배분" },
+        new Sys_Lang { LangKey = "budget.spreadMode.seasonal", ZhCN = "季节权重", ZhTW = "季節權重", En = "Seasonal", Ja = "季節按分", Ko = "계절 가중" },
+        new Sys_Lang { LangKey = "budget.spreadMode.manual", ZhCN = "手工录入", ZhTW = "手工錄入", En = "Manual", Ja = "手動入力", Ko = "수동 입력" },
+        // ── 按钮 ──
+        new Sys_Lang { LangKey = "budget.btn.createBudget", ZhCN = "新建方案", ZhTW = "新建方案", En = "New Budget", Ja = "方案新規", Ko = "방안 생성" },
+        new Sys_Lang { LangKey = "budget.btn.createVersion", ZhCN = "新建版本", ZhTW = "新建版本", En = "New Version", Ja = "バージョン新規", Ko = "버전 생성" },
+        new Sys_Lang { LangKey = "budget.btn.editVersion", ZhCN = "编辑版本", ZhTW = "編輯版本", En = "Edit Version", Ja = "バージョン編集", Ko = "버전 편집" },
+        new Sys_Lang { LangKey = "budget.btn.deleteVersion", ZhCN = "删除版本", ZhTW = "刪除版本", En = "Delete Version", Ja = "バージョン削除", Ko = "버전 삭제" },
+        new Sys_Lang { LangKey = "budget.btn.submit", ZhCN = "提交审批", ZhTW = "提交審批", En = "Submit for Approval", Ja = "承認申請", Ko = "승인 신청" },
+        new Sys_Lang { LangKey = "budget.btn.activate", ZhCN = "激活版本", ZhTW = "激活版本", En = "Activate", Ja = "有効化", Ko = "활성화" },
+        new Sys_Lang { LangKey = "budget.btn.deactivate", ZhCN = "停用方案", ZhTW = "停用方案", En = "Deactivate", Ja = "無効化", Ko = "비활성화" },
+        new Sys_Lang { LangKey = "budget.btn.addLine", ZhCN = "新增预算行", ZhTW = "新增預算行", En = "Add Line", Ja = "予算行追加", Ko = "예산 행 추가" },
+        new Sys_Lang { LangKey = "budget.btn.deleteLine", ZhCN = "删除行", ZhTW = "刪除行", En = "Delete Line", Ja = "行削除", Ko = "행 삭제" },
+        new Sys_Lang { LangKey = "budget.btn.importExcel", ZhCN = "Excel导入", ZhTW = "Excel匯入", En = "Import Excel", Ja = "Excel取込", Ko = "Excel 가져오기" },
+        new Sys_Lang { LangKey = "budget.btn.previewImport", ZhCN = "预览导入", ZhTW = "預覽匯入", En = "Preview Import", Ja = "取込プレビュー", Ko = "가져오기 미리보기" },
+        new Sys_Lang { LangKey = "budget.btn.confirmImport", ZhCN = "确认导入", ZhTW = "確認匯入", En = "Confirm Import", Ja = "取込確定", Ko = "가져오기 확인" },
+        new Sys_Lang { LangKey = "budget.btn.preCheck", ZhCN = "预检控制", ZhTW = "預檢控制", En = "Pre-Check", Ja = "事前チェック", Ko = "사전 점검" },
+        new Sys_Lang { LangKey = "budget.btn.copyVersion", ZhCN = "复制版本", ZhTW = "複製版本", En = "Copy Version", Ja = "バージョンコピー", Ko = "버전 복사" },
+        // ── 消息/提示 ──
+        new Sys_Lang { LangKey = "budget.msg.created", ZhCN = "方案已创建", ZhTW = "方案已建立", En = "Budget created", Ja = "方案を作成しました", Ko = "방안이 생성되었습니다" },
+        new Sys_Lang { LangKey = "budget.msg.versionCreated", ZhCN = "版本已创建", ZhTW = "版本已建立", En = "Version created", Ja = "バージョンを作成しました", Ko = "버전이 생성되었습니다" },
+        new Sys_Lang { LangKey = "budget.msg.saved", ZhCN = "已保存", ZhTW = "已保存", En = "Saved", Ja = "保存しました", Ko = "저장되었습니다" },
+        new Sys_Lang { LangKey = "budget.msg.submitted", ZhCN = "已提交审批", ZhTW = "已提交審批", En = "Submitted for approval", Ja = "承認申請しました", Ko = "승인이 신청되었습니다" },
+        new Sys_Lang { LangKey = "budget.msg.activated", ZhCN = "版本已激活", ZhTW = "版本已激活", En = "Version activated", Ja = "バージョンを有効化しました", Ko = "버전이 활성화되었습니다" },
+        new Sys_Lang { LangKey = "budget.msg.deactivated", ZhCN = "方案已停用", ZhTW = "方案已停用", En = "Budget deactivated", Ja = "方案を無効化しました", Ko = "방안이 비활성화되었습니다" },
+        new Sys_Lang { LangKey = "budget.msg.deleted", ZhCN = "已删除", ZhTW = "已刪除", En = "Deleted", Ja = "削除しました", Ko = "삭제되었습니다" },
+        new Sys_Lang { LangKey = "budget.msg.importDone", ZhCN = "导入成功", ZhTW = "匯入成功", En = "Import successful", Ja = "取込が完了しました", Ko = "가져오기가 완료되었습니다" },
+        new Sys_Lang { LangKey = "budget.msg.deleteVersionConfirm", ZhCN = "确认删除此版本？删除后不可恢复", ZhTW = "確認刪除此版本？刪除後不可恢復", En = "Delete this version? This cannot be undone.", Ja = "このバージョンを削除しますか？削除後は復元できません", Ko = "이 버전을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다" },
+        new Sys_Lang { LangKey = "budget.msg.deactivateConfirm", ZhCN = "确认停用此预算方案？", ZhTW = "確認停用此預算方案？", En = "Deactivate this budget plan?", Ja = "この予算方案を無効化しますか？", Ko = "이 예산 방안을 비활성화하시겠습니까?" },
+        new Sys_Lang { LangKey = "budget.msg.submitConfirm", ZhCN = "确认提交此版本审批？提交后不可编辑", ZhTW = "確認提交此版本審批？提交後不可編輯", En = "Submit this version for approval? It cannot be edited after submission.", Ja = "このバージョンを承認申請しますか？申請後は編集できません", Ko = "이 버전을 승인 신청하시겠습니까? 신청 후에는 편집할 수 없습니다" },
+        new Sys_Lang { LangKey = "budget.msg.activateConfirm", ZhCN = "确认激活此版本？同期旧版本将归档", ZhTW = "確認激活此版本？同期舊版本將歸檔", En = "Activate this version? Previous active version will be archived.", Ja = "このバージョンを有効化しますか？既存有効バージョンはアーカイブされます", Ko = "이 버전을 활성화하시겠습니까? 기존 활성 버전은 보관됩니다" },
+        new Sys_Lang { LangKey = "budget.msg.deleteLineConfirm", ZhCN = "确认删除此预算行？", ZhTW = "確認刪除此預算行？", En = "Delete this budget line?", Ja = "この予算行を削除しますか？", Ko = "이 예산 행을 삭제하시겠습니까?" },
+        new Sys_Lang { LangKey = "budget.msg.noActiveVersion", ZhCN = "该财年无激活预算版本", ZhTW = "該財年無激活預算版本", En = "No active version for this fiscal year", Ja = "この会計年度に有効なバージョンがありません", Ko = "이 회계연도의 활성 버전이 없습니다" },
+        new Sys_Lang { LangKey = "budget.msg.exceeded", ZhCN = "超支警告", ZhTW = "超支警告", En = "Over Budget", Ja = "超過警告", Ko = "예산 초과 경고" },
+        // ── 报告面板 ──
+        new Sys_Lang { LangKey = "budget.panel.versions", ZhCN = "版本列表", ZhTW = "版本列表", En = "Versions", Ja = "バージョン一覧", Ko = "버전 목록" },
+        new Sys_Lang { LangKey = "budget.panel.lines", ZhCN = "预算明细", ZhTW = "預算明細", En = "Budget Lines", Ja = "予算明細", Ko = "예산 명세" },
+        new Sys_Lang { LangKey = "budget.panel.preCheck", ZhCN = "过账预检", ZhTW = "過賬預檢", En = "Posting Pre-Check", Ja = "転記前チェック", Ko = "전기 사전 점검" },
+        new Sys_Lang { LangKey = "budget.panel.report", ZhCN = "预算执行报告", ZhTW = "預算執行報告", En = "Execution Report", Ja = "実績報告", Ko = "실적 보고서" },
+        // ── 错误码 E-A5-* ──
+        new Sys_Lang { LangKey = "E-A5-BUDGET-001", ZhCN = "该财年已存在预算方案（财年唯一）", ZhTW = "該財年已存在預算方案（財年唯一）", En = "A budget plan already exists for fiscal year {0}", Ja = "会計年度 {0} の予算方案が既に存在します", Ko = "회계연도 {0}의 예산 방안이 이미 존재합니다" },
+        new Sys_Lang { LangKey = "E-A5-BUDGET-404", ZhCN = "预算方案不存在", ZhTW = "預算方案不存在", En = "Budget plan not found", Ja = "予算方案が見つかりません", Ko = "예산 방안을 찾을 수 없습니다" },
+        new Sys_Lang { LangKey = "E-A5-VERSION-002", ZhCN = "仅草稿版本可提交审批", ZhTW = "僅草稿版本可提交審批", En = "Only Draft versions can be submitted for approval", Ja = "下書きバージョンのみ承認申請できます", Ko = "초안 버전만 승인 신청할 수 있습니다" },
+        new Sys_Lang { LangKey = "E-A5-VERSION-003", ZhCN = "该版本已有进行中的审批流程，不可重复提交", ZhTW = "該版本已有進行中的審批流程，不可重複提交", En = "A running approval instance already exists for this version", Ja = "このバージョンには既に進行中の承認フローがあります", Ko = "이 버전에 이미 진행 중인 승인 프로세스가 있습니다" },
+        new Sys_Lang { LangKey = "E-A5-VERSION-004", ZhCN = "仅已批准版本可激活", ZhTW = "僅已批准版本可激活", En = "Only Approved versions can be activated", Ja = "承認済バージョンのみ有効化できます", Ko = "승인된 버전만 활성화할 수 있습니다" },
+        new Sys_Lang { LangKey = "E-A5-VERSION-005", ZhCN = "仅草稿版本可编辑或删除", ZhTW = "僅草稿版本可編輯或刪除", En = "Only Draft versions can be edited or deleted", Ja = "下書きバージョンのみ編集・削除できます", Ko = "초안 버전만 편집하거나 삭제할 수 있습니다" },
+        new Sys_Lang { LangKey = "E-A5-VERSION-006", ZhCN = "版本无预算行，不可提交", ZhTW = "版本無預算行，不可提交", En = "Version has no budget lines, cannot submit", Ja = "予算行がないため申請できません", Ko = "예산 행이 없어 신청할 수 없습니다" },
+        new Sys_Lang { LangKey = "E-A5-VERSION-404", ZhCN = "预算版本不存在", ZhTW = "預算版本不存在", En = "Budget version not found", Ja = "予算バージョンが見つかりません", Ko = "예산 버전을 찾을 수 없습니다" },
+        new Sys_Lang { LangKey = "E-A5-LINE-002", ZhCN = "科目不存在或非末级费用/收入科目", ZhTW = "科目不存在或非末級費用/收入科目", En = "Account not found or not a leaf expense/revenue account", Ja = "科目が見つからないか末節費用/収益科目ではありません", Ko = "계정을 찾을 수 없거나 최하위 비용/수익 계정이 아닙니다" },
+        new Sys_Lang { LangKey = "E-A5-LINE-004", ZhCN = "成本对象类型和ID须同时填写或同时为空", ZhTW = "成本對象類型和ID須同時填寫或同時為空", En = "CostObjectType and CostObjectId must both be set or both empty", Ja = "原価オブジェクトタイプとIDは両方設定するか両方空にしてください", Ko = "원가 대상 유형과 ID는 모두 입력하거나 모두 비워야 합니다" },
+        new Sys_Lang { LangKey = "E-A5-LINE-005", ZhCN = "成本中心不存在", ZhTW = "成本中心不存在", En = "Cost center not found", Ja = "コストセンターが見つかりません", Ko = "원가 센터를 찾을 수 없습니다" },
+        new Sys_Lang { LangKey = "E-A5-LINE-404", ZhCN = "预算行不存在", ZhTW = "預算行不存在", En = "Budget line not found", Ja = "予算行が見つかりません", Ko = "예산 행을 찾을 수 없습니다" },
+        new Sys_Lang { LangKey = "E-A5-BUDGET-EXCEEDED", ZhCN = "科目 {0} 预算 {1} 已用 {2} 本次 {3} 超出 {4}", ZhTW = "科目 {0} 預算 {1} 已用 {2} 本次 {3} 超出 {4}", En = "Account {0}: budget {1}, used {2}, incoming {3}, over by {4}", Ja = "科目 {0}：予算 {1}、使用済 {2}、今回 {3}、超過 {4}", Ko = "계정 {0}: 예산 {1}, 사용 {2}, 이번 {3}, 초과 {4}" },
+        new Sys_Lang { LangKey = "E-A5-IMPORT-001", ZhCN = "Excel导入解析失败，请检查格式", ZhTW = "Excel匯入解析失敗，請檢查格式", En = "Excel import parse failed, please check the file format", Ja = "Excel取込解析に失敗しました。形式を確認してください", Ko = "Excel 가져오기 파싱 실패. 파일 형식을 확인하세요" },
+    };
+}

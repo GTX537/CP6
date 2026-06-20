@@ -1452,6 +1452,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nPlanScreenSeed.Items)  // 计划中台 MRP 看板 + 主数据 + nav.73x + E-PLAN-* 错误码
             .Concat(CP6.WebApi.Seed.I18nA2ScreenSeed.Items)    // A2 工艺路线 工作中心+工序费率 视图 + nav.31x + E-A2-* 错误码
             .Concat(CP6.WebApi.Seed.I18nBankReconScreenSeed.Items)   // A4 银行对账 + nav.614 + E-A4-*/W-A4-*
+            .Concat(CP6.WebApi.Seed.I18nA5BudgetScreenSeed.Items)   // A5 预算管理 + nav.621-623 + E-A5-*
             .Concat(CP6.WebApi.Seed.I18nWfDesignerSeed.Items)  // OA 阶段4 自研设计器（表单/流程）画面词条
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
