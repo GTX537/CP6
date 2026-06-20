@@ -1,4 +1,4 @@
-export interface ApiResp<T> { code: number; message: string; data: T }
+export type { ApiResp } from '@/types/fin/fin'
 
 export interface BankStatement {
   id?: string
@@ -16,6 +16,7 @@ export interface BankStatement {
   lockedReconciledDiff?: number | null
   lockedBankAdjustedBalance?: number | null
   lockedBookAdjustedBalance?: number | null
+  lockedStatementInternalDiff?: number | null
   lockedAt?: string | null
   lockedBy?: string | null
   rowVersion?: string | null

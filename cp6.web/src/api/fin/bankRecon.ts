@@ -1,6 +1,7 @@
 import http from '../http'
+import type { ApiResp } from '@/types/fin/fin'
 import type {
-  ApiResp, BankStatement, BankStatementLine, BankCandidateLine,
+  BankStatement, BankStatementLine, BankCandidateLine,
   ReconciliationStatement, BankImportProfile, BankOnlyLineResult, BankImportPreviewResult,
 } from '@/types/fin/bankRecon'
 
