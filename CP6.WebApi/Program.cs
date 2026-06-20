@@ -491,9 +491,6 @@ using (var scope = app.Services.CreateScope())
     // A3 §9 固定资产科目对账（既有库补 Role/新增 4 科目；空库由模板导入负责）
     await CP6.WebApi.Seed.A3AccountSeed.EnsureAsync(db);
 
-    // A5 §8 预算审批流程 + OA 绑定种子（幂等；FlowKey="budget-approve"，BizType="A5_Budget"）
-    CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
-
     if (!db.Sys_Menus.Any())
     {
         // 菜单ID和角色ID都是自定义的，手动指定
@@ -573,6 +570,11 @@ using (var scope = app.Services.CreateScope())
 
         db.SaveChanges();
     }
+
+    // A5 §8 预算审批流程 + OA 绑定种子（幂等；FlowKey="budget-approve"，BizType="A5_Budget"）
+    // 置于 admin 账号 seed 之后，确保首次启动时 admin 已落库，seed 内部可解析到真实 UserId。
+    CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {

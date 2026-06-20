@@ -18,6 +18,14 @@ public static class A5BudgetFlowSeed
     {
         if (!db.Wf_FlowDefs.Any(f => f.FlowKey == FlowKey))
         {
+            // 解析真实管理员 Id：优先使用显式传入值，其次查 admin 用户，最后兜底 Guid.Empty。
+            // 注意：如果本次是全新库的首次启动且 admin 用户尚未写入（Program.cs 中 admin seed 在本方法之后），
+            // 此处会回退到 Guid.Empty；重启后流程定义已存在（幂等 skip），不会自动修复——
+            // 生产环境若遇此情况，请通过 OA 流程设计器重新指定审批人，或删除 FlowKey="budget-approve" 记录后重启。
+            var approver = approverUserId
+                ?? db.Sys_Users.Where(u => u.UserName == "admin").Select(u => (Guid?)u.Id).FirstOrDefault()
+                ?? Guid.Empty;
+
             var schema = new FlowSchema
             {
                 Nodes =
@@ -28,7 +36,7 @@ public static class A5BudgetFlowSeed
                         Type = "approval",
                         Name = "预算审批",
                         ApproverStrategy = "Specified",
-                        ApproverUserId = approverUserId ?? Guid.Empty,   // 实际部署时替换为真实管理员 Id
+                        ApproverUserId = approver,
                     },
                     new FlowNode { Id = "end", Type = "end" },
                 },
