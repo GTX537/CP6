@@ -410,7 +410,7 @@ public class BankReconService : IBankReconService
     {
         var stmt = await _db.BankStatements.AsNoTracking().FirstAsync(x => x.Id == statementId);
         var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId);
-        var isForeign = !string.IsNullOrEmpty(acct.CurrencyCd) && acct.CurrencyCd != "JPY";
+        var isForeign = !FxConstants.IsBase(acct.CurrencyCd);
 
         var lines = await _db.BankStatementLines.AsNoTracking().Where(x => x.StatementId == statementId).ToListAsync();
         var dto = new ReconciliationStatementDto
@@ -442,8 +442,11 @@ public class BankReconService : IBankReconService
         dto.GlBankEndingBalance = glRows.Sum(r => SignedOf(r.jl.Debit, r.jl.Credit, r.jl.OrigAmount, r.jl.CurrencyCd));
 
         // ── 账面单边项：未占用的银行GL凭证行（VoucherDate≤PeriodEnd 且未在 Link 中）──
-        var occupied = await _db.BankReconJournalLinks.AsNoTracking().Select(x => x.JournalLineId).ToListAsync();
-        var occSet = occupied.ToHashSet();
+        var glJlIds = glRows.Select(r => r.jl.Id).ToHashSet();
+        var occSet = (await _db.BankReconJournalLinks.AsNoTracking()
+            .Where(x => glJlIds.Contains(x.JournalLineId))
+            .Select(x => x.JournalLineId)
+            .ToListAsync()).ToHashSet();
         foreach (var r in glRows.Where(r => !occSet.Contains(r.jl.Id)))
         {
             var signed = SignedOf(r.jl.Debit, r.jl.Credit, r.jl.OrigAmount, r.jl.CurrencyCd);
