@@ -185,7 +185,14 @@ public class BudgetLineService : IBudgetLineService
             row.CostCenterCode = EmptyToNull(xlRow.Cell(2).GetString());
             row.CostObjectType = EmptyToNull(xlRow.Cell(3).GetString());
             row.CostObjectId = EmptyToNull(xlRow.Cell(4).GetString());
-            for (int i = 0; i < 12; i++) row.Periods[i] = xlRow.Cell(5 + i).GetValue<decimal>();
+            for (int i = 0; i < 12; i++)
+            {
+                if (!xlRow.Cell(5 + i).TryGetValue<decimal>(out var amt))
+                {
+                    row.Ok = false; row.Error = "E-A5-IMPORT-001"; break;
+                }
+                row.Periods[i] = amt;
+            }
             if (!acctCodes.Contains(row.AccountCode)) { row.Ok = false; row.Error = "E-A5-LINE-002"; }
             else if (row.CostCenterCode != null && !ccCodes.Contains(row.CostCenterCode)) { row.Ok = false; row.Error = "E-A5-LINE-005"; }
             else if ((row.CostObjectType == null) != (row.CostObjectId == null)) { row.Ok = false; row.Error = "E-A5-LINE-004"; }

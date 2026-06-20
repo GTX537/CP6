@@ -121,4 +121,61 @@ public class BudgetCopyImportTests
         var line = await db.BudgetLines.SingleAsync(l => l.VersionId == v.Id);
         Assert.Equal(300m, line.AnnualAmount);
     }
+
+    [Fact]
+    public async Task Import_GarbageMonthCell_RejectsGracefully()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var acct = new GlAccount { Code="6602", Name="管理费用", Type=AccountType.Expense, NormalSide=AccountSide.Debit, IsLeaf=true, IsActive=true };
+        db.GlAccounts.Add(acct);
+        var b = new Budget { No="BUD-2027-00001", Name="2027", FiscalYear=2027, IsActive=true };
+        db.Budgets.Add(b);
+        var v = new BudgetVersion { BudgetId=b.Id, VersionNo=1, Status=BudgetVersionStatus.Draft };
+        db.BudgetVersions.Add(v);
+        await db.SaveChangesAsync();
+        var svc = new BudgetLineService(db);
+        using var xls = BudgetExcelFixture.BuildWithTextMonthCell("6602");
+        var r = await svc.ConfirmImportAsync(v.Id, xls);   // must NOT throw
+        Assert.False(r.Ok);
+        Assert.Equal("E-A5-IMPORT-001", r.Code);
+        Assert.Equal(0, await db.BudgetLines.CountAsync());
+    }
+
+    [Fact]
+    public async Task Preview_ReturnsRowErrors_WithoutPersisting()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var acct = new GlAccount { Code="6602", Name="管理费用", Type=AccountType.Expense, NormalSide=AccountSide.Debit, IsLeaf=true, IsActive=true };
+        db.GlAccounts.Add(acct);
+        var b = new Budget { No="BUD-2027-00001", Name="2027", FiscalYear=2027, IsActive=true };
+        db.Budgets.Add(b);
+        var v = new BudgetVersion { BudgetId=b.Id, VersionNo=1, Status=BudgetVersionStatus.Draft };
+        db.BudgetVersions.Add(v);
+        await db.SaveChangesAsync();
+        var svc = new BudgetLineService(db);
+        using var xls = BudgetExcelFixture.Build(new[] { ("6602", "", "", new decimal[12]), ("9999", "", "", new decimal[12]) });
+        var preview = await svc.PreviewImportAsync(v.Id, xls);
+        Assert.True(preview.HasFatal);
+        Assert.Contains(preview.Rows, r => r.AccountCode == "9999" && !r.Ok);
+        Assert.Contains(preview.Rows, r => r.AccountCode == "6602" && r.Ok);
+        Assert.Equal(0, await db.BudgetLines.CountAsync());   // dry-run persists nothing
+    }
+
+    [Fact]
+    public async Task ConfirmImport_NonDraftVersion_Rejected()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var acct = new GlAccount { Code="6602", Name="管理费用", Type=AccountType.Expense, NormalSide=AccountSide.Debit, IsLeaf=true, IsActive=true };
+        db.GlAccounts.Add(acct);
+        var b = new Budget { No="BUD-2027-00001", Name="2027", FiscalYear=2027, IsActive=true };
+        db.Budgets.Add(b);
+        var v = new BudgetVersion { BudgetId=b.Id, VersionNo=1, Status=BudgetVersionStatus.Approved };
+        db.BudgetVersions.Add(v);
+        await db.SaveChangesAsync();
+        var svc = new BudgetLineService(db);
+        using var xls = BudgetExcelFixture.Build(new[] { ("6602", "", "", new decimal[12]) });
+        var r = await svc.ConfirmImportAsync(v.Id, xls);
+        Assert.False(r.Ok);
+        Assert.Equal("E-A5-VERSION-005", r.Code);
+    }
 }
