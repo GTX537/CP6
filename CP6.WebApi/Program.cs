@@ -111,6 +111,10 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Ser
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalService, CP6.Core.Services.Wf.ApprovalService>();      // 章05 §2 业务侧入口（按绑定起流程/防重/状态）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ApprovalDispatcher>();                                          // 章05 §4 终态分发（注入所有 IApprovalCallback）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.JournalApprovalCallback>(); // 章05 §7 财务凭证示范回调（兑现 MVP）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.BudgetApprovalCallback>(); // A5 §8 预算版本审批回调（通过→自动激活/驳回→可重编）
+builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetService, CP6.Core.Services.Fin.BudgetService>();            // A5 预算方案/版本 CRUD + 送审 + OA 回调
+builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetLineService, CP6.Core.Services.Fin.BudgetLineService>();    // A5 预算行 Upsert/Delete + Excel 导入
+builder.Services.AddScoped<CP6.Core.Services.Fin.FinSequenceService>();                                             // A5 BudgetService ctor 注入具体类型（已注册接口；此处补具体类使 DI 可直接解析）
 
 // 4.0c OA(Wf) 阶段3 高级流程（章07）：超时扫描 + Worker（退回/加签/委派为 FlowEngine 自带方法）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Services.Wf.WfTimeoutService>();    // 章07 §4 超时扫描（remind/approve/reject/escalate）
@@ -485,6 +489,9 @@ using (var scope = app.Services.CreateScope())
 
     // A3 §9 固定资产科目对账（既有库补 Role/新增 4 科目；空库由模板导入负责）
     await CP6.WebApi.Seed.A3AccountSeed.EnsureAsync(db);
+
+    // A5 §8 预算审批流程 + OA 绑定种子（幂等；FlowKey="budget-approve"，BizType="A5_Budget"）
+    CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
 
     if (!db.Sys_Menus.Any())
     {
