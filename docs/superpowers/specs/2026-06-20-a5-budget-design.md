@@ -139,18 +139,21 @@
 |---|---|---|
 | `VersionId` | Guid | → BudgetVersion |
 | `AccountId` | Guid | → GlAccount（**末级 + Type∈{Expense,Revenue}**，服务层校验 §5.2） |
-| `CostCenterId` | Guid? | 可空 = 公司级（不分成本中心） |
-| `CostObjectType` | string(20)? | 可空（"WorkOrder"/"Order"… 对齐 JournalLine.CostObjectType） |
-| `CostObjectId` | string(50)? | 可空（CostObjectType 非空时必填） |
+| `CostCenterId` | Guid? | **真实业务维度**，可空 = 公司级（不分成本中心）；可建 FK → Fin_CostCenter |
+| `CostObjectType` | string(20)? | **真实业务字段**，可空（"WorkOrder"/"Order"… 对齐 JournalLine.CostObjectType） |
+| `CostObjectId` | string(50)? | **真实业务字段**，可空（CostObjectType 非空时必填） |
+| `CostCenterKey` | Guid (not null) | **唯一索引专用规范化键**：CostCenterId 为空→`Guid.Empty`，否则=CostCenterId。**不建 FK** |
+| `CostObjectTypeKey` | string(20) (not null) | **唯一索引专用**：CostObjectType 为空→`""`，否则=CostObjectType |
+| `CostObjectIdKey` | string(50) (not null) | **唯一索引专用**：CostObjectId 为空→`""`，否则=CostObjectId |
 | `AnnualAmount` | decimal(18,2) | 年度额 = Σ 12 期（服务层维护与 BudgetLinePeriod 一致，§5.3） |
 | `ControlMode` | enum `BudgetControlMode`? | null = 继承版本 `DefaultControlMode` |
 | `ControlBasis` | enum `BudgetControlBasis`? | null = 继承版本 `DefaultControlBasis` |
 | `Memo` | string(500)? | 备注 |
 | `RowVersion` | byte[]? | 乐观并发（§14.3） |
 
-唯一索引：`UX_Fin_BudgetLine_Dim` = (VersionId, AccountId, CostCenterId, CostObjectType, CostObjectId)——**一版一桶唯一**。
+唯一索引：`UX_Fin_BudgetLine_Dim` = (VersionId, AccountId, **CostCenterKey, CostObjectTypeKey, CostObjectIdKey**)——**一版一桶唯一**。
 
-> **NULL 维度唯一性落码注意**：SQL Server 唯一索引视多个 NULL 为相异，会放过重复的 (Account, NULL, NULL, NULL)。落码采用**哨兵规范化**：服务层对可空维度做规范化——`CostCenterId` 用 `Guid.Empty` 代表"公司级"、`CostObjectType`/`CostObjectId` 用空串 `""` 代表"无"，写库即非 NULL，唯一索引正常生效；读出时空串/Empty 还原为"未指定"。（与 A4 NULL 维度处理同思路，落码核实。）
+> **NULL 维度唯一性落码方案（保 FK，不写假记录）**：SQL Server 唯一索引视多个 NULL 为相异，会放过重复的 (Account, NULL, NULL, NULL)。**不能**直接把 `Guid.Empty` 写进 `CostCenterId`——若 `CostCenterId` 建 FK 到 `Fin_CostCenter`，`Guid.Empty` 会违反外键（除非建假 CostCenter，禁用此法）。落码采用**真实字段 + 规范化键分离**：`CostCenterId`/`CostObjectType`/`CostObjectId` 保持可空，承载真实业务关系与 FK；另加 `CostCenterKey`(Guid)/`CostObjectTypeKey`(string)/`CostObjectIdKey`(string) **三个 not-null 规范化键仅供唯一索引**，服务层在保存时由真实字段派生（空→`Guid.Empty`/`""`）。唯一索引只用 Key 字段，既解决 NULL 唯一性、又不破坏 FK。Key 字段对前端/业务不可见（纯持久化派生列）。
 
 ### 3.4 `BudgetLinePeriod`（预算行按月分解）`Fin_BudgetLinePeriod`
 
@@ -310,7 +313,7 @@ public static async Task<FinResult> CheckPostingAsync(CP6Context db, JournalEntr
 ```
 
 短路顺序（任一不满足即 `Pass()`，对正常过账透明、爆炸半径=零）：
-1. 解析 entry 落期：按 `VoucherDate.Year/Month` 查 `FiscalPeriod` → 得 `FiscalYear` + `PeriodNo`。无期间 → Pass。
+1. 解析 entry 落期（**与 §9 报表实际侧口径统一**）：**优先**用 `entry.PeriodId` 关联 `FiscalPeriod` 取 `FiscalYear` + `PeriodNo`；`PeriodId` 为空时 **fallback** 到 `IFiscalPeriodService.ResolveAsync(entry.VoucherDate)`。**不直接按 `VoucherDate.Year/Month` 算**——避免非自然财年 / 跨年财期 / 13 期 / 调整期出错。仍解析不到期间 → Pass。
 2. 找该 `FiscalYear` 的 **Active** `BudgetVersion`（join Budget.FiscalYear + Version.IsActive）。无 Active → Pass（无控制）。
 3. 取该版本所有 `ControlMode` 有效解析为 **Block** 的预算行（行覆盖否则版本默认）。无 Block 行 → Pass。
 4. 否则进入逐行匹配校验。
@@ -372,15 +375,13 @@ public static async Task<FinResult> CheckPostingAsync(CP6Context db, JournalEntr
 新增 `BudgetApprovalCallback : IApprovalCallback`（`CP6.Core/Services/Fin/BudgetApprovalCallback.cs`），`BizType => "A5_Budget"`：
 
 ```csharp
-// 与引擎共享 DbContext，在引擎最终 SaveChanges 前调用；抛异常则审批+业务一并回滚（原子）
+// 与引擎共享 DbContext，在引擎最终 SaveChanges 前调用；抛异常则审批+业务一并回滚（原子）。
+// 回调只标脏不自己 SaveChanges——由引擎统一持久化（同一事务）。
 public async Task OnApprovedAsync(ApprovalCallbackContext ctx)
 {
     var versionId = Guid.Parse(ctx.BizId);
-    var v = await _budget.GetVersionAsync(versionId);
-    if (v.Status == Approved || v.IsActive) return;             // 幂等
-    if (v.Status != PendingApproval) throw ...("状态非审批中");
-    v.Status = Approved; v.ApprovedAt = now; v.ApprovedBy = ctx.DecidedById?.ToString() ?? "OA";
-    await _budget.ActivateAsync(versionId);                     // §8.3 自动激活（决策 §8-1）
+    // 一次性完成 Status=Approved + 清旧 Active→Archived + 本版 IsActive=true（§8.3）
+    await _budget.ActivateFromApprovalAsync(versionId, ctx.DecidedById?.ToString() ?? "OA");
 }
 
 public async Task OnRejectedAsync(ApprovalCallbackContext ctx)
@@ -394,13 +395,25 @@ public async Task OnRejectedAsync(ApprovalCallbackContext ctx)
 
 注册：`Program.cs` `builder.Services.AddScoped<IApprovalCallback, BudgetApprovalCallback>();`（与 `JournalApprovalCallback` 并列，多回调按 `BizType` 分发）。
 
+> **事务边界（关键）**：`BudgetApprovalCallback` 与 OA 引擎**共享同一个 scoped `CP6Context`**，回调在引擎最终 `SaveChangesAsync` **之前**被调用。因此 `ActivateFromApprovalAsync` 必须在**同一 DbContext / 同一事务内**一次性完成「置 Approved + 清旧 Active→Archived + 本版 IsActive=true」，且**全程基于已加载的实体引用操作、不中途重查刚改未存盘的状态**（否则会读不到未 `SaveChanges` 的 `Approved`，导致状态判断不一致）。回调内**不自行 `SaveChanges`**——交引擎统一持久化，保证审批终态与预算激活的原子性。
+
 ### 8.3 自动激活（决策 §8-1）
 
-`ActivateAsync(versionId)`（OnApproved 内调，也可独立端点供异常补救）：
+两个入口，逻辑同源、事务边界不同：
+
+**① `ActivateFromApprovalAsync(versionId, decidedBy)`（OA 回调专用，§8.2 内调）**——在与引擎共享的 DbContext 内一次性完成，不自行 SaveChanges：
+1. 加载本版本实体；守卫 `Status=PendingApproval`（幂等：已 Approved/IsActive 直接返回）。
+2. 置 `Status=Approved`、`ApprovedAt=now`、`ApprovedBy=decidedBy`。
+3. 同 Budget 下其它 `IsActive=true` 版本（同一查询/同 DbContext 加载）→ 置 `IsActive=false`、`Status=Archived`。
+4. 本版本 `IsActive=true`。
+5. 全部基于已加载实体引用改值，**不重查刚改未存盘的状态**；引擎随后统一 `SaveChanges`（与审批终态同事务原子落库）。
+
+**② `ActivateAsync(versionId)`（独立端点，手动补救/异常处置用）**——独立事务：
 1. 守卫：版本 `Status=Approved`（否则 E-A5-VERSION-004）。
-2. 同 Budget 下其它 `IsActive=true` 版本 → 置 `IsActive=false`、`Status=Archived`。
-3. 本版本 `IsActive=true`。
-4. 自此该 FiscalYear 控制 + 报表基准切到本版本。
+2. 同 Budget 下其它 `IsActive=true` 版本 → `IsActive=false`、`Status=Archived`。
+3. 本版本 `IsActive=true`，自行 `SaveChanges`。
+
+自此该 FiscalYear 的控制 + 报表基准切到本版本。两入口都保证「同 Budget 至多一个 Active」。
 
 ### 8.4 流程定义 Seed
 
@@ -447,7 +460,8 @@ select 净额：
 - 维度对齐：实际按 (Account,CC,CO) 桶 vs 预算同桶。**实际可能比预算细**（预算在公司级、实际带成本中心）——报表提供两种视图：
   - **按预算桶视图**：实际按预算桶的粒度上卷（实际更细的维度归并到最具体匹配的预算桶，仿 §7.3），逐桶比预算。
   - **按实际维度视图**：实际全维度展开，预算按通配下分（公司级预算不分摊到成本中心，预算列在明细行留空、仅在小计行显示）。MVP 先做**按预算桶视图**（与控制口径一致），实际维度视图作钻取下钻。
-- 每行：`预算` / `实际` / `差异=预算−实际` / `差异率=差异/预算` / `执行率=实际/预算`；费用超支（实际>预算）标红，收入未达标（实际<预算）标黄。
+- **未编预算实际（Unbudgeted Actual）——不可静默丢弃**：实际发生（已过账损益类）若**找不到任何匹配预算桶**（含通配），**不得**因"没有预算行"而从报表消失。这类实际单列到 **"未编预算实际 / Unbudgeted Actual"** 分组：按 (Account,CC,CO) 维度展示，`预算=0`、`实际=发生额`、`差异=−实际`、执行率标记为 "∞/无预算"。用途：暴露**漏编预算**或**异常费用**。该分组计入报表合计（总实际含未编预算部分）。
+- 每行：`预算` / `实际` / `差异=预算−实际` / `差异率=差异/预算` / `执行率=实际/预算`；费用超支（实际>预算）标红，收入未达标（实际<预算）标黄，未编预算实际标橙（提示漏编/异常）。
 - 期间钻取：12 期列 + 季度(Q1-Q4)小计 + 全年合计。
 - 实时、无快照（与三表一致，永远与总账同源）。
 
@@ -567,7 +581,8 @@ house style：`page-header`(h2+subtitle) / `el-card shadow="never"` / `table-too
 ### 14.1 迁移与索引
 
 - 迁移 `A5Budget`：4 表（Budget/BudgetVersion/BudgetLine/BudgetLinePeriod）+ 唯一索引（含 TenantId 前缀自动补）+ RowVersion 列（BudgetVersion/BudgetLine）+ decimal(18,2)。
-- 唯一索引：`UX_Fin_Budget_FiscalYear`、`UX_Fin_BudgetVersion_BudgetNo`、`UX_Fin_BudgetLine_Dim`(哨兵规范化非 NULL)、`UX_Fin_BudgetLinePeriod_LinePeriod`。
+- BudgetLine 含 3 个 not-null 规范化派生列 `CostCenterKey`(Guid)/`CostObjectTypeKey`(string)/`CostObjectIdKey`(string)，与真实可空维度 `CostCenterId`/`CostObjectType`/`CostObjectId` 并存（§3.3）；真实维度可建 FK，Key 列不建 FK。
+- 唯一索引：`UX_Fin_Budget_FiscalYear`、`UX_Fin_BudgetVersion_BudgetNo`、`UX_Fin_BudgetLine_Dim`(=VersionId+AccountId+**CostCenterKey+CostObjectTypeKey+CostObjectIdKey**，规避 NULL 不唯一)、`UX_Fin_BudgetLinePeriod_LinePeriod`。
 - Active 唯一性由服务层保证（不靠 DB 过滤唯一索引，避免跨库差异）。
 
 ### 14.2 多租户
@@ -602,13 +617,13 @@ house style：`page-header`(h2+subtitle) / `el-card shadow="never"` / `table-too
 | # | 场景 | 期望 |
 |---|---|---|
 | AC-001 | 年度额均摊到 12 期 | 每期=年度/12，余数进末期，Σ=年度额 |
-| AC-002 | 同版本重复维度桶 | 拒绝 E-A5-LINE-001 |
+| AC-002 | 同版本重复维度桶（含两行均"公司级/无成本对象"即维度全空） | 规范化 Key 命中唯一索引、拒绝 E-A5-LINE-001（验证 NULL 维度也唯一） |
 | AC-003 | 科目非末级/非损益类入行 | 拒绝 E-A5-LINE-002 |
 | AC-004 | Draft 提交审批 | 起 OA 流程、置 PendingApproval、存 ApprovalInstanceId、版本锁定不可改 |
 | AC-005 | 非 Draft 提交 / 重复提交 | E-A5-VERSION-002 / E-A5-VERSION-003 |
 | AC-006 | OA 通过回调 | 版本 Approved 且自动 Activate、旧 Active 置 Archived、本版 IsActive |
 | AC-007 | OA 驳回回调 | 版本 Rejected + RejectReason；可改回 Draft 重编 |
-| AC-008 | Block 行 + YTD 口径 + 手工过账超累计预算 | PostAsync 拒绝 E-A5-BUDGET-EXCEEDED（含科目/预算/已用/超出 args） |
+| AC-008 | Block 行 + YTD 口径 + 手工过账超累计预算 | PostAsync 拒绝 E-A5-BUDGET-EXCEEDED（含科目/预算/已用/超出 args）；落期经 PeriodId（非自然财年也对） |
 | AC-009 | Block 行 + 过账未超预算 | 正常过账通过 |
 | AC-010 | Warn 行 + 过账超预算 | 过账**通过**（不拦），报表/预检标红预警 W-A5 |
 | AC-011 | AutoPostAsync 超预算 | 不拦（自动凭证放行），报表反映超支 |
@@ -621,6 +636,9 @@ house style：`page-header`(h2+subtitle) / `el-card shadow="never"` / `table-too
 | AC-018 | 无 Active 版本时过账 | BudgetGuard 短路 Pass，过账不受影响 |
 | AC-019 | 红冲已过账凭证 | 不被预算拦截（释放预算） |
 | AC-020 | GET 端点权限 | seed view 后 admin 可读（无 403） |
+| AC-021 | 实际发生但无任何匹配预算桶 | 报表单列"未编预算实际/Unbudgeted Actual"分组（预算=0、实际=发生额），不静默丢弃、计入总实际 |
+| AC-022 | 非自然财年（FiscalYear≠日历年）下过账落期 | BudgetGuard 经 entry.PeriodId 取 FiscalYear/PeriodNo 正确归期；PeriodId 空时 fallback ResolveAsync |
+| AC-023 | OA 通过回调激活 | OnApproved 内同事务一次性完成 Approved+清旧 Active+本版 IsActive，无重查未存盘状态导致的不一致 |
 
 ---
 
