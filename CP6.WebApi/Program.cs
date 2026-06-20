@@ -422,6 +422,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEvent
 
 // 财务每日对账 worker（章10 §5）：每日跑 AP/AR 子账↔GL + 试算平衡勾稽，不一致告警
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.FinReconciliationWorker>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AssetDepreciationWorker>(); // A3 §6.2 月末折旧 Worker（备草稿不过账）
 
 // 4.15.6 T15 / Gap 2.3 — Prometheus /metrics（ブリッジ業務指標）
 //  - Snapshot Provider は T_IntegrationEvent を scrape 毎に集計（DB が単一の真実・再起動で値が消えない）。
