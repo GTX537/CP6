@@ -37,7 +37,13 @@ public class BankStatementService : IBankStatementService
         }
         else
         {
+            var keepTenant = existing.TenantId;
+            var keepCreator = existing.Creator;
+            var keepCreated = existing.CreateDate;
             _db.Entry(existing).CurrentValues.SetValues(dto);
+            existing.TenantId = keepTenant;
+            existing.Creator = keepCreator;
+            existing.CreateDate = keepCreated;
             existing.Modifier = user; existing.ModifyDate = DateTime.Now;
         }
         await _db.SaveChangesAsync();

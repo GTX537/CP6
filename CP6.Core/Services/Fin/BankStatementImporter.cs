@@ -101,12 +101,19 @@ public class BankStatementImporter : IBankStatementImporter
 
     private static string[] SplitCsv(string line, char delim)
     {
-        var list = new List<string>(); var sb = new StringBuilder(); bool inQ = false;
+        var list = new List<string>(); var sb = new StringBuilder();
+        bool inQ = false, pendingQuote = false;
         foreach (var ch in line)
         {
-            if (ch == '"') inQ = !inQ;
-            else if (ch == delim && !inQ) { list.Add(sb.ToString()); sb.Clear(); }
-            else sb.Append(ch);
+            if (pendingQuote)
+            {
+                pendingQuote = false;
+                if (ch == '"') { sb.Append('"'); continue; }   // "" => literal "
+                inQ = false;                                     // it was a closing quote
+            }
+            if (ch == '"') { if (inQ) pendingQuote = true; else inQ = true; continue; }
+            if (ch == delim && !inQ) { list.Add(sb.ToString()); sb.Clear(); continue; }
+            sb.Append(ch);
         }
         list.Add(sb.ToString());
         return list.ToArray();
