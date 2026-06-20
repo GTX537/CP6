@@ -132,5 +132,19 @@ public static class I18nA5BudgetScreenSeed
         new Sys_Lang { LangKey = "budget.msg.costObjectIdPlaceholder", ZhCN = "对象号（选填）", ZhTW = "對象號（選填）", En = "Object ID (optional)", Ja = "対象ID（任意）", Ko = "대상 ID (선택)" },
         new Sys_Lang { LangKey = "budget.msg.monthlyBreakdown", ZhCN = "各月金额", ZhTW = "各月金額", En = "Monthly amounts", Ja = "月別金額", Ko = "월별 금액" },
         new Sys_Lang { LangKey = "budget.field.copyFromNone", ZhCN = "不复制（空白开始）", ZhTW = "不複製（空白開始）", En = "No copy (start blank)", Ja = "コピーなし（空白から開始）", Ko = "복사 없음 (빈 시작)" },
+        // ── BudgetVsActualView 词条 ──
+        new Sys_Lang { LangKey = "budget.field.version", ZhCN = "版本", ZhTW = "版本", En = "Version", Ja = "バージョン", Ko = "버전" },
+        new Sys_Lang { LangKey = "budget.field.periodFrom", ZhCN = "期间从", ZhTW = "期間從", En = "Period From", Ja = "期間開始", Ko = "기간 시작" },
+        new Sys_Lang { LangKey = "budget.field.companyLevel", ZhCN = "公司级", ZhTW = "公司級", En = "Company Level", Ja = "会社全体", Ko = "회사 전체" },
+        new Sys_Lang { LangKey = "budget.msg.activeVersion", ZhCN = "当前生效版本", ZhTW = "當前生效版本", En = "Active Version", Ja = "有効バージョン", Ko = "활성 버전" },
+        new Sys_Lang { LangKey = "budget.msg.allCostCenters", ZhCN = "全部成本中心", ZhTW = "全部成本中心", En = "All Cost Centers", Ja = "全コストセンター", Ko = "전체 원가 센터" },
+        new Sys_Lang { LangKey = "budget.msg.noReport", ZhCN = "请选择财年后点击查询", ZhTW = "請選擇財年後點擊查詢", En = "Select a fiscal year and click Query", Ja = "会計年度を選択して照会してください", Ko = "회계연도를 선택하고 조회하세요" },
+        new Sys_Lang { LangKey = "budget.msg.noData", ZhCN = "暂无数据", ZhTW = "暫無資料", En = "No data", Ja = "データなし", Ko = "데이터 없음" },
+        new Sys_Lang { LangKey = "budget.summary.totalBudget", ZhCN = "总预算", ZhTW = "總預算", En = "Total Budget", Ja = "総予算", Ko = "총 예산" },
+        new Sys_Lang { LangKey = "budget.summary.totalActual", ZhCN = "总实际", ZhTW = "總實際", En = "Total Actual", Ja = "総実績", Ko = "총 실적" },
+        new Sys_Lang { LangKey = "budget.summary.totalVariance", ZhCN = "总差异", ZhTW = "總差異", En = "Total Variance", Ja = "総差異", Ko = "총 차이" },
+        new Sys_Lang { LangKey = "budget.summary.overallRate", ZhCN = "整体执行率", ZhTW = "整體執行率", En = "Overall Execution Rate", Ja = "全体執行率", Ko = "전체 집행률" },
+        new Sys_Lang { LangKey = "budget.tag.unbudgeted", ZhCN = "未编预算", ZhTW = "未編預算", En = "Unbudgeted", Ja = "未予算", Ko = "미예산" },
+        new Sys_Lang { LangKey = "budget.tag.overBudget", ZhCN = "超支", ZhTW = "超支", En = "Over Budget", Ja = "超過", Ko = "초과" },
     };
 }
