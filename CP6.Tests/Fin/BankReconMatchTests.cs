@@ -62,9 +62,26 @@ public class BankReconMatchTests
         var rev = await db.JournalEntries.FirstAsync(e => e.Lines.Any(l => l.Id == reversedBank));
         rev.Status = JournalStatus.Reversed; await db.SaveChangesAsync();
 
+        // 占用场景：另一条 Posted 行已被其他匹配组占用，应排除
+        var occupiedJlId = await PostedBankLine(db, glId, new(2026, 6, 3), 200, 0);
+        var matchGroup = new BankReconMatch
+        {
+            Id = Guid.NewGuid(), StatementId = stmtId,
+            MatchType = BankReconMatchType.Manual, StmtSignedSum = 200m,
+            MatchedAt = DateTime.UtcNow, MatchedBy = "test"
+        };
+        db.BankReconMatches.Add(matchGroup);
+        db.BankReconJournalLinks.Add(new BankReconJournalLink
+        {
+            Id = Guid.NewGuid(), MatchGroupId = matchGroup.Id,
+            JournalLineId = occupiedJlId, JournalEntryId = Guid.NewGuid(), BankSignedAmount = 200m
+        });
+        await db.SaveChangesAsync();
+
         var cands = await svc.GetCandidatesAsync(stmtId, lineId, widen: false);
-        Assert.Single(cands);                       // 反转的被排除
+        Assert.Single(cands);                                           // 反转+占用的均被排除，仅剩第一条
         Assert.Equal(100m, cands[0].BankSignedAmount);
+        Assert.DoesNotContain(cands, c => c.JournalLineId == occupiedJlId); // 已占用行不在候选中
     }
 
     [Fact]

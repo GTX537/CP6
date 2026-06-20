@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,10 +8,12 @@ namespace CP6.Core.Services.Fin;
 public class BankReconService : IBankReconService
 {
     private readonly CP6Context _db;
-    private readonly IJournalEntryService _journal;
-    private readonly IFiscalPeriodService _period;
+    private readonly IJournalEntryService _journal;    // used by C-2 AutoMatch
+    private readonly IFiscalPeriodService _period;     // used by C-2 AutoMatch
     private const int DefaultWindowDays = 90;
-    private const int SubsetSumK = 8;
+    private const int SubsetSumK = 8;                  // used by C-2 AutoMatch
+    // must exceed the max possible date-distance so amount-match always outranks date-closeness
+    private const int AmountMismatchPenalty = 100_000;
 
     public BankReconService(CP6Context db, IJournalEntryService journal, IFiscalPeriodService period)
     { _db = db; _journal = journal; _period = period; }
@@ -21,18 +24,16 @@ public class BankReconService : IBankReconService
         var line = await _db.BankStatementLines.AsNoTracking().FirstAsync(x => x.Id == statementLineId);
         var raw = await LoadCandidateRowsAsync(stmt, widen ? null : DefaultWindowDays);
         // 按 (金额接近 + 日期接近) 排序，金额完全相等优先
-        return raw
-            .Select(c => { c.Rank = Math.Abs((c.VoucherDate - line.TxnDate).Days)
-                                    + (c.BankSignedAmount == line.SignedAmount ? 0 : 100000); return c; })
-            .OrderBy(c => c.Rank).ThenBy(c => c.VoucherDate)
-            .ToList();
+        raw.ForEach(c => c.Rank = Math.Abs((c.VoucherDate - line.TxnDate).Days)
+            + (c.BankSignedAmount == line.SignedAmount ? 0 : AmountMismatchPenalty));
+        return raw.OrderBy(c => c.Rank).ThenBy(c => c.VoucherDate).ToList();
     }
 
     /// <summary>账面侧候选来源（spec §4.2）：命中银行GL、Posted、未反转、未占用、VoucherDate≤PeriodEnd、窗口、外币原币规则。</summary>
     private async Task<List<BankCandidateLine>> LoadCandidateRowsAsync(BankStatement stmt, int? windowDays)
     {
         var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId);
-        var isForeign = !string.IsNullOrEmpty(acct.CurrencyCd) && acct.CurrencyCd != "JPY";   // null/JPY=本位币
+        var isForeign = !FxConstants.IsBase(acct.CurrencyCd);
         var occupied = _db.BankReconJournalLinks.Select(x => x.JournalLineId);
         var lowerDate = windowDays is int w ? stmt.PeriodStart.AddDays(-w) : DateTime.MinValue;
 
