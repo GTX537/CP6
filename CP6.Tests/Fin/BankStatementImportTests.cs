@@ -31,11 +31,12 @@ public class BankStatementImportTests
     }
 
     [Fact]
-    public async Task Profile_Upsert_BlankName_Throws()
+    public async Task Profile_Upsert_BlankName_ReturnsFailResult()
     {
         var svc = Create(out _);
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            svc.UpsertProfileAsync(new BankImportProfile { Name = "" }, "admin"));
+        var r = await svc.UpsertProfileAsync(new BankImportProfile { Name = "" }, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-PROFILE-001", r.Code);
     }
 
     /// <summary>Bug 1 fix: UPDATE branch must not overwrite TenantId/Creator/CreateDate from dto.</summary>
@@ -278,6 +279,42 @@ public class BankStatementImportTests
         // Bug 2 fix: Preview must flag this as StrongDup (cross-session Fingerprint dup)
         Assert.Equal(1, preview.StrongDupCount);
         Assert.Equal(0, preview.SuccessCount);
+    }
+
+    // ── Fix 2 tests: Source=Manual guard on UpdateLine / DeleteLine ──
+
+    private static async Task<(BankStatementService svc, Guid stmtId, Guid lineId)> SeedWithImportedLine(CP6.Core.EFDbContext.CP6Context db)
+    {
+        var (svc, stmtId, profId) = await Seed(db);
+        var csv = "date,deposit,withdrawal,ref\n2026/06/05,100,,R1\n";
+        await svc.ConfirmImportAsync(stmtId, profId, Csv(csv), "a.csv", "admin");
+        var line = await db.BankStatementLines.FirstAsync();
+        return (svc, stmtId, line.Id);
+    }
+
+    [Fact]
+    public async Task UpdateLine_ImportedLine_Rejected()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var (svc, stmtId, lineId) = await SeedWithImportedLine(db);
+        var patch = new CP6.Entity.DomainModels.Fin.BankStatementLine
+        {
+            TxnDate = new DateTime(2026, 6, 5), Direction = BankLineDirection.Deposit,
+            Amount = 200m, CurrencyCd = "CNY"
+        };
+        var r = await svc.UpdateLineAsync(stmtId, lineId, patch, null, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-LINE-001", r.Code);
+    }
+
+    [Fact]
+    public async Task DeleteLine_ImportedLine_Rejected()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var (svc, stmtId, lineId) = await SeedWithImportedLine(db);
+        var r = await svc.DeleteLineAsync(stmtId, lineId, "admin");
+        Assert.False(r.Ok);
+        Assert.Equal("E-A4-LINE-001", r.Code);
     }
 
     // ── Pre-existing test ──

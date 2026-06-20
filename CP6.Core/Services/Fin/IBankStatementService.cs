@@ -5,8 +5,8 @@ public interface IBankStatementService
 {
     // ── Profile（导入模板）──
     Task<List<BankImportProfile>> ListProfilesAsync(Guid? bankAccountId = null);
-    Task UpsertProfileAsync(BankImportProfile dto, string? user);
-    Task DeleteProfileAsync(Guid id, string? user);
+    Task<FinResult> UpsertProfileAsync(BankImportProfile dto, string? user);
+    Task<FinResult> DeleteProfileAsync(Guid id, string? user);
 
     // ── 会话 ──
     Task<List<BankStatement>> ListAsync(Guid? bankAccountId, Guid? fiscalPeriodId, BankStatementStatus? status);

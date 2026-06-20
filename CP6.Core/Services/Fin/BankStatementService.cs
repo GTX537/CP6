@@ -23,10 +23,10 @@ public class BankStatementService : IBankStatementService
         return await q.OrderBy(x => x.Name).ToListAsync();
     }
 
-    public async Task UpsertProfileAsync(BankImportProfile dto, string? user)
+    public async Task<FinResult> UpsertProfileAsync(BankImportProfile dto, string? user)
     {
         if (string.IsNullOrWhiteSpace(dto.Name))
-            throw new InvalidOperationException("E-A4-IMPORT-001: 模板名必填");
+            return FinResult.Fail("E-A4-PROFILE-001");
         var existing = dto.Id != Guid.Empty
             ? await _db.BankImportProfiles.FirstOrDefaultAsync(x => x.Id == dto.Id) : null;
         if (existing == null)
@@ -47,14 +47,16 @@ public class BankStatementService : IBankStatementService
             existing.Modifier = user; existing.ModifyDate = DateTime.Now;
         }
         await _db.SaveChangesAsync();
+        return FinResult.Pass();
     }
 
-    public async Task DeleteProfileAsync(Guid id, string? user)
+    public async Task<FinResult> DeleteProfileAsync(Guid id, string? user)
     {
-        var row = await _db.BankImportProfiles.FirstOrDefaultAsync(x => x.Id == id)
-            ?? throw new InvalidOperationException("E-A4-IMPORT-001: 模板不存在");
+        var row = await _db.BankImportProfiles.FirstOrDefaultAsync(x => x.Id == id);
+        if (row == null) return FinResult.Fail("E-A4-PROFILE-002");
         _db.BankImportProfiles.Remove(row);
         await _db.SaveChangesAsync();
+        return FinResult.Pass();
     }
 
     // ── 会话 / 导入 / 手工行：B-2 实现 ──
@@ -162,6 +164,7 @@ public class BankStatementService : IBankStatementService
         if (existing == null) return FinResult.Fail("E-A4-MATCH-004");
         var stmt = await _db.BankStatements.AsNoTracking().FirstAsync(x => x.Id == statementId);
         if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+        if (existing.Source != BankLineSource.Manual) return FinResult.Fail("E-A4-LINE-001");
         if (existing.MatchStatus == BankLineMatchStatus.Matched) return FinResult.Fail("E-A4-MATCH-005");   // 已匹配须先 Unmatch
         if (rowVersion != null) _db.Entry(existing).Property(x => x.RowVersion).OriginalValue = rowVersion;
         existing.TxnDate = line.TxnDate; existing.Direction = line.Direction; existing.Amount = line.Amount;
@@ -180,6 +183,7 @@ public class BankStatementService : IBankStatementService
         if (existing == null) return FinResult.Fail("E-A4-MATCH-004");
         var stmt = await _db.BankStatements.AsNoTracking().FirstAsync(x => x.Id == statementId);
         if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
+        if (existing.Source != BankLineSource.Manual) return FinResult.Fail("E-A4-LINE-001");
         if (existing.MatchStatus == BankLineMatchStatus.Matched) return FinResult.Fail("E-A4-MATCH-005");
         _db.BankStatementLines.Remove(existing);
         await _db.SaveChangesAsync();

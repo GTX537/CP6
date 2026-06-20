@@ -15,7 +15,7 @@ public class BankImportProfileController : ControllerBase
     public BankImportProfileController(IBankStatementService svc) => _svc = svc;
     private string CurrentUser => User?.Identity?.Name ?? "anonymous";
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
-    private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+    private IActionResult Fin(FinResult r) => r.Ok ? Ok2() : BadRequest(new { code = 400, message = r.Code, args = r.Args });
 
     [HttpGet]
     [RequirePermission("fin-bank-reconciliation", "view")]
@@ -24,10 +24,10 @@ public class BankImportProfileController : ControllerBase
     [HttpPost("upsert")]
     [RequirePermission("fin-bank-reconciliation", "profile-manage")]
     public async Task<IActionResult> Upsert([FromBody] BankImportProfile dto)
-    { try { await _svc.UpsertProfileAsync(dto, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+        => Fin(await _svc.UpsertProfileAsync(dto, CurrentUser));
 
     [HttpDelete("{id}")]
     [RequirePermission("fin-bank-reconciliation", "profile-manage")]
     public async Task<IActionResult> Delete(Guid id)
-    { try { await _svc.DeleteProfileAsync(id, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+        => Fin(await _svc.DeleteProfileAsync(id, CurrentUser));
 }
