@@ -44,14 +44,13 @@ public class BankStatementImporter : IBankStatementImporter
         var result = new BankImportParseResult();
         using var wb = new ClosedXML.Excel.XLWorkbook(file);
         var ws = wb.Worksheet(1);
-        int lineNo = 0;
         foreach (var row in ws.RowsUsed())
         {
-            lineNo++;
+            var lineNo = row.RowNumber();                             // 1-based 物理行号，与 CSV 路径对齐
             if (lineNo <= p.SkipHeaderRows) continue;
             var cols = row.Cells(1, row.LastCellUsed()?.Address.ColumnNumber ?? 1)
                 .Select(c => c.GetString()).ToArray();
-            if (cols.All(string.IsNullOrWhiteSpace)) continue;
+            if (cols.All(string.IsNullOrWhiteSpace)) continue;       // 空行跳过
             var raw = string.Join("", cols);
             try { result.Rows.Add(MapRow(p, cols, lineNo, raw)); }
             catch (Exception ex)

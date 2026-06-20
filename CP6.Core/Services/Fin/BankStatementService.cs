@@ -98,7 +98,8 @@ public class BankStatementService : IBankStatementService
     {
         var profile = await _db.BankImportProfiles.AsNoTracking().FirstAsync(x => x.Id == profileId);
         var parsed = _importer.Parse(profile, file, fileName);
-        return BuildPreview(parsed, await ExistingHashesAsync(statementId));
+        var (existHash, existFp) = await ExistingHashSetsAsync(statementId);
+        return BuildPreview(parsed, existHash, existFp);
     }
 
     public async Task<FinResult> ConfirmImportAsync(Guid statementId, Guid profileId, Stream file, string fileName, string? user)
@@ -144,11 +145,6 @@ public class BankStatementService : IBankStatementService
     public Task<FinResult> DeleteLineAsync(Guid statementId, Guid lineId, string? user) => throw new NotImplementedException();
 
     // ── 私有助手 ──
-    private async Task<HashSet<string>> ExistingHashesAsync(Guid statementId)
-    {
-        var (h, _) = await ExistingHashSetsAsync(statementId); return h;
-    }
-
     private async Task<(HashSet<string> Hash, HashSet<string> Fp)> ExistingHashSetsAsync(Guid statementId)
     {
         var rows = await _db.BankStatementLines.AsNoTracking().Where(x => x.StatementId == statementId)
@@ -157,20 +153,23 @@ public class BankStatementService : IBankStatementService
                 rows.Where(x => x.Fingerprint != null).Select(x => x.Fingerprint!).ToHashSet());
     }
 
-    private static BankImportPreviewResult BuildPreview(BankImportParseResult parsed, HashSet<string> existHash)
+    private static BankImportPreviewResult BuildPreview(BankImportParseResult parsed,
+        HashSet<string> existHash, HashSet<string> existFp)
     {
         var res = new BankImportPreviewResult { Errors = parsed.Errors, FailedCount = parsed.Errors.Count };
-        var seenHash = new HashSet<string>(existHash);
-        var seenKey = new HashSet<string>();   // (TxnDate+Direction+Amount+RefNo) 疑似重复键
+        // 跨会话去重：分别持有 RawRowHash 集和 Fingerprint 集，与 ConfirmImportAsync 逻辑对称
+        var seen = new HashSet<string>(existHash);          // RawRowHash（含已存在 + 批内累积）
+        var seenFp = new HashSet<string>(existFp);         // Fingerprint（含已存在 + 批内累积）
+        var seenKey = new HashSet<string>();               // (TxnDate+Direction+Amount+RefNo) 疑似重复键
         foreach (var r in parsed.Rows)
         {
             var key = $"{r.TxnDate:yyyyMMdd}|{r.Direction}|{r.Amount}|{r.RefNo}";
-            if (seenHash.Contains(r.RawRowHash) || seenHash.Contains(r.Fingerprint))
+            if (seen.Contains(r.RawRowHash) || seenFp.Contains(r.Fingerprint))
             { r.DupKind = "Strong"; r.Importable = false; res.StrongDupCount++; }
             else if (seenKey.Contains(key))
             { r.DupKind = "Suspected"; r.Importable = true; res.SuspectedDupCount++; }
             else res.SuccessCount++;
-            seenHash.Add(r.RawRowHash); seenHash.Add(r.Fingerprint); seenKey.Add(key);
+            seen.Add(r.RawRowHash); seenFp.Add(r.Fingerprint); seenKey.Add(key);
             res.Rows.Add(r);
         }
         return res;

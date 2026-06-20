@@ -1,3 +1,6 @@
+using System.Security.Cryptography;
+using System.Text;
+using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Core.Services.Fin;
@@ -163,6 +166,121 @@ public class BankStatementImportTests
         Assert.False(r.Ok);
         Assert.Equal("E-A4-STATEMENT-LOCKED", r.Code);
     }
+
+    // ── Bug 1 fix tests ──
+
+    /// <summary>Bug 1 fix (Excel row-number): header skip uses physical row number, not iteration counter.
+    /// With a leading blank row (row 1), a header row (row 2) and two data rows (rows 3-4),
+    /// SkipHeaderRows=2 must skip rows 1 and 2 and parse rows 3-4 as data (2 rows, 0 errors).</summary>
+    [Fact]
+    public void Excel_ParseWithHeaderSkip_PhysicalRowNumber()
+    {
+        // Arrange: build in-memory .xlsx — row1=blank, row2=header, row3/4=data
+        var profile = new BankImportProfile
+        {
+            Name = "XLSX-Test", FileFormat = BankFileFormat.Excel,
+            SkipHeaderRows = 2,            // skip physical rows 1 (blank) and 2 (header)
+            DateField = "0", DateFormat = "yyyy/MM/dd",
+            AmountMode = BankAmountMode.DepositWithdrawalColumns,
+            DepositAmountField = "1", WithdrawalAmountField = "2",
+            RefNoField = "3",
+            DecimalSeparator = ".", ThousandsSeparator = ","
+        };
+
+        using var ms = new MemoryStream();
+        using (var wb = new XLWorkbook())
+        {
+            var ws = wb.AddWorksheet("Sheet1");
+            // Row 1: blank (leave empty — RowsUsed() will skip it, but row number must still be 1)
+            ws.Cell(1, 1).Value = "";
+            // Row 2: header
+            ws.Cell(2, 1).Value = "Date";
+            ws.Cell(2, 2).Value = "Deposit";
+            ws.Cell(2, 3).Value = "Withdrawal";
+            ws.Cell(2, 4).Value = "Ref";
+            // Row 3: data 1 (deposit 100)
+            ws.Cell(3, 1).Value = "2026/06/10";
+            ws.Cell(3, 2).Value = "100";
+            ws.Cell(3, 3).Value = "";
+            ws.Cell(3, 4).Value = "R1";
+            // Row 4: data 2 (withdrawal 50)
+            ws.Cell(4, 1).Value = "2026/06/11";
+            ws.Cell(4, 2).Value = "";
+            ws.Cell(4, 3).Value = "50";
+            ws.Cell(4, 4).Value = "R2";
+            wb.SaveAs(ms);
+        }
+        ms.Position = 0;
+
+        var importer = new BankStatementImporter();
+        var result = importer.Parse(profile, ms, "test.xlsx");
+
+        // Assert: exactly 2 data rows, no errors
+        Assert.Empty(result.Errors);
+        Assert.Equal(2, result.Rows.Count);
+        Assert.Equal(new DateTime(2026, 6, 10), result.Rows[0].TxnDate);
+        Assert.Equal(100m, result.Rows[0].Amount);
+        Assert.Equal(1, result.Rows[0].Direction);          // Deposit
+        Assert.Equal(new DateTime(2026, 6, 11), result.Rows[1].TxnDate);
+        Assert.Equal(50m, result.Rows[1].Amount);
+        Assert.Equal(2, result.Rows[1].Direction);          // Withdrawal
+        // SourceLineNo must reflect physical Excel row numbers (3 and 4)
+        Assert.Equal(3, result.Rows[0].SourceLineNo);
+        Assert.Equal(4, result.Rows[1].SourceLineNo);
+    }
+
+    // ── Bug 2 fix tests ──
+
+    /// <summary>Bug 2 fix (Preview cross-session Fingerprint dedup): a row already in DB with the same
+    /// Fingerprint but a different RawRowHash must be flagged as StrongDup in Preview (not just in Confirm).
+    /// Before the fix Preview would miss this and over-report SuccessCount.</summary>
+    [Fact]
+    public async Task Preview_CrossSession_FingerprintDup_Detected()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var (svc, stmtId, profId) = await Seed(db);
+
+        // The CSV profile in Seed: date col0 fmt yyyy/MM/dd, deposit col1, withdrawal col2, ref col3
+        // Row: date=2026/06/15, deposit=500, ref=FP-TEST → Fingerprint = Sha256("20260615|1|500|FP-TEST|||")
+        var txnDate = new DateTime(2026, 6, 15);
+        const decimal amount = 500m;
+        const int direction = 1;       // Deposit
+        const string refNo = "FP-TEST";
+
+        // Compute expected Fingerprint (mirrors BankStatementImporter.Sha256 logic)
+        static string Sha256Hex(string s)
+        {
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(s));
+            return Convert.ToHexString(bytes);
+        }
+        var expectedFp = Sha256Hex($"{txnDate:yyyyMMdd}|{direction}|{amount}|{refNo}|||");
+
+        // Seed a DB line with that Fingerprint but an unrelated RawRowHash (simulates prior import with different raw text)
+        var existingLine = new BankStatementLine
+        {
+            Id = Guid.NewGuid(), StatementId = stmtId, LineNo = 1,
+            TxnDate = txnDate, Direction = BankLineDirection.Deposit, Amount = amount,
+            CurrencyCd = "CNY",
+            RefNo = refNo, Description = null, CounterpartyName = null, BalanceAfter = null,
+            Source = BankLineSource.Imported, MatchStatus = BankLineMatchStatus.Unmatched,
+            ImportBatchNo = "BKRIMP-SEED",
+            RawRowHash = Sha256Hex("different-raw-text-from-prior-export"),
+            Fingerprint = expectedFp,
+        };
+        existingLine.RecomputeSigned();
+        db.BankStatementLines.Add(existingLine);
+        await db.SaveChangesAsync();
+
+        // CSV row has same semantic fields → same Fingerprint, but different raw text → different RawRowHash
+        var csv = $"date,deposit,withdrawal,ref\n2026/06/15,500,,{refNo}\n";
+        var preview = await svc.PreviewAsync(stmtId, profId, Csv(csv), "reexport.csv");
+
+        // Bug 2 fix: Preview must flag this as StrongDup (cross-session Fingerprint dup)
+        Assert.Equal(1, preview.StrongDupCount);
+        Assert.Equal(0, preview.SuccessCount);
+    }
+
+    // ── Pre-existing test ──
 
     /// <summary>Bug 2 fix: SplitCsv must handle RFC-4180 doubled-quote escape ("") as a literal ".</summary>
     [Fact]
