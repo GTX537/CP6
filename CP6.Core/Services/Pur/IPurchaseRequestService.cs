@@ -22,9 +22,15 @@ public interface IPurchaseRequestService
     Task<PurchaseRequest> CreateAsync(PrCreateDto dto, string? userName);
 
     /// <summary>
-    /// 送审（章05 §4）：草稿 → 调审批委托（桩即时通过，BizType=PUR_PR）→ 回填 ApprovalRef + 置已批。
+    /// 送审（章05 §4）：草稿 → 调审批委托（桩即时通过 / 真实流程进 Submitted）→ 回填 ApprovalRef。
     /// </summary>
     Task<PurchaseRequest> SubmitForApprovalAsync(string prNo, string? userName);
+
+    /// <summary>OA 审批通过回调：Submitted→Approved（幂等；不 SaveChanges，由 OA 引擎统一持久化）。</summary>
+    Task ApproveFromApprovalAsync(string prNo, string decidedBy);
+
+    /// <summary>OA 审批驳回回调：Submitted→Draft 可重编重送（幂等；不 SaveChanges）。</summary>
+    Task RejectFromApprovalAsync(string prNo, string reason);
 
     /// <summary>
     /// 转 PO（章05 §5）：仅已批 PR。取可转行（有效 ∧ 有建议供应商 ∧ 未转出），按建议供应商分组，

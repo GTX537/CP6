@@ -169,6 +169,27 @@ public class PurchaseOrderService : IPurchaseOrderService
     }
 
     /// <inheritdoc />
+    public async Task ConfirmFromApprovalAsync(string poNo, string decidedBy)
+    {
+        var po = await _db.PurchaseOrders.FirstOrDefaultAsync(p => p.PoNo == poNo && !p.IsDeleted);
+        if (po == null || po.Status != PoStatus.PendingApproval) return;   // 幂等：仅待审批可确认
+        po.Status = PoStatus.Confirmed;
+        po.Modifier = decidedBy;
+        po.ModifyDate = DateTime.Now;
+        // 不 SaveChanges —— OA 引擎统一持久化（回调共享 DbContext，同事务原子）
+    }
+
+    /// <inheritdoc />
+    public async Task RejectFromApprovalAsync(string poNo, string reason)
+    {
+        var po = await _db.PurchaseOrders.FirstOrDefaultAsync(p => p.PoNo == poNo && !p.IsDeleted);
+        if (po == null || po.Status != PoStatus.PendingApproval) return;   // 幂等
+        po.Status = PoStatus.Draft;   // 回退草稿可重编重送（驳回意见在 OA Wf_FlowHistory 留痕）
+        po.ModifyDate = DateTime.Now;
+        // 不 SaveChanges
+    }
+
+    /// <inheritdoc />
     public async Task CancelAsync(string poNo, string? userName)
     {
         var po = await _db.PurchaseOrders.FirstOrDefaultAsync(p => p.PoNo == poNo && !p.IsDeleted)

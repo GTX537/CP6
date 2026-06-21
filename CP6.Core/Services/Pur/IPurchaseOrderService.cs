@@ -20,9 +20,15 @@ public interface IPurchaseOrderService
     Task<PurchaseOrder> CreateAsync(PoCreateDto dto, string? userName);
 
     /// <summary>
-    /// 送审（章02 §7）：草稿 → 调审批服务（桩即时通过）→ 回填 ApprovalRef + 置确认。
+    /// 送审（章02 §7）：草稿 → 调审批服务（桩即时通过 / 真实流程进 PendingApproval）→ 回填 ApprovalRef。
     /// </summary>
     Task<PurchaseOrder> SubmitForApprovalAsync(string poNo, string? userName);
+
+    /// <summary>OA 审批通过回调：PendingApproval→Confirmed（幂等；不 SaveChanges，由 OA 引擎统一持久化）。</summary>
+    Task ConfirmFromApprovalAsync(string poNo, string decidedBy);
+
+    /// <summary>OA 审批驳回回调：PendingApproval→Draft 可重编重送（幂等；不 SaveChanges）。</summary>
+    Task RejectFromApprovalAsync(string poNo, string reason);
 
     /// <summary>取消（章02 §4）：仅草稿/确认（未发生收货）可取消。</summary>
     Task CancelAsync(string poNo, string? userName);

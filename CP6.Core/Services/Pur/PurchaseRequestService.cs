@@ -126,6 +126,27 @@ public class PurchaseRequestService : IPurchaseRequestService
     }
 
     /// <inheritdoc />
+    public async Task ApproveFromApprovalAsync(string prNo, string decidedBy)
+    {
+        var pr = await _db.PurchaseRequests.FirstOrDefaultAsync(p => p.PrNo == prNo && !p.IsDeleted);
+        if (pr == null || pr.Status != PrStatus.Submitted) return;   // 幂等：仅送审中可批
+        pr.Status = PrStatus.Approved;
+        pr.Modifier = decidedBy;
+        pr.ModifyDate = DateTime.Now;
+        // 不 SaveChanges —— OA 引擎统一持久化
+    }
+
+    /// <inheritdoc />
+    public async Task RejectFromApprovalAsync(string prNo, string reason)
+    {
+        var pr = await _db.PurchaseRequests.FirstOrDefaultAsync(p => p.PrNo == prNo && !p.IsDeleted);
+        if (pr == null || pr.Status != PrStatus.Submitted) return;   // 幂等
+        pr.Status = PrStatus.Draft;   // 回退草稿可重编重送（驳回意见在 OA Wf_FlowHistory 留痕）
+        pr.ModifyDate = DateTime.Now;
+        // 不 SaveChanges
+    }
+
+    /// <inheritdoc />
     public async Task<List<string>> ConvertToPoAsync(string prNo, string? userName)
     {
         var pr = await _db.PurchaseRequests.FirstOrDefaultAsync(p => p.PrNo == prNo && !p.IsDeleted)

@@ -112,6 +112,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalService, CP6.Core.Servi
 builder.Services.AddScoped<CP6.Core.Services.Wf.ApprovalDispatcher>();                                          // 章05 §4 终态分发（注入所有 IApprovalCallback）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.JournalApprovalCallback>(); // 章05 §7 财务凭证示范回调（兑现 MVP）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.BudgetApprovalCallback>(); // A5 §8 预算版本审批回调（通过→自动激活/驳回→可重编）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Pur.PoApprovalCallback>(); // 采购 PO 审批回调（通过→Confirmed/驳回→Draft）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Pur.PrApprovalCallback>(); // 采购 PR 审批回调（通过→Approved/驳回→Draft）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetService, CP6.Core.Services.Fin.BudgetService>();            // A5 预算方案/版本 CRUD + 送审 + OA 回调
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetLineService, CP6.Core.Services.Fin.BudgetLineService>();    // A5 预算行 Upsert/Delete + Excel 导入
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetReportService, CP6.Core.Services.Fin.BudgetReportService>(); // A5 预算 vs 实际报告 + 预控预检
@@ -158,7 +160,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Service
 
 // 4.0.3 采购（Pur）MVP 章01~04：主数据→PO→收货→三单匹配→自动建应付（补全财务 AP 前置）
 builder.Services.AddScoped<CP6.Core.Services.Pur.ISupplierPriceService, CP6.Core.Services.Pur.SupplierPriceService>(); // 章01 §3/§4 采购价表 + 阶梯带价
-builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IApprovalService, CP6.Core.Services.Pur.Contracts.StubApprovalService>(); // P-D1 审批委托（桩；OA 引擎接真实流程后换适配器）
+builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IApprovalService, CP6.Core.Services.Pur.Contracts.ApprovalServiceAdapter>(); // P-D1 审批适配器（真实；PR/PO 经 Wf.IApprovalService 起 OA 流程，无绑定兜底自动放行）
 builder.Services.AddScoped<CP6.Core.Services.Pur.IPurchaseOrderService, CP6.Core.Services.Pur.PurchaseOrderService>(); // 章02 PO 建单带出 + 派生状态机 + 送审
 builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsReceiveService, CP6.Core.Services.Pur.Contracts.StubWmsReceiveService>(); // P-D1 WMS 入库委托（桩；WMS 落地后换适配器）
 builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsQcQuery, CP6.Core.Services.Pur.Contracts.StubWmsQcQuery>(); // P-D1 WMS 检收查询（桩=全合格）
@@ -574,6 +576,7 @@ using (var scope = app.Services.CreateScope())
     // A5 §8 预算审批流程 + OA 绑定种子（幂等；FlowKey="budget-approve"，BizType="A5_Budget"）
     // 置于 admin 账号 seed 之后，确保首次启动时 admin 已落库，seed 内部可解析到真实 UserId。
     CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
+    CP6.WebApi.Seed.PurApprovalFlowSeed.Seed(db);   // 采购 PR/PO 审批流程 + 绑定（PUR_PR/PUR_PO）
 
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
