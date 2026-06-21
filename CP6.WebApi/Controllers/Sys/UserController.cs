@@ -77,6 +77,8 @@ public class UserController : LocalizedControllerBase
         existing.ModifyDate = DateTime.Now;
 
         // 密码非空才更新
+        // TODO(S类 认证加固 T7): 此处直接存明文是已知遗留写入路径；T7「UserController 哈希+管理员重置」将改为
+        //   existing.Password = _hasher.Hash(entity.Password) 并彻底消除明文写入。T7 落地前由启动钩子 PasswordHashMigrationSeed 兜底。
         if (!string.IsNullOrEmpty(entity.Password))
             existing.Password = entity.Password;
 

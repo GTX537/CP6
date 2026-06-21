@@ -1286,18 +1286,8 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
-    if (!db.Sys_Users.Any())
-    {
-        db.Sys_Users.Add(new Sys_User
-        {
-            UserName = "admin",
-            Password = "123456",
-            NickName = "管理员",
-            Enable = true,
-            CreateDate = DateTime.Now
-        });
-        db.SaveChanges();
-    }
+    // （原此处有第二处 admin 明文 seed——无 RoleId 的 legacy 残留，且位于 EnsureHashed 之后会落明文；
+    //   规范 admin 已在上方 menu seed 块以 RoleId=1 建立并被 EnsureHashed 哈希，故删除该重复块。S 类 T1 review I2）
 
     // 多语言词条种子数据
     if (!db.Sys_Langs.Any())

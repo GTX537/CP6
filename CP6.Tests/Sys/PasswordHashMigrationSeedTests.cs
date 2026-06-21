@@ -25,4 +25,17 @@ public class PasswordHashMigrationSeedTests
         Assert.Equal(already, h.Password);
         Assert.Equal(0, PasswordHashMigrationSeed.EnsureHashed(db, hasher));
     }
+
+    [Fact] public void Skips_empty_password_without_error()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        var hasher = new BCryptPasswordHasher();
+        db.Sys_Users.Add(new Sys_User { UserName = "emptyuser", Password = "" });
+        db.SaveChanges();
+
+        var changed = PasswordHashMigrationSeed.EnsureHashed(db, hasher);
+
+        Assert.Equal(0, changed);
+        Assert.Equal("", db.Sys_Users.Single(u => u.UserName == "emptyuser").Password);
+    }
 }
