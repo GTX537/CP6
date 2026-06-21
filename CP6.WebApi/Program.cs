@@ -162,8 +162,8 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Service
 builder.Services.AddScoped<CP6.Core.Services.Pur.ISupplierPriceService, CP6.Core.Services.Pur.SupplierPriceService>(); // 章01 §3/§4 采购价表 + 阶梯带价
 builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IApprovalService, CP6.Core.Services.Pur.Contracts.ApprovalServiceAdapter>(); // P-D1 审批适配器（真实；PR/PO 经 Wf.IApprovalService 起 OA 流程，无绑定兜底自动放行）
 builder.Services.AddScoped<CP6.Core.Services.Pur.IPurchaseOrderService, CP6.Core.Services.Pur.PurchaseOrderService>(); // 章02 PO 建单带出 + 派生状态机 + 送审
-builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsReceiveService, CP6.Core.Services.Pur.Contracts.StubWmsReceiveService>(); // P-D1 WMS 入库委托（桩；WMS 落地后换适配器）
-builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsQcQuery, CP6.Core.Services.Pur.Contracts.StubWmsQcQuery>(); // P-D1 WMS 检收查询（桩=全合格）
+builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsReceiveService, CP6.Core.Services.Pur.Contracts.WmsReceiveServiceAdapter>(); // P-D1 WMS 入库适配器（真实；GR 收货委托 InboundService 完整入库流程，库存真增加，PoNo 钩子）
+builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsQcQuery, CP6.Core.Services.Pur.Contracts.WmsQcQueryAdapter>(); // P-D1 WMS 检收适配器（真实；按 InboundNo 查 QcInspection 判定，无记录→全合格保持桩语义）
 builder.Services.AddScoped<CP6.Core.Services.Pur.IGoodsReceiptService, CP6.Core.Services.Pur.GoodsReceiptService>(); // 章03 双基准收货 + 委托入库 + 回写三累计锚
 builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IFinApService, CP6.Core.Services.Pur.Contracts.FinApServiceAdapter>(); // 章04 建应付适配器（委托财务 IFinAp，借方按 GL 角色 INVENTORY）
 builder.Services.AddScoped<CP6.Core.Services.Pur.IThreeWayMatchService, CP6.Core.Services.Pur.ThreeWayMatchService>(); // 章04 ★三单匹配→自动建应付/挂起
