@@ -168,8 +168,8 @@ builder.Services.AddScoped<CP6.Core.Services.Pur.IThreeWayMatchService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Pur.IPrGenerationService, CP6.Core.Services.Pur.PrGenerationService>(); // 章05 采购申请 PR 需求驱动生成（缺料反流/工单 BOM 缺料）
 builder.Services.AddScoped<CP6.Core.Services.Pur.IPurchaseRequestService, CP6.Core.Services.Pur.PurchaseRequestService>(); // 章05 §4/§5 PR 手工建单 + 送审 + PR→PO 按建议供应商分组转单
 builder.Services.AddScoped<CP6.Core.Services.Pur.IRfqService, CP6.Core.Services.Pur.RfqService>(); // 章06 §2/§3 询价 RFQ 从 PR 发起 + 邀供应商 + 收报价
-builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsIssueService, CP6.Core.Services.Pur.Contracts.StubWmsIssueService>(); // P2-D3 WMS 出库委托（桩；外注支給材 Purpose=subcontract，WMS 落地后换适配器）
-builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IFinCostService, CP6.Core.Services.Pur.Contracts.StubFinCostService>(); // P2-D2 财务成本入账委托（桩；外注成品成本接财务06，落地后换适配器）
+builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsIssueService, CP6.Core.Services.Pur.Contracts.WmsIssueServiceAdapter>(); // P2-D3 WMS 出库适配器（真实；外注支給材委托 IStockMovementService OUT 扣减，RelatedType=SUBCONTRACT，库存不足→E-PUR-080）
+builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IFinCostService, CP6.Core.Services.Pur.Contracts.FinCostServiceAdapter>(); // P2-D2 财务成本入账适配器（真实；外注成品成本经 IAutoVoucherEngine 规则 Subcontract.CostPosted 借FG贷INVENTORY，零重复应付）
 builder.Services.AddScoped<CP6.Core.Services.Pur.ISubcontractService, CP6.Core.Services.Pur.SubcontractService>(); // 章07 §2/§4/§5 外注加工：登记支給材 + 发料追踪 IssuedQty + 成品成本核算（加工费+支給材并入）
 builder.Services.AddScoped<CP6.Core.Services.Pur.IPurReconcileService, CP6.Core.Services.Pur.PurReconcileService>(); // 章08/09 采购对账：PO↔GR↔AP 三方核对 + 堵三个漏（虚开/超收·重复收货/外协吞料）
 // ── 章08 四同步接口落地说明（采购→外部模块单向委托，DI 按配置切真实/桩；跨模块同步走直线，不走 Phase6 事件[事件仅模块内]）──

@@ -364,6 +364,7 @@ public static class I18nPurScreenSeed
         new Sys_Lang { LangKey = "E-PUR-077", ZhCN = "成品数量须大于0", ZhTW = "成品數量須大於0", En = "Finished qty must be greater than 0", Ja = "完成品数量は0より大きい必要があります", Ko = "완제품 수량은 0보다 커야 합니다" },
         new Sys_Lang { LangKey = "E-PUR-078", ZhCN = "财务成本入账失败", ZhTW = "財務成本入賬失敗", En = "Cost posting to finance failed", Ja = "原価会計への計上に失敗しました", Ko = "원가회계 계상에 실패했습니다" },
         new Sys_Lang { LangKey = "E-PUR-079", ZhCN = "计划成品数为0，无法反推单耗", ZhTW = "計劃成品數為0，無法反推單耗", En = "Planned finished qty is 0; cannot derive unit usage", Ja = "計画完成品数が0のため単位消費を逆算できません", Ko = "계획 완제품 수량이 0이라 단위 소요를 역산할 수 없습니다" },
+        new Sys_Lang { LangKey = "E-PUR-080", ZhCN = "支給材库存不足或无可发库存", ZhTW = "支給材庫存不足或無可發庫存", En = "Insufficient or no consigned-material stock to issue", Ja = "支給材の在庫が不足、または出庫可能な在庫がありません", Ko = "지급재 재고가 부족하거나 출고 가능한 재고가 없습니다" },
 
         // ── 采购对账 画面（章08/09：PO↔GR↔AP 三方核对 + 堵三个漏）──
         new Sys_Lang { LangKey = "nav.708", ZhCN = "采购对账", ZhTW = "採購對賬", En = "Reconciliation", Ja = "購買照合", Ko = "구매 대조" },

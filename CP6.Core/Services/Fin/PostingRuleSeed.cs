@@ -159,6 +159,18 @@ public static class PostingRuleSeed
                 Role(2, PostingSide.Credit, "COGS", "Amount"),
             },
         };
+
+        // 外注成品成本入账（采购章07 §5）：借 库存商品 FG / 贷 原材料 INVENTORY（料+加工费从原材料结转入成品）。
+        // 加工费的应付由三单匹配（FinApServiceAdapter 借 INVENTORY 贷 AP_CONTROL）独立记，此处只做结转、不碰应付 → 零重复。来源 Cost。
+        yield return new PostingRule
+        {
+            EventType = "Subcontract.CostPosted", Name = "外注成品成本入账", VoucherSource = VoucherSource.Cost, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "FG", "Amount"),
+                Role(2, PostingSide.Credit, "INVENTORY", "Amount"),
+            },
+        };
     }
 
     private static PostingRuleLine Role(int no, PostingSide side, string role, string amountField, bool carryPartner = false, bool carryCostCenter = false) =>
