@@ -443,6 +443,8 @@ builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>()
 // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
 builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordHasher, CP6.Core.Services.Sys.BCryptPasswordHasher>();
+// S 类认证加固（T2）：密码策略（复杂度/历史不可重用/有效期）
+builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordPolicyService, CP6.Core.Services.Sys.PasswordPolicyService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");

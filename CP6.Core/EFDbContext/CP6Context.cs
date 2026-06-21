@@ -89,6 +89,9 @@ public class CP6Context : DbContext
     /// </summary>
     public DbSet<Sys_RoleFieldPerm> Sys_RoleFieldPerms { get; set; }
 
+    /// <summary>历史密码哈希 —— S 类认证加固 T2（密码不可重用）</summary>
+    public DbSet<Sys_PasswordHistory> Sys_PasswordHistories => Set<Sys_PasswordHistory>();
+
     /// <summary>
     /// 富采番规则 —— PUB 章05 公共模组
     /// </summary>
@@ -539,6 +542,10 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.RoleId, x.ResourceKey, x.FieldName }).IsUnique()
                 .HasDatabaseName("UX_Sys_RoleFieldPerm_RoleResourceField");
         });
+
+        // S 类认证加固 T2：历史密码按用户 + 时间倒序取最近 N 条（非唯一）
+        modelBuilder.Entity<Sys_PasswordHistory>()
+            .HasIndex(x => new { x.UserId, x.ChangedAt });
 
         // PUB 章05 富采番：业务键唯一
         modelBuilder.Entity<Pub_DocSequence>(e =>
