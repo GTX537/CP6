@@ -49,7 +49,8 @@
 |---|---|---|
 | `AuthController.Login` | `CP6.WebApi/Controllers/Sys/AuthController.cs:37`（`POST /api/auth/login`，`[AllowAnonymous]`）| 改造：BCrypt 校验 + 锁定 + 安全审计 + 签发三 Cookie；新增 refresh/logout/change-password 端点 |
 | `LoginRequest` | `CP6.Entity/DTOs/Sys/LoginRequest.cs`（`UserName/Password/TenantCode?`）| 沿用；租户消歧逻辑保留 |
-| `JwtHelper.GenerateToken` | `CP6.Core/Utilities/JwtHelper.cs`（HmacSha256，claims 含 `tenant_id`）| 扩展：加 `jti` claim、access TTL 取 `Security:Token:AccessTokenMinutes` |
+| `JwtHelper.GenerateToken` | `CP6.Core/Utilities/JwtHelper.cs`（HmacSha256，claims 含 `tenant_id`）| 扩展：加 `jti`、`must_change_password` claim、access TTL 取 `Security:Token:AccessTokenMinutes` |
+| `app.UseCors("AllowAll")` | `CP6.WebApi/Program.cs`（勘探：允许所有源）| **收紧**：Cookie 化要求 `AllowCredentials` + 显式 origin（不能用 `*`），见 §5.5 |
 | JWT 中间件 | `CP6.WebApi/Program.cs:443-459`（`AddJwtBearer`，校验 issuer/audience/lifetime/key）| 加 `OnMessageReceived` 从 `cp6_at` cookie 取 token；加 `jti` 黑名单校验 |
 | `appsettings.json` JWT 段 | `CP6.WebApi/appsettings.json:30-36`（Secret/Issuer/Audience/ExpireMinutes）| 新增 `Security` 段（Password/Lockout/Token/Cookie）|
 | `Sys_User` | `CP6.Entity/DomainModels/Sys/Sys_User.cs`（`BaseTenantEntity`；`UserName/Password(MaxLen200)/NickName/RoleId/Enable/Email…`）| `Password` 列**复用存 BCrypt 哈希**（60 字符 ≤ 200）；新增 6 字段（§2.1）|
@@ -105,13 +106,14 @@
 | `CreatedIp` | `string?`(64) | 签发 IP |
 | `UserAgent` | `string?`(256) | 签发 UA |
 
-索引：`TokenHash` 唯一（含 `TenantId` 前缀，沿用唯一索引自动升级机制；但 refresh 查询走 `IgnoreQueryFilters`，见 §5.2）。
+索引：**`TokenHash` 全局唯一**（SHA-256 天然全局唯一）。⚠️ **必须从"唯一索引自动补 `TenantId` 前缀"机制中显式排除该索引**——否则升级成 `(TenantId, TokenHash)` 复合唯一后，refresh 流程在无 tenant context 时按 `TokenHash + IgnoreQueryFilters` 跨租户查询无法命中单列。落码方式：在 `CP6Context` 唯一索引升级逻辑加例外名单（仿 FK 主键依赖索引的跳过分支），保留 `HasIndex(TokenHash).IsUnique()` 为单列全局唯一；**最低要求**：即便不全局唯一，也必须存在 `TokenHash` 单列（非唯一）索引供跨租户查询，绝不能只依赖 `(TenantId, TokenHash)` 组合索引。
 
 **`Sys_SecurityLog`** —— 认证类安全事件审计
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `UserId` | `Guid?` | 可空（登录失败时用户名未知/未解析）|
 | `UserName` | `string?`(100) | 尝试登录的用户名（原样，便于审计枚举攻击）|
+| `RequestTenantCode` | `string?`(64) | **登录请求原始 `TenantCode`**（原样保留，便于审计枚举/租户探测行为）|
 | `EventType` | `int`(enum) | 见下 |
 | `Reason` | `string?`(256) | 失败原因 / 备注（不含密码）|
 | `ClientIp` | `string?`(64) | 客户端 IP |
@@ -120,7 +122,7 @@
 
 `SecurityEventType` 枚举：`LoginSuccess=1 / LoginFailed=2 / AccountLocked=3 / Logout=4 / PasswordChanged=5 / TokenRefreshed=6 / TokenReuseDetected=7 / PermissionDenied=8`。
 
-> 租户归属：登录失败时由请求 `TenantCode` 解析 `TenantId`；解析不出落 `DefaultTenant`（`…A1`）。其余事件已认证，租户来自上下文。
+> 租户归属：登录失败时由请求 `TenantCode` 解析 `TenantId`；解析不出落 `DefaultTenant`（`…A1`），但**原始 `TenantCode` 始终原样记入 `RequestTenantCode`**——落 DefaultTenant 仅为隔离归属，审计仍能看到攻击者尝试的真实租户码（识别枚举/探测）。其余事件已认证，租户来自上下文。
 
 ### 2.3 配置（`appsettings.json` 新增 `Security` 段）
 
@@ -166,6 +168,8 @@
 
 ### 4.1 登录 `POST /api/auth/login`（匿名）
 
+> 本流程所有 `ISecurityAuditService.Log(...)` 调用均带请求原始 `TenantCode`（落 `Sys_SecurityLog.RequestTenantCode`，修订 6）。
+
 1. 解析租户：按 `TenantCode`（沿用现逻辑）得 `TenantId`，设上下文。
 2. 按 `(TenantId, UserName)` 查用户。**不存在** → `ISecurityAuditService.Log(LoginFailed,"user not found")` → 返回 `E-SEC-001`（统一文案防枚举）。
 3. `Enable=false` → 返回 `E-SEC-003`。
@@ -174,7 +178,7 @@
    - **失败** → `RecordFailureAsync`（`FailedLoginCount++`；达 `MaxFailedAttempts` → `LockedUntil=now+LockoutMinutes` + `Log(AccountLocked)`，否则 `Log(LoginFailed)`）→ 返回 `E-SEC-001`。
    - **成功** → `RecordSuccessAsync`（计数清零、`LockedUntil=null`、`LastLoginTime/Ip`）。
 6. 到期/强制改密判定：`MustChangePassword || PasswordPolicyService.IsExpired(user)` → 仍签发会话但响应带 `mustChangePassword=true`（前端引导改密；后端由 `MustChangePasswordMiddleware` 兜底拦截其它端点）。
-7. 签发会话：access JWT（含 `jti`）+ `IRefreshTokenService.IssueAsync` + csrf 串 → `IAuthCookieWriter.WriteAuthCookies` 三 Cookie → `Log(LoginSuccess)` → 返回用户档案 + 菜单（**token 不进 body**）。
+7. 签发会话：access JWT（含 `jti` + `must_change_password` claim，§5.4）+ `IRefreshTokenService.IssueAsync` + csrf 串 → `IAuthCookieWriter.WriteAuthCookies` 三 Cookie → `Log(LoginSuccess)` → 返回用户档案 + 菜单 + `mustChangePassword` 标志（**token 不进 body**）。
 
 ### 4.2 刷新 `POST /api/auth/refresh`（匿名，用 `cp6_rt`）
 
@@ -199,7 +203,7 @@
 
 ### 4.5 管理员重置（扩展 `UserController`）
 
-建用户 / 重置密码：经 `IPasswordHasher.Hash` 存哈希；重置时置 `MustChangePassword=true`、`PasswordChangedAt=now`。**消除明文写入路径**（现 `UserController` 直存明文亦修正）。
+建用户 / 重置密码：经 `IPasswordHasher.Hash` 存哈希；重置时置 `MustChangePassword=true`、`PasswordChangedAt=now`，并 `RevokeAllForUserAsync` 吊销该用户全部 refresh token（可选把其当前 access `jti` 加黑名单），迫使其带 `must_change_password=true` 的新 token 重登（§5.4）。**消除明文写入路径**（现 `UserController` 直存明文亦修正）。
 
 ---
 
@@ -221,11 +225,27 @@
 
 ### 5.3 CSRF 中间件
 
-`CsrfMiddleware`：对 `POST/PUT/PATCH/DELETE`，校验 `X-CSRF-Token` 头 == `cp6_csrf` cookie 值，不符 → `E-SEC-010`（403）。豁免：`/api/auth/login`、`/api/auth/refresh`（匿名建立会话，靠 SameSite + 匿名保护）。位置：`UseAuthentication` 之后、`UseAuthorization` 之前。
+`CsrfMiddleware`：对 `POST/PUT/PATCH/DELETE`，校验 `X-CSRF-Token` 头 == `cp6_csrf` cookie 值，不符 → `E-SEC-010`（403）。位置：`UseAuthentication` 之后、`UseAuthorization` 之前。
+
+**豁免口径（决策，修订 3）**：
+- **`/api/auth/login` 豁免**——首次登录前端尚无 `cp6_csrf`，无从带头；靠匿名 + SameSite=Strict 保护。
+- **`/api/auth/refresh` 不豁免，也校验 `cp6_csrf`**——`cp6_csrf` 是**非 httpOnly** cookie，即使 `cp6_at` 过期，前端仍能读取并带 `X-CSRF-Token` 头，故 refresh 完全可纳入 CSRF 校验，纵深更稳。仅当**确认同站点部署 + SameSite=Strict**时，豁免 refresh 才可接受——但本设计**默认不豁免 refresh**。
 
 ### 5.4 强制改密中间件
 
-`MustChangePasswordMiddleware`：已认证请求若 token/用户 `MustChangePassword=true`，除白名单（`/api/auth/change-password`、`/api/auth/logout`）外一律 `E-SEC-009`（前端据此跳改密页）。
+`MustChangePasswordMiddleware`：已认证请求若 `MustChangePassword=true`，除白名单（`/api/auth/change-password`、`/api/auth/logout`）外一律 `E-SEC-009`（前端据此跳改密页）。
+
+> **性能口径（决策）**：**不无条件每请求查库**。access JWT 签发时写入 `must_change_password` claim → 中间件**优先读 claim**判定；仅在需要强实时性的场景才回查库。**管理员重置密码 / 到期置位时**：置 `MustChangePassword=true` 后**吊销该用户所有 refresh token**，并**可选将其当前 access `jti` 加黑名单**——使旧 access（claim 仍为 false）尽快失效，迫使用户带新 `must_change_password=true` 的 token 重新登录，claim 与库状态自然一致。
+
+### 5.5 CORS / Cookie / 部署假设（决策，修订 2）
+
+Cookie 化认证对跨域与 CORS 有硬约束，必须明确：
+
+- **前端**：axios `withCredentials = true`（`http.ts`），否则浏览器不带 Cookie。
+- **后端 CORS**：必须 `AllowCredentials()`，且 **`AllowOrigins` 不能用 `*`**（带凭证时浏览器禁止通配源）。现状 `app.UseCors("AllowAll")`（勘探报告 `Program.cs`，允许所有源）**必须收紧**为显式来源列表（前端站点 origin，配置化）+ `AllowCredentials`。
+- **部署拓扑（MVP 默认）**：**前后端同站点部署**（同域，或经同域反向代理统一 origin）→ `SameSite=Strict` 可行，CSRF 风险最低。
+- **未来跨站点部署**：若前后端分属不同站点（不同 eTLD+1），需将 Cookie 改为 **`SameSite=None` + `Secure=true`**（且 CORS 精确放行该前端 origin + AllowCredentials），或改走**同域反向代理**把前端与 API 收拢到同一 origin（推荐，免 SameSite=None 的跨站暴露）。
+- `SameSite` 取值由 `Security:Cookie:SameSite` 配置驱动，便于按部署拓扑切换。
 
 ---
 
@@ -234,6 +254,11 @@
 - **EF 迁移 `SecAuthHardening`**：`Sys_User` 加 6 列 + 建 3 张新表（`Sys_PasswordHistory/RefreshToken/SecurityLog`，含 `TenantId` + 索引）。`db.Database.Migrate()` 自动对所有环境生效（仿 A5BudgetI18nFix 套路）。
 - **原地哈希钩子** `PasswordHashMigrationSeed.EnsureHashed(db, hasher)`：`db.Database.Migrate()` 后跑（`Program.cs`），扫 `Sys_User`（`IgnoreQueryFilters` 跨租户），凡 `!IPasswordHasher.IsHashed(Password)` 即 `Password=Hash(Password)` 就地重哈希，幂等（已哈希跳过）→ 现有明文 seed 用户无感升级，重复启动安全。
 - **本地 QA 与 Secure Cookie**：`Secure=true` 在 `http://localhost:5177/5173` 不发送 Cookie → `Cookie:Secure` 在 Development 覆盖为 `false`（`appsettings.Development.json`），保证 gstack 本地 http 全流程跑通；生产 `true`。
+- **⚠️ 不可逆迁移 / 生产备份 + 回滚约束（修订 4）**：原地哈希是**单向不可逆**操作——
+  - **生产执行前必须完成数据库全量备份**（前置硬要求，写入部署 runbook）；
+  - 迁移后**无法还原任何明文密码**（BCrypt 单向），如需回退只能靠备份恢复或全员重置；
+  - **EF `Down()` / 回滚代码严禁尝试把 BCrypt 反哈希为明文**——`Down()` 仅负责删列/删表等结构回退，**绝不触碰 `Password` 列的值**；
+  - 启动钩子幂等：已哈希跳过，重复部署不二次哈希、不损坏既有哈希。
 
 ---
 
@@ -286,7 +311,7 @@
 | T3 | `LoginSecurityService`（锁定 + LastLogin）+ `Sys_SecurityLog` + `ISecurityAuditService` + 登录流接审计 | T1 | 1 |
 | T4 | `RefreshTokenService` + `Sys_RefreshToken` + refresh 端点 + 重用检测 + `IgnoreQueryFilters` 白名单 | T1 | 1 |
 | T5 | `ITokenBlacklistService` + `jti` claim + logout 端点 + JWT `OnTokenValidated` 黑名单校验 | T4 | 1 |
-| T6 | Cookie 化（`OnMessageReceived` 读 cookie + `IAuthCookieWriter` 三 Cookie）+ `CsrfMiddleware` + `MustChangePasswordMiddleware` | T4,T5 | 1 |
+| T6 | Cookie 化（`OnMessageReceived` 读 cookie + `IAuthCookieWriter` 三 Cookie）+ `CsrfMiddleware`(refresh 不豁免) + `MustChangePasswordMiddleware`(claim 优先) + **CORS 收紧**(AllowCredentials+显式 origin) | T4,T5 | 1 |
 | T7 | `UserController` 改密/建用户哈希 + 管理员重置（消除明文写入路径）| T1,T2 | 1 |
 | T8 | `E-SEC` 错误码五语 seed + `SecurityLogController` + 安全日志菜单 + 权限点 seed | T3 | 1 |
 | T9 | 前端：`http.ts` 改造（withCredentials/CSRF/401-refresh）+ `LoginView`（弃 localStorage）+ `ChangePasswordView` + 路由守卫 + `SecurityLogView` + api/types | T6,T8 | 1 |
@@ -308,10 +333,14 @@
 | 明文迁移 | **一次性原地哈希启动钩子**（幂等、现有账号无感）|
 | 密码策略作用域 | **全局 appsettings**；按租户可配留后续 |
 | 刷新令牌存储 | **存哈希**（SHA-256）非原值；轮换 + 重用检测吊链 |
-| refresh 跨租户查询 | **`IgnoreQueryFilters` 白名单**，查后由令牌 `TenantId` 回设上下文 |
-| token 载体 | **httpOnly Cookie**（access/refresh/csrf 三 Cookie）；前端弃 localStorage |
-| CSRF | **双提交令牌**（`cp6_csrf` cookie ↔ `X-CSRF-Token` 头）+ SameSite=Strict |
-| 强制改密 | **中间件兜底** + 登录响应 `mustChangePassword` 标志 |
+| `Sys_RefreshToken.TokenHash` 索引 | **全局唯一**（显式排除 TenantId 前缀升级）；最低也须单列索引，**不得只靠 `(TenantId,TokenHash)` 组合**（修订 1）|
+| refresh 跨租户查询 | **`IgnoreQueryFilters` 白名单**，按 `TokenHash` 单列查，查后由令牌 `TenantId` 回设上下文 |
+| token 载体 | **httpOnly Cookie**（access/refresh/csrf 三 Cookie）；前端弃 localStorage；前端 `withCredentials=true` |
+| CORS / 部署 | CORS `AllowCredentials` + 显式 origin（**禁 `*`**）；MVP **同站点**部署 → SameSite=Strict；跨站点未来→SameSite=None+Secure 或同域反代（修订 2）|
+| CSRF | **双提交令牌**（`cp6_csrf` cookie ↔ `X-CSRF-Token` 头）+ SameSite=Strict；**login 豁免、refresh 不豁免**（cp6_csrf 非 httpOnly，access 过期仍可读，修订 3）|
+| 强制改密 | **`must_change_password` claim 优先**（不每请求查库）+ 中间件兜底 + 登录响应 `mustChangePassword` 标志；重置时吊销 refresh + 可选 jti 黑名单（修订 5）|
+| 密码迁移可逆性 | **不可逆**：生产前必备份；`Down()` 仅删结构、严禁反哈希明文（修订 4）|
+| 安全日志 | `Sys_SecurityLog` 含 **`RequestTenantCode`** 原样记录（审计枚举/租户探测，修订 6）|
 | 登录失败口径 | **统一"用户名或密码错误"防枚举** |
 | 本地 QA Cookie | **Development 覆盖 `Cookie:Secure=false`**，生产 true |
 | 命名空间 | **Sys**（实体/服务/错误码 `E-SEC`）|
