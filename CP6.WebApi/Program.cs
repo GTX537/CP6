@@ -488,9 +488,6 @@ using (var scope = app.Services.CreateScope())
     // Docker 环境下自动创建数据库并应用所有迁移
     db.Database.Migrate();
 
-    // S 类认证加固（T1）：启动幂等把现有明文密码就地 BCrypt 哈希（不可逆，生产前须备份）
-    CP6.WebApi.Seed.PasswordHashMigrationSeed.EnsureHashed(db, scope.ServiceProvider.GetRequiredService<CP6.Core.Services.Sys.IPasswordHasher>());
-
     // 章10 默认租户种子（幂等，按 Id 判存）——登记进 Sys_Tenant 注册表供枚举/登录/管理用
     CP6.Core.Services.Common.TenantSeed.EnsureSeeded(db);
 
@@ -579,6 +576,11 @@ using (var scope = app.Services.CreateScope())
 
         db.SaveChanges();
     }
+
+    // S 类认证加固（T1）：启动幂等把现有明文密码就地 BCrypt 哈希（不可逆，生产前须备份）。
+    // ★置于 admin 账号 seed 之后（块外，每启动跑、幂等）：确保全新库首启时 admin 的明文密码同批被哈希，
+    //   否则首启 admin 以明文落库、登录 Verify 失败，需重启一次才能登录。
+    CP6.WebApi.Seed.PasswordHashMigrationSeed.EnsureHashed(db, scope.ServiceProvider.GetRequiredService<CP6.Core.Services.Sys.IPasswordHasher>());
 
     // A5 §8 预算审批流程 + OA 绑定种子（幂等；FlowKey="budget-approve"，BizType="A5_Budget"）
     // 置于 admin 账号 seed 之后，确保首次启动时 admin 已落库，seed 内部可解析到真实 UserId。
