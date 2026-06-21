@@ -4,6 +4,7 @@ using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels.Sys;
 using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Localization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -36,8 +37,11 @@ public class AuthControllerChangePasswordTests
         db.SaveChanges();
         var opt = Options.Create(new SecurityOptions { Password = new PasswordPolicyOptions { HistoryCount = historyCount } });
         var policy = new PasswordPolicyService(db, opt, hasher);
+        var login = new LoginSecurityService(db, opt);
+        var audit = new SecurityAuditService(db);
         var cfg = new ConfigurationBuilder().Build();
-        var ctl = new AuthController(db, cfg, new FakePermCtx(user.Id), new TenantContext(), hasher, policy);
+        var ctl = new AuthController(db, cfg, new FakePermCtx(user.Id), new TenantContext(), hasher, policy, login, audit);
+        ctl.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return (ctl, db, user);
     }
 

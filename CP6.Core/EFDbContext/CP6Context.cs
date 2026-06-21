@@ -92,6 +92,9 @@ public class CP6Context : DbContext
     /// <summary>历史密码哈希 —— S 类认证加固 T2（密码不可重用）</summary>
     public DbSet<Sys_PasswordHistory> Sys_PasswordHistories => Set<Sys_PasswordHistory>();
 
+    /// <summary>安全事件审计 —— S 类认证加固 T3（登录成败/锁定/改密等）</summary>
+    public DbSet<Sys_SecurityLog> Sys_SecurityLogs => Set<Sys_SecurityLog>();
+
     /// <summary>
     /// 富采番规则 —— PUB 章05 公共模组
     /// </summary>
@@ -546,6 +549,13 @@ public class CP6Context : DbContext
         // S 类认证加固 T2：历史密码按用户 + 时间倒序取最近 N 条（非唯一）
         modelBuilder.Entity<Sys_PasswordHistory>()
             .HasIndex(x => new { x.UserId, x.ChangedAt });
+
+        // S 类认证加固 T3：安全事件审计查询（按类型+时间 / 按登录名）（非唯一）
+        modelBuilder.Entity<Sys_SecurityLog>(e =>
+        {
+            e.HasIndex(x => new { x.EventType, x.CreatedAt });
+            e.HasIndex(x => x.UserName);
+        });
 
         // PUB 章05 富采番：业务键唯一
         modelBuilder.Entity<Pub_DocSequence>(e =>

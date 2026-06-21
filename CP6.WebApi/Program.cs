@@ -445,6 +445,9 @@ builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Config
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordHasher, CP6.Core.Services.Sys.BCryptPasswordHasher>();
 // S 类认证加固（T2）：密码策略（复杂度/历史不可重用/有效期）
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordPolicyService, CP6.Core.Services.Sys.PasswordPolicyService>();
+// S 类认证加固（T3）：登录锁定（防暴破）+ 安全事件审计
+builder.Services.AddScoped<CP6.Core.Services.Sys.ILoginSecurityService, CP6.Core.Services.Sys.LoginSecurityService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.ISecurityAuditService, CP6.Core.Services.Sys.SecurityAuditService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");

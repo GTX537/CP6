@@ -26,8 +26,10 @@ public class AuthController : LocalizedControllerBase
     private readonly ITenantContext _tenant;
     private readonly IPasswordHasher _hasher;
     private readonly IPasswordPolicyService _policy;
+    private readonly ILoginSecurityService _login;
+    private readonly ISecurityAuditService _audit;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit)
     {
         _context = context;
         _config = config;
@@ -35,7 +37,12 @@ public class AuthController : LocalizedControllerBase
         _tenant = tenant;
         _hasher = hasher;
         _policy = policy;
+        _login = login;
+        _audit = audit;
     }
+
+    private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
+    private string? ClientUa => Request.Headers.UserAgent.ToString();
 
     /// <summary>
     /// 登录
@@ -77,15 +84,41 @@ public class AuthController : LocalizedControllerBase
             user = matches.FirstOrDefault();
         }
 
+        // 用户不存在：审计 + 统一失败码（防用户名枚举——不区分"用户不存在"与"密码错误"）
         if (user == null)
-            return BadRequest(new { message = Localizer["用户名不存在"] });
+        {
+            await _audit.LogAsync(SecurityEventType.LoginFailed, null, request.UserName, request.TenantCode, ClientIp, ClientUa, "user not found");
+            throw new BizException("E-SEC-001");
+        }
 
-        // 2. 验证密码（BCrypt 哈希对比）
+        // 2. 账户锁定优先：锁定期内即使密码正确也拒
+        try
+        {
+            _login.EnsureNotLocked(user);
+        }
+        catch (InvalidOperationException)
+        {
+            await _audit.LogAsync(SecurityEventType.AccountLocked, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa, "account locked");
+            throw new BizException("E-SEC-002");
+        }
+
+        // 3. 验证密码（BCrypt 哈希对比）
         if (!_hasher.Verify(request.Password, user.Password))
-            return BadRequest(new { message = Localizer["密码错误"] });
+        {
+            await _login.RecordFailureAsync(user);
+            // 本次失败若触发锁定记 AccountLocked，否则 LoginFailed；对外仍统一 E-SEC-001（防枚举）
+            var evt = user.LockedUntil is { } until && until > DateTime.Now
+                ? SecurityEventType.AccountLocked : SecurityEventType.LoginFailed;
+            await _audit.LogAsync(evt, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa, "wrong password");
+            throw new BizException("E-SEC-001");
+        }
 
+        // 账号被禁用：密码虽对也拒（E-SEC-003，五语 seed 归 T8）+ 审计
         if (!user.Enable)
-            return BadRequest(new { message = Localizer["账号已被禁用"] });
+        {
+            await _audit.LogAsync(SecurityEventType.LoginFailed, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa, "account disabled");
+            throw new BizException("E-SEC-003");
+        }
 
         // 未指定 TenantCode 走唯一名命中时，仍要校验该用户的租户未停用
         if (string.IsNullOrWhiteSpace(request.TenantCode))
@@ -126,7 +159,12 @@ public class AuthController : LocalizedControllerBase
             .Select(m => new { id = m.MenuId, m.MenuName, m.RoutePath, m.Icon, m.ParentId, m.OrderNo } as object)
             .ToListAsync();
 
-        // 5. 返回 Token、用户信息和菜单权限
+        // 5. 登录确实成功（含预热/菜单均就绪）后才记成功画像 + 审计——
+        //    放在 Prewarm 之后，避免 Prewarm 抛错时"已记成功但请求失败"的不一致。
+        await _login.RecordSuccessAsync(user, ClientIp);
+        await _audit.LogAsync(SecurityEventType.LoginSuccess, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa);
+
+        // 6. 返回 Token、用户信息和菜单权限
         return Ok(new
         {
             token,
@@ -169,6 +207,9 @@ public class AuthController : LocalizedControllerBase
         user.PasswordChangedAt = DateTime.Now;
         user.MustChangePassword = false;
         await _context.SaveChangesAsync();   // 一次性持久化：裁剪 + 新历史 + 用户更新（原子）
+
+        // 安全审计（改密成功）。旧 refresh 吊销 T4 叠加。
+        await _audit.LogAsync(SecurityEventType.PasswordChanged, uid, user.UserName, null, ClientIp, ClientUa);
 
         return Ok(new { code = 0, message = "OK" });
     }
