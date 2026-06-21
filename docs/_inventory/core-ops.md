@@ -1,0 +1,109 @@
+### 三、CP6.Core/Services/Wms + Erp — 仓储与进销存服务
+
+#### Services/Wms
+
+- `CP6.Core/Services/Wms/IStockMovementService.cs` — 在库变动服务接口：所有对 Stock 表的增减都必须经此（IN/OUT/MOVE/ADJ/RSV/UNRSV），含 ApplyAsync 单笔变动与 MoveAsync 棚移动配对，附变动请求 DTO。
+- `CP6.Core/Services/Wms/StockMovementService.cs` — 在库变动服务实现：单事务内取/建 Stock 行、按种别增减物理/引当/可用数、负库存校验、自动采番 TXN 并写 StockTransaction 流水、SignalR best-effort 通知。
+- `CP6.Core/Services/Wms/InsufficientStockException.cs` — 出库/预留时可用库存不足且仓库不允许负库存抛出的库存不足异常（携带品号/批号/需求量/在库量）。
+- `CP6.Core/Services/Wms/IInboundService.cs` — 入库服务接口（WM030 入库预定 + WM040 入库实绩）：预定单 CRUD/确认/取消、入库实绩登记 ConfirmReceipt、MES 工单完成品自动入库（幂等）。
+- `CP6.Core/Services/Wms/InboundService.cs` — 入库服务实现：入库预定与入库实绩单据全流程，确认实绩时按明细逐条发 IN 变动反映库存并累计预定已收数，IN/RC 采番。
+- `CP6.Core/Services/Wms/IOutboundService.cs` — 出库服务接口（WM050 材料出库 + WM070 出荷 + WM080 包装）：CRUD、确认/取消、FIFO+期限引当 Allocate、拣货、ShipAsync 出库确定+包装、由 MES 工单/PA 受注自动生成出库指示。
+- `CP6.Core/Services/Wms/OutboundService.cs` — 出库服务实现：出库指示状态机（引当 RSV→拣货→出库 OUT），FEFO 单批引当、出荷自动建包装、回写 ERP 受注出荷实绩、缺料登记。
+- `CP6.Core/Services/Wms/IOutboundRoutingService.cs` — 出库多仓库路由接口：按路由规则+仓库出库优先级解析引当候选仓库顺序（去重保序），含路由规则 CRUD。
+- `CP6.Core/Services/Wms/OutboundRoutingService.cs` — 出库多仓库路由实现：合并匹配规则优先仓库、其余仓按 OutboundPriority、最终回退到表头仓的候选仓库列表解析。
+- `CP6.Core/Services/Wms/IStockTakeService.cs` — 盘点服务接口（WM090）：四段流程（计划→盘点→差异确认→承认完成），含计划快照、批量录数、差异审批与 ADJ 反映。
+- `CP6.Core/Services/Wms/StockTakeService.cs` — 盘点服务实现：建计划时快照 Stock 生成明细，自动算差异数/金额、0 差异自动承认、按阈值走承认流，承认时发 ADJ 把账面改为实盘数。
+- `CP6.Core/Services/Wms/IWmsDashboardService.cs` — WMS 仪表盘汇总服务接口（WM-DASH）：KPI(总在库金额/SKU 数/滞留品/今日入出库预定/未完盘点)、变动趋势、仓库别在库金额、告警汇总。
+- `CP6.Core/Services/Wms/WmsDashboardService.cs` — WMS 仪表盘汇总实现：基于 EF Core 聚合 Stock/StockTransaction 算 KPI 与近 N 日入/出/调趋势、仓库别在库金额、临期/入库延迟/待审盘点告警。
+- `CP6.Core/Services/Wms/IQcInspectionService.cs` — 入荷检品服务接口（MSBBWM100）：由入库预定/直入建检品单、检品中录合格/不良/保留数、最终判定，合格自动转入库实绩。
+- `CP6.Core/Services/Wms/QcInspectionService.cs` — 入荷检品服务实现：检品单状态流转，PASS 判定时按合格数自动生成 InboundReceipt 计入库存（QC 采番）。
+- `CP6.Core/Services/Wms/IRmaService.cs` — RMA 退货管理服务接口（MSBBWM150）：申请→发行→退货入库→检查→判定振分（再卖/修理/报废/退供应商）→关闭的生命周期。
+- `CP6.Core/Services/Wms/RmaService.cs` — RMA 退货管理服务实现：退货入库走 IN 进保留库位、判定后 MOVE 到目标库位或 ADJ 除去，关闭时触发 ERP 退货桥联动。
+- `CP6.Core/Services/Wms/IExpiryService.cs` — 保质期管理服务接口（MSBBWM170）：临期库存查询（剩余天数升序）与批量废弃（发 ADJ 负数清零）。
+- `CP6.Core/Services/Wms/ExpiryService.cs` — 保质期管理服务实现：按 ExpiryDate 阈值列出临期库存并算损失金额，废弃时对选中 Stock 发 ADJ -全数移除库存。
+- `CP6.Core/Services/Wms/ILotTraceService.cs` — 批次追溯服务接口（MSBBWM160）：基于库存流水的正/逆向追溯、影响客户/供应商解析、召回标志设置与批次库存汇总。
+- `CP6.Core/Services/Wms/LotTraceService.cs` — 批次追溯服务实现（纯查询）：遍历 StockTransaction 还原批次上下游，解析出荷客户/入库供应商，置 RecallFlag 使后续引当自动排除该批。
+- `CP6.Core/Services/Wms/IKittingService.cs` — 套件组装/拆解服务接口（MSBBWM140）：套件 BOM 主数据 CRUD + 组装/拆解指示（部件 OUT×N+套件 IN×1 或反之），整指示全成功或全失败。
+- `CP6.Core/Services/Wms/KittingService.cs` — 套件组装/拆解服务实现：组装时按 BOM FEFO 引当部件 OUT 并 IN 成品套件、拆解时套件 OUT 并 IN 还原部件，全程经 StockMovementService 保证回滚。
+- `CP6.Core/Services/Wms/ICrossDockService.cs` — 越库（Cross-Docking）服务接口（MSBBWM130）：到货品建越库计划并一笔执行 IN(暂存)→OUT(出货口)，库存滞留≈0。
+- `CP6.Core/Services/Wms/CrossDockService.cs` — 越库服务实现：越库单 CRUD 与执行（暂存库位 IN 后立即 OUT），XD 采番。
+- `CP6.Core/Services/Wms/IReplenishService.cs` — 补货指示服务接口（MSBBWM120）：拣货棚(PIK-)低于下限时从保管棚(RES-)批量生成补货指示并执行（MOVE 配对）。
+- `CP6.Core/Services/Wms/ReplenishService.cs` — 补货指示服务实现：扫描拣货棚库存低于 minQty 且保管棚有货的组合批量建指示，执行时保管棚 OUT+拣货棚 IN，RPL 采番。
+- `CP6.Core/Services/Wms/ISlottingService.cs` — 储位优化服务接口（MSBBWM110）：分析近 N 日 OUT 流水做 ABC 分级并算推荐库位（A→PIK-A/B→PIK-B/C→RES-C），存推荐 JSON。
+- `CP6.Core/Services/Wms/SlottingService.cs` — 储位优化服务实现：按出库频次/数量做 ABC 排名生成储位推荐计划（JSON 保存），SLP 采番、承认/取消。
+- `CP6.Core/Services/Wms/IPaperRollService.cs` — 原纸卷服务接口（MSBBWM200）：卷入库、消耗减米、适配检索、分切（一母卷→N 子卷+残端）、废弃，纸箱行业专用。
+- `CP6.Core/Services/Wms/PaperRollService.cs` — 原纸卷服务实现：原纸卷台账与按纸质/巾/纹向/需长的适配匹配、消耗扣米、分切母卷生成子卷，ROLL 采番。
+- `CP6.Core/Services/Wms/IInkService.cs` — 油墨/胶粘剂服务接口（MSBBWM230）：墨批 CRUD、开封改期、两批混合(继承最早保质期)、调色配方历史检索与登记。
+- `CP6.Core/Services/Wms/InkService.cs` — 油墨/胶粘剂服务实现：墨批台账、开封状态与临期检索、混批（旧 2 批 OUT+新混合批 IN）、调色实绩记录，INK/ICM 采番。
+- `CP6.Core/Services/Wms/IPalletService.cs` — 托盘服务接口（MSBBWM240）：1 托盘=1 品 1 批（禁混载），组成中→保管中→出货待机→出货已的状态流转。
+- `CP6.Core/Services/Wms/PalletService.cs` — 托盘服务实现：托盘单 CRUD 与状态推进（组成完成/移至出货待机区/出货确定关联出库指示）。
+- `CP6.Core/Services/Wms/IVmiService.cs` — VMI 客户寄存库存服务接口（MSBBWM250）：以 OwnerType=CUSTOMER 识别 VMI 库存，提供客户库存汇总与月度保管费计算/确认。
+- `CP6.Core/Services/Wms/VmiService.cs` — VMI 寄存库存服务实现：客户别 VMI 库存汇总/明细、按日费率月度批量算保管费 upsert 到 VmiBilling 并确认。
+- `CP6.Core/Services/Wms/IRemnantService.cs` — 残材管理服务接口（MSBBWM210）：登记→预约→使用/废弃状态流转，按素材区分+尺寸范围匹配可再用残料。
+- `CP6.Core/Services/Wms/RemnantService.cs` — 残材管理服务实现：残料台账 CRUD、按素材与最小宽长匹配再用候选、预约/解约/使用/废弃状态切换。
+- `CP6.Core/Services/Wms/IPlateMoldService.cs` — 印版/木型管理服务接口（MSBBWM220）：版型台账、使用 shot 累计、寿命预警（UsedShots/MaxShots）、维护管理与状态流转。
+- `CP6.Core/Services/Wms/PlateMoldService.cs` — 印版/木型管理服务实现：版型 CRUD、记录使用 shot 累计并在超寿命置寿命到达、维护开始/完成、废版、寿命预警列表。
+- `CP6.Core/Services/Wms/ISampleStockService.cs` — 样品库存/借出服务接口（MSBBWM260）：试作/色样的借出→返还→失效管理与逾期未还列表。
+- `CP6.Core/Services/Wms/SampleStockService.cs` — 样品库存/借出服务实现：样品台账 CRUD 与借出/返还/失效状态流转、超期未还查询。
+- `CP6.Core/Services/Wms/IReportCenterService.cs` — 报表中心服务接口（MSBBWM900）：库存月报、ABC 分析、滞留品、出入库实绩查询与通用 CSV(UTF-8 BOM) 导出。
+- `CP6.Core/Services/Wms/ReportCenterService.cs` — 报表中心服务实现：以 Stock/StockTransaction 为唯一真实源汇总各类库存报表并提供泛型 CSV 导出。
+- `CP6.Core/Services/Wms/IWcsService.cs` — WCS 仓库控制服务接口（MSBBWM310）：AGV/输送/ASRS 任务的派出→执行→完成/失败模拟流转。
+- `CP6.Core/Services/Wms/WcsService.cs` — WCS 仓库控制服务实现：WCS 任务 CRUD 与手动派出/开始/完成/失败状态流转（实机连携待扩展）。
+- `CP6.Core/Services/Wms/ICarrierService.cs` — 配送商连携服务接口（MSBBWM320）：运单创建、事件追加、集货→配送中→送达/失败状态推进（业者 API 待扩展）。
+- `CP6.Core/Services/Wms/CarrierService.cs` — 配送商连携服务实现：货件运单 CRUD、JSON 事件历史 append 与配送状态流转（佐川/雅马多 API 模拟）。
+- `CP6.Core/Services/Wms/IIotService.cs` — IoT 传感器服务接口（MSBBWM330）：温湿度等传感器主数据 CRUD、读数时序录入、阈值告警、模拟数据生成与当前告警列表。
+- `CP6.Core/Services/Wms/IotService.cs` — IoT 传感器服务实现：传感器主数据与读数时序管理、阈值超标自动置告警、模拟数据生成，SEN 采番。
+- `CP6.Core/Services/Wms/IMobileService.cs` — 移动作业指示服务接口（MSBBWM300，RF 手持）：作业一览、条码扫描解析(库位/品号)、作业完成（MOVE 时动实库存）。
+- `CP6.Core/Services/Wms/MobileService.cs` — 移动作业指示服务实现：手持端作业指示发布/开始/扫码解析/完成（MOVE 完成时发库存变动配对），MTK 采番。
+- `CP6.Core/Services/Wms/IWmsSequenceService.cs` — WMS 业务单号采番接口：全社统一 {Prefix}{yyyyMM}{NNNN} 永不重置采番。
+- `CP6.Core/Services/Wms/WmsSequenceService.cs` — WMS 采番实现：以全期间 scope 维护各前缀连号、自增 NextNo 永不归零。
+- `CP6.Core/Services/Wms/IWmsNotifier.cs` — WMS 实时通知契约（依赖倒置，Core 不依赖 SignalR）：库存变动/入库确定/出荷确定/盘点完成通知，含 NoOp 实现与事件 payload。
+- `CP6.Core/Services/Wms/IStockDwellService.cs` — 库存滞留分析服务接口：按维度统计库存滞留(停留天数)汇总。
+- `CP6.Core/Services/Wms/StockDwellService.cs` — 库存滞留分析实现：按基准日与分组维度统计有量且有入库日的 Stock 滞留天数分布汇总。
+- `CP6.Core/Services/Wms/IStockQcService.cs` — 库存质量状态服务接口：手动设置单条 Stock 的 QcStatus、按工单沿生产入库链批量标记关联库存质量状态。
+- `CP6.Core/Services/Wms/StockQcService.cs` — 库存质量状态服务实现：校验并改写 Stock.QcStatus、按工单生产入库链批量标记关联库存并记日志。
+- `CP6.Core/Services/Wms/IMaterialShortageService.cs` — 物料缺料服务接口：缺料记录创建、分页检索、解决(Resolve)/驳回(Dismiss)。
+- `CP6.Core/Services/Wms/MaterialShortageService.cs` — 物料缺料服务实现：缺料记录建/查与解决/驳回状态变更（默认 Open、补 Id/检出时间）。
+- `CP6.Core/Services/Wms/IMaterialShortageNotifier.cs` — 物料缺料通知契约：缺料发生时推送工单/品号/需求量。
+- `CP6.Core/Services/Wms/MaterialShortageNotifier.cs` — 物料缺料通知实现：经反射解析 WmsHub 的 SignalR HubContext 向全体客户端推送缺料事件（Core 不硬依赖 WebApi）。
+- `CP6.Core/Services/Wms/ErpBridgeHook.cs` — ERP 桥钩实现：WMS 出荷确定后按 WebOrderNo+品号回写 ERP 受注明细累计出荷数/出荷状态/末出荷日并 rollup 表头，含 IntegrationEvent 持久化。
+- `CP6.Core/Services/Wms/WmsBridgeHook.cs` — WMS 桥钩实现：响应 MES 工单下达自动建材料出库、PA 受注创建自动建出荷指示，调用 Outbound/Inbound 服务并持久化集成事件。
+
+#### Services/Erp
+
+- `CP6.Core/Services/Erp/IEstimateCalcService.cs` — 见积计算书服务接口（MSBBPA010）：分页/详情/新建(采番)/订正(乐观锁+工程明细 diff)/删除/复制/计算（按纸张主数据算估算面积与单价）。
+- `CP6.Core/Services/Erp/EstimateCalcService.cs` — 见积计算书服务实现（MSBBPA010）：EMC 单号采番、软删、RowVersion 乐观锁，复用 IMaterialUsageCalculator 共享用量公式（与 MRP 同核）。
+- `CP6.Core/Services/Erp/IQuotationService.cs` — 御见积书服务接口（MSBBPA030/040）：分页/详情/新建/订正(明细+关联计算书 diff)/删除/复制/确定登录，确定后拒绝编辑。
+- `CP6.Core/Services/Erp/QuotationService.cs` — 御见积书服务实现：QTN 单号采番、软删、乐观锁，合计金额=各明细之和，已确定记录拒订正/删除（MSG-004）。
+- `CP6.Core/Services/Erp/IProductService.cs` — 製品マスタ服务接口（MSBBPA050/060）：5 表(基本/工程/材料/批单价/联产品)一次提交，分页/详情/CRUD/复制/采番、按见积引入部材与基本信息、CSV 导出。
+- `CP6.Core/Services/Erp/ProductService.cs` — 製品マスタ服务实现：15 桁 ProductCd(11 桁连号+枝番)采番、5 表全删全插同步、软删、CSV 导出。
+- `CP6.Core/Services/Erp/IOrderService.cs` — Web 受注服务接口（MSBBPA070/080/090）：5 表一次提交，受注 CRUD、受注取消(级联 MES 指图/WMS 出库二段确认)、采番、按套件CD/手配NO 检索引入。
+- `CP6.Core/Services/Erp/OrderService.cs` — Web 受注服务实现：受注 5 表 diff 同步+乐观锁，单价订正起票 PowerEgg WF，受注下达/取消经 WMS/MES/取消桥钩联动。
+- `CP6.Core/Services/Erp/IMasterDataService.cs` — 主数据下拉/联动查询接口（MSBBPA010 用）：据点/担当者/汎用代码下拉，得意先与製品 Master 弹窗共通检索。
+- `CP6.Core/Services/Erp/MasterDataService.cs` — 主数据查询实现：据点/按据点担当者/分组汎用代码下拉，得意先(由已用 CustomerCd 聚合)与製品弹窗分页检索。
+- `CP6.Core/Services/Erp/IBusinessPartnerService.cs` — Web 取引先マスタ服务接口（MSBBPA110/120）：取引先 CRUD、21 条登录校验、FLG 变更不可校验（MSG-018）、一览检索与 CSV 导出。
+- `CP6.Core/Services/Erp/BusinessPartnerService.cs` — Web 取引先マスタ服务实现：邮编/电话正则校验、21 条业务校验与 13 种 FLG 变更不可检查（订正时）。
+- `CP6.Core/Services/Erp/ISheetUnitPriceService.cs` — Web シート单价マスタ服务接口（MSBBPA130）：基准日参照检索、Excel 取込(7 步校验)、选行批量 UPSERT。
+- `CP6.Core/Services/Erp/SheetUnitPriceService.cs` — Web シート单价マスタ服务实现：纯 .NET(zip+XmlReader)解析 xlsx 取込，按取込区分切换写入 T_SheetUnitPrice/Estimate 表。
+- `CP6.Core/Services/Erp/IPlateMoldService.cs` — Web 版型/木型マスタ服务接口（MSBBPA140/150）：5 模式+Rev 管理、按版型NO/决定见积NO/代表製品引入构成、改定、CSV/标签导出、受注+PE API 连携。
+- `CP6.Core/Services/Erp/PlateMoldService.cs` — Web 版型/木型マスタ服务实现：PM 采番+Rev 管理(改定时前 Rev 截止)、版型受注连携与 PlateMoldPeApi 连携。
+- `CP6.Core/Services/Erp/IFscChecklistService.cs` — FSC 製品化检查表发行服务接口（MSBBPA100）：多条件检索、发行(采番+回写见积+Excel 生成)、已发 Excel 下载、格式一览。
+- `CP6.Core/Services/Erp/FscChecklistService.cs` — FSC 检查表发行服务实现：FSC 管理NO 采番、回写确定见积的 FSC 管理NO 与发行日，生成 Excel(无模板时回退纯文本占位)。
+- `CP6.Core/Services/Erp/IBackorderService.cs` — 欠品(backorder)队列服务接口：列出已下单未足额出货明细，提供关闭剩余量/拆分为新受注两种处置动作。
+- `CP6.Core/Services/Erp/BackorderService.cs` — 欠品队列服务实现：聚合 Confirmed/生产中/部分取消受注的未出货明细，支持关闭剩余或克隆明细拆为新受注（反射克隆排除主键/版本/数量等列）。
+- `CP6.Core/Services/Erp/ICreditNoteService.cs` — 贷项通知单(Credit Note)服务接口：分页检索贷项通知单列表。
+- `CP6.Core/Services/Erp/CreditNoteService.cs` — 贷项通知单服务实现：按条件分页检索贷项通知单（按发行日/单号降序）。
+- `CP6.Core/Services/Erp/IFxRateService.cs` — 汇率服务接口（多通货 Gap4.3）：解析得意先取引通货与基准日冻结汇率、查指定通货最新汇率、汇率主数据 CRUD。
+- `CP6.Core/Services/Erp/FxRateService.cs` — 汇率服务实现：受注时按得意先解析通货并取基准日前最新冻结汇率(基轴 JPY=1.0)，汇率主数据 CRUD。
+- `CP6.Core/Services/Erp/IOrderTraceService.cs` — 受注全链路追溯服务接口：按 WebOrderNo 取受注的跨模块联动(桥钩集成事件)追溯。
+- `CP6.Core/Services/Erp/OrderTraceService.cs` — 受注追溯服务实现：按 WebOrderNo 聚合 BRIDGE_HOOK 集成事件等还原受注的 ERP→MES→WMS 联动轨迹。
+- `CP6.Core/Services/Erp/IOtdReportService.cs` — 准时交付(OTD)报表服务接口：按维度汇总准时/延迟出货统计与 CSV 导出。
+- `CP6.Core/Services/Erp/OtdReportService.cs` — 准时交付报表服务实现：统计期内出货受注的准时数/延迟数/准时率/平均延迟天数并按维度分组导出 CSV。
+- `CP6.Core/Services/Erp/IUnshippedOrderService.cs` — 未出货受注服务接口：检索已下单未足额出货受注并联表当前 MES/WMS 状态、CSV 导出。
+- `CP6.Core/Services/Erp/UnshippedOrderService.cs` — 未出货受注服务实现：受注联结 MES/WMS 状态分页检索未出货单，导出上限 5000 行 UTF-8 BOM CSV。
+- `CP6.Core/Services/Erp/IWipCheckService.cs` — 仕挂检查服务接口：订正/删除前对製品做 3 级生产预定状况校验(0 无碍/1 警告/2-3 阻断)，含无 mcframe7 时恒返 Level0 的 NoOp 实现。
+- `CP6.Core/Services/Erp/IPowerEggWorkflowService.cs` — POWER EGG 工作流起票服务接口（PA090 单价订正 46 项送信），含无连携环境仅写日志的 NoOp 实现。
+
+#### 异常说明
+
+- `IWipCheckService.cs` 与 `IPowerEggWorkflowService.cs` 的 NoOp 实现类(`NoOpWipCheckService`/`NoOpPowerEggWorkflowService`)内联在接口文件中，无独立实现 .cs 文件（故 Erp 目录无 `WipCheckService.cs`/`PowerEggWorkflowService.cs`）。
