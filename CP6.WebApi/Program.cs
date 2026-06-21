@@ -442,12 +442,18 @@ builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>()
 
 // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
 builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
-builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordHasher, CP6.Core.Services.Sys.BCryptPasswordHasher>();
+// 工厂注册显式选 IOptions 构造器：BCryptPasswordHasher 有 (int=11) 与 (IOptions) 两个公共构造器，
+// 内置容器无法择一（Development 下 ValidateOnBuild + EF 设计时构建都会报 ambiguous）。工厂绕开构造器选择。
+builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordHasher>(sp =>
+    new CP6.Core.Services.Sys.BCryptPasswordHasher(
+        sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<CP6.Core.Services.Sys.SecurityOptions>>()));
 // S 类认证加固（T2）：密码策略（复杂度/历史不可重用/有效期）
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordPolicyService, CP6.Core.Services.Sys.PasswordPolicyService>();
 // S 类认证加固（T3）：登录锁定（防暴破）+ 安全事件审计
 builder.Services.AddScoped<CP6.Core.Services.Sys.ILoginSecurityService, CP6.Core.Services.Sys.LoginSecurityService>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ISecurityAuditService, CP6.Core.Services.Sys.SecurityAuditService>();
+// S 类认证加固（T4）：刷新令牌轮换 + 重用检测
+builder.Services.AddScoped<CP6.Core.Services.Sys.IRefreshTokenService, CP6.Core.Services.Sys.RefreshTokenService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");

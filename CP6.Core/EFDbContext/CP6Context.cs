@@ -95,6 +95,9 @@ public class CP6Context : DbContext
     /// <summary>安全事件审计 —— S 类认证加固 T3（登录成败/锁定/改密等）</summary>
     public DbSet<Sys_SecurityLog> Sys_SecurityLogs => Set<Sys_SecurityLog>();
 
+    /// <summary>刷新令牌 —— S 类认证加固 T4（轮换 + 重用检测；TokenHash 全局唯一）</summary>
+    public DbSet<Sys_RefreshToken> Sys_RefreshTokens => Set<Sys_RefreshToken>();
+
     /// <summary>
     /// 富采番规则 —— PUB 章05 公共模组
     /// </summary>
@@ -555,6 +558,15 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => new { x.EventType, x.CreatedAt });
             e.HasIndex(x => x.UserName);
+        });
+
+        // S 类认证加固 T4：刷新令牌。TokenHash 单列全局唯一（refresh 无租户上下文，
+        // 按 TokenHash + IgnoreQueryFilters 跨租户查）——下面唯一索引前缀循环对它加跳过条件，
+        // 不升级为 (TenantId, TokenHash)。UserId 为非唯一查询索引（RevokeAllForUser 用）。
+        modelBuilder.Entity<Sys_RefreshToken>(e =>
+        {
+            e.HasIndex(x => x.TokenHash).IsUnique().HasDatabaseName("UX_Sys_RefreshToken_TokenHash");
+            e.HasIndex(x => x.UserId);
         });
 
         // PUB 章05 富采番：业务键唯一
@@ -1896,6 +1908,14 @@ public class CP6Context : DbContext
             {
                 if (idx.Properties.Contains(tenantProp)) continue;   // 已带 TenantId 前缀（如 Sys_Lang）
                 if (fkPrincipalKeyProps.Any(kp => kp.SequenceEqual(idx.Properties))) continue;   // FK 主键依赖，跳过
+
+                // S 类认证加固 T4：Sys_RefreshToken.TokenHash 必须保持单列全局唯一——refresh 时无租户
+                // 上下文（cookie 只携带不可逆 hash），按 TokenHash + IgnoreQueryFilters 跨租户精确命中。
+                // 升级为 (TenantId, TokenHash) 会令默认上下文查不到他租令牌。故此处不前缀。
+                if (et.ClrType == typeof(CP6.Entity.DomainModels.Sys.Sys_RefreshToken)
+                    && idx.Properties.Count == 1
+                    && idx.Properties[0].Name == nameof(CP6.Entity.DomainModels.Sys.Sys_RefreshToken.TokenHash))
+                    continue;
 
                 var dbName = idx.GetDatabaseName();
                 var filter = idx.GetFilter();

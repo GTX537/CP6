@@ -38,7 +38,8 @@ public class AuthControllerLoginSecurityTests
         var policy = new PasswordPolicyService(db, opt, hasher);
         var login = new LoginSecurityService(db, opt);
         var audit = new SecurityAuditService(db);
-        var ctl = new AuthController(db, new ConfigurationBuilder().Build(), new FakePermCtx(), new TenantContext(), hasher, policy, login, audit);
+        var refresh = new RefreshTokenService(db, opt, new TenantContext());
+        var ctl = new AuthController(db, new ConfigurationBuilder().Build(), new FakePermCtx(), new TenantContext(), hasher, policy, login, audit, refresh);
         ctl.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return (ctl, db, user);
     }

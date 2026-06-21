@@ -33,6 +33,15 @@ public class TenantUniqueIndexTests
             foreach (var idx in et.GetIndexes().Where(i => i.IsUnique))
             {
                 if (fkPrincipalKeyProps.Any(kp => kp.SequenceEqual(idx.Properties))) continue;
+
+                // S 类认证加固 T4：Sys_RefreshToken.TokenHash 按设计保持单列全局唯一——refresh 时无租户
+                // 上下文（cookie 仅携带不可逆 hash），按 TokenHash + IgnoreQueryFilters 跨租户精确命中。
+                // 与 CP6Context 唯一索引前缀循环的跳过条件镜像，故同样豁免本守卫。
+                if (et.ClrType == typeof(CP6.Entity.DomainModels.Sys.Sys_RefreshToken)
+                    && idx.Properties.Count == 1
+                    && idx.Properties[0].Name == nameof(CP6.Entity.DomainModels.Sys.Sys_RefreshToken.TokenHash))
+                    continue;
+
                 if (idx.Properties.Count == 0 || idx.Properties[0].Name != nameof(BaseTenantEntity.TenantId))
                     offenders.Add($"{et.ClrType.Name}: ({string.Join(",", idx.Properties.Select(p => p.Name))})");
             }

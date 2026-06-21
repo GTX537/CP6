@@ -28,8 +28,9 @@ public class AuthController : LocalizedControllerBase
     private readonly IPasswordPolicyService _policy;
     private readonly ILoginSecurityService _login;
     private readonly ISecurityAuditService _audit;
+    private readonly IRefreshTokenService _refresh;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh)
     {
         _context = context;
         _config = config;
@@ -39,6 +40,7 @@ public class AuthController : LocalizedControllerBase
         _policy = policy;
         _login = login;
         _audit = audit;
+        _refresh = refresh;
     }
 
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -208,10 +210,41 @@ public class AuthController : LocalizedControllerBase
         user.MustChangePassword = false;
         await _context.SaveChangesAsync();   // 一次性持久化：裁剪 + 新历史 + 用户更新（原子）
 
-        // 安全审计（改密成功）。旧 refresh 吊销 T4 叠加。
+        // 改密后吊销该用户全部刷新令牌（强制其它会话重新登录，防旧凭证沿用）
+        await _refresh.RevokeAllForUserAsync(uid);
+
+        // 安全审计（改密成功）
         await _audit.LogAsync(SecurityEventType.PasswordChanged, uid, user.UserName, null, ClientIp, ClientUa);
 
         return Ok(new { code = 0, message = "OK" });
+    }
+
+    /// <summary>
+    /// 刷新令牌轮换。从 httpOnly cookie <c>cp6_rt</c> 读原始令牌 → 轮换（吊旧发新 + 重用检测）。
+    /// POST /api/auth/refresh
+    /// 本步（T4）落地轮换服务接缝；签发新 access JWT（带 jti，T5）、写三 Cookie + 审计 TokenRefreshed（T6）后续叠加。
+    /// </summary>
+    [HttpPost("refresh")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Refresh()
+    {
+        var raw = Request.Cookies["cp6_rt"];
+        if (string.IsNullOrEmpty(raw))
+            throw new BizException("E-SEC-007");
+        try
+        {
+            var (newRaw, user) = await _refresh.RotateAsync(raw, ClientIp, ClientUa);
+            // T6：签发新 access JWT + AuthCookieWriter 写 cp6_at/cp6_rt/cp6_csrf + 审计 TokenRefreshed。
+            // 本步先把新令牌透传 body 便于过渡期联调（cookie 化前不留真实刷新链路）。
+            return Ok(new { code = 0, refreshToken = newRaw, userName = user.UserName });
+        }
+        catch (InvalidOperationException ex)
+        {
+            // 重用检测/过期/无效 → 转 BizException 本地化；重用时审计 TokenReuseDetected
+            if (ex.Message == "E-SEC-008")
+                await _audit.LogAsync(SecurityEventType.TokenReuseDetected, null, null, null, ClientIp, ClientUa, "refresh token reuse");
+            throw new BizException(ex.Message);
+        }
     }
 }
 
