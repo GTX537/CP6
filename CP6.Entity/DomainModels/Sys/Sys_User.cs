@@ -48,4 +48,20 @@ public class Sys_User : BaseTenantEntity
     /// <summary>邮箱（通知用）</summary>
     [MaxLength(100)]
     public string? Email { get; set; }
+
+    // ───── S 类认证加固：密码安全 + 登录画像 ─────
+    /// <summary>最后改密时间（密码有效期判定起点）</summary>
+    public DateTime? PasswordChangedAt { get; set; }
+    /// <summary>连续登录失败计数</summary>
+    public int FailedLoginCount { get; set; }
+    /// <summary>最后一次失败时刻（ResetCounterMinutes 滑动重置用）</summary>
+    public DateTime? LastFailedLoginAt { get; set; }
+    /// <summary>锁定截止（null=未锁）</summary>
+    public DateTime? LockedUntil { get; set; }
+    /// <summary>最后成功登录时刻</summary>
+    public DateTime? LastLoginTime { get; set; }
+    /// <summary>最后登录 IP</summary>
+    [MaxLength(64)] public string? LastLoginIp { get; set; }
+    /// <summary>强制改密标志</summary>
+    public bool MustChangePassword { get; set; }
 }

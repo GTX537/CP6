@@ -21,13 +21,15 @@ public class AuthController : LocalizedControllerBase
     private readonly IConfiguration _config;
     private readonly ICurrentPermissionContext _perm;
     private readonly ITenantContext _tenant;
+    private readonly IPasswordHasher _hasher;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher)
     {
         _context = context;
         _config = config;
         _perm = perm;
         _tenant = tenant;
+        _hasher = hasher;
     }
 
     /// <summary>
@@ -72,8 +74,8 @@ public class AuthController : LocalizedControllerBase
         if (user == null)
             return BadRequest(new { message = Localizer["用户名不存在"] });
 
-        // 2. 验证密码（简单对比，生产环境应用哈希）
-        if (user.Password != request.Password)
+        // 2. 验证密码（BCrypt 哈希对比）
+        if (!_hasher.Verify(request.Password, user.Password))
             return BadRequest(new { message = Localizer["密码错误"] });
 
         if (!user.Enable)

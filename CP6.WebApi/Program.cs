@@ -440,6 +440,10 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AssetDepreciatio
 builder.Services.AddScoped<CP6.Core.Services.Integration.IBridgeMetricsSnapshotProvider, CP6.Core.Services.Integration.BridgeMetricsSnapshotProvider>();
 builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>();
 
+// S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
+builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
+builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordHasher, CP6.Core.Services.Sys.BCryptPasswordHasher>();
+
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -483,6 +487,9 @@ using (var scope = app.Services.CreateScope())
 
     // Docker 环境下自动创建数据库并应用所有迁移
     db.Database.Migrate();
+
+    // S 类认证加固（T1）：启动幂等把现有明文密码就地 BCrypt 哈希（不可逆，生产前须备份）
+    CP6.WebApi.Seed.PasswordHashMigrationSeed.EnsureHashed(db, scope.ServiceProvider.GetRequiredService<CP6.Core.Services.Sys.IPasswordHasher>());
 
     // 章10 默认租户种子（幂等，按 Id 判存）——登记进 Sys_Tenant 注册表供枚举/登录/管理用
     CP6.Core.Services.Common.TenantSeed.EnsureSeeded(db);
