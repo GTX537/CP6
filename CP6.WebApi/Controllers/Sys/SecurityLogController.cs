@@ -29,6 +29,9 @@ public class SecurityLogController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
+        page = Math.Max(1, page);                 // 防 page<=0 → 负数 Skip 抛异常
+        pageSize = Math.Clamp(pageSize, 1, 200);  // 防一次拉全表
+
         var query = _db.Sys_SecurityLogs.AsQueryable();
 
         if (eventType.HasValue)

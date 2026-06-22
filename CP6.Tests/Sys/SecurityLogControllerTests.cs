@@ -92,4 +92,20 @@ public class SecurityLogControllerTests
         Assert.Equal(5, total);       // 总数为全量
         Assert.Equal(2, rowCount);    // 当页仅 2 条
     }
+
+    [Fact]
+    public async Task Page_zero_is_clamped_to_first_page_without_throwing()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        for (int i = 0; i < 3; i++)
+            Seed(db, SecurityEventType.LoginSuccess, $"u{i}", DateTime.Now.AddMinutes(-i));
+        db.SaveChanges();
+
+        // page=0 不应抛（负数 Skip），应 clamp 到第 1 页
+        var (total, rowCount) = Unwrap(await new SecurityLogController(db)
+            .GetList(eventType: null, userName: null, from: null, to: null, page: 0, pageSize: 2));
+
+        Assert.Equal(3, total);
+        Assert.Equal(2, rowCount);
+    }
 }
