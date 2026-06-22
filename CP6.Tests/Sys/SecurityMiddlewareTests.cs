@@ -41,7 +41,17 @@ public class SecurityMiddlewareTests
         var (next, called) = FakeNext();
         var ex = await Assert.ThrowsAsync<BizException>(() => Csrf(next).Invoke(Ctx("POST", "/api/order")));
         Assert.Equal("E-SEC-010", ex.Code);
+        Assert.Equal(403, ex.HttpStatus);   // CSRF 失败语义为 403 Forbidden
         Assert.False(called());   // 未放行
+    }
+
+    [Fact]
+    public async Task Csrf_login_prefix_lookalike_is_NOT_exempt()
+    {
+        // 带边界匹配：/api/auth/login-xxx 不应被 login 豁免误放行
+        var (next, _) = FakeNext();
+        var ex = await Assert.ThrowsAsync<BizException>(() => Csrf(next).Invoke(Ctx("POST", "/api/auth/login-attack")));
+        Assert.Equal("E-SEC-010", ex.Code);
     }
 
     [Fact]
@@ -111,6 +121,7 @@ public class SecurityMiddlewareTests
         var ex = await Assert.ThrowsAsync<BizException>(() =>
             new MustChangePasswordMiddleware(next).Invoke(AuthCtx("/api/order", authenticated: true, mustChange: true)));
         Assert.Equal("E-SEC-009", ex.Code);
+        Assert.Equal(403, ex.HttpStatus);   // 须先改密语义为 403 Forbidden
         Assert.False(called());
     }
 

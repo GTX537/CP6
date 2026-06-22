@@ -16,10 +16,11 @@ public class MustChangePasswordMiddleware
 
     public async Task Invoke(HttpContext ctx)
     {
+        var path = ctx.Request.Path.Value ?? "";
         if (ctx.User?.Identity?.IsAuthenticated == true
             && ctx.User.FindFirst("must_change_password")?.Value == "true"
-            && !AllowPaths.Any(a => (ctx.Request.Path.Value ?? "").StartsWith(a, StringComparison.OrdinalIgnoreCase)))
-            throw new BizException("E-SEC-009");
+            && !AllowPaths.Any(a => CsrfMiddleware.PathMatches(path, a)))   // 带边界匹配，杜绝同前缀端点误放行
+            throw new BizException("E-SEC-009", 403);   // 403 Forbidden：须先改密
 
         await _next(ctx);
     }
