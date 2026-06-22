@@ -30,6 +30,14 @@ public class RefreshTokenServiceTests
         Assert.Equal(user.Id, who.Id);
         Assert.NotEqual(raw1, raw2);
 
+        // 轮换链真落库校验：清跟踪器强制重载（防 InMemory 导航修复假绿），旧行吊销且链向新行
+        db.ChangeTracker.Clear();
+        var rows = db.Sys_RefreshTokens.IgnoreQueryFilters().ToList();
+        Assert.Equal(2, rows.Count);
+        var oldRow = rows.Single(r => r.RevokedAt != null);
+        var newRow = rows.Single(r => r.RevokedAt == null);
+        Assert.Equal(oldRow.ReplacedByTokenHash, newRow.TokenHash);   // 旧行 ReplacedByTokenHash 指向新令牌哈希
+
         // 旧令牌已吊销 → 再用触发重用检测，整链吊销
         await Assert.ThrowsAsync<InvalidOperationException>(() => svc.RotateAsync(raw1, "1.1.1.1", "UA"));
         // 重用检测后新令牌也被吊销 → 不可再轮换

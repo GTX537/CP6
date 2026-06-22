@@ -38,6 +38,7 @@ public class RefreshTokenService : IRefreshTokenService
         _db.Sys_RefreshTokens.Add(new Sys_RefreshToken
         {
             UserId = user.Id,
+            TenantId = user.TenantId,   // 显式盖租户，与 RotateAsync 对称；不依赖 SaveChanges 隐式盖章的上下文时序
             TokenHash = HashOf(raw),
             ExpiresAt = DateTime.Now.AddDays(_t.RefreshTokenDays),
             CreatedIp = ip,
@@ -94,12 +95,13 @@ public class RefreshTokenService : IRefreshTokenService
         }
     }
 
-    public async Task RevokeAllForUserAsync(Guid userId)
+    public async Task RevokeAllForUserAsync(Guid userId, bool saveChanges = true)
     {
         var rows = await _db.Sys_RefreshTokens.IgnoreQueryFilters()
             .Where(r => r.UserId == userId && r.RevokedAt == null).ToListAsync();
         if (rows.Count == 0) return;
         foreach (var r in rows) r.RevokedAt = DateTime.Now;
-        await _db.SaveChangesAsync();
+        // saveChanges:false → 变更留在跟踪器，由调用方与其它写入合并一次原子保存
+        if (saveChanges) await _db.SaveChangesAsync();
     }
 }

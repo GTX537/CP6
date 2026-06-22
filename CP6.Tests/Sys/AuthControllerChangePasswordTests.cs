@@ -4,6 +4,7 @@ using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels.Sys;
 using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Localization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -92,6 +93,27 @@ public class AuthControllerChangePasswordTests
         db.SaveChanges();
         await Assert.ThrowsAsync<BizException>(() =>
             ctl.ChangePassword(new ChangePasswordRequest("OldPass1!", "ReusedP1!")));
+    }
+
+    [Fact]
+    public async Task Revokes_all_active_refresh_tokens_on_success()
+    {
+        var (ctl, db, user) = Make("OldPass1!");
+        // 预置一条该用户的有效刷新令牌
+        db.Sys_RefreshTokens.Add(new Sys_RefreshToken
+        {
+            UserId = user.Id,
+            TokenHash = "EXISTING_HASH",
+            ExpiresAt = DateTime.Now.AddDays(7)
+        });
+        db.SaveChanges();
+
+        await ctl.ChangePassword(new ChangePasswordRequest("OldPass1!", "NewPass2@"));
+
+        // 清跟踪器强制重载：验证吊销与改密随同一次保存真落库（原子）
+        db.ChangeTracker.Clear();
+        var token = db.Sys_RefreshTokens.IgnoreQueryFilters().Single(t => t.UserId == user.Id);
+        Assert.NotNull(token.RevokedAt);   // 改密强制旧刷新令牌失效
     }
 
     [Fact]

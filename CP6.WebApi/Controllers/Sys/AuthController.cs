@@ -203,15 +203,15 @@ public class AuthController : LocalizedControllerBase
             throw new BizException(ex.Message);
         }
 
-        // 旧哈希入历史并裁剪（不 SaveChanges，与下方写入合并一次保存）（旧 refresh 吊销 T4 叠加、审计 T3 叠加）
+        // 旧哈希入历史并裁剪（不 SaveChanges，与下方写入合并一次保存）（审计 T3 叠加）
         await _policy.RecordHistoryAsync(uid, user.Password);
         user.Password = _hasher.Hash(req.NewPassword);
         user.PasswordChangedAt = DateTime.Now;
         user.MustChangePassword = false;
-        await _context.SaveChangesAsync();   // 一次性持久化：裁剪 + 新历史 + 用户更新（原子）
-
-        // 改密后吊销该用户全部刷新令牌（强制其它会话重新登录，防旧凭证沿用）
-        await _refresh.RevokeAllForUserAsync(uid);
+        // 改密后吊销该用户全部刷新令牌：saveChanges:false 入轨，与改密合并一次原子保存
+        // （改密成功 ⇔ 旧凭证全失效；若分两次保存则第二次失败会留下"改密了但旧 refresh 仍可续命"的窗口）
+        await _refresh.RevokeAllForUserAsync(uid, saveChanges: false);
+        await _context.SaveChangesAsync();   // 一次性原子持久化：裁剪 + 新历史 + 用户更新 + 令牌吊销
 
         // 安全审计（改密成功）
         await _audit.LogAsync(SecurityEventType.PasswordChanged, uid, user.UserName, null, ClientIp, ClientUa);
