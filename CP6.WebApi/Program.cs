@@ -1056,6 +1056,32 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
+    // S 类授权加固(2026-06-22)：9 Sys 控制器细粒度权限点授 admin。
+    // PermissionService.HasActionAsync 无 admin 旁路：贴 [RequirePermission] 的 Sys 端点必须在此 seed+授权 RoleId=1，否则 admin 也 403。幂等。
+    // 菜单 MenuKey（101~113）由全局回填 §684（RoutePath 派生）已覆盖，无需本地补。
+    {
+        var sysActions = new (int MenuId, string Code, string Name)[]
+        {
+            (101, "query", "查看"), (101, "add", "新建"), (101, "edit", "编辑"), (101, "delete", "删除"),  // role
+            (102, "add", "新建"), (102, "edit", "编辑"), (102, "delete", "删除"),                          // menu
+            (104, "query", "查看"), (104, "add", "新建"), (104, "edit", "编辑"), (104, "delete", "删除"),  // user
+            (106, "add", "新建"), (106, "edit", "编辑"), (106, "delete", "删除"),                          // dict
+            (107, "query", "查看"), (107, "delete", "清空"),                                              // operlog
+            (108, "add", "新建"), (108, "edit", "编辑"), (108, "delete", "删除"),                          // pub-dept
+            (109, "query", "查看"), (109, "edit", "编辑"),                                                // pub-role-perm
+            (110, "query", "查看"), (110, "edit", "编辑"),                                                // pub-data-scope
+            (111, "query", "查看"), (111, "edit", "编辑"),                                                // pub-field-perm
+        };
+        foreach (var (menuId, code, name) in sysActions)
+        {
+            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+        }
+        db.SaveChanges();
+    }
+
     // ═══════════════════════════════════════════════════════════
     //  采购（Pur）MVP 章01~04 菜单（700 组）+ 功能权限点
     // ═══════════════════════════════════════════════════════════

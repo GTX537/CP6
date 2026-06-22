@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,7 @@ public class MenuController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("menu", "add")]
     public async Task<IActionResult> Add([FromBody] Sys_Menu entity)
     {
         entity.CreateDate = DateTime.Now;
@@ -40,6 +42,7 @@ public class MenuController : ControllerBase
     }
 
     [HttpPut]
+    [RequirePermission("menu", "edit")]
     public async Task<IActionResult> Update([FromBody] Sys_Menu entity)
     {
         _context.Entry(entity).State = EntityState.Modified;
@@ -48,6 +51,7 @@ public class MenuController : ControllerBase
     }
 
     [HttpDelete]
+    [RequirePermission("menu", "delete")]
     public async Task<IActionResult> Delete([FromBody] int[] ids)
     {
         var entities = await _context.Sys_Menus.Where(m => ids.Contains(m.MenuId)).ToListAsync();

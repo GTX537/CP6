@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DTOs.Sys;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,7 @@ public class UserRoleController : ControllerBase
 
     /// <summary>保存某用户的角色集合 + 主角色</summary>
     [HttpPut("{userId}")]
+    [RequirePermission("user", "edit")]
     public async Task<IActionResult> Save(Guid userId, [FromBody] UserRolesDto d)
     {
         try { await _svc.SaveAsync(userId, d.RoleIds, d.PrimaryRoleId, CurrentUser); return Ok2(); }
@@ -32,5 +34,6 @@ public class UserRoleController : ControllerBase
 
     /// <summary>历史数据迁移：现有 Sys_User.RoleId → Sys_UserRole（幂等）</summary>
     [HttpPost("migrate")]
+    [RequirePermission("user", "edit")]
     public async Task<IActionResult> Migrate() => Ok2(new { inserted = await _svc.MigrateAsync() });
 }

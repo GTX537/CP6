@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,7 @@ public class RoleController : LocalizedControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("role", "query")]
     public async Task<IActionResult> GetList(int page = 1, int pageSize = 10, string? keyword = null)
     {
         var query = _context.Sys_Roles.AsQueryable();
@@ -50,6 +52,7 @@ public class RoleController : LocalizedControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("role", "add")]
     public async Task<IActionResult> Add([FromBody] Sys_Role entity)
     {
         entity.CreateDate = DateTime.Now;
@@ -59,6 +62,7 @@ public class RoleController : LocalizedControllerBase
     }
 
     [HttpPut]
+    [RequirePermission("role", "edit")]
     public async Task<IActionResult> Update([FromBody] Sys_Role entity)
     {
         _context.Entry(entity).State = EntityState.Modified;
@@ -67,6 +71,7 @@ public class RoleController : LocalizedControllerBase
     }
 
     [HttpDelete]
+    [RequirePermission("role", "delete")]
     public async Task<IActionResult> Delete([FromBody] int[] ids)
     {
         var entities = await _context.Sys_Roles.Where(r => ids.Contains(r.RoleId)).ToListAsync();
@@ -82,6 +87,7 @@ public class RoleController : LocalizedControllerBase
     /// 获取角色已分配的菜单ID列表
     /// </summary>
     [HttpGet("{roleId}/menus")]
+    [RequirePermission("role", "query")]
     public async Task<IActionResult> GetRoleMenus(int roleId)
     {
         var menuIds = await _context.Sys_RoleMenus
@@ -95,6 +101,7 @@ public class RoleController : LocalizedControllerBase
     /// 给角色分配菜单权限（整体替换）
     /// </summary>
     [HttpPost("{roleId}/menus")]
+    [RequirePermission("role", "edit")]
     public async Task<IActionResult> SaveRoleMenus(int roleId, [FromBody] int[] menuIds)
     {
         // 1. 删除旧的映射

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
@@ -41,6 +42,7 @@ public class DictController : LocalizedControllerBase
     }
 
     [HttpPost("types")]
+    [RequirePermission("dict", "add")]
     public async Task<IActionResult> AddType([FromBody] Sys_DictType entity)
     {
         if (await _context.Sys_DictTypes.AnyAsync(t => t.TypeCode == entity.TypeCode))
@@ -53,6 +55,7 @@ public class DictController : LocalizedControllerBase
     }
 
     [HttpPut("types")]
+    [RequirePermission("dict", "edit")]
     public async Task<IActionResult> UpdateType([FromBody] Sys_DictType entity)
     {
         var existing = await _context.Sys_DictTypes.FindAsync(entity.Id);
@@ -68,6 +71,7 @@ public class DictController : LocalizedControllerBase
     }
 
     [HttpDelete("types")]
+    [RequirePermission("dict", "delete")]
     public async Task<IActionResult> DeleteTypes([FromBody] int[] ids)
     {
         var types = await _context.Sys_DictTypes.Where(t => ids.Contains(t.Id)).ToListAsync();
@@ -107,6 +111,7 @@ public class DictController : LocalizedControllerBase
     }
 
     [HttpPost("data")]
+    [RequirePermission("dict", "add")]
     public async Task<IActionResult> AddData([FromBody] Sys_DictData entity)
     {
         entity.CreateDate = DateTime.Now;
@@ -120,6 +125,7 @@ public class DictController : LocalizedControllerBase
     }
 
     [HttpPut("data")]
+    [RequirePermission("dict", "edit")]
     public async Task<IActionResult> UpdateData([FromBody] Sys_DictData entity)
     {
         var existing = await _context.Sys_DictDatas.FindAsync(entity.Id);
@@ -138,6 +144,7 @@ public class DictController : LocalizedControllerBase
     }
 
     [HttpDelete("data")]
+    [RequirePermission("dict", "delete")]
     public async Task<IActionResult> DeleteData([FromBody] int[] ids)
     {
         var entities = await _context.Sys_DictDatas.Where(d => ids.Contains(d.Id)).ToListAsync();

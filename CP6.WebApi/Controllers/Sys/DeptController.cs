@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DTOs.Sys;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,7 @@ public class DeptController : ControllerBase
     public async Task<IActionResult> Tree() => Ok2(await _svc.TreeAsync());
 
     [HttpPost]
+    [RequirePermission("pub-dept", "add")]
     public async Task<IActionResult> Create([FromBody] DeptDto d)
     {
         try { return Ok2(new { id = await _svc.CreateAsync(d, d.ParentId, CurrentUser) }); }
@@ -29,6 +31,7 @@ public class DeptController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [RequirePermission("pub-dept", "edit")]
     public async Task<IActionResult> Update(Guid id, [FromBody] DeptDto d)
     {
         try { await _svc.UpdateAsync(id, d, CurrentUser); return Ok2(); }
@@ -36,6 +39,7 @@ public class DeptController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [RequirePermission("pub-dept", "delete")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try { await _svc.DeleteAsync(id); return Ok2(); }
@@ -43,6 +47,7 @@ public class DeptController : ControllerBase
     }
 
     [HttpPost("{id}/move")]
+    [RequirePermission("pub-dept", "edit")]
     public async Task<IActionResult> Move(Guid id, [FromBody] MoveReq r)
     {
         try { await _svc.MoveAsync(id, r.NewParentId, CurrentUser); return Ok2(); }
@@ -50,6 +55,7 @@ public class DeptController : ControllerBase
     }
 
     [HttpPut("{id}/leader")]
+    [RequirePermission("pub-dept", "edit")]
     public async Task<IActionResult> Leader(Guid id, [FromBody] LeaderReq r)
     {
         try { await _svc.SetLeaderAsync(id, r.LeaderId, CurrentUser); return Ok2(); }

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DTOs.Sys;
 using Microsoft.AspNetCore.Authorization;
@@ -20,14 +21,17 @@ public class RolePermController : ControllerBase
 
     /// <summary>取某菜单的操作点定义</summary>
     [HttpGet("menu-action/{menuId:int}")]
+    [RequirePermission("pub-role-perm", "query")]
     public async Task<IActionResult> GetMenuActions(int menuId) => Ok2(await _svc.GetMenuActionsAsync(menuId));
 
     /// <summary>取全部菜单的操作点定义（配置页一次性加载）</summary>
     [HttpGet("menu-action/all")]
+    [RequirePermission("pub-role-perm", "query")]
     public async Task<IActionResult> GetAllMenuActions() => Ok2(await _svc.GetAllMenuActionsAsync());
 
     /// <summary>维护某菜单的操作点</summary>
     [HttpPut("menu-action/{menuId:int}")]
+    [RequirePermission("pub-role-perm", "edit")]
     public async Task<IActionResult> SaveMenuActions(int menuId, [FromBody] List<MenuActionDto> actions)
     {
         await _svc.SaveMenuActionsAsync(menuId, actions, CurrentUser);
@@ -40,10 +44,12 @@ public class RolePermController : ControllerBase
 
     /// <summary>取某角色的功能权限（菜单 + 操作点）</summary>
     [HttpGet("{roleId:int}")]
+    [RequirePermission("pub-role-perm", "query")]
     public async Task<IActionResult> GetRolePerm(int roleId) => Ok2(await _svc.GetRolePermAsync(roleId));
 
     /// <summary>保存某角色的功能权限</summary>
     [HttpPut("{roleId:int}")]
+    [RequirePermission("pub-role-perm", "edit")]
     public async Task<IActionResult> SaveRolePerm(int roleId, [FromBody] RolePermDto dto)
     {
         try { await _svc.SaveRolePermAsync(roleId, dto, CurrentUser); return Ok2(); }
@@ -58,10 +64,12 @@ public class RolePermController : ControllerBase
 
     /// <summary>取某角色的数据范围配置</summary>
     [HttpGet("data-scope/{roleId:int}")]
+    [RequirePermission("pub-data-scope", "query")]
     public async Task<IActionResult> GetRoleDataScopes(int roleId) => Ok2(await _svc.GetRoleDataScopesAsync(roleId));
 
     /// <summary>保存某角色的数据范围配置</summary>
     [HttpPut("data-scope/{roleId:int}")]
+    [RequirePermission("pub-data-scope", "edit")]
     public async Task<IActionResult> SaveRoleDataScopes(int roleId, [FromBody] List<RoleDataScopeDto> items)
     {
         try { await _svc.SaveRoleDataScopesAsync(roleId, items, CurrentUser); return Ok2(); }
@@ -76,10 +84,12 @@ public class RolePermController : ControllerBase
 
     /// <summary>取某角色的字段权限配置</summary>
     [HttpGet("field-perm/{roleId:int}")]
+    [RequirePermission("pub-field-perm", "query")]
     public async Task<IActionResult> GetRoleFieldPerms(int roleId) => Ok2(await _svc.GetRoleFieldPermsAsync(roleId));
 
     /// <summary>保存某角色的字段权限配置</summary>
     [HttpPut("field-perm/{roleId:int}")]
+    [RequirePermission("pub-field-perm", "edit")]
     public async Task<IActionResult> SaveRoleFieldPerms(int roleId, [FromBody] List<RoleFieldPermDto> items)
     {
         try { await _svc.SaveRoleFieldPermsAsync(roleId, items, CurrentUser); return Ok2(); }

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ public class OperLogController : ControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("operlog", "query")]
     public async Task<IActionResult> GetList(int page = 1, int pageSize = 20, string? keyword = null)
     {
         var query = _context.Sys_OperLogs.AsQueryable();
@@ -40,6 +42,7 @@ public class OperLogController : ControllerBase
     /// 清空日志
     /// </summary>
     [HttpDelete]
+    [RequirePermission("operlog", "delete")]
     public async Task<IActionResult> Clear()
     {
         _context.Sys_OperLogs.RemoveRange(_context.Sys_OperLogs);

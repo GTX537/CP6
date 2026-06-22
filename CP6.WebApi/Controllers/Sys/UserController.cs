@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels;
@@ -24,6 +25,7 @@ public class UserController : LocalizedControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("user", "query")]
     public async Task<IActionResult> GetList(int page = 1, int pageSize = 10, string? keyword = null)
     {
         var query = _context.Sys_Users.AsQueryable();
@@ -54,6 +56,7 @@ public class UserController : LocalizedControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("user", "add")]
     public async Task<IActionResult> Add([FromBody] Sys_User entity)
     {
         if (await _context.Sys_Users.AnyAsync(u => u.UserName == entity.UserName))
@@ -70,6 +73,7 @@ public class UserController : LocalizedControllerBase
     }
 
     [HttpPut]
+    [RequirePermission("user", "edit")]
     public async Task<IActionResult> Update([FromBody] Sys_User entity)
     {
         var existing = await _context.Sys_Users.FindAsync(entity.Id);
@@ -101,6 +105,7 @@ public class UserController : LocalizedControllerBase
     }
 
     [HttpDelete]
+    [RequirePermission("user", "delete")]
     public async Task<IActionResult> Delete([FromBody] Guid[] ids)
     {
         var entities = await _context.Sys_Users.Where(u => ids.Contains(u.Id)).ToListAsync();
