@@ -1028,6 +1028,34 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
+    // S 类认证加固（T8）：安全审计日志菜单（114，挂"系统管理"100 组）+ admin 授权 + query 操作权限点。
+    // 菜单驱动路由注册（无 Sys_Menu 则前端路由不注册 → 白屏不可达，A4 H-3 教训）。
+    if (!db.Sys_Menus.Any(m => m.MenuId == 114))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 114, MenuName = "安全日志", RoutePath = "/sys/security-log", Icon = "Lock", ParentId = 100, OrderNo = 114, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 114 });
+        db.SaveChanges();
+    }
+    // 安全日志权限点：PermissionService.HasActionAsync 无 admin 旁路，[RequirePermission("sys-security-log","query")]
+    // 须在此 seed + 授权 admin，否则 admin 也 403。幂等。MenuKey 本地回填（全局回填 §684 早于本菜单创建）。
+    {
+        var secMenu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == 114);
+        if (secMenu != null && string.IsNullOrEmpty(secMenu.MenuKey))
+        {
+            secMenu.MenuKey = secMenu.RoutePath!.Trim('/').Replace('/', '-');   // → sys-security-log
+            db.SaveChanges();
+        }
+        var secActions = new (int MenuId, string Code, string Name)[] { (114, "query", "查看") };
+        foreach (var (menuId, code, name) in secActions)
+        {
+            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+        }
+        db.SaveChanges();
+    }
+
     // ═══════════════════════════════════════════════════════════
     //  采购（Pur）MVP 章01~04 菜单（700 组）+ 功能权限点
     // ═══════════════════════════════════════════════════════════
@@ -1502,6 +1530,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nBankReconScreenSeed.Items)   // A4 银行对账 + nav.614 + E-A4-*/W-A4-*
             .Concat(CP6.WebApi.Seed.I18nA5BudgetScreenSeed.Items)   // A5 预算管理 + nav.621-623 + E-A5-*
             .Concat(CP6.WebApi.Seed.I18nWfDesignerSeed.Items)  // OA 阶段4 自研设计器（表单/流程）画面词条
+            .Concat(CP6.WebApi.Seed.I18nSecScreenSeed.Items)   // S 类认证加固 E-SEC-001~010 + 事件枚举 + 改密/安全日志页
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
