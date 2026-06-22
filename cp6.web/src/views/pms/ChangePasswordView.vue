@@ -61,6 +61,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { authApi } from '@/api/sys/auth'
+import { resetRoutes } from '@/router'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -108,6 +109,7 @@ async function handleSubmit() {
     localStorage.removeItem('menus')
     localStorage.removeItem('userName')
     localStorage.removeItem('nickName')
+    resetRoutes()   // 与登出对称：清掉已挂载的动态路由，回到干净静态路由
     router.push('/login')
   } catch {
     // 错误（E-SEC-004/005/006）由 http.ts 拦截器统一提示，此处不重复提示

@@ -116,13 +116,13 @@ async function loadData() {
   loading.value = true
   try {
     const res = await securityLogApi.getList({
-      eventType: filter.eventType,
+      eventType: filter.eventType || undefined,   // '' → undefined，不下发空 query 参数
       userName: filter.userName || undefined,
       from: dateRange.value?.[0],
       to: dateRange.value?.[1],
       page: page.value,
       pageSize: pageSize.value
-    }) as any
+    })
     tableData.value = res.rows
     total.value = res.total
   } finally {
