@@ -7,6 +7,20 @@
 |---|---|---|---|
 | 1 | 审批引擎全栈 | [`01-审批引擎.md`](01-审批引擎.md) | 流程引擎状态机 + 业务终态回调接缝 + 高级流程 + 审批人解析消费PUB |
 
+## 🗺️ 流程图
+
+```mermaid
+flowchart TB
+  SUB["业务起审 ApprovalService 按Binding"] --> FE["FlowEngine 状态机"]
+  FE -->|EnterNode| AR["审批人解析 消费PUB组织"]
+  AR -->|缺位| SUSP["挂起待指派"]
+  FE -->|ActAsync 幂等会签计票| DEC{"会签判定<br/>any·all·veto"}
+  DEC -->|通过| NEXT["条件流转 下一节点"]
+  DEC -->|驳回| REJ["Rejected"]
+  NEXT -->|终态 SaveChanges前| DISP["ApprovalDispatcher 按BizType分发"]
+  DISP --> CB["IApprovalCallback<br/>财务过账 预算激活 采购确认"]
+```
+
 ## §0 Wf 特有约定
 
 - **编译期单向 + 运行时多态**：OA **不引用任何业务模块**；业务模块实现 `IApprovalCallback` 注册 DI，OA 走到终态由 `ApprovalDispatcher` 按 `BizType` 运行时多态直调（财务凭证/预算/采购PO/PR 四回调）。

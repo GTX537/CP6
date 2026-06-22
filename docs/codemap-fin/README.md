@@ -10,6 +10,21 @@
 | 3 | 三表/成本/对账 | [`03-三表-成本-对账.md`](03-三表-成本-对账.md) | 三表复用试算表/成本料工费真实/银行对账撮合/汇兑重估 |
 | 4 | 资产/预算 | [`04-资产-预算.md`](04-资产-预算.md) | 四法折旧/月末Worker/处置清理结转/预算OA回调/预控守卫 |
 
+## 🗺️ 流程图
+
+```mermaid
+flowchart TB
+  BIZ["业务服务 AP/AR/成本/折旧/处置"] -->|构造 FinBizEvent| ENG["AutoVoucherEngine GenerateAsync"]
+  ENG -->|找规则| RULE["PostingRule 规则即数据 Role锚点"]
+  ENG -->|直过| JE["JournalEntry 借贷恒等+锁期"]
+  JE --> TBx["试算平衡 实时滚算"]
+  TBx --> BS["资产负债表 CloseBal"]
+  TBx --> IS["损益表 PeriodDebit/Credit"]
+  OA["OA 审批通过"] -->|IApprovalCallback| JE
+  WMSx["WMS 出货"] -. FinBridgeHook无live调用 .-> ARx["AR 自动开票"]
+  ARx --> JE
+```
+
 ## §0 Fin 特有约定
 
 - **一台自动凭证引擎**：AP/AR/成本/折旧/处置等过账都不手拼凭证，而是构造 `FinBizEvent` → `IAutoVoucherEngine.GenerateAsync` 按 `PostingRule`(**规则即数据**:只配 Role 锚点+金额字段名,不写死科目Id) → `IJournalEntryService.AutoPostAsync` 直过(含借贷恒等+锁期双保险)。换准则/科目只改 seed。

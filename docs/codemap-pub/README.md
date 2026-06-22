@@ -7,6 +7,19 @@
 |---|---|---|---|
 | 1 | 权限四粒度 + 组织 + 公共模组 | [`01-权限平台.md`](01-权限平台.md) | 菜单/操作/数据/字段四粒度强校验 + 部门树 + 采番/附件/代码生成/Excel |
 
+## 🗺️ 流程图
+
+```mermaid
+flowchart TB
+  LOGIN["登录"] --> AGG["PermissionAggregator 多角色聚合<br/>操作并集 数据最宽 字段最可见"]
+  AGG -->|缓存 30min| CTX["UserPermissionContext IMemoryCache"]
+  CTX --> P1["菜单 HasMenuAsync"]
+  CTX --> P2["操作 RequirePermission 403 与 v-permission"]
+  CTX --> P3["数据 DataScopeFilter 五范围"]
+  CTX --> P4["字段 FieldMask脱敏 与 StripReadOnly拒写"]
+  DEPT["Sys_Dept 物化路径"] -. 及下级查询基座 .-> P3
+```
+
 ## §0 Pub 特有约定
 
 - **四粒度强校验三大落点**：菜单(`Sys_Menu`树→`HasMenuAsync`)、操作(`[RequirePermission]`→403 + `v-permission` UX)、数据(`DataScopeFilter` 注入 Where)、字段(`[FieldMask]` 脱敏 + `StripReadOnly` 拒写)。

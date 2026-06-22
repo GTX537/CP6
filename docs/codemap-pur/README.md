@@ -8,6 +8,22 @@
 | 1 | 主数据 + PO + 收货 + 三单匹配 | [`01-主数据-PO-收货-匹配.md`](01-主数据-PO-收货-匹配.md) | 三累计锚 + 三接缝全接真实(WMS入库/财务建应付/OA送审) |
 | 2 | 申请 + 询价 + 外注 + 对账 | [`02-申请-询价-外注-对账.md`](02-申请-询价-外注-对账.md) | PR需求驱动/PR→PO分组转单/外注委托WMS出料+财务入成本/堵三漏 |
 
+## 🗺️ 流程图
+
+```mermaid
+flowchart LR
+  PR["采购申请 PR"] -->|有供应商 分组转单| PO["采购订单 PO"]
+  PR -->|无供应商| RFQ["询价 RFQ 邀N家比价选定"]
+  RFQ -->|成交价拆单 回写价表| PO
+  PO -->|送审| OA["OA 审批"]
+  PO --> GR["收货 GR 双基准"]
+  GR -->|委托WMS入库| WMSx["WMS 入庫 RECV"]
+  GR -->|回写三累计锚| PO
+  GR --> M3["三单匹配 PO GR 发票"]
+  M3 -->|容差内 委托财务| AP["财务建并过账AP 借INVENTORY"]
+  M3 -->|超容差| SUS["挂起 人工放行或拒绝"]
+```
+
 ## §0 Pur 特有约定
 
 - **三累计锚**：`PurchaseOrderLine.ReceivedQty/AcceptedQty/InvoicedQty` 是全链共同锚——GR 写 Received(+着荷 Accepted)、QC 写 Accepted、匹配写 Invoiced；**PO 状态全部由 `DeriveStatus` 从锚投影**(非手工)。`可开票量 = AcceptedQty - InvoicedQty` 是匹配硬约束。

@@ -20,6 +20,21 @@
 
 ---
 
+## 🗺️ 流程图
+
+```mermaid
+flowchart TB
+  ORD["ERP 受注"] -. 接缝① MesBridge默认off .-> WO
+  PB["生産計画ボード"] -->|排程改期| WO["製造指図 WorkOrder 枢纽"]
+  WO -->|発行 接缝②| WMSO["WMS 材料出庫"]
+  WO --> PR["製造実績 ProductionResult"]
+  PR -->|全工程完了 接缝③| WMSI["WMS 完成品入庫"]
+  PR --> QI["品質検査 QualityInspection"]
+  QI -->|NG| DF["不良 DefectRecord"]
+  QI -->|NG 接缝④| QC["WMS 库存标FAILED 阻出货"]
+  PR --> OEE["設備OEE Dashboard"]
+```
+
 ## §0 MES 特有约定（先读这节）
 
 ### 0.1 MES 主链：生産計画 → 製造指図 → 製造実績 → 品質 →（設備/OEE 分析）

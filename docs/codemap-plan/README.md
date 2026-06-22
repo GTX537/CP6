@@ -7,6 +7,20 @@
 |---|---|---|---|
 | 1 | 物料计划策略 + MRP 引擎 | [`01-mrp.md`](01-mrp.md) | 低层码 + 净需求 + 批量定批 + 转单(桩) |
 
+## 🗺️ 流程图
+
+```mermaid
+flowchart TB
+  DEM["独立需求 开口受注或手动"] --> RUN["MrpEngine.RunAsync regenerative"]
+  RUN -->|步2 低层码 Kahn拓扑| LLC["成环 E-PLAN-循环BOM"]
+  RUN -->|步4 逐层net| NET["net = Gross - Supply.Total - SafetyStock"]
+  NET -->|四源供给| SUP["SupplyService OnHand+InTransit+InWip+FirmPlanned"]
+  NET -->|net大于0 ApplyLotRule| PO["计划订单 Suggested"]
+  PO -->|自制件向下展开BOM| RUN
+  PO -->|确认或转单| CONV["PlanConvertService"]
+  CONV -.-> STUB["采购PR / MES工单<br/>当前桩 PR-STUB WO-STUB MP-D4"]
+```
+
 ## §0 Plan 特有约定
 
 - **MRP = regenerative 全量复算**（MP-D5）：每次运算把"建议态"计划订单作废重生，"确认/转单"态保留并计入供给。

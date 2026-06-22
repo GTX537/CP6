@@ -21,6 +21,24 @@
 
 ---
 
+## 🗺️ 流程图
+
+```mermaid
+flowchart TB
+  subgraph CORE["库存写入铁律"]
+    SMS["IStockMovementService<br/>ApplyAsync MoveAsync"]
+    SMS --> STK["T_Stock 三数量 物化AvailableQty"]
+    SMS --> TXN["T_StockTransaction 不变ログ INSERT only"]
+  end
+  MES["MES完了 / 採購GR"] --> IN["入庫 InboundReceipt"]
+  IN -->|IN| SMS
+  OUT["出庫 OutboundService"] -->|RSV或OUT| SMS
+  OUT -->|AllocateAsync FEFO与QC过滤| STK
+  OUT -->|ShipAsync ErpBridge| ERPx["ERP 出荷回写"]
+  ST["棚卸 StockTake"] -->|ADJ 差异调整| SMS
+  RP["補充 Replenish"] -->|MOVE| SMS
+```
+
 ## §0 WMS 特有约定（先读这节）
 
 ### 0.1 🔒 库存写入铁律（最重要，贯穿全模块）

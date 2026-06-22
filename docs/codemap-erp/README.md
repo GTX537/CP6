@@ -24,6 +24,19 @@
 
 ---
 
+## 🗺️ 流程图
+
+```mermaid
+flowchart LR
+  EC["見積計算 EstimateCalc"] -->|案件NO 单向pull| QT["御見積 Quotation"]
+  QT -->|by-quotation 引入部材| PM["製品マスタ Product"]
+  PM -->|明细picker 引入63字段| OD["受注 Order 主线核心"]
+  OD -->|IMesBridgeHook| WO["MES 製造指図"]
+  OD -->|IWmsBridgeHook| OB["WMS 出荷指示"]
+  OB -->|ShipAsync ErpBridge| WB["出荷実績回写 ShippedQty"]
+  WB -. 驱动取消闸门 .-> OD
+```
+
 ## §0 公共约定（所有功能共享，先读这一节，后面不再重复）
 
 5 个功能都建立在同一套地基上。这些机制**只在这里讲一次**，各功能文件只讲它自己独有的部分。
