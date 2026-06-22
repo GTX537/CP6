@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,14 @@ namespace CP6.WebApi.Controllers.Sys;
 public class UserController : LocalizedControllerBase
 {
     private readonly CP6Context _context;
+    private readonly IPasswordHasher _hasher;
+    private readonly IRefreshTokenService _refresh;
 
-    public UserController(CP6Context context)
+    public UserController(CP6Context context, IPasswordHasher hasher, IRefreshTokenService refresh)
     {
         _context = context;
+        _hasher = hasher;
+        _refresh = refresh;
     }
 
     [HttpGet]
@@ -54,10 +59,14 @@ public class UserController : LocalizedControllerBase
         if (await _context.Sys_Users.AnyAsync(u => u.UserName == entity.UserName))
             return BadRequest(new { message = Localizer["用户名已存在"] });
 
+        // S 类认证加固 T7：建用户密码落 BCrypt（消除明文写入），管理员设初始密码 → 首登强制改密
+        entity.Password = _hasher.Hash(entity.Password);
+        entity.PasswordChangedAt = DateTime.Now;
+        entity.MustChangePassword = true;
         entity.CreateDate = DateTime.Now;
         _context.Sys_Users.Add(entity);
         await _context.SaveChangesAsync();
-        return Ok(entity);
+        return Ok(new { entity.Id, entity.UserName, entity.NickName, entity.RoleId, entity.Enable });
     }
 
     [HttpPut]
@@ -76,11 +85,16 @@ public class UserController : LocalizedControllerBase
         existing.Email = entity.Email;
         existing.ModifyDate = DateTime.Now;
 
-        // 密码非空才更新
-        // TODO(S类 认证加固 T7): 此处直接存明文是已知遗留写入路径；T7「UserController 哈希+管理员重置」将改为
-        //   existing.Password = _hasher.Hash(entity.Password) 并彻底消除明文写入。T7 落地前由启动钩子 PasswordHashMigrationSeed 兜底。
+        // S 类认证加固 T7：密码非空才更新，且落 BCrypt（消除明文写入路径，原 I1 遗留已清）。
+        // 管理员重置密码 = 强制用户首登改密 + 吊销其全部刷新令牌（强制其它会话下线，防旧凭证沿用）。
         if (!string.IsNullOrEmpty(entity.Password))
-            existing.Password = entity.Password;
+        {
+            existing.Password = _hasher.Hash(entity.Password);
+            existing.PasswordChangedAt = DateTime.Now;
+            existing.MustChangePassword = true;
+            // saveChanges:false → 与下方用户更新合并一次原子保存（重置成功 ⇔ 旧令牌全失效）
+            await _refresh.RevokeAllForUserAsync(existing.Id, saveChanges: false);
+        }
 
         await _context.SaveChangesAsync();
         return Ok(new { existing.Id, existing.UserName, existing.NickName, existing.RoleId, existing.Enable });
