@@ -8,6 +8,7 @@ using CP6.WebApi.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace CP6.WebApi.Controllers.Sys;
 
@@ -29,8 +30,10 @@ public class AuthController : LocalizedControllerBase
     private readonly ILoginSecurityService _login;
     private readonly ISecurityAuditService _audit;
     private readonly IRefreshTokenService _refresh;
+    private readonly ITokenBlacklistService _blacklist;
+    private readonly SecurityOptions _sec;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IOptions<SecurityOptions> sec)
     {
         _context = context;
         _config = config;
@@ -41,6 +44,8 @@ public class AuthController : LocalizedControllerBase
         _login = login;
         _audit = audit;
         _refresh = refresh;
+        _blacklist = blacklist;
+        _sec = sec.Value;
     }
 
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -133,16 +138,22 @@ public class AuthController : LocalizedControllerBase
         // 章10：确定当前请求租户为该用户的租户 → 后续权限聚合/菜单查询按其租户正确作用域
         _tenant.CurrentTenantId = user.TenantId;
 
-        // 3. 生成 JWT Token（带 tenant_id，后续请求由 TenantMiddleware 解析）
+        // 3. 生成 JWT Token（带 tenant_id，后续请求由 TenantMiddleware 解析）。
+        //    T5：带 jti（登出黑名单吊销用）+ must_change_password claim；access TTL 取
+        //    SecurityOptions.Token.AccessTokenMinutes（短令牌 + 刷新令牌轮换，替代旧 120min 长令牌）。
         var jwt = _config.GetSection("JWT");
+        var jti = Guid.NewGuid().ToString();
+        var mustChange = user.MustChangePassword || _policy.IsExpired(user);
         var token = JwtHelper.GenerateToken(
             userId: user.Id.ToString(),
             userName: user.UserName,
             secret: jwt["Secret"]!,
             issuer: jwt["Issuer"]!,
             audience: jwt["Audience"]!,
-            expireMinutes: int.Parse(jwt["ExpireMinutes"]!),
-            tenantId: user.TenantId);
+            expireMinutes: _sec.Token.AccessTokenMinutes,
+            tenantId: user.TenantId,
+            jti: jti,
+            mustChangePassword: mustChange);
 
         // 4. 登录聚合（PUB 章09）：预热权限上下文（多角色聚合 + 缓存），首请求免重建
         var ctx = await _perm.PrewarmAsync(user.Id);
@@ -245,6 +256,42 @@ public class AuthController : LocalizedControllerBase
                 await _audit.LogAsync(SecurityEventType.TokenReuseDetected, null, null, null, ClientIp, ClientUa, "refresh token reuse");
             throw new BizException(ex.Message);
         }
+    }
+
+    /// <summary>
+    /// 登出。自研 JWT 无状态，签名有效即放行 → 把当前 access 的 jti 拉黑（TTL = 令牌剩余寿命，
+    /// 到期自动清除）；同时吊销 refresh 令牌。清三 Cookie 在 T6（AuthCookieWriter）接入。
+    /// POST /api/auth/logout
+    /// </summary>
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        // 1. access jti 入黑名单：TTL 取令牌剩余寿命（exp 推算），否则兜底一个完整 access 寿命
+        var jti = User.FindFirst("jti")?.Value;
+        if (!string.IsNullOrEmpty(jti))
+        {
+            var ttl = TimeSpan.FromMinutes(_sec.Token.AccessTokenMinutes);
+            if (long.TryParse(User.FindFirst("exp")?.Value, out var expUnix))
+            {
+                var remaining = DateTimeOffset.FromUnixTimeSeconds(expUnix) - DateTimeOffset.UtcNow;
+                if (remaining > TimeSpan.Zero) ttl = remaining;
+            }
+            await _blacklist.BlacklistAsync(jti, ttl);
+        }
+
+        // 2. 吊销 refresh 令牌（cookie 化前 cp6_rt 可能为空，静默；T6 写入后此处真正吊销）
+        var raw = Request.Cookies["cp6_rt"];
+        if (!string.IsNullOrEmpty(raw))
+            await _refresh.RevokeAsync(raw);
+
+        // 3. 清三 Cookie：T6 接入 IAuthCookieWriter.ClearAuthCookies(Response)（本步占位）
+
+        // 4. 安全审计（登出）
+        var uid = (await _perm.GetAsync()).UserId;
+        await _audit.LogAsync(SecurityEventType.Logout, uid, User.Identity?.Name, null, ClientIp, ClientUa);
+
+        return Ok(new { code = 0, message = "OK" });
     }
 }
 

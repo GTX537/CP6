@@ -454,6 +454,8 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.ILoginSecurityService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Sys.ISecurityAuditService, CP6.Core.Services.Sys.SecurityAuditService>();
 // S 类认证加固（T4）：刷新令牌轮换 + 重用检测
 builder.Services.AddScoped<CP6.Core.Services.Sys.IRefreshTokenService, CP6.Core.Services.Sys.RefreshTokenService>();
+// S 类认证加固（T5）：登出 jti 黑名单（基于 IDistributedCache）
+builder.Services.AddScoped<CP6.Core.Services.Sys.ITokenBlacklistService, CP6.Core.Services.Sys.CacheTokenBlacklistService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
@@ -469,6 +471,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = jwt["Issuer"],
             ValidAudience = jwt["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Secret"]!))
+        };
+        // S 类认证加固（T5）：jti 黑名单校验——登出后即使签名/有效期仍合法的 access 也被拒。
+        // （T6 将向同一 JwtBearerEvents 追加 OnMessageReceived 从 cp6_at cookie 读令牌。）
+        options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+        {
+            OnTokenValidated = async ctx =>
+            {
+                var jti = ctx.Principal?.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti)?.Value;
+                if (!string.IsNullOrEmpty(jti))
+                {
+                    var bl = ctx.HttpContext.RequestServices
+                        .GetRequiredService<CP6.Core.Services.Sys.ITokenBlacklistService>();
+                    if (await bl.IsBlacklistedAsync(jti)) ctx.Fail("token blacklisted");
+                }
+            }
         };
     });
 builder.Services.AddAuthorization();

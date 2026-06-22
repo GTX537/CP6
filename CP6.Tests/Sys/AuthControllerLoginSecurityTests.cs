@@ -7,6 +7,8 @@ using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Xunit;
@@ -39,7 +41,8 @@ public class AuthControllerLoginSecurityTests
         var login = new LoginSecurityService(db, opt);
         var audit = new SecurityAuditService(db);
         var refresh = new RefreshTokenService(db, opt, new TenantContext());
-        var ctl = new AuthController(db, new ConfigurationBuilder().Build(), new FakePermCtx(), new TenantContext(), hasher, policy, login, audit, refresh);
+        var blacklist = new CacheTokenBlacklistService(new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions())));
+        var ctl = new AuthController(db, new ConfigurationBuilder().Build(), new FakePermCtx(), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, opt);
         ctl.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return (ctl, db, user);
     }

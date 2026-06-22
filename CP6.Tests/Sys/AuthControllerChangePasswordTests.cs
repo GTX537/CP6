@@ -7,6 +7,8 @@ using CP6.WebApi.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Xunit;
@@ -41,8 +43,9 @@ public class AuthControllerChangePasswordTests
         var login = new LoginSecurityService(db, opt);
         var audit = new SecurityAuditService(db);
         var refresh = new RefreshTokenService(db, opt, new TenantContext());
+        var blacklist = new CacheTokenBlacklistService(new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions())));
         var cfg = new ConfigurationBuilder().Build();
-        var ctl = new AuthController(db, cfg, new FakePermCtx(user.Id), new TenantContext(), hasher, policy, login, audit, refresh);
+        var ctl = new AuthController(db, cfg, new FakePermCtx(user.Id), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, opt);
         ctl.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return (ctl, db, user);
     }

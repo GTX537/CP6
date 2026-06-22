@@ -20,6 +20,9 @@ public class JwtHelper
     /// <param name="issuer">签发者</param>
     /// <param name="audience">接收者</param>
     /// <param name="expireMinutes">过期时间（分钟）</param>
+    /// <param name="tenantId">租户 Id（章10）</param>
+    /// <param name="jti">JWT 唯一标识（S 类认证加固 T5：登出黑名单按 jti 吊销；null 则自动生成）</param>
+    /// <param name="mustChangePassword">强制改密标志（T5：写入 must_change_password claim，T6 中间件据此拦截）</param>
     public static string GenerateToken(
         string userId,
         string userName,
@@ -27,14 +30,19 @@ public class JwtHelper
         string issuer,
         string audience,
         int expireMinutes,
-        Guid? tenantId = null)
+        Guid? tenantId = null,
+        string? jti = null,
+        bool mustChangePassword = false)
     {
         // 1. 把用户信息放入 Claims（Token 中携带的数据）。tenant_id 供 TenantMiddleware 解析当前租户（章10）
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, userId),
             new Claim(ClaimTypes.Name, userName),
-            new Claim("tenant_id", (tenantId ?? TenantContext.DefaultTenant).ToString())
+            new Claim("tenant_id", (tenantId ?? TenantContext.DefaultTenant).ToString()),
+            // S 类认证加固 T5：jti 唯一标识（登出黑名单吊销用）+ 强制改密标志
+            new Claim(JwtRegisteredClaimNames.Jti, jti ?? Guid.NewGuid().ToString()),
+            new Claim("must_change_password", mustChangePassword ? "true" : "false")
         };
 
         // 2. 用密钥创建签名凭证
