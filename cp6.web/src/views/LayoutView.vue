@@ -135,6 +135,7 @@ import { useI18n } from 'vue-i18n'
 import { Menu, User, SwitchButton } from '@element-plus/icons-vue'
 import { langOptions, changeLang } from '@/i18n'
 import { resetRoutes } from '@/router'
+import { authApi } from '@/api/sys/auth'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import MenuTreeItem from '@/components/MenuTreeItem.vue'
 
@@ -203,7 +204,13 @@ onMounted(() => {
   }
 })
 
-function handleLogout() {
+async function handleLogout() {
+  // T9：先让后端清三 Cookie + 黑名单当前 access jti（失败也继续本地清理）
+  try {
+    await authApi.logout()
+  } catch {
+    // 后端清理失败（如 token 已失效）不阻断本地登出
+  }
   localStorage.clear()
   resetRoutes()
   router.push('/login')

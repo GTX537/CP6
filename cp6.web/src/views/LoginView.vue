@@ -140,7 +140,7 @@ import { useI18n } from 'vue-i18n'
 import type { FormInstance } from 'element-plus'
 import { ArrowDown, Check, Hide, Lock, OfficeBuilding, User, View } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import http from '@/api/http'
+import { authApi } from '@/api/sys/auth'
 import { langOptions, changeLang } from '@/i18n'
 import { addDynamicRoutes } from '@/router'
 
@@ -229,8 +229,10 @@ async function handleLogin() {
   loading.value = true
   loginSuccess.value = false
   try {
-    const res: any = await http.post('/auth/login', form.value)
-    localStorage.setItem('token', res.token)
+    const res: any = await authApi.login(form.value)
+    // T9：token 已由后端 Set-Cookie（httpOnly），前端仅存非敏感登录态标志
+    localStorage.setItem('cp6_authed', '1')
+    localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
     localStorage.setItem('userName', res.userName)
     localStorage.setItem('nickName', res.nickName || res.userName)
     const menus = res.menus || []
@@ -238,6 +240,11 @@ async function handleLogin() {
     addDynamicRoutes(menus)
     ElMessage.success(t('login.success'))
     loginSuccess.value = true
+    // 强制改密：直接进改密页，不走登录过渡动画
+    if (res.mustChangePassword) {
+      router.push('/sys/change-password')
+      return
+    }
     sessionStorage.setItem('cp6-login-transition', 'pending')
     await new Promise(resolve => window.setTimeout(resolve, 700))
     router.push('/')

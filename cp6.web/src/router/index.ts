@@ -12,6 +12,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/lang': () => import('@/views/pms/LangView.vue'),
   '/dict': () => import('@/views/pms/DictView.vue'),
   '/operlog': () => import('@/views/pms/OperLogView.vue'),
+  '/sys/security-log': () => import('@/views/pms/SecurityLogView.vue'),   // S类 T9 安全日志
   '/pub/dept': () => import('@/views/pms/DeptTreeView.vue'),   // PUB 章00 组织模型
   '/pub/role-perm': () => import('@/views/pms/RolePermView.vue'),   // PUB 章02 角色功能权限
   '/pub/data-scope': () => import('@/views/pms/DataScopeView.vue'),   // PUB 章03 数据权限
@@ -159,6 +160,14 @@ const staticRoutes: RouteRecordRaw[] = [
     name: 'login',
     component: () => import('@/views/LoginView.vue')
   },
+  // S类 T9 强制改密页：顶层静态路由，不走 layout/menus，token 失效/强制改密时始终可达，
+  // 且不被 addDynamicRoutes/resetRoutes 重建擦除。standalone 守卫=有 cp6_authed 即放行。
+  {
+    path: '/sys/change-password',
+    name: 'change-password',
+    component: () => import('@/views/pms/ChangePasswordView.vue'),
+    meta: { standalone: true, title: '修改密码' }
+  },
   // 独立窗口（popup）模式：不走 LayoutView，没有侧边栏/头部
   {
     path: '/estimate-calc/window',
@@ -269,7 +278,8 @@ export function resetRoutes() {
 
 // 路由守卫
 router.beforeEach(async (to, _from, next) => {
-  const token = localStorage.getItem('token')
+  // T9：登录态信号由 httpOnly token 改为非敏感标志 cp6_authed（JS 读不到 httpOnly token）
+  const authed = localStorage.getItem('cp6_authed')
 
   // 1. 去登录页，放行
   if (to.path === '/login') {
@@ -277,13 +287,22 @@ router.beforeEach(async (to, _from, next) => {
     return
   }
 
-  // 2. 没有 token，跳登录
-  if (!token) {
+  // 2. 没有登录态，跳登录
+  if (!authed) {
     next('/login')
     return
   }
 
-  // 3. 独立窗口（popup）：已有 token 即可，不依赖动态菜单
+  // 3. 强制改密：登录态下若 mustChangePwd，除改密页自身外一律拦到改密页（避免死循环）
+  if (
+    localStorage.getItem('cp6_mustChangePwd') === '1' &&
+    to.path !== '/sys/change-password'
+  ) {
+    next('/sys/change-password')
+    return
+  }
+
+  // 4. 独立窗口（popup）/ 改密页（standalone）：有登录态即可，不依赖动态菜单
   if (to.meta?.standalone) {
     // i18n 优化 P4：进内容页前确保该路由所需语言命名空间已就绪（失败已在内部兜底全量）。
     await ensureNamespacesForPath(to.path)
@@ -291,7 +310,7 @@ router.beforeEach(async (to, _from, next) => {
     return
   }
 
-  // 4. 有 token 但还没加载动态路由（页面刷新的情况）
+  // 5. 有登录态但还没加载动态路由（页面刷新的情况）
   if (!dynamicRoutesAdded) {
     const menusStr = localStorage.getItem('menus')
     if (menusStr) {
@@ -306,7 +325,7 @@ router.beforeEach(async (to, _from, next) => {
     }
   }
 
-  // 5. 路由已加载：先确保命名空间就绪再放行（i18n 优化 P4 懒加载）。
+  // 6. 路由已加载：先确保命名空间就绪再放行（i18n 优化 P4 懒加载）。
   await ensureNamespacesForPath(to.path)
   next()
 })
