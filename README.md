@@ -47,6 +47,11 @@ cp6.web/      前端    src/{views,api,stores,types,components,composables,i18n,
 | 路径 | 内容 |
 |---|---|
 | `docs/00-{功能盘点,执行计划总盘,product-blueprint}.md` | **战略入口三件套**：现状缺口 / 计划清单+顺序 / 建设蓝图 |
+| **`docs/CODEMAP.md`** | 🗺️ **代码地图（初学者第一份导航）**：每个文件夹作用 / 11 业务域 / 一个请求怎么穿全系统 / 学习路线 |
+| **`docs/codemap-erp/`** | 🔬 **代码级实现手册·ERP**：販売主线（見積→御見積→製品→受注→出荷回写）逐页逐行 + 真实代码片段/错误码（CODEMAP 的放大镜续篇） |
+| **`docs/codemap-mes/`** | 🔬 **代码级实现手册·MES**：製造執行（製造指図→製造実績→品質/不良→設備/OEE→計画板/分析）逐页逐行 + 真实代码片段/错误码 |
+| **`docs/codemap-wms/`** | 🔬 **代码级实现手册·WMS**：倉庫管理（库存写入铁律→入庫→出庫/出荷5接缝→棚卸/補充/期限FEFO/QC→紙器特化→業界連携）逐页逐行 + 真实代码片段/错误码 |
+| **`docs/codemap-{fin,pur,wf,pub,plan}/`** | 🔬 **代码级实现手册·中后台**：财务(总账/往来/三表成本对账/资产预算)·采购(PO/收货/三单匹配/外注)·OA审批·权限平台·计划中台 MRP，逐页逐行 + 真实代码片段/错误码（**11 业务域代码级手册至此全齐**） |
 | `docs/PROJECT_STRUCTURE.md` · `DEVELOPMENT-GUIDE.md` | 项目结构参考 / 开发上手指南 |
 | `docs/superpowers/specs/` · `docs/superpowers/plans/` | 设计 spec / 实施计划（16 份 2026-06-13-*） |
 | `docs/{pub,finance,oa,procurement,space,approval}/` | 各新模块设计丛书 |
