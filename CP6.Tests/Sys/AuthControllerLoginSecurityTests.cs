@@ -42,7 +42,8 @@ public class AuthControllerLoginSecurityTests
         var audit = new SecurityAuditService(db);
         var refresh = new RefreshTokenService(db, opt, new TenantContext());
         var blacklist = new CacheTokenBlacklistService(new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions())));
-        var ctl = new AuthController(db, new ConfigurationBuilder().Build(), new FakePermCtx(), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, opt);
+        var cookies = new AuthCookieWriter(opt);
+        var ctl = new AuthController(db, new ConfigurationBuilder().Build(), new FakePermCtx(), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, cookies, opt);
         ctl.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return (ctl, db, user);
     }

@@ -44,8 +44,9 @@ public class AuthControllerChangePasswordTests
         var audit = new SecurityAuditService(db);
         var refresh = new RefreshTokenService(db, opt, new TenantContext());
         var blacklist = new CacheTokenBlacklistService(new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions())));
+        var cookies = new AuthCookieWriter(opt);
         var cfg = new ConfigurationBuilder().Build();
-        var ctl = new AuthController(db, cfg, new FakePermCtx(user.Id), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, opt);
+        var ctl = new AuthController(db, cfg, new FakePermCtx(user.Id), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, cookies, opt);
         ctl.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return (ctl, db, user);
     }

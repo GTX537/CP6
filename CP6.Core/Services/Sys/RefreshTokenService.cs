@@ -63,6 +63,11 @@ public class RefreshTokenService : IRefreshTokenService
             throw new InvalidOperationException("E-SEC-008");   // 检测到令牌重用
         }
 
+        // ⚠️ 已知并发窗口（T4 review M1，专项后续）：此处「读 RevokedAt==null → 改 RevokedAt → 加新行」
+        // 非原子。同一原始令牌并发提交（多标签页同时刷新）可能两请求都读到未吊销→各发一条新令牌（静默双活，
+        // 不触发重用检测）。真正盗用场景（旧令牌被攻击者重放）仍能在后续轮换被检出，故影响有限、非阻塞。
+        // 彻底修法：带条件原子吊销（ExecuteUpdate ... WHERE Id=@id AND RevokedAt IS NULL 校验受影响行=1，
+        // 否则视为竞态/重用）或加 RowVersion 乐观并发——二者均与 InMemory 测试基建冲突，留作专项（须配 SQLite 并发测）。
         // 由令牌的 TenantId 回设上下文，后续查询/盖章按其租户正确作用域
         _tenant.CurrentTenantId = row.TenantId;
         var user = await _db.Sys_Users.IgnoreQueryFilters().FirstAsync(u => u.Id == row.UserId);

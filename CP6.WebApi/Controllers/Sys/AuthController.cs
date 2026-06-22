@@ -31,9 +31,10 @@ public class AuthController : LocalizedControllerBase
     private readonly ISecurityAuditService _audit;
     private readonly IRefreshTokenService _refresh;
     private readonly ITokenBlacklistService _blacklist;
+    private readonly IAuthCookieWriter _cookies;
     private readonly SecurityOptions _sec;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IOptions<SecurityOptions> sec)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IAuthCookieWriter cookies, IOptions<SecurityOptions> sec)
     {
         _context = context;
         _config = config;
@@ -45,7 +46,24 @@ public class AuthController : LocalizedControllerBase
         _audit = audit;
         _refresh = refresh;
         _blacklist = blacklist;
+        _cookies = cookies;
         _sec = sec.Value;
+    }
+
+    /// <summary>签发 access JWT（短寿命，带 jti + must_change_password）。登录/刷新复用。</summary>
+    private string BuildAccessToken(Sys_User user, string jti, bool mustChange)
+    {
+        var jwt = _config.GetSection("JWT");
+        return JwtHelper.GenerateToken(
+            userId: user.Id.ToString(),
+            userName: user.UserName,
+            secret: jwt["Secret"]!,
+            issuer: jwt["Issuer"]!,
+            audience: jwt["Audience"]!,
+            expireMinutes: _sec.Token.AccessTokenMinutes,
+            tenantId: user.TenantId,
+            jti: jti,
+            mustChangePassword: mustChange);
     }
 
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -141,19 +159,9 @@ public class AuthController : LocalizedControllerBase
         // 3. 生成 JWT Token（带 tenant_id，后续请求由 TenantMiddleware 解析）。
         //    T5：带 jti（登出黑名单吊销用）+ must_change_password claim；access TTL 取
         //    SecurityOptions.Token.AccessTokenMinutes（短令牌 + 刷新令牌轮换，替代旧 120min 长令牌）。
-        var jwt = _config.GetSection("JWT");
         var jti = Guid.NewGuid().ToString();
         var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-        var token = JwtHelper.GenerateToken(
-            userId: user.Id.ToString(),
-            userName: user.UserName,
-            secret: jwt["Secret"]!,
-            issuer: jwt["Issuer"]!,
-            audience: jwt["Audience"]!,
-            expireMinutes: _sec.Token.AccessTokenMinutes,
-            tenantId: user.TenantId,
-            jti: jti,
-            mustChangePassword: mustChange);
+        var token = BuildAccessToken(user, jti, mustChange);
 
         // 4. 登录聚合（PUB 章09）：预热权限上下文（多角色聚合 + 缓存），首请求免重建
         var ctx = await _perm.PrewarmAsync(user.Id);
@@ -177,14 +185,20 @@ public class AuthController : LocalizedControllerBase
         await _login.RecordSuccessAsync(user, ClientIp);
         await _audit.LogAsync(SecurityEventType.LoginSuccess, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa);
 
-        // 6. 返回 Token、用户信息和菜单权限
+        // 6. T6 Cookie 化：签发 refresh 令牌 + CSRF 令牌，三者写 httpOnly/双提交 Cookie。
+        //    access JWT 不再随 body 返回（防 XSS 读取 localStorage token）。
+        var rawRt = await _refresh.IssueAsync(user, ClientIp, ClientUa);
+        var csrf = AuthCookieWriter.NewCsrfToken();
+        _cookies.WriteAuthCookies(Response, token, rawRt, csrf);
+
+        // 7. 返回用户信息和菜单权限（不含 token；mustChangePassword 供前端守卫跳改密页）
         return Ok(new
         {
-            token,
             userName = user.UserName,
             nickName = user.NickName,
             roleId = user.RoleId,
-            menus
+            menus,
+            mustChangePassword = mustChange
         });
     }
 
@@ -231,23 +245,28 @@ public class AuthController : LocalizedControllerBase
     }
 
     /// <summary>
-    /// 刷新令牌轮换。从 httpOnly cookie <c>cp6_rt</c> 读原始令牌 → 轮换（吊旧发新 + 重用检测）。
+    /// 刷新令牌轮换。从 httpOnly cookie <c>cp6_rt</c> 读原始令牌 → 轮换（吊旧发新 + 重用检测）→
+    /// 签发新 access JWT（新 jti）+ 新 CSRF，写三 Cookie + 审计 TokenRefreshed。
     /// POST /api/auth/refresh
-    /// 本步（T4）落地轮换服务接缝；签发新 access JWT（带 jti，T5）、写三 Cookie + 审计 TokenRefreshed（T6）后续叠加。
     /// </summary>
     [HttpPost("refresh")]
     [AllowAnonymous]
     public async Task<IActionResult> Refresh()
     {
-        var raw = Request.Cookies["cp6_rt"];
+        var raw = Request.Cookies[AuthCookieWriter.RefreshCookie];
         if (string.IsNullOrEmpty(raw))
             throw new BizException("E-SEC-007");
         try
         {
+            // RotateAsync 内已由令牌回设 _tenant.CurrentTenantId，后续签发/审计按其租户作用域
             var (newRaw, user) = await _refresh.RotateAsync(raw, ClientIp, ClientUa);
-            // T6：签发新 access JWT + AuthCookieWriter 写 cp6_at/cp6_rt/cp6_csrf + 审计 TokenRefreshed。
-            // 本步先把新令牌透传 body 便于过渡期联调（cookie 化前不留真实刷新链路）。
-            return Ok(new { code = 0, refreshToken = newRaw, userName = user.UserName });
+            var jti = Guid.NewGuid().ToString();
+            var mustChange = user.MustChangePassword || _policy.IsExpired(user);
+            var token = BuildAccessToken(user, jti, mustChange);
+            var csrf = AuthCookieWriter.NewCsrfToken();
+            _cookies.WriteAuthCookies(Response, token, newRaw, csrf);
+            await _audit.LogAsync(SecurityEventType.TokenRefreshed, user.Id, user.UserName, null, ClientIp, ClientUa);
+            return Ok(new { code = 0, userName = user.UserName, mustChangePassword = mustChange });
         }
         catch (InvalidOperationException ex)
         {
@@ -280,12 +299,13 @@ public class AuthController : LocalizedControllerBase
             await _blacklist.BlacklistAsync(jti, ttl);
         }
 
-        // 2. 吊销 refresh 令牌（cookie 化前 cp6_rt 可能为空，静默；T6 写入后此处真正吊销）
-        var raw = Request.Cookies["cp6_rt"];
+        // 2. 吊销 refresh 令牌（cp6_rt 不存在则静默）
+        var raw = Request.Cookies[AuthCookieWriter.RefreshCookie];
         if (!string.IsNullOrEmpty(raw))
             await _refresh.RevokeAsync(raw);
 
-        // 3. 清三 Cookie：T6 接入 IAuthCookieWriter.ClearAuthCookies(Response)（本步占位）
+        // 3. 清三 Cookie
+        _cookies.ClearAuthCookies(Response);
 
         // 4. 安全审计（登出）
         var uid = (await _perm.GetAsync()).UserId;

@@ -456,6 +456,8 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.ISecurityAuditService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Sys.IRefreshTokenService, CP6.Core.Services.Sys.RefreshTokenService>();
 // S 类认证加固（T5）：登出 jti 黑名单（基于 IDistributedCache）
 builder.Services.AddScoped<CP6.Core.Services.Sys.ITokenBlacklistService, CP6.Core.Services.Sys.CacheTokenBlacklistService>();
+// S 类认证加固（T6）：三认证 Cookie 写入器（httpOnly access/refresh + 双提交 CSRF）
+builder.Services.AddScoped<CP6.Core.Services.Sys.IAuthCookieWriter, CP6.Core.Services.Sys.AuthCookieWriter>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
@@ -472,10 +474,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = jwt["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Secret"]!))
         };
-        // S 类认证加固（T5）：jti 黑名单校验——登出后即使签名/有效期仍合法的 access 也被拒。
-        // （T6 将向同一 JwtBearerEvents 追加 OnMessageReceived 从 cp6_at cookie 读令牌。）
+        // S 类认证加固（T5/T6）：JWT 事件。
+        // T6 OnMessageReceived：从 httpOnly cookie cp6_at 读 access（Authorization 头优先，留兼容）。
+        // T5 OnTokenValidated：jti 黑名单校验——登出后即使签名/有效期仍合法的 access 也被拒。
         options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
         {
+            OnMessageReceived = ctx =>
+            {
+                if (string.IsNullOrEmpty(ctx.Token))
+                {
+                    var c = ctx.Request.Cookies[CP6.Core.Services.Sys.AuthCookieWriter.AccessCookie];
+                    if (!string.IsNullOrEmpty(c)) ctx.Token = c;
+                }
+                return Task.CompletedTask;
+            },
             OnTokenValidated = async ctx =>
             {
                 var jti = ctx.Principal?.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti)?.Value;
@@ -490,14 +502,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
-// 6. 注册 CORS（SignalR 需要 AllowCredentials + 指定 Origin）
+// 6. 注册 CORS（T6 收紧：Cookie 化后凭证随浏览器自动带，反射任意源 + AllowCredentials 是 CSRF/凭证泄露面）。
+//    改为显式 origin allowlist（Cors:AllowedOrigins，默认前端 dev http://localhost:5173）。
+//    AllowCredentials 与 WithOrigins 配合（SignalR WebSocket 亦需，且带凭证时本就不允许通配源）。
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                  ?? new[] { "http://localhost:5173" };
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
-        policy.SetIsOriginAllowed(_ => true)  // 允许所有来源
+        policy.WithOrigins(corsOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowCredentials());  // SignalR WebSocket 需要
+              .AllowCredentials());
 });
 
 var app = builder.Build();
@@ -2176,6 +2192,11 @@ app.UseMiddleware<CP6.WebApi.Middleware.TenantMiddleware>();
 
 // i18n 优化 P1：BizException → 本地化消息（须在 UseRequestLocalization 之后）。
 app.UseMiddleware<CP6.WebApi.Middleware.BizExceptionMiddleware>();
+
+// S 类认证加固（T6）：CSRF 双提交校验 + 强制改密拦截。须在 BizExceptionMiddleware 下游
+// （抛 BizException 被其捕获本地化）、UseAuthorization 上游、UseAuthentication 已在更上游（User 已填充）。
+app.UseMiddleware<CP6.WebApi.Middleware.CsrfMiddleware>();
+app.UseMiddleware<CP6.WebApi.Middleware.MustChangePasswordMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();
