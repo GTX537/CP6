@@ -1,6 +1,6 @@
 # 字段级审计回放设计 spec — S 类安全合规 #4（定稿）
 
-> 源：brainstorming 共识（2026-06-22）；定稿评审 2026-06-23（§9，7 点修订，全部锚点经只读 subagent 核验实代码）。底座 = #1 认证加固（已落码）；#2 2FA / #3 SSO 当前**仅有 spec、尚未落码**——本子项目**自洽，不硬依赖 #2/#3**（见 §0 / §9 R1）。本子项目在 `CP6Context.SaveChanges` 写入管道叠加**字段级 before/after 变更史**（who/when/what 全要素），补足现有"请求级操作日志（`Sys_OperLog`）+ 行级审计元字段（`BaseEntity.Creator/Modifier`）"缺失的**数据变更前后值留痕 + 时间线回放**。命名空间 **Sys**，多租户 `BaseTenantEntity`。
+> 源：brainstorming 共识（2026-06-22）；定稿评审 2026-06-23（§9，8 点修订，全部锚点经只读 subagent 核验实代码）。底座 = #1 认证加固（已落码）；#2 2FA / #3 SSO 当前**仅有 spec、尚未落码**——本子项目**自洽，不硬依赖 #2/#3**（见 §0 / §9 R1）。本子项目在 `CP6Context.SaveChanges` 写入管道叠加**字段级 before/after 变更史**（who/when/what 全要素），补足现有"请求级操作日志（`Sys_OperLog`）+ 行级审计元字段（`BaseEntity.Creator/Modifier`）"缺失的**数据变更前后值留痕 + 时间线回放**。命名空间 **Sys**，多租户 `BaseTenantEntity`。
 
 ## §0 范围
 
@@ -52,8 +52,8 @@ public class Sys_FieldAuditLog : BaseTenantEntity
 {
     /// <summary>被审计实体的 CLR 类型名（如 "Sys_User"）。</summary>
     [MaxLength(100)][Required] public string EntityName { get; set; } = string.Empty;
-    /// <summary>被审计实体主键（Guid 字符串）。</summary>
-    [MaxLength(64)][Required] public string EntityKey { get; set; } = string.Empty;
+    /// <summary>被审计实体主键字符串（经 EF 主键元数据提取，键形无关：Guid/int 直取，复合键以 "|" 连接；见 §3.4 R8）。</summary>
+    [MaxLength(128)][Required] public string EntityKey { get; set; } = string.Empty;
     /// <summary>操作：1=Added 2=Modified 3=Deleted。</summary>
     public int Operation { get; set; }
     /// <summary>字段差异 JSON：[{ "field":"Email", "old":"a@x", "new":"b@y" }, ...]。</summary>
@@ -79,7 +79,7 @@ public interface IAuditable { }
 public sealed class AuditIgnoreAttribute : Attribute { }
 ```
 - **首批 opt-in 实体（11 个，均已核验存在；实现 `IAuditable`）**：`Sys_User`、`Sys_Role`、`Sys_UserRole`、`Sys_RoleAction`、`Sys_RoleDataScope`、`Sys_RoleFieldPerm`、`Sys_Menu`、`Sys_Tenant`、`GlAccount`、`SupplierPrice`、`BusinessPartner`。
-  - 其中 `Sys_Role`/`Sys_Menu` 的 Modified 留痕依赖 §0 的控制器先查后改改造。
+  - 其中 `Sys_Role`/`Sys_Menu` 的 Modified 留痕依赖 §0 的控制器先查后改改造。**且 `Sys_Role`(int RoleId)/`Sys_Menu`(int MenuId) 为用户自定义 int 键、不继承 `BaseEntity`/`BaseTenantEntity`（无 `.Id`、无 `TenantId`）**——故 EntityKey 走通用主键提取、审计行 TenantId 回退 `CurrentTenantId`（见 §3.4 R8）。其余 9 个首批实体均 `BaseTenantEntity`/`BaseEntity`（`Guid Id`），其中 `Sys_Tenant` 为共享表（`BaseEntity` 无 `TenantId`）。
   - `Sys_UserRole`/`Sys_RoleAction`/`Sys_RoleDataScope`/`Sys_RoleFieldPerm` 为权限结点表，写入多为增/删（重新授权）→ Added/Deleted 留痕即足。
   - **延后（待 #2/#3 落码后补标，无需改捕获逻辑）**：`Sys_TenantSsoConfig`（#3，当前不存在）。
 - **`[AuditIgnore]` 首批标注（已核验存在）**：`Sys_User.Password`。
@@ -96,7 +96,7 @@ public sealed class AuditIgnoreAttribute : Attribute { }
 > 核验：现有库内敏感列 `Sys_User.Password`（在拒名单）、`Sys_RefreshToken.TokenHash`/`ReplacedByTokenHash`、`Sys_PasswordHistory.PasswordHash`、`Pub_Attachment.FileHash` 均被"以 `Hash` 结尾"/`Password` 命中（前三者非首批 opt-in，属纵深防御；`FileHash` 为完整性校验非密钥，被排除无害）。无 `Salt` 字段（BCrypt 自带内嵌 salt）。结论：拒名单**覆盖充分**。
 
 ### §3.2 跳过字段集
-捕获时统一跳过：主键 `Id`、`TenantId`、行级元字段 `Creator/CreateDate/Modifier/ModifyDate`（已有行级审计，避免噪音）、`[AuditIgnore]` 字段、拒名单字段、导航属性（仅标量列）。
+捕获时统一跳过：**全部主键列**（经 `entry.Metadata.FindPrimaryKey().Properties` 识别，含 `Guid Id` 与 int `RoleId`/`MenuId` 等；**勿写死 `Id`**）、`TenantId`、行级元字段 `Creator/CreateDate/Modifier/ModifyDate`（已有行级审计，避免噪音）、`[AuditIgnore]` 字段、拒名单字段、导航属性（仅标量列）。
 
 ### §3.3 `ICurrentUserAccessor`（`CP6.Core/Services/Sys/`）
 ```csharp
@@ -106,28 +106,46 @@ public interface ICurrentUserAccessor { Guid? UserId { get; } string? UserName {
 
 ### §3.4 捕获 + 原子落库（`CP6Context`）
 
-**两阶段（兑现"原子"目标，因 `Id` store-generated，Added 键须存后取）：**
+**主键提取键形无关（评审 R8）**：首批键形不一——9 个 `BaseTenantEntity`/`BaseEntity` 为 `Guid Id`（store-generated），**`Sys_Role`(int RoleId)/`Sys_Menu`(int MenuId) 为用户自定义 int 键、无 `.Id`**。故 EntityKey **不得写死** `entry.Entity.Id`，须经 EF 主键元数据提取：
 
 ```
+private static string ExtractKey(EntityEntry e)
+{
+    var pk = e.Metadata.FindPrimaryKey();
+    if (pk == null) return "";
+    return string.Join("|", pk.Properties.Select(p => e.Property(p.Name).CurrentValue?.ToString() ?? ""));
+}
+```
+- store-generated（Guid Identity）：存前临时值 → **存后**取真值（Added 在 step5 重取）。
+- 用户自定义键（int RoleId/MenuId）：存前已知。
+- 复合键：`|` 连接（首批均单列，前瞻兼容）。
+
+**两阶段（兑现"原子"目标 + 兼容 store-generated 键）：**
+
+```
+record PendingAudit(EntityEntry Entry, int Operation, List<FieldChange> Changes, string KeyBeforeSave, Guid TenantId);
+
 private List<PendingAudit> CaptureFieldAuditBeforeSave()
 {
     var list = new List<PendingAudit>();
     foreach (var e in ChangeTracker.Entries<IAuditable>())   // 触发 DetectChanges（AutoDetectChangesEnabled 默认 true）
     {
         if (e.State is not (Added or Modified or Deleted)) continue;
-        var changes = BuildChanges(e);          // 跳过集 + 拒名单；Modified 仅 IsModified && !Equals(orig,cur)
+        var changes = BuildChanges(e);          // 跳过全部主键列+TenantId+元字段 + 拒名单；Modified 仅 IsModified && !Equals(orig,cur)
         if (e.State == Modified && changes.Count == 0) continue;   // 空改不记
-        list.Add(new PendingAudit(e /*EntityEntry 引用*/, MapOp(e.State), changes));
+        var tenant = e.Entity is BaseTenantEntity bt ? bt.TenantId : CurrentTenantId;   // 此刻业务实体已 StampTenant
+        list.Add(new PendingAudit(e, MapOp(e.State), changes, ExtractKey(e) /*Added 为临时值，step5 重取*/, tenant));
     }
-    return list;   // 此刻不读 Added 的 Id（临时值）
+    return list;
 }
 ```
 1. `SaveChanges`/`SaveChangesAsync` 重写内：`StampTenant()` → `var pending = CaptureFieldAuditBeforeSave()`。
 2. 若 `pending` 空 → 直接 `base.SaveChanges(acceptAllChangesOnSuccess)`（零开销）。
 3. 否则：**relational**（`Database.IsRelational()` 为真）时 `if (Database.CurrentTransaction == null) using var tx = Database.BeginTransaction()`（无环境事务才自开；有则参与不另开）；**InMemory** 跳过事务（不支持，且会告警/抛）。
-4. `var result = base.SaveChanges(acceptAllChangesOnSuccess)`（业务变更落库，Added 的 `Id` 落定真值）。
-5. 对每个 `pending`：读 `entry.Entity.Id`（现为真值）→ 建 `Sys_FieldAuditLog{ EntityName=ClrType.Name, EntityKey=Id.ToString(), Operation, Changes=JsonSerialize(changes), UserId=_user?.UserId, UserName=_user?.UserName, ChangedAt=DateTime.Now, TenantId=ResolveAuditTenant(entry) }` → `Sys_FieldAuditLogs.Add`。
-   - **审计行 TenantId 归属（评审 R4）**：`ResolveAuditTenant(entry)` = `entry.Entity is BaseTenantEntity bt ? bt.TenantId : CurrentTenantId`。即审计行**镜像业务实体的 TenantId**（业务实体经 step1 `StampTenant` 已定 TenantId；后台 Worker 按租户循环写他租数据时也正确）；**共享表**（`Sys_Tenant` 等 `BaseEntity` 无 TenantId）回退 `CurrentTenantId`（落操作者当前租户上下文，超管系统上下文审阅；文档化接受）。step6 走 `base.SaveChanges` 不经 `StampTenant`，故此处**显式设** TenantId（避免二次遍历）。
+4. `var result = base.SaveChanges(acceptAllChangesOnSuccess)`（业务变更落库，Added 的键落定真值）。
+5. 对每个 `pa in pending`：取键 `var key = pa.Operation == (int)Added ? ExtractKey(pa.Entry) /*存后真值，仍 tracked*/ : pa.KeyBeforeSave /*Modified/Deleted 存前已知；Deleted 存后已 Detached 不可重取*/;` → 建 `Sys_FieldAuditLog{ EntityName=pa.Entry.Metadata.ClrType.Name, EntityKey=key, Operation=pa.Operation, Changes=JsonSerialize(pa.Changes), UserId=_user?.UserId, UserName=_user?.UserName, ChangedAt=DateTime.Now, TenantId=pa.TenantId }` → `Sys_FieldAuditLogs.Add`。
+   - **审计行 TenantId 归属（评审 R4）**：step1 已捕获 `pa.TenantId`——业务实体是 `BaseTenantEntity`→**镜像其 TenantId**（后台 Worker 按租户循环写他租数据时也正确）；**共享表/无租户实体**（`Sys_Tenant`/`Sys_Role`/`Sys_Menu`）回退 `CurrentTenantId`（落操作者当前租户上下文，超管系统上下文审阅；文档化接受）。step6 走 `base.SaveChanges` 不经 `StampTenant`，故此处**显式设** TenantId。
+   - **Deleted 键时序（R8）**：Deleted 实体存后转 Detached、不可重取键 → 用 step1 的 `KeyBeforeSave`（删除前键已知，无 store-generated 顾虑）；仅 Added 在 step5 重取。
 6. `base.SaveChanges(acceptAllChangesOnSuccess: true)`（审计行落库）。relational：`tx.Commit()`。返 step4 的 `result`（业务影响行数；审计行数不计入返回值）。
    - **审计行自身不被审计**（`Sys_FieldAuditLog` 不实现 `IAuditable`）。
    - 异常（任一 `base.SaveChanges` 抛）：relational 事务回滚（业务+审计同生同死=原子）；记 `ILogger`。
@@ -180,7 +198,7 @@ private List<PendingAudit> CaptureFieldAuditBeforeSave()
 - **密钥护栏**：改 `Sys_User.Password` → `Changes` **不含**该字段（`[AuditIgnore]` 与拒名单各一测，含一例"故意不标 `[AuditIgnore]`、靠拒名单兜底"的字段）。
 - **跳过集**：仅改 `Modifier/ModifyDate` → 无审计行（空改）；`Id/TenantId` 不入 diff。
 - **用户归属**：注入有用户 → `UserId/UserName` 落；注入 null（后台）→ null。
-- **键落定**：Added 实体审计行 `EntityKey` == 落定后的真 `Id`（InMemory 验两阶段在同一 `SaveChanges` 周期内完成）。
+- **键落定 + 键形无关（R8）**：Guid 键实体 Added → 审计行 `EntityKey` == 落定后的真 `Id` 串（InMemory 验两阶段在同一 `SaveChanges` 周期内完成）；**`Sys_Menu`(int MenuId)/`Sys_Role`(int RoleId) Added/Modified → `EntityKey` == MenuId/RoleId 串（非空、非 "Id"）**；Deleted（任意键形）→ `EntityKey` == 删除前键（用 `KeyBeforeSave`）。
 - **审计行 TenantId（R4）**：双租户 InMemory，`BaseTenantEntity` 业务实体的审计行 TenantId==该实体 TenantId；查询端点只见本租户审计行。
 - `BuildChanges`/拒名单/`ResolveAuditTenant` 纯函数单测（值截断、null 处理、Invariant 格式、共享表回退）。
 - 控制器（仿 `SecurityLogControllerTests`，**直 `new FieldAuditController(db, fakeUser?)` 调方法**）：筛选 + 分页 clamp + 列表返 `{total,rows}` 且 `rows` 含 `changeCount` 不含完整 changes + `record` 时间线正序返完整 changes（反射读匿名）。**`[RequirePermission]` 不在单测覆盖**（直调绕过过滤器）——移交 §7.2 gstack/集成（评审 R5）。
@@ -204,7 +222,7 @@ private List<PendingAudit> CaptureFieldAuditBeforeSave()
 - 断连（attach-as-Modified）更新路径的原值补偿（如审计前强制 reload）/ `RepositoryBase` 先查后改化。
 - relational 原子回滚集成冒烟（Sqlite/真库）。
 
-## §9 定稿评审修订（2026-06-23，7 点；锚点经只读 subagent 核验实代码）
+## §9 定稿评审修订（2026-06-23，8 点；锚点经只读 subagent 核验实代码）
 
 | # | 发现（证据） | 修订 |
 |---|------|------|
@@ -215,9 +233,10 @@ private List<PendingAudit> CaptureFieldAuditBeforeSave()
 | **R5** | §7.1 原称单测验 `[RequirePermission]` "无权 403"——但范本 `SecurityLogControllerTests` 直 `new` 控制器**绕过**过滤器，不测 403 | §7.1 删 403 单测主张，改为 `{total,rows}` 反射 + 分页 clamp + 时间线正序；403 移交 §7.2 gstack/集成 |
 | **R6** | 原子回滚在 InMemory 不可验（无事务） | §7.1/§8 写明覆盖局限：键落定+同周期写入可验、真回滚仅 relational；列可选集成冒烟 |
 | **R7** | 落码歧义点 | §3.3/§3.4 点名 `Database.IsRelational()` 守事务、DI 自动构造注入（非 pooled，不改 AddDbContext）、`DetectChanges` 依赖、`acceptAllChangesOnSuccess` 透传；§4/§6 列表端点投影 `changeCount` 摘要（详情才返完整 changes，防大文本负载）；§8 收 DB 级级联删除不入审计 |
+| **R8** | EntityKey 提取写死 `entry.Entity.Id` 不成立——核验下钻键形：首批 `Sys_Role`(int RoleId)/`Sys_Menu`(int MenuId) **无 `.Id`、非 BaseTenantEntity**（其余 9 个为 Guid 键）；且原 §3.4 step5 对 Deleted 存后取键会遇 Detached entry | §2.1 EntityKey 改"主键字符串(键形无关)"+MaxLength 64→128；§3.2 跳过集改"全部主键列(FindPrimaryKey),勿写死 Id"；§3.4 加 `ExtractKey`(走主键元数据,`\|` 连接复合键)+`PendingAudit.KeyBeforeSave`(step1 捕获,Modified/Deleted 用之、Added step5 重取)+`TenantId` step1 捕获;§7.1 加 int 键/Deleted 键测试 |
 
 **核验补强（非问题）**：`Id` 经核实为 `[DatabaseGenerated(Identity)]` 无客户端默认 → store-generated 属实，两阶段对 Added 不可省；`CP6Context` 当前无事务/无其它 SaveChanges 副作用 → 两阶段事务为安全新增；`OnModelCreating` 反射批量确认 → 新表自动纳入过滤/索引/盖章；密钥拒名单经全库扫描确认覆盖充分。
 
 ---
 
-*生成于 2026-06-22；定稿 2026-06-23（§9 七点评审修订，全部 §1 锚点经只读 subagent 核验实代码）。源 brainstorming 2 决策（标记式 opt-in 高价值实体 + 字段 ignore · 每次变更一行+JSON 字段差异）+ 原子落库（用户确认）。底座 #1（已落码）；#4 自洽不硬依赖 #2/#3。实施 = subagent-driven，每 Task spec 审+质量审双过 + 先绿后本地 commit（不 push）+ gstack QA。下一步 = 据本定稿撰写实现计划（T1~Tn）。*
+*生成于 2026-06-22；定稿 2026-06-23（§9 八点评审修订，全部 §1 锚点经只读 subagent 核验实代码）。源 brainstorming 2 决策（标记式 opt-in 高价值实体 + 字段 ignore · 每次变更一行+JSON 字段差异）+ 原子落库（用户确认）。底座 #1（已落码）；#4 自洽不硬依赖 #2/#3。实施 = subagent-driven，每 Task spec 审+质量审双过 + 先绿后本地 commit（不 push）+ gstack QA。下一步 = 据本定稿撰写实现计划（T1~Tn）。*
