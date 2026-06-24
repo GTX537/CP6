@@ -463,6 +463,14 @@ builder.Services.AddDataProtection();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ITenantSsoConfigService, CP6.Core.Services.Sys.TenantSsoConfigService>();
 // S 类 #3 SSO（T3）：state/nonce/PKCE 一次性暂态（IDistributedCache）
 builder.Services.AddScoped<CP6.Core.Services.Sys.ISsoStateStore, CP6.Core.Services.Sys.SsoStateStore>();
+// S 类 #3 SSO（T4/T5/T6）：discovery seam（OidcDiscovery 内部 static ConcurrentDictionary 缓存 ConfigurationManager，
+//   故 Scoped 注册不影响跨请求缓存）+ 换码 seam + 编排服务。换码走命名 HttpClient "sso"（超时取 Sso.HttpTimeoutSeconds）。
+builder.Services.AddScoped<CP6.Core.Services.Sys.IOidcDiscovery, CP6.Core.Services.Sys.OidcDiscovery>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.ISsoTokenClient, CP6.Core.Services.Sys.SsoTokenClient>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.ISsoService, CP6.Core.Services.Sys.SsoService>();
+var ssoOpts = builder.Configuration.GetSection("Security:Sso").Get<CP6.Core.Services.Sys.SsoOptions>()
+              ?? new CP6.Core.Services.Sys.SsoOptions();
+builder.Services.AddHttpClient("sso", c => c.Timeout = TimeSpan.FromSeconds(ssoOpts.HttpTimeoutSeconds));
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");

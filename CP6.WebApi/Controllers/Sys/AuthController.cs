@@ -33,8 +33,10 @@ public class AuthController : LocalizedControllerBase
     private readonly ITokenBlacklistService _blacklist;
     private readonly IAuthCookieWriter _cookies;
     private readonly SecurityOptions _sec;
+    private readonly ITenantSsoConfigService _ssoConfig;
+    private readonly ISsoService _sso;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IAuthCookieWriter cookies, IOptions<SecurityOptions> sec)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IAuthCookieWriter cookies, IOptions<SecurityOptions> sec, ITenantSsoConfigService ssoConfig, ISsoService sso)
     {
         _context = context;
         _config = config;
@@ -48,6 +50,8 @@ public class AuthController : LocalizedControllerBase
         _blacklist = blacklist;
         _cookies = cookies;
         _sec = sec.Value;
+        _ssoConfig = ssoConfig;
+        _sso = sso;
     }
 
     /// <summary>签发 access JWT（短寿命，带 jti + must_change_password）。登录/刷新复用。</summary>
@@ -153,6 +157,16 @@ public class AuthController : LocalizedControllerBase
                 return BadRequest(new { message = Localizer["租户已停用"] });
         }
 
+        // #3 SSO（T6）：该租户强制 SSO 时拦截密码登录（break-glass 用户 AllowPasswordFallback=true 例外）。
+        //   按用户所属租户取配置（覆盖未带 TenantCode 的唯一名命中路径）；仅在密码已校验通过后判，
+        //   不泄露"强制 SSO"信号给未持有有效凭证者。
+        var ssoCfg = await _ssoConfig.GetByTenantIdAsync(user.TenantId);
+        if (ssoCfg is { Enabled: true, Enforced: true } && !user.AllowPasswordFallback)
+        {
+            await _audit.LogAsync(SecurityEventType.LoginFailed, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa, "sso enforced");
+            throw new BizException("E-SEC-021");
+        }
+
         // 章10：确定当前请求租户为该用户的租户 → 后续权限聚合/菜单查询按其租户正确作用域
         _tenant.CurrentTenantId = user.TenantId;
 
@@ -163,10 +177,31 @@ public class AuthController : LocalizedControllerBase
         var mustChange = user.MustChangePassword || _policy.IsExpired(user);
         var token = BuildAccessToken(user, jti, mustChange);
 
-        // 4. 登录聚合（PUB 章09）：预热权限上下文（多角色聚合 + 缓存），首请求免重建
-        var ctx = await _perm.PrewarmAsync(user.Id);
+        // 4. 登录聚合（PUB 章09）：预热权限上下文 + 菜单按全部角色聚合（多角色 RBAC 并集）。
+        //    放在记成功画像之前，避免聚合抛错时"已记成功但请求失败"的不一致。
+        var profile = await BuildProfileAsync(user, mustChange);
 
-        // 4.1 菜单按全部角色聚合（多角色 RBAC，取并集）
+        // 5. 登录确实成功（含预热/菜单均就绪）后才记成功画像 + 审计。
+        await _login.RecordSuccessAsync(user, ClientIp);
+        await _audit.LogAsync(SecurityEventType.LoginSuccess, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa);
+
+        // 6. T6 Cookie 化：签发 refresh 令牌 + CSRF 令牌，三者写 httpOnly/双提交 Cookie。
+        //    access JWT 不再随 body 返回（防 XSS 读取 localStorage token）。
+        var rawRt = await _refresh.IssueAsync(user, ClientIp, ClientUa);
+        var csrf = AuthCookieWriter.NewCsrfToken();
+        _cookies.WriteAuthCookies(Response, token, rawRt, csrf);
+
+        // 7. 返回用户信息和菜单权限（不含 token；mustChangePassword 供前端守卫跳改密页）
+        return Ok(profile);
+    }
+
+    /// <summary>
+    /// 登录态画像：预热权限上下文 + 按全部角色聚合菜单（并集）→ 返 { userName, nickName, roleId, menus, mustChangePassword }。
+    /// 密码 Login 与 SSO 落地 profile 端点共用，保证两路返回结构一致。
+    /// </summary>
+    private async Task<object> BuildProfileAsync(Sys_User user, bool mustChange)
+    {
+        var ctx = await _perm.PrewarmAsync(user.Id);
         var roleIds = ctx.RoleIds;
         var menuIds = await _context.Sys_RoleMenus
             .Where(rm => roleIds.Contains(rm.RoleId))
@@ -180,26 +215,90 @@ public class AuthController : LocalizedControllerBase
             .Select(m => new { id = m.MenuId, m.MenuName, m.RoutePath, m.Icon, m.ParentId, m.OrderNo } as object)
             .ToListAsync();
 
-        // 5. 登录确实成功（含预热/菜单均就绪）后才记成功画像 + 审计——
-        //    放在 Prewarm 之后，避免 Prewarm 抛错时"已记成功但请求失败"的不一致。
-        await _login.RecordSuccessAsync(user, ClientIp);
-        await _audit.LogAsync(SecurityEventType.LoginSuccess, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa);
-
-        // 6. T6 Cookie 化：签发 refresh 令牌 + CSRF 令牌，三者写 httpOnly/双提交 Cookie。
-        //    access JWT 不再随 body 返回（防 XSS 读取 localStorage token）。
-        var rawRt = await _refresh.IssueAsync(user, ClientIp, ClientUa);
-        var csrf = AuthCookieWriter.NewCsrfToken();
-        _cookies.WriteAuthCookies(Response, token, rawRt, csrf);
-
-        // 7. 返回用户信息和菜单权限（不含 token；mustChangePassword 供前端守卫跳改密页）
-        return Ok(new
+        return new
         {
             userName = user.UserName,
             nickName = user.NickName,
             roleId = user.RoleId,
             menus,
             mustChangePassword = mustChange
-        });
+        };
+    }
+
+    /// <summary>SSO 回调 redirect_uri：authorize/callback 同源计算（PublicBaseUrl 优先，否则本请求 scheme+host），防 open-redirect 且保两端 redirect_uri 字节一致。</summary>
+    private string SsoRedirectUri()
+        => (string.IsNullOrWhiteSpace(_sec.Sso.PublicBaseUrl)
+                ? $"{Request.Scheme}://{Request.Host}"
+                : _sec.Sso.PublicBaseUrl).TrimEnd('/') + _sec.Sso.CallbackPath;
+
+    /// <summary>SSO 落地/错误前端基址：FrontendBaseUrl 优先，否则回退 CORS 白名单首项（同站约束见 spec R4）。</summary>
+    private string FrontendBase()
+        => (_sec.Sso.FrontendBaseUrl
+                ?? _config.GetSection("Cors:AllowedOrigins").Get<string[]>()?.FirstOrDefault()
+                ?? "http://localhost:5173").TrimEnd('/');
+
+    /// <summary>
+    /// SSO 授权发起：按租户构建 OIDC authorize URL（discovery + PKCE + state），返前端跳转。
+    /// GET /api/auth/sso/authorize?tenantCode=&amp;returnUrl=
+    /// </summary>
+    [HttpGet("sso/authorize")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SsoAuthorize([FromQuery] string tenantCode, [FromQuery] string? returnUrl = null)
+    {
+        try
+        {
+            var url = await _sso.BuildAuthorizeUrlAsync(tenantCode, SsoRedirectUri(), returnUrl);
+            return Ok(new { authorizeUrl = url });
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new BizException(ex.Message);   // E-SEC-020（未配/未启用）/ E-SEC-028（discovery 不可达）
+        }
+    }
+
+    /// <summary>
+    /// SSO 回调：换码 + 验 ID Token + 映射/JIT → 签发会话（复用 Login 的 jti/access/refresh/CSRF Cookie 写入）→ 302 到前端落地屏。
+    /// 失败亦 302 落地屏并带 ?error=码（前端本地化），不写 Cookie。GET /api/auth/sso/callback?code=&amp;state=
+    /// </summary>
+    [HttpGet("sso/callback")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SsoCallback([FromQuery] string code, [FromQuery] string state)
+    {
+        var landing = $"{FrontendBase()}{_sec.Sso.PostLoginRedirect}";
+        try
+        {
+            var user = await _sso.HandleCallbackAsync(code, state, SsoRedirectUri());
+            _tenant.CurrentTenantId = user.TenantId;   // HandleCallback 已设，防御再设
+
+            var jti = Guid.NewGuid().ToString();
+            var token = BuildAccessToken(user, jti, mustChange: false);   // SSO 用户不走密码过期/强制改密
+            await _login.RecordSuccessAsync(user, ClientIp);
+            await _audit.LogAsync(SecurityEventType.SsoLoginSuccess, user.Id, user.UserName, null, ClientIp, ClientUa);
+
+            var rawRt = await _refresh.IssueAsync(user, ClientIp, ClientUa);
+            _cookies.WriteAuthCookies(Response, token, rawRt, AuthCookieWriter.NewCsrfToken());
+            return Redirect(landing);
+        }
+        catch (InvalidOperationException ex)
+        {
+            // 失败不写任何认证 Cookie；审计 + 把错误码透到落地屏由前端本地化。
+            await _audit.LogAsync(SecurityEventType.SsoLoginFailed, null, null, null, ClientIp, ClientUa, ex.Message);
+            return Redirect($"{landing}?error={Uri.EscapeDataString(ex.Message)}");
+        }
+    }
+
+    /// <summary>
+    /// 登录态画像（SSO 落地屏加载后由同站 XHR 调用拿菜单；亦可作通用 whoami）。需登录。
+    /// GET /api/auth/profile
+    /// </summary>
+    [HttpGet("profile")]
+    [Authorize]
+    public async Task<IActionResult> Profile()
+    {
+        var uid = (await _perm.GetAsync()).UserId;
+        var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
+        var mustChange = user.MustChangePassword || _policy.IsExpired(user);
+        return Ok(await BuildProfileAsync(user, mustChange));
     }
 
     /// <summary>
