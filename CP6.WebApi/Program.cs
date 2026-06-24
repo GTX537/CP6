@@ -1069,6 +1069,32 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
+    // S 类 #3 SSO（T7）：租户 SSO 配置菜单（116，挂"系统管理"100 组）+ admin 授权 + query/edit 操作权限点。
+    // 菜单驱动前端路由注册（无 Sys_Menu 则路由不注册）。MenuKey 本地回填（全局回填 §684 早于本菜单创建）。幂等。
+    if (!db.Sys_Menus.Any(m => m.MenuId == 116))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 116, MenuName = "SSO配置", RoutePath = "/sys/sso-config", Icon = "Key", ParentId = 100, OrderNo = 116, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 116 });
+        db.SaveChanges();
+    }
+    {
+        var ssoMenu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == 116);
+        if (ssoMenu != null && string.IsNullOrEmpty(ssoMenu.MenuKey))
+        {
+            ssoMenu.MenuKey = ssoMenu.RoutePath!.Trim('/').Replace('/', '-');   // → sys-sso-config
+            db.SaveChanges();
+        }
+        var ssoActions = new (int MenuId, string Code, string Name)[] { (116, "query", "查看"), (116, "edit", "编辑") };
+        foreach (var (menuId, code, name) in ssoActions)
+        {
+            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+        }
+        db.SaveChanges();
+    }
+
     // S 类授权加固(2026-06-22)：9 Sys 控制器细粒度权限点授 admin。
     // PermissionService.HasActionAsync 无 admin 旁路：贴 [RequirePermission] 的 Sys 端点必须在此 seed+授权 RoleId=1，否则 admin 也 403。幂等。
     // 菜单 MenuKey（101~113）由全局回填 §684（RoutePath 派生）已覆盖，无需本地补。
