@@ -461,6 +461,8 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IAuthCookieWriter, CP6.Core.Ser
 // S 类 #3 SSO（T2）：DataProtection（ClientSecret 加密，spec R7：全仓首次显式注册）+ 租户 SSO 配置服务
 builder.Services.AddDataProtection();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ITenantSsoConfigService, CP6.Core.Services.Sys.TenantSsoConfigService>();
+// S 类 #3 SSO（T3）：state/nonce/PKCE 一次性暂态（IDistributedCache）
+builder.Services.AddScoped<CP6.Core.Services.Sys.ISsoStateStore, CP6.Core.Services.Sys.SsoStateStore>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
