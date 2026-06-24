@@ -1,7 +1,10 @@
 using System.Collections.Specialized;
 using System.Web;
+using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -51,12 +54,26 @@ public class SsoServiceAuthorizeTests
         Enabled = enabled,
     };
 
+    /// <summary>T5：换码接缝（authorize 测试用不到，返 null 即可）。</summary>
+    private sealed class FakeTokenClient : ISsoTokenClient
+    {
+        public Task<string?> ExchangeCodeForIdTokenAsync(OidcEndpoints ep, Sys_TenantSsoConfig cfg, string clientSecret,
+                                                          string code, string codeVerifier, string redirectUri)
+            => Task.FromResult<string?>(null);
+    }
+
     private static (SsoService svc, SsoStateStore store) Make(Sys_TenantSsoConfig? cfg)
     {
         var cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
         var sec = Options.Create(new SecurityOptions());
         var store = new SsoStateStore(cache, sec);
-        var svc = new SsoService(new FakeConfig(cfg), store, new FakeDiscovery());
+        // T5：SsoService 构造扩为 8 依赖。BuildAuthorizeUrlAsync 只用前 3 个，其余给 InMemory/假实现即可。
+        var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        var svc = new SsoService(
+            new FakeConfig(cfg), store, new FakeDiscovery(),
+            new FakeTokenClient(), db, new SecurityAuditService(db),
+            new TenantContext(), new BCryptPasswordHasher());
         return (svc, store);
     }
 
