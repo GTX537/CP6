@@ -458,6 +458,9 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IRefreshTokenService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Sys.ITokenBlacklistService, CP6.Core.Services.Sys.CacheTokenBlacklistService>();
 // S 类认证加固（T6）：三认证 Cookie 写入器（httpOnly access/refresh + 双提交 CSRF）
 builder.Services.AddScoped<CP6.Core.Services.Sys.IAuthCookieWriter, CP6.Core.Services.Sys.AuthCookieWriter>();
+// S 类 #3 SSO（T2）：DataProtection（ClientSecret 加密，spec R7：全仓首次显式注册）+ 租户 SSO 配置服务
+builder.Services.AddDataProtection();
+builder.Services.AddScoped<CP6.Core.Services.Sys.ITenantSsoConfigService, CP6.Core.Services.Sys.TenantSsoConfigService>();
 
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
