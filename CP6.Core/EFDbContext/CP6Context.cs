@@ -98,6 +98,9 @@ public class CP6Context : DbContext
     /// <summary>刷新令牌 —— S 类认证加固 T4（轮换 + 重用检测；TokenHash 全局唯一）</summary>
     public DbSet<Sys_RefreshToken> Sys_RefreshTokens => Set<Sys_RefreshToken>();
 
+    /// <summary>租户 SSO 配置 —— S 类 #3（每租户一行；ClientSecret DataProtection 加密；TenantId 唯一索引）</summary>
+    public DbSet<Sys_TenantSsoConfig> Sys_TenantSsoConfigs => Set<Sys_TenantSsoConfig>();
+
     /// <summary>
     /// 富采番规则 —— PUB 章05 公共模组
     /// </summary>
@@ -567,6 +570,12 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => x.TokenHash).IsUnique().HasDatabaseName("UX_Sys_RefreshToken_TokenHash");
             e.HasIndex(x => x.UserId);
+        });
+
+        // S 类 #3 SSO：每租户一行（TenantId 单列唯一）。已含 TenantId → 反射批量自动跳过保留（spec R6 §1 锚点）。
+        modelBuilder.Entity<Sys_TenantSsoConfig>(e =>
+        {
+            e.HasIndex(x => x.TenantId).IsUnique().HasDatabaseName("UX_Sys_TenantSsoConfig_TenantId");
         });
 
         // PUB 章05 富采番：业务键唯一

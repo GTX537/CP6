@@ -64,4 +64,12 @@ public class Sys_User : BaseTenantEntity
     [MaxLength(64)] public string? LastLoginIp { get; set; }
     /// <summary>强制改密标志</summary>
     public bool MustChangePassword { get; set; }
+
+    // ───── S 类 #3 SSO：联邦身份链 + break-glass ─────
+    /// <summary>联邦身份 subject（IdP 的 sub）；与 ExternalProvider 共同唯一定位。null=本地账号。</summary>
+    [MaxLength(200)] public string? ExternalSubject { get; set; }
+    /// <summary>联邦身份提供方（ID Token 的 iss）；防跨 IdP sub 串号。</summary>
+    [MaxLength(300)] public string? ExternalProvider { get; set; }
+    /// <summary>强制 SSO 下的密码登录例外（break-glass）。默认 false。</summary>
+    public bool AllowPasswordFallback { get; set; }
 }

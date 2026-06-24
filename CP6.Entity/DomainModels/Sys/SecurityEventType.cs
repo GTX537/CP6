@@ -10,5 +10,13 @@ public enum SecurityEventType
     PasswordChanged = 5,
     TokenRefreshed = 6,
     TokenReuseDetected = 7,
-    PermissionDenied = 8
+    PermissionDenied = 8,
+
+    // 9~14 保留给 #2 2FA（spec §1 R1：#3 自洽不硬依赖 #2，刻意留空段）
+
+    // ───── S 类 #3 SSO/OIDC（spec §2.4）─────
+    SsoLoginSuccess = 15,
+    SsoLoginFailed = 16,
+    SsoUserProvisioned = 17,
+    SsoConfigChanged = 18
 }
