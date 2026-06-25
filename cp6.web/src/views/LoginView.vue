@@ -237,6 +237,13 @@ async function handleLogin() {
   loginSuccess.value = false
   try {
     const res: any = await authApi.login(form.value)
+    // #2 2FA（T9）：租户要求 2FA 时后端不签发 auth cookie，仅写 pending cookie（cp6_2fa/cp6_csrf），
+    // 回 { twoFactorRequired:true, mustEnroll }。此时绝不置 cp6_authed，转挑战屏/入会屏完成第二因素。
+    if (res?.twoFactorRequired === true) {
+      loginSuccess.value = true
+      router.push(res.mustEnroll === true ? '/sys/2fa-enroll' : '/sys/2fa-challenge')
+      return
+    }
     // T9：token 已由后端 Set-Cookie（httpOnly），前端仅存非敏感登录态标志
     localStorage.setItem('cp6_authed', '1')
     localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')

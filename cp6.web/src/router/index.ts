@@ -14,6 +14,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/operlog': () => import('@/views/pms/OperLogView.vue'),
   '/sys/security-log': () => import('@/views/pms/SecurityLogView.vue'),   // S类 T9 安全日志
   '/sys/sso-config': () => import('@/views/pms/SsoConfigView.vue'),   // S类 #3 SSO T9 租户配置（菜单116）
+  '/sys/2fa-settings': () => import('@/views/pms/TwoFactorSettingsView.vue'),   // S类 #2 2FA T9 自助启停+租户策略
   '/pub/dept': () => import('@/views/pms/DeptTreeView.vue'),   // PUB 章00 组织模型
   '/pub/role-perm': () => import('@/views/pms/RolePermView.vue'),   // PUB 章02 角色功能权限
   '/pub/data-scope': () => import('@/views/pms/DataScopeView.vue'),   // PUB 章03 数据权限
@@ -177,6 +178,21 @@ const staticRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/pms/SsoLandingView.vue'),
     meta: { standalone: true, title: 'SSO' }
   },
+  // S类 #2 2FA T9 登录第二因素屏：standalone，登录态尚未建立（cp6_authed 未置），
+  // 由后端 pending cookie(cp6_2fa) 承载，验证成功后本屏自行置 cp6_authed + 进首页。
+  // 守卫见 beforeEach：对这两条路径无条件放行（与 /sso/landing 同）。
+  {
+    path: '/sys/2fa-challenge',
+    name: '2fa-challenge',
+    component: () => import('@/views/pms/TwoFactorChallengeView.vue'),
+    meta: { standalone: true, title: '双因素验证' }
+  },
+  {
+    path: '/sys/2fa-enroll',
+    name: '2fa-enroll',
+    component: () => import('@/views/pms/TwoFactorEnrollView.vue'),
+    meta: { standalone: true, title: '设置双因素认证' }
+  },
   // 独立窗口（popup）模式：不走 LayoutView，没有侧边栏/头部
   {
     path: '/estimate-calc/window',
@@ -299,6 +315,13 @@ router.beforeEach(async (to, _from, next) => {
   // 1b. SSO 落地屏：回调后此刻尚无 cp6_authed（落地页调 profile 才置），须无条件放行，
   //     由落地页自行拉 profile 写登录态/或显错误回登录。
   if (to.path === '/sso/landing') {
+    next()
+    return
+  }
+
+  // 1c. #2 2FA 登录第二因素屏：密码已通过但 auth cookie 未签发（仅 pending cookie cp6_2fa），
+  //     故此刻无 cp6_authed，须无条件放行；验证成功后由屏内自行置 cp6_authed 进首页。
+  if (to.path === '/sys/2fa-challenge' || to.path === '/sys/2fa-enroll') {
     next()
     return
   }
