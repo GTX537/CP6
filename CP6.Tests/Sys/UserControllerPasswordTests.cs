@@ -6,6 +6,9 @@ using CP6.WebApi.Controllers.Sys;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
@@ -22,8 +25,11 @@ public class UserControllerPasswordTests
     private static (UserController ctl, CP6Context db) Make()
     {
         var db = TestHelper.CreateInMemoryContext();
-        var refresh = new RefreshTokenService(db, Options.Create(new SecurityOptions()), new TenantContext());
-        var ctl = new UserController(db, H, refresh)
+        var opt = Options.Create(new SecurityOptions());
+        var refresh = new RefreshTokenService(db, opt, new TenantContext());
+        IDistributedCache cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+        var twoFa = new TwoFactorService(db, new TotpService(opt), new LogEmailSender(NullLogger<LogEmailSender>.Instance), cache, new SecurityAuditService(db), opt);
+        var ctl = new UserController(db, H, refresh, twoFa)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
         };

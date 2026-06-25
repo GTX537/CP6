@@ -455,6 +455,83 @@ public class AuthController : LocalizedControllerBase
         return Ok(new { code = 0 });
     }
 
+    // ───────── #2 2FA（T7）§4.6：自助启停（均需登录，当前用户）─────────
+
+    /// <summary>2FA 状态：返 { enabled, tenantMode, canDisable }。canDisable = 已启用 && 租户非强制(mode!=2)。GET /api/auth/2fa/status</summary>
+    [HttpGet("2fa/status")]
+    [Authorize]
+    public async Task<IActionResult> TwoFactorStatus()
+    {
+        var uid = (await _perm.GetAsync()).UserId;
+        var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
+        var mode = _2fa.ResolveTenantMode(user.TenantId);
+        return Ok(new { enabled = user.TwoFactorEnabled, tenantMode = mode, canDisable = user.TwoFactorEnabled && mode != 2 });
+    }
+
+    /// <summary>自助入会准备：开新密钥 + 返 otpauthUri + secret。已启用拒 E-SEC-017。POST /api/auth/2fa/setup-self</summary>
+    [HttpPost("2fa/setup-self")]
+    [Authorize]
+    public async Task<IActionResult> TwoFactorSetupSelf()
+    {
+        var uid = (await _perm.GetAsync()).UserId;
+        var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
+        if (user.TwoFactorEnabled) throw new BizException("E-SEC-017");
+        string uri;
+        try { uri = _2fa.BeginEnrollment(user); }
+        catch (InvalidOperationException ex) { throw new BizException(ex.Message); }
+        await _context.SaveChangesAsync();
+        return Ok(new { otpauthUri = uri, secret = user.TwoFactorSecret });
+    }
+
+    /// <summary>自助入会确认：验码通过 → 置 Enabled。失败 E-SEC-011。POST /api/auth/2fa/enroll-self</summary>
+    [HttpPost("2fa/enroll-self")]
+    [Authorize]
+    public async Task<IActionResult> TwoFactorEnrollSelf([FromBody] TwoFactorCodeRequest req)
+    {
+        var uid = (await _perm.GetAsync()).UserId;
+        var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
+        if (!await _2fa.ConfirmEnrollmentAsync(user, req.Code))
+            throw new BizException("E-SEC-011");
+        await _context.SaveChangesAsync();
+        return Ok(new { code = 0 });
+    }
+
+    /// <summary>自助关闭：验密码 E-SEC-006 → 租户强制拒 E-SEC-019 → 验码(email/totp) E-SEC-011 → 重置。POST /api/auth/2fa/disable-self</summary>
+    [HttpPost("2fa/disable-self")]
+    [Authorize]
+    public async Task<IActionResult> TwoFactorDisableSelf([FromBody] DisableTwoFactorRequest req)
+    {
+        var uid = (await _perm.GetAsync()).UserId;
+        var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
+
+        if (!_hasher.Verify(req.CurrentPassword, user.Password))
+            throw new BizException("E-SEC-006");
+        if (_2fa.ResolveTenantMode(user.TenantId) == 2)
+            throw new BizException("E-SEC-019");   // 强制租户不可自助关闭
+
+        var ok = string.Equals(req.Method, "email", StringComparison.OrdinalIgnoreCase)
+            ? await _2fa.VerifyEmailOtpAsync("self:" + user.Id, req.Code)
+            : _2fa.VerifyTotp(user, req.Code);
+        if (!ok) throw new BizException("E-SEC-011");
+
+        await _2fa.ResetAsync(user, "self-disable");
+        await _context.SaveChangesAsync();
+        await _audit.LogAsync(SecurityEventType.TwoFactorReset, user.Id, user.UserName, null, ClientIp, ClientUa, "self-disable");
+        return Ok(new { code = 0 });
+    }
+
+    /// <summary>自助发送邮件 OTP（otpKey=self:{uid}，用于 disable-self 的 email 分支）。无邮箱/限流/发送失败 → BizException。POST /api/auth/2fa/email-otp-self</summary>
+    [HttpPost("2fa/email-otp-self")]
+    [Authorize]
+    public async Task<IActionResult> TwoFactorEmailOtpSelf()
+    {
+        var uid = (await _perm.GetAsync()).UserId;
+        var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
+        try { await _2fa.SendEmailOtpAsync(user, "self:" + user.Id); }
+        catch (InvalidOperationException ex) { throw new BizException(ex.Message); }  // E-SEC-015/016/018
+        return Ok(new { code = 0 });
+    }
+
     /// <summary>
     /// 自助改密（需登录）。校验旧密码 → 策略 → 历史不可重用 → 旧哈希入历史 + 写新哈希。
     /// POST /api/auth/change-password
@@ -575,3 +652,5 @@ public record ChangePasswordRequest(string CurrentPassword, string NewPassword);
 public record TwoFactorCodeRequest(string Code);
 /// <summary>2FA 挑战验证请求（method=email|totp 默认 totp）。</summary>
 public record TwoFactorVerifyRequest(string Code, string? Method);
+/// <summary>自助关闭 2FA 请求（当前密码 + 验证码 + method=email|totp 默认 totp）。</summary>
+public record DisableTwoFactorRequest(string CurrentPassword, string Code, string? Method);

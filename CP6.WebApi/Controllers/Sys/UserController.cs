@@ -16,12 +16,14 @@ public class UserController : LocalizedControllerBase
     private readonly CP6Context _context;
     private readonly IPasswordHasher _hasher;
     private readonly IRefreshTokenService _refresh;
+    private readonly ITwoFactorService _2fa;
 
-    public UserController(CP6Context context, IPasswordHasher hasher, IRefreshTokenService refresh)
+    public UserController(CP6Context context, IPasswordHasher hasher, IRefreshTokenService refresh, ITwoFactorService twoFa)
     {
         _context = context;
         _hasher = hasher;
         _refresh = refresh;
+        _2fa = twoFa;
     }
 
     [HttpGet]
@@ -102,6 +104,18 @@ public class UserController : LocalizedControllerBase
 
         await _context.SaveChangesAsync();
         return Ok(new { existing.Id, existing.UserName, existing.NickName, existing.RoleId, existing.Enable });
+    }
+
+    /// <summary>管理员重置用户 2FA（清启用/密钥/入会时间，复用 user:edit 权限点）。POST /api/user/reset-2fa</summary>
+    [HttpPost("reset-2fa")]
+    [RequirePermission("user", "edit")]
+    public async Task<IActionResult> ResetTwoFactor([FromBody] Guid userId)
+    {
+        var u = await _context.Sys_Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (u == null) return NotFound();
+        await _2fa.ResetAsync(u, "admin-reset");
+        await _context.SaveChangesAsync();
+        return Ok(new { code = 0 });
     }
 
     [HttpDelete]
