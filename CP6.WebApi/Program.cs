@@ -472,6 +472,28 @@ var ssoOpts = builder.Configuration.GetSection("Security:Sso").Get<CP6.Core.Serv
               ?? new CP6.Core.Services.Sys.SsoOptions();
 builder.Services.AddHttpClient("sso", c => c.Timeout = TimeSpan.FromSeconds(ssoOpts.HttpTimeoutSeconds));
 
+// S 类 #2 2FA（T3）：邮件发送器工厂。
+//   - 配 Email:Smtp:Host → 真发（SmtpEmailSender）。
+//   - 未配 + Dev → 走 LogEmailSender（OTP 写日志，便于本地 QA）。
+//   - 未配 + 非 Dev + 邮件回退启用 → 启动期抛错，防生产把 OTP 泄到日志。
+//   - 未配 + 非 Dev + EmailFallbackEnabled=false → 仍返 LogEmailSender 但永不会被 TwoFactorService 调用。
+builder.Services.AddScoped<CP6.Core.Services.Sys.IEmailSender>(sp =>
+{
+    var cfg = sp.GetRequiredService<IConfiguration>();
+    var env = sp.GetRequiredService<IWebHostEnvironment>();
+    var host = cfg["Email:Smtp:Host"];
+    if (!string.IsNullOrWhiteSpace(host))
+        return new CP6.Core.Services.Sys.SmtpEmailSender(cfg);
+    if (env.IsDevelopment())
+        return new CP6.Core.Services.Sys.LogEmailSender(
+            sp.GetRequiredService<ILogger<CP6.Core.Services.Sys.LogEmailSender>>());
+    var twoFa = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<CP6.Core.Services.Sys.SecurityOptions>>().Value.TwoFactor;
+    if (twoFa.EmailFallbackEnabled)
+        throw new InvalidOperationException("生产环境启用邮件OTP回退但未配置 Email:Smtp:Host——拒绝以日志兜底(防OTP泄露)；配置SMTP或设 Security:TwoFactor:EmailFallbackEnabled=false");
+    return new CP6.Core.Services.Sys.LogEmailSender(
+        sp.GetRequiredService<ILogger<CP6.Core.Services.Sys.LogEmailSender>>()); // 仅当显式关闭邮件回退（永不被调用）
+});
+
 // 5. 配置 JWT 认证
 var jwt = builder.Configuration.GetSection("JWT");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
