@@ -12,7 +12,13 @@ public enum SecurityEventType
     TokenReuseDetected = 7,
     PermissionDenied = 8,
 
-    // 9~14 保留给 #2 2FA（spec §1 R1：#3 自洽不硬依赖 #2，刻意留空段）
+    // ───── S 类 #2 2FA（spec §5）─────
+    TwoFactorChallenged = 9,
+    TwoFactorVerified = 10,
+    TwoFactorFailed = 11,
+    TwoFactorEnrolled = 12,
+    TwoFactorReset = 13,
+    TwoFactorEmailOtpSent = 14,
 
     // ───── S 类 #3 SSO/OIDC（spec §2.4）─────
     SsoLoginSuccess = 15,

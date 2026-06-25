@@ -472,6 +472,11 @@ var ssoOpts = builder.Configuration.GetSection("Security:Sso").Get<CP6.Core.Serv
               ?? new CP6.Core.Services.Sys.SsoOptions();
 builder.Services.AddHttpClient("sso", c => c.Timeout = TimeSpan.FromSeconds(ssoOpts.HttpTimeoutSeconds));
 
+// S 类 #2 2FA（T1/T4）：TOTP + Pending 暂态 + 编排服务。
+builder.Services.AddScoped<CP6.Core.Services.Sys.ITotpService, CP6.Core.Services.Sys.TotpService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IPendingTokenStore, CP6.Core.Services.Sys.PendingTokenStore>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.ITwoFactorService, CP6.Core.Services.Sys.TwoFactorService>();
+
 // S 类 #2 2FA（T3）：邮件发送器工厂。
 //   - 配 Email:Smtp:Host → 真发（SmtpEmailSender）。
 //   - 未配 + Dev → 走 LogEmailSender（OTP 写日志，便于本地 QA）。
