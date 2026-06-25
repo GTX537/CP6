@@ -65,6 +65,14 @@ public class Sys_User : BaseTenantEntity
     /// <summary>强制改密标志</summary>
     public bool MustChangePassword { get; set; }
 
+    // ───── S 类 #2 2FA：TOTP 密钥 + 状态 ─────
+    /// <summary>是否已启用 2FA（TOTP 绑定完成）</summary>
+    public bool TwoFactorEnabled { get; set; }
+    /// <summary>TOTP 密钥（base32）。MVP 明文存列（列加密见 spec §9）</summary>
+    [MaxLength(128)] public string? TwoFactorSecret { get; set; }
+    /// <summary>2FA 绑定时刻</summary>
+    public DateTime? TwoFactorEnrolledAt { get; set; }
+
     // ───── S 类 #3 SSO：联邦身份链 + break-glass ─────
     /// <summary>联邦身份 subject（IdP 的 sub）；与 ExternalProvider 共同唯一定位。null=本地账号。</summary>
     [MaxLength(200)] public string? ExternalSubject { get; set; }

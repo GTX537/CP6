@@ -29,4 +29,7 @@ public class Sys_Tenant : BaseEntity
     /// <summary>备注。</summary>
     [MaxLength(500)]
     public string? Remark { get; set; }
+
+    /// <summary>租户 2FA 策略：0=关闭 1=可选 2=强制。默认 0。</summary>
+    public int TwoFactorMode { get; set; }
 }
