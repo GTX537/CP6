@@ -12,6 +12,12 @@ public interface IAuthCookieWriter
     /// <summary>写三 Cookie（登录 / 刷新成功后调用）。</summary>
     void WriteAuthCookies(HttpResponse resp, string accessJwt, string rawRefresh, string csrf);
 
-    /// <summary>清三 Cookie（登出调用）。</summary>
+    /// <summary>清三 Cookie + cp6_2fa（登出调用，连带清 pending 半登录态）。</summary>
     void ClearAuthCookies(HttpResponse resp);
+
+    /// <summary>写 pending Cookie（S 类 #2 T5）：cp6_2fa(httpOnly,Path=/api/auth)+cp6_csrf(评审#1 2FA 端点亦走双提交)。</summary>
+    void WritePendingCookies(HttpResponse resp, string pendingToken, string csrf);
+
+    /// <summary>清 pending Cookie（2FA 完成 / 取消时调用，含 cp6_2fa；cp6_csrf 由后续 WriteAuthCookies 覆盖）。</summary>
+    void ClearPendingCookies(HttpResponse resp);
 }

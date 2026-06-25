@@ -60,4 +60,36 @@ public class JwtHelper
         // 4. 生成 Token 字符串
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    /// <summary>
+    /// 生成 2FA pending 半登录令牌（S 类 #2 T5）。短命（PendingTokenMinutes，默认 5）+ 自带 jti 用于一次性消费校验。
+    /// purpose ∈ {2fa_verify, 2fa_enroll}；存 token_use claim，T6 端点据此守卫（评审#4 邮件不绕过入会）。
+    /// </summary>
+    public static string GeneratePendingToken(
+        string userId,
+        Guid tenantId,
+        string purpose,
+        string pendingJti,
+        string secret,
+        string issuer,
+        string audience,
+        int minutes)
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, userId),
+            new Claim("tenant_id", tenantId.ToString()),
+            new Claim("token_use", purpose),
+            new Claim(JwtRegisteredClaimNames.Jti, pendingJti)
+        };
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(minutes),
+            signingCredentials: credentials);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
 }

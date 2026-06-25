@@ -13,6 +13,8 @@ public class AuthCookieWriter : IAuthCookieWriter
     public const string AccessCookie = "cp6_at";
     public const string RefreshCookie = "cp6_rt";
     public const string CsrfCookie = "cp6_csrf";
+    /// <summary>2FA pending 半登录 Cookie（S 类 #2 T5）。Path=/api/auth（与 2FA 端点共享）。</summary>
+    public const string PendingCookie = "cp6_2fa";
     /// <summary>refresh 令牌 cookie 仅在 /api/auth 路径回传（缩小暴露面：刷新/登出端点均在此前缀下）。</summary>
     public const string RefreshPath = "/api/auth";
 
@@ -38,8 +40,23 @@ public class AuthCookieWriter : IAuthCookieWriter
 
     public void ClearAuthCookies(HttpResponse resp)
     {
-        foreach (var (name, path) in new[] { (AccessCookie, "/"), (RefreshCookie, RefreshPath), (CsrfCookie, "/") })
+        foreach (var (name, path) in new[] { (AccessCookie, "/"), (RefreshCookie, RefreshPath), (CsrfCookie, "/"), (PendingCookie, RefreshPath) })
             resp.Cookies.Append(name, "",
                 new CookieOptions { Expires = DateTimeOffset.UnixEpoch, Path = path, Secure = _c.Secure, SameSite = Same });
+    }
+
+    public void WritePendingCookies(HttpResponse resp, string pendingToken, string csrf)
+    {
+        resp.Cookies.Append(PendingCookie, pendingToken,
+            new CookieOptions { HttpOnly = true, Secure = _c.Secure, SameSite = Same, Path = RefreshPath });
+        // 2FA 端点（POST /api/auth/2fa/*）也走 CSRF 双提交（评审#1）→ 写 cp6_csrf 供前端读出回填
+        resp.Cookies.Append(CsrfCookie, csrf,
+            new CookieOptions { HttpOnly = false, Secure = _c.Secure, SameSite = Same, Path = "/" });
+    }
+
+    public void ClearPendingCookies(HttpResponse resp)
+    {
+        resp.Cookies.Append(PendingCookie, "",
+            new CookieOptions { Expires = DateTimeOffset.UnixEpoch, Path = RefreshPath, Secure = _c.Secure, SameSite = Same });
     }
 }
