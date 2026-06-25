@@ -17,5 +17,9 @@ export const authApi = {
   // 改密：成功后后端吊销所有 refresh，需重新登录
   changePassword(data: { currentPassword: string; newPassword: string }) {
     return http.post('/auth/change-password', data)
+  },
+  // #3 SSO（T9）：登录态画像（落地屏拿菜单/用户信息；同站 XHR 携 cp6_at Cookie）
+  profile() {
+    return http.get('/auth/profile')
   }
 }

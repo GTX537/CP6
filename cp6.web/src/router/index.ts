@@ -13,6 +13,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/dict': () => import('@/views/pms/DictView.vue'),
   '/operlog': () => import('@/views/pms/OperLogView.vue'),
   '/sys/security-log': () => import('@/views/pms/SecurityLogView.vue'),   // S类 T9 安全日志
+  '/sys/sso-config': () => import('@/views/pms/SsoConfigView.vue'),   // S类 #3 SSO T9 租户配置（菜单116）
   '/pub/dept': () => import('@/views/pms/DeptTreeView.vue'),   // PUB 章00 组织模型
   '/pub/role-perm': () => import('@/views/pms/RolePermView.vue'),   // PUB 章02 角色功能权限
   '/pub/data-scope': () => import('@/views/pms/DataScopeView.vue'),   // PUB 章03 数据权限
@@ -168,6 +169,14 @@ const staticRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/pms/ChangePasswordView.vue'),
     meta: { standalone: true, title: '修改密码' }
   },
+  // S类 #3 SSO T9 落地屏：standalone，回调 302 落地后由 JS 同站 XHR 拉 profile 写登录态。
+  // 进入时尚无 cp6_authed（profile 才置），故守卫需对 /sso/landing 放行（见 beforeEach）。
+  {
+    path: '/sso/landing',
+    name: 'sso-landing',
+    component: () => import('@/views/pms/SsoLandingView.vue'),
+    meta: { standalone: true, title: 'SSO' }
+  },
   // 独立窗口（popup）模式：不走 LayoutView，没有侧边栏/头部
   {
     path: '/estimate-calc/window',
@@ -283,6 +292,13 @@ router.beforeEach(async (to, _from, next) => {
 
   // 1. 去登录页，放行
   if (to.path === '/login') {
+    next()
+    return
+  }
+
+  // 1b. SSO 落地屏：回调后此刻尚无 cp6_authed（落地页调 profile 才置），须无条件放行，
+  //     由落地页自行拉 profile 写登录态/或显错误回登录。
+  if (to.path === '/sso/landing') {
     next()
     return
   }

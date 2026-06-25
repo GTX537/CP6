@@ -84,6 +84,11 @@
               {{ loginSuccess ? $t('login.entering') : $t('login.button') }}
             </el-button>
           </el-form-item>
+          <el-form-item class="sso-action">
+            <button type="button" class="sso-button" :disabled="ssoLoading" @click="handleSsoLogin">
+              {{ ssoLoading ? $t('sec.sso.redirecting') : $t('sec.sso.loginButton') }}
+            </button>
+          </el-form-item>
         </el-form>
 
         <div class="lang-switch">
@@ -141,6 +146,7 @@ import type { FormInstance } from 'element-plus'
 import { ArrowDown, Check, Hide, Lock, OfficeBuilding, User, View } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { authApi } from '@/api/sys/auth'
+import { ssoApi } from '@/api/sys/sso'
 import { langOptions, changeLang } from '@/i18n'
 import { addDynamicRoutes } from '@/router'
 
@@ -148,6 +154,7 @@ const { t, locale } = useI18n()
 const router = useRouter()
 const formRef = ref<FormInstance>()
 const loading = ref(false)
+const ssoLoading = ref(false)
 const currentLang = ref(locale.value)
 const pointerX = ref(50)
 const pointerY = ref(40)
@@ -254,6 +261,24 @@ async function handleLogin() {
     loginSuccess.value = false
   } finally {
     loading.value = false
+  }
+}
+
+// #3 SSO（T9）：SSO 登录入口。必须先有租户编码（SSO 按租户配 IdP），跳转到 IdP 授权端点。
+async function handleSsoLogin() {
+  const tenantCode = form.value.tenantCode.trim()
+  if (!tenantCode) {
+    showTenant.value = true
+    ElMessage.warning(t('sec.sso.tenantCodePrompt'))
+    return
+  }
+  ssoLoading.value = true
+  try {
+    const { authorizeUrl } = await ssoApi.authorize(tenantCode)
+    window.location.href = authorizeUrl   // 整页跳转到 IdP（回调后落地屏 /sso/landing）
+  } catch {
+    // 错误（E-SEC-020/028）由 http.ts 拦截器统一提示
+    ssoLoading.value = false
   }
 }
 </script>
@@ -661,6 +686,36 @@ async function handleLogin() {
 .login-action {
   margin-top: 1.35rem;
   margin-bottom: 0.4rem !important;
+}
+
+.sso-action {
+  margin-bottom: 0.2rem !important;
+}
+
+.sso-button {
+  width: 100%;
+  height: 2.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: transform 0.22s ease, border-color 0.22s ease, background-color 0.22s ease;
+}
+
+.sso-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(125, 211, 252, 0.5);
+  background: rgba(125, 211, 252, 0.14);
+}
+
+.sso-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .lang-switch {
