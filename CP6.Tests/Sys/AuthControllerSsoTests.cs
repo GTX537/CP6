@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
@@ -44,8 +45,13 @@ public class AuthControllerSsoTests
         var login = new LoginSecurityService(db, opt);
         var audit = new SecurityAuditService(db);
         var refresh = new RefreshTokenService(db, opt, new TenantContext());
-        var blacklist = new CacheTokenBlacklistService(new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions())));
+        IDistributedCache cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+        var blacklist = new CacheTokenBlacklistService(cache);
         var cookies = new AuthCookieWriter(opt);
+        var totp = new TotpService(opt);
+        var email = new LogEmailSender(NullLogger<LogEmailSender>.Instance);
+        var pending = new PendingTokenStore(cache, opt);
+        var twoFa = new TwoFactorService(db, totp, email, cache, audit, opt);
         var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["JWT:Secret"] = "cp6_test_secret_key_at_least_32_bytes_long!!",
@@ -55,7 +61,7 @@ public class AuthControllerSsoTests
         }).Build();
         var ssoCfg = new FakeTenantSsoConfigService();
         var sso = new FakeSsoService();
-        var ctl = new AuthController(db, config, new FakePermCtx(uid), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, cookies, opt, ssoCfg, sso);
+        var ctl = new AuthController(db, config, new FakePermCtx(uid), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, cookies, opt, ssoCfg, sso, twoFa, pending);
         ctl.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return (ctl, db, ssoCfg, sso);
     }

@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CP6.WebApi.Controllers.Sys;
 
@@ -35,8 +38,10 @@ public class AuthController : LocalizedControllerBase
     private readonly SecurityOptions _sec;
     private readonly ITenantSsoConfigService _ssoConfig;
     private readonly ISsoService _sso;
+    private readonly ITwoFactorService _2fa;
+    private readonly IPendingTokenStore _pending;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IAuthCookieWriter cookies, IOptions<SecurityOptions> sec, ITenantSsoConfigService ssoConfig, ISsoService sso)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IAuthCookieWriter cookies, IOptions<SecurityOptions> sec, ITenantSsoConfigService ssoConfig, ISsoService sso, ITwoFactorService twoFa, IPendingTokenStore pending)
     {
         _context = context;
         _config = config;
@@ -52,6 +57,8 @@ public class AuthController : LocalizedControllerBase
         _sec = sec.Value;
         _ssoConfig = ssoConfig;
         _sso = sso;
+        _2fa = twoFa;
+        _pending = pending;
     }
 
     /// <summary>签发 access JWT（短寿命，带 jti + must_change_password）。登录/刷新复用。</summary>
@@ -169,6 +176,24 @@ public class AuthController : LocalizedControllerBase
 
         // 章10：确定当前请求租户为该用户的租户 → 后续权限聚合/菜单查询按其租户正确作用域
         _tenant.CurrentTenantId = user.TenantId;
+
+        // #2 2FA（T6）：用户已启用 2FA 或租户强制 → 写 pending 半登录态，不签发完整 access/refresh。
+        //   purpose=2fa_enroll(强制租户且未启用 → 必须先扫码绑定) / 2fa_verify(已启用 → 输码即可)。
+        //   pending 失败/超时/重放交由 /auth/2fa/verify(enroll) + IPendingTokenStore.Consume 守卫。
+        var twoFaMode = _2fa.ResolveTenantMode(user.TenantId);
+        if (_2fa.IsChallengeRequired(user, twoFaMode))
+        {
+            var purpose = _2fa.MustEnroll(user, twoFaMode) ? "2fa_enroll" : "2fa_verify";
+            var pendingJti = _pending.Create(user.Id, user.TenantId, purpose);
+            var jwtCfg = _config.GetSection("JWT");
+            var pendingToken = JwtHelper.GeneratePendingToken(
+                user.Id.ToString(), user.TenantId, purpose, pendingJti,
+                jwtCfg["Secret"]!, jwtCfg["Issuer"]!, jwtCfg["Audience"]!,
+                _sec.TwoFactor.PendingTokenMinutes);
+            _cookies.WritePendingCookies(Response, pendingToken, AuthCookieWriter.NewCsrfToken());
+            await _audit.LogAsync(SecurityEventType.TwoFactorChallenged, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa, purpose == "2fa_enroll" ? "enroll" : null);
+            return Ok(new { twoFactorRequired = true, mustEnroll = purpose == "2fa_enroll" });
+        }
 
         // 3. 生成 JWT Token（带 tenant_id，后续请求由 TenantMiddleware 解析）。
         //    T5：带 jti（登出黑名单吊销用）+ must_change_password claim；access TTL 取
@@ -301,6 +326,135 @@ public class AuthController : LocalizedControllerBase
         return Ok(await BuildProfileAsync(user, mustChange));
     }
 
+    // ───────── #2 2FA（T6）：4 端点 + ReadPending 守卫 ─────────
+
+    /// <summary>读取 cp6_2fa pending JWT → 校验签名/iss/aud/exp → 校验 pending 存仍在(一次性未消费)+(可选)purpose 匹配 → 加载用户(IgnoreQueryFilters) + 回设 _tenant。</summary>
+    private async Task<(Sys_User user, string jti, string purpose)> ReadPendingAsync(string? expectedPurpose = null)
+    {
+        var raw = Request.Cookies[AuthCookieWriter.PendingCookie];
+        if (string.IsNullOrEmpty(raw)) throw new BizException("E-SEC-013");
+
+        var jwtCfg = _config.GetSection("JWT");
+        var handler = new JwtSecurityTokenHandler();
+        try
+        {
+            handler.ValidateToken(raw, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtCfg["Issuer"],
+                ValidAudience = jwtCfg["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtCfg["Secret"]!))
+            }, out var validated);
+
+            var jwt = (JwtSecurityToken)validated;
+            var jti = jwt.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value;
+            var rec = _pending.Get(jti);
+            if (rec == null) throw new BizException("E-SEC-013");
+            if (expectedPurpose != null && !string.Equals(rec.Value.purpose, expectedPurpose, StringComparison.Ordinal))
+                throw new BizException("E-SEC-013");
+
+            var user = await _context.Sys_Users.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(u => u.Id == rec.Value.userId);
+            if (user == null) throw new BizException("E-SEC-013");
+            _tenant.CurrentTenantId = user.TenantId;
+            return (user, jti, rec.Value.purpose);
+        }
+        catch (BizException) { throw; }
+        catch
+        {
+            // 签名/aud/iss/exp 任一不通过 → 统一 E-SEC-013
+            throw new BizException("E-SEC-013");
+        }
+    }
+
+    /// <summary>完成 2FA：消费 pending + 写三 Cookie + 记成功画像/审计 + 返档案。verify/enroll 共用。</summary>
+    private async Task<object> CompleteLoginAfter2faAsync(Sys_User user, string pendingJti)
+    {
+        _pending.Consume(pendingJti);
+        var jti = Guid.NewGuid().ToString();
+        var mustChange = user.MustChangePassword || _policy.IsExpired(user);
+        var token = BuildAccessToken(user, jti, mustChange);
+        var profile = await BuildProfileAsync(user, mustChange);
+        await _login.RecordSuccessAsync(user, ClientIp);
+        await _audit.LogAsync(SecurityEventType.LoginSuccess, user.Id, user.UserName, null, ClientIp, ClientUa, "2fa");
+        var rawRt = await _refresh.IssueAsync(user, ClientIp, ClientUa);
+        _cookies.WriteAuthCookies(Response, token, rawRt, AuthCookieWriter.NewCsrfToken());
+        _cookies.ClearPendingCookies(Response);
+        return profile;
+    }
+
+    /// <summary>2FA 入会准备：开新密钥 + 返 otpauthUri + secret（前端渲二维码 + 手输备选）。已 Enabled 抛 E-SEC-017。POST /api/auth/2fa/setup</summary>
+    [HttpPost("2fa/setup")]
+    [AllowAnonymous]
+    public async Task<IActionResult> TwoFactorSetup()
+    {
+        var (user, _, _) = await ReadPendingAsync();
+        string uri;
+        try { uri = _2fa.BeginEnrollment(user); }
+        catch (InvalidOperationException ex) { throw new BizException(ex.Message); }
+        await _context.SaveChangesAsync();
+        return Ok(new { otpauthUri = uri, secret = user.TwoFactorSecret });
+    }
+
+    /// <summary>2FA 入会确认：验码 → 置 Enabled + 完成登录。purpose 必须为 2fa_enroll。POST /api/auth/2fa/enroll</summary>
+    [HttpPost("2fa/enroll")]
+    [AllowAnonymous]
+    public async Task<IActionResult> TwoFactorEnroll([FromBody] TwoFactorCodeRequest req)
+    {
+        var (user, jti, _) = await ReadPendingAsync("2fa_enroll");
+        if (!await _2fa.ConfirmEnrollmentAsync(user, req.Code))
+        {
+            await _audit.LogAsync(SecurityEventType.TwoFactorFailed, user.Id, user.UserName, null, ClientIp, ClientUa, "enroll");
+            throw new BizException("E-SEC-011");
+        }
+        await _context.SaveChangesAsync();
+        return Ok(await CompleteLoginAfter2faAsync(user, jti));
+    }
+
+    /// <summary>2FA 挑战验证：method=email→VerifyEmailOtp / 否则 TOTP。purpose 必须为 2fa_verify。POST /api/auth/2fa/verify</summary>
+    [HttpPost("2fa/verify")]
+    [AllowAnonymous]
+    public async Task<IActionResult> TwoFactorVerify([FromBody] TwoFactorVerifyRequest req)
+    {
+        var (user, jti, _) = await ReadPendingAsync("2fa_verify");
+
+        try { _login.EnsureNotLocked(user); }
+        catch (InvalidOperationException)
+        {
+            await _audit.LogAsync(SecurityEventType.AccountLocked, user.Id, user.UserName, null, ClientIp, ClientUa, "2fa locked");
+            throw new BizException("E-SEC-002");
+        }
+
+        var ok = string.Equals(req.Method, "email", StringComparison.OrdinalIgnoreCase)
+            ? await _2fa.VerifyEmailOtpAsync(jti, req.Code)
+            : _2fa.VerifyTotp(user, req.Code);
+
+        if (!ok)
+        {
+            await _login.RecordFailureAsync(user);
+            await _audit.LogAsync(SecurityEventType.TwoFactorFailed, user.Id, user.UserName, null, ClientIp, ClientUa, req.Method);
+            throw new BizException("E-SEC-011");
+        }
+
+        await _audit.LogAsync(SecurityEventType.TwoFactorVerified, user.Id, user.UserName, null, ClientIp, ClientUa, req.Method);
+        return Ok(await CompleteLoginAfter2faAsync(user, jti));
+    }
+
+    /// <summary>2FA 邮件 OTP 发送（仅 verify 态；入会态调用直接拒 E-SEC-014 评审#4 防绕过）。POST /api/auth/2fa/email-otp</summary>
+    [HttpPost("2fa/email-otp")]
+    [AllowAnonymous]
+    public async Task<IActionResult> TwoFactorEmailOtp()
+    {
+        var (user, jti, purpose) = await ReadPendingAsync();
+        if (purpose == "2fa_enroll") throw new BizException("E-SEC-014");
+        try { await _2fa.SendEmailOtpAsync(user, jti); }
+        catch (InvalidOperationException ex) { throw new BizException(ex.Message); }  // E-SEC-015/016/018
+        return Ok(new { code = 0 });
+    }
+
     /// <summary>
     /// 自助改密（需登录）。校验旧密码 → 策略 → 历史不可重用 → 旧哈希入历史 + 写新哈希。
     /// POST /api/auth/change-password
@@ -416,3 +570,8 @@ public class AuthController : LocalizedControllerBase
 
 /// <summary>改密请求体（当前密码 + 新密码）。</summary>
 public record ChangePasswordRequest(string CurrentPassword, string NewPassword);
+
+/// <summary>2FA 验码请求（enroll/email-otp 用 method=null）。</summary>
+public record TwoFactorCodeRequest(string Code);
+/// <summary>2FA 挑战验证请求（method=email|totp 默认 totp）。</summary>
+public record TwoFactorVerifyRequest(string Code, string? Method);

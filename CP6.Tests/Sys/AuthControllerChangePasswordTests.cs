@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
@@ -43,10 +44,15 @@ public class AuthControllerChangePasswordTests
         var login = new LoginSecurityService(db, opt);
         var audit = new SecurityAuditService(db);
         var refresh = new RefreshTokenService(db, opt, new TenantContext());
-        var blacklist = new CacheTokenBlacklistService(new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions())));
+        IDistributedCache cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+        var blacklist = new CacheTokenBlacklistService(cache);
         var cookies = new AuthCookieWriter(opt);
         var cfg = new ConfigurationBuilder().Build();
-        var ctl = new AuthController(db, cfg, new FakePermCtx(user.Id), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, cookies, opt, new FakeTenantSsoConfigService(), new FakeSsoService());
+        var totp = new TotpService(opt);
+        var email = new LogEmailSender(NullLogger<LogEmailSender>.Instance);
+        var pending = new PendingTokenStore(cache, opt);
+        var twoFa = new TwoFactorService(db, totp, email, cache, audit, opt);
+        var ctl = new AuthController(db, cfg, new FakePermCtx(user.Id), new TenantContext(), hasher, policy, login, audit, refresh, blacklist, cookies, opt, new FakeTenantSsoConfigService(), new FakeSsoService(), twoFa, pending);
         ctl.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
         return (ctl, db, user);
     }
