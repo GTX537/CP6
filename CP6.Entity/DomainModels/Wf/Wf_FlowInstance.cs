@@ -35,4 +35,8 @@ public class Wf_FlowInstance : BaseTenantEntity
 
     /// <summary>发起人 → Sys_User.Id</summary>
     public Guid StarterId { get; set; }
+
+    /// <summary>乐观并发标记（WFS P1）：并行分支近同时办结时序列化（后续 Task 6 用）。</summary>
+    [Timestamp]
+    public byte[]? RowVersion { get; set; }
 }

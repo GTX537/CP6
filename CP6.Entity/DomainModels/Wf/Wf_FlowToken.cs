@@ -1,0 +1,28 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CP6.Entity.DomainModels.Wf;
+
+/// <summary>
+/// 流程令牌（WFS P1 运行时内核）。一个 token = 实例内一个活动执行点（停留节点）。
+/// 单路径审批：一实例恒一 Active token；并行分叉：一实例多 Active token 并存。
+/// 血缘：ParentTokenId 串嵌套层级；ForkId 标同批分叉（parallelJoin 靠"同 ForkId 计数"认亲）。
+/// "实例进行中" = 存在 Active token（取代旧"CurrentNode 单值"判定）。
+/// </summary>
+[Table("Wf_FlowToken")]
+public class Wf_FlowToken : BaseTenantEntity
+{
+    public Guid InstanceId { get; set; }
+
+    [MaxLength(100)]
+    public string NodeId { get; set; } = string.Empty;
+
+    /// <summary>0=Active 1=Consumed 2=Cancelled。见 FlowTokenStatus。</summary>
+    public int Status { get; set; }
+
+    /// <summary>父令牌 Id（嵌套血缘）。根 token=null。</summary>
+    public Guid? ParentTokenId { get; set; }
+
+    /// <summary>分叉批次 Id（同批共享，join 认亲计数）。根/线性 token=null。</summary>
+    public Guid? ForkId { get; set; }
+}

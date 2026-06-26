@@ -40,4 +40,8 @@ public class Wf_FlowTask : BaseTenantEntity
 
     /// <summary>超时是否已处理（幂等：硬动作 approve/reject/escalate 处理过置 true，扫描不再处理）</summary>
     public bool TimeoutHandled { get; set; }
+
+    /// <summary>所属令牌 → Wf_FlowToken.Id（WFS P1）。会签计票按 (InstanceId,NodeId,TokenId) 隔离。
+    /// 可空：旧数据 / 回填前为 null（后续 Task 8 回填补齐）；新建 task 必带。</summary>
+    public Guid? TokenId { get; set; }
 }

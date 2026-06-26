@@ -385,6 +385,8 @@ public class CP6Context : DbContext
     public DbSet<Wf_ApprovalBinding> Wf_ApprovalBindings { get; set; }
     /// <summary>审批委派（OA 章07 §5，委托人→代理人有效期）</summary>
     public DbSet<Wf_FlowDelegate> Wf_FlowDelegates { get; set; }
+    /// <summary>流程令牌（WFS P1 运行时内核，并行分叉执行点）</summary>
+    public DbSet<Wf_FlowToken> Wf_FlowTokens { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -652,6 +654,11 @@ public class CP6Context : DbContext
         modelBuilder.Entity<Wf_ApprovalBinding>(e =>
         {
             e.HasIndex(x => x.BizType).IsUnique().HasDatabaseName("UX_Wf_ApprovalBinding_BizType");  // 一种业务类型一条绑定
+        });
+        modelBuilder.Entity<Wf_FlowToken>(e =>
+        {
+            e.HasIndex(x => new { x.InstanceId, x.Status }).HasDatabaseName("IX_Wf_FlowToken_InstanceStatus");
+            e.HasIndex(x => new { x.InstanceId, x.ForkId, x.NodeId }).HasDatabaseName("IX_Wf_FlowToken_Fork");
         });
 
         // ═══════════════════════════════════════════════════════════

@@ -19,3 +19,11 @@ public static class FlowTaskStatus
     public const int Cancelled = 3;   // 作废（节点已决/实例撤回/退回时清在途）
     public const int Suspended = 4;   // 挂起（前加签时原审批人临时挂起，加签人审完再激活，章07 §3）
 }
+
+/// <summary>流程令牌状态（Wf_FlowToken.Status）。Active 才参与流转 / join 计数。</summary>
+public static class FlowTokenStatus
+{
+    public const int Active = 0;
+    public const int Consumed = 1;
+    public const int Cancelled = 2;
+}

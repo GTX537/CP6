@@ -18,7 +18,8 @@ public class FlowNode
     public string Id { get; set; } = string.Empty;
     public string? Name { get; set; }
 
-    /// <summary>节点类型：start / approval / end</summary>
+    /// <summary>节点类型：start / approval / end / parallelSplit / parallelJoin。
+    /// parallelSplit=并行分叉(一入 N 出，无条件全激活)；parallelJoin=并行汇聚(N 入一出，等齐放行)。</summary>
     public string Type { get; set; } = "approval";
 
     // ── 审批人规则（C-3 映射为 ApproverRule；start/end 节点可空）──
