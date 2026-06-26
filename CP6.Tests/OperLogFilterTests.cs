@@ -44,6 +44,23 @@ public class OperLogFilterTests
     }
 
     /// <summary>
+    /// 创建 Mock 的 IOperLogTransport，并通过 callback 捕获投递给 Kafka 的 Sys_OperLog 对象，
+    /// 用于断言 Kafka payload（与 DB 降级共用同一 log 对象）也带上了 ImpersonatorId（R7）。
+    /// </summary>
+    private static Mock<IOperLogTransport> CreateCapturingTransport(out Func<Sys_OperLog?> published)
+    {
+        Sys_OperLog? captured = null;
+        var mock = new Mock<IOperLogTransport>();
+        mock.SetupGet(m => m.Name).Returns("Kafka");
+        mock.SetupGet(m => m.IsConnected).Returns(true);
+        mock.Setup(m => m.PublishAsync(It.IsAny<Sys_OperLog>()))
+            .Callback<Sys_OperLog>(l => captured = l)
+            .Returns(Task.CompletedTask);
+        published = () => captured;
+        return mock;
+    }
+
+    /// <summary>
     /// 构造模拟的 ActionExecutingContext + ActionExecutionDelegate
     /// 模拟一个 POST /api/dict/addType 请求
     /// </summary>
@@ -51,18 +68,21 @@ public class OperLogFilterTests
         string method = "POST",
         string path = "/api/dict/addType",
         string controller = "Dict",
-        string action = "AddType")
+        string action = "AddType",
+        params (string type, string value)[] extraClaims)
     {
         // 模拟 HttpContext
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Method = method;
         httpContext.Request.Path = path;
-        // 模拟登录用户
+        // 模拟登录用户（基础 Name claim + 调用方追加的额外 claim，如 impersonator_id）
+        var claims = new List<System.Security.Claims.Claim>
+        {
+            new(System.Security.Claims.ClaimTypes.Name, "testUser")
+        };
+        claims.AddRange(extraClaims.Select(c => new System.Security.Claims.Claim(c.type, c.value)));
         httpContext.User = new System.Security.Claims.ClaimsPrincipal(
-            new System.Security.Claims.ClaimsIdentity(new[]
-            {
-                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "testUser")
-            }, "TestAuth"));
+            new System.Security.Claims.ClaimsIdentity(claims, "TestAuth"));
 
         // 路由数据
         var routeData = new RouteData();
@@ -202,5 +222,90 @@ public class OperLogFilterTests
 
         // Assert：DB 无日志
         Assert.Equal(0, context.Sys_OperLogs.Count());
+    }
+
+    // ---- S 类 #5 T6 / R7：ImpersonatorId 单点构造 → Kafka payload + DB 降级两路径透传 ----
+
+    [Fact]
+    public async Task WithImpersonatorClaim_DbFallback_ShouldPersistImpersonatorId()
+    {
+        // Arrange：Kafka 不可用 → 降级写 DB。请求带 impersonator_id claim（替身操作）。
+        var context = TestHelper.CreateInMemoryContext();
+        var kafka = CreateMockTransport(isConnected: false);
+        var impId = Guid.NewGuid();
+
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig());
+        var (ctx, next) = CreateMockContext(
+            method: "POST", path: "/api/role/add", controller: "Role", action: "Add",
+            extraClaims: ("impersonator_id", impId.ToString()));
+
+        // Act
+        await filter.OnActionExecutionAsync(ctx, next);
+
+        // Assert：DB 行记录了真实平台超管 Id
+        Assert.Equal(1, context.Sys_OperLogs.Count());
+        Assert.Equal(impId, context.Sys_OperLogs.First().ImpersonatorId);
+    }
+
+    [Fact]
+    public async Task WithImpersonatorClaim_KafkaPath_PayloadShouldCarryImpersonatorId()
+    {
+        // Arrange：Kafka 可用 → 投递。捕获 payload，验证 Kafka 路径同样带上 ImpersonatorId（R7 核心）。
+        var context = TestHelper.CreateInMemoryContext();
+        var kafka = CreateCapturingTransport(out var published);
+        var impId = Guid.NewGuid();
+
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig());
+        var (ctx, next) = CreateMockContext(
+            method: "POST", path: "/api/role/add", controller: "Role", action: "Add",
+            extraClaims: ("impersonator_id", impId.ToString()));
+
+        // Act
+        await filter.OnActionExecutionAsync(ctx, next);
+
+        // Assert：未走 DB（走了 Kafka），且投递的 payload 对象带 ImpersonatorId
+        Assert.Equal(0, context.Sys_OperLogs.Count());
+        var payload = published();
+        Assert.NotNull(payload);
+        Assert.Equal(impId, payload!.ImpersonatorId);
+    }
+
+    [Fact]
+    public async Task WithoutImpersonatorClaim_ImpersonatorIdShouldBeNull()
+    {
+        // Arrange：普通（非替身）请求，无 impersonator_id claim → ImpersonatorId 应为 null。
+        var context = TestHelper.CreateInMemoryContext();
+        var kafka = CreateMockTransport(isConnected: false);
+
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig());
+        var (ctx, next) = CreateMockContext(
+            method: "POST", path: "/api/role/add", controller: "Role", action: "Add");
+
+        // Act
+        await filter.OnActionExecutionAsync(ctx, next);
+
+        // Assert
+        Assert.Equal(1, context.Sys_OperLogs.Count());
+        Assert.Null(context.Sys_OperLogs.First().ImpersonatorId);
+    }
+
+    [Fact]
+    public async Task WithGarbageImpersonatorClaim_ImpersonatorIdShouldBeNull()
+    {
+        // Arrange：impersonator_id claim 非合法 Guid（脏数据）→ TryParse 失败 → ImpersonatorId 为 null（不抛）。
+        var context = TestHelper.CreateInMemoryContext();
+        var kafka = CreateMockTransport(isConnected: false);
+
+        var filter = new OperLogFilter(context, kafka.Object, BuildConfig());
+        var (ctx, next) = CreateMockContext(
+            method: "POST", path: "/api/role/add", controller: "Role", action: "Add",
+            extraClaims: ("impersonator_id", "not-a-guid"));
+
+        // Act
+        await filter.OnActionExecutionAsync(ctx, next);
+
+        // Assert
+        Assert.Equal(1, context.Sys_OperLogs.Count());
+        Assert.Null(context.Sys_OperLogs.First().ImpersonatorId);
     }
 }

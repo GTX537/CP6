@@ -101,6 +101,11 @@ public class OperLogFilter : IAsyncActionFilter
         {
             // 章10：在此盖当前请求租户——既覆盖 DB 降级写，也随 Kafka payload 带到消费者落库（消费者 scope 是默认租户）
             TenantId = _context.CurrentTenantId,
+            // S 类 #5 R7：替身操作时从 impersonator_id claim 填真实平台超管 Id。
+            // 在构造处一次性设置 → Kafka payload 序列化与 DB 降级两条路径自然透传同一字段（非每路径分别填）。
+            ImpersonatorId = Guid.TryParse(context.HttpContext.User.FindFirst("impersonator_id")?.Value, out var impId)
+                              ? impId
+                              : (Guid?)null,
             UserName = userName,
             HttpMethod = method,
             RequestUrl = path,
