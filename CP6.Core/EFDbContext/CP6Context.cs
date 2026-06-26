@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using CP6.Core.Services.Common;
+using CP6.Core.Services.Sys;
 using CP6.Entity;
 using Microsoft.EntityFrameworkCore.Metadata;
 using CP6.Entity.DomainModels;
@@ -21,14 +22,17 @@ namespace CP6.Core.EFDbContext;
 public class CP6Context : DbContext
 {
     private readonly ITenantContext? _tenant;
+    private readonly ICurrentUserAccessor? _user;
 
     /// <summary>
     /// 多租户（章10）：可选注入 <see cref="ITenantContext"/>。生产由 DI 注入请求级租户；
     /// 单测/后台用单参构造 → 回退 <see cref="TenantContext.DefaultTenant"/>，故既有测试无需改造。
+    /// 字段审计（#4）：可选注入 <see cref="ICurrentUserAccessor"/>，EF Core 自动构造注入读取当前用户 claims。
     /// </summary>
-    public CP6Context(DbContextOptions<CP6Context> options, ITenantContext? tenant = null) : base(options)
+    public CP6Context(DbContextOptions<CP6Context> options, ITenantContext? tenant = null, ICurrentUserAccessor? user = null) : base(options)
     {
         _tenant = tenant;
+        _user = user;
     }
 
     /// <summary>当前租户 Id（全局查询过滤 + 写入盖章用）。无注入则默认租户。</summary>

@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -27,6 +28,17 @@ public static class TestHelper
             .Options;
 
         return new CP6Context(options);
+    }
+
+    /// <summary>
+    /// 创建 InMemory DbContext，并注入假当前用户（字段审计 #4 测试用）
+    /// </summary>
+    public static CP6Context CreateInMemoryContext(ICurrentUserAccessor? user, ITenantContext? tenant = null)
+    {
+        var options = new DbContextOptionsBuilder<CP6Context>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        return new CP6Context(options, tenant, user);
     }
 
     /// <summary>

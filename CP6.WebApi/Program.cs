@@ -477,6 +477,9 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.ITotpService, CP6.Core.Services
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPendingTokenStore, CP6.Core.Services.Sys.PendingTokenStore>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ITwoFactorService, CP6.Core.Services.Sys.TwoFactorService>();
 
+// S 类 #4 字段审计（T2）：从 JWT claims 读取当前用户（EF Core 自动构造注入到 CP6Context 第三参）。
+builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentUserAccessor, CP6.Core.Services.Sys.CurrentUserAccessor>();
+
 // S 类 #2 2FA（T3）：邮件发送器工厂。
 //   - 配 Email:Smtp:Host → 真发（SmtpEmailSender）。
 //   - 未配 + Dev → 走 LogEmailSender（OTP 写日志，便于本地 QA）。
