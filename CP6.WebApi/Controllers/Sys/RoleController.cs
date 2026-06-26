@@ -65,9 +65,19 @@ public class RoleController : LocalizedControllerBase
     [RequirePermission("role", "edit")]
     public async Task<IActionResult> Update([FromBody] Sys_Role entity)
     {
-        _context.Entry(entity).State = EntityState.Modified;
+        // #4 字段审计 T4：先查后改（替 attach-as-Modified），令 Modified diff 准确。
+        // 仅拷可编辑列；RoleId(PK) 与 CreateDate 刻意不动（无 Creator/Modifier）。
+        var existing = await _context.Sys_Roles.FindAsync(entity.RoleId);
+        if (existing == null)
+            return NotFound();
+
+        existing.RoleName = entity.RoleName;
+        existing.Description = entity.Description;
+        existing.Enable = entity.Enable;
+        existing.OrderNo = entity.OrderNo;
+
         await _context.SaveChangesAsync();
-        return Ok(entity);
+        return Ok(existing);
     }
 
     [HttpDelete]
