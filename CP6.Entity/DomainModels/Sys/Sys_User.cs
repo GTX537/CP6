@@ -26,6 +26,7 @@ public class Sys_User : BaseTenantEntity, IAuditable
     /// 昵称
     /// </summary>
     [MaxLength(100)]
+    [PiiField(Mode = PiiErase.Null)]
     public string? NickName { get; set; }
 
     /// <summary>
@@ -48,6 +49,7 @@ public class Sys_User : BaseTenantEntity, IAuditable
 
     /// <summary>邮箱（通知用）</summary>
     [MaxLength(100)]
+    [PiiField(Mode = PiiErase.Null)]
     public string? Email { get; set; }
 
     // ───── S 类认证加固：密码安全 + 登录画像 ─────
@@ -62,7 +64,9 @@ public class Sys_User : BaseTenantEntity, IAuditable
     /// <summary>最后成功登录时刻</summary>
     public DateTime? LastLoginTime { get; set; }
     /// <summary>最后登录 IP</summary>
-    [MaxLength(64)] public string? LastLoginIp { get; set; }
+    [MaxLength(64)]
+    [PiiField(Mode = PiiErase.Null)]
+    public string? LastLoginIp { get; set; }
     /// <summary>强制改密标志</summary>
     public bool MustChangePassword { get; set; }
 
@@ -81,4 +85,11 @@ public class Sys_User : BaseTenantEntity, IAuditable
     [MaxLength(300)] public string? ExternalProvider { get; set; }
     /// <summary>强制 SSO 下的密码登录例外（break-glass）。默认 false。</summary>
     public bool AllowPasswordFallback { get; set; }
+
+    // ───── S 类 #5 多租户合规：平台超管带外标志位 ─────
+    /// <summary>
+    /// 平台超级管理员（R1）：绕 RBAC 的带外标志位，防租户管理员自提权。
+    /// true=可访问 /api/platform/* 端点族（[RequirePlatformAdmin] 守卫，claim 快判 + DB 回查纵深防御）。默认 false。
+    /// </summary>
+    public bool IsPlatformAdmin { get; set; }
 }

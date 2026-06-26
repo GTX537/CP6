@@ -61,8 +61,10 @@ public class AuthController : LocalizedControllerBase
         _pending = pending;
     }
 
-    /// <summary>签发 access JWT（短寿命，带 jti + must_change_password）。登录/刷新复用。</summary>
-    private string BuildAccessToken(Sys_User user, string jti, bool mustChange)
+    /// <summary>签发 access JWT（短寿命，带 jti + must_change_password）。登录/刷新复用。
+    /// S 类 #5 T1：正常登录/刷新传 user.IsPlatformAdmin（平台超管令牌带 is_platform_admin claim）；
+    /// impersonation 流程不复用此方法（自带身份切换、单独签发，§T5）。</summary>
+    private string BuildAccessToken(Sys_User user, string jti, bool mustChange, bool isPlatformAdmin = false)
     {
         var jwt = _config.GetSection("JWT");
         return JwtHelper.GenerateToken(
@@ -74,7 +76,8 @@ public class AuthController : LocalizedControllerBase
             expireMinutes: _sec.Token.AccessTokenMinutes,
             tenantId: user.TenantId,
             jti: jti,
-            mustChangePassword: mustChange);
+            mustChangePassword: mustChange,
+            isPlatformAdmin: isPlatformAdmin);
     }
 
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -200,7 +203,7 @@ public class AuthController : LocalizedControllerBase
         //    SecurityOptions.Token.AccessTokenMinutes（短令牌 + 刷新令牌轮换，替代旧 120min 长令牌）。
         var jti = Guid.NewGuid().ToString();
         var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-        var token = BuildAccessToken(user, jti, mustChange);
+        var token = BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
 
         // 4. 登录聚合（PUB 章09）：预热权限上下文 + 菜单按全部角色聚合（多角色 RBAC 并集）。
         //    放在记成功画像之前，避免聚合抛错时"已记成功但请求失败"的不一致。
@@ -296,7 +299,7 @@ public class AuthController : LocalizedControllerBase
             _tenant.CurrentTenantId = user.TenantId;   // HandleCallback 已设，防御再设
 
             var jti = Guid.NewGuid().ToString();
-            var token = BuildAccessToken(user, jti, mustChange: false);   // SSO 用户不走密码过期/强制改密
+            var token = BuildAccessToken(user, jti, mustChange: false, isPlatformAdmin: user.IsPlatformAdmin);   // SSO 用户不走密码过期/强制改密
             await _login.RecordSuccessAsync(user, ClientIp);
             await _audit.LogAsync(SecurityEventType.SsoLoginSuccess, user.Id, user.UserName, null, ClientIp, ClientUa);
 
@@ -376,7 +379,7 @@ public class AuthController : LocalizedControllerBase
         _pending.Consume(pendingJti);
         var jti = Guid.NewGuid().ToString();
         var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-        var token = BuildAccessToken(user, jti, mustChange);
+        var token = BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
         var profile = await BuildProfileAsync(user, mustChange);
         await _login.RecordSuccessAsync(user, ClientIp);
         await _audit.LogAsync(SecurityEventType.LoginSuccess, user.Id, user.UserName, null, ClientIp, ClientUa, "2fa");
@@ -592,7 +595,7 @@ public class AuthController : LocalizedControllerBase
             var (newRaw, user) = await _refresh.RotateAsync(raw, ClientIp, ClientUa);
             var jti = Guid.NewGuid().ToString();
             var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-            var token = BuildAccessToken(user, jti, mustChange);
+            var token = BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
             var csrf = AuthCookieWriter.NewCsrfToken();
             _cookies.WriteAuthCookies(Response, token, newRaw, csrf);
             await _audit.LogAsync(SecurityEventType.TokenRefreshed, user.Id, user.UserName, null, ClientIp, ClientUa);

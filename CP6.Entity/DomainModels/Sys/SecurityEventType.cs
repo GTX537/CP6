@@ -24,5 +24,19 @@ public enum SecurityEventType
     SsoLoginSuccess = 15,
     SsoLoginFailed = 16,
     SsoUserProvisioned = 17,
-    SsoConfigChanged = 18
+    SsoConfigChanged = 18,
+
+    // ───── S 类 #5 多租户合规（spec §4/§5/§6）─────
+    TenantCreated = 19,
+    TenantUpdated = 20,
+    TenantSuspended = 21,
+    TenantReactivated = 22,
+    PlatformAdminGranted = 23,
+    PlatformAdminRevoked = 24,
+    ImpersonationStarted = 25,
+    ImpersonationEnded = 26,
+    GdprTenantExported = 27,
+    GdprSubjectExported = 28,
+    GdprTenantErased = 29,
+    GdprSubjectErased = 30
 }

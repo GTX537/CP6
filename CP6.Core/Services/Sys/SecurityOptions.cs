@@ -8,6 +8,8 @@ public class SecurityOptions {
     public CsrfOptions Csrf { get; set; } = new();
     public TwoFactorOptions TwoFactor { get; set; } = new();
     public SsoOptions Sso { get; set; } = new();
+    /// <summary>S 类 #5 多租户合规：impersonation 替身令牌有效期（分钟，默认 30）。</summary>
+    public int ImpersonationMinutes { get; set; } = 30;
 }
 public class SsoOptions {
     public int StateMinutes { get; set; } = 10;

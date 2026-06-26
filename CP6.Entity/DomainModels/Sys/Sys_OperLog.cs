@@ -19,6 +19,13 @@ public class Sys_OperLog
     public Guid TenantId { get; set; }
 
     /// <summary>
+    /// 替身操作人 Id（S 类 #5 impersonation §5.3，R7）：平台超管以目标用户身份操作时，
+    /// 记录发起替身的真实平台超管 Id（null=非替身操作）。本表非 BaseTenantEntity，同 TenantId 手加列；
+    /// 由 OperLogFilter 构造日志时从 impersonator_id claim 填入，Kafka payload 透传到 consumer。
+    /// </summary>
+    public Guid? ImpersonatorId { get; set; }
+
+    /// <summary>
     /// 操作人用户名
     /// </summary>
     [MaxLength(100)]
