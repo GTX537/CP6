@@ -15,6 +15,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/sys/security-log': () => import('@/views/pms/SecurityLogView.vue'),   // S类 T9 安全日志
   '/sys/sso-config': () => import('@/views/pms/SsoConfigView.vue'),   // S类 #3 SSO T9 租户配置（菜单116）
   '/sys/2fa-settings': () => import('@/views/pms/TwoFactorSettingsView.vue'),   // S类 #2 2FA T9 自助启停+租户策略
+  '/sys/field-audit': () => import('@/views/pms/FieldAuditView.vue'),   // S类 #4 字段审计 T7 列表+时间线
   '/pub/dept': () => import('@/views/pms/DeptTreeView.vue'),   // PUB 章00 组织模型
   '/pub/role-perm': () => import('@/views/pms/RolePermView.vue'),   // PUB 章02 角色功能权限
   '/pub/data-scope': () => import('@/views/pms/DataScopeView.vue'),   // PUB 章03 数据权限
