@@ -260,12 +260,12 @@ async function doUpdate() {
 // ── 停用 / 重启用 ────────────────────────────────────
 async function doSuspend(row: TenantRow) {
   await tenantApi.suspend(row.id)
-  ElMessage.success(t('table.saveSuccess'))
+  ElMessage.success(t('platform.saved'))
   loadData()
 }
 async function doReactivate(row: TenantRow) {
   await tenantApi.reactivate(row.id)
-  ElMessage.success(t('table.saveSuccess'))
+  ElMessage.success(t('platform.saved'))
   loadData()
 }
 
