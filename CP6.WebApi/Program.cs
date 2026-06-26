@@ -1099,6 +1099,34 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
+    // #4 字段审计（T5）：字段审计菜单（115，挂"系统管理"100 组）+ admin 授权 + query 操作权限点。
+    // 菜单驱动前端路由注册（无 Sys_Menu 则路由不注册 → 不可达，A4 H-3 教训）。
+    if (!db.Sys_Menus.Any(m => m.MenuId == 115))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 115, MenuName = "字段审计", RoutePath = "/sys/field-audit", Icon = "Document", ParentId = 100, OrderNo = 115, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 115 });
+        db.SaveChanges();
+    }
+    // 字段审计权限点：PermissionService.HasActionAsync 无 admin 旁路，[RequirePermission("sys-field-audit","query")]
+    // 须在此 seed + 授权 admin，否则 admin 也 403。幂等。MenuKey 本地回填（全局回填早于本菜单创建）。
+    {
+        var faMenu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == 115);
+        if (faMenu != null && string.IsNullOrEmpty(faMenu.MenuKey))
+        {
+            faMenu.MenuKey = faMenu.RoutePath!.Trim('/').Replace('/', '-');   // → sys-field-audit
+            db.SaveChanges();
+        }
+        var faActions = new (int MenuId, string Code, string Name)[] { (115, "query", "查看") };
+        foreach (var (menuId, code, name) in faActions)
+        {
+            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+        }
+        db.SaveChanges();
+    }
+
     // S 类 #3 SSO（T7）：租户 SSO 配置菜单（116，挂"系统管理"100 组）+ admin 授权 + query/edit 操作权限点。
     // 菜单驱动前端路由注册（无 Sys_Menu 则路由不注册）。MenuKey 本地回填（全局回填 §684 早于本菜单创建）。幂等。
     if (!db.Sys_Menus.Any(m => m.MenuId == 116))
