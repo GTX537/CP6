@@ -479,6 +479,8 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.ITwoFactorService, CP6.Core.Ser
 
 // S 类 #4 字段审计（T2）：从 JWT claims 读取当前用户（EF Core 自动构造注入到 CP6Context 第三参）。
 builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentUserAccessor, CP6.Core.Services.Sys.CurrentUserAccessor>();
+// S 类 #5 多租户合规（T3）：块① 平台租户管理（建租户原子开通首个 admin + 一次性临时密码 + 审计落平台租户）
+builder.Services.AddScoped<CP6.Core.Services.Platform.ITenantAdminService, CP6.Core.Services.Platform.TenantAdminService>();
 
 // S 类 #2 2FA（T3）：邮件发送器工厂。
 //   - 配 Email:Smtp:Host → 真发（SmtpEmailSender）。
