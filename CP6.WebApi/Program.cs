@@ -485,6 +485,8 @@ builder.Services.AddScoped<CP6.Core.Services.Platform.ITenantAdminService, CP6.C
 builder.Services.AddScoped<CP6.Core.Services.Platform.IPlatformAdminService, CP6.Core.Services.Platform.PlatformAdminService>();
 // S 类 #5 多租户合规（T5）：块② 完整 impersonation（start/end + R2 双向 jti 黑名单 + R3 imp 令牌 mustChange 恒 false + R5 审计落平台租户 + R9-c 真身已撤销拒）
 builder.Services.AddScoped<CP6.Core.Services.Platform.IImpersonationService, CP6.Core.Services.Platform.ImpersonationService>();
+// S 类 #5 多租户合规（T7）：块③ GDPR 双粒度导出（剔密钥）+ 被遗忘权擦除（主体匿名化 RevokeAll / 整租户 anonymize·purge R6 拓扑 + 防护 E-SEC-036/037/038）
+builder.Services.AddScoped<CP6.Core.Services.Platform.IGdprService, CP6.Core.Services.Platform.GdprService>();
 
 // S 类 #2 2FA（T3）：邮件发送器工厂。
 //   - 配 Email:Smtp:Host → 真发（SmtpEmailSender）。
