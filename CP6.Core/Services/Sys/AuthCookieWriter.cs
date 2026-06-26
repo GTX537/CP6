@@ -38,6 +38,13 @@ public class AuthCookieWriter : IAuthCookieWriter
             new CookieOptions { HttpOnly = false, Secure = _c.Secure, SameSite = Same, Path = "/" });
     }
 
+    public void WriteAccessCookieOnly(HttpResponse resp, string accessJwt)
+    {
+        // 同 WriteAuthCookies 的 access 分支（httpOnly/Secure/SameSite/Path="/")；不触碰 refresh/csrf/pending。
+        resp.Cookies.Append(AccessCookie, accessJwt,
+            new CookieOptions { HttpOnly = true, Secure = _c.Secure, SameSite = Same, Path = "/" });
+    }
+
     public void ClearAuthCookies(HttpResponse resp)
     {
         foreach (var (name, path) in new[] { (AccessCookie, "/"), (RefreshCookie, RefreshPath), (CsrfCookie, "/"), (PendingCookie, RefreshPath) })

@@ -483,6 +483,8 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentUserAccessor, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Platform.ITenantAdminService, CP6.Core.Services.Platform.TenantAdminService>();
 // S 类 #5 多租户合规（T4）：块② 平台超管授撤（grant/revoke + 防自锁死 E-SEC-037 + 审计落平台租户）
 builder.Services.AddScoped<CP6.Core.Services.Platform.IPlatformAdminService, CP6.Core.Services.Platform.PlatformAdminService>();
+// S 类 #5 多租户合规（T5）：块② 完整 impersonation（start/end + R2 双向 jti 黑名单 + R3 imp 令牌 mustChange 恒 false + R5 审计落平台租户 + R9-c 真身已撤销拒）
+builder.Services.AddScoped<CP6.Core.Services.Platform.IImpersonationService, CP6.Core.Services.Platform.ImpersonationService>();
 
 // S 类 #2 2FA（T3）：邮件发送器工厂。
 //   - 配 Email:Smtp:Host → 真发（SmtpEmailSender）。

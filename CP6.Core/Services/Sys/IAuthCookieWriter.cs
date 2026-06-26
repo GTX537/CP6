@@ -12,6 +12,10 @@ public interface IAuthCookieWriter
     /// <summary>写三 Cookie（登录 / 刷新成功后调用）。</summary>
     void WriteAuthCookies(HttpResponse resp, string accessJwt, string rawRefresh, string csrf);
 
+    /// <summary>仅写 access Cookie（cp6_at），复用 <see cref="WriteAuthCookies"/> 同款 CookieOptions（多租户合规 #5 T5）。
+    /// impersonation start/end 只换 access 身份，refresh/CSRF 不动 → access 过期/refresh 自然回平台超管=隐式切出窗口。</summary>
+    void WriteAccessCookieOnly(HttpResponse resp, string accessJwt);
+
     /// <summary>清三 Cookie + cp6_2fa（登出调用，连带清 pending 半登录态）。</summary>
     void ClearAuthCookies(HttpResponse resp);
 

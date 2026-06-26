@@ -10,7 +10,9 @@ namespace CP6.WebApi.Middleware;
 public class MustChangePasswordMiddleware
 {
     private readonly RequestDelegate _next;
-    private static readonly string[] AllowPaths = { "/api/auth/change-password", "/api/auth/logout" };
+    // #5 T5 R3 兜底：impersonation 切出端点须放行（imp 令牌恒 must_change_password=false，
+    // 此处为防误传 true 锁死的纵深保险，保证 platform admin 总能切出）。
+    private static readonly string[] AllowPaths = { "/api/auth/change-password", "/api/auth/logout", "/api/platform/impersonation/end" };
 
     public MustChangePasswordMiddleware(RequestDelegate next) => _next = next;
 
