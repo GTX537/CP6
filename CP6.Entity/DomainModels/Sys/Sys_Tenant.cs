@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// （继承 <see cref="BaseEntity"/> 而非 BaseTenantEntity，不参与行级过滤）——否则会自我过滤导致谁都查不到租户。
 /// 用途：①登录租户消歧（按 <see cref="TenantCode"/> 定位）②后台 Worker 按租户循环（枚举 <see cref="Enable"/> 的行）。
 /// </summary>
-public class Sys_Tenant : BaseEntity
+public class Sys_Tenant : BaseEntity, IAuditable
 {
     /// <summary>租户编码（短码，登录时跨同名用户消歧用；全局唯一，大小写不敏感由上层保证）。</summary>
     [MaxLength(50)]

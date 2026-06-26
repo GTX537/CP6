@@ -13,7 +13,7 @@ namespace CP6.Entity.DomainModels.Pur;
 /// 唯一索引 (SupplierId,ItemId,MinQty,ValidFrom) 在 CP6Context 自动升级为 (TenantId,...) 复合唯一。
 /// </remarks>
 [Table("Pur_SupplierPrice")]
-public class SupplierPrice : BaseBizEntity
+public class SupplierPrice : BaseBizEntity, IAuditable
 {
     /// <summary>供应商 CD（= BusinessPartner.BpCd，发注先）</summary>
     [Required, MaxLength(20)]

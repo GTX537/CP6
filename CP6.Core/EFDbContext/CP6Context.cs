@@ -137,6 +137,11 @@ public class CP6Context : DbContext
     /// </summary>
     public DbSet<Sys_OperLog> Sys_OperLogs { get; set; }
 
+    /// <summary>
+    /// 字段级审计日志表（#4 字段审计）
+    /// </summary>
+    public DbSet<Sys_FieldAuditLog> Sys_FieldAuditLogs { get; set; }
+
     // ───── Phase 6 跨模块集成事件 ─────
     /// <summary>跨模块 Bridge Hook 持久化记录（重试 / DLQ / trace 基础）</summary>
     public DbSet<IntegrationEvent> IntegrationEvents { get; set; }
@@ -1877,6 +1882,16 @@ public class CP6Context : DbContext
             // 告警 OperLog 快速过滤（DeadLetter 时 IsAlert=true）的索引补 TenantId 前缀，对齐租户作用域查询。
             e.HasIndex(x => new { x.TenantId, x.IsAlert, x.CreateDate }).HasDatabaseName("IX_Sys_OperLog_Tenant_Alert");
             e.HasQueryFilter(x => x.TenantId == CurrentTenantId);
+        });
+
+        // #4 字段审计：Sys_FieldAuditLog : BaseTenantEntity → 全局过滤/盖章由下方反射批量自动覆盖，
+        // 此处仅手注册 3 个非唯一查询索引 + Changes 大文本列（本表无唯一索引，不涉及 TenantId 前缀升级）。
+        modelBuilder.Entity<Sys_FieldAuditLog>(e =>
+        {
+            e.HasIndex(x => new { x.EntityName, x.EntityKey, x.ChangedAt });   // 单记录时间线回放
+            e.HasIndex(x => new { x.UserId, x.ChangedAt });                    // 按人审计
+            e.HasIndex(x => new { x.EntityName, x.ChangedAt });                // 按实体类型
+            e.Property(x => x.Changes).HasColumnType("nvarchar(max)");         // 大文本
         });
 
         // ═══════════════════════════════════════════════════════════

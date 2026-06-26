@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 1 取引先 ⇄ 9 種類の属性 FLG（得意先/売掛先/請求先/入金先/納品先/発注先/買掛先/支払予定管理先/支払先）
 /// </remarks>
 [Table("T_WebBusinessPartner")]
-public class BusinessPartner : BaseBizEntity
+public class BusinessPartner : BaseBizEntity, IAuditable
 {
     // ───── 業務 PK ─────
     [Required, MaxLength(20)]

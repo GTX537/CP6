@@ -5,7 +5,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// <summary>
 /// 系统用户实体
 /// </summary>
-public class Sys_User : BaseTenantEntity
+public class Sys_User : BaseTenantEntity, IAuditable
 {
     /// <summary>
     /// 用户名（登录账号）
@@ -19,6 +19,7 @@ public class Sys_User : BaseTenantEntity
     /// </summary>
     [MaxLength(200)]
     [Required]
+    [AuditIgnore]
     public string Password { get; set; } = string.Empty;
 
     /// <summary>

@@ -6,7 +6,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// <summary>
 /// 系统角色（RoleId 由用户自定义，不可重复）
 /// </summary>
-public class Sys_Role
+public class Sys_Role : IAuditable
 {
     /// <summary>
     /// 角色ID（自定义，不可重复）

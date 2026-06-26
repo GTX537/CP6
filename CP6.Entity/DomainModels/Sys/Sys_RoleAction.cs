@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// 某角色对某菜单某操作的授权记录；多角色聚合时取 ActionKeys 并集。
 /// </summary>
 [Table("Sys_RoleAction")]
-public class Sys_RoleAction : BaseTenantEntity
+public class Sys_RoleAction : BaseTenantEntity, IAuditable
 {
     /// <summary>角色 → Sys_Role.RoleId（int，B1-D1）</summary>
     public int RoleId { get; set; }

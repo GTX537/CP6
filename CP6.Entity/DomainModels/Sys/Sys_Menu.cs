@@ -6,7 +6,7 @@ namespace CP6.Entity.DomainModels.Sys;
 /// <summary>
 /// 系统菜单/页面（MenuId 由用户自定义，不可重复）
 /// </summary>
-public class Sys_Menu
+public class Sys_Menu : IAuditable
 {
     /// <summary>
     /// 菜单/页面ID（自定义，不可重复）

@@ -13,7 +13,7 @@ namespace CP6.Entity.DomainModels.Fin;
 /// 本阶段不引入 TenantId（统一在 OA 阶段4 系统级多租户收口，届时接 BaseTenantEntity）。
 /// </remarks>
 [Table("Fin_GlAccount")]
-public class GlAccount : BaseTenantEntity
+public class GlAccount : BaseTenantEntity, IAuditable
 {
     /// <summary>科目编码，如 "1122"（应收账款）。同一模板包内唯一</summary>
     [Required, MaxLength(30)]
