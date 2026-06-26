@@ -670,30 +670,31 @@ using (var scope = app.Services.CreateScope())
         }
 
         db.SaveChanges();
+    }
 
-        // S 类 #5 多租户合规（T8）段1：默认租户行（令 ITenantEnumerator 可列出 + impersonation 目标）。
-        // 幂等 by Id（既有库可能已有 DEFAULT 行，守卫使重跑无副作用）。
-        if (!db.Sys_Tenants.Any(t => t.Id == TenantContext.DefaultTenant))
+    // S 类 #5 多租户合规（T8）段1+段2：**必须置于 `if (!db.Sys_Menus.Any())` 守卫块外**，
+    // 每启动跑+各自幂等——既有库（已有 menus）会跳过上面的全量 seed，但引导首个平台超管仍须执行，
+    // 否则 IsPlatformAdmin 永远为 false、平台区不可达。
+    if (!db.Sys_Tenants.Any(t => t.Id == TenantContext.DefaultTenant))
+    {
+        db.Sys_Tenants.Add(new Sys_Tenant
         {
-            db.Sys_Tenants.Add(new Sys_Tenant
-            {
-                Id = TenantContext.DefaultTenant,
-                TenantCode = "DEFAULT",
-                TenantName = "默认租户",
-                Enable = true
-            });
-            db.SaveChanges();
-        }
+            Id = TenantContext.DefaultTenant,
+            TenantCode = "DEFAULT",
+            TenantName = "默认租户",
+            Enable = true
+        });
+        db.SaveChanges();
+    }
 
-        // S 类 #5 多租户合规（T8）段2：引导首个平台超管（默认租户 admin → IsPlatformAdmin=true）。
-        // 平台超管无法经 RBAC 自助提权，故首个超管必须由启动期带外引导。幂等（已是超管则不动）。
-        var seedAdmin = db.Sys_Users.IgnoreQueryFilters()
-            .FirstOrDefault(u => u.UserName == "admin" && u.TenantId == TenantContext.DefaultTenant);
-        if (seedAdmin != null && !seedAdmin.IsPlatformAdmin)
-        {
-            seedAdmin.IsPlatformAdmin = true;
-            db.SaveChanges();
-        }
+    // 引导首个平台超管（默认租户 admin → IsPlatformAdmin=true）。平台超管无法经 RBAC 自助提权，
+    // 故首个超管必须由启动期带外引导。幂等（已是超管则不动）。
+    var seedAdmin = db.Sys_Users.IgnoreQueryFilters()
+        .FirstOrDefault(u => u.UserName == "admin" && u.TenantId == TenantContext.DefaultTenant);
+    if (seedAdmin != null && !seedAdmin.IsPlatformAdmin)
+    {
+        seedAdmin.IsPlatformAdmin = true;
+        db.SaveChanges();
     }
 
     // S 类认证加固（T1）：启动幂等把现有明文密码就地 BCrypt 哈希（不可逆，生产前须备份）。
