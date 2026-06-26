@@ -1656,6 +1656,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nSecScreenSeed.Items)   // S 类认证加固 E-SEC-001~010 + 事件枚举 + 改密/安全日志页
             .Concat(CP6.WebApi.Seed.I18nSec2faScreenSeed.Items)   // S 类 #2 2FA E-SEC-011~019(含012非法策略) + 事件 9~14 + sec.2fa.* 画面词条
             .Concat(CP6.WebApi.Seed.I18nSecSsoScreenSeed.Items)   // S 类 #3 SSO E-SEC-020~029 + 事件 15~18 + 登录/落地/配置页 + nav.116
+            .Concat(CP6.WebApi.Seed.I18nSecAuditScreenSeed.Items) // S 类 #4 字段审计 sec.audit.* 画面词条（只读模块，无错误码）
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
