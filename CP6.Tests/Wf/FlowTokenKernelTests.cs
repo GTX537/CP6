@@ -32,4 +32,24 @@ public class FlowTokenKernelTests
         Assert.Equal(1, FlowTokenStatus.Consumed);
         Assert.Equal(2, FlowTokenStatus.Cancelled);
     }
+
+    [Fact]
+    public async Task ReadModelTables_Persist()
+    {
+        using var db = NewDb();
+        var inst = Guid.NewGuid();
+        db.Wf_FlowFormTos.Add(new Wf_FlowFormTo
+        {
+            Id = Guid.NewGuid(), InstanceId = inst, NodeId = "n1", StepSeq = 1,
+            ExpectedHandlerId = Guid.NewGuid(), Status = FlowFormToStatus.Pending, SentAt = new DateTime(2026, 6, 26),
+        });
+        db.Wf_FlowDatas.Add(new Wf_FlowData { Id = Guid.NewGuid(), InstanceId = inst, NodeId = "n1", StepSeq = 1, DataJson = "{}" });
+        db.Wf_FlowCcs.Add(new Wf_FlowCc { Id = Guid.NewGuid(), InstanceId = inst, RecipientId = Guid.NewGuid() });
+        await db.SaveChangesAsync();
+
+        Assert.Equal(1, await db.Wf_FlowFormTos.CountAsync());
+        Assert.Equal(FlowFormToStatus.Pending, (await db.Wf_FlowFormTos.SingleAsync()).Status);
+        Assert.Equal(1, await db.Wf_FlowDatas.CountAsync());
+        Assert.False((await db.Wf_FlowCcs.SingleAsync()).IsRead);
+    }
 }

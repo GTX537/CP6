@@ -1,0 +1,32 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CP6.Entity.DomainModels.Wf;
+
+/// <summary>
+/// 传签履历台账（WFS 读模型）。token 每到一个人工关卡落一行：送签时建、处理时更新。
+/// 带 TokenId → 并行多分支履历各成一串。与 Wf_FlowHistory（纯追加事件日志）分工互补。
+/// </summary>
+[Table("Wf_FlowFormTo")]
+public class Wf_FlowFormTo : BaseTenantEntity
+{
+    public Guid InstanceId { get; set; }
+    public Guid? TokenId { get; set; }
+    public int StepSeq { get; set; }
+
+    [MaxLength(100)] public string? FromNodeId { get; set; }
+    [MaxLength(100)] public string NodeId { get; set; } = string.Empty;
+    [MaxLength(100)] public string? NodeCode { get; set; }
+    [MaxLength(200)] public string? NodeName { get; set; }
+
+    public Guid ExpectedHandlerId { get; set; }
+    public Guid? ActualHandlerId { get; set; }
+    public Guid? OnBehalfOfId { get; set; }
+
+    /// <summary>0=待签 1=同意 2=驳回 3=转交 4=加签 5=跳过 6=作废。见 FlowFormToStatus。</summary>
+    public int Status { get; set; }
+
+    [MaxLength(1000)] public string? Comment { get; set; }
+    public DateTime SentAt { get; set; }
+    public DateTime? HandledAt { get; set; }
+}

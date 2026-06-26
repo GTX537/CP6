@@ -27,3 +27,15 @@ public static class FlowTokenStatus
     public const int Consumed = 1;
     public const int Cancelled = 2;
 }
+
+/// <summary>传签履历关卡状态（Wf_FlowFormTo.Status）。</summary>
+public static class FlowFormToStatus
+{
+    public const int Pending = 0;     // 待签
+    public const int Approved = 1;    // 同意
+    public const int Rejected = 2;    // 驳回
+    public const int Transferred = 3; // 转交
+    public const int AddSigned = 4;   // 加签
+    public const int Skipped = 5;     // 跳过 / 会签未轮到
+    public const int Voided = 6;      // 作废（驳回连坐 / 退回清场）
+}

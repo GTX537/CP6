@@ -387,6 +387,12 @@ public class CP6Context : DbContext
     public DbSet<Wf_FlowDelegate> Wf_FlowDelegates { get; set; }
     /// <summary>流程令牌（WFS P1 运行时内核，并行分叉执行点）</summary>
     public DbSet<Wf_FlowToken> Wf_FlowTokens { get; set; }
+    /// <summary>传签履历台账（WFS 读模型，每关卡送签/处理记录）</summary>
+    public DbSet<Wf_FlowFormTo> Wf_FlowFormTos { get; set; }
+    /// <summary>每关卡表单快照（WFS 读模型，不可变留痕）</summary>
+    public DbSet<Wf_FlowData> Wf_FlowDatas { get; set; }
+    /// <summary>抄送（WFS 读模型，信箱未读标记）</summary>
+    public DbSet<Wf_FlowCc> Wf_FlowCcs { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -659,6 +665,19 @@ public class CP6Context : DbContext
         {
             e.HasIndex(x => new { x.InstanceId, x.Status }).HasDatabaseName("IX_Wf_FlowToken_InstanceStatus");
             e.HasIndex(x => new { x.InstanceId, x.ForkId, x.NodeId }).HasDatabaseName("IX_Wf_FlowToken_Fork");
+        });
+        modelBuilder.Entity<Wf_FlowFormTo>(e =>
+        {
+            e.HasIndex(x => new { x.InstanceId, x.StepSeq }).HasDatabaseName("IX_Wf_FlowFormTo_Step");
+            e.HasIndex(x => new { x.InstanceId, x.TokenId }).HasDatabaseName("IX_Wf_FlowFormTo_Token");
+            e.HasIndex(x => new { x.ExpectedHandlerId, x.Status }).HasDatabaseName("IX_Wf_FlowFormTo_Handler");
+        });
+        modelBuilder.Entity<Wf_FlowData>(e =>
+            e.HasIndex(x => new { x.InstanceId, x.StepSeq }).HasDatabaseName("IX_Wf_FlowData_Step"));
+        modelBuilder.Entity<Wf_FlowCc>(e =>
+        {
+            e.HasIndex(x => new { x.RecipientId, x.IsRead }).HasDatabaseName("IX_Wf_FlowCc_Recipient");
+            e.HasIndex(x => x.InstanceId).HasDatabaseName("IX_Wf_FlowCc_Instance");
         });
 
         // ═══════════════════════════════════════════════════════════
