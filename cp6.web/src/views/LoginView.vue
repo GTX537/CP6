@@ -149,6 +149,7 @@ import { authApi } from '@/api/sys/auth'
 import { ssoApi } from '@/api/sys/sso'
 import { langOptions, changeLang } from '@/i18n'
 import { addDynamicRoutes } from '@/router'
+import { usePlatformStore } from '@/stores/platform'
 
 const { t, locale } = useI18n()
 const router = useRouter()
@@ -247,6 +248,9 @@ async function handleLogin() {
     // T9：token 已由后端 Set-Cookie（httpOnly），前端仅存非敏感登录态标志
     localStorage.setItem('cp6_authed', '1')
     localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
+    // #5 多租户合规（T9）：带外平台区入口标志（前端 UX 闸；真闸在后端 [RequirePlatformAdmin]）
+    localStorage.setItem('cp6_isPlatformAdmin', res.isPlatformAdmin ? '1' : '')
+    usePlatformStore().refreshFlag()
     localStorage.setItem('userName', res.userName)
     localStorage.setItem('nickName', res.nickName || res.userName)
     const menus = res.menus || []

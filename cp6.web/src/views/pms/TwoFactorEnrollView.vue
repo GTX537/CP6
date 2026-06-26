@@ -47,6 +47,7 @@ import { ElMessage } from 'element-plus'
 import QRCode from 'qrcode'
 import { twoFactorApi } from '@/api/sys/twoFactor'
 import { addDynamicRoutes } from '@/router'
+import { usePlatformStore } from '@/stores/platform'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -73,6 +74,8 @@ onMounted(async () => {
 function completeLogin(res: any) {
   localStorage.setItem('cp6_authed', '1')
   localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
+  localStorage.setItem('cp6_isPlatformAdmin', res.isPlatformAdmin ? '1' : '')   // #5 带外平台区入口标志
+  usePlatformStore().refreshFlag()
   localStorage.setItem('userName', res.userName)
   localStorage.setItem('nickName', res.nickName || res.userName)
   const menus = res.menus || []

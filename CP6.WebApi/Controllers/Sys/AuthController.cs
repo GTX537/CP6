@@ -249,7 +249,8 @@ public class AuthController : LocalizedControllerBase
             nickName = user.NickName,
             roleId = user.RoleId,
             menus,
-            mustChangePassword = mustChange
+            mustChangePassword = mustChange,
+            isPlatformAdmin = user.IsPlatformAdmin   // T9 #5：带外平台区入口标志（前端存 cp6_isPlatformAdmin）
         };
     }
 

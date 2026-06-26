@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { ensureNamespacesForPath } from '@/i18n'
+import { usePlatformStore } from '@/stores/platform'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
@@ -16,6 +17,12 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/sys/sso-config': () => import('@/views/pms/SsoConfigView.vue'),   // S类 #3 SSO T9 租户配置（菜单116）
   '/sys/2fa-settings': () => import('@/views/pms/TwoFactorSettingsView.vue'),   // S类 #2 2FA T9 自助启停+租户策略
   '/sys/field-audit': () => import('@/views/pms/FieldAuditView.vue'),   // S类 #4 字段审计 T7 列表+时间线
+  // ───── S类 #5 多租户合规 平台区（带外，不在 Sys_Menu；由 isPlatformAdmin + [RequirePlatformAdmin] 控制）─────
+  '/platform/tenant': () => import('@/views/platform/TenantListView.vue'),        // 块① 租户管理
+  '/platform/admin': () => import('@/views/platform/PlatformAdminView.vue'),      // 块② 平台超管授撤
+  '/platform/impersonation': () => import('@/views/platform/ImpersonationView.vue'), // 块② impersonation
+  '/platform/audit': () => import('@/views/platform/CrossTenantAuditView.vue'),   // 块④ 跨租户审计
+  '/platform/gdpr': () => import('@/views/platform/GdprView.vue'),                // 块③ GDPR 导出/擦除
   '/pub/dept': () => import('@/views/pms/DeptTreeView.vue'),   // PUB 章00 组织模型
   '/pub/role-perm': () => import('@/views/pms/RolePermView.vue'),   // PUB 章02 角色功能权限
   '/pub/data-scope': () => import('@/views/pms/DataScopeView.vue'),   // PUB 章03 数据权限
@@ -248,6 +255,23 @@ const router = createRouter({
 // 标记是否已加载过动态路由
 let dynamicRoutesAdded = false
 
+// S类 #5 平台区路由（带外，不依赖 Sys_Menu）：始终作为 layout 子路由挂载，
+// 由 beforeEach 守卫（isPlatformAdmin）+ 后端 [RequirePlatformAdmin] 双重把关访问。
+const platformRoutePaths = [
+  '/platform/tenant',
+  '/platform/admin',
+  '/platform/impersonation',
+  '/platform/audit',
+  '/platform/gdpr'
+]
+function platformChildren(): RouteRecordRaw[] {
+  return platformRoutePaths.map(p => ({
+    path: p.replace(/^\//, ''),
+    name: p.replace(/^\//, ''),
+    component: viewModules[p]
+  })) as RouteRecordRaw[]
+}
+
 /**
  * 根据菜单列表动态添加路由
  * menus 格式: [{ id, menuName, routePath, icon, parentId, orderNo }]
@@ -277,11 +301,15 @@ export function addDynamicRoutes(menus: any[]) {
     name: 'layout',
     component: () => import('@/views/LayoutView.vue'),
     redirect: firstRoute,
-    children: routeMenus.map(menu => ({
-      path: menu.routePath.replace(/^\//, ''),
-      name: menu.routePath.replace(/^\//, ''),
-      component: viewModules[menu.routePath]
-    })) as RouteRecordRaw[]
+    children: [
+      ...routeMenus.map(menu => ({
+        path: menu.routePath.replace(/^\//, ''),
+        name: menu.routePath.replace(/^\//, ''),
+        component: viewModules[menu.routePath]
+      })) as RouteRecordRaw[],
+      // S类 #5 带外平台区：始终挂载（菜单不含，靠守卫 + 后端把关）
+      ...platformChildren()
+    ]
   })
 
   dynamicRoutesAdded = true
@@ -330,6 +358,13 @@ router.beforeEach(async (to, _from, next) => {
   // 2. 没有登录态，跳登录
   if (!authed) {
     next('/login')
+    return
+  }
+
+  // 2b. S类 #5 带外平台区守卫（UX 层）：非平台超管访问 /platform/* → 回首页。
+  //     真闸门在后端 [RequirePlatformAdmin]（claim 快判 + DB 回查 + imp 期拒）。
+  if (to.path.startsWith('/platform/') && !usePlatformStore().isPlatformAdmin) {
+    next('/')
     return
   }
 

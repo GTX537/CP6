@@ -19,6 +19,21 @@
           :key="menu.id"
           :node="menu"
         />
+        <!-- 多租户合规 #5（T9）带外平台区入口：仅平台超管 + 非 impersonation 期显示（UX 闸；真闸在后端） -->
+        <el-sub-menu v-if="showPlatformEntry" index="__platform__">
+          <template #title>
+            <el-icon><OfficeBuilding /></el-icon>
+            <span>{{ $t('platform.title') }}</span>
+          </template>
+          <el-menu-item
+            v-for="item in platformLinks"
+            :key="item.path"
+            :index="item.path"
+            @click="goPlatform(item.path)"
+          >
+            {{ $t(item.label) }}
+          </el-menu-item>
+        </el-sub-menu>
       </el-menu>
     </el-aside>
 
@@ -56,6 +71,21 @@
               :key="menu.id"
               :node="menu"
             />
+            <!-- 多租户合规 #5（T9）带外平台区入口（手机端抽屉） -->
+            <el-sub-menu v-if="showPlatformEntry" index="__platform__">
+              <template #title>
+                <el-icon><OfficeBuilding /></el-icon>
+                <span>{{ $t('platform.title') }}</span>
+              </template>
+              <el-menu-item
+                v-for="item in platformLinks"
+                :key="item.path"
+                :index="item.path"
+                @click="goPlatform(item.path)"
+              >
+                {{ $t(item.label) }}
+              </el-menu-item>
+            </el-sub-menu>
           </el-menu>
         </div>
 
@@ -117,6 +147,8 @@
           <el-button link @click="handleLogout">{{ $t('layout.logout') }}</el-button>
         </template>
       </el-header>
+      <!-- 多租户合规 #5（T9）impersonation 全局横幅（带倒计时，R8）。imp 期间常驻顶部。 -->
+      <ImpersonationBanner />
       <el-main class="layout-main">
         <RouterView v-slot="{ Component }">
           <Transition :name="enterFromLogin ? 'route-enter' : 'fade'" mode="out-in">
@@ -132,17 +164,34 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Menu, User, SwitchButton } from '@element-plus/icons-vue'
+import { Menu, User, SwitchButton, OfficeBuilding } from '@element-plus/icons-vue'
 import { langOptions, changeLang } from '@/i18n'
 import { resetRoutes } from '@/router'
 import { authApi } from '@/api/sys/auth'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import MenuTreeItem from '@/components/MenuTreeItem.vue'
+import ImpersonationBanner from '@/components/ImpersonationBanner.vue'
+import { usePlatformStore } from '@/stores/platform'
 
 const { locale, t, te } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const { isMobile } = useBreakpoint()
+const platformStore = usePlatformStore()
+
+// 多租户合规 #5（T9）带外平台区入口：仅平台超管 + 非 impersonation 期显示（imp 期间挂起平台权 E-SEC-034）。
+const showPlatformEntry = computed(() => platformStore.isPlatformAdmin && !platformStore.impersonating)
+const platformLinks = [
+  { path: '/platform/tenant', label: 'platform.tenant.title' },
+  { path: '/platform/admin', label: 'platform.admin.title' },
+  { path: '/platform/impersonation', label: 'platform.impersonation.title' },
+  { path: '/platform/audit', label: 'platform.audit.title' },
+  { path: '/platform/gdpr', label: 'platform.gdpr.title' }
+]
+function goPlatform(path: string) {
+  drawerOpen.value = false
+  router.push(path)
+}
 const currentRoute = computed(() => route.path)
 const nickName = ref(localStorage.getItem('nickName') || '')
 const menuTree = ref<any[]>([])
@@ -211,7 +260,9 @@ async function handleLogout() {
   } catch {
     // 后端清理失败（如 token 已失效）不阻断本地登出
   }
-  localStorage.clear()
+  localStorage.clear()              // 含 cp6_isPlatformAdmin
+  platformStore.clearImpersonation() // 清 sessionStorage cp6_impersonating + 内存态
+  platformStore.refreshFlag()        // 同步 isPlatformAdmin=false（localStorage 已清）
   resetRoutes()
   router.push('/login')
 }

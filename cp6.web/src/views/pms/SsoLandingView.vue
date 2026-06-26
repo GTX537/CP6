@@ -26,6 +26,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { authApi } from '@/api/sys/auth'
 import { addDynamicRoutes } from '@/router'
+import { usePlatformStore } from '@/stores/platform'
 
 const { t, te } = useI18n()
 const route = useRoute()
@@ -48,6 +49,8 @@ onMounted(async () => {
     const res: any = await authApi.profile()
     localStorage.setItem('cp6_authed', '1')
     localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
+    localStorage.setItem('cp6_isPlatformAdmin', res.isPlatformAdmin ? '1' : '')   // #5 带外平台区入口标志
+    usePlatformStore().refreshFlag()
     localStorage.setItem('userName', res.userName)
     localStorage.setItem('nickName', res.nickName || res.userName)
     const menus = res.menus || []
