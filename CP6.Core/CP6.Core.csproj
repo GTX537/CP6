@@ -29,4 +29,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- 字段审计（#4 T3）：暴露 CP6Context 内 internal static 纯函数（IsSecretField/Stringify）给测试工程直测 -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="CP6.Tests" />
+  </ItemGroup>
+
 </Project>

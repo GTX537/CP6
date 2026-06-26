@@ -1,7 +1,10 @@
 using System.Linq.Expressions;
+using System.Reflection;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Entity;
+using CP6.Entity.DomainModels.Sys;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Fin;
@@ -1959,6 +1962,107 @@ public class CP6Context : DbContext
         }
     }
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // 字段审计（#4 T3）：捕获核心。标记式 opt-in（IAuditable）+ 三重密钥防护
+    //（[AuditIgnore] / 内建拒名单 / 跳过全部主键·TenantId·行级元字段）+ 键形无关
+    //（FindPrimaryKey 提取，"|" 连接复合键）+ 两阶段原子落库（业务行先存→键落定→
+    // 审计行后存→同事务 Commit；relational 原子，InMemory 降级）。
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /// <summary>行级元字段（who/when 留痕已由专列承载，diff 跳过避免噪声）。</summary>
+    private static readonly string[] _metaSkip = { "Creator", "CreateDate", "Modifier", "ModifyDate" };
+
+    /// <summary>密钥拒名单（兜底）：即使字段漏标 [AuditIgnore]，名称命中亦不入 diff。
+    /// internal 供纯函数单测直测。</summary>
+    internal static bool IsSecretField(string name)
+    {
+        var n = name.ToLowerInvariant();
+        return n == "password" || n.EndsWith("secret") || n.EndsWith("hash")
+            || n == "tokenhash" || n == "salt" || n == "clientsecretprotected" || n == "twofactorsecret";
+    }
+
+    /// <summary>值化：null 透传；超 1000 字符截断；恒用 InvariantCulture（小数点/日期与区域无关）。
+    /// internal 供纯函数单测直测。</summary>
+    internal static string? Stringify(object? v)
+    {
+        if (v == null) return null;
+        var s = Convert.ToString(v, System.Globalization.CultureInfo.InvariantCulture) ?? "";
+        return s.Length > 1000 ? s[..1000] : s;
+    }
+
+    /// <summary>主键串（键形无关）：FindPrimaryKey().Properties 当前值以 "|" 连接（复合键）。</summary>
+    private static string ExtractKey(EntityEntry e)
+    {
+        var pk = e.Metadata.FindPrimaryKey();
+        if (pk == null) return "";
+        return string.Join("|", pk.Properties.Select(p => e.Property(p.Name).CurrentValue?.ToString() ?? ""));
+    }
+
+    /// <summary>构造单实体的标量字段 before/after diff（跳过主键/TenantId/元字段/[AuditIgnore]/拒名单）。</summary>
+    private List<FieldChange> BuildChanges(EntityEntry e)
+    {
+        var pkNames = e.Metadata.FindPrimaryKey()?.Properties.Select(p => p.Name).ToHashSet() ?? new();
+        var list = new List<FieldChange>();
+        foreach (var p in e.Properties)
+        {
+            var name = p.Metadata.Name;
+            if (pkNames.Contains(name)) continue;                                            // 全部主键(Guid Id/int RoleId/MenuId)
+            if (name == "TenantId" || _metaSkip.Contains(name)) continue;                    // 租户 + 行级元字段
+            if (p.Metadata.PropertyInfo?.GetCustomAttribute<AuditIgnoreAttribute>() != null) continue;  // [AuditIgnore]
+            if (IsSecretField(name)) continue;                                               // 拒名单兜底
+            switch (e.State)
+            {
+                case EntityState.Added: list.Add(new(name, null, Stringify(p.CurrentValue))); break;
+                case EntityState.Deleted: list.Add(new(name, Stringify(p.OriginalValue), null)); break;
+                case EntityState.Modified:
+                    if (p.IsModified && !Equals(p.OriginalValue, p.CurrentValue))
+                        list.Add(new(name, Stringify(p.OriginalValue), Stringify(p.CurrentValue)));
+                    break;
+            }
+        }
+        return list;
+    }
+
+    /// <summary>EntityState → Operation 码（1=Added 2=Modified 3=Deleted）。</summary>
+    private static int MapOp(EntityState s) => s == EntityState.Added ? 1 : s == EntityState.Deleted ? 3 : 2;
+
+    /// <summary>阶段一：保存前遍历 IAuditable 变更，捕获 diff + 存前键 + 租户（业务行尚未落库，Added 键未定）。
+    /// Modified 空 diff（仅元字段/无实变更）跳过，零审计噪声。</summary>
+    private List<PendingAudit> CaptureFieldAuditBeforeSave()
+    {
+        var list = new List<PendingAudit>();
+        foreach (var e in ChangeTracker.Entries<IAuditable>())   // 访问 Entries 触发 DetectChanges
+        {
+            if (e.State is not (EntityState.Added or EntityState.Modified or EntityState.Deleted)) continue;
+            var changes = BuildChanges(e);
+            if (e.State == EntityState.Modified && changes.Count == 0) continue;     // 空改不记
+            var tenant = e.Entity is BaseTenantEntity bt ? bt.TenantId : CurrentTenantId;  // 业务实体已 StampTenant；非租户实体回退
+            list.Add(new PendingAudit(e, e.Metadata.ClrType.Name, MapOp(e.State), changes, ExtractKey(e), tenant));
+        }
+        return list;
+    }
+
+    /// <summary>阶段二：业务行已落库后写审计行。Added 键此刻已落定（仍 tracked，重取真值）；
+    /// Modified/Deleted 用存前键（Deleted 已 Detached）。审计行非 IAuditable，不会被再次捕获。</summary>
+    private void WriteAuditRows(List<PendingAudit> pending)
+    {
+        foreach (var pa in pending)
+        {
+            var key = pa.Operation == 1 ? ExtractKey(pa.Entry) : pa.KeyBeforeSave;   // Added 取存后真值；其余存前键
+            Sys_FieldAuditLogs.Add(new Sys_FieldAuditLog
+            {
+                EntityName = pa.EntityName,
+                EntityKey = key,
+                Operation = pa.Operation,
+                Changes = System.Text.Json.JsonSerializer.Serialize(pa.Changes),
+                UserId = _user?.UserId,
+                UserName = _user?.UserName,
+                ChangedAt = DateTime.Now,
+                TenantId = pa.TenantId        // 阶段二不经 StampTenant → 显式镜像业务实体租户
+            });
+        }
+    }
+
     /// <summary>写入盖章（章10 §4）：新增的 BaseTenantEntity 未显式设租户 → 盖当前租户。
     /// Sys_OperLog（int Id 非 BaseTenantEntity）同样盖章：覆盖 DeadLetterNotifier 等未显式设租户的写入路径。</summary>
     private void StampTenant()
@@ -1975,12 +2079,46 @@ public class CP6Context : DbContext
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         StampTenant();   // SaveChanges() 经 base 路由至本重载，无需再覆盖无参版（避免重复盖章）
-        return base.SaveChanges(acceptAllChangesOnSuccess);
+        var pending = CaptureFieldAuditBeforeSave();
+        if (pending.Count == 0) return base.SaveChanges(acceptAllChangesOnSuccess);   // 无审计目标 → 零开销原路径
+
+        var useTx = Database.IsRelational() && Database.CurrentTransaction == null;   // InMemory 不开；已有环境事务则参与
+        var tx = useTx ? Database.BeginTransaction() : null;
+        try
+        {
+            var result = base.SaveChanges(acceptAllChangesOnSuccess);   // 业务变更（Added 键落定）
+            WriteAuditRows(pending);
+            base.SaveChanges(acceptAllChangesOnSuccess: true);          // 审计行（调 BASE 非 this → 不重入；审计行非 IAuditable）
+            tx?.Commit();
+            return result;                                              // 返业务影响行数（审计行不计入）
+        }
+        catch { tx?.Rollback(); throw; }
+        finally { tx?.Dispose(); }
     }
 
-    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         StampTenant();
-        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        var pending = CaptureFieldAuditBeforeSave();
+        if (pending.Count == 0) return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+
+        var useTx = Database.IsRelational() && Database.CurrentTransaction == null;
+        var tx = useTx ? await Database.BeginTransactionAsync(cancellationToken) : null;
+        try
+        {
+            var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            WriteAuditRows(pending);
+            await base.SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken);
+            if (tx != null) await tx.CommitAsync(cancellationToken);
+            return result;
+        }
+        catch { if (tx != null) await tx.RollbackAsync(cancellationToken); throw; }
+        finally { if (tx != null) await tx.DisposeAsync(); }
     }
+
+    // 字段审计内部记录（#4 T3）：FieldChange 序列化为 Changes JSON（默认属性名 Field/Old/New）。
+    internal sealed record FieldChange(string Field, string? Old, string? New);
+
+    private sealed record PendingAudit(EntityEntry Entry, string EntityName, int Operation,
+                                       List<FieldChange> Changes, string KeyBeforeSave, Guid TenantId);
 }
