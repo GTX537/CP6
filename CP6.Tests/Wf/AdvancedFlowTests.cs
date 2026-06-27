@@ -134,6 +134,48 @@ public class AdvancedFlowTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => Engine(db).SendBackAsync(t1.Id, a, "end"));
     }
 
+    [Fact]
+    public async Task SendBack_CancelsAllActiveTokens_RebuildsSingleRootAtTarget()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        var b = Guid.NewGuid();
+        await SeedFlowAsync(db, a, b);
+
+        var instId = await Engine(db).SubmitAsync(FlowKey, Guid.NewGuid(), "{}");
+        // A 同意 → 流程停在 n2，此刻应有恰好 1 个 Active token 停在 n2
+        var t1 = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n1");
+        await Engine(db).ActAsync(t1.Id, a, approve: true);
+
+        var activeBeforeSendback = await db.Wf_FlowTokens
+            .Where(t => t.InstanceId == instId && t.Status == FlowTokenStatus.Active)
+            .ToListAsync();
+        Assert.Single(activeBeforeSendback);
+        Assert.Equal("n2", activeBeforeSendback[0].NodeId);   // 停在 n2
+
+        var t2 = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n2" && t.Status == FlowTaskStatus.Pending);
+
+        // B 退回到 n1
+        await Engine(db).SendBackAsync(t2.Id, b, "n1", "退回审核");
+
+        // 退回前的所有 Active token 应全部 Cancelled
+        var oldTokenAfter = await db.Wf_FlowTokens.SingleAsync(t => t.Id == activeBeforeSendback[0].Id);
+        Assert.Equal(FlowTokenStatus.Cancelled, oldTokenAfter.Status);
+
+        // 现在应有且仅有 1 个 Active token，停在 n1
+        var activeAfter = await db.Wf_FlowTokens
+            .Where(t => t.InstanceId == instId && t.Status == FlowTokenStatus.Active)
+            .ToListAsync();
+        Assert.Single(activeAfter);
+        Assert.Equal("n1", activeAfter[0].NodeId);            // 根 token 重建在目标节点
+        Assert.Null(activeAfter[0].ParentTokenId);            // 根 token：无父
+        Assert.Null(activeAfter[0].ForkId);                   // 根 token：无分叉
+
+        // 实例仍在运行
+        var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
+        Assert.Equal(FlowInstanceStatus.Running, inst.Status);
+    }
+
     // ───────────────────────── C-3 加签 ─────────────────────────
 
     private const string SingleFlowKey = "single";
@@ -229,6 +271,26 @@ public class AdvancedFlowTests
         for (int i = 0; i < 10; i++)
             await Engine(db).AddSignAsync(ta.Id, a, Guid.NewGuid(), "after");
         await Assert.ThrowsAsync<InvalidOperationException>(() => Engine(db).AddSignAsync(ta.Id, a, Guid.NewGuid(), "after"));
+    }
+
+    [Fact]
+    public async Task AddSign_InheritsTokenId_FromOriginalTask()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        var c = Guid.NewGuid();
+        await SeedSingleApproverAsync(db, a);
+        var instId = await Engine(db).SubmitAsync(SingleFlowKey, Guid.NewGuid(), "{}");
+
+        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n1");
+        Assert.NotNull(ta.TokenId);   // Submit 时 token 已绑定到原任务
+
+        await Engine(db).AddSignAsync(ta.Id, a, c, "after");
+
+        // 新建的加签任务继承原任务的 TokenId
+        var addSignTask = await db.Wf_FlowTasks.SingleAsync(t => t.AddSignSource == "after");
+        Assert.NotNull(addSignTask.TokenId);
+        Assert.Equal(ta.TokenId, addSignTask.TokenId);   // ★ 加签继承 TokenId
     }
 
     // ───────────────────────── C-4 委派 ─────────────────────────
