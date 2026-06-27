@@ -11,6 +11,6 @@ export class BatchCmd implements Command {
   }
 
   undo(ctx: EditorContext): void {
-    for (let i = this.cmds.length - 1; i >= 0; i--) this.cmds[i].undo(ctx)
+    for (let i = this.cmds.length - 1; i >= 0; i--) this.cmds[i]!.undo(ctx)
   }
 }

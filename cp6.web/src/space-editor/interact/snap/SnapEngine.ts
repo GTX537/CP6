@@ -31,13 +31,11 @@ function rackCorners(r: RackVO): Candidate[] {
   const D = r.depthCount * r.cellD
   const th = (r.rotationZ * Math.PI) / 180
   const cos = Math.cos(th), sin = Math.sin(th)
-  const locals: [number, number][] = [
-    [0, 0], [W, 0], [W, D], [0, D],
-  ]
-  return locals.map(([lx, ly]) => ({
+  const t = (lx: number, ly: number): Candidate => ({
     x: r.x + lx * cos - ly * sin,
     y: r.y + lx * sin + ly * cos,
-  }))
+  })
+  return [t(0, 0), t(W, 0), t(W, D), t(0, D)]
 }
 
 // ─── 辅助：解析巷道中心线中点作候选 ─────────────────────────────────────────
@@ -46,11 +44,13 @@ function aisleCenterCandidates(aisles: AisleVO[]): Candidate[] {
   for (const a of aisles) {
     try {
       const pts = JSON.parse(a.centerline) as [number, number][]
-      if (pts.length >= 2) {
+      const first = pts[0]
+      const last = pts[pts.length - 1]
+      if (first && last) {
         // 取首末中点
         const mid: Candidate = {
-          x: (pts[0][0] + pts[pts.length - 1][0]) / 2,
-          y: (pts[0][1] + pts[pts.length - 1][1]) / 2,
+          x: (first[0] + last[0]) / 2,
+          y: (first[1] + last[1]) / 2,
         }
         candidates.push(mid)
       }
@@ -126,9 +126,8 @@ export class SnapEngine {
     if (positions.length < 2) return positions.map(() => 0)
 
     const vals = positions.map(p => p[axis])
-    const sorted = [...vals].sort((a, b) => a - b)
-    const min = sorted[0]
-    const max = sorted[sorted.length - 1]
+    const min = Math.min(...vals)
+    const max = Math.max(...vals)
     const step = (max - min) / (positions.length - 1)
 
     // 按当前值排序：第 i 小的应移到 min + i*step
@@ -138,7 +137,7 @@ export class SnapEngine {
 
     const offsets = new Array<number>(positions.length).fill(0)
     sortedIdx.forEach(({ i }, rank) => {
-      offsets[i] = min + rank * step - vals[i]
+      offsets[i] = min + rank * step - (vals[i] ?? 0)
     })
     return offsets
   }

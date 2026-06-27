@@ -40,8 +40,8 @@ describe('MoveRackCmd', () => {
     const ctx = makeCtx(scene)
     const cmd = new MoveRackCmd('r1', { x: 0, y: 0 }, { x: 100, y: 200 })
     cmd.do(ctx)
-    expect(scene.racks[0].x).toBe(100)
-    expect(scene.racks[0].y).toBe(200)
+    expect(scene.racks[0]!.x).toBe(100)
+    expect(scene.racks[0]!.y).toBe(200)
     expect(ctx.dirtyIds).toContain('r1')
   })
 
@@ -50,8 +50,8 @@ describe('MoveRackCmd', () => {
     const ctx = makeCtx(scene)
     const cmd = new MoveRackCmd('r1', { x: 0, y: 0 }, { x: 100, y: 200 })
     cmd.undo(ctx)
-    expect(scene.racks[0].x).toBe(0)
-    expect(scene.racks[0].y).toBe(0)
+    expect(scene.racks[0]!.x).toBe(0)
+    expect(scene.racks[0]!.y).toBe(0)
   })
 
   it('merge 同 rackId 合并为一步（undo 直接回原点）', () => {
@@ -62,10 +62,10 @@ describe('MoveRackCmd', () => {
     expect(cmd1.merge!(cmd2)).toBe(true)
     // 合并后 do 应移到最终位置
     cmd1.do(ctx)
-    expect(scene.racks[0].x).toBe(100)
+    expect(scene.racks[0]!.x).toBe(100)
     // undo 应回到最初 fromXY
     cmd1.undo(ctx)
-    expect(scene.racks[0].x).toBe(0)
+    expect(scene.racks[0]!.x).toBe(0)
   })
 
   it('merge 不同 rackId 返回 false', () => {
@@ -81,7 +81,7 @@ describe('RotateRackCmd', () => {
     const scene = makeScene([{ id: 'r1', rotationZ: 0 }])
     const ctx = makeCtx(scene)
     new RotateRackCmd('r1', 0, 90).do(ctx)
-    expect(scene.racks[0].rotationZ).toBe(90)
+    expect(scene.racks[0]!.rotationZ).toBe(90)
     expect(ctx.dirtyIds).toContain('r1')
   })
 
@@ -89,7 +89,7 @@ describe('RotateRackCmd', () => {
     const scene = makeScene([{ id: 'r1', rotationZ: 90 }])
     const ctx = makeCtx(scene)
     new RotateRackCmd('r1', 0, 90).undo(ctx)
-    expect(scene.racks[0].rotationZ).toBe(0)
+    expect(scene.racks[0]!.rotationZ).toBe(0)
   })
 })
 
@@ -102,7 +102,7 @@ describe('AddMarkerCmd', () => {
     const cmd = new AddMarkerCmd(marker)
     cmd.do(ctx)
     expect(scene.markers).toHaveLength(1)
-    expect(scene.markers[0].id).toBe('m1')
+    expect(scene.markers[0]!.id).toBe('m1')
     expect(ctx.dirtyIds).toContain('m1')
     cmd.undo(ctx)
     expect(scene.markers).toHaveLength(0)
@@ -117,11 +117,11 @@ describe('MoveMarkerCmd', () => {
     const ctx = makeCtx(scene)
     const cmd = new MoveMarkerCmd('m1', { x: 0, y: 0 }, { x: 50, y: 80 })
     cmd.do(ctx)
-    expect(scene.markers[0].x).toBe(50)
-    expect(scene.markers[0].y).toBe(80)
+    expect(scene.markers[0]!.x).toBe(50)
+    expect(scene.markers[0]!.y).toBe(80)
     cmd.undo(ctx)
-    expect(scene.markers[0].x).toBe(0)
-    expect(scene.markers[0].y).toBe(0)
+    expect(scene.markers[0]!.x).toBe(0)
+    expect(scene.markers[0]!.y).toBe(0)
   })
 })
 
@@ -132,11 +132,11 @@ describe('EditMarkerCmd', () => {
     const ctx = makeCtx(scene)
     const cmd = new EditMarkerCmd('m1', { text: 'before', markerType: 1 }, { text: 'after', markerType: 2 })
     cmd.do(ctx)
-    expect(scene.markers[0].text).toBe('after')
-    expect(scene.markers[0].markerType).toBe(2)
+    expect(scene.markers[0]!.text).toBe('after')
+    expect(scene.markers[0]!.markerType).toBe(2)
     cmd.undo(ctx)
-    expect(scene.markers[0].text).toBe('before')
-    expect(scene.markers[0].markerType).toBe(1)
+    expect(scene.markers[0]!.text).toBe('before')
+    expect(scene.markers[0]!.markerType).toBe(1)
   })
 })
 

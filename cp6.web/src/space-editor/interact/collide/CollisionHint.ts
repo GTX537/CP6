@@ -87,8 +87,11 @@ export function pointInPolygon(px: number, py: number, poly: [number, number][])
   const n = poly.length
   let inside = false
   for (let i = 0, j = n - 1; i < n; j = i++) {
-    const [xi, yi] = poly[i]
-    const [xj, yj] = poly[j]
+    const pi = poly[i]
+    const pj = poly[j]
+    if (!pi || !pj) continue
+    const xi = pi[0], yi = pi[1]
+    const xj = pj[0], yj = pj[1]
     const intersect =
       yi > py !== yj > py &&
       px < ((xj - xi) * (py - yi)) / (yj - yi) + xi
@@ -137,10 +140,12 @@ export function scanCollisions(
 
   for (let i = 0; i < racks.length; i++) {
     const a = racks[i]
+    if (!a) continue
     const collidingWith: string[] = []
 
     for (let j = i + 1; j < racks.length; j++) {
       const b = racks[j]
+      if (!b) continue
       if (obbIntersect(a, b)) {
         collidingWith.push(b.id)
         // 反向记录（避免 O(n²) 结果对）

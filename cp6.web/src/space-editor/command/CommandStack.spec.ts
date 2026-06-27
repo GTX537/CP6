@@ -48,7 +48,7 @@ describe('CommandStack', () => {
     for (let i = 0; i < 101; i++) stack.exec(mkCmd(String(i), log), ctx)
     expect(stack.undoStack).toHaveLength(100)
     // 最旧 (0) 已被移除，最新是 100
-    expect(stack.undoStack[0].label).toBe('1')
+    expect(stack.undoStack[0]!.label).toBe('1')
     expect(stack.undoStack.at(-1)!.label).toBe('100')
   })
 
