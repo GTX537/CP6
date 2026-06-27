@@ -1,8 +1,44 @@
 <template>
   <el-container class="oa-inbox" direction="vertical">
+    <!-- act-as 横幅（代理身份时显示） -->
+    <ActingAsBanner @cleared="reloadList" />
+
     <!-- 顶部工具栏 -->
     <el-header class="inbox-header">
       <span class="inbox-title">{{ t('oa.inbox.title') }}</span>
+
+      <!-- 代理身份下拉 -->
+      <el-dropdown
+        v-if="canActAsList.length > 0 || actingAs"
+        trigger="click"
+        class="acting-as-dropdown"
+        @command="handleActingAsCmd"
+      >
+        <el-button size="small" :type="actingAs ? 'warning' : 'default'">
+          <el-icon><UserFilled /></el-icon>
+          {{ actingAs ? actingAs.userName : '代理身份' }}
+          <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              v-for="u in canActAsList"
+              :key="u.userId"
+              :command="{ type: 'set', user: u }"
+            >
+              以 {{ u.userName }} 身份处理
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-if="actingAs"
+              :command="{ type: 'clear' }"
+              divided
+            >
+              切回本人
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
       <el-button type="primary" size="small" @click="openNewDialog">
         {{ t('oa.inbox.newBtn') }}
       </el-button>
@@ -87,9 +123,15 @@
 import { computed, onMounted, reactive, ref, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
 import { inboxApi } from '@/api/oa/inbox'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
+import { delegateApi } from '@/api/oa/delegate'
+import { getActingAs, setActingAs, clearActingAs } from '@/stores/oaActingAs'
+import type { ActingAs } from '@/stores/oaActingAs'
+import type { GrantUser } from '@/types/oa/advanced'
 import type { InboxStats, FlowAdminItem } from '@/types/oa/inbox'
+import ActingAsBanner from '@/components/oa/ActingAsBanner.vue'
 import InboxDashboard from './InboxDashboard.vue'
 import InboxPending from './InboxPending.vue'
 import InboxRunning from './InboxRunning.vue'
@@ -99,6 +141,39 @@ import FormDetail from './FormDetail.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+
+// ── act-as 态机 ──────────────────────────────────────────────────
+const actingAs = ref<ActingAs | null>(getActingAs())
+const canActAsList = ref<GrantUser[]>([])
+
+async function loadGrants() {
+  try {
+    const res = await delegateApi.myGrants()
+    const data = (res as any)?.data ?? res
+    canActAsList.value = (data?.iCanActAs as GrantUser[]) || []
+  } catch {
+    // 无代理权限时静默忽略
+  }
+}
+
+type ActingAsCmd = { type: 'set'; user: GrantUser } | { type: 'clear' }
+
+function handleActingAsCmd(cmd: ActingAsCmd) {
+  if (cmd.type === 'set') {
+    setActingAs({ userId: cmd.user.userId, userName: cmd.user.userName })
+    actingAs.value = getActingAs()
+    reloadList()
+  } else {
+    clearActingAs()
+    actingAs.value = null
+    reloadList()
+  }
+}
+
+function reloadList() {
+  // 重新触发当前文件夹列表刷新：通过强制路由重载最简单
+  window.location.reload()
+}
 
 // ── 文件夹切换 ──────────────────────────────────────────────────
 const folder = ref<string>('dashboard')
@@ -131,6 +206,8 @@ onMounted(async () => {
   } catch {
     // 忽略错误，徽标不显示
   }
+  // 加载可代理用户列表（T10 act-as 入口）
+  await loadGrants()
 })
 
 // ── 详情抽屉 ────────────────────────────────────────────────────
@@ -171,11 +248,15 @@ async function openNewDialog() {
 .inbox-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   padding: 0 16px;
   background: #fff;
   border-bottom: 1px solid var(--el-border-color-light);
   flex-shrink: 0;
+}
+
+.acting-as-dropdown {
+  margin-left: auto;
 }
 
 .inbox-title {
