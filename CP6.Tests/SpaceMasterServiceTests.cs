@@ -39,6 +39,24 @@ public class SpaceMasterServiceTests
         Assert.Equal("E-SPACE-001", ex.Message);
     }
 
+    /// <summary>编辑器 reconciliation：scene 须含完整 Floor 对象（底图标定 + 原点）。</summary>
+    [Fact]
+    public async Task GetScene_IncludesFloorObject()
+    {
+        var (_, svc) = Make();
+        var siteId = await svc.CreateSiteAsync(new SiteDto { SiteCode = "S", SiteName = "s" }, "u");
+        var floorId = await svc.CreateFloorAsync(new FloorDto
+        {
+            SiteId = siteId, Level = 1, FloorCode = "F1", FloorName = "1F",
+            UnderlayScale = 2.5, OriginX = 100
+        }, "u");
+        var scene = await svc.GetSceneAsync(floorId);
+        Assert.NotNull(scene.Floor);
+        Assert.Equal("F1", scene.Floor!.FloorCode);
+        Assert.Equal(2.5, scene.Floor.UnderlayScale);
+        Assert.Equal(100, scene.Floor.OriginX);
+    }
+
     [Fact]
     public async Task CreateSite_UniqueCode_Succeeds()
     {

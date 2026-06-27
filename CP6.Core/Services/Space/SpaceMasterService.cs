@@ -355,6 +355,18 @@ public class SpaceMasterService : ISpaceMasterService
     {
         var scene = new SceneDto { FloorId = floorId };
 
+        // 楼层对象（编辑器底图标定 + 局部系原点需要；viewer 也可用，不需亦无害）
+        scene.Floor = await _db.Space_Floors
+            .Where(f => f.Id == floorId)
+            .Select(f => new FloorDto
+            {
+                Id = f.Id, SiteId = f.SiteId, Level = f.Level, FloorCode = f.FloorCode,
+                FloorName = f.FloorName, Height = f.Height, UnderlayImage = f.UnderlayImage,
+                UnderlayScale = f.UnderlayScale, UnderlayOffsetX = f.UnderlayOffsetX,
+                UnderlayOffsetY = f.UnderlayOffsetY, OriginX = f.OriginX, OriginY = f.OriginY
+            })
+            .FirstOrDefaultAsync();
+
         scene.Zones = await _db.Space_Zones
             .Where(z => z.FloorId == floorId)
             .Select(z => new ZoneDto
@@ -376,10 +388,11 @@ public class SpaceMasterService : ISpaceMasterService
             .Where(r => r.FloorId == floorId)
             .Select(r => new RackDto
             {
-                Id = r.Id, ZoneId = r.ZoneId, AisleId = r.AisleId, RackCode = r.RackCode,
-                X = r.X, Y = r.Y, Z = r.Z, RotationZ = r.RotationZ,
+                Id = r.Id, ZoneId = r.ZoneId, AisleId = r.AisleId, TemplateId = r.TemplateId,
+                RackCode = r.RackCode, X = r.X, Y = r.Y, Z = r.Z, RotationZ = r.RotationZ,
                 Cols = r.Cols, Levels = r.Levels, DepthCount = r.DepthCount,
-                CellW = r.CellW, CellH = r.CellH, CellD = r.CellD, Enable = r.Enable
+                CellW = r.CellW, CellH = r.CellH, CellD = r.CellD, Enable = r.Enable,
+                RowVersion = r.RowVersion   // 编辑器乐观保存需回传
             }).ToListAsync();
 
         // 仅含 Placed=true 的库位（未放置的走 GetUnplacedAsync）

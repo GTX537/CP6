@@ -7,6 +7,8 @@ namespace CP6.Entity.DTOs.Space;
 public class SceneDto
 {
     public Guid FloorId { get; set; }
+    /// <summary>楼层对象（编辑器需底图标定 UnderlayScale/Offset + 局部系原点；为空＝楼层不存在）</summary>
+    public FloorDto? Floor { get; set; }
     public List<ZoneDto> Zones { get; set; } = new();
     public List<AisleDto> Aisles { get; set; } = new();
     public List<RackDto> Racks { get; set; } = new();
