@@ -1,0 +1,456 @@
+using System.Text.Json;
+using CP6.Core.EFDbContext;
+using CP6.Entity.DomainModels.Space;
+using CP6.Entity.DTOs.Space;
+using Microsoft.EntityFrameworkCore;
+
+namespace CP6.Core.Services.Space;
+
+/// <summary>
+/// Space 主数据服务实现（ch00 §9，v1.1 多租户规则）。
+///
+/// v1.1 约定（全文遵守）：
+///   · 构造只注入 CP6Context + LocationGeometryService，不注入任何租户上下文。
+///   · 查询不写 .Where(x => x.TenantId == ...)——CP6Context.OnModelCreating 已对所有
+///     BaseTenantEntity 子类反射注册全局查询过滤，自动 WHERE TenantId = CurrentTenantId。
+///   · 创建实体不写 TenantId = ...——SaveChanges 写入盖章自动补当前租户。
+///   · 仅保留 Creator = user / CreateDate = DateTime.Now（日期用 DateTime.Now，仓约定）。
+/// </summary>
+public class SpaceMasterService : ISpaceMasterService
+{
+    private readonly CP6Context _db;
+    private readonly LocationGeometryService _geo;
+
+    public SpaceMasterService(CP6Context db, LocationGeometryService geo)
+    {
+        _db  = db;
+        _geo = geo;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Site
+    // ══════════════════════════════════════════════════════════════════════
+
+    public async Task<Guid> CreateSiteAsync(SiteDto d, string? user)
+    {
+        if (await _db.Space_Sites.AnyAsync(x => x.SiteCode == d.SiteCode))
+            throw new InvalidOperationException("E-SPACE-001");
+        var e = new Space_Site
+        {
+            Id         = Guid.NewGuid(),
+            SiteCode   = d.SiteCode,
+            SiteName   = d.SiteName,
+            Address    = d.Address,
+            Lng        = d.Lng,
+            Lat        = d.Lat,
+            Enable     = d.Enable,
+            Creator    = user,
+            CreateDate = DateTime.Now
+        };
+        _db.Space_Sites.Add(e);
+        await _db.SaveChangesAsync();
+        return e.Id;
+    }
+
+    public async Task UpdateSiteAsync(Guid id, SiteDto d, string? user)
+    {
+        var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new InvalidOperationException("E-SPACE-001");
+        e.SiteCode   = d.SiteCode;
+        e.SiteName   = d.SiteName;
+        e.Address    = d.Address;
+        e.Lng        = d.Lng;
+        e.Lat        = d.Lat;
+        e.Enable     = d.Enable;
+        e.Modifier   = user;
+        e.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<List<SiteDto>> ListSitesAsync() =>
+        await _db.Space_Sites.Select(x => new SiteDto
+        {
+            Id = x.Id, SiteCode = x.SiteCode, SiteName = x.SiteName,
+            Address = x.Address, Lng = x.Lng, Lat = x.Lat, Enable = x.Enable
+        }).ToListAsync();
+
+    public async Task DeleteSiteAsync(Guid id)
+    {
+        if (await _db.Space_Floors.AnyAsync(x => x.SiteId == id))
+            throw new InvalidOperationException("E-SPACE-007");
+        var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id);
+        if (e != null) { _db.Space_Sites.Remove(e); await _db.SaveChangesAsync(); }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Floor
+    // ══════════════════════════════════════════════════════════════════════
+
+    public async Task<Guid> CreateFloorAsync(FloorDto d, string? user)
+    {
+        if (await _db.Space_Floors.AnyAsync(x => x.SiteId == d.SiteId && x.FloorCode == d.FloorCode))
+            throw new InvalidOperationException("E-SPACE-001");
+        var e = new Space_Floor
+        {
+            Id              = Guid.NewGuid(),
+            SiteId          = d.SiteId,
+            Level           = d.Level,
+            FloorCode       = d.FloorCode,
+            FloorName       = d.FloorName,
+            Height          = d.Height,
+            UnderlayImage   = d.UnderlayImage,
+            UnderlayScale   = d.UnderlayScale,
+            UnderlayOffsetX = d.UnderlayOffsetX,
+            UnderlayOffsetY = d.UnderlayOffsetY,
+            OriginX         = d.OriginX,
+            OriginY         = d.OriginY,
+            Creator         = user,
+            CreateDate      = DateTime.Now
+        };
+        _db.Space_Floors.Add(e);
+        await _db.SaveChangesAsync();
+        return e.Id;
+    }
+
+    public async Task UpdateFloorAsync(Guid id, FloorDto d, string? user)
+    {
+        var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new InvalidOperationException("E-SPACE-001");
+        e.Level           = d.Level;
+        e.FloorCode       = d.FloorCode;
+        e.FloorName       = d.FloorName;
+        e.Height          = d.Height;
+        e.UnderlayImage   = d.UnderlayImage;
+        e.UnderlayScale   = d.UnderlayScale;
+        e.UnderlayOffsetX = d.UnderlayOffsetX;
+        e.UnderlayOffsetY = d.UnderlayOffsetY;
+        e.OriginX         = d.OriginX;
+        e.OriginY         = d.OriginY;
+        e.Modifier        = user;
+        e.ModifyDate      = DateTime.Now;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<List<FloorDto>> ListFloorsAsync(Guid siteId) =>
+        await _db.Space_Floors.Where(x => x.SiteId == siteId).Select(x => new FloorDto
+        {
+            Id = x.Id, SiteId = x.SiteId, Level = x.Level, FloorCode = x.FloorCode,
+            FloorName = x.FloorName, Height = x.Height, UnderlayImage = x.UnderlayImage,
+            UnderlayScale = x.UnderlayScale, UnderlayOffsetX = x.UnderlayOffsetX,
+            UnderlayOffsetY = x.UnderlayOffsetY, OriginX = x.OriginX, OriginY = x.OriginY
+        }).ToListAsync();
+
+    public async Task DeleteFloorAsync(Guid id)
+    {
+        if (await _db.Space_Zones.AnyAsync(x => x.FloorId == id) ||
+            await _db.Space_Markers.AnyAsync(x => x.FloorId == id))
+            throw new InvalidOperationException("E-SPACE-007");
+        var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id);
+        if (e != null) { _db.Space_Floors.Remove(e); await _db.SaveChangesAsync(); }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Zone
+    // ══════════════════════════════════════════════════════════════════════
+
+    public async Task<Guid> CreateZoneAsync(ZoneDto d, string? user)
+    {
+        ValidatePolygon(d.Polygon);  // E-SPACE-006
+        if (await _db.Space_Zones.AnyAsync(x => x.FloorId == d.FloorId && x.ZoneCode == d.ZoneCode))
+            throw new InvalidOperationException("E-SPACE-001");
+        var e = new Space_Zone
+        {
+            Id         = Guid.NewGuid(),
+            FloorId    = d.FloorId,
+            ZoneCode   = d.ZoneCode,
+            ZoneName   = d.ZoneName,
+            ZoneType   = d.ZoneType,
+            Polygon    = d.Polygon,
+            Color      = d.Color,
+            Enable     = d.Enable,
+            Creator    = user,
+            CreateDate = DateTime.Now
+        };
+        _db.Space_Zones.Add(e);
+        await _db.SaveChangesAsync();
+        return e.Id;
+    }
+
+    public async Task UpdateZoneAsync(Guid id, ZoneDto d, string? user)
+    {
+        ValidatePolygon(d.Polygon);
+        var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new InvalidOperationException("E-SPACE-001");
+        e.ZoneCode   = d.ZoneCode;
+        e.ZoneName   = d.ZoneName;
+        e.ZoneType   = d.ZoneType;
+        e.Polygon    = d.Polygon;
+        e.Color      = d.Color;
+        e.Enable     = d.Enable;
+        e.Modifier   = user;
+        e.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<List<ZoneDto>> ListZonesAsync(Guid floorId) =>
+        await _db.Space_Zones.Where(x => x.FloorId == floorId).Select(x => new ZoneDto
+        {
+            Id = x.Id, FloorId = x.FloorId, ZoneCode = x.ZoneCode, ZoneName = x.ZoneName,
+            ZoneType = x.ZoneType, Polygon = x.Polygon, Color = x.Color, Enable = x.Enable
+        }).ToListAsync();
+
+    public async Task DeleteZoneAsync(Guid id)
+    {
+        if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == id) ||
+            await _db.Space_Racks.AnyAsync(x => x.ZoneId == id))
+            throw new InvalidOperationException("E-SPACE-007");
+        var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id);
+        if (e != null) { _db.Space_Zones.Remove(e); await _db.SaveChangesAsync(); }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Aisle
+    // ══════════════════════════════════════════════════════════════════════
+
+    public async Task<Guid> CreateAisleAsync(AisleDto d, string? user)
+    {
+        if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == d.ZoneId && x.AisleCode == d.AisleCode))
+            throw new InvalidOperationException("E-SPACE-001");
+        var e = new Space_Aisle
+        {
+            Id         = Guid.NewGuid(),
+            ZoneId     = d.ZoneId,
+            AisleCode  = d.AisleCode,
+            Polygon    = d.Polygon,
+            Centerline = d.Centerline,
+            Creator    = user,
+            CreateDate = DateTime.Now
+        };
+        _db.Space_Aisles.Add(e);
+        await _db.SaveChangesAsync();
+        return e.Id;
+    }
+
+    public async Task UpdateAisleAsync(Guid id, AisleDto d, string? user)
+    {
+        var e = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new InvalidOperationException("E-SPACE-001");
+        e.AisleCode  = d.AisleCode;
+        e.Polygon    = d.Polygon;
+        e.Centerline = d.Centerline;
+        e.Modifier   = user;
+        e.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<List<AisleDto>> ListAislesAsync(Guid zoneId) =>
+        await _db.Space_Aisles.Where(x => x.ZoneId == zoneId).Select(x => new AisleDto
+        {
+            Id = x.Id, ZoneId = x.ZoneId, AisleCode = x.AisleCode,
+            Polygon = x.Polygon, Centerline = x.Centerline
+        }).ToListAsync();
+
+    public async Task DeleteAisleAsync(Guid id)
+    {
+        // SetNull: 将此巷道下所有货架的 AisleId 置 null（货架保留）
+        var racks = await _db.Space_Racks.Where(r => r.AisleId == id).ToListAsync();
+        foreach (var r in racks) r.AisleId = null;
+        var e = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id);
+        if (e != null) _db.Space_Aisles.Remove(e);
+        await _db.SaveChangesAsync();
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // Rack
+    // ══════════════════════════════════════════════════════════════════════
+
+    public async Task<Guid> CreateRackAsync(RackDto d, string? user)
+    {
+        if (d.ZoneId == Guid.Empty)
+            throw new InvalidOperationException("E-SPACE-002");  // 货架必须归库区
+        if (d.Cols < 1 || d.Levels < 1 || d.DepthCount < 1 || d.CellW <= 0 || d.CellH <= 0 || d.CellD <= 0)
+            throw new InvalidOperationException("E-SPACE-002");  // 尺寸不变量
+        if (await _db.Space_Racks.AnyAsync(x => x.ZoneId == d.ZoneId && x.RackCode == d.RackCode))
+            throw new InvalidOperationException("E-SPACE-001");
+        // 冗余回填 FloorId（从 Zone 查）
+        var floorId = await _db.Space_Zones
+            .Where(z => z.Id == d.ZoneId)
+            .Select(z => z.FloorId)
+            .FirstOrDefaultAsync();
+        var e = new Space_Rack
+        {
+            Id         = Guid.NewGuid(),
+            ZoneId     = d.ZoneId,
+            AisleId    = d.AisleId,
+            FloorId    = floorId,
+            TemplateId = d.TemplateId,
+            RackCode   = d.RackCode,
+            X          = d.X,
+            Y          = d.Y,
+            Z          = d.Z,
+            RotationZ  = d.RotationZ,
+            Cols       = d.Cols,
+            Levels     = d.Levels,
+            DepthCount = d.DepthCount,
+            CellW      = d.CellW,
+            CellH      = d.CellH,
+            CellD      = d.CellD,
+            Enable     = d.Enable,
+            Creator    = user,
+            CreateDate = DateTime.Now
+        };
+        _db.Space_Racks.Add(e);
+        await _db.SaveChangesAsync();
+        return e.Id;
+    }
+
+    public async Task UpdateRackAsync(Guid id, RackDto d, string? user)
+    {
+        var e = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new InvalidOperationException("E-SPACE-002");
+        // 乐观并发（真库生效；InMemory 测试跳过冲突）
+        _db.Entry(e).Property(x => x.RowVersion).OriginalValue = d.RowVersion;
+        e.X          = d.X;
+        e.Y          = d.Y;
+        e.Z          = d.Z;
+        e.RotationZ  = d.RotationZ;
+        e.Cols       = d.Cols;
+        e.Levels     = d.Levels;
+        e.DepthCount = d.DepthCount;
+        e.CellW      = d.CellW;
+        e.CellH      = d.CellH;
+        e.CellD      = d.CellD;
+        e.AisleId    = d.AisleId;
+        e.Modifier   = user;
+        e.ModifyDate = DateTime.Now;
+        try { await _db.SaveChangesAsync(); }
+        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-SPACE-009"); }
+        // ★ 位姿/尺寸变更后重算其下所有已放置库位的绝对坐标缓存
+        await _geo.RecalcRackLocationsAsync(id);
+    }
+
+    public async Task<List<RackDto>> ListRacksAsync(Guid zoneId) =>
+        await _db.Space_Racks.Where(x => x.ZoneId == zoneId).Select(x => new RackDto
+        {
+            Id = x.Id, ZoneId = x.ZoneId, AisleId = x.AisleId, TemplateId = x.TemplateId,
+            RackCode = x.RackCode, X = x.X, Y = x.Y, Z = x.Z, RotationZ = x.RotationZ,
+            Cols = x.Cols, Levels = x.Levels, DepthCount = x.DepthCount,
+            CellW = x.CellW, CellH = x.CellH, CellD = x.CellD, Enable = x.Enable,
+            RowVersion = x.RowVersion
+        }).ToListAsync();
+
+    public async Task DeleteRackAsync(Guid id)
+    {
+        if (await _db.Space_Locations.AnyAsync(l => l.RackId == id))
+            throw new InvalidOperationException("E-SPACE-003");
+        var e = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id);
+        if (e != null) { _db.Space_Racks.Remove(e); await _db.SaveChangesAsync(); }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // 场景聚合 / 待绑定 / 库位列表
+    // ══════════════════════════════════════════════════════════════════════
+
+    public async Task<SceneDto> GetSceneAsync(Guid floorId)
+    {
+        var scene = new SceneDto { FloorId = floorId };
+
+        scene.Zones = await _db.Space_Zones
+            .Where(z => z.FloorId == floorId)
+            .Select(z => new ZoneDto
+            {
+                Id = z.Id, FloorId = z.FloorId, ZoneCode = z.ZoneCode, ZoneName = z.ZoneName,
+                ZoneType = z.ZoneType, Polygon = z.Polygon, Color = z.Color, Enable = z.Enable
+            }).ToListAsync();
+
+        var zoneIds = scene.Zones.Select(z => z.Id!.Value).ToList();
+        scene.Aisles = await _db.Space_Aisles
+            .Where(a => zoneIds.Contains(a.ZoneId))
+            .Select(a => new AisleDto
+            {
+                Id = a.Id, ZoneId = a.ZoneId, AisleCode = a.AisleCode,
+                Polygon = a.Polygon, Centerline = a.Centerline
+            }).ToListAsync();
+
+        scene.Racks = await _db.Space_Racks
+            .Where(r => r.FloorId == floorId)
+            .Select(r => new RackDto
+            {
+                Id = r.Id, ZoneId = r.ZoneId, AisleId = r.AisleId, RackCode = r.RackCode,
+                X = r.X, Y = r.Y, Z = r.Z, RotationZ = r.RotationZ,
+                Cols = r.Cols, Levels = r.Levels, DepthCount = r.DepthCount,
+                CellW = r.CellW, CellH = r.CellH, CellD = r.CellD, Enable = r.Enable
+            }).ToListAsync();
+
+        // 仅含 Placed=true 的库位（未放置的走 GetUnplacedAsync）
+        scene.Locations = await _db.Space_Locations
+            .Where(l => l.FloorId == floorId && l.Placed)
+            .Select(l => new SceneLocationDto
+            {
+                Id           = l.Id,
+                RackId       = l.RackId!.Value,
+                LocationCode = l.LocationCode,
+                Col          = l.Col   ?? 0,
+                Level        = l.Level ?? 0,
+                Depth        = l.Depth ?? 0,
+                AbsX         = l.AbsX  ?? 0,
+                AbsY         = l.AbsY  ?? 0,
+                AbsZ         = l.AbsZ  ?? 0,
+                SizeW        = l.SizeW ?? 0,
+                SizeH        = l.SizeH ?? 0,
+                SizeD        = l.SizeD ?? 0,
+                Status       = l.Status
+            }).ToListAsync();
+
+        scene.Markers = await _db.Space_Markers
+            .Where(m => m.FloorId == floorId)
+            .Select(m => new MarkerDto
+            {
+                Id = m.Id, FloorId = m.FloorId, X = m.X, Y = m.Y, Z = m.Z,
+                MarkerType = m.MarkerType, Text = m.Text, RefRackId = m.RefRackId
+            }).ToListAsync();
+
+        return scene;
+    }
+
+    public async Task<List<SceneLocationDto>> GetUnplacedAsync(Guid floorId)
+    {
+        // 采纳态待绑定：Status=1 ∧ Placed=false（FloorId 可为空，按租户全量返回）
+        return await _db.Space_Locations
+            .Where(l => l.Status == 1 && !l.Placed)
+            .Select(l => new SceneLocationDto
+            {
+                Id = l.Id, LocationCode = l.LocationCode, Status = l.Status
+            }).ToListAsync();
+    }
+
+    public async Task<List<SceneLocationDto>> ListLocationsAsync(Guid rackId) =>
+        await _db.Space_Locations
+            .Where(l => l.RackId == rackId)
+            .Select(l => new SceneLocationDto
+            {
+                Id           = l.Id,
+                RackId       = l.RackId!.Value,
+                LocationCode = l.LocationCode,
+                Col          = l.Col   ?? 0,
+                Level        = l.Level ?? 0,
+                Depth        = l.Depth ?? 0,
+                AbsX         = l.AbsX  ?? 0,
+                AbsY         = l.AbsY  ?? 0,
+                AbsZ         = l.AbsZ  ?? 0,
+                SizeW        = l.SizeW ?? 0,
+                SizeH        = l.SizeH ?? 0,
+                SizeD        = l.SizeD ?? 0,
+                Status       = l.Status
+            }).ToListAsync();
+
+    // ══════════════════════════════════════════════════════════════════════
+    // 内部工具
+    // ══════════════════════════════════════════════════════════════════════
+
+    private static void ValidatePolygon(string json)
+    {
+        var pts = JsonSerializer.Deserialize<List<List<int>>>(json) ?? new();
+        if (pts.Count < 3) throw new InvalidOperationException("E-SPACE-006");
+    }
+}
