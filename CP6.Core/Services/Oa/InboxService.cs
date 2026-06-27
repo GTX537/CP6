@@ -166,4 +166,61 @@ public class InboxService : IInboxService
         }
         return results;
     }
+
+    public async Task<InboxDetail?> DetailAsync(Guid instanceId)
+    {
+        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId);
+        if (inst is null) return null;
+        var def = await _db.Wf_FlowDefs.FirstOrDefaultAsync(d => d.FlowKey == inst.FlowKey);
+        var formSchema = def == null ? null
+            : (await _db.Wf_FormDefs.FirstOrDefaultAsync(fd => fd.FormKey == def.FormKey))?.SchemaJson;
+
+        var formTos = await _db.Wf_FlowFormTos.Where(f => f.InstanceId == instanceId)
+            .OrderBy(f => f.StepSeq).ThenBy(f => f.SentAt).ToListAsync();
+        var snaps = await _db.Wf_FlowDatas.Where(s => s.InstanceId == instanceId)
+            .OrderBy(s => s.StepSeq).ToListAsync();
+        var ccs = await _db.Wf_FlowCcs.Where(c => c.InstanceId == instanceId).ToListAsync();
+
+        var ids = formTos.SelectMany(f => new[] { f.ExpectedHandlerId, f.ActualHandlerId ?? Guid.Empty, f.OnBehalfOfId ?? Guid.Empty })
+            .Concat(ccs.Select(c => c.RecipientId));
+        var names = await OaUserNames.ResolveAsync(_db, ids);
+        string? N(Guid? id) => id is null || id == Guid.Empty ? null : names.GetValueOrDefault(id.Value, id.Value.ToString());
+
+        var timeline = formTos.Select(f => new TimelineRow(
+            f.StepSeq, f.TokenId, f.NodeId, f.NodeName,
+            f.ExpectedHandlerId, names.GetValueOrDefault(f.ExpectedHandlerId, f.ExpectedHandlerId.ToString()),
+            f.ActualHandlerId, N(f.ActualHandlerId), f.OnBehalfOfId, N(f.OnBehalfOfId),
+            f.Status, f.Comment, f.SentAt, f.HandledAt)).ToList();
+        var snapshots = snaps.Select(s => new SnapshotRow(s.StepSeq, s.NodeId, s.DataJson)).ToList();
+        var ccRows = ccs.Select(c => new CcRow(c.RecipientId, N(c.RecipientId) ?? "", c.AtNodeId, c.IsRead)).ToList();
+
+        IReadOnlyList<ForecastStep> forecast = inst.Status == FlowInstanceStatus.Running
+            ? (await _forecast.ForecastAsync(inst.FlowKey, inst.VarsJson, inst.StarterId, fromNodeId: inst.CurrentNode)).Steps
+            : Array.Empty<ForecastStep>();
+
+        return new InboxDetail(inst, def?.FlowName, def?.FormKey, formSchema,
+            inst.VarsJson, timeline, snapshots, forecast, ccRows);
+    }
+
+    public async Task<InboxStats> StatsAsync(Guid userId)
+    {
+        var pending = await PendingAsync(userId);
+        var running = await RunningAsync(userId);
+        var doneMine = await DoneAsync(userId, DateTime.Now.Year, DateTime.Now.Month, "mine");
+        var rejectedBack = await _db.Wf_FlowInstances
+            .CountAsync(i => i.StarterId == userId && i.Status == FlowInstanceStatus.Rejected);
+
+        var since = DateTime.Now.Date.AddDays(-6);
+        var handledRows = await _db.Wf_FlowFormTos
+            .Where(f => f.ActualHandlerId == userId && f.HandledAt != null && f.HandledAt >= since)
+            .Select(f => f.HandledAt!.Value).ToListAsync();
+        var trend = Enumerable.Range(0, 7).Select(d =>
+        {
+            var day = since.AddDays(d);
+            return new TrendPoint(day.ToString("MM-dd"), handledRows.Count(h => h.Date == day));
+        }).ToList();
+
+        return new InboxStats(pending.Count, running.Count, doneMine.Count, rejectedBack,
+            trend, pending.Take(5).ToList());
+    }
 }

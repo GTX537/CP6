@@ -158,4 +158,33 @@ public class InboxServiceTests
         Assert.Equal("E-WF-004", bad.Error);
         Assert.Equal(FlowTaskStatus.Approved, (await db.Wf_FlowTasks.SingleAsync(t => t.Id == validTaskId)).Status);
     }
+
+    [Fact]
+    public async Task Detail_BuildsTimeline_AndForecast()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var approver = Guid.NewGuid(); var cc = Guid.NewGuid();
+        await SeedAndSubmitAsync(db, starter, approver, cc);
+        var instId = (await db.Wf_FlowInstances.SingleAsync()).Id;
+
+        var detail = await Inbox(db).DetailAsync(instId);
+        Assert.NotNull(detail);
+        Assert.Equal("请假单", detail!.FlowName);
+        var cur = Assert.Single(detail.Timeline.Where(r => r.Status == FlowFormToStatus.Pending));
+        Assert.Equal("n1", cur.NodeId);
+        Assert.Equal("审批王", cur.ExpectedHandlerName);          // 应处理人名解析
+        Assert.NotEmpty(detail.Forecast);                         // 预计段含 end（Running 才算）
+        Assert.Contains(detail.Cc, c => c.RecipientName == "知会赵");
+    }
+
+    [Fact]
+    public async Task Stats_CountsPendingAndRunning()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var approver = Guid.NewGuid(); var cc = Guid.NewGuid();
+        await SeedAndSubmitAsync(db, starter, approver, cc);
+
+        Assert.Equal(1, (await Inbox(db).StatsAsync(approver)).PendingCount);   // 审批人有 1 待办
+        Assert.Equal(1, (await Inbox(db).StatsAsync(starter)).RunningCount);    // 发起人有 1 在途
+    }
 }

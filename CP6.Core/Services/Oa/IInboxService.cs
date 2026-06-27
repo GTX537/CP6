@@ -14,4 +14,7 @@ public interface IInboxService
     Task<IReadOnlyList<InboxDoneItem>> DoneAsync(Guid userId, int? year, int? month, string tab = "mine");
     // ── 批量办理（T7）──
     Task<IReadOnlyList<BatchActResultItem>> ActBatchAsync(Guid userId, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null);
+    // ── 详情 + 仪表盘（T8）──
+    Task<InboxDetail?> DetailAsync(Guid instanceId);   // 不存在 → null（控制器转 404）
+    Task<InboxStats> StatsAsync(Guid userId);
 }
