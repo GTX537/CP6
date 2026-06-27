@@ -202,6 +202,31 @@ public class InboxService : IInboxService
             inst.VarsJson, timeline, snapshots, forecast, ccRows);
     }
 
+    public async Task<IReadOnlyList<FormQueryItem>> QueryAsync(FormQueryFilter f)
+    {
+        var q = _db.Wf_FlowInstances.AsQueryable();
+        if (f.StarterId is { } s) q = q.Where(i => i.StarterId == s);
+        if (!string.IsNullOrWhiteSpace(f.FlowKey)) q = q.Where(i => i.FlowKey == f.FlowKey);
+        if (f.Status is { } st) q = q.Where(i => i.Status == st);
+        if (f.From is { } fr) q = q.Where(i => i.CreateDate >= fr);
+        if (f.To is { } to) q = q.Where(i => i.CreateDate <= to);
+        if (f.HandlerId is { } h)   // 处理人：我办过/正办该实例
+            q = q.Where(i => _db.Wf_FlowFormTos.Any(ft => ft.InstanceId == i.Id
+                && (ft.ExpectedHandlerId == h || ft.ActualHandlerId == h)));
+        if (!string.IsNullOrWhiteSpace(f.Keyword))
+            q = q.Where(i => i.FlowKey.Contains(f.Keyword!) || (i.BizId != null && i.BizId.Contains(f.Keyword!)));
+
+        var rows = await (from i in q
+                          join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
+                          from d in dd.DefaultIfEmpty()
+                          join u in _db.Sys_Users on i.StarterId equals u.Id into uu
+                          from u in uu.DefaultIfEmpty()
+                          orderby i.CreateDate descending
+                          select new { i, FlowName = d == null ? null : d.FlowName, Starter = u }).Take(500).ToListAsync();
+        return rows.Select(x => new FormQueryItem(x.i.Id, x.i.FlowKey, x.FlowName, x.i.StarterId,
+            Name(x.Starter), x.i.Status, x.i.CurrentNode, x.i.CreateDate)).ToList();
+    }
+
     public async Task<InboxStats> StatsAsync(Guid userId)
     {
         var pending = await PendingAsync(userId);

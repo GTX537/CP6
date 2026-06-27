@@ -17,4 +17,6 @@ public interface IInboxService
     // ── 详情 + 仪表盘（T8）──
     Task<InboxDetail?> DetailAsync(Guid instanceId);   // 不存在 → null（控制器转 404）
     Task<InboxStats> StatsAsync(Guid userId);
+    // ── 表單查詢（Phase C）──
+    Task<IReadOnlyList<FormQueryItem>> QueryAsync(FormQueryFilter filter);
 }
