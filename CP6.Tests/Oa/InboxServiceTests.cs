@@ -97,4 +97,46 @@ public class InboxServiceTests
         await Inbox(db).MarkCcReadAsync(cc, ccId);
         Assert.True((await db.Wf_FlowCcs.SingleAsync(c => c.Id == ccId)).IsRead);
     }
+
+    [Fact]
+    public async Task Running_ReturnsMyStarted_WithCurrentHandlers()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var approver = Guid.NewGuid(); var cc = Guid.NewGuid();
+        await SeedAndSubmitAsync(db, starter, approver, cc);
+
+        var running = await Inbox(db).RunningAsync(starter);
+        var item = Assert.Single(running);
+        Assert.Equal("请假单", item.FlowName);
+        Assert.Equal(FlowInstanceStatus.Running, item.Status);
+        Assert.Contains("审批王", item.CurrentHandlers);     // 当前关卡应处理人 = 待签履历 ExpectedHandler
+    }
+
+    [Fact]
+    public async Task Done_Mine_ReturnsHandledByMe()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var approver = Guid.NewGuid(); var cc = Guid.NewGuid();
+        await SeedAndSubmitAsync(db, starter, approver, cc);
+        var taskId = (await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending)).Id;
+        await Engine(db).ActAsync(taskId, approver, approve: true, "OK");   // 办结 → 履历 Approved + 实例 Approved
+
+        var done = await Inbox(db).DoneAsync(approver, null, null, "mine");
+        var item = Assert.Single(done);
+        Assert.Equal(FlowFormToStatus.Approved, item.FormToStatus);
+        Assert.Equal(FlowInstanceStatus.Approved, item.InstanceStatus);
+        Assert.Equal("发起人李", item.StarterName);
+    }
+
+    [Fact]
+    public async Task Done_Cc_ReturnsCcRecipientItems()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var approver = Guid.NewGuid(); var cc = Guid.NewGuid();
+        await SeedAndSubmitAsync(db, starter, approver, cc);
+
+        var done = await Inbox(db).DoneAsync(cc, null, null, "cc");
+        var item = Assert.Single(done);
+        Assert.Equal("请假单", item.FlowName);
+    }
 }

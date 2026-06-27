@@ -8,4 +8,8 @@ public interface IInboxService
     Task<IReadOnlyList<InboxCcItem>> PendingCcAsync(Guid userId);        // CC：抄送我
     Task MarkTaskReadAsync(Guid userId, Guid taskId);                    // 幂等、仅本人
     Task MarkCcReadAsync(Guid userId, Guid ccId);                        // 幂等、仅本人
+    // ── 在途（T6）──
+    Task<IReadOnlyList<InboxRunningItem>> RunningAsync(Guid userId);
+    // ── 已處理（T6）──：tab = mine | cc | all；year/month 可空（null=不限月）
+    Task<IReadOnlyList<InboxDoneItem>> DoneAsync(Guid userId, int? year, int? month, string tab = "mine");
 }

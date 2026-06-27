@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wf;
+using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
 
@@ -65,5 +66,79 @@ public class InboxService : IInboxService
         if (c is null || c.IsRead) return;
         c.IsRead = true; c.ReadAt = DateTime.Now;
         await _db.SaveChangesAsync();
+    }
+
+    private static string Name(Sys_User? u) =>
+        u == null ? "" : (string.IsNullOrWhiteSpace(u.NickName) ? u.UserName : u.NickName!);
+
+    public async Task<IReadOnlyList<InboxRunningItem>> RunningAsync(Guid userId)
+    {
+        var rows = await (from i in _db.Wf_FlowInstances
+                          where i.StarterId == userId && i.Status == FlowInstanceStatus.Running
+                          join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
+                          from d in dd.DefaultIfEmpty()
+                          orderby i.CreateDate descending
+                          select new { i, FlowName = d == null ? null : d.FlowName }).ToListAsync();
+        var instIds = rows.Select(x => x.i.Id).ToList();
+        var pendings = await _db.Wf_FlowFormTos
+            .Where(f => instIds.Contains(f.InstanceId) && f.Status == FlowFormToStatus.Pending)
+            .Select(f => new { f.InstanceId, f.ExpectedHandlerId }).ToListAsync();
+        var names = await OaUserNames.ResolveAsync(_db, pendings.Select(p => p.ExpectedHandlerId));
+        return rows.Select(x => new InboxRunningItem(
+            x.i.Id, x.i.FlowKey, x.FlowName, x.i.CurrentNode, x.i.Status,
+            pendings.Where(p => p.InstanceId == x.i.Id)
+                    .Select(p => names.GetValueOrDefault(p.ExpectedHandlerId, p.ExpectedHandlerId.ToString()))
+                    .Distinct().ToList(),
+            x.i.CreateDate)).ToList();
+    }
+
+    public async Task<IReadOnlyList<InboxDoneItem>> DoneAsync(Guid userId, int? year, int? month, string tab = "mine")
+    {
+        bool InMonth(DateTime dt) => (year is null || dt.Year == year) && (month is null || dt.Month == month);
+
+        var mine = new List<InboxDoneItem>();
+        if (tab is "mine" or "all")
+        {
+            var handled = await (from f in _db.Wf_FlowFormTos
+                                 where f.ActualHandlerId == userId && f.HandledAt != null
+                                       && (f.Status == FlowFormToStatus.Approved
+                                           || f.Status == FlowFormToStatus.Rejected
+                                           || f.Status == FlowFormToStatus.Transferred)
+                                 join i in _db.Wf_FlowInstances on f.InstanceId equals i.Id
+                                 join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
+                                 from d in dd.DefaultIfEmpty()
+                                 join s in _db.Sys_Users on i.StarterId equals s.Id into ss
+                                 from s in ss.DefaultIfEmpty()
+                                 select new { f, i, FlowName = d == null ? null : d.FlowName, Starter = s }).ToListAsync();
+            mine = handled.Where(x => InMonth(x.f.HandledAt!.Value))
+                .GroupBy(x => x.i.Id)
+                .Select(g => g.OrderByDescending(x => x.f.HandledAt).First())
+                .Select(x => new InboxDoneItem(x.i.Id, x.i.FlowKey, x.FlowName, x.i.StarterId, Name(x.Starter),
+                    x.f.Status, x.f.HandledAt!.Value, x.i.Status))
+                .OrderByDescending(x => x.DoneAt).ToList();
+        }
+
+        var cc = new List<InboxDoneItem>();
+        if (tab is "cc" or "all")
+        {
+            var ccRows = await (from c in _db.Wf_FlowCcs
+                                where c.RecipientId == userId
+                                join i in _db.Wf_FlowInstances on c.InstanceId equals i.Id
+                                join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
+                                from d in dd.DefaultIfEmpty()
+                                join s in _db.Sys_Users on i.StarterId equals s.Id into ss
+                                from s in ss.DefaultIfEmpty()
+                                select new { c, i, FlowName = d == null ? null : d.FlowName, Starter = s }).ToListAsync();
+            cc = ccRows.Where(x => InMonth(x.c.CreateDate))
+                .Select(x => new InboxDoneItem(x.i.Id, x.i.FlowKey, x.FlowName, x.i.StarterId, Name(x.Starter),
+                    x.i.Status, x.c.CreateDate, x.i.Status))
+                .OrderByDescending(x => x.DoneAt).ToList();
+        }
+
+        if (tab == "mine") return mine;
+        if (tab == "cc") return cc;
+        return mine.Concat(cc).GroupBy(x => x.InstanceId)
+            .Select(g => g.OrderByDescending(x => x.DoneAt).First())
+            .OrderByDescending(x => x.DoneAt).ToList();
     }
 }
