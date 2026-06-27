@@ -17,14 +17,23 @@ public partial class FlowEngine : IFlowEngine
     private readonly IApproverResolver _approver;
     private readonly IWfNotifier _notifier;
     private readonly ApprovalDispatcher _dispatcher;
+    private readonly IReadOnlyDictionary<string, INodeHandler> _handlers;
 
-    public FlowEngine(CP6Context db, IApproverResolver approver, IWfNotifier? notifier = null, ApprovalDispatcher? dispatcher = null)
+    public FlowEngine(CP6Context db, IApproverResolver approver, IWfNotifier? notifier = null,
+                      ApprovalDispatcher? dispatcher = null, IEnumerable<INodeHandler>? handlers = null)
     {
         _db = db;
         _approver = approver;
         _notifier = notifier ?? new NullWfNotifier();   // 无 SignalR 环境/单测 → 空推送
         _dispatcher = dispatcher ?? new ApprovalDispatcher(Array.Empty<IApprovalCallback>());  // 无业务回调（纯 OA/单测）→ 空分发
+        _handlers = (handlers ?? DefaultHandlers()).ToDictionary(h => h.Type, StringComparer.OrdinalIgnoreCase);
     }
+
+    // ★ T4：当前仅 start/approval/end 三 handler。parallelSplit/Join 在 T5 加（此处不引用，未实现）。
+    private static IEnumerable<INodeHandler> DefaultHandlers() => new INodeHandler[]
+    {
+        new StartNodeHandler(), new ApprovalNodeHandler(), new EndNodeHandler(),
+    };
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
     {
@@ -48,7 +57,8 @@ public partial class FlowEngine : IFlowEngine
         _db.Wf_FlowInstances.Add(inst);
         AddHistory(inst.Id, first.Id, starterId, "submit", null);
 
-        await EnterNodeAsync(inst, schema, first);
+        var root = SpawnToken(inst, first, parent: null, fork: null);
+        await EnterNodeAsync(inst, schema, first, root);
         await DispatchIfFinishedAsync(inst, starterId, null);   // 极少数"起即终态"（如 start→end）也分发，决策人记发起人
         await _db.SaveChangesAsync();
         return inst.Id;
@@ -73,9 +83,10 @@ public partial class FlowEngine : IFlowEngine
         if (approve && task.AddSignSource == "before")
             await ReactivateSuspendedAsync(inst.Id, task.NodeId);
 
-        // 会签判定：取本节点在途/已决任务（排除作废，避免退回重入旧轮任务串台；含刚改的，identity-map 反映未存修改）
+        // 会签判定：取本 token 本节点在途/已决任务（排除作废，避免退回重入旧轮任务串台；含刚改的，identity-map 反映未存修改）
         var nodeTasks = await _db.Wf_FlowTasks
-            .Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.Status != FlowTaskStatus.Cancelled)
+            .Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId
+                        && t.TokenId == task.TokenId && t.Status != FlowTaskStatus.Cancelled)
             .ToListAsync();
         int approved = nodeTasks.Count(t => t.Status == FlowTaskStatus.Approved);
         int rejected = nodeTasks.Count(t => t.Status == FlowTaskStatus.Rejected);
@@ -91,12 +102,13 @@ public partial class FlowEngine : IFlowEngine
         if (passed)
         {
             var schema = await LoadSchemaAsync(inst.FlowKey);
-            var node = FindNode(schema, task.NodeId);
-            if (node is not null) await NextNodeAsync(inst, schema, node);
+            var tok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
+            if (tok is not null) await AdvanceToken(inst, schema, tok);
         }
         else
         {
             inst.Status = FlowInstanceStatus.Rejected;
+            CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
         }
         await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
         await _db.SaveChangesAsync();
@@ -132,64 +144,24 @@ public partial class FlowEngine : IFlowEngine
         }
     }
 
-    // ── 进入节点：end→通过；start→直穿；approval→算审批人建待办（缺位挂起） ──
-    private async Task EnterNodeAsync(Wf_FlowInstance inst, FlowSchema schema, FlowNode node)
+    // ── 进入节点：按 node.Type 多态分发到 INodeHandler（token 为操作主语）。兼容保留 CurrentNode 代表节点 ──
+    internal async Task EnterNodeAsync(Wf_FlowInstance inst, FlowSchema schema, FlowNode node, Wf_FlowToken token)
     {
-        inst.CurrentNode = node.Id;
-
-        if (IsType(node, "end"))
-        {
-            inst.Status = FlowInstanceStatus.Approved;
-            AddHistory(inst.Id, node.Id, inst.StarterId, "end", null);
-            return;
-        }
-        if (IsType(node, "start"))
-        {
-            await NextNodeAsync(inst, schema, node);
-            return;
-        }
-
-        var rule = BuildRule(node);
-        if (rule is null) { Suspend(inst, node, "节点未配置审批人"); return; }
-
-        var res = await _approver.ResolveAsync(rule, new ApproverResolveContext { StarterUserId = inst.StarterId });
-        if (!res.Resolved) { Suspend(inst, node, res.UnresolvedReason ?? "审批人无法解析"); return; }
-
-        // 重入节点（退回/循环）：先作废上一轮遗留任务，避免会签计票串台
-        var stale = await _db.Wf_FlowTasks
-            .Where(t => t.InstanceId == inst.Id && t.NodeId == node.Id && t.Status != FlowTaskStatus.Cancelled)
-            .ToListAsync();
-        foreach (var t in stale) t.Status = FlowTaskStatus.Cancelled;
-
-        var dueAt = NodeDueAt(node);
-        foreach (var uid in res.ApproverIds.Distinct())
-        {
-            var (assignee, delegatedFrom) = await ResolveActualAssigneeAsync(uid);   // 委派期替换为代理人
-            var task = new Wf_FlowTask
-            {
-                Id = Guid.NewGuid(),
-                InstanceId = inst.Id,
-                NodeId = node.Id,
-                AssigneeId = assignee,
-                Status = FlowTaskStatus.Pending,
-                Countersign = node.Countersign,
-                DueAt = dueAt,
-            };
-            _db.Wf_FlowTasks.Add(task);
-            if (delegatedFrom is Guid g)
-                AddHistory(inst.Id, node.Id, assignee, "delegate", $"代 {g} 审批");   // 双痕：代理人 + 被代理人
-            await _notifier.TodoCreatedAsync(assignee, inst.Id, task.Id, inst.FlowKey);   // 推送待办（空实现=no-op）
-        }
+        inst.CurrentNode = node.Id;   // 兼容：保留代表节点
+        var type = (node.Type ?? "approval").Trim().ToLowerInvariant();
+        if (!_handlers.TryGetValue(type, out var handler))
+            throw new InvalidOperationException($"未知节点类型：{node.Type}（节点 {node.Id}）");
+        await handler.OnEnterAsync(new NodeContext { Inst = inst, Schema = schema, Node = node, Token = token, Engine = this });
     }
 
     /// <summary>节点到期时间（章07 §4）：配齐 TimeoutHours + TimeoutAction 才限时，否则不限时。</summary>
-    private static DateTime? NodeDueAt(FlowNode node)
+    internal static DateTime? NodeDueAt(FlowNode node)
         => node.TimeoutHours is int h && h > 0 && !string.IsNullOrWhiteSpace(node.TimeoutAction)
             ? DateTime.Now.AddHours(h)
             : null;
 
     /// <summary>委派替换（章07 §5）：原审批人处有效委派期 → 返回 (代理人, 被代理人)；否则 (原人, null)。</summary>
-    private async Task<(Guid assignee, Guid? delegatedFrom)> ResolveActualAssigneeAsync(Guid approverId)
+    internal async Task<(Guid assignee, Guid? delegatedFrom)> ResolveActualAssigneeAsync(Guid approverId)
     {
         var now = DateTime.Now;
         var d = await _db.Wf_FlowDelegates
@@ -199,20 +171,9 @@ public partial class FlowEngine : IFlowEngine
         return d is null ? (approverId, null) : (d.DelegateId, approverId);
     }
 
-    // ── 流转：沿出边按序取首个条件为真者；无匹配则兜底结束 ──
-    private async Task NextNodeAsync(Wf_FlowInstance inst, FlowSchema schema, FlowNode node)
-    {
-        foreach (var edge in schema.Edges.Where(e => e.From == node.Id))
-        {
-            if (!ExpressionEvaluator.Evaluate(edge.Condition, inst.VarsJson)) continue;
-            var target = FindNode(schema, edge.To);
-            if (target is not null) { await EnterNodeAsync(inst, schema, target); return; }
-        }
-        inst.Status = FlowInstanceStatus.Approved;
-        AddHistory(inst.Id, node.Id, inst.StarterId, "end", "无后继节点，自动结束");
-    }
+    // ── NextNodeAsync 已退役：token 排他流转改由 AdvanceToken（FlowEngine.Tokens.cs）承担，等价旧兜底结束 ──
 
-    private void Suspend(Wf_FlowInstance inst, FlowNode node, string reason)
+    internal void Suspend(Wf_FlowInstance inst, FlowNode node, string reason)
     {
         inst.Status = FlowInstanceStatus.Suspended;
         AddHistory(inst.Id, node.Id, inst.StarterId, "suspend", reason);
@@ -233,7 +194,7 @@ public partial class FlowEngine : IFlowEngine
         foreach (var t in suspended) t.Status = FlowTaskStatus.Pending;
     }
 
-    private void AddHistory(Guid instanceId, string nodeId, Guid actorId, string action, string? comment)
+    internal void AddHistory(Guid instanceId, string nodeId, Guid actorId, string action, string? comment)
         => _db.Wf_FlowHistories.Add(new Wf_FlowHistory
         {
             Id = Guid.NewGuid(),
@@ -257,11 +218,11 @@ public partial class FlowEngine : IFlowEngine
     private static FlowNode? FirstNode(FlowSchema s)
         => !string.IsNullOrEmpty(s.Start) ? FindNode(s, s.Start) : s.Nodes.FirstOrDefault();
 
-    private static FlowNode? FindNode(FlowSchema s, string id) => s.Nodes.FirstOrDefault(n => n.Id == id);
+    internal static FlowNode? FindNode(FlowSchema s, string id) => s.Nodes.FirstOrDefault(n => n.Id == id);
 
-    private static bool IsType(FlowNode n, string type) => string.Equals(n.Type, type, StringComparison.OrdinalIgnoreCase);
+    internal static bool IsType(FlowNode n, string type) => string.Equals(n.Type, type, StringComparison.OrdinalIgnoreCase);
 
-    private static ApproverRule? BuildRule(FlowNode n)
+    internal static ApproverRule? BuildRule(FlowNode n)
     {
         if (string.IsNullOrWhiteSpace(n.ApproverStrategy)) return null;
         if (!Enum.TryParse<ApproverStrategy>(n.ApproverStrategy, ignoreCase: true, out var strat)) return null;

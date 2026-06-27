@@ -42,6 +42,7 @@ public partial class FlowEngine
             Status = FlowTaskStatus.Pending,
             Countersign = task.Countersign,   // 同节点会签规则，计入 EvaluateNodeCounts
             AddSignSource = src,
+            TokenId = task.TokenId,           // ★ T4：随原任务同 token，会签计票方与原任务同框
         };
         _db.Wf_FlowTasks.Add(addTask);
         AddHistory(inst.Id, task.NodeId, actorId, "addsign", comment ?? $"{(src == "before" ? "前" : "后")}加签 → {addSigneeId}");
@@ -98,7 +99,9 @@ public partial class FlowEngine
 
         AddHistory(inst.Id, task.NodeId, actorId, "sendback", comment ?? $"退回至 {targetNodeId}");
 
-        await EnterNodeAsync(inst, schema, target);   // CurrentNode=target + 重建待办（缺审批人→挂起）
+        CancelAllActiveTokens(inst.Id);                                  // 退回 = terminate 在途 token
+        var sbToken = SpawnToken(inst, target, parent: null, fork: null);
+        await EnterNodeAsync(inst, schema, target, sbToken);            // CurrentNode=target + 重建待办（缺审批人→挂起）
         await _db.SaveChangesAsync();
     }
 }

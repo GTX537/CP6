@@ -44,10 +44,34 @@ public partial class FlowEngine
     /// <summary>无 Active token 残留 ⇒ 实例正常通过（置 Approved；dispatch 由调用方在 SaveChanges 前做）。</summary>
     internal void FinishIfDrained(Wf_FlowInstance inst)
     {
-        var anyActive = _db.Wf_FlowTokens.Local.Any(t => t.InstanceId == inst.Id && t.Status == FlowTokenStatus.Active)
-            || _db.Wf_FlowTokens.Any(t => t.InstanceId == inst.Id && t.Status == FlowTokenStatus.Active);
-        if (anyActive) return;
+        if (HasActiveToken(inst.Id)) return;
         if (inst.Status != FlowInstanceStatus.Running) return;   // 已驳回/撤回，不覆盖
         inst.Status = FlowInstanceStatus.Approved;
+    }
+
+    /// <summary>本实例是否仍有 Active token。变更追踪器(Local)对已加载 token 是权威态（含本回合未落盘的 consume/cancel）；
+    /// DB 仅补查"未被本地追踪"的 token（如并行兄弟分支上回合落盘的），<b>排除已在 Local 的 Id 避免读到落盘旧值</b>。</summary>
+    private bool HasActiveToken(Guid instanceId)
+    {
+        if (_db.Wf_FlowTokens.Local.Any(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active))
+            return true;
+        var localIds = _db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId).Select(t => t.Id).ToHashSet();
+        return _db.Wf_FlowTokens
+            .Any(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active && !localIds.Contains(t.Id));
+    }
+
+    /// <summary>token 排他流转：沿出边取首个条件为真者，改 token.NodeId 后进新节点。不消费。
+    /// 无后继 → 消费 token + drained 判定（等价旧 NextNodeAsync 兜底结束）。单 token 线性=零差异。</summary>
+    internal async Task AdvanceToken(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken token)
+    {
+        foreach (var edge in schema.Edges.Where(e => e.From == token.NodeId))
+        {
+            if (!ExpressionEvaluator.Evaluate(edge.Condition, inst.VarsJson)) continue;
+            var target = FindNode(schema, edge.To);
+            if (target is not null) { token.NodeId = target.Id; await EnterNodeAsync(inst, schema, target, token); return; }
+        }
+        ConsumeToken(token);
+        AddHistory(inst.Id, token.NodeId, inst.StarterId, "end", "无后继节点，自动结束");
+        FinishIfDrained(inst);
     }
 }

@@ -30,8 +30,10 @@
   </PropertyGroup>
 
   <!-- 字段审计（#4 T3）：暴露 CP6Context 内 internal static 纯函数（IsSecretField/Stringify）给测试工程直测 -->
+  <!-- WFS（T4）：暴露 internal INodeHandler/各节点 handler 给 WebApi 做 DI 注册 -->
   <ItemGroup>
     <InternalsVisibleTo Include="CP6.Tests" />
+    <InternalsVisibleTo Include="CP6.WebApi" />
   </ItemGroup>
 
 </Project>
