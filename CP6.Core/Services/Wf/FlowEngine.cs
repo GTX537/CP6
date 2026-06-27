@@ -65,7 +65,26 @@ public partial class FlowEngine : IFlowEngine
         return inst.Id;
     }
 
+    /// <summary>
+    /// 办理外壳（WFS P1 Task 6 并发幂等）：把单次办理委托给 <see cref="ActOnceAsync"/>，
+    /// 遇乐观并发冲突（并行兄弟分支近同时办结，join 计数脏读 → <see cref="DbUpdateConcurrencyException"/>）
+    /// 则重读全部追踪实体后重试，最多 3 次（attempt 0/1/2）。重试时重读 inst/token/task → 重算 join
+    /// 计数，序列化"双 1/2 丢失唤醒"竞态。单线程下首次即成功返回，行为零变化。
+    /// </summary>
     public async Task ActAsync(Guid taskId, Guid actorId, bool approve, string? comment = null)
+    {
+        for (int attempt = 0; ; attempt++)
+        {
+            try { await ActOnceAsync(taskId, actorId, approve, comment); return; }
+            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            {
+                // 败方重读全部追踪实体（拿到胜方已落库的 token/inst RowVersion）→ 重试重算 join 计数
+                foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
+            }
+        }
+    }
+
+    private async Task ActOnceAsync(Guid taskId, Guid actorId, bool approve, string? comment = null)
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
                    ?? throw new InvalidOperationException("任务不存在");
@@ -111,6 +130,7 @@ public partial class FlowEngine : IFlowEngine
             inst.Status = FlowInstanceStatus.Rejected;
             CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
         }
+        inst.ModifyDate = DateTime.Now;   // ★ Task6：写触达 inst 行 → UPDATE 带 WHERE RowVersion=@orig（序列化并行办结的支点，败方抛 DbUpdateConcurrencyException 触发重试）
         await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
         await _db.SaveChangesAsync();
     }
