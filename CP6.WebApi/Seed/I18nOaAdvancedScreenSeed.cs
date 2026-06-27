@@ -67,5 +67,6 @@ public static class I18nOaAdvancedScreenSeed
         new Sys_Lang { LangKey = "oa.transfer.commentHint", ZhCN = "请输入转交说明（可选）", ZhTW = "請輸入轉交說明（可選）", En = "Transfer note (optional)", Ja = "転送メモ（任意）",       Ko = "이관 메모 (선택사항)" },
         new Sys_Lang { LangKey = "oa.transfer.confirm",     ZhCN = "确认转交",           ZhTW = "確認轉交",           En = "Confirm Transfer",       Ja = "転送を確認",                 Ko = "이관 확인" },
         new Sys_Lang { LangKey = "oa.transfer.ok",          ZhCN = "转交成功",           ZhTW = "轉交成功",           En = "Transferred",            Ja = "転送しました",               Ko = "이관되었습니다" },
+        new Sys_Lang { LangKey = "oa.detail.transfer",      ZhCN = "转交",               ZhTW = "轉交",               En = "Transfer",               Ja = "転送",                       Ko = "이관" },
     };
 }
