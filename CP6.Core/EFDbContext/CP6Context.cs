@@ -1949,6 +1949,48 @@ public class CP6Context : DbContext
             e.Property(x => x.Changes).HasColumnType("nvarchar(max)");         // 大文本
         });
 
+        // ───── Space 空间数字底座 P1 索引（ch00 §4）。显式写 (TenantId, …) 前缀＝可读性；下方反射块
+        //  检测到索引已含 TenantId 会跳过升级，不重复。Location 过滤唯一索引为业务专属，反射不替造，必须显式。──
+        modelBuilder.Entity<Space_Site>()
+            .HasIndex(x => new { x.TenantId, x.SiteCode }).IsUnique();
+        modelBuilder.Entity<Space_Floor>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.FloorCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.SiteId });
+        });
+        modelBuilder.Entity<Space_Zone>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FloorId, x.ZoneCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.FloorId });
+        });
+        modelBuilder.Entity<Space_Aisle>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.ZoneId, x.AisleCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.ZoneId });
+        });
+        modelBuilder.Entity<Space_Rack>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.ZoneId, x.RackCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.ZoneId });
+            e.HasIndex(x => new { x.TenantId, x.AisleId });
+            e.HasIndex(x => new { x.TenantId, x.FloorId });
+        });
+        modelBuilder.Entity<Space_Location>(e =>
+        {
+            // 过滤唯一索引：非空码租户内唯一；草稿期 LocationCode=NULL 不互撞（ch00 §4.6 / ch03 §7 两阶段重排）
+            e.HasIndex(x => new { x.TenantId, x.LocationCode }).IsUnique()
+             .HasFilter("[LocationCode] IS NOT NULL");
+            e.HasIndex(x => new { x.TenantId, x.RackId });
+            e.HasIndex(x => new { x.TenantId, x.FloorId });
+            e.HasIndex(x => new { x.TenantId, x.Status });
+        });
+        modelBuilder.Entity<Space_Template>()
+            .HasIndex(x => new { x.TenantId, x.TemplateCode }).IsUnique();
+        modelBuilder.Entity<Space_CodeRule>()
+            .HasIndex(x => new { x.TenantId, x.ScopeType, x.ScopeId });
+        modelBuilder.Entity<Space_Marker>()
+            .HasIndex(x => new { x.TenantId, x.FloorId });
+
         // ═══════════════════════════════════════════════════════════
         //  章10 多租户：对所有 BaseTenantEntity 反射批量注册全局查询过滤（防漏命门，OA4-D1/D3）
         //  WHERE TenantId == CurrentTenantId —— 闭包到本上下文实例，EF 每次查询重读当前租户。
