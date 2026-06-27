@@ -139,4 +139,23 @@ public class InboxServiceTests
         var item = Assert.Single(done);
         Assert.Equal("请假单", item.FlowName);
     }
+
+    [Fact]
+    public async Task ActBatch_PartialFailure_ReportsPerItem()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var approver = Guid.NewGuid(); var cc = Guid.NewGuid();
+        await SeedAndSubmitAsync(db, starter, approver, cc);
+        var validTaskId = (await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending)).Id;
+        var bogus = Guid.NewGuid();
+
+        var res = await Inbox(db).ActBatchAsync(approver, new[] { validTaskId, bogus }, approve: true, "批量同意");
+
+        Assert.Equal(2, res.Count);
+        Assert.True(res.Single(r => r.TaskId == validTaskId).Ok);
+        var bad = res.Single(r => r.TaskId == bogus);
+        Assert.False(bad.Ok);
+        Assert.Equal("E-WF-004", bad.Error);
+        Assert.Equal(FlowTaskStatus.Approved, (await db.Wf_FlowTasks.SingleAsync(t => t.Id == validTaskId)).Status);
+    }
 }

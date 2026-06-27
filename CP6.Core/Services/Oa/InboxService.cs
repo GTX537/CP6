@@ -141,4 +141,29 @@ public class InboxService : IInboxService
             .Select(g => g.OrderByDescending(x => x.DoneAt).First())
             .OrderByDescending(x => x.DoneAt).ToList();
     }
+
+    public async Task<IReadOnlyList<BatchActResultItem>> ActBatchAsync(
+        Guid userId, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null)
+    {
+        var results = new List<BatchActResultItem>();
+        foreach (var taskId in taskIds.Distinct())
+        {
+            var t = await _db.Wf_FlowTasks.FirstOrDefaultAsync(x => x.Id == taskId);
+            if (t is null || t.AssigneeId != userId || t.Status != FlowTaskStatus.Pending)
+            {
+                results.Add(new BatchActResultItem(taskId, false, "E-WF-004"));   // 无效/已办/非本人
+                continue;
+            }
+            try
+            {
+                await _engine.ActAsync(taskId, userId, approve, comment);
+                results.Add(new BatchActResultItem(taskId, true, null));
+            }
+            catch (InvalidOperationException e)
+            {
+                results.Add(new BatchActResultItem(taskId, false, e.Message));
+            }
+        }
+        return results;
+    }
 }

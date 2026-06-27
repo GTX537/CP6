@@ -12,4 +12,6 @@ public interface IInboxService
     Task<IReadOnlyList<InboxRunningItem>> RunningAsync(Guid userId);
     // ── 已處理（T6）──：tab = mine | cc | all；year/month 可空（null=不限月）
     Task<IReadOnlyList<InboxDoneItem>> DoneAsync(Guid userId, int? year, int? month, string tab = "mine");
+    // ── 批量办理（T7）──
+    Task<IReadOnlyList<BatchActResultItem>> ActBatchAsync(Guid userId, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null);
 }
