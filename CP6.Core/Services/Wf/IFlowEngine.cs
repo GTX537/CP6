@@ -31,4 +31,8 @@ public interface IFlowEngine
     /// 委派期，则把 assignee 替换为代理人并双记痕迹（v1 仅建待办时替换，存量在途待办不转）。返回委派 Id。
     /// </summary>
     Task<Guid> SetDelegateAsync(Guid grantorId, Guid delegateId, DateTime validFrom, DateTime validTo, string? scope = null, string? remark = null);
+
+    /// <summary>就地起草稿：把 Draft 实例推进进流程（spawn 根 token + 进首节点 + 读模型随推进落库）。
+    /// 仅发起人可提交；非草稿态/越权 → E-WF-003。幂等性同 SubmitAsync（一次 SaveChanges）。</summary>
+    Task StartDraftAsync(Guid instanceId, Guid actorId);
 }

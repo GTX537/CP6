@@ -66,6 +66,32 @@ public partial class FlowEngine : IFlowEngine
     }
 
     /// <summary>
+    /// 就地起草稿：把 Draft 实例推进进流程（spawn 根 token + 进首节点 + 读模型随推进落库）。
+    /// 仅发起人可提交；非草稿态/越权 → E-WF-003。幂等性同 SubmitAsync（一次 SaveChanges）。
+    /// </summary>
+    public async Task StartDraftAsync(Guid instanceId, Guid actorId)
+    {
+        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId)
+                   ?? throw new InvalidOperationException("E-WF-003");
+        if (inst.StarterId != actorId) throw new InvalidOperationException("E-WF-003");        // 越权提交
+        if (inst.Status != FlowInstanceStatus.Draft) throw new InvalidOperationException("E-WF-003"); // 非草稿态
+
+        var schema = await LoadSchemaAsync(inst.FlowKey);
+        var first = FirstNode(schema) ?? throw new InvalidOperationException($"流程 {inst.FlowKey} 无节点");
+
+        inst.Status = FlowInstanceStatus.Running;
+        inst.CurrentNode = first.Id;
+        inst.Modifier = actorId.ToString();
+        inst.ModifyDate = DateTime.Now;
+        AddHistory(inst.Id, first.Id, actorId, "submit", null);
+
+        var root = SpawnToken(inst, first, parent: null, fork: null);
+        await EnterNodeAsync(inst, schema, first, root);
+        await DispatchIfFinishedAsync(inst, actorId, null);
+        await _db.SaveChangesAsync();
+    }
+
+    /// <summary>
     /// 办理外壳（WFS P1 Task 6 并发幂等）：把单次办理委托给 <see cref="ActOnceAsync"/>，
     /// 遇乐观并发冲突（并行兄弟分支近同时办结，join 计数脏读 → <see cref="DbUpdateConcurrencyException"/>）
     /// 则重读全部追踪实体后重试，最多 3 次（attempt 0/1/2）。重试时重读 inst/token/task → 重算 join
