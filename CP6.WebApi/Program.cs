@@ -360,6 +360,12 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Space.LocationGeometryService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService, CP6.Core.Services.Space.SpaceMasterService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService, CP6.Core.Services.Space.CodeEngineService>();  // ch03 可配置编码引擎
+// 4.x.1 Space ch04 — 库位发布 + WMS 桩（SpaceBridgeHook 需同时注册具体类和接口，Dispatcher 注入接口）
+builder.Services.AddScoped<CP6.Core.Services.Integration.SpaceBridgeHook>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceBridgeHook, CP6.Core.Services.Integration.SpaceBridgeHook>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ILocationPublishService, CP6.Core.Services.Space.LocationPublishService>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Integration.NoOpWmsLocationConsumer>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsStockQuery, CP6.Core.Services.Integration.StubWmsStockQuery>();
 
 // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
