@@ -117,4 +117,10 @@ export interface SceneSaveDto {
   }
 }
 
+export interface UnplacedLocationDto {
+  id: string
+  locationCode: string
+  status: number
+}
+
 export type Envelope<T> = { code: number; message: string; data: T }

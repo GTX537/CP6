@@ -7,12 +7,13 @@ import { sceneApi } from '@/api/space/scene'
 import { useSpaceEditorStore } from '@/stores/spaceEditor'
 import { SceneStage } from '@/space-editor/SceneStage'
 import { genZoneArray } from '@/space-editor/generate/genZoneArray'
-import type { ZoneVO } from '@/types/space/scene'
+import type { ZoneVO, RackVO } from '@/types/space/scene'
 import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
 import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
 import { scanCollisions } from '@/space-editor/interact/collide/CollisionHint'
 import TemplatePanel from './panels/TemplatePanel.vue'
 import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
+import BindCodesDialog from './panels/BindCodesDialog.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -37,6 +38,35 @@ const floorId = computed(() => route.params['floorId'] as string)
 
 const importInputRef = ref<HTMLInputElement>()
 const saving = ref(false)
+
+// ── Bind Codes (I-2) ───────────────────────────────────────────────────────────
+
+const bindDialogVisible = ref(false)
+
+const selectedRack = computed<RackVO | null>(() => {
+  if (store.selectionIds.length !== 1) return null
+  const id = store.selectionIds[0]!
+  return store.scene?.racks.find(r => r.id === id) ?? null
+})
+
+function openBindDialog(): void {
+  if (!selectedRack.value) {
+    ElMessage.warning(t('请先在画布上选中一个货架'))
+    return
+  }
+  bindDialogVisible.value = true
+}
+
+async function handleBound(): Promise<void> {
+  try {
+    const res = await sceneApi.get(floorId.value)
+    store.load(res.data)
+    stageRef?.render(res.data)
+    afterCommand()
+  } catch {
+    ElMessage.error(t('刷新场景失败'))
+  }
+}
 
 // ── Core afterCommand callback ────────────────────────────────────────────────
 
@@ -406,6 +436,14 @@ async function handleImportFile(e: Event): Promise<void> {
       </el-button>
       <el-button size="small" @click="handleExport">{{ t('导出') }}</el-button>
       <el-button size="small" @click="handleImportClick">{{ t('导入') }}</el-button>
+      <el-button
+        size="small"
+        :disabled="!selectedRack"
+        :title="selectedRack ? t('为所选货架绑定采纳态库位码') : t('请先选中一个货架')"
+        @click="openBindDialog"
+      >
+        {{ t('反向建模') }}
+      </el-button>
     </div>
 
     <!-- Editor body -->
@@ -432,6 +470,16 @@ async function handleImportFile(e: Event): Promise<void> {
       accept=".json"
       style="display: none"
       @change="handleImportFile"
+    />
+
+    <!-- Bind Codes Dialog (I-2) -->
+    <BindCodesDialog
+      v-if="selectedRack !== null"
+      v-model="bindDialogVisible"
+      :rack-id="selectedRack.id"
+      :rack="selectedRack"
+      :floor-id="floorId"
+      @bound="handleBound"
     />
   </div>
 </template>

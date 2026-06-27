@@ -1,5 +1,5 @@
 import http from '../http'
-import type { Envelope, EditorScene, SceneSaveDto } from '@/types/space/scene'
+import type { Envelope, EditorScene, SceneSaveDto, UnplacedLocationDto } from '@/types/space/scene'
 
 export const sceneApi = {
   get(floorId: string) {
@@ -16,5 +16,8 @@ export const sceneApi = {
   },
   bindCodes(rackId: string, pairs: { locationId: string; col: number; level: number; depth: number }[]) {
     return http.post<any, Envelope<any>>(`/space/rack/${rackId}/bind-codes`, { pairs })
+  },
+  getUnplaced(floorId: string) {
+    return http.get<any, Envelope<UnplacedLocationDto[]>>(`/space/location/unplaced`, { params: { floorId } })
   },
 }
