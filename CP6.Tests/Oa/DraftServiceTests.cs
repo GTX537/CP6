@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Oa;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
@@ -69,6 +70,56 @@ public class DraftServiceTests
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => Engine(db).StartDraftAsync(inst.Id, Guid.NewGuid()));
+        Assert.Equal("E-WF-003", ex.Message);
+    }
+
+    // ── T9: DraftService 草稿 CRUD ──────────────────────────────────────────
+    private static IDraftService Draft(CP6Context db) => new DraftService(db, Engine(db));
+
+    [Fact]
+    public async Task Save_List_Update_Delete_Roundtrip()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid();
+        await SeedFlowAsync(db, Guid.NewGuid());
+
+        var id = await Draft(db).SaveDraftAsync(starter, "leave", """{"days":1}""");
+        var list = await Draft(db).ListDraftsAsync(starter);
+        Assert.Single(list);
+        Assert.Equal(FlowInstanceStatus.Draft, (await db.Wf_FlowInstances.SingleAsync(i => i.Id == id)).Status);
+
+        await Draft(db).UpdateDraftAsync(starter, id, """{"days":3}""");
+        Assert.Equal("""{"days":3}""", (await db.Wf_FlowInstances.SingleAsync(i => i.Id == id)).VarsJson);
+
+        await Draft(db).DeleteDraftAsync(starter, id);
+        Assert.Empty(await Draft(db).ListDraftsAsync(starter));
+    }
+
+    [Fact]
+    public async Task SubmitDraft_EntersFlow()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var approver = Guid.NewGuid();
+        await SeedFlowAsync(db, approver);
+        var id = await Draft(db).SaveDraftAsync(starter, "leave", "{}");
+
+        await Draft(db).SubmitDraftAsync(starter, id);
+
+        var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == id);
+        Assert.Equal(FlowInstanceStatus.Running, inst.Status);
+        Assert.Equal(1, await db.Wf_FlowTasks.CountAsync(t => t.AssigneeId == approver && t.Status == FlowTaskStatus.Pending));
+    }
+
+    [Fact]
+    public async Task Update_NotOwner_Throws()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid();
+        await SeedFlowAsync(db, Guid.NewGuid());
+        var id = await Draft(db).SaveDraftAsync(starter, "leave", "{}");
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => Draft(db).UpdateDraftAsync(Guid.NewGuid(), id, "{}"));
         Assert.Equal("E-WF-003", ex.Message);
     }
 }
