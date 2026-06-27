@@ -30,8 +30,10 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/pub/seq': () => import('@/views/pms/SeqView.vue'),   // PUB 章05 采番规则
   '/pub/codegen': () => import('@/views/pms/CodeGenView.vue'),   // PUB 章08 代码生成器
   // ───── OA 电子表单信箱 (Phase B) ─────
-  '/oa/inbox':      () => import('@/views/oa/inbox/InboxView.vue'),    // OA Phase B 电子表单信箱（菜单733）
-  '/oa/flow-admin': () => import('@/views/oa/admin/FlowAdmin.vue'),    // OA Phase B 流程管理（菜单734）
+  '/oa/inbox':           () => import('@/views/oa/inbox/InboxView.vue'),          // OA Phase B 电子表单信箱（菜单733）
+  '/oa/flow-admin':      () => import('@/views/oa/admin/FlowAdmin.vue'),          // OA Phase B 流程管理（菜单734）
+  // ───── OA Phase C：表单目录 + 起草发起（子页，非菜单，始终挂载）─────
+  '/oa/form-initiate':   () => import('@/views/oa/catalog/FormInitiate.vue'),     // OA Phase C T13 起草发起
   // ───── OA 审批工作流 (Wf) — 旧设计器保留，旧待办/申请已迁移至 /oa/inbox ─────
   '/wf/form-designer': () => import('@/views/wf/designer/FormDesigner.vue'), // OA 章09 表单设计器
   '/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue'), // OA 章09 流程设计器
@@ -276,6 +278,16 @@ function platformChildren(): RouteRecordRaw[] {
   })) as RouteRecordRaw[]
 }
 
+// OA Phase C 子页路由（非菜单，由目录页程序跳转，始终挂载为 layout 子路由）
+const oaSubRoutePaths = ['/oa/form-initiate']
+function oaSubChildren(): RouteRecordRaw[] {
+  return oaSubRoutePaths.map(p => ({
+    path: p.replace(/^\//, ''),
+    name: p.replace(/^\//, ''),
+    component: viewModules[p]
+  })) as RouteRecordRaw[]
+}
+
 /**
  * 根据菜单列表动态添加路由
  * menus 格式: [{ id, menuName, routePath, icon, parentId, orderNo }]
@@ -312,7 +324,9 @@ export function addDynamicRoutes(menus: any[]) {
         component: viewModules[menu.routePath]
       })) as RouteRecordRaw[],
       // S类 #5 带外平台区：始终挂载（菜单不含，靠守卫 + 后端把关）
-      ...platformChildren()
+      ...platformChildren(),
+      // OA Phase C 子页：始终挂载（菜单不含，由目录页程序跳转）
+      ...oaSubChildren()
     ]
   })
 
