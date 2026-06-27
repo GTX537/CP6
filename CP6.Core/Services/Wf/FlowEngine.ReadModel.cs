@@ -49,7 +49,8 @@ public partial class FlowEngine
     /// 办结：更新该 (inst, node, token, expectedHandler) 的待签行为已办结状态。
     /// 若行不存在（幂等 / 加签 / 旁路路径），静默跳过。
     /// </summary>
-    internal async Task UpdateFormToOnHandleAsync(Wf_FlowTask task, Guid actorId, bool approve, string? comment)
+    internal async Task UpdateFormToOnHandleAsync(Wf_FlowTask task, Guid actorId, bool approve, string? comment,
+        Guid? onBehalfOf = null)
     {
         var row = await _db.Wf_FlowFormTos
             .Where(f => f.InstanceId == task.InstanceId
@@ -61,7 +62,8 @@ public partial class FlowEngine
             .FirstOrDefaultAsync();
         if (row is null) return;
         row.Status = approve ? FlowFormToStatus.Approved : FlowFormToStatus.Rejected;
-        row.ActualHandlerId = actorId;
+        row.ActualHandlerId = actorId;   // 实际点击办理的人（act-as 时 = 代理人 me）
+        row.OnBehalfOfId = onBehalfOf;   // 代谁签（非 act-as 时 = null，既有路径零改）
         row.HandledAt = DateTime.Now;
         row.Comment = comment;
     }
