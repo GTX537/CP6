@@ -13,6 +13,7 @@ export interface PickResult {
 
 export interface LocateResult {
   locationId: string
+  locationCode?: string
   floorId: string
   absX: number
   absY: number
