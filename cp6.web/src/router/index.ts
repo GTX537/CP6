@@ -239,6 +239,13 @@ const staticRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/mes/ControlTowerView.vue'),
     meta: { standalone: true, title: 'MES Control Tower' }
   },
+  // Space 编辑器全屏（独立路由、无侧边栏；floorId 来自路由参数）
+  {
+    path: '/space/editor/:floorId',
+    name: 'space-editor',
+    component: () => import('@/views/space/editor/FloorEditor.vue'),
+    meta: { standalone: true, title: 'Space 编辑器' }
+  },
   {
     path: '/',
     name: 'layout',
