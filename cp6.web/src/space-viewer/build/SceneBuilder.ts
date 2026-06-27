@@ -18,6 +18,8 @@ import { UNIT_BOX, addLights, makeRackEdges, zoneMaterial } from './BoxFactory'
 export interface SceneBuildResult {
   objects: Object3D[]
   buckets: InstancedBuckets
+  /** locationId → locationCode for all placed locations with a non-null code */
+  locationCodes: Map<string, string>
 }
 
 interface BuildOptions {
@@ -97,7 +99,15 @@ export class SceneBuilder {
 
     opts.onProgress?.(1, 1)
 
-    return { objects, buckets }
+    // Build locationId → locationCode map (non-null codes only)
+    const locationCodes = new Map<string, string>()
+    for (const loc of scene.locations) {
+      if (loc.placed && loc.locationCode) {
+        locationCodes.set(loc.id, loc.locationCode)
+      }
+    }
+
+    return { objects, buckets, locationCodes }
   }
 
   private _buildZoneMesh(zone: ZoneVO): Mesh | null {
