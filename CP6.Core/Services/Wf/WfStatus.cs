@@ -8,6 +8,8 @@ public static class FlowInstanceStatus
     public const int Rejected = 2;    // 驳回（会签判否）
     public const int Withdrawn = 3;   // 撤回（发起人主动）
     public const int Suspended = 4;   // 挂起待指派（审批人算不出）
+    /// <summary>草稿（暫存）：有实例、无 token、未进流程（umbrella R2）。提交即 StartDraftAsync 就地起 token。</summary>
+    public const int Draft = 5;
 }
 
 /// <summary>流程任务状态（Wf_FlowTask.Status）。!=Pending 即"已办"，是幂等闸门依据。</summary>

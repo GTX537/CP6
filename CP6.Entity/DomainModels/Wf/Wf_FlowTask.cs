@@ -44,4 +44,10 @@ public class Wf_FlowTask : BaseTenantEntity
     /// <summary>所属令牌 → Wf_FlowToken.Id（WFS P1）。会签计票按 (InstanceId,NodeId,TokenId) 隔离。
     /// 可空：旧数据 / 回填前为 null（后续 Task 8 回填补齐）；新建 task 必带。</summary>
     public Guid? TokenId { get; set; }
+
+    /// <summary>未處理"未读"标记（信箱 L2）。送签建任务时默认 false；信箱打开详情/标记已读置 true。</summary>
+    public bool IsRead { get; set; }
+
+    /// <summary>标记已读时刻（幂等：已 true 不重置）。</summary>
+    public DateTime? ReadAt { get; set; }
 }

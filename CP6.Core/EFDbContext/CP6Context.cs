@@ -14,6 +14,7 @@ using CP6.Entity.DomainModels.Pub;
 using CP6.Entity.DomainModels.Pur;
 using CP6.Entity.DomainModels.Wf;
 using CP6.Entity.DomainModels.Wms;
+using CP6.Entity.DomainModels.Space;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.EFDbContext;
@@ -394,6 +395,26 @@ public class CP6Context : DbContext
     /// <summary>抄送（WFS 读模型，信箱未读标记）</summary>
     public DbSet<Wf_FlowCc> Wf_FlowCcs { get; set; }
 
+    // ───── Space 空间数字底座 P1（ch00 9 表）─────
+    /// <summary>站点（Space 章00，6 层模型顶层）</summary>
+    public DbSet<Space_Site> Space_Sites { get; set; }
+    /// <summary>楼层（Space 章00，每层独立局部坐标系）</summary>
+    public DbSet<Space_Floor> Space_Floors { get; set; }
+    /// <summary>库区（Space 章00，功能分区 + 多边形）</summary>
+    public DbSet<Space_Zone> Space_Zones { get; set; }
+    /// <summary>巷道（Space 章00，条件父级 + 中心线）</summary>
+    public DbSet<Space_Aisle> Space_Aisles { get; set; }
+    /// <summary>货架（Space 章00，锚点角 + 格位阵列）</summary>
+    public DbSet<Space_Rack> Space_Racks { get; set; }
+    /// <summary>库位（Space 章00，稳定主键 + 冻结编码 join key）</summary>
+    public DbSet<Space_Location> Space_Locations { get; set; }
+    /// <summary>模板（Space 章01，批量生成蓝本）</summary>
+    public DbSet<Space_Template> Space_Templates { get; set; }
+    /// <summary>编码规则（Space 章03，可配置编码引擎）</summary>
+    public DbSet<Space_CodeRule> Space_CodeRules { get; set; }
+    /// <summary>标注（Space 章02，打点文字/图标/区域）</summary>
+    public DbSet<Space_Marker> Space_Markers { get; set; }
+
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
     public DbSet<GlAccount> GlAccounts { get; set; }
@@ -648,6 +669,7 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.InstanceId, x.NodeId }).HasDatabaseName("IX_Wf_FlowTask_InstanceNode");  // 会签判定取本节点全部任务
             e.HasIndex(x => new { x.AssigneeId, x.Status }).HasDatabaseName("IX_Wf_FlowTask_AssigneeStatus"); // 待办中心
             e.HasIndex(x => new { x.Status, x.DueAt }).HasDatabaseName("IX_Wf_FlowTask_StatusDue");           // 章07 §4 超时扫描
+            e.HasIndex(x => new { x.AssigneeId, x.IsRead }).HasDatabaseName("IX_Wf_FlowTask_AssigneeRead");
         });
         modelBuilder.Entity<Wf_FlowDelegate>(e =>
         {
