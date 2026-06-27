@@ -1,0 +1,332 @@
+using CP6.Core.EFDbContext;
+using CP6.Entity.DomainModels.Space;
+using CP6.Entity.DTOs.Space;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+
+namespace CP6.Core.Services.Space;
+
+/// <summary>
+/// 场景差量保存 + D7 绑码服务实现（ch01 §G-1/I-1，v1.1 多租户规则）。
+/// 构造注入 CP6Context + LocationGeometryService；租户隔离由全局过滤+盖章自动施加。
+/// </summary>
+public class SceneService : ISceneService
+{
+    private readonly CP6Context _db;
+    private readonly LocationGeometryService _geo;
+
+    public SceneService(CP6Context db, LocationGeometryService geo)
+    {
+        _db  = db;
+        _geo = geo;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Dictionary<Guid, Guid>> SaveSceneAsync(Guid floorId, SceneSaveDto dto, string? user)
+    {
+        // InMemory 安全事务守卫：真库开事务，InMemory 降级无事务
+        IDbContextTransaction? tx = _db.Database.IsRelational()
+            ? await _db.Database.BeginTransactionAsync()
+            : null;
+        try
+        {
+            var changedRackIds = new HashSet<Guid>();
+
+            // ── Zones ──────────────────────────────────────────────
+            foreach (var zd in dto.Zones ?? new List<ZoneDto>())
+            {
+                var existing = zd.Id.HasValue
+                    ? await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zd.Id.Value)
+                    : null;
+                if (existing != null)
+                {
+                    existing.ZoneCode   = zd.ZoneCode;
+                    existing.ZoneName   = zd.ZoneName;
+                    existing.ZoneType   = zd.ZoneType;
+                    existing.Polygon    = zd.Polygon;
+                    existing.Color      = zd.Color;
+                    existing.Enable     = zd.Enable;
+                    existing.Modifier   = user;
+                    existing.ModifyDate = DateTime.Now;
+                }
+                else
+                {
+                    _db.Space_Zones.Add(new Space_Zone
+                    {
+                        Id         = zd.Id ?? Guid.NewGuid(),
+                        FloorId    = floorId,
+                        ZoneCode   = zd.ZoneCode,
+                        ZoneName   = zd.ZoneName,
+                        ZoneType   = zd.ZoneType,
+                        Polygon    = zd.Polygon,
+                        Color      = zd.Color,
+                        Enable     = zd.Enable,
+                        Creator    = user,
+                        CreateDate = DateTime.Now
+                    });
+                }
+            }
+
+            // ── Aisles ─────────────────────────────────────────────
+            foreach (var ad in dto.Aisles ?? new List<AisleDto>())
+            {
+                var existing = ad.Id.HasValue
+                    ? await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == ad.Id.Value)
+                    : null;
+                if (existing != null)
+                {
+                    existing.AisleCode  = ad.AisleCode;
+                    existing.Polygon    = ad.Polygon;
+                    existing.Centerline = ad.Centerline;
+                    existing.Modifier   = user;
+                    existing.ModifyDate = DateTime.Now;
+                }
+                else
+                {
+                    _db.Space_Aisles.Add(new Space_Aisle
+                    {
+                        Id         = ad.Id ?? Guid.NewGuid(),
+                        ZoneId     = ad.ZoneId,
+                        AisleCode  = ad.AisleCode,
+                        Polygon    = ad.Polygon,
+                        Centerline = ad.Centerline,
+                        Creator    = user,
+                        CreateDate = DateTime.Now
+                    });
+                }
+            }
+
+            // ── Racks ──────────────────────────────────────────────
+            foreach (var rd in dto.Racks ?? new List<RackDto>())
+            {
+                var existing = rd.Id.HasValue
+                    ? await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rd.Id.Value)
+                    : null;
+                if (existing != null)
+                {
+                    // 乐观锁：设置 OriginalValue，SaveChanges 会在 WHERE 附加 RowVersion
+                    _db.Entry(existing).Property(x => x.RowVersion).OriginalValue = rd.RowVersion;
+
+                    // 位姿/尺寸变更检测
+                    if (existing.X != rd.X || existing.Y != rd.Y || existing.Z != rd.Z ||
+                        existing.RotationZ != rd.RotationZ || existing.Cols != rd.Cols ||
+                        existing.Levels != rd.Levels || existing.DepthCount != rd.DepthCount ||
+                        existing.CellW != rd.CellW || existing.CellH != rd.CellH || existing.CellD != rd.CellD)
+                    {
+                        changedRackIds.Add(existing.Id);
+                    }
+
+                    existing.ZoneId     = rd.ZoneId;
+                    existing.AisleId    = rd.AisleId;
+                    existing.TemplateId = rd.TemplateId;
+                    existing.RackCode   = rd.RackCode;
+                    existing.X          = rd.X;
+                    existing.Y          = rd.Y;
+                    existing.Z          = rd.Z;
+                    existing.RotationZ  = rd.RotationZ;
+                    existing.Cols       = rd.Cols;
+                    existing.Levels     = rd.Levels;
+                    existing.DepthCount = rd.DepthCount;
+                    existing.CellW      = rd.CellW;
+                    existing.CellH      = rd.CellH;
+                    existing.CellD      = rd.CellD;
+                    existing.Enable     = rd.Enable;
+                    existing.Modifier   = user;
+                    existing.ModifyDate = DateTime.Now;
+                }
+                else
+                {
+                    var newId = rd.Id ?? Guid.NewGuid();
+                    _db.Space_Racks.Add(new Space_Rack
+                    {
+                        Id         = newId,
+                        ZoneId     = rd.ZoneId,
+                        AisleId    = rd.AisleId,
+                        FloorId    = floorId,
+                        TemplateId = rd.TemplateId,
+                        RackCode   = rd.RackCode,
+                        X          = rd.X,
+                        Y          = rd.Y,
+                        Z          = rd.Z,
+                        RotationZ  = rd.RotationZ,
+                        Cols       = rd.Cols,
+                        Levels     = rd.Levels,
+                        DepthCount = rd.DepthCount,
+                        CellW      = rd.CellW,
+                        CellH      = rd.CellH,
+                        CellD      = rd.CellD,
+                        Enable     = rd.Enable,
+                        Creator    = user,
+                        CreateDate = DateTime.Now
+                    });
+                    changedRackIds.Add(newId);  // 新货架→位置变化，库位需重算
+                }
+            }
+
+            // ── Markers ────────────────────────────────────────────
+            foreach (var md in dto.Markers ?? new List<MarkerDto>())
+            {
+                var existing = md.Id.HasValue
+                    ? await _db.Space_Markers.FirstOrDefaultAsync(m => m.Id == md.Id.Value)
+                    : null;
+                if (existing != null)
+                {
+                    existing.X          = md.X;
+                    existing.Y          = md.Y;
+                    existing.Z          = md.Z;
+                    existing.MarkerType = md.MarkerType;
+                    existing.Text       = md.Text;
+                    existing.RefRackId  = md.RefRackId;
+                    existing.Modifier   = user;
+                    existing.ModifyDate = DateTime.Now;
+                }
+                else
+                {
+                    _db.Space_Markers.Add(new Space_Marker
+                    {
+                        Id         = md.Id ?? Guid.NewGuid(),
+                        FloorId    = floorId,
+                        X          = md.X,
+                        Y          = md.Y,
+                        Z          = md.Z,
+                        MarkerType = md.MarkerType,
+                        Text       = md.Text,
+                        RefRackId  = md.RefRackId,
+                        Creator    = user,
+                        CreateDate = DateTime.Now
+                    });
+                }
+            }
+
+            // ── Locations ──────────────────────────────────────────
+            foreach (var ld in dto.Locations ?? new List<SceneLocationSaveDto>())
+            {
+                var existing = ld.Id.HasValue
+                    ? await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == ld.Id.Value)
+                    : null;
+                if (existing != null)
+                {
+                    existing.RackId     = ld.RackId;
+                    existing.Col        = ld.Col;
+                    existing.Level      = ld.Level;
+                    existing.Depth      = ld.Depth;
+                    existing.Placed     = ld.Placed;
+                    existing.Status     = ld.Status;
+                    existing.CodeOrigin = ld.CodeOrigin;
+                    existing.Modifier   = user;
+                    existing.ModifyDate = DateTime.Now;
+                }
+                else
+                {
+                    _db.Space_Locations.Add(new Space_Location
+                    {
+                        Id         = ld.Id ?? Guid.NewGuid(),
+                        RackId     = ld.RackId,
+                        FloorId    = floorId,
+                        Col        = ld.Col,
+                        Level      = ld.Level,
+                        Depth      = ld.Depth,
+                        Placed     = ld.Placed,
+                        Status     = ld.Status,
+                        CodeOrigin = ld.CodeOrigin,
+                        Creator    = user,
+                        CreateDate = DateTime.Now
+                    });
+                }
+            }
+
+            // ── Deletes ────────────────────────────────────────────
+            foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
+            {
+                if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId))
+                    throw new InvalidOperationException("E-SPACE-003");
+                var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId);
+                if (e != null) _db.Space_Racks.Remove(e);
+            }
+
+            foreach (var aisleId in dto.Deletes?.Aisles ?? new List<Guid>())
+            {
+                // SetNull：保留货架但解除巷道关联
+                var racks = await _db.Space_Racks.Where(r => r.AisleId == aisleId).ToListAsync();
+                foreach (var r in racks) r.AisleId = null;
+                var e = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == aisleId);
+                if (e != null) _db.Space_Aisles.Remove(e);
+            }
+
+            foreach (var zoneId in dto.Deletes?.Zones ?? new List<Guid>())
+            {
+                var e = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zoneId);
+                if (e != null) _db.Space_Zones.Remove(e);
+            }
+
+            foreach (var markerId in dto.Deletes?.Markers ?? new List<Guid>())
+            {
+                var e = await _db.Space_Markers.FirstOrDefaultAsync(m => m.Id == markerId);
+                if (e != null) _db.Space_Markers.Remove(e);
+            }
+
+            // ── 保存（乐观并发冲突→E-SPACE-009）─────────────────────
+            try
+            {
+                await _db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new InvalidOperationException("E-SPACE-009");
+            }
+
+            // ── 位姿变更货架→重算库位绝对坐标 ─────────────────────────
+            foreach (var rid in changedRackIds)
+                await _geo.RecalcRackLocationsAsync(rid);
+
+            if (tx != null) await tx.CommitAsync();
+        }
+        catch
+        {
+            if (tx != null) await tx.RollbackAsync();
+            throw;
+        }
+        finally
+        {
+            tx?.Dispose();
+        }
+
+        return new Dictionary<Guid, Guid>();
+    }
+
+    /// <inheritdoc/>
+    public async Task BindCodesAsync(Guid rackId, IEnumerable<(Guid locId, int col, int level, int depth)> pairs, string? user)
+    {
+        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId)
+                   ?? throw new InvalidOperationException("E-SPACE-002");
+
+        foreach (var (locId, col, level, depth) in pairs)
+        {
+            var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId)
+                      ?? throw new InvalidOperationException("E-SPACE-004");
+
+            if (loc.Status != 1 || loc.Placed || loc.CodeOrigin != 2)
+                throw new InvalidOperationException("E-SPACE-004");
+
+            var (absX, absY, absZ) = LocationGeometryService.ComputeAbs(rack, col, level, depth);
+
+            loc.RackId   = rackId;
+            loc.FloorId  = rack.FloorId;
+            loc.Col      = col;
+            loc.Level    = level;
+            loc.Depth    = depth;
+            loc.AbsX     = absX;
+            loc.AbsY     = absY;
+            loc.AbsZ     = absZ;
+            loc.SizeW    = rack.CellW;
+            loc.SizeH    = rack.CellH;
+            loc.SizeD    = rack.CellD;
+            loc.Placed   = true;
+            // LocationCode / Id / Status / Version 不动
+            loc.Modifier   = user;
+            loc.ModifyDate = DateTime.Now;
+        }
+
+        await _db.SaveChangesAsync();
+    }
+}
