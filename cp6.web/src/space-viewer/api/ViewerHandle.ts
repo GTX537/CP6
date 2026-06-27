@@ -1,4 +1,4 @@
-import type { Group, Vector3 } from 'three'
+import type { Box3, Group, Vector3 } from 'three'
 
 export interface ViewerHandle {
   load(floorId: string): Promise<void>
@@ -11,4 +11,10 @@ export interface ViewerHandle {
   requestRender(): void
   onReady(cb: () => void): void
   onProgress(cb: (done: number, total: number) => void): void
+  getCurrentFloorId(): string
+  flyToData(p: { x: number; y: number; z: number }): void
+  home(): void
+  overview(): void
+  focusSelected(): void
+  focusBox(box3: Box3): void
 }

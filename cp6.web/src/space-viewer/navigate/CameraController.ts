@@ -1,4 +1,4 @@
-import { PerspectiveCamera, OrthographicCamera, Vector3 } from 'three'
+import { Box3, PerspectiveCamera, OrthographicCamera, Sphere, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import type { WebGLRenderer } from 'three'
 
@@ -113,6 +113,32 @@ export class CameraController {
       this._requestRender()
     }
     return true
+  }
+
+  /** Fly camera to an oblique view of box3 (world space). */
+  focusObject(box3: Box3): void {
+    const center = new Vector3()
+    box3.getCenter(center)
+    const sphere = new Sphere()
+    box3.getBoundingSphere(sphere)
+    const radius = Math.max(sphere.radius, 0.5)
+    const dist = radius * 3.5
+    const camPos = new Vector3(
+      center.x + dist * 0.6,
+      center.y + dist * 0.8,
+      center.z + dist * 0.6,
+    )
+    this.flyTo(camPos, center, 600, easeInOutCubic)
+  }
+
+  /** Reset camera to home preset. */
+  home(): void { this.setPreset('home') }
+
+  /** Fly to orthographic-style top-down overview of the floor. */
+  overview(): void {
+    const pos = new Vector3(0, 200, 0.01)
+    const target = new Vector3(0, 0, 0)
+    this.flyTo(pos, target, 700, easeInOutCubic)
   }
 
   dispose(): void {

@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, Color, Vector3, Group } from 'three'
+import { Box3, Matrix4, Quaternion, Scene, PerspectiveCamera, Color, Vector3, Group } from 'three'
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { Renderer } from './core/Renderer'
 import { Loop } from './core/Loop'
@@ -7,7 +7,7 @@ import { SceneBuilder } from './build/SceneBuilder'
 import { FrustumCuller } from './cull/FrustumCuller'
 import { LodController } from './cull/LodController'
 import { LabelVirtualizer } from './labels/LabelVirtualizer'
-import { CameraController } from './navigate/CameraController'
+import { CameraController, easeInOutCubic } from './navigate/CameraController'
 import { Picker } from './navigate/Picker'
 import { Highlighter } from './navigate/Highlighter'
 import { sceneApi } from '@/api/space/scene'
@@ -25,6 +25,8 @@ export class SpaceViewer implements ViewerHandle {
 
   private _buckets: InstancedBuckets | null = null
   private _locationCodes = new Map<string, string>()
+  private _currentFloorId = ''
+  private _selectedLocationId: string | null = null
 
   private _frustumCuller = new FrustumCuller()
   private _lodController = new LodController()
@@ -133,7 +135,23 @@ export class SpaceViewer implements ViewerHandle {
     this.requestRender()
   }
 
+  private _clearSceneData(): void {
+    this._highlighter.clear()
+    this._selectedLocationId = null
+    if (this._buckets) {
+      this._buckets.dispose()
+      this._buckets = null
+    }
+    this._locationCodes.clear()
+    while (this._sceneRoot.children.length > 0) {
+      const child = this._sceneRoot.children[0]
+      if (child) this._sceneRoot.remove(child)
+    }
+  }
+
   async load(floorId: string): Promise<void> {
+    this._clearSceneData()
+    this._currentFloorId = floorId
     const env = await sceneApi.get(floorId)
     const editorScene = env.data
 
@@ -209,9 +227,16 @@ export class SpaceViewer implements ViewerHandle {
 
   hover(pick: PickResult | null): void { this._highlighter.hover(pick) }
 
-  select(pick: PickResult | null): string | null { return this._highlighter.select(pick) }
+  select(pick: PickResult | null): string | null {
+    const id = this._highlighter.select(pick)
+    this._selectedLocationId = id
+    return id
+  }
 
-  clearSelection(): void { this._highlighter.clear() }
+  clearSelection(): void {
+    this._highlighter.clear()
+    this._selectedLocationId = null
+  }
 
   setPreset(preset: 'top' | 'iso' | 'front' | 'home'): void {
     this._cameraController?.setPreset(preset)
@@ -221,5 +246,62 @@ export class SpaceViewer implements ViewerHandle {
   toggleProjection(): void {
     this._cameraController?.toggleProjection()
     this.requestRender()
+  }
+
+  // ── New N-4 navigation helpers ────────────────────────────────────────────
+
+  getCurrentFloorId(): string { return this._currentFloorId }
+
+  /** Fly camera to oblique view of a data-space point (mm, Z-up). */
+  flyToData(p: { x: number; y: number; z: number }): void {
+    const target = this._sceneRoot.dataToWorld(p)
+    const dist = 25
+    const camPos = new Vector3(
+      target.x + dist * 0.6,
+      target.y + dist * 0.8,
+      target.z + dist * 0.6,
+    )
+    this._cameraController?.flyTo(camPos, target, 800, easeInOutCubic)
+    this.requestRender()
+  }
+
+  home(): void {
+    this._cameraController?.home()
+    this.requestRender()
+  }
+
+  overview(): void {
+    this._cameraController?.overview()
+    this.requestRender()
+  }
+
+  /** Focus camera on the selected location's bounding box. */
+  focusSelected(): void {
+    if (!this._selectedLocationId || !this._buckets || !this._cameraController) return
+    const ref = this._buckets.locationToInstance(this._selectedLocationId)
+    if (!ref) return
+    for (const mesh of this._buckets.meshes) {
+      if (mesh.id !== ref.meshId) continue
+      const mat = new Matrix4()
+      mesh.getMatrixAt(ref.instanceId, mat)
+      const pos = new Vector3()
+      const q = new Quaternion()
+      const scale = new Vector3()
+      mat.decompose(pos, q, scale)
+      // pos = data-mm, scale = mm dimensions; convert to world meters
+      const worldCenter = this._sceneRoot.dataToWorld({ x: pos.x, y: pos.y, z: pos.z })
+      const halfExtent = Math.max(scale.x, scale.y, scale.z) * 0.001 * 0.5
+      const box = new Box3(
+        worldCenter.clone().subScalar(halfExtent),
+        worldCenter.clone().addScalar(halfExtent),
+      )
+      this._cameraController.focusObject(box)
+      return
+    }
+  }
+
+  /** Focus camera on the given world-space box. */
+  focusBox(box3: Box3): void {
+    this._cameraController?.focusObject(box3)
   }
 }
