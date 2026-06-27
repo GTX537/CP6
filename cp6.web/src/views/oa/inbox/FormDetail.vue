@@ -78,7 +78,21 @@
         >
           {{ t('oa.detail.reject') }}
         </el-button>
+        <el-button
+          type="warning"
+          size="small"
+          @click="transferVisible = true"
+        >
+          {{ t('oa.detail.transfer') }}
+        </el-button>
       </div>
+
+      <!-- Transfer dialog -->
+      <TransferDialog
+        v-model="transferVisible"
+        :task-id="myTaskId!"
+        @done="onTransferDone"
+      />
     </template>
   </div>
 </template>
@@ -93,6 +107,7 @@ import type { FormSchema, FormFieldDef, FieldMask } from '@/types/wf/wf'
 import DynamicForm from '@/views/wf/DynamicForm.vue'
 import { buildFieldMask, safeParseObject } from '@/views/wf/fieldMask'
 import FlowTimeline from './FlowTimeline.vue'
+import TransferDialog from './TransferDialog.vue'
 
 const props = defineProps<{ instanceId: string }>()
 const emit = defineEmits<{ done: [] }>()
@@ -106,6 +121,7 @@ const detail = ref<InboxDetail | null>(null)
 const myTaskId = ref<string | null>(null)
 const comment = ref('')
 const acting = ref(false)
+const transferVisible = ref(false)
 /** Local copy of form data (read-only display) */
 const formData = ref<Record<string, any>>({})
 
@@ -176,6 +192,12 @@ async function doAction(approve: boolean) {
   } finally {
     acting.value = false
   }
+}
+
+// ── Transfer ─────────────────────────────────────────────────────
+async function onTransferDone() {
+  emit('done')
+  await loadDetail()
 }
 
 // ── Lifecycle ────────────────────────────────────────────────────
