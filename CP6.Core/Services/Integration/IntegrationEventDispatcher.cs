@@ -1,6 +1,7 @@
 using System.Text.Json;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels;
+using CP6.Entity.DTOs.Space;
 
 namespace CP6.Core.Services.Integration;
 
@@ -64,6 +65,12 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
             var r = await ctx.Fin.OnWorkOrderCompletedAsync(p.WorkOrderNo, p.UserName);
             return r.Success;
         },
+        [RouteKey("SPACE", "WMS", "OnLocationPublishedAsync")] = async ctx =>
+        {
+            var p = ctx.GetPayload<LocationPublishBatch>();
+            var r = await ctx.Space.OnLocationPublishedAsync(p, Guid.NewGuid());
+            return r.Success;
+        },
     };
 
     private readonly IMesBridgeHook _mes;
@@ -71,19 +78,22 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
     private readonly IErpBridgeHook _erp;
     private readonly IOrderCancelBridgeHook _cancel;
     private readonly IFinBridgeHook _fin;
+    private readonly ISpaceBridgeHook _space;
 
     public IntegrationEventDispatcher(
         IMesBridgeHook mes,
         IWmsBridgeHook wms,
         IErpBridgeHook erp,
         IOrderCancelBridgeHook cancel,
-        IFinBridgeHook fin)
+        IFinBridgeHook fin,
+        ISpaceBridgeHook space)
     {
         _mes = mes;
         _wms = wms;
         _erp = erp;
         _cancel = cancel;
         _fin = fin;
+        _space = space;
     }
 
     /// <summary>
@@ -105,7 +115,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         }
 
         var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
-        var context = new DispatchContext(_mes, _wms, _erp, _cancel, _fin, payload);
+        var context = new DispatchContext(_mes, _wms, _erp, _cancel, _fin, _space, payload);
         return route(context);
     }
 
@@ -117,6 +127,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
             IErpBridgeHook erp,
             IOrderCancelBridgeHook cancel,
             IFinBridgeHook fin,
+            ISpaceBridgeHook space,
             JsonElement payload)
         {
             Mes = mes;
@@ -124,6 +135,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
             Erp = erp;
             Cancel = cancel;
             Fin = fin;
+            Space = space;
             Payload = payload;
         }
 
@@ -132,6 +144,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         public IErpBridgeHook Erp { get; }
         public IOrderCancelBridgeHook Cancel { get; }
         public IFinBridgeHook Fin { get; }
+        public ISpaceBridgeHook Space { get; }
         public JsonElement Payload { get; }
 
         public T GetPayload<T>()
