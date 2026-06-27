@@ -1300,6 +1300,26 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 732 });
         db.SaveChanges();
     }
+    // OA 电子表单信箱（Phase B）菜单（740 父组 + 733/734 子项）—— 置于计划中台之后（OrderNo 249~）
+    // 幂等：每项按 MenuId 独立守卫，**置于 `if (!db.Sys_Menus.Any())` 块外**，既有库同样会被追加。
+    if (!db.Sys_Menus.Any(m => m.MenuId == 740))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 740, MenuName = "OA工作流", Icon = "MessageBox", OrderNo = 249, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 740 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 733))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 733, MenuName = "电子表单信箱", RoutePath = "/oa/inbox", Icon = "Inbox", ParentId = 740, OrderNo = 733, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 733 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 734))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 734, MenuName = "流程管理", RoutePath = "/oa/flow-admin", Icon = "Operation", ParentId = 740, OrderNo = 734, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 734 });
+        db.SaveChanges();
+    }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
@@ -1703,6 +1723,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nSecSsoScreenSeed.Items)   // S 类 #3 SSO E-SEC-020~029 + 事件 15~18 + 登录/落地/配置页 + nav.116
             .Concat(CP6.WebApi.Seed.I18nSecAuditScreenSeed.Items) // S 类 #4 字段审计 sec.audit.* 画面词条（只读模块，无错误码）
             .Concat(CP6.WebApi.Seed.I18nTenantComplianceSeed.Items) // S 类 #5 多租户合规 E-SEC-031~038 + 事件 19~30 + platform.* 画面词条（带外平台区）
+            .Concat(CP6.WebApi.Seed.I18nOaInboxScreenSeed.Items)   // OA Phase B 电子表单信箱 oa.*/E-WF-001~008/nav.733/734/740
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();

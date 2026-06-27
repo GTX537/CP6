@@ -29,9 +29,10 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/pub/field-perm': () => import('@/views/pms/FieldPermView.vue'),   // PUB 章04 字段权限
   '/pub/seq': () => import('@/views/pms/SeqView.vue'),   // PUB 章05 采番规则
   '/pub/codegen': () => import('@/views/pms/CodeGenView.vue'),   // PUB 章08 代码生成器
-  // ───── OA 审批工作流 (Wf) ─────
-  '/wf/todo': () => import('@/views/wf/TodoCenter.vue'),               // OA 章04 待办中心
-  '/wf/my-applications': () => import('@/views/wf/MyApplications.vue'), // OA 章04 我的申请
+  // ───── OA 电子表单信箱 (Phase B) ─────
+  '/oa/inbox':      () => import('@/views/oa/inbox/InboxView.vue'),    // OA Phase B 电子表单信箱（菜单733）
+  '/oa/flow-admin': () => import('@/views/oa/admin/FlowAdmin.vue'),    // OA Phase B 流程管理（菜单734）
+  // ───── OA 审批工作流 (Wf) — 旧设计器保留，旧待办/申请已迁移至 /oa/inbox ─────
   '/wf/form-designer': () => import('@/views/wf/designer/FormDesigner.vue'), // OA 章09 表单设计器
   '/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue'), // OA 章09 流程设计器
   // ───── 财务 (Fin) 总账内核 ─────
@@ -165,6 +166,9 @@ const viewModules: Record<string, () => Promise<any>> = {
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口
 const staticRoutes: RouteRecordRaw[] = [
+  // ── OA Phase B 旧路由重定向（菜单条目可能仍为 /wf/*；redirect 确保无论何时均自动跳转至信箱）──
+  { path: '/wf/todo',            redirect: '/oa/inbox' },
+  { path: '/wf/my-applications', redirect: '/oa/inbox' },
   {
     path: '/login',
     name: 'login',
