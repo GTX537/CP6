@@ -35,4 +35,8 @@ public interface IFlowEngine
     /// <summary>就地起草稿：把 Draft 实例推进进流程（spawn 根 token + 进首节点 + 读模型随推进落库）。
     /// 仅发起人可提交；非草稿态/越权 → E-WF-003。幂等性同 SubmitAsync（一次 SaveChanges）。</summary>
     Task StartDraftAsync(Guid instanceId, Guid actorId);
+
+    /// <summary>转交（umbrella §4.5）：把 Pending 待办改派给同租户 toUserId（保 TokenId/NodeId，不流转）。
+    /// 履历原行 Transferred + 受让人新 Pending 行 + AddHistory("transfer") + 通知。非待办/目标非法 → E-WF-002。</summary>
+    Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null);
 }

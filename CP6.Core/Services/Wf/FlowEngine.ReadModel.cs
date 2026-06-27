@@ -109,6 +109,29 @@ public partial class FlowEngine
             f.Status = FlowFormToStatus.Skipped;
     }
 
+    /// <summary>转交读模型：原行 Transferred(实办=转出人)，受让人新起 Pending 行（同 Token/Node，StepSeq 递增）。</summary>
+    internal async Task TransferFormToAsync(Guid instanceId, string nodeId, Guid? tokenId,
+        Guid fromUserId, Guid toUserId, string? comment)
+    {
+        var src = await _db.Wf_FlowFormTos.FirstOrDefaultAsync(f =>
+            f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId &&
+            f.ExpectedHandlerId == fromUserId && f.Status == FlowFormToStatus.Pending);
+        if (src is not null)
+        {
+            src.Status = FlowFormToStatus.Transferred;
+            src.ActualHandlerId = fromUserId;
+            src.HandledAt = DateTime.Now;
+            src.Comment = comment;
+        }
+        _db.Wf_FlowFormTos.Add(new Wf_FlowFormTo
+        {
+            Id = Guid.NewGuid(), InstanceId = instanceId, TokenId = tokenId,
+            StepSeq = NextStepSeq(instanceId),   // sync — checks Local + DB, takes Max+1
+            FromNodeId = src?.FromNodeId, NodeId = nodeId, NodeCode = src?.NodeCode, NodeName = src?.NodeName,
+            ExpectedHandlerId = toUserId, Status = FlowFormToStatus.Pending, SentAt = DateTime.Now,
+        });
+    }
+
     /// <summary>
     /// 驳回连坐 / 退回清场：本实例全 Pending 传签履历行 → 作废。
     /// 先处理 Local（变更追踪器里的当前状态），再处理 DB 中已落盘但未加载的行，

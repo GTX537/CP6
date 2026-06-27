@@ -75,6 +75,28 @@ public partial class FlowEngine
         return d.Id;
     }
 
+    public async Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null)
+    {
+        var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
+                   ?? throw new InvalidOperationException("E-WF-002");
+        if (task.Status != FlowTaskStatus.Pending) throw new InvalidOperationException("E-WF-002");
+
+        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
+        if (inst is null || inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("E-WF-002");
+
+        // 目标须同租户真实用户、且非当前处理人（同租户由全局过滤器保证；查不到=越租户/不存在）
+        var toExists = await _db.Sys_Users.AnyAsync(u => u.Id == toUserId);
+        if (!toExists || toUserId == task.AssigneeId) throw new InvalidOperationException("E-WF-002");
+
+        var fromUserId = task.AssigneeId;
+        await TransferFormToAsync(inst.Id, task.NodeId, task.TokenId, fromUserId, toUserId, comment);
+
+        task.AssigneeId = toUserId;          // 改派（保 TokenId/NodeId/Countersign 不变）
+        AddHistory(inst.Id, task.NodeId, actorId, "transfer", comment);
+        await _notifier.TodoCreatedAsync(toUserId, inst.Id, task.Id, inst.FlowKey);
+        await _db.SaveChangesAsync();
+    }
+
     public async Task SendBackAsync(Guid taskId, Guid actorId, string targetNodeId, string? comment = null)
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
