@@ -28,4 +28,10 @@ public class Wf_FormDef : BaseTenantEntity
 
     /// <summary>是否启用（软停用）</summary>
     public bool Enable { get; set; } = true;
+
+    /// <summary>填單分类（机能大类，umbrella §2.5）。</summary>
+    [MaxLength(100)] public string? Category { get; set; }
+
+    /// <summary>填單子分类。</summary>
+    [MaxLength(100)] public string? SubCategory { get; set; }
 }

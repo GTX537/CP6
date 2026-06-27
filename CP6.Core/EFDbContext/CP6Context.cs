@@ -393,6 +393,10 @@ public class CP6Context : DbContext
     public DbSet<Wf_FlowData> Wf_FlowDatas { get; set; }
     /// <summary>抄送（WFS 读模型，信箱未读标记）</summary>
     public DbSet<Wf_FlowCc> Wf_FlowCcs { get; set; }
+    /// <summary>信箱表单收藏（Phase C，唯一 (TenantId,UserId,FormKey)）</summary>
+    public DbSet<Wf_FormFavorite> Wf_FormFavorites { get; set; }
+    /// <summary>信箱显示偏好（Phase C，唯一 (TenantId,UserId)）</summary>
+    public DbSet<Wf_InboxPref> Wf_InboxPrefs { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -680,6 +684,10 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.RecipientId, x.IsRead }).HasDatabaseName("IX_Wf_FlowCc_Recipient");
             e.HasIndex(x => x.InstanceId).HasDatabaseName("IX_Wf_FlowCc_Instance");
         });
+        modelBuilder.Entity<Wf_FormFavorite>(e =>
+            e.HasIndex(x => new { x.TenantId, x.UserId, x.FormKey }).IsUnique().HasDatabaseName("UX_Wf_FormFavorite"));
+        modelBuilder.Entity<Wf_InboxPref>(e =>
+            e.HasIndex(x => new { x.TenantId, x.UserId }).IsUnique().HasDatabaseName("UX_Wf_InboxPref_User"));
 
         // ═══════════════════════════════════════════════════════════
         //  财务（Fin）章01 总账内核
