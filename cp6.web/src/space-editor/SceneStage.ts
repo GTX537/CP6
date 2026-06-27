@@ -1,6 +1,6 @@
 import Konva from 'konva'
 import type { EditorScene, RackVO, ZoneVO, AisleVO, MarkerVO } from '@/types/space/scene'
-import { worldToScreen, type ViewState, type XY } from './coords'
+import { worldToScreen, screenToWorld, type ViewState, type XY } from './coords'
 
 export class SceneStage {
   readonly stage: Konva.Stage
@@ -11,6 +11,7 @@ export class SceneStage {
     aisle: Konva.Layer
     rack: Konva.Layer
     marker: Konva.Layer
+    ghost: Konva.Layer
   }
   view: ViewState
 
@@ -26,6 +27,7 @@ export class SceneStage {
       aisle: new Konva.Layer(),
       rack: new Konva.Layer(),
       marker: new Konva.Layer(),
+      ghost: new Konva.Layer(),
     }
     for (const layer of Object.values(this.layers)) {
       this.stage.add(layer)
@@ -59,6 +61,29 @@ export class SceneStage {
 
   worldToScreen(w: XY): XY {
     return worldToScreen(w, this.view)
+  }
+
+  screenToWorld(s: XY): XY {
+    return screenToWorld(s, this.view)
+  }
+
+  showGhost(rack: RackVO): void {
+    this.layers.ghost.destroyChildren()
+    const origin = worldToScreen({ x: rack.x, y: rack.y }, this.view)
+    const wPx = rack.cols * rack.cellW * this.view.zoom
+    const dPx = rack.depthCount * rack.cellD * this.view.zoom
+    const group = new Konva.Group({ x: origin.x, y: origin.y, rotation: -rack.rotationZ })
+    group.add(new Konva.Rect({
+      x: 0, y: -dPx, width: wPx, height: dPx,
+      fill: 'rgba(80,200,120,0.3)', stroke: '#40cc70', strokeWidth: 2, opacity: 0.7,
+    }))
+    this.layers.ghost.add(group)
+    this.layers.ghost.batchDraw()
+  }
+
+  hideGhost(): void {
+    this.layers.ghost.destroyChildren()
+    this.layers.ghost.batchDraw()
   }
 
   zoom(delta: number): void {
