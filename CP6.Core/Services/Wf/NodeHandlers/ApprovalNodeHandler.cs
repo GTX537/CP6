@@ -25,6 +25,7 @@ internal sealed class ApprovalNodeHandler : INodeHandler
         foreach (var t in stale) t.Status = FlowTaskStatus.Cancelled;
 
         var dueAt = FlowEngine.NodeDueAt(node);
+        var step = eng.NextStepSeq(inst.Id);   // ★ T9：同一关卡多审批人共享同一序号（foreach 外算）
         foreach (var uid in res.ApproverIds.Distinct())
         {
             var (assignee, delegatedFrom) = await eng.ResolveActualAssigneeAsync(uid);   // 委派期替换为代理人
@@ -40,6 +41,8 @@ internal sealed class ApprovalNodeHandler : INodeHandler
                 TokenId = ctx.Token.Id,   // ★ 唯一增量：会签计票按 token 隔离
             };
             eng.Db.Wf_FlowTasks.Add(task);
+            eng.WriteFormToOnSend(inst, node, ctx.Token,   // ★ T9：送签建传签履历行
+                expectedHandler: assignee, onBehalfOf: delegatedFrom, stepSeq: step);
             if (delegatedFrom is Guid g)
                 eng.AddHistory(inst.Id, node.Id, assignee, "delegate", $"代 {g} 审批");   // 双痕：代理人 + 被代理人
             await eng.Notifier.TodoCreatedAsync(assignee, inst.Id, task.Id, inst.FlowKey);   // 推送待办（空实现=no-op）

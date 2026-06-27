@@ -98,6 +98,7 @@ public partial class FlowEngine : IFlowEngine
         task.Modifier = actorId.ToString();
         task.ModifyDate = DateTime.Now;
         AddHistory(inst.Id, task.NodeId, actorId, approve ? "approve" : "reject", comment);
+        await UpdateFormToOnHandleAsync(task, actorId, approve, comment);   // ★ T9：更新传签履历办结状态
 
         // 前加签人审完 → 激活被挂起的原审批人任务（章07 §3），使其重新可办
         if (approve && task.AddSignSource == "before")
@@ -129,6 +130,7 @@ public partial class FlowEngine : IFlowEngine
         {
             inst.Status = FlowInstanceStatus.Rejected;
             CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
+            VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
         }
         inst.ModifyDate = DateTime.Now;   // ★ Task6：写触达 inst 行 → UPDATE 带 WHERE RowVersion=@orig（序列化并行办结的支点，败方抛 DbUpdateConcurrencyException 触发重试）
         await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
