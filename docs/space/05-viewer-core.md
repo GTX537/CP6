@@ -2,7 +2,7 @@
 
 *--- 可直接用于编写代码的最终版本 ---*
 
-> **v1.1 评审补丁（2026-06-27 深审应用）**：补全坐标适配双向可逆公式（dataToWorld/worldToData，§3.2.1）；明确 InstancedMesh 桶须同时初始化 instanceMatrix + instanceColor（§5.3）；新增 WebGL 上下文丢失恢复流程（§8.4）；澄清货架框几何策略（库位零额外几何 / 货架框一个共享线框几何，§4.1）；补 LOD 阈值表与标签虚拟化参数表（§6.2 / §7.2.1）；LabelVirtualizer 复用剔除结果防 per-frame O(n)（§7.2）；澄清 P1 必需 vs P2+ 性能项（§9.2）；明确前端新增依赖（§12）；落码前先做万级性能 spike（文末）。相关处标「(v1.1评审补丁)」。
+> **v1.1 评审补丁（2026-06-27 深审应用）**：补全坐标适配双向可逆公式（dataToWorld/worldToData，§3.2.1）；明确 InstancedMesh 桶须同时初始化 instanceMatrix + instanceColor（§5.3）；新增 WebGL 上下文丢失恢复流程（§8.4）；澄清货架框几何策略（库位零额外几何 / 货架框一个共享线框几何，§4.1）；补 LOD 阈值表与标签虚拟化参数表（§6.2 / §7.2.1）；LabelVirtualizer 复用剔除结果防 per-frame O(n)（§7.2）；澄清 P1 必需 vs P2+ 性能项（§9.2）；明确前端新增依赖（§12）；**补暴露 06 所需两句柄——分桶包围盒 `getBucketBoundingBox`（§6.1/§10，供 06 拾取粗筛）与 instanceId↔LocationId 反向 `locationToInstance`（§5.2/§10，供 06 hover 复原 / 07 按 LocationId 着色）**；落码前先做万级性能 spike（文末）。相关处标「(v1.1评审补丁)」。
 
 | 属性 | 内容 |
 |---|---|
@@ -190,7 +190,7 @@ const UNIT_BOX = new THREE.BoxGeometry(1, 1, 1)   // 1mm³ 单位盒，全场景
   · 桶过大（如开放区 > N 实例）再二次细分（网格分块）
 ```
 - **着色维度**（07）：同一桶内用 `instanceColor` 按库存状态逐实例上色，不破坏分桶（颜色不增加 draw call）。
-- 桶与数据的映射：维护 `instanceId ↔ LocationId` 双向表（拾取 06 用：射线命中 `instanceId` → 反查 `LocationId` → 库位编码）。
+- 桶与数据的映射：**05 同时维护正反向映射表（v1.1评审补丁）**——正向 `instanceToLocation(meshId,instanceId)→LocationId`（拾取 06 用：射线命中 `instanceId` → 反查 `LocationId` → 库位编码）+ 反向 `locationToInstance(locationId)→{meshId,instanceId}|null`（06 hover 复原 / 07 按 LocationId 着色用：从库位反查回具体桶实例）。两张表建桶时一并填充（§5.3），对外句柄见 §10。
 
 ### 5.3 实例矩阵填充
 ```ts
@@ -203,7 +203,8 @@ locsInZone.forEach((loc, i) => {
       quatFromZ(loc.rack.rotationZ),                     // 绕数据 Z 轴偏航
       scale(loc.sizeW, loc.sizeD, loc.sizeH))            // 数据系尺寸
   inst.setMatrixAt(i, m)
-  bucketIndex.set(inst.id + ':' + i, loc.locationId)     // instanceId→LocationId
+  bucketIndex.set(inst.id + ':' + i, loc.locationId)     // 正向 instanceId→LocationId
+  locationIndex.set(loc.locationId, { meshId: inst.id, instanceId: i }) // 反向 LocationId→{meshId,instanceId}（v1.1评审补丁）
 })
 inst.instanceMatrix.needsUpdate = true
 
@@ -227,6 +228,7 @@ inst.instanceColor.needsUpdate = true
 ### 6.1 视锥剔除（按桶）
 - Three 默认对每个对象做 frustum culling，但 InstancedMesh 是整体——所以**分桶（§5.2）= 让剔除以库区为粒度生效**：相机视锥外的库区桶整体不提交 GPU。
 - 每个桶维护**包围盒**（`computeBoundingBox`）；`FrustumCuller` 每帧（节流）用相机视锥测试各桶包围盒，`bucket.visible = inFrustum`。
+- **桶包围盒对外暴露（v1.1评审补丁）**：经句柄 `getBucketBoundingBox(zoneId): THREE.Box3` 返回该 Zone 桶的**世界包围盒**，供 06 拾取做"包围盒粗筛"（射线/视锥先测各桶 Box3 砍掉远处/视锥外桶，再只对候选桶精拾，06 §3.1）。05 §6.1 本就维护该包围盒，此处只是暴露，不新增计算；句柄见 §10。
 - 大开放区桶过大时二次细分为网格子桶，让剔除更细。
 
 ### 6.2 LOD（按相机距离）
@@ -346,7 +348,9 @@ Loop（rAF）每帧：
 | `load(floorId)` / `dispose()` | 加载/释放某层场景 | 浏览页 |
 | `getSceneRoot()` | 取适配根容器（挂自定义对象） | 06/07/08 |
 | `worldToData(v3)` / `dataToWorld(xyz)` | 坐标适配双向可逆互转（§3.2.1） | 06 拾取 |
-| `instanceToLocation(meshId, instanceId)` | 实例 → LocationId（§5.2） | 06 拾取 |
+| `instanceToLocation(meshId, instanceId)` | 实例 → LocationId（正向，§5.2） | 06 拾取 |
+| `locationToInstance(locationId)` | LocationId → `{meshId, instanceId}` \| `null`（反向映射，§5.2，v1.1评审补丁） | 06 hover 复原 / 07 按 LocationId 着色 |
+| `getBucketBoundingBox(zoneId)` | Zone 桶世界包围盒 `THREE.Box3`（§6.1，v1.1评审补丁） | 06 拾取粗筛 |
 | `setInstanceColor(locationId, color)` | 按库位改实例色（不重建） | **07 库存着色** |
 | `requestRender()` | 触发一次按需渲染 | 07/08 |
 | `onReady / onProgress` | 建图完成/进度事件 | 浏览页 |
