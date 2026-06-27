@@ -6,9 +6,11 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { sceneApi } from '@/api/space/scene'
 import { useSpaceEditorStore } from '@/stores/spaceEditor'
 import { SceneStage } from '@/space-editor/SceneStage'
-import { genRack } from '@/space-editor/generate/genRack'
 import { genZoneArray } from '@/space-editor/generate/genZoneArray'
 import type { ZoneVO } from '@/types/space/scene'
+import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
+import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
+import { scanCollisions } from '@/space-editor/interact/collide/CollisionHint'
 import TemplatePanel from './panels/TemplatePanel.vue'
 import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
 
@@ -20,7 +22,12 @@ const store = useSpaceEditorStore()
 const canvasRef = ref<HTMLDivElement>()
 let stageRef: SceneStage | null = null
 
-// placement mode state
+// Interaction Manager (created after stage is ready)
+const imRef = ref<InteractionManager | null>(null)
+const activeTool = ref<ToolType>('select')
+const collisionCount = ref(0)
+
+// Placement mode state (F-3: template → place)
 const placementMode = ref(false)
 const pendingSel = ref<TemplatePanelSelection | null>(null)
 const selectedZoneId = ref<string>('')
@@ -28,23 +35,152 @@ const selectedZoneId = ref<string>('')
 const zones = computed<ZoneVO[]>(() => store.scene?.zones ?? [])
 const floorId = computed(() => route.params['floorId'] as string)
 
-// file input for import
 const importInputRef = ref<HTMLInputElement>()
 const saving = ref(false)
+
+// ── Core afterCommand callback ────────────────────────────────────────────────
+
+/** Called after every command exec/undo/redo: re-render, collision color, refresh transformer */
+function afterCommand(): void {
+  const s = store.scene
+  if (!stageRef || !s) return
+  stageRef.render(s)
+  const results = scanCollisions(s.racks, s.zones)
+  stageRef.applyRackStyles(store.selectionIds, results)
+
+  // Count uniquely problematic racks for badge
+  const problematic = new Set<string>()
+  for (const r of results) {
+    if (r.collidingWith.length > 0) {
+      problematic.add(r.rackId)
+      for (const id of r.collidingWith) problematic.add(id)
+    }
+    if (r.outOfZone) problematic.add(r.rackId)
+  }
+  collisionCount.value = problematic.size
+
+  imRef.value?.refreshTransformer()
+}
+
+// ── Lifecycle ─────────────────────────────────────────────────────────────────
 
 onMounted(async () => {
   const res = await sceneApi.get(floorId.value)
   store.load(res.data)
+
   if (canvasRef.value) {
     stageRef = new SceneStage(canvasRef.value)
     stageRef.render(res.data)
+    imRef.value = new InteractionManager(stageRef, store, afterCommand)
     bindStageClick()
   }
+
+  document.addEventListener('keydown', onKeydown)
+  document.addEventListener('keyup', onKeyup)
 })
 
 onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onKeydown)
+  document.removeEventListener('keyup', onKeyup)
+  imRef.value?.destroy()
   stageRef?.destroy()
 })
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────────
+
+function onKeydown(e: KeyboardEvent): void {
+  const im = imRef.value
+  // Track ctrl state for snap
+  im?.setCtrlHeld(e.ctrlKey || e.metaKey)
+
+  // Don't intercept when typing in an input/textarea/select
+  const tag = (e.target as HTMLElement).tagName
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'z' || e.key === 'Z') {
+      e.preventDefault()
+      if (e.shiftKey) {
+        // Ctrl+Shift+Z = redo
+        if (store.canRedo) {
+          store.stack.redo(store.buildEditorContext())
+          store.updateUndoRedo()
+          afterCommand()
+        }
+      } else {
+        // Ctrl+Z = undo
+        if (store.canUndo) {
+          store.stack.undo(store.buildEditorContext())
+          store.updateUndoRedo()
+          afterCommand()
+        }
+      }
+    } else if (e.key === 'y' || e.key === 'Y') {
+      e.preventDefault()
+      if (store.canRedo) {
+        store.stack.redo(store.buildEditorContext())
+        store.updateUndoRedo()
+        afterCommand()
+      }
+    } else if (e.key === 'a' || e.key === 'A') {
+      e.preventDefault()
+      im?.selectAll()
+    }
+  } else if (e.key === 'Delete' || e.key === 'Backspace') {
+    e.preventDefault()
+    deleteSelected()
+  } else if (e.key === 'Escape') {
+    e.preventDefault()
+    if (placementMode.value) {
+      exitPlacementMode()
+    } else {
+      im?.escape()
+    }
+  }
+}
+
+function onKeyup(e: KeyboardEvent): void {
+  imRef.value?.setCtrlHeld(e.ctrlKey || e.metaKey)
+}
+
+function deleteSelected(): void {
+  const s = store.scene
+  if (!s) return
+  const selectedIds = store.selectionIds
+  if (selectedIds.length === 0) return
+
+  const racksToDelete = s.racks.filter(r => selectedIds.includes(r.id))
+  if (racksToDelete.length === 0) return
+
+  const cmd = new DeleteCmd({ racks: racksToDelete.map(r => ({ ...r })) })
+  store.stack.exec(cmd, store.buildEditorContext())
+  store.clearSelection()
+  store.updateUndoRedo()
+  afterCommand()
+}
+
+// ── Tool switching ────────────────────────────────────────────────────────────
+
+function switchTool(tool: ToolType): void {
+  imRef.value?.switchTool(tool)
+  activeTool.value = tool
+}
+
+function handleUndo(): void {
+  if (!store.canUndo) return
+  store.stack.undo(store.buildEditorContext())
+  store.updateUndoRedo()
+  afterCommand()
+}
+
+function handleRedo(): void {
+  if (!store.canRedo) return
+  store.stack.redo(store.buildEditorContext())
+  store.updateUndoRedo()
+  afterCommand()
+}
+
+// ── Placement mode (F-3 template → canvas) ───────────────────────────────────
 
 function bindStageClick(): void {
   if (!stageRef) return
@@ -84,7 +220,7 @@ function bindStageClick(): void {
       for (const l of locs) store.markDirty(l.id)
       for (const a of aisles) store.markDirty(a.id)
 
-      stageRef?.render(s)
+      afterCommand()
       exitPlacementMode()
     }
 
@@ -102,11 +238,10 @@ function bindStageClick(): void {
   })
 }
 
-// Also handle single-rack placement when rows=1 racksPerRow=1 via same path (genZoneArray degrades to 1 rack)
-
 function onTemplateSelect(sel: TemplatePanelSelection): void {
   pendingSel.value = sel
   placementMode.value = true
+  imRef.value?.setEnabled(false)
   ElMessage.info(t('点击画布放置货架'))
 }
 
@@ -114,9 +249,11 @@ function exitPlacementMode(): void {
   placementMode.value = false
   pendingSel.value = null
   stageRef?.hideGhost()
+  imRef.value?.setEnabled(true)
 }
 
-// G-2 Save
+// ── Save (G-2) ────────────────────────────────────────────────────────────────
+
 async function handleSave(): Promise<void> {
   if (saving.value) return
   saving.value = true
@@ -135,7 +272,8 @@ async function handleSave(): Promise<void> {
   }
 }
 
-// G-4 Export
+// ── Export / Import (G-4) ─────────────────────────────────────────────────────
+
 async function handleExport(): Promise<void> {
   try {
     const res = await sceneApi.exportScene(floorId.value)
@@ -154,7 +292,6 @@ async function handleExport(): Promise<void> {
   }
 }
 
-// G-4 Import
 function handleImportClick(): void {
   importInputRef.value?.click()
 }
@@ -174,7 +311,6 @@ async function handleImportFile(e: Event): Promise<void> {
     return
   }
 
-  // Prompt for target site
   const { value: siteId } = await ElMessageBox.prompt(
     t('请输入目标站点ID'),
     t('导入场景'),
@@ -203,8 +339,41 @@ async function handleImportFile(e: Event): Promise<void> {
 
 <template>
   <div class="floor-editor">
+    <!-- Toolbar -->
     <div class="toolbar">
       <span class="title">{{ t('空间编辑器') }}</span>
+
+      <!-- Tool switcher -->
+      <el-button-group size="small">
+        <el-button
+          :type="activeTool === 'select' ? 'primary' : 'default'"
+          @click="switchTool('select')"
+          :title="t('选择 (S)')"
+        >{{ t('选择') }}</el-button>
+        <el-button
+          :type="activeTool === 'drag' ? 'primary' : 'default'"
+          @click="switchTool('drag')"
+          :title="t('拖拽 (D)')"
+        >{{ t('拖拽') }}</el-button>
+        <el-button
+          :type="activeTool === 'rotate' ? 'primary' : 'default'"
+          @click="switchTool('rotate')"
+          :title="t('旋转 (R)')"
+        >{{ t('旋转') }}</el-button>
+        <el-button
+          :type="activeTool === 'marker' ? 'primary' : 'default'"
+          @click="switchTool('marker')"
+          :title="t('打点 (M)')"
+        >{{ t('打点') }}</el-button>
+      </el-button-group>
+
+      <!-- Undo / Redo -->
+      <el-button size="small" :disabled="!store.canUndo" @click="handleUndo">
+        {{ t('撤销') }}
+      </el-button>
+      <el-button size="small" :disabled="!store.canRedo" @click="handleRedo">
+        {{ t('重做') }}
+      </el-button>
 
       <el-select
         v-model="selectedZoneId"
@@ -239,6 +408,7 @@ async function handleImportFile(e: Event): Promise<void> {
       <el-button size="small" @click="handleImportClick">{{ t('导入') }}</el-button>
     </div>
 
+    <!-- Editor body -->
     <div class="editor-body">
       <div
         ref="canvasRef"
@@ -248,6 +418,11 @@ async function handleImportFile(e: Event): Promise<void> {
       <aside class="side-panel">
         <TemplatePanel @select="onTemplateSelect" />
       </aside>
+    </div>
+
+    <!-- Collision badge (bottom-right) -->
+    <div v-if="collisionCount > 0" class="collision-badge">
+      ⚠ {{ collisionCount }} {{ t('碰撞/越界') }}
     </div>
 
     <!-- hidden file input for import -->
@@ -267,6 +442,7 @@ async function handleImportFile(e: Event): Promise<void> {
   flex-direction: column;
   height: 100vh;
   background: #f5f5f5;
+  position: relative;
 }
 .toolbar {
   display: flex;
@@ -301,5 +477,18 @@ async function handleImportFile(e: Event): Promise<void> {
   border-left: 1px solid #e0e0e0;
   overflow-y: auto;
   flex-shrink: 0;
+}
+.collision-badge {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(220, 80, 50, 0.92);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 10;
 }
 </style>

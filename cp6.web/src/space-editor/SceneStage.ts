@@ -1,6 +1,7 @@
 import Konva from 'konva'
 import type { EditorScene, RackVO, ZoneVO, AisleVO, MarkerVO } from '@/types/space/scene'
 import { worldToScreen, screenToWorld, type ViewState, type XY } from './coords'
+import type { CollisionResult } from './interact/collide/CollisionHint'
 
 export class SceneStage {
   readonly stage: Konva.Stage
@@ -153,6 +154,8 @@ export class SceneStage {
     const dPx = rack.depthCount * rack.cellD * this.view.zoom
 
     const group = new Konva.Group({
+      id: rack.id,
+      name: 'rack',
       x: origin.x,
       y: origin.y,
       rotation: -rack.rotationZ, // screen Y is flipped, so negate
@@ -187,6 +190,41 @@ export class SceneStage {
     const circle = new Konva.Circle({ x: s.x, y: s.y, radius: 6, fill: '#e05050', stroke: '#fff', strokeWidth: 1 })
     const label = new Konva.Text({ x: s.x + 8, y: s.y - 8, text: marker.text, fontSize: 11, fill: '#333' })
     this.layers.marker.add(circle, label)
+  }
+
+  /** Find the Konva Group for a rack by its id. Returns null if not found or not yet rendered. */
+  getRackNode(rackId: string): Konva.Group | null {
+    return this.layers.rack.findOne<Konva.Group>('#' + rackId) ?? null
+  }
+
+  /**
+   * Apply visual styling to rack nodes based on selection and collision results.
+   * Priority: collision-red > out-of-zone-yellow > selected-blue > normal.
+   */
+  applyRackStyles(selectedIds: string[], collisionResults: CollisionResult[]): void {
+    const redIds = new Set<string>()
+    const yellowIds = new Set<string>()
+    for (const r of collisionResults) {
+      if (r.collidingWith.length > 0) {
+        redIds.add(r.rackId)
+        for (const id of r.collidingWith) redIds.add(id)
+      }
+      if (r.outOfZone) yellowIds.add(r.rackId)
+    }
+    const selSet = new Set(selectedIds)
+
+    for (const node of this.layers.rack.find<Konva.Group>('.rack')) {
+      const rect = node.findOne<Konva.Rect>('Rect')
+      if (!rect) continue
+      const id = node.id()
+      const selected = selSet.has(id)
+      const red = redIds.has(id)
+      const yellow = !red && yellowIds.has(id)
+
+      rect.stroke(red ? '#ff4040' : yellow ? '#ffaa00' : selected ? '#0099ff' : '#4070cc')
+      rect.strokeWidth(selected ? 2.5 : red || yellow ? 2 : 1)
+    }
+    this.layers.rack.batchDraw()
   }
 
   private bindZoomPan(): void {
