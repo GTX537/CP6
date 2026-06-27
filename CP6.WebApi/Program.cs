@@ -128,6 +128,12 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.FinSequenceService>();         
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Services.Wf.WfTimeoutService>();    // 章07 §4 超时扫描（remind/approve/reject/escalate）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
 
+// 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
+builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IFlowAdminService, CP6.Core.Services.Oa.FlowAdminService>();
+
 // 4.0.2 财务（Fin）章01 总账内核
 builder.Services.AddScoped<CP6.Core.Services.Fin.IGlAccountService, CP6.Core.Services.Fin.GlAccountService>(); // 章01 §3 会计科目 + 多国别模板包
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinSequenceService, CP6.Core.Services.Fin.FinSequenceService>(); // 章01 §4 凭证采番（GL-yyyy-MM-NNNNN）
