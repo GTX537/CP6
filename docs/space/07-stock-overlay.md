@@ -2,11 +2,13 @@
 
 *--- 可直接用于编写代码的最终版本 ---*
 
+> **v1.1 评审补丁（2026-06-27 深审）**：本版按深度评审打补丁（相关处标「(v1.1评审补丁)」）——① 新增 **§2.3 BinStatus 5 态映射算法**（明确从 WMS 的 Stock/Location/OutboundOrder 推导，含优先级 锁定>在拣>空>满>有货 + sumQty 取值）；② 补 WMS 侧 `IWmsStockQuery` 实现**索引需求**（`IX(WarehouseCd,LocationCd)` / `IX(WarehouseCd,ProductCd)`）；③ §3.1 记**推送决策点**（WMS 已有 `/hubs/wms`，P2.5/P3 可复用做真实时着色）；④ **库容利用率热力 + 状态/热力/结构三模式切换降为 P2.5**、`TopMaterial` 降为 v2——P2 核心只做「按库位状态着色 + 按物料定位」，不阻断 P2 发布；⑤ 契约入参/join **须带 `WarehouseCd`**（跨仓维度，对齐 04 章 SiteCode↔WarehouseCd，防多仓同名库位撞）。
+
 | 属性 | 内容 |
 |---|---|
 | 章节ID | SPACE-07 实时库存叠加 |
 | 所属模块 | Space 空间数字底座 · **Part 2（P2）** |
-| 里程碑 | **P2**（3D 上看到真实库存：空/满/锁定/在拣 + 库容率 + 按物料定位；P1 的 05/06 渲染地基之上叠数据） |
+| 里程碑 | **P2**（3D 上看到真实库存：空/满/锁定/在拣 + 按物料定位；**库容率/热力 → P2.5**·v1.1评审补丁；P1 的 05/06 渲染地基之上叠数据） |
 | 技术栈 | .NET8（`IWmsStockQuery` 契约，WMS 实现）/ Vue3 + Three.js（叠加着色，复用 [05](./05-viewer-core.md) `setInstanceColor`、[06](./06-camera-pick.md) 定位） |
 | 命名空间 | `CP6.Core/Services/Space/IWmsStockQuery.cs`（契约·Space 侧）/ `cp6.web/src/space-viewer/overlay`（着色叠加）/ `views/space/viewer`（图例/物料搜索 UI） |
 | 落地决策 | D5 **同步只读 `IWmsStockQuery` 批量 + 按需快照(A) + 可选轮询(无推送)·间隔下限·可见区裁剪** / 状态着色 v1 固定默认色 + 字段预留(YAGNI) / D8 **P2 半=按物料/批次/容器定位** |
@@ -65,7 +67,7 @@ public interface IWmsStockQuery
 {
     // ① 批量按库位编码查库存（叠加主力；04 的单条停用校验 = codes 单元素特例）
     Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
-        Guid tenantId, IReadOnlyCollection<string> locationCodes, CancellationToken ct = default);
+        Guid tenantId, string warehouseCd, IReadOnlyCollection<string> locationCodes, CancellationToken ct = default);  // ★(v1.1评审补丁) 入参带 warehouseCd（跨仓维度，join 防同名撞）
 
     // ② 按物料/批次/容器反查"哪些库位有它"（D8 P2 半，第6章）
     Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
@@ -74,21 +76,50 @@ public interface IWmsStockQuery
 
 public sealed class WmsStockDto
 {
-    public string LocationCode { get; set; } = "";  // join key
+    public string WarehouseCd  { get; set; } = "";  // ★(v1.1评审补丁) 跨仓维度：join key 实为 (WarehouseCd, LocationCode) 复合
+    public string LocationCode { get; set; } = "";  // join key（须与 WarehouseCd 配对，防多仓同名撞）
     public int    BinStatus    { get; set; }        // ★0空 1有货 2满 3锁定 4在拣（与 README §六一致）
     public decimal Qty         { get; set; }        // 当前库存量（基本单位）
     public decimal? Capacity   { get; set; }        // 库容（可空，WMS 有则给，算利用率用，第5章）
-    public string?  TopMaterial{ get; set; }        // 占位主物料（可空，信息卡/着色预留）
+    public string?  TopMaterial{ get; set; }        // 占位主物料（可空，信息卡预留；★(v1.1评审补丁) 降为 v2，P2 可不填）
     // —— 字段预留：未来扩温区/锁定原因/批次数等，v1 不消费（YAGNI）——
 }
 ```
 - `BinStatus` 取值与 README §六、04 章一致：**空/有货/满/锁定/在拣**。WMS 把其内部库存模型映射成这 5 态返回。
 - **WMS 实现该接口**（如 `CP6.Core/Services/Wms/WmsStockQuery.cs`），DI 注入；Space 只依赖 `IWmsStockQuery` 抽象——无反向编译依赖。
 - 契约**纯读**：无任何写方法。join 一律按 `LocationCode`（00 §7 的 join key）。
+- **(v1.1评审补丁) 跨仓维度**：`GetStockByLocationsAsync` 入参与 `FindLocationsAsync` 的 `StockLocateQuery` **均须带 `WarehouseCd`**，join key 实为 `(WarehouseCd, LocationCode)`（对齐 04 章 SiteCode↔WarehouseCd 映射），否则多仓同名 `LocationCode` 会撞。前端可见区裁剪收集编码时一并带所属仓。
 
 ### 2.2 批量是硬要求
 - 万级库位绝不能逐个查（N 次 RPC 必崩）。`GetStockByLocationsAsync` 一次传一批编码（当前可见区，第3/8章），WMS 一次返回——网络往返压到批次级。
 - 批大小有上限（如每批 ≤ 1000 编码），超出由 Space 侧分批并发（受控并发数）。
+
+### 2.3 BinStatus 5 态映射算法（v1.1评审补丁）
+> 契约只规定 WMS 返回 0~4 五态（§2.1），本节明确 **WMS 侧如何从其库存模型推导这 5 态**——让实现可直接落码，不留歧义。
+
+**数据来源**：一个物理库位是 `(WarehouseCd, LocationCd, ProductCd, LotNo)` 维度的**多行 `Stock`**。相关字段：
+- `Stock`：`PhysicalQty`（实物量）/ `AllocatedQty`（已分配量）/ `AvailableQty`（可用量）/ `QcStatus`（PENDING/PASSED/FAILED/**HOLD**）。
+- `Location`：`CapacityQty`（库容）/ `IsBlocked`（库位封存）。
+- 在拣判定靠该已分配出库行所属 `OutboundOrder.Status == 3`（Picking）。
+
+**聚合粒度**：按 `(WarehouseCd, LocationCd)` 把该库位的**全部 Stock 行**聚合，`sumQty = Σ PhysicalQty`。
+
+**映射（优先级从高到低：锁定 > 在拣 > 空 > 满 > 有货，命中即返回不再下探）**：
+```
+sumQty = Σ PhysicalQty   // 该 (WarehouseCd, LocationCd) 全部 Stock 行之和
+if (Location.IsBlocked OR any(QcStatus == HOLD))                                  -> 3 锁定   // 安全优先,最高优先级
+else if (exists(AllocatedQty>0 ∧ 该出库行所属 OutboundOrder.Status == Picking(3))) -> 4 在拣
+else if (sumQty == 0)                                                             -> 0 空
+else if (Location.CapacityQty>0 ∧ sumQty >= Location.CapacityQty)                 -> 2 满
+else                                                                             -> 1 有货
+```
+- **优先级语义**：锁定（安全/合规，最高）> 在拣（作业中）> 空 > 满 > 有货（兜底）。
+- **各态数量取值**：统一以 `sumQty = Σ PhysicalQty` 为占用量；返回 DTO 时 `Qty = sumQty`、`Capacity = Location.CapacityQty`（无值即 `null`，§5 利用率粗估）。
+- `TopMaterial` = 按 `PhysicalQty` 倒序的首个 `ProductCd`（★(v1.1评审补丁) 降为 v2，P2 可不填）。
+
+**WMS 侧实现索引需求（v1.1评审补丁）**：实现 `IWmsStockQuery` 须补两索引——
+- `IX(WarehouseCd, LocationCd)`：`GetStockByLocationsAsync` 批量按库位聚合 Stock 行（§2.2 批量主力）。
+- `IX(WarehouseCd, ProductCd)`：`FindLocationsAsync` 物料反查（§6）。
 
 ---
 
@@ -98,6 +129,7 @@ public sealed class WmsStockDto
 
 ### 3.1 无推送（v1）
 - WMS **不主动推**库存变化（不做 SignalR/WebSocket 实时推送）。Space **按需拉**。
+- **(v1.1评审补丁) 推送决策点**：CP6 WMS **已有 `/hubs/wms` SignalR 推送通道**。本章 v1 仍按 D5 = 按需快照 + 可选轮询（无推送），**但记为决策点**——P2.5/P3 可复用 `/hubs/wms` 把库存变化推给 Space 实现真实时着色（届时重审本章刷新策略）。
 - 理由：库存推送要 WMS 改造 + 长连接成本，P2 性价比低；按需快照已满足"看当前库存"需求。实时推送留 P3+（YAGNI）。
 
 ### 3.2 按需快照（A，主力）
@@ -137,6 +169,8 @@ public sealed class WmsStockDto
 | 2 满 | 占满 | 红 |
 | 3 锁定 | 冻结/盘点锁 | 灰 |
 | 4 在拣 | 拣货作业中 | 黄 |
+
+> **(v1.1评审补丁)** 各 BinStatus 由 WMS 按 **§2.3 映射算法**从 Stock/Location/OutboundOrder 推导（优先级 锁定>在拣>空>满>有货），本章只负责"态 → 色"。
 - **v1 固定默认色 + 字段预留**（YAGNI 决策）：色板写死在前端常量，但留 `colorScheme` 配置位，未来可做租户自定义配色，v1 不实现配置 UI。
 - 着色 = 调 05 `setInstanceColor(locationId, color)`——**改实例色，不重建几何**（05 §10 句柄）；批量着色一次刷一批，`requestRender` 触发一次重绘。
 
@@ -147,6 +181,7 @@ public sealed class WmsStockDto
 | 利用率热力模式 | OccupiedRatio → 热力渐变（第5章） |
 | 结构模式（关叠加） | 回 05 默认灰（无库存色，纯看结构） |
 - 图例（legend）随模式显示色含义；切模式即重着色（用缓存快照，不必重拉）。
+- **(v1.1评审补丁) YAGNI 降级**：**利用率热力模式 + 状态/热力/结构三模式切换整体降为 P2.5**——P2 核心只做「**按库位状态着色（状态模式，§4.1）+ 按物料定位（§6）**」，模式切换/热力**不阻断 P2 发布**；状态模式 + "关叠加回 05 灰"是 P2 必备，热力模式留 P2.5。
 
 ### 4.3 未放置/无数据处理
 - `Placed=false`（采纳态无几何）库位不在 3D 中（05 不渲染），自然不着色。
@@ -155,6 +190,8 @@ public sealed class WmsStockDto
 ---
 
 ## 第5章 库容利用率（热力）
+
+> **(v1.1评审补丁) 本章整体降为 P2.5**：库容利用率热力（库位/货架/库区聚合）不是 P2 核心，**不阻断 P2 发布**。P2 只做按库位状态着色（§4.1）+ 按物料定位（§6）；利用率热力随 §4.2 模式切换一并留 P2.5。
 
 ### 5.1 计算
 ```
@@ -187,7 +224,7 @@ public sealed class WmsStockDto
      · "下一个/上一个"在命中集间巡航（复用 06 飞行）
 ```
 - **关键复用**：07 不重造定位——只把 06 的入口从"输入编码"换成"输入物料 → WMS 反查出一批编码 → 喂给 06 的 `locate`"。06 的切层/飞行/高亮/信息卡全程复用。
-- `FindLocationsAsync` 的查询条件（StockLocateQuery）：物料号、批次、容器号、（可选）库区范围；WMS 实现按其库存索引返回。
+- `FindLocationsAsync` 的查询条件（StockLocateQuery）：物料号、批次、容器号、**（v1.1评审补丁）`WarehouseCd` 仓库范围**、（可选）库区范围；WMS 实现按其库存索引（`IX(WarehouseCd, ProductCd)`，§2.3）返回；命中 `WmsLocationHit` 亦带 `WarehouseCd`（跨仓防同名撞）。
 
 ### 6.2 命中可视化
 - 命中库位**整批高亮**（与周边区分），非命中可选**变暗/半透明**（聚焦命中）。

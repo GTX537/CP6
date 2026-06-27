@@ -2,6 +2,8 @@
 
 *--- 可直接用于编写代码的最终版本 ---*
 
+> **v1.1 评审补丁摘要（2026-06-27 深审）**：① 条件段拼接伪代码补全 optional 分支（§3.3，纯函数确定性消费 upper/width/optional）；② 新增取值源 `rack-seq-zone`（Zone 内全局货架序号）解 rack-seq「父内序号 vs Zone 级编号」矛盾，并加静态预检硬规则（§3.2/§5.3/§6.1，含 optional 巷道段必用之，违反 E-SPACE-303）；③ 两阶段重排 `<作用域>` 落为具体 SQL（`Location` 无 `ZoneId`，经 `RackId` 回溯）+ 单事务 + 作用域级互斥（§7.2）；④ 序号固定排序键写死（Zone 按 `ZoneCode` 字典序、Rack 按 `(Y↑, X↑)` 行优先，§4.3）；⑤ 生成/重排入口加显式冻结守卫（§4.4）；⑥ YAGNI：P1 先实现 rebuild、变长示意标可选（§7.3/§8.1）；⑦ 文末补「变长唯一性」边界测试用例。相关处均标「(v1.1评审补丁)」。
+
 | 属性 | 内容 |
 |---|---|
 | 章节ID | SPACE-03 可配置编码引擎 |
@@ -120,24 +122,40 @@
 | `aisle-code` | 所属 Aisle.Code | **条件段**：无巷道时跳过（第5章） |
 | `aisle-seq` | 巷道在库区内序号 | **条件段** |
 | `rack-code` | 所属 Rack.RackCode | 货架业务码（01 §5.2 批量生成给的"排-架"建议值，可在 02 改） |
-| `rack-seq` | 货架在其父（Aisle 或 Zone）内序号 | 序号类 |
+| `rack-seq` | 货架在其父（Aisle 或 Zone）内**父内序号** | 序号类（每个巷道/无巷道组各自从 start 起；**规则含 optional 巷道段时不可用，会撞码 → §6.1 报 E-SPACE-303**） |
+| `rack-seq-zone` | 货架在其所属 **Zone 内的全局序号**（覆盖该 Zone 下所有巷道 + 无巷道路径的货架，统一连续编号） | 序号类（**v1.1评审补丁**；**规则含可选 aisle 段时 rack 粒度必须用它**，§5.3/§6.1） |
 | `col` | 库位列索引 Col | 00 §4.6 三轴索引之一 |
 | `level` | 库位层索引 Level | 垂直层 |
 | `depth` | 库位深索引 Depth | 前后排 |
 
-> **取值源分两类**：①**码源**（`*-code`/`fixed`/`floor-level`）取对象上已有的字段值；②**序号源**（`*-seq`/`col`/`level`/`depth`）按位置算序号，受 `start/step/width` 控制。序号源保证"位置→码"确定性可复算（重排幂等）。
+> **取值源分两类**：①**码源**（`*-code`/`fixed`/`floor-level`）取对象上已有的字段值；②**序号源**（`*-seq`/`rack-seq-zone`/`col`/`level`/`depth`）按位置算序号，受 `start/step/width` 控制。序号源保证"位置→码"确定性可复算（重排幂等），其固定排序键见 §4.3。
 
-### 3.3 拼接规则
+### 3.3 拼接规则 (v1.1评审补丁)
+按 `segments` 数组顺序从左到右拼接；**条件段缺值时整段连同其 `sep` 一并跳过**。下列伪代码为**纯函数、可被确定性消费**（同一 `ctx` + 同一规则恒产同码）：
 ```
-code = seg1.render() + seg1.sep + seg2.render() + seg2.sep + ... + segN.render()
-seg.render():
-  raw = resolveSource(seg, locationContext)     // 取值源求值
-  if seg.source 是序号源: raw = start + (index-1)*step   // 算序号
-  s = String(raw); if seg.upper: s = s.toUpperCase()
-  if seg.width>0: s = pad(s, seg.width, seg.pad)         // 左补
+function buildCode(segments, ctx):
+  out = ""
+  for seg in segments:                          // 数组顺序即段序
+    if seg.optional and isMissing(seg, ctx):    // ★optional 处理：对应层级缺失（如 aisle==null）
+      continue                                   //    整段 + 其 sep 一并跳过，不拼任何字符
+    out += renderSeg(seg, ctx)                    //    拼 值
+    out += seg.sep                                //    + 本段后分隔符（最后一段 sep 通常为空）
+  return stripTrailingSep(out)                    // 兜底：去掉末尾可能残留的 sep
+
+function renderSeg(seg, ctx):
+  raw = resolveSource(seg, ctx)                   // 取值源求值（§3.2）
+  if seg.source 是序号源: raw = seg.start + (index - 1) * seg.step   // 算序号
+  s = String(raw)
+  if seg.upper:    s = s.toUpperCase()            // ★upper 处理：字母大小写归一
+  if seg.width>0:  s = padLeft(s, seg.width, seg.pad)   // ★width 处理：左补 pad 到固定位
   return s
+
+function isMissing(seg, ctx):                     // 条件段判缺：层级对象不存在
+  return seg.source ∈ {aisle-code, aisle-seq} and ctx.aisle == null
 ```
-> 例：`[{key:zone,source:zone-code} - {key:rack,source:rack-seq,width:2} - {key:level,source:level,width:2} - {key:col,source:col,width:2}]` → 库区 `A`、第 3 货架、2 层、5 列 → `A-03-02-05`。
+- **三类处理收口**：`upper`→大小写归一；`width`→左补 `pad` 到固定位；`optional`→层级缺失时整段（含 `sep`）跳过、不留空段、不留多余分隔符。
+> 例：`[{zone,zone-code} - {rack,rack-seq,width:2} - {level,level,width:2} - {col,col,width:2}]` → 库区 `A`、第 3 货架、2 层、5 列 → `A-03-02-05`。
+> **变长对照**（同一规则含 optional 巷道段 `区-[巷]-架-层-位`）：有巷道 `A-02-03-02-05`（区A·巷02·架03·层02·位05） vs **无巷道 `A-03-02-05`**——aisle 段及其后续 `sep` 一并消失，不留空段、不留多余 `-`。
 
 ---
 
@@ -151,8 +169,10 @@ interface LocationContext {
   aisle: AisleVO | null;       // ★可空 → 触发条件段（第5章）
   rack: RackVO;
   col: number; level: number; depth: number;
-  // 序号源所需：该对象在其父集合内的序号（生成前一次性算好，见 4.3）
-  zoneSeq?: number; aisleSeq?: number; rackSeq?: number;
+  // 序号源所需：该对象的序号（生成前一次性算好，见 4.3）
+  zoneSeq?: number; aisleSeq?: number;
+  rackSeq?: number;        // 父（Aisle 或 Zone）内序号
+  rackSeqZone?: number;    // (v1.1评审补丁) Zone 内全局序号，覆盖该 Zone 下所有巷道+无巷道货架
 }
 ```
 
@@ -172,13 +192,16 @@ GenerateCodes(scope):
 ```
 
 ### 4.3 序号的确定性
-- 序号源（`zone-seq/aisle-seq/rack-seq/col/level/depth`）必须**确定性可复算**：序号 = 对象按固定排序键（如 `Zone.Code` 或 `Rack.{X,Y}` 几何顺序）的位次。
+- 序号源（`zone-seq/aisle-seq/rack-seq/rack-seq-zone/col/level/depth`）必须**确定性可复算**：序号 = 对象按**固定排序键**的位次。(v1.1评审补丁) 排序键写死，杜绝"几何顺序"歧义：
+  - **Zone 序号**（`zone-seq`）：按 `Zone.ZoneCode` **字典序升序**定位次。
+  - **Rack 几何序号**（`rack-seq` 父内 / `rack-seq-zone` Zone 全局）：按 **`(YCoord 升序，同 Y 再 XCoord 升序)` 行优先（row-major）** 定位次；`rack-seq` 在各父（巷道/无巷道组）内分别从 `start` 起，`rack-seq-zone` 在整个 Zone 内统一从 `start` 起连续编号。
 - 几何变了（02 挪了货架）→ 序号可能变 → 重排会改草稿码——**这正是草稿期允许重排的原因**（D4：发布前码不冻）。一经发布，码冻结，后续几何调整不再改码（00 §6.2 表 / D4）。
 - `col/level/depth` 直接取库位索引（00 §4.6），不随货架位姿变。
 
 ### 4.4 只写草稿、不翻状态
 - 生成只写 `LocationCode`（与必要时的 `CodeOrigin=1`），**不改 `Status`、不发布**。Status 0→1 的翻转是 04 的发布动作。
 - 已发布库位（Status≥1）若混在作用域里：**跳过**，绝不改其码（试图改 → E-SPACE-004，00 §6 已定）。
+- **显式冻结守卫** (v1.1评审补丁)：除生成/重排 WHERE 已隐式排除 `Status≥1`/`CodeOrigin=2` 外，逐库位入口再加一道显式校验 `if (loc.Status>=1 || loc.CodeOrigin==2) skip`，即便 WHERE 写错也兜底，绝不改写已发布码/采纳码。
 
 ---
 
@@ -196,7 +219,7 @@ GenerateCodes(scope):
 - 条件段**必须**标 `optional:true`；若忘标而 aisle 缺失 → E-SPACE-305（条件段未声明 optional，无法跳过）。
 
 ### 5.3 变长下的唯一性陷阱（与第6章联动）
-> **要害**：跳过巷道段后，无巷道区的 `区-架-层-位` 与有巷道区的某个 `区-巷-架-层-位` **绝不能拼出相同串**。这要求 **rack-seq 在 Zone 范围内唯一**（而非仅在 Aisle 内），或保留足以区分的上层段。第6章把它做成**静态预检**：若规则含条件巷道段，则 `rack` 段的序号范围必须按 **Zone 级**编号（覆盖该 Zone 下所有巷道的货架），否则预检 E-SPACE-303 拦下。
+> **要害**：跳过巷道段后，无巷道区的 `区-架-层-位` 与有巷道区的 `区-巷-架-层-位` 若 rack 段用**父内序号**会撞码——因父内 `rack-seq` 在每个巷道/无巷道组各自从 `start` 起（巷02架1、巷03架1、无巷道架1 都渲染成 `01`），不同路径的 rack 维度失去跨巷道区分度。(v1.1评审补丁) 解法：**rack 段改用 `rack-seq-zone`**（Zone 内全局序号，覆盖该 Zone 下所有巷道 + 无巷道路径的货架，统一连续编号），使 rack 维度在整个 Zone 内唯一。第6章把它做成**静态预检**：**规则含 optional 巷道段时，rack 粒度序号必须为 `rack-seq-zone`**，用父内 `rack-seq` → 预检 E-SPACE-303 拦下。
 
 ---
 
@@ -209,7 +232,7 @@ GenerateCodes(scope):
 | 检查 | 判定 | 失败 |
 |---|---|---|
 | 含足够上层段 | 分段是否包含能区分到 Zone 的段（`zone-code`/`zone-seq`，或 `site+floor` 组合）。库区级规则尤其要含 zone 标识 | E-SPACE-303 规则不足以全局唯一 |
-| 条件段下 rack 编号粒度 | 若含 optional 巷道段，rack-seq 必须 Zone 级编号（第5.3） | E-SPACE-303 |
+| 条件段下 rack 编号粒度 (v1.1评审补丁) | **硬规则**：规则含 optional 巷道段时，rack 粒度序号必须用 `rack-seq-zone`（父内 `rack-seq` 会致不同巷道/无巷道路径撞码，第5.3）；用 `rack-seq` → 拦下 | E-SPACE-303 |
 | 段完备 | 至少含到库位粒度（`col/level/depth` 或能定位单格的组合） | E-SPACE-306 规则未到库位粒度 |
 | 多规则一致性 | 一次生成命中多套库区规则时，各规则产出的码空间不重叠（靠各自含 zone 段保证） | E-SPACE-303 |
 
@@ -234,15 +257,26 @@ candidates = 本批生成的所有 (locationId, code)
 草稿期重排会**交换编码**（如插入一排货架后整体重编，A 的码给了 B）。SQL Server 唯一索引**无延迟校验**：UPDATE 过程中若先把 B 改成 A 的现值，瞬时两行同码即违约。00 §4.6 已为此把编码设计成**可空 + 过滤唯一索引**（`WHERE LocationCode IS NOT NULL`）。
 
 ### 7.2 两阶段重排
+**两阶段（置 NULL → 赋值）必须在同一事务内**，不可拆成两次提交（否则崩在中间会留下整片空码草稿）：
 ```
-事务内：
+单事务内：
   阶段1  UPDATE Space_Location SET LocationCode = NULL
          WHERE TenantId=@t AND Status=0 AND CodeOrigin=1 AND <作用域>
          —— 全置空，过滤唯一索引此刻不约束 NULL，无中途违约
   阶段2  按第4章算新码，批量 UPDATE 赋值（赋值前已过第6章唯一校验）
   提交
 ```
-- 重排**只动草稿引擎码**（`Status=0 ∧ CodeOrigin=1`）：已发布码冻结、采纳码外部既有，二者都不在 WHERE 内，天然豁免。
+**`<作用域>` 展开** (v1.1评审补丁)：`Location` 表**无 `ZoneId`/`FloorId`**（00 §4.6），库区/楼层范围须经 `RackId` 回溯——
+```
+按库区重排  AND RackId IN (SELECT Id FROM Space_Rack WHERE ZoneId=@zone)
+按楼层重排  AND RackId IN (SELECT r.Id FROM Space_Rack r
+                           JOIN Space_Zone z ON r.ZoneId = z.Id
+                           WHERE z.FloorId = @floor)
+全租户重排  （无附加 RackId 子查询）
+```
+- 三种作用域恒含前缀 `AND Status=0 AND CodeOrigin=1`（与阶段1/2 一致），保证只动草稿引擎码。
+- **并发互斥** (v1.1评审补丁)：同一作用域并发重排须互斥——用**作用域级串行**（如对 `(TenantId, ScopeType, ScopeId)` 加应用锁/`sp_getapplock`），或对涉及库位走 **RowVersion 乐观锁 + 冲突重试**（撞 → E-SPACE-009 重跑），防两请求两阶段交错互相覆盖。
+- 重排**只动草稿引擎码**（`Status=0 ∧ CodeOrigin=1`）：已发布码冻结、采纳码外部既有，二者都不在 WHERE 内，天然豁免；入口另有 §4.4 显式冻结守卫兜底。
 - 失败回滚：阶段2 任一冲突 → 整事务回滚，库位码回到重排前（要么全空、要么旧值，取决于回滚点；实务上整事务回滚即恢复原值）。
 
 ### 7.3 重排 vs 增量生成
@@ -252,7 +286,8 @@ candidates = 本批生成的所有 (locationId, code)
 | 加了货架后局部补码 | 可选"仅空码"模式：只对 `LocationCode IS NULL` 的草稿生成，不动已有草稿码（不重排，省扰动） |
 | 规则改了/要整体重编 | 全量重排（阶段1+2） |
 
-> 提供**两种模式**：`fill-empty`（只补空码，稳定不扰动既有草稿码）与 `rebuild`（全量重排）。默认 `fill-empty`；改规则后引导用户 `rebuild`。
+> 提供**两种模式**：`fill-empty`（只补空码，稳定不扰动既有草稿码）与 `rebuild`（全量重排）。
+> **(v1.1评审补丁 · YAGNI)**：两模式均保留，但 **P1 先实现 `rebuild`（安全全量、行为最确定），`fill-empty` 次之**（待用户确有"局部补码不扰动"诉求再补）。落地后改规则仍引导用户走 `rebuild`。
 
 ---
 
@@ -262,7 +297,7 @@ candidates = 本批生成的所有 (locationId, code)
 规则编辑器（`code-rule` 视图）改任一段，**即时**渲染：
 - **结构示意**：`[区A]-[巷02]-[架03]-[层02]-[列05]` 各段彩色块 + 段名。
 - **样例编码**：用选定 Floor 的**真实层级样本**（取该层前 N 个库位上下文）算出前 N 条真实编码；无数据时用合成样例。
-- **变长示意**：同时展示"有巷道"与"无巷道"两条路径的成码（第5章），让用户直观看到条件段跳过效果。
+- **变长示意** (v1.1评审补丁 · 可选)：同时展示"有巷道"与"无巷道"两条路径的成码（第5章），让用户直观看到条件段跳过效果。**P1 可后置**——核心预览（结构示意 + 样例编码 + 预检红灯）先落地，变长示意作增强项。
 - **预检红灯**：静态预检（第6.1）实时跑，缺 zone 段/未到库位粒度即在编辑器顶部亮红条提示，未过不让保存规则。
 
 ### 8.2 预览接口
@@ -341,6 +376,27 @@ GET /api/space/floor/{id}/code-precheck
 | → 05/06 渲染定位 | LocationCode 是 06"按编码定位"的 key |
 | → WMS（经 04） | LocationCode = 发给 WMS 的 join key，全局唯一是 WMS 关联库位的前提 |
 | → PUB 权限 | 规则配置/生成/重排接 PUB 功能权限；规则与库位查询接数据权限；规则按 TenantId 隔离 |
+
+---
+
+## 边界测试用例 (v1.1评审补丁)
+
+**TC-303 · 变长唯一性**：多巷道「有 Aisle + 无 Aisle」混合库区 × 规则含 optional 巷道段。验证 `rack-seq-zone` 不撞码、`rack-seq` 被 E-SPACE-303 拦。
+
+**前置几何**（同一 Zone `A`）：
+- 巷道 `02`：货架若干（父内 `rack-seq` = 1,2,3…）。
+- 巷道 `03`：货架若干（父内 `rack-seq` 又从 1 起）。
+- **无巷道**：直挂 Zone 的货架（`aisle == null`，父内 `rack-seq` 也从 1 起）。
+- 三组货架按 `(YCoord↑, XCoord↑)` 行优先排序，`rack-seq-zone` 在整个 Zone 内连续编号（如 1…N，跨巷道+无巷道统一）。
+
+**规则**：`zone-code - [aisle-seq optional] - <rack 段> - level - col`（巷道段标 `optional:true`）。
+
+| 用例 | rack 段取值源 | 预期 |
+|---|---|---|
+| **A（应通过）** | `rack-seq-zone` | 静态预检过；生成无重码。例：巷02·架(zone全局3)·层02·位05 → `A-02-03-02-05`；**无巷道**·架(zone全局7)·层02·位05 → `A-07-02-05`（aisle 段及其 sep 一并消失）。因 rack 维度在整个 Zone 内唯一，有巷道 `A-02-03-…` 与无巷道 `A-07-…` 路径**绝不相撞**。断言：全 Zone 零重复，事务提交。 |
+| **B（应被拦）** | `rack-seq`（父内） | **静态预检直接 E-SPACE-303**（§6.1 硬规则：规则含 optional 巷道段却用父内 `rack-seq`），**生成前拦下、零写库**。根因：巷02架1 / 巷03架1 / 无巷道架1 都渲染成 rack 段 `01`，叠加 aisle 段在无巷道路径被剥离，不同物理库位的 rack 维度失去跨巷道区分度 → 撞码风险；预检不待生成即结构性拒绝。断言：抛 E-SPACE-303，`Location` 表无任何改动。 |
+
+> 配套：本用例应在 `CodeEngineServiceTests` 落两条单测——`Precheck_OptionalAisle_RackSeqZone_Passes` 与 `Precheck_OptionalAisle_RackSeq_Throws_E303`；后者断言生成入口未发生任何 `LocationCode` 写入。
 
 ---
 

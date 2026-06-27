@@ -14,6 +14,8 @@
 > **题眼**：Space 是"空间几何/布局/库位编码"的**唯一真相源**。本章把这份真相落成 **9 张表 + 一套坐标系约定 + 几何 JSON 结构 + 稳定 GUID 身份**。编辑器（01/02）往这写、编码引擎（03）按这生成、渲染（05/06）按这画、发布（04）按这发——全模块从这一章长出来。**记住一句**：几何永远可动（货架可挪），但 `LocationId` 与库位编码一经发布即冻结，join key 永不漂移。
 >
 > **修订说明（2026-06-12）**：本版修复地基 schema 与 D7 采纳态/草稿编码流的冲突，并补齐外键删除策略、并发控制、FloorId 冗余、底图比例尺、锚点/旋转支点等可落码必需项。详见文末「修订记录」。
+>
+> **v1.1 评审补丁（2026-06-27）**：依设计评审修订——①审计字段更名对齐真实基类 `Creator / CreateDate / Modifier / ModifyDate`（原 `CreateTime / UpdateTime / Updater` 系笔误，9 表全改）；②实体基类改为 `BaseBizEntity`（白拿 `TenantId / IsDeleted / RowVersion` + 审计，删手工脚手架，查询不再显式 `.Where(TenantId)`）；③写死 Location 三态不变量 `Placed ⇔ RackId!=null ⇔ FloorId!=null`，采纳绑定单事务原子回填；④明确 `AbsX/Y/Z` 首次落库初算触发点（`LocationGeometryService`）；⑤补 `Capacity ⇔ CapacityUom` 容量口径不变量；⑥YAGNI 标注 `Site.Lng/Lat`(P3 园区地图)与 Aisle 同层统一布局建议。详见各小节「(v1.1评审补丁)」标注。
 
 ---
 
@@ -95,7 +97,7 @@ Space_Marker       打点/标注（受控自由布局标注）  FloorId, X/Y, Ma
 | **Rack.AisleId** | Aisle | **可选** | **有巷道才挂**；无巷道库区（收货区/平铺区）此字段为空 |
 | **Location.RackId** | Rack | **可空（见放置维度）** | 已放置库位必有货架；**采纳态未放置库位 RackId 为空** |
 
-> **Aisle 是条件父级（贯穿 03/04）**：发布层级路径 = `Site / Floor / Zone / [Aisle] / Rack / Location`。**有巷道 → Aisle 段出现；无巷道 → 路径跳过 Aisle 段、变短**。这要求：①`Rack.ZoneId` 必填、`AisleId` 可空（本章）；②编码引擎支持"可选段"（03 章）；③发布载荷路径为变长数组（04 章）。**绝不为无巷道库区硬造假巷道**。
+> **Aisle 是条件父级（贯穿 03/04）**：发布层级路径 = `Site / Floor / Zone / [Aisle] / Rack / Location`。**有巷道 → Aisle 段出现；无巷道 → 路径跳过 Aisle 段、变短**。这要求：①`Rack.ZoneId` 必填、`AisleId` 可空（本章）；②编码引擎支持"可选段"（03 章）；③发布载荷路径为变长数组（04 章）。**绝不为无巷道库区硬造假巷道**。**(v1.1评审补丁)** Aisle 条件父级保留；P1 建议**同一楼层统一"有巷道"或"无巷道"布局**，同层混合巷道/平铺场景留后续版本细化。
 
 ### 3.1 放置维度（D7 采纳态的 schema 兑现）
 
@@ -106,6 +108,15 @@ Space_Marker       打点/标注（受控自由布局标注）  FloorId, X/Y, Ma
 
 D7 采纳流程：存量编码导入为 **`Status=1 已发布` + `Placed=false 未放置` + `CodeOrigin=2 采纳`**——有冻结码、无几何。编辑器（01/02）反向建模"先摆货架→把格口绑到既有冻结码"时，回填 `RackId/FloorId/索引/坐标/尺寸`，`Placed` 置 `true`，**编码与 `LocationId` 不变**。
 > 因为未放置库位 `FloorId` 为空，整层场景查询（第9章 `/floor/{id}/scene` 按 FloorId 命中）**天然不会带出未放置库位**——它们只在"待绑定列表"里出现，不污染渲染。
+
+#### 3.1.1 三态不变量（v1.1评审补丁）
+
+`Placed`、`RackId`、`FloorId` 三者**完全等价、必须同步**，落库恒等式写死：
+
+> **`Placed ⇔ (RackId != null) ⇔ (FloorId != null)`**
+
+- `Placed=false` 时 `RackId / FloorId / Col / Level / Depth / AbsX / AbsY / AbsZ`（及 `Size*`）**全部为 `NULL`**（有冻结码、无任何几何）。
+- **采纳态绑定（`Placed` false→true）必须在单事务内原子回填 `RackId / FloorId / Col / Level / Depth`，并在同一事务触发 `AbsX/Y/Z` 初算（见 §6.2），禁止任何中间态**——不得出现"已填 `RackId` 但 `FloorId` 仍空""已 `Placed=true` 但坐标未算"这类瞬态脏数据。三字段要么同时为空、要么同时有值。
 
 ### 3.2 删除与引用完整性策略
 
@@ -121,26 +132,28 @@ D7 采纳流程：存量编码导入为 **`Status=1 已发布` + `Placed=false �
 | Template→Rack(引用) | **置空**（SetNull TemplateId） | 删模板不影响已生成货架几何 |
 | Rack→Marker(引用) | **置空**（SetNull RefRackId） | 删货架→锚在其上的标注解除锚定，标注保留（仅 SetNull，不报错） |
 
-> **逻辑删/启用约定**：Site/Zone/Rack 提供 `Enable`（停用而非物理删），保留历史与引用；物理删一律走上表 Restrict。**全表不做软删标记列**（用 `Enable` 表达停用），物理删仅在无子引用时允许。
+> **逻辑删/启用约定（v1.1评审补丁）**：Site/Zone/Rack 提供 `Enable`（业务"停用"语义，停用而非物理删），保留历史与引用；物理删一律走上表 Restrict。**记录级逻辑删除统一用基类 `IsDeleted`**（由 `BaseBizEntity` 提供、全表共有、`CP6Context` 全局过滤），与 `Enable`/`Status` 表达的**业务停用语义正交**——Rack/Location 的逻辑停用沿用既有 `Status`/`Enable`，而 `IsDeleted` 表达"该行记录是否被软删"。物理删仅在无子引用时允许。
 
-> **租户隔离机制**：全表 `TenantId`，EF Core 用**全局查询过滤器**（`HasQueryFilter(e => e.TenantId == _ctx.TenantId)`）统一拦截（接入细节见 09 章）。所有唯一索引均含 `TenantId` 前缀。
+> **租户隔离机制（v1.1评审补丁）**：全表 `TenantId` 由基类 `BaseBizEntity`（经 `BaseTenantEntity`）提供；因 S 类安全合规已落地真·多租户，`CP6Context` 已对 `BaseTenantEntity` 全局过滤 `HasQueryFilter(x => x.TenantId == CurrentTenantId)` 统一拦截（接入细节见 09 章），Space 实体继承 `BaseBizEntity` 即**白拿租户隔离，业务代码无需再写每查询显式 `.Where(x => x.TenantId == ...)`**。所有唯一索引均含 `TenantId` 前缀。
 
 ---
 
 ## 第4章 实体 DDL（9 表）
 
-所有表继承 `BaseEntity`（含 `Id`(GUID)/`TenantId`/`CreateTime`/`Creator`/`UpdateTime`/`Updater` 审计字段），全表按 `TenantId` 隔离。**`Space_Rack`、`Space_Location` 额外带 `RowVersion`(乐观并发戳)**——编辑器多人协作 + 货架改尺寸批量重算库位时防丢更新（EF `[Timestamp] byte[] RowVersion` / SQL `ROWVERSION`）。
+所有表继承 **`BaseBizEntity`** *(v1.1评审补丁)*（继承链 `BaseEntity → BaseTenantEntity → BaseBizEntity`，自带 `Id`(Guid)/`Creator`/`CreateDate`/`Modifier`/`ModifyDate`/**`TenantId`**/**`IsDeleted`**/**`RowVersion`**(`[Timestamp]`)）——租户隔离、审计字段、记录级逻辑删除标记、乐观并发戳**全部白拿**，**实体上无需再手工加 TenantId / RowVersion / 审计字段**（删除原脚手架说明）。因 S 类安全合规已落地真·多租户，`CP6Context` 已对 `BaseTenantEntity` 全局过滤 `HasQueryFilter(x => x.TenantId == CurrentTenantId)`，Space 实体继承 `BaseBizEntity` 即白拿租户隔离，**业务代码无需再写每查询显式 `.Where(x => x.TenantId == ...)`**。`RowVersion` 因此为**全表共有**（编辑器多人协作 + 货架改尺寸批量重算库位时防丢更新，EF `[Timestamp] byte[]` / SQL `ROWVERSION`），其中 `Space_Rack`、`Space_Location` 是并发戳的主要受益者。
+
+> **DDL 阅读约定（v1.1评审补丁）**：下方各表 DDL 中的 `Id / TenantId / Creator / CreateDate / Modifier / ModifyDate / IsDeleted / RowVersion` 等基类列均由 `BaseBizEntity` 统一提供；部分表的 SQL 片段为减噪未逐一重复 `IsDeleted` / `RowVersion` 列，一律以基类为准（`Space_Rack` / `Space_Location` 因是并发热点而在 SQL 中显式标注 `RowVersion`）。
 
 ### 4.1 Space_Site 站点/仓库
 ```csharp
 [Table("Space_Site")]
-public class Space_Site : BaseEntity
+public class Space_Site : BaseBizEntity
 {
     public string  SiteCode { get; set; } = "";   // 站点编码，租户内唯一
     public string  SiteName { get; set; } = "";
     public string? Address  { get; set; }          // 地址
-    public double? Lng      { get; set; }          // 经度（地图定位，可选）
-    public double? Lat      { get; set; }          // 纬度
+    public double? Lng      { get; set; }          // 经度（P3 园区地图用，P1 可不建/留空 (v1.1评审补丁)）
+    public double? Lat      { get; set; }          // 纬度（P3 园区地图用，P1 可不建/留空）
     public bool    Enable   { get; set; } = true;
 }
 ```
@@ -149,7 +162,7 @@ CREATE TABLE Space_Site (
     Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, TenantId UNIQUEIDENTIFIER NOT NULL,
     SiteCode NVARCHAR(50) NOT NULL, SiteName NVARCHAR(100) NOT NULL,
     Address NVARCHAR(200) NULL, Lng FLOAT NULL, Lat FLOAT NULL, Enable BIT NOT NULL DEFAULT 1,
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 CREATE UNIQUE INDEX UX_Space_Site_Tenant_Code ON Space_Site(TenantId, SiteCode);
 ```
@@ -157,7 +170,7 @@ CREATE UNIQUE INDEX UX_Space_Site_Tenant_Code ON Space_Site(TenantId, SiteCode);
 ### 4.2 Space_Floor 楼层
 ```csharp
 [Table("Space_Floor")]
-public class Space_Floor : BaseEntity
+public class Space_Floor : BaseBizEntity
 {
     public Guid    SiteId    { get; set; }            // → Space_Site
     public int     Level     { get; set; }            // 层号（1,2,...；地下用负数）
@@ -180,7 +193,7 @@ CREATE TABLE Space_Floor (
     UnderlayImage NVARCHAR(500) NULL, UnderlayScale FLOAT NULL,
     UnderlayOffsetX INT NOT NULL DEFAULT 0, UnderlayOffsetY INT NOT NULL DEFAULT 0,
     OriginX INT NOT NULL DEFAULT 0, OriginY INT NOT NULL DEFAULT 0,
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 CREATE UNIQUE INDEX UX_Space_Floor_Site_Code ON Space_Floor(TenantId, SiteId, FloorCode);
 CREATE INDEX IX_Space_Floor_Site ON Space_Floor(TenantId, SiteId);
@@ -190,7 +203,7 @@ CREATE INDEX IX_Space_Floor_Site ON Space_Floor(TenantId, SiteId);
 ### 4.3 Space_Zone 库区
 ```csharp
 [Table("Space_Zone")]
-public class Space_Zone : BaseEntity
+public class Space_Zone : BaseBizEntity
 {
     public Guid    FloorId  { get; set; }             // → Space_Floor
     public string  ZoneCode { get; set; } = "";       // 库区编码，楼层内唯一
@@ -207,7 +220,7 @@ CREATE TABLE Space_Zone (
     FloorId UNIQUEIDENTIFIER NOT NULL, ZoneCode NVARCHAR(50) NOT NULL, ZoneName NVARCHAR(100) NOT NULL,
     ZoneType INT NOT NULL DEFAULT 1, Polygon NVARCHAR(MAX) NOT NULL DEFAULT '[]', Color NVARCHAR(20) NULL,
     Enable BIT NOT NULL DEFAULT 1,
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 CREATE UNIQUE INDEX UX_Space_Zone_Floor_Code ON Space_Zone(TenantId, FloorId, ZoneCode);
 CREATE INDEX IX_Space_Zone_Floor ON Space_Zone(TenantId, FloorId);
@@ -216,7 +229,7 @@ CREATE INDEX IX_Space_Zone_Floor ON Space_Zone(TenantId, FloorId);
 ### 4.4 Space_Aisle 巷道（可选）
 ```csharp
 [Table("Space_Aisle")]
-public class Space_Aisle : BaseEntity
+public class Space_Aisle : BaseBizEntity
 {
     public Guid    ZoneId     { get; set; }           // → Space_Zone
     public string  AisleCode  { get; set; } = "";     // 巷道编码，库区内唯一
@@ -229,7 +242,7 @@ CREATE TABLE Space_Aisle (
     Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, TenantId UNIQUEIDENTIFIER NOT NULL,
     ZoneId UNIQUEIDENTIFIER NOT NULL, AisleCode NVARCHAR(50) NOT NULL,
     Polygon NVARCHAR(MAX) NOT NULL DEFAULT '[]', Centerline NVARCHAR(MAX) NOT NULL DEFAULT '[]',
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 CREATE UNIQUE INDEX UX_Space_Aisle_Zone_Code ON Space_Aisle(TenantId, ZoneId, AisleCode);
 CREATE INDEX IX_Space_Aisle_Zone ON Space_Aisle(TenantId, ZoneId);
@@ -238,7 +251,7 @@ CREATE INDEX IX_Space_Aisle_Zone ON Space_Aisle(TenantId, ZoneId);
 ### 4.5 Space_Rack 货架
 ```csharp
 [Table("Space_Rack")]
-public class Space_Rack : BaseEntity
+public class Space_Rack : BaseBizEntity
 {
     public Guid    ZoneId     { get; set; }           // ★必填 → Space_Zone
     public Guid?   AisleId    { get; set; }           // ★可选 → Space_Aisle（有巷道才挂）
@@ -256,7 +269,7 @@ public class Space_Rack : BaseEntity
     public int     CellH      { get; set; }           // 单格高 mm
     public int     CellD      { get; set; }           // 单格深 mm
     public bool    Enable     { get; set; } = true;
-    public byte[]? RowVersion { get; set; }           // 乐观并发戳
+    // RowVersion（[Timestamp] 乐观并发戳）由 BaseBizEntity 提供，无需在此声明 (v1.1评审补丁)
 }
 ```
 ```sql
@@ -269,7 +282,7 @@ CREATE TABLE Space_Rack (
     Cols INT NOT NULL, Levels INT NOT NULL, DepthCount INT NOT NULL DEFAULT 1,
     CellW INT NOT NULL, CellH INT NOT NULL, CellD INT NOT NULL, Enable BIT NOT NULL DEFAULT 1,
     RowVersion ROWVERSION,
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 CREATE UNIQUE INDEX UX_Space_Rack_Zone_Code ON Space_Rack(TenantId, ZoneId, RackCode);
 CREATE INDEX IX_Space_Rack_Zone  ON Space_Rack(TenantId, ZoneId);
@@ -281,7 +294,7 @@ CREATE INDEX IX_Space_Rack_Floor ON Space_Rack(TenantId, FloorId);   -- 整层�
 ### 4.6 Space_Location 库位（join key 载体）
 ```csharp
 [Table("Space_Location")]
-public class Space_Location : BaseEntity      // Id(GUID) = LocationId 稳定主键（D4）
+public class Space_Location : BaseBizEntity      // Id(GUID) = LocationId 稳定主键（D4）
 {
     public Guid?   RackId       { get; set; }         // ★可空：未放置（采纳态 D7）时为空，绑定后回填
     public Guid?   FloorId      { get; set; }         // ★冗余·可空：= Rack.FloorId，加速整层场景/叠加；未放置为空
@@ -302,7 +315,7 @@ public class Space_Location : BaseEntity      // Id(GUID) = LocationId 稳定主
     public bool    Placed       { get; set; }          // ★是否已放置（= RackId 非空）；放置维度，正交于 Status
     public int     Status       { get; set; }          // 0草稿 1已发布 2停用（第7章）
     public long    Version      { get; set; }          // 发布版本号，按 LocationId 递增（04 章）
-    public byte[]? RowVersion   { get; set; }          // 乐观并发戳
+    // RowVersion（[Timestamp] 乐观并发戳）由 BaseBizEntity 提供，无需在此声明 (v1.1评审补丁)
 }
 ```
 ```sql
@@ -316,7 +329,7 @@ CREATE TABLE Space_Location (
     LoadLimit INT NULL, Capacity INT NULL, CapacityUom INT NULL,
     Placed BIT NOT NULL DEFAULT 0, Status INT NOT NULL DEFAULT 0, Version BIGINT NOT NULL DEFAULT 0,
     RowVersion ROWVERSION,
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 -- ★编码可空 + 过滤唯一索引：草稿期"先建库位、后生成码"阶段 code 为 NULL 不互撞；非空码租户内唯一
 CREATE UNIQUE INDEX UX_Space_Location_Tenant_Code ON Space_Location(TenantId, LocationCode) WHERE LocationCode IS NOT NULL;
@@ -328,10 +341,12 @@ CREATE INDEX IX_Space_Location_Status ON Space_Location(TenantId, Status);
 
 > **RackId 为什么可空？** 兑现 D7：采纳态导入的库位"有冻结码、无几何"，此时 `RackId/FloorId/索引/坐标` 全空、`Placed=false`；反向建模绑定货架后回填，`LocationId` 与 `LocationCode` 不变。
 
+> **容量口径不变量（v1.1评审补丁）**：`(Capacity IS NULL) ⇔ (CapacityUom IS NULL)`——容量与其单位必须**同时有值或同时为空，不可只填其一**（否则 07 库容率要么有量纲无口径、要么有口径无量，无法计算）。应用层落库校验。
+
 ### 4.7 Space_Template 模板
 ```csharp
 [Table("Space_Template")]
-public class Space_Template : BaseEntity
+public class Space_Template : BaseBizEntity
 {
     public string  TemplateCode { get; set; } = "";
     public string  TemplateName { get; set; } = "";
@@ -344,7 +359,7 @@ CREATE TABLE Space_Template (
     Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, TenantId UNIQUEIDENTIFIER NOT NULL,
     TemplateCode NVARCHAR(50) NOT NULL, TemplateName NVARCHAR(100) NOT NULL,
     TemplateType INT NOT NULL DEFAULT 1, Params NVARCHAR(MAX) NOT NULL DEFAULT '{}',
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 CREATE UNIQUE INDEX UX_Space_Template_Tenant_Code ON Space_Template(TenantId, TemplateCode);
 ```
@@ -352,7 +367,7 @@ CREATE UNIQUE INDEX UX_Space_Template_Tenant_Code ON Space_Template(TenantId, Te
 ### 4.8 Space_CodeRule 编码规则（本章定表壳，语义见 03）
 ```csharp
 [Table("Space_CodeRule")]
-public class Space_CodeRule : BaseEntity
+public class Space_CodeRule : BaseBizEntity
 {
     public string  RuleName     { get; set; } = "";
     public int     ScopeType    { get; set; }         // ★0 租户默认 / 1 楼层 / 2 库区（粒度比"仅楼层"更现实，语义见 03）
@@ -366,7 +381,7 @@ CREATE TABLE Space_CodeRule (
     Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, TenantId UNIQUEIDENTIFIER NOT NULL,
     RuleName NVARCHAR(100) NOT NULL, ScopeType INT NOT NULL DEFAULT 0, ScopeId UNIQUEIDENTIFIER NULL,
     Segments NVARCHAR(MAX) NOT NULL DEFAULT '[]', IsDefault BIT NOT NULL DEFAULT 0,
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 CREATE INDEX IX_Space_CodeRule_Scope ON Space_CodeRule(TenantId, ScopeType, ScopeId);
 ```
@@ -374,7 +389,7 @@ CREATE INDEX IX_Space_CodeRule_Scope ON Space_CodeRule(TenantId, ScopeType, Scop
 ### 4.9 Space_Marker 打点/标注
 ```csharp
 [Table("Space_Marker")]
-public class Space_Marker : BaseEntity
+public class Space_Marker : BaseBizEntity
 {
     public Guid    FloorId    { get; set; }           // → Space_Floor
     public int     X          { get; set; }           // 局部坐标 mm
@@ -390,7 +405,7 @@ CREATE TABLE Space_Marker (
     Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, TenantId UNIQUEIDENTIFIER NOT NULL,
     FloorId UNIQUEIDENTIFIER NOT NULL, X INT NOT NULL, Y INT NOT NULL, Z INT NOT NULL DEFAULT 0,
     MarkerType INT NOT NULL DEFAULT 1, Text NVARCHAR(200) NOT NULL DEFAULT '', RefRackId UNIQUEIDENTIFIER NULL,
-    CreateTime DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, UpdateTime DATETIME2 NULL, Updater NVARCHAR(50) NULL
+    CreateDate DATETIME2 NOT NULL, Creator NVARCHAR(50) NULL, ModifyDate DATETIME2 NULL, Modifier NVARCHAR(50) NULL
 );
 CREATE INDEX IX_Space_Marker_Floor ON Space_Marker(TenantId, FloorId);
 ```
@@ -461,6 +476,8 @@ public async Task RecalcRackLocationsAsync(Guid rackId)
     // ★注意：不触发 LocationPublished（载荷不含几何，见 04 章）——几何可动而 join key 不漂移
 }
 ```
+
+> **首次落库触发点（v1.1评审补丁）**：除上述货架改动后的批量重算外，`AbsX/AbsY/AbsZ` 的**首次初始化**同样由 `LocationGeometryService` 负责（与 `RecalcRackLocationsAsync` 复用同一 `ComputeAbs` 公式，§6.1），触发点有二：①库位由编码引擎（03）生成、索引 `(Col,Level,Depth)` 落定后；②采纳态库位绑定货架（`Placed` false→true）回填索引后（与 §3.1.1 的单事务原子回填同一事务内完成）。二者均在所属 Rack 位姿已知时立即初算，保证库位一旦 `Placed=true`，其绝对坐标缓存即非空。
 
 | 几何/放置变更 | 重算范围 | 是否发布 WMS |
 |---|---|---|
