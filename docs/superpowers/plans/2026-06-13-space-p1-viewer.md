@@ -1,8 +1,21 @@
-# Space P1 Viewer（05+06）Implementation Plan（初稿）
+# Space P1 Viewer（05+06）Implementation Plan（v1.1 同步）
+
+> **v1.1 同步（2026-06-27）**：本计划初稿（2026-06-13）写于「后端地基待建」假设。**现 Space P1 后端地基（00/03/04，Phase A→D）+ 编辑器（01/02）均已全栈落地**（分支 `feat/space-p1-backend`，后端 1283 测 + 前端 vitest 90 绿）。viewer 是 P1 收官，按三点同步：
+>
+> **① 多租户＝复用真基建（同后端 v1.1）**：CP6 已有真·多租户（`CP6Context` 反射全局过滤/盖章 + `ITenantContext`）。配套后端 `SpaceLocateService` **构造只注入 `CP6Context`**（`public SpaceLocateService(CP6Context db)`），不注入租户上下文，查询不写 `.Where(TenantId==)`（全局过滤自动加）。下文代码/测试样例：`new SpaceLocateService(db, new DefaultSpaceTenantContext())`→`new SpaceLocateService(db)`、`DefaultSpaceTenantContext.DefaultTenant`→`TenantContext.DefaultTenant`（`using CP6.Core.Services.Common;`；实体 init 的 `TenantId = t` 可留）。**v1.1 风格锚点＝ as-built `CodeEngineService.cs`/`SpaceLocateService` 兄弟服务**。
+>
+> **② 对齐 as-built 后端（关键 reconciliation）**：
+> - **GET `/floor/{id}/scene` 已实现**（`SpaceMasterService.GetSceneAsync`→`SceneDto`）。但 **`SceneLocationDto` 无 `zoneId` 也无 `rotationZ`**——而 K-2 `InstancedBuckets` 按 `zoneId` 分桶、实例矩阵需 `rotationZ`。**解法＝前端 enrich，不改后端**：`SceneDto.Racks`（RackDto）**已含 `zoneId` + `rotationZ`**，viewer 的 `SceneBuilder`（K-3）先从 `scene.racks` 建 `Map<rackId,{zoneId,rotationZ}>`，再给每个 location 补 `zoneId`（=其 rack 的）+ `rotationZ`（=其 rack 的）。**K-2 测试样例里 loc 上的 `zoneId`/`rotationZ` 即 enrich 后的形状**，InstancedBuckets 接收已 enrich 的 loc 不变。
+> - **locate/search/detail 是本计划新增后端**（N-2）。`DetailAsync` 组变长 path（Rack→Zone→Floor→Site 跳 null Aisle）可仿 as-built `LocationPublishService.BuildItemAsync` 的 path 组装思路独立查；`LocationDetail.path` 字段与 as-built `LocationPath`（SiteCode/FloorLevel/ZoneCode/AisleCode?/RackCode/Col/Level/Depth）对齐。
+> - 落点＝同一 worktree `D:\CP6-space-backend`（含后端 + 编辑器），后端服务加 `CP6.Core/Services/Space/`、控制器新建 `SpaceLocateController` 或扩既有。
+>
+> **③ 前端依赖**：**`three` 仍需新增**（`npm i three` + `npm i -D @types/three`；OrbitControls/CSS2DRenderer 走 `three/examples/jsm`，vite ESM 正常解析）。**`vitest ^4.1.9` + `@vue/test-utils` + `jsdom` 已由编辑器引入**（V-D5/J-1 的「若先于编辑器落地补装 vitest」已 moot，直接用）。**konva 已装（编辑器）但 viewer 不用**——viewer 是独立 Three.js 内核，与编辑器前端零共享对象，仅共享 `/scene` 数据源。
+>
+> **工作流**：本计划继续在 `feat/space-p1-backend` worktree 落码。Konva/Three 真实渲染/相机/拾取的浏览器行为留 Playwright/gstack 运行态 QA；可保证＝纯逻辑 vitest（SceneRoot 坐标适配/InstancedBuckets 映射/LOD/标签去重/flyTo 缓动）+ vue-tsc + build。
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-> **工作流（丛书模式）**：我出初稿 → 你修订 → 我评审合并定稿后再编码。**这是 P1 第三份（收官）计划**。依赖：后端地基计划（GET `/floor/{id}/scene` 已存在、库位有 AbsXYZ/FloorId/LocationCode）。与编辑器计划（第二份）**无前端共享对象**——viewer 是独立 Three.js 内核，仅共享同一 `/scene` 数据源（05 与 Konva 编辑器彻底解耦）。
+> **工作流**：**这是 P1 第三份（收官）计划**（后端地基 + 编辑器**均已落地**）。依赖**已落地的** GET `/floor/{id}/scene`（库位有 AbsXYZ/FloorId/LocationCode，scene.racks 含 zoneId/rotationZ 供前端 enrich）。与编辑器**无前端共享对象**——viewer 是独立 Three.js 内核，仅共享 `/scene` 数据源。详见顶部 v1.1 同步注记。
 
 **Goal:** 落地 Space P1 的 **3D 浏览**——05 章只读 Three.js 渲染内核 `space-viewer`（坐标系适配 + 参数化盒体 + InstancedMesh 分桶 + 视锥剔除/LOD + 标签虚拟化 + 按需渲染），06 章相机控制 + 拾取（→库位编码）+ hover/click 信息卡 + 楼层切换 + **按库位编码定位（D8 P1 半）**，以及 06 配套后端定位查询（locate/search/detail）。**P1 闭环在此收口**：建模→生成→编码→发布→渲染→浏览+定位。
 
@@ -22,7 +35,7 @@
 | **V-D4** | **坐标适配方式** | 05 §3.2 | 用 **SceneRoot 容器复合变换**（`scale 0.001` + `rotation.x=-π/2`），对象用数据 mm 直接建；反算用 `sceneRoot.worldToLocal` 除以缩放还原 mm（V-D 注意：worldToLocal 已含逆缩放，得到的是数据系坐标） |
 | **V-D5** | **单测范围** | viewer 重渲染、难测 | 纯逻辑单测（坐标适配数学、instanceId↔LocationId 映射、LOD 档位判定、标签去重）走 **vitest**（编辑器计划已引入）；渲染/相机/拾取走 **Playwright e2e** + 手测 |
 
-> **继承**：vitest 由编辑器计划（第二份）引入；若本计划先于编辑器落地，则在 V-1 补装 vitest。TenantId 前端不感知（后端经 /scene 过滤）。
+> **继承（v1.1）**：vitest + @vue/test-utils + jsdom **已由编辑器落地引入**（直接用，无需补装）；konva 已装但 viewer 不用。多租户复用真基建，前端不感知（后端全局过滤自动隔离）。three 仍需新增（V-D1）。
 
 ---
 
@@ -382,4 +395,4 @@ git commit -m "feat(space): locate/search/detail backend queries (ch06 §8)"
 
 ---
 
-*初稿生成于 2026-06-13。源：docs/space/05·06（引用 00 §2/§6/§9）。已勘察 cp6.web 真实栈：three 未引入需新增、OrbitControls/CSS2DRenderer 走 three/examples/jsm；vitest 由编辑器计划引入。*
+*初稿生成于 2026-06-13。v1.1 同步于 2026-06-27（后端 A→D + 编辑器 01/02 已落地后）。源：docs/space/05·06（引用 00 §2/§6/§9）。cp6.web 真实栈：**three 仍需新增**、OrbitControls/CSS2DRenderer 走 three/examples/jsm；**vitest ^4.1.9 + @vue/test-utils + jsdom 已在**（编辑器引入）。as-built reconcile：SceneLocationDto 无 zoneId/rotationZ→viewer 前端从 scene.racks enrich。*
