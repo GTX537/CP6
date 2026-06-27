@@ -355,6 +355,11 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.ISampleStockService, CP6.Core.S
 // 4.20 MSBBWM900 帳票センター
 builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.Services.Wms.ReportCenterService>();
 
+// 4.x Space 空间数字底座 P1（ch00）
+// ITenantContext / TenantMiddleware 已全局注册（S 类合规），Space 不再注册任何租户上下文。
+builder.Services.AddScoped<CP6.Core.Services.Space.LocationGeometryService>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService, CP6.Core.Services.Space.SpaceMasterService>();
+
 // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
