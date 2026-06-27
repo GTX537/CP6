@@ -1326,6 +1326,25 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 734 });
         db.SaveChanges();
     }
+    // OA Phase C 菜单（735/736/737）—— 幂等，置于 Phase B 734 之后
+    if (!db.Sys_Menus.Any(m => m.MenuId == 735))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 735, MenuName = "填單", RoutePath = "/oa/form-catalog", Icon = "EditPen", ParentId = 740, OrderNo = 735, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 735 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 736))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 736, MenuName = "表单查询", RoutePath = "/oa/form-search", Icon = "Search", ParentId = 740, OrderNo = 736, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 736 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 737))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 737, MenuName = "设定", RoutePath = "/oa/settings", Icon = "Setting", ParentId = 740, OrderNo = 737, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 737 });
+        db.SaveChanges();
+    }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
@@ -1730,6 +1749,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nSecAuditScreenSeed.Items) // S 类 #4 字段审计 sec.audit.* 画面词条（只读模块，无错误码）
             .Concat(CP6.WebApi.Seed.I18nTenantComplianceSeed.Items) // S 类 #5 多租户合规 E-SEC-031~038 + 事件 19~30 + platform.* 画面词条（带外平台区）
             .Concat(CP6.WebApi.Seed.I18nOaInboxScreenSeed.Items)   // OA Phase B 电子表单信箱 oa.*/E-WF-001~008/nav.733/734/740
+            .Concat(CP6.WebApi.Seed.I18nOaAdvancedScreenSeed.Items) // OA Phase C 填單/查詢/設定/轉交 oa.catalog.*/oa.initiate.*/oa.settings.*/oa.transfer.*/nav.735/736/737
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
