@@ -52,4 +52,28 @@ public class FlowTokenKernelTests
         Assert.Equal(1, await db.Wf_FlowDatas.CountAsync());
         Assert.False((await db.Wf_FlowCcs.SingleAsync()).IsRead);
     }
+
+    [Fact]
+    public void TokenPrimitives_SpawnConsumeDrain()
+    {
+        using var db = NewDb();
+        var eng = new FlowEngine(db, new ApproverResolver(db));
+        var inst = new Wf_FlowInstance { Id = Guid.NewGuid(), FlowKey = "f", StarterId = Guid.NewGuid(), Status = FlowInstanceStatus.Running, CurrentNode = "n1" };
+        db.Wf_FlowInstances.Add(inst);
+
+        var tok = eng.SpawnToken(inst, new FlowNode { Id = "n1" }, parent: null, fork: null);
+        Assert.Equal(FlowTokenStatus.Active, tok.Status);
+        Assert.Equal("n1", tok.NodeId);
+
+        eng.FinishIfDrained(inst);
+        Assert.Equal(FlowInstanceStatus.Running, inst.Status);   // 还有 Active → 不终态
+
+        eng.ConsumeToken(tok);
+        Assert.Equal(FlowTokenStatus.Consumed, tok.Status);
+        eng.ConsumeToken(tok);                                   // 重放守卫：no-op
+        Assert.Equal(FlowTokenStatus.Consumed, tok.Status);
+
+        eng.FinishIfDrained(inst);
+        Assert.Equal(FlowInstanceStatus.Approved, inst.Status);  // 无 Active → 通过
+    }
 }
