@@ -57,6 +57,7 @@ public partial class FlowEngine
                         && f.TokenId == task.TokenId
                         && f.ExpectedHandlerId == task.AssigneeId
                         && f.Status == FlowFormToStatus.Pending)
+            .OrderByDescending(f => f.SentAt)   // 万一存在两行 Pending，优先关最近送签那行
             .FirstOrDefaultAsync();
         if (row is null) return;
         row.Status = approve ? FlowFormToStatus.Approved : FlowFormToStatus.Rejected;
@@ -92,6 +93,20 @@ public partial class FlowEngine
             if (exists) continue;
             _db.Wf_FlowCcs.Add(new Wf_FlowCc { Id = Guid.NewGuid(), InstanceId = inst.Id, RecipientId = uid, AtNodeId = atNodeId });
         }
+    }
+
+    /// <summary>会签节点已决：把本节点本 token 下、非已办的 Pending 履历行置 Skipped（or 签未轮到/被取消的兄弟行）。</summary>
+    internal void SkipPendingFormTos(Guid instanceId, string nodeId, Guid? tokenId)
+    {
+        foreach (var f in _db.Wf_FlowFormTos.Local
+            .Where(f => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
+                        && f.Status == FlowFormToStatus.Pending).ToList())
+            f.Status = FlowFormToStatus.Skipped;
+        var localIds = _db.Wf_FlowFormTos.Local.Where(f => f.InstanceId == instanceId).Select(f => f.Id).ToHashSet();
+        foreach (var f in _db.Wf_FlowFormTos
+            .Where(f => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
+                        && f.Status == FlowFormToStatus.Pending && !localIds.Contains(f.Id)).ToList())
+            f.Status = FlowFormToStatus.Skipped;
     }
 
     /// <summary>

@@ -106,6 +106,64 @@ public class ReadModelHookTests
         Assert.Equal(1, formTos[0].StepSeq);
     }
 
+    // ─────────────── Fix1：或签("any")首肯 → 兄弟 Pending 履历置 Skipped ───────────────
+
+    private static async Task SeedAnySignAsync(CP6Context db, int roleId, Guid u1, Guid u2, string flowKey)
+    {
+        db.Sys_Users.AddRange(
+            new Sys_User { Id = u1, UserName = $"u{u1:N}", Password = "x", RoleId = roleId, Enable = true },
+            new Sys_User { Id = u2, UserName = $"u{u2:N}", Password = "x", RoleId = roleId, Enable = true });
+        db.Wf_FlowDefs.Add(new Wf_FlowDef
+        {
+            Id = Guid.NewGuid(), FlowKey = flowKey, FlowName = flowKey, FormKey = flowKey,
+            SchemaJson = JsonSerializer.Serialize(new FlowSchema
+            {
+                Nodes =
+                {
+                    new FlowNode
+                    {
+                        Id = "n1", Type = "approval", ApproverStrategy = "Role",
+                        ApproverRoleId = roleId, Countersign = "any",   // ★ 或签
+                    },
+                    new FlowNode { Id = "end", Type = "end" },
+                },
+                Edges = { new FlowEdge { From = "n1", To = "end" } },
+            }),
+            Version = 1, Enable = true,
+        });
+        await db.SaveChangesAsync();
+    }
+
+    [Fact]
+    public async Task FormTo_OrSign_FirstApprovalSkipsSiblingPending()
+    {
+        using var db = NewDb();
+        const int roleId = 77;
+        var u1 = Guid.NewGuid(); var u2 = Guid.NewGuid();
+        await SeedAnySignAsync(db, roleId, u1, u2, "anysign");
+
+        var instId = await Engine(db).SubmitAsync("anysign", Guid.NewGuid(), "{}");
+
+        // 提交后 2 行 Pending
+        Assert.Equal(2, await db.Wf_FlowFormTos.CountAsync(f => f.Status == FlowFormToStatus.Pending));
+
+        // u1 同意 → 或签首肯即过
+        var task1 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == u1 && t.Status == FlowTaskStatus.Pending);
+        await Engine(db).ActAsync(task1.Id, u1, approve: true, "ok");
+
+        var rows = await db.Wf_FlowFormTos.ToListAsync();
+        var u1Row = rows.Single(f => f.ExpectedHandlerId == u1);
+        var u2Row = rows.Single(f => f.ExpectedHandlerId == u2);
+
+        // 办理方 → Approved；被取消的兄弟 → Skipped（非 Pending、非 Voided）
+        Assert.Equal(FlowFormToStatus.Approved, u1Row.Status);
+        Assert.Equal(FlowFormToStatus.Skipped, u2Row.Status);
+
+        // 实例已推进至终态（n1→end）
+        var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
+        Assert.Equal(FlowInstanceStatus.Approved, inst.Status);
+    }
+
     [Fact]
     public async Task FormTo_Reject_VoidsOtherPending()
     {

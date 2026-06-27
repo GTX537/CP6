@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wf;
+using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -163,5 +164,75 @@ public class FlowConcurrencyTests
         var inst = await check.Wf_FlowInstances.AsNoTracking().SingleAsync();
         Assert.Equal(FlowInstanceStatus.Approved, inst.Status);                       // 无丢失唤醒 → 最终通过
         Assert.False(await check.Wf_FlowTokens.AsNoTracking().AnyAsync(t => t.Status == FlowTokenStatus.Active));  // 零残留 Active token
+    }
+
+    // ─────────────── Fix4：会签"停泊路径"也写触达 inst → 串行化非终票，杜绝丢失唤醒 ───────────────
+
+    // start? 直接 n1(approval "all"，Role 下 2 用户) → end。两会签人均须同意。
+    private static FlowSchema AllSignSchema(int roleId) => new()
+    {
+        Start = "n1",
+        Nodes =
+        {
+            new FlowNode { Id = "n1", Type = "approval", ApproverStrategy = "Role", ApproverRoleId = roleId, Countersign = "all" },
+            new FlowNode { Id = "end", Type = "end" },
+        },
+        Edges = { new FlowEdge { From = "n1", To = "end" } },
+    };
+
+    private static async Task<(Guid u1, Guid u2)> SeedAndSubmitAllSignAsync(SqliteConnection conn, int roleId)
+    {
+        var u1 = Guid.NewGuid(); var u2 = Guid.NewGuid();
+        using var db = Ctx(conn);
+        db.Sys_Users.AddRange(
+            new Sys_User { Id = u1, UserName = $"u{u1:N}", Password = "x", RoleId = roleId, Enable = true },
+            new Sys_User { Id = u2, UserName = $"u{u2:N}", Password = "x", RoleId = roleId, Enable = true });
+        db.Wf_FlowDefs.Add(new Wf_FlowDef
+        {
+            Id = Guid.NewGuid(), FlowKey = "cs", FlowName = "cs", FormKey = "f",
+            SchemaJson = JsonSerializer.Serialize(AllSignSchema(roleId)), Version = 1, Enable = true,
+        });
+        await db.SaveChangesAsync();
+        await Engine(db).SubmitAsync("cs", Guid.NewGuid(), "{}");
+        return (u1, u2);
+    }
+
+    /// <summary>
+    /// 会签"all"两审批人，两枚非终票近同时落库：败方持"对方仍 Pending"的陈旧视图入停泊路径。
+    /// 修复后停泊路径同样写触达 inst.ModifyDate → 输掉 RowVersion 竞争 → DbUpdateConcurrencyException →
+    /// ActAsync 重读全部追踪实体（对方现 Approved）、重算会签计数 → 全同意 → 推进 → Approved。
+    /// （若写触达仍留在 !decided 早退之后，败方停泊路径不碰 inst → 无冲突 → 双双停泊 → 实例永卡 Running，本用例即失败。）
+    /// </summary>
+    [Fact]
+    public async Task Countersign_parking_path_serialized_resolves_to_Approved()
+    {
+        using var conn = NewSqliteWithSchema();
+        const int roleId = 4242;
+        var (u1, u2) = await SeedAndSubmitAllSignAsync(conn, roleId);
+
+        Guid t1Id, t2Id;
+        using (var q = Ctx(conn))
+        {
+            t1Id = (await q.Wf_FlowTasks.FirstAsync(t => t.AssigneeId == u1 && t.Status == FlowTaskStatus.Pending)).Id;
+            t2Id = (await q.Wf_FlowTasks.FirstAsync(t => t.AssigneeId == u2 && t.Status == FlowTaskStatus.Pending)).Id;
+        }
+
+        // dbB 先把 inst + 两条 Pending 任务读进 identity-map → 锁住"u1 办结前"的旧 RowVersion 与陈旧 Pending 视图，
+        // 等价于"两会签人近同时各自读到对方仍 Pending"= 真实丢失唤醒脏读窗口。
+        using var dbB = Ctx(conn);
+        await dbB.Wf_FlowInstances.FirstAsync();
+        await dbB.Wf_FlowTasks.Where(t => t.Status == FlowTaskStatus.Pending).ToListAsync();
+
+        // dbA 先办结 u1（非终票 → 停泊，写触达 inst 行刷新 RowVersion）。
+        using (var dbA = Ctx(conn))
+            await Engine(dbA).ActAsync(t1Id, u1, approve: true);
+
+        // dbB 持陈旧 inst + 陈旧"u1 Pending"视图办结 u2（亦非终票 → 走停泊路径）。
+        await Engine(dbB).ActAsync(t2Id, u2, approve: true);
+
+        using var check = Ctx(conn);
+        var inst = await check.Wf_FlowInstances.AsNoTracking().SingleAsync();
+        Assert.Equal(FlowInstanceStatus.Approved, inst.Status);   // 停泊路径被串行化 → 无丢失唤醒 → 最终通过
+        Assert.False(await check.Wf_FlowTokens.AsNoTracking().AnyAsync(t => t.Status == FlowTokenStatus.Active));
     }
 }

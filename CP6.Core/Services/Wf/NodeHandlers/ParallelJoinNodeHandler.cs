@@ -14,21 +14,24 @@ internal sealed class ParallelJoinNodeHandler : INodeHandler
         var eng = ctx.Engine; var inst = ctx.Inst; var schema = ctx.Schema; var node = ctx.Node;
         var inEdges = schema.Edges.Count(e => e.To == node.Id);
 
-        var arrived = AllTokens(eng).Count(t => t.InstanceId == inst.Id && t.NodeId == node.Id
+        var arrived = AllTokens(eng, inst.Id).Count(t => t.NodeId == node.Id
             && t.ForkId == ctx.Token.ForkId && t.Status == FlowTokenStatus.Active);
         if (arrived < inEdges) return;   // 未齐，停泊等其余分支（幂等闸=计数本身）
 
-        var batch = AllTokens(eng).Where(t => t.InstanceId == inst.Id && t.NodeId == node.Id
+        var batch = AllTokens(eng, inst.Id).Where(t => t.NodeId == node.Id
             && t.ForkId == ctx.Token.ForkId && t.Status == FlowTokenStatus.Active).ToList();
         foreach (var t in batch) eng.ConsumeToken(t);
 
         var parentTok = ctx.Token.ParentTokenId is Guid pid
-            ? AllTokens(eng).FirstOrDefault(t => t.Id == pid) : null;
+            ? AllTokens(eng, inst.Id).FirstOrDefault(t => t.Id == pid) : null;
         var cont = eng.SpawnToken(inst, node, parent: parentTok?.ParentTokenId, fork: parentTok?.ForkId);
         eng.AddHistory(inst.Id, node.Id, inst.StarterId, "parallelJoin", null);
         await eng.AdvanceToken(inst, schema, cont);   // 续 token 沿 join 单出边继续
     }
 
-    private static IEnumerable<Wf_FlowToken> AllTokens(FlowEngine eng)
-        => eng.Db.Wf_FlowTokens.Local.Concat(eng.Db.Wf_FlowTokens.AsEnumerable()).Distinct();
+    // 仅扫本实例的 token：Local（含本回合未落盘的）∪ DB（本实例已落盘的），按引用去重（EF 身份映射保证同实例同引用）。
+    private static IEnumerable<Wf_FlowToken> AllTokens(FlowEngine eng, Guid instanceId)
+        => eng.Db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId)
+            .Concat(eng.Db.Wf_FlowTokens.Where(t => t.InstanceId == instanceId).AsEnumerable())
+            .Distinct();
 }

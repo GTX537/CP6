@@ -13,13 +13,16 @@ internal sealed class ParallelSplitNodeHandler : INodeHandler
         var eng = ctx.Engine; var inst = ctx.Inst; var schema = ctx.Schema; var node = ctx.Node;
         eng.ConsumeToken(ctx.Token);                       // 入 token 退场
         var forkId = Guid.NewGuid();
+        var spawnedAny = false;
         foreach (var edge in schema.Edges.Where(e => e.From == node.Id))   // 忽略 Condition，全激活
         {
             var target = FlowEngine.FindNode(schema, edge.To);
             if (target is null) continue;
             var child = eng.SpawnToken(inst, target, parent: ctx.Token.Id, fork: forkId);
             await eng.EnterNodeAsync(inst, schema, target, child);
+            spawnedAny = true;
         }
         eng.AddHistory(inst.Id, node.Id, inst.StarterId, "parallelSplit", null);
+        if (!spawnedAny) eng.FinishIfDrained(inst);   // 误配（无可达出边）→ 别留零 token 的死 Running 实例
     }
 }

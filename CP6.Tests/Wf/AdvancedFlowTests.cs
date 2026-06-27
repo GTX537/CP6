@@ -176,6 +176,32 @@ public class AdvancedFlowTests
         Assert.Equal(FlowInstanceStatus.Running, inst.Status);
     }
 
+    [Fact]
+    public async Task SendBack_VoidsInFlightFormTo_RebuildsTargetPending()
+    {
+        using var db = NewDb();
+        var a = Guid.NewGuid();
+        var b = Guid.NewGuid();
+        await SeedFlowAsync(db, a, b);
+
+        await Engine(db).SubmitAsync(FlowKey, Guid.NewGuid(), "{}");
+        var t1 = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n1");
+        await Engine(db).ActAsync(t1.Id, a, approve: true);   // → n2，B 待办，n2 一行 Pending 履历
+        var t2 = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "n2" && t.Status == FlowTaskStatus.Pending);
+
+        // 退回前：n2 有一行 Pending 履历
+        var n2Pending = await db.Wf_FlowFormTos.SingleAsync(f => f.NodeId == "n2" && f.Status == FlowFormToStatus.Pending);
+
+        await Engine(db).SendBackAsync(t2.Id, b, "n1", "退回");
+
+        // 旧 n2 Pending 履历 → Voided（不再卡幻影待签）
+        var n2Row = await db.Wf_FlowFormTos.SingleAsync(f => f.Id == n2Pending.Id);
+        Assert.Equal(FlowFormToStatus.Voided, n2Row.Status);
+
+        // n1 目标节点重建一行新的 Pending 履历
+        Assert.Equal(1, await db.Wf_FlowFormTos.CountAsync(f => f.NodeId == "n1" && f.Status == FlowFormToStatus.Pending));
+    }
+
     // ───────────────────────── C-3 加签 ─────────────────────────
 
     private const string SingleFlowKey = "single";

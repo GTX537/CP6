@@ -44,6 +44,17 @@ public class TaskCenterService : ITaskCenterService
             .ToListAsync();
         foreach (var t in pending) t.Status = FlowTaskStatus.Cancelled;   // 清在途待办
 
+        // ★ Fix3：撤回 = terminate，级联清理读模型，否则未来收件箱残留幻影 token / 待签
+        var activeTokens = await _db.Wf_FlowTokens
+            .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active)
+            .ToListAsync();
+        foreach (var t in activeTokens) t.Status = FlowTokenStatus.Cancelled;   // 在途 token → Cancelled
+
+        var pendingFormTos = await _db.Wf_FlowFormTos
+            .Where(f => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending)
+            .ToListAsync();
+        foreach (var f in pendingFormTos) f.Status = FlowFormToStatus.Voided;   // 在途传签履历 → Voided
+
         _db.Wf_FlowHistories.Add(new Wf_FlowHistory
         {
             Id = Guid.NewGuid(),

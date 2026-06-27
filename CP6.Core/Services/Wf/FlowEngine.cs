@@ -124,6 +124,12 @@ public partial class FlowEngine : IFlowEngine
         int rejected = nodeTasks.Count(t => t.Status == FlowTaskStatus.Rejected);
         var (decided, passed) = EvaluateNodeCounts(approved, rejected, nodeTasks.Count, task.Countersign);
 
+        // ★ Task6/Fix4：写触达 inst 行 → UPDATE 带 WHERE RowVersion=@orig。置于 decided 判定之前，
+        // 使"停泊（!decided 早退）"与"推进/驳回"两条 mutating 路径都参与 RowVersion 乐观并发，序列化
+        // 并行会签的非终票（杜绝"双双读到对方仍 Pending → 双双停泊 → 丢失唤醒"令实例永卡 Running）。
+        // 幂等 = 仅刷时间戳，单线程行为零变化；败方抛 DbUpdateConcurrencyException → ActAsync 重试重算。
+        inst.ModifyDate = DateTime.Now;
+
         if (!decided)
         {
             await _db.SaveChangesAsync();   // 等其他会签人
@@ -133,6 +139,7 @@ public partial class FlowEngine : IFlowEngine
         CancelPendingTasks(nodeTasks);   // 节点已决，作废本节点其余在途
         if (passed)
         {
+            SkipPendingFormTos(inst.Id, task.NodeId, task.TokenId);   // ★ Fix1：or 签兄弟（被取消任务）的 Pending 履历行 → Skipped
             var schema = await LoadSchemaAsync(inst.FlowKey);
             var tok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
             if (tok is not null) await AdvanceToken(inst, schema, tok);
@@ -143,7 +150,6 @@ public partial class FlowEngine : IFlowEngine
             CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
             VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
         }
-        inst.ModifyDate = DateTime.Now;   // ★ Task6：写触达 inst 行 → UPDATE 带 WHERE RowVersion=@orig（序列化并行办结的支点，败方抛 DbUpdateConcurrencyException 触发重试）
         await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
         await _db.SaveChangesAsync();
     }

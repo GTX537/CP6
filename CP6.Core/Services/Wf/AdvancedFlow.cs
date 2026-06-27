@@ -100,6 +100,7 @@ public partial class FlowEngine
         AddHistory(inst.Id, task.NodeId, actorId, "sendback", comment ?? $"退回至 {targetNodeId}");
 
         CancelAllActiveTokens(inst.Id);                                  // 退回 = terminate 在途 token
+        VoidPendingFormTos(inst.Id);                                     // ★ Fix2：作废被退回节点的在途 Pending 履历（否则残留幻影待签）
         var sbToken = SpawnToken(inst, target, parent: null, fork: null);
         await EnterNodeAsync(inst, schema, target, sbToken);            // CurrentNode=target + 重建待办（缺审批人→挂起）
         await _db.SaveChangesAsync();

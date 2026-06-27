@@ -30,15 +30,18 @@ public partial class FlowEngine
         token.Status = FlowTokenStatus.Consumed;
     }
 
-    /// <summary>驳回连坐：本实例全 Active token → Cancelled。并查 DB + EF Local。</summary>
+    /// <summary>驳回连坐 / 退回 / 撤回清场：本实例全 Active token → Cancelled。
+    /// 与 <see cref="HasActiveToken"/>/VoidPendingFormTos 同款安全合并：先按 Local（变更追踪器权威态）改，
+    /// 再补查 DB 中"未被本地追踪"的行（排除已在 Local 的 Id），避免把"DB 仍 Active 但本地已 Consumed"的 token 误翻 Cancelled。</summary>
     internal void CancelAllActiveTokens(Guid instanceId)
     {
-        var actives = _db.Wf_FlowTokens.Local
-            .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active).ToList();
+        foreach (var t in _db.Wf_FlowTokens.Local
+            .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active).ToList())
+            t.Status = FlowTokenStatus.Cancelled;
+        var localIds = _db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId).Select(t => t.Id).ToHashSet();
         foreach (var t in _db.Wf_FlowTokens
-                     .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active).ToList())
-            if (!actives.Contains(t)) actives.Add(t);
-        foreach (var t in actives) t.Status = FlowTokenStatus.Cancelled;
+            .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active && !localIds.Contains(t.Id)).ToList())
+            t.Status = FlowTokenStatus.Cancelled;
     }
 
     /// <summary>无 Active token 残留 ⇒ 实例正常通过（置 Approved；dispatch 由调用方在 SaveChanges 前做）。</summary>
