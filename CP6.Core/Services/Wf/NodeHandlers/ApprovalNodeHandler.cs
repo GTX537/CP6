@@ -26,6 +26,7 @@ internal sealed class ApprovalNodeHandler : INodeHandler
 
         var dueAt = FlowEngine.NodeDueAt(node);
         var step = eng.NextStepSeq(inst.Id);   // ★ T9：同一关卡多审批人共享同一序号（foreach 外算）
+        eng.WriteSnapshot(inst, node, ctx.Token, step);   // ★ T10：节点到达，存一份表单快照（一关卡一份，foreach 外）
         foreach (var uid in res.ApproverIds.Distinct())
         {
             var (assignee, delegatedFrom) = await eng.ResolveActualAssigneeAsync(uid);   // 委派期替换为代理人

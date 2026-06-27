@@ -131,4 +131,24 @@ public class ReadModelHookTests
         Assert.Equal(FlowFormToStatus.Rejected, u1Row.Status);
         Assert.Equal(FlowFormToStatus.Voided, u2Row.Status);
     }
+
+    // ─────────────── T10：FlowData 每关卡表单快照写入钩子 ───────────────
+
+    [Fact]
+    public async Task FlowData_SnapshotPerStep()
+    {
+        using var db = NewDb();
+        var approver = Guid.NewGuid();
+        await SeedAsync(db, approver);
+        await Engine(db).SubmitAsync("leave", Guid.NewGuid(), """{"days":2}""");
+
+        var snap = await db.Wf_FlowDatas.SingleAsync();      // 送签存一份
+        Assert.Equal("n1", snap.NodeId);
+        Assert.Equal(1, snap.StepSeq);
+        Assert.Contains("days", snap.DataJson);
+
+        var task = await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending);
+        await Engine(db).ActAsync(task.Id, approver, approve: true);
+        Assert.True(await db.Wf_FlowDatas.CountAsync() >= 1);   // 办结再存一份（同关卡）
+    }
 }

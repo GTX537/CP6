@@ -65,6 +65,16 @@ public partial class FlowEngine
         row.Comment = comment;
     }
 
+    /// <summary>存一份该关卡当时表单快照（来源 inst.VarsJson）。</summary>
+    internal void WriteSnapshot(Wf_FlowInstance inst, FlowNode node, Wf_FlowToken token, int stepSeq)
+    {
+        _db.Wf_FlowDatas.Add(new Wf_FlowData
+        {
+            Id = Guid.NewGuid(), InstanceId = inst.Id, TokenId = token.Id, StepSeq = stepSeq,
+            NodeId = node.Id, DataJson = string.IsNullOrWhiteSpace(inst.VarsJson) ? "{}" : inst.VarsJson,
+        });
+    }
+
     /// <summary>
     /// 驳回连坐 / 退回清场：本实例全 Pending 传签履历行 → 作废。
     /// 先处理 Local（变更追踪器里的当前状态），再处理 DB 中已落盘但未加载的行，
