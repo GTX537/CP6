@@ -68,7 +68,11 @@ public partial class FlowEngine
         {
             if (!ExpressionEvaluator.Evaluate(edge.Condition, inst.VarsJson)) continue;
             var target = FindNode(schema, edge.To);
-            if (target is not null) { token.NodeId = target.Id; await EnterNodeAsync(inst, schema, target, token); return; }
+            if (target is not null)
+            {
+                if (edge.CcUsers is { Count: > 0 }) await WriteCcAsync(inst, edge.To, edge.CcUsers, null);
+                token.NodeId = target.Id; await EnterNodeAsync(inst, schema, target, token); return;
+            }
         }
         ConsumeToken(token);
         AddHistory(inst.Id, token.NodeId, inst.StarterId, "end", "无后继节点，自动结束");

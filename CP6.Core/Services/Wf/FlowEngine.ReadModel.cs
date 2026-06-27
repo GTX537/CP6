@@ -75,6 +75,25 @@ public partial class FlowEngine
         });
     }
 
+    /// <summary>写抄送行（去重：同实例+同人+同节点不重复）。roleId 经 IApproverResolver Role 策略解析。</summary>
+    internal async Task WriteCcAsync(Wf_FlowInstance inst, string? atNodeId, IEnumerable<Guid>? users, int? roleId)
+    {
+        var ids = new HashSet<Guid>(users ?? Enumerable.Empty<Guid>());
+        if (roleId is int rid)
+        {
+            var res = await _approver.ResolveAsync(new ApproverRule(ApproverStrategy.Role, null, rid, null),
+                new ApproverResolveContext { StarterUserId = inst.StarterId });
+            foreach (var id in res.ApproverIds) ids.Add(id);
+        }
+        foreach (var uid in ids)
+        {
+            bool exists = _db.Wf_FlowCcs.Local.Any(c => c.InstanceId == inst.Id && c.RecipientId == uid && c.AtNodeId == atNodeId)
+                || await _db.Wf_FlowCcs.AnyAsync(c => c.InstanceId == inst.Id && c.RecipientId == uid && c.AtNodeId == atNodeId);
+            if (exists) continue;
+            _db.Wf_FlowCcs.Add(new Wf_FlowCc { Id = Guid.NewGuid(), InstanceId = inst.Id, RecipientId = uid, AtNodeId = atNodeId });
+        }
+    }
+
     /// <summary>
     /// 驳回连坐 / 退回清场：本实例全 Pending 传签履历行 → 作废。
     /// 先处理 Local（变更追踪器里的当前状态），再处理 DB 中已落盘但未加载的行，

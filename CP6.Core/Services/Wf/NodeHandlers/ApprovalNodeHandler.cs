@@ -12,6 +12,7 @@ internal sealed class ApprovalNodeHandler : INodeHandler
     public async Task OnEnterAsync(NodeContext ctx)
     {
         var eng = ctx.Engine; var inst = ctx.Inst; var node = ctx.Node;
+        await eng.WriteCcAsync(inst, node.Id, node.CcUsers, node.CcRoleId);
         var rule = FlowEngine.BuildRule(node);
         if (rule is null) { eng.Suspend(inst, node, "节点未配置审批人"); return; }
 

@@ -151,4 +151,56 @@ public class ReadModelHookTests
         await Engine(db).ActAsync(task.Id, approver, approve: true);
         Assert.True(await db.Wf_FlowDatas.CountAsync() >= 1);   // 办结再存一份（同关卡）
     }
+
+    // ─────────────── T11：FlowCc 抄送写入钩子 ───────────────
+
+    [Fact]
+    public async Task Cc_NodeRecipients_Written()
+    {
+        using var db = NewDb();
+        var approver = Guid.NewGuid(); var ccUser = Guid.NewGuid();
+        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "leave", FlowName = "leave", FormKey = "leave",
+            SchemaJson = JsonSerializer.Serialize(new FlowSchema {
+                Nodes = { new FlowNode { Id = "n1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = approver,
+                                         CcUsers = new() { ccUser } },
+                          new FlowNode { Id = "end", Type = "end" } },
+                Edges = { new FlowEdge { From = "n1", To = "end" } } }),
+            Version = 1, Enable = true });
+        await db.SaveChangesAsync();
+
+        await Engine(db).SubmitAsync("leave", Guid.NewGuid(), "{}");
+
+        var cc = await db.Wf_FlowCcs.SingleAsync();
+        Assert.Equal(ccUser, cc.RecipientId);
+        Assert.Equal("n1", cc.AtNodeId);
+        Assert.False(cc.IsRead);
+    }
+
+    [Fact]
+    public async Task Cc_PathRecipients_Written()
+    {
+        using var db = NewDb();
+        var approver = Guid.NewGuid(); var pathCc = Guid.NewGuid();
+        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "pathcc", FlowName = "pathcc", FormKey = "pathcc",
+            SchemaJson = JsonSerializer.Serialize(new FlowSchema {
+                Nodes = { new FlowNode { Id = "n1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = approver },
+                          new FlowNode { Id = "end", Type = "end" } },
+                Edges = { new FlowEdge { From = "n1", To = "end", CcUsers = new() { pathCc } } } }),
+            Version = 1, Enable = true });
+        await db.SaveChangesAsync();
+
+        await Engine(db).SubmitAsync("pathcc", Guid.NewGuid(), "{}");
+
+        // edge cc not yet fired (token parked at n1) — no cc rows yet
+        Assert.Equal(0, await db.Wf_FlowCcs.CountAsync());
+
+        // approve n1 → token advances over n1→end edge → path cc fires
+        var task = await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending);
+        await Engine(db).ActAsync(task.Id, approver, approve: true);
+
+        var cc = await db.Wf_FlowCcs.SingleAsync();
+        Assert.Equal(pathCc, cc.RecipientId);
+        Assert.Equal("end", cc.AtNodeId);
+        Assert.False(cc.IsRead);
+    }
 }

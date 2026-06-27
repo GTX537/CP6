@@ -44,6 +44,10 @@ public class FlowNode
 
     /// <summary>escalate 的升级对象 → Sys_User.Id（仅 TimeoutAction=escalate 用）</summary>
     public Guid? EscalateTo { get; set; }
+
+    /// <summary>节点抄送人（进入本节点时抄送，WFS 读模型）。</summary>
+    public List<Guid>? CcUsers { get; set; }
+    public int? CcRoleId { get; set; }
 }
 
 public class FlowEdge
@@ -53,4 +57,7 @@ public class FlowEdge
 
     /// <summary>流转条件表达式（空 = 无条件直达）。C-3 用 ConditionEvaluator 求值，多条件边按声明序取首个为真</summary>
     public string? Condition { get; set; }
+
+    /// <summary>路径抄送人（token 经此转移时抄送，对齐 Delta 知会人员）。</summary>
+    public List<Guid>? CcUsers { get; set; }
 }
