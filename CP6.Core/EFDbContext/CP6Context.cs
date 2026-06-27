@@ -648,6 +648,7 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.InstanceId, x.NodeId }).HasDatabaseName("IX_Wf_FlowTask_InstanceNode");  // 会签判定取本节点全部任务
             e.HasIndex(x => new { x.AssigneeId, x.Status }).HasDatabaseName("IX_Wf_FlowTask_AssigneeStatus"); // 待办中心
             e.HasIndex(x => new { x.Status, x.DueAt }).HasDatabaseName("IX_Wf_FlowTask_StatusDue");           // 章07 §4 超时扫描
+            e.HasIndex(x => new { x.AssigneeId, x.IsRead }).HasDatabaseName("IX_Wf_FlowTask_AssigneeRead");    // 信箱未處理未读
         });
         modelBuilder.Entity<Wf_FlowDelegate>(e =>
         {
