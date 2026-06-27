@@ -134,6 +134,12 @@ builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services
 builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IFlowAdminService, CP6.Core.Services.Oa.FlowAdminService>();
 
+// 4.0e OA 信箱进阶（Phase C）
+builder.Services.AddScoped<CP6.Core.Services.Oa.IDelegateService, CP6.Core.Services.Oa.DelegateService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IFavoriteService, CP6.Core.Services.Oa.FavoriteService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ICatalogService, CP6.Core.Services.Oa.CatalogService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IPrefService, CP6.Core.Services.Oa.PrefService>();
+
 // 4.0.2 财务（Fin）章01 总账内核
 builder.Services.AddScoped<CP6.Core.Services.Fin.IGlAccountService, CP6.Core.Services.Fin.GlAccountService>(); // 章01 §3 会计科目 + 多国别模板包
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinSequenceService, CP6.Core.Services.Fin.FinSequenceService>(); // 章01 §4 凭证采番（GL-yyyy-MM-NNNNN）

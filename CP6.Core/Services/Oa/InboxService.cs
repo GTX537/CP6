@@ -167,6 +167,26 @@ public class InboxService : IInboxService
         return results;
     }
 
+    public async Task<IReadOnlyList<BatchActResultItem>> ActBatchAsAsync(
+        Guid actorId, Guid? onBehalfOf, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null)
+    {
+        var owner = onBehalfOf ?? actorId;
+        var results = new List<BatchActResultItem>();
+        foreach (var taskId in taskIds.Distinct())
+        {
+            var t = await _db.Wf_FlowTasks.FirstOrDefaultAsync(x => x.Id == taskId);
+            if (t is null || t.AssigneeId != owner || t.Status != FlowTaskStatus.Pending)
+            { results.Add(new BatchActResultItem(taskId, false, "E-WF-004")); continue; }
+            try
+            {
+                await _engine.ActAsAsync(taskId, actorId, onBehalfOf, approve, comment);
+                results.Add(new BatchActResultItem(taskId, true, null));
+            }
+            catch (InvalidOperationException e) { results.Add(new BatchActResultItem(taskId, false, e.Message)); }
+        }
+        return results;
+    }
+
     public async Task<InboxDetail?> DetailAsync(Guid instanceId)
     {
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId);
