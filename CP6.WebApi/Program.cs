@@ -359,6 +359,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.
 // ITenantContext / TenantMiddleware 已全局注册（S 类合规），Space 不再注册任何租户上下文。
 builder.Services.AddScoped<CP6.Core.Services.Space.LocationGeometryService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService, CP6.Core.Services.Space.SpaceMasterService>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService, CP6.Core.Services.Space.CodeEngineService>();  // ch03 可配置编码引擎
 
 // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
