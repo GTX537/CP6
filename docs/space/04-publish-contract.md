@@ -2,6 +2,8 @@
 
 *--- 可直接用于编写代码的最终版本 ---*
 
+> **v1.1 评审补丁摘要（2026-06-27 深审）**：本版应用 5 项关键修法（文中相关处标「(v1.1评审补丁)」）——① 新增 **WMS 侧库位消费模型 `T_WmsBin`**（接收发布的落库表 + 幂等 upsert，§5.3，与 `T_Stock` 松耦合）；② 明确 **`LocationCode` 不含仓库前缀 → 多仓客户须配 `SiteCode↔WarehouseCd` 映射**（§3.4，join 锚升为 `(WarehouseCd, LocationCode)`）；③ 补 **`Creator='system'` 溯源修法**（发布载荷带 `publishedBy` + 建议 `PersistEventAsync` 增 `userId` 参数，§2.1）；④ **D6 停用由纯异步事件改为同步 RPC + 异步事件兜底**（即时确认、避免孤儿库位，§6）；⑤ 补 **幂等往返逐项结果 schema**（每项 Success/Skipped/Rejected，有 Rejected 则整事件 Failed，§5.2）。
+
 | 属性 | 内容 |
 |---|---|
 | 章节ID | SPACE-04 库位发布与 WMS 集成契约 |
@@ -9,10 +11,10 @@
 | 里程碑 | **P1 收尾**（让 Space 产的库位编码"过冻结闸门 → 推给 WMS 建立/关联库位"，P1 完成标志） |
 | 技术栈 | .NET8 + EF Core；**复用 CP6 既有集成基建** `T_IntegrationEvent` + `BridgeHookBase` + `IntegrationEventDispatcher` + 重试 Worker / 死信 |
 | 命名空间 | `CP6.Core/Services/Space/LocationPublishService.cs`、`CP6.Core/Services/Integration`（新增 SPACE→WMS 路由 + 载荷） |
-| 落地决策 | D4 发布即冻结（**冻编码不冻几何**·纯几何编辑不发布）/ D6 停用前置 0 库存校验 + **TOCTOU WMS 侧再检查** / 变长路径（跳 Aisle）/ 单向低耦合（契约在消费者侧） |
+| 落地决策 | D4 发布即冻结（**冻编码不冻几何**·纯几何编辑不发布）/ D6 停用＝**同步 RPC 即时确认 + 异步事件兜底**（v1.1，由原"前置 0 库存校验 + TOCTOU WMS 侧再检查"升级）/ 变长路径（跳 Aisle）/ 单向低耦合（契约在消费者侧） |
 | 依赖 | [00 数据模型](./00-data-model.md)（Status 状态机 §7.2、Version 按 LocationId 递增 §7.2、§6.2 发布触发表、CodeOrigin 对账）、[03 编码引擎](./03-code-engine.md)（`code-precheck` 闸门）、[07](./07-stock-overlay.md)（`IWmsStockQuery` 停用前查库存） |
 
-> **题眼**：03 把库位编码生产好（草稿、可重排），本章是**把编码"冻结并发布"给 WMS** 的唯一通道。三件事定生死：① **发布 = 冻结**（Status 0→1，`LocationCode` 此后终生不改，是发给 WMS 的 join key；D4），② **批量 upsert + 幂等**（复用 CP6 `T_IntegrationEvent` 事件，按 `LocationId + Version` 让 WMS 幂等消费，至少一次投递安全），③ **停用要先问 WMS 有没有库存**（D6：Space 发停用前用 `IWmsStockQuery` 查 0 库存，WMS 消费时再查一次兜 TOCTOU）。**记住一句**：Space 发"库位目录主数据"（编码 + 变长层级路径 + 属性），**绝不发几何**（WMS 没有几何，混合分权）；纯几何编辑（货架挪位/旋转）根本不触发发布——join key 永不漂移。**冻编码不冻几何**：发布后码冻死，货架仍可在 02 随便挪。
+> **题眼**：03 把库位编码生产好（草稿、可重排），本章是**把编码"冻结并发布"给 WMS** 的唯一通道。三件事定生死：① **发布 = 冻结**（Status 0→1，`LocationCode` 此后终生不改，是发给 WMS 的 join key；D4），② **批量 upsert + 幂等**（复用 CP6 `T_IntegrationEvent` 事件，按 `LocationId + Version` 让 WMS 幂等消费，至少一次投递安全），③ **停用要先问 WMS 有没有库存**（D6，v1.1 改**同步 RPC**：Space 同步调 WMS 拿权威实时库存判定后再翻 Status，异步事件退为对账/补偿兜底——避免纯异步的孤儿库位与 TOCTOU 误停）。**记住一句**：Space 发"库位目录主数据"（编码 + 变长层级路径 + 属性），**绝不发几何**（WMS 没有几何，混合分权）；纯几何编辑（货架挪位/旋转）根本不触发发布——join key 永不漂移。**冻编码不冻几何**：发布后码冻死，货架仍可在 02 随便挪。
 
 ---
 
@@ -21,8 +23,8 @@
 - 第2章 接入 CP6 既有集成基建（不另造总线）
 - 第3章 LocationPublished 事件载荷（变长路径 + 属性 + Version + Op）
 - 第4章 发布触发点（发布 / 不发布 —— D4 表的兑现）
-- 第5章 WMS 侧消费：批量 upsert + 幂等（按 LocationId + Version）
-- 第6章 停用与库存冲突（D6：前置 0 库存校验 + TOCTOU WMS 侧兜底）
+- 第5章 WMS 侧消费：批量 upsert + 幂等（按 LocationId + Version）+ T_WmsBin 落库模型 + 逐项结果 schema
+- 第6章 停用与库存冲突（D6：同步 RPC 即时确认 + 异步事件兜底，v1.1）
 - 第7章 删除巷道 / 货架与已发布库位（下游待办①：Restrict / re-publish）
 - 第8章 存量采纳对账（CodeOrigin=2 导入 + reconcile）
 - 第9章 发布前闸门（接 03 code-precheck）
@@ -86,7 +88,7 @@ public async Task<BridgeResult> OnLocationPublishedAsync(LocationPublishBatch ba
 - `SourceNo` = **发布批号**（采番生成，如 `LPUB-20260613-0001`，≤30 字符）；不放裸 GUID（GUID 超 30 字符限制），库位明细在 `PayloadJson`。
 - 幂等命中（WMS 侧 Version 已是最新）→ 状态 `Skipped`（终态不重试，符合既有语义）。
 
-> **已知基建缺口（商用化待补，不阻断本章）**：`BridgeHookBase` 硬编码 `Creator="system"`，集成事件无操作用户上下文。Space 发布是**有人触发的主数据动作**，商用化需让发布人可溯源——建议在 payload 内带 `PublishedBy`，或后续给 BridgeHookBase 补用户上下文（见项目记忆 obs 917）。
+> **已知基建缺口 + 修法（v1.1评审补丁）**：`BridgeHookBase.PersistEventAsync` 硬编码 `Creator="system"`，集成事件无操作用户上下文；而 Space 发布是**有人触发的主数据动作**，商用化必须让发布人可溯源。**修法三层**：① 发布载荷带 `publishedBy`（当前操作用户，见 §3.1）；② **建议给 `BridgeHookBase.PersistEventAsync` 增 `userId` 参数**，映射到 `IntegrationEvent.Creator`（商用溯源必需，惠及所有 BridgeHook、非仅 Space）；③ **P1 最低交付**：即便 BridgeHookBase 暂不改，也至少把 `publishedBy` 落到**事件 payload** 与 **`T_WmsBin.LastPublishedBy`**（§5.3），保证发布人链路不丢。（见项目记忆 obs 917）
 
 ### 2.2 为什么发布用事件、不用同步
 - 库位目录是**低频主数据**（建仓时批量发一次，之后偶尔增删），非事务热流——用持久化事件 + 自动重试，发布方不被 WMS 可用性绑死（沿用 00/README §六决策）。
@@ -130,6 +132,11 @@ public async Task<BridgeResult> OnLocationPublishedAsync(LocationPublishBatch ba
 - `version` = 00 §7.2 定义的"按 `LocationId` 递增的发布版本号"，每次发布/停用 +1。
 - WMS 存每个 `locationId` 的 `lastVersion`；消费时 `incoming.version <= stored.lastVersion` → 幂等跳过（第5章）。这让事件**至少一次投递**安全（Worker 重试/重复不会回退状态）。
 
+### 3.4 跨仓重码与 SiteCode↔WarehouseCd 映射（v1.1评审补丁）
+- `LocationCode`（如 `A-03-02-05`）**不含仓库前缀**——它在**单仓内唯一**，但跨仓可能重码（两个仓都有 `A-03-02-05`）。因此 join key 的**真实唯一锚是 `(WarehouseCd, LocationCode)` 二元组**，而非裸 `LocationCode`。
+- **`SiteCode ↔ WarehouseCd` 映射（默认规则）**：**1 个 Space Site = 1 个 WMS Warehouse**，默认 `WarehouseCd = path.siteCode`（直接相等，零配置即可跑通单仓 / 一仓一站的多数客户）；**多仓或命名不一致**的客户用一张**可配置映射表**（`SiteCode → WarehouseCd`）翻译，发布 hook 在投递前按映射填好 `WarehouseCd` 再发。
+- **下游一致性**：WMS 消费 upsert（§5.3）、停用同步 RPC（§6）、库存查询（07 `IWmsStockQuery`）**全部带 `WarehouseCd` 维度**——任何"按 code 找 bin / 查库存"都必须以 `(WarehouseCd, LocationCode)` 为键，否则多仓客户会串仓。`T_WmsBin` 唯一索引即建在 `(TenantId, WarehouseCd, LocationCode)` 上（§5.3）。
+
 ---
 
 ## 第4章 发布触发点（D4 表的兑现）
@@ -171,34 +178,101 @@ for item in batch.items:
 - **按 `locationId`（稳定主键）关联，不按 `code`**：code 虽冻结，但 locationId 才是终生不变的身份（00 §7.1），避免任何编码理解歧义。
 - `version` 单调判据让重复投递、乱序到达都安全收敛到最新态。
 
-### 5.2 整批事务与部分失败
-- WMS 侧建议整批事务；若部分 item 失败（如 DEACTIVATE 被库存拦），返回**逐项结果**，整事件按"有失败项"置 `Failed`（Worker 重试）或 `Skipped`（业务规则跳过，附逐项原因）。
-- Space 侧据返回更新本地：成功项 Status 落定，失败项（如停用被拒）保持原态 + 提示（第6章）。
+### 5.2 整批事务与部分失败（逐项结果 schema · v1.1评审补丁）
+- WMS 侧建议整批事务；若部分 item 失败（如 DEACTIVATE 被库存拦），返回**逐项结果**。
+- **LocationPublished 往返结果结构（每项一条）**：
+```jsonc
+{
+  "batchNo": "LPUB-20260613-0001",
+  "results": [
+    { "locationId": "GUID", "op": "UPSERT",     "result": "Success" },
+    { "locationId": "GUID", "op": "UPSERT",     "result": "Skipped",  "reason": "version<=lastVersion（幂等重复）" },
+    { "locationId": "GUID", "op": "DEACTIVATE", "result": "Rejected", "reason": "W-SPACE-404 库存非0" }
+  ]
+}
+```
+- **逐项 `result` 取值 `Success｜Skipped｜Rejected`**；**整事件状态映射**：只要有一项 `Rejected` → 整事件置 **`Failed`**（Worker 重试 / 人工介入）；全 `Success/Skipped`（无 Rejected）→ 事件 `Success`（纯 `Skipped` 也算成功收敛，幂等命中不是失败）。
+- Space 侧据逐项结果更新本地：`Success` 项 Status 落定，`Rejected` 项（如停用被拒）保持原态 + 提示（第6章）。
+
+### 5.3 WMS 侧库位消费模型 `T_WmsBin`（v1.1评审补丁）
+WMS 收到 `LocationPublished` 后，**落库到自有 `T_WmsBin` 表**（Space 编译期不感知其结构，仅靠事件契约约定）。这是发布的**物理落点**，也是幂等判据 `lastVersion` 的存放处。
+
+**`T_WmsBin` 表结构**：
+
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `Id` | GUID PK | **= Space `LocationId`**（稳定主键，终生不变，跨系统同一身份；非自增，由发布方给定） |
+| `TenantId` | string | 多租户隔离 |
+| `LocationCode` | string | **冻结的 join key**（发布后不变，§3.1） |
+| `WarehouseCd` | string | 仓库维度（由 `SiteCode↔WarehouseCd` 映射得来，§3.4；多仓防串仓） |
+| `Version` | int | 已消费的最新发布版本（= `lastVersion`，幂等判据，§3.3） |
+| `Path` | JSON | 变长层级路径（区/巷/架…，**变长、不含坐标几何**，§3.2） |
+| `Attrs` | JSON | 业务属性（格口尺寸等，§3.1） |
+| `IsActive` | bool | 是否启用（DEACTIVATE 置 false，§6） |
+| `LastPublishedAt` | datetime | 最近一次成功消费时间 |
+| `LastPublishedBy` | string | 最近一次发布人（取自 payload `publishedBy`，溯源，§2.1） |
+
+- **主键 `PK(Id)`**；**唯一索引 `UX(TenantId, WarehouseCd, LocationCode)`**（保证同租户同仓内 code 唯一，对齐 §3.4 的 join 锚）。
+- **与现有 `T_Stock` 松耦合**：`T_WmsBin` 与库存表 `T_Stock` **靠 `(WarehouseCd, LocationCode)` 逻辑关联，不加物理外键 FK**——库位目录（Space 发布）与库存事务（WMS 自管）解耦演进，避免发布动作被库存写锁绑死、也避免删/停时的级联约束。
+
+**幂等 upsert（落库版，对应 §5.1 算法）**：
+```
+upsertBin(item, publishedBy, warehouseCd):
+  existing = T_WmsBin.find(Id = item.locationId)          // 按稳定主键（=LocationId）取既有行
+  if existing != null && existing.Version >= item.version:
+     return SKIP                                          // 陈旧/重复事件，幂等跳过 ← 关键
+  T_WmsBin.upsert({
+     Id            = item.locationId,
+     TenantId,
+     LocationCode  = item.locationCode,
+     WarehouseCd   = warehouseCd,                         // §3.4 映射
+     Version       = item.version,                        // 存最新 version
+     Path = item.path, Attrs = item.attrs, IsActive = true,
+     LastPublishedAt = now(), LastPublishedBy = publishedBy
+  })
+  return SUCCESS
+```
 
 ---
 
-## 第6章 停用与库存冲突（D6）
+## 第6章 停用与库存冲突（D6：同步 RPC + 异步事件兜底）
 
-停用（`Status 1→2`）是**唯一需要反向问 WMS** 的发布动作——因为 Space 不持库存真相，停用一个还有货的库位会制造业务事故。
+停用（`Status 1→2`）是**唯一需要反向问 WMS** 的发布动作——因为 Space 不持库存真相，停用一个还有货的库位会制造业务事故。**(v1.1评审补丁)**：停用**不再走纯异步事件**——纯异步存在两个硬伤（① TOCTOU 误停；② **孤儿库位**：Space 已乐观翻到 `Status=2`，而 WMS 异步拒绝，两侧状态分叉、无人收尾）。故改为 **同步 RPC 即时确认 + 异步事件兜底**。
 
-### 6.1 D6 双重校验
+### 6.1 停用流程：同步 RPC 为主（v1.1评审补丁）
 ```
-① Space 侧前置校验（发停用事件前）：
-   qty = IWmsStockQuery.GetStock(locationCode)        // 同步只读（07 契约）
-   if qty > 0:  阻断，E-SPACE-401「库位仍有库存，不能停用」，不发事件
-   else:        发 DEACTIVATE 事件
+① Space 侧前置校验（用户体验，发请求前）：
+   qty = IWmsStockQuery.GetStock(warehouseCd, locationCode)    // 同步只读（07 契约，带仓维度 §3.4）
+   if qty > 0:  即时阻断，E-SPACE-401「库位仍有库存，不能停用」（连 RPC 都不发）
 
-② WMS 侧消费再校验（TOCTOU 兜底）：
-   收到 DEACTIVATE → 再查一次该 bin 实时库存
-   if 库存 > 0:  拒绝停用，逐项结果返回 rejected「库存非0」→ 事件 Skipped + 原因
-                 Space 收到后回滚本地 Status→1，提示用户
-   else:        执行停用，lastVersion 更新
+② Space → WMS 同步 RPC（权威确认，等返回）：
+   resp = POST /api/wms/bins/deactivate { locationCode, warehouseCd, version }
+   WMS 收到 → 再查一次该 bin 实时库存（TOCTOU 权威校验，库存真相在 WMS）：
+     if qty > 0:  return { success:false, reason:"W-SPACE-404" }       // 拒绝
+     else:        T_WmsBin.IsActive=false, Version=version；return { success:true }
+
+③ Space 据【同步返回】决定本地 Status：
+   if resp.success:  Status 1→2、Version+1（停用落定）
+   else:             Status 保持 1（**不前进**）+ 提示 W-SPACE-404「WMS 侧仍有库存，停用未生效」
+
+④ 异步事件兜底（DEACTIVATE LocationPublished 事件，走 T_IntegrationEvent）：
+   同步成功后仍补发一条 DEACTIVATE 事件，作用＝对账 / 审计 / 补偿：
+   若同步 OK 但后续 WMS 侧状态漂移，事件重放可幂等纠正（§5.1/5.3）。
+   注意：兜底事件**不再参与本地 Status 决策**（决策已由同步返回②③定下），只保证最终一致。
 ```
-- **为什么要两道**：①是用户体验（建模端即时挡住明显错误）；②是正确性兜底——Space 查询与 WMS 应用之间存在**时间窗（TOCTOU）**，期间可能有入库。**以 WMS 侧再校验为权威**（库存真相在 WMS），Space 侧校验只是前置友好提示（D6 决策原文：停用 TOCTOU 兜底＝WMS 侧再检查）。
 
-### 6.2 状态机一致性
-- 停用成功：Space `Status→2`、`Version+1`，WMS bin 标停用。停用码仍冻结（00 §7.2：停用态编码冻结）。
-- 停用被拒（库存非 0）：Space `Status` 保持 `1`，**不**前进到 2；提示"WMS 侧仍有库存，停用未生效"。
+### 6.2 为什么停用用同步、发布用异步（关键差异）
+| 维度 | 发布 UPSERT（异步事件，§2.2） | 停用 DEACTIVATE（同步 RPC + 异步兜底，v1.1） |
+|---|---|---|
+| 性质 | 低频主数据**写入/更新**，可最终一致 | 低频但需**即时确认**的删除性动作 |
+| 失败后果 | 重试即可，库位迟到几秒无害 | 纯异步会产生**孤儿库位**（Space 已翻 2、WMS 异步拒绝→状态分叉），且 TOCTOU 窗口内的入库无法即时反馈用户 |
+| 决策依据 | 投递成功即可 | 必须**据 WMS 实时库存的同步返回**才敢翻 Status，避免误停有货库位 |
+| 兜底 | Worker 重试 / 死信 | 同步定决策 + 异步事件做对账/补偿 |
+> **一句话**：发布是"通知"（可异步、可迟到），停用是"协商"（要 WMS 当场点头）。所以停用必须同步拿到 WMS 的库存判定，异步事件退化为对账兜底。
+
+### 6.3 状态机一致性
+- 停用成功（同步返回 `success:true`）：Space `Status→2`、`Version+1`，`T_WmsBin.IsActive=false`。停用码仍冻结（00 §7.2：停用态编码冻结）。
+- 停用被拒（同步返回 `success:false / W-SPACE-404`）：Space `Status` 保持 `1`，**不**前进到 2（不存在乐观翻转再回滚，因决策依据是同步返回）；提示"WMS 侧仍有库存，停用未生效"。
 
 ---
 
@@ -274,7 +348,7 @@ POST /api/space/location/adopt   { items:[{locationCode, attrs?}] }
 |---|---|---|
 | `/floor/{id}/publish` | POST | 发布整层（或 `?zoneId=` 按库区）：过闸门(第9) → Status→1 + 发 LocationPublished（第3/4） |
 | `/floor/{id}/code-precheck` | GET | 发布前闸门（03 §9.2 提供，本章消费） |
-| `/location/{id}/deactivate` | POST | 停用单库位：D6 双重校验（第6） → DEACTIVATE 事件 |
+| `/location/{id}/deactivate` | POST | 停用单库位：前置校验 → **同步 RPC** 调 WMS `POST /api/wms/bins/deactivate` 拿权威库存判定 → 据返回定 Status + 补发异步 DEACTIVATE 事件兜底（第6，v1.1） |
 | `/location/adopt` | POST | 存量采纳导入（第8.1，CodeOrigin=2，不回发） |
 | `/reconcile?floorId=` | GET | 采纳对账差异清单（第8.2） |
 | `/aisle/{id}` `/rack/{id}` | DELETE | 删除护栏（第7：默认 Restrict；带 `?mode=deactivate｜rehome` 走路径 A/B） |
@@ -294,7 +368,7 @@ POST /api/space/location/adopt   { items:[{locationCode, attrs?}] }
 | E-SPACE-307 | Error | 存在空码或重复码，无法发布 | 发布闸门不过（第9，03 §9.2） |
 | E-SPACE-004 | Error | 已发布库位编码不可修改 | 改 Status≥1 的 LocationCode（00 §6 复用） |
 | E-SPACE-008 | Error | 采纳编码已存在，不能重复导入 | adopt 与既有非空码冲突（00 章复用） |
-| W-SPACE-404 | Warn | 停用未生效：WMS 侧仍有库存 | TOCTOU 兜底，WMS 消费时拒绝（第6.1②） |
+| W-SPACE-404 | Warn | 停用未生效：WMS 侧仍有库存 | 同步 RPC 返回 `success:false`，WMS 实时库存非 0（第6.1②，v1.1） |
 | I-SPACE-401 | Info | 已发布 N 个库位（批号 LPUB-…） | 发布成功 |
 | I-SPACE-402 | Info | 已改挂 N 个库位并刷新路径 | re-publish 路径 B（第7.2） |
 | E-SPACE-009 | Error | 数据已被他人修改，请刷新重试 | 发布/停用 RowVersion 冲突（00 章复用） |
@@ -308,7 +382,7 @@ POST /api/space/location/adopt   { items:[{locationCode, attrs?}] }
 | ← 00 数据模型 | Status §7.2 状态机翻转、Version 按 LocationId 递增、§6.2 发布触发表、CodeOrigin 对账、删除策略 |
 | ← 03 编码引擎 | 发布前调 `code-precheck` 当闸门；只发布编码就绪（非空·唯一）的库位 |
 | → 07 实时叠加 | 复用 `IWmsStockQuery` 做停用前置库存校验（D6）；07 定义完整查询契约，本章只用"查某码库存量" |
-| → WMS（经事件） | 发 `LocationPublished`（SPACE→WMS）；WMS 实现幂等 upsert（按 LocationId+Version）；单向，Space 不依赖 WMS 实现 |
+| → WMS（经事件 + RPC） | 发布发 `LocationPublished`（SPACE→WMS 异步）；WMS 落库 `T_WmsBin`（§5.3）幂等 upsert（按 LocationId+Version）；**停用经同步 RPC `POST /api/wms/bins/deactivate` + 异步事件兜底（第6，v1.1）**；多仓按 `SiteCode↔WarehouseCd` 映射带仓维度（§3.4）；单向，Space 不依赖 WMS 实现 |
 | ↺ CP6 集成基建 | 复用 `T_IntegrationEvent` + `BridgeHookBase` + `IntegrationEventDispatcher`（新增 SPACE\|WMS 路由）+ 重试 Worker/死信/`IDeadLetterNotifier` |
 | → PUB 权限 | 发布/停用/采纳/删除接功能权限；事件追踪接数据权限 |
 | 多租户 | 发布批、事件、采纳目录全带 TenantId；payload 内 tenantId 供 WMS 隔离 |
@@ -319,12 +393,15 @@ POST /api/space/location/adopt   { items:[{locationCode, attrs?}] }
 - [ ] 发布载荷里有什么、绝对没有什么？为什么不发几何/绝对坐标？变长路径怎么体现（aisleCode）？
 - [ ] 为什么发布用 IntegrationEvent 而非同步？复用了 CP6 哪些既有件、新增了什么路由？
 - [ ] WMS 幂等按什么字段判定（locationId 还是 code？version 干嘛）？至少一次投递为什么安全？
+- [ ] （v1.1）`T_WmsBin` 的主键为什么 = Space `LocationId`？唯一索引为什么带 `WarehouseCd`？为什么与 `T_Stock` 不加物理 FK、只逻辑关联？
+- [ ] （v1.1）`LocationCode` 含不含仓库前缀？多仓客户怎么防串仓（`SiteCode↔WarehouseCd` 默认规则与可配置映射）？
+- [ ] （v1.1）`Creator='system'` 缺口怎么补？`publishedBy` 落到哪两个地方、P1 最低交付是什么？
 - [ ] 哪些动作发布、哪些不发布？"冻编码不冻几何"在发布表里怎么体现？
-- [ ] 停用为什么要两道库存校验？哪道是权威、为什么（TOCTOU）？停用被拒后 Space 本地状态怎么处理？
+- [ ] （v1.1）停用为什么改"同步 RPC + 异步事件兜底"而发布仍走异步？什么是孤儿库位？哪步是权威库存判定、为什么（TOCTOU）？停用被拒后 Space 本地 Status 怎么处理？
 - [ ] 删巷道/货架触及已发布库位的默认行为是什么？路径 A 与 B 各做什么？B 为什么不动 join key 却要 re-publish？
 - [ ] 采纳导入为什么不回发 WMS？CodeOrigin 在对账里怎么用？
 - [ ] 发布闸门的三个放行条件是什么？发布后编码还能改吗、几何呢？
 
 ---
 
-*实现：新建 `CP6.Core/Services/Space/LocationPublishService.cs`（发布/停用/采纳/对账/删除护栏）+ `CP6.Core/Services/Integration/SpaceBridgeHook.cs`（继承 BridgeHookBase，SPACE→WMS 发布 hook）+ Dispatcher 注册 `SPACE|WMS|OnLocationPublishedAsync` 路由 + `LocationPublishBatch` 载荷 DTO + `IWmsLocationConsumer` 抽象（WMS 实现幂等 upsert）。配套 xlsx（事件载荷字段表 / 发布触发矩阵 / D6 停用双校验时序 / 删除护栏决策树 / 采纳对账差异矩阵）见同名 `.xlsx`。*
+*实现：新建 `CP6.Core/Services/Space/LocationPublishService.cs`（发布/停用/采纳/对账/删除护栏）+ `CP6.Core/Services/Integration/SpaceBridgeHook.cs`（继承 BridgeHookBase，SPACE→WMS 发布 hook，载荷带 `publishedBy`）+ Dispatcher 注册 `SPACE|WMS|OnLocationPublishedAsync` 路由 + `LocationPublishBatch` 载荷 DTO + `IWmsLocationConsumer` 抽象（WMS 实现幂等 upsert，落 `T_WmsBin` §5.3）+ `IWmsBinDeactivator` 抽象（停用同步 RPC，第6 v1.1）。配套 xlsx（事件载荷字段表 / 发布触发矩阵 / **D6 停用同步 RPC 时序** / **T_WmsBin 字段表** / 删除护栏决策树 / 采纳对账差异矩阵）见同名 `.xlsx`。*
