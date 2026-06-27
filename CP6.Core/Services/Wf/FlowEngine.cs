@@ -29,10 +29,11 @@ public partial class FlowEngine : IFlowEngine
         _handlers = (handlers ?? DefaultHandlers()).ToDictionary(h => h.Type, StringComparer.OrdinalIgnoreCase);
     }
 
-    // ★ T4：当前仅 start/approval/end 三 handler。parallelSplit/Join 在 T5 加（此处不引用，未实现）。
+    // ★ T5：start/approval/end + parallelSplit/parallelJoin 五 handler。
     private static IEnumerable<INodeHandler> DefaultHandlers() => new INodeHandler[]
     {
         new StartNodeHandler(), new ApprovalNodeHandler(), new EndNodeHandler(),
+        new ParallelSplitNodeHandler(), new ParallelJoinNodeHandler(),
     };
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
