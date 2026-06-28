@@ -726,6 +726,7 @@ using (var scope = app.Services.CreateScope())
     // 置于 admin 账号 seed 之后，确保首次启动时 admin 已落库，seed 内部可解析到真实 UserId。
     CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
     CP6.WebApi.Seed.PurApprovalFlowSeed.Seed(db);   // 采购 PR/PO 审批流程 + 绑定（PUR_PR/PUR_PO）
+    CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
 
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
