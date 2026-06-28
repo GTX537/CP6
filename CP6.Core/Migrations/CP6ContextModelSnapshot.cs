@@ -11602,7 +11602,7 @@ namespace CP6.Core.Migrations
                     b.HasIndex("TenantId", "MapKey", "MatchValue")
                         .HasDatabaseName("IX_Wf_ApproverMap_Lookup");
 
-                    b.ToTable("Wf_ApproverMaps");
+                    b.ToTable("Wf_ApproverMap");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowCc", b =>

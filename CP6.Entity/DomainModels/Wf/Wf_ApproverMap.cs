@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CP6.Entity.DomainModels.Wf;
 
 /// <summary>审批人映射表(②b Menu 数据驱动)。一条=某命名映射下某匹配值对应一个审批目标(用户或角色)。
-/// 同 (MapKey,MatchValue) 可多行(多审批人→会签组)。租户隔离走 BaseTenantEntity 全局过滤器。</summary>
+/// 同 (MapKey,MatchValue) 可多行(多审批人→会签组)。租户隔离走 BaseTenantEntity 全局过滤器。
+/// 表名单数 Wf_ApproverMap，对齐全部 Wf_* 实体命名约定(DbSet 复数/[Table] 单数)。</summary>
+[Table("Wf_ApproverMap")]
 public class Wf_ApproverMap : BaseTenantEntity
 {
     [MaxLength(100)] public string MapKey { get; set; } = "";

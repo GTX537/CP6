@@ -12,7 +12,7 @@ namespace CP6.Core.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Wf_ApproverMaps",
+                name: "Wf_ApproverMap",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -30,12 +30,12 @@ namespace CP6.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Wf_ApproverMaps", x => x.Id);
+                    table.PrimaryKey("PK_Wf_ApproverMap", x => x.Id);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wf_ApproverMap_Lookup",
-                table: "Wf_ApproverMaps",
+                table: "Wf_ApproverMap",
                 columns: new[] { "TenantId", "MapKey", "MatchValue" });
         }
 
@@ -43,7 +43,7 @@ namespace CP6.Core.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Wf_ApproverMaps");
+                name: "Wf_ApproverMap");
         }
     }
 }
