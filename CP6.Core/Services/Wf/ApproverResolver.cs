@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ public class ApproverResolver : IApproverResolver
                                             ? ApproverResolveResult.Ok(u)
                                             : ApproverResolveResult.Unres("未指定审批人")),
         ApproverStrategy.Starter       => Task.FromResult(ApproverResolveResult.Ok(ctx.StarterUserId)),
+        ApproverStrategy.FormField     => FormFieldAsync(rule, ctx),
         _ => Task.FromResult(ApproverResolveResult.Unres("未知审批人策略")),
     };
 
@@ -75,5 +77,34 @@ public class ApproverResolver : IApproverResolver
         return ids.Count > 0
             ? ApproverResolveResult.Ok(ids.ToArray())
             : ApproverResolveResult.Unres($"角色 {rid} 下无启用用户");
+    }
+
+    /// <summary>③:从 VarsJson 读 FieldName 取 UserId(单值或数组);过滤存在且启用的用户。</summary>
+    private async Task<ApproverResolveResult> FormFieldAsync(ApproverRule rule, ApproverResolveContext ctx)
+    {
+        if (string.IsNullOrWhiteSpace(rule.FieldName)) return ApproverResolveResult.Unres("未配置表单字段名");
+        var ids = ReadGuidsFromField(ctx.VarsJson, rule.FieldName);
+        if (ids.Count == 0) return ApproverResolveResult.Unres("表单字段未指定有效审批人");
+        var valid = await _db.Sys_Users.Where(u => ids.Contains(u.Id) && u.Enable).Select(u => u.Id).ToListAsync();
+        return valid.Count > 0 ? ApproverResolveResult.Ok(valid.ToArray()) : ApproverResolveResult.Unres("表单字段指定的用户无效或停用");
+    }
+
+    /// <summary>从 VarsJson 读字段(String 单值 / Array 多值),逐个 Guid.TryParse。
+    /// 注:不走 ExpressionEvaluator.ParseVars(它把数组降为 null)。</summary>
+    private static List<Guid> ReadGuidsFromField(string? varsJson, string fieldName)
+    {
+        var result = new List<Guid>();
+        if (string.IsNullOrWhiteSpace(varsJson)) return result;
+        try
+        {
+            using var doc = JsonDocument.Parse(varsJson);
+            if (doc.RootElement.ValueKind != JsonValueKind.Object) return result;
+            if (!doc.RootElement.TryGetProperty(fieldName, out var el)) return result;
+            void TryAdd(JsonElement v) { if (v.ValueKind == JsonValueKind.String && Guid.TryParse(v.GetString(), out var g)) result.Add(g); }
+            if (el.ValueKind == JsonValueKind.Array) foreach (var item in el.EnumerateArray()) TryAdd(item);
+            else TryAdd(el);
+        }
+        catch { /* 解析失败 → 空 */ }
+        return result;
     }
 }
