@@ -7,7 +7,7 @@
 | 部件 | 详情 |
 |---|---|
 | 前端 | vite 5173(`npm run dev`) |
-| 后端 | 5177,**须 `RabbitMQ__HostName=` 空启动**(见下「坑」),读 `appsettings.Local.json` → `CP6DB_SpaceQA`(已迁移到合并分支 schema + Space 07/08 演示数据) |
+| 后端 | 5177,读 `appsettings.Local.json` → `CP6DB_SpaceQA`(已迁移到合并分支 schema + Space 07/08 演示数据)。本机无 RabbitMQ 也能稳跑(见下「坑」澄清) |
 | Playwright | `@playwright/test`(已装)+ `npx playwright install chromium` |
 | 账号 | admin / 123456 |
 | 数据 | Site QAWH `F31F48C2…` / Floor `5C92E6A8…` / 已发布编码 `A-01-01-01…A-01-02-02` |
@@ -44,7 +44,7 @@ npx playwright test e2e/space-viewer.spec.ts --project=chromium
 
 ## 坑
 
-- **合并分支后端无 RabbitMQ 会崩**:OA-D1 `NotificationConsumer` 后台服务连 RabbitMQ(5672)失败 → 未捕获 → .NET6+ 默认 `BackgroundServiceExceptionBehavior=StopHost` 整进程崩。本机无 broker → 启动须 `RabbitMQ__HostName=` 空(`NotificationConsumer` 见空 hostName 优雅 return)。**这是合并代码的鲁棒性缺口(OA 归属),建议后续给该消费者加 try/catch 不崩宿主**;本 SP1 仅用 env 规避,未改 OA 代码。
+- **RabbitMQ 澄清(经实测纠正,无需修复)**:OA-D1 `NotificationConsumer.ExecuteAsync` **已把连接+消费整段包在 `try/catch(Exception)` 里**(`NotificationConsumer.cs` L56~131),broker 不可达时 `BrokerUnreachableException` 被捕获并 log「通知 Consumer 异常退出」,ExecuteAsync 正常返回 → **不触发 `StopHost`,宿主存活**。**实测**:不带任何 env override(`appsettings.Local.json` 配了 RabbitMQ HostName)启动后端,等 broker 连接失败窗口后 5177 仍 LISTENING、login 200。所以**合并后端在无 RabbitMQ 的 DEV 上能稳跑,无需 `RabbitMQ__HostName=` 规避,也无需改 OA 代码**。早先误判"会崩"实为首个 `nohup dotnet run` 进程被进程管理回收(非 consumer),换启动即稳。
 - IDs 绑 QA GUID,QA 库重灌则需改默认或传 env(spec D1;API 动态发现留后续鲁棒性升级)。
 - el-input + Playwright:`.fill()` 不更新 v-model,用 `pressSequentially`(登录与搜索框均如此)。
 
