@@ -8,10 +8,18 @@ public interface IWfNotifier
 {
     /// <summary>新待办产生 → 推送给处理人。</summary>
     Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey);
+
+    /// <summary>流程签核完成（整体通过）→ 推送给发起人（OA Phase D-1）。</summary>
+    Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey);
+
+    /// <summary>流程被驳回 → 推送给发起人（OA Phase D-1）。</summary>
+    Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment);
 }
 
 /// <summary>空实现（无 SignalR 环境 / 单测用）。</summary>
 public sealed class NullWfNotifier : IWfNotifier
 {
     public Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey) => Task.CompletedTask;
+    public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey) => Task.CompletedTask;
+    public Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment) => Task.CompletedTask;
 }

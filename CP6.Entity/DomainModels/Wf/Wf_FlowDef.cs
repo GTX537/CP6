@@ -31,4 +31,10 @@ public class Wf_FlowDef : BaseTenantEntity
 
     /// <summary>是否启用</summary>
     public bool Enable { get; set; } = true;
+
+    /// <summary>功能码（MSBBPA010 式程序/功能标准码，设计器组织主键，umbrella §2.7）。租户内唯一（可空过渡）。</summary>
+    [MaxLength(50)] public string? FunctionId { get; set; }
+
+    /// <summary>流程编号（Delta 式 2887/2889 人面编号，umbrella §2.7）。租户内唯一（可空过渡）。</summary>
+    [MaxLength(50)] public string? FlowCode { get; set; }
 }

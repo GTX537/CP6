@@ -2,6 +2,7 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 import i18n from '@/i18n'
+import { getActingAs } from '@/stores/oaActingAs'
 
 // 模块级（非组件）取全局 t；与 format.ts 同模式。i18n↔http 为运行时循环引用，
 // 仅在拦截器回调（运行期）取用，模块求值期不触达，安全。
@@ -27,6 +28,7 @@ const http = axios.create({
 })
 
 // 请求拦截器：非安全方法注入 CSRF 头（token 在 httpOnly Cookie，浏览器自动带，无需手动注入）
+// T10：/oa/ 请求额外注入 X-Acting-As 头（act-as 态机，sessionStorage per-tab 隔离）
 http.interceptors.request.use((config) => {
   const method = (config.method || 'get').toLowerCase()
   if (method !== 'get' && method !== 'head' && method !== 'options') {
@@ -34,6 +36,10 @@ http.interceptors.request.use((config) => {
     if (csrf) {
       config.headers['X-CSRF-Token'] = csrf
     }
+  }
+  const actingAs = getActingAs()
+  if (actingAs && config.url?.includes('/oa/')) {
+    config.headers['X-Acting-As'] = actingAs.userId
   }
   return config
 })

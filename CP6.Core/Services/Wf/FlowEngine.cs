@@ -66,6 +66,32 @@ public partial class FlowEngine : IFlowEngine
     }
 
     /// <summary>
+    /// 就地起草稿：把 Draft 实例推进进流程（spawn 根 token + 进首节点 + 读模型随推进落库）。
+    /// 仅发起人可提交；非草稿态/越权 → E-WF-003。幂等性同 SubmitAsync（一次 SaveChanges）。
+    /// </summary>
+    public async Task StartDraftAsync(Guid instanceId, Guid actorId)
+    {
+        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId)
+                   ?? throw new InvalidOperationException("E-WF-003");
+        if (inst.StarterId != actorId) throw new InvalidOperationException("E-WF-003");        // 越权提交
+        if (inst.Status != FlowInstanceStatus.Draft) throw new InvalidOperationException("E-WF-003"); // 非草稿态
+
+        var schema = await LoadSchemaAsync(inst.FlowKey);
+        var first = FirstNode(schema) ?? throw new InvalidOperationException($"流程 {inst.FlowKey} 无节点");
+
+        inst.Status = FlowInstanceStatus.Running;
+        inst.CurrentNode = first.Id;
+        inst.Modifier = actorId.ToString();
+        inst.ModifyDate = DateTime.Now;
+        AddHistory(inst.Id, first.Id, actorId, "submit", null);
+
+        var root = SpawnToken(inst, first, parent: null, fork: null);
+        await EnterNodeAsync(inst, schema, first, root);
+        await DispatchIfFinishedAsync(inst, actorId, null);
+        await _db.SaveChangesAsync();
+    }
+
+    /// <summary>
     /// 办理外壳（WFS P1 Task 6 并发幂等）：把单次办理委托给 <see cref="ActOnceAsync"/>，
     /// 遇乐观并发冲突（并行兄弟分支近同时办结，join 计数脏读 → <see cref="DbUpdateConcurrencyException"/>）
     /// 则重读全部追踪实体后重试，最多 3 次（attempt 0/1/2）。重试时重读 inst/token/task → 重算 join
@@ -84,7 +110,25 @@ public partial class FlowEngine : IFlowEngine
         }
     }
 
-    private async Task ActOnceAsync(Guid taskId, Guid actorId, bool approve, string? comment = null)
+    /// <summary>
+    /// act-as 办理：actorId（代理人 me）代 onBehalfOf（被代理人 X）办理其待办。
+    /// 办理逻辑与 ActAsync 等价（推进/计票），但履历 ActualHandlerId = actorId (me)、OnBehalfOfId = onBehalfOf (X)。
+    /// onBehalfOf = null 时行为同 ActAsync（既有路径零改）。授权由控制器 AssertActiveGrant 把关，引擎不查委派。
+    /// </summary>
+    public async Task ActAsAsync(Guid taskId, Guid actorId, Guid? onBehalfOf, bool approve, string? comment = null)
+    {
+        for (int attempt = 0; ; attempt++)
+        {
+            try { await ActOnceAsync(taskId, actorId, approve, comment, onBehalfOf); return; }
+            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            {
+                foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
+            }
+        }
+    }
+
+    private async Task ActOnceAsync(Guid taskId, Guid actorId, bool approve, string? comment = null,
+        Guid? onBehalfOf = null)
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
                    ?? throw new InvalidOperationException("任务不存在");
@@ -98,7 +142,7 @@ public partial class FlowEngine : IFlowEngine
         task.Modifier = actorId.ToString();
         task.ModifyDate = DateTime.Now;
         AddHistory(inst.Id, task.NodeId, actorId, approve ? "approve" : "reject", comment);
-        await UpdateFormToOnHandleAsync(task, actorId, approve, comment);   // ★ T9：更新传签履历办结状态
+        await UpdateFormToOnHandleAsync(task, actorId, approve, comment, onBehalfOf);   // ★ T9：更新传签履历办结状态；act-as 时 actorId=实办人，onBehalfOf=被代理人
 
         // ★ T10：办结时存一份该关卡表单快照（与送签快照同 StepSeq，形成"入→出"两条留痕）
         var doneTok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
@@ -161,9 +205,15 @@ public partial class FlowEngine : IFlowEngine
     private async Task DispatchIfFinishedAsync(Wf_FlowInstance inst, Guid decidedBy, string? reason)
     {
         if (inst.Status == FlowInstanceStatus.Approved)
+        {
             await _dispatcher.OnInstanceFinishedAsync(inst, approved: true, decidedBy, reason: null);
+            await _notifier.FlowApprovedAsync(inst.StarterId, inst.Id, inst.FlowKey);   // ★ D-1 N-T5
+        }
         else if (inst.Status == FlowInstanceStatus.Rejected)
+        {
             await _dispatcher.OnInstanceFinishedAsync(inst, approved: false, decidedBy, reason);
+            await _notifier.FlowRejectedAsync(inst.StarterId, inst.Id, inst.FlowKey, reason);   // ★ D-1 N-T5
+        }
     }
 
     /// <summary>会签三规则（纯函数）。返回 (是否已决, 是否通过)。</summary>

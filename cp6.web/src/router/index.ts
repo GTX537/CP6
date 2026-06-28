@@ -29,9 +29,18 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/pub/field-perm': () => import('@/views/pms/FieldPermView.vue'),   // PUB 章04 字段权限
   '/pub/seq': () => import('@/views/pms/SeqView.vue'),   // PUB 章05 采番规则
   '/pub/codegen': () => import('@/views/pms/CodeGenView.vue'),   // PUB 章08 代码生成器
-  // ───── OA 审批工作流 (Wf) ─────
-  '/wf/todo': () => import('@/views/wf/TodoCenter.vue'),               // OA 章04 待办中心
-  '/wf/my-applications': () => import('@/views/wf/MyApplications.vue'), // OA 章04 我的申请
+  // ───── OA 电子表单信箱 (Phase B) ─────
+  '/oa/inbox':           () => import('@/views/oa/inbox/InboxView.vue'),          // OA Phase B 电子表单信箱（菜单733）
+  '/oa/flow-admin':      () => import('@/views/oa/admin/FlowAdmin.vue'),          // OA Phase B 流程管理（菜单734）
+  // ───── OA Phase C：表单目录 + 查询 + 设定（菜单 735/736/737）─────
+  '/oa/form-catalog':    () => import('@/views/oa/catalog/FormCatalog.vue'),      // OA Phase C T16 填單目录（菜单735）
+  '/oa/form-search':     () => import('@/views/oa/query/FormQuery.vue'),          // OA Phase C T16 表單查詢（菜单736）
+  '/oa/settings':        () => import('@/views/oa/settings/InboxSettings.vue'),  // OA Phase C T16 設定（菜单737）
+  // ───── OA Phase C′：流程设计器（菜单 738）─────
+  '/oa/designer':        () => import('@/views/oa/designer/DesignerView.vue'),   // OA Phase C′ T10 流程设计器（菜单738）
+  // ───── OA Phase C：起草发起（子页，非菜单，始终挂载）─────
+  '/oa/form-initiate':   () => import('@/views/oa/catalog/FormInitiate.vue'),     // OA Phase C T13 起草发起
+  // ───── OA 审批工作流 (Wf) — 旧设计器保留，旧待办/申请已迁移至 /oa/inbox ─────
   '/wf/form-designer': () => import('@/views/wf/designer/FormDesigner.vue'), // OA 章09 表单设计器
   '/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue'), // OA 章09 流程设计器
   // ───── 财务 (Fin) 总账内核 ─────
@@ -165,6 +174,9 @@ const viewModules: Record<string, () => Promise<any>> = {
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口
 const staticRoutes: RouteRecordRaw[] = [
+  // ── OA Phase B 旧路由重定向（菜单条目可能仍为 /wf/*；redirect 确保无论何时均自动跳转至信箱）──
+  { path: '/wf/todo',            redirect: '/oa/inbox' },
+  { path: '/wf/my-applications', redirect: '/oa/inbox' },
   {
     path: '/login',
     name: 'login',
@@ -286,6 +298,16 @@ function platformChildren(): RouteRecordRaw[] {
   })) as RouteRecordRaw[]
 }
 
+// OA Phase C 子页路由（非菜单，由目录页程序跳转，始终挂载为 layout 子路由）
+const oaSubRoutePaths = ['/oa/form-initiate']
+function oaSubChildren(): RouteRecordRaw[] {
+  return oaSubRoutePaths.map(p => ({
+    path: p.replace(/^\//, ''),
+    name: p.replace(/^\//, ''),
+    component: viewModules[p]
+  })) as RouteRecordRaw[]
+}
+
 /**
  * 根据菜单列表动态添加路由
  * menus 格式: [{ id, menuName, routePath, icon, parentId, orderNo }]
@@ -322,7 +344,9 @@ export function addDynamicRoutes(menus: any[]) {
         component: viewModules[menu.routePath]
       })) as RouteRecordRaw[],
       // S类 #5 带外平台区：始终挂载（菜单不含，靠守卫 + 后端把关）
-      ...platformChildren()
+      ...platformChildren(),
+      // OA Phase C 子页：始终挂载（菜单不含，由目录页程序跳转）
+      ...oaSubChildren()
     ]
   })
 

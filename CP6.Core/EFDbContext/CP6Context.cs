@@ -394,6 +394,12 @@ public class CP6Context : DbContext
     public DbSet<Wf_FlowData> Wf_FlowDatas { get; set; }
     /// <summary>抄送（WFS 读模型，信箱未读标记）</summary>
     public DbSet<Wf_FlowCc> Wf_FlowCcs { get; set; }
+    /// <summary>信箱表单收藏（Phase C，唯一 (TenantId,UserId,FormKey)）</summary>
+    public DbSet<Wf_FormFavorite> Wf_FormFavorites { get; set; }
+    /// <summary>信箱显示偏好（Phase C，唯一 (TenantId,UserId)）</summary>
+    public DbSet<Wf_InboxPref> Wf_InboxPrefs { get; set; }
+    /// <summary>站内通知持久化（Phase D-1 通知中心）</summary>
+    public DbSet<Wf_Notification> Wf_Notifications { get; set; }
 
     // ───── Space 空间数字底座 P1（ch00 9 表）─────
     /// <summary>站点（Space 章00，6 层模型顶层）</summary>
@@ -658,6 +664,10 @@ public class CP6Context : DbContext
         modelBuilder.Entity<Wf_FlowDef>(e =>
         {
             e.HasIndex(x => x.FlowKey).IsUnique().HasDatabaseName("UX_Wf_FlowDef_FlowKey");
+            e.HasIndex(x => new { x.TenantId, x.FunctionId }).IsUnique()
+                .HasFilter("[FunctionId] IS NOT NULL").HasDatabaseName("UX_Wf_FlowDef_Function");
+            e.HasIndex(x => new { x.TenantId, x.FlowCode }).IsUnique()
+                .HasFilter("[FlowCode] IS NOT NULL").HasDatabaseName("UX_Wf_FlowDef_Code");
         });
         modelBuilder.Entity<Wf_FlowInstance>(e =>
         {
@@ -669,7 +679,7 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.InstanceId, x.NodeId }).HasDatabaseName("IX_Wf_FlowTask_InstanceNode");  // 会签判定取本节点全部任务
             e.HasIndex(x => new { x.AssigneeId, x.Status }).HasDatabaseName("IX_Wf_FlowTask_AssigneeStatus"); // 待办中心
             e.HasIndex(x => new { x.Status, x.DueAt }).HasDatabaseName("IX_Wf_FlowTask_StatusDue");           // 章07 §4 超时扫描
-            e.HasIndex(x => new { x.AssigneeId, x.IsRead }).HasDatabaseName("IX_Wf_FlowTask_AssigneeRead");
+            e.HasIndex(x => new { x.AssigneeId, x.IsRead }).HasDatabaseName("IX_Wf_FlowTask_AssigneeRead");    // 信箱未處理未读
         });
         modelBuilder.Entity<Wf_FlowDelegate>(e =>
         {
@@ -701,6 +711,12 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.RecipientId, x.IsRead }).HasDatabaseName("IX_Wf_FlowCc_Recipient");
             e.HasIndex(x => x.InstanceId).HasDatabaseName("IX_Wf_FlowCc_Instance");
         });
+        modelBuilder.Entity<Wf_FormFavorite>(e =>
+            e.HasIndex(x => new { x.TenantId, x.UserId, x.FormKey }).IsUnique().HasDatabaseName("UX_Wf_FormFavorite"));
+        modelBuilder.Entity<Wf_InboxPref>(e =>
+            e.HasIndex(x => new { x.TenantId, x.UserId }).IsUnique().HasDatabaseName("UX_Wf_InboxPref_User"));
+        modelBuilder.Entity<Wf_Notification>(e =>
+            e.HasIndex(x => new { x.TenantId, x.UserId, x.IsRead }).HasDatabaseName("IX_Wf_Notification_UserRead"));
 
         // ═══════════════════════════════════════════════════════════
         //  财务（Fin）章01 总账内核

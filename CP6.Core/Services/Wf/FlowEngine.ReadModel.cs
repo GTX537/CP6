@@ -49,7 +49,8 @@ public partial class FlowEngine
     /// 办结：更新该 (inst, node, token, expectedHandler) 的待签行为已办结状态。
     /// 若行不存在（幂等 / 加签 / 旁路路径），静默跳过。
     /// </summary>
-    internal async Task UpdateFormToOnHandleAsync(Wf_FlowTask task, Guid actorId, bool approve, string? comment)
+    internal async Task UpdateFormToOnHandleAsync(Wf_FlowTask task, Guid actorId, bool approve, string? comment,
+        Guid? onBehalfOf = null)
     {
         var row = await _db.Wf_FlowFormTos
             .Where(f => f.InstanceId == task.InstanceId
@@ -61,7 +62,8 @@ public partial class FlowEngine
             .FirstOrDefaultAsync();
         if (row is null) return;
         row.Status = approve ? FlowFormToStatus.Approved : FlowFormToStatus.Rejected;
-        row.ActualHandlerId = actorId;
+        row.ActualHandlerId = actorId;   // 实际点击办理的人（act-as 时 = 代理人 me）
+        row.OnBehalfOfId = onBehalfOf;   // 代谁签（非 act-as 时 = null，既有路径零改）
         row.HandledAt = DateTime.Now;
         row.Comment = comment;
     }
@@ -107,6 +109,29 @@ public partial class FlowEngine
             .Where(f => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
                         && f.Status == FlowFormToStatus.Pending && !localIds.Contains(f.Id)).ToList())
             f.Status = FlowFormToStatus.Skipped;
+    }
+
+    /// <summary>转交读模型：原行 Transferred(实办=转出人)，受让人新起 Pending 行（同 Token/Node，StepSeq 递增）。</summary>
+    internal async Task TransferFormToAsync(Guid instanceId, string nodeId, Guid? tokenId,
+        Guid fromUserId, Guid toUserId, string? comment)
+    {
+        var src = await _db.Wf_FlowFormTos.FirstOrDefaultAsync(f =>
+            f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId &&
+            f.ExpectedHandlerId == fromUserId && f.Status == FlowFormToStatus.Pending);
+        if (src is not null)
+        {
+            src.Status = FlowFormToStatus.Transferred;
+            src.ActualHandlerId = fromUserId;
+            src.HandledAt = DateTime.Now;
+            src.Comment = comment;
+        }
+        _db.Wf_FlowFormTos.Add(new Wf_FlowFormTo
+        {
+            Id = Guid.NewGuid(), InstanceId = instanceId, TokenId = tokenId,
+            StepSeq = NextStepSeq(instanceId),   // sync — checks Local + DB, takes Max+1
+            FromNodeId = src?.FromNodeId, NodeId = nodeId, NodeCode = src?.NodeCode, NodeName = src?.NodeName,
+            ExpectedHandlerId = toUserId, Status = FlowFormToStatus.Pending, SentAt = DateTime.Now,
+        });
     }
 
     /// <summary>

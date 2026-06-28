@@ -109,7 +109,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelSplitNodeHandler>(); // WFS T5 节点处理器：并行分叉
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelJoinNodeHandler>();  // WFS T5 节点处理器：并行汇聚
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
-builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.SignalRWfNotifier>();        // 章04 待办 SignalR 推送（注入给 FlowEngine）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
 // 4.0b OA(Wf) 阶段2 集成（章05 ★）：业务接入 OA 的同步回调
@@ -127,6 +127,22 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.FinSequenceService>();         
 // 4.0c OA(Wf) 阶段3 高级流程（章07）：超时扫描 + Worker（退回/加签/委派为 FlowEngine 自带方法）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Services.Wf.WfTimeoutService>();    // 章07 §4 超时扫描（remind/approve/reject/escalate）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
+
+// 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
+builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IFlowAdminService, CP6.Core.Services.Oa.FlowAdminService>();
+
+// 4.0e OA 信箱进阶（Phase C）
+builder.Services.AddScoped<CP6.Core.Services.Oa.IDelegateService, CP6.Core.Services.Oa.DelegateService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IFavoriteService, CP6.Core.Services.Oa.FavoriteService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ICatalogService, CP6.Core.Services.Oa.CatalogService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IPrefService, CP6.Core.Services.Oa.PrefService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.INotificationService, CP6.Core.Services.Oa.NotificationService>(); // Phase D-1 N-T2 站内通知服务（PersistentWfNotifier + NotificationController 依赖）
+
+// 4.0f OA 流程设计器（Phase C′）
+builder.Services.AddScoped<CP6.Core.Services.Oa.IDesignerService, CP6.Core.Services.Oa.DesignerService>();
 
 // 4.0.2 财务（Fin）章01 总账内核
 builder.Services.AddScoped<CP6.Core.Services.Fin.IGlAccountService, CP6.Core.Services.Fin.GlAccountService>(); // 章01 §3 会计科目 + 多国别模板包
@@ -732,6 +748,7 @@ using (var scope = app.Services.CreateScope())
     // 置于 admin 账号 seed 之后，确保首次启动时 admin 已落库，seed 内部可解析到真实 UserId。
     CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
     CP6.WebApi.Seed.PurApprovalFlowSeed.Seed(db);   // 采购 PR/PO 审批流程 + 绑定（PUR_PR/PUR_PO）
+    CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
 
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
@@ -1315,6 +1332,52 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 732 });
         db.SaveChanges();
     }
+    // OA 电子表单信箱（Phase B）菜单（740 父组 + 733/734 子项）—— 置于计划中台之后（OrderNo 249~）
+    // 幂等：每项按 MenuId 独立守卫，**置于 `if (!db.Sys_Menus.Any())` 块外**，既有库同样会被追加。
+    if (!db.Sys_Menus.Any(m => m.MenuId == 740))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 740, MenuName = "OA工作流", Icon = "MessageBox", OrderNo = 249, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 740 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 733))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 733, MenuName = "电子表单信箱", RoutePath = "/oa/inbox", Icon = "Inbox", ParentId = 740, OrderNo = 733, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 733 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 734))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 734, MenuName = "流程管理", RoutePath = "/oa/flow-admin", Icon = "Operation", ParentId = 740, OrderNo = 734, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 734 });
+        db.SaveChanges();
+    }
+    // OA Phase C 菜单（735/736/737）—— 幂等，置于 Phase B 734 之后
+    if (!db.Sys_Menus.Any(m => m.MenuId == 735))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 735, MenuName = "填單", RoutePath = "/oa/form-catalog", Icon = "EditPen", ParentId = 740, OrderNo = 735, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 735 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 736))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 736, MenuName = "表单查询", RoutePath = "/oa/form-search", Icon = "Search", ParentId = 740, OrderNo = 736, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 736 });
+        db.SaveChanges();
+    }
+    if (!db.Sys_Menus.Any(m => m.MenuId == 737))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 737, MenuName = "设定", RoutePath = "/oa/settings", Icon = "Setting", ParentId = 740, OrderNo = 737, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 737 });
+        db.SaveChanges();
+    }
+    // OA Phase C′ 菜单（738 流程设计器）—— 幂等，置于 Phase C 737 之后
+    if (!db.Sys_Menus.Any(m => m.MenuId == 738))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 738, MenuName = "流程设计器", RoutePath = "/oa/designer", Icon = "Edit", ParentId = 740, OrderNo = 738, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 738 });
+        db.SaveChanges();
+    }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
@@ -1544,20 +1607,20 @@ using (var scope = app.Services.CreateScope())
     // （原此处有第二处 admin 明文 seed——无 RoleId 的 legacy 残留，且位于 EnsureHashed 之后会落明文；
     //   规范 admin 已在上方 menu seed 块以 RoleId=1 建立并被 EnsureHashed 哈希，故删除该重复块。S 类 T1 review I2）
 
-    // 多语言词条种子数据
-    // 去重守卫：补充块的内联 AddLangs 会跨块插入同名全局 LangKey（TenantId=null），全新库首次
-    // 种子时多块都跑→撞 UX_Sys_Lang_Tenant_Key 唯一键崩溃（fresh-deploy 阻断 bug）。本地函数过滤
-    // 已存在键 + 批内去重后再 Add，使整段 lang 种子幂等。老库走 !Any() 守卫跳过本不触发。
-    static void AddLangs(CP6Context db, params Sys_Lang[] langs)
+    // [fresh-deploy fix] Sys_Lang 种子幂等助手：过滤掉 DB 已存在的 LangKey + 批内重复后再插，
+    // 避免全新库首跑时「补充」块与主块的重叠键撞 UX_Sys_Lang_Tenant_Key(2601)。所有词条种子块改走此助手。
+    void SeedLangs(params Sys_Lang[] items)
     {
-        var existing = db.Sys_Langs.AsNoTracking().Where(l => l.TenantId == null).Select(l => l.LangKey).ToHashSet();
-        foreach (var l in langs.GroupBy(x => x.LangKey).Select(g => g.First()))
-            if (!existing.Contains(l.LangKey)) db.Sys_Langs.Add(l);
+        var existing = db.Sys_Langs.AsNoTracking().Select(l => l.LangKey).ToHashSet();
+        var seen = new HashSet<string>();
+        var toInsert = items.Where(i => !existing.Contains(i.LangKey) && seen.Add(i.LangKey)).ToList();
+        if (toInsert.Count > 0) db.Sys_Langs.AddRange(toInsert);
     }
 
+    // 多语言词条种子数据（幂等走上方 SeedLangs；合并 main 后统一用 SeedLangs，删去 Space 侧重复的 AddLangs）
     if (!db.Sys_Langs.Any())
     {
-        AddLangs(db,
+        SeedLangs(
             new Sys_Lang { LangKey = "app.title", ZhCN = "CP6 管理系统", ZhTW = "CP6 管理系統", En = "CP6 Admin", Ja = "CP6 管理システム", Ko = "CP6 관리 시스템" },
             new Sys_Lang { LangKey = "login.title", ZhCN = "CP6 管理系统", ZhTW = "CP6 管理系統", En = "CP6 Admin", Ja = "CP6 管理システム", Ko = "CP6 관리 시스템" },
             new Sys_Lang { LangKey = "login.username", ZhCN = "请输入用户名", ZhTW = "請輸入使用者名稱", En = "Enter username", Ja = "ユーザー名を入力", Ko = "사용자명 입력" },
@@ -1728,12 +1791,16 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nSecSsoScreenSeed.Items)   // S 类 #3 SSO E-SEC-020~029 + 事件 15~18 + 登录/落地/配置页 + nav.116
             .Concat(CP6.WebApi.Seed.I18nSecAuditScreenSeed.Items) // S 类 #4 字段审计 sec.audit.* 画面词条（只读模块，无错误码）
             .Concat(CP6.WebApi.Seed.I18nTenantComplianceSeed.Items) // S 类 #5 多租户合规 E-SEC-031~038 + 事件 19~30 + platform.* 画面词条（带外平台区）
+            .Concat(CP6.WebApi.Seed.I18nOaInboxScreenSeed.Items)   // OA Phase B 电子表单信箱 oa.*/E-WF-001~008/nav.733/734/740
+            .Concat(CP6.WebApi.Seed.I18nOaAdvancedScreenSeed.Items) // OA Phase C 填單/查詢/設定/轉交 oa.catalog.*/oa.initiate.*/oa.settings.*/oa.transfer.*/nav.735/736/737
+            .Concat(CP6.WebApi.Seed.I18nOaDesignerScreenSeed.Items) // OA Phase C′ 流程设计器 oa.designer.*/nav.738
+            .Concat(CP6.WebApi.Seed.I18nOaNotifyScreenSeed.Items)  // OA Phase D-1 通知中心 oa.notify.*/oa.notify.settings.*
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
         if (toAdd.Count > 0)
         {
-            AddLangs(db, toAdd.ToArray());
+            SeedLangs(toAdd.ToArray());
             db.SaveChanges();
         }
 
@@ -1764,7 +1831,7 @@ using (var scope = app.Services.CreateScope())
     // 补充：已有数据库追加导航菜单词条
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.100"))
     {
-        AddLangs(db,
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.100", ZhCN = "系统管理", ZhTW = "系統管理", En = "System", Ja = "システム管理", Ko = "시스템 관리" },
             new Sys_Lang { LangKey = "nav.101", ZhCN = "角色管理", ZhTW = "角色管理", En = "Roles", Ja = "役割管理", Ko = "역할 관리" },
             new Sys_Lang { LangKey = "nav.102", ZhCN = "菜单管理", ZhTW = "選單管理", En = "Menus", Ja = "メニュー管理", Ko = "메뉴 관리" },
@@ -1799,7 +1866,7 @@ using (var scope = app.Services.CreateScope())
     // 販売管理 i18n 扩展 Phase 3（PA010/030/100/130/140/150 等）— sentinel: sales.fsc.format
     if (!db.Sys_Langs.Any(l => l.LangKey == "sales.fsc.format"))
     {
-        AddLangs(db,
+        SeedLangs(
             // 见积计算书 / 御见积书 ────
             new Sys_Lang { LangKey = "sales.qtn.calcInquiry",   ZhCN = "见积计算书 照会", ZhTW = "見積計算書 照會",  En = "Estimate Calc Inquiry",Ja = "見積計算書 照会", Ko = "견적계산서 조회" },
             new Sys_Lang { LangKey = "sales.qtn.calcEntry",     ZhCN = "见积计算书 登录", ZhTW = "見積計算書 登錄",  En = "Estimate Calc Entry", Ja = "見積計算書 登録",  Ko = "견적계산서 등록" },
@@ -1880,7 +1947,7 @@ using (var scope = app.Services.CreateScope())
     // 販売管理 i18n 扩展（Phase 2 追加 keys）— sentinel: sales.role.customer
     if (!db.Sys_Langs.Any(l => l.LangKey == "sales.role.customer"))
     {
-        AddLangs(db,
+        SeedLangs(
             // Step 标题
             new Sys_Lang { LangKey = "sales.step.partsSelect",   ZhCN = "部材选择",     ZhTW = "部材選擇",     En = "Parts Select",       Ja = "部材選択",     Ko = "부재 선택" },
             new Sys_Lang { LangKey = "sales.step.detail",        ZhCN = "明细",         ZhTW = "明細",         En = "Detail",             Ja = "明細",         Ko = "명세" },
@@ -1924,7 +1991,7 @@ using (var scope = app.Services.CreateScope())
     // 补充：已有数据库追加字典相关词条
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.106"))
     {
-        AddLangs(db,
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.106", ZhCN = "数据字典", ZhTW = "資料字典", En = "Dictionary", Ja = "データ辞書", Ko = "데이터 사전" },
             new Sys_Lang { LangKey = "dict.typeCode", ZhCN = "类型编码", ZhTW = "類型編碼", En = "Type Code", Ja = "タイプコード", Ko = "유형 코드" },
             new Sys_Lang { LangKey = "dict.typeName", ZhCN = "类型名称", ZhTW = "類型名稱", En = "Type Name", Ja = "タイプ名", Ko = "유형명" },
@@ -1941,7 +2008,7 @@ using (var scope = app.Services.CreateScope())
     // 补充：操作日志相关词条
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.107"))
     {
-        AddLangs(db,
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.107", ZhCN = "操作日志", ZhTW = "操作日誌", En = "Operation Log", Ja = "操作ログ", Ko = "작업 로그" },
             new Sys_Lang { LangKey = "operlog.user", ZhCN = "操作人", ZhTW = "操作人", En = "User", Ja = "操作者", Ko = "사용자" },
             new Sys_Lang { LangKey = "operlog.method", ZhCN = "方法", ZhTW = "方法", En = "Method", Ja = "メソッド", Ko = "메서드" },
@@ -1965,7 +2032,7 @@ using (var scope = app.Services.CreateScope())
     }
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.2"))
     {
-        AddLangs(db,
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.2", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             new Sys_Lang { LangKey = "dashboard.title", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             new Sys_Lang { LangKey = "dashboard.todayOps", ZhCN = "今日操作", ZhTW = "今日操作", En = "Today Ops", Ja = "本日の操作", Ko = "오늘 작업" },
@@ -1984,7 +2051,7 @@ using (var scope = app.Services.CreateScope())
     // 业务经营总览 仪表盘 i18n（幂等：以 dashboard.todayOrders 为哨兵）
     if (!db.Sys_Langs.Any(l => l.LangKey == "dashboard.todayOrders"))
     {
-        AddLangs(db,
+        SeedLangs(
             // ── KPI 卡 ──
             new Sys_Lang { LangKey = "dashboard.overview",        ZhCN = "业务经营总览", ZhTW = "業務經營總覽", En = "Business Overview", Ja = "業務経営総覧", Ko = "비즈니스 개요" },
             new Sys_Lang { LangKey = "dashboard.todayOrders",     ZhCN = "今日受注",   ZhTW = "今日受注",   En = "Today Orders",    Ja = "今日の受注",   Ko = "오늘 수주" },
@@ -2033,7 +2100,7 @@ using (var scope = app.Services.CreateScope())
     // 販売管理 通用 i18n（操作模式 / 按钮 / Section / 错误消息 / 业务术语）
     if (!db.Sys_Langs.Any(l => l.LangKey == "sales.op.register"))
     {
-        AddLangs(db,
+        SeedLangs(
             // 操作模式 ────────────────────
             new Sys_Lang { LangKey = "sales.op.register",     ZhCN = "登记",     ZhTW = "登記",     En = "New",          Ja = "登録",       Ko = "등록" },
             new Sys_Lang { LangKey = "sales.op.edit",         ZhCN = "修正",     ZhTW = "修正",     En = "Edit",         Ja = "訂正",       Ko = "수정" },
@@ -2195,7 +2262,7 @@ using (var scope = app.Services.CreateScope())
     // 販売管理菜单 i18n（PA010〜PA150） — 已存在 DB 的补充
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.200"))
     {
-        AddLangs(db,
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理(ERP)",      ZhTW = "銷售管理(ERP)",      En = "Sales (ERP)",            Ja = "販売管理(ERP)",           Ko = "판매 관리(ERP)" },
             new Sys_Lang { LangKey = "nav.201", ZhCN = "报价计算单 照会",    ZhTW = "報價計算單 照會",    En = "Estimate Calc Inquiry",  Ja = "見積計算書 照会",         Ko = "견적계산서 조회" },
             new Sys_Lang { LangKey = "nav.202", ZhCN = "报价计算单 登记",    ZhTW = "報價計算單 登記",    En = "Estimate Calc Entry",    Ja = "見積計算書 登録",         Ko = "견적계산서 등록" },

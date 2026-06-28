@@ -144,6 +144,7 @@
             />
           </el-select>
           <span class="layout-nickname">{{ nickName }}</span>
+          <NotificationBell />
           <el-button link @click="handleLogout">{{ $t('layout.logout') }}</el-button>
         </template>
       </el-header>
@@ -171,6 +172,7 @@ import { authApi } from '@/api/sys/auth'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import MenuTreeItem from '@/components/MenuTreeItem.vue'
 import ImpersonationBanner from '@/components/ImpersonationBanner.vue'
+import NotificationBell from '@/views/oa/notification/NotificationBell.vue'
 import { usePlatformStore } from '@/stores/platform'
 
 const { locale, t, te } = useI18n()
