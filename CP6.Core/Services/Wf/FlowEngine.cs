@@ -343,6 +343,23 @@ public partial class FlowEngine : IFlowEngine
     {
         if (string.IsNullOrWhiteSpace(n.ApproverStrategy)) return null;
         if (!Enum.TryParse<ApproverStrategy>(n.ApproverStrategy, ignoreCase: true, out var strat)) return null;
-        return new ApproverRule(strat, n.ApproverLevels, n.ApproverRoleId, n.ApproverUserId);
+        return new ApproverRule(strat, n.ApproverLevels, n.ApproverRoleId, n.ApproverUserId)
+        {
+            FieldName = n.ApproverFieldName,
+            MapKey    = n.ApproverMapKey,
+            When      = n.ApproverWhen,
+            Filter    = n.ApproverFilter,
+            Members   = n.ApproverMembers?.Select(MapSpec).ToList(),
+        };
+    }
+
+    /// <summary>设计期叶 spec → 运行期叶 ApproverRule(无 Members)。</summary>
+    internal static ApproverRule MapSpec(ApproverSpec s)
+    {
+        Enum.TryParse<ApproverStrategy>(s.Strategy, ignoreCase: true, out var strat);
+        return new ApproverRule(strat, s.ApproverLevels, s.ApproverRoleId, s.ApproverUserId)
+        {
+            FieldName = s.FieldName, MapKey = s.MapKey, When = s.When, Filter = s.Filter,
+        };
     }
 }

@@ -69,7 +69,12 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
                 {
                     StageIndex = idx++, Kind = ApprovalStageKinds.Fixed,
                     StageName = st.Name, StageCode = st.Code,
-                    Rule = new ApproverRule(strat, st.ApproverLevels, st.ApproverRoleId, st.ApproverUserId),
+                    Rule = new ApproverRule(strat, st.ApproverLevels, st.ApproverRoleId, st.ApproverUserId)
+                    {
+                        FieldName = st.ApproverFieldName, MapKey = st.ApproverMapKey,
+                        When = st.ApproverWhen, Filter = st.ApproverFilter,
+                        Members = st.ApproverMembers?.Select(FlowEngine.MapSpec).ToList(),
+                    },
                     Countersign = string.IsNullOrWhiteSpace(st.Countersign) ? CountersignModes.All : st.Countersign,
                 });
             }

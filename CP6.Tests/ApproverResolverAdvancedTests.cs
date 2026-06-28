@@ -194,4 +194,41 @@ public class ApproverResolverAdvancedTests
         // starter 自己也是 role 7,但 starter.deptId==starter.deptId 真 → starter 留;u 排除
         Assert.Equal(starter, res.ApproverIds.Single());
     }
+
+    [Fact]
+    public async Task Planner_SingleStageNode_WithGroupSpec_BuildsRichRule()
+    {
+        using var db = NewDb();
+        var node = new FlowNode
+        {
+            Id = "n1", Type = "approval", ApproverStrategy = "Group",
+            ApproverMembers = new List<ApproverSpec>
+            {
+                new() { Strategy = "Starter" },
+                new() { Strategy = "Specified", ApproverUserId = Guid.NewGuid() },
+            },
+        };
+        var plan = await new ApprovalStagePlanner(new ApproverResolver(db))
+            .BuildAsync(new Wf_FlowInstance { StarterId = Guid.NewGuid() }, new FlowSchema(), node);
+        var rule = plan.Single().Rule;
+        Assert.Equal(ApproverStrategy.Group, rule.Strategy);
+        Assert.Equal(2, rule.Members!.Count);
+    }
+
+    [Fact]
+    public async Task Planner_SingleStageNode_WithFieldAndWhen_BuildsRichRule()
+    {
+        using var db = NewDb();
+        var node = new FlowNode
+        {
+            Id = "n1", Type = "approval", ApproverStrategy = "FormField",
+            ApproverFieldName = "approver", ApproverWhen = "amount > 10", ApproverFilter = "user.enable == true",
+        };
+        var plan = await new ApprovalStagePlanner(new ApproverResolver(db))
+            .BuildAsync(new Wf_FlowInstance { StarterId = Guid.NewGuid() }, new FlowSchema(), node);
+        var rule = plan.Single().Rule;
+        Assert.Equal("approver", rule.FieldName);
+        Assert.Equal("amount > 10", rule.When);
+        Assert.Equal("user.enable == true", rule.Filter);
+    }
 }
