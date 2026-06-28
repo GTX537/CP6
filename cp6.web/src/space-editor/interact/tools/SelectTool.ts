@@ -2,6 +2,8 @@
 import Konva from 'konva'
 import type { ITool, ToolContext } from '../InteractionManager'
 import { findRackGroup, isTransformerNode } from '../InteractionManager'
+import { rackCorners } from '../collide/CollisionHint'
+import { obbIntersectsRect, type WorldRect } from '../select/lassoHit'
 
 export class SelectTool implements ITool {
   private ctx: ToolContext
@@ -85,16 +87,23 @@ export class SelectTool implements ITool {
 
     if (selW < 3 && selH < 3) return  // tiny → treat as click, handled by onClick
 
-    // Collect racks within the lasso rect
+    // Collect racks whose true OBB intersects the lasso rect (③ OBB, not AABB)
     const scene = this.ctx.store.scene
     if (!scene) return
 
+    // lasso 屏幕矩形两角 → 世界轴对齐矩形（worldToScreen 无旋转，故世界仍轴对齐）
+    const wA = this.ctx.stage.screenToWorld({ x: selX, y: selY })
+    const wB = this.ctx.stage.screenToWorld({ x: selX + selW, y: selY + selH })
+    const worldRect: WorldRect = {
+      minX: Math.min(wA.x, wB.x),
+      minY: Math.min(wA.y, wB.y),
+      maxX: Math.max(wA.x, wB.x),
+      maxY: Math.max(wA.y, wB.y),
+    }
+
     const selected: string[] = []
     for (const rack of scene.racks) {
-      const node = this.ctx.stage.getRackNode(rack.id)
-      if (!node) continue
-      const bbox = node.getClientRect({ relativeTo: this.ctx.stage.stage })
-      if (this.rectsOverlap(selX, selY, selW, selH, bbox.x, bbox.y, bbox.width, bbox.height)) {
+      if (obbIntersectsRect(rackCorners(rack), worldRect)) {
         selected.push(rack.id)
       }
     }
@@ -154,10 +163,4 @@ export class SelectTool implements ITool {
     this.ctx.stage.layers.rack.batchDraw()
   }
 
-  private rectsOverlap(
-    ax: number, ay: number, aw: number, ah: number,
-    bx: number, by: number, bw: number, bh: number,
-  ): boolean {
-    return !(ax + aw < bx || bx + bw < ax || ay + ah < by || by + bh < ay)
-  }
 }
