@@ -140,6 +140,9 @@ builder.Services.AddScoped<CP6.Core.Services.Oa.IFavoriteService, CP6.Core.Servi
 builder.Services.AddScoped<CP6.Core.Services.Oa.ICatalogService, CP6.Core.Services.Oa.CatalogService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IPrefService, CP6.Core.Services.Oa.PrefService>();
 
+// 4.0f OA 流程设计器（Phase C′）
+builder.Services.AddScoped<CP6.Core.Services.Oa.IDesignerService, CP6.Core.Services.Oa.DesignerService>();
+
 // 4.0.2 财务（Fin）章01 总账内核
 builder.Services.AddScoped<CP6.Core.Services.Fin.IGlAccountService, CP6.Core.Services.Fin.GlAccountService>(); // 章01 §3 会计科目 + 多国别模板包
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinSequenceService, CP6.Core.Services.Fin.FinSequenceService>(); // 章01 §4 凭证采番（GL-yyyy-MM-NNNNN）
