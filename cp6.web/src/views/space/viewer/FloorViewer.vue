@@ -112,6 +112,7 @@ async function loadFloor(floorId: string): Promise<void> {
     await viewer.load(floorId)
     currentFloorId.value = floorId
     viewer.home()
+    void refreshStock()   // 楼层就绪后叠加库存（currentFloorId 已设，避免 onReady 早触发拿空 floorId）
   } catch {
     errorMsg.value = t('加载失败')
     loading.value = false
@@ -185,7 +186,9 @@ function onTogglePoll(): void {
   else overlay?.stopPolling()
 }
 function syncSelectedStock(): void {
-  selectedStock.value = overlay?.getStock(selectedId.value) ?? null
+  // selectedId 是库位 GUID；库存快照按编码键 → 先经 viewer 把 GUID 解析成编码再查
+  const code = selectedId.value ? (viewer?.getLocationCode(selectedId.value) ?? null) : null
+  selectedStock.value = code ? (overlay?.getStock(code) ?? null) : null
 }
 async function onLocateMaterial(material: string): Promise<void> {
   try {
@@ -211,7 +214,6 @@ onMounted(async () => {
   })
   viewer.onReady(() => {
     loading.value = false
-    void refreshStock()
   })
 
   viewer.start()
@@ -221,7 +223,7 @@ onMounted(async () => {
     t,
     () => currentFloorId.value,
     async (floorId) => { await onSwitchFloor(floorId) },
-    (locationId) => { selectedId.value = locationId },
+    (locationId) => { selectedId.value = locationId; syncSelectedStock() },
   )
 
   const initialFloorId = (route.query['floorId'] as string) || ''

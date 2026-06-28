@@ -49,6 +49,7 @@ export class SceneBuilder {
         id: loc.id,
         zoneId: meta?.zoneId ?? '',
         rotationZ: meta?.rotationZ ?? 0,
+        placed: true,   // /scene 仅返已放置库位（SceneDto 契约「仅含 Placed=true」，DTO 不再带 placed 字段）
       }
     })
 
@@ -102,7 +103,7 @@ export class SceneBuilder {
     // Build locationId → locationCode map (non-null codes only)
     const locationCodes = new Map<string, string>()
     for (const loc of scene.locations) {
-      if (loc.placed && loc.locationCode) {
+      if (loc.locationCode) {   // /scene 库位均已放置（见上）；有编码即建 id→code 映射
         locationCodes.set(loc.id, loc.locationCode)
       }
     }

@@ -25,6 +25,7 @@ export class SpaceViewer implements ViewerHandle {
 
   private _buckets: InstancedBuckets | null = null
   private _locationCodes = new Map<string, string>()
+  private _codeToId = new Map<string, string>()
   private _currentFloorId = ''
   private _selectedLocationId: string | null = null
 
@@ -143,6 +144,7 @@ export class SpaceViewer implements ViewerHandle {
       this._buckets = null
     }
     this._locationCodes.clear()
+    this._codeToId.clear()
     while (this._sceneRoot.children.length > 0) {
       const child = this._sceneRoot.children[0]
       if (child) this._sceneRoot.remove(child)
@@ -165,6 +167,8 @@ export class SpaceViewer implements ViewerHandle {
 
     this._buckets = result.buckets
     this._locationCodes = result.locationCodes
+    this._codeToId = new Map()
+    for (const [id, code] of result.locationCodes) this._codeToId.set(code, id)
     this._highlighter.attach(this, this._buckets)
 
     for (const obj of result.objects) {
@@ -251,6 +255,8 @@ export class SpaceViewer implements ViewerHandle {
   // ── New N-4 navigation helpers ────────────────────────────────────────────
 
   getCurrentFloorId(): string { return this._currentFloorId }
+  getLocationCode(locationId: string): string | null { return this._locationCodes.get(locationId) ?? null }
+  getLocationIdByCode(code: string): string | null { return this._codeToId.get(code) ?? null }
 
   /** Fly camera to oblique view of a data-space point (mm, Z-up). */
   flyToData(p: { x: number; y: number; z: number }): void {

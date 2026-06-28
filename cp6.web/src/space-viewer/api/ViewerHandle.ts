@@ -12,6 +12,8 @@ export interface ViewerHandle {
   onReady(cb: () => void): void
   onProgress(cb: (done: number, total: number) => void): void
   getCurrentFloorId(): string
+  getLocationCode(locationId: string): string | null
+  getLocationIdByCode(code: string): string | null
   flyToData(p: { x: number; y: number; z: number }): void
   home(): void
   overview(): void

@@ -30,10 +30,12 @@ export class StockOverlay {
   apply(): void {
     if (this._mode === 'off') return
     for (const [code, d] of this._byCode) {
+      const id = this._viewer.getLocationIdByCode(code)   // 库存按编码键，实例着色按库位 GUID → 先解析
+      if (!id) continue
       const hex = this._mode === 'utilization'
         ? utilizationToHex(locationUtilization(d))
         : binStatusToHex(d.binStatus)
-      this._viewer.setInstanceColor(code, hex)
+      this._viewer.setInstanceColor(id, hex)
     }
     this._viewer.requestRender()
   }
