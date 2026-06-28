@@ -1584,10 +1584,20 @@ using (var scope = app.Services.CreateScope())
     // （原此处有第二处 admin 明文 seed——无 RoleId 的 legacy 残留，且位于 EnsureHashed 之后会落明文；
     //   规范 admin 已在上方 menu seed 块以 RoleId=1 建立并被 EnsureHashed 哈希，故删除该重复块。S 类 T1 review I2）
 
+    // [fresh-deploy fix] Sys_Lang 种子幂等助手：过滤掉 DB 已存在的 LangKey + 批内重复后再插，
+    // 避免全新库首跑时「补充」块与主块的重叠键撞 UX_Sys_Lang_Tenant_Key(2601)。所有词条种子块改走此助手。
+    void SeedLangs(params Sys_Lang[] items)
+    {
+        var existing = db.Sys_Langs.AsNoTracking().Select(l => l.LangKey).ToHashSet();
+        var seen = new HashSet<string>();
+        var toInsert = items.Where(i => !existing.Contains(i.LangKey) && seen.Add(i.LangKey)).ToList();
+        if (toInsert.Count > 0) db.Sys_Langs.AddRange(toInsert);
+    }
+
     // 多语言词条种子数据
     if (!db.Sys_Langs.Any())
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             new Sys_Lang { LangKey = "app.title", ZhCN = "CP6 管理系统", ZhTW = "CP6 管理系統", En = "CP6 Admin", Ja = "CP6 管理システム", Ko = "CP6 관리 시스템" },
             new Sys_Lang { LangKey = "login.title", ZhCN = "CP6 管理系统", ZhTW = "CP6 管理系統", En = "CP6 Admin", Ja = "CP6 管理システム", Ko = "CP6 관리 시스템" },
             new Sys_Lang { LangKey = "login.username", ZhCN = "请输入用户名", ZhTW = "請輸入使用者名稱", En = "Enter username", Ja = "ユーザー名を入力", Ko = "사용자명 입력" },
@@ -1766,7 +1776,7 @@ using (var scope = app.Services.CreateScope())
             .ToList();
         if (toAdd.Count > 0)
         {
-            db.Sys_Langs.AddRange(toAdd);
+            SeedLangs(toAdd.ToArray());
             db.SaveChanges();
         }
 
@@ -1797,7 +1807,7 @@ using (var scope = app.Services.CreateScope())
     // 补充：已有数据库追加导航菜单词条
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.100"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.100", ZhCN = "系统管理", ZhTW = "系統管理", En = "System", Ja = "システム管理", Ko = "시스템 관리" },
             new Sys_Lang { LangKey = "nav.101", ZhCN = "角色管理", ZhTW = "角色管理", En = "Roles", Ja = "役割管理", Ko = "역할 관리" },
             new Sys_Lang { LangKey = "nav.102", ZhCN = "菜单管理", ZhTW = "選單管理", En = "Menus", Ja = "メニュー管理", Ko = "메뉴 관리" },
@@ -1832,7 +1842,7 @@ using (var scope = app.Services.CreateScope())
     // 販売管理 i18n 扩展 Phase 3（PA010/030/100/130/140/150 等）— sentinel: sales.fsc.format
     if (!db.Sys_Langs.Any(l => l.LangKey == "sales.fsc.format"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             // 见积计算书 / 御见积书 ────
             new Sys_Lang { LangKey = "sales.qtn.calcInquiry",   ZhCN = "见积计算书 照会", ZhTW = "見積計算書 照會",  En = "Estimate Calc Inquiry",Ja = "見積計算書 照会", Ko = "견적계산서 조회" },
             new Sys_Lang { LangKey = "sales.qtn.calcEntry",     ZhCN = "见积计算书 登录", ZhTW = "見積計算書 登錄",  En = "Estimate Calc Entry", Ja = "見積計算書 登録",  Ko = "견적계산서 등록" },
@@ -1913,7 +1923,7 @@ using (var scope = app.Services.CreateScope())
     // 販売管理 i18n 扩展（Phase 2 追加 keys）— sentinel: sales.role.customer
     if (!db.Sys_Langs.Any(l => l.LangKey == "sales.role.customer"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             // Step 标题
             new Sys_Lang { LangKey = "sales.step.partsSelect",   ZhCN = "部材选择",     ZhTW = "部材選擇",     En = "Parts Select",       Ja = "部材選択",     Ko = "부재 선택" },
             new Sys_Lang { LangKey = "sales.step.detail",        ZhCN = "明细",         ZhTW = "明細",         En = "Detail",             Ja = "明細",         Ko = "명세" },
@@ -1957,7 +1967,7 @@ using (var scope = app.Services.CreateScope())
     // 补充：已有数据库追加字典相关词条
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.106"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.106", ZhCN = "数据字典", ZhTW = "資料字典", En = "Dictionary", Ja = "データ辞書", Ko = "데이터 사전" },
             new Sys_Lang { LangKey = "dict.typeCode", ZhCN = "类型编码", ZhTW = "類型編碼", En = "Type Code", Ja = "タイプコード", Ko = "유형 코드" },
             new Sys_Lang { LangKey = "dict.typeName", ZhCN = "类型名称", ZhTW = "類型名稱", En = "Type Name", Ja = "タイプ名", Ko = "유형명" },
@@ -1974,7 +1984,7 @@ using (var scope = app.Services.CreateScope())
     // 补充：操作日志相关词条
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.107"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.107", ZhCN = "操作日志", ZhTW = "操作日誌", En = "Operation Log", Ja = "操作ログ", Ko = "작업 로그" },
             new Sys_Lang { LangKey = "operlog.user", ZhCN = "操作人", ZhTW = "操作人", En = "User", Ja = "操作者", Ko = "사용자" },
             new Sys_Lang { LangKey = "operlog.method", ZhCN = "方法", ZhTW = "方法", En = "Method", Ja = "メソッド", Ko = "메서드" },
@@ -1998,7 +2008,7 @@ using (var scope = app.Services.CreateScope())
     }
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.2"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.2", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             new Sys_Lang { LangKey = "dashboard.title", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             new Sys_Lang { LangKey = "dashboard.todayOps", ZhCN = "今日操作", ZhTW = "今日操作", En = "Today Ops", Ja = "本日の操作", Ko = "오늘 작업" },
@@ -2017,7 +2027,7 @@ using (var scope = app.Services.CreateScope())
     // 业务经营总览 仪表盘 i18n（幂等：以 dashboard.todayOrders 为哨兵）
     if (!db.Sys_Langs.Any(l => l.LangKey == "dashboard.todayOrders"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             // ── KPI 卡 ──
             new Sys_Lang { LangKey = "dashboard.overview",        ZhCN = "业务经营总览", ZhTW = "業務經營總覽", En = "Business Overview", Ja = "業務経営総覧", Ko = "비즈니스 개요" },
             new Sys_Lang { LangKey = "dashboard.todayOrders",     ZhCN = "今日受注",   ZhTW = "今日受注",   En = "Today Orders",    Ja = "今日の受注",   Ko = "오늘 수주" },
@@ -2066,7 +2076,7 @@ using (var scope = app.Services.CreateScope())
     // 販売管理 通用 i18n（操作模式 / 按钮 / Section / 错误消息 / 业务术语）
     if (!db.Sys_Langs.Any(l => l.LangKey == "sales.op.register"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             // 操作模式 ────────────────────
             new Sys_Lang { LangKey = "sales.op.register",     ZhCN = "登记",     ZhTW = "登記",     En = "New",          Ja = "登録",       Ko = "등록" },
             new Sys_Lang { LangKey = "sales.op.edit",         ZhCN = "修正",     ZhTW = "修正",     En = "Edit",         Ja = "訂正",       Ko = "수정" },
@@ -2228,7 +2238,7 @@ using (var scope = app.Services.CreateScope())
     // 販売管理菜单 i18n（PA010〜PA150） — 已存在 DB 的补充
     if (!db.Sys_Langs.Any(l => l.LangKey == "nav.200"))
     {
-        db.Sys_Langs.AddRange(
+        SeedLangs(
             new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理(ERP)",      ZhTW = "銷售管理(ERP)",      En = "Sales (ERP)",            Ja = "販売管理(ERP)",           Ko = "판매 관리(ERP)" },
             new Sys_Lang { LangKey = "nav.201", ZhCN = "报价计算单 照会",    ZhTW = "報價計算單 照會",    En = "Estimate Calc Inquiry",  Ja = "見積計算書 照会",         Ko = "견적계산서 조회" },
             new Sys_Lang { LangKey = "nav.202", ZhCN = "报价计算单 登记",    ZhTW = "報價計算單 登記",    En = "Estimate Calc Entry",    Ja = "見積計算書 登録",         Ko = "견적계산서 등록" },
