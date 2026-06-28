@@ -18,8 +18,11 @@ const LOCATION_CODE = process.env['SPACE_LOCATION_CODE'] ?? 'A-01-01-01'
 
 async function openViewer(page: Page, floorId = FLOOR_ID): Promise<void> {
   await page.goto(`/space/viewer/${SITE_ID}?floorId=${floorId}`)
-  // Wait until the loading overlay disappears (viewer ready)
-  await page.waitForSelector('.viewer-loading', { state: 'hidden', timeout: 20000 })
+  // loading 初始为 false(.viewer-loading 由 v-if 控制,初次渲染不在 DOM)→ onMounted 跑 loadFloor 后才 true。
+  // 若直接 waitForSelector(hidden) 会因元素尚未挂载而立即返回,场景其实未加载。
+  // 故先等 loading 出现(若极快未出现则忽略),再等其消失=场景真正就绪。
+  await page.waitForSelector('.viewer-loading', { state: 'visible', timeout: 10000 }).catch(() => {})
+  await page.waitForSelector('.viewer-loading', { state: 'hidden', timeout: 30000 })
 }
 
 test.describe('Space Viewer P1 Closed-Loop', () => {
@@ -78,11 +81,12 @@ test.describe('Space Viewer P1 Closed-Loop', () => {
   test('N3-a: search by exact code → camera flies and info card appears', async ({ page }) => {
     await openViewer(page)
     const searchInput = page.locator('.search-box .el-input__inner')
-    await searchInput.fill(LOCATION_CODE)
+    await searchInput.click()
+    await searchInput.pressSequentially(LOCATION_CODE)
     await searchInput.press('Enter')
-    // flyTo takes ~800 ms; allow up to 3 s for InfoCard
+    // locate = API 往返 + flyTo(~800ms) + InfoCard 渲染;冷/争用栈下放宽到 12s 稳过
     const infoCard = page.locator('.info-card')
-    await expect(infoCard).toBeVisible({ timeout: 3000 })
+    await expect(infoCard).toBeVisible({ timeout: 12000 })
   })
 
   // TC-N3b: Prefix search → candidate dropdown
@@ -90,7 +94,8 @@ test.describe('Space Viewer P1 Closed-Loop', () => {
     await openViewer(page)
     const searchInput = page.locator('.search-box .el-input__inner')
     // Use first 2 chars of the code as prefix
-    await searchInput.fill(LOCATION_CODE.slice(0, 2))
+    await searchInput.click()
+    await searchInput.pressSequentially(LOCATION_CODE.slice(0, 2))
     // Wait for debounce (300 ms) + API response
     await page.waitForTimeout(600)
     // Candidates may appear if seed data exists — soft check
@@ -104,7 +109,8 @@ test.describe('Space Viewer P1 Closed-Loop', () => {
   test('N3-c: click candidate item triggers locate', async ({ page }) => {
     await openViewer(page)
     const searchInput = page.locator('.search-box .el-input__inner')
-    await searchInput.fill(LOCATION_CODE.slice(0, 2))
+    await searchInput.click()
+    await searchInput.pressSequentially(LOCATION_CODE.slice(0, 2))
     await page.waitForTimeout(600)
     const firstCandidate = page.locator('.search-candidate-item').first()
     if (await firstCandidate.isVisible()) {
@@ -144,7 +150,8 @@ test.describe('Space Viewer P1 Closed-Loop', () => {
     await openViewer(page)
     // First locate a location
     const searchInput = page.locator('.search-box .el-input__inner')
-    await searchInput.fill(LOCATION_CODE)
+    await searchInput.click()
+    await searchInput.pressSequentially(LOCATION_CODE)
     await searchInput.press('Enter')
     await page.waitForTimeout(1200)
     // Now click focus
@@ -178,7 +185,8 @@ test.describe('Space Viewer P1 Closed-Loop', () => {
     }
     await openViewer(page)
     const searchInput = page.locator('.search-box .el-input__inner')
-    await searchInput.fill(otherFloorCode)
+    await searchInput.click()
+    await searchInput.pressSequentially(otherFloorCode)
     await searchInput.press('Enter')
     // Cross-floor switch + load + flyTo
     await page.waitForSelector('.viewer-loading', { state: 'hidden', timeout: 20000 })

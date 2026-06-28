@@ -32,8 +32,10 @@ export class Locator {
       return
     }
 
-    // Cross-floor: switch before flying
-    if (result.floorId !== this._getCurrentFloorId()) {
+    // Cross-floor: switch before flying.
+    // GUID 比较须大小写无关:locate API 返回小写 GUID,而 currentFloorId 可能来自 URL 大写,
+    // 否则同层定位会因大小写差异误判为跨层而触发多余的场景重载(e2e N3-a 暴露)。
+    if (result.floorId.toLowerCase() !== this._getCurrentFloorId().toLowerCase()) {
       await this._onFloorSwitch(result.floorId)
     }
 
