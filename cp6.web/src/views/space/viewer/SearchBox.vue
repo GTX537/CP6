@@ -1,8 +1,12 @@
 <template>
   <div class="search-box">
+    <select v-model="mode" class="sb-mode">
+      <option value="code">{{ t('按编码') }}</option>
+      <option value="material">{{ t('按物料') }}</option>
+    </select>
     <el-input
       v-model="query"
-      :placeholder="t('搜索库位编码')"
+      :placeholder="mode === 'code' ? t('搜索库位编码') : t('输入物料号')"
       clearable
       size="small"
       @input="onInput"
@@ -36,15 +40,23 @@ import { Search } from '@element-plus/icons-vue'
 import { locateApi } from '@/api/space/locate'
 import type { LocateResult } from '@/types/space/viewer'
 
-const emit = defineEmits<{ (e: 'locate', code: string): void }>()
+const emit = defineEmits<{
+  (e: 'locate', code: string): void
+  (e: 'locate-material', material: string): void
+}>()
 
 const { t } = useI18n()
+const mode = ref<'code' | 'material'>('code')
 const query = ref('')
 const candidates = ref<LocateResult[]>([])
 let debounceTimer = 0
 
 function onInput(): void {
   clearTimeout(debounceTimer)
+  if (mode.value !== 'code') {
+    candidates.value = []
+    return
+  }
   const q = query.value.trim()
   if (q.length < 2) {
     candidates.value = []
@@ -62,12 +74,13 @@ async function fetchCandidates(prefix: string): Promise<void> {
   }
 }
 
-/** Enter key: treat current input as exact code and locate immediately. */
+/** Enter key: emit 'locate' (code mode) or 'locate-material' (material mode). */
 function onEnter(): void {
   const q = query.value.trim()
   if (!q) return
   candidates.value = []
-  emit('locate', q)
+  if (mode.value === 'code') emit('locate', q)
+  else emit('locate-material', q)
 }
 
 function onBlur(): void {
@@ -93,6 +106,24 @@ function onSelectCandidate(c: LocateResult): void {
 <style scoped>
 .search-box {
   position: relative;
+}
+
+.sb-mode {
+  width: 100%;
+  margin-bottom: 4px;
+  background: rgba(10, 10, 25, 0.88);
+  border: 1px solid rgba(79, 195, 247, 0.3);
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-size: 12px;
+  padding: 2px 6px;
+  cursor: pointer;
+  outline: none;
+}
+
+.sb-mode:hover,
+.sb-mode:focus {
+  border-color: rgba(79, 195, 247, 0.7);
 }
 
 .search-box :deep(.el-input__wrapper) {
