@@ -186,4 +186,37 @@ public class SerialSignTests
         Assert.Equal(FlowInstanceStatus.Suspended, inst.Status);
         Assert.Equal(0, await db.Wf_FlowTasks.CountAsync(t => t.Status == FlowTaskStatus.Pending));
     }
+
+    [Fact]
+    public void Validator_FlagsBadStage_E_WF_011()
+    {
+        var schema = new FlowSchema { Nodes =
+        {
+            new FlowNode { Id="start", Type="start" },
+            new FlowNode { Id="ap", Type="approval", Stages = new()
+            {
+                new ApprovalStage { Kind="managerChain" /* 缺 MaxLevels */, Countersign="all" },
+            }},
+            new FlowNode { Id="end", Type="end" },
+        }, Edges = { new(){From="start",To="ap"}, new(){From="ap",To="end"} } };
+        Assert.Contains("E-WF-011", FlowSchemaValidator.Validate(schema));
+    }
+
+    [Fact]
+    public void Validator_GoodSerialStages_NoStageError()
+    {
+        var schema = new FlowSchema { Nodes =
+        {
+            new FlowNode { Id="start", Type="start" },
+            new FlowNode { Id="ap", Type="approval", Stages = new()
+            {
+                new ApprovalStage { Kind="fixed", ApproverStrategy="Specified", Countersign="all" },
+                new ApprovalStage { Kind="managerChain", MaxLevels=2, Countersign="any" },
+            }},
+            new FlowNode { Id="end", Type="end" },
+        }, Edges = { new(){From="start",To="ap"}, new(){From="ap",To="end"} } };
+        var errs = FlowSchemaValidator.Validate(schema);
+        Assert.DoesNotContain("E-WF-011", errs);
+        Assert.DoesNotContain("E-WF-010", errs);   // 串簽节点不因节点级缺策略误报 E-WF-010
+    }
 }
