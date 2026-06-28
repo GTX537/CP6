@@ -26,6 +26,7 @@ public class ApproverResolver : IApproverResolver
         ApproverStrategy.Starter       => Task.FromResult(ApproverResolveResult.Ok(ctx.StarterUserId)),
         ApproverStrategy.FormField     => FormFieldAsync(rule, ctx),
         ApproverStrategy.DataMap       => DataMapAsync(rule, ctx),
+        ApproverStrategy.Group         => GroupAsync(rule, ctx),
         _ => Task.FromResult(ApproverResolveResult.Unres("未知审批人策略")),
     };
 
@@ -151,5 +152,18 @@ public class ApproverResolver : IApproverResolver
             };
         }
         catch { return null; }
+    }
+
+    /// <summary>①:成员规则各自递归解析 → 去重扁平合并;成员缺位静默不贡献;全空 → Unres。</summary>
+    private async Task<ApproverResolveResult> GroupAsync(ApproverRule rule, ApproverResolveContext ctx)
+    {
+        if (rule.Members is null || rule.Members.Count == 0) return ApproverResolveResult.Unres("JSON 组无成员");
+        var ids = new List<Guid>();
+        foreach (var m in rule.Members)
+        {
+            var r = await ResolveAsync(m, ctx);   // 成员自身 When/Filter 在此生效(T6 后)
+            if (r.Resolved) ids.AddRange(r.ApproverIds);
+        }
+        return ids.Count > 0 ? ApproverResolveResult.Ok(ids.Distinct().ToArray()) : ApproverResolveResult.Unres("JSON 组无任何成员解析出审批人");
     }
 }

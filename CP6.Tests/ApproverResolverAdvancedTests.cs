@@ -108,4 +108,41 @@ public class ApproverResolverAdvancedTests
             new ApproverResolveContext { VarsJson = "{\"costCenter\":\"ZZZ\"}" });
         Assert.False(res.Resolved);
     }
+
+    [Fact]
+    public async Task Group_MergesMembers_Distinct_PartialMissingStillResolves()
+    {
+        using var db = NewDb();
+        var mgr = Guid.NewGuid(); var low = Guid.NewGuid();
+        db.Sys_Users.AddRange(
+            new Sys_User { Id = mgr, UserName = "m", Password = "x", Enable = true },
+            new Sys_User { Id = low, UserName = "l", Password = "x", ManagerId = mgr, Enable = true });
+        await db.SaveChangesAsync();
+
+        var rule = new ApproverRule(ApproverStrategy.Group, null, null, null)
+        {
+            Members = new[]
+            {
+                new ApproverRule(ApproverStrategy.DirectManager, 1, null, null),       // → mgr
+                new ApproverRule(ApproverStrategy.Specified, null, null, mgr),         // → mgr(重复,去重)
+                new ApproverRule(ApproverStrategy.DeptLeader, null, null, null),       // → 无部门,缺位(静默不贡献)
+            }
+        };
+        var res = await new ApproverResolver(db).ResolveAsync(rule,
+            new ApproverResolveContext { StarterUserId = low });
+        Assert.Equal(mgr, res.ApproverIds.Single());   // 合并去重 = {mgr}
+    }
+
+    [Fact]
+    public async Task Group_AllMembersMissing_Unresolved()
+    {
+        using var db = NewDb();
+        var u = Guid.NewGuid();
+        db.Sys_Users.Add(new Sys_User { Id = u, UserName = "u", Password = "x", Enable = true });
+        await db.SaveChangesAsync();
+        var rule = new ApproverRule(ApproverStrategy.Group, null, null, null)
+        { Members = new[] { new ApproverRule(ApproverStrategy.DirectManager, 1, null, null) } };  // u 无主管
+        var res = await new ApproverResolver(db).ResolveAsync(rule, new ApproverResolveContext { StarterUserId = u });
+        Assert.False(res.Resolved);
+    }
 }
