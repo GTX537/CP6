@@ -18,15 +18,18 @@ public partial class FlowEngine : IFlowEngine
     private readonly IWfNotifier _notifier;
     private readonly ApprovalDispatcher _dispatcher;
     private readonly IReadOnlyDictionary<string, INodeHandler> _handlers;
+    private readonly IApprovalStagePlanner _planner;
 
     public FlowEngine(CP6Context db, IApproverResolver approver, IWfNotifier? notifier = null,
-                      ApprovalDispatcher? dispatcher = null, IEnumerable<INodeHandler>? handlers = null)
+                      ApprovalDispatcher? dispatcher = null, IEnumerable<INodeHandler>? handlers = null,
+                      IApprovalStagePlanner? planner = null)
     {
         _db = db;
         _approver = approver;
         _notifier = notifier ?? new NullWfNotifier();   // 无 SignalR 环境/单测 → 空推送
         _dispatcher = dispatcher ?? new ApprovalDispatcher(Array.Empty<IApprovalCallback>());  // 无业务回调（纯 OA/单测）→ 空分发
         _handlers = (handlers ?? DefaultHandlers()).ToDictionary(h => h.Type, StringComparer.OrdinalIgnoreCase);
+        _planner = planner ?? new ApprovalStagePlanner(_approver);   // 测试 Engine(db) 不传 → 内部 new,保 Wf 测绿
     }
 
     // ★ T5：start/approval/end + parallelSplit/parallelJoin 五 handler。

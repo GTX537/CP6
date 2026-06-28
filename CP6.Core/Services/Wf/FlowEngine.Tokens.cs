@@ -9,6 +9,7 @@ public partial class FlowEngine
     internal CP6Context Db => _db;
     internal IApproverResolver Approver => _approver;
     internal IWfNotifier Notifier => _notifier;
+    internal IApprovalStagePlanner Planner => _planner;
 
     /// <summary>生一个 Active token 停在 node。parent/fork 串血缘（根皆 null）。不落盘。</summary>
     internal Wf_FlowToken SpawnToken(Wf_FlowInstance inst, FlowNode node, Guid? parent = null, Guid? fork = null)
