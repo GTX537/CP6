@@ -77,18 +77,22 @@ describe('MoveRackCmd', () => {
 
 // ─── RotateRackCmd ────────────────────────────────────────────────────────────
 describe('RotateRackCmd', () => {
-  it('do 设 rotationZ 到 toDeg', () => {
-    const scene = makeScene([{ id: 'r1', rotationZ: 0 }])
+  it('do 设位姿到 to（x/y/rotationZ 三值齐改）', () => {
+    const scene = makeScene([{ id: 'r1', x: 0, y: 0, rotationZ: 0 }])
     const ctx = makeCtx(scene)
-    new RotateRackCmd('r1', 0, 90).do(ctx)
+    new RotateRackCmd('r1', { x: 0, y: 0, rotationZ: 0 }, { x: 100, y: 50, rotationZ: 90 }).do(ctx)
+    expect(scene.racks[0]!.x).toBe(100)
+    expect(scene.racks[0]!.y).toBe(50)
     expect(scene.racks[0]!.rotationZ).toBe(90)
     expect(ctx.dirtyIds).toContain('r1')
   })
 
-  it('undo 回 fromDeg', () => {
-    const scene = makeScene([{ id: 'r1', rotationZ: 90 }])
+  it('undo 回 from（三值齐还原）', () => {
+    const scene = makeScene([{ id: 'r1', x: 100, y: 50, rotationZ: 90 }])
     const ctx = makeCtx(scene)
-    new RotateRackCmd('r1', 0, 90).undo(ctx)
+    new RotateRackCmd('r1', { x: 0, y: 0, rotationZ: 0 }, { x: 100, y: 50, rotationZ: 90 }).undo(ctx)
+    expect(scene.racks[0]!.x).toBe(0)
+    expect(scene.racks[0]!.y).toBe(0)
     expect(scene.racks[0]!.rotationZ).toBe(0)
   })
 })
