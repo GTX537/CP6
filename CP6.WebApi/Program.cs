@@ -1359,6 +1359,13 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 738 });
         db.SaveChanges();
     }
+    // WFS 审批人解析：审批人映射维护菜单（739）—— 幂等，置于 C′ 738 之后
+    if (!db.Sys_Menus.Any(m => m.MenuId == 739))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 739, MenuName = "approverMap", RoutePath = "/oa/approver-map", Icon = "Edit", ParentId = 740, OrderNo = 739, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 739 });
+        db.SaveChanges();
+    }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
