@@ -15,4 +15,8 @@ public class SignalRWfNotifier : IWfNotifier
 
     public Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey)
         => _hub.Clients.All.SendAsync("WfTodoCreated", new { assigneeId, instanceId, taskId, flowKey });
+
+    // Temporary no-op implementations — replaced by PersistentWfNotifier in N-T4.
+    public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey) => Task.CompletedTask;
+    public Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment) => Task.CompletedTask;
 }
