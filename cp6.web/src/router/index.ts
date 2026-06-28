@@ -36,6 +36,8 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/oa/form-catalog':    () => import('@/views/oa/catalog/FormCatalog.vue'),      // OA Phase C T16 填單目录（菜单735）
   '/oa/form-search':     () => import('@/views/oa/query/FormQuery.vue'),          // OA Phase C T16 表單查詢（菜单736）
   '/oa/settings':        () => import('@/views/oa/settings/InboxSettings.vue'),  // OA Phase C T16 設定（菜单737）
+  // ───── OA Phase C′：流程设计器（菜单 738）─────
+  '/oa/designer':        () => import('@/views/oa/designer/DesignerView.vue'),   // OA Phase C′ T10 流程设计器（菜单738）
   // ───── OA Phase C：起草发起（子页，非菜单，始终挂载）─────
   '/oa/form-initiate':   () => import('@/views/oa/catalog/FormInitiate.vue'),     // OA Phase C T13 起草发起
   // ───── OA 审批工作流 (Wf) — 旧设计器保留，旧待办/申请已迁移至 /oa/inbox ─────

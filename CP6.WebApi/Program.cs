@@ -1348,6 +1348,13 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 737 });
         db.SaveChanges();
     }
+    // OA Phase C′ 菜单（738 流程设计器）—— 幂等，置于 Phase C 737 之后
+    if (!db.Sys_Menus.Any(m => m.MenuId == 738))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 738, MenuName = "流程设计器", RoutePath = "/oa/designer", Icon = "Edit", ParentId = 740, OrderNo = 738, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 738 });
+        db.SaveChanges();
+    }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
@@ -1753,6 +1760,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nTenantComplianceSeed.Items) // S 类 #5 多租户合规 E-SEC-031~038 + 事件 19~30 + platform.* 画面词条（带外平台区）
             .Concat(CP6.WebApi.Seed.I18nOaInboxScreenSeed.Items)   // OA Phase B 电子表单信箱 oa.*/E-WF-001~008/nav.733/734/740
             .Concat(CP6.WebApi.Seed.I18nOaAdvancedScreenSeed.Items) // OA Phase C 填單/查詢/設定/轉交 oa.catalog.*/oa.initiate.*/oa.settings.*/oa.transfer.*/nav.735/736/737
+            .Concat(CP6.WebApi.Seed.I18nOaDesignerScreenSeed.Items) // OA Phase C′ 流程设计器 oa.designer.*/nav.738
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
