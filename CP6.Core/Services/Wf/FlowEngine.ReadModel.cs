@@ -25,9 +25,10 @@ public partial class FlowEngine
     /// <summary>
     /// 送签：approval 节点为每个应处理人建一行 Pending 传签履历。
     /// 同一关卡多审批人（会签）共享同一 stepSeq（调用方在 foreach 外算好传入）。
+    /// 串簽多档路径可选传 stageIndex/stageRound；单档/旧路径不传（默认 null），行为零变化。
     /// </summary>
     internal void WriteFormToOnSend(Wf_FlowInstance inst, FlowNode node, Wf_FlowToken token,
-        Guid expectedHandler, Guid? onBehalfOf, int stepSeq)
+        Guid expectedHandler, Guid? onBehalfOf, int stepSeq, int? stageIndex = null, int? stageRound = null)
     {
         _db.Wf_FlowFormTos.Add(new Wf_FlowFormTo
         {
@@ -42,7 +43,22 @@ public partial class FlowEngine
             OnBehalfOfId = onBehalfOf,
             Status = FlowFormToStatus.Pending,
             SentAt = DateTime.Now,
+            StageIndex = stageIndex,
+            StageRound = stageRound,
         });
+    }
+
+    /// <summary>本 token·node·stage 的下一个 StageRound = 既存最大轮 +1(无 → 0)。前进档天然 0,prevStage 退回天然 +1。
+    /// 仿 NextStepSeq 的 Local+DB 取 Max 模式,杜绝同回合未落盘行漏算。</summary>
+    internal int NextStageRound(Guid instanceId, string nodeId, Guid tokenId, int stageIndex)
+    {
+        int localMax = _db.Wf_FlowTasks.Local
+            .Where(t => t.InstanceId == instanceId && t.NodeId == nodeId && t.TokenId == tokenId && t.StageIndex == stageIndex)
+            .Select(t => (int?)t.StageRound).Max() ?? -1;
+        int dbMax = _db.Wf_FlowTasks
+            .Where(t => t.InstanceId == instanceId && t.NodeId == nodeId && t.TokenId == tokenId && t.StageIndex == stageIndex)
+            .Select(t => (int?)t.StageRound).Max() ?? -1;
+        return Math.Max(localMax, dbMax) + 1;
     }
 
     /// <summary>
