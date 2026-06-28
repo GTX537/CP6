@@ -67,7 +67,36 @@ public class WmsStockQuery : IWmsStockQuery
         return result;
     }
 
-    public Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
+    public async Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
         StockLocateQuery query, CancellationToken ct = default)
-        => throw new NotImplementedException();   // Task 3
+    {
+        var hasMat = !string.IsNullOrWhiteSpace(query.MaterialNo);
+        var hasLot = !string.IsNullOrWhiteSpace(query.Lot);
+        var hasCon = !string.IsNullOrWhiteSpace(query.Container);
+        if (!hasMat && !hasLot && !hasCon) return Array.Empty<WmsLocationHit>();
+
+        // 容器：经 Pallet 反查库位
+        if (hasCon)
+        {
+            return await _db.Pallets
+                .Where(p => p.PalletNo == query.Container && p.LocationCd != null)
+                .GroupBy(p => p.LocationCd!)
+                .Select(g => new WmsLocationHit { LocationCode = g.Key, Qty = 0m, Lot = null })
+                .ToListAsync(ct);
+        }
+
+        // 物料/批次：经 Stock 反查
+        var q = _db.Stocks.Where(s => s.PhysicalQty > 0);
+        if (hasMat) q = q.Where(s => s.ProductCd == query.MaterialNo);
+        if (hasLot) q = q.Where(s => s.LotNo == query.Lot);
+        return await q
+            .GroupBy(s => s.LocationCd)
+            .Select(g => new WmsLocationHit
+            {
+                LocationCode = g.Key,
+                Qty = g.Sum(x => x.PhysicalQty),
+                Lot = hasLot ? query.Lot : null,
+            })
+            .ToListAsync(ct);
+    }
 }

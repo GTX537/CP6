@@ -126,4 +126,55 @@ public class WmsStockQueryTests
         var r = await Stock(db).GetStockByLocationsAsync(new[] { "GHOST" });
         Assert.Empty(r);
     }
+
+    [Fact]
+    public async Task FindLocations_ByMaterial_ReturnsHitsWithQty()
+    {
+        using var db = NewDb();
+        db.Stocks.Add(new Stock { WarehouseCd = "W1", LocationCd = "A-01", ProductCd = "PX", LotNo = "L1",
+            PhysicalQty = 3m, QcStatus = StockQcStatus.Pending });
+        db.Stocks.Add(new Stock { WarehouseCd = "W1", LocationCd = "A-02", ProductCd = "PX", LotNo = "L2",
+            PhysicalQty = 5m, QcStatus = StockQcStatus.Pending });
+        db.Stocks.Add(new Stock { WarehouseCd = "W1", LocationCd = "A-03", ProductCd = "PY", LotNo = "",
+            PhysicalQty = 9m, QcStatus = StockQcStatus.Pending });
+        await db.SaveChangesAsync();
+
+        var hits = await Stock(db).FindLocationsAsync(new StockLocateQuery { MaterialNo = "PX" });
+        Assert.Equal(2, hits.Count);
+        Assert.Contains(hits, h => h.LocationCode == "A-01" && h.Qty == 3m);
+        Assert.Contains(hits, h => h.LocationCode == "A-02" && h.Qty == 5m);
+    }
+
+    [Fact]
+    public async Task FindLocations_ByMaterialAndLot_Filters()
+    {
+        using var db = NewDb();
+        db.Stocks.Add(new Stock { WarehouseCd = "W1", LocationCd = "A-01", ProductCd = "PX", LotNo = "L1",
+            PhysicalQty = 3m, QcStatus = StockQcStatus.Pending });
+        db.Stocks.Add(new Stock { WarehouseCd = "W1", LocationCd = "A-02", ProductCd = "PX", LotNo = "L2",
+            PhysicalQty = 5m, QcStatus = StockQcStatus.Pending });
+        await db.SaveChangesAsync();
+
+        var hits = await Stock(db).FindLocationsAsync(new StockLocateQuery { MaterialNo = "PX", Lot = "L2" });
+        var h = Assert.Single(hits);
+        Assert.Equal("A-02", h.LocationCode);
+    }
+
+    [Fact]
+    public async Task FindLocations_ByContainer_UsesPallet()
+    {
+        using var db = NewDb();
+        db.Pallets.Add(new Pallet { PalletNo = "PLT-1", LocationCd = "A-09", ProductCd = "PZ", LotNo = "L1" });
+        await db.SaveChangesAsync();
+
+        var hits = await Stock(db).FindLocationsAsync(new StockLocateQuery { Container = "PLT-1" });
+        Assert.Equal("A-09", Assert.Single(hits).LocationCode);
+    }
+
+    [Fact]
+    public async Task FindLocations_AllEmpty_ReturnsEmpty()
+    {
+        using var db = NewDb();
+        Assert.Empty(await Stock(db).FindLocationsAsync(new StockLocateQuery()));
+    }
 }
