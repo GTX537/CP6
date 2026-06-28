@@ -109,7 +109,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelSplitNodeHandler>(); // WFS T5 节点处理器：并行分叉
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelJoinNodeHandler>();  // WFS T5 节点处理器：并行汇聚
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
-builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.SignalRWfNotifier>();        // 章04 待办 SignalR 推送（注入给 FlowEngine）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
 // 4.0b OA(Wf) 阶段2 集成（章05 ★）：业务接入 OA 的同步回调
@@ -139,6 +139,7 @@ builder.Services.AddScoped<CP6.Core.Services.Oa.IDelegateService, CP6.Core.Servi
 builder.Services.AddScoped<CP6.Core.Services.Oa.IFavoriteService, CP6.Core.Services.Oa.FavoriteService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ICatalogService, CP6.Core.Services.Oa.CatalogService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IPrefService, CP6.Core.Services.Oa.PrefService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.INotificationService, CP6.Core.Services.Oa.NotificationService>(); // Phase D-1 N-T2 站内通知服务（PersistentWfNotifier + NotificationController 依赖）
 
 // 4.0f OA 流程设计器（Phase C′）
 builder.Services.AddScoped<CP6.Core.Services.Oa.IDesignerService, CP6.Core.Services.Oa.DesignerService>();
