@@ -237,8 +237,14 @@ public class LocationPublishServiceTests
 
     private sealed class FixedStockQuery : IWmsStockQuery
     {
-        private readonly int _qty;
+        private readonly decimal _qty;
         public FixedStockQuery(int qty) => _qty = qty;
-        public Task<int> GetStockQtyAsync(string locationCode) => Task.FromResult(_qty);
+        public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default) => Task.FromResult(_qty);
+        public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>> GetStockByLocationsAsync(
+            IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>>(Array.Empty<CP6.Core.Services.Integration.WmsStockDto>());
+        public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>> FindLocationsAsync(
+            CP6.Core.Services.Integration.StockLocateQuery query, CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>>(Array.Empty<CP6.Core.Services.Integration.WmsLocationHit>());
     }
 }
