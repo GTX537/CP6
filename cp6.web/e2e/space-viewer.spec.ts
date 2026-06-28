@@ -1,41 +1,23 @@
 /**
- * Space Viewer P1 Closed-Loop E2E Test
+ * Space Viewer P1 Closed-Loop E2E (05 渲染 / 06 定位)
  *
- * P1 Closed-Loop validates: 00 建模 → 03 编码 → 04 发布 → 05 渲染 → 06 定位
+ * 整合进既有 Playwright 框架:由 playwright.config.ts 的 chromium project 收录,
+ * 鉴权复用 e2e/auth.setup.ts 的 storageState(admin 已登录),无需本文件自行登录。
  *
- * Prerequisites for running:
- *   1. Backend running at http://localhost:5000 (configured via vite proxy or PLAYWRIGHT_BASE_URL).
- *   2. Frontend dev server: `npm run dev` (http://localhost:5173 by default).
- *   3. Database seeded:
- *      - At least one Site (Space_Sites row) with id matching SPACE_SITE_ID.
- *      - At least one Floor (Space_Floors row) with id matching SPACE_FLOOR_ID.
- *      - At least one placed Location with LocationCode matching SPACE_LOCATION_CODE
- *        and non-zero AbsX/Y/Z coordinates.
- *      - The scene published (FloorPublish or equivalent) so GET /space/floor/:id/scene
- *        returns data with locations.
- *   4. Auth: a valid session cookie (cp6_at) — log in via /login before running, or set
- *      PLAYWRIGHT_STORAGE_STATE to a saved auth state file.
- *   5. Install Playwright: `npm i -D @playwright/test && npx playwright install chromium`
- *   6. Run: `npx playwright test tests/space-viewer.e2e.ts --headed`
- *
- * Environment variables (override defaults):
- *   SPACE_SITE_ID          — Site UUID  (default: 'test-site-id')
- *   SPACE_FLOOR_ID         — Floor UUID (default: 'test-floor-id')
- *   SPACE_LOCATION_CODE    — location code for locate test (default: 'A-01-01-01')
- *   PLAYWRIGHT_BASE_URL    — frontend origin (default: 'http://localhost:5173')
+ * 前提(同既有 e2e):前端 5173 + 后端 5177(→ CP6DB_SpaceQA)已运行。
+ * 默认 IDs 指向 QA 演示数据,可经 env 覆盖:
+ *   SPACE_SITE_ID / SPACE_FLOOR_ID / SPACE_LOCATION_CODE / SPACE_OTHER_FLOOR_CODE
+ * 运行:npx playwright test e2e/space-viewer.spec.ts --project=chromium
  */
 
 import { test, expect, type Page } from '@playwright/test'
 
-const SITE_ID = process.env['SPACE_SITE_ID'] ?? 'test-site-id'
-const FLOOR_ID = process.env['SPACE_FLOOR_ID'] ?? 'test-floor-id'
+const SITE_ID = process.env['SPACE_SITE_ID'] ?? 'F31F48C2-81D5-4BA7-AFF1-83DA8D87C2FE'
+const FLOOR_ID = process.env['SPACE_FLOOR_ID'] ?? '5C92E6A8-C4C8-4D91-9DDC-EA9C54B6961F'
 const LOCATION_CODE = process.env['SPACE_LOCATION_CODE'] ?? 'A-01-01-01'
-const BASE_URL = process.env['PLAYWRIGHT_BASE_URL'] ?? 'http://localhost:5173'
-
-const VIEWER_URL = `${BASE_URL}/space/viewer/${SITE_ID}?floorId=${FLOOR_ID}`
 
 async function openViewer(page: Page, floorId = FLOOR_ID): Promise<void> {
-  await page.goto(`${BASE_URL}/space/viewer/${SITE_ID}?floorId=${floorId}`)
+  await page.goto(`/space/viewer/${SITE_ID}?floorId=${floorId}`)
   // Wait until the loading overlay disappears (viewer ready)
   await page.waitForSelector('.viewer-loading', { state: 'hidden', timeout: 20000 })
 }
@@ -213,7 +195,7 @@ test.describe('Manual inspection (skip in CI)', () => {
   )
 
   test('open viewer for manual inspection', async ({ page }) => {
-    await page.goto(VIEWER_URL)
+    await page.goto(`/space/viewer/${SITE_ID}?floorId=${FLOOR_ID}`)
     // Keep open for manual review — use --headed flag
     await page.waitForTimeout(60000)
   })
