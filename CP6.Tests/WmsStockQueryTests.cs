@@ -177,4 +177,24 @@ public class WmsStockQueryTests
         using var db = NewDb();
         Assert.Empty(await Stock(db).FindLocationsAsync(new StockLocateQuery()));
     }
+
+    [Fact]
+    public async Task GetStockByLocations_TenantIsolated()
+    {
+        var dbName = Guid.NewGuid().ToString();
+        var optsA = new DbContextOptionsBuilder<CP6Context>().UseInMemoryDatabase(dbName).Options;
+        var t2 = new CP6.Core.Services.Common.TenantContext { CurrentTenantId = Guid.NewGuid() };
+
+        // 租户2 播一条
+        using (var db2 = new CP6Context(optsA, t2))
+        {
+            db2.Stocks.Add(new Stock { WarehouseCd = "W1", LocationCd = "A-01", ProductCd = "P1", LotNo = "",
+                PhysicalQty = 5m, QcStatus = StockQcStatus.Pending });
+            db2.Locations.Add(new Location { LocationCd = "A-01", WarehouseCd = "W1" });
+            await db2.SaveChangesAsync();
+        }
+        // 默认租户查 → 看不到租户2 的数据
+        using var dbDefault = new CP6Context(optsA);
+        Assert.Empty(await new WmsStockQuery(dbDefault).GetStockByLocationsAsync(new[] { "A-01" }));
+    }
 }
