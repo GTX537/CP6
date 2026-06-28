@@ -1,6 +1,7 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Sys;
+using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -76,5 +77,35 @@ public class ApproverResolverAdvancedTests
             new ApproverRule(ApproverStrategy.FormField, null, null, null) { FieldName = "approver" },
             new ApproverResolveContext { VarsJson = "{\"approver\":\"not-a-guid\"}" });
         Assert.False(res2.Resolved);
+    }
+
+    [Fact]
+    public async Task DataMap_MatchValue_ResolvesUserAndExpandsRole()
+    {
+        using var db = NewDb();
+        var user = Guid.NewGuid(); var roleUser = Guid.NewGuid();
+        db.Sys_Users.AddRange(
+            new Sys_User { Id = user, UserName = "u", Password = "x", Enable = true },
+            new Sys_User { Id = roleUser, UserName = "r", Password = "x", RoleId = 9, Enable = true });
+        db.Wf_ApproverMaps.AddRange(
+            new Wf_ApproverMap { Id = Guid.NewGuid(), MapKey = "cc", MatchValue = "A100", ApproverUserId = user, Enable = true },
+            new Wf_ApproverMap { Id = Guid.NewGuid(), MapKey = "cc", MatchValue = "A100", ApproverRoleId = 9, Enable = true });
+        await db.SaveChangesAsync();
+
+        var res = await new ApproverResolver(db).ResolveAsync(
+            new ApproverRule(ApproverStrategy.DataMap, null, null, null) { MapKey = "cc", FieldName = "costCenter" },
+            new ApproverResolveContext { VarsJson = "{\"costCenter\":\"A100\"}" });
+        Assert.Contains(user, res.ApproverIds);
+        Assert.Contains(roleUser, res.ApproverIds);
+    }
+
+    [Fact]
+    public async Task DataMap_NoMatch_Unresolved()
+    {
+        using var db = NewDb();
+        var res = await new ApproverResolver(db).ResolveAsync(
+            new ApproverRule(ApproverStrategy.DataMap, null, null, null) { MapKey = "cc", FieldName = "costCenter" },
+            new ApproverResolveContext { VarsJson = "{\"costCenter\":\"ZZZ\"}" });
+        Assert.False(res.Resolved);
     }
 }

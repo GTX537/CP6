@@ -25,6 +25,7 @@ public class ApproverResolver : IApproverResolver
                                             : ApproverResolveResult.Unres("未指定审批人")),
         ApproverStrategy.Starter       => Task.FromResult(ApproverResolveResult.Ok(ctx.StarterUserId)),
         ApproverStrategy.FormField     => FormFieldAsync(rule, ctx),
+        ApproverStrategy.DataMap       => DataMapAsync(rule, ctx),
         _ => Task.FromResult(ApproverResolveResult.Unres("未知审批人策略")),
     };
 
@@ -106,5 +107,49 @@ public class ApproverResolver : IApproverResolver
         }
         catch { /* 解析失败 → 空 */ }
         return result;
+    }
+
+    /// <summary>②b:取 FieldName 标量值 → 查 Wf_ApproverMap(MapKey+MatchValue+Enable);收用户 + 展开角色。</summary>
+    private async Task<ApproverResolveResult> DataMapAsync(ApproverRule rule, ApproverResolveContext ctx)
+    {
+        if (string.IsNullOrWhiteSpace(rule.MapKey) || string.IsNullOrWhiteSpace(rule.FieldName))
+            return ApproverResolveResult.Unres("未配置映射键或匹配字段");
+        var matchValue = ReadScalarString(ctx.VarsJson, rule.FieldName);
+        if (matchValue is null) return ApproverResolveResult.Unres("表单匹配字段为空");
+
+        var rows = await _db.Wf_ApproverMaps
+            .Where(m => m.MapKey == rule.MapKey && m.MatchValue == matchValue && m.Enable).ToListAsync();
+        if (rows.Count == 0) return ApproverResolveResult.Unres($"映射 {rule.MapKey}/{matchValue} 无审批人");
+
+        var ids = new List<Guid>();
+        ids.AddRange(rows.Where(r => r.ApproverUserId is Guid).Select(r => r.ApproverUserId!.Value));
+        foreach (var rid in rows.Where(r => r.ApproverRoleId is int).Select(r => r.ApproverRoleId!.Value).Distinct())
+        {
+            var roleRes = await RoleAsync(new ApproverRule(ApproverStrategy.Role, null, rid, null));
+            if (roleRes.Resolved) ids.AddRange(roleRes.ApproverIds);
+        }
+        var valid = await _db.Sys_Users.Where(u => ids.Contains(u.Id) && u.Enable).Select(u => u.Id).ToListAsync();
+        return valid.Count > 0 ? ApproverResolveResult.Ok(valid.Distinct().ToArray()) : ApproverResolveResult.Unres("映射审批人无效或停用");
+    }
+
+    /// <summary>从 VarsJson 读字段标量值的字符串形式(数字/字符串/布尔);数组/对象/缺失→null。</summary>
+    private static string? ReadScalarString(string? varsJson, string fieldName)
+    {
+        if (string.IsNullOrWhiteSpace(varsJson)) return null;
+        try
+        {
+            using var doc = JsonDocument.Parse(varsJson);
+            if (doc.RootElement.ValueKind != JsonValueKind.Object) return null;
+            if (!doc.RootElement.TryGetProperty(fieldName, out var el)) return null;
+            return el.ValueKind switch
+            {
+                JsonValueKind.String => el.GetString(),
+                JsonValueKind.Number => el.GetRawText(),
+                JsonValueKind.True => "true",
+                JsonValueKind.False => "false",
+                _ => null,
+            };
+        }
+        catch { return null; }
     }
 }
