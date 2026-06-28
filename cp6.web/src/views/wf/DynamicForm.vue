@@ -60,6 +60,19 @@
         :disabled="readonly(f)"
         style="width: 100%"
       />
+      <el-select
+        v-else-if="f.type === 'user'"
+        v-model="model[f.name]"
+        :multiple="!!f.multiple"
+        filterable remote
+        :remote-method="(kw: string) => searchUsers(f.name, kw)"
+        :disabled="readonly(f)"
+        :placeholder="f.placeholder"
+        clearable
+        style="width: 100%"
+      >
+        <el-option v-for="o in (userOpts[f.name] ?? [])" :key="o.value" :label="o.label" :value="o.value" />
+      </el-select>
       <el-input v-else v-model="model[f.name]" :disabled="readonly(f)" :placeholder="f.placeholder" clearable />
     </el-form-item>
   </el-form>
@@ -71,6 +84,7 @@ import { useI18n } from 'vue-i18n'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { FormSchema, FormFieldDef, FieldMask } from '@/types/wf/wf'
 import { applyRules, type FieldEffect } from './ruleEngine'
+import { userApi } from '@/api/sys/user'
 
 const { t } = useI18n()
 
@@ -83,6 +97,14 @@ const props = defineProps<{ schema: FormSchema; mask?: FieldMask }>()
 const model = defineModel<Record<string, any>>({ default: () => ({}) })
 
 const formRef = ref<FormInstance>()
+
+// user 字段远程搜索选项（按字段名分组）
+const userOpts = ref<Record<string, { label: string; value: string }[]>>({})
+async function searchUsers(field: string, kw: string) {
+  if (!kw) { userOpts.value[field] = []; return }
+  const res = await userApi.getList({ page: 1, pageSize: 20, keyword: kw }) as any
+  userOpts.value[field] = (res.rows ?? []).map((u: any) => ({ label: u.nickName || u.userName, value: String(u.id) }))
+}
 
 // 规则生效效果（逐字段 visible/required/disabled/options）。watch(model) 单轮前向重算，
 // compute 写回 model；稳定 compute 下 Vue 同值不再触发 → 收敛（循环依赖一轮不级联）。
@@ -107,7 +129,7 @@ function readonly(f: FormFieldDef): boolean {
   return props.mask?.[f.name] === 'readonly' || eff(f.name)?.disabled === true // 更严赢
 }
 function isText(f: FormFieldDef): boolean {
-  return ['input', 'user', 'dept'].includes(f.type)
+  return ['input', 'dept'].includes(f.type)
 }
 function optionsOf(f: FormFieldDef): { label: string; value: string | number }[] {
   return eff(f.name)?.options ?? f.options ?? [] // 规则 setOptions 优先（联动）

@@ -12,6 +12,8 @@ export interface FormFieldDef {
   placeholder?: string
   /** select/radio/checkbox 选项 */
   options?: { label: string; value: string | number }[]
+  /** user 字段：是否多选（存逗号分隔 GUID 或数组） */
+  multiple?: boolean
 }
 
 /** 规则动作类型（章06 §4）：显隐/必填/禁用(前端)/联动选项(前端)/计算回写 */
