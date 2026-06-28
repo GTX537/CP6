@@ -277,18 +277,27 @@ function exclusiveTo(d: string): string {
   return dt.toISOString().slice(0, 10)
 }
 
+let prevOverlayMode: OverlayMode = 'status'   // 热图开启前的 07 着色模式，关闭时还原
+
 async function onToggleWorkload(): Promise<void> {
   if (!heatmap || !viewer) return
   workloadOn.value = !workloadOn.value
   if (workloadOn.value) {
-    overlayMode.value = 'off'            // 与 07 着色互斥
+    // 与 07 着色互斥：记住当前模式、把 StockOverlay 实际 _mode 也置 off（否则 07 轮询计时器
+    // 每 5s 仍 apply 把库存色覆盖到热图上），并停掉 07 自动刷新。
+    prevOverlayMode = overlayMode.value
+    overlayMode.value = 'off'
+    overlay?.setMode('off')
+    if (polling.value) { overlay?.stopPolling(); polling.value = false }
     await viewer.load(currentFloorId.value)  // 复位为默认灰（不重叠 07 着色）
     heatmap.setEnabled(true)
     await heatmap.refresh(currentFloorId.value, workloadWin.from, exclusiveTo(workloadWin.to))
     ElMessage.info(t('作业热图（时间窗 {f}~{t}）已加载').replace('{f}', workloadWin.from).replace('{t}', workloadWin.to)) // I-SPACE-802
   } else {
     heatmap.setEnabled(false)
-    await loadFloor(currentFloorId.value)  // 复位 + 还原 07 库存着色
+    overlayMode.value = prevOverlayMode      // 还原热图开启前的 07 着色模式
+    overlay?.setMode(prevOverlayMode)
+    await loadFloor(currentFloorId.value)    // 复位 + 按还原后的模式重涂 07 库存着色
   }
 }
 
