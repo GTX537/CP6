@@ -8,6 +8,7 @@
         :key="f.id"
         class="floor-list__item"
         :class="{ 'floor-list__item--active': f.id === currentFloorId }"
+        :data-floor-id="f.id"
         @click="onFloorClick(f.id)"
       >
         <span class="floor-list__level">F{{ f.level }}</span>
