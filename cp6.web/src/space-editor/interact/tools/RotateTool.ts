@@ -89,7 +89,7 @@ export class RotateTool implements ITool {
 
     const rawZ = this.normalize(-node.rotation())
     const toZ = this.normalize(this.ctx.ctrlHeld() ? rawZ : snapAngle(rawZ))
-    const anchor = rotateAboutCenter({ ...this.fromRack, rotationZ: this.fromRack.rotationZ }, toZ)
+    const anchor = rotateAboutCenter(this.fromRack, toZ)
     const to: RackPose = { x: anchor.x, y: anchor.y, rotationZ: toZ }
 
     const id = this.fromRack.id

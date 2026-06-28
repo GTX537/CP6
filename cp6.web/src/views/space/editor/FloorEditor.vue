@@ -298,6 +298,7 @@ function onPlacementMove(): void {
 }
 
 function bindPlacementGhost(): void {
+  stageRef?.stage.off('mousemove.place')  // idempotent: avoid double-register on re-select
   stageRef?.stage.on('mousemove.place', onPlacementMove)
 }
 
