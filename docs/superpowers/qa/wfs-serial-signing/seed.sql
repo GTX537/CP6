@@ -104,8 +104,8 @@ UPDATE Sys_Users SET ManagerId = NULL     WHERE Id = @u_mgr2;   -- chain top
 
 -- ── 3. FormDef: serial-demo-form ──────────────────────────────────────────
 
-IF NOT EXISTS (SELECT 1 FROM Wf_FormDefs WHERE FormKey = 'serial-demo-form')
-  INSERT INTO Wf_FormDefs (Id, FormKey, FormName, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
+IF NOT EXISTS (SELECT 1 FROM Wf_FormDef WHERE FormKey = 'serial-demo-form')
+  INSERT INTO Wf_FormDef (Id, FormKey, FormName, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (
     'BBBB0000-0000-0000-0000-0000000000F1',
     'serial-demo-form',
@@ -139,8 +139,8 @@ IF NOT EXISTS (SELECT 1 FROM Wf_FormDefs WHERE FormKey = 'serial-demo-form')
 -- SET QUOTED_IDENTIFIER ON (at top) is required for this INSERT because
 -- Wf_FlowDefs has a filtered unique index on (FlowKey) WHERE Enable=1.
 
-IF NOT EXISTS (SELECT 1 FROM Wf_FlowDefs WHERE FlowKey = 'serial-demo')
-  INSERT INTO Wf_FlowDefs (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
+IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'serial-demo')
+  INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (
     'BBBB0000-0000-0000-0000-0000000000F2',
     'serial-demo',
@@ -164,9 +164,9 @@ SELECT 'qa_s_gm',                        CONVERT(varchar(36), Id)        FROM Sy
 UNION ALL
 SELECT 'qa_s_newmgr',                    CONVERT(varchar(36), Id)        FROM Sys_Users  WHERE UserName = 'qa_s_newmgr'
 UNION ALL
-SELECT 'serial-demo-form (FormDef)',      FormKey                          FROM Wf_FormDefs WHERE FormKey = 'serial-demo-form'
+SELECT 'serial-demo-form (FormDef)',      FormKey                          FROM Wf_FormDef WHERE FormKey = 'serial-demo-form'
 UNION ALL
-SELECT 'serial-demo (FlowDef)',           FlowKey                          FROM Wf_FlowDefs WHERE FlowKey = 'serial-demo';
+SELECT 'serial-demo (FlowDef)',           FlowKey                          FROM Wf_FlowDef WHERE FlowKey = 'serial-demo';
 
 -- Verify manager chain wiring:
 SELECT
