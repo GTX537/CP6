@@ -101,6 +101,7 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IDeptService, CP6.Core.Services
 
 // 4.0a OA(Wf) 阶段1 运行时
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverResolver, CP6.Core.Services.Wf.ApproverResolver>(); // 章01 审批人解析（消费 PUB 组织）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalStagePlanner, CP6.Core.Services.Wf.ApprovalStagePlanner>(); // 串簽 T2 档展平服务
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine, CP6.Core.Services.Wf.FlowEngine>();             // 章03 流程引擎状态机（会签/条件/幂等）
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.StartNodeHandler>();      // WFS T4 节点处理器：开始
@@ -1795,6 +1796,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaAdvancedScreenSeed.Items) // OA Phase C 填單/查詢/設定/轉交 oa.catalog.*/oa.initiate.*/oa.settings.*/oa.transfer.*/nav.735/736/737
             .Concat(CP6.WebApi.Seed.I18nOaDesignerScreenSeed.Items) // OA Phase C′ 流程设计器 oa.designer.*/nav.738
             .Concat(CP6.WebApi.Seed.I18nOaNotifyScreenSeed.Items)  // OA Phase D-1 通知中心 oa.notify.*/oa.notify.settings.*
+            .Concat(CP6.WebApi.Seed.I18nOaSerialSignScreenSeed.Items)  // WFS 串簽 退回选择器 oa.detail.sendback.* + oa.sendback.* + oa.timeline.sentBack + 设计器档位 oa.designer.stage.* + E-WF-011/012/013
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();

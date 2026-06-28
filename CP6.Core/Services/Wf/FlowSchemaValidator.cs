@@ -22,9 +22,26 @@ public static class FlowSchemaValidator
         foreach (var e in schema.Edges)
             if (!ids.Contains(e.From) || !ids.Contains(e.To)) { errs.Add("E-WF-010"); break; }
 
-        // ⑤ approval 须有合法策略
-        foreach (var n in schema.Nodes.Where(n => T(n) == "approval"))
+        // ⑤ approval 须有合法策略（仅单档节点；串簽节点由⑦单独校验）
+        foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && (n.Stages is null || n.Stages.Count == 0)))
             if (n.ApproverStrategy is null || !KnownStrategies.Contains(n.ApproverStrategy)) { errs.Add("E-WF-010"); break; }
+
+        // ⑦ 串簽档配置(E-WF-011):有 Stages 时每档合法
+        foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && n.Stages is { Count: > 0 }))
+        {
+            bool bad = false;
+            foreach (var st in n.Stages!)
+            {
+                var kind = (st.Kind ?? "fixed").Trim().ToLowerInvariant();
+                bool ruleOk = kind == "managerchain"
+                    ? st.MaxLevels is int ml && ml >= 1
+                    : st.ApproverStrategy is not null && KnownStrategies.Contains(st.ApproverStrategy);
+                var cs = (st.Countersign ?? "all").Trim().ToLowerInvariant();
+                bool csOk = cs is "all" or "any" or "veto";
+                if (!ruleOk || !csOk) { bad = true; break; }
+            }
+            if (bad) { errs.Add("E-WF-011"); break; }
+        }
 
         // ⑥ 并行网关入/出边数
         foreach (var n in schema.Nodes.Where(n => T(n) == "parallelsplit"))

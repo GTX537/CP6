@@ -56,6 +56,9 @@ public class FlowNode
 
     /// <summary>状态编号（Delta StateCode / NodeCode，人面业务码；读模型 Wf_FlowFormTo.NodeCode 取此或 Id，引擎执行不依赖）。</summary>
     public string? Code { get; set; }
+
+    /// <summary>串簽档位序列(有序)。空/缺省=单档,用本节点 ApproverStrategy/Countersign(向后兼容)。</summary>
+    public List<ApprovalStage>? Stages { get; set; }
 }
 
 public class FlowEdge
@@ -68,4 +71,24 @@ public class FlowEdge
 
     /// <summary>路径抄送人（token 经此转移时抄送，对齐 Delta 知会人员）。</summary>
     public List<Guid>? CcUsers { get; set; }
+}
+
+/// <summary>串簽档型常量。</summary>
+public static class ApprovalStageKinds { public const string Fixed = "fixed"; public const string ManagerChain = "managerChain"; }
+/// <summary>会签模式常量。</summary>
+public static class CountersignModes { public const string All = "all"; public const string Any = "any"; public const string Veto = "veto"; }
+
+/// <summary>串簽档位(设计期)。一个 approval 节点可挂有序 Stages;空=单档(用节点既有字段)。</summary>
+public class ApprovalStage
+{
+    public string? Name { get; set; }
+    public string? Code { get; set; }
+    /// <summary>fixed=固定一组审批人;managerChain=沿 ManagerId 链逐级展开。见 ApprovalStageKinds。</summary>
+    public string Kind { get; set; } = ApprovalStageKinds.Fixed;
+    public string? ApproverStrategy { get; set; }     // fixed:DirectManager/DeptLeader/Role/Specified/Starter
+    public int? ApproverLevels { get; set; }          // fixed+DirectManager:取第 N 级主管(本档仍 1 运行档)
+    public int? ApproverRoleId { get; set; }
+    public Guid? ApproverUserId { get; set; }
+    public string Countersign { get; set; } = CountersignModes.All;
+    public int? MaxLevels { get; set; }               // managerChain:逐级展开上限(产 N 运行档)
 }

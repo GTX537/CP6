@@ -5,7 +5,8 @@ namespace CP6.Core.Services.Oa;
 // ── 列表项 ──
 public record InboxPendingItem(Guid TaskId, Guid InstanceId, Guid? TokenId, string FlowKey, string? FlowName,
     string NodeId, string? NodeName, Guid StarterId, string StarterName, string? BizType, string? BizId,
-    bool IsRead, DateTime SentAt);
+    bool IsRead, DateTime SentAt,
+    int StageIndex = 0, int StageRound = 0, string? StageName = null, string? StageCode = null, bool CanSendBackPrevStage = false);
 
 public record InboxCcItem(Guid CcId, Guid InstanceId, string FlowKey, string? FlowName, string? AtNodeId,
     Guid StarterId, string StarterName, bool IsRead, DateTime CreateDate);
@@ -27,7 +28,8 @@ public record BatchActResultItem(Guid TaskId, bool Ok, string? Error);
 // ── 详情（左读右签）──
 public record TimelineRow(int StepSeq, Guid? TokenId, string NodeId, string? NodeName,
     Guid ExpectedHandlerId, string ExpectedHandlerName, Guid? ActualHandlerId, string? ActualHandlerName,
-    Guid? OnBehalfOfId, string? OnBehalfOfName, int Status, string? Comment, DateTime SentAt, DateTime? HandledAt);
+    Guid? OnBehalfOfId, string? OnBehalfOfName, int Status, string? Comment, DateTime SentAt, DateTime? HandledAt,
+    int? StageIndex = null, int? StageRound = null);
 
 public record SnapshotRow(int StepSeq, string NodeId, string DataJson);
 public record CcRow(Guid RecipientId, string RecipientName, string? AtNodeId, bool IsRead);
@@ -38,5 +40,5 @@ public record InboxDetail(Wf_FlowInstance Instance, string? FlowName, string? Fo
 
 // ── 预计流程（ForecastService 产出，置此便于 InboxDetail 引用）──
 public record ForecastStep(string NodeId, string? NodeName, string Type, IReadOnlyList<string> Approvers,
-    bool Resolved, string? Note);
+    bool Resolved, string? Note, int? StageIndex = null, string? StageName = null);
 public record ForecastResult(IReadOnlyList<ForecastStep> Steps, bool Branched);

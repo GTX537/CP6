@@ -1,9 +1,9 @@
 import type { TimelineRow, ForecastStep } from '@/types/oa/inbox'
 
-/** 关卡状态码 → i18n 键（FlowFormToStatus）。 */
+/** 关卡状态码 → i18n 键（FlowFormToStatus）。status 7 = SentBack。 */
 export function formToStatusText(s: number): string {
   return ['oa.formto.pending', 'oa.formto.approved', 'oa.formto.rejected', 'oa.formto.transferred',
-    'oa.formto.addsigned', 'oa.formto.skipped', 'oa.formto.voided'][s] ?? 'oa.formto.pending'
+    'oa.formto.addsigned', 'oa.formto.skipped', 'oa.formto.voided', 'oa.timeline.sentBack'][s] ?? 'oa.formto.pending'
 }
 
 /** 实例状态码 → el-tag type（FlowInstanceStatus 0..4）。 */
@@ -18,7 +18,8 @@ export function instanceStatusText(s: number): string {
 export interface MergedRow {
   forecast: boolean; nodeId: string; nodeName?: string; status?: number;
   expectedHandlerName?: string; actualHandlerName?: string; onBehalfOfName?: string;
-  approvers?: string[]; resolved?: boolean; comment?: string; sentAt?: string; handledAt?: string; tokenId?: string
+  approvers?: string[]; resolved?: boolean; comment?: string; sentAt?: string; handledAt?: string; tokenId?: string;
+  stageIndex?: number | null; stageRound?: number | null
 }
 
 /** 时间线 = 持久行（完成/当前）+ 预计段（灰）。预计行 forecast=true。 */
@@ -28,6 +29,7 @@ export function mergeTimeline(rows: TimelineRow[], forecast: ForecastStep[]): Me
     expectedHandlerName: r.expectedHandlerName, actualHandlerName: r.actualHandlerName ?? undefined,
     onBehalfOfName: r.onBehalfOfName ?? undefined, comment: r.comment ?? undefined,
     sentAt: r.sentAt, handledAt: r.handledAt ?? undefined, tokenId: r.tokenId,
+    stageIndex: r.stageIndex ?? null, stageRound: r.stageRound ?? null,
   }))
   const future: MergedRow[] = forecast.map(f => ({
     forecast: true, nodeId: f.nodeId, nodeName: f.nodeName, approvers: f.approvers, resolved: f.resolved,

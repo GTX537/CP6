@@ -11,7 +11,11 @@ const { t } = useI18n()
 
 // ── Local copy (mirrors props.node; changes emit 'update') ────────
 function cloneNode(n: SchemaNode): SchemaNode {
-  return { ...n, ccUsers: n.ccUsers ? [...n.ccUsers] : [] }
+  return {
+    ...n,
+    ccUsers: n.ccUsers ? [...n.ccUsers] : [],
+    stages: n.stages ? n.stages.map(s => ({ ...s })) : undefined,
+  }
 }
 
 const syncing = ref(false)
@@ -47,10 +51,49 @@ const timeoutDays = computed({
 
 const isApproval = computed(() => local.value.type === 'approval')
 
-// ── Collapse ──────────────────────────────────────────────────────
-const collapseActive = ref<string[]>(['basic', 'advanced', 'cc'])
+// ── 串簽启用状态 ──────────────────────────────────────────────────
+const stageEnabled = computed(
+  () => Array.isArray(local.value.stages) && local.value.stages.length > 0,
+)
 
-// ── User search (Specified approver) ─────────────────────────────
+function toggleStages(v: boolean) {
+  if (v) {
+    local.value.stages = [{ kind: 'fixed', countersign: 'all' }]
+  } else {
+    local.value.stages = undefined
+  }
+}
+
+function addStage() {
+  if (!local.value.stages) local.value.stages = []
+  local.value.stages.push({ kind: 'fixed', countersign: 'all' })
+}
+
+function removeStage(idx: number) {
+  local.value.stages?.splice(idx, 1)
+  if (!local.value.stages?.length) local.value.stages = undefined
+}
+
+function moveStageUp(idx: number) {
+  const arr = local.value.stages
+  if (!arr || idx === 0) return
+  const tmp = arr[idx - 1]!
+  arr[idx - 1] = arr[idx]!
+  arr[idx] = tmp
+}
+
+function moveStageDown(idx: number) {
+  const arr = local.value.stages
+  if (!arr || idx >= arr.length - 1) return
+  const tmp = arr[idx + 1]!
+  arr[idx + 1] = arr[idx]!
+  arr[idx] = tmp
+}
+
+// ── Collapse ──────────────────────────────────────────────────────
+const collapseActive = ref<string[]>(['basic', 'stages', 'advanced', 'cc'])
+
+// ── User search (Specified approver, reused for stages) ──────────
 interface UserOpt { label: string; value: string }
 const userOptions = ref<UserOpt[]>([])
 const userSearchLoading = ref(false)
@@ -69,7 +112,7 @@ async function searchUsers(kw: string) {
   }
 }
 
-// ── Role list (Role strategy) ─────────────────────────────────────
+// ── Role list (Role strategy, reused for stages) ─────────────────
 const roleOptions = ref<{ label: string; value: number }[]>([])
 const roleLoading = ref(false)
 
@@ -127,8 +170,8 @@ async function searchCcUsers(kw: string) {
             <el-tag type="info" size="small">{{ local.type }}</el-tag>
           </el-form-item>
 
-          <!-- approval-specific fields -->
-          <template v-if="isApproval">
+          <!-- approval-specific fields (single-stage; hidden when 串簽 enabled) -->
+          <template v-if="isApproval && !stageEnabled">
             <el-form-item :label="t('oa.designer.approverType')">
               <el-select v-model="local.approverStrategy" style="width: 100%" clearable>
                 <el-option value="DirectManager" :label="t('oa.designer.strategy.directManager')" />
@@ -206,6 +249,181 @@ async function searchCcUsers(kw: string) {
                 <el-option value="veto" :label="t('oa.designer.countersign.veto')" />
               </el-select>
             </el-form-item>
+          </template>
+        </el-form>
+      </el-collapse-item>
+
+      <!-- ── 串簽档位（审批节点专属）──────────────────── -->
+      <el-collapse-item
+        v-if="isApproval"
+        :title="t('oa.designer.stagesSection')"
+        name="stages"
+      >
+        <el-form label-position="top" size="small" class="prop-form">
+          <!-- 启用开关 -->
+          <el-form-item>
+            <el-switch
+              :model-value="stageEnabled"
+              @change="(v: boolean) => toggleStages(v)"
+            />
+            <span class="stage-switch-label">{{ t('oa.designer.stage.enable') }}</span>
+          </el-form-item>
+
+          <!-- 档位列表 -->
+          <template v-if="stageEnabled">
+            <div
+              v-for="(stage, idx) in local.stages"
+              :key="idx"
+              class="stage-card"
+            >
+              <!-- 档头：序号 + 操作按钮 -->
+              <div class="stage-card-header">
+                <span class="stage-index-label">档 {{ idx + 1 }}</span>
+                <div class="stage-card-actions">
+                  <el-button
+                    link
+                    size="small"
+                    :disabled="idx === 0"
+                    @click="moveStageUp(idx)"
+                  >{{ t('oa.designer.stage.moveUp') }}</el-button>
+                  <el-button
+                    link
+                    size="small"
+                    :disabled="idx === (local.stages?.length ?? 1) - 1"
+                    @click="moveStageDown(idx)"
+                  >{{ t('oa.designer.stage.moveDown') }}</el-button>
+                  <el-button
+                    link
+                    size="small"
+                    type="danger"
+                    @click="removeStage(idx)"
+                  >{{ t('oa.designer.stage.remove') }}</el-button>
+                </div>
+              </div>
+
+              <!-- 档名（可选）-->
+              <el-form-item :label="t('oa.designer.stage.name')">
+                <el-input v-model="stage.name" :placeholder="`档 ${idx + 1}`" />
+              </el-form-item>
+
+              <!-- 档型：固定 / 逐级 -->
+              <el-form-item :label="t('oa.designer.approverType')">
+                <el-radio-group v-model="stage.kind">
+                  <el-radio value="fixed">{{ t('oa.designer.stage.kind.fixed') }}</el-radio>
+                  <el-radio value="managerChain">{{ t('oa.designer.stage.kind.managerChain') }}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+
+              <!-- fixed: approverStrategy + pickers (reuse same searchUsers/loadRoles) -->
+              <template v-if="stage.kind === 'fixed'">
+                <el-form-item :label="t('oa.designer.approverType')">
+                  <el-select v-model="stage.approverStrategy" style="width: 100%" clearable>
+                    <el-option value="DirectManager" :label="t('oa.designer.strategy.directManager')" />
+                    <el-option value="DeptLeader"    :label="t('oa.designer.strategy.deptLeader')" />
+                    <el-option value="Role"          :label="t('oa.designer.strategy.role')" />
+                    <el-option value="Specified"     :label="t('oa.designer.strategy.specified')" />
+                    <el-option value="Starter"       :label="t('oa.designer.strategy.starter')" />
+                  </el-select>
+                </el-form-item>
+
+                <!-- DirectManager → approverLevels with tooltip (spec R7) -->
+                <el-form-item
+                  v-if="stage.approverStrategy === 'DirectManager'"
+                  :label="t('oa.designer.approverLevels')"
+                >
+                  <el-tooltip
+                    :content="t('oa.designer.stage.approverLevelsTip')"
+                    placement="top"
+                  >
+                    <el-input-number
+                      v-model="stage.approverLevels"
+                      :min="1"
+                      :max="10"
+                      style="width: 100%"
+                    />
+                  </el-tooltip>
+                </el-form-item>
+
+                <!-- Role → role select -->
+                <el-form-item
+                  v-if="stage.approverStrategy === 'Role'"
+                  :label="t('oa.designer.approverRole')"
+                >
+                  <el-select
+                    v-model="stage.approverRoleId"
+                    style="width: 100%"
+                    filterable
+                    :loading="roleLoading"
+                    @focus="loadRoles"
+                    clearable
+                  >
+                    <el-option
+                      v-for="r in roleOptions"
+                      :key="r.value"
+                      :label="r.label"
+                      :value="r.value"
+                    />
+                  </el-select>
+                </el-form-item>
+
+                <!-- Specified → user remote search (reuse searchUsers / userOptions) -->
+                <el-form-item
+                  v-if="stage.approverStrategy === 'Specified'"
+                  :label="t('oa.designer.approverUser')"
+                >
+                  <el-select
+                    v-model="stage.approverUserId"
+                    style="width: 100%"
+                    filterable
+                    remote
+                    :remote-method="searchUsers"
+                    :loading="userSearchLoading"
+                    :placeholder="t('oa.designer.userHint')"
+                    clearable
+                  >
+                    <el-option
+                      v-for="u in userOptions"
+                      :key="u.value"
+                      :label="u.label"
+                      :value="u.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </template>
+
+              <!-- managerChain: maxLevels with tooltip (spec R7) -->
+              <el-form-item
+                v-if="stage.kind === 'managerChain'"
+                :label="t('oa.designer.stage.maxLevels')"
+              >
+                <el-tooltip
+                  :content="t('oa.designer.stage.maxLevelsTip')"
+                  placement="top"
+                >
+                  <el-input-number
+                    v-model="stage.maxLevels"
+                    :min="1"
+                    :max="20"
+                    style="width: 100%"
+                  />
+                </el-tooltip>
+              </el-form-item>
+
+              <!-- 会签模式 -->
+              <el-form-item :label="t('oa.designer.stage.countersign')">
+                <el-select v-model="stage.countersign" style="width: 100%" clearable>
+                  <el-option value="all"  :label="t('oa.designer.countersign.all')" />
+                  <el-option value="any"  :label="t('oa.designer.countersign.any')" />
+                  <el-option value="veto" :label="t('oa.designer.countersign.veto')" />
+                </el-select>
+              </el-form-item>
+            </div>
+
+            <!-- 加档按钮 -->
+            <el-button
+              style="width: 100%; margin-top: 4px"
+              @click="addStage"
+            >{{ t('oa.designer.stage.add') }}</el-button>
           </template>
         </el-form>
       </el-collapse-item>
@@ -300,5 +518,38 @@ async function searchCcUsers(kw: string) {
   color: #606266;
   padding-bottom: 2px;
   line-height: 1.4;
+}
+
+/* 串簽档位卡片 */
+.stage-card {
+  border: 1px solid #e4e7ed;
+  border-radius: 4px;
+  padding: 8px 10px 4px;
+  margin-bottom: 8px;
+  background: #fafafa;
+}
+
+.stage-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.stage-index-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #409eff;
+}
+
+.stage-card-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.stage-switch-label {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #606266;
 }
 </style>

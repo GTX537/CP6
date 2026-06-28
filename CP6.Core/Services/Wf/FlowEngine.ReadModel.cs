@@ -25,9 +25,10 @@ public partial class FlowEngine
     /// <summary>
     /// 送签：approval 节点为每个应处理人建一行 Pending 传签履历。
     /// 同一关卡多审批人（会签）共享同一 stepSeq（调用方在 foreach 外算好传入）。
+    /// 串簽多档路径可选传 stageIndex/stageRound；单档/旧路径不传（默认 null），行为零变化。
     /// </summary>
     internal void WriteFormToOnSend(Wf_FlowInstance inst, FlowNode node, Wf_FlowToken token,
-        Guid expectedHandler, Guid? onBehalfOf, int stepSeq)
+        Guid expectedHandler, Guid? onBehalfOf, int stepSeq, int? stageIndex = null, int? stageRound = null)
     {
         _db.Wf_FlowFormTos.Add(new Wf_FlowFormTo
         {
@@ -42,7 +43,22 @@ public partial class FlowEngine
             OnBehalfOfId = onBehalfOf,
             Status = FlowFormToStatus.Pending,
             SentAt = DateTime.Now,
+            StageIndex = stageIndex,
+            StageRound = stageRound,
         });
+    }
+
+    /// <summary>本 token·node·stage 的下一个 StageRound = 既存最大轮 +1(无 → 0)。前进档天然 0,prevStage 退回天然 +1。
+    /// 仿 NextStepSeq 的 Local+DB 取 Max 模式,杜绝同回合未落盘行漏算。</summary>
+    internal int NextStageRound(Guid instanceId, string nodeId, Guid tokenId, int stageIndex)
+    {
+        int localMax = _db.Wf_FlowTasks.Local
+            .Where(t => t.InstanceId == instanceId && t.NodeId == nodeId && t.TokenId == tokenId && t.StageIndex == stageIndex)
+            .Select(t => (int?)t.StageRound).Max() ?? -1;
+        int dbMax = _db.Wf_FlowTasks
+            .Where(t => t.InstanceId == instanceId && t.NodeId == nodeId && t.TokenId == tokenId && t.StageIndex == stageIndex)
+            .Select(t => (int?)t.StageRound).Max() ?? -1;
+        return Math.Max(localMax, dbMax) + 1;
     }
 
     /// <summary>
@@ -97,17 +113,21 @@ public partial class FlowEngine
         }
     }
 
-    /// <summary>会签节点已决：把本节点本 token 下、非已办的 Pending 履历行置 Skipped（or 签未轮到/被取消的兄弟行）。</summary>
-    internal void SkipPendingFormTos(Guid instanceId, string nodeId, Guid? tokenId)
+    /// <summary>会签节点已决：把本节点本 token 下、非已办的 Pending 履历行置 Skipped（or 签未轮到/被取消的兄弟行）。
+    /// 串簽多档路径可选传 stageIndex/stageRound，只 Skip 该档该轮行；单档/旧路径不传，行为零变化。</summary>
+    internal void SkipPendingFormTos(Guid instanceId, string nodeId, Guid? tokenId, int? stageIndex = null, int? stageRound = null)
     {
-        foreach (var f in _db.Wf_FlowFormTos.Local
-            .Where(f => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
-                        && f.Status == FlowFormToStatus.Pending).ToList())
-            f.Status = FlowFormToStatus.Skipped;
+        bool Match(Wf_FlowFormTo f) => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
+            && f.Status == FlowFormToStatus.Pending
+            && (stageIndex == null || f.StageIndex == stageIndex)
+            && (stageRound == null || f.StageRound == stageRound);
+        foreach (var f in _db.Wf_FlowFormTos.Local.Where(Match).ToList()) f.Status = FlowFormToStatus.Skipped;
         var localIds = _db.Wf_FlowFormTos.Local.Where(f => f.InstanceId == instanceId).Select(f => f.Id).ToHashSet();
         foreach (var f in _db.Wf_FlowFormTos
             .Where(f => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
-                        && f.Status == FlowFormToStatus.Pending && !localIds.Contains(f.Id)).ToList())
+                        && f.Status == FlowFormToStatus.Pending && !localIds.Contains(f.Id)
+                        && (stageIndex == null || f.StageIndex == stageIndex)
+                        && (stageRound == null || f.StageRound == stageRound)).ToList())
             f.Status = FlowFormToStatus.Skipped;
     }
 
@@ -135,28 +155,25 @@ public partial class FlowEngine
     }
 
     /// <summary>
-    /// 驳回连坐 / 退回清场：本实例全 Pending 传签履历行 → 作废。
+    /// 驳回连坐 / 退回清场：本实例全 Pending 传签履历行 → <paramref name="newStatus"/>（默认 Voided）。
+    /// 可选 nodeId/tokenId/stageIndex/stageRound 过滤，仅 void 匹配行（prevStage 退回仅清当前档轮）。
     /// 先处理 Local（变更追踪器里的当前状态），再处理 DB 中已落盘但未加载的行，
     /// 排除已在 Local 的实体 Id 以避免通过 EF 身份映射读到旧落盘值。
     /// </summary>
-    internal void VoidPendingFormTos(Guid instanceId)
+    internal void VoidPendingFormTos(Guid instanceId, string? nodeId = null, Guid? tokenId = null,
+        int? stageIndex = null, int? stageRound = null, int newStatus = FlowFormToStatus.Voided)
     {
+        bool Match(Wf_FlowFormTo f) => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending
+            && (nodeId == null || f.NodeId == nodeId) && (tokenId == null || f.TokenId == tokenId)
+            && (stageIndex == null || f.StageIndex == stageIndex) && (stageRound == null || f.StageRound == stageRound);
         // ① 变更追踪器（Local）视图——对本回合已修改但未落盘的行是权威状态
-        foreach (var f in _db.Wf_FlowFormTos.Local
-            .Where(f => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending)
-            .ToList())
-            f.Status = FlowFormToStatus.Voided;
-
+        foreach (var f in _db.Wf_FlowFormTos.Local.Where(Match).ToList()) f.Status = newStatus;
         // ② DB 中已落盘但尚未被本回合加载到 Local 的行
-        var localIds = _db.Wf_FlowFormTos.Local
-            .Where(f => f.InstanceId == instanceId)
-            .Select(f => f.Id)
-            .ToHashSet();
+        var localIds = _db.Wf_FlowFormTos.Local.Where(f => f.InstanceId == instanceId).Select(f => f.Id).ToHashSet();
         foreach (var f in _db.Wf_FlowFormTos
-            .Where(f => f.InstanceId == instanceId
-                        && f.Status == FlowFormToStatus.Pending
-                        && !localIds.Contains(f.Id))
-            .ToList())
-            f.Status = FlowFormToStatus.Voided;
+            .Where(f => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending && !localIds.Contains(f.Id)
+                        && (nodeId == null || f.NodeId == nodeId) && (tokenId == null || f.TokenId == tokenId)
+                        && (stageIndex == null || f.StageIndex == stageIndex) && (stageRound == null || f.StageRound == stageRound)).ToList())
+            f.Status = newStatus;
     }
 }
