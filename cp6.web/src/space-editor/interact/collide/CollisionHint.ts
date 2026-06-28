@@ -4,7 +4,7 @@ import type { RackVO, ZoneVO } from '@/types/space/scene'
 
 // ─── 类型 ─────────────────────────────────────────────────────────────────────
 
-interface Vec2 { x: number; y: number }
+export interface Vec2 { x: number; y: number }
 
 // ─── OBB 角点计算 ─────────────────────────────────────────────────────────────
 
@@ -33,7 +33,7 @@ export function rackCorners(r: RackVO): Vec2[] {
 // ─── SAT 投影工具 ─────────────────────────────────────────────────────────────
 
 /** 把一组点投影到轴向量上，返回 [min, max] */
-function project(points: Vec2[], axis: Vec2): [number, number] {
+export function project(points: Vec2[], axis: Vec2): [number, number] {
   let min = Infinity, max = -Infinity
   for (const p of points) {
     const dot = p.x * axis.x + p.y * axis.y
@@ -44,7 +44,7 @@ function project(points: Vec2[], axis: Vec2): [number, number] {
 }
 
 /** 两区间严格分离（不含紧贴） */
-function separated(a: [number, number], b: [number, number]): boolean {
+export function separated(a: [number, number], b: [number, number]): boolean {
   return a[1] <= b[0] || b[1] <= a[0]
 }
 
