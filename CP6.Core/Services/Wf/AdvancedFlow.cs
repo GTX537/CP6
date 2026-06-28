@@ -97,34 +97,88 @@ public partial class FlowEngine
         await _db.SaveChangesAsync();
     }
 
-    public async Task SendBackAsync(Guid taskId, Guid actorId, string targetNodeId, string? comment = null)
+    // 旧重载保留 → 转发 node(既有调用方零感知)
+    public Task SendBackAsync(Guid taskId, Guid actorId, string targetNodeId, string? comment = null)
+        => SendBackAsync(taskId, actorId, new SendBackTarget("node", targetNodeId), comment);
+
+    public async Task SendBackAsync(Guid taskId, Guid actorId, SendBackTarget target, string? comment = null)
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
                    ?? throw new InvalidOperationException("任务不存在");
-        if (task.Status != FlowTaskStatus.Pending) return;   // 幂等闸门：已办无效
+        if (task.Status != FlowTaskStatus.Pending) return;   // 幂等闸门
 
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) return;
-
         var schema = await LoadSchemaAsync(inst.FlowKey);
-        var target = FindNode(schema, targetNodeId)
-                     ?? throw new InvalidOperationException($"退回目标节点不存在：{targetNodeId}");
-        if (IsType(target, "end")) throw new InvalidOperationException("不能退回到结束节点");
 
-        // 作废本实例所有在途待办（含挂起的前加签原任务）——线性引擎下在途任务即当前节点 + 加签。
-        // 一并清掉本节点会签计票（被作废的任务不再计入 EvaluateNodeCounts）。
+        switch ((target.Kind ?? "node").Trim().ToLowerInvariant())
+        {
+            case "node":      await SendBackToNodeAsync(inst, schema, task, actorId, target.NodeId, comment); break;
+            case "prevstage": await SendBackToPrevStageAsync(inst, schema, task, actorId, comment); break;   // T6
+            case "starter":   await SendBackToStarterAsync(inst, task, actorId, comment); break;             // T6
+            default: throw new InvalidOperationException("E-WF-012");
+        }
+        await _db.SaveChangesAsync();
+    }
+
+    private async Task SendBackToNodeAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowTask task,
+        Guid actorId, string? targetNodeId, string? comment)
+    {
+        var target = FindNode(schema, targetNodeId ?? "") ?? throw new InvalidOperationException("E-WF-012");
+        if (IsType(target, "end") || target.Id == task.NodeId) throw new InvalidOperationException("E-WF-012");
+        var tt = (target.Type ?? "approval").Trim().ToLowerInvariant();
+        if (tt != "approval" && tt != "start") throw new InvalidOperationException("E-WF-012");
+        if (!IsUpstreamReachable(schema, target.Id, task.NodeId)) throw new InvalidOperationException("E-WF-012");
+        if (CrossesParallelBlock(schema, target.Id, task.NodeId)) throw new InvalidOperationException("E-WF-012");
+
         var live = await _db.Wf_FlowTasks
-            .Where(t => t.InstanceId == inst.Id
-                        && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended))
+            .Where(t => t.InstanceId == inst.Id && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended))
             .ToListAsync();
         foreach (var t in live) t.Status = FlowTaskStatus.Cancelled;
-
-        AddHistory(inst.Id, task.NodeId, actorId, "sendback", comment ?? $"退回至 {targetNodeId}");
-
-        CancelAllActiveTokens(inst.Id);                                  // 退回 = terminate 在途 token
-        VoidPendingFormTos(inst.Id);                                     // ★ Fix2：作废被退回节点的在途 Pending 履历（否则残留幻影待签）
+        AddHistory(inst.Id, task.NodeId, actorId, "sendback", comment ?? $"退回至 {target.Id}");
+        CancelAllActiveTokens(inst.Id);
+        VoidPendingFormTos(inst.Id);
         var sbToken = SpawnToken(inst, target, parent: null, fork: null);
-        await EnterNodeAsync(inst, schema, target, sbToken);            // CurrentNode=target + 重建待办（缺审批人→挂起）
-        await _db.SaveChangesAsync();
+        await EnterNodeAsync(inst, schema, target, sbToken);
+    }
+
+    // T6 实现 —— 暂置桩,保编译;本任务测试不触达
+    private Task SendBackToPrevStageAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowTask task, Guid actorId, string? comment)
+        => throw new NotImplementedException("T6: prevStage");
+    private Task SendBackToStarterAsync(Wf_FlowInstance inst, Wf_FlowTask task, Guid actorId, string? comment)
+        => throw new NotImplementedException("T6: starter");
+
+    /// <summary>target 能否沿边正向到达 current(即 target 是 current 的上游)。</summary>
+    private static bool IsUpstreamReachable(FlowSchema schema, string targetId, string currentId)
+    {
+        var seen = new HashSet<string> { targetId };
+        var q = new Queue<string>(); q.Enqueue(targetId);
+        while (q.Count > 0)
+        {
+            var cur = q.Dequeue();
+            foreach (var e in schema.Edges.Where(e => e.From == cur))
+            {
+                if (e.To == currentId) return true;
+                if (seen.Add(e.To)) q.Enqueue(e.To);
+            }
+        }
+        return false;
+    }
+
+    /// <summary>v1:target→current 路径若经过 parallelSplit/parallelJoin 则视为跨并行块,禁止。</summary>
+    private static bool CrossesParallelBlock(FlowSchema schema, string targetId, string currentId)
+    {
+        var between = NodesBetween(schema, targetId, currentId);
+        return between.Any(id => schema.Nodes.Any(n => n.Id == id &&
+            ((n.Type ?? "").Equals("parallelSplit", StringComparison.OrdinalIgnoreCase) ||
+             (n.Type ?? "").Equals("parallelJoin", StringComparison.OrdinalIgnoreCase))));
+    }
+
+    private static HashSet<string> NodesBetween(FlowSchema schema, string fromId, string toId)
+    {
+        var fwd = new HashSet<string>(); var q = new Queue<string>(); q.Enqueue(fromId);
+        while (q.Count > 0) { var c = q.Dequeue(); foreach (var e in schema.Edges.Where(e => e.From == c)) if (fwd.Add(e.To)) q.Enqueue(e.To); }
+        fwd.Remove(toId);
+        return fwd;
     }
 }
