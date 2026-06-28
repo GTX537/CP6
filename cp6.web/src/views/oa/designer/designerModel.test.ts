@@ -83,3 +83,33 @@ describe('designerModel', () => {
     expect(validateClient(schema)).not.toContain('oa.designer.errStageInvalid')
   })
 })
+
+describe('approver advanced strategies', () => {
+  it('round-trips formField/dataMap/group fields', () => {
+    const schema: FlowSchemaDto = {
+      start: 's',
+      nodes: [
+        { id: 's', type: 'start' },
+        { id: 'a', type: 'approval', approverStrategy: 'Group',
+          approverWhen: 'amount > 10', approverFilter: 'user.enable == true',
+          approverMembers: [{ strategy: 'Starter' }, { strategy: 'Specified', approverUserId: 'u1' }] },
+        { id: 'e', type: 'end' },
+      ],
+      edges: [{ from: 's', to: 'a' }, { from: 'a', to: 'e' }],
+    }
+    const { nodes, edges } = schemaToGraph(schema)
+    const back = graphToSchema(nodes, edges)
+    const a = back.nodes.find(n => n.id === 'a')!
+    expect(a.approverMembers?.length).toBe(2)
+    expect(a.approverWhen).toBe('amount > 10')
+  })
+
+  it('flags group node with empty members', () => {
+    const schema: FlowSchemaDto = {
+      start: 's',
+      nodes: [{ id: 's', type: 'start' }, { id: 'a', type: 'approval', approverStrategy: 'Group' }, { id: 'e', type: 'end' }],
+      edges: [{ from: 's', to: 'a' }, { from: 'a', to: 'e' }],
+    }
+    expect(validateClient(schema)).toContain('oa.designer.errApproverConfig')
+  })
+})
