@@ -2,8 +2,11 @@ import type { Node as VFNode, Edge as VFEdge } from '@vue-flow/core'
 
 export interface SchemaNode {
   id: string; type: string; name?: string
+  code?: string                                        // 状态编号（对应后端 FlowNode.Code）
   approverStrategy?: string; approverLevels?: number; approverRoleId?: number; approverUserId?: string
-  countersign?: string; timeoutHours?: number; timeoutAction?: string; ccUsers?: string[]; ccRoleId?: number
+  countersign?: string; timeoutHours?: number; timeoutAction?: string
+  allowReject?: boolean                                // 允许退回
+  ccUsers?: string[]; ccRoleId?: number
   x?: number; y?: number
 }
 export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[] }
