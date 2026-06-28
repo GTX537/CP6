@@ -22,6 +22,21 @@
         <span class="info-card__label">{{ t('坐标(mm)') }}</span>
         <span class="info-card__value">{{ detail.absX }}, {{ detail.absY }}, {{ detail.absZ }}</span>
       </div>
+      <template v-if="stock">
+        <div class="info-card__row info-card__sep">{{ t('库存') }}</div>
+        <div class="info-card__row">
+          <span class="info-card__label">{{ t('库位状态') }}</span>
+          <span class="info-card__value">{{ binStatusText }}</span>
+        </div>
+        <div class="info-card__row">
+          <span class="info-card__label">{{ t('库存量') }}</span>
+          <span class="info-card__value">{{ stock.qty }}<template v-if="stock.capacity"> / {{ stock.capacity }}（{{ utilPct }}%）</template></span>
+        </div>
+        <div class="info-card__row" v-if="stock.topMaterial">
+          <span class="info-card__label">{{ t('主物料') }}</span>
+          <span class="info-card__value">{{ stock.topMaterial }}</span>
+        </div>
+      </template>
     </template>
   </div>
 </template>
@@ -31,8 +46,9 @@ import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { locateApi } from '@/api/space/locate'
 import type { LocationDetail } from '@/types/space/viewer'
+import { locationUtilization } from '@/space-viewer/overlay/stockModel'
 
-const props = defineProps<{ locationId: string | null }>()
+const props = defineProps<{ locationId: string | null; stock?: import('@/types/space/overlay').WmsStockDto | null }>()
 defineEmits<{ (e: 'close'): void }>()
 
 const { t } = useI18n()
@@ -53,6 +69,13 @@ const pathText = computed(() => {
     .filter(Boolean)
     .join(' / ')
 })
+
+const binStatusText = computed(() => {
+  const m = ['空', '有货', '满', '锁定', '在拣']
+  return props.stock ? t(m[props.stock.binStatus] ?? '无数据') : ''
+})
+const utilPct = computed(() =>
+  props.stock ? Math.round(locationUtilization(props.stock) * 100) : 0)
 
 watch(
   () => props.locationId,
