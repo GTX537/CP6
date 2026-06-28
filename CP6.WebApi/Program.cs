@@ -1775,6 +1775,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaAdvancedScreenSeed.Items) // OA Phase C 填單/查詢/設定/轉交 oa.catalog.*/oa.initiate.*/oa.settings.*/oa.transfer.*/nav.735/736/737
             .Concat(CP6.WebApi.Seed.I18nOaDesignerScreenSeed.Items) // OA Phase C′ 流程设计器 oa.designer.*/nav.738
             .Concat(CP6.WebApi.Seed.I18nOaNotifyScreenSeed.Items)  // OA Phase D-1 通知中心 oa.notify.*/oa.notify.settings.*
+            .Concat(CP6.WebApi.Seed.I18nOaSerialSignScreenSeed.Items)  // WFS 串簽 退回选择器 oa.detail.sendback.* + oa.sendback.* + oa.timeline.sentBack + 设计器档位 oa.designer.stage.* + E-WF-011/012/013
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
