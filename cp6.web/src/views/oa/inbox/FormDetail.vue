@@ -85,6 +85,14 @@
         >
           {{ t('oa.detail.transfer') }}
         </el-button>
+        <el-button
+          type="danger"
+          size="small"
+          plain
+          @click="sendbackVisible = true"
+        >
+          {{ t('oa.detail.sendback') }}
+        </el-button>
       </div>
 
       <!-- Transfer dialog -->
@@ -92,6 +100,17 @@
         v-model="transferVisible"
         :task-id="myTaskId!"
         @done="onTransferDone"
+      />
+
+      <!-- SendBack dialog -->
+      <SendBackDialog
+        v-if="myTaskId"
+        v-model="sendbackVisible"
+        :task-id="myTaskId"
+        :can-send-back-prev-stage="myPendingItem?.canSendBackPrevStage ?? false"
+        :timeline="detail?.timeline ?? []"
+        :current-node-id="myPendingItem?.nodeId"
+        @done="onSendBackDone"
       />
     </template>
   </div>
@@ -108,6 +127,7 @@ import DynamicForm from '@/views/wf/DynamicForm.vue'
 import { buildFieldMask, safeParseObject } from '@/views/wf/fieldMask'
 import FlowTimeline from './FlowTimeline.vue'
 import TransferDialog from './TransferDialog.vue'
+import SendBackDialog from './SendBackDialog.vue'
 
 const props = defineProps<{ instanceId: string }>()
 const emit = defineEmits<{ done: [] }>()
@@ -119,9 +139,12 @@ const loading = ref(false)
 const detail = ref<InboxDetail | null>(null)
 /** taskId of current user's actionable task for this instance, or null */
 const myTaskId = ref<string | null>(null)
+/** Full pending item for current user's task (for canSendBackPrevStage, nodeId, etc.) */
+const myPendingItem = ref<PendingItem | null>(null)
 const comment = ref('')
 const acting = ref(false)
 const transferVisible = ref(false)
+const sendbackVisible = ref(false)
 /** Local copy of form data (read-only display) */
 const formData = ref<Record<string, any>>({})
 
@@ -144,6 +167,7 @@ async function loadDetail() {
   loading.value = true
   detail.value = null
   myTaskId.value = null
+  myPendingItem.value = null
   try {
     const [detailRes, pendingRes] = await Promise.all([
       inboxApi.detail(props.instanceId),
@@ -154,6 +178,7 @@ async function loadDetail() {
       ((pendingRes as any).data as PendingItem[]) || []
     const match = pendingList.find((p) => p.instanceId === props.instanceId)
     myTaskId.value = match?.taskId ?? null
+    myPendingItem.value = match ?? null
     formData.value = safeParseObject(detail.value?.currentDataJson)
   } catch {
     // HTTP errors already shown by the http interceptor
@@ -196,6 +221,12 @@ async function doAction(approve: boolean) {
 
 // ── Transfer ─────────────────────────────────────────────────────
 async function onTransferDone() {
+  emit('done')
+  await loadDetail()
+}
+
+// ── SendBack ──────────────────────────────────────────────────────
+async function onSendBackDone() {
   emit('done')
   await loadDetail()
 }

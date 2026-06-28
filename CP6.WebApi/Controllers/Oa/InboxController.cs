@@ -177,6 +177,22 @@ public class InboxController : LocalizedControllerBase
         catch (InvalidOperationException e) { return Err(e); }
     }
 
+    // ── 退回 ──
+
+    public record SendBackReq(Guid TaskId, string Kind, string? NodeId, string? Comment);
+
+    [HttpPost("sendback")]
+    public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
+    {
+        try
+        {
+            var (eff, _) = await EffectiveAsync();   // 退回人=有效用户（act-as 时=被代理人）
+            await _engine.SendBackAsync(r.TaskId, eff, new SendBackTarget(r.Kind, r.NodeId), r.Comment);
+            return Ok2(true);
+        }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
+
     public record IdReq(Guid Id);
     public record BatchReq(List<Guid> TaskIds, bool Approve, string? Comment);
 }

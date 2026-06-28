@@ -13,17 +13,26 @@
           :class="{ 'forecast-item': row.forecast }"
         >
           <div class="tl-row">
-            <span class="tl-node">{{ row.nodeName || row.nodeId }}</span>
+            <div class="tl-node-line">
+              <span class="tl-node">{{ row.nodeName || row.nodeId }}</span>
+              <span v-if="row.stageIndex != null" class="tl-stage-label">
+                第 {{ (row.stageIndex ?? 0) + 1 }} 档 · 第 {{ (row.stageRound ?? 0) + 1 }} 轮
+              </span>
+            </div>
 
             <!-- Persisted row (forecast === false) -->
             <template v-if="!row.forecast">
-              <el-tag
-                size="small"
-                :type="statusTagType(row.status)"
-                style="margin-left: 6px"
-              >
-                {{ t(formToStatusText(row.status ?? 0)) }}
-              </el-tag>
+              <div style="display:flex; gap:4px; align-items:center;">
+                <el-tag
+                  size="small"
+                  :type="statusTagType(row.status)"
+                >
+                  {{ t(formToStatusText(row.status ?? 0)) }}
+                </el-tag>
+                <el-tag v-if="row.status === 7" size="small" type="danger" effect="plain">
+                  {{ t('oa.timeline.sentBack') }}
+                </el-tag>
+              </div>
               <div class="tl-handler">
                 <template v-if="row.actualHandlerName">
                   {{ t('实办') }}：{{ row.actualHandlerName }}
@@ -100,7 +109,7 @@ type TimelineType = 'primary' | 'success' | 'warning' | 'danger' | 'info'
 
 function timelineType(status?: number): TimelineType {
   if (status === 1) return 'success'
-  if (status === 2) return 'danger'
+  if (status === 2 || status === 7) return 'danger'
   if (status === 0) return 'warning'
   return 'info'
 }
@@ -109,7 +118,7 @@ function statusTagType(
   status?: number,
 ): 'success' | 'warning' | 'danger' | 'info' {
   if (status === 1) return 'success'
-  if (status === 2) return 'danger'
+  if (status === 2 || status === 7) return 'danger'
   if (status === 0) return 'warning'
   return 'info'
 }
@@ -140,9 +149,24 @@ function formatTime(s?: string): string {
   gap: 3px;
 }
 
+.tl-node-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .tl-node {
   font-weight: 600;
   font-size: 13px;
+}
+
+.tl-stage-label {
+  font-size: 11px;
+  color: var(--el-color-primary);
+  font-weight: 500;
+  background: var(--el-color-primary-light-9);
+  border-radius: 3px;
+  padding: 1px 5px;
 }
 
 .tl-handler {
