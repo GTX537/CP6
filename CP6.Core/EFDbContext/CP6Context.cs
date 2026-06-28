@@ -641,6 +641,10 @@ public class CP6Context : DbContext
         modelBuilder.Entity<Wf_FlowDef>(e =>
         {
             e.HasIndex(x => x.FlowKey).IsUnique().HasDatabaseName("UX_Wf_FlowDef_FlowKey");
+            e.HasIndex(x => new { x.TenantId, x.FunctionId }).IsUnique()
+                .HasFilter("[FunctionId] IS NOT NULL").HasDatabaseName("UX_Wf_FlowDef_Function");
+            e.HasIndex(x => new { x.TenantId, x.FlowCode }).IsUnique()
+                .HasFilter("[FlowCode] IS NOT NULL").HasDatabaseName("UX_Wf_FlowDef_Code");
         });
         modelBuilder.Entity<Wf_FlowInstance>(e =>
         {

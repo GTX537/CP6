@@ -48,6 +48,14 @@ public class FlowNode
     /// <summary>节点抄送人（进入本节点时抄送，WFS 读模型）。</summary>
     public List<Guid>? CcUsers { get; set; }
     public int? CcRoleId { get; set; }
+
+    /// <summary>画布 X 坐标（设计器布局，引擎忽略）。</summary>
+    public double? X { get; set; }
+    /// <summary>画布 Y 坐标（设计器布局，引擎忽略）。</summary>
+    public double? Y { get; set; }
+
+    /// <summary>状态编号（Delta StateCode / NodeCode，人面业务码；读模型 Wf_FlowFormTo.NodeCode 取此或 Id，引擎执行不依赖）。</summary>
+    public string? Code { get; set; }
 }
 
 public class FlowEdge
