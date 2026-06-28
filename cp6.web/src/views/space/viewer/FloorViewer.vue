@@ -269,6 +269,14 @@ async function onLoadPath(taskNo: string): Promise<void> {
   }
 }
 
+// 选择器的 to 日期含义为"含当天"；后端时间窗半开 [from,to) → 查询上界取 to+1 天，
+// 否则 from==to（同一天）会得到空窗，热图开了却不着色。
+function exclusiveTo(d: string): string {
+  const dt = new Date(d + 'T00:00:00')
+  dt.setDate(dt.getDate() + 1)
+  return dt.toISOString().slice(0, 10)
+}
+
 async function onToggleWorkload(): Promise<void> {
   if (!heatmap || !viewer) return
   workloadOn.value = !workloadOn.value
@@ -276,7 +284,7 @@ async function onToggleWorkload(): Promise<void> {
     overlayMode.value = 'off'            // 与 07 着色互斥
     await viewer.load(currentFloorId.value)  // 复位为默认灰（不重叠 07 着色）
     heatmap.setEnabled(true)
-    await heatmap.refresh(currentFloorId.value, workloadWin.from, workloadWin.to)
+    await heatmap.refresh(currentFloorId.value, workloadWin.from, exclusiveTo(workloadWin.to))
     ElMessage.info(t('作业热图（时间窗 {f}~{t}）已加载').replace('{f}', workloadWin.from).replace('{t}', workloadWin.to)) // I-SPACE-802
   } else {
     heatmap.setEnabled(false)
@@ -287,7 +295,7 @@ async function onToggleWorkload(): Promise<void> {
 async function onApplyWorkload(win: { from: string; to: string }): Promise<void> {
   workloadWin = win
   if (workloadOn.value && heatmap) {
-    await heatmap.refresh(currentFloorId.value, win.from, win.to)
+    await heatmap.refresh(currentFloorId.value, win.from, exclusiveTo(win.to))
   }
 }
 
