@@ -20,7 +20,7 @@
       />
 
       <!-- Search box (top-left, barcode scanner / manual entry) -->
-      <SearchBox class="viewer-searchbox" @locate="onLocate" />
+      <SearchBox class="viewer-searchbox" @locate="onLocate" @locate-material="onLocateMaterial" />
 
       <!-- Toolbar (top-center) -->
       <div class="viewer-toolbar">
@@ -36,7 +36,17 @@
       </div>
 
       <!-- Info card (top-right) -->
-      <InfoCard :location-id="selectedId" @close="selectedId = null" />
+      <InfoCard :location-id="selectedId" :stock="selectedStock" @close="selectedId = null" />
+
+      <!-- Stock overlay legend (bottom-left) -->
+      <StockLegend
+        :mode="overlayMode"
+        :polling="polling"
+        :ts="overlayTs"
+        @mode="onOverlayMode"
+        @refresh="refreshStock"
+        @toggle-poll="onTogglePoll"
+      />
 
       <div v-if="loading" class="viewer-loading">
         <span>{{ t('加载中') }} {{ progressText }}</span>
@@ -50,11 +60,16 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 import { SpaceViewer } from '@/space-viewer/SpaceViewer'
 import { Locator } from '@/space-viewer/navigate/Locator'
+import { StockOverlay } from '@/space-viewer/overlay/StockOverlay'
+import { stockApi } from '@/api/space/stock'
+import type { OverlayMode, WmsStockDto } from '@/types/space/overlay'
 import InfoCard from './InfoCard.vue'
 import FloorList from './FloorList.vue'
 import SearchBox from './SearchBox.vue'
+import StockLegend from './StockLegend.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -69,7 +84,13 @@ const siteId = (route.params['siteId'] as string) || ''
 
 let viewer: SpaceViewer | null = null
 let locator: Locator | null = null
+let overlay: StockOverlay | null = null
 let hoverTimer = 0
+
+const overlayMode = ref<OverlayMode>('status')
+const overlayTs = ref('')
+const polling = ref(false)
+const selectedStock = ref<WmsStockDto | null>(null)
 
 function canvasNdc(e: MouseEvent): { x: number; y: number } {
   const canvas = canvasRef.value
@@ -126,6 +147,7 @@ function onClick(e: MouseEvent): void {
   const ndc = canvasNdc(e)
   const pick = viewer.pick(ndc.x, ndc.y)
   selectedId.value = viewer.select(pick)
+  syncSelectedStock()
 }
 
 /** Double-click selects location and flies camera to focus on it. */
@@ -139,17 +161,57 @@ function onDblClick(e: MouseEvent): void {
   }
 }
 
+async function refreshStock(): Promise<void> {
+  if (!overlay) return
+  try {
+    await overlay.refresh(currentFloorId.value)
+    overlay.setMode(overlayMode.value)
+    overlay.apply()
+    overlayTs.value = overlay.ts
+    syncSelectedStock()
+  } catch {
+    ElMessage.warning(t('库存数据获取失败，显示上次快照'))   // W-SPACE-701
+  }
+}
+function onOverlayMode(m: OverlayMode): void {
+  overlayMode.value = m
+  overlay?.setMode(m)
+  if (m === 'off') { void onSwitchFloor(currentFloorId.value) }  // 关叠加→重载回灰（简单可靠）
+  else overlay?.apply()
+}
+function onTogglePoll(): void {
+  polling.value = !polling.value
+  if (polling.value) overlay?.startPolling(() => currentFloorId.value, 5000)
+  else overlay?.stopPolling()
+}
+function syncSelectedStock(): void {
+  selectedStock.value = overlay?.getStock(selectedId.value) ?? null
+}
+async function onLocateMaterial(material: string): Promise<void> {
+  try {
+    const env = await stockApi.locate({ material })
+    const hits = env.data
+    if (!hits.length) { ElMessage.info(t('无库位存放该物料')); return }     // I-SPACE-701
+    if (hits.length > 1) ElMessage.info(t('找到 {n} 个库位，点击定位').replace('{n}', String(hits.length)))  // I-SPACE-702
+    if (locator) await locator.locate(hits[0]!.locationCode)               // 复用 06 定位（首个）
+  } catch {
+    ElMessage.warning(t('库存数据获取失败'))
+  }
+}
+
 onMounted(async () => {
   const canvas = canvasRef.value
   if (!canvas) return
 
   viewer = new SpaceViewer(canvas)
+  overlay = new StockOverlay(viewer as unknown as import('@/space-viewer/api/ViewerHandle').ViewerHandle)
 
   viewer.onProgress((done, total) => {
     progressText.value = `${done}/${total}`
   })
   viewer.onReady(() => {
     loading.value = false
+    void refreshStock()
   })
 
   viewer.start()
@@ -173,6 +235,8 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   clearTimeout(hoverTimer)
+  overlay?.dispose()
+  overlay = null
   viewer?.dispose()
   viewer = null
   locator = null
