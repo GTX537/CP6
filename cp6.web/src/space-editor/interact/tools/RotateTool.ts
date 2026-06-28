@@ -1,31 +1,20 @@
-// RotateTool — 旋转货架（Konva Transformer + RotateRackCmd，ch02 §5）
-// 角度吸附：15° 的倍数（0/15/30/45/…/345），±3° 吸附阈值；按住 Ctrl 关吸附
-// ⚠️ QA 标记：Transformer 旋转锚点默认为选区包围盒中心，非货架原点角；旋转过程中节点位置
-//   可能被 Konva 内部调整，afterCommand 重渲染后自动归位至正确坐标。需运行态验证符号/偏移是否
-//   与 MoveRackCmd 组合使用时一致，暂只支持单选旋转。
+// RotateTool — 旋转货架（Konva Transformer + 中心枢轴提交，SP2 ①②）
+// 枢轴：Konva Transformer 对单节点绕包围盒中心旋转；rack group 的包围盒中心 == 货架几何中心，
+//   故实时预览本就绕几何中心。提交时用 rotateAboutCenter 回算锚点，使最终渲染==预览（消跳变）。
+// 角度吸附：snapAngle（15° 倍数 / ±3°）；按住 Ctrl 关吸附。旋转中显示角度读数，吸附时变绿。
 import Konva from 'konva'
 import type { ITool, ToolContext } from '../InteractionManager'
 import { findRackGroup, isTransformerNode } from '../InteractionManager'
-import { RotateRackCmd } from '../../command/commands/RotateRackCmd'
-
-const SNAP_STEP = 15  // degrees
-const SNAP_THRESHOLD = 3  // ±degrees
-
-function snapAngle(deg: number): number {
-  const normalized = ((deg % 360) + 360) % 360
-  const nearest = Math.round(normalized / SNAP_STEP) * SNAP_STEP
-  const delta = Math.abs(normalized - nearest)
-  // Also check wrapping (e.g. 358° vs 0°)
-  if (delta <= SNAP_THRESHOLD || delta >= 360 - SNAP_THRESHOLD) {
-    return nearest % 360
-  }
-  return normalized
-}
+import { RotateRackCmd, type RackPose } from '../../command/commands/RotateRackCmd'
+import { rotateAboutCenter, snapAngle } from '../rotate/rotateGeometry'
+import type { RackVO } from '@/types/space/scene'
 
 export class RotateTool implements ITool {
   private ctx: ToolContext
-  // Original rotationZ per rackId, captured at transformstart
-  private originalRotations = new Map<string, number>()
+  // 旋转起始时的 from 位姿（单选）
+  private fromPose: RackPose | null = null
+  private fromRack: RackVO | null = null
+  private angleText: Konva.Text | null = null
 
   constructor(ctx: ToolContext) {
     this.ctx = ctx
@@ -36,30 +25,33 @@ export class RotateTool implements ITool {
     this.ctx.transformer.resizeEnabled(false)
     this.ctx.transformer.enabledAnchors([])
     this.refreshTransformer()
-
     this.ctx.transformer.on('transformstart.rt', () => { this.onTransformStart() })
+    this.ctx.transformer.on('transform.rt', () => { this.onTransform() })
     this.ctx.transformer.on('transformend.rt', () => { this.onTransformEnd() })
   }
 
   onDeactivate(): void {
     this.ctx.transformer.off('transformstart.rt')
+    this.ctx.transformer.off('transform.rt')
     this.ctx.transformer.off('transformend.rt')
     this.ctx.transformer.rotateEnabled(false)
     this.ctx.transformer.nodes([])
+    this.clearAngleText()
     this.ctx.stage.layers.rack.batchDraw()
-    this.originalRotations.clear()
+    this.fromPose = null
+    this.fromRack = null
   }
 
   onEscape(): void {
-    // Nothing extra — InteractionManager.escape() clears selection after this
+    // InteractionManager.escape() 随后清选区
+    this.clearAngleText()
   }
 
   onClick(e: Konva.KonvaEventObject<MouseEvent>): void {
     if (isTransformerNode(e.target)) return
     const rackGroup = findRackGroup(e.target)
     if (rackGroup) {
-      // Single-select for rotation
-      this.ctx.store.setSelection([rackGroup.id()])
+      this.ctx.store.setSelection([rackGroup.id()])  // 单选旋转
     } else {
       this.ctx.store.clearSelection()
     }
@@ -67,44 +59,75 @@ export class RotateTool implements ITool {
   }
 
   private onTransformStart(): void {
-    this.originalRotations.clear()
+    this.fromPose = null
+    this.fromRack = null
     const scene = this.ctx.store.scene
     if (!scene) return
-    for (const id of this.ctx.store.selectionIds) {
-      const rack = scene.racks.find((r) => r.id === id)
-      if (rack) this.originalRotations.set(id, rack.rotationZ)
-    }
+    const id = this.ctx.store.selectionIds[0]
+    if (!id) return
+    const rack = scene.racks.find((r) => r.id === id)
+    if (!rack) return
+    this.fromRack = { ...rack }
+    this.fromPose = { x: rack.x, y: rack.y, rotationZ: rack.rotationZ }
+  }
+
+  private onTransform(): void {
+    if (!this.fromRack) return
+    const node = this.ctx.transformer.nodes()[0] as Konva.Group | undefined
+    if (!node) return
+    const rawZ = this.normalize(-node.rotation())
+    const snapped = !this.ctx.ctrlHeld()
+    const shownZ = snapped ? snapAngle(rawZ) : rawZ
+    const isSnapped = snapped && Math.round(shownZ) % 15 === 0
+    this.drawAngleText(node, shownZ, isSnapped)
   }
 
   private onTransformEnd(): void {
-    const nodes = this.ctx.transformer.nodes()
-    if (nodes.length === 0) return
+    const node = this.ctx.transformer.nodes()[0] as Konva.Group | undefined
+    this.clearAngleText()
+    if (!node || !this.fromPose || !this.fromRack) return
 
-    const editorCtx = this.ctx.store.buildEditorContext()
+    const rawZ = this.normalize(-node.rotation())
+    const toZ = this.normalize(this.ctx.ctrlHeld() ? rawZ : snapAngle(rawZ))
+    const anchor = rotateAboutCenter({ ...this.fromRack, rotationZ: this.fromRack.rotationZ }, toZ)
+    const to: RackPose = { x: anchor.x, y: anchor.y, rotationZ: toZ }
 
-    for (const node of nodes) {
-      const group = node as Konva.Group
-      const id = group.id()
-      const fromDeg = this.originalRotations.get(id)
-      if (fromDeg === undefined) continue
-
-      // SceneStage sets group.rotation = -rack.rotationZ (screen Y flipped).
-      // After Transformer rotate: group.rotation() is the new screen angle.
-      // New rotationZ = -group.rotation()  ← sign: QA needed
-      let newRotationZ = -group.rotation()
-
-      if (!this.ctx.ctrlHeld()) {
-        newRotationZ = snapAngle(newRotationZ)
-      }
-      // Normalize to [0, 360)
-      newRotationZ = ((newRotationZ % 360) + 360) % 360
-
-      const cmd = new RotateRackCmd(id, fromDeg, newRotationZ)
-      this.ctx.store.stack.exec(cmd, editorCtx)
-    }
-
+    const id = this.fromRack.id
+    const cmd = new RotateRackCmd(id, this.fromPose, to)
+    this.ctx.store.stack.exec(cmd, this.ctx.store.buildEditorContext())
     this.ctx.store.updateUndoRedo()
+
+    this.fromPose = null
+    this.fromRack = null
     this.ctx.afterCommand()
+  }
+
+  private drawAngleText(node: Konva.Group, deg: number, snapped: boolean): void {
+    const box = node.getClientRect({ relativeTo: this.ctx.stage.stage })
+    const cx = box.x + box.width / 2
+    const top = box.y - 22
+    if (!this.angleText) {
+      this.angleText = new Konva.Text({
+        text: '', fontSize: 13, fontStyle: 'bold', listening: false,
+      })
+      this.ctx.stage.layers.ghost.add(this.angleText)
+    }
+    this.angleText.text(`${Math.round(deg)}°`)
+    this.angleText.fill(snapped ? '#1aab4a' : '#333')
+    this.angleText.position({ x: cx - 12, y: top })
+    this.ctx.stage.layers.ghost.batchDraw()
+  }
+
+  private clearAngleText(): void {
+    if (this.angleText) {
+      this.angleText.destroy()
+      this.angleText = null
+      this.ctx.stage.layers.ghost.batchDraw()
+    }
+  }
+
+  private normalize(deg: number): number {
+    return ((deg % 360) + 360) % 360
   }
 
   private refreshTransformer(): void {
