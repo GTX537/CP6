@@ -42,6 +42,35 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
+
+      <!-- Tab 3: 通知设定 -->
+      <el-tab-pane :label="t('oa.notify.settings.tab')" name="notify">
+        <el-card shadow="never" style="max-width: 500px; margin-top: 16px">
+          <el-form label-width="130px">
+            <el-form-item :label="t('oa.notify.settings.email')">
+              <el-switch v-model="notifyPrefs.email" />
+            </el-form-item>
+            <el-divider content-position="left">{{ t('oa.notify.settings.eventTitle') }}</el-divider>
+            <el-form-item :label="t('oa.notify.settings.todo')">
+              <el-switch v-model="notifyPrefs.todo" />
+            </el-form-item>
+            <el-form-item :label="t('oa.notify.settings.approved')">
+              <el-switch v-model="notifyPrefs.approved" />
+            </el-form-item>
+            <el-form-item :label="t('oa.notify.settings.rejected')">
+              <el-switch v-model="notifyPrefs.rejected" />
+            </el-form-item>
+            <el-form-item :label="t('oa.notify.settings.timeout')">
+              <el-switch v-model="notifyPrefs.timeout" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" :loading="notifySaving" @click="saveNotifyPref">
+                {{ t('common.save') }}
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </el-tab-pane>
     </el-tabs>
 
     <!-- Add Delegate Dialog -->
@@ -233,8 +262,24 @@ interface Prefs {
   showSummary: boolean
 }
 
+interface NotifyPrefs {
+  email: boolean
+  todo: boolean
+  approved: boolean
+  rejected: boolean
+  timeout: boolean
+}
+
+// Full raw PrefsJson object kept in memory so that any partial save preserves
+// all sub-keys written by other sections (display prefs / notify prefs / future keys).
+const storedRaw = ref<Record<string, unknown>>({})
+
 const prefs = ref<Prefs>({ pageSize: 20, hideCancelled: false, showSummary: true })
 const prefSaving = ref(false)
+
+// Notify prefs — defaults all true (matches backend GetNotifyPrefsAsync default)
+const notifyPrefs = ref<NotifyPrefs>({ email: true, todo: true, approved: true, rejected: true, timeout: true })
+const notifySaving = ref(false)
 
 async function loadPref() {
   try {
@@ -243,11 +288,21 @@ async function loadPref() {
     // http interceptor returns response.data (the envelope body), so:
     const prefsJson: string | undefined = (res as any).data?.prefsJson
     if (prefsJson) {
-      const parsed = JSON.parse(prefsJson) as Partial<Prefs>
+      const parsed = JSON.parse(prefsJson) as Record<string, any>
+      // Keep the full raw object so partial saves can always merge into it
+      storedRaw.value = parsed
       prefs.value = {
         pageSize: parsed.pageSize ?? 20,
         hideCancelled: parsed.hideCancelled ?? false,
         showSummary: parsed.showSummary ?? true,
+      }
+      const n: Partial<NotifyPrefs> = (parsed.notify as Partial<NotifyPrefs>) ?? {}
+      notifyPrefs.value = {
+        email: n.email ?? true,
+        todo: n.todo ?? true,
+        approved: n.approved ?? true,
+        rejected: n.rejected ?? true,
+        timeout: n.timeout ?? true,
       }
     }
   } catch {
@@ -258,12 +313,30 @@ async function loadPref() {
 async function savePref() {
   prefSaving.value = true
   try {
-    await prefApi.save(JSON.stringify(prefs.value))
+    // Merge display-pref fields into full raw object (preserves notify + any other sub-keys)
+    const merged = { ...storedRaw.value, ...prefs.value }
+    storedRaw.value = merged
+    await prefApi.save(JSON.stringify(merged))
     ElMessage.success(t('oa.settings.prefSaveOk'))
   } catch {
     // HTTP interceptor auto-toasts
   } finally {
     prefSaving.value = false
+  }
+}
+
+async function saveNotifyPref() {
+  notifySaving.value = true
+  try {
+    // Only overwrite the `notify` sub-key; leave all other PrefsJson keys intact
+    const merged = { ...storedRaw.value, notify: { ...notifyPrefs.value } }
+    storedRaw.value = merged
+    await prefApi.save(JSON.stringify(merged))
+    ElMessage.success(t('oa.settings.prefSaveOk'))
+  } catch {
+    // HTTP interceptor auto-toasts
+  } finally {
+    notifySaving.value = false
   }
 }
 
