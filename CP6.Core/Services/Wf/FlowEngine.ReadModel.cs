@@ -113,17 +113,21 @@ public partial class FlowEngine
         }
     }
 
-    /// <summary>会签节点已决：把本节点本 token 下、非已办的 Pending 履历行置 Skipped（or 签未轮到/被取消的兄弟行）。</summary>
-    internal void SkipPendingFormTos(Guid instanceId, string nodeId, Guid? tokenId)
+    /// <summary>会签节点已决：把本节点本 token 下、非已办的 Pending 履历行置 Skipped（or 签未轮到/被取消的兄弟行）。
+    /// 串簽多档路径可选传 stageIndex/stageRound，只 Skip 该档该轮行；单档/旧路径不传，行为零变化。</summary>
+    internal void SkipPendingFormTos(Guid instanceId, string nodeId, Guid? tokenId, int? stageIndex = null, int? stageRound = null)
     {
-        foreach (var f in _db.Wf_FlowFormTos.Local
-            .Where(f => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
-                        && f.Status == FlowFormToStatus.Pending).ToList())
-            f.Status = FlowFormToStatus.Skipped;
+        bool Match(Wf_FlowFormTo f) => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
+            && f.Status == FlowFormToStatus.Pending
+            && (stageIndex == null || f.StageIndex == stageIndex)
+            && (stageRound == null || f.StageRound == stageRound);
+        foreach (var f in _db.Wf_FlowFormTos.Local.Where(Match).ToList()) f.Status = FlowFormToStatus.Skipped;
         var localIds = _db.Wf_FlowFormTos.Local.Where(f => f.InstanceId == instanceId).Select(f => f.Id).ToHashSet();
         foreach (var f in _db.Wf_FlowFormTos
             .Where(f => f.InstanceId == instanceId && f.NodeId == nodeId && f.TokenId == tokenId
-                        && f.Status == FlowFormToStatus.Pending && !localIds.Contains(f.Id)).ToList())
+                        && f.Status == FlowFormToStatus.Pending && !localIds.Contains(f.Id)
+                        && (stageIndex == null || f.StageIndex == stageIndex)
+                        && (stageRound == null || f.StageRound == stageRound)).ToList())
             f.Status = FlowFormToStatus.Skipped;
     }
 

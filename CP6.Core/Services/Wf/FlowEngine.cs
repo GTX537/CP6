@@ -165,7 +165,9 @@ public partial class FlowEngine : IFlowEngine
         // 会签判定：取本 token 本节点在途/已决任务（排除作废，避免退回重入旧轮任务串台；含刚改的，identity-map 反映未存修改）
         var nodeTasks = await _db.Wf_FlowTasks
             .Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId
-                        && t.TokenId == task.TokenId && t.Status != FlowTaskStatus.Cancelled)
+                        && t.TokenId == task.TokenId
+                        && t.StageIndex == task.StageIndex && t.StageRound == task.StageRound
+                        && t.Status != FlowTaskStatus.Cancelled)
             .ToListAsync();
         int approved = nodeTasks.Count(t => t.Status == FlowTaskStatus.Approved);
         int rejected = nodeTasks.Count(t => t.Status == FlowTaskStatus.Rejected);
@@ -186,10 +188,32 @@ public partial class FlowEngine : IFlowEngine
         CancelPendingTasks(nodeTasks);   // 节点已决，作废本节点其余在途
         if (passed)
         {
-            SkipPendingFormTos(inst.Id, task.NodeId, task.TokenId);   // ★ Fix1：or 签兄弟（被取消任务）的 Pending 履历行 → Skipped
             var schema = await LoadSchemaAsync(inst.FlowKey);
             var tok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
-            if (tok is not null) await AdvanceToken(inst, schema, tok);
+            var plan = (tok is null || string.IsNullOrEmpty(tok.StagePlanJson))
+                ? null
+                : JsonSerializer.Deserialize<List<RuntimeApprovalStage>>(tok.StagePlanJson, JsonOpts);
+
+            if (plan is null)
+            {
+                // 单档:与今天逐字等价(无 stage 过滤 + 直接 AdvanceToken)
+                SkipPendingFormTos(inst.Id, task.NodeId, task.TokenId);
+                if (tok is not null) await AdvanceToken(inst, schema, tok);
+            }
+            else
+            {
+                SkipPendingFormTos(inst.Id, task.NodeId, task.TokenId, task.StageIndex, task.StageRound);
+                int k1 = task.StageIndex + 1;
+                if (k1 < plan.Count)
+                {
+                    var node = FindNode(schema, task.NodeId)!;
+                    await EnterStageAsync(inst, schema, node, tok!, plan, k1);   // 同节点同 token 建下档
+                }
+                else
+                {
+                    await AdvanceToken(inst, schema, tok!);                       // 末档过 → 去下一节点
+                }
+            }
         }
         else
         {
