@@ -87,6 +87,30 @@ export class SceneStage {
     this.layers.ghost.batchDraw()
   }
 
+  /**
+   * 在 originWorld 处画 w×d（mm）外包矩形幽灵，valid 决定绿/琥珀着色（SP2 ④）。
+   * 与 renderRack 同向（矩形向屏幕上方延伸 dPx）。
+   */
+  showFootprintGhost(originWorld: XY, w: number, d: number, valid: boolean): void {
+    this.layers.ghost.destroyChildren()
+    const origin = worldToScreen(originWorld, this.view)
+    const wPx = w * this.view.zoom
+    const dPx = d * this.view.zoom
+    const rect = new Konva.Rect({
+      x: origin.x,
+      y: origin.y - dPx,
+      width: wPx,
+      height: dPx,
+      fill: valid ? 'rgba(80,200,120,0.30)' : 'rgba(255,170,0,0.25)',
+      stroke: valid ? '#40cc70' : '#ffaa00',
+      strokeWidth: 2,
+      dash: [6, 4],
+      listening: false,
+    })
+    this.layers.ghost.add(rect)
+    this.layers.ghost.batchDraw()
+  }
+
   zoom(delta: number): void {
     const factor = delta > 0 ? 1.1 : 0.9
     this.view = { ...this.view, zoom: Math.max(0.005, Math.min(2, this.view.zoom * factor)) }
