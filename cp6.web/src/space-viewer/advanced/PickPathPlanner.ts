@@ -46,7 +46,7 @@ function addEdge(g: Graph, a: Pt, b: Pt): void {
 }
 
 /** 把全部 Aisle 中心线连成一张图（顶点按 1mm 取整去重，共端点/交叉自动合并）。 */
-export function buildCenterlineGraph(aisles: Array<{ centerline: string }>): Graph {
+export function buildCenterlineGraph<T extends { centerline: string }>(aisles: T[]): Graph {
   const g: Graph = { nodes: new Map(), adj: new Map(), segments: [] }
   for (const a of aisles) {
     const v = parseCenterline(a.centerline)
@@ -142,7 +142,7 @@ function polyDist(pts: Pt[]): number {
 }
 
 /** 整条拣货路径：依次拼接相邻拣货点（去重接缝点）。 */
-export function planPickRoute(aisles: Array<{ centerline: string }>, stops: Pt[]): PlannedRoute {
+export function planPickRoute<T extends { centerline: string }>(aisles: T[], stops: Pt[]): PlannedRoute {
   if (stops.length < 2) return { points: stops.slice(), totalDistance: 0, degraded: false }
   const g = buildCenterlineGraph(aisles)
   const points: Pt[] = []

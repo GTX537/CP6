@@ -48,6 +48,23 @@
         @toggle-poll="onTogglePoll"
       />
 
+      <!-- Advanced panel (bottom-right): pick-path / workload / devices -->
+      <AdvancedPanel
+        :path-loaded="pathLoaded"
+        :path-info="pathInfo"
+        :workload-on="workloadOn"
+        :device-on="deviceOn"
+        @load-path="onLoadPath"
+        @play="onPathPlay"
+        @pause="onPathPause"
+        @step="onPathStep"
+        @replay="onPathReplay"
+        @speed="onPathSpeed"
+        @toggle-workload="onToggleWorkload"
+        @apply-workload="onApplyWorkload"
+        @toggle-device="onToggleDevice"
+      />
+
       <div v-if="loading" class="viewer-loading">
         <span>{{ t('加载中') }} {{ progressText }}</span>
       </div>
@@ -70,6 +87,12 @@ import InfoCard from './InfoCard.vue'
 import FloorList from './FloorList.vue'
 import SearchBox from './SearchBox.vue'
 import StockLegend from './StockLegend.vue'
+import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
+import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
+import { DeviceLayer } from '@/space-viewer/advanced/DeviceLayer'
+import { planPickRoute, type Pt } from '@/space-viewer/advanced/PickPathPlanner'
+import { advancedApi } from '@/api/space/advanced'
+import AdvancedPanel from './AdvancedPanel.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -92,6 +115,16 @@ const overlayTs = ref('')
 const polling = ref(false)
 const selectedStock = ref<WmsStockDto | null>(null)
 
+let pathAnimator: PathAnimator | null = null
+let heatmap: WorkloadHeatmap | null = null
+let deviceLayer: DeviceLayer | null = null
+
+const pathLoaded = ref(false)
+const pathInfo = ref('')
+const workloadOn = ref(false)
+const deviceOn = ref(false)
+let workloadWin = { from: new Date().toISOString().slice(0, 10), to: new Date().toISOString().slice(0, 10) }
+
 function canvasNdc(e: MouseEvent): { x: number; y: number } {
   const canvas = canvasRef.value
   if (!canvas) return { x: 0, y: 0 }
@@ -105,6 +138,11 @@ function canvasNdc(e: MouseEvent): { x: number; y: number } {
 async function loadFloor(floorId: string): Promise<void> {
   if (!viewer) return
   selectedId.value = null
+  pathAnimator?.clear()
+  pathLoaded.value = false
+  pathInfo.value = ''
+  deviceLayer?.clear()
+  deviceOn.value = false
   loading.value = true
   errorMsg.value = ''
   progressText.value = ''
@@ -202,12 +240,81 @@ async function onLocateMaterial(material: string): Promise<void> {
   }
 }
 
+function onPathPlay(): void { pathAnimator?.play() }
+function onPathPause(): void { pathAnimator?.pause() }
+function onPathStep(): void { pathAnimator?.stepNext() }
+function onPathReplay(): void { pathAnimator?.replay() }
+function onPathSpeed(v: number): void { pathAnimator?.setSpeed(v) }
+
+async function onLoadPath(taskNo: string): Promise<void> {
+  if (!taskNo || !pathAnimator) return
+  try {
+    const env = await advancedApi.pickPath(currentFloorId.value, taskNo)
+    const data = env.data
+    const stopPts: Pt[] = data.stops
+      .filter((s) => s.absX != null && s.absY != null)
+      .map((s) => ({ x: s.absX as number, y: s.absY as number }))
+    if (stopPts.length < 2) { ElMessage.info(t('该拣货单无可定位拣货点')); return }
+    const route = planPickRoute(data.aisles, stopPts)
+    pathAnimator.setPath(route.points)
+    pathLoaded.value = true
+    pathInfo.value = t('拣货路径：{n} 点，总距 {d} 米')
+      .replace('{n}', String(stopPts.length))
+      .replace('{d}', (route.totalDistance / 1000).toFixed(1))   // I-SPACE-801
+    if (route.degraded) ElMessage.warning(t('巷道路径不连通，近似直连显示'))  // W-SPACE-801
+  } catch {
+    ElMessage.warning(t('高级可视化数据获取失败'))   // W-SPACE-802
+  }
+}
+
+async function onToggleWorkload(): Promise<void> {
+  if (!heatmap || !viewer) return
+  workloadOn.value = !workloadOn.value
+  if (workloadOn.value) {
+    overlayMode.value = 'off'            // 与 07 着色互斥
+    await viewer.load(currentFloorId.value)  // 复位为默认灰（不重叠 07 着色）
+    heatmap.setEnabled(true)
+    await heatmap.refresh(currentFloorId.value, workloadWin.from, workloadWin.to)
+    ElMessage.info(t('作业热图（时间窗 {f}~{t}）已加载').replace('{f}', workloadWin.from).replace('{t}', workloadWin.to)) // I-SPACE-802
+  } else {
+    heatmap.setEnabled(false)
+    await loadFloor(currentFloorId.value)  // 复位 + 还原 07 库存着色
+  }
+}
+
+async function onApplyWorkload(win: { from: string; to: string }): Promise<void> {
+  workloadWin = win
+  if (workloadOn.value && heatmap) {
+    await heatmap.refresh(currentFloorId.value, win.from, win.to)
+  }
+}
+
+async function onToggleDevice(): Promise<void> {
+  if (!deviceLayer) return
+  deviceOn.value = !deviceOn.value
+  if (deviceOn.value) {
+    try {
+      const env = await advancedApi.devices(currentFloorId.value)
+      deviceLayer.setDevices(env.data)
+      ElMessage.info(t('设备联动为演示示意（未接实时）'))   // I-SPACE-803
+    } catch {
+      ElMessage.warning(t('高级可视化数据获取失败'))
+    }
+  } else {
+    deviceLayer.clear()
+  }
+}
+
 onMounted(async () => {
   const canvas = canvasRef.value
   if (!canvas) return
 
   viewer = new SpaceViewer(canvas)
   overlay = new StockOverlay(viewer as unknown as import('@/space-viewer/api/ViewerHandle').ViewerHandle)
+  const vh = viewer as unknown as import('@/space-viewer/api/ViewerHandle').ViewerHandle
+  pathAnimator = new PathAnimator(vh)
+  heatmap = new WorkloadHeatmap(vh)
+  deviceLayer = new DeviceLayer(vh)
 
   viewer.onProgress((done, total) => {
     progressText.value = `${done}/${total}`
@@ -239,6 +346,9 @@ onBeforeUnmount(() => {
   clearTimeout(hoverTimer)
   overlay?.dispose()
   overlay = null
+  pathAnimator?.clear(); pathAnimator = null
+  heatmap?.dispose(); heatmap = null
+  deviceLayer?.clear(); deviceLayer = null
   viewer?.dispose()
   viewer = null
   locator = null
