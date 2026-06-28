@@ -26,6 +26,11 @@ public class Wf_FlowFormTo : BaseTenantEntity
     /// <summary>0=待签 1=同意 2=驳回 3=转交 4=加签 5=跳过 6=作废。见 FlowFormToStatus。</summary>
     public int Status { get; set; }
 
+    /// <summary>串簽运行档序号(timeline/forecast 标号)。旧行 null。</summary>
+    public int? StageIndex { get; set; }
+    /// <summary>串簽重入轮次。旧行 null。</summary>
+    public int? StageRound { get; set; }
+
     [MaxLength(1000)] public string? Comment { get; set; }
     public DateTime SentAt { get; set; }
     public DateTime? HandledAt { get; set; }

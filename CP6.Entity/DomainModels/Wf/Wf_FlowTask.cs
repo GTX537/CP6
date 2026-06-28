@@ -45,6 +45,13 @@ public class Wf_FlowTask : BaseTenantEntity
     /// 可空：旧数据 / 回填前为 null（后续 Task 8 回填补齐）；新建 task 必带。</summary>
     public Guid? TokenId { get; set; }
 
+    /// <summary>串簽运行档序号(WFS 引擎深化)。默认 0=单档/旧数据,语义不变,无需回填。</summary>
+    public int StageIndex { get; set; }
+
+    /// <summary>同一运行档的重入轮次(prevStage 退回后 +1)。计票按 (Inst,Node,Token,StageIndex,StageRound) 隔离,
+    /// 杜绝退回上一档后旧轮 Approved 任务串入新轮计票。默认 0。</summary>
+    public int StageRound { get; set; }
+
     /// <summary>未處理"未读"标记（信箱 L2）。送签建任务时默认 false；信箱打开详情/标记已读置 true。</summary>
     public bool IsRead { get; set; }
 

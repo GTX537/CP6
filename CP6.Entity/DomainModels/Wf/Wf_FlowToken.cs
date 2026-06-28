@@ -25,4 +25,8 @@ public class Wf_FlowToken : BaseTenantEntity
 
     /// <summary>分叉批次 Id（同批共享，join 认亲计数）。根/线性 token=null。</summary>
     public Guid? ForkId { get; set; }
+
+    /// <summary>本 token 当前 approval 节点的冻结运行计划(RuntimeApprovalStage[] JSON)。进多档审批节点时算一次写入;
+    /// 单档/非审批节点 = null。推进/退回基于它,不再每次现查 → 杜绝 managerChain 档位漂移。</summary>
+    public string? StagePlanJson { get; set; }
 }
