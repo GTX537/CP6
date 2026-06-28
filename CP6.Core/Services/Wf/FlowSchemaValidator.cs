@@ -4,7 +4,7 @@ namespace CP6.Core.Services.Wf;
 public static class FlowSchemaValidator
 {
     private static readonly HashSet<string> KnownStrategies =
-        new(new[] { "DirectManager", "DeptLeader", "Role", "Specified", "Starter" }, StringComparer.OrdinalIgnoreCase);
+        new(new[] { "DirectManager", "DeptLeader", "Role", "Specified", "Starter", "FormField", "DataMap", "Group" }, StringComparer.OrdinalIgnoreCase);
 
     public static IReadOnlyList<string> Validate(FlowSchema schema)
     {
@@ -26,6 +26,14 @@ public static class FlowSchemaValidator
         foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && (n.Stages is null || n.Stages.Count == 0)))
             if (n.ApproverStrategy is null || !KnownStrategies.Contains(n.ApproverStrategy)) { errs.Add("E-WF-010"); break; }
 
+        // ⑤b 新策略配置完整性(E-WF-014)：单档节点
+        foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && (n.Stages is null || n.Stages.Count == 0)))
+        {
+            if (n.ApproverStrategy == "FormField" && string.IsNullOrWhiteSpace(n.ApproverFieldName)) { errs.Add("E-WF-014"); break; }
+            if (n.ApproverStrategy == "DataMap" && (string.IsNullOrWhiteSpace(n.ApproverMapKey) || string.IsNullOrWhiteSpace(n.ApproverFieldName))) { errs.Add("E-WF-014"); break; }
+            if (n.ApproverStrategy == "Group" && (n.ApproverMembers is null || n.ApproverMembers.Count == 0)) { errs.Add("E-WF-014"); break; }
+        }
+
         // ⑦ 串簽档配置(E-WF-011):有 Stages 时每档合法
         foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && n.Stages is { Count: > 0 }))
         {
@@ -41,6 +49,24 @@ public static class FlowSchemaValidator
                 if (!ruleOk || !csOk) { bad = true; break; }
             }
             if (bad) { errs.Add("E-WF-011"); break; }
+        }
+
+        // ⑦b 串簽档新策略配置完整性(E-WF-014)：fixed 档
+        foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && n.Stages is { Count: > 0 }))
+        {
+            bool stageBad014 = false;
+            foreach (var st in n.Stages!)
+            {
+                var kind = (st.Kind ?? "fixed").Trim().ToLowerInvariant();
+                if (kind != "fixed") continue;
+                if ((st.ApproverStrategy == "FormField" && string.IsNullOrWhiteSpace(st.ApproverFieldName)) ||
+                    (st.ApproverStrategy == "DataMap" && (string.IsNullOrWhiteSpace(st.ApproverMapKey) || string.IsNullOrWhiteSpace(st.ApproverFieldName))) ||
+                    (st.ApproverStrategy == "Group" && (st.ApproverMembers is null || st.ApproverMembers.Count == 0)))
+                {
+                    stageBad014 = true; break;
+                }
+            }
+            if (stageBad014) { errs.Add("E-WF-014"); break; }
         }
 
         // ⑥ 并行网关入/出边数
