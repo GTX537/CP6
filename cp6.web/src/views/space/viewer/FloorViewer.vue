@@ -143,6 +143,8 @@ async function loadFloor(floorId: string): Promise<void> {
   pathInfo.value = ''
   deviceLayer?.clear()
   deviceOn.value = false
+  heatmap?.setEnabled(false)
+  workloadOn.value = false   // 切层重置热图开关，避免新层显灰但勾选仍亮的态不一致
   loading.value = true
   errorMsg.value = ''
   progressText.value = ''
