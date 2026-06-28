@@ -205,9 +205,15 @@ public partial class FlowEngine : IFlowEngine
     private async Task DispatchIfFinishedAsync(Wf_FlowInstance inst, Guid decidedBy, string? reason)
     {
         if (inst.Status == FlowInstanceStatus.Approved)
+        {
             await _dispatcher.OnInstanceFinishedAsync(inst, approved: true, decidedBy, reason: null);
+            await _notifier.FlowApprovedAsync(inst.StarterId, inst.Id, inst.FlowKey);   // ★ D-1 N-T5
+        }
         else if (inst.Status == FlowInstanceStatus.Rejected)
+        {
             await _dispatcher.OnInstanceFinishedAsync(inst, approved: false, decidedBy, reason);
+            await _notifier.FlowRejectedAsync(inst.StarterId, inst.Id, inst.FlowKey, reason);   // ★ D-1 N-T5
+        }
     }
 
     /// <summary>会签三规则（纯函数）。返回 (是否已决, 是否通过)。</summary>
