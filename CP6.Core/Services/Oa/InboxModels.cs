@@ -5,7 +5,8 @@ namespace CP6.Core.Services.Oa;
 // ── 列表项 ──
 public record InboxPendingItem(Guid TaskId, Guid InstanceId, Guid? TokenId, string FlowKey, string? FlowName,
     string NodeId, string? NodeName, Guid StarterId, string StarterName, string? BizType, string? BizId,
-    bool IsRead, DateTime SentAt);
+    bool IsRead, DateTime SentAt,
+    int StageIndex = 0, int StageRound = 0, string? StageName = null, string? StageCode = null, bool CanSendBackPrevStage = false);
 
 public record InboxCcItem(Guid CcId, Guid InstanceId, string FlowKey, string? FlowName, string? AtNodeId,
     Guid StarterId, string StarterName, bool IsRead, DateTime CreateDate);
@@ -27,7 +28,8 @@ public record BatchActResultItem(Guid TaskId, bool Ok, string? Error);
 // ── 详情（左读右签）──
 public record TimelineRow(int StepSeq, Guid? TokenId, string NodeId, string? NodeName,
     Guid ExpectedHandlerId, string ExpectedHandlerName, Guid? ActualHandlerId, string? ActualHandlerName,
-    Guid? OnBehalfOfId, string? OnBehalfOfName, int Status, string? Comment, DateTime SentAt, DateTime? HandledAt);
+    Guid? OnBehalfOfId, string? OnBehalfOfName, int Status, string? Comment, DateTime SentAt, DateTime? HandledAt,
+    int? StageIndex = null, int? StageRound = null);
 
 public record SnapshotRow(int StepSeq, string NodeId, string DataJson);
 public record CcRow(Guid RecipientId, string RecipientName, string? AtNodeId, bool IsRead);

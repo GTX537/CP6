@@ -28,11 +28,40 @@ public class InboxService : IInboxService
                           from s in ss.DefaultIfEmpty()
                           orderby t.CreateDate descending
                           select new { t, i, FlowName = d == null ? null : d.FlowName, Starter = s }).ToListAsync();
-        return rows.Select(x => new InboxPendingItem(
-            x.t.Id, x.i.Id, x.t.TokenId, x.i.FlowKey, x.FlowName,
-            x.t.NodeId, null, x.i.StarterId,
-            x.Starter == null ? "" : (string.IsNullOrWhiteSpace(x.Starter.NickName) ? x.Starter.UserName : x.Starter.NickName!),
-            x.i.BizType, x.i.BizId, x.t.IsRead, x.t.CreateDate)).ToList();
+
+        // Batch-load frozen stage plans for tokens that carry multi-stage plans
+        var tokenIds = rows.Where(x => x.t.TokenId.HasValue).Select(x => x.t.TokenId!.Value).Distinct().ToList();
+        var tokenPlans = new Dictionary<(Guid tokenId, int stageIndex), (string? name, string? code)>();
+        if (tokenIds.Count > 0)
+        {
+            var tokens = await _db.Wf_FlowTokens
+                .Where(tok => tokenIds.Contains(tok.Id) && tok.StagePlanJson != null)
+                .Select(tok => new { tok.Id, tok.StagePlanJson })
+                .ToListAsync();
+            foreach (var tok in tokens)
+            {
+                if (string.IsNullOrEmpty(tok.StagePlanJson)) continue;
+                var plan = System.Text.Json.JsonSerializer.Deserialize<List<Wf.RuntimeApprovalStage>>(tok.StagePlanJson);
+                if (plan is null) continue;
+                foreach (var stage in plan)
+                    tokenPlans[(tok.Id, stage.StageIndex)] = (stage.StageName, stage.StageCode);
+            }
+        }
+
+        return rows.Select(x =>
+        {
+            (string? stageName, string? stageCode) = (x.t.TokenId.HasValue)
+                ? tokenPlans.GetValueOrDefault((x.t.TokenId.Value, x.t.StageIndex), (null, null))
+                : (null, null);
+            return new InboxPendingItem(
+                x.t.Id, x.i.Id, x.t.TokenId, x.i.FlowKey, x.FlowName,
+                x.t.NodeId, null, x.i.StarterId,
+                x.Starter == null ? "" : (string.IsNullOrWhiteSpace(x.Starter.NickName) ? x.Starter.UserName : x.Starter.NickName!),
+                x.i.BizType, x.i.BizId, x.t.IsRead, x.t.CreateDate,
+                StageIndex: x.t.StageIndex, StageRound: x.t.StageRound,
+                StageName: stageName, StageCode: stageCode,
+                CanSendBackPrevStage: x.t.StageIndex > 0);
+        }).ToList();
     }
 
     public async Task<IReadOnlyList<InboxCcItem>> PendingCcAsync(Guid userId)
@@ -210,7 +239,8 @@ public class InboxService : IInboxService
             f.StepSeq, f.TokenId, f.NodeId, f.NodeName,
             f.ExpectedHandlerId, names.GetValueOrDefault(f.ExpectedHandlerId, f.ExpectedHandlerId.ToString()),
             f.ActualHandlerId, N(f.ActualHandlerId), f.OnBehalfOfId, N(f.OnBehalfOfId),
-            f.Status, f.Comment, f.SentAt, f.HandledAt)).ToList();
+            f.Status, f.Comment, f.SentAt, f.HandledAt,
+            StageIndex: f.StageIndex, StageRound: f.StageRound)).ToList();
         var snapshots = snaps.Select(s => new SnapshotRow(s.StepSeq, s.NodeId, s.DataJson)).ToList();
         var ccRows = ccs.Select(c => new CcRow(c.RecipientId, N(c.RecipientId) ?? "", c.AtNodeId, c.IsRead)).ToList();
 
