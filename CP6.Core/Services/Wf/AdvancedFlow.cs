@@ -142,11 +142,38 @@ public partial class FlowEngine
         await EnterNodeAsync(inst, schema, target, sbToken);
     }
 
-    // T6 实现 —— 暂置桩,保编译;本任务测试不触达
-    private Task SendBackToPrevStageAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowTask task, Guid actorId, string? comment)
-        => throw new NotImplementedException("T6: prevStage");
-    private Task SendBackToStarterAsync(Wf_FlowInstance inst, Wf_FlowTask task, Guid actorId, string? comment)
-        => throw new NotImplementedException("T6: starter");
+    private async Task SendBackToPrevStageAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowTask task,
+        Guid actorId, string? comment)
+    {
+        if (task.StageIndex <= 0) throw new InvalidOperationException("E-WF-012");   // 第 0 档无上一档
+        var node = FindNode(schema, task.NodeId) ?? throw new InvalidOperationException("E-WF-012");
+
+        // ① 本档本轮全部在途/挂起任务 → Cancelled
+        var cur = await _db.Wf_FlowTasks.Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId
+            && t.TokenId == task.TokenId && t.StageIndex == task.StageIndex && t.StageRound == task.StageRound
+            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)).ToListAsync();
+        foreach (var t in cur) t.Status = FlowTaskStatus.Cancelled;
+        // ② 本档本轮 Pending 履历 → SentBack(非 Voided)
+        VoidPendingFormTos(inst.Id, task.NodeId, task.TokenId, task.StageIndex, task.StageRound, FlowFormToStatus.SentBack);
+        AddHistory(inst.Id, task.NodeId, actorId, "sendback", comment ?? $"退回上一档(档{task.StageIndex}→{task.StageIndex - 1})");
+
+        // ③ 读冻结计划,重建上一档(StageRound 由 EnterStageAsync 自推导 +1),token 不 terminate
+        var tok = await _db.Wf_FlowTokens.FirstAsync(t => t.Id == task.TokenId);
+        var plan = System.Text.Json.JsonSerializer.Deserialize<List<RuntimeApprovalStage>>(tok.StagePlanJson!, JsonOpts)!;
+        await EnterStageAsync(inst, schema, node, tok, plan, task.StageIndex - 1);
+    }
+
+    private async Task SendBackToStarterAsync(Wf_FlowInstance inst, Wf_FlowTask task, Guid actorId, string? comment)
+    {
+        var live = await _db.Wf_FlowTasks.Where(t => t.InstanceId == inst.Id
+            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)).ToListAsync();
+        foreach (var t in live) t.Status = FlowTaskStatus.Cancelled;
+        AddHistory(inst.Id, task.NodeId, actorId, "sendback", comment ?? "退回发起人重填");
+        CancelAllActiveTokens(inst.Id);
+        VoidPendingFormTos(inst.Id);                              // 全实例 Pending → Voided
+        inst.Status = FlowInstanceStatus.Draft;                  // 回草稿,发起人改后 StartDraftAsync 从头跑
+        inst.ModifyDate = DateTime.Now;
+    }
 
     /// <summary>target 能否沿边正向到达 current(即 target 是 current 的上游)。</summary>
     private static bool IsUpstreamReachable(FlowSchema schema, string targetId, string currentId)

@@ -155,28 +155,25 @@ public partial class FlowEngine
     }
 
     /// <summary>
-    /// 驳回连坐 / 退回清场：本实例全 Pending 传签履历行 → 作废。
+    /// 驳回连坐 / 退回清场：本实例全 Pending 传签履历行 → <paramref name="newStatus"/>（默认 Voided）。
+    /// 可选 nodeId/tokenId/stageIndex/stageRound 过滤，仅 void 匹配行（prevStage 退回仅清当前档轮）。
     /// 先处理 Local（变更追踪器里的当前状态），再处理 DB 中已落盘但未加载的行，
     /// 排除已在 Local 的实体 Id 以避免通过 EF 身份映射读到旧落盘值。
     /// </summary>
-    internal void VoidPendingFormTos(Guid instanceId)
+    internal void VoidPendingFormTos(Guid instanceId, string? nodeId = null, Guid? tokenId = null,
+        int? stageIndex = null, int? stageRound = null, int newStatus = FlowFormToStatus.Voided)
     {
+        bool Match(Wf_FlowFormTo f) => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending
+            && (nodeId == null || f.NodeId == nodeId) && (tokenId == null || f.TokenId == tokenId)
+            && (stageIndex == null || f.StageIndex == stageIndex) && (stageRound == null || f.StageRound == stageRound);
         // ① 变更追踪器（Local）视图——对本回合已修改但未落盘的行是权威状态
-        foreach (var f in _db.Wf_FlowFormTos.Local
-            .Where(f => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending)
-            .ToList())
-            f.Status = FlowFormToStatus.Voided;
-
+        foreach (var f in _db.Wf_FlowFormTos.Local.Where(Match).ToList()) f.Status = newStatus;
         // ② DB 中已落盘但尚未被本回合加载到 Local 的行
-        var localIds = _db.Wf_FlowFormTos.Local
-            .Where(f => f.InstanceId == instanceId)
-            .Select(f => f.Id)
-            .ToHashSet();
+        var localIds = _db.Wf_FlowFormTos.Local.Where(f => f.InstanceId == instanceId).Select(f => f.Id).ToHashSet();
         foreach (var f in _db.Wf_FlowFormTos
-            .Where(f => f.InstanceId == instanceId
-                        && f.Status == FlowFormToStatus.Pending
-                        && !localIds.Contains(f.Id))
-            .ToList())
-            f.Status = FlowFormToStatus.Voided;
+            .Where(f => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending && !localIds.Contains(f.Id)
+                        && (nodeId == null || f.NodeId == nodeId) && (tokenId == null || f.TokenId == tokenId)
+                        && (stageIndex == null || f.StageIndex == stageIndex) && (stageRound == null || f.StageRound == stageRound)).ToList())
+            f.Status = newStatus;
     }
 }
