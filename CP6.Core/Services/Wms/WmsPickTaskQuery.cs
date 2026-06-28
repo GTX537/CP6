@@ -12,9 +12,7 @@ public class WmsPickTaskQuery : IWmsPickTaskQuery
 
     public async Task<PickPathDto> GetPickPathAsync(string taskNo, CancellationToken ct = default)
     {
-        var exists = await _db.OutboundOrders.AnyAsync(o => o.OutboundNo == taskNo, ct);
-        if (!exists) return new PickPathDto { TaskNo = taskNo };
-
+        // 单查即可：未知单或全 null 库位明细 → 空 Items（与有单同形，无需先 AnyAsync 探测）。
         var details = await _db.OutboundOrderDetails
             .Where(d => d.OutboundNo == taskNo && d.LocationCd != null)
             .OrderBy(d => d.LineNo)
