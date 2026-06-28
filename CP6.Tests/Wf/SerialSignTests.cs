@@ -221,6 +221,30 @@ public class SerialSignTests
     }
 
     [Fact]
+    public async Task SerialManagerChain_StarterNoManager_SuspendsE_WF_013()
+    {
+        using var db = Db();
+        var starter = Guid.NewGuid();
+        db.Sys_Users.Add(new() { Id = starter, UserName = "lonely2", Enable = true, ManagerId = null, Password = "x" });
+        var schema = new FlowSchema { Start = "ap", Nodes =
+        {
+            new FlowNode { Id = "ap", Type = "approval", Stages = new()
+            {
+                new ApprovalStage { Kind = "managerChain", MaxLevels = 2, Countersign = "all" },
+            }},
+            new FlowNode { Id = "end", Type = "end" },
+        }, Edges = { new(){From="ap",To="end"} } };
+        db.Wf_FlowDefs.Add(new() { Id = Guid.NewGuid(), FlowKey = "mc0", FlowName = "x", FormKey = "t",
+            SchemaJson = System.Text.Json.JsonSerializer.Serialize(schema), Version = 1, Enable = true });
+        await db.SaveChangesAsync();
+
+        var instId = await Eng(db).SubmitAsync("mc0", starter, "{}");
+        var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
+        Assert.Equal(FlowInstanceStatus.Suspended, inst.Status);   // 不静默跳过,挂起待指派
+        Assert.Equal(0, await db.Wf_FlowTasks.CountAsync(t => t.Status == FlowTaskStatus.Pending));
+    }
+
+    [Fact]
     public async Task SerialNode_ThenSingleStageNode_AdvancesCleanly_NoStalePlanLeak()
     {
         using var db = Db();

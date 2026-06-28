@@ -31,6 +31,7 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
             if (string.Equals(kind, ApprovalStageKinds.ManagerChain, StringComparison.OrdinalIgnoreCase))
             {
                 int max = st.MaxLevels is int m && m >= 1 ? m : 1;
+                int before = result.Count;
                 Guid? prevResolved = null;
                 for (int j = 1; j <= max; j++)
                 {
@@ -46,6 +47,17 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
                         StageIndex = idx++, Kind = ApprovalStageKinds.ManagerChain,
                         StageName = st.Name, StageCode = st.Code,
                         Rule = new ApproverRule(ApproverStrategy.DirectManager, j, null, null),
+                        Countersign = string.IsNullOrWhiteSpace(st.Countersign) ? CountersignModes.All : st.Countersign,
+                    });
+                }
+                if (result.Count == before)
+                {
+                    // 0 展开(starter 无主管)→ spec §3.5:发一个运行档,激活时解析不到 → Suspend(E-WF-013),不静默跳过
+                    result.Add(new RuntimeApprovalStage
+                    {
+                        StageIndex = idx++, Kind = ApprovalStageKinds.ManagerChain,
+                        StageName = st.Name, StageCode = st.Code,
+                        Rule = new ApproverRule(ApproverStrategy.DirectManager, 1, null, null),
                         Countersign = string.IsNullOrWhiteSpace(st.Countersign) ? CountersignModes.All : st.Countersign,
                     });
                 }

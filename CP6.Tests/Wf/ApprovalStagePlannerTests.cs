@@ -88,6 +88,22 @@ public class ApprovalStagePlannerTests
     }
 
     [Fact]
+    public async Task ManagerChain_ZeroExpansion_EmitsOneUnresolvableStage_NotDropped()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid();   // no manager at all
+        db.Sys_Users.Add(new Sys_User { Id = starter, UserName = "lonely", Enable = true, ManagerId = null, Password = "x" });
+        await db.SaveChangesAsync();
+        var node = new FlowNode { Id = "n1", Type = "approval", Stages = new()
+        {
+            new ApprovalStage { Kind = "managerChain", MaxLevels = 3, Countersign = "all" },
+        }};
+        var plan = await Planner(db).BuildAsync(new Wf_FlowInstance { StarterId = starter }, new FlowSchema(), node);
+        Assert.Single(plan);   // 不是 0,而是 1 个(激活时不可解析 → Suspend)
+        Assert.Equal(ApproverStrategy.DirectManager, plan[0].Rule.Strategy);
+    }
+
+    [Fact]
     public async Task MixedFixed_ManagerChain_Fixed_IndicesContiguous()
     {
         using var db = NewDb();
