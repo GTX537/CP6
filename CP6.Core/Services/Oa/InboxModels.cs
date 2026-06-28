@@ -38,5 +38,5 @@ public record InboxDetail(Wf_FlowInstance Instance, string? FlowName, string? Fo
 
 // ── 预计流程（ForecastService 产出，置此便于 InboxDetail 引用）──
 public record ForecastStep(string NodeId, string? NodeName, string Type, IReadOnlyList<string> Approvers,
-    bool Resolved, string? Note);
+    bool Resolved, string? Note, int? StageIndex = null, string? StageName = null);
 public record ForecastResult(IReadOnlyList<ForecastStep> Steps, bool Branched);

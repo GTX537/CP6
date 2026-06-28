@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wf;
+using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -10,7 +11,9 @@ public class ForecastService : IForecastService
     private static readonly JsonSerializerOptions JsonOpts = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = true };
     private readonly CP6Context _db;
     private readonly IApproverResolver _approver;
-    public ForecastService(CP6Context db, IApproverResolver approver) { _db = db; _approver = approver; }
+    private readonly IApprovalStagePlanner _planner;
+    public ForecastService(CP6Context db, IApproverResolver approver, IApprovalStagePlanner planner)
+    { _db = db; _approver = approver; _planner = planner; }
 
     public async Task<ForecastResult> ForecastAsync(string flowKey, string varsJson, Guid starterId, string? fromNodeId = null)
     {
@@ -52,9 +55,13 @@ public class ForecastService : IForecastService
                     cursor = NextNodeId(schema, cursor, varsJson);
                     break;
                 default: // approval
-                    var (names, resolved) = await ResolveApproverNamesAsync(node, starterId);
-                    steps.Add(new ForecastStep(node.Id, node.Name, "approval", names, resolved,
-                        resolved ? null : "审批人到达时解析"));
+                    var plan = await _planner.BuildAsync(new Wf_FlowInstance { StarterId = starterId }, schema, node);
+                    foreach (var rs in plan)
+                    {
+                        var (names, resolved) = await ResolveRuleNamesAsync(rs.Rule, starterId);
+                        steps.Add(new ForecastStep(node.Id, rs.StageName ?? node.Name, "approval", names, resolved,
+                            resolved ? null : "审批人到达时解析", rs.StageIndex, rs.StageName));
+                    }
                     cursor = NextNodeId(schema, cursor, varsJson);
                     break;
             }
@@ -69,13 +76,10 @@ public class ForecastService : IForecastService
         return null;
     }
 
-    private async Task<(IReadOnlyList<string> Names, bool Resolved)> ResolveApproverNamesAsync(FlowNode node, Guid starterId)
+    private async Task<(IReadOnlyList<string> Names, bool Resolved)> ResolveRuleNamesAsync(ApproverRule rule, Guid starterId)
     {
-        if (!Enum.TryParse<ApproverStrategy>(node.ApproverStrategy, ignoreCase: true, out var strat))
-            return (Array.Empty<string>(), false);
         try
         {
-            var rule = new ApproverRule(strat, node.ApproverLevels, node.ApproverRoleId, node.ApproverUserId);
             var res = await _approver.ResolveAsync(rule, new ApproverResolveContext { StarterUserId = starterId });
             if (!res.Resolved) return (Array.Empty<string>(), false);
             var names = await OaUserNames.ResolveAsync(_db, res.ApproverIds);

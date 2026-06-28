@@ -14,7 +14,7 @@ public class ForecastServiceTests
     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
-    private static IForecastService Forecast(CP6Context db) => new ForecastService(db, new ApproverResolver(db));
+    private static IForecastService Forecast(CP6Context db) => new ForecastService(db, new ApproverResolver(db), new ApprovalStagePlanner(new ApproverResolver(db)));
 
     private static async Task SeedLinearAsync(CP6Context db, Guid u1)
     {
@@ -63,6 +63,35 @@ public class ForecastServiceTests
         var res = await Forecast(db).ForecastAsync("f", "{}", Guid.NewGuid(), fromNodeId: "n1");
         Assert.Equal(2, res.Steps.Count);                 // n2, end（不含已到达的 n1）
         Assert.Equal("n2", res.Steps[0].NodeId);
+    }
+
+    [Fact]
+    public async Task Forecast_ExpandsSerialStages()
+    {
+        using var db = NewDb();
+        Guid s1=Guid.NewGuid(), s2=Guid.NewGuid();
+        var schema = new FlowSchema { Start="ap", Nodes =
+        {
+            new FlowNode { Id="ap", Type="approval", Stages = new()
+            {
+                new ApprovalStage { Kind="fixed", ApproverStrategy="Specified", ApproverUserId=s1, Name="档1" },
+                new ApprovalStage { Kind="fixed", ApproverStrategy="Specified", ApproverUserId=s2, Name="档2" },
+            }},
+            new FlowNode { Id="end", Type="end" },
+        }, Edges = { new(){From="ap",To="end"} } };
+        db.Wf_FlowDefs.Add(new() { Id=Guid.NewGuid(), FlowKey="fs", FlowName="x", FormKey="t",
+            SchemaJson=JsonSerializer.Serialize(schema), Version=1, Enable=true });
+        await db.SaveChangesAsync();
+
+        var planner = new ApprovalStagePlanner(new ApproverResolver(db));
+        var svc = new ForecastService(db, new ApproverResolver(db), planner);
+        var res = await svc.ForecastAsync("fs", "{}", Guid.NewGuid());
+
+        var approvalSteps = res.Steps.Where(s => s.Type == "approval").ToList();
+        Assert.Equal(2, approvalSteps.Count);
+        Assert.Equal(0, approvalSteps[0].StageIndex);
+        Assert.Equal("档1", approvalSteps[0].StageName);
+        Assert.Equal(1, approvalSteps[1].StageIndex);
     }
 
     [Fact]
