@@ -125,6 +125,17 @@ export class InteractionManager {
     this.refreshTransformer()
   }
 
+  /** 对世界坐标点做吸附（供放置幽灵跟随用）。IM 禁用时仍可调用（纯计算）。 */
+  snapWorld(point: { x: number; y: number }): { x: number; y: number; snapped: boolean } {
+    const scene = this.ctx.store.scene
+    if (!scene) return { ...point, snapped: false }
+    return this.ctx.snap.snap(point, {
+      zoom: this.ctx.stage.view.zoom,
+      racks: scene.racks,
+      aisles: scene.aisles,
+    })
+  }
+
   /** Cancel current operation and/or clear selection (Esc). */
   escape(): void {
     const tool = this.tools[this._activeTool]

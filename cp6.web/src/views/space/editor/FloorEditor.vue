@@ -14,6 +14,8 @@ import { scanCollisions } from '@/space-editor/interact/collide/CollisionHint'
 import TemplatePanel from './panels/TemplatePanel.vue'
 import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
 import BindCodesDialog from './panels/BindCodesDialog.vue'
+import { arrayFootprint } from '@/space-editor/generate/arrayFootprint'
+import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -268,16 +270,53 @@ function bindStageClick(): void {
   })
 }
 
+// ── Placement ghost follow (SP2 ④) ──────────────────────────────────────────
+
+function placementValid(originX: number, originY: number, w: number, d: number): boolean {
+  if (!selectedZoneId.value) return false
+  const zone = store.scene?.zones.find(z => z.id === selectedZoneId.value)
+  if (!zone) return false
+  let poly: [number, number][]
+  try { poly = JSON.parse(zone.polygon) as [number, number][] } catch { return false }
+  const corners: [number, number][] = [
+    [originX, originY], [originX + w, originY],
+    [originX + w, originY + d], [originX, originY + d],
+  ]
+  return corners.every(([cx, cy]) => pointInPolygon(cx, cy, poly))
+}
+
+function onPlacementMove(): void {
+  if (!placementMode.value || !pendingSel.value || !stageRef) return
+  const ptr = stageRef.stage.getPointerPosition()
+  if (!ptr) return
+  const raw = stageRef.screenToWorld(ptr)
+  const snapped = imRef.value?.snapWorld(raw) ?? { x: raw.x, y: raw.y }
+  const sel = pendingSel.value
+  const { w, d } = arrayFootprint(sel.template, sel.arrayParams)
+  const valid = placementValid(snapped.x, snapped.y, w, d)
+  stageRef.showFootprintGhost({ x: snapped.x, y: snapped.y }, w, d, valid)
+}
+
+function bindPlacementGhost(): void {
+  stageRef?.stage.on('mousemove.place', onPlacementMove)
+}
+
+function unbindPlacementGhost(): void {
+  stageRef?.stage.off('mousemove.place')
+}
+
 function onTemplateSelect(sel: TemplatePanelSelection): void {
   pendingSel.value = sel
   placementMode.value = true
   imRef.value?.setEnabled(false)
-  ElMessage.info(t('点击画布放置货架'))
+  bindPlacementGhost()
+  ElMessage.info(t('移动到画布，单击放置货架'))
 }
 
 function exitPlacementMode(): void {
   placementMode.value = false
   pendingSel.value = null
+  unbindPlacementGhost()
   stageRef?.hideGhost()
   imRef.value?.setEnabled(true)
 }
