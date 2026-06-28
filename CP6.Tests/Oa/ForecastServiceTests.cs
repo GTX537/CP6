@@ -113,4 +113,26 @@ public class ForecastServiceTests
         var res = await Forecast(db).ForecastAsync("p", "{}", Guid.NewGuid(), fromNodeId: null);
         Assert.True(res.Branched);                        // 含 parallelSplit
     }
+
+    [Fact]
+    public async Task Forecast_FormFieldNode_ResolvesNamedApprover_FromVars()
+    {
+        using var db = NewDb();
+        var approver = Guid.NewGuid();
+        db.Sys_Users.Add(new Sys_User { Id = approver, UserName = "boss", NickName = "Boss", Password = "x", Enable = true });
+        var schema = "{\"start\":\"s\",\"nodes\":[" +
+            "{\"id\":\"s\",\"type\":\"start\"}," +
+            "{\"id\":\"a\",\"type\":\"approval\",\"approverStrategy\":\"FormField\",\"approverFieldName\":\"approver\"}," +
+            "{\"id\":\"e\",\"type\":\"end\"}]," +
+            "\"edges\":[{\"from\":\"s\",\"to\":\"a\"},{\"from\":\"a\",\"to\":\"e\"}]}";
+        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "ff", FlowName = "ff", FormKey = "f",
+            SchemaJson = schema, Enable = true });
+        await db.SaveChangesAsync();
+
+        var svc = new ForecastService(db, new ApproverResolver(db), new ApprovalStagePlanner(new ApproverResolver(db)));
+        var res = await svc.ForecastAsync("ff", $"{{\"approver\":\"{approver}\"}}", Guid.NewGuid());
+        var step = res.Steps.First(s => s.NodeId == "a");
+        Assert.True(step.Resolved);
+        Assert.Contains("Boss", step.Approvers);   // Approvers is the real property name on ForecastStep
+    }
 }

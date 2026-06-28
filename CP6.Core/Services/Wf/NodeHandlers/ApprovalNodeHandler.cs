@@ -21,7 +21,7 @@ internal sealed class ApprovalNodeHandler : INodeHandler
             var rule = FlowEngine.BuildRule(node);
             if (rule is null) { eng.Suspend(inst, node, "节点未配置审批人"); return; }
 
-            var res = await eng.Approver.ResolveAsync(rule, new ApproverResolveContext { StarterUserId = inst.StarterId });
+            var res = await eng.Approver.ResolveAsync(rule, new ApproverResolveContext { StarterUserId = inst.StarterId, VarsJson = inst.VarsJson });
             if (!res.Resolved) { eng.Suspend(inst, node, res.UnresolvedReason ?? "审批人无法解析"); return; }
 
             // 重入节点（退回/循环）：先作废上一轮遗留任务，避免会签计票串台
