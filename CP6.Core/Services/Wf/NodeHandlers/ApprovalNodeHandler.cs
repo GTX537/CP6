@@ -16,6 +16,7 @@ internal sealed class ApprovalNodeHandler : INodeHandler
         // ── 单档(无 Stages):与今天逐字等价,不碰 planner/StagePlanJson ──
         if (node.Stages is null || node.Stages.Count == 0)
         {
+            ctx.Token.StagePlanJson = null;   // 清陈旧串簽计划:多档节点→单档节点同 token 流转时,token 上一节点的冻结计划须清,否则 ActOnceAsync 误判本单档节点为多档
             await eng.WriteCcAsync(inst, node.Id, node.CcUsers, node.CcRoleId);
             var rule = FlowEngine.BuildRule(node);
             if (rule is null) { eng.Suspend(inst, node, "节点未配置审批人"); return; }

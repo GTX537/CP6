@@ -219,4 +219,46 @@ public class SerialSignTests
         Assert.DoesNotContain("E-WF-011", errs);
         Assert.DoesNotContain("E-WF-010", errs);   // 串簽节点不因节点级缺策略误报 E-WF-010
     }
+
+    [Fact]
+    public async Task SerialNode_ThenSingleStageNode_AdvancesCleanly_NoStalePlanLeak()
+    {
+        using var db = Db();
+        Guid s1 = Guid.NewGuid(), s2 = Guid.NewGuid(), s3 = Guid.NewGuid();
+        // ap1 = 2 档串簽(s1→s2) → ap2 = 单档审批(s3) → end
+        var schema = new FlowSchema { Start = "ap1", Nodes =
+        {
+            new FlowNode { Id = "ap1", Type = "approval", Stages = new()
+            {
+                new ApprovalStage { Kind = "fixed", ApproverStrategy = "Specified", ApproverUserId = s1, Countersign = "all" },
+                new ApprovalStage { Kind = "fixed", ApproverStrategy = "Specified", ApproverUserId = s2, Countersign = "all" },
+            }},
+            new FlowNode { Id = "ap2", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = s3 },   // 单档(无 Stages)
+            new FlowNode { Id = "end", Type = "end" },
+        }, Edges = { new(){From="ap1",To="ap2"}, new(){From="ap2",To="end"} } };
+        db.Wf_FlowDefs.Add(new() { Id = Guid.NewGuid(), FlowKey = "mix", FlowName = "x", FormKey = "t",
+            SchemaJson = System.Text.Json.JsonSerializer.Serialize(schema), Version = 1, Enable = true });
+        await db.SaveChangesAsync();
+
+        var instId = await Eng(db).SubmitAsync("mix", Guid.NewGuid(), "{}");
+
+        // 跑完 ap1 两档
+        var t0 = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "ap1" && t.StageIndex == 0 && t.Status == FlowTaskStatus.Pending);
+        await Eng(db).ActAsync(t0.Id, s1, true);
+        var t1 = await db.Wf_FlowTasks.SingleAsync(t => t.NodeId == "ap1" && t.StageIndex == 1 && t.Status == FlowTaskStatus.Pending);
+        await Eng(db).ActAsync(t1.Id, s2, true);
+
+        // 现到 ap2 单档:应只有 s3 一个待办,且 token 的 StagePlanJson 已清
+        var ap2Pending = await db.Wf_FlowTasks.Where(t => t.NodeId == "ap2" && t.Status == FlowTaskStatus.Pending).ToListAsync();
+        Assert.Single(ap2Pending);
+        Assert.Equal(s3, ap2Pending[0].AssigneeId);
+        var tok = await db.Wf_FlowTokens.SingleAsync(t => t.InstanceId == instId && t.Status == FlowTokenStatus.Active);
+        Assert.Null(tok.StagePlanJson);   // 进单档节点时已清陈旧计划
+
+        // 批 ap2 → 应直达 end → Approved(不被陈旧 ap1 计划误带出第 2 档)
+        await Eng(db).ActAsync(ap2Pending[0].Id, s3, true);
+        var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
+        Assert.Equal(FlowInstanceStatus.Approved, inst.Status);
+        Assert.Equal(0, await db.Wf_FlowTasks.CountAsync(t => t.NodeId == "ap2" && t.StageIndex == 1));   // 无残留计划误建的第 2 档
+    }
 }
