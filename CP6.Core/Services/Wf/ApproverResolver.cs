@@ -15,20 +15,33 @@ public class ApproverResolver : IApproverResolver
     private readonly CP6Context _db;
     public ApproverResolver(CP6Context db) => _db = db;
 
-    public Task<ApproverResolveResult> ResolveAsync(ApproverRule rule, ApproverResolveContext ctx) => rule.Strategy switch
+    public async Task<ApproverResolveResult> ResolveAsync(ApproverRule rule, ApproverResolveContext ctx)
     {
-        ApproverStrategy.DirectManager => DirectManagerAsync(rule, ctx),
-        ApproverStrategy.DeptLeader    => DeptLeaderAsync(ctx),
-        ApproverStrategy.Role          => RoleAsync(rule),
-        ApproverStrategy.Specified     => Task.FromResult(rule.SpecifiedUserId is Guid u
-                                            ? ApproverResolveResult.Ok(u)
-                                            : ApproverResolveResult.Unres("未指定审批人")),
-        ApproverStrategy.Starter       => Task.FromResult(ApproverResolveResult.Ok(ctx.StarterUserId)),
-        ApproverStrategy.FormField     => FormFieldAsync(rule, ctx),
-        ApproverStrategy.DataMap       => DataMapAsync(rule, ctx),
-        ApproverStrategy.Group         => GroupAsync(rule, ctx),
-        _ => Task.FromResult(ApproverResolveResult.Unres("未知审批人策略")),
-    };
+        // ②a 门控:When 假 → 本规则不产审批人
+        if (!string.IsNullOrWhiteSpace(rule.When) && !ExpressionEvaluator.Evaluate(rule.When, ctx.VarsJson))
+            return ApproverResolveResult.Unres("条件不满足(When)");
+
+        var baseRes = rule.Strategy switch
+        {
+            ApproverStrategy.DirectManager => await DirectManagerAsync(rule, ctx),
+            ApproverStrategy.DeptLeader    => await DeptLeaderAsync(ctx),
+            ApproverStrategy.Role          => await RoleAsync(rule),
+            ApproverStrategy.Specified     => rule.SpecifiedUserId is Guid u
+                                                ? ApproverResolveResult.Ok(u) : ApproverResolveResult.Unres("未指定审批人"),
+            ApproverStrategy.Starter       => ApproverResolveResult.Ok(ctx.StarterUserId),
+            ApproverStrategy.FormField     => await FormFieldAsync(rule, ctx),
+            ApproverStrategy.DataMap       => await DataMapAsync(rule, ctx),
+            ApproverStrategy.Group         => await GroupAsync(rule, ctx),
+            _ => ApproverResolveResult.Unres("未知审批人策略"),
+        };
+        if (!baseRes.Resolved) return baseRes;
+
+        // ②a 候选过滤:Filter 逐候选求值,留通过者
+        if (!string.IsNullOrWhiteSpace(rule.Filter))
+            return await ApplyFilterAsync(rule.Filter!, baseRes.ApproverIds, ctx);
+
+        return baseRes;
+    }
 
     /// <summary>沿 ManagerId 上溯 Levels 级；链短于 N 时取能到达的链顶；无任何上级 → 缺位。</summary>
     private async Task<ApproverResolveResult> DirectManagerAsync(ApproverRule rule, ApproverResolveContext ctx)
@@ -165,5 +178,34 @@ public class ApproverResolver : IApproverResolver
             if (r.Resolved) ids.AddRange(r.ApproverIds);
         }
         return ids.Count > 0 ? ApproverResolveResult.Ok(ids.Distinct().ToArray()) : ApproverResolveResult.Unres("JSON 组无任何成员解析出审批人");
+    }
+
+    /// <summary>②a 候选过滤:对每个候选载入 Sys_User 行,建 starter.* / user.* + 表单字段 变量字典求值。</summary>
+    private async Task<ApproverResolveResult> ApplyFilterAsync(string filter, List<Guid> candidateIds, ApproverResolveContext ctx)
+    {
+        var users = await _db.Sys_Users.Where(u => candidateIds.Contains(u.Id)).ToListAsync();
+        var formVars = ExpressionEvaluator.ParseVars(ctx.VarsJson);
+        var starter = await _db.Sys_Users.FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId);
+        var kept = new List<Guid>();
+        foreach (var u in users)
+        {
+            var vars = new Dictionary<string, object?>(formVars, StringComparer.Ordinal);
+            AddUserNamespace(vars, "starter", starter);
+            AddUserNamespace(vars, "user", u);
+            if (ExpressionEvaluator.Evaluate(filter, vars)) kept.Add(u.Id);
+        }
+        return kept.Count > 0 ? ApproverResolveResult.Ok(kept.ToArray()) : ApproverResolveResult.Unres("无候选人满足过滤条件");
+    }
+
+    /// <summary>把用户属性写进变量字典(ns.id/deptId/managerId/roleId/userName/enable);GUID 串化、int→double。</summary>
+    private static void AddUserNamespace(Dictionary<string, object?> vars, string ns, Sys_User? u)
+    {
+        if (u is null) return;
+        vars[$"{ns}.id"]        = u.Id.ToString();
+        vars[$"{ns}.deptId"]    = u.DeptId?.ToString() ?? "";
+        vars[$"{ns}.managerId"] = u.ManagerId?.ToString() ?? "";
+        vars[$"{ns}.roleId"]    = u.RoleId is int r ? (double)r : (object?)null;
+        vars[$"{ns}.userName"]  = u.UserName;
+        vars[$"{ns}.enable"]    = u.Enable;
     }
 }

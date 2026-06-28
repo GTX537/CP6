@@ -145,4 +145,53 @@ public class ApproverResolverAdvancedTests
         var res = await new ApproverResolver(db).ResolveAsync(rule, new ApproverResolveContext { StarterUserId = u });
         Assert.False(res.Resolved);
     }
+
+    [Fact]
+    public async Task When_GatesRule_FalseYieldsUnresolved()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid();
+        var ruleTrue = new ApproverRule(ApproverStrategy.Starter, null, null, null) { When = "amount > 10" };
+        var ruleFalse = new ApproverRule(ApproverStrategy.Starter, null, null, null) { When = "amount > 1000" };
+        var ctx = new ApproverResolveContext { StarterUserId = starter, VarsJson = "{\"amount\":100}" };
+        Assert.True((await new ApproverResolver(db).ResolveAsync(ruleTrue, ctx)).Resolved);
+        Assert.False((await new ApproverResolver(db).ResolveAsync(ruleFalse, ctx)).Resolved);
+    }
+
+    [Fact]
+    public async Task Filter_KeepsSameDeptCandidates()
+    {
+        using var db = NewDb();
+        var dept = Guid.NewGuid();
+        var starter = Guid.NewGuid();
+        var same = Guid.NewGuid(); var other = Guid.NewGuid();
+        db.Sys_Users.AddRange(
+            new Sys_User { Id = starter, UserName = "s", Password = "x", DeptId = dept, RoleId = 7, Enable = true },
+            new Sys_User { Id = same, UserName = "same", Password = "x", DeptId = dept, RoleId = 7, Enable = true },
+            new Sys_User { Id = other, UserName = "other", Password = "x", DeptId = Guid.NewGuid(), RoleId = 7, Enable = true });
+        await db.SaveChangesAsync();
+
+        var rule = new ApproverRule(ApproverStrategy.Role, null, 7, null) { Filter = "user.deptId == starter.deptId" };
+        var res = await new ApproverResolver(db).ResolveAsync(rule,
+            new ApproverResolveContext { StarterUserId = starter, VarsJson = "{}" });
+        Assert.Contains(same, res.ApproverIds);
+        Assert.Contains(starter, res.ApproverIds);   // starter 同部门也留
+        Assert.DoesNotContain(other, res.ApproverIds);
+    }
+
+    [Fact]
+    public async Task Filter_AllExcluded_Unresolved()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var u = Guid.NewGuid();
+        db.Sys_Users.AddRange(
+            new Sys_User { Id = starter, UserName = "s", Password = "x", DeptId = Guid.NewGuid(), RoleId = 7, Enable = true },
+            new Sys_User { Id = u, UserName = "u", Password = "x", DeptId = Guid.NewGuid(), RoleId = 7, Enable = true });
+        await db.SaveChangesAsync();
+        var rule = new ApproverRule(ApproverStrategy.Role, null, 7, null) { Filter = "user.deptId == starter.deptId" };
+        var res = await new ApproverResolver(db).ResolveAsync(rule,
+            new ApproverResolveContext { StarterUserId = starter, VarsJson = "{}" });
+        // starter 自己也是 role 7,但 starter.deptId==starter.deptId 真 → starter 留;u 排除
+        Assert.Equal(starter, res.ApproverIds.Single());
+    }
 }
