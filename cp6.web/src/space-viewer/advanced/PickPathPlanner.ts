@@ -18,7 +18,7 @@ export interface Graph {
   segments: Array<{ a: Pt; b: Pt }>
 }
 
-const key = (p: Pt): string => `${Math.round(p.x)},${Math.round(p.y)}`
+export const key = (p: Pt): string => `${Math.round(p.x)},${Math.round(p.y)}`
 const dist = (a: Pt, b: Pt): number => Math.hypot(a.x - b.x, a.y - b.y)
 
 /** 解析中心线 JSON `[[x,y],…]`；非法/空 → []。 */
