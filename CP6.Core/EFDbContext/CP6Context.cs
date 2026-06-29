@@ -422,6 +422,9 @@ public class CP6Context : DbContext
     public DbSet<Space_CodeRule> Space_CodeRules { get; set; }
     /// <summary>标注（Space 章02，打点文字/图标/区域）</summary>
     public DbSet<Space_Marker> Space_Markers { get; set; }
+    // ───── Space P4 多层路由 ─────
+    public DbSet<Space_Connector> Space_Connectors { get; set; }
+    public DbSet<Space_ConnectorStop> Space_ConnectorStops { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -2008,6 +2011,16 @@ public class CP6Context : DbContext
         });
         modelBuilder.Entity<Space_Template>()
             .HasIndex(x => new { x.TenantId, x.TemplateCode }).IsUnique();
+        modelBuilder.Entity<Space_Connector>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.ConnectorCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.SiteId });
+        });
+        modelBuilder.Entity<Space_ConnectorStop>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.ConnectorId, x.FloorId }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.ConnectorId });
+        });
         modelBuilder.Entity<Space_CodeRule>()
             .HasIndex(x => new { x.TenantId, x.ScopeType, x.ScopeId });
         modelBuilder.Entity<Space_Marker>()
