@@ -82,12 +82,12 @@
 | SOP-M05-01 | 01 | 工作中心(A2) | /mes/work-center | P2 | 工艺主数据 | ⬜ |
 | SOP-M05-02 | 02 | 工序费率(A2) | /mes/process-cost-rate | P2 | 工序成本费率 | ⬜ |
 | SOP-M05-03 | 03 | 製造指図入力 | /mes/work-order | P0 | 工单录入(受注Bridge展开) | ✅(16节/6场景/31用例) |
-| SOP-M05-04 | 04 | 製造指図一覧 | /mes/work-order-list | P0 | 工单检索/发行触发材料出庫 | ⬜ |
+| SOP-M05-04 | 04 | 製造指図一覧 | /mes/work-order-list | P0 | 工单检索/发行触发材料出庫 | ✅(16节/6场景/30用例) |
 | SOP-M05-05 | 05 | 製造実績入力 | /mes/production-result | P0 | 工序实绩/完工触发入庫 | ✅(16节/6场景/30用例) |
-| SOP-M05-06 | 06 | 製造実績一覧 | /mes/production-result-list | P1 | 实绩检索 | ⬜ |
+| SOP-M05-06 | 06 | 製造実績一覧 | /mes/production-result-list | P1 | 实绩检索 | ✅(16节/6场景/28用例) |
 | SOP-M05-07 | 07 | 品質検査入力 | /mes/quality-inspection | P1 | NG联动Stock.QcStatus | ✅(16节/5场景/29用例) |
-| SOP-M05-08 | 08 | 品質検査一覧 | /mes/quality-inspection-list | P1 | 检验检索 | ⬜ |
-| SOP-M05-09 | 09 | 不良管理 | /mes/defect | P1 | 不良记录 | ⬜ |
+| SOP-M05-08 | 08 | 品質検査一覧 | /mes/quality-inspection-list | P1 | 检验检索 | ✅(16节/6场景/28用例) |
+| SOP-M05-09 | 09 | 不良管理 | /mes/defect | P1 | 不良记录 | ✅(16节/6场景/31用例) |
 | SOP-M05-10 | 10 | 生産計画ボード | /mes/planning-board | P1 | 排产看板 | ⬜ |
 | SOP-M05-11 | 11 | MES Dashboard | /mes/dashboard | P2 | 生产看板 | ⬜ |
 | SOP-M05-12 | 12 | 設備一覧 | /mes/machine-list | P2 | 设备+停机 | ⬜ |
