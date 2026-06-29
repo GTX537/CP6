@@ -1,6 +1,8 @@
 // cp6.web/src/space-viewer/advanced/PickPathPlanner.ts
 // 拣货路径规划：中心线图 + Dijkstra（纯逻辑，mm 数据空间，2D-XY）。
 
+import { segSegIntersection, splitPointsOnSegment } from './segmentIntersect'
+
 export interface Pt { x: number; y: number }
 
 export interface PlannedRoute {
@@ -45,12 +47,26 @@ function addEdge(g: Graph, a: Pt, b: Pt): void {
   g.segments.push({ a, b })
 }
 
-/** 把全部 Aisle 中心线连成一张图（顶点按 1mm 取整去重，共端点/交叉自动合并）。 */
+/** 把全部 Aisle 中心线连成一张图：两阶段——收集原始段 → 求交拆段（交叉口按 1mm 取整成公共节点）。 */
 export function buildCenterlineGraph<T extends { centerline: string }>(aisles: T[]): Graph {
   const g: Graph = { nodes: new Map(), adj: new Map(), segments: [] }
+  // 阶段 1：收集所有 aisle 中心线的相邻点对为原始段
+  const raw: Array<{ a: Pt; b: Pt }> = []
   for (const a of aisles) {
     const v = parseCenterline(a.centerline)
-    for (let i = 0; i + 1 < v.length; i++) addEdge(g, v[i]!, v[i + 1]!)
+    for (let i = 0; i + 1 < v.length; i++) raw.push({ a: v[i]!, b: v[i + 1]! })
+  }
+  // 阶段 2：每段扫描其余段求交点，拆段后逐子边 addEdge（共享 1mm 取整顶点 → 交叉口自动合并）
+  for (let i = 0; i < raw.length; i++) {
+    const s = raw[i]!
+    const cuts: Pt[] = []
+    for (let j = 0; j < raw.length; j++) {
+      if (j === i) continue
+      const x = segSegIntersection(s.a, s.b, raw[j]!.a, raw[j]!.b)
+      if (x) cuts.push(x)
+    }
+    const ordered = splitPointsOnSegment(s.a, s.b, cuts)
+    for (let k = 0; k + 1 < ordered.length; k++) addEdge(g, ordered[k]!, ordered[k + 1]!)
   }
   return g
 }

@@ -49,4 +49,26 @@ describe('PickPathPlanner', () => {
     expect(planPickRoute([], [{ x: 1, y: 2 }]).points).toEqual([{ x: 1, y: 2 }])
     expect(planPickRoute([], []).points).toEqual([])
   })
+
+  it('buildCenterlineGraph splits at a mid-segment crossing (plus shape)', () => {
+    // H 在 y=500、V 在 x=500，中段 (500,500) 相交，互不共端点
+    const g = buildCenterlineGraph([
+      { aisleCode: 'H', centerline: '[[0,500],[1000,500]]' },
+      { aisleCode: 'V', centerline: '[[500,0],[500,1000]]' },
+    ])
+    expect(g.nodes.has('500,500')).toBe(true)       // 交叉口成为公共节点
+    expect(g.nodes.size).toBe(5)                     // 4 端点 + 1 交叉口
+    expect(g.adj.get('500,500')!.length).toBe(4)     // 四向连通
+  })
+
+  it('planPickRoute connects across a mid-segment crossing (v1 would degrade)', () => {
+    const aisles = [
+      { aisleCode: 'H', centerline: '[[0,500],[1000,500]]' },
+      { aisleCode: 'V', centerline: '[[500,0],[500,1000]]' },
+    ]
+    // 起点贴 V 巷下段、终点贴 H 巷右段 → 必须经交叉口连通
+    const route = planPickRoute(aisles, [{ x: 480, y: 100 }, { x: 900, y: 520 }])
+    expect(route.degraded).toBe(false)
+    expect(route.points.some((p) => Math.round(p.x) === 500 && Math.round(p.y) === 500)).toBe(true)
+  })
 })
