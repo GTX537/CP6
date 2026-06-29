@@ -295,7 +295,7 @@ Write-Host "================================================================" -F
 
 # 2-a. Verify seed rows present (GET cc key).
 Write-Host "-- Verify seed rows for key=cc --"
-$r2a = GetJson "$BaseUrl/api/oa/approver-map?mapKey=cc" $sessAdmin
+$r2a = GetJson "$BaseUrl/api/oa/approver-map/list?mapKey=cc" $sessAdmin
 Chk "S2a: list cc GET HTTP" 200 $r2a.Code
 $ccRows = @()
 if ($r2a.Code -eq 200) {
@@ -341,7 +341,7 @@ if ($newId) {
     $delCode = DeleteJson "$BaseUrl/api/oa/approver-map/$newId" $sessAdmin
     Chk "S2e: delete B200 HTTP" 200 $delCode
     # Verify still 2 seed rows for cc/A100 after delete.
-    $r2e_check = GetJson "$BaseUrl/api/oa/approver-map?mapKey=cc" $sessAdmin
+    $r2e_check = GetJson "$BaseUrl/api/oa/approver-map/list?mapKey=cc" $sessAdmin
     if ($r2e_check.Code -eq 200) {
         $ccRowsAfter = @($r2e_check.Data.data)
         if ($null -eq $ccRowsAfter -or $ccRowsAfter.Count -eq 0) { $ccRowsAfter = @($r2e_check.Data) }
@@ -477,7 +477,7 @@ if ($inst5a) {
     }
 }
 
-# 5b: amount=100 -> A2 When=false, skipped; instance Approved after A1 only.
+# 5b: amount=100 -> A2 When=false -> Unres -> A2 node Suspends (spec §4.1/§9). Node-level When gates the rule (no approver -> suspend); flow routing-around is via edge conditions, not When.
 Write-Host "-- 5b: amount=100 (When=false, A2 skipped) --"
 $vars5b = "{`"amount`":100}"
 $inst5b = Submit $sessStart "approver-when-flow" $vars5b
@@ -495,7 +495,7 @@ if ($inst5b) {
     # Instance should be Approved (A2 gate bypassed).
     $detail5b = GetDetail $sessStart $inst5b
     if ($null -ne $detail5b) {
-        Chk "S5b: instance Approved after A1 only (A2 skipped)" 1 $detail5b.instance.status
+        Chk "S5b: instance Suspended at A2 (When=false suspends per spec)" 4 $detail5b.instance.status
     } else {
         Warn "S5b: could not fetch detail"
     }
@@ -584,21 +584,21 @@ Write-Host "Forecast check : FormField flow with approver=qa_a_user1" -Foregroun
 Write-Host "================================================================" -ForegroundColor Cyan
 
 $forecastVars = "{`"approver`":`"$G_user1`"}"
-$rFc = PostJson "$BaseUrl/api/oa/forecast" @{ flowKey = "approver-forecast-flow"; varsJson = $forecastVars } $sessStart
+$rFc = PostJson "$BaseUrl/api/oa/forecast/preview" @{ flowKey = "approver-forecast-flow"; varsJson = $forecastVars } $sessStart
 Chk "Forecast: HTTP" 200 $rFc.Code
 if ($rFc.Code -eq 200 -and $rFc.Data) {
-    $stages = $rFc.Data.data.stages
-    if ($null -eq $stages) { $stages = $rFc.Data.stages }
-    if ($stages -and @($stages).Count -gt 0) {
-        $firstStage = @($stages)[0]
-        $approverNames = "$($firstStage.approverNames)"
+    $steps = $rFc.Data.data.steps
+    if ($null -eq $steps) { $steps = $rFc.Data.steps }
+    if ($steps -and @($steps).Count -gt 0) {
+        $firstStage = @($steps)[0]
+        $approverNames = "$($firstStage.approvers)"
         $approverIds   = "$($firstStage.approverIds)"
         # Accept either names or ids containing user1's guid or nickname
         $hasConcrete = ($approverNames -and $approverNames -ne "" -and $approverNames -ne "[]") `
                        -or ($approverIds -and $approverIds.Contains($G_user1))
         Chk "Forecast: concrete approver resolved for FormField" $true $hasConcrete
     } else {
-        Warn "Forecast: stages array empty or not found in response"
+        Warn "Forecast: steps array empty or not found in response"
     }
 } else {
     Warn "Forecast: endpoint not available or returned error (acceptable before live server)"

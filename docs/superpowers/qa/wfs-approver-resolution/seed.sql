@@ -55,15 +55,15 @@ DECLARE @u_mgr        uniqueidentifier = 'CCCC0000-0000-0000-0000-000000000007';
 DECLARE @dept_A uniqueidentifier = 'DDDD0000-0000-0000-0000-000000000001';
 DECLARE @dept_B uniqueidentifier = 'DDDD0000-0000-0000-0000-000000000002';
 
--- ── 1. Departments (Sys_Depts) ────────────────────────────────────────────────
+-- ── 1. Departments (Sys_Dept) ────────────────────────────────────────────────
 
-IF NOT EXISTS (SELECT 1 FROM Sys_Depts WHERE Id = @dept_A)
-  INSERT INTO Sys_Depts (Id, DeptName, Enable, Creator, CreateDate, TenantId)
-  VALUES (@dept_A, 'QA Dept A', 1, 'qa-approver-seed', GETDATE(), @tenant);
+IF NOT EXISTS (SELECT 1 FROM Sys_Dept WHERE Id = @dept_A)
+  INSERT INTO Sys_Dept (Id, DeptCode, DeptName, Path, Sort, Enable, Creator, CreateDate, TenantId)
+  VALUES (@dept_A, 'QA-DEPT-A', 'QA Dept A', '/qa-dept-a/', 0, 1, 'qa-approver-seed', GETDATE(), @tenant);
 
-IF NOT EXISTS (SELECT 1 FROM Sys_Depts WHERE Id = @dept_B)
-  INSERT INTO Sys_Depts (Id, DeptName, Enable, Creator, CreateDate, TenantId)
-  VALUES (@dept_B, 'QA Dept B', 1, 'qa-approver-seed', GETDATE(), @tenant);
+IF NOT EXISTS (SELECT 1 FROM Sys_Dept WHERE Id = @dept_B)
+  INSERT INTO Sys_Dept (Id, DeptCode, DeptName, Path, Sort, Enable, Creator, CreateDate, TenantId)
+  VALUES (@dept_B, 'QA-DEPT-B', 'QA Dept B', '/qa-dept-b/', 0, 1, 'qa-approver-seed', GETDATE(), @tenant);
 
 -- ── 2. Users (clone admin's BCrypt hash = password "123456") ─────────────────
 
@@ -256,7 +256,7 @@ IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'approver-forecast-flow'
 IF NOT EXISTS (SELECT 1 FROM Wf_ApproverMap WHERE MapKey = 'cc' AND MatchValue = 'A100' AND ApproverUserId = @u_user1)
   INSERT INTO Wf_ApproverMap (Id, MapKey, MatchValue, ApproverUserId, ApproverRoleId, OrderNo, Enable, Creator, CreateDate, TenantId)
   VALUES (
-    'GGGG0000-0000-0000-0000-000000000001',
+    'ABCD0000-0000-0000-0000-000000000001',
     'cc', 'A100',
     @u_user1, NULL,
     0, 1, 'qa-approver-seed', GETDATE(), @tenant
@@ -265,7 +265,7 @@ IF NOT EXISTS (SELECT 1 FROM Wf_ApproverMap WHERE MapKey = 'cc' AND MatchValue =
 IF NOT EXISTS (SELECT 1 FROM Wf_ApproverMap WHERE MapKey = 'cc' AND MatchValue = 'A100' AND ApproverRoleId = 9)
   INSERT INTO Wf_ApproverMap (Id, MapKey, MatchValue, ApproverUserId, ApproverRoleId, OrderNo, Enable, Creator, CreateDate, TenantId)
   VALUES (
-    'GGGG0000-0000-0000-0000-000000000002',
+    'ABCD0000-0000-0000-0000-000000000002',
     'cc', 'A100',
     NULL, 9,
     1, 1, 'qa-approver-seed', GETDATE(), @tenant
