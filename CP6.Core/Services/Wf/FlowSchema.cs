@@ -59,6 +59,13 @@ public class FlowNode
 
     /// <summary>串簽档位序列(有序)。空/缺省=单档,用本节点 ApproverStrategy/Countersign(向后兼容)。</summary>
     public List<ApprovalStage>? Stages { get; set; }
+
+    // ── 高级审批人策略(②③①)。缺省 null=不启用,走原扁平 4 字段路径(向后兼容) ──
+    public string? ApproverFieldName { get; set; }   // FormField/DataMap:字段名
+    public string? ApproverMapKey { get; set; }      // DataMap:映射键
+    public string? ApproverWhen { get; set; }        // ②a 门控
+    public string? ApproverFilter { get; set; }      // ②a 候选过滤
+    public List<ApproverSpec>? ApproverMembers { get; set; }   // Group 成员
 }
 
 public class FlowEdge
@@ -91,4 +98,24 @@ public class ApprovalStage
     public Guid? ApproverUserId { get; set; }
     public string Countersign { get; set; } = CountersignModes.All;
     public int? MaxLevels { get; set; }               // managerChain:逐级展开上限(产 N 运行档)
+
+    // ── 高级审批人策略(②③①)。缺省 null=不启用,走原扁平 4 字段路径(向后兼容) ──
+    public string? ApproverFieldName { get; set; }   // FormField/DataMap:字段名
+    public string? ApproverMapKey { get; set; }      // DataMap:映射键
+    public string? ApproverWhen { get; set; }        // ②a 门控
+    public string? ApproverFilter { get; set; }      // ②a 候选过滤
+    public List<ApproverSpec>? ApproverMembers { get; set; }   // Group 成员
+}
+
+/// <summary>审批人设计期叶规则(Group 成员用)。对齐 ApproverRule 叶子部分,无 Members(扁平合并)。</summary>
+public class ApproverSpec
+{
+    public string? Strategy { get; set; }
+    public int? ApproverLevels { get; set; }
+    public int? ApproverRoleId { get; set; }
+    public Guid? ApproverUserId { get; set; }
+    public string? FieldName { get; set; }
+    public string? MapKey { get; set; }
+    public string? When { get; set; }
+    public string? Filter { get; set; }
 }

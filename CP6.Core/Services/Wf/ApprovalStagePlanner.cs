@@ -37,7 +37,7 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
                 {
                     var probe = await _approver.ResolveAsync(
                         new ApproverRule(ApproverStrategy.DirectManager, j, null, null),
-                        new ApproverResolveContext { StarterUserId = inst.StarterId });
+                        new ApproverResolveContext { StarterUserId = inst.StarterId, VarsJson = inst.VarsJson });
                     if (!probe.Resolved) break;                       // 无任何上级 → 链断
                     var resolvedId = probe.ApproverIds[0];
                     if (resolvedId == prevResolved) break;             // 链顶已被前档覆盖 → 停止展开
@@ -69,7 +69,12 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
                 {
                     StageIndex = idx++, Kind = ApprovalStageKinds.Fixed,
                     StageName = st.Name, StageCode = st.Code,
-                    Rule = new ApproverRule(strat, st.ApproverLevels, st.ApproverRoleId, st.ApproverUserId),
+                    Rule = new ApproverRule(strat, st.ApproverLevels, st.ApproverRoleId, st.ApproverUserId)
+                    {
+                        FieldName = st.ApproverFieldName, MapKey = st.ApproverMapKey,
+                        When = st.ApproverWhen, Filter = st.ApproverFilter,
+                        Members = st.ApproverMembers?.Select(FlowEngine.MapSpec).ToList(),
+                    },
                     Countersign = string.IsNullOrWhiteSpace(st.Countersign) ? CountersignModes.All : st.Countersign,
                 });
             }

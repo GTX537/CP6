@@ -102,6 +102,7 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IDeptService, CP6.Core.Services
 // 4.0a OA(Wf) 阶段1 运行时
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverResolver, CP6.Core.Services.Wf.ApproverResolver>(); // 章01 审批人解析（消费 PUB 组织）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalStagePlanner, CP6.Core.Services.Wf.ApprovalStagePlanner>(); // 串簽 T2 档展平服务
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverMapService, CP6.Core.Services.Wf.ApproverMapService>(); // ②b 审批人映射维护
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine, CP6.Core.Services.Wf.FlowEngine>();             // 章03 流程引擎状态机（会签/条件/幂等）
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.StartNodeHandler>();      // WFS T4 节点处理器：开始
@@ -1379,6 +1380,13 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 738 });
         db.SaveChanges();
     }
+    // WFS 审批人解析：审批人映射维护菜单（739）—— 幂等，置于 C′ 738 之后
+    if (!db.Sys_Menus.Any(m => m.MenuId == 739))
+    {
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 739, MenuName = "approverMap", RoutePath = "/oa/approver-map", Icon = "Edit", ParentId = 740, OrderNo = 739, Enable = true });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 739 });
+        db.SaveChanges();
+    }
     // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
@@ -1797,6 +1805,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaDesignerScreenSeed.Items) // OA Phase C′ 流程设计器 oa.designer.*/nav.738
             .Concat(CP6.WebApi.Seed.I18nOaNotifyScreenSeed.Items)  // OA Phase D-1 通知中心 oa.notify.*/oa.notify.settings.*
             .Concat(CP6.WebApi.Seed.I18nOaSerialSignScreenSeed.Items)  // WFS 串簽 退回选择器 oa.detail.sendback.* + oa.sendback.* + oa.timeline.sentBack + 设计器档位 oa.designer.stage.* + E-WF-011/012/013
+            .Concat(CP6.WebApi.Seed.I18nOaApproverScreenSeed.Items)  // 审批人解析高级策略 oa.designer.strategy.*/oa.approverMap.*/nav.739/E-WF-014/015
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();

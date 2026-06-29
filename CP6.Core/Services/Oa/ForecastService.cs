@@ -55,10 +55,10 @@ public class ForecastService : IForecastService
                     cursor = NextNodeId(schema, cursor, varsJson);
                     break;
                 default: // approval
-                    var plan = await _planner.BuildAsync(new Wf_FlowInstance { StarterId = starterId }, schema, node);
+                    var plan = await _planner.BuildAsync(new Wf_FlowInstance { StarterId = starterId, VarsJson = varsJson }, schema, node);
                     foreach (var rs in plan)
                     {
-                        var (names, resolved) = await ResolveRuleNamesAsync(rs.Rule, starterId);
+                        var (names, resolved) = await ResolveRuleNamesAsync(rs.Rule, starterId, varsJson);
                         steps.Add(new ForecastStep(node.Id, rs.StageName ?? node.Name, "approval", names, resolved,
                             resolved ? null : "审批人到达时解析", rs.StageIndex, rs.StageName));
                     }
@@ -76,11 +76,11 @@ public class ForecastService : IForecastService
         return null;
     }
 
-    private async Task<(IReadOnlyList<string> Names, bool Resolved)> ResolveRuleNamesAsync(ApproverRule rule, Guid starterId)
+    private async Task<(IReadOnlyList<string> Names, bool Resolved)> ResolveRuleNamesAsync(ApproverRule rule, Guid starterId, string varsJson)
     {
         try
         {
-            var res = await _approver.ResolveAsync(rule, new ApproverResolveContext { StarterUserId = starterId });
+            var res = await _approver.ResolveAsync(rule, new ApproverResolveContext { StarterUserId = starterId, VarsJson = varsJson });
             if (!res.Resolved) return (Array.Empty<string>(), false);
             var names = await OaUserNames.ResolveAsync(_db, res.ApproverIds);
             return (res.ApproverIds.Select(id => names.GetValueOrDefault(id, id.ToString())).ToList(), true);

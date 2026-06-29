@@ -1,5 +1,16 @@
 import type { Node as VFNode, Edge as VFEdge } from '@vue-flow/core'
 
+export interface ApproverSpecDto {
+  strategy?: string
+  approverLevels?: number
+  approverRoleId?: number
+  approverUserId?: string
+  fieldName?: string
+  mapKey?: string
+  when?: string
+  filter?: string
+}
+
 export interface ApprovalStageDto {
   name?: string
   code?: string
@@ -10,6 +21,11 @@ export interface ApprovalStageDto {
   approverUserId?: string
   countersign?: 'all' | 'any' | 'veto'
   maxLevels?: number
+  approverFieldName?: string
+  approverMapKey?: string
+  approverWhen?: string
+  approverFilter?: string
+  approverMembers?: ApproverSpecDto[]
 }
 
 export interface SchemaNode {
@@ -20,6 +36,11 @@ export interface SchemaNode {
   allowReject?: boolean                                // 允许退回
   ccUsers?: string[]; ccRoleId?: number
   stages?: ApprovalStageDto[]                          // 串簽多档审批配置
+  approverFieldName?: string
+  approverMapKey?: string
+  approverWhen?: string
+  approverFilter?: string
+  approverMembers?: ApproverSpecDto[]
   x?: number; y?: number
 }
 export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[] }
@@ -89,6 +110,12 @@ export function validateClient(schema: FlowSchemaDto): string[] {
         if (!ruleOk || !csOk) { errs.push('oa.designer.errStageInvalid'); break }
       }
     }
+  }
+  for (const n of nodes) {
+    if (n.type !== 'approval') continue
+    if (n.approverStrategy === 'FormField' && !n.approverFieldName) errs.push('oa.designer.errApproverConfig')
+    if (n.approverStrategy === 'DataMap' && (!n.approverMapKey || !n.approverFieldName)) errs.push('oa.designer.errApproverConfig')
+    if (n.approverStrategy === 'Group' && !(n.approverMembers?.length)) errs.push('oa.designer.errApproverConfig')
   }
   return errs
 }

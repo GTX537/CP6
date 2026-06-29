@@ -9,7 +9,7 @@ public partial class FlowEngine
         Wf_FlowToken token, IReadOnlyList<RuntimeApprovalStage> plan, int k)
     {
         var stage = plan[k];
-        var res = await _approver.ResolveAsync(stage.Rule, new ApproverResolveContext { StarterUserId = inst.StarterId });
+        var res = await _approver.ResolveAsync(stage.Rule, new ApproverResolveContext { StarterUserId = inst.StarterId, VarsJson = inst.VarsJson });
         if (!res.Resolved) { Suspend(inst, node, "E-WF-013"); return; }
 
         int round = NextStageRound(inst.Id, node.Id, token.Id, k);

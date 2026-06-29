@@ -400,6 +400,8 @@ public class CP6Context : DbContext
     public DbSet<Wf_InboxPref> Wf_InboxPrefs { get; set; }
     /// <summary>站内通知持久化（Phase D-1 通知中心）</summary>
     public DbSet<Wf_Notification> Wf_Notifications { get; set; }
+    /// <summary>审批人映射表（数据驱动策略 DataMap）</summary>
+    public DbSet<Wf_ApproverMap> Wf_ApproverMaps { get; set; }
 
     // ───── Space 空间数字底座 P1（ch00 9 表）─────
     /// <summary>站点（Space 章00，6 层模型顶层）</summary>
@@ -719,6 +721,8 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.TenantId, x.UserId }).IsUnique().HasDatabaseName("UX_Wf_InboxPref_User"));
         modelBuilder.Entity<Wf_Notification>(e =>
             e.HasIndex(x => new { x.TenantId, x.UserId, x.IsRead }).HasDatabaseName("IX_Wf_Notification_UserRead"));
+        modelBuilder.Entity<Wf_ApproverMap>(e =>
+            e.HasIndex(x => new { x.TenantId, x.MapKey, x.MatchValue }).HasDatabaseName("IX_Wf_ApproverMap_Lookup"));
 
         // ═══════════════════════════════════════════════════════════
         //  财务（Fin）章01 总账内核

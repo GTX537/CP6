@@ -15,6 +15,7 @@ function cloneNode(n: SchemaNode): SchemaNode {
     ...n,
     ccUsers: n.ccUsers ? [...n.ccUsers] : [],
     stages: n.stages ? n.stages.map(s => ({ ...s })) : undefined,
+    approverMembers: n.approverMembers ? n.approverMembers.map(m => ({ ...m })) : undefined,
   }
 }
 
@@ -72,6 +73,16 @@ function addStage() {
 function removeStage(idx: number) {
   local.value.stages?.splice(idx, 1)
   if (!local.value.stages?.length) local.value.stages = undefined
+}
+
+function addMember() {
+  if (!local.value.approverMembers) local.value.approverMembers = []
+  local.value.approverMembers.push({ strategy: 'Starter' })
+}
+
+function removeMember(i: number) {
+  local.value.approverMembers?.splice(i, 1)
+  if (!local.value.approverMembers?.length) local.value.approverMembers = undefined
 }
 
 function moveStageUp(idx: number) {
@@ -179,6 +190,9 @@ async function searchCcUsers(kw: string) {
                 <el-option value="Role"         :label="t('oa.designer.strategy.role')" />
                 <el-option value="Specified"    :label="t('oa.designer.strategy.specified')" />
                 <el-option value="Starter"      :label="t('oa.designer.strategy.starter')" />
+                <el-option value="FormField" :label="t('oa.designer.strategy.formField')" />
+                <el-option value="DataMap"   :label="t('oa.designer.strategy.dataMap')" />
+                <el-option value="Group"     :label="t('oa.designer.strategy.group')" />
               </el-select>
             </el-form-item>
 
@@ -240,6 +254,47 @@ async function searchCcUsers(kw: string) {
                 />
               </el-select>
             </el-form-item>
+
+            <!-- FormField → 选 user 型表单字段(降级文本) -->
+            <el-form-item v-if="local.approverStrategy === 'FormField'" :label="t('oa.designer.approverField')">
+              <el-input v-model="local.approverFieldName" :placeholder="t('oa.designer.approverFieldHint')" clearable />
+            </el-form-item>
+            <!-- DataMap → 映射键 + 匹配字段 -->
+            <template v-if="local.approverStrategy === 'DataMap'">
+              <el-form-item :label="t('oa.designer.approverMapKey')">
+                <el-input v-model="local.approverMapKey" clearable />
+              </el-form-item>
+              <el-form-item :label="t('oa.designer.approverField')">
+                <el-input v-model="local.approverFieldName" clearable />
+              </el-form-item>
+            </template>
+            <!-- Group → 成员行增删 -->
+            <template v-if="local.approverStrategy === 'Group'">
+              <div v-for="(m, i) in (local.approverMembers ?? [])" :key="i" class="stage-card">
+                <div class="stage-card-header">
+                  <span class="stage-index-label">{{ t('oa.designer.member') }} {{ i + 1 }}</span>
+                  <el-button link type="danger" size="small" @click="removeMember(i)">{{ t('oa.designer.stage.remove') }}</el-button>
+                </div>
+                <el-select v-model="m.strategy" style="width:100%" clearable>
+                  <el-option value="DirectManager" :label="t('oa.designer.strategy.directManager')" />
+                  <el-option value="DeptLeader" :label="t('oa.designer.strategy.deptLeader')" />
+                  <el-option value="Role" :label="t('oa.designer.strategy.role')" />
+                  <el-option value="Specified" :label="t('oa.designer.strategy.specified')" />
+                  <el-option value="Starter" :label="t('oa.designer.strategy.starter')" />
+                  <el-option value="FormField" :label="t('oa.designer.strategy.formField')" />
+                  <el-option value="DataMap" :label="t('oa.designer.strategy.dataMap')" />
+                </el-select>
+                <el-input v-if="m.strategy === 'Specified'" v-model="m.approverUserId" :placeholder="t('oa.designer.approverUser')" style="margin-top:4px" clearable />
+                <el-input-number v-if="m.strategy === 'DirectManager'" v-model="m.approverLevels" :min="1" :max="10" style="width:100%;margin-top:4px" />
+                <el-input v-if="m.strategy === 'Role'" v-model.number="m.approverRoleId" :placeholder="t('oa.designer.approverRole')" style="margin-top:4px" clearable />
+                <template v-if="m.strategy === 'FormField'"><el-input v-model="m.fieldName" :placeholder="t('oa.designer.approverField')" style="margin-top:4px" clearable /></template>
+                <template v-if="m.strategy === 'DataMap'">
+                  <el-input v-model="m.mapKey" :placeholder="t('oa.designer.approverMapKey')" style="margin-top:4px" clearable />
+                  <el-input v-model="m.fieldName" :placeholder="t('oa.designer.approverField')" style="margin-top:4px" clearable />
+                </template>
+              </div>
+              <el-button style="width:100%;margin-top:4px" @click="addMember">{{ t('oa.designer.addMember') }}</el-button>
+            </template>
 
             <!-- Countersign type -->
             <el-form-item :label="t('oa.designer.countersign')">
@@ -323,6 +378,8 @@ async function searchCcUsers(kw: string) {
                     <el-option value="Role"          :label="t('oa.designer.strategy.role')" />
                     <el-option value="Specified"     :label="t('oa.designer.strategy.specified')" />
                     <el-option value="Starter"       :label="t('oa.designer.strategy.starter')" />
+                    <el-option value="FormField" :label="t('oa.designer.strategy.formField')" />
+                    <el-option value="DataMap"   :label="t('oa.designer.strategy.dataMap')" />
                   </el-select>
                 </el-form-item>
 
@@ -389,6 +446,20 @@ async function searchCcUsers(kw: string) {
                     />
                   </el-select>
                 </el-form-item>
+
+                <!-- FormField → 表单字段名 -->
+                <el-form-item v-if="stage.approverStrategy === 'FormField'" :label="t('oa.designer.approverField')">
+                  <el-input v-model="stage.approverFieldName" :placeholder="t('oa.designer.approverFieldHint')" clearable />
+                </el-form-item>
+                <!-- DataMap → 映射键 + 匹配字段 -->
+                <template v-if="stage.approverStrategy === 'DataMap'">
+                  <el-form-item :label="t('oa.designer.approverMapKey')">
+                    <el-input v-model="stage.approverMapKey" clearable />
+                  </el-form-item>
+                  <el-form-item :label="t('oa.designer.approverField')">
+                    <el-input v-model="stage.approverFieldName" clearable />
+                  </el-form-item>
+                </template>
               </template>
 
               <!-- managerChain: maxLevels with tooltip (spec R7) -->
@@ -454,6 +525,13 @@ async function searchCcUsers(kw: string) {
               <el-option value="reject"   :label="t('oa.designer.timeoutAction.reject')" />
               <el-option value="escalate" :label="t('oa.designer.timeoutAction.escalate')" />
             </el-select>
+          </el-form-item>
+
+          <el-form-item v-if="isApproval" :label="t('oa.designer.approverWhen')">
+            <el-input v-model="local.approverWhen" type="textarea" :rows="2" :placeholder="t('oa.designer.approverWhenHint')" />
+          </el-form-item>
+          <el-form-item v-if="isApproval" :label="t('oa.designer.approverFilter')">
+            <el-input v-model="local.approverFilter" type="textarea" :rows="2" :placeholder="t('oa.designer.approverFilterHint')" />
           </el-form-item>
         </el-form>
       </el-collapse-item>
