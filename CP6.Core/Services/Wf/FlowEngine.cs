@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
@@ -294,6 +295,111 @@ public partial class FlowEngine : IFlowEngine
     {
         inst.Status = FlowInstanceStatus.Suspended;
         AddHistory(inst.Id, node.Id, inst.StarterId, "suspend", reason);
+    }
+
+    /// <summary>
+    /// 异步服务任务成功恢复（spec §4.4，<b>幂等 P0-2</b>）：重载 inst/schema/token；
+    /// 幂等闸 = token 已消费/取消（非 Active）<b>或</b> 已离开服务节点（NodeId != nodeId）→ 直接 no-op
+    /// （防 worker 崩溃重投 / 重试导致二次推进）。否则合并 outputVars（经 <see cref="ServiceVarsHelper.MergeOutputVars"/>，
+    /// 保留前缀 wf./sys./_internal. 被拦截，记 serviceVars 履历）→ <see cref="AdvanceToken"/> 沿成功边推进
+    /// → 终态分发 → SaveChanges。整体包乐观并发重试×3（仿 <see cref="ActAsync"/>）。
+    /// </summary>
+    internal async Task ResumeServiceTokenAsync(Guid instanceId, Guid tokenId, string nodeId,
+        Dictionary<string, object?>? outputVars)
+    {
+        for (int attempt = 0; ; attempt++)
+        {
+            try
+            {
+                var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId);
+                if (inst is null) return;
+                var token = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == tokenId);
+                // ★ P0-2 幂等闸：已恢复（消费/取消）或已离开该服务节点 → 不二次推进
+                if (token is null || token.Status != FlowTokenStatus.Active || token.NodeId != nodeId) return;
+
+                var schema = await LoadSchemaAsync(inst.FlowKey);
+
+                if (outputVars is { Count: > 0 })
+                {
+                    var res = ServiceVarsHelper.MergeOutputVars(inst.VarsJson, outputVars);
+                    inst.VarsJson = res.VarsJson;
+                    AddHistory(inst.Id, nodeId, inst.StarterId, "serviceVars",
+                        $"merged: [{string.Join(",", res.MergedKeys)}]; skipped: [{string.Join(",", res.SkippedKeys)}]");
+                }
+
+                await AdvanceToken(inst, schema, token);   // 沿成功边（跳 IsError）
+                await DispatchIfFinishedAsync(inst, inst.StarterId, null);
+                await _db.SaveChangesAsync();
+                return;
+            }
+            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            {
+                foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 异步服务任务失败耗尽路由（spec §4.3，<b>幂等</b>）：重载 inst/schema/token；幂等闸同
+    /// <see cref="ResumeServiceTokenAsync"/>（token 已离开 → no-op）。先把标准错误变量 <c>wf.serviceError</c>
+    /// <b>直写</b>进 inst.VarsJson（保留命名空间，<b>不</b>经 MergeOutputVars 的 wf.* 拦截）；
+    /// 节点有 IsError 出边 → <see cref="AdvanceAlongErrorEdge"/>，否则 <see cref="Suspend"/>。整体重试×3。
+    /// </summary>
+    internal async Task FailServiceTokenAsync(Guid instanceId, Guid tokenId, string nodeId, string? reason)
+    {
+        for (int attempt = 0; ; attempt++)
+        {
+            try
+            {
+                var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId);
+                if (inst is null) return;
+                var token = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == tokenId);
+                if (token is null || token.Status != FlowTokenStatus.Active || token.NodeId != nodeId) return;
+
+                var schema = await LoadSchemaAsync(inst.FlowKey);
+                var node = FindNode(schema, nodeId);
+                if (node is null) return;
+
+                // ★ P1-4：标准错误变量直写 wf.serviceError（受控保留路径，不走 MergeOutputVars 的 wf.* 拦截）
+                inst.VarsJson = WriteServiceError(inst.VarsJson, nodeId, reason);
+
+                if (schema.Edges.Any(e => e.From == nodeId && e.IsError == true))
+                    await AdvanceAlongErrorEdge(inst, schema, token);   // 走错误边
+                else
+                    Suspend(inst, node, "服务任务失败:" + reason);
+
+                await DispatchIfFinishedAsync(inst, inst.StarterId, reason);
+                await _db.SaveChangesAsync();
+                return;
+            }
+            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            {
+                foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
+            }
+        }
+    }
+
+    /// <summary>把标准错误变量 <c>wf.serviceError{nodeId,message,failedAtUtc}</c> 直接写进 VarsJson（spec §4.3/P1-4）。
+    /// 直写保留 <c>wf.</c> 命名空间（区别于 OutputVars 合并的 wf.* 拦截）。jobId/kind 在此层未知 → 省略。</summary>
+    private static string WriteServiceError(string? varsJson, string nodeId, string? reason)
+    {
+        JsonObject root;
+        if (!string.IsNullOrWhiteSpace(varsJson))
+        {
+            try   { root = JsonNode.Parse(varsJson)?.AsObject() ?? new JsonObject(); }
+            catch { root = new JsonObject(); }
+        }
+        else root = new JsonObject();
+
+        var wf = root["wf"] as JsonObject;
+        if (wf is null) { wf = new JsonObject(); root["wf"] = wf; }
+        wf["serviceError"] = new JsonObject
+        {
+            ["nodeId"]      = nodeId,
+            ["message"]     = reason,
+            ["failedAtUtc"] = DateTime.UtcNow.ToString("O"),
+        };
+        return root.ToJsonString();
     }
 
     private static void CancelPendingTasks(IEnumerable<Wf_FlowTask> tasks)

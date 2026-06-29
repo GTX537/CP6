@@ -65,10 +65,13 @@ public partial class FlowEngine
     }
 
     /// <summary>token 排他流转：沿出边取首个条件为真者，改 token.NodeId 后进新节点。不消费。
-    /// 无后继 → 消费 token + drained 判定（等价旧 NextNodeAsync 兜底结束）。单 token 线性=零差异。</summary>
+    /// 无后继 → 消费 token + drained 判定（等价旧 NextNodeAsync 兜底结束）。单 token 线性=零差异。
+    /// <para>D8 不变量（spec §4.3/§4.4）：成功路径<b>绝不</b>走错误边 —— 过滤 <c>IsError != true</c>。
+    /// 既有边 <c>IsError==null</c> → <c>null != true</c> 为真 → 字节等价；仅服务任务重试耗尽经
+    /// <see cref="AdvanceAlongErrorEdge"/> 走 <c>IsError==true</c> 的边。</para></summary>
     internal async Task AdvanceToken(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken token)
     {
-        foreach (var edge in schema.Edges.Where(e => e.From == token.NodeId))
+        foreach (var edge in schema.Edges.Where(e => e.From == token.NodeId && e.IsError != true))
         {
             if (!ExpressionEvaluator.Evaluate(edge.Condition, inst.VarsJson)) continue;
             var target = FindNode(schema, edge.To);
@@ -81,5 +84,23 @@ public partial class FlowEngine
         ConsumeToken(token);
         AddHistory(inst.Id, token.NodeId, inst.StarterId, "end", "无后继节点，自动结束");
         FinishIfDrained(inst);
+    }
+
+    /// <summary>服务任务失败专用流转（spec §4.3/§4.4）：沿本节点 <c>IsError==true</c> 的首条出边推进
+    /// （改 token.NodeId 后进目标节点，不消费）；无错误边 → 挂起（Suspend）。
+    /// 与 <see cref="AdvanceToken"/> 互补：前者跳错误边、后者只走错误边。错误边 ≤1（spec §6.1 E-WF-017）。</summary>
+    internal async Task AdvanceAlongErrorEdge(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken token)
+    {
+        foreach (var edge in schema.Edges.Where(e => e.From == token.NodeId && e.IsError == true))
+        {
+            var target = FindNode(schema, edge.To);
+            if (target is not null)
+            {
+                if (edge.CcUsers is { Count: > 0 }) await WriteCcAsync(inst, edge.To, edge.CcUsers, null);
+                token.NodeId = target.Id; await EnterNodeAsync(inst, schema, target, token); return;
+            }
+        }
+        var node = FindNode(schema, token.NodeId);
+        if (node is not null) Suspend(inst, node, "服务任务失败且无错误边");
     }
 }
