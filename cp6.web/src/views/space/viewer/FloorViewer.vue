@@ -52,6 +52,8 @@
       <AdvancedPanel
         :path-loaded="pathLoaded"
         :path-info="pathInfo"
+        :compare-info="compareInfo"
+        :show-optimized="showOptimized"
         :workload-on="workloadOn"
         :device-on="deviceOn"
         @load-path="onLoadPath"
@@ -60,6 +62,7 @@
         @step="onPathStep"
         @replay="onPathReplay"
         @speed="onPathSpeed"
+        @toggle-optimized="onToggleOptimized"
         @toggle-workload="onToggleWorkload"
         @apply-workload="onApplyWorkload"
         @toggle-device="onToggleDevice"
@@ -90,7 +93,7 @@ import StockLegend from './StockLegend.vue'
 import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
 import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
 import { DeviceLayer } from '@/space-viewer/advanced/DeviceLayer'
-import { planPickRoute, type Pt } from '@/space-viewer/advanced/PickPathPlanner'
+import { planPickComparison, type Pt, type PickComparison } from '@/space-viewer/advanced/PickPathPlanner'
 import { advancedApi } from '@/api/space/advanced'
 import AdvancedPanel from './AdvancedPanel.vue'
 
@@ -121,6 +124,9 @@ let deviceLayer: DeviceLayer | null = null
 
 const pathLoaded = ref(false)
 const pathInfo = ref('')
+const comparison = ref<PickComparison | null>(null)
+const showOptimized = ref(false)
+const compareInfo = ref('')
 const workloadOn = ref(false)
 const deviceOn = ref(false)
 let workloadWin = { from: new Date().toISOString().slice(0, 10), to: new Date().toISOString().slice(0, 10) }
@@ -141,6 +147,9 @@ async function loadFloor(floorId: string): Promise<void> {
   pathAnimator?.clear()
   pathLoaded.value = false
   pathInfo.value = ''
+  comparison.value = null
+  showOptimized.value = false
+  compareInfo.value = ''
   deviceLayer?.clear()
   deviceOn.value = false
   heatmap?.setEnabled(false)
@@ -253,20 +262,33 @@ async function onLoadPath(taskNo: string): Promise<void> {
   try {
     const env = await advancedApi.pickPath(currentFloorId.value, taskNo)
     const data = env.data
-    const stopPts: Pt[] = data.stops
+    const stopPts: Pt[] = [...data.stops]
+      .sort((a, b) => a.seq - b.seq)                              // 按 LineNo(seq) 升序，固定 actual 语义
       .filter((s) => s.absX != null && s.absY != null)
       .map((s) => ({ x: s.absX as number, y: s.absY as number }))
     if (stopPts.length < 2) { ElMessage.info(t('该拣货单无可定位拣货点')); return }
-    const route = planPickRoute(data.aisles, stopPts)
-    pathAnimator.setPath(route.points)
+    const cmp = planPickComparison(data.aisles, stopPts)
+    comparison.value = cmp
+    pathAnimator.setPath(cmp.actual.points)                       // 青线 + 小车 = 实际 LineNo 序
+    showOptimized.value = false
+    pathAnimator.setComparisonPath(null)
     pathLoaded.value = true
     pathInfo.value = t('拣货路径：{n} 点，总距 {d} 米')
       .replace('{n}', String(stopPts.length))
-      .replace('{d}', (route.totalDistance / 1000).toFixed(1))   // I-SPACE-801
-    if (route.degraded) ElMessage.warning(t('巷道路径不连通，近似直连显示'))  // W-SPACE-801
+      .replace('{d}', (cmp.actualMm / 1000).toFixed(1))           // I-SPACE-801
+    compareInfo.value = t('实际 {a} 米 / 优化 {o} 米 / 省 {p}%')
+      .replace('{a}', (cmp.actualMm / 1000).toFixed(1))
+      .replace('{o}', (cmp.optimizedMm / 1000).toFixed(1))
+      .replace('{p}', cmp.savingsPct.toFixed(0))
+    if (cmp.actual.degraded) ElMessage.warning(t('巷道路径不连通，近似直连显示'))  // W-SPACE-801
   } catch {
     ElMessage.warning(t('高级可视化数据获取失败'))   // W-SPACE-802
   }
+}
+
+function onToggleOptimized(): void {
+  showOptimized.value = !showOptimized.value
+  pathAnimator?.setComparisonPath(showOptimized.value ? (comparison.value?.optimized.points ?? null) : null)
 }
 
 // 选择器的 to 日期含义为"含当天"；后端时间窗半开 [from,to) → 查询上界取 to+1 天，

@@ -19,6 +19,10 @@
         </select>
       </div>
       <div class="ap-info" v-if="pathInfo">{{ pathInfo }}</div>
+      <div class="ap-info" v-if="pathLoaded && compareInfo">{{ compareInfo }}</div>
+      <label class="ap-check" v-if="pathLoaded">
+        <input type="checkbox" :checked="showOptimized" @change="$emit('toggle-optimized')" />{{ t('显示优化路径') }}
+      </label>
     </div>
 
     <div class="ap-section">
@@ -42,9 +46,10 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-defineProps<{ pathLoaded: boolean; pathInfo: string; workloadOn: boolean; deviceOn: boolean }>()
+defineProps<{ pathLoaded: boolean; pathInfo: string; compareInfo: string; showOptimized: boolean; workloadOn: boolean; deviceOn: boolean }>()
 const emit = defineEmits<{
   (e: 'load-path', taskNo: string): void
+  (e: 'toggle-optimized'): void
   (e: 'play'): void; (e: 'pause'): void; (e: 'step'): void; (e: 'replay'): void
   (e: 'speed', v: number): void
   (e: 'toggle-workload'): void
