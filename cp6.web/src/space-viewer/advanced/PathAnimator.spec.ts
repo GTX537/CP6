@@ -45,4 +45,24 @@ describe('PathAnimator', () => {
     a.setPath([{ x: 1, y: 1 }])
     expect(v.root.children.length).toBe(0)
   })
+
+  it('setComparisonPath adds a green line and null removes only it (keeps path+cart)', () => {
+    const v = fakeViewer()
+    const a = new PathAnimator(v as any)
+    a.setPath(L)
+    expect(v.root.children[0]!.children.length).toBe(2)   // line + cart
+    a.setComparisonPath([{ x: 0, y: 0 }, { x: 500, y: 500 }])
+    expect(v.root.children[0]!.children.length).toBe(3)   // + compare line
+    a.setComparisonPath(null)
+    expect(v.root.children[0]!.children.length).toBe(2)   // 只移除对比线
+  })
+
+  it('clear() also removes the comparison line', () => {
+    const v = fakeViewer()
+    const a = new PathAnimator(v as any)
+    a.setPath(L)
+    a.setComparisonPath([{ x: 0, y: 0 }, { x: 500, y: 500 }])
+    a.clear()
+    expect(v.root.children.length).toBe(0)
+  })
 })

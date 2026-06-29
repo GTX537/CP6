@@ -11,6 +11,7 @@ const GROUND_Z = 200       // mm，路径线离地高度
 const CART_SIZE = 600      // mm 立方
 const PATH_COLOR = 0x00e5ff
 const CART_COLOR = 0xff4081
+const COMPARE_COLOR = 0x76ff03   // 绿，优化对比线
 const DEFAULT_SPEED = 4000 // mm/s
 
 export class PathAnimator {
@@ -19,6 +20,7 @@ export class PathAnimator {
   private _points: Pt[] = []
   private _length = 0
   private _cart: Mesh | null = null
+  private _compareLine: Line | null = null
   private _dist = 0
   private _speed = DEFAULT_SPEED
   private _playing = false
@@ -48,6 +50,23 @@ export class PathAnimator {
     this._positionCart()
 
     this._viewer.getSceneRoot().add(this._group)
+    this._viewer.requestRender()
+  }
+
+  /** 静态对比线（优化序，无小车不参与动画）；null 清除。挂在同一 _group 下。 */
+  setComparisonPath(points: Pt[] | null): void {
+    if (this._compareLine) {
+      this._group.remove(this._compareLine)
+      this._compareLine = null
+    }
+    if (points && points.length >= 2) {
+      const arr: number[] = []
+      for (const p of points) arr.push(p.x, p.y, GROUND_Z + 20)  // +20mm 防 z-fight
+      const geom = new BufferGeometry()
+      geom.setAttribute('position', new Float32BufferAttribute(arr, 3))
+      this._compareLine = new Line(geom, new LineBasicMaterial({ color: COMPARE_COLOR }))
+      this._group.add(this._compareLine)
+    }
     this._viewer.requestRender()
   }
 
@@ -109,6 +128,7 @@ export class PathAnimator {
     this._group.clear()
     if (this._group.parent) this._group.parent.remove(this._group)
     this._cart = null
+    this._compareLine = null
     this._points = []
     this._length = 0
     this._dist = 0
