@@ -34,10 +34,12 @@ public partial class FlowEngine : IFlowEngine
     }
 
     // ★ T5：start/approval/end + parallelSplit/parallelJoin 五 handler。
+    // ★ 服务任务 A-T6：第 6 个 serviceTask handler（fallback 用空 executor 列表；DI 实例携真实 executor）。
     private static IEnumerable<INodeHandler> DefaultHandlers() => new INodeHandler[]
     {
         new StartNodeHandler(), new ApprovalNodeHandler(), new EndNodeHandler(),
         new ParallelSplitNodeHandler(), new ParallelJoinNodeHandler(),
+        new ServiceTaskNodeHandler(Array.Empty<IServiceTaskExecutor>()),
     };
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
