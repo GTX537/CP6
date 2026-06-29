@@ -98,15 +98,17 @@ export function astar(
   adj: Map<string, Array<{ to: string; w: number }>>,
   start: string,
   end: string,
-  nodePt: (k: string) => Pt,
+  nodePt: (k: string) => { x: number; y: number; z?: number },
 ): string[] | null {
   const g = new Map<string, number>()       // 已知最短 g 值
   const f = new Map<string, number>()        // f = g + h
   const prev = new Map<string, string>()
   const visited = new Set<string>()
   const endPt = nodePt(end)
+  const h = (a: { x: number; y: number; z?: number }, b: { x: number; y: number; z?: number }): number =>
+    Math.hypot(a.x - b.x, a.y - b.y, (a.z ?? 0) - (b.z ?? 0))
   g.set(start, 0)
-  f.set(start, dist(nodePt(start), endPt))
+  f.set(start, h(nodePt(start), endPt))
   while (true) {
     // 开集取最小 f（节点数小，O(V^2) 选最小可接受，不引堆）
     let u: string | null = null
@@ -121,7 +123,7 @@ export function astar(
       const nd = gu + e.w
       if (nd < (g.get(e.to) ?? Infinity)) {
         g.set(e.to, nd)
-        f.set(e.to, nd + dist(nodePt(e.to), endPt))
+        f.set(e.to, nd + h(nodePt(e.to), endPt))
         prev.set(e.to, u)
       }
     }

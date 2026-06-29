@@ -146,4 +146,16 @@ describe('PickPathPlanner', () => {
     expect(cmp.optimizedMm).toBe(0)
     expect(cmp.savingsPct).toBe(0)
   })
+
+  it('astar heuristic is 3D-tolerant: routes A->B->C up the z axis', () => {
+    const adj = new Map<string, Array<{ to: string; w: number }>>([
+      ['A', [{ to: 'B', w: 10 }]],
+      ['B', [{ to: 'A', w: 10 }, { to: 'C', w: 10 }]],
+      ['C', [{ to: 'B', w: 10 }]],
+    ])
+    const coords: Record<string, { x: number; y: number; z?: number }> = {
+      A: { x: 0, y: 0, z: 0 }, B: { x: 0, y: 0, z: 10 }, C: { x: 0, y: 0, z: 20 },
+    }
+    expect(astar(adj, 'A', 'C', (k) => coords[k]!)).toEqual(['A', 'B', 'C'])
+  })
 })
