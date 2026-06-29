@@ -66,6 +66,24 @@ public class FlowNode
     public string? ApproverWhen { get; set; }        // ②a 门控
     public string? ApproverFilter { get; set; }      // ②a 候选过滤
     public List<ApproverSpec>? ApproverMembers { get; set; }   // Group 成员
+
+    // ── 服务任务节点(§2.1,全可空向后兼容,null=非服务任务节点) ──
+    public string? ServiceKind { get; set; }            // "dataWriteback" | "webApi" | "timer"
+    public string? ServiceMode { get; set; }            // "sync" | "async"
+
+    // 动作绑定
+    public string? ServiceActionName { get; set; }      // dataWriteback / timer 动作:注册执行器键
+    public string? ServiceConnectorName { get; set; }   // webApi / timer 动作:注册连接器键
+    public string? ServicePath { get; set; }            // webApi:相对 baseURL 的路径模板
+    public string? ServiceParamsJson { get; set; }      // 参数模板:JSON,键→表达式(§3.6 语法)
+
+    // timer 专属
+    public string? ServiceDelayMode { get; set; }       // "duration" | "untilDate" | "untilExpr"
+    public string? ServiceDelayValue { get; set; }      // "3d"/"PT2H" | "2026-07-01" | 表达式
+
+    // 重试策略(设计器口径:重试次数;映射到 job.MaxAttempts = retries + 1)
+    public int? ServiceMaxRetries { get; set; }         // 默认 3(= 首次后再重试 3 次)
+    public int? ServiceRetryBackoffSec { get; set; }    // 默认 30,指数退避基数
 }
 
 public class FlowEdge
@@ -78,6 +96,9 @@ public class FlowEdge
 
     /// <summary>路径抄送人（token 经此转移时抄送，对齐 Delta 知会人员）。</summary>
     public List<Guid>? CcUsers { get; set; }
+
+    /// <summary>失败出边标记(§2.2)。true=仅服务任务重试耗尽时走;普通 AdvanceToken 跳过它(null!=true 等价)。</summary>
+    public bool? IsError { get; set; }
 }
 
 /// <summary>串簽档型常量。</summary>

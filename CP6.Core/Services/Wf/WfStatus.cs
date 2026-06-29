@@ -42,3 +42,28 @@ public static class FlowFormToStatus
     public const int Voided = 6;      // 作废（驳回连坐 / 退回清场）
     public const int SentBack = 7;    // 退回上一档(区别于普通作废 Voided=6)
 }
+
+/// <summary>服务任务异步停泊作业状态（Wf_ServiceJob.Status,§2.4）。</summary>
+public static class ServiceJobStatus
+{
+    public const int Pending = 0;    // 待执行(入队/等待 DueAt)
+    public const int Running = 1;    // 执行中(已抢占 lease)
+    public const int Succeeded = 2;  // 成功(终态)
+    public const int Failed = 3;     // 失败耗尽重试(终态)
+    public const int Cancelled = 4;  // 已取消(实例驳回/撤回,终态)
+}
+
+/// <summary>服务任务节点种类(§2.4)。对应 FlowNode.ServiceKind。</summary>
+public static class ServiceKind
+{
+    public const string DataWriteback = "dataWriteback";
+    public const string WebApi = "webApi";
+    public const string Timer = "timer";
+}
+
+/// <summary>服务任务执行模式(§2.4)。对应 FlowNode.ServiceMode。</summary>
+public static class ServiceMode
+{
+    public const string Sync = "sync";
+    public const string Async = "async";
+}
