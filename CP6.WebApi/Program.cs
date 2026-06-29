@@ -132,6 +132,9 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Serv
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfServiceJobService, CP6.Core.Services.Wf.WfServiceJobService>();  // B-T2 服务任务异步底座扫描服务（spec §4.1）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobScanWorker>();                          // B-T2 服务任务扫描 Worker（20s 周期，lease 抢占，v1 单实例）
+// C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
 
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
