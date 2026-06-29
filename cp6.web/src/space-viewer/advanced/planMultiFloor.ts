@@ -7,6 +7,7 @@ export interface MFGraph {
   nodes: Map<string, Pt3>                                   // key=mfKey；z=层标高
   adj: Map<string, Array<{ to: string; w: number }>>
   segments: Array<{ a: Pt; b: Pt; floorId: string }>        // 供按层投影接入
+  floorZ: Map<string, number>                               // floorId→层标高 mm（含无巷道层，O(1) 取 z）
 }
 export interface AisleVOLite { aisleCode: string; centerline: string }
 export interface ConnectorPath { connectorCode: string; type: number; stops: Array<{ floorId: string; x: number; y: number }> }
@@ -43,7 +44,7 @@ export function buildMultiFloorGraph(
   connectors: ConnectorPath[],
 ): MFGraph {
   const zOf = new Map(floors.map((f) => [f.floorId, f.z]))
-  const g: MFGraph = { nodes: new Map(), adj: new Map(), segments: [] }
+  const g: MFGraph = { nodes: new Map(), adj: new Map(), segments: [], floorZ: zOf }
 
   // 1) 各层 SP3 子图 → 前缀合并
   for (const f of floors) {
@@ -88,15 +89,14 @@ export function polyDist3(pts: Pt3[]): number {
   return d
 }
 
-/** 取某层标高（从该层任一节点 z）。 */
-function floorZ(g: MFGraph, fid: string): number {
-  for (const [k, p] of g.nodes) if (k.startsWith(`${fid}:`)) return p.z
-  return 0
+/** 取某层标高（O(1) 查 g.floorZ；含无巷道/无 stop 的层，避免退化端点落 z=0）。 */
+function zOfFloor(g: MFGraph, fid: string): number {
+  return g.floorZ.get(fid) ?? 0
 }
 
 /** 跨层相邻两拣货点：各端投影到本层巷道接入（临时 FA/FB），astar 跑多层图。不连通→直连 degraded。 */
 export function pathBetweenMF(g: MFGraph, a: MFStop, b: MFStop): { points: Pt3[]; degraded: boolean } {
-  const za = floorZ(g, a.floorId), zb = floorZ(g, b.floorId)
+  const za = zOfFloor(g, a.floorId), zb = zOfFloor(g, b.floorId)
   const pa: Pt3 = { x: a.x, y: a.y, z: za }, pb: Pt3 = { x: b.x, y: b.y, z: zb }
 
   const accA = nearestAccessOnSegments(g.segments.filter((s) => s.floorId === a.floorId), { x: a.x, y: a.y })
@@ -140,7 +140,7 @@ export interface MFComparison {
 
 function planRouteOnMFGraph(g: MFGraph, stops: MFStop[]): MFRoute {
   if (stops.length < 2) {
-    return { points: stops.map((s) => ({ x: s.x, y: s.y, z: floorZ(g, s.floorId) })), totalDistance: 0, degraded: false }
+    return { points: stops.map((s) => ({ x: s.x, y: s.y, z: zOfFloor(g, s.floorId) })), totalDistance: 0, degraded: false }
   }
   const points: Pt3[] = []
   let degraded = false

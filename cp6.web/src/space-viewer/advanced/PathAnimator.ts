@@ -27,6 +27,7 @@ export class PathAnimator {
   private _points: Pt3[] = []
   private _length = 0
   private _cart: Mesh | null = null
+  private _pathLine: Line | null = null
   private _compareLine: Line | null = null
   private _dist = 0
   private _speed = DEFAULT_SPEED
@@ -49,7 +50,8 @@ export class PathAnimator {
     for (const p of this._points) arr.push(p.x, p.y, p.z + GROUND_Z)
     const geom = new BufferGeometry()
     geom.setAttribute('position', new Float32BufferAttribute(arr, 3))
-    this._group.add(new Line(geom, new LineBasicMaterial({ color: PATH_COLOR })))
+    this._pathLine = new Line(geom, new LineBasicMaterial({ color: PATH_COLOR }))
+    this._group.add(this._pathLine)
 
     this._cart = new Mesh(new BoxGeometry(CART_SIZE, CART_SIZE, CART_SIZE), new MeshBasicMaterial({ color: CART_COLOR }))
     this._group.add(this._cart)
@@ -67,6 +69,22 @@ export class PathAnimator {
     this._compareLine.geometry.dispose()
     ;(this._compareLine.material as LineBasicMaterial).dispose()
     this._compareLine = null
+  }
+
+  /** 移除并释放主路径线 + 小车（GPU geometry/material dispose，防 reload 泄漏）。 */
+  private _clearMainPath(): void {
+    if (this._pathLine) {
+      this._group.remove(this._pathLine)
+      this._pathLine.geometry.dispose()
+      ;(this._pathLine.material as LineBasicMaterial).dispose()
+      this._pathLine = null
+    }
+    if (this._cart) {
+      this._group.remove(this._cart)
+      this._cart.geometry.dispose()
+      ;(this._cart.material as MeshBasicMaterial).dispose()
+      this._cart = null
+    }
   }
 
   /** 静态对比线（优化序，无小车不参与动画）；null 清除。挂在同一 _group 下。 */
@@ -142,9 +160,9 @@ export class PathAnimator {
   clear(): void {
     this.pause()
     this._clearCompareLine()
+    this._clearMainPath()
     this._group.clear()
     if (this._group.parent) this._group.parent.remove(this._group)
-    this._cart = null
     this._points = []
     this._length = 0
     this._dist = 0
