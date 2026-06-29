@@ -267,6 +267,13 @@ const staticRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/space/viewer/FloorViewer.vue'),
     meta: { standalone: true, title: 'Space 3D 浏览器' }
   },
+  // Space 3D 全层叠视图（独立路由、无侧边栏；siteId 来自路由参数）
+  {
+    path: '/space/stacked/:siteId',
+    name: 'space-stacked',
+    component: () => import('@/views/space/stacked/StackedViewer.vue'),
+    meta: { standalone: true, title: 'Space 3D 全层叠视图' },
+  },
   {
     path: '/',
     name: 'layout',
