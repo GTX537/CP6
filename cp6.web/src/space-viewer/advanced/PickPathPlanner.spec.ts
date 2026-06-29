@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseCenterline, buildCenterlineGraph, planPickRoute } from './PickPathPlanner'
+import { parseCenterline, buildCenterlineGraph, planPickRoute, astar } from './PickPathPlanner'
 
 describe('PickPathPlanner', () => {
   it('parseCenterline parses valid and tolerates garbage', () => {
@@ -70,5 +70,31 @@ describe('PickPathPlanner', () => {
     const route = planPickRoute(aisles, [{ x: 480, y: 100 }, { x: 900, y: 520 }])
     expect(route.degraded).toBe(false)
     expect(route.points.some((p) => Math.round(p.x) === 500 && Math.round(p.y) === 500)).toBe(true)
+  })
+
+  it('astar finds the optimal path and respects the admissible heuristic', () => {
+    // S(0,0)—M(50,100)—E(100,0) 三角：直连 S-E=100 短于 S-M-E≈223.6
+    const adj = new Map<string, Array<{ to: string; w: number }>>([
+      ['0,0', [{ to: '50,100', w: Math.hypot(50, 100) }, { to: '100,0', w: 100 }]],
+      ['50,100', [{ to: '0,0', w: Math.hypot(50, 100) }, { to: '100,0', w: Math.hypot(50, 100) }]],
+      ['100,0', [{ to: '0,0', w: 100 }, { to: '50,100', w: Math.hypot(50, 100) }]],
+    ])
+    const coords: Record<string, { x: number; y: number }> = {
+      '0,0': { x: 0, y: 0 }, '50,100': { x: 50, y: 100 }, '100,0': { x: 100, y: 0 },
+    }
+    const path = astar(adj, '0,0', '100,0', (k) => coords[k]!)
+    expect(path).toEqual(['0,0', '100,0'])
+  })
+
+  it('astar returns null when disconnected', () => {
+    const adj = new Map<string, Array<{ to: string; w: number }>>([
+      ['0,0', [{ to: '10,0', w: 10 }]],
+      ['10,0', [{ to: '0,0', w: 10 }]],
+      ['99,99', []],
+    ])
+    const coords: Record<string, { x: number; y: number }> = {
+      '0,0': { x: 0, y: 0 }, '10,0': { x: 10, y: 0 }, '99,99': { x: 99, y: 99 },
+    }
+    expect(astar(adj, '0,0', '99,99', (k) => coords[k]!)).toBeNull()
   })
 })

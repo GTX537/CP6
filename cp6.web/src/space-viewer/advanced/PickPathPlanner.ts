@@ -91,27 +91,41 @@ function nearestAccess(g: Graph, p: Pt): { foot: Pt; segA: Pt; segB: Pt } | null
   return best ? { foot: best.foot, segA: best.segA, segB: best.segB } : null
 }
 
-/** Dijkstra（邻接表 + 临时接入节点 FA/FB）。返回 key 序列或 null。 */
-function dijkstra(adj: Map<string, Array<{ to: string; w: number }>>, start: string, end: string): string[] | null {
-  const dists = new Map<string, number>()
+/** A\*（邻接表 + 欧氏启发式 + 临时接入节点 FA/FB）。返回 key 序列或 null。
+ *  nodePt：取节点坐标（FA/FB→各自 foot，其余→g.nodes）；h(k)=dist(nodePt(k),nodePt(end))，admissible。 */
+export function astar(
+  adj: Map<string, Array<{ to: string; w: number }>>,
+  start: string,
+  end: string,
+  nodePt: (k: string) => Pt,
+): string[] | null {
+  const g = new Map<string, number>()       // 已知最短 g 值
+  const f = new Map<string, number>()        // f = g + h
   const prev = new Map<string, string>()
   const visited = new Set<string>()
-  dists.set(start, 0)
-  // 简单 O(V^2) 选最小（一层巷道节点数十级，足够）
+  const endPt = nodePt(end)
+  g.set(start, 0)
+  f.set(start, dist(nodePt(start), endPt))
   while (true) {
+    // 开集取最小 f（节点数小，O(V^2) 选最小可接受，不引堆）
     let u: string | null = null
     let best = Infinity
-    for (const [k, d] of dists) if (!visited.has(k) && d < best) { best = d; u = k }
+    for (const [k, fk] of f) if (!visited.has(k) && fk < best) { best = fk; u = k }
     if (u === null) break
     if (u === end) break
     visited.add(u)
+    const gu = g.get(u)!
     for (const e of adj.get(u) ?? []) {
       if (visited.has(e.to)) continue
-      const nd = best + e.w
-      if (nd < (dists.get(e.to) ?? Infinity)) { dists.set(e.to, nd); prev.set(e.to, u) }
+      const nd = gu + e.w
+      if (nd < (g.get(e.to) ?? Infinity)) {
+        g.set(e.to, nd)
+        f.set(e.to, nd + dist(nodePt(e.to), endPt))
+        prev.set(e.to, u)
+      }
     }
   }
-  if (!dists.has(end)) return null
+  if (!g.has(end)) return null
   const path: string[] = []
   let cur: string | undefined = end
   while (cur !== undefined) { path.unshift(cur); cur = prev.get(cur) }
@@ -144,7 +158,7 @@ function pathBetween(g: Graph, a: Pt, b: Pt): { points: Pt[]; degraded: boolean 
   }
 
   const nodePt = (k: string): Pt => (k === FA ? accA.foot : k === FB ? accB.foot : g.nodes.get(k)!)
-  const path = dijkstra(adj, FA, FB)
+  const path = astar(adj, FA, FB, nodePt)
   if (!path) return { points: [a, b], degraded: true }
 
   const mid = path.map(nodePt)
