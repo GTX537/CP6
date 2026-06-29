@@ -2,6 +2,7 @@
 // 拣货路径规划：中心线图 + Dijkstra（纯逻辑，mm 数据空间，2D-XY）。
 
 import { segSegIntersection, splitPointsOnSegment } from './segmentIntersect'
+import { optimizeOrder, routeLengthByOrder } from './routeOptimize'
 
 export interface Pt { x: number; y: number }
 
@@ -171,10 +172,9 @@ function polyDist(pts: Pt[]): number {
   return d
 }
 
-/** 整条拣货路径：依次拼接相邻拣货点（去重接缝点）。 */
-export function planPickRoute<T extends { centerline: string }>(aisles: T[], stops: Pt[]): PlannedRoute {
+/** 按已建图规划整条路径（内部，避免重复 buildCenterlineGraph）。 */
+function planPickRouteOnGraph(g: Graph, stops: Pt[]): PlannedRoute {
   if (stops.length < 2) return { points: stops.slice(), totalDistance: 0, degraded: false }
-  const g = buildCenterlineGraph(aisles)
   const points: Pt[] = []
   let degraded = false
   for (let i = 0; i + 1 < stops.length; i++) {
@@ -184,4 +184,57 @@ export function planPickRoute<T extends { centerline: string }>(aisles: T[], sto
     points.push(...segPts)
   }
   return { points, totalDistance: polyDist(points), degraded }
+}
+
+/** 整条拣货路径：依次拼接相邻拣货点（去重接缝点）。对外旧签名，内部建图一次。 */
+export function planPickRoute<T extends { centerline: string }>(aisles: T[], stops: Pt[]): PlannedRoute {
+  return planPickRouteOnGraph(buildCenterlineGraph(aisles), stops)
+}
+
+/** 拣货点两两图最短距离矩阵（mm；degraded 段记直连欧氏，一致可比）。对称。
+ *  degradedPairs：i<j 计一次退化点对数（写入引用，供 planPickComparison 透出）。 */
+export function distanceMatrixFromGraph(g: Graph, stops: Pt[], degradedPairs?: { count: number }): number[][] {
+  const n = stops.length
+  const m: number[][] = Array.from({ length: n }, () => new Array<number>(n).fill(0))
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const seg = pathBetween(g, stops[i]!, stops[j]!)
+      const d = polyDist(seg.points)
+      m[i]![j] = d
+      m[j]![i] = d
+      if (seg.degraded && degradedPairs) degradedPairs.count++
+    }
+  }
+  return m
+}
+
+export interface PickComparison {
+  actual: PlannedRoute       // LineNo 序
+  optimized: PlannedRoute    // 优化序（已兜底 ≤ actual）
+  order: number[]            // 优化访问序（stops 下标，order[0]===0；回退时 = [0,1,2,…]）
+  actualMm: number           // mm（底层数据空间即 mm）
+  optimizedMm: number        // mm
+  savingsPct: number         // (actualMm-optimizedMm)/actualMm*100；actualMm=0→0；钳 ≥0
+  degradedPairCount: number  // distanceMatrix 中退化（直连欧氏）的点对数
+}
+
+/** what-if 重排对比：actual=LineNo 序，optimized=NN+2opt（以 actual 为 baseline 兜底，强保证 ≤ actual）。 */
+export function planPickComparison<T extends { centerline: string }>(aisles: T[], stops: Pt[]): PickComparison {
+  const g = buildCenterlineGraph(aisles)                  // 单次建图
+  const actual = planPickRouteOnGraph(g, stops)
+  if (stops.length < 2) {
+    return { actual, optimized: actual, order: stops.map((_, i) => i), actualMm: actual.totalDistance, optimizedMm: actual.totalDistance, savingsPct: 0, degradedPairCount: 0 }
+  }
+  const degradedPairs = { count: 0 }
+  const matrix = distanceMatrixFromGraph(g, stops, degradedPairs)
+  const actualOrder = stops.map((_, i) => i)
+  const candidateOrder = optimizeOrder(matrix)
+  const actualLen = routeLengthByOrder(matrix, actualOrder)
+  const candidateLen = routeLengthByOrder(matrix, candidateOrder)
+  const order = candidateLen + 1e-9 < actualLen ? candidateOrder : actualOrder
+  const optimized = planPickRouteOnGraph(g, order.map((i) => stops[i]!))
+  const actualMm = actual.totalDistance
+  const optimizedMm = optimized.totalDistance
+  const savingsPct = actualMm === 0 ? 0 : Math.max(0, ((actualMm - optimizedMm) / actualMm) * 100)
+  return { actual, optimized, order, actualMm, optimizedMm, savingsPct, degradedPairCount: degradedPairs.count }
 }

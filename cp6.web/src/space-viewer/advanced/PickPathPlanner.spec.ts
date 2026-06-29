@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { parseCenterline, buildCenterlineGraph, planPickRoute, astar } from './PickPathPlanner'
+import {
+  parseCenterline, buildCenterlineGraph, planPickRoute, astar,
+  distanceMatrixFromGraph, planPickComparison,
+} from './PickPathPlanner'
 
 describe('PickPathPlanner', () => {
   it('parseCenterline parses valid and tolerates garbage', () => {
@@ -96,5 +99,51 @@ describe('PickPathPlanner', () => {
       '0,0': { x: 0, y: 0 }, '10,0': { x: 10, y: 0 }, '99,99': { x: 99, y: 99 },
     }
     expect(astar(adj, '0,0', '99,99', (k) => coords[k]!)).toBeNull()
+  })
+
+  it('distanceMatrixFromGraph is symmetric; degraded pairs use euclidean', () => {
+    const g = buildCenterlineGraph([{ aisleCode: 'H', centerline: '[[0,0],[1000,0]]' }])
+    const stops = [{ x: 0, y: 50 }, { x: 200, y: 50 }]
+    const m = distanceMatrixFromGraph(g, stops)
+    expect(m[0]![0]).toBe(0)
+    expect(m[0]![1]).toBeCloseTo(m[1]![0]!)        // 对称
+    expect(m[0]![1]).toBeCloseTo(300)              // 50 下 + 200 巷 + 50 上
+
+    const empty = buildCenterlineGraph([])         // 无段 → degraded 欧氏
+    const md = distanceMatrixFromGraph(empty, stops)
+    expect(md[0]![1]).toBeCloseTo(200)             // 直连欧氏
+  })
+
+  it('planPickComparison: optimized never longer than actual; savings >= 0', () => {
+    const aisles = [{ aisleCode: 'H', centerline: '[[0,0],[1000,0]]' }]
+    // LineNo 序 0->1000->200->800 来回绕路；优化序应 0->200->800->1000
+    const stops = [{ x: 0, y: 50 }, { x: 1000, y: 50 }, { x: 200, y: 50 }, { x: 800, y: 50 }]
+    const cmp = planPickComparison(aisles, stops)
+    expect(cmp.order[0]).toBe(0)
+    expect(cmp.order).toEqual([0, 2, 3, 1])
+    expect(cmp.actualMm).toBeCloseTo(2700)
+    expect(cmp.optimizedMm).toBeCloseTo(1300)
+    expect(cmp.optimizedMm).toBeLessThanOrEqual(cmp.actualMm + 1e-6)
+    expect(cmp.savingsPct).toBeGreaterThan(0)
+    expect(cmp.actual.degraded).toBe(false)
+    expect(cmp.optimized.degraded).toBe(false)
+    expect(cmp.degradedPairCount).toBe(0)
+  })
+
+  it('planPickComparison: already-optimal order falls back, savings = 0', () => {
+    const aisles = [{ aisleCode: 'H', centerline: '[[0,0],[1000,0]]' }]
+    const stops = [{ x: 0, y: 50 }, { x: 200, y: 50 }, { x: 800, y: 50 }, { x: 1000, y: 50 }]
+    const cmp = planPickComparison(aisles, stops)
+    expect(cmp.order).toEqual([0, 1, 2, 3])        // 回退原序
+    expect(cmp.savingsPct).toBe(0)
+    expect(cmp.optimizedMm).toBeCloseTo(cmp.actualMm)
+  })
+
+  it('planPickComparison: single stop -> zero distances, savings 0', () => {
+    const cmp = planPickComparison([{ aisleCode: 'H', centerline: '[[0,0],[1000,0]]' }], [{ x: 0, y: 50 }])
+    expect(cmp.order).toEqual([0])
+    expect(cmp.actualMm).toBe(0)
+    expect(cmp.optimizedMm).toBe(0)
+    expect(cmp.savingsPct).toBe(0)
   })
 })
