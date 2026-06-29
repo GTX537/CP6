@@ -33,9 +33,13 @@ public partial class FlowEngine
 
     /// <summary>驳回连坐 / 退回 / 撤回清场：本实例全 Active token → Cancelled。
     /// 与 <see cref="HasActiveToken"/>/VoidPendingFormTos 同款安全合并：先按 Local（变更追踪器权威态）改，
-    /// 再补查 DB 中"未被本地追踪"的行（排除已在 Local 的 Id），避免把"DB 仍 Active 但本地已 Consumed"的 token 误翻 Cancelled。</summary>
+    /// 再补查 DB 中"未被本地追踪"的行（排除已在 Local 的 Id），避免把"DB 仍 Active 但本地已 Consumed"的 token 误翻 Cancelled。
+    /// <para>B-T3（P0-5 入队侧）：同时把该实例 <c>Status==Pending</c> 的 <see cref="Wf_ServiceJob"/> 行标
+    /// <c>Cancelled</c>（同款 Local + localIds-exclusion 惯用法），让扫描 worker 永不唤醒已终止实例的停泊 token。
+    /// <c>Status==Running</c> 的 job 不强杀——由 B-T1 <c>ScanOnceAsync</c> 执行前状态闸（§4.2 P0-5）在 worker 侧处理。</para></summary>
     internal void CancelAllActiveTokens(Guid instanceId)
     {
+        // ── token 清场（既有逻辑，字节等价） ──
         foreach (var t in _db.Wf_FlowTokens.Local
             .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active).ToList())
             t.Status = FlowTokenStatus.Cancelled;
@@ -43,6 +47,23 @@ public partial class FlowEngine
         foreach (var t in _db.Wf_FlowTokens
             .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active && !localIds.Contains(t.Id)).ToList())
             t.Status = FlowTokenStatus.Cancelled;
+
+        // ── B-T3: Pending 服务任务 job 清场（同款 Local + localIds-exclusion 惯用法） ──
+        var now = DateTime.UtcNow;
+        foreach (var j in _db.Wf_ServiceJobs.Local
+            .Where(j => j.InstanceId == instanceId && j.Status == ServiceJobStatus.Pending).ToList())
+        {
+            j.Status = ServiceJobStatus.Cancelled;
+            j.CompletedAtUtc = now;
+        }
+        var localJobIds = _db.Wf_ServiceJobs.Local
+            .Where(j => j.InstanceId == instanceId).Select(j => j.Id).ToHashSet();
+        foreach (var j in _db.Wf_ServiceJobs
+            .Where(j => j.InstanceId == instanceId && j.Status == ServiceJobStatus.Pending && !localJobIds.Contains(j.Id)).ToList())
+        {
+            j.Status = ServiceJobStatus.Cancelled;
+            j.CompletedAtUtc = now;
+        }
     }
 
     /// <summary>无 Active token 残留 ⇒ 实例正常通过（置 Approved；dispatch 由调用方在 SaveChanges 前做）。</summary>

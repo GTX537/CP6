@@ -55,6 +55,17 @@ public class TaskCenterService : ITaskCenterService
             .ToListAsync();
         foreach (var f in pendingFormTos) f.Status = FlowFormToStatus.Voided;   // 在途传签履历 → Voided
 
+        // ★ B-T3（P0-5 入队侧）：撤回 = terminate，同步清理 Pending 服务任务 job。
+        // Running job 不强杀——由扫描 worker 执行前状态闸（§4.2 P0-5）在 worker 侧处理。
+        // 注：TaskCenterService 无 FlowEngine 依赖，直接查 DB（WithdrawAsync 已把全部 token 加载进追踪器，
+        //     job 若也在追踪器中用 Local 是权威态；首批撤回 job 走 SaveChangesAsync 前，DB 仍是 Pending，
+        //     此处直接 DB 查即可——WithdrawAsync 是事务起点无前置未落盘 job 变动）。
+        var pendingJobs = await _db.Wf_ServiceJobs
+            .Where(j => j.InstanceId == instanceId && j.Status == ServiceJobStatus.Pending)
+            .ToListAsync();
+        var withdrawNow = DateTime.UtcNow;
+        foreach (var j in pendingJobs) { j.Status = ServiceJobStatus.Cancelled; j.CompletedAtUtc = withdrawNow; }
+
         _db.Wf_FlowHistories.Add(new Wf_FlowHistory
         {
             Id = Guid.NewGuid(),
