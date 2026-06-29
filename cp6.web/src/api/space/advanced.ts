@@ -1,7 +1,7 @@
 // cp6.web/src/api/space/advanced.ts
 import http from '../http'
 import type { Envelope } from '@/types/space/scene'
-import type { FloorPickPath, FloorWorkload, DeviceDto } from '@/types/space/advanced'
+import type { FloorPickPath, FloorWorkload, DeviceDto, SitePickPath } from '@/types/space/advanced'
 
 export const advancedApi = {
   pickPath(floorId: string, taskNo: string) {
@@ -12,5 +12,8 @@ export const advancedApi = {
   },
   devices(floorId: string) {
     return http.get<unknown, Envelope<DeviceDto[]>>(`/space/floor/${floorId}/devices`)
+  },
+  sitePickPath(siteId: string, taskNo: string) {
+    return http.get<unknown, Envelope<SitePickPath>>(`/space/site/${siteId}/pick-path`, { params: { taskNo } })
   },
 }
