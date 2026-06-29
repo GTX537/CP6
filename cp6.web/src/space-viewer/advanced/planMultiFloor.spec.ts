@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildMultiFloorGraph } from './planMultiFloor'
+import { buildMultiFloorGraph, pathBetweenMF, distanceMatrixMF, polyDist3 } from './planMultiFloor'
 
 const F1 = 'F1', F2 = 'F2'
 const floors = [{ floorId: F1, z: 0 }, { floorId: F2, z: 6000 }]
@@ -19,5 +19,23 @@ describe('buildMultiFloorGraph', () => {
     const up = g.adj.get('F1:500,500')!.find((e) => e.to === 'F2:500,500')
     expect(up).toBeTruthy()
     expect(up!.w).toBeCloseTo(6000)
+  })
+})
+
+describe('pathBetweenMF', () => {
+  it('routes across floors via the connector (path has a z change 0→6000)', () => {
+    const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+    const r = pathBetweenMF(g, { floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 })
+    expect(r.degraded).toBe(false)
+    const zs = r.points.map((p) => p.z)
+    expect(Math.min(...zs)).toBeCloseTo(0)
+    expect(Math.max(...zs)).toBeCloseTo(6000)
+  })
+  it('distanceMatrixMF symmetric + includes vertical leg (>6000)', () => {
+    const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+    const stops = [{ floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 }]
+    const m = distanceMatrixMF(g, stops)
+    expect(m[0]![1]).toBeCloseTo(m[1]![0]!)
+    expect(m[0]![1]).toBeGreaterThan(6000)
   })
 })

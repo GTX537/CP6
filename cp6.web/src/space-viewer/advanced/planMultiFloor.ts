@@ -1,6 +1,6 @@
 // cp6.web/src/space-viewer/advanced/planMultiFloor.ts —— 多层图 + 跨层路径（承 SP3，图在前端）
-import { buildCenterlineGraph, key, type Pt } from './PickPathPlanner'
-import { mfKey, type Pt3, type FloorMeta } from './multiFloor'
+import { buildCenterlineGraph, key, astar, type Pt } from './PickPathPlanner'
+import { mfKey, dist3, type Pt3, type FloorMeta } from './multiFloor'
 
 export interface MFGraph {
   nodes: Map<string, Pt3>                                   // key=mfKey；z=层标高
@@ -76,4 +76,58 @@ export function buildMultiFloorGraph(
     }
   }
   return g
+}
+
+export interface MFStop { floorId: string; x: number; y: number }
+export interface MFRoute { points: Pt3[]; totalDistance: number; degraded: boolean }
+
+export function polyDist3(pts: Pt3[]): number {
+  let d = 0
+  for (let i = 1; i < pts.length; i++) d += dist3(pts[i - 1]!, pts[i]!)
+  return d
+}
+
+/** 取某层标高（从该层任一节点 z）。 */
+function floorZ(g: MFGraph, fid: string): number {
+  for (const [k, p] of g.nodes) if (k.startsWith(`${fid}:`)) return p.z
+  return 0
+}
+
+/** 跨层相邻两拣货点：各端投影到本层巷道接入（临时 FA/FB），astar 跑多层图。不连通→直连 degraded。 */
+export function pathBetweenMF(g: MFGraph, a: MFStop, b: MFStop): { points: Pt3[]; degraded: boolean } {
+  const za = floorZ(g, a.floorId), zb = floorZ(g, b.floorId)
+  const pa: Pt3 = { x: a.x, y: a.y, z: za }, pb: Pt3 = { x: b.x, y: b.y, z: zb }
+
+  const accA = nearestAccessOnSegments(g.segments.filter((s) => s.floorId === a.floorId), { x: a.x, y: a.y })
+  const accB = nearestAccessOnSegments(g.segments.filter((s) => s.floorId === b.floorId), { x: b.x, y: b.y })
+  if (!accA || !accB) return { points: [pa, pb], degraded: true }
+
+  const adj = new Map<string, Array<{ to: string; w: number }>>()
+  for (const [k, list] of g.adj) adj.set(k, list.slice())
+  const FA = 'FA', FB = 'FB'
+  const link = (n: string, p: MFStop, segA: Pt, segB: Pt) => {
+    const ka = `${p.floorId}:${key(segA)}`, kb = `${p.floorId}:${key(segB)}`
+    adj.set(n, [{ to: ka, w: Math.hypot(p.x - segA.x, p.y - segA.y) }, { to: kb, w: Math.hypot(p.x - segB.x, p.y - segB.y) }])
+    adj.get(ka)?.push({ to: n, w: Math.hypot(p.x - segA.x, p.y - segA.y) })
+    adj.get(kb)?.push({ to: n, w: Math.hypot(p.x - segB.x, p.y - segB.y) })
+  }
+  link(FA, a, accA.segA, accA.segB)
+  link(FB, b, accB.segA, accB.segB)
+
+  const nodePt = (k: string): Pt3 => (k === FA ? pa : k === FB ? pb : g.nodes.get(k)!)
+  const path = astar(adj, FA, FB, nodePt)
+  if (!path) return { points: [pa, pb], degraded: true }
+  return { points: path.map(nodePt), degraded: false }
+}
+
+export function distanceMatrixMF(g: MFGraph, stops: MFStop[], degradedPairs?: { count: number }): number[][] {
+  const n = stops.length
+  const m: number[][] = Array.from({ length: n }, () => new Array<number>(n).fill(0))
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+    const seg = pathBetweenMF(g, stops[i]!, stops[j]!)
+    const d = polyDist3(seg.points)
+    m[i]![j] = d; m[j]![i] = d
+    if (seg.degraded && degradedPairs) degradedPairs.count++
+  }
+  return m
 }
