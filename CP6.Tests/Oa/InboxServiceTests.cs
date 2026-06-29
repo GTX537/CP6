@@ -15,7 +15,7 @@ public class InboxServiceTests
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
     private static FlowEngine Engine(CP6Context db) => new(db, new ApproverResolver(db));
-    private static IForecastService Forecast(CP6Context db) => new ForecastService(db, new ApproverResolver(db));
+    private static IForecastService Forecast(CP6Context db) => new ForecastService(db, new ApproverResolver(db), new ApprovalStagePlanner(new ApproverResolver(db)));
     private static IInboxService Inbox(CP6Context db) => new InboxService(db, Engine(db), Forecast(db));
 
     // 流程：n1(approver 审批，CC 给 ccUser) → end。

@@ -55,6 +55,27 @@ public class DesignerServiceTests
     }
 
     [Fact]
+    public async Task Save_BadSerialStage_ThrowsE_WF_011()
+    {
+        using var db = NewDb();
+        // managerChain 档缺 MaxLevels → FlowSchemaValidator 返回 E-WF-011
+        var badSchema = JsonSerializer.Serialize(new FlowSchema
+        {
+            Start = "s",
+            Nodes = { new FlowNode { Id = "s", Type = "start" },
+                      new FlowNode { Id = "a", Type = "approval", Stages = new()
+                      {
+                          new ApprovalStage { Kind = "managerChain" /* MaxLevels 缺失 */, Countersign = "all" },
+                      }},
+                      new FlowNode { Id = "e", Type = "end" } },
+            Edges = { new FlowEdge { From = "s", To = "a" }, new FlowEdge { From = "a", To = "e" } },
+        });
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => Svc(db).SaveAsync(new SaveFlowRequest("bad", "x", "x", null, null, badSchema), null));
+        Assert.Equal("E-WF-011", ex.Message);   // 具体码,不是通用 E-WF-010
+    }
+
+    [Fact]
     public async Task Clone_ProducesIndependentCopy()
     {
         using var db = NewDb();

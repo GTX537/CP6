@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { schemaToGraph, graphToSchema, validateClient, NODE_PALETTE } from './designerModel'
+import type { FlowSchemaDto } from './designerModel'
 
 const schema = {
   start: 's',
@@ -42,5 +43,43 @@ describe('designerModel', () => {
   it('NODE_PALETTE lists the 5 engine node types', () => {
     expect(NODE_PALETTE.map(p => p.type).sort())
       .toEqual(['approval', 'end', 'parallelJoin', 'parallelSplit', 'start'])
+  })
+
+  it('round-trips serial stages', () => {
+    const schema: FlowSchemaDto = { start: 'ap', nodes: [
+      { id: 'ap', type: 'approval', stages: [
+        { kind: 'fixed', approverStrategy: 'Specified', countersign: 'all', name: '档1' },
+        { kind: 'managerChain', maxLevels: 2, countersign: 'all', name: '逐级' },
+      ] },
+      { id: 'end', type: 'end' },
+    ], edges: [{ from: 'ap', to: 'end' }] }
+    const g = schemaToGraph(schema)
+    const back = graphToSchema(g.nodes, g.edges)
+    const ap = back.nodes.find(n => n.id === 'ap')!
+    const stages = ap.stages!
+    expect(stages).toHaveLength(2)
+    expect(stages[1]!.maxLevels).toBe(2)
+    expect(stages[0]!.approverStrategy).toBe('Specified')
+  })
+
+  it('validateClient flags invalid stage (managerChain without maxLevels)', () => {
+    const schema: FlowSchemaDto = { start: 'start', nodes: [
+      { id: 'start', type: 'start' },
+      { id: 'ap', type: 'approval', stages: [{ kind: 'managerChain', countersign: 'all' }] },
+      { id: 'end', type: 'end' },
+    ], edges: [{ from: 'start', to: 'ap' }, { from: 'ap', to: 'end' }] }
+    expect(validateClient(schema)).toContain('oa.designer.errStageInvalid')
+  })
+
+  it('validateClient passes valid serial stages', () => {
+    const schema: FlowSchemaDto = { start: 'start', nodes: [
+      { id: 'start', type: 'start' },
+      { id: 'ap', type: 'approval', stages: [
+        { kind: 'fixed', approverStrategy: 'Specified', countersign: 'all' },
+        { kind: 'managerChain', maxLevels: 2, countersign: 'any' },
+      ] },
+      { id: 'end', type: 'end' },
+    ], edges: [{ from: 'start', to: 'ap' }, { from: 'ap', to: 'end' }] }
+    expect(validateClient(schema)).not.toContain('oa.designer.errStageInvalid')
   })
 })

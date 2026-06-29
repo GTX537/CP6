@@ -1,5 +1,8 @@
 namespace CP6.Core.Services.Wf;
 
+/// <summary>退回落点。Kind: prevStage(同节点上一档)/starter(退回发起人重填)/node(退回指定上游节点)。</summary>
+public sealed record SendBackTarget(string Kind, string? NodeId = null);
+
 /// <summary>
 /// 流程引擎（OA 章03 ★）。状态机解释器：实例 = 状态载体，一次 tick = (当前节点, 动作) → 下一节点 + 副作用。
 /// 全状态落库、幂等可重放。审批人委托 IApproverResolver，条件流转委托 ConditionEvaluator。
@@ -25,6 +28,9 @@ public interface IFlowEngine
     /// 三落点（上一步/指定节点/发起人）只是 targetNodeId 不同。幂等：任务已办则无效。
     /// </summary>
     Task SendBackAsync(Guid taskId, Guid actorId, string targetNodeId, string? comment = null);
+
+    /// <summary>退回(泛化三目标)。详见 spec §4.2。</summary>
+    Task SendBackAsync(Guid taskId, Guid actorId, SendBackTarget target, string? comment = null);
 
     /// <summary>
     /// 加签（章07 §3）：在当前任务所在节点加一个实例级临时审批人（不改 FlowDef）。

@@ -11,4 +11,6 @@ export const inboxApi = {
   markCcRead:   (id: string) => http.post('/oa/inbox/cc/read', { id }),
   batch: (taskIds: string[], approve: boolean, comment?: string) =>
     http.post('/oa/inbox/batch', { taskIds, approve, comment }),
+  sendBack: (taskId: string, kind: 'prevStage' | 'starter' | 'node', nodeId?: string, comment?: string) =>
+    http.post('/oa/inbox/sendback', { taskId, kind, nodeId, comment }),
 }

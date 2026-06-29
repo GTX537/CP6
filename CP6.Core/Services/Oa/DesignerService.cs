@@ -30,7 +30,8 @@ public class DesignerService : IDesignerService
     {
         // ① schema 校验
         var schema = JsonSerializer.Deserialize<FlowSchema>(req.SchemaJson, JsonOpts) ?? new FlowSchema();
-        if (FlowSchemaValidator.Validate(schema).Count > 0) throw new InvalidOperationException("E-WF-010");
+        var schemaErrs = FlowSchemaValidator.Validate(schema);
+        if (schemaErrs.Count > 0) throw new InvalidOperationException(schemaErrs[0]);
 
         // ② 身份码租户内唯一（排除自身 FlowKey）
         if (!string.IsNullOrWhiteSpace(req.FunctionId) &&

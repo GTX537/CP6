@@ -40,4 +40,5 @@ public static class FlowFormToStatus
     public const int AddSigned = 4;   // 加签
     public const int Skipped = 5;     // 跳过 / 会签未轮到
     public const int Voided = 6;      // 作废（驳回连坐 / 退回清场）
+    public const int SentBack = 7;    // 退回上一档(区别于普通作废 Voided=6)
 }

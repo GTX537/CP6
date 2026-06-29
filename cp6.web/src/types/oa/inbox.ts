@@ -12,6 +12,11 @@ export interface PendingItem {
   bizId?: string
   isRead: boolean
   sentAt: string
+  stageIndex?: number
+  stageRound?: number
+  stageName?: string
+  stageCode?: string
+  canSendBackPrevStage?: boolean
 }
 
 export interface CcItem {
@@ -76,6 +81,8 @@ export interface TimelineRow {
   comment?: string
   sentAt: string
   handledAt?: string
+  stageIndex?: number | null
+  stageRound?: number | null
 }
 
 export interface SnapshotRow {

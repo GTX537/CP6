@@ -1,5 +1,17 @@
 import type { Node as VFNode, Edge as VFEdge } from '@vue-flow/core'
 
+export interface ApprovalStageDto {
+  name?: string
+  code?: string
+  kind: 'fixed' | 'managerChain'
+  approverStrategy?: string
+  approverLevels?: number
+  approverRoleId?: number
+  approverUserId?: string
+  countersign?: 'all' | 'any' | 'veto'
+  maxLevels?: number
+}
+
 export interface SchemaNode {
   id: string; type: string; name?: string
   code?: string                                        // 状态编号（对应后端 FlowNode.Code）
@@ -7,6 +19,7 @@ export interface SchemaNode {
   countersign?: string; timeoutHours?: number; timeoutAction?: string
   allowReject?: boolean                                // 允许退回
   ccUsers?: string[]; ccRoleId?: number
+  stages?: ApprovalStageDto[]                          // 串簽多档审批配置
   x?: number; y?: number
 }
 export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[] }
@@ -65,6 +78,17 @@ export function validateClient(schema: FlowSchemaDto): string[] {
   if (nodes.filter(n => n.type === 'start').length !== 1) errs.push('oa.designer.errNoStart')
   if (!nodes.some(n => n.type === 'end')) errs.push('oa.designer.errNoEnd')
   if (edges.some(e => !ids.has(e.from) || !ids.has(e.to))) errs.push('oa.designer.errDanglingEdge')
-  if (nodes.some(n => n.type === 'approval' && !n.approverStrategy)) errs.push('oa.designer.errNoStrategy')
+  if (nodes.some(n => n.type === 'approval' && !n.approverStrategy && !(n.stages?.length))) errs.push('oa.designer.errNoStrategy')
+  for (const n of nodes) {
+    if (n.type === 'approval' && n.stages && n.stages.length) {
+      for (const s of n.stages) {
+        const ruleOk = s.kind === 'managerChain'
+          ? (s.maxLevels ?? 0) >= 1
+          : !!s.approverStrategy
+        const csOk = !s.countersign || ['all', 'any', 'veto'].includes(s.countersign)
+        if (!ruleOk || !csOk) { errs.push('oa.designer.errStageInvalid'); break }
+      }
+    }
+  }
   return errs
 }
