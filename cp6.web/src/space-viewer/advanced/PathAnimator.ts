@@ -4,8 +4,8 @@ import {
   Mesh, MeshBasicMaterial,
 } from 'three'
 import type { ViewerHandle } from '../api/ViewerHandle'
-import type { Pt } from './PickPathPlanner'
-import { polylineLength, pointAtDistance } from './pathModel'
+import type { Pt3 } from './multiFloor'
+import { polylineLength3, pointAtDistance3 } from './pathModel'
 
 const GROUND_Z = 200       // mm，路径线离地高度
 const CART_SIZE = 600      // mm 立方
@@ -14,10 +14,17 @@ const CART_COLOR = 0xff4081
 const COMPARE_COLOR = 0x76ff03   // 绿，优化对比线
 const DEFAULT_SPEED = 4000 // mm/s
 
+/** 接受 Pt（无 z）或 Pt3（有 z）；z 缺省归零，保持单层调用者零回归。 */
+type Pt3Like = { x: number; y: number; z?: number }
+
+function normalizePt3(p: Pt3Like): Pt3 {
+  return { x: p.x, y: p.y, z: p.z ?? 0 }
+}
+
 export class PathAnimator {
   private _viewer: ViewerHandle
   private _group = new Group()
-  private _points: Pt[] = []
+  private _points: Pt3[] = []
   private _length = 0
   private _cart: Mesh | null = null
   private _compareLine: Line | null = null
@@ -32,14 +39,14 @@ export class PathAnimator {
   get playing(): boolean { return this._playing }
   get progress(): number { return this._length > 0 ? Math.min(1, this._dist / this._length) : 0 }
 
-  setPath(points: Pt[]): void {
+  setPath(points: Pt3Like[]): void {
     this.clear()
-    this._points = points.slice()
-    this._length = polylineLength(points)
-    if (points.length < 2) return
+    this._points = points.map(normalizePt3)
+    this._length = polylineLength3(this._points)
+    if (this._points.length < 2) return
 
     const arr: number[] = []
-    for (const p of points) arr.push(p.x, p.y, GROUND_Z)
+    for (const p of this._points) arr.push(p.x, p.y, p.z + GROUND_Z)
     const geom = new BufferGeometry()
     geom.setAttribute('position', new Float32BufferAttribute(arr, 3))
     this._group.add(new Line(geom, new LineBasicMaterial({ color: PATH_COLOR })))
@@ -63,11 +70,12 @@ export class PathAnimator {
   }
 
   /** 静态对比线（优化序，无小车不参与动画）；null 清除。挂在同一 _group 下。 */
-  setComparisonPath(points: Pt[] | null): void {
+  setComparisonPath(points: Pt3Like[] | null): void {
     this._clearCompareLine()
     if (points && points.length >= 2) {
+      const pts3 = points.map(normalizePt3)
       const arr: number[] = []
-      for (const p of points) arr.push(p.x, p.y, GROUND_Z + 20)  // +20mm 防 z-fight
+      for (const p of pts3) arr.push(p.x, p.y, p.z + GROUND_Z + 20)  // +20mm 防 z-fight
       const geom = new BufferGeometry()
       geom.setAttribute('position', new Float32BufferAttribute(arr, 3))
       this._compareLine = new Line(geom, new LineBasicMaterial({ color: COMPARE_COLOR }))
@@ -78,8 +86,8 @@ export class PathAnimator {
 
   private _positionCart(): void {
     if (!this._cart) return
-    const p = pointAtDistance(this._points, this._dist)
-    this._cart.position.set(p.x, p.y, GROUND_Z + CART_SIZE / 2)
+    const p = pointAtDistance3(this._points, this._dist)
+    this._cart.position.set(p.x, p.y, p.z + GROUND_Z + CART_SIZE / 2)
   }
 
   play(): void {
@@ -111,7 +119,9 @@ export class PathAnimator {
     this.pause()
     let acc = 0
     for (let i = 1; i < this._points.length; i++) {
-      acc += Math.hypot(this._points[i]!.x - this._points[i - 1]!.x, this._points[i]!.y - this._points[i - 1]!.y)
+      const a = this._points[i - 1]!
+      const b = this._points[i]!
+      acc += Math.hypot(b.x - a.x, b.y - a.y, b.z - a.z)
       if (acc > this._dist + 1) { this._dist = acc; break }
     }
     if (this._dist > this._length) this._dist = this._length

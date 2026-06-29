@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { Group } from 'three'
 import { PathAnimator } from './PathAnimator'
+import type { Pt3 } from './multiFloor'
 
 function fakeViewer() {
   const root = new Group()
@@ -64,5 +65,12 @@ describe('PathAnimator', () => {
     a.setComparisonPath([{ x: 0, y: 0 }, { x: 500, y: 500 }])
     a.clear()
     expect(v.root.children.length).toBe(0)
+  })
+
+  it('setPath accepts 3D points (z varies); group has line + cart', () => {
+    const v = fakeViewer()
+    const a = new PathAnimator(v as any)
+    a.setPath([{ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 6000 }, { x: 800, y: 0, z: 6000 }] as Pt3[])
+    expect(v.root.children[0]!.children.length).toBe(2)   // line + cart
   })
 })
