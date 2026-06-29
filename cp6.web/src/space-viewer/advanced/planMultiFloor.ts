@@ -1,6 +1,7 @@
 // cp6.web/src/space-viewer/advanced/planMultiFloor.ts —— 多层图 + 跨层路径（承 SP3，图在前端）
 import { buildCenterlineGraph, key, astar, type Pt } from './PickPathPlanner'
 import { mfKey, dist3, type Pt3, type FloorMeta } from './multiFloor'
+import { optimizeOrder, routeLengthByOrder } from './routeOptimize'
 
 export interface MFGraph {
   nodes: Map<string, Pt3>                                   // key=mfKey；z=层标高
@@ -130,4 +131,44 @@ export function distanceMatrixMF(g: MFGraph, stops: MFStop[], degradedPairs?: { 
     if (seg.degraded && degradedPairs) degradedPairs.count++
   }
   return m
+}
+
+export interface MFComparison {
+  actual: MFRoute; optimized: MFRoute; order: number[]
+  actualMm: number; optimizedMm: number; savingsPct: number; degradedPairCount: number
+}
+
+function planRouteOnMFGraph(g: MFGraph, stops: MFStop[]): MFRoute {
+  if (stops.length < 2) {
+    return { points: stops.map((s) => ({ x: s.x, y: s.y, z: floorZ(g, s.floorId) })), totalDistance: 0, degraded: false }
+  }
+  const points: Pt3[] = []
+  let degraded = false
+  for (let i = 0; i + 1 < stops.length; i++) {
+    const seg = pathBetweenMF(g, stops[i]!, stops[i + 1]!)
+    degraded = degraded || seg.degraded
+    const pts = i === 0 ? seg.points : seg.points.slice(1)
+    points.push(...pts)
+  }
+  return { points, totalDistance: polyDist3(points), degraded }
+}
+
+/** what-if 跨层重排对比：actual=LineNo 序，optimized=NN+2opt（以 actual 为 baseline 兜底，强保证 ≤ actual）。 */
+export function planPickComparisonMF(
+  floors: FloorMeta[], aislesByFloor: Map<string, AisleVOLite[]>, connectors: ConnectorPath[], stops: MFStop[],
+): MFComparison {
+  const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+  const actual = planRouteOnMFGraph(g, stops)
+  if (stops.length < 2) {
+    return { actual, optimized: actual, order: stops.map((_, i) => i), actualMm: actual.totalDistance, optimizedMm: actual.totalDistance, savingsPct: 0, degradedPairCount: 0 }
+  }
+  const degradedPairs = { count: 0 }
+  const matrix = distanceMatrixMF(g, stops, degradedPairs)
+  const actualOrder = stops.map((_, i) => i)
+  const candidate = optimizeOrder(matrix)
+  const order = routeLengthByOrder(matrix, candidate) + 1e-9 < routeLengthByOrder(matrix, actualOrder) ? candidate : actualOrder
+  const optimized = planRouteOnMFGraph(g, order.map((i) => stops[i]!))
+  const actualMm = actual.totalDistance, optimizedMm = optimized.totalDistance
+  const savingsPct = actualMm === 0 ? 0 : Math.max(0, ((actualMm - optimizedMm) / actualMm) * 100)
+  return { actual, optimized, order, actualMm, optimizedMm, savingsPct, degradedPairCount: degradedPairs.count }
 }
