@@ -231,4 +231,19 @@ public class ApproverResolverAdvancedTests
         Assert.Equal("amount > 10", rule.When);
         Assert.Equal("user.enable == true", rule.Filter);
     }
+
+    [Fact]
+    public async Task When_CanReference_StarterNamespace()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid();
+        db.Sys_Users.Add(new Sys_User { Id = starter, UserName = "s", Password = "x", RoleId = 5, Enable = true });
+        await db.SaveChangesAsync();
+
+        var ctx = new ApproverResolveContext { StarterUserId = starter, VarsJson = "{}" };
+        var ruleTrue = new ApproverRule(ApproverStrategy.Starter, null, null, null) { When = "starter.roleId == 5" };
+        var ruleFalse = new ApproverRule(ApproverStrategy.Starter, null, null, null) { When = "starter.roleId == 9" };
+        Assert.True((await new ApproverResolver(db).ResolveAsync(ruleTrue, ctx)).Resolved);
+        Assert.False((await new ApproverResolver(db).ResolveAsync(ruleFalse, ctx)).Resolved);
+    }
 }

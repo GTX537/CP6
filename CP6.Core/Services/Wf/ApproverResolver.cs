@@ -17,9 +17,15 @@ public class ApproverResolver : IApproverResolver
 
     public async Task<ApproverResolveResult> ResolveAsync(ApproverRule rule, ApproverResolveContext ctx)
     {
-        // ②a 门控:When 假 → 本规则不产审批人
-        if (!string.IsNullOrWhiteSpace(rule.When) && !ExpressionEvaluator.Evaluate(rule.When, ctx.VarsJson))
-            return ApproverResolveResult.Unres("条件不满足(When)");
+        // ②a 门控:When 对 表单 vars(+ starter.* 若引用)求值,假 → 本规则不产审批人(spec §4.6 命名空间)
+        if (!string.IsNullOrWhiteSpace(rule.When))
+        {
+            var whenVars = ExpressionEvaluator.ParseVars(ctx.VarsJson);
+            if (rule.When!.Contains("starter."))   // 仅在引用时载入发起人,保表单字段门控的常见路径零额外查询
+                AddUserNamespace(whenVars, "starter", await _db.Sys_Users.FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId));
+            if (!ExpressionEvaluator.Evaluate(rule.When, whenVars))
+                return ApproverResolveResult.Unres("条件不满足(When)");
+        }
 
         var baseRes = rule.Strategy switch
         {
