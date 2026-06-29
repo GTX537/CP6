@@ -1,5 +1,7 @@
 # Space P1 后端地基 Implementation Plan（初稿）
 
+> **v1.1 评审返改（2026-06-27）**：多租户从「自建桩方案」升级为**复用 CP6 真·多租户基建**——Space 实体继承 `BaseBizEntity`（已含 `TenantId`/`IsDeleted`/`RowVersion`），直接吃 `ITenantContext`（`CP6.Core.Services.Common`）+ `CP6Context.OnModelCreating` 对所有 `BaseTenantEntity` 子类反射注册的全局查询过滤 + `TenantMiddleware`（JWT `tenant_id` 解析）+ `SaveChanges` 自动盖章。**删自建 `ISpaceTenantContext`/`DefaultSpaceTenantContext` 桩、删默认 GUID 常量（改用 `TenantContext.DefaultTenant`，恰好同值）、删所有显式 `.Where(x => x.TenantId == ...)`（全局过滤自动加）与手工 `entity.TenantId = ...`（盖章自动）**。下文凡 v1.1 触及处均标 `(v1.1: …)`；并联动 00/03/04 v1.1 补丁（见各 Phase 注记）。**全局名称映射（下文代码样例一律按此读）**：`ISpaceTenantContext`→`ITenantContext`；`DefaultSpaceTenantContext`→`TenantContext`；属性 `.TenantId`→`.CurrentTenantId`；`DefaultSpaceTenantContext.DefaultTenant`→`TenantContext.DefaultTenant`；`new DefaultSpaceTenantContext()`→`new TenantContext()`（或测试走 `TestHelper.CreateInMemoryContext(user, tenant)`）。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 > **工作流说明（丛书模式）**：本文是**我出的初稿**。按既定工作流，下一步是**你做修订版**（重点看下面「关键前置决策」5 条），我再评审合并为唯一定稿后才进编码。**先别按本稿动代码**——决策未拍板前，schema/签名可能整体改。
@@ -16,12 +18,14 @@
 
 丛书 DDL 是按"理想多租户 schema"写的，与 CP6 现状有 5 处缺口。我已勘察代码库，逐条给出**建议值 + 理由**，请在修订版里确认或推翻：
 
+> **(v1.1: D-A/D-B/D-C 已于评审定案)**——本计划初稿写于「CP6 零多租户」假设，故 D-A 用桩。**S 类安全合规整包落地后 CP6 已有真·多租户基建**（`BaseTenantEntity.TenantId` + `BaseBizEntity` + `ITenantContext` + `CP6Context` 反射全局过滤/盖章 + `TenantMiddleware`）。下表 D-A/D-B/D-C 三行按 v1.1 重写为「复用真基建」；D-D/D-E 不变。
+
 | # | 议题 | 文档原意 | CP6 现状（已勘察） | **本稿建议值** | 影响面 |
 |---|---|---|---|---|---|
-| **D-A** | **TenantId / 多租户** | 全表带 `TenantId`，唯一索引均 `(TenantId, Code...)`，EF 全局查询过滤器隔离 | **零多租户基建**——`TenantId` 在整个 .cs 代码库出现 0 次 | **方案 A**：9 表**现在就带 `TenantId` 列 + 复合唯一索引**（保住 03 章"租户全局唯一"契约、避免日后破坏性迁移）；新增 `ISpaceTenantContext` 解析当前租户，P1 **桩实现返回固定默认租户 GUID**；**EF 全局查询过滤器 + 真实租户解析延到 09 章**，P1 服务层**显式 `.Where(x => x.TenantId == _tenant.TenantId)`** 过滤 | 每个实体 + 每个查询 |
-| **D-B** | **审计字段名** | DDL 写 `CreateTime/Creator/UpdateTime/Updater` | 真实 `BaseEntity` = `Creator/CreateDate/Modifier/ModifyDate`（见 `CP6.Entity/BaseEntity.cs`） | **以代码为准**：用 `Creator/CreateDate/Modifier/ModifyDate`；文档 DDL 的 `CreateTime/UpdateTime/Updater` 视为笔误 | 全部 DDL/迁移 |
-| **D-C** | **基类与软删** | "继承 BaseEntity（含 Id/TenantId）"；"全表不做软删列、用 Enable" | `BaseEntity`(Id/Creator/CreateDate/Modifier/ModifyDate，**无 TenantId**)；`BaseBizEntity` 额外带 `IsDeleted`+`[Timestamp]RowVersion` | Space 实体**继承 `BaseEntity`**（不继承 BaseBizEntity，避免引入 `IsDeleted` 与"用 Enable"冲突）；`TenantId` 在各实体内**自行声明**；`Space_Rack`/`Space_Location` **手工加 `[Timestamp] byte[]? RowVersion`** | 每个实体 |
-| **D-D** | **WMS 消费 / 库存查询** | 04 发布给 WMS 消费；D6 停用前 `IWmsStockQuery` 查库存 | WMS 模块未实现这两个契约 | P1 **只立契约 + 注册路由 + 桩实现**：`IWmsLocationConsumer`（NoOp，返回成功）、`IWmsStockQuery`（桩返回 0 库存）。真实 WMS 消费/库存查询是 **WMS 模块的后续工作**，配置开关切换（仿既有 `WmsBridge:Enabled` NoOp 范式） | 04 全部 + DI |
+| **D-A** | **TenantId / 多租户** | 全表带 `TenantId`，唯一索引均 `(TenantId, Code...)`，EF 全局查询过滤器隔离 | **(v1.1 修正现状)** S 类合规后 CP6 已有真·多租户：`BaseTenantEntity.TenantId` + `CP6Context.OnModelCreating` 对所有 `BaseTenantEntity` 子类反射注册 `HasQueryFilter(x => x.TenantId == CurrentTenantId)` + 反射把单列唯一索引升级为 `(TenantId, …)` 复合唯一 + `SaveChanges` 自动盖章 + `ITenantContext`/`TenantMiddleware`（JWT `tenant_id`） | **(v1.1 定案) 复用真基建**：9 表实体**继承 `BaseBizEntity`**（→ 自带 `TenantId`），即获全局查询过滤 + 复合唯一升级 + 写入盖章，**P1 即真多租户**。**无需** `ISpaceTenantContext` 桩、**无需**默认 GUID 常量（复用 `TenantContext.DefaultTenant`，恰好同值 `…A1`）、**无需**每查询显式 `.Where(TenantId)`（全局过滤自动加）。服务/控制器构造注入 `ITenantContext`（仅在确需跨租户/绕过时用）。**09 章从「设计租户」降级为「接线收口 + 冒烟」**（中间件已全局生效，只验证 Space 端点随当前租户隔离）。 | 实体改基类即可；查询无需改 |
+| **D-B** | **审计字段名** | DDL 写 `CreateTime/Creator/UpdateTime/Updater` | 真实 `BaseEntity` = `Creator/CreateDate/Modifier/ModifyDate`（见 `CP6.Entity/BaseEntity.cs`） | **以代码为准（确认）**：用 `Creator/CreateDate/Modifier/ModifyDate`；文档 DDL 的 `CreateTime/UpdateTime/Updater` 视为笔误。**(v1.1)** 这些字段经由 `BaseBizEntity → BaseTenantEntity → BaseEntity` 继承链获得，无需在 Space 实体内声明 | 全部 DDL/迁移 |
+| **D-C** | **基类与软删** | "继承 BaseEntity（含 Id/TenantId）"；"全表不做软删列、用 Enable" | `BaseEntity`(Id/审计字段)；`BaseTenantEntity : BaseEntity`(+`TenantId`)；`BaseBizEntity : BaseTenantEntity`(+`IsDeleted`+`[Timestamp]RowVersion`) | **(v1.1 改：继承 `BaseBizEntity`)**——一次性获得 `TenantId`（纳入全局过滤/盖章）+ `IsDeleted` + `RowVersion`。**各实体不再自行声明 `TenantId`、不再手工加 `[Timestamp] RowVersion`**（全 9 表都有 RowVersion，乐观锁全表可用，超出原"仅 Rack/Location"）。`IsDeleted` 列随基类带入但**P1 不启用软删**（无对应全局过滤，列休眠；删除护栏仍按 B-5 应用层物理校验，与"用 Enable"语义不冲突——`Enable`=业务停用，`IsDeleted`=技术软删，两者正交）。 | 每个实体改基类一行 |
+| **D-D** | **WMS 消费 / 库存查询** | 04 发布给 WMS 消费；D6 停用前 `IWmsStockQuery` 查库存 | WMS 模块未实现这两个契约 | P1 **只立契约 + 注册路由 + 桩实现**：`IWmsLocationConsumer`（NoOp，返回成功）、`IWmsStockQuery`（桩返回 0 库存）。真实 WMS 消费/库存查询是 **WMS 模块的后续工作**，配置开关切换（仿既有 `WmsBridge:Enabled` NoOp 范式）。**(v1.1: 联动 04 v1.1)** 真实消费侧落 `T_WmsBin` 消费表、停用改「同步 RPC」、`SiteCode ↔ WarehouseCd` 映射——均属 WMS 模块后续；P1 仍只保 `NoOpWmsLocationConsumer`/`StubWmsStockQuery` 桩，但桩签名按 04 v1.1 对齐 | 04 全部 + DI |
 | **D-E** | **发布批号格式** | `LPUB-20260613-0001`（带日 + 横杠，18 字符） | 既有 `DocNumber.NextAsync` 产 13 字符 `CODE+yyyyMM+seq4`（无日无杠） | 用 `DocNumber.NextAsync(db,"LPB")` 取自增 `seq`，**自行格式化**为 `LPUB-{yyyyMMdd}-{seq:D4}`（≤30 字符，满足 `IntegrationEvent.SourceNo` 约束） | 04 发布服务 |
 
 > **测试基建限制（重要）**：CP6.Tests 用 **EF Core InMemory**（`UseInMemoryDatabase`）。InMemory **测不了**：①过滤唯一索引 `WHERE LocationCode IS NOT NULL` 的真实约束；②`ROWVERSION` 乐观并发冲突；③两阶段重排"先置 NULL 避中途违约"的 SQL Server 无延迟校验行为。这些**逻辑层**（候选码去重、版本单调、状态翻转）能用 InMemory 测；但**索引级/并发级**正确性需补一组**真 SQL Server（或 SQLite）集成测**作兜底（见 Task D-9）。本稿对受影响的测试都标注了 `[InMemory 仅测逻辑]` / `[需真库]`。
@@ -39,8 +43,8 @@
 - `CodeRuleDtos.cs` — `Segments` 模型、规则 CRUD、preview 请求/响应、precheck 响应
 - `LocationPublishBatch.cs` — 04 事件载荷（batch + items + 变长 path + attrs）
 
-### 租户上下文（`CP6.Core/Services/Space/` 或 `CP6.Core/Services/Common/`）
-- `ISpaceTenantContext.cs` + `DefaultSpaceTenantContext.cs` — D-A 桩（P1 返回固定默认租户）
+### 租户上下文 ~~（自建桩）~~ **(v1.1: 删除——复用既有 `ITenantContext`)**
+- ~~`ISpaceTenantContext.cs` + `DefaultSpaceTenantContext.cs`~~ **删除**。直接注入既有 `CP6.Core.Services.Common.ITenantContext`（`TenantMiddleware` 已全局接 JWT；测试用 `new TenantContext { CurrentTenantId = … }` 或 `TestHelper.CreateInMemoryContext(user, tenant)`）。不新增任何租户上下文文件。
 
 ### 服务（`CP6.Core/Services/Space/`）
 - `ISpaceMasterService.cs` / `SpaceMasterService.cs` — Site/Floor/Zone/Aisle/Rack/Location CRUD + 删除护栏 + scene + unplaced（00 §9）
@@ -60,8 +64,8 @@
 - `LocationPublishController.cs`（`/floor/{id}/publish`、`/location/{id}/deactivate`、`/location/adopt`、`/reconcile`、`/aisle|rack/{id}` DELETE、`/publish/events`）
 
 ### 注册与迁移
-- 修改 `CP6.Core/EFDbContext/CP6Context.cs` — 9 个 `DbSet` + `OnModelCreating` 索引/RowVersion 配置
-- 修改 `CP6.WebApi/Program.cs` — DI 注册（服务 + 桩 + 租户上下文）
+- 修改 `CP6.Core/EFDbContext/CP6Context.cs` — 9 个 `DbSet` + `OnModelCreating` 业务索引配置。**(v1.1: 全局查询过滤、`(TenantId, …)` 复合唯一升级、RowVersion 均由既有反射块对 `BaseTenantEntity` 子类自动覆盖，Space 无需手写；只写过滤唯一索引 `WHERE LocationCode IS NOT NULL` 等业务专属索引)**
+- 修改 `CP6.WebApi/Program.cs` — DI 注册（Space 服务 + WMS 桩）。**(v1.1: 租户上下文 `ITenantContext`/`TenantMiddleware` 已在主程序注册，Space 不再注册任何租户上下文)**
 - 新增迁移 `CP6.Core/Migrations/*_SpaceP1Init.cs`
 
 ### 测试（`CP6.Tests/`）
@@ -71,7 +75,7 @@
 
 ## 实施分四阶段
 
-- **Phase A**（Task A-1..A-3）：9 实体 + DbContext + 租户上下文桩 + 迁移 — 地基 schema
+- **Phase A**（~~Task A-1..A-3~~ **v1.1: A-1 删除，A-2/A-3**）：9 实体（继承 `BaseBizEntity`）+ DbContext + 迁移 — 地基 schema。**(v1.1: 原 A-1「租户上下文桩」整体删除，改复用既有 `ITenantContext`)**
 - **Phase B**（Task B-1..B-6）：主数据服务 + 几何重算 + scene/unplaced + 控制器 — 00 章可用
 - **Phase C**（Task C-1..C-6）：编码引擎 — 03 章可用
 - **Phase D**（Task D-1..D-9）：发布契约 + WMS 桩 + 集成路由 — 04 章可用，P1 后端闭环达成
@@ -82,47 +86,9 @@
 
 # Phase A — 实体与地基 schema
 
-## Task A-1: 租户上下文桩（D-A）
+## ~~Task A-1: 租户上下文桩（D-A）~~ — **(v1.1: 整任务删除)**
 
-**Files:**
-- Create: `CP6.Core/Services/Space/ISpaceTenantContext.cs`
-- Create: `CP6.Core/Services/Space/DefaultSpaceTenantContext.cs`
-
-- [ ] **Step 1: 写接口与桩实现**
-
-```csharp
-// ISpaceTenantContext.cs
-namespace CP6.Core.Services.Space;
-
-/// <summary>
-/// 当前租户解析。P1 为桩（固定默认租户）；09 章接 PUB/JWT claim 后替换真实实现。
-/// 服务层所有 Space 查询/写入都经它取 TenantId，确保切换真实实现时零改动。
-/// </summary>
-public interface ISpaceTenantContext
-{
-    Guid TenantId { get; }
-}
-```
-
-```csharp
-// DefaultSpaceTenantContext.cs
-namespace CP6.Core.Services.Space;
-
-/// <summary>P1 桩：固定默认租户。09 章替换为从 JWT claim "tenant_id" 解析。</summary>
-public sealed class DefaultSpaceTenantContext : ISpaceTenantContext
-{
-    // 固定默认租户 GUID（种子数据、迁移、测试共用此值）
-    public static readonly Guid DefaultTenant = Guid.Parse("00000000-0000-0000-0000-0000000000A1");
-    public Guid TenantId => DefaultTenant;
-}
-```
-
-- [ ] **Step 2: 提交**
-
-```bash
-git add CP6.Core/Services/Space/ISpaceTenantContext.cs CP6.Core/Services/Space/DefaultSpaceTenantContext.cs
-git commit -m "feat(space): add ISpaceTenantContext stub (P1 single-tenant)"
-```
+> **(v1.1)** 不再自建 `ISpaceTenantContext`/`DefaultSpaceTenantContext`。CP6 已有 `CP6.Core.Services.Common.ITenantContext`（请求级 scoped，`TenantMiddleware` 从 JWT `tenant_id` 写入；`CP6Context` 全局过滤/盖章读取它）与默认实现 `TenantContext`（`TenantContext.DefaultTenant = 00000000-0000-0000-0000-0000000000A1`，恰好等于原桩拟用的默认 GUID）。**无任何文件要建、无提交**。下游凡需"当前租户 Id"处：服务/控制器注入 `ITenantContext` 取 `.CurrentTenantId`（但 P1 绝大多数情形**不需要**——全局过滤与写入盖章已自动按当前租户处理）。Phase A 从 **A-2** 开始。
 
 ---
 
@@ -131,7 +97,7 @@ git commit -m "feat(space): add ISpaceTenantContext stub (P1 single-tenant)"
 **Files:**
 - Create: `CP6.Entity/DomainModels/Space/Space_Site.cs` 等 9 个文件
 
-> 全部继承 `BaseEntity`（D-C），自带 `Creator/CreateDate/Modifier/ModifyDate`；各实体自行声明 `Guid TenantId`；`Space_Rack`/`Space_Location` 加 `[Timestamp] byte[]? RowVersion`。字段严格照 00 §4 的 C# DDL，**仅审计字段名按 D-B 改**。
+> **(v1.1: 改为继承 `BaseBizEntity`，D-C)** 全部继承 `CP6.Entity.BaseBizEntity`（链上自带 `Id` + `Creator/CreateDate/Modifier/ModifyDate` + `TenantId` + `IsDeleted` + `[Timestamp] byte[]? RowVersion`）。因此各实体**不再声明 `public Guid TenantId`**（基类已有，重声明会冲突）、**不再手工加 `[Timestamp] RowVersion`**（基类已有，全 9 表都有乐观锁）。字段严格照 00 §4 的 C# DDL，审计字段名按 D-B（已由基类满足）。下面 9 段代码已按 v1.1 删去这两类重复声明。
 
 - [ ] **Step 1: 写 9 个实体类**
 
@@ -141,9 +107,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CP6.Entity.DomainModels.Space;
 
 [Table("Space_Site")]
-public class Space_Site : BaseEntity
+public class Space_Site : BaseBizEntity   // (v1.1: BaseEntity→BaseBizEntity；TenantId/RowVersion 由基类带入)
 {
-    public Guid    TenantId { get; set; }
     public string  SiteCode { get; set; } = "";
     public string  SiteName { get; set; } = "";
     public string? Address  { get; set; }
@@ -156,9 +121,8 @@ public class Space_Site : BaseEntity
 ```csharp
 // Space_Floor.cs
 [Table("Space_Floor")]
-public class Space_Floor : BaseEntity
+public class Space_Floor : BaseBizEntity   // (v1.1: BaseBizEntity；TenantId/RowVersion 由基类带入)
 {
-    public Guid    TenantId        { get; set; }
     public Guid    SiteId          { get; set; }
     public int     Level           { get; set; }
     public string  FloorCode       { get; set; } = "";
@@ -176,9 +140,8 @@ public class Space_Floor : BaseEntity
 ```csharp
 // Space_Zone.cs
 [Table("Space_Zone")]
-public class Space_Zone : BaseEntity
+public class Space_Zone : BaseBizEntity   // (v1.1: BaseBizEntity；TenantId/RowVersion 由基类带入)
 {
-    public Guid    TenantId { get; set; }
     public Guid    FloorId  { get; set; }
     public string  ZoneCode { get; set; } = "";
     public string  ZoneName { get; set; } = "";
@@ -192,9 +155,8 @@ public class Space_Zone : BaseEntity
 ```csharp
 // Space_Aisle.cs
 [Table("Space_Aisle")]
-public class Space_Aisle : BaseEntity
+public class Space_Aisle : BaseBizEntity   // (v1.1: BaseBizEntity；TenantId/RowVersion 由基类带入)
 {
-    public Guid   TenantId   { get; set; }
     public Guid   ZoneId     { get; set; }
     public string AisleCode  { get; set; } = "";
     public string Polygon    { get; set; } = "[]";    // 巷道面顶点 JSON
@@ -204,11 +166,9 @@ public class Space_Aisle : BaseEntity
 
 ```csharp
 // Space_Rack.cs
-using System.ComponentModel.DataAnnotations;
 [Table("Space_Rack")]
-public class Space_Rack : BaseEntity
+public class Space_Rack : BaseBizEntity   // (v1.1: BaseBizEntity；TenantId/RowVersion 由基类带入，删 using DataAnnotations)
 {
-    public Guid    TenantId   { get; set; }
     public Guid    ZoneId     { get; set; }           // 必填
     public Guid?   AisleId    { get; set; }           // 可选（有巷道才挂）
     public Guid    FloorId    { get; set; }           // 冗余 = Zone.FloorId
@@ -225,16 +185,15 @@ public class Space_Rack : BaseEntity
     public int     CellH      { get; set; }
     public int     CellD      { get; set; }
     public bool    Enable     { get; set; } = true;
-    [Timestamp] public byte[]? RowVersion { get; set; }
+    // (v1.1: 删手工 RowVersion —— 由 BaseBizEntity 提供)
 }
 ```
 
 ```csharp
 // Space_Location.cs  ——  Id(GUID)=LocationId 稳定主键（D4）
 [Table("Space_Location")]
-public class Space_Location : BaseEntity
+public class Space_Location : BaseBizEntity   // (v1.1: BaseBizEntity；TenantId/RowVersion 由基类带入)
 {
-    public Guid    TenantId     { get; set; }
     public Guid?   RackId       { get; set; }         // 可空（采纳态 D7 未放置为空）
     public Guid?   FloorId      { get; set; }         // 冗余·可空
     public string? LocationCode { get; set; }         // join key；草稿可空，发布后非空冻结
@@ -254,16 +213,15 @@ public class Space_Location : BaseEntity
     public bool    Placed       { get; set; }         // = (RackId != null)，正交于 Status
     public int     Status       { get; set; }         // 0草稿1已发布2停用
     public long    Version      { get; set; }         // 按 LocationId 递增（04）
-    [Timestamp] public byte[]? RowVersion { get; set; }
+    // (v1.1: 删手工 RowVersion —— 由 BaseBizEntity 提供)
 }
 ```
 
 ```csharp
 // Space_Template.cs
 [Table("Space_Template")]
-public class Space_Template : BaseEntity
+public class Space_Template : BaseBizEntity   // (v1.1: BaseBizEntity；TenantId/RowVersion 由基类带入)
 {
-    public Guid   TenantId     { get; set; }
     public string TemplateCode { get; set; } = "";
     public string TemplateName { get; set; } = "";
     public int    TemplateType { get; set; } = 1;     // 1货架2库区
@@ -274,9 +232,8 @@ public class Space_Template : BaseEntity
 ```csharp
 // Space_CodeRule.cs
 [Table("Space_CodeRule")]
-public class Space_CodeRule : BaseEntity
+public class Space_CodeRule : BaseBizEntity   // (v1.1: BaseBizEntity；TenantId/RowVersion 由基类带入)
 {
-    public Guid   TenantId  { get; set; }
     public string RuleName  { get; set; } = "";
     public int    ScopeType { get; set; }             // 0租户默认1楼层2库区
     public Guid?  ScopeId   { get; set; }             // =1→FloorId =2→ZoneId =0→null
@@ -288,9 +245,8 @@ public class Space_CodeRule : BaseEntity
 ```csharp
 // Space_Marker.cs
 [Table("Space_Marker")]
-public class Space_Marker : BaseEntity
+public class Space_Marker : BaseBizEntity   // (v1.1: BaseBizEntity；TenantId/RowVersion 由基类带入)
 {
-    public Guid   TenantId   { get; set; }
     public Guid   FloorId    { get; set; }
     public int    X          { get; set; }
     public int    Y          { get; set; }
@@ -322,29 +278,38 @@ git commit -m "feat(space): add 9 geometry domain entities (ch00)"
 - Test: `CP6.Tests/SpacePersistenceTests.cs`
 - Create: migration `*_SpaceP1Init`
 
-- [ ] **Step 1: 写失败测试（实体落库往返）** `[InMemory 仅测逻辑]`
+- [ ] **Step 1: 写失败测试（实体落库往返 + 租户隔离）** `[InMemory 仅测逻辑]`
+
+> **(v1.1)** 测试经 `TestHelper.CreateInMemoryContext(user, tenant)` 注入租户上下文（参 `CP6.Tests/Tenant/TenantFilterTests.cs` 写法）。新增不显式设 `TenantId` 也被自动盖章为当前租户、跨租户不可见——证明已吃真·多租户基建。
 
 ```csharp
 // SpacePersistenceTests.cs
 using CP6.Core.EFDbContext;
-using CP6.Core.Services.Space;
+using CP6.Core.Services.Common;          // (v1.1) ITenantContext / TenantContext
 using CP6.Entity.DomainModels.Space;
 using Microsoft.EntityFrameworkCore;
 
 public class SpacePersistenceTests
 {
-    private static CP6Context Db() => new(new DbContextOptionsBuilder<CP6Context>()
-        .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+    // (v1.1) 注入租户上下文；不再用自建桩。同库名 + 不同租户验证隔离。
+    private static CP6Context DbFor(string dbName, Guid tenant) =>
+        TestHelper.CreateInMemoryContext(user: null, tenant: new TenantContext { CurrentTenantId = tenant });
 
     [Fact]
-    public async Task Site_RoundTrips()
+    public async Task Site_RoundTrips_AndStampsTenant()
     {
-        var t = DefaultSpaceTenantContext.DefaultTenant;
-        using var db = Db();
-        db.Space_Sites.Add(new Space_Site { Id = Guid.NewGuid(), TenantId = t, SiteCode = "WH1", SiteName = "本社倉庫" });
-        await db.SaveChangesAsync();
-        var got = await db.Space_Sites.SingleAsync();
-        Assert.Equal("WH1", got.SiteCode);
+        var t = Guid.NewGuid();
+        var db = Guid.NewGuid().ToString();
+        // (v1.1) 不显式设 TenantId —— SaveChanges 自动盖当前租户
+        using (var ctx = DbFor(db, t)) { ctx.Space_Sites.Add(new Space_Site { SiteCode = "WH1", SiteName = "本社倉庫" }); await ctx.SaveChangesAsync(); }
+        using (var ctx = DbFor(db, t))
+        {
+            var got = await ctx.Space_Sites.SingleAsync();   // (v1.1) 全局过滤自动按 t 限定，无显式 .Where
+            Assert.Equal("WH1", got.SiteCode);
+            Assert.Equal(t, got.TenantId);                   // 已自动盖章
+        }
+        // 另一个租户看不到（硬墙）
+        using (var ctx = DbFor(db, Guid.NewGuid())) Assert.Empty(await ctx.Space_Sites.ToListAsync());
     }
 }
 ```
@@ -371,10 +336,12 @@ Expected: FAIL — `CP6Context` 无 `Space_Sites` 属性（编译错误）
     public DbSet<CP6.Entity.DomainModels.Space.Space_Marker>   Space_Markers   { get; set; }
 ```
 
-在 `OnModelCreating(ModelBuilder b)` 内加 Space 索引配置（若现有 context 无 OnModelCreating override，则新增之；保留 `base.OnModelCreating(b)`）：
+在 `OnModelCreating(ModelBuilder b)` 内加 Space 索引配置。
+
+> **(v1.1: 不要手写全局过滤；唯一索引可不带 TenantId 前缀)** `CP6Context.OnModelCreating` **末尾已有反射块**：对所有 `BaseTenantEntity` 子类（含 Space 9 表）①注册 `HasQueryFilter(x => x.TenantId == CurrentTenantId)`，②把"单列全局唯一"索引升级为 `(TenantId, …)` 复合唯一。所以**严禁手写 `HasQueryFilter`**（会与反射块双注册）；唯一索引**写单列 `.IsUnique()` 即可，反射自动加 TenantId 前缀**（已显式写 `(TenantId, …)` 的也行——反射检测到含 TenantId 会跳过，不重复）。下方代码保留显式 `(TenantId, …)` 仅为可读性，等价。**唯一例外**：`Space_Location` 的过滤唯一索引 `WHERE LocationCode IS NOT NULL` 是 Space 业务专属，**必须显式声明**（含 TenantId 前缀 + filter），反射不替你造它。
 
 ```csharp
-    // ── Space P1 索引（00 §4；唯一索引含 TenantId 前缀 = D-A 方案A）──
+    // ── Space P1 索引（00 §4）。(v1.1) 全局过滤 + (TenantId,…) 唯一升级由反射块自动；下方显式前缀=可读性等价。──
     var sp = b.Entity<CP6.Entity.DomainModels.Space.Space_Site>();
     sp.HasIndex(x => new { x.TenantId, x.SiteCode }).IsUnique();
 
@@ -422,7 +389,7 @@ Expected: PASS
 - [ ] **Step 5: 生成迁移**
 
 Run: `dotnet ef migrations add SpaceP1Init -p CP6.Core -s CP6.WebApi`
-Expected: 生成 `*_SpaceP1Init.cs`；打开确认含 9 表 + 过滤唯一索引 `filter: "[LocationCode] IS NOT NULL"` + 两个 RowVersion 列。
+Expected: 生成 `*_SpaceP1Init.cs`；打开确认含 9 表 + 过滤唯一索引 `filter: "[LocationCode] IS NOT NULL"`。**(v1.1)** 每表均含 `TenantId` + `IsDeleted` + `RowVersion`（共 9 套，来自 `BaseBizEntity`，非原稿"两个 RowVersion"）；所有唯一索引应为 `(TenantId, …)` 复合（反射升级的产物）。
 
 - [ ] **Step 6: 提交**
 
@@ -435,7 +402,9 @@ git commit -m "feat(space): register 9 DbSets + indexes + SpaceP1Init migration 
 
 # Phase B — 主数据服务 + 几何 + 场景（00 章可用）
 
-> 服务层统一约定：构造注入 `CP6Context db` + `ISpaceTenantContext tenant`；所有查询 `.Where(x => x.TenantId == tenant.TenantId)`；所有创建 `entity.TenantId = tenant.TenantId; entity.Creator = currentUser; entity.CreateDate = DateTime.Now`。控制器仿 `MachineController`：`[ApiController][Route("api/space")][Authorize]`，`CurrentUser => User?.Identity?.Name`，返回 `{ code, message, data }`，业务异常 `InvalidOperationException` → 400。
+> 服务层统一约定 **(v1.1 已返改——以下为新约定，下文 Phase B/C/D 全部代码样例据此读)**：构造**只注入 `CP6Context db`**（需要当前租户 Id 的极少数场景才追加 `ITenantContext`，取 `.CurrentTenantId`）。**所有查询删除显式 `.Where(x => x.TenantId == …)`** —— `CP6Context` 已对 `BaseTenantEntity` 子类注册全局查询过滤，自动 `WHERE TenantId == CurrentTenantId`。**所有创建删除 `entity.TenantId = …`** —— `SaveChanges` 写入盖章自动补当前租户；仅保留 `entity.Creator = currentUser; entity.CreateDate = DateTime.Now`。控制器仿 `MachineController`：`[ApiController][Route("api/space")][Authorize]`，`CurrentUser => User?.Identity?.Name`，返回 `{ code, message, data }`，业务异常 `InvalidOperationException` → 400。
+>
+> **(v1.1: 全局映射，适用于下文每段代码样例)** 下文服务/测试样例仍写有 `ISpaceTenantContext`/`DefaultSpaceTenantContext`/`_tenant.TenantId`/`tid`/`.Where(x => x.TenantId == tid)`/`entity.TenantId = tid` 等——**一律按下述读，无需逐行重写**：① `ISpaceTenantContext`→`ITenantContext`、`DefaultSpaceTenantContext`→`TenantContext`、`.TenantId`→`.CurrentTenantId`；② 凡 `.Where(x => x.TenantId == tid …)` → **删除该 TenantId 条件**（保留其余条件；若整句仅此一条件则该 `.Where` 整删），因全局过滤自动加；③ 凡建实体的 `TenantId = tid,` → **删除**（盖章自动）；④ 跨实体 JOIN/`Contains` 子查询同理删 TenantId 条件（两侧都被全局过滤）。测试构造从 `new DefaultSpaceTenantContext()` → `TestHelper.CreateInMemoryContext(user, new TenantContext{ CurrentTenantId = t })`。
 
 ## Task B-1: 几何坐标重算 `LocationGeometryService`（00 §6 —— 全模块最核心公式，先做）
 
@@ -998,9 +967,9 @@ public class SpaceMasterController : ControllerBase
 
 - [ ] **Step 6: DI 注册 + 构建**
 
-在 `Program.cs` 服务注册区加：
+在 `Program.cs` 服务注册区加（**(v1.1)** 不注册任何租户上下文——`ITenantContext`/`TenantMiddleware` 已由主程序/安全合规注册）：
 ```csharp
-builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceTenantContext, CP6.Core.Services.Space.DefaultSpaceTenantContext>();
+// (v1.1: 删除 ISpaceTenantContext 桩注册——复用既有 ITenantContext)
 builder.Services.AddScoped<CP6.Core.Services.Space.LocationGeometryService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService, CP6.Core.Services.Space.SpaceMasterService>();
 ```
@@ -1015,6 +984,8 @@ git add -A && git commit -m "feat(space): scene aggregation + unplaced list + ma
 ---
 
 # Phase C — 可配置编码引擎（03 章）
+
+> **(v1.1: 联动 03 v1.1，仅引用不展开)** 03 设计已增补：①取值源新增 `rack-seq-zone`（货架在 Zone 内的序号，配合变长巷道段保唯一）——本 Phase 的 `SegInput`/取值源 `switch`（C-1/C-3）届时多一条分支；②两阶段重排的 `<作用域>` 改用 **JOIN `Space_Rack` 过滤**圈定重排集合（C-3 §7.2）。落码时以 03 v1.1 为准；本稿算法骨架不变。另：本 Phase 所有代码样例的租户处理一律按 Phase B 开头「v1.1 全局映射」读（删显式 `.Where(TenantId)` 与 `TenantId = tid`）。
 
 ## Task C-1: Segments 模型 + 取值源求值（03 §3）
 
@@ -1460,6 +1431,8 @@ Program.cs 加：`builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngine
 ---
 
 # Phase D — 库位发布与 WMS 集成契约（04 章）
+
+> **(v1.1: 联动 04 v1.1，仅引用不展开)** 04 契约已增补：①WMS 侧新增 `T_WmsBin` 消费表（真实落库目标）；②库位停用由"发事件"改为**同步 RPC**；③`SiteCode ↔ WarehouseCd` 映射。这些**属 WMS 模块后续**——P1 后端**仍只保 `NoOpWmsLocationConsumer`/`StubWmsStockQuery` 桩**（不建 `T_WmsBin`、不实现同步 RPC），但**桩接口签名对齐 04 v1.1**（如消费结果含映射回执字段），切真实实现时桩零改签名。本 Phase 代码样例租户处理同样按 Phase B 开头「v1.1 全局映射」读。
 
 ## Task D-1: 发布载荷 DTO + WMS 契约 + 桩（04 §3 / D-D）
 
@@ -1925,13 +1898,13 @@ Expected: Build succeeded；全部 Space 测试 PASS
 4. **D6 ②WMS 侧 TOCTOU 再校验**——属 WMS 消费实现，P1 桩占位。
 5. **gen-code 单格生成（03 §9.1 旁路）**——C-5 留接口，实现待补。
 
-**Type 一致性：** `ComputeAbs`/`RecalcRackLocationsAsync`(B-1)、`CodeSegment.Render`/`IsSeq`(C-1)、`CodePrecheck.Validate`(C-2)、`GenerateAsync`/`PreviewAsync`/`PrecheckAsync`(C-3/4/5)、`OnLocationPublishedAsync`(D-2)、`PublishFloorAsync`/`DeactivateAsync`/`AdoptAsync`/`BuildItemAsync`(D-3/4/5) 跨任务签名已对齐。`DefaultSpaceTenantContext.DefaultTenant` 全测试复用。
+**Type 一致性：** `ComputeAbs`/`RecalcRackLocationsAsync`(B-1)、`CodeSegment.Render`/`IsSeq`(C-1)、`CodePrecheck.Validate`(C-2)、`GenerateAsync`/`PreviewAsync`/`PrecheckAsync`(C-3/4/5)、`OnLocationPublishedAsync`(D-2)、`PublishFloorAsync`/`DeactivateAsync`/`AdoptAsync`/`BuildItemAsync`(D-3/4/5) 跨任务签名已对齐。**(v1.1)** 租户上下文统一为既有 `ITenantContext`/`TenantContext`；测试统一 `TestHelper.CreateInMemoryContext(user, new TenantContext{ CurrentTenantId = t })`（不再有 `DefaultSpaceTenantContext`）。
 
 ---
 
 ## 执行交接
 
-计划初稿已存 `docs/superpowers/plans/2026-06-13-space-p1-backend.md`。**但按丛书工作流，下一步是你做修订版**（先拍板「关键前置决策」5 条 + 收尾推迟项取舍），我再评审合并为唯一定稿，然后才进编码。
+计划初稿已存 `docs/superpowers/plans/2026-06-13-space-p1-backend.md`。**(v1.1: 决策 D-A/D-B/D-C 已评审定案并直接返改入本文（复用真·多租户基建）；D-D/D-E 及收尾推迟项仍待最终取舍。)** 按丛书工作流，下一步是确认 D-D/D-E + 收尾推迟项后合并为唯一定稿，然后才进编码。
 
 定稿后两种执行方式：
 1. **Subagent-Driven（推荐）**——每个 Task 派新 subagent，任务间评审，快迭代。
@@ -1940,3 +1913,5 @@ Expected: Build succeeded；全部 Space 测试 PASS
 ---
 
 *初稿生成于 2026-06-13。源：docs/space/00·03·04。已勘察 CP6 真实代码：BaseEntity/BaseBizEntity 审计字段、零多租户现状、BridgeHookBase/IntegrationEventDispatcher 复用点、DocNumber 采番、xUnit+InMemory 测试基建。*
+
+*v1.1 评审返改于 2026-06-27：S 类安全合规已落真·多租户（`BaseTenantEntity`/`BaseBizEntity` + `ITenantContext` + `CP6Context` 反射全局过滤/盖章/复合唯一升级 + `TenantMiddleware`），故 D-A 从桩升级为复用真基建——实体继承 `BaseBizEntity`、删自建 `ISpaceTenantContext`/`DefaultSpaceTenantContext` 桩与默认 GUID 常量、删全部显式 `.Where(TenantId)` 与手工盖章、09 章降级为接线收口；并加 00/03/04 v1.1 联动引用注记。已二次勘察确认：`CP6.Entity/BaseBizEntity.cs`、`CP6.Entity/BaseTenantEntity.cs`、`CP6.Core/Services/Common/ITenantContext.cs`、`CP6.WebApi/Middleware/TenantMiddleware.cs`、`CP6.Core/EFDbContext/CP6Context.cs`(反射全局过滤+唯一升级+StampTenant)、`CP6.Tests/TestHelper.cs`、`CP6.Tests/Tenant/TenantFilterTests.cs`。*

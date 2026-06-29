@@ -373,6 +373,27 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.ISampleStockService, CP6.Core.S
 // 4.20 MSBBWM900 帳票センター
 builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.Services.Wms.ReportCenterService>();
 
+// 4.x Space 空间数字底座 P1（ch00）
+// ITenantContext / TenantMiddleware 已全局注册（S 类合规），Space 不再注册任何租户上下文。
+builder.Services.AddScoped<CP6.Core.Services.Space.LocationGeometryService>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService, CP6.Core.Services.Space.SpaceMasterService>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService, CP6.Core.Services.Space.CodeEngineService>();  // ch03 可配置编码引擎
+// 4.x.2 Space ch01 编辑器配套后端（F-1/G-1/G-3/I-1）
+builder.Services.AddScoped<CP6.Core.Services.Space.ITemplateService, CP6.Core.Services.Space.TemplateService>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ISceneService, CP6.Core.Services.Space.SceneService>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ISceneIoService, CP6.Core.Services.Space.SceneIoService>();
+// 4.x.3 Space ch06 viewer 定位查询（locate/search/detail）
+builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceLocateService, CP6.Core.Services.Space.SpaceLocateService>();
+// 4.x.1 Space ch04 — 库位发布 + WMS 桩（SpaceBridgeHook 需同时注册具体类和接口，Dispatcher 注入接口）
+builder.Services.AddScoped<CP6.Core.Services.Integration.SpaceBridgeHook>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceBridgeHook, CP6.Core.Services.Integration.SpaceBridgeHook>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ILocationPublishService, CP6.Core.Services.Space.LocationPublishService>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Integration.NoOpWmsLocationConsumer>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsStockQuery, CP6.Core.Services.Wms.WmsStockQuery>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsPickTaskQuery, CP6.Core.Services.Wms.WmsPickTaskQuery>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsWorkloadQuery, CP6.Core.Services.Wms.WmsWorkloadQuery>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsDeviceQuery, CP6.Core.Services.Wms.WmsDeviceQuery>();
+
 // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
@@ -1605,7 +1626,7 @@ using (var scope = app.Services.CreateScope())
         if (toInsert.Count > 0) db.Sys_Langs.AddRange(toInsert);
     }
 
-    // 多语言词条种子数据
+    // 多语言词条种子数据（幂等走上方 SeedLangs；合并 main 后统一用 SeedLangs，删去 Space 侧重复的 AddLangs）
     if (!db.Sys_Langs.Any())
     {
         SeedLangs(

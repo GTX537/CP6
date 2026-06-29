@@ -1,8 +1,22 @@
-# Space P1 编辑器（01+02）Implementation Plan（初稿）
+# Space P1 编辑器（01+02）Implementation Plan（v1.1 同步）
+
+> **v1.1 同步（2026-06-27）**：本计划初稿（2026-06-13）写于「后端地基待建」假设。**现 Space P1 后端地基（00/03/04）已全栈落地**（分支 `feat/space-p1-backend`，Phase A→D，1272 测绿），故本编辑器计划按三点同步落码：
+>
+> **① 多租户＝复用真基建（同后端 v1.1）**：CP6 已有真·多租户（`BaseBizEntity` + `CP6Context` 反射全局过滤/盖章 + `ITenantContext`/`TenantMiddleware`）。**删自建 `ISpaceTenantContext`/`DefaultSpaceTenantContext` 桩**——配套后端服务（`TemplateService`/`SceneService`/`SceneIoService`）**构造只注入 `CP6Context`**（`SceneService` 另注 `LocationGeometryService geo`），不注入租户上下文，查询不写 `.Where(TenantId==)`、创建不写 `TenantId=`（盖章自动）。下文代码样例一律按此读：`ISpaceTenantContext`→`ITenantContext`、`DefaultSpaceTenantContext`→`TenantContext`、`new LocationGeometryService(db, new DefaultSpaceTenantContext())`→`new LocationGeometryService(db)`、`new SceneService(db, new DefaultSpaceTenantContext(), geo)`→`new SceneService(db, geo)`、`DefaultSpaceTenantContext.DefaultTenant`→`TenantContext.DefaultTenant`（测试实体 init 的 `TenantId = t` 可保留＝默认租户，无害）。**v1.1 风格锚点＝ as-built `CP6.Core/Services/Space/SpaceMasterService.cs`、`CodeEngineService.cs`**。
+>
+> **② 对齐 as-built 后端（关键 reconciliation）**：
+> - **GET `/floor/{id}/scene` 已实现**（`SpaceMasterService.GetSceneAsync`→`SceneDto`），但 as-built `SceneDto` = `{ FloorId, Zones, Aisles, Racks(RackDto **无 RowVersion**), Locations(SceneLocationDto 限字段), Markers }`——**无完整 Floor 对象、Rack 投影漏 RowVersion**。编辑器需要完整 Floor（底图 `UnderlayScale`/`Offset` + `Origin`）+ `Rack.RowVersion`（乐观保存）。**→ E-1/E-4/G-1 须扩 scene 契约**：给 `GetSceneAsync` 的 `SceneDto` 补 `FloorDto Floor` + `RackDto` 投影补 `RowVersion`（viewer 05/06 也消费 scene 但不需 RowVersion，加之无害）。本计划 §E-1 `EditorScene.floor`/`RackVO.rowVersion` 字段不变，**契约缺口由实现补齐**。
+> - **`LocationGeometryService.RecalcRackLocationsAsync(rackId)` 已实现**（B-1，构造 `(CP6Context db)`）——`SceneService` 直接复用。
+> - **`GetUnplacedAsync(floorId)` 已实现**（B-6）——I-2 待绑定列表直接用。
+> - **POST `/scene`、template CRUD、export/import、bind-codes 仍是本计划新增**（as-built 后端只有 GET scene + 主数据 CRUD + 编码引擎 + 发布契约）。落点＝同一 worktree `D:\CP6-space-backend`，服务加 `CP6.Core/Services/Space/`、控制器扩 `SpaceMasterController` 或新建。
+>
+> **③ 前端单测框架已就位**：`cp6.web` **已有 `vitest ^4.1.9`**（`package.json` scripts 已含 `test`/`test:watch`），下文 E-D2/E-1/页脚「无 vitest」均过时——E-1 只需 `npm i konva` + `npm i -D @vue/test-utils jsdom` + 建 `vitest.config.ts`（jsdom + `@`→`src` alias）。konva 仍需新增。
+>
+> **工作流**：本计划继续在 `feat/space-p1-backend` worktree 落码（编辑器依赖已落地的后端）。
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-> **工作流（丛书模式）**：我出初稿 → 你修订 → 我评审合并定稿后再编码。**这是 P1 第二份计划**（第一份 = `2026-06-13-space-p1-backend.md` 后端地基）。本计划**依赖后端地基计划已落地**（9 实体 + `ISpaceTenantContext` + GET `/floor/{id}/scene` + 编码引擎 + `LocationGeometryService.RecalcRackLocationsAsync`）。
+> **工作流**：**这是 P1 第二份计划**（第一份 = `2026-06-13-space-p1-backend.md` 后端地基，**已落地** Phase A→D）。本计划**依赖已落地的后端**（9 实体 + 真·多租户 `ITenantContext`（非桩）+ GET `/floor/{id}/scene` + 编码引擎 + `LocationGeometryService.RecalcRackLocationsAsync` + `GetUnplacedAsync`）。详见顶部 v1.1 同步注记。
 
 **Goal:** 落地 Space P1 的**建模编辑器**——01 章 2D 俯视 Konva 画布 + 模板化批量生成 + 草稿保存 + 场景导入导出 + D7 采纳反向建模入口，02 章受控自由布局交互（拖拽/旋转/打点/框选/捕捉/碰撞提示/撤销重做），以及它们驱动的**配套后端**（模板服务、整层差量保存、导入导出、绑码）。
 
@@ -17,12 +31,12 @@
 | # | 议题 | 现状 | **建议值** |
 |---|---|---|---|
 | **E-D1** | **Konva 依赖** | `package.json` 无 konva | 新增 `konva ^9`（纯 canvas，无 vue 包装；自行封装 `SceneStage`，不引 vue-konva 避免黑盒） |
-| **E-D2** | **前端单测框架** | devDeps 只有 `@playwright/test`，**无 vitest** | 新增 `vitest` + `@vue/test-utils` 测纯逻辑（genRack/SnapEngine/CommandStack/坐标映射）；画布渲染/交互用 Playwright e2e。**若你不想引 vitest**，则纯逻辑测也走 Playwright component test——建议引 vitest（轻、快） |
+| **E-D2** | **前端单测框架** | **(v1.1 修正) `vitest ^4.1.9` 已在 devDeps**（scripts 已含 `test`/`test:watch`） | 直接用既有 `vitest` 测纯逻辑（genRack/SnapEngine/CommandStack/坐标映射）；只需补 `@vue/test-utils` + `jsdom` + `vitest.config.ts`。画布渲染/交互用 Playwright e2e |
 | **E-D3** | **临时 Id 策略** | CP6 用 GUID 主键 | 前端 `crypto.randomUUID()` 生成对象 Id，保存直接用（00 §6 `Id=LocationId` 稳定主键，前后端 GUID 一致，**省 Id 映射**，01 §6.2） |
 | **E-D4** | **批量生成落点** | 01 §9 给两实现 | v1 用**前端纯函数生成 + 随 `/scene` 保存**（预览即所得）；服务端 `/generate` 留大阵列优化（不在本计划） |
 | **E-D5** | **库位在 2D 不画** | 01 §3.4 | 画布**只画货架矩形**（俯视，含 RotationZ），库位以"6×4 格"网格线/计数表达；库位 VO 在 store 里**按货架懒展开**（选中才展开），避免万级 Konva 节点 |
 
-> **继承后端地基计划的决策**：TenantId 方案A（前端不感知，后端注入）、审计字段、`/scene` GET 已存在。本计划只**新增** POST `/scene`、template、export/import、bind-codes 后端。
+> **继承已落地后端的决策（v1.1）**：多租户＝复用真基建（前端不感知，后端经全局过滤/盖章自动隔离，**无桩**）、审计字段经 `BaseBizEntity` 继承链、GET `/scene` 已存在（但 `SceneDto` 需补 Floor + Rack.RowVersion，见顶部②）。本计划只**新增** POST `/scene`、template、export/import、bind-codes 后端。
 
 ---
 
@@ -649,4 +663,4 @@ git commit -m "feat(space): D7 reverse-modeling bind-codes (ch01 §8.1)"
 
 ---
 
-*初稿生成于 2026-06-13。源：docs/space/01·02（引用 00 §6/§9）。已勘察 cp6.web 前端真实栈：Vue3.5+TS+Pinia3+vue-router5+element-plus+axios(http.ts 信封+409 处理)+vue-i18n；konva/three 均未引入需新增；devDeps 仅 Playwright 无 vitest。*
+*初稿生成于 2026-06-13。v1.1 同步于 2026-06-27（后端地基 A→D 已落地后）。源：docs/space/01·02（引用 00 §6/§9）。cp6.web 前端真实栈：Vue3.5+TS+Pinia3+vue-router5+element-plus+axios(http.ts 信封+409 处理)+vue-i18n+**vitest ^4.1.9（已在）**；**konva 仍需新增**，three 留给 viewer 计划。*

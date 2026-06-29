@@ -1,4 +1,5 @@
 using CP6.Core.Services;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels;
 using Moq;
 
@@ -20,7 +21,7 @@ public class IntegrationEventDispatcherTests
         mes.Setup(h => h.OnOrderCreatedAsync("WEB-001", "tester"))
             .ReturnsAsync(MesBridgeResult.Ok(new[] { "WO-001" }));
         var dispatcher = new IntegrationEventDispatcher(
-            mes.Object, wms.Object, erp.Object, cancel.Object, fin.Object);
+            mes.Object, wms.Object, erp.Object, cancel.Object, fin.Object, Mock.Of<ISpaceBridgeHook>());
 
         var ok = await dispatcher.DispatchAsync(new IntegrationEvent
         {
@@ -45,7 +46,7 @@ public class IntegrationEventDispatcherTests
         wms.Setup(h => h.OnProductionCompletedAsync("WO-100", 12.34m, "u1"))
             .ReturnsAsync(WmsBridgeResult.Ok("IN-100"));
         var dispatcher = new IntegrationEventDispatcher(
-            mes.Object, wms.Object, erp.Object, cancel.Object, fin.Object);
+            mes.Object, wms.Object, erp.Object, cancel.Object, fin.Object, Mock.Of<ISpaceBridgeHook>());
 
         var ok = await dispatcher.DispatchAsync(new IntegrationEvent
         {
@@ -67,7 +68,8 @@ public class IntegrationEventDispatcherTests
             Mock.Of<IWmsBridgeHook>(),
             Mock.Of<IErpBridgeHook>(),
             Mock.Of<IOrderCancelBridgeHook>(),
-            Mock.Of<IFinBridgeHook>());
+            Mock.Of<IFinBridgeHook>(),
+            Mock.Of<ISpaceBridgeHook>());
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             dispatcher.DispatchAsync(new IntegrationEvent
@@ -92,7 +94,8 @@ public class IntegrationEventDispatcherTests
             wms.Object,
             Mock.Of<IErpBridgeHook>(),
             Mock.Of<IOrderCancelBridgeHook>(),
-            Mock.Of<IFinBridgeHook>());
+            Mock.Of<IFinBridgeHook>(),
+            Mock.Of<ISpaceBridgeHook>());
 
         var ok = await dispatcher.DispatchAsync(new IntegrationEvent
         {

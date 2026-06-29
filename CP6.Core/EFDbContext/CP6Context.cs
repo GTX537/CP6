@@ -14,6 +14,7 @@ using CP6.Entity.DomainModels.Pub;
 using CP6.Entity.DomainModels.Pur;
 using CP6.Entity.DomainModels.Wf;
 using CP6.Entity.DomainModels.Wms;
+using CP6.Entity.DomainModels.Space;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.EFDbContext;
@@ -401,6 +402,26 @@ public class CP6Context : DbContext
     public DbSet<Wf_Notification> Wf_Notifications { get; set; }
     /// <summary>审批人映射表（数据驱动策略 DataMap）</summary>
     public DbSet<Wf_ApproverMap> Wf_ApproverMaps { get; set; }
+
+    // ───── Space 空间数字底座 P1（ch00 9 表）─────
+    /// <summary>站点（Space 章00，6 层模型顶层）</summary>
+    public DbSet<Space_Site> Space_Sites { get; set; }
+    /// <summary>楼层（Space 章00，每层独立局部坐标系）</summary>
+    public DbSet<Space_Floor> Space_Floors { get; set; }
+    /// <summary>库区（Space 章00，功能分区 + 多边形）</summary>
+    public DbSet<Space_Zone> Space_Zones { get; set; }
+    /// <summary>巷道（Space 章00，条件父级 + 中心线）</summary>
+    public DbSet<Space_Aisle> Space_Aisles { get; set; }
+    /// <summary>货架（Space 章00，锚点角 + 格位阵列）</summary>
+    public DbSet<Space_Rack> Space_Racks { get; set; }
+    /// <summary>库位（Space 章00，稳定主键 + 冻结编码 join key）</summary>
+    public DbSet<Space_Location> Space_Locations { get; set; }
+    /// <summary>模板（Space 章01，批量生成蓝本）</summary>
+    public DbSet<Space_Template> Space_Templates { get; set; }
+    /// <summary>编码规则（Space 章03，可配置编码引擎）</summary>
+    public DbSet<Space_CodeRule> Space_CodeRules { get; set; }
+    /// <summary>标注（Space 章02，打点文字/图标/区域）</summary>
+    public DbSet<Space_Marker> Space_Markers { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -1949,6 +1970,48 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.EntityName, x.ChangedAt });                // 按实体类型
             e.Property(x => x.Changes).HasColumnType("nvarchar(max)");         // 大文本
         });
+
+        // ───── Space 空间数字底座 P1 索引（ch00 §4）。显式写 (TenantId, …) 前缀＝可读性；下方反射块
+        //  检测到索引已含 TenantId 会跳过升级，不重复。Location 过滤唯一索引为业务专属，反射不替造，必须显式。──
+        modelBuilder.Entity<Space_Site>()
+            .HasIndex(x => new { x.TenantId, x.SiteCode }).IsUnique();
+        modelBuilder.Entity<Space_Floor>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.FloorCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.SiteId });
+        });
+        modelBuilder.Entity<Space_Zone>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FloorId, x.ZoneCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.FloorId });
+        });
+        modelBuilder.Entity<Space_Aisle>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.ZoneId, x.AisleCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.ZoneId });
+        });
+        modelBuilder.Entity<Space_Rack>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.ZoneId, x.RackCode }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.ZoneId });
+            e.HasIndex(x => new { x.TenantId, x.AisleId });
+            e.HasIndex(x => new { x.TenantId, x.FloorId });
+        });
+        modelBuilder.Entity<Space_Location>(e =>
+        {
+            // 过滤唯一索引：非空码租户内唯一；草稿期 LocationCode=NULL 不互撞（ch00 §4.6 / ch03 §7 两阶段重排）
+            e.HasIndex(x => new { x.TenantId, x.LocationCode }).IsUnique()
+             .HasFilter("[LocationCode] IS NOT NULL");
+            e.HasIndex(x => new { x.TenantId, x.RackId });
+            e.HasIndex(x => new { x.TenantId, x.FloorId });
+            e.HasIndex(x => new { x.TenantId, x.Status });
+        });
+        modelBuilder.Entity<Space_Template>()
+            .HasIndex(x => new { x.TenantId, x.TemplateCode }).IsUnique();
+        modelBuilder.Entity<Space_CodeRule>()
+            .HasIndex(x => new { x.TenantId, x.ScopeType, x.ScopeId });
+        modelBuilder.Entity<Space_Marker>()
+            .HasIndex(x => new { x.TenantId, x.FloorId });
 
         // ═══════════════════════════════════════════════════════════
         //  章10 多租户：对所有 BaseTenantEntity 反射批量注册全局查询过滤（防漏命门，OA4-D1/D3）
