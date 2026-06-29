@@ -14,6 +14,8 @@ import { scanCollisions } from '@/space-editor/interact/collide/CollisionHint'
 import TemplatePanel from './panels/TemplatePanel.vue'
 import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
 import BindCodesDialog from './panels/BindCodesDialog.vue'
+import ConnectorPanel from './panels/ConnectorPanel.vue'
+import { connectorApi } from '@/api/space/connector'
 import { arrayFootprint } from '@/space-editor/generate/arrayFootprint'
 import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
 
@@ -35,8 +37,14 @@ const placementMode = ref(false)
 const pendingSel = ref<TemplatePanelSelection | null>(null)
 const selectedZoneId = ref<string>('')
 
+// Connector placement state (P4: click-to-place a connector stop on this floor)
+const connectorPlacementMode = ref(false)
+const pendingConnectorId = ref<string>('')
+const connectorPanelRef = ref<InstanceType<typeof ConnectorPanel> | null>(null)
+
 const zones = computed<ZoneVO[]>(() => store.scene?.zones ?? [])
 const floorId = computed(() => route.params['floorId'] as string)
+const siteId = computed(() => store.scene?.floor.siteId ?? '')
 
 const importInputRef = ref<HTMLInputElement>()
 const saving = ref(false)
@@ -163,7 +171,9 @@ function onKeydown(e: KeyboardEvent): void {
     deleteSelected()
   } else if (e.key === 'Escape') {
     e.preventDefault()
-    if (placementMode.value) {
+    if (connectorPlacementMode.value) {
+      exitConnectorPlacement()
+    } else if (placementMode.value) {
       exitPlacementMode()
     } else {
       im?.escape()
@@ -217,6 +227,15 @@ function handleRedo(): void {
 function bindStageClick(): void {
   if (!stageRef) return
   stageRef.stage.on('click', () => {
+    // P4: connector stop placement takes priority when active
+    if (connectorPlacementMode.value && pendingConnectorId.value) {
+      const cptr = stageRef!.stage.getPointerPosition()
+      if (!cptr) return
+      const cworld = stageRef!.screenToWorld(cptr)
+      void placeConnectorStop(pendingConnectorId.value, cworld.x, cworld.y)
+      return
+    }
+
     if (!placementMode.value || !pendingSel.value) return
     const ptr = stageRef!.stage.getPointerPosition()
     if (!ptr) return
@@ -320,6 +339,34 @@ function exitPlacementMode(): void {
   unbindPlacementGhost()
   stageRef?.hideGhost()
   imRef.value?.setEnabled(true)
+}
+
+// ── Connector stop placement (P4) ─────────────────────────────────────────────
+
+function onConnectorPlaceRequest(connectorId: string): void {
+  if (placementMode.value) exitPlacementMode()
+  pendingConnectorId.value = connectorId
+  connectorPlacementMode.value = true
+  imRef.value?.setEnabled(false)
+  ElMessage.info(t('移动到画布，单击放置连接体落点'))
+}
+
+function exitConnectorPlacement(): void {
+  connectorPlacementMode.value = false
+  pendingConnectorId.value = ''
+  imRef.value?.setEnabled(true)
+}
+
+async function placeConnectorStop(connectorId: string, x: number, y: number): Promise<void> {
+  try {
+    await connectorApi.upsertStop(connectorId, { floorId: floorId.value, x, y })
+    ElMessage.success(t('落点已保存'))
+    connectorPanelRef.value?.refresh()
+  } catch {
+    ElMessage.error(t('保存落点失败'))
+  } finally {
+    exitConnectorPlacement()
+  }
 }
 
 // ── Save (G-2) ────────────────────────────────────────────────────────────────
@@ -469,6 +516,15 @@ async function handleImportFile(e: Event): Promise<void> {
         {{ t('取消放置') }}
       </el-button>
 
+      <el-button
+        v-if="connectorPlacementMode"
+        type="warning"
+        size="small"
+        @click="exitConnectorPlacement"
+      >
+        {{ t('取消放置落点') }}
+      </el-button>
+
       <div style="flex: 1" />
 
       <el-button type="primary" size="small" :loading="saving" @click="handleSave">
@@ -490,11 +546,18 @@ async function handleImportFile(e: Event): Promise<void> {
     <div class="editor-body">
       <div
         ref="canvasRef"
-        :class="['canvas-container', { 'placement-mode': placementMode }]"
+        :class="['canvas-container', { 'placement-mode': placementMode || connectorPlacementMode }]"
       />
 
       <aside class="side-panel">
         <TemplatePanel @select="onTemplateSelect" />
+        <ConnectorPanel
+          v-if="siteId"
+          ref="connectorPanelRef"
+          :site-id="siteId"
+          :floor-id="floorId"
+          @request-place="onConnectorPlaceRequest"
+        />
       </aside>
     </div>
 
