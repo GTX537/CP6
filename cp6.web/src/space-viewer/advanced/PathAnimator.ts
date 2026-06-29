@@ -53,12 +53,18 @@ export class PathAnimator {
     this._viewer.requestRender()
   }
 
+  /** 移除并释放对比线（GPU geometry/material dispose，防 toggle 泄漏）。 */
+  private _clearCompareLine(): void {
+    if (!this._compareLine) return
+    this._group.remove(this._compareLine)
+    this._compareLine.geometry.dispose()
+    ;(this._compareLine.material as LineBasicMaterial).dispose()
+    this._compareLine = null
+  }
+
   /** 静态对比线（优化序，无小车不参与动画）；null 清除。挂在同一 _group 下。 */
   setComparisonPath(points: Pt[] | null): void {
-    if (this._compareLine) {
-      this._group.remove(this._compareLine)
-      this._compareLine = null
-    }
+    this._clearCompareLine()
     if (points && points.length >= 2) {
       const arr: number[] = []
       for (const p of points) arr.push(p.x, p.y, GROUND_Z + 20)  // +20mm 防 z-fight
@@ -125,10 +131,10 @@ export class PathAnimator {
 
   clear(): void {
     this.pause()
+    this._clearCompareLine()
     this._group.clear()
     if (this._group.parent) this._group.parent.remove(this._group)
     this._cart = null
-    this._compareLine = null
     this._points = []
     this._length = 0
     this._dist = 0
