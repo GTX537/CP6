@@ -44,5 +44,5 @@ export interface DeviceDto {
 export interface SiteFloorVO { floorId: string; floorCode: string; level: number; height: number; z: number }
 export interface SitePickStopVO { seq: number; locationCode: string; qty: number; materialNo: string | null; floorId: string | null; absX: number | null; absY: number | null; absZ: number | null }
 export interface SiteAisleVO { floorId: string; aisleCode: string; centerline: string }
-export interface SiteConnectorVO { connectorCode: string; type: number; stops: Array<{ floorId: string; x: number; y: number }> }
+export interface SiteConnectorVO { connectorCode: string; type: number; waitSec: number; travelSecPerFloor: number; stops: Array<{ floorId: string; x: number; y: number }> }
 export interface SitePickPath { taskNo: string; floors: SiteFloorVO[]; stops: SitePickStopVO[]; aisles: SiteAisleVO[]; connectors: SiteConnectorVO[] }
