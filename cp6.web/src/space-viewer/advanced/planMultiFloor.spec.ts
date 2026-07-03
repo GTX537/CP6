@@ -1,61 +1,75 @@
 import { describe, it, expect } from 'vitest'
-import { buildMultiFloorGraph, pathBetweenMF, distanceMatrixMF, polyDist3 } from './planMultiFloor'
-import { planPickComparisonMF } from './planMultiFloor'
+import { buildMultiFloorGraph, pathBetweenMF, costMatrixMF, planPickComparisonMF } from './planMultiFloor'
+import { mmToSec, verticalSec, WALK_SPEED_MMPS } from './cost'
 
 const F1 = 'F1', F2 = 'F2'
-const floors = [{ floorId: F1, z: 0 }, { floorId: F2, z: 6000 }]
+const floors = [{ floorId: F1, z: 0, level: 1 }, { floorId: F2, z: 6000, level: 2 }]
 const aislesByFloor = new Map([
   [F1, [{ aisleCode: 'H1', centerline: '[[0,500],[1000,500]]' }]],
   [F2, [{ aisleCode: 'H2', centerline: '[[0,500],[1000,500]]' }]],
 ])
-const connectors = [{ connectorCode: 'E1', type: 1, stops: [{ floorId: F1, x: 500, y: 500 }, { floorId: F2, x: 500, y: 500 }] }]
+const E1 = { connectorCode: 'E1', type: 1, waitSec: 20, travelSecPerFloor: 6, stops: [{ floorId: F1, x: 500, y: 500 }, { floorId: F2, x: 500, y: 500 }] }
+const connectors = [E1]
 
-describe('buildMultiFloorGraph', () => {
-  it('namespaces nodes per floor and adds a vertical connector edge of weight |Δz|', () => {
+describe('buildMultiFloorGraph (time weights)', () => {
+  it('vertical connector edge = verticalSec(wait,perFloor,|Δlevel|)', () => {
     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
-    expect(g.nodes.has('F1:0,500')).toBe(true)
-    expect(g.nodes.has('F2:0,500')).toBe(true)
-    expect(g.nodes.has('F1:500,500')).toBe(true)
-    expect(g.nodes.has('F2:500,500')).toBe(true)
     const up = g.adj.get('F1:500,500')!.find((e) => e.to === 'F2:500,500')
     expect(up).toBeTruthy()
-    expect(up!.w).toBeCloseTo(6000)
+    expect(up!.w).toBeCloseTo(verticalSec(20, 6, 1)) // 26s
+  })
+  it('horizontal aisle edge = mmToSec(distance)', () => {
+    const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+    const e = g.adj.get('F1:0,500')!.find((x) => x.to === 'F1:1000,500')
+    expect(e!.w).toBeCloseTo(mmToSec(1000))
+  })
+  it('hScale = Kmin = global min(time/physLen); horizontal dominates here', () => {
+    const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+    expect(g.hScale).toBeCloseTo(1 / WALK_SPEED_MMPS)
   })
 })
 
-describe('pathBetweenMF', () => {
-  it('routes across floors via the connector (path has a z change 0→6000)', () => {
+describe('pathBetweenMF (time)', () => {
+  it('crosses floors via connector; z spans 0→6000; time > vertical 26s', () => {
     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
     const r = pathBetweenMF(g, { floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 })
     expect(r.degraded).toBe(false)
-    const zs = r.points.map((p) => p.z)
-    expect(Math.min(...zs)).toBeCloseTo(0)
-    expect(Math.max(...zs)).toBeCloseTo(6000)
+    expect(Math.min(...r.points.map((p) => p.z))).toBeCloseTo(0)
+    expect(Math.max(...r.points.map((p) => p.z))).toBeCloseTo(6000)
+    expect(r.time).toBeGreaterThan(verticalSec(20, 6, 1))
   })
-  it('distanceMatrixMF symmetric + includes vertical leg (>6000)', () => {
+  it('costMatrixMF symmetric + includes vertical time', () => {
     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
     const stops = [{ floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 }]
-    const m = distanceMatrixMF(g, stops)
+    const m = costMatrixMF(g, stops)
     expect(m[0]![1]).toBeCloseTo(m[1]![0]!)
-    expect(m[0]![1]).toBeGreaterThan(6000)
+    expect(m[0]![1]).toBeGreaterThan(verticalSec(20, 6, 1))
   })
 })
 
-describe('planPickComparisonMF', () => {
-  it('optimized never longer than actual; savings>=0; points carry z', () => {
-    const stops = [
-      { floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 },
-      { floorId: F1, x: 900, y: 520 }, { floorId: F2, x: 100, y: 520 },
-    ]
+describe('planPickComparisonMF (dual distance+time)', () => {
+  const stops = [
+    { floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 },
+    { floorId: F1, x: 900, y: 520 }, { floorId: F2, x: 100, y: 520 },
+  ]
+  it('returns both Mm and Sec; optimizedSec ≤ actualSec; timeSavings ≥ 0; order[0]=0', () => {
     const cmp = planPickComparisonMF(floors, aislesByFloor, connectors, stops)
     expect(cmp.order[0]).toBe(0)
-    expect(cmp.optimizedMm).toBeLessThanOrEqual(cmp.actualMm + 1e-6)
-    expect(cmp.savingsPct).toBeGreaterThanOrEqual(0)
+    expect(cmp.optimizedSec).toBeLessThanOrEqual(cmp.actualSec + 1e-6)
+    expect(cmp.timeSavingsPct).toBeGreaterThanOrEqual(0)
+    expect(cmp.actualMm).toBeGreaterThan(0)
+    expect(cmp.actualSec).toBeGreaterThan(0)
     expect(cmp.actual.points.some((p) => p.z > 0)).toBe(true)
   })
-  it('single stop -> zero, savings 0', () => {
+  it('pricier elevator raises actualSec (cost wired through)', () => {
+    const cheap = planPickComparisonMF(floors, aislesByFloor, [E1], stops)
+    const dear = planPickComparisonMF(floors, aislesByFloor, [{ ...E1, waitSec: 120, travelSecPerFloor: 60 }], stops)
+    expect(dear.actualSec).toBeGreaterThan(cheap.actualSec)
+  })
+  it('single stop → zero distance/time, savings 0', () => {
     const cmp = planPickComparisonMF(floors, aislesByFloor, connectors, [{ floorId: F1, x: 100, y: 520 }])
     expect(cmp.actualMm).toBe(0)
-    expect(cmp.savingsPct).toBe(0)
+    expect(cmp.actualSec).toBe(0)
+    expect(cmp.timeSavingsPct).toBe(0)
   })
 })
