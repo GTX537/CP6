@@ -98,13 +98,17 @@ async function onLoadPath(taskNo: string): Promise<void> {
   try {
     const env = await advancedApi.sitePickPath(siteId, taskNo)
     const d = env.data
-    const mfFloors = d.floors.map((f) => ({ floorId: f.floorId, z: f.z }))
+    const mfFloors = d.floors.map((f) => ({ floorId: f.floorId, z: f.z, level: f.level }))
     const aislesByFloor = new Map<string, { aisleCode: string; centerline: string }[]>()
     for (const a of d.aisles) {
       if (!aislesByFloor.has(a.floorId)) aislesByFloor.set(a.floorId, [])
       aislesByFloor.get(a.floorId)!.push({ aisleCode: a.aisleCode, centerline: a.centerline })
     }
-    const connectors = d.connectors.map((c) => ({ connectorCode: c.connectorCode, type: c.type, stops: c.stops }))
+    const connectors = d.connectors.map((c) => ({
+      connectorCode: c.connectorCode, type: c.type,
+      waitSec: c.waitSec, travelSecPerFloor: c.travelSecPerFloor,
+      stops: c.stops,
+    }))
     const stops = [...d.stops]
       .sort((a, b) => a.seq - b.seq)
       .filter((s) => s.floorId != null && s.absX != null && s.absY != null)
@@ -116,10 +120,10 @@ async function onLoadPath(taskNo: string): Promise<void> {
     showOptimized.value = false
     pathAnimator.setComparisonPath(null)
     pathLoaded.value = true
-    compareInfo.value = t('实际 {a} 米 / 优化 {o} 米 / 省 {p}%')
-      .replace('{a}', (cmp.actualMm / 1000).toFixed(1))
-      .replace('{o}', (cmp.optimizedMm / 1000).toFixed(1))
-      .replace('{p}', cmp.savingsPct.toFixed(0))
+    compareInfo.value = t('实际 {am} 米 / {as} 秒 ・ 优化 {om} 米 / {os} 秒 ・ 省 {p}%')
+      .replace('{am}', (cmp.actualMm / 1000).toFixed(1)).replace('{as}', cmp.actualSec.toFixed(0))
+      .replace('{om}', (cmp.optimizedMm / 1000).toFixed(1)).replace('{os}', cmp.optimizedSec.toFixed(0))
+      .replace('{p}', cmp.timeSavingsPct.toFixed(0))
     if (cmp.actual.degraded) ElMessage.warning(t('跨层路径不连通，近似直连显示'))
   } catch {
     ElMessage.warning(t('跨层拣货路径获取失败'))
