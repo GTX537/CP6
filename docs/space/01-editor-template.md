@@ -2,6 +2,8 @@
 
 *--- 可直接用于编写代码的最终版本 ---*
 
+> **v1.1 摘要（2026-06-27 深审补丁）**：①genRack 增 `skipAutoCode` 标记与 03 编码引擎隔离（采纳反向建模模式置 true，库位不进 03 自动编码管道），新建/采纳两模式库位流不混（§5.2/§8/§11）；②§3.1 钉死屏幕坐标系三方一致——屏幕原点、缩放中心(zoom-to-cursor)、**旋转支点=货架原点角(00 §2 锚点角)**，及 Konva 2D↔mm↔05 Three Y-up 映射；③§7 导出只导 `Status=0` 草稿库位，含 `Status≥1` 已发布/停用报 E-SPACE-104（防重生 LocationId 脱钩 WMS join key），导入后编码改"用户确认后手动"；④§6 补脏标记记录级粒度 / 临时 GUID 管理 / RowVersion 冲突前端刷新策略（对齐 00 v1.1 BaseBizEntity）；⑤§2.2 前端新增 Konva 依赖给版本/类型建议；⑥YAGNI：场景复制(§7)/D7 采纳(§8)/服务端 `/generate`(§9) 标 P1 可后置·P2 再加，P1 核心=新建编码建模；⑦对齐 00 v1.1：genRack 生成库位 `Placed=true` 须原子回填 RackId/FloorId、采纳绑定原子回填（00 §3.1.1 不变量，§5.2/§8.1）。逐处见「(v1.1评审补丁)」。
+
 | 属性 | 内容 |
 |---|---|
 | 章节ID | SPACE-01 编辑器框架 + 模板化生成 |
@@ -75,6 +77,8 @@ cp6.web/src/space-editor/   ← 与视图解耦的画布引擎封装（可独立
 - 不用 SVG：图元一多（库位级别）DOM 数量爆炸、卡顿。
 - 不用 Three.js 做编辑：3D 拾取/对齐/深度判断重（D1 决策已排除直接 3D 操作）；3D 只读浏览在 05/06。
 
+> **(v1.1评审补丁) 前端依赖落地**：当前 `cp6.web` 尚无 Konva，需新增：`konva`（建议 `^9.x`，画布引擎本体）+ `vue-konva`（建议 `^3.x`，Vue3 绑定）。Konva 自带 TS 类型（包内置 `.d.ts`，无需额外 `@types`）。单测栈 `vitest` 已在 cp6.web，直接对 `space-editor/generate/`（纯函数生成器）与 `io/`（序列化/重映射）写测试；Konva 画布交互在 jsdom 下受限，画布层以"纯函数 + 快照"为主，交互测试留 02 章走 gstack 浏览器 QA。
+
 ### 2.3 场景对象图（前端内存模型，镜像 00）
 ```ts
 interface EditorScene {
@@ -96,6 +100,12 @@ interface EditorScene {
 - 数据是 floor 局部系、单位 mm、Z-up（00 章）；2D 俯视画布只用 **X/Y 平面**（俯视，Z 不参与平面布局，仅在属性里显示层）。
 - 映射：`screenX = (worldX - panX) * zoom`，`screenY = (worldY - panY) * zoom`。`zoom` = px/mm。
 - **Y 轴方向**：世界系 Y 向"上"（北），屏幕 Y 向下；画布做一次 Y 翻转，保证"图上往上 = 世界 +Y"，与俯视直觉一致。
+- **(v1.1评审补丁) 屏幕坐标系钉死（保 2D 编辑 / 3D 渲染 / 00 公式 三方不偏移）**：
+  - **屏幕原点**：Konva `Stage` 左上角为像素 (0,0)；世界原点 = floor 局部系 (0,0)，经 `pan/zoom` 映射到屏幕，不另设独立原点。
+  - **缩放中心**：以"鼠标光标所在世界点"为锚（zoom-to-cursor）——缩放时保持光标下世界坐标不动、反算 `panX/panY`，**不以屏幕中心缩放**，避免描图时焦点漂移。
+  - **平移（pan）**：`panX/panY` 是世界系偏移量（mm），与 3.1 映射式同源。
+  - **旋转支点**：货架 `RotationZ` 的旋转支点 = **货架原点角（与 00 §2 锚点角一致，近端/左下角）**，与 00 §6 computeAbs"角点锚 + 绕角转"同一支点；Konva 矩形须把 `offsetX/offsetY` 设到该角（**非几何中心**），使 2D 所见旋转 = 00 公式所算 = 05 所绘。
+  - **2D↔mm↔3D 映射**：Konva 2D 取 `X=世界X(mm)`、`Y=世界Y(mm)`（经上面 Y 翻转）；05 章 Three.js 为 Y-up，适配规则（与 05 对齐）为 `Three.x=世界X、Three.z=−世界Y、Three.y=世界Z`，即俯视 XY 平面映到 Three 的 XZ 地平面。三方共用 00 的 mm 局部系为唯一真值，任何一方不得自带额外缩放/偏移，杜绝偏移累积。
 
 ### 3.2 底图描图（消费 00 的 UnderlayScale/Offset）
 ```
@@ -179,7 +189,8 @@ interface EditorScene {
 ### 5.2 生成算法（纯函数，`space-editor/generate/`）
 ```ts
 // 货架模板 → 1 货架 + 库位阵列；坐标用 00 §6 公式（角点锚 + 绕角转）
-function genRack(tpl: RackTemplate, originX:number, originY:number, rotation:number): {rack:RackVO, locs:LocationVO[]} {
+// (v1.1评审补丁) skipAutoCode：采纳反向建模模式（§8）置 true，生成库位不进 03 自动编码管道，编码留给绑既有冻结码
+function genRack(tpl: RackTemplate, originX:number, originY:number, rotation:number, skipAutoCode=false): {rack:RackVO, locs:LocationVO[]} {
   const rack = { id: newGuid(), x:originX, y:originY, z:0, rotationZ:rotation,
                  cols:tpl.cols, levels:tpl.levels, depthCount:tpl.depthCount,
                  cellW:tpl.cellW, cellH:tpl.cellH, cellD:tpl.cellD, templateId:tpl.id }
@@ -188,10 +199,10 @@ function genRack(tpl: RackTemplate, originX:number, originY:number, rotation:num
     for (let l=1;l<=tpl.levels;l++)
       for (let d=1;d<=tpl.depthCount;d++) {
         const [ax,ay,az] = computeAbs(rack, c, l, d)          // 00 §6.1 公式
-        locs.push({ id:newGuid(), rackId:rack.id, floorId:scene.floor.id,
+        locs.push({ id:newGuid(), rackId:rack.id, floorId:scene.floor.id,   // (v1.1评审补丁) Placed=true 须同批带 rackId/floorId（00 §3.1.1 不变量）
                     col:c, level:l, depth:d, absX:ax, absY:ay, absZ:az,
                     sizeW:tpl.cellW, sizeH:tpl.cellH, sizeD:tpl.cellD,
-                    locationCode:null, codeOrigin:1, placed:true, status:0, version:0 })
+                    locationCode:null, codeOrigin:1, placed:true, status:0, version:0, skipAutoCode })
       }
   return { rack, locs }
 }
@@ -199,6 +210,14 @@ function genRack(tpl: RackTemplate, originX:number, originY:number, rotation:num
 - 库区模板 = 按 `rows/racksPerRow/rowGap/rackGap` 算每个货架 `originX/Y/rotation`，循环调 `genRack`；`aisleBetweenRows` 则在每两排间生成 `Space_Aisle`（多边形 + 中心线，00 §5）。
 - **产出全部草稿态**：`Status=0`、`LocationCode=null`（编码留 03）、`Placed=true`、`CodeOrigin=1`。
 - 货架编码 `RackCode`：批量生成时按"排-架"序号给一个**临时建议值**（如 `R01-01`），可在 02 章改；它是 03 编码引擎的"架号段"取值源之一。
+
+> **(v1.1评审补丁) 与编码引擎隔离——两模式不混流**：编辑器须显式区分两种库位流：
+> - **新建编码模式**（genRack 默认，`skipAutoCode=false`）：生成库位 `CodeOrigin=1`，进 03 自动编码管道由 03 给码——本章 P1 核心。
+> - **采纳反向建模模式**（§8，调 `genRack(..., skipAutoCode=true)`）：生成的格口几何 `skipAutoCode=true`，**不进 03 自动编码**，编码由 §8 绑定既有冻结码（`CodeOrigin=2`）提供。
+>
+> 否则采纳模式下 genRack 的 `CodeOrigin=1` 草稿会被 03 自动编码，与 D7 既有冻结码冲突。两模式库位流物理隔离，互不串入对方管道；触发时机详见第11章"→ 03 编码引擎"。
+
+> **(v1.1评审补丁) 对齐 00 v1.1 不变量（Placed 原子回填）**：生成库位 `Placed=true`，须在**同一事务内原子回填** `RackId`+`FloorId`（及 col/level/depth/AbsXYZ/Size），满足 00 §3.1.1"`Placed=true ⇒ RackId、FloorId 非空"不变量。genRack 出参已带 `rackId/floorId`，落库（第6.2）须保证三者同批写入，不得出现"Placed=true 却 RackId 空"的中间态。
 
 ### 5.3 生成校验
 | 校验 | 处理 |
@@ -214,6 +233,7 @@ function genRack(tpl: RackTemplate, originX:number, originY:number, rotation:num
 
 ### 6.1 草稿与脏标记
 - 编辑器对象在 Pinia 中维护，改动打 `dirty` 标记（新增/修改/删除集）。
+- **(v1.1评审补丁) 脏标记粒度 = 记录级**：以"单条对象（Zone/Aisle/Rack/Location/Marker）"为脏标记单位，分 `added/updated/deleted` 三集；货架位姿变更连带其库位（00 §6.2 RecalcRackLocations 影响的子集）一并入 `updated`。保存只提交三集差量，不全量回传整层。
 - 草稿态 = `Location.Status=0`；保存只是把几何落库，**不等于发布**（发布是 04 章独立动作，过冻结闸门才 `Status→1`）。
 - 库位 `LocationCode` 在草稿期可为 `null`、可被 03 反复重排（00 章过滤唯一索引支撑）。
 
@@ -226,15 +246,20 @@ POST /api/space/floor/{id}/scene  { zones, aisles, racks, locations, markers, de
 ```
 - 保存粒度 = 整层场景差量提交（只传 dirty）；大阵列首次保存可分批（每批 N 货架）避免超大请求。
 - **临时 Id**：前端生成对象用临时 GUID；保存后以服务端返回为准（前端 GUID 与服务端一致即可直接用，CP6 用 GUID 主键，省去映射）。
+- **(v1.1评审补丁) 临时 GUID 管理**：因 CP6 用客户端生成的 GUID 主键，前端 `newGuid()` 即最终 PK——保存请求直接携带该 GUID，服务端 honor 之；父子引用（Rack→Location 的 `RackId/FloorId`）全程用同一 GUID 串接，**无需"临时 ID→服务端 ID"重映射**。保存响应只回 RowVersion（不换 ID）。**唯一例外**：场景导入（第7.2）须 `new GUID` 重映射，因要克隆成全新对象、绝不复用源 Id。
 
 ### 6.3 并发
 多人同时编辑同层：靠 00 章 `RowVersion` 乐观锁，谁先存谁赢，后者收 E-SPACE-009 提示刷新。v1 不做实时协同（OT/CRDT），属 P3+。
+
+> **(v1.1评审补丁) RowVersion 冲突的前端策略（对齐 00 v1.1）**：实体继承 00 v1.1 的 `BaseBizEntity`（自带 `RowVersion`），差量保存须**逐条携带各对象 RowVersion**；服务端按条比对，冲突条目返回 E-SPACE-009 + 冲突对象 Id 列表。前端策略：弹"数据已被他人修改"→ 拉取冲突对象的服务端最新值 → **仅刷新冲突条目**（保留未冲突的本地脏改），用户复核后重提；**不整层丢弃本地编辑**。
 
 ---
 
 ## 第7章 场景复制与 JSON 导入导出（多客户复制）
 
 商用底座要"一套建好的仓库布局复制给相似客户"。
+
+> **(v1.1评审补丁·YAGNI) 排期**：场景复制（导出导入完整 ID 映射）**P1 可后置、P2 再加**；P1 核心是"新建编码建模"主链路（模板生成 → 草稿保存 → 03 编码 → 04 发布）。P1 先确立导出/导入的 DTO 契约与 ID 重映射规则，端到端复制流程留 P2。
 
 ### 7.1 导出
 ```
@@ -243,6 +268,7 @@ GET /api/space/floor/{id}/export  → SceneExportDto(JSON)
 ```
 - 导出**几何 + 模板**；库位可选（通常导出货架参数即可，库位由导入方重新生成，省体积）。
 - **不导出**：TenantId、绝对坐标缓存（导入重算）、LocationCode（导入方重新编码）、发布状态。
+- **(v1.1评审补丁) 只导草稿库位**：导出范围仅含 `Status=0` 草稿库位；若所选范围内含 `Status≥1`（已发布/停用）库位，**报错 E-SPACE-104 拒绝导出**。原因：导入会重建 LocationId（`new GUID`，第7.2），已发布库位一旦被重生成 Id 即与 WMS 的 join key 脱钩、造成 WMS 关联失联——已发布库位不参与"克隆复制"语义。
 
 ### 7.2 导入
 ```
@@ -253,6 +279,7 @@ POST /api/space/site/{id}/import  SceneExportDto
 ```
 - **ID 重映射**是关键：导入即"克隆成新对象"，绝不复用源 Id/编码，避免跨租户/跨场景串号。
 - 导入后是**草稿**：客户再按自己的编码规则（03）重新生成库位编码、再发布（04）。
+- **(v1.1评审补丁) 导入后编码时机 = 用户确认后手动**：导入只重建几何与草稿态（`Status→0`、`LocationCode` 清空、`TenantId` 注入当前租户），**不自动触发 03 编码**；库位编码由用户在 03 编码引擎页**确认编码规则后手动生成**（避免导入即套用源租户隐含规则误编码）。即"导入 = 落草稿几何"、"编码 = 用户确认后单独动作"，两步解耦。
 
 > **为什么导出可不带库位、导入重新生成？** 库位是货架参数的确定性派生（00 §5.3/§6）。导出货架参数 + 模板即可无损重建库位几何；省下万级库位的传输/存储，且强制导入方走自己的编码规则，符合"可配置编码引擎·多客户复制"。
 
@@ -262,15 +289,17 @@ POST /api/space/site/{id}/import  SceneExportDto
 
 存量 WMS 客户：编码已存在于 WMS，先导入为"已发布·未放置·无几何"（采纳导入落库在 04 章），本章提供**把几何补上**的反向建模入口。
 
+> **(v1.1评审补丁·YAGNI) 排期**：D7 采纳反向建模**P1 可后置、P2 再加**——它服务存量 WMS 客户，P1 先打通新建编码建模主链路。P1 仅须保证 00 schema（`Placed⊥Status`、`RackId/Code 可空`）与本入口兼容、并预留 `skipAutoCode` 隔离（§5.2），绑定 UI / 自动预匹配留 P2。
+
 ### 8.1 反向建模流程（与"模板生成新码"并列的第二入口）
 ```
 ① 采纳导入（04 章）：现有 WMS 库位编码 → Space_Location（Status=1, Placed=false, CodeOrigin=2, 无几何）
 ② 编辑器拉"待绑定列表"：GET /api/space/location/unplaced?floorId=（00 §9）
-③ 用户在 2D 画布摆货架（第5章模板生成几何，但此货架的库位先不自动建码）
+③ 用户在 2D 画布摆货架（第5章模板生成几何，调 `genRack(..., skipAutoCode=true)`：此货架格口**不进 03 自动编码管道**，编码留给 ④ 绑既有冻结码）  // (v1.1评审补丁)
 ④ 绑定：把货架的格口(col,level,depth) ←→ 待绑定列表里的既有冻结码 配对
      - 自动建议：按"列/层/深顺序"与编码末段顺序对齐，批量预匹配
      - 人工校正：拖拽/点选逐个改绑
-⑤ 提交绑定：回填 Location.RackId/FloorId/col/level/depth/AbsXYZ/Size，Placed=true
+⑤ 提交绑定：**原子回填**（同一事务）Location.RackId/FloorId/col/level/depth/AbsXYZ/Size，Placed=true  // (v1.1评审补丁) 满足 00 §3.1.1：Placed=true ⇒ RackId/FloorId 非空，回填须原子、杜绝中间态
      —— LocationId 与 LocationCode 不变（00 §7.1），不触发发布（00 §6.2 表）
 ```
 
@@ -295,7 +324,7 @@ POST /api/space/site/{id}/import  SceneExportDto
 | `/template/{id}/clone` | POST | 复制模板（系统预置→租户） |
 | `/floor/{id}/scene` | GET | 整层场景（00 §9，渲染/编辑共用） |
 | `/floor/{id}/scene` | POST | 整层差量保存（第6.2，事务 + 乐观锁） |
-| `/floor/{id}/generate` | POST | 模板化批量生成（服务端校验规模 + 落草稿；或前端生成后随 scene 保存） |
+| `/floor/{id}/generate` | POST | 模板化批量生成（服务端校验规模 + 落草稿；或前端生成后随 scene 保存）。**(v1.1评审补丁·YAGNI) P1 可后置**：P1 默认走前端纯函数生成 + `/scene` 保存（预览即所得）；服务端 `/generate` 待超大阵列再加（P2） |
 | `/floor/{id}/export` | GET | 场景导出 JSON（第7.1） |
 | `/site/{id}/import` | POST | 场景导入（ID 重映射，第7.2） |
 | `/location/unplaced?floorId=` | GET | 采纳待绑定库位列表（第8，00 §9） |
@@ -315,6 +344,7 @@ POST /api/space/site/{id}/import  SceneExportDto
 | W-SPACE-103 | Warn | 本次将生成 N 个库位，确认继续？ | 阵列规模超阈值 |
 | E-SPACE-102 | Error | 底图未标定比例尺，无法按真实尺寸描图 | 用 UnderlayImage 但缺 UnderlayScale |
 | E-SPACE-103 | Error | 导入场景版本不兼容 | export meta.version 不匹配 |
+| E-SPACE-104 | Error | 含已发布/停用库位，不可导出 | 导出范围含 Status≥1 库位（第7.1，防重生 Id 脱钩 WMS）**(v1.1评审补丁)** |
 | E-SPACE-009 | Error | 数据已被他人修改，请刷新重试 | 保存 RowVersion 冲突（00 章） |
 
 ---
@@ -325,7 +355,7 @@ POST /api/space/site/{id}/import  SceneExportDto
 |---|---|
 | ← 00 数据模型 | 读写 9 表几何；用 §6 computeAbs、§7 状态机、底图比例尺、RowVersion |
 | → 02 受控自由布局 | 共用 Konva 画布 + Pinia 场景；02 做拖拽/旋转/打点/捕捉/撤销 |
-| → 03 编码引擎 | 本章产草稿库位（空码）；03 给 `LocationCode`、支持重排 |
+| → 03 编码引擎 | 本章产草稿库位（空码）；03 给 `LocationCode`、支持重排。**(v1.1评审补丁) 触发时机**：仅 `skipAutoCode=false`（新建编码模式）的草稿库位进 03 自动编码管道；`skipAutoCode=true`（§8 采纳反向建模）的库位编码由绑定既有冻结码提供、不触发 03，避免与 D7 冻结码冲突。导入场景（第7.2）的编码由用户在 03 页确认规则后手动触发，不随导入自动编码 |
 | → 04 发布契约 | 采纳导入落库在 04；本章提供反向建模绑定入口（unplaced/bind-codes） |
 | → 05/06 渲染 | 保存后 `/floor/{id}/scene` 供 3D 渲染 |
 | → PUB 权限 | 编辑器操作接 PUB 功能权限（建模/生成/导入需授权）；场景查询接数据权限 |
