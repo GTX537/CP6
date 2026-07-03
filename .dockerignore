@@ -1,3 +1,10 @@
+# VCS / 文档 / 前端（API 镜像不需要，排除后构建上下文大幅缩小）
+.git/
+docs/
+.pnpm-store/
+cp6.web/
+claudedocs/
+
 # .NET
 **/bin/
 **/obj/
