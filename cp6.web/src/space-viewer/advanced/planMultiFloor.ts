@@ -10,7 +10,7 @@ export interface MFGraph {
   segments: Array<{ a: Pt; b: Pt; floorId: string }>
   floorZ: Map<string, number>
   floorLevel: Map<string, number>
-  hScale: number                                        // Kmin = 全图 min(边时间/边物理长)，A* admissible 标定
+  hScale: number                                        // Kmin = 全图 min(边时间 / 边真3D长)，A* admissible 标定（h = 3D欧氏距 × hScale）
 }
 export interface AisleVOLite { aisleCode: string; centerline: string }
 export interface ConnectorPath {
@@ -87,7 +87,7 @@ export function buildMultiFloorGraph(
       const a = sorted[i]!, b = sorted[i + 1]!
       const span = Math.abs(a.level - b.level)
       const w = verticalSec(c.waitSec, c.travelSecPerFloor, span)
-      const physLen = Math.abs(a.z - b.z)
+      const physLen = dist3({ x: a.s.x, y: a.s.y, z: a.z }, { x: b.s.x, y: b.s.y, z: b.z }) // 真 3D 边长（含 xy 位移，倾斜连接体 admissible）
       if (physLen > 0) minRate = Math.min(minRate, w / physLen)
       addMFEdge(g, mfKey(a.s.floorId, a.s), { x: a.s.x, y: a.s.y, z: a.z },
                    mfKey(b.s.floorId, b.s), { x: b.s.x, y: b.s.y, z: b.z }, w)

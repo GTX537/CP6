@@ -27,6 +27,14 @@ describe('buildMultiFloorGraph (time weights)', () => {
     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
     expect(g.hScale).toBeCloseTo(1 / WALK_SPEED_MMPS)
   })
+  it('slanted connector: Kmin uses true 3D edge length, not |Δz| (A* admissibility)', () => {
+    // 倾斜连接体：F1(500,500)→F2(1100,500)，Δxy=600、Δz=6000；时间=verticalSec(0,1,1)=1s（rate 极低 → 全图 Kmin）
+    const slanted = { connectorCode: 'S1', type: 1, waitSec: 0, travelSecPerFloor: 1, stops: [{ floorId: F1, x: 500, y: 500 }, { floorId: F2, x: 1100, y: 500 }] }
+    const g = buildMultiFloorGraph(floors, aislesByFloor, [slanted])
+    const physLen = Math.hypot(1100 - 500, 6000 - 0) // 真 3D 边长 = hypot(600,6000)，非 |Δz|=6000
+    // Kmin 必须用真边长；用 |Δz| 会高估最小 rate → 启发式不可采纳(inadmissible) → A* 可能次优
+    expect(g.hScale).toBeCloseTo(verticalSec(0, 1, 1) / physLen, 6)
+  })
 })
 
 describe('pathBetweenMF (time)', () => {
