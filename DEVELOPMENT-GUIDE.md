@@ -34,10 +34,10 @@ cp6.web（独立前端项目，通过 HTTP/WebSocket 与 API 通信）
 | 国际化 | vue-i18n | 11.3 | 5 语言动态切换 |
 | HTTP 客户端 | axios | 1.14 | API 请求 + 拦截器 |
 | 实时通信 | @microsoft/signalr | 10.0 | WebSocket 推送 |
-| 后端框架 | ASP.NET Core | 10.0 | RESTful API |
-| ORM | EF Core + Dapper | 10.0 / 2.1 | CRUD + 复杂 SQL |
-| 认证 | JWT Bearer | 8.17 | 无状态身份验证 |
-| 缓存 | IDistributedCache | 10.0 | Memory / Redis 双模式 |
+| 后端框架 | ASP.NET Core | 8.0 | RESTful API |
+| ORM | EF Core + Dapper | 8.0 / 2.1 | CRUD + 复杂 SQL |
+| 认证 | JWT Bearer | 8.0 | 无状态身份验证 |
+| 缓存 | IDistributedCache | 8.0 | Memory / Redis 双模式 |
 | 消息队列 | RabbitMQ.Client | 7.2 | 异步消息解耦 |
 | 数据库 | SQL Server | 2022 | 关系型存储 |
 | 容器化 | Docker + Compose | - | 多服务编排 |
@@ -53,9 +53,9 @@ cp6.web（独立前端项目，通过 HTTP/WebSocket 与 API 通信）
 ```bash
 # 1. 创建解决方案和项目
 dotnet new sln -n CP6
-dotnet new classlib -n CP6.Entity -f net10.0
-dotnet new classlib -n CP6.Core -f net10.0
-dotnet new webapi -n CP6.WebApi -f net10.0
+dotnet new classlib -n CP6.Entity -f net8.0
+dotnet new classlib -n CP6.Core -f net8.0
+dotnet new webapi -n CP6.WebApi -f net8.0
 
 # 2. 添加项目引用
 dotnet add CP6.Core reference CP6.Entity
@@ -459,7 +459,7 @@ minikube service cp6-web -n cp6
 
 ### 测试项目搭建
 ```bash
-dotnet new xunit -n CP6.Tests -f net10.0
+dotnet new xunit -n CP6.Tests -f net8.0
 dotnet add CP6.Tests reference CP6.WebApi CP6.Core
 dotnet add CP6.Tests package Moq
 dotnet add CP6.Tests package Microsoft.EntityFrameworkCore.InMemory
