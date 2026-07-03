@@ -11,6 +11,14 @@ public class ConnectorService : IConnectorService
     private readonly CP6Context _db;
     public ConnectorService(CP6Context db) => _db = db;
 
+    private static (int wait, int perFloor) DefaultCost(int type) => type switch
+    {
+        1 => (20, 6),   // 电梯
+        2 => (0, 15),   // 楼梯
+        3 => (0, 10),   // 坡道
+        _ => (0, 10),
+    };
+
     public async Task<List<ConnectorView>> ListBySiteAsync(Guid siteId)
     {
         var conns = await _db.Space_Connectors.Where(c => c.SiteId == siteId).ToListAsync();
@@ -19,6 +27,7 @@ public class ConnectorService : IConnectorService
         return conns.Select(c => new ConnectorView
         {
             Id = c.Id, ConnectorCode = c.ConnectorCode, ConnectorType = c.ConnectorType, Name = c.Name,
+            WaitSec = c.WaitSec, TravelSecPerFloor = c.TravelSecPerFloor,
             Stops = stops.Where(s => s.ConnectorId == c.Id)
                          .Select(s => new ConnectorStopView { FloorId = s.FloorId, X = s.X, Y = s.Y }).ToList()
         }).ToList();
@@ -28,10 +37,13 @@ public class ConnectorService : IConnectorService
     {
         if (await _db.Space_Connectors.AnyAsync(c => c.SiteId == d.SiteId && c.ConnectorCode == d.ConnectorCode))
             throw new InvalidOperationException("E-SPACE-501");
+        var (wait, perFloor) = (d.WaitSec <= 0 && d.TravelSecPerFloor <= 0)
+            ? DefaultCost(d.ConnectorType) : (d.WaitSec, d.TravelSecPerFloor);
         var e = new Space_Connector
         {
             Id = Guid.NewGuid(), SiteId = d.SiteId, ConnectorCode = d.ConnectorCode,
-            ConnectorType = d.ConnectorType, Name = d.Name, Creator = user, CreateDate = DateTime.Now
+            ConnectorType = d.ConnectorType, Name = d.Name, WaitSec = wait, TravelSecPerFloor = perFloor,
+            Creator = user, CreateDate = DateTime.Now
         };
         _db.Space_Connectors.Add(e);
         await _db.SaveChangesAsync();
@@ -70,6 +82,16 @@ public class ConnectorService : IConnectorService
         var stops = await _db.Space_ConnectorStops.Where(s => s.ConnectorId == id).ToListAsync();
         _db.Space_ConnectorStops.RemoveRange(stops);
         _db.Space_Connectors.Remove(conn);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(Guid id, ConnectorUpdateDto d, string? user)
+    {
+        var e = await _db.Space_Connectors.FirstOrDefaultAsync(c => c.Id == id)
+            ?? throw new InvalidOperationException("E-SPACE-502");
+        e.Name = d.Name; e.ConnectorType = d.ConnectorType;
+        e.WaitSec = d.WaitSec; e.TravelSecPerFloor = d.TravelSecPerFloor;
+        e.Modifier = user; e.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
     }
 }

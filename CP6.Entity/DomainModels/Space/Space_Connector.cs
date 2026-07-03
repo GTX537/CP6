@@ -18,4 +18,10 @@ public class Space_Connector : BaseBizEntity
 
     [Required, MaxLength(100)]
     public string Name { get; set; } = string.Empty;
+
+    /// <summary>登乘/门周期固定成本（秒）。竖直边一次性计（Space P5）。</summary>
+    public int WaitSec { get; set; }
+
+    /// <summary>每跨一层的行程成本（秒），按两 stop 的 Level 差乘（Space P5）。</summary>
+    public int TravelSecPerFloor { get; set; }
 }

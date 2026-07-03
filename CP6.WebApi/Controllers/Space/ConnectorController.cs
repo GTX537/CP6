@@ -36,6 +36,13 @@ public class ConnectorController : ControllerBase
     [HttpDelete("connector/{id:guid}/stop/{floorId:guid}")]
     public async Task<IActionResult> DeleteStop(Guid id, Guid floorId) { await _svc.DeleteStopAsync(id, floorId); return Ok2(); }
 
+    [HttpPut("connector/{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] ConnectorUpdateDto d)
+    {
+        try { await _svc.UpdateAsync(id, d, CurrentUser); return Ok2(); }
+        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+    }
+
     [HttpDelete("connector/{id:guid}")]
     public async Task<IActionResult> Delete(Guid id) { await _svc.DeleteAsync(id); return Ok2(); }
 }

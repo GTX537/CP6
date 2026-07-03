@@ -120,6 +120,7 @@ public class SpaceAdvancedController : ControllerBase
         var connectors = conns.Select(c => new
         {
             connectorCode = c.ConnectorCode, type = c.ConnectorType,
+            waitSec = c.WaitSec, travelSecPerFloor = c.TravelSecPerFloor,
             stops = connStops.Where(s => s.ConnectorId == c.Id).Select(s => new { floorId = s.FloorId, x = s.X, y = s.Y }).ToList()
         }).ToList();
 

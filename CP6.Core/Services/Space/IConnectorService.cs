@@ -9,4 +9,5 @@ public interface IConnectorService
     Task UpsertStopAsync(Guid connectorId, ConnectorStopDto d, string? user);
     Task DeleteStopAsync(Guid connectorId, Guid floorId);
     Task DeleteAsync(Guid id);
+    Task UpdateAsync(Guid id, ConnectorUpdateDto d, string? user);
 }
