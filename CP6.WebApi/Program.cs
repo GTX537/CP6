@@ -110,6 +110,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.EndNodeHandler>();        // WFS T4 节点处理器：结束
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelSplitNodeHandler>(); // WFS T5 节点处理器：并行分叉
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelJoinNodeHandler>();  // WFS T5 节点处理器：并行汇聚
+builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ServiceTaskNodeHandler>();    // WFS A-T6 节点处理器：服务任务（注入 IEnumerable<IServiceTaskExecutor>，未注册时为空）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
@@ -129,6 +130,11 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.FinSequenceService>();         
 // 4.0c OA(Wf) 阶段3 高级流程（章07）：超时扫描 + Worker（退回/加签/委派为 FlowEngine 自带方法）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Services.Wf.WfTimeoutService>();    // 章07 §4 超时扫描（remind/approve/reject/escalate）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfServiceJobService, CP6.Core.Services.Wf.WfServiceJobService>();  // B-T2 服务任务异步底座扫描服务（spec §4.1）
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobScanWorker>();                          // B-T2 服务任务扫描 Worker（20s 周期，lease 抢占，v1 单实例）
+// C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
 
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();

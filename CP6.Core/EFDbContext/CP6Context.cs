@@ -402,6 +402,8 @@ public class CP6Context : DbContext
     public DbSet<Wf_Notification> Wf_Notifications { get; set; }
     /// <summary>审批人映射表（数据驱动策略 DataMap）</summary>
     public DbSet<Wf_ApproverMap> Wf_ApproverMaps { get; set; }
+    /// <summary>服务任务异步停泊作业台账（服务任务节点增量,§2.3）</summary>
+    public DbSet<Wf_ServiceJob> Wf_ServiceJobs { get; set; }
 
     // ───── Space 空间数字底座 P1（ch00 9 表）─────
     /// <summary>站点（Space 章00，6 层模型顶层）</summary>
@@ -726,6 +728,20 @@ public class CP6Context : DbContext
             e.HasIndex(x => new { x.TenantId, x.UserId, x.IsRead }).HasDatabaseName("IX_Wf_Notification_UserRead"));
         modelBuilder.Entity<Wf_ApproverMap>(e =>
             e.HasIndex(x => new { x.TenantId, x.MapKey, x.MatchValue }).HasDatabaseName("IX_Wf_ApproverMap_Lookup"));
+
+        // 服务任务停泊台账(§2.3):扫描 / 实例维度 / 活跃 job 唯一约束
+        modelBuilder.Entity<Wf_ServiceJob>(b =>
+        {
+            b.HasIndex(x => new { x.TenantId, x.Status, x.NextAttemptAtUtc })
+                .HasDatabaseName("IX_Wf_ServiceJob_Scan");
+            b.HasIndex(x => new { x.TenantId, x.InstanceId })
+                .HasDatabaseName("IX_Wf_ServiceJob_Instance");
+            // filtered unique: 同 token 同 node 只能一个活跃 job(Status IN Pending/Running)
+            // SQLite 上通过 GenerateCreateScript 生成 WHERE 子句; 代码级 EnqueueServiceJob 先查兜底(A-T6)
+            b.HasIndex(x => new { x.TenantId, x.TokenId, x.NodeId })
+                .IsUnique().HasFilter("[Status] IN (0, 1)")
+                .HasDatabaseName("UX_Wf_ServiceJob_LiveToken");
+        });
 
         // ═══════════════════════════════════════════════════════════
         //  财务（Fin）章01 总账内核
