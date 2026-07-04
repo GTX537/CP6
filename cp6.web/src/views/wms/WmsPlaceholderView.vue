@@ -72,8 +72,8 @@ const hint = computed(() => phaseInfo.value.hint)
 <style scoped>
 .wms-placeholder { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 100px); padding: 24px; }
 .phase-icon { font-size: 80px; line-height: 1; margin-bottom: 8px; }
-.title { font-size: 22px; font-weight: 700; color: #303133; margin-bottom: 4px; }
-.subtitle { font-size: 14px; color: #909399; margin-bottom: 16px; }
-.info { margin: 12px 0 24px; text-align: center; color: #606266; }
-.info .hint { margin-top: 12px; padding: 12px 16px; background: #f4f7fa; border-left: 3px solid #409eff; border-radius: 4px; max-width: 600px; text-align: left; }
+.title { font-size: var(--cp-fs-2xl); font-weight: 800; color: var(--cp-ink); margin-bottom: 4px; }
+.subtitle { font-size: var(--cp-fs-lg); color: var(--cp-muted); margin-bottom: 16px; }
+.info { margin: 12px 0 24px; text-align: center; color: var(--cp-text); }
+.info .hint { margin-top: 12px; padding: 12px 16px; background: var(--cp-line-soft); border-left: 3px solid var(--cp-info); border-radius: var(--cp-r-sm); max-width: 600px; text-align: left; }
 </style>

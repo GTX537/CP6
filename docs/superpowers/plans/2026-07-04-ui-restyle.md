@@ -596,6 +596,32 @@ describe('CpListPage', () => {
 
 （初始为空；发现 CpListPage/CpFormDialog 覆盖不了的形态时记录于此并先扩模板）
 
+### WMS 迁移批次1 复盘（编号接续 Task 11 试点，从 #9 起）
+
+批次1（Placeholder/InboundOrderList/Expiry/CrossDock/WarehouseList/StockTakeList）迁移完成，功能零丢失、真栈验收通过（5 个已路由页；WmsPlaceholderView 为无路由孤儿代码，仅 token 化）。以下缺口均用逃生舱/旧机制代偿保功能，按批次规则「不改模板组件本体」记录待后续扩契约：
+
+9. **CpFilterBar `daterange` 无 `value-format` 透传 → 返回 `Date` 对象**（Minor）。
+   - 现象：InboundOrderList 原「予定入荷 从/至」两个 `el-date-picker value-format="YYYY-MM-DD"`（返回字符串）。CpFilterBar 无单日 `date` type，只能合并为 `daterange`；而 CpFilterBar 的 `el-date-picker` 未设 `value-format`，返回 `[Date, Date]`，与后端 `arrivalFrom/arrivalTo: string` 契约不符。
+   - 代偿：fetch 包装内 `ymd()` 本地时区格式化（避免 `toISOString` UTC 偏移）为 `YYYY-MM-DD`。
+   - 建议：FilterField 增 `valueFormat?`（透传 el-date-picker），或 CpFilterBar 对 daterange 默认 `value-format="YYYY-MM-DD"`；并补单日 `date` type。
+
+10. **CpFilterBar 无 `number` 字段类型（min/max/step）**（Minor）。
+    - 现象：Expiry 原「N 日以内」为 `el-input-number :min="1" :max="365"`。CpFilterBar 仅 text/select/daterange。
+    - 代偿：用 `text` + `placeholder="30"`；fetch 内 `Number()` 解析并 clamp 到 1..365，缺省 30。丢失 spinner 与初值回填（字段初值空，查询按 30）。
+    - 建议：FilterField 增 `type:'number'` + `min/max/step`。
+
+11. **CpListPage 强制分页，无法关闭 → 全量勾选跨页失效**（Minor）。
+    - 现象：Expiry 原为单表 `max-height` 滚动（无分页），`type="selection"` 跨全量勾选后一括廃棄。CpListPage 始终渲染 pager 且无 `:paginated=false` 开关，勾选降为「当页范围」。
+    - 影响：数据完整性不受影响（概览指标在 fetch 包装内按全量结果计算）；仅跨页批量勾选丢失。廃棄为低频操作，可接受。
+    - 建议：CpListPage 增 `paginated?: boolean`（false 时隐藏 pager、fetch 传大 size）或 `pageSizes` 定制。
+
+12. **CpListPage 无命令式 `reload()` / 无外部刷新触发**（Important，影响 3 页）。
+    - 现象：CpListPage 仅在 mounted/search/reset/翻页/切卡内部 fetch，不 watch 任何外部信号，也未 `defineExpose`。而 Expiry(廃棄)、CrossDock(新建/実行/取消)、Warehouse(新建/編集/削除) 均需「页内 in-place 变更后刷新列表」（原页调用 `reload()`）。
+    - 代偿：父级持 `reloadKey` ref，`:key="reloadKey"` 绑定 CpListPage，变更成功后 `reloadKey++` 强制重挂载重查。**副作用**：重挂载会把 CpListPage 内部 `filters`（重置为 `{}`）与 `page`（重置为 1）清空 → 用户当前搜索/翻页上下文丢失（Warehouse 编辑后列表回到未筛选首页最明显）。数据正确性优先，故采用；记为已知降级。
+    - 建议：CpListPage `defineExpose({ reload })`（父级 `ref` 命令式刷新，保留 filters/page），或增 `refreshKey?: number` prop 内部 `watch` 触发 `load()`（不重置状态）。这是本批最值得回填的契约扩展。
+
+（注：所有页 CpFilterBar `expand/collapse` 仍留组件内中文默认「展开更多/收起」、CpEmpty 空态仍为中文「暂无数据」——沿用 Task 11 试点约定，属 follow-up #6，非本批新增。）
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

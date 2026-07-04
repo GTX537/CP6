@@ -1,81 +1,78 @@
+<!--
+  倉庫マスタ —— CpPageShell + CpListPage + CpFormDialog 迁移（WMS 批次1）。
+  種別列 kind:'tag'+map；マイナス許可/操作 走 col slot；新建/編集共用 CpFormDialog（default slot 保留 switch/select/disabled 等表单）。
+  必填(倉庫CD/倉庫名)由 el-form rules 校验。in-place 变更(新建/編集/削除)后自增 reloadKey 刷新（模板缺口 #12）。
+-->
 <template>
-  <div class="wms-warehouse">
-    <el-card shadow="never" class="search-card">
-      <el-form :model="query" inline size="small">
-        <el-form-item :label="t('wms.warehouse.fld.cd')"><el-input v-model="query.warehouseCd" clearable style="width: 140px" /></el-form-item>
-        <el-form-item :label="t('wms.warehouse.fld.type')">
-          <el-select v-model="query.warehouseType" clearable style="width: 140px">
-            <el-option v-for="(label, val) in warehouseTypeMap" :key="val" :label="label" :value="Number(val)" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('wms.warehouse.fld.baseCd')"><el-input v-model="query.baseCd" clearable style="width: 120px" /></el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
-          <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+  <CpPageShell :title="t('wms.warehouse.title')" :count="total">
+    <template #actions>
+      <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+    </template>
 
-    <el-card shadow="never">
-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row>
-        <el-table-column prop="warehouseCd" :label="t('wms.warehouse.fld.cd')" width="120" />
-        <el-table-column prop="warehouseName" :label="t('wms.warehouse.fld.name')" min-width="200" />
-        <el-table-column :label="t('wms.warehouse.fld.type')" width="120">
-          <template #default="{ row }">
-            <el-tag :type="typeTagOf(row.warehouseType)" size="small">{{ warehouseTypeMap[row.warehouseType] || row.warehouseType }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="baseCd" :label="t('wms.warehouse.fld.baseCd')" width="100" />
-        <el-table-column prop="managerCd" :label="t('wms.warehouse.fld.manager')" width="120" />
-        <el-table-column :label="t('wms.warehouse.fld.allowNegative')" width="120" align="center">
-          <template #default="{ row }">
-            <el-tag v-if="row.allowNegative" type="warning" size="small">{{ t('wms.warehouse.fld.allowed') }}</el-tag>
-            <span v-else>—</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="addressText" :label="t('wms.warehouse.fld.address')" min-width="200" show-overflow-tooltip />
-        <el-table-column :label="t('wms.common.action')" width="160" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('wms.common.edit') }}</el-button>
-            <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <el-dialog v-model="dialogVisible" :title="editing?.id ? t('wms.warehouse.dlg.edit') : t('wms.warehouse.dlg.create')" width="560">
-      <el-form v-if="editing" :model="editing" label-width="160px" size="small">
-        <el-form-item :label="t('wms.warehouse.fld.cd')" required>
-          <el-input v-model="editing.warehouseCd" :disabled="!!editing.id" maxlength="10" />
-        </el-form-item>
-        <el-form-item :label="t('wms.warehouse.fld.name')" required><el-input v-model="editing.warehouseName" maxlength="100" /></el-form-item>
-        <el-form-item :label="t('wms.warehouse.fld.type')">
-          <el-select v-model="editing.warehouseType">
-            <el-option v-for="(label, val) in warehouseTypeMap" :key="val" :label="label" :value="Number(val)" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('wms.warehouse.fld.baseCd')"><el-input v-model="editing.baseCd" maxlength="10" /></el-form-item>
-        <el-form-item :label="t('wms.warehouse.fld.manager')"><el-input v-model="editing.managerCd" maxlength="20" /></el-form-item>
-        <el-form-item :label="t('wms.warehouse.fld.address')"><el-input v-model="editing.addressText" maxlength="200" /></el-form-item>
-        <el-form-item :label="t('wms.warehouse.fld.allowNegative')"><el-switch v-model="editing.allowNegative" /></el-form-item>
-        <el-form-item :label="t('wms.common.remarks')"><el-input v-model="editing.remarks" type="textarea" :rows="2" /></el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false">{{ t('wms.common.cancel') }}</el-button>
-        <el-button type="primary" @click="onSave" :loading="saving">{{ t('wms.common.save') }}</el-button>
+    <CpListPage
+      :key="reloadKey"
+      :columns="columns"
+      :fetch="fetchList"
+      :search-fields="searchFields"
+      :filter-labels="filterLabels"
+      @total-change="total = $event"
+    >
+      <template #col-allowNegative="{ row }">
+        <CpTag v-if="row.allowNegative" tone="warn">{{ t('wms.warehouse.fld.allowed') }}</CpTag>
+        <span v-else class="cp-dash">—</span>
       </template>
-    </el-dialog>
-  </div>
+      <template #col-_action="{ row }">
+        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('wms.common.edit') }}</el-button>
+        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
+      </template>
+    </CpListPage>
+
+    <CpFormDialog
+      v-model="dialogVisible"
+      :title="dialogTitle"
+      width="560"
+      :form="form"
+      :rules="rules"
+      :submit="onSave"
+      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
+      @saved="reloadKey++"
+    >
+      <el-form-item :label="t('wms.warehouse.fld.cd')" prop="warehouseCd">
+        <el-input v-model="form.warehouseCd" :disabled="!!form.id" maxlength="10" />
+      </el-form-item>
+      <el-form-item :label="t('wms.warehouse.fld.name')" prop="warehouseName">
+        <el-input v-model="form.warehouseName" maxlength="100" />
+      </el-form-item>
+      <el-form-item :label="t('wms.warehouse.fld.type')">
+        <el-select v-model="form.warehouseType">
+          <el-option v-for="(label, val) in warehouseTypeMap" :key="val" :label="label" :value="Number(val)" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('wms.warehouse.fld.baseCd')"><el-input v-model="form.baseCd" maxlength="10" /></el-form-item>
+      <el-form-item :label="t('wms.warehouse.fld.manager')"><el-input v-model="form.managerCd" maxlength="20" /></el-form-item>
+      <el-form-item :label="t('wms.warehouse.fld.address')"><el-input v-model="form.addressText" maxlength="200" /></el-form-item>
+      <el-form-item :label="t('wms.warehouse.fld.allowNegative')"><el-switch v-model="form.allowNegative" /></el-form-item>
+      <el-form-item :label="t('wms.common.remarks')"><el-input v-model="form.remarks" type="textarea" :rows="2" /></el-form-item>
+    </CpFormDialog>
+  </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, computed } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, reactive, computed } from 'vue'
+import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+import CpFormDialog from '@/components/templates/CpFormDialog.vue'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { warehouseApi } from '@/api/wms/warehouse'
 import type { Warehouse } from '@/types/wms/wms'
 
 const { t } = useI18n()
+
+const total = ref<number>()
+const reloadKey = ref(0)
 
 const warehouseTypeMap = computed<Record<number, string>>(() => ({
   1: t('wms.warehouse.type.raw'),
@@ -84,51 +81,79 @@ const warehouseTypeMap = computed<Record<number, string>>(() => ({
   4: t('wms.warehouse.type.defective'),
   5: t('wms.warehouse.type.external'),
 }))
+// 原 typeTagOf(primary/success/success/danger/info) → 设计系统 Tone（保色）
+function typeTone(v: number): Tone {
+  return ({ 1: 'info', 2: 'ok', 3: 'ok', 4: 'danger', 5: 'muted' } as const)[v as 1] || 'muted'
+}
+function codeLabel(m: Record<number, string>, v: unknown): string {
+  return m[v as number] || (v == null ? '' : String(v))
+}
 
-const query = reactive<{ warehouseCd?: string; warehouseType?: number; baseCd?: string }>({})
-const rows = ref<Warehouse[]>([])
-const loading = ref(false)
+const columns = computed<ListColumn[]>(() => [
+  { prop: 'warehouseCd', label: t('wms.warehouse.fld.cd'), width: 120 },
+  { prop: 'warehouseName', label: t('wms.warehouse.fld.name'), minWidth: 200 },
+  { prop: 'warehouseType', label: t('wms.warehouse.fld.type'), width: 120, kind: 'tag',
+    map: (v) => ({ label: codeLabel(warehouseTypeMap.value, v), tone: typeTone(v as number) }) },
+  { prop: 'baseCd', label: t('wms.warehouse.fld.baseCd'), width: 100 },
+  { prop: 'managerCd', label: t('wms.warehouse.fld.manager'), width: 120 },
+  { prop: 'allowNegative', label: t('wms.warehouse.fld.allowNegative'), width: 120, align: 'center' },
+  { prop: 'addressText', label: t('wms.warehouse.fld.address'), minWidth: 200, overflowTooltip: true },
+  { prop: '_action', label: t('wms.common.action'), width: 160, fixed: 'right' },
+])
 
+const filterLabels = computed(() => ({
+  search: t('wms.common.search'),
+  reset: t('wms.common.clear'),
+}))
+
+const searchFields = computed<FilterField[]>(() => [
+  { key: 'warehouseCd', label: t('wms.warehouse.fld.cd'), type: 'text' },
+  {
+    key: 'warehouseType', label: t('wms.warehouse.fld.type'), type: 'select',
+    options: Object.entries(warehouseTypeMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+  },
+  { key: 'baseCd', label: t('wms.warehouse.fld.baseCd'), type: 'text' },
+])
+
+const fetchList: ListFetch = async ({ filters }) => {
+  const f = filters as Record<string, unknown>
+  const q: { warehouseCd?: string; warehouseType?: number; baseCd?: string } = {}
+  if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
+  if (f.warehouseType !== undefined && f.warehouseType !== '') q.warehouseType = Number(f.warehouseType)
+  if (f.baseCd) q.baseCd = String(f.baseCd)
+  const res = await warehouseApi.search(q)
+  const all = res.data || []
+  return { rows: all, total: all.length }
+}
+
+// —— 新建/編集对话框 ——
 const dialogVisible = ref(false)
-const editing = ref<Warehouse | null>(null)
-const saving = ref(false)
-
-function typeTagOf(t: number): 'primary' | 'success' | 'warning' | 'danger' | 'info' {
-  return ({ 1: 'primary', 2: 'success', 3: 'success', 4: 'danger', 5: 'info' } as const)[t] || 'info'
-}
-
-async function reload() {
-  loading.value = true
-  try {
-    const res = await warehouseApi.search(query)
-    rows.value = res.data || []
-  } finally { loading.value = false }
-}
+const form = reactive<Warehouse>({ warehouseCd: '', warehouseName: '', warehouseType: 1, allowNegative: false })
+const dialogTitle = computed(() => (form.id ? t('wms.warehouse.dlg.edit') : t('wms.warehouse.dlg.create')))
+const rules = computed<FormRules>(() => ({
+  warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+  warehouseName: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+}))
 
 function openCreate() {
-  editing.value = { warehouseCd: '', warehouseName: '', warehouseType: 1, allowNegative: false }
+  Object.assign(form, {
+    id: undefined, warehouseCd: '', warehouseName: '', warehouseType: 1, baseCd: '',
+    managerCd: '', addressText: '', allowNegative: false, remarks: '',
+  })
   dialogVisible.value = true
 }
-
 function openEdit(row: Warehouse) {
-  editing.value = { ...row }
+  Object.assign(form, { baseCd: '', managerCd: '', addressText: '', remarks: '', ...row })
   dialogVisible.value = true
 }
 
 async function onSave() {
-  if (!editing.value) return
-  saving.value = true
-  try {
-    if (editing.value.id) {
-      await warehouseApi.update(editing.value.warehouseCd, editing.value)
-      ElMessage.success(t('wms.common.success'))
-    } else {
-      await warehouseApi.create(editing.value)
-      ElMessage.success(t('wms.common.success'))
-    }
-    dialogVisible.value = false
-    reload()
-  } finally { saving.value = false }
+  if (form.id) {
+    await warehouseApi.update(form.warehouseCd, form)
+  } else {
+    await warehouseApi.create(form)
+  }
+  ElMessage.success(t('wms.common.success'))
 }
 
 async function onDelete(row: Warehouse) {
@@ -136,14 +161,11 @@ async function onDelete(row: Warehouse) {
     await ElMessageBox.confirm(`${t('wms.common.confirmDelete')} [${row.warehouseCd}]`, t('wms.common.confirm'), { type: 'warning' })
     await warehouseApi.delete(row.warehouseCd)
     ElMessage.success(t('wms.common.success'))
-    reload()
+    reloadKey.value++
   } catch { /* */ }
 }
-
-onMounted(reload)
 </script>
 
 <style scoped>
-.wms-warehouse { padding: 16px; }
-.search-card { margin-bottom: 12px; }
+.cp-dash { color: var(--cp-muted); }
 </style>
