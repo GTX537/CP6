@@ -24,14 +24,14 @@
         class="kpi-cell"
         @click="onCardClick(card.to)"
       >
-        <KpiCard
+        <CpStatCard
           :label="t('dashboard.' + card.key)"
           :value="card.value"
           :tone="kpiTone(card)"
           :clickable="canGo(card.to)"
         >
           <template #icon><component :is="card.icon" /></template>
-        </KpiCard>
+        </CpStatCard>
       </div>
     </section>
 
@@ -315,7 +315,7 @@ import { stockDwellApi } from '@/api/wms/stockDwell'
 import { formatQty } from '@/utils/format'
 import { getConnection, startConnection } from '@/utils/signalr'
 import { useBreakpoint } from '@/composables/useBreakpoint'
-import KpiCard from './components/KpiCard.vue'
+import CpStatCard from '@/components/templates/CpStatCard.vue'
 import DonutChart from './components/DonutChart.vue'
 import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/erp/order'
 import type { StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
