@@ -3,7 +3,8 @@ import { ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { connectorApi } from '@/api/space/connector'
-import type { ConnectorVO } from '@/types/space/connector'
+import type { ConnectorVO, ConnectorUpdate } from '@/types/space/connector'
+import { TYPE_DEFAULT_COST } from '@/space-viewer/advanced/cost'
 
 const { t } = useI18n()
 
@@ -25,7 +26,13 @@ function typeLabel(tp: number): string {
   return typeOptions.find(o => o.value === tp)?.label ?? String(tp)
 }
 
-const form = ref({ connectorCode: '', connectorType: 1, name: '' })
+const form = ref({ connectorCode: '', connectorType: 1, name: '', waitSec: 20, travelSecPerFloor: 6 })
+
+// 选类型时预填成本默认（用户可改）
+watch(() => form.value.connectorType, (tp) => {
+  const d = TYPE_DEFAULT_COST[tp]
+  if (d) { form.value.waitSec = d.waitSec; form.value.travelSecPerFloor = d.travelSecPerFloor }
+})
 
 async function load(): Promise<void> {
   if (!props.siteId) return
@@ -55,9 +62,11 @@ async function createConnector(): Promise<void> {
       connectorCode: code,
       connectorType: form.value.connectorType,
       name: form.value.name.trim(),
+      waitSec: form.value.waitSec,
+      travelSecPerFloor: form.value.travelSecPerFloor,
     })
     ElMessage.success(t('新建成功'))
-    form.value = { connectorCode: '', connectorType: 1, name: '' }
+    form.value = { connectorCode: '', connectorType: 1, name: '', waitSec: 20, travelSecPerFloor: 6 }
     await load()
   } catch {
     ElMessage.error(t('新建失败'))
@@ -93,6 +102,16 @@ async function removeConnector(c: ConnectorVO): Promise<void> {
   }
 }
 
+async function saveCost(c: ConnectorVO): Promise<void> {
+  try {
+    const d: ConnectorUpdate = { name: c.name, connectorType: c.connectorType, waitSec: c.waitSec, travelSecPerFloor: c.travelSecPerFloor }
+    await connectorApi.update(c.id, d)
+    ElMessage.success(t('成本已保存'))
+  } catch {
+    ElMessage.error(t('保存成本失败'))
+  }
+}
+
 // Exposed so FloorEditor can refresh after a stop is placed on the canvas.
 defineExpose({ refresh: load })
 </script>
@@ -115,6 +134,12 @@ defineExpose({ refresh: load })
       <el-form-item :label="t('名称')">
         <el-input v-model="form.name" />
       </el-form-item>
+      <el-form-item :label="t('等待秒')">
+        <el-input-number v-model="form.waitSec" :min="0" :step="1" controls-position="right" style="width: 100%" />
+      </el-form-item>
+      <el-form-item :label="t('每层秒')">
+        <el-input-number v-model="form.travelSecPerFloor" :min="0" :step="1" controls-position="right" style="width: 100%" />
+      </el-form-item>
     </el-form>
     <el-button type="primary" size="small" style="width: 100%" @click="createConnector">
       {{ t('新建连接体') }}
@@ -129,6 +154,14 @@ defineExpose({ refresh: load })
           <span class="conn-type">{{ typeLabel(c.connectorType) }}</span>
         </div>
         <div class="conn-code">{{ c.connectorCode }}</div>
+
+        <div class="conn-cost">
+          <span class="cost-label">{{ t('等待秒') }}</span>
+          <el-input-number v-model="c.waitSec" :min="0" :step="1" size="small" controls-position="right" style="width: 96px" />
+          <span class="cost-label">{{ t('每层秒') }}</span>
+          <el-input-number v-model="c.travelSecPerFloor" :min="0" :step="1" size="small" controls-position="right" style="width: 96px" />
+          <el-button size="small" type="primary" plain @click="saveCost(c)">{{ t('保存成本') }}</el-button>
+        </div>
 
         <div class="stop-list">
           <div v-for="s in c.stops" :key="s.floorId" class="stop-row">
@@ -237,6 +270,17 @@ defineExpose({ refresh: load })
   display: flex;
   gap: 6px;
   margin-top: 4px;
+}
+.conn-cost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 6px 0;
+}
+.cost-label {
+  font-size: 11px;
+  color: #666;
 }
 .empty-tip {
   font-size: 12px;

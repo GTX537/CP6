@@ -94,6 +94,7 @@ import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
 import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
 import { DeviceLayer } from '@/space-viewer/advanced/DeviceLayer'
 import { planPickComparison, type Pt, type PickComparison } from '@/space-viewer/advanced/PickPathPlanner'
+import { mmToSec } from '@/space-viewer/advanced/cost'
 import { advancedApi } from '@/api/space/advanced'
 import AdvancedPanel from './AdvancedPanel.vue'
 
@@ -276,9 +277,9 @@ async function onLoadPath(taskNo: string): Promise<void> {
     pathInfo.value = t('拣货路径：{n} 点，总距 {d} 米')
       .replace('{n}', String(stopPts.length))
       .replace('{d}', (cmp.actualMm / 1000).toFixed(1))           // I-SPACE-801
-    compareInfo.value = t('实际 {a} 米 / 优化 {o} 米 / 省 {p}%')
-      .replace('{a}', (cmp.actualMm / 1000).toFixed(1))
-      .replace('{o}', (cmp.optimizedMm / 1000).toFixed(1))
+    compareInfo.value = t('实际 {am} 米 / {as} 秒 ・ 优化 {om} 米 / {os} 秒 ・ 省 {p}%')
+      .replace('{am}', (cmp.actualMm / 1000).toFixed(1)).replace('{as}', mmToSec(cmp.actualMm).toFixed(0))
+      .replace('{om}', (cmp.optimizedMm / 1000).toFixed(1)).replace('{os}', mmToSec(cmp.optimizedMm).toFixed(0))
       .replace('{p}', cmp.savingsPct.toFixed(0))
     if (cmp.actual.degraded) ElMessage.warning(t('巷道路径不连通，近似直连显示'))  // W-SPACE-801
   } catch {

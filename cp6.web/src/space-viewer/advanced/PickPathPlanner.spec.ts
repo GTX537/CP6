@@ -159,3 +159,20 @@ describe('PickPathPlanner', () => {
     expect(astar(adj, 'A', 'C', (k) => coords[k]!)).toEqual(['A', 'B', 'C'])
   })
 })
+
+describe('astar hScale (admissibility 标定)', () => {
+  const adj = new Map<string, Array<{ to: string; w: number }>>([
+    ['A', [{ to: 'B', w: 10 }]],
+    ['B', [{ to: 'A', w: 10 }, { to: 'C', w: 10 }]],
+    ['C', [{ to: 'B', w: 10 }]],
+  ])
+  const pts: Record<string, { x: number; y: number }> = { A: { x: 0, y: 0 }, B: { x: 10, y: 0 }, C: { x: 20, y: 0 } }
+  const nodePt = (k: string) => pts[k]!
+
+  it('default hScale equals explicit 1 (SP3 zero-regression)', () => {
+    expect(astar(adj, 'A', 'C', nodePt)).toEqual(astar(adj, 'A', 'C', nodePt, 1))
+  })
+  it('still finds optimal path with a tiny hScale (conservative heuristic)', () => {
+    expect(astar(adj, 'A', 'C', nodePt, 0.0001)).toEqual(['A', 'B', 'C'])
+  })
+})

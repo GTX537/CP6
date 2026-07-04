@@ -178,3 +178,6 @@ CP6.WebApi/wwwroot/i18n/
 
 # pnpm store (2026-07-03 新机器迁移: 本地包缓存, 非源码)
 .pnpm-store/
+
+# superpowers SDD scratch
+.superpowers/

@@ -2,7 +2,7 @@
 import type { Pt } from './PickPathPlanner'
 
 export interface Pt3 { x: number; y: number; z: number }
-export interface FloorMeta { floorId: string; z: number }  // z=堆叠标高 mm
+export interface FloorMeta { floorId: string; z: number; level: number }  // z=堆叠标高 mm；level=楼层序（算跨层数）
 
 /** 多层节点键：楼层命名空间 + 1mm 取整 XY。 */
 export const mfKey = (floorId: string, p: { x: number; y: number }): string =>

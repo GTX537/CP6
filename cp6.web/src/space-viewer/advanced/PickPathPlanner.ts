@@ -99,6 +99,7 @@ export function astar(
   start: string,
   end: string,
   nodePt: (k: string) => { x: number; y: number; z?: number },
+  hScale = 1,
 ): string[] | null {
   const g = new Map<string, number>()       // 已知最短 g 值
   const f = new Map<string, number>()        // f = g + h
@@ -106,7 +107,7 @@ export function astar(
   const visited = new Set<string>()
   const endPt = nodePt(end)
   const h = (a: { x: number; y: number; z?: number }, b: { x: number; y: number; z?: number }): number =>
-    Math.hypot(a.x - b.x, a.y - b.y, (a.z ?? 0) - (b.z ?? 0))
+    Math.hypot(a.x - b.x, a.y - b.y, (a.z ?? 0) - (b.z ?? 0)) * hScale
   g.set(start, 0)
   f.set(start, h(nodePt(start), endPt))
   while (true) {

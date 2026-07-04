@@ -1,6 +1,6 @@
 import http from '../http'
 import type { Envelope } from '@/types/space/scene'
-import type { ConnectorVO, ConnectorCreate, ConnectorStopVO } from '@/types/space/connector'
+import type { ConnectorVO, ConnectorCreate, ConnectorStopVO, ConnectorUpdate } from '@/types/space/connector'
 
 export const connectorApi = {
   listBySite(siteId: string) {
@@ -8,6 +8,9 @@ export const connectorApi = {
   },
   create(d: ConnectorCreate) {
     return http.post<unknown, Envelope<{ id: string }>>(`/space/connector`, d)
+  },
+  update(id: string, d: ConnectorUpdate) {
+    return http.put<unknown, Envelope<null>>(`/space/connector/${id}`, d)
   },
   upsertStop(id: string, s: ConnectorStopVO) {
     return http.put<unknown, Envelope<null>>(`/space/connector/${id}/stop`, s)
