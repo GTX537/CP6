@@ -3,15 +3,15 @@
     <!-- 桌面端：左侧菜单常驻 -->
     <el-aside
       v-if="!isMobile"
-      width="220px"
-      class="layout-aside"
+      width="238px"
+      class="layout-aside cp-menu"
     >
-      <div class="layout-logo">{{ $t('app.title') }}</div>
+      <div class="cp-brand">
+        <span class="cp-brand-logo">CP</span>
+        <div><b>{{ $t('app.title') }}</b><small>MANUFACTURING</small></div>
+      </div>
       <el-menu
         :default-active="currentRoute"
-        background-color="#304156"
-        text-color="#bfcbd9"
-        active-text-color="#409eff"
         router
       >
         <menu-tree-item
@@ -35,6 +35,7 @@
           </el-menu-item>
         </el-sub-menu>
       </el-menu>
+      <div class="cp-env"><i />{{ $t('app.title') }} · v2.4</div>
     </el-aside>
 
     <!-- 手机端：抽屉式菜单 -->
@@ -57,12 +58,9 @@
         </div>
 
         <!-- 菜单（可滚动） -->
-        <div class="drawer-menu-wrap">
+        <div class="drawer-menu-wrap cp-menu">
           <el-menu
             :default-active="currentRoute"
-            background-color="#304156"
-            text-color="#bfcbd9"
-            active-text-color="#409eff"
             router
             @select="drawerOpen = false"
           >
@@ -135,7 +133,7 @@
 
         <!-- 桌面端：完整的语言/用户/退出 -->
         <template v-if="!isMobile">
-          <el-select v-model="currentLang" size="small" style="width: 130px" @change="onChangeLang">
+          <el-select v-model="currentLang" size="small" class="cp-lang" @change="onChangeLang">
             <el-option
               v-for="item in langOptions"
               :key="item.value"
@@ -143,9 +141,14 @@
               :value="item.value"
             />
           </el-select>
-          <span class="layout-nickname">{{ nickName }}</span>
           <NotificationBell />
-          <el-button link @click="handleLogout">{{ $t('layout.logout') }}</el-button>
+          <div class="cp-me">
+            <span class="cp-me-ava">{{ nickName ? nickName.charAt(0).toUpperCase() : '?' }}</span>
+            <b>{{ nickName }}</b>
+          </div>
+          <el-button link class="cp-logout-btn" :title="$t('layout.logout')" @click="handleLogout">
+            <el-icon :size="18"><SwitchButton /></el-icon>
+          </el-button>
         </template>
       </el-header>
       <!-- 多租户合规 #5（T9）impersonation 全局横幅（带倒计时，R8）。imp 期间常驻顶部。 -->
@@ -275,38 +278,122 @@ async function handleLogout() {
   height: 100vh;
   height: 100dvh;
   background:
-    radial-gradient(circle at top right, rgba(125, 211, 252, 0.1), transparent 24%),
-    linear-gradient(180deg, #f8fbff 0%, #f5f7fa 40%);
+    radial-gradient(1000px 520px at 92% -8%, rgba(43, 212, 205, .10), transparent 55%),
+    var(--cp-bg);
 }
+
+/* ===== 桌面侧栏：悬浮式浅色 ===== */
 .layout-aside {
-  background: linear-gradient(180deg, #26364a 0%, #304156 55%, #32465c 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 12px 10px;
+  background: transparent;
+  box-shadow: none;
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease;
-  box-shadow: 10px 0 30px rgba(15, 23, 42, 0.12);
 }
-.layout-logo {
+.cp-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 4px 10px 20px;
+}
+.cp-brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: var(--cp-brand-grad);
+  box-shadow: var(--cp-brand-glow);
+  display: grid;
+  place-items: center;
   color: #fff;
-  text-align: center;
-  padding: 16px 0;
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 0.04em;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: .5px;
+  flex-shrink: 0;
 }
+.cp-brand b {
+  color: var(--cp-ink);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .3px;
+}
+.cp-brand small {
+  display: block;
+  font-size: 9.5px;
+  color: var(--cp-muted);
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.cp-env {
+  margin-top: 10px;
+  padding: 11px 14px;
+  border-radius: var(--cp-r-md);
+  background: rgba(255, 255, 255, .6);
+  border: 1px solid var(--cp-line);
+  font-size: 11.5px;
+  color: var(--cp-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.cp-env i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cp-ok);
+  box-shadow: 0 0 6px var(--cp-ok);
+}
+
+/* 浅色菜单（桌面侧栏 + 移动抽屉共用） */
+.cp-menu :deep(.el-menu) {
+  background: transparent;
+  border-right: none;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+.cp-menu :deep(.el-menu-item),
+.cp-menu :deep(.el-sub-menu__title) {
+  color: var(--cp-text);
+  font-weight: 700;
+  font-size: 13.5px;
+  border-radius: var(--cp-r-md);
+  margin: 2px 0;
+  height: 42px;
+}
+.cp-menu :deep(.el-menu-item:hover),
+.cp-menu :deep(.el-sub-menu__title:hover) {
+  background: var(--cp-brand-bg);
+  color: var(--cp-ink);
+}
+.cp-menu :deep(.el-menu-item.is-active) {
+  background: var(--cp-brand-grad);
+  color: #fff;
+  box-shadow: var(--cp-brand-glow);
+}
+.cp-menu :deep(.el-sub-menu .el-menu) {
+  background: transparent;
+}
+
+/* ===== 顶栏：毛玻璃 ===== */
 .layout-header {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.88);
   gap: 12px;
-  padding: 0 16px;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(18px) saturate(150%);
+  padding: 12px 24px;
+  background: rgba(242, 250, 251, .72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--cp-line);
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease, box-shadow 0.35s ease;
 }
 .layout-header.is-mobile {
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 10px 30px rgba(148, 163, 184, 0.16);
+  box-shadow: var(--cp-shadow-2);
 }
 .layout-header-spacer {
   flex: 1;
@@ -314,24 +401,85 @@ async function handleLogout() {
 .layout-title-mobile {
   font-weight: 600;
   font-size: 16px;
-  color: #303133;
+  color: var(--cp-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: 1;
   min-width: 0;
 }
-.layout-nickname {
-  color: #606266;
-}
 .hamburger-btn {
   padding: 0 4px;
   flex-shrink: 0;
 }
+
+/* 语言切换胶囊 */
+.cp-lang {
+  width: 130px;
+}
+.cp-lang :deep(.el-select__wrapper) {
+  border-radius: 11px;
+  box-shadow: var(--cp-shadow-1);
+  font-weight: 800;
+  color: var(--cp-text);
+}
+.cp-lang :deep(.el-select__wrapper:hover) {
+  border-color: var(--cp-brand);
+}
+
+/* 用户胶囊 */
+.cp-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--cp-card);
+  border: 1px solid var(--cp-line);
+  border-radius: 22px;
+  padding: 4px 14px 4px 4px;
+  box-shadow: var(--cp-shadow-1);
+  flex-shrink: 0;
+}
+.cp-me-ava {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--cp-brand-grad);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.cp-me b {
+  color: var(--cp-ink);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* 登出图标按钮 */
+.cp-logout-btn {
+  width: 37px;
+  height: 37px;
+  border-radius: 11px;
+  background: var(--cp-card);
+  border: 1px solid var(--cp-line);
+  display: grid;
+  place-items: center;
+  color: var(--cp-muted);
+  box-shadow: var(--cp-shadow-1);
+  transition: .15s;
+  flex-shrink: 0;
+}
+.cp-logout-btn:hover {
+  color: var(--cp-danger);
+  transform: translateY(-1px);
+}
+
 .layout-main {
   background:
-    radial-gradient(circle at top right, rgba(125, 211, 252, 0.12), transparent 24%),
-    linear-gradient(180deg, rgba(248, 251, 255, 0.92), rgba(245, 247, 250, 0.98));
+    radial-gradient(circle at top right, rgba(20, 184, 196, .12), transparent 24%),
+    linear-gradient(180deg, var(--cp-bg), var(--cp-bg-hover));
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s ease, filter 0.7s ease;
 }
 
@@ -357,21 +505,21 @@ async function handleLogout() {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(180deg, #26364a 0%, #304156 55%, #32465c 100%);
+  background: var(--cp-card);
 }
 .drawer-header {
   padding: 16px;
   padding-top: calc(20px + env(safe-area-inset-top, 0px));
-  border-bottom: 1px solid #3d5165;
+  border-bottom: 1px solid var(--cp-line);
 }
 .drawer-logo {
-  color: #fff;
+  color: var(--cp-ink);
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 6px;
 }
 .drawer-user {
-  color: #bfcbd9;
+  color: var(--cp-text);
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -382,14 +530,11 @@ async function handleLogout() {
   overflow-y: auto;
   min-height: 0;
 }
-.drawer-menu-wrap :deep(.el-menu) {
-  border-right: none;
-}
 .drawer-footer {
   padding: 12px 16px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  background: rgba(24, 36, 52, 0.4);
-  border-top: 1px solid #3d5165;
+  background: var(--cp-bg-hover);
+  border-top: 1px solid var(--cp-line);
 }
 
 :deep(.route-enter-enter-active),
@@ -432,6 +577,6 @@ async function handleLogout() {
 /* 全局：抽屉内部去掉默认 padding */
 .layout-drawer .el-drawer__body {
   padding: 0;
-  background: #304156;
+  background: var(--cp-card);
 }
 </style>
