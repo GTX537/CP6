@@ -707,6 +707,19 @@ describe('CpListPage', () => {
     - 现象：BusinessPartnerList 的 @sort-change 服务端排序是本批该页「decisive token-only reason」却未起票——CpListPage 未透传 el-table 同名事件，强套即丢排序功能。
     - 建议契约：ListColumn 增 `sortable?: 'custom'`，CpListPage 接 el-table @sort-change，把 `sortField?/sortOrder?` 并入 ListFetch query（并 emit sort-change）。
 
+### ERP批次2 复盘（编号接续，从 #20 起）
+
+批次2（PlateMoldList/ProductMasterList/EstimateCalcList/CreditNoteList/OrderList）迁移完成，功能零丢失、真栈验收通过。本批首次 dogfood #18 lazy（OrderList）与 #19 sortable:'custom'（Order/Product/Estimate 真栈验证 sortField/sortOrder 透传）。分类：CreditNote=CpPageShell+CpListPage（唯一标题键）；Estimate/Product=CpListPage（自动取得+服务端排序，Product 另含 CSV filter-stash + status toolbar checkbox-group）；Order=CpListPage lazy（检索先行+排序+CSV stash+2 toolbar checkbox+受注取消 dialog 兄弟要素+追跡/詳細/取消 col slot）；PlateMold=token 化（行内発行チェックの一括ラベル発行＋picker 現在行選択＋5 ペア FROM≤TO 交差検証）。mobile 卡片分岐（Estimate/CreditNote/Order）撤去为 DS 标准横スクロール（main.css:222-225），非缺口。以下为新增缺口：
+
+20. **CpListPage 内包 filters 不外露 → 亲侧操作（CSV 出力等）拿不到当前检索条件**（Minor，本批 3 页 Product/Order/PlateMold）
+    - 现象：exportCsv(query) 需送含 CpFilterBar 各字段值的全 query，但 filters 闭于 CpListPage 内部 `filters.value`，亲级仅传 searchFields、读不到值。
+    - 代偿：fetch closure 每次收到的 `filters`（+sortField/sortOrder）stash 到 page-level ref（`lastFilters`/`lastSort`），export 侧 buildQuery 复用。唯一齟齬：初回 fetch 前 export → filters 空（lazy 页检索前 export 无意义故许容；auto-load 页 mount fetch 已 stash）。
+    - 建议契约：CpListPage `defineExpose({ reload, getFilters })`（或 filters snapshot API），让亲侧 CSV/一括操作读到当前检索条件。
+21. **CpListPage 无 @current-change（行高亮选择）透传 → picker-mode「返回选中行」形态无法表达**（Minor，PlateMold token 化决定打之一）
+    - 现象：PlateMold picker 模式用 highlight-current-row+@current-change 掴选中行，脚部「選択して戻る」返呼出元。CpListPage 仅透 selectable(checkbox) 的 selection-change，不出单行高亮选择事件。
+    - 代偿（token 化侧）：保留原机制。若 CpListPage 化可用操作列行内「選択」按钮（#16）代替，但与行内発行チェック一括操作合并后选 token 化。
+    - 建议契约：CpListPage 增 `@current-change(row)` 透传（与 #16 @row-click 对偶补齐行选择系事件）。
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

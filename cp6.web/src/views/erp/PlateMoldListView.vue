@@ -60,8 +60,8 @@
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
-        <el-tag v-if="checkedCount" type="success" size="small" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</el-tag>
+        <CpTag tone="info">{{ t('sales.list.totalCount', { n: total }) }}</CpTag>
+        <CpTag v-if="checkedCount" tone="ok" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</CpTag>
       </div>
 
       <el-table
@@ -141,6 +141,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'
+import CpTag from '@/components/base/CpTag.vue'
 import { plateMoldApi } from '@/api/erp/plateMold'
 import type { PlateMoldQueryDto, PlateMoldListItemDto } from '@/types/erp/plateMold'
 
