@@ -6,7 +6,7 @@
   端材列表原本单表滚动无分页 → :paginated="false"。in-place 变更(新建/予約/解除/使用/廃棄)后 listRef.reload()。
 -->
 <template>
-  <CpPageShell :title="t('wms.remnant.fld.no')" :count="total">
+  <CpPageShell :title="t('wms.remnant.title')" :count="total">
     <template #actions>
       <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
       <el-button type="success" @click="matchDialog = true">{{ t('wms.remnant.btn.match') }}</el-button>
