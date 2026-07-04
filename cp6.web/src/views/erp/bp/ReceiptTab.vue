@@ -10,7 +10,7 @@
     <el-form-item :label="t('集金区分')"><el-input v-model="store.bp.collectionDiv" :disabled="!store.canEdit" style="width: 120px" /></el-form-item>
     <el-form-item :label="t('集金予定日')">
       <el-input-number v-model="store.bp.collectionPlannedDay" :disabled="!store.canEdit" :min="1" :max="99" :controls="false" style="width: 110px" />
-      <span style="margin-left: 6px; font-size: 12px; color: #909399;">1〜31, 99</span>
+      <span class="hint-text">1〜31, 99</span>
     </el-form-item>
     <el-form-item :label="t('手形回り区分')"><el-input v-model="store.bp.billRotationDiv" :disabled="!store.canEdit" style="width: 120px" /></el-form-item>
     <el-divider content-position="left">{{ t('領収書 送付先') }}</el-divider>
@@ -32,4 +32,7 @@ import { useBpStore } from '@/stores/businessPartner'
 const props = defineProps<{ store: ReturnType<typeof useBpStore> }>()
 const store = props.store
 </script>
-<style scoped>:deep(.el-form-item){margin-bottom:8px;}</style>
+<style scoped>
+:deep(.el-form-item){margin-bottom:8px;}
+.hint-text { margin-left: 6px; font-size: 12px; color: var(--cp-muted); }
+</style>
