@@ -700,10 +700,10 @@ describe('CpListPage', () => {
 
 本批新增模板缺口 2 项（复盘评审补记：token 化处置本身各有依据并获维持，但反复出现的形态缺口应起票而非仅记录——「0 缺口」判定系本批缺陷）：
 
-18. **CpListPage 无 search-first/lazy 模式**（Minor）
+18. **CpListPage 无 search-first/lazy 模式**（Minor）—— ✅ 已实现（契约扩展三轮 commit）：`lazy?: boolean`（默认 false），true 时 onMounted 不自动 fetch、空态起步（CpEmpty 可见/total=0 分页器自然惰性），首查由 search/切卡/reload()/分页/排序等显式手势触发，首查成功前不 emit total-change。
     - 现象：现状 onMounted 必自动 fetch；ERP 反复出现「先选必填条件再查询」形态（本批 3/5 页有此形态：FscChecklist/OrderPriceCorrection 拠点必須・自動取得なし，SheetUnitPrice 基準日+拠点必須），与该契约相反，只能整页 token 化放弃模板。
     - 建议契约：`lazy?: boolean`（默认 false），true 时抑制 onMounted(load)，首查仅由显式 search/reload() 触发。
-19. **CpListPage 无服务端排序透传**（Minor）
+19. **CpListPage 无服务端排序透传**（Minor）—— ✅ 已实现（契约扩展三轮 commit）：ListColumn 增 `sortable?: 'custom'`（仅服务端语义），CpListPage 接 el-table @sort-change：order 规范化 asc/desc、page 重置 1、`sortField?/sortOrder?` 并入 ListFetch query（取消排序两键移除）并 emit sort-change({field,order})；lazy 未加载时排序亦触发首查。
     - 现象：BusinessPartnerList 的 @sort-change 服务端排序是本批该页「decisive token-only reason」却未起票——CpListPage 未透传 el-table 同名事件，强套即丢排序功能。
     - 建议契约：ListColumn 增 `sortable?: 'custom'`，CpListPage 接 el-table @sort-change，把 `sortField?/sortOrder?` 并入 ListFetch query（并 emit sort-change）。
 
