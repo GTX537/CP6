@@ -1,0 +1,6 @@
+.cp-hover-lift { transition: transform var(--cp-t-base), box-shadow var(--cp-t-base); }
+.cp-hover-lift:hover { transform: translateY(-3px); box-shadow: var(--cp-shadow-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-property: opacity, color, background-color, border-color !important; }
+}
