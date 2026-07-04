@@ -172,3 +172,118 @@ describe('CpListPage 行为契约补充', () => {
     expect(w.find('.cp-mono').exists()).toBe(false)
   })
 })
+
+// —— Milestone C 契约扩展：total-change / minWidth·fixed·tooltip / highlightCurrentRow / map / date ——
+import type { ListColumn } from '../CpListPage.vue'
+import type { Tone } from '@/components/base/CpTag.vue'
+
+describe('CpListPage 契约扩展（Milestone C）', () => {
+  it('total-change：成功加载后 emit 最新 total', async () => {
+    const w = mount(CpListPage, {
+      props: { columns: cols, fetch: makeFetch([{ no: 'A', qty: 1 }, { no: 'B', qty: 2 }]) }
+    })
+    await flushPromises()
+    expect(w.emitted('total-change')).toEqual([[2]])
+  })
+
+  it('total-change：过期响应不 emit（seq 守卫）', async () => {
+    let resolveFirst!: (v: { rows: unknown[]; total: number }) => void
+    const f = vi.fn()
+      .mockImplementationOnce(() => new Promise((r) => { resolveFirst = r }))
+      .mockResolvedValueOnce({ rows: [{ no: 'SHP-NEW', qty: 2 }], total: 7 })
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f,
+      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
+    await flushPromises()
+    await w.findAll('.ss')[1].trigger('click')
+    await flushPromises()
+    expect(w.emitted('total-change')).toEqual([[7]]) // 只有最新请求的 total
+
+    resolveFirst({ rows: [{ no: 'SHP-OLD', qty: 1 }], total: 99 })
+    await flushPromises()
+    expect(w.emitted('total-change')).toEqual([[7]]) // 过期响应不得追加 emit
+  })
+
+  it('minWidth / overflowTooltip / fixed 透传 el-table-column', async () => {
+    const c: ListColumn[] = [
+      { prop: 'customerName', label: '客先名', minWidth: 160, overflowTooltip: true },
+      { prop: '_action', label: '操作', width: 100, fixed: 'right' }
+    ]
+    const w = mount(CpListPage, {
+      props: { columns: c, fetch: makeFetch([{ customerName: 'X', _action: '' }]) }
+    })
+    await flushPromises()
+    const tcs = w.findAllComponents({ name: 'ElTableColumn' })
+    const cust = tcs.find((tc) => tc.props('label') === '客先名')!
+    expect(cust.props('minWidth')).toBe(160)
+    expect(cust.props('showOverflowTooltip')).toBe(true)
+    const act = tcs.find((tc) => tc.props('label') === '操作')!
+    expect(act.props('fixed')).toBe('right')
+  })
+
+  it('highlightCurrentRow：默认 true，可显式关闭', async () => {
+    const w1 = mount(CpListPage, { props: { columns: cols, fetch: makeFetch() } })
+    await flushPromises()
+    expect(w1.findComponent({ name: 'ElTable' }).props('highlightCurrentRow')).toBe(true)
+
+    const w2 = mount(CpListPage, {
+      props: { columns: cols, fetch: makeFetch(), highlightCurrentRow: false }
+    })
+    await flushPromises()
+    expect(w2.findComponent({ name: 'ElTable' }).props('highlightCurrentRow')).toBe(false)
+  })
+
+  it('map + kind:tag：渲染 label 与 tone 的 CpTag', async () => {
+    const c: ListColumn[] = [{
+      prop: 'st', label: '状态', kind: 'tag',
+      map: (v) => ({ label: `状態${v}`, tone: 'warn' as Tone })
+    }]
+    const f = vi.fn().mockResolvedValue({ rows: [{ st: 3 }], total: 1 })
+    const w = mount(CpListPage, { props: { columns: c, fetch: f } })
+    await flushPromises()
+    const tag = w.find('td .cp-tag')
+    expect(tag.exists()).toBe(true)
+    expect(tag.text()).toBe('状態3')
+    expect(tag.classes()).toContain('t-warn')
+  })
+
+  it('map 无 kind:tag：仅替换文本 label，不渲染 CpTag（码值文本列免插槽）', async () => {
+    const c: ListColumn[] = [{ prop: 'pr', label: '優先度', map: (v) => ({ label: v === 2 ? '緊急' : '通常' }) }]
+    const f = vi.fn().mockResolvedValue({ rows: [{ pr: 2 }], total: 1 })
+    const w = mount(CpListPage, { props: { columns: c, fetch: f } })
+    await flushPromises()
+    expect(w.find('td .cp-tag').exists()).toBe(false)
+    expect(w.text()).toContain('緊急')
+  })
+
+  it('col-<prop> slot 优先于 map', async () => {
+    const c: ListColumn[] = [{
+      prop: 'st', label: '状态', kind: 'tag', map: () => ({ label: 'MAP', tone: 'ok' as Tone })
+    }]
+    const f = vi.fn().mockResolvedValue({ rows: [{ st: 1 }], total: 1 })
+    const w = mount(CpListPage, {
+      props: { columns: c, fetch: f },
+      slots: { 'col-st': `<template #col-st="{ row }"><i class="via-slot">S-{{ row.st }}</i></template>` }
+    })
+    await flushPromises()
+    expect(w.find('.via-slot').text()).toBe('S-1')
+    expect(w.find('td .cp-tag').exists()).toBe(false)
+    expect(w.text()).not.toContain('MAP')
+  })
+
+  it("kind:'date'：非空值 slice(0,10)，null/undefined 渲染空", async () => {
+    const c: ListColumn[] = [
+      { prop: 'no', label: '单号', kind: 'mono' },
+      { prop: 'd', label: '日付', kind: 'date' }
+    ]
+    const f = vi.fn().mockResolvedValue({
+      rows: [{ no: 'A', d: '2026-07-04T00:00:00' }, { no: 'B', d: null }],
+      total: 2
+    })
+    const w = mount(CpListPage, { props: { columns: c, fetch: f } })
+    await flushPromises()
+    expect(w.text()).toContain('2026-07-04')
+    expect(w.text()).not.toContain('2026-07-04T')
+    // 第二行日期单元格为空（null → ''，不出现 "null"）
+    expect(w.text()).not.toContain('null')
+  })
+})
