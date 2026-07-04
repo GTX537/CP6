@@ -660,6 +660,17 @@ describe('CpListPage', () => {
 
 （注：StockTake/IotMonitor/ReportCenter 三页为特殊页，按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3 处置一致。CpFormDialog 采用 `label-position:top`（设计系统标准），与原页 label-width 左标签的差异属既定契约，非缺口。Carrier/StockTake/stock-take-list 三处后端无种子数据，Carrier 验证空态 + 新建弹窗、StockTake 直达验证 default 渲染，已在报告注明。）
 
+### WMS 迁移批次7 复盘（编号接续，从 #17 起）
+
+批次7（BridgeHealth/OutboundRouting/MaterialShortage/WmsDashboard/InkLot）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：OutboundRouting/MaterialShortage=查询列表页（CpPageShell+CpListPage，码值列 map，前者 paginated=false、后者服务端分页，复合 create/action ダイアログ保持 el-dialog）；BridgeHealth=监控仪表盘特殊页（KPI×3→CpStatCard、パネルヘッダ→CpSectionHeader、状態 el-tag→CpTag，保留 30s ポーリング/timer cleanup、el-progress/el-table）；WmsDashboard=仪表盘特殊页（KPI×8→CpStatCard、カードヘッダ→CpSectionHeader、状態/TXN el-tag→CpTag，保留 SignalR リアルタイム/棒グラフ/タイムライン/明細テーブル；棒グラフ系列色→--cp-ok/danger/muted token）；InkLot=タブ式ワークベンチ特殊页（2 リスト+4 ダイアログ、tabs は模板契約外——token 化 + 状態 el-tag→CpTag、expiry 色→--cp-danger/warn，el-tabs/el-form/el-table/dialogs 保持）。真栈：BridgeHealth KPI(0.0%/0/0)+2 パネル No Data；OutboundRouting count 0 空态+新規ルール ダイアログ+プレビューカード；MaterialShortage KPI(未対応 0)+検索/クリア reload+Total 0 分页；WmsDashboard KPI×8+未接続 pill+トレンド/倉庫別/アラート表；InkLot 2 タブ切替+検索フォーム No Data。console 无新 error（WmsDashboard 的 SignalR CSRF 403 negotiate 失败=環境既有基础设施问题，SignalR コード原様保持未改，非本批引入，未接続 pill 正确反映）。以下为唯一新增缺口：
+
+17. **CpListPage / CpFilterBar 无初始 filter 值（无法 seed 默认查询条件）**（Minor）
+    - 现象：MaterialShortage 原 `query.status` 初期値 = 'OPEN'（欠品トリアージのため既定で未対応のみ表示）、resetQuery も 'OPEN' に戻す。CpFilterBar 的 filters 内部初始化为 `{}`，各字段起始 undefined，无 prop 可 seed 初始值。
+    - 代偿：`fetchList` 内 `status = filters.status === undefined ? 'OPEN' : filters.status`——初回/リセット(undefined)→OPEN、''→全件、明示選択はそのまま。功能等价保全（初期表示=未対応、リセット=未対応、全件は ALL 選択で到達）；唯一の齟齬は初回に status セレクトが空表示（実データは OPEN 絞込）——cosmetic、記录在案。
+    - 建议：CpListPage 增 `initialFilters?: Record<string,unknown>`（或 CpFilterBar `defaultValue`）透传初始 filters，恢复默认查询条件的可视回填。
+
+（注：MaterialShortage 采用 CpListPage 标准分页，page-sizes 从原 [50,100,200]/默认 50 变为模板 [20,50,100]/默认 20——属既定模板契约，非缺口。BridgeHealth/WmsDashboard 系监控·仪表盘特殊页，InkLot 系 tabs 工作台特殊页，均按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3/4 处置一致。WmsDashboard SignalR CSRF negotiate 403 为測試環境基础设施既有问题，非本批引入。）
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

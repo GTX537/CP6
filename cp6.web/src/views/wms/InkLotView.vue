@@ -42,7 +42,7 @@
             </el-table-column>
             <el-table-column :label="t('wms.ink.fld.openStatus')" width="100">
               <template #default="{ row }">
-                <el-tag :type="row.openStatus === 'OPENED' ? 'warning' : 'success'" size="small">{{ openMap[row.openStatus] }}</el-tag>
+                <CpTag :tone="row.openStatus === 'OPENED' ? 'warn' : 'ok'">{{ openMap[row.openStatus] }}</CpTag>
               </template>
             </el-table-column>
             <el-table-column prop="expiryDate" :label="t('wms.ink.fld.expiry')" width="120">
@@ -128,7 +128,7 @@
     <el-dialog v-model="openDialog" :title="t('wms.ink.dlg.open') + ' — ' + openTarget?.inkLotNo" width="420">
       <el-form label-width="160px" size="small">
         <el-form-item :label="t('wms.ink.fld.expiry')">
-          <el-tag>{{ openTarget?.expiryDate }}</el-tag>
+          <CpTag tone="info">{{ openTarget?.expiryDate }}</CpTag>
         </el-form-item>
         <el-form-item :label="t('wms.ink.fld.newExpiry')">
           <el-date-picker v-model="openNewExpiry" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
@@ -184,6 +184,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpTag from '@/components/base/CpTag.vue'
 import { inkApi } from '@/api/wms/paperIndustry'
 import type { InkLot, InkLotSearchQuery, InkColorMatchHistory, MixInkRequest } from '@/types/wms/wms'
 import { formatQty as fmtQty } from '@/utils/format'
@@ -338,6 +339,6 @@ onMounted(reloadLots)
 <style scoped>
 .wms-ink-lot { padding: 16px; }
 .search-card { margin-bottom: 12px; }
-.expiry-expired { color: #f56c6c; font-weight: bold; }
-.expiry-soon { color: #e6a23c; font-weight: bold; }
+.expiry-expired { color: var(--cp-danger); font-weight: bold; }
+.expiry-soon { color: var(--cp-warn); font-weight: bold; }
 </style>

@@ -1,3 +1,7 @@
+<!--
+  ブリッジ健全性モニタ —— 監視系特殊页（30s ポーリング）。模板不强套：KPI→CpStatCard、
+  パネルヘッダ→CpSectionHeader、状態 el-tag→CpTag、token 化。setInterval/clearInterval は原様保持。
+-->
 <template>
   <div class="bridge-health">
     <div class="toolbar">
@@ -10,48 +14,35 @@
 
     <el-row :gutter="12">
       <el-col :xs="24" :sm="8">
-        <el-card shadow="never" class="kpi-card">
-          <component :is="CircleCheckFilled" class="kpi-icon success" />
-          <div>
-            <div class="kpi-label">{{ t('wms.bridgeHealth.successRate') }}</div>
-            <div class="kpi-value">{{ formatPercent(overallSuccessRate) }}</div>
-          </div>
-        </el-card>
+        <CpStatCard :label="t('wms.bridgeHealth.successRate')" :value="formatPercent(overallSuccessRate)" tone="brand">
+          <template #icon><CircleCheckFilled /></template>
+        </CpStatCard>
       </el-col>
       <el-col :xs="24" :sm="8">
-        <el-card shadow="never" class="kpi-card" :class="{ warn: metrics.queueDepth > 0 }">
-          <component :is="WarningFilled" class="kpi-icon warning" />
-          <div>
-            <div class="kpi-label">{{ t('wms.bridgeHealth.queueDepth') }}</div>
-            <div class="kpi-value">{{ metrics.queueDepth }}</div>
-          </div>
-        </el-card>
+        <CpStatCard :label="t('wms.bridgeHealth.queueDepth')" :value="metrics.queueDepth" :tone="metrics.queueDepth > 0 ? 'warn' : 'info'">
+          <template #icon><WarningFilled /></template>
+        </CpStatCard>
       </el-col>
       <el-col :xs="24" :sm="8">
-        <el-card shadow="never" class="kpi-card" :class="{ danger: metrics.deadLetterCount > 0 }">
-          <component :is="BellFilled" class="kpi-icon danger" />
-          <div>
-            <div class="kpi-label">{{ t('wms.bridgeHealth.deadLetterCount') }}</div>
-            <div class="kpi-value">{{ metrics.deadLetterCount }}</div>
-          </div>
-        </el-card>
+        <CpStatCard :label="t('wms.bridgeHealth.deadLetterCount')" :value="metrics.deadLetterCount" :tone="metrics.deadLetterCount > 0 ? 'danger' : 'info'">
+          <template #icon><BellFilled /></template>
+        </CpStatCard>
       </el-col>
     </el-row>
 
     <el-card shadow="never" class="panel">
       <template #header>
-        <div class="panel-header">
-          <span>{{ t('wms.bridgeHealth.hooks') }}</span>
-          <el-tag size="small" type="info">{{ metrics.hooks.length }}</el-tag>
-        </div>
+        <CpSectionHeader :title="t('wms.bridgeHealth.hooks')">
+          <template #extra><CpTag tone="info">{{ metrics.hooks.length }}</CpTag></template>
+        </CpSectionHeader>
       </template>
       <el-table :data="metrics.hooks" border stripe size="small" v-loading="loading">
         <el-table-column prop="hookName" :label="t('wms.bridgeHealth.hookName')" min-width="220" show-overflow-tooltip />
         <el-table-column :label="t('wms.bridgeHealth.sourceTarget')" width="150">
           <template #default="{ row }">
-            <el-tag size="small" type="info">{{ row.sourceModule }}</el-tag>
+            <CpTag tone="info">{{ row.sourceModule }}</CpTag>
             <span class="arrow">→</span>
-            <el-tag size="small">{{ row.targetModule }}</el-tag>
+            <CpTag tone="muted">{{ row.targetModule }}</CpTag>
           </template>
         </el-table-column>
         <el-table-column prop="totalCount" :label="t('wms.bridgeHealth.totalCount')" width="90" align="right" />
@@ -76,17 +67,16 @@
 
     <el-card shadow="never" class="panel">
       <template #header>
-        <div class="panel-header">
-          <span>{{ t('wms.bridgeHealth.latestDeadLetters') }}</span>
-          <el-tag size="small" type="danger">{{ metrics.deadLetters.length }}</el-tag>
-        </div>
+        <CpSectionHeader :title="t('wms.bridgeHealth.latestDeadLetters')">
+          <template #extra><CpTag tone="danger">{{ metrics.deadLetters.length }}</CpTag></template>
+        </CpSectionHeader>
       </template>
       <el-table :data="metrics.deadLetters" border stripe size="small" v-loading="loading" empty-text=" ">
         <el-table-column prop="hookName" :label="t('wms.bridgeHealth.hookName')" min-width="200" show-overflow-tooltip />
         <el-table-column prop="sourceNo" :label="t('wms.bridgeHealth.sourceNo')" width="140" show-overflow-tooltip />
         <el-table-column :label="t('wms.bridgeHealth.status')" width="110">
           <template #default>
-            <el-tag type="danger" size="small">{{ t('wms.bridgeHealth.status.DEAD') }}</el-tag>
+            <CpTag tone="danger">{{ t('wms.bridgeHealth.status.DEAD') }}</CpTag>
           </template>
         </el-table-column>
         <el-table-column prop="attempts" :label="t('wms.bridgeHealth.attempts')" width="90" align="right" />
@@ -117,6 +107,9 @@ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { BellFilled, CircleCheckFilled, Refresh, WarningFilled } from '@element-plus/icons-vue'
+import CpStatCard from '@/components/templates/CpStatCard.vue'
+import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
+import CpTag from '@/components/base/CpTag.vue'
 import { bridgeHealthApi } from '@/api/wms/bridgeHealth'
 import type { BridgeHealthMetrics } from '@/types/wms/wms'
 
@@ -215,92 +208,34 @@ onUnmounted(() => {
 }
 
 .toolbar h2 {
-  font-size: 18px;
+  font-size: var(--cp-fs-xl);
   font-weight: 600;
   line-height: 1.2;
   margin: 0 0 4px;
 }
 
 .window {
-  color: #606266;
-  font-size: 12px;
-}
-
-.kpi-card {
-  align-items: center;
-  border-left: 4px solid #409eff;
-  display: flex;
-  gap: 12px;
-  min-height: 88px;
-}
-
-.kpi-card.warn {
-  border-left-color: #e6a23c;
-}
-
-.kpi-card.danger {
-  border-left-color: #f56c6c;
-}
-
-.kpi-icon {
-  flex: 0 0 auto;
-  height: 30px;
-  width: 30px;
-}
-
-.kpi-icon.success {
-  color: #67c23a;
-}
-
-.kpi-icon.warning {
-  color: #e6a23c;
-}
-
-.kpi-icon.danger {
-  color: #f56c6c;
-}
-
-.kpi-label {
-  color: #606266;
-  font-size: 12px;
-  margin-bottom: 4px;
-}
-
-.kpi-value {
-  color: #303133;
-  font-size: 26px;
-  font-weight: 650;
-  line-height: 1;
+  color: var(--cp-muted);
+  font-size: var(--cp-fs-xs);
 }
 
 .panel {
   margin-top: 12px;
 }
 
-.panel-header {
-  align-items: center;
-  display: flex;
-  font-weight: 600;
-  justify-content: space-between;
-}
-
 .arrow {
-  color: #909399;
+  color: var(--cp-muted);
   margin: 0 6px;
 }
 
 .bad {
-  color: #d93026;
+  color: var(--cp-danger);
   font-weight: 600;
 }
 
 @media (max-width: 767px) {
   .bridge-health {
     padding: 8px;
-  }
-
-  .kpi-card {
-    margin-bottom: 8px;
   }
 }
 </style>
