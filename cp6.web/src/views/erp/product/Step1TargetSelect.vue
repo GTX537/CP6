@@ -144,13 +144,13 @@
       </el-table-column>
       <el-table-column label="WF" width="60" align="center">
         <template #default="{ row }">
-          <el-icon v-if="row.wfApproved" color="#67c23a"><Check /></el-icon>
+          <el-icon v-if="row.wfApproved" color="var(--cp-ok)"><Check /></el-icon>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column :label="t('連携')" width="60" align="center">
         <template #default="{ row }">
-          <el-icon v-if="row.masterLinked" color="#409eff"><Link /></el-icon>
+          <el-icon v-if="row.masterLinked" color="var(--cp-brand)"><Link /></el-icon>
           <span v-else>-</span>
         </template>
       </el-table-column>

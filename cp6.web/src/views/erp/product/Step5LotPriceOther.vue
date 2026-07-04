@@ -10,7 +10,7 @@
         :disabled="!store.canEdit"
         @click="addLotPrice"
       >{{ t('行追加') }}</el-button>
-      <span style="color: #909399; font-size: 12px">
+      <span style="color: var(--cp-muted); font-size: 12px">
         {{ t('※ 現在価格は表示用、新価格は次回適用 — 適用日付を必ず入力') }}
       </span>
     </div>

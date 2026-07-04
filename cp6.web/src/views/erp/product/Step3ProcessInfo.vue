@@ -13,7 +13,7 @@
         :disabled="!store.canEdit || store.processes.length === 0"
         @click="reSort"
       >{{ t('並び順再採番') }}</el-button>
-      <span style="color: #909399; font-size: 12px">
+      <span style="color: var(--cp-muted); font-size: 12px">
         {{ t('※ 工程CD 0600/0601/0602（トムソン系）は連産品ボタンが活性化') }}
       </span>
     </div>
