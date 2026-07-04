@@ -150,3 +150,28 @@ $ npm run build
 ```
 
 两项验证全部通过，无 build 错误或 type-check 错误。
+
+---
+
+# Task 3 复核修复报告（2026-07-04 二轮）
+
+分支：`feat/ui-restyle`
+
+## 复核发现 1（Important）：出货三段条板外 hex 违反 §2.5
+
+**改动**：`cp6.web/src/views/dashboard/DashboardView.vue` 出货条 inline style
+- 「部分出货」bar 分段与数字文字色的 `#7CE3DD` 全部改为 `var(--cp-warn)`（状态类图表必须用语义色）
+- 「未出货」数字文字色 `var(--cp-line-soft)`（近白不可读）改为 `var(--cp-muted)`；bar 分段本身保持 `var(--cp-line-soft)` 不变
+- 「已出货」数字：经确认通过 `.ship .block .v` 类样式已继承 `color: var(--cp-ink)`，无 inline 覆盖，无需改动
+
+## 复核发现 2（Important）：sparkline 单点/空数组守卫
+
+**改动**：`cp6.web/src/views/dashboard/components/KpiCard.vue`
+- 模板 v-if 从 `trend?.length` 收紧为 `trend && trend.length >= 2`——trend 长度 < 2 时整个 sparkline SVG 不渲染，`points()`/`areaPath()` 不会以单点数组被调用（单点时 `t.length - 1 || 1` 会产出退化路径）
+
+## 验证
+
+```
+npm run type-check: 0 errors
+npm run build: 0 errors
+```

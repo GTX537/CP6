@@ -50,17 +50,17 @@
             <div class="track">
               <div class="bar">
                 <i :style="{ width: shipSummary.shippedPct + '%', background: 'var(--cp-brand)' }" />
-                <i :style="{ width: shipSummary.partialPct + '%', background: '#7CE3DD' }" />
+                <i :style="{ width: shipSummary.partialPct + '%', background: 'var(--cp-warn)' }" />
                 <i :style="{ width: (100 - shipSummary.shippedPct - shipSummary.partialPct) + '%', background: 'var(--cp-line-soft)' }" />
               </div>
               <div class="bl"><span class="num">{{ shipSummary.shippedPct }}%</span></div>
             </div>
             <div class="block">
-              <div class="v num" style="color: #7CE3DD">{{ shipSummary.partial }}</div>
+              <div class="v num" style="color: var(--cp-warn)">{{ shipSummary.partial }}</div>
               <div class="l">{{ t('dashboard.ship5') }}</div>
             </div>
             <div class="block">
-              <div class="v num" style="color: var(--cp-line-soft)">{{ shipSummary.unshipped }}</div>
+              <div class="v num" style="color: var(--cp-muted)">{{ shipSummary.unshipped }}</div>
               <div class="l">{{ t('dashboard.ship0') }}</div>
             </div>
           </div>

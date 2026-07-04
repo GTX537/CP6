@@ -60,7 +60,7 @@ function areaPath(t: number[]): string {
       <slot name="sub">{{ sub }}</slot>
       <span v-if="clickable" class="go">→</span>
     </div>
-    <svg v-if="trend?.length" class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
+    <svg v-if="trend && trend.length >= 2" class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
       <path
         :d="areaPath(trend)"
         :fill="{ brand: 'rgba(20,184,196,.10)', info: 'rgba(78,128,238,.10)', warn: 'rgba(240,148,10,.10)', danger: 'rgba(229,72,77,.08)' }[props.tone]"
