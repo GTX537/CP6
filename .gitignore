@@ -181,3 +181,6 @@ CP6.WebApi/wwwroot/i18n/
 
 # superpowers SDD scratch
 .superpowers/
+
+# SQL Server 备份文件
+*.bak
