@@ -8,7 +8,7 @@
             <div class="card-hd">
               <el-icon><Box /></el-icon>
               <span>{{ t('wms.prodIn.title') }}</span>
-              <el-tag type="success" effect="dark" style="margin-left: auto">{{ t('wms.prodIn.sourceProduction') }}</el-tag>
+              <CpTag tone="ok" style="margin-left: auto">{{ t('wms.prodIn.sourceProduction') }}</CpTag>
             </div>
           </template>
 
@@ -54,7 +54,7 @@
             <el-form-item :label="t('wms.common.warehouse')" required>
               <el-input v-model="form.warehouseCd" size="large">
                 <template #append>
-                  <span style="color: #909399; font-size: 12px">{{ qualityWhHint }}</span>
+                  <span style="color: var(--cp-muted); font-size: 12px">{{ qualityWhHint }}</span>
                 </template>
               </el-input>
             </el-form-item>
@@ -108,6 +108,7 @@ import { ref, reactive, computed, nextTick, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Box, Aim, Check, List, Refresh } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
+import CpTag from '@/components/base/CpTag.vue'
 import { inboundReceiptApi } from '@/api/wms/inboundReceipt'
 import type { InboundReceipt } from '@/types/wms/wms'
 
@@ -213,6 +214,6 @@ onMounted(() => {
 
 <style scoped>
 .wms-prod-inbound { padding: 16px; }
-.big-card :deep(.el-card__header) { background: #f0f9ff; }
+.big-card :deep(.el-card__header) { background: var(--cp-brand-bg); }
 .card-hd { display: flex; align-items: center; gap: 8px; }
 </style>

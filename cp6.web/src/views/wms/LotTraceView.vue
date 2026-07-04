@@ -39,7 +39,7 @@
             <el-descriptions-item :label="t('wms.lotTrace.summary.locationCount')">{{ summary.locationCount }}</el-descriptions-item>
             <el-descriptions-item :label="t('wms.common.expiryDate')">{{ summary.expiryDate?.slice(0, 10) || '—' }}</el-descriptions-item>
             <el-descriptions-item :label="t('wms.stock.flag.recall')">
-              <el-tag v-if="summary.recallFlag" type="danger" size="small">{{ t('wms.lotTrace.summary.recalled') }}</el-tag>
+              <CpTag v-if="summary.recallFlag" tone="danger">{{ t('wms.lotTrace.summary.recalled') }}</CpTag>
               <span v-else>—</span>
             </el-descriptions-item>
           </el-descriptions>
@@ -54,7 +54,7 @@
           <template #header>
             <span style="font-weight: 600">
               {{ direction === 'FORWARD' ? t('wms.lotTrace.affected.customers') : t('wms.lotTrace.affected.suppliers') }}
-              <el-tag size="small" type="warning" style="margin-left: 8px">{{ affectedList.length }}</el-tag>
+              <CpTag tone="warn" style="margin-left: 8px">{{ affectedList.length }}</CpTag>
             </span>
           </template>
           <el-empty v-if="affectedList.length === 0" :description="t('wms.lotTrace.affected.none')" />
@@ -81,22 +81,22 @@
           <template #header>
             <span style="font-weight: 600">
               {{ t('wms.lotTrace.nodes.title') }}
-              <el-tag size="small" style="margin-left: 8px">{{ result.nodes.length }}</el-tag>
+              <CpTag tone="muted" style="margin-left: 8px">{{ result.nodes.length }}</CpTag>
             </span>
           </template>
           <el-empty v-if="result.nodes.length === 0" :description="t('wms.common.noSelection')" />
           <el-timeline v-else>
             <el-timeline-item v-for="n in result.nodes" :key="n.txnNo"
                 :type="timelineTypeOf(n.txnType)" :timestamp="n.txnAt?.replace('T', ' ').slice(0, 19)">
-              <el-tag :type="txnTagOf(n.txnType)" size="small">{{ n.txnType }}</el-tag>
+              <CpTag :tone="txnTone(n.txnType)">{{ n.txnType }}</CpTag>
               <span style="margin-left: 8px">{{ n.warehouseCd }} - {{ n.locationCd }}</span>
               <span :class="n.qty < 0 ? 'qty-out' : 'qty-in'" style="margin-left: 8px; font-weight: 600">
                 {{ n.qty > 0 ? '+' : '' }}{{ formatQty(n.qty) }}
               </span>
-              <div v-if="n.relatedNo" style="color: #909399; font-size: 12px; margin-top: 4px">
+              <div v-if="n.relatedNo" style="color: var(--cp-muted); font-size: 12px; margin-top: 4px">
                 [{{ n.relatedType }}] {{ n.relatedNo }}
               </div>
-              <div v-if="n.remark" style="color: #606266; font-size: 12px; margin-top: 4px">{{ n.remark }}</div>
+              <div v-if="n.remark" style="color: var(--cp-text); font-size: 12px; margin-top: 4px">{{ n.remark }}</div>
             </el-timeline-item>
           </el-timeline>
         </el-card>
@@ -109,6 +109,7 @@
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { lotTraceApi } from '@/api/wms/lotTrace'
 import type { LotTraceResult, LotStockSummary } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
@@ -128,10 +129,15 @@ const affectedList = computed<any[]>(() => {
   return direction.value === 'FORWARD' ? result.value.affectedCustomers : result.value.affectedSuppliers
 })
 
+// el-timeline-item :type 用 EP type（时间轴圆点色，el-timeline 为特殊组件保留）
 function txnTagOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
   return ({ IN: 'success', OUT: 'danger', RSV: 'warning', UNRSV: 'info', MOVE: 'primary', ADJ: 'info' } as const)[t as 'IN'] || 'info'
 }
 function timelineTypeOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' { return txnTagOf(t) }
+// CpTag 用共享 Tone（保色：success→ok / danger→danger / warning→warn / primary→info / info→muted）
+function txnTone(t: string): Tone {
+  return ({ IN: 'ok', OUT: 'danger', RSV: 'warn', UNRSV: 'muted', MOVE: 'info', ADJ: 'muted' } as const)[t as 'IN'] || 'muted'
+}
 
 async function trace() {
   if (!productCd.value || !lotNo.value) { ElMessage.warning(t('wms.common.required')); return }
@@ -168,6 +174,6 @@ async function setRecall(flag: boolean) {
 <style scoped>
 .wms-lot-trace { padding: 16px; }
 .search-card { margin-bottom: 12px; }
-.qty-in { color: var(--el-color-success); }
-.qty-out { color: var(--el-color-danger); }
+.qty-in { color: var(--cp-ok); }
+.qty-out { color: var(--cp-danger); }
 </style>

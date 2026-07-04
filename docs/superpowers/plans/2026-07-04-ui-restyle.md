@@ -596,6 +596,96 @@ describe('CpListPage', () => {
 
 （初始为空；发现 CpListPage/CpFormDialog 覆盖不了的形态时记录于此并先扩模板）
 
+### WMS 迁移批次1 复盘（编号接续 Task 11 试点，从 #9 起）
+
+批次1（Placeholder/InboundOrderList/Expiry/CrossDock/WarehouseList/StockTakeList）迁移完成，功能零丢失、真栈验收通过（5 个已路由页；WmsPlaceholderView 为无路由孤儿代码，仅 token 化）。以下缺口均用逃生舱/旧机制代偿保功能，按批次规则「不改模板组件本体」记录待后续扩契约：
+
+9. **CpFilterBar `daterange` 无 `value-format` 透传 → 返回 `Date` 对象**（Minor）—— ✅ 已实现（契约扩展二轮 commit）：FilterField 增 `valueFormat?` 透传 el-date-picker（date/daterange 通用，opt-in 无默认值以免静默改变既有消费者返回类型）；InboundOrderList 已改独立 date 字段直接拿字符串，ymd() 代偿已删。
+   - 现象：InboundOrderList 原「予定入荷 从/至」两个 `el-date-picker value-format="YYYY-MM-DD"`（返回字符串）。CpFilterBar 无单日 `date` type，只能合并为 `daterange`；而 CpFilterBar 的 `el-date-picker` 未设 `value-format`，返回 `[Date, Date]`，与后端 `arrivalFrom/arrivalTo: string` 契约不符。
+   - 代偿：fetch 包装内 `ymd()` 本地时区格式化（避免 `toISOString` UTC 偏移）为 `YYYY-MM-DD`。
+   - 建议：FilterField 增 `valueFormat?`（透传 el-date-picker），或 CpFilterBar 对 daterange 默认 `value-format="YYYY-MM-DD"`；并补单日 `date` type。
+
+10. **CpFilterBar 无 `number` 字段类型（min/max/step）**（Minor）—— ✅ 已实现（契约扩展二轮 commit）：FilterField 增 `type:'number'` + `min/max/step` 透传 el-input-number；Expiry「N日以内」已改 number(1..365)（spinner 恢复；字段初值空，fetch 侧缺省 30 语义保留）。
+    - 现象：Expiry 原「N 日以内」为 `el-input-number :min="1" :max="365"`。CpFilterBar 仅 text/select/daterange。
+    - 代偿：用 `text` + `placeholder="30"`；fetch 内 `Number()` 解析并 clamp 到 1..365，缺省 30。丢失 spinner 与初值回填（字段初值空，查询按 30）。
+    - 建议：FilterField 增 `type:'number'` + `min/max/step`。
+
+11. **CpListPage 强制分页，无法关闭 → 全量勾选跨页失效**（Minor）—— ✅ 已实现（契约扩展二轮 commit）：CpListPage 增 `paginated?: boolean`（默认 true）；false 时隐藏 pager、page 锁 1、fetch 收 size=UNPAGED_SIZE(1000)；Expiry 已挂 `:paginated="false"`，跨全量勾选一括廃棄恢复。
+    - 现象：Expiry 原为单表 `max-height` 滚动（无分页），`type="selection"` 跨全量勾选后一括廃棄。CpListPage 始终渲染 pager 且无 `:paginated=false` 开关，勾选降为「当页范围」。
+    - 影响：数据完整性不受影响（概览指标在 fetch 包装内按全量结果计算）；仅跨页批量勾选丢失。廃棄为低频操作，可接受。
+    - 建议：CpListPage 增 `paginated?: boolean`（false 时隐藏 pager、fetch 传大 size）或 `pageSizes` 定制。
+
+12. **CpListPage 无命令式 `reload()` / 无外部刷新触发**（Important，影响 3 页）—— ✅ 已实现（契约扩展二轮 commit）：`defineExpose({ reload })`（仅此一项），reload() 保留 filters/page/statusKey 重查；Expiry/CrossDock/Warehouse 三页 `reloadKey` + `:key` 重挂载方案已删，搜索/翻页上下文在变更后不再丢失（删空当前页不自动收拢页码，与原页行为一致，记录在案）。
+    - 现象：CpListPage 仅在 mounted/search/reset/翻页/切卡内部 fetch，不 watch 任何外部信号，也未 `defineExpose`。而 Expiry(廃棄)、CrossDock(新建/実行/取消)、Warehouse(新建/編集/削除) 均需「页内 in-place 变更后刷新列表」（原页调用 `reload()`）。
+    - 代偿：父级持 `reloadKey` ref，`:key="reloadKey"` 绑定 CpListPage，变更成功后 `reloadKey++` 强制重挂载重查。**副作用**：重挂载会把 CpListPage 内部 `filters`（重置为 `{}`）与 `page`（重置为 1）清空 → 用户当前搜索/翻页上下文丢失（Warehouse 编辑后列表回到未筛选首页最明显）。数据正确性优先，故采用；记为已知降级。
+    - 建议：CpListPage `defineExpose({ reload })`（父级 `ref` 命令式刷新，保留 filters/page），或增 `refreshKey?: number` prop 内部 `watch` 触发 `load()`（不重置状态）。这是本批最值得回填的契约扩展。
+
+13. **FilterField 无单日期 `date` 类型**（Minor，批次1评审补记）—— ✅ 已实现（契约扩展二轮 commit）：FilterField 增 `type:'date'`（单日 el-date-picker 透传，配 valueFormat 用）；InboundOrderList「予定入荷 从/至」已拆回两个独立字段，单侧开区间查询恢复。
+    - 现象：InboundOrderList 原「予定入荷 从/至」为两个**独立**单日期 `el-date-picker`（可只填一侧做开区间查询）。FilterField 仅 text/select/daterange，被并成一个 daterange —— 单侧开区间查询能力丢失（daterange 必须成对选起止）。
+    - 代偿：合并为 daterange（documented compensation，见批次1报告盘点）；fetch 内拆回 arrivalFrom/arrivalTo。
+    - 建议：FilterField 增 `type:'date'`（单日 el-date-picker 透传），恢复独立起/止字段形态。
+
+（注：所有页 CpFilterBar `expand/collapse` 仍留组件内中文默认「展开更多/收起」、CpEmpty 空态仍为中文「暂无数据」——沿用 Task 11 试点约定，属 follow-up #6，非本批新增。）
+
+### WMS 迁移批次2 复盘（编号接续，从 #14 起）
+
+批次2（LotTrace/Replenish/InboundReceipt/Slotting/ProductionInbound）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：Replenish=查询列表页（CpListPage+2×CpFormDialog）；Slotting=一覧/明细双态同组件（CpListPage v-show 常挂 + CpDetailPanel + 分析 CpFormDialog）；LotTrace/ProductionInbound/InboundReceipt=非表格特殊页（token 化 + 基础件替换）。以下为唯一新增缺口：
+
+14. **CpDetailPanel 的 tag 值无 tone 映射（不支持 ListColumn.map 式码值→tone）**（Minor）
+    - 现象：Slotting 明细「基本情報」用 CpDetailPanel 铺 6 项；其中「状態」是数字码需 码→文案 + 码→tone 两步映射。CpDetailPanel 的 `kind:'tag'` 与 CpTag 一样只认「已是状态词」的原始值（走 STATUS_TONE，日文标签命不中→muted），无 `map?: (val)=>{label,tone?}`（对照 ListColumn 已有 map）。
+    - 代偿：把带 tone 的状態 CpTag 放到明细卡 `CpSectionHeader` 的 `#extra` 槽（原页状态也在标题行），CpDetailPanel 只铺纯文本/数字项——功能与视觉均保全，未丢 tone。
+    - 建议：CpDetailPanel.items 增可选 `tone?: Tone`（或 `map`），与 ListColumn.map 对齐，让详情面板码值状态也能声明式着色。
+
+（注：CpListPage 的 el-pagination 触发 element-plus 内部 `[el-pagination] small … deprecated` 警告——EP 库内部 size-changer 自带，warning 级、非本批引入、CpListPage 本体未改，记录在案非阻塞。InboundReceipt 为全页可编辑录入页，原本即已 token 化合规（el-card overrides + var() 令牌，零禁用硬编码、无状态 pill 可替换），本批审计后维持原结构。）
+
+### WMS 迁移批次3 复盘（编号接续，从 #15 起）
+
+批次3（InboundOrder/SampleStock/Pallet/LocationList/PaperRoll）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：SampleStock/Pallet/PaperRoll=查询列表页（CpListPage + 2~3×CpFormDialog default slot）；InboundOrder=全页可编辑录入页（token 化 + 状態 el-tag→CpTag）；LocationList=master-detail 双表联动特殊页（token 化 + CpTag，保留双栏 + el-dialog）。以下为唯一新增缺口：
+
+15. **CpFilterBar 无 boolean/checkbox 字段类型**（Minor）
+    - 现象：SampleStock 原「未返却(超過)」为 el-checkbox 查询条件（`overdueOnly: boolean`）。FilterField 仅 text/select/date/daterange/number，无法渲染复选。
+    - 代偿：`overdueOnly` 提为页级 `ref`，放 CpListPage **toolbar slot** 复选，`fetchList` 闭包读取 + `@change` 触发 `listRef.reload()`——控件与功能完整保全（未降级为 select 下拉）。
+    - 建议：FilterField 增 `type:'boolean'`（透传 el-checkbox / el-switch），或 CpFilterBar 增字段级插槽，让布尔查询条件声明式进查询区。
+
+（注：LocationList 为 master-detail 双表联动，CpListPage 单表卡形态不表达，按「特殊页不强套模板」保留双栏 el-table + 编辑 el-dialog，未计入模板缺口——与批次2 LotTrace/InboundReceipt 处置一致。）
+
+### WMS 迁移批次4 复盘（编号接续，从 #16 起）
+
+批次4（WcsTask/StockTake/IotMonitor/ReportCenter/Carrier）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：WcsTask/Carrier=查询列表页（CpPageShell+CpListPage+CpFilterBar+3×CpFormDialog，码值状態列 kind:'tag'+map，客户端分页）；StockTake=棚卸明細/编辑特殊页（token 化：el-tag→CpTag+tone、内联 #aaa/el-var→--cp-* token、保留 el-descriptions+可编辑 el-table+el-affix action-bar）；IotMonitor=监控仪表盘特殊页（token 化 + CpTag/CpEmpty 基础件替换，保留 30s 轮询/アラート/行クリック履歴，新建/投入弹窗迁 CpFormDialog）；ReportCenter=帳票中心特殊页（token 化 + CpTag/CpEmpty，保留動的表单/多结果表/CSV）。真栈：WcsTask 5 行 + 状態/優先度 pill + 新建 CpFormDialog；Carrier 空态（Total 0）+ 新建必填标记；IotMonitor 1 alert/3 sensors + 投入/履歴弹窗；ReportCenter 在庫月報 16 行 + 件数 pill；StockTake 无数据故直达验证 default 渲染（計画/全棚卸 pill + action-bar）。以下为唯一新增缺口：
+
+16. **CpListPage 无 `@row-click` 透传（整行点击事件）**（Minor）
+    - 现象：Carrier 原表格 `@row-click` 整行点击打开「イベント履歴」详情弹窗。CpListPage 的 el-table 未透传 row-click，业务侧拿不到行点击事件。
+    - 代偿：详情能力下沉到操作列常驻「詳細」link 按钮（`openDetail(row)`），功能与 timeline 弹窗完整保全；仅丢失「整行可点」这一 UX affordance（highlight-current-row 仍默认开启，视觉高亮不受影响）。
+    - 建议：CpListPage 增 `@row-click(row)` 透传 el-table 同名事件，恢复整行点击进详情的交互。
+
+（注：StockTake/IotMonitor/ReportCenter 三页为特殊页，按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3 处置一致。CpFormDialog 采用 `label-position:top`（设计系统标准），与原页 label-width 左标签的差异属既定契约，非缺口。Carrier/StockTake/stock-take-list 三处后端无种子数据，Carrier 验证空态 + 新建弹窗、StockTake 直达验证 default 渲染，已在报告注明。）
+
+### WMS 迁移批次7 复盘（编号接续，从 #17 起）
+
+批次7（BridgeHealth/OutboundRouting/MaterialShortage/WmsDashboard/InkLot）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：OutboundRouting/MaterialShortage=查询列表页（CpPageShell+CpListPage，码值列 map，前者 paginated=false、后者服务端分页，复合 create/action ダイアログ保持 el-dialog）；BridgeHealth=监控仪表盘特殊页（KPI×3→CpStatCard、パネルヘッダ→CpSectionHeader、状態 el-tag→CpTag，保留 30s ポーリング/timer cleanup、el-progress/el-table）；WmsDashboard=仪表盘特殊页（KPI×8→CpStatCard、カードヘッダ→CpSectionHeader、状態/TXN el-tag→CpTag，保留 SignalR リアルタイム/棒グラフ/タイムライン/明細テーブル；棒グラフ系列色→--cp-ok/danger/muted token）；InkLot=タブ式ワークベンチ特殊页（2 リスト+4 ダイアログ、tabs は模板契約外——token 化 + 状態 el-tag→CpTag、expiry 色→--cp-danger/warn，el-tabs/el-form/el-table/dialogs 保持）。真栈：BridgeHealth KPI(0.0%/0/0)+2 パネル No Data；OutboundRouting count 0 空态+新規ルール ダイアログ+プレビューカード；MaterialShortage KPI(未対応 0)+検索/クリア reload+Total 0 分页；WmsDashboard KPI×8+未接続 pill+トレンド/倉庫別/アラート表；InkLot 2 タブ切替+検索フォーム No Data。console 无新 error（WmsDashboard 的 SignalR CSRF 403 negotiate 失败=環境既有基础设施问题，SignalR コード原様保持未改，非本批引入，未接続 pill 正确反映）。以下为唯一新增缺口：
+
+17. **CpListPage / CpFilterBar 无初始 filter 值（无法 seed 默认查询条件）**（Minor）
+    - 现象：MaterialShortage 原 `query.status` 初期値 = 'OPEN'（欠品トリアージのため既定で未対応のみ表示）、resetQuery も 'OPEN' に戻す。CpFilterBar 的 filters 内部初始化为 `{}`，各字段起始 undefined，无 prop 可 seed 初始值。
+    - 代偿：`fetchList` 内 `status = filters.status === undefined ? 'OPEN' : filters.status`——初回/リセット(undefined)→OPEN、''→全件、明示選択はそのまま。功能等价保全（初期表示=未対応、リセット=未対応、全件は ALL 選択で到達）；唯一の齟齬は初回に status セレクトが空表示（実データは OPEN 絞込）——cosmetic、記录在案。
+    - 建议：CpListPage 增 `initialFilters?: Record<string,unknown>`（或 CpFilterBar `defaultValue`）透传初始 filters，恢复默认查询条件的可视回填。
+
+（注：MaterialShortage 采用 CpListPage 标准分页，page-sizes 从原 [50,100,200]/默认 50 变为模板 [20,50,100]/默认 20——属既定模板契约，非缺口。BridgeHealth/WmsDashboard 系监控·仪表盘特殊页，InkLot 系 tabs 工作台特殊页，均按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3/4 处置一致。WmsDashboard SignalR CSRF negotiate 403 为測試環境基础设施既有问题，非本批引入。）
+
+### WMS 迁移批次8 复盘（模块收尾，无新增模板缺口）
+
+批次8（模块收尾）迁移完成，功能零丢失、真栈验收通过。本批 = Part A 末两页（模块最大）+ Part B 模块级硬编码清扫 + Part C 累积清理。分类与处置：
+
+- **KitView**（キット，420 行）= el-tabs 双模块（マスタ / 組立指示）× list+detail 双态。list 态迁 CpListPage（状態/種別/ON-OFF=kind:'tag'+map；数量/実行日時=col slot；新規=toolbar slot #15），list 用 `v-if` 随 mode 切换卸载 → 戻る时重挂 auto-fetch（RmaView 先例のフレッシュネス）；detail 态 = 新規/閲覧兼用の編集フォーム + BOM 編集テーブル（特殊エディタ領域，保留 el-card/el-form/el-table/el-affix），ヘッダ状態を CpTag 化、action-bar/txn-list を token 化。組立指示の kitSku ドロップダウンはマスタ一覧と別ソース（`activeMasters` を onMounted＋マスタ変更後にロード）で疎結合化。el-tabs は模板契約外の特殊ナビ——CpPageShell は被せず、原页无页头を踏襲。
+- **StockDwellView**（在庫滞留レポート，456 行）= 仪表盘/分析特殊页（KPI×4 + 滞留バケット横棒グラフ + 明細テーブル + モバイル表示）。按「非表格特殊页只做 token 化 + 基础件替换」处置：el-tag→CpTag、el-empty→CpEmpty、内联全色値（#303133/#606266/#409eff/#f56c6c/#e6a23c/#67c23a/#d93026/#eef2f7/#ebeef5）→ `--cp-ink/muted/info/danger/warn/ok/line/line-soft` token 化。滞留バケット 4 色は「意味づけ色（新鮮→期限超過）」で設計トークンに 1:1 対応するため §2.5 図表色免除は使わずトークン化（grep が `/* cp-chart-color */` 免除行ゼロ＝完全クリーンで返る）。
+
+**Part B 模块硬编码清扫**：全 `#hex`/`rgba()` 真彩值仅 StockDwell + KitView 内联残留（其余 wms 页 grep 命中均为 `template #default` 正则误报——"defa" 4 位十六进制字符，非色值），已随两页迁移清零。`var(--el-*)` 残留 5 处一并 token 化：InboundReceipt/InboundOrder/Kit 的 action-bar（`--el-bg-color`/`--el-border-color-lighter`→`--cp-card`/`--cp-line-soft`，与 Slotting 统一）、LotTrace 的 `.qty-in/.qty-out`（`--el-color-success`/`--el-color-danger`→`--cp-ok`/`--cp-danger`）。最终 grep：非 `#default` 误报行 = 0。
+
+**Part C 累积清理**（并入 fix commit ②）：① SlottingView 删除死 CSS `.wms-slotting{padding:16px}`（模板根为 CpPageShell，该类无宿主）；`listRef` 从悬空改为接线——新增 `listDirty` 脏标记，onApprove/onCancel 成功后置位，`backToList()` 在返回一覧时命令式 `reload()`（CpListPage 为 `v-show` 常挂不自动重取，故手动刷新，等价 RmaView `v-if` 重挂的フレッシュネス；真栈证实：承認後戻る→`GET /wms/slotting` 触发、一覧显示 SLP2026070001/承認済/admin）。② 删除 detail action-bar 重复「戻る」（保留 header #actions 版）。③ **CrossDock xDockNo 大小写修正**：后端实体 `XDockNo` camelCase 序列化为 `xDockNo`（大写 D），前端行读取用了 `xdockNo`（小写 d）→ 単号列空白 + 実行/取消 POST `/cross-dock/undefined/execute`。修正 CrossDockView 列 prop + onExecute/onCancel 行读取 + `CrossDockOrder` 类型定义三处为 `xDockNo`（create 响应体后端返回的是字面 `{ xdockNo }` 匿名对象，保持不变；search 过滤键 `xdockNo` 走后端大小写不敏感模型绑定，工作正常，未动）。真栈证实：単号列显示 XD2026070001、`POST /api/wms/cross-dock/XD2026070001/execute → 200`（原为 `/undefined/execute → 400`）。
+
+真栈证据（截图存 `.superpowers/sdd/shots/`）：Kit マスタ一覧（Total 2 + ON pill + 開く/削除）/マスタ detail（フォーム+BOM 編集+行追加）/組立一覧（Total 3 + 方向/状態 pill）/組立 detail（下書き=muted・組立=ok の CpTag ヘッダ + 実行/取消 action-bar）；StockDwell（KPI×4 トークン枠色 + バケット横棒 --cp-ok/info + 基準日 CpTag）；CrossDock（単号 XD2026070001 + 実行 200）；Slotting（承認→戻る→一覧リロード=承認済 反映）。console 无本批新 error（SignalR CSRF 403 / EP small·label 弃用警告 = 環境·既有基础设施，非本批引入）。type-check 0 error、`npm run test` 304 全绿。
+
+**本批无新增模板缺口**——两页均落在既有契约（CpListPage toolbar/col slot #15/#16、default-filter-in-fetch #17）与「特殊页 token 化」处置内，未触发新的模板扩展需求。
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

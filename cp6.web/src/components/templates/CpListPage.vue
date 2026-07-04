@@ -18,11 +18,16 @@
     - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key；tone 用 CpTag 共享 Tone。
     - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
     - highlightCurrentRow?: boolean 透传 el-table 当前行高亮；默认 true（迁移页默认保留原行为）。
+    - paginated?: boolean          默认 true。false 时隐藏分页器、page 锁定 1，fetch 收到 size=UNPAGED_SIZE(1000)
+                                   一次取全量（单表滚动 + 跨全量勾选形态，如賞味期限一括廃棄）。
     - filterLabels?: FilterBarLabels 透传 CpFilterBar 按钮文案覆盖（业务侧接 i18n；缺省中文）。
     - emptyText?: string           透传 CpEmpty 空状态文案（缺省「暂无数据」）。
   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
   Emits: selection-change(rows) ｜ total-change(n)（每次成功加载后携带最新 total，供 CpPageShell :count 接线；
          受 seq 乱序守卫，过期响应不 emit）
+  Expose: reload()（仅此一项）——命令式重新 fetch，保留当前 filters / page / statusKey（页内 in-place 变更后刷新，
+          替代重挂载 :key 方案）。注意：删除当前页最后一行后 reload() 仍停留原 page，可能显示空页（不自动收拢页码，
+          与原页 reload() 行为一致，记录在案）。
 
   使用示例：
     <CpPageShell title="出庫指示一覧" :count="total">
@@ -78,9 +83,10 @@ const props = withDefaults(defineProps<{
   selectable?: boolean
   rowKey?: string
   highlightCurrentRow?: boolean
+  paginated?: boolean
   filterLabels?: FilterBarLabels
   emptyText?: string
-}>(), { highlightCurrentRow: true })
+}>(), { highlightCurrentRow: true, paginated: true })
 
 const emit = defineEmits<{
   (e: 'selection-change', rows: unknown[]): void
@@ -96,6 +102,9 @@ const rows = ref<unknown[]>([])
 const total = ref(0)
 const loading = ref(false)
 
+// paginated=false 时一次取数的 size 上限（无分页形态的全量口径；超过此量的数据源应保持分页）
+const UNPAGED_SIZE = 1000
+
 // —— load()：唯一取数入口；seq 守卫乱序响应（只有最新一次请求的结果生效）——
 let seq = 0
 async function load() {
@@ -103,8 +112,8 @@ async function load() {
   loading.value = true
   try {
     const res = await props.fetch({
-      page: page.value,
-      size: size.value,
+      page: props.paginated ? page.value : 1, // 无分页形态 page 锁定 1
+      size: props.paginated ? size.value : UNPAGED_SIZE,
       filters: filters.value,
       statusKey: statusKey.value
     })
@@ -120,6 +129,10 @@ async function load() {
   }
 }
 onMounted(load)
+
+// —— 命令式刷新：保留当前 filters / page / statusKey 重新 fetch（页内 in-place 变更后调用）——
+function reload() { return load() }
+defineExpose({ reload }) // 仅暴露 reload，内部状态不外露
 
 // —— 交互 ——
 function onSearch() { page.value = 1; load() }
@@ -208,7 +221,7 @@ function mapTone(c: ListColumn, row: unknown): Tone | undefined {
         </template>
       </el-table>
 
-      <div class="pager">
+      <div v-if="paginated" class="pager">
         <el-pagination
           v-model:current-page="page"
           v-model:page-size="size"

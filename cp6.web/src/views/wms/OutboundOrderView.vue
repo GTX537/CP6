@@ -2,10 +2,10 @@
   <div class="wms-outbound-order">
     <el-card shadow="never">
       <template #header>
-        <div style="display: flex; align-items: center; gap: 12px">
-          <span style="font-weight: 600">{{ isNew ? t('wms.outbound.titleNew') : `${t('wms.outbound.title')} [${form.outboundNo}]` }}</span>
-          <el-tag :type="statusTagOf(form.status)" size="small">{{ statusMap[form.status] || '—' }}</el-tag>
-          <el-tag size="small" :type="form.outboundType === 1 ? 'info' : 'warning'">{{ typeMap[form.outboundType] }}</el-tag>
+        <div class="card-hd">
+          <span class="hd-title">{{ isNew ? t('wms.outbound.titleNew') : `${t('wms.outbound.title')} [${form.outboundNo}]` }}</span>
+          <CpTag :tone="statusTone(form.status)">{{ statusMap[form.status] || '—' }}</CpTag>
+          <CpTag :tone="form.outboundType === 1 ? 'info' : 'warn'">{{ typeMap[form.outboundType] }}</CpTag>
         </div>
       </template>
 
@@ -154,6 +154,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
 import type { OutboundOrder, OutboundOrderDetail, ShipRequest } from '@/types/wms/wms'
 import { formatQty as fmtQty } from '@/utils/format'
@@ -196,8 +197,8 @@ const canDelete = computed(() => !isNew.value && form.status === 0)
 const shipDialog = ref(false)
 const shipReq = reactive<ShipRequest>({ caseQty: 1 })
 
-function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'danger' {
-  return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'warning', 4: 'success', 9: 'danger' } as const)[s as 0] || 'info'
+function statusTone(s: number): Tone {
+  return ({ 0: 'info', 1: 'info', 2: 'warn', 3: 'warn', 4: 'ok', 9: 'muted' } as const)[s as 0] || 'info'
 }
 function formatQty(n: number | null | undefined): string {
   if (n == null) return '0'
@@ -297,7 +298,9 @@ onMounted(async () => {
 
 <style scoped>
 .wms-outbound-order { padding: 16px; padding-bottom: 60px; }
-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
+.card-hd { display: flex; align-items: center; gap: 12px; }
+.hd-title { font-weight: 600; }
+.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
 .action-bar > * { margin-left: 8px; }
-.ok { color: var(--el-color-success); font-weight: 600; }
+.ok { color: var(--cp-ok); font-weight: 600; }
 </style>

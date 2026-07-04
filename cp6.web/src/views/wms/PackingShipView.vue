@@ -38,7 +38,7 @@
             <div class="hd-row">
               <div>
                 <h2 style="margin: 0">{{ current.outboundNo }}</h2>
-                <div style="color: #666; font-size: 13px">{{ current.customerName || current.workOrderNo }}</div>
+                <div style="color: var(--cp-muted); font-size: 13px">{{ current.customerName || current.workOrderNo }}</div>
               </div>
               <div style="margin-left: auto">
                 <el-tag type="warning" size="large">{{ (current.details || []).length }} {{ t('wms.pick.fld.lineNo') }}</el-tag>
@@ -250,17 +250,17 @@ onMounted(() => { reloadQueue(); reloadHistory() })
 .card-hd { display: flex; align-items: center; gap: 8px; }
 .queue-card :deep(.el-card__body) { padding: 8px; max-height: 720px; overflow-y: auto; }
 .queue-item {
-  padding: 10px 12px; border: 1px solid #ebeef5; border-radius: 6px; margin-bottom: 6px; cursor: pointer;
-  transition: all 0.15s;
+  padding: 10px 12px; border: 1px solid var(--cp-line); border-radius: var(--cp-r-sm); margin-bottom: 6px; cursor: pointer;
+  transition: all var(--cp-t-base);
 }
-.queue-item:hover { background: #f5f7fa; border-color: #c0c4cc; }
-.queue-item.active { background: #fdf6ec; border-color: #e6a23c; }
+.queue-item:hover { background: var(--cp-bg-hover); border-color: var(--cp-faint); }
+.queue-item.active { background: var(--cp-warn-bg); border-color: var(--cp-warn); }
 .queue-no { font-weight: bold; font-size: 14px; }
 .queue-meta { display: flex; gap: 4px; margin: 4px 0; }
-.queue-info { font-size: 12px; color: #606266; }
+.queue-info { font-size: 12px; color: var(--cp-text); }
 
 .hd-card { margin-bottom: 8px; }
 .hd-row { display: flex; align-items: center; }
 .items-card { margin-bottom: 8px; }
-.ship-card :deep(.el-card__header) { background: #f0f9ff; }
+.ship-card :deep(.el-card__header) { background: var(--cp-brand-bg); }
 </style>

@@ -1,72 +1,46 @@
+<!--
+  入庫指示一覧 —— CpPageShell + CpListPage 迁移（WMS 批次1）。
+  状態列走 kind:'tag'+map（码→i18n+tone）；種別列纯 map（原页无 tag 视觉）；日期列 kind:'date'；操作列 col slot。
+  「予定入荷 从/至」为两个独立单日期字段（type:'date' + valueFormat:'YYYY-MM-DD'，契约扩展二轮 #9/#13）——
+  可只填一侧做开区间查询，model 直接为字符串，无需 fetch 内格式化。
+  数据源 inboundOrderApi.search 返回扁平数组无 total → 客户端分页（同样板）。
+-->
 <template>
-  <div class="wms-inbound-list">
-    <el-card shadow="never" class="search-card">
-      <el-form :model="query" inline size="small">
-        <el-form-item :label="t('wms.inbound.fld.no')"><el-input v-model="query.inboundNo" clearable style="width: 180px" /></el-form-item>
-        <el-form-item :label="t('wms.inbound.fld.supplierCd')"><el-input v-model="query.supplierCd" clearable style="width: 140px" /></el-form-item>
-        <el-form-item :label="t('wms.common.warehouse')"><el-input v-model="query.warehouseCd" clearable style="width: 120px" /></el-form-item>
-        <el-form-item :label="t('wms.common.status')">
-          <el-select v-model="query.status" clearable style="width: 140px">
-            <el-option v-for="(label, val) in statusMap" :key="val" :label="label" :value="Number(val)" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="`${t('wms.inbound.fld.expectedArrival')} ${t('wms.common.from')}`">
-          <el-date-picker v-model="query.arrivalFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
-        </el-form-item>
-        <el-form-item :label="t('wms.common.to')">
-          <el-date-picker v-model="query.arrivalTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
-          <el-button @click="goCreate">{{ t('wms.common.create') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+  <CpPageShell :title="t('wms.inbound.titleList')" :count="total">
+    <template #actions>
+      <el-button @click="goCreate">{{ t('wms.common.create') }}</el-button>
+    </template>
 
-    <el-card shadow="never">
-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row>
-        <el-table-column prop="inboundNo" :label="t('wms.inbound.fld.no')" width="180" />
-        <el-table-column :label="t('wms.common.status')" width="120">
-          <template #default="{ row }">
-            <el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] || row.status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('wms.common.type')" width="120">
-          <template #default="{ row }">{{ typeMap[row.inboundType] || row.inboundType }}</template>
-        </el-table-column>
-        <el-table-column prop="supplierName" :label="t('wms.inbound.fld.supplierName')" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="poNo" :label="t('wms.inbound.fld.poNo')" width="140" />
-        <el-table-column prop="expectedArrivalDate" :label="t('wms.inbound.fld.expectedArrival')" width="120">
-          <template #default="{ row }">{{ row.expectedArrivalDate?.slice(0, 10) }}</template>
-        </el-table-column>
-        <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="80" />
-        <el-table-column prop="createDate" :label="t('wms.common.createDate')" width="120">
-          <template #default="{ row }">{{ row.createDate?.slice(0, 10) }}</template>
-        </el-table-column>
-        <el-table-column :label="t('wms.common.action')" width="160" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="goEdit(row)">{{ t('wms.common.open') }}</el-button>
-            <el-button link type="success" size="small" @click="goReceive(row)">{{ t('wms.inbound.btn.receipt') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-  </div>
+    <CpListPage
+      :columns="columns"
+      :fetch="fetchList"
+      :search-fields="searchFields"
+      :filter-labels="filterLabels"
+      @total-change="total = $event"
+    >
+      <template #col-_action="{ row }">
+        <el-button link type="primary" size="small" @click="goEdit(row)">{{ t('wms.common.open') }}</el-button>
+        <el-button link type="success" size="small" @click="goReceive(row)">{{ t('wms.inbound.btn.receipt') }}</el-button>
+      </template>
+    </CpListPage>
+  </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+import { type Tone } from '@/components/base/CpTag.vue'
 import { inboundOrderApi } from '@/api/wms/inboundOrder'
 import type { InboundOrder, InboundOrderSearchQuery } from '@/types/wms/wms'
 
 const router = useRouter()
 const { t } = useI18n()
 
-const query = reactive<InboundOrderSearchQuery>({ pageSize: 100 })
-const rows = ref<InboundOrder[]>([])
-const loading = ref(false)
+const total = ref<number>()
 
 const statusMap = computed<Record<number, string>>(() => ({
   0: t('wms.inbound.status.draft'),
@@ -82,26 +56,63 @@ const typeMap = computed<Record<number, string>>(() => ({
   9: t('wms.inbound.type.other'),
 }))
 
-function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'danger' {
-  return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'success', 9: 'danger' } as const)[s as 0] || 'info'
+// 沿用原 statusTagOf（info/primary/warning/success/danger）意图 → 设计系统共享 Tone
+function statusTone(s: number): Tone {
+  return ({ 0: 'muted', 1: 'info', 2: 'warn', 3: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
+}
+function codeLabel(m: Record<number, string>, v: unknown): string {
+  return m[v as number] || (v == null ? '' : String(v))
 }
 
-async function reload() {
-  loading.value = true
-  try {
-    const res = await inboundOrderApi.search(query)
-    rows.value = res.data || []
-  } finally { loading.value = false }
+const columns = computed<ListColumn[]>(() => [
+  { prop: 'inboundNo', label: t('wms.inbound.fld.no'), kind: 'mono', width: 180 },
+  { prop: 'status', label: t('wms.common.status'), width: 120, kind: 'tag',
+    map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
+  { prop: 'inboundType', label: t('wms.common.type'), width: 120,
+    map: (v) => ({ label: codeLabel(typeMap.value, v) }) },
+  { prop: 'supplierName', label: t('wms.inbound.fld.supplierName'), minWidth: 180, overflowTooltip: true },
+  { prop: 'poNo', label: t('wms.inbound.fld.poNo'), width: 140 },
+  { prop: 'expectedArrivalDate', label: t('wms.inbound.fld.expectedArrival'), width: 120, kind: 'date' },
+  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 80 },
+  { prop: 'createDate', label: t('wms.common.createDate'), width: 120, kind: 'date' },
+  { prop: '_action', label: t('wms.common.action'), width: 160, fixed: 'right' },
+])
+
+const filterLabels = computed(() => ({
+  search: t('wms.common.search'),
+  reset: t('wms.common.clear'),
+}))
+
+const searchFields = computed<FilterField[]>(() => [
+  { key: 'inboundNo', label: t('wms.inbound.fld.no'), type: 'text' },
+  { key: 'supplierCd', label: t('wms.inbound.fld.supplierCd'), type: 'text' },
+  { key: 'warehouseCd', label: t('wms.common.warehouse'), type: 'text' },
+  {
+    key: 'status', label: t('wms.common.status'), type: 'select',
+    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+  },
+  // 原页形态：两个独立单日期（可只填一侧做开区间查询）；valueFormat 使 model 直接为 'YYYY-MM-DD' 字符串
+  { key: 'arrivalFrom', label: `${t('wms.inbound.fld.expectedArrival')} ${t('wms.common.from')}`, type: 'date', valueFormat: 'YYYY-MM-DD' },
+  { key: 'arrivalTo', label: `${t('wms.inbound.fld.expectedArrival')} ${t('wms.common.to')}`, type: 'date', valueFormat: 'YYYY-MM-DD' },
+])
+
+const PAGE_CAP = 500
+const fetchList: ListFetch = async ({ page, size, filters }) => {
+  const f = filters as Record<string, unknown>
+  const q: InboundOrderSearchQuery = { pageSize: PAGE_CAP }
+  if (f.inboundNo) q.inboundNo = String(f.inboundNo)
+  if (f.supplierCd) q.supplierCd = String(f.supplierCd)
+  if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
+  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
+  if (f.arrivalFrom) q.arrivalFrom = String(f.arrivalFrom) // valueFormat 已保证 YYYY-MM-DD 字符串
+  if (f.arrivalTo) q.arrivalTo = String(f.arrivalTo)
+  const res = await inboundOrderApi.search(q)
+  const all = res.data || []
+  const start = (page - 1) * size
+  return { rows: all.slice(start, start + size), total: all.length }
 }
 
 function goCreate() { router.push({ path: '/wms/inbound-order', query: { mode: 'new' } }) }
 function goEdit(row: InboundOrder) { router.push({ path: '/wms/inbound-order', query: { no: row.inboundNo } }) }
 function goReceive(row: InboundOrder) { router.push({ path: '/wms/inbound-receipt', query: { inboundNo: row.inboundNo } }) }
-
-onMounted(reload)
 </script>
-
-<style scoped>
-.wms-inbound-list { padding: 16px; }
-.search-card { margin-bottom: 12px; }
-</style>

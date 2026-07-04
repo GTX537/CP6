@@ -4,7 +4,7 @@
       <div class="hd-row">
         <div>
           <h2 style="margin: 0">{{ t('wms.mobile.title') }}</h2>
-          <div style="font-size: 12px; color: #909399">{{ formatDateTime(new Date()) }}</div>
+          <div style="font-size: 12px; color: var(--cp-muted)">{{ formatDateTime(new Date()) }}</div>
         </div>
         <el-button :icon="Refresh" circle @click="reload" :loading="loading" />
       </div>
@@ -243,30 +243,30 @@ onMounted(reload)
 .hd-row { display: flex; align-items: center; justify-content: space-between; }
 .scan-bar { margin-top: 12px; }
 .scan-result {
-  margin-top: 8px; padding: 8px 10px; border-radius: 8px;
-  background: #f5f7fa; border-left: 4px solid #909399;
+  margin-top: 8px; padding: 8px 10px; border-radius: var(--cp-r-sm);
+  background: var(--cp-bg-th); border-left: 4px solid var(--cp-muted);
 }
-.scan-result.location { border-left-color: #67c23a; }
-.scan-result.product { border-left-color: #409eff; }
-.scan-result.unknown { border-left-color: #e6a23c; }
+.scan-result.location { border-left-color: var(--cp-ok); }
+.scan-result.product { border-left-color: var(--cp-info); }
+.scan-result.unknown { border-left-color: var(--cp-warn); }
 .sr-hd { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.sr-sub { font-size: 12px; color: #909399; }
+.sr-sub { font-size: 12px; color: var(--cp-muted); }
 .sr-stk { margin-top: 6px; }
-.sr-empty { font-size: 12px; color: #909399; margin-top: 6px; }
-.stat { text-align: center; padding: 6px; border-radius: 6px; background: #f5f7fa; }
-.stat-num { font-size: 22px; font-weight: bold; color: #409eff; }
-.stat-lbl { font-size: 11px; color: #606266; }
+.sr-empty { font-size: 12px; color: var(--cp-muted); margin-top: 6px; }
+.stat { text-align: center; padding: 6px; border-radius: var(--cp-r-sm); background: var(--cp-bg-th); }
+.stat-num { font-size: 22px; font-weight: bold; color: var(--cp-brand); }
+.stat-lbl { font-size: 11px; color: var(--cp-text); }
 .task-tabs :deep(.el-tabs__content) { padding-top: 6px; }
 .task-card {
-  background: #fff; border: 1px solid #ebeef5; border-radius: 8px;
+  background: var(--cp-card); border: 1px solid var(--cp-line); border-radius: var(--cp-r-sm);
   padding: 10px 12px; margin-bottom: 8px; cursor: pointer;
-  transition: all 0.15s;
+  transition: all var(--cp-t-base);
 }
-.task-card:active { background: #ecf5ff; }
+.task-card:active { background: var(--cp-brand-bg); }
 .task-hd { display: flex; align-items: center; justify-content: space-between; }
-.task-no { font-weight: bold; font-size: 14px; color: #303133; }
-.task-sub { font-size: 12px; color: #606266; margin: 4px 0; }
-.task-grid { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: #606266; margin-bottom: 6px; }
+.task-no { font-weight: bold; font-size: 14px; color: var(--cp-ink); }
+.task-sub { font-size: 12px; color: var(--cp-text); margin: 4px 0; }
+.task-grid { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--cp-text); margin-bottom: 6px; }
 .task-actions { display: flex; gap: 6px; justify-content: flex-end; }
-.task-foot { font-size: 11px; color: #909399; }
+.task-foot { font-size: 11px; color: var(--cp-muted); }
 </style>

@@ -1,50 +1,47 @@
+<!--
+  キット (Kit) —— WMS 迁移批次8。el-tabs 双模块（マスタ管理 / 組立指示），各模块 list+detail 双态。
+  list 态 → CpListPage（状態/種別/ON-OFF=kind:'tag'+map；数量/実行日時=col slot；新規=toolbar slot）；
+    list を v-if で detail 时卸载 → 戻る时重挂 auto-fetch（RmaView 先例のフレッシュネス）。
+  detail 态（新規/閲覧兼用の編集フォーム + BOM 編集テーブル）→ 特殊エディタ領域：ヘッダ状態を CpTag 化、
+    action-bar を token 化、BOM は el-table を維持（行内編集の子表は模板表达不能）。
+  組立指示の kitSku ドロップダウンはマスタ一覧と別ソース（activeMasters）を onMounted ＋ マスタ変更後にロード。
+-->
 <template>
   <div class="wms-kit">
     <el-tabs v-model="activeTab">
       <!-- ─── マスタ管理 ─── -->
       <el-tab-pane :label="t('wms.kit.tab.master')" name="master">
-        <el-card v-if="masterMode === 'list'" shadow="never" class="search-card">
-          <el-form inline size="small">
-            <el-form-item :label="t('wms.kit.fld.kitSku')"><el-input v-model="masterKeyword" clearable style="width: 200px" /></el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reloadMasters" :loading="masterLoading">{{ t('wms.common.search') }}</el-button>
-              <el-button @click="openMasterCreate">{{ t('wms.common.create') }}</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
+        <!-- 一覧 -->
+        <CpListPage
+          v-if="masterMode === 'list'"
+          ref="masterListRef"
+          :columns="masterColumns"
+          :fetch="fetchMasters"
+          :search-fields="masterSearchFields"
+          :filter-labels="filterLabels"
+        >
+          <template #toolbar>
+            <el-button @click="openMasterCreate">{{ t('wms.common.create') }}</el-button>
+          </template>
+          <template #col-_action="{ row }">
+            <el-button link type="primary" size="small" @click="openMasterEdit(row.kitSku)">{{ t('wms.common.open') }}</el-button>
+            <el-button link type="danger" size="small" @click="onMasterDelete(row.kitSku)">{{ t('wms.common.delete') }}</el-button>
+          </template>
+        </CpListPage>
 
-        <el-card v-if="masterMode === 'list'" shadow="never">
-          <el-table :data="masters" border stripe size="small" max-height="500" highlight-current-row>
-            <el-table-column prop="kitSku" :label="t('wms.kit.fld.kitSku')" width="180" />
-            <el-table-column prop="kitName" :label="t('wms.kit.fld.kitName')" min-width="200" />
-            <el-table-column prop="defaultWarehouseCd" :label="t('wms.kit.fld.defaultWh')" width="140" />
-            <el-table-column :label="t('wms.kit.fld.active')" width="100" align="center">
-              <template #default="{ row }">
-                <el-tag v-if="row.activeFlg" type="success" size="small">ON</el-tag>
-                <el-tag v-else type="info" size="small">OFF</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column :label="t('wms.common.action')" width="160" fixed="right">
-              <template #default="{ row }">
-                <el-button link type="primary" size="small" @click="openMasterEdit(row.kitSku)">{{ t('wms.common.open') }}</el-button>
-                <el-button link type="danger" size="small" @click="onMasterDelete(row.kitSku)">{{ t('wms.common.delete') }}</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-
-        <template v-if="masterMode === 'detail' && currentMaster">
+        <!-- 詳細 / 新規 -->
+        <template v-else-if="masterMode === 'detail' && currentMaster">
           <el-card shadow="never">
             <template #header>
-              <span style="font-weight: 600">
-                {{ isNewMaster ? t('wms.kit.titleNew') : `${t('wms.kit.title')} [${currentMaster.kitSku}]` }}
+              <span class="hd-title">
+                {{ masterIsNew ? t('wms.kit.titleNew') : `${t('wms.kit.title')} [${currentMaster.kitSku}]` }}
               </span>
             </template>
             <el-form :model="currentMaster" label-width="160px" size="small">
               <el-row :gutter="16">
                 <el-col :span="8">
                   <el-form-item :label="t('wms.kit.fld.kitSku')" required>
-                    <el-input v-model="currentMaster.kitSku" :disabled="!isNewMaster" maxlength="20" />
+                    <el-input v-model="currentMaster.kitSku" :disabled="!masterIsNew" maxlength="20" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
@@ -73,8 +70,8 @@
 
           <el-card shadow="never" style="margin-top: 12px">
             <template #header>
-              <div style="display: flex; justify-content: space-between; align-items: center">
-                <span style="font-weight: 600">{{ t('wms.kit.bom.title') }}</span>
+              <div class="card-hd hd-between">
+                <span class="hd-title">{{ t('wms.kit.bom.title') }}</span>
                 <el-button type="primary" size="small" @click="addBomLine">{{ t('wms.common.addLine') }}</el-button>
               </div>
             </template>
@@ -112,69 +109,36 @@
       </el-tab-pane>
 
       <!-- ─── 組立指示 ─── -->
-      <el-tab-pane :label="t('wms.kit.tab.order')" name="order">
-        <el-card v-if="orderMode === 'list'" shadow="never" class="search-card">
-          <el-form :model="orderQuery" inline size="small">
-            <el-form-item :label="t('wms.kit.fld.orderNo')"><el-input v-model="orderQuery.kitOrderNo" clearable style="width: 180px" /></el-form-item>
-            <el-form-item :label="t('wms.kit.fld.kitSku')"><el-input v-model="orderQuery.kitSku" clearable style="width: 160px" /></el-form-item>
-            <el-form-item :label="t('wms.kit.fld.direction')">
-              <el-select v-model="orderQuery.direction" clearable style="width: 140px">
-                <el-option v-for="(l, v) in directionMap" :key="v" :label="l" :value="v" />
-              </el-select>
-            </el-form-item>
-            <el-form-item :label="t('wms.common.status')">
-              <el-select v-model="orderQuery.status" clearable style="width: 120px">
-                <el-option v-for="(l, v) in orderStatusMap" :key="v" :label="l" :value="Number(v)" />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reloadOrders" :loading="orderLoading">{{ t('wms.common.search') }}</el-button>
-              <el-button @click="openOrderCreate">{{ t('wms.common.create') }}</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
+      <el-tab-pane :label="t('wms.kit.tab.order')" name="order" lazy>
+        <!-- 一覧 -->
+        <CpListPage
+          v-if="orderMode === 'list'"
+          ref="orderListRef"
+          :columns="orderColumns"
+          :fetch="fetchOrders"
+          :search-fields="orderSearchFields"
+          :filter-labels="filterLabels"
+        >
+          <template #toolbar>
+            <el-button @click="openOrderCreate">{{ t('wms.common.create') }}</el-button>
+          </template>
+          <template #col-qty="{ row }">{{ formatQty(row.qty) }}</template>
+          <template #col-executedAt="{ row }">{{ row.executedAt?.replace('T', ' ').slice(0, 16) || '—' }}</template>
+          <template #col-_action="{ row }">
+            <el-button link type="primary" size="small" @click="openOrderDetail(row.kitOrderNo)">{{ t('wms.common.open') }}</el-button>
+          </template>
+        </CpListPage>
 
-        <el-card v-if="orderMode === 'list'" shadow="never">
-          <el-table :data="orders" border stripe size="small" max-height="500" highlight-current-row>
-            <el-table-column prop="kitOrderNo" :label="t('wms.kit.fld.orderNo')" width="180" />
-            <el-table-column :label="t('wms.kit.fld.direction')" width="120">
-              <template #default="{ row }">
-                <el-tag :type="row.direction === 'ASSEMBLE' ? 'success' : 'warning'" size="small">{{ directionMap[row.direction] }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column :label="t('wms.common.status')" width="100">
-              <template #default="{ row }">
-                <el-tag :type="orderStatusTagOf(row.status)" size="small">{{ orderStatusMap[row.status] }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="kitSku" :label="t('wms.kit.fld.kitSku')" width="160" />
-            <el-table-column prop="kitName" :label="t('wms.kit.fld.kitName')" min-width="180" show-overflow-tooltip />
-            <el-table-column prop="qty" :label="t('wms.common.qty')" width="100" align="right">
-              <template #default="{ row }">{{ formatQty(row.qty) }}</template>
-            </el-table-column>
-            <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="90" />
-            <el-table-column prop="kitLocationCd" :label="t('wms.kit.fld.kitLoc')" width="140" />
-            <el-table-column prop="kitLotNo" :label="t('wms.kit.fld.kitLot')" width="160" />
-            <el-table-column prop="executedAt" :label="t('wms.kit.fld.executedAt')" width="160">
-              <template #default="{ row }">{{ row.executedAt?.replace('T', ' ').slice(0, 16) || '—' }}</template>
-            </el-table-column>
-            <el-table-column :label="t('wms.common.action')" width="100" fixed="right">
-              <template #default="{ row }">
-                <el-button link type="primary" size="small" @click="openOrderDetail(row.kitOrderNo)">{{ t('wms.common.open') }}</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-
-        <template v-if="orderMode === 'detail' && currentOrder">
+        <!-- 詳細 / 新規 -->
+        <template v-else-if="orderMode === 'detail' && currentOrder">
           <el-card shadow="never">
             <template #header>
-              <div style="display: flex; align-items: center; gap: 12px">
-                <span style="font-weight: 600">
+              <div class="card-hd">
+                <span class="hd-title">
                   {{ isNewOrder ? t('wms.kit.orderTitleNew') : `${t('wms.kit.orderTitle')} [${currentOrder.kitOrderNo}]` }}
                 </span>
-                <el-tag v-if="!isNewOrder" :type="orderStatusTagOf(currentOrder.status)" size="small">{{ orderStatusMap[currentOrder.status] }}</el-tag>
-                <el-tag :type="currentOrder.direction === 'ASSEMBLE' ? 'success' : 'warning'" size="small">{{ directionMap[currentOrder.direction] }}</el-tag>
+                <CpTag v-if="!isNewOrder" :tone="orderStatusTone(currentOrder.status)">{{ orderStatusMap[currentOrder.status] }}</CpTag>
+                <CpTag :tone="currentOrder.direction === 'ASSEMBLE' ? 'ok' : 'warn'">{{ directionMap[currentOrder.direction] }}</CpTag>
               </div>
             </template>
             <el-form :model="currentOrder" label-width="160px" size="small">
@@ -223,7 +187,7 @@
                 <template #title>
                   {{ t('wms.kit.msg.txnCount', { n: currentOrder.executedTxnNos.split(';').length }) }}
                 </template>
-                <div style="font-size: 12px; color: #606266; word-break: break-all">{{ currentOrder.executedTxnNos }}</div>
+                <div class="txn-list">{{ currentOrder.executedTxnNos }}</div>
               </el-alert>
             </el-form>
           </el-card>
@@ -243,9 +207,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { kittingApi } from '@/api/wms/kitting'
 import type { KitMaster, KitMasterComponent, KitOrder, KitOrderSearchQuery } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
@@ -255,6 +222,9 @@ const { t } = useI18n()
 const activeTab = ref<'master' | 'order'>('master')
 const saving = ref(false)
 
+const filterLabels = computed(() => ({ search: t('wms.common.search'), reset: t('wms.common.clear') }))
+
+// —— 码值映射（i18n 反応式）——
 const directionMap = computed<Record<string, string>>(() => ({
   ASSEMBLE: t('wms.kit.dir.assemble'),
   DISASSEMBLE: t('wms.kit.dir.disassemble'),
@@ -264,31 +234,57 @@ const orderStatusMap = computed<Record<number, string>>(() => ({
   1: t('wms.kit.status.executed'),
   9: t('wms.kit.status.cancelled'),
 }))
+// 原 orderStatusTagOf(info/success/danger) → 设计系统 Tone（info=グレー→muted で保色）
+function orderStatusTone(s: number): Tone {
+  return ({ 0: 'muted', 1: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
+}
+function codeLabel(m: Record<number, string>, v: unknown): string {
+  return m[v as number] || (v == null ? '' : String(v))
+}
 
-// ─── マスタ ───
+// —— 組立指示 kitSku ドロップダウン用の有効マスタ（一覧とは別ソース）——
+const activeMasters = ref<KitMaster[]>([])
+async function loadActiveMasters() {
+  activeMasters.value = ((await kittingApi.searchMasters()).data || []).filter(m => m.activeFlg)
+}
+
+// ─────────────────────── マスタ ───────────────────────
 const masterMode = ref<'list' | 'detail'>('list')
-const masterKeyword = ref('')
-const masters = ref<KitMaster[]>([])
-const masterLoading = ref(false)
+const masterIsNew = ref(false)
 const currentMaster = ref<KitMaster | null>(null)
-const isNewMaster = computed(() => currentMaster.value !== null && !masters.value.some(m => m.kitSku === currentMaster.value!.kitSku))
+const masterListRef = ref<InstanceType<typeof CpListPage>>()
 
-const activeMasters = computed(() => masters.value.filter(m => m.activeFlg))
+const masterColumns = computed<ListColumn[]>(() => [
+  { prop: 'kitSku', label: t('wms.kit.fld.kitSku'), kind: 'mono', width: 180 },
+  { prop: 'kitName', label: t('wms.kit.fld.kitName'), minWidth: 200, overflowTooltip: true },
+  { prop: 'defaultWarehouseCd', label: t('wms.kit.fld.defaultWh'), width: 140 },
+  { prop: 'activeFlg', label: t('wms.kit.fld.active'), width: 100, align: 'center', kind: 'tag',
+    map: (v) => ({ label: v ? 'ON' : 'OFF', tone: v ? 'ok' : 'muted' }) },
+  { prop: '_action', label: t('wms.common.action'), width: 160, fixed: 'right' },
+])
 
-async function reloadMasters() {
-  masterLoading.value = true
-  try { masters.value = (await kittingApi.searchMasters(masterKeyword.value || undefined)).data || [] }
-  finally { masterLoading.value = false }
+const masterSearchFields = computed<FilterField[]>(() => [
+  { key: 'kitSku', label: t('wms.kit.fld.kitSku'), type: 'text' },
+])
+
+const fetchMasters: ListFetch = async ({ page, size, filters }) => {
+  const f = filters as Record<string, unknown>
+  const kw = f.kitSku ? String(f.kitSku) : undefined
+  const all = (await kittingApi.searchMasters(kw)).data || []
+  const start = (page - 1) * size
+  return { rows: all.slice(start, start + size), total: all.length }
 }
 
 function openMasterCreate() {
   currentMaster.value = { kitSku: '', kitName: '', activeFlg: true, components: [] }
+  masterIsNew.value = true
   masterMode.value = 'detail'
 }
 
 async function openMasterEdit(kitSku: string) {
   const res = await kittingApi.getMaster(kitSku)
   currentMaster.value = res.data
+  masterIsNew.value = false
   masterMode.value = 'detail'
 }
 
@@ -311,14 +307,14 @@ async function onMasterSave() {
   if (currentMaster.value.components.length === 0) { ElMessage.warning(t('wms.inbound.msg.noDetail')); return }
   saving.value = true
   try {
-    if (isNewMaster.value) {
+    if (masterIsNew.value) {
       await kittingApi.createMaster(currentMaster.value)
     } else {
       await kittingApi.updateMaster(currentMaster.value.kitSku, currentMaster.value)
     }
     ElMessage.success(t('wms.common.success'))
-    masterMode.value = 'list'
-    await reloadMasters()
+    masterMode.value = 'list' // v-if 再挂 auto-fetch
+    await loadActiveMasters()
   } finally { saving.value = false }
 }
 
@@ -327,16 +323,16 @@ async function onMasterDelete(kitSku: string) {
     await ElMessageBox.confirm(`${t('wms.common.confirmDelete')} [${kitSku}]`, t('wms.common.confirm'), { type: 'warning' })
     await kittingApi.deleteMaster(kitSku)
     ElMessage.success(t('wms.common.success'))
-    await reloadMasters()
+    masterListRef.value?.reload()
+    await loadActiveMasters()
   } catch { /* */ }
 }
 
-// ─── 指示 ───
+// ─────────────────────── 指示 ───────────────────────
 const orderMode = ref<'list' | 'detail'>('list')
-const orderQuery = reactive<KitOrderSearchQuery>({ pageSize: 100 })
-const orders = ref<KitOrder[]>([])
-const orderLoading = ref(false)
 const currentOrder = ref<KitOrder | null>(null)
+const orderListRef = ref<InstanceType<typeof CpListPage>>()
+
 const isNewOrder = computed(() => currentOrder.value !== null && !currentOrder.value.kitOrderNo)
 const canExecute = computed(() => currentOrder.value && currentOrder.value.kitOrderNo && currentOrder.value.status === 0)
 const canCancelOrder = computed(() => currentOrder.value && currentOrder.value.kitOrderNo && currentOrder.value.status === 0)
@@ -345,14 +341,45 @@ const kitLotHint = computed(() => currentOrder.value?.direction === 'DISASSEMBLE
   ? t('wms.kit.msg.kitLotRequiredDisassemble')
   : t('wms.kit.msg.kitLotAutoGen'))
 
-function orderStatusTagOf(s: number): 'info' | 'success' | 'danger' {
-  return ({ 0: 'info', 1: 'success', 9: 'danger' } as const)[s as 0] || 'info'
-}
+const orderColumns = computed<ListColumn[]>(() => [
+  { prop: 'kitOrderNo', label: t('wms.kit.fld.orderNo'), kind: 'mono', width: 180 },
+  { prop: 'direction', label: t('wms.kit.fld.direction'), width: 120, kind: 'tag',
+    map: (v) => ({ label: directionMap.value[v as string] ?? '', tone: v === 'ASSEMBLE' ? 'ok' : 'warn' }) },
+  { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
+    map: (v) => ({ label: codeLabel(orderStatusMap.value, v), tone: orderStatusTone(v as number) }) },
+  { prop: 'kitSku', label: t('wms.kit.fld.kitSku'), width: 160 },
+  { prop: 'kitName', label: t('wms.kit.fld.kitName'), minWidth: 180, overflowTooltip: true },
+  { prop: 'qty', label: t('wms.common.qty'), width: 100, align: 'right' },
+  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 90 },
+  { prop: 'kitLocationCd', label: t('wms.kit.fld.kitLoc'), width: 140 },
+  { prop: 'kitLotNo', label: t('wms.kit.fld.kitLot'), width: 160 },
+  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), width: 160 },
+  { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
+])
 
-async function reloadOrders() {
-  orderLoading.value = true
-  try { orders.value = (await kittingApi.searchOrders(orderQuery)).data || [] }
-  finally { orderLoading.value = false }
+const orderSearchFields = computed<FilterField[]>(() => [
+  { key: 'kitOrderNo', label: t('wms.kit.fld.orderNo'), type: 'text' },
+  { key: 'kitSku', label: t('wms.kit.fld.kitSku'), type: 'text' },
+  {
+    key: 'direction', label: t('wms.kit.fld.direction'), type: 'select',
+    options: Object.entries(directionMap.value).map(([v, l]) => ({ label: l, value: v })),
+  },
+  {
+    key: 'status', label: t('wms.common.status'), type: 'select',
+    options: Object.entries(orderStatusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+  },
+])
+
+const fetchOrders: ListFetch = async ({ page, size, filters }) => {
+  const f = filters as Record<string, unknown>
+  const q: KitOrderSearchQuery = { pageSize: 100 }
+  if (f.kitOrderNo) q.kitOrderNo = String(f.kitOrderNo)
+  if (f.kitSku) q.kitSku = String(f.kitSku)
+  if (f.direction) q.direction = String(f.direction)
+  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
+  const all = (await kittingApi.searchOrders(q)).data || []
+  const start = (page - 1) * size
+  return { rows: all.slice(start, start + size), total: all.length }
 }
 
 function openOrderCreate() {
@@ -406,15 +433,15 @@ async function onOrderCancel() {
 }
 
 // ─── ライフサイクル ───
-onMounted(reloadMasters)
-watch(activeTab, (v) => {
-  if (v === 'order' && orders.value.length === 0) reloadOrders()
-})
+onMounted(loadActiveMasters)
 </script>
 
 <style scoped>
 .wms-kit { padding: 16px; padding-bottom: 60px; }
-.search-card { margin-bottom: 12px; }
-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
+.card-hd { display: flex; align-items: center; gap: 12px; }
+.hd-between { justify-content: space-between; }
+.hd-title { font-weight: 600; }
+.txn-list { font-size: var(--cp-fs-xs); color: var(--cp-muted); word-break: break-all; }
+.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
 .action-bar > * { margin-left: 8px; }
 </style>

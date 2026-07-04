@@ -1,54 +1,33 @@
+<!--
+  出庫ルーティング設定 —— 查询列表页。CpPageShell(:count) + CpListPage(paginated=false、码值列 map)。
+  候補倉庫プレビュー(設定検証ツール)と 作成/編集ダイアログ は複合フォームのため el-dialog/el-form 保持（token 化のみ）。
+  変更後 listRef.reload()（:key 再マウント不使用）。
+-->
 <template>
-  <div class="outbound-routing">
-    <div class="page-header">
-      <h2>{{ t('wms.outboundRouting.title') }}</h2>
-      <span class="subtitle">{{ t('wms.outboundRouting.subtitle') }}</span>
-    </div>
+  <CpPageShell :title="t('wms.outboundRouting.title')" :count="total">
+    <template #actions>
+      <el-button type="primary" @click="openCreate">{{ t('wms.outboundRouting.btn.create') }}</el-button>
+      <el-button @click="listRef?.reload()">{{ t('wms.outboundRouting.btn.refresh') }}</el-button>
+    </template>
 
-    <el-card shadow="never">
-      <div class="table-toolbar">
-        <el-button type="primary" size="small" @click="openCreate">
-          {{ t('wms.outboundRouting.btn.create') }}
+    <p class="subtitle">{{ t('wms.outboundRouting.subtitle') }}</p>
+
+    <CpListPage
+      ref="listRef"
+      :columns="columns"
+      :fetch="fetchList"
+      :paginated="false"
+      @total-change="total = $event"
+    >
+      <template #col-_action="{ row }">
+        <el-button link type="primary" size="small" @click="openEdit(row)">
+          {{ t('wms.outboundRouting.btn.edit') }}
         </el-button>
-        <el-button size="small" @click="reload">{{ t('wms.outboundRouting.btn.refresh') }}</el-button>
-        <el-tag size="small" type="info">{{ t('wms.common.total') }}: {{ rows.length }}</el-tag>
-      </div>
-
-      <el-table :data="rows" border stripe size="small" max-height="560" v-loading="loading">
-        <el-table-column prop="sortOrder" :label="t('wms.outboundRouting.col.sortOrder')" width="90" align="right" />
-        <el-table-column prop="ruleName" :label="t('wms.outboundRouting.col.ruleName')" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="customerCd" :label="t('wms.outboundRouting.col.customerCd')" width="120">
-          <template #default="{ row }">{{ row.customerCd || t('wms.outboundRouting.any') }}</template>
-        </el-table-column>
-        <el-table-column prop="productCdPrefix" :label="t('wms.outboundRouting.col.productPrefix')" width="130">
-          <template #default="{ row }">{{ row.productCdPrefix || t('wms.outboundRouting.any') }}</template>
-        </el-table-column>
-        <el-table-column prop="outboundType" :label="t('wms.outboundRouting.col.outboundType')" width="120">
-          <template #default="{ row }">
-            {{ row.outboundType == null ? t('wms.outboundRouting.any') : t(`wms.outboundRouting.type.${row.outboundType}`) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="targetWarehouseCd" :label="t('wms.outboundRouting.col.target')" width="130" show-overflow-tooltip />
-        <el-table-column prop="enabled" :label="t('wms.outboundRouting.col.enabled')" width="100">
-          <template #default="{ row }">
-            <el-tag :type="row.enabled ? 'success' : 'info'" size="small">
-              {{ row.enabled ? t('wms.outboundRouting.on') : t('wms.outboundRouting.off') }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="remarks" :label="t('wms.outboundRouting.col.remarks')" min-width="160" show-overflow-tooltip />
-        <el-table-column :label="t('wms.outboundRouting.col.action')" width="150" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">
-              {{ t('wms.outboundRouting.btn.edit') }}
-            </el-button>
-            <el-button link type="danger" size="small" @click="remove(row)">
-              {{ t('wms.outboundRouting.btn.delete') }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+        <el-button link type="danger" size="small" @click="remove(row)">
+          {{ t('wms.outboundRouting.btn.delete') }}
+        </el-button>
+      </template>
+    </CpListPage>
 
     <!-- 候補倉庫プレビュー（設定検証ツール） -->
     <el-card shadow="never" class="preview-card">
@@ -78,15 +57,14 @@
       </el-form>
       <div v-if="previewResult.length" class="preview-result">
         <span class="preview-label">{{ t('wms.outboundRouting.preview.order') }}:</span>
-        <el-tag
+        <CpTag
           v-for="(wh, idx) in previewResult"
           :key="wh + idx"
-          :type="idx === 0 ? 'success' : 'info'"
-          size="small"
+          :tone="idx === 0 ? 'ok' : 'info'"
           class="preview-tag"
         >
           {{ idx + 1 }}. {{ wh }}
-        </el-tag>
+        </CpTag>
       </div>
     </el-card>
 
@@ -130,22 +108,25 @@
         <el-button type="primary" :loading="saving" @click="submit">{{ t('wms.outboundRouting.btn.confirm') }}</el-button>
       </template>
     </el-dialog>
-  </div>
+  </CpPageShell>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpTag from '@/components/base/CpTag.vue'
 import { outboundRoutingApi } from '@/api/wms/outboundRouting'
 import { warehouseApi } from '@/api/wms/warehouse'
 import type { OutboundRoutingRule } from '@/types/wms/outboundRouting'
 
 const { t } = useI18n()
 
-const rows = ref<OutboundRoutingRule[]>([])
+const total = ref<number>()
+const listRef = ref<InstanceType<typeof CpListPage>>()
 const warehouses = ref<{ warehouseCd: string; warehouseName: string }[]>([])
-const loading = ref(false)
 const saving = ref(false)
 
 const dialogVisible = ref(false)
@@ -153,6 +134,30 @@ const editingId = ref<string | null>(null)
 const dialogTitle = computed(() =>
   editingId.value ? t('wms.outboundRouting.dlg.editTitle') : t('wms.outboundRouting.dlg.createTitle'),
 )
+
+// —— 列定义（customerCd/productCdPrefix/outboundType は any フォールバックを map で文案置換；enabled は kind:'tag'+map） ——
+const columns = computed<ListColumn[]>(() => [
+  { prop: 'sortOrder', label: t('wms.outboundRouting.col.sortOrder'), width: 90, kind: 'num' },
+  { prop: 'ruleName', label: t('wms.outboundRouting.col.ruleName'), minWidth: 180, overflowTooltip: true },
+  { prop: 'customerCd', label: t('wms.outboundRouting.col.customerCd'), width: 120,
+    map: (v) => ({ label: v ? String(v) : t('wms.outboundRouting.any') }) },
+  { prop: 'productCdPrefix', label: t('wms.outboundRouting.col.productPrefix'), width: 130,
+    map: (v) => ({ label: v ? String(v) : t('wms.outboundRouting.any') }) },
+  { prop: 'outboundType', label: t('wms.outboundRouting.col.outboundType'), width: 120,
+    map: (v) => ({ label: v == null ? t('wms.outboundRouting.any') : t(`wms.outboundRouting.type.${v}`) }) },
+  { prop: 'targetWarehouseCd', label: t('wms.outboundRouting.col.target'), width: 130, overflowTooltip: true },
+  { prop: 'enabled', label: t('wms.outboundRouting.col.enabled'), width: 100, kind: 'tag',
+    map: (v) => ({ label: v ? t('wms.outboundRouting.on') : t('wms.outboundRouting.off'), tone: v ? 'ok' : 'muted' }) },
+  { prop: 'remarks', label: t('wms.outboundRouting.col.remarks'), minWidth: 160, overflowTooltip: true },
+  { prop: '_action', label: t('wms.outboundRouting.col.action'), width: 150, fixed: 'right' },
+])
+
+// —— 取数：outboundRoutingApi.list(true) 扁平数组、无分页 → paginated=false 一次取全 ——
+const fetchList: ListFetch = async () => {
+  const res = await outboundRoutingApi.list(true)
+  const all = (res?.data || []) as OutboundRoutingRule[]
+  return { rows: all, total: all.length }
+}
 
 function emptyForm(): OutboundRoutingRule {
   return {
@@ -171,16 +176,6 @@ const form = reactive<OutboundRoutingRule>(emptyForm())
 const preview = reactive({ productCd: '', customerCd: '', outboundType: 2, fallbackWarehouseCd: '' })
 const previewResult = ref<string[]>([])
 const previewLoading = ref(false)
-
-async function reload() {
-  loading.value = true
-  try {
-    const res = await outboundRoutingApi.list(true)
-    rows.value = (res?.data || []) as OutboundRoutingRule[]
-  } finally {
-    loading.value = false
-  }
-}
 
 async function loadWarehouses() {
   try {
@@ -225,7 +220,7 @@ async function submit() {
       ElMessage.success(t('wms.outboundRouting.msg.created'))
     }
     dialogVisible.value = false
-    await reload()
+    listRef.value?.reload()
   } finally {
     saving.value = false
   }
@@ -240,7 +235,7 @@ async function remove(row: OutboundRoutingRule) {
   if (!row.id) return
   await outboundRoutingApi.remove(row.id)
   ElMessage.success(t('wms.outboundRouting.msg.deleted'))
-  await reload()
+  listRef.value?.reload()
 }
 
 async function runPreview() {
@@ -262,52 +257,33 @@ async function runPreview() {
   }
 }
 
-onMounted(() => {
-  reload()
-  loadWarehouses()
-})
+onMounted(loadWarehouses)
 </script>
 
 <style scoped>
-.outbound-routing {
-  padding: 12px;
-}
-.page-header {
-  margin-bottom: 12px;
-}
-.page-header h2 {
-  margin: 0;
-  color: #303133;
-  font-size: 20px;
-  font-weight: 650;
-}
 .subtitle {
-  color: #909399;
-  font-size: 12px;
-}
-.table-toolbar {
-  margin-bottom: 8px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  color: var(--cp-muted);
+  font-size: var(--cp-fs-xs);
+  margin: -8px 0 0;
 }
 .preview-card {
-  margin-top: 12px;
+  margin-top: 4px;
 }
 .preview-result {
   margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
 }
 .preview-label {
-  color: #606266;
-  font-size: 13px;
-  margin-right: 8px;
-}
-.preview-tag {
-  margin-right: 6px;
+  color: var(--cp-muted);
+  font-size: var(--cp-fs-sm);
+  margin-right: 2px;
 }
 .hint {
-  color: #909399;
-  font-size: 12px;
+  color: var(--cp-muted);
+  font-size: var(--cp-fs-xs);
   margin-left: 8px;
 }
 </style>

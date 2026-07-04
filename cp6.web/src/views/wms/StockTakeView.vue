@@ -4,8 +4,8 @@
       <template #header>
         <div style="display: flex; align-items: center; gap: 12px">
           <span style="font-weight: 600">{{ t('wms.stocktake.title') }} [{{ form.stockTakeNo }}]</span>
-          <el-tag :type="statusTagOf(form.status)" size="small">{{ statusMap[form.status] }}</el-tag>
-          <el-tag size="small">{{ typeMap[form.stockTakeType] }}</el-tag>
+          <CpTag :tone="statusTone(form.status)">{{ statusMap[form.status] }}</CpTag>
+          <CpTag tone="info">{{ typeMap[form.stockTakeType] }}</CpTag>
         </div>
       </template>
       <el-descriptions :column="4" size="small" border>
@@ -46,7 +46,7 @@
         </el-table-column>
         <el-table-column :label="t('wms.stocktake.col.diff')" width="100" align="right">
           <template #default="{ row }">
-            <span v-if="row.countedQty == null" style="color: #aaa">—</span>
+            <span v-if="row.countedQty == null" class="dash">—</span>
             <span v-else :class="{ minus: (row.diffQty ?? 0) < 0, plus: (row.diffQty ?? 0) > 0 }">
               {{ formatQty(row.diffQty) }}
             </span>
@@ -65,13 +65,13 @@
         </el-table-column>
         <el-table-column :label="t('wms.common.status')" width="100">
           <template #default="{ row }">
-            <el-tag size="small" :type="approvalTagOf(row.approvalStatus)">{{ approvalMap[row.approvalStatus] }}</el-tag>
+            <CpTag :tone="approvalTone(row.approvalStatus)">{{ approvalMap[row.approvalStatus] }}</CpTag>
           </template>
         </el-table-column>
         <el-table-column label="ADJ" width="140">
           <template #default="{ row }">
-            <el-tooltip v-if="row.adjustTxnNo" :content="row.adjustTxnNo"><el-tag type="success" size="small">ADJ</el-tag></el-tooltip>
-            <span v-else style="color: #aaa">—</span>
+            <el-tooltip v-if="row.adjustTxnNo" :content="row.adjustTxnNo"><CpTag tone="ok">ADJ</CpTag></el-tooltip>
+            <span v-else class="dash">—</span>
           </template>
         </el-table-column>
       </el-table>
@@ -95,6 +95,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { stockTakeApi } from '@/api/wms/stockTake'
 import type { StockTake, StockTakeDetail, StockTakeCountInput } from '@/types/wms/wms'
 import { formatQty as fmtQty } from '@/utils/format'
@@ -149,11 +150,13 @@ const filteredDetails = computed(() => {
 const diffCount = computed(() =>
   form.details.filter(d => d.countedQty != null && (d.diffQty ?? 0) !== 0).length)
 
-function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'danger' | 'success' {
-  return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'danger', 4: 'success', 9: 'info' } as const)[s as 0] || 'info'
+// 原 statusTagOf(info/primary/warning/danger/success/info) → 设计系统 Tone（保色）
+function statusTone(s: number): Tone {
+  return ({ 0: 'info', 1: 'info', 2: 'warn', 3: 'danger', 4: 'ok', 9: 'info' } as const)[s as 0] || 'info'
 }
-function approvalTagOf(s: number): 'info' | 'success' | 'danger' {
-  return ({ 0: 'info', 1: 'success', 2: 'success', 9: 'danger' } as const)[s as 0] || 'info'
+// 原 approvalTagOf(info/success/success/danger) → 设计系统 Tone（保色）
+function approvalTone(s: number): Tone {
+  return ({ 0: 'info', 1: 'ok', 2: 'ok', 9: 'danger' } as const)[s as 0] || 'info'
 }
 function formatQty(n: number | null | undefined): string {
   if (n == null) return '—'
@@ -233,8 +236,9 @@ onMounted(async () => {
 
 <style scoped>
 .wms-stock-take { padding: 16px; padding-bottom: 60px; }
-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
+.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
 .action-bar > * { margin-left: 8px; }
-.plus { color: var(--el-color-success); font-weight: 600; }
-.minus { color: var(--el-color-danger); font-weight: 600; }
+.plus { color: var(--cp-ok); font-weight: 600; }
+.minus { color: var(--cp-danger); font-weight: 600; }
+.dash { color: var(--cp-faint); }
 </style>

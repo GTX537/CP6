@@ -270,6 +270,58 @@ describe('CpListPage 契约扩展（Milestone C）', () => {
     expect(w.text()).not.toContain('MAP')
   })
 
+  it('paginated=false：不渲染分页器，fetch 收到 size=1000、page=1', async () => {
+    const f = makeFetch()
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f, paginated: false } })
+    await flushPromises()
+    expect(w.findComponent({ name: 'ElPagination' }).exists()).toBe(false)
+    expect(w.find('.pager').exists()).toBe(false)
+    expect(f).toHaveBeenCalledWith(expect.objectContaining({ page: 1, size: 1000 }))
+  })
+
+  it('paginated 缺省 true：分页器照常渲染、size 为默认 20', async () => {
+    const f = makeFetch()
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f } })
+    await flushPromises()
+    expect(w.findComponent({ name: 'ElPagination' }).exists()).toBe(true)
+    expect(f).toHaveBeenCalledWith(expect.objectContaining({ page: 1, size: 20 }))
+  })
+
+  it('exposed reload()：重新 fetch 且保留当前 filters / page / statusKey（不重置）', async () => {
+    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields,
+      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
+    await flushPromises()
+    // 1) 切状态卡 → statusKey=wait
+    await w.findAll('.ss')[1].trigger('click')
+    await flushPromises()
+    // 2) 经筛选栏设置筛选并查询 → filters.q=SHP-9
+    await w.get('.fld input').setValue('SHP-9')
+    await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
+    await flushPromises()
+    // 3) 翻到第 2 页
+    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
+    await flushPromises()
+    const callsBefore = f.mock.calls.length
+
+    ;(w.vm as unknown as { reload: () => Promise<void> }).reload()
+    await flushPromises()
+    expect(f.mock.calls.length).toBe(callsBefore + 1)
+    const q = f.mock.calls.at(-1)![0]
+    expect(q.page).toBe(2) // page 保留
+    expect(q.filters.q).toBe('SHP-9') // filters 保留
+    expect(q.statusKey).toBe('wait') // statusKey 保留
+  })
+
+  it('defineExpose 只暴露 reload（公开实例不含内部 load/state）', async () => {
+    const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch() } })
+    await flushPromises()
+    // VTU 的 vm 会代理 setupState，故直接断言 defineExpose 的 exposed 对象
+    const exposed = (w.vm.$ as unknown as { exposed: Record<string, unknown> }).exposed
+    expect(typeof exposed.reload).toBe('function')
+    expect(Object.keys(exposed)).toEqual(['reload'])
+  })
+
   it("kind:'date'：非空值 slice(0,10)，null/undefined 渲染空", async () => {
     const c: ListColumn[] = [
       { prop: 'no', label: '单号', kind: 'mono' },
