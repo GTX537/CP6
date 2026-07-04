@@ -11,9 +11,9 @@
           <el-radio-button :value="BpOperationType.Delete" :disabled="!hasLoaded || !store.isAdmin">{{ t('sales.op.delete') }}</el-radio-button>
           <el-radio-button :value="BpOperationType.View" :disabled="!hasLoaded">{{ t('sales.op.view') }}</el-radio-button>
         </el-radio-group>
-        <el-tag v-if="store.bp.status === 0" type="info" size="small">{{ t('sales.op.preregister') }}</el-tag>
-        <el-tag v-else-if="store.bp.status === 1" type="success" size="small">{{ t('sales.op.register') }}</el-tag>
-        <el-tag v-else-if="store.bp.status === 9" type="danger" size="small">{{ t('sales.op.delete') }}</el-tag>
+        <CpTag v-if="store.bp.status === 0" tone="info">{{ t('sales.op.preregister') }}</CpTag>
+        <CpTag v-else-if="store.bp.status === 1" tone="ok">{{ t('sales.op.register') }}</CpTag>
+        <CpTag v-else-if="store.bp.status === 9" tone="danger">{{ t('sales.op.delete') }}</CpTag>
       </div>
 
       <el-form inline size="small" style="margin-top: 8px">
@@ -68,6 +68,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useBpStore } from '@/stores/businessPartner'
 import { bpApi } from '@/api/erp/businessPartner'
 import { BpOperationType } from '@/types/erp/businessPartner'
+import CpTag from '@/components/base/CpTag.vue'
 import BasicInfoTab from './bp/BasicInfoTab.vue'
 import CustomerTab from './bp/CustomerTab.vue'
 import ArTab from './bp/ArTab.vue'

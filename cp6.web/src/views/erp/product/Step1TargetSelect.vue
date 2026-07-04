@@ -92,9 +92,9 @@
           @click="onOpenEstimateDetail"
         >{{ t('見積詳細') }}</el-button>
       </el-button-group>
-      <el-tag v-if="store.wipCheckResult" :type="wipTagType" size="small" style="margin-left: 12px">
+      <CpTag v-if="store.wipCheckResult" :tone="wipTone" style="margin-left: 12px">
         {{ t('仕掛チェック') }}: {{ wipLabel }}
-      </el-tag>
+      </CpTag>
     </div>
 
     <el-table
@@ -139,18 +139,18 @@
       </el-table-column>
       <el-table-column :label="t('状態')" width="90">
         <template #default="{ row }">
-          <el-tag size="small" :type="statusTagType(row.status)">{{ statusLabel(row.status) }}</el-tag>
+          <CpTag :tone="statusTone(row.status)">{{ statusLabel(row.status) }}</CpTag>
         </template>
       </el-table-column>
       <el-table-column label="WF" width="60" align="center">
         <template #default="{ row }">
-          <el-icon v-if="row.wfApproved" color="#67c23a"><Check /></el-icon>
+          <el-icon v-if="row.wfApproved" color="var(--cp-ok)"><Check /></el-icon>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column :label="t('連携')" width="60" align="center">
         <template #default="{ row }">
-          <el-icon v-if="row.masterLinked" color="#409eff"><Link /></el-icon>
+          <el-icon v-if="row.masterLinked" color="var(--cp-brand)"><Link /></el-icon>
           <span v-else>-</span>
         </template>
       </el-table-column>
@@ -194,6 +194,7 @@ import type { ProductMemberDto } from '@/types/erp/productMaster'
 import { useProductMasterStore } from '@/stores/productMaster'
 import { productApi } from '@/api/erp/product'
 import MasterReferenceDialog from '@/components/master/MasterReferenceDialog.vue'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
 
 const store = useProductMasterStore()
@@ -295,14 +296,14 @@ function onOpenEstimateDetail() {
 function statusLabel(s: number): string {
   return s === 9 ? t('承認済') : s === 1 ? t('承認待') : t('未作成')
 }
-function statusTagType(s: number): 'info' | 'warning' | 'success' {
-  return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'
+function statusTone(s: number): Tone {
+  return s === 9 ? 'ok' : s === 1 ? 'warn' : 'info'
 }
 
-const wipTagType = computed<'success' | 'warning' | 'danger'>(() => {
+const wipTone = computed<Tone>(() => {
   const lv = store.wipCheckResult?.level ?? 0
-  if (lv === 0) return 'success'
-  if (lv === 1) return 'warning'
+  if (lv === 0) return 'ok'
+  if (lv === 1) return 'warn'
   return 'danger'
 })
 const wipLabel = computed(() => {

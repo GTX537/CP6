@@ -339,3 +339,166 @@ describe('CpListPage 契约扩展（Milestone C）', () => {
     expect(w.text()).not.toContain('null')
   })
 })
+
+// —— 契约扩展三轮（ERP批次1 复盘 #18 lazy / #19 sortable:'custom'）——
+describe('CpListPage 契约扩展三轮：#18 lazy search-first', () => {
+  it('lazy=true：mounted 不 fetch，CpEmpty 可见，total-change 未 emit', async () => {
+    const f = makeFetch()
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f, lazy: true, searchFields } })
+    await flushPromises()
+    expect(f).not.toHaveBeenCalled()
+    expect(w.findComponent({ name: 'CpEmpty' }).exists()).toBe(true) // loading=false 的空态
+    expect(w.find('.el-loading-mask').exists()).toBe(false)
+    expect(w.emitted('total-change')).toBeUndefined() // 首查成功前不 emit
+  })
+
+  it('lazy=true：CpFilterBar 查询触发首查，且 fetch 恰好调用一次（page=1）', async () => {
+    const f = makeFetch()
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f, lazy: true, searchFields } })
+    await flushPromises()
+    await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
+    await flushPromises()
+    expect(f).toHaveBeenCalledTimes(1)
+    expect(f).toHaveBeenCalledWith(expect.objectContaining({ page: 1 }))
+    expect(w.emitted('total-change')).toEqual([[1]]) // 首查成功后才 emit
+  })
+
+  it('lazy=true：切状态卡触发首查', async () => {
+    const f = makeFetch()
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f, lazy: true,
+      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
+    await flushPromises()
+    expect(f).not.toHaveBeenCalled()
+    await w.findAll('.ss')[1].trigger('click')
+    await flushPromises()
+    expect(f).toHaveBeenCalledTimes(1)
+    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ statusKey: 'wait' }))
+  })
+
+  it('lazy=true：exposed reload() 触发首查', async () => {
+    const f = makeFetch()
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f, lazy: true } })
+    await flushPromises()
+    expect(f).not.toHaveBeenCalled()
+    ;(w.vm as unknown as { reload: () => Promise<void> }).reload()
+    await flushPromises()
+    expect(f).toHaveBeenCalledTimes(1)
+  })
+
+  it('lazy=true：sort-change 也触发首查（显式用户手势）', async () => {
+    const sortCols: ListColumn[] = [{ prop: 'no', label: '单号', sortable: 'custom' }]
+    const f = makeFetch()
+    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f, lazy: true } })
+    await flushPromises()
+    expect(f).not.toHaveBeenCalled()
+    w.findComponent({ name: 'ElTable' }).vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
+    await flushPromises()
+    expect(f).toHaveBeenCalledTimes(1)
+    expect(f).toHaveBeenLastCalledWith(
+      expect.objectContaining({ sortField: 'no', sortOrder: 'asc' })
+    )
+  })
+})
+
+// —— ERP批次2 修正（#22 reset 透传）——
+describe('CpListPage 缺口 #22：reset 事件透传', () => {
+  it('reset 同步 emit 且先于重置触发的 load()——监听器清理的外部筛选 ref 不进入该次 fetch', async () => {
+    let external = true // 模拟页面级 toolbar checkbox（CpFilterBar 外部的筛选状态）
+    const seen: boolean[] = [] // fetch closure 每次读到的外部值
+    const f = vi.fn().mockImplementation(async () => { seen.push(external); return { rows: [], total: 0 } })
+    const w = mount(CpListPage, {
+      props: { columns: cols, fetch: f, searchFields, onReset: () => { external = false } }
+    })
+    await flushPromises()
+    expect(seen).toEqual([true]) // mount 自动 fetch 时外部 ref 尚未清理
+
+    await w.findAll('button').find((b) => b.text().includes('重置'))!.trigger('click')
+    await flushPromises()
+    expect(w.emitted('reset')).toHaveLength(1)
+    expect(seen).toEqual([true, false]) // reset 触发的 fetch 读到的已是清理后的值（emit 先于 load）
+  })
+})
+
+describe("CpListPage 契约扩展三轮：#19 sortable:'custom' 服务端排序", () => {
+  const sortCols: ListColumn[] = [
+    { prop: 'no', label: '单号', kind: 'mono', sortable: 'custom' },
+    { prop: 'qty', label: '数量', kind: 'num' }
+  ]
+
+  it("sortable:'custom' 透传 el-table-column；未声明列不透传", async () => {
+    const w = mount(CpListPage, { props: { columns: sortCols, fetch: makeFetch() } })
+    await flushPromises()
+    const tcs = w.findAllComponents({ name: 'ElTableColumn' })
+    expect(tcs.find((tc) => tc.props('label') === '单号')!.props('sortable')).toBe('custom')
+    expect(tcs.find((tc) => tc.props('label') === '数量')!.props('sortable')).toBe(false)
+  })
+
+  it('sort-change：fetch 收到 sortField/sortOrder（asc 规范化）且 page 重置为 1', async () => {
+    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
+    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f } })
+    await flushPromises()
+    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
+    await flushPromises()
+    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }))
+
+    w.findComponent({ name: 'ElTable' }).vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
+    await flushPromises()
+    expect(f).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 1, sortField: 'no', sortOrder: 'asc' })
+    )
+  })
+
+  it('sort-change：descending 规范化为 desc，并保持在后续翻页 fetch 中', async () => {
+    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
+    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f } })
+    await flushPromises()
+    w.findComponent({ name: 'ElTable' }).vm.$emit('sort-change', { prop: 'no', order: 'descending' })
+    await flushPromises()
+    expect(f).toHaveBeenLastCalledWith(
+      expect.objectContaining({ sortField: 'no', sortOrder: 'desc' })
+    )
+    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
+    await flushPromises()
+    expect(f).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 2, sortField: 'no', sortOrder: 'desc' })
+    )
+  })
+
+  it('取消排序（order:null）：query 中两键均不存在', async () => {
+    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 1 })
+    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f } })
+    await flushPromises()
+    const table = w.findComponent({ name: 'ElTable' })
+    table.vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
+    await flushPromises()
+    table.vm.$emit('sort-change', { prop: 'no', order: null })
+    await flushPromises()
+    const q = f.mock.calls.at(-1)![0]
+    expect('sortField' in q).toBe(false)
+    expect('sortOrder' in q).toBe(false)
+  })
+
+  it('未排序的默认 fetch：query 中不含 sortField/sortOrder 键', async () => {
+    const f = makeFetch()
+    mount(CpListPage, { props: { columns: sortCols, fetch: f } })
+    await flushPromises()
+    const q = f.mock.calls.at(-1)![0]
+    expect('sortField' in q).toBe(false)
+    expect('sortOrder' in q).toBe(false)
+  })
+
+  it('sort-change 事件外发 {field, order}；取消时两者 undefined', async () => {
+    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 1 })
+    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f } })
+    await flushPromises()
+    const table = w.findComponent({ name: 'ElTable' })
+    table.vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
+    await flushPromises()
+    table.vm.$emit('sort-change', { prop: 'no', order: null })
+    await flushPromises()
+    expect(w.emitted('sort-change')).toEqual([
+      [{ field: 'no', order: 'asc' }],
+      [{ field: undefined, order: undefined }]
+    ])
+  })
+})

@@ -686,6 +686,49 @@ describe('CpListPage', () => {
 
 **本批无新增模板缺口**——两页均落在既有契约（CpListPage toolbar/col slot #15/#16、default-filter-in-fetch #17）与「特殊页 token 化」处置内，未触发新的模板扩展需求。
 
+### ERP批次1 复盘（Milestone C 首模块，编号接续，从 #18 起）
+
+批次1（FxRate/FscChecklist/SheetUnitPrice/BusinessPartnerList/OrderPriceCorrection）迁移完成，功能零丢失、真栈验收通过（5 页均无菜单入口，localStorage.menus 注入 + route 直达）。ERP 页 i18n 用 erp.*/sales.* 键族（非 wms.common.*），filter-labels 与 CpTag 文案均取原页现有键、未臆造。**诚实分类判定**（CpListPage 契约 = onMounted 自动 fetch + 单一 fetch；auto-load 无害且无必须检索条件的照会一覧才模板化，余者按「特殊页 token 化不强套」）：
+
+- **FxRateView**（照会 CRUD 一覧，194 行）= 唯一素直に載る查询列表页 → **CpPageShell + CpListPage + CpFormDialog**。rateDate=kind:'date'、rate 6 桁固定=col-rate slot、subtitle+「基軸:JPY」CpTag=toolbar slot、新規/編集=CpFormDialog default slot（uppercase/input-number precision6 step0.5/textarea 保全）、削除=ElMessageBox+listRef.reload()。filterLabels={ search:erp.fxRate.btn.refresh(「通貨で再読込」語義の既存キー), reset:sales.btn.clear }。
+- **FscChecklistView**（206 行）= 検索先行（拠点必須・自動取得なし・FROM≤TO/フォーマット必須のクロス検証・出力フォーマットはアクション引数）→ **token 化**。CpListPage の onMounted 自動 fetch 契約と相反するため強套せず、el-form/el-table/el-pagination/発行フロー原様、状態・件数・発行済 el-tag→CpTag(+tone)。
+- **SheetUnitPriceView**（206 行）= Excel アップロード + 登録/参照デュアルモード + 行内選択グリッド + 一括更新（検索駆動の単一 fetch 形態でない）→ **token 化**。件数 el-tag→CpTag、選択ファイル名 #606266→--cp-muted。
+- **BusinessPartnerListView**（219 行）= サーバサイド列ソート（@sort-change、CpListPage 未透過＝強套すると機能喪失）+ 属性 FLG×11 + 詳細検索コラプス（分類 1〜10）の構造化検索（CpFilterBar 平坦フィールドでは表現不能）→ **token 化**。ソート/CSV/行選択 原様、状態・件数 el-tag→CpTag(+tone)、FlgIcon 色 #67c23a/#dcdfe6→--cp-ok/--cp-line。WMS LocationList（双表→token 化）同处置。
+- **OrderPriceCorrectionView**（237 行）= type=selection 連動の行内編集グリッド（変更後単価/特値/理由）+ 拠点必須・自動取得なし → **token 化**。WMS StockTake（編集テーブル→token 化）同处置。状態・件数・選択中 el-tag→CpTag(+tone)、仮単価警告 #e6a23c→--cp-warn。
+
+真栈证据（截图存 `.superpowers/sdd/shots/erp-*.png`）：FxRate（為替レート管理 +count 0 pill / CpFilterBar / toolbar「基軸:JPY」CpTag / CpEmpty / 新規=CpFormDialog 必須マーク+precision6 input-number）；FscChecklist（拠点必須*+ステータスチェック+出力フォーマット select+発行(0)+「合計 0 件」CpTag）；SheetUnitPrice（基準日/拠点必須+取込区分/操作種別 radio+Excel 選択+全選択/全解除+CpTag）；BusinessPartnerList（FLG×11 グリーンチェック --cp-ok+ソート可列+CSV+「合計 0 件」CpTag、検索実行=0 行空態）；OrderPriceCorrection（数量/金額 FROM-TO number+仮単価+selection+行内編集列+選択行を更新(0)+CpTag）。5 页种子データ無しのため空態レンダリング検証（BP は検索で 0 行確認）；表内ステータス CpTag tone は純関数+FxRate toolbar タグで描画済のため低リスク、記录在案。console 无本批新 error（残存 intlify object-flatten / Vue Router deprecation・No-match=menus 注入リロード由来＝既有基础设施）。type-check 0 error、`npm run test` 46 files/304 全绿（baseline 304 保持）。
+
+本批新增模板缺口 2 项（复盘评审补记：token 化处置本身各有依据并获维持，但反复出现的形态缺口应起票而非仅记录——「0 缺口」判定系本批缺陷）：
+
+18. **CpListPage 无 search-first/lazy 模式**（Minor）—— ✅ 已实现（契约扩展三轮 commit）：`lazy?: boolean`（默认 false），true 时 onMounted 不自动 fetch、空态起步（CpEmpty 可见/total=0 分页器自然惰性），首查由 search/切卡/reload()/分页/排序等显式手势触发，首查成功前不 emit total-change。
+    - 现象：现状 onMounted 必自动 fetch；ERP 反复出现「先选必填条件再查询」形态（本批 3/5 页有此形态：FscChecklist/OrderPriceCorrection 拠点必須・自動取得なし，SheetUnitPrice 基準日+拠点必須），与该契约相反，只能整页 token 化放弃模板。
+    - 建议契约：`lazy?: boolean`（默认 false），true 时抑制 onMounted(load)，首查仅由显式 search/reload() 触发。
+19. **CpListPage 无服务端排序透传**（Minor）—— ✅ 已实现（契约扩展三轮 commit）：ListColumn 增 `sortable?: 'custom'`（仅服务端语义），CpListPage 接 el-table @sort-change：order 规范化 asc/desc、page 重置 1、`sortField?/sortOrder?` 并入 ListFetch query（取消排序两键移除）并 emit sort-change({field,order})；lazy 未加载时排序亦触发首查。
+    - 现象：BusinessPartnerList 的 @sort-change 服务端排序是本批该页「decisive token-only reason」却未起票——CpListPage 未透传 el-table 同名事件，强套即丢排序功能。
+    - 建议契约：ListColumn 增 `sortable?: 'custom'`，CpListPage 接 el-table @sort-change，把 `sortField?/sortOrder?` 并入 ListFetch query（并 emit sort-change）。
+
+### ERP批次2 复盘（编号接续，从 #20 起）
+
+批次2（PlateMoldList/ProductMasterList/EstimateCalcList/CreditNoteList/OrderList）迁移完成，功能零丢失、真栈验收通过。本批首次 dogfood #18 lazy（OrderList）与 #19 sortable:'custom'（Order/Product/Estimate 真栈验证 sortField/sortOrder 透传）。分类：CreditNote=CpPageShell+CpListPage（唯一标题键）；Estimate/Product=CpListPage（自动取得+服务端排序，Product 另含 CSV filter-stash + status toolbar checkbox-group）；Order=CpListPage lazy（检索先行+排序+CSV stash+2 toolbar checkbox+受注取消 dialog 兄弟要素+追跡/詳細/取消 col slot）；PlateMold=token 化（行内発行チェックの一括ラベル発行＋picker 現在行選択＋5 ペア FROM≤TO 交差検証）。mobile 卡片分岐（Estimate/CreditNote/Order）撤去为 DS 标准横スクロール（main.css:222-225），非缺口。以下为新增缺口：
+
+20. **CpListPage 内包 filters 不外露 → 亲侧操作（CSV 出力等）拿不到当前检索条件**（Minor，本批 3 页 Product/Order/PlateMold）
+    - 现象：exportCsv(query) 需送含 CpFilterBar 各字段值的全 query，但 filters 闭于 CpListPage 内部 `filters.value`，亲级仅传 searchFields、读不到值。
+    - 代偿：fetch closure 每次收到的 `filters`（+sortField/sortOrder）stash 到 page-level ref（`lastFilters`/`lastSort`），export 侧 buildQuery 复用。唯一齟齬：初回 fetch 前 export → filters 空（lazy 页检索前 export 无意义故许容；auto-load 页 mount fetch 已 stash）。
+    - 建议契约：CpListPage `defineExpose({ reload, getFilters })`（或 filters snapshot API），让亲侧 CSV/一括操作读到当前检索条件。
+21. **CpListPage 无 @current-change（行高亮选择）透传 → picker-mode「返回选中行」形态无法表达**（Minor，PlateMold token 化决定打之一）
+    - 现象：PlateMold picker 模式用 highlight-current-row+@current-change 掴选中行，脚部「選択して戻る」返呼出元。CpListPage 仅透 selectable(checkbox) 的 selection-change，不出单行高亮选择事件。
+    - 代偿（token 化侧）：保留原机制。若 CpListPage 化可用操作列行内「選択」按钮（#16）代替，但与行内発行チェック一括操作合并后选 token 化。
+    - 建议契约：CpListPage 增 `@current-change(row)` 透传（与 #16 @row-click 对偶补齐行选择系事件）。
+22. **CpListPage 无 reset 事件透传 → クリア无法联动清理 CpFilterBar 外部的筛选状态（toolbar checkbox 等）**（评审指摘的未披露回归；本批 2 页 Order/Product）—— ✅ 已实现（最小扩展随修复 commit）：CpListPage 透传 `reset` 事件，页面外部筛选状态（工具栏 checkbox 等）可挂钩清理。
+    - 现象：原 Order resetQuery() 同时清 onlyConsignedSales/onlyMcUntransferred，原 Product onReset() 清 statusSel；迁移后这些筛选提为页面级 ref 放 toolbar slot（#15 代偿），而 CpFilterBar 的重置事件被 CpListPage 内部消化不外发——クリア后 checkbox 保持勾选且继续参与 fetch（功能回归）。
+    - 实现契约：emits 增 `reset()`，onReset 顺序 = 清内部 state（page=1，filters 已由 CpFilterBar 先回写清空）→ **同步 emit('reset')** → load()——监听器先清自身 ref，随后 fetch closure 读到的已是清理后的值（时序由专项测试锁定：监听器清理的外部 ref 不进入 reset 触发的 fetch query）。Order `@reset` 清两 checkbox、Product `@reset` 清 statusSel，与原页 reset 语义对齐。
+
+### ERP批次3 复盘（编号接续，从 #23 起——本批无新增编号）
+
+批次3（QuotationList/BackorderList/OtdReport/OrderTrace/OrderCancelDialog）迁移完成，真栈验收通过（tests 316 保持）。分类：Quotation=CpListPage standalone（自动取得+服务端排序 #19+status toolbar checkbox #15+@reset #22）；Backorder=CpPageShell+CpListPage（paginated=false 单表全量）；OtdReport/OrderTrace=特殊页 token 化；OrderCancelDialog=working form dialog token 化（el-tag→CpTag，emits 契约保全）+ Phase-6 遗留可视性 bug 一行修复（`visible=ref(props.modelValue)`）。**本批无新增模板缺口编号**，以下为既知限制补记：
+
+- **QuotationList 原 `@row-dblclick→照会` 手势丢失**（#21 家族既知限制，不另立新号）：CpListPage 无行激活钩子（行选择/行激活系事件缺口与 #16 行内按钮代偿、#21 @current-change 未透传同族）。照会仍在操作列一键可达，能力未丢，仅双击快捷手势降级——与批次2 EstimateCalc 同处置（row-dblclick→操作列集约）。
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

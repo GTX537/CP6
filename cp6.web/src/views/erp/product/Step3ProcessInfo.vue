@@ -13,7 +13,7 @@
         :disabled="!store.canEdit || store.processes.length === 0"
         @click="reSort"
       >{{ t('並び順再採番') }}</el-button>
-      <span style="color: #909399; font-size: 12px">
+      <span style="color: var(--cp-muted); font-size: 12px">
         {{ t('※ 工程CD 0600/0601/0602（トムソン系）は連産品ボタンが活性化') }}
       </span>
     </div>
@@ -255,13 +255,12 @@
           :disabled="!store.canEdit"
           @click="addCoProduct"
         >{{ t('行追加') }}</el-button>
-        <el-tag
-          :type="coRatioOk ? 'success' : 'danger'"
-          size="small"
+        <CpTag
+          :tone="coRatioOk ? 'ok' : 'danger'"
           style="margin-left: 12px"
         >
           QtyRatio{{ t('合計') }}: {{ coRatioSum.toFixed(4) }} {{ coRatioOk ? '✓' : t('(=1.0 必須)') }}
-        </el-tag>
+        </CpTag>
       </div>
       <el-table :data="currentCoList" border stripe size="small" style="width: 100%">
         <el-table-column prop="rowNo" label="No" width="60" align="center" />
@@ -315,6 +314,7 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { useProductMasterStore } from '@/stores/productMaster'
+import CpTag from '@/components/base/CpTag.vue'
 import type { ProductProcessDto, ProductCoProductDto } from '@/types/erp/productMaster'
 
 const store = useProductMasterStore()

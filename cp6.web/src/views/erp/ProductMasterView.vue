@@ -10,12 +10,10 @@
           <span v-if="store.productCd" class="product-cd">
             {{ t('製品CD') }}: {{ store.productCd }}
           </span>
-          <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">
-            {{ t('自動採番待ち') }}
-          </el-tag>
-          <el-tag v-if="store.status === 1" type="warning" size="small">{{ t('承認待ち') }}</el-tag>
-          <el-tag v-else-if="store.status === 9" type="success" size="small">{{ t('承認済') }}</el-tag>
-          <el-tag v-if="store.mcTransferFlg" type="info" size="small">{{ t('mc転送済') }}</el-tag>
+          <CpTag v-else-if="store.isNew" tone="info">{{ t('自動採番待ち') }}</CpTag>
+          <CpTag v-if="store.status === 1" tone="warn">{{ t('承認待ち') }}</CpTag>
+          <CpTag v-else-if="store.status === 9" tone="ok">{{ t('承認済') }}</CpTag>
+          <CpTag v-if="store.mcTransferFlg" tone="info">{{ t('mc転送済') }}</CpTag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="hasNoCd">
@@ -95,6 +93,7 @@ import { useProductMasterStore } from '@/stores/productMaster'
 import { useProductConflictHandler } from '@/composables/useProductConflictHandler'
 import { ProductOperationType } from '@/types/erp/productMaster'
 import { productApi } from '@/api/erp/product'
+import CpTag from '@/components/base/CpTag.vue'
 import Step1TargetSelect from './product/Step1TargetSelect.vue'
 import Step2BasicInfo from './product/Step2BasicInfo.vue'
 import Step3ProcessInfo from './product/Step3ProcessInfo.vue'
@@ -494,7 +493,7 @@ onMounted(async () => {
 .product-cd {
   font-size: 16px;
   font-weight: 600;
-  color: #409eff;
+  color: var(--cp-brand);
 }
 .step-bar {
   margin-top: 8px;

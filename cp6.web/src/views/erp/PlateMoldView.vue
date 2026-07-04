@@ -6,8 +6,8 @@
         <div class="header-left">
           <el-tag :type="opTagType" size="large" effect="dark">{{ opLabel }}</el-tag>
           <span v-if="store.dto.wdPtnNo" class="key">{{ t('sales.pm.no') }}: {{ store.dto.wdPtnNo }} / {{ t('sales.term.rev') }} {{ store.dto.wdRev }}</span>
-          <el-tag v-else-if="store.isRegister" type="info" size="small">{{ t('sales.status.autoNumber') }}</el-tag>
-          <el-tag v-if="store.dto.status === 9" type="success" size="small">{{ t('sales.status.transferred') }}</el-tag>
+          <CpTag v-else-if="store.isRegister" tone="info">{{ t('sales.status.autoNumber') }}</CpTag>
+          <CpTag v-if="store.dto.status === 9" tone="ok">{{ t('sales.status.transferred') }}</CpTag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small">
@@ -189,6 +189,7 @@ import { Document } from '@element-plus/icons-vue'
 import { usePlateMoldStore } from '@/stores/plateMold'
 import { PlateMoldOperationType } from '@/types/erp/plateMold'
 import { plateMoldApi } from '@/api/erp/plateMold'
+import CpTag from '@/components/base/CpTag.vue'
 
 const { t } = useI18n()
 const store = usePlateMoldStore()

@@ -6,9 +6,7 @@
         <div class="header-left">
           <el-tag :type="opTagType" :size="isMobile ? 'default' : 'large'" effect="dark">{{ opLabel }}</el-tag>
           <span v-if="form.qtnNo" class="qtn-no">{{ t('御見積書 No.') }} {{ form.qtnNo }}</span>
-          <el-tag v-if="statusLabel" :type="statusTagType" effect="plain" :size="isMobile ? 'small' : 'large'">
-            {{ statusLabel }}
-          </el-tag>
+          <CpTag v-if="statusLabel" :tone="statusTone">{{ statusLabel }}</CpTag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="!form.qtnNo && op !== 10">
@@ -377,7 +375,7 @@
               </el-table-column>
             </el-table>
 
-            <div v-if="form.details.length === 0" style="text-align:center; padding: 16px; color:#909399">
+            <div v-if="form.details.length === 0" style="text-align:center; padding: 16px; color:var(--cp-muted)">
               {{ t('明細がありません。「使用」チェック or 「行追加」で明細を追加してください。') }}
             </div>
           </el-tab-pane>
@@ -474,6 +472,7 @@ import type { MasterBase, MasterStaff } from '@/types/erp/estimateCalc'
 import type { AxiosError } from 'axios'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import { formatQty, formatNumber } from '@/utils/format'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 
 const { isMobile } = useBreakpoint()
 const Op = QuotationOperationType
@@ -544,9 +543,9 @@ const statusLabel = computed(() => {
   if (form.qtnNo) return t('未承認')
   return ''
 })
-const statusTagType = computed<'info' | 'success' | 'warning' | 'primary'>(() => {
-  if (form.masterConfirmFlg >= 2) return 'success'
-  if (form.estimateCheckFlg >= 1) return 'warning'
+const statusTone = computed<Tone>(() => {
+  if (form.masterConfirmFlg >= 2) return 'ok'
+  if (form.estimateCheckFlg >= 1) return 'warn'
   return 'info'
 })
 
@@ -1135,7 +1134,7 @@ onBeforeUnmount(() => {
 .qtn-no {
   font-size: 16px;
   font-weight: 600;
-  color: #409eff;
+  color: var(--cp-brand);
 }
 .btn-row {
   display: flex;
@@ -1199,7 +1198,7 @@ onBeforeUnmount(() => {
   margin: 0;
   border-radius: 0;
   z-index: 50;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  box-shadow: var(--cp-shadow-up);
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .quotation-view.is-mobile .footer-card :deep(.el-card__body) {

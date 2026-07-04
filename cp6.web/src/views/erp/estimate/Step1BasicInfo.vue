@@ -626,7 +626,7 @@ onMounted(async () => {
 <style scoped>
 :deep(.el-divider__text) {
   font-weight: 600;
-  color: #409eff;
+  color: var(--cp-brand);
 }
 :deep(.el-form-item) {
   margin-bottom: 12px;

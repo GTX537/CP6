@@ -27,21 +27,21 @@
           </div>
         </div>
         <div class="kpi-strip">
-          <el-tag type="info" effect="plain">
+          <CpTag tone="info">
             {{ t('erp.orderTrace.summary.totalEvents') }}: {{ trace.summary.totalEvents }}
-          </el-tag>
-          <el-tag type="success" effect="plain">
+          </CpTag>
+          <CpTag tone="ok">
             {{ t('erp.orderTrace.summary.success') }}: {{ trace.summary.successCount }}
-          </el-tag>
-          <el-tag :type="trace.summary.failedCount > 0 ? 'danger' : 'info'" effect="plain">
+          </CpTag>
+          <CpTag :tone="trace.summary.failedCount > 0 ? 'danger' : 'info'">
             {{ t('erp.orderTrace.summary.failed') }}: {{ trace.summary.failedCount }}
-          </el-tag>
-          <el-tag :type="trace.summary.deadCount > 0 ? 'danger' : 'info'" effect="plain">
+          </CpTag>
+          <CpTag :tone="trace.summary.deadCount > 0 ? 'danger' : 'info'">
             {{ t('erp.orderTrace.summary.dead') }}: {{ trace.summary.deadCount }}
-          </el-tag>
-          <el-tag type="warning" effect="plain">
+          </CpTag>
+          <CpTag tone="warn">
             {{ t('erp.orderTrace.summary.distinctChains') }}: {{ trace.summary.distinctCorrelationIds }}
-          </el-tag>
+          </CpTag>
         </div>
       </div>
     </el-card>
@@ -68,7 +68,7 @@
           <template #title>
             <div class="chain-title">
               <span>{{ shortCorrelation(group.correlationId) }}</span>
-              <el-tag size="small" type="info">{{ group.items.length }}</el-tag>
+              <CpTag tone="info">{{ group.items.length }}</CpTag>
             </div>
           </template>
           <el-timeline>
@@ -108,7 +108,7 @@
 import { computed, defineComponent, h, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { ElButton, ElMessage, ElTag, ElTooltip } from 'element-plus'
+import { ElButton, ElMessage, ElTooltip } from 'element-plus'
 import {
   CircleCheckFilled,
   CircleCloseFilled,
@@ -120,6 +120,7 @@ import {
 } from '@element-plus/icons-vue'
 import { orderTraceApi } from '@/api/erp/orderTrace'
 import type { OrderTrace, OrderTraceTimelineItem } from '@/types/erp/orderTrace'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -153,12 +154,12 @@ const EventContent = defineComponent({
     return () => h('div', { class: 'event-content' }, [
       h('div', { class: 'event-head' }, [
         h('div', { class: 'event-route' }, [
-          h(ElTag, { size: 'small', type: 'info' }, () => props.item.sourceModule),
+          h(CpTag, { tone: 'info' }, () => props.item.sourceModule),
           h('span', { class: 'route-arrow' }, '->'),
-          h(ElTag, { size: 'small' }, () => props.item.targetModule),
+          h(CpTag, { tone: 'muted' }, () => props.item.targetModule),
           h('span', { class: 'hook-name' }, props.item.hookName),
         ]),
-        h(ElTag, { size: 'small', type: statusTagType(props.item.status) }, () => statusLabel(props.item.status)),
+        h(CpTag, { tone: statusTone(props.item.status) }, () => statusLabel(props.item.status)),
       ]),
       h('div', { class: 'event-nos' }, [
         h('span', props.item.sourceNo),
@@ -198,6 +199,14 @@ function statusTagType(status: string): 'success' | 'warning' | 'danger' | 'info
 
 function timelineType(status: string): 'success' | 'warning' | 'danger' | 'info' {
   return statusTagType(status)
+}
+
+// status → CpTag 语义色调（沿用 statusTagType 意图，映射到设计系统共享 Tone）
+function statusTone(status: string): Tone {
+  if (status === 'SUCCESS') return 'ok'
+  if (status === 'FAILED' || status === 'DEAD') return 'danger'
+  if (status === 'PENDING') return 'warn'
+  return 'info'
 }
 
 function statusIcon(status: string) {
@@ -290,7 +299,7 @@ watch(
 }
 
 .trace-toolbar h2 {
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 20px;
   font-weight: 650;
   line-height: 1.3;
@@ -317,14 +326,14 @@ watch(
 }
 
 .summary-no {
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 18px;
   font-weight: 650;
   line-height: 1.2;
 }
 
 .summary-meta {
-  color: #606266;
+  color: var(--cp-text);
   display: flex;
   flex-wrap: wrap;
   font-size: 13px;
@@ -362,7 +371,7 @@ watch(
 }
 
 .event-box {
-  border: 1px solid #ebeef5;
+  border: 1px solid var(--cp-line);
   border-radius: 8px;
   padding: 10px 12px;
 }
@@ -389,17 +398,17 @@ watch(
 }
 
 .route-arrow {
-  color: #909399;
+  color: var(--cp-muted);
 }
 
 .hook-name {
-  color: #303133;
+  color: var(--cp-ink);
   font-weight: 600;
   word-break: break-all;
 }
 
 .event-nos {
-  color: #606266;
+  color: var(--cp-text);
   font-size: 13px;
   word-break: break-all;
 }
@@ -412,7 +421,7 @@ watch(
 }
 
 .event-message {
-  color: #909399;
+  color: var(--cp-muted);
   font-size: 13px;
   min-width: 0;
   word-break: break-word;

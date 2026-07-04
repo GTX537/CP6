@@ -13,7 +13,7 @@
         :disabled="!store.canEdit || store.materials.length === 0"
         @click="reSort"
       >{{ t('並び順再採番') }}</el-button>
-      <span style="color: #909399; font-size: 12px">
+      <span style="color: var(--cp-muted); font-size: 12px">
         {{ t('※ 材料区分: 1=主材料 / 2=副資材 / 3=梱包材') }}
       </span>
     </div>

@@ -398,7 +398,7 @@ onMounted(async () => {
 .qtn-no {
   font-size: 16px;
   font-weight: 600;
-  color: #409eff;
+  color: var(--cp-brand);
 }
 .step-bar {
   margin-top: 8px;
@@ -464,7 +464,7 @@ onMounted(async () => {
   margin: 0;
   border-radius: 0;
   z-index: 50;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  box-shadow: var(--cp-shadow-up);
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .estimate-calc.is-mobile .footer-card :deep(.el-card__body) {

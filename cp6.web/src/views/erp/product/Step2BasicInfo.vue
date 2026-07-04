@@ -11,7 +11,7 @@
         style="width: 200px"
       />
       <el-button size="small" type="primary" :icon="Search" @click="onLoadFromEstimateCalc">{{ t('引入') }}</el-button>
-      <span style="color: #909399; font-size: 12px">
+      <span style="color: var(--cp-muted); font-size: 12px">
         {{ t('※ 見積計算書から基本情報を読み込みます（既存の入力値は上書きされます）') }}
       </span>
     </div>

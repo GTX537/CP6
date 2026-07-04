@@ -156,7 +156,7 @@
       </el-table-column>
       <el-table-column :label="t('ステータス')" width="100">
         <template #default="{ row }">
-          <el-tag size="small" :type="statusTagType(row.status)">{{ statusLabel(row.status) }}</el-tag>
+          <CpTag :tone="statusTone(row.status)">{{ statusLabel(row.status) }}</CpTag>
         </template>
       </el-table-column>
     </el-table>
@@ -188,6 +188,7 @@ import { useOrderStore } from '@/stores/order'
 import { orderApi } from '@/api/erp/order'
 import { formatNumber } from '@/utils/format'
 import MasterReferenceDialog from '@/components/master/MasterReferenceDialog.vue'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
 import type { OrderDetailDto } from '@/types/erp/order'
 
@@ -310,8 +311,8 @@ async function onLookupMembers() {
 function statusLabel(s: number): string {
   return s === 9 ? t('mc転送済') : s === 1 ? t('承認待') : t('未')
 }
-function statusTagType(s: number): 'info' | 'warning' | 'success' {
-  return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'
+function statusTone(s: number): Tone {
+  return s === 9 ? 'ok' : s === 1 ? 'warn' : 'info'
 }
 </script>
 

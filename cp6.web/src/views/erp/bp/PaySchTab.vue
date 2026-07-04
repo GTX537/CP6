@@ -11,7 +11,7 @@
     </el-form-item>
     <el-form-item :label="t('支払締日 1')" :required="!store.bp.paidEachTimeFlg">
       <el-input-number v-model="store.bp.paymentClosingDay1" :disabled="!store.canEdit || store.bp.paidEachTimeFlg" :min="1" :max="99" :controls="false" style="width: 110px" />
-      <span style="margin-left: 6px; font-size: 12px; color: #909399;">{{ t('1〜31, 99') }}</span>
+      <span class="hint-text">{{ t('1〜31, 99') }}</span>
     </el-form-item>
     <el-form-item :label="t('支払税計算 FLG')">
       <el-checkbox v-model="store.bp.paymentTaxCalcFlg" :disabled="!store.canEdit">{{ t('税計算') }}</el-checkbox>
@@ -35,4 +35,7 @@ import { useBpStore } from '@/stores/businessPartner'
 const props = defineProps<{ store: ReturnType<typeof useBpStore> }>()
 const store = props.store
 </script>
-<style scoped>:deep(.el-form-item){margin-bottom:8px;}</style>
+<style scoped>
+:deep(.el-form-item){margin-bottom:8px;}
+.hint-text { margin-left: 6px; font-size: 12px; color: var(--cp-muted); }
+</style>

@@ -5,7 +5,7 @@
     <el-form-item :label="t('債権与信管理先')"><el-input v-model="store.bp.creditMgmtArCd" :disabled="!store.canEdit" style="width: 200px" /></el-form-item>
     <el-form-item :label="t('請求締日 1')">
       <el-input-number v-model="store.bp.billingClosingDay1" :disabled="!store.canEdit" :min="1" :max="99" :controls="false" style="width: 110px" />
-      <span style="margin-left: 6px; font-size: 12px; color: #909399;">1〜31, 99</span>
+      <span class="hint-text">1〜31, 99</span>
     </el-form-item>
     <el-form-item :label="t('請求書印刷区分')"><el-input v-model="store.bp.billingPrintDiv" :disabled="!store.canEdit" style="width: 120px" /></el-form-item>
     <el-form-item :label="t('請求書封緘区分')"><el-input v-model="store.bp.billingSealDiv" :disabled="!store.canEdit" style="width: 120px" /></el-form-item>
@@ -28,4 +28,7 @@ import { useBpStore } from '@/stores/businessPartner'
 const props = defineProps<{ store: ReturnType<typeof useBpStore> }>()
 const store = props.store
 </script>
-<style scoped>:deep(.el-form-item){margin-bottom:8px;}</style>
+<style scoped>
+:deep(.el-form-item){margin-bottom:8px;}
+.hint-text { margin-left: 6px; font-size: 12px; color: var(--cp-muted); }
+</style>
