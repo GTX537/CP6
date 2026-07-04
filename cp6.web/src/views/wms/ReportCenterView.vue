@@ -45,13 +45,13 @@
           <el-button :disabled="rows.length === 0" @click="downloadCsv">{{ t('wms.report.btn.csv') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-tag type="info">{{ t('wms.report.fld.rows') }}: {{ rows.length }}</el-tag>
+          <CpTag tone="info">{{ t('wms.report.fld.rows') }}: {{ rows.length }}</CpTag>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never">
-      <el-empty v-if="rows.length === 0" :description="t('wms.report.msg.noData')" />
+      <CpEmpty v-if="rows.length === 0" :text="t('wms.report.msg.noData')" />
 
       <!-- Monthly -->
       <el-table v-if="reportType === 'monthly' && rows.length > 0" :data="rows" border stripe size="small" max-height="650">
@@ -85,7 +85,7 @@
         </el-table-column>
         <el-table-column :label="t('wms.report.abc.rank')" width="100" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.abcRank === 'A' ? 'danger' : row.abcRank === 'B' ? 'warning' : 'info'">{{ row.abcRank }}</el-tag>
+            <CpTag :tone="row.abcRank === 'A' ? 'danger' : row.abcRank === 'B' ? 'warn' : 'info'">{{ row.abcRank }}</CpTag>
           </template>
         </el-table-column>
       </el-table>
@@ -102,7 +102,7 @@
         <el-table-column prop="lastMovedAt" :label="t('wms.report.dead.lastMoved')" width="150" />
         <el-table-column prop="idleDays" :label="t('wms.report.dead.idleDays')" width="120" align="right">
           <template #default="{ row }">
-            <el-tag :type="row.idleDays > 180 ? 'danger' : row.idleDays > 90 ? 'warning' : 'info'" size="small">{{ row.idleDays }}</el-tag>
+            <CpTag :tone="row.idleDays > 180 ? 'danger' : row.idleDays > 90 ? 'warn' : 'info'">{{ row.idleDays }}</CpTag>
           </template>
         </el-table-column>
         <el-table-column prop="estimatedValue" :label="t('wms.report.monthly.value')" width="140" align="right">
@@ -135,6 +135,8 @@
 import { ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpTag from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import { reportApi } from '@/api/wms/reportCenter'
 import { formatQty, formatCurrency } from '@/utils/format'
 

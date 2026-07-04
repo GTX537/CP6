@@ -649,6 +649,17 @@ describe('CpListPage', () => {
 
 （注：LocationList 为 master-detail 双表联动，CpListPage 单表卡形态不表达，按「特殊页不强套模板」保留双栏 el-table + 编辑 el-dialog，未计入模板缺口——与批次2 LotTrace/InboundReceipt 处置一致。）
 
+### WMS 迁移批次4 复盘（编号接续，从 #16 起）
+
+批次4（WcsTask/StockTake/IotMonitor/ReportCenter/Carrier）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：WcsTask/Carrier=查询列表页（CpPageShell+CpListPage+CpFilterBar+3×CpFormDialog，码值状態列 kind:'tag'+map，客户端分页）；StockTake=棚卸明細/编辑特殊页（token 化：el-tag→CpTag+tone、内联 #aaa/el-var→--cp-* token、保留 el-descriptions+可编辑 el-table+el-affix action-bar）；IotMonitor=监控仪表盘特殊页（token 化 + CpTag/CpEmpty 基础件替换，保留 30s 轮询/アラート/行クリック履歴，新建/投入弹窗迁 CpFormDialog）；ReportCenter=帳票中心特殊页（token 化 + CpTag/CpEmpty，保留動的表单/多结果表/CSV）。真栈：WcsTask 5 行 + 状態/優先度 pill + 新建 CpFormDialog；Carrier 空态（Total 0）+ 新建必填标记；IotMonitor 1 alert/3 sensors + 投入/履歴弹窗；ReportCenter 在庫月報 16 行 + 件数 pill；StockTake 无数据故直达验证 default 渲染（計画/全棚卸 pill + action-bar）。以下为唯一新增缺口：
+
+16. **CpListPage 无 `@row-click` 透传（整行点击事件）**（Minor）
+    - 现象：Carrier 原表格 `@row-click` 整行点击打开「イベント履歴」详情弹窗。CpListPage 的 el-table 未透传 row-click，业务侧拿不到行点击事件。
+    - 代偿：详情能力下沉到操作列常驻「詳細」link 按钮（`openDetail(row)`），功能与 timeline 弹窗完整保全；仅丢失「整行可点」这一 UX affordance（highlight-current-row 仍默认开启，视觉高亮不受影响）。
+    - 建议：CpListPage 增 `@row-click(row)` 透传 el-table 同名事件，恢复整行点击进详情的交互。
+
+（注：StockTake/IotMonitor/ReportCenter 三页为特殊页，按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3 处置一致。CpFormDialog 采用 `label-position:top`（设计系统标准），与原页 label-width 左标签的差异属既定契约，非缺口。Carrier/StockTake/stock-take-list 三处后端无种子数据，Carrier 验证空态 + 新建弹窗、StockTake 直达验证 default 渲染，已在报告注明。）
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

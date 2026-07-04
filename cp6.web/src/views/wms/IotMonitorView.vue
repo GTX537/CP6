@@ -1,3 +1,8 @@
+<!--
+  IoT センサー監視 —— 監視ダッシュボード特殊页（WMS 批次4）：非表格监控形态，不强套 CpListPage。
+  token 化 + 基础件替换：状态 pill el-tag→CpTag、空态 el-empty→CpEmpty、内联灰色→var(--cp-*)；
+  新建/投入弹窗迁 CpFormDialog；履歴弹窗（只读表）保留 el-dialog；30 秒轮询 / アラート面板 / 行クリック履歴 全保留。
+-->
 <template>
   <div class="wms-iot">
     <!-- ヘッダ：アラート + 全体ボタン -->
@@ -5,7 +10,7 @@
       <div class="alert-hd">
         <div>
           <h3 style="margin: 0">{{ t('wms.iot.title') }}</h3>
-          <div style="color:#909399; font-size: 12px">{{ alerts.length }} alerts · {{ sensors.length }} sensors</div>
+          <div class="sub">{{ alerts.length }} alerts · {{ sensors.length }} sensors</div>
         </div>
         <div>
           <el-button :icon="MagicStick" type="warning" @click="simulate" :loading="simBusy">{{ t('wms.iot.btn.simulate') }}</el-button>
@@ -19,7 +24,7 @@
         ·  value: <b>{{ a.lastValue }}</b>
         · {{ a.alertMessage || '' }}
       </el-alert>
-      <el-empty v-if="alerts.length === 0" :description="t('wms.iot.msg.noAlerts')" :image-size="60" />
+      <CpEmpty v-if="alerts.length === 0" :text="t('wms.iot.msg.noAlerts')" />
     </el-card>
 
     <el-card shadow="never">
@@ -42,7 +47,7 @@
         </el-table-column>
         <el-table-column :label="t('wms.iot.fld.lastValue')" width="120" align="right">
           <template #default="{ row }">
-            <el-tag v-if="row.lastValue != null" :type="isAlert(row) ? 'danger' : 'success'">{{ row.lastValue }} {{ row.unit || '' }}</el-tag>
+            <CpTag v-if="row.lastValue != null" :tone="isAlert(row) ? 'danger' : 'ok'">{{ row.lastValue }} {{ row.unit || '' }}</CpTag>
             <span v-else>—</span>
           </template>
         </el-table-column>
@@ -56,8 +61,8 @@
       </el-table>
     </el-card>
 
-    <!-- 履歴 Dialog -->
-    <el-dialog v-model="historyDialog" :title="historyTarget?.sensorId + ' — ' + t('wms.iot.tab.history')" width="800">
+    <!-- 履歴 Dialog（只读表，保留 el-dialog） -->
+    <el-dialog v-model="historyDialog" :title="(historyTarget?.sensorId ?? '') + ' — ' + t('wms.iot.tab.history')" width="800">
       <el-table :data="readings" border stripe size="small" max-height="450">
         <el-table-column prop="readAt" label="ReadAt" width="180" />
         <el-table-column prop="value" :label="t('wms.iot.fld.value')" width="120" align="right">
@@ -65,7 +70,7 @@
         </el-table-column>
         <el-table-column :label="t('wms.iot.fld.alert')" width="80" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.isAlert" type="danger" size="small">⚠</el-tag>
+            <CpTag v-if="row.isAlert" tone="danger">⚠</CpTag>
           </template>
         </el-table-column>
         <el-table-column prop="alertMessage" label="Message" min-width="220" show-overflow-tooltip />
@@ -73,70 +78,70 @@
     </el-dialog>
 
     <!-- 新建 -->
-    <el-dialog v-model="createDialog" :title="t('wms.iot.dlg.create')" width="560">
-      <el-form v-if="editing" :model="editing" label-width="140px" size="small">
-        <el-row :gutter="12">
-          <el-col :span="12"><el-form-item :label="t('wms.iot.fld.type')" required>
-            <el-select v-model="editing.sensorType" @change="onTypeChange">
-              <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="v" />
-            </el-select>
-          </el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.iot.fld.name')"><el-input v-model="editing.sensorName" maxlength="100" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.common.warehouse')" required><el-input v-model="editing.warehouseCd" maxlength="10" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.common.location')"><el-input v-model="editing.locationCd" maxlength="30" /></el-form-item></el-col>
-          <el-col :span="8"><el-form-item :label="t('wms.iot.fld.unit')"><el-input v-model="editing.unit" maxlength="10" /></el-form-item></el-col>
-          <el-col :span="8"><el-form-item :label="t('wms.iot.fld.min')"><el-input-number v-model="editing.minThreshold" :precision="2" controls-position="right" style="width: 100%" /></el-form-item></el-col>
-          <el-col :span="8"><el-form-item :label="t('wms.iot.fld.max')"><el-input-number v-model="editing.maxThreshold" :precision="2" controls-position="right" style="width: 100%" /></el-form-item></el-col>
-          <el-col :span="24"><el-form-item :label="t('wms.iot.fld.enabled')"><el-switch v-model="editing.isEnabled" /></el-form-item></el-col>
-          <el-col :span="24"><el-form-item :label="t('wms.common.remarks')"><el-input v-model="editing.remarks" type="textarea" :rows="2" /></el-form-item></el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <el-button @click="createDialog = false">{{ t('wms.common.cancel') }}</el-button>
-        <el-button type="primary" @click="onCreate" :loading="saving">{{ t('wms.common.save') }}</el-button>
-      </template>
-    </el-dialog>
+    <CpFormDialog
+      v-model="createDialog"
+      :title="t('wms.iot.dlg.create')"
+      width="560"
+      :form="createForm"
+      :rules="createRules"
+      :submit="onCreate"
+      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
+      @saved="reload"
+    >
+      <el-row :gutter="12">
+        <el-col :span="12"><el-form-item :label="t('wms.iot.fld.type')" prop="sensorType">
+          <el-select v-model="createForm.sensorType" @change="onTypeChange">
+            <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="v" />
+          </el-select>
+        </el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.iot.fld.name')"><el-input v-model="createForm.sensorName" maxlength="100" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.common.warehouse')" prop="warehouseCd"><el-input v-model="createForm.warehouseCd" maxlength="10" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.common.location')"><el-input v-model="createForm.locationCd" maxlength="30" /></el-form-item></el-col>
+        <el-col :span="8"><el-form-item :label="t('wms.iot.fld.unit')"><el-input v-model="createForm.unit" maxlength="10" /></el-form-item></el-col>
+        <el-col :span="8"><el-form-item :label="t('wms.iot.fld.min')"><el-input-number v-model="createForm.minThreshold" :precision="2" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+        <el-col :span="8"><el-form-item :label="t('wms.iot.fld.max')"><el-input-number v-model="createForm.maxThreshold" :precision="2" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+        <el-col :span="24"><el-form-item :label="t('wms.iot.fld.enabled')"><el-switch v-model="createForm.isEnabled" /></el-form-item></el-col>
+        <el-col :span="24"><el-form-item :label="t('wms.common.remarks')"><el-input v-model="createForm.remarks" type="textarea" :rows="2" /></el-form-item></el-col>
+      </el-row>
+    </CpFormDialog>
 
     <!-- 投入 -->
-    <el-dialog v-model="postDialog" :title="t('wms.iot.dlg.postReading') + ' — ' + postTarget?.sensorId" width="400">
-      <el-form label-width="100px" size="small">
-        <el-form-item :label="t('wms.iot.fld.value')" required>
-          <el-input-number v-model="postValue" :precision="2" controls-position="right" style="width: 100%" />
-        </el-form-item>
-        <el-form-item v-if="postTarget" :label="'Range'">
-          <span>{{ postTarget.minThreshold ?? '—' }} 〜 {{ postTarget.maxThreshold ?? '—' }} {{ postTarget.unit || '' }}</span>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="postDialog = false">{{ t('wms.common.cancel') }}</el-button>
-        <el-button type="primary" @click="onPost">{{ t('wms.common.save') }}</el-button>
-      </template>
-    </el-dialog>
+    <CpFormDialog
+      v-model="postDialog"
+      :title="t('wms.iot.dlg.postReading') + ' — ' + (postTarget?.sensorId ?? '')"
+      width="400"
+      :form="postForm"
+      :submit="onPost"
+      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
+      @saved="reload"
+    >
+      <el-form-item :label="t('wms.iot.fld.value')" prop="value">
+        <el-input-number v-model="postForm.value" :precision="2" controls-position="right" style="width: 100%" />
+      </el-form-item>
+      <el-form-item v-if="postTarget" :label="'Range'">
+        <span>{{ postTarget.minThreshold ?? '—' }} 〜 {{ postTarget.maxThreshold ?? '—' }} {{ postTarget.unit || '' }}</span>
+      </el-form-item>
+    </CpFormDialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, type FormRules } from 'element-plus'
 import { Refresh, MagicStick } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
+import CpTag from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
+import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { iotApi } from '@/api/wms/connectivity'
 import type { IotSensor, IotSensorReading, IotAlert } from '@/types/wms/wms'
 
 const { t } = useI18n()
 const loading = ref(false)
 const simBusy = ref(false)
-const saving = ref(false)
 
 const sensors = ref<IotSensor[]>([])
 const alerts = ref<IotAlert[]>([])
-
-const createDialog = ref(false)
-const editing = ref<any>(null)
-
-const postDialog = ref(false)
-const postTarget = ref<IotSensor | null>(null)
-const postValue = ref(0)
 
 const historyDialog = ref(false)
 const historyTarget = ref<IotSensor | null>(null)
@@ -174,51 +179,56 @@ async function simulate() {
   } finally { simBusy.value = false }
 }
 
+// —— 新建 ——
+const createDialog = ref(false)
+const createForm = reactive<Record<string, unknown>>({
+  sensorType: 'TEMP', sensorName: '', warehouseCd: '', locationCd: '',
+  unit: '℃', minThreshold: 2, maxThreshold: 8, isEnabled: true, remarks: '',
+})
+const createRules = computed<FormRules>(() => ({
+  sensorType: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
+  warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+}))
 function openCreate() {
-  editing.value = {
+  Object.assign(createForm, {
     sensorType: 'TEMP', sensorName: '', warehouseCd: '', locationCd: '',
-    unit: '℃', minThreshold: 2, maxThreshold: 8, isEnabled: true,
-  }
+    unit: '℃', minThreshold: 2, maxThreshold: 8, isEnabled: true, remarks: '',
+  })
   createDialog.value = true
 }
-
 function onTypeChange() {
-  const defaults: Record<string, any> = {
+  const defaults: Record<string, { unit: string; min: number; max: number }> = {
     TEMP:  { unit: '℃', min: 2, max: 8 },
     HUMID: { unit: '%', min: 30, max: 70 },
     SHOCK: { unit: 'G', min: 0, max: 3 },
     SHELF: { unit: 'ON-OFF', min: 0, max: 1 },
   }
-  const d = defaults[editing.value.sensorType] || defaults.TEMP
-  editing.value.unit = d.unit
-  editing.value.minThreshold = d.min
-  editing.value.maxThreshold = d.max
+  const d = defaults[createForm.sensorType as string] ?? { unit: '℃', min: 2, max: 8 }
+  createForm.unit = d.unit
+  createForm.minThreshold = d.min
+  createForm.maxThreshold = d.max
 }
-
 async function onCreate() {
-  saving.value = true
-  try {
-    const res = await iotApi.createSensor(editing.value)
-    ElMessage.success(`${t('wms.common.success')}: ${res.data.sensorId}`)
-    createDialog.value = false
-    await reload()
-  } finally { saving.value = false }
+  const res = await iotApi.createSensor(createForm)
+  ElMessage.success(`${t('wms.common.success')}: ${res.data.sensorId}`)
 }
 
+// —— 投入 ——
+const postDialog = ref(false)
+const postTarget = ref<IotSensor | null>(null)
+const postForm = reactive<Record<string, unknown>>({ value: 0 })
 function openPost(row: IotSensor) {
   postTarget.value = row
-  postValue.value = row.lastValue ?? 0
+  postForm.value = row.lastValue ?? 0
   postDialog.value = true
 }
-
 async function onPost() {
   if (!postTarget.value) return
-  await iotApi.postReading(postTarget.value.sensorId, postValue.value)
+  await iotApi.postReading(postTarget.value.sensorId, Number(postForm.value))
   ElMessage.success(t('wms.common.success'))
-  postDialog.value = false
-  await reload()
 }
 
+// —— 履歴 ——
 async function onRowClick(row: IotSensor) {
   historyTarget.value = row
   const r = await iotApi.getReadings(row.sensorId, undefined, undefined, 200)
@@ -239,5 +249,6 @@ onUnmounted(() => { if (timer) window.clearInterval(timer) })
 .wms-iot { padding: 16px; }
 .alert-card { margin-bottom: 12px; }
 .alert-hd { display: flex; align-items: center; justify-content: space-between; }
+.alert-hd .sub { color: var(--cp-muted); font-size: 12px; }
 .card-hd { display: flex; align-items: center; }
 </style>
