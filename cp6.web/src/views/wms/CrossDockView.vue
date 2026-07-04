@@ -100,7 +100,7 @@ function codeLabel(m: Record<number, string>, v: unknown): string {
 }
 
 const columns = computed<ListColumn[]>(() => [
-  { prop: 'xdockNo', label: t('wms.xdock.fld.no'), kind: 'mono', width: 180 },
+  { prop: 'xDockNo', label: t('wms.xdock.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
   { prop: 'productCd', label: t('wms.common.product'), width: 120 },
@@ -170,7 +170,7 @@ async function onSave() {
 async function onExecute(row: CrossDockOrder) {
   try {
     await ElMessageBox.confirm(t('wms.xdock.msg.executeAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await crossDockApi.execute(row.xdockNo!)
+    await crossDockApi.execute(row.xDockNo!)
     ElMessage.success(t('wms.common.success'))
     reloadList()
   } catch { /* */ }
@@ -179,7 +179,7 @@ async function onExecute(row: CrossDockOrder) {
 async function onCancel(row: CrossDockOrder) {
   try {
     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await crossDockApi.cancel(row.xdockNo!)
+    await crossDockApi.cancel(row.xDockNo!)
     ElMessage.success(t('wms.common.success'))
     reloadList()
   } catch { /* */ }

@@ -672,7 +672,7 @@ export interface KitOrderSearchQuery {
 
 export interface CrossDockOrder {
   id?: string
-  xdockNo?: string
+  xDockNo?: string  // 后端实体 XDockNo → camelCase 序列化为 xDockNo（大写 D）
   inboundNo?: string
   outboundNo?: string
   productCd: string

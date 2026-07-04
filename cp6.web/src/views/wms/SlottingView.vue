@@ -8,7 +8,7 @@
   <CpPageShell :title="t('wms.slotting.title')" :count="mode === 'list' ? total : undefined">
     <template #actions>
       <el-button v-if="mode === 'list'" @click="analyzeDialog = true">{{ t('wms.slotting.btn.analyze') }}</el-button>
-      <el-button v-else @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
+      <el-button v-else @click="backToList">{{ t('wms.common.back') }}</el-button>
     </template>
 
     <!-- 一覧态（常挂，切明细用 v-show 隐藏以保留筛选上下文） -->
@@ -71,7 +71,6 @@
 
       <el-affix position="bottom" :offset="0">
         <div class="action-bar">
-          <el-button @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
           <el-button v-if="currentResult.plan.status === 1" type="success" @click="onApprove">{{ t('wms.stocktake.btn.approve') }}</el-button>
           <el-button v-if="currentResult.plan.status !== 9 && currentResult.plan.status !== 2" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
         </div>
@@ -119,6 +118,13 @@ const mode = ref<'list' | 'detail'>('list')
 const total = ref<number>()
 const listRef = ref<InstanceType<typeof CpListPage>>()
 const currentResult = ref<SlottingPlanResult | null>(null)
+// 明细内承認/取消后置脏标记：返回一覧时命令式刷新 CpListPage（v-show 常挂不自动重取）
+const listDirty = ref(false)
+
+function backToList() {
+  if (listDirty.value) { listRef.value?.reload(); listDirty.value = false }
+  mode.value = 'list'
+}
 
 // —— 码值映射 ——
 const statusMap = computed<Record<number, string>>(() => ({
@@ -215,6 +221,7 @@ async function onApprove() {
     await ElMessageBox.confirm(t('wms.slotting.msg.approveAsk'), t('wms.common.confirm'), { type: 'warning' })
     await slottingApi.approve(currentResult.value.plan.slottingPlanNo)
     ElMessage.success(t('wms.common.success'))
+    listDirty.value = true
     await openDetail(currentResult.value.plan.slottingPlanNo)
   } catch { /* */ }
 }
@@ -224,13 +231,13 @@ async function onCancel() {
     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
     await slottingApi.cancel(currentResult.value.plan.slottingPlanNo)
     ElMessage.success(t('wms.common.success'))
+    listDirty.value = true
     await openDetail(currentResult.value.plan.slottingPlanNo)
   } catch { /* */ }
 }
 </script>
 
 <style scoped>
-.wms-slotting { padding: 16px; }
 /* 卡片壳（复用设计系统卡片 token；非硬编码） */
 .cp-card { background: var(--cp-card); border-radius: var(--cp-r-md); box-shadow: var(--cp-shadow-1); overflow: hidden; }
 .cp-card-body { padding: 16px 20px; }
