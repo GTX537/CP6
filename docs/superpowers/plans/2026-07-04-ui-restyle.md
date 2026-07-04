@@ -601,3 +601,34 @@ describe('CpListPage', () => {
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
 - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
 - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+
+## 模板缺口（Task 11 试点复盘）
+
+第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpStatusStrip + CpTag 的组合足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+
+1. **total 不外露 → PageShell 计数 pill 无法接线**（本次影响最大）。
+   - 页面需要：mockup 头部「28 单」计数 pill（CpPageShell `:count`）。
+   - 模板缺：CpListPage 内部持有 `total` 但既不 emit 也不暴露，父级 CpPageShell 拿不到值，只能省略 `:count`。
+   - 建议契约扩展：CpListPage 增 `@total-change(n:number)`（或 `v-model:total` / `#count` 作用域插槽），让业务页把总数回填到 PageShell。本次为遵守「不擅改已评审组件」而省略计数 pill，记为缺口而非页内 hack。
+
+2. **ListColumn 缺 `minWidth` 与 `overflowTooltip`**。
+   - 页面需要：客先名列原为 `min-width:160 + show-overflow-tooltip`（长客户名省略号 + 悬浮全文）。
+   - 模板缺：ListColumn 仅有 `width`，无最小宽 / 无溢出 tooltip；长文本无法优雅截断。
+   - 建议契约扩展：ListColumn 增 `minWidth?: number` 与 `overflowTooltip?: boolean`，透传给 el-table-column 的 `min-width` / `show-overflow-tooltip`。
+
+3. **kind:'tag' 仅认「已是 CpTag 状态词」的原始值，码值状态列仍需自绘插槽**。
+   - 页面需要：区分 / ステータス / 優先度 三列是数字码（0..9），要「码→i18n 文案」+「码→语义 tone」两步映射。
+   - 模板缺：kind:'tag' 直接把单元格原值当 CpTag `status`，对数字码既显不出文案也命不中 tone；只能改用 `col-<prop>` 插槽 + `<CpTag :tone>` 自绘（功能已保全，但每个码值列都要重复样板）。
+   - 建议契约扩展：ListColumn 增可选 `map?: (val, row) => { label: string; tone?: Tone }`（或 `valueMap` 字典），让码值状态/枚举列声明式着色，免去逐列插槽。
+
+4. **CpTag 文本在窄列内换行**（小视觉缺陷）。
+   - 现象：区分列 90px / 状态列 110px 下，「ピッキング」被折成「ピッキン グ」，pill 竖向撑高。
+   - 模板缺：CpTag 未设 `white-space:nowrap`。
+   - 建议：CpTag `.cp-tag` 加 `white-space:nowrap`（纯样式微调，不改契约）。
+
+5. **数据源无 total，ListFetch 只能客户端分页**（记录而非模板缺口——受「不改后端/API 契约」约束）。
+   - 现象：`outboundOrderApi.search` 返回扁平数组无总数，而 ListFetch 契约要求 `{ rows, total }`。
+   - 适配：fetch 包装以 `pageSize:500` 取一批，`total = 数组长度`，按 page/size 客户端切片（真栈验证 37 条 → 20/页 2 页、翻页正确）。
+   - 后续：待后端补 `WmsPaged<T>`（total/page/pageSize 已有类型）后，fetch 包装可直接透传 page/size 做服务端分页；无需改模板。
+
+模板本次「够用」的原因：CpListPage 的 `col-<prop>` 具名插槽是逃生舱——凡 kind 表达不了的列（码值 tag、日期截断、行操作按钮、自定义 tone）都能落到插槽里保功能，因此上述缺口都不是阻塞项，而是「省样板 / 补计数」的契约增强。
