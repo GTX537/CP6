@@ -686,7 +686,7 @@ describe('CpListPage', () => {
 
 **本批无新增模板缺口**——两页均落在既有契约（CpListPage toolbar/col slot #15/#16、default-filter-in-fetch #17）与「特殊页 token 化」处置内，未触发新的模板扩展需求。
 
-### ERP批次1 复盘（Milestone C 首模块，无新增模板缺口，编号仍止于 #17）
+### ERP批次1 复盘（Milestone C 首模块，编号接续，从 #18 起）
 
 批次1（FxRate/FscChecklist/SheetUnitPrice/BusinessPartnerList/OrderPriceCorrection）迁移完成，功能零丢失、真栈验收通过（5 页均无菜单入口，localStorage.menus 注入 + route 直达）。ERP 页 i18n 用 erp.*/sales.* 键族（非 wms.common.*），filter-labels 与 CpTag 文案均取原页现有键、未臆造。**诚实分类判定**（CpListPage 契约 = onMounted 自动 fetch + 单一 fetch；auto-load 无害且无必须检索条件的照会一覧才模板化，余者按「特殊页 token 化不强套」）：
 
@@ -698,7 +698,14 @@ describe('CpListPage', () => {
 
 真栈证据（截图存 `.superpowers/sdd/shots/erp-*.png`）：FxRate（為替レート管理 +count 0 pill / CpFilterBar / toolbar「基軸:JPY」CpTag / CpEmpty / 新規=CpFormDialog 必須マーク+precision6 input-number）；FscChecklist（拠点必須*+ステータスチェック+出力フォーマット select+発行(0)+「合計 0 件」CpTag）；SheetUnitPrice（基準日/拠点必須+取込区分/操作種別 radio+Excel 選択+全選択/全解除+CpTag）；BusinessPartnerList（FLG×11 グリーンチェック --cp-ok+ソート可列+CSV+「合計 0 件」CpTag、検索実行=0 行空態）；OrderPriceCorrection（数量/金額 FROM-TO number+仮単価+selection+行内編集列+選択行を更新(0)+CpTag）。5 页种子データ無しのため空態レンダリング検証（BP は検索で 0 行確認）；表内ステータス CpTag tone は純関数+FxRate toolbar タグで描画済のため低リスク、記录在案。console 无本批新 error（残存 intlify object-flatten / Vue Router deprecation・No-match=menus 注入リロード由来＝既有基础设施）。type-check 0 error、`npm run test` 46 files/304 全绿（baseline 304 保持）。
 
-**本批无新增模板缺口**——5 页均落在既有契約（CpListPage/CpFormDialog 標準 + #15/#16/#17）与「特殊页 token 化」処置内。BusinessPartnerList のサーバソート未対応は既知制約（#16 @row-click 近傍）で当该页 token 化選択の決め手として記録、机能は token 化で保全済、新規缺口としては未起票。
+本批新增模板缺口 2 项（复盘评审补记：token 化处置本身各有依据并获维持，但反复出现的形态缺口应起票而非仅记录——「0 缺口」判定系本批缺陷）：
+
+18. **CpListPage 无 search-first/lazy 模式**（Minor）
+    - 现象：现状 onMounted 必自动 fetch；ERP 反复出现「先选必填条件再查询」形态（本批 3/5 页有此形态：FscChecklist/OrderPriceCorrection 拠点必須・自動取得なし，SheetUnitPrice 基準日+拠点必須），与该契约相反，只能整页 token 化放弃模板。
+    - 建议契约：`lazy?: boolean`（默认 false），true 时抑制 onMounted(load)，首查仅由显式 search/reload() 触发。
+19. **CpListPage 无服务端排序透传**（Minor）
+    - 现象：BusinessPartnerList 的 @sort-change 服务端排序是本批该页「decisive token-only reason」却未起票——CpListPage 未透传 el-table 同名事件，强套即丢排序功能。
+    - 建议契约：ListColumn 增 `sortable?: 'custom'`，CpListPage 接 el-table @sort-change，把 `sortField?/sortOrder?` 并入 ListFetch query（并 emit sort-change）。
 
 ## Self-Review 记录
 
