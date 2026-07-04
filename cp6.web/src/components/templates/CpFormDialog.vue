@@ -13,6 +13,8 @@
     - rules?: FormRules                 校验规则；同 key 覆盖 required 自动规则。
     - submit: (form) => Promise<void>   提交回调；resolve 视为成功。
     - width?: string                    弹窗宽度，透传 el-dialog。
+    - labels?: { cancel?; confirm? }    footer 按钮文案覆盖；缺省中文，供业务侧接 i18n。
+    - requiredMessage?: (label) => string  自动必填规则文案生成器；缺省 `${label}为必填项`。
   Slots: default（自定义表单体，替代 fields；仍在 el-form 内，parent 提供 el-form-item 规则同样生效）。
   Emits: update:modelValue(open) ｜ saved()
 
@@ -48,7 +50,12 @@ const props = defineProps<{
   rules?: FormRules
   submit: (form: Record<string, unknown>) => Promise<void>
   width?: string
+  labels?: { cancel?: string; confirm?: string }
+  requiredMessage?: (label: string) => string
 }>()
+
+// 自动必填规则文案：缺省中文，业务侧可传 requiredMessage 覆盖（接 i18n）
+const defaultRequiredMessage = (label: string) => `${label}为必填项`
 
 const emit = defineEmits<{
   (e: 'update:modelValue', open: boolean): void
@@ -64,7 +71,7 @@ const mergedRules = computed<FormRules>(() => {
   for (const f of props.fields ?? []) {
     if (f.required) {
       const trigger = f.type === 'select' || f.type === 'date' ? 'change' : 'blur'
-      out[f.key] = [{ required: true, message: `${f.label}为必填项`, trigger }]
+      out[f.key] = [{ required: true, message: (props.requiredMessage ?? defaultRequiredMessage)(f.label), trigger }]
     }
   }
   for (const [k, v] of Object.entries(props.rules ?? {})) out[k] = v
@@ -81,10 +88,11 @@ function close() {
 }
 
 async function onConfirm() {
-  const valid = await formRef.value?.validate().catch(() => false)
-  if (!valid) return // 校验失败：不提交、不关闭、el-form 已内联提示
-  submitting.value = true
+  if (submitting.value) return // 防双提交：校验/提交在途时二次点击直接忽略
+  submitting.value = true // 提前置位——覆盖 validate 在途窗口，杜绝并发进入
   try {
+    const valid = await formRef.value?.validate().catch(() => false)
+    if (!valid) return // 校验失败：不提交、不关闭、el-form 已内联提示（finally 复位 submitting）
     await props.submit(props.form)
     emit('saved')
     emit('update:modelValue', false)
@@ -147,8 +155,8 @@ async function onConfirm() {
 
     <template #footer>
       <div class="cp-fd-footer">
-        <el-button @click="close">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="onConfirm">确认</el-button>
+        <el-button @click="close">{{ labels?.cancel ?? '取消' }}</el-button>
+        <el-button type="primary" :loading="submitting" @click="onConfirm">{{ labels?.confirm ?? '确认' }}</el-button>
       </div>
     </template>
   </el-dialog>

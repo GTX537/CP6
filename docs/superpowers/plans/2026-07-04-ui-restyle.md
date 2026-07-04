@@ -540,7 +540,7 @@ describe('CpListPage', () => {
 })
 ```
 
-- [ ] **Step 2: 实现 CpListPage.vue**——组合结构：`CpStatusStrip?` → `CpFilterBar?` → 表格卡（toolbar slot + el-table + el-pagination）。内部状态 `page/size/filters/statusKey/rows/total/loading`；统一 `load()` 调 `props.fetch`，catch 里 `ElMessage.error((e as Error).message)`。列渲染按 `kind` 分支（`tag`→`<CpTag :status="row[prop]" />`；`mono`→`class="cp-mono"`；`num`→`class="num" align=right`）；`col-<prop>` slot 存在时优先。视觉值抄 mockup-final-b `.tcard/.toolbar/.pager`。
+- [ ] **Step 2: 实现 CpListPage.vue**——组合结构：`CpStatusStrip?` → `CpFilterBar?` → 表格卡（toolbar slot + el-table + el-pagination）。内部状态 `page/size/filters/statusKey/rows/total/loading`；统一 `load()` 调 `props.fetch`，catch 里 `ElMessage.error((e as Error)?.message ?? String(e))`（原弱形式 `(e as Error).message` 已在终审 hardening commit 修复为与 CpFormDialog 一致的硬化形式；Milestone C brief 不得再抄弱形式）。列渲染按 `kind` 分支（`tag`→`<CpTag :status="row[prop]" />`；`mono`→`class="cp-mono"`；`num`→`class="num" align=right`）；`col-<prop>` slot 存在时优先。视觉值抄 mockup-final-b `.tcard/.toolbar/.pager`。
 - [ ] **Step 3:** 抽 CpStatCard：KpiCard.vue 内容平移 + 文件头注释，`DashboardView` import 路径改 `@/components/templates/CpStatCard.vue`，删 `views/dashboard/components/KpiCard.vue`。
 - [ ] **Step 4:** Run `npm run test` → 全 PASS；`npm run type-check` 0 error。
 - [ ] **Step 5:** Commit：`feat(ui): CpListPage 查询页模板 + CpStatCard 抽取`。
@@ -621,19 +621,26 @@ describe('CpListPage', () => {
    - 模板缺：kind:'tag' 直接把单元格原值当 CpTag `status`，对数字码既显不出文案也命不中 tone；只能改用 `col-<prop>` 插槽 + `<CpTag :tone>` 自绘（功能已保全，但每个码值列都要重复样板）。
    - 建议契约扩展：ListColumn 增可选 `map?: (val, row) => { label: string; tone?: Tone }`（或 `valueMap` 字典），让码值状态/枚举列声明式着色，免去逐列插槽。
 
-4. **CpTag 文本在窄列内换行**（小视觉缺陷）。
+4. **CpTag 文本在窄列内换行**（小视觉缺陷）—— ✅ 已修复（终审 hardening commit）。
    - 现象：区分列 90px / 状态列 110px 下，「ピッキング」被折成「ピッキン グ」，pill 竖向撑高。
-   - 模板缺：CpTag 未设 `white-space:nowrap`。
-   - 建议：CpTag `.cp-tag` 加 `white-space:nowrap`（纯样式微调，不改契约）。
+   - 修复：CpTag `.cp-tag` 已加 `white-space:nowrap`（纯样式微调，未改契约）。
 
 5. **数据源无 total，ListFetch 只能客户端分页**（记录而非模板缺口——受「不改后端/API 契约」约束）。
    - 现象：`outboundOrderApi.search` 返回扁平数组无总数，而 ListFetch 契约要求 `{ rows, total }`。
    - 适配：fetch 包装以 `pageSize:500` 取一批，`total = 数组长度`，按 page/size 客户端切片（真栈验证 37 条 → 20/页 2 页、翻页正确）。
    - 后续：待后端补 `WmsPaged<T>`（total/page/pageSize 已有类型）后，fetch 包装可直接透传 page/size 做服务端分页；无需改模板。
 
-6. **CpFilterBar 按钮文案硬编码中文 → i18n 回归**（Important，评审补记）。
+6. **CpFilterBar 按钮文案硬编码中文 → i18n 回归**（Important，评审补记）—— ⏳ 部分修复（终审 hardening commit）。
    - 页面需要：原页面查询/重置按钮走 `t('wms.common.search')` 等词条，随语言切换；默认语言为 ja。
-   - 模板缺：CpFilterBar 的「查询 / 重置 / 展开更多(收起)」为硬编码中文（CpFilterBar.vue:111-113），迁移后 ja 默认语言下这三个按钮只显示中文——相对原页面是 i18n 回归。
-   - 建议契约扩展：CpFilterBar 按钮文案支持 i18n——组件内改用 `$t`（约定词条 key，如 `common.search` / `common.reset` / `common.expandMore`）或增 `labels?: { search?; reset?; expand?; collapse? }` props；模板修复后本页无需改动。Milestone C 批量迁移前应优先修此项，否则每个迁移页都会引入同样回归。
+   - 已做：CpFilterBar 增 `labels?: { search?; reset?; expand?; collapse? }`，CpFormDialog 增 `labels?: { cancel?; confirm? }` + `requiredMessage?`，CpEmpty 沿用既有 `text?`；CpListPage 透传 `filterLabels?` / `emptyText?`。试点页 `OutboundOrderListView.vue` 已就现有词条接线（`search→wms.common.search`、`reset→wms.common.clear`）；`expand/collapse` 无对应 key，保留组件内中文默认（未臆造 Sys_Langs 词条）。
+   - 剩余 follow-up（Milestone C）：采用共享词条（如 `common.search/reset/expandMore/collapse`）或组件内直接 `t()`，让 expand/collapse 等也随语言切换、免每页手动传 labels。
+
+7. **共享 `Tone` 类型导出 + STATUS_TONE 强类型**（终审提出，Milestone C 票，未在本次修复）。
+   - 现状：`CpTag` 的 tone 联合类型 `'ok'|'warn'|'danger'|'info'|'muted'` 内联在 props；`STATUS_TONE` 值为宽松 `Record<string,string>`；`ListColumn.map`（缺口#3 提案）、`StatusTab.tone`、页面 `statusTone()` 等各处对 tone 各写各的字面量，无单一事实来源。
+   - 建议：从 `CpTag.vue` 导出 `export type Tone = ...`，`STATUS_TONE: Record<string, Tone>`，各消费点复用该类型，编译期约束非法 tone。
+
+8. **`kind:'date'` 死词汇**（终审提出，Milestone C 前实现或删除）。
+   - 现状：`ListColumn.kind` 声明含 `'date'`，但 CpListPage 列渲染分支未实现 date 格式化（落到 `<template v-else>` 原样输出），头注也写「date→暂原样」。试点页日期列走 `col-plannedDate` 插槽自行 `slice`，`kind:'date'` 从未生效——属死词汇。
+   - 建议：Milestone C 前二选一——要么实现 date 格式化分支（按 i18n `d()`/`format`），要么从 `kind` 联合类型删除 `'date'`，避免误导后续迁移页声明无效 kind。
 
 模板本次「够用」的原因：CpListPage 的 `col-<prop>` 具名插槽是逃生舱——凡 kind 表达不了的列（码值 tag、日期截断、行操作按钮、自定义 tone）都能落到插槽里保功能，因此上述缺口都不是阻塞项，而是「省样板 / 补计数」的契约增强。

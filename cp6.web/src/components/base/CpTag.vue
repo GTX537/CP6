@@ -2,7 +2,7 @@
   CpTag —— 状态 pill（圆点 + 文字，设计系统 §9.1）。
 
   Props:
-    - status?: string  业务状态词；经 STATUS_TONE 集中映射到色调，未命中回退 muted。
+    - status?: string  业务状态词；经 STATUS_TONE 集中映射到色调，空串/未命中均回退 muted。
     - tone?: 'ok'|'warn'|'danger'|'info'|'muted'  显式指定色调，优先级高于 status。
   Slots:
     - default  标签文案；缺省时回退渲染 status 文本。
@@ -26,12 +26,13 @@ export const STATUS_TONE: Record<string, string> = {
 <script setup lang="ts">
 import { computed } from 'vue'
 const props = defineProps<{ status?: string; tone?: 'ok'|'warn'|'danger'|'info'|'muted' }>()
-const t = computed(() => props.tone ?? (props.status && STATUS_TONE[props.status]) ?? 'muted')
+// status='' 或未命中 → || 'muted' 兜底（?? 无法拦截空串这类 falsy-非 nullish 值，会漏出 't-' 空色调）
+const t = computed(() => props.tone ?? ((props.status && STATUS_TONE[props.status]) || 'muted'))
 </script>
 <template><span class="cp-tag" :class="`t-${t}`"><slot>{{ status }}</slot></span></template>
 <style scoped>
 .cp-tag { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:800;
-  padding:3px 10px; border-radius:999px; }
+  padding:3px 10px; border-radius:999px; white-space:nowrap; }
 .cp-tag::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
 .t-ok { background:var(--cp-ok-bg); color:var(--cp-ok); }
 .t-warn { background:var(--cp-warn-bg); color:var(--cp-warn); }

@@ -10,7 +10,7 @@
       <el-button type="warning" @click="bridgeDialog = true">{{ t('wms.outbound.bridge.title') }}</el-button>
     </template>
 
-    <CpListPage :columns="columns" :fetch="fetchList" :search-fields="searchFields">
+    <CpListPage :columns="columns" :fetch="fetchList" :search-fields="searchFields" :filter-labels="filterLabels">
       <!-- 種別 -->
       <template #col-outboundType="{ row }">
         <CpTag :tone="row.outboundType === 1 ? 'info' : 'warn'">
@@ -116,6 +116,12 @@ const columns = computed<ListColumn[]>(() => [
   { prop: 'priority', label: t('wms.outbound.fld.priority'), width: 80 },
   { prop: '_action', label: t('wms.common.action'), width: 100 },
 ])
+
+// —— CpFilterBar 按钮文案接 i18n（沿用现有词条；expand/collapse 无对应 key，留组件默认） ——
+const filterLabels = computed(() => ({
+  search: t('wms.common.search'),
+  reset: t('wms.common.clear'),
+}))
 
 // —— 搜索字段 ——（对应原 el-form 6 个查询项） ——
 const searchFields = computed<FilterField[]>(() => [

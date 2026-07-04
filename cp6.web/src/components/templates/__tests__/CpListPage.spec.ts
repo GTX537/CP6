@@ -67,6 +67,26 @@ describe('CpListPage 行为契约补充', () => {
     errSpy.mockRestore()
   })
 
+  it('fetch reject 非 Error：ElMessage.error 收到字符串（与 CpFormDialog 同一硬化契约，不产生 undefined）', async () => {
+    const errSpy = vi.spyOn(ElMessage, 'error').mockImplementation((() => undefined) as never)
+    const f = vi.fn().mockRejectedValue('网络异常') // 非 Error（无 .message）
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f } })
+    await flushPromises()
+    expect(errSpy).toHaveBeenCalledWith('网络异常')
+    expect(w.find('.cp-list').exists()).toBe(true)
+    errSpy.mockRestore()
+  })
+
+  it('emptyText 透传 CpEmpty', async () => {
+    const w = mount(CpListPage, {
+      props: { columns: cols, fetch: makeFetch([]), emptyText: '該当データなし' }
+    })
+    await flushPromises()
+    const empty = w.findComponent({ name: 'CpEmpty' })
+    expect(empty.exists()).toBe(true)
+    expect(empty.text()).toContain('該当データなし')
+  })
+
   it('翻页以对应 page 重新 fetch；search 将 page 重置为 1', async () => {
     const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
     const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields } })

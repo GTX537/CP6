@@ -104,6 +104,21 @@ describe('CpFormDialog', () => {
     errSpy.mockRestore()
   })
 
+  it('防双提交：validate 在途期间二次 onConfirm → submit 仅一次', async () => {
+    const submit = vi.fn().mockResolvedValue(undefined)
+    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
+    await flushPromises()
+    const state = (w.vm as unknown as { $: { setupState: Record<string, any> } }).$.setupState
+    // validate 保持 pending，模拟校验尚未完成时的第二次点击
+    let resolveValidate!: (v: boolean) => void
+    state.formRef.validate = vi.fn(() => new Promise((r) => { resolveValidate = r }))
+    state.onConfirm()
+    state.onConfirm() // 二次快速触发：应被 submitting 守卫拦下
+    resolveValidate(true)
+    await flushPromises()
+    expect(submit).toHaveBeenCalledTimes(1)
+  })
+
   it('提交进行中：确认按钮进入 loading 态，结束后解除', async () => {
     let release!: () => void
     const submit = vi.fn(() => new Promise<void>((r) => { release = r }))

@@ -12,6 +12,11 @@ describe('CpTag', () => {
     const w = mount(CpTag, { props: { status: '莫名状态' } })
     expect(w.classes()).toContain('t-muted')
   })
+  it('falls back to muted for empty status (no bare t- class)', () => {
+    const w = mount(CpTag, { props: { status: '' } })
+    expect(w.classes()).toContain('t-muted')
+    expect(w.classes()).not.toContain('t-')
+  })
   it('explicit tone overrides status', () => {
     const w = mount(CpTag, { props: { status: '已出库', tone: 'danger' } })
     expect(w.classes()).toContain('t-danger')

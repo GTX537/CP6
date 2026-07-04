@@ -10,6 +10,8 @@
     - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
     - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key。
     - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
+    - filterLabels?: FilterBarLabels 透传 CpFilterBar 按钮文案覆盖（业务侧接 i18n；缺省中文）。
+    - emptyText?: string           透传 CpEmpty 空状态文案（缺省「暂无数据」）。
   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
   Emits: selection-change(rows)
 
@@ -47,7 +49,7 @@ export interface StatusTab { key: string; label: string; count: number; tone?: s
 import { onMounted, ref } from 'vue'
 import { ElMessage, ElPagination, ElTable, ElTableColumn, vLoading } from 'element-plus'
 import CpStatusStrip from './CpStatusStrip.vue'
-import CpFilterBar, { type FilterField } from './CpFilterBar.vue'
+import CpFilterBar, { type FilterField, type FilterBarLabels } from './CpFilterBar.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 
@@ -58,6 +60,8 @@ const props = defineProps<{
   statusTabs?: StatusTab[]
   selectable?: boolean
   rowKey?: string
+  filterLabels?: FilterBarLabels
+  emptyText?: string
 }>()
 
 const emit = defineEmits<{ (e: 'selection-change', rows: unknown[]): void }>()
@@ -88,7 +92,7 @@ async function load() {
     total.value = res.total
   } catch (e) {
     if (id !== seq) return
-    ElMessage.error((e as Error).message) // 保留旧 rows/total
+    ElMessage.error((e as Error)?.message ?? String(e)) // 保留旧 rows/total（与 CpFormDialog 同一错误硬化契约）
   } finally {
     if (id === seq) loading.value = false
   }
@@ -124,6 +128,7 @@ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
       v-if="searchFields?.length"
       v-model="filters"
       :fields="searchFields"
+      :labels="filterLabels"
       @search="onSearch"
       @reset="onReset"
     />
@@ -162,7 +167,7 @@ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
         </el-table-column>
 
         <template #empty>
-          <CpEmpty v-if="!loading" />
+          <CpEmpty v-if="!loading" :text="emptyText" />
         </template>
       </el-table>
 

@@ -71,4 +71,30 @@ describe('CpFilterBar', () => {
     const w = mount(CpFilterBar, { props: { fields, modelValue: {} } })
     expect(w.findAll('button').some((b) => b.text().includes('展开更多'))).toBe(false)
   })
+
+  it('daterange field renders and wires start/end placeholders from field.placeholder', () => {
+    const drFields: FilterField[] = [{ key: 'date', label: '计划出库日', type: 'daterange', placeholder: '选择日期' }]
+    const w = mount(CpFilterBar, { props: { fields: drFields, modelValue: {} } })
+    const inputs = w.findAll('.el-range-input')
+    expect(inputs).toHaveLength(2) // 起 / 止 两个输入
+    expect(inputs[0].attributes('placeholder')).toBe('选择日期')
+    expect(inputs[1].attributes('placeholder')).toBe('选择日期')
+  })
+
+  it('renders custom button labels when labels prop supplied', () => {
+    const many: FilterField[] = [...fields, { key: 'operator', label: '担当', type: 'text' }]
+    const w = mount(CpFilterBar, {
+      props: {
+        fields: many,
+        modelValue: {},
+        labels: { search: '検索', reset: 'クリア', expand: 'もっと見る', collapse: '閉じる' }
+      }
+    })
+    expect(w.findAll('button').some((b) => b.text().includes('検索'))).toBe(true)
+    expect(w.findAll('button').some((b) => b.text().includes('クリア'))).toBe(true)
+    expect(w.findAll('button').some((b) => b.text().includes('もっと見る'))).toBe(true)
+    // 无 labels 时的中文默认不应再出现
+    expect(w.text()).not.toContain('查询')
+    expect(w.text()).not.toContain('重置')
+  })
 })

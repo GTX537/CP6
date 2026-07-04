@@ -6,6 +6,9 @@
   Props:
     - fields: FilterField[]              字段声明表（见 FilterField）。
     - modelValue: Record<string,unknown> 查询条件对象；键为 field.key，值为该字段当前值。
+    - labels?: FilterBarLabels           按钮文案覆盖（search/reset/expand/collapse）；缺省中文，供业务侧接 i18n。
+  说明：daterange 字段的 el-date-picker 忽略单个 placeholder，故把 field.placeholder 同时接到
+        start-placeholder / end-placeholder（起止用同一串），保证占位提示可见。
   Emits:
     - update:modelValue (next)  任一字段变更/重置时抛出「全新对象」（不原地修改入参）。
     - search                    点击「查询」时抛出（无载荷；父级读自身 model）。
@@ -29,13 +32,24 @@ export interface FilterField {
   options?: { label: string; value: unknown }[]
   placeholder?: string
 }
+// 按钮文案覆盖：缺省中文，业务侧可传 i18n 词条覆盖任一按钮
+export interface FilterBarLabels {
+  search?: string
+  reset?: string
+  expand?: string
+  collapse?: string
+}
 </script>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { ElInput, ElSelect, ElOption, ElDatePicker, ElButton } from 'element-plus'
 
-const props = defineProps<{ fields: FilterField[]; modelValue: Record<string, unknown> }>()
+const props = defineProps<{
+  fields: FilterField[]
+  modelValue: Record<string, unknown>
+  labels?: FilterBarLabels
+}>()
 const emit = defineEmits<{
   (e: 'update:modelValue', next: Record<string, unknown>): void
   (e: 'search'): void
@@ -95,6 +109,8 @@ function onReset() {
         type="daterange"
         :model-value="(modelValue[f.key] as any)"
         :placeholder="f.placeholder"
+        :start-placeholder="f.placeholder"
+        :end-placeholder="f.placeholder"
         range-separator="→"
         @update:model-value="setField(f.key, $event)"
       />
@@ -108,9 +124,9 @@ function onReset() {
         type="button"
         class="link-btn"
         @click="expanded = !expanded"
-      >{{ expanded ? '收起' : '展开更多' }} ▾</button>
-      <el-button @click="onReset">重置</el-button>
-      <el-button type="primary" @click="emit('search')">查询</el-button>
+      >{{ expanded ? (labels?.collapse ?? '收起') : (labels?.expand ?? '展开更多') }} ▾</button>
+      <el-button @click="onReset">{{ labels?.reset ?? '重置' }}</el-button>
+      <el-button type="primary" @click="emit('search')">{{ labels?.search ?? '查询' }}</el-button>
     </div>
   </div>
 </template>
