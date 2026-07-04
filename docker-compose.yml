@@ -96,6 +96,9 @@ services:
       JWT__Secret: "${JWT_SECRET:?Set JWT_SECRET (>=32 chars) in .env}"
     ports:
       - "9991:5000"
+    volumes:
+      # i18n 发布快照持久化：LangPublishService 写 wwwroot/i18n，不挂卷则容器重建即回滚到镜像内旧快照
+      - cp6-api-i18n:/app/wwwroot/i18n
     depends_on:
       cp6-db:
         condition: service_healthy
@@ -136,3 +139,4 @@ volumes:
   cp6-redis-data:
   cp6-mq-data:
   cp6-kafka-data:
+  cp6-api-i18n:
