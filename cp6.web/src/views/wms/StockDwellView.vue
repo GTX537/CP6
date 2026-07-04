@@ -71,7 +71,7 @@
       <template #header>
         <div class="panel-header">
           <span>{{ t('wms.stockDwell.chart.title') }}</span>
-          <el-tag size="small" type="info">{{ t('wms.stockDwell.filter.asOfDate') }}: {{ formatDate(summary?.asOfDate) }}</el-tag>
+          <CpTag tone="info">{{ t('wms.stockDwell.filter.asOfDate') }}: {{ formatDate(summary?.asOfDate) }}</CpTag>
         </div>
       </template>
 
@@ -105,12 +105,12 @@
           </div>
         </div>
       </div>
-      <el-empty v-else :description="t('wms.stockDwell.empty')" :image-size="70" />
+      <CpEmpty v-else :text="t('wms.stockDwell.empty')" />
     </el-card>
 
     <el-card shadow="never" class="table-card">
       <div class="table-toolbar">
-        <el-tag size="small">{{ t('wms.common.total') }}: {{ rows.length }}</el-tag>
+        <CpTag tone="info">{{ t('wms.common.total') }}: {{ rows.length }}</CpTag>
       </div>
 
       <el-table
@@ -148,9 +148,9 @@
         </el-table-column>
         <el-table-column :label="t('wms.stockDwell.col.oldestAge')" width="120" align="right">
           <template #default="{ row }">
-            <el-tag :type="row.oldestAgeDays > 90 ? 'danger' : 'info'" size="small">
+            <CpTag :tone="row.oldestAgeDays > 90 ? 'danger' : 'info'">
               {{ row.oldestAgeDays }}
-            </el-tag>
+            </CpTag>
           </template>
         </el-table-column>
       </el-table>
@@ -166,7 +166,7 @@
             <span>{{ t('wms.stockDwell.col.oldestAge') }}: {{ row.oldestAgeDays }}</span>
           </div>
         </div>
-        <el-empty v-if="!rows.length && !loading" :description="t('wms.stockDwell.empty')" :image-size="70" />
+        <CpEmpty v-if="!rows.length && !loading" :text="t('wms.stockDwell.empty')" />
       </div>
     </el-card>
   </div>
@@ -176,6 +176,8 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Refresh, Search } from '@element-plus/icons-vue'
+import CpTag from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import { stockDwellApi } from '@/api/wms/stockDwell'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import type { StockDwellQuery, StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
@@ -277,7 +279,7 @@ onMounted(load)
 
 .page-header h2 {
   margin: 0;
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 20px;
   font-weight: 650;
   line-height: 1.3;
@@ -291,29 +293,29 @@ onMounted(load)
 
 .kpi-card {
   min-height: 86px;
-  border-left: 4px solid #409eff;
+  border-left: 4px solid var(--cp-info);
 }
 
 .kpi-card.danger {
-  border-left-color: #f56c6c;
+  border-left-color: var(--cp-danger);
 }
 
 .kpi-card.warning {
-  border-left-color: #e6a23c;
+  border-left-color: var(--cp-warn);
 }
 
 .kpi-card.value {
-  border-left-color: #67c23a;
+  border-left-color: var(--cp-ok);
 }
 
 .kpi-label {
-  color: #606266;
+  color: var(--cp-muted);
   font-size: 12px;
   margin-bottom: 8px;
 }
 
 .kpi-value {
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 24px;
   font-weight: 650;
   line-height: 1.15;
@@ -347,7 +349,7 @@ onMounted(load)
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 13px;
 }
 
@@ -358,7 +360,7 @@ onMounted(load)
 }
 
 .bucket-label strong {
-  color: #606266;
+  color: var(--cp-muted);
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -368,31 +370,32 @@ onMounted(load)
   display: flex;
   overflow: hidden;
   border-radius: 6px;
-  background: #eef2f7;
+  background: var(--cp-line-soft);
 }
 
 .bucket-segment {
   min-width: 3px;
 }
 
+/* 滞留日数バケット＝意味づけ色（新鮮→期限超過）。設計トークンに直接対応するため §2.5 図表免除は使わずトークン化 */
 .bucket-segment.b0 {
-  background: #67c23a;
+  background: var(--cp-ok);
 }
 
 .bucket-segment.b1 {
-  background: #409eff;
+  background: var(--cp-info);
 }
 
 .bucket-segment.b2 {
-  background: #e6a23c;
+  background: var(--cp-warn);
 }
 
 .bucket-segment.b3 {
-  background: #f56c6c;
+  background: var(--cp-danger);
 }
 
 .over90-text {
-  color: #d93026;
+  color: var(--cp-danger);
   font-weight: 650;
 }
 
@@ -403,7 +406,7 @@ onMounted(load)
 
 .mobile-row {
   padding: 12px 0;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--cp-line);
 }
 
 .mobile-row:last-child {
@@ -419,7 +422,7 @@ onMounted(load)
 }
 
 .mobile-main {
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 14px;
   margin-bottom: 6px;
 }
@@ -435,7 +438,7 @@ onMounted(load)
 }
 
 .mobile-meta {
-  color: #606266;
+  color: var(--cp-muted);
   font-size: 12px;
 }
 

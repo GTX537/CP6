@@ -218,6 +218,6 @@ onMounted(async () => {
 <style scoped>
 .wms-inbound-order { padding: 16px; padding-bottom: 60px; }
 .header-card :deep(.el-card__header) { padding: 10px 16px; }
-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
+.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
 .action-bar > * { margin-left: 8px; }
 </style>

@@ -174,6 +174,6 @@ async function setRecall(flag: boolean) {
 <style scoped>
 .wms-lot-trace { padding: 16px; }
 .search-card { margin-bottom: 12px; }
-.qty-in { color: var(--el-color-success); }
-.qty-out { color: var(--el-color-danger); }
+.qty-in { color: var(--cp-ok); }
+.qty-out { color: var(--cp-danger); }
 </style>

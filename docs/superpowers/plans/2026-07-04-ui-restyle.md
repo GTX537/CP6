@@ -671,6 +671,21 @@ describe('CpListPage', () => {
 
 （注：MaterialShortage 采用 CpListPage 标准分页，page-sizes 从原 [50,100,200]/默认 50 变为模板 [20,50,100]/默认 20——属既定模板契约，非缺口。BridgeHealth/WmsDashboard 系监控·仪表盘特殊页，InkLot 系 tabs 工作台特殊页，均按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3/4 处置一致。WmsDashboard SignalR CSRF negotiate 403 为測試環境基础设施既有问题，非本批引入。）
 
+### WMS 迁移批次8 复盘（模块收尾，无新增模板缺口）
+
+批次8（模块收尾）迁移完成，功能零丢失、真栈验收通过。本批 = Part A 末两页（模块最大）+ Part B 模块级硬编码清扫 + Part C 累积清理。分类与处置：
+
+- **KitView**（キット，420 行）= el-tabs 双模块（マスタ / 組立指示）× list+detail 双态。list 态迁 CpListPage（状態/種別/ON-OFF=kind:'tag'+map；数量/実行日時=col slot；新規=toolbar slot #15），list 用 `v-if` 随 mode 切换卸载 → 戻る时重挂 auto-fetch（RmaView 先例のフレッシュネス）；detail 态 = 新規/閲覧兼用の編集フォーム + BOM 編集テーブル（特殊エディタ領域，保留 el-card/el-form/el-table/el-affix），ヘッダ状態を CpTag 化、action-bar/txn-list を token 化。組立指示の kitSku ドロップダウンはマスタ一覧と別ソース（`activeMasters` を onMounted＋マスタ変更後にロード）で疎結合化。el-tabs は模板契約外の特殊ナビ——CpPageShell は被せず、原页无页头を踏襲。
+- **StockDwellView**（在庫滞留レポート，456 行）= 仪表盘/分析特殊页（KPI×4 + 滞留バケット横棒グラフ + 明細テーブル + モバイル表示）。按「非表格特殊页只做 token 化 + 基础件替换」处置：el-tag→CpTag、el-empty→CpEmpty、内联全色値（#303133/#606266/#409eff/#f56c6c/#e6a23c/#67c23a/#d93026/#eef2f7/#ebeef5）→ `--cp-ink/muted/info/danger/warn/ok/line/line-soft` token 化。滞留バケット 4 色は「意味づけ色（新鮮→期限超過）」で設計トークンに 1:1 対応するため §2.5 図表色免除は使わずトークン化（grep が `/* cp-chart-color */` 免除行ゼロ＝完全クリーンで返る）。
+
+**Part B 模块硬编码清扫**：全 `#hex`/`rgba()` 真彩值仅 StockDwell + KitView 内联残留（其余 wms 页 grep 命中均为 `template #default` 正则误报——"defa" 4 位十六进制字符，非色值），已随两页迁移清零。`var(--el-*)` 残留 5 处一并 token 化：InboundReceipt/InboundOrder/Kit 的 action-bar（`--el-bg-color`/`--el-border-color-lighter`→`--cp-card`/`--cp-line-soft`，与 Slotting 统一）、LotTrace 的 `.qty-in/.qty-out`（`--el-color-success`/`--el-color-danger`→`--cp-ok`/`--cp-danger`）。最终 grep：非 `#default` 误报行 = 0。
+
+**Part C 累积清理**（并入 fix commit ②）：① SlottingView 删除死 CSS `.wms-slotting{padding:16px}`（模板根为 CpPageShell，该类无宿主）；`listRef` 从悬空改为接线——新增 `listDirty` 脏标记，onApprove/onCancel 成功后置位，`backToList()` 在返回一覧时命令式 `reload()`（CpListPage 为 `v-show` 常挂不自动重取，故手动刷新，等价 RmaView `v-if` 重挂的フレッシュネス；真栈证实：承認後戻る→`GET /wms/slotting` 触发、一覧显示 SLP2026070001/承認済/admin）。② 删除 detail action-bar 重复「戻る」（保留 header #actions 版）。③ **CrossDock xDockNo 大小写修正**：后端实体 `XDockNo` camelCase 序列化为 `xDockNo`（大写 D），前端行读取用了 `xdockNo`（小写 d）→ 単号列空白 + 実行/取消 POST `/cross-dock/undefined/execute`。修正 CrossDockView 列 prop + onExecute/onCancel 行读取 + `CrossDockOrder` 类型定义三处为 `xDockNo`（create 响应体后端返回的是字面 `{ xdockNo }` 匿名对象，保持不变；search 过滤键 `xdockNo` 走后端大小写不敏感模型绑定，工作正常，未动）。真栈证实：単号列显示 XD2026070001、`POST /api/wms/cross-dock/XD2026070001/execute → 200`（原为 `/undefined/execute → 400`）。
+
+真栈证据（截图存 `.superpowers/sdd/shots/`）：Kit マスタ一覧（Total 2 + ON pill + 開く/削除）/マスタ detail（フォーム+BOM 編集+行追加）/組立一覧（Total 3 + 方向/状態 pill）/組立 detail（下書き=muted・組立=ok の CpTag ヘッダ + 実行/取消 action-bar）；StockDwell（KPI×4 トークン枠色 + バケット横棒 --cp-ok/info + 基準日 CpTag）；CrossDock（単号 XD2026070001 + 実行 200）；Slotting（承認→戻る→一覧リロード=承認済 反映）。console 无本批新 error（SignalR CSRF 403 / EP small·label 弃用警告 = 環境·既有基础设施，非本批引入）。type-check 0 error、`npm run test` 304 全绿。
+
+**本批无新增模板缺口**——两页均落在既有契约（CpListPage toolbar/col slot #15/#16、default-filter-in-fetch #17）与「特殊页 token 化」处置内，未触发新的模板扩展需求。
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
