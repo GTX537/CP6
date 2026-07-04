@@ -73,7 +73,7 @@
       <template #header>
         <div class="panel-header">
           <span>{{ t('erp.otdReport.chart.title') }}</span>
-          <el-tag size="small" type="info">{{ rows.length }}</el-tag>
+          <CpTag tone="info">{{ rows.length }}</CpTag>
         </div>
       </template>
       <div v-loading="loading" class="bar-list">
@@ -125,6 +125,7 @@ import { ElMessage } from 'element-plus'
 import { Download, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
 import { otdReportApi } from '@/api/erp/otdReport'
 import { formatQty } from '@/utils/format'
+import CpTag from '@/components/base/CpTag.vue'
 import type { OtdReportGroupBy, OtdReportQuery, OtdReportRow, OtdReportSummary } from '@/types/erp/otdReport'
 
 const { t } = useI18n()
@@ -257,7 +258,7 @@ onMounted(loadSummary)
 }
 
 .page-header h2 {
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 20px;
   font-weight: 650;
   line-height: 1.3;
@@ -283,30 +284,30 @@ onMounted(loadSummary)
 }
 
 .kpi-card.warn {
-  border-color: #f3d19e;
+  border-color: var(--cp-warn);
 }
 
 .kpi-label {
-  color: #909399;
+  color: var(--cp-muted);
   font-size: 12px;
   line-height: 1.2;
   margin-bottom: 6px;
 }
 
 .kpi-value {
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 24px;
   font-weight: 700;
   line-height: 1.1;
 }
 
 .kpi-value.rate {
-  color: #2f8f63;
+  color: var(--cp-ok);
 }
 
 .kpi-value.late,
 .lateText {
-  color: #c45656;
+  color: var(--cp-danger);
   font-weight: 650;
 }
 
@@ -331,7 +332,7 @@ onMounted(loadSummary)
 }
 
 .bar-label {
-  color: #303133;
+  color: var(--cp-ink);
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -339,7 +340,7 @@ onMounted(loadSummary)
 }
 
 .bar-track {
-  background: #edf2f7;
+  background: var(--cp-line-soft);
   border-radius: 6px;
   height: 12px;
   overflow: hidden;
@@ -351,19 +352,19 @@ onMounted(loadSummary)
 }
 
 .bar-fill.good {
-  background: #2f8f63;
+  background: var(--cp-ok);
 }
 
 .bar-fill.warn {
-  background: #d99b2b;
+  background: var(--cp-warn);
 }
 
 .bar-fill.bad {
-  background: #c45656;
+  background: var(--cp-danger);
 }
 
 .bar-value {
-  color: #606266;
+  color: var(--cp-text);
   font-size: 12px;
   text-align: right;
 }

@@ -58,12 +58,8 @@
           </el-table-column>
           <el-table-column :label="t('sales.cancel.autoCancellable')" width="120" align="center">
             <template #default="{ row }">
-              <el-tag v-if="row.autoCancellable" type="success" size="small">
-                {{ t('sales.cancel.yes') }}
-              </el-tag>
-              <el-tag v-else type="danger" size="small">
-                {{ t('sales.cancel.no_') }}
-              </el-tag>
+              <CpTag v-if="row.autoCancellable" tone="ok">{{ t('sales.cancel.yes') }}</CpTag>
+              <CpTag v-else tone="danger">{{ t('sales.cancel.no_') }}</CpTag>
             </template>
           </el-table-column>
         </el-table>
@@ -80,12 +76,8 @@
           </el-table-column>
           <el-table-column :label="t('sales.cancel.autoCancellable')" width="120" align="center">
             <template #default="{ row }">
-              <el-tag v-if="row.autoCancellable" type="success" size="small">
-                {{ t('sales.cancel.yes') }}
-              </el-tag>
-              <el-tag v-else type="danger" size="small">
-                {{ t('sales.cancel.no_') }}
-              </el-tag>
+              <CpTag v-if="row.autoCancellable" tone="ok">{{ t('sales.cancel.yes') }}</CpTag>
+              <CpTag v-else tone="danger">{{ t('sales.cancel.no_') }}</CpTag>
             </template>
           </el-table-column>
         </el-table>
@@ -136,6 +128,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { orderApi } from '@/api/erp/order'
 import type { OrderCancelResult } from '@/types/erp/order'
+import CpTag from '@/components/base/CpTag.vue'
 
 const { t } = useI18n()
 
@@ -149,7 +142,9 @@ const emit = defineEmits<{
   (e: 'cancelled'): void
 }>()
 
-const visible = ref(false)
+// modelValue から初期化：呼出元が v-if でマウント（modelValue 既に true）した場合でも
+// 非 immediate watch では visible が false のまま開かない回帰を防ぐ。
+const visible = ref(props.modelValue)
 const step = ref<'input' | 'decision' | 'done'>('input')
 const reason = ref('')
 const loading = ref(false)
