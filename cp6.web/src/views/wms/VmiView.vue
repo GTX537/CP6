@@ -1,185 +1,113 @@
+<!--
+  VMI 在庫（預り在庫）—— el-tabs 三视图，每个 tab 一张查询列表 → 各 tab 内嵌 CpListPage 迁移（WMS 批次5）。
+  el-tabs 是页面外壳（模板无对应契约，保留）；数量/金额列用 map；期限 col slot 保逾期红字；操作/確定/確定フラグ 走 col slot。
+  客户汇总无查询无分页(paginated=false)；明细无搜索栏，刷新+客户标签放 toolbar slot，fetch 闭包依 selectedCustomer 守卫。
+  跨 tab 联动：openDetails 切 tab + detailsRef.reload()；計算/確定 后 billingsRef.reload()。
+-->
 <template>
   <div class="wms-vmi">
     <el-tabs v-model="activeTab" type="card">
       <!-- ───── 客户汇总 ───── -->
       <el-tab-pane :label="t('wms.vmi.tab.customers')" name="customers">
-        <el-card shadow="never" class="search-card">
-          <el-form inline size="small">
-            <el-form-item :label="t('wms.vmi.fld.customerCd')">
-              <el-input v-model="customerQuery" clearable style="width: 160px" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reloadCustomers" :loading="loading">{{ t('wms.common.search') }}</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-
-        <el-card shadow="never">
-          <el-table :data="customers" border stripe size="small" max-height="600" highlight-current-row>
-            <el-table-column prop="customerCd" :label="t('wms.vmi.fld.customerCd')" width="140" />
-            <el-table-column prop="customerName" :label="t('wms.vmi.fld.customerName')" min-width="180" />
-            <el-table-column prop="skuCount" :label="t('wms.vmi.fld.skuCount')" width="100" align="right" />
-            <el-table-column prop="totalPhysicalQty" :label="t('wms.vmi.fld.physical')" width="120" align="right">
-              <template #default="{ row }">{{ formatQty(row.totalPhysicalQty) }}</template>
-            </el-table-column>
-            <el-table-column prop="totalAllocatedQty" :label="t('wms.vmi.fld.allocated')" width="120" align="right">
-              <template #default="{ row }">{{ formatQty(row.totalAllocatedQty) }}</template>
-            </el-table-column>
-            <el-table-column prop="totalAvailableQty" :label="t('wms.vmi.fld.available')" width="120" align="right">
-              <template #default="{ row }">{{ formatQty(row.totalAvailableQty) }}</template>
-            </el-table-column>
-            <el-table-column prop="estimatedValue" :label="t('wms.vmi.fld.estValue')" width="140" align="right">
-              <template #default="{ row }">{{ formatMoney(row.estimatedValue) }}</template>
-            </el-table-column>
-            <el-table-column :label="t('wms.common.action')" width="140" fixed="right">
-              <template #default="{ row }">
-                <el-button link type="primary" size="small" @click="openDetails(row.customerCd)">{{ t('wms.vmi.btn.viewDetail') }}</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
+        <CpListPage
+          ref="customersRef"
+          :columns="customerColumns"
+          :fetch="fetchCustomers"
+          :search-fields="customerSearchFields"
+          :filter-labels="filterLabels"
+          :paginated="false"
+        >
+          <template #col-_action="{ row }">
+            <el-button link type="primary" size="small" @click="openDetails(row.customerCd)">{{ t('wms.vmi.btn.viewDetail') }}</el-button>
+          </template>
+        </CpListPage>
       </el-tab-pane>
 
       <!-- ───── 明细 ───── -->
       <el-tab-pane :label="t('wms.vmi.tab.details') + (selectedCustomer ? ` (${selectedCustomer})` : '')" name="details" :disabled="!selectedCustomer">
-        <el-card shadow="never" class="search-card">
-          <el-form inline size="small">
-            <el-form-item :label="t('wms.vmi.fld.customerCd')">
-              <el-tag>{{ selectedCustomer }}</el-tag>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="reloadDetails" :loading="loading">{{ t('wms.common.refresh') }}</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-
-        <el-card shadow="never">
-          <el-table :data="details" border stripe size="small" max-height="600">
-            <el-table-column prop="productCd" :label="t('wms.common.product')" width="140" />
-            <el-table-column prop="lotNo" :label="t('wms.common.lot')" width="140" />
-            <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="100" />
-            <el-table-column prop="locationCd" :label="t('wms.common.location')" width="140" />
-            <el-table-column prop="physicalQty" :label="t('wms.vmi.fld.physical')" width="110" align="right">
-              <template #default="{ row }">{{ formatQty(row.physicalQty) }}</template>
-            </el-table-column>
-            <el-table-column prop="availableQty" :label="t('wms.vmi.fld.available')" width="110" align="right">
-              <template #default="{ row }">{{ formatQty(row.availableQty) }}</template>
-            </el-table-column>
-            <el-table-column prop="receiveDate" :label="t('wms.vmi.fld.receiveDate')" width="120" />
-            <el-table-column prop="expiryDate" :label="t('wms.common.expiryDate')" width="120">
-              <template #default="{ row }">
-                <span :class="expiryClass(row.expiryDate)">{{ row.expiryDate || '-' }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
+        <CpListPage
+          ref="detailsRef"
+          :columns="detailColumns"
+          :fetch="fetchDetails"
+          :paginated="false"
+        >
+          <template #toolbar>
+            <el-tag>{{ selectedCustomer }}</el-tag>
+            <el-button @click="reloadDetails">{{ t('wms.common.refresh') }}</el-button>
+          </template>
+          <template #col-expiryDate="{ row }">
+            <span :class="expiryClass(row.expiryDate)">{{ row.expiryDate || '-' }}</span>
+          </template>
+        </CpListPage>
       </el-tab-pane>
 
       <!-- ───── 保管料 ───── -->
       <el-tab-pane :label="t('wms.vmi.tab.billings')" name="billings">
-        <el-card shadow="never" class="search-card">
-          <el-form inline size="small">
-            <el-form-item :label="t('wms.vmi.fld.customerCd')">
-              <el-input v-model="billingQuery.customerCd" clearable style="width: 140px" />
-            </el-form-item>
-            <el-form-item :label="t('wms.vmi.fld.yearMonth')">
-              <el-input v-model="billingQuery.yearMonth" placeholder="2026-05" clearable style="width: 120px" />
-            </el-form-item>
-            <el-form-item :label="t('wms.vmi.fld.confirmed')">
-              <el-select v-model="billingQuery.confirmed" clearable style="width: 120px">
-                <el-option :label="t('wms.common.confirm')" :value="true" />
-                <el-option label="—" :value="false" />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reloadBillings" :loading="loading">{{ t('wms.common.search') }}</el-button>
-              <el-button type="warning" @click="openCalc">{{ t('wms.vmi.btn.calculate') }}</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-
-        <el-card shadow="never">
-          <el-table :data="billings" border stripe size="small" max-height="600">
-            <el-table-column prop="billingNo" :label="t('wms.vmi.fld.billingNo')" width="200" />
-            <el-table-column prop="customerCd" :label="t('wms.vmi.fld.customerCd')" width="120" />
-            <el-table-column prop="customerName" :label="t('wms.vmi.fld.customerName')" min-width="160" show-overflow-tooltip />
-            <el-table-column prop="yearMonth" :label="t('wms.vmi.fld.yearMonth')" width="100" />
-            <el-table-column prop="skuCount" :label="t('wms.vmi.fld.skuCount')" width="90" align="right" />
-            <el-table-column prop="beginQty" :label="t('wms.vmi.fld.beginQty')" width="110" align="right">
-              <template #default="{ row }">{{ formatQty(row.beginQty) }}</template>
-            </el-table-column>
-            <el-table-column prop="endQty" :label="t('wms.vmi.fld.endQty')" width="110" align="right">
-              <template #default="{ row }">{{ formatQty(row.endQty) }}</template>
-            </el-table-column>
-            <el-table-column prop="avgQty" :label="t('wms.vmi.fld.avgQty')" width="110" align="right">
-              <template #default="{ row }">{{ formatQty(row.avgQty) }}</template>
-            </el-table-column>
-            <el-table-column prop="dailyStorageRate" :label="t('wms.vmi.fld.dailyRate')" width="110" align="right">
-              <template #default="{ row }">{{ formatMoney(row.dailyStorageRate) }}</template>
-            </el-table-column>
-            <el-table-column prop="billingAmount" :label="t('wms.vmi.fld.billingAmt')" width="140" align="right">
-              <template #default="{ row }"><b>{{ formatMoney(row.billingAmount) }}</b></template>
-            </el-table-column>
-            <el-table-column prop="calculatedAt" :label="t('wms.vmi.fld.calculatedAt')" width="170" />
-            <el-table-column :label="t('wms.vmi.fld.confirmed')" width="100" align="center">
-              <template #default="{ row }">
-                <el-tag v-if="row.confirmed" type="success" size="small">{{ t('wms.common.confirm') }}</el-tag>
-                <el-tag v-else type="info" size="small">-</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column :label="t('wms.common.action')" width="120" fixed="right">
-              <template #default="{ row }">
-                <el-button v-if="!row.confirmed" link type="primary" size="small" @click="onConfirm(row)">{{ t('wms.vmi.btn.confirm') }}</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
+        <CpListPage
+          ref="billingsRef"
+          :columns="billingColumns"
+          :fetch="fetchBillings"
+          :search-fields="billingSearchFields"
+          :filter-labels="filterLabels"
+          :paginated="false"
+        >
+          <template #toolbar>
+            <el-button type="warning" @click="openCalc">{{ t('wms.vmi.btn.calculate') }}</el-button>
+          </template>
+          <template #col-billingAmount="{ row }">
+            <b>{{ formatMoney(row.billingAmount) }}</b>
+          </template>
+          <template #col-confirmed="{ row }">
+            <el-tag v-if="row.confirmed" type="success" size="small">{{ t('wms.common.confirm') }}</el-tag>
+            <el-tag v-else type="info" size="small">-</el-tag>
+          </template>
+          <template #col-_action="{ row }">
+            <el-button v-if="!row.confirmed" link type="primary" size="small" @click="onConfirm(row)">{{ t('wms.vmi.btn.confirm') }}</el-button>
+          </template>
+        </CpListPage>
       </el-tab-pane>
     </el-tabs>
 
     <!-- 计算保管料 Dialog -->
-    <el-dialog v-model="calcDialog" :title="t('wms.vmi.dlg.calculate')" width="480">
+    <CpFormDialog
+      v-model="calcDialog"
+      :title="t('wms.vmi.dlg.calculate')"
+      width="480"
+      :form="calcForm"
+      :rules="calcRules"
+      :submit="onCalc"
+      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.vmi.btn.calculate') }"
+    >
       <el-alert :title="t('wms.vmi.msg.calcHint')" type="info" :closable="false" show-icon style="margin-bottom: 12px" />
-      <el-form :model="calcForm" label-width="160px" size="small">
-        <el-form-item :label="t('wms.vmi.fld.yearMonth')" required>
-          <el-input v-model="calcForm.yearMonth" placeholder="2026-05" maxlength="7" />
-        </el-form-item>
-        <el-form-item :label="t('wms.vmi.fld.dailyRate')" required>
-          <el-input-number v-model="calcForm.dailyStorageRate" :min="0" :precision="4" controls-position="right" style="width: 100%" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="calcDialog = false">{{ t('wms.common.cancel') }}</el-button>
-        <el-button type="primary" @click="onCalc" :loading="saving">{{ t('wms.vmi.btn.calculate') }}</el-button>
-      </template>
-    </el-dialog>
+      <el-form-item :label="t('wms.vmi.fld.yearMonth')" prop="yearMonth">
+        <el-input v-model="calcForm.yearMonth" placeholder="2026-05" maxlength="7" />
+      </el-form-item>
+      <el-form-item :label="t('wms.vmi.fld.dailyRate')" prop="dailyStorageRate">
+        <el-input-number v-model="calcForm.dailyStorageRate" :min="0" :precision="4" controls-position="right" style="width: 100%" />
+      </el-form-item>
+    </CpFormDialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, reactive, computed } from 'vue'
+import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { vmiApi } from '@/api/wms/paperIndustry'
-import type { VmiCustomerSummary, VmiStockDetail, VmiBilling } from '@/types/wms/wms'
+import type { VmiBilling } from '@/types/wms/wms'
 import { formatQty as fmtQty, formatCurrency } from '@/utils/format'
 
 const { t } = useI18n()
 const activeTab = ref<'customers' | 'details' | 'billings'>('customers')
-const loading = ref(false)
-const saving = ref(false)
 
-const customerQuery = ref('')
-const customers = ref<VmiCustomerSummary[]>([])
+const customersRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const detailsRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const billingsRef = ref<InstanceType<typeof CpListPage> | null>(null)
 
 const selectedCustomer = ref('')
-const details = ref<VmiStockDetail[]>([])
-
-const billingQuery = reactive<{ customerCd?: string; yearMonth?: string; confirmed?: boolean }>({})
-const billings = ref<VmiBilling[]>([])
-
-const calcDialog = ref(false)
-const calcForm = reactive({ yearMonth: '', dailyStorageRate: 1.0 })
 
 function formatQty(n: number | undefined | null) {
   if (n == null) return '0'
@@ -197,51 +125,107 @@ function expiryClass(d: string | undefined) {
   return ''
 }
 
-async function reloadCustomers() {
-  loading.value = true
-  try { customers.value = (await vmiApi.customers(customerQuery.value || undefined)).data || [] }
-  finally { loading.value = false }
+const filterLabels = computed(() => ({
+  search: t('wms.common.search'),
+  reset: t('wms.common.clear'),
+}))
+
+// ───── 客户汇总 ─────
+const customerColumns = computed<ListColumn[]>(() => [
+  { prop: 'customerCd', label: t('wms.vmi.fld.customerCd'), width: 140 },
+  { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 180 },
+  { prop: 'skuCount', label: t('wms.vmi.fld.skuCount'), width: 100, kind: 'num' },
+  { prop: 'totalPhysicalQty', label: t('wms.vmi.fld.physical'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'totalAllocatedQty', label: t('wms.vmi.fld.allocated'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'totalAvailableQty', label: t('wms.vmi.fld.available'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'estimatedValue', label: t('wms.vmi.fld.estValue'), width: 140, align: 'right', map: (v) => ({ label: formatMoney(v as number) }) },
+  { prop: '_action', label: t('wms.common.action'), width: 140, fixed: 'right' },
+])
+const customerSearchFields = computed<FilterField[]>(() => [
+  { key: 'customerCd', label: t('wms.vmi.fld.customerCd'), type: 'text' },
+])
+const fetchCustomers: ListFetch = async ({ filters }) => {
+  const cd = filters.customerCd ? String(filters.customerCd) : undefined
+  const all = (await vmiApi.customers(cd)).data || []
+  return { rows: all, total: all.length }
 }
 
 async function openDetails(cd: string) {
   selectedCustomer.value = cd
   activeTab.value = 'details'
-  await reloadDetails()
+  detailsRef.value?.reload()
 }
 
-async function reloadDetails() {
-  if (!selectedCustomer.value) return
-  loading.value = true
-  try { details.value = (await vmiApi.details(selectedCustomer.value)).data || [] }
-  finally { loading.value = false }
+// ───── 明细 ─────
+const detailColumns = computed<ListColumn[]>(() => [
+  { prop: 'productCd', label: t('wms.common.product'), width: 140 },
+  { prop: 'lotNo', label: t('wms.common.lot'), width: 140 },
+  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 100 },
+  { prop: 'locationCd', label: t('wms.common.location'), width: 140 },
+  { prop: 'physicalQty', label: t('wms.vmi.fld.physical'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'availableQty', label: t('wms.vmi.fld.available'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'receiveDate', label: t('wms.vmi.fld.receiveDate'), width: 120 },
+  { prop: 'expiryDate', label: t('wms.common.expiryDate'), width: 120 },
+])
+const fetchDetails: ListFetch = async () => {
+  if (!selectedCustomer.value) return { rows: [], total: 0 }
+  const all = (await vmiApi.details(selectedCustomer.value)).data || []
+  return { rows: all, total: all.length }
+}
+function reloadDetails() { detailsRef.value?.reload() }
+
+// ───── 保管料 ─────
+const billingColumns = computed<ListColumn[]>(() => [
+  { prop: 'billingNo', label: t('wms.vmi.fld.billingNo'), width: 200 },
+  { prop: 'customerCd', label: t('wms.vmi.fld.customerCd'), width: 120 },
+  { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 160, overflowTooltip: true },
+  { prop: 'yearMonth', label: t('wms.vmi.fld.yearMonth'), width: 100 },
+  { prop: 'skuCount', label: t('wms.vmi.fld.skuCount'), width: 90, kind: 'num' },
+  { prop: 'beginQty', label: t('wms.vmi.fld.beginQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'endQty', label: t('wms.vmi.fld.endQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'avgQty', label: t('wms.vmi.fld.avgQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'dailyStorageRate', label: t('wms.vmi.fld.dailyRate'), width: 110, align: 'right', map: (v) => ({ label: formatMoney(v as number) }) },
+  { prop: 'billingAmount', label: t('wms.vmi.fld.billingAmt'), width: 140, align: 'right' },
+  { prop: 'calculatedAt', label: t('wms.vmi.fld.calculatedAt'), width: 170 },
+  { prop: 'confirmed', label: t('wms.vmi.fld.confirmed'), width: 100, align: 'center' },
+  { prop: '_action', label: t('wms.common.action'), width: 120, fixed: 'right' },
+])
+const billingSearchFields = computed<FilterField[]>(() => [
+  { key: 'customerCd', label: t('wms.vmi.fld.customerCd'), type: 'text' },
+  { key: 'yearMonth', label: t('wms.vmi.fld.yearMonth'), type: 'text', placeholder: '2026-05' },
+  {
+    key: 'confirmed', label: t('wms.vmi.fld.confirmed'), type: 'select',
+    options: [
+      { label: t('wms.common.confirm'), value: true },
+      { label: '—', value: false },
+    ],
+  },
+])
+const fetchBillings: ListFetch = async ({ filters }) => {
+  const cd = filters.customerCd ? String(filters.customerCd) : undefined
+  const ym = filters.yearMonth ? String(filters.yearMonth) : undefined
+  const confirmed = filters.confirmed === undefined || filters.confirmed === '' ? undefined : Boolean(filters.confirmed)
+  const all = (await vmiApi.billings(cd, ym, confirmed)).data || []
+  return { rows: all, total: all.length }
 }
 
-async function reloadBillings() {
-  loading.value = true
-  try { billings.value = (await vmiApi.billings(billingQuery.customerCd, billingQuery.yearMonth, billingQuery.confirmed)).data || [] }
-  finally { loading.value = false }
-}
-
+// —— 计算保管料 ——
+const calcDialog = ref(false)
+const calcForm = reactive({ yearMonth: '', dailyStorageRate: 1.0 })
+const calcRules = computed<FormRules>(() => ({
+  yearMonth: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+  dailyStorageRate: [{ required: true, trigger: 'change', validator: (_r, v, cb) => (typeof v === 'number' && v > 0 ? cb() : cb(new Error(t('wms.common.required')))) }],
+}))
 function openCalc() {
   const now = new Date()
-  const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-  calcForm.yearMonth = ym
+  calcForm.yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
   calcForm.dailyStorageRate = 1.0
   calcDialog.value = true
 }
-
 async function onCalc() {
-  if (!calcForm.yearMonth || calcForm.dailyStorageRate <= 0) {
-    ElMessage.warning(t('wms.common.required'))
-    return
-  }
-  saving.value = true
-  try {
-    const res = await vmiApi.calculate(calcForm.yearMonth, calcForm.dailyStorageRate)
-    ElMessage.success(t('wms.vmi.msg.upserted', { n: res.data.upserted }))
-    calcDialog.value = false
-    await reloadBillings()
-  } finally { saving.value = false }
+  const res = await vmiApi.calculate(calcForm.yearMonth, calcForm.dailyStorageRate)
+  ElMessage.success(t('wms.vmi.msg.upserted', { n: res.data.upserted }))
+  billingsRef.value?.reload()
 }
 
 async function onConfirm(row: VmiBilling) {
@@ -249,19 +233,13 @@ async function onConfirm(row: VmiBilling) {
     await ElMessageBox.confirm(`${t('wms.vmi.btn.confirm')}: ${row.billingNo}`, t('wms.common.confirm'), { type: 'warning' })
     await vmiApi.confirm(row.billingNo)
     ElMessage.success(t('wms.common.success'))
-    await reloadBillings()
+    billingsRef.value?.reload()
   } catch { /* */ }
 }
-
-onMounted(() => {
-  reloadCustomers()
-  reloadBillings()
-})
 </script>
 
 <style scoped>
 .wms-vmi { padding: 16px; }
-.search-card { margin-bottom: 12px; }
-.expiry-expired { color: #f56c6c; font-weight: bold; }
-.expiry-soon { color: #e6a23c; font-weight: bold; }
+.expiry-expired { color: var(--cp-danger); font-weight: bold; }
+.expiry-soon { color: var(--cp-warn); font-weight: bold; }
 </style>
