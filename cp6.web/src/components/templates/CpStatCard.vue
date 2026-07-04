@@ -1,6 +1,24 @@
+<!--
+  CpStatCard —— KPI 统计卡（原 views/dashboard/components/KpiCard.vue 平移；设计系统 §9.2）。
+  标签 + 大数字 + 可选角标图标 / 副文案 / sparkline；tone 控制角标与折线着色，danger 时整卡告警态。
+  trend 传 7 日数值数组时渲染 sparkline（现有 API 无该数据源时不传，不造假数据）。
+
+  Props:
+    - label: string                     标签文字。
+    - value: number | string            主数值。
+    - suffix?: string                   数值后缀（如「件」）。
+    - tone?: 'brand'|'info'|'warn'|'danger'  色调，缺省 brand；danger 时整卡告警。
+    - trend?: number[]                  ≥2 个点时渲染 sparkline。
+    - sub?: string                      副文案（sub slot 优先）。
+    - clickable?: boolean               外层负责实际 @click/路由；true 时 sub 行追加 → 提示。
+  Slots: icon（右上角标图标）｜ sub（副文案，覆盖 sub prop）
+
+  使用示例：
+    <CpStatCard label="在制指令" :value="10" suffix="件" tone="brand" sub="完成率 36.4%">
+      <template #icon><SetUp /></template>
+    </CpStatCard>
+-->
 <script setup lang="ts">
-// KpiCard：仪表盘 KPI 卡。trend 传 7 日数值数组时渲染 sparkline（现有 API 无该数据源时不传，不造假数据）。
-// 用法：<KpiCard label="在制指令" :value="10" suffix="件" tone="brand" sub="完成率 36.4%"><template #icon><SetUp /></template></KpiCard>
 const props = withDefaults(defineProps<{
   label: string
   value: number | string
