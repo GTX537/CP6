@@ -8,9 +8,9 @@
           <span v-if="store.order.webOrderNo" class="web-order-no">
             {{ t('Web受注NO') }}: {{ store.order.webOrderNo }}
           </span>
-          <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">{{ t('sales.status.autoNumber') }}</el-tag>
-          <el-tag v-if="store.order.status === 9" type="success" size="small">{{ t('sales.status.transferred') }}</el-tag>
-          <el-tag v-if="store.order.mcTransferFlg" type="info" size="small">{{ t('mc連携') }}</el-tag>
+          <CpTag v-else-if="store.isNew" tone="info">{{ t('sales.status.autoNumber') }}</CpTag>
+          <CpTag v-if="store.order.status === 9" tone="ok">{{ t('sales.status.transferred') }}</CpTag>
+          <CpTag v-if="store.order.mcTransferFlg" tone="info">{{ t('mc連携') }}</CpTag>
         </div>
         <div class="header-right">
           <el-radio-group v-model="opModel" size="small" :disabled="hasNoOrder">
@@ -84,6 +84,7 @@ import Step1HeaderAndDetails from './order/Step1HeaderAndDetails.vue'
 import Step2BasicInfo from './order/Step2BasicInfo.vue'
 import Step3ProcessInfo from './order/Step3ProcessInfo.vue'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import CpTag from '@/components/base/CpTag.vue'
 
 const { t } = useI18n()
 const store = useOrderStore()
@@ -303,7 +304,7 @@ async function onReset() {
   border-radius: 0;
   z-index: 50;
   padding-bottom: env(safe-area-inset-bottom, 0);
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+  box-shadow: var(--cp-shadow-up);
 }
 .order-entry.is-mobile .footer-card :deep(.el-card__body) {
   padding: 10px 12px;

@@ -2,12 +2,12 @@
   <el-card shadow="never" v-if="detail">
     <div style="margin-bottom: 12px;">
       <el-tag size="small">{{ t('明細 No.{no} - {cd}', { no: detail.webOrderDetailNo, cd: detail.productCd || t('製品 CD 未選択') }) }}</el-tag>
-      <el-tag v-if="!isCompositionEditable" type="info" size="small" style="margin-left: 8px;">
+      <CpTag v-if="!isCompositionEditable" tone="info" style="margin-left: 8px;">
         {{ t('構成・工程 参照のみ（受注区分: {type}）', { type: store.order.orderType }) }}
-      </el-tag>
-      <el-tag v-else type="success" size="small" style="margin-left: 8px;">
+      </CpTag>
+      <CpTag v-else tone="ok" style="margin-left: 8px;">
         {{ t('シート受注 → 構成・工程編集可') }}
-      </el-tag>
+      </CpTag>
     </div>
 
     <!-- 基本情報 -->
@@ -139,6 +139,7 @@ const { t } = useI18n()
 import { computed, watch } from 'vue'
 import { useOrderStore } from '@/stores/order'
 import { orderApi } from '@/api/erp/order'
+import CpTag from '@/components/base/CpTag.vue'
 
 const store = useOrderStore()
 const detail = computed(() => store.currentDetail)
