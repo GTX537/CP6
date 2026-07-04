@@ -19,6 +19,7 @@
       :filter-labels="filterLabels"
       :empty-text="t('sales.err.E10008')"
       @total-change="total = $event"
+      @reset="onFilterReset"
     >
       <template #toolbar>
         <CpTag tone="info">{{ t('sales.list.totalCount', { n: total ?? 0 }) }}</CpTag>
@@ -79,6 +80,13 @@ const exporting = ref(false)
 // —— toolbar checkbox（#15）——
 const onlyConsignedSales = ref(false)
 const onlyMcUntransferred = ref(false)
+
+// クリア連動（#22 reset 透传）：原 resetQuery は onlyConsignedSales/onlyMcUntransferred も初期化していた。
+// emit は reset 起因の load() より先に同期発火するため、直後の fetch は既にクリア済みの値を読む。
+function onFilterReset() {
+  onlyConsignedSales.value = false
+  onlyMcUntransferred.value = false
+}
 
 // —— CSV 出力用 stash（CpListPage 内包 filters を親が読めない代償）——
 const lastFilters = ref<Record<string, unknown>>({})

@@ -719,6 +719,9 @@ describe('CpListPage', () => {
     - 现象：PlateMold picker 模式用 highlight-current-row+@current-change 掴选中行，脚部「選択して戻る」返呼出元。CpListPage 仅透 selectable(checkbox) 的 selection-change，不出单行高亮选择事件。
     - 代偿（token 化侧）：保留原机制。若 CpListPage 化可用操作列行内「選択」按钮（#16）代替，但与行内発行チェック一括操作合并后选 token 化。
     - 建议契约：CpListPage 增 `@current-change(row)` 透传（与 #16 @row-click 对偶补齐行选择系事件）。
+22. **CpListPage 无 reset 事件透传 → クリア无法联动清理 CpFilterBar 外部的筛选状态（toolbar checkbox 等）**（评审指摘的未披露回归；本批 2 页 Order/Product）—— ✅ 已实现（最小扩展随修复 commit）：CpListPage 透传 `reset` 事件，页面外部筛选状态（工具栏 checkbox 等）可挂钩清理。
+    - 现象：原 Order resetQuery() 同时清 onlyConsignedSales/onlyMcUntransferred，原 Product onReset() 清 statusSel；迁移后这些筛选提为页面级 ref 放 toolbar slot（#15 代偿），而 CpFilterBar 的重置事件被 CpListPage 内部消化不外发——クリア后 checkbox 保持勾选且继续参与 fetch（功能回归）。
+    - 实现契约：emits 增 `reset()`，onReset 顺序 = 清内部 state（page=1，filters 已由 CpFilterBar 先回写清空）→ **同步 emit('reset')** → load()——监听器先清自身 ref，随后 fetch closure 读到的已是清理后的值（时序由专项测试锁定：监听器清理的外部 ref 不进入 reset 触发的 fetch query）。Order `@reset` 清两 checkbox、Product `@reset` 清 statusSel，与原页 reset 语义对齐。
 
 ## Self-Review 记录
 

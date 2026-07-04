@@ -400,6 +400,25 @@ describe('CpListPage 契约扩展三轮：#18 lazy search-first', () => {
   })
 })
 
+// —— ERP批次2 修正（#22 reset 透传）——
+describe('CpListPage 缺口 #22：reset 事件透传', () => {
+  it('reset 同步 emit 且先于重置触发的 load()——监听器清理的外部筛选 ref 不进入该次 fetch', async () => {
+    let external = true // 模拟页面级 toolbar checkbox（CpFilterBar 外部的筛选状态）
+    const seen: boolean[] = [] // fetch closure 每次读到的外部值
+    const f = vi.fn().mockImplementation(async () => { seen.push(external); return { rows: [], total: 0 } })
+    const w = mount(CpListPage, {
+      props: { columns: cols, fetch: f, searchFields, onReset: () => { external = false } }
+    })
+    await flushPromises()
+    expect(seen).toEqual([true]) // mount 自动 fetch 时外部 ref 尚未清理
+
+    await w.findAll('button').find((b) => b.text().includes('重置'))!.trigger('click')
+    await flushPromises()
+    expect(w.emitted('reset')).toHaveLength(1)
+    expect(seen).toEqual([true, false]) // reset 触发的 fetch 读到的已是清理后的值（emit 先于 load）
+  })
+})
+
 describe("CpListPage 契约扩展三轮：#19 sortable:'custom' 服务端排序", () => {
   const sortCols: ListColumn[] = [
     { prop: 'no', label: '单号', kind: 'mono', sortable: 'custom' },

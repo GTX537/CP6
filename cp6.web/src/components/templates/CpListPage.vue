@@ -36,7 +36,9 @@
   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
   Emits: selection-change(rows) ｜ total-change(n)（每次成功加载后携带最新 total，供 CpPageShell :count 接线；
          受 seq 乱序守卫，过期响应不 emit）｜ sort-change({field,order})（排序状态变更时外发规范化值；
-         取消排序时 field/order 均为 undefined）
+         取消排序时 field/order 均为 undefined）｜ reset()（CpFilterBar 重置时透传，**先于**重置触发的
+         load() 同步 emit——页面级外部筛选状态（toolbar checkbox 等，缺口 #22）可在监听器内清理自身 ref，
+         保证紧随其后的 fetch closure 读到的已是清理后的值）
   Expose: reload()（仅此一项）——命令式重新 fetch，保留当前 filters / page / statusKey（页内 in-place 变更后刷新，
           替代重挂载 :key 方案）。注意：删除当前页最后一行后 reload() 仍停留原 page，可能显示空页（不自动收拢页码，
           与原页 reload() 行为一致，记录在案）。
@@ -109,6 +111,7 @@ const emit = defineEmits<{
   (e: 'selection-change', rows: unknown[]): void
   (e: 'total-change', total: number): void
   (e: 'sort-change', payload: { field?: string; order?: SortOrder }): void
+  (e: 'reset'): void
 }>()
 
 // —— 内部状态 ——
@@ -160,7 +163,9 @@ defineExpose({ reload }) // 仅暴露 reload，内部状态不外露
 
 // —— 交互 ——
 function onSearch() { page.value = 1; load() }
-function onReset() { page.value = 1; load() } // CpFilterBar 已先回写清空后的 filters
+// CpFilterBar 已先回写清空后的 filters；emit('reset') 同步于 load() 之前——
+// 监听器（页面级 toolbar checkbox 等外部筛选，缺口 #22）先清自身 ref，随后的 fetch 才读到清理后的值
+function onReset() { page.value = 1; emit('reset'); load() }
 function onStatus(key: string) { statusKey.value = key; page.value = 1; load() }
 function onPageChange() { load() }
 function onSizeChange() { page.value = 1; load() }

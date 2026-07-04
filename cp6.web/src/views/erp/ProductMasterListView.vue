@@ -15,6 +15,7 @@
     :fetch="fetchList"
     :search-fields="searchFields"
     :filter-labels="filterLabels"
+    @reset="statusSel = []"
   >
     <template #toolbar>
       <el-checkbox-group v-model="statusSel" @change="listRef?.reload()">
