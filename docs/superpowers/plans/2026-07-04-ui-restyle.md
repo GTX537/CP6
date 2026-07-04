@@ -604,17 +604,17 @@ describe('CpListPage', () => {
 
 ## 模板缺口（Task 11 试点复盘）
 
-第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpStatusStrip + CpTag 的组合足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
 
 1. **total 不外露 → PageShell 计数 pill 无法接线**（本次影响最大）。
    - 页面需要：mockup 头部「28 单」计数 pill（CpPageShell `:count`）。
    - 模板缺：CpListPage 内部持有 `total` 但既不 emit 也不暴露，父级 CpPageShell 拿不到值，只能省略 `:count`。
    - 建议契约扩展：CpListPage 增 `@total-change(n:number)`（或 `v-model:total` / `#count` 作用域插槽），让业务页把总数回填到 PageShell。本次为遵守「不擅改已评审组件」而省略计数 pill，记为缺口而非页内 hack。
 
-2. **ListColumn 缺 `minWidth` 与 `overflowTooltip`**。
-   - 页面需要：客先名列原为 `min-width:160 + show-overflow-tooltip`（长客户名省略号 + 悬浮全文）。
-   - 模板缺：ListColumn 仅有 `width`，无最小宽 / 无溢出 tooltip；长文本无法优雅截断。
-   - 建议契约扩展：ListColumn 增 `minWidth?: number` 与 `overflowTooltip?: boolean`，透传给 el-table-column 的 `min-width` / `show-overflow-tooltip`。
+2. **ListColumn / 表格级配置缺字段：`minWidth`、`overflowTooltip`、`fixed`、`highlight-current-row`**。
+   - 页面需要：客先名列原为 `min-width:160 + show-overflow-tooltip`（长客户名省略号 + 悬浮全文）；操作列原为 `fixed="right"`（横向滚动时行按钮钉在右侧）；表格原有 `highlight-current-row`（点击行高亮当前行）。
+   - 模板缺：ListColumn 仅有 `width`，无最小宽 / 无溢出 tooltip / 无 `fixed`；CpListPage 也不透传表格级 `highlight-current-row`。迁移后这三项行为丢失（undocumented behavior change，本次试点复盘补记）：横向滚动时操作按钮不再钉住、当前行不再高亮。
+   - 建议契约扩展：ListColumn 增 `minWidth?: number`、`overflowTooltip?: boolean`、`fixed?: 'left' | 'right'`，透传 el-table-column 的 `min-width` / `show-overflow-tooltip` / `fixed`；CpListPage 增 `highlightCurrentRow?: boolean`（或直接默认开启）透传 el-table。
 
 3. **kind:'tag' 仅认「已是 CpTag 状态词」的原始值，码值状态列仍需自绘插槽**。
    - 页面需要：区分 / ステータス / 優先度 三列是数字码（0..9），要「码→i18n 文案」+「码→语义 tone」两步映射。
@@ -630,5 +630,10 @@ describe('CpListPage', () => {
    - 现象：`outboundOrderApi.search` 返回扁平数组无总数，而 ListFetch 契约要求 `{ rows, total }`。
    - 适配：fetch 包装以 `pageSize:500` 取一批，`total = 数组长度`，按 page/size 客户端切片（真栈验证 37 条 → 20/页 2 页、翻页正确）。
    - 后续：待后端补 `WmsPaged<T>`（total/page/pageSize 已有类型）后，fetch 包装可直接透传 page/size 做服务端分页；无需改模板。
+
+6. **CpFilterBar 按钮文案硬编码中文 → i18n 回归**（Important，评审补记）。
+   - 页面需要：原页面查询/重置按钮走 `t('wms.common.search')` 等词条，随语言切换；默认语言为 ja。
+   - 模板缺：CpFilterBar 的「查询 / 重置 / 展开更多(收起)」为硬编码中文（CpFilterBar.vue:111-113），迁移后 ja 默认语言下这三个按钮只显示中文——相对原页面是 i18n 回归。
+   - 建议契约扩展：CpFilterBar 按钮文案支持 i18n——组件内改用 `$t`（约定词条 key，如 `common.search` / `common.reset` / `common.expandMore`）或增 `labels?: { search?; reset?; expand?; collapse? }` props；模板修复后本页无需改动。Milestone C 批量迁移前应优先修此项，否则每个迁移页都会引入同样回归。
 
 模板本次「够用」的原因：CpListPage 的 `col-<prop>` 具名插槽是逃生舱——凡 kind 表达不了的列（码值 tag、日期截断、行操作按钮、自定义 tone）都能落到插槽里保功能，因此上述缺口都不是阻塞项，而是「省样板 / 补计数」的契约增强。
