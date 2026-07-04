@@ -11,6 +11,8 @@
                                    fixed:'left'|'right'→fixed（钉列）。
                                    map?: (val,row)=>{ label, tone? }：码值列声明式映射——label 替换单元格文案（任意 kind 生效）；
                                    kind:'tag' 时按 tone 渲染 CpTag（tone 缺省 muted）。col-<prop> 插槽优先级高于 map。
+                                   map 的 tone 仅在 kind:'tag' 时生效，其他 kind 忽略（仅 label 替换文本）。
+                                   map 须为纯函数——每单元格可能被调用多次（label 与 tone 分别取值），含副作用或非确定性会导致两者不一致。
     - fetch: ListFetch             数据源：({ page,size,filters,statusKey? }) => Promise<{ rows,total }>。
     - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
     - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key；tone 用 CpTag 共享 Tone。
