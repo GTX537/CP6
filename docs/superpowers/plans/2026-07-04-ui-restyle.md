@@ -723,6 +723,12 @@ describe('CpListPage', () => {
     - 现象：原 Order resetQuery() 同时清 onlyConsignedSales/onlyMcUntransferred，原 Product onReset() 清 statusSel；迁移后这些筛选提为页面级 ref 放 toolbar slot（#15 代偿），而 CpFilterBar 的重置事件被 CpListPage 内部消化不外发——クリア后 checkbox 保持勾选且继续参与 fetch（功能回归）。
     - 实现契约：emits 增 `reset()`，onReset 顺序 = 清内部 state（page=1，filters 已由 CpFilterBar 先回写清空）→ **同步 emit('reset')** → load()——监听器先清自身 ref，随后 fetch closure 读到的已是清理后的值（时序由专项测试锁定：监听器清理的外部 ref 不进入 reset 触发的 fetch query）。Order `@reset` 清两 checkbox、Product `@reset` 清 statusSel，与原页 reset 语义对齐。
 
+### ERP批次3 复盘（编号接续，从 #23 起——本批无新增编号）
+
+批次3（QuotationList/BackorderList/OtdReport/OrderTrace/OrderCancelDialog）迁移完成，真栈验收通过（tests 316 保持）。分类：Quotation=CpListPage standalone（自动取得+服务端排序 #19+status toolbar checkbox #15+@reset #22）；Backorder=CpPageShell+CpListPage（paginated=false 单表全量）；OtdReport/OrderTrace=特殊页 token 化；OrderCancelDialog=working form dialog token 化（el-tag→CpTag，emits 契约保全）+ Phase-6 遗留可视性 bug 一行修复（`visible=ref(props.modelValue)`）。**本批无新增模板缺口编号**，以下为既知限制补记：
+
+- **QuotationList 原 `@row-dblclick→照会` 手势丢失**（#21 家族既知限制，不另立新号）：CpListPage 无行激活钩子（行选择/行激活系事件缺口与 #16 行内按钮代偿、#21 @current-change 未透传同族）。照会仍在操作列一键可达，能力未丢，仅双击快捷手势降级——与批次2 EstimateCalc 同处置（row-dblclick→操作列集约）。
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
