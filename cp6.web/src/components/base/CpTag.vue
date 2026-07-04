@@ -3,11 +3,13 @@
 
   Props:
     - status?: string  业务状态词；经 STATUS_TONE 集中映射到色调，空串/未命中均回退 muted。
-    - tone?: 'ok'|'warn'|'danger'|'info'|'muted'  显式指定色调，优先级高于 status。
+    - tone?: Tone      显式指定色调，优先级高于 status。
   Slots:
     - default  标签文案；缺省时回退渲染 status 文本。
   Export:
-    - STATUS_TONE  状态→色调映射表，供业务侧查询/复用。
+    - type Tone   语义色调联合类型 'ok'|'warn'|'danger'|'info'|'muted'（库内唯一事实来源，
+                  CpStatusStrip / CpListPage(StatusTab·ListColumn.map) 及业务页 tone 逻辑均复用）。
+    - STATUS_TONE 状态→色调映射表（Record<string, Tone>），供业务侧查询/复用。
 
   使用示例：
     <CpTag status="已出库">已出库</CpTag>
@@ -15,7 +17,8 @@
     <CpTag tone="danger">超期</CpTag>     （显式色调）
 -->
 <script lang="ts">
-export const STATUS_TONE: Record<string, string> = {
+export type Tone = 'ok' | 'warn' | 'danger' | 'info' | 'muted'
+export const STATUS_TONE: Record<string, Tone> = {
   '已出库': 'ok', '已出货': 'ok', '已完成': 'ok', '已对账': 'ok', '已批准': 'ok',
   '未出库': 'warn', '未出货': 'warn', '待审批': 'warn', '待处理': 'warn',
   '拣货中': 'info', '进行中': 'info', '已发行': 'info',
@@ -25,7 +28,7 @@ export const STATUS_TONE: Record<string, string> = {
 </script>
 <script setup lang="ts">
 import { computed } from 'vue'
-const props = defineProps<{ status?: string; tone?: 'ok'|'warn'|'danger'|'info'|'muted' }>()
+const props = defineProps<{ status?: string; tone?: Tone }>()
 // status='' 或未命中 → || 'muted' 兜底（?? 无法拦截空串这类 falsy-非 nullish 值，会漏出 't-' 空色调）
 const t = computed(() => props.tone ?? ((props.status && STATUS_TONE[props.status]) || 'muted'))
 </script>

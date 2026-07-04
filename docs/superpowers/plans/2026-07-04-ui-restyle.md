@@ -606,17 +606,17 @@ describe('CpListPage', () => {
 
 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
 
-1. **total 不外露 → PageShell 计数 pill 无法接线**（本次影响最大）。
+1. **total 不外露 → PageShell 计数 pill 无法接线**（本次影响最大）—— ✅ 已实现（契约扩展 commit）：CpListPage 新增 `@total-change(n)`，仅最新请求（seq 守卫）成功后 emit；试点页已接 CpPageShell `:count`（真栈 37）。
    - 页面需要：mockup 头部「28 单」计数 pill（CpPageShell `:count`）。
    - 模板缺：CpListPage 内部持有 `total` 但既不 emit 也不暴露，父级 CpPageShell 拿不到值，只能省略 `:count`。
    - 建议契约扩展：CpListPage 增 `@total-change(n:number)`（或 `v-model:total` / `#count` 作用域插槽），让业务页把总数回填到 PageShell。本次为遵守「不擅改已评审组件」而省略计数 pill，记为缺口而非页内 hack。
 
-2. **ListColumn / 表格级配置缺字段：`minWidth`、`overflowTooltip`、`fixed`、`highlight-current-row`**。
+2. **ListColumn / 表格级配置缺字段：`minWidth`、`overflowTooltip`、`fixed`、`highlight-current-row`**—— ✅ 已实现（契约扩展 commit）：ListColumn 增 `minWidth/overflowTooltip/fixed` 透传 el-table-column；CpListPage 增 `highlightCurrentRow`（默认 true）透传 el-table；试点页三项行为已回补。
    - 页面需要：客先名列原为 `min-width:160 + show-overflow-tooltip`（长客户名省略号 + 悬浮全文）；操作列原为 `fixed="right"`（横向滚动时行按钮钉在右侧）；表格原有 `highlight-current-row`（点击行高亮当前行）。
    - 模板缺：ListColumn 仅有 `width`，无最小宽 / 无溢出 tooltip / 无 `fixed`；CpListPage 也不透传表格级 `highlight-current-row`。迁移后这三项行为丢失（undocumented behavior change，本次试点复盘补记）：横向滚动时操作按钮不再钉住、当前行不再高亮。
    - 建议契约扩展：ListColumn 增 `minWidth?: number`、`overflowTooltip?: boolean`、`fixed?: 'left' | 'right'`，透传 el-table-column 的 `min-width` / `show-overflow-tooltip` / `fixed`；CpListPage 增 `highlightCurrentRow?: boolean`（或直接默认开启）透传 el-table。
 
-3. **kind:'tag' 仅认「已是 CpTag 状态词」的原始值，码值状态列仍需自绘插槽**。
+3. **kind:'tag' 仅认「已是 CpTag 状态词」的原始值，码值状态列仍需自绘插槽**—— ✅ 已实现（契约扩展 commit）：ListColumn 增 `map?: (val,row)=>{label,tone?}`——label 替换任意 kind 的单元格文案，`kind:'tag'` 时按 tone 渲染 CpTag；`col-<prop>` 插槽仍优先。试点页 区分/ステータス 改 `kind:'tag'`+map、優先度 改纯 map（原页即纯文本无 tone），三个插槽已删。
    - 页面需要：区分 / ステータス / 優先度 三列是数字码（0..9），要「码→i18n 文案」+「码→语义 tone」两步映射。
    - 模板缺：kind:'tag' 直接把单元格原值当 CpTag `status`，对数字码既显不出文案也命不中 tone；只能改用 `col-<prop>` 插槽 + `<CpTag :tone>` 自绘（功能已保全，但每个码值列都要重复样板）。
    - 建议契约扩展：ListColumn 增可选 `map?: (val, row) => { label: string; tone?: Tone }`（或 `valueMap` 字典），让码值状态/枚举列声明式着色，免去逐列插槽。
@@ -635,11 +635,11 @@ describe('CpListPage', () => {
    - 已做：CpFilterBar 增 `labels?: { search?; reset?; expand?; collapse? }`，CpFormDialog 增 `labels?: { cancel?; confirm? }` + `requiredMessage?`，CpEmpty 沿用既有 `text?`；CpListPage 透传 `filterLabels?` / `emptyText?`。试点页 `OutboundOrderListView.vue` 已就现有词条接线（`search→wms.common.search`、`reset→wms.common.clear`）；`expand/collapse` 无对应 key，保留组件内中文默认（未臆造 Sys_Langs 词条）。
    - 剩余 follow-up（Milestone C）：采用共享词条（如 `common.search/reset/expandMore/collapse`）或组件内直接 `t()`，让 expand/collapse 等也随语言切换、免每页手动传 labels。
 
-7. **共享 `Tone` 类型导出 + STATUS_TONE 强类型**（终审提出，Milestone C 票，未在本次修复）。
+7. **共享 `Tone` 类型导出 + STATUS_TONE 强类型**（终审提出，Milestone C 票）—— ✅ 已实现（契约扩展 commit）：CpTag.vue 导出 `export type Tone`，`STATUS_TONE: Record<string, Tone>`；CpStatusStrip.items.tone、CpListPage StatusTab.tone / ListColumn.map、试点页 statusTone() 全部复用，库公开类型不再残留 string tone。
    - 现状：`CpTag` 的 tone 联合类型 `'ok'|'warn'|'danger'|'info'|'muted'` 内联在 props；`STATUS_TONE` 值为宽松 `Record<string,string>`；`ListColumn.map`（缺口#3 提案）、`StatusTab.tone`、页面 `statusTone()` 等各处对 tone 各写各的字面量，无单一事实来源。
    - 建议：从 `CpTag.vue` 导出 `export type Tone = ...`，`STATUS_TONE: Record<string, Tone>`，各消费点复用该类型，编译期约束非法 tone。
 
-8. **`kind:'date'` 死词汇**（终审提出，Milestone C 前实现或删除）。
+8. **`kind:'date'` 死词汇**（终审提出，Milestone C 前实现或删除）—— ✅ 已实现（契约扩展 commit）：date 分支落地为 `String(val).slice(0,10)`（null/undefined 渲染空，与试点页原插槽约定一致）；头注已去「date→暂原样」；试点页 plannedDate 改 `kind:'date'` 并删插槽。
    - 现状：`ListColumn.kind` 声明含 `'date'`，但 CpListPage 列渲染分支未实现 date 格式化（落到 `<template v-else>` 原样输出），头注也写「date→暂原样」。试点页日期列走 `col-plannedDate` 插槽自行 `slice`，`kind:'date'` 从未生效——属死词汇。
    - 建议：Milestone C 前二选一——要么实现 date 格式化分支（按 i18n `d()`/`format`），要么从 `kind` 联合类型删除 `'date'`，避免误导后续迁移页声明无效 kind。
 

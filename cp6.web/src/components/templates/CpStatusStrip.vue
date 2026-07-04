@@ -3,8 +3,8 @@
   横向排列的 pill 卡，每张展示「圆点 + 文字 + 计数」；点击某卡即把该卡 key 回写为当前筛选值。
 
   Props:
-    - items: { key:string; label:string; count:number; tone?:string }[]
-        速览项；tone（ok|warn|danger|info|muted）着色圆点与计数，缺省为中性 ink。
+    - items: { key:string; label:string; count:number; tone?:Tone }[]
+        速览项；tone（CpTag 导出的共享 Tone：ok|warn|danger|info|muted）着色圆点与计数，缺省为中性 ink。
     - modelValue: string   当前选中的 key；与之相等的卡获得 `on` 高亮态。
   Emits:
     - update:modelValue (key: string)   点击某卡时抛出该卡 key（供 v-model 双向绑定）。
@@ -19,17 +19,19 @@
       ]" />
 -->
 <script setup lang="ts">
-interface StatusItem { key: string; label: string; count: number; tone?: string }
+import type { Tone } from '@/components/base/CpTag.vue'
+
+interface StatusItem { key: string; label: string; count: number; tone?: Tone }
 
 defineProps<{ items: StatusItem[]; modelValue: string }>()
 defineEmits<{ (e: 'update:modelValue', key: string): void }>()
 
-const TONE_VAR: Record<string, string> = {
+const TONE_VAR: Record<Tone, string> = {
   ok: 'var(--cp-ok)', warn: 'var(--cp-warn)', danger: 'var(--cp-danger)',
   info: 'var(--cp-info)', muted: 'var(--cp-muted)'
 }
-// tone 缺省或未命中 → 中性 ink；命中 → 对应语义色
-const toneColor = (tone?: string) => (tone && TONE_VAR[tone]) || 'var(--cp-ink)'
+// tone 缺省 → 中性 ink；有值 → 对应语义色（Tone 联合类型保证必命中）
+const toneColor = (tone?: Tone) => (tone && TONE_VAR[tone]) || 'var(--cp-ink)'
 </script>
 
 <template>

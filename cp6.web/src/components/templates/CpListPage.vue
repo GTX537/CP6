@@ -5,36 +5,51 @@
   fetch 期间 v-loading；fetch reject → ElMessage.error 且保留旧数据；rows 空 → CpEmpty；乱序响应只取最新。
 
   Props:
-    - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag / date→暂原样）。
+    - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag /
+                                   date→String(val).slice(0,10)，null/undefined 渲染空）。
+                                   列级透传：width / minWidth→min-width / overflowTooltip→show-overflow-tooltip /
+                                   fixed:'left'|'right'→fixed（钉列）。
+                                   map?: (val,row)=>{ label, tone? }：码值列声明式映射——label 替换单元格文案（任意 kind 生效）；
+                                   kind:'tag' 时按 tone 渲染 CpTag（tone 缺省 muted）。col-<prop> 插槽优先级高于 map。
     - fetch: ListFetch             数据源：({ page,size,filters,statusKey? }) => Promise<{ rows,total }>。
     - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
-    - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key。
+    - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key；tone 用 CpTag 共享 Tone。
     - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
+    - highlightCurrentRow?: boolean 透传 el-table 当前行高亮；默认 true（迁移页默认保留原行为）。
     - filterLabels?: FilterBarLabels 透传 CpFilterBar 按钮文案覆盖（业务侧接 i18n；缺省中文）。
     - emptyText?: string           透传 CpEmpty 空状态文案（缺省「暂无数据」）。
   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
-  Emits: selection-change(rows)
+  Emits: selection-change(rows) ｜ total-change(n)（每次成功加载后携带最新 total，供 CpPageShell :count 接线；
+         受 seq 乱序守卫，过期响应不 emit）
 
   使用示例：
     <CpPageShell title="出庫指示一覧" :count="total">
       <CpListPage
-        :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' }]"
+        :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' },
+                   { prop:'st', label:'状态', kind:'tag', map: (v) => ({ label: stLabel(v), tone: stTone(v) }) }]"
         :fetch="loadShipments"
         :search-fields="[{ key:'q', label:'单号', type:'text' }]"
         :status-tabs="[{ key:'all', label:'全部', count:28 }]"
         selectable row-key="id"
-        @selection-change="onSel">
+        @selection-change="onSel"
+        @total-change="total = $event">
         <template #toolbar><el-button>批量出库</el-button></template>
       </CpListPage>
     </CpPageShell>
 -->
 <script lang="ts">
+import type { Tone } from '@/components/base/CpTag.vue'
+
 export interface ListColumn {
   prop: string
   label: string
   width?: number
+  minWidth?: number
   align?: 'left' | 'right' | 'center'
   kind?: 'text' | 'num' | 'mono' | 'tag' | 'date'
+  overflowTooltip?: boolean
+  fixed?: 'left' | 'right'
+  map?: (val: unknown, row: unknown) => { label: string; tone?: Tone }
 }
 export type ListFetch = (q: {
   page: number
@@ -42,7 +57,7 @@ export type ListFetch = (q: {
   filters: Record<string, unknown>
   statusKey?: string
 }) => Promise<{ rows: unknown[]; total: number }>
-export interface StatusTab { key: string; label: string; count: number; tone?: string }
+export interface StatusTab { key: string; label: string; count: number; tone?: Tone }
 </script>
 
 <script setup lang="ts">
@@ -53,18 +68,22 @@ import CpFilterBar, { type FilterField, type FilterBarLabels } from './CpFilterB
 import CpTag from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   columns: ListColumn[]
   fetch: ListFetch
   searchFields?: FilterField[]
   statusTabs?: StatusTab[]
   selectable?: boolean
   rowKey?: string
+  highlightCurrentRow?: boolean
   filterLabels?: FilterBarLabels
   emptyText?: string
-}>()
+}>(), { highlightCurrentRow: true })
 
-const emit = defineEmits<{ (e: 'selection-change', rows: unknown[]): void }>()
+const emit = defineEmits<{
+  (e: 'selection-change', rows: unknown[]): void
+  (e: 'total-change', total: number): void
+}>()
 
 // —— 内部状态 ——
 const page = ref(1)
@@ -90,6 +109,7 @@ async function load() {
     if (id !== seq) return // 已有更新的请求发出，丢弃本次结果
     rows.value = res.rows
     total.value = res.total
+    emit('total-change', res.total) // 仅最新请求成功后 emit（供 CpPageShell :count 接线）
   } catch (e) {
     if (id !== seq) return
     ElMessage.error((e as Error)?.message ?? String(e)) // 保留旧 rows/total（与 CpFormDialog 同一错误硬化契约）
@@ -112,6 +132,16 @@ function cell(row: unknown, prop: string): unknown {
 }
 function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
   return c.align ?? (c.kind === 'num' ? 'right' : 'left')
+}
+// 单元格文案：map.label > date 截断(yyyy-MM-dd) > 原值
+function display(c: ListColumn, row: unknown): unknown {
+  const v = cell(row, c.prop)
+  if (c.map) return c.map(v, row).label
+  if (c.kind === 'date') return v == null ? '' : String(v).slice(0, 10)
+  return v
+}
+function mapTone(c: ListColumn, row: unknown): Tone | undefined {
+  return c.map?.(cell(row, c.prop), row).tone
 }
 </script>
 
@@ -140,6 +170,7 @@ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
         v-loading="loading"
         :data="rows"
         :row-key="rowKey"
+        :highlight-current-row="highlightCurrentRow"
         @selection-change="emit('selection-change', $event)"
       >
         <el-table-column v-if="$slots.expand" type="expand">
@@ -154,14 +185,18 @@ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
           :prop="c.prop"
           :label="c.label"
           :width="c.width"
+          :min-width="c.minWidth"
+          :show-overflow-tooltip="c.overflowTooltip"
+          :fixed="c.fixed"
           :align="colAlign(c)"
         >
           <template #default="{ row }">
             <slot :name="`col-${c.prop}`" :row="row">
-              <CpTag v-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
-              <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ cell(row, c.prop) }}</span>
-              <span v-else-if="c.kind === 'num'" class="num">{{ cell(row, c.prop) }}</span>
-              <template v-else>{{ cell(row, c.prop) }}</template>
+              <CpTag v-if="c.kind === 'tag' && c.map" :tone="mapTone(c, row)">{{ display(c, row) }}</CpTag>
+              <CpTag v-else-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
+              <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ display(c, row) }}</span>
+              <span v-else-if="c.kind === 'num'" class="num">{{ display(c, row) }}</span>
+              <template v-else>{{ display(c, row) }}</template>
             </slot>
           </template>
         </el-table-column>
