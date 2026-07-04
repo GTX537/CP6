@@ -1,10 +1,14 @@
 <!--
   CpFilterBar —— 列表页查询区（设计系统 §9.2）。
-  按 fields 声明渲染一排查询字段（text / select / daterange，控件观感由 Element Plus overrides 保证），
+  按 fields 声明渲染一排查询字段（text / select / date / daterange / number，控件观感由 Element Plus overrides 保证），
   右侧提供「展开更多 / 重置 / 查询」。字段超过 4 个时自动折叠，多出的字段隐藏在「展开更多」后。
 
   Props:
     - fields: FilterField[]              字段声明表（见 FilterField）。
+        type:'date'      单日 el-date-picker 透传（独立起/止字段可各自留空做单侧开区间查询）。
+        type:'number'    el-input-number 透传，min/max/step 可选；model 值为 number | undefined。
+        valueFormat?     date / daterange 透传 el-date-picker value-format（如 'YYYY-MM-DD' → model 为字符串）。
+                         opt-in：不传保持 el-date-picker 默认（返回 Date 对象）——不设默认值，避免静默改变既有消费者的返回类型。
     - modelValue: Record<string,unknown> 查询条件对象；键为 field.key，值为该字段当前值。
     - labels?: FilterBarLabels           按钮文案覆盖（search/reset/expand/collapse）；缺省中文，供业务侧接 i18n。
   说明：daterange 字段的 el-date-picker 忽略单个 placeholder，故把 field.placeholder 同时接到
@@ -28,9 +32,15 @@
 export interface FilterField {
   key: string
   label: string
-  type: 'text' | 'select' | 'daterange'
+  type: 'text' | 'select' | 'date' | 'daterange' | 'number'
   options?: { label: string; value: unknown }[]
   placeholder?: string
+  /** date / daterange：透传 el-date-picker value-format（opt-in，不传返回 Date 对象） */
+  valueFormat?: string
+  /** number：透传 el-input-number */
+  min?: number
+  max?: number
+  step?: number
 }
 // 按钮文案覆盖：缺省中文，业务侧可传 i18n 词条覆盖任一按钮
 export interface FilterBarLabels {
@@ -43,7 +53,7 @@ export interface FilterBarLabels {
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { ElInput, ElSelect, ElOption, ElDatePicker, ElButton } from 'element-plus'
+import { ElInput, ElSelect, ElOption, ElDatePicker, ElInputNumber, ElButton } from 'element-plus'
 
 const props = defineProps<{
   fields: FilterField[]
@@ -105,13 +115,34 @@ function onReset() {
       </el-select>
 
       <el-date-picker
+        v-else-if="f.type === 'date'"
+        type="date"
+        :model-value="(modelValue[f.key] as any)"
+        :placeholder="f.placeholder"
+        :value-format="f.valueFormat"
+        clearable
+        @update:model-value="setField(f.key, $event)"
+      />
+
+      <el-date-picker
         v-else-if="f.type === 'daterange'"
         type="daterange"
         :model-value="(modelValue[f.key] as any)"
         :placeholder="f.placeholder"
         :start-placeholder="f.placeholder"
         :end-placeholder="f.placeholder"
+        :value-format="f.valueFormat"
         range-separator="→"
+        @update:model-value="setField(f.key, $event)"
+      />
+
+      <el-input-number
+        v-else-if="f.type === 'number'"
+        :model-value="(modelValue[f.key] as number | undefined)"
+        :min="f.min"
+        :max="f.max"
+        :step="f.step"
+        :placeholder="f.placeholder"
         @update:model-value="setField(f.key, $event)"
       />
     </div>

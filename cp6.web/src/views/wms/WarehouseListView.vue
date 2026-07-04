@@ -1,7 +1,8 @@
 <!--
   倉庫マスタ —— CpPageShell + CpListPage + CpFormDialog 迁移（WMS 批次1）。
   種別列 kind:'tag'+map；マイナス許可/操作 走 col slot；新建/編集共用 CpFormDialog（default slot 保留 switch/select/disabled 等表单）。
-  必填(倉庫CD/倉庫名)由 el-form rules 校验。in-place 变更(新建/編集/削除)后自增 reloadKey 刷新（模板缺口 #12）。
+  必填(倉庫CD/倉庫名)由 el-form rules 校验。in-place 变更(新建/編集/削除)后 listRef.reload() 命令式刷新
+  （契约扩展二轮 #12），保留当前筛选/页码。
 -->
 <template>
   <CpPageShell :title="t('wms.warehouse.title')" :count="total">
@@ -10,7 +11,7 @@
     </template>
 
     <CpListPage
-      :key="reloadKey"
+      ref="listRef"
       :columns="columns"
       :fetch="fetchList"
       :search-fields="searchFields"
@@ -35,7 +36,7 @@
       :rules="rules"
       :submit="onSave"
       :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
-      @saved="reloadKey++"
+      @saved="reloadList"
     >
       <el-form-item :label="t('wms.warehouse.fld.cd')" prop="warehouseCd">
         <el-input v-model="form.warehouseCd" :disabled="!!form.id" maxlength="10" />
@@ -72,7 +73,9 @@ import type { Warehouse } from '@/types/wms/wms'
 const { t } = useI18n()
 
 const total = ref<number>()
-const reloadKey = ref(0)
+// in-place 变更后命令式刷新（保留当前筛选/页码）
+const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+function reloadList() { listRef.value?.reload() }
 
 const warehouseTypeMap = computed<Record<number, string>>(() => ({
   1: t('wms.warehouse.type.raw'),
@@ -162,7 +165,7 @@ async function onDelete(row: Warehouse) {
     await ElMessageBox.confirm(`${t('wms.common.confirmDelete')} [${row.warehouseCd}]`, t('wms.common.confirm'), { type: 'warning' })
     await warehouseApi.delete(row.warehouseCd)
     ElMessage.success(t('wms.common.success'))
-    reloadKey.value++
+    reloadList()
   } catch { /* */ }
 }
 </script>

@@ -81,6 +81,79 @@ describe('CpFilterBar', () => {
     expect(inputs[1].attributes('placeholder')).toBe('选择日期')
   })
 
+  it('date 字段渲染单日 el-date-picker（非 range，一个输入框）', () => {
+    const w = mount(CpFilterBar, {
+      props: { fields: [{ key: 'from', label: '予定入荷 From', type: 'date' }], modelValue: {} }
+    })
+    expect(w.findComponent({ name: 'ElDatePicker' }).exists()).toBe(true)
+    expect(w.findAll('.el-range-input')).toHaveLength(0) // 不是 range 形态
+    expect(w.find('.el-date-editor input').exists()).toBe(true)
+  })
+
+  it('date + valueFormat：用户输入日期后 model 值为格式化字符串（非 Date 对象）', async () => {
+    const w = mount(CpFilterBar, {
+      props: {
+        fields: [{ key: 'from', label: 'From', type: 'date', valueFormat: 'YYYY-MM-DD' }],
+        modelValue: {}
+      }
+    })
+    const input = w.get('.el-date-editor input')
+    await input.setValue('2026-07-04')
+    await input.trigger('change')
+    const emits = w.emitted('update:modelValue')!
+    const payload = emits.at(-1)![0] as Record<string, unknown>
+    expect(payload.from).toBe('2026-07-04') // 字符串，不是 Date
+    expect(typeof payload.from).toBe('string')
+  })
+
+  it('date 无 valueFormat：el-date-picker 不收到 value-format（保持返回 Date 的默认行为）', () => {
+    const w = mount(CpFilterBar, {
+      props: { fields: [{ key: 'from', label: 'From', type: 'date' }], modelValue: {} }
+    })
+    expect(w.findComponent({ name: 'ElDatePicker' }).props('valueFormat')).toBeUndefined()
+  })
+
+  it('daterange 透传 valueFormat 到 el-date-picker', () => {
+    const w = mount(CpFilterBar, {
+      props: {
+        fields: [{ key: 'range', label: '期間', type: 'daterange', valueFormat: 'YYYY-MM-DD' }],
+        modelValue: {}
+      }
+    })
+    expect(w.findComponent({ name: 'ElDatePicker' }).props('valueFormat')).toBe('YYYY-MM-DD')
+  })
+
+  it('number 字段渲染 el-input-number 且透传 min/max/step', () => {
+    const w = mount(CpFilterBar, {
+      props: {
+        fields: [{ key: 'days', label: 'N日以内', type: 'number', min: 1, max: 365, step: 1 }],
+        modelValue: {}
+      }
+    })
+    const num = w.findComponent({ name: 'ElInputNumber' })
+    expect(num.exists()).toBe(true)
+    expect(num.props('min')).toBe(1)
+    expect(num.props('max')).toBe(365)
+    expect(num.props('step')).toBe(1)
+  })
+
+  it('number 字段变更后 v-model 值为数值型', async () => {
+    // 真实 v-model 回写（el-input-number 在 prop 不回写时会自行重同步，直接断言 emit 序列不可靠）
+    const Host = {
+      components: { CpFilterBar },
+      data: () => ({
+        model: {} as Record<string, unknown>,
+        fields: [{ key: 'days', label: 'N日以内', type: 'number', min: 1, max: 365 }] as FilterField[]
+      }),
+      template: `<CpFilterBar v-model="model" :fields="fields" />`
+    }
+    const w = mount(Host)
+    const input = w.get('.el-input-number input')
+    await input.setValue('30')
+    await input.trigger('change')
+    expect((w.vm as unknown as { model: Record<string, unknown> }).model.days).toBe(30)
+  })
+
   it('renders custom button labels when labels prop supplied', () => {
     const many: FilterField[] = [...fields, { key: 'operator', label: '担当', type: 'text' }]
     const w = mount(CpFilterBar, {

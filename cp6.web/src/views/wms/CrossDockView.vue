@@ -2,7 +2,7 @@
   クロスドック —— CpPageShell + CpListPage + CpFormDialog 迁移（WMS 批次1）。
   状態列 kind:'tag'+map；数量/実行日時/操作 走 col slot；新建用 CpFormDialog（default slot 保留 input-number/placeholder/maxlength 等 fields 声明表达不了的表单）。
   必填(品目/倉庫/一時ロケ)改由 el-form rules 校验（CpFormDialog validate() 门禁），等价原 onSave 手工校验。
-  in-place 变更(新建/実行/取消)后自增 reloadKey 重挂载 CpListPage 刷新（模板缺口 #12：无命令式 reload）。
+  in-place 变更(新建/実行/取消)后 listRef.reload() 命令式刷新（契约扩展二轮 #12），保留当前筛选/页码。
 -->
 <template>
   <CpPageShell :title="t('wms.xdock.title')" :count="total">
@@ -11,7 +11,7 @@
     </template>
 
     <CpListPage
-      :key="reloadKey"
+      ref="listRef"
       :columns="columns"
       :fetch="fetchList"
       :search-fields="searchFields"
@@ -37,7 +37,7 @@
       :rules="rules"
       :submit="onSave"
       :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
-      @saved="reloadKey++"
+      @saved="reloadList"
     >
       <el-form-item :label="t('wms.common.product')" prop="productCd">
         <el-input v-model="form.productCd" maxlength="20" />
@@ -82,7 +82,9 @@ import { formatQty } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
-const reloadKey = ref(0)
+// in-place 变更后命令式刷新（保留当前筛选/页码）
+const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+function reloadList() { listRef.value?.reload() }
 
 const statusMap = computed<Record<number, string>>(() => ({
   0: t('wms.xdock.status.planned'),
@@ -170,7 +172,7 @@ async function onExecute(row: CrossDockOrder) {
     await ElMessageBox.confirm(t('wms.xdock.msg.executeAsk'), t('wms.common.confirm'), { type: 'warning' })
     await crossDockApi.execute(row.xdockNo!)
     ElMessage.success(t('wms.common.success'))
-    reloadKey.value++
+    reloadList()
   } catch { /* */ }
 }
 
@@ -179,7 +181,7 @@ async function onCancel(row: CrossDockOrder) {
     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
     await crossDockApi.cancel(row.xdockNo!)
     ElMessage.success(t('wms.common.success'))
-    reloadKey.value++
+    reloadList()
   } catch { /* */ }
 }
 </script>

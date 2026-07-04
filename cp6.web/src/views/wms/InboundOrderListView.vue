@@ -1,8 +1,8 @@
 <!--
   入庫指示一覧 —— CpPageShell + CpListPage 迁移（WMS 批次1）。
   状態列走 kind:'tag'+map（码→i18n+tone）；種別列纯 map（原页无 tag 视觉）；日期列 kind:'date'；操作列 col slot。
-  原「予定入荷 从/至」两个单日期查询合并为 CpFilterBar daterange（filterbar 无单日 type）；
-  daterange 返回 Date 对象（filterbar 未透传 value-format），故 fetch 内本地格式化为 YYYY-MM-DD（模板缺口 #9）。
+  「予定入荷 从/至」为两个独立单日期字段（type:'date' + valueFormat:'YYYY-MM-DD'，契约扩展二轮 #9/#13）——
+  可只填一侧做开区间查询，model 直接为字符串，无需 fetch 内格式化。
   数据源 inboundOrderApi.search 返回扁平数组无 total → 客户端分页（同样板）。
 -->
 <template>
@@ -91,16 +91,10 @@ const searchFields = computed<FilterField[]>(() => [
     key: 'status', label: t('wms.common.status'), type: 'select',
     options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
   },
-  { key: 'arrival', label: `${t('wms.inbound.fld.expectedArrival')}`, type: 'daterange' },
+  // 原页形态：两个独立单日期（可只填一侧做开区间查询）；valueFormat 使 model 直接为 'YYYY-MM-DD' 字符串
+  { key: 'arrivalFrom', label: `${t('wms.inbound.fld.expectedArrival')} ${t('wms.common.from')}`, type: 'date', valueFormat: 'YYYY-MM-DD' },
+  { key: 'arrivalTo', label: `${t('wms.inbound.fld.expectedArrival')} ${t('wms.common.to')}`, type: 'date', valueFormat: 'YYYY-MM-DD' },
 ])
-
-// Date → YYYY-MM-DD（本地时区，避免 toISOString UTC 偏移）
-function ymd(d: unknown): string | undefined {
-  if (!d) return undefined
-  const dt = d instanceof Date ? d : new Date(String(d))
-  if (Number.isNaN(dt.getTime())) return undefined
-  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
-}
 
 const PAGE_CAP = 500
 const fetchList: ListFetch = async ({ page, size, filters }) => {
@@ -110,10 +104,8 @@ const fetchList: ListFetch = async ({ page, size, filters }) => {
   if (f.supplierCd) q.supplierCd = String(f.supplierCd)
   if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
   if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
-  if (Array.isArray(f.arrival)) {
-    q.arrivalFrom = ymd(f.arrival[0])
-    q.arrivalTo = ymd(f.arrival[1])
-  }
+  if (f.arrivalFrom) q.arrivalFrom = String(f.arrivalFrom) // valueFormat 已保证 YYYY-MM-DD 字符串
+  if (f.arrivalTo) q.arrivalTo = String(f.arrivalTo)
   const res = await inboundOrderApi.search(q)
   const all = res.data || []
   const start = (page - 1) * size
