@@ -638,6 +638,17 @@ describe('CpListPage', () => {
 
 （注：CpListPage 的 el-pagination 触发 element-plus 内部 `[el-pagination] small … deprecated` 警告——EP 库内部 size-changer 自带，warning 级、非本批引入、CpListPage 本体未改，记录在案非阻塞。InboundReceipt 为全页可编辑录入页，原本即已 token 化合规（el-card overrides + var() 令牌，零禁用硬编码、无状态 pill 可替换），本批审计后维持原结构。）
 
+### WMS 迁移批次3 复盘（编号接续，从 #15 起）
+
+批次3（InboundOrder/SampleStock/Pallet/LocationList/PaperRoll）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：SampleStock/Pallet/PaperRoll=查询列表页（CpListPage + 2~3×CpFormDialog default slot）；InboundOrder=全页可编辑录入页（token 化 + 状態 el-tag→CpTag）；LocationList=master-detail 双表联动特殊页（token 化 + CpTag，保留双栏 + el-dialog）。以下为唯一新增缺口：
+
+15. **CpFilterBar 无 boolean/checkbox 字段类型**（Minor）
+    - 现象：SampleStock 原「未返却(超過)」为 el-checkbox 查询条件（`overdueOnly: boolean`）。FilterField 仅 text/select/date/daterange/number，无法渲染复选。
+    - 代偿：`overdueOnly` 提为页级 `ref`，放 CpListPage **toolbar slot** 复选，`fetchList` 闭包读取 + `@change` 触发 `listRef.reload()`——控件与功能完整保全（未降级为 select 下拉）。
+    - 建议：FilterField 增 `type:'boolean'`（透传 el-checkbox / el-switch），或 CpFilterBar 增字段级插槽，让布尔查询条件声明式进查询区。
+
+（注：LocationList 为 master-detail 双表联动，CpListPage 单表卡形态不表达，按「特殊页不强套模板」保留双栏 el-table + 编辑 el-dialog，未计入模板缺口——与批次2 LotTrace/InboundReceipt 处置一致。）
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

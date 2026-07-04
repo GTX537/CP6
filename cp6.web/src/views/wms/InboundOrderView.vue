@@ -4,7 +4,7 @@
       <template #header>
         <div style="display: flex; align-items: center; gap: 12px">
           <span style="font-weight: 600">{{ isNew ? t('wms.inbound.titleNew') : `${t('wms.inbound.titleEdit')} [${form.inboundNo}]` }}</span>
-          <el-tag :type="statusTagOf(form.status)" size="small">{{ statusMap[form.status] || '—' }}</el-tag>
+          <CpTag :tone="statusTone(form.status)">{{ statusMap[form.status] || '—' }}</CpTag>
         </div>
       </template>
 
@@ -110,6 +110,7 @@ import { useI18n } from 'vue-i18n'
 import { inboundOrderApi } from '@/api/wms/inboundOrder'
 import type { InboundOrder, InboundOrderDetail } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -144,8 +145,9 @@ const canCancel = computed(() => !isNew.value && form.status !== 9 && form.statu
 const canDelete = computed(() => !isNew.value && form.status === 0)
 const canReceive = computed(() => !isNew.value && (form.status === 1 || form.status === 2))
 
-function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'danger' {
-  return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'success', 9: 'danger' } as const)[s as 0] || 'info'
+// 原 statusTagOf(info/primary/warning/success/danger) → 设计系统 Tone（保色）
+function statusTone(s: number): Tone {
+  return ({ 0: 'muted', 1: 'info', 2: 'warn', 3: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
 }
 
 function addLine() {

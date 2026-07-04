@@ -26,7 +26,7 @@
             <div class="card-header">
               <span style="font-weight: 600">
                 {{ t('wms.location.locationList') }}
-                <span v-if="selectedWh" style="color: #909399; font-weight: normal">
+                <span v-if="selectedWh" style="color: var(--cp-muted); font-weight: normal">
                   — {{ selectedWh.warehouseCd }} {{ selectedWh.warehouseName }}
                 </span>
               </span>
@@ -45,7 +45,7 @@
             <el-table-column prop="locationName" :label="t('wms.location.fld.displayName')" min-width="160" />
             <el-table-column :label="t('wms.location.fld.level')" width="100" align="center">
               <template #default="{ row }">
-                <el-tag size="small">{{ levelMap[row.locationLevel] || `L${row.locationLevel}` }}</el-tag>
+                <CpTag tone="info">{{ levelMap[row.locationLevel] || `L${row.locationLevel}` }}</CpTag>
               </template>
             </el-table-column>
             <el-table-column prop="parentLocationCd" :label="t('wms.location.fld.parentCd')" width="160" />
@@ -62,8 +62,8 @@
             </el-table-column>
             <el-table-column :label="t('wms.stock.col.flag')" width="120" align="center">
               <template #default="{ row }">
-                <el-tag v-if="!row.isPickable" size="small" type="info">{{ t('wms.location.flag.notPickable') }}</el-tag>
-                <el-tag v-if="row.isBlocked" size="small" type="danger" style="margin-left: 4px">{{ t('wms.location.flag.frozen') }}</el-tag>
+                <CpTag v-if="!row.isPickable" tone="muted">{{ t('wms.location.flag.notPickable') }}</CpTag>
+                <CpTag v-if="row.isBlocked" tone="danger" style="margin-left: 4px">{{ t('wms.location.flag.frozen') }}</CpTag>
                 <span v-if="row.isPickable && !row.isBlocked">—</span>
               </template>
             </el-table-column>
@@ -101,7 +101,7 @@
         </el-row>
         <el-form-item :label="t('wms.location.fld.capacity')">
           <el-input-number v-model="editing.capacityQty" :min="0" :precision="2" controls-position="right" style="width: 100%" />
-          <span style="margin-left: 8px; color: #999">{{ t('wms.location.fld.capacityHint') }}</span>
+          <span style="margin-left: 8px; color: var(--cp-muted)">{{ t('wms.location.fld.capacityHint') }}</span>
         </el-form-item>
         <el-form-item :label="t('wms.location.fld.allowedType')"><el-input v-model="editing.allowedProductType" :placeholder="t('wms.location.fld.allowedHint')" maxlength="50" /></el-form-item>
         <el-form-item :label="t('wms.location.fld.pickable')"><el-switch v-model="editing.isPickable" /></el-form-item>
@@ -122,6 +122,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { warehouseApi } from '@/api/wms/warehouse'
 import type { Warehouse, WmsLocation } from '@/types/wms/wms'
+import CpTag from '@/components/base/CpTag.vue'
 
 const { t } = useI18n()
 
@@ -226,6 +227,6 @@ onMounted(loadWarehouses)
 .wrap { min-height: calc(100vh - 100px); }
 .left-card, .right-card { height: 100%; }
 .card-header { display: flex; justify-content: space-between; align-items: center; }
-.empty { padding: 60px 0; text-align: center; color: #909399; }
-:deep(.is-selected td) { background: #ecf5ff !important; }
+.empty { padding: 60px 0; text-align: center; color: var(--cp-muted); }
+:deep(.is-selected td) { background: var(--cp-brand-bg) !important; }
 </style>

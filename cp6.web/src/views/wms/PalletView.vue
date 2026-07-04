@@ -1,126 +1,108 @@
+<!--
+  パレット管理 —— CpPageShell + CpListPage + 3×CpFormDialog 迁移（WMS 批次3）。
+  状態列 kind:'tag'+map；重量列 map(formatQty)；操作走 col slot（状态相关 4 动作）。
+  新建/移動/出荷用 CpFormDialog（default slot 保留 input-number/maxlength）；必填改 el-form rules。
+  in-place 变更(新建/完成/移動/出荷/削除)后 listRef.reload() 保留当前筛选/页码。
+-->
 <template>
-  <div class="wms-pallet">
-    <el-card shadow="never" class="search-card">
-      <el-form :model="query" inline size="small">
-        <el-form-item :label="t('wms.pallet.fld.no')"><el-input v-model="query.palletNo" clearable style="width: 180px" /></el-form-item>
-        <el-form-item :label="t('wms.common.product')"><el-input v-model="query.productCd" clearable style="width: 140px" /></el-form-item>
-        <el-form-item :label="t('wms.common.lot')"><el-input v-model="query.lotNo" clearable style="width: 140px" /></el-form-item>
-        <el-form-item :label="t('wms.common.warehouse')"><el-input v-model="query.warehouseCd" clearable style="width: 100px" /></el-form-item>
-        <el-form-item :label="t('wms.common.status')">
-          <el-select v-model="query.status" clearable style="width: 130px">
-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
-          <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+  <CpPageShell :title="t('wms.pallet.title')" :count="total">
+    <template #actions>
+      <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+    </template>
 
-    <el-card shadow="never">
-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row>
-        <el-table-column prop="palletNo" :label="t('wms.pallet.fld.no')" width="180" />
-        <el-table-column :label="t('wms.common.status')" width="110">
-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
-        </el-table-column>
-        <el-table-column prop="productCd" :label="t('wms.common.product')" width="140" />
-        <el-table-column prop="productName" :label="t('wms.common.productName')" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="lotNo" :label="t('wms.common.lot')" width="140" />
-        <el-table-column prop="cartonQty" :label="t('wms.pallet.fld.cartonQty')" width="80" align="right" />
-        <el-table-column prop="weightKg" :label="t('wms.pallet.fld.weightKg')" width="100" align="right">
-          <template #default="{ row }">{{ formatQty(row.weightKg) }}</template>
-        </el-table-column>
-        <el-table-column prop="heightMm" :label="t('wms.pallet.fld.heightMm')" width="100" align="right" />
-        <el-table-column prop="maxStackLayers" :label="t('wms.pallet.fld.maxStack')" width="100" align="right" />
-        <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="100" />
-        <el-table-column prop="locationCd" :label="t('wms.common.location')" width="140" />
-        <el-table-column prop="shippedOutboundNo" :label="t('wms.pallet.fld.outboundNo')" width="160" />
-        <el-table-column :label="t('wms.common.action')" width="280" fixed="right">
-          <template #default="{ row }">
-            <el-button v-if="row.status === 0" link type="primary" size="small" @click="onComplete(row)">{{ t('wms.pallet.btn.complete') }}</el-button>
-            <el-button v-if="row.status === 1" link type="warning" size="small" @click="openMove(row)">{{ t('wms.pallet.btn.moveShip') }}</el-button>
-            <el-button v-if="row.status === 2" link type="success" size="small" @click="openShip(row)">{{ t('wms.pallet.btn.markShipped') }}</el-button>
-            <el-button v-if="row.status === 0" link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <!-- 新建 Dialog -->
-    <el-dialog v-model="createDialog" :title="t('wms.pallet.dlg.create')" width="600">
-      <el-form v-if="editing" :model="editing" label-width="140px" size="small">
-        <el-row :gutter="12">
-          <el-col :span="12"><el-form-item :label="t('wms.common.product')" required><el-input v-model="editing.productCd" maxlength="20" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.common.productName')"><el-input v-model="editing.productName" maxlength="100" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.common.lot')" required><el-input v-model="editing.lotNo" maxlength="30" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.pallet.fld.cartonQty')" required><el-input-number v-model="editing.cartonQty" :min="1" controls-position="right" style="width: 100%" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.pallet.fld.weightKg')"><el-input-number v-model="editing.weightKg" :min="0" :precision="2" controls-position="right" style="width: 100%" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.pallet.fld.heightMm')"><el-input-number v-model="editing.heightMm" :min="0" controls-position="right" style="width: 100%" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.pallet.fld.maxStack')"><el-input-number v-model="editing.maxStackLayers" :min="1" controls-position="right" style="width: 100%" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('wms.common.warehouse')" required><el-input v-model="editing.warehouseCd" maxlength="10" /></el-form-item></el-col>
-          <el-col :span="24"><el-form-item :label="t('wms.common.location')" required><el-input v-model="editing.locationCd" maxlength="30" /></el-form-item></el-col>
-          <el-col :span="24"><el-form-item :label="t('wms.common.remarks')"><el-input v-model="editing.remarks" type="textarea" :rows="2" /></el-form-item></el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <el-button @click="createDialog = false">{{ t('wms.common.cancel') }}</el-button>
-        <el-button type="primary" @click="onCreate" :loading="saving">{{ t('wms.common.save') }}</el-button>
+    <CpListPage
+      ref="listRef"
+      :columns="columns"
+      :fetch="fetchList"
+      :search-fields="searchFields"
+      :filter-labels="filterLabels"
+      @total-change="total = $event"
+    >
+      <template #col-_action="{ row }">
+        <el-button v-if="row.status === 0" link type="primary" size="small" @click="onComplete(row)">{{ t('wms.pallet.btn.complete') }}</el-button>
+        <el-button v-if="row.status === 1" link type="warning" size="small" @click="openMove(row)">{{ t('wms.pallet.btn.moveShip') }}</el-button>
+        <el-button v-if="row.status === 2" link type="success" size="small" @click="openShip(row)">{{ t('wms.pallet.btn.markShipped') }}</el-button>
+        <el-button v-if="row.status === 0" link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
       </template>
-    </el-dialog>
+    </CpListPage>
 
-    <!-- 移动 Dialog -->
-    <el-dialog v-model="moveDialog" :title="t('wms.pallet.dlg.moveShip') + ' — ' + moveTarget?.palletNo" width="420">
-      <el-form label-width="140px" size="small">
-        <el-form-item :label="t('wms.pallet.fld.toLoc')" required>
-          <el-input v-model="moveToLocation" maxlength="30" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="moveDialog = false">{{ t('wms.common.cancel') }}</el-button>
-        <el-button type="primary" @click="onMove" :loading="saving">{{ t('wms.common.confirm') }}</el-button>
-      </template>
-    </el-dialog>
+    <!-- 新建 -->
+    <CpFormDialog
+      v-model="createDialog"
+      :title="t('wms.pallet.dlg.create')"
+      width="600"
+      :form="createForm"
+      :rules="createRules"
+      :submit="onCreate"
+      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
+      @saved="reloadList"
+    >
+      <el-row :gutter="12">
+        <el-col :span="12"><el-form-item :label="t('wms.common.product')" prop="productCd"><el-input v-model="createForm.productCd" maxlength="20" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.common.productName')"><el-input v-model="createForm.productName" maxlength="100" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.common.lot')" prop="lotNo"><el-input v-model="createForm.lotNo" maxlength="30" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.pallet.fld.cartonQty')" prop="cartonQty"><el-input-number v-model="createForm.cartonQty" :min="1" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.pallet.fld.weightKg')"><el-input-number v-model="createForm.weightKg" :min="0" :precision="2" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.pallet.fld.heightMm')"><el-input-number v-model="createForm.heightMm" :min="0" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.pallet.fld.maxStack')"><el-input-number v-model="createForm.maxStackLayers" :min="1" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+        <el-col :span="12"><el-form-item :label="t('wms.common.warehouse')" prop="warehouseCd"><el-input v-model="createForm.warehouseCd" maxlength="10" /></el-form-item></el-col>
+        <el-col :span="24"><el-form-item :label="t('wms.common.location')" prop="locationCd"><el-input v-model="createForm.locationCd" maxlength="30" /></el-form-item></el-col>
+        <el-col :span="24"><el-form-item :label="t('wms.common.remarks')"><el-input v-model="createForm.remarks" type="textarea" :rows="2" /></el-form-item></el-col>
+      </el-row>
+    </CpFormDialog>
 
-    <!-- 出货 Dialog -->
-    <el-dialog v-model="shipDialog" :title="t('wms.pallet.dlg.markShipped') + ' — ' + shipTarget?.palletNo" width="420">
-      <el-form label-width="140px" size="small">
-        <el-form-item :label="t('wms.pallet.fld.outboundNo')" required>
-          <el-input v-model="shipOutboundNo" maxlength="25" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="shipDialog = false">{{ t('wms.common.cancel') }}</el-button>
-        <el-button type="primary" @click="onShip" :loading="saving">{{ t('wms.common.confirm') }}</el-button>
-      </template>
-    </el-dialog>
-  </div>
+    <!-- 移動 -->
+    <CpFormDialog
+      v-model="moveDialog"
+      :title="t('wms.pallet.dlg.moveShip') + ' — ' + (moveTarget?.palletNo ?? '')"
+      width="420"
+      :form="moveForm"
+      :rules="moveRules"
+      :submit="onMove"
+      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.confirm') }"
+      @saved="reloadList"
+    >
+      <el-form-item :label="t('wms.pallet.fld.toLoc')" prop="toLocation">
+        <el-input v-model="moveForm.toLocation" maxlength="30" />
+      </el-form-item>
+    </CpFormDialog>
+
+    <!-- 出荷 -->
+    <CpFormDialog
+      v-model="shipDialog"
+      :title="t('wms.pallet.dlg.markShipped') + ' — ' + (shipTarget?.palletNo ?? '')"
+      width="420"
+      :form="shipForm"
+      :rules="shipRules"
+      :submit="onShip"
+      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.confirm') }"
+      @saved="reloadList"
+    >
+      <el-form-item :label="t('wms.pallet.fld.outboundNo')" prop="outboundNo">
+        <el-input v-model="shipForm.outboundNo" maxlength="25" />
+      </el-form-item>
+    </CpFormDialog>
+  </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, reactive, computed } from 'vue'
+import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+import CpFormDialog from '@/components/templates/CpFormDialog.vue'
+import { type Tone } from '@/components/base/CpTag.vue'
 import { palletApi } from '@/api/wms/paperIndustry'
 import type { Pallet, PalletSearchQuery } from '@/types/wms/wms'
 import { formatQty as fmtQty } from '@/utils/format'
 
 const { t } = useI18n()
-const query = reactive<PalletSearchQuery>({ pageSize: 100 })
-const rows = ref<Pallet[]>([])
-const loading = ref(false)
-const saving = ref(false)
 
-const createDialog = ref(false)
-const editing = ref<any>(null)
-
-const moveDialog = ref(false)
-const moveTarget = ref<Pallet | null>(null)
-const moveToLocation = ref('')
-
-const shipDialog = ref(false)
-const shipTarget = ref<Pallet | null>(null)
-const shipOutboundNo = ref('')
+const total = ref<number>()
+const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+function reloadList() { listRef.value?.reload() }
 
 const statusMap = computed<Record<number, string>>(() => ({
   0: t('wms.pallet.status.building'),
@@ -128,39 +110,92 @@ const statusMap = computed<Record<number, string>>(() => ({
   2: t('wms.pallet.status.waitingShip'),
   3: t('wms.pallet.status.shipped'),
 }))
-
-function statusTagOf(s: number): 'info' | 'success' | 'warning' | 'primary' {
-  return ({ 0: 'info', 1: 'success', 2: 'warning', 3: 'primary' } as const)[s as 0] || 'info'
+// 原 statusTagOf(info/success/warning/primary) → 设计系统 Tone（保色）
+function statusTone(s: number): Tone {
+  return ({ 0: 'muted', 1: 'ok', 2: 'warn', 3: 'info' } as const)[s as 0] || 'muted'
 }
-
+function codeLabel(m: Record<number, string>, v: unknown): string {
+  return m[v as number] || (v == null ? '' : String(v))
+}
 function formatQty(n: number | undefined | null) {
   if (n == null) return ''
   return fmtQty(n, 2)
 }
 
-async function reload() {
-  loading.value = true
-  try { rows.value = (await palletApi.search(query)).data || [] }
-  finally { loading.value = false }
+const columns = computed<ListColumn[]>(() => [
+  { prop: 'palletNo', label: t('wms.pallet.fld.no'), kind: 'mono', width: 180 },
+  { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
+    map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
+  { prop: 'productCd', label: t('wms.common.product'), width: 140 },
+  { prop: 'productName', label: t('wms.common.productName'), minWidth: 160, overflowTooltip: true },
+  { prop: 'lotNo', label: t('wms.common.lot'), width: 140 },
+  { prop: 'cartonQty', label: t('wms.pallet.fld.cartonQty'), width: 80, align: 'right' },
+  { prop: 'weightKg', label: t('wms.pallet.fld.weightKg'), width: 100, align: 'right',
+    map: (v) => ({ label: formatQty(v as number) }) },
+  { prop: 'heightMm', label: t('wms.pallet.fld.heightMm'), width: 100, align: 'right' },
+  { prop: 'maxStackLayers', label: t('wms.pallet.fld.maxStack'), width: 100, align: 'right' },
+  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 100 },
+  { prop: 'locationCd', label: t('wms.common.location'), width: 140 },
+  { prop: 'shippedOutboundNo', label: t('wms.pallet.fld.outboundNo'), width: 160 },
+  { prop: '_action', label: t('wms.common.action'), width: 280, fixed: 'right' },
+])
+
+const filterLabels = computed(() => ({
+  search: t('wms.common.search'),
+  reset: t('wms.common.clear'),
+}))
+
+const searchFields = computed<FilterField[]>(() => [
+  { key: 'palletNo', label: t('wms.pallet.fld.no'), type: 'text' },
+  { key: 'productCd', label: t('wms.common.product'), type: 'text' },
+  { key: 'lotNo', label: t('wms.common.lot'), type: 'text' },
+  { key: 'warehouseCd', label: t('wms.common.warehouse'), type: 'text' },
+  {
+    key: 'status', label: t('wms.common.status'), type: 'select',
+    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+  },
+])
+
+const PAGE_CAP = 500
+const fetchList: ListFetch = async ({ page, size, filters }) => {
+  const f = filters as Record<string, unknown>
+  const q: PalletSearchQuery = { pageSize: PAGE_CAP }
+  if (f.palletNo) q.palletNo = String(f.palletNo)
+  if (f.productCd) q.productCd = String(f.productCd)
+  if (f.lotNo) q.lotNo = String(f.lotNo)
+  if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
+  if (f.status !== undefined && f.status !== '' && f.status !== null) q.status = Number(f.status)
+  const res = await palletApi.search(q)
+  const all = res.data || []
+  const start = (page - 1) * size
+  return { rows: all.slice(start, start + size), total: all.length }
 }
 
+// —— 新建 ——
+const createDialog = ref(false)
+const createForm = reactive<Record<string, unknown>>({
+  productCd: '', productName: '', lotNo: '', cartonQty: 1,
+  weightKg: undefined, heightMm: undefined, maxStackLayers: undefined,
+  warehouseCd: '', locationCd: '', remarks: '',
+})
+const createRules = computed<FormRules>(() => ({
+  productCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+  lotNo: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+  cartonQty: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
+  warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+  locationCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+}))
 function openCreate() {
-  editing.value = {
-    productCd: '', productName: '', lotNo: '',
-    cartonQty: 1, weightKg: undefined, heightMm: undefined, maxStackLayers: undefined,
-    warehouseCd: '', locationCd: '',
-  }
+  Object.assign(createForm, {
+    productCd: '', productName: '', lotNo: '', cartonQty: 1,
+    weightKg: undefined, heightMm: undefined, maxStackLayers: undefined,
+    warehouseCd: '', locationCd: '', remarks: '',
+  })
   createDialog.value = true
 }
-
 async function onCreate() {
-  saving.value = true
-  try {
-    const res = await palletApi.create(editing.value)
-    ElMessage.success(`${t('wms.common.success')}: ${res.data.palletNo}`)
-    createDialog.value = false
-    await reload()
-  } finally { saving.value = false }
+  const res = await palletApi.create({ ...createForm } as unknown as Pallet)
+  ElMessage.success(`${t('wms.common.success')}: ${res.data.palletNo}`)
 }
 
 async function onComplete(row: Pallet) {
@@ -168,42 +203,42 @@ async function onComplete(row: Pallet) {
     await ElMessageBox.confirm(`${t('wms.pallet.btn.complete')}: ${row.palletNo}`, t('wms.common.confirm'), { type: 'warning' })
     await palletApi.completeBuilding(row.palletNo)
     ElMessage.success(t('wms.common.success'))
-    await reload()
+    reloadList()
   } catch { /* */ }
 }
 
+// —— 移動 ——
+const moveDialog = ref(false)
+const moveTarget = ref<Pallet | null>(null)
+const moveForm = reactive<Record<string, unknown>>({ toLocation: '' })
+const moveRules = computed<FormRules>(() => ({
+  toLocation: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+}))
 function openMove(row: Pallet) {
   moveTarget.value = row
-  moveToLocation.value = ''
+  moveForm.toLocation = ''
   moveDialog.value = true
 }
-
 async function onMove() {
-  if (!moveTarget.value || !moveToLocation.value) { ElMessage.warning(t('wms.common.required')); return }
-  saving.value = true
-  try {
-    await palletApi.moveToShipping(moveTarget.value.palletNo, moveToLocation.value)
-    ElMessage.success(t('wms.common.success'))
-    moveDialog.value = false
-    await reload()
-  } finally { saving.value = false }
+  await palletApi.moveToShipping(moveTarget.value!.palletNo, moveForm.toLocation as string)
+  ElMessage.success(t('wms.common.success'))
 }
 
+// —— 出荷 ——
+const shipDialog = ref(false)
+const shipTarget = ref<Pallet | null>(null)
+const shipForm = reactive<Record<string, unknown>>({ outboundNo: '' })
+const shipRules = computed<FormRules>(() => ({
+  outboundNo: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+}))
 function openShip(row: Pallet) {
   shipTarget.value = row
-  shipOutboundNo.value = ''
+  shipForm.outboundNo = ''
   shipDialog.value = true
 }
-
 async function onShip() {
-  if (!shipTarget.value || !shipOutboundNo.value) { ElMessage.warning(t('wms.common.required')); return }
-  saving.value = true
-  try {
-    await palletApi.markShipped(shipTarget.value.palletNo, shipOutboundNo.value)
-    ElMessage.success(t('wms.common.success'))
-    shipDialog.value = false
-    await reload()
-  } finally { saving.value = false }
+  await palletApi.markShipped(shipTarget.value!.palletNo, shipForm.outboundNo as string)
+  ElMessage.success(t('wms.common.success'))
 }
 
 async function onDelete(row: Pallet) {
@@ -211,14 +246,7 @@ async function onDelete(row: Pallet) {
     await ElMessageBox.confirm(`${t('wms.common.confirmDelete')}: ${row.palletNo}`, t('wms.common.confirm'), { type: 'warning' })
     await palletApi.delete(row.palletNo)
     ElMessage.success(t('wms.common.success'))
-    await reload()
+    reloadList()
   } catch { /* */ }
 }
-
-onMounted(reload)
 </script>
-
-<style scoped>
-.wms-pallet { padding: 16px; }
-.search-card { margin-bottom: 12px; }
-</style>
