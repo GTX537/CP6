@@ -1,3 +1,9 @@
+<!--
+  取引先一覧 —— サーバサイド列ソート（@sort-change）＋ 属性 FLG 11 チェックボックス群 ＋ 詳細検索コラプス（分類 1〜10）
+  ＋ 行選択→照会/編集 ＋ CSV 出力の重厚検索页。CpListPage はサーバソート未透過・CpFilterBar は構造化検索群を
+  表現できず、強套すると列ソート機能を喪失するため「非表格特殊页」として token 化：el-form/el-table/el-pagination/
+  ソート/CSV は原様保全し、状態・件数 el-tag → CpTag(+tone)、FLG アイコン色値 → --cp-ok/--cp-line トークン化のみ。
+-->
 <template>
   <div class="bp-list">
     <el-card shadow="never" class="search-card">
@@ -52,7 +58,7 @@
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
+        <CpTag tone="info">{{ t('sales.list.totalCount', { n: total }) }}</CpTag>
         <el-button v-if="selectedRow" type="primary" link size="small" style="margin-left: 12px" @click="goView">{{ t('sales.btn.openView') }}</el-button>
         <el-button v-if="selectedRow" type="warning" link size="small" style="margin-left: 4px" @click="goEdit">{{ t('sales.op.edit') }}</el-button>
       </div>
@@ -60,7 +66,7 @@
         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
         <el-table-column prop="status" :label="t('sales.term.status')" width="100" sortable="custom">
           <template #default="{ row }">
-            <el-tag :type="statusTagType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
+            <CpTag :tone="statusTone(row.status)">{{ statusLabel(row.status) }}</CpTag>
           </template>
         </el-table-column>
         <el-table-column prop="bpCd" :label="t('sales.term.bp')" width="120" sortable="custom" />
@@ -108,6 +114,8 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Download, Check } from '@element-plus/icons-vue'
+import CpTag from '@/components/base/CpTag.vue'
+import { type Tone } from '@/components/base/CpTag.vue'
 import { bpApi } from '@/api/erp/businessPartner'
 import type { BpQueryDto, BpListItemDto } from '@/types/erp/businessPartner'
 
@@ -116,8 +124,8 @@ const router = useRouter()
 
 // 简易内联组件：FLG 图标
 const FlgIcon = (props: { on: boolean }) => props.on
-  ? h(Check, { color: '#67c23a', style: 'font-size: 16px' })
-  : h('span', { style: 'color:#dcdfe6' }, '-')
+  ? h(Check, { style: 'color: var(--cp-ok); font-size: 16px' })
+  : h('span', { style: 'color: var(--cp-line)' }, '-')
 
 const query = reactive<BpQueryDto>({
   includeCustomer: true, includeAccountsReceivable: true, includeBilling: true,
@@ -207,8 +215,9 @@ function goEdit() {
 function statusLabel(s: number): string {
   return s === 0 ? t('sales.op.preregister') : s === 1 ? t('sales.op.register') : s === 9 ? t('sales.op.delete') : '-'
 }
-function statusTagType(s: number): 'info' | 'success' | 'danger' {
-  return s === 0 ? 'info' : s === 1 ? 'success' : 'danger'
+// status → CpTag Tone（原 statusTagType の info/success/danger 意図を保色）
+function statusTone(s: number): Tone {
+  return s === 0 ? 'info' : s === 1 ? 'ok' : 'danger'
 }
 </script>
 

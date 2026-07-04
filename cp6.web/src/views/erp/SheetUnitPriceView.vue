@@ -1,3 +1,9 @@
+<!--
+  シート単価取込／参照 —— Excel アップロード + 登録/参照デュアルモード + 行内選択グリッド + 一括更新の特殊页。
+  検索駆動の単一 fetch 形態でなく（登録モードは検索なし・アップロード起点）、CpListPage 契約に載らないため
+  「非表格特殊页」として token 化：el-upload/モード radio/el-table/一括更新フローは原様保全し、件数 el-tag → CpTag、
+  インライン色値 #606266 → --cp-muted トークン化のみ。
+-->
 <template>
   <div class="sheet-unit-price">
     <el-card shadow="never" class="form-card">
@@ -34,7 +40,7 @@
           >
             <el-button :icon="Upload" type="primary">{{ t('sales.sup.selectExcel') }}</el-button>
           </el-upload>
-          <span v-if="selectedFile" style="margin-left: 12px; color: #606266;">{{ selectedFile.name }}</span>
+          <span v-if="selectedFile" class="file-name">{{ selectedFile.name }}</span>
         </el-form-item>
       </el-form>
 
@@ -54,7 +60,7 @@
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 12px;">
-        <el-tag size="small">{{ t('sales.list.totalCount', { n: rows.length }) }}</el-tag>
+        <CpTag tone="info">{{ t('sales.list.totalCount', { n: rows.length }) }}</CpTag>
         <el-checkbox v-if="opType === 'register'" v-model="allSelected" @change="onToggleAll">{{ t('sales.sup.allSelect') }}</el-checkbox>
         <el-button v-if="opType === 'register' && rows.length > 0" type="success" @click="onUpdate" :loading="updating">
           {{ t('sales.btn.update') }}（{{ checkedCount }}）
@@ -99,6 +105,7 @@ import { ref, computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Upload } from '@element-plus/icons-vue'
+import CpTag from '@/components/base/CpTag.vue'
 import { sheetUnitPriceApi } from '@/api/erp/sheetUnitPrice'
 import { formatNumber } from '@/utils/format'
 import type { SheetUnitPriceDto, SheetPriceQueryDto } from '@/types/erp/sheetUnitPrice'
@@ -203,4 +210,5 @@ function reset() {
 <style scoped>
 .sheet-unit-price { padding: 16px; }
 .form-card { margin-bottom: 12px; }
+.file-name { margin-left: 12px; color: var(--cp-muted); }
 </style>

@@ -1,3 +1,10 @@
+<!--
+  受注単価訂正 —— 検索先行（拠点必須・自動取得なし）＋ type=selection 選択に連動する行内編集グリッド
+  （変更後単価/特値/理由の el-input-number・checkbox・input を選択行のみ活性化）＋ 一括更新の特殊页。
+  行内編集グリッド形態は CpListPage の読取リスト契約に載らないため「非表格特殊页」として token 化：
+  el-form/el-table/行内エディタ/一括更新フローは原様保全し、状態・件数 el-tag → CpTag(+tone)、仮単価警告アイコン
+  色値 #e6a23c → --cp-warn トークン化のみ。
+-->
 <template>
   <div class="price-correction">
     <!-- 検索条件 -->
@@ -53,17 +60,17 @@
     <!-- 結果 -->
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">{{ t('合計 {n} 件', { n: total }) }}</el-tag>
-        <el-tag v-if="selectedRows.length > 0" type="success" size="small" style="margin-left: 8px;">
+        <CpTag tone="info">{{ t('合計 {n} 件', { n: total }) }}</CpTag>
+        <CpTag v-if="selectedRows.length > 0" tone="ok" style="margin-left: 8px;">
           {{ t('選択中 {n} 件', { n: selectedRows.length }) }}
-        </el-tag>
+        </CpTag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" @selection-change="onSelectionChange">
         <el-table-column type="selection" width="50" />
         <el-table-column prop="rowNo" label="No" width="60" align="center" />
         <el-table-column :label="t('状態')" width="80" align="center">
           <template #default="{ row }">
-            <el-tag :type="approvalTagType(row.approvalStatus)" size="small">{{ approvalLabel(row.approvalStatus) }}</el-tag>
+            <CpTag :tone="approvalTone(row.approvalStatus)">{{ approvalLabel(row.approvalStatus) }}</CpTag>
           </template>
         </el-table-column>
         <el-table-column prop="customerCd" :label="t('得意先')" width="100" />
@@ -97,7 +104,7 @@
         </el-table-column>
         <el-table-column :label="t('仮単価')" width="60" align="center">
           <template #default="{ row }">
-            <el-icon v-if="row.provisionalPriceFlg" color="#e6a23c"><Warning /></el-icon>
+            <el-icon v-if="row.provisionalPriceFlg" class="prov-warn"><Warning /></el-icon>
           </template>
         </el-table-column>
         <el-table-column :label="t('単価変更理由')" min-width="180">
@@ -129,6 +136,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 
 const { t } = useI18n()
 import { Warning } from '@element-plus/icons-vue'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { orderApi } from '@/api/erp/order'
 import type {
   OrderPriceCorrectionQueryDto,
@@ -224,9 +232,10 @@ function approvalLabel(s?: number): string {
   if (s === 9) return t('承認済')
   return t('未')
 }
-function approvalTagType(s?: number): 'info' | 'warning' | 'success' {
-  if (s === 1) return 'warning'
-  if (s === 9) return 'success'
+// approvalStatus → CpTag Tone（原 approvalTagType の warning/success/info 意図を保色）
+function approvalTone(s?: number): Tone {
+  if (s === 1) return 'warn'
+  if (s === 9) return 'ok'
   return 'info'
 }
 </script>
@@ -234,4 +243,5 @@ function approvalTagType(s?: number): 'info' | 'warning' | 'success' {
 <style scoped>
 .price-correction { padding: 16px; }
 .search-card { margin-bottom: 12px; }
+.prov-warn { color: var(--cp-warn); }
 </style>

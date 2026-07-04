@@ -686,6 +686,20 @@ describe('CpListPage', () => {
 
 **本批无新增模板缺口**——两页均落在既有契约（CpListPage toolbar/col slot #15/#16、default-filter-in-fetch #17）与「特殊页 token 化」处置内，未触发新的模板扩展需求。
 
+### ERP批次1 复盘（Milestone C 首模块，无新增模板缺口，编号仍止于 #17）
+
+批次1（FxRate/FscChecklist/SheetUnitPrice/BusinessPartnerList/OrderPriceCorrection）迁移完成，功能零丢失、真栈验收通过（5 页均无菜单入口，localStorage.menus 注入 + route 直达）。ERP 页 i18n 用 erp.*/sales.* 键族（非 wms.common.*），filter-labels 与 CpTag 文案均取原页现有键、未臆造。**诚实分类判定**（CpListPage 契约 = onMounted 自动 fetch + 单一 fetch；auto-load 无害且无必须检索条件的照会一覧才模板化，余者按「特殊页 token 化不强套」）：
+
+- **FxRateView**（照会 CRUD 一覧，194 行）= 唯一素直に載る查询列表页 → **CpPageShell + CpListPage + CpFormDialog**。rateDate=kind:'date'、rate 6 桁固定=col-rate slot、subtitle+「基軸:JPY」CpTag=toolbar slot、新規/編集=CpFormDialog default slot（uppercase/input-number precision6 step0.5/textarea 保全）、削除=ElMessageBox+listRef.reload()。filterLabels={ search:erp.fxRate.btn.refresh(「通貨で再読込」語義の既存キー), reset:sales.btn.clear }。
+- **FscChecklistView**（206 行）= 検索先行（拠点必須・自動取得なし・FROM≤TO/フォーマット必須のクロス検証・出力フォーマットはアクション引数）→ **token 化**。CpListPage の onMounted 自動 fetch 契約と相反するため強套せず、el-form/el-table/el-pagination/発行フロー原様、状態・件数・発行済 el-tag→CpTag(+tone)。
+- **SheetUnitPriceView**（206 行）= Excel アップロード + 登録/参照デュアルモード + 行内選択グリッド + 一括更新（検索駆動の単一 fetch 形態でない）→ **token 化**。件数 el-tag→CpTag、選択ファイル名 #606266→--cp-muted。
+- **BusinessPartnerListView**（219 行）= サーバサイド列ソート（@sort-change、CpListPage 未透過＝強套すると機能喪失）+ 属性 FLG×11 + 詳細検索コラプス（分類 1〜10）の構造化検索（CpFilterBar 平坦フィールドでは表現不能）→ **token 化**。ソート/CSV/行選択 原様、状態・件数 el-tag→CpTag(+tone)、FlgIcon 色 #67c23a/#dcdfe6→--cp-ok/--cp-line。WMS LocationList（双表→token 化）同处置。
+- **OrderPriceCorrectionView**（237 行）= type=selection 連動の行内編集グリッド（変更後単価/特値/理由）+ 拠点必須・自動取得なし → **token 化**。WMS StockTake（編集テーブル→token 化）同处置。状態・件数・選択中 el-tag→CpTag(+tone)、仮単価警告 #e6a23c→--cp-warn。
+
+真栈证据（截图存 `.superpowers/sdd/shots/erp-*.png`）：FxRate（為替レート管理 +count 0 pill / CpFilterBar / toolbar「基軸:JPY」CpTag / CpEmpty / 新規=CpFormDialog 必須マーク+precision6 input-number）；FscChecklist（拠点必須*+ステータスチェック+出力フォーマット select+発行(0)+「合計 0 件」CpTag）；SheetUnitPrice（基準日/拠点必須+取込区分/操作種別 radio+Excel 選択+全選択/全解除+CpTag）；BusinessPartnerList（FLG×11 グリーンチェック --cp-ok+ソート可列+CSV+「合計 0 件」CpTag、検索実行=0 行空態）；OrderPriceCorrection（数量/金額 FROM-TO number+仮単価+selection+行内編集列+選択行を更新(0)+CpTag）。5 页种子データ無しのため空態レンダリング検証（BP は検索で 0 行確認）；表内ステータス CpTag tone は純関数+FxRate toolbar タグで描画済のため低リスク、記录在案。console 无本批新 error（残存 intlify object-flatten / Vue Router deprecation・No-match=menus 注入リロード由来＝既有基础设施）。type-check 0 error、`npm run test` 46 files/304 全绿（baseline 304 保持）。
+
+**本批无新增模板缺口**——5 页均落在既有契約（CpListPage/CpFormDialog 標準 + #15/#16/#17）与「特殊页 token 化」処置内。BusinessPartnerList のサーバソート未対応は既知制約（#16 @row-click 近傍）で当该页 token 化選択の決め手として記録、机能は token 化で保全済、新規缺口としては未起票。
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

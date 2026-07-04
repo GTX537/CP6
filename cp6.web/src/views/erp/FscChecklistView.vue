@@ -1,3 +1,8 @@
+<!--
+  FSC チェックシート —— 検索先行（拠点必須・自動取得なし・FROM≤TO/フォーマット必須のクロス項目検証）＋発行アクションの特殊页。
+  CpListPage の onMounted 自動 fetch 契約と相反（拠点未指定では取得しない）ため「非表格特殊页」として token 化：
+  el-form 検索区／el-table／el-pagination／発行フローは原様保全し、状態・件数・発行済 el-tag → CpTag(+tone) のみ置換。
+-->
 <template>
   <div class="fsc-view">
     <el-card shadow="never" class="search-card">
@@ -39,8 +44,8 @@
 
     <el-card shadow="never">
       <div style="margin-bottom: 8px;">
-        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
-        <el-tag v-if="checkedCount > 0" type="success" size="small" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</el-tag>
+        <CpTag tone="info">{{ t('sales.list.totalCount', { n: total }) }}</CpTag>
+        <CpTag v-if="checkedCount > 0" tone="ok" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</CpTag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600">
         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
@@ -61,7 +66,7 @@
         <el-table-column prop="totalAmount" :label="t('sales.fsc.totalAmount')" width="130" align="right" />
         <el-table-column :label="t('sales.term.status')" width="100" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'info'" size="small">{{ row.status === 1 ? t('sales.fsc.confirmed') : t('sales.fsc.notConfirmed') }}</el-tag>
+            <CpTag :tone="row.status === 1 ? 'ok' : 'info'">{{ row.status === 1 ? t('sales.fsc.confirmed') : t('sales.fsc.notConfirmed') }}</CpTag>
           </template>
         </el-table-column>
         <el-table-column :label="t('sales.btn.issue') + '☑'" width="80" align="center">
@@ -72,7 +77,7 @@
         <el-table-column prop="fscManagementNo" :label="t('sales.fsc.mgmtNo')" width="130" />
         <el-table-column :label="t('sales.fsc.issued')" width="80" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.issuedLabel" type="success" size="small">{{ row.issuedLabel }}</el-tag>
+            <CpTag v-if="row.issuedLabel" tone="ok">{{ row.issuedLabel }}</CpTag>
           </template>
         </el-table-column>
       </el-table>
@@ -95,6 +100,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Document } from '@element-plus/icons-vue'
+import CpTag from '@/components/base/CpTag.vue'
 import { fscApi } from '@/api/erp/fsc'
 import type { FscChecklistQueryDto, FscChecklistItemDto, FscFormat } from '@/types/erp/fsc'
 
