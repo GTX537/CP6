@@ -231,7 +231,7 @@ watch(rows, resequence, { deep: false })
 }
 .title {
   font-weight: 600;
-  color: #409eff;
+  color: var(--cp-brand);
 }
 .header-actions {
   display: flex;

@@ -74,7 +74,7 @@
       </template>
       <ul class="notes">
         <li v-for="(line, i) in result.notes" :key="i">{{ line }}</li>
-        <li v-if="!result.notes.length" style="color:#999">{{ t('未計算') }}</li>
+        <li v-if="!result.notes.length" style="color: var(--cp-muted)">{{ t('未計算') }}</li>
       </ul>
     </el-card>
   </div>
@@ -158,7 +158,7 @@ onMounted(() => {
 }
 .title {
   font-weight: 600;
-  color: #409eff;
+  color: var(--cp-brand);
 }
 .right-btns {
   text-align: right;
@@ -166,7 +166,7 @@ onMounted(() => {
 .highlight {
   font-size: 16px;
   font-weight: 700;
-  color: #f56c6c;
+  color: var(--cp-danger);
 }
 .notes {
   margin: 0;
@@ -174,7 +174,7 @@ onMounted(() => {
   font-family: Consolas, 'Courier New', monospace;
   font-size: 13px;
   line-height: 1.8;
-  color: #666;
+  color: var(--cp-text);
 }
 .notes li {
   list-style: decimal;
