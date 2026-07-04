@@ -49,13 +49,18 @@
             </div>
             <div class="track">
               <div class="bar">
-                <i :style="{ width: shipSummary.pct + '%', background: 'var(--cp-brand-grad)' }" />
-                <i :style="{ width: (100 - shipSummary.pct) + '%', background: 'var(--cp-line-soft)' }" />
+                <i :style="{ width: shipSummary.shippedPct + '%', background: 'var(--cp-brand)' }" />
+                <i :style="{ width: shipSummary.partialPct + '%', background: '#7CE3DD' }" />
+                <i :style="{ width: (100 - shipSummary.shippedPct - shipSummary.partialPct) + '%', background: 'var(--cp-line-soft)' }" />
               </div>
-              <div class="bl"><span class="num">{{ shipSummary.pct }}%</span></div>
+              <div class="bl"><span class="num">{{ shipSummary.shippedPct }}%</span></div>
             </div>
             <div class="block">
-              <div class="v num" style="color: var(--cp-warn)">{{ shipSummary.pending }}</div>
+              <div class="v num" style="color: #7CE3DD">{{ shipSummary.partial }}</div>
+              <div class="l">{{ t('dashboard.ship5') }}</div>
+            </div>
+            <div class="block">
+              <div class="v num" style="color: var(--cp-line-soft)">{{ shipSummary.unshipped }}</div>
               <div class="l">{{ t('dashboard.ship0') }}</div>
             </div>
           </div>
@@ -431,9 +436,11 @@ const headAlertParts = computed(() => {
 const shipSummary = computed(() => {
   const total = recentOrders.value.length
   const shipped = recentOrders.value.filter(o => o.shipStatus === 9).length
-  const pending = total - shipped
-  const pct = total ? Math.round((shipped / total) * 100) : 0
-  return { total, shipped, pending, pct }
+  const partial = recentOrders.value.filter(o => o.shipStatus === 5).length
+  const unshipped = recentOrders.value.filter(o => o.shipStatus === 0).length
+  const shippedPct = total ? Math.round((shipped / total) * 100) : 0
+  const partialPct = total ? Math.round((partial / total) * 100) : 0
+  return { total, shipped, partial, unshipped, shippedPct, partialPct }
 })
 
 // ── 制造进度环图（来自既有 workOrderStatus）──

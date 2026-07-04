@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<{
 type Tone = 'brand' | 'info' | 'warn' | 'danger'
 
 const chipStyle: Record<Tone, { bg: string; color: string }> = {
-  brand: { bg: 'rgba(20,184,196,.10)', color: 'var(--cp-brand-deep)' },
+  brand: { bg: 'var(--cp-brand-bg)', color: 'var(--cp-brand-deep)' },
   info: { bg: 'var(--cp-info-bg)', color: 'var(--cp-info)' },
   warn: { bg: 'var(--cp-warn-bg)', color: 'var(--cp-warn)' },
   danger: { bg: 'var(--cp-danger-bg)', color: 'var(--cp-danger)' },
@@ -31,6 +31,15 @@ function points(t: number[]): string {
   const max = Math.max(...t, 1)
   const min = Math.min(...t, 0)
   return t.map((v, i) => `${(i / (t.length - 1 || 1)) * 100},${28 - ((v - min) / (max - min || 1)) * 24}`).join(' ')
+}
+
+function areaPath(t: number[]): string {
+  const pts = points(t)
+  const coords = pts.split(' ').map(p => {
+    const [x, y] = p.split(',')
+    return `${x} ${y}`
+  })
+  return `M${coords[0]} L${coords.slice(1).join(' ')} V30 H0 Z`
 }
 </script>
 
@@ -52,6 +61,10 @@ function points(t: number[]): string {
       <span v-if="clickable" class="go">→</span>
     </div>
     <svg v-if="trend?.length" class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
+      <path
+        :d="areaPath(trend)"
+        :fill="{ brand: 'rgba(20,184,196,.10)', info: 'rgba(78,128,238,.10)', warn: 'rgba(240,148,10,.10)', danger: 'rgba(229,72,77,.08)' }[props.tone]"
+      />
       <polyline
         :points="points(trend)"
         :stroke="toneVar[props.tone]"
