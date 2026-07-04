@@ -1,0 +1,5 @@
+/* CP6 Design System §12：暗色模式覆盖层。v1.0 仅占位——
+   业务代码只许消费 semantic 变量，未来在此覆盖即可零重构上暗色。 */
+html.dark {
+  /* 预留：--cp-bg / --cp-card / --cp-ink / --cp-text / --cp-line ... */
+}

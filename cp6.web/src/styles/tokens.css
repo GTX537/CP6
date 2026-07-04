@@ -1,0 +1,43 @@
+:root {
+  /* Brand */
+  --cp-brand:#14B8C4; --cp-brand-2:#2BD4CD; --cp-brand-deep:#0E93A0;
+  --cp-brand-grad:linear-gradient(118deg,var(--cp-brand-2),var(--cp-brand));
+  --cp-brand-glow:0 8px 20px rgba(20,184,196,.30);
+  --cp-brand-bg:rgba(20,184,196,.08);
+  /* Neutral */
+  --cp-ink:#10343C; --cp-text:#47616B; --cp-muted:#8CA3AB; --cp-faint:#C2D2D7;
+  --cp-line:#E6EFF1; --cp-line-soft:#EFF6F7;
+  --cp-bg:#F2FAFB; --cp-card:#FFFFFF; --cp-bg-th:#FBFDFE; --cp-bg-hover:#F6FCFC;
+  /* Semantic */
+  --cp-ok:#22B573; --cp-ok-bg:#E7F8F0;
+  --cp-warn:#F0940A; --cp-warn-bg:#FEF3E2;
+  --cp-danger:#E5484D; --cp-danger-bg:#FDEBEC;
+  --cp-info:#4E80EE; --cp-info-bg:#EBF1FE;
+  --cp-violet:#8B7CF0; --cp-violet-bg:#F0EEFD;
+  /* Radius */
+  --cp-r-xl:20px; --cp-r-lg:16px; --cp-r-md:12px; --cp-r-sm:8px;
+  /* Shadow */
+  --cp-shadow-1:0 1px 2px rgba(16,52,60,.04), 0 6px 20px rgba(16,52,60,.05);
+  --cp-shadow-2:0 10px 30px rgba(16,52,60,.08);
+  /* Typography */
+  --cp-font:'Nunito',-apple-system,'HarmonyOS Sans SC','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+  --cp-fs-2xs:11px; --cp-fs-xs:12px; --cp-fs-sm:12.5px; --cp-fs-base:13px;
+  --cp-fs-md:13.5px; --cp-fs-lg:14.5px; --cp-fs-xl:16px; --cp-fs-2xl:21px;
+  --cp-fs-3xl:24px; --cp-fs-num-lg:31px;
+  /* Spacing */
+  --cp-sp-4:4px; --cp-sp-8:8px; --cp-sp-12:12px; --cp-sp-16:16px;
+  --cp-sp-20:20px; --cp-sp-24:24px; --cp-sp-28:28px; --cp-sp-32:32px; --cp-sp-40:40px;
+  /* Motion */
+  --cp-t-fast:.12s ease; --cp-t-base:.16s ease;
+}
+
+/* 附录 A 的 :root{...} 原样在上方 …… 以下为追加部分 */
+.num { font-variant-numeric: tabular-nums; }
+
+body {
+  font-family: var(--cp-font);
+  color: var(--cp-text);
+  background:
+    radial-gradient(1000px 520px at 92% -8%, rgba(43,212,205,.10), transparent 55%),
+    var(--cp-bg);
+}

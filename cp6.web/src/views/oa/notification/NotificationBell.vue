@@ -80,7 +80,10 @@ const loading = ref(false)
 async function refreshUnread() {
   try {
     const res = await notificationApi.unreadCount()
-    unreadCount.value = (res as any)?.data ?? (res as unknown as number) ?? 0
+    // 后端返回 { code, message, data: { count } }；http 拦截器已解到 body，
+    // 故未读数在 res.data.count（不是 res.data 本身——那是对象，直接绑到 :value 会渲染 [object Object]）
+    const count = (res as any)?.data?.count
+    unreadCount.value = typeof count === 'number' ? count : 0
   } catch {
     // best-effort，网络失败静默忽略
   }

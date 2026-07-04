@@ -1,0 +1,56 @@
+:root {
+  --el-color-primary: var(--cp-brand);
+  --el-color-primary-dark-2: var(--cp-brand-deep);
+  /* light-N = 品牌色向白混合 N×10%（Element Plus 生成规则），静态预算值： */
+  --el-color-primary-light-3: #5BCDD6;
+  --el-color-primary-light-5: #8ADCE2;
+  --el-color-primary-light-7: #B9EAED;
+  --el-color-primary-light-8: #D0F1F3;
+  --el-color-primary-light-9: #E8F8F9;
+  /* success/warning/danger/info 的 light-N 变体按同法预生成，实施时一次性写入本文件 */
+  --el-color-success: var(--cp-ok);
+  --el-color-warning: var(--cp-warn);
+  --el-color-danger: var(--cp-danger);
+  --el-color-info: var(--cp-info);
+  --el-text-color-primary: var(--cp-ink);
+  --el-text-color-regular: var(--cp-text);
+  --el-text-color-secondary: var(--cp-muted);
+  --el-text-color-placeholder: var(--cp-faint);
+  --el-border-color: var(--cp-line);
+  --el-border-color-lighter: var(--cp-line-soft);
+  --el-fill-color-blank: var(--cp-card);
+  --el-bg-color-page: var(--cp-bg);
+  --el-border-radius-base: 9px;
+  --el-border-radius-small: 8px;
+  --el-border-radius-round: 999px;
+  --el-box-shadow-light: var(--cp-shadow-1);
+  --el-font-family: var(--cp-font);
+}
+
+/* §10.1 的 :root{...} 映射在上方 …… 以下为追加部分 */
+:root {
+  --el-color-success-light-9: var(--cp-ok-bg);
+  --el-color-warning-light-9: var(--cp-warn-bg);
+  --el-color-danger-light-9: var(--cp-danger-bg);
+  --el-color-info-light-9: var(--cp-info-bg);
+}
+/* 表头：设计系统 §9.1 CpTable 规范 */
+.el-table th.el-table__cell {
+  background: var(--cp-bg-th);
+  color: var(--cp-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .8px;
+}
+.el-table .el-table__row:hover > td.el-table__cell { background: var(--cp-bg-hover); }
+/* 主按钮品牌渐变 + glow */
+.el-button--primary {
+  background: var(--cp-brand-grad);
+  border: none;
+  box-shadow: var(--cp-brand-glow);
+  font-weight: 800;
+}
+.el-button--primary:hover { transform: translateY(-1px); }
+/* 卡片 */
+.el-card { border-radius: var(--cp-r-lg); border: none; box-shadow: var(--cp-shadow-1); }
+.el-dialog { border-radius: var(--cp-r-lg); }
