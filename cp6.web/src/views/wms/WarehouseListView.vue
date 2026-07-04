@@ -115,7 +115,7 @@ const searchFields = computed<FilterField[]>(() => [
   { key: 'baseCd', label: t('wms.warehouse.fld.baseCd'), type: 'text' },
 ])
 
-const fetchList: ListFetch = async ({ filters }) => {
+const fetchList: ListFetch = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: { warehouseCd?: string; warehouseType?: number; baseCd?: string } = {}
   if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
@@ -123,7 +123,8 @@ const fetchList: ListFetch = async ({ filters }) => {
   if (f.baseCd) q.baseCd = String(f.baseCd)
   const res = await warehouseApi.search(q)
   const all = res.data || []
-  return { rows: all, total: all.length }
+  const start = (page - 1) * size
+  return { rows: all.slice(start, start + size), total: all.length }
 }
 
 // —— 新建/編集对话框 ——

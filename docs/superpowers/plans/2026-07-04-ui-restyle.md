@@ -620,6 +620,11 @@ describe('CpListPage', () => {
     - 代偿：父级持 `reloadKey` ref，`:key="reloadKey"` 绑定 CpListPage，变更成功后 `reloadKey++` 强制重挂载重查。**副作用**：重挂载会把 CpListPage 内部 `filters`（重置为 `{}`）与 `page`（重置为 1）清空 → 用户当前搜索/翻页上下文丢失（Warehouse 编辑后列表回到未筛选首页最明显）。数据正确性优先，故采用；记为已知降级。
     - 建议：CpListPage `defineExpose({ reload })`（父级 `ref` 命令式刷新，保留 filters/page），或增 `refreshKey?: number` prop 内部 `watch` 触发 `load()`（不重置状态）。这是本批最值得回填的契约扩展。
 
+13. **FilterField 无单日期 `date` 类型**（Minor，批次1评审补记）。
+    - 现象：InboundOrderList 原「予定入荷 从/至」为两个**独立**单日期 `el-date-picker`（可只填一侧做开区间查询）。FilterField 仅 text/select/daterange，被并成一个 daterange —— 单侧开区间查询能力丢失（daterange 必须成对选起止）。
+    - 代偿：合并为 daterange（documented compensation，见批次1报告盘点）；fetch 内拆回 arrivalFrom/arrivalTo。
+    - 建议：FilterField 增 `type:'date'`（单日 el-date-picker 透传），恢复独立起/止字段形态。
+
 （注：所有页 CpFilterBar `expand/collapse` 仍留组件内中文默认「展开更多/收起」、CpEmpty 空态仍为中文「暂无数据」——沿用 Task 11 试点约定，属 follow-up #6，非本批新增。）
 
 ## Self-Review 记录

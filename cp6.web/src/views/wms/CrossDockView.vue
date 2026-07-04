@@ -45,7 +45,7 @@
       <el-form-item :label="t('wms.common.productName')">
         <el-input v-model="form.productName" maxlength="100" />
       </el-form-item>
-      <el-form-item :label="t('wms.common.qty')">
+      <el-form-item :label="t('wms.common.qty')" prop="qty">
         <el-input-number v-model="form.qty" :min="0" :precision="2" controls-position="right" style="width: 100%" />
       </el-form-item>
       <el-form-item :label="t('wms.common.warehouse')" prop="warehouseCd">
@@ -146,6 +146,8 @@ const form = reactive<CrossDockOrder>({
 })
 const rules = computed<FormRules>(() => ({
   productCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+  // qty：原页有 required 视觉星号但无校验；按 Warehouse 先例补规则（星号还原 + 校验强化）
+  qty: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
   warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
   tempLocationCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
 }))
