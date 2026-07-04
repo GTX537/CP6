@@ -1,75 +1,52 @@
+<!--
+  受入検品 —— list+detail 単一ファイル（mode トグル）。
+  list モード → CpPageShell（:count←total）+ CpListPage（単表スクロール paginated=false）。
+    状態=kind:'tag'+map（共有 Tone）；判定=col slot（null 時タグ非表示を保つ）；到着日時=col slot（yyyy-MM-dd HH:mm）。
+    検索 4：inspectionNo/inboundNo/status/finalJudgement。fromInbound は CpPageShell #actions。
+  detail モード（特殊エディタ領域）→ 基本情報を CpDetailPanel 化、明細編集テーブルは保持、action-bar/判定ダイアログを token 化。
+    back で mode=list → CpListPage が再マウントし自動 reload。
+-->
 <template>
   <div class="wms-qc">
-    <el-card v-if="mode === 'list'" shadow="never" class="search-card">
-      <el-form :model="query" inline size="small">
-        <el-form-item :label="t('wms.qc.fld.inspectionNo')"><el-input v-model="query.inspectionNo" clearable style="width: 180px" /></el-form-item>
-        <el-form-item :label="t('wms.inbound.fld.no')"><el-input v-model="query.inboundNo" clearable style="width: 180px" /></el-form-item>
-        <el-form-item :label="t('wms.common.status')">
-          <el-select v-model="query.status" clearable style="width: 140px">
-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('wms.qc.fld.judgement')">
-          <el-select v-model="query.finalJudgement" clearable style="width: 140px">
-            <el-option v-for="(l, v) in judgementMap" :key="v" :label="l" :value="v" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
-          <el-button @click="bridgeDialog = true">{{ t('wms.qc.btn.fromInbound') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <!-- ───── 一覧 ───── -->
+    <CpPageShell v-if="mode === 'list'" :title="t('wms.qc.title')" :count="total">
+      <template #actions>
+        <el-button @click="bridgeDialog = true">{{ t('wms.qc.btn.fromInbound') }}</el-button>
+      </template>
 
-    <el-card v-if="mode === 'list'" shadow="never">
-      <el-table :data="rows" border stripe size="small" max-height="650" highlight-current-row>
-        <el-table-column prop="inspectionNo" :label="t('wms.qc.fld.inspectionNo')" width="180" />
-        <el-table-column :label="t('wms.common.status')" width="110">
-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
-        </el-table-column>
-        <el-table-column :label="t('wms.qc.fld.judgement')" width="120">
-          <template #default="{ row }">
-            <el-tag v-if="row.finalJudgement" :type="judgementTagOf(row.finalJudgement)" size="small">{{ judgementMap[row.finalJudgement] }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="inboundNo" :label="t('wms.inbound.fld.no')" width="180" />
-        <el-table-column prop="supplierName" :label="t('wms.inbound.fld.supplierName')" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="arrivalDateTime" :label="t('wms.qc.fld.arrivalDateTime')" width="160">
-          <template #default="{ row }">{{ row.arrivalDateTime?.replace('T', ' ').slice(0, 16) }}</template>
-        </el-table-column>
-        <el-table-column prop="generatedReceiptNo" :label="t('wms.qc.fld.generatedReceipt')" width="180" />
-        <el-table-column :label="t('wms.common.action')" width="100" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openDetail(row.inspectionNo)">{{ t('wms.common.open') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+      <CpListPage
+        :columns="columns"
+        :fetch="fetchList"
+        :search-fields="searchFields"
+        :filter-labels="filterLabels"
+        :paginated="false"
+        @total-change="total = $event"
+      >
+        <template #col-finalJudgement="{ row }">
+          <CpTag v-if="row.finalJudgement" :tone="judgementTone(row.finalJudgement)">{{ judgementMap[row.finalJudgement] }}</CpTag>
+        </template>
+        <template #col-arrivalDateTime="{ row }">{{ row.arrivalDateTime?.replace('T', ' ').slice(0, 16) }}</template>
+        <template #col-_action="{ row }">
+          <el-button link type="primary" size="small" @click="openDetail(row.inspectionNo)">{{ t('wms.common.open') }}</el-button>
+        </template>
+      </CpListPage>
+    </CpPageShell>
 
-    <!-- Detail editor -->
+    <!-- ───── 詳細エディタ ───── -->
     <template v-if="mode === 'detail' && current">
       <el-card shadow="never">
         <template #header>
-          <div style="display: flex; align-items: center; gap: 12px">
-            <span style="font-weight: 600">{{ t('wms.qc.title') }} [{{ current.inspectionNo }}]</span>
-            <el-tag :type="statusTagOf(current.status)" size="small">{{ statusMap[current.status] }}</el-tag>
-            <el-tag v-if="current.finalJudgement" :type="judgementTagOf(current.finalJudgement)" size="small">
-              {{ judgementMap[current.finalJudgement] }}
-            </el-tag>
+          <div class="card-hd">
+            <span class="hd-title">{{ t('wms.qc.title') }} [{{ current.inspectionNo }}]</span>
+            <CpTag :tone="statusTone(current.status)">{{ statusMap[current.status] }}</CpTag>
+            <CpTag v-if="current.finalJudgement" :tone="judgementTone(current.finalJudgement)">{{ judgementMap[current.finalJudgement] }}</CpTag>
           </div>
         </template>
-        <el-descriptions :column="3" size="small" border>
-          <el-descriptions-item :label="t('wms.inbound.fld.no')">{{ current.inboundNo || '—' }}</el-descriptions-item>
-          <el-descriptions-item :label="t('wms.inbound.fld.supplierName')">{{ current.supplierName || '—' }}</el-descriptions-item>
-          <el-descriptions-item :label="t('wms.qc.fld.arrivalDateTime')">{{ current.arrivalDateTime?.replace('T', ' ').slice(0, 16) }}</el-descriptions-item>
-          <el-descriptions-item :label="t('wms.qc.fld.inspector')">{{ current.inspectorCd || '—' }}</el-descriptions-item>
-          <el-descriptions-item :label="t('wms.qc.fld.generatedReceipt')">{{ current.generatedReceiptNo || '—' }}</el-descriptions-item>
-          <el-descriptions-item :label="t('wms.qc.fld.judgementReason')">{{ current.judgementReason || '—' }}</el-descriptions-item>
-        </el-descriptions>
+        <CpDetailPanel :cols="3" :items="detailItems" />
       </el-card>
 
       <el-card shadow="never" style="margin-top: 12px">
-        <template #header><span style="font-weight: 600">{{ t('wms.common.detail') }}</span></template>
+        <template #header><span class="hd-title">{{ t('wms.common.detail') }}</span></template>
         <el-table :data="current.items" border size="small" max-height="500">
           <el-table-column type="index" :label="t('wms.common.line')" width="50" align="center" />
           <el-table-column :label="t('wms.common.product')" width="120">
@@ -144,7 +121,7 @@
         <el-form-item v-if="judgeForm.finalJudgement === 'PASS'" :label="t('wms.qc.fld.acceptWh')">
           <el-input v-model="judgeForm.acceptWarehouseCd" :placeholder="t('（空=元入庫予定の倉庫）')" />
         </el-form-item>
-        <div v-if="judgeForm.finalJudgement === 'PASS'" style="margin-left: 160px; color: #909399; font-size: 12px">
+        <div v-if="judgeForm.finalJudgement === 'PASS'" class="judge-hint">
           {{ t('wms.qc.msg.passAutoReceipt') }}
         </div>
       </el-form>
@@ -157,9 +134,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+import CpDetailPanel, { type DetailItem } from '@/components/templates/CpDetailPanel.vue'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { qcInspectionApi } from '@/api/wms/qcInspection'
 import type { QcInspection, QcInspectionSearchQuery, QcJudgeRequest } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
@@ -167,9 +149,7 @@ import { formatQty } from '@/utils/format'
 const { t } = useI18n()
 
 const mode = ref<'list' | 'detail'>('list')
-const query = reactive<QcInspectionSearchQuery>({ pageSize: 100 })
-const rows = ref<QcInspection[]>([])
-const loading = ref(false)
+const total = ref<number>()
 
 const current = ref<QcInspection | null>(null)
 const saving = ref(false)
@@ -199,18 +179,68 @@ const editable = computed(() => current.value && (current.value.status === 0 || 
 const canJudge = computed(() => current.value && current.value.status !== 2 && current.value.status !== 9)
 const canCancel = computed(() => current.value && current.value.status !== 2 && current.value.status !== 9)
 
-function statusTagOf(s: number): 'info' | 'primary' | 'success' | 'danger' {
-  return ({ 0: 'info', 1: 'primary', 2: 'success', 9: 'danger' } as const)[s as 0] || 'info'
+function statusTone(s: number): Tone {
+  return ({ 0: 'muted', 1: 'info', 2: 'ok', 9: 'muted' } as const)[s as 0] || 'info'
 }
-function judgementTagOf(j: string): 'success' | 'warning' | 'danger' | 'info' {
-  return ({ PASS: 'success', CONDITIONAL: 'warning', HOLD: 'warning', FAIL: 'danger', RETURN: 'danger' } as const)[j as 'PASS'] || 'info'
+function judgementTone(j: string): Tone {
+  return ({ PASS: 'ok', CONDITIONAL: 'warn', HOLD: 'warn', FAIL: 'danger', RETURN: 'danger' } as const)[j as 'PASS'] || 'info'
 }
 
-async function reload() {
-  loading.value = true
-  try { rows.value = (await qcInspectionApi.search(query)).data || [] }
-  finally { loading.value = false }
+// —— 一覧 ——
+const filterLabels = computed(() => ({
+  search: t('wms.common.search'),
+  reset: t('wms.common.clear'),
+}))
+
+const columns = computed<ListColumn[]>(() => [
+  { prop: 'inspectionNo', label: t('wms.qc.fld.inspectionNo'), kind: 'mono', width: 180 },
+  { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
+    map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
+  { prop: 'finalJudgement', label: t('wms.qc.fld.judgement'), width: 120 },
+  { prop: 'inboundNo', label: t('wms.inbound.fld.no'), width: 180 },
+  { prop: 'supplierName', label: t('wms.inbound.fld.supplierName'), minWidth: 160, overflowTooltip: true },
+  { prop: 'arrivalDateTime', label: t('wms.qc.fld.arrivalDateTime'), width: 160 },
+  { prop: 'generatedReceiptNo', label: t('wms.qc.fld.generatedReceipt'), width: 180 },
+  { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
+])
+
+const searchFields = computed<FilterField[]>(() => [
+  { key: 'inspectionNo', label: t('wms.qc.fld.inspectionNo'), type: 'text' },
+  { key: 'inboundNo', label: t('wms.inbound.fld.no'), type: 'text' },
+  {
+    key: 'status', label: t('wms.common.status'), type: 'select',
+    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+  },
+  {
+    key: 'finalJudgement', label: t('wms.qc.fld.judgement'), type: 'select',
+    options: Object.entries(judgementMap.value).map(([v, l]) => ({ label: l, value: v })),
+  },
+])
+
+const fetchList: ListFetch = async ({ filters }) => {
+  const f = filters as Record<string, unknown>
+  const q: QcInspectionSearchQuery = { pageSize: 500 }
+  if (f.inspectionNo) q.inspectionNo = String(f.inspectionNo)
+  if (f.inboundNo) q.inboundNo = String(f.inboundNo)
+  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
+  if (f.finalJudgement) q.finalJudgement = String(f.finalJudgement)
+  const all = (await qcInspectionApi.search(q)).data || []
+  return { rows: all, total: all.length }
 }
+
+// —— 詳細（基本情報 → CpDetailPanel） ——
+const detailItems = computed<DetailItem[]>(() => {
+  const c = current.value
+  if (!c) return []
+  return [
+    { label: t('wms.inbound.fld.no'), value: c.inboundNo || '—' },
+    { label: t('wms.inbound.fld.supplierName'), value: c.supplierName || '—' },
+    { label: t('wms.qc.fld.arrivalDateTime'), value: c.arrivalDateTime?.replace('T', ' ').slice(0, 16) || '—' },
+    { label: t('wms.qc.fld.inspector'), value: c.inspectorCd || '—' },
+    { label: t('wms.qc.fld.generatedReceipt'), value: c.generatedReceiptNo || '—' },
+    { label: t('wms.qc.fld.judgementReason'), value: c.judgementReason || '—' },
+  ]
+})
 
 async function openDetail(no: string) {
   const res = await qcInspectionApi.get(no)
@@ -271,13 +301,13 @@ async function onCancel() {
     await openDetail(current.value.inspectionNo!)
   } catch { /* */ }
 }
-
-onMounted(reload)
 </script>
 
 <style scoped>
 .wms-qc { padding: 16px; padding-bottom: 60px; }
-.search-card { margin-bottom: 12px; }
-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
+.card-hd { display: flex; align-items: center; gap: 12px; }
+.hd-title { font-weight: 600; }
+.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
 .action-bar > * { margin-left: 8px; }
+.judge-hint { margin-left: 160px; color: var(--cp-muted); font-size: var(--cp-fs-xs); }
 </style>

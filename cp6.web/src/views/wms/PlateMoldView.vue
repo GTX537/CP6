@@ -1,65 +1,43 @@
+<!--
+  版・金型在庫 —— 査詢一覧ページ → CpPageShell + CpListPage（単表スクロール paginated=false）。
+  状態=kind:'tag'+map（共有 Tone）；種別=map（タグなし文案置換）；寿命比率=col slot（el-progress 保持）；操作=col slot（状態別ボタン, 補償 #16）。
+  新規/使用記録/メンテ開始/寿命警報 は編集ダイアログとして el-dialog 保持（CpFormDialog 契約に載らない複合フォーム）。
+  変更後は listRef.reload()（:key 再マウント不使用）。
+-->
 <template>
   <div class="wms-plate-mold">
-    <el-card shadow="never" class="search-card">
-      <el-form :model="query" inline size="small">
-        <el-form-item :label="t('wms.plate.fld.no')"><el-input v-model="query.plateNo" clearable style="width: 180px" /></el-form-item>
-        <el-form-item :label="t('wms.plate.fld.type')">
-          <el-select v-model="query.plateType" clearable style="width: 120px">
-            <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="v" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('wms.plate.fld.customer')"><el-input v-model="query.customerCd" clearable style="width: 120px" /></el-form-item>
-        <el-form-item :label="t('wms.plate.fld.product')"><el-input v-model="query.productCd" clearable style="width: 120px" /></el-form-item>
-        <el-form-item :label="t('wms.common.status')">
-          <el-select v-model="query.status" clearable style="width: 130px">
-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
-          <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
-          <el-button type="warning" @click="openWarnings">{{ t('wms.plate.btn.warnings') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CpPageShell :title="t('wms.plate.title')" :count="total">
+      <template #actions>
+        <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+        <el-button type="warning" @click="openWarnings">{{ t('wms.plate.btn.warnings') }}</el-button>
+      </template>
 
-    <el-card shadow="never">
-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row>
-        <el-table-column prop="plateNo" :label="t('wms.plate.fld.no')" width="160" />
-        <el-table-column :label="t('wms.common.status')" width="110">
-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
-        </el-table-column>
-        <el-table-column :label="t('wms.plate.fld.type')" width="80">
-          <template #default="{ row }">{{ typeMap[row.plateType] || row.plateType }}</template>
-        </el-table-column>
-        <el-table-column prop="customerCd" :label="t('wms.plate.fld.customer')" width="100" />
-        <el-table-column prop="productCd" :label="t('wms.plate.fld.product')" width="100" />
-        <el-table-column prop="productName" :label="t('wms.common.productName')" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="colorCount" :label="t('wms.plate.fld.colorCount')" width="80" align="right" />
-        <el-table-column prop="sizeNote" :label="t('wms.plate.fld.sizeNote')" width="120" />
-        <el-table-column :label="t('wms.plate.fld.lifeRatio')" width="180">
-          <template #default="{ row }">
-            <div style="font-size: 11px">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
-            <el-progress
-              v-if="row.maxShots"
-              :percentage="Math.min(100, Math.round((row.usedShots / row.maxShots) * 100))"
-              :stroke-width="6" :show-text="false"
-              :status="lifeStatus(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column prop="lastUsedAt" :label="t('wms.plate.fld.lastUsed')" width="160" />
-        <el-table-column prop="nextMaintenanceDate" :label="t('wms.plate.fld.nextMaint')" width="130" />
-        <el-table-column :label="t('wms.common.action')" width="260" fixed="right">
-          <template #default="{ row }">
-            <el-button v-if="row.status === 0" link type="primary" size="small" @click="openUse(row)">{{ t('wms.plate.btn.use') }}</el-button>
-            <el-button v-if="row.status === 0 || row.status === 2" link type="warning" size="small" @click="openMaintStart(row)">{{ t('wms.plate.btn.maintStart') }}</el-button>
-            <el-button v-if="row.status === 1" link type="success" size="small" @click="onMaintEnd(row)">{{ t('wms.plate.btn.maintEnd') }}</el-button>
-            <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDiscard(row)">{{ t('wms.plate.btn.discard') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+      <CpListPage
+        ref="listRef"
+        :columns="columns"
+        :fetch="fetchList"
+        :search-fields="searchFields"
+        :filter-labels="filterLabels"
+        :paginated="false"
+        @total-change="total = $event"
+      >
+        <template #col-lifeRatio="{ row }">
+          <div class="life-txt">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
+          <el-progress
+            v-if="row.maxShots"
+            :percentage="Math.min(100, Math.round((row.usedShots / row.maxShots) * 100))"
+            :stroke-width="6" :show-text="false"
+            :status="lifeStatus(row)"
+          />
+        </template>
+        <template #col-_action="{ row }">
+          <el-button v-if="row.status === 0" link type="primary" size="small" @click="openUse(row)">{{ t('wms.plate.btn.use') }}</el-button>
+          <el-button v-if="row.status === 0 || row.status === 2" link type="warning" size="small" @click="openMaintStart(row)">{{ t('wms.plate.btn.maintStart') }}</el-button>
+          <el-button v-if="row.status === 1" link type="success" size="small" @click="onMaintEnd(row)">{{ t('wms.plate.btn.maintEnd') }}</el-button>
+          <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDiscard(row)">{{ t('wms.plate.btn.discard') }}</el-button>
+        </template>
+      </CpListPage>
+    </CpPageShell>
 
     <!-- 新建 Dialog -->
     <el-dialog v-model="createDialog" :title="t('wms.plate.dlg.create')" width="700">
@@ -128,13 +106,13 @@
       <el-table :data="warningsList" border stripe size="small" max-height="450">
         <el-table-column prop="plateNo" :label="t('wms.plate.fld.no')" width="160" />
         <el-table-column :label="t('wms.common.status')" width="110">
-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
+          <template #default="{ row }"><CpTag :tone="statusTone(row.status)">{{ statusMap[row.status] }}</CpTag></template>
         </el-table-column>
         <el-table-column prop="customerCd" :label="t('wms.plate.fld.customer')" width="100" />
         <el-table-column prop="productCd" :label="t('wms.plate.fld.product')" width="120" />
         <el-table-column :label="t('wms.plate.fld.lifeRatio')" min-width="200">
           <template #default="{ row }">
-            <div style="font-size: 11px">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
+            <div class="life-txt">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
             <el-progress v-if="row.maxShots"
               :percentage="Math.min(100, Math.round((row.usedShots / row.maxShots) * 100))"
               :stroke-width="8" :status="lifeStatus(row)" />
@@ -146,18 +124,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { plateMoldApi } from '@/api/wms/paperIndustry2'
 import type { PlateMoldStock, PlateMoldSearchQuery } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
-const query = reactive<PlateMoldSearchQuery>({ pageSize: 100 })
-const rows = ref<PlateMoldStock[]>([])
-const loading = ref(false)
+const total = ref<number>()
 const saving = ref(false)
+const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
 
 const createDialog = ref(false)
 const editing = ref<any>(null)
@@ -187,8 +168,8 @@ const statusMap = computed<Record<number, string>>(() => ({
   3: t('wms.plate.status.discarded'),
 }))
 
-function statusTagOf(s: number): 'success' | 'warning' | 'danger' | 'info' {
-  return ({ 0: 'success', 1: 'warning', 2: 'danger', 3: 'info' } as const)[s as 0] || 'info'
+function statusTone(s: number): Tone {
+  return ({ 0: 'ok', 1: 'warn', 2: 'danger', 3: 'muted' } as const)[s as 0] || 'info'
 }
 
 function lifeStatus(row: PlateMoldStock): 'success' | 'warning' | 'exception' | undefined {
@@ -199,11 +180,56 @@ function lifeStatus(row: PlateMoldStock): 'success' | 'warning' | 'exception' | 
   return 'success'
 }
 
-async function reload() {
-  loading.value = true
-  try { rows.value = (await plateMoldApi.search(query)).data || [] }
-  finally { loading.value = false }
+// —— 一覧 ——
+const filterLabels = computed(() => ({
+  search: t('wms.common.search'),
+  reset: t('wms.common.clear'),
+}))
+
+const columns = computed<ListColumn[]>(() => [
+  { prop: 'plateNo', label: t('wms.plate.fld.no'), kind: 'mono', width: 160 },
+  { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
+    map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
+  { prop: 'plateType', label: t('wms.plate.fld.type'), width: 80,
+    map: (v) => ({ label: typeMap.value[v as string] || (v == null ? '' : String(v)) }) },
+  { prop: 'customerCd', label: t('wms.plate.fld.customer'), width: 100 },
+  { prop: 'productCd', label: t('wms.plate.fld.product'), width: 100 },
+  { prop: 'productName', label: t('wms.common.productName'), minWidth: 160, overflowTooltip: true },
+  { prop: 'colorCount', label: t('wms.plate.fld.colorCount'), width: 80, kind: 'num' },
+  { prop: 'sizeNote', label: t('wms.plate.fld.sizeNote'), width: 120 },
+  { prop: 'lifeRatio', label: t('wms.plate.fld.lifeRatio'), width: 180 },
+  { prop: 'lastUsedAt', label: t('wms.plate.fld.lastUsed'), width: 160 },
+  { prop: 'nextMaintenanceDate', label: t('wms.plate.fld.nextMaint'), width: 130 },
+  { prop: '_action', label: t('wms.common.action'), width: 260, fixed: 'right' },
+])
+
+const searchFields = computed<FilterField[]>(() => [
+  { key: 'plateNo', label: t('wms.plate.fld.no'), type: 'text' },
+  {
+    key: 'plateType', label: t('wms.plate.fld.type'), type: 'select',
+    options: Object.entries(typeMap.value).map(([v, l]) => ({ label: l, value: v })),
+  },
+  { key: 'customerCd', label: t('wms.plate.fld.customer'), type: 'text' },
+  { key: 'productCd', label: t('wms.plate.fld.product'), type: 'text' },
+  {
+    key: 'status', label: t('wms.common.status'), type: 'select',
+    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+  },
+])
+
+const fetchList: ListFetch = async ({ filters }) => {
+  const f = filters as Record<string, unknown>
+  const q: PlateMoldSearchQuery = { pageSize: 500 }
+  if (f.plateNo) q.plateNo = String(f.plateNo)
+  if (f.plateType) q.plateType = String(f.plateType)
+  if (f.customerCd) q.customerCd = String(f.customerCd)
+  if (f.productCd) q.productCd = String(f.productCd)
+  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
+  const all = (await plateMoldApi.search(q)).data || []
+  return { rows: all, total: all.length }
 }
+
+function reloadList() { listRef.value?.reload() }
 
 function openCreate() {
   editing.value = {
@@ -221,7 +247,7 @@ async function onCreate() {
     const res = await plateMoldApi.create(editing.value)
     ElMessage.success(`${t('wms.common.success')}: ${res.data.plateNo}`)
     createDialog.value = false
-    await reload()
+    reloadList()
   } finally { saving.value = false }
 }
 
@@ -238,7 +264,7 @@ async function onUse() {
     await plateMoldApi.recordUsage(useTarget.value.plateNo, useShots.value)
     ElMessage.success(t('wms.common.success'))
     useDialog.value = false
-    await reload()
+    reloadList()
   } finally { saving.value = false }
 }
 
@@ -255,7 +281,7 @@ async function onMaintStart() {
     await plateMoldApi.startMaintenance(maintTarget.value.plateNo, maintNextDate.value)
     ElMessage.success(t('wms.common.success'))
     maintDialog.value = false
-    await reload()
+    reloadList()
   } finally { saving.value = false }
 }
 
@@ -264,7 +290,7 @@ async function onMaintEnd(row: PlateMoldStock) {
     await ElMessageBox.confirm(`${t('wms.plate.btn.maintEnd')}: ${row.plateNo}`, t('wms.common.confirm'), { type: 'warning' })
     await plateMoldApi.completeMaintenance(row.plateNo)
     ElMessage.success(t('wms.common.success'))
-    await reload()
+    reloadList()
   } catch { /* */ }
 }
 
@@ -273,22 +299,20 @@ async function onDiscard(row: PlateMoldStock) {
     await ElMessageBox.confirm(`${t('wms.plate.btn.discard')}: ${row.plateNo}`, t('wms.common.confirm'), { type: 'warning' })
     await plateMoldApi.discard(row.plateNo)
     ElMessage.success(t('wms.common.success'))
-    await reload()
+    reloadList()
   } catch { /* */ }
 }
 
 async function openWarnings() {
-  loading.value = true
+  saving.value = true
   try {
     warningsList.value = (await plateMoldApi.warnings(0.9)).data || []
     warningsDialog.value = true
-  } finally { loading.value = false }
+  } finally { saving.value = false }
 }
-
-onMounted(reload)
 </script>
 
 <style scoped>
 .wms-plate-mold { padding: 16px; }
-.search-card { margin-bottom: 12px; }
+.life-txt { font-size: var(--cp-fs-2xs); }
 </style>

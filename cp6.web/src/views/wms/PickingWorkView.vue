@@ -41,14 +41,14 @@
             <div class="hd-row">
               <div>
                 <h2 style="margin: 0">{{ current.outboundNo }}</h2>
-                <div style="color: #666; font-size: 13px">
+                <div class="hd-sub">
                   {{ current.customerName || current.workOrderNo }}
                 </div>
               </div>
               <div class="hd-progress">
-                <span style="font-size: 12px; color: #666">{{ t('wms.pick.fld.pickedQty') }}</span>
+                <span class="hd-cap">{{ t('wms.pick.fld.pickedQty') }}</span>
                 <el-progress :percentage="progressPct" :stroke-width="14" />
-                <div style="font-size: 11px; color: #666">{{ pickedLines }} / {{ current.details?.length || 0 }} {{ t('wms.pick.fld.lineNo') }}</div>
+                <div class="hd-count">{{ pickedLines }} / {{ current.details?.length || 0 }} {{ t('wms.pick.fld.lineNo') }}</div>
               </div>
               <div>
                 <el-button v-if="current.status === 2" type="warning" size="large" @click="onStart">{{ t('wms.pick.btn.start') }}</el-button>
@@ -78,11 +78,11 @@
               </div>
               <el-row :gutter="8" class="line-row">
                 <el-col :span="6"><b>{{ t('wms.pick.fld.fromLoc') }}</b><div>{{ line.locationCd || '—' }}</div></el-col>
-                <el-col :span="6"><b>{{ t('wms.pick.fld.product') }}</b><div>{{ line.productCd }}<br/><span style="font-size:11px;color:#888">{{ line.productName || '' }}</span></div></el-col>
+                <el-col :span="6"><b>{{ t('wms.pick.fld.product') }}</b><div>{{ line.productCd }}<br/><span class="prod-sub">{{ line.productName || '' }}</span></div></el-col>
                 <el-col :span="6"><b>{{ t('wms.pick.fld.lot') }}</b><div>{{ line.lotNo || '—' }}</div></el-col>
                 <el-col :span="6">
                   <b>{{ t('wms.pick.fld.reqQty') }}</b>
-                  <div>{{ formatQty(line.requiredQty) }} → <b style="color:#67c23a">{{ formatQty(lineState[line.lineNo]?.actualQty ?? 0) }}</b></div>
+                  <div>{{ formatQty(line.requiredQty) }} → <b class="picked-qty">{{ formatQty(lineState[line.lineNo]?.actualQty ?? 0) }}</b></div>
                 </el-col>
               </el-row>
               <div v-if="!lineState[line.lineNo]?.done && !lineState[line.lineNo]?.short && current.status === 3" class="line-actions">
@@ -276,28 +276,33 @@ onMounted(reloadTasks)
 .card-hd { display: flex; align-items: center; gap: 8px; }
 .task-card :deep(.el-card__body) { padding: 8px; max-height: 720px; overflow-y: auto; }
 .task-item {
-  padding: 10px 12px; border: 1px solid #ebeef5; border-radius: 6px; margin-bottom: 6px; cursor: pointer;
-  transition: all 0.15s;
+  padding: 10px 12px; border: 1px solid var(--cp-line); border-radius: var(--cp-r-sm); margin-bottom: 6px; cursor: pointer;
+  transition: all var(--cp-t-base);
 }
-.task-item:hover { background: #f5f7fa; border-color: #c0c4cc; }
-.task-item.active { background: #ecf5ff; border-color: #409eff; }
-.task-no { font-weight: bold; font-size: 14px; }
+.task-item:hover { background: var(--cp-bg-hover); border-color: var(--cp-faint); }
+.task-item.active { background: var(--cp-brand-bg); border-color: var(--cp-brand); }
+.task-no { font-weight: bold; font-size: var(--cp-fs-lg); }
 .task-meta { display: flex; gap: 4px; margin: 4px 0; }
-.task-info { font-size: 12px; color: #606266; }
+.task-info { font-size: var(--cp-fs-xs); color: var(--cp-text); }
 
 .hd-card { margin-bottom: 12px; }
 .hd-row { display: flex; align-items: center; gap: 20px; }
 .hd-progress { flex: 1; }
+.hd-sub { color: var(--cp-text); font-size: var(--cp-fs-base); }
+.hd-cap { font-size: var(--cp-fs-xs); color: var(--cp-text); }
+.hd-count { font-size: var(--cp-fs-2xs); color: var(--cp-text); }
 
 .line-item {
-  padding: 12px; border: 1px solid #ebeef5; border-radius: 8px; margin-bottom: 8px;
-  background: #fafafa;
+  padding: 12px; border: 1px solid var(--cp-line); border-radius: var(--cp-r-sm); margin-bottom: 8px;
+  background: var(--cp-bg-th);
 }
-.line-item.done { background: #f0f9eb; border-color: #95d475; opacity: 0.75; }
-.line-item.active { border-color: #409eff; box-shadow: 0 0 6px rgba(64, 158, 255, 0.3); }
+.line-item.done { background: var(--cp-ok-bg); border-color: var(--cp-ok); opacity: 0.75; }
+.line-item.active { border-color: var(--cp-brand); box-shadow: var(--cp-shadow-1); }
 .line-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.line-no { font-weight: bold; font-size: 16px; color: #303133; }
-.line-row b { color: #606266; font-size: 12px; display: block; margin-bottom: 2px; }
+.line-no { font-weight: bold; font-size: var(--cp-fs-xl); color: var(--cp-ink); }
+.line-row b { color: var(--cp-text); font-size: var(--cp-fs-xs); display: block; margin-bottom: 2px; }
 .line-row > .el-col { padding: 4px 0; }
 .line-actions { margin-top: 8px; display: flex; gap: 6px; }
+.prod-sub { font-size: var(--cp-fs-2xs); color: var(--cp-muted); }
+.picked-qty { color: var(--cp-ok); }
 </style>

@@ -1,51 +1,39 @@
+<!--
+  返品 (RMA) —— list+detail 単一ファイル（mode トグル）。
+  list モード → CpPageShell（:count←total）+ CpListPage（単表スクロール paginated=false）。
+    状態=kind:'tag'+map（共有 Tone）；申請日=kind:'date'；create は CpPageShell #actions。
+  detail モード（特殊エディタ領域：新規/閲覧兼用フォーム + 明細編集テーブル）→ ヘッダ状態を CpTag 化、action-bar を token 化。
+    back で mode=list → CpListPage が再マウントし自動 reload。
+-->
 <template>
   <div class="wms-rma">
-    <el-card v-if="mode === 'list'" shadow="never" class="search-card">
-      <el-form :model="query" inline size="small">
-        <el-form-item :label="t('wms.rma.fld.no')"><el-input v-model="query.rmaNo" clearable style="width: 180px" /></el-form-item>
-        <el-form-item :label="t('wms.outbound.fld.customerCd')"><el-input v-model="query.customerCd" clearable style="width: 130px" /></el-form-item>
-        <el-form-item :label="t('wms.rma.fld.originalShipping')"><el-input v-model="query.originalShippingNo" clearable style="width: 180px" /></el-form-item>
-        <el-form-item :label="t('wms.common.status')">
-          <el-select v-model="query.status" clearable style="width: 140px">
-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
-          <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <!-- ───── 一覧 ───── -->
+    <CpPageShell v-if="mode === 'list'" :title="t('wms.rma.title')" :count="total">
+      <template #actions>
+        <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+      </template>
 
-    <el-card v-if="mode === 'list'" shadow="never">
-      <el-table :data="rows" border stripe size="small" max-height="650" highlight-current-row>
-        <el-table-column prop="rmaNo" :label="t('wms.rma.fld.no')" width="180" />
-        <el-table-column :label="t('wms.common.status')" width="120">
-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
-        </el-table-column>
-        <el-table-column prop="customerCd" :label="t('wms.outbound.fld.customerCd')" width="100" />
-        <el-table-column prop="customerName" :label="t('wms.outbound.fld.customerName')" min-width="140" show-overflow-tooltip />
-        <el-table-column prop="originalShippingNo" :label="t('wms.rma.fld.originalShipping')" width="180" />
-        <el-table-column prop="appliedDate" :label="t('wms.rma.fld.appliedDate')" width="120">
-          <template #default="{ row }">{{ row.appliedDate?.slice(0, 10) }}</template>
-        </el-table-column>
-        <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="90" />
-        <el-table-column prop="returnReason" :label="t('wms.rma.fld.returnReason')" min-width="180" show-overflow-tooltip />
-        <el-table-column :label="t('wms.common.action')" width="100" fixed="right">
-          <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openDetail(row.rmaNo)">{{ t('wms.common.open') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+      <CpListPage
+        :columns="columns"
+        :fetch="fetchList"
+        :search-fields="searchFields"
+        :filter-labels="filterLabels"
+        :paginated="false"
+        @total-change="total = $event"
+      >
+        <template #col-_action="{ row }">
+          <el-button link type="primary" size="small" @click="openDetail(row.rmaNo)">{{ t('wms.common.open') }}</el-button>
+        </template>
+      </CpListPage>
+    </CpPageShell>
 
-    <!-- Detail / Create -->
+    <!-- ───── 詳細 / 新規 ───── -->
     <template v-if="mode === 'detail' && current">
       <el-card shadow="never">
         <template #header>
-          <div style="display: flex; align-items: center; gap: 12px">
-            <span style="font-weight: 600">{{ isNew ? t('wms.rma.titleNew') : `${t('wms.rma.title')} [${current.rmaNo}]` }}</span>
-            <el-tag v-if="!isNew" :type="statusTagOf(current.status)" size="small">{{ statusMap[current.status] }}</el-tag>
+          <div class="card-hd">
+            <span class="hd-title">{{ isNew ? t('wms.rma.titleNew') : `${t('wms.rma.title')} [${current.rmaNo}]` }}</span>
+            <CpTag v-if="!isNew" :tone="statusTone(current.status)">{{ statusMap[current.status] }}</CpTag>
           </div>
         </template>
         <el-form :model="current" label-width="160px" size="small">
@@ -62,8 +50,8 @@
 
       <el-card shadow="never" style="margin-top: 12px">
         <template #header>
-          <div style="display: flex; justify-content: space-between; align-items: center">
-            <span style="font-weight: 600">{{ t('wms.common.detail') }}</span>
+          <div class="card-hd hd-between">
+            <span class="hd-title">{{ t('wms.common.detail') }}</span>
             <el-button v-if="isNew" type="primary" size="small" @click="addLine">{{ t('wms.common.addLine') }}</el-button>
           </div>
         </template>
@@ -142,9 +130,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { rmaApi } from '@/api/wms/rma'
 import type { RmaHeader, RmaDetail, RmaSearchQuery, RmaDispositionInput } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
@@ -152,9 +144,8 @@ import { formatQty } from '@/utils/format'
 const { t } = useI18n()
 
 const mode = ref<'list' | 'detail'>('list')
-const query = reactive<RmaSearchQuery>({ pageSize: 100 })
-const rows = ref<RmaHeader[]>([])
-const loading = ref(false)
+const total = ref<number>()
+const query = reactive<RmaSearchQuery>({ pageSize: 500 })
 
 const current = ref<RmaHeader | null>(null)
 const saving = ref(false)
@@ -187,14 +178,48 @@ const canJudge = computed(() => current.value && (current.value.status === 2 || 
 const canClose = computed(() => current.value && current.value.status === 4)
 const canCancel = computed(() => current.value && current.value.status !== 5 && current.value.status !== 9 && !isNew.value)
 
-function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'danger' {
-  return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'warning', 4: 'success', 5: 'success', 9: 'danger' } as const)[s as 0] || 'info'
+function statusTone(s: number): Tone {
+  return ({ 0: 'info', 1: 'info', 2: 'warn', 3: 'warn', 4: 'ok', 5: 'ok', 9: 'muted' } as const)[s as 0] || 'info'
 }
 
-async function reload() {
-  loading.value = true
-  try { rows.value = (await rmaApi.search(query)).data || [] }
-  finally { loading.value = false }
+// —— 一覧 ——
+const filterLabels = computed(() => ({
+  search: t('wms.common.search'),
+  reset: t('wms.common.clear'),
+}))
+
+const columns = computed<ListColumn[]>(() => [
+  { prop: 'rmaNo', label: t('wms.rma.fld.no'), kind: 'mono', width: 180 },
+  { prop: 'status', label: t('wms.common.status'), width: 120, kind: 'tag',
+    map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
+  { prop: 'customerCd', label: t('wms.outbound.fld.customerCd'), width: 100 },
+  { prop: 'customerName', label: t('wms.outbound.fld.customerName'), minWidth: 140, overflowTooltip: true },
+  { prop: 'originalShippingNo', label: t('wms.rma.fld.originalShipping'), width: 180 },
+  { prop: 'appliedDate', label: t('wms.rma.fld.appliedDate'), width: 120, kind: 'date' },
+  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 90 },
+  { prop: 'returnReason', label: t('wms.rma.fld.returnReason'), minWidth: 180, overflowTooltip: true },
+  { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
+])
+
+const searchFields = computed<FilterField[]>(() => [
+  { key: 'rmaNo', label: t('wms.rma.fld.no'), type: 'text' },
+  { key: 'customerCd', label: t('wms.outbound.fld.customerCd'), type: 'text' },
+  { key: 'originalShippingNo', label: t('wms.rma.fld.originalShipping'), type: 'text' },
+  {
+    key: 'status', label: t('wms.common.status'), type: 'select',
+    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+  },
+])
+
+const fetchList: ListFetch = async ({ filters }) => {
+  const f = filters as Record<string, unknown>
+  const q: RmaSearchQuery = { ...query }
+  q.rmaNo = f.rmaNo ? String(f.rmaNo) : undefined
+  q.customerCd = f.customerCd ? String(f.customerCd) : undefined
+  q.originalShippingNo = f.originalShippingNo ? String(f.originalShippingNo) : undefined
+  q.status = f.status !== undefined && f.status !== '' ? Number(f.status) : undefined
+  const all = (await rmaApi.search(q)).data || []
+  return { rows: all, total: all.length }
 }
 
 function openCreate() {
@@ -288,13 +313,13 @@ async function onCancel() {
     await openDetail(current.value.rmaNo!)
   } catch { /* */ }
 }
-
-onMounted(reload)
 </script>
 
 <style scoped>
 .wms-rma { padding: 16px; padding-bottom: 60px; }
-.search-card { margin-bottom: 12px; }
-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
+.card-hd { display: flex; align-items: center; gap: 12px; }
+.hd-between { justify-content: space-between; }
+.hd-title { font-weight: 600; }
+.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
 .action-bar > * { margin-left: 8px; }
 </style>
