@@ -1635,7 +1635,8 @@ using (var scope = app.Services.CreateScope())
     }
 
     // 多语言词条种子数据（幂等走上方 SeedLangs；合并 main 后统一用 SeedLangs，删去 Space 侧重复的 AddLangs）
-    if (!db.Sys_Langs.Any())
+    // [restored-db fix] 原 if (!db.Sys_Langs.Any()) 全空守卫会让"恢复旧库"场景跳过本块后续新增词条；
+    // SeedLangs 逐键幂等（见上方助手），与其余 11 个种子块保持一致，无需全空守卫。保留裸块只为最小 diff。
     {
         SeedLangs(
             new Sys_Lang { LangKey = "app.title", ZhCN = "CP6 管理系统", ZhTW = "CP6 管理系統", En = "CP6 Admin", Ja = "CP6 管理システム", Ko = "CP6 관리 시스템" },
