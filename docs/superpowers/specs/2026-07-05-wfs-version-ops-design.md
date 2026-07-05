@@ -58,17 +58,25 @@ public Guid? PublishedBy { get; set; }
 
 - 唯一索引改 `(TenantId, FlowKey, Version)`；辅助索引 `(TenantId, FlowKey, Status)`。
 - **数据迁移**：既有行全部标 `Published`（`PublishedAtUtc = 迁移时刻`）——既有单行即 v1 已发布，行为无缝。
-- `Enable` 语义收窄为 **FlowKey 级发起开关**（读口径：取「最新 Published 且 Enable」；关掉最新 published 的 Enable = 停止发起，在途不受影响）。
+- `Enable` 语义收窄为 **FlowKey 级发起开关**，读口径（spec 评审修订，防静默回退）：**先取「最新 Published」唯一一行，再看该行 Enable**——false 即 E-WF-029 拒绝发起，**绝不回落到更旧的 Published 版本**（若把 Enable 放进查询条件，关 v3 会让 v2 重新满足条件、"停止发起"变成无声回退发旧版，比债本身更隐蔽）。发布新版本时新行 Enable **继承上一 Published 版的值**（无前版=true）——被停用的流程发布新版不会静默重新开闸。
 - **不可变铁律**：`Status==Published` 行的 SchemaJson/FlowName/FormKey 拒绝更新（服务层守卫 + 测试锁定）；可变的只有 Enable。
 
 ### §2.2 `Wf_FlowInstance` pin 列
 
 ```csharp
-/// <summary>版本 pin：发起时刻固定的流程定义版本行。实例全生命周期按此行取 schema。</summary>
-public Guid FlowDefId { get; set; }
+/// <summary>版本 pin：发起时刻固定的流程定义版本行。**在途实例恒非空**；仅历史终态实例
+/// 允许 null（迁移期孤儿 FlowKey：定义行曾被删，见 §2.2 孤儿策略）。</summary>
+public Guid? FlowDefId { get; set; }
 ```
 
-索引 `(FlowDefId)`（版本分布统计键）。**数据迁移回填**：既有实例按 FlowKey 关联现存单行 Def 回填（迁移 SQL 内完成，无孤儿——若有孤儿 FlowKey 迁移即失败快速暴露）。
+索引 `(FlowDefId)`（版本分布统计键）。
+
+**数据迁移回填与孤儿策略（spec 评审修订，不把数据问题留到部署时刻爆炸）**：
+- **plan 前置任务**：生产数据预检查询（`SELECT DISTINCT FlowKey FROM Wf_FlowInstance WHERE FlowKey NOT IN (SELECT FlowKey FROM Wf_FlowDef)` 按状态分组盘点），先跑后定。
+- **回填口径**：能关联的按 FlowKey 回填现存 Def 行；**在途（非终态）实例出现孤儿 → 迁移失败**（在途孤儿本不该存在，属须先修的数据事故）；**终态实例孤儿 → FlowDefId 留 null 容忍**（终态无引擎动作，永不 LoadSchema；FormDetail/打印等消费端对 null 降级为「仅履历视图」）。
+- **不变量**：发起路径 pin 恒非空；引擎 `LoadSchemaAsync(inst)` 遇 null 抛异常快速失败（构造上只可能是在途实例，null 即 bug）。
+
+**删除守卫（堵住孤儿的再生产）**：`Wf_FlowDef` 删除规则收紧为 **Published 行一律禁删**（历史版本 KB 级永久保留，§9 既有口径）、Draft 行可删；FlowAdmin 现状有无删除入口进 plan 核实项，有则接守卫、无则只落服务层守卫+测试。
 
 ### §2.3 引擎改造
 
@@ -80,7 +88,7 @@ public Guid FlowDefId { get; set; }
 
 ## §3 设计器发布流
 
-1. **打开**：加载该 FlowKey 的**最新草稿**；无草稿 → 从最新 Published **copy-on-write** 衍生草稿行（Version = 最大值+1，Status=Draft）；从未有任何行（新流程）→ 空白草稿 v1。
+1. **打开**：加载该 FlowKey 的**最新草稿**；无草稿 → 从最新 Published **copy-on-write** 衍生草稿行（Version = 最大值+1，Status=Draft）；从未有任何行（新流程）→ 空白草稿 v1。**并发口径**：两设计器同时衍生撞 `(FlowKey,Version)` 唯一键 → 捕获后**重载对方刚建的草稿**（不是报错）；同一草稿两人并发保存 → Def RowVersion 检测冲突，提示重载（不做静默 last-write-wins）。
 2. **保存**：只写草稿行 SchemaJson（现 save 行为收窄到 Draft，写 Published 行被 §2.1 守卫拒绝）。
 3. **发布**：新端点/按钮——全族校验（FlowSchemaValidator + DesignerService 规则）通过 → 草稿 `Status=Published` + `PublishedAtUtc/By`；发布后再编辑 → 回到步骤 1 的 copy-on-write。发布并发冲突走 Def RowVersion（加 `[Timestamp]`，迁移含）。无草稿可发布/校验未过 → **E-WF-030**（聚合校验错误随响应返回）。
 4. **版本历史**：设计器顶部版本下拉（vN·发布时间·发布人）——选历史版本**只读查看**（画布/状态机两模式均可）+「从此版本另存草稿」（回滚的达成方式，D4/§0.2 Out）。
@@ -93,7 +101,7 @@ public Guid FlowDefId { get; set; }
 
 ### §4.1 实例检索 tab
 
-- 筛选：状态（Running/Suspended/终态）/ FlowKey / **版本**（Def 版本下拉）/ 停泊超龄（停在同节点 > N 天）/ 发起人 / 日期范围。
+- 筛选：状态（Running/Suspended/终态）/ FlowKey / **版本**（Def 版本下拉，**只列 Published 行**——构造上无实例 pin 草稿）/ 停泊超龄（停在同节点 > N 天）/ 发起人 / 日期范围。
 - 列表列：单号/流程/版本/当前关卡/停留时长/发起人/状态；行点开 → FormDetail 跳转。
 - **版本分布视图**：按 FlowKey 分组的「版本 × 在途数」矩阵（D3 收敛决策的观察面）。
 - 后端：`IFlowOpsService.SearchInstancesAsync(filter, page)`（专用聚合查询，不复用收件箱查询——视角不同：全租户 vs 个人）。
@@ -101,14 +109,16 @@ public Guid FlowDefId { get; set; }
 ### §4.2 job 运维 tab
 
 - 筛选：状态（Failed/Running/Pending 退避中）/ **老化占坑**（TriggerFire InstanceId 与 Error 均空超宽限——基建 spec §4 告警的消费端）/ Kind / 日期。
-- 动作：**重放**（Failed job → AttemptCount=0、Status=Pending、清 LastError——executor 幂等是铁律，重放安全）；**取消**（Failed/Pending job → Cancelled + `FailServiceTokenAsync` 走错误路由，等价重试耗尽处置）。job 处于 Running（有 lease）时两动作均拒（400，防与 worker 竞争）。
+- 动作：**重放**（Failed job → AttemptCount=0、Status=Pending、清 LastError——executor 幂等是铁律，重放安全）；**取消**（Failed/Pending job → Cancelled + `FailServiceTokenAsync` 走错误路由，等价重试耗尽处置）。
+- **token 前置校验（spec 评审补）**：两动作统一要求 **token 仍停泊于该 job 的节点**——若 token 已走（如重试耗尽 `FailServiceTokenAsync` 已沿错误边离开），重放=纯副作用僵尸调用（HTTP 照发、resume 撞状态闸吞掉）、取消=对已处置 job 二次 fail，语义均不成立 → 拒 400 + 提示「流程已走错误路径，请对实例使用强制推进/终止」。此前置按 token 实时状态动态判断，与「Failed 后 token 是走错误边还是留停泊」的现状实现无关，两种现状均正确覆盖（plan 侦察时仍核实现状，测试按核实结果构造两态用例）。
+- job 处于 Running（有 lease）时两动作均拒（400，防与 worker 竞争）。
 
 ### §4.3 分析 tab（D5）
 
 固定四报表，按 FlowKey + 日期范围：
 1. **平均审批时长**（实例发起→终态，按流程分组，趋势折线）；
 2. **瓶颈关卡 Top**（FlowFormTo 按 (FlowKey,NodeId) 聚合平均停留，条形图）；
-3. **超时率**（超时动作触发数 / 关卡办结数）；
+3. **超时率**（超时动作触发数 / 关卡办结数——分子数据源大概率在 `Wf_FlowHistory` 的超时动作行而非 FormTo，**plan 侦察核实落点**，读模型缺列则本波补聚合查询而非加列）；
 4. **驳回率**（Rejected 实例 / 终态实例，按流程）。
 
 后端 `GetAnalyticsAsync(flowKey?, fromUtc, toUtc)` 一次返回四块聚合；前端图表遵循 Design System + dataviz 规范（执行时用 dataviz skill 校色/形制）；空数据空态。**只读，不引 BI 依赖**。
@@ -120,7 +130,7 @@ public Guid FlowDefId { get; set; }
 | job 重放/取消 | §4.2 | §4.2 | `job-ops` |
 | **强制终止** | 实例 Running/Suspended | 走撤回清场语义 + **级联取消子实例**（三期 subflow §3.3 复用）+ FlowHistory 行 `action="forceTerminate"`（操作者+理由） | `terminate` |
 | **重解析审批人** | 实例 Suspended | 对挂起节点重跑 `IApproverResolver`——解析成功 → 生成待办、实例回 Running；仍失败 → 保持 Suspended + 返回原因 | `re-resolve` |
-| **强制推进** | token 停泊/待办 Pending | 当前关卡按「系统代办通过」处置：在途待办 Cancelled、FormTo 行 Skipped、FlowHistory `action="forceAdvance"`（操作者+**理由必填**）→ AdvanceToken 沿正常出边 | `force-advance`，**仅 platform-admin**（复用 RequirePlatformAdmin 先例） |
+| **强制推进** | token 停泊/待办 Pending | 当前关卡按「系统代办通过」处置：在途待办 Cancelled、FormTo 行 Skipped、FlowHistory `action="forceAdvance"`（操作者+**理由必填**）→ AdvanceToken 沿正常出边。**停泊 token 的伴随规则（spec 评审补，防孤儿/幽灵副作用）**：命中 **subFlow 停泊** → 同步级联取消其在途子实例组（复用 subflow spec §3.3「视同 token 死亡」路径——否则用户继续办一个回注注定进状态闸黑洞的孤儿子流程）；命中 **serviceTask 停泊** → 同步 Cancel 其 pending/退避中 `Wf_ServiceJob`（否则 worker 仍会拾起执行、HTTP 副作用照发，对外部系统是幽灵调用） | `force-advance`，**仅 platform-admin**（复用 RequirePlatformAdmin 先例） |
 
 全部动作：入参理由必填（重放/取消可选）、OperLog + FlowHistory 双痕、并发安全走实例/job RowVersion。
 
@@ -153,7 +163,8 @@ public Guid FlowDefId { get; set; }
 
 - **pin 语义**：发布 v2 后在途 v1 单按 v1 跑到终态（删节点/改审批人两变体的定点回归——正是债的两个事故形态）；新单 pin v2；Enable 关闭停发起在途不受影响。
 - **发布流**：copy-on-write 衍生、Published 不可变守卫、校验未过 E-WF-030、并发发布 RowVersion、「从历史另存草稿」。
-- **驾驶舱**：检索过滤矩阵、版本分布计数、job 重放后 worker 正常拾起、取消走错误路由、Running job 拒操作、强制终止级联子实例+双痕、重解析成功/仍失败两态、强制推进的 FormTo/History/权限矩阵（非 platform-admin 403）。
+- **驾驶舱**：检索过滤矩阵、版本分布计数、job 重放后 worker 正常拾起、取消走错误路由、Running job 拒操作、**token 已走时重放/取消拒 400（僵尸调用定点）**、强制终止级联子实例+双痕、重解析成功/仍失败两态、强制推进的 FormTo/History/权限矩阵（非 platform-admin 403）、**强推 subFlow 停泊 token 级联取消子实例组 + 强推 serviceTask 停泊 token 同步 Cancel pending job（孤儿/幽灵副作用定点）**。
+- **Enable/孤儿定点**：关最新 Published 的 Enable → E-WF-029 不回落旧版本；发布新版 Enable 继承前版；终态孤儿 null 降级仅履历视图、在途孤儿迁移失败、Published 行禁删守卫。
 - **分析**：四聚合的已知数据集断言、空态、日期边界。
 - **QA harness**：gstack 剧本（发布 v2→旧单继续走 v1 实况走查、版本 diff 视图、驾驶舱四动作全流程、老化占坑筛选）。
 - 基线全绿；EF 迁移恰一次 `WfsVersionPin`（含数据回填）。
