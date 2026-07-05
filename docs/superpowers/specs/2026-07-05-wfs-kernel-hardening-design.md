@@ -158,7 +158,7 @@ SendBackScope Analyze(schema, token血缘链, currentNodeId, targetNodeId)
 | 作用域 | 行为 |
 |---|---|
 | `SameBranch` | 先定**分支内剥离层** = 包含目标节点的最内层分支域（当前 token 在分支内的嵌套 fork 里、而目标在该内层 split 之前时，剥离层是外层，与 BeforeSplit 的「最外剥离层」对称）。清场 = **剥离层 token 的整个后代子树**（含内层 fork 的兄弟 token；Cancel 在途 token、Cancel Pending 待办、Void Pending FormTo）；在目标节点重生 token 携带**剥离层的 ForkId/ParentTokenId 血缘**——不是当前 token 的内层血缘（★外层 join 认亲不破坏，外层兄弟分支照常走） |
-| `BeforeSplit` | 现行为：全清场 + 目标节点单链重启（`CancelAllActiveTokens` + `VoidPendingFormTos` 全量）——被剥离的 fork 批次 token 全 Cancelled，join 无残留 |
+| `BeforeSplit` | 全清场 + 目标节点单链重启（`CancelAllActiveTokens` + `VoidPendingFormTos` 全量）——被剥离的 fork 批次 token 全 Cancelled，join 无残留。**勘误（plan 侦察 2026-07-05）**：现状代码对一切跨网关退回是 `CrossesParallelBlock` 直接拒 E-WF-012（并非允许后全清场），故 BeforeSplit 实为**放开该禁令后复用既有全清场机制**——机制照旧，能力是新放开的 |
 | `SiblingBranch` | 拒绝，抛 **E-WF-019**（结构化码，非自由文本） |
 
 `prevStage`/`starter` 目标：prevStage 天然同节点同分支 → `SameBranch` 口径收窄清场；starter 天然 `BeforeSplit`（start 在一切 split 之前）→ 现行为不变。
