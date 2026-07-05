@@ -1,7 +1,7 @@
 <template>
   <div class="inbox-running">
     <div class="table-toolbar">
-      <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
+      <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
     </div>
 
@@ -22,16 +22,16 @@
       </el-table-column>
       <el-table-column :label="t('oa.col.status')" width="110">
         <template #default="{ row }">
-          <el-tag :type="(instanceStatusType(row.status) as any)" size="small">
+          <CpTag :tone="instanceStatusTone(row.status)">
             {{ t(instanceStatusText(row.status)) }}
-          </el-tag>
+          </CpTag>
         </template>
       </el-table-column>
       <el-table-column :label="t('oa.col.createDate')" width="170">
         <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
       </el-table-column>
     </el-table>
-    <el-empty v-if="!loading && !rows.length" :image-size="80" :description="t('oa.running.empty')" />
+    <CpEmpty v-if="!loading && !rows.length" :text="t('oa.running.empty')" />
   </div>
 </template>
 
@@ -40,11 +40,18 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Refresh } from '@element-plus/icons-vue'
 import { inboxApi } from '@/api/oa/inbox'
-import { instanceStatusType, instanceStatusText } from '@/views/oa/inbox/inboxModel'
+import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { RunningItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
 const emit = defineEmits<{ 'open-detail': [id: string] }>()
+
+/** 実例状態码 → CpTag 色調（对齐 inboxModel.instanceStatusType：warning/success/danger/info/info）。 */
+function instanceStatusTone(s: number): Tone {
+  return (['warn', 'ok', 'danger', 'info', 'info'] as Tone[])[s] ?? 'info'
+}
 
 const rows = ref<RunningItem[]>([])
 const loading = ref(false)

@@ -1,7 +1,7 @@
 <template>
   <div class="inbox-draft">
     <div class="table-toolbar">
-      <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
+      <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
     </div>
 
@@ -24,7 +24,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-empty v-if="!loading && !rows.length" :image-size="80" :description="t('oa.draft.empty')" />
+    <CpEmpty v-if="!loading && !rows.length" :text="t('oa.draft.empty')" />
 
     <!-- Edit dialog -->
     <el-dialog v-model="editDialog.visible" :title="t('oa.draft.editTitle')" width="520px">
@@ -52,6 +52,8 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import { draftApi } from '@/api/oa/draft'
+import CpTag from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 
 const { t } = useI18n()
 

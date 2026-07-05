@@ -104,9 +104,9 @@
           <el-table-column prop="flowName" label="流程名称" />
           <el-table-column prop="enable" label="状态" width="80">
             <template #default="{ row }">
-              <el-tag :type="row.enable ? 'success' : 'info'" size="small">
+              <CpTag :tone="row.enable ? 'ok' : 'muted'">
                 {{ row.enable ? '启用' : '停用' }}
-              </el-tag>
+              </CpTag>
             </template>
           </el-table-column>
         </el-table>
@@ -138,6 +138,7 @@ import InboxRunning from './InboxRunning.vue'
 import InboxDone from './InboxDone.vue'
 import InboxDraft from './InboxDraft.vue'
 import FormDetail from './FormDetail.vue'
+import CpTag from '@/components/base/CpTag.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -242,7 +243,7 @@ async function openNewDialog() {
 <style scoped>
 .oa-inbox {
   height: 100%;
-  background: #f5f7fa;
+  background: var(--cp-bg);
 }
 
 .inbox-header {
@@ -250,8 +251,8 @@ async function openNewDialog() {
   align-items: center;
   gap: 8px;
   padding: 0 16px;
-  background: #fff;
-  border-bottom: 1px solid var(--el-border-color-light);
+  background: var(--cp-card);
+  border-bottom: 1px solid var(--cp-line-soft);
   flex-shrink: 0;
 }
 
@@ -262,7 +263,7 @@ async function openNewDialog() {
 .inbox-title {
   font-size: 16px;
   font-weight: 650;
-  color: #303133;
+  color: var(--cp-ink);
 }
 
 .inbox-body {
@@ -271,8 +272,8 @@ async function openNewDialog() {
 }
 
 .inbox-aside {
-  background: #fff;
-  border-right: 1px solid var(--el-border-color-light);
+  background: var(--cp-card);
+  border-right: 1px solid var(--cp-line-soft);
   overflow-y: auto;
 }
 
@@ -299,13 +300,13 @@ async function openNewDialog() {
 
 /* 流程管理分隔线效果 */
 .flow-admin-item {
-  border-top: 1px solid var(--el-border-color-light);
+  border-top: 1px solid var(--cp-line-soft);
   margin-top: 4px;
 }
 
 .new-dialog-note {
   margin-top: 12px;
   font-size: 12px;
-  color: var(--el-text-color-placeholder);
+  color: var(--cp-faint);
 }
 </style>
