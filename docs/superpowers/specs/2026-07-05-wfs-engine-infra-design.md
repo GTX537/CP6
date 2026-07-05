@@ -54,6 +54,7 @@ public class Sys_WorkCalendar : BaseTenantEntity
 ```
 
 规则：`IsWorkday(date) = 例外表命中 ? 行.IsWorkday : (周一~周五)`。**日本法定假日 seed**：2026–2027 两年（元日/成人の日/建国記念の日/天皇誕生日/春分/昭和の日/憲法記念日/みどりの日/こどもの日/海の日/山の日/敬老の日/秋分/スポーツの日/文化の日/勤労感謝の日 + 振替休日），seed 幂等（(TenantId,Date) 去重），植入默认租户。
+**非默认租户防静默缺失**：无例外行的租户 workdays 按纯周末算，元旦审批照发没人会发现——管理页年历**空态提示**「本租户未维护假日日历」+「导入日本法定假日」按钮（复用 seed 逻辑，写当前租户）。
 
 ### §2.2 `WorkdayCalculator`（`CP6.Core/Services/Wf`，纯查询服务）
 
@@ -91,6 +92,8 @@ public interface IWorkdayCalculator
 - 删 `Wf_TriggerFire`：`FiredUtc < now - 保留期` 且（`InstanceId != null` 或 `Error != null`）——**未完成占坑行永不清**（timer 补跑依据）。
 - 保留期：`Wfs:CleanupRetentionDays` 默认 180；`<=0` = 禁用清理。
 - 分批删（每批 500，防长事务/锁表），每轮记 OperLog 一行（删除计数）。
+- **幂等窗口契约（spec 评审补）**：`Wf_TriggerFire` 既是审计也是幂等闸——清理即意味着 **message 端点的幂等保证窗口 = 保留期**（调用方拿 180 天前的 Idempotency-Key 重放会重复起单）；此契约写进 message 端点文档与波③ spec §3.4 呼应。timer/event 键含到期时刻/事件 Id 不会自然复现，不受影响。
+- **老化占坑告警**：`InstanceId` 与 `Error` 均空且超龄（> `Wfs:StaleReservationAlertDays` 默认 7 天）的占坑行永不清但**每轮 OperLog 记计数**——这是补跑 worker 持续失败的信号，非静默黑洞。
 
 ---
 
@@ -116,6 +119,7 @@ public class Wf_Connector : BaseTenantEntity
 ### §5.2 行为
 
 - 加密：`IDataProtectionProvider.CreateProtector("Wfs.Connector.Auth")`；管理页保存时加密、执行时解密；**读接口永不回显明文**（返回 `hasAuth: true` 掩码）。
+- **运维前提（plan 必核实项）**：DataProtection **密钥环必须持久化到共享存储**（现有部署的 `PersistKeysTo*` 配置现状）——否则换机/重建容器/多实例部署会使全部凭证密文不可解、所有租户连接器瘫痪。若现状未配置，密钥环持久化作为本波前置任务落地。
 - 解析（D5）：`WebApiExecutor` 按 Name 解析时**先查租户表**（Enabled 行 → 包装成动态 `DbWfConnector : IWfConnector`，HttpClient 走 `IHttpClientFactory`，超时=TimeoutSec）→ 未命中回落 app 级注册字典。目录端点（C-T3）同口径合并两源（租户行优先去重）。
 - **E-WF-028**：保存时校验 `TimeoutSec*1s ≥ 租约 LeaseDuration` 拒绝（波①票 3 启动护栏的保存时前移；app 级连接器仍靠启动护栏）。
 - 管理页：连接器 tab（列表/新建/编辑/启停；凭证输入即写不回显）。权限点沿波③ MenuAction 口径（`oa-flow-admin` 家族）。
@@ -124,6 +128,8 @@ public class Wf_Connector : BaseTenantEntity
 
 - **⑤**：`FlowNode` 加 `ServiceHttpMethod?`（GET/POST/PUT/DELETE，默认连接器口径）/ `ServiceTimeoutSec?`（POCO 零迁移）。`WebApiExecutor`：节点覆盖优先 → 连接器默认。节点 TimeoutSec 同受 E-WF-028 口径校验（静态：值域+上限；租约比对在保存时）。面板 webApi 段加两个可选输入。
 - **⑥**：`Sys_Tenant` 加 `TimeZoneId?`（IANA/Windows id，`TimeZoneInfo.FindSystemTimeZoneById` 可解析；迁移 `WfsInfra` 之三）。消费点：timer `untilDate`/`workdays` 与触发器 cron 的本地时刻解释——统一经新 `ITenantClock.GetTenantTimeZone()`（缺省 app 默认 `Wfs:DefaultTimeZone`，再缺省服务器时区）。租户管理页加时区下拉。**存量行为保持**：TimeZoneId null 时与现状完全一致。
+  - **时区变更自愈口径**：改时区**不批量重算**既有触发器的 NextDueUtc——下次发火后按新时区重算即自愈（最多一次旧时区发火，管理页保存时提示此口径）。
+  - **DST 口径**：cron 本地时刻落在 DST 跳过区间 → 取下一有效瞬间；落在重复区间 → 取首次出现。日本无 DST，但字段不限日本，口径写死防歧义。
 
 ---
 

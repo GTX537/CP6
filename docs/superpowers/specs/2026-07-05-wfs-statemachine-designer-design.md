@@ -31,7 +31,7 @@
 ## §1 现状锚点（逆向真实，不编造）
 
 - **设计器结构**：`cp6.web/src/views/oa/designer/`——`FlowDesigner.vue`（画布壳）/ `designerModel.ts`（schema↔VueFlow 图投影 `schemaToGraph`/`graphToSchema` + `validateClient`）/ `NodePropertyPanel.vue`（约 900 行，按节点类型分段）/ `EdgePropertyPanel.vue`。
-- **schema 形态**：`FlowSchema { nodes: FlowNode[], edges: FlowEdge[] }`（camelCase 序列化契约，C-T3 已核）；节点类型（三期后全集）：start / approval / condition? / parallelSplit / parallelJoin / inclusiveSplit / inclusiveJoin / serviceTask / subFlow / end（执行 plan 时以 handler 字典与 `designerModel.ts` 实际为准）。
+- **schema 形态**：`FlowSchema { nodes: FlowNode[], edges: FlowEdge[] }`（camelCase 序列化契约，C-T3 已核）；节点类型（三期后全集）：start / approval / condition? / parallelSplit / parallelJoin / inclusiveSplit / inclusiveJoin / serviceTask / subFlow / end（执行 plan 时以 handler 字典与 `designerModel.ts` 实际为准；**condition 若确为独立节点类型，plan 侦察时一并敲定其 State 表行表示——类型列显示/是否可编辑——且 capability 检测不得遗漏**）。
 - **审批人配置面**：approval 节点 8 策略 + When/Filter + 串签 stages + 会签 countersign——State 表行内编辑复用 `NodePropertyPanel` 的既有分段控件（抽子组件复用，不复制粘贴）。
 - **参照文件**：`docs/oa/WFS/流程编辑器-离线版.html`（State/Path 表格范式来源）。
 - **umbrella §1.5.2**：Sign Records 弹窗 = `Wf_FlowFormTo` 时间线——State 编号（FunctionId/FlowCode 家族，`Wf_FlowDef` 相关）与 Delta 2887 式人面编号的对应关系在 umbrella §2.7。
@@ -60,14 +60,16 @@ interface SmPath  { fromNo: number; toNo: number; condition?: string; isError?: 
 interface SmView  { states: SmState[]; paths: SmPath[]; capability: 'editable' | 'readonly' }
 ```
 
-- **状态编号 no**：从 start 拓扑序生成（start=0，end=最大），只是**视图内行号**（Delta 心智锚点），不持久化、不进 schema——nodeId 仍是权威身份。
+- **状态编号 no**：**start 起 BFS、visited 截断**的确定性行号（start=0；同层按出边声明序；end 恒排最末）——不是纯拓扑序：editable 范围含条件边且条件边可回跳成环（二期 hardening §5.1 明确承认环存在），有环时拓扑序不存在。回跳边在 Path 表照常显示（表现为 fromNo > toNo 的行）。编号只是**视图内行号**（Delta 心智锚点），不持久化、不进 schema——nodeId 仍是权威身份。含回跳边 schema 的投影稳定性入 round-trip 测试矩阵。
 - **capability 检测**（D2）：schema 含 `parallelSplit/parallelJoin/inclusiveSplit/inclusiveJoin` 节点，或 subFlow 节点 `SubCollectionVar` 非空（多实例）→ `readonly`；否则 `editable`。serviceTask/单实例 subFlow/条件边/错误边都可编辑（线性链上的自动化步骤是 Delta 心智内的）。
 - **双向投影**：`editable` 时 `stateMachineToSchema` 以 baseSchema 为底，按表格增删改合成新 schema（节点坐标：新增状态自动布局在链尾/插入点中点，图形模式切回后可再手排；既有节点坐标原样保留）。`readonly` 时不提供反向。
 - **round-trip 不变量**：`editable` schema → SmView → schema′，除坐标外语义等价（节点/边/全部配置字段深比较）——vitest 锁定。
 
 ### §2.3 模式切换
 
-`FlowDesigner.vue` 顶部加分段开关「图形 / 状态机」：切换即投影（同一内存 schema，无需保存）；localStorage 记忆（D4）；`readonly` schema 切入状态机时横幅提示 + 表格禁编辑（查看/跳转仍可用）。保存按钮两模式共用（状态机模式保存前先 `stateMachineToSchema` 合成，走同一 save + validateClient）。
+`FlowDesigner.vue` 顶部加分段开关「图形 / 状态机」：localStorage 记忆（D4，**每浏览器**口径——共用机器会串，QA 按每浏览器验，不按每用户）；`readonly` schema 切入状态机时横幅提示 + 表格禁编辑（查看/跳转仍可用）。
+
+**编辑落点（spec 评审写死，决定 M-C 数据流架构）：write-through**——状态机模式的每次表格编辑**即时** `stateMachineToSchema` 合成回同一内存 schema（单一事实源永远是 schema，SmView 是派生视图），模式切换**永远无损**；否决「保存时才合成」（切模式即丢未保存编辑，bug 类）。保存按钮两模式共用（内存 schema 已是最新，走同一 save + validateClient）。
 
 ---
 

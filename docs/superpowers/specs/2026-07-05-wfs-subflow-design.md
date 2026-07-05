@@ -26,7 +26,7 @@
 | D2 | 子驳回/撤回传播 = **错误边优先，无边则传播**：父 subFlow 节点挂 IsError 边→沿错误边路由；无→父实例驳回（父节点在并行支内时受二期 `onBranchReject` 剪枝配置管辖，两期语义自动组合） | 与 serviceTask 错误路由同构，设计器心智统一 |
 | D3 | **动态多实例一并做**：`SubCollectionVar` 集合变量展开 N 并行子实例 + 完成策略 all/any | 用户选项确认 |
 | D4 | 回指用**正式列**：`Wf_FlowInstance.ParentInstanceId/ParentTokenId`（一次迁移 `WfsSubFlow`），不借用 BizType/BizId | 保持业务单据绑定语义纯净 |
-| D5 | 终态回注挂 **`DispatchIfFinished` 接缝**（SaveChanges 前原子）——与业务终态分发同一原子窗口 | 引擎原子接缝铁律（内核既有不变量） |
+| D5 | 终态回注采用**入队-复核两段式**（spec 评审 2026-07-05 修订）：子终态的 SaveChanges 窗口内只做「原子入队 `subFlowResume` 内部 job」（复用 `Wf_ServiceJob`，唤醒凭据与子终态同事务持久化，crash-safe）；组计票+回注+父 token 恢复+推进全部在**提交后复核**阶段执行（fast path 同请求立即复核 + worker 兜底扫描），恢复动作经父实例 RowVersion 乐观并发 + 停泊状态闸保证恰一次 | 原「同窗口计票」在两个并发 web 请求各审一个子实例时跨事务互不可见：all 策略双双认为未齐→无人恢复（丢唤醒）、any 策略双双自认首个→双恢复。窗口内只入队亦满足「原子接缝内零外呼」铁律 |
 
 ---
 
@@ -85,30 +85,42 @@ public int? SubIndex { get; set; }
 
 OnEnter：
 1. 解析配置（校验层已保证合法，防御式复检 E-WF-025）。
-2. 集合解析：`SubCollectionVar` null → 单实例（N=1）；否则从父 `inst.VarsJson` 取 JSON 数组，N=长度（**N=0 → 视为空集完成**：与完成策略无关，直接恢复父 token 沿非错误出边前进、不回注，历史记 "subFlowEmptyCollection"——不发起任何子实例，不算错误）。
+2. 集合解析：`SubCollectionVar` null → 单实例（N=1）；否则从父 `inst.VarsJson` 取 JSON 数组，N=长度（**N=0 → 视为空集完成**：与完成策略无关，直接恢复父 token 沿非错误出边前进、不回注，历史记 "subFlowEmptyCollection"——不发起任何子实例，不算错误）。**N 上限**：`Wfs:SubFlowMaxInstances`（app 配置，默认 100），超出 → 运行时 E-WF-025 走错误处置（防一个事务起 5000 子实例）。
+   **版本绑定口径**：子实例用 `SubmitAsync` 既有口径＝**发起时刻该 FlowKey 的最新已发布版本**；防环 DFS（§5）遍历的也是**校验时刻的当前已发布版本**——环检测是保存时快照，后续发布可能引入新环，由运行时深度守卫兜底。
 3. 逐 i∈[0,N)：构造子 varsJson =（`SubVarsInJson` 映射自父 vars）∪ `{"item": 集合[i], "itemIndex": i}`（单实例无 item 键）→ `SubmitAsync(SubFlowKey, 父inst.StarterId, 子varsJson)` → 新子实例回填 `ParentInstanceId/ParentTokenId/SubIndex`。撞 `(ParentTokenId,SubIndex)` 唯一键 → 幂等跳过（停泊重入）。
 4. 父 token 停泊（不 Advance），AddHistory("subFlowStarted", 记 N 与子实例 Id 列表)。
 
 **深度守卫**：Submit 前沿 `ParentInstanceId` 链上溯计数，≥ 8 层 → 抛 E-WF-026（运行时兜底；静态防环见 §5）。
 
-### §3.2 终态回注 `ResumeSubFlowParentAsync`（挂 `DispatchIfFinished`）
+### §3.2 终态回注——入队-复核两段式（D5 修订版）
 
-子实例进终态且 `ParentInstanceId != null` 时，在**同一 SaveChanges 窗口**内调用：
+**为什么不能同窗口计票**：两个子实例在两个并发 web 请求里同时被审批时，两个事务互相看不见对方未提交的终态——all 策略下双方都读到「未齐」谁也不恢复（丢唤醒）；any 策略下双方都自认首个 Approved 双双恢复（双恢复）。「DB+Local+身份映射」只对同一 SaveChanges 窗口内有效，状态闸读后写在并发事务下拦不住。
 
-1. 取同 `ParentTokenId` 的全部子实例组，按 `SubCompletionPolicy` 计票：
+**第一段（子终态事务窗口内，挂 `DispatchIfFinished`）**：子实例进终态且 `ParentInstanceId != null` → 仅**原子入队**一条 `Wf_ServiceJob`（内部 Kind=`subFlowResume`，载荷=ParentTokenId；与子终态同一 SaveChanges 持久化）。唤醒凭据落库即 crash-safe——丢唤醒在机制上不可能。窗口内零计票、零推进、零外呼（铁律相容）。
+
+**第二段（提交后复核 `CheckSubFlowGroupAsync(parentTokenId)`，幂等，两个入口共用）**：
+- **fast path**：子终态请求提交成功后、同请求内立即调用一次（保低延迟，审批完成即时推进）。
+- **兜底**：`WfServiceJobScanWorker` 扫到未完成 `subFlowResume` job 时调用同一方法（fast path 与提交之间进程崩溃的闭环）。fast path 成功时顺手把 job 标 Succeeded；worker 迟到看见已完成 → 状态闸零动作。
+
+复核逻辑：
+
+1. 重读（已提交数据）同 `ParentTokenId` 的全部子实例组，按 `SubCompletionPolicy` 计票：
 
 | 策略 | 恢复条件 | 错误处置条件 | 附带动作 |
 |---|---|---|---|
 | **all**（默认） | 全部 Approved | **任一** Rejected/Withdrawn | 错误处置时级联取消其余在途子实例 |
 | **any** | **首个** Approved | **全部** Rejected/Withdrawn | 恢复时级联撤回其余在途子实例 |
 
-2. **恢复路径**：按 `SubVarsOutJson` 回注父 vars（多实例=按 SubIndex 聚合为数组；any=仅首个 Approved 的值）→ 恢复父 token `AdvanceToken` 沿非错误出边继续。幂等：父 token 已非停泊态（已恢复/已取消）→ 零动作返回（与 `ResumeServiceTokenAsync` 同款状态闸）。
+2. **恢复路径**：按 `SubVarsOutJson` 回注父 vars（多实例=按 SubIndex 聚合为数组；any=仅首个 Approved 的值）→ 恢复父 token `AdvanceToken` 沿非错误出边继续。
 3. **错误处置路径**（D2）：错误变量注入父 vars（`subFlowError`: 触发子实例 Id/终态/SubIndex）→ 父节点有 IsError 出边 → `AdvanceAlongErrorEdge`；无 → 父实例驳回（走既有驳回语义；父节点在并行支内时由二期 `onBranchReject` 决定剪枝或连坐——本 spec 零新增逻辑，语义自动组合）。
-4. 计票口径防竞态：同窗口两子实例同时终态——计票基于 DB+Local 全量子实例组状态（EF 身份映射），后到者看见先到者已把父 token 恢复/取消 → 状态闸零动作。
+4. **恰一次保证**（any 双恢复的闭合）：恢复/错误处置动作提交时经**父实例 RowVersion 乐观并发**（回注本就写实例 VarsJson 行）；并发复核撞 RowVersion → 重读 → 停泊状态闸（父 token 已非停泊态 → 零动作）。丢唤醒由第一段的原子入队闭合——两个并发子终态各自入队各自复核，后提交者的复核必然看见完整组状态。
+5. 推进（AdvanceToken）触发的通知、孙 subFlow 递归、同步 serviceTask 等都发生在复核阶段自己的事务里，走各自既有机制——与「原子接缝内零外呼」铁律的边界即「第一段窗口内只入队」。
 
-### §3.3 级联取消
+### §3.3 级联取消（三条路径，缺一即孤儿）
 
 - **父实例终止**（驳回/撤回/被更上层级联）：清场路径追加「递归级联取消在途子实例」——子实例走既有撤回语义（`Withdrawn` + 清场 + 其 pending 待办作废），子实例自己的子实例递归。级联产生的 `Withdrawn` **不再向父回注**（父已终态，回注入口检查父实例状态闸）。
+- **父 token 死亡但父实例存活**（spec 评审 2026-07-05 补，二期语义下真实存在）：兄弟分支剪枝把停泊 subFlow token 置 `Pruned`、SameBranch 退回把它 `Cancelled`——这两条**token 级清场路径不走实例终止清场**，若不处理则在途子实例成孤儿（用户继续办一个结果注定进状态闸黑洞的子流程）。**接缝**：二期 `CancelTokenSubtree`（H-C）的清理职责从「token+任务+FormTo+Pending ServiceJob 四清」扩展为**五清**——第五项=命中「停泊 subFlow token」时级联取消其子实例组（同上撤回语义，递归）；剪枝路径（H-B）经由同一工具/钩子，天然覆盖。落码顺序不敏感：二期先落地则本 spec 的 S-C 波在 CancelTokenSubtree 加第五清；若将来出现绕过该工具的新清场路径，须同步审视本接缝（写入两处代码注释互指）。
+- **退回重生防双批**：SameBranch 退回后重生 token 是新 tokenId，重入 subFlow 节点时 `(ParentTokenId,SubIndex)` 唯一键**按设计不撞**（ParentTokenId 已变）——新批照常起；旧批已在上一条路径中被级联取消，**不存在新旧并跑**。此口径依赖上一条落实，测试矩阵含定点用例。
 - **子实例被用户手工撤回**：等价子终态 Withdrawn → 走 §3.2 计票（all=触发错误处置；any=计入全驳判定）。
 
 ---
@@ -149,7 +161,8 @@ OnEnter：
 - **多实例**：N=3 all 全过回注数组 / all 任一驳触发错误处置+级联取消兄弟 / any 首过恢复+级联撤回其余 / any 全驳才错误处置 / N=0 空集直通 / 集合非数组 E-WF-025。
 - **组合语义**：父 subFlow 节点在并行支内 + 无错边 + 子驳 → 外层 `onBranchReject=prune` 时剪父支不连坐（二期语义组合的定点测试）。
 - **级联**：父撤回→子递归取消且不回注 / 三层嵌套级联 / 深度 8 守卫 E-WF-026 / 保存时环检测。
-- **幂等/竞态**：停泊重入不重复起子（唯一键）/ 双子同窗终态计票一次 / 父 token 已恢复后迟到回注零动作。
+- **幂等/竞态（§3.2 两段式的定点矩阵）**：停泊重入不重复起子（唯一键）/ **跨事务并发双子终态**：all 不丢唤醒（双入队后至少一次复核见全齐）、any 不双恢复（RowVersion 撞→状态闸零动作）/ fast path 与 worker 兜底各自幂等、fast path 前进程崩溃由 job 兜底补唤醒 / 父 token 已恢复后迟到复核零动作 / N 超上限 E-WF-025 错误处置。
+- **token 级级联（§3.3 定点）**：剪枝停泊 subFlow token → 子实例组级联取消 / SameBranch 退回 → 旧批取消+重入起新批无并跑 / CancelTokenSubtree 五清含子实例。
 - **QA harness**：gstack 剧本（设计器配 subFlow+映射+多实例、父子收件箱互链走查、驳回传播实况）。
 - 基线：后端全绿 +N；前端 vitest/type-check/build 全绿；EF 迁移恰一次 `WfsSubFlow`。
 
@@ -158,8 +171,8 @@ OnEnter：
 ## §8 分期 / 任务波次（供 writing-plans 细化）
 
 - **S-A 数据模型**：FlowNode POCO + 迁移（回指三列+索引）+ 常量/防重键。
-- **S-B handler + 回注**：SubFlowNodeHandler + ResumeSubFlowParentAsync + 计票 + 错误处置 + 深度守卫。
-- **S-C 级联**：父终止递归级联 + 手工撤回入计票。
+- **S-B handler + 两段式回注**：SubFlowNodeHandler（含 N 上限）+ 第一段原子入队（`Wf_ServiceJob` 内部 Kind=`subFlowResume`）+ 第二段 `CheckSubFlowGroupAsync`（fast path + worker 兜底共用，RowVersion 乐观并发+状态闸）+ 计票 + 错误处置 + 深度守卫。**plan 核实项**：`Wf_FlowInstance` RowVersion 列/触发器现状（QA harness 迹象表明已有，需确证）；`WfServiceJobScanWorker` 对内部 Kind 的分发点。
+- **S-C 级联三路径**：父终止递归级联 + **CancelTokenSubtree 第五清（停泊 subFlow token → 子实例组级联，接缝见 §3.3）** + 退回重生防双批定点测试 + 手工撤回入计票。
 - **S-D 校验**：E-WF-025/026 双层 + validateClient 镜像。
 - **S-E 设计器 + 收件箱**：palette/面板/round-trip + 父子互链。
 - **S-F i18n + QA**：五语 seed + harness + DoD。
