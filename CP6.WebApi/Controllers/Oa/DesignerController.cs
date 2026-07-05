@@ -33,6 +33,10 @@ public class DesignerController : LocalizedControllerBase
     public async Task<IActionResult> List([FromQuery] string? functionId)
         => Ok2(await _designer.ListAsync(functionId));
 
+    [HttpGet("service-catalog")]
+    public IActionResult ServiceCatalog()
+        => Ok2(_designer.GetServiceCatalog());   // P1-6：按 Kind/VisibleInDesigner 过滤的回写动作 + 连接器
+
     [HttpGet("load/{flowKey}")]
     public async Task<IActionResult> Load(string flowKey)
     {

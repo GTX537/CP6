@@ -13,7 +13,8 @@ public class DesignerServiceTests
     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
-    private static IDesignerService Svc(CP6Context db) => new DesignerService(db, new FlowDefService(db));
+    private static IDesignerService Svc(CP6Context db) => new DesignerService(db, new FlowDefService(db),
+        Array.Empty<IServiceTaskExecutor>(), Array.Empty<IWfConnector>());
 
     private static string ValidSchema() => JsonSerializer.Serialize(new FlowSchema
     {

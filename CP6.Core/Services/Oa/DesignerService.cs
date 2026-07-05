@@ -1,6 +1,8 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wf;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 
 namespace CP6.Core.Services.Oa;
@@ -10,7 +12,20 @@ public class DesignerService : IDesignerService
     private static readonly JsonSerializerOptions JsonOpts = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = true };
     private readonly CP6Context _db;
     private readonly IFlowDefService _flowDef;
-    public DesignerService(CP6Context db, IFlowDefService flowDef) { _db = db; _flowDef = flowDef; }
+    private readonly IEnumerable<IServiceTaskExecutor> _execs;
+    private readonly IEnumerable<IWfConnector> _connectors;
+    public DesignerService(CP6Context db, IFlowDefService flowDef,
+        IEnumerable<IServiceTaskExecutor> execs, IEnumerable<IWfConnector> connectors)
+    {
+        _db = db; _flowDef = flowDef; _execs = execs; _connectors = connectors;
+    }
+
+    /// <summary>P1-6 服务目录：actions 只含 Kind==dataWriteback 且 VisibleInDesigner 的执行器
+    /// （WebApiExecutor 被排除）；connectors 含全部注册连接器。每项 {name, label(DisplayName)}。</summary>
+    public ServiceCatalog GetServiceCatalog() => new(
+        _execs.Where(e => e.Kind == ServiceKind.DataWriteback && e.VisibleInDesigner)
+              .Select(e => new ServiceCatalogItem(e.Key, e.DisplayName)).ToList(),
+        _connectors.Select(c => new ServiceCatalogItem(c.Name, c.DisplayName)).ToList());
 
     public async Task<IReadOnlyList<FlowDefSummary>> ListAsync(string? functionId = null)
     {
