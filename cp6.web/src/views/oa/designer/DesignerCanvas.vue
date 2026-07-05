@@ -341,7 +341,7 @@ function focusNode(nodeId: string) {
         <!-- Palette node types -->
         <div
           v-for="item in NODE_PALETTE"
-          :key="item.type"
+          :key="item.label"
           class="palette-item"
           draggable="true"
           @dragstart="onPaletteDragStart($event, item.type)"

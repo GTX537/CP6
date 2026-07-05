@@ -49,7 +49,7 @@ export interface SchemaNode {
   servicePath?: string                                 // webApi：路径
   serviceParamsJson?: string
   serviceDelayMode?: string                            // timer：固定/相对
-  serviceDelayValue?: number                           // timer：延时值
+  serviceDelayValue?: string                           // timer：延时值（镜像后端 string? ServiceDelayValue，承载 "3d"/"PT2H"/日期串）
   serviceMaxRetries?: number
   serviceRetryBackoffSec?: number
   x?: number; y?: number
