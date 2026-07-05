@@ -136,6 +136,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobScan
 // C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.SampleDataWritebackExecutor>(); // C-T2 样例 dataWriteback 执行器（设计器可见，黄金模板；纯计算回写，不落库）
 
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
