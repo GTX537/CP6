@@ -729,6 +729,21 @@ describe('CpListPage', () => {
 
 - **QuotationList 原 `@row-dblclick→照会` 手势丢失**（#21 家族既知限制，不另立新号）：CpListPage 无行激活钩子（行选择/行激活系事件缺口与 #16 行内按钮代偿、#21 @current-change 未透传同族）。照会仍在操作列一键可达，能力未丢，仅双击快捷手势降级——与批次2 EstimateCalc 同处置（row-dblclick→操作列集约）。
 
+### OA 迁移批次1 复盘（Milestone C 首模块，编号接续，从 #23 起）
+
+批次1（FlowAdmin/ApproverMapView/FormCatalog/FormInitiate/FormQuery）迁移完成，真栈验收通过（tests 316 保持）。分类与处置：
+- **FlowAdmin**=CpPageShell+CpListPage（`paginated=false` 单表全量、`col-enable` 行内 el-switch 启停守卫+乐观回滚、切换后 reload 反映服务端互斥、`@total-change`→计数 pill），scoped style 归零。
+- **FormQuery**=**特殊页保留原机制**（见下 #23）：仅无损基础件替换（el-tag→CpTag 附 instanceStatusTone 对齐 inboxModel、el-empty→CpEmpty），保留原 el-card 查询区 + el-table + 详情抽屉。
+- **FormCatalog / FormInitiate**=非表格特殊页 token 化（`--el-*`→`--cp-*`：line-soft/ink/muted；el-empty→CpEmpty），不强套模板。
+- **ApproverMapView**=行内编辑表格（inline el-input 行），特殊页 token 化：内联 style 提取为 class + `.tcard` 卡壳用 `--cp-card/--cp-r-md/--cp-shadow-1`。
+
+本批新增模板缺口 1 项：
+
+23. **CpFilterBar select 不支持 remote 远程搜索选项（异步 autocomplete）**（FormQuery 触发）
+   - 页面需要：FormQuery 的「发起人 / 处理人」两个查询字段是 `el-select filterable remote :remote-method`——随键盘输入调 `userApi.getList` 异步拉候选，非静态枚举。
+   - 模板缺：`FilterField` 的 `type:'select'` 只接受静态 `options[]`，无 `remote`/`remoteMethod`/`loading` 透传；若强改 CpFilterBar 会丢失用户远程搜索能力。加之本页还有 daterange+关键词共 6 字段、行点击→抽屉详情，整体判为「特殊页保留原机制保功能」，未强套 CpListPage/CpFilterBar（与 LocationList master-detail 保留同处置逻辑）。
+   - 建议契约扩展：`FilterField` 增可选 `remote?: boolean` + `remoteMethod?: (q:string)=>void` + `loading?: boolean`（或 `asyncOptions` 加载器），让远程搜索选择列也能声明式落入 CpFilterBar。
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

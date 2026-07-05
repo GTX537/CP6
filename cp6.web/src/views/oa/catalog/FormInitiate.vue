@@ -25,11 +25,7 @@
             :schema="schema"
             v-model="model"
           />
-          <el-empty
-            v-else
-            :image-size="60"
-            :description="t('oa.initiate.noFields')"
-          />
+          <CpEmpty v-else :text="t('oa.initiate.noFields')" />
         </el-col>
 
         <!-- RIGHT: forecast timeline (shown after preview) -->
@@ -71,6 +67,7 @@ import { forecastApi } from '@/api/oa/forecast'
 import { draftApi } from '@/api/oa/draft'
 import type { FormSchema } from '@/types/wf/wf'
 import type { ForecastStep, FlowAdminItem } from '@/types/oa/inbox'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import DynamicForm from '@/views/wf/DynamicForm.vue'
 import FlowTimeline from '@/views/oa/inbox/FlowTimeline.vue'
 
@@ -208,10 +205,10 @@ onMounted(load)
 .panel-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--el-text-color-primary);
+  color: var(--cp-ink);
   margin-bottom: 10px;
   padding-bottom: 6px;
-  border-bottom: 1px solid var(--el-border-color-light);
+  border-bottom: 1px solid var(--cp-line-soft);
 }
 
 .form-col {
@@ -219,7 +216,7 @@ onMounted(load)
 }
 
 .timeline-col {
-  border-left: 1px solid var(--el-border-color-light);
+  border-left: 1px solid var(--cp-line-soft);
   padding-left: 8px;
   overflow-y: auto;
   max-height: calc(100vh - 220px);
@@ -231,6 +228,6 @@ onMounted(load)
   gap: 10px;
   padding: 14px 0 4px;
   margin-top: 16px;
-  border-top: 1px solid var(--el-border-color-light);
+  border-top: 1px solid var(--cp-line-soft);
 }
 </style>

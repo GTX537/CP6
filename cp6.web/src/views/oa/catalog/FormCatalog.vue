@@ -69,11 +69,7 @@
       </el-collapse-item>
     </el-collapse>
 
-    <el-empty
-      v-else-if="!loading"
-      :image-size="80"
-      :description="t('oa.catalog.empty')"
-    />
+    <CpEmpty v-else-if="!loading" :text="t('oa.catalog.empty')" />
   </div>
 </template>
 
@@ -82,6 +78,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Star, StarFilled } from '@element-plus/icons-vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import { catalogApi } from '@/api/oa/catalog'
 import type { CatalogNode, FormCard } from '@/types/oa/advanced'
 
@@ -152,11 +149,12 @@ onMounted(load)
 .section-title {
   font-weight: 600;
   font-size: 14px;
+  color: var(--cp-ink);
 }
 
 .catalog-collapse {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 4px;
+  border: 1px solid var(--cp-line-soft);
+  border-radius: var(--cp-r-md);
 }
 
 .sub-section {
@@ -165,7 +163,7 @@ onMounted(load)
 
 .sub-label {
   font-size: 12px;
-  color: var(--el-text-color-secondary);
+  color: var(--cp-muted);
   font-weight: 500;
   margin-bottom: 8px;
   padding-left: 2px;
