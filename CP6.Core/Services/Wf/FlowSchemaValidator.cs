@@ -6,6 +6,10 @@ public static class FlowSchemaValidator
     private static readonly HashSet<string> KnownStrategies =
         new(new[] { "DirectManager", "DeptLeader", "Role", "Specified", "Starter", "FormField", "DataMap", "Group" }, StringComparer.OrdinalIgnoreCase);
 
+    // 服务任务合法 kind：引擎按 ServiceKind 常量精确匹配(ServiceTaskNodeHandler)，此处同用序数比较以对齐运行期语义。
+    private static readonly HashSet<string> KnownServiceKinds =
+        new(new[] { ServiceKind.DataWriteback, ServiceKind.WebApi, ServiceKind.Timer }, StringComparer.Ordinal);
+
     public static IReadOnlyList<string> Validate(FlowSchema schema)
     {
         var errs = new List<string>();
@@ -74,6 +78,26 @@ public static class FlowSchemaValidator
             if (schema.Edges.Count(e => e.From == n.Id) < 2) { errs.Add("E-WF-010"); break; }
         foreach (var n in schema.Nodes.Where(n => T(n) == "paralleljoin"))
             if (schema.Edges.Count(e => e.To == n.Id) < 2) { errs.Add("E-WF-010"); break; }
+
+        // ⑧ 服务任务节点配置完整性(E-WF-016) + 非 end 须有成功出边(P2-3)。
+        //    kind 非法 / dataWriteback 缺 ActionName / webApi 缺 Connector|Path / timer 缺 DelayMode|DelayValue → E-WF-016。
+        //    serviceTask 必非 end，若无任何"非错误"出边则成功路径无后继(引擎会误结 Approved) → E-WF-016。
+        foreach (var n in schema.Nodes.Where(n => T(n) == "servicetask"))
+        {
+            var kind = (n.ServiceKind ?? string.Empty).Trim();
+            bool bad =
+                !KnownServiceKinds.Contains(kind)
+                || (kind == ServiceKind.DataWriteback && string.IsNullOrWhiteSpace(n.ServiceActionName))
+                || (kind == ServiceKind.WebApi && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
+                || (kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(n.ServiceDelayMode) || string.IsNullOrWhiteSpace(n.ServiceDelayValue)))
+                || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
+            if (bad) { errs.Add("E-WF-016"); break; }
+        }
+
+        // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边仅允许出自 serviceTask 节点。
+        var serviceIds = schema.Nodes.Where(n => T(n) == "servicetask").Select(n => n.Id).ToHashSet();
+        if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
+        if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
 
         // ④ 从 start 可达某 end（BFS）
         var start = schema.Nodes.FirstOrDefault(n => T(n) == "start");

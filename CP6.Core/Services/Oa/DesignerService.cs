@@ -48,6 +48,22 @@ public class DesignerService : IDesignerService
         var schemaErrs = FlowSchemaValidator.Validate(schema);
         if (schemaErrs.Count > 0) throw new InvalidOperationException(schemaErrs[0]);
 
+        // ①b 服务任务引用注册名校验(E-WF-018)：dataWriteback 的 ActionName 须命中 Kind==dataWriteback 的执行器 Key；
+        //     webApi 的 ConnectorName 须命中连接器 Name。缺名属 E-WF-016(上一步已拦)，此处只查"引用了但未注册"。
+        var actionKeys = _execs.Where(e => e.Kind == ServiceKind.DataWriteback)
+            .Select(e => e.Key).ToHashSet(StringComparer.Ordinal);
+        var connNames = _connectors.Select(c => c.Name).ToHashSet(StringComparer.Ordinal);
+        foreach (var n in schema.Nodes.Where(n =>
+            string.Equals((n.Type ?? string.Empty).Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)))
+        {
+            if (n.ServiceKind == ServiceKind.DataWriteback && !string.IsNullOrWhiteSpace(n.ServiceActionName)
+                && !actionKeys.Contains(n.ServiceActionName))
+                throw new InvalidOperationException("E-WF-018");
+            if (n.ServiceKind == ServiceKind.WebApi && !string.IsNullOrWhiteSpace(n.ServiceConnectorName)
+                && !connNames.Contains(n.ServiceConnectorName))
+                throw new InvalidOperationException("E-WF-018");
+        }
+
         // ② 身份码租户内唯一（排除自身 FlowKey）
         if (!string.IsNullOrWhiteSpace(req.FunctionId) &&
             await _db.Wf_FlowDefs.AnyAsync(d => d.FunctionId == req.FunctionId && d.FlowKey != req.FlowKey))
