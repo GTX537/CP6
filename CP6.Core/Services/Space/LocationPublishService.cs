@@ -4,6 +4,7 @@ using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Space;
 
@@ -43,42 +44,57 @@ public class LocationPublishService : ILocationPublishService
     /// <inheritdoc/>
     public async Task<int> PublishFloorAsync(Guid floorId, Guid? zoneId, string? user)
     {
-        // 1. 闸门（ch03 §9.2）
-        var pre = await _code.PrecheckAsync(floorId);
-        if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
-            throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
-
-        // 2. 取 Status=0 且编码就绪的库位
-        var locs = await _db.Space_Locations
-            .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null)
-            .ToListAsync();
-
-        if (locs.Count == 0) return 0;
-
-        // 3. 批号（D-E）
-        var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
-        var batchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}";
-
-        // 4. 翻状态 + 升版 + 组载荷
-        var batch = new LocationPublishBatch
+        // InMemory 安全事务守卫（惯例见 SceneService）：真库开事务，InMemory 降级无事务。
+        // 事务范围＝闸门→翻状态→WMS 消费(T_WmsBin 写入)→事件落库，全部同库原子提交，
+        // 修复"翻了状态但事件静默丢失"的窗口（同一 CP6Context 实例，hook 内 SaveChanges 同事务）。
+        IDbContextTransaction? tx = _db.Database.IsRelational()
+            ? await _db.Database.BeginTransactionAsync()
+            : null;
+        try
         {
-            BatchNo = batchNo,
-            TenantId = _t.CurrentTenantId,  // DTO 字段，不被 EF 盖章，必须显式赋值
-            PublishedBy = user
-        };
-        foreach (var l in locs)
-        {
-            l.Status = 1;
-            l.Version += 1;
-            l.Modifier = user;
-            l.ModifyDate = DateTime.Now;
-            batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
+            // 1. 闸门（ch03 §9.2）
+            var pre = await _code.PrecheckAsync(floorId);
+            if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
+                throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
+
+            // 2. 取 Status=0 且编码就绪的库位
+            var locs = await _db.Space_Locations
+                .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null)
+                .ToListAsync();
+
+            if (locs.Count == 0) return 0;
+
+            // 3. 批号（D-E）
+            var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
+            var batchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}";
+
+            // 4. 翻状态 + 升版 + 组载荷
+            var batch = new LocationPublishBatch
+            {
+                BatchNo = batchNo,
+                TenantId = _t.CurrentTenantId,  // DTO 字段，不被 EF 盖章，必须显式赋值
+                PublishedBy = user
+            };
+            foreach (var l in locs)
+            {
+                l.Status = 1;
+                l.Version += 1;
+                l.Modifier = user;
+                l.ModifyDate = DateTime.Now;
+                batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
+            }
+            await _db.SaveChangesAsync();
+
+            // 5. 发事件（hook 内部吞消费异常→Failed 事件落库，由 Worker 重试；不影响本事务提交）
+            await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+
+            if (tx != null) await tx.CommitAsync();
+            return locs.Count;
         }
-        await _db.SaveChangesAsync();
-
-        // 5. 发事件
-        await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
-        return locs.Count;
+        finally
+        {
+            if (tx != null) await tx.DisposeAsync();   // 未 Commit 即 Dispose = 回滚
+        }
     }
 
     /// <inheritdoc/>
