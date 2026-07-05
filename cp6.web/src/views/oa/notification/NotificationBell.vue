@@ -194,10 +194,10 @@ onUnmounted(() => {
 }
 .bell-btn {
   padding: 4px 6px;
-  color: #606266;
+  color: var(--cp-muted);
 }
 .bell-btn:hover {
-  color: #409eff;
+  color: var(--cp-brand);
 }
 
 /* Popover 内容 */
@@ -214,7 +214,7 @@ onUnmounted(() => {
 .notify-panel-title {
   font-weight: 600;
   font-size: 14px;
-  color: #303133;
+  color: var(--cp-ink);
 }
 
 /* 空状态 */
@@ -224,12 +224,12 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 24px 0;
-  color: #909399;
+  color: var(--cp-muted);
   font-size: 13px;
   gap: 8px;
 }
 .notify-empty-icon {
-  color: #dcdfe6;
+  color: var(--cp-faint);
 }
 
 /* 加载 */
@@ -237,7 +237,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   padding: 24px 0;
-  color: #409eff;
+  color: var(--cp-brand);
 }
 .is-loading {
   animation: rotating 1.5s linear infinite;
@@ -260,21 +260,21 @@ onUnmounted(() => {
   align-items: flex-start;
   gap: 8px;
   padding: 10px 4px;
-  border-radius: 6px;
+  border-radius: var(--cp-r-sm);
   cursor: pointer;
   transition: background 0.15s;
 }
 .notify-item:hover {
-  background: #f5f7fa;
+  background: var(--cp-bg-hover);
 }
 .notify-item + .notify-item {
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--cp-line-soft);
 }
 .notify-item.is-unread {
-  background: #f0f7ff;
+  background: var(--cp-brand-bg);
 }
 .notify-item.is-unread:hover {
-  background: #e8f3ff;
+  background: color-mix(in srgb, var(--cp-brand) 14%, var(--cp-card));
 }
 
 /* 未读小圆点 */
@@ -283,7 +283,7 @@ onUnmounted(() => {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #409eff;
+  background: var(--cp-brand);
   margin-top: 5px;
 }
 
@@ -293,14 +293,14 @@ onUnmounted(() => {
 }
 .notify-item-title {
   font-size: 13px;
-  color: #303133;
+  color: var(--cp-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .notify-item-time {
   font-size: 11px;
-  color: #909399;
+  color: var(--cp-muted);
   margin-top: 2px;
 }
 </style>
