@@ -22,19 +22,22 @@ public class LocationPublishService : ILocationPublishService
     private readonly ICodeEngineService _code;
     private readonly ISpaceBridgeHook _hook;
     private readonly IWmsStockQuery _stock;
+    private readonly IWmsBinDeactivator _deactivator;
 
     public LocationPublishService(
         CP6Context db,
         ITenantContext t,
         ICodeEngineService code,
         ISpaceBridgeHook hook,
-        IWmsStockQuery stock)
+        IWmsStockQuery stock,
+        IWmsBinDeactivator deactivator)
     {
         _db = db;
         _t = t;
         _code = code;
         _hook = hook;
         _stock = stock;
+        _deactivator = deactivator;
     }
 
     /// <inheritdoc/>
@@ -86,13 +89,28 @@ public class LocationPublishService : ILocationPublishService
         if (l.Status != 1)
             throw new InvalidOperationException("E-SPACE-004: 库位未处于已发布状态");
 
-        // D6 前置校验：查 WMS 库存
+        // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①）
         var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "");
         if (qty > 0)
             throw new InvalidOperationException("E-SPACE-401: 库位仍有库存，无法停用");
 
+        // ② 同步 RPC：WMS 按实时库存权威判定（TOCTOU 防护；ch04 §6.1② v1.1）
+        var newVersion = l.Version + 1;
+        var resp = await _deactivator.DeactivateAsync(new WmsDeactivateRequest
+        {
+            LocationId = l.Id,
+            LocationCode = l.LocationCode ?? "",
+            WarehouseCd = await ResolveWarehouseCdAsync(l),
+            Version = newVersion,
+            User = user
+        });
+
+        // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
+        if (!resp.Success)
+            throw new InvalidOperationException("W-SPACE-404: WMS 侧仍有库存，停用未生效");
+
         l.Status = 2;
-        l.Version += 1;
+        l.Version = newVersion;
         l.Modifier = user;
         l.ModifyDate = DateTime.Now;
 
@@ -106,15 +124,8 @@ public class LocationPublishService : ILocationPublishService
         batch.Items.Add(await BuildItemAsync(l, "DEACTIVATE"));
         await _db.SaveChangesAsync();
 
-        var r = await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
-        if (!r.Success)
-        {
-            // WMS 拒绝 → 回滚状态
-            l.Status = 1;
-            l.Version += 1;
-            await _db.SaveChangesAsync();
-            throw new InvalidOperationException("W-SPACE-404: WMS 拒绝停用，已回滚");
-        }
+        // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
+        await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
     }
 
     /// <inheritdoc/>

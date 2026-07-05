@@ -21,13 +21,15 @@ public class LocationPublishServiceTests
     private static LocationPublishService MakePublishSvc(
         CP6Context db,
         IWmsStockQuery? stock = null,
-        ISpaceBridgeHook? hook = null)
+        ISpaceBridgeHook? hook = null,
+        IWmsBinDeactivator? deact = null)
     {
         var t = new TenantContext();
         var code = new CodeEngineService(db);
         hook ??= new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
         stock ??= new StubWmsStockQuery();
-        return new LocationPublishService(db, t, code, hook, stock);
+        deact ??= new CP6.Core.Services.Wms.WmsBinDeactivator(db);
+        return new LocationPublishService(db, t, code, hook, stock, deact);
     }
 
     // ── D-3: 整层发布 ──────────────────────────────────────────────────────
@@ -309,5 +311,87 @@ public class LocationPublishServiceTests
         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>> FindLocationsAsync(
             CP6.Core.Services.Integration.StockLocateQuery query, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>>(Array.Empty<CP6.Core.Services.Integration.WmsLocationHit>());
+    }
+
+    private sealed class RejectingDeactivator : IWmsBinDeactivator
+    {
+        public Task<WmsDeactivateResult> DeactivateAsync(WmsDeactivateRequest req, CancellationToken ct = default)
+            => Task.FromResult(new WmsDeactivateResult { Success = false, Reason = "W-SPACE-404 库存非0" });
+    }
+
+    [Fact]
+    public async Task Deactivate_WmsRejects_StatusStays1_NoEvent()
+    {
+        using var db = Db();
+        var locId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
+            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1, Version = 1
+        });
+        await db.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => MakePublishSvc(db, deact: new RejectingDeactivator()).DeactivateAsync(locId, "u"));
+
+        Assert.StartsWith("W-SPACE-404", ex.Message);
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(1, loc.Status);            // §6.3：不前进、无翻转回滚
+        Assert.Equal(1, loc.Version);           // 版本不动
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 决策失败不发兜底事件
+    }
+
+    [Fact]
+    public async Task Deactivate_Success_WmsBinInactive_VersionSynced()
+    {
+        using var db = Db();
+        var locId = Guid.NewGuid();
+        // 预置已消费的 bin（模拟此前 UPSERT 已落库）
+        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
+        {
+            Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", Version = 1, IsActive = true
+        });
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
+            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1, Version = 1
+        });
+        await db.SaveChangesAsync();
+
+        await MakePublishSvc(db).DeactivateAsync(locId, "u");
+
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(2, loc.Status);
+        Assert.Equal(2, loc.Version);
+        var bin = await db.WmsBins.SingleAsync();
+        Assert.False(bin.IsActive);
+        Assert.Equal(2, bin.Version);           // 同步 RPC 落定的新版本
+        Assert.Equal(1, await db.IntegrationEvents.CountAsync());   // ④ 兜底事件已补发
+    }
+
+    [Fact]
+    public async Task Deactivate_NoBinYet_SyncRpc_WritesTombstone()
+    {
+        // H6：UPSERT 事件尚未消费（bin 不存在）时停用 → 同步 RPC 落墓碑占住 (Id, Version)
+        using var db = Db();
+        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);   // WarehouseCd 默认=SiteCode "WH1"
+        var locId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1, Version = 1
+        });
+        await db.SaveChangesAsync();
+
+        await MakePublishSvc(db).DeactivateAsync(locId, "u");
+
+        var tomb = await db.WmsBins.SingleAsync();
+        Assert.False(tomb.IsActive);
+        Assert.Equal(2, tomb.Version);
+        Assert.Equal("WH1", tomb.WarehouseCd);
+        Assert.Equal(2, (await db.Space_Locations.SingleAsync()).Status);
     }
 }
