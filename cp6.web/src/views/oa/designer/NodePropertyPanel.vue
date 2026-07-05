@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { userApi } from '@/api/sys/user'
 import { roleApi } from '@/api/sys/role'
@@ -59,12 +59,22 @@ const isServiceTask = computed(() => local.value.type === 'serviceTask')
 // ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
 const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
 
-onMounted(async () => {
-  if (!isServiceTask.value) return
-  try {
-    catalog.value = await designerApi.getServiceCatalog()
-  } catch { /* HTTP interceptor toasts */ }
-})
+// 组件被 Vue 复用（node↔node 切换无 :key）时 onMounted 只跑一次，
+// 首挂非 serviceTask 会永久漏拉；改用 watch(immediate) + 已加载标记，失败可重试。
+const catalogLoaded = ref(false)
+watch(
+  isServiceTask,
+  async (v) => {
+    if (!v || catalogLoaded.value) return
+    catalogLoaded.value = true
+    try {
+      catalog.value = await designerApi.getServiceCatalog()
+    } catch {
+      catalogLoaded.value = false // HTTP interceptor toasts；允许下次重试
+    }
+  },
+  { immediate: true },
+)
 
 // ── 串簽启用状态 ──────────────────────────────────────────────────
 const stageEnabled = computed(
