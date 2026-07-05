@@ -129,9 +129,9 @@ async function searchCcUsers(kw: string) {
 .panel-title {
   font-size: 13px;
   font-weight: 600;
-  color: #303133;
+  color: var(--cp-ink);
   padding: 4px 0 8px;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid var(--cp-line);
   margin-bottom: 8px;
 }
 
@@ -145,7 +145,7 @@ async function searchCcUsers(kw: string) {
 
 .prop-form :deep(.el-form-item__label) {
   font-size: 12px;
-  color: #606266;
+  color: var(--cp-text);
   padding-bottom: 2px;
   line-height: 1.4;
 }

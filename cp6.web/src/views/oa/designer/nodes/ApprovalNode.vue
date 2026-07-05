@@ -23,18 +23,18 @@ type NodeData = {
 
 <style scoped>
 .vf-node-approval {
-  background: #ecf5ff;
-  border: 2px solid #409eff;
-  border-radius: 6px;
+  background: var(--cp-info-bg);
+  border: 2px solid var(--cp-info);
+  border-radius: var(--cp-r-sm);
   padding: 8px 16px;
   min-width: 130px;
   text-align: center;
   font-size: 13px;
-  color: #333;
+  color: var(--cp-text);
   cursor: default;
 }
 .vf-node-approval.vf-node--selected {
-  box-shadow: 0 0 0 2px #409eff80;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-info) 50%, transparent);
 }
 .node-label {
   font-weight: 500;
@@ -42,7 +42,7 @@ type NodeData = {
 }
 .node-strategy {
   font-size: 11px;
-  color: #409eff;
+  color: var(--cp-info);
   margin-top: 2px;
   white-space: nowrap;
 }
