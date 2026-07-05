@@ -346,7 +346,7 @@ function focusNode(nodeId: string) {
           draggable="true"
           @dragstart="onPaletteDragStart($event, item.type)"
         >
-          <span class="palette-dot" :style="{ background: item.color }" />
+          <span class="palette-dot" :class="`dot-${item.type}`" />
           {{ item.label }}
         </div>
       </div>
@@ -405,8 +405,8 @@ function focusNode(nodeId: string) {
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: #fff;
-  border-bottom: 1px solid #e4e7ed;
+  background: var(--cp-card);
+  border-bottom: 1px solid var(--cp-line);
   flex-shrink: 0;
 }
 
@@ -420,8 +420,8 @@ function focusNode(nodeId: string) {
 .canvas-palette {
   width: 160px;
   flex-shrink: 0;
-  background: #fafafa;
-  border-right: 1px solid #e4e7ed;
+  background: var(--cp-bg-th);
+  border-right: 1px solid var(--cp-line);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -435,9 +435,9 @@ function focusNode(nodeId: string) {
 
 .search-results {
   margin-top: 4px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  background: var(--cp-card);
+  border: 1px solid var(--cp-line);
+  border-radius: var(--cp-r-sm);
   max-height: 120px;
   overflow-y: auto;
 }
@@ -450,19 +450,19 @@ function focusNode(nodeId: string) {
   flex-direction: column;
 }
 .search-result-item:hover {
-  background: #f0f9ff;
+  background: var(--cp-bg-hover);
 }
 .sr-id {
-  color: #909399;
+  color: var(--cp-muted);
   font-size: 11px;
 }
 .sr-name {
-  color: #333;
+  color: var(--cp-text);
 }
 
 .palette-label {
   font-size: 11px;
-  color: #909399;
+  color: var(--cp-muted);
   padding: 2px 4px;
   font-weight: 600;
   text-transform: uppercase;
@@ -474,16 +474,16 @@ function focusNode(nodeId: string) {
   align-items: center;
   gap: 6px;
   padding: 6px 8px;
-  border: 1px solid #e4e7ed;
-  border-radius: 4px;
-  background: #fff;
+  border: 1px solid var(--cp-line);
+  border-radius: var(--cp-r-sm);
+  background: var(--cp-card);
   cursor: grab;
   font-size: 12px;
   user-select: none;
   transition: box-shadow 0.15s;
 }
 .palette-item:hover {
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--cp-shadow-1);
 }
 .palette-item:active {
   cursor: grabbing;
@@ -495,6 +495,13 @@ function focusNode(nodeId: string) {
   border-radius: 50%;
   flex-shrink: 0;
 }
+/* Palette legend swatches — node-type semantic colors, kept in lockstep
+   with the rendered node borders (StartNode/ApprovalNode/GatewayNode/EndNode). */
+.dot-start { background: var(--cp-ok); }
+.dot-approval { background: var(--cp-info); }
+.dot-parallelSplit,
+.dot-parallelJoin { background: var(--cp-warn); }
+.dot-end { background: var(--cp-muted); }
 
 .canvas-flow-wrap {
   flex: 1;

@@ -359,7 +359,7 @@ function doValidateClick() { doValidate() }
   flex-direction: column;
   height: calc(100vh - 84px);   /* subtract app header */
   min-height: 0;
-  background: #f5f7fa;
+  background: var(--cp-bg);
 }
 
 .designer-toolbar {
@@ -368,8 +368,8 @@ function doValidateClick() { doValidate() }
   gap: 8px;
   flex-wrap: wrap;
   padding: 8px 12px;
-  background: #fff;
-  border-bottom: 1px solid #e4e7ed;
+  background: var(--cp-card);
+  border-bottom: 1px solid var(--cp-line);
   flex-shrink: 0;
 }
 
@@ -390,14 +390,14 @@ function doValidateClick() { doValidate() }
 .designer-right-panel {
   width: 280px;
   flex-shrink: 0;
-  border-left: 1px solid #e4e7ed;
-  background: #fff;
+  border-left: 1px solid var(--cp-line);
+  background: var(--cp-card);
   overflow-y: auto;
 }
 
 .panel-hint {
   padding: 24px 16px;
-  color: #909399;
+  color: var(--cp-muted);
   font-size: 13px;
   text-align: center;
   line-height: 1.6;

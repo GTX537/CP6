@@ -124,9 +124,9 @@
         <el-table-column prop="currentNode" label="当前节点" width="140" show-overflow-tooltip />
         <el-table-column label="状态" width="90">
           <template #default="{ row }">
-            <el-tag :type="instanceStatusType(row.status as number)" size="small">
+            <CpTag :tone="instanceStatusTone(row.status as number)">
               {{ t(instanceStatusText(row.status as number)) }}
-            </el-tag>
+            </CpTag>
           </template>
         </el-table-column>
         <el-table-column prop="createDate" label="发起时间" min-width="160" show-overflow-tooltip />
@@ -138,7 +138,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-empty v-if="!searching && rows.length === 0" description="暂无数据，请输入条件后查询" />
+      <CpEmpty v-if="!searching && rows.length === 0" text="暂无数据，请输入条件后查询" />
     </el-card>
 
     <!-- 详情抽屉 -->
@@ -159,12 +159,19 @@ import { useI18n } from 'vue-i18n'
 import { queryApi } from '@/api/oa/query'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
 import { userApi } from '@/api/sys/user'
-import { instanceStatusType, instanceStatusText } from '@/views/oa/inbox/inboxModel'
+import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import FormDetail from '@/views/oa/inbox/FormDetail.vue'
 import type { FormQueryFilter, FormQueryItem } from '@/types/oa/advanced'
 import type { FlowAdminItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
+
+/** 実例状態码 → CpTag 色調（对齐 inboxModel.instanceStatusType：warning/success/danger/info/info）。 */
+function instanceStatusTone(s: number): Tone {
+  return (['warn', 'ok', 'danger', 'info', 'info'] as Tone[])[s] ?? 'info'
+}
 
 // ── 条件 ─────────────────────────────────────────────────────────
 const filter = reactive<FormQueryFilter>({

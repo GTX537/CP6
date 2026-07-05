@@ -29,13 +29,13 @@ type NodeData = {
   cursor: default;
 }
 .vf-node-gateway-wrap.vf-node--selected .vf-node-gateway {
-  box-shadow: 0 0 0 2px #e6a23c80;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-warn) 50%, transparent);
 }
 .vf-node-gateway {
   width: 60px;
   height: 60px;
-  background: #fdf6ec;
-  border: 2px solid #e6a23c;
+  background: var(--cp-warn-bg);
+  border: 2px solid var(--cp-warn);
   transform: rotate(45deg);
   display: flex;
   align-items: center;
@@ -45,7 +45,7 @@ type NodeData = {
   transform: rotate(-45deg);
   font-size: 11px;
   font-weight: 500;
-  color: #e6a23c;
+  color: var(--cp-warn);
   white-space: nowrap;
 }
 </style>

@@ -729,6 +729,42 @@ describe('CpListPage', () => {
 
 - **QuotationList 原 `@row-dblclick→照会` 手势丢失**（#21 家族既知限制，不另立新号）：CpListPage 无行激活钩子（行选择/行激活系事件缺口与 #16 行内按钮代偿、#21 @current-change 未透传同族）。照会仍在操作列一键可达，能力未丢，仅双击快捷手势降级——与批次2 EstimateCalc 同处置（row-dblclick→操作列集约）。
 
+### OA 迁移批次1 复盘（Milestone C 首模块，编号接续，从 #23 起）
+
+批次1（FlowAdmin/ApproverMapView/FormCatalog/FormInitiate/FormQuery）迁移完成，真栈验收通过（tests 316 保持）。分类与处置：
+- **FlowAdmin**=CpPageShell+CpListPage（`paginated=false` 单表全量、`col-enable` 行内 el-switch 启停守卫+乐观回滚、切换后 reload 反映服务端互斥、`@total-change`→计数 pill），scoped style 归零。
+- **FormQuery**=**特殊页保留原机制**（见下 #23）：仅无损基础件替换（el-tag→CpTag 附 instanceStatusTone 对齐 inboxModel、el-empty→CpEmpty），保留原 el-card 查询区 + el-table + 详情抽屉。
+- **FormCatalog / FormInitiate**=非表格特殊页 token 化（`--el-*`→`--cp-*`：line-soft/ink/muted；el-empty→CpEmpty），不强套模板。
+- **ApproverMapView**=行内编辑表格（inline el-input 行），特殊页 token 化：内联 style 提取为 class + `.tcard` 卡壳用 `--cp-card/--cp-r-md/--cp-shadow-1`。
+
+本批新增模板缺口 1 项：
+
+23. **CpFilterBar select 不支持 remote 远程搜索选项（异步 autocomplete）**（FormQuery 触发）
+   - 页面需要：FormQuery 的「发起人 / 处理人」两个查询字段是 `el-select filterable remote :remote-method`——随键盘输入调 `userApi.getList` 异步拉候选，非静态枚举。
+   - 模板缺：`FilterField` 的 `type:'select'` 只接受静态 `options[]`，无 `remote`/`remoteMethod`/`loading` 透传；若强改 CpFilterBar 会丢失用户远程搜索能力。加之本页还有 daterange+关键词共 6 字段、行点击→抽屉详情，整体判为「特殊页保留原机制保功能」，未强套 CpListPage/CpFilterBar（与 LocationList master-detail 保留同处置逻辑）。
+   - 建议契约扩展：`FilterField` 增可选 `remote?: boolean` + `remoteMethod?: (q:string)=>void` + `loading?: boolean`（或 `asyncOptions` 加载器），让远程搜索选择列也能声明式落入 CpFilterBar。
+
+### OA 迁移批次2 复盘（编号接续，本批无新增编号）
+
+批次2（InboxView/InboxPending/InboxRunning/InboxDone/InboxDraft——電子フォーム受信箱信箱族）迁移完成，真栈验收通过（tests 316 保持）。这五个文件是**信箱外壳 + 内嵌子面板族**：InboxView 是 `el-container` 壳（左菜单导航 + `<component :is>` 动态挂载子面板 + 详情抽屉 + 新建对话框），四个列表面板作为子面板挂在 `el-main` 内、经 `@open-detail` 上抛给壳打开抽屉——**均非独立路由查询页**。分类与处置（统一按 FormQuery 先例「特殊页保留原机制 + 无损基础件替换」，四同型面板处置一致）：
+- **InboxView**=导航壳特殊页 token 化：`#f5f7fa`→`--cp-bg`、`#fff`→`--cp-card`(×2)、`#303133`→`--cp-ink`、`--el-border-color-light`→`--cp-line-soft`(×3)、`--el-text-color-placeholder`→`--cp-faint`；新建对话框 flow 列表 `el-tag(启用/停用)`→`CpTag(ok/muted)`。保留 el-menu/el-drawer/el-dropdown/act-as 机制。
+- **InboxPending**=双 tab（審査/CC）+ 勾选批量条 + 未読行加粗 + 行点击标已読→抽屉：`el-tag`(2 处计数)→`CpTag`、`el-empty`(2 处)→`CpEmpty`；`.batch-bar` 的 `--el-color-primary-light-9/7`→`--cp-brand-bg` + `color-mix(--cp-brand 24%)`、`4px`→`--cp-r-sm`、`--el-text-color-regular`→`--cp-text`。保留 el-tabs/selection/batch/row-class/row-click。
+- **InboxRunning**=单表 + 状态列 + 行点击→抽屉：`el-tag`(计数)→`CpTag`、状态 `el-tag :type=instanceStatusType`→`CpTag :tone=instanceStatusTone`（本地 helper `['warn','ok','danger','info','info']` 对齐 inboxModel，与 FormQuery 同法）、`el-empty`→`CpEmpty`。移除已无用的 `instanceStatusType` import。
+- **InboxDone**=月份选择器 + 三 tab（自分/全件/CC）+ 单表 + 状态列 + 行点击：`el-tag`(计数)→`CpTag`、状态 `formToTagType`→改名 `formToStatusTone` 返回 Tone `['warn','ok','danger','info'...]`、`el-empty`→`CpEmpty`。保留 el-date-picker/el-tabs。
+- **InboxDraft**=单表 + 行内 编集/提出/削除 按钮 + 暂存编辑对话框：`el-tag`(计数)→`CpTag`、`el-empty`→`CpEmpty`。保留 el-dialog 编辑器与行操作。
+
+**本批无新增模板缺口编号**：四面板均为「信箱内嵌子面板」形态（行点击→壳抽屉、内部 tabs/月份筛选、勾选批量、未読行样式、行内多按钮），CpListPage 单表卡契约不表达这些（行激活钩子缺口 #16/#21 家族既知、单表 vs 多 tab、无 `:row-class-name` 透传），且强套后仍须按 §5 保留原机制——故与 OA 批次1 FormQuery 同处置，统一保留 el-table + 原交互并只做 token 化 + 无损基础件替换（`el-tag`→`CpTag`、`el-empty`→`CpEmpty`、硬编码色清零），未触发新的模板扩展需求。既有的 `size="small"` 弃用告警、SignalR CSRF 403 均为迁移前既有基础设施问题，非本批引入。
+
+### OA 迁移批次3 复盘（编号接续，本批无新增编号）
+
+批次3（InboxDashboard/FormDetail/FlowTimeline/SendBackDialog/TransferDialog——信箱仪表盘 + 详情 + 时间线 + 对话框族）迁移完成，真栈验收通过（tests 316 保持、type-check 0 error）。分类与处置：
+- **InboxDashboard**=仪表盘特殊页 token 化（同 BridgeHealthView/WmsDashboard 先例）：4×(el-card+el-statistic)→`CpStatCard`（tone warn/info/brand/danger）、卡头 span→`CpSectionHeader`、趋势柱 `#f5f7fa`→`--cp-line-soft`+`var(--el-color-primary)`→`var(--cp-brand)`（`/* cp-chart-color */` 豁免）+ 文字 `--cp-muted/--cp-faint`、`el-empty`(×2)→`CpEmpty`。保留内嵌 el-table（迷你表非独立查询页，强套 CpListPage 属过度）与 `open-detail` emits 签名。
+- **FormDetail**=详情抽屉特殊页 token 化：CC `el-tag`→`CpTag(info)`、`el-empty`(×2)→`CpEmpty`、`--el-*`(panel-title/detail-left/action-bar/cc-title)→`--cp-ink/--cp-line/--cp-muted`。DynamicForm（工作流 schema 表单）CpDetailPanel（静态 items[]）表达不了→按 §5 保留（同 LocationList master-detail，不计缺口）；el-skeleton/el-input/el-button 保留。props`instanceId`/emits`done` 签名不变。
+- **FlowTimeline**=时间线特殊形态 token 化：状态 `el-tag :type=statusTagType`→`CpTag :tone=formToStatusTone`（新 helper `['warn','ok','danger','info','info','info','info','danger']`，**0-6 对齐 InboxDone.formToStatusTone**、7=danger 保留原视觉——同状态同 tone 无漂移）、SentBack 附 tag→`CpTag(danger)`、`el-empty`→`CpEmpty`、`--el-color-primary*/--el-text-color-*`→`--cp-brand*/--cp-text/--cp-muted/--cp-faint`。el-timeline/el-timeline-item 保留（DS 无时间线模板，特殊形态；`:type` 语义 prop 非硬编码色）。
+- **SendBackDialog / TransferDialog**=working form dialog，**审计后无改动**：两文件均无 scoped style、无硬编码色、无 el-tag（内联 style 纯布局）。保留 el-dialog——SendBack 的 kind 单选驱动条件字段 + `type=danger` 破坏性确认、Transfer 的 remote 异步搜索 select（#23 家族）+ `type=warning` 确认，CpFormDialog 声明式 fields/硬编码 primary confirm 表达不了（套用将丢 danger/warning 语义=回归），按 §5 保留原机制（同 ERP 批次3 OrderCancelDialog）。emits/props 签名保全。
+
+**本批无新增模板缺口编号**：三特殊页按「非表格特殊页只做 token 化 + 无损基础件替换」处置、两 working dialog 审计合规且保留 el-dialog 的动因分属既知 #23 家族与 CpFormDialog confirm 硬编码 primary 既定契约差异，未触发新的模板扩展需求。既有的 SignalR `/hubs/notify/negotiate` 403、`el-pagination small` 弃用告警、intlify flatten 告警均为迁移前既有基础设施问题，非本批引入。附带发现 `common.cancel` 在 ja 词典缺键（两对话框取消按钮显示原始 key）——迁移前既有 i18n 缺口，本批未改这两文件/不改 i18n 机制，记录待与缺口 #6 follow-up 统一补 `common.*` 词条。
+
 ## Self-Review 记录
 
 - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。

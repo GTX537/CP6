@@ -4,10 +4,9 @@
     <el-skeleton v-if="loading" :rows="6" animated />
 
     <!-- Load error / empty -->
-    <el-empty
+    <CpEmpty
       v-else-if="!detail"
-      :image-size="80"
-      :description="t('oa.detail.loadFailed')"
+      :text="t('oa.detail.loadFailed')"
     />
 
     <!-- Content -->
@@ -22,10 +21,9 @@
             v-model="formData"
             :mask="readonlyMask"
           />
-          <el-empty
+          <CpEmpty
             v-else
-            :image-size="60"
-            :description="t('oa.detail.noFormData')"
+            :text="t('oa.detail.noFormData')"
           />
         </el-col>
 
@@ -39,15 +37,13 @@
           <template v-if="detail.cc?.length">
             <div class="cc-title">{{ t('oa.detail.cc') }}</div>
             <div class="cc-tags">
-              <el-tag
+              <CpTag
                 v-for="c in detail.cc"
                 :key="c.recipientId"
-                size="small"
-                effect="plain"
-                type="info"
+                tone="info"
               >
                 {{ c.recipientName }}
-              </el-tag>
+              </CpTag>
             </div>
           </template>
         </el-col>
@@ -128,6 +124,8 @@ import { buildFieldMask, safeParseObject } from '@/views/wf/fieldMask'
 import FlowTimeline from './FlowTimeline.vue'
 import TransferDialog from './TransferDialog.vue'
 import SendBackDialog from './SendBackDialog.vue'
+import CpTag from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 
 const props = defineProps<{ instanceId: string }>()
 const emit = defineEmits<{ done: [] }>()
@@ -249,14 +247,14 @@ watch(() => props.instanceId, loadDetail)
 .panel-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--el-text-color-primary);
+  color: var(--cp-ink);
   margin-bottom: 10px;
   padding-bottom: 6px;
-  border-bottom: 1px solid var(--el-border-color-light);
+  border-bottom: 1px solid var(--cp-line);
 }
 
 .detail-left {
-  border-right: 1px solid var(--el-border-color-light);
+  border-right: 1px solid var(--cp-line);
   padding-right: 16px;
 }
 
@@ -268,7 +266,7 @@ watch(() => props.instanceId, loadDetail)
 
 .cc-title {
   font-size: 12px;
-  color: var(--el-text-color-secondary);
+  color: var(--cp-muted);
   margin: 14px 0 6px;
 }
 
@@ -284,6 +282,6 @@ watch(() => props.instanceId, loadDetail)
   gap: 10px;
   padding: 14px 0 4px;
   margin-top: 16px;
-  border-top: 1px solid var(--el-border-color-light);
+  border-top: 1px solid var(--cp-line);
 }
 </style>

@@ -14,18 +14,18 @@ const props = defineProps<NodeProps>()
 
 <style scoped>
 .vf-node-start {
-  background: #f0faf0;
-  border: 2px solid #67c23a;
-  border-radius: 20px;
+  background: var(--cp-ok-bg);
+  border: 2px solid var(--cp-ok);
+  border-radius: var(--cp-r-xl);
   padding: 8px 20px;
   min-width: 120px;
   text-align: center;
   font-size: 13px;
-  color: #333;
+  color: var(--cp-text);
   cursor: default;
 }
 .vf-node-start.vf-node--selected {
-  box-shadow: 0 0 0 2px #67c23a80;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-ok) 50%, transparent);
 }
 .node-label {
   font-weight: 500;

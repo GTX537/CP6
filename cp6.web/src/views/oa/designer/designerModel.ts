@@ -46,12 +46,14 @@ export interface SchemaNode {
 export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[] }
 export interface FlowSchemaDto { start?: string; nodes: SchemaNode[]; edges: SchemaEdge[] }
 
+// node-identity swatches (categorical, chart-color family §2.5). Rendering uses the
+// tokenized `.dot-<type>` CSS classes in DesignerCanvas; this `color` field is legacy metadata.
 export const NODE_PALETTE = [
-  { type: 'start',         label: '填單(发起)', color: '#67c23a' },
-  { type: 'approval',      label: '審批',       color: '#409eff' },
-  { type: 'parallelSplit', label: '并行分叉',   color: '#e6a23c' },
-  { type: 'parallelJoin',  label: '并行汇聚',   color: '#e6a23c' },
-  { type: 'end',           label: '結束',       color: '#909399' },
+  { type: 'start',         label: '填單(发起)', color: '#67c23a' }, /* cp-chart-color */
+  { type: 'approval',      label: '審批',       color: '#409eff' }, /* cp-chart-color */
+  { type: 'parallelSplit', label: '并行分叉',   color: '#e6a23c' }, /* cp-chart-color */
+  { type: 'parallelJoin',  label: '并行汇聚',   color: '#e6a23c' }, /* cp-chart-color */
+  { type: 'end',           label: '結束',       color: '#909399' }, /* cp-chart-color */
 ] as const
 
 /** FlowSchema → Vue Flow 图（节点带 position + data 全字段；边 source/target + data 条件/CC）。 */

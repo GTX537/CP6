@@ -40,13 +40,14 @@ onMounted(async () => { await loadKeys(); await loadRoles(); await loadRows() })
 </script>
 
 <template>
-  <div style="padding:12px">
-    <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center">
-      <el-select v-model="curKey" filterable allow-create clearable :placeholder="t('oa.approverMap.key')" style="width:240px" @change="loadRows">
+  <div class="approver-map">
+    <div class="am-toolbar">
+      <el-select v-model="curKey" filterable allow-create clearable :placeholder="t('oa.approverMap.key')" class="am-key" @change="loadRows">
         <el-option v-for="k in keys" :key="k" :label="k" :value="k" />
       </el-select>
       <el-button type="primary" @click="addRow">{{ t('oa.approverMap.addRow') }}</el-button>
     </div>
+    <div class="tcard">
     <el-table :data="rows" border size="small">
       <el-table-column :label="t('oa.approverMap.matchValue')">
         <template #default="{ row }"><el-input v-model="row.matchValue" /></template>
@@ -75,5 +76,14 @@ onMounted(async () => { await loadKeys(); await loadRoles(); await loadRows() })
         </template>
       </el-table-column>
     </el-table>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.approver-map { display: flex; flex-direction: column; gap: 12px; padding: 12px; }
+.am-toolbar { display: flex; gap: 8px; align-items: center; }
+.am-key { width: 240px; }
+.tcard { background: var(--cp-card); border-radius: var(--cp-r-md);
+  box-shadow: var(--cp-shadow-1); overflow: hidden; }
+</style>

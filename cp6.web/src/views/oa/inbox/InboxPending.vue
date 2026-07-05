@@ -4,7 +4,7 @@
       <!-- 待審核 -->
       <el-tab-pane :label="t('oa.pending.toReview')" name="review">
         <div class="table-toolbar">
-          <el-tag size="small">{{ t('共 {n} 条', { n: reviewRows.length }) }}</el-tag>
+          <CpTag>{{ t('共 {n} 条', { n: reviewRows.length }) }}</CpTag>
           <el-button :icon="Refresh" circle size="small" :loading="reviewLoading" @click="loadReview" />
         </div>
 
@@ -45,13 +45,13 @@
             <template #default="{ row }">{{ formatTime(row.sentAt) }}</template>
           </el-table-column>
         </el-table>
-        <el-empty v-if="!reviewLoading && !reviewRows.length" :image-size="80" :description="t('oa.pending.empty')" />
+        <CpEmpty v-if="!reviewLoading && !reviewRows.length" :text="t('oa.pending.empty')" />
       </el-tab-pane>
 
       <!-- 抄送 CC -->
       <el-tab-pane :label="t('oa.pending.cc')" name="cc">
         <div class="table-toolbar">
-          <el-tag size="small">{{ t('共 {n} 条', { n: ccRows.length }) }}</el-tag>
+          <CpTag>{{ t('共 {n} 条', { n: ccRows.length }) }}</CpTag>
           <el-button :icon="Refresh" circle size="small" :loading="ccLoading" @click="loadCc" />
         </div>
         <el-table
@@ -71,7 +71,7 @@
             <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
           </el-table-column>
         </el-table>
-        <el-empty v-if="!ccLoading && !ccRows.length" :image-size="80" :description="t('oa.pending.ccEmpty')" />
+        <CpEmpty v-if="!ccLoading && !ccRows.length" :text="t('oa.pending.ccEmpty')" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -84,6 +84,8 @@ import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import type { ElTable } from 'element-plus'
 import { inboxApi } from '@/api/oa/inbox'
+import CpTag from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { PendingItem, CcItem, BatchResultItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
@@ -197,14 +199,14 @@ onMounted(loadReview)
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: var(--el-color-primary-light-9);
-  border: 1px solid var(--el-color-primary-light-7);
-  border-radius: 4px;
+  background: var(--cp-brand-bg);
+  border: 1px solid color-mix(in srgb, var(--cp-brand) 24%, transparent);
+  border-radius: var(--cp-r-sm);
   margin-bottom: 8px;
 }
 .batch-info {
   font-size: 13px;
-  color: var(--el-text-color-regular);
+  color: var(--cp-text);
   white-space: nowrap;
 }
 :deep(.row-unread td) {

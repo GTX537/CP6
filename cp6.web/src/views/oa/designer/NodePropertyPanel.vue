@@ -3,6 +3,7 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { userApi } from '@/api/sys/user'
 import { roleApi } from '@/api/sys/role'
+import CpTag from '@/components/base/CpTag.vue'
 import type { SchemaNode } from './designerModel'
 
 const props = defineProps<{ node: SchemaNode }>()
@@ -178,7 +179,7 @@ async function searchCcUsers(kw: string) {
           </el-form-item>
 
           <el-form-item :label="t('oa.designer.nodeType')">
-            <el-tag type="info" size="small">{{ local.type }}</el-tag>
+            <CpTag tone="muted">{{ local.type }}</CpTag>
           </el-form-item>
 
           <!-- approval-specific fields (single-stage; hidden when 串簽 enabled) -->
@@ -576,9 +577,9 @@ async function searchCcUsers(kw: string) {
 .panel-title {
   font-size: 13px;
   font-weight: 600;
-  color: #303133;
+  color: var(--cp-ink);
   padding: 4px 0 8px;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid var(--cp-line);
   margin-bottom: 8px;
 }
 
@@ -593,18 +594,18 @@ async function searchCcUsers(kw: string) {
 
 .prop-form :deep(.el-form-item__label) {
   font-size: 12px;
-  color: #606266;
+  color: var(--cp-text);
   padding-bottom: 2px;
   line-height: 1.4;
 }
 
 /* 串簽档位卡片 */
 .stage-card {
-  border: 1px solid #e4e7ed;
-  border-radius: 4px;
+  border: 1px solid var(--cp-line);
+  border-radius: var(--cp-r-sm);
   padding: 8px 10px 4px;
   margin-bottom: 8px;
-  background: #fafafa;
+  background: var(--cp-bg-th);
 }
 
 .stage-card-header {
@@ -617,7 +618,7 @@ async function searchCcUsers(kw: string) {
 .stage-index-label {
   font-size: 12px;
   font-weight: 600;
-  color: #409eff;
+  color: var(--cp-brand);
 }
 
 .stage-card-actions {
@@ -628,6 +629,6 @@ async function searchCcUsers(kw: string) {
 .stage-switch-label {
   margin-left: 8px;
   font-size: 12px;
-  color: #606266;
+  color: var(--cp-text);
 }
 </style>

@@ -20,7 +20,7 @@
     </div>
 
     <div class="table-toolbar">
-      <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
+      <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
     </div>
 
@@ -38,16 +38,16 @@
       <el-table-column prop="starterName" :label="t('oa.col.starter')" width="120" />
       <el-table-column :label="t('oa.col.status')" width="110">
         <template #default="{ row }">
-          <el-tag :type="formToTagType(row.formToStatus)" size="small">
+          <CpTag :tone="formToStatusTone(row.formToStatus)">
             {{ t(formToStatusText(row.formToStatus)) }}
-          </el-tag>
+          </CpTag>
         </template>
       </el-table-column>
       <el-table-column :label="t('oa.col.doneAt')" width="170">
         <template #default="{ row }">{{ formatTime(row.doneAt) }}</template>
       </el-table-column>
     </el-table>
-    <el-empty v-if="!loading && !rows.length" :image-size="80" :description="t('oa.done.empty')" />
+    <CpEmpty v-if="!loading && !rows.length" :text="t('oa.done.empty')" />
   </div>
 </template>
 
@@ -57,6 +57,8 @@ import { useI18n } from 'vue-i18n'
 import { Refresh } from '@element-plus/icons-vue'
 import { inboxApi } from '@/api/oa/inbox'
 import { formToStatusText } from '@/views/oa/inbox/inboxModel'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { DoneItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
@@ -92,10 +94,9 @@ function onRowClick(row: DoneItem) {
   emit('open-detail', row.instanceId)
 }
 
-// 0=pending(warning) 1=approved(success) 2=rejected(danger) 3+=info
-type TagType = 'success' | 'warning' | 'danger' | 'info' | 'primary'
-function formToTagType(s: number): TagType {
-  const map: TagType[] = ['warning', 'success', 'danger', 'info', 'info', 'info', 'info']
+// 0=pending(warn) 1=approved(ok) 2=rejected(danger) 3+=info（对齐原 formToTagType：warning/success/danger/info…）
+function formToStatusTone(s: number): Tone {
+  const map: Tone[] = ['warn', 'ok', 'danger', 'info', 'info', 'info', 'info']
   return map[s] ?? 'info'
 }
 

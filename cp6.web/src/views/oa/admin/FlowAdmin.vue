@@ -1,65 +1,79 @@
+<!--
+  流程管理（OA Phase B，菜单734）—— CpPageShell + CpListPage 迁移。
+  单一 flowAdminApi.list() 全量（无搜索/无分页 → :paginated="false"，onMounted 自动 fetch）；
+  启停开关走 col-enable 插槽（行内 el-switch，per-row toggling 守卫 + 乐观回滚保留），
+  切换成功后 listRef.reload() 反映服务端联动（唯一启用互斥）；件数走 CpPageShell :count←@total-change。
+  el-alert 唯一性提示无 Cp 等价物，作为壳内首个子项保留。
+-->
 <template>
-  <div class="flow-admin">
-    <div class="page-header"><h2>{{ t('oa.flowadmin.title') }}</h2></div>
+  <CpPageShell :title="t('oa.flowadmin.title')" :count="total">
+    <template #actions>
+      <el-button :icon="Refresh" circle :loading="refreshing" @click="refresh" />
+    </template>
 
-    <el-alert type="info" :closable="false" show-icon class="hint-alert">
+    <el-alert type="info" :closable="false" show-icon>
       {{ t('oa.flowadmin.uniqueHint') }}
     </el-alert>
 
-    <el-card shadow="never" class="table-card">
-      <div class="table-toolbar">
-        <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
-        <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
-      </div>
-
-      <el-table :data="rows" border stripe size="small" max-height="620" v-loading="loading">
-        <el-table-column prop="flowKey" :label="t('oa.flowadmin.col.flowKey')" width="200" />
-        <el-table-column prop="flowName" :label="t('oa.flowadmin.col.flowName')" min-width="160" />
-        <el-table-column prop="formKey" :label="t('oa.flowadmin.col.formKey')" width="180" />
-        <el-table-column prop="version" :label="t('oa.flowadmin.col.version')" width="80" />
-        <el-table-column :label="t('oa.flowadmin.col.enable')" width="110">
-          <template #default="{ row }">
-            <el-switch
-              v-model="row.enable"
-              :loading="toggling.has(row.flowKey)"
-              :disabled="toggling.has(row.flowKey)"
-              @change="(val: boolean | string | number) => toggleEnable(row, val as boolean)"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <el-empty
-        v-if="!rows.length && !loading"
-        :description="t('oa.flowadmin.empty')"
-        :image-size="80"
-      />
-    </el-card>
-  </div>
+    <CpListPage
+      ref="listRef"
+      :columns="columns"
+      :fetch="fetchFlows"
+      :paginated="false"
+      :empty-text="t('oa.flowadmin.empty')"
+      @total-change="total = $event"
+    >
+      <template #col-enable="{ row }">
+        <el-switch
+          v-model="(row as FlowAdminItem).enable"
+          :loading="toggling.has((row as FlowAdminItem).flowKey)"
+          :disabled="toggling.has((row as FlowAdminItem).flowKey)"
+          @change="(val: boolean | string | number) => toggleEnable(row as FlowAdminItem, val as boolean)"
+        />
+      </template>
+    </CpListPage>
+  </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
+import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
 import type { FlowAdminItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
 
-const rows = ref<FlowAdminItem[]>([])
-const loading = ref(false)
+const total = ref<number>()
+const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const refreshing = ref(false)
 // per-row guard: flowKeys currently being toggled — prevents races and double-clicks
 const toggling = reactive(new Set<string>())
 
-async function load() {
-  loading.value = true
+const columns = computed<ListColumn[]>(() => [
+  { prop: 'flowKey', label: t('oa.flowadmin.col.flowKey'), width: 200, kind: 'mono' },
+  { prop: 'flowName', label: t('oa.flowadmin.col.flowName'), minWidth: 160 },
+  { prop: 'formKey', label: t('oa.flowadmin.col.formKey'), width: 180 },
+  { prop: 'version', label: t('oa.flowadmin.col.version'), width: 80 },
+  { prop: 'enable', label: t('oa.flowadmin.col.enable'), width: 110 },
+])
+
+// 单一取数：flowAdminApi.list() 返回全量（无 total）→ 客户端 total = 数组长度，配 :paginated="false"
+const fetchFlows: ListFetch = async () => {
+  const res = await flowAdminApi.list()
+  const data = res.data ?? []
+  return { rows: data, total: data.length }
+}
+
+async function refresh() {
+  refreshing.value = true
   try {
-    const res = await flowAdminApi.list()
-    rows.value = res.data ?? []
+    await listRef.value?.reload()
   } finally {
-    loading.value = false
+    refreshing.value = false
   }
 }
 
@@ -71,7 +85,7 @@ async function toggleEnable(row: FlowAdminItem, newVal: boolean) {
     await flowAdminApi.enable(row.flowKey, newVal)
     ElMessage.success(newVal ? t('oa.flowadmin.enabled') : t('oa.flowadmin.disabled'))
     // Reload to reflect any server-side side-effects (e.g. another flow auto-disabled)
-    await load()
+    await listRef.value?.reload()
   } catch {
     // The http interceptor (http.ts line 89) already toasts the error message for 400
     // responses (including E-WF-008 conflicts). We only need to revert the switch.
@@ -80,30 +94,4 @@ async function toggleEnable(row: FlowAdminItem, newVal: boolean) {
     toggling.delete(row.flowKey)
   }
 }
-
-onMounted(load)
 </script>
-
-<style scoped>
-.flow-admin {
-  padding: 16px;
-}
-.page-header {
-  margin-bottom: 12px;
-}
-.page-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 650;
-  color: #303133;
-}
-.hint-alert {
-  margin-bottom: 12px;
-}
-.table-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-</style>
