@@ -211,8 +211,8 @@ public class SceneService : ISceneService
                     existing.Level      = ld.Level;
                     existing.Depth      = ld.Depth;
                     existing.Placed     = ld.Placed;
-                    existing.Status     = ld.Status;
-                    existing.CodeOrigin = ld.CodeOrigin;
+                    // H1 状态机护栏：Status/CodeOrigin 不接受场景保存覆盖——
+                    // 状态只经 publish/deactivate 通道流转（ch04 §4），来源标签只在生码/采纳时落定
                     existing.Modifier   = user;
                     existing.ModifyDate = DateTime.Now;
                 }
@@ -227,8 +227,8 @@ public class SceneService : ISceneService
                         Level      = ld.Level,
                         Depth      = ld.Depth,
                         Placed     = ld.Placed,
-                        Status     = ld.Status,
-                        CodeOrigin = ld.CodeOrigin,
+                        Status     = 0,   // H1：编辑器新建恒草稿（发布走 publish、采纳走 adopt/bind-codes）
+                        CodeOrigin = 1,
                         Creator    = user,
                         CreateDate = DateTime.Now
                     });
