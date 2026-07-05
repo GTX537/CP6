@@ -52,15 +52,20 @@ public class LocationPublishService : ILocationPublishService
             : null;
         try
         {
-            // 1. 闸门（ch03 §9.2）
-            var pre = await _code.PrecheckAsync(floorId);
+            // 1. 闸门（ch03 §9.2；zoneId 给定时按库区收窄，H5）
+            var pre = await _code.PrecheckAsync(floorId, zoneId);
             if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
                 throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
 
-            // 2. 取 Status=0 且编码就绪的库位
-            var locs = await _db.Space_Locations
-                .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null)
-                .ToListAsync();
+            // 2. 取 Status=0 且编码就绪的库位（zoneId 给定时经 Rack.ZoneId 收窄）
+            var locQuery = _db.Space_Locations
+                .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null);
+            if (zoneId != null)
+            {
+                var rackIds = await _db.Space_Racks.Where(r => r.ZoneId == zoneId).Select(r => r.Id).ToListAsync();
+                locQuery = locQuery.Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value));
+            }
+            var locs = await locQuery.ToListAsync();
 
             if (locs.Count == 0) return 0;
 

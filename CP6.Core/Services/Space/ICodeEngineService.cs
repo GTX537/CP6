@@ -38,10 +38,10 @@ public interface ICodeEngineService
     // ── 发布前预检（ch03 §9.2）─────────────────────────────────────────
 
     /// <summary>
-    /// 发布前编码预检（ch03 §9.2，04 闸门入口）。
+    /// 发布前编码预检（ch03 §9.2，04 闸门入口）。zoneId 给定时按库区收窄（H5：库位经 Rack.ZoneId 归属）。
     /// 检查：空码草稿数 / 重复码组 / 规则静态错误 / 未落位草稿数。
     /// </summary>
-    Task<CodePrecheckResp> PrecheckAsync(Guid floorId);
+    Task<CodePrecheckResp> PrecheckAsync(Guid floorId, Guid? zoneId = null);
 
     // ── 单格生成（ch03 §10，可推迟）────────────────────────────────────
 

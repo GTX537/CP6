@@ -178,6 +178,33 @@ public class LocationPublishServiceTests
         Assert.Equal("W9", payload.GetProperty("Items")[0].GetProperty("WarehouseCd").GetString());
     }
 
+    [Fact]
+    public async Task Publish_WithZoneId_OnlyPublishesThatZone_GateZoneScoped()
+    {
+        using var db = Db();
+        var floorId = Guid.NewGuid();
+        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1" };
+        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+        var zoneA = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZA", ZoneName = "A" };
+        var zoneB = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZB", ZoneName = "B" };
+        var rackA = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneA.Id, FloorId = floorId, RackCode = "RA", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        var rackB = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneB.Id, FloorId = floorId, RackCode = "RB", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.Space_CodeRules.Add(new Space_CodeRule { Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true, Segments = ValidSegmentsJson() });
+        db.AddRange(site, floor, zoneA, zoneB, rackA, rackB);
+        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rackA.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "ZA-01", Col = 1, Level = 1, Depth = 1 });
+        // Zone B 留一个空码草稿——整层闸门会拦（E-307），库区闸门必须放行 Zone A
+        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rackB.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = null, Col = 1, Level = 1, Depth = 1 });
+        await db.SaveChangesAsync();
+
+        var n = await MakePublishSvc(db).PublishFloorAsync(floorId, zoneA.Id, "u");
+
+        Assert.Equal(1, n);
+        var a = await db.Space_Locations.SingleAsync(l => l.RackId == rackA.Id);
+        var b = await db.Space_Locations.SingleAsync(l => l.RackId == rackB.Id);
+        Assert.Equal(1, a.Status);
+        Assert.Equal(0, b.Status);   // Zone B 未被波及
+    }
+
     // ── D-4: 停用 ──────────────────────────────────────────────────────────
 
     [Fact]

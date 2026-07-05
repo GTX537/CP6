@@ -279,14 +279,18 @@ public class CodeEngineService : ICodeEngineService
     // ══════════════════════════════════════════════════════════════════════
 
     /// <inheritdoc/>
-    public async Task<CodePrecheckResp> PrecheckAsync(Guid floorId)
+    public async Task<CodePrecheckResp> PrecheckAsync(Guid floorId, Guid? zoneId = null)
     {
         var resp = new CodePrecheckResp();
 
-        // 拉 floor 内全部草稿库位
-        var locs = await _db.Space_Locations
-            .Where(l => l.FloorId == floorId && l.Status == 0)
-            .ToListAsync();
+        // 拉 floor（或指定库区）内全部草稿库位——库区归属经 Rack.ZoneId 推导
+        var locQuery = _db.Space_Locations.Where(l => l.FloorId == floorId && l.Status == 0);
+        if (zoneId != null)
+        {
+            var rackIds = await _db.Space_Racks.Where(r => r.ZoneId == zoneId).Select(r => r.Id).ToListAsync();
+            locQuery = locQuery.Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value));
+        }
+        var locs = await locQuery.ToListAsync();
 
         resp.EmptyCodeCount = locs.Count(l => l.LocationCode == null);
 
@@ -299,8 +303,10 @@ public class CodeEngineService : ICodeEngineService
 
         resp.UnplacedDraftCount = locs.Count(l => l.LocationCode != null && !l.Placed);
 
-        // 规则完备性：对 floor 内各 Zone 跑静态预检，汇总错误码（去重）
-        var zones = await _db.Space_Zones.Where(z => z.FloorId == floorId).ToListAsync();
+        // 规则完备性：对 floor（或指定库区）跑静态预检，汇总错误码（去重）
+        var zoneQuery = _db.Space_Zones.Where(z => z.FloorId == floorId);
+        if (zoneId != null) zoneQuery = zoneQuery.Where(z => z.Id == zoneId);
+        var zones = await zoneQuery.ToListAsync();
         var rules = await _db.Space_CodeRules.ToListAsync();
         var precheckErrs = new HashSet<string>(StringComparer.Ordinal);
 
