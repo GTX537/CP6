@@ -50,17 +50,17 @@
               "timeout":       { "inApp": true, "email": true  } } }
 ```
 
-类型轴 = `WfNotificationType` 值域（上例示意，plan 时按实际枚举对齐）；通道轴 = inApp / email。**缺键默认 true**（解析函数 `bool IsEnabled(prefs, type, channel)` 三态坍缩：无行/无键/无通道键 → true）。
+类型轴 = `WfNotificationType` 值域（上例示意，plan 时按实际枚举对齐；**含内核 hardening spec 同期新增的 `BranchPruned` 剪枝类型**——剪枝与驳回是独立类型键、独立开关，两 spec 联动口径以此为准）；通道轴 = inApp / email。**缺键默认 true**（解析函数 `bool IsEnabled(prefs, type, channel)` 三态坍缩：无行/无键/无通道键 → true）。
 
 ### §2.2 行为
 
-- `PersistentWfNotifier` 每个发送方法入口查偏好：inApp=false → 跳过持久+推送；email=false → 跳过邮件（若该类型本有邮件动作）。
+- `PersistentWfNotifier` 每个发送方法**逐收件人**查偏好（一次 taskArrived 可发多个审批人，偏好按收件人各自生效，不是逐调用查一次）：inApp=false → 跳过该收件人的持久+推送；email=false → 跳过该收件人的邮件（若该类型本有邮件动作）。
 - 偏好查询轻缓存（per-request scope 内存缓存即可，不引分布式缓存）。
 - **不回溯**：改偏好只影响此后通知，既有通知行不动。
 
 ### §2.3 设置 UI
 
-信箱设置页（既有）加「通知设定」卡片：类型×通道开关矩阵表格 + 恢复默认按钮。保存走既有 InboxPref 端点（PrefsJson 合并写，不整体覆盖——保留其他偏好键）。
+信箱设置页（既有）加「通知设定」卡片：类型×通道开关矩阵表格 + 恢复默认按钮。**无邮件动作的类型×通道格子禁用或隐藏**（并非所有 WfNotificationType 都接了邮件动作，给用户拨了没效果的开关是误导；plan 时按实际枚举核定哪些格子有效）。保存走既有 InboxPref 端点（PrefsJson 合并写，不整体覆盖——保留其他偏好键）。
 
 ---
 
@@ -82,7 +82,7 @@
 
 ### §3.2 UI
 
-信箱管理入口「批量改派」对话框：选 from/to 用户（既有用户选择器）→ 预览待转清单（条数+抽样）→ 确认 → 结果报告（成功/失败明细表，失败行可单条重试）。
+信箱管理入口「批量改派」对话框：选 from/to 用户（既有用户选择器）→ 预览待转清单（条数+抽样）→ 确认 → 结果报告（成功/失败明细表，失败行可单条重试；**单条重试走同一 TransferAsync + 同一失败明细口径**——重试时任务可能已被他人办结/转走，此类结果同样以明细行呈现，不特殊处理）。
 
 ---
 

@@ -59,7 +59,7 @@ public string? OnBranchReject { get; set; }
 
 ### §2.2 FlowEdge
 
-无新字段。inclusiveSplit 出边复用既有 `Condition`（条件表达式，`ExpressionEvaluator` 同口径）；**无条件出边 = 恒真 = default 兜底**。
+无新字段。inclusiveSplit 出边复用既有 `Condition`（条件表达式，`ExpressionEvaluator` 同口径）。**无条件出边 = default 兜底边（BPMN 语义）：仅当全部条件边求值为假时才走，且恰好一条**（E-WF-020 强制）——不是恒真必走边；恒真语义会让兜底边上的审批人每单都收任务，非业务本意。
 
 ### §2.3 常量（`WfStatus.cs`）
 
@@ -79,29 +79,31 @@ public static class FlowTokenStatus
 
 ### §3.1 `InclusiveSplitNodeHandler`（Type=`"inclusiveSplit"`，第 7 个 handler）
 
-1. 对全部出边求值 `Condition`（无条件边恒真），得真边集 T。
-2. 校验层保证 |T| ≥ 1（§6 E-WF-020 强制至少一条无条件出边兜底），运行时零真不可能；防御式兜底：|T|=0 → 抛引擎异常（校验漏网属 bug，不静默）。
-3. 对每条真边各生一枚 token：新 ForkId（同批共享）、ParentTokenId=当前 token——与 parallelSplit 完全相同的血缘机制。
-4. AddHistory("inclusiveSplit", 记真边集)。
+1. 对全部**条件出边**求值 `Condition`，得真边集 T；default 边（唯一无条件边）不参与求值。
+2. 激活边集 = T 非空时取 T（**default 边不走**）；T 为空时取 default 边（兜底，恰好一支）。校验层（§6 E-WF-020）保证 default 边存在且唯一，激活边集恒非空；防御式兜底：激活集为空 → 抛引擎异常（校验漏网属 bug，不静默）。
+3. 对激活边集每条边各生一枚 token：新 ForkId（同批共享）、ParentTokenId=当前 token——与 parallelSplit 完全相同的血缘机制。
+4. AddHistory("inclusiveSplit", 记激活边集)。
 
 ### §3.2 `InclusiveJoinNodeHandler`（Type=`"inclusiveJoin"`，第 8 个 handler）
 
 与 `ParallelJoinNodeHandler` 同构，唯一差异是计票（§3.3）。放行 = 消费同批到场 token + 上弹一层血缘续 token 沿单出边继续（复制 `ParallelJoinNodeHandler.cs:21-29` 机制）。实现上抽共享私有基类或静态辅助，**不合并两个 handler**（D3）。
 
-### §3.3 动态计票（parallelJoin 一并改造，D4）
+### §3.3 动态计票（parallelJoin 一并改造，D4）——血缘感知判据
 
 ```
+定义：token t「穿过」fork 批次 F ⇔ t 自身或其 ParentTokenId 祖先链上存在 ForkId==F 的 token。
 放行条件：本 join 节点到场数（同 ForkId Active）≥ 1
-          且 同 ForkId 的 Active token 全部位于本 join 节点（别处无在途活支）
+          且 不存在「穿过本 fork 批次」的在途 Active token（停在本 join 的到场 token 除外）
 ```
 
-即「本 fork 所有还活着的分支都到齐了」——不数静态入边，也不数历史生成总数：
+即「本 fork 所有还活着的分支（含其嵌套子树）都到齐了」。**判据必须血缘感知，不能只看同 ForkId 的 Active**——分支进入内层 split 时该分支 token 被 Consumed、子 token 挂新 ForkId（`ParallelSplitNodeHandler.cs:14-21`），只看同 ForkId 会在「A 已到场、B 在内层子 fork 在途」时误判 B 支死亡而提前放行：
 
-- 无剪枝、parallelSplit 场景：活支数 == 出边数，与旧静态入边计票行为全等（回归测试锁定）。
+- 无剪枝、parallelSplit、无嵌套：全部分支 token 或 Active 在途（挡放行）或到场，到齐时与旧静态入边计票行为全等（回归测试锁定）。
+- **嵌套**：B 支的内层子 token 祖先链穿过外层批次 → 挡外层 join 放行；内层 join 放行产生的续 token 恢复外层血缘（`ParallelJoinNodeHandler.cs:25-29`）继续被追踪，直至到场。与旧静态计票在嵌套场景同样等价（旧口径等 B 的续 token 到场）。
 - inclusive 场景：活支 == |T|（只生成了真边 token），join 只等实际激活的分支——inclusive join 语义的标准解。
 - 剪枝场景：Pruned 不是 Active，天然从等待集消失。
-- **同分支退回重生 token（§5.2 保留原 ForkId）场景**：重生 token 是 Active 且不在 join → join 继续等，语义正确。（若按"曾生成总数"计票，退回重生会撑大预期数导致永久等不齐——此判据是为此专门规避的。）
-- token 查询沿用 `ParallelJoinNodeHandler.AllTokens`（Local ∪ DB 身份映射去重）口径。
+- **同分支退回重生 token（§5.2 血缘保留）场景**：重生 token 穿过本批次且 Active 不在 join → join 继续等，语义正确。（若按"曾生成总数"计票，退回重生会撑大预期数导致永久等不齐。）
+- token 查询沿用 `ParallelJoinNodeHandler.AllTokens`（Local ∪ DB 身份映射去重）口径；祖先链走内存 ParentTokenId 上溯（单实例 token 数小，零额外查询）。
 
 ---
 
@@ -119,9 +121,10 @@ public static class FlowTokenStatus
 ### §4.2 剪枝路径
 
 1. 本分支 token `Status = Pruned`；本分支（tokenId 过滤）Pending 待办 → Cancelled、Pending FormTo 行 → Voided（复用 `VoidPendingFormTos` tokenId 过滤）。
-2. AddHistory("branchPruned")，通知发起人分支被剪（`IWfNotifier` 复用驳回通知类型，文案区分）。
+2. AddHistory("branchPruned")，通知发起人分支被剪——**新增独立通知类型 `WfNotificationType.BranchPruned` + `IWfNotifier.BranchPrunedAsync`**，不复用驳回类型（信箱 spec 的通知偏好矩阵按类型开关，剪枝与驳回须可独立控制；两 spec 同期落地，联动口径见信箱 spec §2.1）。
 3. **join 补放行探测**：剪枝可能使停泊中的 join 凑齐——扫同 ForkId 停在 join 节点的 Active token，重入其 `OnEnterAsync`（计数本身幂等，重入安全——`ParallelJoinNodeHandler.cs:6` 注释既有保证）。
-4. **全剪光递归上弹**：若同 ForkId 已无任何 Active token（§3.3 判据下 join 放行至少需一枚到场 Active，故无 Active 即不可能再放行）—— 视同「该 fork 的续 token 被驳回」，递归应用**上一层** fork 的 `OnBranchReject`（外层 prune → 剪外层该支；外层 cascade/无外层 → 实例 Rejected 走既有终态分发）。递归定义天然覆盖嵌套网关。
+4. **全剪光递归上弹**：判据与 §3.3 同款**血缘感知**——若不存在「穿过本 fork 批次」的在途 Active token（含停在 join 的；分支在内层子 fork 在途时同 ForkId 无 Active 但血缘链有，不算剪光）—— 视同「该 fork 的续 token 被驳回」，递归应用**上一层** fork 的 `OnBranchReject`（外层 prune → 剪外层该支；外层 cascade/无外层 → 实例 Rejected 走既有终态分发）。递归定义天然覆盖嵌套网关。
+   - 与 §4.2.3 的先后：先探测 join 补放行（有到场 Active 即可能放行），放行后仍无穿过本批次的 Active 才谈得上剪光——续 token 已上弹一层，属上层批次的存活支。
 
 ### §4.3 不变量
 
@@ -154,7 +157,7 @@ SendBackScope Analyze(schema, token血缘链, currentNodeId, targetNodeId)
 
 | 作用域 | 行为 |
 |---|---|
-| `SameBranch` | 只清**本分支**：Cancel 本 token 血缘下在途 token、Cancel 本分支 Pending 待办、Void 本分支 Pending FormTo（均 tokenId/forkId 过滤）；在目标节点重生 token **保留原 ForkId/ParentTokenId 血缘**（★join 认亲不破坏，兄弟分支照常走） |
+| `SameBranch` | 先定**分支内剥离层** = 包含目标节点的最内层分支域（当前 token 在分支内的嵌套 fork 里、而目标在该内层 split 之前时，剥离层是外层，与 BeforeSplit 的「最外剥离层」对称）。清场 = **剥离层 token 的整个后代子树**（含内层 fork 的兄弟 token；Cancel 在途 token、Cancel Pending 待办、Void Pending FormTo）；在目标节点重生 token 携带**剥离层的 ForkId/ParentTokenId 血缘**——不是当前 token 的内层血缘（★外层 join 认亲不破坏，外层兄弟分支照常走） |
 | `BeforeSplit` | 现行为：全清场 + 目标节点单链重启（`CancelAllActiveTokens` + `VoidPendingFormTos` 全量）——被剥离的 fork 批次 token 全 Cancelled，join 无残留 |
 | `SiblingBranch` | 拒绝，抛 **E-WF-019**（结构化码，非自由文本） |
 
@@ -163,8 +166,10 @@ SendBackScope Analyze(schema, token血缘链, currentNodeId, targetNodeId)
 ### §5.3 需核实项（plan 阶段）
 
 - `SendBackToNodeAsync` 重生 token 时血缘保留现状（`AdvancedFlow.cs:124-143`）；
-- `CancelAllActiveTokens` 加 forkId/tokenId 过滤重载（`FlowEngine.Tokens.cs:34`）；
-- 退回后 `StageRound` 递增语义与分支局部退回的相容性（`FlowEngine.ReadModel.cs:51`）。
+- `CancelAllActiveTokens` 加 forkId/tokenId/子树 过滤重载（`FlowEngine.Tokens.cs:34`）；
+- 退回后 `StageRound` 递增语义与分支局部退回的相容性（`FlowEngine.ReadModel.cs:51`）；
+- **§4.1 本层 split 节点定位机制**：token 是否记录生成它的 split nodeId（Wf_FlowToken 现有列核实）；若无，靠 ParentTokenId 上溯 + 父 token 的 NodeId/History 反查——两条路 plan 时定一条；
+- 剥离层判定（§5.2 SameBranch）与 fork 栈上溯共用同一血缘辅助函数，避免两套口径。
 
 ---
 
@@ -174,7 +179,7 @@ SendBackScope Analyze(schema, token血缘链, currentNodeId, targetNodeId)
 
 | 码 | 规则 |
 |---|---|
-| **E-WF-020** | inclusiveSplit 出边须 ≥ 2，且**至少一条无条件出边**（default 兜底，运行时零真不可能） |
+| **E-WF-020** | inclusiveSplit 出边须 ≥ 2，其中**恰好一条无条件 default 边**（全条件边为假时的兜底，§3.1 语义），其余出边必须带条件 |
 | **E-WF-021** | inclusiveSplit/inclusiveJoin 须成对可达（split 各出边的首个公共汇聚 join 类型须为 inclusiveJoin；孤立 join 报错）；`onBranchReject` 值域 ∈ {cascade, prune}（写在非 split 节点上报错） |
 
 E-WF-019（退回兄弟支拒绝）是**运行时**错误码，不在静态校验层。
@@ -203,7 +208,7 @@ E-WF-019（退回兄弟支拒绝）是**运行时**错误码，不在静态校�
 
 ## §9 测试策略
 
-- **inclusive**：2/3 真边、全真、仅 default 兜底、嵌套 parallel⊂inclusive 与 inclusive⊂parallel、动态计票与静态等价回归（parallelJoin 改造后旧场景全等）。
+- **inclusive**：2/3 真边、全真条件边（default 不走）、全假仅 default 兜底、嵌套 parallel⊂inclusive 与 inclusive⊂parallel、动态计票与静态等价回归（parallelJoin 改造后旧场景全等）、**嵌套在途防提前放行**（A 到场、B 在内层子 fork 在途 → 外层 join 必须等——血缘感知判据的定点回归，spec 评审抓过的洞）。
 - **剪枝**：单支剪、多支剪、剪后 join 补放行、全剪光→实例 Rejected、嵌套递归上弹（内层全剪光×外层 prune/cascade 两态）、cascade 默认零 diff 回归、FormTo 履历状态矩阵（Pruned 分支 Voided、兄弟分支不受扰）。
 - **退回**：三规则 ×（parallel/inclusive）×（node/prevStage/starter 三目标）矩阵；SameBranch 退回后血缘保持、join 仍能认亲齐批；E-WF-019 拒绝路径。
 - **QA harness**：gstack 剧本（设计器拖 inclusive 对、配 prune、校验报错走查、错误码 i18n 显示），对齐 E-T3 harness 先例。
@@ -229,7 +234,7 @@ E-WF-019（退回兄弟支拒绝）是**运行时**错误码，不在静态校�
 - **H-D 设计器**：palette/面板/round-trip/validateClient 镜像。
 - **H-E i18n + QA**：五语 seed + gstack harness + DoD 验收。
 
-依赖：H-A → H-B（剪枝依赖动态计票）→ H-C 可与 H-B 并行（退回不依赖剪枝）→ H-D → H-E。
+依赖：**H-A → {H-B ‖ H-C} → H-D → H-E**。H-B（剪枝）与 H-C（退回）互不依赖可并行，但**两者都依赖 H-A**——剪枝依赖动态计票，退回的「重生 token 兼容性」推理（§3.3）同样建立在血缘感知判据之上。
 
 ---
 
