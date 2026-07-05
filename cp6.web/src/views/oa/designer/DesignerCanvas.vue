@@ -17,6 +17,7 @@ import StartNode from './nodes/StartNode.vue'
 import ApprovalNode from './nodes/ApprovalNode.vue'
 import GatewayNode from './nodes/GatewayNode.vue'
 import EndNode from './nodes/EndNode.vue'
+import ServiceTaskNode from './nodes/ServiceTaskNode.vue'
 
 // ── Props & emits ──────────────────────────────────────────────────
 const props = defineProps<{ modelValue: FlowSchemaDto }>()
@@ -181,11 +182,17 @@ onUnmounted(() => {
 })
 
 // ── Palette drag-and-drop ──────────────────────────────────────────
-let dragType = ''
+// dragKey uniquely identifies a palette entry: `type` for single-type nodes,
+// `serviceTask:<kind>` for the three serviceTask entries (same type, distinct kind).
+let dragKey = ''
 
-function onPaletteDragStart(e: DragEvent, type: string) {
-  dragType = type
-  e.dataTransfer?.setData('text/plain', type)
+function paletteKey(item: (typeof NODE_PALETTE)[number]): string {
+  return 'kind' in item ? `${item.type}:${item.kind}` : item.type
+}
+
+function onPaletteDragStart(e: DragEvent, item: (typeof NODE_PALETTE)[number]) {
+  dragKey = paletteKey(item)
+  e.dataTransfer?.setData('text/plain', dragKey)
 }
 
 function onCanvasDragOver(e: DragEvent) {
@@ -195,25 +202,29 @@ function onCanvasDragOver(e: DragEvent) {
 
 function onCanvasDrop(e: DragEvent) {
   e.preventDefault()
-  const type = dragType || e.dataTransfer?.getData('text/plain') || ''
-  if (!type) return
+  const key = dragKey || e.dataTransfer?.getData('text/plain') || ''
+  if (!key) return
   const el = vfWrapperRef.value
   if (!el) return
   const rect = el.getBoundingClientRect()
   // project(): converts VueFlow-container-relative coordinates to flow coordinates
   const pos = project({ x: e.clientX - rect.left, y: e.clientY - rect.top })
-  const palette = NODE_PALETTE.find((p) => p.type === type)
+  const palette = NODE_PALETTE.find((p) => paletteKey(p) === key)
+  if (!palette) { dragKey = ''; return }
+  const type = palette.type
+  // serviceTask 落点预置 serviceKind（D-T1 graphToSchema 会随 data 透传，保证 round-trip）。
+  const serviceKind = 'kind' in palette ? palette.kind : undefined
   pushHistory()
   addNodes([
     {
       id: `n${Date.now()}`,
       type,
       position: pos,
-      label: palette?.label ?? type,
-      data: { type, name: palette?.label ?? type },
+      label: palette.label,
+      data: { type, name: palette.label, ...(serviceKind ? { serviceKind } : {}) },
     } satisfies Node,
   ])
-  dragType = ''
+  dragKey = ''
 }
 
 // ── Auto layout (BFS from start node) ─────────────────────────────
@@ -344,7 +355,7 @@ function focusNode(nodeId: string) {
           :key="item.label"
           class="palette-item"
           draggable="true"
-          @dragstart="onPaletteDragStart($event, item.type)"
+          @dragstart="onPaletteDragStart($event, item)"
         >
           <span class="palette-dot" :class="`dot-${item.type}`" />
           {{ item.label }}
@@ -381,6 +392,9 @@ function focusNode(nodeId: string) {
           </template>
           <template #node-end="nodeProps">
             <EndNode v-bind="nodeProps" />
+          </template>
+          <template #node-serviceTask="nodeProps">
+            <ServiceTaskNode v-bind="nodeProps" />
           </template>
 
           <!-- Background & Controls -->
@@ -502,6 +516,8 @@ function focusNode(nodeId: string) {
 .dot-parallelSplit,
 .dot-parallelJoin { background: var(--cp-warn); }
 .dot-end { background: var(--cp-muted); }
+/* serviceTask 三 kind 共用 brand 青，与 ServiceTaskNode 节点身份一致（虚线机器节点）。 */
+.dot-serviceTask { background: var(--cp-brand); }
 
 .canvas-flow-wrap {
   flex: 1;
