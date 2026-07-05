@@ -51,8 +51,8 @@ public class DesignerService : IDesignerService
         // ①b 服务任务引用注册名校验(E-WF-018)：dataWriteback 的 ActionName 须命中 Kind==dataWriteback 的执行器 Key；
         //     webApi 的 ConnectorName 须命中连接器 Name。缺名属 E-WF-016(上一步已拦)，此处只查"引用了但未注册"。
         var actionKeys = _execs.Where(e => e.Kind == ServiceKind.DataWriteback)
-            .Select(e => e.Key).ToHashSet(StringComparer.Ordinal);
-        var connNames = _connectors.Select(c => c.Name).ToHashSet(StringComparer.Ordinal);
+            .Select(e => e.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var connNames = _connectors.Select(c => c.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
         foreach (var n in schema.Nodes.Where(n =>
             string.Equals((n.Type ?? string.Empty).Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)))
         {

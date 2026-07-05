@@ -198,4 +198,17 @@ public class ServiceTaskValidatorTests
         await svc.SaveAsync(req, "tester");                          // action 已注册 → 不抛
         Assert.NotNull(await db.Wf_FlowDefs.SingleOrDefaultAsync(d => d.FlowKey == "ok"));
     }
+
+    [Fact]
+    public async Task Save_ConnectorName_CaseInsensitive_Persists()
+    {
+        // E-WF-018 注册名比较须镜像运行时字典(OrdinalIgnoreCase)：
+        // 注册名 "erpEcho" vs schema 引用 "ErpEcho" 仅大小写不同 → 运行时找得到 → save 也须放行。
+        using var db = NewDb();
+        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
+        var s = Base(); Svc(s).ServiceConnectorName = "ErpEcho";      // 大小写不符的已注册连接器
+        var req = new SaveFlowRequest("ci", "大小写流程", "leave", null, null, Json(s));
+        await svc.SaveAsync(req, "tester");                          // 不应抛 E-WF-018
+        Assert.NotNull(await db.Wf_FlowDefs.SingleOrDefaultAsync(d => d.FlowKey == "ci"));
+    }
 }
