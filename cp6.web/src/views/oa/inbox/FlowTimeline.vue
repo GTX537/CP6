@@ -23,15 +23,12 @@
             <!-- Persisted row (forecast === false) -->
             <template v-if="!row.forecast">
               <div style="display:flex; gap:4px; align-items:center;">
-                <el-tag
-                  size="small"
-                  :type="statusTagType(row.status)"
-                >
+                <CpTag :tone="formToStatusTone(row.status ?? 0)">
                   {{ t(formToStatusText(row.status ?? 0)) }}
-                </el-tag>
-                <el-tag v-if="row.status === 7" size="small" type="danger" effect="plain">
+                </CpTag>
+                <CpTag v-if="row.status === 7" tone="danger">
                   {{ t('oa.timeline.sentBack') }}
-                </el-tag>
+                </CpTag>
               </div>
               <div class="tl-handler">
                 <template v-if="row.actualHandlerName">
@@ -65,10 +62,9 @@
         </el-timeline-item>
       </el-timeline>
     </template>
-    <el-empty
+    <CpEmpty
       v-if="branchEntries.length === 0"
-      :image-size="60"
-      :description="t('暂无流转记录')"
+      :text="t('暂无流转记录')"
     />
   </div>
 </template>
@@ -78,6 +74,8 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { TimelineRow, ForecastStep } from '@/types/oa/inbox'
 import { mergeTimeline, groupByBranch, formToStatusText, type MergedRow } from './inboxModel'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 
 const props = defineProps<{
   timeline: TimelineRow[]
@@ -114,13 +112,13 @@ function timelineType(status?: number): TimelineType {
   return 'info'
 }
 
-function statusTagType(
-  status?: number,
-): 'success' | 'warning' | 'danger' | 'info' {
-  if (status === 1) return 'success'
-  if (status === 2 || status === 7) return 'danger'
-  if (status === 0) return 'warning'
-  return 'info'
+/**
+ * 关卡状态码 → CpTag 色調（FlowFormToStatus 0..7；7=SentBack）。
+ * 0-6 与 InboxDone.formToStatusTone 对齐（warn/ok/danger/info…），7=danger，
+ * 保留原 statusTagType 视觉（0→warn·1→ok·2/7→danger·其余 info）。
+ */
+function formToStatusTone(status?: number): Tone {
+  return (['warn', 'ok', 'danger', 'info', 'info', 'info', 'info', 'danger'] as Tone[])[status ?? 0] ?? 'info'
 }
 
 function formatTime(s?: string): string {
@@ -137,10 +135,10 @@ function formatTime(s?: string): string {
 .branch-header {
   font-size: 12px;
   font-weight: 600;
-  color: var(--el-color-primary);
+  color: var(--cp-brand-deep);
   margin: 8px 0 4px;
   padding-left: 6px;
-  border-left: 3px solid var(--el-color-primary-light-5);
+  border-left: 3px solid var(--cp-brand);
 }
 
 .tl-row {
@@ -162,33 +160,33 @@ function formatTime(s?: string): string {
 
 .tl-stage-label {
   font-size: 11px;
-  color: var(--el-color-primary);
+  color: var(--cp-brand-deep);
   font-weight: 500;
-  background: var(--el-color-primary-light-9);
+  background: var(--cp-brand-bg);
   border-radius: 3px;
   padding: 1px 5px;
 }
 
 .tl-handler {
   font-size: 12px;
-  color: var(--el-text-color-regular);
+  color: var(--cp-text);
 }
 
 .tl-comment {
   font-size: 12px;
-  color: var(--el-text-color-secondary);
+  color: var(--cp-muted);
   font-style: italic;
   margin: 0;
 }
 
 .tl-time {
   font-size: 11px;
-  color: var(--el-text-color-placeholder);
+  color: var(--cp-faint);
 }
 
 .tl-approvers {
   font-size: 12px;
-  color: var(--el-text-color-secondary);
+  color: var(--cp-muted);
 }
 
 /* Forecast items: dashed tail + muted text */
@@ -197,6 +195,6 @@ function formatTime(s?: string): string {
 }
 
 .forecast-item :deep(.el-timeline-item__content) {
-  color: var(--el-text-color-secondary);
+  color: var(--cp-muted);
 }
 </style>

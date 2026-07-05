@@ -3,30 +3,22 @@
     <!-- 4 stat cards -->
     <el-row :gutter="12" class="stat-row">
       <el-col :span="6">
-        <el-card shadow="hover" class="stat-card">
-          <el-statistic :value="stats?.pendingCount ?? 0" :title="t('oa.dashboard.pending')" />
-        </el-card>
+        <CpStatCard :label="t('oa.dashboard.pending')" :value="stats?.pendingCount ?? 0" tone="warn" />
       </el-col>
       <el-col :span="6">
-        <el-card shadow="hover" class="stat-card">
-          <el-statistic :value="stats?.runningCount ?? 0" :title="t('oa.dashboard.running')" />
-        </el-card>
+        <CpStatCard :label="t('oa.dashboard.running')" :value="stats?.runningCount ?? 0" tone="info" />
       </el-col>
       <el-col :span="6">
-        <el-card shadow="hover" class="stat-card">
-          <el-statistic :value="stats?.doneThisMonth ?? 0" :title="t('oa.dashboard.doneThisMonth')" />
-        </el-card>
+        <CpStatCard :label="t('oa.dashboard.doneThisMonth')" :value="stats?.doneThisMonth ?? 0" tone="brand" />
       </el-col>
       <el-col :span="6">
-        <el-card shadow="hover" class="stat-card">
-          <el-statistic :value="stats?.rejectedBackToMe ?? 0" :title="t('oa.dashboard.rejected')" />
-        </el-card>
+        <CpStatCard :label="t('oa.dashboard.rejected')" :value="stats?.rejectedBackToMe ?? 0" tone="danger" />
       </el-col>
     </el-row>
 
     <!-- 7-day trend bars (no chart lib) -->
     <el-card shadow="never" class="trend-card">
-      <template #header><span>{{ t('oa.dashboard.trend') }}</span></template>
+      <template #header><CpSectionHeader :title="t('oa.dashboard.trend')" /></template>
       <div v-if="stats?.trend?.length" class="trend-bars">
         <div v-for="p in stats.trend" :key="p.date" class="trend-col">
           <span class="bar-count">{{ p.count }}</span>
@@ -36,12 +28,12 @@
           <span class="bar-date">{{ p.date.slice(5) }}</span>
         </div>
       </div>
-      <el-empty v-else :image-size="60" :description="t('oa.dashboard.noTrend')" />
+      <CpEmpty v-else :text="t('oa.dashboard.noTrend')" />
     </el-card>
 
     <!-- Recent pending -->
     <el-card shadow="never" class="recent-card">
-      <template #header><span>{{ t('oa.dashboard.recentPending') }}</span></template>
+      <template #header><CpSectionHeader :title="t('oa.dashboard.recentPending')" /></template>
       <el-table
         :data="stats?.recentPending ?? []"
         stripe
@@ -56,10 +48,9 @@
           <template #default="{ row }">{{ formatTime(row.sentAt) }}</template>
         </el-table-column>
       </el-table>
-      <el-empty
+      <CpEmpty
         v-if="!loading && !(stats?.recentPending?.length)"
-        :image-size="60"
-        :description="t('oa.dashboard.noPending')"
+        :text="t('oa.dashboard.noPending')"
       />
     </el-card>
   </div>
@@ -69,6 +60,9 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { inboxApi } from '@/api/oa/inbox'
+import CpStatCard from '@/components/templates/CpStatCard.vue'
+import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
+import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { InboxStats, PendingItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
@@ -113,10 +107,6 @@ onMounted(load)
 .stat-row {
   margin: 0 !important;
 }
-.stat-card :deep(.el-statistic__head) {
-  font-size: 12px;
-  margin-bottom: 4px;
-}
 .trend-card,
 .recent-card {
   margin: 0;
@@ -137,7 +127,7 @@ onMounted(load)
 .bar-track {
   width: 100%;
   height: 60px;
-  background: #f5f7fa;
+  background: var(--cp-line-soft);
   border-radius: 3px;
   display: flex;
   flex-direction: column;
@@ -145,7 +135,7 @@ onMounted(load)
   overflow: hidden;
 }
 .bar-fill {
-  background: var(--el-color-primary);
+  background: var(--cp-brand); /* cp-chart-color */
   width: 100%;
   min-height: 2px;
   border-radius: 3px 3px 0 0;
@@ -153,12 +143,12 @@ onMounted(load)
 }
 .bar-count {
   font-size: 10px;
-  color: var(--el-text-color-secondary);
+  color: var(--cp-muted);
   line-height: 1;
 }
 .bar-date {
   font-size: 10px;
-  color: var(--el-text-color-placeholder);
+  color: var(--cp-faint);
   white-space: nowrap;
   line-height: 1;
 }
