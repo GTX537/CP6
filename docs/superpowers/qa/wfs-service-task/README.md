@@ -108,6 +108,15 @@ scan cadence + 10s timer durations).
 - **Scenarios 2-6** park a token + enqueue a `Wf_ServiceJob`; settling requires
   one worker scan (<=20s) for webApi/fail flows, or 10s due + one scan for timers.
 
+### Known assumptions
+
+- `qa_svc_starter` must be able to read its own Running/Suspended instance detail
+  via `GET /api/oa/inbox/detail/{id}`. `InboxService.DetailAsync` currently applies
+  **no userId/role filter** (any authenticated user can read any instance detail),
+  so this is safe today. If that endpoint ever gains an owner check, the status
+  polling in scenarios S2-S6 must be adjusted accordingly -- a 403/404 there is
+  this known assumption breaking, not a service-task bug.
+
 ---
 
 ## 4. Why the FlowDefs are seeded by raw INSERT (failure-flow principle)
