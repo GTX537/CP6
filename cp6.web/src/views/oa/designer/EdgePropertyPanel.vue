@@ -93,6 +93,12 @@ async function searchCcUsers(kw: string) {
         />
       </el-form-item>
 
+      <!-- 失败边（IsError）：服务任务失败耗尽时走此边（D-T3）-->
+      <el-form-item>
+        <el-checkbox v-model="local.isError">{{ t('oa.designer.svc.errorEdge') }}</el-checkbox>
+      </el-form-item>
+      <div class="edge-error-hint">{{ t('oa.designer.svc.errorEdgeHint') }}</div>
+
       <!-- 知會人員 -->
       <el-form-item :label="t('oa.designer.ccUsers')">
         <el-select
@@ -148,5 +154,12 @@ async function searchCcUsers(kw: string) {
   color: var(--cp-text);
   padding-bottom: 2px;
   line-height: 1.4;
+}
+
+.edge-error-hint {
+  font-size: 12px;
+  color: var(--cp-text-muted);
+  line-height: 1.4;
+  margin: -4px 0 10px;
 }
 </style>

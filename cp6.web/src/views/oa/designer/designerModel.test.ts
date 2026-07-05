@@ -40,9 +40,9 @@ describe('designerModel', () => {
     expect(validateClient(ghost as any).length).toBeGreaterThan(0)
   })
 
-  it('NODE_PALETTE lists the 5 engine node types', () => {
-    expect(NODE_PALETTE.map(p => p.type).sort())
-      .toEqual(['approval', 'end', 'parallelJoin', 'parallelSplit', 'start'])
+  it('NODE_PALETTE lists the engine node types (incl. serviceTask)', () => {
+    expect([...new Set(NODE_PALETTE.map(p => p.type))].sort())
+      .toEqual(['approval', 'end', 'parallelJoin', 'parallelSplit', 'serviceTask', 'start'])
   })
 
   it('round-trips serial stages', () => {

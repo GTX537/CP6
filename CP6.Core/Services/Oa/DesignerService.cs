@@ -1,6 +1,8 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wf;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 
 namespace CP6.Core.Services.Oa;
@@ -10,7 +12,20 @@ public class DesignerService : IDesignerService
     private static readonly JsonSerializerOptions JsonOpts = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = true };
     private readonly CP6Context _db;
     private readonly IFlowDefService _flowDef;
-    public DesignerService(CP6Context db, IFlowDefService flowDef) { _db = db; _flowDef = flowDef; }
+    private readonly IEnumerable<IServiceTaskExecutor> _execs;
+    private readonly IEnumerable<IWfConnector> _connectors;
+    public DesignerService(CP6Context db, IFlowDefService flowDef,
+        IEnumerable<IServiceTaskExecutor> execs, IEnumerable<IWfConnector> connectors)
+    {
+        _db = db; _flowDef = flowDef; _execs = execs; _connectors = connectors;
+    }
+
+    /// <summary>P1-6 服务目录：actions 只含 Kind==dataWriteback 且 VisibleInDesigner 的执行器
+    /// （WebApiExecutor 被排除）；connectors 含全部注册连接器。每项 {name, label(DisplayName)}。</summary>
+    public ServiceCatalog GetServiceCatalog() => new(
+        _execs.Where(e => e.Kind == ServiceKind.DataWriteback && e.VisibleInDesigner)
+              .Select(e => new ServiceCatalogItem(e.Key, e.DisplayName)).ToList(),
+        _connectors.Select(c => new ServiceCatalogItem(c.Name, c.DisplayName)).ToList());
 
     public async Task<IReadOnlyList<FlowDefSummary>> ListAsync(string? functionId = null)
     {
@@ -32,6 +47,22 @@ public class DesignerService : IDesignerService
         var schema = JsonSerializer.Deserialize<FlowSchema>(req.SchemaJson, JsonOpts) ?? new FlowSchema();
         var schemaErrs = FlowSchemaValidator.Validate(schema);
         if (schemaErrs.Count > 0) throw new InvalidOperationException(schemaErrs[0]);
+
+        // ①b 服务任务引用注册名校验(E-WF-018)：dataWriteback 的 ActionName 须命中 Kind==dataWriteback 的执行器 Key；
+        //     webApi 的 ConnectorName 须命中连接器 Name。缺名属 E-WF-016(上一步已拦)，此处只查"引用了但未注册"。
+        var actionKeys = _execs.Where(e => e.Kind == ServiceKind.DataWriteback)
+            .Select(e => e.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var connNames = _connectors.Select(c => c.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var n in schema.Nodes.Where(n =>
+            string.Equals((n.Type ?? string.Empty).Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)))
+        {
+            if (n.ServiceKind == ServiceKind.DataWriteback && !string.IsNullOrWhiteSpace(n.ServiceActionName)
+                && !actionKeys.Contains(n.ServiceActionName))
+                throw new InvalidOperationException("E-WF-018");
+            if (n.ServiceKind == ServiceKind.WebApi && !string.IsNullOrWhiteSpace(n.ServiceConnectorName)
+                && !connNames.Contains(n.ServiceConnectorName))
+                throw new InvalidOperationException("E-WF-018");
+        }
 
         // ② 身份码租户内唯一（排除自身 FlowKey）
         if (!string.IsNullOrWhiteSpace(req.FunctionId) &&

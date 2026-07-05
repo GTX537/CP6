@@ -7,4 +7,5 @@ public interface IDesignerService
     Task<FlowDefSummary?> LoadAsync(string flowKey);                            // 取定义摘要（schema 经 GetDef 取）
     Task SaveAsync(SaveFlowRequest req, string? user);                          // 校验 E-WF-010 + 唯一 E-WF-009 + SaveDef
     Task CloneAsync(CloneRequest req, string? user);                           // 独立副本
+    ServiceCatalog GetServiceCatalog();                                        // P1-6 服务目录：可见回写动作 + 全部连接器
 }
