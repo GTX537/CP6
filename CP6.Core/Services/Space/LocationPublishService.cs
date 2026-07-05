@@ -203,8 +203,23 @@ public class LocationPublishService : ILocationPublishService
             LocationCode = l.LocationCode ?? "",
             CodeOrigin = l.CodeOrigin,
             Version = l.Version,
+            WarehouseCd = await ResolveWarehouseCdAsync(l),
             Path = path,
             Attrs = attrs
         };
+    }
+
+    /// <summary>
+    /// SiteCode↔WarehouseCd 映射（ch04 §3.4）：Site.WarehouseCd 显式配置优先，空则默认 = SiteCode。
+    /// 走 FloorId → Site 链（比 Rack 链短，且停用未落位库位也可能有 FloorId）；无楼层归属返回 null。
+    /// </summary>
+    private async Task<string?> ResolveWarehouseCdAsync(Space_Location l)
+    {
+        if (l.FloorId == null) return null;
+        var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == l.FloorId);
+        if (floor == null) return null;
+        var site = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId);
+        if (site == null) return null;
+        return string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
     }
 }

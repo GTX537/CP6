@@ -113,6 +113,69 @@ public class LocationPublishServiceTests
         Assert.Equal(0, n);
     }
 
+    // ── v1.1 §3.4: SiteCode↔WarehouseCd 映射 ─────────────────────────────
+
+    private static (Guid floorId, Guid rackId) SeedHierarchy(CP6Context db, string? siteWarehouseCd)
+    {
+        var floorId = Guid.NewGuid();
+        var rackId = Guid.NewGuid();
+        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1", WarehouseCd = siteWarehouseCd };
+        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
+        var rack = new Space_Rack { Id = rackId, ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.Space_CodeRules.Add(new Space_CodeRule
+        {
+            Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true,
+            Segments = ValidSegmentsJson()
+        });
+        db.Space_Sites.Add(site);
+        db.Space_Floors.Add(floor);
+        db.Space_Zones.Add(zone);
+        db.Space_Racks.Add(rack);
+        return (floorId, rackId);
+    }
+
+    [Fact]
+    public async Task Publish_SiteWithoutMapping_ItemWarehouseCd_DefaultsToSiteCode()
+    {
+        using var db = Db();
+        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1
+        });
+        await db.SaveChangesAsync();
+
+        await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
+
+        var evt = await db.IntegrationEvents.SingleAsync();
+        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+        // 默认规则：WarehouseCd = SiteCode（ch04 §3.4）
+        Assert.Equal("WH1", payload.GetProperty("Items")[0].GetProperty("WarehouseCd").GetString());
+    }
+
+    [Fact]
+    public async Task Publish_SiteWithMapping_ItemWarehouseCd_UsesMappedValue()
+    {
+        using var db = Db();
+        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: "W9");
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1
+        });
+        await db.SaveChangesAsync();
+
+        await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
+
+        var evt = await db.IntegrationEvents.SingleAsync();
+        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+        Assert.Equal("W9", payload.GetProperty("Items")[0].GetProperty("WarehouseCd").GetString());
+    }
+
     // ── D-4: 停用 ──────────────────────────────────────────────────────────
 
     [Fact]
