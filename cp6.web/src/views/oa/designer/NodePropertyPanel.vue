@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { userApi } from '@/api/sys/user'
 import { roleApi } from '@/api/sys/role'
+import { designerApi } from '@/api/oa/designer'
+import type { ServiceCatalog } from '@/api/oa/designer'
 import CpTag from '@/components/base/CpTag.vue'
 import type { SchemaNode } from './designerModel'
 
@@ -52,6 +54,17 @@ const timeoutDays = computed({
 })
 
 const isApproval = computed(() => local.value.type === 'approval')
+const isServiceTask = computed(() => local.value.type === 'serviceTask')
+
+// ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
+const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
+
+onMounted(async () => {
+  if (!isServiceTask.value) return
+  try {
+    catalog.value = await designerApi.getServiceCatalog()
+  } catch { /* HTTP interceptor toasts */ }
+})
 
 // ── 串簽启用状态 ──────────────────────────────────────────────────
 const stageEnabled = computed(
@@ -103,7 +116,7 @@ function moveStageDown(idx: number) {
 }
 
 // ── Collapse ──────────────────────────────────────────────────────
-const collapseActive = ref<string[]>(['basic', 'stages', 'advanced', 'cc'])
+const collapseActive = ref<string[]>(['basic', 'stages', 'service', 'advanced', 'cc'])
 
 // ── User search (Specified approver, reused for stages) ──────────
 interface UserOpt { label: string; value: string }
@@ -306,6 +319,141 @@ async function searchCcUsers(kw: string) {
               </el-select>
             </el-form-item>
           </template>
+        </el-form>
+      </el-collapse-item>
+
+      <!-- ── 服务任务配置（serviceTask 专属，按 serviceKind 切换）────── -->
+      <el-collapse-item
+        v-if="isServiceTask"
+        :title="t('oa.designer.svc.title')"
+        name="service"
+      >
+        <el-form label-position="top" size="small" class="prop-form">
+          <!-- 服务类型 -->
+          <el-form-item :label="t('oa.designer.svc.kind')">
+            <el-select v-model="local.serviceKind" style="width: 100%">
+              <el-option value="dataWriteback" :label="t('oa.designer.svc.kind.dataWriteback')" />
+              <el-option value="webApi"        :label="t('oa.designer.svc.kind.webApi')" />
+              <el-option value="timer"         :label="t('oa.designer.svc.kind.timer')" />
+            </el-select>
+          </el-form-item>
+
+          <!-- 数据回写：动作 / 模式 / 参数模板 -->
+          <template v-if="local.serviceKind === 'dataWriteback'">
+            <el-form-item :label="t('oa.designer.svc.action')">
+              <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
+                <el-option
+                  v-for="a in catalog.actions"
+                  :key="a.name"
+                  :value="a.name"
+                  :label="a.label || a.name"
+                />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="t('oa.designer.svc.mode')">
+              <el-select v-model="local.serviceMode" style="width: 100%" clearable>
+                <el-option value="sync"  :label="t('oa.designer.svc.mode.sync')" />
+                <el-option value="async" :label="t('oa.designer.svc.mode.async')" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="t('oa.designer.svc.params')">
+              <el-input
+                v-model="local.serviceParamsJson"
+                type="textarea"
+                :rows="3"
+                :placeholder="t('oa.designer.svc.paramsHint')"
+              />
+            </el-form-item>
+          </template>
+
+          <!-- 接口调用：连接器 / 路径 / 参数 / 模式 -->
+          <template v-else-if="local.serviceKind === 'webApi'">
+            <el-form-item :label="t('oa.designer.svc.connector')">
+              <el-select v-model="local.serviceConnectorName" style="width: 100%" clearable>
+                <el-option
+                  v-for="c in catalog.connectors"
+                  :key="c.name"
+                  :value="c.name"
+                  :label="c.label || c.name"
+                />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="t('oa.designer.svc.path')">
+              <el-input
+                v-model="local.servicePath"
+                :placeholder="t('oa.designer.svc.pathHint')"
+                clearable
+              />
+            </el-form-item>
+
+            <el-form-item :label="t('oa.designer.svc.params')">
+              <el-input
+                v-model="local.serviceParamsJson"
+                type="textarea"
+                :rows="3"
+                :placeholder="t('oa.designer.svc.paramsHint')"
+              />
+            </el-form-item>
+
+            <el-form-item :label="t('oa.designer.svc.mode')">
+              <el-select v-model="local.serviceMode" style="width: 100%" clearable>
+                <el-option value="sync"  :label="t('oa.designer.svc.mode.sync')" />
+                <el-option value="async" :label="t('oa.designer.svc.mode.async')" />
+              </el-select>
+            </el-form-item>
+          </template>
+
+          <!-- 定时器：延时模式 / 延时值 / 可选到点动作 -->
+          <template v-else-if="local.serviceKind === 'timer'">
+            <el-form-item :label="t('oa.designer.svc.delayMode')">
+              <el-radio-group v-model="local.serviceDelayMode">
+                <el-radio value="duration">{{ t('oa.designer.svc.delayMode.duration') }}</el-radio>
+                <el-radio value="untilDate">{{ t('oa.designer.svc.delayMode.untilDate') }}</el-radio>
+                <el-radio value="untilExpr">{{ t('oa.designer.svc.delayMode.untilExpr') }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+
+            <el-form-item :label="t('oa.designer.svc.delayValue')">
+              <el-input
+                v-model="local.serviceDelayValue"
+                :placeholder="t('oa.designer.svc.delayValueHint')"
+                clearable
+              />
+            </el-form-item>
+
+            <el-form-item :label="t('oa.designer.svc.timerAction')">
+              <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
+                <el-option
+                  v-for="a in catalog.actions"
+                  :key="a.name"
+                  :value="a.name"
+                  :label="a.label || a.name"
+                />
+              </el-select>
+            </el-form-item>
+          </template>
+
+          <!-- 重试（三 kind 共用）-->
+          <el-form-item :label="t('oa.designer.svc.maxRetries')">
+            <el-input-number
+              v-model="local.serviceMaxRetries"
+              :min="0"
+              :max="10"
+              style="width: 100%"
+            />
+          </el-form-item>
+
+          <el-form-item :label="t('oa.designer.svc.backoff')">
+            <el-input-number
+              v-model="local.serviceRetryBackoffSec"
+              :min="0"
+              :step="5"
+              style="width: 100%"
+            />
+          </el-form-item>
         </el-form>
       </el-collapse-item>
 
