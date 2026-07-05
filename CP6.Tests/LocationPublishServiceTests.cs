@@ -331,7 +331,7 @@ public class LocationPublishServiceTests
     {
         private readonly decimal _qty;
         public FixedStockQuery(int qty) => _qty = qty;
-        public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default) => Task.FromResult(_qty);
+        public Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default) => Task.FromResult(_qty);
         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>> GetStockByLocationsAsync(
             IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>>(Array.Empty<CP6.Core.Services.Integration.WmsStockDto>());

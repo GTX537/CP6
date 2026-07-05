@@ -44,6 +44,11 @@ public class LocationPublishController : ControllerBase
         {
             return BadRequest(new { code = 400, message = e.Message });
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
+            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
+        }
     }
 
     // ── PUT /api/space/location/{id}/deactivate ───────────────────────────
@@ -60,6 +65,11 @@ public class LocationPublishController : ControllerBase
         catch (InvalidOperationException e)
         {
             return BadRequest(new { code = 400, message = e.Message });
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
+            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
         }
     }
 
@@ -78,6 +88,11 @@ public class LocationPublishController : ControllerBase
         catch (InvalidOperationException e)
         {
             return BadRequest(new { code = 400, message = e.Message });
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
+            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
         }
     }
 

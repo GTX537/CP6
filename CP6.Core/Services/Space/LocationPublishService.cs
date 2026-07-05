@@ -110,8 +110,9 @@ public class LocationPublishService : ILocationPublishService
         if (l.Status != 1)
             throw new InvalidOperationException("E-SPACE-004: 库位未处于已发布状态");
 
-        // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①）
-        var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "");
+        // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
+        var warehouseCd = await ResolveWarehouseCdAsync(l);
+        var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
         if (qty > 0)
             throw new InvalidOperationException("E-SPACE-401: 库位仍有库存，无法停用");
 
@@ -121,7 +122,7 @@ public class LocationPublishService : ILocationPublishService
         {
             LocationId = l.Id,
             LocationCode = l.LocationCode ?? "",
-            WarehouseCd = await ResolveWarehouseCdAsync(l),
+            WarehouseCd = warehouseCd,
             Version = newVersion,
             User = user
         });

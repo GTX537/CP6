@@ -179,6 +179,21 @@ public class WmsStockQueryTests
     }
 
     [Fact]
+    public async Task GetStockQty_WarehouseScoped_ExcludesOtherWarehouses()
+    {
+        // H7：多仓同码时不带仓维度会跨仓求和 → 误拦他仓同码库位的停用
+        using var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        db.Stocks.Add(new Stock { Id = Guid.NewGuid(), WarehouseCd = "W1", LocationCd = "A-01", ProductCd = "P", LotNo = "", PhysicalQty = 3m });
+        db.Stocks.Add(new Stock { Id = Guid.NewGuid(), WarehouseCd = "W2", LocationCd = "A-01", ProductCd = "P", LotNo = "", PhysicalQty = 7m });
+        await db.SaveChangesAsync();
+
+        var q = new WmsStockQuery(db);
+        Assert.Equal(10m, await q.GetStockQtyAsync("A-01"));        // 兼容：不带仓维度=跨仓求和
+        Assert.Equal(3m, await q.GetStockQtyAsync("A-01", "W1"));   // 带仓维度只算本仓
+    }
+
+    [Fact]
     public async Task GetStockByLocations_TenantIsolated()
     {
         var dbName = Guid.NewGuid().ToString();

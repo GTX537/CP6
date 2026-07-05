@@ -11,8 +11,12 @@ public class WmsStockQuery : IWmsStockQuery
     private readonly CP6Context _db;
     public WmsStockQuery(CP6Context db) => _db = db;
 
-    public async Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default)
-        => await _db.Stocks.Where(s => s.LocationCd == locationCode).SumAsync(s => s.PhysicalQty, ct);
+    public async Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default)
+    {
+        var q = _db.Stocks.Where(s => s.LocationCd == locationCode);
+        if (!string.IsNullOrEmpty(warehouseCd)) q = q.Where(s => s.WarehouseCd == warehouseCd);
+        return await q.SumAsync(s => s.PhysicalQty, ct);
+    }
 
     public async Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
         IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
