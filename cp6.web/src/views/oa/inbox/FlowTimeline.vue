@@ -163,7 +163,7 @@ function formatTime(s?: string): string {
   color: var(--cp-brand-deep);
   font-weight: 500;
   background: var(--cp-brand-bg);
-  border-radius: 3px;
+  border-radius: var(--cp-r-sm);
   padding: 1px 5px;
 }
 

@@ -128,7 +128,7 @@ onMounted(load)
   width: 100%;
   height: 60px;
   background: var(--cp-line-soft);
-  border-radius: 3px;
+  border-radius: var(--cp-r-sm);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -138,7 +138,7 @@ onMounted(load)
   background: var(--cp-brand); /* cp-chart-color */
   width: 100%;
   min-height: 2px;
-  border-radius: 3px 3px 0 0;
+  border-radius: var(--cp-r-sm) var(--cp-r-sm) 0 0;
   transition: height 0.3s;
 }
 .bar-count {
