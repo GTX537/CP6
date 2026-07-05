@@ -45,6 +45,28 @@ watch(
   { deep: true },
 )
 
+// ── serviceKind 切换时清理另一分支的残留字段 ──────────────────────
+// cloneNode/emit 全量展开：用户把 serviceTask 从 webApi 切到 timer/dataWriteback 后，
+// serviceConnectorName/servicePath 面板不再展示却仍残留在 emit 出的 patch 里。
+// 运行期 ServiceTaskActionRef.Snapshot 的优先级规则（timer + ConnectorName → actionKind='webApi'，
+// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:54-73）会据此到点静默外呼用户以为已删的连接器。
+// 故切 kind 时必须主动清残留——切勿删除本清理，否则复现 timer 静默 webApi 外呼缺陷。
+// 注意：timer 的 serviceActionName 是面板可见的“到点动作”，是合法配置，必须保留。
+// syncing 守卫复用上方模式：初始 clone / 节点切换加载期间 local 被整体替换，此时不清理（避免误清）。
+watch(
+  () => local.value.serviceKind,
+  (kind) => {
+    if (syncing.value) return
+    if (local.value.type !== 'serviceTask') return
+    if (kind !== 'webApi') {
+      local.value.serviceConnectorName = undefined
+      local.value.servicePath = undefined
+    } else {
+      local.value.serviceActionName = undefined // 卫生对称：webApi 无“到点动作”
+    }
+  },
+)
+
 // ── Timeout: stored as hours, UI shows days ───────────────────────
 const timeoutDays = computed({
   get: () => (local.value.timeoutHours != null ? local.value.timeoutHours / 24 : 0),

@@ -154,7 +154,7 @@ export function validateClient(schema: FlowSchemaDto): string[] {
       : n.serviceKind === 'dataWriteback'
         ? !!n.serviceActionName
         : n.serviceKind === 'timer'
-          ? n.serviceDelayValue != null
+          ? n.serviceDelayValue != null && n.serviceDelayMode != null  // 镜像后端：值与模式(radio 无默认)双字段必填
           : false                                        // 缺/未知 serviceKind 即配置不完整
     if (!ok) errs.push('oa.designer.errServiceConfig')
   }

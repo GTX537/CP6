@@ -20,4 +20,9 @@ describe('serviceTask round-trip', () => {
     const errs = validateClient(schema as any)
     expect(errs.some(e => e.includes('errServiceConfig') || e.includes('服务'))).toBe(true)
   })
+  it('validateClient flags timer with delayValue but no delayMode (radio 未点，镜像后端 E-WF-016)', () => {
+    const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'timer', serviceDelayValue:'3d' /* 缺 delayMode */ }], edges:[] }
+    const errs = validateClient(schema as any)
+    expect(errs).toContain('oa.designer.errServiceConfig')
+  })
 })
