@@ -21,13 +21,15 @@ public class LocationPublishServiceTests
     private static LocationPublishService MakePublishSvc(
         CP6Context db,
         IWmsStockQuery? stock = null,
-        ISpaceBridgeHook? hook = null)
+        ISpaceBridgeHook? hook = null,
+        IWmsBinDeactivator? deact = null)
     {
         var t = new TenantContext();
         var code = new CodeEngineService(db);
         hook ??= new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
         stock ??= new StubWmsStockQuery();
-        return new LocationPublishService(db, t, code, hook, stock);
+        deact ??= new CP6.Core.Services.Wms.WmsBinDeactivator(db);
+        return new LocationPublishService(db, t, code, hook, stock, deact);
     }
 
     // ── D-3: 整层发布 ──────────────────────────────────────────────────────
@@ -111,6 +113,128 @@ public class LocationPublishServiceTests
         var floorId = Guid.NewGuid();
         var n = await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
         Assert.Equal(0, n);
+    }
+
+    // ── v1.1 §3.4: SiteCode↔WarehouseCd 映射 ─────────────────────────────
+
+    private static (Guid floorId, Guid rackId) SeedHierarchy(CP6Context db, string? siteWarehouseCd)
+    {
+        var floorId = Guid.NewGuid();
+        var rackId = Guid.NewGuid();
+        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1", WarehouseCd = siteWarehouseCd };
+        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
+        var rack = new Space_Rack { Id = rackId, ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.Space_CodeRules.Add(new Space_CodeRule
+        {
+            Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true,
+            Segments = ValidSegmentsJson()
+        });
+        db.Space_Sites.Add(site);
+        db.Space_Floors.Add(floor);
+        db.Space_Zones.Add(zone);
+        db.Space_Racks.Add(rack);
+        return (floorId, rackId);
+    }
+
+    [Fact]
+    public async Task Publish_SiteWithoutMapping_ItemWarehouseCd_DefaultsToSiteCode()
+    {
+        using var db = Db();
+        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1
+        });
+        await db.SaveChangesAsync();
+
+        await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
+
+        var evt = await db.IntegrationEvents.SingleAsync();
+        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+        // 默认规则：WarehouseCd = SiteCode（ch04 §3.4）
+        Assert.Equal("WH1", payload.GetProperty("Items")[0].GetProperty("WarehouseCd").GetString());
+    }
+
+    [Fact]
+    public async Task Publish_SiteWithMapping_ItemWarehouseCd_UsesMappedValue()
+    {
+        using var db = Db();
+        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: "W9");
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1
+        });
+        await db.SaveChangesAsync();
+
+        await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
+
+        var evt = await db.IntegrationEvents.SingleAsync();
+        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+        Assert.Equal("W9", payload.GetProperty("Items")[0].GetProperty("WarehouseCd").GetString());
+    }
+
+    [Fact]
+    public async Task Publish_SiteCodeOver10Chars_NoMapping_Throws_E405_NoOrphan()
+    {
+        // 终审 #1：SiteCode(11 字符) 默认回退 WarehouseCd=SiteCode 超 nvarchar(10) 列约束。
+        // 长度守卫在 SaveChanges 前 fail-fast → 状态不持久化、无事件、无孤儿。
+        using var db = Db();
+        var floorId = Guid.NewGuid();
+        var rackId = Guid.NewGuid();
+        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "SITE0123456", SiteName = "S1", WarehouseCd = null }; // 11 chars
+        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
+        var rack = new Space_Rack { Id = rackId, ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.Space_CodeRules.Add(new Space_CodeRule { Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true, Segments = ValidSegmentsJson() });
+        db.AddRange(site, floor, zone, rack);
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1
+        });
+        await db.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => MakePublishSvc(db).PublishFloorAsync(floorId, null, "u"));
+        Assert.StartsWith("E-SPACE-405", ex.Message);
+
+        // AsNoTracking 读 InMemory 存储快照（SaveChanges 从未运行）→ Status 仍 0
+        var loc = await db.Space_Locations.AsNoTracking().SingleAsync();
+        Assert.Equal(0, loc.Status);
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+    }
+
+    [Fact]
+    public async Task Publish_WithZoneId_OnlyPublishesThatZone_GateZoneScoped()
+    {
+        using var db = Db();
+        var floorId = Guid.NewGuid();
+        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1" };
+        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+        var zoneA = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZA", ZoneName = "A" };
+        var zoneB = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZB", ZoneName = "B" };
+        var rackA = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneA.Id, FloorId = floorId, RackCode = "RA", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        var rackB = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneB.Id, FloorId = floorId, RackCode = "RB", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.Space_CodeRules.Add(new Space_CodeRule { Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true, Segments = ValidSegmentsJson() });
+        db.AddRange(site, floor, zoneA, zoneB, rackA, rackB);
+        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rackA.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "ZA-01", Col = 1, Level = 1, Depth = 1 });
+        // Zone B 留一个空码草稿——整层闸门会拦（E-307），库区闸门必须放行 Zone A
+        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rackB.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = null, Col = 1, Level = 1, Depth = 1 });
+        await db.SaveChangesAsync();
+
+        var n = await MakePublishSvc(db).PublishFloorAsync(floorId, zoneA.Id, "u");
+
+        Assert.Equal(1, n);
+        var a = await db.Space_Locations.SingleAsync(l => l.RackId == rackA.Id);
+        var b = await db.Space_Locations.SingleAsync(l => l.RackId == rackB.Id);
+        Assert.Equal(1, a.Status);
+        Assert.Equal(0, b.Status);   // Zone B 未被波及
     }
 
     // ── D-4: 停用 ──────────────────────────────────────────────────────────
@@ -239,12 +363,94 @@ public class LocationPublishServiceTests
     {
         private readonly decimal _qty;
         public FixedStockQuery(int qty) => _qty = qty;
-        public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default) => Task.FromResult(_qty);
+        public Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default) => Task.FromResult(_qty);
         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>> GetStockByLocationsAsync(
             IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>>(Array.Empty<CP6.Core.Services.Integration.WmsStockDto>());
         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>> FindLocationsAsync(
             CP6.Core.Services.Integration.StockLocateQuery query, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>>(Array.Empty<CP6.Core.Services.Integration.WmsLocationHit>());
+    }
+
+    private sealed class RejectingDeactivator : IWmsBinDeactivator
+    {
+        public Task<WmsDeactivateResult> DeactivateAsync(WmsDeactivateRequest req, CancellationToken ct = default)
+            => Task.FromResult(new WmsDeactivateResult { Success = false, Reason = "W-SPACE-404 库存非0" });
+    }
+
+    [Fact]
+    public async Task Deactivate_WmsRejects_StatusStays1_NoEvent()
+    {
+        using var db = Db();
+        var locId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
+            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1, Version = 1
+        });
+        await db.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => MakePublishSvc(db, deact: new RejectingDeactivator()).DeactivateAsync(locId, "u"));
+
+        Assert.StartsWith("W-SPACE-404", ex.Message);
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(1, loc.Status);            // §6.3：不前进、无翻转回滚
+        Assert.Equal(1, loc.Version);           // 版本不动
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 决策失败不发兜底事件
+    }
+
+    [Fact]
+    public async Task Deactivate_Success_WmsBinInactive_VersionSynced()
+    {
+        using var db = Db();
+        var locId = Guid.NewGuid();
+        // 预置已消费的 bin（模拟此前 UPSERT 已落库）
+        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
+        {
+            Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", Version = 1, IsActive = true
+        });
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
+            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1, Version = 1
+        });
+        await db.SaveChangesAsync();
+
+        await MakePublishSvc(db).DeactivateAsync(locId, "u");
+
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(2, loc.Status);
+        Assert.Equal(2, loc.Version);
+        var bin = await db.WmsBins.SingleAsync();
+        Assert.False(bin.IsActive);
+        Assert.Equal(2, bin.Version);           // 同步 RPC 落定的新版本
+        Assert.Equal(1, await db.IntegrationEvents.CountAsync());   // ④ 兜底事件已补发
+    }
+
+    [Fact]
+    public async Task Deactivate_NoBinYet_SyncRpc_WritesTombstone()
+    {
+        // H6：UPSERT 事件尚未消费（bin 不存在）时停用 → 同步 RPC 落墓碑占住 (Id, Version)
+        using var db = Db();
+        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);   // WarehouseCd 默认=SiteCode "WH1"
+        var locId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1, Version = 1
+        });
+        await db.SaveChangesAsync();
+
+        await MakePublishSvc(db).DeactivateAsync(locId, "u");
+
+        var tomb = await db.WmsBins.SingleAsync();
+        Assert.False(tomb.IsActive);
+        Assert.Equal(2, tomb.Version);
+        Assert.Equal("WH1", tomb.WarehouseCd);
+        Assert.Equal(2, (await db.Space_Locations.SingleAsync()).Status);
     }
 }

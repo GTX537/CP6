@@ -8,7 +8,9 @@ namespace CP6.Core.Services.Integration;
 /// <summary>Space 发布 bridge hook 契约（ch04 §2.1）。</summary>
 public interface ISpaceBridgeHook
 {
-    Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId);
+    /// <param name="persistEvent">true=末尾落 IntegrationEvent（首发路径）；false=不落（Worker 重试路径，
+    /// 由 Worker 更新原事件行，避免每次重试新插一行导致事件表翻倍增长）。</param>
+    Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId, bool persistEvent = true);
 }
 
 /// <summary>Space bridge hook 调用结果。</summary>
@@ -33,7 +35,7 @@ public class SpaceBridgeHook : BridgeHookBase, ISpaceBridgeHook
     }
 
     /// <summary>发布批次到 WMS，落 IntegrationEvent 持久化记录。</summary>
-    public async Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId)
+    public async Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId, bool persistEvent = true)
     {
         string status;
         string? error = null;
@@ -55,16 +57,19 @@ public class SpaceBridgeHook : BridgeHookBase, ISpaceBridgeHook
             error = ex.ToString();
         }
 
-        await PersistEventAsync(
-            sourceModule: "SPACE",
-            targetModule: "WMS",
-            hookName: nameof(OnLocationPublishedAsync),
-            sourceNo: batch.BatchNo,
-            targetNo: null,
-            status: status,
-            error: error,
-            correlationId: correlationId,
-            payload: batch);
+        if (persistEvent)
+        {
+            await PersistEventAsync(
+                sourceModule: "SPACE",
+                targetModule: "WMS",
+                hookName: nameof(OnLocationPublishedAsync),
+                sourceNo: batch.BatchNo,
+                targetNo: null,
+                status: status,
+                error: error,
+                correlationId: correlationId,
+                payload: batch);
+        }
 
         return new SpaceBridgeResult
         {

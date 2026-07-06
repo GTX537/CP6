@@ -30,4 +30,8 @@ public class Space_Site : BaseBizEntity
 
     /// <summary>是否启用</summary>
     public bool Enable { get; set; } = true;
+
+    /// <summary>WMS 仓库编码映射（ch04 §3.4 SiteCode↔WarehouseCd；空=默认规则 WarehouseCd=SiteCode）</summary>
+    [MaxLength(10)]
+    public string? WarehouseCd { get; set; }
 }

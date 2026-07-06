@@ -68,7 +68,8 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         [RouteKey("SPACE", "WMS", "OnLocationPublishedAsync")] = async ctx =>
         {
             var p = ctx.GetPayload<LocationPublishBatch>();
-            var r = await ctx.Space.OnLocationPublishedAsync(p, Guid.NewGuid());
+            // 重试路径不重复落事件：Worker 负责更新原 IntegrationEvent 行的 Status/Attempts
+            var r = await ctx.Space.OnLocationPublishedAsync(p, Guid.NewGuid(), persistEvent: false);
             return r.Success;
         },
     };

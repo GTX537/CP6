@@ -14,8 +14,8 @@ public interface IWmsStockQuery
     Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
         StockLocateQuery query, CancellationToken ct = default);
 
-    /// <summary>单库位库存量（= 批量的单元素特例；04 停用前置 0 库存校验用）。</summary>
-    Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default);
+    /// <summary>单库位库存量（04 停用前置校验用）。warehouseCd 给定时按 (仓,码) 锚查（§3.4 多仓防串仓）。</summary>
+    Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default);
 }
 
 /// <summary>库位库存叠加 DTO（join key=LocationCode）。</summary>
@@ -57,6 +57,6 @@ public sealed class StubWmsStockQuery : IWmsStockQuery
         StockLocateQuery query, CancellationToken ct = default)
         => Task.FromResult<IReadOnlyList<WmsLocationHit>>(Array.Empty<WmsLocationHit>());
 
-    public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default)
+    public Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default)
         => Task.FromResult(0m);
 }

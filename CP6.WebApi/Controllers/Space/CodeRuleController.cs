@@ -82,9 +82,9 @@ public class CodeRuleController : ControllerBase
     /// 返回：空码数 / 重复码组 / 规则静态错误 / 未落位数。
     /// </summary>
     [HttpGet("floor/{id:guid}/code-precheck")]
-    public async Task<IActionResult> CodePrecheck(Guid id)
+    public async Task<IActionResult> CodePrecheck(Guid id, [FromQuery] Guid? zoneId = null)
     {
-        try { return Ok2(await _svc.PrecheckAsync(id)); }
+        try { return Ok2(await _svc.PrecheckAsync(id, zoneId)); }
         catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
     }
 

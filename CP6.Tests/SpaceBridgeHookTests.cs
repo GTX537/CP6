@@ -56,6 +56,21 @@ public class SpaceBridgeHookTests
         Assert.Equal(IntegrationEventStatus.Skipped, evt.Status);
     }
 
+    [Fact]
+    public async Task Hook_PersistEventFalse_DoesNotInsertEventRow()
+    {
+        using var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        var hook = new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
+        var batch = new LocationPublishBatch { BatchNo = "LPUB-20260705-0001" };
+
+        var r = await hook.OnLocationPublishedAsync(batch, Guid.NewGuid(), persistEvent: false);
+
+        Assert.True(r.Success);
+        // 重试路径（Dispatcher）走此分支：Worker 更新原事件行，hook 不得再新插一行
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+    }
+
     private sealed class AllSkippedConsumer : IWmsLocationConsumer
     {
         public Task<WmsConsumeResult> ConsumeAsync(LocationPublishBatch batch) =>

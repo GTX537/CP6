@@ -162,4 +162,50 @@ public class SceneServiceTests
             () => svc.SaveSceneAsync(floorId, dto, "u"));
         Assert.Equal("E-SPACE-003", ex.Message);
     }
+
+    [Fact]
+    public async Task SaveScene_CannotFlipPublishedStatus_OrCodeOrigin()
+    {
+        // H1：场景保存曾可任意覆盖 Status/CodeOrigin——绕过 publish/deactivate 状态机的后门
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var locId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = floorId, RackId = null,
+            Placed = false, Status = 1, CodeOrigin = 2, LocationCode = "EXT-001", Version = 3
+        });
+        await db.SaveChangesAsync();
+
+        await svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Locations = new List<SceneLocationSaveDto>
+            {
+                new SceneLocationSaveDto { Id = locId, RackId = Guid.Empty, Col = 1, Level = 1, Depth = 1, Placed = false, Status = 0, CodeOrigin = 1 }
+            }
+        }, "u");
+
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(1, loc.Status);       // 发布状态不被场景保存改写
+        Assert.Equal(2, loc.CodeOrigin);   // 来源标签（对账依据）同理
+    }
+
+    [Fact]
+    public async Task SaveScene_NewLocation_ForcedDraft()
+    {
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+
+        await svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Locations = new List<SceneLocationSaveDto>
+            {
+                new SceneLocationSaveDto { Id = Guid.NewGuid(), RackId = Guid.Empty, Col = 1, Level = 1, Depth = 1, Placed = false, Status = 1, CodeOrigin = 2 }
+            }
+        }, "u");
+
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(0, loc.Status);       // 编辑器新建恒草稿；发布走 publish、采纳走 adopt
+        Assert.Equal(1, loc.CodeOrigin);
+    }
 }

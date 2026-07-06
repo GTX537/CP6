@@ -19,6 +19,8 @@ public class LocationPublishItem
     /// <summary>编码来源：1 引擎生成 / 2 采纳导入</summary>
     public int CodeOrigin { get; set; }
     public long Version { get; set; }
+    /// <summary>仓库编码（v1.1 §3.4：发布 hook 投递前按 SiteCode↔WarehouseCd 映射填好；(WarehouseCd, LocationCode) 是跨系统 join 锚）</summary>
+    public string? WarehouseCd { get; set; }
     public LocationPath Path { get; set; } = new();
     /// <summary>业务属性（仅 size 等，★绝不含 AbsX/Y/Z 几何坐标）</summary>
     public Dictionary<string, object?> Attrs { get; set; } = new();

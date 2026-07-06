@@ -428,6 +428,10 @@ public class CP6Context : DbContext
     public DbSet<Space_Connector> Space_Connectors { get; set; }
     public DbSet<Space_ConnectorStop> Space_ConnectorStops { get; set; }
 
+    // ───── Space ch04 v1.1 §5.3 发布落点（WMS 侧消费表，方案A 2026-07-05 拍板）─────
+    /// <summary>WMS 库位消费表（Space 发布落点，幂等判据 lastVersion 存放处）</summary>
+    public DbSet<CP6.Entity.DomainModels.Wms.WmsBin> WmsBins { get; set; }
+
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
     public DbSet<GlAccount> GlAccounts { get; set; }
@@ -2041,6 +2045,15 @@ public class CP6Context : DbContext
             .HasIndex(x => new { x.TenantId, x.ScopeType, x.ScopeId });
         modelBuilder.Entity<Space_Marker>()
             .HasIndex(x => new { x.TenantId, x.FloorId });
+        modelBuilder.Entity<CP6.Entity.DomainModels.Wms.WmsBin>(e =>
+        {
+            // Id = Space LocationId，由发布方给定，禁止自动生成（ch04 §5.3）
+            e.Property(x => x.Id).ValueGeneratedNever();
+            // join 锚：同租户同仓内 code 唯一（ch04 §3.4）
+            e.HasIndex(x => new { x.TenantId, x.WarehouseCd, x.LocationCode }).IsUnique();
+            e.Property(x => x.PathJson).HasColumnType("nvarchar(max)");
+            e.Property(x => x.AttrsJson).HasColumnType("nvarchar(max)");
+        });
 
         // ═══════════════════════════════════════════════════════════
         //  章10 多租户：对所有 BaseTenantEntity 反射批量注册全局查询过滤（防漏命门，OA4-D1/D3）
