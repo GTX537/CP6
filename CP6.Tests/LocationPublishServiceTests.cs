@@ -179,6 +179,38 @@ public class LocationPublishServiceTests
     }
 
     [Fact]
+    public async Task Publish_SiteCodeOver10Chars_NoMapping_Throws_E405_NoOrphan()
+    {
+        // 终审 #1：SiteCode(11 字符) 默认回退 WarehouseCd=SiteCode 超 nvarchar(10) 列约束。
+        // 长度守卫在 SaveChanges 前 fail-fast → 状态不持久化、无事件、无孤儿。
+        using var db = Db();
+        var floorId = Guid.NewGuid();
+        var rackId = Guid.NewGuid();
+        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "SITE0123456", SiteName = "S1", WarehouseCd = null }; // 11 chars
+        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
+        var rack = new Space_Rack { Id = rackId, ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.Space_CodeRules.Add(new Space_CodeRule { Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true, Segments = ValidSegmentsJson() });
+        db.AddRange(site, floor, zone, rack);
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1
+        });
+        await db.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => MakePublishSvc(db).PublishFloorAsync(floorId, null, "u"));
+        Assert.StartsWith("E-SPACE-405", ex.Message);
+
+        // AsNoTracking 读 InMemory 存储快照（SaveChanges 从未运行）→ Status 仍 0
+        var loc = await db.Space_Locations.AsNoTracking().SingleAsync();
+        Assert.Equal(0, loc.Status);
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+    }
+
+    [Fact]
     public async Task Publish_WithZoneId_OnlyPublishesThatZone_GateZoneScoped()
     {
         using var db = Db();

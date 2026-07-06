@@ -26,7 +26,11 @@ public class WmsBinConsumer : IWmsLocationConsumer
         var result = new WmsConsumeResult { Success = true };
         foreach (var item in batch.Items)
         {
-            var bin = await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == item.LocationId);
+            // 终审 #3：先看同批未保存的 Added 实体（Local），再落库查——顺手兜掉批内同 LocationId 双 Add。
+            // 注意 FindAsync 会看见 Local 但绕过全局查询过滤器（不做租户核对），此处用 Local+过滤查询双查更稳；
+            // 本表 PK=LocationId 为全局唯一 GUID，跨租户误命中现实无虞。
+            var bin = _db.WmsBins.Local.FirstOrDefault(b => b.Id == item.LocationId)
+                      ?? await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == item.LocationId);
 
             // 陈旧/重复事件 → 幂等跳过（§5.1 关键行，至少一次投递安全）
             if (bin != null && item.Version <= bin.Version)
@@ -87,6 +91,20 @@ public class WmsBinConsumer : IWmsLocationConsumer
             }
             if (bin == null)
             {
+                // 终审 #3：join 锚碰撞检查——同 (WarehouseCd, LocationCode) 被不同 LocationId（含墓碑）
+                // 占用时，直接 Add 会撞唯一索引走异常毒化链；改为业务拒绝链（REJECTED + Success=false）。
+                // 含 Local 同批检查，覆盖同批两条不同 LocationId 却撞同锚的场景。
+                var anchorHolder = _db.WmsBins.Local
+                        .FirstOrDefault(b => b.WarehouseCd == item.WarehouseCd && b.LocationCode == item.LocationCode)
+                    ?? await _db.WmsBins.FirstOrDefaultAsync(
+                        b => b.WarehouseCd == item.WarehouseCd && b.LocationCode == item.LocationCode);
+                if (anchorHolder != null && anchorHolder.Id != item.LocationId)
+                {
+                    result.Items.Add(Item(item, "REJECTED",
+                        "join 锚 (WarehouseCd, LocationCode) 已被其他 LocationId 占用（唯一索引冲突转业务拒绝）"));
+                    result.Success = false;
+                    continue;
+                }
                 bin = new WmsBin { Id = item.LocationId };
                 _db.WmsBins.Add(bin);
             }
@@ -99,9 +117,35 @@ public class WmsBinConsumer : IWmsLocationConsumer
             result.Items.Add(Item(item, "UPSERTED", null));
         }
 
-        await _db.SaveChangesAsync();
+        // 终审 #2：持久失败时，失败实体若留在共享 CP6Context tracker 里，会毒化 SpaceBridgeHook
+        // 的事件落库与 Worker 批尾簿记（Attempts/NextRetryAt 丢失 → 热循环永不 DeadLetter）。
+        // 失败时只 detach 本方法 Add/Modify 的 WmsBin 行后 rethrow——绝不用 ChangeTracker.Clear()
+        // （那会连 Worker 正在跟踪的事件行一起断开）。
+        try
+        {
+            await _db.SaveChangesAsync();
+        }
+        catch
+        {
+            DetachOwnWrites();
+            throw;
+        }
         result.AllSkipped = result.Items.Count > 0 && result.Items.All(i => i.Status == "SKIPPED");
         return result;
+    }
+
+    /// <summary>
+    /// SaveChanges 失败时，将本消费方法写入（Added/Modified）的 WmsBin 行从共享 tracker 断开，
+    /// 避免污染同 context 内其他跟踪实体（事件行等）。internal 供单测直接锁定 detach 语义。
+    /// </summary>
+    internal void DetachOwnWrites()
+    {
+        foreach (var entry in _db.ChangeTracker.Entries<WmsBin>()
+                     .Where(e => e.State is EntityState.Added or EntityState.Modified)
+                     .ToList())
+        {
+            entry.State = EntityState.Detached;
+        }
     }
 
     private static void Stamp(WmsBin bin, long version, string? publishedBy)

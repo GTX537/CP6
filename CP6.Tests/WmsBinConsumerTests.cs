@@ -96,6 +96,57 @@ public class WmsBinConsumerTests
     }
 
     [Fact]
+    public async Task Upsert_AnchorCollision_DifferentLocationId_Rejected()
+    {
+        // 终审 #3：同 (WarehouseCd, LocationCode) 锚被不同 LocationId 占用 → 走业务拒绝链，
+        // 而非 Add 撞唯一索引走异常毒化链。
+        using var db = Db();
+        var idA = Guid.NewGuid();
+        var idB = Guid.NewGuid();
+        await new WmsBinConsumer(db).ConsumeAsync(Batch(Upsert(idA, "A-01-01-01", 1)));   // bin A 占住锚
+
+        var r = await new WmsBinConsumer(db).ConsumeAsync(Batch(Upsert(idB, "A-01-01-01", 1)));
+
+        Assert.False(r.Success);
+        Assert.Equal("REJECTED", r.Items.Single().Status);
+        Assert.Equal(1, await db.WmsBins.CountAsync());          // 仍只有 A，B 未落库
+        Assert.Equal(idA, (await db.WmsBins.SingleAsync()).Id);
+    }
+
+    [Fact]
+    public async Task Upsert_SameBatch_DuplicateLocationId_NoDoubleAdd()
+    {
+        // 终审 #3：FindAsync/Local 双查兜掉批内同 LocationId 双 Add——第二条按已见 Added 实体走版本门，
+        // 不抛、行数=1。
+        using var db = Db();
+        var id = Guid.NewGuid();
+
+        var r = await new WmsBinConsumer(db).ConsumeAsync(
+            Batch(Upsert(id, "A-01-01-01", 1), Upsert(id, "A-01-01-01", 1)));
+
+        Assert.Equal(2, r.Items.Count);
+        Assert.Equal("UPSERTED", r.Items[0].Status);
+        Assert.Equal("SKIPPED", r.Items[1].Status);              // 同版本走幂等门
+        Assert.Equal(1, await db.WmsBins.CountAsync());
+    }
+
+    [Fact]
+    public void DetachOwnWrites_DetachesAddedWmsBins()
+    {
+        // 终审 #2：InMemory 难以可靠诱发 SaveChanges 持久失败（Local 双查已消除同批双 Add 诱发路径），
+        // 故直接锁定 detach 语义——Add 一个 WmsBin 后调清理方法，断言 Entry.State==Detached。
+        using var db = Db();
+        var consumer = new WmsBinConsumer(db);
+        var bin = new WmsBin { Id = Guid.NewGuid(), LocationCode = "A-01-01-01", WarehouseCd = "WH1", Version = 1 };
+        db.WmsBins.Add(bin);
+        Assert.Equal(EntityState.Added, db.Entry(bin).State);
+
+        consumer.DetachOwnWrites();
+
+        Assert.Equal(EntityState.Detached, db.Entry(bin).State);
+    }
+
+    [Fact]
     public async Task Deactivate_NoBin_CreatesTombstone()
     {
         // H6 乱序防护（对契约 §5.1 的修正）：bin 不存在的 DEACTIVATE 落墓碑而非跳过，

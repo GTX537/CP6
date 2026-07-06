@@ -245,6 +245,14 @@ public class LocationPublishService : ILocationPublishService
     /// <summary>
     /// SiteCode↔WarehouseCd 映射（ch04 §3.4）：Site.WarehouseCd 显式配置优先，空则默认 = SiteCode。
     /// 走 FloorId → Site 链（比 Rack 链短，且停用未落位库位也可能有 FloorId）；无楼层归属返回 null。
+    ///
+    /// 长度守卫（终审 #1）：WmsBin.WarehouseCd / Space_Site.WarehouseCd 均为 nvarchar(10)，而
+    /// Space_Site.SiteCode 是 MaxLength(50)。默认回退 WarehouseCd=SiteCode 时若 SiteCode 超 10 字符，
+    /// 消费端真库 SaveChanges 会截断/抛异常 → 毒化共享 CP6Context → 状态已翻/无 bin/无事件的三无孤儿。
+    /// 本方法在 BuildItemAsync（发布）/ DeactivateAsync（停用）内被调用。发布路径虽在循环里先写了
+    /// 内存态 l.Status = 1，但抛异常发生在 _db.SaveChangesAsync() 之前——内存翻转从不落库，且外层
+    /// 发布事务（tx）未 Commit 即 Dispose 回滚。因此天然 fail-fast：库位 Status 不持久化、无 bin、无事件、无孤儿。
+    /// 显式配置的 Space_Site.WarehouseCd 本身受 MaxLength(10) 列约束护住，超长只可能来自 SiteCode 默认回退。
     /// </summary>
     private async Task<string?> ResolveWarehouseCdAsync(Space_Location l)
     {
@@ -253,6 +261,10 @@ public class LocationPublishService : ILocationPublishService
         if (floor == null) return null;
         var site = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId);
         if (site == null) return null;
-        return string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
+        var warehouseCd = string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
+        if (warehouseCd.Length > 10)
+            throw new InvalidOperationException(
+                "E-SPACE-405: 站点编码超过 10 字符且未配置 WarehouseCd 映射，无法发布/停用");
+        return warehouseCd;
     }
 }
