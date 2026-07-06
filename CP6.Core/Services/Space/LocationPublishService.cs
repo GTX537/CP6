@@ -151,6 +151,48 @@ public class LocationPublishService : ILocationPublishService
     }
 
     /// <inheritdoc/>
+    public async Task<int> RepublishAsync(IReadOnlyCollection<Guid> locationIds, string? user)
+    {
+        if (locationIds.Count == 0) return 0;
+
+        // 嵌套事务守卫：本方法会被 SceneService 场景保存事务（H4 改挂）或删除放行路径包裹调用；
+        // 已有环境事务时直接加入（同连接嵌套 BeginTransaction 会抛），无事务时自开（惯例守卫）。
+        var ownsTx = _db.Database.IsRelational() && _db.Database.CurrentTransaction == null;
+        IDbContextTransaction? tx = ownsTx ? await _db.Database.BeginTransactionAsync() : null;
+        try
+        {
+            var locs = await _db.Space_Locations
+                .Where(l => locationIds.Contains(l.Id) && l.Status == 1 && l.LocationCode != null)
+                .ToListAsync();
+            if (locs.Count == 0) return 0;
+
+            var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
+            var batch = new LocationPublishBatch
+            {
+                BatchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}",
+                TenantId = _t.CurrentTenantId,
+                PublishedBy = user
+            };
+            foreach (var l in locs)
+            {
+                l.Version += 1;                 // 码冻结不变，只升版刷新 path（§7.2 B）
+                l.Modifier = user;
+                l.ModifyDate = DateTime.Now;
+                batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
+            }
+            await _db.SaveChangesAsync();
+            await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+
+            if (tx != null) await tx.CommitAsync();
+            return locs.Count;
+        }
+        finally
+        {
+            if (tx != null) await tx.DisposeAsync();
+        }
+    }
+
+    /// <inheritdoc/>
     public async Task<(int imported, List<string> skipped)> AdoptAsync(
         IEnumerable<(string code, Dictionary<string, object?>? attrs)> items, string? user)
     {

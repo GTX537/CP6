@@ -310,6 +310,67 @@ public class LocationPublishServiceTests
         Assert.StartsWith("E-SPACE-004", ex.Message);
     }
 
+    // ── §7.2 路径B: re-publish ────────────────────────────────────────────
+
+    [Fact]
+    public async Task Republish_PublishedLocation_BumpsVersion_EmitsUpsert()
+    {
+        using var db = Db();
+        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);
+        var locId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = floorId, RackId = rackId,
+            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
+            Col = 1, Level = 1, Depth = 1, Version = 3
+        });
+        await db.SaveChangesAsync();
+
+        var n = await MakePublishSvc(db).RepublishAsync(new[] { locId }, "u");
+
+        Assert.Equal(1, n);
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(1, loc.Status);                    // 状态不变（不是重新发布生命周期）
+        Assert.Equal(4, loc.Version);                   // 只升版
+        Assert.Equal("A-01-01-01", loc.LocationCode);   // 码冻结不变（§7.2 B 精髓）
+        var evt = await db.IntegrationEvents.SingleAsync();
+        var payload = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(evt.PayloadJson);
+        Assert.Equal("UPSERT", payload.GetProperty("Items")[0].GetProperty("Op").GetString());
+        Assert.Equal(4, payload.GetProperty("Items")[0].GetProperty("Version").GetInt64());
+    }
+
+    [Fact]
+    public async Task Republish_IgnoresDraftAndDeactivated()
+    {
+        using var db = Db();
+        var draftId = Guid.NewGuid();
+        var deactId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = draftId, FloorId = Guid.NewGuid(), Status = 0, LocationCode = "D-01", Version = 0
+        });
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = deactId, FloorId = Guid.NewGuid(), Status = 2, LocationCode = "X-01", Version = 2
+        });
+        await db.SaveChangesAsync();
+
+        var n = await MakePublishSvc(db).RepublishAsync(new[] { draftId, deactId }, "u");
+
+        Assert.Equal(0, n);
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 非发布态不产生事件
+        Assert.Equal(0, (await db.Space_Locations.FirstAsync(l => l.Id == draftId)).Version);
+    }
+
+    [Fact]
+    public async Task Republish_EmptyInput_Returns0_NoEvent()
+    {
+        using var db = Db();
+        var n = await MakePublishSvc(db).RepublishAsync(Array.Empty<Guid>(), "u");
+        Assert.Equal(0, n);
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+    }
+
     // ── D-5: 采纳导入 ──────────────────────────────────────────────────────
 
     [Fact]
