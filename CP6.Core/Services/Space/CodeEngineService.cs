@@ -165,7 +165,7 @@ public class CodeEngineService : ICodeEngineService
             var segs = DeserializeSegs(rule.Segments);
             var errs = CodePrecheck.Validate(segs);
             if (errs.Count > 0)
-                throw new InvalidOperationException(errs[0]);  // E-303/305/306
+                throw new BizException(errs[0]);  // E-303/305/306
         }
 
         // ── 6. 组装候选码 ──────────────────────────────────────────────
@@ -363,7 +363,7 @@ public class CodeEngineService : ICodeEngineService
         var segs    = DeserializeSegs(rule.Segments);
         var preErrs = CodePrecheck.Validate(segs);
         if (preErrs.Count > 0)
-            throw new InvalidOperationException(preErrs[0]);
+            throw new BizException(preErrs[0]);
 
         // 简化序号字典（单格场景；完整 Zone 级排序见计划 §10）
         var zoneSeq = new Dictionary<Guid, int> { [zone.Id] = 1 };
