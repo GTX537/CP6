@@ -7,8 +7,10 @@ import { SelectTool } from './tools/SelectTool'
 import { DragTool } from './tools/DragTool'
 import { RotateTool } from './tools/RotateTool'
 import { MarkerTool } from './tools/MarkerTool'
+import { ZoneTool } from './tools/ZoneTool'
+import type { WorldRect } from './select/lassoHit'
 
-export type ToolType = 'select' | 'drag' | 'rotate' | 'marker'
+export type ToolType = 'select' | 'drag' | 'rotate' | 'marker' | 'zone'
 type Store = ReturnType<typeof useSpaceEditorStore>
 
 export interface ITool {
@@ -28,6 +30,8 @@ export interface ToolContext {
   ctrlHeld: () => boolean
   afterCommand: () => void
   transformer: Konva.Transformer
+  /** ZoneTool 拖框完成回调——由 FloorEditor 注入，接手校验/命名/命令栈业务。 */
+  onZoneRectDrawn?: (rect: WorldRect) => void
 }
 
 // ── Shared helpers (exported for tools) ──────────────────────────────────────
@@ -89,6 +93,7 @@ export class InteractionManager {
       drag: new DragTool(this.ctx),
       rotate: new RotateTool(this.ctx),
       marker: new MarkerTool(this.ctx),
+      zone: new ZoneTool(this.ctx),
     }
 
     this.bindEvents()
@@ -106,6 +111,11 @@ export class InteractionManager {
 
   setCtrlHeld(held: boolean): void {
     this._ctrlHeld = held
+  }
+
+  /** 注入 ZoneTool 拖框完成回调（FloorEditor 在此接手弹窗/校验/命令栈）。 */
+  setZoneRectHandler(fn: (rect: WorldRect) => void): void {
+    this.ctx.onZoneRectDrawn = fn
   }
 
   /** Disable all event handling (e.g. during placement mode). */

@@ -172,6 +172,10 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wms/iot-monitor':          () => import('@/views/wms/IotMonitorView.vue'),
   // ───── Phase WM-8 帳票（占位） ─────
   '/wms/report-center':        () => import('@/views/wms/ReportCenterView.vue'),
+  // ── Space 空間管理（波2 P0）─────────────────────────────
+  '/space/home': () => import('@/views/space/SpaceHomeView.vue'),
+  '/space/site': () => import('@/views/space/master/SpaceSiteView.vue'),
+  '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口

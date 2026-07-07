@@ -3,12 +3,13 @@ import { describe, it, expect } from 'vitest'
 import { MoveRackCmd } from './commands/MoveRackCmd'
 import { RotateRackCmd } from './commands/RotateRackCmd'
 import { AddMarkerCmd } from './commands/AddMarkerCmd'
+import { AddZoneCmd } from './commands/AddZoneCmd'
 import { MoveMarkerCmd } from './commands/MoveMarkerCmd'
 import { EditMarkerCmd } from './commands/EditMarkerCmd'
 import { DeleteCmd } from './commands/DeleteCmd'
 import { BatchCmd } from './commands/BatchCmd'
 import type { EditorContext } from './Command'
-import type { EditorScene, RackVO, MarkerVO } from '@/types/space/scene'
+import type { EditorScene, RackVO, MarkerVO, ZoneVO } from '@/types/space/scene'
 
 function makeScene(racks: Partial<RackVO>[] = [], markers: Partial<MarkerVO>[] = []): EditorScene {
   return {
@@ -111,6 +112,26 @@ describe('AddMarkerCmd', () => {
     cmd.undo(ctx)
     expect(scene.markers).toHaveLength(0)
     expect(ctx.deleteIds).toContain('m1')
+  })
+})
+
+// ─── AddZoneCmd ───────────────────────────────────────────────────────────────
+describe('AddZoneCmd', () => {
+  it('do 插入 zone；undo 删除', () => {
+    const scene = makeScene()
+    const ctx = makeCtx(scene)
+    const zone: ZoneVO = {
+      id: 'z1', floorId: 'f1', zoneCode: 'Z-001', zoneName: '库区A',
+      zoneType: 1, polygon: '[[0,0],[1000,0],[1000,1000],[0,1000]]', enable: true,
+    }
+    const cmd = new AddZoneCmd(zone)
+    cmd.do(ctx)
+    expect(scene.zones).toHaveLength(1)
+    expect(scene.zones[0]!.id).toBe('z1')
+    expect(ctx.dirtyIds).toContain('z1')
+    cmd.undo(ctx)
+    expect(scene.zones).toHaveLength(0)
+    expect(ctx.deleteIds).toContain('z1')
   })
 })
 

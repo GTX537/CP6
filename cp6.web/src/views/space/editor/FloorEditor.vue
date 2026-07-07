@@ -10,6 +10,9 @@ import { genZoneArray } from '@/space-editor/generate/genZoneArray'
 import type { ZoneVO, RackVO } from '@/types/space/scene'
 import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
 import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
+import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
+import { rectToPolygon, rectShortEdge } from '@/space-editor/interact/tools/zoneGeom'
+import type { WorldRect } from '@/space-editor/interact/select/lassoHit'
 import { scanCollisions } from '@/space-editor/interact/collide/CollisionHint'
 import TemplatePanel from './panels/TemplatePanel.vue'
 import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
@@ -112,6 +115,7 @@ onMounted(async () => {
     stageRef = new SceneStage(canvasRef.value)
     stageRef.render(res.data)
     imRef.value = new InteractionManager(stageRef, store, afterCommand)
+    imRef.value.setZoneRectHandler(onZoneRectDrawn)
     bindStageClick()
   }
 
@@ -220,6 +224,84 @@ function handleRedo(): void {
   store.stack.redo(store.buildEditorContext())
   store.updateUndoRedo()
   afterCommand()
+}
+
+// ── New Zone (拖框建库区，解建模鸡蛋问题) ───────────────────────────────────
+
+const MIN_ZONE_EDGE = 500  // mm，短边下限
+
+const zoneDialogVisible = ref(false)
+const pendingZoneRect = ref<WorldRect | null>(null)
+const zoneForm = ref<{ zoneCode: string; zoneName: string; zoneType: number; color: string }>({
+  zoneCode: '',
+  zoneName: '',
+  zoneType: 1,
+  color: '#67c23a',
+})
+
+const zoneTypeOptions = [
+  { value: 1, label: t('存储区') },
+  { value: 2, label: t('拣选区') },
+  { value: 3, label: t('收货区') },
+  { value: 4, label: t('发货区') },
+]
+
+/** ZoneTool 拖框完成 → 校验短边 → 弹命名弹窗（业务全在页面侧） */
+function onZoneRectDrawn(rect: WorldRect): void {
+  if (rectShortEdge(rect) < MIN_ZONE_EDGE) {
+    ElMessage.warning(t('库区太小，请拖大一点'))
+    switchTool('select')
+    return
+  }
+  pendingZoneRect.value = rect
+  zoneForm.value = { zoneCode: '', zoneName: '', zoneType: 1, color: '#67c23a' }
+  zoneDialogVisible.value = true
+}
+
+/** 弹窗确认：校验必填 + zoneCode 不重 → AddZoneCmd 进栈 → 重渲染 → 切回 select */
+function confirmZone(): void {
+  const rect = pendingZoneRect.value
+  const s = store.scene
+  if (!rect || !s) return
+
+  const code = zoneForm.value.zoneCode.trim()
+  const name = zoneForm.value.zoneName.trim()
+  if (!code) { ElMessage.warning(t('请输入库区编码')); return }
+  if (!name) { ElMessage.warning(t('请输入库区名称')); return }
+  if (s.zones.some(z => z.zoneCode === code)) {
+    ElMessage.warning(t('库区编码已存在'))
+    return
+  }
+
+  const zone: ZoneVO = {
+    id: crypto.randomUUID(),
+    floorId: floorId.value,
+    zoneCode: code,
+    zoneName: name,
+    zoneType: zoneForm.value.zoneType,
+    polygon: JSON.stringify(rectToPolygon(rect)),
+    color: zoneForm.value.color || null,
+    enable: true,
+  }
+
+  const cmd = new AddZoneCmd(zone)
+  store.stack.exec(cmd, store.buildEditorContext())
+  store.updateUndoRedo()
+  afterCommand()
+
+  closeZoneDialog()
+  ElMessage.success(t('库区已创建'))
+}
+
+/** 取消：丢弃矩形，不产生命令 */
+function cancelZone(): void {
+  closeZoneDialog()
+}
+
+function closeZoneDialog(): void {
+  zoneDialogVisible.value = false
+  pendingZoneRect.value = null
+  switchTool('select')
 }
 
 // ── Placement mode (F-3 template → canvas) ───────────────────────────────────
@@ -482,6 +564,11 @@ async function handleImportFile(e: Event): Promise<void> {
           @click="switchTool('marker')"
           :title="t('打点 (M)')"
         >{{ t('打点') }}</el-button>
+        <el-button
+          :type="activeTool === 'zone' ? 'primary' : 'default'"
+          @click="switchTool('zone')"
+          :title="t('拖框新建库区')"
+        >{{ t('新建库区') }}</el-button>
       </el-button-group>
 
       <!-- Undo / Redo -->
@@ -574,6 +661,40 @@ async function handleImportFile(e: Event): Promise<void> {
       style="display: none"
       @change="handleImportFile"
     />
+
+    <!-- New Zone Dialog (拖框建库区) -->
+    <el-dialog
+      v-model="zoneDialogVisible"
+      :title="t('新建库区')"
+      width="420px"
+      @closed="cancelZone"
+    >
+      <el-form label-width="80px">
+        <el-form-item :label="t('库区编码')" required>
+          <el-input v-model="zoneForm.zoneCode" :placeholder="t('请输入库区编码')" />
+        </el-form-item>
+        <el-form-item :label="t('库区名称')" required>
+          <el-input v-model="zoneForm.zoneName" :placeholder="t('请输入库区名称')" />
+        </el-form-item>
+        <el-form-item :label="t('库区类型')">
+          <el-select v-model="zoneForm.zoneType" style="width: 100%">
+            <el-option
+              v-for="opt in zoneTypeOptions"
+              :key="opt.value"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="t('颜色')">
+          <el-color-picker v-model="zoneForm.color" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="cancelZone">{{ t('取消') }}</el-button>
+        <el-button type="primary" @click="confirmZone">{{ t('确定') }}</el-button>
+      </template>
+    </el-dialog>
 
     <!-- Bind Codes Dialog (I-2) -->
     <BindCodesDialog
