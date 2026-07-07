@@ -14,6 +14,6 @@ export class AddZoneCmd implements Command {
   undo(ctx: EditorContext): void {
     const idx = ctx.scene.zones.findIndex(z => z.id === this.zone.id)
     if (idx >= 0) ctx.scene.zones.splice(idx, 1)
-    ctx.markDirtyDelete(this.zone.id)
+    ctx.markDirtyDelete(this.zone.id, 'zone')
   }
 }
