@@ -10,7 +10,7 @@ using Xunit;
 namespace CP6.Tests;
 
 /// <summary>
-/// G-1 场景差量保存测试：新增货架/库位落库且 AbsX 重算；位姿变更触发重算；删有库位货架→E-003。
+/// G-1 场景差量保存测试：新增货架/库位落库且 AbsX 重算；位姿变更触发重算；删货架按契约§7.1（有已发布→E-403，其余级联删）。
 /// </summary>
 public class SceneServiceTests
 {
@@ -133,8 +133,10 @@ public class SceneServiceTests
     }
 
     [Fact]
-    public async Task SaveScene_DeleteRackWithLocations_ThrowsE003()
+    public async Task SaveScene_DeleteRackWithDraftLocations_Cascades()
     {
+        // 语义变更（契约 §7.1 + 2026-07-06 拍板）：旧 E-003「有任何库位全拦」废止——
+        // 草稿种子 → 库位连带删+删货架成功（原断言 E-SPACE-003 已按种子实际状态改写）。
         var (db, svc) = Make();
         var floorId = Guid.NewGuid();
         var zoneId  = Guid.NewGuid();
@@ -163,9 +165,10 @@ public class SceneServiceTests
             Deletes = new Deletes { Racks = new List<Guid> { rackId } }
         };
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => svc.SaveSceneAsync(floorId, dto, "u"));
-        Assert.Equal("E-SPACE-003", ex.Message);
+        await svc.SaveSceneAsync(floorId, dto, "u");
+
+        Assert.Equal(0, await db.Space_Racks.CountAsync());
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
     }
 
     [Fact]
@@ -350,5 +353,73 @@ public class SceneServiceTests
         var remaining = await db.Space_Locations.ToListAsync();
         Assert.Single(remaining);                                   // 幽灵位已连带删
         Assert.Equal(inBounds.Id, remaining[0].Id);
+    }
+
+    [Fact]
+    public async Task SaveScene_DeleteLocation_DraftAndDeactivated_Allowed_PublishedRejected()
+    {
+        // 库位删除通道（2026-07-06 拍板：0/2 可删，1 拒绝。停用位删除后码仍占 T_WmsBin 锚——已知代价）
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var draft = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, Status = 0 };
+        var deact = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, Status = 2, LocationCode = "X-01", Version = 2 };
+        var pub = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, Status = 1, LocationCode = "P-01", Version = 1 };
+        db.AddRange(draft, deact, pub);
+        await db.SaveChangesAsync();
+
+        // 草稿+停用：删除成功
+        await svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Deletes = new Deletes { Locations = new List<Guid> { draft.Id, deact.Id } }
+        }, "u");
+        Assert.Equal(1, await db.Space_Locations.CountAsync());
+
+        // 已发布：拒绝
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Deletes = new Deletes { Locations = new List<Guid> { pub.Id } }
+        }, "u"));
+        Assert.StartsWith("E-SPACE-408", ex.Message);
+        Assert.Equal(1, await db.Space_Locations.CountAsync());
+    }
+
+    [Fact]
+    public async Task SaveScene_DeleteRack_DraftLocationsOnly_Cascades()
+    {
+        // ch04 §7.1：全草稿 → 连带删（替代旧 E-003 全拦）
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.AddRange(zone, rack);
+        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Status = 0, Col = 1, Level = 1, Depth = 1 });
+        await db.SaveChangesAsync();
+
+        await svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Deletes = new Deletes { Racks = new List<Guid> { rack.Id } }
+        }, "u");
+
+        Assert.Equal(0, await db.Space_Racks.CountAsync());
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
+    }
+
+    [Fact]
+    public async Task SaveScene_DeleteRack_WithPublishedLocation_Throws403()
+    {
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.AddRange(zone, rack);
+        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Status = 1, LocationCode = "Z1-01", Col = 1, Level = 1, Depth = 1, Version = 1 });
+        await db.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Deletes = new Deletes { Racks = new List<Guid> { rack.Id } }
+        }, "u"));
+        Assert.StartsWith("E-SPACE-403", ex.Message);
+        Assert.Equal(1, await db.Space_Racks.CountAsync());
     }
 }

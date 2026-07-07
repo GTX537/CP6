@@ -257,10 +257,25 @@ public class SceneService : ISceneService
             }
 
             // ── Deletes ────────────────────────────────────────────
+            foreach (var locId in dto.Deletes?.Locations ?? new List<Guid>())
+            {
+                var e = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId);
+                if (e == null) continue;
+                // 已发布不可删（须先停用）；草稿/停用可删（2026-07-06 拍板）。
+                // 注意：停用位删除后其码仍被 T_WmsBin 停用行占据 join 锚，同码新库位发布会被
+                // 锚碰撞 REJECTED——锚清理机制记后续票，此为拍板时已知代价。
+                if (e.Status == 1)
+                    throw new InvalidOperationException("E-SPACE-408: 已发布库位不可删除，请先停用");
+                _db.Space_Locations.Remove(e);
+            }
+
             foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
             {
-                if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId))
-                    throw new InvalidOperationException("E-SPACE-003");
+                // ch04 §7.1：有已发布库位 → Restrict；全草稿/停用 → 库位连带删（旧 E-003 全拦废止）
+                if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId && l.Status == 1))
+                    throw new InvalidOperationException("E-SPACE-403: 该货架下有已发布库位，请先停用");
+                var children = await _db.Space_Locations.Where(l => l.RackId == rackId).ToListAsync();
+                if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
                 var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId);
                 if (e != null) _db.Space_Racks.Remove(e);
             }

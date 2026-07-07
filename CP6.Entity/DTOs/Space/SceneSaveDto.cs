@@ -18,6 +18,8 @@ public class Deletes
     public List<Guid>? Aisles { get; set; }
     public List<Guid>? Zones { get; set; }
     public List<Guid>? Markers { get; set; }
+    /// <summary>库位删除（2026-07-06 拍板：Status=0/2 可删、=1 拒绝 E-SPACE-408）</summary>
+    public List<Guid>? Locations { get; set; }
 }
 
 /// <summary>库位差量保存 DTO（G-1 用，含 Id 以区分新建/更新）</summary>
