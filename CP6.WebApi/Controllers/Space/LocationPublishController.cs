@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Space;
 using CP6.Entity.DomainModels;
@@ -10,6 +11,7 @@ namespace CP6.WebApi.Controllers.Space;
 /// <summary>
 /// 库位发布、停用、采纳、事件查询 Web API（ch04）。
 /// 路由前缀 /api/space；租户隔离由 TenantMiddleware + CP6Context 全局查询过滤自动施加。
+/// 权限约定（波4）：变更端点（POST/PUT/DELETE）贴 [RequirePermission]，GET（events）只 [Authorize]。
 /// </summary>
 [ApiController]
 [Route("api/space")]
@@ -33,6 +35,7 @@ public class LocationPublishController : ControllerBase
 
     /// <summary>整层/库区发布（ch04 §4）。</summary>
     [HttpPost("floor/{id:guid}/publish")]
+    [RequirePermission("space-publish", "publish")]
     public async Task<IActionResult> PublishFloor(Guid id, [FromBody] PublishFloorRequest? req)
     {
         try
@@ -51,6 +54,7 @@ public class LocationPublishController : ControllerBase
 
     /// <summary>停用已发布库位（ch04 §6）。</summary>
     [HttpPut("location/{id:guid}/deactivate")]
+    [RequirePermission("space-publish", "deactivate")]
     public async Task<IActionResult> Deactivate(Guid id)
     {
         try
@@ -69,6 +73,7 @@ public class LocationPublishController : ControllerBase
 
     /// <summary>存量采纳导入（ch04 §8.1）。</summary>
     [HttpPost("location/adopt")]
+    [RequirePermission("space-publish", "adopt")]
     public async Task<IActionResult> Adopt([FromBody] AdoptRequest req)
     {
         try

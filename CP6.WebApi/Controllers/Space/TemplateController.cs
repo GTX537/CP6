@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +9,8 @@ namespace CP6.WebApi.Controllers.Space;
 /// <summary>
 /// 模板 Web API（ch01 §F-1）。
 /// 路由 /api/space/template*；租户隔离由 TenantMiddleware + CP6Context 全局过滤自动施加。
+/// 权限约定（波4）：变更端点（POST/PUT/DELETE，含 clone）贴 [RequirePermission]，GET 只 [Authorize]。
+/// 模板变更归楼层编辑单一动作 space-floor:edit（映射表裁决）。
 /// </summary>
 [ApiController]
 [Route("api/space")]
@@ -27,6 +30,7 @@ public class TemplateController : ControllerBase
 
     /// <summary>创建模板</summary>
     [HttpPost("template")]
+    [RequirePermission("space-floor", "edit")]
     public async Task<IActionResult> Create([FromBody] TemplateDto d)
     {
         return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
@@ -34,6 +38,7 @@ public class TemplateController : ControllerBase
 
     /// <summary>更新模板</summary>
     [HttpPut("template/{id:guid}")]
+    [RequirePermission("space-floor", "edit")]
     public async Task<IActionResult> Update(Guid id, [FromBody] TemplateDto d)
     {
         await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
@@ -41,6 +46,7 @@ public class TemplateController : ControllerBase
 
     /// <summary>删除模板</summary>
     [HttpDelete("template/{id:guid}")]
+    [RequirePermission("space-floor", "edit")]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _svc.DeleteAsync(id); return Ok2();
@@ -48,6 +54,7 @@ public class TemplateController : ControllerBase
 
     /// <summary>克隆模板（新 Id + 新编码，同 Params/Type）</summary>
     [HttpPost("template/{id:guid}/clone")]
+    [RequirePermission("space-floor", "edit")]
     public async Task<IActionResult> Clone(Guid id)
     {
         return Ok2(new { id = await _svc.CloneAsync(id, CurrentUser) });
