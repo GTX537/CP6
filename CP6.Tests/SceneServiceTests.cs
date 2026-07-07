@@ -286,4 +286,69 @@ public class SceneServiceTests
         Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Version);   // 版本不动
         Assert.Equal(0, await db.IntegrationEvents.CountAsync());            // 零事件
     }
+
+    [Fact]
+    public async Task SaveScene_ShrinkRack_PublishedOutOfBounds_Throws403_NothingSaved()
+    {
+        // H2（2026-07-06 拍板：Restrict 阻断，非契约§4字面的自动停用）
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 3, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.AddRange(zone, rack);
+        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "Z1-03", Col = 3, Level = 1, Depth = 1, Version = 1 });
+        await db.SaveChangesAsync();
+
+        var dto = new SceneSaveDto
+        {
+            Racks = new List<RackDto>
+            {
+                new RackDto
+                {
+                    Id = rack.Id, ZoneId = zone.Id, AisleId = null, RackCode = "R1",
+                    X = 0, Y = 0, Z = 0, RotationZ = 0,
+                    Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,   // 3→2 缩格
+                    Enable = true, RowVersion = rack.RowVersion
+                }
+            }
+        };
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
+        Assert.StartsWith("E-SPACE-403", ex.Message);
+        Assert.Equal(3, (await db.Space_Racks.AsNoTracking().SingleAsync()).Cols);   // 缩格未生效
+        Assert.Equal(1, await db.Space_Locations.CountAsync());                      // 库位仍在
+    }
+
+    [Fact]
+    public async Task SaveScene_ShrinkRack_DraftOutOfBounds_CascadeDeleted()
+    {
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 3, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.AddRange(zone, rack);
+        var inBounds = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 0, CodeOrigin = 1, Col = 1, Level = 1, Depth = 1 };
+        var ghost = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 0, CodeOrigin = 1, Col = 3, Level = 1, Depth = 1 };
+        db.AddRange(inBounds, ghost);
+        await db.SaveChangesAsync();
+
+        await svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Racks = new List<RackDto>
+            {
+                new RackDto
+                {
+                    Id = rack.Id, ZoneId = zone.Id, AisleId = null, RackCode = "R1",
+                    X = 0, Y = 0, Z = 0, RotationZ = 0,
+                    Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,
+                    Enable = true, RowVersion = rack.RowVersion
+                }
+            }
+        }, "u");
+
+        Assert.Equal(2, (await db.Space_Racks.SingleAsync()).Cols);
+        var remaining = await db.Space_Locations.ToListAsync();
+        Assert.Single(remaining);                                   // 幽灵位已连带删
+        Assert.Equal(inBounds.Id, remaining[0].Id);
+    }
 }

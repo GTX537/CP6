@@ -114,6 +114,20 @@ public class SceneService : ISceneService
                     if (existing.ZoneId != rd.ZoneId || existing.AisleId != rd.AisleId)
                         pathChangedRackIds.Add(existing.Id);
 
+                    // H2 缩格护栏（2026-07-06 拍板：Restrict）：越界库位——已发布阻断，草稿/停用连带删
+                    if (rd.Cols < existing.Cols || rd.Levels < existing.Levels || rd.DepthCount < existing.DepthCount)
+                    {
+                        var outOfBounds = await _db.Space_Locations
+                            .Where(l => l.RackId == existing.Id &&
+                                        (l.Col > rd.Cols || l.Level > rd.Levels || l.Depth > rd.DepthCount))
+                            .ToListAsync();
+                        if (outOfBounds.Any(l => l.Status == 1))
+                            throw new InvalidOperationException(
+                                "E-SPACE-403: 缩格触及已发布库位，请先停用越界库位再缩格");
+                        if (outOfBounds.Count > 0)
+                            _db.Space_Locations.RemoveRange(outOfBounds);   // 幽灵位清理（H2）
+                    }
+
                     // 位姿/尺寸变更检测
                     if (existing.X != rd.X || existing.Y != rd.Y || existing.Z != rd.Z ||
                         existing.RotationZ != rd.RotationZ || existing.Cols != rd.Cols ||
