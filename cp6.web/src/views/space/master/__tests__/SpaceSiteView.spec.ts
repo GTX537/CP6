@@ -4,8 +4,15 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import { siteApi } from '@/api/space/site'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
+import { permission } from '@/directives/permission'
 import SpaceSiteView from '../SpaceSiteView.vue'
 import type { SiteVO } from '@/types/space/scene'
+
+// v-permission store：默认全授权（不改变既有断言）；单测内翻转 permHas.fn 隐藏指定键
+const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
+vi.mock('@/stores/permission', () => ({
+  usePermissionStore: () => ({ loaded: true, has: (k: string) => permHas.fn(k) }),
+}))
 
 // 站点 API 全 mock（list 返回两行样例；create 成功）
 vi.mock('@/api/space/site', () => ({
@@ -27,12 +34,13 @@ const rows: SiteVO[] = [
 
 function mountView() {
   const i18n = createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
-  return mount(SpaceSiteView, { global: { plugins: [i18n] } })
+  return mount(SpaceSiteView, { global: { plugins: [i18n], directives: { permission } } })
 }
 
 describe('SpaceSiteView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    permHas.fn = () => true
     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: rows })
     vi.mocked(siteApi.create).mockResolvedValue({ code: 0, message: '', data: { id: 'new' } })
   })
@@ -67,5 +75,14 @@ describe('SpaceSiteView', () => {
 
     expect(siteApi.create).toHaveBeenCalledTimes(1)
     expect(siteApi.list).toHaveBeenCalledTimes(2)
+  })
+
+  it('缺 space-site:delete 权时削除按钮从 DOM 移除，编辑按钮保留', async () => {
+    permHas.fn = (k) => k !== 'space-site:delete'
+    const w = mountView()
+    await flushPromises()
+    const btns = w.findAll('el-button')
+    expect(btns.filter((b) => b.text() === 'space.common.delete').length).toBe(0)
+    expect(btns.filter((b) => b.text() === 'space.common.edit').length).toBeGreaterThan(0)
   })
 })

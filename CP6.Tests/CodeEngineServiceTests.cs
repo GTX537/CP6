@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Core.Services.Space;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
@@ -254,9 +255,9 @@ public class CodeEngineServiceTests
             Draft(rackId, floorId, 1, 1, 1));   // 同坐标 → 同码
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => Svc(db).GenerateAsync(floorId, "rebuild", null));
-        Assert.Equal("E-SPACE-304", ex.Message);
+        Assert.Equal("E-SPACE-304", ex.Code);
     }
 
     [Fact]

@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// 继承 BaseBizEntity → 自带 TenantId（行级隔离）+ IsDeleted + RowVersion（乐观锁）。
 /// </summary>
 [Table("Space_Site")]
-public class Space_Site : BaseBizEntity
+public class Space_Site : BaseBizEntity, IAuditable
 {
     /// <summary>站点编码（租户内唯一）</summary>
     [Required, MaxLength(50)]

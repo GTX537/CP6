@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ public class ConnectorService : IConnectorService
     public async Task<Guid> CreateAsync(ConnectorDto d, string? user)
     {
         if (await _db.Space_Connectors.AnyAsync(c => c.SiteId == d.SiteId && c.ConnectorCode == d.ConnectorCode))
-            throw new InvalidOperationException("E-SPACE-501");
+            throw new BizException("E-SPACE-501");
         var (wait, perFloor) = (d.WaitSec <= 0 && d.TravelSecPerFloor <= 0)
             ? DefaultCost(d.ConnectorType) : (d.WaitSec, d.TravelSecPerFloor);
         var e = new Space_Connector
@@ -53,7 +54,7 @@ public class ConnectorService : IConnectorService
     public async Task UpsertStopAsync(Guid connectorId, ConnectorStopDto d, string? user)
     {
         _ = await _db.Space_Connectors.FirstOrDefaultAsync(c => c.Id == connectorId)
-            ?? throw new InvalidOperationException("E-SPACE-502");
+            ?? throw new BizException("E-SPACE-502");
         var s = await _db.Space_ConnectorStops.FirstOrDefaultAsync(x => x.ConnectorId == connectorId && x.FloorId == d.FloorId);
         if (s is null)
         {
@@ -88,7 +89,7 @@ public class ConnectorService : IConnectorService
     public async Task UpdateAsync(Guid id, ConnectorUpdateDto d, string? user)
     {
         var e = await _db.Space_Connectors.FirstOrDefaultAsync(c => c.Id == id)
-            ?? throw new InvalidOperationException("E-SPACE-502");
+            ?? throw new BizException("E-SPACE-502");
         e.Name = d.Name; e.ConnectorType = d.ConnectorType;
         e.WaitSec = d.WaitSec; e.TravelSecPerFloor = d.TravelSecPerFloor;
         e.Modifier = user; e.ModifyDate = DateTime.Now;

@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -58,7 +59,7 @@ public class CodeEngineService : ICodeEngineService
     public async Task UpdateRuleAsync(Guid id, CodeRuleDto d, string? user)
     {
         var e = await _db.Space_CodeRules.FirstOrDefaultAsync(r => r.Id == id)
-                ?? throw new InvalidOperationException("E-SPACE-301");
+                ?? throw new BizException("E-SPACE-301");
 
         // 改为默认时，把同作用域其他规则 IsDefault 置 false（排除自身，同批 SaveChanges）
         if (d.IsDefault && !e.IsDefault)
@@ -78,7 +79,7 @@ public class CodeEngineService : ICodeEngineService
     public async Task DeleteRuleAsync(Guid id)
     {
         var e = await _db.Space_CodeRules.FirstOrDefaultAsync(r => r.Id == id)
-                ?? throw new InvalidOperationException("E-SPACE-301");
+                ?? throw new BizException("E-SPACE-301");
         _db.Space_CodeRules.Remove(e);
         await _db.SaveChangesAsync();
     }
@@ -164,7 +165,7 @@ public class CodeEngineService : ICodeEngineService
             var segs = DeserializeSegs(rule.Segments);
             var errs = CodePrecheck.Validate(segs);
             if (errs.Count > 0)
-                throw new InvalidOperationException(errs[0]);  // E-303/305/306
+                throw new BizException(errs[0]);  // E-303/305/306
         }
 
         // ── 6. 组装候选码 ──────────────────────────────────────────────
@@ -197,7 +198,7 @@ public class CodeEngineService : ICodeEngineService
             .Where(g => g.Count() > 1)
             .ToList();
         if (dupInBatch.Count > 0)
-            throw new InvalidOperationException("E-SPACE-304");
+            throw new BizException("E-SPACE-304");
 
         // ② 与库内既有非空码比对（全局过滤已按当前租户隔离）
         var idsInBatch = candidates.Select(c => c.Loc.Id).ToHashSet();
@@ -208,7 +209,7 @@ public class CodeEngineService : ICodeEngineService
             .ToListAsync();
         var existingSet = existingCodes.ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (candidates.Any(c => existingSet.Contains(c.Code)))
-            throw new InvalidOperationException("E-SPACE-304");
+            throw new BizException("E-SPACE-304");
 
         // ── 8. 两阶段写回（ch03 §7.2）─────────────────────────────────
 
@@ -319,10 +320,10 @@ public class CodeEngineService : ICodeEngineService
                 foreach (var err in CodePrecheck.Validate(segs))
                     precheckErrs.Add(err);
             }
-            catch (InvalidOperationException ex)
+            catch (BizException ex)
             {
                 // E-SPACE-301 (无规则) / E-SPACE-302 (多规则无默认)
-                precheckErrs.Add(ex.Message);
+                precheckErrs.Add(ex.Code);
             }
         }
 
@@ -339,15 +340,15 @@ public class CodeEngineService : ICodeEngineService
     {
         // TODO: rackSeq 在大规则集下应取 Zone 级完整排序；此处取 1 作最小实现（计划 §10 补全）
         var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locationId)
-                  ?? throw new InvalidOperationException("E-SPACE-301");
+                  ?? throw new BizException("E-SPACE-301");
 
         if (loc.RackId == null || !loc.Placed)
-            throw new InvalidOperationException("E-SPACE-301");
+            throw new BizException("E-SPACE-301");
 
         var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == loc.RackId)
-                   ?? throw new InvalidOperationException("E-SPACE-301");
+                   ?? throw new BizException("E-SPACE-301");
         var zone = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == rack.ZoneId)
-                   ?? throw new InvalidOperationException("E-SPACE-301");
+                   ?? throw new BizException("E-SPACE-301");
         Space_Aisle? aisle = rack.AisleId.HasValue
             ? await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == rack.AisleId)
             : null;
@@ -362,7 +363,7 @@ public class CodeEngineService : ICodeEngineService
         var segs    = DeserializeSegs(rule.Segments);
         var preErrs = CodePrecheck.Validate(segs);
         if (preErrs.Count > 0)
-            throw new InvalidOperationException(preErrs[0]);
+            throw new BizException(preErrs[0]);
 
         // 简化序号字典（单格场景；完整 Zone 级排序见计划 §10）
         var zoneSeq = new Dictionary<Guid, int> { [zone.Id] = 1 };
@@ -394,13 +395,13 @@ public class CodeEngineService : ICodeEngineService
         if (hit.Count == 0)
             hit = rules.Where(r => r.ScopeType == 0).ToList();
         if (hit.Count == 0)
-            throw new InvalidOperationException("E-SPACE-301");
+            throw new BizException("E-SPACE-301");
 
         // IsDefault 优先；否则仅一条直接用；多条无默认 → 歧义错误
         var def = hit.FirstOrDefault(r => r.IsDefault);
         if (def != null) return def;
         if (hit.Count == 1) return hit[0];
-        throw new InvalidOperationException("E-SPACE-302");
+        throw new BizException("E-SPACE-302");
     }
 
     /// <summary>

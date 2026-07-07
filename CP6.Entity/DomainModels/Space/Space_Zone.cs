@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// Polygon 存顶点 JSON（floor 局部系 mm）。
 /// </summary>
 [Table("Space_Zone")]
-public class Space_Zone : BaseBizEntity
+public class Space_Zone : BaseBizEntity, IAuditable
 {
     /// <summary>所属楼层</summary>
     public Guid FloorId { get; set; }

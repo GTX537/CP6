@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.WebApi.Localization;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
@@ -37,7 +38,7 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task<Guid> CreateSiteAsync(SiteDto d, string? user)
     {
         if (await _db.Space_Sites.AnyAsync(x => x.SiteCode == d.SiteCode))
-            throw new InvalidOperationException("E-SPACE-001");
+            throw new BizException("E-SPACE-001");
         var e = new Space_Site
         {
             Id         = Guid.NewGuid(),
@@ -59,7 +60,7 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task UpdateSiteAsync(Guid id, SiteDto d, string? user)
     {
         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new InvalidOperationException("E-SPACE-001");
+                ?? throw new BizException("E-SPACE-001");
         e.SiteCode   = d.SiteCode;
         e.SiteName   = d.SiteName;
         e.Address    = d.Address;
@@ -83,7 +84,7 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task DeleteSiteAsync(Guid id)
     {
         if (await _db.Space_Floors.AnyAsync(x => x.SiteId == id))
-            throw new InvalidOperationException("E-SPACE-007");
+            throw new BizException("E-SPACE-007");
         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id);
         if (e != null) { _db.Space_Sites.Remove(e); await _db.SaveChangesAsync(); }
     }
@@ -95,7 +96,7 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task<Guid> CreateFloorAsync(FloorDto d, string? user)
     {
         if (await _db.Space_Floors.AnyAsync(x => x.SiteId == d.SiteId && x.FloorCode == d.FloorCode))
-            throw new InvalidOperationException("E-SPACE-001");
+            throw new BizException("E-SPACE-001");
         var e = new Space_Floor
         {
             Id              = Guid.NewGuid(),
@@ -121,7 +122,7 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task UpdateFloorAsync(Guid id, FloorDto d, string? user)
     {
         var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new InvalidOperationException("E-SPACE-001");
+                ?? throw new BizException("E-SPACE-001");
         e.Level           = d.Level;
         e.FloorCode       = d.FloorCode;
         e.FloorName       = d.FloorName;
@@ -150,7 +151,7 @@ public class SpaceMasterService : ISpaceMasterService
     {
         if (await _db.Space_Zones.AnyAsync(x => x.FloorId == id) ||
             await _db.Space_Markers.AnyAsync(x => x.FloorId == id))
-            throw new InvalidOperationException("E-SPACE-007");
+            throw new BizException("E-SPACE-007");
         var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id);
         if (e != null) { _db.Space_Floors.Remove(e); await _db.SaveChangesAsync(); }
     }
@@ -163,7 +164,7 @@ public class SpaceMasterService : ISpaceMasterService
     {
         ValidatePolygon(d.Polygon);  // E-SPACE-006
         if (await _db.Space_Zones.AnyAsync(x => x.FloorId == d.FloorId && x.ZoneCode == d.ZoneCode))
-            throw new InvalidOperationException("E-SPACE-001");
+            throw new BizException("E-SPACE-001");
         var e = new Space_Zone
         {
             Id         = Guid.NewGuid(),
@@ -186,7 +187,7 @@ public class SpaceMasterService : ISpaceMasterService
     {
         ValidatePolygon(d.Polygon);
         var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new InvalidOperationException("E-SPACE-001");
+                ?? throw new BizException("E-SPACE-001");
         e.ZoneCode   = d.ZoneCode;
         e.ZoneName   = d.ZoneName;
         e.ZoneType   = d.ZoneType;
@@ -209,7 +210,7 @@ public class SpaceMasterService : ISpaceMasterService
     {
         if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == id) ||
             await _db.Space_Racks.AnyAsync(x => x.ZoneId == id))
-            throw new InvalidOperationException("E-SPACE-007");
+            throw new BizException("E-SPACE-007");
         var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id);
         if (e != null) { _db.Space_Zones.Remove(e); await _db.SaveChangesAsync(); }
     }
@@ -221,7 +222,7 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task<Guid> CreateAisleAsync(AisleDto d, string? user)
     {
         if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == d.ZoneId && x.AisleCode == d.AisleCode))
-            throw new InvalidOperationException("E-SPACE-001");
+            throw new BizException("E-SPACE-001");
         var e = new Space_Aisle
         {
             Id         = Guid.NewGuid(),
@@ -240,7 +241,7 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task UpdateAisleAsync(Guid id, AisleDto d, string? user)
     {
         var e = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new InvalidOperationException("E-SPACE-001");
+                ?? throw new BizException("E-SPACE-001");
         e.AisleCode  = d.AisleCode;
         e.Polygon    = d.Polygon;
         e.Centerline = d.Centerline;
@@ -263,7 +264,7 @@ public class SpaceMasterService : ISpaceMasterService
 
         // I2：mode 白名单（在取 published 之前）——未知 mode 直接拒绝，不静默降级默认删除
         if (mode is not (null or "deactivate" or "rehome"))
-            throw new InvalidOperationException("E-SPACE-002: 未知 mode（可用 deactivate|rehome）");
+            throw new BizException("E-SPACE-002");
 
         var racks = await _db.Space_Racks.Where(r => r.AisleId == id).ToListAsync();
         var rackIds = racks.Select(r => r.Id).ToList();
@@ -279,9 +280,9 @@ public class SpaceMasterService : ISpaceMasterService
             if (targetAisleId != null)
             {
                 var target = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == targetAisleId.Value)
-                             ?? throw new InvalidOperationException("E-SPACE-407: 目标巷道不存在");
+                             ?? throw new BizException("E-SPACE-407");
                 if (racks.Any(r => r.ZoneId != target.ZoneId))
-                    throw new InvalidOperationException("E-SPACE-407: 目标巷道与货架不在同一库区");
+                    throw new BizException("E-SPACE-407");
             }
             // I1：改挂 + re-publish + 删源 三段提交包一层事务（RepublishAsync 嵌套守卫自动加入，非原子重试黑洞闭合）
             IDbContextTransaction? tx = _db.Database.IsRelational()
@@ -321,8 +322,7 @@ public class SpaceMasterService : ISpaceMasterService
                     break;
 
                 default:
-                    throw new InvalidOperationException(
-                        $"E-SPACE-402: 该巷道下有 {published.Count} 个已发布库位，不能直接删除（可用 mode=deactivate|rehome）");
+                    throw new BizException("E-SPACE-402");
             }
         }
 
@@ -340,11 +340,11 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task<Guid> CreateRackAsync(RackDto d, string? user)
     {
         if (d.ZoneId == Guid.Empty)
-            throw new InvalidOperationException("E-SPACE-002");  // 货架必须归库区
+            throw new BizException("E-SPACE-002");  // 货架必须归库区
         if (d.Cols < 1 || d.Levels < 1 || d.DepthCount < 1 || d.CellW <= 0 || d.CellH <= 0 || d.CellD <= 0)
-            throw new InvalidOperationException("E-SPACE-002");  // 尺寸不变量
+            throw new BizException("E-SPACE-002");  // 尺寸不变量
         if (await _db.Space_Racks.AnyAsync(x => x.ZoneId == d.ZoneId && x.RackCode == d.RackCode))
-            throw new InvalidOperationException("E-SPACE-001");
+            throw new BizException("E-SPACE-001");
         // 冗余回填 FloorId（从 Zone 查）
         var floorId = await _db.Space_Zones
             .Where(z => z.Id == d.ZoneId)
@@ -380,7 +380,7 @@ public class SpaceMasterService : ISpaceMasterService
     public async Task UpdateRackAsync(Guid id, RackDto d, string? user)
     {
         var e = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id)
-                ?? throw new InvalidOperationException("E-SPACE-002");
+                ?? throw new BizException("E-SPACE-002");
         // 乐观并发（真库生效；InMemory 测试跳过冲突）
         _db.Entry(e).Property(x => x.RowVersion).OriginalValue = d.RowVersion;
         e.X          = d.X;
@@ -397,7 +397,7 @@ public class SpaceMasterService : ISpaceMasterService
         e.Modifier   = user;
         e.ModifyDate = DateTime.Now;
         try { await _db.SaveChangesAsync(); }
-        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-SPACE-009"); }
+        catch (DbUpdateConcurrencyException) { throw new BizException("E-SPACE-009", 409); }
         // ★ 位姿/尺寸变更后重算其下所有已放置库位的绝对坐标缓存
         await _geo.RecalcRackLocationsAsync(id);
     }
@@ -419,7 +419,7 @@ public class SpaceMasterService : ISpaceMasterService
 
         // I2：mode 白名单（在取 published 之前）——未知 mode 直接拒绝，不静默降级默认删除
         if (mode is not (null or "deactivate" or "rehome"))
-            throw new InvalidOperationException("E-SPACE-002: 未知 mode（可用 deactivate|rehome）");
+            throw new BizException("E-SPACE-002");
 
         var published = await _db.Space_Locations
             .Where(l => l.RackId == id && l.Status == 1)
@@ -432,15 +432,15 @@ public class SpaceMasterService : ISpaceMasterService
         if (mode == "rehome")
         {
             if (targetRackId == null)
-                throw new InvalidOperationException("E-SPACE-002: mode=rehome 需要 targetRackId");
+                throw new BizException("E-SPACE-002");
             var target = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetRackId.Value)
-                         ?? throw new InvalidOperationException("E-SPACE-002: 目标货架不存在");
+                         ?? throw new BizException("E-SPACE-002");
             if (target.ZoneId != rack.ZoneId)
-                throw new InvalidOperationException("E-SPACE-002: 目标货架与源货架不在同一库区，无法改挂");
+                throw new BizException("E-SPACE-002");
             if (target.Cols < rack.Cols || target.Levels < rack.Levels || target.DepthCount < rack.DepthCount)
-                throw new InvalidOperationException("E-SPACE-002: 目标货架网格小于源货架，无法改挂");
+                throw new BizException("E-SPACE-002");
             if (await _db.Space_Locations.AnyAsync(l => l.RackId == target.Id))
-                throw new InvalidOperationException("E-SPACE-002: 目标货架已有库位，无法改挂");
+                throw new BizException("E-SPACE-002");
 
             // I1：改挂 + re-publish + 删源 三段提交包一层事务（RepublishAsync 嵌套守卫自动加入，非原子重试黑洞闭合）
             IDbContextTransaction? tx = _db.Database.IsRelational()
@@ -488,8 +488,7 @@ public class SpaceMasterService : ISpaceMasterService
                     break;
 
                 default:
-                    throw new InvalidOperationException(
-                        "E-SPACE-403: 该货架下有已发布库位，请先停用（或 mode=deactivate|rehome）");
+                    throw new BizException("E-SPACE-403");
             }
         }
 
@@ -618,6 +617,6 @@ public class SpaceMasterService : ISpaceMasterService
     private static void ValidatePolygon(string json)
     {
         var pts = JsonSerializer.Deserialize<List<List<int>>>(json) ?? new();
-        if (pts.Count < 3) throw new InvalidOperationException("E-SPACE-006");
+        if (pts.Count < 3) throw new BizException("E-SPACE-006");
     }
 }

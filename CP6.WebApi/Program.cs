@@ -397,6 +397,7 @@ builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceLocateService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Integration.SpaceBridgeHook>();
 builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceBridgeHook, CP6.Core.Services.Integration.SpaceBridgeHook>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ILocationPublishService, CP6.Core.Services.Space.LocationPublishService>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceNotifier, CP6.WebApi.Services.SignalRSpaceNotifier>(); // 库位発布/停用 SignalR プッシュ（SpaceHub 全播）
 // ch04 v1.1 §5.3：真消费端（T_WmsBin 幂等 upsert，方案A 2026-07-05）。回滚开关：换回 NoOpWmsLocationConsumer 即断开。
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Wms.WmsBinConsumer>();
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsBinDeactivator, CP6.Core.Services.Wms.WmsBinDeactivator>(); // ch04 §6 v1.1 停用同步 RPC 真实现（TOCTOU 权威库存判定 + T_WmsBin 停用/墓碑）
@@ -1819,6 +1820,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaSerialSignScreenSeed.Items)  // WFS 串簽 退回选择器 oa.detail.sendback.* + oa.sendback.* + oa.timeline.sentBack + 设计器档位 oa.designer.stage.* + E-WF-011/012/013
             .Concat(CP6.WebApi.Seed.I18nOaApproverScreenSeed.Items)  // 审批人解析高级策略 oa.designer.strategy.*/oa.approverMap.*/nav.739/E-WF-014/015
             .Concat(CP6.WebApi.Seed.I18nOaServiceTaskScreenSeed.Items)  // WFS 服务任务 oa.designer.svc.* + oa.designer.errServiceConfig + E-WF-016/017/018
+            .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
@@ -2522,6 +2524,7 @@ app.MapControllers();
 app.MapHub<NotifyHub>("/hubs/notify");
 app.MapHub<CP6.WebApi.Hubs.MesHub>("/hubs/mes");
 app.MapHub<CP6.WebApi.Hubs.WmsHub>("/hubs/wms");
+app.MapHub<CP6.WebApi.Hubs.SpaceHub>("/hubs/space");
 
 // T15 / Gap 2.3 — Prometheus 公開エンドポイント /metrics ＋ ブリッジ業務指標コレクタ起動
 app.MapMetrics();   // GET /metrics（Prometheus テキスト形式）

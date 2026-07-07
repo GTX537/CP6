@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,7 @@ public class LocationGeometryService
     public async Task RecalcRackLocationsAsync(Guid rackId)
     {
         var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId)
-                   ?? throw new InvalidOperationException("E-SPACE-002");
+                   ?? throw new BizException("E-SPACE-002");
         var locs = await _db.Space_Locations
             .Where(l => l.RackId == rackId && l.Placed).ToListAsync();
         foreach (var l in locs)

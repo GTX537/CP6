@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ public class SceneIoService : ISceneIoService
     public async Task<SceneExportDto> ExportAsync(Guid floorId)
     {
         var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == floorId)
-                    ?? throw new InvalidOperationException("E-SPACE-001");
+                    ?? throw new BizException("E-SPACE-001");
 
         var zones = await _db.Space_Zones
             .Where(z => z.FloorId == floorId)

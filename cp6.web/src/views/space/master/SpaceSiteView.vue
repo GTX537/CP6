@@ -9,7 +9,7 @@
 <template>
   <CpPageShell :title="t('space.site.title')" :count="total">
     <template #actions>
-      <el-button @click="openCreate">{{ t('space.site.create') }}</el-button>
+      <el-button v-permission="'space-site:add'" @click="openCreate">{{ t('space.site.create') }}</el-button>
     </template>
 
     <CpListPage
@@ -25,9 +25,9 @@
         <span v-else class="cp-dash" :title="t('space.site.whDefaultTip', { code: row.siteCode })">—</span>
       </template>
       <template #col-_action="{ row }">
-        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
+        <el-button v-permission="'space-site:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
         <el-button link type="primary" size="small" @click="gotoFloor(row)">{{ t('space.site.floors') }}</el-button>
-        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
+        <el-button v-permission="'space-site:delete'" link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
       </template>
     </CpListPage>
 

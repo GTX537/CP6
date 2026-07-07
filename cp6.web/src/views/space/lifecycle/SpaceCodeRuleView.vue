@@ -12,7 +12,7 @@
 <template>
   <CpPageShell :title="t('space.rule.title')" :count="total">
     <template #actions>
-      <el-button @click="openCreate">{{ t('space.rule.create') }}</el-button>
+      <el-button v-permission="'space-code-rule:add'" @click="openCreate">{{ t('space.rule.create') }}</el-button>
     </template>
 
     <CpListPage
@@ -25,9 +25,9 @@
         <span>{{ scopeDisplay(row) }}</span>
       </template>
       <template #col-_action="{ row }">
-        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
+        <el-button v-permission="'space-code-rule:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
         <el-button link type="primary" size="small" @click="openPreview(row.segments)">{{ t('space.rule.preview') }}</el-button>
-        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
+        <el-button v-permission="'space-code-rule:delete'" link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
       </template>
     </CpListPage>
 

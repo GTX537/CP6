@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// Centerline 存中心线节点 JSON，章08 拣货路径消费。
 /// </summary>
 [Table("Space_Aisle")]
-public class Space_Aisle : BaseBizEntity
+public class Space_Aisle : BaseBizEntity, IAuditable
 {
     /// <summary>所属库区</summary>
     public Guid ZoneId { get; set; }

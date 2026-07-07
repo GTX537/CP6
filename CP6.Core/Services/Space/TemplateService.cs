@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ public class TemplateService : ITemplateService
     public async Task<Guid> CreateAsync(TemplateDto d, string? user)
     {
         if (await _db.Space_Templates.AnyAsync(t => t.TemplateCode == d.TemplateCode))
-            throw new InvalidOperationException("E-SPACE-001");
+            throw new BizException("E-SPACE-001");
 
         var e = new Space_Template
         {
@@ -48,7 +49,7 @@ public class TemplateService : ITemplateService
     public async Task UpdateAsync(Guid id, TemplateDto d, string? user)
     {
         var e = await _db.Space_Templates.FirstOrDefaultAsync(t => t.Id == id)
-                ?? throw new InvalidOperationException("E-SPACE-001");
+                ?? throw new BizException("E-SPACE-001");
         e.TemplateCode = d.TemplateCode;
         e.TemplateName = d.TemplateName;
         e.TemplateType = d.TemplateType;
@@ -69,7 +70,7 @@ public class TemplateService : ITemplateService
     public async Task<Guid> CloneAsync(Guid id, string? user)
     {
         var src = await _db.Space_Templates.FirstOrDefaultAsync(t => t.Id == id)
-                  ?? throw new InvalidOperationException("E-SPACE-001");
+                  ?? throw new BizException("E-SPACE-001");
 
         // 生成不碰撞的克隆编码：{code}-COPY → -COPY2 → -COPY3 ...
         var candidate = src.TemplateCode + "-COPY";

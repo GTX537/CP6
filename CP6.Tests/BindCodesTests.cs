@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
 using CP6.Entity.DomainModels.Space;
@@ -20,7 +21,7 @@ public class BindCodesTests
         var geo = new LocationGeometryService(db);
         var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
             new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
-            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
+            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db), new NoOpSpaceNotifier());
         return (db, new SceneService(db, geo, publish));
     }
 
@@ -84,9 +85,9 @@ public class BindCodesTests
         });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.BindCodesAsync(rackId, new[] { (locId, 1, 1, 1) }, "u"));
-        Assert.Equal("E-SPACE-004", ex.Message);
+        Assert.Equal("E-SPACE-004", ex.Code);
     }
 
     [Fact]
@@ -110,8 +111,8 @@ public class BindCodesTests
         });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.BindCodesAsync(rackId, new[] { (locId, 1, 1, 1) }, "u"));
-        Assert.Equal("E-SPACE-004", ex.Message);
+        Assert.Equal("E-SPACE-004", ex.Code);
     }
 }

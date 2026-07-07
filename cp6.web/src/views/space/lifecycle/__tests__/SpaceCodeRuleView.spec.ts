@@ -10,7 +10,14 @@ import { zoneApi } from '@/api/space/zone'
 import SpaceCodeRuleView from '../SpaceCodeRuleView.vue'
 import SegmentsEditor from '../SegmentsEditor.vue'
 import { newSegment } from '../codeRuleValidate'
+import { permission } from '@/directives/permission'
 import type { CodeRuleVO, CodeSegmentDef, CodePreviewResp, SiteVO, FloorVO } from '@/types/space/scene'
+
+// v-permission store：默认全授权；单测内翻转 permHas.fn 隐藏指定键
+const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
+vi.mock('@/stores/permission', () => ({
+  usePermissionStore: () => ({ loaded: true, has: (k: string) => permHas.fn(k) }),
+}))
 
 vi.mock('@/api/space/codeRule', () => ({
   codeRuleApi: { list: vi.fn(), create: vi.fn(), update: vi.fn(), remove: vi.fn(), preview: vi.fn() },
@@ -45,12 +52,13 @@ function i18nPlugin() {
   return createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
 }
 function mountView(opts: Record<string, unknown> = {}) {
-  return mount(SpaceCodeRuleView, { global: { plugins: [i18nPlugin()], ...(opts.global as object || {}) } })
+  return mount(SpaceCodeRuleView, { global: { plugins: [i18nPlugin()], directives: { permission }, ...(opts.global as object || {}) } })
 }
 
 describe('SpaceCodeRuleView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    permHas.fn = () => true
     vi.mocked(codeRuleApi.list).mockResolvedValue({ code: 0, message: '', data: rules })
     vi.mocked(codeRuleApi.preview).mockResolvedValue({ code: 0, message: '', data: previewResp })
     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
@@ -80,6 +88,16 @@ describe('SpaceCodeRuleView', () => {
     expect(codeRuleApi.preview).toHaveBeenCalled()
     expect(w.text()).toContain('A-01-01')
     expect(w.text()).toContain('A-02-01')
+  })
+
+  // v-permission：缺 delete 键 → 削除按钮移除，编辑按钮保留
+  it('缺 space-code-rule:delete 权时削除按钮从 DOM 移除，编辑按钮保留', async () => {
+    permHas.fn = (k) => k !== 'space-code-rule:delete'
+    const w = mountView()
+    await flushPromises()
+    const btns = w.findAll('el-button')
+    expect(btns.filter((b) => b.text() === 'space.common.delete').length).toBe(0)
+    expect(btns.filter((b) => b.text() === 'space.common.edit').length).toBeGreaterThan(0)
   })
 })
 
