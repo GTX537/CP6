@@ -14,6 +14,6 @@ export class AddMarkerCmd implements Command {
   undo(ctx: EditorContext): void {
     const idx = ctx.scene.markers.findIndex(m => m.id === this.marker.id)
     if (idx >= 0) ctx.scene.markers.splice(idx, 1)
-    ctx.markDirtyDelete(this.marker.id)
+    ctx.markDirtyDelete(this.marker.id, 'marker')
   }
 }

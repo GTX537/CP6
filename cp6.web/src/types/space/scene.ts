@@ -114,6 +114,9 @@ export interface TemplateVO {
   params: string
 }
 
+/** 差量删除的实体种类——决定 id 进 deletes 的哪个桶（后端 Deletes 五列表镜像） */
+export type DeleteKind = 'rack' | 'aisle' | 'zone' | 'marker' | 'location'
+
 export interface SceneSaveDto {
   racks?: RackVO[]
   aisles?: AisleVO[]
@@ -125,6 +128,7 @@ export interface SceneSaveDto {
     aisles?: string[]
     zones?: string[]
     markers?: string[]
+    locations?: string[]
   }
 }
 

@@ -17,12 +17,12 @@ export class DeleteCmd implements Command {
     for (const rack of racks) {
       const idx = ctx.scene.racks.findIndex(r => r.id === rack.id)
       if (idx >= 0) ctx.scene.racks.splice(idx, 1)
-      ctx.markDirtyDelete(rack.id)
+      ctx.markDirtyDelete(rack.id, 'rack')
     }
     for (const marker of markers) {
       const idx = ctx.scene.markers.findIndex(m => m.id === marker.id)
       if (idx >= 0) ctx.scene.markers.splice(idx, 1)
-      ctx.markDirtyDelete(marker.id)
+      ctx.markDirtyDelete(marker.id, 'marker')
     }
   }
 
