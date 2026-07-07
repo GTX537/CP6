@@ -14,11 +14,13 @@ public class SceneService : ISceneService
 {
     private readonly CP6Context _db;
     private readonly LocationGeometryService _geo;
+    private readonly ILocationPublishService _publish;
 
-    public SceneService(CP6Context db, LocationGeometryService geo)
+    public SceneService(CP6Context db, LocationGeometryService geo, ILocationPublishService publish)
     {
         _db  = db;
         _geo = geo;
+        _publish = publish;
     }
 
     /// <inheritdoc/>
@@ -31,6 +33,7 @@ public class SceneService : ISceneService
         try
         {
             var changedRackIds = new HashSet<Guid>();
+            var pathChangedRackIds = new HashSet<Guid>();   // H4：层级归属（ZoneId/AisleId）变更的货架
 
             // ── Zones ──────────────────────────────────────────────
             foreach (var zd in dto.Zones ?? new List<ZoneDto>())
@@ -106,6 +109,10 @@ public class SceneService : ISceneService
                 {
                     // 乐观锁：设置 OriginalValue，SaveChanges 会在 WHERE 附加 RowVersion
                     _db.Entry(existing).Property(x => x.RowVersion).OriginalValue = rd.RowVersion;
+
+                    // H4（ch04 §7.2 路径B）：层级归属变更检测——纯几何不发布，但 path 归属变更须 re-publish
+                    if (existing.ZoneId != rd.ZoneId || existing.AisleId != rd.AisleId)
+                        pathChangedRackIds.Add(existing.Id);
 
                     // 位姿/尺寸变更检测
                     if (existing.X != rd.X || existing.Y != rd.Y || existing.Z != rd.Z ||
@@ -278,6 +285,17 @@ public class SceneService : ISceneService
             // ── 位姿变更货架→重算库位绝对坐标 ─────────────────────────
             foreach (var rid in changedRackIds)
                 await _geo.RecalcRackLocationsAsync(rid);
+
+            // ── H4：改挂货架下的已发布库位 re-publish（在本事务内，RepublishAsync 嵌套守卫自动加入）──
+            if (pathChangedRackIds.Count > 0)
+            {
+                var republishIds = await _db.Space_Locations
+                    .Where(l => l.RackId != null && pathChangedRackIds.Contains(l.RackId.Value) && l.Status == 1)
+                    .Select(l => l.Id)
+                    .ToListAsync();
+                if (republishIds.Count > 0)
+                    await _publish.RepublishAsync(republishIds, user);
+            }
 
             if (tx != null) await tx.CommitAsync();
         }

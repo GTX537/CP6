@@ -1,8 +1,10 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace CP6.Tests;
@@ -17,7 +19,10 @@ public class SceneServiceTests
         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
         var geo = new LocationGeometryService(db);
-        return (db, new SceneService(db, geo));
+        var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
+            new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
+            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
+        return (db, new SceneService(db, geo, publish));
     }
 
     [Fact]
@@ -207,5 +212,78 @@ public class SceneServiceTests
         var loc = await db.Space_Locations.SingleAsync();
         Assert.Equal(0, loc.Status);       // 编辑器新建恒草稿；发布走 publish、采纳走 adopt
         Assert.Equal(1, loc.CodeOrigin);
+    }
+
+    [Fact]
+    public async Task SaveScene_RackZoneChanged_RepublishesPublishedLocations()
+    {
+        // H4（ch04 §7.2 路径B）：层级归属变更 → 已发布库位自动 re-publish 刷新 WMS path
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1" };
+        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+        var zoneA = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZA", ZoneName = "A" };
+        var zoneB = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZB", ZoneName = "B" };
+        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneA.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        var pubLoc = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "ZA-01", Col = 1, Level = 1, Depth = 1, Version = 1 };
+        var draftLoc = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = null, Col = 1, Level = 1, Depth = 1 };
+        db.AddRange(site, floor, zoneA, zoneB, rack, pubLoc, draftLoc);
+        await db.SaveChangesAsync();
+        var rowVersion = rack.RowVersion;
+
+        await svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Racks = new List<RackDto>
+            {
+                new RackDto
+                {
+                    Id = rack.Id, ZoneId = zoneB.Id, AisleId = null, RackCode = "R1",
+                    X = 0, Y = 0, Z = 0, RotationZ = 0,
+                    Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,
+                    Enable = true, RowVersion = rowVersion
+                }
+            }
+        }, "u");
+
+        var loc = await db.Space_Locations.SingleAsync(l => l.Id == pubLoc.Id);
+        Assert.Equal(2, loc.Version);                       // re-publish 升版
+        Assert.Equal(1, loc.Status);                        // 状态不变
+        var evt = await db.IntegrationEvents.SingleAsync();
+        var payload = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(evt.PayloadJson);
+        var item = payload.GetProperty("Items")[0];
+        Assert.Equal("UPSERT", item.GetProperty("Op").GetString());
+        Assert.Equal("ZB", item.GetProperty("Path").GetProperty("ZoneCode").GetString());   // 新归属
+        // 草稿库位不受波及
+        Assert.Equal(0, (await db.Space_Locations.SingleAsync(l => l.Id == draftLoc.Id)).Version);
+    }
+
+    [Fact]
+    public async Task SaveScene_GeometryOnlyChange_NoRepublish()
+    {
+        // D4：纯几何（挪位/旋转/改尺寸不缩格）不发布——join key 不漂移
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.AddRange(zone, rack);
+        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "Z1-01", Col = 1, Level = 1, Depth = 1, Version = 1 });
+        await db.SaveChangesAsync();
+
+        await svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Racks = new List<RackDto>
+            {
+                new RackDto
+                {
+                    Id = rack.Id, ZoneId = zone.Id, AisleId = null, RackCode = "R1",
+                    X = 5000, Y = 3000, Z = 0, RotationZ = 90,   // 只挪位旋转
+                    Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,
+                    Enable = true, RowVersion = rack.RowVersion
+                }
+            }
+        }, "u");
+
+        Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Version);   // 版本不动
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());            // 零事件
     }
 }

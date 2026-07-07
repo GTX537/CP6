@@ -1,7 +1,9 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
 using CP6.Entity.DomainModels.Space;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace CP6.Tests;
@@ -16,7 +18,10 @@ public class BindCodesTests
         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
         var geo = new LocationGeometryService(db);
-        return (db, new SceneService(db, geo));
+        var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
+            new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
+            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
+        return (db, new SceneService(db, geo, publish));
     }
 
     [Fact]
