@@ -1,3 +1,4 @@
+// 定义于 Core 供服务层抛出；namespace 保留历史值 CP6.WebApi.Localization 以零涟漪迁移（2026-07-07 波4）。
 namespace CP6.WebApi.Localization;
 
 /// <summary>
