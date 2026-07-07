@@ -110,3 +110,9 @@ P1热修: complete (commit 0f797db并入main, Approved[opus审]; del集Set→Map
 波4 Task 7: complete (无commit; 回归门全绿[后端1565/前端369经OOM假信号重跑]; 真库种子52 MenuAction+52 RoleAction[4租户×13]; 403/审计/BizException三项线上验证降级=旧镜像07-03+临时后端Migrate崩[栈重建风暴]——行为由单测+反射测试锁定; 真库发现Sys_Langs E-SPACE-*=0行[启动种子未跑,重部署自动补]. 波5首票: 重建cp6-api镜像+三项端到端补验)
 波4 终审+扫尾: complete (fable终审 Ready=Yes[九项接缝全核:管道顺序/三信封/双409路径/W-404边界/三方键一致/notify时机/词条覆盖/审计零半行]; Important#1裁决=方案①Location.Version贴AuditIgnore已实施; 扫尾chore 8b3b441[种子注释BizException化/回滚段RoleId=1限定]; 记波5: E-601 BizException化/403信封中文平台票/审计量级实测校准/QA三项补验保持队首)
 合并: complete (main --no-ff已push. Space波4 DONE)
+
+# ═══ 会话交接点 2026-07-07 ═══
+# 本会话完成: Space 波1/1.5/2/3/4 全部计划→执行→审查→终审→合并(main=a44a4f7); P1热修; 数据安全归档;
+# DB备份体系(CP6-DB-Backup 每4h→C:\CP6Backups)+WSL keep-alive(CP6-WSL-KeepAlive 登录自启,根因修复);
+# 提交纪律变更: 每commit立即push(见记忆 commit-push-immediately).
+# 下会话入口: 波5 票据池(space3d 记忆内, 队首=重建cp6-api镜像+波4三项线上补验). 用户将开新窗口继续.
