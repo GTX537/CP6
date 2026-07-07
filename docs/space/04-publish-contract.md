@@ -4,6 +4,8 @@
 
 > **v1.1 评审补丁摘要（2026-06-27 深审）**：本版应用 5 项关键修法（文中相关处标「(v1.1评审补丁)」）——① 新增 **WMS 侧库位消费模型 `T_WmsBin`**（接收发布的落库表 + 幂等 upsert，§5.3，与 `T_Stock` 松耦合）；② 明确 **`LocationCode` 不含仓库前缀 → 多仓客户须配 `SiteCode↔WarehouseCd` 映射**（§3.4，join 锚升为 `(WarehouseCd, LocationCode)`）；③ 补 **`Creator='system'` 溯源修法**（发布载荷带 `publishedBy` + 建议 `PersistEventAsync` 增 `userId` 参数，§2.1）；④ **D6 停用由纯异步事件改为同步 RPC + 异步事件兜底**（即时确认、避免孤儿库位，§6）；⑤ 补 **幂等往返逐项结果 schema**（每项 Success/Skipped/Rejected，有 Rejected 则整事件 Failed，§5.2）。
 
+> **v1.2 实装补丁摘要（2026-07-05/06 波1 + 波1.5 实装 + 终审拍板）**：波1（发布/停用/消费闭环 `LocationPublishService` + `WmsBinConsumer` + `WmsBinDeactivator`）与波1.5（删除通道 + 缩格 + rehome 改挂 + 场景保存自动触发）落地后，把实装与拍板固化进本契约（文中相关处标「(v1.2实装补丁)」）——① **§5.1 墓碑修正**：DEACTIVATE 遇 bin 不存在**不再跳过**，落墓碑行（`IsActive=false` + `Version` 占位），封堵「UPSERT 仍在重试队列时停用 → 迟到旧版 UPSERT 复活库位」的乱序分叉（H6 拍板，`WmsBinConsumer` + `WmsBinDeactivator` 双入口实装）；② **§3.4 WarehouseCd 长度域**：`WarehouseCd`=`nvarchar(10)`、`SiteCode`=`nvarchar(50)`，默认映射回退时 SiteCode 超 10 字符被 `E-SPACE-405` fail-fast 拦截（波1 终审 #1）；③ **新增 §5.4 消费端持久化失败语义**（约束触发不是处理策略：SaveChanges 失败清 tracker / 锚碰撞走业务拒绝 REJECTED / 墓碑残余碰撞走异常→重试→死信，波1 终审 #2·#3）；④ **§7 落地说明**：`?mode=deactivate|rehome` 已实装，缩格触及已发布库位改为 **Restrict 阻断**（2026-07-06 拍板替代 §4 表「减格→DEACTIVATE」字面），库位删除通道对 Status=0/2 开放、=1 拒绝 `E-SPACE-408`；⑤ **§11 消息表追加** `E-SPACE-405/408/407/002` 系并注记与总纲 §16.3 的错误码表重名（以本契约与代码为准，总纲待同步修订，记票）。**无产品代码变更，纯文档固化。**
+
 | 属性 | 内容 |
 |---|---|
 | 章节ID | SPACE-04 库位发布与 WMS 集成契约 |
@@ -136,6 +138,7 @@ public async Task<BridgeResult> OnLocationPublishedAsync(LocationPublishBatch ba
 - `LocationCode`（如 `A-03-02-05`）**不含仓库前缀**——它在**单仓内唯一**，但跨仓可能重码（两个仓都有 `A-03-02-05`）。因此 join key 的**真实唯一锚是 `(WarehouseCd, LocationCode)` 二元组**，而非裸 `LocationCode`。
 - **`SiteCode ↔ WarehouseCd` 映射（默认规则）**：**1 个 Space Site = 1 个 WMS Warehouse**，默认 `WarehouseCd = path.siteCode`（直接相等，零配置即可跑通单仓 / 一仓一站的多数客户）；**多仓或命名不一致**的客户用一张**可配置映射表**（`SiteCode → WarehouseCd`）翻译，发布 hook 在投递前按映射填好 `WarehouseCd` 再发。
 - **下游一致性**：WMS 消费 upsert（§5.3）、停用同步 RPC（§6）、库存查询（07 `IWmsStockQuery`）**全部带 `WarehouseCd` 维度**——任何"按 code 找 bin / 查库存"都必须以 `(WarehouseCd, LocationCode)` 为键，否则多仓客户会串仓。`T_WmsBin` 唯一索引即建在 `(TenantId, WarehouseCd, LocationCode)` 上（§5.3）。
+- **`WarehouseCd` 长度域与 fail-fast 护栏 (v1.2实装补丁)**：实装把域定死为 `WarehouseCd = nvarchar(10)`（`WmsBin.WarehouseCd` 与 `Space_Site.WarehouseCd` 均 `[MaxLength(10)]`），而 `SiteCode` 上限 `nvarchar(50)`。二者长度不等意味着**默认规则 `WarehouseCd = SiteCode` 只对 ≤10 字符的站点码成立**。`LocationPublishService.ResolveWarehouseCdAsync` 的解析顺序为：先取 `Space_Site.WarehouseCd` 显式配置；未配置时回退默认规则 `= SiteCode`——**若此时 SiteCode 超 10 字符**（截断会静默改变 join 锚、酿成串仓/漏发），则**发布/停用整体 `E-SPACE-405` fail-fast 拦截**（波1 终审 #1），而非静默截断或跳过。**结论**：多仓且站点码超 10 字符的客户，**必须**显式配置 `Space_Site.WarehouseCd`（≤10 字符），否则该 Site 无法发布。
 
 ---
 
@@ -177,6 +180,15 @@ for item in batch.items:
 ```
 - **按 `locationId`（稳定主键）关联，不按 `code`**：code 虽冻结，但 locationId 才是终生不变的身份（00 §7.1），避免任何编码理解歧义。
 - `version` 单调判据让重复投递、乱序到达都安全收敛到最新态。
+
+> **墓碑修正：DEACTIVATE 遇 bin 不存在不再跳过 (v1.2实装补丁)**：原算法第 `if bin == null && op == DEACTIVATE: skip（幂等无操作）` 一行**在乱序场景下有漏洞**——「UPSERT 事件仍在重试队列 → 库位先被停用」时，bin 尚未落库，若停用跳过则**迟到的旧版 UPSERT 会把已停用的库位复活**，两侧状态分叉。实装（2026-07-05 评审 **H6 拍板**，`WmsBinConsumer.cs` 与 `WmsBinDeactivator.cs` **双入口**）改法：
+> ```
+> if bin == null && op == DEACTIVATE:
+>    if item.WarehouseCd 非空:  落墓碑行 { Id=locationId, WarehouseCd, LocationCode,
+>                                        Version=item.version, IsActive=false }   // 占位停用态
+>    else:                      SKIP（无 WarehouseCd 建不了 (WarehouseCd,LocationCode) join 锚，退回幂等跳过）
+> ```
+> 墓碑行凭 `Version` 单调把后到的旧版 UPSERT（`incoming.version <= tomb.Version`）**掐死在幂等分支**，库位不复活。**双入口**：① 异步 DEACTIVATE 事件经 `WmsBinConsumer` 落墓碑；② 同步停用 RPC 经 `WmsBinDeactivator` 落墓碑（同步 RPC 是权威停用时点，bin 未曾消费也要立即钉死停用态）。**唯一退回跳过的场景**＝无 `WarehouseCd`（如采纳态无楼层归属，建不了 join 锚），此时无墓碑可落，回到幂等无操作。
 
 ### 5.2 整批事务与部分失败（逐项结果 schema · v1.1评审补丁）
 - WMS 侧建议整批事务；若部分 item 失败（如 DEACTIVATE 被库存拦），返回**逐项结果**。
@@ -232,6 +244,14 @@ upsertBin(item, publishedBy, warehouseCd):
   })
   return SUCCESS
 ```
+
+### 5.4 消费端持久化失败语义（v1.2实装补丁）
+
+> **约束触发不是处理策略**：唯一索引 `UX(TenantId, WarehouseCd, LocationCode)`（§5.3）与 SaveChanges 只保证"不写坏数据"，**不保证优雅收敛**。波1 终审锁定三条消费端失败语义，`WmsBinConsumer` 已实装：
+
+- **① SaveChanges 失败必须清理自身 change tracker（波1 终审 #2）**：消费端与事件簿记（`T_IntegrationEvent`）、Worker 整租户批尾**共享同一 DbContext scope**。若消费端 upsert 的 `SaveChangesAsync` 抛异常，本次 `WmsBin` 的 Added/Modified entries **仍滞留在 tracker 里**——下一次 `SaveChanges`（哪怕是事件簿记或同批其他租户的写入）会**连带重放这批脏 entries**，毒化无关事务。故实装在 catch 中调 `DetachOwnWrites()`：把本次 `WmsBin` entries 逐个 `Entry.State = Detached` **再抛**，隔离故障、防止毒化同 scope 的簿记与 Worker 批尾。（测试 `DetachOwnWrites_DetachesAddedWmsBins` 锁定该语义。）
+- **② join 锚被其他 LocationId 占用 → 业务拒绝 `REJECTED`，不走异常链（波1 终审 #3）**：UPSERT 时若目标 `(TenantId, WarehouseCd, LocationCode)` 锚**已被另一个 `LocationId`（含墓碑行）占用**，这是**业务冲突而非系统故障**——实装**在 SaveChanges 之前主动探测**该锚，命中即该条记 `result="REJECTED"`（reason「join 锚已被其他 LocationId 占用」），**把唯一索引冲突转成逐项业务拒绝**，而非让 DB 抛 `DbUpdateException` 污染整批。按 §5.2 映射：整批有 `Rejected` → 整事件 `Failed` → Worker 重试 / 人工介入。缺 `WarehouseCd`（映射未命中）同样走 `REJECTED`（建不了 join 锚）。
+- **③ 墓碑分支的锚碰撞残余走异常 → 重试 → 死信（记票优化）**：DEACTIVATE 落墓碑（§5.1）时，若该锚**残余碰撞**（罕见的墓碑并发/重复落库），当前实装**未做前置探测**，落库时由唯一索引拦下抛异常 → 事件 `Failed` → Worker 退避重试 → 最终 `Dead`（`IDeadLetterNotifier` 告警，可见收敛）。语义正确（不会写坏、有人被告警），但**不如 UPSERT 分支的"主动探测转 REJECTED"优雅**——**已记票**为后续优化（把墓碑分支的锚碰撞也改为前置探测转逐项拒绝）。
 
 ---
 
@@ -295,6 +315,15 @@ upsertBin(item, publishedBy, warehouseCd):
 | **B. re-publish 改挂** | 把这些库位**改挂到新巷道/货架**（几何回填，code 不变），发 UPSERT 事件**只更新 path 元数据**（aisleCode 变/变 null），`Version+1`；几何调整本不发布，但**path 元数据变更属目录主数据**，须 re-publish 让 WMS 路径不陈旧 | 库位还在用、只是巷道重命名/重组 |
 
 > **B 是待办①的精髓**：`LocationCode`（join key）**全程不变、不冻结失效**——re-publish 只刷新 WMS 侧的辅助 path 元数据（区/巷/架归属），不动 join key。这区别于 D4"纯几何编辑不发布"：纯几何（坐标）确实不发，但**层级归属（path）变更要发**，因为 path 是发布载荷的一部分、WMS 拿它做区架统计。default Restrict 保护"误删"，路径 A/B 给"有意改造"留正规出口。
+
+### 7.3 落地说明（波1.5 实装 + 三项拍板，v1.2实装补丁）
+
+波1.5 把 §7.1/§7.2 的删除护栏与两条放行路径落成代码（`SpaceMasterService.DeleteAisleAsync` / `DeleteRackAsync` + `SceneService` 缩格/删位通道）。实装事实与三项拍板：
+
+- **`?mode` 已实装**：`DELETE /aisle/{id}` 与 `/rack/{id}` 支持 `?mode=deactivate|rehome`（rehome 另带 `targetAisleId`/`targetRackId`）。默认（无 mode）＝ §7.1 **Restrict 阻断**（删巷道 `E-SPACE-402`、删货架 `E-SPACE-403`，文案带 `可用 mode=deactivate|rehome` 提示）；`mode=deactivate` ＝ §7.2 路径 A（逐个走第6章停用后删）；`mode=rehome` ＝ §7.2 路径 B（改挂 + 只刷 path 的 UPSERT）。
+- **拍板① 缩格触及已发布库位 = Restrict 阻断（2026-07-06）**：**替代 §4 发布触发表「货架减格子 → 删库位（已发布的）→ 1→2 停用 DEACTIVATE」的字面**。原因：停用是**同步 RPC 决策模型**（第6章），而场景保存（`SceneService`）里缩格是**内嵌批量动作**——只要**任一格口有库存**，其停用同步 RPC 会失败，导致**整场景保存挫败且不可预期**（用户无法预知哪个格口有货）。故缩格触及已发布库位一律 **Restrict**（`E-SPACE-403`「缩格触及已发布库位，请先停用越界库位再缩格」），把停用决策**移出批量保存**、交给用户显式逐个处理。§4 表该行以本条为准。
+- **拍板② 库位删除通道对 Status=0/2 开放、=1 拒绝（2026-07-06）**：场景保存的库位删除对 **草稿(Status=0)** 与 **已停用(Status=2)** 库位放行；对 **已发布(Status=1)** 库位拒绝 `E-SPACE-408`（「已发布库位不可删除，请先停用」）——已发布库位有对外契约，须先走第6章 DEACTIVATE 停用（→Status=2）方可删。
+- **拍板③ 停用位删除后码仍占 T_WmsBin 锚（记票）**：停用后删除的库位，其 `LocationCode` 仍占着 `T_WmsBin` 的 `(TenantId, WarehouseCd, LocationCode)` 唯一锚（含墓碑行），Space 侧删除**不联动清理 WMS 侧 bin/墓碑**。当前代价＝该码短期内不可被新库位复用（UPSERT 会因锚碰撞走 §5.4② REJECTED）。**已记票**：T_WmsBin 停用行/墓碑锚的清理机制（对账漂移 job 或显式回收通道）后续实现，与波1 遗留票合并管理。
 
 ---
 
@@ -372,6 +401,14 @@ POST /api/space/location/adopt   { items:[{locationCode, attrs?}] }
 | I-SPACE-401 | Info | 已发布 N 个库位（批号 LPUB-…） | 发布成功 |
 | I-SPACE-402 | Info | 已改挂 N 个库位并刷新路径 | re-publish 路径 B（第7.2） |
 | E-SPACE-009 | Error | 数据已被他人修改，请刷新重试 | 发布/停用 RowVersion 冲突（00 章复用） |
+| E-SPACE-405 | Error | 站点编码超过 10 字符且未配置 WarehouseCd 映射，无法发布/停用 | 默认映射回退时 SiteCode>10 字符（§3.4，`LocationPublishService.ResolveWarehouseCdAsync`，波1 终审 #1，v1.2） |
+| E-SPACE-408 | Error | 已发布库位不可删除，请先停用 | 库位删除通道对 Status=1 库位（§7.3 拍板②，`SceneService`，v1.2） |
+| E-SPACE-407 | Error | 目标巷道不存在 / 与货架不在同一库区 | rehome 目标巷道校验失败（§7.2 路径 B，`SpaceMasterService.DeleteAisleAsync`，v1.2） |
+| E-SPACE-402 | Error | 该巷道下有 N 个已发布库位，不能直接删除（可用 mode=deactivate\|rehome） | 删 Aisle 触发 Restrict，文案带 mode 提示（§7.1/§7.3，v1.2 补文案） |
+| E-SPACE-403 | Error | 该货架下有已发布库位，请先停用（或 mode=deactivate\|rehome）；缩格触及已发布库位，请先停用越界库位再缩格 | 删 Rack Restrict + 缩格 Restrict 复用（§7.1/§7.3 拍板①，`SpaceMasterService`/`SceneService`，v1.2） |
+| E-SPACE-002 系 | Error | 删货架 rehome 校验：targetRackId 必填 / 目标货架不存在 / 目标网格小于源 / 目标已有库位 | 删 Rack `mode=rehome` 参数与改挂前置校验（§7.2 路径 B，`SpaceMasterService.DeleteRackAsync`，v1.2） |
+
+> **错误码与总纲 Spec §16.3 重名注记 (v1.2实装补丁)**：总纲 Spec §16.3 的错误码表也占用了 `402/403/405/407/408`，但**语义与本契约实装不同**（总纲侧取义为发布预检 / WMS 同步失败 / 映射缺失等，且 `406` 被总纲 §16.3 的**死信**占用，故本契约避让 `E-SPACE-406`，改用 `408` 表「已发布库位不可删除」）。**以本契约与代码实装取号为准**（`E-SPACE-405`=站点编码超长无映射、`E-SPACE-408`=已发布库位不可删除、`E-SPACE-407`=rehome 目标巷道校验、`E-SPACE-402/403`=删除 Restrict、`E-SPACE-002` 系=rehome 网格校验）；**总纲 §16.3 错误码表待同步修订（记票）**。
 
 ---
 
