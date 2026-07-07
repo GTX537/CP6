@@ -328,6 +328,88 @@ public class SpaceMasterServiceTests
     }
 
     [Fact]
+    public async Task DeleteRack_ModeRehome_TargetInDifferentZone_Throws()
+    {
+        // C1 反证：跨 zone 目标 rehome 会打穿 WarehouseCd 锚——必须拒绝，源架/库位原样
+        var (db, svc) = Make();
+        var floorId  = Guid.NewGuid();
+        var zoneA    = Guid.NewGuid();
+        var zoneB    = Guid.NewGuid();
+        var srcId    = Guid.NewGuid();
+        var targetId = Guid.NewGuid();
+        var locId    = Guid.NewGuid();
+
+        db.Space_Racks.Add(new Space_Rack
+            { Id = srcId, ZoneId = zoneA, FloorId = floorId, RackCode = "R1",
+              Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
+        db.Space_Racks.Add(new Space_Rack
+            { Id = targetId, ZoneId = zoneB, FloorId = floorId, RackCode = "R2",
+              Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = floorId, RackId = srcId,
+            Placed = true, Status = 1, CodeOrigin = 1, Version = 1,
+            LocationCode = "A-01-01-01", Col = 1, Level = 1, Depth = 1
+        });
+        await db.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.DeleteRackAsync(srcId, mode: "rehome", targetRackId: targetId, user: "u"));
+        Assert.StartsWith("E-SPACE-002", ex.Message);
+
+        // 拒绝后：源架仍在，库位仍挂源架（锚未动）
+        Assert.NotNull(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == srcId));
+        Assert.Equal(srcId, (await db.Space_Locations.SingleAsync()).RackId);
+    }
+
+    [Fact]
+    public async Task DeleteRack_ModeRehome_DraftOnly_MovesLocations_NotDeleted()
+    {
+        // I2：全草稿货架 rehome——「搬走」语义对草稿同样成立（改挂 target，不删、不 re-publish）
+        var (db, svc) = Make();
+        var floorId  = Guid.NewGuid();
+        var zoneId   = Guid.NewGuid();
+        var srcId    = Guid.NewGuid();
+        var targetId = Guid.NewGuid();
+        var locId    = Guid.NewGuid();
+
+        db.Space_Racks.Add(new Space_Rack
+            { Id = srcId, ZoneId = zoneId, FloorId = floorId, RackCode = "R1",
+              Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
+        db.Space_Racks.Add(new Space_Rack
+            { Id = targetId, ZoneId = zoneId, FloorId = floorId, RackCode = "R2",
+              Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
+        db.Space_Locations.Add(new Space_Location
+            { Id = locId, FloorId = floorId, RackId = srcId, Placed = true, Status = 0, CodeOrigin = 1, Col = 1, Level = 1, Depth = 1 });
+        await db.SaveChangesAsync();
+
+        await svc.DeleteRackAsync(srcId, mode: "rehome", targetRackId: targetId, user: "u");
+
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(targetId, loc.RackId);                         // 草稿改挂 target（未被销毁）
+        Assert.Equal(0, loc.Status);                                // 仍草稿，未升版
+        Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 草稿无 re-publish 事件
+        Assert.Null(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == srcId));      // 源架已删
+        Assert.NotNull(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetId)); // 目标架仍在
+    }
+
+    [Fact]
+    public async Task DeleteRack_UnknownMode_Throws_NoSideEffect()
+    {
+        // I2：未知 mode 白名单拦截——不静默降级删除，零副作用
+        var (db, svc) = Make();
+        var s = await SeedPublishedAisleAsync(db);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.DeleteRackAsync(s.rackId, mode: "bogus", user: "u"));
+        Assert.StartsWith("E-SPACE-002", ex.Message);
+
+        Assert.Equal(1, await db.Space_Racks.CountAsync());
+        Assert.Equal(1, await db.Space_Locations.CountAsync());
+        Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Status);
+    }
+
+    [Fact]
     public async Task DeleteAisle_SetsNullRackAisleId()
     {
         var (db, svc) = Make();

@@ -34,7 +34,7 @@ public class WmsBinDeactivator : IWmsBinDeactivator
         if (bin != null)
         {
             bin.IsActive = false;
-            bin.Version = req.Version;
+            bin.Version = Math.Max(bin.Version, req.Version);   // 版本单调不回退（防陈旧停用重开乱序窗）
             bin.LastPublishedAt = DateTime.Now;
             bin.LastPublishedBy = req.User;
             await _db.SaveChangesAsync(ct);

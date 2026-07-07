@@ -222,12 +222,25 @@ public class SceneService : ISceneService
             // ── Locations ──────────────────────────────────────────
             foreach (var ld in dto.Locations ?? new List<SceneLocationSaveDto>())
             {
+                // I3①：DTO RackId 非空 Guid，前端可能以 Guid.Empty 表未落位——归一化为 null 防误伤采纳态
+                Guid? incomingRack = ld.RackId == Guid.Empty ? null : ld.RackId;
+
                 var existing = ld.Id.HasValue
                     ? await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == ld.Id.Value)
                     : null;
                 if (existing != null)
                 {
-                    existing.RackId     = ld.RackId;
+                    // I3②：已发布库位的落位不可经场景保存变更（改挂走货架 rehome，废弃走停用）——值未变的回显不触发
+                    if (existing.Status == 1 &&
+                        (existing.RackId != incomingRack || existing.Col != ld.Col ||
+                         existing.Level != ld.Level || existing.Depth != ld.Depth))
+                        throw new InvalidOperationException(
+                            "E-SPACE-004: 已发布库位的落位不可经场景保存变更（改挂走货架 rehome，废弃走停用）");
+
+                    // I3③：越界护栏（闭合 H2 同帧缩格绕过）——同帧已缩格的货架经 identity-map 返回新网格
+                    await AssertLocationInBoundsAsync(incomingRack, ld);
+
+                    existing.RackId     = incomingRack;
                     existing.Col        = ld.Col;
                     existing.Level      = ld.Level;
                     existing.Depth      = ld.Depth;
@@ -239,10 +252,13 @@ public class SceneService : ISceneService
                 }
                 else
                 {
+                    // I3③：新建库位落点同样越界校验（闭合同帧缩格+新落越界格）
+                    await AssertLocationInBoundsAsync(incomingRack, ld);
+
                     _db.Space_Locations.Add(new Space_Location
                     {
                         Id         = ld.Id ?? Guid.NewGuid(),
-                        RackId     = ld.RackId,
+                        RackId     = incomingRack,
                         FloorId    = floorId,
                         Col        = ld.Col,
                         Level      = ld.Level,
@@ -339,6 +355,20 @@ public class SceneService : ISceneService
         }
 
         return new Dictionary<Guid, Guid>();
+    }
+
+    /// <summary>
+    /// I3③ 越界护栏：库位落点必须落在货架网格内。incomingRack 为 null（未落位）→ 放过；
+    /// 货架查不到（同帧新建架未落库 / 真不存在）→ 放过（FK 语义由既有行为兜）。
+    /// 同帧已缩格的货架经 EF identity-map 返回被追踪的新网格值，闭合 H2 同帧缩格绕过。
+    /// </summary>
+    private async Task AssertLocationInBoundsAsync(Guid? incomingRack, SceneLocationSaveDto ld)
+    {
+        if (incomingRack == null) return;
+        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == incomingRack.Value);
+        if (rack == null) return;
+        if (ld.Col > rack.Cols || ld.Level > rack.Levels || ld.Depth > rack.DepthCount)
+            throw new InvalidOperationException("E-SPACE-002: 库位落点超出货架网格");
     }
 
     /// <inheritdoc/>
