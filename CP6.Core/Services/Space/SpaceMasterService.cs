@@ -383,12 +383,65 @@ public class SpaceMasterService : ISpaceMasterService
             RowVersion = x.RowVersion
         }).ToListAsync();
 
-    public async Task DeleteRackAsync(Guid id)
+    public async Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null)
     {
-        if (await _db.Space_Locations.AnyAsync(l => l.RackId == id))
-            throw new InvalidOperationException("E-SPACE-003");
-        var e = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id);
-        if (e != null) { _db.Space_Racks.Remove(e); await _db.SaveChangesAsync(); }
+        var rack = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id);
+        if (rack == null) return;
+
+        var published = await _db.Space_Locations
+            .Where(l => l.RackId == id && l.Status == 1)
+            .Select(l => l.Id)
+            .ToListAsync();
+
+        if (published.Count > 0)
+        {
+            switch (mode)
+            {
+                case "deactivate":
+                    // 路径A（ch04 §7.2）：逐个停用（同步 RPC 决策模型，不包事务，部分完成重试幂等）
+                    // → 落到下方级联删（停用位可删，2026-07-06 拍板②——与巷道 SetNull 落点不同）。
+                    foreach (var locId in published)
+                        await _publish.DeactivateAsync(locId, user);
+                    break;
+
+                case "rehome":
+                    // 路径B（同规格换架）：目标网格 ≥ 源、且无自有库位（否则格口冲突）。
+                    if (targetRackId == null)
+                        throw new InvalidOperationException("E-SPACE-002: mode=rehome 需要 targetRackId");
+                    var target = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetRackId.Value)
+                                 ?? throw new InvalidOperationException("E-SPACE-002: 目标货架不存在");
+                    if (target.Cols < rack.Cols || target.Levels < rack.Levels || target.DepthCount < rack.DepthCount)
+                        throw new InvalidOperationException("E-SPACE-002: 目标货架网格小于源货架，无法改挂");
+                    if (await _db.Space_Locations.AnyAsync(l => l.RackId == target.Id))
+                        throw new InvalidOperationException("E-SPACE-002: 目标货架已有库位，无法改挂");
+
+                    var movable = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
+                    foreach (var l in movable)
+                    {
+                        l.RackId     = target.Id;
+                        l.FloorId    = target.FloorId;
+                        l.Modifier   = user;
+                        l.ModifyDate = DateTime.Now;
+                    }
+                    await _db.SaveChangesAsync();                         // 先落改挂
+                    await _geo.RecalcRackLocationsAsync(target.Id);       // 几何回填（纯几何不发布，D4）
+                    await _publish.RepublishAsync(published, user);       // path.RackCode 变 → re-publish（§7.2 B）
+                    _db.Space_Racks.Remove(rack);
+                    await _db.SaveChangesAsync();
+                    return;
+
+                default:
+                    throw new InvalidOperationException(
+                        "E-SPACE-403: 该货架下有已发布库位，请先停用（或 mode=deactivate|rehome）");
+            }
+        }
+
+        // 无已发布（或 deactivate 后）→ 库位级联删 + 删货架（停用位可删，2026-07-06 拍板；
+        // 其码仍占 T_WmsBin 锚，同码再发布会被 REJECTED——锚清理记后续票）。
+        var children = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
+        if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
+        _db.Space_Racks.Remove(rack);
+        await _db.SaveChangesAsync();
     }
 
     // ══════════════════════════════════════════════════════════════════════

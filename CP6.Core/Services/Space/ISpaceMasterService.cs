@@ -42,7 +42,13 @@ public interface ISpaceMasterService
     Task<Guid> CreateRackAsync(RackDto dto, string? user);
     Task UpdateRackAsync(Guid id, RackDto dto, string? user);   // 位姿/尺寸变更后触发几何重算
     Task<List<RackDto>> ListRacksAsync(Guid zoneId);
-    Task DeleteRackAsync(Guid id);                // 护栏：有库位 → E-SPACE-003
+    /// <summary>
+    /// 删货架（ch04 §7.1/§7.2）：有已发布库位默认 Restrict（E-SPACE-403）；
+    /// mode=deactivate → 逐个停用后级联删（停用位可删，2026-07-06 拍板）；
+    /// mode=rehome → 整架库位改挂 targetRackId（同规格换架：目标网格≥源且无自有库位）+ re-publish 后删源架。
+    /// 无已发布库位 → 库位级联删 + 删货架（旧 E-SPACE-003 全拦废止）。
+    /// </summary>
+    Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null);
 
     // ── 场景聚合 / 待绑定 / 库位列表 ───────────────────────────────────────
     Task<SceneDto> GetSceneAsync(Guid floorId);                 // 仅含 Placed=true 库位

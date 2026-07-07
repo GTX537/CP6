@@ -149,9 +149,9 @@ public class SpaceMasterController : ControllerBase
     }
 
     [HttpDelete("rack/{id:guid}")]
-    public async Task<IActionResult> DeleteRack(Guid id)
+    public async Task<IActionResult> DeleteRack(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetRackId = null)
     {
-        try { await _svc.DeleteRackAsync(id); return Ok2(); }
+        try { await _svc.DeleteRackAsync(id, mode, targetRackId, CurrentUser); return Ok2(); }
         catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
     }
 

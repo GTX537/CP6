@@ -188,20 +188,26 @@ public class SpaceMasterServiceTests
 
     // ── B-5: 删除护栏 ─────────────────────────────────────────────────────
 
+    /// <summary>
+    /// 契约变更（§7.1 + 2026-07-06 拍板）：旧 E-SPACE-003「有库位一律拦」全废止。
+    /// 无 Status=1 已发布库位时，删货架级联删其下（草稿）库位，不再抛 E-003。
+    /// </summary>
     [Fact]
-    public async Task DeleteRack_WithLocations_Throws_E003()
+    public async Task DeleteRack_WithLocations_CascadeDeletes_E003Abolished()
     {
         var (db, svc) = Make();
         var rackId = Guid.NewGuid();
         db.Space_Racks.Add(new Space_Rack
             { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
         db.Space_Locations.Add(new Space_Location
-            { Id = Guid.NewGuid(), RackId = rackId, Placed = true });
+            { Id = Guid.NewGuid(), RackId = rackId, Placed = true });  // Status 默认 0=草稿
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => svc.DeleteRackAsync(rackId));
-        Assert.Equal("E-SPACE-003", ex.Message);
+        await svc.DeleteRackAsync(rackId);
+
+        // 旧断言（抛 E-003）废止：货架与库位全级联删
+        Assert.Equal(0, await db.Space_Racks.CountAsync());
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
     }
 
     [Fact]
@@ -215,6 +221,110 @@ public class SpaceMasterServiceTests
 
         await svc.DeleteRackAsync(rackId);
         Assert.Equal(0, await db.Space_Racks.CountAsync());
+    }
+
+    // ── 波1.5 Task 6: 删货架护栏 + mode=deactivate|rehome（ch04 §7.1/§7.2）─────
+
+    [Fact]
+    public async Task DeleteRack_DraftLocationsOnly_Cascades()
+    {
+        var (db, svc) = Make();
+        var rackId = Guid.NewGuid();
+        db.Space_Racks.Add(new Space_Rack
+            { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
+        db.Space_Locations.AddRange(
+            new Space_Location { Id = Guid.NewGuid(), RackId = rackId, Placed = true, Status = 0 },
+            new Space_Location { Id = Guid.NewGuid(), RackId = rackId, Placed = true, Status = 0 });
+        await db.SaveChangesAsync();
+
+        await svc.DeleteRackAsync(rackId);
+
+        // 无 Status=1 → 级联删库位+货架（旧 E-003 全拦废止）
+        Assert.Equal(0, await db.Space_Racks.CountAsync());
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
+    }
+
+    [Fact]
+    public async Task DeleteRack_WithPublished_NoMode_Throws403()
+    {
+        var (db, svc) = Make();
+        var s = await SeedPublishedAisleAsync(db);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.DeleteRackAsync(s.rackId));
+        Assert.StartsWith("E-SPACE-403", ex.Message);
+
+        // 护栏拦下：货架与库位原样
+        Assert.Equal(1, await db.Space_Racks.CountAsync());
+        Assert.Equal(1, await db.Space_Locations.CountAsync());
+        Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Status);
+    }
+
+    [Fact]
+    public async Task DeleteRack_ModeDeactivate_DeactivatesThenCascades()
+    {
+        var (db, svc) = Make();
+        var s = await SeedPublishedAisleAsync(db);
+
+        await svc.DeleteRackAsync(s.rackId, mode: "deactivate", user: "u");
+
+        // 停用后级联删（拍板②：停用位可删）——货架与库位全删
+        Assert.Equal(0, await db.Space_Racks.CountAsync());
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
+        // DEACTIVATE 事件已落库
+        Assert.True(await db.IntegrationEvents.CountAsync() >= 1);
+        // 真 WmsBinDeactivator 组装：T_WmsBin 墓碑 IsActive=false（loc 已被级联删，bin 独立留存）
+        var bin = await db.WmsBins.SingleAsync();
+        Assert.False(bin.IsActive);
+    }
+
+    [Fact]
+    public async Task DeleteRack_ModeRehome_MovesLocations_Republishes()
+    {
+        var (db, svc) = Make();
+        // 源架 R1（1x1x1）+ published loc（Version=1, Col=1）
+        var siteId  = Guid.NewGuid();
+        var floorId = Guid.NewGuid();
+        var zoneId  = Guid.NewGuid();
+        var srcId   = Guid.NewGuid();
+        var targetId = Guid.NewGuid();
+        var locId   = Guid.NewGuid();
+
+        db.Space_Sites.Add(new Space_Site { Id = siteId, SiteCode = "S1", SiteName = "S1" });
+        db.Space_Floors.Add(new Space_Floor { Id = floorId, SiteId = siteId, Level = 1, FloorCode = "F1", FloorName = "1F" });
+        db.Space_Zones.Add(new Space_Zone
+            { Id = zoneId, FloorId = floorId, ZoneCode = "Z1", ZoneName = "Zone1", Polygon = "[[0,0],[1,0],[1,1]]" });
+        db.Space_Racks.Add(new Space_Rack
+            { Id = srcId, ZoneId = zoneId, FloorId = floorId, RackCode = "R1",
+              Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
+        // 目标架 R2（同规格 1x1x1，无自有库位，同 zone）
+        db.Space_Racks.Add(new Space_Rack
+            { Id = targetId, ZoneId = zoneId, FloorId = floorId, RackCode = "R2",
+              Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId, FloorId = floorId, RackId = srcId,
+            Placed = true, Status = 1, CodeOrigin = 1, Version = 1,
+            LocationCode = "A-01-01-01", Col = 1, Level = 1, Depth = 1
+        });
+        await db.SaveChangesAsync();
+
+        await svc.DeleteRackAsync(srcId, mode: "rehome", targetRackId: targetId, user: "u");
+
+        // 库位改挂 target、Version 升、Status 仍 1（码冻结）
+        var loc = await db.Space_Locations.SingleAsync();
+        Assert.Equal(targetId, loc.RackId);
+        Assert.Equal(2, loc.Version);
+        Assert.Equal(1, loc.Status);
+        // 源架已删，目标架仍在
+        Assert.Null(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == srcId));
+        Assert.NotNull(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetId));
+        // UPSERT 事件 path.RackCode == "R2"
+        var evt = await db.IntegrationEvents.SingleAsync();
+        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+        var item = payload.GetProperty("Items")[0];
+        Assert.Equal("UPSERT", item.GetProperty("Op").GetString());
+        Assert.Equal("R2", item.GetProperty("Path").GetProperty("RackCode").GetString());
     }
 
     [Fact]
