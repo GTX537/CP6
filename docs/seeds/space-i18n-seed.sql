@@ -13,11 +13,15 @@
  * 合計 43 キー = common 14 + site 11 + floor 11 + home 7。
  * ============================================================ */
 SET NOCOUNT ON; SET XACT_ABORT ON;
+SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;
 PRINT '=== Space i18n シード開始 ===';
 
 IF OBJECT_ID('tempdb..#i18n') IS NOT NULL DROP TABLE #i18n;
 CREATE TABLE #i18n (
-    LangKey nvarchar(200) NOT NULL PRIMARY KEY,
+    -- COLLATE DATABASE_DEFAULT: 一時テーブルは既定 tempdb 照合順序（Latin1）を継承するため、
+    -- Sys_Langs.LangKey（Chinese_PRC_CI_AS）との MERGE 結合で照合順序衝突（Msg 468）が発生する。
+    -- DATABASE_DEFAULT は一時テーブルでは現行DB(CP6DB)の既定照合順序に解決され、対象列と一致する。
+    LangKey nvarchar(200) COLLATE DATABASE_DEFAULT NOT NULL PRIMARY KEY,
     ZhCN nvarchar(500), ZhTW nvarchar(500), En nvarchar(500), Ja nvarchar(500), Ko nvarchar(500)
 );
 
