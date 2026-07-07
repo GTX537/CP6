@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
@@ -100,9 +101,9 @@ public class LocationPublishServiceTests
         });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => MakePublishSvc(db).PublishFloorAsync(floorId, null, "u"));
-        Assert.StartsWith("E-SPACE-307", ex.Message);
+        Assert.Equal("E-SPACE-307", ex.Code);
         Assert.Equal(0, await db.IntegrationEvents.CountAsync());
     }
 
@@ -200,9 +201,9 @@ public class LocationPublishServiceTests
         });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => MakePublishSvc(db).PublishFloorAsync(floorId, null, "u"));
-        Assert.StartsWith("E-SPACE-405", ex.Message);
+        Assert.Equal("E-SPACE-405", ex.Code);
 
         // AsNoTracking 读 InMemory 存储快照（SaveChanges 从未运行）→ Status 仍 0
         var loc = await db.Space_Locations.AsNoTracking().SingleAsync();
@@ -288,9 +289,9 @@ public class LocationPublishServiceTests
         await db.SaveChangesAsync();
 
         var stockStub = new FixedStockQuery(5);
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => MakePublishSvc(db, stock: stockStub).DeactivateAsync(locId, "u"));
-        Assert.StartsWith("E-SPACE-401", ex.Message);
+        Assert.Equal("E-SPACE-401", ex.Code);
         Assert.Equal(0, await db.IntegrationEvents.CountAsync());
     }
 
@@ -305,9 +306,9 @@ public class LocationPublishServiceTests
         });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => MakePublishSvc(db).DeactivateAsync(locId, "u"));
-        Assert.StartsWith("E-SPACE-004", ex.Message);
+        Assert.Equal("E-SPACE-004", ex.Code);
     }
 
     // ── §7.2 路径B: re-publish ────────────────────────────────────────────
@@ -452,10 +453,10 @@ public class LocationPublishServiceTests
         });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => MakePublishSvc(db, deact: new RejectingDeactivator()).DeactivateAsync(locId, "u"));
 
-        Assert.StartsWith("W-SPACE-404", ex.Message);
+        Assert.Equal("W-SPACE-404", ex.Code);
         var loc = await db.Space_Locations.SingleAsync();
         Assert.Equal(1, loc.Status);            // §6.3：不前进、无翻转回滚
         Assert.Equal(1, loc.Version);           // 版本不动

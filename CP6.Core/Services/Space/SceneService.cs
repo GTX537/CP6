@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -122,8 +123,7 @@ public class SceneService : ISceneService
                                         (l.Col > rd.Cols || l.Level > rd.Levels || l.Depth > rd.DepthCount))
                             .ToListAsync();
                         if (outOfBounds.Any(l => l.Status == 1))
-                            throw new InvalidOperationException(
-                                "E-SPACE-403: 缩格触及已发布库位，请先停用越界库位再缩格");
+                            throw new BizException("E-SPACE-403");
                         if (outOfBounds.Count > 0)
                             _db.Space_Locations.RemoveRange(outOfBounds);   // 幽灵位清理（H2）
                     }
@@ -234,8 +234,7 @@ public class SceneService : ISceneService
                     if (existing.Status == 1 &&
                         (existing.RackId != incomingRack || existing.Col != ld.Col ||
                          existing.Level != ld.Level || existing.Depth != ld.Depth))
-                        throw new InvalidOperationException(
-                            "E-SPACE-004: 已发布库位的落位不可经场景保存变更（改挂走货架 rehome，废弃走停用）");
+                        throw new BizException("E-SPACE-004");
 
                     // I3③：越界护栏（闭合 H2 同帧缩格绕过）——同帧已缩格的货架经 identity-map 返回新网格
                     await AssertLocationInBoundsAsync(incomingRack, ld);
@@ -281,7 +280,7 @@ public class SceneService : ISceneService
                 // 注意：停用位删除后其码仍被 T_WmsBin 停用行占据 join 锚，同码新库位发布会被
                 // 锚碰撞 REJECTED——锚清理机制记后续票，此为拍板时已知代价。
                 if (e.Status == 1)
-                    throw new InvalidOperationException("E-SPACE-408: 已发布库位不可删除，请先停用");
+                    throw new BizException("E-SPACE-408");
                 _db.Space_Locations.Remove(e);
             }
 
@@ -289,7 +288,7 @@ public class SceneService : ISceneService
             {
                 // ch04 §7.1：有已发布库位 → Restrict；全草稿/停用 → 库位连带删（旧 E-003 全拦废止）
                 if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId && l.Status == 1))
-                    throw new InvalidOperationException("E-SPACE-403: 该货架下有已发布库位，请先停用");
+                    throw new BizException("E-SPACE-403");
                 var children = await _db.Space_Locations.Where(l => l.RackId == rackId).ToListAsync();
                 if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
                 var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId);
@@ -324,7 +323,7 @@ public class SceneService : ISceneService
             }
             catch (DbUpdateConcurrencyException)
             {
-                throw new InvalidOperationException("E-SPACE-009");
+                throw new BizException("E-SPACE-009", 409);
             }
 
             // ── 位姿变更货架→重算库位绝对坐标 ─────────────────────────
@@ -368,22 +367,22 @@ public class SceneService : ISceneService
         var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == incomingRack.Value);
         if (rack == null) return;
         if (ld.Col > rack.Cols || ld.Level > rack.Levels || ld.Depth > rack.DepthCount)
-            throw new InvalidOperationException("E-SPACE-002: 库位落点超出货架网格");
+            throw new BizException("E-SPACE-002");
     }
 
     /// <inheritdoc/>
     public async Task BindCodesAsync(Guid rackId, IEnumerable<(Guid locId, int col, int level, int depth)> pairs, string? user)
     {
         var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId)
-                   ?? throw new InvalidOperationException("E-SPACE-002");
+                   ?? throw new BizException("E-SPACE-002");
 
         foreach (var (locId, col, level, depth) in pairs)
         {
             var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId)
-                      ?? throw new InvalidOperationException("E-SPACE-004");
+                      ?? throw new BizException("E-SPACE-004");
 
             if (loc.Status != 1 || loc.Placed || loc.CodeOrigin != 2)
-                throw new InvalidOperationException("E-SPACE-004");
+                throw new BizException("E-SPACE-004");
 
             var (absX, absY, absZ) = LocationGeometryService.ComputeAbs(rack, col, level, depth);
 

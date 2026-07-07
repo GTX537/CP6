@@ -22,15 +22,13 @@ public class ConnectorController : ControllerBase
     [HttpPost("connector")]
     public async Task<IActionResult> Create([FromBody] ConnectorDto d)
     {
-        try { return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
     }
 
     [HttpPut("connector/{id:guid}/stop")]
     public async Task<IActionResult> UpsertStop(Guid id, [FromBody] ConnectorStopDto d)
     {
-        try { await _svc.UpsertStopAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpsertStopAsync(id, d, CurrentUser); return Ok2();
     }
 
     [HttpDelete("connector/{id:guid}/stop/{floorId:guid}")]
@@ -39,8 +37,7 @@ public class ConnectorController : ControllerBase
     [HttpPut("connector/{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] ConnectorUpdateDto d)
     {
-        try { await _svc.UpdateAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
     }
 
     [HttpDelete("connector/{id:guid}")]

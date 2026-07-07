@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
 using CP6.Entity.DomainModels.Space;
@@ -41,9 +42,9 @@ public class SpaceMasterServiceTests
     {
         var (_, svc) = Make();
         await svc.CreateSiteAsync(new SiteDto { SiteCode = "WH1", SiteName = "a" }, "u");
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.CreateSiteAsync(new SiteDto { SiteCode = "WH1", SiteName = "b" }, "u"));
-        Assert.Equal("E-SPACE-001", ex.Message);
+        Assert.Equal("E-SPACE-001", ex.Code);
     }
 
     /// <summary>编辑器 reconciliation：scene 须含完整 Floor 对象（底图标定 + 原点）。</summary>
@@ -76,10 +77,10 @@ public class SpaceMasterServiceTests
     public async Task CreateZone_PolygonLessThan3Vertices_Throws_E006()
     {
         var (_, svc) = Make();
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.CreateZoneAsync(
                 new ZoneDto { FloorId = Guid.NewGuid(), ZoneCode = "A", Polygon = "[[0,0],[1,1]]" }, "u"));
-        Assert.Equal("E-SPACE-006", ex.Message);
+        Assert.Equal("E-SPACE-006", ex.Code);
     }
 
     [Fact]
@@ -100,10 +101,10 @@ public class SpaceMasterServiceTests
         var id = await svc.CreateZoneAsync(
             new ZoneDto { FloorId = floorId, ZoneCode = "Z1",
                           Polygon = "[[0,0],[1,0],[1,1]]" }, "u");
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.UpdateZoneAsync(id,
                 new ZoneDto { FloorId = floorId, ZoneCode = "Z1", Polygon = "[[0,0]]" }, "u"));
-        Assert.Equal("E-SPACE-006", ex.Message);
+        Assert.Equal("E-SPACE-006", ex.Code);
     }
 
     [Fact]
@@ -183,28 +184,28 @@ public class SpaceMasterServiceTests
             Cols = 1, Levels = 1, DepthCount = 1,
             CellW = 1000, CellH = 1000, CellD = 1000
         }, "u");
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.CreateRackAsync(new RackDto
             {
                 ZoneId = zoneId, RackCode = "R1",
                 Cols = 1, Levels = 1, DepthCount = 1,
                 CellW = 1000, CellH = 1000, CellD = 1000
             }, "u"));
-        Assert.Equal("E-SPACE-001", ex.Message);
+        Assert.Equal("E-SPACE-001", ex.Code);
     }
 
     [Fact]
     public async Task CreateRack_EmptyZoneId_Throws_E002()
     {
         var (_, svc) = Make();
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.CreateRackAsync(new RackDto
             {
                 ZoneId = Guid.Empty, RackCode = "R1",
                 Cols = 1, Levels = 1, DepthCount = 1,
                 CellW = 1000, CellH = 1000, CellD = 1000
             }, "u"));
-        Assert.Equal("E-SPACE-002", ex.Message);
+        Assert.Equal("E-SPACE-002", ex.Code);
     }
 
     // ── B-5: 删除护栏 ─────────────────────────────────────────────────────
@@ -271,9 +272,9 @@ public class SpaceMasterServiceTests
         var (db, svc) = Make();
         var s = await SeedPublishedAisleAsync(db);
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.DeleteRackAsync(s.rackId));
-        Assert.StartsWith("E-SPACE-403", ex.Message);
+        Assert.Equal("E-SPACE-403", ex.Code);
 
         // 护栏拦下：货架与库位原样
         Assert.Equal(1, await db.Space_Racks.CountAsync());
@@ -374,9 +375,9 @@ public class SpaceMasterServiceTests
         });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.DeleteRackAsync(srcId, mode: "rehome", targetRackId: targetId, user: "u"));
-        Assert.StartsWith("E-SPACE-002", ex.Message);
+        Assert.Equal("E-SPACE-002", ex.Code);
 
         // 拒绝后：源架仍在，库位仍挂源架（锚未动）
         Assert.NotNull(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == srcId));
@@ -421,9 +422,9 @@ public class SpaceMasterServiceTests
         var (db, svc) = Make();
         var s = await SeedPublishedAisleAsync(db);
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.DeleteRackAsync(s.rackId, mode: "bogus", user: "u"));
-        Assert.StartsWith("E-SPACE-002", ex.Message);
+        Assert.Equal("E-SPACE-002", ex.Code);
 
         Assert.Equal(1, await db.Space_Racks.CountAsync());
         Assert.Equal(1, await db.Space_Locations.CountAsync());
@@ -488,9 +489,9 @@ public class SpaceMasterServiceTests
         var (db, svc) = Make();
         var s = await SeedPublishedAisleAsync(db);
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.DeleteAisleAsync(s.aisleId));
-        Assert.StartsWith("E-SPACE-402", ex.Message);
+        Assert.Equal("E-SPACE-402", ex.Code);
 
         // 护栏拦下：巷道仍在，货架 AisleId 未被置空
         Assert.Equal(1, await db.Space_Aisles.CountAsync());
@@ -558,9 +559,9 @@ public class SpaceMasterServiceTests
         db.Space_Aisles.Add(new Space_Aisle { Id = targetId, ZoneId = otherZoneId, AisleCode = "DST" });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.DeleteAisleAsync(s.aisleId, mode: "rehome", targetAisleId: targetId, user: "u"));
-        Assert.StartsWith("E-SPACE-407", ex.Message);
+        Assert.Equal("E-SPACE-407", ex.Code);
 
         // 拒绝后：src 仍在，货架仍挂 src
         Assert.Equal(s.aisleId, (await db.Space_Racks.SingleAsync()).AisleId);
@@ -576,9 +577,9 @@ public class SpaceMasterServiceTests
         db.Space_Floors.Add(new Space_Floor { Id = Guid.NewGuid(), SiteId = siteId, FloorCode = "F", FloorName = "f" });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.DeleteSiteAsync(siteId));
-        Assert.Equal("E-SPACE-007", ex.Message);
+        Assert.Equal("E-SPACE-007", ex.Code);
     }
 
     [Fact]
@@ -592,9 +593,9 @@ public class SpaceMasterServiceTests
               Polygon = "[[0,0],[1,0],[1,1]]" });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.DeleteFloorAsync(floorId));
-        Assert.Equal("E-SPACE-007", ex.Message);
+        Assert.Equal("E-SPACE-007", ex.Code);
     }
 
     [Fact]
@@ -609,9 +610,9 @@ public class SpaceMasterServiceTests
             { Id = Guid.NewGuid(), ZoneId = zoneId, AisleCode = "A" });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.DeleteZoneAsync(zoneId));
-        Assert.Equal("E-SPACE-007", ex.Message);
+        Assert.Equal("E-SPACE-007", ex.Code);
     }
 
     // ── B-6: 场景聚合 / 待绑定 ──────────────────────────────────────────

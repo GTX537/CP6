@@ -40,10 +40,6 @@ public class LocationPublishController : ControllerBase
             var count = await _svc.PublishFloorAsync(id, req?.ZoneId, CurrentUser);
             return Ok2(new { published = count });
         }
-        catch (InvalidOperationException e)
-        {
-            return BadRequest(new { code = 400, message = e.Message });
-        }
         catch (DbUpdateConcurrencyException)
         {
             // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
@@ -61,10 +57,6 @@ public class LocationPublishController : ControllerBase
         {
             await _svc.DeactivateAsync(id, CurrentUser);
             return Ok2();
-        }
-        catch (InvalidOperationException e)
-        {
-            return BadRequest(new { code = 400, message = e.Message });
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -84,10 +76,6 @@ public class LocationPublishController : ControllerBase
             var items = req.Items.Select(i => (i.Code, (Dictionary<string, object?>?)i.Attrs));
             var (imported, skipped) = await _svc.AdoptAsync(items, CurrentUser);
             return Ok2(new { imported, skipped });
-        }
-        catch (InvalidOperationException e)
-        {
-            return BadRequest(new { code = 400, message = e.Message });
         }
         catch (DbUpdateConcurrencyException)
         {

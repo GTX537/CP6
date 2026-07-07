@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Core.Services.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -23,9 +24,9 @@ public class TemplateServiceTests
     {
         var (_, svc) = Make();
         await svc.CreateAsync(new TemplateDto { TemplateCode = "T1", TemplateName = "tmpl1", TemplateType = 1, Params = "{}" }, "u");
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.CreateAsync(new TemplateDto { TemplateCode = "T1", TemplateName = "tmpl2", TemplateType = 1, Params = "{}" }, "u"));
-        Assert.Equal("E-SPACE-001", ex.Message);
+        Assert.Equal("E-SPACE-001", ex.Code);
     }
 
     [Fact]

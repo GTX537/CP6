@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
 using CP6.Entity.DomainModels.Space;
@@ -319,8 +320,8 @@ public class SceneServiceTests
             }
         };
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
-        Assert.StartsWith("E-SPACE-403", ex.Message);
+        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
+        Assert.Equal("E-SPACE-403", ex.Code);
         Assert.Equal(3, (await db.Space_Racks.AsNoTracking().SingleAsync()).Cols);   // 缩格未生效
         Assert.Equal(1, await db.Space_Locations.CountAsync());                      // 库位仍在
     }
@@ -378,11 +379,11 @@ public class SceneServiceTests
         Assert.Equal(1, await db.Space_Locations.CountAsync());
 
         // 已发布：拒绝
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
         {
             Deletes = new Deletes { Locations = new List<Guid> { pub.Id } }
         }, "u"));
-        Assert.StartsWith("E-SPACE-408", ex.Message);
+        Assert.Equal("E-SPACE-408", ex.Code);
         Assert.Equal(1, await db.Space_Locations.CountAsync());
     }
 
@@ -418,11 +419,11 @@ public class SceneServiceTests
         db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Status = 1, LocationCode = "Z1-01", Col = 1, Level = 1, Depth = 1, Version = 1 });
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
         {
             Deletes = new Deletes { Racks = new List<Guid> { rack.Id } }
         }, "u"));
-        Assert.StartsWith("E-SPACE-403", ex.Message);
+        Assert.Equal("E-SPACE-403", ex.Code);
         Assert.Equal(1, await db.Space_Racks.CountAsync());
     }
 
@@ -455,7 +456,7 @@ public class SceneServiceTests
             }
         };
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
+        await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
         Assert.Equal(3, (await db.Space_Racks.AsNoTracking().SingleAsync()).Cols);       // 缩格未生效
         Assert.Equal(1, (await db.Space_Locations.AsNoTracking().SingleAsync()).Col);    // 库位原位
     }
@@ -473,14 +474,14 @@ public class SceneServiceTests
         db.AddRange(zone, rackA, rackB, loc);
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
         {
             Locations = new List<SceneLocationSaveDto>
             {
                 new SceneLocationSaveDto { Id = loc.Id, RackId = rackB.Id, Col = 1, Level = 1, Depth = 1, Placed = true }
             }
         }, "u"));
-        Assert.StartsWith("E-SPACE-004", ex.Message);
+        Assert.Equal("E-SPACE-004", ex.Code);
         Assert.Equal(rackA.Id, (await db.Space_Locations.AsNoTracking().SingleAsync()).RackId);   // 仍挂 A
     }
 
@@ -496,14 +497,14 @@ public class SceneServiceTests
         db.AddRange(zone, rack, loc);
         await db.SaveChangesAsync();
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
         {
             Locations = new List<SceneLocationSaveDto>
             {
                 new SceneLocationSaveDto { Id = loc.Id, RackId = rack.Id, Col = 5, Level = 1, Depth = 1, Placed = true }   // 5 > Cols=2
             }
         }, "u"));
-        Assert.StartsWith("E-SPACE-002", ex.Message);
+        Assert.Equal("E-SPACE-002", ex.Code);
         Assert.Equal(1, (await db.Space_Locations.AsNoTracking().SingleAsync()).Col);   // 草稿原位
     }
 }

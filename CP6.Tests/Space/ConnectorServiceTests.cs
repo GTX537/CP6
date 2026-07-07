@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Core.Services.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -36,9 +37,9 @@ public class ConnectorServiceTests
         var (_, svc) = Make();
         var site = Guid.NewGuid();
         await svc.CreateAsync(new ConnectorDto { SiteId = site, ConnectorCode = "E1", ConnectorType = 1, Name = "a" }, "u");
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.CreateAsync(new ConnectorDto { SiteId = site, ConnectorCode = "E1", ConnectorType = 1, Name = "b" }, "u"));
-        Assert.Equal("E-SPACE-501", ex.Message);
+        Assert.Equal("E-SPACE-501", ex.Code);
     }
 
     [Fact]
@@ -93,8 +94,8 @@ public class ConnectorServiceTests
     public async Task Update_missing_throws_E502()
     {
         var (_, svc) = Make();
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+        var ex = await Assert.ThrowsAsync<BizException>(
             () => svc.UpdateAsync(Guid.NewGuid(), new ConnectorUpdateDto { Name = "x", ConnectorType = 1 }, "u"));
-        Assert.Equal("E-SPACE-502", ex.Message);
+        Assert.Equal("E-SPACE-502", ex.Code);
     }
 }

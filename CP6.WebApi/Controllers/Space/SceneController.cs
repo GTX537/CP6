@@ -34,8 +34,7 @@ public class SceneController : ControllerBase
     [HttpPost("floor/{id:guid}/scene")]
     public async Task<IActionResult> SaveScene(Guid id, [FromBody] SceneSaveDto dto)
     {
-        try { return Ok2(new { idMap = await _scene.SaveSceneAsync(id, dto, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { idMap = await _scene.SaveSceneAsync(id, dto, CurrentUser) });
     }
 
     // ── G-3 导入导出 ──────────────────────────────────────────────────────
@@ -44,16 +43,14 @@ public class SceneController : ControllerBase
     [HttpGet("floor/{id:guid}/export")]
     public async Task<IActionResult> Export(Guid id)
     {
-        try { return Ok2(await _io.ExportAsync(id)); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(await _io.ExportAsync(id));
     }
 
     /// <summary>导入场景到指定站点（新 GUID 映射，库位按货架参数全枚举重建）</summary>
     [HttpPost("site/{id:guid}/import")]
     public async Task<IActionResult> Import(Guid id, [FromBody] SceneExportDto dto)
     {
-        try { return Ok2(new { floorId = await _io.ImportAsync(id, dto, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { floorId = await _io.ImportAsync(id, dto, CurrentUser) });
     }
 
     // ── I-1 D7 绑码 ──────────────────────────────────────────────────────
@@ -62,12 +59,8 @@ public class SceneController : ControllerBase
     [HttpPost("rack/{id:guid}/bind-codes")]
     public async Task<IActionResult> BindCodes(Guid id, [FromBody] BindCodesDto dto)
     {
-        try
-        {
-            var pairs = dto.Pairs.Select(p => (p.LocationId, p.Col, p.Level, p.Depth));
-            await _scene.BindCodesAsync(id, pairs, CurrentUser);
-            return Ok2();
-        }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        var pairs = dto.Pairs.Select(p => (p.LocationId, p.Col, p.Level, p.Depth));
+        await _scene.BindCodesAsync(id, pairs, CurrentUser);
+        return Ok2();
     }
 }

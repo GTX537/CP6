@@ -33,32 +33,28 @@ public class CodeRuleController : ControllerBase
     [HttpPost("code-rule")]
     public async Task<IActionResult> CreateRule([FromBody] CodeRuleDto d)
     {
-        try { return Ok2(new { id = await _svc.CreateRuleAsync(d, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CreateRuleAsync(d, CurrentUser) });
     }
 
     /// <summary>修改编码规则。</summary>
     [HttpPut("code-rule/{id:guid}")]
     public async Task<IActionResult> UpdateRule(Guid id, [FromBody] CodeRuleDto d)
     {
-        try { await _svc.UpdateRuleAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpdateRuleAsync(id, d, CurrentUser); return Ok2();
     }
 
     /// <summary>删除编码规则。</summary>
     [HttpDelete("code-rule/{id:guid}")]
     public async Task<IActionResult> DeleteRule(Guid id)
     {
-        try { await _svc.DeleteRuleAsync(id); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.DeleteRuleAsync(id); return Ok2();
     }
 
     /// <summary>实时预览编码样例（ch03 §8）。合成两路（有/无巷道），不写库。</summary>
     [HttpPost("code-rule/preview")]
     public async Task<IActionResult> Preview([FromBody] CodePreviewReq req)
     {
-        try { return Ok2(await _svc.PreviewAsync(req)); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(await _svc.PreviewAsync(req));
     }
 
     // ── 批量生成 ───────────────────────────────────────────────────────────
@@ -71,8 +67,7 @@ public class CodeRuleController : ControllerBase
     [HttpPost("floor/{id:guid}/generate-codes")]
     public async Task<IActionResult> GenerateCodes(Guid id, [FromBody] GenerateCodesReq req)
     {
-        try { return Ok2(await _svc.GenerateAsync(id, req.Mode, req.ScopeZoneId)); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(await _svc.GenerateAsync(id, req.Mode, req.ScopeZoneId));
     }
 
     // ── 发布前编码预检 ─────────────────────────────────────────────────────
@@ -84,8 +79,7 @@ public class CodeRuleController : ControllerBase
     [HttpGet("floor/{id:guid}/code-precheck")]
     public async Task<IActionResult> CodePrecheck(Guid id, [FromQuery] Guid? zoneId = null)
     {
-        try { return Ok2(await _svc.PrecheckAsync(id, zoneId)); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(await _svc.PrecheckAsync(id, zoneId));
     }
 
     // ── 单格生成 ───────────────────────────────────────────────────────────
@@ -96,8 +90,7 @@ public class CodeRuleController : ControllerBase
     [HttpPost("location/{id:guid}/gen-code")]
     public async Task<IActionResult> GenCode(Guid id)
     {
-        try { return Ok2(new { code = await _svc.GenSingleAsync(id) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { code = await _svc.GenSingleAsync(id) });
     }
 }
 

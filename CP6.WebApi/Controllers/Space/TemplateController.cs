@@ -29,31 +29,27 @@ public class TemplateController : ControllerBase
     [HttpPost("template")]
     public async Task<IActionResult> Create([FromBody] TemplateDto d)
     {
-        try { return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
     }
 
     /// <summary>更新模板</summary>
     [HttpPut("template/{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] TemplateDto d)
     {
-        try { await _svc.UpdateAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
     }
 
     /// <summary>删除模板</summary>
     [HttpDelete("template/{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        try { await _svc.DeleteAsync(id); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.DeleteAsync(id); return Ok2();
     }
 
     /// <summary>克隆模板（新 Id + 新编码，同 Params/Type）</summary>
     [HttpPost("template/{id:guid}/clone")]
     public async Task<IActionResult> Clone(Guid id)
     {
-        try { return Ok2(new { id = await _svc.CloneAsync(id, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CloneAsync(id, CurrentUser) });
     }
 }

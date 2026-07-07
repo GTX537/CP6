@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Localization;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Space;
@@ -55,7 +56,7 @@ public class LocationPublishService : ILocationPublishService
             // 1. 闸门（ch03 §9.2；zoneId 给定时按库区收窄，H5）
             var pre = await _code.PrecheckAsync(floorId, zoneId);
             if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
-                throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
+                throw new BizException("E-SPACE-307");
 
             // 2. 取 Status=0 且编码就绪的库位（zoneId 给定时经 Rack.ZoneId 收窄）
             var locQuery = _db.Space_Locations
@@ -106,15 +107,15 @@ public class LocationPublishService : ILocationPublishService
     public async Task DeactivateAsync(Guid locationId, string? user)
     {
         var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId)
-                ?? throw new InvalidOperationException("E-SPACE-004: 库位不存在");
+                ?? throw new BizException("E-SPACE-004");
         if (l.Status != 1)
-            throw new InvalidOperationException("E-SPACE-004: 库位未处于已发布状态");
+            throw new BizException("E-SPACE-004");
 
         // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
         var warehouseCd = await ResolveWarehouseCdAsync(l);
         var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
         if (qty > 0)
-            throw new InvalidOperationException("E-SPACE-401: 库位仍有库存，无法停用");
+            throw new BizException("E-SPACE-401");
 
         // ② 同步 RPC：WMS 按实时库存权威判定（TOCTOU 防护；ch04 §6.1② v1.1）
         var newVersion = l.Version + 1;
@@ -129,7 +130,7 @@ public class LocationPublishService : ILocationPublishService
 
         // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
         if (!resp.Success)
-            throw new InvalidOperationException("W-SPACE-404: WMS 侧仍有库存，停用未生效");
+            throw new BizException("W-SPACE-404");
 
         l.Status = 2;
         l.Version = newVersion;
@@ -305,8 +306,7 @@ public class LocationPublishService : ILocationPublishService
         if (site == null) return null;
         var warehouseCd = string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
         if (warehouseCd.Length > 10)
-            throw new InvalidOperationException(
-                "E-SPACE-405: 站点编码超过 10 字符且未配置 WarehouseCd 映射，无法发布/停用");
+            throw new BizException("E-SPACE-405");
         return warehouseCd;
     }
 }

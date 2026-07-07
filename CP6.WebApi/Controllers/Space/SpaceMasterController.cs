@@ -29,22 +29,19 @@ public class SpaceMasterController : ControllerBase
     [HttpPost("site")]
     public async Task<IActionResult> CreateSite([FromBody] SiteDto d)
     {
-        try { return Ok2(new { id = await _svc.CreateSiteAsync(d, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CreateSiteAsync(d, CurrentUser) });
     }
 
     [HttpPut("site/{id:guid}")]
     public async Task<IActionResult> UpdateSite(Guid id, [FromBody] SiteDto d)
     {
-        try { await _svc.UpdateSiteAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpdateSiteAsync(id, d, CurrentUser); return Ok2();
     }
 
     [HttpDelete("site/{id:guid}")]
     public async Task<IActionResult> DeleteSite(Guid id)
     {
-        try { await _svc.DeleteSiteAsync(id); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.DeleteSiteAsync(id); return Ok2();
     }
 
     // ── Floor ─────────────────────────────────────────────────────────────
@@ -56,22 +53,19 @@ public class SpaceMasterController : ControllerBase
     [HttpPost("floor")]
     public async Task<IActionResult> CreateFloor([FromBody] FloorDto d)
     {
-        try { return Ok2(new { id = await _svc.CreateFloorAsync(d, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CreateFloorAsync(d, CurrentUser) });
     }
 
     [HttpPut("floor/{id:guid}")]
     public async Task<IActionResult> UpdateFloor(Guid id, [FromBody] FloorDto d)
     {
-        try { await _svc.UpdateFloorAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpdateFloorAsync(id, d, CurrentUser); return Ok2();
     }
 
     [HttpDelete("floor/{id:guid}")]
     public async Task<IActionResult> DeleteFloor(Guid id)
     {
-        try { await _svc.DeleteFloorAsync(id); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.DeleteFloorAsync(id); return Ok2();
     }
 
     // ── Zone ──────────────────────────────────────────────────────────────
@@ -83,22 +77,19 @@ public class SpaceMasterController : ControllerBase
     [HttpPost("zone")]
     public async Task<IActionResult> CreateZone([FromBody] ZoneDto d)
     {
-        try { return Ok2(new { id = await _svc.CreateZoneAsync(d, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CreateZoneAsync(d, CurrentUser) });
     }
 
     [HttpPut("zone/{id:guid}")]
     public async Task<IActionResult> UpdateZone(Guid id, [FromBody] ZoneDto d)
     {
-        try { await _svc.UpdateZoneAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpdateZoneAsync(id, d, CurrentUser); return Ok2();
     }
 
     [HttpDelete("zone/{id:guid}")]
     public async Task<IActionResult> DeleteZone(Guid id)
     {
-        try { await _svc.DeleteZoneAsync(id); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.DeleteZoneAsync(id); return Ok2();
     }
 
     // ── Aisle ─────────────────────────────────────────────────────────────
@@ -110,22 +101,19 @@ public class SpaceMasterController : ControllerBase
     [HttpPost("aisle")]
     public async Task<IActionResult> CreateAisle([FromBody] AisleDto d)
     {
-        try { return Ok2(new { id = await _svc.CreateAisleAsync(d, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CreateAisleAsync(d, CurrentUser) });
     }
 
     [HttpPut("aisle/{id:guid}")]
     public async Task<IActionResult> UpdateAisle(Guid id, [FromBody] AisleDto d)
     {
-        try { await _svc.UpdateAisleAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpdateAisleAsync(id, d, CurrentUser); return Ok2();
     }
 
     [HttpDelete("aisle/{id:guid}")]
     public async Task<IActionResult> DeleteAisle(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetAisleId = null)
     {
-        try { await _svc.DeleteAisleAsync(id, mode, targetAisleId, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.DeleteAisleAsync(id, mode, targetAisleId, CurrentUser); return Ok2();
     }
 
     // ── Rack ──────────────────────────────────────────────────────────────
@@ -137,22 +125,19 @@ public class SpaceMasterController : ControllerBase
     [HttpPost("rack")]
     public async Task<IActionResult> CreateRack([FromBody] RackDto d)
     {
-        try { return Ok2(new { id = await _svc.CreateRackAsync(d, CurrentUser) }); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        return Ok2(new { id = await _svc.CreateRackAsync(d, CurrentUser) });
     }
 
     [HttpPut("rack/{id:guid}")]
     public async Task<IActionResult> UpdateRack(Guid id, [FromBody] RackDto d)
     {
-        try { await _svc.UpdateRackAsync(id, d, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.UpdateRackAsync(id, d, CurrentUser); return Ok2();
     }
 
     [HttpDelete("rack/{id:guid}")]
     public async Task<IActionResult> DeleteRack(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetRackId = null)
     {
-        try { await _svc.DeleteRackAsync(id, mode, targetRackId, CurrentUser); return Ok2(); }
-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+        await _svc.DeleteRackAsync(id, mode, targetRackId, CurrentUser); return Ok2();
     }
 
     // ── 场景聚合 / 待绑定 / 库位列表 ────────────────────────────────────
