@@ -25,6 +25,7 @@ public class LocationPublishService : ILocationPublishService
     private readonly ISpaceBridgeHook _hook;
     private readonly IWmsStockQuery _stock;
     private readonly IWmsBinDeactivator _deactivator;
+    private readonly ISpaceNotifier _notifier;
 
     public LocationPublishService(
         CP6Context db,
@@ -32,7 +33,8 @@ public class LocationPublishService : ILocationPublishService
         ICodeEngineService code,
         ISpaceBridgeHook hook,
         IWmsStockQuery stock,
-        IWmsBinDeactivator deactivator)
+        IWmsBinDeactivator deactivator,
+        ISpaceNotifier notifier)
     {
         _db = db;
         _t = t;
@@ -40,6 +42,7 @@ public class LocationPublishService : ILocationPublishService
         _hook = hook;
         _stock = stock;
         _deactivator = deactivator;
+        _notifier = notifier;
     }
 
     /// <inheritdoc/>
@@ -95,6 +98,10 @@ public class LocationPublishService : ILocationPublishService
             await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
 
             if (tx != null) await tx.CommitAsync();
+
+            // 6. SignalR プッシュ（★事務 Commit 後：確定済みイベントのみ通知、推送不進事務。
+            //    実装は例外を投げない契約 ── 万一落ちても業務は既に確定済み、return を妨げない）
+            await _notifier.NotifyLocationPublishedAsync(batchNo, locs.Count, "SUCCESS");
             return locs.Count;
         }
         finally
@@ -149,6 +156,10 @@ public class LocationPublishService : ILocationPublishService
 
         // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
         await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+
+        // ⑤ SignalR プッシュ（兜底事件 hook 後：本地 Status 已 SaveChanges 確定。
+        //    実装は例外を投げない契約 ── 推送失敗絕不坏业务）
+        await _notifier.NotifyLocationPublishedAsync(batch.BatchNo, 1, "SUCCESS");
     }
 
     /// <inheritdoc/>

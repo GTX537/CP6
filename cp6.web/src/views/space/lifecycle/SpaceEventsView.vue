@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
@@ -45,6 +45,10 @@ import CpListPage, { type ListColumn, type ListFetch } from '@/components/templa
 import { type Tone } from '@/components/base/CpTag.vue'
 import { publishApi } from '@/api/space/publish'
 import type { SpaceEventVO } from '@/types/space/scene'
+import {
+  startSpaceConnection, onLocationPublished, offLocationPublished,
+  type LocationPublishedPayload,
+} from '@/utils/spaceHub'
 
 const { t } = useI18n()
 
@@ -104,6 +108,19 @@ function nextPage() {
 function showError(msg: string) {
   ElMessageBox.alert(msg, t('space.events.col.lastError'), { type: 'error' })
 }
+
+// SignalR：発布/停用プッシュ受信 → 第 1 頁へ戻して再取得（低頻イベント、全播）
+function onPublished(_payload: LocationPublishedPayload) {
+  page.value = 1
+  listRef.value?.reload()
+}
+onMounted(() => {
+  startSpaceConnection()
+  onLocationPublished(onPublished)
+})
+onUnmounted(() => {
+  offLocationPublished(onPublished)
+})
 </script>
 
 <style scoped>

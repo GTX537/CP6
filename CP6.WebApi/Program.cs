@@ -397,6 +397,7 @@ builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceLocateService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Integration.SpaceBridgeHook>();
 builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceBridgeHook, CP6.Core.Services.Integration.SpaceBridgeHook>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ILocationPublishService, CP6.Core.Services.Space.LocationPublishService>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceNotifier, CP6.WebApi.Services.SignalRSpaceNotifier>(); // 库位発布/停用 SignalR プッシュ（SpaceHub 全播）
 // ch04 v1.1 §5.3：真消费端（T_WmsBin 幂等 upsert，方案A 2026-07-05）。回滚开关：换回 NoOpWmsLocationConsumer 即断开。
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Wms.WmsBinConsumer>();
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsBinDeactivator, CP6.Core.Services.Wms.WmsBinDeactivator>(); // ch04 §6 v1.1 停用同步 RPC 真实现（TOCTOU 权威库存判定 + T_WmsBin 停用/墓碑）
@@ -2523,6 +2524,7 @@ app.MapControllers();
 app.MapHub<NotifyHub>("/hubs/notify");
 app.MapHub<CP6.WebApi.Hubs.MesHub>("/hubs/mes");
 app.MapHub<CP6.WebApi.Hubs.WmsHub>("/hubs/wms");
+app.MapHub<CP6.WebApi.Hubs.SpaceHub>("/hubs/space");
 
 // T15 / Gap 2.3 — Prometheus 公開エンドポイント /metrics ＋ ブリッジ業務指標コレクタ起動
 app.MapMetrics();   // GET /metrics（Prometheus テキスト形式）

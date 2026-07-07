@@ -21,7 +21,7 @@ public class BindCodesTests
         var geo = new LocationGeometryService(db);
         var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
             new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
-            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
+            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db), new NoOpSpaceNotifier());
         return (db, new SceneService(db, geo, publish));
     }
 

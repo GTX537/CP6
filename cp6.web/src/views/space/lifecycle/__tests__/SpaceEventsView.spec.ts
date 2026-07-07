@@ -11,6 +11,14 @@ import type { SpaceEventVO } from '@/types/space/scene'
 vi.mock('@/api/space/publish', () => ({ publishApi: { events: vi.fn() } }))
 vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
 
+// spaceHub をモック：onLocationPublished に渡されたコールバックを捕捉し、テストから発火できるようにする
+let publishedCb: ((p: unknown) => void) | null = null
+vi.mock('@/utils/spaceHub', () => ({
+  startSpaceConnection: vi.fn(),
+  onLocationPublished: vi.fn((cb: (p: unknown) => void) => { publishedCb = cb }),
+  offLocationPublished: vi.fn(() => { publishedCb = null }),
+}))
+
 function ev(over: Partial<SpaceEventVO>): SpaceEventVO {
   return {
     id: 'e', hookName: 'wms.location.sync', sourceNo: 'PUB-001', targetModule: 'WMS',
@@ -33,9 +41,10 @@ function mountView() {
 }
 
 describe('SpaceEventsView', () => {
-  afterEach(() => { document.body.innerHTML = '' })
+  afterEach(() => { document.body.innerHTML = ''; publishedCb = null })
   beforeEach(() => {
     vi.clearAllMocks()
+    publishedCb = null
     vi.mocked(publishApi.events).mockResolvedValue({ code: 0, message: '', data: [] })
   })
 
@@ -83,5 +92,20 @@ describe('SpaceEventsView', () => {
     const nextBtn = w.findAll('button').find((b) => b.text() === 'space.events.nextPage')
     expect(nextBtn).toBeTruthy()
     expect(nextBtn!.attributes('disabled')).toBeDefined()
+  })
+
+  // ④ SignalR LocationPublished 受信 → events を再取得（二次呼び出し）
+  it('SignalR 発布プッシュ受信で一覧を再取得する', async () => {
+    const w = mountView()
+    await flushPromises()
+    expect(publishApi.events).toHaveBeenCalledTimes(1) // 初回 mount
+    expect(publishedCb).toBeTruthy() // onLocationPublished でコールバック登録済み
+
+    publishedCb!({ batchNo: 'LPUB-20260707-0001', count: 3, status: 'SUCCESS' })
+    await flushPromises()
+
+    expect(publishApi.events).toHaveBeenCalledTimes(2) // reload で二次取得
+    expect(publishApi.events).toHaveBeenLastCalledWith(1, 50) // 第 1 頁へ戻る
+    w.unmount()
   })
 })

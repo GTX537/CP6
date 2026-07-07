@@ -31,7 +31,7 @@ public class SpaceMasterServiceTests
         // publish 依赖组装同 SceneServiceTests.Make()（Task 2 已升级）——删巷道放行路径/改挂 re-publish 需要
         var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
             new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
-            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
+            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db), new NoOpSpaceNotifier());
         return (db, new SpaceMasterService(db, geo, publish));
     }
 
