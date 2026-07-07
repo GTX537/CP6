@@ -4,7 +4,7 @@ namespace CP6.WebApi.Seed;
 
 /// <summary>
 /// 3D Space（库位建模/编码/发布/连接器/定位）业务错误码 E-SPACE-*/W-SPACE-* 词条（波4）。
-/// 服务层抛 InvalidOperationException("E-SPACE-xxx")，拦截器按请求 culture 翻译为友好文案。
+/// 服务层抛 BizException("E-SPACE-xxx")（波4 Task3 起），BizExceptionMiddleware 按请求 culture 翻译为友好文案。
 /// 中文来源：throw 站点内联消息 > docs/space/04-publish-contract.md §11 消息表（语义以代码/契约为准）。
 /// 经 Program.cs 幂等合并（已存在的 key 跳过）。
 /// </summary>

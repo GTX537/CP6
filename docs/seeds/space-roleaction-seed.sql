@@ -132,7 +132,8 @@ ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
  * ------------------------------------------------------------ */
 /*
 BEGIN TRANSACTION;
-DELETE FROM Sys_RoleAction WHERE MenuId BETWEEN 902 AND 905 AND ActionCode IN
+-- RoleId=1 限定：本种子只授过管理员；不限定会连带删掉日后经 UI 授出的其他角色 Space 授权（波4 终审 T4 修正）
+DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId BETWEEN 902 AND 905 AND ActionCode IN
  (N'add', N'edit', N'delete', N'generate', N'publish', N'deactivate', N'adopt');
 DELETE FROM Sys_MenuAction WHERE MenuId BETWEEN 902 AND 905 AND ActionCode IN
  (N'add', N'edit', N'delete', N'generate', N'publish', N'deactivate', N'adopt');

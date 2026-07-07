@@ -66,6 +66,9 @@ public class Space_Location : BaseBizEntity, IAuditable
     /// <summary>状态：0草稿 1已发布 2停用</summary>
     public int Status { get; set; }
 
-    /// <summary>发布版本号（按 LocationId 递增，章04 幂等判据）</summary>
+    /// <summary>发布版本号（按 LocationId 递增，章04 幂等判据）。
+    /// [AuditIgnore]：批量发布/re-publish 逐位递增属机器 diff（波4 终审裁决 2026-07-07），
+    /// 不入字段审计——Status/LocationCode 等人工可感知变更仍审计。</summary>
+    [AuditIgnore]
     public long Version { get; set; }
 }
