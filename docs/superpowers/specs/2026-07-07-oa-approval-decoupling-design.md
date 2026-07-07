@@ -89,7 +89,13 @@ FormService                    IApprovalService.SubmitAsync
 
 - `ApprovalService.SubmitAsync` 中：反序列化规则数组 → 用**现成 `ExpressionEvaluator`**（前后端同语义引擎）以 formSnapshot 为 vars **顺序求值，首中即选**；全不中回落主 `FlowKey`。
 - **fail-closed 语义**：`ConditionJson` 解析失败 / 表达式求值抛异常 / 选中 FlowKey 不存在或 `Enable=false` → **抛错拒绝提交**（错误码见 §7），绝不静默回落主 FlowKey——审批走错链是合规事故，宁可提交失败暴露配置问题。
-- 主 `FlowKey` 自身不存在/停用同样拒绝（现状是起流程时才炸，前移到绑定校验与提交两道闸）。
+- 主 `FlowKey` 自身不存在/停用同样拒绝（现状是起流程时才炸，前移到绑定校验与提交两道闸）。**即使条件规则已命中别的流程，主 FlowKey 无效仍拒绝——有意从严**：主 key 是兜底契约的一部分，允许它烂着等于允许"全不中"路径随时炸，plan 阶段不得当 bug 放松。
+- **FlowKey 可发起性判定收敛到单一解析方法**（`ApprovalService` 内一个 private resolver，绑定保存校验与提交两道闸、canSubmit 三处共用）。**四期版本治理联动条款**（照 version-ops spec §3 第 6 条对触发器的写法）：四期 V-A pin 落地后，可发起性口径从「FlowKey 存在且 Enable」切换为「最新 Published 且 Enable」（E-WF-029 语境），**只改该 resolver 一处**，本 spec 三道闸自动继承——不得在三处各写一遍判定。
+
+**绑定生命周期语义（Enable / 删除）：**
+
+- **`Enable=false` 只封发起**：`SubmitAsync` 拒绝（E-WF-031）+ 聚合端点 `canSubmit=false`。**`DetailRoute` 照常下发、在途实例照常办理**——路由是呈现不是发起，停用绑定不得把在途待办变砖（业务单据没有 SFS FormData，回落 FormDetail 是空壳）。条件选流程只发生在提交时，不涉及在途。
+- **删除守卫**：绑定已被任何流程实例引用（存在 `Wf_FlowInstance.BizType` 匹配，不限在途）→ **禁止物理删除**（E-WF-035），只能停用——物理删除会使存量待办与历史单据的深链 join 不到路由。从未被引用的绑定可删。管理 UI 的删除按钮按此显隐。
 
 ### 3.2 绑定管理 UI
 
@@ -113,10 +119,11 @@ GET /api/oa/approval/detail?instanceId=xxx           （SFS/实例模式）
 { instanceId, status, currentNodeName, starterName,
   myTask: { taskId, nodeId, nodeName } | null,      // 当前登录用户的待办任务
   timeline: [...],                                   // 复用 InboxService 既有轨迹投影
-  canSubmit: bool }                                  // None/Rejected 且绑定启用
+  canSubmit: bool }                                  // (None|Rejected|Withdrawn) 且绑定启用（口径见 §4.3）
 ```
 
 - 双键二选一，都传或都不传 → 400。bizType+bizId 模式取**最新**实例（与 `GetStatusAsync` 现有口径一致）。
+- **授权口径（端点级，防止刚堵字段级暴露又开端点级暴露）**：返回体含完整审批轨迹与各关卡意见，不得任意登录用户凭 bizId 可查。可见性判定 = **发起人 ∪ 当前及历史办理人（曾被指派任务）∪ 被抄送人（Wf_FlowCc）∪ 具备 FlowAdmin 管理权限者**——即复用收件箱既有可见面。未命中 → 403，响应不含任何单据信息。"旁观者态" = 命中可见性但当前无待办者（§4.3 矩阵中的旁观者行即指此集合，不是任意人）。**无实例场景**：仅返回 `{ status: None, canSubmit }` 骨架（信息量近零，无需可见性判定；提交本身由业务页权限守卫）。
 - **写操作零新增**：同意/驳回/退回/转办/撤回全部复用现有收件箱 act 端点（按 taskId），审计、幂等、计票路径不分叉。
 
 ---
@@ -177,12 +184,15 @@ interface ApprovalAction {
 
 | 状态 × 身份 | 面板呈现 |
 |---|---|
-| 无实例 / 已驳回 | 「提交审批」按钮（调 snapshot 函数取快照；canSubmit=false 则隐藏） |
+| 无实例 / 已驳回 / **已撤回(Withdrawn)** | 「提交审批」按钮（调 snapshot 函数取快照；canSubmit=false 则隐藏） |
 | 审批中 × 我是办理人 | 意见框 + 动作按钮组（描述符驱动）|
 | 审批中 × 旁观者 | 只读状态条 + 当前节点 + 办理人 |
+| **挂起(Suspended)** | 旁观条变体 + 挂起原因提示（审批人解析失败等），不出办理区 |
 | 已通过 | 结果徽章 |
 
-时间线：**有实例即恒显示**（含审批中/已通过/已驳回），与状态矩阵正交。`revoke` 动词仅对发起人且流程未完结时可用（沿用 TaskCenterService 既有撤回闸，面板按 ctx 自动显隐）。
+**canSubmit 口径 = None / Rejected / Withdrawn**（撤回后必须能重新发起，否则单据卡死）。Suspended/Running 一律 false。实现不得让 Withdrawn/Suspended 掉进 default 分支。
+
+时间线：**有实例即恒显示**（含审批中/已通过/已驳回/已撤回/挂起），与状态矩阵正交。`revoke` 动词仅对发起人且流程未完结时可用（沿用 TaskCenterService 既有撤回闸，面板按 ctx 自动显隐）。
 
 - 时间线复用现有 `FlowTimeline.vue`；`TransferDialog`/`SendBackDialog` **收编进 WFS 组件族**（`components/approval/`，本来就是审批语义）。
 - Cp* 设计系统 token；五语 i18n 词条随种子入库。
@@ -217,24 +227,24 @@ interface ApprovalAction {
 - 修复：详情解析 schema 不再丢 rules；用现成 `applyRules(schema, dataJson)` 求 visible 效果，**条件隐藏字段在只读视图不渲染**。
 - 边界：required/disabled 在只读态无意义不应用；compute 不重算（数据提交时已服务端定格）。
 - 效果：审批人所见 = 发起人所见，堵住信息暴露面。
+- **交叉引用（稟議書打印）**：四期打印 spec 的字段表格「按 FormSchema 字段序」渲染，同样必须走**同一份"快照(§6.1)+applyRules"解析投影**——条件隐藏字段印在纸上归档比屏幕暴露更严重。两边出 plan 时对齐：只读投影抽成共用函数，打印视图是它的第二个消费者（本条同步记入打印 plan 的前置注记）。
 
 ---
 
 ## 7. 错误处理
 
-沿用 E-WF 错误码族 + 既有 i18n 种子模式（五语词条随迁移种子入库）：
+沿用 E-WF 错误码族 + 既有 i18n 种子模式（五语词条随迁移种子入库）。**码号本 spec 锁定**（现有水位：四期已用到 E-WF-030，本包从 031 起）：
 
-| 场景 | 语义 |
-|---|---|
-| 绑定缺失 / 主 FlowKey 无效或停用 | 提交拒绝（现状 InvalidOperationException 升级为编码错误） |
-| ConditionJson 解析失败 | 提交拒绝（fail-closed） |
-| 条件表达式求值异常 | 提交拒绝（fail-closed） |
-| 条件选中的 FlowKey 不存在/停用 | 提交拒绝（fail-closed） |
-| 同单据重复提交 | 已有防重闸，保持 |
-| 非办理人调 act | 引擎已有闸；聚合端点对旁观者返回 myTask=null，前端不出办理区 |
-| 聚合端点双键都传/都不传 | 400 |
-
-具体码号在 plan 阶段对照 E-WF 现有登记表顺延分配（避免与 WFS 深化 spec 预留段冲突）。
+| 码 | 场景 | 语义 |
+|---|---|---|
+| **E-WF-031** | 绑定缺失 / 绑定停用（Enable=false） | 提交拒绝（现状 InvalidOperationException 升级为编码错误） |
+| **E-WF-032** | ConditionJson 解析失败 | 提交拒绝（fail-closed） |
+| **E-WF-033** | 条件表达式求值异常 | 提交拒绝（fail-closed） |
+| **E-WF-034** | 解析出的 FlowKey（含条件命中与主 key 兜底）不存在/停用 | 提交拒绝（fail-closed）；四期 pin 落地后此判定切 E-WF-029 口径（§3.1 前向条款） |
+| **E-WF-035** | 绑定删除被拒：已被流程实例引用 | 管理 UI 提示改为停用 |
+| — | 同单据重复提交 | 已有防重闸，保持 |
+| — | 非办理人调 act | 引擎已有闸；聚合端点对旁观者返回 myTask=null，前端不出办理区 |
+| — | 聚合端点双键都传/都不传 | 400；未命中可见性 → 403（§3.3） |
 
 ---
 
@@ -244,17 +254,19 @@ interface ApprovalAction {
 
 1. 后端：实现 `IApprovalCallback`（铁律照抄 IApprovalCallback 注释：幂等、失败抛异常触发整体回滚、不自行 SaveChanges）→ DI 注册。
 2. 后端：业务提交口调 `IApprovalService.SubmitAsync(bizType, bizId, snapshot)`；snapshot 字段即条件选流程与流程条件边的变量面，**字段名一旦被流程引用即为契约，改名要过流程定义排查**。
-3. 配置：FlowAdmin 建绑定（BizType/FlowKey/DetailRoute/条件规则）+ 确认审批角色有 DetailRoute 目标页 view 权限。
-4. 前端：详情页放 `<ApprovalPanel>`（需要自定义按钮则传 actions 描述符）。
-5. 验收：提交 → 收件箱深链 → 业务页办理 → 回调落库全链路。
+3. 后端：**调 submit 前确保单据已持久化、快照取自已保存数据**——快照若取自未落库的内存态，与回调落库时按 bizId 查到的数据不一致，条件选流程与审批人所见都会错。这是业务侧最容易踩的坑。
+4. 配置：FlowAdmin 建绑定（BizType/FlowKey/DetailRoute/条件规则）+ 确认审批角色有 DetailRoute 目标页 view 权限。
+5. 前端：详情页放 `<ApprovalPanel>`（需要自定义按钮则传 actions 描述符）。
+6. 验收：提交 → 收件箱深链 → 业务页办理 → 回调落库全链路。
 
 ---
 
 ## 9. 测试
 
 **后端**：
-- 条件选流程：首中即选 / 全不中回落主 FlowKey / ConditionJson 解析失败拒绝 / 表达式异常拒绝 / 选中 FlowKey 停用拒绝。
-- 聚合端点：办理人（myTask 非空）/ 旁观者（myTask=null）/ 无实例（canSubmit 口径）/ 双键校验 400。
+- 条件选流程：首中即选 / 全不中回落主 FlowKey / ConditionJson 解析失败拒绝 / 表达式异常拒绝 / 选中 FlowKey 停用拒绝 / 主 FlowKey 停用即拒绝（即使条件已命中，有意从严）。
+- 聚合端点授权：发起人可见 / 历史办理人可见 / 被抄送人可见 / 无关用户 403 / 旁观者（myTask=null）/ 无实例骨架（canSubmit 口径含 Withdrawn）/ 双键校验 400。
+- 绑定生命周期：Enable=false 提交拒绝但 detailRoute 照常下发、在途任务照常可办 / 已被实例引用的绑定删除被拒（E-WF-035）/ 未引用可删。
 - 绑定保存校验：表达式语法 / flowKey 启用性 / BizType 唯一。
 - SchemaSnapshot：提交落快照 / 改版后旧单回显快照 / 存量空快照回落当前版。
 - 集成：照抄 Pur/Fin 既有 harness 模式（`PurApprovalIntegrationTests` 同构）。
@@ -276,8 +288,15 @@ interface ApprovalAction {
 - SFS 产品面缺口：子表格明细 / 附件控件 / 设计器拖拽与草稿发布 / JSON 字段查询报表 → **另立项**（OA 低代码商业化深化）。
 - 绑定表 ActionsJson 零代码动作配置、流程节点级动作白名单 → 演进方向，等真需求。
 - `{bizId}` 之外的路由占位符、多实例并存语义 → YAGNI。
+- **历史轮次时间线**：驳回重提后"取最新实例"意味着面板只显示本轮轨迹，上一轮驳回意见不可见——与"多实例并存"不是一回事，是同一单据的串行轮次。有真实回溯需求时再做（数据都在 Wf_FlowInstance，按 bizType+bizId 可查全轮次）。
 - 收件箱摘要卡（业务字段标注渲染）→ 已被"业务页面办理"决策取代，不做。
 
 ## 11. 排期定位
 
 本包不依赖 WFS 深化二三四期任何任务，可独立执行；建议作为「WFS 开工令」前的独立小包，或并入二期首波——plan 阶段用户拍板。执行照既定 SDD 流程（写计划 → 分支 → 逐任务实现+审查 → fable 终审 → 合并即推）。
+
+**串行约束（写死，防并行冲突）：**
+
+- **与三期 inbox-ux 串行**：本包 §4.4 大改 FormDetail，三期 X-C（移动端）同样改 FormDetail。**本包先行**，inbox-ux X 波开工时以换装 ApprovalPanel 后的 FormDetail 为基线（打印 spec 已有"排 X-C 之后"的同类写法）。
+- **与四期版本治理的接缝**：FlowKey 可发起性 resolver 单点收敛（§3.1 前向条款），四期 V-A 落地时改一处即可。
+- **与四期打印的接缝**：只读投影共用函数（§6.2 交叉引用），打印 plan 含前置注记。
