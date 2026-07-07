@@ -10,6 +10,8 @@ public class SiteDto
     public double? Lng { get; set; }
     public double? Lat { get; set; }
     public bool Enable { get; set; } = true;
+    /// <summary>WMS 仓库编码映射（ch04 §3.4：空=默认 WarehouseCd=SiteCode；≤10 字符，超长由发布侧 E-SPACE-405 守卫拦截）</summary>
+    public string? WarehouseCd { get; set; }
 }
 
 /// <summary>楼层（Floor）CRUD DTO</summary>

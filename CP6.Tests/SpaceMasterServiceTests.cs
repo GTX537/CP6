@@ -116,6 +116,27 @@ public class SpaceMasterServiceTests
         Assert.Equal(2, list.Count);
     }
 
+    /// <summary>
+    /// 波1 终审记票兑现：SiteDto 暴露 WarehouseCd（此前是只能 SQL 改的死配置列）。
+    /// Create 带 WarehouseCd → List 回显 → Update 改值 → List 回显新值。
+    /// </summary>
+    [Fact]
+    public async Task Site_WarehouseCd_RoundTrips_ThroughDtoAndService()
+    {
+        var (_, svc) = Make();
+        var id = await svc.CreateSiteAsync(
+            new SiteDto { SiteCode = "WH1", SiteName = "a", WarehouseCd = "MAIN" }, "u");
+
+        var created = (await svc.ListSitesAsync()).Single(x => x.Id == id);
+        Assert.Equal("MAIN", created.WarehouseCd);
+
+        await svc.UpdateSiteAsync(id,
+            new SiteDto { SiteCode = "WH1", SiteName = "a", WarehouseCd = "ALT" }, "u");
+
+        var updated = (await svc.ListSitesAsync()).Single(x => x.Id == id);
+        Assert.Equal("ALT", updated.WarehouseCd);
+    }
+
     // ── B-4: 货架改位姿触发几何重算 ──────────────────────────────────────
 
     [Fact]

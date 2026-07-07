@@ -47,6 +47,7 @@ public class SpaceMasterService : ISpaceMasterService
             Lng        = d.Lng,
             Lat        = d.Lat,
             Enable     = d.Enable,
+            WarehouseCd = d.WarehouseCd,
             Creator    = user,
             CreateDate = DateTime.Now
         };
@@ -65,6 +66,7 @@ public class SpaceMasterService : ISpaceMasterService
         e.Lng        = d.Lng;
         e.Lat        = d.Lat;
         e.Enable     = d.Enable;
+        e.WarehouseCd = d.WarehouseCd;
         e.Modifier   = user;
         e.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
@@ -74,7 +76,8 @@ public class SpaceMasterService : ISpaceMasterService
         await _db.Space_Sites.Select(x => new SiteDto
         {
             Id = x.Id, SiteCode = x.SiteCode, SiteName = x.SiteName,
-            Address = x.Address, Lng = x.Lng, Lat = x.Lat, Enable = x.Enable
+            Address = x.Address, Lng = x.Lng, Lat = x.Lat, Enable = x.Enable,
+            WarehouseCd = x.WarehouseCd
         }).ToListAsync();
 
     public async Task DeleteSiteAsync(Guid id)

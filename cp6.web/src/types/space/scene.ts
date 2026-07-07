@@ -1,5 +1,16 @@
 // Space 编辑器 VO 类型 — 镜像后端 DTOs（ch01 §E-1）
 
+export interface SiteVO {
+  id?: string
+  siteCode: string
+  siteName: string
+  address?: string | null
+  lng?: number | null
+  lat?: number | null
+  enable: boolean
+  warehouseCd?: string | null
+}
+
 export interface FloorVO {
   id: string
   siteId: string
