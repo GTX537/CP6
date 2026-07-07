@@ -24,7 +24,7 @@
         </CpSectionHeader>
 
         <div class="floor-body">
-          <div v-if="!(floorMap[s.id!] && floorMap[s.id!].length)" class="floor-empty">
+          <div v-if="!floorMap[s.id!]?.length" class="floor-empty">
             {{ t('space.home.noFloor') }}
           </div>
           <div v-for="f in floorMap[s.id!]" :key="f.id" class="floor-row">
@@ -69,7 +69,7 @@ onMounted(async () => {
   sites.value = res.data || []
   // 全站点楼层并发拉取汇总（Promise.all 取简；站点数量级小，无分页压力）
   const results = await Promise.all(sites.value.map((s) => floorApi.list(s.id!)))
-  sites.value.forEach((s, i) => { floorMap[s.id!] = results[i].data || [] })
+  sites.value.forEach((s, i) => { floorMap[s.id!] = results[i]?.data || [] })
 })
 
 // —— 导航：standalone 页一律 named-push（路径参数）——
