@@ -149,8 +149,6 @@ function move(i: number, dir: -1 | 1) {
   arr[j] = a
   emitChange()
 }
-
-defineExpose({ seqFieldsEnabled, upperEnabled, fixedValueEnabled })
 </script>
 
 <style scoped>

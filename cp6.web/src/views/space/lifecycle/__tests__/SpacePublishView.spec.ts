@@ -181,4 +181,24 @@ describe('SpacePublishView', () => {
     expect(document.body.textContent).toContain('3')
     expect(document.body.textContent).toContain('DUP-9')
   })
+
+  // ⑤ 乱序守卫：慢的楼层级预检后到，不得覆盖快的库区级结果（deferred promise 乱序，照 CpListPage.spec 先例）
+  it('乱序预检：慢的旧请求不得覆盖新库区结果', async () => {
+    const slowPc: CodePrecheckResp = { emptyCodeCount: 99, duplicateGroups: [], precheckErrors: [], unplacedDraftCount: 0 }
+    let resolveSlow!: (v: { code: number; message: string; data: CodePrecheckResp }) => void
+    vi.mocked(codeRuleApi.precheck)
+      .mockImplementationOnce(() => new Promise((r) => { resolveSlow = r })) // 楼层级：慢，pending
+      .mockResolvedValueOnce({ code: 0, message: '', data: dirtyPrecheck })  // 库区级：快，先到
+    const w = mountView()
+    await flushPromises()
+    await selectFloor(w) // 触发楼层级预检（挂起，未解析）
+    // 选库区 z1 → 触发库区级预检（快，先落）
+    w.findAllComponents(ElSelect)[2].vm.$emit('update:modelValue', 'z1')
+    await flushPromises()
+    expect(w.findAllComponents(CpStatCard)[0].props('value')).toBe(3) // 库区级 dirtyPrecheck 已落
+    // 楼层级慢请求此刻后到 → 应被 seq 守卫丢弃
+    resolveSlow({ code: 0, message: '', data: slowPc })
+    await flushPromises()
+    expect(w.findAllComponents(CpStatCard)[0].props('value')).toBe(3) // 仍为库区级 3，而非过期的 99
+  })
 })

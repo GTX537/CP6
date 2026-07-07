@@ -165,8 +165,12 @@ watch(selSiteId, async (nv) => {
   selZoneId.value = undefined
   if (nv) cFloors.value = await floorApi.list(nv).then((r) => r.data || []).catch(() => [])
 })
+// 触发链：切楼层→floor watcher 清库区并「独家」跑一次预检（zone=undefined）；切库区→zone watcher 跑预检。
+// floor watcher 重置 selZoneId 会连锁触发 zone watcher，用 suppressZoneWatch 抑制该次连锁——否则同参双发。
+let suppressZoneWatch = false
 watch(selFloorId, async (nv) => {
   cZones.value = []
+  if (selZoneId.value !== undefined) suppressZoneWatch = true // 仅当确有变更（保证 zone watcher 必触发以复位标志）
   selZoneId.value = undefined
   // 切楼层重置停用搜索态
   searchRows.value = []
@@ -179,6 +183,7 @@ watch(selFloorId, async (nv) => {
   }
 })
 watch(selZoneId, () => {
+  if (suppressZoneWatch) { suppressZoneWatch = false; return } // 来自切楼层的连锁重置，floor watcher 已跑预检
   if (selFloorId.value) runPrecheck()
 })
 
@@ -188,16 +193,21 @@ const precheckLoading = ref(false)
 const emptyPc: CodePrecheckResp = { emptyCodeCount: 0, duplicateGroups: [], precheckErrors: [], unplacedDraftCount: 0 }
 const pc = computed<CodePrecheckResp>(() => precheck.value || emptyPc)
 
+// seq 守卫乱序响应：快速切楼层/库区时，只有最新一次请求的结果生效（照 CpListPage.load 范式）
+let pcSeq = 0
 async function runPrecheck() {
   if (!selFloorId.value) { precheck.value = null; return }
+  const id = ++pcSeq
   precheckLoading.value = true
   try {
     const res = await codeRuleApi.precheck(selFloorId.value, selZoneId.value || undefined)
+    if (id !== pcSeq) return // 已有更新的请求发出，丢弃本次过期响应
     precheck.value = res.data
   } catch {
+    if (id !== pcSeq) return
     precheck.value = null // 错误 message 已由 http 拦截器提示
   } finally {
-    precheckLoading.value = false
+    if (id === pcSeq) precheckLoading.value = false
   }
 }
 
@@ -266,6 +276,7 @@ async function onAdopt() {
   try {
     const res = await publishApi.adopt(codes.map((code) => ({ code })))
     adoptResult.value = res.data
+    await runPrecheck() // 采纳新增已发布库位会使预检过期，重跑（runPrecheck 内部已守卫无楼层场景）
   } catch (e) {
     if ((e as { response?: { status?: number } })?.response?.status === 409) {
       ElMessageBox.alert(t('space.publish.conflict409'))
