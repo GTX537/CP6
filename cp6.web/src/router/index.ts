@@ -176,6 +176,8 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/space/home': () => import('@/views/space/SpaceHomeView.vue'),
   '/space/site': () => import('@/views/space/master/SpaceSiteView.vue'),
   '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
+  // ── Space 波3 生命周期 ─────────────────────────────
+  '/space/code-rule': () => import('@/views/space/lifecycle/SpaceCodeRuleView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口
