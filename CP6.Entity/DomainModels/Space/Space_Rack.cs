@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// ZoneId 必填、AisleId 可选（条件父级）、FloorId 冗余 = Zone.FloorId。
 /// </summary>
 [Table("Space_Rack")]
-public class Space_Rack : BaseBizEntity
+public class Space_Rack : BaseBizEntity, IAuditable
 {
     /// <summary>所属库区（必填）</summary>
     public Guid ZoneId { get; set; }

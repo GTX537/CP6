@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// Segments 存分段定义 JSON（章03 §3）。IsDefault 同作用域互斥。
 /// </summary>
 [Table("Space_CodeRule")]
-public class Space_CodeRule : BaseBizEntity
+public class Space_CodeRule : BaseBizEntity, IAuditable
 {
     /// <summary>规则名称</summary>
     [Required, MaxLength(100)]

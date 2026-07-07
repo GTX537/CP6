@@ -9,7 +9,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// Placed（= RackId != null，是否落位）正交于 Status（0草稿/1已发布/2停用）。
 /// </summary>
 [Table("Space_Location")]
-public class Space_Location : BaseBizEntity
+public class Space_Location : BaseBizEntity, IAuditable
 {
     /// <summary>所属货架（可空——采纳态 D7 未放置为空）</summary>
     public Guid? RackId { get; set; }

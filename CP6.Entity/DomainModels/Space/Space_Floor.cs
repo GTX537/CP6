@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// Building 简化：Site → Floor 直连（无独立楼栋层）。
 /// </summary>
 [Table("Space_Floor")]
-public class Space_Floor : BaseBizEntity
+public class Space_Floor : BaseBizEntity, IAuditable
 {
     /// <summary>所属站点</summary>
     public Guid SiteId { get; set; }

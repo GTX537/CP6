@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// Params 存参数 JSON（快照，非活引用）。
 /// </summary>
 [Table("Space_Template")]
-public class Space_Template : BaseBizEntity
+public class Space_Template : BaseBizEntity, IAuditable
 {
     /// <summary>模板编码（租户内唯一）</summary>
     [Required, MaxLength(50)]

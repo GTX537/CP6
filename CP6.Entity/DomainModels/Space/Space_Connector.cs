@@ -5,7 +5,7 @@ namespace CP6.Entity.DomainModels.Space;
 
 /// <summary>连接体（电梯/楼梯/坡道）：竖井，经 N 条 ConnectorStop 服务多层（Space P4）。</summary>
 [Table("Space_Connector")]
-public class Space_Connector : BaseBizEntity
+public class Space_Connector : BaseBizEntity, IAuditable
 {
     public Guid SiteId { get; set; }
 

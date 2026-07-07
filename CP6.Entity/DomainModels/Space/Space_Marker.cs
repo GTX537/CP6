@@ -8,7 +8,7 @@ namespace CP6.Entity.DomainModels.Space;
 /// RefRackId 可锚到货架（随架移动），删货架 SetNull。
 /// </summary>
 [Table("Space_Marker")]
-public class Space_Marker : BaseBizEntity
+public class Space_Marker : BaseBizEntity, IAuditable
 {
     /// <summary>所属楼层</summary>
     public Guid FloorId { get; set; }
