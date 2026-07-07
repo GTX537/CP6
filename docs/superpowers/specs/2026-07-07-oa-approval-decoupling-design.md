@@ -123,7 +123,7 @@ GET /api/oa/approval/detail?instanceId=xxx           （SFS/实例模式）
 ```
 
 - 双键二选一，都传或都不传 → 400。bizType+bizId 模式取**最新**实例（与 `GetStatusAsync` 现有口径一致）。
-- **授权口径（端点级，防止刚堵字段级暴露又开端点级暴露）**：返回体含完整审批轨迹与各关卡意见，不得任意登录用户凭 bizId 可查。可见性判定 = **发起人 ∪ 当前及历史办理人（曾被指派任务）∪ 被抄送人（Wf_FlowCc）∪ 具备 FlowAdmin 管理权限者**——即复用收件箱既有可见面。未命中 → 403，响应不含任何单据信息。"旁观者态" = 命中可见性但当前无待办者（§4.3 矩阵中的旁观者行即指此集合，不是任意人）。**无实例场景**：仅返回 `{ status: None, canSubmit }` 骨架（信息量近零，无需可见性判定；提交本身由业务页权限守卫）。
+- **授权口径（端点级，防止刚堵字段级暴露又开端点级暴露）**：返回体含完整审批轨迹与各关卡意见，不得任意登录用户凭 bizId 可查。可见性判定 = **发起人 ∪ 当前及历史办理人（曾被指派任务，Wf_FlowFormTo 三列）∪ 被抄送人（Wf_FlowCc）**——即复用收件箱既有可见面。管理员不入此集合（plan 阶段收窄）：FlowAdmin 有自己的管理入口，聚合端点不做权限旁路，更安全。未命中 → 403，响应不含任何单据信息。"旁观者态" = 命中可见性但当前无待办者（§4.3 矩阵中的旁观者行即指此集合，不是任意人）。**无实例场景**：仅返回 `{ status: None, canSubmit }` 骨架（信息量近零，无需可见性判定；提交本身由业务页权限守卫）。
 - **写操作零新增**：同意/驳回/退回/转办/撤回全部复用现有收件箱 act 端点（按 taskId），审计、幂等、计票路径不分叉。
 
 ---
@@ -139,12 +139,13 @@ const b = useApproval({ instanceId })
 
 // 暴露
 a.status / a.instanceId / a.myTask / a.timeline / a.loading
-a.submit(snapshot)                       // 走 /approval/submit（ApprovalService 通道）
 a.approve(comment) / a.reject(comment)   // 按 myTask.taskId 调现有 act 端点
 a.sendBack(...) / a.transfer(...) / a.revoke()
 a.refresh()
 a.onDecided(cb)                          // 终态后回调，业务页借此刷新单据状态
 ```
+
+**提交通道（plan 阶段裁决，防快照信任漏洞）**：**不设通用 submit 端点**。提交永远走业务模块自己的后端端点（黄金模板第 2/3 条：服务端从已持久化单据构建 snapshot 再调 `IApprovalService.SubmitAsync`）——若开放客户端直传 snapshot 的通用端点，恶意客户端可篡改 snapshot 操纵条件选流程绕开高链。ApprovalPanel 经 `submit-handler` prop 触发业务端点，办完自动 refresh；不传 submitHandler 则不渲染提交按钮（SFS 实例模式无需，发起走 FormInitiate）。
 
 ### 4.2 动作模型：引擎动词 vs 业务动词
 
@@ -174,7 +175,7 @@ interface ApprovalAction {
 ### 4.3 `<ApprovalPanel>` 组件
 
 ```vue
-<ApprovalPanel biz-type="PO" :biz-id="order.id" :snapshot="buildSnapshot"
+<ApprovalPanel biz-type="PO" :biz-id="order.id" :submit-handler="submitForApproval"
                :actions="poActions" @decided="reload" />
 <!-- 或 SFS/实例模式 -->
 <ApprovalPanel :instance-id="detail.instanceId" />
@@ -184,7 +185,7 @@ interface ApprovalAction {
 
 | 状态 × 身份 | 面板呈现 |
 |---|---|
-| 无实例 / 已驳回 / **已撤回(Withdrawn)** | 「提交审批」按钮（调 snapshot 函数取快照；canSubmit=false 则隐藏） |
+| 无实例 / 已驳回 / **已撤回(Withdrawn)** | 「提交审批」按钮（调 submit-handler 触发业务端点；canSubmit=false 或未传 handler 则隐藏） |
 | 审批中 × 我是办理人 | 意见框 + 动作按钮组（描述符驱动）|
 | 审批中 × 旁观者 | 只读状态条 + 当前节点 + 办理人 |
 | **挂起(Suspended)** | 旁观条变体 + 挂起原因提示（审批人解析失败等），不出办理区 |
