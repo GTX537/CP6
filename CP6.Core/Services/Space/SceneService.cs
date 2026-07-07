@@ -14,11 +14,13 @@ public class SceneService : ISceneService
 {
     private readonly CP6Context _db;
     private readonly LocationGeometryService _geo;
+    private readonly ILocationPublishService _publish;
 
-    public SceneService(CP6Context db, LocationGeometryService geo)
+    public SceneService(CP6Context db, LocationGeometryService geo, ILocationPublishService publish)
     {
         _db  = db;
         _geo = geo;
+        _publish = publish;
     }
 
     /// <inheritdoc/>
@@ -31,6 +33,7 @@ public class SceneService : ISceneService
         try
         {
             var changedRackIds = new HashSet<Guid>();
+            var pathChangedRackIds = new HashSet<Guid>();   // H4：层级归属（ZoneId/AisleId）变更的货架
 
             // ── Zones ──────────────────────────────────────────────
             foreach (var zd in dto.Zones ?? new List<ZoneDto>())
@@ -106,6 +109,24 @@ public class SceneService : ISceneService
                 {
                     // 乐观锁：设置 OriginalValue，SaveChanges 会在 WHERE 附加 RowVersion
                     _db.Entry(existing).Property(x => x.RowVersion).OriginalValue = rd.RowVersion;
+
+                    // H4（ch04 §7.2 路径B）：层级归属变更检测——纯几何不发布，但 path 归属变更须 re-publish
+                    if (existing.ZoneId != rd.ZoneId || existing.AisleId != rd.AisleId)
+                        pathChangedRackIds.Add(existing.Id);
+
+                    // H2 缩格护栏（2026-07-06 拍板：Restrict）：越界库位——已发布阻断，草稿/停用连带删
+                    if (rd.Cols < existing.Cols || rd.Levels < existing.Levels || rd.DepthCount < existing.DepthCount)
+                    {
+                        var outOfBounds = await _db.Space_Locations
+                            .Where(l => l.RackId == existing.Id &&
+                                        (l.Col > rd.Cols || l.Level > rd.Levels || l.Depth > rd.DepthCount))
+                            .ToListAsync();
+                        if (outOfBounds.Any(l => l.Status == 1))
+                            throw new InvalidOperationException(
+                                "E-SPACE-403: 缩格触及已发布库位，请先停用越界库位再缩格");
+                        if (outOfBounds.Count > 0)
+                            _db.Space_Locations.RemoveRange(outOfBounds);   // 幽灵位清理（H2）
+                    }
 
                     // 位姿/尺寸变更检测
                     if (existing.X != rd.X || existing.Y != rd.Y || existing.Z != rd.Z ||
@@ -201,12 +222,25 @@ public class SceneService : ISceneService
             // ── Locations ──────────────────────────────────────────
             foreach (var ld in dto.Locations ?? new List<SceneLocationSaveDto>())
             {
+                // I3①：DTO RackId 非空 Guid，前端可能以 Guid.Empty 表未落位——归一化为 null 防误伤采纳态
+                Guid? incomingRack = ld.RackId == Guid.Empty ? null : ld.RackId;
+
                 var existing = ld.Id.HasValue
                     ? await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == ld.Id.Value)
                     : null;
                 if (existing != null)
                 {
-                    existing.RackId     = ld.RackId;
+                    // I3②：已发布库位的落位不可经场景保存变更（改挂走货架 rehome，废弃走停用）——值未变的回显不触发
+                    if (existing.Status == 1 &&
+                        (existing.RackId != incomingRack || existing.Col != ld.Col ||
+                         existing.Level != ld.Level || existing.Depth != ld.Depth))
+                        throw new InvalidOperationException(
+                            "E-SPACE-004: 已发布库位的落位不可经场景保存变更（改挂走货架 rehome，废弃走停用）");
+
+                    // I3③：越界护栏（闭合 H2 同帧缩格绕过）——同帧已缩格的货架经 identity-map 返回新网格
+                    await AssertLocationInBoundsAsync(incomingRack, ld);
+
+                    existing.RackId     = incomingRack;
                     existing.Col        = ld.Col;
                     existing.Level      = ld.Level;
                     existing.Depth      = ld.Depth;
@@ -218,10 +252,13 @@ public class SceneService : ISceneService
                 }
                 else
                 {
+                    // I3③：新建库位落点同样越界校验（闭合同帧缩格+新落越界格）
+                    await AssertLocationInBoundsAsync(incomingRack, ld);
+
                     _db.Space_Locations.Add(new Space_Location
                     {
                         Id         = ld.Id ?? Guid.NewGuid(),
-                        RackId     = ld.RackId,
+                        RackId     = incomingRack,
                         FloorId    = floorId,
                         Col        = ld.Col,
                         Level      = ld.Level,
@@ -236,10 +273,25 @@ public class SceneService : ISceneService
             }
 
             // ── Deletes ────────────────────────────────────────────
+            foreach (var locId in dto.Deletes?.Locations ?? new List<Guid>())
+            {
+                var e = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId);
+                if (e == null) continue;
+                // 已发布不可删（须先停用）；草稿/停用可删（2026-07-06 拍板）。
+                // 注意：停用位删除后其码仍被 T_WmsBin 停用行占据 join 锚，同码新库位发布会被
+                // 锚碰撞 REJECTED——锚清理机制记后续票，此为拍板时已知代价。
+                if (e.Status == 1)
+                    throw new InvalidOperationException("E-SPACE-408: 已发布库位不可删除，请先停用");
+                _db.Space_Locations.Remove(e);
+            }
+
             foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
             {
-                if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId))
-                    throw new InvalidOperationException("E-SPACE-003");
+                // ch04 §7.1：有已发布库位 → Restrict；全草稿/停用 → 库位连带删（旧 E-003 全拦废止）
+                if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId && l.Status == 1))
+                    throw new InvalidOperationException("E-SPACE-403: 该货架下有已发布库位，请先停用");
+                var children = await _db.Space_Locations.Where(l => l.RackId == rackId).ToListAsync();
+                if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
                 var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId);
                 if (e != null) _db.Space_Racks.Remove(e);
             }
@@ -279,6 +331,17 @@ public class SceneService : ISceneService
             foreach (var rid in changedRackIds)
                 await _geo.RecalcRackLocationsAsync(rid);
 
+            // ── H4：改挂货架下的已发布库位 re-publish（在本事务内，RepublishAsync 嵌套守卫自动加入）──
+            if (pathChangedRackIds.Count > 0)
+            {
+                var republishIds = await _db.Space_Locations
+                    .Where(l => l.RackId != null && pathChangedRackIds.Contains(l.RackId.Value) && l.Status == 1)
+                    .Select(l => l.Id)
+                    .ToListAsync();
+                if (republishIds.Count > 0)
+                    await _publish.RepublishAsync(republishIds, user);
+            }
+
             if (tx != null) await tx.CommitAsync();
         }
         catch
@@ -292,6 +355,20 @@ public class SceneService : ISceneService
         }
 
         return new Dictionary<Guid, Guid>();
+    }
+
+    /// <summary>
+    /// I3③ 越界护栏：库位落点必须落在货架网格内。incomingRack 为 null（未落位）→ 放过；
+    /// 货架查不到（同帧新建架未落库 / 真不存在）→ 放过（FK 语义由既有行为兜）。
+    /// 同帧已缩格的货架经 EF identity-map 返回被追踪的新网格值，闭合 H2 同帧缩格绕过。
+    /// </summary>
+    private async Task AssertLocationInBoundsAsync(Guid? incomingRack, SceneLocationSaveDto ld)
+    {
+        if (incomingRack == null) return;
+        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == incomingRack.Value);
+        if (rack == null) return;
+        if (ld.Col > rack.Cols || ld.Level > rack.Levels || ld.Depth > rack.DepthCount)
+            throw new InvalidOperationException("E-SPACE-002: 库位落点超出货架网格");
     }
 
     /// <inheritdoc/>

@@ -30,13 +30,25 @@ public interface ISpaceMasterService
     Task<Guid> CreateAisleAsync(AisleDto dto, string? user);
     Task UpdateAisleAsync(Guid id, AisleDto dto, string? user);
     Task<List<AisleDto>> ListAislesAsync(Guid zoneId);
-    Task DeleteAisleAsync(Guid id);               // SetNull: 其下 Rack.AisleId 置 null → 再删
+    /// <summary>
+    /// 删巷道（ch04 §7.1/§7.2）：其下有已发布库位时默认 Restrict（E-SPACE-402）；
+    /// mode=deactivate → 逐个走停用同步 RPC 后删（路径A）；
+    /// mode=rehome → 货架改挂 targetAisleId（可 null=脱巷道）+ re-publish 刷新 path 后删（路径B）。
+    /// 无已发布库位时行为同旧版：SetNull 其下 Rack.AisleId → 删。
+    /// </summary>
+    Task DeleteAisleAsync(Guid id, string? mode = null, Guid? targetAisleId = null, string? user = null);
 
     // ── Rack ──────────────────────────────────────────────────────────────
     Task<Guid> CreateRackAsync(RackDto dto, string? user);
     Task UpdateRackAsync(Guid id, RackDto dto, string? user);   // 位姿/尺寸变更后触发几何重算
     Task<List<RackDto>> ListRacksAsync(Guid zoneId);
-    Task DeleteRackAsync(Guid id);                // 护栏：有库位 → E-SPACE-003
+    /// <summary>
+    /// 删货架（ch04 §7.1/§7.2）：有已发布库位默认 Restrict（E-SPACE-403）；
+    /// mode=deactivate → 逐个停用后级联删（停用位可删，2026-07-06 拍板）；
+    /// mode=rehome → 整架库位改挂 targetRackId（同规格换架：目标网格≥源且无自有库位）+ re-publish 后删源架。
+    /// 无已发布库位 → 库位级联删 + 删货架（旧 E-SPACE-003 全拦废止）。
+    /// </summary>
+    Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null);
 
     // ── 场景聚合 / 待绑定 / 库位列表 ───────────────────────────────────────
     Task<SceneDto> GetSceneAsync(Guid floorId);                 // 仅含 Placed=true 库位
