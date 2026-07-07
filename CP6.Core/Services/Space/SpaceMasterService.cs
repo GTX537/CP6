@@ -10,7 +10,7 @@ namespace CP6.Core.Services.Space;
 /// Space 主数据服务实现（ch00 §9，v1.1 多租户规则）。
 ///
 /// v1.1 约定（全文遵守）：
-///   · 构造只注入 CP6Context + LocationGeometryService，不注入任何租户上下文。
+///   · 构造注入 CP6Context + LocationGeometryService + ILocationPublishService（删除放行路径/改挂 re-publish 用），不注入任何租户上下文。
 ///   · 查询不写 .Where(x => x.TenantId == ...)——CP6Context.OnModelCreating 已对所有
 ///     BaseTenantEntity 子类反射注册全局查询过滤，自动 WHERE TenantId = CurrentTenantId。
 ///   · 创建实体不写 TenantId = ...——SaveChanges 写入盖章自动补当前租户。
@@ -20,11 +20,13 @@ public class SpaceMasterService : ISpaceMasterService
 {
     private readonly CP6Context _db;
     private readonly LocationGeometryService _geo;
+    private readonly ILocationPublishService _publish;
 
-    public SpaceMasterService(CP6Context db, LocationGeometryService geo)
+    public SpaceMasterService(CP6Context db, LocationGeometryService geo, ILocationPublishService publish)
     {
         _db  = db;
         _geo = geo;
+        _publish = publish;
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -250,13 +252,55 @@ public class SpaceMasterService : ISpaceMasterService
             Polygon = x.Polygon, Centerline = x.Centerline
         }).ToListAsync();
 
-    public async Task DeleteAisleAsync(Guid id)
+    public async Task DeleteAisleAsync(Guid id, string? mode = null, Guid? targetAisleId = null, string? user = null)
     {
-        // SetNull: 将此巷道下所有货架的 AisleId 置 null（货架保留）
+        var aisle = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id);
+        if (aisle == null) return;
+
         var racks = await _db.Space_Racks.Where(r => r.AisleId == id).ToListAsync();
+        var rackIds = racks.Select(r => r.Id).ToList();
+        var published = await _db.Space_Locations
+            .Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value) && l.Status == 1)
+            .Select(l => l.Id)
+            .ToListAsync();
+
+        if (published.Count > 0)
+        {
+            switch (mode)
+            {
+                case "deactivate":
+                    // 路径A（ch04 §7.2）：逐个走停用同步 RPC。不包事务——停用是同步决策模型，
+                    // 部分完成时已停用的保持停用（安全方向），重试幂等收敛。
+                    foreach (var locId in published)
+                        await _publish.DeactivateAsync(locId, user);
+                    break;
+
+                case "rehome":
+                    // 路径B（ch04 §7.2）：改挂目标巷道（null=脱巷道也是 path 变更）→ re-publish → 删。
+                    if (targetAisleId != null)
+                    {
+                        var target = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == targetAisleId.Value)
+                                     ?? throw new InvalidOperationException("E-SPACE-005: 目标巷道不存在");
+                        if (racks.Any(r => r.ZoneId != target.ZoneId))
+                            throw new InvalidOperationException("E-SPACE-005: 目标巷道与货架不在同一库区");
+                    }
+                    foreach (var r in racks) r.AisleId = targetAisleId;
+                    await _db.SaveChangesAsync();                    // 先落改挂，BuildItemAsync 才拼得出新 path
+                    await _publish.RepublishAsync(published, user);
+                    _db.Space_Aisles.Remove(aisle);                  // 货架已不挂本巷道，直接删
+                    await _db.SaveChangesAsync();
+                    return;
+
+                default:
+                    throw new InvalidOperationException(
+                        $"E-SPACE-402: 该巷道下有 {published.Count} 个已发布库位，不能直接删除（可用 mode=deactivate|rehome）");
+            }
+        }
+
+        // 默认路径（无已发布 / deactivate 后落到这里）——SetNull 保留货架。
+        // 注：deactivate 后库位已 Status=2，其 WMS bin 已带最终态，path 陈旧无消费方，不再 re-publish。
         foreach (var r in racks) r.AisleId = null;
-        var e = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id);
-        if (e != null) _db.Space_Aisles.Remove(e);
+        _db.Space_Aisles.Remove(aisle);
         await _db.SaveChangesAsync();
     }
 

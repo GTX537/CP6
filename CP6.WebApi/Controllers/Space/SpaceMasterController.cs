@@ -122,9 +122,9 @@ public class SpaceMasterController : ControllerBase
     }
 
     [HttpDelete("aisle/{id:guid}")]
-    public async Task<IActionResult> DeleteAisle(Guid id)
+    public async Task<IActionResult> DeleteAisle(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetAisleId = null)
     {
-        try { await _svc.DeleteAisleAsync(id); return Ok2(); }
+        try { await _svc.DeleteAisleAsync(id, mode, targetAisleId, CurrentUser); return Ok2(); }
         catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
     }
 

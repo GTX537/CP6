@@ -30,7 +30,13 @@ public interface ISpaceMasterService
     Task<Guid> CreateAisleAsync(AisleDto dto, string? user);
     Task UpdateAisleAsync(Guid id, AisleDto dto, string? user);
     Task<List<AisleDto>> ListAislesAsync(Guid zoneId);
-    Task DeleteAisleAsync(Guid id);               // SetNull: 其下 Rack.AisleId 置 null → 再删
+    /// <summary>
+    /// 删巷道（ch04 §7.1/§7.2）：其下有已发布库位时默认 Restrict（E-SPACE-402）；
+    /// mode=deactivate → 逐个走停用同步 RPC 后删（路径A）；
+    /// mode=rehome → 货架改挂 targetAisleId（可 null=脱巷道）+ re-publish 刷新 path 后删（路径B）。
+    /// 无已发布库位时行为同旧版：SetNull 其下 Rack.AisleId → 删。
+    /// </summary>
+    Task DeleteAisleAsync(Guid id, string? mode = null, Guid? targetAisleId = null, string? user = null);
 
     // ── Rack ──────────────────────────────────────────────────────────────
     Task<Guid> CreateRackAsync(RackDto dto, string? user);
