@@ -22,7 +22,7 @@
  *     もし何らかの占用があれば採番を見直すこと。）
  *
  * 実行方法:
- *   sqlcmd -S localhost -d CP6 -U sa -P <pw> -i space-menu-seed.sql
+ *   sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/space-menu-seed.sql -b
  *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
  *
  * 冪等性:
