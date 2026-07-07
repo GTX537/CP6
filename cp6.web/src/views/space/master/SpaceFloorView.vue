@@ -23,7 +23,7 @@
           :value="s.id!"
         />
       </el-select>
-      <el-button :disabled="!selectedSiteId" @click="openCreate">{{ t('space.floor.create') }}</el-button>
+      <el-button v-permission="'space-floor:add'" :disabled="!selectedSiteId" @click="openCreate">{{ t('space.floor.create') }}</el-button>
     </template>
 
     <CpListPage
@@ -34,8 +34,8 @@
       @total-change="total = $event"
     >
       <template #col-_action="{ row }">
-        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
-        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
+        <el-button v-permission="'space-floor:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
+        <el-button v-permission="'space-floor:delete'" link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
         <el-button link type="primary" size="small" @click="gotoEditor(row)">{{ t('space.floor.editor') }}</el-button>
       </template>
     </CpListPage>

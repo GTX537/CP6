@@ -62,7 +62,7 @@
             <el-radio value="fill-empty">{{ t('space.publish.mode.fillEmpty') }}</el-radio>
             <el-radio value="rebuild">{{ t('space.publish.mode.rebuild') }}</el-radio>
           </el-radio-group>
-          <el-button type="primary" :loading="genLoading" @click="onGenerate">{{ t('space.publish.genBtn') }}</el-button>
+          <el-button v-permission="'space-code-rule:generate'" type="primary" :loading="genLoading" @click="onGenerate">{{ t('space.publish.genBtn') }}</el-button>
         </div>
       </section>
 
@@ -70,9 +70,9 @@
       <section class="pub-sec">
         <div class="sec-head"><span class="sec-title">{{ t('space.publish.publishTitle') }}</span></div>
         <div class="pub-row">
-          <el-button type="primary" :loading="publishLoading" :disabled="!canPublish" @click="onPublish">{{ t('space.publish.doPublish') }}</el-button>
+          <el-button v-permission="'space-publish:publish'" type="primary" :loading="publishLoading" :disabled="!canPublish" @click="onPublish">{{ t('space.publish.doPublish') }}</el-button>
           <span v-if="!canPublish" class="pub-gate">{{ t('space.publish.gateHint') }}</span>
-          <el-button @click="openAdopt">{{ t('space.publish.adoptBtn') }}</el-button>
+          <el-button v-permission="'space-publish:adopt'" @click="openAdopt">{{ t('space.publish.adoptBtn') }}</el-button>
         </div>
       </section>
 
@@ -94,7 +94,7 @@
           </el-table-column>
           <el-table-column :label="t('space.common.action')" width="120" align="center">
             <template #default="{ row }">
-              <el-button v-if="row.status === 1" link type="danger" size="small" @click="onDeactivate(row)">{{ t('space.publish.deactivate') }}</el-button>
+              <el-button v-if="row.status === 1" v-permission="'space-publish:deactivate'" link type="danger" size="small" @click="onDeactivate(row)">{{ t('space.publish.deactivate') }}</el-button>
             </template>
           </el-table-column>
         </el-table>

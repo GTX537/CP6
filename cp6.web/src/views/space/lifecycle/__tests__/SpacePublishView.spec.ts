@@ -10,9 +10,16 @@ import { siteApi } from '@/api/space/site'
 import { floorApi } from '@/api/space/floor'
 import { locateApi } from '@/api/space/locate'
 import CpStatCard from '@/components/templates/CpStatCard.vue'
+import { permission } from '@/directives/permission'
 import SpacePublishView from '../SpacePublishView.vue'
 import type { SiteVO, FloorVO, ZoneVO, CodePrecheckResp } from '@/types/space/scene'
 import type { LocateResult } from '@/types/space/viewer'
+
+// v-permission store：默认全授权；单测内翻转 permHas.fn 隐藏指定键
+const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
+vi.mock('@/stores/permission', () => ({
+  usePermissionStore: () => ({ loaded: true, has: (k: string) => permHas.fn(k) }),
+}))
 
 vi.mock('@/api/space/codeRule', () => ({
   codeRuleApi: { precheck: vi.fn(), generate: vi.fn() },
@@ -59,7 +66,7 @@ function i18nPlugin() {
 // attachTo document.body so el-dialog / ElMessageBox teleported content renders in jsdom
 function mountView() {
   return mount(SpacePublishView, {
-    global: { plugins: [i18nPlugin(), ElementPlus] },
+    global: { plugins: [i18nPlugin(), ElementPlus], directives: { permission } },
     attachTo: document.body,
   })
 }
@@ -78,6 +85,7 @@ describe('SpacePublishView', () => {
   afterEach(() => { document.body.innerHTML = '' })
   beforeEach(() => {
     vi.clearAllMocks()
+    permHas.fn = () => true
     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
     vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
     vi.mocked(zoneApi.list).mockResolvedValue({ code: 0, message: '', data: zones })
@@ -200,5 +208,16 @@ describe('SpacePublishView', () => {
     resolveSlow({ code: 0, message: '', data: slowPc })
     await flushPromises()
     expect(w.findAllComponents(CpStatCard)[0].props('value')).toBe(3) // 仍为库区级 3，而非过期的 99
+  })
+
+  // ⑥ v-permission：缺 space-publish:publish 键 → 发布按钮移除，采纳按钮保留
+  it('缺 space-publish:publish 权时发布按钮从 DOM 移除，采纳按钮保留', async () => {
+    permHas.fn = (k) => k !== 'space-publish:publish'
+    const w = mountView()
+    await flushPromises()
+    await selectFloor(w)
+    const btns = w.findAll('button')
+    expect(btns.find((b) => b.text() === 'space.publish.doPublish')).toBeUndefined()
+    expect(btns.find((b) => b.text() === 'space.publish.adoptBtn')).toBeTruthy()
   })
 })
