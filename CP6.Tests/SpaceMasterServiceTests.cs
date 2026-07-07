@@ -347,7 +347,7 @@ public class SpaceMasterServiceTests
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => svc.DeleteAisleAsync(s.aisleId, mode: "rehome", targetAisleId: targetId, user: "u"));
-        Assert.StartsWith("E-SPACE-005", ex.Message);
+        Assert.StartsWith("E-SPACE-407", ex.Message);
 
         // 拒绝后：src 仍在，货架仍挂 src
         Assert.Equal(s.aisleId, (await db.Space_Racks.SingleAsync()).AisleId);

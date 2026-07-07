@@ -280,9 +280,9 @@ public class SpaceMasterService : ISpaceMasterService
                     if (targetAisleId != null)
                     {
                         var target = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == targetAisleId.Value)
-                                     ?? throw new InvalidOperationException("E-SPACE-005: 目标巷道不存在");
+                                     ?? throw new InvalidOperationException("E-SPACE-407: 目标巷道不存在");
                         if (racks.Any(r => r.ZoneId != target.ZoneId))
-                            throw new InvalidOperationException("E-SPACE-005: 目标巷道与货架不在同一库区");
+                            throw new InvalidOperationException("E-SPACE-407: 目标巷道与货架不在同一库区");
                     }
                     foreach (var r in racks) r.AisleId = targetAisleId;
                     await _db.SaveChangesAsync();                    // 先落改挂，BuildItemAsync 才拼得出新 path
