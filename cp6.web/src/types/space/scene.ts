@@ -139,3 +139,58 @@ export interface UnplacedLocationDto {
 }
 
 export type Envelope<T> = { code: number; message: string; data: T }
+
+// ── 生命周期（ch03 编码规则 / ch04 发布）VO —— 镜像后端 CodeRuleDtos.cs ──
+
+/** 编码段定义（CodeRuleDtos.cs:7，11 字段 camelCase 对齐）。 */
+export interface CodeSegmentDef {
+  key: string
+  name: string
+  source: string
+  width: number
+  pad: string
+  start: number
+  step: number
+  sep: string
+  upper: boolean
+  fixedValue: string
+  optional: boolean
+}
+
+/** 编码规则 VO（segments 归一后恒为数组；对应后端 CodeRuleDto）。 */
+export interface CodeRuleVO {
+  id?: string
+  ruleName: string
+  scopeType: number
+  scopeId?: string | null
+  segments: CodeSegmentDef[]
+  isDefault: boolean
+}
+
+/** 实时预览响应（ch03 §8）。 */
+export interface CodePreviewResp {
+  structure: { key: string; name: string; source: string; optional: boolean }[]
+  samples: string[]
+  variableLen: { withAisle: string; withoutAisle: string }
+  precheck: { ok: boolean; errors: string[] }
+}
+
+/** 发布前编码预检响应（ch03 §9.2）。 */
+export interface CodePrecheckResp {
+  emptyCodeCount: number
+  duplicateGroups: string[][]
+  precheckErrors: string[]
+  unplacedDraftCount: number
+}
+
+/** SPACE→WMS 集成事件 VO（ch04 §2）。 */
+export interface SpaceEventVO {
+  id: string
+  hookName: string
+  sourceNo: string
+  targetModule: string
+  status: string
+  attempts: number
+  createDate: string
+  lastError?: string | null
+}
