@@ -15,6 +15,7 @@ using CP6.Entity.DomainModels.Pur;
 using CP6.Entity.DomainModels.Wf;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DomainModels.Space;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.EFDbContext;
@@ -23,7 +24,7 @@ namespace CP6.Core.EFDbContext;
 /// 数据库上下文 - 管理所有实体与数据库表的映射
 /// 每新增一个实体，就在这里加一个 DbSet
 /// </summary>
-public class CP6Context : DbContext
+public class CP6Context : DbContext, IDataProtectionKeyContext
 {
     private readonly ITenantContext? _tenant;
     private readonly ICurrentUserAccessor? _user;
@@ -46,6 +47,12 @@ public class CP6Context : DbContext
     /// 用户表
     /// </summary>
     public DbSet<Sys_User> Sys_Users { get; set; }
+
+    /// <summary>
+    /// DataProtection 密钥环持久化表（P0-T1）——实现 <see cref="IDataProtectionKeyContext"/>，
+    /// 令 SSO/2FA/CSRF 密文所依赖的密钥落库、重启存活。非 BaseTenantEntity，不受全局租户过滤。
+    /// </summary>
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
     /// <summary>
     /// 租户注册表 —— OA 章10 §7 多租户花名册（共享表，Id 即各表 TenantId 来源）

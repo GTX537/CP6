@@ -3,6 +3,7 @@ using CP6.Core.BaseProvider;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services;
 using CP6.Entity.DomainModels;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -515,7 +516,10 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.ITokenBlacklistService, CP6.Cor
 // S 类认证加固（T6）：三认证 Cookie 写入器（httpOnly access/refresh + 双提交 CSRF）
 builder.Services.AddScoped<CP6.Core.Services.Sys.IAuthCookieWriter, CP6.Core.Services.Sys.AuthCookieWriter>();
 // S 类 #3 SSO（T2）：DataProtection（ClientSecret 加密，spec R7：全仓首次显式注册）+ 租户 SSO 配置服务
-builder.Services.AddDataProtection();
+// P0-T1：密钥环持久化到 DB（EF）——SSO/2FA/CSRF 密文重启存活；SetApplicationName 保证多副本/重装后仍能解密旧密文。
+builder.Services.AddDataProtection()
+    .PersistKeysToDbContext<CP6.Core.EFDbContext.CP6Context>()
+    .SetApplicationName("CP6");
 builder.Services.AddScoped<CP6.Core.Services.Sys.ITenantSsoConfigService, CP6.Core.Services.Sys.TenantSsoConfigService>();
 // S 类 #3 SSO（T3）：state/nonce/PKCE 一次性暂态（IDistributedCache）
 builder.Services.AddScoped<CP6.Core.Services.Sys.ISsoStateStore, CP6.Core.Services.Sys.SsoStateStore>();

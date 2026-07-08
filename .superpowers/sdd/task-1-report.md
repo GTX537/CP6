@@ -1,35 +1,51 @@
-# 波4 Task 1 Report: 审计接线（11 实体 + 行为测试）
+# Task P0-T1 Report: DataProtection 密钥环持久化到数据库（EF）
 
-## Status
-DONE — commit `a66fb1f` on `feat/space-wave4-crosscutting`.
+## What I implemented
 
-## Implemented
-- 11 个 Space 主数据实体追加 `, IAuditable`（标记接口，接入 `CP6Context.SaveChanges` 字段级审计管道）：
-  Space_Site / Space_Floor / Space_Zone / Space_Aisle / Space_Rack / Space_Location /
-  Space_Template / Space_CodeRule / Space_Marker / Space_Connector / Space_ConnectorStop。
-- 全部继承 `BaseBizEntity`，namespace `CP6.Entity.DomainModels.Space` 嵌套于 `CP6.Entity`，
-  IAuditable 无需额外 using（同 GlAccount.cs:16 先例）。
-- WmsBin **未挂**（机器写入消费表，审计噪音）——符合约束。
-- 新建 `CP6.Tests/Space/SpaceAuditTests.cs`（照 FieldAuditCaptureTests 桩：FakeUser /
-  TestHelper.CreateInMemoryContext / ParseChanges），2 个 Fact。
+- **Step 1 — Package**: Added `Microsoft.AspNetCore.DataProtection.EntityFrameworkCore` `8.0.12` to `CP6.Core/CP6.Core.csproj` (DbContext lives in CP6.Core; the reference flows transitively to CP6.WebApi and CP6.Tests, so no separate add needed there).
+- **Step 2 — DbContext**: `CP6Context` now implements `IDataProtectionKeyContext` and exposes `public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }` (added `using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;`). Confirmed the reflection tenant filter at `CP6Context.cs:2062` only scans `BaseTenantEntity` subclasses (`typeof(BaseTenantEntity).IsAssignableFrom(...) && t.BaseType is null`), so `DataProtectionKey` is untouched — asserted by the `DataProtectionKey_Is_Not_TenantFiltered` test (`GetQueryFilter()` is null).
+- **Step 3 — Migration**: `20260708085236_PersistDataProtectionKeys` — contains ONLY the `DataProtectionKeys` table (Id identity PK / FriendlyName / Xml, all nvarchar(max)). No model drift.
+- **Step 4 — Program.cs**: `builder.Services.AddDataProtection().PersistKeysToDbContext<CP6Context>().SetApplicationName("CP6");` at ~line 519. Added `using Microsoft.AspNetCore.DataProtection;` for the `PersistKeysToDbContext` / `SetApplicationName` extension methods.
+- **Step 5 — Tests**: pre-existing 5-test suite verifies interface contract, no tenant filter, key row lands in table after first Protect, Protect/Unprotect roundtrip, and cross-ServiceProvider (restart-sim, shared InMemory root) decrypt. Assertions match the brief; no changes needed.
+- **Step 6 — Ops note**: captured in the commit body (SSO ClientSecret existing ciphertext was encrypted by the old ephemeral key and will NOT decrypt after switch — must be re-saved once on the PMS SsoConfig page post-deploy).
+
+## What I tested and results
+
+- Focused: `dotnet test CP6.Tests/CP6.Tests.csproj --filter DataProtectionPersistenceTests` -> **Passed! Failed: 0, Passed: 5, Total: 5**.
+- Full suite: `dotnet test CP6.slnx` -> **Passed! Failed: 0, Passed: 1570, Skipped: 5, Total: 1575** (baseline 1565+ held; +5 new tests).
 
 ## TDD Evidence
-- RED：挂接口前跑 SpaceAuditTests → 2 fail，`Assert.Single() Failure: The collection was empty`
-  （无 IAuditable → 零审计行，确认现状）。
-- GREEN：11 实体挂接口后 → `Passed! Failed: 0, Passed: 2`。
-- EntityName 断言用 `nameof(Space_Site)`（核实既有测试同写法，取实体类名非表名）。
 
-## Tests
-- 新测试：2 passed。
-- 全量 `dotnet test CP6.Tests/CP6.Tests.csproj`：**1559 passed / 5 skipped / 0 failed**（基线 1557 → +2）。
-- `dotnet build CP6.slnx`：**Build succeeded，0 error**。
+### RED (before implementation — source changes stashed, untracked test kept)
+Command: `dotnet build CP6.Tests/CP6.Tests.csproj --no-incremental`
+```
+CP6.Tests\Platform\DataProtectionPersistenceTests.cs(4,43): error CS0234: The type or namespace name
+'EntityFrameworkCore' does not exist in the namespace 'Microsoft.AspNetCore.DataProtection'
+Build FAILED. 1 Error(s)
+```
+The test does not compile without the package + interface — this is the RED state written last session.
 
-## Files changed (12)
-- CP6.Entity/DomainModels/Space/Space_{Site,Floor,Zone,Aisle,Rack,Location,Template,CodeRule,Marker,Connector,ConnectorStop}.cs（各 +1 接口）
-- CP6.Tests/Space/SpaceAuditTests.cs（新建，2 Fact）
+### GREEN (after implementation)
+Command: `dotnet test CP6.Tests/CP6.Tests.csproj --filter DataProtectionPersistenceTests`
+```
+Passed!  - Failed: 0, Passed: 5, Skipped: 0, Total: 5, Duration: 8 s - CP6.Tests.dll (net8.0)
+```
 
-## Self-review
-- 接口机制为 opt-in 标记，无列映射，无迁移影响。
-- 测试 Fact①覆盖 create/Op1/EntityName/EntityKey；Fact②覆盖 update/Op2/diff Field-Old-New。
-- 未触碰 WmsBin；未改 DbContext（Space_Site 等已注册）。
-- 仅一个 commit，含 Co-Authored-By trailer。
+## Files changed
+
+- `CP6.Core/CP6.Core.csproj` — package reference
+- `CP6.Core/EFDbContext/CP6Context.cs` — interface + DbSet + using
+- `CP6.WebApi/Program.cs` — PersistKeysToDbContext + SetApplicationName + using
+- `CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.cs` (+ .Designer.cs) — new migration
+- `CP6.Core/Migrations/CP6ContextModelSnapshot.cs` — snapshot updated with DataProtectionKeys
+- `CP6.Tests/Platform/DataProtectionPersistenceTests.cs` — test suite (was untracked, now committed)
+
+## Self-review findings
+
+- Migration verified to contain exactly one table, no unrelated changes -> no model drift.
+- Package added only in CP6.Core (single source of truth); transitively available downstream — no redundant refs.
+- Followed existing code/comment conventions in CP6Context and Program.cs.
+
+## Issues / concerns
+
+- Ops follow-up (not a code issue): after deploy, SSO ClientSecret must be re-saved once (old ciphertext undecryptable). Documented in commit body.
