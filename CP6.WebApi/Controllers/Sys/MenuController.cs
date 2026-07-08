@@ -69,8 +69,9 @@ public class MenuController : ControllerBase
     {
         var entities = await _context.Sys_Menus.Where(m => ids.Contains(m.MenuId)).ToListAsync();
         _context.Sys_Menus.RemoveRange(entities);
-        // 同时删除关联的权限映射
-        var mappings = _context.Sys_RoleMenus.Where(rm => ids.Contains(rm.MenuId));
+        // 同时删除关联的权限映射。P0-T3 补口：Sys_Menu 是全局表，删菜单须清**所有租户**的映射
+        // （Sys_RoleMenu 已租户化，不带 IgnoreQueryFilters 只会清当前租户、他租留孤儿行）。
+        var mappings = _context.Sys_RoleMenus.IgnoreQueryFilters().Where(rm => ids.Contains(rm.MenuId));
         _context.Sys_RoleMenus.RemoveRange(mappings);
         var count = await _context.SaveChangesAsync();
         return Ok(new { count });

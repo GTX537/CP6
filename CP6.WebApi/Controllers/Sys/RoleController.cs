@@ -87,7 +87,8 @@ public class RoleController : LocalizedControllerBase
     {
         var entities = await _context.Sys_Roles.Where(r => ids.Contains(r.RoleId)).ToListAsync();
         _context.Sys_Roles.RemoveRange(entities);
-        // 同时删除关联的权限映射
+        // 同时删除关联的权限映射（P0-T3 补口：Sys_RoleMenu 已租户化，全局过滤限定当前租户——
+        // 删本租户角色只清本租户映射，他租同号 RoleId 不受影响）
         var mappings = _context.Sys_RoleMenus.Where(rm => ids.Contains(rm.RoleId));
         _context.Sys_RoleMenus.RemoveRange(mappings);
         var count = await _context.SaveChangesAsync();
@@ -115,11 +116,11 @@ public class RoleController : LocalizedControllerBase
     [RequirePermission("role", "edit")]
     public async Task<IActionResult> SaveRoleMenus(int roleId, [FromBody] int[] menuIds)
     {
-        // 1. 删除旧的映射
+        // 1. 删除旧的映射（P0-T3 补口：全局过滤限定当前租户——A 改角色菜单不再串改 B 的同号角色）
         var oldMappings = _context.Sys_RoleMenus.Where(rm => rm.RoleId == roleId);
         _context.Sys_RoleMenus.RemoveRange(oldMappings);
 
-        // 2. 添加新的映射
+        // 2. 添加新的映射（TenantId 由 StampTenant 自动盖当前租户）
         var newMappings = menuIds.Select(menuId => new Sys_RoleMenu
         {
             RoleId = roleId,

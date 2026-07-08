@@ -17,7 +17,8 @@ namespace CP6.Core.Services.Platform;
 /// 直接调 <see cref="JwtHelper.GenerateToken"/>。JWT secret/issuer/audience 取 <c>IConfiguration["JWT:*"]</c>
 /// （与 <c>AuthController.BuildAccessToken</c> 同源）；imp 寿命取 <see cref="SecurityOptions.ImpersonationMinutes"/>。</para>
 /// <para>菜单并集复刻 <c>AuthController.BuildProfileAsync</c>（Sys_UserRole 附加角色 ∪ Sys_User.RoleId 主角色 → Sys_RoleMenu → Sys_Menu），
-/// 经 <c>IgnoreQueryFilters</c> 跨租户读目标用户角色（Sys_UserRole 带 TenantId 受全局过滤；Sys_Menu/Sys_RoleMenu 全局表无过滤）。</para>
+/// 经 <c>IgnoreQueryFilters</c> 跨租户读目标用户角色与角色菜单（Sys_UserRole/Sys_RoleMenu 均带 TenantId 受全局过滤，
+/// 后者按目标租户显式钉住；Sys_Menu 全局表无过滤）。</para>
 /// </summary>
 public class ImpersonationService : IImpersonationService
 {
@@ -101,7 +102,7 @@ public class ImpersonationService : IImpersonationService
         }
 
         // 8. R8：返目标用户菜单 + imp 有效分钟数。
-        var menus = await BuildMenusAsync(target.Id);
+        var menus = await BuildMenusAsync(target.Id, target.TenantId);
         return new ImpersonationStartResult(tenantId, targetTenant.TenantName, target.Id, target.UserName, menus, _sec.ImpersonationMinutes);
     }
 
@@ -151,12 +152,14 @@ public class ImpersonationService : IImpersonationService
         await _audit.LogAsync(SecurityEventType.ImpersonationEnded, impAdmin.Id, impAdmin.UserName, null, null, null, null);
 
         // 8. 返平台超管自身菜单。
-        var menus = await BuildMenusAsync(impAdmin.Id);
+        var menus = await BuildMenusAsync(impAdmin.Id, impAdmin.TenantId);
         return new ImpersonationEndResult(menus);
     }
 
-    /// <summary>菜单并集（复刻 <c>AuthController.BuildProfileAsync</c>）：Sys_UserRole 附加角色 ∪ Sys_User.RoleId 主角色 → Sys_RoleMenu → 启用 Sys_Menu，按 OrderNo 升序。</summary>
-    private async Task<List<MenuRow>> BuildMenusAsync(Guid targetUserId)
+    /// <summary>菜单并集（复刻 <c>AuthController.BuildProfileAsync</c>）：Sys_UserRole 附加角色 ∪ Sys_User.RoleId 主角色 → Sys_RoleMenu → 启用 Sys_Menu，按 OrderNo 升序。
+    /// P0-T3 补口：Sys_RoleMenu 已租户化 → 须按目标用户的租户显式作用域（本方法运行于平台租户上下文，
+    /// 依赖全局过滤会读到平台租户的映射）。</summary>
+    private async Task<List<MenuRow>> BuildMenusAsync(Guid targetUserId, Guid targetTenantId)
     {
         // Sys_UserRole 带 TenantId 受全局过滤 → IgnoreQueryFilters 跨租户读目标用户角色。
         var roleIds = await _db.Sys_UserRoles.IgnoreQueryFilters()
@@ -167,8 +170,9 @@ public class ImpersonationService : IImpersonationService
         if (primary is int p && !roleIds.Contains(p)) roleIds.Add(p);
         roleIds = roleIds.Distinct().ToList();
 
-        var menuIds = await _db.Sys_RoleMenus
-            .Where(rm => roleIds.Contains(rm.RoleId))
+        // 租户化后 RoleId 跨租户可同号 → 必须显式钉住目标租户的映射行（IgnoreQueryFilters + TenantId 精确匹配）。
+        var menuIds = await _db.Sys_RoleMenus.IgnoreQueryFilters()
+            .Where(rm => rm.TenantId == targetTenantId && roleIds.Contains(rm.RoleId))
             .Select(rm => rm.MenuId)
             .Distinct()
             .ToListAsync();

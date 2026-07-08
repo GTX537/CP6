@@ -101,6 +101,61 @@ public class RoleTenantIsolationTests
             Assert.Empty(a.Sys_Roles.ToList());
     }
 
+    // ⑤（评审 Important 补口）A 编辑角色菜单映射（整体替换语义），B 同号角色的菜单不受影响。
+    [Fact]
+    public void Editing_role_menus_in_A_does_not_affect_B()
+    {
+        var db = Guid.NewGuid().ToString();
+        using (var a = CtxFor(db, TenantA))
+        {
+            a.Sys_RoleMenus.Add(new Sys_RoleMenu { TenantId = TenantA, RoleId = 1, MenuId = 100 });
+            a.Sys_RoleMenus.Add(new Sys_RoleMenu { TenantId = TenantA, RoleId = 1, MenuId = 101 });
+            a.SaveChanges();
+        }
+        using (var b = CtxFor(db, TenantB))
+        {
+            b.Sys_RoleMenus.Add(new Sys_RoleMenu { TenantId = TenantB, RoleId = 1, MenuId = 100 });
+            b.Sys_RoleMenus.Add(new Sys_RoleMenu { TenantId = TenantB, RoleId = 1, MenuId = 101 });
+            b.SaveChanges();
+        }
+
+        // A 整体替换 RoleId=1 的菜单集（复刻 RoleController.SaveRoleMenus：删旧+插新，靠全局过滤圈定范围）。
+        using (var a = CtxFor(db, TenantA))
+        {
+            var old = a.Sys_RoleMenus.Where(rm => rm.RoleId == 1).ToList();
+            a.Sys_RoleMenus.RemoveRange(old);
+            a.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 200 });   // 不设 TenantId → 盖章
+            a.SaveChanges();
+        }
+
+        using (var b = CtxFor(db, TenantB))
+        {
+            var bMenus = b.Sys_RoleMenus.Where(rm => rm.RoleId == 1).Select(rm => rm.MenuId).OrderBy(x => x).ToList();
+            Assert.Equal(new[] { 100, 101 }, bMenus);   // B 原集完好
+        }
+        using (var a = CtxFor(db, TenantA))
+        {
+            var aMenus = a.Sys_RoleMenus.Where(rm => rm.RoleId == 1).Select(rm => rm.MenuId).ToList();
+            Assert.Equal(new[] { 200 }, aMenus);        // A 替换生效
+        }
+    }
+
+    // ⑥（评审 Important 补口）新建 Sys_RoleMenu 未显式设 TenantId → StampTenant 自动盖当前租户。
+    [Fact]
+    public void New_role_menu_auto_stamps_current_tenant()
+    {
+        var db = Guid.NewGuid().ToString();
+        using (var b = CtxFor(db, TenantB))
+        {
+            b.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 100 });   // 不设 TenantId
+            b.SaveChanges();
+        }
+        using (var raw = CtxFor(db, TenantB))
+            Assert.Equal(TenantB, raw.Sys_RoleMenus.IgnoreQueryFilters().Single().TenantId);
+        using (var a = CtxFor(db, TenantA))
+            Assert.Empty(a.Sys_RoleMenus.ToList());
+    }
+
     // ④ 回填校验逻辑单测（映射完整性）：复现迁移 SQL 强制的不变式——
     //    任一租户被子表引用的 RoleId，必在该租户拥有对应 Sys_Role 行；否则回填不完整（迁移应 THROW）。
     [Fact]

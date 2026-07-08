@@ -118,9 +118,21 @@ public class TenantAdminService : ITenantAdminService
             OrderNo = 0,
         };
 
+        // 4c. P0-T3 补口：Sys_RoleMenu 已租户化 → 新租户管理员角色须自带菜单映射副本
+        //     （从默认租户 RoleId=1 的映射集复制；否则新租户 admin 登录后菜单为空）。
+        var defaultAdminMenuIds = await _db.Sys_RoleMenus.IgnoreQueryFilters()
+            .Where(rm => rm.TenantId == TenantContext.DefaultTenant && rm.RoleId == 1)
+            .Select(rm => rm.MenuId)
+            .Distinct()
+            .ToListAsync();
+        var adminMenus = defaultAdminMenuIds
+            .Select(mid => new Sys_RoleMenu { TenantId = tenant.Id, RoleId = 1, MenuId = mid })
+            .ToList();
+
         // 5. 单 SaveChanges → EF 单事务包裹 → 任一失败整体回滚（R9-a）。
         _db.Sys_Tenants.Add(tenant);
         _db.Sys_Roles.Add(adminRole);
+        _db.Sys_RoleMenus.AddRange(adminMenus);
         _db.Sys_Users.Add(admin);
         await _db.SaveChangesAsync();
 

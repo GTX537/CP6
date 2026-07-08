@@ -116,3 +116,35 @@ Snapshot diff（`CP6ContextModelSnapshot.cs`）仅：
 - **Sys_RoleMenu 遗留隐患（超出本任务范围）**：该表无 TenantId 且 RoleController 的 GetRoleMenus/SaveRoleMenus/Delete 直接按 RoleId 操作它 → 跨租户同号 RoleId 会串。本任务未触碰（brief 仅要求 UserRole/RoleAction）。建议后续把 Sys_RoleMenu 租户化或迁往 Sys_RoleAction 体系。
 - **迁移未在真 SQL Server 跑过**（本环境测试用 InMemory）；THROW/CROSS JOIN/UNION 为标准 T-SQL，真库验证归 P0-T4。
 - StampTenant 对 Sys_Role 在 TenantId 为**主键一部分**时于 SaveChanges 覆盖前赋值——EF 允许改 Added 实体键值，先例风险低；测试③已覆盖自动盖章路径。
+
+---
+
+## 8. 评审 Important 修复：Sys_RoleMenu 租户化补口（追加 2026-07-08）
+
+评审确认 §7 所报的 Sys_RoleMenu 隐患因本任务**被激活**（回填后各租户拥有同号 RoleId，A 改/删角色菜单映射串改 B），按指令补口闭合。
+
+### 变更
+1. **实体** `Sys_RoleMenu.cs`：加 `Guid TenantId`；int 自增 Id 主键保留（全库确认 `Sys_RoleMenu.Id` 零引用）。
+2. **CP6Context**：手挂 `HasQueryFilter(TenantId == CurrentTenantId)` + 非唯一索引 `IX_Sys_RoleMenu_Tenant_Role (TenantId, RoleId)`（Get/SaveRoleMenus、登录菜单聚合都按 RoleId 查）；StampTenant 加 Sys_RoleMenu 循环。
+3. **迁移 `SysRoleMenuTenantize`（20260708100345）**：schema 段仅 AddColumn TenantId + CreateIndex（snapshot diff 零漂移）。手写数据段：`SET QUOTED_IDENTIFIER ON` → 归户 A1 → 逐非默认租户复制副本（NOT EXISTS 幂等；`EXISTS Sys_Roles(t.Id, RoleId)` 前置——**不扩散孤儿映射**；零非默认租户时 CROSS JOIN 空集安全）→ `THROW 50002` 校验（已知 RoleId 缺本租户角色副本即回滚；known-RoleId 守卫与 SysRoleTenantize 一致，预存孤儿不误杀）。
+4. **消费点逐一核验**（指令 3）：
+   - `RoleController.cs` Delete(91-92)/GetRoleMenus(104)/SaveRoleMenus(119-128)：经 EF 上下文 → 过滤自动圈定当前租户；新插入行 StampTenant 盖章。仅加注释，无行为改码。
+   - 登录菜单树 `AuthController.BuildProfileAsync`(234)：Login 在其之前（181 行）已 `_tenant.CurrentTenantId = user.TenantId` → 过滤作用域正确，零改码。
+   - `PermissionAggregator`(38)/`RolePermService`(68,84-88)：请求租户上下文内运行，过滤正确，零改码。
+   - **`ImpersonationService.BuildMenusAsync`——唯一必须改码的读路径**：运行于平台租户上下文却要读目标租户的映射（原注释明言依赖"Sys_RoleMenu 全局表无过滤"）。改为 `IgnoreQueryFilters + rm.TenantId == targetTenantId` 显式钉住；两调用点分别传 `target.TenantId` / `impAdmin.TenantId`。这是**合理的** IgnoreQueryFilters（平台超管跨租户代入的既有语义，与 Sys_UserRole 同法）。
+   - **`MenuController.Delete`(73-74)——刻意跨租户**：Sys_Menu 是全局表，删菜单须清**所有租户**的映射，改 `IgnoreQueryFilters`（否则他租留孤儿行）。
+5. **种子**（指令 4）：既有行为确实播种 Sys_RoleMenu（Program.cs 管理员角色全菜单集）→ 按逐租户镜像：`TenantAdminService.CreateAsync` 建租户事务内复制默认租户 RoleId=1 映射集（否则新租户 admin 登录菜单为空）；Program.cs 启动安全网对 RoleId=1 映射**全缺**的启用租户整套补（只在全缺时补——租户管理员刻意删过的单条不复活）。Program.cs 既有增量种子块经 StampTenant 落默认租户，语义不变。
+
+### 测试证据
+- **RED**（暂注释 Sys_RoleMenu 过滤）：`Editing_role_menus_in_A_does_not_affect_B [FAIL]`、`New_role_menu_auto_stamps_current_tenant [FAIL]`（Failed: 2, Passed: 5）。
+- **GREEN**（恢复过滤）：RoleTenantIsolationTests(7) + ImpersonationServiceTests(14) 共 21 全绿。
+- **全量**：`Passed! - Failed: 0, Passed: 1577, Skipped: 5, Total: 1582`（上轮 1575+5 → +2 新测试，零回归）。
+- 回填不变式纯函数 `BackfillInvariant.FindUnmatchedRefs` 形状即 (TenantId, RoleId) 引用集，THROW 50002 是同一谓词——既有 ④/反例两测已覆盖，无需改。
+
+### 修改的既有测试及理由
+`ImpersonationServiceTests.SeedMenusForRole` 加 `Guid tenantId` 参数（7 调用点：Start 路径 4 处传 TargetTenant，End 路径 3 处传 DefaultTenant——End 构建的是平台超管自身菜单）。原实现依赖"映射是全局表"，租户化后映射行必须落在角色所属租户，是设计的直接产物。
+
+### 关切
+- `docs/seeds/*.sql` 历史运维脚本直插 `Sys_RoleMenus (RoleId, MenuId)` 不带 TenantId → 若将来重跑会落 TenantId=空 Guid（对所有租户不可见，且不会串数据）。这些是一次性已执行脚本，未改；后续新运维脚本须带 TenantId（记横切规范）。
+- 增量菜单授权漂移：Program.cs 后续新增模块菜单的 RoleId=1 增量种子只落默认租户；非默认租户须由租户管理员在 UI 授权（或后续种子机制逐租户化）。属既有种子机制的多租户课题，超出本补口范围。
+- 迁移仍未在真 SQL Server 执行（InMemory 测试）；真库验证归 P0-T4。

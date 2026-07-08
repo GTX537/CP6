@@ -103,13 +103,14 @@ public class ImpersonationServiceTests
         db.SaveChanges();
     }
 
-    /// <summary>给目标用户角色配几条菜单（证 R8 menus 非空）。</summary>
-    private static void SeedMenusForRole(CP6Context db, int roleId)
+    /// <summary>给目标用户角色配几条菜单（证 R8 menus 非空）。
+    /// P0-T3 补口：Sys_RoleMenu 已租户化 → 映射行须显式落在角色所属租户（BuildMenusAsync 按目标租户钉住）。</summary>
+    private static void SeedMenusForRole(CP6Context db, int roleId, Guid tenantId)
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 9001, MenuName = "Dash", RoutePath = "/dash", OrderNo = 1, Enable = true });
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 9002, MenuName = "Wf", RoutePath = "/wf", OrderNo = 2, Enable = true });
-        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = roleId, MenuId = 9001 });
-        db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = roleId, MenuId = 9002 });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { TenantId = tenantId, RoleId = roleId, MenuId = 9001 });
+        db.Sys_RoleMenus.Add(new Sys_RoleMenu { TenantId = tenantId, RoleId = roleId, MenuId = 9002 });
         db.SaveChanges();
     }
 
@@ -161,7 +162,7 @@ public class ImpersonationServiceTests
         var (svc, db, _, _, _, _) = Make(TenantContext.DefaultTenant);
         SeedTenant(db, TargetTenant);
         var target = SeedUser(db, TargetTenant, roleId: 1, mustChange: true);   // 目标须改密
-        SeedMenusForRole(db, 1);
+        SeedMenusForRole(db, 1, TargetTenant);
         var adminId = SeedUser(db, TenantContext.DefaultTenant, isPlatformAdmin: true);
 
         var ctx = new DefaultHttpContext();
@@ -195,7 +196,7 @@ public class ImpersonationServiceTests
         SeedTenant(db, TargetTenant);
         SeedUser(db, TargetTenant, roleId: 3, userName: "lowpriv");          // 非管理员
         var admin = SeedUser(db, TargetTenant, roleId: 1, userName: "tadmin");
-        SeedMenusForRole(db, 1);
+        SeedMenusForRole(db, 1, TargetTenant);
         var adminId = SeedUser(db, TenantContext.DefaultTenant, isPlatformAdmin: true);
 
         var ctx = new DefaultHttpContext();
@@ -263,7 +264,7 @@ public class ImpersonationServiceTests
         var (svc, db, bl, _, _, _) = Make(TenantContext.DefaultTenant);
         SeedTenant(db, TargetTenant);
         SeedUser(db, TargetTenant, roleId: 1);
-        SeedMenusForRole(db, 1);
+        SeedMenusForRole(db, 1, TargetTenant);
         var adminId = SeedUser(db, TenantContext.DefaultTenant, isPlatformAdmin: true);
 
         var ctx = new DefaultHttpContext();
@@ -281,7 +282,7 @@ public class ImpersonationServiceTests
         var (svc, db, _, audit, _, _) = Make(TargetTenant);
         SeedTenant(db, TargetTenant);
         SeedUser(db, TargetTenant, roleId: 1);
-        SeedMenusForRole(db, 1);
+        SeedMenusForRole(db, 1, TargetTenant);
         var adminId = SeedUser(db, TargetTenant, isPlatformAdmin: true);
 
         var ctx = new DefaultHttpContext();
@@ -304,7 +305,7 @@ public class ImpersonationServiceTests
         var (svc, db, _, _, _, _) = Make(TenantContext.DefaultTenant);
         var adminId = SeedUser(db, TenantContext.DefaultTenant, isPlatformAdmin: true, userName: "platadmin");
         var targetId = SeedUser(db, TargetTenant, roleId: 1);
-        SeedMenusForRole(db, 1);
+        SeedMenusForRole(db, 1, TenantContext.DefaultTenant);   // End 路径构建的是平台超管自身菜单
 
         var ctx = new DefaultHttpContext();
         var r = await svc.EndAsync(ImpPrincipal(targetId, adminId, "imp-jti"), ctx.Response);
@@ -335,7 +336,7 @@ public class ImpersonationServiceTests
         var (svc, db, bl, _, _, _) = Make(TenantContext.DefaultTenant);
         var adminId = SeedUser(db, TenantContext.DefaultTenant, isPlatformAdmin: true);
         var targetId = SeedUser(db, TargetTenant, roleId: 1);
-        SeedMenusForRole(db, 1);
+        SeedMenusForRole(db, 1, TenantContext.DefaultTenant);
 
         var ctx = new DefaultHttpContext();
         await svc.EndAsync(ImpPrincipal(targetId, adminId, "IMP-JTI"), ctx.Response);
@@ -379,7 +380,7 @@ public class ImpersonationServiceTests
         var (svc, db, _, audit, tenant, _) = Make(TargetTenant);
         var adminId = SeedUser(db, TenantContext.DefaultTenant, isPlatformAdmin: true);
         var targetId = SeedUser(db, TargetTenant, roleId: 1);
-        SeedMenusForRole(db, 1);
+        SeedMenusForRole(db, 1, TenantContext.DefaultTenant);
 
         var ctx = new DefaultHttpContext();
         await svc.EndAsync(ImpPrincipal(targetId, adminId, "imp"), ctx.Response);

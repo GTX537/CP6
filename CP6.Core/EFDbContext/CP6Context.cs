@@ -579,6 +579,15 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasQueryFilter(x => x.TenantId == CurrentTenantId);
         });
 
+        // P0-T3 补口（评审 Important）：Sys_RoleMenu 随 Sys_Role 一并租户化——否则 A 租户改 RoleId=1
+        // 的菜单映射会串改 B 租户同号角色的菜单可见性。int 自增 Id 主键保留（无外部引用），
+        // 手挂过滤 + (TenantId, RoleId) 查询索引（Get/SaveRoleMenus、登录菜单聚合都按 RoleId 查）。
+        modelBuilder.Entity<Sys_RoleMenu>(e =>
+        {
+            e.HasQueryFilter(x => x.TenantId == CurrentTenantId);
+            e.HasIndex(x => new { x.TenantId, x.RoleId }).HasDatabaseName("IX_Sys_RoleMenu_Tenant_Role");
+        });
+
         // PUB 章01 多角色：用户-角色中间表（B1-D1 RoleId int；B1-D3 章09 再加 TenantId）
         modelBuilder.Entity<Sys_UserRole>(e =>
         {
@@ -2248,6 +2257,11 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
         // P0-T3：Sys_Role（int RoleId 复合主键，非 BaseTenantEntity，未进反射批量）新增行盖当前租户。
         foreach (var e in ChangeTracker.Entries<Sys_Role>())
+            if (e.State == EntityState.Added && e.Entity.TenantId == Guid.Empty)
+                e.Entity.TenantId = CurrentTenantId;
+
+        // P0-T3 补口：Sys_RoleMenu（int Id 非 BaseTenantEntity）同样盖章。
+        foreach (var e in ChangeTracker.Entries<Sys_RoleMenu>())
             if (e.State == EntityState.Added && e.Entity.TenantId == Guid.Empty)
                 e.Entity.TenantId = CurrentTenantId;
     }
