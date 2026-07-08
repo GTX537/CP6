@@ -747,6 +747,29 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
+    // P0-T3：Sys_Role 已租户化（复合主键 (TenantId,RoleId)）→ 确保每个启用租户都拥有默认管理员角色（RoleId=1）。
+    // 迁移已对存量库逐租户回填；本块为启动幂等安全网（覆盖迁移后新建/遗漏的租户，照逐租户种子先例）。
+    {
+        var enabledTenantIds = db.Sys_Tenants.Where(t => t.Enable).Select(t => t.Id).ToList();
+        var tenantsWithAdminRole = db.Sys_Roles.IgnoreQueryFilters()
+            .Where(r => r.RoleId == 1).Select(r => r.TenantId).ToHashSet();
+        var missing = enabledTenantIds.Where(id => !tenantsWithAdminRole.Contains(id)).ToList();
+        if (missing.Count > 0)
+        {
+            foreach (var tid in missing)
+                db.Sys_Roles.Add(new Sys_Role
+                {
+                    TenantId = tid,
+                    RoleId = 1,
+                    RoleName = "管理员",
+                    Description = "拥有全部权限",
+                    Enable = true,
+                    OrderNo = 0,
+                });
+            db.SaveChanges();
+        }
+    }
+
     // 引导首个平台超管（默认租户 admin → IsPlatformAdmin=true）。平台超管无法经 RBAC 自助提权，
     // 故首个超管必须由启动期带外引导。幂等（已是超管则不动）。
     var seedAdmin = db.Sys_Users.IgnoreQueryFilters()

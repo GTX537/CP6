@@ -67,7 +67,8 @@ public class RoleController : LocalizedControllerBase
     {
         // #4 字段审计 T4：先查后改（替 attach-as-Modified），令 Modified diff 准确。
         // 仅拷可编辑列；RoleId(PK) 与 CreateDate 刻意不动（无 Creator/Modifier）。
-        var existing = await _context.Sys_Roles.FindAsync(entity.RoleId);
+        // P0-T3：复合主键 (TenantId,RoleId) 后不能用单参 FindAsync；按 RoleId 查（全局过滤自动限定当前租户）。
+        var existing = await _context.Sys_Roles.FirstOrDefaultAsync(r => r.RoleId == entity.RoleId);
         if (existing == null)
             return NotFound();
 

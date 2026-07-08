@@ -569,6 +569,16 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         });
         modelBuilder.Entity<Sys_User>().HasIndex(x => x.DeptId);   // 按部门取人（DataScope）
 
+        // P0-T3 Sys_Role 租户化：int RoleId 用户自定义主键 → 复合主键 (TenantId, RoleId)，每租户独立角色集。
+        // RoleId 保持稳定（各租户副本同号），子表(UserRole/RoleAction/RoleDataScope/RoleFieldPerm/User.RoleId)
+        // 按值 + 各自 TenantId 在租户作用域内解析 → 零重指。int Id 非 BaseTenantEntity（继承 BaseEntity 会引入
+        // 冲突的 Guid Id 主键 + Creator/Modifier/ModifyDate 列漂移），照 Sys_OperLog 先例手注册全局过滤 + 手补 StampTenant。
+        modelBuilder.Entity<Sys_Role>(e =>
+        {
+            e.HasKey(x => new { x.TenantId, x.RoleId });
+            e.HasQueryFilter(x => x.TenantId == CurrentTenantId);
+        });
+
         // PUB 章01 多角色：用户-角色中间表（B1-D1 RoleId int；B1-D3 章09 再加 TenantId）
         modelBuilder.Entity<Sys_UserRole>(e =>
         {
@@ -2233,6 +2243,11 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
                 e.Entity.TenantId = CurrentTenantId;
 
         foreach (var e in ChangeTracker.Entries<Sys_OperLog>())
+            if (e.State == EntityState.Added && e.Entity.TenantId == Guid.Empty)
+                e.Entity.TenantId = CurrentTenantId;
+
+        // P0-T3：Sys_Role（int RoleId 复合主键，非 BaseTenantEntity，未进反射批量）新增行盖当前租户。
+        foreach (var e in ChangeTracker.Entries<Sys_Role>())
             if (e.State == EntityState.Added && e.Entity.TenantId == Guid.Empty)
                 e.Entity.TenantId = CurrentTenantId;
     }

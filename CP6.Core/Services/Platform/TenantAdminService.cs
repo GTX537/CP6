@@ -106,8 +106,21 @@ public class TenantAdminService : ITenantAdminService
             MustChangePassword = true
         };
 
+        // 4b. P0-T3：新租户预置默认管理员角色（RoleId=1，与 admin.RoleId 对应）。
+        //     Sys_Role 已租户化（复合主键 (TenantId,RoleId)）→ 每租户须自带角色集，否则新租户 admin 无角色可解析。
+        var adminRole = new Sys_Role
+        {
+            TenantId = tenant.Id,
+            RoleId = 1,
+            RoleName = "管理员",
+            Description = "拥有全部权限",
+            Enable = true,
+            OrderNo = 0,
+        };
+
         // 5. 单 SaveChanges → EF 单事务包裹 → 任一失败整体回滚（R9-a）。
         _db.Sys_Tenants.Add(tenant);
+        _db.Sys_Roles.Add(adminRole);
         _db.Sys_Users.Add(admin);
         await _db.SaveChangesAsync();
 

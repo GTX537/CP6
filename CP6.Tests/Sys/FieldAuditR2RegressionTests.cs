@@ -1,10 +1,12 @@
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Sys;
 using CP6.WebApi.Controllers.Sys;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace CP6.Tests.Sys;
@@ -65,8 +67,10 @@ public class FieldAuditR2RegressionTests
 
         Assert.IsType<OkObjectResult>(result);
 
+        // P0-T3：Sys_Role 复合主键 (TenantId, RoleId) → 审计键为 "<TenantId>|<RoleId>"（默认租户上下文）。
+        var expectedKey = $"{TenantContext.DefaultTenant}|7001";
         var modified = db.Sys_FieldAuditLogs
-            .Where(x => x.Operation == 2 && x.EntityName == nameof(Sys_Role) && x.EntityKey == "7001")
+            .Where(x => x.Operation == 2 && x.EntityName == nameof(Sys_Role) && x.EntityKey == expectedKey)
             .ToList();
         Assert.Single(modified);
         var diffs = ParseChanges(modified[0].Changes);
@@ -74,7 +78,7 @@ public class FieldAuditR2RegressionTests
         Assert.Equal("原角色", nameDiff.Old);
         Assert.Equal("新角色", nameDiff.New);
 
-        var stored = await db.Sys_Roles.FindAsync(7001);
+        var stored = await db.Sys_Roles.FirstOrDefaultAsync(r => r.RoleId == 7001);
         Assert.NotNull(stored);
         Assert.Equal(seededDate, stored!.CreateDate);   // CreateDate 未被 Update 覆写
         Assert.Equal("新角色", stored.RoleName);
