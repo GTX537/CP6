@@ -43,7 +43,7 @@
 4. **ATP**：v1 做库存 ATP（现库存−已承诺），MRP/MPS ATP 留接口。
 5. **编号规则**：租户级可配置采番（前缀/日期段/流水位数/重置周期），Sales 先用，后续各模块迁入。
 6. **术语词典**：行业包携带 i18n 术语覆盖层（租户启用包后「Item」显示为「製品」or「品目」等），不另造机制、扩展现有 i18n。
-7. **审批适配器**：`IApprovalGateway`（发起/回调/撤回），WFS 实现走既有 ServiceTask/FlowKey 机制；PowerEgg stub 迁到适配器后面。
+7. **审批适配器**：~~`IApprovalGateway`~~ **勘误（2026-07-09 评审）：不新造接口，"可插拔审批"即既有 `IApprovalService.SubmitAsync(bizType,…)` + `Wf_ApprovalBinding` + `IApprovalCallback`（审批解耦 spec 2026-07-07 契约）**；PowerEgg stub 迁到 IApprovalService 的备选实现位。单据侧只存"迁移点→BizType"映射（见 2026-07-09 配置基建设计 §1④）。
 8. **存量迁移**：spec 内含 PA070 63 项目分拣表（核心/纸器包/SFS 三桶）+ Quotation/Order/Product 存量映射；迁移脚本按 Space 波4 THROW 校验先例写。
 
 ## 与既有路线的关系
