@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,7 @@ public class LotTraceController : ControllerBase
 
     /// <summary>リコールフラグ ON / OFF</summary>
     [HttpPost("recall")]
+    [RequirePermission("wms-lot-trace", "recall")]
     public async Task<IActionResult> Recall([FromBody] RecallRequest req)
     {
         if (string.IsNullOrWhiteSpace(req.ProductCd) || string.IsNullOrWhiteSpace(req.LotNo))

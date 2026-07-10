@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ public class MobileController : ControllerBase
     }
 
     [HttpPost("task")]
+    [RequirePermission("wms-mobile", "add")]
     public async Task<IActionResult> Create([FromBody] MobileTaskDto dto)
     {
         try
@@ -42,6 +44,7 @@ public class MobileController : ControllerBase
     }
 
     [HttpPost("task/{no}/start")]
+    [RequirePermission("wms-mobile", "start")]
     public async Task<IActionResult> Start(string no)
     {
         try { await _svc.StartAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -50,11 +53,13 @@ public class MobileController : ControllerBase
 
     /// <summary>バーコード 1 件を解決（ロケーション/製品/不明）。</summary>
     [HttpPost("scan")]
+    [RequirePermission("wms-mobile", "scan")]
     public async Task<IActionResult> Scan([FromBody] MobileScanRequest req)
         => Ok(new { code = 0, message = "OK", data = await _svc.ScanAsync(req) });
 
     /// <summary>作業完了。MOVE は実在庫を動かす。</summary>
     [HttpPost("task/{no}/done")]
+    [RequirePermission("wms-mobile", "complete")]
     public async Task<IActionResult> Done(string no, [FromBody] MobileCompleteRequest? req)
     {
         try
@@ -67,6 +72,7 @@ public class MobileController : ControllerBase
     }
 
     [HttpPost("task/{no}/cancel")]
+    [RequirePermission("wms-mobile", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try { await _svc.CancelAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

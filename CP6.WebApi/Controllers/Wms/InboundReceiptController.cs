@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ public class InboundReceiptController : ControllerBase
 
     /// <summary>受入登録（同時に確定 + 在庫反映）</summary>
     [HttpPost]
+    [RequirePermission("wms-inbound-receipt", "post")]
     public async Task<IActionResult> Confirm([FromBody] InboundReceiptDto dto)
     {
         try

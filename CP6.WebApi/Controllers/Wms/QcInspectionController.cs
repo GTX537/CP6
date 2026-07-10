@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ public class QcInspectionController : ControllerBase
 
     /// <summary>入庫予定参照で検品作成</summary>
     [HttpPost("from-inbound/{inboundNo}")]
+    [RequirePermission("wms-qc-inspection", "add")]
     public async Task<IActionResult> CreateFromInbound(string inboundNo)
     {
         try
@@ -44,6 +46,7 @@ public class QcInspectionController : ControllerBase
 
     /// <summary>直入検品作成</summary>
     [HttpPost]
+    [RequirePermission("wms-qc-inspection", "add")]
     public async Task<IActionResult> CreateDirect([FromBody] QcInspectionDto dto)
     {
         try
@@ -56,6 +59,7 @@ public class QcInspectionController : ControllerBase
 
     /// <summary>検査結果保存（status 0→1 自動）</summary>
     [HttpPut("{no}/items")]
+    [RequirePermission("wms-qc-inspection", "edit")]
     public async Task<IActionResult> SaveItems(string no, [FromBody] List<QcInspectionItemDto> items)
     {
         try
@@ -68,6 +72,7 @@ public class QcInspectionController : ControllerBase
 
     /// <summary>最終判定（PASS の場合は InboundReceipt 自動生成）</summary>
     [HttpPost("{no}/judge")]
+    [RequirePermission("wms-qc-inspection", "judge")]
     public async Task<IActionResult> Judge(string no, [FromBody] JudgeRequest req)
     {
         try
@@ -80,6 +85,7 @@ public class QcInspectionController : ControllerBase
     }
 
     [HttpPost("{no}/cancel")]
+    [RequirePermission("wms-qc-inspection", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try

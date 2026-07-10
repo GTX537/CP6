@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.AspNetCore.Authorization;
@@ -42,6 +43,7 @@ public class WarehouseController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-warehouse", "add")]
     public async Task<IActionResult> Create([FromBody] Warehouse dto)
     {
         if (string.IsNullOrWhiteSpace(dto.WarehouseCd))
@@ -60,6 +62,7 @@ public class WarehouseController : ControllerBase
     }
 
     [HttpPut("{cd}")]
+    [RequirePermission("wms-warehouse", "edit")]
     public async Task<IActionResult> Update(string cd, [FromBody] Warehouse dto)
     {
         var w = await _db.Warehouses.FirstOrDefaultAsync(x => x.WarehouseCd == cd && !x.IsDeleted);
@@ -86,6 +89,7 @@ public class WarehouseController : ControllerBase
     }
 
     [HttpDelete("{cd}")]
+    [RequirePermission("wms-warehouse", "del")]
     public async Task<IActionResult> Delete(string cd)
     {
         var w = await _db.Warehouses.FirstOrDefaultAsync(x => x.WarehouseCd == cd && !x.IsDeleted);
@@ -115,6 +119,7 @@ public class WarehouseController : ControllerBase
     }
 
     [HttpPost("location")]
+    [RequirePermission("wms-location", "add")]
     public async Task<IActionResult> CreateLocation([FromBody] Location dto)
     {
         if (string.IsNullOrWhiteSpace(dto.LocationCd) || string.IsNullOrWhiteSpace(dto.WarehouseCd))
@@ -140,6 +145,7 @@ public class WarehouseController : ControllerBase
     }
 
     [HttpPut("location/{cd}")]
+    [RequirePermission("wms-location", "edit")]
     public async Task<IActionResult> UpdateLocation(string cd, [FromBody] Location dto)
     {
         var l = await _db.Locations.FirstOrDefaultAsync(x => x.LocationCd == cd && !x.IsDeleted);
@@ -169,6 +175,7 @@ public class WarehouseController : ControllerBase
     }
 
     [HttpDelete("location/{cd}")]
+    [RequirePermission("wms-location", "del")]
     public async Task<IActionResult> DeleteLocation(string cd)
     {
         var l = await _db.Locations.FirstOrDefaultAsync(x => x.LocationCd == cd && !x.IsDeleted);

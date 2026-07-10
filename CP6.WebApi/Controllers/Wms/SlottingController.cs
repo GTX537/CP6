@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,7 @@ public class SlottingController : ControllerBase
 
     /// <summary>分析実行 → SlottingPlan 生成</summary>
     [HttpPost("analyze")]
+    [RequirePermission("wms-slotting", "analyze")]
     public async Task<IActionResult> Analyze([FromBody] AnalyzeRequest req)
     {
         try
@@ -39,6 +41,7 @@ public class SlottingController : ControllerBase
     }
 
     [HttpPost("{no}/approve")]
+    [RequirePermission("wms-slotting", "approve")]
     public async Task<IActionResult> Approve(string no)
     {
         try { await _svc.ApproveAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -46,6 +49,7 @@ public class SlottingController : ControllerBase
     }
 
     [HttpPost("{no}/cancel")]
+    [RequirePermission("wms-slotting", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try { await _svc.CancelAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

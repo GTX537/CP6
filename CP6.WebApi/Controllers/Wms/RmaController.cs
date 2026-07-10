@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ public class RmaController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-rma", "add")]
     public async Task<IActionResult> Create([FromBody] RmaDto dto)
     {
         try
@@ -42,6 +44,7 @@ public class RmaController : ControllerBase
     }
 
     [HttpPost("{no}/receive")]
+    [RequirePermission("wms-rma", "receive")]
     public async Task<IActionResult> Receive(string no)
     {
         try
@@ -53,6 +56,7 @@ public class RmaController : ControllerBase
     }
 
     [HttpPost("{no}/start-inspection")]
+    [RequirePermission("wms-rma", "inspect")]
     public async Task<IActionResult> StartInspection(string no)
     {
         try
@@ -64,6 +68,7 @@ public class RmaController : ControllerBase
     }
 
     [HttpPost("{no}/judge")]
+    [RequirePermission("wms-rma", "judge")]
     public async Task<IActionResult> Judge(string no, [FromBody] List<RmaDispositionInput> inputs)
     {
         try
@@ -76,6 +81,7 @@ public class RmaController : ControllerBase
     }
 
     [HttpPost("{no}/close")]
+    [RequirePermission("wms-rma", "close")]
     public async Task<IActionResult> Close(string no)
     {
         try
@@ -87,6 +93,7 @@ public class RmaController : ControllerBase
     }
 
     [HttpPost("{no}/cancel")]
+    [RequirePermission("wms-rma", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try

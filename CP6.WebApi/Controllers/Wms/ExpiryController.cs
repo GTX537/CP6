@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,7 @@ public class ExpiryController : ControllerBase
 
     /// <summary>一括廃棄（指定 Stock を ADJ -PhysicalQty で除去）</summary>
     [HttpPost("dispose")]
+    [RequirePermission("wms-expiry", "dispose")]
     public async Task<IActionResult> Dispose([FromBody] DisposeRequest req)
     {
         try

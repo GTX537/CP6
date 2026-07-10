@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ public class StockTakeController : ControllerBase
 
     /// <summary>計画作成（スナップショット取得）</summary>
     [HttpPost("plan")]
+    [RequirePermission("wms-stocktake", "add")]
     public async Task<IActionResult> CreatePlan([FromBody] StockTakePlanDto dto)
     {
         try
@@ -46,6 +48,7 @@ public class StockTakeController : ControllerBase
 
     /// <summary>カウント開始（status 0→1）</summary>
     [HttpPost("{no}/start-count")]
+    [RequirePermission("wms-stocktake", "count")]
     public async Task<IActionResult> StartCount(string no)
     {
         try
@@ -58,6 +61,7 @@ public class StockTakeController : ControllerBase
 
     /// <summary>カウント値一括更新</summary>
     [HttpPut("{no}/counts")]
+    [RequirePermission("wms-stocktake", "count")]
     public async Task<IActionResult> UpdateCounts(string no, [FromBody] List<StockTakeCountInput> inputs)
     {
         try
@@ -70,6 +74,7 @@ public class StockTakeController : ControllerBase
 
     /// <summary>差異確認移行（status 1→2/3）</summary>
     [HttpPost("{no}/submit")]
+    [RequirePermission("wms-stocktake", "submit")]
     public async Task<IActionResult> Submit(string no)
     {
         try
@@ -82,6 +87,7 @@ public class StockTakeController : ControllerBase
 
     /// <summary>承認 + ADJ 反映（status →4 完了）</summary>
     [HttpPost("{no}/approve")]
+    [RequirePermission("wms-stocktake", "approve")]
     public async Task<IActionResult> Approve(string no)
     {
         try
@@ -94,6 +100,7 @@ public class StockTakeController : ControllerBase
 
     /// <summary>取消（status →9）</summary>
     [HttpPost("{no}/cancel")]
+    [RequirePermission("wms-stocktake", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try

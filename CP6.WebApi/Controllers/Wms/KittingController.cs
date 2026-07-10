@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ public class KittingController : ControllerBase
     }
 
     [HttpPost("masters")]
+    [RequirePermission("wms-kitting", "add")]
     public async Task<IActionResult> CreateMaster([FromBody] KitMasterDto dto)
     {
         try { await _svc.CreateMasterAsync(dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -36,6 +38,7 @@ public class KittingController : ControllerBase
     }
 
     [HttpPut("masters/{kitSku}")]
+    [RequirePermission("wms-kitting", "edit")]
     public async Task<IActionResult> UpdateMaster(string kitSku, [FromBody] KitMasterDto dto)
     {
         try { await _svc.UpdateMasterAsync(kitSku, dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -43,6 +46,7 @@ public class KittingController : ControllerBase
     }
 
     [HttpDelete("masters/{kitSku}")]
+    [RequirePermission("wms-kitting", "del")]
     public async Task<IActionResult> DeleteMaster(string kitSku)
     {
         try { await _svc.DeleteMasterAsync(kitSku, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -63,6 +67,7 @@ public class KittingController : ControllerBase
     }
 
     [HttpPost("orders")]
+    [RequirePermission("wms-kitting", "add")]
     public async Task<IActionResult> CreateOrder([FromBody] KitOrderDto dto)
     {
         try
@@ -74,6 +79,7 @@ public class KittingController : ControllerBase
     }
 
     [HttpPost("orders/{no}/execute")]
+    [RequirePermission("wms-kitting", "execute")]
     public async Task<IActionResult> Execute(string no)
     {
         try { await _svc.ExecuteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -82,6 +88,7 @@ public class KittingController : ControllerBase
     }
 
     [HttpPost("orders/{no}/cancel")]
+    [RequirePermission("wms-kitting", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try { await _svc.CancelAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

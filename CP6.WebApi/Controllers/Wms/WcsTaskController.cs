@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class WcsTaskController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-wcs-task", "add")]
     public async Task<IActionResult> Create([FromBody] WcsTaskDto dto)
     {
         try
@@ -38,6 +40,7 @@ public class WcsTaskController : ControllerBase
     }
 
     [HttpPost("{no}/dispatch")]
+    [RequirePermission("wms-wcs-task", "dispatch")]
     public async Task<IActionResult> Dispatch(string no, [FromBody] DispatchReq req)
     {
         try { await _svc.DispatchAsync(no, req.DeviceCd, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -45,6 +48,7 @@ public class WcsTaskController : ControllerBase
     }
 
     [HttpPost("{no}/start")]
+    [RequirePermission("wms-wcs-task", "start")]
     public async Task<IActionResult> Start(string no)
     {
         try { await _svc.StartAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -52,6 +56,7 @@ public class WcsTaskController : ControllerBase
     }
 
     [HttpPost("{no}/complete")]
+    [RequirePermission("wms-wcs-task", "complete")]
     public async Task<IActionResult> Complete(string no)
     {
         try { await _svc.CompleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -59,6 +64,7 @@ public class WcsTaskController : ControllerBase
     }
 
     [HttpPost("{no}/fail")]
+    [RequirePermission("wms-wcs-task", "fail")]
     public async Task<IActionResult> Fail(string no, [FromBody] FailReq req)
     {
         try { await _svc.FailAsync(no, req.ErrorMessage, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -66,6 +72,7 @@ public class WcsTaskController : ControllerBase
     }
 
     [HttpDelete("{no}")]
+    [RequirePermission("wms-wcs-task", "del")]
     public async Task<IActionResult> Delete(string no)
     {
         try { await _svc.DeleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

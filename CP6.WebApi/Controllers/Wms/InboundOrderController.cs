@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ public class InboundOrderController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-inbound-order", "add")]
     public async Task<IActionResult> Create([FromBody] InboundOrderDto dto)
     {
         try
@@ -44,6 +46,7 @@ public class InboundOrderController : ControllerBase
     }
 
     [HttpPut("{no}")]
+    [RequirePermission("wms-inbound-order", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] InboundOrderDto dto)
     {
         try
@@ -55,6 +58,7 @@ public class InboundOrderController : ControllerBase
     }
 
     [HttpDelete("{no}")]
+    [RequirePermission("wms-inbound-order", "del")]
     public async Task<IActionResult> Delete(string no)
     {
         try
@@ -66,6 +70,7 @@ public class InboundOrderController : ControllerBase
     }
 
     [HttpPost("{no}/confirm")]
+    [RequirePermission("wms-inbound-order", "confirm")]
     public async Task<IActionResult> Confirm(string no)
     {
         try
@@ -77,6 +82,7 @@ public class InboundOrderController : ControllerBase
     }
 
     [HttpPost("{no}/cancel")]
+    [RequirePermission("wms-inbound-order", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class CrossDockController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-cross-dock", "add")]
     public async Task<IActionResult> Create([FromBody] CrossDockOrderDto dto)
     {
         try
@@ -38,6 +40,7 @@ public class CrossDockController : ControllerBase
     }
 
     [HttpPost("{no}/execute")]
+    [RequirePermission("wms-cross-dock", "execute")]
     public async Task<IActionResult> Execute(string no)
     {
         try { await _svc.ExecuteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -46,6 +49,7 @@ public class CrossDockController : ControllerBase
     }
 
     [HttpPost("{no}/cancel")]
+    [RequirePermission("wms-cross-dock", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try { await _svc.CancelAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

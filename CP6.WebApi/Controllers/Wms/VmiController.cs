@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class VmiController : ControllerBase
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchBillingsAsync(customerCd, yearMonth, confirmed) });
 
     [HttpPost("billings/calculate")]
+    [RequirePermission("wms-vmi", "calculate")]
     public async Task<IActionResult> Calculate([FromBody] CalculateRequest req)
     {
         try
@@ -38,6 +40,7 @@ public class VmiController : ControllerBase
     }
 
     [HttpPost("billings/{no}/confirm")]
+    [RequirePermission("wms-vmi", "confirm")]
     public async Task<IActionResult> Confirm(string no)
     {
         try { await _svc.ConfirmBillingAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

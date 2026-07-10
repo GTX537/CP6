@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class PalletController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-pallet", "add")]
     public async Task<IActionResult> Create([FromBody] PalletDto dto)
     {
         try
@@ -38,6 +40,7 @@ public class PalletController : ControllerBase
     }
 
     [HttpPut("{no}")]
+    [RequirePermission("wms-pallet", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] PalletDto dto)
     {
         try { await _svc.UpdateAsync(no, dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -45,6 +48,7 @@ public class PalletController : ControllerBase
     }
 
     [HttpPost("{no}/complete-building")]
+    [RequirePermission("wms-pallet", "complete")]
     public async Task<IActionResult> CompleteBuilding(string no)
     {
         try { await _svc.CompleteBuildingAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -52,6 +56,7 @@ public class PalletController : ControllerBase
     }
 
     [HttpPost("{no}/move-to-shipping")]
+    [RequirePermission("wms-pallet", "move")]
     public async Task<IActionResult> MoveToShipping(string no, [FromBody] MoveRequest req)
     {
         try { await _svc.MoveToShippingWaitAsync(no, req.ToLocationCd, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -59,6 +64,7 @@ public class PalletController : ControllerBase
     }
 
     [HttpPost("{no}/mark-shipped")]
+    [RequirePermission("wms-pallet", "ship")]
     public async Task<IActionResult> MarkShipped(string no, [FromBody] ShipRequest req)
     {
         try { await _svc.MarkShippedAsync(no, req.OutboundNo, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -66,6 +72,7 @@ public class PalletController : ControllerBase
     }
 
     [HttpDelete("{no}")]
+    [RequirePermission("wms-pallet", "del")]
     public async Task<IActionResult> Delete(string no)
     {
         try { await _svc.DeleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,7 @@ public class IotMonitorController : ControllerBase
     }
 
     [HttpPost("sensors")]
+    [RequirePermission("wms-iot", "add")]
     public async Task<IActionResult> CreateSensor([FromBody] IotSensorDto dto)
     {
         try
@@ -39,6 +41,7 @@ public class IotMonitorController : ControllerBase
     }
 
     [HttpPut("sensors/{id}")]
+    [RequirePermission("wms-iot", "edit")]
     public async Task<IActionResult> UpdateSensor(string id, [FromBody] IotSensorDto dto)
     {
         try { await _svc.UpdateSensorAsync(id, dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -46,6 +49,7 @@ public class IotMonitorController : ControllerBase
     }
 
     [HttpDelete("sensors/{id}")]
+    [RequirePermission("wms-iot", "del")]
     public async Task<IActionResult> DeleteSensor(string id)
     {
         try { await _svc.DeleteSensorAsync(id, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -58,6 +62,7 @@ public class IotMonitorController : ControllerBase
         => Ok(new { code = 0, message = "OK", data = await _svc.GetReadingsAsync(id, from, to, limit) });
 
     [HttpPost("sensors/{id}/readings")]
+    [RequirePermission("wms-iot", "ingest")]
     public async Task<IActionResult> PostReading(string id, [FromBody] PostReadingReq req)
     {
         try { await _svc.PostReadingAsync(id, req.Value, req.ReadAt, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -66,6 +71,7 @@ public class IotMonitorController : ControllerBase
 
     /// <summary>疑似データ生成（デモ用）— 全センサ × N 件</summary>
     [HttpPost("simulate")]
+    [RequirePermission("wms-iot", "simulate")]
     public async Task<IActionResult> Simulate([FromQuery] int count = 1)
     {
         var n = await _svc.SimulateAsync(count, CurrentUser);

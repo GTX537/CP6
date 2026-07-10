@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ public class OutboundOrderController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-outbound-order", "add")]
     public async Task<IActionResult> Create([FromBody] OutboundOrderDto dto)
     {
         try
@@ -44,6 +46,7 @@ public class OutboundOrderController : ControllerBase
     }
 
     [HttpPut("{no}")]
+    [RequirePermission("wms-outbound-order", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] OutboundOrderDto dto)
     {
         try
@@ -55,6 +58,7 @@ public class OutboundOrderController : ControllerBase
     }
 
     [HttpDelete("{no}")]
+    [RequirePermission("wms-outbound-order", "del")]
     public async Task<IActionResult> Delete(string no)
     {
         try
@@ -66,6 +70,7 @@ public class OutboundOrderController : ControllerBase
     }
 
     [HttpPost("{no}/confirm")]
+    [RequirePermission("wms-outbound-order", "confirm")]
     public async Task<IActionResult> Confirm(string no)
     {
         try
@@ -77,6 +82,7 @@ public class OutboundOrderController : ControllerBase
     }
 
     [HttpPost("{no}/cancel")]
+    [RequirePermission("wms-outbound-order", "cancel")]
     public async Task<IActionResult> Cancel(string no)
     {
         try
@@ -89,6 +95,7 @@ public class OutboundOrderController : ControllerBase
 
     /// <summary>引当実行（FIFO + 期限優先）</summary>
     [HttpPost("{no}/allocate")]
+    [RequirePermission("wms-outbound-order", "allocate")]
     public async Task<IActionResult> Allocate(string no)
     {
         try
@@ -102,6 +109,7 @@ public class OutboundOrderController : ControllerBase
 
     /// <summary>ピッキング開始（Allocated → Picking）</summary>
     [HttpPost("{no}/start-picking")]
+    [RequirePermission("wms-outbound-order", "pick")]
     public async Task<IActionResult> StartPicking(string no)
     {
         try
@@ -114,6 +122,7 @@ public class OutboundOrderController : ControllerBase
 
     /// <summary>出庫確定（OUT + 出荷区分なら梱包採番）</summary>
     [HttpPost("{no}/ship")]
+    [RequirePermission("wms-outbound-order", "ship")]
     public async Task<IActionResult> Ship(string no, [FromBody] ShipRequest req)
     {
         try
@@ -129,6 +138,7 @@ public class OutboundOrderController : ControllerBase
 
     /// <summary>MES 製造指図 → 材料出庫指示を自動生成</summary>
     [HttpPost("from-work-order/{workOrderNo}")]
+    [RequirePermission("wms-outbound-order", "add")]
     public async Task<IActionResult> FromWorkOrder(string workOrderNo)
     {
         try
@@ -141,6 +151,7 @@ public class OutboundOrderController : ControllerBase
 
     /// <summary>PA 受注 → 出荷指示を自動生成</summary>
     [HttpPost("from-order/{webOrderNo}")]
+    [RequirePermission("wms-outbound-order", "add")]
     public async Task<IActionResult> FromOrder(string webOrderNo)
     {
         try

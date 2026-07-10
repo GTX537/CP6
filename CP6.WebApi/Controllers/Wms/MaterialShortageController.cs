@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ public class MaterialShortageController : ControllerBase
         });
 
     [HttpPost("{id:guid}/resolve")]
+    [RequirePermission("wms-material-shortage", "resolve")]
     public async Task<IActionResult> Resolve(Guid id, [FromBody] ShortageActionRequest? req)
     {
         try
@@ -49,6 +51,7 @@ public class MaterialShortageController : ControllerBase
     }
 
     [HttpPost("{id:guid}/dismiss")]
+    [RequirePermission("wms-material-shortage", "dismiss")]
     public async Task<IActionResult> Dismiss(Guid id, [FromBody] ShortageActionRequest? req)
     {
         try

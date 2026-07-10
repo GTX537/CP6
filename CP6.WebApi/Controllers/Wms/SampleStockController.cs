@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class SampleStockController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-sample-stock", "add")]
     public async Task<IActionResult> Create([FromBody] SampleDto dto)
     {
         try
@@ -38,6 +40,7 @@ public class SampleStockController : ControllerBase
     }
 
     [HttpPut("{no}")]
+    [RequirePermission("wms-sample-stock", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] SampleDto dto)
     {
         try { await _svc.UpdateAsync(no, dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -45,6 +48,7 @@ public class SampleStockController : ControllerBase
     }
 
     [HttpPost("{no}/lend")]
+    [RequirePermission("wms-sample-stock", "lend")]
     public async Task<IActionResult> Lend(string no, [FromBody] LendRequest req)
     {
         try { await _svc.LendAsync(no, req.LentTo, req.ExpectedReturnDate, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -52,6 +56,7 @@ public class SampleStockController : ControllerBase
     }
 
     [HttpPost("{no}/return")]
+    [RequirePermission("wms-sample-stock", "return")]
     public async Task<IActionResult> Return(string no)
     {
         try { await _svc.ReturnAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -59,6 +64,7 @@ public class SampleStockController : ControllerBase
     }
 
     [HttpPost("{no}/expire")]
+    [RequirePermission("wms-sample-stock", "expire")]
     public async Task<IActionResult> Expire(string no)
     {
         try { await _svc.ExpireAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -70,6 +76,7 @@ public class SampleStockController : ControllerBase
         => Ok(new { code = 0, message = "OK", data = await _svc.OverdueAsync() });
 
     [HttpDelete("{no}")]
+    [RequirePermission("wms-sample-stock", "del")]
     public async Task<IActionResult> Delete(string no)
     {
         try { await _svc.DeleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

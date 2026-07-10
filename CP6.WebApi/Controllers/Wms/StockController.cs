@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Wms;
@@ -80,6 +81,7 @@ public class StockController : ControllerBase
 
     /// <summary>在庫変動 1 件適用（汎用エンドポイント）</summary>
     [HttpPost("apply")]
+    [RequirePermission("wms-stock", "adjust")]
     public async Task<IActionResult> Apply([FromBody] StockMovementRequest req, CancellationToken ct)
     {
         req.OperatorCd ??= CurrentUser;
@@ -100,6 +102,7 @@ public class StockController : ControllerBase
 
     /// <summary>棚移動</summary>
     [HttpPost("move")]
+    [RequirePermission("wms-stock", "move")]
     public async Task<IActionResult> Move([FromBody] StockMoveRequest req, CancellationToken ct)
     {
         req.OperatorCd ??= CurrentUser;

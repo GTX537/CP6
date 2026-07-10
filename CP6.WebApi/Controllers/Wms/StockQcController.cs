@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ public class StockQcController : ControllerBase
 
     /// <summary>POST /api/wms/stock-qc/{stockId}/set</summary>
     [HttpPost("{stockId:guid}/set")]
+    [RequirePermission("wms-stock-qc", "set")]
     public async Task<IActionResult> SetSingle(Guid stockId, [FromBody] SetStockQcRequest req)
     {
         if (string.IsNullOrWhiteSpace(req.NewStatus))
@@ -31,6 +33,7 @@ public class StockQcController : ControllerBase
 
     /// <summary>POST /api/wms/stock-qc/by-work-order/{workOrderNo}</summary>
     [HttpPost("by-work-order/{workOrderNo}")]
+    [RequirePermission("wms-stock-qc", "set")]
     public async Task<IActionResult> MarkByWO(string workOrderNo, [FromBody] SetStockQcRequest req)
     {
         if (string.IsNullOrWhiteSpace(req.NewStatus))

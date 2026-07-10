@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.AspNetCore.Authorization;
@@ -40,6 +41,7 @@ public class OutboundRoutingController : ControllerBase
 
     /// <summary>ルール新規作成。</summary>
     [HttpPost]
+    [RequirePermission("wms-outbound-routing", "add")]
     public async Task<IActionResult> Create([FromBody] OutboundRoutingRule rule)
     {
         try
@@ -55,6 +57,7 @@ public class OutboundRoutingController : ControllerBase
 
     /// <summary>ルール更新。</summary>
     [HttpPut("{id:guid}")]
+    [RequirePermission("wms-outbound-routing", "edit")]
     public async Task<IActionResult> Update(Guid id, [FromBody] OutboundRoutingRule rule)
     {
         try
@@ -70,6 +73,7 @@ public class OutboundRoutingController : ControllerBase
 
     /// <summary>ルール削除（論理削除）。</summary>
     [HttpDelete("{id:guid}")]
+    [RequirePermission("wms-outbound-routing", "del")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try

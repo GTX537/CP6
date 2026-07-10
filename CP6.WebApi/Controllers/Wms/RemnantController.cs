@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class RemnantController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-remnant", "add")]
     public async Task<IActionResult> Create([FromBody] RemnantDto dto)
     {
         try
@@ -38,6 +40,7 @@ public class RemnantController : ControllerBase
     }
 
     [HttpPut("{no}")]
+    [RequirePermission("wms-remnant", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] RemnantDto dto)
     {
         try { await _svc.UpdateAsync(no, dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -49,6 +52,7 @@ public class RemnantController : ControllerBase
         => Ok(new { code = 0, message = "OK", data = await _svc.MatchAsync(materialType, minWidthMm, minLengthMm) });
 
     [HttpPost("{no}/reserve")]
+    [RequirePermission("wms-remnant", "reserve")]
     public async Task<IActionResult> Reserve(string no, [FromBody] ReserveRequest req)
     {
         try { await _svc.ReserveAsync(no, req.ReservedFor, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -56,6 +60,7 @@ public class RemnantController : ControllerBase
     }
 
     [HttpPost("{no}/unreserve")]
+    [RequirePermission("wms-remnant", "reserve")]
     public async Task<IActionResult> Unreserve(string no)
     {
         try { await _svc.UnreserveAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -63,6 +68,7 @@ public class RemnantController : ControllerBase
     }
 
     [HttpPost("{no}/use")]
+    [RequirePermission("wms-remnant", "use")]
     public async Task<IActionResult> MarkUsed(string no)
     {
         try { await _svc.MarkUsedAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -70,6 +76,7 @@ public class RemnantController : ControllerBase
     }
 
     [HttpPost("{no}/dispose")]
+    [RequirePermission("wms-remnant", "dispose")]
     public async Task<IActionResult> Dispose(string no)
     {
         try { await _svc.DisposeAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -77,6 +84,7 @@ public class RemnantController : ControllerBase
     }
 
     [HttpDelete("{no}")]
+    [RequirePermission("wms-remnant", "del")]
     public async Task<IActionResult> Delete(string no)
     {
         try { await _svc.DeleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

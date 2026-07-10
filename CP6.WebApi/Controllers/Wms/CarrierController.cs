@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class CarrierController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-carrier", "add")]
     public async Task<IActionResult> Create([FromBody] CarrierShipmentDto dto)
     {
         try
@@ -38,6 +40,7 @@ public class CarrierController : ControllerBase
     }
 
     [HttpPost("{no}/event")]
+    [RequirePermission("wms-carrier", "event")]
     public async Task<IActionResult> AddEvent(string no, [FromBody] CarrierEventDto evt)
     {
         try { await _svc.AddEventAsync(no, evt, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -45,6 +48,7 @@ public class CarrierController : ControllerBase
     }
 
     [HttpPost("{no}/pickup")]
+    [RequirePermission("wms-carrier", "event")]
     public async Task<IActionResult> PickUp(string no)
     {
         try { await _svc.MarkPickedUpAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -52,6 +56,7 @@ public class CarrierController : ControllerBase
     }
 
     [HttpPost("{no}/in-transit")]
+    [RequirePermission("wms-carrier", "event")]
     public async Task<IActionResult> InTransit(string no)
     {
         try { await _svc.MarkInTransitAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -59,6 +64,7 @@ public class CarrierController : ControllerBase
     }
 
     [HttpPost("{no}/delivered")]
+    [RequirePermission("wms-carrier", "event")]
     public async Task<IActionResult> Delivered(string no)
     {
         try { await _svc.MarkDeliveredAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -66,6 +72,7 @@ public class CarrierController : ControllerBase
     }
 
     [HttpPost("{no}/fail")]
+    [RequirePermission("wms-carrier", "event")]
     public async Task<IActionResult> Fail(string no, [FromBody] FailReq req)
     {
         try { await _svc.MarkFailedAsync(no, req.Reason, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }

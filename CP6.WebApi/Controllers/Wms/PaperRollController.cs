@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class PaperRollController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("wms-paper-roll", "add")]
     public async Task<IActionResult> Create([FromBody] PaperRollDto dto)
     {
         try
@@ -38,6 +40,7 @@ public class PaperRollController : ControllerBase
     }
 
     [HttpPost("{no}/consume")]
+    [RequirePermission("wms-paper-roll", "consume")]
     public async Task<IActionResult> Consume(string no, [FromBody] ConsumeRequest req)
     {
         try
@@ -57,6 +60,7 @@ public class PaperRollController : ControllerBase
     }
 
     [HttpPost("slit")]
+    [RequirePermission("wms-paper-roll", "slit")]
     public async Task<IActionResult> Slit([FromBody] SlitRequest req)
     {
         try
@@ -68,6 +72,7 @@ public class PaperRollController : ControllerBase
     }
 
     [HttpPost("{no}/dispose")]
+    [RequirePermission("wms-paper-roll", "dispose")]
     public async Task<IActionResult> Dispose(string no)
     {
         try { await _svc.DisposeAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
