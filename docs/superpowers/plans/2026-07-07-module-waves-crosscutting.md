@@ -68,3 +68,17 @@
 ## 执行顺序与派单纪律
 
 M-WMS → M-ERP → M-MES → M-OA/WF → M-PUR → M-PLAN/PUB。波间不并行（权限种子表全局唯一索引易冲突）；波内 T 任务按依赖串行、测试补网类可并行派单。每波完成即更新 `cp6-global-audit-2026-07-07` 记忆对应条目。
+
+---
+
+## M-WMS 完成记录 + 跟踪票（2026-07-10）
+
+**M-WMS 已完成并入 main**（feat/m-wms-crosscutting，7 任务 T1-T7 逐任务审查 + 全支终审 Ready=Yes）：29 控制器 125 写端点贴 [RequirePermission] + 逐租户 MenuAction/RoleAction 种子（112 条/30 键）+ 菜单启动种子链接入(含 MenuKey 锚定) + fail-closed 反射测试 + 前端高危按钮 v-permission(44 条) + 9 实体 IAuditable + 5 账实回归测试。全量 1589 绿。
+
+**🔴 平台级跟踪票（全支终审 Important，影响全模块非仅 WMS）**：`TenantAdminService.CreateAsync`（CP6.Core/Services/Platform/TenantAdminService.cs:121-135）复制了 Sys_Role+Sys_RoleMenu 但**从不复制 Sys_RoleAction** → 运行时经 UI 新建的租户，其 admin 在下次应用重启前对**全部 [RequirePermission] 端点 403**（WMS/Space/Fin 皆中招）。重启自愈（各模块 PermissionSeed 启动扫全租户补种），现有租户全部正确。修法：仿菜单复制逻辑，在 CreateAsync 内从默认租户复制 Sys_RoleAction 到新租户。**属平台层，应随双模认证/平台包处理，不在模块波内。**
+
+**M-WMS follow-up 票（前端完整性，非 DoD 阻断）**：
+1. WMS 前端 add/edit/状态流转按钮 v-permission 全覆盖（本波只做高危+删除 44 条；约 30 状态键 + 全部 add/edit 待补）。
+2. WMS 前端硬编码 CJK 清理转 i18n 五语（发现 `t('急')`/`t('至急')`/`t('ヤマト運輸')` 等把 CJK 字面当 key 传 t() 的反模式）。
+3. 5 处「后端有 DELETE 端点但前端无删除按钮」缺口（remnant/plate-mold/sample-stock/wcs-task/iot 的 del）——产品拍板补按钮或收敛端点。
+4. 审计明细不对称（OutboundOrder 贴 IAuditable、其 Detail 未贴）——终审判非缺陷，如需明细留痕追加 `, IAuditable` 即可零迁移。
