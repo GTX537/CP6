@@ -36,6 +36,16 @@
  *   末尾のサンプル UPDATE を参考にカスタマイズ。
  * ============================================================ */
 
+/* ============================================================
+ * 【M-WMS Task 2 追記】接入方式の正本は C# 起動シード
+ *   CP6.WebApi/Seed/WmsMenuSeed.cs（Program.cs 起動チェーンで冪等実行）。
+ *   クリーンデプロイ時、WMS メニューは起動時に自動投入され、
+ *   30 個の権限リソースキーの錨定行に MenuKey が明示設定される。
+ *   本 SQL は「ドキュメント／手動フォールバック」用に C# シードと同期維持。
+ *   本ファイル §2.5（MenuKey 明示更新）が権限キー ↔ メニュー行の対応の正本表。
+ *   詳細対応表: docs/seeds/wms-key-menu-anchor.md
+ * ============================================================ */
+
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
 BEGIN TRY
@@ -87,6 +97,10 @@ IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 416)
     INSERT INTO Sys_Menus VALUES (416, N'WMSダッシュボード',    N'/wms/dashboard',          N'DataAnalysis',   400, 416, 1, SYSDATETIME());
 IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 417)
     INSERT INTO Sys_Menus VALUES (417, N'材料欠品管理',          N'/wms/material-shortage', N'Warning',        400, 417, 1, SYSDATETIME());
+/* 在庫QC(保留/放行)  StockQcController（/api/wms/stock-qc）用。T1【菜单缺】補充。
+ * MenuId=429（418 は backlog 波次拣货計画が予約済のため回避）／OrderNo=418 で 在庫 コア簇内表示。 */
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 429)
+    INSERT INTO Sys_Menus VALUES (429, N'在庫QC(保留/放行)',     N'/wms/stock-qc',          N'CircleCheck',    400, 418, 1, SYSDATETIME());
 
 /* ------------------------------------------------------------
  * 3. 拡張機能 (Phase WM-5 ~ WM-7)  MenuId 420~439
@@ -166,6 +180,44 @@ IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 483)
  * ------------------------------------------------------------ */
 IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 419)
     INSERT INTO Sys_Menus VALUES (419, N'出庫ルーティング',     N'/wms/outbound-routing',   N'Switch',         400, 419, 1, SYSDATETIME());
+
+/* ------------------------------------------------------------
+ * 2.5 MenuKey 明示更新（M-WMS Task 2 正本）
+ *   権限リソースキー = 錨定メニュー行の MenuKey（連字符小文字）。
+ *   30 個の権限キーを恰も一つの錨定行に明示設定。RoutePath 自動派生は使わない
+ *   （/wms/stock-take→wms-stock-take ≠ wms-stocktake 等 8 件が食い違うため）。
+ *   非錨定の一覧/補助ページは MenuKey を設定せず（権限を担わない）。
+ * ------------------------------------------------------------ */
+UPDATE Sys_Menus SET MenuKey = N'wms-warehouse'         WHERE MenuId = 401;
+UPDATE Sys_Menus SET MenuKey = N'wms-location'          WHERE MenuId = 402;
+UPDATE Sys_Menus SET MenuKey = N'wms-stock'             WHERE MenuId = 403;
+UPDATE Sys_Menus SET MenuKey = N'wms-inbound-order'     WHERE MenuId = 405;  -- 405=登録(主) / 404=一覧は非錨定
+UPDATE Sys_Menus SET MenuKey = N'wms-inbound-receipt'   WHERE MenuId = 406;
+UPDATE Sys_Menus SET MenuKey = N'wms-outbound-order'    WHERE MenuId = 408;  -- 408=登録(主) / 407=一覧は非錨定
+UPDATE Sys_Menus SET MenuKey = N'wms-stocktake'         WHERE MenuId = 415;  -- 415=作業(主) / 414=一覧は非錨定
+UPDATE Sys_Menus SET MenuKey = N'wms-material-shortage' WHERE MenuId = 417;
+UPDATE Sys_Menus SET MenuKey = N'wms-stock-qc'          WHERE MenuId = 429;  -- T1 菜单缺 補充
+UPDATE Sys_Menus SET MenuKey = N'wms-outbound-routing'  WHERE MenuId = 419;
+UPDATE Sys_Menus SET MenuKey = N'wms-qc-inspection'     WHERE MenuId = 421;  -- Route=/wms/inspection と食違うため明示
+UPDATE Sys_Menus SET MenuKey = N'wms-slotting'          WHERE MenuId = 422;
+UPDATE Sys_Menus SET MenuKey = N'wms-replenish'         WHERE MenuId = 423;
+UPDATE Sys_Menus SET MenuKey = N'wms-cross-dock'        WHERE MenuId = 424;
+UPDATE Sys_Menus SET MenuKey = N'wms-kitting'           WHERE MenuId = 425;  -- Route=/wms/kit と食違うため明示
+UPDATE Sys_Menus SET MenuKey = N'wms-rma'               WHERE MenuId = 426;
+UPDATE Sys_Menus SET MenuKey = N'wms-lot-trace'         WHERE MenuId = 427;
+UPDATE Sys_Menus SET MenuKey = N'wms-expiry'            WHERE MenuId = 428;
+UPDATE Sys_Menus SET MenuKey = N'wms-paper-roll'        WHERE MenuId = 441;
+UPDATE Sys_Menus SET MenuKey = N'wms-remnant'           WHERE MenuId = 442;
+UPDATE Sys_Menus SET MenuKey = N'wms-plate-mold'        WHERE MenuId = 443;  -- Route=/wms/plate-mold-stock と食違うため明示
+UPDATE Sys_Menus SET MenuKey = N'wms-ink'               WHERE MenuId = 444;  -- Route=/wms/ink-lot と食違うため明示
+UPDATE Sys_Menus SET MenuKey = N'wms-pallet'            WHERE MenuId = 445;
+UPDATE Sys_Menus SET MenuKey = N'wms-vmi'               WHERE MenuId = 446;
+UPDATE Sys_Menus SET MenuKey = N'wms-sample-stock'      WHERE MenuId = 447;
+UPDATE Sys_Menus SET MenuKey = N'wms-mobile'            WHERE MenuId = 461;  -- Route=/wms/mobile-task と食違うため明示
+UPDATE Sys_Menus SET MenuKey = N'wms-wcs-task'          WHERE MenuId = 462;
+UPDATE Sys_Menus SET MenuKey = N'wms-carrier'           WHERE MenuId = 463;
+UPDATE Sys_Menus SET MenuKey = N'wms-iot'               WHERE MenuId = 464;  -- Route=/wms/iot-monitor と食違うため明示
+UPDATE Sys_Menus SET MenuKey = N'wms-stock-dwell'       WHERE MenuId = 483;
 
 /* ------------------------------------------------------------
  * 7. 管理者ロール (RoleId=1) に全 WMS メニューを付与

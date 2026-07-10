@@ -803,6 +803,11 @@ using (var scope = app.Services.CreateScope())
     CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
 
+    // M-WMS 横切接线 Task 2：WMS 400 段菜单启动幂等种子（洁净部署自动可达）+ 30 权限键锚定行显式 MenuKey。
+    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：同一启动内非锚定 WMS 内容页(null key)获派生键，
+    //   而锚定行 MenuKey 非 null 不受回填影响（详见 WmsMenuSeed 注释）。
+    CP6.WebApi.Seed.WmsMenuSeed.EnsureSeeded(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {
