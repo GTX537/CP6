@@ -16,7 +16,7 @@ namespace CP6.WebApi.Seed;
 ///
 /// 数据来源（执行真相，与强校验 1:1）：
 ///  - 下方 <see cref="Actions"/> 清单直接从 <c>CP6.WebApi/Controllers/Wms/*.cs</c> 的
-///    <c>[RequirePermission(键,action)]</c> 属性 grep 去重派生（106 条去重 (键,action)，覆盖全 30 键）。
+///    <c>[RequirePermission(键,action)]</c> 属性 grep 去重派生（112 条去重 (键,action)，覆盖全 30 键）。
 ///  - MenuId 经锚定表 <c>docs/seeds/wms-key-menu-anchor.md</c> 由权限键映射而得（30 键 → 锚定 MenuId）。
 ///  - 文档留档：<c>docs/seeds/wms-roleaction-seed.sql</c>（本 C# 为正本，SQL 与此一致）。
 ///
@@ -33,7 +33,7 @@ public static class WmsPermissionSeed
     /// <summary>
     /// (MenuId, ActionCode, ActionName) —— 与各 WMS 控制器 [RequirePermission(键, action)] 去重后 1:1。
     /// MenuId 依 <c>docs/seeds/wms-key-menu-anchor.md</c> 锚定；ActionName 为中文显示名（照 Fin 种子风格）。
-    /// 计 106 条，覆盖 30 个 menu-key。
+    /// 计 112 条，覆盖 30 个 menu-key。
     /// </summary>
     private static readonly (int MenuId, string Code, string Name)[] Actions =
     {

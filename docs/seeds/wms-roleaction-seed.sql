@@ -2,7 +2,7 @@
  * WMS 倉庫管理 権限点（MenuAction / RoleAction）シードデータ（M-WMS 横切接線 Task 3b）
  * ============================================================
  * 正本   : CP6.WebApi/Seed/WmsPermissionSeed.cs（启动幂等・逐租户・执行真相）。
- *          本 SQL は文档留档／手动灾备用。清单必须与 C# Actions[] 一致（106 条 (键,action)／30 键）。
+ *          本 SQL は文档留档／手动灾备用。清单必须与 C# Actions[] 一致（112 条 (键,action)／30 键）。
  * 対象 DB     : CP6DB (SQL Server)
  * 対象テーブル : Sys_MenuAction（授権可能な操作点の登記）
  *              Sys_RoleAction（管理者ロール RoleId=1 への全動作授権）
@@ -35,7 +35,7 @@ BEGIN TRANSACTION;
 PRINT '=== WMS 権限点（MenuAction/RoleAction）シード 開始 ===';
 
 /* ------------------------------------------------------------
- * 0. 動作定義テーブル（MenuId, ActionCode, ActionName）——106 条／租户
+ * 0. 動作定義テーブル（MenuId, ActionCode, ActionName）——112 条／租户
  *    C# WmsPermissionSeed.Actions[] と逐字一致。
  * ------------------------------------------------------------ */
 DECLARE @Actions TABLE (MenuId INT, ActionCode NVARCHAR(50), ActionName NVARCHAR(100));
@@ -113,7 +113,7 @@ INSERT INTO @Actions (MenuId, ActionCode, ActionName) VALUES
  (464, N'ingest', N'数据取込'), (464, N'simulate', N'模拟'),
  -- 483 wms-stock-dwell
  (483, N'view', N'查看');
--- 合計 106 動作定義／租户（30 键）
+-- 合計 112 動作定義／租户（30 键）
 
 /* ------------------------------------------------------------
  * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
@@ -149,8 +149,8 @@ SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId IN (SELECT DISTINCT MenuI
 SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId IN (SELECT DISTINCT MenuId FROM @Actions);
 
 PRINT N'  租户数                       : ' + CAST(@Tn AS NVARCHAR(10));
-PRINT N'  MenuAction 件数(WMS)         : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 106 想定）';
-PRINT N'  RoleAction 件数(管理者・WMS) : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 106 想定）';
+PRINT N'  MenuAction 件数(WMS)         : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 112 想定）';
+PRINT N'  RoleAction 件数(管理者・WMS) : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 112 想定）';
 
 COMMIT TRANSACTION;
 PRINT '=== WMS 権限点シード 完了 ===';
