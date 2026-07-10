@@ -2,7 +2,7 @@
 
 > 只读盘点 · 2026-07-10 · 对应 07-09 配置基建 spec §7.6（§1④/§3/§5）
 > 三维度：**环节被关 × 审批解绑/换绑 × 校验器变化**，逐 DocType 给可执行处置。
-> 状态：待用户评审；§3 争议点拍板后回写本文件。
+> 状态：**已评审收口（2026-07-10，用户全采）**——§3 七个争议点全部按推荐拍板，见各条【已拍板】标注。
 
 ## 0. 先说两个影响全表的现状事实（代码实读）
 
@@ -88,14 +88,14 @@ spec §1④口径3 原文是"**新配置从下一次迁移动作起约束**"（p
 | **JournalEntry（FinJournalPost）** | PendingReview 实例走完，回调过账与引擎同事务（原子铁律已实现，不存在"OA 过了账没落"的窗口）；解绑走 `ApprovalService` 路径=抛异常 fail-closed ✅ 财务线语义正确 | 复核人≠制单人靠 `DecidedById` 回传——换绑到"自动通过"型流程会让 checker=starter，绑定保存时应校验流程含人工审批节点（记票） |
 | **BudgetVersion（A5_Budget）** | 同 Journal | BudgetGuard（`Fin\BudgetGuard.cs`）= **现存"校验器配置变化"活先例**：Block/Warn 模式由 BudgetVersion 配置驱动，变化即时作用于下一次过账、已过账不回溯——与口径3 per-action 完全一致，④ 的 GuardConfig 语义可直接对齐此先例 |
 
-## 3. 需要用户拍板的争议点
+## 3. 争议点拍板（2026-07-10 用户全采推荐项）
 
-1. **口径3 的精确语义：per-action 还是 per-doc pin？** spec 原文="新配置从下一次迁移动作起约束"（per-action：在途单下一步就按新图走）；记忆/任务转述="在途单按创建时配置走完"（per-doc：需给每张单存配置快照）。行为差异见 0.3。**推荐 per-action（spec 原文）**：零快照存储、旧配置引用失效校验器时不会把在途单困死；代价=在途单行为随配置变、需写进顾问操作须知。若拍 per-doc pin，则 DocFlowConfig 需加版本表+单据存 ConfigVersion，施工量显著上升。
-2. **④ 开工是否前置 WFS 版本治理？** 现状无版本 pin（0.2），"在途审批自然走完"仅在换绑/停用场景成立，同 FlowKey 原地改版会击穿。**推荐最低限**：不等版本治理波，先立运维硬规约+代码闸："改流程=建新 FlowKey+换绑，禁止原地改已投产 FlowDef 的 SchemaJson（有在途实例时保存拒绝 E-WF）"——这个保存闸是小改动，建议随 ④ 一起做。
-3. **解绑语义统一**：ApprovalService fail-closed（抛异常）vs Pur Adapter fail-open（自动放行）并存。**推荐**：④ 体系下"不想审批"的唯一正规动作=删 ApprovalPoint（配置层）；"ApprovalPoint 在而 Binding 停用/缺失"=保存时预警+运行时 E-CONF 拦迁移（fail-closed）。Pur 的 fail-open 兼容语义是否收敛（收敛=存量未配审批的租户 PR/PO 提交会开始报错，需配套种子"直通绑定"或迁移公告）。
-4. **Invoiced 是否进 OptionalSteps**（租户不在系统内开票，备选边 Shipped→Closed）？若进，是否强制与 F1 模块开关（①FeatureGate）联动一致性校验？
-5. **关闭 Quotation 整环节时在途报价的默认处置**：推荐"在途走完可转单，仅藏新建"+可选批量作废运维动作；还是一刀切冻结？
-6. **管理员撤回在途审批的配套是否进 v1**：各状态机的 PendingApproval/Submitted→Draft 显式回退边+撤回工具，是"审批解绑后放行在途单"的唯一正规通道；不做则解绑后 PendingApproval 单只能等实例走完。
-7. **变更单跨配置 Apply**：目标态被裁时 E-CONF 拒绝+人工改单（推荐，语义安全）vs 自动映射到备选边（省人工，但等于替用户猜业务语义）。
+1. **【已拍板→per-action】口径3 的精确语义：per-action 还是 per-doc pin？** spec 原文="新配置从下一次迁移动作起约束"（per-action：在途单下一步就按新图走）；记忆/任务转述="在途单按创建时配置走完"（per-doc：需给每张单存配置快照）。行为差异见 0.3。**推荐 per-action（spec 原文）**：零快照存储、旧配置引用失效校验器时不会把在途单困死；代价=在途单行为随配置变、需写进顾问操作须知。若拍 per-doc pin，则 DocFlowConfig 需加版本表+单据存 ConfigVersion，施工量显著上升。
+2. **【已拍板→不前置，随④做最低限保存闸】④ 开工是否前置 WFS 版本治理？** 现状无版本 pin（0.2），"在途审批自然走完"仅在换绑/停用场景成立，同 FlowKey 原地改版会击穿。**推荐最低限**：不等版本治理波，先立运维硬规约+代码闸："改流程=建新 FlowKey+换绑，禁止原地改已投产 FlowDef 的 SchemaJson（有在途实例时保存拒绝 E-WF）"——这个保存闸是小改动，建议随 ④ 一起做。
+3. **【已拍板→fail-closed 统一，Pur fail-open 收敛+种子直通绑定】解绑语义统一**：ApprovalService fail-closed（抛异常）vs Pur Adapter fail-open（自动放行）并存。**推荐**：④ 体系下"不想审批"的唯一正规动作=删 ApprovalPoint（配置层）；"ApprovalPoint 在而 Binding 停用/缺失"=保存时预警+运行时 E-CONF 拦迁移（fail-closed）。Pur 的 fail-open 兼容语义是否收敛（收敛=存量未配审批的租户 PR/PO 提交会开始报错，需配套种子"直通绑定"或迁移公告）。
+4. **【已拍板→进白名单+F1 FeatureGate 联动校验+关闭时 dry-run】Invoiced 是否进 OptionalSteps**（租户不在系统内开票，备选边 Shipped→Closed）？若进，是否强制与 F1 模块开关（①FeatureGate）联动一致性校验？
+5. **【已拍板→在途走完可转单仅藏新建+批量作废运维动作可选】关闭 Quotation 整环节时在途报价的默认处置**：推荐"在途走完可转单，仅藏新建"+可选批量作废运维动作；还是一刀切冻结？
+6. **【已拍板→进 v1：回退边+撤回工具】管理员撤回在途审批的配套是否进 v1**：各状态机的 PendingApproval/Submitted→Draft 显式回退边+撤回工具，是"审批解绑后放行在途单"的唯一正规通道；不做则解绑后 PendingApproval 单只能等实例走完。
+7. **【已拍板→E-CONF 拒绝+人工改单，不做自动映射】变更单跨配置 Apply**：目标态被裁时 E-CONF 拒绝+人工改单（推荐，语义安全）vs 自动映射到备选边（省人工，但等于替用户猜业务语义）。
 
 **关键文件索引**：`docs/superpowers/specs/2026-07-09-tenant-config-platform-design.md`（§1④/§3/§5/§7）、`CP6.Core\Services\Wf\ApprovalService.cs`（防重+fail-closed）、`CP6.Core\Services\Pur\Contracts\ApprovalServiceAdapter.cs`（fail-open）、`CP6.Core\Services\Wf\FlowEngine.cs:433`（无版本 pin 的 LoadSchemaAsync）、`CP6.Entity\DomainModels\Wf\Wf_FlowDef.cs:8`（阶段1 简化自认）、`CP6.Entity\DomainModels\Erp\Order.cs:121`（老单生命周期）、`CP6.Core\Services\Fin\BudgetGuard.cs`（校验器配置化活先例）。

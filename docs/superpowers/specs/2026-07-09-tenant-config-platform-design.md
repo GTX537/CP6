@@ -166,10 +166,10 @@ Item 主数据照前篇：通用窄表 + PaperPack 扩展表，MRP/WMS/MES 改�
 
 **显式发布制**：词典编辑保存后仅将该租户快照标记 stale（UI 提示「有未发布的术语变更」），运行快照照旧生效；显式「发布」触发后台任务按租户重建快照 → 版本号 bump → 前端按版本号拉新。不做保存即重发布（避免批量修改中间态外漏；与 ConfigBundle「导出=定稿」语义一致）。
 
-### 7.5 纸器 63 项目分拣表【盘点中 2026-07-10】
+### 7.5 纸器 63 项目分拣表【已拍板 2026-07-10】
 
-逐字段过 PA070 实体族（Order/OrderDetail/OrderProcess/OrderMaterial/OrderProcessNote），按核心/纸器包/SFS 三桶分拣，含 Service/Controller 消费点佐证；产出评审表待用户过目。
+实为 PA070 实体族全量 222 字段，四桶终局：核心 66 / 纸器包 97 / SFS 31 / 淘汰 28（mc 连携键/冗余列/旧审批字段，随老模块退役）。全表+13 项争议拍板见 `2026-07-10-pa070-field-triage.md`。写 plan 硬提示：HaibaiNo2 承重墙（授信/检索消费点须改指 CustomerCd）、OrderProcess/Material「写而不读」需拍受注快照是否为 WO 展开优先源、审批三字段收敛 IApprovalService 不平移。
 
-### 7.6 在途单据配置变更边界【盘点中 2026-07-10】
+### 7.6 在途单据配置变更边界【已拍板 2026-07-10】
 
-逐 DocType 枚举「环节被关×审批解绑×校验器变化」组合边界（§1④口径3 为总原则），含现存有状态机单据的纳入/不纳入判定；产出评审表待用户过目。
+v1 管辖=Sales v2 链 5 DocType；口径3 定为 **per-action**；解绑语义统一 fail-closed（Pur fail-open 收敛+种子直通绑定）；WFS 版本治理不前置、随④做「在途实例禁止原地改 SchemaJson」保存闸；Invoiced 进 OptionalSteps+F1 FeatureGate 联动；撤回工具进 v1；变更单跨配置 Apply 一律 E-CONF 拒绝。全表+7 项争议拍板见 `2026-07-10-docflow-boundary-inventory.md`。
