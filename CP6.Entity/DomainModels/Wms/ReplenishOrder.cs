@@ -15,7 +15,7 @@ namespace CP6.Entity.DomainModels.Wms;
 /// 第一版：日次バッチで GenerateAsync → MinQty 割れ製品を抽出 → 補充指示一括生成
 /// </remarks>
 [Table("T_ReplenishOrder")]
-public class ReplenishOrder : BaseBizEntity
+public class ReplenishOrder : BaseBizEntity, IAuditable
 {
     [Required, MaxLength(20)]
     public string ReplenishNo { get; set; } = string.Empty;

@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Wms;
 /// 4 段階フロー：0=計画 → 1=カウント中 → 2=差異確認中 → 3=承認待ち → 4=完了 / 9=取消
 /// </remarks>
 [Table("T_StockTake")]
-public class StockTake : BaseBizEntity
+public class StockTake : BaseBizEntity, IAuditable
 {
     /// <summary>棚卸NO（業務 PK）</summary>
     [Required, MaxLength(20)]

@@ -13,7 +13,7 @@ namespace CP6.Entity.DomainModels.Wms;
 /// 承認後、ADJ トランザクション発行で在庫を実盤数に上書き。
 /// </remarks>
 [Table("T_StockTakeDetail")]
-public class StockTakeDetail : BaseBizEntity
+public class StockTakeDetail : BaseBizEntity, IAuditable
 {
     /// <summary>棚卸NO（FK → T_StockTake.StockTakeNo）</summary>
     [Required, MaxLength(20)]

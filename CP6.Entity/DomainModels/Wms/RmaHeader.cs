@@ -13,7 +13,7 @@ namespace CP6.Entity.DomainModels.Wms;
 ///   0=申請受付 → 1=RMA番号発行 → 2=返品入庫 → 3=検査中 → 4=判定済 → 5=後処理完了 → 9=取消
 /// </remarks>
 [Table("T_RmaHeader")]
-public class RmaHeader : BaseBizEntity
+public class RmaHeader : BaseBizEntity, IAuditable
 {
     [Required, MaxLength(20)]
     public string RmaNo { get; set; } = string.Empty;

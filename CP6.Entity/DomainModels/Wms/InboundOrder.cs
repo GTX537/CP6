@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Wms;
 /// ステータス：0=下書き 1=確定済 2=入庫中（部分入庫）3=完了 9=取消
 /// </remarks>
 [Table("T_InboundOrder")]
-public class InboundOrder : BaseBizEntity
+public class InboundOrder : BaseBizEntity, IAuditable
 {
     /// <summary>入庫予定NO（業務 PK）</summary>
     [Required, MaxLength(20)]

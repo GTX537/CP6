@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Wms;
 /// ParentLocationCd で自己参照ツリーを形成。
 /// </remarks>
 [Table("T_Location")]
-public class Location : BaseBizEntity
+public class Location : BaseBizEntity, IAuditable
 {
     /// <summary>ロケーションCD（業務 PK）</summary>
     [Required, MaxLength(30)]

@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Wms;
 /// 業務 PK：WarehouseCd。1倉庫 → N ロケーション → N 在庫。
 /// </remarks>
 [Table("T_Warehouse")]
-public class Warehouse : BaseBizEntity
+public class Warehouse : BaseBizEntity, IAuditable
 {
     /// <summary>倉庫CD（業務 PK、3 桁英数字）</summary>
     [Required, MaxLength(10)]

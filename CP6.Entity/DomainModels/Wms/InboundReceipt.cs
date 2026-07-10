@@ -14,7 +14,7 @@ namespace CP6.Entity.DomainModels.Wms;
 /// 確定処理で StockMovementService.ApplyAsync(IN) を明細件数分実行する。
 /// </remarks>
 [Table("T_InboundReceipt")]
-public class InboundReceipt : BaseBizEntity
+public class InboundReceipt : BaseBizEntity, IAuditable
 {
     /// <summary>入庫実績NO（業務 PK）</summary>
     [Required, MaxLength(20)]
