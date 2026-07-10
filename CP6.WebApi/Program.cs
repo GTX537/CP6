@@ -808,6 +808,11 @@ using (var scope = app.Services.CreateScope())
     //   而锚定行 MenuKey 非 null 不受回填影响（详见 WmsMenuSeed 注释）。
     CP6.WebApi.Seed.WmsMenuSeed.EnsureSeeded(db);
 
+    // M-WMS 横切接线 Task 3b：WMS 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+    // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+    // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
+    CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {
