@@ -57,7 +57,9 @@ public static class WmsMenuSeed
         (417, "材料欠品管理",         "/wms/material-shortage",    "Warning",        400, 417, "wms-material-shortage"),
         // 429=在庫QC（品質保留/放行）：StockQcController（/api/wms/stock-qc）原无菜单行，T1 标注【菜单缺】。
         // MenuId 418 已被 backlog 的波次拣货计划保留，故取 429；OrderNo=418 使其在 在庫 コア簇内显示。
-        (429, "在庫QC(保留/放行)",    "/wms/stock-qc",             "CircleCheck",    400, 418, "wms-stock-qc"),
+        // RoutePath 指向 /wms/stock（QC 操作内嵌于 StockQueryView，无独立路由）——避免死导航链接；
+        // MenuKey 显式设 wms-stock-qc 不受 RoutePath 影响（终审 Minor#1）。
+        (429, "在庫QC(保留/放行)",    "/wms/stock",                "CircleCheck",    400, 418, "wms-stock-qc"),
         (419, "出庫ルーティング",     "/wms/outbound-routing",     "Switch",         400, 419, "wms-outbound-routing"),
 
         // ── 拡張機能 (WM-5~7)  420(parent) 421~428 ─────────────
