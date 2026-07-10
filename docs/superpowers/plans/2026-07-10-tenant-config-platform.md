@@ -987,3 +987,18 @@ public async Task Trim_variant_skip_quotation()   // 裁剪变体：跳见积租
 1. **Spec 覆盖**：§1①→T1/T2；§1②→T3；§1③→T4；§1④→T6/T7/T8（+拍板2/3→T9、ConditionJson/撤回→T10）；§1⑤→T5；§1⑥→T12；§2→T11；§3 接缝→各 Produces 块锁定签名待 Sales v2 消费；§5→各任务测试+T14；§4.1 双模认证显式范围外（独立 plan）。盘点拍板 #1~#13 全部有落点（#1→T8 per-action 测试；#2→T9 保存闸；#3→T9 PASSTHROUGH；#4→T7 F1 联动 Warning；#5→T7 DocTypeDisabled 语义注释+T14 变体测试；#6→T10 Withdraw；#7 变更单跨配置 Apply 属 Sales v2 plan（SalesOrderChange 实体不在本计划）——已在 spec 7.6 记录，Sales v2 plan 必须实现。
 2. **占位符扫描**：无 TBD/TODO；三处「先定位/先读」是明确的发现步骤（FlowDef 保存点、SubmitAsync 签名、FlowDef SchemaJson 节点名），各自附了定位命令。
 3. **类型一致性**：`IFeatureGate`/`INumberingService`/`ITerminologyResolver`/`DocFlowRegistry`/`IDocFlowEngine`/`IPackRouter`/`IConfigBundleService` 签名在 Produces 与后续 Consumes 引用处逐一核对一致；错误码不重号（E-CONF-001,010,015~017,020~027,030~031；E-WF-101~102,110~111）。
+
+---
+
+## 终审追加票据（P0 平台硬化 Fable 终审，2026-07-10）
+
+P0-T3 租户化改动经 Fable 终审（8 路查找×13 验证），必修四项已在分支 `feat/p0-platform-hardening`（commit 1d863c0）修复：#1 RoleController.Add 跨租户写注入、#2 启动兜底网复活已清空菜单、#3 Sys_RoleMenu 唯一约束、#4 SysRoleTenantize.Down() 回滚撞重复键。以下为终审确认但判为"记票走配置基建"的剩余项（严重度降序）：
+
+- [ ] **CFG-T#5 字段审计 EntityKey 碎片化**（CONFIRMED）：Sys_Role 主键改复合 `(TenantId,RoleId)` 后，`ExtractKey` 用 `|` 拼所有主键列，历史 `Sys_FieldAuditLog.EntityKey='7001'` 与新 `'<TenantId>|7001'` 两种格式并存；`FieldAuditController.GetRecord/GetList` 按精确匹配查 → 角色变更史断成两半。修法：一次性数据迁移改写历史 Sys_Role 的 EntityKey（`'<RoleId>'` → `'<DefaultTenant>|<RoleId>'`，存量角色皆归 A1），或接受并在运维须知记录。**建议随本计划 Step 3 运维须知一并处置。**
+- [ ] **CFG-T#6 新种子菜单不传播到存量租户**（CONFIRMED）：升级时新增 `{RoleId=1,MenuId=X}` 种子只盖章到默认租户；兜底网（#2 修复后）只随"首次补建管理员角色"播种，不向已有租户传播新菜单。租户化前是全局可见，现按租户漂移，且无"向所有租户传播新菜单"的工具。修法：提供一个幂等的"新菜单→所有启用租户 admin 角色"传播步骤（启动期或运维 API），或纳入配置基建的 Pack 发布链。
+- [ ] **CFG-T#7 SSO JIT 悬空 DefaultRoleId**（CONFIRMED，fail-closed，主要既有）：JIT/Upsert/Delete 三处都不校验 `Sys_TenantSsoConfig.DefaultRoleId` 在本租户存在；删掉被引用角色后新 SSO 用户空权限登录。租户化新增了"某 RoleId 在别租户有效但本租户无"的悬空向量。修法：`SsoConfigController.Put`/`TenantSsoConfigService.Upsert` 校验 DefaultRoleId 属当前租户；`RoleController.Delete` 加被引用检查（用户/SSO 配置）。
+- [ ] **CFG-T#8 SaveRoleMenus 不校验 roleId 存在**（CONFIRMED，既有、惰性）：可为本租户不存在的角色建孤儿 Sys_RoleMenu 行；权限聚合走 user→role→rolemenu，孤儿角色永不解析，惰性无害。修法：`SaveRoleMenus` 加 `Sys_Roles.AnyAsync(r=>r.RoleId==roleId)` 存在校验（对齐 `Update`）。
+- [ ] **CFG-T#9 SysRoleTenantize Step-4 一致性闸可能卡部署**（PLAUSIBLE，有意 fail-closed）：存量子表行若挂 `Guid.Empty`/已删租户且 RoleId 有效，THROW 50001 回滚整个迁移，需手工清数据。属刻意 fail-closed，运维风险非缺陷。修法：迁移前预检 SQL 出报告（照 WFS version-ops V-A0 孤儿 FlowKey 预检先例），或 Step-1 一并把子表 `Guid.Empty` 归户 A1。
+- [ ] **CFG-T#清理 三处种子逻辑重复**（复用/简化/深度三路撞车）：管理员角色/菜单种子在迁移 SQL + `TenantAdminService.CreateAsync` + `Program.cs` 启动网三处重复，改默认值要同步三处。修法：抽 `AdminRoleSeed.EnsureSeeded(db, tenantId)` 单一 helper（照 `TenantSeed.EnsureSeeded`/`PostingRuleSeed.EnsureSeeded` 先例），三处共用。
+- [ ] **CFG-T#清理 CP6Context 手写 stamp/filter 循环**：`StampTenant` 里 `Sys_OperLog`/`Sys_Role`/`Sys_RoleMenu` 三份相同的 `foreach(Added && TenantId==Empty)` 循环 + 各自 `HasQueryFilter`，是反射批量之外的第 3、4 份拷贝。修法：引入 `ITenantStamped` 标记接口，让既有反射 sweep 一并迭代，三份手写循环收敛为一。
+- [ ] **CFG-T#清理 启动网非前导列全表扫**（本轮 #2 修复已顺带消除 `tenantsWithAdminMenus` 那次扫描；`tenantsWithAdminRole` 的 `Where(RoleId==1)` 仍在非前导列上扫 Sys_Roles，量小可接受）：如需进一步优化，把兜底网整体门控在一次存在性检查后。
