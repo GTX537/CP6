@@ -116,3 +116,8 @@ P1热修: complete (commit 0f797db并入main, Approved[opus审]; del集Set→Map
 # DB备份体系(CP6-DB-Backup 每4h→C:\CP6Backups)+WSL keep-alive(CP6-WSL-KeepAlive 登录自启,根因修复);
 # 提交纪律变更: 每commit立即push(见记忆 commit-push-immediately).
 # 下会话入口: 波5 票据池(space3d 记忆内, 队首=重建cp6-api镜像+波4三项线上补验). 用户将开新窗口继续.
+
+# P0 平台硬化执行台账（docs/superpowers/plans/2026-07-07-p0-platform-hardening.md, branch=feat/p0-platform-hardening, base=51298f6）
+P0-T1: complete (commit 2155fb1, Spec ✅ + Approved[opus审]; 密钥环 PersistKeysToDbContext+SetApplicationName("CP6")/迁移仅一表无漂移/租户过滤不误伤双断言/模拟重启跨SP解密测试; 全量1570绿[基线1565+]; ⚠️commit body运维说明已主控亲验在[部署后PMS SsoConfig重存ClientSecret]; WFS D-T0 已满足. Minor记终审: 测试仅InMemory不验SQL列型[迁移即schema保证,可接受])
+P0-T2: complete (commit a34a337, Spec ✅ + Approved[sonnet审,独立复grep]; 仅appsettings.json ±2行: 删JWT.ExpireMinutes死键[保Secret/Issuer/Audience]+Security.Token旁_comment唯一配置源; Dev/Docker/Local变体核实无此键; AuthController三处均读Security.Token.AccessTokenMinutes; 1570绿基线持平. Minor: _comment中文vs邻节英文[文件本就多语混排,放行])
+P0-T3: complete (commits 09c5c3a+9abdf19修复, Approved after fix[opus审+复审]; 两处被迫偏离经审查核实全部属实且正确: ①Sys_Role int主键不继承BaseTenantEntity→照Sys_OperLog先例手动TenantId+复合PK(TenantId,RoleId)+HasQueryFilter+StampTenant ②回填保号复制零重指[全部真子表已带TenantId,Sys_RoleMenu无TenantId使brief的remap不可行]; 迁移SysRoleTenantize schema零漂移+手写SQL归户→复制→THROW 50001校验[5子表超集]; 修复=审查Important: Sys_RoleMenu租户化补口(SysRoleMenuTenantize迁移+THROW 50002+filter/stamp接线,RoleController两站点自动收口,ImpersonationService钉租户IgnoreQueryFilters与MenuController全租户purge两例外裁决sound,CreateAsync复制默认租户RoleId=1菜单集+启动网仅零映射租户补种); 全量1577绿[基线1570+7新隔离测试]. Minor记终审: 租户admin全删菜单启动会复活[启发式无法区分]/增量菜单种子仅默认租户[pre-existing,记横切规范票]/docs/seeds旧SQL无TenantId重跑=不可见非串号/真SQL Server迁移执行与前端PMS Role冒烟→T4)
