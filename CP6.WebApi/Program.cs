@@ -766,27 +766,18 @@ using (var scope = app.Services.CreateScope())
                     Enable = true,
                     OrderNo = 0,
                 });
-            db.SaveChanges();
-        }
 
-        // P0-T3 补口：Sys_RoleMenu 亦租户化 → 对 RoleId=1 菜单映射**完全缺失**的启用租户，复制默认租户
-        // 的映射集（只在全缺时整套补——租户管理员刻意删过的单条不复活；迁移已回填存量，本块兜迁移后遗漏）。
-        var defaultAdminMenus = db.Sys_RoleMenus.IgnoreQueryFilters()
-            .Where(rm => rm.TenantId == TenantContext.DefaultTenant && rm.RoleId == 1)
-            .Select(rm => rm.MenuId).Distinct().ToList();
-        if (defaultAdminMenus.Count > 0)
-        {
-            var tenantsWithAdminMenus = db.Sys_RoleMenus.IgnoreQueryFilters()
-                .Where(rm => rm.RoleId == 1).Select(rm => rm.TenantId).Distinct().ToHashSet();
-            var menuMissing = enabledTenantIds
-                .Where(id => id != TenantContext.DefaultTenant && !tenantsWithAdminMenus.Contains(id)).ToList();
-            if (menuMissing.Count > 0)
-            {
-                foreach (var tid in menuMissing)
-                    foreach (var mid in defaultAdminMenus)
-                        db.Sys_RoleMenus.Add(new Sys_RoleMenu { TenantId = tid, RoleId = 1, MenuId = mid });
-                db.SaveChanges();
-            }
+            // P0-T3 补口 + P0 终审 #2：管理员菜单集**只随「首次补建管理员角色」一起播种**（missing 即从无到有
+            // 的租户）。不得以「RoleId=1 菜单行数==0」判缺失后整套补——那样会把租户管理员**刻意清空**的菜单集
+            // 在下次启动复活（终审 CONFIRMED）。已有管理员角色的租户其菜单集属租户自主配置，安全网一律不碰。
+            var defaultAdminMenus = db.Sys_RoleMenus.IgnoreQueryFilters()
+                .Where(rm => rm.TenantId == TenantContext.DefaultTenant && rm.RoleId == 1)
+                .Select(rm => rm.MenuId).Distinct().ToList();
+            foreach (var tid in missing.Where(id => id != TenantContext.DefaultTenant))
+                foreach (var mid in defaultAdminMenus)
+                    db.Sys_RoleMenus.Add(new Sys_RoleMenu { TenantId = tid, RoleId = 1, MenuId = mid });
+
+            db.SaveChanges();
         }
     }
 

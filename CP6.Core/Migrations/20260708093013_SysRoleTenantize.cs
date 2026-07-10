@@ -83,6 +83,12 @@ END;
                 name: "PK_Sys_Roles",
                 table: "Sys_Roles");
 
+            // P0 终审 #4：Up() 把默认租户 A1 的角色逐租户复制（RoleId 跨租户重复），单列 RoleId 主键因此
+            // 不再唯一。回滚前须先删掉非 A1 的副本，只留原始 A1 行，否则下方 AddPrimaryKey(RoleId) 撞重复键
+            // → 回滚失败。删副本即还原迁移前的单命名空间状态（子表引用零重指，与 Up() 对称）。
+            migrationBuilder.Sql(
+                "DELETE FROM dbo.Sys_Roles WHERE TenantId <> '00000000-0000-0000-0000-0000000000A1';");
+
             migrationBuilder.DropColumn(
                 name: "TenantId",
                 table: "Sys_Roles");

@@ -580,12 +580,15 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         });
 
         // P0-T3 补口（评审 Important）：Sys_RoleMenu 随 Sys_Role 一并租户化——否则 A 租户改 RoleId=1
-        // 的菜单映射会串改 B 租户同号角色的菜单可见性。int 自增 Id 主键保留（无外部引用），
-        // 手挂过滤 + (TenantId, RoleId) 查询索引（Get/SaveRoleMenus、登录菜单聚合都按 RoleId 查）。
+        // 的菜单映射会串改 B 租户同号角色的菜单可见性。int 自增 Id 主键保留（无外部引用），手挂过滤。
+        // P0 终审 #3：索引升级为 (TenantId,RoleId,MenuId) **唯一**——挡住并发建租户/兜底网/重跑种子插入
+        // 重复映射行（原仅非唯一索引，防重全靠应用层自觉）。最左前缀 (TenantId,RoleId) 仍服务菜单聚合查询。
         modelBuilder.Entity<Sys_RoleMenu>(e =>
         {
             e.HasQueryFilter(x => x.TenantId == CurrentTenantId);
-            e.HasIndex(x => new { x.TenantId, x.RoleId }).HasDatabaseName("IX_Sys_RoleMenu_Tenant_Role");
+            e.HasIndex(x => new { x.TenantId, x.RoleId, x.MenuId })
+                .IsUnique()
+                .HasDatabaseName("IX_Sys_RoleMenu_Tenant_Role");
         });
 
         // PUB 章01 多角色：用户-角色中间表（B1-D1 RoleId int；B1-D3 章09 再加 TenantId）

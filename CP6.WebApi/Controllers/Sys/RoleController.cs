@@ -55,6 +55,9 @@ public class RoleController : LocalizedControllerBase
     [RequirePermission("role", "add")]
     public async Task<IActionResult> Add([FromBody] Sys_Role entity)
     {
+        // P0 终审 #1：TenantId 是不可信输入——StampTenant 仅在 TenantId==Guid.Empty 时盖章，
+        // body 携带的他租非空 Guid 会被放行 → 跨租户写注入。控制器边界强制盖当前租户。
+        entity.TenantId = _context.CurrentTenantId;
         entity.CreateDate = DateTime.Now;
         _context.Sys_Roles.Add(entity);
         await _context.SaveChangesAsync();

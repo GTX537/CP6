@@ -72,6 +72,11 @@ END;
                 name: "IX_Sys_RoleMenu_Tenant_Role",
                 table: "Sys_RoleMenus");
 
+            // P0 终审 #4（对称清理）：Up() 把 A1 的映射逐租户复制。回滚须先删非 A1 副本还原单命名空间状态，
+            // 否则残留重复行会在重新应用迁移时叠加（虽无唯一约束不撞键，但污染数据）。与角色迁移 Down 对称。
+            migrationBuilder.Sql(
+                "DELETE FROM dbo.Sys_RoleMenus WHERE TenantId <> '00000000-0000-0000-0000-0000000000A1';");
+
             migrationBuilder.DropColumn(
                 name: "TenantId",
                 table: "Sys_RoleMenus");

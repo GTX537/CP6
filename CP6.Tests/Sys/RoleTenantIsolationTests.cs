@@ -1,6 +1,7 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels.Sys;
+using CP6.WebApi.Controllers.Sys;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -154,6 +155,25 @@ public class RoleTenantIsolationTests
             Assert.Equal(TenantB, raw.Sys_RoleMenus.IgnoreQueryFilters().Single().TenantId);
         using (var a = CtxFor(db, TenantA))
             Assert.Empty(a.Sys_RoleMenus.ToList());
+    }
+
+    // ⑦（P0 终审 #1）跨租户写注入防护：控制器 Add 强制盖当前租户，忽略 body 携带的他租 TenantId。
+    //    StampTenant 仅在 TenantId==Empty 时盖章，非空值会放行——若控制器信任 body 即成跨租户写注入。
+    [Fact]
+    public async System.Threading.Tasks.Task Add_forces_current_tenant_ignoring_body_tenantId()
+    {
+        var db = Guid.NewGuid().ToString();
+        using (var b = CtxFor(db, TenantB))
+        {
+            var controller = new RoleController(b);
+            // 攻击构造：B 租户上下文，body 显式携带默认租户 A 的 TenantId，试图把角色写进 A。
+            await controller.Add(new Sys_Role { TenantId = TenantA, RoleId = 7, RoleName = "注入" });
+        }
+        // 落库行必被改写为 B；A 视图看不到。
+        using (var raw = CtxFor(db, TenantB))
+            Assert.Equal(TenantB, raw.Sys_Roles.IgnoreQueryFilters().Single(r => r.RoleId == 7).TenantId);
+        using (var a = CtxFor(db, TenantA))
+            Assert.Empty(a.Sys_Roles.Where(r => r.RoleId == 7).ToList());
     }
 
     // ④ 回填校验逻辑单测（映射完整性）：复现迁移 SQL 强制的不变式——
