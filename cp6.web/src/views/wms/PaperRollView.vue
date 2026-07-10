@@ -9,7 +9,7 @@
   <CpPageShell :title="t('wms.paperRoll.title')" :count="total">
     <template #actions>
       <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
-      <el-button type="warning" @click="openSlit">{{ t('wms.paperRoll.btn.slit') }}</el-button>
+      <el-button v-permission="'wms-paper-roll:slit'" type="warning" @click="openSlit">{{ t('wms.paperRoll.btn.slit') }}</el-button>
     </template>
 
     <CpListPage
@@ -26,8 +26,8 @@
       </template>
 
       <template #col-_action="{ row }">
-        <el-button v-if="row.status !== 3" link type="primary" size="small" @click="openConsume(row)">{{ t('wms.paperRoll.btn.consume') }}</el-button>
-        <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDispose(row)">{{ t('wms.paperRoll.btn.dispose') }}</el-button>
+        <el-button v-if="row.status !== 3" v-permission="'wms-paper-roll:consume'" link type="primary" size="small" @click="openConsume(row)">{{ t('wms.paperRoll.btn.consume') }}</el-button>
+        <el-button v-if="row.status !== 3" v-permission="'wms-paper-roll:dispose'" link type="danger" size="small" @click="onDispose(row)">{{ t('wms.paperRoll.btn.dispose') }}</el-button>
       </template>
     </CpListPage>
 

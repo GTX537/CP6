@@ -28,7 +28,7 @@
             <el-form-item>
               <el-button type="primary" @click="reloadLots" :loading="loading">{{ t('wms.common.search') }}</el-button>
               <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
-              <el-button type="warning" @click="openMixDialog">{{ t('wms.ink.btn.mix') }}</el-button>
+              <el-button v-permission="'wms-ink:mix'" type="warning" @click="openMixDialog">{{ t('wms.ink.btn.mix') }}</el-button>
             </el-form-item>
           </el-form>
         </el-card>

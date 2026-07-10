@@ -25,7 +25,7 @@
           </template>
           <template #col-_action="{ row }">
             <el-button link type="primary" size="small" @click="openMasterEdit(row.kitSku)">{{ t('wms.common.open') }}</el-button>
-            <el-button link type="danger" size="small" @click="onMasterDelete(row.kitSku)">{{ t('wms.common.delete') }}</el-button>
+            <el-button v-permission="'wms-kitting:del'" link type="danger" size="small" @click="onMasterDelete(row.kitSku)">{{ t('wms.common.delete') }}</el-button>
           </template>
         </CpListPage>
 
@@ -196,7 +196,7 @@
             <div class="action-bar">
               <el-button @click="orderMode = 'list'">{{ t('wms.common.back') }}</el-button>
               <el-button v-if="isNewOrder" type="primary" @click="onOrderSave" :loading="saving">{{ t('wms.common.save') }}</el-button>
-              <el-button v-if="canExecute" type="success" @click="onOrderExecute" :loading="saving">{{ t('wms.kit.btn.execute') }}</el-button>
+              <el-button v-if="canExecute" v-permission="'wms-kitting:execute'" type="success" @click="onOrderExecute" :loading="saving">{{ t('wms.kit.btn.execute') }}</el-button>
               <el-button v-if="canCancelOrder" type="danger" plain @click="onOrderCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
             </div>
           </el-affix>

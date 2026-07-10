@@ -99,7 +99,7 @@
     <el-affix position="bottom" :offset="0">
       <div class="action-bar">
         <el-button @click="goBack">{{ t('wms.common.back') }}</el-button>
-        <el-button type="primary" @click="onConfirm" :loading="saving">{{ t('wms.receipt.btn.confirmReceive') }}</el-button>
+        <el-button v-permission="'wms-inbound-receipt:post'" type="primary" @click="onConfirm" :loading="saving">{{ t('wms.receipt.btn.confirmReceive') }}</el-button>
       </div>
     </el-affix>
   </div>

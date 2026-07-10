@@ -27,8 +27,8 @@
           <template #header>
             <div style="display: flex; justify-content: space-between; align-items: center">
               <span style="font-weight: 600">{{ t('wms.lotTrace.summary.title') }}</span>
-              <el-button v-if="!summary.recallFlag" type="danger" size="small" @click="setRecall(true)">{{ t('wms.lotTrace.btn.setRecall') }}</el-button>
-              <el-button v-else type="warning" size="small" @click="setRecall(false)">{{ t('wms.lotTrace.btn.clearRecall') }}</el-button>
+              <el-button v-if="!summary.recallFlag" v-permission="'wms-lot-trace:recall'" type="danger" size="small" @click="setRecall(true)">{{ t('wms.lotTrace.btn.setRecall') }}</el-button>
+              <el-button v-else v-permission="'wms-lot-trace:recall'" type="warning" size="small" @click="setRecall(false)">{{ t('wms.lotTrace.btn.clearRecall') }}</el-button>
             </div>
           </template>
           <el-descriptions :column="4" size="small" border>

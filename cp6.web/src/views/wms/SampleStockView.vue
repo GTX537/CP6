@@ -28,9 +28,9 @@
       </template>
 
       <template #col-_action="{ row }">
-        <el-button v-if="row.status === 0 || row.status === 2" link type="primary" size="small" @click="openLend(row)">{{ t('wms.sample.btn.lend') }}</el-button>
-        <el-button v-if="row.status === 1" link type="success" size="small" @click="onReturn(row)">{{ t('wms.sample.btn.return') }}</el-button>
-        <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onExpire(row)">{{ t('wms.sample.btn.expire') }}</el-button>
+        <el-button v-if="row.status === 0 || row.status === 2" v-permission="'wms-sample-stock:lend'" link type="primary" size="small" @click="openLend(row)">{{ t('wms.sample.btn.lend') }}</el-button>
+        <el-button v-if="row.status === 1" v-permission="'wms-sample-stock:return'" link type="success" size="small" @click="onReturn(row)">{{ t('wms.sample.btn.return') }}</el-button>
+        <el-button v-if="row.status !== 3" v-permission="'wms-sample-stock:expire'" link type="danger" size="small" @click="onExpire(row)">{{ t('wms.sample.btn.expire') }}</el-button>
       </template>
     </CpListPage>
 

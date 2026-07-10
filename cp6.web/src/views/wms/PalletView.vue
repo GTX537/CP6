@@ -20,9 +20,9 @@
     >
       <template #col-_action="{ row }">
         <el-button v-if="row.status === 0" link type="primary" size="small" @click="onComplete(row)">{{ t('wms.pallet.btn.complete') }}</el-button>
-        <el-button v-if="row.status === 1" link type="warning" size="small" @click="openMove(row)">{{ t('wms.pallet.btn.moveShip') }}</el-button>
-        <el-button v-if="row.status === 2" link type="success" size="small" @click="openShip(row)">{{ t('wms.pallet.btn.markShipped') }}</el-button>
-        <el-button v-if="row.status === 0" link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
+        <el-button v-if="row.status === 1" v-permission="'wms-pallet:move'" link type="warning" size="small" @click="openMove(row)">{{ t('wms.pallet.btn.moveShip') }}</el-button>
+        <el-button v-if="row.status === 2" v-permission="'wms-pallet:ship'" link type="success" size="small" @click="openShip(row)">{{ t('wms.pallet.btn.markShipped') }}</el-button>
+        <el-button v-if="row.status === 0" v-permission="'wms-pallet:del'" link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
       </template>
     </CpListPage>
 

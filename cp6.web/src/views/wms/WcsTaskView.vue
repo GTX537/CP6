@@ -29,7 +29,7 @@
       <template #col-_action="{ row }">
         <el-button v-if="row.status === 0" link type="primary" size="small" @click="openDispatch(row)">{{ t('wms.wcs.btn.dispatch') }}</el-button>
         <el-button v-if="row.status === 1" link type="warning" size="small" @click="onStart(row)">{{ t('wms.wcs.btn.start') }}</el-button>
-        <el-button v-if="row.status === 2" link type="success" size="small" @click="onComplete(row)">{{ t('wms.wcs.btn.complete') }}</el-button>
+        <el-button v-if="row.status === 2" v-permission="'wms-wcs-task:complete'" link type="success" size="small" @click="onComplete(row)">{{ t('wms.wcs.btn.complete') }}</el-button>
         <el-button v-if="row.status === 1 || row.status === 2" link type="danger" size="small" @click="openFail(row)">{{ t('wms.wcs.btn.fail') }}</el-button>
       </template>
     </CpListPage>

@@ -118,9 +118,9 @@
         <div class="action-bar">
           <el-button @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
           <el-button v-if="isNew" type="primary" @click="onSave" :loading="saving">{{ t('wms.common.save') }}</el-button>
-          <el-button v-if="canReceive" type="primary" @click="onReceive">{{ t('wms.rma.btn.receive') }}</el-button>
+          <el-button v-if="canReceive" v-permission="'wms-rma:receive'" type="primary" @click="onReceive">{{ t('wms.rma.btn.receive') }}</el-button>
           <el-button v-if="canStartInsp" type="primary" @click="onStartInsp">{{ t('wms.rma.btn.startInspection') }}</el-button>
-          <el-button v-if="canJudge" type="success" @click="onJudge">{{ t('wms.rma.btn.judge') }}</el-button>
+          <el-button v-if="canJudge" v-permission="'wms-rma:judge'" type="success" @click="onJudge">{{ t('wms.rma.btn.judge') }}</el-button>
           <el-button v-if="canClose" type="success" plain @click="onClose">{{ t('wms.rma.btn.close') }}</el-button>
           <el-button v-if="canCancel" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
         </div>

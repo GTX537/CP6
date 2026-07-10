@@ -22,7 +22,7 @@
       <template #col-executedAt="{ row }">{{ row.executedAt?.replace('T', ' ').slice(0, 16) || '—' }}</template>
       <template #col-_action="{ row }">
         <template v-if="row.status === 0">
-          <el-button link type="success" size="small" @click="onExecute(row)">{{ t('wms.kit.btn.execute') }}</el-button>
+          <el-button v-permission="'wms-cross-dock:execute'" link type="success" size="small" @click="onExecute(row)">{{ t('wms.kit.btn.execute') }}</el-button>
           <el-button link type="danger" size="small" @click="onCancel(row)">{{ t('wms.outbound.btn.cancel') }}</el-button>
         </template>
         <span v-else class="cp-dash">—</span>

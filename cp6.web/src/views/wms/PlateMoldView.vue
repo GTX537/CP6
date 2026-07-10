@@ -34,7 +34,7 @@
           <el-button v-if="row.status === 0" link type="primary" size="small" @click="openUse(row)">{{ t('wms.plate.btn.use') }}</el-button>
           <el-button v-if="row.status === 0 || row.status === 2" link type="warning" size="small" @click="openMaintStart(row)">{{ t('wms.plate.btn.maintStart') }}</el-button>
           <el-button v-if="row.status === 1" link type="success" size="small" @click="onMaintEnd(row)">{{ t('wms.plate.btn.maintEnd') }}</el-button>
-          <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDiscard(row)">{{ t('wms.plate.btn.discard') }}</el-button>
+          <el-button v-if="row.status !== 3" v-permission="'wms-plate-mold:dispose'" link type="danger" size="small" @click="onDiscard(row)">{{ t('wms.plate.btn.discard') }}</el-button>
         </template>
       </CpListPage>
     </CpPageShell>

@@ -93,9 +93,9 @@
       <div class="action-bar">
         <el-button @click="goBack">{{ t('wms.common.back') }}</el-button>
         <el-button v-if="editable" type="primary" @click="onSave" :loading="saving">{{ t('wms.common.save') }}</el-button>
-        <el-button v-if="canConfirm" type="success" @click="onConfirm">{{ t('wms.inbound.btn.confirm') }}</el-button>
-        <el-button v-if="canCancel" type="warning" @click="onCancel">{{ t('wms.inbound.btn.cancel') }}</el-button>
-        <el-button v-if="canDelete" type="danger" @click="onDelete">{{ t('wms.common.delete') }}</el-button>
+        <el-button v-if="canConfirm" v-permission="'wms-inbound-order:confirm'" type="success" @click="onConfirm">{{ t('wms.inbound.btn.confirm') }}</el-button>
+        <el-button v-if="canCancel" v-permission="'wms-inbound-order:cancel'" type="warning" @click="onCancel">{{ t('wms.inbound.btn.cancel') }}</el-button>
+        <el-button v-if="canDelete" v-permission="'wms-inbound-order:del'" type="danger" @click="onDelete">{{ t('wms.common.delete') }}</el-button>
         <el-button v-if="canReceive" type="success" plain @click="goReceive">{{ t('wms.inbound.btn.receiptLong') }}</el-button>
       </div>
     </el-affix>

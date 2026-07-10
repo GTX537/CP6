@@ -24,7 +24,7 @@
         <CpTag v-if="overdueCount > 0" tone="danger">{{ t('wms.expiry.col.overdue') }}: {{ overdueCount }}</CpTag>
         <CpTag v-if="totalLoss > 0" tone="warn">{{ t('wms.expiry.col.totalLoss') }}: ¥{{ formatMoney(totalLoss) }}</CpTag>
         <span class="tb-spacer" />
-        <el-button type="danger" :disabled="selected.length === 0" @click="onDispose">
+        <el-button v-permission="'wms-expiry:dispose'" type="danger" :disabled="selected.length === 0" @click="onDispose">
           {{ t('wms.expiry.btn.dispose') }} ({{ selected.length }})
         </el-button>
       </template>

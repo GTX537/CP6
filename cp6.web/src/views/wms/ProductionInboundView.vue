@@ -72,7 +72,7 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" size="large" style="width: 100%; font-size: 18px; height: 56px"
+              <el-button v-permission="'wms-inbound-receipt:post'" type="primary" size="large" style="width: 100%; font-size: 18px; height: 56px"
                 @click="onConfirm" :loading="saving" :icon="Check">
                 {{ t('wms.prodIn.btn.confirm') }}
               </el-button>

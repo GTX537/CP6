@@ -52,7 +52,7 @@
           :paginated="false"
         >
           <template #toolbar>
-            <el-button type="warning" @click="openCalc">{{ t('wms.vmi.btn.calculate') }}</el-button>
+            <el-button v-permission="'wms-vmi:calculate'" type="warning" @click="openCalc">{{ t('wms.vmi.btn.calculate') }}</el-button>
           </template>
           <template #col-billingAmount="{ row }">
             <b>{{ formatMoney(row.billingAmount) }}</b>
@@ -62,7 +62,7 @@
             <el-tag v-else type="info" size="small">-</el-tag>
           </template>
           <template #col-_action="{ row }">
-            <el-button v-if="!row.confirmed" link type="primary" size="small" @click="onConfirm(row)">{{ t('wms.vmi.btn.confirm') }}</el-button>
+            <el-button v-if="!row.confirmed" v-permission="'wms-vmi:confirm'" link type="primary" size="small" @click="onConfirm(row)">{{ t('wms.vmi.btn.confirm') }}</el-button>
           </template>
         </CpListPage>
       </el-tab-pane>

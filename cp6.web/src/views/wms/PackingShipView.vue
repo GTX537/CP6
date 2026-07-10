@@ -104,7 +104,7 @@
                 </el-form-item></el-col>
               </el-row>
               <div style="margin-top: 8px">
-                <el-button type="success" size="large" style="width: 100%; font-size: 18px; height: 56px"
+                <el-button v-permission="'wms-outbound-order:ship'" type="success" size="large" style="width: 100%; font-size: 18px; height: 56px"
                   @click="onShip" :loading="saving" :icon="Check">
                   {{ t('wms.pack.btn.confirmShip') }}
                 </el-button>

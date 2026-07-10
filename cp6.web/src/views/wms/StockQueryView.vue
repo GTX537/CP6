@@ -40,7 +40,7 @@
 
       <template #col-_action="{ row }">
         <el-button link type="primary" size="small" @click="openHistory(row)">{{ t('wms.common.history') }}</el-button>
-        <el-button link type="warning" size="small" @click="openQcDialog(row)">{{ t('wms.stock.qc.btn') }}</el-button>
+        <el-button v-permission="'wms-stock-qc:set'" link type="warning" size="small" @click="openQcDialog(row)">{{ t('wms.stock.qc.btn') }}</el-button>
       </template>
     </CpListPage>
 

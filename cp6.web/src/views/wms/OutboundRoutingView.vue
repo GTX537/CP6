@@ -23,7 +23,7 @@
         <el-button link type="primary" size="small" @click="openEdit(row)">
           {{ t('wms.outboundRouting.btn.edit') }}
         </el-button>
-        <el-button link type="danger" size="small" @click="remove(row)">
+        <el-button v-permission="'wms-outbound-routing:del'" link type="danger" size="small" @click="remove(row)">
           {{ t('wms.outboundRouting.btn.delete') }}
         </el-button>
       </template>

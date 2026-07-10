@@ -71,7 +71,7 @@
             <el-table-column :label="t('wms.common.action')" width="140" fixed="right">
               <template #default="{ row }">
                 <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('wms.common.edit') }}</el-button>
-                <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
+                <el-button v-permission="'wms-location:del'" link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
               </template>
             </el-table-column>
           </el-table>

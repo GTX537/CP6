@@ -83,8 +83,8 @@
         <el-button v-if="canStartCount" type="primary" @click="onStartCount">{{ t('wms.stocktake.btn.startCount') }}</el-button>
         <el-button v-if="canSaveCounts" type="primary" @click="onSaveCounts" :loading="saving">{{ t('wms.common.save') }}</el-button>
         <el-button v-if="canSubmit" type="warning" @click="onSubmit">{{ t('wms.stocktake.btn.submitReview') }}</el-button>
-        <el-button v-if="canApprove" type="success" @click="onApprove">{{ t('wms.stocktake.btn.approve') }} + {{ t('wms.stocktake.btn.adjust') }}</el-button>
-        <el-button v-if="canCancel" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+        <el-button v-if="canApprove" v-permission="'wms-stocktake:approve'" type="success" @click="onApprove">{{ t('wms.stocktake.btn.approve') }} + {{ t('wms.stocktake.btn.adjust') }}</el-button>
+        <el-button v-if="canCancel" v-permission="'wms-stocktake:cancel'" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
       </div>
     </el-affix>
   </div>

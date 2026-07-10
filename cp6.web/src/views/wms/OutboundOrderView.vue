@@ -123,11 +123,11 @@
       <div class="action-bar">
         <el-button @click="goBack">{{ t('wms.common.back') }}</el-button>
         <el-button v-if="editable" type="primary" @click="onSave" :loading="saving">{{ t('wms.common.save') }}</el-button>
-        <el-button v-if="canConfirm" type="success" @click="onConfirm">{{ t('wms.outbound.btn.confirm') }}</el-button>
-        <el-button v-if="canAllocate" type="warning" @click="onAllocate">{{ t('wms.outbound.btn.allocate') }}</el-button>
-        <el-button v-if="canShip" type="success" @click="onShipClick">{{ t('wms.outbound.btn.ship') }}</el-button>
-        <el-button v-if="canCancel" type="warning" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
-        <el-button v-if="canDelete" type="danger" @click="onDelete">{{ t('wms.outbound.btn.delete') }}</el-button>
+        <el-button v-if="canConfirm" v-permission="'wms-outbound-order:confirm'" type="success" @click="onConfirm">{{ t('wms.outbound.btn.confirm') }}</el-button>
+        <el-button v-if="canAllocate" v-permission="'wms-outbound-order:allocate'" type="warning" @click="onAllocate">{{ t('wms.outbound.btn.allocate') }}</el-button>
+        <el-button v-if="canShip" v-permission="'wms-outbound-order:ship'" type="success" @click="onShipClick">{{ t('wms.outbound.btn.ship') }}</el-button>
+        <el-button v-if="canCancel" v-permission="'wms-outbound-order:cancel'" type="warning" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+        <el-button v-if="canDelete" v-permission="'wms-outbound-order:del'" type="danger" @click="onDelete">{{ t('wms.outbound.btn.delete') }}</el-button>
       </div>
     </el-affix>
 

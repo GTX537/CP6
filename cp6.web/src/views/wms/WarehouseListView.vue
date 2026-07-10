@@ -24,7 +24,7 @@
       </template>
       <template #col-_action="{ row }">
         <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('wms.common.edit') }}</el-button>
-        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
+        <el-button v-permission="'wms-warehouse:del'" link type="danger" size="small" @click="onDelete(row)">{{ t('wms.common.delete') }}</el-button>
       </template>
     </CpListPage>
 

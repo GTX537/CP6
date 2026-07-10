@@ -24,8 +24,8 @@
       <template #col-_action="{ row }">
         <el-button v-if="row.status === 0" link type="primary" size="small" @click="openReserve(row)">{{ t('wms.remnant.btn.reserve') }}</el-button>
         <el-button v-if="row.status === 1" link type="warning" size="small" @click="onUnreserve(row)">{{ t('wms.remnant.btn.unreserve') }}</el-button>
-        <el-button v-if="row.status === 0 || row.status === 1" link type="success" size="small" @click="onUse(row)">{{ t('wms.remnant.btn.use') }}</el-button>
-        <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDispose(row)">{{ t('wms.remnant.btn.dispose') }}</el-button>
+        <el-button v-if="row.status === 0 || row.status === 1" v-permission="'wms-remnant:use'" link type="success" size="small" @click="onUse(row)">{{ t('wms.remnant.btn.use') }}</el-button>
+        <el-button v-if="row.status !== 3" v-permission="'wms-remnant:dispose'" link type="danger" size="small" @click="onDispose(row)">{{ t('wms.remnant.btn.dispose') }}</el-button>
       </template>
     </CpListPage>
 

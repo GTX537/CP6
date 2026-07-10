@@ -90,7 +90,7 @@
         <div class="action-bar">
           <el-button @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
           <el-button v-if="editable" type="primary" @click="onSaveItems" :loading="saving">{{ t('wms.common.save') }}</el-button>
-          <el-button v-if="canJudge" type="success" @click="onJudgeClick">{{ t('wms.qc.btn.judge') }}</el-button>
+          <el-button v-if="canJudge" v-permission="'wms-qc-inspection:judge'" type="success" @click="onJudgeClick">{{ t('wms.qc.btn.judge') }}</el-button>
           <el-button v-if="canCancel" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
         </div>
       </el-affix>

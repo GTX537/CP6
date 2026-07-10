@@ -88,7 +88,7 @@
           </div>
           <div class="task-actions" v-if="m.status !== 2 && m.status !== 9">
             <el-button v-if="m.status === 0" size="small" @click="startTask(m)">{{ t('wms.mobile.act.start') }}</el-button>
-            <el-button size="small" type="primary" @click="doneTask(m)">{{ t('wms.mobile.act.done') }}</el-button>
+            <el-button v-permission="'wms-mobile:complete'" size="small" type="primary" @click="doneTask(m)">{{ t('wms.mobile.act.done') }}</el-button>
             <el-button size="small" text type="info" @click="cancelTask(m)">{{ t('wms.mobile.act.cancel') }}</el-button>
           </div>
         </div>
