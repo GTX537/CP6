@@ -44,6 +44,21 @@ public class CostSettleService : ICostSettleService
         if (wip == null) return FinResult.Fail("E-FIN-141", "WIP");
         if (fg == null) return FinResult.Fail("E-FIN-141", "FG");
 
+        // 拍板②：有标准成本时 FG 按【标准成本】资本化，实际与标准的差异结转 COGS（科目月末自然清零）。
+        // 无标准成本（StandardCost<=0，未定义标准的品目）或差异=0 → 维持现状：FG 按实际全额、无差异凭证。
+        var standardCost = sheet.StandardCost;          // 标准料+标准工+标准费
+        var hasStandard = standardCost > 0m;
+        var variance = total - standardCost;            // >0 超支 / <0 有利
+        var fgAmount = hasStandard ? standardCost : total;
+
+        // 差异腿要用的 COGS 前置解析：缺配置整体 fail 在任何过账前（避免 ①② 已提交后才 141，重试重复凭证）
+        Guid? cogs = null;
+        if (hasStandard && variance != 0m)
+        {
+            cogs = await RoleIdAsync("COGS");
+            if (cogs == null) return FinResult.Fail("E-FIN-141", "COGS");
+        }
+
         var now = DateTime.Now;
 
         // ① 料工费 → WIP（借 WIP / 贷 各成本来源）
@@ -76,13 +91,6 @@ public class CostSettleService : ICostSettleService
         var r1 = await _journal.AutoPostAsync(collect);
         if (!r1.Ok) return r1;
 
-        // 拍板②：有标准成本时 FG 按【标准成本】资本化，实际与标准的差异结转 COGS（科目月末自然清零）。
-        // 无标准成本（StandardCost<=0，未定义标准的品目）或差异=0 → 维持现状：FG 按实际全额、无差异凭证。
-        var standardCost = sheet.StandardCost;          // 标准料+标准工+标准费
-        var hasStandard = standardCost > 0m;
-        var variance = total - standardCost;            // >0 超支 / <0 有利
-        var fgAmount = hasStandard ? standardCost : total;
-
         // ② WIP → FG（借 库存商品 / 贷 在制品；有标准成本时按标准，差异走 ③）
         var settle = new JournalEntry
         {
@@ -99,13 +107,11 @@ public class CostSettleService : ICostSettleService
         var r2 = await _journal.AutoPostAsync(settle);
         if (!r2.Ok) return r2;
 
-        // ③ 成本差异结转 COGS（拍板②）：仅当有标准成本且差异非零。
+        // ③ 成本差异结转 COGS（拍板②）：仅当有标准成本且差异非零（cogs 已前置解析）。
         //    超支(variance>0) 借 COGS / 贷 WIP；有利(variance<0) 反向 借 WIP / 贷 COGS（|差异|）。
         //    三腿合计 WIP 借贷净零：借WIP(actual) − 贷WIP(standard→FG) ∓ 差异腿 = 0。
-        if (hasStandard && variance != 0m)
+        if (cogs is Guid cogsId)
         {
-            var cogs = await RoleIdAsync("COGS");
-            if (cogs == null) return FinResult.Fail("E-FIN-141", "COGS");
             var varEntry = new JournalEntry
             {
                 VoucherDate = now,
@@ -115,14 +121,14 @@ public class CostSettleService : ICostSettleService
             };
             if (variance > 0m)
             {
-                varEntry.Lines.Add(new JournalLine { AccountId = cogs.Value, Debit = variance });
+                varEntry.Lines.Add(new JournalLine { AccountId = cogsId, Debit = variance });
                 varEntry.Lines.Add(new JournalLine { AccountId = wip.Value, Credit = variance });
             }
             else
             {
                 var abs = -variance;
                 varEntry.Lines.Add(new JournalLine { AccountId = wip.Value, Debit = abs });
-                varEntry.Lines.Add(new JournalLine { AccountId = cogs.Value, Credit = abs });
+                varEntry.Lines.Add(new JournalLine { AccountId = cogsId, Credit = abs });
             }
             var r3 = await _journal.AutoPostAsync(varEntry);
             if (!r3.Ok) return r3;

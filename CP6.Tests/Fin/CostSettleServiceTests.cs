@@ -111,7 +111,7 @@ public class CostSettleServiceTests
         var k = await SetupAsync(db);
         await SeedWoAsync(db);
         await k.Collect.CollectAsync("WO1", 300m, 200m, "u");
-        Assert.Equal(115m, await k.Settle.FgUnitCostAsync("WO1"));     // 1150 / 10
+        Assert.Equal(110m, await k.Settle.FgUnitCostAsync("WO1"));     // 拍板②标准口径：StandardCost 1100 / 10（实际1150 的 +50 差异已转 COGS）
     }
 
     [Fact]

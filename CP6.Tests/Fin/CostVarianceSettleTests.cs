@@ -151,6 +151,109 @@ public class CostVarianceSettleTests
         Assert.Equal(500m, settle.Lines.Single(l => l.AccountId == fg).Debit);   // 实际全额
     }
 
+    // ════════════════════════════════════════════════════════════════════════
+    //  端到端恒等（审查 Important 修复验证）：完工结转 + 出货 AR.Cogs
+    //  → FG 借贷净零、COGS 合计 = 实际总成本。
+    //  关键：FgUnitCost 拍板②改标准口径（hasStandard 时 = StandardCost/CompletedQty），
+    //  出货按标准贷 FG 与 #FG 腿（借 FG 标准）恒等；COGS = 出货标准 + #VAR 差异 = 实际。
+    // ════════════════════════════════════════════════════════════════════════
+
+    private static async Task<(CP6.Core.EFDbContext.CP6Context db, CostSettleService settle, ArInvoiceService ar)>
+        SetupEndToEndAsync(Action<CostSheet> configure)
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        var gl = new GlAccountService(db);
+        await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "seed");   // AR 过账需完整 COA（AR_CONTROL/REVENUE/TAX 等）
+        PostingRuleSeed.EnsureSeeded(db);                              // AR.Cogs 引擎规则（借 COGS/贷 FG）
+
+        var sheet = new CostSheet
+        {
+            Id = Guid.NewGuid(), No = "CS-E2E", WorkOrderNo = "WOE", CompletedQty = 10,
+            Status = CostSheetStatus.Collected,
+        };
+        configure(sheet);
+        db.CostSheets.Add(sheet);
+        await db.SaveChangesAsync();
+
+        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
+        var engine = new AutoVoucherEngine(db, journal);
+        var ar = new ArInvoiceService(db, engine, journal, new FinSequenceService(db));
+        return (db, new CostSettleService(db, journal), ar);
+    }
+
+    private static FinShipmentInvoiceRequest ShipAll() => new()
+    {
+        ShipmentId = "SHP-E2E", WorkOrderNo = "WOE", CustomerId = "CUST1",
+        InvoiceDate = new DateTime(2026, 6, 15), DueDate = new DateTime(2026, 7, 15),
+        EstimatedCost = 9999m,   // 应被 FgUnitCost 真实成本覆盖
+        Lines = { new FinShipmentInvoiceLine { ItemId = "P1", Qty = 10, UnitPrice = 100 } },
+    };
+
+    // ── 有标准：实际550/标准500 全出货 → FG 净零（借500结转=贷500出货）、COGS=500出货+50差异=550实际 ──
+    [Fact]
+    public async Task EndToEnd_SettleThenShip_WithStandard_FgNetsZero_CogsEqualsActual()
+    {
+        var (db, settle, ar) = await SetupEndToEndAsync(s =>
+        {
+            s.MaterialActual = 550; s.MaterialStandard = 500;   // 超支 +50
+        });
+
+        var r1 = await settle.SettleAsync("WOE", "u");
+        Assert.True(r1.Ok, r1.Code);
+        Assert.Equal(50m, await settle.FgUnitCostAsync("WOE"));   // 标准口径 500/10（非实际 55）
+
+        var (r2, _, _) = await ar.CreateFromShipmentAsync(ShipAll(), "u");
+        Assert.True(r2.Ok, r2.Code);
+        var inv = await db.ArInvoices.SingleAsync(x => x.ShipmentId == "SHP-E2E");
+        Assert.Equal(500m, inv.CostAmount);   // 标准单位成本 50 × 10，非估算 9999
+
+        var fg = await AccIdAsync(db, "FG");
+        var cogs = await AccIdAsync(db, "COGS");
+        var wip = await AccIdAsync(db, "WIP");
+
+        // FG 借贷净零：结转借 500（标准）= 出货贷 500（标准），无 −50 幻影残留
+        var fgLines = await db.JournalLines.Where(l => l.AccountId == fg).ToListAsync();
+        Assert.Equal(500m, fgLines.Sum(l => l.Debit));
+        Assert.Equal(fgLines.Sum(l => l.Debit), fgLines.Sum(l => l.Credit));
+
+        // COGS 合计 = 出货 500 + 差异 50 = 实际总成本 550（不超记）
+        var cogsLines = await db.JournalLines.Where(l => l.AccountId == cogs).ToListAsync();
+        Assert.Equal(550m, cogsLines.Sum(l => l.Debit) - cogsLines.Sum(l => l.Credit));
+
+        // WIP 亦净零
+        var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
+        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));
+    }
+
+    // ── 无标准：实际550 全出货 → FG 净零（借550实际=贷550出货）、COGS=550=实际、无 #VAR ──
+    [Fact]
+    public async Task EndToEnd_SettleThenShip_NoStandard_FgNetsZero_CogsEqualsActual()
+    {
+        var (db, settle, ar) = await SetupEndToEndAsync(s =>
+        {
+            s.MaterialActual = 550; s.MaterialStandard = 0;   // 未定义标准
+        });
+
+        var r1 = await settle.SettleAsync("WOE", "u");
+        Assert.True(r1.Ok, r1.Code);
+        Assert.Equal(55m, await settle.FgUnitCostAsync("WOE"));   // 实际口径 550/10
+
+        var (r2, _, _) = await ar.CreateFromShipmentAsync(ShipAll(), "u");
+        Assert.True(r2.Ok, r2.Code);
+        var inv = await db.ArInvoices.SingleAsync(x => x.ShipmentId == "SHP-E2E");
+        Assert.Equal(550m, inv.CostAmount);   // 实际单位成本 55 × 10
+
+        Assert.False(await db.JournalEntries.AnyAsync(e => e.SourceDocNo!.EndsWith("#VAR")));
+
+        var fg = await AccIdAsync(db, "FG");
+        var cogs = await AccIdAsync(db, "COGS");
+        var fgLines = await db.JournalLines.Where(l => l.AccountId == fg).ToListAsync();
+        Assert.Equal(550m, fgLines.Sum(l => l.Debit));
+        Assert.Equal(fgLines.Sum(l => l.Debit), fgLines.Sum(l => l.Credit));   // FG 净零
+        var cogsLines = await db.JournalLines.Where(l => l.AccountId == cogs).ToListAsync();
+        Assert.Equal(550m, cogsLines.Sum(l => l.Debit) - cogsLines.Sum(l => l.Credit));   // COGS = 实际
+    }
+
     // ── 场景5：重放不重记（Status=Settled → E-FIN-402，差异凭证仍只 1 张）──
     [Fact]
     public async Task Settle_Replay_DoesNotDuplicateVarianceVoucher()
