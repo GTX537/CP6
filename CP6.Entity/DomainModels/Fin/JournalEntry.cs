@@ -91,6 +91,8 @@ public enum VoucherSource
     Depreciation = 8,
     /// <summary>A3 资产处置结转凭证</summary>
     AssetDisposal = 9,
+    /// <summary>波A 库存移动自动凭证（入库暂估/盘盈/盘亏/报废）</summary>
+    Inventory = 10,
 }
 
 /// <summary>凭证状态机</summary>

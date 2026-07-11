@@ -171,6 +171,51 @@ public static class PostingRuleSeed
                 Role(2, PostingSide.Credit, "INVENTORY", "Amount"),
             },
         };
+
+        // ── 波A 库存移动自动凭证（VoucherSource.Inventory）──
+        // 采购入库暂估：借 原材料 INVENTORY / 贷 暂估应付账款 GRNI（收货未开票，发票到票后再冲销）。金额=入库 Qty×UnitPrice
+        yield return new PostingRule
+        {
+            EventType = "Inventory.Received", Name = "库存入库暂估", VoucherSource = VoucherSource.Inventory, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "INVENTORY", "Amount"),
+                Role(2, PostingSide.Credit, "GRNI", "Amount"),
+            },
+        };
+
+        // 盘盈：借 原材料 INVENTORY / 贷 营业外收入 NON_OP_INCOME（盘盈利得）
+        yield return new PostingRule
+        {
+            EventType = "Inventory.AdjustGain", Name = "库存盘盈", VoucherSource = VoucherSource.Inventory, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "INVENTORY", "Amount"),
+                Role(2, PostingSide.Credit, "NON_OP_INCOME", "Amount"),
+            },
+        };
+
+        // 盘亏：借 待处理财产损溢 PENDING_PROPERTY_LOSS / 贷 原材料 INVENTORY
+        yield return new PostingRule
+        {
+            EventType = "Inventory.AdjustLoss", Name = "库存盘亏", VoucherSource = VoucherSource.Inventory, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "PENDING_PROPERTY_LOSS", "Amount"),
+                Role(2, PostingSide.Credit, "INVENTORY", "Amount"),
+            },
+        };
+
+        // 报废：借 营业外支出 NON_OP_EXPENSE（报废损失）/ 贷 原材料 INVENTORY
+        yield return new PostingRule
+        {
+            EventType = "Inventory.Scrapped", Name = "库存报废", VoucherSource = VoucherSource.Inventory, IsActive = true,
+            Lines =
+            {
+                Role(1, PostingSide.Debit, "NON_OP_EXPENSE", "Amount"),
+                Role(2, PostingSide.Credit, "INVENTORY", "Amount"),
+            },
+        };
     }
 
     private static PostingRuleLine Role(int no, PostingSide side, string role, string amountField, bool carryPartner = false, bool carryCostCenter = false) =>
