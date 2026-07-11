@@ -187,6 +187,12 @@ public static class I18nFinScreenSeed
         new Sys_Lang { LangKey = "E-FIN-144", ZhCN = "试算不平，禁止结账", ZhTW = "試算不平，禁止結帳", En = "Trial balance not balanced; close blocked", Ja = "試算表が不一致のため締められません", Ko = "시산표가 불일치하여 마감할 수 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-145", ZhCN = "上一会计期间尚未结账", ZhTW = "上一會計期間尚未結帳", En = "Previous period is not yet closed", Ja = "前会計期間が未締めです", Ko = "이전 회계 기간이 아직 마감되지 않았습니다" },
         new Sys_Lang { LangKey = "E-FIN-146", ZhCN = "期间未结账，无需反结账", ZhTW = "期間未結帳，無需反結帳", En = "Period is not closed; nothing to reopen", Ja = "期間は未締めのため解除不要です", Ko = "기간이 마감되지 않아 해제할 필요가 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-404", ZhCN = "该财年已年结锁定，不能过账", ZhTW = "該財年已年結鎖定，不能過帳", En = "Fiscal year is closed (locked); cannot post", Ja = "会計年度は年次締め済みのため記帳できません", Ko = "회계연도가 연말 마감되어 전기할 수 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-405", ZhCN = "该财年 12 期未全部结账，不能年结", ZhTW = "該財年 12 期未全部結帳，不能年結", En = "Not all 12 periods are closed; cannot run year-close", Ja = "12会計期間が全て締められていないため年次締めできません", Ko = "12개 기간이 모두 마감되지 않아 연말 마감을 할 수 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-406", ZhCN = "该财年已年结", ZhTW = "該財年已年結", En = "Fiscal year is already closed", Ja = "当会計年度は年次締め済みです", Ko = "해당 회계연도는 이미 연말 마감되었습니다" },
+        new Sys_Lang { LangKey = "E-FIN-407", ZhCN = "该财年未年结，无需反年结", ZhTW = "該財年未年結，無需反年結", En = "Fiscal year is not year-closed; nothing to reopen", Ja = "当会計年度は未締めのため年次締め解除不要です", Ko = "해당 회계연도는 연말 마감되지 않아 해제할 필요가 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-408", ZhCN = "本年利润科目(3103)不存在", ZhTW = "本年利潤科目(3103)不存在", En = "Current-year profit account (3103) not found", Ja = "当期純利益科目(3103)が存在しません", Ko = "당기순이익 계정(3103)이 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-409", ZhCN = "年结依赖未注入（凭证服务）", ZhTW = "年結相依未注入（憑證服務）", En = "Year-close dependency (journal service) not wired", Ja = "年次締めの依存(伝票サービス)が未注入です", Ko = "연말 마감 의존성(전표 서비스)이 주입되지 않았습니다" },
 
         // ════════ 应付 AP（章03）════════
         // ── 菜单 ──
