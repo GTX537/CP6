@@ -83,17 +83,27 @@ public class WorkOrderCompleteCostFlowTests
         var wip = (await k.Gl.GetByRoleAsync("WIP"))!.Id;
         var fg = (await k.Gl.GetByRoleAsync("FG"))!.Id;
         var inv = (await k.Gl.GetByRoleAsync("INVENTORY"))!.Id;
+        var cogs = (await k.Gl.GetByRoleAsync("COGS"))!.Id;
 
-        // ① 料工费 → WIP：借 WIP 550 / 贷 原材料(INVENTORY) 550
+        // ① 料工费 → WIP：借 WIP 实际全额 550 / 贷 原材料(INVENTORY) 550
         var collect = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#WIP"));
         Assert.Equal(VoucherSource.Cost, collect.Source);
         Assert.Equal(550m, collect.Lines.Single(l => l.AccountId == wip).Debit);
         Assert.Equal(550m, collect.Lines.Single(l => l.AccountId == inv).Credit);
 
-        // ② WIP → FG：借 库存商品(FG) 550 / 贷 在制品(WIP) 550
+        // ② WIP → FG：拍板②按标准成本 500（计划100×5）/ 贷 在制品(WIP) 500
         var settle = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
-        Assert.Equal(550m, settle.Lines.Single(l => l.AccountId == fg).Debit);
-        Assert.Equal(550m, settle.Lines.Single(l => l.AccountId == wip).Credit);
+        Assert.Equal(500m, settle.Lines.Single(l => l.AccountId == fg).Debit);
+        Assert.Equal(500m, settle.Lines.Single(l => l.AccountId == wip).Credit);
+
+        // ③ 差异 = 实际550 − 标准500 = +50 超用（多耗10×5）→ 借 COGS 50 / 贷 WIP 50
+        var varv = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#VAR"));
+        Assert.Equal(50m, varv.Lines.Single(l => l.AccountId == cogs).Debit);
+        Assert.Equal(50m, varv.Lines.Single(l => l.AccountId == wip).Credit);
+
+        // WIP 借贷净零（三腿合计）
+        var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
+        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));
     }
 
     // ── Collect 失败（工单不存在 → E-FIN-401）则不 Settle：零凭证 ──
@@ -124,8 +134,8 @@ public class WorkOrderCompleteCostFlowTests
         Assert.True(r1.Success, r1.Message);
         var r2 = await k.Hook.OnWorkOrderCompletedAsync("WO1", "mes");   // 重放同完工事件
 
-        // 仍只有 1 张 #WIP + 1 张 #FG（共 2 张 Cost 凭证）
-        Assert.Equal(2, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
+        // 仍只有 1 张 #WIP + 1 张 #FG + 1 张 #VAR（料实际550 vs 标准500 有 +50 差异，共 3 张 Cost 凭证）
+        Assert.Equal(3, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
         Assert.Equal(1, await db.CostSheets.CountAsync(s => s.WorkOrderNo == "WO1"));
         Assert.False(r2.Success);   // 已结转 → 幂等跳过（非重复过账）
     }
