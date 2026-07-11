@@ -40,12 +40,16 @@ public class StockMovementService : IStockMovementService
         Validate(req);
 
         // 棚卸凍結ガード（波F）：進行中の棚卸（Counting/DiffReview/AwaitingApproval）が対象ロケーションを
-        // 覆っている間は物理入出庫（IN/OUT/MOVE）を拒否し、カウント基準の正確性を保護する。
-        // 棚卸承認自身の差異調整（ADJ）は放行（A.2 前提：ADJ で账实を収束させる）。
+        // 覆っている間は物理数を動かす移動（IN/OUT/MOVE/ADJ）を拒否し、カウント基準の正確性を保護する。
+        // 豁免は「棚卸承認自身の差異調整」＝ ADJ かつ RelatedType=="STOCKTAKE" のみ（A.2 前提：ADJ で账实を収束）。
+        // 効期核銷（EXPIRY_DISPOSE）・RMA 調整等の他 ADJ は快照 BookQty を狂わせるため同様に拒否
+        //（判別子は StockFinBridge の (TxnType,RelatedType) 帰属フィルタと同源）。
         // RSV/UNRSV は引当のみで物理数を動かさないため凍結対象外。
         // 反冲（OUT/ISSUE, AllowNegativeOverride）も凍結ロケーションでは拒否＝盘点基线正确性优先
         //（反冲は best-effort：呼出側 C.1/C.2 の二重闸が吞错＋归集跳过で吸収し後補償可能）。
-        if ((req.TxnType is WmsTxnType.IN or WmsTxnType.OUT or WmsTxnType.MOVE)
+        var isStockTakeAdj = req.TxnType == WmsTxnType.ADJ && req.RelatedType == "STOCKTAKE";
+        if (!isStockTakeAdj
+            && (req.TxnType is WmsTxnType.IN or WmsTxnType.OUT or WmsTxnType.MOVE or WmsTxnType.ADJ)
             && await IsLocationFrozenAsync(req.WarehouseCd, req.LocationCd, ct))
         {
             throw new InvalidOperationException(
@@ -187,6 +191,16 @@ public class StockMovementService : IStockMovementService
             throw new ArgumentException("WM-MSG-011: 移動数量は0より大きい値を指定してください。");
         if (string.Equals(req.FromLocationCd, req.ToLocationCd, StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");
+
+        // 棚卸凍結の双端予検（波F）：MOVE は 2 腿非原子（源 OUT commit 後に先 IN が弾かれると在庫が宙吊り）。
+        // 腿1発行前に移動先の凍結を先読みして早期拒否する（移動元は腿1の ApplyAsync 内ガードが検査）。
+        // TOCTOU（予検通過後に凍結開始）は残るが、窓は極小かつ StartCountAsync 時点の快照 BookQty が
+        // 腿2前の在庫を反映するため棚卸収束は破れない。
+        if (await IsLocationFrozenAsync(req.WarehouseCd, req.ToLocationCd, ct))
+        {
+            throw new InvalidOperationException(
+                $"WM-MSG-304: 棚卸進行中のロケーション（{req.WarehouseCd} / {req.ToLocationCd}）は入出庫できません");
+        }
 
         // 源 OUT 側：物理在庫を減らす（StockTransaction には MOVE 種別 + Qty=-X で記録）
         var outNo = await ApplyAsync(new StockMovementRequest
