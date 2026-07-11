@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -22,13 +23,16 @@ public class StockMovementService : IStockMovementService
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IWmsNotifier _notifier;
+    private readonly IStockFinBridge _finBridge;
     private const string TxnPrefix = "TXN";
 
-    public StockMovementService(CP6Context db, IWmsSequenceService seq, IWmsNotifier? notifier = null)
+    public StockMovementService(CP6Context db, IWmsSequenceService seq, IWmsNotifier? notifier = null,
+        IStockFinBridge? finBridge = null)
     {
         _db = db;
         _seq = seq;
         _notifier = notifier ?? new NoOpWmsNotifier();
+        _finBridge = finBridge ?? new NoOpStockFinBridge();
     }
 
     public async Task<string> ApplyAsync(StockMovementRequest req, CancellationToken ct = default)
@@ -123,6 +127,14 @@ public class StockMovementService : IStockMovementService
 
             await _db.SaveChangesAsync(ct);
             if (tx != null) await tx.CommitAsync(ct);
+
+            // WMS→Fin 库存过账桥点火（best-effort、commit 之后・通知の前、失敗しても在庫移動は成功扱い）。
+            // 実際に過账するか否かは桥内の (TxnType,RelatedType) 帰属フィルタが判定（採購入庫/盘盈亏/报废のみ）。
+            try
+            {
+                await _finBridge.OnStockMovedAsync(txn, req.RelatedType ?? "", req.OperatorCd);
+            }
+            catch { /* fin bridge failure must not break stock movement */ }
 
             // SignalR リアルタイム通知（best-effort、失敗しても本処理は成功扱い）
             try

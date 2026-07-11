@@ -348,7 +348,10 @@ public class InboundService : IInboundService
                 UnitCd = d.UnitCd,
                 UnitPrice = d.UnitPrice,
                 RelatedNo = receiptNo,
-                RelatedType = "INBOUND",
+                // 生産完工入庫（PRODUCTION 源）は採購入庫と区別する独立 RelatedType を発行し、
+                // 库存过账桥が採購入庫暂估（Inventory.Received／借 INVENTORY 贷 GRNI）を生成しないよう分離する。
+                // 完工入庫の GL は波C 成本結転（借 FG 贷 WIP）が担当——さもなくば FG が二重計上＋GRNI 虚增。
+                RelatedType = dto.SourceType == InboundSourceType.Production ? "INBOUND-FG" : "INBOUND",
                 OperatorCd = dto.OperatorCd ?? userName,
                 Remark = $"入庫実績 {receiptNo}",
                 ReceiveDate = header.ReceiveDateTime,

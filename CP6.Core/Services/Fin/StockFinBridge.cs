@@ -121,6 +121,7 @@ public class StockFinBridge : BridgeHookBase, IStockFinBridge
         "SHIP" => "出货由波B开票过账，桥跳过避免双记",
         "ISSUE" => "生产领料由波C反冲过账，桥跳过避免双记",
         "FG" => "完工入库由波C成本结转过账，桥跳过避免双记",
+        "INBOUND-FG" => "生产完工入库（PRODUCTION 源）由波C成本结转过账（借FG/贷WIP），桥跳过避免双记＋防GRNI虚增",
         "MOVE" => "库内移库无GL影响，跳过",
         "REPLENISH" => "补充移库无GL影响，跳过",
         "RMA" => "退品返品暂不自动过账，跳过",
