@@ -138,3 +138,9 @@ M-WMS T6: complete (commit eb5fb51, Spec ✅ + Approved[sonnet审重跑]; 9实�
 M-WMS T5(聚焦版): complete (commit 014325b, Spec ✅ + Approved[sonnet审源码级回溯]; 26页44条v-permission高危+删除全覆盖, 键逐字对齐后端[按按钮实际调用API端点键非页面名, ProductionInbound入庫確定=inbound-receipt:post/PackingShip=outbound-order:ship跨域复用正确]; 纯属性追加零逻辑/CJK改动; 范围克制未越界状态档; type-check exit0. Follow-up票: add/edit全覆盖+CJK清理+5处无按钮DELETE缺口. 疑点: wms-stock-qc:set前端已贴依赖T2菜单429[已补])
 M-WMS T7测试补网: complete (commit 653a7fc, Spec ✅ + Approved[sonnet审逐行核服务源码]; 5用例StockTake承认+Outbound出库账实回归绑定真实计算[ADJ符号/台账双路对账/lot隔离/Confirmed守卫], 服务算错会真红; 不重复既有覆盖; 零生产改动; 148/148 Wms全绿. 全量回归1589绿[基线1578+11新]. Minor: 一用例数值边际重叠既有)
 # M-WMS T1-T7全部完成并逐任务审查通过. 待: 全支终审→合并main→部署
+M-WMS 全支终审+合并+部署: complete (fable终审 Ready=Yes[三处键一致性端到端零断链/前端全授权/fail-closed全覆盖/种子逐租户]; Minor#1修[菜单429 RoutePath→/wms/stock]; 平台Important记票[TenantAdminService不复制RoleAction→新租户admin重启前403,影响全模块,重启自愈]; 快进合并main=6745973; cp6-api镜像重建部署[宿主publish+薄镜像], 线上验证: 448 WMS RoleAction=112/租户×4逐租户落库/admin对warehouse:add空体400[权限放行到校验层]/无认证403[强校验生效]; cp6-web前端未重建[UX层后端已403, 6天旧属更广stale, 内存受限不冒险]). M-WMS 波完成.
+
+# ═══ 会话交接点 2026-07-11：FIN 财务油路开工在即 ═══
+# 本会话完成: ①全项目盘点(4路探查校准, 按难度×优先级)交付 ②M-WMS授权粒度收口波7任务全过审+fable终审+合并main=6745973+cp6-api重建部署+线上验证(448 RoleAction=112/租户×4/admin放行/无认证403) ③FIN两拍板(反冲负库存allow+warn/差异月末转COGS)锁spec=542bb61 ④FIN 4路探查摸清5子域真实API ⑤FIN码级plan出=docs/superpowers/plans/2026-07-11-fin-integration-loop.md commit f5e8d27(7波: 0地基/B出货AR/A库存GL/C反冲成本差异/F盘点冻结/D年结/E探测器+G横切)
+# 下窗口入口: 说「FIN 开工」→ 按 fin-oil-route-execution 记忆开工令从波B起跑(subagent-driven Opus, 同M-WMS格式逐任务回写本台账). 过账归属三方分工设计已呈述用户待确认(无异议默认采纳).
+# 未决呈用户: FIN过账归属(B收入COGS/C料工费WIP→FG/A采购入库+盘盈亏+报废)是否符合会计口径; 波次顺序默认B先(最高价值).
