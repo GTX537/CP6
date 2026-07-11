@@ -39,6 +39,19 @@ public class StockMovementService : IStockMovementService
     {
         Validate(req);
 
+        // 棚卸凍結ガード（波F）：進行中の棚卸（Counting/DiffReview/AwaitingApproval）が対象ロケーションを
+        // 覆っている間は物理入出庫（IN/OUT/MOVE）を拒否し、カウント基準の正確性を保護する。
+        // 棚卸承認自身の差異調整（ADJ）は放行（A.2 前提：ADJ で账实を収束させる）。
+        // RSV/UNRSV は引当のみで物理数を動かさないため凍結対象外。
+        // 反冲（OUT/ISSUE, AllowNegativeOverride）も凍結ロケーションでは拒否＝盘点基线正确性优先
+        //（反冲は best-effort：呼出側 C.1/C.2 の二重闸が吞错＋归集跳过で吸収し後補償可能）。
+        if ((req.TxnType is WmsTxnType.IN or WmsTxnType.OUT or WmsTxnType.MOVE)
+            && await IsLocationFrozenAsync(req.WarehouseCd, req.LocationCd, ct))
+        {
+            throw new InvalidOperationException(
+                $"WM-MSG-304: 棚卸進行中のロケーション（{req.WarehouseCd} / {req.LocationCd}）は入出庫できません");
+        }
+
         // SQL Server のみトランザクションを張る（InMemory は SupportsTransactions=false）
         IDbContextTransaction? tx = null;
         if (_db.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
@@ -208,6 +221,25 @@ public class StockMovementService : IStockMovementService
     }
 
     // ───────── 内部ヘルパー ─────────
+
+    /// <summary>
+    /// 指定ロケーションが進行中の棚卸（Counting/DiffReview/AwaitingApproval）に覆われ、凍結中かを判定する（波F）。
+    /// カバレッジ粒度 = StockTakeDetail（倉庫＋ロケーション）。承認（ApproveAndApplyAsync）or 取消（CancelAsync）で
+    /// ヘッダ状態が Completed/Cancelled へ遷移すれば、活性单クエリが空になり自然解凍される（状態の巻き戻し書込は不要）。
+    /// 性能：AnyAsync による存在判定のみ（等値条件でインデックス親和）。ApplyAsync 1 件あたり物理入出庫時に最小 1 クエリ。
+    /// </summary>
+    private Task<bool> IsLocationFrozenAsync(string warehouseCd, string locationCd, CancellationToken ct = default)
+    {
+        return (from d in _db.StockTakeDetails
+                join h in _db.StockTakes on d.StockTakeNo equals h.StockTakeNo
+                where !d.IsDeleted && !h.IsDeleted
+                      && d.WarehouseCd == warehouseCd && d.LocationCd == locationCd
+                      && (h.Status == StockTakeStatus.Counting
+                          || h.Status == StockTakeStatus.DiffReview
+                          || h.Status == StockTakeStatus.AwaitingApproval)
+                select d.LineNo)
+            .AnyAsync(ct);
+    }
 
     private static void Validate(StockMovementRequest req)
     {

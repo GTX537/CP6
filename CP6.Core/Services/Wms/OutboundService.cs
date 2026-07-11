@@ -347,7 +347,14 @@ public class OutboundService : IOutboundService
                         && s.AvailableQty >= needed
                         && s.OwnerType == StockOwnerType.Self
                         && s.QcStatus != StockQcStatus.Failed
-                        && s.QcStatus != StockQcStatus.Hold)
+                        && s.QcStatus != StockQcStatus.Hold
+                        // 棚卸凍結（波F）：進行中の棚卸に覆われたロケーションは引当候補から除外
+                        && !_db.StockTakeDetails.Any(d => !d.IsDeleted
+                            && d.WarehouseCd == s.WarehouseCd && d.LocationCd == s.LocationCd
+                            && _db.StockTakes.Any(h => h.StockTakeNo == d.StockTakeNo && !h.IsDeleted
+                                && (h.Status == StockTakeStatus.Counting
+                                    || h.Status == StockTakeStatus.DiffReview
+                                    || h.Status == StockTakeStatus.AwaitingApproval))))
             .OrderBy(s => s.ExpiryDate ?? DateTime.MaxValue)
             .ThenBy(s => s.ReceiveDate ?? DateTime.MaxValue)
             .ThenBy(s => s.LotNo)

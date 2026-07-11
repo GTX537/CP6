@@ -11,8 +11,10 @@ namespace CP6.Core.Services.Wms;
 /// 仕様書 §10。
 /// 採番：ST（YYYYMMDD-NNN 形式）。3 桁の月内連番。
 /// 在庫調整は StockMovementService.ApplyAsync(ADJ, Qty=diff) 経由。
-/// 第一版では「棚卸中フラグ」（Stock 凍結）は未実装。運用上の注意として
-/// 棚卸期間中の出庫はカウント結果に影響する旨をオペレータに周知する。
+/// 【波F】「棚卸中フラグ」＝凍結は活性单クエリ方式で実装済み：進行中（Counting/DiffReview/
+/// AwaitingApproval）の棚卸が覆うロケーションは StockMovementService 側で物理入出庫（IN/OUT/MOVE）を
+/// WM-MSG-304 で拒否し、OutboundService 引当候補からも除外する（承認自身の ADJ は放行）。
+/// 承認完了 or 取消で状態が遷移すれば活性单クエリが空になり自然解凍される（状態の巻き戻し書込は不要）。
 /// </remarks>
 public class StockTakeService : IStockTakeService
 {
