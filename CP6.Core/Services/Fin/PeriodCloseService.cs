@@ -160,84 +160,159 @@ public class PeriodCloseService : IPeriodCloseService
             .Where(x => x.Net != 0m)
             .ToList();
 
-        // ③ 空财年（无损益余额）→ 不产生凭证，仍锁年
+        // 3103 本年利润（无 Role，按编码）/ 3104 未分配利润（Role）
+        var profit = await _db.GlAccounts.FirstOrDefaultAsync(a => a.Code == CurrentYearProfitCode && a.IsActive);
+
+        // ③ 空财年（无损益余额）：通常仅锁年（不产生凭证）。
+        //    但若上次年结 v1（损益清零入 3103）已投、v2（3103→3104）未投而年未锁（如 v2 首跑失败后重试），
+        //    则损益已清零→balances 为空，若此时径直锁年会把全年利润残死在 3103、3104 恒 0（终审 Important#2）。
+        //    对策：锁年前检查 3103 残额≠0 → 补投 v2 再锁年。
         if (balances.Count == 0)
         {
-            await LockYearAsync(periods, userId);
-            _logger?.LogInformation("年结 {FY} 无损益余额，仅锁年（不产生凭证） by {User}", fiscalYear, userId);
+            var profit3103Net = profit == null ? 0m : await PostedAccountNetAsync(profit.Id, periodIds);
+            if (profit == null || profit3103Net == 0m)
+            {
+                await LockYearAsync(periods, userId);
+                _logger?.LogInformation("年结 {FY} 无损益余额，仅锁年（不产生凭证） by {User}", fiscalYear, userId);
+                return FinResult.Pass();
+            }
+
+            // 3103 残额≠0：补投 v2（3103→3104）。残额 net=借-贷：<0=贷余(净利未结转)→3103借/3104贷；>0=借余(净亏)→3103贷/3104借。
+            var retained0 = await _db.GlAccounts.FirstOrDefaultAsync(a => a.Role == RetainedEarningsRole && a.IsActive);
+            if (retained0 == null) return FinResult.Fail("E-FIN-141", RetainedEarningsRole);
+
+            lastPeriod.Status = PeriodStatus.Open;
+            await _db.SaveChangesAsync();
+            var recovered = false;
+            try
+            {
+                var v2r = new JournalEntry
+                {
+                    VoucherDate = carryDate,
+                    Source = VoucherSource.Carryover,
+                    SourceDocNo = $"{yearTag}-RE",
+                    Description = $"{fiscalYear} 年度净利结转未分配利润（重试补投 3103 残额）",
+                };
+                if (profit3103Net < 0m)   // 3103 贷余（净利）→ 3103 借 / 3104 贷
+                {
+                    v2r.Lines.Add(new JournalLine { AccountId = profit.Id, Debit = -profit3103Net });
+                    v2r.Lines.Add(new JournalLine { AccountId = retained0.Id, Credit = -profit3103Net });
+                }
+                else                      // 3103 借余（净亏）→ 3103 贷 / 3104 借
+                {
+                    v2r.Lines.Add(new JournalLine { AccountId = profit.Id, Credit = profit3103Net });
+                    v2r.Lines.Add(new JournalLine { AccountId = retained0.Id, Debit = profit3103Net });
+                }
+                var rr = await _journal.AutoPostAsync(v2r);
+                if (!rr.Ok) return rr;
+
+                await LockYearAsync(periods, userId);
+                recovered = true;
+            }
+            finally
+            {
+                if (!recovered) { lastPeriod.Status = PeriodStatus.Closed; await _db.SaveChangesAsync(); }
+            }
+
+            _logger?.LogWarning(
+                "年结 {FY} 重试：v1 已投而 v2 缺投，补投 3103→3104 残额结转（{Net}）+ 锁年 by {User}",
+                fiscalYear, -profit3103Net, userId);
             return FinResult.Pass();
         }
 
-        // 3103 本年利润（无 Role，按编码）/ 3104 未分配利润（Role）
-        var profit = await _db.GlAccounts.FirstOrDefaultAsync(a => a.Code == CurrentYearProfitCode && a.IsActive);
         if (profit == null) return FinResult.Fail("E-FIN-408", CurrentYearProfitCode);
         var retained = await _db.GlAccounts.FirstOrDefaultAsync(a => a.Role == RetainedEarningsRole && a.IsActive);
         if (retained == null) return FinResult.Fail("E-FIN-141", RetainedEarningsRole);
 
         // ★ 年结凭证须落财年末期（已 Closed）：由年结进程暂开该期承接结转分录，过账后再连同全年锁 YearClosed。
         //   仍走 AutoPostAsync（借贷平衡/科目合法性兜底），不绕过校验。
+        //   ★ 终审 Important#2：暂开→投凭证→锁年 全段包 try/finally，AutoPostAsync 抛异常（非 Fail 返回）
+        //     时 finally 恢复末期 Closed，避免末期泄漏 Open。
         lastPeriod.Status = PeriodStatus.Open;
         await _db.SaveChangesAsync();
 
-        // 凭证一：损益逐科目反向清零，净额对 3103
-        var v1 = new JournalEntry
+        var profitNet = 0m;
+        var yearLocked = false;
+        try
         {
-            VoucherDate = carryDate,
-            Source = VoucherSource.Carryover,
-            SourceDocNo = yearTag,
-            Description = $"{fiscalYear} 年度损益结转（结转本年利润）",
-        };
-        decimal clrDebit = 0m, clrCredit = 0m;
-        foreach (var b in balances)
-        {
-            if (b.Net > 0m)      // 借方余额（费用）→ 贷记冲平
-            {
-                v1.Lines.Add(new JournalLine { AccountId = b.AccountId, Credit = b.Net });
-                clrCredit += b.Net;
-            }
-            else                 // 贷方余额（收入）→ 借记冲平
-            {
-                v1.Lines.Add(new JournalLine { AccountId = b.AccountId, Debit = -b.Net });
-                clrDebit += -b.Net;
-            }
-        }
-        var profitNet = clrDebit - clrCredit;   // >0 净利（3103 贷）；<0 净亏（3103 借）
-        if (profitNet > 0m) v1.Lines.Add(new JournalLine { AccountId = profit.Id, Credit = profitNet });
-        else if (profitNet < 0m) v1.Lines.Add(new JournalLine { AccountId = profit.Id, Debit = -profitNet });
-        // profitNet==0（损益相抵）→ 无 3103 行，v1 借贷自平
-
-        var r1 = await _journal.AutoPostAsync(v1);
-        if (!r1.Ok) { lastPeriod.Status = PeriodStatus.Closed; await _db.SaveChangesAsync(); return r1; }
-
-        // 凭证二：3103 → 3104（仅当存在净损益）
-        if (profitNet != 0m)
-        {
-            var v2 = new JournalEntry
+            // 凭证一：损益逐科目反向清零，净额对 3103
+            var v1 = new JournalEntry
             {
                 VoucherDate = carryDate,
                 Source = VoucherSource.Carryover,
-                SourceDocNo = $"{yearTag}-RE",
-                Description = $"{fiscalYear} 年度净利结转未分配利润",
+                SourceDocNo = yearTag,
+                Description = $"{fiscalYear} 年度损益结转（结转本年利润）",
             };
-            if (profitNet > 0m)   // 净利：3103 借 / 3104 贷
+            decimal clrDebit = 0m, clrCredit = 0m;
+            foreach (var b in balances)
             {
-                v2.Lines.Add(new JournalLine { AccountId = profit.Id, Debit = profitNet });
-                v2.Lines.Add(new JournalLine { AccountId = retained.Id, Credit = profitNet });
+                if (b.Net > 0m)      // 借方余额（费用）→ 贷记冲平
+                {
+                    v1.Lines.Add(new JournalLine { AccountId = b.AccountId, Credit = b.Net });
+                    clrCredit += b.Net;
+                }
+                else                 // 贷方余额（收入）→ 借记冲平
+                {
+                    v1.Lines.Add(new JournalLine { AccountId = b.AccountId, Debit = -b.Net });
+                    clrDebit += -b.Net;
+                }
             }
-            else                  // 净亏：3103 贷 / 3104 借
+            profitNet = clrDebit - clrCredit;   // >0 净利（3103 贷）；<0 净亏（3103 借）
+            if (profitNet > 0m) v1.Lines.Add(new JournalLine { AccountId = profit.Id, Credit = profitNet });
+            else if (profitNet < 0m) v1.Lines.Add(new JournalLine { AccountId = profit.Id, Debit = -profitNet });
+            // profitNet==0（损益相抵）→ 无 3103 行，v1 借贷自平
+
+            var r1 = await _journal.AutoPostAsync(v1);
+            if (!r1.Ok) return r1;   // finally 恢复末期 Closed
+
+            // 凭证二：3103 → 3104（仅当存在净损益）
+            if (profitNet != 0m)
             {
-                v2.Lines.Add(new JournalLine { AccountId = profit.Id, Credit = -profitNet });
-                v2.Lines.Add(new JournalLine { AccountId = retained.Id, Debit = -profitNet });
+                var v2 = new JournalEntry
+                {
+                    VoucherDate = carryDate,
+                    Source = VoucherSource.Carryover,
+                    SourceDocNo = $"{yearTag}-RE",
+                    Description = $"{fiscalYear} 年度净利结转未分配利润",
+                };
+                if (profitNet > 0m)   // 净利：3103 借 / 3104 贷
+                {
+                    v2.Lines.Add(new JournalLine { AccountId = profit.Id, Debit = profitNet });
+                    v2.Lines.Add(new JournalLine { AccountId = retained.Id, Credit = profitNet });
+                }
+                else                  // 净亏：3103 贷 / 3104 借
+                {
+                    v2.Lines.Add(new JournalLine { AccountId = profit.Id, Credit = -profitNet });
+                    v2.Lines.Add(new JournalLine { AccountId = retained.Id, Debit = -profitNet });
+                }
+                var r2 = await _journal.AutoPostAsync(v2);
+                if (!r2.Ok) return r2;   // finally 恢复末期 Closed（v1 保持 Posted；重试走空财年残额补投分支）
             }
-            var r2 = await _journal.AutoPostAsync(v2);
-            if (!r2.Ok) { lastPeriod.Status = PeriodStatus.Closed; await _db.SaveChangesAsync(); return r2; }
+
+            // 全年 12 期锁 YearClosed
+            await LockYearAsync(periods, userId);
+            yearLocked = true;
+        }
+        finally
+        {
+            if (!yearLocked) { lastPeriod.Status = PeriodStatus.Closed; await _db.SaveChangesAsync(); }
         }
 
-        // 全年 12 期锁 YearClosed
-        await LockYearAsync(periods, userId);
         _logger?.LogInformation(
             "年结 {FY} 完成：损益结转 + 3103→3104 + 锁年（净额 {Net}） by {User}", fiscalYear, profitNet, userId);
         return FinResult.Pass();
+    }
+
+    /// <summary>指定科目在给定期间集内、已过账凭证下的净额（借-贷）。</summary>
+    private async Task<decimal> PostedAccountNetAsync(Guid accountId, List<Guid> periodIds)
+    {
+        var vals = await (from l in _db.JournalLines
+                          join e in _db.JournalEntries on l.EntryId equals e.Id
+                          where e.Status == JournalStatus.Posted
+                                && periodIds.Contains(e.PeriodId)
+                                && l.AccountId == accountId
+                          select l.Debit - l.Credit).ToListAsync();
+        return vals.Sum();
     }
 
     public async Task<FinResult> ReopenYearAsync(int fiscalYear, string userId)
@@ -269,28 +344,34 @@ public class PeriodCloseService : IPeriodCloseService
         if (toNegate.Count > 0)
         {
             // 反向凭证须落财年末期（当前 YearClosed）：暂开末期承接，仍走 AutoPostAsync（借贷平衡/科目兜底）。
+            // ★ 终审 Important#2：暂开→投凭证段包 try/finally，AutoPostAsync 抛异常（非 Fail 返回）时
+            //   finally 恢复末期 YearClosed，避免末期泄漏 Open。
             var lastPeriod = periods[^1];
             lastPeriod.Status = PeriodStatus.Open;
             await _db.SaveChangesAsync();
 
-            var rv = new JournalEntry
+            var posted = false;
+            try
             {
-                VoucherDate = lastPeriod.PeriodEnd,
-                Source = VoucherSource.Carryover,
-                SourceDocNo = $"{yearTag}-REOPEN",
-                Description = $"{fiscalYear} 反年结（反向冲销年结结转，原年结凭证保持已过账）",
-            };
-            foreach (var b in toNegate)
-            {
-                if (b.Net > 0m) rv.Lines.Add(new JournalLine { AccountId = b.AccountId, Credit = b.Net });
-                else rv.Lines.Add(new JournalLine { AccountId = b.AccountId, Debit = -b.Net });
+                var rv = new JournalEntry
+                {
+                    VoucherDate = lastPeriod.PeriodEnd,
+                    Source = VoucherSource.Carryover,
+                    SourceDocNo = $"{yearTag}-REOPEN",
+                    Description = $"{fiscalYear} 反年结（反向冲销年结结转，原年结凭证保持已过账）",
+                };
+                foreach (var b in toNegate)
+                {
+                    if (b.Net > 0m) rv.Lines.Add(new JournalLine { AccountId = b.AccountId, Credit = b.Net });
+                    else rv.Lines.Add(new JournalLine { AccountId = b.AccountId, Debit = -b.Net });
+                }
+                var rr = await _journal.AutoPostAsync(rv);
+                if (!rr.Ok) return rr;   // finally 恢复末期 YearClosed
+                posted = true;
             }
-            var rr = await _journal.AutoPostAsync(rv);
-            if (!rr.Ok)
+            finally
             {
-                lastPeriod.Status = PeriodStatus.YearClosed;
-                await _db.SaveChangesAsync();
-                return rr;
+                if (!posted) { lastPeriod.Status = PeriodStatus.YearClosed; await _db.SaveChangesAsync(); }
             }
         }
 

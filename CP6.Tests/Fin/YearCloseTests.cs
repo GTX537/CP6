@@ -362,6 +362,68 @@ public class YearCloseTests
         Assert.Equal(400m, await AcctNet(db, p3104));   // 借方净额（减少留存）
     }
 
+    // ──────── 重试：v1 已投而 v2 未投（3103 残额）→ 再次年结补投 v2 并锁年（终审 Important#2）────────
+
+    [Fact]
+    public async Task YearClose_Retry_AfterV1PostedV2Missing_CompletesV2AndLocks()
+    {
+        using var db = NewDb();
+        var gl = await SeedCoa(db);
+        var bank = (await gl.GetByCodeAsync("1002"))!.Id;
+        var rev = (await gl.GetByCodeAsync("4001"))!.Id;
+        var cogs = (await gl.GetByCodeAsync("5001"))!.Id;
+        var p3103 = (await gl.GetByCodeAsync("3103"))!.Id;
+        var p3104 = (await gl.GetByCodeAsync("3104"))!.Id;
+
+        // 正常损益：收入 1000 / 费用 600 → 净利 400
+        await PostManual(db, new DateTime(2026, 1, 15), bank, rev, 1000m);
+        await PostManual(db, new DateTime(2026, 2, 15), cogs, bank, 600m);
+
+        // 模拟「v1 已投而 v2 失败未投」的残态：手工 AutoPost 一张 YC-2026 结转凭证
+        //（损益逐科目清零 → 净利 400 入 3103 贷），但不投 3103→3104 的 v2。
+        var v1 = new JournalEntry
+        {
+            VoucherDate = new DateTime(2026, 12, 31),
+            Source = VoucherSource.Carryover,
+            SourceDocNo = "YC-2026",
+            Description = "模拟 v1 已投（v2 缺投）",
+            Lines =
+            {
+                new JournalLine { AccountId = rev, Debit = 1000m },
+                new JournalLine { AccountId = cogs, Credit = 600m },
+                new JournalLine { AccountId = p3103, Credit = 400m },
+            },
+        };
+        Assert.True((await Jes(db).AutoPostAsync(v1)).Ok);
+
+        await CloseAll12(db, 2026);
+
+        // 前提确认：损益已清零（balances 空）、3103 残贷 400、v2 未投、年未锁
+        Assert.Equal(0m, await AcctNet(db, rev));
+        Assert.Equal(0m, await AcctNet(db, cogs));
+        Assert.Equal(-400m, await AcctNet(db, p3103));   // 3103 残额（全年利润残死）
+        Assert.Equal(0m, await AcctNet(db, p3104));
+
+        // 重试年结：不再走「空财年仅锁年」死锁分支，而是补投 v2（3103→3104）再锁年
+        var r = await Close(db).YearCloseAsync(2026, "boss");
+        Assert.True(r.Ok, r.Code);
+
+        // 补投的 v2（YC-2026-RE）：3103 借 400 / 3104 贷 400
+        var v2 = await db.JournalEntries.Include(x => x.Lines)
+            .SingleAsync(x => x.Source == VoucherSource.Carryover && x.SourceDocNo == "YC-2026-RE");
+        Assert.Equal(JournalStatus.Posted, v2.Status);
+        Assert.Equal(400m, v2.Lines.Single(l => l.AccountId == p3103).Debit);
+        Assert.Equal(400m, v2.Lines.Single(l => l.AccountId == p3104).Credit);
+
+        // 3103 结平、3104 = 贷 400（净利落定未分配利润）
+        Assert.Equal(0m, await AcctNet(db, p3103));
+        Assert.Equal(-400m, await AcctNet(db, p3104));
+
+        // 全年 12 期锁 YearClosed
+        var periods = await db.FiscalPeriods.Where(p => p.FiscalYear == 2026).ToListAsync();
+        Assert.All(periods, p => Assert.Equal(PeriodStatus.YearClosed, p.Status));
+    }
+
     // ───────────────────────── 空财年：无损益 → 不产生凭证仍锁年 ─────────────────────────
 
     [Fact]

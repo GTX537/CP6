@@ -54,6 +54,8 @@ public static class FinPeriodPermissionSeed
                         ActionCode = code,
                         ActionName = name,
                         Sort = 0,
+                        Creator = "system",
+                        CreateDate = DateTime.Now,
                     });
                     changed = true;
                 }
@@ -67,6 +69,8 @@ public static class FinPeriodPermissionSeed
                         RoleId = 1,
                         MenuId = PeriodMenuId,
                         ActionCode = code,
+                        Creator = "system",
+                        CreateDate = DateTime.Now,
                     });
                     changed = true;
                 }

@@ -78,6 +78,8 @@ public static class FinCoaBackfillSeed
                         StandardScheme = scheme,
                         IsActive = true,
                         ParentId = parentId,
+                        Creator = "system",
+                        CreateDate = DateTime.Now,
                     });
                     changed = true;
                 }
