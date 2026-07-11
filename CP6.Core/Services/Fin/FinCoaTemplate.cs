@@ -133,6 +133,7 @@ public static class FinCoaTemplate
         new("2210", "Input Tax (VAT recoverable)", AccountType.Liability, Cr, true, Role: "TAX_INPUT"),
         new("2220", "Output Tax (VAT payable)",    AccountType.Liability, Cr, true, Role: "TAX_OUTPUT"),
         new("3000", "Share Capital",           AccountType.Equity, Cr, true, Role: "EQUITY_CAPITAL"),
+        new("3103", "Current Year Earnings",   AccountType.Equity, Cr, true),                             // 波G 年结本年利润（无 Role，按编码 3103 定位，与 CN 同码同义——PeriodCloseService.CurrentYearProfitCode）
         new("3300", "Retained Earnings",       AccountType.Equity, Cr, true, Role: "RETAINED_EARNINGS"),
         new("4000", "Sales Revenue",           AccountType.Revenue, Cr, true, Role: "REVENUE"),
         new("4800", "Non-Operating Income",    AccountType.Revenue, Cr, true, Role: "NON_OP_INCOME"),        // 波A 盘盈利得

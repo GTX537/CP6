@@ -664,6 +664,10 @@ using (var scope = app.Services.CreateScope())
     // A3 §9 固定资产科目对账（既有库补 Role/新增 4 科目；空库由模板导入负责）
     await CP6.WebApi.Seed.A3AccountSeed.EnsureAsync(db);
 
+    // F1 波G G.1：存量租户 COA 缺行逐租户回填（波A GRNI/盘盈亏 + 波G INTL 本年利润 3103），
+    // 只对已导入该 scheme 的租户按模板补插缺失行（只插不改不删）。空库由模板导入负责。幂等。
+    CP6.WebApi.Seed.FinCoaBackfillSeed.EnsureSeeded(db);
+
     if (!db.Sys_Menus.Any())
     {
         // 菜单ID和角色ID都是自定义的，手动指定
@@ -1221,6 +1225,11 @@ using (var scope = app.Services.CreateScope())
         }
         db.SaveChanges();
     }
+
+    // F1 波G G.1：年结高危端点（PeriodController year-close/reopen-year）权限点逐租户种子。
+    // 上方 D-2 finActions 块仅默认租户（.Any 受行级过滤）；本块照 M-WMS T3b 逐租户显式 TenantId + IgnoreQueryFilters，
+    // 覆盖全部租户 admin（否则非默认租户 admin 年结 403）。须置于 Fin 权限块之后（MenuKey 604 已回填、菜单行已在）。幂等。
+    CP6.WebApi.Seed.FinPeriodPermissionSeed.EnsureSeeded(db);
 
     // S 类认证加固（T8）：安全审计日志菜单（114，挂"系统管理"100 组）+ admin 授权 + query 操作权限点。
     // 菜单驱动路由注册（无 Sys_Menu 则前端路由不注册 → 白屏不可达，A4 H-3 教训）。
