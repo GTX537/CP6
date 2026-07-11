@@ -297,6 +297,17 @@ public class OutboundService : IOutboundService
         header.Modifier = userName;
         header.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
+
+        // WMS→FIN 接缝：出荷区分の取消 → AR 红冲（幂等 ShipmentId=出庫号、best-effort）。
+        //  主控裁決1：消費端は発票が無ければ Skipped で優雅に no-op するため、WMS 側から Fin テーブルを
+        //  跨模块照会せず無条件点火し、発票の有無は Fin 側で判定させる（低耦合）。B.1 の Shipping 門槛と対称。
+        //  現状態機では Completed（開票済の可能性あり）は取消不可のため、実質「出荷前取消」の空振り紅冲が主だが、
+        //  空振りは消費端が Skipped で吸収する。紅冲失敗は取消をブロックしない（_erpBridge 先例に倣う）。
+        if (header.OutboundType == OutboundType.Shipping)
+        {
+            try { await _finBridge.OnShipmentCancelledAsync(outboundNo, userName); }
+            catch { /* best-effort：紅冲失敗は取消を失敗させない */ }
+        }
     }
 
     // ═══════════════════════════════════════════════════════════
