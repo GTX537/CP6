@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DomainModels.Wms;
@@ -22,6 +23,7 @@ public class OutboundService : IOutboundService
     private readonly IStockMovementService _stock;
     private readonly IWmsNotifier _notifier;
     private readonly IErpBridgeHook _erpBridge;
+    private readonly IFinBridgeHook _finBridge;
     private readonly IMaterialShortageService? _shortage;
     private readonly IMaterialShortageNotifier? _shortageNotifier;
     private readonly IOutboundRoutingService? _routing;
@@ -37,13 +39,15 @@ public class OutboundService : IOutboundService
         IErpBridgeHook? erpBridge = null,
         IMaterialShortageService? shortage = null,
         IMaterialShortageNotifier? shortageNotifier = null,
-        IOutboundRoutingService? routing = null)
+        IOutboundRoutingService? routing = null,
+        IFinBridgeHook? finBridge = null)
     {
         _db = db;
         _seq = seq;
         _stock = stock;
         _notifier = notifier ?? new NoOpWmsNotifier();
         _erpBridge = erpBridge ?? new NoOpErpBridgeHook();
+        _finBridge = finBridge ?? new NoOpFinBridgeHook();
         _shortage = shortage;
         _shortageNotifier = shortageNotifier;
         _routing = routing;
@@ -463,6 +467,9 @@ public class OutboundService : IOutboundService
         if (details.Count == 0)
             throw new InvalidOperationException("WM-MSG-041: 出庫対象明細がありません");
 
+        // 今回出荷数のスナップショット（ループで ShippedQty が更新される前に確保）— FIN 自動開票の行数量に使用
+        var shippedByLine = details.ToDictionary(d => d.LineNo, d => d.AllocatedQty - d.ShippedQty);
+
         foreach (var d in details)
         {
             var shipQty = d.AllocatedQty - d.ShippedQty;
@@ -528,7 +535,67 @@ public class OutboundService : IOutboundService
             catch { /* best-effort：回写失敗は出荷確定を失敗させない */ }
         }
 
+        // WMS→FIN 接缝：出荷区分の出庫確定 → AR 自動開票（幂等 ShipmentId=出庫号、best-effort）
+        //  受注售価を優先取得し、成本は工単成本単があれば消費端が実成本へ切替、無ければ EstimatedCost 回退（0=成本凭证保留）。
+        if (header.OutboundType == OutboundType.Shipping)
+        {
+            try
+            {
+                var finReq = await BuildFinInvoiceRequestAsync(header, details, shippedByLine);
+                if (finReq.Lines.Count > 0)
+                    await _finBridge.OnShipmentConfirmedAsync(finReq, userName);
+            }
+            catch { /* best-effort：自動開票失敗は出荷確定を失敗させない */ }
+        }
+
         return packageNo;
+    }
+
+    /// <summary>
+    /// 出庫確定データから FIN 自動開票リクエストを組立てる。
+    /// 售価は受注明細 <see cref="OrderDetail.IndividualUnitPrice"/> を優先（引当で在庫成本価に汚染され得る
+    /// 出庫明細 UnitPrice を盲信しない）。取得できない場合のみ出庫明細 UnitPrice に回退する。
+    /// </summary>
+    private async Task<FinShipmentInvoiceRequest> BuildFinInvoiceRequestAsync(
+        OutboundOrder header, List<OutboundOrderDetail> details, IReadOnlyDictionary<int, decimal> shippedByLine)
+    {
+        // 受注明細の售価を製品CD別に索引（同製品複数明細は最初の非 null 価格を採用）
+        var orderPriceByProduct = new Dictionary<string, decimal?>();
+        if (!string.IsNullOrWhiteSpace(header.WebOrderNo))
+        {
+            var ods = await _db.OrderDetails.AsNoTracking()
+                .Where(d => d.WebOrderNo == header.WebOrderNo && !d.IsDeleted)
+                .ToListAsync();
+            orderPriceByProduct = ods
+                .GroupBy(d => d.ProductCd)
+                .ToDictionary(g => g.Key, g => g.Select(x => x.IndividualUnitPrice).FirstOrDefault(p => p.HasValue));
+        }
+
+        var lines = new List<FinShipmentInvoiceLine>();
+        foreach (var d in details)
+        {
+            if (!shippedByLine.TryGetValue(d.LineNo, out var qty) || qty <= 0m) continue;
+
+            decimal unitPrice = 0m;
+            if (orderPriceByProduct.TryGetValue(d.ProductCd, out var op) && op.HasValue)
+                unitPrice = op.Value;           // 受注售価を優先
+            else if (d.UnitPrice.HasValue)
+                unitPrice = d.UnitPrice.Value;  // 受注明細が引けない場合のみ出庫明細単価へ回退
+
+            lines.Add(new FinShipmentInvoiceLine { ItemId = d.ProductCd, Qty = qty, UnitPrice = unitPrice });
+        }
+
+        return new FinShipmentInvoiceRequest
+        {
+            ShipmentId = header.OutboundNo,   // 幂等键
+            OrderId = string.IsNullOrWhiteSpace(header.WebOrderNo) ? null : header.WebOrderNo,
+            WorkOrderNo = string.IsNullOrWhiteSpace(header.WorkOrderNo) ? null : header.WorkOrderNo,
+            CustomerId = header.CustomerCd ?? string.Empty,
+            InvoiceDate = DateTime.Today,
+            DueDate = DateTime.Today,
+            EstimatedCost = 0m,   // 工単成本単があれば消費端が実 FG 単位成本へ切替、無ければ成本凭证は保留（CostAmount>0 のみ計上）
+            Lines = lines,
+        };
     }
 
     // ═══════════════════════════════════════════════════════════
