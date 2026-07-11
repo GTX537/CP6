@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Fin;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Mes;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Fin;
@@ -177,5 +178,89 @@ public class WorkOrderCompleteCostFlowTests
 
         var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
         Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));   // WIP 净零
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  审查修复：两道闸（backflush 失败不触发 fin hook / 零成本不结转防锁死）
+    // ════════════════════════════════════════════════════════════════════════
+
+    private sealed class ThrowingBackflush : IBackflushService
+    {
+        public Task BackflushAsync(string workOrderNo, string? userName)
+            => throw new InvalidOperationException("backflush boom");
+    }
+
+    private sealed class RecordingFinHook : IFinBridgeHook
+    {
+        public int WorkOrderCompletedCalls;
+        public Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
+            => Task.FromResult(FinBridgeResult.Ok(null));
+        public Task<FinBridgeResult> OnShipmentCancelledAsync(string shipmentId, string? userName)
+            => Task.FromResult(FinBridgeResult.Ok(null));
+        public Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName)
+        {
+            WorkOrderCompletedCalls++;
+            return Task.FromResult(FinBridgeResult.Ok(workOrderNo));
+        }
+    }
+
+    // ── 闸1：反冲抛错 → fin hook 本轮不触发（避免零/陈旧 ActualQty 被归集+auto-settle 锁死），报工本体照常成功 ──
+    [Fact]
+    public async Task Complete_BackflushThrows_FinHookNotTriggered_ReportStillSucceeds()
+    {
+        using var db = NewDb();
+        db.Set<WorkOrder>().Add(new WorkOrder { Id = Guid.NewGuid(), WorkOrderNo = "WOB", ProductCd = "P1", Status = 2, ProductionQty = 10m, CompletedQty = 0m });
+        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WOB", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
+        await db.SaveChangesAsync();
+
+        var mesSeq = new MesSequenceService(db);
+        var woService = new WorkOrderService(db, mesSeq, new NoOpWmsBridgeHook());
+        var finHook = new RecordingFinHook();
+        var prService = new ProductionResultService(db, mesSeq, woService, new NoOpMesNotifier(), new NoOpWmsBridgeHook(), new ThrowingBackflush(), finHook);
+
+        // 反冲抛错被吞、报工不抛错
+        var resultNo = await prService.CompleteAsync(new ProductionResultRequest
+        {
+            WorkOrderNo = "WOB", ProcessCd = "OP1", OperatorCd = "OP", GoodQty = 10m,
+        }, "mes");
+        Assert.False(string.IsNullOrEmpty(resultNo));
+
+        // 完工照常落账，但 fin hook 本轮被跳过（0 次调用）
+        var wo = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WOB");
+        Assert.Equal(WorkOrderStatus.Completed, wo.Status);
+        Assert.Equal(0, finHook.WorkOrderCompletedCalls);
+    }
+
+    // ── 闸2：归集后 TotalActual<=0 → 不结转（否则 CostSettle 会把零额单直接标 Settled 无凭证 → 恒 E-FIN-402 永久锁死）──
+    [Fact]
+    public async Task Hook_ZeroTotalActual_SkipsSettle_SheetStaysCollected()
+    {
+        using var db = NewDb();
+        var k = await SetupHookAsync(db);
+        SeedWoWithActual(db, "WOZ", supplyPrice: 5m, actualQty: 0m);   // 反冲未回写 → 料消耗 0 → TotalActual = 0
+        await db.SaveChangesAsync();
+
+        var r = await k.Hook.OnWorkOrderCompletedAsync("WOZ", "mes");
+        Assert.False(r.Success);
+        Assert.Contains("SKIPPED", r.Message);
+
+        // 成本单留在 Collected（可重试），未被标 Settled，零凭证
+        var cs = await db.CostSheets.SingleAsync(s => s.WorkOrderNo == "WOZ");
+        Assert.Equal(CostSheetStatus.Collected, cs.Status);
+        Assert.Null(cs.JournalEntryId);
+        Assert.Equal(0, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
+
+        // IntegrationEvent 留 Skipped 痕
+        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceNo == "WOZ" && e.Status == "SKIPPED"));
+
+        // 反冲补偿回写后重放 → 可恢复：正常归集+结转
+        var wom = await db.WorkOrderMaterials.SingleAsync(m => m.WorkOrderNo == "WOZ");
+        wom.ActualQty = 10m;
+        await db.SaveChangesAsync();
+        var r2 = await k.Hook.OnWorkOrderCompletedAsync("WOZ", "mes");
+        Assert.True(r2.Success, r2.Message);
+        var cs2 = await db.CostSheets.SingleAsync(s => s.WorkOrderNo == "WOZ");
+        Assert.Equal(CostSheetStatus.Settled, cs2.Status);
+        Assert.Equal(50m, cs2.MaterialActual);   // 10 × 5
     }
 }

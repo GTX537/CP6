@@ -2,6 +2,7 @@ using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CP6.Core.Services.Mes;
 
@@ -20,9 +21,10 @@ public class ProductionResultService : IProductionResultService
     private readonly IWmsBridgeHook _wmsBridge;
     private readonly IBackflushService? _backflush;
     private readonly IFinBridgeHook? _finBridge;
+    private readonly ILogger<ProductionResultService>? _logger;
     private const string ResultSeqKey = "PR";
 
-    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null, IFinBridgeHook? finBridge = null)
+    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null, IFinBridgeHook? finBridge = null, ILogger<ProductionResultService>? logger = null)
     {
         _db = db;
         _seq = seq;
@@ -31,6 +33,7 @@ public class ProductionResultService : IProductionResultService
         _wmsBridge = wmsBridge;
         _backflush = backflush;
         _finBridge = finBridge;
+        _logger = logger;
     }
 
     /// <summary>
@@ -265,16 +268,24 @@ public class ProductionResultService : IProductionResultService
             // F1 波C.1：完工点で BOM 定额の原料を反冲（OUT/ISSUE）＋実績消費回写。
             // best-effort（コミット後）：反冲失敗は既提交の報工をロールバックしない
             // （拍板①：账实差异は棚卸で吸収。不足時も負在庫＋告警で通す）。
+            var backflushOk = true;
             if (_backflush != null)
             {
                 try { await _backflush.BackflushAsync(req.WorkOrderNo, userName); }
-                catch { /* 反冲失敗は報工本体に影響させない */ }
+                catch (Exception ex)
+                {
+                    // 反冲失敗は報工本体に影響させない。ただし本轮 fin hook はスキップ
+                    //（ActualQty 未回写のまま归集すると零/陈旧成本が auto-settle で Settled に固化し恒 E-FIN-402 → 不可恢复）。
+                    backflushOk = false;
+                    _logger?.LogWarning(ex, "[MES] 工单 {Wo} 反冲失败，本轮跳过成本归集/结转（料耗未记，待补偿后重放）", req.WorkOrderNo);
+                }
             }
 
             // F1 波C.2：反冲回写 ActualQty の後に成本归集+结转をトリガ（順序 load-bearing：
             // CollectAsync は WorkOrderMaterial.ActualQty を読むため、必ず反冲の後）。
+            // 闸1：反冲失敗时本轮跳过（料耗没记上就先不归集，待后续补偿）。
             // best-effort（コミット後）：归集/结转失敗は既提交の報工をロールバックしない。
-            if (_finBridge != null)
+            if (_finBridge != null && backflushOk)
             {
                 try { await _finBridge.OnWorkOrderCompletedAsync(req.WorkOrderNo, userName); }
                 catch { /* 成本归集/结转失敗は報工本体に影響させない */ }

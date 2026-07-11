@@ -103,6 +103,18 @@ public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
                 return FinBridgeResult.Failed(collect.Code ?? "collect fail");
             }
 
+            // ②′ 零成本守卫（闸2）：TotalActual<=0 时不结转——CostSettle 会把零额单直接标 Settled 无凭证，
+            // 之后归集恒 E-FIN-402 → 永久锁死。留在 Collected 态，待反冲补偿/工费补录后重放可恢复。
+            var sheet = await Db.CostSheets.AsNoTracking().FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo);
+            if (sheet == null || sheet.TotalActual <= 0m)
+            {
+                await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                    workOrderNo, null, IntegrationEventStatus.Skipped, "zero total cost", corrId,
+                    new { workOrderNo, userName, step = "settle-guard", total = sheet?.TotalActual ?? 0m });
+                Logger.LogWarning("[FIN-Bridge] 工单 {Wo} 归集后总成本<=0，跳过结转（成本单留在 Collected 可重试）", workOrderNo);
+                return FinBridgeResult.Skipped("zero total cost, settle skipped");
+            }
+
             // ② 完工结转：料工费→WIP + WIP→FG 两凭证（借贷/科目照 CostSettle 既有实现）。归集成功才结转。
             var settle = await _settle.SettleAsync(workOrderNo, user);
             var status = settle.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
