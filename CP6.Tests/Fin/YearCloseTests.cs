@@ -231,7 +231,7 @@ public class YearCloseTests
         Assert.Equal(before, after);   // 不重记
     }
 
-    // ───────────────────────── 反年结：红冲 + 回 Closed + 可再过账 ─────────────────────────
+    // ───────────────── 反年结：反向冲销（原凭证保持 Posted）+ 余额恢复 + 回 Closed + 可再过账 ─────────────────
 
     [Fact]
     public async Task ReopenYear_ReversesCarryoverAndUnlocks()
@@ -240,20 +240,33 @@ public class YearCloseTests
         var gl = await SeedCoa(db);
         var bank = (await gl.GetByCodeAsync("1002"))!.Id;
         var rev = (await gl.GetByCodeAsync("4001"))!.Id;
+        var cogs = (await gl.GetByCodeAsync("5001"))!.Id;
         var cash = (await gl.GetByCodeAsync("1001"))!.Id;
+        var p3103 = (await gl.GetByCodeAsync("3103"))!.Id;
+        var p3104 = (await gl.GetByCodeAsync("3104"))!.Id;
         await PostManual(db, new DateTime(2026, 1, 15), bank, rev, 1000m);
+        await PostManual(db, new DateTime(2026, 3, 15), cogs, bank, 600m);
         await CloseAll12(db, 2026);
         Assert.True((await Close(db).YearCloseAsync(2026, "boss")).Ok);
 
         var r = await Close(db).ReopenYearAsync(2026, "boss");
         Assert.True(r.Ok, r.Code);
 
-        // 两张年结凭证被红冲
-        var carry = await db.JournalEntries
-            .Where(x => x.Source == VoucherSource.Carryover).ToListAsync();
-        Assert.NotEmpty(carry);
-        Assert.All(carry, c => Assert.Equal(JournalStatus.Reversed, c.Status));
-        Assert.Equal(carry.Count, await db.JournalEntries.CountAsync(x => x.Source == VoucherSource.Reversal));
+        // ★ 原两张年结凭证保持 Posted（不走 ReverseAsync），另投一张反向 Carryover 凭证 YC-2026-REOPEN
+        Assert.Equal(JournalStatus.Posted,
+            (await db.JournalEntries.SingleAsync(x => x.SourceDocNo == "YC-2026")).Status);
+        Assert.Equal(JournalStatus.Posted,
+            (await db.JournalEntries.SingleAsync(x => x.SourceDocNo == "YC-2026-RE")).Status);
+        var reopen = await db.JournalEntries.SingleAsync(
+            x => x.Source == VoucherSource.Carryover && x.SourceDocNo == "YC-2026-REOPEN");
+        Assert.Equal(JournalStatus.Posted, reopen.Status);
+        Assert.Equal(0, await db.JournalEntries.CountAsync(x => x.Source == VoucherSource.Reversal));
+
+        // ★ 余额恢复原值（多冲缺陷回归锁）：原+反向同计 → 损益回年结前，3103/3104 归零
+        Assert.Equal(-1000m, await AcctNet(db, rev));    // 收入贷方净额恢复（非 -2000 翻倍）
+        Assert.Equal(600m, await AcctNet(db, cogs));     // 费用借方净额恢复（非 +1200 翻倍）
+        Assert.Equal(0m, await AcctNet(db, p3103));
+        Assert.Equal(0m, await AcctNet(db, p3104));      // 无 +400 残值
 
         // 12 期回 Closed
         var periods = await db.FiscalPeriods.Where(p => p.FiscalYear == 2026).ToListAsync();
@@ -270,6 +283,38 @@ public class YearCloseTests
         };
         var pr = await Jes(db).AutoPostAsync(e);
         Assert.True(pr.Ok, pr.Code);
+    }
+
+    // ─────────────── 反年结 → 再年结：读到正确损益，利润不翻倍（多冲缺陷回归锁）───────────────
+
+    [Fact]
+    public async Task ReopenYear_ThenYearCloseAgain_ProfitNotDoubled()
+    {
+        using var db = NewDb();
+        var gl = await SeedCoa(db);
+        var bank = (await gl.GetByCodeAsync("1002"))!.Id;
+        var rev = (await gl.GetByCodeAsync("4001"))!.Id;
+        var cogs = (await gl.GetByCodeAsync("5001"))!.Id;
+        var p3103 = (await gl.GetByCodeAsync("3103"))!.Id;
+        var p3104 = (await gl.GetByCodeAsync("3104"))!.Id;
+        await PostManual(db, new DateTime(2026, 1, 15), bank, rev, 1000m);
+        await PostManual(db, new DateTime(2026, 2, 15), cogs, bank, 600m);
+        await CloseAll12(db, 2026);
+        Assert.True((await Close(db).YearCloseAsync(2026, "boss")).Ok);
+        Assert.True((await Close(db).ReopenYearAsync(2026, "boss")).Ok);
+
+        var r = await Close(db).YearCloseAsync(2026, "boss");
+        Assert.True(r.Ok, r.Code);
+
+        // 再年结后：损益仍清零、3103 结平、3104 = 贷 400（非 800 翻倍）
+        Assert.Equal(0m, await AcctNet(db, rev));
+        Assert.Equal(0m, await AcctNet(db, cogs));
+        Assert.Equal(0m, await AcctNet(db, p3103));
+        Assert.Equal(-400m, await AcctNet(db, p3104));
+
+        // 全年重新锁 YearClosed
+        var periods = await db.FiscalPeriods.Where(p => p.FiscalYear == 2026).ToListAsync();
+        Assert.All(periods, p => Assert.Equal(PeriodStatus.YearClosed, p.Status));
     }
 
     [Fact]

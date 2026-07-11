@@ -242,23 +242,56 @@ public class PeriodCloseService : IPeriodCloseService
 
     public async Task<FinResult> ReopenYearAsync(int fiscalYear, string userId)
     {
-        var periods = await _db.FiscalPeriods.Where(p => p.FiscalYear == fiscalYear).ToListAsync();
+        var periods = await _db.FiscalPeriods
+            .Where(p => p.FiscalYear == fiscalYear)
+            .OrderBy(p => p.PeriodNo).ToListAsync();
         if (periods.Count == 0 || periods.All(p => p.Status != PeriodStatus.YearClosed))
             return FinResult.Fail("E-FIN-407", fiscalYear);
         if (_journal == null) return FinResult.Fail("E-FIN-409");
 
-        // 红冲两张年结凭证（ReverseAsync 不看锁期，可在 YearClosed 状态下执行）
+        // ★ 不用 ReverseAsync：原凭证被标 Reversed 会掉出 Status==Posted 余额口径，而红冲凭证 Posted 单边计入
+        //   → 净效果=多冲一次（损益翻倍、3104 残值）。改为：**原两张年结凭证保持 Posted**，另投一张反向
+        //   Carryover 凭证（YC-{fy}-REOPEN）经 AutoPostAsync 过账；原+反向同计 → 损益余额恢复原值、
+        //   3103/3104 归零，再年结读到正确损益不翻倍。
+        //   幂等自查重：按「本财年全部 YC-{fy}* 结转凭证（含历史 REOPEN）的每科目净额」取负——
+        //   close→reopen 反复循环时历史轮次已互抵，只冲最后一轮净效果；净额全 0（空财年）→ 不产生凭证仅解锁。
         var yearTag = $"YC-{fiscalYear}";
-        var carryVouchers = await _db.JournalEntries
-            .Where(e => e.Source == VoucherSource.Carryover
-                        && (e.SourceDocNo == yearTag || e.SourceDocNo == yearTag + "-RE")
-                        && e.Status == JournalStatus.Posted)
-            .OrderBy(e => e.SourceDocNo).ToListAsync();
+        var carryNet = await (from l in _db.JournalLines
+                              join e in _db.JournalEntries on l.EntryId equals e.Id
+                              where e.Status == JournalStatus.Posted
+                                    && e.Source == VoucherSource.Carryover
+                                    && e.SourceDocNo != null && e.SourceDocNo.StartsWith(yearTag)
+                              group new { l.Debit, l.Credit } by l.AccountId into g
+                              select new { AccountId = g.Key, Net = g.Sum(x => x.Debit) - g.Sum(x => x.Credit) })
+                             .ToListAsync();
+        var toNegate = carryNet.Where(x => x.Net != 0m).ToList();
 
-        foreach (var v in carryVouchers)
+        if (toNegate.Count > 0)
         {
-            var rr = await _journal.ReverseAsync(v.Id, userId, $"反年结 FY{fiscalYear}", autoPost: true);
-            if (!rr.Ok) return rr;
+            // 反向凭证须落财年末期（当前 YearClosed）：暂开末期承接，仍走 AutoPostAsync（借贷平衡/科目兜底）。
+            var lastPeriod = periods[^1];
+            lastPeriod.Status = PeriodStatus.Open;
+            await _db.SaveChangesAsync();
+
+            var rv = new JournalEntry
+            {
+                VoucherDate = lastPeriod.PeriodEnd,
+                Source = VoucherSource.Carryover,
+                SourceDocNo = $"{yearTag}-REOPEN",
+                Description = $"{fiscalYear} 反年结（反向冲销年结结转，原年结凭证保持已过账）",
+            };
+            foreach (var b in toNegate)
+            {
+                if (b.Net > 0m) rv.Lines.Add(new JournalLine { AccountId = b.AccountId, Credit = b.Net });
+                else rv.Lines.Add(new JournalLine { AccountId = b.AccountId, Debit = -b.Net });
+            }
+            var rr = await _journal.AutoPostAsync(rv);
+            if (!rr.Ok)
+            {
+                lastPeriod.Status = PeriodStatus.YearClosed;
+                await _db.SaveChangesAsync();
+                return rr;
+            }
         }
 
         // 12 期回 Closed（解除年度锁定，恢复到月结态）
@@ -272,8 +305,8 @@ public class PeriodCloseService : IPeriodCloseService
         await _db.SaveChangesAsync();
 
         _logger?.LogWarning(
-            "会计年度反年结 FY={FY} by {User} —— 危险动作（改历史，红冲 {Cnt} 张年结凭证 + 12 期回 Closed）",
-            fiscalYear, userId, carryVouchers.Count);
+            "会计年度反年结 FY={FY} by {User} —— 危险动作（改历史，反向冲销 {Cnt} 科目净额 + 12 期回 Closed）",
+            fiscalYear, userId, toNegate.Count);
         return FinResult.Pass();
     }
 
