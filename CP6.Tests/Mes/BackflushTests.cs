@@ -157,4 +157,69 @@ public class BackflushTests
             .SingleAsync(m => m.WorkOrderNo == "WO4" && m.MaterialCd == "MAT4");
         Assert.Equal(20m, wom.ActualQty); // 二重 ActualQty なし
     }
+
+    // ── ⑤ 多料 BOM 部分失敗（終審 Important#1）：第二料が失敗しても首料は反冲＋ActualQty 落库成功
+    //    （旧実装だと後料失敗で全断链→首料 ActualQty 消失＋整単冪等で残料永久未反冲）。
+    //    失敗料が残るので末尾で投げる（C.2 闸維持）。解凍後の重放で第二料のみ補反冲、首料は加倍しない ──
+    [Fact]
+    public async Task PartialFailure_FirstMaterialPersists_ReplayResumesSecondOnly()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        SeedWarehouse(db);
+        db.WorkOrders.Add(new WorkOrder { WorkOrderNo = "WO5", ProductCd = "PRODE", Status = 4, CompletedQty = 10m });
+        // 二料 BOM：MAT5A（SortOrder 1・成功）/ MAT5B（SortOrder 2・当初失敗）
+        db.Set<ProductMaterial>().Add(new ProductMaterial
+        { ProductCd = "PRODE", ProcessCd = "P1", MaterialCd = "MAT5A", MaterialTypeDiv = "3", UsageType = 2, UnitUsage = 2m, SortOrder = 1 });
+        db.Set<ProductMaterial>().Add(new ProductMaterial
+        { ProductCd = "PRODE", ProcessCd = "P1", MaterialCd = "MAT5B", MaterialTypeDiv = "3", UsageType = 2, UnitUsage = 3m, SortOrder = 2 });
+        SeedStock(db, "MAT5A", 100m);
+        SeedStock(db, "MAT5B", 100m);
+        await db.SaveChangesAsync();
+
+        // 第二料 MAT5B の在庫移動を最初は失敗させる（棚卸凍結を模擬：ApplyAsync が投げる）
+        var seq = new WmsSequenceService(db);
+        var gated = new GatedStock(new StockMovementService(db, seq)) { BlockedProduct = "MAT5B" };
+        var svc = new BackflushService(db, gated, new MaterialUsageCalculator());
+
+        // ── 初回：全料を試行（首料成功→即時落库、第二料失敗）→ 末尾で集約投げ（C.2 闸維持） ──
+        await Assert.ThrowsAsync<InvalidOperationException>(() => svc.BackflushAsync("WO5", "tester"));
+
+        // 首料 MAT5A：反冲成功＋在庫扣＋ActualQty 落库（旧実装だと後料失敗で断链→ ActualQty が失われた）
+        Assert.Equal(1, await db.StockTransactions.CountAsync(t => t.RelatedType == "ISSUE" && t.RelatedNo == "WO5" && t.ProductCd == "MAT5A"));
+        Assert.Equal(80m, (await db.Stocks.AsNoTracking().SingleAsync(s => s.ProductCd == "MAT5A")).PhysicalQty);
+        Assert.Equal(20m, (await db.WorkOrderMaterials.AsNoTracking().SingleAsync(m => m.WorkOrderNo == "WO5" && m.MaterialCd == "MAT5A")).ActualQty);
+        // 第二料 MAT5B：まだ反冲されていない
+        Assert.Equal(0, await db.StockTransactions.CountAsync(t => t.RelatedType == "ISSUE" && t.RelatedNo == "WO5" && t.ProductCd == "MAT5B"));
+
+        // ── 解凍（阻止解除）→ 重放：第二料のみ補反冲、首料は加倍しない ──
+        gated.BlockedProduct = null;
+        await svc.BackflushAsync("WO5", "tester");
+
+        // 首料は 1 回のみ（重放で加倍しない）
+        Assert.Equal(1, await db.StockTransactions.CountAsync(t => t.RelatedType == "ISSUE" && t.RelatedNo == "WO5" && t.ProductCd == "MAT5A"));
+        Assert.Equal(80m, (await db.Stocks.AsNoTracking().SingleAsync(s => s.ProductCd == "MAT5A")).PhysicalQty);
+        Assert.Equal(20m, (await db.WorkOrderMaterials.AsNoTracking().SingleAsync(m => m.WorkOrderNo == "WO5" && m.MaterialCd == "MAT5A")).ActualQty);
+        // 第二料は今回補反冲（30 = 3×10）＋ActualQty 落库
+        Assert.Equal(1, await db.StockTransactions.CountAsync(t => t.RelatedType == "ISSUE" && t.RelatedNo == "WO5" && t.ProductCd == "MAT5B"));
+        Assert.Equal(70m, (await db.Stocks.AsNoTracking().SingleAsync(s => s.ProductCd == "MAT5B")).PhysicalQty);
+        Assert.Equal(30m, (await db.WorkOrderMaterials.AsNoTracking().SingleAsync(m => m.WorkOrderNo == "WO5" && m.MaterialCd == "MAT5B")).ActualQty);
+    }
+
+    /// <summary>指定材料の在庫移動を投げさせるデコレータ（棚卸凍結による ApplyAsync 失敗を模擬）。</summary>
+    private sealed class GatedStock : IStockMovementService
+    {
+        private readonly IStockMovementService _inner;
+        public string? BlockedProduct { get; set; }
+        public GatedStock(IStockMovementService inner) => _inner = inner;
+
+        public Task<string> ApplyAsync(StockMovementRequest req, CancellationToken ct = default)
+        {
+            if (BlockedProduct != null && req.ProductCd == BlockedProduct)
+                throw new InvalidOperationException("WM-MSG-304: 棚卸進行中のロケーション（模擬）");
+            return _inner.ApplyAsync(req, ct);
+        }
+
+        public Task<(string OutTxnNo, string InTxnNo)> MoveAsync(StockMoveRequest req, CancellationToken ct = default)
+            => _inner.MoveAsync(req, ct);
+    }
 }

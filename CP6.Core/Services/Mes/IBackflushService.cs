@@ -12,7 +12,10 @@ public interface IBackflushService
 {
     /// <summary>
     /// 指図番号 <paramref name="workOrderNo"/> の完成品に対し、BOM 定额の原料を反冲する。
-    /// 冪等：同一指図に既存の ISSUE 反冲移動があれば何もしない。
+    /// 冪等は<b>材料行単位</b>：本工单に既存の ISSUE 反冲移動がある材料のみスキップし、
+    /// 未反冲の材料は重放で続伝する（一部の料が失敗＝棚卸凍結等でも残料が永久未反冲にならない）。
+    /// 行失敗しても<b>途中で断链せず</b>全料を試行し、成功料は各自即時落库する。
+    /// 但し失敗料が残れば末尾で例外を投げる（呼出側 C.2 闸で本轮成本归集をスキップさせるため）。
     /// </summary>
     Task BackflushAsync(string workOrderNo, string? userName);
 }
