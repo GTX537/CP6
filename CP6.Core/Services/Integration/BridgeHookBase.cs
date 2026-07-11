@@ -39,6 +39,8 @@ public abstract class BridgeHookBase
     /// <param name="error">失敗時の詳細（Skipped 時は理由、Failed 時は ToString()）</param>
     /// <param name="correlationId">端到端 trace 用 GUID</param>
     /// <param name="payload">入力 payload（重試時に Dispatcher が反序列化）</param>
+    /// <param name="operatorUser">操作者（審計 T4 / spec §8）：呼び出し元の userName を透過して <see cref="IntegrationEvent.Creator"/> に落とす。
+    /// null/空白なら "system" に退避（operator を持たない存量桥の後方互換）。</param>
     /// <remarks>
     /// 失敗時のリトライ間隔は固定 60s で初期化（Worker が指数退避で更新）。
     /// Persistence 自体が失敗しても親 hook には伝播させない（best-effort 強化）。
@@ -52,7 +54,8 @@ public abstract class BridgeHookBase
         string status,
         string? error,
         Guid correlationId,
-        object payload)
+        object payload,
+        string? operatorUser = null)
     {
         try
         {
@@ -72,7 +75,7 @@ public abstract class BridgeHookBase
                     : (DateTime?)null,
                 CorrelationId = correlationId,
                 PayloadJson = SafeSerialize(payload),
-                Creator = "system",
+                Creator = string.IsNullOrWhiteSpace(operatorUser) ? "system" : operatorUser,
                 CreateDate = DateTime.Now,
             };
             Db.IntegrationEvents.Add(evt);

@@ -35,7 +35,7 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
             {
                 var msg = $"出庫指示 [{outboundNo}] が見つかりません";
                 await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
                 return ErpBridgeResult.Skipped(msg);
             }
 
@@ -44,7 +44,7 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
             {
                 var msg = "出荷区分かつ受注紐付きの出庫ではありません";
                 await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
                 return ErpBridgeResult.Skipped(msg);
             }
 
@@ -58,7 +58,7 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
             {
                 var msg = "出荷数のある明細がありません";
                 await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
                 return ErpBridgeResult.Skipped(msg);
             }
 
@@ -68,7 +68,7 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
             {
                 var msg = $"受注 [{webOrderNo}] が見つかりません";
                 await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
                 return ErpBridgeResult.Skipped(msg);
             }
 
@@ -121,14 +121,14 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
             Logger.LogInformation("[ERP-Bridge] 出庫 {Outbound} → 受注 {Order} 出荷実績回写（ShipStatus={Status}）",
                 outboundNo, webOrderNo, order.ShipStatus);
             await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                outboundNo, webOrderNo, IntegrationEventStatus.Success, null, corrId, payload);
+                outboundNo, webOrderNo, IntegrationEventStatus.Success, null, corrId, payload, userName);
             return ErpBridgeResult.Ok(webOrderNo);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "[ERP-Bridge] 出庫 {Outbound} の受注回写で予期せぬエラー", outboundNo);
             await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                outboundNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
+                outboundNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
             return ErpBridgeResult.Failed(ex.Message);
         }
     }
@@ -145,7 +145,7 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
             {
                 const string msg = "WM-MSG-RMA-404";
                 await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
-                    rmaNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
+                    rmaNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
                 return ErpBridgeResult.Skipped(msg);
             }
 
@@ -212,21 +212,21 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
                 rmaNo, details.Count);
             await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
                 rmaNo, string.IsNullOrEmpty(firstCreditNoteNo) ? null : firstCreditNoteNo,
-                IntegrationEventStatus.Success, null, corrId, payload);
+                IntegrationEventStatus.Success, null, corrId, payload, userName);
             return ErpBridgeResult.Ok(rmaNo);
         }
         catch (InvalidOperationException ex)
         {
             Logger.LogWarning("[ERP-Bridge] RMA {RmaNo} credit-note bridge skipped: {Msg}", rmaNo, ex.Message);
             await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
-                rmaNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload);
+                rmaNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload, userName);
             return ErpBridgeResult.Skipped(ex.Message);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "[ERP-Bridge] RMA {RmaNo} credit-note bridge failed", rmaNo);
             await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
-                rmaNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
+                rmaNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
             return ErpBridgeResult.Failed(ex.Message);
         }
     }
