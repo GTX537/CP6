@@ -19,9 +19,10 @@ public class ProductionResultService : IProductionResultService
     private readonly IMesNotifier _notifier;
     private readonly IWmsBridgeHook _wmsBridge;
     private readonly IBackflushService? _backflush;
+    private readonly IFinBridgeHook? _finBridge;
     private const string ResultSeqKey = "PR";
 
-    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null)
+    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null, IFinBridgeHook? finBridge = null)
     {
         _db = db;
         _seq = seq;
@@ -29,6 +30,7 @@ public class ProductionResultService : IProductionResultService
         _notifier = notifier;
         _wmsBridge = wmsBridge;
         _backflush = backflush;
+        _finBridge = finBridge;
     }
 
     /// <summary>
@@ -267,6 +269,15 @@ public class ProductionResultService : IProductionResultService
             {
                 try { await _backflush.BackflushAsync(req.WorkOrderNo, userName); }
                 catch { /* 反冲失敗は報工本体に影響させない */ }
+            }
+
+            // F1 波C.2：反冲回写 ActualQty の後に成本归集+结转をトリガ（順序 load-bearing：
+            // CollectAsync は WorkOrderMaterial.ActualQty を読むため、必ず反冲の後）。
+            // best-effort（コミット後）：归集/结转失敗は既提交の報工をロールバックしない。
+            if (_finBridge != null)
+            {
+                try { await _finBridge.OnWorkOrderCompletedAsync(req.WorkOrderNo, userName); }
+                catch { /* 成本归集/结转失敗は報工本体に影響させない */ }
             }
         }
 

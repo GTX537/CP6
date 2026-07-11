@@ -15,12 +15,14 @@ public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
 {
     private readonly IArInvoiceService _ar;
     private readonly ICostCollectService _cost;
+    private readonly ICostSettleService _settle;
 
-    public FinBridgeHook(CP6Context db, IArInvoiceService ar, ICostCollectService cost, ILogger<FinBridgeHook> logger)
+    public FinBridgeHook(CP6Context db, IArInvoiceService ar, ICostCollectService cost, ICostSettleService settle, ILogger<FinBridgeHook> logger)
         : base(db, logger)
     {
         _ar = ar;
         _cost = cost;
+        _settle = settle;
     }
 
     public async Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
@@ -80,22 +82,44 @@ public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
     public async Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName)
     {
         var corrId = Guid.NewGuid();
-        var payload = new { workOrderNo, userName };
+        var user = userName ?? "system";
         try
         {
-            // 工费留 0：自动归集只吃料真实消耗，工费/制费由财务补录标准估算后再结转（避免自动塞 0 工费即结转）
-            var r = await _cost.CollectAsync(workOrderNo, 0m, 0m, userName ?? "system");
-            var status = r.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
+            // ① 成本归集：工费留 0（自动归集只吃料真实反冲消耗，工费/制费由财务补录标准估算后再结转）。
+            var collect = await _cost.CollectAsync(workOrderNo, 0m, 0m, user);
+            if (!collect.Ok)
+            {
+                // E-FIN-402 = 成本单已结转（重复完工事件）→ 幂等跳过，不重复归集/结转。
+                if (collect.Code == "E-FIN-402")
+                {
+                    await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                        workOrderNo, null, IntegrationEventStatus.Skipped, collect.Code, corrId,
+                        new { workOrderNo, userName, step = "collect", note = "already settled" });
+                    return FinBridgeResult.Skipped("cost already settled");
+                }
+                await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                    workOrderNo, null, IntegrationEventStatus.Failed, collect.Code, corrId,
+                    new { workOrderNo, userName, step = "collect" });
+                return FinBridgeResult.Failed(collect.Code ?? "collect fail");
+            }
+
+            // ② 完工结转：料工费→WIP + WIP→FG 两凭证（借贷/科目照 CostSettle 既有实现）。归集成功才结转。
+            var settle = await _settle.SettleAsync(workOrderNo, user);
+            var status = settle.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
             await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
-                workOrderNo, null, status, r.Ok ? null : r.Code, corrId, payload);
-            if (r.Ok) Logger.LogInformation("[FIN-Bridge] 工单 {Wo} 完工 → 成本自动归集（料真实消耗）", workOrderNo);
-            return r.Ok ? FinBridgeResult.Ok(workOrderNo) : FinBridgeResult.Failed(r.Code ?? "fail");
+                workOrderNo, null, status, settle.Ok ? null : settle.Code, corrId,
+                new { workOrderNo, userName, step = settle.Ok ? "settled" : "settle" });
+            if (settle.Ok)
+                Logger.LogInformation("[FIN-Bridge] 工单 {Wo} 完工 → 成本归集+结转（料真实消耗→WIP→FG）", workOrderNo);
+            else
+                Logger.LogWarning("[FIN-Bridge] 工单 {Wo} 成本已归集但结转失败 {Code}（成本单停在 Collected 待重试）", workOrderNo, settle.Code);
+            return settle.Ok ? FinBridgeResult.Ok(workOrderNo) : FinBridgeResult.Failed(settle.Code ?? "settle fail");
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "[FIN-Bridge] 工单 {Wo} 成本自动归集异常", workOrderNo);
+            Logger.LogError(ex, "[FIN-Bridge] 工单 {Wo} 成本归集/结转异常", workOrderNo);
             await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
-                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
+                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, new { workOrderNo, userName });
             return FinBridgeResult.Failed(ex.Message);
         }
     }
