@@ -188,6 +188,17 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinReconciliationService, CP6.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArAgingService, CP6.Core.Services.Fin.ArAgingService>(); // 章04 §3 应收账龄
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICreditControlService, CP6.Core.Services.Fin.CreditControlService>(); // 章04 §3 信用控制（出货前反向约束）
 builder.Services.AddScoped<CP6.Core.Services.Integration.IFinBridgeHook, CP6.Core.Services.Fin.FinBridgeHook>(); // F2-D4 出货→AR 自动开票/红冲（Phase6 桥，WMS|FIN 路由）
+// F1 波0 Task 0.2：库存移动→Fin 自动过账桥（采购入库/盘盈亏/报废，VoucherSource.Inventory）。
+// appsettings.json の StockFinBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
+var stockFinBridgeEnabled = builder.Configuration.GetValue<bool?>("StockFinBridge:Enabled") ?? true;
+if (stockFinBridgeEnabled)
+{
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IStockFinBridge, CP6.Core.Services.Fin.StockFinBridge>();
+}
+else
+{
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IStockFinBridge, CP6.Core.Services.Integration.NoOpStockFinBridge>();
+}
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Services.Fin.IFinAp)sp.GetRequiredService<CP6.Core.Services.Fin.IApInvoiceService>()); // F2-D3 采购对外契约（同一 ApInvoiceService 实例）
 
 // 4.0.3 采购（Pur）MVP 章01~04：主数据→PO→收货→三单匹配→自动建应付（补全财务 AP 前置）

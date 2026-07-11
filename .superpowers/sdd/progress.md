@@ -144,3 +144,13 @@ M-WMS 全支终审+合并+部署: complete (fable终审 Ready=Yes[三处键一�
 # 本会话完成: ①全项目盘点(4路探查校准, 按难度×优先级)交付 ②M-WMS授权粒度收口波7任务全过审+fable终审+合并main=6745973+cp6-api重建部署+线上验证(448 RoleAction=112/租户×4/admin放行/无认证403) ③FIN两拍板(反冲负库存allow+warn/差异月末转COGS)锁spec=542bb61 ④FIN 4路探查摸清5子域真实API ⑤FIN码级plan出=docs/superpowers/plans/2026-07-11-fin-integration-loop.md commit f5e8d27(7波: 0地基/B出货AR/A库存GL/C反冲成本差异/F盘点冻结/D年结/E探测器+G横切)
 # 下窗口入口: 说「FIN 开工」→ 按 fin-oil-route-execution 记忆开工令从波B起跑(subagent-driven Opus, 同M-WMS格式逐任务回写本台账). 过账归属三方分工设计已呈述用户待确认(无异议默认采纳).
 # 未决呈用户: FIN过账归属(B收入COGS/C料工费WIP→FG/A采购入库+盘盈亏+报废)是否符合会计口径; 波次顺序默认B先(最高价值).
+
+# ═══ F1 财务油路接通波（branch=feat/fin-integration-loop, base=e043d57）2026-07-11 ═══
+# 依据: docs/superpowers/plans/2026-07-11-fin-integration-loop.md(f5e8d27) + specs/2026-07-07-fin-integration-loop-design.md(542bb61两拍板)
+# 波序: B(出货AR)→0(地基)→A(库存GL)→C(反冲成本差异)→F(盘点冻结)→D(年结)→E(E2E)→G(横切)→终审合并部署
+# 过账归属(用户已呈述无异议默认采纳): B=收入+COGS / C=料工费WIP→FG(CostSettle过账,反冲只扣物理量) / A=采购入库+盘盈亏+报废(ISSUE/FG/SHIP Skipped)
+# 预检记录: spec§2.2「同事务原子」vs plan「best-effort不阻断」分歧——按plan执行(07-11拍板①产线不因账停支持best-effort, plan为后出治理文本)
+FIN B.1: complete (commit e5b521a, Spec ✅ + Approved[opus审]; 点火位/幂等键/售价受注优先裁决精确落地+污染值999vs受注12.5测试证明; 生产DI实读核实[Program.cs:190+333可选参真注入]; shippedByLine快照捕获本轮出货量; 全量1592绿[基线1589+3]. Minor记终审: 回退价路径无测试/WorkOrderNo透传无断言/同品多受注明细FirstOrDefault取价边缘)
+FIN B.2: complete (commit 7d92d29, Spec ✅ + Approved[sonnet审]; 裁决1前提独立核实[FinBridgeHook:58-64无发票=Skipped优雅no-op]→Shipping型无条件点火低耦合成立; 裁决3可达性独立核实[Completed唯一设点=ShipAsync:513=唯一开票点,Cancel守卫:264→已开票可取消确不可达,非编造]; 全量1595绿[1592+3]. Follow-up票: 真红冲需完工后入口[RMA/退货撤销]. Minor: PartialAllocated分支无测试/新注释中日混排)
+# 波B完成(B.1+B.2). 下=波0地基
+FIN 0.1+0.1b: complete (commit e1b2daa, Spec ✅ + Approved[sonnet审]; VoucherSource.Inventory=10不动既有值/四规则借贷映射逐字/既有11规则未触; 偏离独立核实成立[CN2202/INTL2150确被AP_CONTROL/AR_ADVANCE占用→2204/2110合法邻码]; 两模板Role核对CN只缺GRNI+1行、INTL缺四全补; 测试断言真种子内容非套套逻辑; 1604绿[1595+9]. 🔴部署门票: 存量租户已导入COA不含新Role行→库存过账上线前需回填(否则老租户E-FIN-141), 照PENDING_PROPERTY_LOSS先例同类缺口, 波G/部署时收口. Minor: PostingRuleSeed.cs:14 XML注释陈旧[pre-existing])
