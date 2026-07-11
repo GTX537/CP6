@@ -35,7 +35,7 @@ public class MesBridgeHook : BridgeHookBase, IMesBridgeHook
                 webOrderNo, nos.Count, string.Join(",", nos));
             await PersistEventAsync("ERP", "MES", nameof(OnOrderCreatedAsync),
                 webOrderNo, nos.Count > 0 ? nos[0] : null,
-                IntegrationEventStatus.Success, null, corrId, payload);
+                IntegrationEventStatus.Success, null, corrId, payload, userName);
             return MesBridgeResult.Ok(nos);
         }
         catch (InvalidOperationException ex)
@@ -43,7 +43,7 @@ public class MesBridgeHook : BridgeHookBase, IMesBridgeHook
             // 既に指図あり／対象明細なし等の業務エラー
             Logger.LogWarning("[MES-Bridge] 受注 {Order} 指図展開スキップ: {Msg}", webOrderNo, ex.Message);
             await PersistEventAsync("ERP", "MES", nameof(OnOrderCreatedAsync),
-                webOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload);
+                webOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload, userName);
             return MesBridgeResult.Skipped(ex.Message);
         }
         catch (Exception ex)
@@ -51,7 +51,7 @@ public class MesBridgeHook : BridgeHookBase, IMesBridgeHook
             // 想定外（DB 接続不可等）— 親の受注作成は失敗させない
             Logger.LogError(ex, "[MES-Bridge] 受注 {Order} 指図展開で予期せぬエラー", webOrderNo);
             await PersistEventAsync("ERP", "MES", nameof(OnOrderCreatedAsync),
-                webOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
+                webOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
             return MesBridgeResult.Failed(ex.Message);
         }
     }

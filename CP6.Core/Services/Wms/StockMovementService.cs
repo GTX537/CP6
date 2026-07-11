@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -22,18 +23,38 @@ public class StockMovementService : IStockMovementService
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IWmsNotifier _notifier;
+    private readonly IStockFinBridge _finBridge;
     private const string TxnPrefix = "TXN";
 
-    public StockMovementService(CP6Context db, IWmsSequenceService seq, IWmsNotifier? notifier = null)
+    public StockMovementService(CP6Context db, IWmsSequenceService seq, IWmsNotifier? notifier = null,
+        IStockFinBridge? finBridge = null)
     {
         _db = db;
         _seq = seq;
         _notifier = notifier ?? new NoOpWmsNotifier();
+        _finBridge = finBridge ?? new NoOpStockFinBridge();
     }
 
     public async Task<string> ApplyAsync(StockMovementRequest req, CancellationToken ct = default)
     {
         Validate(req);
+
+        // 棚卸凍結ガード（波F）：進行中の棚卸（Counting/DiffReview/AwaitingApproval）が対象ロケーションを
+        // 覆っている間は物理数を動かす移動（IN/OUT/MOVE/ADJ）を拒否し、カウント基準の正確性を保護する。
+        // 豁免は「棚卸承認自身の差異調整」＝ ADJ かつ RelatedType=="STOCKTAKE" のみ（A.2 前提：ADJ で账实を収束）。
+        // 効期核銷（EXPIRY_DISPOSE）・RMA 調整等の他 ADJ は快照 BookQty を狂わせるため同様に拒否
+        //（判別子は StockFinBridge の (TxnType,RelatedType) 帰属フィルタと同源）。
+        // RSV/UNRSV は引当のみで物理数を動かさないため凍結対象外。
+        // 反冲（OUT/ISSUE, AllowNegativeOverride）も凍結ロケーションでは拒否＝盘点基线正确性优先
+        //（反冲は best-effort：呼出側 C.1/C.2 の二重闸が吞错＋归集跳过で吸収し後補償可能）。
+        var isStockTakeAdj = req.TxnType == WmsTxnType.ADJ && req.RelatedType == "STOCKTAKE";
+        if (!isStockTakeAdj
+            && (req.TxnType is WmsTxnType.IN or WmsTxnType.OUT or WmsTxnType.MOVE or WmsTxnType.ADJ)
+            && await IsLocationFrozenAsync(req.WarehouseCd, req.LocationCd, ct))
+        {
+            throw new InvalidOperationException(
+                $"WM-MSG-304: 棚卸進行中のロケーション（{req.WarehouseCd} / {req.LocationCd}）は入出庫できません");
+        }
 
         // SQL Server のみトランザクションを張る（InMemory は SupportsTransactions=false）
         IDbContextTransaction? tx = null;
@@ -79,11 +100,11 @@ public class StockMovementService : IStockMovementService
             // 在庫数の更新（種別毎にロジック分岐）
             ApplyDelta(stock, req);
 
-            // マイナス在庫チェック（AllowNegative=true の倉庫は除外）
-            var allowNegative = await _db.Warehouses
+            // マイナス在庫チェック（AllowNegative=true の倉庫、または要求で明示的に上書きされた場合は除外）
+            var allowNegative = req.AllowNegativeOverride || (await _db.Warehouses
                 .Where(w => w.WarehouseCd == req.WarehouseCd && !w.IsDeleted)
                 .Select(w => (bool?)w.AllowNegative)
-                .FirstOrDefaultAsync(ct) ?? false;
+                .FirstOrDefaultAsync(ct) ?? false);
 
             if (!allowNegative)
             {
@@ -124,6 +145,14 @@ public class StockMovementService : IStockMovementService
             await _db.SaveChangesAsync(ct);
             if (tx != null) await tx.CommitAsync(ct);
 
+            // WMS→Fin 库存过账桥点火（best-effort、commit 之后・通知の前、失敗しても在庫移動は成功扱い）。
+            // 実際に過账するか否かは桥内の (TxnType,RelatedType) 帰属フィルタが判定（採購入庫/盘盈亏/报废のみ）。
+            try
+            {
+                await _finBridge.OnStockMovedAsync(txn, req.RelatedType ?? "", req.OperatorCd);
+            }
+            catch { /* fin bridge failure must not break stock movement */ }
+
             // SignalR リアルタイム通知（best-effort、失敗しても本処理は成功扱い）
             try
             {
@@ -163,6 +192,16 @@ public class StockMovementService : IStockMovementService
         if (string.Equals(req.FromLocationCd, req.ToLocationCd, StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");
 
+        // 棚卸凍結の双端予検（波F）：MOVE は 2 腿非原子（源 OUT commit 後に先 IN が弾かれると在庫が宙吊り）。
+        // 腿1発行前に移動先の凍結を先読みして早期拒否する（移動元は腿1の ApplyAsync 内ガードが検査）。
+        // TOCTOU（予検通過後に凍結開始）は残るが、窓は極小かつ StartCountAsync 時点の快照 BookQty が
+        // 腿2前の在庫を反映するため棚卸収束は破れない。
+        if (await IsLocationFrozenAsync(req.WarehouseCd, req.ToLocationCd, ct))
+        {
+            throw new InvalidOperationException(
+                $"WM-MSG-304: 棚卸進行中のロケーション（{req.WarehouseCd} / {req.ToLocationCd}）は入出庫できません");
+        }
+
         // 源 OUT 側：物理在庫を減らす（StockTransaction には MOVE 種別 + Qty=-X で記録）
         var outNo = await ApplyAsync(new StockMovementRequest
         {
@@ -196,6 +235,25 @@ public class StockMovementService : IStockMovementService
     }
 
     // ───────── 内部ヘルパー ─────────
+
+    /// <summary>
+    /// 指定ロケーションが進行中の棚卸（Counting/DiffReview/AwaitingApproval）に覆われ、凍結中かを判定する（波F）。
+    /// カバレッジ粒度 = StockTakeDetail（倉庫＋ロケーション）。承認（ApproveAndApplyAsync）or 取消（CancelAsync）で
+    /// ヘッダ状態が Completed/Cancelled へ遷移すれば、活性单クエリが空になり自然解凍される（状態の巻き戻し書込は不要）。
+    /// 性能：AnyAsync による存在判定のみ（等値条件でインデックス親和）。ApplyAsync 1 件あたり物理入出庫時に最小 1 クエリ。
+    /// </summary>
+    private Task<bool> IsLocationFrozenAsync(string warehouseCd, string locationCd, CancellationToken ct = default)
+    {
+        return (from d in _db.StockTakeDetails
+                join h in _db.StockTakes on d.StockTakeNo equals h.StockTakeNo
+                where !d.IsDeleted && !h.IsDeleted
+                      && d.WarehouseCd == warehouseCd && d.LocationCd == locationCd
+                      && (h.Status == StockTakeStatus.Counting
+                          || h.Status == StockTakeStatus.DiffReview
+                          || h.Status == StockTakeStatus.AwaitingApproval)
+                select d.LineNo)
+            .AnyAsync(ct);
+    }
 
     private static void Validate(StockMovementRequest req)
     {

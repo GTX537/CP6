@@ -76,6 +76,7 @@ public class JournalEntryService : IJournalEntryService
         if (e == null) return FinResult.Fail("E-FIN-130");
         if (e.Status != JournalStatus.PendingReview) return FinResult.Fail("E-FIN-110");
         if (e.MakerId == checkerId) return FinResult.Fail("E-FIN-111");          // ★ maker-checker 铁则
+        if (await IsYearClosedAsync(e.PeriodId)) return FinResult.Fail("E-FIN-404");     // ★ 年度锁定（先于月结锁期判，给独立码）
         if (!await _period.IsOpenAsync(e.PeriodId)) return FinResult.Fail("E-FIN-112");  // ★ 锁期保护
 
         var v = await ValidateAsync(e);                                          // 过账前再校一次借贷恒等
@@ -107,6 +108,7 @@ public class JournalEntryService : IJournalEntryService
 
         var v = await ValidateAsync(entry);
         if (!v.Ok) return v;
+        if (await IsYearClosedAsync(entry.PeriodId)) return FinResult.Fail("E-FIN-404");     // ★ 年度锁定拒
         if (!await _period.IsOpenAsync(entry.PeriodId)) return FinResult.Fail("E-FIN-112");
 
         var guard = await BankReconGuard.CheckPostingAsync(_db, entry);
@@ -191,6 +193,13 @@ public class JournalEntryService : IJournalEntryService
         _db.JournalEntries.Add(reversal);
         await _db.SaveChangesAsync();
         return FinResult.Pass();
+    }
+
+    /// <summary>该期间是否已年结（YearClosed）。年度锁定给独立错误码 E-FIN-404，不改月结锁期(E-FIN-112)行为。</summary>
+    private async Task<bool> IsYearClosedAsync(Guid periodId)
+    {
+        var p = await _db.FiscalPeriods.FindAsync(periodId);
+        return p is { Status: PeriodStatus.YearClosed };
     }
 
     /// <summary>给分录补行号并挂上头 Id。</summary>

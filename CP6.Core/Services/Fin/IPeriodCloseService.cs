@@ -14,4 +14,18 @@ public interface IPeriodCloseService
 
     /// <summary>反结账（仅 Closed 可反；置回 Open + 留痕）。</summary>
     Task<FinResult> ReopenAsync(Guid periodId, string userId);
+
+    /// <summary>
+    /// 年结（章02 §3 / 波D）。校验财年 12 期全 Closed → 损益逐科目反向清零净额入 3103 本年利润 →
+    /// 3103 结转 3104 未分配利润（两张 Carryover 凭证走 AutoPostAsync）→ 全年 12 期锁 YearClosed。
+    /// 净利/净亏两向皆对；空财年不产生凭证仍锁年。幂等：已年结拒（E-FIN-406）。
+    /// </summary>
+    Task<FinResult> YearCloseAsync(int fiscalYear, string userId);
+
+    /// <summary>
+    /// 反年结（高危，章02 §3 / 波D）。投一张反向 Carryover 凭证（YC-{fy}-REOPEN：按本财年 YC-{fy}* 结转
+    /// 净额取负，经 AutoPostAsync 过账；原年结凭证保持 Posted——不用 ReverseAsync，避免 Reversed 掉出
+    /// Posted 余额口径造成多冲）+ 12 期回 Closed + 留痕。仅已年结财年可反（否则 E-FIN-407）。
+    /// </summary>
+    Task<FinResult> ReopenYearAsync(int fiscalYear, string userId);
 }

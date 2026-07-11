@@ -58,8 +58,15 @@ public class CostSheet : BaseTenantEntity
     [NotMapped] public decimal StandardCost => MaterialStandard + LaborStandard + OverheadStandard;
     /// <summary>成本差异 = 实际 − 标准（&gt;0 超支）</summary>
     [NotMapped] public decimal Variance => TotalActual - StandardCost;
-    /// <summary>FG 完工单位成本 = 实际总成本 / 完工数（完工数为 0 时取 0）</summary>
-    [NotMapped] public decimal FgUnitCost => CompletedQty > 0m ? Math.Round(TotalActual / CompletedQty, 4, MidpointRounding.AwayFromZero) : 0m;
+    /// <summary>
+    /// FG 完工单位成本（完工数为 0 时取 0）。拍板②（波C.3）：有标准成本时 FG 按【标准】资本化
+    /// （SettleAsync #FG 腿按 StandardCost 过账，差异已单独转 COGS），故单位成本 = 标准总成本 / 完工数
+    /// ——出货 AR.Cogs 按此贷 FG 才与结转口径恒等（FG 净零，COGS=出货标准+差异=实际）。
+    /// 无标准成本（StandardCost&lt;=0）维持实际口径 = 实际总成本 / 完工数。
+    /// </summary>
+    [NotMapped] public decimal FgUnitCost => CompletedQty > 0m
+        ? Math.Round((StandardCost > 0m ? StandardCost : TotalActual) / CompletedQty, 4, MidpointRounding.AwayFromZero)
+        : 0m;
 
     /// <summary>归集明细行（料/工/费来源可追溯）</summary>
     public List<CostSheetLine> Lines { get; set; } = new();

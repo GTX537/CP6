@@ -28,7 +28,8 @@ public class FinBridgeHookTests
         var engine = new AutoVoucherEngine(db, journal);
         var ar = new ArInvoiceService(db, engine, journal, new FinSequenceService(db));
         var cost = new CostCollectService(db, new FinSequenceService(db), new CP6.Core.Services.Mes.ProcessCostRateService(db));
-        return new FinBridgeHook(db, ar, cost, NullLogger<FinBridgeHook>.Instance);
+        var settle = new CostSettleService(db, journal);
+        return new FinBridgeHook(db, ar, cost, settle, NullLogger<FinBridgeHook>.Instance);
     }
 
     private static FinShipmentInvoiceRequest Req() => new()
@@ -134,7 +135,7 @@ public class FinBridgeHookTests
         var cs = await db.CostSheets.SingleAsync(x => x.WorkOrderNo == "WO9");
         Assert.Equal(550m, cs.MaterialActual);     // 110×5 料真实消耗
         Assert.Equal(0m, cs.LaborActual);          // 工费留 0 待财务补录
-        Assert.Equal(CostSheetStatus.Collected, cs.Status);   // 仅归集未结转
+        Assert.Equal(CostSheetStatus.Settled, cs.Status);   // C.2：归集后自动结转（料→WIP→FG）
         Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceModule == "MES" && e.TargetModule == "FIN" && e.SourceNo == "WO9" && e.Status == "SUCCESS"));
     }
 }

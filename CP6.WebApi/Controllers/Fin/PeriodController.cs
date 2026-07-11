@@ -40,4 +40,14 @@ public class PeriodController : ControllerBase
     [HttpPost("{id}/reopen")]
     [RequirePermission("fin-period", "reopen")]
     public async Task<IActionResult> Reopen(Guid id) => Fin(await _close.ReopenAsync(id, CurrentUser));
+
+    /// <summary>年结（损益结转 3103→3104 + 锁年）。财年 12 期须全部结账。</summary>
+    [HttpPost("year-close/{fiscalYear:int}")]
+    [RequirePermission("fin-period", "year-close")]
+    public async Task<IActionResult> YearClose(int fiscalYear) => Fin(await _close.YearCloseAsync(fiscalYear, CurrentUser));
+
+    /// <summary>反年结（危险动作，红冲年结凭证 + 12 期回 Closed，限高权限）。</summary>
+    [HttpPost("reopen-year/{fiscalYear:int}")]
+    [RequirePermission("fin-period", "reopen-year")]
+    public async Task<IActionResult> ReopenYear(int fiscalYear) => Fin(await _close.ReopenYearAsync(fiscalYear, CurrentUser));
 }

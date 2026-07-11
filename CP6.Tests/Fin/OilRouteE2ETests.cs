@@ -1,0 +1,352 @@
+using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
+using CP6.Core.Services.Fin;
+using CP6.Core.Services.Integration;
+using CP6.Core.Services.Mes;
+using CP6.Core.Services.Wms;
+using CP6.Entity.DomainModels.Erp;
+using CP6.Entity.DomainModels.Fin;
+using CP6.Entity.DomainModels.Mes;
+using CP6.Entity.DomainModels.Wms;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Logging.Abstractions;
+
+namespace CP6.Tests.Fin;
+
+/// <summary>
+/// F1 財務油路 波E — 跨模块闭环 E2E×4（油路探测器・全包终验闸）。
+///
+/// 各波已有单元/链路测试逐段锁定。本文件的价值是 <b>跨模块整链一气呵成</b>：从业务起点
+/// （采购收货 / 受注 / 工单完工 / 盘点）驱动真实服务链，直到 GL 凭证终点，断言到
+/// <b>科目 Role + 金额真值 + 凭证张数精确</b>——任何桥断线或双记，探测器当天变红。
+///
+/// 全走真链（真 Inbound/Outbound/StockMovement/StockFinBridge/FinBridgeHook/ArInvoice/
+/// CostCollect/CostSettle/Backflush/ProductionResult/StockTake + 真 AutoVoucherEngine + InMemory），
+/// 记账一律经 AutoVoucherEngine/AutoPostAsync（禁手工 new 凭证）；零生产代码改动。
+///
+///  E1 采购入库→GL      ：采购入库单→收货确定 → 借 INVENTORY / 贷 GRNI（Qty×UnitPrice）。
+///  E2 出货→AR+COGS     ：受注→出库单→配货→出货确定 → 借 AR_CONTROL/贷 REVENUE(+TAX) + 借 COGS/贷 FG（标准价）。
+///  E3 工单完工全链     ：工单+BOM 定额+标准 → 完工 → 反冲扣料 + 借WIP/贷INV(料) + 借FG(标准)/贷WIP + 差异→COGS 三腿，WIP 净零。
+///  E4 盘点冻结→差异→GL ：开盘点(OUT 拒 304) → 盘亏承认 → 解冻(可 OUT) + 借 PENDING_PROPERTY_LOSS/贷 INVENTORY。
+/// </summary>
+public class OilRouteE2ETests
+{
+    // ProductionResultService.WriteAsync は明示トランザクションを使うため InMemory 警告を抑止（E3 で必須）。
+    private static CP6Context NewDbTx() => new(new DbContextOptionsBuilder<CP6Context>()
+        .UseInMemoryDatabase(Guid.NewGuid().ToString())
+        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+        .Options);
+
+    private static CP6Context NewDbWithWarehouse()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        db.Warehouses.Add(new Warehouse
+        {
+            WarehouseCd = "W01", WarehouseName = "メイン倉庫",
+            WarehouseType = WarehouseType.RawMaterial, AllowNegative = false,
+        });
+        db.SaveChanges();
+        return db;
+    }
+
+    private static async Task SeedCoaAndRulesAsync(CP6Context db)
+    {
+        var gl = new GlAccountService(db);
+        await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "seed");
+        PostingRuleSeed.EnsureSeeded(db);
+    }
+
+    /// <summary>指定 Role 科目上の借/贷発生額合計を回査（走真引擎生成後）。</summary>
+    private static async Task<(decimal debit, decimal credit)> RoleAmountAsync(CP6Context db, string role)
+    {
+        var accId = await db.GlAccounts.Where(a => a.Role == role && a.IsActive).Select(a => a.Id).SingleAsync();
+        var lines = await db.JournalLines.Where(l => l.AccountId == accId).ToListAsync();
+        return (lines.Sum(l => l.Debit), lines.Sum(l => l.Credit));
+    }
+
+    private static async Task<Guid> RoleIdAsync(CP6Context db, string role)
+        => await db.GlAccounts.Where(a => a.Role == role && a.IsActive).Select(a => a.Id).SingleAsync();
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  E1 采购入库 → GL（采购入库单 → 收货确定 → Inventory.Received 借 INVENTORY/贷 GRNI）
+    //  种子演算：ExpectedQty=10、ReceivedQty=10、UnitPrice=30 → 金额 = 10×30 = 300。
+    // ════════════════════════════════════════════════════════════════════════
+    [Fact]
+    public async Task E1_PurchaseReceipt_ToGl_DebitInventory_CreditGrni()
+    {
+        using var db = NewDbWithWarehouse();
+        await SeedCoaAndRulesAsync(db);
+
+        // 真链装配：StockMovementService ← StockFinBridge ← AutoVoucherEngine
+        var seq = new WmsSequenceService(db);
+        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
+        var bridge = new StockFinBridge(db, new AutoVoucherEngine(db, journal), NullLogger<StockFinBridge>.Instance);
+        var stock = new StockMovementService(db, seq, notifier: null, finBridge: bridge);
+        var inbound = new InboundService(db, seq, stock);
+
+        // ① 采购入库单（Draft → Confirmed）——从最上游起
+        var inNo = await inbound.CreateOrderAsync(new InboundOrderDto
+        {
+            InboundType = 1, SupplierCd = "SUP1", WarehouseCd = "W01", ExpectedArrivalDate = DateTime.Today,
+            Details = new List<InboundOrderDetailDto>
+            {
+                new() { LineNo = 1, ProductCd = "RM-1", ExpectedQty = 10m, UnitPrice = 30m, ExpectedLocationCd = "RM-01" },
+            },
+        }, "buyer");
+        await inbound.ConfirmOrderAsync(inNo, "buyer");
+
+        // ② 收货确定（PURCHASE 源 → RelatedType=INBOUND → 桥生成 Inventory.Received）
+        var rcNo = await inbound.ConfirmReceiptAsync(new InboundReceiptDto
+        {
+            InboundNo = inNo, SourceType = InboundSourceType.Purchase, WarehouseCd = "W01", OperatorCd = "recv",
+            Details = new List<InboundReceiptDetailDto>
+            {
+                new() { LineNo = 1, RefOrderLineNo = 1, ProductCd = "RM-1", LotNo = "L1", ReceivedQty = 10m, LocationCd = "RM-01", UnitPrice = 30m },
+            },
+        }, "recv");
+        Assert.False(string.IsNullOrEmpty(rcNo));
+
+        // ③ 断言 GL：借 INVENTORY 300 / 贷 GRNI 300（10×30），且恰 1 张 Inventory 来源凭证（防双记）
+        var inv = await RoleAmountAsync(db, "INVENTORY");
+        var grni = await RoleAmountAsync(db, "GRNI");
+        Assert.Equal(300m, inv.debit);
+        Assert.Equal(0m, inv.credit);
+        Assert.Equal(300m, grni.credit);
+        Assert.Equal(0m, grni.debit);
+        Assert.Equal(1, await db.JournalEntries.CountAsync(
+            j => j.Source == VoucherSource.Inventory && j.Status == JournalStatus.Posted));
+
+        // 库存实物落账：RM-1 入库 10
+        Assert.Equal(10m, (await db.Stocks.SingleAsync(s => s.ProductCd == "RM-1")).PhysicalQty);
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  E2 出货 → AR + COGS（受注 → 出库单 → 配货 → 出货确定）
+    //  种子演算：受注售价 100 × 出货 10 = NetAmount 1000（无税 → GrossAmount 1000）
+    //            → AR 收入凭证 借 AR_CONTROL 1000 / 贷 REVENUE 1000 / TAX_OUTPUT 0。
+    //            成本单 FgUnitCost = MaterialStandard 400 / CompletedQty 10 = 40（标准口径）
+    //            → COGS = 40 × 10 = 400 → 借 COGS 400 / 贷 FG 400。
+    //  税腿说明：真 ShipAsync 组装的开票请求不带 TaxCodeId（TaxAmount=0），税腿由 ArInvoiceServiceTests 专测；
+    //            本 E2E 锁「有税则挂 TAX_OUTPUT」的骨架 = 无税时 TAX_OUTPUT 净零、REVENUE 吃全额。
+    // ════════════════════════════════════════════════════════════════════════
+    [Fact]
+    public async Task E2_OrderToShip_ToAr_AndCogs()
+    {
+        using var db = NewDbWithWarehouse();
+        await SeedCoaAndRulesAsync(db);
+
+        // 真链装配：OutboundService ← FinBridgeHook ← ArInvoiceService/CostCollect/CostSettle + 真引擎
+        var seq = new WmsSequenceService(db);
+        var stock = new StockMovementService(db, seq);
+        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
+        var engine = new AutoVoucherEngine(db, journal);
+        var ar = new ArInvoiceService(db, engine, journal, new FinSequenceService(db));
+        var collect = new CostCollectService(db, new FinSequenceService(db), new ProcessCostRateService(db));
+        var settle = new CostSettleService(db, journal);
+        var finHook = new FinBridgeHook(db, ar, collect, settle, NullLogger<FinBridgeHook>.Instance);
+        var outbound = new OutboundService(db, seq, stock, finBridge: finHook);
+
+        // 成品在庫（受注品）——引当対象。UnitPrice=成本価 999（受注售価とは無関係、汚染判別と同型）
+        await stock.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.IN, WarehouseCd = "W01", LocationCd = "FG-01",
+            ProductCd = "PROD-X", LotNo = "L1", Qty = 100m, UnitPrice = 999m,
+        });
+
+        // 已完工工单の成本単（FgUnitCost=40 標準口径）——出荷が実 FG 単位成本で COGS を切替える源。
+        db.CostSheets.Add(new CostSheet
+        {
+            Id = Guid.NewGuid(), No = "CS-E2", WorkOrderNo = "WO-E2SALE", CompletedQty = 10m,
+            MaterialStandard = 400m, MaterialActual = 400m, Status = CostSheetStatus.Settled,
+        });
+
+        // 受注（售価 100/EA × 10）
+        db.Orders.Add(new Order { WebOrderNo = "WO_E2", CustomerCd = "C-E2", OrderDate = DateTime.Today, OrderType = "01", Status = 1 });
+        db.OrderDetails.Add(new OrderDetail
+        {
+            WebOrderNo = "WO_E2", WebOrderDetailNo = 1, ProductCd = "PROD-X",
+            Quantity = 10m, UnitPriceUnit = "EA", IndividualUnitPrice = 100m,
+        });
+        await db.SaveChangesAsync();
+
+        // 受注 → 出库单（自動展開）→ 出荷が成本単を引くよう WorkOrderNo を紐付け（WO 産の FG を出荷）
+        var outNo = await outbound.CreateFromOrderAsync("WO_E2", "u");
+        var header = await db.OutboundOrders.SingleAsync(x => x.OutboundNo == outNo);
+        header.WorkOrderNo = "WO-E2SALE";
+        await db.SaveChangesAsync();
+
+        // 配货 → 出货确定（Shipping → 桥点火 AR 自動開票 + 成本結転）
+        await outbound.ConfirmOrderAsync(outNo, "u");
+        await outbound.AllocateAsync(outNo, "u");
+        var pkg = await outbound.ShipAsync(outNo, new ShipRequest(), "u");
+        Assert.False(string.IsNullOrEmpty(pkg));
+
+        // 発票が生成された（幂等键 ShipmentId=出庫号）
+        var invc = await db.ArInvoices.SingleAsync(x => x.ShipmentId == outNo && !x.IsCreditMemo);
+        Assert.Equal(1000m, invc.NetAmount);
+        Assert.Equal(0m, invc.TaxAmount);
+        Assert.Equal(400m, invc.CostAmount);   // FgUnitCost 40 × 10（估算ではない）
+
+        // ① AR 收入凭证：借 AR_CONTROL 1000 / 贷 REVENUE 1000 / 贷 TAX_OUTPUT 0
+        var arc = await RoleAmountAsync(db, "AR_CONTROL");
+        var rev = await RoleAmountAsync(db, "REVENUE");
+        var tax = await RoleAmountAsync(db, "TAX_OUTPUT");
+        Assert.Equal(1000m, arc.debit);
+        Assert.Equal(1000m, rev.credit);
+        Assert.Equal(0m, tax.credit);          // 无税 → 税腿净零（有税则挂 TAX_OUTPUT）
+        Assert.Equal(1, await db.JournalEntries.CountAsync(
+            j => j.Source == VoucherSource.AR && j.Status == JournalStatus.Posted));   // 恰 1 张收入凭证（防双记）
+
+        // ② COGS 成本结转凭证：借 COGS 400 / 贷 FG 400（有标准按标准价）
+        var cogs = await RoleAmountAsync(db, "COGS");
+        var fg = await RoleAmountAsync(db, "FG");
+        Assert.Equal(400m, cogs.debit);
+        Assert.Equal(400m, fg.credit);
+        Assert.Equal(1, await db.JournalEntries.CountAsync(
+            j => j.Source == VoucherSource.Cost && j.Status == JournalStatus.Posted));  // 恰 1 张成本凭证（防双记）
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  E3 工单完工全链（工单+BOM 定额+标准 → 真 ProductionResult 完工 → 反冲+归集+结转三腿）
+    //  种子演算：BOM UnitUsage=2、SupplyPrice=5、ProductionQty=10
+    //            → 反冲量 = 2×10 = 20、料实际 = 20×5 = 100（借 WIP / 贷 INVENTORY）。
+    //            预置 WorkOrderMaterial.PlanQty=18 → 料标准 = 18×5 = 90（FG 按标准 借 FG 90 / 贷 WIP 90）。
+    //            差异 = 实际100 − 标准90 = +10 超支（借 COGS 10 / 贷 WIP 10）。
+    //            WIP 净零：借 100 = 贷 90+10。工/费缺费率 → 整单回退 0，不干扰料差异。
+    // ════════════════════════════════════════════════════════════════════════
+    [Fact]
+    public async Task E3_WorkOrderComplete_FullChain_BackflushCollectSettleVariance()
+    {
+        using var db = NewDbTx();
+        await SeedCoaAndRulesAsync(db);
+
+        // 発行済指図 1 工程 + 定额料 BOM + 材料在庫 + 预置 PlanQty（標準料の源）
+        db.Set<WorkOrder>().Add(new WorkOrder { Id = Guid.NewGuid(), WorkOrderNo = "WO-E3", ProductCd = "P1", Status = 2, ProductionQty = 10m, CompletedQty = 0m });
+        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO-E3", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
+        db.Set<ProductMaterial>().Add(new ProductMaterial { Id = Guid.NewGuid(), ProductCd = "P1", ProcessCd = "OP1", MaterialCd = "M1", MaterialTypeDiv = "3", UsageType = 2, UnitUsage = 2m, SupplyPrice = 5m });
+        // 反冲は同 (ProcessCd,MaterialCd) 行の ActualQty を累加 → PlanQty=18 が標準料の基（背反：backflush は PlanQty を触らない）
+        db.Set<WorkOrderMaterial>().Add(new WorkOrderMaterial { Id = Guid.NewGuid(), WorkOrderNo = "WO-E3", ProcessCd = "OP1", MaterialCd = "M1", PlanQty = 18m, ActualQty = 0m });
+        db.Set<Stock>().Add(new Stock { WarehouseCd = "W01", LocationCd = "L1", ProductCd = "M1", LotNo = "", PhysicalQty = 100m, AllocatedQty = 0m, AvailableQty = 100m, OwnerType = StockOwnerType.Self, UnitPrice = 5m });
+        await db.SaveChangesAsync();
+
+        // 真链：ProductionResult（真 Backflush + 真 FinBridgeHook）
+        var seq = new WmsSequenceService(db);
+        var stock = new StockMovementService(db, seq);
+        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
+        var ar = new ArInvoiceService(db, new AutoVoucherEngine(db, journal), journal, new FinSequenceService(db));
+        var collect = new CostCollectService(db, new FinSequenceService(db), new ProcessCostRateService(db));
+        var settle = new CostSettleService(db, journal);
+        var finHook = new FinBridgeHook(db, ar, collect, settle, NullLogger<FinBridgeHook>.Instance);
+        var backflush = new BackflushService(db, stock, new MaterialUsageCalculator());
+        var mesSeq = new MesSequenceService(db);
+        var woService = new WorkOrderService(db, mesSeq, new NoOpWmsBridgeHook());
+        var prService = new ProductionResultService(db, mesSeq, woService, new NoOpMesNotifier(), new NoOpWmsBridgeHook(), backflush, finHook);
+
+        await prService.CompleteAsync(new ProductionResultRequest
+        {
+            WorkOrderNo = "WO-E3", ProcessCd = "OP1", OperatorCd = "OP", GoodQty = 10m,
+        }, "mes");
+
+        // ① 反冲扣料（物理量 + ActualQty 回写）：M1 出库 20 → 在庫 100→80；ActualQty=20；ISSUE 台账存在
+        var mat = await db.WorkOrderMaterials.AsNoTracking().SingleAsync(m => m.WorkOrderNo == "WO-E3" && m.MaterialCd == "M1");
+        Assert.Equal(20m, mat.ActualQty);
+        Assert.Equal(80m, (await db.Stocks.SingleAsync(s => s.ProductCd == "M1")).PhysicalQty);
+        Assert.Equal(1, await db.StockTransactions.CountAsync(t => t.RelatedType == "ISSUE" && t.RelatedNo == "WO-E3"));
+
+        // ② 归集：料实际100 / 料标准90（真值对齐），Settled
+        var cs = await db.CostSheets.SingleAsync(s => s.WorkOrderNo == "WO-E3");
+        Assert.Equal(100m, cs.MaterialActual);
+        Assert.Equal(90m, cs.MaterialStandard);
+        Assert.Equal(CostSheetStatus.Settled, cs.Status);
+
+        var wip = await RoleIdAsync(db, "WIP");
+        var fg = await RoleIdAsync(db, "FG");
+        var inv = await RoleIdAsync(db, "INVENTORY");
+        var cogs = await RoleIdAsync(db, "COGS");
+
+        // ③ 料工费 → WIP：借 WIP 实际全额 100 / 贷 原材料(INVENTORY) 100
+        var wipVoucher = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#WIP"));
+        Assert.Equal(VoucherSource.Cost, wipVoucher.Source);
+        Assert.Equal(100m, wipVoucher.Lines.Single(l => l.AccountId == wip).Debit);
+        Assert.Equal(100m, wipVoucher.Lines.Single(l => l.AccountId == inv).Credit);
+
+        // ④ WIP → FG（按标准）：借 FG 90 / 贷 WIP 90
+        var fgVoucher = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
+        Assert.Equal(90m, fgVoucher.Lines.Single(l => l.AccountId == fg).Debit);
+        Assert.Equal(90m, fgVoucher.Lines.Single(l => l.AccountId == wip).Credit);
+
+        // ⑤ 差异 → COGS（超支 +10）：借 COGS 10 / 贷 WIP 10
+        var varVoucher = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#VAR"));
+        Assert.Equal(10m, varVoucher.Lines.Single(l => l.AccountId == cogs).Debit);
+        Assert.Equal(10m, varVoucher.Lines.Single(l => l.AccountId == wip).Credit);
+
+        // ⑥ 恰 3 张 Cost 凭证（#WIP+#FG+#VAR，防双记）+ WIP 借贷净零
+        Assert.Equal(3, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
+        var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
+        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  E4 盘点冻结 → 差异承认 → GL（开盘点冻结 → 盘亏承认 → 解冻 + AdjustLoss）
+    //  种子演算：账簿 100、实盘 95 → 差异 −5、UnitPrice=5 → 金额 = |−5|×5 = 25。
+    //            借 PENDING_PROPERTY_LOSS 25 / 贷 INVENTORY 25。
+    // ════════════════════════════════════════════════════════════════════════
+    [Fact]
+    public async Task E4_StockTakeFreeze_LossApproval_ToGl_Unfreeze()
+    {
+        using var db = NewDbWithWarehouse();
+        await SeedCoaAndRulesAsync(db);
+
+        var seq = new WmsSequenceService(db);
+        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
+        var bridge = new StockFinBridge(db, new AutoVoucherEngine(db, journal), NullLogger<StockFinBridge>.Instance);
+        var stock = new StockMovementService(db, seq, notifier: null, finBridge: bridge);
+        var take = new StockTakeService(db, seq, stock);
+
+        // 初期在庫（RelatedType 未指定 → 桥 Skipped、GL 未汚染）
+        await stock.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.IN, WarehouseCd = "W01", LocationCd = "LOC1",
+            ProductCd = "P001", LotNo = "L1", Qty = 100m, UnitPrice = 5m,
+        });
+
+        // ① 开盘点（Counting）→ LOC1 冻结生效
+        var no = await take.CreatePlanAsync(new StockTakePlanDto { TargetWarehouseCd = "W01" }, "u1");
+        await take.StartCountAsync(no, "u1");
+
+        // 冻结在效：该库位 OUT 被拒 WM-MSG-304
+        var frozen = await Assert.ThrowsAsync<InvalidOperationException>(() => stock.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.OUT, WarehouseCd = "W01", LocationCd = "LOC1",
+            ProductCd = "P001", LotNo = "L1", Qty = 10m,
+        }));
+        Assert.Contains("WM-MSG-304", frozen.Message);
+
+        // ② 盘亏承认（实盘 95 < 账簿 100）→ ADJ −5 STOCKTAKE 放行 → 桥生成 AdjustLoss
+        await take.UpdateCountsAsync(no, new() { new() { LineNo = 1, CountedQty = 95m, DiffReasonCd = "BREAK" } }, "u1");
+        await take.SubmitForReviewAsync(no, "u1");
+        await take.ApproveAndApplyAsync(no, "u1");
+
+        // ③ 解冻（Completed）：同库位 OUT 可执行（95→85）
+        Assert.Equal(StockTakeStatus.Completed, (await db.StockTakes.SingleAsync()).Status);
+        var outTxn = await stock.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.OUT, WarehouseCd = "W01", LocationCd = "LOC1",
+            ProductCd = "P001", LotNo = "L1", Qty = 10m,
+        });
+        Assert.False(string.IsNullOrEmpty(outTxn));
+        Assert.Equal(85m, (await db.Stocks.SingleAsync(s => s.ProductCd == "P001")).PhysicalQty);
+
+        // ④ 断言 GL：借 PENDING_PROPERTY_LOSS 25 / 贷 INVENTORY 25（|−5|×5），恰 1 张盘亏凭证（防双记）
+        //    解冻后 OUT 的 RelatedType=null → 桥 Skipped，不新增 GL → Inventory 凭证仍恰 1 张。
+        var loss = await RoleAmountAsync(db, "PENDING_PROPERTY_LOSS");
+        var inv = await RoleAmountAsync(db, "INVENTORY");
+        Assert.Equal(25m, loss.debit);
+        Assert.Equal(0m, loss.credit);
+        Assert.Equal(25m, inv.credit);
+        Assert.Equal(0m, inv.debit);   // 初期入庫は Skipped → 借方なし
+        Assert.Equal(1, await db.JournalEntries.CountAsync(
+            j => j.Source == VoucherSource.Inventory && j.Status == JournalStatus.Posted));
+    }
+}

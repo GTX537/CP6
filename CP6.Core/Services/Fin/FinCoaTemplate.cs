@@ -69,6 +69,7 @@ public static class FinCoaTemplate
         new("2001", "短期借款",   AccountType.Liability, Cr, true, 2, ParentCode: "2000"),
         new("2202", "应付账款",   AccountType.Liability, Cr, true, 2, IsControl: true, SubLedgerType: "AP", RequirePartner: true, Role: "AP_CONTROL", ParentCode: "2000"),
         new("2203", "预收账款",   AccountType.Liability, Cr, true, 2, RequirePartner: true, Role: "AR_ADVANCE", ParentCode: "2000"),
+        new("2204", "暂估应付账款", AccountType.Liability, Cr, true, 2, Role: "GRNI", ParentCode: "2000"),   // 波A 收货未开票暂估（2202 已被 AP_CONTROL 占用，另取邻码）
         new("2211", "应付职工薪酬", AccountType.Liability, Cr, true, 2, ParentCode: "2000"),
         new("2221", "应交税费",   AccountType.Liability, Cr, IsLeaf: false, Level: 2, ParentCode: "2000"),
         new("2221.01", "应交税费—进项税", AccountType.Liability, Cr, true, 3, Role: "TAX_INPUT", ParentCode: "2221"),
@@ -125,18 +126,23 @@ public static class FinCoaTemplate
         new("1300", "Raw Materials",           AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "INV", Role: "INVENTORY"),
         new("1340", "Work in Progress",        AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "COST", Role: "WIP"),
         new("1350", "Finished Goods",          AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "INV", Role: "FG"),
+        new("1900", "Pending Property Loss",   AccountType.Asset, Dr, true, Role: "PENDING_PROPERTY_LOSS"),   // 波A 盘亏清理
         new("2100", "Accounts Payable",        AccountType.Liability, Cr, true, IsControl: true, SubLedgerType: "AP", RequirePartner: true, Role: "AP_CONTROL"),
+        new("2110", "Goods Received Not Invoiced", AccountType.Liability, Cr, true, Role: "GRNI"),             // 波A 收货未开票暂估（2150 已被 AR_ADVANCE 占用）
         new("2150", "Advance from Customers",  AccountType.Liability, Cr, true, RequirePartner: true, Role: "AR_ADVANCE"),
         new("2210", "Input Tax (VAT recoverable)", AccountType.Liability, Cr, true, Role: "TAX_INPUT"),
         new("2220", "Output Tax (VAT payable)",    AccountType.Liability, Cr, true, Role: "TAX_OUTPUT"),
         new("3000", "Share Capital",           AccountType.Equity, Cr, true, Role: "EQUITY_CAPITAL"),
+        new("3103", "Current Year Earnings",   AccountType.Equity, Cr, true),                             // 波G 年结本年利润（无 Role，按编码 3103 定位，与 CN 同码同义——PeriodCloseService.CurrentYearProfitCode）
         new("3300", "Retained Earnings",       AccountType.Equity, Cr, true, Role: "RETAINED_EARNINGS"),
         new("4000", "Sales Revenue",           AccountType.Revenue, Cr, true, Role: "REVENUE"),
+        new("4800", "Non-Operating Income",    AccountType.Revenue, Cr, true, Role: "NON_OP_INCOME"),        // 波A 盘盈利得
         new("4900", "FX Gain",                 AccountType.Revenue, Cr, true, Role: "FX_GAIN"),
         new("5000", "Cost of Goods Sold",      AccountType.Expense, Dr, true, Role: "COGS"),
         new("5100", "Direct Material",         AccountType.Expense, Dr, true, Role: "DIRECT_MATERIAL"),
         new("5200", "Direct Labor",            AccountType.Expense, Dr, true, Role: "DIRECT_LABOR"),
         new("5300", "Manufacturing Overhead",  AccountType.Expense, Dr, true, Role: "MFG_OVERHEAD"),
+        new("6800", "Non-Operating Expense",   AccountType.Expense, Dr, true, Role: "NON_OP_EXPENSE"),       // 波A 报废净损
         new("6900", "FX Loss",                 AccountType.Expense, Dr, true, Role: "FX_LOSS"),
     };
 }

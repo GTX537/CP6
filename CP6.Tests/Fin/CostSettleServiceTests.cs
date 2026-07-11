@@ -74,9 +74,16 @@ public class CostSettleServiceTests
         Assert.Equal(300m, collect.Lines.Single(l => l.AccountId == lab).Credit);    // 贷 直接人工 吸收
         Assert.Equal(200m, collect.Lines.Single(l => l.AccountId == oh).Credit);     // 贷 制造费用 吸收
 
+        // 拍板②：FG 按标准成本资本化。标准 = 料600(计划100×5+50×2) + 工300 + 费200 = 1100（料实际 650 含 +50 超用差异）
         var settle = await db.JournalEntries.Include(e => e.Lines).FirstAsync(e => e.SourceDocNo!.EndsWith("#FG"));
-        Assert.Equal(1150m, settle.Lines.Single(l => l.AccountId == fg).Debit);      // 借 库存商品
-        Assert.Equal(1150m, settle.Lines.Single(l => l.AccountId == wip).Credit);    // 贷 在制品
+        Assert.Equal(1100m, settle.Lines.Single(l => l.AccountId == fg).Debit);      // 借 库存商品（标准）
+        Assert.Equal(1100m, settle.Lines.Single(l => l.AccountId == wip).Credit);    // 贷 在制品（标准）
+
+        // 差异 = 实际1150 − 标准1100 = +50 超支 → 借 COGS 50 / 贷 WIP 50
+        var cogs = (await k.Gl.GetByRoleAsync("COGS"))!.Id;
+        var varv = await db.JournalEntries.Include(e => e.Lines).FirstAsync(e => e.SourceDocNo!.EndsWith("#VAR"));
+        Assert.Equal(50m, varv.Lines.Single(l => l.AccountId == cogs).Debit);
+        Assert.Equal(50m, varv.Lines.Single(l => l.AccountId == wip).Credit);
 
         var cs = await db.CostSheets.FirstAsync(s => s.WorkOrderNo == "WO1");
         Assert.Equal(CostSheetStatus.Settled, cs.Status);
@@ -104,7 +111,7 @@ public class CostSettleServiceTests
         var k = await SetupAsync(db);
         await SeedWoAsync(db);
         await k.Collect.CollectAsync("WO1", 300m, 200m, "u");
-        Assert.Equal(115m, await k.Settle.FgUnitCostAsync("WO1"));     // 1150 / 10
+        Assert.Equal(110m, await k.Settle.FgUnitCostAsync("WO1"));     // 拍板②标准口径：StandardCost 1100 / 10（实际1150 的 +50 差异已转 COGS）
     }
 
     [Fact]

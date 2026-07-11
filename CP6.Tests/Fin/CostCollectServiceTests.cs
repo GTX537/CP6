@@ -9,7 +9,7 @@ namespace CP6.Tests.Fin;
 
 /// <summary>
 /// 财务章06 A：成本归集（★卖点）。料 = MES 实际消耗(WorkOrderMaterial.ActualQty) × BOM 供给单价(ProductMaterial.SupplyPrice)；
-/// 标准料 = 计划用量×同单价 → 差额即料用量差异；工费标准估算；FG 单位成本 = 实际总成本/完工数。
+/// 标准料 = 计划用量×同单价 → 差额即料用量差异；工费标准估算；FG 单位成本 = 标准总成本/完工数（拍板②，无标准时实际口径）。
 /// 场景：M1 计划100实际110单价5；M2 计划50实际50单价2；工300费200；完工10。
 /// </summary>
 public class CostCollectServiceTests
@@ -64,7 +64,7 @@ public class CostCollectServiceTests
         Assert.Equal(1150m, cs.TotalActual);       // 650 + 300 + 200
         Assert.Equal(1100m, cs.StandardCost);      // 600 + 300 + 200
         Assert.Equal(50m, cs.Variance);            // 料用量差异：M1 多耗 10×5
-        Assert.Equal(115m, cs.FgUnitCost);         // 1150 / 10
+        Assert.Equal(110m, cs.FgUnitCost);         // 拍板②标准口径：StandardCost 1100 / 10（差异 50 结转 COGS，不入 FG 单位成本）
     }
 
     [Fact]

@@ -29,7 +29,7 @@ public class FiscalPeriod : BaseTenantEntity
     /// <summary>期间止日（含）</summary>
     public DateTime PeriodEnd { get; set; }
 
-    /// <summary>状态：Open / Closed</summary>
+    /// <summary>状态：Open / Closed / YearClosed</summary>
     public PeriodStatus Status { get; set; }
 
     /// <summary>结账时间</summary>
@@ -45,6 +45,8 @@ public enum PeriodStatus
 {
     /// <summary>开启（可记账）</summary>
     Open = 0,
-    /// <summary>已结账（锁期，禁记账）</summary>
+    /// <summary>已结账（月结锁期，禁记账）</summary>
     Closed = 1,
+    /// <summary>已年结（年度锁定，损益已结转 3103→3104，禁记账；须先反年结再反月结）</summary>
+    YearClosed = 2,
 }

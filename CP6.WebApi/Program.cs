@@ -188,6 +188,17 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinReconciliationService, CP6.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArAgingService, CP6.Core.Services.Fin.ArAgingService>(); // 章04 §3 应收账龄
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICreditControlService, CP6.Core.Services.Fin.CreditControlService>(); // 章04 §3 信用控制（出货前反向约束）
 builder.Services.AddScoped<CP6.Core.Services.Integration.IFinBridgeHook, CP6.Core.Services.Fin.FinBridgeHook>(); // F2-D4 出货→AR 自动开票/红冲（Phase6 桥，WMS|FIN 路由）
+// F1 波0 Task 0.2：库存移动→Fin 自动过账桥（采购入库/盘盈亏/报废，VoucherSource.Inventory）。
+// appsettings.json の StockFinBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
+var stockFinBridgeEnabled = builder.Configuration.GetValue<bool?>("StockFinBridge:Enabled") ?? true;
+if (stockFinBridgeEnabled)
+{
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IStockFinBridge, CP6.Core.Services.Fin.StockFinBridge>();
+}
+else
+{
+    builder.Services.AddScoped<CP6.Core.Services.Integration.IStockFinBridge, CP6.Core.Services.Integration.NoOpStockFinBridge>();
+}
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Services.Fin.IFinAp)sp.GetRequiredService<CP6.Core.Services.Fin.IApInvoiceService>()); // F2-D3 采购对外契约（同一 ApInvoiceService 实例）
 
 // 4.0.3 采购（Pur）MVP 章01~04：主数据→PO→收货→三单匹配→自动建应付（补全财务 AP 前置）
@@ -307,6 +318,7 @@ builder.Services.AddScoped<IPlateMoldPeApiService, NoOpPlateMoldPeApiService>();
 // 4.7 MSBBME010〜090 MES 製造執行 相关服务
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesSequenceService, CP6.Core.Services.Mes.MesSequenceService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IWorkOrderService, CP6.Core.Services.Mes.WorkOrderService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IBackflushService, CP6.Core.Services.Mes.BackflushService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IProductionResultService, CP6.Core.Services.Mes.ProductionResultService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IQualityInspectionService, CP6.Core.Services.Mes.QualityInspectionService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IDefectRecordService, CP6.Core.Services.Mes.DefectRecordService>();
@@ -651,6 +663,10 @@ using (var scope = app.Services.CreateScope())
 
     // A3 §9 固定资产科目对账（既有库补 Role/新增 4 科目；空库由模板导入负责）
     await CP6.WebApi.Seed.A3AccountSeed.EnsureAsync(db);
+
+    // F1 波G G.1：存量租户 COA 缺行逐租户回填（波A GRNI/盘盈亏 + 波G INTL 本年利润 3103），
+    // 只对已导入该 scheme 的租户按模板补插缺失行（只插不改不删）。空库由模板导入负责。幂等。
+    CP6.WebApi.Seed.FinCoaBackfillSeed.EnsureSeeded(db);
 
     if (!db.Sys_Menus.Any())
     {
@@ -1209,6 +1225,11 @@ using (var scope = app.Services.CreateScope())
         }
         db.SaveChanges();
     }
+
+    // F1 波G G.1：年结高危端点（PeriodController year-close/reopen-year）权限点逐租户种子。
+    // 上方 D-2 finActions 块仅默认租户（.Any 受行级过滤）；本块照 M-WMS T3b 逐租户显式 TenantId + IgnoreQueryFilters，
+    // 覆盖全部租户 admin（否则非默认租户 admin 年结 403）。须置于 Fin 权限块之后（MenuKey 604 已回填、菜单行已在）。幂等。
+    CP6.WebApi.Seed.FinPeriodPermissionSeed.EnsureSeeded(db);
 
     // S 类认证加固（T8）：安全审计日志菜单（114，挂"系统管理"100 组）+ admin 授权 + query 操作权限点。
     // 菜单驱动路由注册（无 Sys_Menu 则前端路由不注册 → 白屏不可达，A4 H-3 教训）。

@@ -1,0 +1,200 @@
+using CP6.Core.EFDbContext;
+using CP6.Core.Services.Fin;
+using CP6.Core.Services.Wms;
+using CP6.Entity.DomainModels.Fin;
+using CP6.Entity.DomainModels.Wms;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
+
+namespace CP6.Tests.Fin;
+
+/// <summary>
+/// F1 財務油路 波A Task A.2：棚卸差異 ADJ 承認 → 自動過账 の真链回帰テスト
+/// （真 StockTakeService → 真 StockMovementService.ApplyAsync → 真 StockFinBridge → 真 AutoVoucherEngine + InMemory）。
+///
+/// 検証観点：
+///  ① 盘亏承认（CountedQty&lt;BookQty）→ 借 PENDING_PROPERTY_LOSS / 贷 INVENTORY（金額=|DiffQty|×UnitPrice）。
+///  ② 盘盈承认（CountedQty&gt;BookQty）→ 借 INVENTORY / 贷 NON_OP_INCOME。
+///  ③ 単価透传の実証：StockTakeService は請求に UnitPrice=Detail.UnitPrice を積む
+///     （Detail.UnitPrice は CreatePlan で Stock.UnitPrice をスナップショット）→ 桥が計価過账できる。
+///     ★ 補口不要：透传チェーンは既に貫通（Stock.UnitPrice → Detail.UnitPrice → ADJ.UnitPrice → txn.UnitPrice → 桥金額）。
+///  ④ 単価欠落時（Stock.UnitPrice=null）でも ADJ 放行は破壊しない：在庫更新は成功、桥は計価不能で Skipped（凭证なし）。
+///  ⑤ 报废（RelatedType=SCRAP）直駆：ApplyAsync 経由 → 借 NON_OP_EXPENSE / 贷 INVENTORY（桥行為ロック）。
+///     現仓に SCRAP 生産構造点は無し（YAGNI・業務流は作らない）——本テストは桥行為の固定のみ。
+///     follow-up：将来の生産报废入口（RMA処置 / 独立报废単）が UnitPrice 付きで SCRAP 値を積めば即通。
+/// </summary>
+public class StockTakeAdjustGlTests
+{
+    /// <summary>W01 倉庫 + Fin COA/PostingRule を播種し、真 StockFinBridge を配線した StockTakeService/StockMovementService を返す。</summary>
+    private static async Task<(StockTakeService take, StockMovementService move, CP6Context db)> CreateAsync()
+    {
+        var db = TestHelper.CreateInMemoryContext();
+        db.Warehouses.Add(new Warehouse
+        {
+            WarehouseCd = "W01", WarehouseName = "メイン倉庫",
+            WarehouseType = WarehouseType.RawMaterial, AllowNegative = false,
+        });
+        await db.SaveChangesAsync();
+
+        var gl = new GlAccountService(db);
+        await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "t");
+        PostingRuleSeed.EnsureSeeded(db);
+
+        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
+        var engine = new AutoVoucherEngine(db, journal);
+        var bridge = new StockFinBridge(db, engine, NullLogger<StockFinBridge>.Instance);
+
+        var seq = new WmsSequenceService(db);
+        var move = new StockMovementService(db, seq, notifier: null, finBridge: bridge);
+        var take = new StockTakeService(db, seq, move);
+        return (take, move, db);
+    }
+
+    /// <summary>初期在庫を IN で積む（RelatedType=null → 桥は Skipped、GL を汚さない）。</summary>
+    private static async Task SeedStockAsync(StockMovementService move,
+        string product, string lot, string location, decimal qty, decimal? unitPrice)
+    {
+        await move.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.IN, WarehouseCd = "W01",
+            LocationCd = location, ProductCd = product, LotNo = lot,
+            Qty = qty, UnitPrice = unitPrice,   // RelatedType 未指定 → 桥 Skipped
+        });
+    }
+
+    /// <summary>指定 Role 科目上の借/贷発生額合計を回査。</summary>
+    private static async Task<(decimal debit, decimal credit)> RoleAmountAsync(CP6Context db, string role)
+    {
+        var accId = await db.GlAccounts.Where(a => a.Role == role && a.IsActive).Select(a => a.Id).SingleAsync();
+        var lines = await db.JournalLines.Where(l => l.AccountId == accId).ToListAsync();
+        return (lines.Sum(l => l.Debit), lines.Sum(l => l.Credit));
+    }
+
+    // ───────── ① 盘亏承认 → 借 待処理財産損溢 / 贷 存货 ─────────
+
+    [Fact]
+    public async Task ApproveLoss_Generates_AdjustLoss_DebitPendingLoss_CreditInventory()
+    {
+        var (take, move, db) = await CreateAsync();
+        await SeedStockAsync(move, "P001", "L1", "LOC1", 100m, 5m);
+
+        var no = await take.CreatePlanAsync(new StockTakePlanDto { TargetWarehouseCd = "W01" }, "u1");
+        await take.StartCountAsync(no, "u1");
+        // 差異 -5（実棚 95 < 帳簿 100）
+        await take.UpdateCountsAsync(no, new() { new() { LineNo = 1, CountedQty = 95m, DiffReasonCd = "BREAK" } }, "u1");
+        await take.SubmitForReviewAsync(no, "u1");
+        await take.ApproveAndApplyAsync(no, "u1");
+
+        // 桥点火 → 借 PENDING_PROPERTY_LOSS 25 / 贷 INVENTORY 25（|-5|×5）
+        var loss = await RoleAmountAsync(db, "PENDING_PROPERTY_LOSS");
+        var inv = await RoleAmountAsync(db, "INVENTORY");
+        Assert.Equal(25m, loss.debit);
+        Assert.Equal(0m, loss.credit);
+        Assert.Equal(25m, inv.credit);
+        Assert.Equal(0m, inv.debit);   // 初期入庫は Skipped（GL 未生成）→ 借方なし
+
+        // Inventory 来源凭证 1 張のみ過账
+        Assert.Equal(1, await db.JournalEntries.CountAsync(
+            j => j.Source == VoucherSource.Inventory && j.Status == JournalStatus.Posted));
+        // ADJ 放行の前提は破壊しない：在庫は 95 に反映
+        Assert.Equal(95m, (await db.Stocks.SingleAsync(s => s.ProductCd == "P001")).PhysicalQty);
+    }
+
+    // ───────── ② 盘盈承认 → 借 存货 / 贷 営業外収入 ─────────
+
+    [Fact]
+    public async Task ApproveGain_Generates_AdjustGain_DebitInventory_CreditNonOpIncome()
+    {
+        var (take, move, db) = await CreateAsync();
+        await SeedStockAsync(move, "P001", "L1", "LOC1", 100m, 8m);
+
+        var no = await take.CreatePlanAsync(new StockTakePlanDto { TargetWarehouseCd = "W01" }, "u1");
+        await take.StartCountAsync(no, "u1");
+        // 差異 +4（実棚 104 > 帳簿 100）
+        await take.UpdateCountsAsync(no, new() { new() { LineNo = 1, CountedQty = 104m, DiffReasonCd = "FOUND" } }, "u1");
+        await take.SubmitForReviewAsync(no, "u1");
+        await take.ApproveAndApplyAsync(no, "u1");
+
+        // 桥点火 → 借 INVENTORY 32 / 贷 NON_OP_INCOME 32（4×8）
+        var inv = await RoleAmountAsync(db, "INVENTORY");
+        var gain = await RoleAmountAsync(db, "NON_OP_INCOME");
+        Assert.Equal(32m, inv.debit);
+        Assert.Equal(32m, gain.credit);
+        Assert.Equal(104m, (await db.Stocks.SingleAsync(s => s.ProductCd == "P001")).PhysicalQty);
+    }
+
+    // ───────── ③ 単価透传の実証：ADJ.UnitPrice = Detail.UnitPrice = Stock スナップショット ─────────
+
+    [Fact]
+    public async Task Approve_PropagatesUnitPrice_FromStockSnapshot_ToAdjTxn_AndVoucher()
+    {
+        var (take, move, db) = await CreateAsync();
+        await SeedStockAsync(move, "P001", "L1", "LOC1", 100m, 7m);
+
+        var no = await take.CreatePlanAsync(new StockTakePlanDto { TargetWarehouseCd = "W01" }, "u1");
+        await take.StartCountAsync(no, "u1");
+        await take.UpdateCountsAsync(no, new() { new() { LineNo = 1, CountedQty = 97m, DiffReasonCd = "BREAK" } }, "u1");
+        await take.SubmitForReviewAsync(no, "u1");
+        await take.ApproveAndApplyAsync(no, "u1");
+
+        // ★ 透传の直接実証：明細スナップショット単価 → ADJ トランザクション単価が一致
+        var d = await db.StockTakeDetails.SingleAsync();
+        Assert.Equal(7m, d.UnitPrice);                                       // Stock.UnitPrice をスナップショット
+        var adj = await db.StockTransactions.SingleAsync(t => t.TxnType == WmsTxnType.ADJ);
+        Assert.Equal(7m, adj.UnitPrice);                                     // 桥が計価に使う値
+        Assert.Equal("STOCKTAKE", adj.RelatedType);
+        // 金額 = |DiffQty|×UnitPrice = 3×7 = 21 → 桥が計価過账できた証拠
+        Assert.Equal(21m, (await RoleAmountAsync(db, "PENDING_PROPERTY_LOSS")).debit);
+        Assert.Equal(21m, (await RoleAmountAsync(db, "INVENTORY")).credit);
+    }
+
+    // ───────── ④ 単価欠落でも ADJ 放行は破壊しない（桥は Skipped・凭证なし） ─────────
+
+    [Fact]
+    public async Task ApproveLoss_WithNullUnitPrice_StillApplies_ButBridgeSkips_NoVoucher()
+    {
+        var (take, move, db) = await CreateAsync();
+        await SeedStockAsync(move, "P001", "L1", "LOC1", 100m, null);   // 単価なし
+
+        var no = await take.CreatePlanAsync(new StockTakePlanDto { TargetWarehouseCd = "W01" }, "u1");
+        await take.StartCountAsync(no, "u1");
+        await take.UpdateCountsAsync(no, new() { new() { LineNo = 1, CountedQty = 95m, DiffReasonCd = "BREAK" } }, "u1");
+        await take.SubmitForReviewAsync(no, "u1");
+        await take.ApproveAndApplyAsync(no, "u1");
+
+        // ADJ 放行の前提未破壊：在庫は 95 に反映され、承認は完了
+        Assert.Equal(95m, (await db.Stocks.SingleAsync(s => s.ProductCd == "P001")).PhysicalQty);
+        Assert.Equal(StockTakeStatus.Completed, (await db.StockTakes.SingleAsync()).Status);
+        // 単価欠落 → 桥は計価不能で Skipped（禁零額凭证）→ 凭证は生成されない
+        Assert.Equal(0, await db.JournalEntries.CountAsync());
+        var adj = await db.StockTransactions.SingleAsync(t => t.TxnType == WmsTxnType.ADJ);
+        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceNo == adj.TxnNo && e.Status == "SKIPPED"));
+    }
+
+    // ───────── ⑤ 报废 SCRAP 直駆（ApplyAsync 経由）→ 借 営業外支出 / 贷 存货（桥行為ロック） ─────────
+
+    [Fact]
+    public async Task Scrap_ViaApplyAsync_Generates_InventoryScrapped_DebitNonOpExpense_CreditInventory()
+    {
+        var (_, move, db) = await CreateAsync();
+        await SeedStockAsync(move, "P001", "L1", "LOC1", 10m, 50m);
+
+        // 报废出库：RelatedType=SCRAP（現仓に生産構造点は無し・桥行為の固定のみ）
+        var txnNo = await move.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.OUT, WarehouseCd = "W01",
+            LocationCd = "LOC1", ProductCd = "P001", LotNo = "L1",
+            Qty = 2m, UnitPrice = 50m,
+            RelatedType = "SCRAP", RelatedNo = "SCRAP-1", OperatorCd = "wms",
+        });
+
+        // 桥点火 → 借 NON_OP_EXPENSE 100 / 贷 INVENTORY 100（2×50）
+        var exp = await RoleAmountAsync(db, "NON_OP_EXPENSE");
+        var inv = await RoleAmountAsync(db, "INVENTORY");
+        Assert.Equal(100m, exp.debit);
+        Assert.Equal(100m, inv.credit);
+        Assert.Equal(1, await db.JournalEntries.CountAsync(
+            j => j.Source == VoucherSource.Inventory && j.Status == JournalStatus.Posted));
+        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceNo == txnNo && e.Status == "SUCCESS"));
+    }
+}
