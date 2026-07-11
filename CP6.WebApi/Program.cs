@@ -318,6 +318,7 @@ builder.Services.AddScoped<IPlateMoldPeApiService, NoOpPlateMoldPeApiService>();
 // 4.7 MSBBME010〜090 MES 製造執行 相关服务
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesSequenceService, CP6.Core.Services.Mes.MesSequenceService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IWorkOrderService, CP6.Core.Services.Mes.WorkOrderService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IBackflushService, CP6.Core.Services.Mes.BackflushService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IProductionResultService, CP6.Core.Services.Mes.ProductionResultService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IQualityInspectionService, CP6.Core.Services.Mes.QualityInspectionService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IDefectRecordService, CP6.Core.Services.Mes.DefectRecordService>();

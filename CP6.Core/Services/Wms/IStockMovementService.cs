@@ -49,6 +49,13 @@ public class StockMovementRequest
     public string OwnerType { get; set; } = StockOwnerType.Self;
     public string? OwnerCd { get; set; }
     public string? PaperRollNo { get; set; }
+
+    /// <summary>
+    /// マイナス在庫ガード上書き（既定 false）。true の場合、倉庫の <c>AllowNegative</c> 設定に関わらず
+    /// マイナス在庫記帳を許可する。完工反冲（拍板①：不足でも報工を止めず負在庫＋告警）専用の逃がし弁。
+    /// この標志はガード可否のみに作用し、他の在庫更新セマンティクスは一切変えない。
+    /// </summary>
+    public bool AllowNegativeOverride { get; set; } = false;
 }
 
 /// <summary>

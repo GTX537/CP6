@@ -193,24 +193,15 @@ public class MrpEngine : IMrpEngine
         return run;
     }
 
-    /// <summary>展开子料用量：尺寸料(原紙/UsageType=1)经用量内核面积×段成率×(层系数)；定额料单耗×数量。</summary>
+    /// <summary>
+    /// 展开子料用量。尺寸/定额算法は共通解決器 <see cref="BomUsageResolver"/> に一元化し、
+    /// 完工反冲（BackflushService）と口径を共用する（公式非重複）。
+    /// </summary>
     private decimal ComputeUsage(
         string parentItem, ProductMaterial row, decimal parentQty,
         IReadOnlyDictionary<string, ProductMaster> specByCd,
         IReadOnlyDictionary<string, decimal> yieldByFlute)
-    {
-        bool dimensional = row.UsageType == 1 || row.MaterialTypeDiv == "4";
-        if (dimensional)
-        {
-            if (!specByCd.TryGetValue(parentItem, out var pm)) return 0m;
-            var w = pm.SheetDimW ?? 0m;
-            var f = pm.SheetDimF ?? 0m;
-            var yield = pm.SheetFlute != null && yieldByFlute.TryGetValue(pm.SheetFlute, out var y) && y > 0 ? y : 1.0m;
-            var coeff = row.UnitUsage ?? 1m;   // per-层差异系数（中芯波纹取り都）refinement，缺省 1
-            return _usage.CalcDimensional(w, f, yield, parentQty) * coeff;
-        }
-        return _usage.CalcFixed(row.UnitUsage ?? 0m, parentQty);
-    }
+        => BomUsageResolver.ComputeUsage(_usage, parentItem, row, parentQty, specByCd, yieldByFlute);
 
     /// <summary>批量规则定批：lot-for-lot / MOQ 向上取 / 订货倍数·整卷取整。</summary>
     private static decimal ApplyLotRule(decimal net, Plan_ItemPlanningPolicy pol)

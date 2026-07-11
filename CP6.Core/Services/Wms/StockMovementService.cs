@@ -83,11 +83,11 @@ public class StockMovementService : IStockMovementService
             // 在庫数の更新（種別毎にロジック分岐）
             ApplyDelta(stock, req);
 
-            // マイナス在庫チェック（AllowNegative=true の倉庫は除外）
-            var allowNegative = await _db.Warehouses
+            // マイナス在庫チェック（AllowNegative=true の倉庫、または要求で明示的に上書きされた場合は除外）
+            var allowNegative = req.AllowNegativeOverride || (await _db.Warehouses
                 .Where(w => w.WarehouseCd == req.WarehouseCd && !w.IsDeleted)
                 .Select(w => (bool?)w.AllowNegative)
-                .FirstOrDefaultAsync(ct) ?? false;
+                .FirstOrDefaultAsync(ct) ?? false);
 
             if (!allowNegative)
             {

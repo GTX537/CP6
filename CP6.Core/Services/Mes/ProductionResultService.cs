@@ -18,15 +18,17 @@ public class ProductionResultService : IProductionResultService
     private readonly IWorkOrderService _woService;
     private readonly IMesNotifier _notifier;
     private readonly IWmsBridgeHook _wmsBridge;
+    private readonly IBackflushService? _backflush;
     private const string ResultSeqKey = "PR";
 
-    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge)
+    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null)
     {
         _db = db;
         _seq = seq;
         _woService = woService;
         _notifier = notifier;
         _wmsBridge = wmsBridge;
+        _backflush = backflush;
     }
 
     /// <summary>
@@ -255,7 +257,18 @@ public class ProductionResultService : IProductionResultService
 
         // ERP→MES→WMS 接缝：全工程完了時、完成品（累計良品数）を WMS へ自動入庫（best-effort）
         if (justCompleted)
+        {
             await _wmsBridge.OnProductionCompletedAsync(req.WorkOrderNo, wo.CompletedQty, userName);
+
+            // F1 波C.1：完工点で BOM 定额の原料を反冲（OUT/ISSUE）＋実績消費回写。
+            // best-effort（コミット後）：反冲失敗は既提交の報工をロールバックしない
+            // （拍板①：账实差异は棚卸で吸収。不足時も負在庫＋告警で通す）。
+            if (_backflush != null)
+            {
+                try { await _backflush.BackflushAsync(req.WorkOrderNo, userName); }
+                catch { /* 反冲失敗は報工本体に影響させない */ }
+            }
+        }
 
         // A2 §4.3：完了(4)/数量報告(5) の後に工序双工時を派生・物化（覆盖態はスキップ）
         // best-effort（コミット後）：派生失敗は報工本体に影響させない。工時は冪等に後続報工で再計算される
