@@ -842,6 +842,13 @@ using (var scope = app.Services.CreateScope())
     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
 
+    // M-MES 横切接线 Task 2：MES 300 段菜单锚定 MenuKey（mes-*）。
+    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块（:894）之前：既有 300–315 由 Program.cs（本文件 :1511+）
+    //   在回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → MES 全 403。
+    //   本种子在回填前对 10 有菜单键各锚定一行显式设 mes-* MenuKey（含缺行补建），并防御矫正历史回填错配
+    //   （尤其 310 /mes/machine-list 回填得 mes-machine-list ≠ 真相源 mes-machine）。MES 无孤儿路由，纯锚定。
+    CP6.WebApi.Seed.MesMenuSeed.EnsureSeeded(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {
