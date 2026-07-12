@@ -114,7 +114,7 @@
 
 ---
 
-## 四、只读 POST 豁免清单（归 view，共 12 个 —— 均逐条读 Service 实现证得无写）
+## 四、只读 POST 豁免清单（归 view，共 11 个 —— 均逐条读 Service 实现证得无写）
 
 | # | 端点（方法） | 豁免依据（读 Service 实现） |
 |---|---|---|
@@ -129,7 +129,6 @@
 | 9 | POST `/api/otd-report/export-csv`（OtdReportService.ExportCsvAsync） | 同上，纯读导出 |
 | 10 | POST `/api/orders/unshipped/search`（UnshippedOrderService.SearchAsync） | UnshippedOrderService 全类无任何写操作，纯分页查询 |
 | 11 | POST `/api/orders/unshipped/export-csv`（UnshippedOrderService.ExportCsvAsync） | 同上，纯读导出 |
-| 12 | POST `/api/orders/calc-*` 之外——见 #1–4 已覆盖 | —— |
 
 > **复核结论（防望文生义）**：以下"看似导出/发行"的 POST **确为写端点，不豁免**——
 > - `POST /api/fsc-checklists/issue`：`FscChecklistService.IssueAsync` 在 FscChecklists **Add + SaveChangesAsync**（FscChecklistService.cs:156,189），写发行履历 → 键 `erp-fsc-checklist:issue`。
@@ -167,8 +166,8 @@
 - **扫描控制器**：15（Backorder / BusinessPartner / CreditNote / EstimateCalc / FscChecklist / FxRate / MasterData / Order / OrderTrace / OtdReport / PlateMold / Product / Quotation / SheetUnitPrice / UnshippedOrder）。
 - **含写端点控制器**：13（除 MasterData、OrderTrace 两个 GET-only）。
 - **POST/PUT/DELETE 端点行总数**：**46**（= §一表行数，精确吻合）。
-  - 其中**只读 POST 豁免（→view）**：**12**。
-  - **真·写端点**：**34**。
+  - 其中**只读 POST 豁免（→view）**：**11**。
+  - **真·写端点**：**35**。
 - **menu-key（去重）**：**14**（9 有菜单 / 5 孤儿待 T4）。
 - **高危键（是）**：**2**（`erp-order:cancel`、`erp-order-price-correction:correct`）。
 - **状态键**：**6**。
@@ -177,7 +176,7 @@
 
 | 控制器 | POST/PUT/DELETE 端点数 | 表内 # |
 |---|---|---|
-| OrderController | 9（Create/Update/Delete/BatchPrice/Cancel + 4 只读POST；其余 15 个均 GET 不列） | 1–9 |
+| OrderController | 9（Create/Update/Delete/BatchPrice/Cancel + 4 只读POST；其余 16 个均 GET 不列） | 1–9 |
 | BackorderController | 2（GET queue 不列） | 10–11 |
 | CreditNoteController | 1（唯一端点，只读POST） | 12 |
 | FxRateController | 3（GET List/Resolve 不列） | 13–15 |
