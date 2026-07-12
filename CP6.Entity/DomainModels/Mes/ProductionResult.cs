@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// 1指図1工程の各報告（開始/中断/再開/完了/数量報告）を時系列で蓄積
 /// </remarks>
 [Table("T_ProductionResult")]
-public class ProductionResult : BaseBizEntity
+public class ProductionResult : BaseBizEntity, IAuditable
 {
     /// <summary>実績NO（業務 PK、PRYYYYMMDD-NNNN）</summary>
     [Required, MaxLength(20)]

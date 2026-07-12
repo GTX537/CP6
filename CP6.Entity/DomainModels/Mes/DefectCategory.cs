@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// 例：D01-寸法不良 / 巾寸法外れ
 /// </remarks>
 [Table("M_DefectCategory")]
-public class DefectCategory : BaseBizEntity
+public class DefectCategory : BaseBizEntity, IAuditable
 {
     /// <summary>大分類CD（PK1、D01〜D07）</summary>
     [Required, MaxLength(10)]

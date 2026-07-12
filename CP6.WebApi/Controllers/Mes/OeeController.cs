@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -41,6 +42,7 @@ public class OeeController : ControllerBase
 
     /// <summary>指定日 再計算（保存）</summary>
     [HttpPost("recalculate")]
+    [RequirePermission("mes-oee", "recalculate")]
     public async Task<IActionResult> Recalculate([FromBody] OeeRecalcRequest req)
     {
         var n = await _service.RecalculateAsync(req, CurrentUser);

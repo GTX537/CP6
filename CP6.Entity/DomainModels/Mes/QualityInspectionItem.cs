@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// 業務複合 PK：INSPECTION_NO + ITEM_SEQ_NO
 /// </remarks>
 [Table("T_QualityInspectionItem")]
-public class QualityInspectionItem : BaseBizEntity
+public class QualityInspectionItem : BaseBizEntity, IAuditable
 {
     /// <summary>検査NO（FK → T_QualityInspection.InspectionNo）</summary>
     [Required, MaxLength(20)]

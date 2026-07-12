@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DomainModels.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -19,8 +20,12 @@ public class ProcessCostRateController : ControllerBase
     [HttpGet] public async Task<IActionResult> List([FromQuery] string? wgCd) => Ok2(await _svc.ListAsync(wgCd));
     [HttpGet("resolve")] public async Task<IActionResult> Resolve([FromQuery] string wgCd, [FromQuery] DateTime onDate)
         => Ok2(await _svc.ResolveAsync(wgCd, onDate));
-    [HttpPost("upsert")] public async Task<IActionResult> Upsert([FromBody] ProcessCostRate dto)
+    [HttpPost("upsert")]
+    [RequirePermission("mes-process-cost-rate", "edit")]
+    public async Task<IActionResult> Upsert([FromBody] ProcessCostRate dto)
     { try { await _svc.UpsertAsync(dto, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
-    [HttpDelete("{id:Guid}")] public async Task<IActionResult> Delete(Guid id)
+    [HttpDelete("{id:Guid}")]
+    [RequirePermission("mes-process-cost-rate", "del")]
+    public async Task<IActionResult> Delete(Guid id)
     { try { await _svc.DeleteAsync(id, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
 }

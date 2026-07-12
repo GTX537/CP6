@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,7 @@ public class DefectRecordController : ControllerBase
 
     /// <summary>ME080 — 手動起票</summary>
     [HttpPost]
+    [RequirePermission("mes-defect", "add")]
     public async Task<IActionResult> Create([FromBody] DefectRecordDto dto)
     {
         try
@@ -53,6 +55,7 @@ public class DefectRecordController : ControllerBase
 
     /// <summary>ME080 — 更新（原因分析 / 是正処置）</summary>
     [HttpPut("{no}")]
+    [RequirePermission("mes-defect", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] DefectRecordDto dto)
     {
         try
@@ -68,6 +71,7 @@ public class DefectRecordController : ControllerBase
 
     /// <summary>ME080 — 削除</summary>
     [HttpDelete("{no}")]
+    [RequirePermission("mes-defect", "del")]
     public async Task<IActionResult> Delete(string no)
     {
         try

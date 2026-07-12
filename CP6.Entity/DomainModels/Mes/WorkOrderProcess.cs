@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// 業務複合 PK：WORK_ORDER_NO + PROCESS_CD + TASK_CD
 /// </remarks>
 [Table("T_WorkOrderProcess")]
-public class WorkOrderProcess : BaseBizEntity
+public class WorkOrderProcess : BaseBizEntity, IAuditable
 {
     /// <summary>指図NO（FK → T_WorkOrder.WorkOrderNo）</summary>
     [Required, MaxLength(20)]

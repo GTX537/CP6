@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// 1指図 → N工程(T_WorkOrderProcess) / N材料(T_WorkOrderMaterial) / N実績(T_ProductionResult)
 /// </remarks>
 [Table("T_WorkOrder")]
-public class WorkOrder : BaseBizEntity
+public class WorkOrder : BaseBizEntity, IAuditable
 {
     /// <summary>製造指図NO（業務 PK、WOYYYYMMDD-NNNN）</summary>
     [Required, MaxLength(20)]

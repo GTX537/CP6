@@ -5,7 +5,7 @@ namespace CP6.Entity.DomainModels.Mes;
 
 /// <summary>工序费率（A2 · spec §3.3）。工作中心×生效区间 的 工/费双率（元/h）。</summary>
 [Table("T_ProcessCostRate")]
-public class ProcessCostRate : BaseBizEntity
+public class ProcessCostRate : BaseBizEntity, IAuditable
 {
     /// <summary>工作中心CD（业务键 → WorkCenter.WgCd）</summary>
     [Required, MaxLength(10)] public string WgCd { get; set; } = string.Empty;

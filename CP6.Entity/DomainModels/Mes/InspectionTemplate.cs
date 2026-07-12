@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// 業務複合 PK：TEMPLATE_CD + ITEM_SEQ_NO
 /// </remarks>
 [Table("M_InspectionTemplate")]
-public class InspectionTemplate : BaseBizEntity
+public class InspectionTemplate : BaseBizEntity, IAuditable
 {
     /// <summary>テンプレートCD（PK1）</summary>
     [Required, MaxLength(20)]

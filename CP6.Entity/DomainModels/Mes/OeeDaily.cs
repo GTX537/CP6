@@ -13,6 +13,9 @@ namespace CP6.Entity.DomainModels.Mes;
 ///   品質(Quality)        = 良品数 / (良品数+不良数)
 /// 業務複合 PK：OeeDate + MachineCd
 /// </remarks>
+// [审计豁免] 派生型日次集計：Availability/Performance/Quality/Oee 及 Good/DefectQty 皆由
+// MachineDowntime（已纳审计）+ ProductionResult（已纳审计）重算派生，无源真值、日频重算——
+// 字段级审计等同复制上游噪声。照 OEE 快照口径不贴 IAuditable，由 MesAuditTests 负测试坐实零审计行。
 [Table("T_OeeDaily")]
 public class OeeDaily : BaseBizEntity
 {

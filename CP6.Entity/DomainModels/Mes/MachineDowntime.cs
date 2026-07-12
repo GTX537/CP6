@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// OEE 可用率計算の元データ
 /// </remarks>
 [Table("T_MachineDowntime")]
-public class MachineDowntime : BaseBizEntity
+public class MachineDowntime : BaseBizEntity, IAuditable
 {
     /// <summary>停止記録NO（業務 PK、DTyyyyMMdd-NNNN）</summary>
     [Required, MaxLength(20)]

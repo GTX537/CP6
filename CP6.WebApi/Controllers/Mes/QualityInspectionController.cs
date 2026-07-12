@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,7 @@ public class QualityInspectionController : ControllerBase
 
     /// <summary>ME060 — 新規登録</summary>
     [HttpPost]
+    [RequirePermission("mes-quality-inspection", "add")]
     public async Task<IActionResult> Create([FromBody] QualityInspectionDto dto)
     {
         try
@@ -53,6 +55,7 @@ public class QualityInspectionController : ControllerBase
 
     /// <summary>ME060 — 訂正</summary>
     [HttpPut("{no}")]
+    [RequirePermission("mes-quality-inspection", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] QualityInspectionDto dto)
     {
         try

@@ -96,3 +96,17 @@ M-WMS → M-ERP → M-MES → M-OA/WF → M-PUR → M-PLAN/PUB。波间不并行
 4. 跨波票：Wms 域 `PlateMoldStock` 含 `MadeCost decimal(18,2)` 未贴 IAuditable（M-WMS T6 未圈入），随 M-WMS 补丁或 M-MES 波顺手收。
 5. 🔴 **用户裁决点**：`EstimateCalcController.Calculate` 现挂 `[AllowAnonymous]`——终审建议撤销匿名改 `[Authorize]`（计算读真实定价主数据且 API 经公网隧道暴露，匿名可探测成本函数）。T4 测试已锁现状（豁免清单+ AllowAnonymous 断言），变更须走独立 commit。
 6. 部署清单（合并后）：重建 cp6-api 镜像→线上验两高危端点（`POST /api/orders/{no}/cancel`、`PUT /api/orders/price-correction/batch`）无权限 403 / 非默认租户 admin ERP 写端点放行 / 菜单 216-220 可达；部署前跑 `SELECT * FROM Sys_Menus WHERE MenuId BETWEEN 216 AND 220` 排除手工占用（终审 Minor#7）。既有边界周知：TenantAdminService 不复制 RoleAction（平台票，见上）/ 存量非默认租户 admin 看不到 216-220 导航（CFG-T#6）。
+
+---
+
+## M-MES 完成记录 + 跟踪票（2026-07-12）
+
+**M-MES 已完成并入 main**（feat/m-mes-crosscutting，6 任务 T1-T6 逐任务过审 + fable 终审 Ready=Yes 零必修）：基线 1716→1758 绿。四层键一致性（28 贴点→25 元组→10 MenuKey 锚定→反射测试）全量对账零失配；洁净首启命门（MES 菜单在回填块后插入致 MenuKey=null 全 403）与 310 机台键错配（mes-machine-list≠mes-machine）双双解除；IAuditable 15 实体全量对账 13 纳入+2 豁免（字段级实查一次过审）+ 跨波票 PlateMoldStock.MadeCost 收口（M-ERP 票#4 关闭）；MES 服务全 tracked SaveChanges **无 ExecuteUpdate 审计盲区**、11 控制器零 AllowAnonymous。
+
+**M-MES 跟踪票**：
+1. 🔴 **Sys_FieldAuditLog retention 票升级**（终审 Important#1，升级自 M-ERP 票#2）：本波把全系统最高频写路径（报工 start/suspend/resume/complete/report，每动作≥3 审计行）纳入字段级审计，车间节拍下增速远超受注。措辞升级为「**MES 上线前须有 retention/归档策略或至少容量告警**」，结合 7/12 磁盘满停机事故史。（部署时已加最低限容量监控，见部署记录；真正的归档/purge 策略待用户裁决。）
+2. 🔴 **排产两缺口（产品裁决）**（T6 审查裁定为真实缺口非 by-design）：①`RescheduleAsync` 无过去日期/号机时间冲突检知（PlanningBoardService.cs:125-145 仅三道校验）②`AutoArrange` 从 baseTime 空白重建 machinePointer，不避让已占用机台时段（:174-195）。测试已 pin 现状语义，裁决改语义后测试会红提醒同步。
+3. **「贴点⊆种子」互锁测试跨模块补强**（终审 Minor#2）：现有测试锁「漏贴」与「种子偏离 oracle」，但「新端点贴了键忘更新种子」无测试红只会现网 admin 403。反射读贴点→锚定表映射→断言 ⊆ 种子 Actions；WMS/ERP/MES 三模块统一补一张票（吸收 T3b「加端点须同步 oracle」提示票）。
+4. MES 前端 0 条 v-permission：并入既有「前端 v-permission 不对称 + cp6-web 镜像 stale」UX 票（M-WMS 票#1 / M-ERP 票#3 同族）。
+5. Minor 随手项：Program.cs 种子接线注释与 T1/T2 文档的绝对行号自漂移——后续统一去行号化改内容锚定；MesPermissionSeed 枚举租户不过滤 Enable（与 Erp/Wms 种子同型，如收紧三个种子一起改）。
+6. 部署清单（合并后）：重建 cp6-api 镜像→首启 SQL 验证 300-315 十锚定键就位（尤其 310=mes-machine）+ Sys_MenuAction/RoleAction MES 段=25×租户数→高危端点 403 冒烟（production-results complete / process-cost-rate upsert）+ admin 放行→非默认租户 admin 放行+菜单可达→开始监控 Sys_FieldAuditLog 增速。既有边界周知：TenantAdminService 不复制 RoleAction（平台票）/ cp6-web stale。

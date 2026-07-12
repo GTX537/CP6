@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -32,6 +33,7 @@ public class MachineController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("mes-machine", "add")]
     public async Task<IActionResult> Create([FromBody] MachineDto dto)
     {
         try
@@ -43,6 +45,7 @@ public class MachineController : ControllerBase
     }
 
     [HttpPut("{cd}")]
+    [RequirePermission("mes-machine", "edit")]
     public async Task<IActionResult> Update(string cd, [FromBody] MachineDto dto)
     {
         try
@@ -54,6 +57,7 @@ public class MachineController : ControllerBase
     }
 
     [HttpDelete("{cd}")]
+    [RequirePermission("mes-machine", "del")]
     public async Task<IActionResult> Delete(string cd)
     {
         try
@@ -66,6 +70,7 @@ public class MachineController : ControllerBase
 
     /// <summary>設備状態変更</summary>
     [HttpPost("{cd}/status")]
+    [RequirePermission("mes-machine", "status")]
     public async Task<IActionResult> ChangeStatus(string cd, [FromBody] ChangeStatusRequest req)
     {
         try
@@ -86,6 +91,7 @@ public class MachineController : ControllerBase
     }
 
     [HttpPost("downtimes")]
+    [RequirePermission("mes-machine", "downtime")]
     public async Task<IActionResult> RegisterDowntime([FromBody] MachineDowntimeDto dto)
     {
         try
@@ -97,6 +103,7 @@ public class MachineController : ControllerBase
     }
 
     [HttpPost("downtimes/{no}/close")]
+    [RequirePermission("mes-machine", "downtime")]
     public async Task<IActionResult> CloseDowntime(string no, [FromBody] CloseDowntimeRequest req)
     {
         try

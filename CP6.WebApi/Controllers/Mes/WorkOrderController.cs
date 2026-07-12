@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -46,6 +47,7 @@ public class WorkOrderController : ControllerBase
 
     /// <summary>ME020 — 新建 POST /api/mes/work-orders</summary>
     [HttpPost]
+    [RequirePermission("mes-work-order", "add")]
     public async Task<IActionResult> Create([FromBody] WorkOrderDto dto)
     {
         try
@@ -61,6 +63,7 @@ public class WorkOrderController : ControllerBase
 
     /// <summary>ME020 — 訂正 PUT /api/mes/work-orders/{no}</summary>
     [HttpPut("{no}")]
+    [RequirePermission("mes-work-order", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] WorkOrderDto dto)
     {
         try
@@ -76,6 +79,7 @@ public class WorkOrderController : ControllerBase
 
     /// <summary>ME030 — 削除 DELETE /api/mes/work-orders/{no}</summary>
     [HttpDelete("{no}")]
+    [RequirePermission("mes-work-order", "del")]
     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? body = null)
     {
         try
@@ -91,6 +95,7 @@ public class WorkOrderController : ControllerBase
 
     /// <summary>ME020 — 指図発行 POST /api/mes/work-orders/{no}/issue</summary>
     [HttpPost("{no}/issue")]
+    [RequirePermission("mes-work-order", "issue")]
     public async Task<IActionResult> Issue(string no)
     {
         try
@@ -106,6 +111,7 @@ public class WorkOrderController : ControllerBase
 
     /// <summary>ME020 — 受注 → 指図 自動展開 POST /api/mes/work-orders/expand-from-order</summary>
     [HttpPost("expand-from-order")]
+    [RequirePermission("mes-work-order", "add")]
     public async Task<IActionResult> ExpandFromOrder([FromBody] ExpandFromOrderRequest req)
     {
         try
