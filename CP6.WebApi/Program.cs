@@ -862,6 +862,13 @@ using (var scope = app.Services.CreateScope())
     //   OA 派生键与真相源逐字一致（零错配，不同于 MES machine-list），命门纯为时序；矫正块严限 7 锚定行按 MenuId 定位。
     CP6.WebApi.Seed.OawfMenuSeed.EnsureSeeded(db);
 
+    // M-OA/WF 横切接线 Task 3b：OA/WF 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+    // Task 3a 给 16 控制器 31 真写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+    // 须置于 OawfMenuSeed 之后（RoleAction 挂锚定 MenuId 733/734/735/737/738/739，菜单行须先在）。
+    // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。20 去重元组（31 写端点去重）覆盖 6 有写端点 menu-key
+    // （oa-form-search(736) 仅 Query search 只读豁免→view，不种）。
+    CP6.WebApi.Seed.OawfPermissionSeed.EnsureSeeded(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {
