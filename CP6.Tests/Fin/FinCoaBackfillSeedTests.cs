@@ -108,6 +108,64 @@ public class FinCoaBackfillSeedTests
     }
 
     [Fact]
+    public void Backfill_CnTenantMissingCurrentYearProfit_InsertsEquityCreditNoRole()
+    {
+        using var db = NewDb();
+        var tid = Guid.NewGuid();
+        AddTenant(db, tid, "T1");
+        SeedTenantCoa(db, tid, FinCoaTemplate.CnGaap, excludeCodes: "3103");   // 存量 COA 早于模板加 3103（线上 CN 缺口）
+
+        Assert.Null(Acct(db, tid, FinCoaTemplate.CnGaap, "3103"));   // 前置：缺行 → 年结 E-FIN-408
+
+        FinCoaBackfillSeed.EnsureSeeded(db);
+
+        var cye = Acct(db, tid, FinCoaTemplate.CnGaap, "3103");
+        Assert.NotNull(cye);
+        Assert.Equal(AccountType.Equity, cye!.Type);
+        Assert.Equal(AccountSide.Credit, cye.NormalSide);
+        Assert.Null(cye.Role);        // 本年利润无 Role（PeriodCloseService 按编码 3103 定位）
+        Assert.True(cye.IsActive);
+        Assert.NotNull(cye.Creator);  // G.1 审计字段
+    }
+
+    [Fact]
+    public void Backfill_CnTenantMissingRetainedEarnings_InsertsWithRole()
+    {
+        using var db = NewDb();
+        var tid = Guid.NewGuid();
+        AddTenant(db, tid, "T1");
+        SeedTenantCoa(db, tid, FinCoaTemplate.CnGaap, excludeCodes: "3104");   // 未分配利润（年结凭证二依赖）缺行
+
+        Assert.Null(Acct(db, tid, FinCoaTemplate.CnGaap, "3104"));
+
+        FinCoaBackfillSeed.EnsureSeeded(db);
+
+        var re = Acct(db, tid, FinCoaTemplate.CnGaap, "3104");
+        Assert.NotNull(re);
+        Assert.Equal("RETAINED_EARNINGS", re!.Role);
+        Assert.Equal(AccountType.Equity, re.Type);
+        Assert.Equal(AccountSide.Credit, re.NormalSide);
+
+        // 已有 → 二次回填零变动（防重码）
+        var before = db.GlAccounts.IgnoreQueryFilters().Count(a => a.TenantId == tid);
+        FinCoaBackfillSeed.EnsureSeeded(db);
+        Assert.Equal(before, db.GlAccounts.IgnoreQueryFilters().Count(a => a.TenantId == tid));
+    }
+
+    [Fact]
+    public void Backfill_IntlTenantMissingRetainedEarnings_Inserts()
+    {
+        using var db = NewDb();
+        var tid = Guid.NewGuid();
+        AddTenant(db, tid, "T1");
+        SeedTenantCoa(db, tid, FinCoaTemplate.Intl, excludeCodes: "3300");   // INTL RETAINED_EARNINGS=3300
+
+        FinCoaBackfillSeed.EnsureSeeded(db);
+
+        Assert.Equal("RETAINED_EARNINGS", Acct(db, tid, FinCoaTemplate.Intl, "3300")!.Role);
+    }
+
+    [Fact]
     public void Backfill_TenantAlreadyComplete_NoChange()
     {
         using var db = NewDb();

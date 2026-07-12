@@ -10,9 +10,10 @@ namespace CP6.WebApi.Seed;
 /// 已按旧模板建账的存量租户缺行 → 库存过账 <c>E-FIN-141</c> / 年结 <c>E-FIN-408</c>）。
 ///
 /// 回填码单（从模板取属性，单一真相源，保证"金额科目属性与模板一致"）：
-///  - CN-GAAP：<c>2204</c> GRNI 暂估应付（波A 收货未开票）
+///  - CN-GAAP：<c>2204</c> GRNI 暂估应付（波A 收货未开票）/ <c>3103</c> 本年利润 / <c>3104</c> 未分配利润（波D 年结两凭证依赖）
 ///  - INTL：<c>2110</c> GRNI / <c>1900</c> PENDING_PROPERTY_LOSS / <c>4800</c> NON_OP_INCOME /
-///          <c>6800</c> NON_OP_EXPENSE（波A 盘盈亏/报废）/ <c>3103</c> Current Year Earnings（波G 年结本年利润）
+///          <c>6800</c> NON_OP_EXPENSE（波A 盘盈亏/报废）/ <c>3103</c> Current Year Earnings /
+///          <c>3300</c> Retained Earnings（波G 年结本年利润/未分配利润）
 ///
 /// 规则（照 <see cref="A3AccountSeed"/> 精神，但升级为**逐租户**——GlAccount 是 BaseTenantEntity）：
 ///  - 只对**已导入该 scheme**（该租户下有 ≥1 行同 scheme 科目）的租户回填，不给空租户凭空建 COA。
@@ -27,8 +28,8 @@ public static class FinCoaBackfillSeed
     /// <summary>scheme → 需回填的科目编码集（属性一律从 <see cref="FinCoaTemplate"/> 取）。</summary>
     private static readonly Dictionary<string, string[]> BackfillCodes = new()
     {
-        [FinCoaTemplate.CnGaap] = new[] { "2204" },
-        [FinCoaTemplate.Intl] = new[] { "2110", "1900", "4800", "6800", "3103" },
+        [FinCoaTemplate.CnGaap] = new[] { "2204", "3103", "3104" },
+        [FinCoaTemplate.Intl] = new[] { "2110", "1900", "4800", "6800", "3103", "3300" },
     };
 
     public static void EnsureSeeded(CP6Context db)
