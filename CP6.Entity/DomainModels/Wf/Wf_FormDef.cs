@@ -8,8 +8,10 @@ namespace CP6.Entity.DomainModels.Wf;
 /// JSON 列直存 nvarchar(max)，不用 EAV（OA-D4 / 08 章）。继承 BaseEntity，Enable 软停用，
 /// 本阶段不带 TenantId（OA 阶段4 多租户统一加）。
 /// </summary>
+// [审计纳入] 表单定义＝设计期治理配置（SchemaJson 字段定义、版本、启停）。oa-designer 落库对象，
+// schema 变更改变前端渲染 + 后端 required/类型复核规则——治理配置面，须字段级留痕。贴 IAuditable。
 [Table("Wf_FormDef")]
-public class Wf_FormDef : BaseTenantEntity
+public class Wf_FormDef : BaseTenantEntity, IAuditable
 {
     /// <summary>表单稳定业务键（本阶段全局唯一；多租户后改租户内唯一）。建后不可改</summary>
     [Required, MaxLength(100)]

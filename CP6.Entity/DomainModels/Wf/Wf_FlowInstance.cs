@@ -7,6 +7,8 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 流程实例（OA 章03 §3）。状态机的"状态载体"：CurrentNode = 当前停留节点，Status = 实例总态。
 /// VarsJson 存表单字段值快照（条件流转 ConditionEvaluator 的取值源）。全状态落库、幂等可重放。
 /// </summary>
+// [审计豁免] 运行时状态载体：CurrentNode/Status/VarsJson 皆高频状态机流转（每次推进即变），
+// 正确性由 FlowEngine 引擎测试 + RowVersion 乐观锁锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
 [Table("Wf_FlowInstance")]
 public class Wf_FlowInstance : BaseTenantEntity
 {

@@ -7,6 +7,10 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 传签履历台账（WFS 读模型）。token 每到一个人工关卡落一行：送签时建、处理时更新。
 /// 带 TokenId → 并行多分支履历各成一串。与 Wf_FlowHistory（纯追加事件日志）分工互补。
 /// </summary>
+// [审计豁免] 传签履历台账：运行时读模型，token 每到人工关卡送签建、处理更新(Status/HandledAt 随流转)，
+// 由引擎测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+// 本表是 Wf_FlowTask.AssigneeId 改派(TransferAsync)的结构化审计源：转出行标 Transferred/ActualHandlerId，
+// 受让人新起 Pending 行 ExpectedHandlerId=toUserId（见 FlowEngine.ReadModel.cs:135-155 TransferFormToAsync）。
 [Table("Wf_FlowFormTo")]
 public class Wf_FlowFormTo : BaseTenantEntity
 {

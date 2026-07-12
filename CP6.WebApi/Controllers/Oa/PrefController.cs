@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using Microsoft.AspNetCore.Authorization;
@@ -41,6 +42,7 @@ public class PrefController : LocalizedControllerBase
     public record SavePrefReq(string PrefsJson);
 
     [HttpPost("save")]
+    [RequirePermission("oa-settings", "edit")]
     public async Task<IActionResult> Save([FromBody] SavePrefReq r)
     {
         try

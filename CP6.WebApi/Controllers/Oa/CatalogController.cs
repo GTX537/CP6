@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using Microsoft.AspNetCore.Authorization;
@@ -42,6 +43,7 @@ public class CatalogController : LocalizedControllerBase
     public record FavoriteReq(string FormKey, bool On);
 
     [HttpPost("favorite")]
+    [RequirePermission("oa-form-catalog", "favorite")]
     public async Task<IActionResult> Favorite([FromBody] FavoriteReq r)
     {
         try

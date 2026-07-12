@@ -7,8 +7,10 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 流程定义（OA 章03 §3）。SchemaJson = 节点+边有向图，驱动流程引擎状态机。
 /// 绑定一张表单（FormKey）。改版只升 Version，在途实例按其快照运行（阶段1 简化：实例不存 schema 快照，按 FlowKey 取最新——单租户手配场景可接受，多版本并行留扩展）。
 /// </summary>
+// [审计纳入] 流程定义＝设计期治理配置（SchemaJson 节点/边有向图、FlowKey 绑定、版本）。高危键 oa-designer:*
+// 的落库对象，schema/启停变更影响所有在途流程走向——须字段级留痕谁在何时改了流程结构。贴 IAuditable。
 [Table("Wf_FlowDef")]
-public class Wf_FlowDef : BaseTenantEntity
+public class Wf_FlowDef : BaseTenantEntity, IAuditable
 {
     /// <summary>流程稳定业务键（本阶段全局唯一）。建后不可改</summary>
     [Required, MaxLength(100)]

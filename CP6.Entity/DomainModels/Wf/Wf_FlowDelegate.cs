@@ -8,8 +8,10 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 若原审批人正处委派期，则把 AssigneeId 替换为代理人，并在痕迹双记"代 X 审批"。
 /// v1 仅"建待办时替换"（存量在途待办转派后续增强）；Scope 预留按流程限定（空=全部流程）。
 /// </summary>
+// [审计纳入] 审批委派＝权限授予面：委托人在有效期内把自己的审批权授予代理人（Grantor→Delegate、有效期、启停）。
+// 谁把审批权给了谁/何时收回是权限授予的敏感事实，须字段级留痕。贴 IAuditable。
 [Table("Wf_FlowDelegate")]
-public class Wf_FlowDelegate : BaseTenantEntity
+public class Wf_FlowDelegate : BaseTenantEntity, IAuditable
 {
     /// <summary>委托人（原审批人）→ Sys_User.Id</summary>
     public Guid GrantorId { get; set; }

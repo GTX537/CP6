@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Wf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ public class ApproverMapController : LocalizedControllerBase
     public async Task<IActionResult> Keys() => Ok2(await _svc.DistinctKeysAsync());
 
     [HttpPost]
+    [RequirePermission("oa-approver-map", "add")]
     public async Task<IActionResult> Create([FromBody] CreateReq r)
     {
         try { return Ok2(await _svc.CreateAsync(r.MapKey, r.MatchValue, r.ApproverUserId, r.ApproverRoleId, r.OrderNo)); }
@@ -33,6 +35,7 @@ public class ApproverMapController : LocalizedControllerBase
     }
 
     [HttpPut("{id}")]
+    [RequirePermission("oa-approver-map", "edit")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateReq r)
     {
         try { await _svc.UpdateAsync(id, r.MatchValue, r.ApproverUserId, r.ApproverRoleId, r.OrderNo, r.Enable); return Ok2(); }
@@ -40,5 +43,6 @@ public class ApproverMapController : LocalizedControllerBase
     }
 
     [HttpDelete("{id}")]
+    [RequirePermission("oa-approver-map", "del")]
     public async Task<IActionResult> Delete(Guid id) { await _svc.DeleteAsync(id); return Ok2(); }
 }

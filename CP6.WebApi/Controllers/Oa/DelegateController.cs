@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using Microsoft.AspNetCore.Authorization;
@@ -50,6 +51,7 @@ public class DelegateController : LocalizedControllerBase
     public record AddDelegateReq(Guid DelegateId, DateTime ValidFrom, DateTime ValidTo, string? Scope, string? Remark);
 
     [HttpPost("add")]
+    [RequirePermission("oa-settings", "delegate")]
     public async Task<IActionResult> Add([FromBody] AddDelegateReq r)
     {
         try
@@ -66,6 +68,7 @@ public class DelegateController : LocalizedControllerBase
     public record RemoveDelegateReq(Guid Id);
 
     [HttpPost("remove")]
+    [RequirePermission("oa-settings", "delegate")]
     public async Task<IActionResult> Remove([FromBody] RemoveDelegateReq r)
     {
         try

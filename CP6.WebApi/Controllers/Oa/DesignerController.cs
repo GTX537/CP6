@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
@@ -49,6 +50,7 @@ public class DesignerController : LocalizedControllerBase
     public record SaveReq(string FlowKey, string FlowName, string FormKey, string? FunctionId, string? FlowCode, string SchemaJson);
 
     [HttpPost("save")]
+    [RequirePermission("oa-designer", "edit")]
     public async Task<IActionResult> Save([FromBody] SaveReq r)
     {
         try
@@ -63,6 +65,7 @@ public class DesignerController : LocalizedControllerBase
     public record CloneReq(string SourceFlowKey, string NewFlowKey, string NewFlowName);
 
     [HttpPost("clone")]
+    [RequirePermission("oa-designer", "add")]
     public async Task<IActionResult> Clone([FromBody] CloneReq r)
     {
         try

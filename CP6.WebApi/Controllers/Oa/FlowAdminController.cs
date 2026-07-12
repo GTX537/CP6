@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,6 +46,7 @@ public class FlowAdminController : LocalizedControllerBase
     // ── 启停 ──
 
     [HttpPost("enable")]
+    [RequirePermission("oa-flow-admin", "enable")]
     public async Task<IActionResult> Enable([FromBody] EnableReq r)
     {
         try

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,7 @@ public class FormController : LocalizedControllerBase
     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
 
     [HttpPost("form/def")]
+    [RequirePermission("oa-designer", "form-save")]
     public async Task<IActionResult> SaveDef([FromBody] FormDefReq r)
     {
         try { return Ok2(new { id = await _svc.SaveDefAsync(r.FormKey, r.FormName, r.SchemaJson, CurrentUser) }); }
@@ -33,6 +35,7 @@ public class FormController : LocalizedControllerBase
     }
 
     [HttpPost("form/data")]
+    [RequirePermission("oa-form-catalog", "submit")]
     public async Task<IActionResult> SubmitData([FromBody] FormDataReq r)
     {
         try { return Ok2(new { id = await _svc.SubmitDataAsync(r.FormKey, r.BizId, r.DataJson, CurrentUser) }); }

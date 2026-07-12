@@ -7,6 +7,8 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 每条记录 = 一个停泊等待执行/重试的服务任务 job。
 /// 活跃 job(Status IN Pending/Running)靠 filtered unique index 保证同 token 同 node 至多一条。
 /// 表名单数 Wf_ServiceJob,DbSet 复数 Wf_ServiceJobs(对齐全部 Wf_* 实体命名约定)。</summary>
+// [审计豁免] 服务任务异步作业台账：运行时队列(AttemptCount/Status/Lock*/NextAttemptAtUtc 高频翻转 + RowVersion 并发),
+// 正确性由 ServiceJob 扫描/租约测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
 [Table("Wf_ServiceJob")]
 public class Wf_ServiceJob : BaseTenantEntity
 {

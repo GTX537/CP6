@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,7 @@ public class ApprovalController : LocalizedControllerBase
 
     /// <summary>起业务审批（按 bizType 绑定的流程）。返回流程实例 Id。</summary>
     [HttpPost("submit")]
+    [RequirePermission("oa-form-catalog", "submit")]
     public async Task<IActionResult> Submit([FromBody] ApprovalSubmitReq r)
     {
         try
