@@ -13,7 +13,7 @@
 | 3 | `oa-form-catalog` | 735 | `/oa/form-catalog` | 填單 | 承载 Catalog 收藏 + Draft CRUD + Forecast 预览 + 起流程/提交（submit） |
 | 4 | `oa-form-search` | 736 | `/oa/form-search` | 表单查询 | 仅 view（唯一端点只读豁免） |
 | 5 | `oa-settings` | 737 | `/oa/settings` | 设定 | 承载 Delegate 授权（**委派双键合一后唯一 delegate 锚**，主控拍板1）+ Pref 偏好 |
-| 6 | `oa-designer` | 738 | `/oa/designer` | 流程设计器 | 承载 Designer save/clone（新栈）+ Flow/Form def（旧栈）。**双栈退役/收编未裁决（拍板3），旧栈键照锚 738** |
+| 6 | `oa-designer` | 738 | `/oa/designer` | 流程设计器 | 承载 Designer save/clone（新栈）+ Flow/Form def（旧栈）。**双栈已裁决=收编（2026-07-12 用户拍板，见下方 T2 追补节），双栈并存，旧栈键照锚 738 不变** |
 | 7 | `oa-approver-map` | 739 | `/oa/approver-map` | approverMap | 审批人映射维护 |
 
 ## 非锚定行（MenuKey 留 null，不承载权限）
@@ -49,4 +49,4 @@
 2. **零错配（与 MES 差异）**：OA 733–739 RoutePath 派生键与真相源 menu-key **逐字一致**（`/oa/inbox`→`oa-inbox` …），
    命门纯为**时序**（非 MES machine-list 那种键值错配）。防御矫正块（按 MenuId 定位、严限 7 锚定行）正常恒为 no-op，
    仅为结构对齐与防御历史/异常写坏而保留。
-3. **主控三拍板**：①委派双键合一→`oa-settings:delegate`（menu-key 集不变，action 层合一）；②`oa-flow-admin:enable` 维持状态级；③双栈未裁决，本任务仅菜单锚定、不动 /wf/*-designer 路由。
+3. **主控三拍板**：①委派双键合一→`oa-settings:delegate`（menu-key 集不变，action 层合一）；②`oa-flow-admin:enable` 维持状态级；③双栈原留待用户裁决；**2026-07-12 用户拍板=收编，T2 追补已落地**（741/742 两收编行使 /wf/*-designer 可达，见下方 T2 追补节），权限面不变。
