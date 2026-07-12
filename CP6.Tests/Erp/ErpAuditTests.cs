@@ -196,6 +196,37 @@ public class ErpAuditTests
         Assert.Contains(diffs, d => d.Field == "Amount" && d.Old == "500" && d.New == "600");
     }
 
+    // ── 木型・版型管理マスタ（PlateMold）— 版型采购定价决策·钱 ─────────────
+    [Fact]
+    public void Update_PlateMold_decisionAmount_writes_op2_diff()
+    {
+        using var db = Ctx();
+        var mold = new PlateMold
+        {
+            WdPtnNo = "WP20260712-001",
+            WdRev = 1,
+            BaseCd = "B01",
+            DecisionEstimateNo = "DE001",
+            VrsnName = "版型A",
+            CustomerCd = "C001",
+            RepresentativeProductCd = "P001",
+            SupplierCd = "S001",
+            DecisionAmount = 30000m,
+        };
+        db.Set<PlateMold>().Add(mold);
+        db.SaveChanges();
+
+        mold.DecisionAmount = 32000m;
+        db.SaveChanges();
+
+        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
+        Assert.Single(rows);
+        Assert.Equal(nameof(PlateMold), rows[0].EntityName);
+
+        var diffs = ParseChanges(rows[0].Changes);
+        Assert.Contains(diffs, d => d.Field == "DecisionAmount" && d.Old == "30000" && d.New == "32000");
+    }
+
     // ── 负测试：追加型履历（FscChecklist）未贴 IAuditable → 零审计行 ──────
     [Fact]
     public void Append_FscChecklist_writes_no_audit_row()

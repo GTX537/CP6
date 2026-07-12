@@ -24,6 +24,7 @@
 | QuotationDetail | T_QuotationDetail | 御見積書印字明细 | **含 UnitPrice(単価)/Amount(金額=数量×単価)**——打印到正式对客报价书 PDF 的行级金额（复审纳入，与 OrderDetail 同口径） |
 | ProductProcess | T_ProductProcess | 製品加工工程明细 | **含 PurchasePrice(仕入単価)/FixedPrice(指値)**——行级定价，改它影响算价（复审纳入） |
 | ProductMaterial | T_ProductMaterial | 製品加工材料明细 | **含 SupplyPrice(受給単価)**——行级定价，改它影响算价（复审纳入） |
+| PlateMold | T_PlateMold | 木型・版型管理マスタ | **含 EstimateAmount(見積金額)/DecisionAmount(決定金額)/PurchaseAmount(購入金額)** — 版型采购定价决策的钱路，与 OrderProcess/ProductProcess 同口径（二复审纳入） |
 
 ### 豁免（不贴 IAuditable）— 全部经字段级实查
 | 实体 | 类别 | 豁免理由（字段级实查结论） | 留痕方式 |
@@ -33,7 +34,8 @@
 | EstimateCalcProcess | 見積计算子工程明细 | **实查无货币字段**（工程名/作業名/仕様1-7 Label+Val/PlateNo/ProcNote 皆文本），单価/金額落在头 EstimateCalc 与工序汇总，此明细不承载钱 | 报告 + commit msg |
 | QuotationCalc | 御見積-計算書 M:N 中间关联表 | **实查无货币字段**（QtnNo/QtnCalcNo 关联键 + EstimateCheckFlg/MasterConfirmFlg 状态标志 + 日期 + FscManagementNo），纯关联/状态表 | 报告 + commit msg |
 | ProductCoProduct | 製品連産品明细 | **实查无货币字段**：CoProductName(名称)/QtyRatio(数量産出比率，非钱)/NextProcessCd(次工程CD)，定价落在 ProductProcess/ProductMaterial | 报告 + commit msg |
-| PlateMold | 木型・版型管理マスタ | 主档但**实查非定价**、改定走 Rev 追加型历史（新增记录非原地改），超出本任务「钱与定价主数据」圈定范围（审查者复核确认豁免成立） | 报告（borderline，记票） |
+
+> **PlateMold 已于二复审移入纳入侧**（见纳入表末行）。首版「实查非定价」表述失实——`PlateMold.cs:103-105` 实有 EstimateAmount/DecisionAmount/PurchaseAmount 三个 decimal 货币字段。
 
 **豁免注释策略**：brief req 3 将源码注释限定于「高频写入/追加型日志类」豁免（照 WMS Stock/StockTransaction 先例）。ERP 中唯一该类=FscChecklist（追加型履历），已加源码 `[审计豁免]` 注释 + 负测试。其余为「头为主」明细豁免（不同类别，WMS 先例亦仅 commit-msg 留痕，未逐文件注释），坐实于本表 + commit message，避免 11 文件注释churn（遵 Code Organization「零其他改动」）。
 
@@ -57,14 +59,14 @@
 - 新增测试：CP6.Tests/Erp/ErpAuditTests.cs（7 用例）
 
 ## Self-Review
-- 逐实体裁决表完整（21 类全覆盖，纳入 11/豁免 11，BusinessPartner 计入纳入）✓
+- 逐实体裁决表完整（21 类全覆盖；最终纳入 17/豁免 5，BusinessPartner 计入纳入；PlateMold 于二复审并入纳入）✓
 - 豁免理由坐实：追加型 FscChecklist 源码注释 + 负测试；头为主明细报告/commit 留痕 ✓
 - 测试真实断言实体名/字段/新旧值，含负测试 ✓
 - 零业务逻辑改动；`git status` 无 Migrations 新文件 ✓
 - IAuditable 空标记接口不映射列 → EF 模型无漂移；全量 1706 绿含既有 EF 模型/迁移相关测试无退化 ✓
 
 ## Concerns
-- **PlateMold（borderline 记票）**：木型・版型管理マスタ为主数据但非定价，本任务按「钱与定价主数据」圈定豁免。若后续以「全主档审计」为口径，应单独评估纳入（改定走 Rev 追加历史，字段审计价值主要在「訂正」原地改场景）。
+- ~~**PlateMold（borderline 记票）**~~ **【二复审已收口→纳入】**：首版误判为「非定价」，实则 `PlateMold.cs:103-105` 有 EstimateAmount/DecisionAmount/PurchaseAmount 三个 decimal 货币字段（版型采购定价决策钱路）。二复审已贴 IAuditable 纳入，口径与 OrderProcess/ProductProcess 一致。详见文末「二复审修复」段。
 - OrderDetail 纳入是相对 WMS T6「单据明细头为主」豁免的**有据departure**：brief 明列「Order 头/明细」，且 OrderDetail 承载行级单价/金额快照（钱所在）；与 WMS 纳入 StockTakeDetail（主明细）一致。生产写审计行开销：受注为低频交易文档，非高频台账，开销可接受。
 
 ---
@@ -96,6 +98,7 @@
 ### 复审后覆盖计数
 - **纳入 16 实体**（首版 11 + 复审新增 5）；**豁免 6 实体**（全部经字段级实查，均无货币/定价字段）。
 - 圈定原则统一为：**实体实含货币/定价字段 → 纳入**（与 OrderDetail 口径一致），不再按头/明细类别套用先例。
+- ⚠️ 此计数为**第一次复审后**快照；PlateMold 于其后**二复审**并入纳入，最终计数=**纳入 17/豁免 5**（见文末「二复审修复」段）。
 
 ### 测试命令与输出
 ```
@@ -113,3 +116,36 @@ Passed!  - Failed: 0, Passed: 1708, Skipped: 5, Total: 1713 - CP6.Tests.dll (net
 - 5 实体单行追加 `IAuditable`：OrderProcess / OrderMaterial / QuotationDetail / ProductProcess / ProductMaterial
 - 测试新增 2 用例：CP6.Tests/Erp/ErpAuditTests.cs（7→9）
 - 本报告裁决表修订 + 复审段追加
+
+---
+
+## 二复审修复（PlateMold 货币字段失实豁免收口）
+
+### 背景
+二复审字段级实查发现首版对 **PlateMold（木型・版型管理マスタ）** 的豁免理由「实查非定价」与源码矛盾：`CP6.Entity/DomainModels/Erp/PlateMold.cs:103-105` 实有三个 `decimal(15,4)` 货币字段 **EstimateAmount(見積金額)/DecisionAmount(決定金額)/PurchaseAmount(購入金額)**——版型采购定价决策的钱路。按本任务已确立口径「实体实含货币/定价字段即纳入」（与 OrderProcess/ProductProcess 同理），PlateMold 应纳入。接受裁决。
+
+### 修复动作
+1. **PlateMold 贴 IAuditable**（纯标记单行，零其他改动、零迁移）：`public class PlateMold : BaseBizEntity, IAuditable`。
+2. **裁决表修正**：PlateMold 从豁免侧移入纳入侧；订正首版「实查非定价」失实表述与相关整体性断言；Self-Review 计数同步更新。
+3. **同族实体检查**：`*Plate*`/`*Mold*` glob 全仓仅 `PlateMold.cs` 一个类。版型履历用**同表 T_PlateMold 的 WdRev 多行**管理（(WdPtnNo, WdRev) 业务 PK，改定=Rev+1 追加），无独立明细/履历实体类。结论：**无同族货币字段实体待处理**。
+4. **测试补充**：新增 1 真值断言用例 `Update_PlateMold_decisionAmount_writes_op2_diff` → op2 diff，Field=`DecisionAmount` Old=`30000` New=`32000`。既有 9 用例不动。
+
+### 最终覆盖计数
+- **纳入 17 实体**（首版 11 + 一复审 5 + 二复审 PlateMold 1）；**豁免 5 实体**（FscChecklist / OrderProcessNote / EstimateCalcProcess / QuotationCalc / ProductCoProduct，全部经字段级实查确认无货币/定价字段）。
+
+### 测试命令与输出
+```
+$ dotnet test --filter ErpAuditTests
+Passed!  - Failed: 0, Passed: 10, Skipped: 0, Total: 10 - CP6.Tests.dll (net8.0)
+
+$ dotnet test
+Passed!  - Failed: 0, Passed: 1709, Skipped: 5, Total: 1714 - CP6.Tests.dll (net8.0)
+```
+- ErpAuditTests：10 绿（9 既有 + 1 新补）。
+- 全量：1709 绿（基线 1708 + 1 新增），0 失败，无退化。
+- `git status`：仅 PlateMold.cs + 测试 + 本报告改动，**无 Migrations 新文件**（IAuditable 空标记不映射列，EF 模型无漂移）。
+
+### Files Changed（二复审）
+- `CP6.Entity/DomainModels/Erp/PlateMold.cs`：类声明单行追加 `IAuditable`。
+- `CP6.Tests/Erp/ErpAuditTests.cs`：新增 1 用例（9→10）。
+- 本报告裁决表修订 + 二复审段追加。
