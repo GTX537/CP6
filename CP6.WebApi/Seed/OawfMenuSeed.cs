@@ -26,20 +26,31 @@ namespace CP6.WebApi.Seed;
 ///    与键天然对齐），安全。
 ///  - **委派双键合一裁决**（主控 T2 拍板1）：<c>oa-inbox:delegate</c> 与 <c>oa-settings:delegate</c> 在 action
 ///    层合一为 <c>oa-settings:delegate</c>（权限面统一），**不影响 menu-key 集**——<c>oa-inbox</c>/<c>oa-settings</c>
-///    两菜单键均照旧锚定。<c>oa-flow-admin:enable</c> 维持状态级（拍板2）。双栈退役/收编未裁决（拍板3）：本
-///    任务不动 /wf/*-designer 路由，旧栈 <c>oa-designer:*</c> 键照真相源锚定到 738 流程设计器菜单行。
+///    两菜单键均照旧锚定。<c>oa-flow-admin:enable</c> 维持状态级（拍板2）。
+///  - **双栈收编裁决**（用户 2026-07-12，拍板3 落地）：旧设计器孤儿路由 <c>/wf/form-designer</c>、
+///    <c>/wf/flow-designer</c>（前端 router/index.ts:46-47 viewModules 已注册组件映射，但无 Sys_Menu 行 →
+///    <c>addDynamicRoutes</c> 不注册 → 洁净部署下不可达，真相源 §六头号裁决点）**收编而非退役**：补两行
+///    Sys_Menu（741/742）令其可达，双栈并存，旧栈写端点不删。<b>MenuKey 留 null</b>——权限已锚在 738
+///    （<c>oa-designer:edit</c>/<c>oa-designer:form-save</c>，旧栈 FlowController.SaveDef/FormController.SaveDef
+///    归并入该键，真相源 §一 #28/#31），741/742 若也赋 <c>oa-designer</c> 会与 738 撞
+///    <c>Sys_Menus.MenuKey IS NOT NULL</c> 过滤唯一索引（同键不可两行）。留 null 后由 Program.cs :908 回填块
+///    派生 <c>wf-form-designer</c>/<c>wf-flow-designer</c>——无 RoleAction 引用，纯挂菜单树无害（与 MES
+///    非锚定行同型）。
 ///
 /// 幂等：MenuId 判存守卫不重复插入；防御矫正块把既有库中被历史回填/异常写坏的 7 锚定行 MenuKey 就地纠回
-/// <c>oa-*</c>（作用域严限 7 锚定行 r.Key != null；740 父行不动）。RoleMenu 默认授管理员（RoleId=1，默认租户
-/// 由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
+/// <c>oa-*</c>（作用域严限 7 锚定行 r.Key != null；740 父行、741/742 收编行不动）。RoleMenu 默认授管理员
+/// （RoleId=1，默认租户由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
 /// </summary>
 public static class OawfMenuSeed
 {
     /// <summary>
     /// 菜单定义：(MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey)。
-    /// MenuKey 非 null 者即 7 个权限锚定行（733–739）；null 者为 740 父行（不承载权限）。
+    /// MenuKey 非 null 者即 7 个权限锚定行（733–739）；null 者为 740 父行（不承载权限）+ 741/742 双栈
+    /// 收编行（承载权限，但锚在 738，本行故意不赋键）。
     /// 733–740 既有由 Program.cs（:1446–1496）播种，本表含之仅为 (a) 显式锚定 MenuKey (b) 部分部署缺行时补建。
     /// RoutePath/Icon/ParentId/OrderNo 与 Program.cs 现有 OA 菜单块逐字一致。
+    /// 741/742 取号：全仓扫描（Seed 目录 + Program.cs + 迁移）740 段仅占用至 740，741/742 无占用
+    /// （730–732 计划中台段与本段不重叠），照 ErpMenuSeed 五孤儿收编先例（216–220）就近连续取号。
     /// </summary>
     private static readonly (int Id, string Name, string? Route, string? Icon, int? Parent, int Order, string? Key)[] Rows =
     {
@@ -54,6 +65,12 @@ public static class OawfMenuSeed
         (737, "设定",          "/oa/settings",      "Setting",   740, 737, "oa-settings"),
         (738, "流程设计器",    "/oa/designer",      "Edit",      740, 738, "oa-designer"),
         (739, "approverMap",   "/oa/approver-map",  "Edit",      740, 739, "oa-approver-map"),
+
+        // ── 双栈孤儿路由收编 741–742（用户裁决 2026-07-12，照 ErpMenuSeed 五孤儿先例）：RoutePath 与
+        // cp6.web/src/router/index.ts:46-47 viewModules 键逐字一致，令其经 addDynamicRoutes 可达。
+        // MenuKey 留 null（权限已锚 738，见上方类注释「双栈收编裁决」），Icon 照 738 同款 Edit。
+        (741, "フォームデザイナー(旧)", "/wf/form-designer", "Edit", 740, 741, null),
+        (742, "フローデザイナー(旧)",   "/wf/flow-designer", "Edit", 740, 742, null),
     };
 
     /// <summary>

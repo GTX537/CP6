@@ -25,8 +25,22 @@
 ## 段位与孤儿
 
 - MenuId 段位 = 既有 733–740（8 行），**全部已由 Program.cs（:1446–1496）播种，OawfMenuSeed 无新建缺行**（缺行补建逻辑保留作防御）。
-- OA/WF **零孤儿 menu-key**（7 键全落 733–739）。另有 2 条前端孤儿*路由* `/wf/form-designer`、`/wf/flow-designer`（真相源 §六头号裁决点）**待用户裁决退役/收编**——本任务不动，旧栈 `oa-designer:*` 键照真相源暂锚 738。
+- OA/WF **零孤儿 menu-key**（7 键全落 733–739）。
 - 唯一索引安全：7 锚定键互不相同（真相源 §二，OA RoutePath 与键天然对齐），不撞 `Sys_Menus.MenuKey IS NOT NULL` 过滤唯一索引（`CP6Context.cs:602`）。
+
+## T2 追补：双栈孤儿路由收编（用户裁决 2026-07-12，已落地）
+
+真相源 §六头号裁决点 `/wf/form-designer`、`/wf/flow-designer` 两条前端孤儿*路由*（router/index.ts:46-47 viewModules 已注册组件映射但无 Sys_Menu 行 → 洁净部署下不可达）：**用户裁决=收编**（旧设计器可达，双栈并存，不删旧栈端点）。
+
+| MenuId | 菜单名 | RoutePath | ParentId | MenuKey | 裁决 |
+|---|---|---|---|---|---|
+| 741 | フォームデザイナー(旧) | `/wf/form-designer` | 740 | **null** | 权限已锚 738（`oa-designer:form-save`，旧栈 FormController.SaveDef，真相源 §一 #31）；本行赋非空键会与 738 撞 `MenuKey IS NOT NULL` 过滤唯一索引，故留 null（回填得 `wf-form-designer`，无 RoleAction 引用，无害） |
+| 742 | フローデザイナー(旧) | `/wf/flow-designer` | 740 | **null** | 权限已锚 738（`oa-designer:edit`，旧栈 FlowController.SaveDef，真相源 §一 #28）；同上理由留 null（回填得 `wf-flow-designer`，无害） |
+
+- **段位查证**：全仓 grep `CP6.WebApi/Seed/*.cs` + `Program.cs` + `Migrations/*.cs`（InsertData/MenuId 字面量）确认 741/742 无占用（OA 段止于 740，PLAN 段 730–732 不重叠，迁移文件名内 `741`/`742` 子串均为时间戳误命中，非 MenuId）。取号照 `ErpMenuSeed` 五孤儿收编先例（216–220）就近连续取号。
+- **前端可达性核对**：RoutePath `/wf/form-designer`、`/wf/flow-designer` 与 `cp6.web/src/router/index.ts:46-47` viewModules 键逐字一致（`'/wf/form-designer': () => import('@/views/wf/designer/FormDesigner.vue')` / `'/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue')`）——`addDynamicRoutes` 匹配条件满足，两页收编后前端可达。
+- RoleMenu 均授 admin（RoleId=1），照收编先例。
+- 唯一索引安全：741/742 MenuKey 均 null，不与 7 锚定键（含 738 `oa-designer`）冲突。
 
 ## 硬前置落实（真相源 §六头号命门）
 

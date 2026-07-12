@@ -149,7 +149,7 @@
 
 `/api/wf/*` 五引擎控制器（Flow/Form/Task/AdvancedFlow/Approval）+ Notification + ApprovalController 均无自己菜单行，本表按「消费页」锚定（审批动作→733；起流程/提交→735；通知已读→733）。此为「键锚定菜单」原则的必然，非漏配。若未来给通知中心/业务审批集成单独建菜单，相关键随迁。
 
-### ⚠ 头号用户裁决点·双栈孤儿路由（`/wf/form-designer`、`/wf/flow-designer`）—— 只记录不裁决
+### ⚠ 头号用户裁决点·双栈孤儿路由（`/wf/form-designer`、`/wf/flow-designer`）—— **2026-07-12 已裁决=收编（见下方追记）**
 
 **证据链**：
 - 前端：`router/index.ts:46-47` 的 `viewModules` 组件映射表登记 `'/wf/form-designer' → views/wf/designer/FormDesigner.vue`、`'/wf/flow-designer' → views/wf/designer/FlowDesigner.vue`（注释「OA 章09 旧设计器保留」）。**二者无对应 Sys_Menu 菜单行**（OA 菜单 733–740 无 `/wf/*-designer` 路径），且不在 `platformRoutePaths`(:303) / `oaSubRoutePaths`(:319) / 静态路由(:190-288) 之列。
@@ -163,6 +163,8 @@
 - **收编案**（给两路由补 Sys_Menu 行 + MenuKey，或并入 738 designer 菜单）：两路由变可达并纳入权限体系，但与新栈 `/oa/designer` 功能重叠形成双维护面与用户困惑；新增 `wf-*` 菜单键还与「OA 域统一 `oa-*` 前缀」不一致。
 
 **T1 处置（待裁决前的占位）**：本表将旧栈 `flow/def`(#28) 归并入 `oa-designer:edit`（与新栈同写 Wf_FlowDef、同权限语义），`form/def`(#31) 记为 `oa-designer:form-save`（暂锚 738）。**T2 贴权限前须由用户裁定退役/收编**，否则旧栈 def 端点将挂一个「概念上锚定不可达路由」的键。
+
+**2026-07-12 用户裁决 = 收编，已落地**：补 Sys_Menu 741（フォームデザイナー(旧)，`/wf/form-designer`）、742（フローデザイナー(旧)，`/wf/flow-designer`），ParentId=740，MenuKey 留 null（权限维持锚 738，不与之共键），RoutePath 与 `router/index.ts:46-47` viewModules 键逐字一致，两页收编后前端可达；旧栈端点不删，双栈并存。落地见 `CP6.WebApi/Seed/OawfMenuSeed.cs`（Rows 741/742）+ `docs/seeds/oawf-key-menu-anchor.md`「T2 追补」节 + `docs/seeds/oawf-menu-seed.sql`。上文「两案影响面」中的「收编案」为最终选定方案。
 
 ### 注4·委派双端点合一裁决（T2 主控拍板1，2026-07-12 已裁决）
 
@@ -180,7 +182,7 @@ AdvancedFlow `/api/wf/advanced/delegate`(#26) 与 OA `/api/oa/delegate/add`/`rem
 - **POST/PUT/DELETE 端点行总数**：**33**（= §一表行数，精确吻合）。
   - 其中**只读 POST 豁免（→view）**：**2**。
   - **真·写端点**：**31**。
-- **menu-key（去重）**：**7**（全部有菜单行 733–739，零孤儿 menu-key；另有 2 条前端孤儿*路由* /wf/*-designer 待裁决，§六）。
+- **menu-key（去重）**：**7**（全部有菜单行 733–739，零孤儿 menu-key）。另有 2 条前端孤儿*路由* /wf/*-designer **已于 2026-07-12 裁决收编**（补 Sys_Menu 741/742，MenuKey 留 null 不新增 menu-key，权限仍锚 738，§六）。
 - **资源键（去重，含 view）**：**22**（T2 委派合一后 23→22，`oa-inbox:delegate` 退役并入 `oa-settings:delegate`）。
 - **高危键（是）**：**8**（T2 委派合一后 9→8）：`oa-inbox:approve/transfer/sendback/addsign` + `oa-settings:delegate`（合一 OA #5/#6 + AdvancedFlow #26）+ `oa-designer:edit/add/form-save`。
 - **状态键**：**3**（`oa-form-catalog:submit`、`oa-flow-admin:enable`、`oa-inbox:withdraw`）。

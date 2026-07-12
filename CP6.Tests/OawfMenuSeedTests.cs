@@ -94,13 +94,62 @@ public class OawfMenuSeedTests
         var menuCount1 = db.Sys_Menus.Count();
         var roleMenuCount1 = db.Sys_RoleMenus.Count();
 
-        OawfMenuSeed.EnsureSeeded(db);   // 第二次
+        OawfMenuSeed.EnsureSeeded(db);   // 第二次（含新收编行，幂等不重复插入）
         Assert.Equal(menuCount1, db.Sys_Menus.Count());
         Assert.Equal(roleMenuCount1, db.Sys_RoleMenus.Count());
 
-        // 全 8 行（740 父 + 733–739）+ 各授管理员一条 RoleMenu。
-        Assert.Equal(8, menuCount1);
-        Assert.Equal(8, roleMenuCount1);
+        // 全 10 行（740 父 + 733–739 七锚定 + 741/742 双栈收编）+ 各授管理员一条 RoleMenu。
+        Assert.Equal(10, menuCount1);
+        Assert.Equal(10, roleMenuCount1);
+    }
+
+    // ── 双栈收编（用户裁决 2026-07-12）：追补 2 用例 ──────────────────────────
+
+    [Fact]
+    public void EnsureSeeded_CollectsOrphanDesignerRoutes_741And742_WithNullMenuKeyAndRoutePathMatchingViewModules()
+    {
+        using var db = NewDb();
+        OawfMenuSeed.EnsureSeeded(db);
+
+        // 收编行存在，RoutePath 须与 cp6.web/src/router/index.ts:46-47 viewModules 键逐字一致，
+        // 否则 addDynamicRoutes 仍不注册（前端仍不可达）。MenuKey 留 null：权限已锚 738 oa-designer。
+        var formDesigner = db.Sys_Menus.SingleOrDefault(m => m.MenuId == 741);
+        Assert.NotNull(formDesigner);
+        Assert.Equal("/wf/form-designer", formDesigner!.RoutePath);
+        Assert.Null(formDesigner.MenuKey);
+        Assert.Equal(740, formDesigner.ParentId);
+        Assert.True(formDesigner.Enable);
+
+        var flowDesigner = db.Sys_Menus.SingleOrDefault(m => m.MenuId == 742);
+        Assert.NotNull(flowDesigner);
+        Assert.Equal("/wf/flow-designer", flowDesigner!.RoutePath);
+        Assert.Null(flowDesigner.MenuKey);
+        Assert.Equal(740, flowDesigner.ParentId);
+        Assert.True(flowDesigner.Enable);
+
+        // 均授管理员菜单（RoleId=1），照收编先例。
+        Assert.True(db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == 741));
+        Assert.True(db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == 742));
+    }
+
+    [Fact]
+    public void EnsureSeeded_IsIdempotent_WithOrphanCollectionRows_NoDuplicatesOnSecondRun()
+    {
+        using var db = NewDb();
+        OawfMenuSeed.EnsureSeeded(db);
+        OawfMenuSeed.EnsureSeeded(db);   // 第二次
+
+        // 741/742 各恰一行、MenuKey 仍为 null（未被防御矫正块误赋值——该块严限 r.Key != null）。
+        Assert.Equal(1, db.Sys_Menus.Count(m => m.MenuId == 741));
+        Assert.Equal(1, db.Sys_Menus.Count(m => m.MenuId == 742));
+        Assert.Null(db.Sys_Menus.Single(m => m.MenuId == 741).MenuKey);
+        Assert.Null(db.Sys_Menus.Single(m => m.MenuId == 742).MenuKey);
+
+        // 唯一索引安全：非空 MenuKey 仍恰 7 个（733–739 锚定，"oa-designer" 仅 738 一行持有），
+        // 741/742 未与 738 共键——若共键会撞 Sys_Menus.MenuKey IS NOT NULL 过滤唯一索引。
+        var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
+        Assert.Equal(7, keyed.Count);
+        Assert.Equal(1, keyed.Count(k => k == "oa-designer"));
     }
 
     [Fact]
