@@ -7,6 +7,8 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 表单数据（OA 章02）。一次提交一行，DataJson 存字段值快照；与流程实例经 BizId 关联
 /// （阶段1 BizId 可空，阶段3 接业务后回填流程实例 Id / 业务单号）。
 /// </summary>
+// [审计豁免] 表单提交数据：运行时一次提交一行的字段值快照(DataJson)，改版不动旧数据本身即留痕，
+// 非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
 [Table("Wf_FormData")]
 public class Wf_FormData : BaseTenantEntity
 {

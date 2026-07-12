@@ -7,6 +7,8 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 流程待办任务（OA 章03 §3）。一个节点可建多条（会签：多人各一条）。
 /// Status!=0 即"已办"，是 ActAsync 幂等闸门的依据。
 /// </summary>
+// [审计豁免] 高频运行时待办任务：一节点多条(会签)、Status/IsRead/StageIndex 幂等流转，正确性由 FlowEngine
+// 引擎测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
 [Table("Wf_FlowTask")]
 public class Wf_FlowTask : BaseTenantEntity
 {

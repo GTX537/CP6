@@ -7,6 +7,8 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 流程审批痕迹（OA 章03 §3）。每次动作（提交/同意/驳回/撤回/挂起…）追加一条，构成审批时间线。
 /// 仅追加、不更新，CreateDate(BaseEntity) = 动作发生时刻。
 /// </summary>
+// [审计豁免] 仅追加事件日志：本身即审批时间线(submit/approve/reject… 每动作追加一条、不更新)，
+// 是审计源而非被审计对象。字段级审计等同复制自身。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
 [Table("Wf_FlowHistory")]
 public class Wf_FlowHistory : BaseTenantEntity
 {

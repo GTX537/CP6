@@ -8,6 +8,8 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 每事件产生一行，随引擎 SaveChanges 同一工作单元落库。
 /// 收件人=UserId（新待办→处理人；签核完成/驳回→发起人；超时→处理人）。
 /// </summary>
+// [审计豁免] 站内通知：运行时随事件追加、IsRead/ReadAt 高频翻转，非治理配置/权限授予面。
+// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
 [Table("Wf_Notification")]
 public class Wf_Notification : BaseTenantEntity
 {

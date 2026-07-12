@@ -8,8 +8,10 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 时，按本表的 BizType 找到对应 FlowKey 起流程。一种业务类型一条启用绑定（UX 唯一索引）。
 /// ConditionJson 预留"按表单字段选不同流程"（v1 直用 FlowKey，条件选流程后续增强）。
 /// </summary>
+// [审计纳入] 审批绑定单源＝业务类型→审批流程的治理映射（BizType→FlowKey、启停）。改绑/停用直接改变
+// 某业务是否走审批、走哪条流程——治理配置面，须字段级留痕。贴 IAuditable。
 [Table("Wf_ApprovalBinding")]
-public class Wf_ApprovalBinding : BaseTenantEntity
+public class Wf_ApprovalBinding : BaseTenantEntity, IAuditable
 {
     /// <summary>业务类型标识（如 "FinJournalPost"、"PO"），与 IApprovalService/IApprovalCallback 对应</summary>
     [Required, MaxLength(50)]

@@ -9,6 +9,8 @@ namespace CP6.Entity.DomainModels.Wf;
 /// 血缘：ParentTokenId 串嵌套层级；ForkId 标同批分叉（parallelJoin 靠"同 ForkId 计数"认亲）。
 /// "实例进行中" = 存在 Active token（取代旧"CurrentNode 单值"判定）。
 /// </summary>
+// [审计豁免] 运行时执行点令牌：分叉/合流内核态(Status/StagePlanJson 高频翻转)，正确性由 FlowToken 内核测试锁定，
+// 非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
 [Table("Wf_FlowToken")]
 public class Wf_FlowToken : BaseTenantEntity
 {
