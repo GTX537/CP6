@@ -9,6 +9,13 @@ namespace CP6.Entity.DomainModels.Wf;
 /// </summary>
 // [审计豁免] 高频运行时待办任务：一节点多条(会签)、Status/IsRead/StageIndex 幂等流转，正确性由 FlowEngine
 // 引擎测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+// 复审补记(审批权归属字段级变更 AssigneeId 改写)：两条原地改写路径——
+//   ① AdvancedFlow.TransferAsync (AdvancedFlow.cs:94) task.AssigneeId = toUserId 改派；
+//   ② WfTimeoutService escalate 分支 (WfTimeoutService.cs:85) task.AssigneeId = up 超时升级。
+// 两处均有结构化补偿留痕，非静默改写：①同步调 TransferFormToAsync(FlowEngine.ReadModel.cs:135-155)
+// 在 Wf_FlowFormTo 追加新行(ExpectedHandlerId=toUserId)+原行标 Transferred/ActualHandlerId=fromUserId；
+// ②同步 AddHistory-style 写 Wf_FlowHistory「超时升级：{old}→{new}」(WfTimeoutService.cs:80-84)。
+// 审批权归属变更本身已被下游读模型/日志表结构化记录，故 AssigneeId 字段级 diff 豁免不丢证据，维持豁免。
 [Table("Wf_FlowTask")]
 public class Wf_FlowTask : BaseTenantEntity
 {

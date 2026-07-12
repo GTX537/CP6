@@ -20,7 +20,7 @@
 | 4 | **Wf_FlowDelegate** | 审批委派：GrantorId→DelegateId、ValidFrom/To、Enable、Scope。委托人把审批权授予代理人——谁把审批权给了谁/何时收回。**权限授予面**（brief 点名 Delegate 类应纳入）。 | **纳入** |
 | 5 | **Wf_ApproverMap** | 审批人映射：MapKey/MatchValue→ApproverUserId/ApproverRoleId、OrderNo、Enable。改一行即改某匹配值由谁审批=授予/回收审批权。**权限授予面**（brief 点名 ApproverMap 应纳入）。数据驱动。 | **纳入** |
 | 6 | Wf_FlowInstance | 运行时状态载体：CurrentNode/Status/VarsJson 每次推进即变；RowVersion 乐观锁。正确性由 FlowEngine 引擎测试锁定。 | 豁免 |
-| 7 | Wf_FlowTask | 高频待办任务：一节点多条(会签)、Status/IsRead/StageIndex/StageRound 幂等流转。引擎测试锁定。 | 豁免 |
+| 7 | Wf_FlowTask | 高频待办任务：一节点多条(会签)、Status/IsRead/StageIndex/StageRound 幂等流转。引擎测试锁定。**复审补记**：AssigneeId(审批权归属)有两条原地改写路径——AdvancedFlow.TransferAsync(AdvancedFlow.cs:94)改派、WfTimeoutService escalate(WfTimeoutService.cs:85)超时升级；均有结构化补偿留痕（Wf_FlowFormTo 新行+原行标记, FlowEngine.ReadModel.cs:135-155；Wf_FlowHistory「超时升级：{old}→{new}」, WfTimeoutService.cs:80-84），字段级 diff 豁免不丢证据，维持豁免。 | 豁免 |
 | 8 | Wf_FlowToken | 运行时执行点令牌：分叉/合流内核态 Status/StagePlanJson 高频翻转。FlowToken 内核测试锁定。 | 豁免 |
 | 9 | Wf_FlowHistory | **仅追加事件日志**：submit/approve/reject… 每动作追加一条、不更新。本身即审批时间线(审计源而非被审计对象)。 | 豁免 |
 | 10 | Wf_FlowData | 每关卡不可变表单快照：按 StepSeq 追加"每步变化轨迹"留痕，建后不改。运行时读模型。 | 豁免 |
@@ -49,3 +49,13 @@
 
 ## Concerns
 - 无。IAuditable 为纯标记，零业务逻辑/零 schema 变更；豁免逐条源码注释可追溯；负测试覆盖全部 12 豁免实体。
+
+## 复审修复记录（Important finding：Wf_FlowTask 豁免语义未覆盖 assignee 改写风险）
+- **finding**：审查者指出 Wf_FlowTask 豁免注释未点名 `AssigneeId`（审批权归属）字段级改写这一具体风险点——`AdvancedFlow.cs:94` TransferAsync 改派、`WfTimeoutService.cs:85` escalate 超时升级均直接原地改写该字段。
+- **核实结论**：亲自读码逐一核对，四处引用全部属实——
+  1. `AdvancedFlow.cs:94` `task.AssigneeId = toUserId;`（TransferAsync 改派）；
+  2. `WfTimeoutService.cs:85` `task.AssigneeId = up;`（escalate 分支超时升级）；
+  3. `FlowEngine.ReadModel.cs:135-155` `TransferFormToAsync`：原行标 `Transferred`/`ActualHandlerId=fromUserId`，追加新行 `ExpectedHandlerId=toUserId`；
+  4. `WfTimeoutService.cs:80-84` 写 `Wf_FlowHistory`，`Comment=$"超时升级：{task.AssigneeId} → {up}"`。
+- **裁决**：豁免结论维持不变（两条改写路径均有结构化补偿留痕，非静默改写），但补丢证据——已把该论证写入 `Wf_FlowTask.cs`/`Wf_FlowFormTo.cs` 源码豁免注释与上表 #7 行，供后续审计/审查者无需重新推演。
+- **改动性质**：纯注释/文档，零业务逻辑改动，零迁移。
