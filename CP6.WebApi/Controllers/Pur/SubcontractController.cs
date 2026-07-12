@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ public class SubcontractController : ControllerBase
 
     /// <summary>登记外注成品行的支給材（按成品 BOM 应发料，校验外注 Type=2，幂等 upsert）。</summary>
     [HttpPost("{poNo}/{lineNo:int}/consign")]
+    [RequirePermission("pur-subcontract", "consign")]
     public async Task<IActionResult> AddConsign(string poNo, int lineNo, [FromBody] List<ConsignMaterialDto> items)
     {
         try { return Ok2(await _svc.AddConsignAsync(poNo, lineNo, items ?? new(), CurrentUser)); }
@@ -39,6 +41,7 @@ public class SubcontractController : ControllerBase
 
     /// <summary>发支給材（委托 WMS 出库 Purpose=subcontract，累加 IssuedQty；body 为空→一次发齐剩余，否则分批）。</summary>
     [HttpPost("{poNo}/{lineNo:int}/issue")]
+    [RequirePermission("pur-subcontract", "issue")]
     public async Task<IActionResult> Issue(string poNo, int lineNo, [FromBody] List<ConsignIssueDto>? issuances)
     {
         try { return Ok2(await _svc.IssueConsignAsync(poNo, lineNo, issuances, CurrentUser)); }
@@ -47,6 +50,7 @@ public class SubcontractController : ControllerBase
 
     /// <summary>收成品成本核算（加工费 + 支給材成本并入，接财务 06）。</summary>
     [HttpPost("{poNo}/{lineNo:int}/finished-cost")]
+    [RequirePermission("pur-subcontract", "cost")]
     public async Task<IActionResult> FinishedCost(string poNo, int lineNo, [FromBody] FinishedCostRequest req)
     {
         try { return Ok2(await _svc.CalcFinishedCostAsync(poNo, lineNo, req.FinishedQty, CurrentUser)); }
@@ -55,6 +59,7 @@ public class SubcontractController : ControllerBase
 
     /// <summary>防吞料对账（实发 vs 成品反推应耗，超损耗容差→挂起核查）。</summary>
     [HttpPost("{poNo}/{lineNo:int}/reconcile")]
+    [RequirePermission("pur-subcontract", "view")]   // 只读 POST 豁免归 view（真相源 §四：全方法无写副作用）
     public async Task<IActionResult> Reconcile(string poNo, int lineNo, [FromBody] ReconcileRequest req)
     {
         try { return Ok2(await _svc.ReconcileConsignAsync(poNo, lineNo, req.FinishedQty, req.TolerancePct, CurrentUser)); }
