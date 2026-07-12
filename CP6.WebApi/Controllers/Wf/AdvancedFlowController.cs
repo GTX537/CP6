@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,7 @@ public class AdvancedFlowController : LocalizedControllerBase
 
     /// <summary>退回到目标节点（章07 §2）。</summary>
     [HttpPost("sendback")]
+    [RequirePermission("oa-inbox", "sendback")]
     public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
     {
         try
@@ -41,6 +43,7 @@ public class AdvancedFlowController : LocalizedControllerBase
 
     /// <summary>加签（章07 §3）。source: before(前) / after(后)。</summary>
     [HttpPost("addsign")]
+    [RequirePermission("oa-inbox", "addsign")]
     public async Task<IActionResult> AddSign([FromBody] AddSignReq r)
     {
         try
@@ -54,6 +57,7 @@ public class AdvancedFlowController : LocalizedControllerBase
 
     /// <summary>登记委派（章07 §5）。委托人=登录用户。</summary>
     [HttpPost("delegate")]
+    [RequirePermission("oa-settings", "delegate")]
     public async Task<IActionResult> Delegate([FromBody] DelegateReq r)
     {
         try

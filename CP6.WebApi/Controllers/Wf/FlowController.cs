@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +34,7 @@ public class FlowController : LocalizedControllerBase
     // ── 流程定义 ──
 
     [HttpPost("flow/def")]
+    [RequirePermission("oa-designer", "edit")]
     public async Task<IActionResult> SaveDef([FromBody] FlowDefReq r)
     {
         try { return Ok2(new { id = await _defSvc.SaveDefAsync(r.FlowKey, r.FlowName, r.FormKey, r.SchemaJson, CurrentUser) }); }
@@ -49,6 +51,7 @@ public class FlowController : LocalizedControllerBase
     // ── 起流程 / 办理 ──
 
     [HttpPost("flow/submit")]
+    [RequirePermission("oa-form-catalog", "submit")]
     public async Task<IActionResult> Submit([FromBody] SubmitReq r)
     {
         try
@@ -61,6 +64,7 @@ public class FlowController : LocalizedControllerBase
     }
 
     [HttpPost("task/{id}/act")]
+    [RequirePermission("oa-inbox", "approve")]
     public async Task<IActionResult> Act(Guid id, [FromBody] ActReq r)
     {
         try

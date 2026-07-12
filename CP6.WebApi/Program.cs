@@ -855,9 +855,9 @@ using (var scope = app.Services.CreateScope())
     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。25 去重元组（28 写端点去重）覆盖 9 有写端点 menu-key（plan-achievement 仅 view 不种）。
     CP6.WebApi.Seed.MesPermissionSeed.EnsureSeeded(db);
 
-    // M-OA/WF 横切接线 Task 2：OA/WF 菜单锚定 MenuKey（oa-*，真相源 §二 7 键）。
-    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块（:908）之前：OA 菜单 733–740 由本文件 :1446–1496
-    //   在回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → OA/WF 全 403
+    // M-OA/WF 横切接线 Task 2：OA/WF 菜单锚定 MenuKey（oa-*，真相源 §二 7 键）。紧随 MesPermissionSeed 之后执行。
+    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」（全局回填块）之前：OA 菜单 733–740 由本文件下方 OA 菜单插入块
+    //   在全局回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → OA/WF 全 403
     //   （真相源 §六头号命门）。本种子在回填前对 733–739 各显式设 oa-* MenuKey（含缺行补建）；740 父行留 null。
     //   OA 派生键与真相源逐字一致（零错配，不同于 MES machine-list），命门纯为时序；矫正块严限 7 锚定行按 MenuId 定位。
     CP6.WebApi.Seed.OawfMenuSeed.EnsureSeeded(db);

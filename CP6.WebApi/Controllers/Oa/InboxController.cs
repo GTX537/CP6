@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
@@ -132,6 +133,7 @@ public class InboxController : LocalizedControllerBase
     // ── 已读标记 ──
 
     [HttpPost("task/read")]
+    [RequirePermission("oa-inbox", "read")]
     public async Task<IActionResult> MarkTaskRead([FromBody] IdReq r)
     {
         var me = await CurrentUserIdAsync();
@@ -140,6 +142,7 @@ public class InboxController : LocalizedControllerBase
     }
 
     [HttpPost("cc/read")]
+    [RequirePermission("oa-inbox", "read")]
     public async Task<IActionResult> MarkCcRead([FromBody] IdReq r)
     {
         var me = await CurrentUserIdAsync();
@@ -150,6 +153,7 @@ public class InboxController : LocalizedControllerBase
     // ── 批量办理（act-as 版）──
 
     [HttpPost("batch")]
+    [RequirePermission("oa-inbox", "approve")]
     public async Task<IActionResult> Batch([FromBody] BatchReq r)
     {
         try
@@ -166,6 +170,7 @@ public class InboxController : LocalizedControllerBase
     public record TransferReq(Guid TaskId, Guid ToUserId, string? Comment);
 
     [HttpPost("transfer")]
+    [RequirePermission("oa-inbox", "transfer")]
     public async Task<IActionResult> Transfer([FromBody] TransferReq r)
     {
         try
@@ -182,6 +187,7 @@ public class InboxController : LocalizedControllerBase
     public record SendBackReq(Guid TaskId, string Kind, string? NodeId, string? Comment);
 
     [HttpPost("sendback")]
+    [RequirePermission("oa-inbox", "sendback")]
     public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
     {
         try

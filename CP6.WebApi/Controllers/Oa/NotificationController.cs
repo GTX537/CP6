@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,7 @@ public class NotificationController : LocalizedControllerBase
     // ── 标记单条已读 ──
 
     [HttpPost("read")]
+    [RequirePermission("oa-inbox", "read")]
     public async Task<IActionResult> Read([FromBody] IdReq r)
     {
         var me = await CurrentUserIdAsync();
@@ -61,6 +63,7 @@ public class NotificationController : LocalizedControllerBase
     // ── 全部标记已读 ──
 
     [HttpPost("read-all")]
+    [RequirePermission("oa-inbox", "read")]
     public async Task<IActionResult> ReadAll()
     {
         var me = await CurrentUserIdAsync();

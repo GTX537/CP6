@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,7 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> MyApplications() => Ok2(await _svc.MyApplicationsAsync(await MeAsync()));
 
     [HttpPost("flow/{id}/withdraw")]
+    [RequirePermission("oa-inbox", "withdraw")]
     public async Task<IActionResult> Withdraw(Guid id)
     {
         try { await _svc.WithdrawAsync(id, await MeAsync()); return Ok2(); }

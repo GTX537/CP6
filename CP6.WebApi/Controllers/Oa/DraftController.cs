@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using Microsoft.AspNetCore.Authorization;
@@ -39,6 +40,7 @@ public class DraftController : LocalizedControllerBase
     // ── 新建草稿 ──
 
     [HttpPost("save")]
+    [RequirePermission("oa-form-catalog", "add")]
     public async Task<IActionResult> Save([FromBody] SaveDraftReq r)
     {
         try
@@ -53,6 +55,7 @@ public class DraftController : LocalizedControllerBase
     // ── 更新草稿 ──
 
     [HttpPost("update")]
+    [RequirePermission("oa-form-catalog", "edit")]
     public async Task<IActionResult> Update([FromBody] UpdateDraftReq r)
     {
         try
@@ -67,6 +70,7 @@ public class DraftController : LocalizedControllerBase
     // ── 提交草稿 ──
 
     [HttpPost("submit")]
+    [RequirePermission("oa-form-catalog", "submit")]
     public async Task<IActionResult> Submit([FromBody] IdReq r)
     {
         try
@@ -81,6 +85,7 @@ public class DraftController : LocalizedControllerBase
     // ── 删除草稿 ──
 
     [HttpPost("delete")]
+    [RequirePermission("oa-form-catalog", "del")]
     public async Task<IActionResult> Delete([FromBody] IdReq r)
     {
         try
