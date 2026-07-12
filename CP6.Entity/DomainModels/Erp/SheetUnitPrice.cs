@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 取込区分=シート単価 → 本テーブル / 取込区分=見積用 → SheetUnitPriceEstimate（同一構造）
 /// </remarks>
 [Table("T_SheetUnitPrice")]
-public class SheetUnitPrice : BaseBizEntity
+public class SheetUnitPrice : BaseBizEntity, IAuditable
 {
     /// <summary>改定日（適用基準日；PK1）</summary>
     public DateTime RevisionDate { get; set; }
@@ -49,7 +49,7 @@ public class SheetUnitPrice : BaseBizEntity
 /// </summary>
 /// <remarks>SheetUnitPrice と同一構造の別テーブル（仕様書 §6 §7）。</remarks>
 [Table("T_SheetUnitPriceEstimate")]
-public class SheetUnitPriceEstimate : BaseBizEntity
+public class SheetUnitPriceEstimate : BaseBizEntity, IAuditable
 {
     public DateTime RevisionDate { get; set; }
     [Required, MaxLength(10)] public string BaseCd { get; set; } = string.Empty;

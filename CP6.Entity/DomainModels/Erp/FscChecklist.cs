@@ -11,6 +11,8 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 業務 PK：FscManagementNo
 /// 実体は「発行履歴 + ダウンロード元」として機能。御見積書側の FscManagementNo / FSCチェックシート発行日 は別更新。
 /// </remarks>
+// [审计豁免] 追加型 FSC 発行履歴（発行ごとに 1 行追加、不可变），字段级审计无意义——
+// 照 WMS StockTransaction 先例不贴 IAuditable，由 ErpAuditTests 负测试坐实零审计行。
 [Table("T_FscChecklist")]
 public class FscChecklist : BaseBizEntity
 {

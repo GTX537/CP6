@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CP6.Entity.DomainModels.Erp;
 
 [Table("T_CreditNote")]
-public class CreditNote : BaseBizEntity
+public class CreditNote : BaseBizEntity, IAuditable
 {
     [Required, MaxLength(20)] public string CreditNoteNo { get; set; } = string.Empty;
     [MaxLength(20)] public string? WebOrderNo { get; set; }

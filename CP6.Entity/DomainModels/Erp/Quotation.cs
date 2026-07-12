@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 并持有 N 行打印用明细（QuotationDetail）。
 /// </remarks>
 [Table("T_Quotation")]
-public class Quotation : BaseBizEntity
+public class Quotation : BaseBizEntity, IAuditable
 {
     // ───── 业务主键 ─────
     /// <summary>御見積書NO（10 字符，自动采番）</summary>

@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 战略商品区分 03-10、容利法判定明细、決定見積補足等次要字段后续 Phase 再补
 /// </remarks>
 [Table("T_EstimateCalc")]
-public class EstimateCalc : BaseBizEntity
+public class EstimateCalc : BaseBizEntity, IAuditable
 {
     // ───── 业务主键 ─────
     /// <summary>見積計算書NO（XXXXXXXX-NN，11 字符：8 位主番 + '-' + 2 位枝番）</summary>
