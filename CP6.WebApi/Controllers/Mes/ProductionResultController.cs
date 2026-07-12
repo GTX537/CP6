@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -38,22 +39,27 @@ public class ProductionResultController : ControllerBase
 
     /// <summary>ME040 — 工程開始 POST /api/mes/production-results/start</summary>
     [HttpPost("start")]
+    [RequirePermission("mes-production-result", "start")]
     public Task<IActionResult> Start([FromBody] ProductionResultRequest req) => Run(req, _service.StartAsync);
 
     /// <summary>ME040 — 工程中断 POST /api/mes/production-results/suspend</summary>
     [HttpPost("suspend")]
+    [RequirePermission("mes-production-result", "suspend")]
     public Task<IActionResult> Suspend([FromBody] ProductionResultRequest req) => Run(req, _service.SuspendAsync);
 
     /// <summary>ME040 — 中断解除 POST /api/mes/production-results/resume</summary>
     [HttpPost("resume")]
+    [RequirePermission("mes-production-result", "suspend")]
     public Task<IActionResult> Resume([FromBody] ProductionResultRequest req) => Run(req, _service.ResumeAsync);
 
     /// <summary>ME040 — 工程完了 POST /api/mes/production-results/complete</summary>
     [HttpPost("complete")]
+    [RequirePermission("mes-production-result", "complete")]
     public Task<IActionResult> Complete([FromBody] ProductionResultRequest req) => Run(req, _service.CompleteAsync);
 
     /// <summary>ME040 — 数量報告 POST /api/mes/production-results</summary>
     [HttpPost]
+    [RequirePermission("mes-production-result", "report")]
     public Task<IActionResult> Report([FromBody] ProductionResultRequest req) => Run(req, _service.ReportAsync);
 
     private async Task<IActionResult> Run(ProductionResultRequest req, Func<ProductionResultRequest, string?, Task<string>> action)

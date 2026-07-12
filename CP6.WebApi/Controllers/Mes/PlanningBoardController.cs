@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +35,7 @@ public class PlanningBoardController : ControllerBase
 
     /// <summary>ドラッグ後 日時更新</summary>
     [HttpPut("reschedule")]
+    [RequirePermission("mes-planning-board", "reschedule")]
     public async Task<IActionResult> Reschedule([FromBody] RescheduleRequest req)
     {
         try
@@ -49,6 +51,7 @@ public class PlanningBoardController : ControllerBase
 
     /// <summary>自動配置（PA050 ManufOrderPrio + 納期で並び替え）</summary>
     [HttpPost("auto-arrange")]
+    [RequirePermission("mes-planning-board", "arrange")]
     public async Task<IActionResult> AutoArrange([FromBody] AutoArrangeRequest req)
     {
         var changed = await _service.AutoArrangeAsync(req, CurrentUser);

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DomainModels.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -20,10 +21,12 @@ public class WorkCenterController : ControllerBase
     [HttpGet("{wgCd}")] public async Task<IActionResult> Get(string wgCd) => Ok2(await _svc.GetAsync(wgCd));
 
     [HttpPost("upsert")]
+    [RequirePermission("mes-work-center", "edit")]
     public async Task<IActionResult> Upsert([FromBody] WorkCenter dto)
     { try { await _svc.UpsertAsync(dto, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
 
     [HttpDelete("{wgCd}")]
+    [RequirePermission("mes-work-center", "del")]
     public async Task<IActionResult> Delete(string wgCd)
     { try { await _svc.DeleteAsync(wgCd, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
 }
