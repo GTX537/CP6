@@ -824,6 +824,13 @@ using (var scope = app.Services.CreateScope())
     //   而锚定行 MenuKey 非 null 不受回填影响（详见 WmsMenuSeed 注释）。
     CP6.WebApi.Seed.WmsMenuSeed.EnsureSeeded(db);
 
+    // M-ERP 横切接线 Task 2：ERP 200 段菜单锚定 MenuKey（erp-*）+ 5 孤儿路由收编（216–220）。
+    // ★同样须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：既有 201–215 裸路径（/order…）
+    //   若被回填成 order/product… 无 erp- 前缀会与真相源 erp-* 键全体失配 → 全 ERP fail-closed 403。
+    //   本种子对 9 有菜单键 + 5 孤儿键各锚定一行显式设 erp-* MenuKey（一域两页仅锚定登録页，
+    //   一覧页留 null 由回填派生——因 MenuKey 有 IS NOT NULL 唯一索引，禁两行共键）。
+    CP6.WebApi.Seed.ErpMenuSeed.EnsureSeeded(db);
+
     // M-WMS 横切接线 Task 3b：WMS 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
