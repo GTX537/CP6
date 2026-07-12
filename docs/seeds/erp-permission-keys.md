@@ -93,6 +93,8 @@
 | 13 | `erp-otd-report` | —— | **T4 需补菜单**（孤儿路由 `/erp/otd-report`）。仅 view（两端点均只读 POST 豁免） |
 | 14 | `erp-fx-rate` | —— | **T4 需补菜单**（孤儿路由 `/erp/fx-rate`）。含 add/edit/del |
 
+> **勘误（2026-07-12）**：上表标「✅一域两行」的 6 个 menu-key（estimate-calc/quotation/product/order/business-partner/plate-mold）当时未定两行如何分配 MenuKey；本表成文后的裁决＝**单锚定登録页**（一覧页 MenuKey 留 null），非两行同赋同键，见 `docs/seeds/erp-key-menu-anchor.md`。
+
 > **9 个 menu-key 有对应菜单行**（MenuId 201–215，缺 MenuKey，T2 统一补显式 `erp-*`）；**5 个 menu-key 菜单缺**（order-trace / credit-note / backorder / otd-report / fx-rate）——即简报点名的 T4 五条孤儿路由。
 
 ---
@@ -155,6 +157,7 @@
    Program.cs 对无 MenuKey 菜单执行 `MenuKey = RoutePath.Trim('/').Replace('/','-')`（:882-886）。ERP 菜单 201–215 的 RoutePath 是 `/order`、`/product`、`/estimate-calc`、`/order-price-correction`… **无 `erp/` 段**，回填后得 `order`、`product`… **无 `erp-` 前缀**，与本表 `erp-order`… **对不上**，PermissionAggregator join 不到键 → **全 ERP fail-closed 403**。
    → **T2 必须在两处菜单种子块（初始 :684-699 与幂等启动 :935-1031）对 201–215 显式赋 `MenuKey="erp-*"`，且置于回填块（:882）之前**（对标 WMS T2「30 权限键锚定行显式 MenuKey，须置于回填块之前」）。**这是 T2 不做则整波失配的硬前置。**
 2. **一域两菜单行的 MenuKey 分配**：estimate-calc/quotation/product/order/business-partner/plate-mold 各有「一覧+登録」两菜单行。T2 需决定 MenuKey 落在哪行——**建议两行同赋同一 `erp-*` MenuKey**（一覧页承 view、登録页承 add/edit/del），并确认 `Sys_Menu.MenuKey` 无唯一约束阻挡同键多行（WMS inbound-order 404/405 两行共 `wms-inbound-order` 已有先例，应可行；T2 落库前复验）。
+   > **勘误（2026-07-12）**：本条「两行同赋同一 MenuKey」的建议已被 `Sys_Menus.MenuKey IS NOT NULL` 唯一索引否决（同键多行行不通）。实际裁决＝**单锚定登録页**，一覧页 MenuKey 留 null，见 `docs/seeds/erp-key-menu-anchor.md`。
 3. **`EstimateCalcController.Calculate` 现挂 `[AllowAnonymous]`**（:136）：试算引擎当前对匿名开放。本表给 `erp-estimate-calc:view`，但 T3 贴 RequirePermission 前须先决定是否撤 `[AllowAnonymous]`——**若保留匿名则该端点不受权限键管辖**（反射测试须把它列入豁免白名单，否则 fail-closed 断言会误判）。**待拍板。**
 4. **credit-note 高危写端点在 ERP 不存在**：简报点名「信用単(credit note)操作」为高危，但 `CreditNoteController` 当前**只有 POST `/search`（只读）**，无任何签发/冲销写端点。信用単实际签发大概率在 FIN 模块。→ ERP 侧 credit-note 仅 `view`；高危 credit-note 操作键应在 FIN 波盘点，本波无对应端点可贴。**记为盘点差异，供上层裁处。**
 5. **price/rate master 的金额-adjacent 边界**：`erp-fx-rate:add/edit/del`（为替レート）与 `erp-sheet-unit-price:import/edit`（单价 master）会影响金额换算/估价，但属**主数据 CRUD**（对标 WMS master 编辑归否），本表未提级高危。若 T2 审计要求"影响定价的主数据变更"入高危审计范围，可单独提级——**待 T2 审计拍板。**

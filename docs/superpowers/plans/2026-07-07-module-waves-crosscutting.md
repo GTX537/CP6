@@ -82,3 +82,17 @@ M-WMS → M-ERP → M-MES → M-OA/WF → M-PUR → M-PLAN/PUB。波间不并行
 2. WMS 前端硬编码 CJK 清理转 i18n 五语（发现 `t('急')`/`t('至急')`/`t('ヤマト運輸')` 等把 CJK 字面当 key 传 t() 的反模式）。
 3. 5 处「后端有 DELETE 端点但前端无删除按钮」缺口（remnant/plate-mold/sample-stock/wcs-task/iot 的 del）——产品拍板补按钮或收敛端点。
 4. 审计明细不对称（OutboundOrder 贴 IAuditable、其 Detail 未贴）——终审判非缺陷，如需明细留痕追加 `, IAuditable` 即可零迁移。
+
+---
+
+## M-ERP 完成记录 + 跟踪票（2026-07-12）
+
+**M-ERP 已完成并入 main**（feat/m-erp-crosscutting，6 任务 T1-T6 逐任务过审 + fable 终审 With fixes→Ready，必修项已修）：基线 1683→1716 绿，四层键一致性（RequirePermission 贴点 / MenuKey 锚定 / MenuAction 种子 / RoleAction 种子）全量对账零失配。
+
+**M-ERP 跟踪票**：
+1. 🔴 **ExecuteUpdateAsync 审计盲区**（终审 Important#1）：`OrderService.cs:992-996` 単価訂正セット単価一括伝播直写 `OrderDetail.SetUnitPrice`，绕过 ChangeTracker，零审计行；同类 `OrderService.cs:354-373` 受注删除级联软删、`ProductService.cs:502-521` 製品子表软删。修法＝改 tracked 更新或手工补审计行。与 T6 遗留的 relational 集成测试票（ExecuteUpdate 分支覆盖）并为一票两面。
+2. 🔴 **Sys_FieldAuditLog 保全策略缺失**（终审 Important#2）：Added 实体记全字段快照，OrderDetail 宽表一笔受注多条大 JSON；全仓无 retention/purge 策略。上线后须监控增速+立归档策略，或裁决 Added 不记全量快照。结合 7/12 磁盘满停机事故史一并考量。
+3. 前端 v-permission 不对称（非 DoD 缺口）：本计划 M-ERP 段无前端任务，但高危按钮（受注取消/単価訂正）可见点击 403；与 cp6-web 镜像 stale 重建并为一张 UX 票。
+4. 跨波票：Wms 域 `PlateMoldStock` 含 `MadeCost decimal(18,2)` 未贴 IAuditable（M-WMS T6 未圈入），随 M-WMS 补丁或 M-MES 波顺手收。
+5. 🔴 **用户裁决点**：`EstimateCalcController.Calculate` 现挂 `[AllowAnonymous]`——终审建议撤销匿名改 `[Authorize]`（计算读真实定价主数据且 API 经公网隧道暴露，匿名可探测成本函数）。T4 测试已锁现状（豁免清单+ AllowAnonymous 断言），变更须走独立 commit。
+6. 部署清单（合并后）：重建 cp6-api 镜像→线上验两高危端点（`POST /api/orders/{no}/cancel`、`PUT /api/orders/price-correction/batch`）无权限 403 / 非默认租户 admin ERP 写端点放行 / 菜单 216-220 可达；部署前跑 `SELECT * FROM Sys_Menus WHERE MenuId BETWEEN 216 AND 220` 排除手工占用（终审 Minor#7）。既有边界周知：TenantAdminService 不复制 RoleAction（平台票，见上）/ 存量非默认租户 admin 看不到 216-220 导航（CFG-T#6）。

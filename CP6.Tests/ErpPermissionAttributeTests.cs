@@ -27,8 +27,11 @@ namespace CP6.Tests;
 ///
 /// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
 /// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
-/// 继承说明：15 个 ERP 控制器均直接继承 ControllerBase、写端点均为手写声明方法（无 CodeGen
-/// 继承端点），故 DeclaredOnly 反射不漏扫。
+/// 继承说明：15 个 ERP 控制器中 6 个直接继承 ControllerBase，9 个经 LocalizedControllerBase
+/// （抽象基类，仅暴露 Localizer 属性，零 [HttpXxx] action 声明）继承 ControllerBase；因各级基类
+/// 均无端点声明，写端点均为子类手写声明方法，故 BindingFlags.DeclaredOnly 反射不会漏扫端点。
+/// 若未来在共享基类（LocalizedControllerBase 或 ControllerBase 派生链上）新增 [HttpXxx] 方法，
+/// DeclaredOnly 会静默漏扫该端点——届时须调整扫描策略（如改用非 DeclaredOnly 并按声明类型过滤）。
 /// </summary>
 public class ErpPermissionAttributeTests
 {
