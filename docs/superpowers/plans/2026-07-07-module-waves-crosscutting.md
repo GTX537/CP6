@@ -110,3 +110,16 @@ M-WMS → M-ERP → M-MES → M-OA/WF → M-PUR → M-PLAN/PUB。波间不并行
 4. MES 前端 0 条 v-permission：并入既有「前端 v-permission 不对称 + cp6-web 镜像 stale」UX 票（M-WMS 票#1 / M-ERP 票#3 同族）。
 5. Minor 随手项：Program.cs 种子接线注释与 T1/T2 文档的绝对行号自漂移——后续统一去行号化改内容锚定；MesPermissionSeed 枚举租户不过滤 Enable（与 Erp/Wms 种子同型，如收紧三个种子一起改）。
 6. 部署清单（合并后）：重建 cp6-api 镜像→首启 SQL 验证 300-315 十锚定键就位（尤其 310=mes-machine）+ Sys_MenuAction/RoleAction MES 段=25×租户数→高危端点 403 冒烟（production-results complete / process-cost-rate upsert）+ admin 放行→非默认租户 admin 放行+菜单可达→开始监控 Sys_FieldAuditLog 增速。既有边界周知：TenantAdminService 不复制 RoleAction（平台票）/ cp6-web stale。
+
+---
+
+## M-OA/WF 完成记录 + 跟踪票（2026-07-12）
+
+**M-OA/WF 已完成并入 main**（feat/m-oawf-crosscutting，7 任务 T1/T2/T2b/T3a/T3b/T4/T5 逐任务过审 + fable 终审 Ready=Yes 零代码必修）：基线 1758→1796 绿。四层键一致性（31 贴点→20 元组→7 MenuKey 锚定→反射测试）六方全量对账零失配；OA 洁净首启命门（733-739 无 MenuKey+回填时序）解除；双栈用户裁决=收编（741/742 两行使 /wf/*-designer 可达，权限面不变）；委派双键合一 oa-settings:delegate；IAuditable 17 实体全量=纳入 5（FlowDef/ApprovalBinding/FormDef/FlowDelegate/ApproverMap）+豁免 12（AssigneeId 改写路径补偿留痕论证补记）。
+
+**M-OA/WF 跟踪票**：
+1. 🔴 **引擎审批归属校验缺失（高优先，普通角色放权前必修）**（终审 Important#2）：`FlowEngine.ActOnceAsync`(FlowEngine.cs:136-150)、`AdvancedFlow.TransferAsync/AddSignAsync/SendBackAsync`(AdvancedFlow.cs:20-110) 均不校验 actorId 是否任务 AssigneeId（仅新栈 InboxService.ActBatchAsAsync:207 有闸）。本波贴点后当前 admin-only 已收口（净改善），但给普通角色放 `oa-inbox:approve` 的那一刻，旧栈无归属校验路径对全员打开→越权代批复活。修法=三方法补 assignee（含委派代理）校验。**此票必须排在普通角色授权之前。**
+2. 🔴 **普通角色授权步骤（部署编排一等公民）**（终审 Important#1）：本波锁的是全员面（审批/已读/起流程/存草稿），部署后非 admin 全部 403。放权顺序：先落票#1 → 再经 /api/pub/role-perm 给普通员工角色授低危集（oa-inbox:read/approve/withdraw + oa-form-catalog 五键 + oa-settings:edit），高危键（transfer/sendback/addsign/delegate/designer:*/enable/approver-map）按岗单独授。前端无 v-permission（沿既有 UX 票），普通用户按钮可见点击 403。
+3. 「贴点⊆种子」互锁测试票扩容为四模块（WMS/ERP/MES/OAWF）（并 M-MES 票#3）。
+4. Minor 合票：注释去行号化（OawfMenuSeed.cs 头注 :1446/:908 已再漂移）；四模块种子不过滤租户 Enable；2 个 view 豁免键无 MenuAction 行授权 UI 不可枚举（周知）；菜单 739 MenuName 未汉化（既有）。
+5. 部署清单（合并后）：重建 cp6-api →首启 SQL 验 733-742（733-739 七 oa-* 键/740 null/741-742 在且回填派生 wf-*-designer）+ MenuAction/RoleAction OA 段=20×租户数→高危冒烟（POST /api/oa/inbox/batch、/api/oa/designer/save 无认证 403/admin 穿透）→双栈收编验证（admin 导航 741/742 可达，无需重建 cp6-web）。既有边界周知：TenantAdminService 不复制 RoleAction；存量非默认租户 admin 的 741/742 RoleMenu 不自动传播（CFG-T#6 族）。
