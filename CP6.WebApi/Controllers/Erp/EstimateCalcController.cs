@@ -137,8 +137,8 @@ public class EstimateCalcController : LocalizedControllerBase
     /// 計算（引擎：面積 × 原紙単価（M_GenericCode Paper）× 段成率（M067））
     /// POST /api/estimate-calcs/calculate
     /// </summary>
+    // 2026-07-12 用户裁决撤销匿名(fable终审建议): 定价主数据不对匿名暴露;只读故不贴权限键
     [HttpPost("calculate")]
-    [AllowAnonymous]
     public async Task<IActionResult> Calculate([FromBody] EstimateCalcDto dto)
     {
         var result = await _service.CalculateAsync(dto);

@@ -62,7 +62,7 @@ public class ErpPermissionAttributeTests
         "OrderController.CalcProductCategory",  // §四#2 仅 ProductMasters.AsNoTracking 读，无 SaveChanges
         "OrderController.CalcMaterials",        // §四#3 BOM 展开纯读投影 DTO
         "OrderController.ExportReport",         // §四#4 受注伝票导出，AsNoTracking 读→拼文本 bytes
-        "EstimateCalcController.Calculate",     // §四#5 计算引擎仅写内存 DTO List，无 _db.Add/SaveChanges；⚠另挂 [AllowAnonymous]（见 Calculate_RetainsAllowAnonymous）
+        "EstimateCalcController.Calculate",     // §四#5 计算引擎仅写内存 DTO List，无 _db.Add/SaveChanges；2026-07-12 已撤销 [AllowAnonymous]，需登录但不贴权限键（见 Calculate_AllowAnonymousRevoked_RequiresAuth）
         "PlateMoldController.Label",            // §四#6 ラベル CSV 生成，AsNoTracking 读
         "CreditNoteController.Search",          // §四#7 CreditNoteService 全类无写，纯分页查询
         "OtdReportController.Summary",          // §四#8 OtdReportService 全类无写，纯汇总读
@@ -179,15 +179,19 @@ public class ErpPermissionAttributeTests
     }
 
     [Fact]
-    public void Calculate_RetainsAllowAnonymous()
+    public void Calculate_AllowAnonymousRevoked_RequiresAuth()
     {
-        // 主控裁决：EstimateCalcController.Calculate 保留 [AllowAnonymous]（已记终审票待用户裁处）。
-        // 该端点在豁免清单内，核心闸不会拦其缺键；此断言独立锁死「删 AllowAnonymous 却忘贴权限」这条路：
-        // 一旦有人去掉匿名开放，本用例即红，逼其重新决策（复原匿名 或 移出豁免+贴 RequirePermission）。
+        // 2026-07-12 用户裁决（fable终审建议）：撤销 EstimateCalcController.Calculate 的 [AllowAnonymous]。
+        // 理由：该接口读真实定价主数据（原紙単価×段成率），API 经公网隧道暴露，匿名可探测成本函数。
+        // 撤销后回落到类级 [Authorize]（需登录）；仍是只读计算，不贴 [RequirePermission]，继续留在只读 POST 豁免清单。
+        // 本用例防回潮：一旦有人重新给该方法贴回 [AllowAnonymous]，本用例即红。
         var m = typeof(EstimateCalcController).GetMethod(nameof(EstimateCalcController.Calculate));
         Assert.NotNull(m);
-        Assert.True(m!.GetCustomAttributes<AllowAnonymousAttribute>().Any(),
-            "EstimateCalcController.Calculate 应保留 [AllowAnonymous]；若已撤销，须同步给该端点贴 [RequirePermission] 并移出只读 POST 豁免清单。");
+        Assert.False(m!.GetCustomAttributes<AllowAnonymousAttribute>().Any(),
+            "EstimateCalcController.Calculate 不应再挂 [AllowAnonymous]（2026-07-12 用户裁决已撤销匿名访问，防回潮）。");
+        Assert.False(m.GetCustomAttributes<RequirePermissionAttribute>().Any(),
+            "Calculate 仍是只读计算，不应贴 [RequirePermission]（登录即可用）。");
+        Assert.Contains("EstimateCalcController.Calculate", ReadOnlyPostExemptions);
     }
 
     [Fact]

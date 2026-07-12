@@ -159,6 +159,7 @@
 2. **一域两菜单行的 MenuKey 分配**：estimate-calc/quotation/product/order/business-partner/plate-mold 各有「一覧+登録」两菜单行。T2 需决定 MenuKey 落在哪行——**建议两行同赋同一 `erp-*` MenuKey**（一覧页承 view、登録页承 add/edit/del），并确认 `Sys_Menu.MenuKey` 无唯一约束阻挡同键多行（WMS inbound-order 404/405 两行共 `wms-inbound-order` 已有先例，应可行；T2 落库前复验）。
    > **勘误（2026-07-12）**：本条「两行同赋同一 MenuKey」的建议已被 `Sys_Menus.MenuKey IS NOT NULL` 唯一索引否决（同键多行行不通）。实际裁决＝**单锚定登録页**，一覧页 MenuKey 留 null，见 `docs/seeds/erp-key-menu-anchor.md`。
 3. **`EstimateCalcController.Calculate` 现挂 `[AllowAnonymous]`**（:136）：试算引擎当前对匿名开放。本表给 `erp-estimate-calc:view`，但 T3 贴 RequirePermission 前须先决定是否撤 `[AllowAnonymous]`——**若保留匿名则该端点不受权限键管辖**（反射测试须把它列入豁免白名单，否则 fail-closed 断言会误判）。**待拍板。**
+   > **裁决（2026-07-12）**：用户裁决＝**撤销匿名**（fable 终审建议）。理由：该接口读真实定价主数据（原紙単価×段成率），API 经公网隧道暴露，匿名可探测成本函数。已落地——`EstimateCalcController.Calculate` 撤 `[AllowAnonymous]`，回落类级 `[Authorize]`（需登录），仍不贴 `[RequirePermission]`（只读，留在只读 POST 豁免清单）。
 4. **credit-note 高危写端点在 ERP 不存在**：简报点名「信用単(credit note)操作」为高危，但 `CreditNoteController` 当前**只有 POST `/search`（只读）**，无任何签发/冲销写端点。信用単实际签发大概率在 FIN 模块。→ ERP 侧 credit-note 仅 `view`；高危 credit-note 操作键应在 FIN 波盘点，本波无对应端点可贴。**记为盘点差异，供上层裁处。**
 5. **price/rate master 的金额-adjacent 边界**：`erp-fx-rate:add/edit/del`（为替レート）与 `erp-sheet-unit-price:import/edit`（单价 master）会影响金额换算/估价，但属**主数据 CRUD**（对标 WMS master 编辑归否），本表未提级高危。若 T2 审计要求"影响定价的主数据变更"入高危审计范围，可单独提级——**待 T2 审计拍板。**
 
