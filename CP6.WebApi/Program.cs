@@ -831,6 +831,12 @@ using (var scope = app.Services.CreateScope())
     //   一覧页留 null 由回填派生——因 MenuKey 有 IS NOT NULL 唯一索引，禁两行共键）。
     CP6.WebApi.Seed.ErpMenuSeed.EnsureSeeded(db);
 
+    // M-ERP 横切接线 Task 3b：ERP 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+    // Task 3a 给 10 控制器 35 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+    // 须置于 ErpMenuSeed 之后（RoleAction 挂锚定 MenuId 202/204/206/208/209/210/212/213/215/218/220，菜单行须先在）。
+    // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。30 去重元组（35 写端点去重）覆盖 11 有写端点 menu-key。
+    CP6.WebApi.Seed.ErpPermissionSeed.EnsureSeeded(db);
+
     // M-WMS 横切接线 Task 3b：WMS 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
