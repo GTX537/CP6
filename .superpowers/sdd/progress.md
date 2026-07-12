@@ -229,3 +229,4 @@ M-OA/WF 合并+部署: complete (main=5f3819a --no-ff已push, 分支留远端; �
 # 依据: plan M-PUR段(T1补齐裸控制器) + docs/00-横切接线规范.md; 基线1796绿
 # 实况: Pur 8控制器, 4已部分贴点(PurchaseOrder3/GoodsReceipt2/SupplierPrice2/ThreeWayMatch3=10处), 4裸(PurchaseRequest/Rfq/Subcontract+计划未点名的PurReconcile); Pur菜单701-704有局部回填块(:1499一带)
 # 小波压缩三任务: T1真相源(含既有10贴点键面审计+裸4定键) → T2贴点+菜单锚定+逐租户种子(一体) → T3反射测试+403拒绝用例
+M-PUR T1: complete (commit 0a20284+标题数直修, Spec 5项全✅ + Approved[opus审,独立枚举24非GET端点双向闭环/10既有键面逐字核/豁免Service实读零写证真/两§六硬前置亲验Program.cs成立: ①回填:1513只盖701-704且全局:922早于Pur插入:1385→705-707首启MenuKey=null 403 ②内联种子:1518-1531仅默认租户RoleId=1]; 键面24=既有10+新14全连字符锚定701-707, 高危7/状态5/豁免1; 唯一Minor=§3b标题共4个应为5→主控直修; concerns: 5边界端点分级属判断留§五改判口径/租户数以运行时Sys_Tenants为准)

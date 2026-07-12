@@ -86,7 +86,7 @@
 | `pur-subcontract:issue` | 22 | **发支給材=委托 WMS 实物出库**：IssueConsignAsync→`_wmsIssue.IssueAsync(Purpose=subcontract)` 出库实物，`c.IssuedQty += wms.IssuedQty` 记防吞料锚。不可逆库存移动。SubcontractService.cs:97-141 |
 | `pur-subcontract:cost` | 23 | **外注成品成本入账**：CalcFinishedCostAsync→`_finCost.PostSubcontractCostAsync` 生成成本凭证(CostVoucherNo)、接财务 06（加工费+支給材成本并入）。SubcontractService.cs:144-182 |
 
-### 3b. 独立状态流转动作键（`状态`，共 4 个，仍单独成键、不塞 edit/view）
+### 3b. 独立状态流转动作键（`状态`，共 5 个，仍单独成键、不塞 edit/view）
 
 `pur-po:submit`（PO 送审，#4）· `pur-po:cancel`（PO 取消，#5）· `pur-gr:qc`（检收判定应用回写验收锚，#7）· `pur-pr:submit`（PR 送审，#12）· `pur-match:reject`（拒绝挂起单，#10）。
 
