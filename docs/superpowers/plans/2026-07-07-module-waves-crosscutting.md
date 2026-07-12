@@ -123,3 +123,16 @@ M-WMS → M-ERP → M-MES → M-OA/WF → M-PUR → M-PLAN/PUB。波间不并行
 3. 「贴点⊆种子」互锁测试票扩容为四模块（WMS/ERP/MES/OAWF）（并 M-MES 票#3）。
 4. Minor 合票：注释去行号化（OawfMenuSeed.cs 头注 :1446/:908 已再漂移）；四模块种子不过滤租户 Enable；2 个 view 豁免键无 MenuAction 行授权 UI 不可枚举（周知）；菜单 739 MenuName 未汉化（既有）。
 5. 部署清单（合并后）：重建 cp6-api →首启 SQL 验 733-742（733-739 七 oa-* 键/740 null/741-742 在且回填派生 wf-*-designer）+ MenuAction/RoleAction OA 段=20×租户数→高危冒烟（POST /api/oa/inbox/batch、/api/oa/designer/save 无认证 403/admin 穿透）→双栈收编验证（admin 导航 741/742 可达，无需重建 cp6-web）。既有边界周知：TenantAdminService 不复制 RoleAction；存量非默认租户 admin 的 741/742 RoleMenu 不自动传播（CFG-T#6 族）。
+
+---
+
+## M-PUR 完成记录 + 跟踪票（2026-07-12）
+
+**M-PUR 已完成**（feat/m-pur-crosscutting，3 任务 T1/T2/T3 逐任务过审[opus 独立复核均零必修] + fable 终审 Ready=Yes 零代码必修）：基线 1796→1808 绿（终审者亲跑确认）。四层键面五源全量对账精确（24 贴点↔真相源§一↔PurPermissionSeed.Actions↔T3 oracle↔种子测试 ExpectedTuples，双向零零头）；T1 两硬前置根治（705-707 MenuKey 插入时显式赋值首启就位+逐租户 PurPermissionSeed 取代默认租户内联块，跨替换幂等零重复[StampTenant 仅盖 Guid.Empty 有专测 pin]）；豁免 1=subcontract reconcile 按 view 贴点非旁路（豁免表空断言，五波最强形态）；写面扫描零盲区（Pur DbSet 仅 Services\Pur 引用，零 ExecuteUpdate/Delete，唯一外部写路=审批回调在 oa-inbox:approve 闸后）。
+
+**M-PUR 跟踪票**：
+1. **M-PLAN/PUB 波简报必带一行**（终审 Minor#1）：`PrGenerationService`（Program.cs:213 注册，写 PurchaseRequests，现无生产调用方=死代码非漏洞）——MRP→PR 生成端点接线时必须自带 RequirePermission（plan-* 键），跨命名空间写 Pur 表正是本闸门要抓的形态。
+2. **跨波票：IsMutating 不含 HttpPatch**（并 M-PUR T3 Minor#1）：五波反射测试同型潜在 fail-open（Pur 现零 PATCH/PUT 无实弹）；一次 sweep 五文件齐补 HttpPatchAttribute。
+3. **「贴点⊆种子」互锁测试跨模块票扩容为五模块**（WMS/ERP/MES/OAWF/PUR，并 M-MES 票#3/M-OA/WF 票#3）：种子行被删任何测试闸不红。
+4. Minor 合票（忽略级周知）：708 pur-reconcile MenuKey 首启 null 至下次 :922 全局回填（零键锚定无 403 影响）；T2 种子单测 MenuKey 断言自指（生产正确性由显式赋值代码+部署冒烟承载）；种子逐行 Any() 启动查询（4 租户无害，Wms 先例一致）。
+5. **部署清单（合并后）**：重建 cp6-api（宿主 publish→删 Local/Development 配置→薄 Dockerfile→compose up）→ SQL 验 705-707 MenuKey=pur-rfq/pur-pr/pur-subcontract 非空 → Sys_RoleActions Pur 段（701-707,RoleId=1）=24×4 租户=96 且默认租户恰 24（内联→种子替换零重复证据），Sys_MenuActions 同 96 → 无认证 POST /api/pur/match/x/release 与 /api/pur/subcontract/x/1/issue → 401/403 → admin+CSRF POST /api/pur/pr/x/convert 穿透授权层（400/业务错非 403）→ **非默认租户 admin 重复穿透**（本波逐租户种子修复的具体证明，波前既有 10 键在非默认租户 admin 也 403）→ 可选：仅授 pur-subcontract:view 用户 POST reconcile → 200（豁免归 view 端到端）。
