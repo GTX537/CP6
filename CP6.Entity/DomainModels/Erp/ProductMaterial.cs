@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 業務複合 PK：製品コード + 工程コード + 材料CD
 /// </remarks>
 [Table("T_ProductMaterial")]
-public class ProductMaterial : BaseBizEntity
+public class ProductMaterial : BaseBizEntity, IAuditable
 {
     /// <summary>製品コード（FK + PK1）</summary>
     [Required, MaxLength(20)]

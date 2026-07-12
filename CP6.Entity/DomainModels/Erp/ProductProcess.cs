@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 業務複合 PK：製品コード + 作業コード（TaskCd）
 /// </remarks>
 [Table("T_ProductProcess")]
-public class ProductProcess : BaseBizEntity
+public class ProductProcess : BaseBizEntity, IAuditable
 {
     /// <summary>製品コード（FK → T_ProductMaster.ProductCd）</summary>
     [Required, MaxLength(20)]

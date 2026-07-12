@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 每行可关联一个 見積計算書NO（来自「使用」チェックの自動追加），也可手工追加。
 /// </remarks>
 [Table("T_QuotationDetail")]
-public class QuotationDetail : BaseBizEntity
+public class QuotationDetail : BaseBizEntity, IAuditable
 {
     /// <summary>御見積書NO（复合主键一部分；FK → T_Quotation）</summary>
     [Required]

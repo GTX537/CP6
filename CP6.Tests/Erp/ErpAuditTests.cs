@@ -142,6 +142,60 @@ public class ErpAuditTests
         Assert.Equal(price.Id.ToString(), rows[0].EntityKey);
     }
 
+    // ── 受注加工工程明细（OrderProcess）— 採購/固定単価·钱 ───────────────
+    [Fact]
+    public void Update_OrderProcess_purchaseUnitPrice_writes_op2_diff()
+    {
+        using var db = Ctx();
+        var proc = new OrderProcess
+        {
+            WebOrderNo = "WO20260712-004",
+            WebOrderDetailNo = 1,
+            ProductCd = "P001",
+            OperationCd = "OP01",
+            ProcessCd = "PC01",
+            PurchaseUnitPrice = 100m,
+        };
+        db.Set<OrderProcess>().Add(proc);
+        db.SaveChanges();
+
+        proc.PurchaseUnitPrice = 120m;
+        db.SaveChanges();
+
+        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
+        Assert.Single(rows);
+        Assert.Equal(nameof(OrderProcess), rows[0].EntityName);
+
+        var diffs = ParseChanges(rows[0].Changes);
+        Assert.Contains(diffs, d => d.Field == "PurchaseUnitPrice" && d.Old == "100" && d.New == "120");
+    }
+
+    // ── 御見積書明细（QuotationDetail）— 打印到对客报价书的行级単価/金額 ─────
+    [Fact]
+    public void Update_QuotationDetail_amount_writes_op2_diff()
+    {
+        using var db = Ctx();
+        var detail = new QuotationDetail
+        {
+            QtnNo = "QTN20260712-001",
+            DetailNo = 1,
+            UnitPrice = 50m,
+            Amount = 500m,
+        };
+        db.Set<QuotationDetail>().Add(detail);
+        db.SaveChanges();
+
+        detail.Amount = 600m;
+        db.SaveChanges();
+
+        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
+        Assert.Single(rows);
+        Assert.Equal(nameof(QuotationDetail), rows[0].EntityName);
+
+        var diffs = ParseChanges(rows[0].Changes);
+        Assert.Contains(diffs, d => d.Field == "Amount" && d.Old == "500" && d.New == "600");
+    }
+
     // ── 负测试：追加型履历（FscChecklist）未贴 IAuditable → 零审计行 ──────
     [Fact]
     public void Append_FscChecklist_writes_no_audit_row()
