@@ -47,7 +47,7 @@
 | 23 | QueryController | POST `/api/oa/query/search` | Search | `oa-form-search` | view | 只读POST→view | 跨流程多条件查询，InboxService.QueryAsync 纯读（§四）。POST 仅为传 FormQueryFilter 复杂体。菜单736 |
 | 24 | AdvancedFlowController | POST `/api/wf/advanced/sendback` | SendBack | `oa-inbox` | sendback | **是** | 退回到目标节点（章07 §2，IFlowEngine.SendBackAsync）。归并入 oa-inbox:sendback（§五归并5，与 #19 同引擎同语义） |
 | 25 | AdvancedFlowController | POST `/api/wf/advanced/addsign` | AddSign | `oa-inbox` | addsign | **是** | **加签**（章07 §3，AddSignAsync 动态插入审批人，改变审批链）。不可逆流程结构变更 |
-| 26 | AdvancedFlowController | POST `/api/wf/advanced/delegate` | Delegate | `oa-inbox` | delegate | **是** | **登记委派**（章07 §5，SetDelegateAsync 授予代理审批权）。与 OA `oa-settings:delegate`(#5) 同语义、不同锚定页（§六注4，两键并存待 T2 复核是否合一） |
+| 26 | AdvancedFlowController | POST `/api/wf/advanced/delegate` | Delegate | `oa-settings` | delegate | **是** | **登记委派**（章07 §5，SetDelegateAsync 授予代理审批权）。与 OA `/api/oa/delegate/add`(#5) 同语义——**T2 主控拍板：委派双键合一为 `oa-settings:delegate`**（原 `oa-inbox:delegate` 退役，权限面统一防一处授一处漏；§六注4 裁决记录） |
 | 27 | ApprovalController | POST `/api/wf/approval/submit` | Submit | `oa-form-catalog` | submit | 状态 | **起业务审批**（业务模块接入 OA 入口，按 bizType 绑定流程起实例）。归并入 submit（§五归并3）。无自己菜单，锚填單页（§六注3） |
 | 28 | FlowController | POST `/api/wf/flow/def` | SaveDef | `oa-designer` | edit | **是** | **流程定义保存（旧栈设计器）**——与新栈 DesignerController.Save(#7) **同写 Wf_FlowDef**，归并入 oa-designer:edit（§五归并2）。对应孤儿路由 `/wf/flow-designer`，**待用户裁决退役/收编（§六头号裁决点）** |
 | 29 | FlowController | POST `/api/wf/flow/submit` | Submit | `oa-form-catalog` | submit | 状态 | 起流程（IFlowEngine.SubmitAsync），归并入 submit（§五归并3） |
@@ -68,11 +68,11 @@
 
 | # | menu-key | 锚定菜单（Program.cs MenuId / RoutePath） | 说明 |
 |---|---|---|---|
-| 1 | `oa-inbox` | 733 电子表单信箱 `/oa/inbox` | ✅有菜单行。回填自 RoutePath = `oa-inbox` ✅一致。承载 Inbox + /wf 引擎的审批动作（approve/transfer/sendback/addsign/delegate/withdraw/read） |
+| 1 | `oa-inbox` | 733 电子表单信箱 `/oa/inbox` | ✅有菜单行。回填自 RoutePath = `oa-inbox` ✅一致。承载 Inbox + /wf 引擎的审批动作（approve/transfer/sendback/addsign/withdraw/read）。**委派动作已合一迁出至 `oa-settings:delegate`**（T2 拍板1） |
 | 2 | `oa-flow-admin` | 734 流程管理 `/oa/flow-admin` | ✅。回填 = `oa-flow-admin` ✅一致。承载 FlowAdmin 启停 |
 | 3 | `oa-form-catalog` | 735 填單 `/oa/form-catalog` | ✅。回填 = `oa-form-catalog` ✅一致。承载 Catalog 收藏 + Draft CRUD + Forecast 预览 + 起流程/提交（submit） |
 | 4 | `oa-form-search` | 736 表单查询 `/oa/form-search` | ✅。仅 view（唯一端点只读豁免）。回填 = `oa-form-search` ✅一致 |
-| 5 | `oa-settings` | 737 设定 `/oa/settings` | ✅。回填 = `oa-settings` ✅一致。承载 Delegate 授权 + Pref 偏好 |
+| 5 | `oa-settings` | 737 设定 `/oa/settings` | ✅。回填 = `oa-settings` ✅一致。承载 Delegate 授权（**委派双键合一后唯一 delegate 锚**：OA #5/#6 + AdvancedFlow #26）+ Pref 偏好 |
 | 6 | `oa-designer` | 738 流程设计器 `/oa/designer` | ✅。回填 = `oa-designer` ✅一致。承载 Designer save/clone（新栈）+ Flow/Form def（旧栈，§六裁决） |
 | 7 | `oa-approver-map` | 739 审批人映射 `/oa/approver-map` | ✅。回填 = `oa-approver-map` ✅一致 |
 
@@ -81,8 +81,9 @@
 
 ---
 
-## 三、高危动作清单（`是`：审批放行/权限授予/流程定义变更/不可逆，共 9 个资源键）
+## 三、高危动作清单（`是`：审批放行/权限授予/流程定义变更/不可逆，共 8 个资源键；T2 委派合一后 9→8）
 
+> 生成于 2026-07-12；**2026-07-12 T2 更新**：委派双键合一（`oa-inbox:delegate` 退役并入 `oa-settings:delegate`），高危键 9→8、资源键 23→22（详§六注4、§七）。
 > T3 贴 `[RequirePermission]` 与 T2 审计的**第一优先级**，**绝不可**与 view/edit 混授。OA/WF 域高危集中在**审批写路径**与**流程/表单定义变更**——前者一次误授即他人可越权承认单据（触发预算激活/PO 确认/成本结转等业务级联），后者一次误改即所有在途/未来流程受影响。
 
 | 资源键 | 为何高危独立 |
@@ -91,8 +92,7 @@
 | `oa-inbox:transfer` | **转交**：改派待办处理人，审批权转移、不可逆 |
 | `oa-inbox:sendback` | **退回**：回退到目标节点、作废已产生审批痕迹（Inbox #19 + AdvancedFlow #24 同引擎归并）。不可逆流程回退 |
 | `oa-inbox:addsign` | **加签**：动态插入审批人、改变审批链结构（章07 §3）。不可逆 |
-| `oa-inbox:delegate` | **委派登记（章07 §5）**：授予他人以你身份审批的代理权。安全敏感权限授予 |
-| `oa-settings:delegate` | **代理授权授予/撤销（设定页）**：同 `oa-inbox:delegate` 语义、经不同控制器(OA DelegateController)与锚定页。计划点名「委托授予」。两键并存，§六注4 记 T2 复核是否合一 |
+| `oa-settings:delegate` | **代理授权授予/撤销 + 委派登记（合一键）**：**T2 主控拍板1——委派双键合一**，收编 OA DelegateController Add/Remove(#5/#6) + AdvancedFlow SetDelegate(#26)。授予他人以你身份审批的代理权（act-as），安全敏感权限授予。原 `oa-inbox:delegate` 退役（§六注4） |
 | `oa-designer:edit` | **流程定义保存**：新栈 DesignerController.Save(#7) + 旧栈 FlowController.SaveDef(#28) 同写 Wf_FlowDef。改流程定义不可逆影响所有在途/未来实例。计划点名 |
 | `oa-designer:add` | **克隆流程定义**（#8）：新建 Wf_FlowDef，同属流程定义变更 |
 | `oa-designer:form-save` | **表单定义保存**（旧栈 FormController.SaveDef #31）：改 Wf_FormDef schema，影响所有引用该 formKey 的表单渲染。**对应孤儿路由 /wf/form-designer，待裁决（§六）** |
@@ -101,7 +101,7 @@
 
 `oa-form-catalog:submit`（起流程/起审/提交草稿/提交表单数据，归并 Draft.submit + Flow.submit + Approval.submit + Form.form-data）· `oa-flow-admin:enable`（流程启停干预，计划点名，见§五归并6）· `oa-inbox:withdraw`（撤回申请）
 
-> 非四基粒度独立动作键合计 = 9（高危）+ 3（状态）= **12 个**。其余端点走 `add/edit/del/view` 四基粒度 + `favorite`/`read` 两个低危个性化写键。
+> 非四基粒度独立动作键合计 = 8（高危，T2 委派合一后 9→8）+ 3（状态）= **11 个**。其余端点走 `add/edit/del/view` 四基粒度 + `favorite`/`read` 两个低危个性化写键。
 
 ---
 
@@ -164,9 +164,10 @@
 
 **T1 处置（待裁决前的占位）**：本表将旧栈 `flow/def`(#28) 归并入 `oa-designer:edit`（与新栈同写 Wf_FlowDef、同权限语义），`form/def`(#31) 记为 `oa-designer:form-save`（暂锚 738）。**T2 贴权限前须由用户裁定退役/收编**，否则旧栈 def 端点将挂一个「概念上锚定不可达路由」的键。
 
-### 注4·委派双端点（`oa-inbox:delegate` vs `oa-settings:delegate`）
+### 注4·委派双端点合一裁决（T2 主控拍板1，2026-07-12 已裁决）
 
-AdvancedFlow `/api/wf/advanced/delegate`(#26) 与 OA `/api/oa/delegate/add`(#5) 语义相同（均授予代理审批权），经不同控制器/锚定页产生两个 delegate 键。二者是否应合一（或前者退役）由 T2 复核——**当前按锚定页各成一键**。
+AdvancedFlow `/api/wf/advanced/delegate`(#26) 与 OA `/api/oa/delegate/add`/`remove`(#5/#6) 语义相同（均授予/撤销代理审批权，act-as），T1 曾按锚定页各成 `oa-inbox:delegate` 与 `oa-settings:delegate` 两键。**T1 审查建议合一**（引用：委派授权面若分散于信箱与设定两键，则「一处授一处漏」，安全敏感权限授予绝不应双面维护）。
+**T2 主控裁决：合一为 `oa-settings:delegate`（设定页为委派管理归属地）**。`oa-inbox:delegate` **退役**；#26 改锚 `oa-settings:delegate`（§一表已改写）。影响：高危资源键 9→8、资源键去重 23→22（§七同步）。T3 贴点时 AdvancedFlow.Delegate、OA DelegateController.Add/Remove 三端点统一贴 `[RequirePermission("oa-settings","delegate")]`。
 
 ---
 
@@ -180,8 +181,8 @@ AdvancedFlow `/api/wf/advanced/delegate`(#26) 与 OA `/api/oa/delegate/add`(#5) 
   - 其中**只读 POST 豁免（→view）**：**2**。
   - **真·写端点**：**31**。
 - **menu-key（去重）**：**7**（全部有菜单行 733–739，零孤儿 menu-key；另有 2 条前端孤儿*路由* /wf/*-designer 待裁决，§六）。
-- **资源键（去重，含 view）**：**23**。
-- **高危键（是）**：**9**（`oa-inbox:approve/transfer/sendback/addsign/delegate` + `oa-settings:delegate` + `oa-designer:edit/add/form-save`）。
+- **资源键（去重，含 view）**：**22**（T2 委派合一后 23→22，`oa-inbox:delegate` 退役并入 `oa-settings:delegate`）。
+- **高危键（是）**：**8**（T2 委派合一后 9→8）：`oa-inbox:approve/transfer/sendback/addsign` + `oa-settings:delegate`（合一 OA #5/#6 + AdvancedFlow #26）+ `oa-designer:edit/add/form-save`。
 - **状态键**：**3**（`oa-form-catalog:submit`、`oa-flow-admin:enable`、`oa-inbox:withdraw`）。
 
 ### 逐控制器双向核对（控制器→表 / 表→控制器，零缺漏零 GET 误列）
