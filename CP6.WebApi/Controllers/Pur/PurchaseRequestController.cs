@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
 using CP6.Entity.DomainModels.Pur;
 using Microsoft.AspNetCore.Authorization;
@@ -30,6 +31,7 @@ public class PurchaseRequestController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("pur-pr", "add")]
     public async Task<IActionResult> Create([FromBody] PrCreateDto dto)
     {
         try { return Ok2(await _svc.CreateAsync(dto, CurrentUser)); }
@@ -38,6 +40,7 @@ public class PurchaseRequestController : ControllerBase
 
     /// <summary>送审（草稿 → 审批 → 已批）。</summary>
     [HttpPost("{prNo}/submit")]
+    [RequirePermission("pur-pr", "submit")]
     public async Task<IActionResult> Submit(string prNo)
     {
         try { return Ok2(await _svc.SubmitForApprovalAsync(prNo, CurrentUser)); }
@@ -46,6 +49,7 @@ public class PurchaseRequestController : ControllerBase
 
     /// <summary>转 PO（仅已批；按建议供应商分组拆单，回填 ConvertedPoNo）。</summary>
     [HttpPost("{prNo}/convert")]
+    [RequirePermission("pur-pr", "convert")]
     public async Task<IActionResult> Convert(string prNo)
     {
         try { return Ok2(await _svc.ConvertToPoAsync(prNo, CurrentUser)); }

@@ -1414,19 +1414,19 @@ using (var scope = app.Services.CreateScope())
     }
     if (!db.Sys_Menus.Any(m => m.MenuId == 705))
     {
-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 705, MenuName = "询价比价", RoutePath = "/pur/rfq", Icon = "Histogram", ParentId = 700, OrderNo = 705, Enable = true });
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 705, MenuName = "询价比价", RoutePath = "/pur/rfq", MenuKey = "pur-rfq", Icon = "Histogram", ParentId = 700, OrderNo = 705, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 705 });
         db.SaveChanges();
     }
     if (!db.Sys_Menus.Any(m => m.MenuId == 706))
     {
-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 706, MenuName = "采购申请", RoutePath = "/pur/pr", Icon = "Tickets", ParentId = 700, OrderNo = 706, Enable = true });
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 706, MenuName = "采购申请", RoutePath = "/pur/pr", MenuKey = "pur-pr", Icon = "Tickets", ParentId = 700, OrderNo = 706, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 706 });
         db.SaveChanges();
     }
     if (!db.Sys_Menus.Any(m => m.MenuId == 707))
     {
-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 707, MenuName = "外注加工", RoutePath = "/pur/subcontract", Icon = "SetUp", ParentId = 700, OrderNo = 707, Enable = true });
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 707, MenuName = "外注加工", RoutePath = "/pur/subcontract", MenuKey = "pur-subcontract", Icon = "SetUp", ParentId = 700, OrderNo = 707, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 707 });
         db.SaveChanges();
     }
@@ -1508,29 +1508,15 @@ using (var scope = app.Services.CreateScope())
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 739 });
         db.SaveChanges();
     }
-    // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
+    // 采购功能权限点：701–704 MenuKey 回填（705/706/707 已在菜单插入时显式赋值，首启即就位，不依赖 :922 全局回填）。
     {
         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
             pm.MenuKey = pm.RoutePath!.Trim('/').Replace('/', '-');
         db.SaveChanges();
-
-        // (MenuId, ActionCode, ActionName) —— 与各控制器 [RequirePermission(menuKey, action)] 一一对应
-        var purActions = new (int MenuId, string Code, string Name)[]
-        {
-            (701, "add", "新增/更新"), (701, "delete", "删除"),
-            (702, "add", "建单"), (702, "submit", "送审"), (702, "cancel", "取消"),
-            (703, "add", "确认收货"), (703, "qc", "检收应用"),
-            (704, "add", "匹配建票"), (704, "release", "放行"), (704, "reject", "拒绝"),
-        };
-        foreach (var (menuId, code, name) in purActions)
-        {
-            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
-                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
-            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
-                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
-        }
-        db.SaveChanges();
     }
+    // 逐租户播 Pur 全 24 权限键（既有 10 + 新 14，含 subcontract:view）+ 授 admin(RoleId=1)。
+    // 取代原仅默认租户的内联块（真相源 docs/seeds/pur-permission-keys.md §六 硬前置②）；须置于 Pur 菜单 + 705/706/707 MenuKey 之后（RoleAction 挂锚定 MenuId 701–707）。
+    CP6.WebApi.Seed.PurPermissionSeed.EnsureSeeded(db);
 
     // ═══════════════════════════════════════════════════════════
     //  MSBBME010〜090 MES 製造執行 菜单
