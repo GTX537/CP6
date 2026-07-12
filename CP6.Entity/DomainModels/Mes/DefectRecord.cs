@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// ステータス：0=起票済み 1=分析中 2=是正中 3=完了
 /// </remarks>
 [Table("T_DefectRecord")]
-public class DefectRecord : BaseBizEntity
+public class DefectRecord : BaseBizEntity, IAuditable
 {
     /// <summary>不良NO（業務 PK、DFYYYYMMDD-NNNN）</summary>
     [Required, MaxLength(20)]

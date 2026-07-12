@@ -13,7 +13,7 @@ namespace CP6.Entity.DomainModels.Wms;
 /// 状态：0=使用可 1=メンテ中 2=寿命到達 3=廃版
 /// </remarks>
 [Table("T_PlateMoldStock")]
-public class PlateMoldStock : BaseBizEntity
+public class PlateMoldStock : BaseBizEntity, IAuditable
 {
     [Required, MaxLength(25)]
     public string PlateNo { get; set; } = string.Empty;

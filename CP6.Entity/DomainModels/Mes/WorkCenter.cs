@@ -5,7 +5,7 @@ namespace CP6.Entity.DomainModels.Mes;
 
 /// <summary>工作中心主数据（A2 · spec §3.2）。费率与产能挂载点；产能字段=CRP 地基。</summary>
 [Table("T_WorkCenter")]
-public class WorkCenter : BaseBizEntity
+public class WorkCenter : BaseBizEntity, IAuditable
 {
     /// <summary>工作中心CD（业务键，唯一；= ProductProcess.WgCd / WorkOrderProcess.WgCd）</summary>
     [Required, MaxLength(10)] public string WgCd { get; set; } = string.Empty;

@@ -14,6 +14,8 @@ namespace CP6.Entity.DomainModels.Mes;
 ///     ('QC', '2026-05-15') → 0003
 ///     ('DF', '2026-05-15') → 0001
 /// </remarks>
+// [审计豁免] 純採番計数器：CurrentValue 每次採番自增，无货币/无业务事实字段，高频写——
+// 字段级审计无意义。照 WMS/ERP Sequence 先例不贴 IAuditable，由 MesAuditTests 负测试坐实零审计行。
 [Table("T_MesSequence")]
 public class MesSequence : BaseEntity
 {

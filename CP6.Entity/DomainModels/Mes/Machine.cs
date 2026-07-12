@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Mes;
 /// 1 設備 → N 停止記録(T_MachineDowntime) / N OEE 日次(T_OeeDaily)
 /// </remarks>
 [Table("M_Machine")]
-public class Machine : BaseBizEntity
+public class Machine : BaseBizEntity, IAuditable
 {
     /// <summary>設備CD（業務 PK）</summary>
     [Required, MaxLength(20)]
