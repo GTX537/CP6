@@ -11,7 +11,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 業務 PK: (WebOrderNo, WebOrderDetailNo, ProductCd, ProcessCd, MaterialCd)
 /// </remarks>
 [Table("T_OrderMaterial")]
-public class OrderMaterial : BaseBizEntity
+public class OrderMaterial : BaseBizEntity, IAuditable
 {
     [Required, MaxLength(20)]
     public string WebOrderNo { get; set; } = string.Empty;

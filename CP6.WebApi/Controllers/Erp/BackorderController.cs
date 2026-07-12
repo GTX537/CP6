@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +28,7 @@ public class BackorderController : ControllerBase
     }
 
     [HttpPost("{webOrderNo}/{detailNo:int}/close-remaining")]
+    [RequirePermission("erp-backorder", "close")]
     public async Task<IActionResult> CloseRemaining(
         string webOrderNo,
         int detailNo,
@@ -49,6 +51,7 @@ public class BackorderController : ControllerBase
     }
 
     [HttpPost("{webOrderNo}/{detailNo:int}/split-to-new-order")]
+    [RequirePermission("erp-backorder", "split")]
     public async Task<IActionResult> SplitToNewOrder(
         string webOrderNo,
         int detailNo,

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,7 @@ public class FxRateController : ControllerBase
         => Ok(new { code = 0, message = "OK", data = await _svc.ResolveRateAsync(currencyCd ?? "", asOf ?? DateTime.Today) });
 
     [HttpPost]
+    [RequirePermission("erp-fx-rate", "add")]
     public async Task<IActionResult> Create([FromBody] FxRate rate)
     {
         try
@@ -43,6 +45,7 @@ public class FxRateController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequirePermission("erp-fx-rate", "edit")]
     public async Task<IActionResult> Update(Guid id, [FromBody] FxRate rate)
     {
         try
@@ -57,6 +60,7 @@ public class FxRateController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequirePermission("erp-fx-rate", "del")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try

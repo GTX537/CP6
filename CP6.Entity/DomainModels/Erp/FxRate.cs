@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 受注時に得意先通貨の当日（基準日以前の最新）レートを <see cref="Order.FxRate"/> へ凍結する。
 /// </remarks>
 [Table("T_FxRate")]
-public class FxRate : BaseBizEntity
+public class FxRate : BaseBizEntity, IAuditable
 {
     /// <summary>通貨CD（ISO 4217、例 USD/EUR/CNY）</summary>
     [Required, MaxLength(3)]

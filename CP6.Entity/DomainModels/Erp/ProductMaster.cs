@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 採番ルール（Rev.5）：登録時 BRANCH1 = "00" + 行番、BRANCH2/3 = "MCNULLVAL"
 /// </remarks>
 [Table("T_ProductMaster")]
-public class ProductMaster : BaseBizEntity
+public class ProductMaster : BaseBizEntity, IAuditable
 {
     // ───── 業務主キー ─────
     /// <summary>製品コード（機能コード+年月+自増13桁 + 枝番4桁=17桁、業務 PK、自動採番）</summary>

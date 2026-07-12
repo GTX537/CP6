@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -225,6 +226,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>単価訂正バッチ更新 — PUT /api/orders/price-correction/batch</summary>
     [HttpPut("price-correction/batch")]
+    [RequirePermission("erp-order-price-correction", "correct")]
     public async Task<IActionResult> BatchUpdatePrice([FromBody] OrderPriceCorrectionBatchUpdateDto req)
     {
         try
@@ -259,6 +261,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>受注登録 — POST /api/orders</summary>
     [HttpPost]
+    [RequirePermission("erp-order", "add")]
     public async Task<IActionResult> Create([FromBody] OrderDto dto)
     {
         try
@@ -275,6 +278,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>受注訂正 — PUT /api/orders/{webOrderNo}</summary>
     [HttpPut("{webOrderNo}")]
+    [RequirePermission("erp-order", "edit")]
     public async Task<IActionResult> Update(string webOrderNo, [FromBody] OrderDto dto)
     {
         try
@@ -304,6 +308,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>受注削除（軟削除）— DELETE /api/orders/{webOrderNo}</summary>
     [HttpDelete("{webOrderNo}")]
+    [RequirePermission("erp-order", "del")]
     public async Task<IActionResult> Delete(string webOrderNo, [FromQuery] string? rowVersion)
     {
         try
@@ -358,6 +363,7 @@ public class OrderController : LocalizedControllerBase
     /// force=true: 強制実施 — Bridge Hook 経由で全自動取消可能な WO/Outbound を取消。
     /// </remarks>
     [HttpPost("{webOrderNo}/cancel")]
+    [RequirePermission("erp-order", "cancel")]
     public async Task<IActionResult> Cancel(string webOrderNo, [FromBody] OrderCancelRequest req)
     {
         if (req == null || string.IsNullOrWhiteSpace(req.Reason))

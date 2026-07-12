@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 受注時に製品基本マスタから大量フィールドをスナップショットコピーする設計
 /// </remarks>
 [Table("T_OrderDetail")]
-public class OrderDetail : BaseBizEntity
+public class OrderDetail : BaseBizEntity, IAuditable
 {
     // ───── 業務主キー ─────
     /// <summary>Web受注NO (FK→T_Order)</summary>

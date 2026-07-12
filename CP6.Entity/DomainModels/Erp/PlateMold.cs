@@ -13,7 +13,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 登録/改定/訂正時に「版型受注連携」（T_Order + T_OrderDetail 118 項）+ PE API 連携（53 項）を実行。
 /// </remarks>
 [Table("T_PlateMold")]
-public class PlateMold : BaseBizEntity
+public class PlateMold : BaseBizEntity, IAuditable
 {
     /// <summary>木型・版型 NO（PK1, 自動採番）</summary>
     [Required, MaxLength(40)]

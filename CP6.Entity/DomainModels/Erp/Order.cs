@@ -12,7 +12,7 @@ namespace CP6.Entity.DomainModels.Erp;
 /// 1 受注 → 多 OrderDetail → 多 OrderProcess / OrderMaterial
 /// </remarks>
 [Table("T_Order")]
-public class Order : BaseBizEntity
+public class Order : BaseBizEntity, IAuditable
 {
     // ───── 業務主キー ─────
     /// <summary>Web受注NO（業務 PK、シーケンス自動採番）</summary>

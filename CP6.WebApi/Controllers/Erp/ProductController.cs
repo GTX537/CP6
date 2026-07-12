@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -90,6 +91,7 @@ public class ProductController : LocalizedControllerBase
 
     /// <summary>新建（登録）— POST /api/products</summary>
     [HttpPost]
+    [RequirePermission("erp-product", "add")]
     public async Task<IActionResult> Create([FromBody] ProductDto dto)
     {
         var cd = await _service.CreateAsync(dto, CurrentUser);
@@ -99,6 +101,7 @@ public class ProductController : LocalizedControllerBase
 
     /// <summary>修改（訂正）— PUT /api/products/{cd}</summary>
     [HttpPut("{cd}")]
+    [RequirePermission("erp-product", "edit")]
     public async Task<IActionResult> Update(string cd, [FromBody] ProductDto dto)
     {
         try
@@ -124,6 +127,7 @@ public class ProductController : LocalizedControllerBase
 
     /// <summary>逻辑删除 — DELETE /api/products/{cd}</summary>
     [HttpDelete("{cd}")]
+    [RequirePermission("erp-product", "del")]
     public async Task<IActionResult> Delete(string cd, [FromBody] DeleteRequest? req)
     {
         try
@@ -143,6 +147,7 @@ public class ProductController : LocalizedControllerBase
 
     /// <summary>复制新建 — POST /api/products/{cd}/copy</summary>
     [HttpPost("{cd}/copy")]
+    [RequirePermission("erp-product", "add")]
     public async Task<IActionResult> Copy(string cd)
     {
         try
