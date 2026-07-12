@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +45,7 @@ public class BusinessPartnerController : LocalizedControllerBase
 
     /// <summary>新規登録 — POST /api/business-partners?preRegister=true|false</summary>
     [HttpPost]
+    [RequirePermission("erp-business-partner", "add")]
     public async Task<IActionResult> Create([FromBody] BusinessPartnerDto dto, [FromQuery] bool preRegister = false)
     {
         try
@@ -60,6 +62,7 @@ public class BusinessPartnerController : LocalizedControllerBase
 
     /// <summary>訂正 — PUT /api/business-partners/{cd}</summary>
     [HttpPut("{bpCd}")]
+    [RequirePermission("erp-business-partner", "edit")]
     public async Task<IActionResult> Update(string bpCd, [FromBody] BusinessPartnerDto dto)
     {
         try
@@ -85,6 +88,7 @@ public class BusinessPartnerController : LocalizedControllerBase
     /// <summary>削除 — DELETE /api/business-partners/{cd}（管理者のみ）</summary>
     [HttpDelete("{bpCd}")]
     [Authorize(Roles = "1,Admin")]   // RoleId=1 = 管理者
+    [RequirePermission("erp-business-partner", "del")]
     public async Task<IActionResult> Delete(string bpCd, [FromBody] DeleteRequest? req = null)
     {
         try

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -58,6 +59,7 @@ public class PlateMoldController : LocalizedControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("erp-plate-mold", "add")]
     public async Task<IActionResult> Create([FromBody] PlateMoldDto dto)
     {
         var userName = User?.Identity?.Name;
@@ -76,6 +78,7 @@ public class PlateMoldController : LocalizedControllerBase
     }
 
     [HttpPut("{wdPtnNo}/revise")]
+    [RequirePermission("erp-plate-mold", "edit")]
     public async Task<IActionResult> Revise(string wdPtnNo, [FromBody] PlateMoldDto dto)
     {
         var userName = User?.Identity?.Name;
@@ -94,6 +97,7 @@ public class PlateMoldController : LocalizedControllerBase
     }
 
     [HttpPut("{wdPtnNo}/{wdRev:int}")]
+    [RequirePermission("erp-plate-mold", "edit")]
     public async Task<IActionResult> Update(string wdPtnNo, int wdRev, [FromBody] PlateMoldDto dto)
     {
         var userName = User?.Identity?.Name;
@@ -113,6 +117,7 @@ public class PlateMoldController : LocalizedControllerBase
     }
 
     [HttpDelete("{wdPtnNo}/{wdRev:int}")]
+    [RequirePermission("erp-plate-mold", "del")]
     public async Task<IActionResult> Delete(string wdPtnNo, int wdRev, [FromQuery] string? rowVersion = null)
     {
         var userName = User?.Identity?.Name;

@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,7 @@ public class EstimateCalcController : LocalizedControllerBase
     /// POST /api/estimate-calcs
     /// </summary>
     [HttpPost]
+    [RequirePermission("erp-estimate-calc", "add")]
     public async Task<IActionResult> Create([FromBody] EstimateCalcDto dto)
     {
         var no = await _service.CreateAsync(dto, CurrentUser);
@@ -63,6 +65,7 @@ public class EstimateCalcController : LocalizedControllerBase
     /// PUT /api/estimate-calcs/{no}
     /// </summary>
     [HttpPut("{no}")]
+    [RequirePermission("erp-estimate-calc", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] EstimateCalcDto dto)
     {
         try
@@ -92,6 +95,7 @@ public class EstimateCalcController : LocalizedControllerBase
     /// Body: { "rowVersion": "base64..." }
     /// </summary>
     [HttpDelete("{no}")]
+    [RequirePermission("erp-estimate-calc", "del")]
     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? req)
     {
         try
@@ -114,6 +118,7 @@ public class EstimateCalcController : LocalizedControllerBase
     /// POST /api/estimate-calcs/{no}/copy
     /// </summary>
     [HttpPost("{no}/copy")]
+    [RequirePermission("erp-estimate-calc", "add")]
     public async Task<IActionResult> Copy(string no)
     {
         try

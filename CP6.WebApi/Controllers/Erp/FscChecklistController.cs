@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -48,6 +49,7 @@ public class FscChecklistController : LocalizedControllerBase
 
     /// <summary>チェックシート発行 — POST /api/fsc-checklists/issue</summary>
     [HttpPost("issue")]
+    [RequirePermission("erp-fsc-checklist", "issue")]
     public async Task<IActionResult> Issue([FromBody] FscIssueRequestDto req)
     {
         try

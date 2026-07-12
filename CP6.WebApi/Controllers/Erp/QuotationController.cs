@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -52,6 +53,7 @@ public class QuotationController : LocalizedControllerBase
     /// POST /api/quotations
     /// </summary>
     [HttpPost]
+    [RequirePermission("erp-quotation", "add")]
     public async Task<IActionResult> Create([FromBody] QuotationDto dto)
     {
         var no = await _service.CreateAsync(dto, CurrentUser);
@@ -64,6 +66,7 @@ public class QuotationController : LocalizedControllerBase
     /// PUT /api/quotations/{no}
     /// </summary>
     [HttpPut("{no}")]
+    [RequirePermission("erp-quotation", "edit")]
     public async Task<IActionResult> Update(string no, [FromBody] QuotationDto dto)
     {
         try
@@ -97,6 +100,7 @@ public class QuotationController : LocalizedControllerBase
     /// DELETE /api/quotations/{no}
     /// </summary>
     [HttpDelete("{no}")]
+    [RequirePermission("erp-quotation", "del")]
     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? req)
     {
         try
@@ -123,6 +127,7 @@ public class QuotationController : LocalizedControllerBase
     /// POST /api/quotations/{no}/copy
     /// </summary>
     [HttpPost("{no}/copy")]
+    [RequirePermission("erp-quotation", "add")]
     public async Task<IActionResult> Copy(string no)
     {
         try
@@ -143,6 +148,7 @@ public class QuotationController : LocalizedControllerBase
     /// Body: { "qtnCalcNos": ["..."], "rowVersion": "base64" }
     /// </summary>
     [HttpPost("{no}/confirm")]
+    [RequirePermission("erp-quotation", "confirm")]
     public async Task<IActionResult> Confirm(string no, [FromBody] ConfirmRequest req)
     {
         try
@@ -172,6 +178,7 @@ public class QuotationController : LocalizedControllerBase
     /// POST /api/quotations/{no}/cancel-confirm
     /// </summary>
     [HttpPost("{no}/cancel-confirm")]
+    [RequirePermission("erp-quotation", "confirm")]
     public async Task<IActionResult> CancelConfirm(string no, [FromBody] DeleteRequest? req)
     {
         try
@@ -199,6 +206,7 @@ public class QuotationController : LocalizedControllerBase
     /// POST /api/quotations/{no}/issue
     /// </summary>
     [HttpPost("{no}/issue")]
+    [RequirePermission("erp-quotation", "issue")]
     public async Task<IActionResult> Issue(string no, [FromBody] IssueRequest req)
     {
         try

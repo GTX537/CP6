@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -36,6 +37,7 @@ public class SheetUnitPriceController : LocalizedControllerBase
     /// <summary>Excel 取込（multipart upload）— POST /api/sheet-unit-prices/import</summary>
     [HttpPost("import")]
     [RequestSizeLimit(50_000_000)] // 50 MB
+    [RequirePermission("erp-sheet-unit-price", "import")]
     public async Task<IActionResult> Import(
         IFormFile file,
         [FromForm] DateTime baseDate,
@@ -51,6 +53,7 @@ public class SheetUnitPriceController : LocalizedControllerBase
 
     /// <summary>選択行 一括更新（UPSERT） — PUT /api/sheet-unit-prices/batch-update</summary>
     [HttpPut("batch-update")]
+    [RequirePermission("erp-sheet-unit-price", "edit")]
     public async Task<IActionResult> BatchUpdate([FromBody] SheetPriceBatchUpdateDto request)
     {
         var userName = User?.Identity?.Name;
