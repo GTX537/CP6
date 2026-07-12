@@ -191,3 +191,11 @@ FIN G.1追补: complete (COA回填码单补年结依赖三行[CN 3103本年利�
 # ═══ FIN 部署完成 2026-07-12 (main=11f9978 镜像c6efe55a5804) ═══
 FIN 部署: complete (publish→删Local/Dev配置→薄镜像build 488MB→compose up cp6-api; 启动日志Application started+迁移无错; 种子线上实证=DEFAULT租户3103本年利润/3104未分配利润两行Creator=system[11f9978新码单当场生效]; B1/C1无COA正确跳过[不凭空建]. 三门: ①C.3存量成本单=1条非零→CS-2026-06-00001/WO2026060003/Status=2已结转JournalEntry非空/Material全零/2026-06-18 admin建=6月QA遗留, 已结不可重结风险低, 记票待用户裁处 ②磁盘=4.49GB✅(清理见下) ③Failed事件=0[SKIPPED 4/SUCCESS 7], 持续观察B1/C1)
 # 🔴运维事故与治本 2026-07-12: 7/11 12:16 WU下载2.8GB→C盘0字节→WSL swap vhdx I/O error→dockerd 22:40崩→全栈停机~2h(且WSL 15:20曾重启致keep-alive丢失, 每条wsl命令唤醒VM形成弹跳假象). 处置: WU缓存cmd rd清除(2848→42MB)+旧Claude CLI版本+npm缓存+diskpart compact vhdx(10.92→10.46GB), C盘0→4.49GB; keep-alive重拉+新增计划任务CP6-WSL-KeepAlive-Watchdog每5min幂等自愈(原ONLOGON任务无人登录不触发是单点). 遗留: pagefile 6GB可缩(需重启)/50GB系统盘结构性太紧建议扩容
+
+# ═══ AllowAnonymous 撤销 2026-07-12(用户裁决, main=ba33712) ═══
+撤匿名: complete (EstimateCalc.Calculate删AllowAnonymous回落类级Authorize不贴权限键仍留只读豁免; T4测试改写为防回潮断言(不再挂匿名+仍无RequirePermission+仍在豁免); 真相源§六#3记裁决; 前端grep=走共享axios withCredentials不破坏; 1716绿计数不变; 镜像立即重建部署, 线上验证calculate无认证403生效)
+
+# ═══ M-MES 横切接线波(branch=feat/m-mes-crosscutting, base=ba33712)2026-07-12 ═══
+# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md M-MES段 + docs/00-横切接线规范.md; 基线1716绿
+# 任务重排(照M-ERP): T1权限键清单→T2菜单MenuKey锚定+孤儿路由→T3a贴RequirePermission→T3b逐租户种子→T4反射测试→T5 IAuditable(WorkOrder/ProductionResult+顺手收跨波票Wms PlateMoldStock.MadeCost)→T6测试补网(报工状态机/PlanningBoard排产改期; 反冲测试F1已有)
+# 教训前置: T5审计豁免须字段级实查(M-ERP两轮返工); Mes目录实有11控制器(计划口径10, 以实扫为准)
