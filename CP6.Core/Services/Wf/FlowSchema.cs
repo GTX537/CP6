@@ -84,6 +84,10 @@ public class FlowNode
     // 重试策略(设计器口径:重试次数;映射到 job.MaxAttempts = retries + 1)
     public int? ServiceMaxRetries { get; set; }         // 默认 3(= 首次后再重试 3 次)
     public int? ServiceRetryBackoffSec { get; set; }    // 默认 30,指数退避基数
+
+    // ── 内核 hardening（spec §2.1，可空向后兼容） ──
+    /// <summary>分支驳回策略（仅 parallelSplit/inclusiveSplit 有意义）：null/"cascade"=连坐（现状）；"prune"=剪枝。</summary>
+    public string? OnBranchReject { get; set; }
 }
 
 public class FlowEdge

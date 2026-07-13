@@ -107,6 +107,36 @@ public static class FlowSchemaValidator
         if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
         if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
 
+        // ⑩ inclusive 网关（hardening E-WF-020/021）
+        // E-WF-020：inclusiveSplit 出边（非错误边）须 ≥2 且恰好一条无条件 default 兜底边
+        foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivesplit"))
+        {
+            var outs = schema.Edges.Where(e => e.From == n.Id && e.IsError != true).ToList();
+            var dflt = outs.Count(e => string.IsNullOrWhiteSpace(e.Condition));
+            if (outs.Count < 2 || dflt != 1) { errs.Add("E-WF-020"); break; }
+        }
+
+        // E-WF-021a：每个 inclusiveSplit 的最近公共汇聚须存在且类型为 inclusiveJoin
+        var pairedJoinIds = new HashSet<string>();
+        foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivesplit"))
+        {
+            var join = FlowGraph.NearestCommonJoin(schema, n);
+            if (join is null || T(join) != "inclusivejoin") { errs.Add("E-WF-021"); continue; }
+            pairedJoinIds.Add(join.Id);
+        }
+        // E-WF-021b：inclusiveJoin 入边 ≥2 且被至少一个 inclusiveSplit 配对（孤立 join 报错）
+        foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivejoin"))
+            if (schema.Edges.Count(e => e.To == n.Id) < 2 || !pairedJoinIds.Contains(n.Id))
+            { errs.Add("E-WF-021"); break; }
+        // E-WF-021c：onBranchReject 值域 ∈ {cascade, prune}（大小写不敏感）且仅允许写在 split 型节点上
+        foreach (var n in schema.Nodes)
+        {
+            if (string.IsNullOrWhiteSpace(n.OnBranchReject)) continue;
+            var v = n.OnBranchReject.Trim().ToLowerInvariant();
+            bool onSplit = T(n) is "parallelsplit" or "inclusivesplit";
+            if (!onSplit || (v != "cascade" && v != "prune")) { errs.Add("E-WF-021"); break; }
+        }
+
         // ④ 从 start 可达某 end（BFS）
         var start = schema.Nodes.FirstOrDefault(n => T(n) == "start");
         if (start is not null)
