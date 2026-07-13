@@ -1,0 +1,739 @@
+# Review package: 1992d2c..HEAD
+
+## Commits
+180eca6 feat(wfs-hardening): D-T1 designerModel palette两入口+onBranchReject round-trip+validateClient E-WF-020/021镜像+通知类型镜像
+
+## Files changed
+ .superpowers/sdd/task-DT1-brief.md                 | 354 ++++++++++++++++++---
+ .superpowers/sdd/task-DT1-report.md                |  87 ++---
+ cp6.web/src/types/oa/notification.ts               |   1 +
+ .../oa/designer/designerModel.hardening.test.ts    |  90 ++++++
+ .../src/views/oa/designer/designerModel.test.ts    |   2 +-
+ cp6.web/src/views/oa/designer/designerModel.ts     |  60 ++++
+ 6 files changed, 497 insertions(+), 97 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-DT1-brief.md b/.superpowers/sdd/task-DT1-brief.md
+index 3e34c90..df85491 100644
+--- a/.superpowers/sdd/task-DT1-brief.md
++++ b/.superpowers/sdd/task-DT1-brief.md
+@@ -1,52 +1,330 @@
+-# Task D-T1: designerModel — NODE_PALETTE 3 入口 + Service*/IsError round-trip + validateClient(vitest 可测核心)
+-
+-（摘自 docs/superpowers/plans/2026-06-29-wfs-service-task.md；spec 章节 §5.1；D 波纪律：视图全用 `t()` 运行时键，免重生 keys.generated；TS 类型加在 designerModel；每 Task 跑 `npm run test`(vitest) + `npm run type-check`）
++### Task D-T1: designerModel — palette 2 入口 + onBranchReject round-trip + validateClient 镜像 + notification 类型镜像
+ 
+ **Files:**
+ - Modify: `cp6.web/src/views/oa/designer/designerModel.ts`
+-- Test: `cp6.web/src/views/oa/designer/__tests__/designerModel.serviceTask.spec.ts`(或既有 designerModel spec 同目录)
++- Modify: `cp6.web/src/views/oa/designer/designerModel.test.ts`（仅 :45 palette 类型清单断言随扩展更新——该断言即「palette 全集清单」，非行为不变量）
++- Modify: `cp6.web/src/types/oa/notification.ts`
++- Test: `cp6.web/src/views/oa/designer/designerModel.hardening.test.ts`
+ 
+ - [ ] **Step 1: 写失败 vitest**
+ 
+ ```ts
++// cp6.web/src/views/oa/designer/designerModel.hardening.test.ts
+ import { describe, it, expect } from 'vitest'
+-import { schemaToGraph, graphToSchema, validateClient, NODE_PALETTE } from '../designerModel'
+-
+-describe('serviceTask round-trip', () => {
+-  it('palette has 3 serviceTask entries', () => {
+-    const st = NODE_PALETTE.filter(p => p.type === 'serviceTask')
+-    expect(st.map(p => (p as any).kind).sort()).toEqual(['dataWriteback','timer','webApi'])
+-  })
+-  it('schemaToGraph/graphToSchema preserves Service* fields', () => {
+-    const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'webApi', serviceMode:'async',
+-      serviceConnectorName:'erpEcho', servicePath:'/o', serviceParamsJson:'{}', serviceMaxRetries:3 }],
+-      edges:[{ from:'s', to:'e', isError:true }] }
+-    const back = graphToSchema(schemaToGraph(schema as any))
+-    expect(back.nodes[0].serviceKind).toBe('webApi')
+-    expect(back.nodes[0].serviceConnectorName).toBe('erpEcho')
+-    expect(back.edges[0].isError).toBe(true)
+-  })
+-  it('validateClient flags incomplete serviceTask', () => {
+-    const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'webApi' /* 缺 connector/path */ }], edges:[] }
+-    const errs = validateClient(schema as any)
+-    expect(errs.some(e => e.includes('errServiceConfig') || e.includes('服务'))).toBe(true)
++import { schemaToGraph, graphToSchema, validateClient, NODE_PALETTE } from './designerModel'
++import type { FlowSchemaDto } from './designerModel'
++
++describe('inclusive gateway & branch-reject (kernel hardening)', () => {
++  it('palette has inclusiveSplit/inclusiveJoin entries', () => {
++    expect(NODE_PALETTE.some(p => p.type === 'inclusiveSplit')).toBe(true)
++    expect(NODE_PALETTE.some(p => p.type === 'inclusiveJoin')).toBe(true)
++  })
++
++  it('onBranchReject round-trips through graph conversion', () => {
++    const schema: FlowSchemaDto = {
++      start: 's',
++      nodes: [
++        { id: 's', type: 'start' },
++        { id: 'g', type: 'parallelSplit', onBranchReject: 'prune' },
++      ],
++      edges: [{ from: 's', to: 'g' }],
++    }
++    const back = graphToSchema(schemaToGraph(schema))
++    expect(back.nodes.find(n => n.id === 'g')?.onBranchReject).toBe('prune')
++  })
++
++  const incBase = (): FlowSchemaDto => ({
++    start: 's',
++    nodes: [
++      { id: 's', type: 'start' },
++      { id: 'g', type: 'inclusiveSplit' },
++      { id: 'a', type: 'approval', approverStrategy: 'Starter' },
++      { id: 'd', type: 'approval', approverStrategy: 'Starter' },
++      { id: 'j', type: 'inclusiveJoin' },
++      { id: 'e', type: 'end' },
++    ],
++    edges: [
++      { from: 's', to: 'g' },
++      { from: 'g', to: 'a', condition: 'x > 0' },
++      { from: 'g', to: 'd' },                          // default
++      { from: 'a', to: 'j' }, { from: 'd', to: 'j' },
++      { from: 'j', to: 'e' },
++    ],
++  })
++
++  it('valid inclusive pair passes', () => {
++    expect(validateClient(incBase())).toEqual([])
++  })
++
++  it('missing default edge -> errInclusiveDefault (E-WF-020 mirror)', () => {
++    const s = incBase()
++    s.edges.find(e => e.from === 'g' && e.to === 'd')!.condition = 'y > 0'
++    expect(validateClient(s)).toContain('oa.designer.errInclusiveDefault')
++  })
++
++  it('two default edges -> errInclusiveDefault', () => {
++    const s = incBase()
++    s.edges.find(e => e.from === 'g' && e.to === 'a')!.condition = undefined
++    expect(validateClient(s)).toContain('oa.designer.errInclusiveDefault')
++  })
++
++  it('paired with parallelJoin -> errInclusivePair (E-WF-021 mirror)', () => {
++    const s = incBase()
++    s.nodes.find(n => n.id === 'j')!.type = 'parallelJoin'
++    expect(validateClient(s)).toContain('oa.designer.errInclusivePair')
++  })
++
++  it('orphan inclusiveJoin -> errInclusivePair', () => {
++    const s: FlowSchemaDto = {
++      start: 's',
++      nodes: [
++        { id: 's', type: 'start' },
++        { id: 'a', type: 'approval', approverStrategy: 'Starter' },
++        { id: 'j', type: 'inclusiveJoin' },
++        { id: 'e', type: 'end' },
++      ],
++      edges: [
++        { from: 's', to: 'a' }, { from: 'a', to: 'j' }, { from: 's', to: 'j' },
++        { from: 'j', to: 'e' },
++      ],
++    }
++    expect(validateClient(s)).toContain('oa.designer.errInclusivePair')
++  })
++
++  it('onBranchReject bad value / wrong node -> errBranchReject (E-WF-021c mirror)', () => {
++    const s1 = incBase()
++    s1.nodes.find(n => n.id === 'g')!.onBranchReject = 'explode' as any
++    expect(validateClient(s1)).toContain('oa.designer.errBranchReject')
++    const s2 = incBase()
++    s2.nodes.find(n => n.id === 'a')!.onBranchReject = 'prune'
++    expect(validateClient(s2)).toContain('oa.designer.errBranchReject')
+   })
+ })
+ ```
+ 
+-- [ ] **Step 2: 跑验证 FAIL** — `cd cp6.web && npm run test -- designerModel.serviceTask`。
+-- [ ] **Step 3: 实现** — `designerModel.ts`:
+-  - NODE_PALETTE 加 spec §5.1 三入口(`{type:'serviceTask', kind:'dataWriteback'|'webApi'|'timer', label, color}`)。
+-  - TS `SchemaNode` 加可选 `serviceKind?/serviceMode?/serviceActionName?/serviceConnectorName?/servicePath?/serviceParamsJson?/serviceDelayMode?/serviceDelayValue?/serviceMaxRetries?/serviceRetryBackoffSec?`;`SchemaEdge` 加 `isError?`。
+-  - `schemaToGraph`/`graphToSchema`:把这些字段读/写到节点 data / edge data(round-trip);调色板落点时按 kind 预置 `serviceKind`。
+-  - `validateClient`:serviceTask 缺必填(webApi 缺 connector/path、dataWriteback 缺 action、timer 缺 delay)→ push `errServiceConfig` 文案(镜像后端 E-WF-016)。
+-- [ ] **Step 4: PASS + `npm run type-check`**。
+-- [ ] **Step 5: commit** — `git commit -m "feat(wfs-service-task): D-T1 designerModel 调色板+Service*/IsError round-trip+validateClient"`
++- [ ] **Step 2: 跑验证 FAIL** — `cd cp6.web && npm run test -- designerModel.hardening`。
++
++- [ ] **Step 3: 实现** — `designerModel.ts`：
++
++`SchemaNode` 接口服务任务字段块后加：
++
++```ts
++  // 内核 hardening：分支驳回策略（仅 parallelSplit/inclusiveSplit；镜像后端 FlowNode.OnBranchReject，camelCase 契约）
++  onBranchReject?: 'cascade' | 'prune'
++```
++
++`NODE_PALETTE` 在 `parallelJoin` 条目后加两行（沿既有条目风格；色彩由组件层 `.dot-<type>` token 决定，不带 color 字段——对齐 serviceTask 先例注释）：
++
++```ts
++  { type: 'inclusiveSplit', label: '包容分叉' },
++  { type: 'inclusiveJoin',  label: '包容汇聚' },
++```
++
++`validateClient` 末尾（serviceTask 校验块之后、`return errs` 之前）加镜像块——**与后端逐条对齐，不多不少**（E-WF-020 ↔ errInclusiveDefault；E-WF-021a/b ↔ errInclusivePair；E-WF-021c ↔ errBranchReject）：
++
++```ts
++  // ── inclusive 网关镜像（后端 E-WF-020/021，kernel hardening）──
++  const nodeType = (id: string) => nodes.find(n => n.id === id)?.type
++  const isJoinType = (ty?: string) => ty === 'parallelJoin' || ty === 'inclusiveJoin'
++  const bfsDepths = (from: string): Map<string, number> => {
++    const depth = new Map<string, number>([[from, 0]])
++    const q = [from]
++    while (q.length) {
++      const cur = q.shift()!
++      for (const e of edges.filter(e => e.from === cur))
++        if (!depth.has(e.to)) { depth.set(e.to, depth.get(cur)! + 1); q.push(e.to) }
++    }
++    return depth
++  }
++  const nearestCommonJoin = (splitId: string): string | undefined => {
++    const outs = edges.filter(e => e.from === splitId && !e.isError)
++    if (!outs.length) return undefined
++    const sets = outs.map(e => new Set(bfsDepths(e.to).keys()))
++    const common = [...sets[0]!].filter(id => sets.every(s => s.has(id)))
++    const depths = bfsDepths(splitId)
++    let best: string | undefined
++    let bestD = Infinity
++    for (const id of common) {
++      const d = depths.get(id) ?? Infinity
++      if (isJoinType(nodeType(id)) && d < bestD) { best = id; bestD = d }
++    }
++    return best
++  }
++  // E-WF-020 镜像：inclusiveSplit 出边 ≥2 且恰好一条无条件 default 边
++  for (const n of nodes) {
++    if (n.type !== 'inclusiveSplit') continue
++    const outs = edges.filter(e => e.from === n.id && !e.isError)
++    const dflt = outs.filter(e => !e.condition?.trim())
++    if (outs.length < 2 || dflt.length !== 1) { errs.push('oa.designer.errInclusiveDefault'); break }
++  }
++  // E-WF-021a/b 镜像：split 最近公共汇聚须为 inclusiveJoin；inclusiveJoin 入边≥2 且被配对
++  const pairedJoins = new Set<string>()
++  let pairBad = false
++  for (const n of nodes) {
++    if (n.type !== 'inclusiveSplit') continue
++    const j = nearestCommonJoin(n.id)
++    if (!j || nodeType(j) !== 'inclusiveJoin') { pairBad = true; continue }
++    pairedJoins.add(j)
++  }
++  for (const n of nodes) {
++    if (n.type !== 'inclusiveJoin') continue
++    if (edges.filter(e => e.to === n.id).length < 2 || !pairedJoins.has(n.id)) pairBad = true
++  }
++  if (pairBad) errs.push('oa.designer.errInclusivePair')
++  // E-WF-021c 镜像：onBranchReject 值域 + 只许写在 split 型节点
++  for (const n of nodes) {
++    if (n.onBranchReject == null) continue
++    const ok = (n.type === 'parallelSplit' || n.type === 'inclusiveSplit')
++      && (n.onBranchReject === 'cascade' || n.onBranchReject === 'prune')
++    if (!ok) { errs.push('oa.designer.errBranchReject'); break }
++  }
++```
++
++`designerModel.test.ts` :45 断言更新为（**本计划唯一允许的既有测试改动**，随 palette 全集扩展）：
++
++```ts
++    expect([...new Set(NODE_PALETTE.map(p => p.type))].sort())
++      .toEqual(['approval', 'end', 'inclusiveJoin', 'inclusiveSplit', 'parallelJoin', 'parallelSplit', 'serviceTask', 'start'])
++```
++
++`types/oa/notification.ts` 的 `NotificationType` 常量加：
++
++```ts
++  BranchPruned: 5,
++```
++
++- [ ] **Step 4: 跑验证 PASS** — `npm run test`（320+N 全绿）+ `npm run type-check`。
++- [ ] **Step 5: commit**
++
++```bash
++git add -A && git commit -m "feat(wfs-hardening): D-T1 designerModel palette两入口+onBranchReject round-trip+validateClient E-WF-020/021镜像+通知类型镜像"
++```
++
++## 落码纪律 / Global Constraints（每个 Task 都遵守）
++
++- **基线锁定**：后端 `dotnet test CP6.Tests/CP6.Tests.csproj` = **1509 通过（5 skip=SQLite 既知）** → 本波只增不减、全绿；前端 `npm run test`（vitest）= **320 全绿** → +N 全绿；`npm run type-check`（package.json 既有命令，含大堆内存参数）+ `npm run build` 全过。
++- **EF clean（本波零迁移）**：只改 SchemaJson POCO（`FlowNode.OnBranchReject`）+ 常量（`FlowTokenStatus.Pruned`），**不加实体列、不生成迁移**。每波末跑 `dotnet ef migrations has-pending-model-changes --project CP6.Core/CP6.Core.csproj --startup-project CP6.WebApi/CP6.WebApi.csproj --context CP6Context` 必须 clean。
++- **27 个既有 Wf 不变量测试一个断言不许改**（`CP6.Tests/Wf/**` 既有文件只增不改；`ParallelGatewayTests` 4+1 个并行语义测试是动态计票的等价性铁闸）。唯一例外见 D-T1：前端 `designerModel.test.ts:45` 的 palette 类型清单断言随 palette 扩展同步更新（前端测试不在 27 不变量范围，且该断言就是「palette 全集清单」本身）。
++- **默认路径行为与现状全等**：无 inclusive 节点 + 无 onBranchReject 配置的流程，token 状态序列 / 任务 / FormTo / 通知 bit 级等价（cascade 一行不改、动态计票旧场景回归锁定、线性退回走既有全清场分支逐字保留）。
++- **引擎内写路径三律（黄金模板铁律）**：① 先校验后写（一切结构化拒绝在任何状态突变之前抛出）；② 幂等（join 计数重入安全、已办任务再办 no-op）；③ handler/引擎内部方法**绝不自行 SaveChanges**（统一由 ActAsync/SendBackAsync 等外壳收口，剪枝/退回全部改动随既有 SaveChanges 落库）。
++- **E 波紧跟 D 波不留窗口**：D-T2 合入后立即执行 E-T1/E-T2，不允许「有 UI 无 i18n/无 QA」的中间态过夜。
++- **零跨模块污染**：不碰 `cp6.web/src/views/space/**`、`Services/*Space*`、Space 迁移/DbSet。每 Task 完成 `git show --stat` 复核。
++- **零硬编码色**：前端新增视觉全部走 Design System token（`var(--cp-warn)` 家族等），沿 `DesignerCanvas.vue` `.dot-*` / `GatewayNode.vue` 既有 token 用法。
++- **五语 i18n**：ja / zh-CN / zh-TW / en / ko，新 UI 文案全 `t()` 运行时键，键值入 `I18nOa*ScreenSeed` 家族新 seed。
++- **隔离 worktree**：建议 `git worktree add C:/CP6-wfs-hardening -b feat/wfs-kernel-hardening main`（off `fb90d75`），不污染 `C:\CP6` 工作区。
++- **subagent-driven TDD**：每 Task 全新编码子代理（模型按 model-policy：Opus 4.8）→ 主代理 `git show` diff 复核 → 本地 commit **不 push**。节奏：先写失败测试 → 跑验证 FAIL → 最小实现 → 跑验证 PASS → commit。提交信息 `feat(wfs-hardening): <Task 号> 中文摘要`。
++
++---
++
++## 侦察结论（spec §5.3 各核实项，已实读代码定案 —— 执行者照此实现，不再二次侦察）
++
++| 核实项 | 结论 |
++|---|---|
++| §4.1 **split 节点定位机制** | `Wf_FlowToken`（`CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs`）**没有** split nodeId 列，只有 `ParentTokenId`/`ForkId`/`StagePlanJson`。选定 **ParentTokenId 上溯**：分叉时 `ParallelSplitNodeHandler.cs:21` 以 `parent: ctx.Token.Id` 生子 token，而 ctx.Token 在被消费前 NodeId 已被 `AdvanceToken`（`FlowEngine.Tokens.cs:102`）置为 split 节点 id、`ConsumeToken` 不改 NodeId ⇒ **`ForkParent(t)`（Id==t.ParentTokenId 的 token）.NodeId 恒等于生成 t.ForkId 批次的 split 节点 id**。join 续 token 的「上弹一层」血缘（`ParallelJoinNodeHandler.cs:25-27`）保证该不变量对每层 fork 成立。零迁移。 |
++| §5.3 **SendBackToNodeAsync 重生血缘现状** | `AdvancedFlow.cs:141` — `SpawnToken(inst, target, parent: null, fork: null)`，**血缘归零**（根 token）。SameBranch 规则必须改为携带剥离层血缘 `(parent: strip.ParentTokenId, fork: strip.ForkId)`；BeforeSplit/线性流保留归零重生（现状逐字）。 |
++| §5.3 **CancelAllActiveTokens 过滤重载** | `FlowEngine.Tokens.cs:40` 现为全实例清场（含 B-T3 的 Pending Wf_ServiceJob 清场）、无过滤参数。不改它；**新增 `CancelTokenSubtree(Guid instanceId, Guid rootTokenId)`**（C-T2）：按 ParentTokenId 闭包算子树，子树内 Active token→Cancelled、Pending/Suspended 任务→Cancelled、Pending FormTo→Voided、Pending ServiceJob→Cancelled（镜像既有 Local ∪ DB localIds-exclusion 惯用法）。**子树闭包正确性论证**：join 续 token 血缘「上弹一层」（parent=祖父），故任何仍在途的分支延续 token 会重新挂在剥离层同级 —— 作用域分析（C-T1）从 current token 血缘出发选剥离层时选到的正是该延续 token 本身，ParentTokenId 后代闭包捕获全部需清场的活 token（C-T3 嵌套测试锁定）。 |
++| §5.3 **StageRound 递增与局部退回相容性** | `NextStageRound`（`FlowEngine.ReadModel.cs:53`）按 `(instanceId, nodeId, tokenId, stageIndex)` 键控取 Max+1。SameBranch 重生的是**新 tokenId** ⇒ 新 token 串簽轮次从 0 起，与现状全清场重生同构，**天然相容，零改**。prevStage 退回不换 token（`AdvancedFlow.cs:161-163`），轮次 +1 语义不受本波影响。 |
++| §5.3 **剥离层判定与 fork 栈共用血缘辅助** | 新 `TokenLineage` 静态类（A-T1）：`AncestorChain` / `CrossesFork` / `ForkParent` / `ForkStack`。剪枝递归上弹（B-T2/B-T3）与退回剥离层解析（C-T1）共用，单一口径。token 快照沿用 `ParallelJoinNodeHandler.AllTokens` 的 Local ∪ DB 身份映射去重口径，抽为 `FlowEngine.SnapshotTokens`（A-T1）。 |
++| **计票退化护栏（计划期新发现）** | 旧静态计票在「join 被 ForkId==null 的线性 token 进入」的怪异 schema 下按入边数计（等不齐永停）；朴素动态判据会立即放行 ⇒ 行为漂移。定案：`GatewayJoinHelper` 对 **ForkId==null 保留旧静态入边计票路径**，bit 级等价（A-T2 专测锁定）。 |
++| **剪后补放行 ≠ 全剪光（计划期新发现）** | 剪枝后 join 若齐批放行，同批 token 全部 Consumed、续 token 属上层批次 ⇒ 「无 Active 穿过本批次」也成立，若不加判别会误判全剪光递归驳回。定案：补放行探测中**检测到任一停泊 token 重入后变为 Consumed（即 join 已放行）则立即返回**，不再走全剪光检查（B-T2 `Prune_JoinBackfill_*` 锁定）。 |
++
++**发现的 spec 与代码现状出入（不改 spec，按下述口径落码）**：
++1. spec §5.2 称 BeforeSplit 为「现行为」——实际现状是 `CrossesParallelBlock`（`AdvancedFlow.cs:196`）对一切跨网关退回直接拒绝 E-WF-012，并非允许后全清场。本波 BeforeSplit = **放开该禁令后套用既有全清场机制**（行为上是新放开的能力，机制逐字复用现状代码块）。既有测试无「跨并行块拒绝」断言（已 grep 核实），无不变量冲突。
++2. spec §4.2.2 通知联动信箱 spec 偏好矩阵——`PersistentWfNotifier` 现按 `NotificationPrefs` 强类型字段开关，无 BranchPruned 键。本波 `BranchPrunedAsync` **不查偏好开关**（等价信箱 spec「缺键默认 true」三态坍缩），偏好矩阵接管由信箱 spec 落地时统一改造。
++3. spec §1 的 FlowEngine 行号锚点有 ±10 行漂移（办理实际在 `ActOnceAsync :136`、会签计票 `:169-177`、驳回连坐 `:221-226`），语义描述全部核实无误。
++
++---
++
++## File Structure（创建/修改清单，每文件一职责）
++
++**后端 `CP6.Core/Services/Wf`**
++- Modify `WfStatus.cs` — `FlowTokenStatus` 加 `Pruned = 3`。
++- Modify `FlowSchema.cs` — `FlowNode` 加 `public string? OnBranchReject { get; set; }`。
++- Create `TokenLineage.cs` — 血缘辅助纯函数（AncestorChain/CrossesFork/ForkParent/ForkStack）。
++- Create `FlowGraph.cs` — schema 图论辅助（ReachableFrom/BfsDepths/NearestCommonJoin/BranchDomain）。
++- Modify `FlowEngine.Tokens.cs` — 新增 `SnapshotTokens` / `CancelTokenSubtree` / `CancelPendingTasksOfToken` / `CancelPendingServiceJobsOfToken`。
++- Create `NodeHandlers/GatewayJoinHelper.cs` — 双 join 共享动态计票放行（D4）。
++- Modify `NodeHandlers/ParallelJoinNodeHandler.cs` — 委托 GatewayJoinHelper（删私有 AllTokens/静态计票）。
++- Create `NodeHandlers/InclusiveSplitNodeHandler.cs` — 第 7 个 handler。
++- Create `NodeHandlers/InclusiveJoinNodeHandler.cs` — 第 8 个 handler。
++- Modify `FlowEngine.cs` — `DefaultHandlers()` 加 2 handler；`ActOnceAsync` 驳回分支加 prune 分流（cascade 一行不改）。
++- Create `FlowEngine.Prune.cs` — partial：`TryPruneBranchAsync`/`PruneTokenAsync`/`ReleaseOrCollapseAsync`/`FindSplitNode`/`IsPrune`/`IsJoinType`。
++- Create `SendBackScopeAnalyzer.cs` — `SendBackScope` 枚举 + `Analyze` 纯函数。
++- Modify `AdvancedFlow.cs` — `SendBackToNodeAsync` 三规则接线（删 `CrossesParallelBlock`/`NodesBetween`）。
++- Modify `FlowSchemaValidator.cs` — E-WF-020 / E-WF-021 规则。
++- Modify `IWfNotifier.cs` — 加 `BranchPrunedAsync` + `NullWfNotifier` 实现。
++
++**后端其他**
++- Modify `CP6.Entity/DomainModels/Wf/WfNotificationType.cs` — 加 `BranchPruned = 5`。
++- Modify `CP6.WebApi/Services/PersistentWfNotifier.cs` — `BranchPrunedAsync` 三渠道实现。
++- Modify `CP6.WebApi/Services/SignalRWfNotifier.cs` — `BranchPrunedAsync` no-op（接口补全）。
++- Modify `CP6.WebApi/Program.cs` — DI 注册 2 个新 INodeHandler（:113 后）；i18n concat（:1819 链尾）。
++- Create `CP6.WebApi/Seed/I18nOaKernelHardeningScreenSeed.cs` — 五语 12 键。
++
++**前端 `cp6.web/src`**
++- Modify `views/oa/designer/designerModel.ts` — `SchemaNode.onBranchReject` + palette 2 入口 + validateClient E-WF-020/021 镜像。
++- Modify `views/oa/designer/designerModel.test.ts` — :45 palette 类型清单断言补 2 类型。
++- Create `views/oa/designer/designerModel.hardening.test.ts` — 新 vitest。
++- Create `views/oa/designer/nodes/InclusiveGatewayNode.vue` — 空心圆菱形节点（BPMN 惯例）。
++- Modify `views/oa/designer/DesignerCanvas.vue` — 注册 2 节点模板 + palette 空心 dot 样式。
++- Modify `views/oa/designer/NodePropertyPanel.vue` — 「分支驳回策略」段（parallelSplit/inclusiveSplit）。
++- Modify `types/oa/notification.ts` — `NotificationType.BranchPruned = 5` 镜像。
++
++**测试 / QA**
++- Create `CP6.Tests/Wf/TokenLineageTests.cs` / `DynamicJoinCountTests.cs` / `InclusiveGatewayTests.cs` / `InclusiveValidatorTests.cs` / `BranchPruneTests.cs` / `BranchPruneNestedTests.cs` / `SendBackScopeTests.cs` / `TokenSubtreeCancelTests.cs` / `SendBackThreeRuleTests.cs`。
++- Modify `CP6.Tests/Oa/NotificationEngineHookTests.cs` — `CountingNotifier` 补 `BranchPrunedAsync` 计数。
++- Create `docs/superpowers/qa/wfs-kernel-hardening/{README.md,seed.sql,qa_kernel_hardening.ps1}` — gstack harness。
++
++---
++
++## 共享契约（所有 Task 用这些**精确**名字与签名，前后一致，不许漂移）
++
++```csharp
++// WfStatus.cs
++public const int Pruned = 3;                                  // FlowTokenStatus 新常量
++
++// FlowSchema.cs / FlowNode
++public string? OnBranchReject { get; set; }                   // null/"cascade"=连坐(现状)；"prune"=剪枝
++
++// TokenLineage.cs（internal static class TokenLineage）
++public static IEnumerable<Wf_FlowToken> AncestorChain(IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken t);
++public static bool CrossesFork(IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken t, Guid forkId);
++public static Wf_FlowToken? ForkParent(IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken t);
++public static List<(Wf_FlowToken BranchToken, Guid ForkId, string SplitNodeId)> ForkStack(
++    IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken t);          // 内→外
++
++// FlowGraph.cs（internal static class FlowGraph）
++public static FlowNode? NearestCommonJoin(FlowSchema schema, FlowNode split);
++public static HashSet<string> ReachableFrom(FlowSchema schema, string startId);
++public static HashSet<string> BranchDomain(FlowSchema schema, string edgeTargetId, string pairedJoinId);
++
++// FlowEngine.Tokens.cs（partial FlowEngine）
++internal IReadOnlyList<Wf_FlowToken> SnapshotTokens(Guid instanceId);          // Local ∪ DB 去重快照
++internal void CancelTokenSubtree(Guid instanceId, Guid rootTokenId);           // 剥离层子树清场
++
++// NodeHandlers/GatewayJoinHelper.cs
++internal static class GatewayJoinHelper { public static Task TryReleaseAsync(NodeContext ctx, string historyAction); }
++
++// FlowEngine.Prune.cs（partial FlowEngine）
++internal Task<bool> TryPruneBranchAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken token, Guid actorId, string? comment);
++internal static FlowNode? FindSplitNode(FlowSchema schema, IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken token);
++internal static bool IsPrune(FlowNode split);
++
++// SendBackScopeAnalyzer.cs
++public enum SendBackScope { SameBranch, BeforeSplit, SiblingBranch }
++public static (SendBackScope Scope, Wf_FlowToken? StripToken) Analyze(
++    FlowSchema schema, IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken current,
++    string currentNodeId, string targetNodeId);                // 结构不可判定 → throw E-WF-012
++
++// IWfNotifier.cs / WfNotificationType.cs
++Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment);
++public const int BranchPruned = 5;
++```
++
++- 节点类型串：`"inclusiveSplit"` / `"inclusiveJoin"`（比较一律 OrdinalIgnoreCase，对齐 `EnterNodeAsync` 的 ToLowerInvariant 分发）。
++- 履历 action：`"inclusiveSplit"` / `"inclusiveJoin"` / `"branchPruned"`；退回沿用 `"sendback"`。
++- 错误码：**E-WF-019**（运行时，退回兄弟支拒绝）/ **E-WF-020**（静态，inclusive default 边）/ **E-WF-021**（静态，配对 + onBranchReject 值域/落点）。
++- 前端 i18n 键：`oa.designer.gw.inclusiveSplit|inclusiveJoin|branchReject|branchReject.cascade|branchReject.prune|branchRejectHint`、`oa.designer.errInclusiveDefault|errInclusivePair|errBranchReject`、`E-WF-019|E-WF-020|E-WF-021`（12 键五语）。
+ 
+-## 注意（OA UI 迁移 2026-07-05 后补充）
+-- designerModel.ts 刚经历 UI token 化（OA 批次4）：NODE_PALETTE 的 color 字段已裁定为死字段被消除、只留 label 被消费（DesignerCanvas 不读 color）。新增三入口时**跟随现状**：若现 NODE_PALETTE 项无 color 字段就不要加回，调色板色彩由组件层 token 决定。落地前先读现文件确认结构。
+-- type-check 用堆 8192：`$env:NODE_OPTIONS='--max-old-space-size=8192'`（4096 会 OOM）。
++---
+ 
+-## 落码纪律
+-- 工作目录 `C:\CP6`，分支 `feat/wfs-service-task-finish`。本地 commit 不 push。
+-- 零 Space 污染。TDD 节奏。视图文案全 `t()` 运行时键。
+diff --git a/.superpowers/sdd/task-DT1-report.md b/.superpowers/sdd/task-DT1-report.md
+index 143dc0d..540a411 100644
+--- a/.superpowers/sdd/task-DT1-report.md
++++ b/.superpowers/sdd/task-DT1-report.md
+@@ -1,58 +1,29 @@
+-# Task D-T1 Report — designerModel 调色板 + Service*/IsError round-trip + validateClient
+-
+-**Status:** DONE
+-**Branch:** feat/wfs-service-task-finish (local commit, not pushed)
+-**Commit:** f56bf7d `feat(wfs-service-task): D-T1 designerModel 调色板+Service*/IsError round-trip+validateClient`
+-
+-## 改动文件清单
+-1. `cp6.web/src/views/oa/designer/designerModel.ts` (M) — 类型、NODE_PALETTE、round-trip、validateClient。
+-2. `cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts` (新增) — brief Step 1 的 3 个测试（逐字，仅补 `!` 非空断言）。
+-3. `cp6.web/src/views/oa/designer/designerModel.test.ts` (M) — 既有 palette-count 断言随新增节点类型更新（见自查）。
+-
+-放置目录说明：既有 spec 实际位于 `designer/designerModel.test.ts`，**无 `__tests__` 子目录**。brief 允许「或既有 designerModel spec 同目录」，故新 spec 放同级 `designer/designerModel.serviceTask.spec.ts`，跟随现状不新建目录。
+-
+-## 测试命令与输出摘要
+-- `npm run test -- designerModel.serviceTask`（Step 2，实现前）→ **3 failed**（`graphToSchema` 单参 TypeError + validateClient 未 push）。符合预期红。
+-- `npm run test -- designerModel`（Step 4）→ **2 files / 12 tests passed**（9 既有 + 3 新）。全绿。
+-- `NODE_OPTIONS=--max-old-space-size=8192 npm run type-check`（vue-tsc --build）→ 首轮 3 处 TS2532（brief 逐字测试触发 noUncheckedIndexedAccess），补 `!` 后 → **exit 0，无错误**。
+-
+-## SchemaNode / SchemaEdge 类型决策
+-- 字段命名跟随现状：交换 JSON 用 **camelCase**（现 SchemaNode/SchemaEdge 全 camelCase），镜像后端 PascalCase 的 `Service*`/`IsError`。
+-- SchemaNode 新增 10 个可选字段（全部 `?`，与 brief 字段清单逐字一致）：`serviceKind?('dataWriteback'|'webApi'|'timer' 联合)`、`serviceMode?`、`serviceActionName?`、`serviceConnectorName?`、`servicePath?`、`serviceParamsJson?`、`serviceDelayMode?`、`serviceDelayValue?(number)`、`serviceMaxRetries?(number)`、`serviceRetryBackoffSec?(number)`。
+-- SchemaEdge 新增 `isError?: boolean`。
+-- **节点 Service\* 字段 round-trip 是「免费」的**：`schemaToGraph` 用 `data:{...n}` 整体铺开、`graphToSchema` 用 `...(n.data as SchemaNode)` 铺回，新字段自动随行——无需逐字段搬运。仅 **edge 的 isError** 需显式加：`schemaToGraph` 的 edge `data` 与 `graphToSchema` 的 edge 输出各补一处（原来只搬 condition/ccUsers）。
+-- `graphToSchema` 加了函数重载：`graphToSchema(nodes, edges)`（既有唯一调用点 DesignerCanvas.vue:106 两参）与 `graphToSchema({nodes,edges})`（brief 测试单参 `graphToSchema(schemaToGraph(...))`）两种签名并存，实现体用 `Array.isArray` 分流。既有两参调用与类型均不受影响。
+-
+-## NODE_PALETTE 三入口结构与 color 字段处置理由
+-三入口结构：`{ type: 'serviceTask', kind: 'dataWriteback'|'webApi'|'timer', label }`——同 `type='serviceTask'`，以 `kind` 区分；label 为硬编码中文（数据回写/接口调用/定时器），跟随现有 5 项 label 硬编码惯例（NODE_PALETTE 是数据模型常量，非视图，现状不走 t()）。
+-
+-**color 字段裁定为不添加**，理由：
+-1. brief 补充注明 OA 批次4 已将 color 定为死字段，`DesignerCanvas` 只读 `type`/`label`——已用 Grep+Read 实证核实：`DesignerCanvas.vue` 仅在 palette 落点用 `palette?.label`、渲染用 `.dot-${item.type}` CSS token，**全代码库无任何 `.color` 消费点**。
+-2. 三入口是本次新增，若补 color 等于把批次4 刚清掉的硬编码 hex 重新引入（违背 token 化迁移意图）；brief 补充明确「若无 color 就不要加回，色彩由组件层 token 决定」。
+-3. 现有 5 项仍留 color 只是迁移时作为 legacy metadata 未删；数组因此变异构（5 项带 color / 3 项不带）。因无任何 `.color` 读取点，`as const` 联合类型下 type-check 通过、既有 `.map(p=>p.type)`/`.find(...).label` 均安全。
+-
+-## 自查发现
+-- **既有测试 `NODE_PALETTE lists the 5 engine node types` 必然失效**：它硬断言 palette type 恰为 5 项，而新增 serviceTask 是有意的第 6 个 type。此断言与「新增节点类型」在语义上不可共存，属需求变化导致的必要更新，而非回归。已改为对 type 去重后断言 6 类（含 serviceTask），保持诚实且最小改动。这是唯一被触及的既有测试；其余 8 个既有测试原样全绿。
+-- **brief 逐字测试触发 noUncheckedIndexedAccess**：`back.nodes[0].x` 形式在本项目 tsconfig 下报 TS2532。既有 spec 本就统一用 `!`（如 `g.nodes[0]!`）。故对 3 行补 `!` 非空断言，值与语义零改动，仅满足 Step 4 type-check 绿的硬要求。
+-- **同 type 多 palette 项的落点歧义留给 D-T3**：`DesignerCanvas` 落点 `NODE_PALETTE.find(p=>p.type===type)` 对 3 个 serviceTask 只会命中第一个、丢失 kind；brief「调色板落点时按 kind 预置 serviceKind」属组件层（D-T3）接线，D-T1 未改任何 .vue，仅在 palette 项暴露 `kind` 供 D-T3 消费。scope 保持数据模型层。
+-- 零 Space 污染；未 push；未触碰既有 `picture/`、`shots/` 等 session 起始已存在的未跟踪文件（仅 stage 本任务 3 文件）。
+-
+-## Fix Round 1
+-
+-审查发现的 2 个 Important 缺陷已修复。
+-
+-### 改动点
+-1. `cp6.web/src/views/oa/designer/designerModel.ts:52` — `serviceDelayValue?: number` → `serviceDelayValue?: string`，镜像后端 `CP6.Core/Services/Wf/FlowSchema.cs:82` 的 `public string? ServiceDelayValue`（承载 "3d"/"PT2H"/日期串，ServiceTaskNodeHandler 按字符串解析）。`validateClient` 的 timer 分支（:157）用 `n.serviceDelayValue != null` 判断，对 string 同样成立，故不动。无 spec 测试引用该字段字面量，无随动。
+-2. `cp6.web/src/views/oa/designer/DesignerCanvas.vue:344` — 调色板 `:key="item.type"` → `:key="item.label"`，消除 3 个 serviceTask 入口共享 `type='serviceTask'` 导致的 Vue duplicate keys 告警。label 在 NODE_PALETTE 内全唯一且类型安全（`item.kind` 会因联合类型部分成员无该字段而 vue-tsc 报错，故改用等价唯一 key `item.label`）。仅改此一处。
+-
+-### 验证
+-命令 1：`npm run test -- designerModel`
+-```
+- Test Files  2 passed (2)
+-      Tests  12 passed (12)
+-```
+-命令 2：`$env:NODE_OPTIONS='--max-old-space-size=8192'; npm run type-check`
+-```
+-> vue-tsc --build
+-EXIT=0
+-```
++# Task D-T1 Report — designerModel palette 两入口 + onBranchReject round-trip + validateClient E-WF-020/021 镜像 + notification 类型镜像
++
++**Status: DONE / 全绿**
++**Branch:** feat/wfs-kernel-hardening
++（本报告覆盖旧 serviceTask 波 D-T1 报告——同名文件复用，内容为内核 hardening 波。）
++
++## 改动清单（4 文件，零跨模块污染）
++- `cp6.web/src/views/oa/designer/designerModel.ts` — `SchemaNode.onBranchReject?: 'cascade'|'prune'` + palette 两入口(`inclusiveSplit`/`inclusiveJoin`,无 color 字段对齐 serviceTask 先例) + `validateClient` 三块镜像(E-WF-020 / 021a/b / 021c)。
++- `cp6.web/src/views/oa/designer/designerModel.test.ts` — :45 palette 类型清单断言随扩展补 2 类型（本波唯一允许的既有断言改动）。
++- `cp6.web/src/views/oa/designer/designerModel.hardening.test.ts` — 新 vitest，8 用例（计划 Step 1 逐字）。
++- `cp6.web/src/types/oa/notification.ts` — `NotificationType.BranchPruned = 5`。
++
++## 红→绿证据
++- 红（实现前）：`npm run test -- designerModel.hardening` = **Tests 6 failed | 2 passed**（round-trip 因 graphToSchema 全量 spread data 天然通过；valid-pair 亦通过；其余 6 项断言失败）。符合预期红。
++- 绿（实现后）：`npm run test` = **Test Files 61 passed, Tests 409 passed**（基线 401 + 8 新），零失败零回退（timer/serviceTask/波① 错误边 style 全保留）。
++- type-check：`NODE_OPTIONS=--max-old-space-size=8192 npm run type-check`（vue-tsc --build）= exit 0。
++- build：`npm run build` = ✓ built in 10.31s（仅既有 chunk-size 警告，非错误）。
++
++## onBranchReject round-trip 证据
++`{ id:'g', type:'parallelSplit', onBranchReject:'prune' }` → `graphToSchema(schemaToGraph(schema))` → `back.nodes.find(n=>n.id==='g').onBranchReject === 'prune'`。字段无需在转换函数显式接线：schemaToGraph `data:{...n}` 全量入 data、graphToSchema `...(n.data as SchemaNode)` 全量回写，随 spread 透传。
++
++## D-T2 要用的接口（前端契约，均在 designerModel.ts）
++- `SchemaNode.onBranchReject?: 'cascade' | 'prune'` — 属性面板「分支驳回策略」段绑定字段；仅 `parallelSplit`/`inclusiveSplit` 合法（validateClient 已守 `errBranchReject`）。
++- `NODE_PALETTE` 新增两条 `{ type:'inclusiveSplit', label:'包容分叉' }` / `{ type:'inclusiveJoin', label:'包容汇聚' }`（无 color 字段，视觉走 `.dot-inclusiveSplit`/`.dot-inclusiveJoin` token；DesignerCanvas 需注册节点模板 + 空心 dot 样式）。
++- `validateClient` 新错误 key：`oa.designer.errInclusiveDefault` / `errInclusivePair` / `errBranchReject`（i18n 键待 E 波 seed）。
++- validateClient 内联私有辅助 `bfsDepths`/`nearestCommonJoin`/`isJoinType`/`nodeType`（非导出），D-T2 无需依赖。
++
++## 疑虑
++无。default 边判据用 `!e.condition?.trim()`（空串/纯空白视为无条件），与后端 E-WF-020 语义一致；isError 边在 nearestCommonJoin 与 E-WF-020 出边计数中已 `!e.isError` 排除。
+diff --git a/cp6.web/src/types/oa/notification.ts b/cp6.web/src/types/oa/notification.ts
+index ceec6ae..a3cea06 100644
+--- a/cp6.web/src/types/oa/notification.ts
++++ b/cp6.web/src/types/oa/notification.ts
+@@ -1,20 +1,21 @@
+ /**
+  * WfNotificationType — 对齐后端 WfNotificationType 常量
+  * SignalR 事件名："WfNotification"
+  * SignalR payload: { type: number, userId: string, instanceId?: string, taskId?: string, flowKey?: string }
+  */
+ export const NotificationType = {
+   TodoCreated:  1,
+   FlowApproved: 2,
+   FlowRejected: 3,
+   Timeout:      4,
++  BranchPruned: 5,
+ } as const
+ 
+ export type NotificationType = typeof NotificationType[keyof typeof NotificationType]
+ 
+ export interface NotificationItem {
+   id:          string
+   type:        NotificationType
+   title:       string
+   body:        string
+   instanceId?: string
+diff --git a/cp6.web/src/views/oa/designer/designerModel.hardening.test.ts b/cp6.web/src/views/oa/designer/designerModel.hardening.test.ts
+new file mode 100644
+index 0000000..1c2947e
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/designerModel.hardening.test.ts
+@@ -0,0 +1,90 @@
++import { describe, it, expect } from 'vitest'
++import { schemaToGraph, graphToSchema, validateClient, NODE_PALETTE } from './designerModel'
++import type { FlowSchemaDto } from './designerModel'
++
++describe('inclusive gateway & branch-reject (kernel hardening)', () => {
++  it('palette has inclusiveSplit/inclusiveJoin entries', () => {
++    expect(NODE_PALETTE.some(p => p.type === 'inclusiveSplit')).toBe(true)
++    expect(NODE_PALETTE.some(p => p.type === 'inclusiveJoin')).toBe(true)
++  })
++
++  it('onBranchReject round-trips through graph conversion', () => {
++    const schema: FlowSchemaDto = {
++      start: 's',
++      nodes: [
++        { id: 's', type: 'start' },
++        { id: 'g', type: 'parallelSplit', onBranchReject: 'prune' },
++      ],
++      edges: [{ from: 's', to: 'g' }],
++    }
++    const back = graphToSchema(schemaToGraph(schema))
++    expect(back.nodes.find(n => n.id === 'g')?.onBranchReject).toBe('prune')
++  })
++
++  const incBase = (): FlowSchemaDto => ({
++    start: 's',
++    nodes: [
++      { id: 's', type: 'start' },
++      { id: 'g', type: 'inclusiveSplit' },
++      { id: 'a', type: 'approval', approverStrategy: 'Starter' },
++      { id: 'd', type: 'approval', approverStrategy: 'Starter' },
++      { id: 'j', type: 'inclusiveJoin' },
++      { id: 'e', type: 'end' },
++    ],
++    edges: [
++      { from: 's', to: 'g' },
++      { from: 'g', to: 'a', condition: 'x > 0' },
++      { from: 'g', to: 'd' },                          // default
++      { from: 'a', to: 'j' }, { from: 'd', to: 'j' },
++      { from: 'j', to: 'e' },
++    ],
++  })
++
++  it('valid inclusive pair passes', () => {
++    expect(validateClient(incBase())).toEqual([])
++  })
++
++  it('missing default edge -> errInclusiveDefault (E-WF-020 mirror)', () => {
++    const s = incBase()
++    s.edges.find(e => e.from === 'g' && e.to === 'd')!.condition = 'y > 0'
++    expect(validateClient(s)).toContain('oa.designer.errInclusiveDefault')
++  })
++
++  it('two default edges -> errInclusiveDefault', () => {
++    const s = incBase()
++    s.edges.find(e => e.from === 'g' && e.to === 'a')!.condition = undefined
++    expect(validateClient(s)).toContain('oa.designer.errInclusiveDefault')
++  })
++
++  it('paired with parallelJoin -> errInclusivePair (E-WF-021 mirror)', () => {
++    const s = incBase()
++    s.nodes.find(n => n.id === 'j')!.type = 'parallelJoin'
++    expect(validateClient(s)).toContain('oa.designer.errInclusivePair')
++  })
++
++  it('orphan inclusiveJoin -> errInclusivePair', () => {
++    const s: FlowSchemaDto = {
++      start: 's',
++      nodes: [
++        { id: 's', type: 'start' },
++        { id: 'a', type: 'approval', approverStrategy: 'Starter' },
++        { id: 'j', type: 'inclusiveJoin' },
++        { id: 'e', type: 'end' },
++      ],
++      edges: [
++        { from: 's', to: 'a' }, { from: 'a', to: 'j' }, { from: 's', to: 'j' },
++        { from: 'j', to: 'e' },
++      ],
++    }
++    expect(validateClient(s)).toContain('oa.designer.errInclusivePair')
++  })
++
++  it('onBranchReject bad value / wrong node -> errBranchReject (E-WF-021c mirror)', () => {
++    const s1 = incBase()
++    s1.nodes.find(n => n.id === 'g')!.onBranchReject = 'explode' as any
++    expect(validateClient(s1)).toContain('oa.designer.errBranchReject')
++    const s2 = incBase()
++    s2.nodes.find(n => n.id === 'a')!.onBranchReject = 'prune'
++    expect(validateClient(s2)).toContain('oa.designer.errBranchReject')
++  })
++})
+diff --git a/cp6.web/src/views/oa/designer/designerModel.test.ts b/cp6.web/src/views/oa/designer/designerModel.test.ts
+index 5f4e5a5..be2fb7e 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.test.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.test.ts
+@@ -35,21 +35,21 @@ describe('designerModel', () => {
+   it('validateClient flags missing start + edge to unknown node', () => {
+     expect(validateClient(schema as any)).toEqual([])
+     const noStart = { ...schema, nodes: schema.nodes.filter(n => n.type !== 'start') }
+     expect(validateClient(noStart as any).length).toBeGreaterThan(0)
+     const ghost = { ...schema, edges: [...schema.edges, { from: 'a', to: 'zzz' }] }
+     expect(validateClient(ghost as any).length).toBeGreaterThan(0)
+   })
+ 
+   it('NODE_PALETTE lists the engine node types (incl. serviceTask)', () => {
+     expect([...new Set(NODE_PALETTE.map(p => p.type))].sort())
+-      .toEqual(['approval', 'end', 'parallelJoin', 'parallelSplit', 'serviceTask', 'start'])
++      .toEqual(['approval', 'end', 'inclusiveJoin', 'inclusiveSplit', 'parallelJoin', 'parallelSplit', 'serviceTask', 'start'])
+   })
+ 
+   it('round-trips serial stages', () => {
+     const schema: FlowSchemaDto = { start: 'ap', nodes: [
+       { id: 'ap', type: 'approval', stages: [
+         { kind: 'fixed', approverStrategy: 'Specified', countersign: 'all', name: '档1' },
+         { kind: 'managerChain', maxLevels: 2, countersign: 'all', name: '逐级' },
+       ] },
+       { id: 'end', type: 'end' },
+     ], edges: [{ from: 'ap', to: 'end' }] }
+diff --git a/cp6.web/src/views/oa/designer/designerModel.ts b/cp6.web/src/views/oa/designer/designerModel.ts
+index e5802a3..72b881b 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.ts
+@@ -45,32 +45,37 @@ export interface SchemaNode {
+   serviceKind?: 'dataWriteback' | 'webApi' | 'timer'
+   serviceMode?: string                                 // sync | async
+   serviceActionName?: string                           // dataWriteback：服务目录 action
+   serviceConnectorName?: string                        // webApi：连接器
+   servicePath?: string                                 // webApi：路径
+   serviceParamsJson?: string
+   serviceDelayMode?: string                            // timer：固定/相对
+   serviceDelayValue?: string                           // timer：延时值（镜像后端 string? ServiceDelayValue，承载 "3d"/"PT2H"/日期串）
+   serviceMaxRetries?: number
+   serviceRetryBackoffSec?: number
++  // 内核 hardening：分支驳回策略（仅 parallelSplit/inclusiveSplit；镜像后端 FlowNode.OnBranchReject，camelCase 契约）
++  onBranchReject?: 'cascade' | 'prune'
+   x?: number; y?: number
+ }
+ export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[]; isError?: boolean }
+ export interface FlowSchemaDto { start?: string; nodes: SchemaNode[]; edges: SchemaEdge[] }
+ 
+ // node-identity swatches (categorical, chart-color family §2.5). Rendering uses the
+ // tokenized `.dot-<type>` CSS classes in DesignerCanvas; this `color` field is legacy metadata.
+ export const NODE_PALETTE = [
+   { type: 'start',         label: '填單(发起)', color: '#67c23a' }, /* cp-chart-color */
+   { type: 'approval',      label: '審批',       color: '#409eff' }, /* cp-chart-color */
+   { type: 'parallelSplit', label: '并行分叉',   color: '#e6a23c' }, /* cp-chart-color */
+   { type: 'parallelJoin',  label: '并行汇聚',   color: '#e6a23c' }, /* cp-chart-color */
++  // 包容网关两入口（色彩由组件层 `.dot-<type>` token 决定，不带 color 字段——对齐 serviceTask 先例）。
++  { type: 'inclusiveSplit', label: '包容分叉' },
++  { type: 'inclusiveJoin',  label: '包容汇聚' },
+   { type: 'end',           label: '結束',       color: '#909399' }, /* cp-chart-color */
+   // 服务任务三入口（同 type='serviceTask'，以 kind 区分）。色彩由组件层 `.dot-<type>` token 决定，
+   // 故不带 color 字段（OA 批次4 已裁定 color 为死字段；DesignerCanvas 只读 type/label）。
+   { type: 'serviceTask',   kind: 'dataWriteback', label: '数据回写' },
+   { type: 'serviceTask',   kind: 'webApi',        label: '接口调用' },
+   { type: 'serviceTask',   kind: 'timer',         label: '定时器' },
+ ] as const
+ 
+ /** FlowSchema → Vue Flow 图（节点带 position + data 全字段；边 source/target + data 条件/CC）。 */
+ export function schemaToGraph(schema: FlowSchemaDto): { nodes: VFNode[]; edges: VFEdge[] } {
+@@ -155,12 +160,67 @@ export function validateClient(schema: FlowSchemaDto): string[] {
+     if (n.type !== 'serviceTask') continue
+     const ok = n.serviceKind === 'webApi'
+       ? !!n.serviceConnectorName && !!n.servicePath
+       : n.serviceKind === 'dataWriteback'
+         ? !!n.serviceActionName
+         : n.serviceKind === 'timer'
+           ? n.serviceDelayValue != null && n.serviceDelayMode != null  // 镜像后端：值与模式(radio 无默认)双字段必填
+           : false                                        // 缺/未知 serviceKind 即配置不完整
+     if (!ok) errs.push('oa.designer.errServiceConfig')
+   }
++  // ── inclusive 网关镜像（后端 E-WF-020/021，kernel hardening）──
++  const nodeType = (id: string) => nodes.find(n => n.id === id)?.type
++  const isJoinType = (ty?: string) => ty === 'parallelJoin' || ty === 'inclusiveJoin'
++  const bfsDepths = (from: string): Map<string, number> => {
++    const depth = new Map<string, number>([[from, 0]])
++    const q = [from]
++    while (q.length) {
++      const cur = q.shift()!
++      for (const e of edges.filter(e => e.from === cur))
++        if (!depth.has(e.to)) { depth.set(e.to, depth.get(cur)! + 1); q.push(e.to) }
++    }
++    return depth
++  }
++  const nearestCommonJoin = (splitId: string): string | undefined => {
++    const outs = edges.filter(e => e.from === splitId && !e.isError)
++    if (!outs.length) return undefined
++    const sets = outs.map(e => new Set(bfsDepths(e.to).keys()))
++    const common = [...sets[0]!].filter(id => sets.every(s => s.has(id)))
++    const depths = bfsDepths(splitId)
++    let best: string | undefined
++    let bestD = Infinity
++    for (const id of common) {
++      const d = depths.get(id) ?? Infinity
++      if (isJoinType(nodeType(id)) && d < bestD) { best = id; bestD = d }
++    }
++    return best
++  }
++  // E-WF-020 镜像：inclusiveSplit 出边 ≥2 且恰好一条无条件 default 边
++  for (const n of nodes) {
++    if (n.type !== 'inclusiveSplit') continue
++    const outs = edges.filter(e => e.from === n.id && !e.isError)
++    const dflt = outs.filter(e => !e.condition?.trim())
++    if (outs.length < 2 || dflt.length !== 1) { errs.push('oa.designer.errInclusiveDefault'); break }
++  }
++  // E-WF-021a/b 镜像：split 最近公共汇聚须为 inclusiveJoin；inclusiveJoin 入边≥2 且被配对
++  const pairedJoins = new Set<string>()
++  let pairBad = false
++  for (const n of nodes) {
++    if (n.type !== 'inclusiveSplit') continue
++    const j = nearestCommonJoin(n.id)
++    if (!j || nodeType(j) !== 'inclusiveJoin') { pairBad = true; continue }
++    pairedJoins.add(j)
++  }
++  for (const n of nodes) {
++    if (n.type !== 'inclusiveJoin') continue
++    if (edges.filter(e => e.to === n.id).length < 2 || !pairedJoins.has(n.id)) pairBad = true
++  }
++  if (pairBad) errs.push('oa.designer.errInclusivePair')
++  // E-WF-021c 镜像：onBranchReject 值域 + 只许写在 split 型节点
++  for (const n of nodes) {
++    if (n.onBranchReject == null) continue
++    const ok = (n.type === 'parallelSplit' || n.type === 'inclusiveSplit')
++      && (n.onBranchReject === 'cascade' || n.onBranchReject === 'prune')
++    if (!ok) { errs.push('oa.designer.errBranchReject'); break }
++  }
+   return errs
+ }

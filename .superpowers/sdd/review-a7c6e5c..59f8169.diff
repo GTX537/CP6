@@ -1,0 +1,286 @@
+# Review package: a7c6e5c..HEAD
+
+## Commits
+59f8169 refactor(ui): ERP 迁移批次5——OrderEntry向导+order steps+PlateMoldView token化
+
+## Files changed
+ cp6.web/src/styles/tokens.css                         | 1 +
+ cp6.web/src/views/erp/OrderEntryView.vue              | 9 +++++----
+ cp6.web/src/views/erp/PlateMoldView.vue               | 5 +++--
+ cp6.web/src/views/erp/order/Step1HeaderAndDetails.vue | 7 ++++---
+ cp6.web/src/views/erp/order/Step2BasicInfo.vue        | 9 +++++----
+ 5 files changed, 18 insertions(+), 13 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/styles/tokens.css b/cp6.web/src/styles/tokens.css
+index 763c523..b43b34d 100644
+--- a/cp6.web/src/styles/tokens.css
++++ b/cp6.web/src/styles/tokens.css
+@@ -12,20 +12,21 @@
+   --cp-ok:#22B573; --cp-ok-bg:#E7F8F0;
+   --cp-warn:#F0940A; --cp-warn-bg:#FEF3E2;
+   --cp-danger:#E5484D; --cp-danger-bg:#FDEBEC;
+   --cp-info:#4E80EE; --cp-info-bg:#EBF1FE;
+   --cp-violet:#8B7CF0; --cp-violet-bg:#F0EEFD;
+   /* Radius */
+   --cp-r-xl:20px; --cp-r-lg:16px; --cp-r-md:12px; --cp-r-sm:8px;
+   /* Shadow */
+   --cp-shadow-1:0 1px 2px rgba(16,52,60,.04), 0 6px 20px rgba(16,52,60,.05);
+   --cp-shadow-2:0 10px 30px rgba(16,52,60,.08);
++  --cp-shadow-up:0 -2px 8px rgba(16,52,60,.06);
+   /* Typography */
+   --cp-font:'Nunito',-apple-system,'HarmonyOS Sans SC','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+   --cp-fs-2xs:11px; --cp-fs-xs:12px; --cp-fs-sm:12.5px; --cp-fs-base:13px;
+   --cp-fs-md:13.5px; --cp-fs-lg:14.5px; --cp-fs-xl:16px; --cp-fs-2xl:21px;
+   --cp-fs-3xl:24px; --cp-fs-num-lg:31px;
+   /* Spacing */
+   --cp-sp-4:4px; --cp-sp-8:8px; --cp-sp-12:12px; --cp-sp-16:16px;
+   --cp-sp-20:20px; --cp-sp-24:24px; --cp-sp-28:28px; --cp-sp-32:32px; --cp-sp-40:40px;
+   /* Motion */
+   --cp-t-fast:.12s ease; --cp-t-base:.16s ease;
+diff --git a/cp6.web/src/views/erp/OrderEntryView.vue b/cp6.web/src/views/erp/OrderEntryView.vue
+index 353fc61..c11fc44 100644
+--- a/cp6.web/src/views/erp/OrderEntryView.vue
++++ b/cp6.web/src/views/erp/OrderEntryView.vue
+@@ -1,23 +1,23 @@
+ <template>
+   <div class="order-entry" :class="{ 'is-mobile': isMobile }">
+     <!-- ヘッダー：操作種別 + WebOrderNo + ステップバー -->
+     <el-card shadow="never" class="header-card">
+       <div class="header-row">
+         <div class="header-left">
+           <el-tag :type="opTagType" :size="isMobile ? 'default' : 'large'" effect="dark">{{ opLabel }}</el-tag>
+           <span v-if="store.order.webOrderNo" class="web-order-no">
+             {{ t('Web受注NO') }}: {{ store.order.webOrderNo }}
+           </span>
+-          <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">{{ t('sales.status.autoNumber') }}</el-tag>
+-          <el-tag v-if="store.order.status === 9" type="success" size="small">{{ t('sales.status.transferred') }}</el-tag>
+-          <el-tag v-if="store.order.mcTransferFlg" type="info" size="small">{{ t('mc連携') }}</el-tag>
++          <CpTag v-else-if="store.isNew" tone="info">{{ t('sales.status.autoNumber') }}</CpTag>
++          <CpTag v-if="store.order.status === 9" tone="ok">{{ t('sales.status.transferred') }}</CpTag>
++          <CpTag v-if="store.order.mcTransferFlg" tone="info">{{ t('mc連携') }}</CpTag>
+         </div>
+         <div class="header-right">
+           <el-radio-group v-model="opModel" size="small" :disabled="hasNoOrder">
+             <el-radio-button :value="OrderOperationType.New">{{ t('sales.op.register') }}</el-radio-button>
+             <el-radio-button :value="OrderOperationType.Edit" :disabled="hasNoOrder">{{ t('sales.op.edit') }}</el-radio-button>
+             <el-radio-button :value="OrderOperationType.Delete" :disabled="hasNoOrder">{{ t('sales.op.delete') }}</el-radio-button>
+             <el-radio-button :value="OrderOperationType.View" :disabled="hasNoOrder">{{ t('sales.op.view') }}</el-radio-button>
+           </el-radio-group>
+         </div>
+       </div>
+@@ -77,20 +77,21 @@
+ import { ref, computed } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { useOrderStore } from '@/stores/order'
+ import { OrderOperationType } from '@/types/erp/order'
+ import { orderApi } from '@/api/erp/order'
+ import Step1HeaderAndDetails from './order/Step1HeaderAndDetails.vue'
+ import Step2BasicInfo from './order/Step2BasicInfo.vue'
+ import Step3ProcessInfo from './order/Step3ProcessInfo.vue'
+ import { useBreakpoint } from '@/composables/useBreakpoint'
++import CpTag from '@/components/base/CpTag.vue'
+ 
+ const { t } = useI18n()
+ const store = useOrderStore()
+ const { isMobile } = useBreakpoint()
+ 
+ const searchNo = ref('')
+ const searchHaibaiNo1 = ref('')
+ const loading = ref(false)
+ const saving = ref(false)
+ 
+@@ -296,21 +297,21 @@ async function onReset() {
+ }
+ .order-entry.is-mobile .footer-card {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   margin: 0;
+   border-radius: 0;
+   z-index: 50;
+   padding-bottom: env(safe-area-inset-bottom, 0);
+-  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
++  box-shadow: var(--cp-shadow-up);
+ }
+ .order-entry.is-mobile .footer-card :deep(.el-card__body) {
+   padding: 10px 12px;
+ }
+ .order-entry.is-mobile .btn-row {
+   justify-content: stretch;
+   gap: 6px;
+ }
+ .order-entry.is-mobile .btn-row :deep(.el-button) {
+   flex: 1;
+diff --git a/cp6.web/src/views/erp/PlateMoldView.vue b/cp6.web/src/views/erp/PlateMoldView.vue
+index 7b4611a..2969f44 100644
+--- a/cp6.web/src/views/erp/PlateMoldView.vue
++++ b/cp6.web/src/views/erp/PlateMoldView.vue
+@@ -1,20 +1,20 @@
+ <template>
+   <div class="plate-mold">
+     <!-- ヘッダー：操作種別 + 検索 -->
+     <el-card shadow="never" class="header-card">
+       <div class="header-row">
+         <div class="header-left">
+           <el-tag :type="opTagType" size="large" effect="dark">{{ opLabel }}</el-tag>
+           <span v-if="store.dto.wdPtnNo" class="key">{{ t('sales.pm.no') }}: {{ store.dto.wdPtnNo }} / {{ t('sales.term.rev') }} {{ store.dto.wdRev }}</span>
+-          <el-tag v-else-if="store.isRegister" type="info" size="small">{{ t('sales.status.autoNumber') }}</el-tag>
+-          <el-tag v-if="store.dto.status === 9" type="success" size="small">{{ t('sales.status.transferred') }}</el-tag>
++          <CpTag v-else-if="store.isRegister" tone="info">{{ t('sales.status.autoNumber') }}</CpTag>
++          <CpTag v-if="store.dto.status === 9" tone="ok">{{ t('sales.status.transferred') }}</CpTag>
+         </div>
+         <div class="header-right">
+           <el-radio-group v-model="opModel" size="small">
+             <el-radio-button :value="PlateMoldOperationType.Register">{{ t('sales.op.register') }}</el-radio-button>
+             <el-radio-button :value="PlateMoldOperationType.Revise">{{ t('sales.op.revise') }}</el-radio-button>
+             <el-radio-button :value="PlateMoldOperationType.Edit">{{ t('sales.op.edit') }}</el-radio-button>
+             <el-radio-button :value="PlateMoldOperationType.Delete" :disabled="!store.isAdmin">{{ t('sales.op.delete') }}</el-radio-button>
+             <el-radio-button :value="PlateMoldOperationType.View">{{ t('sales.op.view') }}</el-radio-button>
+           </el-radio-group>
+         </div>
+@@ -182,20 +182,21 @@
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, computed } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { Document } from '@element-plus/icons-vue'
+ import { usePlateMoldStore } from '@/stores/plateMold'
+ import { PlateMoldOperationType } from '@/types/erp/plateMold'
+ import { plateMoldApi } from '@/api/erp/plateMold'
++import CpTag from '@/components/base/CpTag.vue'
+ 
+ const { t } = useI18n()
+ const store = usePlateMoldStore()
+ const tab = ref('basic')
+ const searchNo = ref('')
+ const searchRev = ref<number | undefined>()
+ const searchEstimate = ref('')
+ const loading = ref(false)
+ const saving = ref(false)
+ 
+diff --git a/cp6.web/src/views/erp/order/Step1HeaderAndDetails.vue b/cp6.web/src/views/erp/order/Step1HeaderAndDetails.vue
+index 4cd33d6..07509cb 100644
+--- a/cp6.web/src/views/erp/order/Step1HeaderAndDetails.vue
++++ b/cp6.web/src/views/erp/order/Step1HeaderAndDetails.vue
+@@ -149,21 +149,21 @@
+           <el-input v-model="row.deliveryCd" :disabled="!store.canEdit" size="small" />
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('預り')" width="60" align="center">
+         <template #default="{ row }">
+           <el-checkbox v-model="row.consignedSalesFlg" true-value="1" false-value="0" :disabled="!store.canEdit" />
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('ステータス')" width="100">
+         <template #default="{ row }">
+-          <el-tag size="small" :type="statusTagType(row.status)">{{ statusLabel(row.status) }}</el-tag>
++          <CpTag :tone="statusTone(row.status)">{{ statusLabel(row.status) }}</CpTag>
+         </template>
+       </el-table-column>
+     </el-table>
+ 
+     <!-- 製品 CD 検索 popup -->
+     <MasterReferenceDialog
+       v-model="productPickerVisible"
+       kind="product"
+       :initial-keyword="pickingRow?.productCd ?? ''"
+       :customer-cd="store.order.customerCd"
+@@ -181,20 +181,21 @@
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ const { t } = useI18n()
+ import { ref, computed } from 'vue'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { Search, Plus, Delete, Top, Bottom, CopyDocument, RefreshLeft } from '@element-plus/icons-vue'
+ import { useOrderStore } from '@/stores/order'
+ import { orderApi } from '@/api/erp/order'
+ import { formatNumber } from '@/utils/format'
+ import MasterReferenceDialog from '@/components/master/MasterReferenceDialog.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
+ import type { OrderDetailDto } from '@/types/erp/order'
+ 
+ const store = useOrderStore()
+ 
+ const memberProductCd = ref('')
+ const productPickerVisible = ref(false)
+ const customerPickerVisible = ref(false)
+ const pickingRow = ref<OrderDetailDto | null>(null)
+ const selectedRowNo = ref<number | null>(null)
+@@ -303,18 +304,18 @@ async function onLookupMembers() {
+       }))
+       store.markDirty()
+       ElMessage.success(t('{n} 件の部材を引入しました', { n: rows.length }))
+     }
+   } catch { /* */ }
+ }
+ 
+ function statusLabel(s: number): string {
+   return s === 9 ? t('mc転送済') : s === 1 ? t('承認待') : t('未')
+ }
+-function statusTagType(s: number): 'info' | 'warning' | 'success' {
+-  return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'
++function statusTone(s: number): Tone {
++  return s === 9 ? 'ok' : s === 1 ? 'warn' : 'info'
+ }
+ </script>
+ 
+ <style scoped>
+ :deep(.el-form-item) { margin-bottom: 8px; }
+ </style>
+diff --git a/cp6.web/src/views/erp/order/Step2BasicInfo.vue b/cp6.web/src/views/erp/order/Step2BasicInfo.vue
+index 04ee290..57f657a 100644
+--- a/cp6.web/src/views/erp/order/Step2BasicInfo.vue
++++ b/cp6.web/src/views/erp/order/Step2BasicInfo.vue
+@@ -1,20 +1,20 @@
+ <template>
+   <el-card shadow="never" v-if="detail">
+     <div style="margin-bottom: 12px;">
+       <el-tag size="small">{{ t('明細 No.{no} - {cd}', { no: detail.webOrderDetailNo, cd: detail.productCd || t('製品 CD 未選択') }) }}</el-tag>
+-      <el-tag v-if="!isCompositionEditable" type="info" size="small" style="margin-left: 8px;">
++      <CpTag v-if="!isCompositionEditable" tone="info" style="margin-left: 8px;">
+         {{ t('構成・工程 参照のみ（受注区分: {type}）', { type: store.order.orderType }) }}
+-      </el-tag>
+-      <el-tag v-else type="success" size="small" style="margin-left: 8px;">
++      </CpTag>
++      <CpTag v-else tone="ok" style="margin-left: 8px;">
+         {{ t('シート受注 → 構成・工程編集可') }}
+-      </el-tag>
++      </CpTag>
+     </div>
+ 
+     <!-- 基本情報 -->
+     <el-divider content-position="left">{{ t('基本情報') }}</el-divider>
+     <el-form :model="detail" :disabled="store.isPageReadOnly" label-width="110px" size="small" inline>
+       <el-form-item :label="t('納品先 CD')">
+         <el-input v-model="detail.deliveryCd" :disabled="!store.canEdit" style="width: 160px" />
+       </el-form-item>
+       <el-form-item :label="t('納品先名')">
+         <el-input v-model="detail.deliveryName" :disabled="!store.canEdit" style="width: 200px" />
+@@ -132,20 +132,21 @@
+   </el-card>
+   <el-empty v-else :description="t('部材一覧で行を選択してください')" />
+ </template>
+ 
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ const { t } = useI18n()
+ import { computed, watch } from 'vue'
+ import { useOrderStore } from '@/stores/order'
+ import { orderApi } from '@/api/erp/order'
++import CpTag from '@/components/base/CpTag.vue'
+ 
+ const store = useOrderStore()
+ const detail = computed(() => store.currentDetail)
+ 
+ const isCompositionEditable = computed(() => {
+   // 仕様書 §1：受注区分 × 製品区分 × 品目採番 から判定
+   // 簡略：シート受注(20)・原紙(40)・輪切り(80) は編集可
+   return ['20', '40', '80'].includes(store.order.orderType)
+ })
+ 

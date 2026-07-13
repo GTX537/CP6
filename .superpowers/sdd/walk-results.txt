@@ -1,0 +1,246 @@
+=== warehouse | /wms/warehouse | 倉庫マスタ ===
+STATUS: Navigated to http://localhost:5173/wms/warehouse (200)
+TEXTLEN: 1148
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== location | /wms/location | ロケーション管理 ===
+STATUS: Navigated to http://localhost:5173/wms/location (200)
+TEXTLEN: 1033
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== stock | /wms/stock | 在庫照会 ===
+STATUS: Navigated to http://localhost:5173/wms/stock (200)
+TEXTLEN: 2701
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== inbound-order-list | /wms/inbound-order-list | 入庫予定一覧 ===
+STATUS: Navigated to http://localhost:5173/wms/inbound-order-list (200)
+TEXTLEN: 1070
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== inbound-order | /wms/inbound-order | 入庫予定登録 ===
+STATUS: Navigated to http://localhost:5173/wms/inbound-order (200)
+TEXTLEN: 997
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== inbound-receipt | /wms/inbound-receipt | 入庫実績入力 ===
+STATUS: Navigated to http://localhost:5173/wms/inbound-receipt (200)
+TEXTLEN: 1071
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== outbound-order-list | /wms/outbound-order-list | 出庫指示一覧 ===
+STATUS: Navigated to http://localhost:5173/wms/outbound-order-list (200)
+TEXTLEN: 2554
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== outbound-order | /wms/outbound-order | 出庫指示登録 ===
+STATUS: Navigated to http://localhost:5173/wms/outbound-order (200)
+TEXTLEN: 1018
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== product-inbound | /wms/product-inbound | 製品入庫 ===
+STATUS: Navigated to http://localhost:5173/wms/product-inbound (200)
+TEXTLEN: 1349
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== shipping-order-list | /wms/shipping-order-list | 出荷指示一覧 ===
+STATUS: Navigated to http://localhost:5173/wms/shipping-order-list (200)
+TEXTLEN: 2554
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== shipping-order | /wms/shipping-order | 出荷指示登録 ===
+STATUS: Navigated to http://localhost:5173/wms/shipping-order (200)
+TEXTLEN: 1018
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== picking | /wms/picking | ピッキング作業 ===
+STATUS: Navigated to http://localhost:5173/wms/picking (200)
+TEXTLEN: 933
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== packaging | /wms/packaging | 梱包出荷確定 ===
+STATUS: Navigated to http://localhost:5173/wms/packaging (200)
+TEXTLEN: 1970
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== stock-take-list | /wms/stock-take-list | 棚卸一覧 ===
+STATUS: Navigated to http://localhost:5173/wms/stock-take-list (200)
+TEXTLEN: 990
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== stock-take | /wms/stock-take | 棚卸作業 ===
+STATUS: Navigated to http://localhost:5173/wms/stock-take (200)
+TEXTLEN: 1086
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== dashboard | /wms/dashboard | WMSダッシュボード ===
+STATUS: Navigated to http://localhost:5173/wms/dashboard (200)
+TEXTLEN: 1428
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== material-shortage | /wms/material-shortage | 材料欠品管理 ===
+STATUS: Navigated to http://localhost:5173/wms/material-shortage (200)
+TEXTLEN: 986
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== outbound-routing | /wms/outbound-routing | 出庫ルーティング ===
+STATUS: Navigated to http://localhost:5173/wms/outbound-routing (200)
+TEXTLEN: 1109
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== inspection | /wms/inspection | 入荷検品QC ===
+STATUS: Navigated to http://localhost:5173/wms/inspection (200)
+TEXTLEN: 1181
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== slotting | /wms/slotting | スロッティング最適化 ===
+STATUS: Navigated to http://localhost:5173/wms/slotting (200)
+TEXTLEN: 1203
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== replenish | /wms/replenish | 補充指示 ===
+STATUS: Navigated to http://localhost:5173/wms/replenish (200)
+TEXTLEN: 1196
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== cross-dock | /wms/cross-dock | クロスドッキング ===
+STATUS: Navigated to http://localhost:5173/wms/cross-dock (200)
+TEXTLEN: 1221
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== kit | /wms/kit | キッティング組立 ===
+STATUS: Navigated to http://localhost:5173/wms/kit (200)
+TEXTLEN: 1212
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== rma | /wms/rma | 返品管理RMA ===
+STATUS: Navigated to http://localhost:5173/wms/rma (200)
+TEXTLEN: 1121
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== lot-trace | /wms/lot-trace | ロット追溯回収 ===
+STATUS: Navigated to http://localhost:5173/wms/lot-trace (200)
+TEXTLEN: 1036
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== expiry | /wms/expiry | 賞味期限管理FEFO ===
+STATUS: Navigated to http://localhost:5173/wms/expiry (200)
+TEXTLEN: 1119
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== paper-roll | /wms/paper-roll | 原紙ロール管理 ===
+STATUS: Navigated to http://localhost:5173/wms/paper-roll (200)
+TEXTLEN: 1263
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== remnant | /wms/remnant | 残材端材管理 ===
+STATUS: Navigated to http://localhost:5173/wms/remnant (200)
+TEXTLEN: 1237
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== plate-mold-stock | /wms/plate-mold-stock | 印版木型倉庫 ===
+STATUS: Navigated to http://localhost:5173/wms/plate-mold-stock (200)
+TEXTLEN: 1146
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== ink-lot | /wms/ink-lot | インキ接着剤管理 ===
+STATUS: Navigated to http://localhost:5173/wms/ink-lot (200)
+TEXTLEN: 1204
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== pallet | /wms/pallet | パレット管理 ===
+STATUS: Navigated to http://localhost:5173/wms/pallet (200)
+TEXTLEN: 1192
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== vmi | /wms/vmi | 客先預り在庫VMI ===
+STATUS: Navigated to http://localhost:5173/wms/vmi (200)
+TEXTLEN: 1069
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== sample-stock | /wms/sample-stock | 試作サンプル在庫 ===
+STATUS: Navigated to http://localhost:5173/wms/sample-stock (200)
+TEXTLEN: 1210
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== mobile-task | /wms/mobile-task | モバイル作業指示 ===
+STATUS: Navigated to http://localhost:5173/wms/mobile-task (200)
+TEXTLEN: 1020
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== wcs-task | /wms/wcs-task | WCS自動倉庫連携 ===
+STATUS: Navigated to http://localhost:5173/wms/wcs-task (200)
+TEXTLEN: 1751
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== carrier | /wms/carrier | 配送業者連携 ===
+STATUS: Navigated to http://localhost:5173/wms/carrier (200)
+TEXTLEN: 1090
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== iot-monitor | /wms/iot-monitor | IoT温湿度モニタ ===
+STATUS: Navigated to http://localhost:5173/wms/iot-monitor (200)
+TEXTLEN: 1519
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== report-center | /wms/report-center | 帳票センター ===
+STATUS: Navigated to http://localhost:5173/wms/report-center (200)
+TEXTLEN: 902
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== bridge-health | /wms/bridge-health | 連携ヘルス監視 ===
+STATUS: Navigated to http://localhost:5173/wms/bridge-health (200)
+TEXTLEN: 1160
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR: none
+
+=== stock-dwell | /wms/stock-dwell | 在庫滞留レポート ===
+STATUS: Navigated to http://localhost:5173/wms/stock-dwell (200)
+TEXTLEN: 1550
+SNIPPET: CP CP6 管理システム MANUFACTURING ダッシュボード システム管理 販売管理(ERP) �
+NEWERR:
+    at debugWarn (http://localhost:5173/node_modules/.vite/deps/element-plus.js?v=7e19fd6e:4750:35)
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BlS_GlrJ.js?v=7e19fd6e:1874:17)
+    at callWithAsyncErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BlS_GlrJ.js?v=7e19fd6e:1881:15)
+    at debugWarn (http://localhost:5173/node_modules/.vite/deps/element-plus.js?v=7e19fd6e:4750:35)
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BlS_GlrJ.js?v=7e19fd6e:1874:17)
+    at callWithAsyncErrorHandling (http://localhost:5173/node_modules/.vite/deps/vue.runtime.esm-bundler-BlS_GlrJ.js?v=7e19fd6e:1881:15)
+

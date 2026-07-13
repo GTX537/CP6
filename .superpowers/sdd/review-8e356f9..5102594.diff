@@ -1,0 +1,240 @@
+# Review package: 8e356f9..HEAD
+
+## Commits
+5102594 feat(wfs-hardening): C-T1 SendBackScopeAnalyzer作用域纯函数(三分+最内剥离层+E-WF-012保守拒)
+
+## Files changed
+ CP6.Core/Services/Wf/SendBackScopeAnalyzer.cs |  47 +++++++
+ CP6.Tests/Wf/SendBackScopeTests.cs            | 170 ++++++++++++++++++++++++++
+ 2 files changed, 217 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/SendBackScopeAnalyzer.cs b/CP6.Core/Services/Wf/SendBackScopeAnalyzer.cs
+new file mode 100644
+index 0000000..c283695
+--- /dev/null
++++ b/CP6.Core/Services/Wf/SendBackScopeAnalyzer.cs
+@@ -0,0 +1,47 @@
++using CP6.Entity.DomainModels.Wf;
++
++namespace CP6.Core.Services.Wf;
++
++/// <summary>退回作用域（hardening spec §5.1 三分）。</summary>
++public enum SendBackScope
++{
++    /// <summary>目标在当前分支可达域内 → 只剥离本支（剥离层子树清场 + 血缘保留重生）。</summary>
++    SameBranch,
++    /// <summary>目标在 fork 栈全部 split 之前（含线性流无 fork）→ 既有全清场整块重来。</summary>
++    BeforeSplit,
++    /// <summary>目标在兄弟分支域内 → 拒绝（E-WF-019，语义永久禁止）。</summary>
++    SiblingBranch,
++}
++
++/// <summary>退回作用域判定（纯函数，动手清场前调用）。§5.3 定案：
++/// fork 栈由 <see cref="TokenLineage.ForkStack"/> 血缘上溯（与剪枝共用口径）；
++/// 分支域由 <see cref="FlowGraph.BranchDomain"/>（配对 join = <see cref="FlowGraph.NearestCommonJoin"/>，
++/// 与校验 E-WF-021 共用口径）。逐层内→外：目标与当前节点同域 → SameBranch（首个命中层即
++/// 「包含目标节点的最内层分支域」，剥离层 = 该层分支代表 token）；目标只在兄弟域 → SiblingBranch；
++/// 全层不命中 → BeforeSplit。配对不可判定（无公共 join，环路/直通 end 的怪异 schema）→ 抛 E-WF-012 保守拒绝
++/// （现状对跨网关退回本来就拒，非收紧）。</summary>
++public static class SendBackScopeAnalyzer
++{
++    public static (SendBackScope Scope, Wf_FlowToken? StripToken) Analyze(
++        FlowSchema schema, IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken current,
++        string currentNodeId, string targetNodeId)
++    {
++        foreach (var (branchToken, _, splitNodeId) in TokenLineage.ForkStack(all, current))
++        {
++            var split = schema.Nodes.FirstOrDefault(n => n.Id == splitNodeId)
++                        ?? throw new InvalidOperationException("E-WF-012");
++            var join = FlowGraph.NearestCommonJoin(schema, split)
++                       ?? throw new InvalidOperationException("E-WF-012");
++            var domains = schema.Edges.Where(e => e.From == split.Id && e.IsError != true)
++                .Select(e => FlowGraph.BranchDomain(schema, e.To, join.Id)).ToList();
++
++            var mine = domains.Where(d => d.Contains(currentNodeId)).ToList();
++            if (mine.Any(d => d.Contains(targetNodeId)))
++                return (SendBackScope.SameBranch, branchToken);
++            if (domains.Any(d => d.Contains(targetNodeId)))
++                return (SendBackScope.SiblingBranch, null);
++            // 目标在本层块外 → 上探外层
++        }
++        return (SendBackScope.BeforeSplit, null);
++    }
++}
+diff --git a/CP6.Tests/Wf/SendBackScopeTests.cs b/CP6.Tests/Wf/SendBackScopeTests.cs
+new file mode 100644
+index 0000000..61103cf
+--- /dev/null
++++ b/CP6.Tests/Wf/SendBackScopeTests.cs
+@@ -0,0 +1,170 @@
++using CP6.Core.Services.Wf;
++using CP6.Entity.DomainModels.Wf;
++
++namespace CP6.Tests.Wf;
++
++/// <summary>退回作用域纯函数（hardening spec §5.1）。schema + 内存 token 直测，不动库。</summary>
++public class SendBackScopeTests
++{
++    private static readonly Guid InstId = Guid.NewGuid();
++
++    private static Wf_FlowToken Tok(string node, Guid? parent = null, Guid? fork = null,
++        int status = FlowTokenStatus.Active)
++        => new() { Id = Guid.NewGuid(), InstanceId = InstId, NodeId = node,
++                   ParentTokenId = parent, ForkId = fork, Status = status };
++
++    // s → n0 → split → ( a1 → a2 , b1 ) → join → end
++    private static FlowSchema ParallelSchema() => new()
++    {
++        Start = "s",
++        Nodes =
++        {
++            new FlowNode { Id = "s", Type = "start" },
++            new FlowNode { Id = "n0", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++            new FlowNode { Id = "split", Type = "parallelSplit" },
++            new FlowNode { Id = "a1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++            new FlowNode { Id = "a2", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++            new FlowNode { Id = "b1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++            new FlowNode { Id = "join", Type = "parallelJoin" },
++            new FlowNode { Id = "end", Type = "end" },
++        },
++        Edges =
++        {
++            new FlowEdge { From = "s", To = "n0" }, new FlowEdge { From = "n0", To = "split" },
++            new FlowEdge { From = "split", To = "a1" }, new FlowEdge { From = "a1", To = "a2" },
++            new FlowEdge { From = "split", To = "b1" },
++            new FlowEdge { From = "a2", To = "join" }, new FlowEdge { From = "b1", To = "join" },
++            new FlowEdge { From = "join", To = "end" },
++        },
++    };
++
++    [Fact]
++    public void LinearToken_NoForkStack_BeforeSplit()
++    {
++        var schema = ParallelSchema();
++        var root = Tok("n0");
++        var (scope, strip) = SendBackScopeAnalyzer.Analyze(schema, new[] { root }, root, "n0", "s");
++        Assert.Equal(SendBackScope.BeforeSplit, scope);
++        Assert.Null(strip);
++    }
++
++    [Fact]
++    public void SameBranch_TargetUpstreamInOwnBranch()
++    {
++        var schema = ParallelSchema();
++        var f = Guid.NewGuid();
++        var root = Tok("split", status: FlowTokenStatus.Consumed);
++        var a = Tok("a2", parent: root.Id, fork: f);
++        var b = Tok("b1", parent: root.Id, fork: f);
++        var all = new[] { root, a, b };
++
++        var (scope, strip) = SendBackScopeAnalyzer.Analyze(schema, all, a, "a2", "a1");
++        Assert.Equal(SendBackScope.SameBranch, scope);
++        Assert.Equal(a.Id, strip!.Id);                                     // 剥离层 = 本层分支代表 token
++    }
++
++    [Fact]
++    public void BeforeSplit_TargetUpstreamOfSplit()
++    {
++        var schema = ParallelSchema();
++        var f = Guid.NewGuid();
++        var root = Tok("split", status: FlowTokenStatus.Consumed);
++        var a = Tok("a2", parent: root.Id, fork: f);
++        var all = new[] { root, a };
++
++        var (scope, strip) = SendBackScopeAnalyzer.Analyze(schema, all, a, "a2", "n0");
++        Assert.Equal(SendBackScope.BeforeSplit, scope);
++        Assert.Null(strip);
++    }
++
++    [Fact]
++    public void SiblingBranch_TargetInSiblingDomain()
++    {
++        var schema = ParallelSchema();
++        var f = Guid.NewGuid();
++        var root = Tok("split", status: FlowTokenStatus.Consumed);
++        var a = Tok("a2", parent: root.Id, fork: f);
++        var all = new[] { root, a };
++
++        var (scope, _) = SendBackScopeAnalyzer.Analyze(schema, all, a, "a2", "b1");
++        Assert.Equal(SendBackScope.SiblingBranch, scope);
++    }
++
++    [Fact]
++    public void Nested_TargetBetweenOuterSplitAndInnerSplit_StripIsOuterLayer()
++    {
++        // s → outer → ( h1 → inner → (x1,x2) → ij , b1 ) → oj → end；current 在 x1，target = h1（内层 split 之前、外层支内）
++        var schema = new FlowSchema
++        {
++            Start = "s",
++            Nodes =
++            {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "outer", Type = "parallelSplit" },
++                new FlowNode { Id = "h1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "inner", Type = "parallelSplit" },
++                new FlowNode { Id = "x1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "x2", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "ij", Type = "parallelJoin" },
++                new FlowNode { Id = "b1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "oj", Type = "parallelJoin" },
++                new FlowNode { Id = "end", Type = "end" },
++            },
++            Edges =
++            {
++                new FlowEdge { From = "s", To = "outer" },
++                new FlowEdge { From = "outer", To = "h1" }, new FlowEdge { From = "h1", To = "inner" },
++                new FlowEdge { From = "inner", To = "x1" }, new FlowEdge { From = "inner", To = "x2" },
++                new FlowEdge { From = "x1", To = "ij" }, new FlowEdge { From = "x2", To = "ij" },
++                new FlowEdge { From = "ij", To = "oj" },
++                new FlowEdge { From = "outer", To = "b1" }, new FlowEdge { From = "b1", To = "oj" },
++                new FlowEdge { From = "oj", To = "end" },
++            },
++        };
++        var fo = Guid.NewGuid(); var fi = Guid.NewGuid();
++        var root = Tok("outer", status: FlowTokenStatus.Consumed);
++        var h = Tok("inner", parent: root.Id, fork: fo, status: FlowTokenStatus.Consumed);  // 外层支代表，已进内层 split
++        var x = Tok("x1", parent: h.Id, fork: fi);
++        var all = new[] { root, h, x };
++
++        var (scope, strip) = SendBackScopeAnalyzer.Analyze(schema, all, x, "x1", "h1");
++        Assert.Equal(SendBackScope.SameBranch, scope);
++        Assert.Equal(h.Id, strip!.Id);                                     // ★ 剥离层是外层支代表 token（spec §5.2 对称规则）
++
++        // 而 target 在内层同支内时剥离层是内层
++        var (scope2, strip2) = SendBackScopeAnalyzer.Analyze(schema, all, x, "x1", "x1");
++        // 自退回在调用方被 E-WF-012 拦，这里直接验证内层域命中路径：target=x1 属 x 的最内层域
++        Assert.Equal(SendBackScope.SameBranch, scope2);
++        Assert.Equal(x.Id, strip2!.Id);
++    }
++
++    [Fact]
++    public void UnresolvablePairing_Throws_E_WF_012()
++    {
++        // split 无公共 join（一支直通 end）→ 结构不可判定 → 保守拒绝
++        var schema = new FlowSchema
++        {
++            Start = "s",
++            Nodes =
++            {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "split", Type = "parallelSplit" },
++                new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "b", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "end", Type = "end" },
++            },
++            Edges =
++            {
++                new FlowEdge { From = "s", To = "split" },
++                new FlowEdge { From = "split", To = "a" }, new FlowEdge { From = "split", To = "b" },
++                new FlowEdge { From = "a", To = "end" }, new FlowEdge { From = "b", To = "end" },
++            },
++        };
++        var f = Guid.NewGuid();
++        var root = Tok("split", status: FlowTokenStatus.Consumed);
++        var a = Tok("a", parent: root.Id, fork: f);
++        var ex = Assert.Throws<InvalidOperationException>(
++            () => SendBackScopeAnalyzer.Analyze(schema, new[] { root, a }, a, "a", "s"));
++        Assert.Contains("E-WF-012", ex.Message);
++    }
++}

@@ -1,0 +1,305 @@
+# Review package: f44e4fe..73bb4fa
+
+## Commits
+73bb4fa feat(space): 楼层管理页（站点下拉+CRUD+跳编辑器）
+
+## Files changed
+ cp6.web/src/api/space/floor.ts                     |   4 +-
+ cp6.web/src/views/space/master/SpaceFloorView.vue  | 176 +++++++++++++++++++++
+ .../space/master/__tests__/SpaceFloorView.spec.ts  |  80 ++++++++++
+ 3 files changed, 259 insertions(+), 1 deletion(-)
+
+## Diff
+diff --git a/cp6.web/src/api/space/floor.ts b/cp6.web/src/api/space/floor.ts
+index e66d36c..dd2969d 100644
+--- a/cp6.web/src/api/space/floor.ts
++++ b/cp6.web/src/api/space/floor.ts
+@@ -1,17 +1,19 @@
+ import http from '../http'
+ import type { FloorVO, Envelope } from '@/types/space/scene'
+ 
+ export const floorApi = {
+   list(siteId: string) {
+     return http.get<unknown, Envelope<FloorVO[]>>(`/space/floor`, { params: { siteId } })
+   },
+-  create(d: FloorVO) {
++  // create 载荷无 id（后端生成 Guid）；收窄为 Partial 以匹配「新建时无 id」的现实
++  // （照 api/space/template.ts 的 Partial 惯例；FloorVO 本身不改——编辑器代码假定 id 存在）。
++  create(d: Partial<FloorVO>) {
+     return http.post<unknown, Envelope<{ id: string }>>(`/space/floor`, d)
+   },
+   update(id: string, d: FloorVO) {
+     return http.put<unknown, Envelope<unknown>>(`/space/floor/${encodeURIComponent(id)}`, d)
+   },
+   remove(id: string) {
+     return http.delete<unknown, Envelope<unknown>>(`/space/floor/${encodeURIComponent(id)}`)
+   },
+ }
+diff --git a/cp6.web/src/views/space/master/SpaceFloorView.vue b/cp6.web/src/views/space/master/SpaceFloorView.vue
+new file mode 100644
+index 0000000..bb1a8a9
+--- /dev/null
++++ b/cp6.web/src/views/space/master/SpaceFloorView.vue
+@@ -0,0 +1,176 @@
++<!--
++  楼层マスタ —— CpPageShell + CpListPage + CpFormDialog（Space 波2）。
++  1:1 套用 SpaceSiteView 范式（单表 CRUD、前端切片分页、in-place 变更后 listRef.reload()）；
++  差异在「站点上下文」：顶部工具栏站点下拉（siteApi.list 填充、route.query.siteId 预选）；
++  未选站点显示 CpEmpty，选定后才渲染列表；站点间切换命令式 reload（首次选定由 v-if 挂载自动首查）。
++  underlay/origin 属编辑器域，不进本表单（YAGNI）；新建时 siteId 由当前选中站点隐式带入。
++  「編集画面」named-push {name:'space-editor', params:{floorId}} 进全屏编辑器。
++  删除失败的后端护栏 message 由 http 拦截器原样 ElMessage.error（此处 catch 仅止崩）。
++-->
++<template>
++  <CpPageShell :title="t('space.floor.title')" :count="total">
++    <template #actions>
++      <el-select
++        v-model="selectedSiteId"
++        :placeholder="t('space.floor.selectSite')"
++        filterable
++        style="width: 240px"
++      >
++        <el-option
++          v-for="s in sites"
++          :key="s.id"
++          :label="`${s.siteCode}　${s.siteName}`"
++          :value="s.id!"
++        />
++      </el-select>
++      <el-button :disabled="!selectedSiteId" @click="openCreate">{{ t('space.floor.create') }}</el-button>
++    </template>
++
++    <CpListPage
++      v-if="selectedSiteId"
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      @total-change="total = $event"
++    >
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
++        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
++        <el-button link type="primary" size="small" @click="gotoEditor(row)">{{ t('space.floor.editor') }}</el-button>
++      </template>
++    </CpListPage>
++    <CpEmpty v-else :text="t('space.floor.pickSiteFirst')" />
++
++    <CpFormDialog
++      v-model="dialogVisible"
++      :title="dialogTitle"
++      width="560"
++      :form="form"
++      :rules="rules"
++      :submit="onSave"
++      :labels="{ cancel: t('space.common.cancel'), confirm: t('space.common.save') }"
++      @saved="reloadList"
++    >
++      <el-form-item :label="t('space.floor.fld.level')" prop="level">
++        <el-input-number v-model="form.level" :min="0" :step="1" :precision="0" controls-position="right" />
++      </el-form-item>
++      <el-form-item :label="t('space.floor.fld.floorCode')" prop="floorCode">
++        <el-input v-model="form.floorCode" maxlength="50" />
++      </el-form-item>
++      <el-form-item :label="t('space.floor.fld.floorName')" prop="floorName">
++        <el-input v-model="form.floorName" maxlength="100" />
++      </el-form-item>
++      <el-form-item :label="t('space.floor.fld.height')" prop="height">
++        <el-input-number v-model="form.height" :min="0" :step="500" :precision="0" controls-position="right" />
++      </el-form-item>
++    </CpFormDialog>
++  </CpPageShell>
++</template>
++
++<script setup lang="ts">
++import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
++import { useRouter, useRoute } from 'vue-router'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
++import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import type { SiteVO, FloorVO } from '@/types/space/scene'
++
++const { t } = useI18n()
++const router = useRouter()
++const route = useRoute()
++
++const total = ref<number>()
++// in-place 变更后命令式刷新（保留当前筛选/页码）
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
++
++// —— 站点上下文 ——
++const sites = ref<SiteVO[]>([])
++const selectedSiteId = ref<string | undefined>()
++
++onMounted(async () => {
++  const res = await siteApi.list()
++  sites.value = res.data || []
++  const qid = route.query.siteId
++  if (typeof qid === 'string' && qid) selectedSiteId.value = qid // 预选（站点页「楼层」跳转带入）
++})
++
++// 站点切换：站点→站点时命令式 reload；首次选定（undefined→id）由 v-if 挂载自动首查，无需重复。
++watch(selectedSiteId, (nv, ov) => {
++  if (nv && ov) nextTick(reloadList)
++})
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'level', label: t('space.floor.fld.level'), width: 100, kind: 'num' },
++  { prop: 'floorCode', label: t('space.floor.fld.floorCode'), width: 160, kind: 'mono' },
++  { prop: 'floorName', label: t('space.floor.fld.floorName'), minWidth: 200 },
++  { prop: 'height', label: t('space.floor.fld.height'), width: 140, kind: 'num' },
++  { prop: '_action', label: t('space.common.action'), width: 220, fixed: 'right' },
++])
++
++// list 端点按 siteId 返回全量 → 前端切片分页（照 SpaceSiteView 切片写法）
++const fetchList: ListFetch = async ({ page, size }) => {
++  if (!selectedSiteId.value) return { rows: [], total: 0 }
++  const res = await floorApi.list(selectedSiteId.value)
++  const all = res.data || []
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
++}
++
++// —— 新建/編集对话框 —— form 为 Partial（新建无 id / underlay·origin 不进表单）
++const dialogVisible = ref(false)
++const form = reactive<Partial<FloorVO>>({ level: undefined, floorCode: '', floorName: '', height: 6000 })
++const dialogTitle = computed(() => (form.id ? t('space.floor.dlg.edit') : t('space.floor.dlg.create')))
++const rules = computed<FormRules>(() => ({
++  level: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++  floorCode: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++  floorName: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++}))
++
++function openCreate() {
++  Object.assign(form, { id: undefined, level: undefined, floorCode: '', floorName: '', height: 6000 })
++  dialogVisible.value = true
++}
++function openEdit(row: FloorVO) {
++  Object.assign(form, { ...row }) // 保留 underlay/origin（更新时回传，避免编辑器域被清零）
++  dialogVisible.value = true
++}
++
++async function onSave() {
++  // 只取表单四字段 + 当前站点；编辑时并入原行其余字段（underlay/origin）后回传。
++  const editable: Partial<FloorVO> = {
++    siteId: selectedSiteId.value,
++    level: form.level,
++    floorCode: form.floorCode,
++    floorName: form.floorName,
++    height: form.height,
++  }
++  if (form.id) {
++    await floorApi.update(form.id, { ...form, ...editable } as FloorVO)
++  } else {
++    await floorApi.create(editable)
++  }
++  ElMessage.success(t('space.common.success'))
++}
++
++async function onDelete(row: FloorVO) {
++  try {
++    await ElMessageBox.confirm(`${t('space.common.confirmDelete')} [${row.floorCode}]`, t('space.common.confirm'), { type: 'warning' })
++    await floorApi.remove(row.id)
++    ElMessage.success(t('space.common.success'))
++    reloadList()
++  } catch { /* 取消 / 后端子级护栏错误（后者已由 http 拦截器原样提示） */ }
++}
++
++function gotoEditor(row: FloorVO) {
++  router.push({ name: 'space-editor', params: { floorId: row.id } })
++}
++</script>
++
++<style scoped>
++</style>
+diff --git a/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts b/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts
+new file mode 100644
+index 0000000..b352940
+--- /dev/null
++++ b/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts
+@@ -0,0 +1,80 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import SpaceFloorView from '../SpaceFloorView.vue'
++import type { SiteVO, FloorVO } from '@/types/space/scene'
++
++// router.push 用稳定 mock（hoisted，供跳编辑器断言）
++const { push } = vi.hoisted(() => ({ push: vi.fn() }))
++
++// 站点/楼层 API 全 mock；vue-router 注入 stub（照 SpaceSiteView.spec 先例）
++vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
++vi.mock('@/api/space/floor', () => ({
++  floorApi: { list: vi.fn(), create: vi.fn(), update: vi.fn(), remove: vi.fn() },
++}))
++vi.mock('vue-router', () => ({
++  useRouter: () => ({ push }),
++  useRoute: () => ({ query: { siteId: 's1' } }), // 预选 s1
++}))
++
++const sites: SiteVO[] = [
++  { id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true },
++  { id: 's2', siteCode: 'OSK', siteName: '大阪DC', enable: true },
++]
++const floors: FloorVO[] = [
++  { id: 'f1', siteId: 's1', level: 1, floorCode: 'FL1', floorName: '1階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++  { id: 'f2', siteId: 's1', level: 2, floorCode: 'FL2', floorName: '2階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++]
++
++function mountView() {
++  const i18n = createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
++  return mount(SpaceFloorView, { global: { plugins: [i18n] } })
++}
++
++describe('SpaceFloorView', () => {
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
++    vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
++    vi.mocked(floorApi.create).mockResolvedValue({ code: 0, message: '', data: { id: 'new' } })
++  })
++
++  it('route.query.siteId 预选后按站点渲染楼层行', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(siteApi.list).toHaveBeenCalled()
++    expect(floorApi.list).toHaveBeenCalledWith('s1')
++    expect(w.text()).toContain('FL1')
++    expect(w.text()).toContain('FL2')
++  })
++
++  it('「編集画面」按钮 named-push 到 space-editor 且 params.floorId 正确', async () => {
++    const w = mountView()
++    await flushPromises()
++    // _action 列 fixed:'right' → el-table 双渲染（主表 + 固定层）；点全部「編集画面」按钮，
++    // toHaveBeenCalledWith 命中携真实行的那次即可。
++    const editorBtns = w.findAll('el-button').filter((b) => b.text() === 'space.floor.editor')
++    expect(editorBtns.length).toBeGreaterThan(0)
++    for (const b of editorBtns) await b.trigger('click')
++    expect(push).toHaveBeenCalledWith({ name: 'space-editor', params: { floorId: 'f1' } })
++  })
++
++  it('新建保存后触发楼层 list 二次调用', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(floorApi.list).toHaveBeenCalledTimes(1)
++
++    const dlg = w.findComponent(CpFormDialog)
++    // 走对话框 submit 契约（onSave → floorApi.create），再触发 saved → reload
++    await (dlg.props('submit') as (f: Record<string, unknown>) => Promise<void>)(dlg.props('form'))
++    dlg.vm.$emit('saved')
++    await flushPromises()
++
++    expect(floorApi.create).toHaveBeenCalledTimes(1)
++    expect(floorApi.list).toHaveBeenCalledTimes(2)
++  })
++})

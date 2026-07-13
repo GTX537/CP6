@@ -1,0 +1,1124 @@
+# Review package: dcc354a9ef93f0fbf34bde011fb07d4e52a0d13e..HEAD
+
+## Commits
+b2ed174 test(space-p5): 真库&gstack QA — 双值面板/成本影响优化序/单层时间/编辑器预填（固化截图+seed）
+76ed5d3 feat(space-p5): 对比面板双值（堆叠 timeSavingsPct/单层派生时间行）
+c1a7f66 feat(space-p5): ConnectorPanel 成本输入 + 类型预填 + 列表项编辑保存成本
+02cce6c feat(space-p5): 前端连接体类型/SiteConnectorVO +成本字段 + connectorApi.update
+08891ab fix(space-p5): Kmin 用 3D 真边长而非 |Δz| — 修复倾斜连接体 A* admissibility（对抗审查 Blocking）
+4ffe26d feat(space-p5): 多层时间图核心 — verticalSec 竖直边/mmToSec 水平边/Kmin admissible/costMatrixMF/双值 MFComparison（8 测）
+b5b2e94 feat(space-p5): astar 加可选 hScale=1（启发标定，SP3 距离图缺省零回归）
+68b2692 feat(space-p5): cost.ts 步速常量 + mmToSec/verticalSec + 类型默认（3 测）
+a31d815 chore: ignore .superpowers/ SDD scratch
+
+## Files changed
+ .gitignore                                         |   3 +
+ cp6.web/src/api/space/connector.ts                 |   5 +-
+ .../space-viewer/advanced/PickPathPlanner.spec.ts  |  17 +++
+ .../src/space-viewer/advanced/PickPathPlanner.ts   |   3 +-
+ cp6.web/src/space-viewer/advanced/cost.ts          |  16 +++
+ cp6.web/src/space-viewer/advanced/multiFloor.ts    |   2 +-
+ .../space-viewer/advanced/planMultiFloor.spec.ts   |  80 ++++++++-----
+ .../src/space-viewer/advanced/planMultiFloor.ts    | 106 +++++++++++------
+ cp6.web/src/types/space/advanced.ts                |   2 +-
+ cp6.web/src/types/space/connector.ts               |   5 +-
+ .../views/space/editor/panels/ConnectorPanel.vue   |  50 +++++++-
+ cp6.web/src/views/space/stacked/StackedViewer.vue  |  16 ++-
+ cp6.web/src/views/space/viewer/FloorViewer.vue     |   7 +-
+ .../qa/space-p5-traversal-cost/01-stacked-dual.png | Bin 0 -> 27980 bytes
+ .../qa/space-p5-traversal-cost/02-cost-effect.png  | Bin 0 -> 28014 bytes
+ .../qa/space-p5-traversal-cost/03-floor-time.png   | Bin 0 -> 40654 bytes
+ .../04-editor-connector.png                        | Bin 0 -> 38471 bytes
+ .../qa/space-p5-traversal-cost/README.md           | 132 +++++++++++++++++++++
+ .../qa/space-p5-traversal-cost/seed.sql            |  84 +++++++++++++
+ 19 files changed, 443 insertions(+), 85 deletions(-)
+
+## Diff
+diff --git a/.gitignore b/.gitignore
+index 973f655..903a0b9 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -171,10 +171,13 @@ docs/file/**/*.xlsx
+ /*.png
+ /openapi.json
+ docs/file/
+ 
+ # i18n 优化 P4：发布模式生成的版本化静态包（产物，非源码）
+ CP6.WebApi/wwwroot/i18n/
+ .gstack/
+ 
+ # pnpm store (2026-07-03 新机器迁移: 本地包缓存, 非源码)
+ .pnpm-store/
++
++# superpowers SDD scratch
++.superpowers/
+diff --git a/cp6.web/src/api/space/connector.ts b/cp6.web/src/api/space/connector.ts
+index 08a8540..bb1b909 100644
+--- a/cp6.web/src/api/space/connector.ts
++++ b/cp6.web/src/api/space/connector.ts
+@@ -1,21 +1,24 @@
+ import http from '../http'
+ import type { Envelope } from '@/types/space/scene'
+-import type { ConnectorVO, ConnectorCreate, ConnectorStopVO } from '@/types/space/connector'
++import type { ConnectorVO, ConnectorCreate, ConnectorStopVO, ConnectorUpdate } from '@/types/space/connector'
+ 
+ export const connectorApi = {
+   listBySite(siteId: string) {
+     return http.get<unknown, Envelope<ConnectorVO[]>>(`/space/site/${siteId}/connector`)
+   },
+   create(d: ConnectorCreate) {
+     return http.post<unknown, Envelope<{ id: string }>>(`/space/connector`, d)
+   },
++  update(id: string, d: ConnectorUpdate) {
++    return http.put<unknown, Envelope<null>>(`/space/connector/${id}`, d)
++  },
+   upsertStop(id: string, s: ConnectorStopVO) {
+     return http.put<unknown, Envelope<null>>(`/space/connector/${id}/stop`, s)
+   },
+   deleteStop(id: string, floorId: string) {
+     return http.delete<unknown, Envelope<null>>(`/space/connector/${id}/stop/${floorId}`)
+   },
+   remove(id: string) {
+     return http.delete<unknown, Envelope<null>>(`/space/connector/${id}`)
+   },
+ }
+diff --git a/cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts b/cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts
+index c89b2d1..76f4c56 100644
+--- a/cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts
++++ b/cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts
+@@ -152,10 +152,27 @@ describe('PickPathPlanner', () => {
+       ['A', [{ to: 'B', w: 10 }]],
+       ['B', [{ to: 'A', w: 10 }, { to: 'C', w: 10 }]],
+       ['C', [{ to: 'B', w: 10 }]],
+     ])
+     const coords: Record<string, { x: number; y: number; z?: number }> = {
+       A: { x: 0, y: 0, z: 0 }, B: { x: 0, y: 0, z: 10 }, C: { x: 0, y: 0, z: 20 },
+     }
+     expect(astar(adj, 'A', 'C', (k) => coords[k]!)).toEqual(['A', 'B', 'C'])
+   })
+ })
++
++describe('astar hScale (admissibility 标定)', () => {
++  const adj = new Map<string, Array<{ to: string; w: number }>>([
++    ['A', [{ to: 'B', w: 10 }]],
++    ['B', [{ to: 'A', w: 10 }, { to: 'C', w: 10 }]],
++    ['C', [{ to: 'B', w: 10 }]],
++  ])
++  const pts: Record<string, { x: number; y: number }> = { A: { x: 0, y: 0 }, B: { x: 10, y: 0 }, C: { x: 20, y: 0 } }
++  const nodePt = (k: string) => pts[k]!
++
++  it('default hScale equals explicit 1 (SP3 zero-regression)', () => {
++    expect(astar(adj, 'A', 'C', nodePt)).toEqual(astar(adj, 'A', 'C', nodePt, 1))
++  })
++  it('still finds optimal path with a tiny hScale (conservative heuristic)', () => {
++    expect(astar(adj, 'A', 'C', nodePt, 0.0001)).toEqual(['A', 'B', 'C'])
++  })
++})
+diff --git a/cp6.web/src/space-viewer/advanced/PickPathPlanner.ts b/cp6.web/src/space-viewer/advanced/PickPathPlanner.ts
+index 233c404..91ac96d 100644
+--- a/cp6.web/src/space-viewer/advanced/PickPathPlanner.ts
++++ b/cp6.web/src/space-viewer/advanced/PickPathPlanner.ts
+@@ -92,28 +92,29 @@ function nearestAccess(g: Graph, p: Pt): { foot: Pt; segA: Pt; segB: Pt } | null
+   return best ? { foot: best.foot, segA: best.segA, segB: best.segB } : null
+ }
+ 
+ /** A\*（邻接表 + 欧氏启发式 + 临时接入节点 FA/FB）。返回 key 序列或 null。
+  *  nodePt：取节点坐标（FA/FB→各自 foot，其余→g.nodes）；h(k)=dist(nodePt(k),nodePt(end))，admissible。 */
+ export function astar(
+   adj: Map<string, Array<{ to: string; w: number }>>,
+   start: string,
+   end: string,
+   nodePt: (k: string) => { x: number; y: number; z?: number },
++  hScale = 1,
+ ): string[] | null {
+   const g = new Map<string, number>()       // 已知最短 g 值
+   const f = new Map<string, number>()        // f = g + h
+   const prev = new Map<string, string>()
+   const visited = new Set<string>()
+   const endPt = nodePt(end)
+   const h = (a: { x: number; y: number; z?: number }, b: { x: number; y: number; z?: number }): number =>
+-    Math.hypot(a.x - b.x, a.y - b.y, (a.z ?? 0) - (b.z ?? 0))
++    Math.hypot(a.x - b.x, a.y - b.y, (a.z ?? 0) - (b.z ?? 0)) * hScale
+   g.set(start, 0)
+   f.set(start, h(nodePt(start), endPt))
+   while (true) {
+     // 开集取最小 f（节点数小，O(V^2) 选最小可接受，不引堆）
+     let u: string | null = null
+     let best = Infinity
+     for (const [k, fk] of f) if (!visited.has(k) && fk < best) { best = fk; u = k }
+     if (u === null) break
+     if (u === end) break
+     visited.add(u)
+diff --git a/cp6.web/src/space-viewer/advanced/cost.ts b/cp6.web/src/space-viewer/advanced/cost.ts
+new file mode 100644
+index 0000000..350b88c
+--- /dev/null
++++ b/cp6.web/src/space-viewer/advanced/cost.ts
+@@ -0,0 +1,16 @@
++// cp6.web/src/space-viewer/advanced/cost.ts —— 通行成本常量与换算（时间=秒，SP5）
++export const WALK_SPEED_MMPS = 1200 // 水平步行/叉车混合默认 1.2 m/s
++
++/** 水平物理距离(mm) → 时间(秒)。 */
++export const mmToSec = (mm: number): number => mm / WALK_SPEED_MMPS
++
++/** 竖直边时间(秒)：等待(每停一次门周期) + 每层行程 × 跨层数。 */
++export const verticalSec = (waitSec: number, perFloorSec: number, floorsSpanned: number): number =>
++  waitSec + perFloorSec * Math.abs(floorsSpanned)
++
++/** 编辑器预填用类型默认（后端 ConnectorService.DefaultCost 为持久化权威，此处镜像供 UX）。 */
++export const TYPE_DEFAULT_COST: Record<number, { waitSec: number; travelSecPerFloor: number }> = {
++  1: { waitSec: 20, travelSecPerFloor: 6 },
++  2: { waitSec: 0, travelSecPerFloor: 15 },
++  3: { waitSec: 0, travelSecPerFloor: 10 },
++}
+diff --git a/cp6.web/src/space-viewer/advanced/multiFloor.ts b/cp6.web/src/space-viewer/advanced/multiFloor.ts
+index 6b51ef9..663a419 100644
+--- a/cp6.web/src/space-viewer/advanced/multiFloor.ts
++++ b/cp6.web/src/space-viewer/advanced/multiFloor.ts
+@@ -1,14 +1,14 @@
+ // cp6.web/src/space-viewer/advanced/multiFloor.ts —— 多层图基元（mm，floorId 命名空间）
+ import type { Pt } from './PickPathPlanner'
+ 
+ export interface Pt3 { x: number; y: number; z: number }
+-export interface FloorMeta { floorId: string; z: number }  // z=堆叠标高 mm
++export interface FloorMeta { floorId: string; z: number; level: number }  // z=堆叠标高 mm；level=楼层序（算跨层数）
+ 
+ /** 多层节点键：楼层命名空间 + 1mm 取整 XY。 */
+ export const mfKey = (floorId: string, p: { x: number; y: number }): string =>
+   `${floorId}:${Math.round(p.x)},${Math.round(p.y)}`
+ 
+ export const dist3 = (a: Pt3, b: Pt3): number => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z)
+ 
+ /** 把 2D 点 + 层 z 升 Pt3。 */
+ export const lift = (p: Pt, z: number): Pt3 => ({ x: p.x, y: p.y, z })
+diff --git a/cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts b/cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts
+index c7093e1..0f8570f 100644
+--- a/cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts
++++ b/cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts
+@@ -1,61 +1,83 @@
+ import { describe, it, expect } from 'vitest'
+-import { buildMultiFloorGraph, pathBetweenMF, distanceMatrixMF, polyDist3 } from './planMultiFloor'
+-import { planPickComparisonMF } from './planMultiFloor'
++import { buildMultiFloorGraph, pathBetweenMF, costMatrixMF, planPickComparisonMF } from './planMultiFloor'
++import { mmToSec, verticalSec, WALK_SPEED_MMPS } from './cost'
+ 
+ const F1 = 'F1', F2 = 'F2'
+-const floors = [{ floorId: F1, z: 0 }, { floorId: F2, z: 6000 }]
++const floors = [{ floorId: F1, z: 0, level: 1 }, { floorId: F2, z: 6000, level: 2 }]
+ const aislesByFloor = new Map([
+   [F1, [{ aisleCode: 'H1', centerline: '[[0,500],[1000,500]]' }]],
+   [F2, [{ aisleCode: 'H2', centerline: '[[0,500],[1000,500]]' }]],
+ ])
+-const connectors = [{ connectorCode: 'E1', type: 1, stops: [{ floorId: F1, x: 500, y: 500 }, { floorId: F2, x: 500, y: 500 }] }]
++const E1 = { connectorCode: 'E1', type: 1, waitSec: 20, travelSecPerFloor: 6, stops: [{ floorId: F1, x: 500, y: 500 }, { floorId: F2, x: 500, y: 500 }] }
++const connectors = [E1]
+ 
+-describe('buildMultiFloorGraph', () => {
+-  it('namespaces nodes per floor and adds a vertical connector edge of weight |Δz|', () => {
++describe('buildMultiFloorGraph (time weights)', () => {
++  it('vertical connector edge = verticalSec(wait,perFloor,|Δlevel|)', () => {
+     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+-    expect(g.nodes.has('F1:0,500')).toBe(true)
+-    expect(g.nodes.has('F2:0,500')).toBe(true)
+-    expect(g.nodes.has('F1:500,500')).toBe(true)
+-    expect(g.nodes.has('F2:500,500')).toBe(true)
+     const up = g.adj.get('F1:500,500')!.find((e) => e.to === 'F2:500,500')
+     expect(up).toBeTruthy()
+-    expect(up!.w).toBeCloseTo(6000)
++    expect(up!.w).toBeCloseTo(verticalSec(20, 6, 1)) // 26s
++  })
++  it('horizontal aisle edge = mmToSec(distance)', () => {
++    const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
++    const e = g.adj.get('F1:0,500')!.find((x) => x.to === 'F1:1000,500')
++    expect(e!.w).toBeCloseTo(mmToSec(1000))
++  })
++  it('hScale = Kmin = global min(time/physLen); horizontal dominates here', () => {
++    const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
++    expect(g.hScale).toBeCloseTo(1 / WALK_SPEED_MMPS)
++  })
++  it('slanted connector: Kmin uses true 3D edge length, not |Δz| (A* admissibility)', () => {
++    // 倾斜连接体：F1(500,500)→F2(1100,500)，Δxy=600、Δz=6000；时间=verticalSec(0,1,1)=1s（rate 极低 → 全图 Kmin）
++    const slanted = { connectorCode: 'S1', type: 1, waitSec: 0, travelSecPerFloor: 1, stops: [{ floorId: F1, x: 500, y: 500 }, { floorId: F2, x: 1100, y: 500 }] }
++    const g = buildMultiFloorGraph(floors, aislesByFloor, [slanted])
++    const physLen = Math.hypot(1100 - 500, 6000 - 0) // 真 3D 边长 = hypot(600,6000)，非 |Δz|=6000
++    // Kmin 必须用真边长；用 |Δz| 会高估最小 rate → 启发式不可采纳(inadmissible) → A* 可能次优
++    expect(g.hScale).toBeCloseTo(verticalSec(0, 1, 1) / physLen, 6)
+   })
+ })
+ 
+-describe('pathBetweenMF', () => {
+-  it('routes across floors via the connector (path has a z change 0→6000)', () => {
++describe('pathBetweenMF (time)', () => {
++  it('crosses floors via connector; z spans 0→6000; time > vertical 26s', () => {
+     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+     const r = pathBetweenMF(g, { floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 })
+     expect(r.degraded).toBe(false)
+-    const zs = r.points.map((p) => p.z)
+-    expect(Math.min(...zs)).toBeCloseTo(0)
+-    expect(Math.max(...zs)).toBeCloseTo(6000)
++    expect(Math.min(...r.points.map((p) => p.z))).toBeCloseTo(0)
++    expect(Math.max(...r.points.map((p) => p.z))).toBeCloseTo(6000)
++    expect(r.time).toBeGreaterThan(verticalSec(20, 6, 1))
+   })
+-  it('distanceMatrixMF symmetric + includes vertical leg (>6000)', () => {
++  it('costMatrixMF symmetric + includes vertical time', () => {
+     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+     const stops = [{ floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 }]
+-    const m = distanceMatrixMF(g, stops)
++    const m = costMatrixMF(g, stops)
+     expect(m[0]![1]).toBeCloseTo(m[1]![0]!)
+-    expect(m[0]![1]).toBeGreaterThan(6000)
++    expect(m[0]![1]).toBeGreaterThan(verticalSec(20, 6, 1))
+   })
+ })
+ 
+-describe('planPickComparisonMF', () => {
+-  it('optimized never longer than actual; savings>=0; points carry z', () => {
+-    const stops = [
+-      { floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 },
+-      { floorId: F1, x: 900, y: 520 }, { floorId: F2, x: 100, y: 520 },
+-    ]
++describe('planPickComparisonMF (dual distance+time)', () => {
++  const stops = [
++    { floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 },
++    { floorId: F1, x: 900, y: 520 }, { floorId: F2, x: 100, y: 520 },
++  ]
++  it('returns both Mm and Sec; optimizedSec ≤ actualSec; timeSavings ≥ 0; order[0]=0', () => {
+     const cmp = planPickComparisonMF(floors, aislesByFloor, connectors, stops)
+     expect(cmp.order[0]).toBe(0)
+-    expect(cmp.optimizedMm).toBeLessThanOrEqual(cmp.actualMm + 1e-6)
+-    expect(cmp.savingsPct).toBeGreaterThanOrEqual(0)
++    expect(cmp.optimizedSec).toBeLessThanOrEqual(cmp.actualSec + 1e-6)
++    expect(cmp.timeSavingsPct).toBeGreaterThanOrEqual(0)
++    expect(cmp.actualMm).toBeGreaterThan(0)
++    expect(cmp.actualSec).toBeGreaterThan(0)
+     expect(cmp.actual.points.some((p) => p.z > 0)).toBe(true)
+   })
+-  it('single stop -> zero, savings 0', () => {
++  it('pricier elevator raises actualSec (cost wired through)', () => {
++    const cheap = planPickComparisonMF(floors, aislesByFloor, [E1], stops)
++    const dear = planPickComparisonMF(floors, aislesByFloor, [{ ...E1, waitSec: 120, travelSecPerFloor: 60 }], stops)
++    expect(dear.actualSec).toBeGreaterThan(cheap.actualSec)
++  })
++  it('single stop → zero distance/time, savings 0', () => {
+     const cmp = planPickComparisonMF(floors, aislesByFloor, connectors, [{ floorId: F1, x: 100, y: 520 }])
+     expect(cmp.actualMm).toBe(0)
+-    expect(cmp.savingsPct).toBe(0)
++    expect(cmp.actualSec).toBe(0)
++    expect(cmp.timeSavingsPct).toBe(0)
+   })
+ })
+diff --git a/cp6.web/src/space-viewer/advanced/planMultiFloor.ts b/cp6.web/src/space-viewer/advanced/planMultiFloor.ts
+index 1b7acf1..fe6f0e5 100644
+--- a/cp6.web/src/space-viewer/advanced/planMultiFloor.ts
++++ b/cp6.web/src/space-viewer/advanced/planMultiFloor.ts
+@@ -1,23 +1,30 @@
+-// cp6.web/src/space-viewer/advanced/planMultiFloor.ts —— 多层图 + 跨层路径（承 SP3，图在前端）
++// cp6.web/src/space-viewer/advanced/planMultiFloor.ts —— 多层图 + 跨层路径（承 SP4，边权=时间秒，SP5）
+ import { buildCenterlineGraph, key, astar, type Pt } from './PickPathPlanner'
+ import { mfKey, dist3, type Pt3, type FloorMeta } from './multiFloor'
+ import { optimizeOrder, routeLengthByOrder } from './routeOptimize'
++import { mmToSec, verticalSec, WALK_SPEED_MMPS } from './cost'
+ 
+ export interface MFGraph {
+-  nodes: Map<string, Pt3>                                   // key=mfKey；z=层标高
+-  adj: Map<string, Array<{ to: string; w: number }>>
+-  segments: Array<{ a: Pt; b: Pt; floorId: string }>        // 供按层投影接入
+-  floorZ: Map<string, number>                               // floorId→层标高 mm（含无巷道层，O(1) 取 z）
++  nodes: Map<string, Pt3>
++  adj: Map<string, Array<{ to: string; w: number }>>   // w = 时间(秒)
++  segments: Array<{ a: Pt; b: Pt; floorId: string }>
++  floorZ: Map<string, number>
++  floorLevel: Map<string, number>
++  hScale: number                                        // Kmin = 全图 min(边时间 / 边真3D长)，A* admissible 标定（h = 3D欧氏距 × hScale）
+ }
+ export interface AisleVOLite { aisleCode: string; centerline: string }
+-export interface ConnectorPath { connectorCode: string; type: number; stops: Array<{ floorId: string; x: number; y: number }> }
++export interface ConnectorPath {
++  connectorCode: string; type: number
++  waitSec: number; travelSecPerFloor: number
++  stops: Array<{ floorId: string; x: number; y: number }>
++}
+ 
+ function addMFEdge(g: MFGraph, ka: string, pa: Pt3, kb: string, pb: Pt3, w: number): void {
+   if (ka === kb) return
+   if (!g.nodes.has(ka)) g.nodes.set(ka, pa)
+   if (!g.nodes.has(kb)) g.nodes.set(kb, pb)
+   if (!g.adj.has(ka)) g.adj.set(ka, [])
+   if (!g.adj.has(kb)) g.adj.set(kb, [])
+   if (!g.adj.get(ka)!.some((e) => e.to === kb)) g.adj.get(ka)!.push({ to: kb, w })
+   if (!g.adj.get(kb)!.some((e) => e.to === ka)) g.adj.get(kb)!.push({ to: ka, w })
+ }
+@@ -30,145 +37,168 @@ export function nearestAccessOnSegments(segs: Array<{ a: Pt; b: Pt }>, p: Pt): {
+     const len2 = dx * dx + dy * dy
+     let t = len2 === 0 ? 0 : ((p.x - s.a.x) * dx + (p.y - s.a.y) * dy) / len2
+     t = Math.max(0, Math.min(1, t))
+     const foot = { x: s.a.x + t * dx, y: s.a.y + t * dy }
+     const d = Math.hypot(p.x - foot.x, p.y - foot.y)
+     if (!best || d < best.d) best = { segA: s.a, segB: s.b, d }
+   }
+   return best ? { segA: best.segA, segB: best.segB } : null
+ }
+ 
+-/** 合并各层 SP3 子图（按 floorId 命名空间）+ 连接体接入本层巷道 + 同连接体相邻层 stop 竖直边（权=|Δz|）。 */
++/** 合并各层 SP3 子图（边权 mm→秒）+ 连接体接入（水平秒）+ 同连接体相邻层竖直边（verticalSec）。
++ *  hScale = Kmin = 全图 min(边时间/边物理长)。 */
+ export function buildMultiFloorGraph(
+   floors: FloorMeta[],
+   aislesByFloor: Map<string, AisleVOLite[]>,
+   connectors: ConnectorPath[],
+ ): MFGraph {
+   const zOf = new Map(floors.map((f) => [f.floorId, f.z]))
+-  const g: MFGraph = { nodes: new Map(), adj: new Map(), segments: [], floorZ: zOf }
++  const levelOf = new Map(floors.map((f) => [f.floorId, f.level]))
++  const g: MFGraph = { nodes: new Map(), adj: new Map(), segments: [], floorZ: zOf, floorLevel: levelOf, hScale: 1 / WALK_SPEED_MMPS }
++  let minRate = 1 / WALK_SPEED_MMPS // 水平边 rate 恒定，作 Kmin 起点
+ 
+-  // 1) 各层 SP3 子图 → 前缀合并
++  // 1) 各层 SP3 子图（mm 边权）→ 前缀合并 + mm→秒
+   for (const f of floors) {
+     const z = f.z
+     const g2d = buildCenterlineGraph(aislesByFloor.get(f.floorId) ?? [])
+     for (const [k2d, pt] of g2d.nodes) g.nodes.set(`${f.floorId}:${k2d}`, { x: pt.x, y: pt.y, z })
+-    for (const [k2d, list] of g2d.adj) g.adj.set(`${f.floorId}:${k2d}`, list.map((e) => ({ to: `${f.floorId}:${e.to}`, w: e.w })))
++    for (const [k2d, list] of g2d.adj) g.adj.set(`${f.floorId}:${k2d}`, list.map((e) => ({ to: `${f.floorId}:${e.to}`, w: mmToSec(e.w) })))
+     for (const s of g2d.segments) g.segments.push({ a: s.a, b: s.b, floorId: f.floorId })
+   }
+ 
+-  // 2) 连接体：每 stop 接入本层最近巷道；同连接体相邻层 stop 竖直边
++  // 2) 连接体：每 stop 接入本层最近巷道（水平秒）；同连接体相邻层竖直边（verticalSec）
+   for (const c of connectors) {
+-    const placed = c.stops.filter((s) => zOf.has(s.floorId)).map((s) => ({ s, z: zOf.get(s.floorId)! }))
++    const placed = c.stops.filter((s) => zOf.has(s.floorId)).map((s) => ({ s, z: zOf.get(s.floorId)!, level: levelOf.get(s.floorId)! }))
+     for (const { s, z } of placed) {
+       const floorSegs = g.segments.filter((seg) => seg.floorId === s.floorId)
+       const acc = nearestAccessOnSegments(floorSegs, { x: s.x, y: s.y })
+       const nodeK = mfKey(s.floorId, s)
+       const nodeP: Pt3 = { x: s.x, y: s.y, z }
+       if (acc) {
+-        addMFEdge(g, nodeK, nodeP, `${s.floorId}:${key(acc.segA)}`, { x: acc.segA.x, y: acc.segA.y, z }, Math.hypot(s.x - acc.segA.x, s.y - acc.segA.y))
+-        addMFEdge(g, nodeK, nodeP, `${s.floorId}:${key(acc.segB)}`, { x: acc.segB.x, y: acc.segB.y, z }, Math.hypot(s.x - acc.segB.x, s.y - acc.segB.y))
++        const dA = Math.hypot(s.x - acc.segA.x, s.y - acc.segA.y)
++        const dB = Math.hypot(s.x - acc.segB.x, s.y - acc.segB.y)
++        addMFEdge(g, nodeK, nodeP, `${s.floorId}:${key(acc.segA)}`, { x: acc.segA.x, y: acc.segA.y, z }, mmToSec(dA))
++        addMFEdge(g, nodeK, nodeP, `${s.floorId}:${key(acc.segB)}`, { x: acc.segB.x, y: acc.segB.y, z }, mmToSec(dB))
+       } else {
+         g.nodes.set(nodeK, nodeP)
+       }
+     }
+     const sorted = placed.slice().sort((a, b) => a.z - b.z)
+     for (let i = 0; i + 1 < sorted.length; i++) {
+       const a = sorted[i]!, b = sorted[i + 1]!
++      const span = Math.abs(a.level - b.level)
++      const w = verticalSec(c.waitSec, c.travelSecPerFloor, span)
++      const physLen = dist3({ x: a.s.x, y: a.s.y, z: a.z }, { x: b.s.x, y: b.s.y, z: b.z }) // 真 3D 边长（含 xy 位移，倾斜连接体 admissible）
++      if (physLen > 0) minRate = Math.min(minRate, w / physLen)
+       addMFEdge(g, mfKey(a.s.floorId, a.s), { x: a.s.x, y: a.s.y, z: a.z },
+-                   mfKey(b.s.floorId, b.s), { x: b.s.x, y: b.s.y, z: b.z }, Math.abs(a.z - b.z))
++                   mfKey(b.s.floorId, b.s), { x: b.s.x, y: b.s.y, z: b.z }, w)
+     }
+   }
++  g.hScale = minRate
+   return g
+ }
+ 
+ export interface MFStop { floorId: string; x: number; y: number }
+-export interface MFRoute { points: Pt3[]; totalDistance: number; degraded: boolean }
++export interface MFRoute { points: Pt3[]; totalDistance: number; totalTime: number; degraded: boolean }
+ 
+ export function polyDist3(pts: Pt3[]): number {
+   let d = 0
+   for (let i = 1; i < pts.length; i++) d += dist3(pts[i - 1]!, pts[i]!)
+   return d
+ }
+ 
+ /** 取某层标高（O(1) 查 g.floorZ；含无巷道/无 stop 的层，避免退化端点落 z=0）。 */
+ function zOfFloor(g: MFGraph, fid: string): number {
+   return g.floorZ.get(fid) ?? 0
+ }
+ 
+-/** 跨层相邻两拣货点：各端投影到本层巷道接入（临时 FA/FB），astar 跑多层图。不连通→直连 degraded。 */
+-export function pathBetweenMF(g: MFGraph, a: MFStop, b: MFStop): { points: Pt3[]; degraded: boolean } {
++/** 沿 astar 返回的 key 序累计边时间（adj 含临时 FA/FB）。 */
++function pathCost(adj: Map<string, Array<{ to: string; w: number }>>, keys: string[]): number {
++  let c = 0
++  for (let i = 0; i + 1 < keys.length; i++) {
++    const e = adj.get(keys[i]!)?.find((x) => x.to === keys[i + 1]!)
++    if (e) c += e.w
++  }
++  return c
++}
++
++/** 跨层相邻两拣货点：各端投影本层巷道接入（FA/FB），astar 跑多层时间图。不连通→直连 degraded（时间=直线÷步速）。 */
++export function pathBetweenMF(g: MFGraph, a: MFStop, b: MFStop): { points: Pt3[]; time: number; degraded: boolean } {
+   const za = zOfFloor(g, a.floorId), zb = zOfFloor(g, b.floorId)
+   const pa: Pt3 = { x: a.x, y: a.y, z: za }, pb: Pt3 = { x: b.x, y: b.y, z: zb }
+ 
+   const accA = nearestAccessOnSegments(g.segments.filter((s) => s.floorId === a.floorId), { x: a.x, y: a.y })
+   const accB = nearestAccessOnSegments(g.segments.filter((s) => s.floorId === b.floorId), { x: b.x, y: b.y })
+-  if (!accA || !accB) return { points: [pa, pb], degraded: true }
++  if (!accA || !accB) return { points: [pa, pb], time: mmToSec(dist3(pa, pb)), degraded: true }
+ 
+   const adj = new Map<string, Array<{ to: string; w: number }>>()
+   for (const [k, list] of g.adj) adj.set(k, list.slice())
+   const FA = 'FA', FB = 'FB'
+   const link = (n: string, p: MFStop, segA: Pt, segB: Pt) => {
+     const ka = `${p.floorId}:${key(segA)}`, kb = `${p.floorId}:${key(segB)}`
+-    adj.set(n, [{ to: ka, w: Math.hypot(p.x - segA.x, p.y - segA.y) }, { to: kb, w: Math.hypot(p.x - segB.x, p.y - segB.y) }])
+-    adj.get(ka)?.push({ to: n, w: Math.hypot(p.x - segA.x, p.y - segA.y) })
+-    adj.get(kb)?.push({ to: n, w: Math.hypot(p.x - segB.x, p.y - segB.y) })
++    adj.set(n, [{ to: ka, w: mmToSec(Math.hypot(p.x - segA.x, p.y - segA.y)) }, { to: kb, w: mmToSec(Math.hypot(p.x - segB.x, p.y - segB.y)) }])
++    adj.get(ka)?.push({ to: n, w: mmToSec(Math.hypot(p.x - segA.x, p.y - segA.y)) })
++    adj.get(kb)?.push({ to: n, w: mmToSec(Math.hypot(p.x - segB.x, p.y - segB.y)) })
+   }
+   link(FA, a, accA.segA, accA.segB)
+   link(FB, b, accB.segA, accB.segB)
+ 
+   const nodePt = (k: string): Pt3 => (k === FA ? pa : k === FB ? pb : g.nodes.get(k)!)
+-  const path = astar(adj, FA, FB, nodePt)
+-  if (!path) return { points: [pa, pb], degraded: true }
+-  return { points: path.map(nodePt), degraded: false }
++  const path = astar(adj, FA, FB, nodePt, g.hScale)
++  if (!path) return { points: [pa, pb], time: mmToSec(dist3(pa, pb)), degraded: true }
++  return { points: path.map(nodePt), time: pathCost(adj, path), degraded: false }
+ }
+ 
+-export function distanceMatrixMF(g: MFGraph, stops: MFStop[], degradedPairs?: { count: number }): number[][] {
++/** 拣货点两两时间矩阵（秒；degraded 段记直线÷步速）。对称。 */
++export function costMatrixMF(g: MFGraph, stops: MFStop[], degradedPairs?: { count: number }): number[][] {
+   const n = stops.length
+   const m: number[][] = Array.from({ length: n }, () => new Array<number>(n).fill(0))
+   for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+     const seg = pathBetweenMF(g, stops[i]!, stops[j]!)
+-    const d = polyDist3(seg.points)
+-    m[i]![j] = d; m[j]![i] = d
++    m[i]![j] = seg.time; m[j]![i] = seg.time
+     if (seg.degraded && degradedPairs) degradedPairs.count++
+   }
+   return m
+ }
+ 
+ export interface MFComparison {
+   actual: MFRoute; optimized: MFRoute; order: number[]
+-  actualMm: number; optimizedMm: number; savingsPct: number; degradedPairCount: number
++  actualMm: number; optimizedMm: number          // 距离（几何，参考）
++  actualSec: number; optimizedSec: number        // 时间（优化目标）
++  timeSavingsPct: number; degradedPairCount: number
+ }
+ 
+ function planRouteOnMFGraph(g: MFGraph, stops: MFStop[]): MFRoute {
+   if (stops.length < 2) {
+-    return { points: stops.map((s) => ({ x: s.x, y: s.y, z: zOfFloor(g, s.floorId) })), totalDistance: 0, degraded: false }
++    return { points: stops.map((s) => ({ x: s.x, y: s.y, z: zOfFloor(g, s.floorId) })), totalDistance: 0, totalTime: 0, degraded: false }
+   }
+   const points: Pt3[] = []
+-  let degraded = false
++  let degraded = false, totalTime = 0
+   for (let i = 0; i + 1 < stops.length; i++) {
+     const seg = pathBetweenMF(g, stops[i]!, stops[i + 1]!)
+     degraded = degraded || seg.degraded
++    totalTime += seg.time
+     const pts = i === 0 ? seg.points : seg.points.slice(1)
+     points.push(...pts)
+   }
+-  return { points, totalDistance: polyDist3(points), degraded }
++  return { points, totalDistance: polyDist3(points), totalTime, degraded }
+ }
+ 
+-/** what-if 跨层重排对比：actual=LineNo 序，optimized=NN+2opt（以 actual 为 baseline 兜底，强保证 ≤ actual）。 */
++/** what-if 跨层重排对比：actual=LineNo 序，optimized=NN+2opt（时间矩阵，以 actual 为 baseline 兜底，强保证 ≤ actual 时间）。 */
+ export function planPickComparisonMF(
+   floors: FloorMeta[], aislesByFloor: Map<string, AisleVOLite[]>, connectors: ConnectorPath[], stops: MFStop[],
+ ): MFComparison {
+   const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+   const actual = planRouteOnMFGraph(g, stops)
+   if (stops.length < 2) {
+-    return { actual, optimized: actual, order: stops.map((_, i) => i), actualMm: actual.totalDistance, optimizedMm: actual.totalDistance, savingsPct: 0, degradedPairCount: 0 }
++    return { actual, optimized: actual, order: stops.map((_, i) => i), actualMm: actual.totalDistance, optimizedMm: actual.totalDistance, actualSec: actual.totalTime, optimizedSec: actual.totalTime, timeSavingsPct: 0, degradedPairCount: 0 }
+   }
+   const degradedPairs = { count: 0 }
+-  const matrix = distanceMatrixMF(g, stops, degradedPairs)
++  const matrix = costMatrixMF(g, stops, degradedPairs)
+   const actualOrder = stops.map((_, i) => i)
+   const candidate = optimizeOrder(matrix)
+   const order = routeLengthByOrder(matrix, candidate) + 1e-9 < routeLengthByOrder(matrix, actualOrder) ? candidate : actualOrder
+   const optimized = planRouteOnMFGraph(g, order.map((i) => stops[i]!))
+-  const actualMm = actual.totalDistance, optimizedMm = optimized.totalDistance
+-  const savingsPct = actualMm === 0 ? 0 : Math.max(0, ((actualMm - optimizedMm) / actualMm) * 100)
+-  return { actual, optimized, order, actualMm, optimizedMm, savingsPct, degradedPairCount: degradedPairs.count }
++  const actualSec = actual.totalTime, optimizedSec = optimized.totalTime
++  const timeSavingsPct = actualSec === 0 ? 0 : Math.max(0, ((actualSec - optimizedSec) / actualSec) * 100)
++  return { actual, optimized, order, actualMm: actual.totalDistance, optimizedMm: optimized.totalDistance, actualSec, optimizedSec, timeSavingsPct, degradedPairCount: degradedPairs.count }
+ }
+diff --git a/cp6.web/src/types/space/advanced.ts b/cp6.web/src/types/space/advanced.ts
+index 8c498ac..91b0ab0 100644
+--- a/cp6.web/src/types/space/advanced.ts
++++ b/cp6.web/src/types/space/advanced.ts
+@@ -37,12 +37,12 @@ export interface DeviceDto {
+   status: number
+   locationCode: string | null
+   absX: number | null
+   absY: number | null
+   absZ: number | null
+ }
+ 
+ export interface SiteFloorVO { floorId: string; floorCode: string; level: number; height: number; z: number }
+ export interface SitePickStopVO { seq: number; locationCode: string; qty: number; materialNo: string | null; floorId: string | null; absX: number | null; absY: number | null; absZ: number | null }
+ export interface SiteAisleVO { floorId: string; aisleCode: string; centerline: string }
+-export interface SiteConnectorVO { connectorCode: string; type: number; stops: Array<{ floorId: string; x: number; y: number }> }
++export interface SiteConnectorVO { connectorCode: string; type: number; waitSec: number; travelSecPerFloor: number; stops: Array<{ floorId: string; x: number; y: number }> }
+ export interface SitePickPath { taskNo: string; floors: SiteFloorVO[]; stops: SitePickStopVO[]; aisles: SiteAisleVO[]; connectors: SiteConnectorVO[] }
+diff --git a/cp6.web/src/types/space/connector.ts b/cp6.web/src/types/space/connector.ts
+index 3312dc9..2671ada 100644
+--- a/cp6.web/src/types/space/connector.ts
++++ b/cp6.web/src/types/space/connector.ts
+@@ -1,3 +1,4 @@
+ export interface ConnectorStopVO { floorId: string; x: number; y: number }
+-export interface ConnectorVO { id: string; connectorCode: string; connectorType: number; name: string; stops: ConnectorStopVO[] }
+-export interface ConnectorCreate { siteId: string; connectorCode: string; connectorType: number; name: string }
++export interface ConnectorVO { id: string; connectorCode: string; connectorType: number; name: string; waitSec: number; travelSecPerFloor: number; stops: ConnectorStopVO[] }
++export interface ConnectorCreate { siteId: string; connectorCode: string; connectorType: number; name: string; waitSec: number; travelSecPerFloor: number }
++export interface ConnectorUpdate { name: string; connectorType: number; waitSec: number; travelSecPerFloor: number }
+diff --git a/cp6.web/src/views/space/editor/panels/ConnectorPanel.vue b/cp6.web/src/views/space/editor/panels/ConnectorPanel.vue
+index 6247884..1078e80 100644
+--- a/cp6.web/src/views/space/editor/panels/ConnectorPanel.vue
++++ b/cp6.web/src/views/space/editor/panels/ConnectorPanel.vue
+@@ -1,16 +1,17 @@
+ <script setup lang="ts">
+ import { ref, onMounted, watch } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { connectorApi } from '@/api/space/connector'
+-import type { ConnectorVO } from '@/types/space/connector'
++import type { ConnectorVO, ConnectorUpdate } from '@/types/space/connector'
++import { TYPE_DEFAULT_COST } from '@/space-viewer/advanced/cost'
+ 
+ const { t } = useI18n()
+ 
+ const props = defineProps<{ siteId: string; floorId: string }>()
+ const emit = defineEmits<{
+   requestPlace: [connectorId: string]
+ }>()
+ 
+ const connectors = ref<ConnectorVO[]>([])
+ const loading = ref(false)
+@@ -18,21 +19,27 @@ const loading = ref(false)
+ const typeOptions = [
+   { value: 1, label: t('电梯') },
+   { value: 2, label: t('楼梯') },
+   { value: 3, label: t('坡道') },
+ ]
+ 
+ function typeLabel(tp: number): string {
+   return typeOptions.find(o => o.value === tp)?.label ?? String(tp)
+ }
+ 
+-const form = ref({ connectorCode: '', connectorType: 1, name: '' })
++const form = ref({ connectorCode: '', connectorType: 1, name: '', waitSec: 20, travelSecPerFloor: 6 })
++
++// 选类型时预填成本默认（用户可改）
++watch(() => form.value.connectorType, (tp) => {
++  const d = TYPE_DEFAULT_COST[tp]
++  if (d) { form.value.waitSec = d.waitSec; form.value.travelSecPerFloor = d.travelSecPerFloor }
++})
+ 
+ async function load(): Promise<void> {
+   if (!props.siteId) return
+   loading.value = true
+   try {
+     const res = await connectorApi.listBySite(props.siteId)
+     connectors.value = res.data ?? []
+   } catch {
+     ElMessage.error(t('加载连接体失败'))
+   } finally {
+@@ -48,23 +55,25 @@ async function createConnector(): Promise<void> {
+   if (!code) {
+     ElMessage.warning(t('请输入连接体编码'))
+     return
+   }
+   try {
+     await connectorApi.create({
+       siteId: props.siteId,
+       connectorCode: code,
+       connectorType: form.value.connectorType,
+       name: form.value.name.trim(),
++      waitSec: form.value.waitSec,
++      travelSecPerFloor: form.value.travelSecPerFloor,
+     })
+     ElMessage.success(t('新建成功'))
+-    form.value = { connectorCode: '', connectorType: 1, name: '' }
++    form.value = { connectorCode: '', connectorType: 1, name: '', waitSec: 20, travelSecPerFloor: 6 }
+     await load()
+   } catch {
+     ElMessage.error(t('新建失败'))
+   }
+ }
+ 
+ function placeHere(c: ConnectorVO): void {
+   emit('requestPlace', c.id)
+ }
+ 
+@@ -86,20 +95,30 @@ async function removeConnector(c: ConnectorVO): Promise<void> {
+   }
+   try {
+     await connectorApi.remove(c.id)
+     ElMessage.success(t('删除成功'))
+     await load()
+   } catch {
+     ElMessage.error(t('删除失败'))
+   }
+ }
+ 
++async function saveCost(c: ConnectorVO): Promise<void> {
++  try {
++    const d: ConnectorUpdate = { name: c.name, connectorType: c.connectorType, waitSec: c.waitSec, travelSecPerFloor: c.travelSecPerFloor }
++    await connectorApi.update(c.id, d)
++    ElMessage.success(t('成本已保存'))
++  } catch {
++    ElMessage.error(t('保存成本失败'))
++  }
++}
++
+ // Exposed so FloorEditor can refresh after a stop is placed on the canvas.
+ defineExpose({ refresh: load })
+ </script>
+ 
+ <template>
+   <div class="connector-panel">
+     <div class="panel-title">{{ t('连接体') }}</div>
+ 
+     <!-- New connector form -->
+     <div class="panel-section">{{ t('新建连接体') }}</div>
+@@ -108,35 +127,49 @@ defineExpose({ refresh: load })
+         <el-input v-model="form.connectorCode" :placeholder="t('如 ELV-01')" />
+       </el-form-item>
+       <el-form-item :label="t('类型')">
+         <el-select v-model="form.connectorType" style="width: 100%">
+           <el-option v-for="o in typeOptions" :key="o.value" :label="o.label" :value="o.value" />
+         </el-select>
+       </el-form-item>
+       <el-form-item :label="t('名称')">
+         <el-input v-model="form.name" />
+       </el-form-item>
++      <el-form-item :label="t('等待秒')">
++        <el-input-number v-model="form.waitSec" :min="0" :step="1" controls-position="right" style="width: 100%" />
++      </el-form-item>
++      <el-form-item :label="t('每层秒')">
++        <el-input-number v-model="form.travelSecPerFloor" :min="0" :step="1" controls-position="right" style="width: 100%" />
++      </el-form-item>
+     </el-form>
+     <el-button type="primary" size="small" style="width: 100%" @click="createConnector">
+       {{ t('新建连接体') }}
+     </el-button>
+ 
+     <!-- Connector list -->
+     <div class="panel-section">{{ t('连接体列表') }}</div>
+     <div v-loading="loading" class="conn-list">
+       <div v-for="c in connectors" :key="c.id" class="conn-item">
+         <div class="conn-head">
+           <span class="conn-name">{{ c.name || c.connectorCode }}</span>
+           <span class="conn-type">{{ typeLabel(c.connectorType) }}</span>
+         </div>
+         <div class="conn-code">{{ c.connectorCode }}</div>
+ 
++        <div class="conn-cost">
++          <span class="cost-label">{{ t('等待秒') }}</span>
++          <el-input-number v-model="c.waitSec" :min="0" :step="1" size="small" controls-position="right" style="width: 96px" />
++          <span class="cost-label">{{ t('每层秒') }}</span>
++          <el-input-number v-model="c.travelSecPerFloor" :min="0" :step="1" size="small" controls-position="right" style="width: 96px" />
++          <el-button size="small" type="primary" plain @click="saveCost(c)">{{ t('保存成本') }}</el-button>
++        </div>
++
+         <div class="stop-list">
+           <div v-for="s in c.stops" :key="s.floorId" class="stop-row">
+             <span :class="['stop-floor', { current: s.floorId === floorId }]">
+               {{ s.floorId === floorId ? t('本层') : t('其他层') + ' ' + s.floorId.slice(0, 8) }}
+             </span>
+             <span class="stop-xy">({{ Math.round(s.x) }}, {{ Math.round(s.y) }})</span>
+             <el-button link type="danger" size="small" @click="removeStop(c, s.floorId)">
+               {{ t('删除') }}
+             </el-button>
+           </div>
+@@ -231,17 +264,28 @@ defineExpose({ refresh: load })
+ }
+ .stop-xy {
+   color: #666;
+   flex: 1;
+ }
+ .conn-actions {
+   display: flex;
+   gap: 6px;
+   margin-top: 4px;
+ }
++.conn-cost {
++  display: flex;
++  align-items: center;
++  gap: 4px;
++  flex-wrap: wrap;
++  margin: 6px 0;
++}
++.cost-label {
++  font-size: 11px;
++  color: #666;
++}
+ .empty-tip {
+   font-size: 12px;
+   color: #bbb;
+   text-align: center;
+   padding: 12px;
+ }
+ </style>
+diff --git a/cp6.web/src/views/space/stacked/StackedViewer.vue b/cp6.web/src/views/space/stacked/StackedViewer.vue
+index 919f970..0ba8292 100644
+--- a/cp6.web/src/views/space/stacked/StackedViewer.vue
++++ b/cp6.web/src/views/space/stacked/StackedViewer.vue
+@@ -91,42 +91,46 @@ const compareInfo = ref('')
+ function onToggleFloor(floorId: string, visible: boolean): void {
+   floorVisible[floorId] = visible
+   viewer?.setFloorVisible(floorId, visible)
+ }
+ 
+ async function onLoadPath(taskNo: string): Promise<void> {
+   if (!taskNo || !pathAnimator) return
+   try {
+     const env = await advancedApi.sitePickPath(siteId, taskNo)
+     const d = env.data
+-    const mfFloors = d.floors.map((f) => ({ floorId: f.floorId, z: f.z }))
++    const mfFloors = d.floors.map((f) => ({ floorId: f.floorId, z: f.z, level: f.level }))
+     const aislesByFloor = new Map<string, { aisleCode: string; centerline: string }[]>()
+     for (const a of d.aisles) {
+       if (!aislesByFloor.has(a.floorId)) aislesByFloor.set(a.floorId, [])
+       aislesByFloor.get(a.floorId)!.push({ aisleCode: a.aisleCode, centerline: a.centerline })
+     }
+-    const connectors = d.connectors.map((c) => ({ connectorCode: c.connectorCode, type: c.type, stops: c.stops }))
++    const connectors = d.connectors.map((c) => ({
++      connectorCode: c.connectorCode, type: c.type,
++      waitSec: c.waitSec, travelSecPerFloor: c.travelSecPerFloor,
++      stops: c.stops,
++    }))
+     const stops = [...d.stops]
+       .sort((a, b) => a.seq - b.seq)
+       .filter((s) => s.floorId != null && s.absX != null && s.absY != null)
+       .map((s) => ({ floorId: s.floorId as string, x: s.absX as number, y: s.absY as number }))
+     if (stops.length < 2) { ElMessage.info(t('该拣货单跨层可定位拣货点不足')); return }
+     const cmp = planPickComparisonMF(mfFloors, aislesByFloor, connectors, stops)
+     comparison.value = cmp
+     pathAnimator.setPath(cmp.actual.points)
+     showOptimized.value = false
+     pathAnimator.setComparisonPath(null)
+     pathLoaded.value = true
+-    compareInfo.value = t('实际 {a} 米 / 优化 {o} 米 / 省 {p}%')
+-      .replace('{a}', (cmp.actualMm / 1000).toFixed(1))
+-      .replace('{o}', (cmp.optimizedMm / 1000).toFixed(1))
+-      .replace('{p}', cmp.savingsPct.toFixed(0))
++    compareInfo.value = t('实际 {am} 米 / {as} 秒 ・ 优化 {om} 米 / {os} 秒 ・ 省 {p}%')
++      .replace('{am}', (cmp.actualMm / 1000).toFixed(1)).replace('{as}', cmp.actualSec.toFixed(0))
++      .replace('{om}', (cmp.optimizedMm / 1000).toFixed(1)).replace('{os}', cmp.optimizedSec.toFixed(0))
++      .replace('{p}', cmp.timeSavingsPct.toFixed(0))
+     if (cmp.actual.degraded) ElMessage.warning(t('跨层路径不连通，近似直连显示'))
+   } catch {
+     ElMessage.warning(t('跨层拣货路径获取失败'))
+   }
+ }
+ 
+ function onPathPlay(): void { pathAnimator?.play() }
+ function onPathPause(): void { pathAnimator?.pause() }
+ function onPathReplay(): void { pathAnimator?.replay() }
+ 
+diff --git a/cp6.web/src/views/space/viewer/FloorViewer.vue b/cp6.web/src/views/space/viewer/FloorViewer.vue
+index 4a6e891..140cea1 100644
+--- a/cp6.web/src/views/space/viewer/FloorViewer.vue
++++ b/cp6.web/src/views/space/viewer/FloorViewer.vue
+@@ -87,20 +87,21 @@ import { StockOverlay } from '@/space-viewer/overlay/StockOverlay'
+ import { stockApi } from '@/api/space/stock'
+ import type { OverlayMode, WmsStockDto } from '@/types/space/overlay'
+ import InfoCard from './InfoCard.vue'
+ import FloorList from './FloorList.vue'
+ import SearchBox from './SearchBox.vue'
+ import StockLegend from './StockLegend.vue'
+ import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
+ import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
+ import { DeviceLayer } from '@/space-viewer/advanced/DeviceLayer'
+ import { planPickComparison, type Pt, type PickComparison } from '@/space-viewer/advanced/PickPathPlanner'
++import { mmToSec } from '@/space-viewer/advanced/cost'
+ import { advancedApi } from '@/api/space/advanced'
+ import AdvancedPanel from './AdvancedPanel.vue'
+ 
+ const { t } = useI18n()
+ const route = useRoute()
+ 
+ const canvasRef = ref<HTMLCanvasElement | null>(null)
+ const loading = ref(false)
+ const progressText = ref('')
+ const errorMsg = ref('')
+@@ -269,23 +270,23 @@ async function onLoadPath(taskNo: string): Promise<void> {
+     if (stopPts.length < 2) { ElMessage.info(t('该拣货单无可定位拣货点')); return }
+     const cmp = planPickComparison(data.aisles, stopPts)
+     comparison.value = cmp
+     pathAnimator.setPath(cmp.actual.points)                       // 青线 + 小车 = 实际 LineNo 序
+     showOptimized.value = false
+     pathAnimator.setComparisonPath(null)
+     pathLoaded.value = true
+     pathInfo.value = t('拣货路径：{n} 点，总距 {d} 米')
+       .replace('{n}', String(stopPts.length))
+       .replace('{d}', (cmp.actualMm / 1000).toFixed(1))           // I-SPACE-801
+-    compareInfo.value = t('实际 {a} 米 / 优化 {o} 米 / 省 {p}%')
+-      .replace('{a}', (cmp.actualMm / 1000).toFixed(1))
+-      .replace('{o}', (cmp.optimizedMm / 1000).toFixed(1))
++    compareInfo.value = t('实际 {am} 米 / {as} 秒 ・ 优化 {om} 米 / {os} 秒 ・ 省 {p}%')
++      .replace('{am}', (cmp.actualMm / 1000).toFixed(1)).replace('{as}', mmToSec(cmp.actualMm).toFixed(0))
++      .replace('{om}', (cmp.optimizedMm / 1000).toFixed(1)).replace('{os}', mmToSec(cmp.optimizedMm).toFixed(0))
+       .replace('{p}', cmp.savingsPct.toFixed(0))
+     if (cmp.actual.degraded) ElMessage.warning(t('巷道路径不连通，近似直连显示'))  // W-SPACE-801
+   } catch {
+     ElMessage.warning(t('高级可视化数据获取失败'))   // W-SPACE-802
+   }
+ }
+ 
+ function onToggleOptimized(): void {
+   showOptimized.value = !showOptimized.value
+   pathAnimator?.setComparisonPath(showOptimized.value ? (comparison.value?.optimized.points ?? null) : null)
+diff --git a/docs/superpowers/qa/space-p5-traversal-cost/01-stacked-dual.png b/docs/superpowers/qa/space-p5-traversal-cost/01-stacked-dual.png
+new file mode 100644
+index 0000000..ed02f01
+Binary files /dev/null and b/docs/superpowers/qa/space-p5-traversal-cost/01-stacked-dual.png differ
+diff --git a/docs/superpowers/qa/space-p5-traversal-cost/02-cost-effect.png b/docs/superpowers/qa/space-p5-traversal-cost/02-cost-effect.png
+new file mode 100644
+index 0000000..1278a36
+Binary files /dev/null and b/docs/superpowers/qa/space-p5-traversal-cost/02-cost-effect.png differ
+diff --git a/docs/superpowers/qa/space-p5-traversal-cost/03-floor-time.png b/docs/superpowers/qa/space-p5-traversal-cost/03-floor-time.png
+new file mode 100644
+index 0000000..b4c6392
+Binary files /dev/null and b/docs/superpowers/qa/space-p5-traversal-cost/03-floor-time.png differ
+diff --git a/docs/superpowers/qa/space-p5-traversal-cost/04-editor-connector.png b/docs/superpowers/qa/space-p5-traversal-cost/04-editor-connector.png
+new file mode 100644
+index 0000000..db35c1a
+Binary files /dev/null and b/docs/superpowers/qa/space-p5-traversal-cost/04-editor-connector.png differ
+diff --git a/docs/superpowers/qa/space-p5-traversal-cost/README.md b/docs/superpowers/qa/space-p5-traversal-cost/README.md
+new file mode 100644
+index 0000000..8a4b915
+--- /dev/null
++++ b/docs/superpowers/qa/space-p5-traversal-cost/README.md
+@@ -0,0 +1,132 @@
++# Space P5 — Traversal-Cost QA (真库 + 真浏览器)
++
++End-to-end QA for the Space P5 feature: multi-floor pick-path routing switched from
++pure distance to **time** weights (per-connector `WaitSec` + `TravelSecPerFloor`), with a
++**dual distance + time** panel and a cost-aware what-if optimizer.
++
++All 5 acceptance points below were run against a **real database** and a **real headless
++browser** (not mocks). Status: **5/5 PASS**.
++
++---
++
++## Environment (THIS machine — differs from the original brief)
++
++| Piece | Value |
++|-------|-------|
++| Repo / branch | `C:\CP6` @ `feat/space-p5-frontend-cost` (T1–T10 done, green) |
++| SQL Server | **Docker** container `cp6-db` inside WSL2 Ubuntu, published to Windows host. sa password in `C:\CP6\.env` (`MSSQL_SA_PASSWORD`). |
++| QA database | `CP6DB_SpaceQA` — **bootstrapped fresh** on this machine (the old machine's QA db was not migrated). Backend auto-migrates on first start. |
++| Backend | `dotnet run` on `http://localhost:5177` (`ASPNETCORE_ENVIRONMENT=Development`). |
++| Frontend | Vite on `http://localhost:5180`; its `/api` proxy already defaults to `:5177` (no env var needed). |
++| Login | `admin` / `123456` (auto-seeded on the fresh db by `Program.cs`; tenant `…A1` matches the seed data). |
++
++### 坑 (gotchas hit on this machine — read before repeating)
++
++1. **`.NET SqlClient` + WSL2 + `localhost` = connection refused (10061).**
++   The connection string **must use `127.0.0.1,1433`, not `localhost,1433`.**
++   `localhost` resolves to IPv6 `::1` first, and WSL2's localhost-forwarding of the
++   Docker-published port is unreliable for SqlClient's SNI over `::1` (raw TCP and
++   `Test-NetConnection` succeed, but `SqlConnection.Open()` refuses). Forcing IPv4 with
++   `127.0.0.1` fixes it. This is baked into `appsettings.Local.json`.
++
++2. **gstack headless browser cannot run on this Windows host.**
++   gstack's Playwright server runs under **bun**, and `chromium.launch()` **hangs
++   indefinitely under bun on Windows** (reproduced with a 1-line launch test → timeout;
++   no `chrome-headless-shell` process ever spawns). Node.js drives the exact same
++   Playwright + browsers fine. **Workaround:** the browser acceptance steps were run via a
++   small **Node + Playwright** script (`qarun.mjs`, not committed — lives in the gstack
++   skill dir) using the browsers gstack already installed. Same engine, same evidence.
++   If gstack is fixed for bun-on-Windows later, the standard `browse` CLI can replace it.
++
++3. **Software WebGL works.** Launching chromium with
++   `--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader` gives real WebGL,
++   so the Three.js viewers actually rendered the 3D scene and the pick path (see
++   `01-stacked-dual.png`). The SP4-era "synthetic wheel can't reach near-LOD" limitation
++   did **not** bite here — the path lines render at the default camera. Path *animation
++   frame-by-frame* was not stepped; correctness of the cost math is additionally covered by
++   T2/T4/T5/T6 unit tests and the contract test below.
++
++---
++
++## Seed chain (run in this exact order against `CP6DB_SpaceQA`)
++
++The QAWH site chain was originally hand-built in the editor UI (no SQL existed), so this QA
++adds a **bootstrap** section that materializes it before the older seeds can resolve their
++hard-coded GUIDs.
++
++| # | File | Creates |
++|---|------|---------|
++| 0 | `space-p5-traversal-cost/seed.sql` **(bootstrap section)** | Site `QAWH` `F31F48C2…`, Floor `F1` `5C92E6A8…` (L1), Zone `A` `4D426CAE…`, Rack `R1` `0A00…0001` |
++| 1 | `space-p3-sp3/seed.sql` | F1 cross-grid aisles + 4 `SP3-*` locations + single-floor zig-zag order **`OB-SP3-CROSS`** |
++| 2 | `space-p4-multifloor/seed.sql` | Floor `F2` (L2) + zone/rack/locations + elevator **`E1`** (F1↔F2) + cross-floor order **`OB-P4-CROSS`** |
++| 3 | `space-p5-traversal-cost/seed.sql` **(E1-cost section)** | `UPDATE Space_Connector SET WaitSec=20, TravelSecPerFloor=6 WHERE ConnectorCode='E1'` |
++
++Because the sp5 file holds both the bootstrap **and** the E1 cost update, and the E1 update
++needs sp4's connector to exist first, the file is run **twice**: once first (bootstrap;
++E1 update hits 0 rows), and once last (E1 now exists → cost applied). The file is fully
++idempotent (`IF NOT EXISTS`), ASCII-only, `SET QUOTED_IDENTIFIER ON`.
++
++Run each file via (password from `.env`):
++```
++wsl -d Ubuntu -u root -- sh -c \
++  "docker exec -i cp6-db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '<PW>' -C -d CP6DB_SpaceQA \
++     < /mnt/c/CP6/docs/superpowers/qa/space-p5-traversal-cost/seed.sql"
++```
++
++---
++
++## Acceptance results (5/5 PASS)
++
++### 1. Contract — `GET /api/space/site/{QAWH}/pick-path?taskNo=OB-P4-CROSS` → 200 ✅
++`data.connectors[0]` = E1 with `waitSec: 20, travelSecPerFloor: 6`; every floor carries
++`level` + `z` (F2 → level 2 / z 6000, F1 → level 1 / z 0). Verified with a cookie-jar
++`curl` login (admin/123456). Response envelope `{code:0, message:"OK", data:{…}}`.
++
++### 2. Stacked viewer dual-value panel — `01-stacked-dual.png` ✅
++`/space/stacked/{QAWH}` → load `OB-P4-CROSS` → panel shows:
++> **实际 33.2 米 / 91 秒 ・ 优化 17.2 米 / 35 秒 ・ 省 61%**
++
++Both distance (米) and time (秒) shown; savings% is on the **time** basis. The cross-floor
++path renders in the 3D scene (cyan lines through the elevator, pink stop marker).
++
++### 3. Cost effect — `02-cost-effect.png` ✅
++Raise E1 cost (`WaitSec=120, TravelSecPerFloor=60`) → reload → panel becomes:
++> **实际 33.2 米 / 553 秒 ・ 优化 17.2 米 / 189 秒 ・ 省 66%**
++
++Distances are unchanged (33.2 / 17.2 m) — only the **time** weights move (91→553s actual,
++35→189s optimized) and the savings shifts 61%→**66%**, proving connector cost feeds the
++optimizer. Restored to 20/6 afterward.
++
++### 4. Single-floor time line — `03-floor-time.png` ✅
++`/space/viewer/{QAWH}?floorId={F1}` → load single-floor zig-zag order `OB-SP3-CROSS`:
++> path info: **拣货路径：4 点，总距 15.3 米**
++> compare:  **实际 15.3 米 / 13 秒 ・ 优化 9.3 米 / 8 秒 ・ 省 39%**
++
++Time row present, path renders; matches the sp3 seed's documented ~15.3m→9.3m / ~39%.
++
++### 5. Editor ConnectorPanel — `04-editor-connector.png` ✅
++`/space/editor/{F1}`:
++- **New-connector type prefill:** selecting 类型 = 楼梯 (stairs) changed the cost fields from
++  `等待秒 20 / 每层秒 6` (elevator default) to `等待秒 0 / 每层秒 15` (stairs default) — matches
++  `TYPE_DEFAULT_COST`.
++- **Edit list item + save:** changed E1's 等待秒 and clicked **保存成本** → green success
++  toast **成本已保存**. (E1 restored to 20/6 after the test.)
++
++---
++
++## Screenshots
++| File | Acceptance |
++|------|-----------|
++| `01-stacked-dual.png` | #2 stacked dual distance+time panel |
++| `02-cost-effect.png` | #3 expensive-E1 → shifted time / savings |
++| `03-floor-time.png` | #4 single-floor time line |
++| `04-editor-connector.png` | #5 type prefill + 保存成本 toast |
++
++---
++
++## Post-QA state
++- `E1` cost left at the canonical **20 / 6**.
++- `appsettings.Local.json` restored to `Database=CP6DB` (correct local-dev config for this
++  machine; still uses `127.0.0.1,1433` per 坑 #1). Only its DB name and server host differ
++  from the committed template — the file is gitignored.
++- Background `dotnet` (5177) and `vite` (5180) processes stopped.
+diff --git a/docs/superpowers/qa/space-p5-traversal-cost/seed.sql b/docs/superpowers/qa/space-p5-traversal-cost/seed.sql
+new file mode 100644
+index 0000000..ab1e703
+--- /dev/null
++++ b/docs/superpowers/qa/space-p5-traversal-cost/seed.sql
+@@ -0,0 +1,84 @@
++-- Space P5 traversal-cost QA seed (CP6DB_SpaceQA)
++-- =====================================================================
++-- This is the LAST seed in a 4-part chain. Run order against CP6DB_SpaceQA:
++--   0) THIS file's "Bootstrap" section below  (site QAWH / floor F1 / zone A / rack R1)
++--   1) docs/superpowers/qa/space-p3-sp3/seed.sql        (F1 cross-grid + SP3-* locs + OB-SP3-CROSS zig-zag order)
++--   2) docs/superpowers/qa/space-p4-multifloor/seed.sql (F2 + elevator E1 + OB-P4-CROSS cross-floor order)
++--   3) THIS file's "E1 cost" section below              (Space P5: gives elevator E1 its time cost)
++--
++-- WHY a bootstrap section: on the ORIGINAL QA machine the QAWH site chain
++-- (site/F1/zone A/rack R1) was created by hand via the editor UI, so the sp3/sp4
++-- seeds referenced those GUIDs but never created them. On a FRESH Docker volume
++-- (this machine) the QA db is bootstrapped from scratch, so we must materialize
++-- that chain here before the sp3/sp4 seeds can resolve their FK GUIDs.
++--
++-- The GUIDs below MUST match the ones hard-coded in the sp3/sp4 seeds:
++--   Tenant 00000000-0000-0000-0000-0000000000A1 (default/admin tenant, DEV-visible)
++--   Site QAWH   F31F48C2-81D5-4BA7-AFF1-83DA8D87C2FE
++--   Floor F1    5C92E6A8-C4C8-4D91-9DDC-EA9C54B6961F  (Level 1)
++--   Zone  A     4D426CAE-AAE6-4CC5-91A1-370549113A59  (on F1)
++--   Rack  R1    0A000000-0000-0000-0000-000000000001  (on F1 / Zone A)
++--
++-- Idempotent (every insert guarded by IF NOT EXISTS). ASCII only (sqlcmd safe).
++-- SET QUOTED_IDENTIFIER ON required (Space_Location has a filtered unique index).
++--
++-- Run (this machine — Docker SQL Server in WSL2):
++--   PW from C:\CP6\.env (MSSQL_SA_PASSWORD)
++--   wsl -d Ubuntu -u root -- sh -c \
++--     "docker exec -i cp6-db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '<PW>' -C -d CP6DB_SpaceQA \
++--       < /mnt/c/CP6/docs/superpowers/qa/space-p5-traversal-cost/seed.sql"
++
++SET NOCOUNT ON;
++SET QUOTED_IDENTIFIER ON;
++SET ANSI_NULLS ON;
++
++DECLARE @Tenant uniqueidentifier = '00000000-0000-0000-0000-0000000000A1';
++DECLARE @Site   uniqueidentifier = 'F31F48C2-81D5-4BA7-AFF1-83DA8D87C2FE'; -- QAWH
++DECLARE @F1     uniqueidentifier = '5C92E6A8-C4C8-4D91-9DDC-EA9C54B6961F'; -- floor F1 (Level 1)
++DECLARE @ZoneA  uniqueidentifier = '4D426CAE-AAE6-4CC5-91A1-370549113A59'; -- zone A on F1
++DECLARE @RackR1 uniqueidentifier = '0A000000-0000-0000-0000-000000000001'; -- rack R1 on F1 / zone A
++DECLARE @Now    datetime2 = SYSUTCDATETIME();
++
++-- =====================================================================
++-- BOOTSTRAP: QAWH site chain (site -> floor F1 -> zone A -> rack R1)
++-- Must run BEFORE the sp3 + sp4 seeds.
++-- =====================================================================
++
++-- 1) Site QAWH
++IF NOT EXISTS (SELECT 1 FROM Space_Site WHERE Id=@Site)
++  INSERT INTO Space_Site (Id, SiteCode, SiteName, Enable, CreateDate, TenantId, IsDeleted)
++  VALUES (@Site, 'QAWH', 'QA Warehouse', 1, @Now, @Tenant, 0);
++
++-- 2) Floor F1 (Level 1, height 6000)
++IF NOT EXISTS (SELECT 1 FROM Space_Floor WHERE Id=@F1)
++  INSERT INTO Space_Floor (Id, SiteId, Level, FloorCode, FloorName, Height, UnderlayOffsetX, UnderlayOffsetY, OriginX, OriginY, CreateDate, TenantId, IsDeleted)
++  VALUES (@F1, @Site, 1, 'F1', '1F', 6000, 0, 0, 0, 0, @Now, @Tenant, 0);
++
++-- 3) Zone A on F1
++IF NOT EXISTS (SELECT 1 FROM Space_Zone WHERE Id=@ZoneA)
++  INSERT INTO Space_Zone (Id, FloorId, ZoneCode, ZoneName, ZoneType, Polygon, Enable, CreateDate, TenantId, IsDeleted)
++  VALUES (@ZoneA, @F1, 'A', 'A Zone', 1, '[]', 1, @Now, @Tenant, 0);
++
++-- 4) Rack R1 on F1 / Zone A (SP3 locations need a valid RackId)
++IF NOT EXISTS (SELECT 1 FROM Space_Rack WHERE Id=@RackR1)
++  INSERT INTO Space_Rack (Id, ZoneId, FloorId, RackCode, X, Y, Z, RotationZ, Cols, Levels, DepthCount, CellW, CellH, CellD, Enable, CreateDate, TenantId, IsDeleted)
++  VALUES (@RackR1, @ZoneA, @F1, 'R1', 0, 0, 0, 0, 1, 1, 1, 1000, 1000, 1000, 1, @Now, @Tenant, 0);
++
++-- =====================================================================
++-- E1 COST (Space P5): give elevator E1 its traversal time cost.
++-- Requires the sp4 seed to have created connector E1 first.
++--   WaitSec           = boarding/door fixed cost (charged once on the vertical edge)
++--   TravelSecPerFloor = per-level travel cost (x |Level diff| of the two stops)
++-- Baseline QA values: 20s wait + 6s/floor.
++-- =====================================================================
++UPDATE Space_Connector SET WaitSec=20, TravelSecPerFloor=6 WHERE ConnectorCode='E1';
++
++-- --- Cost-effect variant (acceptance #3): make the elevator expensive so the
++--     what-if optimizer changes the optimized order / savings%. Run this, reload
++--     the stacked viewer, capture 02-cost-effect.png, then restore to 20/6 above.
++-- UPDATE Space_Connector SET WaitSec=120, TravelSecPerFloor=60 WHERE ConnectorCode='E1';
++
++-- ===== verify =====
++SELECT 'site' AS kind, SiteCode, SiteName FROM Space_Site WHERE Id=@Site;
++SELECT 'floors' AS kind, FloorCode, Level FROM Space_Floor WHERE SiteId=@Site ORDER BY Level;
++SELECT 'connector E1 cost' AS kind, ConnectorCode, WaitSec, TravelSecPerFloor FROM Space_Connector WHERE ConnectorCode='E1';

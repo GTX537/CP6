@@ -1,0 +1,290 @@
+# Review package: 7d92d29..HEAD
+
+## Commits
+e1b2daa feat(fin): 波A地基 VoucherSource.Inventory + 库存过账规则种子 + GRNI科目
+
+## Files changed
+ CP6.Core/Services/Fin/FinCoaTemplate.cs        |  5 ++
+ CP6.Core/Services/Fin/PostingRuleSeed.cs       | 45 ++++++++++++++
+ CP6.Entity/DomainModels/Fin/JournalEntry.cs    |  2 +
+ CP6.Tests/Fin/InventoryPostingRuleSeedTests.cs | 82 ++++++++++++++++++++++++++
+ CP6.Tests/Fin/PostingRuleSeedTests.cs          |  5 +-
+ 5 files changed, 137 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Fin/FinCoaTemplate.cs b/CP6.Core/Services/Fin/FinCoaTemplate.cs
+index 6e58d7d..3a8a919 100644
+--- a/CP6.Core/Services/Fin/FinCoaTemplate.cs
++++ b/CP6.Core/Services/Fin/FinCoaTemplate.cs
+@@ -62,20 +62,21 @@ public static class FinCoaTemplate
+         new("1602", "累计折旧",   AccountType.Asset, Cr, true, Role: "ACCUM_DEPREC"),   // 备抵
+         new("1606", "固定资产清理", AccountType.Asset, Dr, true, Role: "ASSET_CLEARING"),   // A3 §4 处置清理科目
+         new("1701", "无形资产",   AccountType.Asset, Dr, true),
+         new("1901", "待处理财产损溢", AccountType.Asset, Dr, true, Role: "PENDING_PROPERTY_LOSS"),   // A3 §4 盘亏清理
+ 
+         // 2 负债类（贷方增）
+         new("2000", "流动负债",   AccountType.Liability, Cr, IsLeaf: false),
+         new("2001", "短期借款",   AccountType.Liability, Cr, true, 2, ParentCode: "2000"),
+         new("2202", "应付账款",   AccountType.Liability, Cr, true, 2, IsControl: true, SubLedgerType: "AP", RequirePartner: true, Role: "AP_CONTROL", ParentCode: "2000"),
+         new("2203", "预收账款",   AccountType.Liability, Cr, true, 2, RequirePartner: true, Role: "AR_ADVANCE", ParentCode: "2000"),
++        new("2204", "暂估应付账款", AccountType.Liability, Cr, true, 2, Role: "GRNI", ParentCode: "2000"),   // 波A 收货未开票暂估（2202 已被 AP_CONTROL 占用，另取邻码）
+         new("2211", "应付职工薪酬", AccountType.Liability, Cr, true, 2, ParentCode: "2000"),
+         new("2221", "应交税费",   AccountType.Liability, Cr, IsLeaf: false, Level: 2, ParentCode: "2000"),
+         new("2221.01", "应交税费—进项税", AccountType.Liability, Cr, true, 3, Role: "TAX_INPUT", ParentCode: "2221"),
+         new("2221.02", "应交税费—销项税", AccountType.Liability, Cr, true, 3, Role: "TAX_OUTPUT", ParentCode: "2221"),
+         new("2221.03", "应交税费—应交所得税", AccountType.Liability, Cr, true, 3, ParentCode: "2221"),
+         new("2231", "应付票据",   AccountType.Liability, Cr, true, 2, ParentCode: "2000"),
+         new("2241", "其他应付款", AccountType.Liability, Cr, true, 2, ParentCode: "2000"),
+         new("2501", "长期借款",   AccountType.Liability, Cr, true),
+ 
+         // 3 权益类（贷方增）
+@@ -118,25 +119,29 @@ public static class FinCoaTemplate
+     /// 全量按同一规则铺开，此处给关键/控制科目（含 Role 锚点），足够支撑自动凭证与 MVP。
+     /// </summary>
+     public static readonly IReadOnlyList<CoaSeedRow> IntlRows = new List<CoaSeedRow>
+     {
+         new("1010", "Cash on Hand",            AccountType.Asset, Dr, true),
+         new("1020", "Bank",                    AccountType.Asset, Dr, true),
+         new("1100", "Accounts Receivable",     AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "AR", RequirePartner: true, Role: "AR_CONTROL"),
+         new("1300", "Raw Materials",           AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "INV", Role: "INVENTORY"),
+         new("1340", "Work in Progress",        AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "COST", Role: "WIP"),
+         new("1350", "Finished Goods",          AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "INV", Role: "FG"),
++        new("1900", "Pending Property Loss",   AccountType.Asset, Dr, true, Role: "PENDING_PROPERTY_LOSS"),   // 波A 盘亏清理
+         new("2100", "Accounts Payable",        AccountType.Liability, Cr, true, IsControl: true, SubLedgerType: "AP", RequirePartner: true, Role: "AP_CONTROL"),
++        new("2110", "Goods Received Not Invoiced", AccountType.Liability, Cr, true, Role: "GRNI"),             // 波A 收货未开票暂估（2150 已被 AR_ADVANCE 占用）
+         new("2150", "Advance from Customers",  AccountType.Liability, Cr, true, RequirePartner: true, Role: "AR_ADVANCE"),
+         new("2210", "Input Tax (VAT recoverable)", AccountType.Liability, Cr, true, Role: "TAX_INPUT"),
+         new("2220", "Output Tax (VAT payable)",    AccountType.Liability, Cr, true, Role: "TAX_OUTPUT"),
+         new("3000", "Share Capital",           AccountType.Equity, Cr, true, Role: "EQUITY_CAPITAL"),
+         new("3300", "Retained Earnings",       AccountType.Equity, Cr, true, Role: "RETAINED_EARNINGS"),
+         new("4000", "Sales Revenue",           AccountType.Revenue, Cr, true, Role: "REVENUE"),
++        new("4800", "Non-Operating Income",    AccountType.Revenue, Cr, true, Role: "NON_OP_INCOME"),        // 波A 盘盈利得
+         new("4900", "FX Gain",                 AccountType.Revenue, Cr, true, Role: "FX_GAIN"),
+         new("5000", "Cost of Goods Sold",      AccountType.Expense, Dr, true, Role: "COGS"),
+         new("5100", "Direct Material",         AccountType.Expense, Dr, true, Role: "DIRECT_MATERIAL"),
+         new("5200", "Direct Labor",            AccountType.Expense, Dr, true, Role: "DIRECT_LABOR"),
+         new("5300", "Manufacturing Overhead",  AccountType.Expense, Dr, true, Role: "MFG_OVERHEAD"),
++        new("6800", "Non-Operating Expense",   AccountType.Expense, Dr, true, Role: "NON_OP_EXPENSE"),       // 波A 报废净损
+         new("6900", "FX Loss",                 AccountType.Expense, Dr, true, Role: "FX_LOSS"),
+     };
+ }
+diff --git a/CP6.Core/Services/Fin/PostingRuleSeed.cs b/CP6.Core/Services/Fin/PostingRuleSeed.cs
+index 55961ae..4467fd9 100644
+--- a/CP6.Core/Services/Fin/PostingRuleSeed.cs
++++ b/CP6.Core/Services/Fin/PostingRuleSeed.cs
+@@ -164,20 +164,65 @@ public static class PostingRuleSeed
+         // 加工费的应付由三单匹配（FinApServiceAdapter 借 INVENTORY 贷 AP_CONTROL）独立记，此处只做结转、不碰应付 → 零重复。来源 Cost。
+         yield return new PostingRule
+         {
+             EventType = "Subcontract.CostPosted", Name = "外注成品成本入账", VoucherSource = VoucherSource.Cost, IsActive = true,
+             Lines =
+             {
+                 Role(1, PostingSide.Debit, "FG", "Amount"),
+                 Role(2, PostingSide.Credit, "INVENTORY", "Amount"),
+             },
+         };
++
++        // ── 波A 库存移动自动凭证（VoucherSource.Inventory）──
++        // 采购入库暂估：借 原材料 INVENTORY / 贷 暂估应付账款 GRNI（收货未开票，发票到票后再冲销）。金额=入库 Qty×UnitPrice
++        yield return new PostingRule
++        {
++            EventType = "Inventory.Received", Name = "库存入库暂估", VoucherSource = VoucherSource.Inventory, IsActive = true,
++            Lines =
++            {
++                Role(1, PostingSide.Debit, "INVENTORY", "Amount"),
++                Role(2, PostingSide.Credit, "GRNI", "Amount"),
++            },
++        };
++
++        // 盘盈：借 原材料 INVENTORY / 贷 营业外收入 NON_OP_INCOME（盘盈利得）
++        yield return new PostingRule
++        {
++            EventType = "Inventory.AdjustGain", Name = "库存盘盈", VoucherSource = VoucherSource.Inventory, IsActive = true,
++            Lines =
++            {
++                Role(1, PostingSide.Debit, "INVENTORY", "Amount"),
++                Role(2, PostingSide.Credit, "NON_OP_INCOME", "Amount"),
++            },
++        };
++
++        // 盘亏：借 待处理财产损溢 PENDING_PROPERTY_LOSS / 贷 原材料 INVENTORY
++        yield return new PostingRule
++        {
++            EventType = "Inventory.AdjustLoss", Name = "库存盘亏", VoucherSource = VoucherSource.Inventory, IsActive = true,
++            Lines =
++            {
++                Role(1, PostingSide.Debit, "PENDING_PROPERTY_LOSS", "Amount"),
++                Role(2, PostingSide.Credit, "INVENTORY", "Amount"),
++            },
++        };
++
++        // 报废：借 营业外支出 NON_OP_EXPENSE（报废损失）/ 贷 原材料 INVENTORY
++        yield return new PostingRule
++        {
++            EventType = "Inventory.Scrapped", Name = "库存报废", VoucherSource = VoucherSource.Inventory, IsActive = true,
++            Lines =
++            {
++                Role(1, PostingSide.Debit, "NON_OP_EXPENSE", "Amount"),
++                Role(2, PostingSide.Credit, "INVENTORY", "Amount"),
++            },
++        };
+     }
+ 
+     private static PostingRuleLine Role(int no, PostingSide side, string role, string amountField, bool carryPartner = false, bool carryCostCenter = false) =>
+         new()
+         {
+             LineNo = no, Side = side, Source = RuleLineSource.FixedRole,
+             AccountRole = role, AmountField = amountField, CarryPartner = carryPartner, CarryCostCenter = carryCostCenter,
+         };
+ 
+     private static PostingRuleLine Doc(int no, PostingSide side, string accField, string amtField, bool carryCostCenter = false) =>
+diff --git a/CP6.Entity/DomainModels/Fin/JournalEntry.cs b/CP6.Entity/DomainModels/Fin/JournalEntry.cs
+index 58e35c7..3502877 100644
+--- a/CP6.Entity/DomainModels/Fin/JournalEntry.cs
++++ b/CP6.Entity/DomainModels/Fin/JournalEntry.cs
+@@ -84,20 +84,22 @@ public enum VoucherSource
+     /// <summary>红冲</summary>
+     Reversal = 5,
+     /// <summary>期末未实现汇兑重估（含下期初冲回）</summary>
+     FxReval = 6,
+     /// <summary>A4 银行对账单边项自动凭证</summary>
+     BankRecon = 7,
+     /// <summary>A3 月末折旧 / 处置月补提折旧汇总凭证</summary>
+     Depreciation = 8,
+     /// <summary>A3 资产处置结转凭证</summary>
+     AssetDisposal = 9,
++    /// <summary>波A 库存移动自动凭证（入库暂估/盘盈/盘亏/报废）</summary>
++    Inventory = 10,
+ }
+ 
+ /// <summary>凭证状态机</summary>
+ public enum JournalStatus
+ {
+     /// <summary>草稿</summary>
+     Draft = 0,
+     /// <summary>待复核</summary>
+     PendingReview = 1,
+     /// <summary>已过账（冻结，只能红冲）</summary>
+diff --git a/CP6.Tests/Fin/InventoryPostingRuleSeedTests.cs b/CP6.Tests/Fin/InventoryPostingRuleSeedTests.cs
+new file mode 100644
+index 0000000..2d96b8a
+--- /dev/null
++++ b/CP6.Tests/Fin/InventoryPostingRuleSeedTests.cs
+@@ -0,0 +1,82 @@
++using CP6.Core.Services.Fin;
++using CP6.Entity.DomainModels.Fin;
++
++namespace CP6.Tests.Fin;
++
++/// <summary>
++/// 财务波A 地基（Task 0.1 + 0.1b）：库存过账规则种子
++/// （Inventory.Received / AdjustGain / AdjustLoss / Scrapped，VoucherSource=Inventory）
++/// + 两 COA 模板（CN-GAAP / INTL）均含所需 Role（INVENTORY/GRNI/NON_OP_INCOME/
++/// PENDING_PROPERTY_LOSS/NON_OP_EXPENSE）。规则只配角色锚点+金额字段，借贷两边取同一
++/// "Amount" 字段 → ValidateBalance 意义上天然平衡。
++/// </summary>
++public class InventoryPostingRuleSeedTests
++{
++    private static PostingRule Rule(string eventType) =>
++        PostingRuleSeed.BuildRules().Single(r => r.EventType == eventType);
++
++    [Fact]
++    public void BuildRules_IncludesFourInventoryEventTypes()
++    {
++        var ets = PostingRuleSeed.BuildRules().Select(r => r.EventType).ToHashSet();
++        Assert.Contains("Inventory.Received", ets);
++        Assert.Contains("Inventory.AdjustGain", ets);
++        Assert.Contains("Inventory.AdjustLoss", ets);
++        Assert.Contains("Inventory.Scrapped", ets);
++    }
++
++    [Theory]
++    [InlineData("Inventory.Received", "INVENTORY", "GRNI")]                     // 采购入库暂估
++    [InlineData("Inventory.AdjustGain", "INVENTORY", "NON_OP_INCOME")]         // 盘盈
++    [InlineData("Inventory.AdjustLoss", "PENDING_PROPERTY_LOSS", "INVENTORY")] // 盘亏
++    [InlineData("Inventory.Scrapped", "NON_OP_EXPENSE", "INVENTORY")]          // 报废
++    public void InventoryRule_HasExpectedDebitCreditRoles_AndBalancedAmountField(
++        string eventType, string debitRole, string creditRole)
++    {
++        var rule = Rule(eventType);
++
++        Assert.Equal(VoucherSource.Inventory, rule.VoucherSource);
++        Assert.True(rule.IsActive);
++        Assert.Equal(2, rule.Lines.Count);
++
++        var debit = rule.Lines.Single(l => l.Side == PostingSide.Debit);
++        var credit = rule.Lines.Single(l => l.Side == PostingSide.Credit);
++
++        // 两行均按 Role 锚点解析科目（FixedRole）
++        Assert.Equal(RuleLineSource.FixedRole, debit.Source);
++        Assert.Equal(RuleLineSource.FixedRole, credit.Source);
++        Assert.Equal(debitRole, debit.AccountRole);
++        Assert.Equal(creditRole, credit.AccountRole);
++
++        // ★ 借贷两边金额字段一致 = "Amount"：单边同字段 → 借贷天然相等
++        Assert.Equal("Amount", debit.AmountField);
++        Assert.Equal("Amount", credit.AmountField);
++    }
++
++    [Theory]
++    [InlineData(FinCoaTemplate.CnGaap)]
++    [InlineData(FinCoaTemplate.Intl)]
++    public void BothCoaTemplates_ContainEveryRoleUsedByInventoryRules(string scheme)
++    {
++        var roles = FinCoaTemplate.Get(scheme)
++            .Where(r => r.Role != null).Select(r => r.Role!).ToHashSet();
++
++        Assert.Contains("INVENTORY", roles);
++        Assert.Contains("GRNI", roles);
++        Assert.Contains("NON_OP_INCOME", roles);
++        Assert.Contains("PENDING_PROPERTY_LOSS", roles);
++        Assert.Contains("NON_OP_EXPENSE", roles);
++    }
++
++    [Theory]
++    [InlineData(FinCoaTemplate.CnGaap)]
++    [InlineData(FinCoaTemplate.Intl)]
++    public void GrniAccount_IsLiabilityCredit_AndDoesNotRequirePartner(string scheme)
++    {
++        var grni = FinCoaTemplate.Get(scheme).Single(r => r.Role == "GRNI");
++        Assert.Equal(AccountType.Liability, grni.Type);
++        Assert.Equal(AccountSide.Credit, grni.NormalSide);
++        // Inventory.Received 贷 GRNI 时不带往来单位；若科目 RequirePartner=true 会触发 E-FIN-106
++        Assert.False(grni.RequirePartner);
++    }
++}
+diff --git a/CP6.Tests/Fin/PostingRuleSeedTests.cs b/CP6.Tests/Fin/PostingRuleSeedTests.cs
+index ed49a5c..f256ea7 100644
+--- a/CP6.Tests/Fin/PostingRuleSeedTests.cs
++++ b/CP6.Tests/Fin/PostingRuleSeedTests.cs
+@@ -20,27 +20,28 @@ public class PostingRuleSeedTests
+ 
+     private static readonly DateTime Biz = new(2026, 6, 15);
+ 
+     [Fact]
+     public void EnsureSeeded_SeedsStandardRules_AndIsIdempotent()
+     {
+         using var db = NewDb();
+         var n1 = PostingRuleSeed.EnsureSeeded(db);
+         var n2 = PostingRuleSeed.EnsureSeeded(db);   // 重播
+ 
+-        Assert.Equal(11, n1);
++        Assert.Equal(15, n1);
+         Assert.Equal(0, n2);                          // ★ 幂等
+-        Assert.Equal(11, db.PostingRules.Count());
++        Assert.Equal(15, db.PostingRules.Count());
+         Assert.All(new[]
+             {
+                 "AP.InvoicePosted", "AP.Payment", "AP.Prepayment", "AP.CreditMemo", "AR.Revenue", "AR.Cogs",
+                 "AR.Receipt", "AR.Advance", "AR.CreditMemo", "AR.CogsReversal", "Subcontract.CostPosted",
++                "Inventory.Received", "Inventory.AdjustGain", "Inventory.AdjustLoss", "Inventory.Scrapped",
+             },
+             et => Assert.True(db.PostingRules.Any(r => r.EventType == et)));
+     }
+ 
+     [Fact]
+     public async Task SeededApInvoiceRule_OverRealCoa_GeneratesBalancedVoucher()
+     {
+         using var db = NewDb();
+         var gl = new GlAccountService(db);
+         await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "test");

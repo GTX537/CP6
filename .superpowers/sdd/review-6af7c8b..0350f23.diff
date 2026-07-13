@@ -1,0 +1,295 @@
+# Review package: 6af7c8b..0350f23
+
+## Commits
+0350f23 fix(space): 终审修复——WarehouseCd长度守卫+消费端tracker清理+join锚碰撞转REJECTED
+
+## Files changed
+ CP6.Core/Services/Space/LocationPublishService.cs | 14 ++++++-
+ CP6.Core/Services/Wms/WmsBinConsumer.cs           | 48 ++++++++++++++++++++-
+ CP6.Tests/LocationPublishServiceTests.cs          | 32 ++++++++++++++
+ CP6.Tests/WmsBinConsumerTests.cs                  | 51 +++++++++++++++++++++++
+ 4 files changed, 142 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/LocationPublishService.cs b/CP6.Core/Services/Space/LocationPublishService.cs
+index d3f4c45..fdfd3cd 100644
+--- a/CP6.Core/Services/Space/LocationPublishService.cs
++++ b/CP6.Core/Services/Space/LocationPublishService.cs
+@@ -238,21 +238,33 @@ public class LocationPublishService : ILocationPublishService
+             Version = l.Version,
+             WarehouseCd = await ResolveWarehouseCdAsync(l),
+             Path = path,
+             Attrs = attrs
+         };
+     }
+ 
+     /// <summary>
+     /// SiteCode↔WarehouseCd 映射（ch04 §3.4）：Site.WarehouseCd 显式配置优先，空则默认 = SiteCode。
+     /// 走 FloorId → Site 链（比 Rack 链短，且停用未落位库位也可能有 FloorId）；无楼层归属返回 null。
++    ///
++    /// 长度守卫（终审 #1）：WmsBin.WarehouseCd / Space_Site.WarehouseCd 均为 nvarchar(10)，而
++    /// Space_Site.SiteCode 是 MaxLength(50)。默认回退 WarehouseCd=SiteCode 时若 SiteCode 超 10 字符，
++    /// 消费端真库 SaveChanges 会截断/抛异常 → 毒化共享 CP6Context → 状态已翻/无 bin/无事件的三无孤儿。
++    /// 本方法在 BuildItemAsync（发布）/ DeactivateAsync（停用）内被调用。发布路径虽在循环里先写了
++    /// 内存态 l.Status = 1，但抛异常发生在 _db.SaveChangesAsync() 之前——内存翻转从不落库，且外层
++    /// 发布事务（tx）未 Commit 即 Dispose 回滚。因此天然 fail-fast：库位 Status 不持久化、无 bin、无事件、无孤儿。
++    /// 显式配置的 Space_Site.WarehouseCd 本身受 MaxLength(10) 列约束护住，超长只可能来自 SiteCode 默认回退。
+     /// </summary>
+     private async Task<string?> ResolveWarehouseCdAsync(Space_Location l)
+     {
+         if (l.FloorId == null) return null;
+         var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == l.FloorId);
+         if (floor == null) return null;
+         var site = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId);
+         if (site == null) return null;
+-        return string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
++        var warehouseCd = string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
++        if (warehouseCd.Length > 10)
++            throw new InvalidOperationException(
++                "E-SPACE-405: 站点编码超过 10 字符且未配置 WarehouseCd 映射，无法发布/停用");
++        return warehouseCd;
+     }
+ }
+diff --git a/CP6.Core/Services/Wms/WmsBinConsumer.cs b/CP6.Core/Services/Wms/WmsBinConsumer.cs
+index a4eb39d..03a427e 100644
+--- a/CP6.Core/Services/Wms/WmsBinConsumer.cs
++++ b/CP6.Core/Services/Wms/WmsBinConsumer.cs
+@@ -19,21 +19,25 @@ public class WmsBinConsumer : IWmsLocationConsumer
+     private readonly CP6Context _db;
+ 
+     public WmsBinConsumer(CP6Context db) => _db = db;
+ 
+     /// <inheritdoc/>
+     public async Task<WmsConsumeResult> ConsumeAsync(LocationPublishBatch batch)
+     {
+         var result = new WmsConsumeResult { Success = true };
+         foreach (var item in batch.Items)
+         {
+-            var bin = await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == item.LocationId);
++            // 终审 #3：先看同批未保存的 Added 实体（Local），再落库查——顺手兜掉批内同 LocationId 双 Add。
++            // 注意 FindAsync 会看见 Local 但绕过全局查询过滤器（不做租户核对），此处用 Local+过滤查询双查更稳；
++            // 本表 PK=LocationId 为全局唯一 GUID，跨租户误命中现实无虞。
++            var bin = _db.WmsBins.Local.FirstOrDefault(b => b.Id == item.LocationId)
++                      ?? await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == item.LocationId);
+ 
+             // 陈旧/重复事件 → 幂等跳过（§5.1 关键行，至少一次投递安全）
+             if (bin != null && item.Version <= bin.Version)
+             {
+                 result.Items.Add(Item(item, "SKIPPED", "version<=lastVersion（幂等重复）"));
+                 continue;
+             }
+ 
+             if (item.Op == "DEACTIVATE")
+             {
+@@ -80,37 +84,77 @@ public class WmsBinConsumer : IWmsLocationConsumer
+             // UPSERT
+             if (string.IsNullOrEmpty(item.WarehouseCd))
+             {
+                 // 无仓维度无法建 (WarehouseCd, LocationCode) join 锚（§3.4）→ 拒绝该条
+                 result.Items.Add(Item(item, "REJECTED", "缺 WarehouseCd（SiteCode↔WarehouseCd 映射未命中）"));
+                 result.Success = false;
+                 continue;
+             }
+             if (bin == null)
+             {
++                // 终审 #3：join 锚碰撞检查——同 (WarehouseCd, LocationCode) 被不同 LocationId（含墓碑）
++                // 占用时，直接 Add 会撞唯一索引走异常毒化链；改为业务拒绝链（REJECTED + Success=false）。
++                // 含 Local 同批检查，覆盖同批两条不同 LocationId 却撞同锚的场景。
++                var anchorHolder = _db.WmsBins.Local
++                        .FirstOrDefault(b => b.WarehouseCd == item.WarehouseCd && b.LocationCode == item.LocationCode)
++                    ?? await _db.WmsBins.FirstOrDefaultAsync(
++                        b => b.WarehouseCd == item.WarehouseCd && b.LocationCode == item.LocationCode);
++                if (anchorHolder != null && anchorHolder.Id != item.LocationId)
++                {
++                    result.Items.Add(Item(item, "REJECTED",
++                        "join 锚 (WarehouseCd, LocationCode) 已被其他 LocationId 占用（唯一索引冲突转业务拒绝）"));
++                    result.Success = false;
++                    continue;
++                }
+                 bin = new WmsBin { Id = item.LocationId };
+                 _db.WmsBins.Add(bin);
+             }
+             bin.LocationCode = item.LocationCode;   // 理论不变（发布后码冻结）
+             bin.WarehouseCd = item.WarehouseCd;
+             bin.PathJson = JsonSerializer.Serialize(item.Path, Json);
+             bin.AttrsJson = JsonSerializer.Serialize(item.Attrs, Json);
+             bin.IsActive = true;
+             Stamp(bin, item.Version, batch.PublishedBy);
+             result.Items.Add(Item(item, "UPSERTED", null));
+         }
+ 
+-        await _db.SaveChangesAsync();
++        // 终审 #2：持久失败时，失败实体若留在共享 CP6Context tracker 里，会毒化 SpaceBridgeHook
++        // 的事件落库与 Worker 批尾簿记（Attempts/NextRetryAt 丢失 → 热循环永不 DeadLetter）。
++        // 失败时只 detach 本方法 Add/Modify 的 WmsBin 行后 rethrow——绝不用 ChangeTracker.Clear()
++        // （那会连 Worker 正在跟踪的事件行一起断开）。
++        try
++        {
++            await _db.SaveChangesAsync();
++        }
++        catch
++        {
++            DetachOwnWrites();
++            throw;
++        }
+         result.AllSkipped = result.Items.Count > 0 && result.Items.All(i => i.Status == "SKIPPED");
+         return result;
+     }
+ 
++    /// <summary>
++    /// SaveChanges 失败时，将本消费方法写入（Added/Modified）的 WmsBin 行从共享 tracker 断开，
++    /// 避免污染同 context 内其他跟踪实体（事件行等）。internal 供单测直接锁定 detach 语义。
++    /// </summary>
++    internal void DetachOwnWrites()
++    {
++        foreach (var entry in _db.ChangeTracker.Entries<WmsBin>()
++                     .Where(e => e.State is EntityState.Added or EntityState.Modified)
++                     .ToList())
++        {
++            entry.State = EntityState.Detached;
++        }
++    }
++
+     private static void Stamp(WmsBin bin, long version, string? publishedBy)
+     {
+         bin.Version = version;
+         bin.LastPublishedAt = DateTime.Now;
+         bin.LastPublishedBy = publishedBy;
+     }
+ 
+     private static WmsItemResult Item(LocationPublishItem i, string status, string? reason) =>
+         new() { LocationId = i.LocationId, Status = status, Reason = reason };
+ }
+diff --git a/CP6.Tests/LocationPublishServiceTests.cs b/CP6.Tests/LocationPublishServiceTests.cs
+index a0697e7..9c389a3 100644
+--- a/CP6.Tests/LocationPublishServiceTests.cs
++++ b/CP6.Tests/LocationPublishServiceTests.cs
+@@ -171,20 +171,52 @@ public class LocationPublishServiceTests
+         });
+         await db.SaveChangesAsync();
+ 
+         await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
+ 
+         var evt = await db.IntegrationEvents.SingleAsync();
+         var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+         Assert.Equal("W9", payload.GetProperty("Items")[0].GetProperty("WarehouseCd").GetString());
+     }
+ 
++    [Fact]
++    public async Task Publish_SiteCodeOver10Chars_NoMapping_Throws_E405_NoOrphan()
++    {
++        // 终审 #1：SiteCode(11 字符) 默认回退 WarehouseCd=SiteCode 超 nvarchar(10) 列约束。
++        // 长度守卫在 SaveChanges 前 fail-fast → 状态不持久化、无事件、无孤儿。
++        using var db = Db();
++        var floorId = Guid.NewGuid();
++        var rackId = Guid.NewGuid();
++        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "SITE0123456", SiteName = "S1", WarehouseCd = null }; // 11 chars
++        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
++        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
++        var rack = new Space_Rack { Id = rackId, ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        db.Space_CodeRules.Add(new Space_CodeRule { Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true, Segments = ValidSegmentsJson() });
++        db.AddRange(site, floor, zone, rack);
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
++            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1
++        });
++        await db.SaveChangesAsync();
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++            () => MakePublishSvc(db).PublishFloorAsync(floorId, null, "u"));
++        Assert.StartsWith("E-SPACE-405", ex.Message);
++
++        // AsNoTracking 读 InMemory 存储快照（SaveChanges 从未运行）→ Status 仍 0
++        var loc = await db.Space_Locations.AsNoTracking().SingleAsync();
++        Assert.Equal(0, loc.Status);
++        Assert.Equal(0, await db.IntegrationEvents.CountAsync());
++    }
++
+     [Fact]
+     public async Task Publish_WithZoneId_OnlyPublishesThatZone_GateZoneScoped()
+     {
+         using var db = Db();
+         var floorId = Guid.NewGuid();
+         var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1" };
+         var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+         var zoneA = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZA", ZoneName = "A" };
+         var zoneB = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZB", ZoneName = "B" };
+         var rackA = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneA.Id, FloorId = floorId, RackCode = "RA", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+diff --git a/CP6.Tests/WmsBinConsumerTests.cs b/CP6.Tests/WmsBinConsumerTests.cs
+index 989a709..adf9556 100644
+--- a/CP6.Tests/WmsBinConsumerTests.cs
++++ b/CP6.Tests/WmsBinConsumerTests.cs
+@@ -88,20 +88,71 @@ public class WmsBinConsumerTests
+     {
+         using var db = Db();
+         var r = await new WmsBinConsumer(db).ConsumeAsync(
+             Batch(Upsert(Guid.NewGuid(), "A-01-01-01", 1, warehouseCd: null)));
+ 
+         Assert.False(r.Success);                      // 任一 Rejected → 整事件 Failed（§5.2）
+         Assert.Equal("REJECTED", r.Items.Single().Status);
+         Assert.Equal(0, await db.WmsBins.CountAsync());
+     }
+ 
++    [Fact]
++    public async Task Upsert_AnchorCollision_DifferentLocationId_Rejected()
++    {
++        // 终审 #3：同 (WarehouseCd, LocationCode) 锚被不同 LocationId 占用 → 走业务拒绝链，
++        // 而非 Add 撞唯一索引走异常毒化链。
++        using var db = Db();
++        var idA = Guid.NewGuid();
++        var idB = Guid.NewGuid();
++        await new WmsBinConsumer(db).ConsumeAsync(Batch(Upsert(idA, "A-01-01-01", 1)));   // bin A 占住锚
++
++        var r = await new WmsBinConsumer(db).ConsumeAsync(Batch(Upsert(idB, "A-01-01-01", 1)));
++
++        Assert.False(r.Success);
++        Assert.Equal("REJECTED", r.Items.Single().Status);
++        Assert.Equal(1, await db.WmsBins.CountAsync());          // 仍只有 A，B 未落库
++        Assert.Equal(idA, (await db.WmsBins.SingleAsync()).Id);
++    }
++
++    [Fact]
++    public async Task Upsert_SameBatch_DuplicateLocationId_NoDoubleAdd()
++    {
++        // 终审 #3：FindAsync/Local 双查兜掉批内同 LocationId 双 Add——第二条按已见 Added 实体走版本门，
++        // 不抛、行数=1。
++        using var db = Db();
++        var id = Guid.NewGuid();
++
++        var r = await new WmsBinConsumer(db).ConsumeAsync(
++            Batch(Upsert(id, "A-01-01-01", 1), Upsert(id, "A-01-01-01", 1)));
++
++        Assert.Equal(2, r.Items.Count);
++        Assert.Equal("UPSERTED", r.Items[0].Status);
++        Assert.Equal("SKIPPED", r.Items[1].Status);              // 同版本走幂等门
++        Assert.Equal(1, await db.WmsBins.CountAsync());
++    }
++
++    [Fact]
++    public void DetachOwnWrites_DetachesAddedWmsBins()
++    {
++        // 终审 #2：InMemory 难以可靠诱发 SaveChanges 持久失败（Local 双查已消除同批双 Add 诱发路径），
++        // 故直接锁定 detach 语义——Add 一个 WmsBin 后调清理方法，断言 Entry.State==Detached。
++        using var db = Db();
++        var consumer = new WmsBinConsumer(db);
++        var bin = new WmsBin { Id = Guid.NewGuid(), LocationCode = "A-01-01-01", WarehouseCd = "WH1", Version = 1 };
++        db.WmsBins.Add(bin);
++        Assert.Equal(EntityState.Added, db.Entry(bin).State);
++
++        consumer.DetachOwnWrites();
++
++        Assert.Equal(EntityState.Detached, db.Entry(bin).State);
++    }
++
+     [Fact]
+     public async Task Deactivate_NoBin_CreatesTombstone()
+     {
+         // H6 乱序防护（对契约 §5.1 的修正）：bin 不存在的 DEACTIVATE 落墓碑而非跳过，
+         // 否则迟到重试的旧版 UPSERT 会复活已停用库位。
+         using var db = Db();
+         var id = Guid.NewGuid();
+         var item = Upsert(id, "A-01-01-01", 2);
+         item.Op = "DEACTIVATE";
+ 

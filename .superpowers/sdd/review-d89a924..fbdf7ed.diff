@@ -1,0 +1,2077 @@
+# Review package: d89a924..HEAD
+
+## Commits
+fbdf7ed refactor(ui): ERP 迁移批次2——PlateMoldList/ProductMasterList/EstimateCalcList/CreditNoteList/OrderList
+
+## Files changed
+ cp6.web/src/views/erp/CreditNoteListView.vue    | 432 +++++----------------
+ cp6.web/src/views/erp/EstimateCalcListView.vue  | 392 +++++--------------
+ cp6.web/src/views/erp/OrderListView.vue         | 482 ++++++++----------------
+ cp6.web/src/views/erp/PlateMoldListView.vue     |   5 +-
+ cp6.web/src/views/erp/ProductMasterListView.vue | 426 ++++++++-------------
+ docs/superpowers/plans/2026-07-04-ui-restyle.md |  13 +
+ 6 files changed, 500 insertions(+), 1250 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/erp/CreditNoteListView.vue b/cp6.web/src/views/erp/CreditNoteListView.vue
+index 9b41fde..5983a09 100644
+--- a/cp6.web/src/views/erp/CreditNoteListView.vue
++++ b/cp6.web/src/views/erp/CreditNoteListView.vue
+@@ -1,370 +1,126 @@
++<!--
++  クレジットノート一覧 —— ERP 迁移批次2（CpPageShell + CpListPage）。
++  照会一覧（onMounted 自動取得・必須検索条件なし・単一 fetch）で CpListPage 契約に素直に載る。
++  種別列＝kind:'tag'+map（REFUND=warn/EXCHANGE=info/SCRAP=danger）、発行日＝kind:'date'、
++  数量/金額＝kind:'num'+map（formatQty）、Web受注NO＝col slot（明細へ遷移リンク）、理由＝col slot（50 字省略+tooltip）、取引先＝map(name||cd)。
++  モバイル専用カード分岐は撤去し、設計システム標準（main.css: el-table 横スクロール）に統一。
++-->
+ <template>
+-  <div class="credit-note-list">
+-    <div class="page-header">
+-      <h2>{{ t('erp.creditNote.title') }}</h2>
+-    </div>
+-
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('erp.creditNote.search.customer')">
+-          <el-input v-model="query.customerCd" clearable style="width: 150px" />
+-        </el-form-item>
+-        <el-form-item :label="t('erp.creditNote.search.webOrderNo')">
+-          <el-input v-model="query.webOrderNo" clearable style="width: 170px" />
+-        </el-form-item>
+-        <el-form-item :label="t('erp.creditNote.search.type')">
+-          <el-select v-model="query.type" clearable style="width: 150px">
+-            <el-option :label="t('erp.creditNote.type.ALL')" value="" />
+-            <el-option :label="t('erp.creditNote.type.REFUND')" value="REFUND" />
+-            <el-option :label="t('erp.creditNote.type.EXCHANGE')" value="EXCHANGE" />
+-            <el-option :label="t('erp.creditNote.type.SCRAP')" value="SCRAP" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('erp.creditNote.search.dateFrom')">
+-          <el-date-picker
+-            v-model="query.dateFrom"
+-            type="date"
+-            value-format="YYYY-MM-DD"
+-            style="width: 150px"
+-            clearable
+-          />
+-        </el-form-item>
+-        <el-form-item :label="t('erp.creditNote.search.dateTo')">
+-          <el-date-picker
+-            v-model="query.dateTo"
+-            type="date"
+-            value-format="YYYY-MM-DD"
+-            style="width: 150px"
+-            clearable
+-          />
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" :loading="loading" @click="search">
+-            {{ t('erp.creditNote.btn.search') }}
+-          </el-button>
+-          <el-button @click="resetQuery">{{ t('erp.creditNote.btn.reset') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
+-
+-    <el-card shadow="never">
+-      <div class="table-toolbar">
+-        <el-tag size="small">{{ t('erp.creditNote.total', { n: total }) }}</el-tag>
+-      </div>
+-
+-      <el-table v-if="!isMobile" :data="rows" border stripe size="small" max-height="620" v-loading="loading">
+-        <el-table-column prop="issueDate" :label="t('erp.creditNote.col.issueDate')" width="120">
+-          <template #default="{ row }">{{ formatDate(row.issueDate) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="creditNoteNo" :label="t('erp.creditNote.col.no')" width="150" show-overflow-tooltip />
+-        <el-table-column prop="webOrderNo" :label="t('erp.creditNote.col.webOrderNo')" width="150">
+-          <template #default="{ row }">
+-            <el-button v-if="row.webOrderNo" link type="primary" size="small" @click="goOrder(row.webOrderNo)">
+-              {{ row.webOrderNo }}
+-            </el-button>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="rmaNo" :label="t('erp.creditNote.col.rmaNo')" width="140" show-overflow-tooltip />
+-        <el-table-column :label="t('erp.creditNote.col.customer')" min-width="170" show-overflow-tooltip>
+-          <template #default="{ row }">
+-            {{ row.customerName || row.customerCd }}
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="type" :label="t('erp.creditNote.col.type')" width="120">
+-          <template #default="{ row }">
+-            <el-tag :type="typeTag(row.type)" size="small">
+-              {{ t(`erp.creditNote.type.${row.type}`) }}
+-            </el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="productCd" :label="t('erp.creditNote.col.product')" width="130" show-overflow-tooltip />
+-        <el-table-column prop="qty" :label="t('erp.creditNote.col.qty')" width="110" align="right">
+-          <template #default="{ row }">{{ formatQty(row.qty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="amount" :label="t('erp.creditNote.col.amount')" width="120" align="right">
+-          <template #default="{ row }">{{ formatAmount(row.amount) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="reason" :label="t('erp.creditNote.col.reason')" min-width="220">
+-          <template #default="{ row }">
+-            <el-tooltip v-if="row.reason && row.reason.length > 50" :content="row.reason" placement="top">
+-              <span>{{ truncateReason(row.reason) }}</span>
+-            </el-tooltip>
+-            <span v-else>{{ row.reason }}</span>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-
+-      <div v-else class="credit-note-card-list" v-loading="loading">
+-        <el-empty v-if="!rows.length && !loading" :image-size="80" />
+-        <div v-for="row in rows" :key="row.creditNoteNo" class="credit-note-card">
+-          <div class="card-head">
+-            <div>
+-              <div class="card-no">{{ row.creditNoteNo }}</div>
+-              <div class="card-date">{{ formatDate(row.issueDate) }}</div>
+-            </div>
+-            <el-tag :type="typeTag(row.type)" size="small">
+-              {{ t(`erp.creditNote.type.${row.type}`) }}
+-            </el-tag>
+-          </div>
+-          <div class="card-row">
+-            <span>{{ t('erp.creditNote.col.webOrderNo') }}</span>
+-            <el-button v-if="row.webOrderNo" link type="primary" size="small" @click="goOrder(row.webOrderNo)">
+-              {{ row.webOrderNo }}
+-            </el-button>
+-          </div>
+-          <div class="card-row">
+-            <span>{{ t('erp.creditNote.col.rmaNo') }}</span>
+-            <strong>{{ row.rmaNo || '-' }}</strong>
+-          </div>
+-          <div class="card-row">
+-            <span>{{ t('erp.creditNote.col.customer') }}</span>
+-            <strong>{{ row.customerName || row.customerCd }}</strong>
+-          </div>
+-          <div class="card-row">
+-            <span>{{ t('erp.creditNote.col.amount') }}</span>
+-            <strong>{{ formatAmount(row.amount) }}</strong>
+-          </div>
+-          <div v-if="row.reason" class="card-reason">{{ truncateReason(row.reason) }}</div>
+-        </div>
+-      </div>
+-
+-      <el-pagination
+-        v-model:current-page="query.page"
+-        v-model:page-size="query.pageSize"
+-        :total="total"
+-        :page-sizes="[50, 100, 200]"
+-        :layout="isMobile ? 'prev, pager, next' : 'total, sizes, prev, pager, next, jumper'"
+-        :pager-count="isMobile ? 5 : 7"
+-        :small="isMobile"
+-        background
+-        style="margin-top: 12px; justify-content: flex-end"
+-        @current-change="reload"
+-        @size-change="reload"
+-      />
+-    </el-card>
+-  </div>
++  <CpPageShell :title="t('erp.creditNote.title')" :count="total">
++    <CpListPage
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      @total-change="total = $event"
++    >
++      <template #col-webOrderNo="{ row }">
++        <el-button v-if="row.webOrderNo" link type="primary" size="small" @click="goOrder(row.webOrderNo)">
++          {{ row.webOrderNo }}
++        </el-button>
++      </template>
++      <template #col-reason="{ row }">
++        <el-tooltip v-if="row.reason && row.reason.length > 50" :content="row.reason" placement="top">
++          <span>{{ truncateReason(row.reason) }}</span>
++        </el-tooltip>
++        <span v-else>{{ row.reason }}</span>
++      </template>
++    </CpListPage>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { onMounted, reactive, ref } from 'vue'
++import { computed, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRouter } from 'vue-router'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import { type Tone } from '@/components/base/CpTag.vue'
+ import { creditNoteApi } from '@/api/erp/creditNote'
+-import { useBreakpoint } from '@/composables/useBreakpoint'
+ import { formatQty } from '@/utils/format'
+-import type { CreditNoteListItem, CreditNoteQuery, CreditNoteType } from '@/types/erp/creditNote'
++import type { CreditNoteType } from '@/types/erp/creditNote'
+ 
+ const { t } = useI18n()
+ const router = useRouter()
+-const { isMobile } = useBreakpoint()
+-
+-const query = reactive<Required<Pick<CreditNoteQuery, 'page' | 'pageSize'>> & {
+-  customerCd?: string
+-  webOrderNo?: string
+-  type: CreditNoteType | ''
+-  dateFrom?: string
+-  dateTo?: string
+-}>({
+-  type: '',
+-  page: 1,
+-  pageSize: 50,
+-})
+ 
+-const rows = ref<CreditNoteListItem[]>([])
+-const total = ref(0)
+-const loading = ref(false)
+-
+-function normalizePaged(res: any) {
+-  const data = res?.data || {}
+-  return {
+-    items: (data.items || data.Items || []) as CreditNoteListItem[],
+-    total: Number(data.total ?? data.Total ?? 0),
+-  }
+-}
++const total = ref<number>()
+ 
+-function typeTag(type: CreditNoteType): 'warning' | 'info' | 'danger' {
+-  if (type === 'REFUND') return 'warning'
++function typeTone(type: CreditNoteType): Tone {
++  if (type === 'REFUND') return 'warn'
+   if (type === 'EXCHANGE') return 'info'
+   return 'danger'
+ }
+-
+-function formatDate(value?: string): string {
+-  return value ? value.slice(0, 10) : ''
+-}
+-
+ function formatAmount(value?: number | null): string {
+-  if (value == null) return ''
+-  return formatQty(value, 2)
++  return value == null ? '' : formatQty(value, 2)
+ }
+-
+ function truncateReason(value?: string): string {
+   if (!value) return ''
+   return value.length > 50 ? `${value.slice(0, 50)}...` : value
+ }
+ 
+-async function reload() {
+-  loading.value = true
+-  try {
+-    const res = await creditNoteApi.search({
+-      customerCd: query.customerCd,
+-      webOrderNo: query.webOrderNo,
+-      type: query.type,
+-      dateFrom: query.dateFrom,
+-      dateTo: query.dateTo,
+-      page: query.page,
+-      pageSize: query.pageSize,
+-    })
+-    const paged = normalizePaged(res)
+-    rows.value = paged.items
+-    total.value = paged.total
+-  } finally {
+-    loading.value = false
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'issueDate', label: t('erp.creditNote.col.issueDate'), width: 120, kind: 'date' },
++  { prop: 'creditNoteNo', label: t('erp.creditNote.col.no'), width: 150, overflowTooltip: true },
++  { prop: 'webOrderNo', label: t('erp.creditNote.col.webOrderNo'), width: 150 },
++  { prop: 'rmaNo', label: t('erp.creditNote.col.rmaNo'), width: 140, overflowTooltip: true },
++  { prop: 'customerName', label: t('erp.creditNote.col.customer'), minWidth: 170, overflowTooltip: true,
++    map: (_v, row) => ({ label: (row as { customerName?: string; customerCd?: string }).customerName || (row as { customerCd?: string }).customerCd || '' }) },
++  { prop: 'type', label: t('erp.creditNote.col.type'), width: 120, kind: 'tag',
++    map: (v) => ({ label: t(`erp.creditNote.type.${v}`), tone: typeTone(v as CreditNoteType) }) },
++  { prop: 'productCd', label: t('erp.creditNote.col.product'), width: 130, overflowTooltip: true },
++  { prop: 'qty', label: t('erp.creditNote.col.qty'), width: 110, kind: 'num',
++    map: (v) => ({ label: v == null ? '' : formatQty(v as number) }) },
++  { prop: 'amount', label: t('erp.creditNote.col.amount'), width: 120, kind: 'num',
++    map: (v) => ({ label: formatAmount(v as number) }) },
++  { prop: 'reason', label: t('erp.creditNote.col.reason'), minWidth: 220 },
++])
++
++const filterLabels = computed(() => ({
++  search: t('erp.creditNote.btn.search'),
++  reset: t('erp.creditNote.btn.reset'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'customerCd', label: t('erp.creditNote.search.customer'), type: 'text' },
++  { key: 'webOrderNo', label: t('erp.creditNote.search.webOrderNo'), type: 'text' },
++  {
++    key: 'type', label: t('erp.creditNote.search.type'), type: 'select',
++    options: [
++      { label: t('erp.creditNote.type.ALL'), value: '' },
++      { label: t('erp.creditNote.type.REFUND'), value: 'REFUND' },
++      { label: t('erp.creditNote.type.EXCHANGE'), value: 'EXCHANGE' },
++      { label: t('erp.creditNote.type.SCRAP'), value: 'SCRAP' },
++    ],
++  },
++  { key: 'dateFrom', label: t('erp.creditNote.search.dateFrom'), type: 'date', valueFormat: 'YYYY-MM-DD' },
++  { key: 'dateTo', label: t('erp.creditNote.search.dateTo'), type: 'date', valueFormat: 'YYYY-MM-DD' },
++])
++
++function normalizePaged(res: unknown) {
++  const data = (res as { data?: Record<string, unknown> })?.data || {}
++  return {
++    items: (data.items || data.Items || []) as unknown[],
++    total: Number(data.total ?? data.Total ?? 0),
+   }
+ }
+ 
+-function search() {
+-  query.page = 1
+-  reload()
+-}
+-
+-function resetQuery() {
+-  query.customerCd = undefined
+-  query.webOrderNo = undefined
+-  query.type = ''
+-  query.dateFrom = undefined
+-  query.dateTo = undefined
+-  query.page = 1
+-  reload()
++const fetchList: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const res = await creditNoteApi.search({
++    customerCd: (f.customerCd as string) || undefined,
++    webOrderNo: (f.webOrderNo as string) || undefined,
++    type: (f.type as CreditNoteType | '') || '',
++    dateFrom: (f.dateFrom as string) || undefined,
++    dateTo: (f.dateTo as string) || undefined,
++    page,
++    pageSize: size,
++  })
++  const paged = normalizePaged(res)
++  return { rows: paged.items, total: paged.total }
+ }
+ 
+ function goOrder(webOrderNo: string) {
+   router.push({ path: '/order', query: { webOrderNo } })
+ }
+-
+-onMounted(reload)
+ </script>
+-
+-<style scoped>
+-.credit-note-list {
+-  padding: 16px;
+-}
+-
+-.page-header {
+-  margin-bottom: 12px;
+-}
+-
+-.page-header h2 {
+-  margin: 0;
+-  color: #303133;
+-  font-size: 20px;
+-  font-weight: 650;
+-  line-height: 1.3;
+-}
+-
+-.search-card {
+-  margin-bottom: 12px;
+-}
+-
+-.table-toolbar {
+-  margin-bottom: 8px;
+-}
+-
+-.credit-note-card-list {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 10px;
+-}
+-
+-.credit-note-card {
+-  background: #fff;
+-  border: 1px solid #ebeef5;
+-  border-radius: 8px;
+-  padding: 12px;
+-}
+-
+-.card-head {
+-  display: flex;
+-  align-items: flex-start;
+-  justify-content: space-between;
+-  gap: 10px;
+-  padding-bottom: 8px;
+-  border-bottom: 1px dashed #ebeef5;
+-  margin-bottom: 8px;
+-}
+-
+-.card-no {
+-  color: #303133;
+-  font-size: 15px;
+-  font-weight: 650;
+-}
+-
+-.card-date {
+-  color: #909399;
+-  font-size: 12px;
+-  margin-top: 2px;
+-}
+-
+-.card-row {
+-  display: flex;
+-  justify-content: space-between;
+-  align-items: center;
+-  gap: 8px;
+-  font-size: 13px;
+-  min-height: 26px;
+-}
+-
+-.card-row span {
+-  color: #909399;
+-}
+-
+-.card-row strong {
+-  color: #303133;
+-  font-weight: 500;
+-  text-align: right;
+-  word-break: break-all;
+-}
+-
+-.card-reason {
+-  margin-top: 8px;
+-  color: #606266;
+-  font-size: 13px;
+-  line-height: 1.5;
+-  word-break: break-word;
+-}
+-
+-@media (max-width: 767px) {
+-  .credit-note-list {
+-    padding: 12px;
+-  }
+-
+-  .search-card :deep(.el-card__body) {
+-    padding: 12px;
+-  }
+-
+-  .search-card :deep(.el-form-item) {
+-    display: flex;
+-    flex-direction: column;
+-    align-items: stretch;
+-    margin-right: 0;
+-    margin-bottom: 12px;
+-    width: 100%;
+-  }
+-
+-  .search-card :deep(.el-form-item__label) {
+-    justify-content: flex-start;
+-    height: auto;
+-    line-height: 20px;
+-    margin-bottom: 4px;
+-  }
+-
+-  .search-card :deep(.el-form-item__content) {
+-    width: 100%;
+-  }
+-
+-  .search-card :deep(.el-input),
+-  .search-card :deep(.el-select),
+-  .search-card :deep(.el-date-editor.el-input) {
+-    width: 100% !important;
+-  }
+-}
+-</style>
+diff --git a/cp6.web/src/views/erp/EstimateCalcListView.vue b/cp6.web/src/views/erp/EstimateCalcListView.vue
+index edba356..f1a1701 100644
+--- a/cp6.web/src/views/erp/EstimateCalcListView.vue
++++ b/cp6.web/src/views/erp/EstimateCalcListView.vue
+@@ -1,356 +1,148 @@
++<!--
++  見積計算書一覧 —— ERP 迁移批次2（CpListPage）。
++  照会一覧（onMounted 自動取得・単一 fetch）+ サーバサイド列ソート（#19 sortable:'custom'）を dogfood。
++  金額/数量＝kind:'num'+map（formatQty/formatNumber）、日付＝kind:'date'、更新日時＝map（fmtDateTime）、
++  操作（照会/編集/複製/削除）＝col slot、新規＝toolbar slot（#16 action button）。
++  拠点 select は masterApi.getBases を onMounted ロード。子タブ保存/削除 → postMessage → listRef.reload()。
++  ページ標題キー無し（不臆造）のため CpPageShell は被せず CpListPage スタンドアロン（総数はページャに表示）。
++  モバイル専用カード分岐は撤去し設計システム標準（el-table 横スクロール）に統一。
++-->
+ <template>
+-  <div class="estimate-list">
+-    <!-- 查询区 -->
+-    <el-card shadow="never" class="search-card">
+-      <el-form inline :model="query" @submit.prevent="onSearch">
+-        <el-form-item :label="t('sales.term.calcNo')">
+-          <el-input v-model="query.qtnCalcNo" :placeholder="t('例: 00000001')" clearable style="width: 180px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.customer')">
+-          <el-input v-model="query.customerCd" :placeholder="t('sales.term.customer') + ' CD'" clearable style="width: 160px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.base')">
+-          <el-select v-model="query.baseCd" :placeholder="t('全部')" clearable style="width: 160px">
+-            <el-option v-for="b in bases" :key="b.baseCd" :value="b.baseCd" :label="`${b.baseCd} ${b.baseName}`" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('sales.qtn.qtnDate')">
+-          <el-date-picker
+-            v-model="dateRange"
+-            type="daterange"
+-            value-format="YYYY-MM-DD"
+-            range-separator="~"
+-            :start-placeholder="t('sales.search.dateFrom')"
+-            :end-placeholder="t('sales.search.dateTo')"
+-            style="width: 260px"
+-          />
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" :icon="Search" @click="onSearch">{{ t('sales.btn.search') }}</el-button>
+-          <el-button :icon="RefreshLeft" @click="onReset">{{ t('sales.btn.clear') }}</el-button>
+-          <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
+-
+-    <!-- 列表 -->
+-    <el-card shadow="never" class="table-card">
+-      <!-- 桌面端：完整表格 -->
+-      <el-table
+-        v-if="!isMobile"
+-        :data="rows"
+-        v-loading="loading"
+-        stripe
+-        border
+-        style="width: 100%"
+-        @row-dblclick="(row: EstimateCalcListItem) => onView(row)"
+-        @sort-change="onSortChange"
+-      >
+-        <el-table-column prop="qtnCalcNo" :label="t('sales.term.calcNo')" width="140" sortable="custom" />
+-        <el-table-column prop="qtnDate" :label="t('sales.qtn.qtnDate')" width="110" sortable="custom">
+-          <template #default="{ row }">{{ fmtDate(row.qtnDate) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="qtnBaseCd" :label="t('sales.term.base')" width="80" sortable="custom" />
+-        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="90" sortable="custom" />
+-        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="120" sortable="custom" />
+-        <el-table-column prop="customerProductName1" :label="t('顧客品名')" min-width="200" show-overflow-tooltip sortable="custom" />
+-        <el-table-column prop="orderQty" :label="t('sales.term.qty')" width="100" align="right" sortable="custom">
+-          <template #default="{ row }">{{ fmtNum(row.orderQty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="estimateUnitPrice" :label="t('sales.term.unitPrice')" width="120" align="right" sortable="custom">
+-          <template #default="{ row }">{{ fmtMoney(row.estimateUnitPrice) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="qtnDiv" :label="t('見積区分')" width="100" sortable="custom" />
+-        <el-table-column prop="modifyDate" :label="t('最終更新')" width="160" sortable="custom">
+-          <template #default="{ row }">{{ fmtDateTime(row.modifyDate || row.createDate) }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('sales.list.action')" width="260" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
+-            <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+-            <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+-            <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-
+-      <!-- 手机端：卡片列表 -->
+-      <div v-else class="mobile-card-list" v-loading="loading">
+-        <el-empty v-if="!rows.length && !loading" :image-size="80" />
+-        <div
+-          v-for="row in rows"
+-          :key="row.qtnCalcNo"
+-          class="mobile-card"
+-          @click="onView(row)"
+-        >
+-          <div class="mc-head">
+-            <div class="mc-no">{{ row.qtnCalcNo }}</div>
+-            <el-tag size="small" type="info">{{ fmtDate(row.qtnDate) }}</el-tag>
+-          </div>
+-          <div class="mc-title">{{ row.customerProductName1 || '—' }}</div>
+-          <div class="mc-meta">
+-            <span>{{ t('客') }}: {{ row.customerCd || '—' }}</span>
+-            <span>{{ t('拠点') }}: {{ row.qtnBaseCd || '—' }}</span>
+-          </div>
+-          <div class="mc-meta">
+-            <span>{{ t('数量') }}: {{ fmtNum(row.orderQty) }}</span>
+-            <span class="mc-price">{{ t('単価') }}: ¥{{ fmtMoney(row.estimateUnitPrice) }}</span>
+-          </div>
+-          <div class="mc-actions" @click.stop>
+-            <el-button link type="warning" size="small" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+-            <el-button link type="success" size="small" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+-            <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
+-          </div>
+-        </div>
+-      </div>
+-
+-      <div class="pagination">
+-        <el-pagination
+-          v-model:current-page="query.page"
+-          v-model:page-size="query.pageSize"
+-          :total="total"
+-          :page-sizes="[10, 20, 50]"
+-          :layout="isMobile ? 'prev, pager, next' : 'total, sizes, prev, pager, next'"
+-          :pager-count="isMobile ? 5 : 7"
+-          :small="isMobile"
+-          background
+-          @current-change="loadData"
+-          @size-change="loadData"
+-        />
+-      </div>
+-    </el-card>
+-  </div>
++  <CpListPage
++    ref="listRef"
++    :columns="columns"
++    :fetch="fetchList"
++    :search-fields="searchFields"
++    :filter-labels="filterLabels"
++  >
++    <template #toolbar>
++      <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
++    </template>
++    <template #col-_action="{ row }">
++      <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
++      <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
++      <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
++      <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
++    </template>
++  </CpListPage>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
++import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+-
+-const { t } = useI18n()
+ import { ElMessage, ElMessageBox } from 'element-plus'
+-import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue'
++import { Plus } from '@element-plus/icons-vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+ import { estimateCalcApi } from '@/api/erp/estimateCalc'
+ import { masterApi } from '@/api/erp/master'
+-import type { EstimateCalcListItem, MasterBase, EstimateCalcQuery } from '@/types/erp/estimateCalc'
+-import { useBreakpoint } from '@/composables/useBreakpoint'
++import type { EstimateCalcListItem, MasterBase } from '@/types/erp/estimateCalc'
+ import { formatQty, formatNumber } from '@/utils/format'
+ 
+-const { isMobile } = useBreakpoint()
+-
+-const loading = ref(false)
+-const rows = ref<EstimateCalcListItem[]>([])
+-const total = ref(0)
++const { t } = useI18n()
++const listRef = ref<InstanceType<typeof CpListPage>>()
+ const bases = ref<MasterBase[]>([])
+ 
+-const query = reactive<EstimateCalcQuery>({
+-  page: 1,
+-  pageSize: 10,
+-  qtnCalcNo: '',
+-  customerCd: '',
+-  baseCd: '',
+-  dateFrom: '',
+-  dateTo: '',
+-  sortField: '',
+-  sortOrder: '',
+-})
+-const dateRange = ref<[string, string] | null>(null)
+-
+-// 表头点击排序：Element Plus 传 { prop, order: 'ascending'|'descending'|null }
+-function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+-  query.sortField = order ? prop : ''
+-  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+-  query.page = 1
+-  loadData()
+-}
+-
+-const fmtDate = (v?: string) => (v ? v.slice(0, 10) : '')
+ const fmtDateTime = (v?: string) => (v ? v.replace('T', ' ').slice(0, 19) : '')
+ const fmtNum = (v?: number) => (v == null ? '' : formatQty(v))
+ const fmtMoney = (v?: number) => (v == null ? '' : formatNumber(v, 'decimal'))
+ 
+-async function loadData() {
+-  try {
+-    loading.value = true
+-    if (dateRange.value) {
+-      query.dateFrom = dateRange.value[0]
+-      query.dateTo = dateRange.value[1]
+-    } else {
+-      query.dateFrom = ''
+-      query.dateTo = ''
+-    }
+-    const res = await estimateCalcApi.getList(query)
+-    if (res.code === 0) {
+-      rows.value = res.data.rows ?? []
+-      total.value = res.data.total ?? 0
+-    }
+-  } finally {
+-    loading.value = false
+-  }
+-}
+-
+-function onSearch() {
+-  query.page = 1
+-  loadData()
+-}
+-function onReset() {
+-  query.qtnCalcNo = ''
+-  query.customerCd = ''
+-  query.baseCd = ''
+-  dateRange.value = null
+-  query.page = 1
+-  loadData()
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'qtnCalcNo', label: t('sales.term.calcNo'), width: 140, sortable: 'custom' },
++  { prop: 'qtnDate', label: t('sales.qtn.qtnDate'), width: 110, kind: 'date', sortable: 'custom' },
++  { prop: 'qtnBaseCd', label: t('sales.term.base'), width: 80, sortable: 'custom' },
++  { prop: 'staffCd', label: t('sales.term.staff'), width: 90, sortable: 'custom' },
++  { prop: 'customerCd', label: t('sales.term.customer'), width: 120, sortable: 'custom' },
++  { prop: 'customerProductName1', label: t('顧客品名'), minWidth: 200, overflowTooltip: true, sortable: 'custom' },
++  { prop: 'orderQty', label: t('sales.term.qty'), width: 100, kind: 'num', sortable: 'custom',
++    map: (v) => ({ label: fmtNum(v as number) }) },
++  { prop: 'estimateUnitPrice', label: t('sales.term.unitPrice'), width: 120, kind: 'num', sortable: 'custom',
++    map: (v) => ({ label: fmtMoney(v as number) }) },
++  { prop: 'qtnDiv', label: t('見積区分'), width: 100, sortable: 'custom' },
++  { prop: 'modifyDate', label: t('最終更新'), width: 160, sortable: 'custom',
++    map: (_v, row) => ({ label: fmtDateTime((row as EstimateCalcListItem).modifyDate || (row as EstimateCalcListItem).createDate) }) },
++  { prop: '_action', label: t('sales.list.action'), width: 260, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('sales.btn.search'),
++  reset: t('sales.btn.clear'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'qtnCalcNo', label: t('sales.term.calcNo'), type: 'text', placeholder: t('例: 00000001') },
++  { key: 'customerCd', label: t('sales.term.customer'), type: 'text', placeholder: t('sales.term.customer') + ' CD' },
++  {
++    key: 'baseCd', label: t('sales.term.base'), type: 'select',
++    options: bases.value.map((b) => ({ label: `${b.baseCd} ${b.baseName}`, value: b.baseCd })),
++  },
++  { key: 'dateRange', label: t('sales.qtn.qtnDate'), type: 'daterange', valueFormat: 'YYYY-MM-DD' },
++])
++
++const fetchList: ListFetch = async ({ page, size, filters, sortField, sortOrder }) => {
++  const f = filters as Record<string, unknown>
++  const range = (f.dateRange as [string, string] | undefined) || null
++  const res = await estimateCalcApi.getList({
++    page,
++    pageSize: size,
++    qtnCalcNo: (f.qtnCalcNo as string) || '',
++    customerCd: (f.customerCd as string) || '',
++    baseCd: (f.baseCd as string) || '',
++    dateFrom: range ? range[0] : '',
++    dateTo: range ? range[1] : '',
++    sortField: sortField || '',
++    sortOrder: sortOrder || '',
++  })
++  if (res.code === 0) return { rows: res.data.rows ?? [], total: res.data.total ?? 0 }
++  return { rows: [], total: 0 }
+ }
+ 
+-/**
+- * 以新页签打开見積計算書编辑页
+- * 保存/删除后父页签自动刷新列表（通过 postMessage）
+- * 注意：不传 features 字符串，浏览器会按"新标签页"处理而非弹窗
+- */
+ function openInWindow(op: 'new' | 'view' | 'edit' | 'copy', no?: string) {
+   const qs = new URLSearchParams({ op })
+   if (no) qs.set('no', no)
+   const url = `${window.location.origin}/estimate-calc/window?${qs.toString()}`
+-
+   const win = window.open(url, '_blank')
+   if (!win) {
+     ElMessage.warning(t('新页签被浏览器拦截，请允许本站点打开新页签后再试'))
+   }
+ }
+ 
+-function onView(row: EstimateCalcListItem) {
+-  openInWindow('view', row.qtnCalcNo)
+-}
+-function onEdit(row: EstimateCalcListItem) {
+-  openInWindow('edit', row.qtnCalcNo)
+-}
+-function onCopy(row: EstimateCalcListItem) {
+-  openInWindow('copy', row.qtnCalcNo)
+-}
++function onNew() { openInWindow('new') }
++function onView(row: EstimateCalcListItem) { openInWindow('view', row.qtnCalcNo) }
++function onEdit(row: EstimateCalcListItem) { openInWindow('edit', row.qtnCalcNo) }
++function onCopy(row: EstimateCalcListItem) { openInWindow('copy', row.qtnCalcNo) }
++
+ async function onDelete(row: EstimateCalcListItem) {
+   try {
+-    await ElMessageBox.confirm(t('削除 {no} ? （論理削除、復旧不可）', { no: row.qtnCalcNo }), t('確認'), {
+-      type: 'warning',
+-    })
++    await ElMessageBox.confirm(t('削除 {no} ? （論理削除、復旧不可）', { no: row.qtnCalcNo }), t('確認'), { type: 'warning' })
+   } catch {
+     return
+   }
+   try {
+     const res = await estimateCalcApi.remove(row.qtnCalcNo)
+     if (res.code === 0) {
+       ElMessage.success(t('削除完了'))
+-      loadData()
++      listRef.value?.reload()
+     }
+-  } catch {
+-    // interceptor shows error
+-  }
+-}
+-
+-function onNew() {
+-  openInWindow('new')
++  } catch { /* interceptor toast */ }
+ }
+ 
+-// 监听子窗口保存/删除消息，自动刷新列表
++// 子ウィンドウ保存/削除通知で一覧リフレッシュ
+ function handleMessage(e: MessageEvent) {
+   if (e.origin !== window.location.origin) return
+   const data = e.data
+   if (data?.source === 'cp6-estimate' && (data.type === 'saved' || data.type === 'deleted')) {
+-    loadData()
++    listRef.value?.reload()
+   }
+ }
+ 
+ onMounted(async () => {
+   window.addEventListener('message', handleMessage)
+-  const [baseRes] = await Promise.all([masterApi.getBases(), loadData()])
++  const baseRes = await masterApi.getBases()
+   bases.value = baseRes.data ?? []
+ })
+ 
+ onBeforeUnmount(() => {
+   window.removeEventListener('message', handleMessage)
+ })
+ </script>
+-
+-<style scoped>
+-.estimate-list {
+-  padding: 12px;
+-  display: flex;
+-  flex-direction: column;
+-  gap: 12px;
+-}
+-.search-card :deep(.el-card__body),
+-.table-card :deep(.el-card__body) {
+-  padding: 12px 16px;
+-}
+-.pagination {
+-  margin-top: 12px;
+-  text-align: right;
+-}
+-
+-/* 手机卡片 */
+-.mobile-card-list {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 10px;
+-}
+-.mobile-card {
+-  background: #fff;
+-  border: 1px solid #ebeef5;
+-  border-radius: 10px;
+-  padding: 12px 14px;
+-  cursor: pointer;
+-  transition: box-shadow 0.15s ease;
+-}
+-.mobile-card:active {
+-  box-shadow: 0 2px 8px rgba(64,158,255,0.15);
+-}
+-.mc-head {
+-  display: flex;
+-  justify-content: space-between;
+-  align-items: center;
+-  margin-bottom: 6px;
+-}
+-.mc-no {
+-  font-weight: 600;
+-  font-size: 15px;
+-  color: #303133;
+-}
+-.mc-title {
+-  font-size: 14px;
+-  color: #303133;
+-  margin-bottom: 8px;
+-  overflow: hidden;
+-  text-overflow: ellipsis;
+-  white-space: nowrap;
+-}
+-.mc-meta {
+-  display: flex;
+-  justify-content: space-between;
+-  font-size: 12px;
+-  color: #909399;
+-  padding: 2px 0;
+-}
+-.mc-price {
+-  color: #f56c6c;
+-  font-weight: 600;
+-}
+-.mc-actions {
+-  display: flex;
+-  justify-content: flex-end;
+-  gap: 4px;
+-  margin-top: 8px;
+-  padding-top: 8px;
+-  border-top: 1px dashed #ebeef5;
+-}
+-
+-@media (max-width: 767px) {
+-  .estimate-list {
+-    padding: 12px;
+-  }
+-  .search-card :deep(.el-card__body),
+-  .table-card :deep(.el-card__body) {
+-    padding: 12px;
+-  }
+-  .pagination {
+-    text-align: center;
+-  }
+-}
+-</style>
+diff --git a/cp6.web/src/views/erp/OrderListView.vue b/cp6.web/src/views/erp/OrderListView.vue
+index 816021d..f5d6c14 100644
+--- a/cp6.web/src/views/erp/OrderListView.vue
++++ b/cp6.web/src/views/erp/OrderListView.vue
+@@ -1,394 +1,206 @@
++<!--
++  受注一覧 —— ERP 迁移批次2（CpListPage）。
++  検索先行（拠点等を選んでから照会・onMounted 自動取得なし）→ lazy モード（#18）を dogfood。
++  サーバサイド列ソート（#19 sortable:'custom'）も dogfood。数量/単価/金額＝kind:'num'（原様 raw 右寄せ）、
++  通貨(currencyCd+fxRate)/預り売上フラグ＝col slot、操作（詳細/追跡/取消）＝col slot、
++  受注取消は OrderCancelDialog を兄弟要素で保持（col slot から起動、成功→reload）。
++  預り売上のみ/mc未転送のみ＝toolbar checkbox（#15）、CSV 出力＝toolbar（#16）。
++  CSV 出力は CpFilterBar 内包 filters を親が読めないため fetch closure で最後の filters/sort/checkbox を stash して再利用。
++  ページ標題キー無し（不臆造）のため CpPageShell 非適用。件数は toolbar CpTag（原様の位置）。モバイルは設計システム標準（横スクロール）。
++-->
+ <template>
+   <div class="order-list">
+-    <!-- 検索条件 -->
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" label-width="100px" size="small" inline>
+-        <el-form-item :label="t('sales.term.base')">
+-          <el-input v-model="query.baseCd" style="width: 120px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.customer') + ' ' + t('sales.search.from')">
+-          <el-input v-model="query.customerCd" style="width: 130px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.customer') + ' ' + t('sales.search.to')">
+-          <el-input v-model="query.customerCdTo" style="width: 130px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.orderType')">
+-          <el-input v-model="query.orderType" style="width: 100px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.orderDate') + ' ' + t('sales.search.from')">
+-          <el-date-picker v-model="query.orderDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.orderDate') + ' ' + t('sales.search.to')">
+-          <el-date-picker v-model="query.orderDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.deliveryDate') + ' ' + t('sales.search.from')">
+-          <el-date-picker v-model="query.deliveryDateFrom" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.deliveryDate') + ' ' + t('sales.search.to')">
+-          <el-date-picker v-model="query.deliveryDateTo" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
+-        </el-form-item>
+-
+-        <el-collapse v-model="advancedOpen" style="width: 100%">
+-          <el-collapse-item :title="t('sales.section.advSearch')" name="adv">
+-            <el-form-item :label="t('sales.term.haibaiNo') + '1 ' + t('sales.search.from')">
+-              <el-input v-model="query.haibaiNo1From" style="width: 150px" />
+-            </el-form-item>
+-            <el-form-item :label="t('sales.term.haibaiNo') + '1 ' + t('sales.search.to')">
+-              <el-input v-model="query.haibaiNo1To" style="width: 150px" />
+-            </el-form-item>
+-            <el-form-item :label="t('sales.term.orderSheet')">
+-              <el-input v-model="query.orderSheetNo" style="width: 150px" />
+-            </el-form-item>
+-            <el-form-item :label="t('sales.term.productCd')">
+-              <el-input v-model="query.productCd" style="width: 150px" />
+-            </el-form-item>
+-            <el-form-item :label="t('顧客品名')">
+-              <el-input v-model="query.customerItemName" style="width: 200px" />
+-            </el-form-item>
+-            <el-form-item :label="t('シート段')">
+-              <el-input v-model="query.sheetFlute" style="width: 100px" />
+-            </el-form-item>
+-            <el-form-item :label="t('原紙CD')">
+-              <el-input v-model="query.paperCd" style="width: 130px" />
+-            </el-form-item>
+-            <el-form-item :label="t('印刷CD')">
+-              <el-input v-model="query.printCd" style="width: 130px" />
+-            </el-form-item>
+-            <el-form-item :label="t('エンボスCD')">
+-              <el-input v-model="query.embossCd" style="width: 130px" />
+-            </el-form-item>
+-            <el-form-item :label="t('メーカCD')">
+-              <el-input v-model="query.makerCd" style="width: 130px" />
+-            </el-form-item>
+-            <el-form-item :label="t('運送会社')">
+-              <el-input v-model="query.carrier" style="width: 130px" />
+-            </el-form-item>
+-            <el-form-item>
+-              <el-checkbox v-model="query.onlyConsignedSales">{{ t('sales.order.consignedSale') }}</el-checkbox>
+-              <el-checkbox v-model="query.onlyMcUntransferred">{{ t('sales.order.mcUntransferred') }}</el-checkbox>
+-            </el-form-item>
+-          </el-collapse-item>
+-        </el-collapse>
+-
+-        <el-form-item>
+-          <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
+-          <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
+-          <el-button :icon="Download" @click="exportCsv" :loading="exporting">{{ t('sales.btn.exportCsv') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
+-
+-    <!-- 結果 -->
+-    <el-card shadow="never">
+-      <div style="margin-bottom: 8px;">
+-        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
+-      </div>
+-
+-      <!-- 桌面端：完整表格 -->
+-      <el-table v-if="!isMobile" :data="rows" border stripe size="small" style="width: 100%" max-height="600" @sort-change="onSortChange">
+-        <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
+-        <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" sortable="custom" />
+-        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" width="160" />
+-        <el-table-column prop="salesPersonName" :label="t('sales.term.staff')" width="120" />
+-        <el-table-column prop="orderSheetNo" :label="t('注文書NO')" width="120" />
+-        <el-table-column prop="haibaiNo1" :label="t('手配NO1')" width="140" sortable="custom" />
+-        <el-table-column prop="defectiveHaibaiNo" :label="t('不適合手配NO')" width="140" sortable="custom" />
+-        <el-table-column prop="mcOrderNo" :label="t('注文NO(mc)')" width="140" sortable="custom" />
+-        <el-table-column prop="orderDate" :label="t('受注日')" width="100" />
+-        <el-table-column prop="customerDeliveryDate" :label="t('客先納期')" width="100" sortable="custom" />
+-        <el-table-column prop="productCd" :label="t('製品CD')" width="140" sortable="custom" />
+-        <el-table-column prop="cpItemOrComposition" :label="t('CP品名/構成')" min-width="180" />
+-        <el-table-column prop="sheetFlute" :label="t('段')" width="60" sortable="custom" />
+-        <el-table-column prop="compositionF" :label="t('表(構成)')" width="140" />
+-        <el-table-column prop="compositionC" :label="t('中(構成)')" width="140" />
+-        <el-table-column prop="compositionB" :label="t('裏(構成)')" width="140" />
+-        <el-table-column prop="quantity" :label="t('数量')" width="100" align="right" sortable="custom" />
+-        <el-table-column prop="qtyUnit" :label="t('単位')" width="60" />
+-        <el-table-column prop="individualUnitPrice" :label="t('個別単価')" width="120" align="right" sortable="custom" />
+-        <el-table-column prop="setUnitPrice" :label="t('セット単価')" width="120" align="right" sortable="custom" />
+-        <el-table-column prop="amount" :label="t('受注金額')" width="130" align="right" sortable="custom" />
+-        <el-table-column :label="t('通貨')" width="110" align="center">
+-          <template #default="{ row }">
+-            <span>{{ row.currencyCd || 'JPY' }}</span>
+-            <span v-if="row.currencyCd && row.currencyCd !== 'JPY'" class="fx-rate-hint"> @{{ row.fxRate }}</span>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('預り売上')" width="80" align="center">
+-          <template #default="{ row }">
+-            <el-icon v-if="row.consignedSalesFlg === '1'" color="#67c23a"><Check /></el-icon>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="slipNote" :label="t('伝票備考')" min-width="160" sortable="custom" />
+-        <el-table-column :label="t('操作')" width="230" align="center" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="goDetail(row)">{{ t('詳細') }}</el-button>
+-            <el-button
+-              link
+-              type="primary"
+-              size="small"
+-              :icon="Connection"
+-              @click.stop="goTrace(row.webOrderNo)"
+-            >
+-              {{ t('erp.orderTrace.btn.trace') }}
+-            </el-button>
+-            <el-button
+-              link
+-              type="danger"
+-              size="small"
+-              @click.stop="openCancelDialog(row)"
+-            >
+-              {{ t('sales.cancel.btn') }}
+-            </el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-
+-      <!-- 手机端：卡片列表 -->
+-      <div v-else class="order-card-list">
+-        <el-empty v-if="!rows.length && !loading" :image-size="80" :description="t('sales.err.E10008')" />
+-        <div
+-          v-for="row in rows"
+-          :key="row.webOrderNo"
+-          class="order-card"
+-          @click="goDetail(row)"
+-        >
+-          <div class="order-card-head">
+-            <div class="order-card-customer">{{ row.customerName || row.customerCd }}</div>
+-            <div class="order-card-amount">{{ formatCurrency(row.amount) }}</div>
+-          </div>
+-          <div class="order-card-row">
+-            <span class="lbl">{{ t('注文書NO') }}</span>
+-            <span class="val">{{ row.orderSheetNo || '—' }}</span>
+-          </div>
+-          <div class="order-card-row">
+-            <span class="lbl">{{ t('手配NO1') }}</span>
+-            <span class="val">{{ row.haibaiNo1 || '—' }}</span>
+-          </div>
+-          <div class="order-card-row">
+-            <span class="lbl">{{ t('受注日 / 納期') }}</span>
+-            <span class="val">{{ row.orderDate }} → {{ row.customerDeliveryDate }}</span>
+-          </div>
+-          <div class="order-card-row">
+-            <span class="lbl">{{ t('製品CD') }}</span>
+-            <span class="val">{{ row.productCd || '—' }}</span>
+-          </div>
+-          <div class="order-card-row">
+-            <span class="lbl">{{ t('数量') }}</span>
+-            <span class="val">{{ row.quantity }} {{ row.qtyUnit }}</span>
+-          </div>
+-          <div v-if="row.consignedSalesFlg === '1'" class="order-card-flag">
+-            <el-tag type="success" size="small">{{ t('預り売上') }}</el-tag>
+-          </div>
+-          <div class="order-card-actions" @click.stop>
+-            <el-button link type="primary" size="small" :icon="Connection" @click="goTrace(row.webOrderNo)">
+-              {{ t('erp.orderTrace.btn.trace') }}
+-            </el-button>
+-          </div>
+-        </div>
+-      </div>
+-
+-      <el-pagination
+-        v-model:current-page="query.page"
+-        v-model:page-size="query.pageSize"
+-        :total="total"
+-        :page-sizes="[50, 100, 200]"
+-        :layout="isMobile ? 'prev, pager, next' : 'total, sizes, prev, pager, next, jumper'"
+-        :pager-count="isMobile ? 5 : 7"
+-        :small="isMobile"
+-        background
+-        style="margin-top: 12px; justify-content: flex-end"
+-        @current-change="search"
+-        @size-change="search"
+-      />
+-    </el-card>
+-
+-    <!-- Phase 6 受注取消ダイアログ -->
++    <CpListPage
++      ref="listRef"
++      lazy
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      :empty-text="t('sales.err.E10008')"
++      @total-change="total = $event"
++    >
++      <template #toolbar>
++        <CpTag tone="info">{{ t('sales.list.totalCount', { n: total ?? 0 }) }}</CpTag>
++        <el-checkbox v-model="onlyConsignedSales" @change="listRef?.reload()">{{ t('sales.order.consignedSale') }}</el-checkbox>
++        <el-checkbox v-model="onlyMcUntransferred" @change="listRef?.reload()">{{ t('sales.order.mcUntransferred') }}</el-checkbox>
++        <div class="tb-spacer" />
++        <el-button :icon="Download" :loading="exporting" @click="onExportCsv">{{ t('sales.btn.exportCsv') }}</el-button>
++      </template>
++
++      <template #col-currency="{ row }">
++        <span>{{ row.currencyCd || 'JPY' }}</span>
++        <span v-if="row.currencyCd && row.currencyCd !== 'JPY'" class="fx-rate-hint"> @{{ row.fxRate }}</span>
++      </template>
++      <template #col-consigned="{ row }">
++        <el-icon v-if="row.consignedSalesFlg === '1'" class="flg-on"><Check /></el-icon>
++      </template>
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="goDetail(row)">{{ t('詳細') }}</el-button>
++        <el-button link type="primary" size="small" :icon="Connection" @click.stop="goTrace(row.webOrderNo)">
++          {{ t('erp.orderTrace.btn.trace') }}
++        </el-button>
++        <el-button link type="danger" size="small" @click.stop="openCancelDialog(row)">
++          {{ t('sales.cancel.btn') }}
++        </el-button>
++      </template>
++    </CpListPage>
++
++    <!-- Phase 6 受注取消ダイアログ（CpListPage 外の兄弟要素として保持） -->
+     <OrderCancelDialog
+       v-if="cancelDialogVisible"
+       v-model="cancelDialogVisible"
+       :web-order-no="cancelTargetWebOrderNo"
+       @cancelled="onCancelled"
+     />
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive } from 'vue'
++import { computed, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRouter } from 'vue-router'
+ import { ElMessage } from 'element-plus'
+ import { Download, Check, Connection } from '@element-plus/icons-vue'
++import CpListPage, { type ListColumn, type ListFetch, type SortOrder } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { orderApi } from '@/api/erp/order'
+ import type { OrderQueryDto, OrderListItemDto } from '@/types/erp/order'
+-import { useBreakpoint } from '@/composables/useBreakpoint'
+-import { useFormat } from '@/utils/format'
+ import OrderCancelDialog from './OrderCancelDialog.vue'
+ 
+ const { t } = useI18n()
+ const router = useRouter()
+-const { isMobile } = useBreakpoint()
+-// i18n 优化 P2 样例：金额走 locale 感知的多币种格式化（默认 JPY）。
+-const { formatCurrency } = useFormat()
+ 
+-const query = reactive<OrderQueryDto>({
+-  page: 1,
+-  pageSize: 100,
+-  sortField: '',
+-  sortOrder: '',
+-})
+-const advancedOpen = ref<string[]>([])
+-const rows = ref<OrderListItemDto[]>([])
+-const total = ref(0)
+-const loading = ref(false)
++const listRef = ref<InstanceType<typeof CpListPage>>()
++const total = ref<number>()
+ const exporting = ref(false)
+ 
+-// Phase 6 取消ダイアログ
++// —— toolbar checkbox（#15）——
++const onlyConsignedSales = ref(false)
++const onlyMcUntransferred = ref(false)
++
++// —— CSV 出力用 stash（CpListPage 内包 filters を親が読めない代償）——
++const lastFilters = ref<Record<string, unknown>>({})
++const lastSort = ref<{ sortField?: string; sortOrder?: SortOrder }>({})
++
++// —— Phase 6 取消ダイアログ ——
+ const cancelDialogVisible = ref(false)
+ const cancelTargetWebOrderNo = ref('')
+-
+ function openCancelDialog(row: OrderListItemDto) {
+   cancelTargetWebOrderNo.value = row.webOrderNo
+   cancelDialogVisible.value = true
+ }
+-
+ function onCancelled() {
+   ElMessage.success(t('sales.cancel.successMsg'))
+-  // 重新查询列表
+-  search()
+-}
+-
+-async function search() {
+-  loading.value = true
+-  try {
+-    const res = await orderApi.searchList(query)
+-    if (res.code === 0 && res.data) {
+-      rows.value = res.data.rows
+-      total.value = res.data.total
+-      if (rows.value.length === 0) ElMessage.info(t('sales.err.E10008'))
+-    }
+-  } catch { /* */ } finally {
+-    loading.value = false
+-  }
++  listRef.value?.reload()
++}
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'rowNo', label: t('sales.list.no'), width: 60, align: 'center' },
++  { prop: 'customerCd', label: t('sales.term.customer'), width: 100, sortable: 'custom' },
++  { prop: 'customerName', label: t('sales.term.customer') + t('sales.term.bpName').slice(-1), width: 160 },
++  { prop: 'salesPersonName', label: t('sales.term.staff'), width: 120 },
++  { prop: 'orderSheetNo', label: t('注文書NO'), width: 120 },
++  { prop: 'haibaiNo1', label: t('手配NO1'), width: 140, sortable: 'custom' },
++  { prop: 'defectiveHaibaiNo', label: t('不適合手配NO'), width: 140, sortable: 'custom' },
++  { prop: 'mcOrderNo', label: t('注文NO(mc)'), width: 140, sortable: 'custom' },
++  { prop: 'orderDate', label: t('受注日'), width: 100 },
++  { prop: 'customerDeliveryDate', label: t('客先納期'), width: 100, sortable: 'custom' },
++  { prop: 'productCd', label: t('製品CD'), width: 140, sortable: 'custom' },
++  { prop: 'cpItemOrComposition', label: t('CP品名/構成'), minWidth: 180 },
++  { prop: 'sheetFlute', label: t('段'), width: 60, sortable: 'custom' },
++  { prop: 'compositionF', label: t('表(構成)'), width: 140 },
++  { prop: 'compositionC', label: t('中(構成)'), width: 140 },
++  { prop: 'compositionB', label: t('裏(構成)'), width: 140 },
++  { prop: 'quantity', label: t('数量'), width: 100, kind: 'num', sortable: 'custom' },
++  { prop: 'qtyUnit', label: t('単位'), width: 60 },
++  { prop: 'individualUnitPrice', label: t('個別単価'), width: 120, kind: 'num', sortable: 'custom' },
++  { prop: 'setUnitPrice', label: t('セット単価'), width: 120, kind: 'num', sortable: 'custom' },
++  { prop: 'amount', label: t('受注金額'), width: 130, kind: 'num', sortable: 'custom' },
++  { prop: 'currency', label: t('通貨'), width: 110, align: 'center' },
++  { prop: 'consigned', label: t('預り売上'), width: 80, align: 'center' },
++  { prop: 'slipNote', label: t('伝票備考'), minWidth: 160, sortable: 'custom' },
++  { prop: '_action', label: t('操作'), width: 230, align: 'center', fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('sales.btn.search'),
++  reset: t('sales.btn.clear'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'baseCd', label: t('sales.term.base'), type: 'text' },
++  { key: 'customerCd', label: t('sales.term.customer') + ' ' + t('sales.search.from'), type: 'text' },
++  { key: 'customerCdTo', label: t('sales.term.customer') + ' ' + t('sales.search.to'), type: 'text' },
++  { key: 'orderType', label: t('sales.term.orderType'), type: 'text' },
++  { key: 'orderDateFrom', label: t('sales.term.orderDate') + ' ' + t('sales.search.from'), type: 'date', valueFormat: 'YYYY-MM-DD' },
++  { key: 'orderDateTo', label: t('sales.term.orderDate') + ' ' + t('sales.search.to'), type: 'date', valueFormat: 'YYYY-MM-DD' },
++  { key: 'deliveryDateFrom', label: t('sales.term.deliveryDate') + ' ' + t('sales.search.from'), type: 'date', valueFormat: 'YYYY-MM-DD' },
++  { key: 'deliveryDateTo', label: t('sales.term.deliveryDate') + ' ' + t('sales.search.to'), type: 'date', valueFormat: 'YYYY-MM-DD' },
++  { key: 'haibaiNo1From', label: t('sales.term.haibaiNo') + '1 ' + t('sales.search.from'), type: 'text' },
++  { key: 'haibaiNo1To', label: t('sales.term.haibaiNo') + '1 ' + t('sales.search.to'), type: 'text' },
++  { key: 'orderSheetNo', label: t('sales.term.orderSheet'), type: 'text' },
++  { key: 'productCd', label: t('sales.term.productCd'), type: 'text' },
++  { key: 'customerItemName', label: t('顧客品名'), type: 'text' },
++  { key: 'sheetFlute', label: t('シート段'), type: 'text' },
++  { key: 'paperCd', label: t('原紙CD'), type: 'text' },
++  { key: 'printCd', label: t('印刷CD'), type: 'text' },
++  { key: 'embossCd', label: t('エンボスCD'), type: 'text' },
++  { key: 'makerCd', label: t('メーカCD'), type: 'text' },
++  { key: 'carrier', label: t('運送会社'), type: 'text' },
++])
++
++// —— filters + checkbox + sort → API query（空値除去；#17）——
++function buildQuery(filters: Record<string, unknown>, sortField?: string, sortOrder?: SortOrder): OrderQueryDto {
++  const q: Record<string, unknown> = { ...filters }
++  q.onlyConsignedSales = onlyConsignedSales.value || undefined
++  q.onlyMcUntransferred = onlyMcUntransferred.value || undefined
++  q.sortField = sortField || undefined
++  q.sortOrder = sortOrder || undefined
++  Object.keys(q).forEach((k) => {
++    const v = q[k]
++    if (v === '' || v === null || v === undefined) delete q[k]
++  })
++  return q as unknown as OrderQueryDto
+ }
+ 
+-function resetQuery() {
+-  Object.keys(query).forEach(k => {
+-    if (k !== 'page' && k !== 'pageSize') (query as any)[k] = undefined
+-  })
+-  query.page = 1
+-  rows.value = []
+-  total.value = 0
++const fetchList: ListFetch = async ({ page, size, filters, sortField, sortOrder }) => {
++  lastFilters.value = filters
++  lastSort.value = { sortField, sortOrder }
++  const q = buildQuery(filters, sortField, sortOrder)
++  const res = await orderApi.searchList({ ...q, page, pageSize: size })
++  if (res.code === 0 && res.data) return { rows: res.data.rows, total: res.data.total }
++  return { rows: [], total: 0 }
+ }
+ 
+-async function exportCsv() {
++async function onExportCsv() {
+   exporting.value = true
+   try {
+-    const blob = await orderApi.exportListCsv(query) as unknown as Blob
++    const q = buildQuery(lastFilters.value, lastSort.value.sortField, lastSort.value.sortOrder)
++    const blob = await orderApi.exportListCsv(q) as unknown as Blob
+     const url = URL.createObjectURL(blob)
+     const a = document.createElement('a')
+     a.href = url
+     a.download = `orders_${new Date().toISOString().slice(0, 10)}.csv`
+     a.click()
+     URL.revokeObjectURL(url)
+-  } catch { /* */ } finally {
++  } catch { /* interceptor toast */ } finally {
+     exporting.value = false
+   }
+ }
+ 
+-function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+-  query.sortField = order ? prop : ''
+-  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+-  query.page = 1
+-  search()
+-}
+-
+ function goDetail(row: OrderListItemDto) {
+   router.push({ path: '/order', query: { webOrderNo: row.webOrderNo } })
+ }
+-
+ function goTrace(webOrderNo: string) {
+   router.push({ path: '/erp/order-trace', query: { webOrderNo } })
+ }
+ </script>
+ 
+ <style scoped>
+-.order-list { padding: 16px; }
+-.search-card { margin-bottom: 12px; }
+-
+-/* 移动卡片 */
+-.order-card-list {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 10px;
+-}
+-.order-card {
+-  background: #fff;
+-  border: 1px solid #ebeef5;
+-  border-radius: 10px;
+-  padding: 14px;
+-  cursor: pointer;
+-  transition: box-shadow 0.15s ease;
+-  position: relative;
+-}
+-.order-card:active {
+-  box-shadow: 0 2px 8px rgba(64,158,255,0.15);
+-}
+-.order-card-head {
+-  display: flex;
+-  justify-content: space-between;
+-  align-items: baseline;
+-  margin-bottom: 10px;
+-  padding-bottom: 8px;
+-  border-bottom: 1px dashed #ebeef5;
+-  gap: 8px;
+-}
+-.order-card-customer {
+-  font-weight: 600;
+-  font-size: 15px;
+-  color: #303133;
+-  flex: 1;
+-  overflow: hidden;
+-  text-overflow: ellipsis;
+-  white-space: nowrap;
+-}
+-.order-card-amount {
+-  font-weight: 600;
+-  font-size: 16px;
+-  color: #f56c6c;
+-  flex-shrink: 0;
+-}
+-.order-card-row {
+-  display: flex;
+-  gap: 8px;
+-  font-size: 13px;
+-  padding: 3px 0;
+-  line-height: 1.5;
+-}
+-.order-card-row .lbl {
+-  color: #909399;
+-  min-width: 88px;
+-  flex-shrink: 0;
+-}
+-.order-card-row .val {
+-  color: #303133;
+-  flex: 1;
+-  word-break: break-all;
+-  font-size: 13px;
+-}
+-.order-card-flag {
+-  margin-top: 8px;
+-}
+-
+-.order-card-actions {
+-  display: flex;
+-  justify-content: flex-end;
+-  margin-top: 8px;
+-}
+-
+-@media (max-width: 767px) {
+-  .order-list { padding: 12px; }
+-  .search-card :deep(.el-card__body) {
+-    padding: 12px;
+-  }
+-}
++.order-list { padding: 0; }
++.tb-spacer { flex: 1; }
++.fx-rate-hint { color: var(--cp-muted); }
++.flg-on { color: var(--cp-ok); }
+ </style>
+diff --git a/cp6.web/src/views/erp/PlateMoldListView.vue b/cp6.web/src/views/erp/PlateMoldListView.vue
+index 5cc360c..b12d2e4 100644
+--- a/cp6.web/src/views/erp/PlateMoldListView.vue
++++ b/cp6.web/src/views/erp/PlateMoldListView.vue
+@@ -53,22 +53,22 @@
+           </el-button>
+           <el-button v-if="isPickerMode" type="success" :disabled="!selectedRow" @click="onPick">
+             {{ t('sales.btn.selectReturn') }}
+           </el-button>
+         </el-form-item>
+       </el-form>
+     </el-card>
+ 
+     <el-card shadow="never">
+       <div style="margin-bottom: 8px;">
+-        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
+-        <el-tag v-if="checkedCount" type="success" size="small" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</el-tag>
++        <CpTag tone="info">{{ t('sales.list.totalCount', { n: total }) }}</CpTag>
++        <CpTag v-if="checkedCount" tone="ok" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</CpTag>
+       </div>
+ 
+       <el-table
+         :data="rows" border stripe size="small" max-height="600" style="width: 100%"
+         highlight-current-row @current-change="(r: PlateMoldListItemDto | null) => selectedRow = r"
+         @sort-change="onSortChange"
+       >
+         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
+         <el-table-column :label="t('sales.btn.issue')" width="60" align="center">
+           <template #default="{ row }"><el-checkbox v-model="row.issue" /></template>
+@@ -134,20 +134,21 @@
+     </el-card>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, reactive, computed } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRoute, useRouter } from 'vue-router'
+ import { ElMessage } from 'element-plus'
+ import { Download } from '@element-plus/icons-vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { plateMoldApi } from '@/api/erp/plateMold'
+ import type { PlateMoldQueryDto, PlateMoldListItemDto } from '@/types/erp/plateMold'
+ 
+ const { t } = useI18n()
+ const route = useRoute()
+ const router = useRouter()
+ 
+ const query = reactive<PlateMoldQueryDto>({
+   onlyLatestRev: true, page: 1, pageSize: 100,
+   sortField: '', sortOrder: '',
+diff --git a/cp6.web/src/views/erp/ProductMasterListView.vue b/cp6.web/src/views/erp/ProductMasterListView.vue
+index 36a9167..b973425 100644
+--- a/cp6.web/src/views/erp/ProductMasterListView.vue
++++ b/cp6.web/src/views/erp/ProductMasterListView.vue
+@@ -1,349 +1,225 @@
++<!--
++  Web 製品マスタ一覧 —— ERP 迁移批次2（CpListPage）。
++  照会一覧（onMounted 自動取得）+ サーバサイド列ソート（#19 sortable:'custom'）を dogfood。
++  ステータス列＝kind:'tag'+map、WF/MC 転送＝col slot（アイコン、色 token 化）、更新日＝map（fmtDt）、
++  操作（照会/編集/複製/削除）＝col slot、新規/CSV 出力＝toolbar slot（#16 action button）、
++  ステータス複数チェック＝toolbar slot（#15 の checkbox-group 拡張、page-level ref を fetch closure が読む）。
++  CSV 出力は CpFilterBar 内包の filters を親が読めない（模板缺口）ため、fetch closure で最後の filters/sort を stash して再利用。
++  子タブ保存/削除 → postMessage → listRef.reload()。行ダブルクリック→照会は操作列「照会」ボタンに集約（row-click 未透過 #16）。
++  ページ標題キー無し（不臆造）のため CpPageShell 非適用。モバイルは設計システム標準（el-table 横スクロール）。
++-->
+ <template>
+-  <div class="product-list">
+-    <!-- 検索エリア -->
+-    <el-card shadow="never" class="search-card">
+-      <el-form inline :model="query" @submit.prevent="onSearch">
+-        <el-form-item :label="t('sales.term.productCd')">
+-          <el-input v-model="query.productCdFrom" :placeholder="t('sales.search.from')" clearable style="width: 160px" />
+-          <span style="margin: 0 4px">~</span>
+-          <el-input v-model="query.productCdTo" :placeholder="t('sales.search.to')" clearable style="width: 160px" />
+-        </el-form-item>
+-        <el-form-item :label="t('セット製品CD')">
+-          <el-input v-model="query.setProductCd" clearable style="width: 160px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.customer') + ' CD'">
+-          <el-input v-model="query.customerCd" clearable style="width: 140px" />
+-        </el-form-item>
+-        <el-form-item :label="t('親案件')">
+-          <el-input v-model="query.projectNoParent" clearable style="width: 120px" />
+-        </el-form-item>
+-        <el-form-item :label="t('子案件')">
+-          <el-input v-model="query.projectNoChild" clearable style="width: 120px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.qtnNo')">
+-          <el-input v-model="query.quotationNo" clearable style="width: 140px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.calcNo')">
+-          <el-input v-model="query.estimateCalcNo" clearable style="width: 140px" />
+-        </el-form-item>
+-        <el-form-item :label="t('顧客品名1')">
+-          <el-input v-model="query.customerItemName1" clearable style="width: 200px" />
+-        </el-form-item>
+-        <el-form-item :label="t('顧客品名2')">
+-          <el-input v-model="query.customerItemName2" clearable style="width: 160px" />
+-        </el-form-item>
+-        <el-form-item :label="t('設計提案NO')">
+-          <el-input v-model="query.designProposalNo" clearable style="width: 140px" />
+-        </el-form-item>
+-        <el-form-item :label="t('更新日')">
+-          <el-date-picker
+-            v-model="modifyDateRange"
+-            type="daterange"
+-            value-format="YYYY-MM-DD"
+-            range-separator="~"
+-            :start-placeholder="t('sales.search.from')"
+-            :end-placeholder="t('sales.search.to')"
+-            style="width: 260px"
+-          />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.status')">
+-          <el-checkbox-group v-model="statusSel">
+-            <el-checkbox :value="0">{{ t('未承認') }}</el-checkbox>
+-            <el-checkbox :value="1">{{ t('承認待') }}</el-checkbox>
+-            <el-checkbox :value="9">{{ t('承認済/転送済') }}</el-checkbox>
+-          </el-checkbox-group>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" :icon="Search" @click="onSearch">{{ t('sales.btn.search') }}</el-button>
+-          <el-button :icon="RefreshLeft" @click="onReset">{{ t('sales.btn.clear') }}</el-button>
+-          <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
+-          <el-button :icon="Download" :loading="exporting" @click="onExportCsv">{{ t('sales.btn.exportCsv') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
+-
+-    <!-- 一覧 -->
+-    <el-card shadow="never" class="table-card">
+-      <el-table
+-        :data="rows"
+-        v-loading="loading"
+-        stripe
+-        border
+-        style="width: 100%"
+-        @row-dblclick="(row: ProductListItemDto) => onView(row)"
+-        @sort-change="onSortChange"
+-      >
+-        <el-table-column prop="productCd" :label="t('sales.term.productCd')" width="160" fixed="left" sortable="custom" />
+-        <el-table-column prop="setProductCd" :label="t('セット製品CD')" width="140" sortable="custom" />
+-        <el-table-column prop="setProductName" :label="t('セット品名')" min-width="180" show-overflow-tooltip sortable="custom" />
+-        <el-table-column prop="customerCd" :label="t('sales.term.customer') + ' CD'" width="100" sortable="custom" />
+-        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" min-width="160" show-overflow-tooltip />
+-        <el-table-column prop="customerItemName1" :label="t('顧客品名1')" min-width="160" show-overflow-tooltip sortable="custom" />
+-        <el-table-column prop="customerItemName2" :label="t('顧客品名2')" min-width="140" show-overflow-tooltip sortable="custom" />
+-        <el-table-column prop="projectNoParent" :label="t('親案件')" width="100" sortable="custom" />
+-        <el-table-column prop="projectNoChild" :label="t('子案件')" width="100" sortable="custom" />
+-        <el-table-column prop="quotationNo" :label="t('sales.term.qtnNo')" width="120" sortable="custom" />
+-        <el-table-column prop="estimateCalcNo" :label="t('sales.term.calcNo')" width="130" sortable="custom" />
+-        <el-table-column prop="status" :label="t('sales.term.status')" width="100" sortable="custom">
+-          <template #default="{ row }">
+-            <el-tag :type="statusTagType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column label="WF" width="60" align="center">
+-          <template #default="{ row }">
+-            <el-icon v-if="row.wfApprovalFlg" color="#67c23a"><Check /></el-icon>
+-            <span v-else>-</span>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('MC転送')" width="80" align="center">
+-          <template #default="{ row }">
+-            <el-icon v-if="row.mcTransferFlg" color="#409eff"><Link /></el-icon>
+-            <span v-else>-</span>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="modifyDate" :label="t('更新日')" width="160" sortable="custom">
+-          <template #default="{ row }">{{ fmtDt(row.modifyDate) }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('sales.list.action')" width="280" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
+-            <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+-            <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+-            <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-
+-      <div class="pagination">
+-        <el-pagination
+-          v-model:current-page="query.page"
+-          v-model:page-size="query.pageSize"
+-          :total="total"
+-          :page-sizes="[10, 20, 50, 100]"
+-          layout="total, sizes, prev, pager, next"
+-          @current-change="loadData"
+-          @size-change="loadData"
+-        />
+-      </div>
+-    </el-card>
+-  </div>
++  <CpListPage
++    ref="listRef"
++    :columns="columns"
++    :fetch="fetchList"
++    :search-fields="searchFields"
++    :filter-labels="filterLabels"
++  >
++    <template #toolbar>
++      <el-checkbox-group v-model="statusSel" @change="listRef?.reload()">
++        <el-checkbox :value="0">{{ t('未承認') }}</el-checkbox>
++        <el-checkbox :value="1">{{ t('承認待') }}</el-checkbox>
++        <el-checkbox :value="9">{{ t('承認済/転送済') }}</el-checkbox>
++      </el-checkbox-group>
++      <div class="tb-spacer" />
++      <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
++      <el-button :icon="Download" :loading="exporting" @click="onExportCsv">{{ t('sales.btn.exportCsv') }}</el-button>
++    </template>
++
++    <template #col-status="{ row }">
++      <CpTag :tone="statusTone(row.status)">{{ statusLabel(row.status) }}</CpTag>
++    </template>
++    <template #col-wf="{ row }">
++      <el-icon v-if="row.wfApprovalFlg" class="flg-on"><Check /></el-icon>
++      <span v-else>-</span>
++    </template>
++    <template #col-mc="{ row }">
++      <el-icon v-if="row.mcTransferFlg" class="flg-link"><Link /></el-icon>
++      <span v-else>-</span>
++    </template>
++    <template #col-_action="{ row }">
++      <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
++      <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
++      <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
++      <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
++    </template>
++  </CpListPage>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
++import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+-
+-const { t } = useI18n()
+ import { ElMessage, ElMessageBox } from 'element-plus'
+-import { Search, RefreshLeft, Plus, Check, Link, Download } from '@element-plus/icons-vue'
++import { Plus, Check, Link, Download } from '@element-plus/icons-vue'
++import CpListPage, { type ListColumn, type ListFetch, type SortOrder } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { productApi } from '@/api/erp/product'
+ import type { ProductListItemDto, ProductQuery } from '@/types/erp/productMaster'
+ 
+-const loading = ref(false)
++const { t } = useI18n()
++const listRef = ref<InstanceType<typeof CpListPage>>()
+ const exporting = ref(false)
+-const rows = ref<ProductListItemDto[]>([])
+-const total = ref(0)
+-
+-const query = reactive<ProductQuery>({
+-  page: 1,
+-  pageSize: 20,
+-  productCdFrom: '',
+-  productCdTo: '',
+-  customerCd: '',
+-  setProductCd: '',
+-  projectNoParent: '',
+-  projectNoChild: '',
+-  quotationNo: '',
+-  estimateCalcNo: '',
+-  customerItemName1: '',
+-  customerItemName2: '',
+-  designProposalNo: '',
+-  modifyDateFrom: '',
+-  modifyDateTo: '',
+-  statuses: [],
+-  sortField: '',
+-  sortOrder: '',
+-})
+ const statusSel = ref<number[]>([])
+-const modifyDateRange = ref<[string, string] | null>(null)
+-watch(statusSel, v => (query.statuses = v.length ? [...v] : undefined))
+ 
+-function fmtDt(v?: string) {
+-  return v ? v.replace('T', ' ').slice(0, 16) : ''
+-}
++// —— CSV 出力用：fetch closure が最後の filters/sort を stash（CpListPage 内包 filters を親が読めない代償）——
++const lastFilters = ref<Record<string, unknown>>({})
++const lastSort = ref<{ sortField?: string; sortOrder?: SortOrder }>({})
++
++function fmtDt(v?: string) { return v ? v.replace('T', ' ').slice(0, 16) : '' }
+ function statusLabel(s: number): string {
+   return s === 9 ? t('sales.status.approved') : s === 1 ? t('sales.status.pendingApproval') : t('sales.status.notRegistered')
+ }
+-function statusTagType(s: number): 'info' | 'warning' | 'success' {
+-  return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'
++function statusTone(s: number): Tone {
++  return s === 9 ? 'ok' : s === 1 ? 'warn' : 'info'
+ }
+ 
+-function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+-  query.sortField = order ? prop : ''
+-  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+-  query.page = 1
+-  loadData()
+-}
+-
+-async function loadData() {
+-  try {
+-    loading.value = true
+-    if (modifyDateRange.value) {
+-      query.modifyDateFrom = modifyDateRange.value[0]
+-      query.modifyDateTo = modifyDateRange.value[1]
+-    } else {
+-      query.modifyDateFrom = ''
+-      query.modifyDateTo = ''
+-    }
+-    const payload = { ...query } as unknown as Record<string, unknown>
+-    Object.keys(payload).forEach(k => {
+-      const v = payload[k]
+-      if (v === '' || v === null) delete payload[k]
+-    })
+-    const res = await productApi.getList(payload as unknown as ProductQuery)
+-    if (res.code === 0) {
+-      rows.value = res.data.rows ?? []
+-      total.value = res.data.total ?? 0
+-    }
+-  } finally {
+-    loading.value = false
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'productCd', label: t('sales.term.productCd'), width: 160, fixed: 'left', sortable: 'custom' },
++  { prop: 'setProductCd', label: t('セット製品CD'), width: 140, sortable: 'custom' },
++  { prop: 'setProductName', label: t('セット品名'), minWidth: 180, overflowTooltip: true, sortable: 'custom' },
++  { prop: 'customerCd', label: t('sales.term.customer') + ' CD', width: 100, sortable: 'custom' },
++  { prop: 'customerName', label: t('sales.term.customer') + t('sales.term.bpName').slice(-1), minWidth: 160, overflowTooltip: true },
++  { prop: 'customerItemName1', label: t('顧客品名1'), minWidth: 160, overflowTooltip: true, sortable: 'custom' },
++  { prop: 'customerItemName2', label: t('顧客品名2'), minWidth: 140, overflowTooltip: true, sortable: 'custom' },
++  { prop: 'projectNoParent', label: t('親案件'), width: 100, sortable: 'custom' },
++  { prop: 'projectNoChild', label: t('子案件'), width: 100, sortable: 'custom' },
++  { prop: 'quotationNo', label: t('sales.term.qtnNo'), width: 120, sortable: 'custom' },
++  { prop: 'estimateCalcNo', label: t('sales.term.calcNo'), width: 130, sortable: 'custom' },
++  { prop: 'status', label: t('sales.term.status'), width: 100, sortable: 'custom' },
++  { prop: 'wf', label: 'WF', width: 60, align: 'center' },
++  { prop: 'mc', label: t('MC転送'), width: 80, align: 'center' },
++  { prop: 'modifyDate', label: t('更新日'), width: 160, sortable: 'custom', map: (v) => ({ label: fmtDt(v as string) }) },
++  { prop: '_action', label: t('sales.list.action'), width: 280, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('sales.btn.search'),
++  reset: t('sales.btn.clear'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'productCdFrom', label: t('sales.term.productCd') + ' ' + t('sales.search.from'), type: 'text' },
++  { key: 'productCdTo', label: t('sales.term.productCd') + ' ' + t('sales.search.to'), type: 'text' },
++  { key: 'setProductCd', label: t('セット製品CD'), type: 'text' },
++  { key: 'customerCd', label: t('sales.term.customer') + ' CD', type: 'text' },
++  { key: 'projectNoParent', label: t('親案件'), type: 'text' },
++  { key: 'projectNoChild', label: t('子案件'), type: 'text' },
++  { key: 'quotationNo', label: t('sales.term.qtnNo'), type: 'text' },
++  { key: 'estimateCalcNo', label: t('sales.term.calcNo'), type: 'text' },
++  { key: 'customerItemName1', label: t('顧客品名1'), type: 'text' },
++  { key: 'customerItemName2', label: t('顧客品名2'), type: 'text' },
++  { key: 'designProposalNo', label: t('設計提案NO'), type: 'text' },
++  { key: 'modifyDateRange', label: t('更新日'), type: 'daterange', valueFormat: 'YYYY-MM-DD' },
++])
++
++// —— filters + status + sort → API query（空値は除去；#17 undefined/'' 同一視）——
++function buildQuery(filters: Record<string, unknown>, sortField?: string, sortOrder?: SortOrder): ProductQuery {
++  const range = (filters.modifyDateRange as [string, string] | undefined) || null
++  const q: Record<string, unknown> = {
++    productCdFrom: filters.productCdFrom,
++    productCdTo: filters.productCdTo,
++    setProductCd: filters.setProductCd,
++    customerCd: filters.customerCd,
++    projectNoParent: filters.projectNoParent,
++    projectNoChild: filters.projectNoChild,
++    quotationNo: filters.quotationNo,
++    estimateCalcNo: filters.estimateCalcNo,
++    customerItemName1: filters.customerItemName1,
++    customerItemName2: filters.customerItemName2,
++    designProposalNo: filters.designProposalNo,
++    modifyDateFrom: range ? range[0] : undefined,
++    modifyDateTo: range ? range[1] : undefined,
++    statuses: statusSel.value.length ? [...statusSel.value] : undefined,
++    sortField: sortField || undefined,
++    sortOrder: sortOrder || undefined,
+   }
++  Object.keys(q).forEach((k) => {
++    const v = q[k]
++    if (v === '' || v === null || v === undefined) delete q[k]
++  })
++  return q as unknown as ProductQuery
+ }
+ 
+-function onSearch() {
+-  query.page = 1
+-  loadData()
+-}
+-
+-function onReset() {
+-  Object.assign(query, {
+-    page: 1,
+-    pageSize: 20,
+-    productCdFrom: '',
+-    productCdTo: '',
+-    customerCd: '',
+-    setProductCd: '',
+-    projectNoParent: '',
+-    projectNoChild: '',
+-    quotationNo: '',
+-    estimateCalcNo: '',
+-    customerItemName1: '',
+-    customerItemName2: '',
+-    designProposalNo: '',
+-    modifyDateFrom: '',
+-    modifyDateTo: '',
+-    statuses: [],
+-  })
+-  statusSel.value = []
+-  modifyDateRange.value = null
+-  loadData()
++const fetchList: ListFetch = async ({ page, size, filters, sortField, sortOrder }) => {
++  lastFilters.value = filters
++  lastSort.value = { sortField, sortOrder }
++  const q = buildQuery(filters, sortField, sortOrder)
++  const res = await productApi.getList({ ...q, page, pageSize: size } as ProductQuery)
++  if (res.code === 0) return { rows: res.data.rows ?? [], total: res.data.total ?? 0 }
++  return { rows: [], total: 0 }
+ }
+ 
+-function openInWindow(opc: 'new' | 'view' | 'edit' | 'copy' | 'delete', cd?: string) {
+-  const qs = new URLSearchParams({ op: opc })
++function openInWindow(op: 'new' | 'view' | 'edit' | 'copy' | 'delete', cd?: string) {
++  const qs = new URLSearchParams({ op })
+   if (cd) qs.set('cd', cd)
+-  const url = `${window.location.origin}/product/window?${qs.toString()}`
+-  const w = window.open(url, '_blank')
+-  if (!w) {
+-    ElMessage.warning(t('新しいタブがブロックされました。このサイトに対してポップアップを許可してください'))
+-  }
++  const w = window.open(`${window.location.origin}/product/window?${qs.toString()}`, '_blank')
++  if (!w) ElMessage.warning(t('新しいタブがブロックされました。このサイトに対してポップアップを許可してください'))
+ }
++function onNew() { openInWindow('new') }
++function onView(row: ProductListItemDto) { openInWindow('view', row.productCd) }
++function onEdit(row: ProductListItemDto) { openInWindow('edit', row.productCd) }
++function onCopy(row: ProductListItemDto) { openInWindow('copy', row.productCd) }
+ 
+ async function onExportCsv() {
++  exporting.value = true
+   try {
+-    exporting.value = true
+-    if (modifyDateRange.value) {
+-      query.modifyDateFrom = modifyDateRange.value[0]
+-      query.modifyDateTo = modifyDateRange.value[1]
+-    } else {
+-      query.modifyDateFrom = ''
+-      query.modifyDateTo = ''
+-    }
+-    const payload = { ...query } as unknown as Record<string, unknown>
+-    Object.keys(payload).forEach(k => {
+-      const v = payload[k]
+-      if (v === '' || v === null) delete payload[k]
+-    })
+-    // ページング無視で全件出力
+-    delete payload.page
+-    delete payload.pageSize
+-    const blob = await productApi.exportCsv(payload as unknown as ProductQuery)
+-    // ブラウザでダウンロード
++    const q = buildQuery(lastFilters.value, lastSort.value.sortField, lastSort.value.sortOrder)
++    const blob = await productApi.exportCsv(q)
+     const url = URL.createObjectURL(blob)
+     const link = document.createElement('a')
+     link.href = url
+     const ts = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14)
+     link.download = `products_${ts}.csv`
+     document.body.appendChild(link)
+     link.click()
+     document.body.removeChild(link)
+     URL.revokeObjectURL(url)
+     ElMessage.success(t('CSV を出力しました'))
+   } catch {
+-    /* http interceptor toast */
++    /* interceptor toast */
+   } finally {
+     exporting.value = false
+   }
+ }
+ 
+-function onView(row: ProductListItemDto) { openInWindow('view', row.productCd) }
+-function onEdit(row: ProductListItemDto) { openInWindow('edit', row.productCd) }
+-function onCopy(row: ProductListItemDto) { openInWindow('copy', row.productCd) }
+-function onNew() { openInWindow('new') }
+-
+ async function onDelete(row: ProductListItemDto) {
+   if (row.mcTransferFlg) {
+     ElMessage.warning(t('mc転送済の製品は削除できません'))
+     return
+   }
+   try {
+     await ElMessageBox.confirm(
+       t('{cd} を削除します（論理削除・復旧不可）。よろしいですか？', { cd: row.productCd }),
+       t('削除確認'),
+       { type: 'warning' },
+     )
+   } catch { return }
+   try {
+     const res = await productApi.remove(row.productCd)
+     if (res.code === 0) {
+       ElMessage.success(t('削除しました'))
+-      loadData()
++      listRef.value?.reload()
+     }
+   } catch { /* interceptor toast */ }
+ }
+ 
+-// 子タブから保存/削除通知
+ function handleMessage(e: MessageEvent) {
+   if (e.origin !== window.location.origin) return
+   const data = e.data
+   if (data?.source === 'cp6-product' && (data.type === 'saved' || data.type === 'deleted')) {
+-    loadData()
++    listRef.value?.reload()
+   }
+ }
+ 
+-onMounted(() => {
+-  window.addEventListener('message', handleMessage)
+-  loadData()
+-})
+-
+-onBeforeUnmount(() => {
+-  window.removeEventListener('message', handleMessage)
+-})
++onMounted(() => { window.addEventListener('message', handleMessage) })
++onBeforeUnmount(() => { window.removeEventListener('message', handleMessage) })
+ </script>
+ 
+ <style scoped>
+-.product-list {
+-  padding: 12px;
+-  display: flex;
+-  flex-direction: column;
+-  gap: 12px;
+-}
+-.search-card :deep(.el-card__body),
+-.table-card :deep(.el-card__body) {
+-  padding: 12px 16px;
+-}
+-.pagination {
+-  margin-top: 12px;
+-  text-align: right;
+-}
++/* toolbar: ステータスチェック群と右寄せアクションの分離（純レイアウト） */
++.tb-spacer { flex: 1; }
++.flg-on { color: var(--cp-ok); }
++.flg-link { color: var(--cp-info); }
+ </style>
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 6fbdf76..a11d7ad 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -700,20 +700,33 @@ describe('CpListPage', () => {
+ 
+ 本批新增模板缺口 2 项（复盘评审补记：token 化处置本身各有依据并获维持，但反复出现的形态缺口应起票而非仅记录——「0 缺口」判定系本批缺陷）：
+ 
+ 18. **CpListPage 无 search-first/lazy 模式**（Minor）—— ✅ 已实现（契约扩展三轮 commit）：`lazy?: boolean`（默认 false），true 时 onMounted 不自动 fetch、空态起步（CpEmpty 可见/total=0 分页器自然惰性），首查由 search/切卡/reload()/分页/排序等显式手势触发，首查成功前不 emit total-change。
+     - 现象：现状 onMounted 必自动 fetch；ERP 反复出现「先选必填条件再查询」形态（本批 3/5 页有此形态：FscChecklist/OrderPriceCorrection 拠点必須・自動取得なし，SheetUnitPrice 基準日+拠点必須），与该契约相反，只能整页 token 化放弃模板。
+     - 建议契约：`lazy?: boolean`（默认 false），true 时抑制 onMounted(load)，首查仅由显式 search/reload() 触发。
+ 19. **CpListPage 无服务端排序透传**（Minor）—— ✅ 已实现（契约扩展三轮 commit）：ListColumn 增 `sortable?: 'custom'`（仅服务端语义），CpListPage 接 el-table @sort-change：order 规范化 asc/desc、page 重置 1、`sortField?/sortOrder?` 并入 ListFetch query（取消排序两键移除）并 emit sort-change({field,order})；lazy 未加载时排序亦触发首查。
+     - 现象：BusinessPartnerList 的 @sort-change 服务端排序是本批该页「decisive token-only reason」却未起票——CpListPage 未透传 el-table 同名事件，强套即丢排序功能。
+     - 建议契约：ListColumn 增 `sortable?: 'custom'`，CpListPage 接 el-table @sort-change，把 `sortField?/sortOrder?` 并入 ListFetch query（并 emit sort-change）。
+ 
++### ERP批次2 复盘（编号接续，从 #20 起）
++
++批次2（PlateMoldList/ProductMasterList/EstimateCalcList/CreditNoteList/OrderList）迁移完成，功能零丢失、真栈验收通过。本批首次 dogfood #18 lazy（OrderList）与 #19 sortable:'custom'（Order/Product/Estimate 真栈验证 sortField/sortOrder 透传）。分类：CreditNote=CpPageShell+CpListPage（唯一标题键）；Estimate/Product=CpListPage（自动取得+服务端排序，Product 另含 CSV filter-stash + status toolbar checkbox-group）；Order=CpListPage lazy（检索先行+排序+CSV stash+2 toolbar checkbox+受注取消 dialog 兄弟要素+追跡/詳細/取消 col slot）；PlateMold=token 化（行内発行チェックの一括ラベル発行＋picker 現在行選択＋5 ペア FROM≤TO 交差検証）。mobile 卡片分岐（Estimate/CreditNote/Order）撤去为 DS 标准横スクロール（main.css:222-225），非缺口。以下为新增缺口：
++
++20. **CpListPage 内包 filters 不外露 → 亲侧操作（CSV 出力等）拿不到当前检索条件**（Minor，本批 3 页 Product/Order/PlateMold）
++    - 现象：exportCsv(query) 需送含 CpFilterBar 各字段值的全 query，但 filters 闭于 CpListPage 内部 `filters.value`，亲级仅传 searchFields、读不到值。
++    - 代偿：fetch closure 每次收到的 `filters`（+sortField/sortOrder）stash 到 page-level ref（`lastFilters`/`lastSort`），export 侧 buildQuery 复用。唯一齟齬：初回 fetch 前 export → filters 空（lazy 页检索前 export 无意义故许容；auto-load 页 mount fetch 已 stash）。
++    - 建议契约：CpListPage `defineExpose({ reload, getFilters })`（或 filters snapshot API），让亲侧 CSV/一括操作读到当前检索条件。
++21. **CpListPage 无 @current-change（行高亮选择）透传 → picker-mode「返回选中行」形态无法表达**（Minor，PlateMold token 化决定打之一）
++    - 现象：PlateMold picker 模式用 highlight-current-row+@current-change 掴选中行，脚部「選択して戻る」返呼出元。CpListPage 仅透 selectable(checkbox) 的 selection-change，不出单行高亮选择事件。
++    - 代偿（token 化侧）：保留原机制。若 CpListPage 化可用操作列行内「選択」按钮（#16）代替，但与行内発行チェック一括操作合并后选 token 化。
++    - 建议契约：CpListPage 增 `@current-change(row)` 透传（与 #16 @row-click 对偶补齐行选择系事件）。
++
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+ 

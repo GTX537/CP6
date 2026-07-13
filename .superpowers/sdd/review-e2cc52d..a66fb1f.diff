@@ -1,0 +1,383 @@
+# Review package: e2cc52d..a66fb1f
+
+## Commits
+a66fb1f feat(space): 11 实体接入字段级审计（IAuditable）
+
+## Files changed
+ CP6.Entity/DomainModels/Space/Space_Aisle.cs       |  2 +-
+ CP6.Entity/DomainModels/Space/Space_CodeRule.cs    |  2 +-
+ CP6.Entity/DomainModels/Space/Space_Connector.cs   |  2 +-
+ .../DomainModels/Space/Space_ConnectorStop.cs      |  2 +-
+ CP6.Entity/DomainModels/Space/Space_Floor.cs       |  2 +-
+ CP6.Entity/DomainModels/Space/Space_Location.cs    |  2 +-
+ CP6.Entity/DomainModels/Space/Space_Marker.cs      |  2 +-
+ CP6.Entity/DomainModels/Space/Space_Rack.cs        |  2 +-
+ CP6.Entity/DomainModels/Space/Space_Site.cs        |  2 +-
+ CP6.Entity/DomainModels/Space/Space_Template.cs    |  2 +-
+ CP6.Entity/DomainModels/Space/Space_Zone.cs        |  2 +-
+ CP6.Tests/Space/SpaceAuditTests.cs                 | 70 ++++++++++++++++++++++
+ 12 files changed, 81 insertions(+), 11 deletions(-)
+
+## Diff
+diff --git a/CP6.Entity/DomainModels/Space/Space_Aisle.cs b/CP6.Entity/DomainModels/Space/Space_Aisle.cs
+index 127482f..b387956 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Aisle.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Aisle.cs
+@@ -1,21 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 巷道（Space 章00 §4，条件父级）。Rack.ZoneId 必填、AisleId 可选——有巷道才挂。
+ /// Centerline 存中心线节点 JSON，章08 拣货路径消费。
+ /// </summary>
+ [Table("Space_Aisle")]
+-public class Space_Aisle : BaseBizEntity
++public class Space_Aisle : BaseBizEntity, IAuditable
+ {
+     /// <summary>所属库区</summary>
+     public Guid ZoneId { get; set; }
+ 
+     /// <summary>巷道编码（库区内唯一）</summary>
+     [Required, MaxLength(50)]
+     public string AisleCode { get; set; } = string.Empty;
+ 
+     /// <summary>巷道面顶点 JSON</summary>
+     [Column(TypeName = "nvarchar(max)")]
+diff --git a/CP6.Entity/DomainModels/Space/Space_CodeRule.cs b/CP6.Entity/DomainModels/Space/Space_CodeRule.cs
+index 49f55f9..4d88c0a 100644
+--- a/CP6.Entity/DomainModels/Space/Space_CodeRule.cs
++++ b/CP6.Entity/DomainModels/Space/Space_CodeRule.cs
+@@ -1,21 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 编码规则（Space 章03 可配置编码引擎）。作用域 0租户默认/1楼层/2库区，就近覆盖优先。
+ /// Segments 存分段定义 JSON（章03 §3）。IsDefault 同作用域互斥。
+ /// </summary>
+ [Table("Space_CodeRule")]
+-public class Space_CodeRule : BaseBizEntity
++public class Space_CodeRule : BaseBizEntity, IAuditable
+ {
+     /// <summary>规则名称</summary>
+     [Required, MaxLength(100)]
+     public string RuleName { get; set; } = string.Empty;
+ 
+     /// <summary>作用域类型：0租户默认 1楼层 2库区</summary>
+     public int ScopeType { get; set; }
+ 
+     /// <summary>作用域对象 Id（1→FloorId，2→ZoneId，0→null）</summary>
+     public Guid? ScopeId { get; set; }
+diff --git a/CP6.Entity/DomainModels/Space/Space_Connector.cs b/CP6.Entity/DomainModels/Space/Space_Connector.cs
+index 8852b89..1f1d844 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Connector.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Connector.cs
+@@ -1,18 +1,18 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>连接体（电梯/楼梯/坡道）：竖井，经 N 条 ConnectorStop 服务多层（Space P4）。</summary>
+ [Table("Space_Connector")]
+-public class Space_Connector : BaseBizEntity
++public class Space_Connector : BaseBizEntity, IAuditable
+ {
+     public Guid SiteId { get; set; }
+ 
+     /// <summary>连接体编码（站内唯一）</summary>
+     [Required, MaxLength(50)]
+     public string ConnectorCode { get; set; } = string.Empty;
+ 
+     /// <summary>类型 1=Elevator 2=Stairs 3=Ramp</summary>
+     public int ConnectorType { get; set; } = 1;
+ 
+diff --git a/CP6.Entity/DomainModels/Space/Space_ConnectorStop.cs b/CP6.Entity/DomainModels/Space/Space_ConnectorStop.cs
+index e449be0..409117e 100644
+--- a/CP6.Entity/DomainModels/Space/Space_ConnectorStop.cs
++++ b/CP6.Entity/DomainModels/Space/Space_ConnectorStop.cs
+@@ -1,13 +1,13 @@
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>连接体在某楼层的落点（楼层局部坐标 mm）。一连接体每层至多一落点（Space P4）。</summary>
+ [Table("Space_ConnectorStop")]
+-public class Space_ConnectorStop : BaseBizEntity
++public class Space_ConnectorStop : BaseBizEntity, IAuditable
+ {
+     public Guid ConnectorId { get; set; }
+     public Guid FloorId { get; set; }
+     public int X { get; set; }
+     public int Y { get; set; }
+ }
+diff --git a/CP6.Entity/DomainModels/Space/Space_Floor.cs b/CP6.Entity/DomainModels/Space/Space_Floor.cs
+index a75d23e..bfd61e6 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Floor.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Floor.cs
+@@ -1,21 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 楼层（Space 章00 §4）。每 Floor 是一个独立局部坐标系（mm / Z-up / 原点 OriginX/Y）。
+ /// Building 简化：Site → Floor 直连（无独立楼栋层）。
+ /// </summary>
+ [Table("Space_Floor")]
+-public class Space_Floor : BaseBizEntity
++public class Space_Floor : BaseBizEntity, IAuditable
+ {
+     /// <summary>所属站点</summary>
+     public Guid SiteId { get; set; }
+ 
+     /// <summary>楼层序号（如 1/2/-1）</summary>
+     public int Level { get; set; }
+ 
+     /// <summary>楼层编码（站点内唯一）</summary>
+     [Required, MaxLength(50)]
+     public string FloorCode { get; set; } = string.Empty;
+diff --git a/CP6.Entity/DomainModels/Space/Space_Location.cs b/CP6.Entity/DomainModels/Space/Space_Location.cs
+index 68c6a23..0bc4d69 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Location.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Location.cs
+@@ -2,21 +2,21 @@ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 库位（Space 章00 §4）。Id(GUID)=LocationId 稳定主键（D4），发布后冻结编码做 WMS join key。
+ /// LocationCode 草稿可空、发布后非空冻结；CodeOrigin 1引擎生成 / 2采纳导入。
+ /// Placed（= RackId != null，是否落位）正交于 Status（0草稿/1已发布/2停用）。
+ /// </summary>
+ [Table("Space_Location")]
+-public class Space_Location : BaseBizEntity
++public class Space_Location : BaseBizEntity, IAuditable
+ {
+     /// <summary>所属货架（可空——采纳态 D7 未放置为空）</summary>
+     public Guid? RackId { get; set; }
+ 
+     /// <summary>所属楼层（冗余·可空）</summary>
+     public Guid? FloorId { get; set; }
+ 
+     /// <summary>库位编码（join key；草稿可空，发布后非空冻结）</summary>
+     [MaxLength(100)]
+     public string? LocationCode { get; set; }
+diff --git a/CP6.Entity/DomainModels/Space/Space_Marker.cs b/CP6.Entity/DomainModels/Space/Space_Marker.cs
+index ccba21c..2b2f999 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Marker.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Marker.cs
+@@ -1,21 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 标注（Space 章00 §4 / 章02 打点）。楼层上的文字/图标/区域提示。
+ /// RefRackId 可锚到货架（随架移动），删货架 SetNull。
+ /// </summary>
+ [Table("Space_Marker")]
+-public class Space_Marker : BaseBizEntity
++public class Space_Marker : BaseBizEntity, IAuditable
+ {
+     /// <summary>所属楼层</summary>
+     public Guid FloorId { get; set; }
+ 
+     /// <summary>位置 X（mm）</summary>
+     public int X { get; set; }
+ 
+     /// <summary>位置 Y（mm）</summary>
+     public int Y { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Space/Space_Rack.cs b/CP6.Entity/DomainModels/Space/Space_Rack.cs
+index 62ddb2a..bdba9fd 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Rack.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Rack.cs
+@@ -1,21 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 货架（Space 章00 §4）。锚点角 (X,Y,Z) + 绕角偏航 RotationZ；Cols×Levels×DepthCount 个格位。
+ /// ZoneId 必填、AisleId 可选（条件父级）、FloorId 冗余 = Zone.FloorId。
+ /// </summary>
+ [Table("Space_Rack")]
+-public class Space_Rack : BaseBizEntity
++public class Space_Rack : BaseBizEntity, IAuditable
+ {
+     /// <summary>所属库区（必填）</summary>
+     public Guid ZoneId { get; set; }
+ 
+     /// <summary>所属巷道（可选，有巷道才挂）</summary>
+     public Guid? AisleId { get; set; }
+ 
+     /// <summary>所属楼层（冗余 = Zone.FloorId，便于按层查询）</summary>
+     public Guid FloorId { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Space/Space_Site.cs b/CP6.Entity/DomainModels/Space/Space_Site.cs
+index b2f4b53..3de870c 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Site.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Site.cs
+@@ -1,21 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 站点（Space 章00 §4，6 层数据模型顶层）。一个物理园区/仓库地址。
+ /// 继承 BaseBizEntity → 自带 TenantId（行级隔离）+ IsDeleted + RowVersion（乐观锁）。
+ /// </summary>
+ [Table("Space_Site")]
+-public class Space_Site : BaseBizEntity
++public class Space_Site : BaseBizEntity, IAuditable
+ {
+     /// <summary>站点编码（租户内唯一）</summary>
+     [Required, MaxLength(50)]
+     public string SiteCode { get; set; } = string.Empty;
+ 
+     /// <summary>站点名称</summary>
+     [Required, MaxLength(100)]
+     public string SiteName { get; set; } = string.Empty;
+ 
+     /// <summary>地址</summary>
+diff --git a/CP6.Entity/DomainModels/Space/Space_Template.cs b/CP6.Entity/DomainModels/Space/Space_Template.cs
+index 553eca6..68cac52 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Template.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Template.cs
+@@ -1,21 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 模板（Space 章00 §4 / 章01 模板化生成）。货架/库区参数快照，批量生成的蓝本。
+ /// Params 存参数 JSON（快照，非活引用）。
+ /// </summary>
+ [Table("Space_Template")]
+-public class Space_Template : BaseBizEntity
++public class Space_Template : BaseBizEntity, IAuditable
+ {
+     /// <summary>模板编码（租户内唯一）</summary>
+     [Required, MaxLength(50)]
+     public string TemplateCode { get; set; } = string.Empty;
+ 
+     /// <summary>模板名称</summary>
+     [Required, MaxLength(100)]
+     public string TemplateName { get; set; } = string.Empty;
+ 
+     /// <summary>模板类型：1货架 2库区</summary>
+diff --git a/CP6.Entity/DomainModels/Space/Space_Zone.cs b/CP6.Entity/DomainModels/Space/Space_Zone.cs
+index 7a56d7d..9c627f9 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Zone.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Zone.cs
+@@ -1,21 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Space;
+ 
+ /// <summary>
+ /// 库区（Space 章00 §4）。楼层内的功能分区（存储/收货/发货/分拣/通道）。
+ /// Polygon 存顶点 JSON（floor 局部系 mm）。
+ /// </summary>
+ [Table("Space_Zone")]
+-public class Space_Zone : BaseBizEntity
++public class Space_Zone : BaseBizEntity, IAuditable
+ {
+     /// <summary>所属楼层</summary>
+     public Guid FloorId { get; set; }
+ 
+     /// <summary>库区编码（楼层内唯一）</summary>
+     [Required, MaxLength(50)]
+     public string ZoneCode { get; set; } = string.Empty;
+ 
+     /// <summary>库区名称</summary>
+     [Required, MaxLength(100)]
+diff --git a/CP6.Tests/Space/SpaceAuditTests.cs b/CP6.Tests/Space/SpaceAuditTests.cs
+new file mode 100644
+index 0000000..fa3144e
+--- /dev/null
++++ b/CP6.Tests/Space/SpaceAuditTests.cs
+@@ -0,0 +1,70 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Space;
++using Xunit;
++
++namespace CP6.Tests.Space;
++
++/// <summary>
++/// Space 主数据字段级审计接线行为测试（波4 T1）。
++/// 照 <see cref="CP6.Tests.Sys.FieldAuditCaptureTests"/> 范式：InMemory + 假当前用户。
++/// 验证 11 实体接入 IAuditable 后，create/update 随业务行同周期写入 Sys_FieldAuditLogs。
++/// </summary>
++public class SpaceAuditTests
++{
++    /// <summary>假当前用户桩。</summary>
++    private sealed class FakeUser : ICurrentUserAccessor
++    {
++        public FakeUser(Guid? id, string? name) { UserId = id; UserName = name; }
++        public Guid? UserId { get; }
++        public string? UserName { get; }
++    }
++
++    // diff 行的轻量 DTO（System.Text.Json 默认属性名 Field/Old/New）。
++    private sealed record DiffRow(string Field, string? Old, string? New);
++
++    private static List<DiffRow> ParseChanges(string json)
++        => JsonSerializer.Deserialize<List<DiffRow>>(json) ?? new();
++
++    private static readonly Guid _userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
++
++    private static CP6Context Ctx()
++        => TestHelper.CreateInMemoryContext(new FakeUser(_userId, "alice"));
++
++    [Fact]
++    public void Create_Space_Site_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var site = new Space_Site { SiteCode = "S001", SiteName = "华东仓" };
++        db.Set<Space_Site>().Add(site);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Space_Site), rows[0].EntityName);
++        Assert.Equal(site.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_Space_Site_name_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var site = new Space_Site { SiteCode = "S002", SiteName = "旧名" };
++        db.Set<Space_Site>().Add(site);
++        db.SaveChanges();
++
++        site.SiteName = "新名";
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Space_Site), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Single(diffs);
++        Assert.Equal("SiteName", diffs[0].Field);
++        Assert.Equal("旧名", diffs[0].Old);
++        Assert.Equal("新名", diffs[0].New);
++    }
++}

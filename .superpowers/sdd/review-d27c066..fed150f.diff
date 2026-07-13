@@ -1,0 +1,300 @@
+# Review package: d27c066..fed150f
+
+## Commits
+fed150f fix(space): 发布包事务原子提交 + 重试路径不重复落 IntegrationEvent
+
+## Files changed
+ .../Integration/IntegrationEventDispatcher.cs      |  3 +-
+ CP6.Core/Services/Integration/SpaceBridgeHook.cs   | 29 ++++----
+ CP6.Core/Services/Space/LocationPublishService.cs  | 78 +++++++++++++---------
+ CP6.Tests/SpaceBridgeHookTests.cs                  | 15 +++++
+ 4 files changed, 81 insertions(+), 44 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs b/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
+index ecc02f0..88c33e6 100644
+--- a/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
++++ b/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
+@@ -61,21 +61,22 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
+         },
+         [RouteKey("MES", "FIN", "OnWorkOrderCompletedAsync")] = async ctx =>
+         {
+             var p = ctx.GetPayload<OnWorkOrderCompletedFinPayload>();
+             var r = await ctx.Fin.OnWorkOrderCompletedAsync(p.WorkOrderNo, p.UserName);
+             return r.Success;
+         },
+         [RouteKey("SPACE", "WMS", "OnLocationPublishedAsync")] = async ctx =>
+         {
+             var p = ctx.GetPayload<LocationPublishBatch>();
+-            var r = await ctx.Space.OnLocationPublishedAsync(p, Guid.NewGuid());
++            // 重试路径不重复落事件：Worker 负责更新原 IntegrationEvent 行的 Status/Attempts
++            var r = await ctx.Space.OnLocationPublishedAsync(p, Guid.NewGuid(), persistEvent: false);
+             return r.Success;
+         },
+     };
+ 
+     private readonly IMesBridgeHook _mes;
+     private readonly IWmsBridgeHook _wms;
+     private readonly IErpBridgeHook _erp;
+     private readonly IOrderCancelBridgeHook _cancel;
+     private readonly IFinBridgeHook _fin;
+     private readonly ISpaceBridgeHook _space;
+diff --git a/CP6.Core/Services/Integration/SpaceBridgeHook.cs b/CP6.Core/Services/Integration/SpaceBridgeHook.cs
+index 48a58b8..5c71c00 100644
+--- a/CP6.Core/Services/Integration/SpaceBridgeHook.cs
++++ b/CP6.Core/Services/Integration/SpaceBridgeHook.cs
+@@ -1,21 +1,23 @@
+ using CP6.Core.EFDbContext;
+ using CP6.Entity.DomainModels;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.Extensions.Logging;
+ 
+ namespace CP6.Core.Services.Integration;
+ 
+ /// <summary>Space 发布 bridge hook 契约（ch04 §2.1）。</summary>
+ public interface ISpaceBridgeHook
+ {
+-    Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId);
++    /// <param name="persistEvent">true=末尾落 IntegrationEvent（首发路径）；false=不落（Worker 重试路径，
++    /// 由 Worker 更新原事件行，避免每次重试新插一行导致事件表翻倍增长）。</param>
++    Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId, bool persistEvent = true);
+ }
+ 
+ /// <summary>Space bridge hook 调用结果。</summary>
+ public class SpaceBridgeResult
+ {
+     public bool Success { get; set; }
+     public string? Message { get; set; }
+ }
+ 
+ /// <summary>
+@@ -26,21 +28,21 @@ public class SpaceBridgeHook : BridgeHookBase, ISpaceBridgeHook
+ {
+     private readonly IWmsLocationConsumer _wms;
+ 
+     public SpaceBridgeHook(CP6Context db, ILogger<SpaceBridgeHook> logger, IWmsLocationConsumer wms)
+         : base(db, logger)
+     {
+         _wms = wms;
+     }
+ 
+     /// <summary>发布批次到 WMS，落 IntegrationEvent 持久化记录。</summary>
+-    public async Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId)
++    public async Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId, bool persistEvent = true)
+     {
+         string status;
+         string? error = null;
+         bool ok = false;
+         try
+         {
+             var res = await _wms.ConsumeAsync(batch);
+             ok = res.Success;
+             status = !res.Success
+                 ? IntegrationEventStatus.Failed
+@@ -48,28 +50,31 @@ public class SpaceBridgeHook : BridgeHookBase, ISpaceBridgeHook
+                     ? IntegrationEventStatus.Skipped
+                     : IntegrationEventStatus.Success;
+             if (!res.Success) error = "WMS consume returned failure";
+         }
+         catch (Exception ex)
+         {
+             status = IntegrationEventStatus.Failed;
+             error = ex.ToString();
+         }
+ 
+-        await PersistEventAsync(
+-            sourceModule: "SPACE",
+-            targetModule: "WMS",
+-            hookName: nameof(OnLocationPublishedAsync),
+-            sourceNo: batch.BatchNo,
+-            targetNo: null,
+-            status: status,
+-            error: error,
+-            correlationId: correlationId,
+-            payload: batch);
++        if (persistEvent)
++        {
++            await PersistEventAsync(
++                sourceModule: "SPACE",
++                targetModule: "WMS",
++                hookName: nameof(OnLocationPublishedAsync),
++                sourceNo: batch.BatchNo,
++                targetNo: null,
++                status: status,
++                error: error,
++                correlationId: correlationId,
++                payload: batch);
++        }
+ 
+         return new SpaceBridgeResult
+         {
+             Success = ok && status != IntegrationEventStatus.Failed,
+             Message = error
+         };
+     }
+ }
+diff --git a/CP6.Core/Services/Space/LocationPublishService.cs b/CP6.Core/Services/Space/LocationPublishService.cs
+index 41f4525..9ebd887 100644
+--- a/CP6.Core/Services/Space/LocationPublishService.cs
++++ b/CP6.Core/Services/Space/LocationPublishService.cs
+@@ -1,16 +1,17 @@
+ using CP6.Core.EFDbContext;
+ using CP6.Core.Services.Common;
+ using CP6.Core.Services.Integration;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Storage;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// 库位发布、停用、采纳服务实现（ch04）。
+ ///
+ /// v1.1 多租户约定：
+ ///   · 构造注入 ITenantContext 仅用于 LocationPublishBatch.TenantId DTO 字段（不被 EF 盖章）。
+ ///   · 查询不写 .Where(TenantId)——全局过滤自动按当前租户隔离。
+ ///   · 创建实体不写 TenantId——SaveChanges 盖章自动补当前租户。
+@@ -36,56 +37,71 @@ public class LocationPublishService : ILocationPublishService
+         _t = t;
+         _code = code;
+         _hook = hook;
+         _stock = stock;
+         _deactivator = deactivator;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<int> PublishFloorAsync(Guid floorId, Guid? zoneId, string? user)
+     {
+-        // 1. 闸门（ch03 §9.2）
+-        var pre = await _code.PrecheckAsync(floorId);
+-        if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
+-            throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
+-
+-        // 2. 取 Status=0 且编码就绪的库位
+-        var locs = await _db.Space_Locations
+-            .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null)
+-            .ToListAsync();
++        // InMemory 安全事务守卫（惯例见 SceneService）：真库开事务，InMemory 降级无事务。
++        // 事务范围＝闸门→翻状态→WMS 消费(T_WmsBin 写入)→事件落库，全部同库原子提交，
++        // 修复"翻了状态但事件静默丢失"的窗口（同一 CP6Context 实例，hook 内 SaveChanges 同事务）。
++        IDbContextTransaction? tx = _db.Database.IsRelational()
++            ? await _db.Database.BeginTransactionAsync()
++            : null;
++        try
++        {
++            // 1. 闸门（ch03 §9.2）
++            var pre = await _code.PrecheckAsync(floorId);
++            if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
++                throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
+ 
+-        if (locs.Count == 0) return 0;
++            // 2. 取 Status=0 且编码就绪的库位
++            var locs = await _db.Space_Locations
++                .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null)
++                .ToListAsync();
+ 
+-        // 3. 批号（D-E）
+-        var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
+-        var batchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}";
++            if (locs.Count == 0) return 0;
+ 
+-        // 4. 翻状态 + 升版 + 组载荷
+-        var batch = new LocationPublishBatch
+-        {
+-            BatchNo = batchNo,
+-            TenantId = _t.CurrentTenantId,  // DTO 字段，不被 EF 盖章，必须显式赋值
+-            PublishedBy = user
+-        };
+-        foreach (var l in locs)
++            // 3. 批号（D-E）
++            var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
++            var batchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}";
++
++            // 4. 翻状态 + 升版 + 组载荷
++            var batch = new LocationPublishBatch
++            {
++                BatchNo = batchNo,
++                TenantId = _t.CurrentTenantId,  // DTO 字段，不被 EF 盖章，必须显式赋值
++                PublishedBy = user
++            };
++            foreach (var l in locs)
++            {
++                l.Status = 1;
++                l.Version += 1;
++                l.Modifier = user;
++                l.ModifyDate = DateTime.Now;
++                batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
++            }
++            await _db.SaveChangesAsync();
++
++            // 5. 发事件（hook 内部吞消费异常→Failed 事件落库，由 Worker 重试；不影响本事务提交）
++            await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
++
++            if (tx != null) await tx.CommitAsync();
++            return locs.Count;
++        }
++        finally
+         {
+-            l.Status = 1;
+-            l.Version += 1;
+-            l.Modifier = user;
+-            l.ModifyDate = DateTime.Now;
+-            batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
++            if (tx != null) await tx.DisposeAsync();   // 未 Commit 即 Dispose = 回滚
+         }
+-        await _db.SaveChangesAsync();
+-
+-        // 5. 发事件
+-        await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+-        return locs.Count;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task DeactivateAsync(Guid locationId, string? user)
+     {
+         var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId)
+                 ?? throw new InvalidOperationException("E-SPACE-004: 库位不存在");
+         if (l.Status != 1)
+             throw new InvalidOperationException("E-SPACE-004: 库位未处于已发布状态");
+ 
+diff --git a/CP6.Tests/SpaceBridgeHookTests.cs b/CP6.Tests/SpaceBridgeHookTests.cs
+index d6f3064..facfd46 100644
+--- a/CP6.Tests/SpaceBridgeHookTests.cs
++++ b/CP6.Tests/SpaceBridgeHookTests.cs
+@@ -49,20 +49,35 @@ public class SpaceBridgeHookTests
+         {
+             BatchNo = "LPUB-20260613-0002",
+             Items = { new LocationPublishItem { Op = "UPSERT", LocationId = locId, LocationCode = "B-01-01-01", Version = 1 } }
+         };
+         var r = await hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+         Assert.True(r.Success); // still ok (skipped is not failure)
+         var evt = await db.IntegrationEvents.SingleAsync();
+         Assert.Equal(IntegrationEventStatus.Skipped, evt.Status);
+     }
+ 
++    [Fact]
++    public async Task Hook_PersistEventFalse_DoesNotInsertEventRow()
++    {
++        using var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
++        var hook = new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
++        var batch = new LocationPublishBatch { BatchNo = "LPUB-20260705-0001" };
++
++        var r = await hook.OnLocationPublishedAsync(batch, Guid.NewGuid(), persistEvent: false);
++
++        Assert.True(r.Success);
++        // 重试路径（Dispatcher）走此分支：Worker 更新原事件行，hook 不得再新插一行
++        Assert.Equal(0, await db.IntegrationEvents.CountAsync());
++    }
++
+     private sealed class AllSkippedConsumer : IWmsLocationConsumer
+     {
+         public Task<WmsConsumeResult> ConsumeAsync(LocationPublishBatch batch) =>
+             Task.FromResult(new WmsConsumeResult
+             {
+                 Success = true,
+                 AllSkipped = true,
+                 Items = batch.Items.ConvertAll(i => new WmsItemResult { LocationId = i.LocationId, Status = "SKIPPED" })
+             });
+     }

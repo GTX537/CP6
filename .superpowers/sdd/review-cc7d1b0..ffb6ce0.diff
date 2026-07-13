@@ -1,0 +1,330 @@
+# Review package: cc7d1b0..ffb6ce0
+
+## Commits
+ffb6ce0 feat(space): 删货架护栏+mode=deactivate|rehome（同规格换架）+ 契约§7.1级联语义（评审 H3 收尾）
+
+## Files changed
+ CP6.Core/Services/Space/ISpaceMasterService.cs     |   8 +-
+ CP6.Core/Services/Space/SpaceMasterService.cs      |  63 ++++++++++-
+ CP6.Tests/SpaceMasterServiceTests.cs               | 120 ++++++++++++++++++++-
+ .../Controllers/Space/SpaceMasterController.cs     |   4 +-
+ 4 files changed, 182 insertions(+), 13 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/ISpaceMasterService.cs b/CP6.Core/Services/Space/ISpaceMasterService.cs
+index 2c18de9..a90dbd4 100644
+--- a/CP6.Core/Services/Space/ISpaceMasterService.cs
++++ b/CP6.Core/Services/Space/ISpaceMasterService.cs
+@@ -35,17 +35,23 @@ public interface ISpaceMasterService
+     /// mode=deactivate → 逐个走停用同步 RPC 后删（路径A）；
+     /// mode=rehome → 货架改挂 targetAisleId（可 null=脱巷道）+ re-publish 刷新 path 后删（路径B）。
+     /// 无已发布库位时行为同旧版：SetNull 其下 Rack.AisleId → 删。
+     /// </summary>
+     Task DeleteAisleAsync(Guid id, string? mode = null, Guid? targetAisleId = null, string? user = null);
+ 
+     // ── Rack ──────────────────────────────────────────────────────────────
+     Task<Guid> CreateRackAsync(RackDto dto, string? user);
+     Task UpdateRackAsync(Guid id, RackDto dto, string? user);   // 位姿/尺寸变更后触发几何重算
+     Task<List<RackDto>> ListRacksAsync(Guid zoneId);
+-    Task DeleteRackAsync(Guid id);                // 护栏：有库位 → E-SPACE-003
++    /// <summary>
++    /// 删货架（ch04 §7.1/§7.2）：有已发布库位默认 Restrict（E-SPACE-403）；
++    /// mode=deactivate → 逐个停用后级联删（停用位可删，2026-07-06 拍板）；
++    /// mode=rehome → 整架库位改挂 targetRackId（同规格换架：目标网格≥源且无自有库位）+ re-publish 后删源架。
++    /// 无已发布库位 → 库位级联删 + 删货架（旧 E-SPACE-003 全拦废止）。
++    /// </summary>
++    Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null);
+ 
+     // ── 场景聚合 / 待绑定 / 库位列表 ───────────────────────────────────────
+     Task<SceneDto> GetSceneAsync(Guid floorId);                 // 仅含 Placed=true 库位
+     Task<List<SceneLocationDto>> GetUnplacedAsync(Guid floorId); // Status=1 ∧ Placed=false（租户全量）
+     Task<List<SceneLocationDto>> ListLocationsAsync(Guid rackId);
+ }
+diff --git a/CP6.Core/Services/Space/SpaceMasterService.cs b/CP6.Core/Services/Space/SpaceMasterService.cs
+index 46e7907..71df55f 100644
+--- a/CP6.Core/Services/Space/SpaceMasterService.cs
++++ b/CP6.Core/Services/Space/SpaceMasterService.cs
+@@ -376,26 +376,79 @@ public class SpaceMasterService : ISpaceMasterService
+     public async Task<List<RackDto>> ListRacksAsync(Guid zoneId) =>
+         await _db.Space_Racks.Where(x => x.ZoneId == zoneId).Select(x => new RackDto
+         {
+             Id = x.Id, ZoneId = x.ZoneId, AisleId = x.AisleId, TemplateId = x.TemplateId,
+             RackCode = x.RackCode, X = x.X, Y = x.Y, Z = x.Z, RotationZ = x.RotationZ,
+             Cols = x.Cols, Levels = x.Levels, DepthCount = x.DepthCount,
+             CellW = x.CellW, CellH = x.CellH, CellD = x.CellD, Enable = x.Enable,
+             RowVersion = x.RowVersion
+         }).ToListAsync();
+ 
+-    public async Task DeleteRackAsync(Guid id)
++    public async Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null)
+     {
+-        if (await _db.Space_Locations.AnyAsync(l => l.RackId == id))
+-            throw new InvalidOperationException("E-SPACE-003");
+-        var e = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id);
+-        if (e != null) { _db.Space_Racks.Remove(e); await _db.SaveChangesAsync(); }
++        var rack = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id);
++        if (rack == null) return;
++
++        var published = await _db.Space_Locations
++            .Where(l => l.RackId == id && l.Status == 1)
++            .Select(l => l.Id)
++            .ToListAsync();
++
++        if (published.Count > 0)
++        {
++            switch (mode)
++            {
++                case "deactivate":
++                    // 路径A（ch04 §7.2）：逐个停用（同步 RPC 决策模型，不包事务，部分完成重试幂等）
++                    // → 落到下方级联删（停用位可删，2026-07-06 拍板②——与巷道 SetNull 落点不同）。
++                    foreach (var locId in published)
++                        await _publish.DeactivateAsync(locId, user);
++                    break;
++
++                case "rehome":
++                    // 路径B（同规格换架）：目标网格 ≥ 源、且无自有库位（否则格口冲突）。
++                    if (targetRackId == null)
++                        throw new InvalidOperationException("E-SPACE-002: mode=rehome 需要 targetRackId");
++                    var target = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetRackId.Value)
++                                 ?? throw new InvalidOperationException("E-SPACE-002: 目标货架不存在");
++                    if (target.Cols < rack.Cols || target.Levels < rack.Levels || target.DepthCount < rack.DepthCount)
++                        throw new InvalidOperationException("E-SPACE-002: 目标货架网格小于源货架，无法改挂");
++                    if (await _db.Space_Locations.AnyAsync(l => l.RackId == target.Id))
++                        throw new InvalidOperationException("E-SPACE-002: 目标货架已有库位，无法改挂");
++
++                    var movable = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
++                    foreach (var l in movable)
++                    {
++                        l.RackId     = target.Id;
++                        l.FloorId    = target.FloorId;
++                        l.Modifier   = user;
++                        l.ModifyDate = DateTime.Now;
++                    }
++                    await _db.SaveChangesAsync();                         // 先落改挂
++                    await _geo.RecalcRackLocationsAsync(target.Id);       // 几何回填（纯几何不发布，D4）
++                    await _publish.RepublishAsync(published, user);       // path.RackCode 变 → re-publish（§7.2 B）
++                    _db.Space_Racks.Remove(rack);
++                    await _db.SaveChangesAsync();
++                    return;
++
++                default:
++                    throw new InvalidOperationException(
++                        "E-SPACE-403: 该货架下有已发布库位，请先停用（或 mode=deactivate|rehome）");
++            }
++        }
++
++        // 无已发布（或 deactivate 后）→ 库位级联删 + 删货架（停用位可删，2026-07-06 拍板；
++        // 其码仍占 T_WmsBin 锚，同码再发布会被 REJECTED——锚清理记后续票）。
++        var children = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
++        if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
++        _db.Space_Racks.Remove(rack);
++        await _db.SaveChangesAsync();
+     }
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // 场景聚合 / 待绑定 / 库位列表
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     public async Task<SceneDto> GetSceneAsync(Guid floorId)
+     {
+         var scene = new SceneDto { FloorId = floorId };
+ 
+diff --git a/CP6.Tests/SpaceMasterServiceTests.cs b/CP6.Tests/SpaceMasterServiceTests.cs
+index 4cbb1ae..31cff90 100644
+--- a/CP6.Tests/SpaceMasterServiceTests.cs
++++ b/CP6.Tests/SpaceMasterServiceTests.cs
+@@ -181,49 +181,159 @@ public class SpaceMasterServiceTests
+             {
+                 ZoneId = Guid.Empty, RackCode = "R1",
+                 Cols = 1, Levels = 1, DepthCount = 1,
+                 CellW = 1000, CellH = 1000, CellD = 1000
+             }, "u"));
+         Assert.Equal("E-SPACE-002", ex.Message);
+     }
+ 
+     // ── B-5: 删除护栏 ─────────────────────────────────────────────────────
+ 
++    /// <summary>
++    /// 契约变更（§7.1 + 2026-07-06 拍板）：旧 E-SPACE-003「有库位一律拦」全废止。
++    /// 无 Status=1 已发布库位时，删货架级联删其下（草稿）库位，不再抛 E-003。
++    /// </summary>
+     [Fact]
+-    public async Task DeleteRack_WithLocations_Throws_E003()
++    public async Task DeleteRack_WithLocations_CascadeDeletes_E003Abolished()
+     {
+         var (db, svc) = Make();
+         var rackId = Guid.NewGuid();
+         db.Space_Racks.Add(new Space_Rack
+             { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
+         db.Space_Locations.Add(new Space_Location
+-            { Id = Guid.NewGuid(), RackId = rackId, Placed = true });
++            { Id = Guid.NewGuid(), RackId = rackId, Placed = true });  // Status 默认 0=草稿
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+-            () => svc.DeleteRackAsync(rackId));
+-        Assert.Equal("E-SPACE-003", ex.Message);
++        await svc.DeleteRackAsync(rackId);
++
++        // 旧断言（抛 E-003）废止：货架与库位全级联删
++        Assert.Equal(0, await db.Space_Racks.CountAsync());
++        Assert.Equal(0, await db.Space_Locations.CountAsync());
+     }
+ 
+     [Fact]
+     public async Task DeleteRack_NoLocations_Succeeds()
+     {
+         var (db, svc) = Make();
+         var rackId = Guid.NewGuid();
+         db.Space_Racks.Add(new Space_Rack
+             { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
+         await db.SaveChangesAsync();
+ 
+         await svc.DeleteRackAsync(rackId);
+         Assert.Equal(0, await db.Space_Racks.CountAsync());
+     }
+ 
++    // ── 波1.5 Task 6: 删货架护栏 + mode=deactivate|rehome（ch04 §7.1/§7.2）─────
++
++    [Fact]
++    public async Task DeleteRack_DraftLocationsOnly_Cascades()
++    {
++        var (db, svc) = Make();
++        var rackId = Guid.NewGuid();
++        db.Space_Racks.Add(new Space_Rack
++            { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
++        db.Space_Locations.AddRange(
++            new Space_Location { Id = Guid.NewGuid(), RackId = rackId, Placed = true, Status = 0 },
++            new Space_Location { Id = Guid.NewGuid(), RackId = rackId, Placed = true, Status = 0 });
++        await db.SaveChangesAsync();
++
++        await svc.DeleteRackAsync(rackId);
++
++        // 无 Status=1 → 级联删库位+货架（旧 E-003 全拦废止）
++        Assert.Equal(0, await db.Space_Racks.CountAsync());
++        Assert.Equal(0, await db.Space_Locations.CountAsync());
++    }
++
++    [Fact]
++    public async Task DeleteRack_WithPublished_NoMode_Throws403()
++    {
++        var (db, svc) = Make();
++        var s = await SeedPublishedAisleAsync(db);
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++            () => svc.DeleteRackAsync(s.rackId));
++        Assert.StartsWith("E-SPACE-403", ex.Message);
++
++        // 护栏拦下：货架与库位原样
++        Assert.Equal(1, await db.Space_Racks.CountAsync());
++        Assert.Equal(1, await db.Space_Locations.CountAsync());
++        Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Status);
++    }
++
++    [Fact]
++    public async Task DeleteRack_ModeDeactivate_DeactivatesThenCascades()
++    {
++        var (db, svc) = Make();
++        var s = await SeedPublishedAisleAsync(db);
++
++        await svc.DeleteRackAsync(s.rackId, mode: "deactivate", user: "u");
++
++        // 停用后级联删（拍板②：停用位可删）——货架与库位全删
++        Assert.Equal(0, await db.Space_Racks.CountAsync());
++        Assert.Equal(0, await db.Space_Locations.CountAsync());
++        // DEACTIVATE 事件已落库
++        Assert.True(await db.IntegrationEvents.CountAsync() >= 1);
++        // 真 WmsBinDeactivator 组装：T_WmsBin 墓碑 IsActive=false（loc 已被级联删，bin 独立留存）
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.False(bin.IsActive);
++    }
++
++    [Fact]
++    public async Task DeleteRack_ModeRehome_MovesLocations_Republishes()
++    {
++        var (db, svc) = Make();
++        // 源架 R1（1x1x1）+ published loc（Version=1, Col=1）
++        var siteId  = Guid.NewGuid();
++        var floorId = Guid.NewGuid();
++        var zoneId  = Guid.NewGuid();
++        var srcId   = Guid.NewGuid();
++        var targetId = Guid.NewGuid();
++        var locId   = Guid.NewGuid();
++
++        db.Space_Sites.Add(new Space_Site { Id = siteId, SiteCode = "S1", SiteName = "S1" });
++        db.Space_Floors.Add(new Space_Floor { Id = floorId, SiteId = siteId, Level = 1, FloorCode = "F1", FloorName = "1F" });
++        db.Space_Zones.Add(new Space_Zone
++            { Id = zoneId, FloorId = floorId, ZoneCode = "Z1", ZoneName = "Zone1", Polygon = "[[0,0],[1,0],[1,1]]" });
++        db.Space_Racks.Add(new Space_Rack
++            { Id = srcId, ZoneId = zoneId, FloorId = floorId, RackCode = "R1",
++              Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
++        // 目标架 R2（同规格 1x1x1，无自有库位，同 zone）
++        db.Space_Racks.Add(new Space_Rack
++            { Id = targetId, ZoneId = zoneId, FloorId = floorId, RackCode = "R2",
++              Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = floorId, RackId = srcId,
++            Placed = true, Status = 1, CodeOrigin = 1, Version = 1,
++            LocationCode = "A-01-01-01", Col = 1, Level = 1, Depth = 1
++        });
++        await db.SaveChangesAsync();
++
++        await svc.DeleteRackAsync(srcId, mode: "rehome", targetRackId: targetId, user: "u");
++
++        // 库位改挂 target、Version 升、Status 仍 1（码冻结）
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(targetId, loc.RackId);
++        Assert.Equal(2, loc.Version);
++        Assert.Equal(1, loc.Status);
++        // 源架已删，目标架仍在
++        Assert.Null(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == srcId));
++        Assert.NotNull(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetId));
++        // UPSERT 事件 path.RackCode == "R2"
++        var evt = await db.IntegrationEvents.SingleAsync();
++        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
++        var item = payload.GetProperty("Items")[0];
++        Assert.Equal("UPSERT", item.GetProperty("Op").GetString());
++        Assert.Equal("R2", item.GetProperty("Path").GetProperty("RackCode").GetString());
++    }
++
+     [Fact]
+     public async Task DeleteAisle_SetsNullRackAisleId()
+     {
+         var (db, svc) = Make();
+         var aisleId = Guid.NewGuid();
+         db.Space_Aisles.Add(new Space_Aisle
+             { Id = aisleId, ZoneId = Guid.NewGuid(), AisleCode = "L1" });
+         db.Space_Racks.Add(new Space_Rack
+             { Id = Guid.NewGuid(), ZoneId = Guid.NewGuid(), AisleId = aisleId, RackCode = "R" });
+         await db.SaveChangesAsync();
+diff --git a/CP6.WebApi/Controllers/Space/SpaceMasterController.cs b/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
+index a28015e..75d11a9 100644
+--- a/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
++++ b/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
+@@ -142,23 +142,23 @@ public class SpaceMasterController : ControllerBase
+     }
+ 
+     [HttpPut("rack/{id:guid}")]
+     public async Task<IActionResult> UpdateRack(Guid id, [FromBody] RackDto d)
+     {
+         try { await _svc.UpdateRackAsync(id, d, CurrentUser); return Ok2(); }
+         catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+     }
+ 
+     [HttpDelete("rack/{id:guid}")]
+-    public async Task<IActionResult> DeleteRack(Guid id)
++    public async Task<IActionResult> DeleteRack(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetRackId = null)
+     {
+-        try { await _svc.DeleteRackAsync(id); return Ok2(); }
++        try { await _svc.DeleteRackAsync(id, mode, targetRackId, CurrentUser); return Ok2(); }
+         catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+     }
+ 
+     // ── 场景聚合 / 待绑定 / 库位列表 ────────────────────────────────────
+ 
+     [HttpGet("floor/{id:guid}/scene")]
+     public async Task<IActionResult> Scene(Guid id) =>
+         Ok2(await _svc.GetSceneAsync(id));
+ 
+     [HttpGet("location/unplaced")]

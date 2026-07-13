@@ -1,0 +1,568 @@
+# Review package: 8a0e17f..54f4080
+
+## Commits
+54f4080 feat(space): 管理与发布页按钮接入 v-permission
+
+## Files changed
+ .../src/views/space/lifecycle/SpaceCodeRuleView.vue |  6 +++---
+ .../src/views/space/lifecycle/SpacePublishView.vue  |  8 ++++----
+ .../lifecycle/__tests__/SpaceCodeRuleView.spec.ts   | 20 +++++++++++++++++++-
+ .../lifecycle/__tests__/SpacePublishView.spec.ts    | 21 ++++++++++++++++++++-
+ cp6.web/src/views/space/master/SpaceFloorView.vue   |  6 +++---
+ cp6.web/src/views/space/master/SpaceSiteView.vue    |  6 +++---
+ .../space/master/__tests__/SpaceFloorView.spec.ts   | 19 ++++++++++++++++++-
+ .../space/master/__tests__/SpaceSiteView.spec.ts    | 19 ++++++++++++++++++-
+ 8 files changed, 88 insertions(+), 17 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue b/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue
+index 27dc8c6..59c3b83 100644
+--- a/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue
++++ b/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue
+@@ -5,36 +5,36 @@
+    - scopeId 显示名解析：list 后并发拉 site→floor(→zone) 建索引，scopeNames 反查显示；失败留裸 id 截断。
+    - 作用域级联表单：scopeType=1 站点→楼层；=2 站点→楼层→库区；=0 隐藏。编辑时以索引反查回填级联。
+    - SegmentsEditor（段编辑器，v-model form.segments）+ 本地镜像校验黄条（权威=后端 preview）。
+    - 预览弹窗：编辑中/行 segments 直接 POST preview，展示 samples / variableLen / precheck。
+    - isDefault 提示「设为默认将自动取消同作用域其他默认」（后端自动清，无冲突报错）。
+   删除失败的后端护栏 message 由 http 拦截器原样 ElMessage.error（此处 catch 仅止崩）。
+ -->
+ <template>
+   <CpPageShell :title="t('space.rule.title')" :count="total">
+     <template #actions>
+-      <el-button @click="openCreate">{{ t('space.rule.create') }}</el-button>
++      <el-button v-permission="'space-code-rule:add'" @click="openCreate">{{ t('space.rule.create') }}</el-button>
+     </template>
+ 
+     <CpListPage
+       ref="listRef"
+       :columns="columns"
+       :fetch="fetchList"
+       @total-change="total = $event"
+     >
+       <template #col-scopeId="{ row }">
+         <span>{{ scopeDisplay(row) }}</span>
+       </template>
+       <template #col-_action="{ row }">
+-        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
++        <el-button v-permission="'space-code-rule:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
+         <el-button link type="primary" size="small" @click="openPreview(row.segments)">{{ t('space.rule.preview') }}</el-button>
+-        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
++        <el-button v-permission="'space-code-rule:delete'" link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
+       </template>
+     </CpListPage>
+ 
+     <CpFormDialog
+       v-model="dialogVisible"
+       :title="dialogTitle"
+       width="960"
+       :form="form"
+       :rules="rules"
+       :submit="onSave"
+diff --git a/cp6.web/src/views/space/lifecycle/SpacePublishView.vue b/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+index ec2a4b2..5d1c388 100644
+--- a/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
++++ b/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+@@ -55,31 +55,31 @@
+       </section>
+ 
+       <!-- ③ 生码 -->
+       <section class="pub-sec">
+         <div class="sec-head"><span class="sec-title">{{ t('space.publish.genTitle') }}</span></div>
+         <div class="pub-row">
+           <el-radio-group v-model="genMode">
+             <el-radio value="fill-empty">{{ t('space.publish.mode.fillEmpty') }}</el-radio>
+             <el-radio value="rebuild">{{ t('space.publish.mode.rebuild') }}</el-radio>
+           </el-radio-group>
+-          <el-button type="primary" :loading="genLoading" @click="onGenerate">{{ t('space.publish.genBtn') }}</el-button>
++          <el-button v-permission="'space-code-rule:generate'" type="primary" :loading="genLoading" @click="onGenerate">{{ t('space.publish.genBtn') }}</el-button>
+         </div>
+       </section>
+ 
+       <!-- ④ 发布 + 存量采纳 -->
+       <section class="pub-sec">
+         <div class="sec-head"><span class="sec-title">{{ t('space.publish.publishTitle') }}</span></div>
+         <div class="pub-row">
+-          <el-button type="primary" :loading="publishLoading" :disabled="!canPublish" @click="onPublish">{{ t('space.publish.doPublish') }}</el-button>
++          <el-button v-permission="'space-publish:publish'" type="primary" :loading="publishLoading" :disabled="!canPublish" @click="onPublish">{{ t('space.publish.doPublish') }}</el-button>
+           <span v-if="!canPublish" class="pub-gate">{{ t('space.publish.gateHint') }}</span>
+-          <el-button @click="openAdopt">{{ t('space.publish.adoptBtn') }}</el-button>
++          <el-button v-permission="'space-publish:adopt'" @click="openAdopt">{{ t('space.publish.adoptBtn') }}</el-button>
+         </div>
+       </section>
+ 
+       <!-- ⑤ 停用小节 -->
+       <section class="pub-sec">
+         <div class="sec-head"><span class="sec-title">{{ t('space.publish.deactTitle') }}</span></div>
+         <div class="pub-row">
+           <el-input v-model="stopPrefix" class="stop-prefix" style="width: 260px" clearable :placeholder="t('space.publish.prefixPh')" @keyup.enter="runSearch" />
+           <el-button :loading="searchLoading" @click="runSearch">{{ t('space.publish.searchBtn') }}</el-button>
+         </div>
+@@ -87,21 +87,21 @@
+           <el-table-column :label="t('space.publish.col.code')" min-width="200">
+             <template #default="{ row }"><span class="cp-mono">{{ row.locationCode || row.locationId }}</span></template>
+           </el-table-column>
+           <el-table-column :label="t('space.publish.col.status')" width="140">
+             <template #default="{ row }">
+               <CpTag :tone="statusTone(row.status)">{{ t(`space.publish.status.${row.status}`) }}</CpTag>
+             </template>
+           </el-table-column>
+           <el-table-column :label="t('space.common.action')" width="120" align="center">
+             <template #default="{ row }">
+-              <el-button v-if="row.status === 1" link type="danger" size="small" @click="onDeactivate(row)">{{ t('space.publish.deactivate') }}</el-button>
++              <el-button v-if="row.status === 1" v-permission="'space-publish:deactivate'" link type="danger" size="small" @click="onDeactivate(row)">{{ t('space.publish.deactivate') }}</el-button>
+             </template>
+           </el-table-column>
+         </el-table>
+         <CpEmpty v-else-if="searched" :text="t('space.publish.noMatch')" />
+       </section>
+     </template>
+ 
+     <!-- 存量采纳弹窗 -->
+     <el-dialog v-model="adoptVisible" :title="t('space.publish.adoptTitle')" width="560">
+       <div class="adopt-codes">
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts
+index 7b3b4fb..642a0b4 100644
+--- a/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts
+@@ -3,22 +3,29 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
+ import { mount, flushPromises } from '@vue/test-utils'
+ import { createI18n } from 'vue-i18n'
+ import ElementPlus from 'element-plus'
+ import { codeRuleApi } from '@/api/space/codeRule'
+ import { siteApi } from '@/api/space/site'
+ import { floorApi } from '@/api/space/floor'
+ import { zoneApi } from '@/api/space/zone'
+ import SpaceCodeRuleView from '../SpaceCodeRuleView.vue'
+ import SegmentsEditor from '../SegmentsEditor.vue'
+ import { newSegment } from '../codeRuleValidate'
++import { permission } from '@/directives/permission'
+ import type { CodeRuleVO, CodeSegmentDef, CodePreviewResp, SiteVO, FloorVO } from '@/types/space/scene'
+ 
++// v-permission store：默认全授权；单测内翻转 permHas.fn 隐藏指定键
++const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
++vi.mock('@/stores/permission', () => ({
++  usePermissionStore: () => ({ loaded: true, has: (k: string) => permHas.fn(k) }),
++}))
++
+ vi.mock('@/api/space/codeRule', () => ({
+   codeRuleApi: { list: vi.fn(), create: vi.fn(), update: vi.fn(), remove: vi.fn(), preview: vi.fn() },
+ }))
+ vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
+ vi.mock('@/api/space/floor', () => ({ floorApi: { list: vi.fn() } }))
+ vi.mock('@/api/space/zone', () => ({ zoneApi: { list: vi.fn() } }))
+ vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
+ 
+ function seg(source: string, optional = false): CodeSegmentDef {
+   return { ...newSegment(), source, optional }
+@@ -38,26 +45,27 @@ const previewResp: CodePreviewResp = {
+   structure: [],
+   samples: ['A-01-01', 'A-01-02', 'A-02-01'],
+   variableLen: { withAisle: 'Z-AA-01-01', withoutAisle: 'Z-01-01' },
+   precheck: { ok: true, errors: [] },
+ }
+ 
+ function i18nPlugin() {
+   return createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
+ }
+ function mountView(opts: Record<string, unknown> = {}) {
+-  return mount(SpaceCodeRuleView, { global: { plugins: [i18nPlugin()], ...(opts.global as object || {}) } })
++  return mount(SpaceCodeRuleView, { global: { plugins: [i18nPlugin()], directives: { permission }, ...(opts.global as object || {}) } })
+ }
+ 
+ describe('SpaceCodeRuleView', () => {
+   beforeEach(() => {
+     vi.clearAllMocks()
++    permHas.fn = () => true
+     vi.mocked(codeRuleApi.list).mockResolvedValue({ code: 0, message: '', data: rules })
+     vi.mocked(codeRuleApi.preview).mockResolvedValue({ code: 0, message: '', data: previewResp })
+     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
+     vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
+     vi.mocked(zoneApi.list).mockResolvedValue({ code: 0, message: '', data: [] })
+   })
+ 
+   // ① mock list → 渲染规则名与段数
+   it('挂载后渲染规则名与段数', async () => {
+     const w = mountView()
+@@ -74,20 +82,30 @@ describe('SpaceCodeRuleView', () => {
+     const w = mountView({ global: { plugins: [i18nPlugin()], stubs: { teleport: true } } })
+     await flushPromises()
+     const pvBtns = w.findAll('el-button').filter((b) => b.text() === 'space.rule.preview')
+     expect(pvBtns.length).toBeGreaterThan(0)
+     await pvBtns[0].trigger('click')
+     await flushPromises()
+     expect(codeRuleApi.preview).toHaveBeenCalled()
+     expect(w.text()).toContain('A-01-01')
+     expect(w.text()).toContain('A-02-01')
+   })
++
++  // v-permission：缺 delete 键 → 削除按钮移除，编辑按钮保留
++  it('缺 space-code-rule:delete 权时削除按钮从 DOM 移除，编辑按钮保留', async () => {
++    permHas.fn = (k) => k !== 'space-code-rule:delete'
++    const w = mountView()
++    await flushPromises()
++    const btns = w.findAll('el-button')
++    expect(btns.filter((b) => b.text() === 'space.common.delete').length).toBe(0)
++    expect(btns.filter((b) => b.text() === 'space.common.edit').length).toBeGreaterThan(0)
++  })
+ })
+ 
+ // ② 新建弹窗添加两段 → 本地校验提示出现（缺库位粒度段 E-306）——直接测 SegmentsEditor
+ // SegmentsEditor 独立挂载须注册 ElementPlus（el-table 需其管理作用域插槽）。
+ describe('SegmentsEditor 本地校验', () => {
+   function mountEditor(modelValue: CodeSegmentDef[]) {
+     return mount(SegmentsEditor, {
+       props: { modelValue, 'onUpdate:modelValue': (v: CodeSegmentDef[]) => (modelValue = v) },
+       global: { plugins: [i18nPlugin(), ElementPlus] },
+     })
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+index 0d5b6f6..a7bdae3 100644
+--- a/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+@@ -3,24 +3,31 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+ import { mount, flushPromises } from '@vue/test-utils'
+ import { createI18n } from 'vue-i18n'
+ import ElementPlus, { ElSelect, ElMessageBox } from 'element-plus'
+ import { codeRuleApi } from '@/api/space/codeRule'
+ import { publishApi } from '@/api/space/publish'
+ import { zoneApi } from '@/api/space/zone'
+ import { siteApi } from '@/api/space/site'
+ import { floorApi } from '@/api/space/floor'
+ import { locateApi } from '@/api/space/locate'
+ import CpStatCard from '@/components/templates/CpStatCard.vue'
++import { permission } from '@/directives/permission'
+ import SpacePublishView from '../SpacePublishView.vue'
+ import type { SiteVO, FloorVO, ZoneVO, CodePrecheckResp } from '@/types/space/scene'
+ import type { LocateResult } from '@/types/space/viewer'
+ 
++// v-permission store：默认全授权；单测内翻转 permHas.fn 隐藏指定键
++const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
++vi.mock('@/stores/permission', () => ({
++  usePermissionStore: () => ({ loaded: true, has: (k: string) => permHas.fn(k) }),
++}))
++
+ vi.mock('@/api/space/codeRule', () => ({
+   codeRuleApi: { precheck: vi.fn(), generate: vi.fn() },
+ }))
+ vi.mock('@/api/space/publish', () => ({
+   publishApi: { publishFloor: vi.fn(), deactivate: vi.fn(), adopt: vi.fn() },
+ }))
+ vi.mock('@/api/space/zone', () => ({ zoneApi: { list: vi.fn() } }))
+ vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
+ vi.mock('@/api/space/floor', () => ({ floorApi: { list: vi.fn() } }))
+ vi.mock('@/api/space/locate', () => ({ locateApi: { search: vi.fn() } }))
+@@ -52,39 +59,40 @@ function i18nPlugin() {
+       ja: {
+         'space.publish.imported': '取込 {n} 件',
+         'space.publish.skipped': 'スキップ {n} 件',
+       },
+     },
+   })
+ }
+ // attachTo document.body so el-dialog / ElMessageBox teleported content renders in jsdom
+ function mountView() {
+   return mount(SpacePublishView, {
+-    global: { plugins: [i18nPlugin(), ElementPlus] },
++    global: { plugins: [i18nPlugin(), ElementPlus], directives: { permission } },
+     attachTo: document.body,
+   })
+ }
+ 
+ // 顶栏选择站点→楼层（emit update:modelValue 驱动 v-model；顺序：站点/楼层/库区）
+ async function selectFloor(w: ReturnType<typeof mountView>) {
+   const selects = w.findAllComponents(ElSelect)
+   selects[0].vm.$emit('update:modelValue', 's1')
+   await flushPromises()
+   const s2 = w.findAllComponents(ElSelect)
+   s2[1].vm.$emit('update:modelValue', 'f1')
+   await flushPromises()
+ }
+ 
+ describe('SpacePublishView', () => {
+   afterEach(() => { document.body.innerHTML = '' })
+   beforeEach(() => {
+     vi.clearAllMocks()
++    permHas.fn = () => true
+     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
+     vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
+     vi.mocked(zoneApi.list).mockResolvedValue({ code: 0, message: '', data: zones })
+     vi.mocked(codeRuleApi.precheck).mockResolvedValue({ code: 0, message: '', data: cleanPrecheck })
+     vi.mocked(codeRuleApi.generate).mockResolvedValue({ code: 0, message: '', data: [] })
+     vi.mocked(publishApi.publishFloor).mockResolvedValue({ code: 0, message: '', data: { published: 0 } })
+     vi.mocked(publishApi.deactivate).mockResolvedValue({ code: 0, message: '', data: null })
+     vi.mocked(publishApi.adopt).mockResolvedValue({ code: 0, message: '', data: { imported: 0, skipped: [] } })
+     vi.mocked(locateApi.search).mockResolvedValue({ code: 0, message: '', data: [] })
+   })
+@@ -194,11 +202,22 @@ describe('SpacePublishView', () => {
+     await selectFloor(w) // 触发楼层级预检（挂起，未解析）
+     // 选库区 z1 → 触发库区级预检（快，先落）
+     w.findAllComponents(ElSelect)[2].vm.$emit('update:modelValue', 'z1')
+     await flushPromises()
+     expect(w.findAllComponents(CpStatCard)[0].props('value')).toBe(3) // 库区级 dirtyPrecheck 已落
+     // 楼层级慢请求此刻后到 → 应被 seq 守卫丢弃
+     resolveSlow({ code: 0, message: '', data: slowPc })
+     await flushPromises()
+     expect(w.findAllComponents(CpStatCard)[0].props('value')).toBe(3) // 仍为库区级 3，而非过期的 99
+   })
++
++  // ⑥ v-permission：缺 space-publish:publish 键 → 发布按钮移除，采纳按钮保留
++  it('缺 space-publish:publish 权时发布按钮从 DOM 移除，采纳按钮保留', async () => {
++    permHas.fn = (k) => k !== 'space-publish:publish'
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    const btns = w.findAll('button')
++    expect(btns.find((b) => b.text() === 'space.publish.doPublish')).toBeUndefined()
++    expect(btns.find((b) => b.text() === 'space.publish.adoptBtn')).toBeTruthy()
++  })
+ })
+diff --git a/cp6.web/src/views/space/master/SpaceFloorView.vue b/cp6.web/src/views/space/master/SpaceFloorView.vue
+index bb1a8a9..55289fb 100644
+--- a/cp6.web/src/views/space/master/SpaceFloorView.vue
++++ b/cp6.web/src/views/space/master/SpaceFloorView.vue
+@@ -16,33 +16,33 @@
+         filterable
+         style="width: 240px"
+       >
+         <el-option
+           v-for="s in sites"
+           :key="s.id"
+           :label="`${s.siteCode}　${s.siteName}`"
+           :value="s.id!"
+         />
+       </el-select>
+-      <el-button :disabled="!selectedSiteId" @click="openCreate">{{ t('space.floor.create') }}</el-button>
++      <el-button v-permission="'space-floor:add'" :disabled="!selectedSiteId" @click="openCreate">{{ t('space.floor.create') }}</el-button>
+     </template>
+ 
+     <CpListPage
+       v-if="selectedSiteId"
+       ref="listRef"
+       :columns="columns"
+       :fetch="fetchList"
+       @total-change="total = $event"
+     >
+       <template #col-_action="{ row }">
+-        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
+-        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
++        <el-button v-permission="'space-floor:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
++        <el-button v-permission="'space-floor:delete'" link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
+         <el-button link type="primary" size="small" @click="gotoEditor(row)">{{ t('space.floor.editor') }}</el-button>
+       </template>
+     </CpListPage>
+     <CpEmpty v-else :text="t('space.floor.pickSiteFirst')" />
+ 
+     <CpFormDialog
+       v-model="dialogVisible"
+       :title="dialogTitle"
+       width="560"
+       :form="form"
+diff --git a/cp6.web/src/views/space/master/SpaceSiteView.vue b/cp6.web/src/views/space/master/SpaceSiteView.vue
+index 867a957..151e899 100644
+--- a/cp6.web/src/views/space/master/SpaceSiteView.vue
++++ b/cp6.web/src/views/space/master/SpaceSiteView.vue
+@@ -2,39 +2,39 @@
+   站点マスタ —— CpPageShell + CpListPage + CpFormDialog（Space 波2）。
+   1:1 套用 WarehouseListView 范式：单表 CRUD、前端切片分页（list 端点无分页）、
+   in-place 变更后 listRef.reload() 命令式刷新（保留筛选/页码）。
+   warehouseCd 列空显示「—」并 title 提示发布时默认取站点编码；enable 走 kind:tag map。
+   编辑时 siteCode 只读（发布后 code 是映射锚——保守禁改，波1.5 终审 M 项背书）。
+   删除失败的后端护栏 message 由 http 拦截器原样 ElMessage.error（此处 catch 仅止崩）。
+ -->
+ <template>
+   <CpPageShell :title="t('space.site.title')" :count="total">
+     <template #actions>
+-      <el-button @click="openCreate">{{ t('space.site.create') }}</el-button>
++      <el-button v-permission="'space-site:add'" @click="openCreate">{{ t('space.site.create') }}</el-button>
+     </template>
+ 
+     <CpListPage
+       ref="listRef"
+       :columns="columns"
+       :fetch="fetchList"
+       :search-fields="searchFields"
+       :filter-labels="filterLabels"
+       @total-change="total = $event"
+     >
+       <template #col-warehouseCd="{ row }">
+         <span v-if="row.warehouseCd" class="cp-mono">{{ row.warehouseCd }}</span>
+         <span v-else class="cp-dash" :title="t('space.site.whDefaultTip', { code: row.siteCode })">—</span>
+       </template>
+       <template #col-_action="{ row }">
+-        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
++        <el-button v-permission="'space-site:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
+         <el-button link type="primary" size="small" @click="gotoFloor(row)">{{ t('space.site.floors') }}</el-button>
+-        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
++        <el-button v-permission="'space-site:delete'" link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
+       </template>
+     </CpListPage>
+ 
+     <CpFormDialog
+       v-model="dialogVisible"
+       :title="dialogTitle"
+       width="560"
+       :form="form"
+       :rules="rules"
+       :submit="onSave"
+diff --git a/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts b/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts
+index b352940..1c4ebbd 100644
+--- a/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts
++++ b/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts
+@@ -1,20 +1,27 @@
+ // @vitest-environment jsdom
+ import { describe, it, expect, vi, beforeEach } from 'vitest'
+ import { mount, flushPromises } from '@vue/test-utils'
+ import { createI18n } from 'vue-i18n'
+ import { siteApi } from '@/api/space/site'
+ import { floorApi } from '@/api/space/floor'
+ import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import { permission } from '@/directives/permission'
+ import SpaceFloorView from '../SpaceFloorView.vue'
+ import type { SiteVO, FloorVO } from '@/types/space/scene'
+ 
++// v-permission store：默认全授权；单测内翻转 permHas.fn 隐藏指定键
++const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
++vi.mock('@/stores/permission', () => ({
++  usePermissionStore: () => ({ loaded: true, has: (k: string) => permHas.fn(k) }),
++}))
++
+ // router.push 用稳定 mock（hoisted，供跳编辑器断言）
+ const { push } = vi.hoisted(() => ({ push: vi.fn() }))
+ 
+ // 站点/楼层 API 全 mock；vue-router 注入 stub（照 SpaceSiteView.spec 先例）
+ vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
+ vi.mock('@/api/space/floor', () => ({
+   floorApi: { list: vi.fn(), create: vi.fn(), update: vi.fn(), remove: vi.fn() },
+ }))
+ vi.mock('vue-router', () => ({
+   useRouter: () => ({ push }),
+@@ -25,26 +32,27 @@ const sites: SiteVO[] = [
+   { id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true },
+   { id: 's2', siteCode: 'OSK', siteName: '大阪DC', enable: true },
+ ]
+ const floors: FloorVO[] = [
+   { id: 'f1', siteId: 's1', level: 1, floorCode: 'FL1', floorName: '1階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
+   { id: 'f2', siteId: 's1', level: 2, floorCode: 'FL2', floorName: '2階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
+ ]
+ 
+ function mountView() {
+   const i18n = createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
+-  return mount(SpaceFloorView, { global: { plugins: [i18n] } })
++  return mount(SpaceFloorView, { global: { plugins: [i18n], directives: { permission } } })
+ }
+ 
+ describe('SpaceFloorView', () => {
+   beforeEach(() => {
+     vi.clearAllMocks()
++    permHas.fn = () => true
+     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
+     vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
+     vi.mocked(floorApi.create).mockResolvedValue({ code: 0, message: '', data: { id: 'new' } })
+   })
+ 
+   it('route.query.siteId 预选后按站点渲染楼层行', async () => {
+     const w = mountView()
+     await flushPromises()
+     expect(siteApi.list).toHaveBeenCalled()
+     expect(floorApi.list).toHaveBeenCalledWith('s1')
+@@ -70,11 +78,20 @@ describe('SpaceFloorView', () => {
+ 
+     const dlg = w.findComponent(CpFormDialog)
+     // 走对话框 submit 契约（onSave → floorApi.create），再触发 saved → reload
+     await (dlg.props('submit') as (f: Record<string, unknown>) => Promise<void>)(dlg.props('form'))
+     dlg.vm.$emit('saved')
+     await flushPromises()
+ 
+     expect(floorApi.create).toHaveBeenCalledTimes(1)
+     expect(floorApi.list).toHaveBeenCalledTimes(2)
+   })
++
++  it('缺 space-floor:delete 权时削除按钮从 DOM 移除，编辑按钮保留', async () => {
++    permHas.fn = (k) => k !== 'space-floor:delete'
++    const w = mountView()
++    await flushPromises()
++    const btns = w.findAll('el-button')
++    expect(btns.filter((b) => b.text() === 'space.common.delete').length).toBe(0)
++    expect(btns.filter((b) => b.text() === 'space.common.edit').length).toBeGreaterThan(0)
++  })
+ })
+diff --git a/cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts b/cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts
+index 800094b..8fb5f24 100644
+--- a/cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts
++++ b/cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts
+@@ -1,45 +1,53 @@
+ // @vitest-environment jsdom
+ import { describe, it, expect, vi, beforeEach } from 'vitest'
+ import { mount, flushPromises } from '@vue/test-utils'
+ import { createI18n } from 'vue-i18n'
+ import { siteApi } from '@/api/space/site'
+ import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import { permission } from '@/directives/permission'
+ import SpaceSiteView from '../SpaceSiteView.vue'
+ import type { SiteVO } from '@/types/space/scene'
+ 
++// v-permission store：默认全授权（不改变既有断言）；单测内翻转 permHas.fn 隐藏指定键
++const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
++vi.mock('@/stores/permission', () => ({
++  usePermissionStore: () => ({ loaded: true, has: (k: string) => permHas.fn(k) }),
++}))
++
+ // 站点 API 全 mock（list 返回两行样例；create 成功）
+ vi.mock('@/api/space/site', () => ({
+   siteApi: {
+     list: vi.fn(),
+     create: vi.fn(),
+     update: vi.fn(),
+     remove: vi.fn(),
+   },
+ }))
+ 
+ // 视图内 useRouter（「楼层」跳转）——测试无需真实路由
+ vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
+ 
+ const rows: SiteVO[] = [
+   { id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true, warehouseCd: 'WH01', address: '東京都' },
+   { id: 's2', siteCode: 'OSK', siteName: '大阪DC', enable: false, warehouseCd: null, address: null },
+ ]
+ 
+ function mountView() {
+   const i18n = createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
+-  return mount(SpaceSiteView, { global: { plugins: [i18n] } })
++  return mount(SpaceSiteView, { global: { plugins: [i18n], directives: { permission } } })
+ }
+ 
+ describe('SpaceSiteView', () => {
+   beforeEach(() => {
+     vi.clearAllMocks()
++    permHas.fn = () => true
+     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: rows })
+     vi.mocked(siteApi.create).mockResolvedValue({ code: 0, message: '', data: { id: 'new' } })
+   })
+ 
+   it('挂载后渲染两行站点编码', async () => {
+     const w = mountView()
+     await flushPromises()
+     expect(siteApi.list).toHaveBeenCalled()
+     expect(w.text()).toContain('TKY')
+     expect(w.text()).toContain('OSK')
+@@ -61,11 +69,20 @@ describe('SpaceSiteView', () => {
+     await w.find('.cp-page-actions el-button').trigger('click')
+     const dlg = w.findComponent(CpFormDialog)
+     // 走对话框 submit 契约（onSave → siteApi.create），再触发 saved → reload
+     await (dlg.props('submit') as (f: Record<string, unknown>) => Promise<void>)(dlg.props('form'))
+     dlg.vm.$emit('saved')
+     await flushPromises()
+ 
+     expect(siteApi.create).toHaveBeenCalledTimes(1)
+     expect(siteApi.list).toHaveBeenCalledTimes(2)
+   })
++
++  it('缺 space-site:delete 权时削除按钮从 DOM 移除，编辑按钮保留', async () => {
++    permHas.fn = (k) => k !== 'space-site:delete'
++    const w = mountView()
++    await flushPromises()
++    const btns = w.findAll('el-button')
++    expect(btns.filter((b) => b.text() === 'space.common.delete').length).toBe(0)
++    expect(btns.filter((b) => b.text() === 'space.common.edit').length).toBeGreaterThan(0)
++  })
+ })

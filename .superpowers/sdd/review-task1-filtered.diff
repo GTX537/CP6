@@ -1,0 +1,208 @@
+fe74607 feat(space): T_WmsBin 消费表 + Space_Site.WarehouseCd 映射列（ch04 v1.1 §5.3/§3.4，方案A）
+
+ CP6.Core/EFDbContext/CP6Context.cs                 |    13 +
+ .../20260705172214_SpaceWave1WmsBin.Designer.cs    | 17490 +++++++++++++++++++
+ .../Migrations/20260705172214_SpaceWave1WmsBin.cs  |    65 +
+ CP6.Core/Migrations/CP6ContextModelSnapshot.cs     |    73 +
+ CP6.Entity/DomainModels/Space/Space_Site.cs        |     4 +
+ CP6.Entity/DomainModels/Wms/WmsBin.cs              |    41 +
+ 6 files changed, 17686 insertions(+)
+
+=== 以下 diff 排除 EF 生成文件（*.Designer.cs / CP6ContextModelSnapshot.cs，仅 stat 中可见）===
+diff --git a/CP6.Core/EFDbContext/CP6Context.cs b/CP6.Core/EFDbContext/CP6Context.cs
+index 7a6f0aa..bdf26dd 100644
+--- a/CP6.Core/EFDbContext/CP6Context.cs
++++ b/CP6.Core/EFDbContext/CP6Context.cs
+@@ -421,20 +421,24 @@ public class CP6Context : DbContext
+     /// <summary>模板（Space 章01，批量生成蓝本）</summary>
+     public DbSet<Space_Template> Space_Templates { get; set; }
+     /// <summary>编码规则（Space 章03，可配置编码引擎）</summary>
+     public DbSet<Space_CodeRule> Space_CodeRules { get; set; }
+     /// <summary>标注（Space 章02，打点文字/图标/区域）</summary>
+     public DbSet<Space_Marker> Space_Markers { get; set; }
+     // ───── Space P4 多层路由 ─────
+     public DbSet<Space_Connector> Space_Connectors { get; set; }
+     public DbSet<Space_ConnectorStop> Space_ConnectorStops { get; set; }
+ 
++    // ───── Space ch04 v1.1 §5.3 发布落点（WMS 侧消费表，方案A 2026-07-05 拍板）─────
++    /// <summary>WMS 库位消费表（Space 发布落点，幂等判据 lastVersion 存放处）</summary>
++    public DbSet<CP6.Entity.DomainModels.Wms.WmsBin> WmsBins { get; set; }
++
+     // ───── 财务（Fin）章01 总账内核 ─────
+     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
+     public DbSet<GlAccount> GlAccounts { get; set; }
+     /// <summary>成本中心（章01，机台/工序/部门分析维度）</summary>
+     public DbSet<CostCenter> CostCenters { get; set; }
+     /// <summary>记账凭证头（章01，maker-checker 状态机 + 红冲）</summary>
+     public DbSet<JournalEntry> JournalEntries { get; set; }
+     /// <summary>记账凭证分录行（章01，借贷本位币 decimal）</summary>
+     public DbSet<JournalLine> JournalLines { get; set; }
+     /// <summary>财务采番计数器（章01，凭证号按月采番）</summary>
+@@ -2034,20 +2038,29 @@ public class CP6Context : DbContext
+         });
+         modelBuilder.Entity<Space_ConnectorStop>(e =>
+         {
+             e.HasIndex(x => new { x.TenantId, x.ConnectorId, x.FloorId }).IsUnique();
+             e.HasIndex(x => new { x.TenantId, x.ConnectorId });
+         });
+         modelBuilder.Entity<Space_CodeRule>()
+             .HasIndex(x => new { x.TenantId, x.ScopeType, x.ScopeId });
+         modelBuilder.Entity<Space_Marker>()
+             .HasIndex(x => new { x.TenantId, x.FloorId });
++        modelBuilder.Entity<CP6.Entity.DomainModels.Wms.WmsBin>(e =>
++        {
++            // Id = Space LocationId，由发布方给定，禁止自动生成（ch04 §5.3）
++            e.Property(x => x.Id).ValueGeneratedNever();
++            // join 锚：同租户同仓内 code 唯一（ch04 §3.4）
++            e.HasIndex(x => new { x.TenantId, x.WarehouseCd, x.LocationCode }).IsUnique();
++            e.Property(x => x.PathJson).HasColumnType("nvarchar(max)");
++            e.Property(x => x.AttrsJson).HasColumnType("nvarchar(max)");
++        });
+ 
+         // ═══════════════════════════════════════════════════════════
+         //  章10 多租户：对所有 BaseTenantEntity 反射批量注册全局查询过滤（防漏命门，OA4-D1/D3）
+         //  WHERE TenantId == CurrentTenantId —— 闭包到本上下文实例，EF 每次查询重读当前租户。
+         // ═══════════════════════════════════════════════════════════
+         foreach (var et in modelBuilder.Model.GetEntityTypes()
+                      .Where(t => typeof(BaseTenantEntity).IsAssignableFrom(t.ClrType) && t.BaseType is null))
+         {
+             var p = Expression.Parameter(et.ClrType, "e");
+             var body = Expression.Equal(
+diff --git a/CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.cs b/CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.cs
+new file mode 100644
+index 0000000..40f88e4
+--- /dev/null
++++ b/CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.cs
+@@ -0,0 +1,65 @@
++﻿using System;
++using Microsoft.EntityFrameworkCore.Migrations;
++
++#nullable disable
++
++namespace CP6.Core.Migrations
++{
++    /// <inheritdoc />
++    public partial class SpaceWave1WmsBin : Migration
++    {
++        /// <inheritdoc />
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<string>(
++                name: "WarehouseCd",
++                table: "Space_Site",
++                type: "nvarchar(10)",
++                maxLength: 10,
++                nullable: true);
++
++            migrationBuilder.CreateTable(
++                name: "T_WmsBin",
++                columns: table => new
++                {
++                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
++                    LocationCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
++                    WarehouseCd = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
++                    Version = table.Column<long>(type: "bigint", nullable: false),
++                    PathJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
++                    AttrsJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
++                    IsActive = table.Column<bool>(type: "bit", nullable: false),
++                    LastPublishedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
++                    LastPublishedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
++                    Creator = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
++                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
++                    Modifier = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
++                    ModifyDate = table.Column<DateTime>(type: "datetime2", nullable: true),
++                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
++                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
++                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
++                },
++                constraints: table =>
++                {
++                    table.PrimaryKey("PK_T_WmsBin", x => x.Id);
++                });
++
++            migrationBuilder.CreateIndex(
++                name: "IX_T_WmsBin_TenantId_WarehouseCd_LocationCode",
++                table: "T_WmsBin",
++                columns: new[] { "TenantId", "WarehouseCd", "LocationCode" },
++                unique: true);
++        }
++
++        /// <inheritdoc />
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropTable(
++                name: "T_WmsBin");
++
++            migrationBuilder.DropColumn(
++                name: "WarehouseCd",
++                table: "Space_Site");
++        }
++    }
++}
+diff --git a/CP6.Entity/DomainModels/Space/Space_Site.cs b/CP6.Entity/DomainModels/Space/Space_Site.cs
+index 6475f91..b2f4b53 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Site.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Site.cs
+@@ -23,11 +23,15 @@ public class Space_Site : BaseBizEntity
+     public string? Address { get; set; }
+ 
+     /// <summary>经度（可选，地图定位）</summary>
+     public double? Lng { get; set; }
+ 
+     /// <summary>纬度（可选，地图定位）</summary>
+     public double? Lat { get; set; }
+ 
+     /// <summary>是否启用</summary>
+     public bool Enable { get; set; } = true;
++
++    /// <summary>WMS 仓库编码映射（ch04 §3.4 SiteCode↔WarehouseCd；空=默认规则 WarehouseCd=SiteCode）</summary>
++    [MaxLength(10)]
++    public string? WarehouseCd { get; set; }
+ }
+diff --git a/CP6.Entity/DomainModels/Wms/WmsBin.cs b/CP6.Entity/DomainModels/Wms/WmsBin.cs
+new file mode 100644
+index 0000000..125c19b
+--- /dev/null
++++ b/CP6.Entity/DomainModels/Wms/WmsBin.cs
+@@ -0,0 +1,41 @@
++using System.ComponentModel.DataAnnotations;
++using System.ComponentModel.DataAnnotations.Schema;
++
++namespace CP6.Entity.DomainModels.Wms;
++
++/// <summary>
++/// WMS 侧库位消费表（Space ch04 §5.3 v1.1）。接收 Space LocationPublished 发布的库位目录，
++/// 是发布的物理落点与幂等判据 lastVersion 的存放处。
++/// Id = Space LocationId（稳定主键，跨系统同一身份，由发布方给定、非自动生成）。
++/// 与 T_Stock 靠 (WarehouseCd, LocationCode) 逻辑关联，不加物理 FK（库位目录与库存事务解耦演进）。
++/// </summary>
++[Table("T_WmsBin")]
++public class WmsBin : BaseBizEntity
++{
++    /// <summary>冻结的 join key（发布后不变，ch04 §3.1）</summary>
++    [Required, MaxLength(100)]
++    public string LocationCode { get; set; } = string.Empty;
++
++    /// <summary>仓库维度（SiteCode↔WarehouseCd 映射得来，ch04 §3.4，多仓防串仓）</summary>
++    [Required, MaxLength(10)]
++    public string WarehouseCd { get; set; } = string.Empty;
++
++    /// <summary>已消费的最新发布版本（= lastVersion，幂等判据，ch04 §3.3）</summary>
++    public long Version { get; set; }
++
++    /// <summary>变长层级路径 JSON（区/巷/架…，不含坐标几何，ch04 §3.2）</summary>
++    public string PathJson { get; set; } = "{}";
++
++    /// <summary>业务属性 JSON（格口尺寸等，ch04 §3.1）</summary>
++    public string AttrsJson { get; set; } = "{}";
++
++    /// <summary>是否启用（DEACTIVATE 置 false，ch04 §6）</summary>
++    public bool IsActive { get; set; } = true;
++
++    /// <summary>最近一次成功消费时间</summary>
++    public DateTime? LastPublishedAt { get; set; }
++
++    /// <summary>最近一次发布人（payload publishedBy，溯源，ch04 §2.1）</summary>
++    [MaxLength(100)]
++    public string? LastPublishedBy { get; set; }
++}

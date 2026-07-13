@@ -1,0 +1,105 @@
+# Review package: b2e45d7..HEAD
+
+## Commits
+f01d49f fix(wfs-service-task): T11 CsrfMiddleware 豁免 /hubs 路径（修复 SignalR negotiate 被 CSRF 403 拦截）
+
+## Files changed
+ CP6.Tests/Wf/CsrfHubExemptionTests.cs   | 24 ++++++++++++++++++++++++
+ CP6.WebApi/CP6.WebApi.csproj            |  5 +++++
+ CP6.WebApi/Middleware/CsrfMiddleware.cs | 12 +++++++++---
+ 3 files changed, 38 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/CP6.Tests/Wf/CsrfHubExemptionTests.cs b/CP6.Tests/Wf/CsrfHubExemptionTests.cs
+new file mode 100644
+index 0000000..a9805bf
+--- /dev/null
++++ b/CP6.Tests/Wf/CsrfHubExemptionTests.cs
+@@ -0,0 +1,24 @@
++using CP6.WebApi.Middleware;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++/// <summary>
++/// 票11：SignalR hub negotiate 是 POST，默认不带 X-CSRF-Token 头，被 CsrfMiddleware 双提交校验 403 拦截。
++/// B1：CsrfMiddleware 豁免 /hubs 前缀（段边界匹配，覆盖 notify/mes/wms/space 全部 hub 的 negotiate），
++/// 不误豁免 /hubsxxx，业务写请求仍受 CSRF 约束。
++/// </summary>
++public class CsrfHubExemptionTests
++{
++    [Theory]
++    [InlineData("/hubs/notify", true)]
++    [InlineData("/hubs/notify/negotiate", true)]
++    [InlineData("/hubs/mes/negotiate", true)]
++    [InlineData("/hubs/wms", true)]
++    [InlineData("/hubs/space/negotiate", true)]   // 波4 SpaceHub：/hubs 前缀一并覆盖
++    [InlineData("/api/auth/login", true)]          // 既有豁免仍在
++    [InlineData("/api/oa/designer/save", false)]   // 业务写请求仍受 CSRF 约束
++    [InlineData("/hubsxxx/notify", false)]         // 段边界：非 /hubs/ 前缀不豁免
++    public void HubPaths_AreExempt(string path, bool expectExempt)
++        => Assert.Equal(expectExempt, CsrfMiddleware.IsExempt(path));
++}
+diff --git a/CP6.WebApi/CP6.WebApi.csproj b/CP6.WebApi/CP6.WebApi.csproj
+index ddab064..190e36b 100644
+--- a/CP6.WebApi/CP6.WebApi.csproj
++++ b/CP6.WebApi/CP6.WebApi.csproj
+@@ -14,11 +14,16 @@
+     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.12">
+       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+       <PrivateAssets>all</PrivateAssets>
+     </PackageReference>
+   </ItemGroup>
+ 
+   <ItemGroup>
+     <ProjectReference Include="..\CP6.Core\CP6.Core.csproj" />
+   </ItemGroup>
+ 
++  <ItemGroup>
++    <!-- 票11：CsrfMiddleware.IsExempt 等 internal 静态谓词供测试直断（照 CP6.Core 既有模式） -->
++    <InternalsVisibleTo Include="CP6.Tests" />
++  </ItemGroup>
++
+ </Project>
+diff --git a/CP6.WebApi/Middleware/CsrfMiddleware.cs b/CP6.WebApi/Middleware/CsrfMiddleware.cs
+index a077e63..e6374bc 100644
+--- a/CP6.WebApi/Middleware/CsrfMiddleware.cs
++++ b/CP6.WebApi/Middleware/CsrfMiddleware.cs
+@@ -20,28 +20,34 @@ public class CsrfMiddleware
+     {
+         _next = next;
+         _enabled = opt.Value.Csrf.Enabled;
+     }
+ 
+     public async Task Invoke(HttpContext ctx)
+     {
+         if (_enabled)
+         {
+             var path = ctx.Request.Path.Value ?? "";
+-            // 带边界精确匹配：仅 /api/auth/login(/...) 豁免，杜绝 /api/auth/login-xxx 这类同前缀端点被静默豁免
+-            var exempt = PathMatches(path, "/api/auth/login");
+-            if (!exempt && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
++            if (!IsExempt(path) && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
+             {
+                 var cookie = ctx.Request.Cookies[AuthCookieWriter.CsrfCookie];
+                 var header = ctx.Request.Headers["X-CSRF-Token"].ToString();
+                 if (string.IsNullOrEmpty(cookie) || cookie != header)
+                     throw new BizException("E-SEC-010", 403);   // 403 Forbidden：CSRF 校验失败（spec §5.3）
+             }
+         }
+         await _next(ctx);
+     }
+ 
++    /// <summary>CSRF 豁免路径（段边界匹配，杜绝同前缀误豁免）：
++    /// ① 登录端点（登录时尚无 csrf cookie，杜绝 /api/auth/login-xxx 这类同前缀端点被静默豁免）；
++    /// ② SignalR hub 路径（negotiate 是 POST 但不改业务状态，hub 自身经 JWT/cookie 认证；
++    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub）。</summary>
++    internal static bool IsExempt(string path)
++        => PathMatches(path, "/api/auth/login")
++           || PathMatches(path, "/hubs");
++
+     /// <summary>路径段边界匹配：path == prefix 或 path 以 "prefix/" 起头（避免同前缀误匹配）。</summary>
+     internal static bool PathMatches(string path, string prefix)
+         => path.Equals(prefix, StringComparison.OrdinalIgnoreCase)
+            || path.StartsWith(prefix + "/", StringComparison.OrdinalIgnoreCase);
+ }

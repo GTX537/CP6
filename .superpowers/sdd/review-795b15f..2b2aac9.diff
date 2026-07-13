@@ -1,0 +1,1992 @@
+# Review package: 795b15f..HEAD
+
+## Commits
+2b2aac9 docs(ui): 补记 Task 11 模板缺口(CpFilterBar i18n 回归/fixed列/highlight-current-row)
+6a99826 refactor(ui): WMS 出库指示一览迁移 CpListPage(模板首个真实消费者)
+57ae2ea feat(ui): CpFormDialog 表单弹窗 + CpDetailPanel 详情面板
+c1a8de0 feat(ui): CpListPage 查询页模板 + CpStatCard 抽取
+d9534fa feat(ui): CpStatusStrip 状态速览条 + CpFilterBar 查询区
+8c54bac feat(ui): CpPageShell 页面壳 + CpEmpty 空状态
+6121460 feat(ui): CpTag 状态 pill + CpSectionHeader
+0b24d93 test(ui): 组件测试基建（@vue/test-utils + jsdom pragma）
+484cea4 chore: gitignore .superpowers 执行工作目录
+
+## Files changed
+ .superpowers/sdd/task-3-report.md                  | 177 ------------------
+ cp6.web/src/components/base/CpEmpty.vue            |  35 ++++
+ cp6.web/src/components/base/CpSectionHeader.vue    |  31 ++++
+ cp6.web/src/components/base/CpTag.vue              |  41 +++++
+ .../base/__tests__/CpSectionHeader.spec.ts         |  18 ++
+ .../src/components/base/__tests__/CpTag.spec.ts    |  20 ++
+ .../src/components/base/__tests__/smoke.spec.ts    |  11 ++
+ cp6.web/src/components/templates/CpDetailPanel.vue |  58 ++++++
+ cp6.web/src/components/templates/CpFilterBar.vue   | 128 +++++++++++++
+ cp6.web/src/components/templates/CpFormDialog.vue  | 159 ++++++++++++++++
+ cp6.web/src/components/templates/CpListPage.vue    | 201 +++++++++++++++++++++
+ cp6.web/src/components/templates/CpPageShell.vue   |  38 ++++
+ .../templates/CpStatCard.vue}                      |  22 ++-
+ cp6.web/src/components/templates/CpStatusStrip.vue |  62 +++++++
+ .../templates/__tests__/CpFilterBar.spec.ts        |  74 ++++++++
+ .../templates/__tests__/CpFormDialog.spec.ts       | 140 ++++++++++++++
+ .../templates/__tests__/CpListPage.spec.ts         | 154 ++++++++++++++++
+ .../templates/__tests__/CpPageShell.spec.ts        |  30 +++
+ .../templates/__tests__/CpStatusStrip.spec.ts      |  41 +++++
+ cp6.web/src/views/dashboard/DashboardView.vue      |   6 +-
+ cp6.web/src/views/wms/OutboundOrderListView.vue    | 165 +++++++++--------
+ cp6.web/vitest.config.ts                           |   2 +
+ docs/superpowers/plans/2026-07-04-ui-restyle.md    |  36 ++++
+ 23 files changed, 1392 insertions(+), 257 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-3-report.md b/.superpowers/sdd/task-3-report.md
+deleted file mode 100644
+index c9ddd97..0000000
+--- a/.superpowers/sdd/task-3-report.md
++++ /dev/null
+@@ -1,177 +0,0 @@
+-# Task 3 报告：Dashboard 重做
+-
+-分支：`feat/ui-restyle`　Commit：`202bf3f`
+-
+-## 1. 保留的业务逻辑清单（逐项核对）
+-
+-从旧 `DashboardView.vue`（~28KB）通读并核对，以下全部原样保留：
+-
+-**API 调用**
+-- `dashboardApi.getSummary()` → `summary` / `recentOrders` / `workOrderStatus`
+-- `orderApi.searchUnshipped(...)` → Phase 8 受注済未出荷 widget（`unshippedRows/unshippedTotal`）
+-- `stockDwellApi.summary(...)` → T13 90天以上滞留库存 widget（`stockDwellSummary`）
+-- `startConnection()/getConnection()`（SignalR）→ `BusinessNotification` / `NewOperLog` 订阅，`onUnmounted` 里的 `conn.off(...)` 清理
+-
+-**数据 ref / computed**
+-- `summary`, `recentOrders`, `workOrderStatus`, `latestNotice`, `feed`, `dashboardReady`
+-- `statCards`（8 项 KPI 全部保留，未删减）, `quickLinks`/`allQuickLinks`
+-- `unshippedRows/unshippedTotal/unshippedLoading/onlyOverdue/unshippedQuery`
+-- `stockDwellSummary/stockDwellLoading/stockDwellRows/maxStockDwellOver90`
+-
+-**路由跳转**：`canGo/onCardClick/go/goOrderDetail`，`/order`、各 KPI 的 `to`、`quickLinks` 的 `path` 全部不变。
+-
+-**i18n key**：未新增任何 key。新视觉层复用的 key：`dashboard.title`、`dashboard.stockWarnings`、`dashboard.pendingApprovals`、`dashboard.qOrder`、`dashboard.shipStatus`、`dashboard.ship0/9`、`dashboard.workOrderStatus`、`dashboard.wo0~9`、`dashboard.noData`、`dashboard.waitingFeed` 等，均已在 `deploy/seed-data/sys_lang.json` 中确认存在中/日文案。
+-
+-**格式化辅助函数**：`fmtQty/fmtTime/fmtDate/todayString/shipLabel/shipColor/woLabel/orderLifecycleColor/stockDwellPercent/revealDashboard/loadData/loadUnshipped/loadStockDwell` 全部原样保留（仅 `alertType` 改名重写为 `alertBarStyle`，见下）。
+-
+-## 2. 重写前后结构对照
+-
+-| 区块 | 旧实现 | 新实现 |
+-|---|---|---|
+-| 顶部通知 | 独立 `el-alert` 横幅（页面最上方） | 移入右列，改为渐变 `alertbar`（按 level 变色），逻辑不变（`latestNotice`/`@close`） |
+-| KPI 8 卡 | `el-row/el-col` + `el-card` `stat-card` | `KpiCard.vue` 新组件，`.kpis{grid-template-columns:repeat(4,1fr)}`，8 卡两行铺满，未删减任何指标 |
+-| 制造ステータス | `el-progress` 逐行横条 | `DonutChart.vue` 环图 + 图例（segments 来自 `workOrderStatus`） |
+-| 快捷入口 | `.quick-grid/.quick-item` | 沿用同一份 `allQuickLinks` 数据，改用 mockup 的 `.quick/.q` 类名 |
+-| 最近受注/未出荷/滞留库存 | `el-card` + `el-table` | 改为纯 div `.card/.card-head`，`el-table` 本体不变（表头样式来自 Task 1 全局 override，未新增表格 CSS） |
+-| 新增：page-head | 无 | 标题 `dashboard.title` + 日期（`Intl`/`toLocaleDateString`，非 i18n key）+ 预警摘要（复用 `stockWarnings`/`pendingApprovals` 真实计数与既有 key 拼接）+ 一个真实按钮（`qOrder`→`/order`） |
+-| 新增：出货状态条 | 无对应 UI | 用**已加载的 `recentOrders` 样本**统计 `shipStatus===9` 占比画进度条（非新 API、非编造数据，明确是该表格样本的出货占比，不是"今日全量"口径） |
+-
+-## 3. 关于 mockup 与"不造假数据"的取舍
+-
+-- mockup 的 KPI `trend` sparkline 和"较上周+2""目标120"等文案：现有 API 无 7 日趋势/目标值数据源，**未传 `trend`，未编造任何 sub 文案**，仅用 `clickable` 生成一个纯装饰的 `→` 提示（复用原有 `canGo` 布尔值，无新文案）。
+-- mockup 的"导出日报"按钮：无对应功能/API，**未实现**，只保留了有真实路由的"受注入力"按钮。
+-- 出货状态条数值来自 `recentOrders`（已加载、非新请求），不是编造数字。
+-
+-## 4. 新组件
+-
+-- `cp6.web/src/views/dashboard/components/KpiCard.vue`：props `label/value/suffix/tone/trend/sub/clickable`，tone→chip 配色 4 种（brand/info/warn/danger），trend 可选 sparkline，clickable 追加 `→`。
+-- `cp6.web/src/views/dashboard/components/DonutChart.vue`：props `segments/centerLabel`，`r=46, C=2πr≈289.03`，每段 `dasharray = rawLen-3 / C`、`dashoffset = -累计rawLen`（清空隙 3px），空数据渲染灰色整环 + `#empty` 插槽。
+-
+-## 5. 验证输出摘要
+-
+-```
+-> npm run type-check
+-> vue-tsc --build
+-（无输出，0 错误）
+-
+-> npm run build
+-✓ built in 7.39s
+-（仅有既存的 chunk-size 警告，与本次改动无关）
+-```
+-
+-真实登录 + gstack browse 截图对照（`admin/123456`，dashboard 路由）：
+-- 桌面 1600px：page-head/8×KPI/双列(出货状态条+最近受注+快捷入口 | 制造ステータス环图+实时通知)/受注済未出荷(21条+分页)/90天滞留库存(空态) 全部渲染正常，视觉上与 `picture/mockup-final-a-dashboard.html` 的配色、圆角、卡片阴影、环图结构高度一致。
+-- 手机 390px：KPI 网格回落 2 列，最近受注表格自动切换为 `simple-list`，快捷入口回落 3 列，无横向溢出。
+-- `console --errors`：仅有 1 个**既存**（非本次改动引入）的警告 —— `NotificationBell.vue` 里 `ElBadge` prop 类型不匹配导致头部出现 `[object Object]` 红点（`git log` 确认来自更早的 `447f3b0` 提交，与 dashboard 无关，未在本任务范围内修复）；以及既存的 SignalR CSRF negotiate 403（本地 dev 环境已知问题，非本次引入）。无任何来自 `KpiCard`/`DonutChart`/`DashboardView` 新代码的报错或 Vue 警告。
+-
+-## 6. 自审发现
+-
+-- `chipStyle`/`toneVar` 最初用 `Record<string,...>` 导致 `noUncheckedIndexedAccess` 下 vue-tsc 报 `Object is possibly 'undefined'`；改为 `Record<Tone,...>`（Tone 为 4 值联合类型）后消除。
+-- 图标标签（`Van/List/Grid/Warning/SetUp/Bell/DocumentAdd`）改为显式从 `@element-plus/icons-vue` 导入并作为字面量标签使用，与仓库既有约定一致（其余视图均是"作为标签用就显式 import，仅动态 `:is="字符串"` 才依赖全局注册」），避免潜在的 volar 类型检查空洞。
+-- 未改动 `.el-table` 相关 CSS（复用 Task 1 `element-overrides.css` 的全局表头样式），符合"表格只调整容器 class"的要求。
+-
+-## Concerns
+-
+-- `picture/demo4-soft-saas.html`、`picture/files/`、`picture/preview.webp` 是会话开始前就存在的未跟踪文件（非本任务产出），未纳入本次 commit。
+-- 头部 `[object Object]` 红点是既存 bug（`NotificationBell.vue`），与本任务无关，未处理，建议单独立票。
+-
+----
+-
+-# Task 3 修复执行报告（2026-07-04）
+-
+-分支：`feat/ui-restyle`　Commit：`4867be8`
+-
+-## 修复 1：KpiCard.vue chip 背景 token 化（Important）
+-
+-**改动内容**：第 18 行 `chipStyle` Record 中 brand 档的背景值从硬编码 `'rgba(20,184,196,.10)'` 改为 `'var(--cp-brand-bg)'`，其他三档（info/warn/danger）保持不变。
+-
+-**文件**：`cp6.web/src/views/dashboard/components/KpiCard.vue`
+-
+-**验证**：✓ type-check 0 错误，✓ build 0 错误
+-
+-## 修复 2：DashboardView.vue 出货状态条改为三段（Important）
+-
+-**改动内容**：
+-- 修改 `shipSummary` computed（第431行）从 2 值（shipped/pending）改为 4 值（shipped/partial/unshipped 数量 + shippedPct/partialPct 百分比）
+-- 修改 template `.ship` 区块（第45行）从 2 个 block 改为 3 个 block：
+-  - 已出货(9)：数值显示，色值 `var(--cp-brand)`，label `t('dashboard.ship9')`
+-  - 部分出货(5)：数值显示，色值 `#7CE3DD`（图表系列色，字面量豁免），label `t('dashboard.ship5')`（已在 sys_lang.json 确认存在）
+-  - 未出货(0)：数值显示，色值 `var(--cp-line-soft)`，label `t('dashboard.ship0')`
+-- 进度条由 2 段改为 3 段，颜色对应上述三档
+-
+-**文件**：`cp6.web/src/views/dashboard/DashboardView.vue`
+-
+-**前置验证**：✓ grep 确认 `dashboard.ship5` 在 `deploy/seed-data/sys_lang.json` 中存在，翻译为"部分出货"
+-
+-**验证**：✓ type-check 0 错误，✓ build 0 错误
+-
+-## 修复 3：KpiCard.vue sparkline 添加面积填充（Minor）
+-
+-**改动内容**：
+-- 新增 `areaPath()` 函数（第36行）：将 polyline points 转换为闭合的 SVG path，格式 `M x y L x y ... V30 H0 Z`，用于生成面积填充路径
+-- 在 template 的 SVG 中（第54行）polyline 前添加一个面积填充 `<path>`，fill 值根据 tone 类型从字典取值：
+-  - brand: `rgba(20,184,196,.10)`
+-  - info: `rgba(78,128,238,.10)`
+-  - warn: `rgba(240,148,10,.10)`
+-  - danger: `rgba(229,72,77,.08)`
+-
+-**文件**：`cp6.web/src/views/dashboard/components/KpiCard.vue`
+-
+-**参考**：参照 `picture/mockup-final-a-dashboard.html` 第260-272行的 spark path 写法
+-
+-**验证**：✓ type-check 0 错误，✓ build 0 错误
+-
+-## 修复 4：检查并清理 color 字段（Minor）
+-
+-**改动内容**：
+-- grep 检查 `statCards` 和 `quickLinks` 数据的 `color` 字段是否被使用
+-- 发现 `kpiTone()` 函数（第396-397行）仍在使用 `card.color` 来确定 KPI 卡的视觉基调（tone 映射）
+-- **结论**：保留 color 字段，未删除
+-
+-**文件**：`cp6.web/src/views/dashboard/DashboardView.vue`
+-
+-**依据**：```
+-396:  if (card.color === '#e6a23c') return 'warn'
+-397:  if (card.color === '#409eff') return 'info'
+-```
+-color 字段在 `kpiTone()` 函数中仍被读取用于 tone 映射，删除会导致 KPI 卡无法正确显示色调。
+-
+-## 验证摘要
+-
+-```
+-$ npm run type-check
+-> vue-tsc --build
+-（0 错误）
+-
+-$ npm run build
+-✓ 2561 modules transformed
+-✓ built in ~7.39s
+-（0 errors）
+-```
+-
+-两项验证全部通过，无 build 错误或 type-check 错误。
+-
+----
+-
+-# Task 3 复核修复报告（2026-07-04 二轮）
+-
+-分支：`feat/ui-restyle`
+-
+-## 复核发现 1（Important）：出货三段条板外 hex 违反 §2.5
+-
+-**改动**：`cp6.web/src/views/dashboard/DashboardView.vue` 出货条 inline style
+-- 「部分出货」bar 分段与数字文字色的 `#7CE3DD` 全部改为 `var(--cp-warn)`（状态类图表必须用语义色）
+-- 「未出货」数字文字色 `var(--cp-line-soft)`（近白不可读）改为 `var(--cp-muted)`；bar 分段本身保持 `var(--cp-line-soft)` 不变
+-- 「已出货」数字：经确认通过 `.ship .block .v` 类样式已继承 `color: var(--cp-ink)`，无 inline 覆盖，无需改动
+-
+-## 复核发现 2（Important）：sparkline 单点/空数组守卫
+-
+-**改动**：`cp6.web/src/views/dashboard/components/KpiCard.vue`
+-- 模板 v-if 从 `trend?.length` 收紧为 `trend && trend.length >= 2`——trend 长度 < 2 时整个 sparkline SVG 不渲染，`points()`/`areaPath()` 不会以单点数组被调用（单点时 `t.length - 1 || 1` 会产出退化路径）
+-
+-## 验证
+-
+-```
+-npm run type-check: 0 errors
+-npm run build: 0 errors
+-```
+diff --git a/cp6.web/src/components/base/CpEmpty.vue b/cp6.web/src/components/base/CpEmpty.vue
+new file mode 100644
+index 0000000..9f7d7bb
+--- /dev/null
++++ b/cp6.web/src/components/base/CpEmpty.vue
+@@ -0,0 +1,35 @@
++<!--
++  CpEmpty —— 空状态占位（居中 muted 图标 + 文案 + 可选操作）。
++
++  Props:
++    - text?: string  提示文案；缺省为「暂无数据」。
++  Slots:
++    - action  文案下方的操作出口（如「新規作成」按钮）。
++
++  使用示例：
++    <CpEmpty text="該当するデータがありません">
++      <template #action><button>新規作成</button></template>
++    </CpEmpty>
++-->
++<script setup lang="ts">
++withDefaults(defineProps<{ text?: string }>(), { text: '暂无数据' })
++</script>
++<template>
++  <div class="cp-empty">
++    <svg class="cp-empty__icon" viewBox="0 0 24 24" width="40" height="40"
++      fill="none" stroke="currentColor" stroke-width="1.5"
++      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
++      <path d="M3 7l2-3h14l2 3M3 7v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7h18" />
++      <path d="M9 11h6" />
++    </svg>
++    <p class="cp-empty__text">{{ text }}</p>
++    <div class="cp-empty__action"><slot name="action" /></div>
++  </div>
++</template>
++<style scoped>
++.cp-empty { display:flex; flex-direction:column; align-items:center; justify-content:center;
++  gap:12px; padding:48px 20px; text-align:center; color:var(--cp-muted); }
++.cp-empty__icon { color:var(--cp-faint); }
++.cp-empty__text { font-size:var(--cp-fs-base); font-weight:700; color:var(--cp-muted); }
++.cp-empty__action { display:flex; gap:10px; }
++</style>
+diff --git a/cp6.web/src/components/base/CpSectionHeader.vue b/cp6.web/src/components/base/CpSectionHeader.vue
+new file mode 100644
+index 0000000..acac08e
+--- /dev/null
++++ b/cp6.web/src/components/base/CpSectionHeader.vue
+@@ -0,0 +1,31 @@
++<!--
++  CpSectionHeader —— 卡片/区块标题栏（设计系统 §11；样式参照 mockup .card-head / .sec-head）。
++
++  Props:
++    - title: string  区块标题（14.5px / 800 / ink）。
++  Slots:
++    - default  标题左侧插槽（如图标），置于 title 之前。
++    - extra    标题右侧插槽（如「查看全部 →」链接、操作按钮）。
++
++  使用示例：
++    <CpSectionHeader title="最近受注">
++      <template #extra><a href="#">查看全部 →</a></template>
++    </CpSectionHeader>
++-->
++<script setup lang="ts">
++defineProps<{ title: string }>()
++</script>
++<template>
++  <div class="cp-sec-head">
++    <h2 class="cp-sec-head__title"><slot />{{ title }}</h2>
++    <div class="cp-sec-head__extra"><slot name="extra" /></div>
++  </div>
++</template>
++<style scoped>
++.cp-sec-head { display:flex; align-items:center; justify-content:space-between;
++  padding:16px 20px; border-bottom:1px solid var(--cp-line-soft); }
++.cp-sec-head__title { font-size:14.5px; font-weight:800; color:var(--cp-ink);
++  display:flex; align-items:center; gap:9px; }
++.cp-sec-head__extra { display:flex; align-items:center; gap:9px;
++  font-size:12px; font-weight:800; color:var(--cp-brand-deep); }
++</style>
+diff --git a/cp6.web/src/components/base/CpTag.vue b/cp6.web/src/components/base/CpTag.vue
+new file mode 100644
+index 0000000..4611507
+--- /dev/null
++++ b/cp6.web/src/components/base/CpTag.vue
+@@ -0,0 +1,41 @@
++<!--
++  CpTag —— 状态 pill（圆点 + 文字，设计系统 §9.1）。
++
++  Props:
++    - status?: string  业务状态词；经 STATUS_TONE 集中映射到色调，未命中回退 muted。
++    - tone?: 'ok'|'warn'|'danger'|'info'|'muted'  显式指定色调，优先级高于 status。
++  Slots:
++    - default  标签文案；缺省时回退渲染 status 文本。
++  Export:
++    - STATUS_TONE  状态→色调映射表，供业务侧查询/复用。
++
++  使用示例：
++    <CpTag status="已出库">已出库</CpTag>
++    <CpTag status="拣货中" />            （info；文案回退 status）
++    <CpTag tone="danger">超期</CpTag>     （显式色调）
++-->
++<script lang="ts">
++export const STATUS_TONE: Record<string, string> = {
++  '已出库': 'ok', '已出货': 'ok', '已完成': 'ok', '已对账': 'ok', '已批准': 'ok',
++  '未出库': 'warn', '未出货': 'warn', '待审批': 'warn', '待处理': 'warn',
++  '拣货中': 'info', '进行中': 'info', '已发行': 'info',
++  '已取消': 'muted', '已作废': 'muted',
++  '超期': 'danger', '今日': 'danger', '已驳回': 'danger'
++}
++</script>
++<script setup lang="ts">
++import { computed } from 'vue'
++const props = defineProps<{ status?: string; tone?: 'ok'|'warn'|'danger'|'info'|'muted' }>()
++const t = computed(() => props.tone ?? (props.status && STATUS_TONE[props.status]) ?? 'muted')
++</script>
++<template><span class="cp-tag" :class="`t-${t}`"><slot>{{ status }}</slot></span></template>
++<style scoped>
++.cp-tag { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:800;
++  padding:3px 10px; border-radius:999px; }
++.cp-tag::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
++.t-ok { background:var(--cp-ok-bg); color:var(--cp-ok); }
++.t-warn { background:var(--cp-warn-bg); color:var(--cp-warn); }
++.t-danger { background:var(--cp-danger-bg); color:var(--cp-danger); }
++.t-info { background:var(--cp-info-bg); color:var(--cp-info); }
++.t-muted { background:var(--cp-line-soft); color:var(--cp-muted); }
++</style>
+diff --git a/cp6.web/src/components/base/__tests__/CpSectionHeader.spec.ts b/cp6.web/src/components/base/__tests__/CpSectionHeader.spec.ts
+new file mode 100644
+index 0000000..9173738
+--- /dev/null
++++ b/cp6.web/src/components/base/__tests__/CpSectionHeader.spec.ts
+@@ -0,0 +1,18 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import CpSectionHeader from '../CpSectionHeader.vue'
++
++describe('CpSectionHeader', () => {
++  it('renders the title', () => {
++    const w = mount(CpSectionHeader, { props: { title: '最近受注' } })
++    expect(w.get('.cp-sec-head__title').text()).toContain('最近受注')
++  })
++  it('exposes an extra slot outlet on the right', () => {
++    const w = mount(CpSectionHeader, {
++      props: { title: '最近受注' },
++      slots: { extra: '<a class="more">查看全部 →</a>' }
++    })
++    expect(w.get('.cp-sec-head__extra .more').text()).toBe('查看全部 →')
++  })
++})
+diff --git a/cp6.web/src/components/base/__tests__/CpTag.spec.ts b/cp6.web/src/components/base/__tests__/CpTag.spec.ts
+new file mode 100644
+index 0000000..a29908f
+--- /dev/null
++++ b/cp6.web/src/components/base/__tests__/CpTag.spec.ts
+@@ -0,0 +1,20 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import CpTag, { STATUS_TONE } from '../CpTag.vue'
++
++describe('CpTag', () => {
++  it('maps known status to tone class', () => {
++    const w = mount(CpTag, { props: { status: '已出库' }, slots: { default: '已出库' } })
++    expect(w.classes()).toContain('t-ok')
++  })
++  it('falls back to muted for unknown status', () => {
++    const w = mount(CpTag, { props: { status: '莫名状态' } })
++    expect(w.classes()).toContain('t-muted')
++  })
++  it('explicit tone overrides status', () => {
++    const w = mount(CpTag, { props: { status: '已出库', tone: 'danger' } })
++    expect(w.classes()).toContain('t-danger')
++  })
++  it('exports STATUS_TONE map', () => { expect(STATUS_TONE['拣货中']).toBe('info') })
++})
+diff --git a/cp6.web/src/components/base/__tests__/smoke.spec.ts b/cp6.web/src/components/base/__tests__/smoke.spec.ts
+new file mode 100644
+index 0000000..6c63def
+--- /dev/null
++++ b/cp6.web/src/components/base/__tests__/smoke.spec.ts
+@@ -0,0 +1,11 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import { defineComponent } from 'vue'
++
++describe('component test infra', () => {
++  it('mounts a component under jsdom', () => {
++    const w = mount(defineComponent({ template: '<p>ok</p>' }))
++    expect(w.text()).toBe('ok')
++  })
++})
+diff --git a/cp6.web/src/components/templates/CpDetailPanel.vue b/cp6.web/src/components/templates/CpDetailPanel.vue
+new file mode 100644
+index 0000000..075c59a
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpDetailPanel.vue
+@@ -0,0 +1,58 @@
++<!--
++  CpDetailPanel —— 详情描述面板（设计系统 §9.2；详情页「基本信息」等描述区目标模板）。
++  按 items 声明以 CSS 栅格铺开「标签 / 值」对；kind 控制值的格式化，与 CpListPage 列约定一致
++  （num→数字体右倾 / mono→单号样式 / tag→CpTag / text→原样）。
++
++  Props:
++    - items: { label:string; value:unknown; kind?:'text'|'num'|'mono'|'tag' }[]  描述项。
++    - cols?: number   栅格列数，默认 2。
++
++  使用示例：
++    <CpDetailPanel :cols="3" :items="[
++      { label:'单号', value:'SHP-1001', kind:'mono' },
++      { label:'数量', value:1000, kind:'num' },
++      { label:'状态', value:'已出库', kind:'tag' }
++    ]" />
++-->
++<script lang="ts">
++export interface DetailItem {
++  label: string
++  value: unknown
++  kind?: 'text' | 'num' | 'mono' | 'tag'
++}
++</script>
++
++<script setup lang="ts">
++import { computed } from 'vue'
++import CpTag from '@/components/base/CpTag.vue'
++
++const props = defineProps<{ items: DetailItem[]; cols?: number }>()
++
++const gridStyle = computed(() => ({
++  gridTemplateColumns: `repeat(${props.cols ?? 2}, minmax(0, 1fr))`
++}))
++</script>
++
++<template>
++  <dl class="cp-detail" :style="gridStyle">
++    <div v-for="(it, i) in items" :key="i" class="cp-detail-item">
++      <dt class="cp-detail-label">{{ it.label }}</dt>
++      <dd class="cp-detail-value">
++        <CpTag v-if="it.kind === 'tag'" :status="String(it.value ?? '')" />
++        <span v-else-if="it.kind === 'mono'" class="cp-mono">{{ it.value }}</span>
++        <span v-else-if="it.kind === 'num'" class="num">{{ it.value }}</span>
++        <template v-else>{{ it.value }}</template>
++      </dd>
++    </div>
++  </dl>
++</template>
++
++<style scoped>
++.cp-detail { display:grid; gap:16px 24px; margin:0; }
++.cp-detail-item { display:flex; flex-direction:column; gap:5px; min-width:0; }
++.cp-detail-label { font-size:var(--cp-fs-2xs); font-weight:800; color:var(--cp-muted); letter-spacing:.5px; }
++.cp-detail-value { margin:0; font-size:var(--cp-fs-base); font-weight:700; color:var(--cp-ink);
++  overflow:hidden; text-overflow:ellipsis; }
++/* 单号样式（同 CpListPage .mono；暂无全局工具类，先在模板内定义） */
++.cp-mono { font-weight:800; color:var(--cp-brand-deep); font-size:var(--cp-fs-sm); }
++</style>
+diff --git a/cp6.web/src/components/templates/CpFilterBar.vue b/cp6.web/src/components/templates/CpFilterBar.vue
+new file mode 100644
+index 0000000..16d88d6
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpFilterBar.vue
+@@ -0,0 +1,128 @@
++<!--
++  CpFilterBar —— 列表页查询区（设计系统 §9.2）。
++  按 fields 声明渲染一排查询字段（text / select / daterange，控件观感由 Element Plus overrides 保证），
++  右侧提供「展开更多 / 重置 / 查询」。字段超过 4 个时自动折叠，多出的字段隐藏在「展开更多」后。
++
++  Props:
++    - fields: FilterField[]              字段声明表（见 FilterField）。
++    - modelValue: Record<string,unknown> 查询条件对象；键为 field.key，值为该字段当前值。
++  Emits:
++    - update:modelValue (next)  任一字段变更/重置时抛出「全新对象」（不原地修改入参）。
++    - search                    点击「查询」时抛出（无载荷；父级读自身 model）。
++    - reset                     点击「重置」时抛出（清空 model 后一并触发）。
++
++  使用示例：
++    <CpFilterBar
++      v-model="query"
++      :fields="[
++        { key:'q',    label:'单号', type:'text', placeholder:'搜索单号' },
++        { key:'cust', label:'客户', type:'select', options:[{label:'ASAHI',value:'a'}] },
++        { key:'date', label:'日期', type:'daterange' }
++      ]"
++      @search="load" @reset="load" />
++-->
++<script lang="ts">
++export interface FilterField {
++  key: string
++  label: string
++  type: 'text' | 'select' | 'daterange'
++  options?: { label: string; value: unknown }[]
++  placeholder?: string
++}
++</script>
++
++<script setup lang="ts">
++import { computed, ref } from 'vue'
++import { ElInput, ElSelect, ElOption, ElDatePicker, ElButton } from 'element-plus'
++
++const props = defineProps<{ fields: FilterField[]; modelValue: Record<string, unknown> }>()
++const emit = defineEmits<{
++  (e: 'update:modelValue', next: Record<string, unknown>): void
++  (e: 'search'): void
++  (e: 'reset'): void
++}>()
++
++const COLLAPSE_AT = 4
++const expanded = ref(false)
++const showToggle = computed(() => props.fields.length > COLLAPSE_AT)
++const visibleFields = computed(() =>
++  expanded.value ? props.fields : props.fields.slice(0, COLLAPSE_AT)
++)
++
++// 变更单个字段：始终抛出全新对象，不原地修改 prop
++function setField(key: string, value: unknown) {
++  emit('update:modelValue', { ...props.modelValue, [key]: value })
++}
++
++function onReset() {
++  const cleared: Record<string, unknown> = {}
++  for (const f of props.fields) cleared[f.key] = undefined
++  emit('update:modelValue', cleared)
++  emit('reset')
++}
++</script>
++
++<template>
++  <div class="cp-filter">
++    <div v-for="f in visibleFields" :key="f.key" class="fld">
++      <label>{{ f.label }}</label>
++
++      <el-input
++        v-if="f.type === 'text'"
++        :model-value="(modelValue[f.key] as string | undefined)"
++        :placeholder="f.placeholder"
++        clearable
++        @update:model-value="setField(f.key, $event)"
++      />
++
++      <el-select
++        v-else-if="f.type === 'select'"
++        :model-value="(modelValue[f.key] as any)"
++        :placeholder="f.placeholder"
++        clearable
++        @update:model-value="setField(f.key, $event)"
++      >
++        <el-option
++          v-for="o in f.options"
++          :key="String(o.value)"
++          :label="o.label"
++          :value="(o.value as any)"
++        />
++      </el-select>
++
++      <el-date-picker
++        v-else-if="f.type === 'daterange'"
++        type="daterange"
++        :model-value="(modelValue[f.key] as any)"
++        :placeholder="f.placeholder"
++        range-separator="→"
++        @update:model-value="setField(f.key, $event)"
++      />
++    </div>
++
++    <span class="spacer" />
++
++    <div class="fbtns">
++      <button
++        v-if="showToggle"
++        type="button"
++        class="link-btn"
++        @click="expanded = !expanded"
++      >{{ expanded ? '收起' : '展开更多' }} ▾</button>
++      <el-button @click="onReset">重置</el-button>
++      <el-button type="primary" @click="emit('search')">查询</el-button>
++    </div>
++  </div>
++</template>
++
++<style scoped>
++.cp-filter { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;
++  background:var(--cp-card); border-radius:var(--cp-r-md); box-shadow:var(--cp-shadow-1);
++  padding:14px 18px; }
++.fld { display:flex; flex-direction:column; gap:5px; }
++.fld label { font-size:var(--cp-fs-2xs); font-weight:800; color:var(--cp-muted); letter-spacing:.5px; }
++.cp-filter .spacer { flex:1; }
++.fbtns { display:flex; gap:8px; align-items:center; }
++.link-btn { font-size:var(--cp-fs-sm); font-weight:800; color:var(--cp-brand-deep);
++  background:none; border:none; cursor:pointer; font-family:inherit; padding:8px 4px; }
++</style>
+diff --git a/cp6.web/src/components/templates/CpFormDialog.vue b/cp6.web/src/components/templates/CpFormDialog.vue
+new file mode 100644
+index 0000000..d82e753
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpFormDialog.vue
+@@ -0,0 +1,159 @@
++<!--
++  CpFormDialog —— 表单弹窗（设计系统 §9.2；新建/编辑类操作的目标模板）。
++  组合结构：el-dialog + el-form（观感由 Element Plus overrides 保证），footer = ghost 取消 + primary 确认。
++  按 fields 声明自组表单；或用默认 slot 自定义复杂表单（与 fields 互斥，slot 优先）。
++  行为：点确认先 elForm.validate()；校验失败不提交、不关闭、不弹错（el-form 内联提示）；
++  submit resolve → emit saved + update:modelValue(false)；reject → ElMessage.error 且保持打开；提交期间确认钮 loading。
++
++  Props:
++    - modelValue: boolean               弹窗开合（v-model）。
++    - title: string                     标题。
++    - fields?: FormField[]              字段声明；默认 slot 存在时被忽略。
++    - form: Record<string,unknown>      表单对象（父级持有并负责重置）。
++    - rules?: FormRules                 校验规则；同 key 覆盖 required 自动规则。
++    - submit: (form) => Promise<void>   提交回调；resolve 视为成功。
++    - width?: string                    弹窗宽度，透传 el-dialog。
++  Slots: default（自定义表单体，替代 fields；仍在 el-form 内，parent 提供 el-form-item 规则同样生效）。
++  Emits: update:modelValue(open) ｜ saved()
++
++  使用示例：
++    <CpFormDialog v-model="open" title="新建物料" :form="form" :submit="save"
++      :fields="[{ key:'name', label:'名称', type:'text', required:true },
++                { key:'qty', label:'数量', type:'number' }]"
++      @saved="reload" />
++-->
++<script lang="ts">
++export interface FormField {
++  key: string
++  label: string
++  type: 'text' | 'number' | 'select' | 'date' | 'textarea'
++  options?: { label: string; value: unknown }[]
++  required?: boolean
++}
++</script>
++
++<script setup lang="ts">
++import { computed, ref } from 'vue'
++import type { FormInstance, FormRules } from 'element-plus'
++import {
++  ElDialog, ElForm, ElFormItem, ElInput, ElInputNumber,
++  ElSelect, ElOption, ElDatePicker, ElButton, ElMessage
++} from 'element-plus'
++
++const props = defineProps<{
++  modelValue: boolean
++  title: string
++  fields?: FormField[]
++  form: Record<string, unknown>
++  rules?: FormRules
++  submit: (form: Record<string, unknown>) => Promise<void>
++  width?: string
++}>()
++
++const emit = defineEmits<{
++  (e: 'update:modelValue', open: boolean): void
++  (e: 'saved'): void
++}>()
++
++const formRef = ref<FormInstance>()
++const submitting = ref(false)
++
++// required 字段自动生成必填规则；显式 rules 同 key 覆盖（explicit wins）
++const mergedRules = computed<FormRules>(() => {
++  const out: FormRules = {}
++  for (const f of props.fields ?? []) {
++    if (f.required) {
++      const trigger = f.type === 'select' || f.type === 'date' ? 'change' : 'blur'
++      out[f.key] = [{ required: true, message: `${f.label}为必填项`, trigger }]
++    }
++  }
++  for (const [k, v] of Object.entries(props.rules ?? {})) out[k] = v
++  return out
++})
++
++// 就地写回表单字段（父级持有 form 对象，表单编辑即改其属性）
++function setVal(key: string, value: unknown) {
++  props.form[key] = value
++}
++
++function close() {
++  emit('update:modelValue', false)
++}
++
++async function onConfirm() {
++  const valid = await formRef.value?.validate().catch(() => false)
++  if (!valid) return // 校验失败：不提交、不关闭、el-form 已内联提示
++  submitting.value = true
++  try {
++    await props.submit(props.form)
++    emit('saved')
++    emit('update:modelValue', false)
++  } catch (err) {
++    ElMessage.error((err as Error)?.message ?? String(err))
++  } finally {
++    submitting.value = false
++  }
++}
++</script>
++
++<template>
++  <el-dialog
++    :model-value="modelValue"
++    :title="title"
++    :width="width"
++    @update:model-value="emit('update:modelValue', $event)"
++  >
++    <el-form ref="formRef" :model="form" :rules="mergedRules" label-position="top">
++      <slot v-if="$slots.default" />
++      <template v-else>
++        <el-form-item v-for="f in fields" :key="f.key" :label="f.label" :prop="f.key">
++          <el-input
++            v-if="f.type === 'text'"
++            :model-value="(form[f.key] as string | undefined)"
++            @update:model-value="setVal(f.key, $event)"
++          />
++          <el-input
++            v-else-if="f.type === 'textarea'"
++            type="textarea"
++            :model-value="(form[f.key] as string | undefined)"
++            @update:model-value="setVal(f.key, $event)"
++          />
++          <el-input-number
++            v-else-if="f.type === 'number'"
++            :model-value="(form[f.key] as number | undefined)"
++            @update:model-value="setVal(f.key, $event)"
++          />
++          <el-select
++            v-else-if="f.type === 'select'"
++            :model-value="(form[f.key] as any)"
++            @update:model-value="setVal(f.key, $event)"
++          >
++            <el-option
++              v-for="o in f.options"
++              :key="String(o.value)"
++              :label="o.label"
++              :value="(o.value as any)"
++            />
++          </el-select>
++          <el-date-picker
++            v-else-if="f.type === 'date'"
++            type="date"
++            :model-value="(form[f.key] as any)"
++            @update:model-value="setVal(f.key, $event)"
++          />
++        </el-form-item>
++      </template>
++    </el-form>
++
++    <template #footer>
++      <div class="cp-fd-footer">
++        <el-button @click="close">取消</el-button>
++        <el-button type="primary" :loading="submitting" @click="onConfirm">确认</el-button>
++      </div>
++    </template>
++  </el-dialog>
++</template>
++
++<style scoped>
++.cp-fd-footer { display:flex; justify-content:flex-end; gap:8px; }
++</style>
+diff --git a/cp6.web/src/components/templates/CpListPage.vue b/cp6.web/src/components/templates/CpListPage.vue
+new file mode 100644
+index 0000000..6919bf4
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpListPage.vue
+@@ -0,0 +1,201 @@
++<!--
++  CpListPage —— 业务查询页核心模板（设计系统 §9.2；130+ 查询页的目标模板）。
++  组合结构：CpStatusStrip?（状态速览）→ CpFilterBar?（查询区）→ 表格卡 .tcard（toolbar slot + el-table + 分页）。
++  行为：mounted 自动 fetch；search/reset/翻页/切状态卡重新 fetch（search/reset/切卡均重置 page=1）；
++  fetch 期间 v-loading；fetch reject → ElMessage.error 且保留旧数据；rows 空 → CpEmpty；乱序响应只取最新。
++
++  Props:
++    - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag / date→暂原样）。
++    - fetch: ListFetch             数据源：({ page,size,filters,statusKey? }) => Promise<{ rows,total }>。
++    - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
++    - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key。
++    - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
++  Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
++  Emits: selection-change(rows)
++
++  使用示例：
++    <CpPageShell title="出庫指示一覧" :count="total">
++      <CpListPage
++        :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' }]"
++        :fetch="loadShipments"
++        :search-fields="[{ key:'q', label:'单号', type:'text' }]"
++        :status-tabs="[{ key:'all', label:'全部', count:28 }]"
++        selectable row-key="id"
++        @selection-change="onSel">
++        <template #toolbar><el-button>批量出库</el-button></template>
++      </CpListPage>
++    </CpPageShell>
++-->
++<script lang="ts">
++export interface ListColumn {
++  prop: string
++  label: string
++  width?: number
++  align?: 'left' | 'right' | 'center'
++  kind?: 'text' | 'num' | 'mono' | 'tag' | 'date'
++}
++export type ListFetch = (q: {
++  page: number
++  size: number
++  filters: Record<string, unknown>
++  statusKey?: string
++}) => Promise<{ rows: unknown[]; total: number }>
++export interface StatusTab { key: string; label: string; count: number; tone?: string }
++</script>
++
++<script setup lang="ts">
++import { onMounted, ref } from 'vue'
++import { ElMessage, ElPagination, ElTable, ElTableColumn, vLoading } from 'element-plus'
++import CpStatusStrip from './CpStatusStrip.vue'
++import CpFilterBar, { type FilterField } from './CpFilterBar.vue'
++import CpTag from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++
++const props = defineProps<{
++  columns: ListColumn[]
++  fetch: ListFetch
++  searchFields?: FilterField[]
++  statusTabs?: StatusTab[]
++  selectable?: boolean
++  rowKey?: string
++}>()
++
++const emit = defineEmits<{ (e: 'selection-change', rows: unknown[]): void }>()
++
++// —— 内部状态 ——
++const page = ref(1)
++const size = ref(20)
++const filters = ref<Record<string, unknown>>({})
++const statusKey = ref<string | undefined>(props.statusTabs?.[0]?.key)
++const rows = ref<unknown[]>([])
++const total = ref(0)
++const loading = ref(false)
++
++// —— load()：唯一取数入口；seq 守卫乱序响应（只有最新一次请求的结果生效）——
++let seq = 0
++async function load() {
++  const id = ++seq
++  loading.value = true
++  try {
++    const res = await props.fetch({
++      page: page.value,
++      size: size.value,
++      filters: filters.value,
++      statusKey: statusKey.value
++    })
++    if (id !== seq) return // 已有更新的请求发出，丢弃本次结果
++    rows.value = res.rows
++    total.value = res.total
++  } catch (e) {
++    if (id !== seq) return
++    ElMessage.error((e as Error).message) // 保留旧 rows/total
++  } finally {
++    if (id === seq) loading.value = false
++  }
++}
++onMounted(load)
++
++// —— 交互 ——
++function onSearch() { page.value = 1; load() }
++function onReset() { page.value = 1; load() } // CpFilterBar 已先回写清空后的 filters
++function onStatus(key: string) { statusKey.value = key; page.value = 1; load() }
++function onPageChange() { load() }
++function onSizeChange() { page.value = 1; load() }
++
++// —— 列渲染 ——
++function cell(row: unknown, prop: string): unknown {
++  return (row as Record<string, unknown>)?.[prop]
++}
++function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
++  return c.align ?? (c.kind === 'num' ? 'right' : 'left')
++}
++</script>
++
++<template>
++  <div class="cp-list">
++    <CpStatusStrip
++      v-if="statusTabs?.length"
++      :items="statusTabs"
++      :model-value="statusKey ?? ''"
++      @update:model-value="onStatus"
++    />
++
++    <CpFilterBar
++      v-if="searchFields?.length"
++      v-model="filters"
++      :fields="searchFields"
++      @search="onSearch"
++      @reset="onReset"
++    />
++
++    <div class="tcard">
++      <div v-if="$slots.toolbar" class="toolbar"><slot name="toolbar" /></div>
++
++      <el-table
++        v-loading="loading"
++        :data="rows"
++        :row-key="rowKey"
++        @selection-change="emit('selection-change', $event)"
++      >
++        <el-table-column v-if="$slots.expand" type="expand">
++          <template #default="{ row }"><slot name="expand" :row="row" /></template>
++        </el-table-column>
++
++        <el-table-column v-if="selectable" type="selection" width="44" />
++
++        <el-table-column
++          v-for="c in columns"
++          :key="c.prop"
++          :prop="c.prop"
++          :label="c.label"
++          :width="c.width"
++          :align="colAlign(c)"
++        >
++          <template #default="{ row }">
++            <slot :name="`col-${c.prop}`" :row="row">
++              <CpTag v-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
++              <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ cell(row, c.prop) }}</span>
++              <span v-else-if="c.kind === 'num'" class="num">{{ cell(row, c.prop) }}</span>
++              <template v-else>{{ cell(row, c.prop) }}</template>
++            </slot>
++          </template>
++        </el-table-column>
++
++        <template #empty>
++          <CpEmpty v-if="!loading" />
++        </template>
++      </el-table>
++
++      <div class="pager">
++        <el-pagination
++          v-model:current-page="page"
++          v-model:page-size="size"
++          :total="total"
++          :page-sizes="[20, 50, 100]"
++          layout="total, sizes, prev, pager, next"
++          @current-change="onPageChange"
++          @size-change="onSizeChange"
++        />
++      </div>
++    </div>
++  </div>
++</template>
++
++<style scoped>
++.cp-list { display:flex; flex-direction:column; gap:16px; }
++
++/* 表格卡（mockup-final-b .tcard） */
++.tcard { background:var(--cp-card); border-radius:var(--cp-r-md); box-shadow:var(--cp-shadow-1);
++  overflow:hidden; display:flex; flex-direction:column; }
++
++/* 批量操作区（mockup-final-b .toolbar） */
++.toolbar { display:flex; align-items:center; gap:8px; padding:12px 16px;
++  border-bottom:1px solid var(--cp-line-soft); }
++
++/* 分页行（mockup-final-b .pager；控件观感由 Element Plus overrides 保证） */
++.pager { display:flex; align-items:center; justify-content:flex-end; gap:8px; padding:13px 16px;
++  font-size:var(--cp-fs-sm); font-weight:700; color:var(--cp-muted); }
++
++/* 单号样式（mockup-final-b .mono；暂无全局工具类，先在模板内定义） */
++.cp-mono { font-weight:800; color:var(--cp-brand-deep); font-size:var(--cp-fs-sm); }
++</style>
+diff --git a/cp6.web/src/components/templates/CpPageShell.vue b/cp6.web/src/components/templates/CpPageShell.vue
+new file mode 100644
+index 0000000..61d9cf0
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpPageShell.vue
+@@ -0,0 +1,38 @@
++<!--
++  CpPageShell —— 业务页标准壳（设计系统 §9.2）。
++  标题 + 可选计数 pill + 右上操作区，下方为纵向 16px 间距的内容区。
++
++  Props:
++    - title: string   页面标题（21px / 800 / ink）。
++    - count?: number  可选计数；提供时（含 0）在标题右侧渲染计数 pill。
++  Slots:
++    - actions  标题栏右上的按钮组出口。
++    - default  内容区出口（纵向 flex，子项间距 16px 由父级 gap 提供）。
++
++  使用示例：
++    <CpPageShell title="出庫指示一覧" :count="28">
++      <template #actions><button>新規</button></template>
++      …内容…
++    </CpPageShell>
++-->
++<script setup lang="ts">
++defineProps<{ title: string; count?: number }>()
++</script>
++<template>
++  <div class="cp-page">
++    <div class="cp-page-head">
++      <h1>{{ title }}<span v-if="count !== undefined" class="cnt num">{{ count }}</span></h1>
++      <div class="cp-page-actions"><slot name="actions" /></div>
++    </div>
++    <slot />
++  </div>
++</template>
++<style scoped>
++.cp-page { display:flex; flex-direction:column; gap:16px; max-width:1420px; margin:0 auto; }
++.cp-page-head { display:flex; align-items:center; justify-content:space-between; gap:14px; }
++.cp-page-head h1 { font-size:var(--cp-fs-2xl); font-weight:800; color:var(--cp-ink);
++  display:flex; align-items:center; gap:11px; }
++.cp-page-head .cnt { font-size:12px; font-weight:800; color:var(--cp-brand-deep);
++  background:var(--cp-brand-bg); border-radius:999px; padding:3px 11px; }
++.cp-page-actions { display:flex; gap:10px; }
++</style>
+diff --git a/cp6.web/src/views/dashboard/components/KpiCard.vue b/cp6.web/src/components/templates/CpStatCard.vue
+similarity index 77%
+rename from cp6.web/src/views/dashboard/components/KpiCard.vue
+rename to cp6.web/src/components/templates/CpStatCard.vue
+index ef3cfb2..254ad0c 100644
+--- a/cp6.web/src/views/dashboard/components/KpiCard.vue
++++ b/cp6.web/src/components/templates/CpStatCard.vue
+@@ -1,13 +1,31 @@
++<!--
++  CpStatCard —— KPI 统计卡（原 views/dashboard/components/KpiCard.vue 平移；设计系统 §9.2）。
++  标签 + 大数字 + 可选角标图标 / 副文案 / sparkline；tone 控制角标与折线着色，danger 时整卡告警态。
++  trend 传 7 日数值数组时渲染 sparkline（现有 API 无该数据源时不传，不造假数据）。
++
++  Props:
++    - label: string                     标签文字。
++    - value: number | string            主数值。
++    - suffix?: string                   数值后缀（如「件」）。
++    - tone?: 'brand'|'info'|'warn'|'danger'  色调，缺省 brand；danger 时整卡告警。
++    - trend?: number[]                  ≥2 个点时渲染 sparkline。
++    - sub?: string                      副文案（sub slot 优先）。
++    - clickable?: boolean               外层负责实际 @click/路由；true 时 sub 行追加 → 提示。
++  Slots: icon（右上角标图标）｜ sub（副文案，覆盖 sub prop）
++
++  使用示例：
++    <CpStatCard label="在制指令" :value="10" suffix="件" tone="brand" sub="完成率 36.4%">
++      <template #icon><SetUp /></template>
++    </CpStatCard>
++-->
+ <script setup lang="ts">
+-// KpiCard：仪表盘 KPI 卡。trend 传 7 日数值数组时渲染 sparkline（现有 API 无该数据源时不传，不造假数据）。
+-// 用法：<KpiCard label="在制指令" :value="10" suffix="件" tone="brand" sub="完成率 36.4%"><template #icon><SetUp /></template></KpiCard>
+ const props = withDefaults(defineProps<{
+   label: string
+   value: number | string
+   suffix?: string
+   tone?: 'brand' | 'info' | 'warn' | 'danger'
+   trend?: number[]
+   sub?: string
+   /** 卡片本身是否可点击跳转（由外层容器负责实际 @click/路由）：为 true 时在 sub 行追加一个 → 提示。 */
+   clickable?: boolean
+ }>(), { tone: 'brand' })
+diff --git a/cp6.web/src/components/templates/CpStatusStrip.vue b/cp6.web/src/components/templates/CpStatusStrip.vue
+new file mode 100644
+index 0000000..27dcdc6
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpStatusStrip.vue
+@@ -0,0 +1,62 @@
++<!--
++  CpStatusStrip —— 状态速览条（点击即筛选，设计系统 §9.2）。
++  横向排列的 pill 卡，每张展示「圆点 + 文字 + 计数」；点击某卡即把该卡 key 回写为当前筛选值。
++
++  Props:
++    - items: { key:string; label:string; count:number; tone?:string }[]
++        速览项；tone（ok|warn|danger|info|muted）着色圆点与计数，缺省为中性 ink。
++    - modelValue: string   当前选中的 key；与之相等的卡获得 `on` 高亮态。
++  Emits:
++    - update:modelValue (key: string)   点击某卡时抛出该卡 key（供 v-model 双向绑定）。
++
++  使用示例：
++    <CpStatusStrip
++      v-model="status"
++      :items="[
++        { key:'all',  label:'全部',  count:28 },
++        { key:'wait', label:'未出库', count:9, tone:'warn' },
++        { key:'done', label:'已出库', count:12, tone:'ok' }
++      ]" />
++-->
++<script setup lang="ts">
++interface StatusItem { key: string; label: string; count: number; tone?: string }
++
++defineProps<{ items: StatusItem[]; modelValue: string }>()
++defineEmits<{ (e: 'update:modelValue', key: string): void }>()
++
++const TONE_VAR: Record<string, string> = {
++  ok: 'var(--cp-ok)', warn: 'var(--cp-warn)', danger: 'var(--cp-danger)',
++  info: 'var(--cp-info)', muted: 'var(--cp-muted)'
++}
++// tone 缺省或未命中 → 中性 ink；命中 → 对应语义色
++const toneColor = (tone?: string) => (tone && TONE_VAR[tone]) || 'var(--cp-ink)'
++</script>
++
++<template>
++  <div class="cp-status-strip">
++    <button
++      v-for="it in items"
++      :key="it.key"
++      type="button"
++      class="ss"
++      :class="{ on: it.key === modelValue }"
++      @click="$emit('update:modelValue', it.key)"
++    >
++      <span class="dot" :style="{ background: toneColor(it.tone) }" />
++      {{ it.label }}
++      <b class="num" :style="{ color: toneColor(it.tone) }">{{ it.count }}</b>
++    </button>
++  </div>
++</template>
++
++<style scoped>
++.cp-status-strip { display:flex; flex-wrap:wrap; gap:10px; }
++.ss { display:flex; align-items:center; gap:10px; background:var(--cp-card);
++  border:1px solid var(--cp-line); border-radius:var(--cp-r-md); padding:10px 16px;
++  box-shadow:var(--cp-shadow-1); cursor:pointer; transition:var(--cp-t-fast);
++  font-family:inherit; font-weight:700; font-size:var(--cp-fs-sm); color:var(--cp-muted); }
++.ss b { font-size:19px; font-weight:800; }
++.ss:hover { border-color:var(--cp-brand); }
++.ss.on { border-color:var(--cp-brand); background:var(--cp-brand-bg); color:var(--cp-brand-deep); }
++.ss .dot { width:8px; height:8px; border-radius:50%; }
++</style>
+diff --git a/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts b/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts
+new file mode 100644
+index 0000000..df87332
+--- /dev/null
++++ b/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts
+@@ -0,0 +1,74 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import CpFilterBar, { type FilterField } from '../CpFilterBar.vue'
++
++const fields: FilterField[] = [
++  { key: 'q', label: '出库单号', type: 'text', placeholder: '单号搜索' },
++  { key: 'cust', label: '得意先', type: 'select', options: [{ label: 'ASAHI', value: 'a' }] },
++  { key: 'wh', label: '出库仓库', type: 'select', options: [{ label: '東京', value: 'tk' }] },
++  { key: 'date', label: '计划出库日', type: 'daterange' }
++]
++
++function findButton(w: ReturnType<typeof mount>, text: string) {
++  return w.findAll('button').find((b) => b.text().includes(text))!
++}
++
++describe('CpFilterBar', () => {
++  it('renders one field block per field with its label', () => {
++    const w = mount(CpFilterBar, { props: { fields, modelValue: {} } })
++    const flds = w.findAll('.fld')
++    expect(flds).toHaveLength(4)
++    expect(flds[0].get('label').text()).toBe('出库单号')
++    // a text field renders a real <input>
++    expect(flds[0].find('input').exists()).toBe(true)
++  })
++
++  it('emits search (no payload) when the search button is clicked', async () => {
++    const w = mount(CpFilterBar, { props: { fields, modelValue: {} } })
++    await findButton(w, '查询').trigger('click')
++    expect(w.emitted('search')).toEqual([[]])
++  })
++
++  it('reset clears every field and emits update:modelValue + reset', async () => {
++    const w = mount(CpFilterBar, {
++      props: { fields, modelValue: { q: 'SHP-1', cust: 'a' } }
++    })
++    await findButton(w, '重置').trigger('click')
++    const cleared = w.emitted('update:modelValue')![0][0] as Record<string, unknown>
++    for (const f of fields) {
++      expect(cleared).toHaveProperty(f.key)
++      expect(cleared[f.key]).toBeUndefined()
++    }
++    expect(w.emitted('reset')).toEqual([[]])
++  })
++
++  it('emits a new object (no prop mutation) when a field changes', async () => {
++    const model = { q: '' }
++    const w = mount(CpFilterBar, { props: { fields, modelValue: model } })
++    await w.get('.fld input').setValue('SHP-9')
++    const payload = w.emitted('update:modelValue')![0][0] as Record<string, unknown>
++    expect(payload.q).toBe('SHP-9')
++    expect(payload).not.toBe(model) // brand new object
++    expect(model.q).toBe('') // original prop untouched
++  })
++
++  it('hides fields beyond the 4th until 展开更多 is toggled', async () => {
++    const many: FilterField[] = [
++      ...fields,
++      { key: 'operator', label: '担当', type: 'text' }
++    ]
++    const w = mount(CpFilterBar, { props: { fields: many, modelValue: {} } })
++    expect(w.findAll('.fld')).toHaveLength(4)
++    expect(w.text()).not.toContain('担当')
++
++    await findButton(w, '展开更多').trigger('click')
++    expect(w.findAll('.fld')).toHaveLength(5)
++    expect(w.text()).toContain('担当')
++  })
++
++  it('shows no expand toggle when fields.length <= 4', () => {
++    const w = mount(CpFilterBar, { props: { fields, modelValue: {} } })
++    expect(w.findAll('button').some((b) => b.text().includes('展开更多'))).toBe(false)
++  })
++})
+diff --git a/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts b/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts
+new file mode 100644
+index 0000000..8eedb4f
+--- /dev/null
++++ b/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts
+@@ -0,0 +1,140 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, afterEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { nextTick } from 'vue'
++import { ElMessage } from 'element-plus'
++import CpFormDialog, { type FormField } from '../CpFormDialog.vue'
++
++const fields: FormField[] = [
++  { key: 'name', label: '名称', type: 'text', required: true },
++  { key: 'qty', label: '数量', type: 'number' }
++]
++
++// el-dialog teleports its content to document.body — query there.
++function bodyButton(text: string): HTMLButtonElement {
++  return Array.from(document.body.querySelectorAll('.el-dialog button')).find((b) =>
++    b.textContent?.includes(text)
++  ) as HTMLButtonElement
++}
++
++// attachTo document.body so the teleported dialog content actually renders in jsdom.
++function mountDialog(props: Record<string, unknown>) {
++  return mount(CpFormDialog, { props, attachTo: document.body })
++}
++
++// Reach the internal <el-form> instance the component holds via `formRef`.
++// Element Plus' async validation does not settle under jsdom, so we drive the
++// validate() outcome at this seam to deterministically exercise onConfirm's gate
++// (validate → submit). The required-rule *wiring* is asserted separately through
++// the rendered is-required asterisk.
++function elFormOf(w: ReturnType<typeof mountDialog>) {
++  return (w.vm as unknown as { $: { setupState: { formRef: { validate: unknown } } } }).$
++    .setupState.formRef
++}
++
++afterEach(() => {
++  document.body.innerHTML = ''
++})
++
++describe('CpFormDialog', () => {
++  it('打开后渲染 title、fields 标签，且 required 字段生成必填规则（asterisk）', async () => {
++    const w = mountDialog({ modelValue: true, title: '新建物料', fields, form: { name: '', qty: 0 }, submit: vi.fn() })
++    await flushPromises()
++    expect(document.body.textContent).toContain('新建物料')
++    expect(document.body.textContent).toContain('名称')
++    expect(document.body.textContent).toContain('数量')
++    // required:true → mergedRules → el-form-item 标记必填
++    const items = w.findAll('.el-form-item')
++    expect(items[0].classes()).toContain('is-required') // name 必填
++    expect(items[1].classes()).not.toContain('is-required') // qty 非必填
++  })
++
++  it('校验失败：不调用 submit，不 emit saved / close', async () => {
++    const submit = vi.fn().mockResolvedValue(undefined)
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: '', qty: 0 }, submit })
++    await flushPromises()
++    // 模拟 el-form 校验失败（真实场景中 validate() 对空必填项 reject）
++    elFormOf(w).validate = vi.fn().mockRejectedValue({ name: [{ message: '名称为必填项' }] })
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(submit).not.toHaveBeenCalled()
++    expect(w.emitted('saved')).toBeUndefined()
++    expect(w.emitted('update:modelValue')).toBeUndefined()
++  })
++
++  it('submit resolve：先 validate 再 submit → emit saved + update:modelValue(false)', async () => {
++    const form = { name: 'M-1', qty: 10 }
++    const submit = vi.fn().mockResolvedValue(undefined)
++    const w = mountDialog({ modelValue: true, title: 't', fields, form, submit })
++    await flushPromises()
++    const validate = vi.fn().mockResolvedValue(true)
++    elFormOf(w).validate = validate
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(validate).toHaveBeenCalled() // 提交前先校验
++    expect(submit).toHaveBeenCalledTimes(1)
++    expect(submit).toHaveBeenCalledWith(form)
++    expect(w.emitted('saved')).toEqual([[]])
++    expect(w.emitted('update:modelValue')).toEqual([[false]])
++  })
++
++  it('submit reject：ElMessage.error 且不关闭（无 saved）', async () => {
++    const errSpy = vi.spyOn(ElMessage, 'error').mockImplementation((() => undefined) as never)
++    const submit = vi.fn().mockRejectedValue(new Error('保存失败'))
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
++    await flushPromises()
++    elFormOf(w).validate = vi.fn().mockResolvedValue(true)
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(errSpy).toHaveBeenCalledWith('保存失败')
++    expect(w.emitted('saved')).toBeUndefined()
++    expect(w.emitted('update:modelValue')).toBeUndefined()
++    errSpy.mockRestore()
++  })
++
++  it('submit reject 非 Error：ElMessage.error 收到字符串（不产生 [object Object]）', async () => {
++    const errSpy = vi.spyOn(ElMessage, 'error').mockImplementation((() => undefined) as never)
++    const submit = vi.fn().mockRejectedValue('网络异常')
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
++    await flushPromises()
++    elFormOf(w).validate = vi.fn().mockResolvedValue(true)
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(errSpy).toHaveBeenCalledWith('网络异常')
++    errSpy.mockRestore()
++  })
++
++  it('提交进行中：确认按钮进入 loading 态，结束后解除', async () => {
++    let release!: () => void
++    const submit = vi.fn(() => new Promise<void>((r) => { release = r }))
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
++    await flushPromises()
++    elFormOf(w).validate = vi.fn().mockResolvedValue(true)
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(bodyButton('确认').classList.contains('is-loading')).toBe(true)
++    release()
++    await flushPromises()
++    expect(bodyButton('确认').classList.contains('is-loading')).toBe(false)
++  })
++
++  it('提供默认 slot 时替代 fields 自组表单', async () => {
++    const w = mountDialog({
++      modelValue: true, title: 't', fields, form: {}, submit: vi.fn(),
++      // 具名传入默认插槽
++    })
++    await flushPromises()
++    w.unmount()
++    // 重新挂载并带默认 slot
++    const w2 = mount(CpFormDialog, {
++      props: { modelValue: true, title: 't', fields, form: {}, submit: vi.fn() },
++      slots: { default: '<div class="custom-body">自定义表单</div>' },
++      attachTo: document.body
++    })
++    await flushPromises()
++    expect(document.body.querySelector('.custom-body')).not.toBeNull()
++    // fields 生成的 el-form-item 不应渲染
++    expect(document.body.querySelectorAll('.el-form-item').length).toBe(0)
++    w2.unmount()
++  })
++})
+diff --git a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+new file mode 100644
+index 0000000..47af864
+--- /dev/null
++++ b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+@@ -0,0 +1,154 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { nextTick } from 'vue'
++import { ElMessage } from 'element-plus'
++import CpListPage from '../CpListPage.vue'
++import type { FilterField } from '../CpFilterBar.vue'
++const cols = [{ prop: 'no', label: '单号', kind: 'mono' }, { prop: 'qty', label: '数量', kind: 'num' }]
++function makeFetch(rows = [{ no: 'SHP-1', qty: 1000 }]) {
++  return vi.fn().mockResolvedValue({ rows, total: rows.length })
++}
++describe('CpListPage', () => {
++  it('mounted 自动调用 fetch(page=1)', async () => {
++    const f = makeFetch(); mount(CpListPage, { props: { columns: cols, fetch: f } })
++    await flushPromises()
++    expect(f).toHaveBeenCalledWith(expect.objectContaining({ page: 1 }))
++  })
++  it('渲染行数据与列格式', async () => {
++    const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch() } })
++    await flushPromises()
++    expect(w.text()).toContain('SHP-1')
++  })
++  it('fetch 空结果显示 CpEmpty', async () => {
++    const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch([]) } })
++    await flushPromises()
++    expect(w.findComponent({ name: 'CpEmpty' }).exists()).toBe(true)
++  })
++  it('fetch 失败保留 UI 不崩', async () => {
++    const f = vi.fn().mockRejectedValue(new Error('boom'))
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f } })
++    await flushPromises()
++    expect(w.find('.cp-list').exists()).toBe(true)
++  })
++  it('切换状态卡以 statusKey 重新 fetch', async () => {
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f,
++      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
++    await flushPromises()
++    await w.findAll('.ss')[1].trigger('click'); await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ statusKey: 'wait' }))
++  })
++  it('selection-change 透传', async () => {
++    const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch(), selectable: true } })
++    await flushPromises()
++    w.findComponent({ name: 'ElTable' }).vm.$emit('selection-change', [{ no: 'SHP-1' }])
++    expect(w.emitted('selection-change')![0][0]).toHaveLength(1)
++  })
++})
++
++// —— 行为契约补充测试（错误保留旧行 / 翻页与 search 重置 / 乱序守卫 / loading）——
++const searchFields: FilterField[] = [{ key: 'q', label: '单号', type: 'text' }]
++
++describe('CpListPage 行为契约补充', () => {
++  it('fetch 失败：ElMessage.error(错误消息) 且表格保留旧行', async () => {
++    const errSpy = vi.spyOn(ElMessage, 'error').mockImplementation((() => undefined) as never)
++    const f = vi.fn()
++      .mockResolvedValueOnce({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 1 })
++      .mockRejectedValueOnce(new Error('boom'))
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields } })
++    await flushPromises()
++    expect(w.text()).toContain('SHP-1')
++
++    await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
++    await flushPromises()
++    expect(errSpy).toHaveBeenCalledWith('boom')
++    expect(w.text()).toContain('SHP-1') // 旧数据仍在
++    errSpy.mockRestore()
++  })
++
++  it('翻页以对应 page 重新 fetch；search 将 page 重置为 1', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields } })
++    await flushPromises()
++
++    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
++    await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }))
++
++    await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
++    await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ page: 1 }))
++  })
++
++  it('reset 清空筛选、page=1 并重新 fetch', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields } })
++    await flushPromises()
++    await w.get('.fld input').setValue('SHP-9')
++    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
++    await flushPromises()
++
++    await w.findAll('button').find((b) => b.text().includes('重置'))!.trigger('click')
++    await flushPromises()
++    const q = f.mock.calls.at(-1)![0]
++    expect(q.page).toBe(1)
++    expect(q.filters.q).toBeUndefined()
++  })
++
++  it('乱序响应：慢的旧请求不得覆盖新结果', async () => {
++    let resolveFirst!: (v: { rows: unknown[]; total: number }) => void
++    const f = vi.fn()
++      .mockImplementationOnce(() => new Promise((r) => { resolveFirst = r }))
++      .mockResolvedValueOnce({ rows: [{ no: 'SHP-NEW', qty: 2 }], total: 1 })
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f,
++      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
++    await flushPromises()
++    await w.findAll('.ss')[1].trigger('click')
++    await flushPromises()
++    expect(w.text()).toContain('SHP-NEW')
++
++    resolveFirst({ rows: [{ no: 'SHP-OLD', qty: 1 }], total: 1 })
++    await flushPromises()
++    expect(w.text()).not.toContain('SHP-OLD')
++    expect(w.text()).toContain('SHP-NEW')
++  })
++
++  it('fetch 期间表格显示 v-loading 遮罩', async () => {
++    let resolve!: (v: { rows: unknown[]; total: number }) => void
++    const f = vi.fn(() => new Promise<{ rows: unknown[]; total: number }>((r) => { resolve = r }))
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f } })
++    await nextTick()
++    expect(w.find('.el-loading-mask').exists()).toBe(true)
++    resolve({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 1 })
++    await flushPromises()
++    expect(w.text()).toContain('SHP-1')
++  })
++
++  it('kind 渲染：mono→.cp-mono、num→.num、tag→CpTag', async () => {
++    const tagCols = [
++      { prop: 'no', label: '单号', kind: 'mono' },
++      { prop: 'qty', label: '数量', kind: 'num' },
++      { prop: 'st', label: '状态', kind: 'tag' }
++    ]
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000, st: '已出库' }], total: 1 })
++    const w = mount(CpListPage, { props: { columns: tagCols, fetch: f } })
++    await flushPromises()
++    expect(w.find('td .cp-mono').text()).toBe('SHP-1')
++    expect(w.find('td .num').text()).toBe('1000')
++    // 断言真实单元格里的 CpTag（el-table-column 会额外渲染一个空 row 的隐藏占位，不取它）
++    const tag = w.find('td .cp-tag')
++    expect(tag.exists()).toBe(true)
++    expect(tag.text()).toBe('已出库')
++  })
++
++  it('col-<prop> slot 优先于默认渲染', async () => {
++    const w = mount(CpListPage, {
++      props: { columns: cols, fetch: makeFetch() },
++      slots: { 'col-no': `<template #col-no="{ row }"><b class="custom">C-{{ row.no }}</b></template>` }
++    })
++    await flushPromises()
++    expect(w.find('.custom').text()).toBe('C-SHP-1')
++    expect(w.find('.cp-mono').exists()).toBe(false)
++  })
++})
+diff --git a/cp6.web/src/components/templates/__tests__/CpPageShell.spec.ts b/cp6.web/src/components/templates/__tests__/CpPageShell.spec.ts
+new file mode 100644
+index 0000000..75e7043
+--- /dev/null
++++ b/cp6.web/src/components/templates/__tests__/CpPageShell.spec.ts
+@@ -0,0 +1,30 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import CpPageShell from '../CpPageShell.vue'
++
++describe('CpPageShell', () => {
++  it('renders the title', () => {
++    const w = mount(CpPageShell, { props: { title: '出庫指示一覧' } })
++    expect(w.get('.cp-page-head h1').text()).toContain('出庫指示一覧')
++  })
++  it('renders the count pill only when count is provided (including 0)', () => {
++    const without = mount(CpPageShell, { props: { title: '出庫指示一覧' } })
++    expect(without.find('.cp-page-head .cnt').exists()).toBe(false)
++    const zero = mount(CpPageShell, { props: { title: '出庫指示一覧', count: 0 } })
++    expect(zero.get('.cp-page-head .cnt').text()).toBe('0')
++    const some = mount(CpPageShell, { props: { title: '出庫指示一覧', count: 28 } })
++    expect(some.get('.cp-page-head .cnt').text()).toBe('28')
++  })
++  it('exposes actions slot and default content slot outlets', () => {
++    const w = mount(CpPageShell, {
++      props: { title: '出庫指示一覧' },
++      slots: {
++        actions: '<button class="act">新規</button>',
++        default: '<div class="body">内容</div>'
++      }
++    })
++    expect(w.get('.cp-page-actions .act').text()).toBe('新規')
++    expect(w.get('.cp-page .body').text()).toBe('内容')
++  })
++})
+diff --git a/cp6.web/src/components/templates/__tests__/CpStatusStrip.spec.ts b/cp6.web/src/components/templates/__tests__/CpStatusStrip.spec.ts
+new file mode 100644
+index 0000000..bb1dcac
+--- /dev/null
++++ b/cp6.web/src/components/templates/__tests__/CpStatusStrip.spec.ts
+@@ -0,0 +1,41 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import CpStatusStrip from '../CpStatusStrip.vue'
++
++const items = [
++  { key: 'all', label: '全部', count: 28 },
++  { key: 'wait', label: '未出库', count: 9, tone: 'warn' },
++  { key: 'done', label: '已出库', count: 12, tone: 'ok' }
++]
++
++describe('CpStatusStrip', () => {
++  it('renders one card per item', () => {
++    const w = mount(CpStatusStrip, { props: { items, modelValue: 'all' } })
++    expect(w.findAll('.ss')).toHaveLength(3)
++  })
++  it('renders label and count for each card', () => {
++    const w = mount(CpStatusStrip, { props: { items, modelValue: 'all' } })
++    const first = w.findAll('.ss')[1]
++    expect(first.text()).toContain('未出库')
++    expect(first.text()).toContain('9')
++  })
++  it('emits update:modelValue with the clicked item key', async () => {
++    const w = mount(CpStatusStrip, { props: { items, modelValue: 'all' } })
++    await w.findAll('.ss')[2].trigger('click')
++    expect(w.emitted('update:modelValue')).toEqual([['done']])
++  })
++  it('gives the active card (key === modelValue) the on class', () => {
++    const w = mount(CpStatusStrip, { props: { items, modelValue: 'wait' } })
++    const cards = w.findAll('.ss')
++    expect(cards[0].classes()).not.toContain('on')
++    expect(cards[1].classes()).toContain('on')
++    expect(cards[2].classes()).not.toContain('on')
++  })
++  it('renders a card whose count is 0', () => {
++    const w = mount(CpStatusStrip, {
++      props: { items: [{ key: 'x', label: '空', count: 0 }], modelValue: 'x' }
++    })
++    expect(w.get('.ss').text()).toContain('0')
++  })
++})
+diff --git a/cp6.web/src/views/dashboard/DashboardView.vue b/cp6.web/src/views/dashboard/DashboardView.vue
+index f32b576..21e15ca 100644
+--- a/cp6.web/src/views/dashboard/DashboardView.vue
++++ b/cp6.web/src/views/dashboard/DashboardView.vue
+@@ -17,28 +17,28 @@
+     </div>
+ 
+     <!-- KPI 卡片 -->
+     <section class="kpis reveal-item" style="--delay: 70ms">
+       <div
+         v-for="card in statCards"
+         :key="card.key"
+         class="kpi-cell"
+         @click="onCardClick(card.to)"
+       >
+-        <KpiCard
++        <CpStatCard
+           :label="t('dashboard.' + card.key)"
+           :value="card.value"
+           :tone="kpiTone(card)"
+           :clickable="canGo(card.to)"
+         >
+           <template #icon><component :is="card.icon" /></template>
+-        </KpiCard>
++        </CpStatCard>
+       </div>
+     </section>
+ 
+     <!-- 双列 -->
+     <section class="cols">
+       <!-- 左列 -->
+       <div class="col">
+         <!-- 出货状态 -->
+         <div class="card reveal-item" style="--delay: 140ms">
+           <div class="card-head"><h2><el-icon class="i"><Van /></el-icon>{{ t('dashboard.shipStatus') }}</h2></div>
+@@ -308,21 +308,21 @@
+ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRouter } from 'vue-router'
+ import { Refresh, DocumentAdd, Van, List, Grid, Warning, SetUp, Bell } from '@element-plus/icons-vue'
+ import { dashboardApi } from '@/api/sys/dashboard'
+ import { orderApi } from '@/api/erp/order'
+ import { stockDwellApi } from '@/api/wms/stockDwell'
+ import { formatQty } from '@/utils/format'
+ import { getConnection, startConnection } from '@/utils/signalr'
+ import { useBreakpoint } from '@/composables/useBreakpoint'
+-import KpiCard from './components/KpiCard.vue'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
+ import DonutChart from './components/DonutChart.vue'
+ import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/erp/order'
+ import type { StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
+ 
+ const { t, locale } = useI18n()
+ const router = useRouter()
+ const { isMobile } = useBreakpoint()
+ 
+ interface Summary {
+   todayOrders: number
+diff --git a/cp6.web/src/views/wms/OutboundOrderListView.vue b/cp6.web/src/views/wms/OutboundOrderListView.vue
+index 9c4d4bd..2e37e13 100644
+--- a/cp6.web/src/views/wms/OutboundOrderListView.vue
++++ b/cp6.web/src/views/wms/OutboundOrderListView.vue
+@@ -1,141 +1,163 @@
++<!--
++  出庫指示一覧 —— CpListPage 模板首个真实消费者（Task 11 / Milestone B 试点）。
++  结构：CpPageShell（标题 + actions：新建 / 桥接展开）→ CpListPage（搜索区 + 表格卡 + 分页）。
++  数据源 outboundOrderApi.search 返回扁平数组且无 total，故 fetch 包装内做客户端分页（见 fetchList）。
++-->
+ <template>
+-  <div class="wms-outbound-list">
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('wms.outbound.fld.no')"><el-input v-model="query.outboundNo" clearable style="width: 180px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.type')">
+-          <el-select v-model="query.outboundType" clearable style="width: 130px">
+-            <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="Number(v)" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('wms.common.status')">
+-          <el-select v-model="query.status" clearable style="width: 140px">
+-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('wms.outbound.fld.workOrderNo')"><el-input v-model="query.workOrderNo" clearable style="width: 160px" /></el-form-item>
+-        <el-form-item :label="t('wms.outbound.fld.webOrderNo')"><el-input v-model="query.webOrderNo" clearable style="width: 160px" /></el-form-item>
+-        <el-form-item :label="t('wms.outbound.fld.customerCd')"><el-input v-model="query.customerCd" clearable style="width: 130px" /></el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-          <el-button @click="goCreate">{{ t('wms.common.create') }}</el-button>
+-          <el-button type="warning" @click="bridgeDialog = true">{{ t('wms.outbound.bridge.title') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
++  <CpPageShell :title="t('wms.outbound.titleList')">
++    <template #actions>
++      <el-button @click="goCreate">{{ t('wms.common.create') }}</el-button>
++      <el-button type="warning" @click="bridgeDialog = true">{{ t('wms.outbound.bridge.title') }}</el-button>
++    </template>
+ 
+-    <el-card shadow="never">
+-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row>
+-        <el-table-column prop="outboundNo" :label="t('wms.outbound.fld.no')" width="180" />
+-        <el-table-column :label="t('wms.common.type')" width="90">
+-          <template #default="{ row }">
+-            <el-tag :type="row.outboundType === 1 ? 'info' : 'warning'" size="small">{{ typeMap[row.outboundType] || row.outboundType }}</el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.common.status')" width="110">
+-          <template #default="{ row }">
+-            <el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] || row.status }}</el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="workOrderNo" :label="t('wms.outbound.fld.workOrderNo')" width="160" />
+-        <el-table-column prop="webOrderNo" :label="t('wms.outbound.fld.webOrderNo')" width="160" />
+-        <el-table-column prop="customerName" :label="t('wms.outbound.fld.customerName')" min-width="160" show-overflow-tooltip />
+-        <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="80" />
+-        <el-table-column prop="plannedDate" :label="t('wms.outbound.fld.plannedDate')" width="110">
+-          <template #default="{ row }">{{ row.plannedDate?.slice(0, 10) }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.outbound.fld.priority')" width="80">
+-          <template #default="{ row }">{{ priorityMap[row.priority] || row.priority }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.common.action')" width="100" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="goEdit(row)">{{ t('wms.common.open') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
++    <CpListPage :columns="columns" :fetch="fetchList" :search-fields="searchFields">
++      <!-- 種別 -->
++      <template #col-outboundType="{ row }">
++        <CpTag :tone="row.outboundType === 1 ? 'info' : 'warn'">
++          {{ typeMap[row.outboundType] || row.outboundType }}
++        </CpTag>
++      </template>
++      <!-- 状態 -->
++      <template #col-status="{ row }">
++        <CpTag :tone="statusTone(row.status)">
++          {{ statusMap[row.status] || row.status }}
++        </CpTag>
++      </template>
++      <!-- 計画出庫日（切到 yyyy-MM-dd） -->
++      <template #col-plannedDate="{ row }">{{ row.plannedDate?.slice(0, 10) }}</template>
++      <!-- 優先度 -->
++      <template #col-priority="{ row }">{{ priorityMap[row.priority] || row.priority }}</template>
++      <!-- 操作 -->
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="goEdit(row)">{{ t('wms.common.open') }}</el-button>
++      </template>
++    </CpListPage>
+ 
++    <!-- 桥接展开：MES 製造指図 / PA 受注 → 出庫指示（保留原对话框，CpListPage 无对应契约） -->
+     <el-dialog v-model="bridgeDialog" :title="t('wms.outbound.bridge.title')" width="500">
+       <el-form size="small" label-width="160px">
+         <el-form-item :label="t('wms.outbound.bridge.fromWo')">
+           <el-input v-model="bridgeWoNo" :placeholder="t('例: {sample}', { sample: 'WO20260522-0001' })">
+             <template #append>
+               <el-button type="primary" @click="onBridgeWo" :loading="bridging">{{ t('wms.common.expand') }}</el-button>
+             </template>
+           </el-input>
+         </el-form-item>
+         <el-divider />
+         <el-form-item :label="t('wms.outbound.bridge.fromOrder')">
+           <el-input v-model="bridgeOrderNo" :placeholder="t('例: {sample}', { sample: 'O20260522-0001' })">
+             <template #append>
+               <el-button type="primary" @click="onBridgeOrder" :loading="bridging">{{ t('wms.common.expand') }}</el-button>
+             </template>
+           </el-input>
+         </el-form-item>
+       </el-form>
+     </el-dialog>
+-  </div>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, onMounted, computed } from 'vue'
++import { ref, computed } from 'vue'
+ import { useRouter } from 'vue-router'
+ import { ElMessage } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { outboundOrderApi } from '@/api/wms/outboundOrder'
+ import type { OutboundOrder, OutboundOrderSearchQuery } from '@/types/wms/wms'
+ 
+ const router = useRouter()
+ const { t } = useI18n()
+ 
+-const query = reactive<OutboundOrderSearchQuery>({ pageSize: 100 })
+-const rows = ref<OutboundOrder[]>([])
+-const loading = ref(false)
+-
++// —— 桥接展开对话框状态 ——
+ const bridgeDialog = ref(false)
+ const bridgeWoNo = ref('')
+ const bridgeOrderNo = ref('')
+ const bridging = ref(false)
+ 
++// —— 码值映射（i18n 反应式） ——
+ const typeMap = computed<Record<number, string>>(() => ({
+   1: t('wms.outbound.type.material'),
+   2: t('wms.outbound.type.shipping'),
+   3: t('wms.outbound.type.transfer'),
+   9: t('wms.outbound.type.other'),
+ }))
+ const statusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.outbound.status.draft'),
+   1: t('wms.outbound.status.confirmed'),
+   2: t('wms.outbound.status.allocated'),
+   3: t('wms.outbound.status.picking'),
+   4: t('wms.outbound.status.completed'),
+   9: t('wms.outbound.status.cancelled'),
+ }))
+ const priorityMap = computed<Record<number, string>>(() => ({
+   1: t('wms.outbound.priority.normal'),
+   2: t('wms.outbound.priority.urgent'),
+   3: t('wms.outbound.priority.express'),
+ }))
+ 
+-function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'danger' {
+-  return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'warning', 4: 'success', 9: 'danger' } as const)[s as 0] || 'info'
++// status 码 → CpTag 语义色调（沿用原 statusTagOf 意图，映射到设计系统 tone）
++function statusTone(s: number): 'ok' | 'warn' | 'danger' | 'info' | 'muted' {
++  return ({ 0: 'muted', 1: 'warn', 2: 'warn', 3: 'info', 4: 'ok', 9: 'muted' } as const)[s as 0] || 'muted'
+ }
+ 
+-async function reload() {
+-  loading.value = true
+-  try {
+-    const res = await outboundOrderApi.search(query)
+-    rows.value = res.data || []
+-  } finally { loading.value = false }
++// —— 列定义 ——（種別/状態/計画出庫日/優先度/操作 走具名列插槽） ——
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'outboundNo', label: t('wms.outbound.fld.no'), kind: 'mono', width: 180 },
++  { prop: 'outboundType', label: t('wms.common.type'), width: 90 },
++  { prop: 'status', label: t('wms.common.status'), width: 110 },
++  { prop: 'workOrderNo', label: t('wms.outbound.fld.workOrderNo'), width: 160 },
++  { prop: 'webOrderNo', label: t('wms.outbound.fld.webOrderNo'), width: 160 },
++  { prop: 'customerName', label: t('wms.outbound.fld.customerName') },
++  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 80 },
++  { prop: 'plannedDate', label: t('wms.outbound.fld.plannedDate'), width: 110 },
++  { prop: 'priority', label: t('wms.outbound.fld.priority'), width: 80 },
++  { prop: '_action', label: t('wms.common.action'), width: 100 },
++])
++
++// —— 搜索字段 ——（对应原 el-form 6 个查询项） ——
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'outboundNo', label: t('wms.outbound.fld.no'), type: 'text' },
++  {
++    key: 'outboundType', label: t('wms.common.type'), type: 'select',
++    options: Object.entries(typeMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++  {
++    key: 'status', label: t('wms.common.status'), type: 'select',
++    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++  { key: 'workOrderNo', label: t('wms.outbound.fld.workOrderNo'), type: 'text' },
++  { key: 'webOrderNo', label: t('wms.outbound.fld.webOrderNo'), type: 'text' },
++  { key: 'customerCd', label: t('wms.outbound.fld.customerCd'), type: 'text' },
++])
++
++// —— 取数：包装 outboundOrderApi.search；后端返回扁平数组且无 total → 客户端分页 ——
++const PAGE_CAP = 500
++const fetchList: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const q: OutboundOrderSearchQuery = { pageSize: PAGE_CAP }
++  if (f.outboundNo) q.outboundNo = String(f.outboundNo)
++  if (f.outboundType !== undefined && f.outboundType !== '') q.outboundType = Number(f.outboundType)
++  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
++  if (f.workOrderNo) q.workOrderNo = String(f.workOrderNo)
++  if (f.webOrderNo) q.webOrderNo = String(f.webOrderNo)
++  if (f.customerCd) q.customerCd = String(f.customerCd)
++  const res = await outboundOrderApi.search(q)
++  const all = res.data || []
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
++// —— 导航 / 桥接 ——
+ function goCreate() { router.push({ path: '/wms/outbound-order', query: { mode: 'new' } }) }
+ function goEdit(row: OutboundOrder) { router.push({ path: '/wms/outbound-order', query: { no: row.outboundNo } }) }
+ 
+ async function onBridgeWo() {
+   if (!bridgeWoNo.value) return
+   bridging.value = true
+   try {
+     const res = await outboundOrderApi.fromWorkOrder(bridgeWoNo.value)
+     ElMessage.success(t('wms.outbound.bridge.expanded', { no: res.data.outboundNo }))
+     bridgeDialog.value = false
+@@ -148,18 +170,11 @@ async function onBridgeOrder() {
+   if (!bridgeOrderNo.value) return
+   bridging.value = true
+   try {
+     const res = await outboundOrderApi.fromOrder(bridgeOrderNo.value)
+     ElMessage.success(t('wms.outbound.bridge.expanded', { no: res.data.outboundNo }))
+     bridgeDialog.value = false
+     bridgeOrderNo.value = ''
+     router.push({ path: '/wms/outbound-order', query: { no: res.data.outboundNo } })
+   } finally { bridging.value = false }
+ }
+-
+-onMounted(reload)
+ </script>
+-
+-<style scoped>
+-.wms-outbound-list { padding: 16px; }
+-.search-card { margin-bottom: 12px; }
+-</style>
+diff --git a/cp6.web/vitest.config.ts b/cp6.web/vitest.config.ts
+index 6f65ce2..15e29f9 100644
+--- a/cp6.web/vitest.config.ts
++++ b/cp6.web/vitest.config.ts
+@@ -1,14 +1,16 @@
+ import { fileURLToPath, URL } from 'node:url'
+ import { defineConfig } from 'vitest/config'
++import vue from '@vitejs/plugin-vue'
+ 
+ export default defineConfig({
++  plugins: [vue()],
+   resolve: {
+     alias: {
+       '@': fileURLToPath(new URL('./src', import.meta.url)),
+     },
+   },
+   test: {
+     environment: 'jsdom',
+     include: ['src/**/*.{test,spec}.ts'],
+   },
+ })
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index c3902ec..a0b1527 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -594,10 +594,46 @@ describe('CpListPage', () => {
+ 
+ ## 模板缺口（试点与迁移中回填）
+ 
+ （初始为空；发现 CpListPage/CpFormDialog 覆盖不了的形态时记录于此并先扩模板）
+ 
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
++
++## 模板缺口（Task 11 试点复盘）
++
++第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
++
++1. **total 不外露 → PageShell 计数 pill 无法接线**（本次影响最大）。
++   - 页面需要：mockup 头部「28 单」计数 pill（CpPageShell `:count`）。
++   - 模板缺：CpListPage 内部持有 `total` 但既不 emit 也不暴露，父级 CpPageShell 拿不到值，只能省略 `:count`。
++   - 建议契约扩展：CpListPage 增 `@total-change(n:number)`（或 `v-model:total` / `#count` 作用域插槽），让业务页把总数回填到 PageShell。本次为遵守「不擅改已评审组件」而省略计数 pill，记为缺口而非页内 hack。
++
++2. **ListColumn / 表格级配置缺字段：`minWidth`、`overflowTooltip`、`fixed`、`highlight-current-row`**。
++   - 页面需要：客先名列原为 `min-width:160 + show-overflow-tooltip`（长客户名省略号 + 悬浮全文）；操作列原为 `fixed="right"`（横向滚动时行按钮钉在右侧）；表格原有 `highlight-current-row`（点击行高亮当前行）。
++   - 模板缺：ListColumn 仅有 `width`，无最小宽 / 无溢出 tooltip / 无 `fixed`；CpListPage 也不透传表格级 `highlight-current-row`。迁移后这三项行为丢失（undocumented behavior change，本次试点复盘补记）：横向滚动时操作按钮不再钉住、当前行不再高亮。
++   - 建议契约扩展：ListColumn 增 `minWidth?: number`、`overflowTooltip?: boolean`、`fixed?: 'left' | 'right'`，透传 el-table-column 的 `min-width` / `show-overflow-tooltip` / `fixed`；CpListPage 增 `highlightCurrentRow?: boolean`（或直接默认开启）透传 el-table。
++
++3. **kind:'tag' 仅认「已是 CpTag 状态词」的原始值，码值状态列仍需自绘插槽**。
++   - 页面需要：区分 / ステータス / 優先度 三列是数字码（0..9），要「码→i18n 文案」+「码→语义 tone」两步映射。
++   - 模板缺：kind:'tag' 直接把单元格原值当 CpTag `status`，对数字码既显不出文案也命不中 tone；只能改用 `col-<prop>` 插槽 + `<CpTag :tone>` 自绘（功能已保全，但每个码值列都要重复样板）。
++   - 建议契约扩展：ListColumn 增可选 `map?: (val, row) => { label: string; tone?: Tone }`（或 `valueMap` 字典），让码值状态/枚举列声明式着色，免去逐列插槽。
++
++4. **CpTag 文本在窄列内换行**（小视觉缺陷）。
++   - 现象：区分列 90px / 状态列 110px 下，「ピッキング」被折成「ピッキン グ」，pill 竖向撑高。
++   - 模板缺：CpTag 未设 `white-space:nowrap`。
++   - 建议：CpTag `.cp-tag` 加 `white-space:nowrap`（纯样式微调，不改契约）。
++
++5. **数据源无 total，ListFetch 只能客户端分页**（记录而非模板缺口——受「不改后端/API 契约」约束）。
++   - 现象：`outboundOrderApi.search` 返回扁平数组无总数，而 ListFetch 契约要求 `{ rows, total }`。
++   - 适配：fetch 包装以 `pageSize:500` 取一批，`total = 数组长度`，按 page/size 客户端切片（真栈验证 37 条 → 20/页 2 页、翻页正确）。
++   - 后续：待后端补 `WmsPaged<T>`（total/page/pageSize 已有类型）后，fetch 包装可直接透传 page/size 做服务端分页；无需改模板。
++
++6. **CpFilterBar 按钮文案硬编码中文 → i18n 回归**（Important，评审补记）。
++   - 页面需要：原页面查询/重置按钮走 `t('wms.common.search')` 等词条，随语言切换；默认语言为 ja。
++   - 模板缺：CpFilterBar 的「查询 / 重置 / 展开更多(收起)」为硬编码中文（CpFilterBar.vue:111-113），迁移后 ja 默认语言下这三个按钮只显示中文——相对原页面是 i18n 回归。
++   - 建议契约扩展：CpFilterBar 按钮文案支持 i18n——组件内改用 `$t`（约定词条 key，如 `common.search` / `common.reset` / `common.expandMore`）或增 `labels?: { search?; reset?; expand?; collapse? }` props；模板修复后本页无需改动。Milestone C 批量迁移前应优先修此项，否则每个迁移页都会引入同样回归。
++
++模板本次「够用」的原因：CpListPage 的 `col-<prop>` 具名插槽是逃生舱——凡 kind 表达不了的列（码值 tag、日期截断、行操作按钮、自定义 tone）都能落到插槽里保功能，因此上述缺口都不是阻塞项，而是「省样板 / 补计数」的契约增强。

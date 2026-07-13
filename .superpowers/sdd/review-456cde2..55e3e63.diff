@@ -1,0 +1,559 @@
+# Review package: 456cde2..55e3e63
+
+## Commits
+55e3e63 refactor(ui): OA 迁移批次4——Designer流程设计器族8文件token化
+
+## Files changed
+ cp6.web/src/views/oa/designer/DesignerCanvas.vue   | 39 +++++++++++++---------
+ cp6.web/src/views/oa/designer/DesignerView.vue     | 12 +++----
+ .../src/views/oa/designer/EdgePropertyPanel.vue    |  6 ++--
+ .../src/views/oa/designer/NodePropertyPanel.vue    | 19 ++++++-----
+ .../src/views/oa/designer/nodes/ApprovalNode.vue   | 12 +++----
+ cp6.web/src/views/oa/designer/nodes/EndNode.vue    | 10 +++---
+ .../src/views/oa/designer/nodes/GatewayNode.vue    |  8 ++---
+ cp6.web/src/views/oa/designer/nodes/StartNode.vue  | 10 +++---
+ 8 files changed, 62 insertions(+), 54 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/oa/designer/DesignerCanvas.vue b/cp6.web/src/views/oa/designer/DesignerCanvas.vue
+index 7c13322..7aca701 100644
+--- a/cp6.web/src/views/oa/designer/DesignerCanvas.vue
++++ b/cp6.web/src/views/oa/designer/DesignerCanvas.vue
+@@ -339,21 +339,21 @@ function focusNode(nodeId: string) {
+         <div class="palette-label">{{ t('oa.designer.palette') }}</div>
+ 
+         <!-- Palette node types -->
+         <div
+           v-for="item in NODE_PALETTE"
+           :key="item.type"
+           class="palette-item"
+           draggable="true"
+           @dragstart="onPaletteDragStart($event, item.type)"
+         >
+-          <span class="palette-dot" :style="{ background: item.color }" />
++          <span class="palette-dot" :class="`dot-${item.type}`" />
+           {{ item.label }}
+         </div>
+       </div>
+ 
+       <!-- VueFlow canvas wrapper -->
+       <div
+         ref="vfWrapperRef"
+         class="canvas-flow-wrap"
+         @dragover="onCanvasDragOver"
+         @drop="onCanvasDrop"
+@@ -398,110 +398,117 @@ function focusNode(nodeId: string) {
+   flex-direction: column;
+   height: 100%;
+   min-height: 0;
+ }
+ 
+ .canvas-toolbar {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   padding: 6px 12px;
+-  background: #fff;
+-  border-bottom: 1px solid #e4e7ed;
++  background: var(--cp-card);
++  border-bottom: 1px solid var(--cp-line);
+   flex-shrink: 0;
+ }
+ 
+ .canvas-body {
+   display: flex;
+   flex: 1;
+   min-height: 0;
+   overflow: hidden;
+ }
+ 
+ .canvas-palette {
+   width: 160px;
+   flex-shrink: 0;
+-  background: #fafafa;
+-  border-right: 1px solid #e4e7ed;
++  background: var(--cp-bg-th);
++  border-right: 1px solid var(--cp-line);
+   display: flex;
+   flex-direction: column;
+   gap: 4px;
+   padding: 8px 6px;
+   overflow-y: auto;
+ }
+ 
+ .palette-search {
+   margin-bottom: 6px;
+ }
+ 
+ .search-results {
+   margin-top: 4px;
+-  background: #fff;
+-  border: 1px solid #dcdfe6;
+-  border-radius: 4px;
++  background: var(--cp-card);
++  border: 1px solid var(--cp-line);
++  border-radius: var(--cp-r-sm);
+   max-height: 120px;
+   overflow-y: auto;
+ }
+ 
+ .search-result-item {
+   padding: 4px 8px;
+   cursor: pointer;
+   font-size: 12px;
+   display: flex;
+   flex-direction: column;
+ }
+ .search-result-item:hover {
+-  background: #f0f9ff;
++  background: var(--cp-bg-hover);
+ }
+ .sr-id {
+-  color: #909399;
++  color: var(--cp-muted);
+   font-size: 11px;
+ }
+ .sr-name {
+-  color: #333;
++  color: var(--cp-text);
+ }
+ 
+ .palette-label {
+   font-size: 11px;
+-  color: #909399;
++  color: var(--cp-muted);
+   padding: 2px 4px;
+   font-weight: 600;
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+ }
+ 
+ .palette-item {
+   display: flex;
+   align-items: center;
+   gap: 6px;
+   padding: 6px 8px;
+-  border: 1px solid #e4e7ed;
+-  border-radius: 4px;
+-  background: #fff;
++  border: 1px solid var(--cp-line);
++  border-radius: var(--cp-r-sm);
++  background: var(--cp-card);
+   cursor: grab;
+   font-size: 12px;
+   user-select: none;
+   transition: box-shadow 0.15s;
+ }
+ .palette-item:hover {
+-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
++  box-shadow: var(--cp-shadow-1);
+ }
+ .palette-item:active {
+   cursor: grabbing;
+ }
+ 
+ .palette-dot {
+   width: 10px;
+   height: 10px;
+   border-radius: 50%;
+   flex-shrink: 0;
+ }
++/* Palette legend swatches — node-type semantic colors, kept in lockstep
++   with the rendered node borders (StartNode/ApprovalNode/GatewayNode/EndNode). */
++.dot-start { background: var(--cp-ok); }
++.dot-approval { background: var(--cp-info); }
++.dot-parallelSplit,
++.dot-parallelJoin { background: var(--cp-warn); }
++.dot-end { background: var(--cp-muted); }
+ 
+ .canvas-flow-wrap {
+   flex: 1;
+   min-width: 0;
+   min-height: 0;
+   position: relative;
+ }
+ 
+ /* VueFlow fills the wrapper */
+ .canvas-flow-wrap :deep(.vue-flow) {
+diff --git a/cp6.web/src/views/oa/designer/DesignerView.vue b/cp6.web/src/views/oa/designer/DesignerView.vue
+index 66e5c72..8311e25 100644
+--- a/cp6.web/src/views/oa/designer/DesignerView.vue
++++ b/cp6.web/src/views/oa/designer/DesignerView.vue
+@@ -352,54 +352,54 @@ function doValidateClick() { doValidate() }
+     </el-dialog>
+   </div>
+ </template>
+ 
+ <style scoped>
+ .designer-view {
+   display: flex;
+   flex-direction: column;
+   height: calc(100vh - 84px);   /* subtract app header */
+   min-height: 0;
+-  background: #f5f7fa;
++  background: var(--cp-bg);
+ }
+ 
+ .designer-toolbar {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   flex-wrap: wrap;
+   padding: 8px 12px;
+-  background: #fff;
+-  border-bottom: 1px solid #e4e7ed;
++  background: var(--cp-card);
++  border-bottom: 1px solid var(--cp-line);
+   flex-shrink: 0;
+ }
+ 
+ .designer-main {
+   display: flex;
+   flex: 1;
+   min-height: 0;
+   overflow: hidden;
+ }
+ 
+ .designer-canvas-wrap {
+   flex: 1;
+   min-width: 0;
+   min-height: 0;
+   overflow: hidden;
+ }
+ 
+ .designer-right-panel {
+   width: 280px;
+   flex-shrink: 0;
+-  border-left: 1px solid #e4e7ed;
+-  background: #fff;
++  border-left: 1px solid var(--cp-line);
++  background: var(--cp-card);
+   overflow-y: auto;
+ }
+ 
+ .panel-hint {
+   padding: 24px 16px;
+-  color: #909399;
++  color: var(--cp-muted);
+   font-size: 13px;
+   text-align: center;
+   line-height: 1.6;
+ }
+ </style>
+diff --git a/cp6.web/src/views/oa/designer/EdgePropertyPanel.vue b/cp6.web/src/views/oa/designer/EdgePropertyPanel.vue
+index 8f7cebf..1a80d06 100644
+--- a/cp6.web/src/views/oa/designer/EdgePropertyPanel.vue
++++ b/cp6.web/src/views/oa/designer/EdgePropertyPanel.vue
+@@ -122,31 +122,31 @@ async function searchCcUsers(kw: string) {
+ .edge-prop-panel {
+   padding: 8px;
+   overflow-y: auto;
+   height: 100%;
+   box-sizing: border-box;
+ }
+ 
+ .panel-title {
+   font-size: 13px;
+   font-weight: 600;
+-  color: #303133;
++  color: var(--cp-ink);
+   padding: 4px 0 8px;
+-  border-bottom: 1px solid #e4e7ed;
++  border-bottom: 1px solid var(--cp-line);
+   margin-bottom: 8px;
+ }
+ 
+ .prop-form {
+   padding: 4px 2px 0;
+ }
+ 
+ .prop-form :deep(.el-form-item) {
+   margin-bottom: 10px;
+ }
+ 
+ .prop-form :deep(.el-form-item__label) {
+   font-size: 12px;
+-  color: #606266;
++  color: var(--cp-text);
+   padding-bottom: 2px;
+   line-height: 1.4;
+ }
+ </style>
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+index af6a881..94a5113 100644
+--- a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+@@ -1,15 +1,16 @@
+ <script setup lang="ts">
+ import { ref, computed, watch, nextTick } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { userApi } from '@/api/sys/user'
+ import { roleApi } from '@/api/sys/role'
++import CpTag from '@/components/base/CpTag.vue'
+ import type { SchemaNode } from './designerModel'
+ 
+ const props = defineProps<{ node: SchemaNode }>()
+ const emit = defineEmits<{ update: [patch: Partial<SchemaNode>] }>()
+ const { t } = useI18n()
+ 
+ // ── Local copy (mirrors props.node; changes emit 'update') ────────
+ function cloneNode(n: SchemaNode): SchemaNode {
+   return {
+     ...n,
+@@ -171,21 +172,21 @@ async function searchCcUsers(kw: string) {
+         <el-form label-position="top" size="small" class="prop-form">
+           <el-form-item :label="t('oa.designer.stateName')">
+             <el-input v-model="local.name" />
+           </el-form-item>
+ 
+           <el-form-item :label="t('oa.designer.stateCode')">
+             <el-input v-model="local.code" />
+           </el-form-item>
+ 
+           <el-form-item :label="t('oa.designer.nodeType')">
+-            <el-tag type="info" size="small">{{ local.type }}</el-tag>
++            <CpTag tone="muted">{{ local.type }}</CpTag>
+           </el-form-item>
+ 
+           <!-- approval-specific fields (single-stage; hidden when 串簽 enabled) -->
+           <template v-if="isApproval && !stageEnabled">
+             <el-form-item :label="t('oa.designer.approverType')">
+               <el-select v-model="local.approverStrategy" style="width: 100%" clearable>
+                 <el-option value="DirectManager" :label="t('oa.designer.strategy.directManager')" />
+                 <el-option value="DeptLeader"   :label="t('oa.designer.strategy.deptLeader')" />
+                 <el-option value="Role"         :label="t('oa.designer.strategy.role')" />
+                 <el-option value="Specified"    :label="t('oa.designer.strategy.specified')" />
+@@ -569,65 +570,65 @@ async function searchCcUsers(kw: string) {
+ .node-prop-panel {
+   padding: 8px;
+   overflow-y: auto;
+   height: 100%;
+   box-sizing: border-box;
+ }
+ 
+ .panel-title {
+   font-size: 13px;
+   font-weight: 600;
+-  color: #303133;
++  color: var(--cp-ink);
+   padding: 4px 0 8px;
+-  border-bottom: 1px solid #e4e7ed;
++  border-bottom: 1px solid var(--cp-line);
+   margin-bottom: 8px;
+ }
+ 
+ .prop-form {
+   padding: 4px 2px 0;
+ }
+ 
+ /* Compact form items inside the panel */
+ .prop-form :deep(.el-form-item) {
+   margin-bottom: 10px;
+ }
+ 
+ .prop-form :deep(.el-form-item__label) {
+   font-size: 12px;
+-  color: #606266;
++  color: var(--cp-text);
+   padding-bottom: 2px;
+   line-height: 1.4;
+ }
+ 
+ /* 串簽档位卡片 */
+ .stage-card {
+-  border: 1px solid #e4e7ed;
+-  border-radius: 4px;
++  border: 1px solid var(--cp-line);
++  border-radius: var(--cp-r-sm);
+   padding: 8px 10px 4px;
+   margin-bottom: 8px;
+-  background: #fafafa;
++  background: var(--cp-bg-th);
+ }
+ 
+ .stage-card-header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 6px;
+ }
+ 
+ .stage-index-label {
+   font-size: 12px;
+   font-weight: 600;
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ 
+ .stage-card-actions {
+   display: flex;
+   gap: 2px;
+ }
+ 
+ .stage-switch-label {
+   margin-left: 8px;
+   font-size: 12px;
+-  color: #606266;
++  color: var(--cp-text);
+ }
+ </style>
+diff --git a/cp6.web/src/views/oa/designer/nodes/ApprovalNode.vue b/cp6.web/src/views/oa/designer/nodes/ApprovalNode.vue
+index 4c3da32..e642c2b 100644
+--- a/cp6.web/src/views/oa/designer/nodes/ApprovalNode.vue
++++ b/cp6.web/src/views/oa/designer/nodes/ApprovalNode.vue
+@@ -16,34 +16,34 @@ type NodeData = {
+     <div class="node-label">{{ (props.data as NodeData)?.name || '審批' }}</div>
+     <div v-if="(props.data as NodeData)?.approverStrategy" class="node-strategy">
+       {{ (props.data as NodeData).approverStrategy }}
+     </div>
+     <Handle type="source" :position="Position.Bottom" />
+   </div>
+ </template>
+ 
+ <style scoped>
+ .vf-node-approval {
+-  background: #ecf5ff;
+-  border: 2px solid #409eff;
+-  border-radius: 6px;
++  background: var(--cp-info-bg);
++  border: 2px solid var(--cp-info);
++  border-radius: var(--cp-r-sm);
+   padding: 8px 16px;
+   min-width: 130px;
+   text-align: center;
+   font-size: 13px;
+-  color: #333;
++  color: var(--cp-text);
+   cursor: default;
+ }
+ .vf-node-approval.vf-node--selected {
+-  box-shadow: 0 0 0 2px #409eff80;
++  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-info) 50%, transparent);
+ }
+ .node-label {
+   font-weight: 500;
+   white-space: nowrap;
+ }
+ .node-strategy {
+   font-size: 11px;
+-  color: #409eff;
++  color: var(--cp-info);
+   margin-top: 2px;
+   white-space: nowrap;
+ }
+ </style>
+diff --git a/cp6.web/src/views/oa/designer/nodes/EndNode.vue b/cp6.web/src/views/oa/designer/nodes/EndNode.vue
+index 51f81f6..a7ec642 100644
+--- a/cp6.web/src/views/oa/designer/nodes/EndNode.vue
++++ b/cp6.web/src/views/oa/designer/nodes/EndNode.vue
+@@ -7,28 +7,28 @@ const props = defineProps<NodeProps>()
+ 
+ <template>
+   <div :class="['vf-node-end', { 'vf-node--selected': props.selected }]">
+     <Handle type="target" :position="Position.Top" />
+     <div class="node-label">{{ (props.data as Record<string, unknown>)?.name as string || '結束' }}</div>
+   </div>
+ </template>
+ 
+ <style scoped>
+ .vf-node-end {
+-  background: #f4f4f5;
+-  border: 2px solid #909399;
+-  border-radius: 20px;
++  background: var(--cp-line-soft);
++  border: 2px solid var(--cp-muted);
++  border-radius: var(--cp-r-xl);
+   padding: 8px 20px;
+   min-width: 120px;
+   text-align: center;
+   font-size: 13px;
+-  color: #333;
++  color: var(--cp-text);
+   cursor: default;
+ }
+ .vf-node-end.vf-node--selected {
+-  box-shadow: 0 0 0 2px #90939980;
++  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-muted) 50%, transparent);
+ }
+ .node-label {
+   font-weight: 500;
+   white-space: nowrap;
+ }
+ </style>
+diff --git a/cp6.web/src/views/oa/designer/nodes/GatewayNode.vue b/cp6.web/src/views/oa/designer/nodes/GatewayNode.vue
+index 7794def..a61588b 100644
+--- a/cp6.web/src/views/oa/designer/nodes/GatewayNode.vue
++++ b/cp6.web/src/views/oa/designer/nodes/GatewayNode.vue
+@@ -22,30 +22,30 @@ type NodeData = {
+ 
+ <style scoped>
+ .vf-node-gateway-wrap {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   background: transparent;
+   cursor: default;
+ }
+ .vf-node-gateway-wrap.vf-node--selected .vf-node-gateway {
+-  box-shadow: 0 0 0 2px #e6a23c80;
++  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-warn) 50%, transparent);
+ }
+ .vf-node-gateway {
+   width: 60px;
+   height: 60px;
+-  background: #fdf6ec;
+-  border: 2px solid #e6a23c;
++  background: var(--cp-warn-bg);
++  border: 2px solid var(--cp-warn);
+   transform: rotate(45deg);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+ }
+ .gw-label {
+   transform: rotate(-45deg);
+   font-size: 11px;
+   font-weight: 500;
+-  color: #e6a23c;
++  color: var(--cp-warn);
+   white-space: nowrap;
+ }
+ </style>
+diff --git a/cp6.web/src/views/oa/designer/nodes/StartNode.vue b/cp6.web/src/views/oa/designer/nodes/StartNode.vue
+index 3366462..f880ae6 100644
+--- a/cp6.web/src/views/oa/designer/nodes/StartNode.vue
++++ b/cp6.web/src/views/oa/designer/nodes/StartNode.vue
+@@ -7,28 +7,28 @@ const props = defineProps<NodeProps>()
+ 
+ <template>
+   <div :class="['vf-node-start', { 'vf-node--selected': props.selected }]">
+     <div class="node-label">{{ (props.data as Record<string, unknown>)?.name as string || '填單(发起)' }}</div>
+     <Handle type="source" :position="Position.Bottom" />
+   </div>
+ </template>
+ 
+ <style scoped>
+ .vf-node-start {
+-  background: #f0faf0;
+-  border: 2px solid #67c23a;
+-  border-radius: 20px;
++  background: var(--cp-ok-bg);
++  border: 2px solid var(--cp-ok);
++  border-radius: var(--cp-r-xl);
+   padding: 8px 20px;
+   min-width: 120px;
+   text-align: center;
+   font-size: 13px;
+-  color: #333;
++  color: var(--cp-text);
+   cursor: default;
+ }
+ .vf-node-start.vf-node--selected {
+-  box-shadow: 0 0 0 2px #67c23a80;
++  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-ok) 50%, transparent);
+ }
+ .node-label {
+   font-weight: 500;
+   white-space: nowrap;
+ }
+ </style>

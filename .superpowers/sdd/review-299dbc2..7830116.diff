@@ -1,0 +1,168 @@
+# Review package: 299dbc2..HEAD
+
+## Commits
+7830116 fix(ui): WMS批次1修正——Warehouse/StockTake分页切片/qty必填星号/缺口#13补记
+
+## Files changed
+ cp6.web/src/views/wms/CrossDockView.vue         | 4 +++-
+ cp6.web/src/views/wms/StockTakeListView.vue     | 5 +++--
+ cp6.web/src/views/wms/WarehouseListView.vue     | 5 +++--
+ docs/superpowers/plans/2026-07-04-ui-restyle.md | 5 +++++
+ 4 files changed, 14 insertions(+), 5 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/wms/CrossDockView.vue b/cp6.web/src/views/wms/CrossDockView.vue
+index 21e4f47..77da871 100644
+--- a/cp6.web/src/views/wms/CrossDockView.vue
++++ b/cp6.web/src/views/wms/CrossDockView.vue
+@@ -38,21 +38,21 @@
+       :submit="onSave"
+       :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
+       @saved="reloadKey++"
+     >
+       <el-form-item :label="t('wms.common.product')" prop="productCd">
+         <el-input v-model="form.productCd" maxlength="20" />
+       </el-form-item>
+       <el-form-item :label="t('wms.common.productName')">
+         <el-input v-model="form.productName" maxlength="100" />
+       </el-form-item>
+-      <el-form-item :label="t('wms.common.qty')">
++      <el-form-item :label="t('wms.common.qty')" prop="qty">
+         <el-input-number v-model="form.qty" :min="0" :precision="2" controls-position="right" style="width: 100%" />
+       </el-form-item>
+       <el-form-item :label="t('wms.common.warehouse')" prop="warehouseCd">
+         <el-input v-model="form.warehouseCd" maxlength="10" />
+       </el-form-item>
+       <el-form-item :label="t('wms.xdock.fld.tempLoc')" prop="tempLocationCd">
+         <el-input v-model="form.tempLocationCd" maxlength="30" />
+       </el-form-item>
+       <el-form-item :label="t('wms.common.lot')">
+         <el-input v-model="form.lotNo" placeholder="auto: XD<date>-<seq>" maxlength="30" />
+@@ -139,20 +139,22 @@ const fetchList: ListFetch = async ({ page, size, filters }) => {
+   return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
+ // —— 新建对话框 ——
+ const dialogVisible = ref(false)
+ const form = reactive<CrossDockOrder>({
+   productCd: '', qty: 0, warehouseCd: '', tempLocationCd: '', lotNo: '', status: 0,
+ })
+ const rules = computed<FormRules>(() => ({
+   productCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++  // qty：原页有 required 视觉星号但无校验；按 Warehouse 先例补规则（星号还原 + 校验强化）
++  qty: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
+   warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+   tempLocationCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+ }))
+ 
+ function openCreate() {
+   Object.assign(form, {
+     productCd: '', productName: '', qty: 0, warehouseCd: '', tempLocationCd: '', lotNo: '',
+     fromDock: '', toDock: '', supplierCd: '', customerCd: '', remarks: '', status: 0,
+   })
+   dialogVisible.value = true
+diff --git a/cp6.web/src/views/wms/StockTakeListView.vue b/cp6.web/src/views/wms/StockTakeListView.vue
+index 70d995a..f6b8685 100644
+--- a/cp6.web/src/views/wms/StockTakeListView.vue
++++ b/cp6.web/src/views/wms/StockTakeListView.vue
+@@ -124,30 +124,31 @@ const searchFields = computed<FilterField[]>(() => [
+     key: 'stockTakeType', label: t('wms.common.type'), type: 'select',
+     options: Object.entries(typeMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+   },
+   {
+     key: 'status', label: t('wms.common.status'), type: 'select',
+     options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+   },
+   { key: 'targetWarehouseCd', label: t('wms.common.warehouse'), type: 'text' },
+ ])
+ 
+-const fetchList: ListFetch = async ({ filters }) => {
++const fetchList: ListFetch = async ({ page, size, filters }) => {
+   const f = filters as Record<string, unknown>
+   const q: StockTakeSearchQuery = { pageSize: 100 }
+   if (f.stockTakeNo) q.stockTakeNo = String(f.stockTakeNo)
+   if (f.stockTakeType !== undefined && f.stockTakeType !== '') q.stockTakeType = Number(f.stockTakeType)
+   if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
+   if (f.targetWarehouseCd) q.targetWarehouseCd = String(f.targetWarehouseCd)
+   const res = await stockTakeApi.search(q)
+   const all = res.data || []
+-  return { rows: all, total: all.length }
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
+ function goDetail(row: StockTake) {
+   router.push({ path: '/wms/stock-take', query: { no: row.stockTakeNo } })
+ }
+ 
+ // —— 計画作成对话框 ——
+ const planDialog = ref(false)
+ const planForm = reactive<StockTakePlanRequest>({
+   stockTakeType: 1,
+diff --git a/cp6.web/src/views/wms/WarehouseListView.vue b/cp6.web/src/views/wms/WarehouseListView.vue
+index 09c92ca..e5d1947 100644
+--- a/cp6.web/src/views/wms/WarehouseListView.vue
++++ b/cp6.web/src/views/wms/WarehouseListView.vue
+@@ -108,29 +108,30 @@ const filterLabels = computed(() => ({
+ 
+ const searchFields = computed<FilterField[]>(() => [
+   { key: 'warehouseCd', label: t('wms.warehouse.fld.cd'), type: 'text' },
+   {
+     key: 'warehouseType', label: t('wms.warehouse.fld.type'), type: 'select',
+     options: Object.entries(warehouseTypeMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+   },
+   { key: 'baseCd', label: t('wms.warehouse.fld.baseCd'), type: 'text' },
+ ])
+ 
+-const fetchList: ListFetch = async ({ filters }) => {
++const fetchList: ListFetch = async ({ page, size, filters }) => {
+   const f = filters as Record<string, unknown>
+   const q: { warehouseCd?: string; warehouseType?: number; baseCd?: string } = {}
+   if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
+   if (f.warehouseType !== undefined && f.warehouseType !== '') q.warehouseType = Number(f.warehouseType)
+   if (f.baseCd) q.baseCd = String(f.baseCd)
+   const res = await warehouseApi.search(q)
+   const all = res.data || []
+-  return { rows: all, total: all.length }
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
+ // —— 新建/編集对话框 ——
+ const dialogVisible = ref(false)
+ const form = reactive<Warehouse>({ warehouseCd: '', warehouseName: '', warehouseType: 1, allowNegative: false })
+ const dialogTitle = computed(() => (form.id ? t('wms.warehouse.dlg.edit') : t('wms.warehouse.dlg.create')))
+ const rules = computed<FormRules>(() => ({
+   warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+   warehouseName: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
+ }))
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 2719038..4aad7bb 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -613,20 +613,25 @@ describe('CpListPage', () => {
+ 11. **CpListPage 强制分页，无法关闭 → 全量勾选跨页失效**（Minor）。
+     - 现象：Expiry 原为单表 `max-height` 滚动（无分页），`type="selection"` 跨全量勾选后一括廃棄。CpListPage 始终渲染 pager 且无 `:paginated=false` 开关，勾选降为「当页范围」。
+     - 影响：数据完整性不受影响（概览指标在 fetch 包装内按全量结果计算）；仅跨页批量勾选丢失。廃棄为低频操作，可接受。
+     - 建议：CpListPage 增 `paginated?: boolean`（false 时隐藏 pager、fetch 传大 size）或 `pageSizes` 定制。
+ 
+ 12. **CpListPage 无命令式 `reload()` / 无外部刷新触发**（Important，影响 3 页）。
+     - 现象：CpListPage 仅在 mounted/search/reset/翻页/切卡内部 fetch，不 watch 任何外部信号，也未 `defineExpose`。而 Expiry(廃棄)、CrossDock(新建/実行/取消)、Warehouse(新建/編集/削除) 均需「页内 in-place 变更后刷新列表」（原页调用 `reload()`）。
+     - 代偿：父级持 `reloadKey` ref，`:key="reloadKey"` 绑定 CpListPage，变更成功后 `reloadKey++` 强制重挂载重查。**副作用**：重挂载会把 CpListPage 内部 `filters`（重置为 `{}`）与 `page`（重置为 1）清空 → 用户当前搜索/翻页上下文丢失（Warehouse 编辑后列表回到未筛选首页最明显）。数据正确性优先，故采用；记为已知降级。
+     - 建议：CpListPage `defineExpose({ reload })`（父级 `ref` 命令式刷新，保留 filters/page），或增 `refreshKey?: number` prop 内部 `watch` 触发 `load()`（不重置状态）。这是本批最值得回填的契约扩展。
+ 
++13. **FilterField 无单日期 `date` 类型**（Minor，批次1评审补记）。
++    - 现象：InboundOrderList 原「予定入荷 从/至」为两个**独立**单日期 `el-date-picker`（可只填一侧做开区间查询）。FilterField 仅 text/select/daterange，被并成一个 daterange —— 单侧开区间查询能力丢失（daterange 必须成对选起止）。
++    - 代偿：合并为 daterange（documented compensation，见批次1报告盘点）；fetch 内拆回 arrivalFrom/arrivalTo。
++    - 建议：FilterField 增 `type:'date'`（单日 el-date-picker 透传），恢复独立起/止字段形态。
++
+ （注：所有页 CpFilterBar `expand/collapse` 仍留组件内中文默认「展开更多/收起」、CpEmpty 空态仍为中文「暂无数据」——沿用 Task 11 试点约定，属 follow-up #6，非本批新增。）
+ 
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 

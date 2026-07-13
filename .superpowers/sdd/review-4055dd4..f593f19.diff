@@ -1,0 +1,236 @@
+# Review package: 4055dd4..HEAD
+
+## Commits
+f593f19 feat(wfs-service-task): C-T2 样例 dataWriteback executor
+
+## Files changed
+ .../Wf/Executors/SampleDataWritebackExecutor.cs    |  79 +++++++++++++++
+ CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs   | 107 +++++++++++++++++++++
+ CP6.WebApi/Program.cs                              |   1 +
+ 3 files changed, 187 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/Executors/SampleDataWritebackExecutor.cs b/CP6.Core/Services/Wf/Executors/SampleDataWritebackExecutor.cs
+new file mode 100644
+index 0000000..060e38b
+--- /dev/null
++++ b/CP6.Core/Services/Wf/Executors/SampleDataWritebackExecutor.cs
+@@ -0,0 +1,79 @@
++using System.Collections.Generic;
++using System.Globalization;
++
++namespace CP6.Core.Services.Wf.Executors;
++
++/// <summary>
++/// 样例 dataWriteback 执行器（§3.1 首个对设计器可见的回写动作，C-T2）。
++/// Key = "sampleWriteback"；Kind = "dataWriteback"；VisibleInDesigner = true（进服务目录，P1-6）。
++/// <para>
++/// 演示动作：读表单 <c>$.amount</c> × 1，写回流程变量 <c>writebackEcho</c>，
++/// 并发出幂等键 <c>writebackIdempotencyKey = wf-writeback-job-{JobId}</c>。
++/// 纯计算、无 I/O——真实业务回写（PO 确认 / 凭证过账等）由后续按需各加一个 executor，照本模板复制。
++/// </para>
++///
++/// <para><b>黄金模板三铁律（后续 dataWriteback executor 照此模板复制——架构审查 2026-07-05 裁定）</b></para>
++/// <para>
++/// 背景：sync 路径下 executor 与引擎共享同一 DbContext/事务；executor 半途抛异常时，
++/// 已改的追踪实体会被引擎外层 SaveChanges 一并提交（ServiceTaskNodeHandler.cs 入队降级路径不回滚脏改）。
++/// 因此：
++/// <list type="number">
++///   <item><b>先校验全部前置条件，再执行任何写操作</b>——校验失败直接
++///     <see cref="ServiceTaskResult.Fail(string)"/>，不留半截脏改。本例先解析 + 校验 amount，
++///     全部通过后才构造 OutputVars。</item>
++///   <item><b>幂等</b>——用 ctx 语义键（<c>JobId</c>/<c>InstanceId</c>）判重，重复执行结果一致。
++///     本例输出是输入的纯函数（amount × 1）且带 <c>wf-writeback-job-{JobId}</c> 幂等键，
++///     at-least-once 重投结果字节等价。</item>
++///   <item><b>绝不自行 <c>SaveChanges()</c>、不开独立事务、不发外部 HTTP</b>——落库交给引擎的原子接缝
++///     （引擎把 OutputVars 经 <see cref="ServiceVarsHelper.MergeOutputVars"/> 合并回 inst.VarsJson 后统一 SaveChanges）；
++///     外呼只属于 webApi kind 经 IWfConnector。</item>
++/// </list>
++/// 如需读 DB，注入 <c>CP6Context</c>（同 scoped，sync 路径原子前提，spec §4.5），但仍不得自行 SaveChanges。
++/// </para>
++/// </summary>
++public sealed class SampleDataWritebackExecutor : IServiceTaskExecutor
++{
++    public string Key               => "sampleWriteback";
++    public string Kind              => ServiceKind.DataWriteback;   // "dataWriteback"
++    public bool   VisibleInDesigner => true;                       // dataWriteback 动作进服务目录（P1-6）
++    public string DisplayName       => "样例数据回写";
++
++    /// <summary>
++    /// 读 <c>$.amount</c> × 1 → 写回 <c>writebackEcho</c>。纯计算，无 I/O。
++    /// 律1：先校验 amount 存在且为数值，任一不满足直接 Fail（不构造任何 OutputVars）。
++    /// </summary>
++    public System.Threading.Tasks.Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx)
++    {
++        // ── 律1：先校验全部前置条件，再执行任何写操作 ──────────────────────
++        var tplCtx = new ServiceTemplateCtx(
++            varsJson:   ctx.VarsJson,
++            actorId:    ctx.ActorId.ToString(),
++            jobId:      ctx.JobId.ToString(),
++            instanceId: ctx.InstanceId.ToString(),
++            nowUtcIso:  ctx.NowUtc.ToString("O"));
++
++        var amountRaw = ServiceVarsHelper.ResolveValue("$.amount", tplCtx);
++        if (string.IsNullOrWhiteSpace(amountRaw))
++            return Done(ServiceTaskResult.Fail("E-WF-019 缺少必填表单字段 amount，无法回写"));
++
++        if (!decimal.TryParse(amountRaw, NumberStyles.Number, CultureInfo.InvariantCulture, out var amount))
++            return Done(ServiceTaskResult.Fail($"E-WF-019 表单字段 amount 非数值:{amountRaw}"));
++
++        // ── 律2：幂等键（at-least-once 重投判重依据）─────────────────────────
++        var idempotencyKey = $"wf-writeback-job-{ctx.JobId}";
++
++        // ── 律3：只返回 OutputVars，绝不自行 SaveChanges / 开事务 / 发 HTTP ──
++        // 演示回写：amount × 1（换成真实业务计算即为下一个 executor）。
++        var writeback = amount * 1m;
++        var outputVars = new Dictionary<string, object?>
++        {
++            ["writebackEcho"]           = writeback,
++            ["writebackIdempotencyKey"] = idempotencyKey,
++        };
++
++        return Done(ServiceTaskResult.Ok(outputVars));
++    }
++
++    private static System.Threading.Tasks.Task<ServiceTaskResult> Done(ServiceTaskResult r)
++        => System.Threading.Tasks.Task.FromResult(r);
++}
+diff --git a/CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs b/CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs
+new file mode 100644
+index 0000000..8398b72
+--- /dev/null
++++ b/CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs
+@@ -0,0 +1,107 @@
++// CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs
++using System;
++using System.Collections.Generic;
++using System.Threading.Tasks;
++using CP6.Core.Services.Wf;
++using CP6.Core.Services.Wf.Executors;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++public class SampleDataWritebackExecutorTests
++{
++    private static ServiceTaskContext MakeCtx(Guid jobId, string? varsJson = null) =>
++        new ServiceTaskContext
++        {
++            InstanceId    = Guid.NewGuid(),
++            TokenId       = Guid.NewGuid(),
++            NodeId        = "n1",
++            StarterId     = Guid.NewGuid(),
++            JobId         = jobId,
++            AttemptNo     = 1,
++            ActorId       = Guid.Empty,
++            NowUtc        = new DateTime(2026, 6, 29, 0, 0, 0, DateTimeKind.Utc),
++            VarsJson      = varsJson,
++            ActionRefJson = null
++        };
++
++    // ── T1: 元数据（设计器可见的 dataWriteback 动作）────────────────────────
++    [Fact]
++    public void Metadata_Is_DataWriteback_Visible_SampleWriteback()
++    {
++        var executor = new SampleDataWritebackExecutor();
++        Assert.Equal("sampleWriteback", executor.Key);
++        Assert.Equal("dataWriteback", executor.Kind);
++        Assert.Equal(ServiceKind.DataWriteback, executor.Kind);
++        Assert.True(executor.VisibleInDesigner);
++        Assert.False(string.IsNullOrWhiteSpace(executor.DisplayName));
++    }
++
++    // ── T2: happy path — 读 $.amount × 1 写回 writebackEcho + 幂等键 ──────────
++    [Fact]
++    public async Task HappyPath_Writes_Echo_And_IdempotencyKey()
++    {
++        var jobId = Guid.NewGuid();
++        var ctx = MakeCtx(jobId, varsJson: "{\"amount\":100}");
++        var executor = new SampleDataWritebackExecutor();
++
++        var result = await executor.ExecuteAsync(ctx);
++
++        Assert.True(result.Success);
++        Assert.Null(result.Error);
++        Assert.NotNull(result.OutputVars);
++        Assert.True(result.OutputVars!.ContainsKey("writebackEcho"));
++        Assert.Equal("100", result.OutputVars["writebackEcho"]?.ToString());
++        Assert.Equal($"wf-writeback-job-{jobId}", result.OutputVars["writebackIdempotencyKey"]?.ToString());
++    }
++
++    // ── T3: 律2 幂等 — 同 ctx 重复执行结果字节等价 ─────────────────────────
++    [Fact]
++    public async Task Idempotent_RepeatedExecution_SameResult()
++    {
++        var jobId = Guid.NewGuid();
++        var ctx = MakeCtx(jobId, varsJson: "{\"amount\":42.5}");
++        var executor = new SampleDataWritebackExecutor();
++
++        var r1 = await executor.ExecuteAsync(ctx);
++        var r2 = await executor.ExecuteAsync(ctx);
++
++        Assert.True(r1.Success);
++        Assert.True(r2.Success);
++        Assert.Equal(r1.OutputVars!["writebackEcho"]?.ToString(), r2.OutputVars!["writebackEcho"]?.ToString());
++        Assert.Equal("42.5", r1.OutputVars["writebackEcho"]?.ToString());
++        Assert.Equal(
++            r1.OutputVars["writebackIdempotencyKey"]?.ToString(),
++            r2.OutputVars["writebackIdempotencyKey"]?.ToString());
++    }
++
++    // ── T4: 律1 先校验 — 缺 amount → Fail，不留半截脏改 ─────────────────────
++    [Fact]
++    public async Task MissingAmount_Fails_NoPartialWrite()
++    {
++        var ctx = MakeCtx(Guid.NewGuid(), varsJson: "{\"other\":1}");
++        var executor = new SampleDataWritebackExecutor();
++
++        var result = await executor.ExecuteAsync(ctx);
++
++        Assert.False(result.Success);
++        Assert.Null(result.OutputVars);
++        Assert.NotNull(result.Error);
++        Assert.Contains("E-WF-019", result.Error!);
++    }
++
++    // ── T5: 律1 先校验 — amount 非数值 → Fail ──────────────────────────────
++    [Fact]
++    public async Task NonNumericAmount_Fails()
++    {
++        var ctx = MakeCtx(Guid.NewGuid(), varsJson: "{\"amount\":\"abc\"}");
++        var executor = new SampleDataWritebackExecutor();
++
++        var result = await executor.ExecuteAsync(ctx);
++
++        Assert.False(result.Success);
++        Assert.Null(result.OutputVars);
++        Assert.NotNull(result.Error);
++        Assert.Contains("E-WF-019", result.Error!);
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 0e65393..2c5ea64 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -129,20 +129,21 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetReportService, CP6.Core.
+ builder.Services.AddScoped<CP6.Core.Services.Fin.FinSequenceService>();                                             // A5 BudgetService ctor 注入具体类型（已注册接口；此处补具体类使 DI 可直接解析）
+ 
+ // 4.0c OA(Wf) 阶段3 高级流程（章07）：超时扫描 + Worker（退回/加签/委派为 FlowEngine 自带方法）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Services.Wf.WfTimeoutService>();    // 章07 §4 超时扫描（remind/approve/reject/escalate）
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfServiceJobService, CP6.Core.Services.Wf.WfServiceJobService>();  // B-T2 服务任务异步底座扫描服务（spec §4.1）
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobScanWorker>();                          // B-T2 服务任务扫描 Worker（20s 周期，lease 抢占，v1 单实例）
+ // C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
++builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.SampleDataWritebackExecutor>(); // C-T2 样例 dataWriteback 执行器（设计器可见，黄金模板；纯计算回写，不落库）
+ 
+ // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IFlowAdminService, CP6.Core.Services.Oa.FlowAdminService>();
+ 
+ // 4.0e OA 信箱进阶（Phase C）
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IDelegateService, CP6.Core.Services.Oa.DelegateService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IFavoriteService, CP6.Core.Services.Oa.FavoriteService>();

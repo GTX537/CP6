@@ -1,0 +1,246 @@
+# Review package: 73bb4fa..a511e08
+
+## Commits
+a511e08 feat(space): Space 落地页（站点/楼层导航，消灭孤儿路由）
+
+## Files changed
+ cp6.web/src/views/space/SpaceHomeView.vue          | 118 +++++++++++++++++++++
+ .../views/space/__tests__/SpaceHomeView.spec.ts    | 105 ++++++++++++++++++
+ 2 files changed, 223 insertions(+)
+
+## Diff
+diff --git a/cp6.web/src/views/space/SpaceHomeView.vue b/cp6.web/src/views/space/SpaceHomeView.vue
+new file mode 100644
+index 0000000..96a0f6f
+--- /dev/null
++++ b/cp6.web/src/views/space/SpaceHomeView.vue
+@@ -0,0 +1,118 @@
++<!--
++  Space 落地页 —— 站点/楼层导航入口（Space 波2；消灭 3D 编辑器/浏览器/层叠视图三条孤儿 standalone 路由）。
++  范式=WmsDashboardView 的 CpStatCard 网格 + CpSectionHeader 卡片区（不套 el-card #header 插槽，改用普通 div，
++  便于单测直取——本页无表格）。数据：siteApi.list 拉全站点，再 Promise.all 各站点 floorApi.list 汇总楼层。
++  跳 standalone 页一律 named-push：space-viewer(params.siteId[,query.floorId]) / space-stacked / space-editor(params.floorId)。
++  无站点 → CpEmpty +「去创建站点」push /space/site（普通菜单路由，非 standalone）。
++  自写标签 cp-mono 须本组件补 scoped 类（SpaceSiteView 前车之鉴：slot 内 cp-mono 因 scoped 隔离而失样）。
++-->
++<template>
++  <div class="space-home">
++    <div class="stat-grid">
++      <CpStatCard :label="t('space.home.siteCount')" :value="sites.length" tone="brand" />
++      <CpStatCard :label="t('space.home.floorCount')" :value="floorCount" tone="brand" />
++    </div>
++
++    <template v-if="sites.length">
++      <div v-for="s in sites" :key="s.id" class="site-card">
++        <CpSectionHeader :title="s.siteName">
++          <span class="cp-mono site-code">{{ s.siteCode }}</span>
++          <template #extra>
++            <el-button link type="primary" size="small" @click="gotoViewer(s)">{{ t('space.home.viewer3d') }}</el-button>
++            <el-button link type="primary" size="small" @click="gotoStacked(s)">{{ t('space.home.stacked') }}</el-button>
++          </template>
++        </CpSectionHeader>
++
++        <div class="floor-body">
++          <div v-if="!(floorMap[s.id!] && floorMap[s.id!].length)" class="floor-empty">
++            {{ t('space.home.noFloor') }}
++          </div>
++          <div v-for="f in floorMap[s.id!]" :key="f.id" class="floor-row">
++            <span class="floor-label"><span class="cp-mono">L{{ f.level }}</span> {{ f.floorName }}</span>
++            <span class="floor-actions">
++              <el-button link type="primary" size="small" @click="gotoEditor(f)">{{ t('space.common.edit') }}</el-button>
++              <el-button link type="primary" size="small" @click="gotoFloorViewer(s, f)">{{ t('space.home.viewer3d') }}</el-button>
++            </span>
++          </div>
++        </div>
++      </div>
++    </template>
++
++    <CpEmpty v-else :text="t('space.home.empty')">
++      <template #action>
++        <el-button type="primary" @click="gotoCreateSite">{{ t('space.home.createSite') }}</el-button>
++      </template>
++    </CpEmpty>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { ref, reactive, computed, onMounted } from 'vue'
++import { useRouter } from 'vue-router'
++import { useI18n } from 'vue-i18n'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import type { SiteVO, FloorVO } from '@/types/space/scene'
++
++const { t } = useI18n()
++const router = useRouter()
++
++const sites = ref<SiteVO[]>([])
++const floorMap = reactive<Record<string, FloorVO[]>>({})
++const floorCount = computed(() => Object.values(floorMap).reduce((n, arr) => n + arr.length, 0))
++
++onMounted(async () => {
++  const res = await siteApi.list()
++  sites.value = res.data || []
++  // 全站点楼层并发拉取汇总（Promise.all 取简；站点数量级小，无分页压力）
++  const results = await Promise.all(sites.value.map((s) => floorApi.list(s.id!)))
++  sites.value.forEach((s, i) => { floorMap[s.id!] = results[i].data || [] })
++})
++
++// —— 导航：standalone 页一律 named-push（路径参数）——
++function gotoViewer(s: SiteVO) { router.push({ name: 'space-viewer', params: { siteId: s.id } }) }
++function gotoStacked(s: SiteVO) { router.push({ name: 'space-stacked', params: { siteId: s.id } }) }
++function gotoEditor(f: FloorVO) { router.push({ name: 'space-editor', params: { floorId: f.id } }) }
++function gotoFloorViewer(s: SiteVO, f: FloorVO) {
++  router.push({ name: 'space-viewer', params: { siteId: s.id }, query: { floorId: f.id } })
++}
++function gotoCreateSite() { router.push('/space/site') }
++</script>
++
++<style scoped>
++.space-home { padding: 16px; }
++
++.stat-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
++  gap: 12px;
++}
++
++.site-card {
++  margin-top: 12px;
++  background: var(--cp-card);
++  border-radius: var(--cp-r-lg);
++  box-shadow: var(--cp-shadow-1);
++  overflow: hidden;
++}
++.site-code { margin-right: 2px; }
++
++.floor-body { padding: 4px 20px 8px; }
++.floor-empty { padding: 16px 0; text-align: center; color: var(--cp-muted); font-size: var(--cp-fs-sm); }
++.floor-row {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  padding: 10px 0;
++  border-bottom: 1px solid var(--cp-line-soft);
++}
++.floor-row:last-child { border-bottom: none; }
++.floor-label { font-size: var(--cp-fs-sm); color: var(--cp-ink); font-weight: 700; }
++.floor-actions { display: flex; align-items: center; gap: 4px; }
++
++/* SpaceSiteView 前车之鉴：slot/自写标签内 cp-mono 因 scoped 隔离失样，本组件自补 */
++.cp-mono { font-weight: 800; color: var(--cp-brand-deep); font-size: var(--cp-fs-sm); }
++</style>
+diff --git a/cp6.web/src/views/space/__tests__/SpaceHomeView.spec.ts b/cp6.web/src/views/space/__tests__/SpaceHomeView.spec.ts
+new file mode 100644
+index 0000000..a682fac
+--- /dev/null
++++ b/cp6.web/src/views/space/__tests__/SpaceHomeView.spec.ts
+@@ -0,0 +1,105 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++import SpaceHomeView from '../SpaceHomeView.vue'
++import type { SiteVO, FloorVO } from '@/types/space/scene'
++
++// router.push 用稳定 mock（hoisted，供导航断言）
++const { push } = vi.hoisted(() => ({ push: vi.fn() }))
++
++// 站点/楼层 API 全 mock；vue-router 注入 stub（照 SpaceFloorView.spec 先例）
++vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
++vi.mock('@/api/space/floor', () => ({ floorApi: { list: vi.fn() } }))
++vi.mock('vue-router', () => ({ useRouter: () => ({ push }) }))
++
++const sites: SiteVO[] = [
++  { id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true },
++  { id: 's2', siteCode: 'OSK', siteName: '大阪DC', enable: true },
++]
++const floorsBySite: Record<string, FloorVO[]> = {
++  s1: [
++    { id: 'f1', siteId: 's1', level: 1, floorCode: 'FL1', floorName: '1階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++    { id: 'f2', siteId: 's1', level: 2, floorCode: 'FL2', floorName: '2階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++  ],
++  s2: [
++    { id: 'f3', siteId: 's2', level: 1, floorCode: 'FL1', floorName: '1F', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++  ],
++}
++
++function mountView() {
++  const i18n = createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
++  return mount(SpaceHomeView, { global: { plugins: [i18n] } })
++}
++
++function btnsByText(w: ReturnType<typeof mountView>, text: string) {
++  return w.findAll('el-button').filter((b) => b.text() === text)
++}
++
++describe('SpaceHomeView', () => {
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
++    vi.mocked(floorApi.list).mockImplementation((siteId: string) =>
++      Promise.resolve({ code: 0, message: '', data: floorsBySite[siteId] || [] }),
++    )
++  })
++
++  it('StatCard 数值汇总正确，站点卡片与楼层行渲染', async () => {
++    const w = mountView()
++    await flushPromises()
++
++    expect(siteApi.list).toHaveBeenCalled()
++    expect(floorApi.list).toHaveBeenCalledWith('s1')
++    expect(floorApi.list).toHaveBeenCalledWith('s2')
++
++    // StatCard×2：站点数=2 / 楼层数=全站点汇总=3
++    const cards = w.findAllComponents(CpStatCard)
++    expect(cards).toHaveLength(2)
++    expect(cards[0].props('value')).toBe(2)
++    expect(cards[1].props('value')).toBe(3)
++
++    // 站点卡片 + 楼层行
++    expect(w.text()).toContain('TKY')
++    expect(w.text()).toContain('東京DC')
++    expect(w.text()).toContain('OSK')
++    expect(w.text()).toContain('1階')
++    expect(w.text()).toContain('2階')
++    expect(w.text()).toContain('L1')
++  })
++
++  it('卡头/楼层行按钮 named-push 参数正确', async () => {
++    const w = mountView()
++    await flushPromises()
++
++    // 卡头「3D」→ space-viewer(params.siteId)；「全景」→ space-stacked(params.siteId)
++    for (const b of btnsByText(w, 'space.home.viewer3d')) await b.trigger('click')
++    for (const b of btnsByText(w, 'space.home.stacked')) await b.trigger('click')
++    // 楼层行「編集」→ space-editor(params.floorId)
++    for (const b of btnsByText(w, 'space.common.edit')) await b.trigger('click')
++
++    expect(push).toHaveBeenCalledWith({ name: 'space-viewer', params: { siteId: 's1' } })
++    expect(push).toHaveBeenCalledWith({ name: 'space-stacked', params: { siteId: 's1' } })
++    expect(push).toHaveBeenCalledWith({ name: 'space-editor', params: { floorId: 'f1' } })
++    // 楼层行「3D」携 query.floorId
++    expect(push).toHaveBeenCalledWith({ name: 'space-viewer', params: { siteId: 's1' }, query: { floorId: 'f1' } })
++  })
++
++  it('空态：无站点 → CpEmpty + 「去创建站点」push /space/site', async () => {
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: [] })
++    const w = mountView()
++    await flushPromises()
++
++    expect(w.findComponent(CpEmpty).exists()).toBe(true)
++    expect(w.text()).not.toContain('TKY')
++
++    const createBtns = btnsByText(w, 'space.home.createSite')
++    expect(createBtns.length).toBeGreaterThan(0)
++    await createBtns[0].trigger('click')
++    expect(push).toHaveBeenCalledWith('/space/site')
++  })
++})

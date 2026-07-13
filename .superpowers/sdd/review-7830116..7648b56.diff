@@ -1,0 +1,901 @@
+# Review package: 7830116..HEAD
+
+## Commits
+7648b56 feat(ui): 模板契约扩展二轮——FilterField date·number·valueFormat + CpListPage paginated·reload + 批次1回填
+
+## Files changed
+ cp6.web/src/components/templates/CpFilterBar.vue   | 37 ++++++++++-
+ cp6.web/src/components/templates/CpListPage.vue    | 21 +++++--
+ .../templates/__tests__/CpFilterBar.spec.ts        | 73 ++++++++++++++++++++++
+ .../templates/__tests__/CpListPage.spec.ts         | 52 +++++++++++++++
+ cp6.web/src/views/wms/CrossDockView.vue            | 14 +++--
+ cp6.web/src/views/wms/ExpiryView.vue               | 20 +++---
+ cp6.web/src/views/wms/InboundOrderListView.vue     | 22 +++----
+ cp6.web/src/views/wms/WarehouseListView.vue        | 13 ++--
+ docs/superpowers/plans/2026-07-04-ui-restyle.md    | 10 +--
+ 9 files changed, 216 insertions(+), 46 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/components/templates/CpFilterBar.vue b/cp6.web/src/components/templates/CpFilterBar.vue
+index e62529d..031b942 100644
+--- a/cp6.web/src/components/templates/CpFilterBar.vue
++++ b/cp6.web/src/components/templates/CpFilterBar.vue
+@@ -1,17 +1,21 @@
+ <!--
+   CpFilterBar —— 列表页查询区（设计系统 §9.2）。
+-  按 fields 声明渲染一排查询字段（text / select / daterange，控件观感由 Element Plus overrides 保证），
++  按 fields 声明渲染一排查询字段（text / select / date / daterange / number，控件观感由 Element Plus overrides 保证），
+   右侧提供「展开更多 / 重置 / 查询」。字段超过 4 个时自动折叠，多出的字段隐藏在「展开更多」后。
+ 
+   Props:
+     - fields: FilterField[]              字段声明表（见 FilterField）。
++        type:'date'      单日 el-date-picker 透传（独立起/止字段可各自留空做单侧开区间查询）。
++        type:'number'    el-input-number 透传，min/max/step 可选；model 值为 number | undefined。
++        valueFormat?     date / daterange 透传 el-date-picker value-format（如 'YYYY-MM-DD' → model 为字符串）。
++                         opt-in：不传保持 el-date-picker 默认（返回 Date 对象）——不设默认值，避免静默改变既有消费者的返回类型。
+     - modelValue: Record<string,unknown> 查询条件对象；键为 field.key，值为该字段当前值。
+     - labels?: FilterBarLabels           按钮文案覆盖（search/reset/expand/collapse）；缺省中文，供业务侧接 i18n。
+   说明：daterange 字段的 el-date-picker 忽略单个 placeholder，故把 field.placeholder 同时接到
+         start-placeholder / end-placeholder（起止用同一串），保证占位提示可见。
+   Emits:
+     - update:modelValue (next)  任一字段变更/重置时抛出「全新对象」（不原地修改入参）。
+     - search                    点击「查询」时抛出（无载荷；父级读自身 model）。
+     - reset                     点击「重置」时抛出（清空 model 后一并触发）。
+ 
+   使用示例：
+@@ -21,36 +25,42 @@
+         { key:'q',    label:'单号', type:'text', placeholder:'搜索单号' },
+         { key:'cust', label:'客户', type:'select', options:[{label:'ASAHI',value:'a'}] },
+         { key:'date', label:'日期', type:'daterange' }
+       ]"
+       @search="load" @reset="load" />
+ -->
+ <script lang="ts">
+ export interface FilterField {
+   key: string
+   label: string
+-  type: 'text' | 'select' | 'daterange'
++  type: 'text' | 'select' | 'date' | 'daterange' | 'number'
+   options?: { label: string; value: unknown }[]
+   placeholder?: string
++  /** date / daterange：透传 el-date-picker value-format（opt-in，不传返回 Date 对象） */
++  valueFormat?: string
++  /** number：透传 el-input-number */
++  min?: number
++  max?: number
++  step?: number
+ }
+ // 按钮文案覆盖：缺省中文，业务侧可传 i18n 词条覆盖任一按钮
+ export interface FilterBarLabels {
+   search?: string
+   reset?: string
+   expand?: string
+   collapse?: string
+ }
+ </script>
+ 
+ <script setup lang="ts">
+ import { computed, ref } from 'vue'
+-import { ElInput, ElSelect, ElOption, ElDatePicker, ElButton } from 'element-plus'
++import { ElInput, ElSelect, ElOption, ElDatePicker, ElInputNumber, ElButton } from 'element-plus'
+ 
+ const props = defineProps<{
+   fields: FilterField[]
+   modelValue: Record<string, unknown>
+   labels?: FilterBarLabels
+ }>()
+ const emit = defineEmits<{
+   (e: 'update:modelValue', next: Record<string, unknown>): void
+   (e: 'search'): void
+   (e: 'reset'): void
+@@ -97,30 +107,51 @@ function onReset() {
+         @update:model-value="setField(f.key, $event)"
+       >
+         <el-option
+           v-for="o in f.options"
+           :key="String(o.value)"
+           :label="o.label"
+           :value="(o.value as any)"
+         />
+       </el-select>
+ 
++      <el-date-picker
++        v-else-if="f.type === 'date'"
++        type="date"
++        :model-value="(modelValue[f.key] as any)"
++        :placeholder="f.placeholder"
++        :value-format="f.valueFormat"
++        clearable
++        @update:model-value="setField(f.key, $event)"
++      />
++
+       <el-date-picker
+         v-else-if="f.type === 'daterange'"
+         type="daterange"
+         :model-value="(modelValue[f.key] as any)"
+         :placeholder="f.placeholder"
+         :start-placeholder="f.placeholder"
+         :end-placeholder="f.placeholder"
++        :value-format="f.valueFormat"
+         range-separator="→"
+         @update:model-value="setField(f.key, $event)"
+       />
++
++      <el-input-number
++        v-else-if="f.type === 'number'"
++        :model-value="(modelValue[f.key] as number | undefined)"
++        :min="f.min"
++        :max="f.max"
++        :step="f.step"
++        :placeholder="f.placeholder"
++        @update:model-value="setField(f.key, $event)"
++      />
+     </div>
+ 
+     <span class="spacer" />
+ 
+     <div class="fbtns">
+       <button
+         v-if="showToggle"
+         type="button"
+         class="link-btn"
+         @click="expanded = !expanded"
+diff --git a/cp6.web/src/components/templates/CpListPage.vue b/cp6.web/src/components/templates/CpListPage.vue
+index c9e0eba..3abd5cf 100644
+--- a/cp6.web/src/components/templates/CpListPage.vue
++++ b/cp6.web/src/components/templates/CpListPage.vue
+@@ -11,25 +11,30 @@
+                                    fixed:'left'|'right'→fixed（钉列）。
+                                    map?: (val,row)=>{ label, tone? }：码值列声明式映射——label 替换单元格文案（任意 kind 生效）；
+                                    kind:'tag' 时按 tone 渲染 CpTag（tone 缺省 muted）。col-<prop> 插槽优先级高于 map。
+                                    map 的 tone 仅在 kind:'tag' 时生效，其他 kind 忽略（仅 label 替换文本）。
+                                    map 须为纯函数——每单元格可能被调用多次（label 与 tone 分别取值），含副作用或非确定性会导致两者不一致。
+     - fetch: ListFetch             数据源：({ page,size,filters,statusKey? }) => Promise<{ rows,total }>。
+     - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
+     - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key；tone 用 CpTag 共享 Tone。
+     - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
+     - highlightCurrentRow?: boolean 透传 el-table 当前行高亮；默认 true（迁移页默认保留原行为）。
++    - paginated?: boolean          默认 true。false 时隐藏分页器、page 锁定 1，fetch 收到 size=UNPAGED_SIZE(1000)
++                                   一次取全量（单表滚动 + 跨全量勾选形态，如賞味期限一括廃棄）。
+     - filterLabels?: FilterBarLabels 透传 CpFilterBar 按钮文案覆盖（业务侧接 i18n；缺省中文）。
+     - emptyText?: string           透传 CpEmpty 空状态文案（缺省「暂无数据」）。
+   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
+   Emits: selection-change(rows) ｜ total-change(n)（每次成功加载后携带最新 total，供 CpPageShell :count 接线；
+          受 seq 乱序守卫，过期响应不 emit）
++  Expose: reload()（仅此一项）——命令式重新 fetch，保留当前 filters / page / statusKey（页内 in-place 变更后刷新，
++          替代重挂载 :key 方案）。注意：删除当前页最后一行后 reload() 仍停留原 page，可能显示空页（不自动收拢页码，
++          与原页 reload() 行为一致，记录在案）。
+ 
+   使用示例：
+     <CpPageShell title="出庫指示一覧" :count="total">
+       <CpListPage
+         :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' },
+                    { prop:'st', label:'状态', kind:'tag', map: (v) => ({ label: stLabel(v), tone: stTone(v) }) }]"
+         :fetch="loadShipments"
+         :search-fields="[{ key:'q', label:'单号', type:'text' }]"
+         :status-tabs="[{ key:'all', label:'全部', count:28 }]"
+         selectable row-key="id"
+@@ -71,63 +76,71 @@ import CpTag from '@/components/base/CpTag.vue'
+ import CpEmpty from '@/components/base/CpEmpty.vue'
+ 
+ const props = withDefaults(defineProps<{
+   columns: ListColumn[]
+   fetch: ListFetch
+   searchFields?: FilterField[]
+   statusTabs?: StatusTab[]
+   selectable?: boolean
+   rowKey?: string
+   highlightCurrentRow?: boolean
++  paginated?: boolean
+   filterLabels?: FilterBarLabels
+   emptyText?: string
+-}>(), { highlightCurrentRow: true })
++}>(), { highlightCurrentRow: true, paginated: true })
+ 
+ const emit = defineEmits<{
+   (e: 'selection-change', rows: unknown[]): void
+   (e: 'total-change', total: number): void
+ }>()
+ 
+ // —— 内部状态 ——
+ const page = ref(1)
+ const size = ref(20)
+ const filters = ref<Record<string, unknown>>({})
+ const statusKey = ref<string | undefined>(props.statusTabs?.[0]?.key)
+ const rows = ref<unknown[]>([])
+ const total = ref(0)
+ const loading = ref(false)
+ 
++// paginated=false 时一次取数的 size 上限（无分页形态的全量口径；超过此量的数据源应保持分页）
++const UNPAGED_SIZE = 1000
++
+ // —— load()：唯一取数入口；seq 守卫乱序响应（只有最新一次请求的结果生效）——
+ let seq = 0
+ async function load() {
+   const id = ++seq
+   loading.value = true
+   try {
+     const res = await props.fetch({
+-      page: page.value,
+-      size: size.value,
++      page: props.paginated ? page.value : 1, // 无分页形态 page 锁定 1
++      size: props.paginated ? size.value : UNPAGED_SIZE,
+       filters: filters.value,
+       statusKey: statusKey.value
+     })
+     if (id !== seq) return // 已有更新的请求发出，丢弃本次结果
+     rows.value = res.rows
+     total.value = res.total
+     emit('total-change', res.total) // 仅最新请求成功后 emit（供 CpPageShell :count 接线）
+   } catch (e) {
+     if (id !== seq) return
+     ElMessage.error((e as Error)?.message ?? String(e)) // 保留旧 rows/total（与 CpFormDialog 同一错误硬化契约）
+   } finally {
+     if (id === seq) loading.value = false
+   }
+ }
+ onMounted(load)
+ 
++// —— 命令式刷新：保留当前 filters / page / statusKey 重新 fetch（页内 in-place 变更后调用）——
++function reload() { return load() }
++defineExpose({ reload }) // 仅暴露 reload，内部状态不外露
++
+ // —— 交互 ——
+ function onSearch() { page.value = 1; load() }
+ function onReset() { page.value = 1; load() } // CpFilterBar 已先回写清空后的 filters
+ function onStatus(key: string) { statusKey.value = key; page.value = 1; load() }
+ function onPageChange() { load() }
+ function onSizeChange() { page.value = 1; load() }
+ 
+ // —— 列渲染 ——
+ function cell(row: unknown, prop: string): unknown {
+   return (row as Record<string, unknown>)?.[prop]
+@@ -201,21 +214,21 @@ function mapTone(c: ListColumn, row: unknown): Tone | undefined {
+               <template v-else>{{ display(c, row) }}</template>
+             </slot>
+           </template>
+         </el-table-column>
+ 
+         <template #empty>
+           <CpEmpty v-if="!loading" :text="emptyText" />
+         </template>
+       </el-table>
+ 
+-      <div class="pager">
++      <div v-if="paginated" class="pager">
+         <el-pagination
+           v-model:current-page="page"
+           v-model:page-size="size"
+           :total="total"
+           :page-sizes="[20, 50, 100]"
+           layout="total, sizes, prev, pager, next"
+           @current-change="onPageChange"
+           @size-change="onSizeChange"
+         />
+       </div>
+diff --git a/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts b/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts
+index c67e675..a75d2d8 100644
+--- a/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts
++++ b/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts
+@@ -74,20 +74,93 @@ describe('CpFilterBar', () => {
+ 
+   it('daterange field renders and wires start/end placeholders from field.placeholder', () => {
+     const drFields: FilterField[] = [{ key: 'date', label: '计划出库日', type: 'daterange', placeholder: '选择日期' }]
+     const w = mount(CpFilterBar, { props: { fields: drFields, modelValue: {} } })
+     const inputs = w.findAll('.el-range-input')
+     expect(inputs).toHaveLength(2) // 起 / 止 两个输入
+     expect(inputs[0].attributes('placeholder')).toBe('选择日期')
+     expect(inputs[1].attributes('placeholder')).toBe('选择日期')
+   })
+ 
++  it('date 字段渲染单日 el-date-picker（非 range，一个输入框）', () => {
++    const w = mount(CpFilterBar, {
++      props: { fields: [{ key: 'from', label: '予定入荷 From', type: 'date' }], modelValue: {} }
++    })
++    expect(w.findComponent({ name: 'ElDatePicker' }).exists()).toBe(true)
++    expect(w.findAll('.el-range-input')).toHaveLength(0) // 不是 range 形态
++    expect(w.find('.el-date-editor input').exists()).toBe(true)
++  })
++
++  it('date + valueFormat：用户输入日期后 model 值为格式化字符串（非 Date 对象）', async () => {
++    const w = mount(CpFilterBar, {
++      props: {
++        fields: [{ key: 'from', label: 'From', type: 'date', valueFormat: 'YYYY-MM-DD' }],
++        modelValue: {}
++      }
++    })
++    const input = w.get('.el-date-editor input')
++    await input.setValue('2026-07-04')
++    await input.trigger('change')
++    const emits = w.emitted('update:modelValue')!
++    const payload = emits.at(-1)![0] as Record<string, unknown>
++    expect(payload.from).toBe('2026-07-04') // 字符串，不是 Date
++    expect(typeof payload.from).toBe('string')
++  })
++
++  it('date 无 valueFormat：el-date-picker 不收到 value-format（保持返回 Date 的默认行为）', () => {
++    const w = mount(CpFilterBar, {
++      props: { fields: [{ key: 'from', label: 'From', type: 'date' }], modelValue: {} }
++    })
++    expect(w.findComponent({ name: 'ElDatePicker' }).props('valueFormat')).toBeUndefined()
++  })
++
++  it('daterange 透传 valueFormat 到 el-date-picker', () => {
++    const w = mount(CpFilterBar, {
++      props: {
++        fields: [{ key: 'range', label: '期間', type: 'daterange', valueFormat: 'YYYY-MM-DD' }],
++        modelValue: {}
++      }
++    })
++    expect(w.findComponent({ name: 'ElDatePicker' }).props('valueFormat')).toBe('YYYY-MM-DD')
++  })
++
++  it('number 字段渲染 el-input-number 且透传 min/max/step', () => {
++    const w = mount(CpFilterBar, {
++      props: {
++        fields: [{ key: 'days', label: 'N日以内', type: 'number', min: 1, max: 365, step: 1 }],
++        modelValue: {}
++      }
++    })
++    const num = w.findComponent({ name: 'ElInputNumber' })
++    expect(num.exists()).toBe(true)
++    expect(num.props('min')).toBe(1)
++    expect(num.props('max')).toBe(365)
++    expect(num.props('step')).toBe(1)
++  })
++
++  it('number 字段变更后 v-model 值为数值型', async () => {
++    // 真实 v-model 回写（el-input-number 在 prop 不回写时会自行重同步，直接断言 emit 序列不可靠）
++    const Host = {
++      components: { CpFilterBar },
++      data: () => ({
++        model: {} as Record<string, unknown>,
++        fields: [{ key: 'days', label: 'N日以内', type: 'number', min: 1, max: 365 }] as FilterField[]
++      }),
++      template: `<CpFilterBar v-model="model" :fields="fields" />`
++    }
++    const w = mount(Host)
++    const input = w.get('.el-input-number input')
++    await input.setValue('30')
++    await input.trigger('change')
++    expect((w.vm as unknown as { model: Record<string, unknown> }).model.days).toBe(30)
++  })
++
+   it('renders custom button labels when labels prop supplied', () => {
+     const many: FilterField[] = [...fields, { key: 'operator', label: '担当', type: 'text' }]
+     const w = mount(CpFilterBar, {
+       props: {
+         fields: many,
+         modelValue: {},
+         labels: { search: '検索', reset: 'クリア', expand: 'もっと見る', collapse: '閉じる' }
+       }
+     })
+     expect(w.findAll('button').some((b) => b.text().includes('検索'))).toBe(true)
+diff --git a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+index b655c40..317a74e 100644
+--- a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
++++ b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+@@ -263,20 +263,72 @@ describe('CpListPage 契约扩展（Milestone C）', () => {
+     const w = mount(CpListPage, {
+       props: { columns: c, fetch: f },
+       slots: { 'col-st': `<template #col-st="{ row }"><i class="via-slot">S-{{ row.st }}</i></template>` }
+     })
+     await flushPromises()
+     expect(w.find('.via-slot').text()).toBe('S-1')
+     expect(w.find('td .cp-tag').exists()).toBe(false)
+     expect(w.text()).not.toContain('MAP')
+   })
+ 
++  it('paginated=false：不渲染分页器，fetch 收到 size=1000、page=1', async () => {
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, paginated: false } })
++    await flushPromises()
++    expect(w.findComponent({ name: 'ElPagination' }).exists()).toBe(false)
++    expect(w.find('.pager').exists()).toBe(false)
++    expect(f).toHaveBeenCalledWith(expect.objectContaining({ page: 1, size: 1000 }))
++  })
++
++  it('paginated 缺省 true：分页器照常渲染、size 为默认 20', async () => {
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f } })
++    await flushPromises()
++    expect(w.findComponent({ name: 'ElPagination' }).exists()).toBe(true)
++    expect(f).toHaveBeenCalledWith(expect.objectContaining({ page: 1, size: 20 }))
++  })
++
++  it('exposed reload()：重新 fetch 且保留当前 filters / page / statusKey（不重置）', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields,
++      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
++    await flushPromises()
++    // 1) 切状态卡 → statusKey=wait
++    await w.findAll('.ss')[1].trigger('click')
++    await flushPromises()
++    // 2) 经筛选栏设置筛选并查询 → filters.q=SHP-9
++    await w.get('.fld input').setValue('SHP-9')
++    await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
++    await flushPromises()
++    // 3) 翻到第 2 页
++    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
++    await flushPromises()
++    const callsBefore = f.mock.calls.length
++
++    ;(w.vm as unknown as { reload: () => Promise<void> }).reload()
++    await flushPromises()
++    expect(f.mock.calls.length).toBe(callsBefore + 1)
++    const q = f.mock.calls.at(-1)![0]
++    expect(q.page).toBe(2) // page 保留
++    expect(q.filters.q).toBe('SHP-9') // filters 保留
++    expect(q.statusKey).toBe('wait') // statusKey 保留
++  })
++
++  it('defineExpose 只暴露 reload（公开实例不含内部 load/state）', async () => {
++    const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch() } })
++    await flushPromises()
++    // VTU 的 vm 会代理 setupState，故直接断言 defineExpose 的 exposed 对象
++    const exposed = (w.vm.$ as unknown as { exposed: Record<string, unknown> }).exposed
++    expect(typeof exposed.reload).toBe('function')
++    expect(Object.keys(exposed)).toEqual(['reload'])
++  })
++
+   it("kind:'date'：非空值 slice(0,10)，null/undefined 渲染空", async () => {
+     const c: ListColumn[] = [
+       { prop: 'no', label: '单号', kind: 'mono' },
+       { prop: 'd', label: '日付', kind: 'date' }
+     ]
+     const f = vi.fn().mockResolvedValue({
+       rows: [{ no: 'A', d: '2026-07-04T00:00:00' }, { no: 'B', d: null }],
+       total: 2
+     })
+     const w = mount(CpListPage, { props: { columns: c, fetch: f } })
+diff --git a/cp6.web/src/views/wms/CrossDockView.vue b/cp6.web/src/views/wms/CrossDockView.vue
+index 77da871..69b0000 100644
+--- a/cp6.web/src/views/wms/CrossDockView.vue
++++ b/cp6.web/src/views/wms/CrossDockView.vue
+@@ -1,24 +1,24 @@
+ <!--
+   クロスドック —— CpPageShell + CpListPage + CpFormDialog 迁移（WMS 批次1）。
+   状態列 kind:'tag'+map；数量/実行日時/操作 走 col slot；新建用 CpFormDialog（default slot 保留 input-number/placeholder/maxlength 等 fields 声明表达不了的表单）。
+   必填(品目/倉庫/一時ロケ)改由 el-form rules 校验（CpFormDialog validate() 门禁），等价原 onSave 手工校验。
+-  in-place 变更(新建/実行/取消)后自增 reloadKey 重挂载 CpListPage 刷新（模板缺口 #12：无命令式 reload）。
++  in-place 变更(新建/実行/取消)后 listRef.reload() 命令式刷新（契约扩展二轮 #12），保留当前筛选/页码。
+ -->
+ <template>
+   <CpPageShell :title="t('wms.xdock.title')" :count="total">
+     <template #actions>
+       <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+     </template>
+ 
+     <CpListPage
+-      :key="reloadKey"
++      ref="listRef"
+       :columns="columns"
+       :fetch="fetchList"
+       :search-fields="searchFields"
+       :filter-labels="filterLabels"
+       @total-change="total = $event"
+     >
+       <template #col-qty="{ row }">{{ formatQty(row.qty) }}</template>
+       <template #col-executedAt="{ row }">{{ row.executedAt?.replace('T', ' ').slice(0, 16) || '—' }}</template>
+       <template #col-_action="{ row }">
+         <template v-if="row.status === 0">
+@@ -30,21 +30,21 @@
+     </CpListPage>
+ 
+     <CpFormDialog
+       v-model="dialogVisible"
+       :title="t('wms.xdock.dlg.create')"
+       width="560"
+       :form="form"
+       :rules="rules"
+       :submit="onSave"
+       :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
+-      @saved="reloadKey++"
++      @saved="reloadList"
+     >
+       <el-form-item :label="t('wms.common.product')" prop="productCd">
+         <el-input v-model="form.productCd" maxlength="20" />
+       </el-form-item>
+       <el-form-item :label="t('wms.common.productName')">
+         <el-input v-model="form.productName" maxlength="100" />
+       </el-form-item>
+       <el-form-item :label="t('wms.common.qty')" prop="qty">
+         <el-input-number v-model="form.qty" :min="0" :precision="2" controls-position="right" style="width: 100%" />
+       </el-form-item>
+@@ -75,21 +75,23 @@ import CpListPage, { type ListColumn, type ListFetch } from '@/components/templa
+ import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+ import CpFormDialog from '@/components/templates/CpFormDialog.vue'
+ import { type Tone } from '@/components/base/CpTag.vue'
+ import { crossDockApi } from '@/api/wms/logistics'
+ import type { CrossDockOrder, CrossDockSearchQuery } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+ const total = ref<number>()
+-const reloadKey = ref(0)
++// in-place 变更后命令式刷新（保留当前筛选/页码）
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
+ 
+ const statusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.xdock.status.planned'),
+   1: t('wms.xdock.status.executed'),
+   9: t('wms.xdock.status.cancelled'),
+ }))
+ // 原 statusTagOf(info/success/danger) → 设计系统 Tone（保色）
+ function statusTone(s: number): Tone {
+   return ({ 0: 'muted', 1: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
+ }
+@@ -163,27 +165,27 @@ function openCreate() {
+ async function onSave() {
+   const res = await crossDockApi.create(form)
+   ElMessage.success(`${t('wms.common.success')}: ${res.data.xdockNo}`)
+ }
+ 
+ async function onExecute(row: CrossDockOrder) {
+   try {
+     await ElMessageBox.confirm(t('wms.xdock.msg.executeAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await crossDockApi.execute(row.xdockNo!)
+     ElMessage.success(t('wms.common.success'))
+-    reloadKey.value++
++    reloadList()
+   } catch { /* */ }
+ }
+ 
+ async function onCancel(row: CrossDockOrder) {
+   try {
+     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await crossDockApi.cancel(row.xdockNo!)
+     ElMessage.success(t('wms.common.success'))
+-    reloadKey.value++
++    reloadList()
+   } catch { /* */ }
+ }
+ </script>
+ 
+ <style scoped>
+ .cp-dash { color: var(--cp-muted); }
+ </style>
+diff --git a/cp6.web/src/views/wms/ExpiryView.vue b/cp6.web/src/views/wms/ExpiryView.vue
+index ecb3648..9ff8b0e 100644
+--- a/cp6.web/src/views/wms/ExpiryView.vue
++++ b/cp6.web/src/views/wms/ExpiryView.vue
+@@ -1,25 +1,27 @@
+ <!--
+   賞味期限管理 —— CpPageShell + CpListPage 迁移（WMS 批次1）。
+   selectable 勾选 + toolbar slot（超期/損失額 概览 pill + 一括廃棄按钮）；数量/金額/残日 走 col slot 保留原格式化与语义色。
+   概览指标（超期件数/損失合計）在 fetch 包装内按「全量结果」计算（CpListPage 不外露 rows，只 emit total）。
+-  搜索区「N 日以内」原为 el-input-number(1..365)，CpFilterBar 无 number 型 → 用 text 代偿（模板缺口 #10）。
+-  数据源 expiryApi.expiring 返回扁平数组无 total → 客户端分页；选择为当页范围（CpListPage 强制分页，模板缺口 #11）。
++  「N 日以内」为 type:'number'(1..365)（契约扩展二轮 #10）；字段初值空，fetch 内缺省按 30 查（原页初值 30 的等价语义）。
++  :paginated="false"（契约扩展二轮 #11）→ 单表滚动、跨全量勾选一括廃棄恢复；廃棄成功后 listRef.reload()
++  in-place 刷新（契约扩展二轮 #12），保留当前搜索条件。数据源 expiryApi.expiring 返回扁平数组无 total。
+ -->
+ <template>
+   <CpPageShell :title="t('wms.expiry.title')" :count="total">
+     <CpListPage
+-      :key="reloadKey"
++      ref="listRef"
+       :columns="columns"
+       :fetch="fetchList"
+       :search-fields="searchFields"
+       :filter-labels="filterLabels"
++      :paginated="false"
+       selectable
+       row-key="stockId"
+       @selection-change="onSelectionChange"
+       @total-change="total = $event"
+     >
+       <template #toolbar>
+         <CpTag v-if="overdueCount > 0" tone="danger">{{ t('wms.expiry.col.overdue') }}: {{ overdueCount }}</CpTag>
+         <CpTag v-if="totalLoss > 0" tone="warn">{{ t('wms.expiry.col.totalLoss') }}: ¥{{ formatMoney(totalLoss) }}</CpTag>
+         <span class="tb-spacer" />
+         <el-button type="danger" :disabled="selected.length === 0" @click="onDispose">
+@@ -48,22 +50,22 @@ import CpTag from '@/components/base/CpTag.vue'
+ import { expiryApi } from '@/api/wms/expiry'
+ import type { ExpiryStock } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+ const total = ref<number>()
+ const selected = ref<ExpiryStock[]>([])
+ const overdueCount = ref(0)
+ const totalLoss = ref(0)
+-// CpListPage 无命令式 reload 契约（模板缺口 #12）→ 廃棄成功后自增 key 强制 CpListPage 重挂载重查
+-const reloadKey = ref(0)
++// 廃棄成功后命令式 reload（保留当前搜索条件，in-place 刷新）
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+ 
+ function dayClass(d: number) {
+   if (d < 0) return 'overdue'
+   if (d < 7) return 'soon'
+   return ''
+ }
+ function formatMoney(n: number) { return formatQty(Math.round(Number(n) || 0), 0) }
+ 
+ const columns = computed<ListColumn[]>(() => [
+   { prop: 'productCd', label: t('wms.common.product'), width: 120 },
+@@ -76,34 +78,36 @@ const columns = computed<ListColumn[]>(() => [
+   { prop: 'unitPrice', label: t('wms.common.unitPrice'), width: 110, align: 'right' },
+   { prop: 'lossAmount', label: t('wms.expiry.col.lossAmount'), width: 120, align: 'right' },
+ ])
+ 
+ const filterLabels = computed(() => ({
+   search: t('wms.common.search'),
+   reset: t('wms.common.clear'),
+ }))
+ 
+ const searchFields = computed<FilterField[]>(() => [
+-  { key: 'days', label: t('wms.expiry.fld.daysWithin'), type: 'text', placeholder: '30' },
++  // 原页 el-input-number(1..365) 形态恢复；字段初值空 → fetch 内缺省 30（原页初值 30 的等价语义）
++  { key: 'days', label: t('wms.expiry.fld.daysWithin'), type: 'number', min: 1, max: 365, placeholder: '30' },
+   { key: 'warehouseCd', label: t('wms.common.warehouse'), type: 'text' },
+ ])
+ 
+ const fetchList: ListFetch = async ({ page, size, filters }) => {
+   const f = filters as Record<string, unknown>
+-  const rawDays = f.days === undefined || f.days === '' ? 30 : Number(f.days)
++  const rawDays = f.days == null || f.days === '' ? 30 : Number(f.days)
+   const days = Number.isFinite(rawDays) && rawDays > 0 ? Math.min(rawDays, 365) : 30
+   const wh = f.warehouseCd ? String(f.warehouseCd) : undefined
+   const res = await expiryApi.expiring(days, wh)
+   const all = res.data || []
+   // 概览指标按全量结果计算（模板只 emit total，rows 不外露 → 在 fetch 包装内算）
+   overdueCount.value = all.filter(r => r.daysUntilExpiry < 0).length
+   totalLoss.value = all.reduce((sum, r) => sum + (r.lossAmount || 0), 0)
++  // :paginated=false → page 恒 1、size=1000：slice 等于全量透传（数据量远小于 1000）
+   const start = (page - 1) * size
+   return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
+ function onSelectionChange(sel: unknown[]) { selected.value = sel as ExpiryStock[] }
+ 
+ async function onDispose() {
+   if (selected.value.length === 0) return
+   try {
+     await ElMessageBox.confirm(
+@@ -111,20 +115,20 @@ async function onDispose() {
+       t('wms.common.confirm'),
+       { type: 'warning' }
+     )
+     const reason = await ElMessageBox.prompt(t('wms.expiry.msg.reasonAsk'), t('wms.common.confirm'), {
+       inputValue: t('賞味期限切れ廃棄'),
+     }).then(r => r.value).catch(() => null)
+     if (reason == null) return
+     const res = await expiryApi.dispose({ stockIds: selected.value.map(s => s.stockId), reason })
+     ElMessage.success(`${res.data.disposed} ${t('wms.expiry.msg.disposed')}`)
+     selected.value = []
+-    reloadKey.value++ // 重挂载 CpListPage → 重查（搜索条件回到默认，见模板缺口 #12）
++    listRef.value?.reload() // in-place 重查，保留当前搜索条件
+   } catch { /* */ }
+ }
+ </script>
+ 
+ <style scoped>
+ .tb-spacer { flex: 1; }
+ .overdue { color: var(--cp-danger); font-weight: 700; }
+ .soon { color: var(--cp-warn); font-weight: 600; }
+ </style>
+diff --git a/cp6.web/src/views/wms/InboundOrderListView.vue b/cp6.web/src/views/wms/InboundOrderListView.vue
+index b4f2555..412f9a3 100644
+--- a/cp6.web/src/views/wms/InboundOrderListView.vue
++++ b/cp6.web/src/views/wms/InboundOrderListView.vue
+@@ -1,15 +1,15 @@
+ <!--
+   入庫指示一覧 —— CpPageShell + CpListPage 迁移（WMS 批次1）。
+   状態列走 kind:'tag'+map（码→i18n+tone）；種別列纯 map（原页无 tag 视觉）；日期列 kind:'date'；操作列 col slot。
+-  原「予定入荷 从/至」两个单日期查询合并为 CpFilterBar daterange（filterbar 无单日 type）；
+-  daterange 返回 Date 对象（filterbar 未透传 value-format），故 fetch 内本地格式化为 YYYY-MM-DD（模板缺口 #9）。
++  「予定入荷 从/至」为两个独立单日期字段（type:'date' + valueFormat:'YYYY-MM-DD'，契约扩展二轮 #9/#13）——
++  可只填一侧做开区间查询，model 直接为字符串，无需 fetch 内格式化。
+   数据源 inboundOrderApi.search 返回扁平数组无 total → 客户端分页（同样板）。
+ -->
+ <template>
+   <CpPageShell :title="t('wms.inbound.titleList')" :count="total">
+     <template #actions>
+       <el-button @click="goCreate">{{ t('wms.common.create') }}</el-button>
+     </template>
+ 
+     <CpListPage
+       :columns="columns"
+@@ -84,43 +84,35 @@ const filterLabels = computed(() => ({
+ }))
+ 
+ const searchFields = computed<FilterField[]>(() => [
+   { key: 'inboundNo', label: t('wms.inbound.fld.no'), type: 'text' },
+   { key: 'supplierCd', label: t('wms.inbound.fld.supplierCd'), type: 'text' },
+   { key: 'warehouseCd', label: t('wms.common.warehouse'), type: 'text' },
+   {
+     key: 'status', label: t('wms.common.status'), type: 'select',
+     options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+   },
+-  { key: 'arrival', label: `${t('wms.inbound.fld.expectedArrival')}`, type: 'daterange' },
++  // 原页形态：两个独立单日期（可只填一侧做开区间查询）；valueFormat 使 model 直接为 'YYYY-MM-DD' 字符串
++  { key: 'arrivalFrom', label: `${t('wms.inbound.fld.expectedArrival')} ${t('wms.common.from')}`, type: 'date', valueFormat: 'YYYY-MM-DD' },
++  { key: 'arrivalTo', label: `${t('wms.inbound.fld.expectedArrival')} ${t('wms.common.to')}`, type: 'date', valueFormat: 'YYYY-MM-DD' },
+ ])
+ 
+-// Date → YYYY-MM-DD（本地时区，避免 toISOString UTC 偏移）
+-function ymd(d: unknown): string | undefined {
+-  if (!d) return undefined
+-  const dt = d instanceof Date ? d : new Date(String(d))
+-  if (Number.isNaN(dt.getTime())) return undefined
+-  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+-}
+-
+ const PAGE_CAP = 500
+ const fetchList: ListFetch = async ({ page, size, filters }) => {
+   const f = filters as Record<string, unknown>
+   const q: InboundOrderSearchQuery = { pageSize: PAGE_CAP }
+   if (f.inboundNo) q.inboundNo = String(f.inboundNo)
+   if (f.supplierCd) q.supplierCd = String(f.supplierCd)
+   if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
+   if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
+-  if (Array.isArray(f.arrival)) {
+-    q.arrivalFrom = ymd(f.arrival[0])
+-    q.arrivalTo = ymd(f.arrival[1])
+-  }
++  if (f.arrivalFrom) q.arrivalFrom = String(f.arrivalFrom) // valueFormat 已保证 YYYY-MM-DD 字符串
++  if (f.arrivalTo) q.arrivalTo = String(f.arrivalTo)
+   const res = await inboundOrderApi.search(q)
+   const all = res.data || []
+   const start = (page - 1) * size
+   return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
+ function goCreate() { router.push({ path: '/wms/inbound-order', query: { mode: 'new' } }) }
+ function goEdit(row: InboundOrder) { router.push({ path: '/wms/inbound-order', query: { no: row.inboundNo } }) }
+ function goReceive(row: InboundOrder) { router.push({ path: '/wms/inbound-receipt', query: { inboundNo: row.inboundNo } }) }
+ </script>
+diff --git a/cp6.web/src/views/wms/WarehouseListView.vue b/cp6.web/src/views/wms/WarehouseListView.vue
+index e5d1947..8af9164 100644
+--- a/cp6.web/src/views/wms/WarehouseListView.vue
++++ b/cp6.web/src/views/wms/WarehouseListView.vue
+@@ -1,23 +1,24 @@
+ <!--
+   倉庫マスタ —— CpPageShell + CpListPage + CpFormDialog 迁移（WMS 批次1）。
+   種別列 kind:'tag'+map；マイナス許可/操作 走 col slot；新建/編集共用 CpFormDialog（default slot 保留 switch/select/disabled 等表单）。
+-  必填(倉庫CD/倉庫名)由 el-form rules 校验。in-place 变更(新建/編集/削除)后自增 reloadKey 刷新（模板缺口 #12）。
++  必填(倉庫CD/倉庫名)由 el-form rules 校验。in-place 变更(新建/編集/削除)后 listRef.reload() 命令式刷新
++  （契约扩展二轮 #12），保留当前筛选/页码。
+ -->
+ <template>
+   <CpPageShell :title="t('wms.warehouse.title')" :count="total">
+     <template #actions>
+       <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+     </template>
+ 
+     <CpListPage
+-      :key="reloadKey"
++      ref="listRef"
+       :columns="columns"
+       :fetch="fetchList"
+       :search-fields="searchFields"
+       :filter-labels="filterLabels"
+       @total-change="total = $event"
+     >
+       <template #col-allowNegative="{ row }">
+         <CpTag v-if="row.allowNegative" tone="warn">{{ t('wms.warehouse.fld.allowed') }}</CpTag>
+         <span v-else class="cp-dash">—</span>
+       </template>
+@@ -28,21 +29,21 @@
+     </CpListPage>
+ 
+     <CpFormDialog
+       v-model="dialogVisible"
+       :title="dialogTitle"
+       width="560"
+       :form="form"
+       :rules="rules"
+       :submit="onSave"
+       :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
+-      @saved="reloadKey++"
++      @saved="reloadList"
+     >
+       <el-form-item :label="t('wms.warehouse.fld.cd')" prop="warehouseCd">
+         <el-input v-model="form.warehouseCd" :disabled="!!form.id" maxlength="10" />
+       </el-form-item>
+       <el-form-item :label="t('wms.warehouse.fld.name')" prop="warehouseName">
+         <el-input v-model="form.warehouseName" maxlength="100" />
+       </el-form-item>
+       <el-form-item :label="t('wms.warehouse.fld.type')">
+         <el-select v-model="form.warehouseType">
+           <el-option v-for="(label, val) in warehouseTypeMap" :key="val" :label="label" :value="Number(val)" />
+@@ -65,21 +66,23 @@ import CpPageShell from '@/components/templates/CpPageShell.vue'
+ import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+ import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+ import CpFormDialog from '@/components/templates/CpFormDialog.vue'
+ import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { warehouseApi } from '@/api/wms/warehouse'
+ import type { Warehouse } from '@/types/wms/wms'
+ 
+ const { t } = useI18n()
+ 
+ const total = ref<number>()
+-const reloadKey = ref(0)
++// in-place 变更后命令式刷新（保留当前筛选/页码）
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
+ 
+ const warehouseTypeMap = computed<Record<number, string>>(() => ({
+   1: t('wms.warehouse.type.raw'),
+   2: t('wms.warehouse.type.wip'),
+   3: t('wms.warehouse.type.finished'),
+   4: t('wms.warehouse.type.defective'),
+   5: t('wms.warehouse.type.external'),
+ }))
+ // 原 typeTagOf(primary/success/success/danger/info) → 设计系统 Tone（保色）
+ function typeTone(v: number): Tone {
+@@ -155,18 +158,18 @@ async function onSave() {
+     await warehouseApi.create(form)
+   }
+   ElMessage.success(t('wms.common.success'))
+ }
+ 
+ async function onDelete(row: Warehouse) {
+   try {
+     await ElMessageBox.confirm(`${t('wms.common.confirmDelete')} [${row.warehouseCd}]`, t('wms.common.confirm'), { type: 'warning' })
+     await warehouseApi.delete(row.warehouseCd)
+     ElMessage.success(t('wms.common.success'))
+-    reloadKey.value++
++    reloadList()
+   } catch { /* */ }
+ }
+ </script>
+ 
+ <style scoped>
+ .cp-dash { color: var(--cp-muted); }
+ </style>
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 4aad7bb..e564393 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -593,41 +593,41 @@ describe('CpListPage', () => {
+ ---
+ 
+ ## 模板缺口（试点与迁移中回填）
+ 
+ （初始为空；发现 CpListPage/CpFormDialog 覆盖不了的形态时记录于此并先扩模板）
+ 
+ ### WMS 迁移批次1 复盘（编号接续 Task 11 试点，从 #9 起）
+ 
+ 批次1（Placeholder/InboundOrderList/Expiry/CrossDock/WarehouseList/StockTakeList）迁移完成，功能零丢失、真栈验收通过（5 个已路由页；WmsPlaceholderView 为无路由孤儿代码，仅 token 化）。以下缺口均用逃生舱/旧机制代偿保功能，按批次规则「不改模板组件本体」记录待后续扩契约：
+ 
+-9. **CpFilterBar `daterange` 无 `value-format` 透传 → 返回 `Date` 对象**（Minor）。
++9. **CpFilterBar `daterange` 无 `value-format` 透传 → 返回 `Date` 对象**（Minor）—— ✅ 已实现（契约扩展二轮 commit）：FilterField 增 `valueFormat?` 透传 el-date-picker（date/daterange 通用，opt-in 无默认值以免静默改变既有消费者返回类型）；InboundOrderList 已改独立 date 字段直接拿字符串，ymd() 代偿已删。
+    - 现象：InboundOrderList 原「予定入荷 从/至」两个 `el-date-picker value-format="YYYY-MM-DD"`（返回字符串）。CpFilterBar 无单日 `date` type，只能合并为 `daterange`；而 CpFilterBar 的 `el-date-picker` 未设 `value-format`，返回 `[Date, Date]`，与后端 `arrivalFrom/arrivalTo: string` 契约不符。
+    - 代偿：fetch 包装内 `ymd()` 本地时区格式化（避免 `toISOString` UTC 偏移）为 `YYYY-MM-DD`。
+    - 建议：FilterField 增 `valueFormat?`（透传 el-date-picker），或 CpFilterBar 对 daterange 默认 `value-format="YYYY-MM-DD"`；并补单日 `date` type。
+ 
+-10. **CpFilterBar 无 `number` 字段类型（min/max/step）**（Minor）。
++10. **CpFilterBar 无 `number` 字段类型（min/max/step）**（Minor）—— ✅ 已实现（契约扩展二轮 commit）：FilterField 增 `type:'number'` + `min/max/step` 透传 el-input-number；Expiry「N日以内」已改 number(1..365)（spinner 恢复；字段初值空，fetch 侧缺省 30 语义保留）。
+     - 现象：Expiry 原「N 日以内」为 `el-input-number :min="1" :max="365"`。CpFilterBar 仅 text/select/daterange。
+     - 代偿：用 `text` + `placeholder="30"`；fetch 内 `Number()` 解析并 clamp 到 1..365，缺省 30。丢失 spinner 与初值回填（字段初值空，查询按 30）。
+     - 建议：FilterField 增 `type:'number'` + `min/max/step`。
+ 
+-11. **CpListPage 强制分页，无法关闭 → 全量勾选跨页失效**（Minor）。
++11. **CpListPage 强制分页，无法关闭 → 全量勾选跨页失效**（Minor）—— ✅ 已实现（契约扩展二轮 commit）：CpListPage 增 `paginated?: boolean`（默认 true）；false 时隐藏 pager、page 锁 1、fetch 收 size=UNPAGED_SIZE(1000)；Expiry 已挂 `:paginated="false"`，跨全量勾选一括廃棄恢复。
+     - 现象：Expiry 原为单表 `max-height` 滚动（无分页），`type="selection"` 跨全量勾选后一括廃棄。CpListPage 始终渲染 pager 且无 `:paginated=false` 开关，勾选降为「当页范围」。
+     - 影响：数据完整性不受影响（概览指标在 fetch 包装内按全量结果计算）；仅跨页批量勾选丢失。廃棄为低频操作，可接受。
+     - 建议：CpListPage 增 `paginated?: boolean`（false 时隐藏 pager、fetch 传大 size）或 `pageSizes` 定制。
+ 
+-12. **CpListPage 无命令式 `reload()` / 无外部刷新触发**（Important，影响 3 页）。
++12. **CpListPage 无命令式 `reload()` / 无外部刷新触发**（Important，影响 3 页）—— ✅ 已实现（契约扩展二轮 commit）：`defineExpose({ reload })`（仅此一项），reload() 保留 filters/page/statusKey 重查；Expiry/CrossDock/Warehouse 三页 `reloadKey` + `:key` 重挂载方案已删，搜索/翻页上下文在变更后不再丢失（删空当前页不自动收拢页码，与原页行为一致，记录在案）。
+     - 现象：CpListPage 仅在 mounted/search/reset/翻页/切卡内部 fetch，不 watch 任何外部信号，也未 `defineExpose`。而 Expiry(廃棄)、CrossDock(新建/実行/取消)、Warehouse(新建/編集/削除) 均需「页内 in-place 变更后刷新列表」（原页调用 `reload()`）。
+     - 代偿：父级持 `reloadKey` ref，`:key="reloadKey"` 绑定 CpListPage，变更成功后 `reloadKey++` 强制重挂载重查。**副作用**：重挂载会把 CpListPage 内部 `filters`（重置为 `{}`）与 `page`（重置为 1）清空 → 用户当前搜索/翻页上下文丢失（Warehouse 编辑后列表回到未筛选首页最明显）。数据正确性优先，故采用；记为已知降级。
+     - 建议：CpListPage `defineExpose({ reload })`（父级 `ref` 命令式刷新，保留 filters/page），或增 `refreshKey?: number` prop 内部 `watch` 触发 `load()`（不重置状态）。这是本批最值得回填的契约扩展。
+ 
+-13. **FilterField 无单日期 `date` 类型**（Minor，批次1评审补记）。
++13. **FilterField 无单日期 `date` 类型**（Minor，批次1评审补记）—— ✅ 已实现（契约扩展二轮 commit）：FilterField 增 `type:'date'`（单日 el-date-picker 透传，配 valueFormat 用）；InboundOrderList「予定入荷 从/至」已拆回两个独立字段，单侧开区间查询恢复。
+     - 现象：InboundOrderList 原「予定入荷 从/至」为两个**独立**单日期 `el-date-picker`（可只填一侧做开区间查询）。FilterField 仅 text/select/daterange，被并成一个 daterange —— 单侧开区间查询能力丢失（daterange 必须成对选起止）。
+     - 代偿：合并为 daterange（documented compensation，见批次1报告盘点）；fetch 内拆回 arrivalFrom/arrivalTo。
+     - 建议：FilterField 增 `type:'date'`（单日 el-date-picker 透传），恢复独立起/止字段形态。
+ 
+ （注：所有页 CpFilterBar `expand/collapse` 仍留组件内中文默认「展开更多/收起」、CpEmpty 空态仍为中文「暂无数据」——沿用 Task 11 试点约定，属 follow-up #6，非本批新增。）
+ 
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。

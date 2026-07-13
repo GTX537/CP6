@@ -1,0 +1,71 @@
+# Review package: 08891ab..HEAD
+
+## Commits
+02cce6c feat(space-p5): 前端连接体类型/SiteConnectorVO +成本字段 + connectorApi.update
+
+## Files changed
+ cp6.web/src/api/space/connector.ts   | 5 ++++-
+ cp6.web/src/types/space/advanced.ts  | 2 +-
+ cp6.web/src/types/space/connector.ts | 5 +++--
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/api/space/connector.ts b/cp6.web/src/api/space/connector.ts
+index 08a8540..bb1b909 100644
+--- a/cp6.web/src/api/space/connector.ts
++++ b/cp6.web/src/api/space/connector.ts
+@@ -1,21 +1,24 @@
+ import http from '../http'
+ import type { Envelope } from '@/types/space/scene'
+-import type { ConnectorVO, ConnectorCreate, ConnectorStopVO } from '@/types/space/connector'
++import type { ConnectorVO, ConnectorCreate, ConnectorStopVO, ConnectorUpdate } from '@/types/space/connector'
+ 
+ export const connectorApi = {
+   listBySite(siteId: string) {
+     return http.get<unknown, Envelope<ConnectorVO[]>>(`/space/site/${siteId}/connector`)
+   },
+   create(d: ConnectorCreate) {
+     return http.post<unknown, Envelope<{ id: string }>>(`/space/connector`, d)
+   },
++  update(id: string, d: ConnectorUpdate) {
++    return http.put<unknown, Envelope<null>>(`/space/connector/${id}`, d)
++  },
+   upsertStop(id: string, s: ConnectorStopVO) {
+     return http.put<unknown, Envelope<null>>(`/space/connector/${id}/stop`, s)
+   },
+   deleteStop(id: string, floorId: string) {
+     return http.delete<unknown, Envelope<null>>(`/space/connector/${id}/stop/${floorId}`)
+   },
+   remove(id: string) {
+     return http.delete<unknown, Envelope<null>>(`/space/connector/${id}`)
+   },
+ }
+diff --git a/cp6.web/src/types/space/advanced.ts b/cp6.web/src/types/space/advanced.ts
+index 8c498ac..91b0ab0 100644
+--- a/cp6.web/src/types/space/advanced.ts
++++ b/cp6.web/src/types/space/advanced.ts
+@@ -37,12 +37,12 @@ export interface DeviceDto {
+   status: number
+   locationCode: string | null
+   absX: number | null
+   absY: number | null
+   absZ: number | null
+ }
+ 
+ export interface SiteFloorVO { floorId: string; floorCode: string; level: number; height: number; z: number }
+ export interface SitePickStopVO { seq: number; locationCode: string; qty: number; materialNo: string | null; floorId: string | null; absX: number | null; absY: number | null; absZ: number | null }
+ export interface SiteAisleVO { floorId: string; aisleCode: string; centerline: string }
+-export interface SiteConnectorVO { connectorCode: string; type: number; stops: Array<{ floorId: string; x: number; y: number }> }
++export interface SiteConnectorVO { connectorCode: string; type: number; waitSec: number; travelSecPerFloor: number; stops: Array<{ floorId: string; x: number; y: number }> }
+ export interface SitePickPath { taskNo: string; floors: SiteFloorVO[]; stops: SitePickStopVO[]; aisles: SiteAisleVO[]; connectors: SiteConnectorVO[] }
+diff --git a/cp6.web/src/types/space/connector.ts b/cp6.web/src/types/space/connector.ts
+index 3312dc9..2671ada 100644
+--- a/cp6.web/src/types/space/connector.ts
++++ b/cp6.web/src/types/space/connector.ts
+@@ -1,3 +1,4 @@
+ export interface ConnectorStopVO { floorId: string; x: number; y: number }
+-export interface ConnectorVO { id: string; connectorCode: string; connectorType: number; name: string; stops: ConnectorStopVO[] }
+-export interface ConnectorCreate { siteId: string; connectorCode: string; connectorType: number; name: string }
++export interface ConnectorVO { id: string; connectorCode: string; connectorType: number; name: string; waitSec: number; travelSecPerFloor: number; stops: ConnectorStopVO[] }
++export interface ConnectorCreate { siteId: string; connectorCode: string; connectorType: number; name: string; waitSec: number; travelSecPerFloor: number }
++export interface ConnectorUpdate { name: string; connectorType: number; waitSec: number; travelSecPerFloor: number }

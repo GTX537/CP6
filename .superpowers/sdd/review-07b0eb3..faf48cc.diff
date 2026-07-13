@@ -1,0 +1,118 @@
+# Review package: 07b0eb3..HEAD
+
+## Commits
+faf48cc fix(ui): 出货条语义色+未出货数字可读性+sparkline单点守卫
+
+## Files changed
+ .superpowers/sdd/task-3-report.md                  | 25 ++++++++++++++++++++++
+ cp6.web/src/views/dashboard/DashboardView.vue      |  6 +++---
+ cp6.web/src/views/dashboard/components/KpiCard.vue |  2 +-
+ 3 files changed, 29 insertions(+), 4 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-3-report.md b/.superpowers/sdd/task-3-report.md
+index e7697ae..c9ddd97 100644
+--- a/.superpowers/sdd/task-3-report.md
++++ b/.superpowers/sdd/task-3-report.md
+@@ -143,10 +143,35 @@ $ npm run type-check
+ > vue-tsc --build
+ （0 错误）
+ 
+ $ npm run build
+ ✓ 2561 modules transformed
+ ✓ built in ~7.39s
+ （0 errors）
+ ```
+ 
+ 两项验证全部通过，无 build 错误或 type-check 错误。
++
++---
++
++# Task 3 复核修复报告（2026-07-04 二轮）
++
++分支：`feat/ui-restyle`
++
++## 复核发现 1（Important）：出货三段条板外 hex 违反 §2.5
++
++**改动**：`cp6.web/src/views/dashboard/DashboardView.vue` 出货条 inline style
++- 「部分出货」bar 分段与数字文字色的 `#7CE3DD` 全部改为 `var(--cp-warn)`（状态类图表必须用语义色）
++- 「未出货」数字文字色 `var(--cp-line-soft)`（近白不可读）改为 `var(--cp-muted)`；bar 分段本身保持 `var(--cp-line-soft)` 不变
++- 「已出货」数字：经确认通过 `.ship .block .v` 类样式已继承 `color: var(--cp-ink)`，无 inline 覆盖，无需改动
++
++## 复核发现 2（Important）：sparkline 单点/空数组守卫
++
++**改动**：`cp6.web/src/views/dashboard/components/KpiCard.vue`
++- 模板 v-if 从 `trend?.length` 收紧为 `trend && trend.length >= 2`——trend 长度 < 2 时整个 sparkline SVG 不渲染，`points()`/`areaPath()` 不会以单点数组被调用（单点时 `t.length - 1 || 1` 会产出退化路径）
++
++## 验证
++
++```
++npm run type-check: 0 errors
++npm run build: 0 errors
++```
+diff --git a/cp6.web/src/views/dashboard/DashboardView.vue b/cp6.web/src/views/dashboard/DashboardView.vue
+index 11225c2..f32b576 100644
+--- a/cp6.web/src/views/dashboard/DashboardView.vue
++++ b/cp6.web/src/views/dashboard/DashboardView.vue
+@@ -43,31 +43,31 @@
+         <div class="card reveal-item" style="--delay: 140ms">
+           <div class="card-head"><h2><el-icon class="i"><Van /></el-icon>{{ t('dashboard.shipStatus') }}</h2></div>
+           <div class="ship">
+             <div class="block">
+               <div class="v num">{{ shipSummary.shipped }}</div>
+               <div class="l">{{ t('dashboard.ship9') }}</div>
+             </div>
+             <div class="track">
+               <div class="bar">
+                 <i :style="{ width: shipSummary.shippedPct + '%', background: 'var(--cp-brand)' }" />
+-                <i :style="{ width: shipSummary.partialPct + '%', background: '#7CE3DD' }" />
++                <i :style="{ width: shipSummary.partialPct + '%', background: 'var(--cp-warn)' }" />
+                 <i :style="{ width: (100 - shipSummary.shippedPct - shipSummary.partialPct) + '%', background: 'var(--cp-line-soft)' }" />
+               </div>
+               <div class="bl"><span class="num">{{ shipSummary.shippedPct }}%</span></div>
+             </div>
+             <div class="block">
+-              <div class="v num" style="color: #7CE3DD">{{ shipSummary.partial }}</div>
++              <div class="v num" style="color: var(--cp-warn)">{{ shipSummary.partial }}</div>
+               <div class="l">{{ t('dashboard.ship5') }}</div>
+             </div>
+             <div class="block">
+-              <div class="v num" style="color: var(--cp-line-soft)">{{ shipSummary.unshipped }}</div>
++              <div class="v num" style="color: var(--cp-muted)">{{ shipSummary.unshipped }}</div>
+               <div class="l">{{ t('dashboard.ship0') }}</div>
+             </div>
+           </div>
+         </div>
+ 
+         <!-- 最近受注 -->
+         <div class="card reveal-item" style="--delay: 200ms">
+           <div class="card-head"><h2><el-icon class="i"><List /></el-icon>{{ t('dashboard.recentOrders') }}</h2></div>
+ 
+           <el-table v-if="recentOrders.length && !isMobile" :data="recentOrders" stripe size="small">
+diff --git a/cp6.web/src/views/dashboard/components/KpiCard.vue b/cp6.web/src/views/dashboard/components/KpiCard.vue
+index c0836fd..ef3cfb2 100644
+--- a/cp6.web/src/views/dashboard/components/KpiCard.vue
++++ b/cp6.web/src/views/dashboard/components/KpiCard.vue
+@@ -53,21 +53,21 @@ function areaPath(t: number[]): string {
+         :style="{ background: chipStyle[props.tone].bg, color: chipStyle[props.tone].color }"
+       >
+         <slot name="icon" />
+       </span>
+     </div>
+     <div class="val num">{{ value }}<small v-if="suffix"> {{ suffix }}</small></div>
+     <div v-if="sub || clickable" class="sub">
+       <slot name="sub">{{ sub }}</slot>
+       <span v-if="clickable" class="go">→</span>
+     </div>
+-    <svg v-if="trend?.length" class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
++    <svg v-if="trend && trend.length >= 2" class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
+       <path
+         :d="areaPath(trend)"
+         :fill="{ brand: 'rgba(20,184,196,.10)', info: 'rgba(78,128,238,.10)', warn: 'rgba(240,148,10,.10)', danger: 'rgba(229,72,77,.08)' }[props.tone]"
+       />
+       <polyline
+         :points="points(trend)"
+         :stroke="toneVar[props.tone]"
+         stroke-width="2"
+         fill="none"
+         stroke-linecap="round"

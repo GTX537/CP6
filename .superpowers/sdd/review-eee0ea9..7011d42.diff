@@ -1,0 +1,470 @@
+# Review package: eee0ea9..HEAD
+
+## Commits
+7011d42 feat(wfs-hardening): D-T2 InclusiveGatewayNode空心圆菱形+画布接线+属性面板分支驳回策略段
+
+## Files changed
+ .superpowers/sdd/task-DT2-report.md                | 67 ++++++++++-------
+ cp6.web/src/views/oa/designer/DesignerCanvas.vue   | 10 +++
+ .../NodePropertyPanel.branchReject.spec.ts         | 87 ++++++++++++++++++++++
+ .../src/views/oa/designer/NodePropertyPanel.vue    | 32 ++++++++
+ .../oa/designer/nodes/InclusiveGatewayNode.spec.ts | 40 ++++++++++
+ .../oa/designer/nodes/InclusiveGatewayNode.vue     | 62 +++++++++++++++
+ 6 files changed, 272 insertions(+), 26 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-DT2-report.md b/.superpowers/sdd/task-DT2-report.md
+index eb85c5c..1367ac8 100644
+--- a/.superpowers/sdd/task-DT2-report.md
++++ b/.superpowers/sdd/task-DT2-report.md
+@@ -1,26 +1,41 @@
+-# Task D-T2 报告：ServiceTaskNode 自定义节点 + 画布接线
+-
+-## 改动文件清单
+-- **Create** `cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue` — serviceTask 自定义节点组件（虚线机器节点，图标 chip + kind 副标签）。
+-- **Modify** `cp6.web/src/views/oa/designer/DesignerCanvas.vue`：
+-  - import ServiceTaskNode；`#node-serviceTask` slot 注册。
+-  - 拖拽：`dragType:string` → `dragKey:string`（`serviceTask:<kind>` 复合键，区分同 type 三 kind）；新增 `paletteKey()` 辅助；`onPaletteDragStart` 改传整个 palette item；`onCanvasDrop` 按 key 精确匹配 palette 项，serviceTask 落点在 `data` 预置 `serviceKind`（D-T1 graphToSchema 随 data 透传，round-trip 成立）。
+-  - 调色板 dot：新增 `.dot-serviceTask { background: var(--cp-brand); }`。
+-
+-## 验证命令与输出
+-- `npm run type-check`（NODE_OPTIONS=--max-old-space-size=8192）：**通过**，vue-tsc --build 无错误输出。
+-- `npm run build`（同堆）：**通过**，`✓ built in 6.59s`。仅有既存的 chunk >500kB 警告（非本任务引入，走 stderr 被 PowerShell 包装为 NativeCommandError 显示，实际 exit 0）。
+-
+-## 视觉方案五条逐条落实
+-1. **家族色**：三 kind 共用 `--cp-brand`/`--cp-brand-bg`，无第二色相；danger 红未使用。✅
+-2. **签名元素**：`border: 2px dashed var(--cp-brand)`（对比人类节点实线）+ label 左侧 16px `.node-kind-icon` chip（bg `--cp-brand-bg`、`border-radius: 4px`、字符 dataWriteback「⤓」/webApi「⚡」/timer「⏱」）。线型+图标双重编码。✅
+-3. **kind 副标签**：`.node-strategy` 位置（仿 ApprovalNode），`t('oa.designer.svc.kind.<kind>')` 运行时键，色 `--cp-brand`。✅
+-4. **其余照 ApprovalNode**：`background: var(--cp-brand-bg)`、`border-radius: var(--cp-r-sm)`、`padding: 8px 16px; min-width: 130px`、选中 `box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-brand) 50%, transparent)`、Handle 上入下出、class `vf-node-service` + `vf-node--selected`。✅
+-5. **调色板项**：serviceTask 三项圆点 `.dot-serviceTask` 用同一 brand 青，无 color 字段（跟随 D-T1 处置，点色在组件层 token 决定）。✅
+-
+-## 自查发现
+-- 新文件 ServiceTaskNode.vue grep `#hex`/`rgba(`/`hsla(`：**零硬编码色值**，全部 `--cp-*` token。
+-- DesignerCanvas 新增样式仅 `var(--cp-brand)`，无硬编码。
+-- 主标签 fallback 用 `t('oa.designer.svc.title')`、kind 副标签用 `t('oa.designer.svc.kind.*')`，键 E-T2 才 seed，当前界面显示裸键为预期（brief 明确）。
+-- `serviceKind` computed 对缺失/未知值兜底为 `dataWriteback`，避免渲染时图标/标签 undefined。
+-- Vue Flow 实际渲染 smoke（拖拽落点、虚线外观）留 QA。
++# Task D-T2 报告：InclusiveGatewayNode + 画布接线 + 属性面板「分支驳回策略」段
++
++## Status: 完成（TDD 红→绿，前端 420 全绿 / type-check 0 / build 过）
++
++## 交付物
++| 文件 | 动作 | 内容 |
++|---|---|---|
++| `cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.vue` | Create | BPMN 惯例 菱形+内嵌空心圆节点（区别 GatewayNode 实心菱形）；`t()` 文案；全 `var(--cp-warn)` token 零硬编码色 |
++| `cp6.web/src/views/oa/designer/DesignerCanvas.vue` | Modify | import + `#node-inclusiveSplit`/`#node-inclusiveJoin` 两模板 + `.dot-inclusiveSplit/.dot-inclusiveJoin`（空心 dot，border token） |
++| `cp6.web/src/views/oa/designer/NodePropertyPanel.vue` | Modify | script `isSplitGateway`+`branchReject` computed；「基本參數」nodeType 后加分支驳回 el-select 段；`.gw-hint` 样式 |
++| `cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.spec.ts` | Create（测试） | 4 用例：split/join 文案键、空心圆记号、选中态类 |
++| `cp6.web/src/views/oa/designer/NodePropertyPanel.branchReject.spec.ts` | Create（测试） | 7 用例：split 型渲染/非 split 不渲染、默认 cascade 不落 schema、prune 写入、cascade 回清 |
++
++**未碰** `EdgePropertyPanel.vue`（spec §7.3：inclusive 出边复用既有条件边编辑）。
++
++## 红绿证据
++- **基线**：前端 vitest 409 全绿（会话起点亲跑确认）。
++- **红**：新增 2 spec（11 用例）跑 → 7 failed（InclusiveGatewayNode.vue 缺失 + panel 无 isSplitGateway/branchReject）。
++- **绿**：实现后新 spec 11/11 通过；全量 `npx vitest run` → 63 files / 420 tests 全绿（409+11）。
++- `npm run type-check`（vue-tsc --build）→ 0 错误。
++- `npm run build` → 通过（唯一告警为既存 chunk>500kB 提示，与本任务无关）。
++
++## 契约要点
++- `branchReject` computed：默认 `cascade` 不落 schema（`onBranchReject=undefined`），选 `prune` 才写字段 → 旧流程零污染，与后端 `null=cascade` 语义一致。
++- `isSplitGateway`：仅 `parallelSplit`/`inclusiveSplit` 露段。
++- palette dot：inclusive 用空心（`background:transparent; border:2px solid var(--cp-warn)`）与 parallel 实心区分，呼应节点空心圆身份。
++
++## E-T1 需种的 i18n 键清单（本任务只引用，五语 seed 归 E-T1）
++本任务 template 内 `t()` 新引用键（六键，五语 = ja/zh-CN/zh-TW/en/ko）：
++1. `oa.designer.gw.inclusiveSplit`（节点：包容分叉）
++2. `oa.designer.gw.inclusiveJoin`（节点：包容汇聚）
++3. `oa.designer.gw.branchReject`（属性面板 label：分支驳回策略）
++4. `oa.designer.gw.branchReject.cascade`（选项：连坐/级联驳回）
++5. `oa.designer.gw.branchReject.prune`（选项：剪枝）
++6. `oa.designer.gw.branchRejectHint`（下拉下方 hint 说明）
++
++> 注：D-T1 在 validateClient 引用的 `oa.designer.errInclusiveDefault|errInclusivePair|errBranchReject` 及 `E-WF-019|020|021` 亦属 E-T1 共 12 键五语 seed 范畴（见共享契约）。本任务新引用的是上列前 6 键（gw.* 家族）。
++
++## 疑虑 / 备注
++- InclusiveGatewayNode.spec 中 `<Handle>` 用 `stubs:{Handle:true}` 隔离 VueFlow provider（无 store context 会 inject 失败）；Vue Flow 真实渲染 smoke 按计划留 QA harness。
++- 提交刻意剔除工作树中 CT2/CT3/DT2 .md 的 LF→CRLF 行尾 churn（非本任务改动），仅提交 D-T2 前端 5 文件 + 本报告。
+diff --git a/cp6.web/src/views/oa/designer/DesignerCanvas.vue b/cp6.web/src/views/oa/designer/DesignerCanvas.vue
+index 281aad3..f4dc3cb 100644
+--- a/cp6.web/src/views/oa/designer/DesignerCanvas.vue
++++ b/cp6.web/src/views/oa/designer/DesignerCanvas.vue
+@@ -9,20 +9,21 @@ import { Background } from '@vue-flow/background'
+ import { Controls } from '@vue-flow/controls'
+ import '@vue-flow/core/dist/style.css'
+ import '@vue-flow/core/dist/theme-default.css'
+ import { useI18n } from 'vue-i18n'
+ 
+ import { schemaToGraph, graphToSchema, NODE_PALETTE } from './designerModel'
+ import type { FlowSchemaDto } from './designerModel'
+ import StartNode from './nodes/StartNode.vue'
+ import ApprovalNode from './nodes/ApprovalNode.vue'
+ import GatewayNode from './nodes/GatewayNode.vue'
++import InclusiveGatewayNode from './nodes/InclusiveGatewayNode.vue'
+ import EndNode from './nodes/EndNode.vue'
+ import ServiceTaskNode from './nodes/ServiceTaskNode.vue'
+ 
+ // ── Props & emits ──────────────────────────────────────────────────
+ const props = defineProps<{ modelValue: FlowSchemaDto }>()
+ const emit = defineEmits<{
+   'update:modelValue': [value: FlowSchemaDto]
+   'select': [val: { kind: 'node' | 'edge' | null; id: string | null }]
+ }>()
+ 
+@@ -383,20 +384,26 @@ function focusNode(nodeId: string) {
+           </template>
+           <template #node-approval="nodeProps">
+             <ApprovalNode v-bind="nodeProps" />
+           </template>
+           <template #node-parallelSplit="nodeProps">
+             <GatewayNode v-bind="nodeProps" />
+           </template>
+           <template #node-parallelJoin="nodeProps">
+             <GatewayNode v-bind="nodeProps" />
+           </template>
++          <template #node-inclusiveSplit="nodeProps">
++            <InclusiveGatewayNode v-bind="nodeProps" />
++          </template>
++          <template #node-inclusiveJoin="nodeProps">
++            <InclusiveGatewayNode v-bind="nodeProps" />
++          </template>
+           <template #node-end="nodeProps">
+             <EndNode v-bind="nodeProps" />
+           </template>
+           <template #node-serviceTask="nodeProps">
+             <ServiceTaskNode v-bind="nodeProps" />
+           </template>
+ 
+           <!-- Background & Controls -->
+           <Background v-if="showGrid" variant="lines" />
+           <Controls />
+@@ -508,20 +515,23 @@ function focusNode(nodeId: string) {
+   height: 10px;
+   border-radius: 50%;
+   flex-shrink: 0;
+ }
+ /* Palette legend swatches — node-type semantic colors, kept in lockstep
+    with the rendered node borders (StartNode/ApprovalNode/GatewayNode/EndNode). */
+ .dot-start { background: var(--cp-ok); }
+ .dot-approval { background: var(--cp-info); }
+ .dot-parallelSplit,
+ .dot-parallelJoin { background: var(--cp-warn); }
++/* inclusive 网关：空心 dot 区分 parallel 实心（BPMN 记号一致性）。 */
++.dot-inclusiveSplit,
++.dot-inclusiveJoin { background: transparent; border: 2px solid var(--cp-warn); }
+ .dot-end { background: var(--cp-muted); }
+ /* serviceTask 三 kind 共用 brand 青，与 ServiceTaskNode 节点身份一致（虚线机器节点）。 */
+ .dot-serviceTask { background: var(--cp-brand); }
+ 
+ .canvas-flow-wrap {
+   flex: 1;
+   min-width: 0;
+   min-height: 0;
+   position: relative;
+ }
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.branchReject.spec.ts b/cp6.web/src/views/oa/designer/NodePropertyPanel.branchReject.spec.ts
+new file mode 100644
+index 0000000..0f86c90
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.branchReject.spec.ts
+@@ -0,0 +1,87 @@
++// @vitest-environment jsdom
++// D-T2：属性面板「分支驳回策略」段（parallelSplit / inclusiveSplit 专属）。
++// 契约：默认 cascade 不落 schema（onBranchReject=undefined，旧流程零污染，与后端 null=cascade 同义）；
++//       选 prune 才写 onBranchReject='prune'。
++import { describe, it, expect, vi } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import ElementPlus from 'element-plus'
++import { nextTick } from 'vue'
++import type { SchemaNode } from './designerModel'
++
++vi.mock('@/api/oa/designer', () => ({
++  designerApi: {
++    getServiceCatalog: vi.fn().mockResolvedValue({ actions: [], connectors: [] }),
++  },
++}))
++
++import NodePropertyPanel from './NodePropertyPanel.vue'
++
++const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })
++
++function mountPanel(node: SchemaNode) {
++  return mount(NodePropertyPanel, {
++    props: { node },
++    global: { plugins: [i18n, ElementPlus] },
++  })
++}
++
++function state(w: ReturnType<typeof mountPanel>) {
++  return (w.vm as unknown as { $: { setupState: Record<string, any> } }).$.setupState
++}
++
++describe('NodePropertyPanel 分支驳回策略段（D-T2）', () => {
++  it('parallelSplit → isSplitGateway 真、渲染分支驳回下拉', async () => {
++    const w = mountPanel({ id: 'g', type: 'parallelSplit' } as SchemaNode)
++    await flushPromises()
++    expect(state(w).isSplitGateway).toBe(true)
++    const labels = w.findAll('.el-form-item__label').map(n => n.text())
++    expect(labels).toContain('oa.designer.gw.branchReject')
++  })
++
++  it('inclusiveSplit → 渲染分支驳回下拉', async () => {
++    const w = mountPanel({ id: 'g', type: 'inclusiveSplit' } as SchemaNode)
++    await flushPromises()
++    expect(state(w).isSplitGateway).toBe(true)
++    const labels = w.findAll('.el-form-item__label').map(n => n.text())
++    expect(labels).toContain('oa.designer.gw.branchReject')
++  })
++
++  it('approval（非 split）→ 不渲染分支驳回段', async () => {
++    const w = mountPanel({ id: 'a', type: 'approval', approverStrategy: 'Starter' } as SchemaNode)
++    await flushPromises()
++    expect(state(w).isSplitGateway).toBe(false)
++    const labels = w.findAll('.el-form-item__label').map(n => n.text())
++    expect(labels).not.toContain('oa.designer.gw.branchReject')
++  })
++
++  it('parallelJoin（非 split）→ 不渲染分支驳回段', async () => {
++    const w = mountPanel({ id: 'j', type: 'parallelJoin' } as SchemaNode)
++    await flushPromises()
++    expect(state(w).isSplitGateway).toBe(false)
++  })
++
++  it('branchReject 默认 cascade（onBranchReject 未落）', async () => {
++    const w = mountPanel({ id: 'g', type: 'parallelSplit' } as SchemaNode)
++    await flushPromises()
++    expect(state(w).branchReject).toBe('cascade')
++    expect(state(w).local.onBranchReject).toBeUndefined()
++  })
++
++  it('选 prune → 写 onBranchReject=prune', async () => {
++    const w = mountPanel({ id: 'g', type: 'parallelSplit' } as SchemaNode)
++    await flushPromises()
++    state(w).branchReject = 'prune'
++    await nextTick()
++    expect(state(w).local.onBranchReject).toBe('prune')
++  })
++
++  it('选回 cascade → 清 onBranchReject（旧流程零污染）', async () => {
++    const w = mountPanel({ id: 'g', type: 'parallelSplit', onBranchReject: 'prune' } as SchemaNode)
++    await flushPromises()
++    expect(state(w).branchReject).toBe('prune')
++    state(w).branchReject = 'cascade'
++    await nextTick()
++    expect(state(w).local.onBranchReject).toBeUndefined()
++  })
++})
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+index 7c2c8c1..fc4b4c5 100644
+--- a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+@@ -115,20 +115,33 @@ const timerActionKind = computed<'none' | 'write' | 'api'>({
+ const timeoutDays = computed({
+   get: () => (local.value.timeoutHours != null ? local.value.timeoutHours / 24 : 0),
+   set: (v: number | null) => {
+     local.value.timeoutHours = v != null && v > 0 ? Math.round(v * 24) : undefined
+   },
+ })
+ 
+ const isApproval = computed(() => local.value.type === 'approval')
+ const isServiceTask = computed(() => local.value.type === 'serviceTask')
+ 
++// 分支驳回策略（parallelSplit/inclusiveSplit 专属，hardening D-T2）
++const isSplitGateway = computed(
++  () => local.value.type === 'parallelSplit' || local.value.type === 'inclusiveSplit',
++)
++
++// 默认 cascade 不落 schema（旧流程零污染，与后端 null=cascade 语义一致）
++const branchReject = computed({
++  get: () => local.value.onBranchReject ?? 'cascade',
++  set: (v: 'cascade' | 'prune') => {
++    local.value.onBranchReject = v === 'cascade' ? undefined : v
++  },
++})
++
+ // ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
+ const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
+ const catalogLoaded = ref(false)
+ const catalogFailed = ref(false)   // 票7：加载失败态，驱动模板露「重试」
+ 
+ async function loadCatalog() {
+   catalogFailed.value = false
+   try {
+     catalog.value = await designerApi.getServiceCatalog()
+     catalogLoaded.value = true
+@@ -267,20 +280,31 @@ async function searchCcUsers(kw: string) {
+           </el-form-item>
+ 
+           <el-form-item :label="t('oa.designer.stateCode')">
+             <el-input v-model="local.code" />
+           </el-form-item>
+ 
+           <el-form-item :label="t('oa.designer.nodeType')">
+             <CpTag tone="muted">{{ local.type }}</CpTag>
+           </el-form-item>
+ 
++          <!-- ── 分支驳回策略（parallelSplit/inclusiveSplit 专属，hardening D-T2）────── -->
++          <template v-if="isSplitGateway">
++            <el-form-item :label="t('oa.designer.gw.branchReject')">
++              <el-select v-model="branchReject" style="width: 100%">
++                <el-option value="cascade" :label="t('oa.designer.gw.branchReject.cascade')" />
++                <el-option value="prune"   :label="t('oa.designer.gw.branchReject.prune')" />
++              </el-select>
++              <span class="gw-hint">{{ t('oa.designer.gw.branchRejectHint') }}</span>
++            </el-form-item>
++          </template>
++
+           <!-- approval-specific fields (single-stage; hidden when 串簽 enabled) -->
+           <template v-if="isApproval && !stageEnabled">
+             <el-form-item :label="t('oa.designer.approverType')">
+               <el-select v-model="local.approverStrategy" style="width: 100%" clearable>
+                 <el-option value="DirectManager" :label="t('oa.designer.strategy.directManager')" />
+                 <el-option value="DeptLeader"   :label="t('oa.designer.strategy.deptLeader')" />
+                 <el-option value="Role"         :label="t('oa.designer.strategy.role')" />
+                 <el-option value="Specified"    :label="t('oa.designer.strategy.specified')" />
+                 <el-option value="Starter"      :label="t('oa.designer.strategy.starter')" />
+                 <el-option value="FormField" :label="t('oa.designer.strategy.formField')" />
+@@ -840,20 +864,28 @@ async function searchCcUsers(kw: string) {
+ </template>
+ 
+ <style scoped>
+ .node-prop-panel {
+   padding: 8px;
+   overflow-y: auto;
+   height: 100%;
+   box-sizing: border-box;
+ }
+ 
++.gw-hint {
++  display: block;
++  margin-top: 4px;
++  font-size: 11px;
++  line-height: 1.5;
++  color: var(--cp-muted);
++}
++
+ .panel-title {
+   font-size: 13px;
+   font-weight: 600;
+   color: var(--cp-ink);
+   padding: 4px 0 8px;
+   border-bottom: 1px solid var(--cp-line);
+   margin-bottom: 8px;
+ }
+ 
+ .prop-form {
+diff --git a/cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.spec.ts b/cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.spec.ts
+new file mode 100644
+index 0000000..675073c
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.spec.ts
+@@ -0,0 +1,40 @@
++// @vitest-environment jsdom
++// D-T2：包容网关节点组件（BPMN 惯例 菱形+内嵌空心圆，区别 parallel 实心菱形）。
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import InclusiveGatewayNode from './InclusiveGatewayNode.vue'
++
++const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })
++
++function mountNode(data: Record<string, unknown>) {
++  return mount(InclusiveGatewayNode, {
++    props: { id: 'g1', type: 'inclusiveSplit', selected: false, data } as any,
++    global: { plugins: [i18n], stubs: { Handle: true } },
++  })
++}
++
++describe('InclusiveGatewayNode（D-T2）', () => {
++  it('inclusiveSplit → 渲染 split 文案键', () => {
++    const w = mountNode({ type: 'inclusiveSplit' })
++    expect(w.text()).toContain('oa.designer.gw.inclusiveSplit')
++  })
++
++  it('inclusiveJoin → 渲染 join 文案键', () => {
++    const w = mountNode({ type: 'inclusiveJoin' })
++    expect(w.text()).toContain('oa.designer.gw.inclusiveJoin')
++  })
++
++  it('渲染 BPMN 空心圆记号（区别 parallel 实心菱形）', () => {
++    const w = mountNode({ type: 'inclusiveSplit' })
++    expect(w.find('.inc-circle').exists()).toBe(true)
++  })
++
++  it('selected → 菱形壳挂选中态类', () => {
++    const w = mount(InclusiveGatewayNode, {
++      props: { id: 'g1', type: 'inclusiveSplit', selected: true, data: { type: 'inclusiveSplit' } } as any,
++      global: { plugins: [i18n], stubs: { Handle: true } },
++    })
++    expect(w.find('.vf-node--selected').exists()).toBe(true)
++  })
++})
+diff --git a/cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.vue b/cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.vue
+new file mode 100644
+index 0000000..fcb91fb
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/nodes/InclusiveGatewayNode.vue
+@@ -0,0 +1,62 @@
++<script setup lang="ts">
++import { computed } from 'vue'
++import { Handle, Position } from '@vue-flow/core'
++import type { NodeProps } from '@vue-flow/core'
++import { useI18n } from 'vue-i18n'
++
++const props = defineProps<NodeProps>()
++const { t } = useI18n()
++
++type NodeData = { type?: string }
++const isJoin = computed(() => (props.data as NodeData)?.type === 'inclusiveJoin')
++</script>
++
++<template>
++  <!-- Inclusive gateway: 菱形 + 内嵌空心圆（BPMN inclusive 记号），区别 GatewayNode 的实心菱形 -->
++  <div :class="['vf-node-inclusive-wrap', { 'vf-node--selected': props.selected }]">
++    <Handle type="target" :position="Position.Top" />
++    <div class="vf-node-inclusive">
++      <span class="inc-circle" />
++      <span class="inc-label">{{ isJoin ? t('oa.designer.gw.inclusiveJoin') : t('oa.designer.gw.inclusiveSplit') }}</span>
++    </div>
++    <Handle type="source" :position="Position.Bottom" />
++  </div>
++</template>
++
++<style scoped>
++.vf-node-inclusive-wrap {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  background: transparent;
++  cursor: default;
++}
++.vf-node-inclusive-wrap.vf-node--selected .vf-node-inclusive {
++  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-warn) 50%, transparent);
++}
++.vf-node-inclusive {
++  position: relative;
++  width: 60px;
++  height: 60px;
++  background: var(--cp-warn-bg);
++  border: 2px solid var(--cp-warn);
++  transform: rotate(45deg);
++  display: flex;
++  align-items: center;
++  justify-content: center;
++}
++.inc-circle {
++  position: absolute;
++  inset: 8px;
++  border: 2px solid var(--cp-warn);
++  border-radius: 50%;
++}
++.inc-label {
++  transform: rotate(-45deg);
++  font-size: 10px;
++  font-weight: 500;
++  color: var(--cp-warn);
++  white-space: nowrap;
++  z-index: 1;
++}
++</style>

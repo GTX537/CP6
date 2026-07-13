@@ -1,0 +1,869 @@
+# Review package: 66a9237..372677e
+
+## Commits
+372677e feat(oawf): M-OA/WF T5 IAuditable 贴点——Wf 治理/授权族纳入5+运行时豁免12
+
+## Files changed
+ .superpowers/sdd/oawf-t5-report.md               |  51 ++++
+ CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs     |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs          |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowData.cs        |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs         |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs    |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs      |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs     |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs    |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs        |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs       |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FormData.cs        |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FormDef.cs         |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs    |   1 +
+ CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs       |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_Notification.cs    |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs      |   2 +
+ CP6.Tests/Wf/OawfAuditTests.cs                   | 339 +++++++++++++++++++++++
+ 19 files changed, 428 insertions(+), 5 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/oawf-t5-report.md b/.superpowers/sdd/oawf-t5-report.md
+new file mode 100644
+index 0000000..24206dc
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t5-report.md
+@@ -0,0 +1,51 @@
++# M-OA/WF T5 报告：IAuditable 贴点(Wf_FlowDef/Wf_ApprovalBinding 族)
++
++## 结论
++- 目录全量对账：CP6.Entity/DomainModels/Wf 域 **17 个实体**（+1 `WfNotificationType` 静态常量类，非实体不计入）。
++- **纳入 5 / 豁免 12 / 目录 17（零漏）**。
++- 每实体单行 `IAuditable`（纳入）或 `[审计豁免]` 源码注释（豁免），**零业务字段改动、零迁移**（`git status CP6.Core/Migrations/` = 0）。
++- `dotnet test --filter OawfAuditTests` = **21/21 绿**；全量 = **1796 passed / 5 skipped / 0 failed**（= 基线 1775 + 本任务 21，基线未跌）。
++
++## 裁决方法
++口径（brief §需求1）：**不可逆治理配置 或 权限授予类 → 纳入；高频运行时流转 / 追加型 / 用户偏好 → 豁免**。
++逐实体字段级实查（非按类别套先例）。拦截器 `CP6Context.CaptureFieldAuditBeforeSave` 走 `ChangeTracker.Entries<IAuditable>()` 泛型标记，EntityName=`ClrType.Name`，PK=Id(Guid)→EntityKey，元字段(Id/TenantId/Creator/CreateDate/Modifier/ModifyDate)与 [AuditIgnore]/密钥/RowVersion 由 `BuildChanges` 跳过。
++
++## 全量裁决表（17 实体）
++
++| # | 实体 | 字段级/语义证据 | 裁决 |
++|---|------|----------------|------|
++| 1 | **Wf_FlowDef** | 流程定义：SchemaJson(节点/边有向图)、FlowKey/FormKey 绑定、Version、Enable、FunctionId/FlowCode。**高危键 oa-designer:* 落库对象**，schema/启停变更影响所有在途流程走向。设计期治理配置。 | **纳入** |
++| 2 | **Wf_ApprovalBinding** | 审批绑定单源：BizType→FlowKey 映射、Enable、ConditionJson。改绑/停用直接改变某业务是否走审批、走哪条流程。计划点名。治理配置面。 | **纳入** |
++| 3 | **Wf_FormDef** | 表单定义：SchemaJson(字段定义)、Version、Enable、Category。oa-designer 落库对象，schema 改前端渲染+后端 required/类型复核规则。设计期治理配置。 | **纳入** |
++| 4 | **Wf_FlowDelegate** | 审批委派：GrantorId→DelegateId、ValidFrom/To、Enable、Scope。委托人把审批权授予代理人——谁把审批权给了谁/何时收回。**权限授予面**（brief 点名 Delegate 类应纳入）。 | **纳入** |
++| 5 | **Wf_ApproverMap** | 审批人映射：MapKey/MatchValue→ApproverUserId/ApproverRoleId、OrderNo、Enable。改一行即改某匹配值由谁审批=授予/回收审批权。**权限授予面**（brief 点名 ApproverMap 应纳入）。数据驱动。 | **纳入** |
++| 6 | Wf_FlowInstance | 运行时状态载体：CurrentNode/Status/VarsJson 每次推进即变；RowVersion 乐观锁。正确性由 FlowEngine 引擎测试锁定。 | 豁免 |
++| 7 | Wf_FlowTask | 高频待办任务：一节点多条(会签)、Status/IsRead/StageIndex/StageRound 幂等流转。引擎测试锁定。 | 豁免 |
++| 8 | Wf_FlowToken | 运行时执行点令牌：分叉/合流内核态 Status/StagePlanJson 高频翻转。FlowToken 内核测试锁定。 | 豁免 |
++| 9 | Wf_FlowHistory | **仅追加事件日志**：submit/approve/reject… 每动作追加一条、不更新。本身即审批时间线(审计源而非被审计对象)。 | 豁免 |
++| 10 | Wf_FlowData | 每关卡不可变表单快照：按 StepSeq 追加"每步变化轨迹"留痕，建后不改。运行时读模型。 | 豁免 |
++| 11 | Wf_FlowFormTo | 传签履历台账：运行时读模型，送签建/处理更新(Status/HandledAt 随流转)。引擎测试锁定。 | 豁免 |
++| 12 | Wf_FlowCc | 抄送运行时读模型：随流转落行、IsRead/ReadAt 高频翻转。 | 豁免 |
++| 13 | Wf_FormData | 表单提交数据：运行时一次提交一行的字段值快照(DataJson)，改版不动旧数据本身即留痕。 | 豁免 |
++| 14 | Wf_Notification | 站内通知：运行时随事件追加、IsRead/ReadAt 高频翻转。 | 豁免 |
++| 15 | Wf_FormFavorite | 用户个人偏好：填單☆收藏(UserId,FormKey)。 | 豁免 |
++| 16 | Wf_InboxPref | 用户个人偏好：信箱显示偏好 PrefsJson 自由结构。 | 豁免 |
++| 17 | Wf_ServiceJob | 服务任务异步作业台账：运行时队列 AttemptCount/Status/Lock*/NextAttemptAtUtc 高频翻转 + RowVersion 并发。ServiceJob 扫描/租约测试锁定。 | 豁免 |
++| — | WfNotificationType | 静态常量类（`public static class`，无 BaseEntity/无 [Table]/无行）→ **非实体，不计入目录**。 | N/A |
++
++豁免注释已全部落源码（每行 `[审计豁免]` 头注，均标注"OawfAuditTests 负测试坐实零审计行"）。
++
++## TDD 证据（先红后绿）
++- **RED**（贴点前跑 OawfAuditTests）：`Failed: 9, Passed: 12, Total: 21` —— 9 个纳入正测试全红（无审计行），12 个豁免负测试已绿。
++- **GREEN**（5 实体贴 IAuditable 后）：`Failed: 0, Passed: 21, Total: 21`。
++- 纳入正测试真值断言：op1 断言 `EntityName==nameof(...)` + `EntityKey==Id.ToString()`；op2 断言 diff `Field/Old/New` 真值（如 FlowDef.Enable `True→False`、ApprovalBinding.FlowKey `oa-po→oa-po-v2`、FormDef.Version `1→2`、FlowDelegate.Enable 收回 `True→False`、ApproverMap.ApproverRoleId `5→9`）。
++- 豁免负测试真实：12 个 `Assert.Empty(db.Sys_FieldAuditLogs.ToList())`，含 Notification create+update(IsRead 翻转)双段。
++
++## 全量回归
++`dotnet test`（全量）= **1796 passed / 5 skipped / 0 failed**（1 m 5 s）。基线 1775 未跌，+21 本任务。
++
++## 零迁移证据
++`git status --porcelain CP6.Core/Migrations/` = 0 行。IAuditable 为无列标记接口（`interface IAuditable {}`），不映射任何列，EF 模型无 diff。改动面：17 个 Wf 实体文件（5 加接口 + 12 加注释）+ 1 新测试文件。
++
++## Concerns
++- 无。IAuditable 为纯标记，零业务逻辑/零 schema 变更；豁免逐条源码注释可追溯；负测试覆盖全部 12 豁免实体。
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs b/CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs
+index 00906e4..09a0ee1 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs
+@@ -1,22 +1,24 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 审批绑定（OA 章05 §3）。业务类型 → 审批流程的映射：业务侧调 IApprovalService.SubmitAsync(bizType,…)
+ /// 时，按本表的 BizType 找到对应 FlowKey 起流程。一种业务类型一条启用绑定（UX 唯一索引）。
+ /// ConditionJson 预留"按表单字段选不同流程"（v1 直用 FlowKey，条件选流程后续增强）。
+ /// </summary>
++// [审计纳入] 审批绑定单源＝业务类型→审批流程的治理映射（BizType→FlowKey、启停）。改绑/停用直接改变
++// 某业务是否走审批、走哪条流程——治理配置面，须字段级留痕。贴 IAuditable。
+ [Table("Wf_ApprovalBinding")]
+-public class Wf_ApprovalBinding : BaseTenantEntity
++public class Wf_ApprovalBinding : BaseTenantEntity, IAuditable
+ {
+     /// <summary>业务类型标识（如 "FinJournalPost"、"PO"），与 IApprovalService/IApprovalCallback 对应</summary>
+     [Required, MaxLength(50)]
+     public string BizType { get; set; } = string.Empty;
+ 
+     /// <summary>绑定的流程定义 FlowKey（Wf_FlowDef.FlowKey）</summary>
+     [Required, MaxLength(100)]
+     public string FlowKey { get; set; } = string.Empty;
+ 
+     /// <summary>是否启用（停用后该业务类型不再走审批）</summary>
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs b/CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs
+index 6ecea3e..4a6c466 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs
+@@ -1,18 +1,20 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>审批人映射表(②b Menu 数据驱动)。一条=某命名映射下某匹配值对应一个审批目标(用户或角色)。
+ /// 同 (MapKey,MatchValue) 可多行(多审批人→会签组)。租户隔离走 BaseTenantEntity 全局过滤器。
+ /// 表名单数 Wf_ApproverMap，对齐全部 Wf_* 实体命名约定(DbSet 复数/[Table] 单数)。</summary>
++// [审计纳入] 审批人映射＝数据驱动的权限授予面：MapKey/MatchValue→审批目标(ApproverUserId/ApproverRoleId)。
++// 改一行即改变某匹配值由谁审批，等同授予/回收审批权——权限授予面，须字段级留痕。贴 IAuditable。
+ [Table("Wf_ApproverMap")]
+-public class Wf_ApproverMap : BaseTenantEntity
++public class Wf_ApproverMap : BaseTenantEntity, IAuditable
+ {
+     [MaxLength(100)] public string MapKey { get; set; } = "";
+     [MaxLength(200)] public string MatchValue { get; set; } = "";
+     public Guid? ApproverUserId { get; set; }
+     public int? ApproverRoleId { get; set; }
+     public int OrderNo { get; set; }
+     public bool Enable { get; set; } = true;
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs
+index 770394b..4a18e48 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs
+@@ -1,15 +1,17 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>抄送（WFS 读模型）。节点/路徑/提交/结束抄送均落一行；IsRead 给信箱"未读"标记。</summary>
++// [审计豁免] 抄送运行时读模型：随流转落行、IsRead/ReadAt 高频翻转，非治理配置/权限授予面。
++// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowCc")]
+ public class Wf_FlowCc : BaseTenantEntity
+ {
+     public Guid InstanceId { get; set; }
+     public Guid RecipientId { get; set; }
+     [MaxLength(100)] public string? AtNodeId { get; set; }
+     public bool IsRead { get; set; }
+     public DateTime? ReadAt { get; set; }
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowData.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowData.cs
+index 2f18289..6352701 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowData.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowData.cs
+@@ -1,18 +1,20 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 每关卡表单快照（WFS 读模型）。每到一关 / 每次办结存一份当时表单字段值（不可变留痕）。
+ /// 区别 Wf_FormData（整单最新）/ VarsJson（流程变量，会被覆盖）：本表按 StepSeq 串"每步变化轨迹"。
+ /// </summary>
++// [审计豁免] 每关卡不可变表单快照：按 StepSeq 追加"每步变化轨迹"留痕(建后不改)，运行时读模型非治理配置。
++// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowData")]
+ public class Wf_FlowData : BaseTenantEntity
+ {
+     public Guid InstanceId { get; set; }
+     public Guid? TokenId { get; set; }
+     public int StepSeq { get; set; }
+     [MaxLength(100)] public string NodeId { get; set; } = string.Empty;
+     [Column(TypeName = "nvarchar(max)")] public string DataJson { get; set; } = "{}";
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs
+index e390313..4b9e516 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs
+@@ -1,21 +1,23 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程定义（OA 章03 §3）。SchemaJson = 节点+边有向图，驱动流程引擎状态机。
+ /// 绑定一张表单（FormKey）。改版只升 Version，在途实例按其快照运行（阶段1 简化：实例不存 schema 快照，按 FlowKey 取最新——单租户手配场景可接受，多版本并行留扩展）。
+ /// </summary>
++// [审计纳入] 流程定义＝设计期治理配置（SchemaJson 节点/边有向图、FlowKey 绑定、版本）。高危键 oa-designer:*
++// 的落库对象，schema/启停变更影响所有在途流程走向——须字段级留痕谁在何时改了流程结构。贴 IAuditable。
+ [Table("Wf_FlowDef")]
+-public class Wf_FlowDef : BaseTenantEntity
++public class Wf_FlowDef : BaseTenantEntity, IAuditable
+ {
+     /// <summary>流程稳定业务键（本阶段全局唯一）。建后不可改</summary>
+     [Required, MaxLength(100)]
+     public string FlowKey { get; set; } = string.Empty;
+ 
+     /// <summary>流程名称</summary>
+     [Required, MaxLength(200)]
+     public string FlowName { get; set; } = string.Empty;
+ 
+     /// <summary>绑定的表单定义 FormKey</summary>
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs
+index 25bde3b..6a50700 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs
+@@ -1,22 +1,24 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 审批委派（OA 章07 §5）。委托人在有效期内把自己的审批权委派给代理人：流程引擎<b>建待办时</b>
+ /// 若原审批人正处委派期，则把 AssigneeId 替换为代理人，并在痕迹双记"代 X 审批"。
+ /// v1 仅"建待办时替换"（存量在途待办转派后续增强）；Scope 预留按流程限定（空=全部流程）。
+ /// </summary>
++// [审计纳入] 审批委派＝权限授予面：委托人在有效期内把自己的审批权授予代理人（Grantor→Delegate、有效期、启停）。
++// 谁把审批权给了谁/何时收回是权限授予的敏感事实，须字段级留痕。贴 IAuditable。
+ [Table("Wf_FlowDelegate")]
+-public class Wf_FlowDelegate : BaseTenantEntity
++public class Wf_FlowDelegate : BaseTenantEntity, IAuditable
+ {
+     /// <summary>委托人（原审批人）→ Sys_User.Id</summary>
+     public Guid GrantorId { get; set; }
+ 
+     /// <summary>代理人（受托人）→ Sys_User.Id</summary>
+     public Guid DelegateId { get; set; }
+ 
+     /// <summary>委派生效时间（含）</summary>
+     public DateTime ValidFrom { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs
+index 4987ba7..5492b22 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 传签履历台账（WFS 读模型）。token 每到一个人工关卡落一行：送签时建、处理时更新。
+ /// 带 TokenId → 并行多分支履历各成一串。与 Wf_FlowHistory（纯追加事件日志）分工互补。
+ /// </summary>
++// [审计豁免] 传签履历台账：运行时读模型，token 每到人工关卡送签建、处理更新(Status/HandledAt 随流转)，
++// 由引擎测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowFormTo")]
+ public class Wf_FlowFormTo : BaseTenantEntity
+ {
+     public Guid InstanceId { get; set; }
+     public Guid? TokenId { get; set; }
+     public int StepSeq { get; set; }
+ 
+     [MaxLength(100)] public string? FromNodeId { get; set; }
+     [MaxLength(100)] public string NodeId { get; set; } = string.Empty;
+     [MaxLength(100)] public string? NodeCode { get; set; }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs
+index 83376fe..2b2e552 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程审批痕迹（OA 章03 §3）。每次动作（提交/同意/驳回/撤回/挂起…）追加一条，构成审批时间线。
+ /// 仅追加、不更新，CreateDate(BaseEntity) = 动作发生时刻。
+ /// </summary>
++// [审计豁免] 仅追加事件日志：本身即审批时间线(submit/approve/reject… 每动作追加一条、不更新)，
++// 是审计源而非被审计对象。字段级审计等同复制自身。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowHistory")]
+ public class Wf_FlowHistory : BaseTenantEntity
+ {
+     /// <summary>所属流程实例 → Wf_FlowInstance.Id</summary>
+     public Guid InstanceId { get; set; }
+ 
+     /// <summary>动作所在节点 Id</summary>
+     [MaxLength(100)]
+     public string NodeId { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs
+index 07ad47f..399bc4f 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程实例（OA 章03 §3）。状态机的"状态载体"：CurrentNode = 当前停留节点，Status = 实例总态。
+ /// VarsJson 存表单字段值快照（条件流转 ConditionEvaluator 的取值源）。全状态落库、幂等可重放。
+ /// </summary>
++// [审计豁免] 运行时状态载体：CurrentNode/Status/VarsJson 皆高频状态机流转（每次推进即变），
++// 正确性由 FlowEngine 引擎测试 + RowVersion 乐观锁锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowInstance")]
+ public class Wf_FlowInstance : BaseTenantEntity
+ {
+     /// <summary>所属流程定义 FlowKey</summary>
+     [Required, MaxLength(100)]
+     public string FlowKey { get; set; } = string.Empty;
+ 
+     /// <summary>业务类型（阶段2 接业务用；阶段1 可空）</summary>
+     [MaxLength(50)]
+     public string? BizType { get; set; }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs
+index cde7690..c4ce2f0 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程待办任务（OA 章03 §3）。一个节点可建多条（会签：多人各一条）。
+ /// Status!=0 即"已办"，是 ActAsync 幂等闸门的依据。
+ /// </summary>
++// [审计豁免] 高频运行时待办任务：一节点多条(会签)、Status/IsRead/StageIndex 幂等流转，正确性由 FlowEngine
++// 引擎测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowTask")]
+ public class Wf_FlowTask : BaseTenantEntity
+ {
+     /// <summary>所属流程实例 → Wf_FlowInstance.Id</summary>
+     public Guid InstanceId { get; set; }
+ 
+     /// <summary>所在节点 Id</summary>
+     [MaxLength(100)]
+     public string NodeId { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs
+index 9a91502..50b7d55 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs
+@@ -2,20 +2,22 @@ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程令牌（WFS P1 运行时内核）。一个 token = 实例内一个活动执行点（停留节点）。
+ /// 单路径审批：一实例恒一 Active token；并行分叉：一实例多 Active token 并存。
+ /// 血缘：ParentTokenId 串嵌套层级；ForkId 标同批分叉（parallelJoin 靠"同 ForkId 计数"认亲）。
+ /// "实例进行中" = 存在 Active token（取代旧"CurrentNode 单值"判定）。
+ /// </summary>
++// [审计豁免] 运行时执行点令牌：分叉/合流内核态(Status/StagePlanJson 高频翻转)，正确性由 FlowToken 内核测试锁定，
++// 非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowToken")]
+ public class Wf_FlowToken : BaseTenantEntity
+ {
+     public Guid InstanceId { get; set; }
+ 
+     [MaxLength(100)]
+     public string NodeId { get; set; } = string.Empty;
+ 
+     /// <summary>0=Active 1=Consumed 2=Cancelled。见 FlowTokenStatus。</summary>
+     public int Status { get; set; }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FormData.cs b/CP6.Entity/DomainModels/Wf/Wf_FormData.cs
+index 976d84e..4626330 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FormData.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FormData.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 表单数据（OA 章02）。一次提交一行，DataJson 存字段值快照；与流程实例经 BizId 关联
+ /// （阶段1 BizId 可空，阶段3 接业务后回填流程实例 Id / 业务单号）。
+ /// </summary>
++// [审计豁免] 表单提交数据：运行时一次提交一行的字段值快照(DataJson)，改版不动旧数据本身即留痕，
++// 非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FormData")]
+ public class Wf_FormData : BaseTenantEntity
+ {
+     /// <summary>对应表单定义 FormKey</summary>
+     [Required, MaxLength(100)]
+     public string FormKey { get; set; } = string.Empty;
+ 
+     /// <summary>提交时的表单定义版本（留痕：改版不动旧数据）</summary>
+     public int FormVersion { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FormDef.cs b/CP6.Entity/DomainModels/Wf/Wf_FormDef.cs
+index 4a759ce..a6788e7 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FormDef.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FormDef.cs
+@@ -1,22 +1,24 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 表单定义（OA 章02）。SchemaJson 驱动前端动态渲染 + 后端 required/类型复核。
+ /// JSON 列直存 nvarchar(max)，不用 EAV（OA-D4 / 08 章）。继承 BaseEntity，Enable 软停用，
+ /// 本阶段不带 TenantId（OA 阶段4 多租户统一加）。
+ /// </summary>
++// [审计纳入] 表单定义＝设计期治理配置（SchemaJson 字段定义、版本、启停）。oa-designer 落库对象，
++// schema 变更改变前端渲染 + 后端 required/类型复核规则——治理配置面，须字段级留痕。贴 IAuditable。
+ [Table("Wf_FormDef")]
+-public class Wf_FormDef : BaseTenantEntity
++public class Wf_FormDef : BaseTenantEntity, IAuditable
+ {
+     /// <summary>表单稳定业务键（本阶段全局唯一；多租户后改租户内唯一）。建后不可改</summary>
+     [Required, MaxLength(100)]
+     public string FormKey { get; set; } = string.Empty;
+ 
+     /// <summary>表单名称</summary>
+     [Required, MaxLength(200)]
+     public string FormName { get; set; } = string.Empty;
+ 
+     /// <summary>表单 schema（字段定义 JSON）</summary>
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs b/CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs
+index af09347..456301c 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs
+@@ -1,12 +1,13 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>填單☆收藏（信箱 L2，umbrella §2.5）。唯一 (TenantId,UserId,FormKey)。</summary>
++// [审计豁免] 用户个人偏好：填單☆收藏，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FormFavorite")]
+ public class Wf_FormFavorite : BaseTenantEntity
+ {
+     public Guid UserId { get; set; }
+     [MaxLength(100)] public string FormKey { get; set; } = string.Empty;
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs b/CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs
+index a1d33208..5321dce 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs
+@@ -1,12 +1,14 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>信箱显示偏好（umbrella §2.5）。每用户一行，PrefsJson 自由结构。唯一 (TenantId,UserId)。</summary>
++// [审计豁免] 用户个人偏好：信箱显示偏好 PrefsJson 自由结构，非治理配置/权限授予面。
++// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_InboxPref")]
+ public class Wf_InboxPref : BaseTenantEntity
+ {
+     public Guid UserId { get; set; }
+     [Column(TypeName = "nvarchar(max)")] public string PrefsJson { get; set; } = "{}";
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_Notification.cs b/CP6.Entity/DomainModels/Wf/Wf_Notification.cs
+index 57fb64b..bf594d9 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_Notification.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_Notification.cs
+@@ -1,20 +1,22 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 站内通知持久化（OA Phase D-1 §通知中心）。
+ /// 每事件产生一行，随引擎 SaveChanges 同一工作单元落库。
+ /// 收件人=UserId（新待办→处理人；签核完成/驳回→发起人；超时→处理人）。
+ /// </summary>
++// [审计豁免] 站内通知：运行时随事件追加、IsRead/ReadAt 高频翻转，非治理配置/权限授予面。
++// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_Notification")]
+ public class Wf_Notification : BaseTenantEntity
+ {
+     /// <summary>收件人 → Sys_User.Id</summary>
+     public Guid UserId { get; set; }
+ 
+     /// <summary>通知类型（WfNotificationType 常量）</summary>
+     public int Type { get; set; }
+ 
+     /// <summary>通知标题（最长 200 字符）</summary>
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs b/CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs
+index ae651df..09b8201 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>服务任务异步停泊作业台账(§2.3)。
+ /// 每条记录 = 一个停泊等待执行/重试的服务任务 job。
+ /// 活跃 job(Status IN Pending/Running)靠 filtered unique index 保证同 token 同 node 至多一条。
+ /// 表名单数 Wf_ServiceJob,DbSet 复数 Wf_ServiceJobs(对齐全部 Wf_* 实体命名约定)。</summary>
++// [审计豁免] 服务任务异步作业台账：运行时队列(AttemptCount/Status/Lock*/NextAttemptAtUtc 高频翻转 + RowVersion 并发),
++// 正确性由 ServiceJob 扫描/租约测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_ServiceJob")]
+ public class Wf_ServiceJob : BaseTenantEntity
+ {
+     // TenantId 来自 BaseTenantEntity；Id/CreateDate/ModifyDate 来自 BaseEntity
+ 
+     public Guid InstanceId { get; set; }           // FK→Wf_FlowInstance
+     public Guid TokenId { get; set; }              // 要恢复的停泊 token
+     [MaxLength(100)] public string NodeId { get; set; } = "";   // 服务任务节点 Id(与 Wf_FlowToken.NodeId / Wf_FlowInstance.CurrentNode 同口径)
+     [MaxLength(50)]  public string Kind { get; set; } = "";     // dataWriteback/webApi/timer
+ 
+diff --git a/CP6.Tests/Wf/OawfAuditTests.cs b/CP6.Tests/Wf/OawfAuditTests.cs
+new file mode 100644
+index 0000000..8e5884c
+--- /dev/null
++++ b/CP6.Tests/Wf/OawfAuditTests.cs
+@@ -0,0 +1,339 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Wf;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++/// <summary>
++/// OA/WF 治理配置 / 权限授予面 关键实体字段级审计接线冒烟（M-OA/WF 横切 T5）。
++/// 照 <see cref="CP6.Tests.Mes.MesAuditTests"/> 范式：InMemory + 假当前用户。
++/// 验证贴 IAuditable 的 5 个设计期治理/授权实体（流程定义 Wf_FlowDef·审批绑定单源 Wf_ApprovalBinding·
++/// 表单定义 Wf_FormDef·审批委派 Wf_FlowDelegate·审批人映射 Wf_ApproverMap）在 create/update
++/// 随业务行同周期写入 Sys_FieldAuditLogs（真实断言实体名/字段/新旧值）；
++/// 并回归确认 12 个高频运行时流转 / 追加型 / 用户偏好 实体（实例·任务·令牌·痕迹·关卡快照·传签履历·
++/// 抄送·表单数据·通知·收藏·信箱偏好·服务作业）均未贴 → 零审计行（负测试，全量豁免对账）。
++/// </summary>
++public class OawfAuditTests
++{
++    private sealed class FakeUser : ICurrentUserAccessor
++    {
++        public FakeUser(Guid? id, string? name) { UserId = id; UserName = name; }
++        public Guid? UserId { get; }
++        public string? UserName { get; }
++    }
++
++    private sealed record DiffRow(string Field, string? Old, string? New);
++
++    private static List<DiffRow> ParseChanges(string json)
++        => JsonSerializer.Deserialize<List<DiffRow>>(json) ?? new();
++
++    private static readonly Guid _userId = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static CP6Context Ctx()
++        => TestHelper.CreateInMemoryContext(new FakeUser(_userId, "alice"));
++
++    // ════════════════════════════════════════════════════════════════════════
++    //  纳入：治理配置 / 权限授予面（5 实体）
++    // ════════════════════════════════════════════════════════════════════════
++
++    // ── 流程定义（Wf_FlowDef）— SchemaJson/FlowKey 设计期治理配置，改版影响所有在途流程 ──
++    [Fact]
++    public void Create_FlowDef_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var fd = new Wf_FlowDef { FlowKey = "oa-leave", FlowName = "请假流程", FormKey = "fm-leave" };
++        db.Set<Wf_FlowDef>().Add(fd);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FlowDef), rows[0].EntityName);
++        Assert.Equal(fd.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_FlowDef_enable_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var fd = new Wf_FlowDef { FlowKey = "oa-leave", FlowName = "请假流程", FormKey = "fm-leave", Enable = true };
++        db.Set<Wf_FlowDef>().Add(fd);
++        db.SaveChanges();
++
++        fd.Enable = false;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FlowDef), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Enable" && d.Old == "True" && d.New == "False");
++    }
++
++    // ── 审批绑定单源（Wf_ApprovalBinding）— BizType→FlowKey 映射，改绑改变谁的审批走哪条流程 ──
++    [Fact]
++    public void Create_ApprovalBinding_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var b = new Wf_ApprovalBinding { BizType = "FinJournalPost", FlowKey = "oa-journal", Enable = true };
++        db.Set<Wf_ApprovalBinding>().Add(b);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_ApprovalBinding), rows[0].EntityName);
++        Assert.Equal(b.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_ApprovalBinding_flowKey_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var b = new Wf_ApprovalBinding { BizType = "PO", FlowKey = "oa-po", Enable = true };
++        db.Set<Wf_ApprovalBinding>().Add(b);
++        db.SaveChanges();
++
++        b.FlowKey = "oa-po-v2";
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_ApprovalBinding), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "FlowKey" && d.Old == "oa-po" && d.New == "oa-po-v2");
++    }
++
++    // ── 表单定义（Wf_FormDef）— SchemaJson/Version 设计期治理配置（oa-designer 落库对象）──
++    [Fact]
++    public void Update_FormDef_version_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var f = new Wf_FormDef { FormKey = "fm-leave", FormName = "请假单", Version = 1 };
++        db.Set<Wf_FormDef>().Add(f);
++        db.SaveChanges();
++
++        f.Version = 2;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FormDef), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Version" && d.Old == "1" && d.New == "2");
++    }
++
++    // ── 审批委派（Wf_FlowDelegate）— 委托人把审批权授予代理人：权限授予面 ────────────────
++    [Fact]
++    public void Create_FlowDelegate_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var d = new Wf_FlowDelegate
++        {
++            GrantorId = Guid.NewGuid(),
++            DelegateId = Guid.NewGuid(),
++            ValidFrom = new DateTime(2026, 7, 12),
++            ValidTo = new DateTime(2026, 7, 20),
++            Enable = true,
++        };
++        db.Set<Wf_FlowDelegate>().Add(d);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FlowDelegate), rows[0].EntityName);
++        Assert.Equal(d.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_FlowDelegate_enable_revoke_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var d = new Wf_FlowDelegate
++        {
++            GrantorId = Guid.NewGuid(),
++            DelegateId = Guid.NewGuid(),
++            ValidFrom = new DateTime(2026, 7, 12),
++            ValidTo = new DateTime(2026, 7, 20),
++            Enable = true,
++        };
++        db.Set<Wf_FlowDelegate>().Add(d);
++        db.SaveChanges();
++
++        d.Enable = false;   // 即时收回委派
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FlowDelegate), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Enable" && d.Old == "True" && d.New == "False");
++    }
++
++    // ── 审批人映射（Wf_ApproverMap）— MapKey→审批目标(用户/角色)：数据驱动的权限授予面 ────
++    [Fact]
++    public void Create_ApproverMap_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var m = new Wf_ApproverMap { MapKey = "dept-manager", MatchValue = "D01", ApproverRoleId = 5, Enable = true };
++        db.Set<Wf_ApproverMap>().Add(m);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_ApproverMap), rows[0].EntityName);
++        Assert.Equal(m.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_ApproverMap_approverRoleId_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var m = new Wf_ApproverMap { MapKey = "dept-manager", MatchValue = "D01", ApproverRoleId = 5, Enable = true };
++        db.Set<Wf_ApproverMap>().Add(m);
++        db.SaveChanges();
++
++        m.ApproverRoleId = 9;   // 改派审批目标角色
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_ApproverMap), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "ApproverRoleId" && d.Old == "5" && d.New == "9");
++    }
++
++    // ════════════════════════════════════════════════════════════════════════
++    //  豁免负测试：高频运行时流转 / 追加型 / 用户偏好（12 实体，全量对账）
++    // ════════════════════════════════════════════════════════════════════════
++
++    // 运行时状态载体：CurrentNode/Status 高频状态机流转，正确性由 FlowEngine 引擎测试锁定，豁免。
++    [Fact]
++    public void Create_FlowInstance_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowInstance>().Add(new Wf_FlowInstance { FlowKey = "oa-leave", CurrentNode = "start", StarterId = Guid.NewGuid() });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 高频待办任务：一节点多条、Status 幂等流转，引擎测试锁定，豁免。
++    [Fact]
++    public void Create_FlowTask_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowTask>().Add(new Wf_FlowTask { InstanceId = Guid.NewGuid(), NodeId = "n1", AssigneeId = Guid.NewGuid() });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 运行时执行点令牌：分叉/合流内核态，引擎测试锁定，豁免。
++    [Fact]
++    public void Create_FlowToken_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowToken>().Add(new Wf_FlowToken { InstanceId = Guid.NewGuid(), NodeId = "n1", Status = 0 });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 审批痕迹：仅追加事件日志（本身即审计时间线），豁免。
++    [Fact]
++    public void Create_FlowHistory_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowHistory>().Add(new Wf_FlowHistory { InstanceId = Guid.NewGuid(), NodeId = "n1", ActorId = Guid.NewGuid(), Action = "approve" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 每关卡表单快照：不可变追加留痕，豁免。
++    [Fact]
++    public void Create_FlowData_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowData>().Add(new Wf_FlowData { InstanceId = Guid.NewGuid(), StepSeq = 1, NodeId = "n1" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 传签履历台账：运行时读模型，豁免。
++    [Fact]
++    public void Create_FlowFormTo_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowFormTo>().Add(new Wf_FlowFormTo { InstanceId = Guid.NewGuid(), StepSeq = 1, NodeId = "n1", ExpectedHandlerId = Guid.NewGuid(), SentAt = DateTime.Now });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 抄送读模型：IsRead 高频翻转，豁免。
++    [Fact]
++    public void Create_FlowCc_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowCc>().Add(new Wf_FlowCc { InstanceId = Guid.NewGuid(), RecipientId = Guid.NewGuid() });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 表单提交数据：运行时一次提交一行的字段值快照，豁免。
++    [Fact]
++    public void Create_FormData_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FormData>().Add(new Wf_FormData { FormKey = "fm-leave", FormVersion = 1, DataJson = "{}" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 站内通知：运行时追加 + IsRead 高频翻转，豁免（create 与 update 皆零审计行）。
++    [Fact]
++    public void CreateUpdate_Notification_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        var n = new Wf_Notification { UserId = Guid.NewGuid(), Type = WfNotificationType.TodoCreated, Title = "新待办", IsRead = false };
++        db.Set<Wf_Notification>().Add(n);
++        db.SaveChanges();
++
++        n.IsRead = true;
++        db.SaveChanges();
++
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 填單收藏：用户个人偏好，豁免。
++    [Fact]
++    public void Create_FormFavorite_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FormFavorite>().Add(new Wf_FormFavorite { UserId = Guid.NewGuid(), FormKey = "fm-leave" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 信箱显示偏好：用户个人偏好，豁免。
++    [Fact]
++    public void Create_InboxPref_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_InboxPref>().Add(new Wf_InboxPref { UserId = Guid.NewGuid(), PrefsJson = "{}" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 服务任务异步作业台账：运行时队列（AttemptCount/Lock/Status 高频翻转），引擎测试锁定，豁免。
++    [Fact]
++    public void Create_ServiceJob_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_ServiceJob>().Add(new Wf_ServiceJob { InstanceId = Guid.NewGuid(), TokenId = Guid.NewGuid(), NodeId = "n1", Kind = "timer" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++}

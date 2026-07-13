@@ -1,0 +1,1410 @@
+# Review package: 226282f..HEAD
+
+## Commits
+f31abd9 refactor(ui): WMS 迁移批次5——Remnant/StockQuery/PackingShip/Vmi/MobileTask
+
+## Files changed
+ cp6.web/src/views/wms/MobileTaskView.vue  |  36 +--
+ cp6.web/src/views/wms/PackingShipView.vue |  14 +-
+ cp6.web/src/views/wms/RemnantView.vue     | 342 ++++++++++++++--------------
+ cp6.web/src/views/wms/StockQueryView.vue  | 259 ++++++++++------------
+ cp6.web/src/views/wms/VmiView.vue         | 356 ++++++++++++++----------------
+ 5 files changed, 495 insertions(+), 512 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/wms/MobileTaskView.vue b/cp6.web/src/views/wms/MobileTaskView.vue
+index 793a0ff..07a8b12 100644
+--- a/cp6.web/src/views/wms/MobileTaskView.vue
++++ b/cp6.web/src/views/wms/MobileTaskView.vue
+@@ -1,17 +1,17 @@
+ <template>
+   <div class="wms-mobile">
+     <el-card shadow="never" class="hd-card">
+       <div class="hd-row">
+         <div>
+           <h2 style="margin: 0">{{ t('wms.mobile.title') }}</h2>
+-          <div style="font-size: 12px; color: #909399">{{ formatDateTime(new Date()) }}</div>
++          <div style="font-size: 12px; color: var(--cp-muted)">{{ formatDateTime(new Date()) }}</div>
+         </div>
+         <el-button :icon="Refresh" circle @click="reload" :loading="loading" />
+       </div>
+ 
+       <!-- スキャンバー（バーコード解決） -->
+       <div class="scan-bar">
+         <el-input
+           v-model="scanCode"
+           :placeholder="t('wms.mobile.scan.ph')"
+           size="large"
+@@ -236,37 +236,37 @@ function goInbound() { router.push('/wms/inbound-receipt') }
+ 
+ onMounted(reload)
+ </script>
+ 
+ <style scoped>
+ .wms-mobile { padding: 12px; max-width: 600px; margin: 0 auto; }
+ .hd-card { margin-bottom: 12px; }
+ .hd-row { display: flex; align-items: center; justify-content: space-between; }
+ .scan-bar { margin-top: 12px; }
+ .scan-result {
+-  margin-top: 8px; padding: 8px 10px; border-radius: 8px;
+-  background: #f5f7fa; border-left: 4px solid #909399;
++  margin-top: 8px; padding: 8px 10px; border-radius: var(--cp-r-sm);
++  background: var(--cp-bg-th); border-left: 4px solid var(--cp-muted);
+ }
+-.scan-result.location { border-left-color: #67c23a; }
+-.scan-result.product { border-left-color: #409eff; }
+-.scan-result.unknown { border-left-color: #e6a23c; }
++.scan-result.location { border-left-color: var(--cp-ok); }
++.scan-result.product { border-left-color: var(--cp-info); }
++.scan-result.unknown { border-left-color: var(--cp-warn); }
+ .sr-hd { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+-.sr-sub { font-size: 12px; color: #909399; }
++.sr-sub { font-size: 12px; color: var(--cp-muted); }
+ .sr-stk { margin-top: 6px; }
+-.sr-empty { font-size: 12px; color: #909399; margin-top: 6px; }
+-.stat { text-align: center; padding: 6px; border-radius: 6px; background: #f5f7fa; }
+-.stat-num { font-size: 22px; font-weight: bold; color: #409eff; }
+-.stat-lbl { font-size: 11px; color: #606266; }
++.sr-empty { font-size: 12px; color: var(--cp-muted); margin-top: 6px; }
++.stat { text-align: center; padding: 6px; border-radius: var(--cp-r-sm); background: var(--cp-bg-th); }
++.stat-num { font-size: 22px; font-weight: bold; color: var(--cp-brand); }
++.stat-lbl { font-size: 11px; color: var(--cp-text); }
+ .task-tabs :deep(.el-tabs__content) { padding-top: 6px; }
+ .task-card {
+-  background: #fff; border: 1px solid #ebeef5; border-radius: 8px;
++  background: var(--cp-card); border: 1px solid var(--cp-line); border-radius: var(--cp-r-sm);
+   padding: 10px 12px; margin-bottom: 8px; cursor: pointer;
+-  transition: all 0.15s;
++  transition: all var(--cp-t-base);
+ }
+-.task-card:active { background: #ecf5ff; }
++.task-card:active { background: var(--cp-brand-bg); }
+ .task-hd { display: flex; align-items: center; justify-content: space-between; }
+-.task-no { font-weight: bold; font-size: 14px; color: #303133; }
+-.task-sub { font-size: 12px; color: #606266; margin: 4px 0; }
+-.task-grid { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: #606266; margin-bottom: 6px; }
++.task-no { font-weight: bold; font-size: 14px; color: var(--cp-ink); }
++.task-sub { font-size: 12px; color: var(--cp-text); margin: 4px 0; }
++.task-grid { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--cp-text); margin-bottom: 6px; }
+ .task-actions { display: flex; gap: 6px; justify-content: flex-end; }
+-.task-foot { font-size: 11px; color: #909399; }
++.task-foot { font-size: 11px; color: var(--cp-muted); }
+ </style>
+diff --git a/cp6.web/src/views/wms/PackingShipView.vue b/cp6.web/src/views/wms/PackingShipView.vue
+index 64ed69e..d5f9aa1 100644
+--- a/cp6.web/src/views/wms/PackingShipView.vue
++++ b/cp6.web/src/views/wms/PackingShipView.vue
+@@ -31,21 +31,21 @@
+         <el-card shadow="never" v-if="!current">
+           <el-empty :description="t('wms.pack.msg.noPackages')" />
+         </el-card>
+ 
+         <template v-else>
+           <!-- ヘッダ -->
+           <el-card shadow="never" class="hd-card">
+             <div class="hd-row">
+               <div>
+                 <h2 style="margin: 0">{{ current.outboundNo }}</h2>
+-                <div style="color: #666; font-size: 13px">{{ current.customerName || current.workOrderNo }}</div>
++                <div style="color: var(--cp-muted); font-size: 13px">{{ current.customerName || current.workOrderNo }}</div>
+               </div>
+               <div style="margin-left: auto">
+                 <el-tag type="warning" size="large">{{ (current.details || []).length }} {{ t('wms.pick.fld.lineNo') }}</el-tag>
+               </div>
+             </div>
+           </el-card>
+ 
+           <!-- 商品リスト -->
+           <el-card shadow="never" class="items-card">
+             <template #header>
+@@ -243,24 +243,24 @@ async function reloadHistory() {
+ }
+ 
+ onMounted(() => { reloadQueue(); reloadHistory() })
+ </script>
+ 
+ <style scoped>
+ .wms-pack { padding: 12px; }
+ .card-hd { display: flex; align-items: center; gap: 8px; }
+ .queue-card :deep(.el-card__body) { padding: 8px; max-height: 720px; overflow-y: auto; }
+ .queue-item {
+-  padding: 10px 12px; border: 1px solid #ebeef5; border-radius: 6px; margin-bottom: 6px; cursor: pointer;
+-  transition: all 0.15s;
++  padding: 10px 12px; border: 1px solid var(--cp-line); border-radius: var(--cp-r-sm); margin-bottom: 6px; cursor: pointer;
++  transition: all var(--cp-t-base);
+ }
+-.queue-item:hover { background: #f5f7fa; border-color: #c0c4cc; }
+-.queue-item.active { background: #fdf6ec; border-color: #e6a23c; }
++.queue-item:hover { background: var(--cp-bg-hover); border-color: var(--cp-faint); }
++.queue-item.active { background: var(--cp-warn-bg); border-color: var(--cp-warn); }
+ .queue-no { font-weight: bold; font-size: 14px; }
+ .queue-meta { display: flex; gap: 4px; margin: 4px 0; }
+-.queue-info { font-size: 12px; color: #606266; }
++.queue-info { font-size: 12px; color: var(--cp-text); }
+ 
+ .hd-card { margin-bottom: 8px; }
+ .hd-row { display: flex; align-items: center; }
+ .items-card { margin-bottom: 8px; }
+-.ship-card :deep(.el-card__header) { background: #f0f9ff; }
++.ship-card :deep(.el-card__header) { background: var(--cp-brand-bg); }
+ </style>
+diff --git a/cp6.web/src/views/wms/RemnantView.vue b/cp6.web/src/views/wms/RemnantView.vue
+index 06bc04c..44105bd 100644
+--- a/cp6.web/src/views/wms/RemnantView.vue
++++ b/cp6.web/src/views/wms/RemnantView.vue
+@@ -1,260 +1,282 @@
++<!--
++  端材在庫 —— CpPageShell + CpListPage + 2×CpFormDialog 迁移（WMS 批次5）。
++  状態列 kind:'tag'+map；種別列 map（无 tag，仅换文案）；寸法列 kind:'num'；数量列 map（拼 unitCd）；操作走 col slot（状态条件按钮）。
++  新建/予約用 CpFormDialog（default slot 保留 input-number/select/textarea）；必填改 el-form rules。
++  再利用検索(match) 是「查询工具+结果表」而非编辑表单，模板表达不了 → 保留原 el-dialog（逃生舱）。
++  端材列表原本单表滚动无分页 → :paginated="false"。in-place 变更(新建/予約/解除/使用/廃棄)后 listRef.reload()。
++-->
+ <template>
+-  <div class="wms-remnant">
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('wms.remnant.fld.no')"><el-input v-model="query.remnantNo" clearable style="width: 180px" /></el-form-item>
+-        <el-form-item :label="t('wms.remnant.fld.matType')">
+-          <el-select v-model="query.materialType" clearable style="width: 120px">
+-            <el-option v-for="(l, v) in matTypeMap" :key="v" :label="l" :value="v" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('wms.remnant.fld.matGrade')"><el-input v-model="query.materialGrade" clearable style="width: 120px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.status')">
+-          <el-select v-model="query.status" clearable style="width: 120px">
+-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('wms.remnant.fld.sourceWO')"><el-input v-model="query.sourceWorkOrderNo" clearable style="width: 140px" /></el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-          <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+-          <el-button type="success" @click="matchDialog = true">{{ t('wms.remnant.btn.match') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
++  <CpPageShell :title="t('wms.remnant.fld.no')" :count="total">
++    <template #actions>
++      <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
++      <el-button type="success" @click="matchDialog = true">{{ t('wms.remnant.btn.match') }}</el-button>
++    </template>
+ 
+-    <el-card shadow="never">
+-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row>
+-        <el-table-column prop="remnantNo" :label="t('wms.remnant.fld.no')" width="180" />
+-        <el-table-column :label="t('wms.common.status')" width="100">
+-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.remnant.fld.matType')" width="80">
+-          <template #default="{ row }">{{ matTypeMap[row.materialType] || row.materialType }}</template>
+-        </el-table-column>
+-        <el-table-column prop="materialGrade" :label="t('wms.remnant.fld.matGrade')" width="100" />
+-        <el-table-column prop="widthMm" :label="t('wms.remnant.fld.widthMm')" width="90" align="right" />
+-        <el-table-column prop="lengthMm" :label="t('wms.remnant.fld.lengthMm')" width="100" align="right" />
+-        <el-table-column prop="thicknessUm" :label="t('wms.remnant.fld.thickness')" width="100" align="right" />
+-        <el-table-column prop="quantity" :label="t('wms.remnant.fld.qty')" width="100" align="right">
+-          <template #default="{ row }">{{ formatQty(row.quantity) }} {{ row.unitCd }}</template>
+-        </el-table-column>
+-        <el-table-column prop="sourceWorkOrderNo" :label="t('wms.remnant.fld.sourceWO')" width="160" />
+-        <el-table-column prop="sourceRollNo" :label="t('wms.remnant.fld.sourceRoll')" width="160" />
+-        <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="80" />
+-        <el-table-column prop="locationCd" :label="t('wms.common.location')" width="120" />
+-        <el-table-column prop="reservedFor" :label="t('wms.remnant.fld.reservedFor')" width="140" />
+-        <el-table-column prop="registeredAt" :label="t('wms.sample.fld.registeredAt')" width="170" />
+-        <el-table-column :label="t('wms.common.action')" width="240" fixed="right">
+-          <template #default="{ row }">
+-            <el-button v-if="row.status === 0" link type="primary" size="small" @click="openReserve(row)">{{ t('wms.remnant.btn.reserve') }}</el-button>
+-            <el-button v-if="row.status === 1" link type="warning" size="small" @click="onUnreserve(row)">{{ t('wms.remnant.btn.unreserve') }}</el-button>
+-            <el-button v-if="row.status === 0 || row.status === 1" link type="success" size="small" @click="onUse(row)">{{ t('wms.remnant.btn.use') }}</el-button>
+-            <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDispose(row)">{{ t('wms.remnant.btn.dispose') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
+-
+-    <!-- 新建 Dialog -->
+-    <el-dialog v-model="createDialog" :title="t('wms.remnant.dlg.create')" width="600">
+-      <el-form v-if="editing" :model="editing" label-width="140px" size="small">
+-        <el-row :gutter="12">
+-          <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.matType')" required>
+-            <el-select v-model="editing.materialType">
+-              <el-option v-for="(l, v) in matTypeMap" :key="v" :label="l" :value="v" />
+-            </el-select>
+-          </el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.matGrade')"><el-input v-model="editing.materialGrade" maxlength="20" /></el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.widthMm')" required><el-input-number v-model="editing.widthMm" :min="1" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.lengthMm')" required><el-input-number v-model="editing.lengthMm" :min="1" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.thickness')"><el-input-number v-model="editing.thicknessUm" :min="0" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.qty')" required><el-input-number v-model="editing.quantity" :min="0" :precision="4" controls-position="right" style="width: 100%" /></el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="'Unit'"><el-input v-model="editing.unitCd" maxlength="10" /></el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.sourceWO')"><el-input v-model="editing.sourceWorkOrderNo" maxlength="25" /></el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.sourceRoll')"><el-input v-model="editing.sourceRollNo" maxlength="25" /></el-form-item></el-col>
+-          <el-col :span="12"><el-form-item :label="t('wms.common.warehouse')" required><el-input v-model="editing.warehouseCd" maxlength="10" /></el-form-item></el-col>
+-          <el-col :span="24"><el-form-item :label="t('wms.common.location')" required><el-input v-model="editing.locationCd" maxlength="30" /></el-form-item></el-col>
+-          <el-col :span="24"><el-form-item :label="t('wms.common.remarks')"><el-input v-model="editing.remarks" type="textarea" :rows="2" /></el-form-item></el-col>
+-        </el-row>
+-      </el-form>
+-      <template #footer>
+-        <el-button @click="createDialog = false">{{ t('wms.common.cancel') }}</el-button>
+-        <el-button type="primary" @click="onCreate" :loading="saving">{{ t('wms.common.save') }}</el-button>
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      :paginated="false"
++      @total-change="total = $event"
++    >
++      <template #col-_action="{ row }">
++        <el-button v-if="row.status === 0" link type="primary" size="small" @click="openReserve(row)">{{ t('wms.remnant.btn.reserve') }}</el-button>
++        <el-button v-if="row.status === 1" link type="warning" size="small" @click="onUnreserve(row)">{{ t('wms.remnant.btn.unreserve') }}</el-button>
++        <el-button v-if="row.status === 0 || row.status === 1" link type="success" size="small" @click="onUse(row)">{{ t('wms.remnant.btn.use') }}</el-button>
++        <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDispose(row)">{{ t('wms.remnant.btn.dispose') }}</el-button>
+       </template>
+-    </el-dialog>
++    </CpListPage>
+ 
+-    <!-- 预约 Dialog -->
+-    <el-dialog v-model="reserveDialog" :title="t('wms.remnant.dlg.reserve') + ' — ' + reserveTarget?.remnantNo" width="420">
+-      <el-form label-width="120px" size="small">
+-        <el-form-item :label="t('wms.remnant.fld.reservedFor')" required>
+-          <el-input v-model="reserveFor" maxlength="30" />
+-        </el-form-item>
+-      </el-form>
+-      <template #footer>
+-        <el-button @click="reserveDialog = false">{{ t('wms.common.cancel') }}</el-button>
+-        <el-button type="primary" @click="onReserve" :loading="saving">{{ t('wms.common.save') }}</el-button>
+-      </template>
+-    </el-dialog>
++    <!-- 新建 -->
++    <CpFormDialog
++      v-model="createDialog"
++      :title="t('wms.remnant.dlg.create')"
++      width="600"
++      :form="createForm"
++      :rules="createRules"
++      :submit="onCreate"
++      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
++      @saved="reloadList"
++    >
++      <el-row :gutter="12">
++        <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.matType')" prop="materialType">
++          <el-select v-model="createForm.materialType" style="width: 100%">
++            <el-option v-for="(l, v) in matTypeMap" :key="v" :label="l" :value="v" />
++          </el-select>
++        </el-form-item></el-col>
++        <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.matGrade')"><el-input v-model="createForm.materialGrade" maxlength="20" /></el-form-item></el-col>
++        <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.widthMm')" prop="widthMm"><el-input-number v-model="createForm.widthMm" :min="1" controls-position="right" style="width: 100%" /></el-form-item></el-col>
++        <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.lengthMm')" prop="lengthMm"><el-input-number v-model="createForm.lengthMm" :min="1" controls-position="right" style="width: 100%" /></el-form-item></el-col>
++        <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.thickness')"><el-input-number v-model="createForm.thicknessUm" :min="0" controls-position="right" style="width: 100%" /></el-form-item></el-col>
++        <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.qty')" prop="quantity"><el-input-number v-model="createForm.quantity" :min="0" :precision="4" controls-position="right" style="width: 100%" /></el-form-item></el-col>
++        <el-col :span="12"><el-form-item label="Unit"><el-input v-model="createForm.unitCd" maxlength="10" /></el-form-item></el-col>
++        <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.sourceWO')"><el-input v-model="createForm.sourceWorkOrderNo" maxlength="25" /></el-form-item></el-col>
++        <el-col :span="12"><el-form-item :label="t('wms.remnant.fld.sourceRoll')"><el-input v-model="createForm.sourceRollNo" maxlength="25" /></el-form-item></el-col>
++        <el-col :span="12"><el-form-item :label="t('wms.common.warehouse')" prop="warehouseCd"><el-input v-model="createForm.warehouseCd" maxlength="10" /></el-form-item></el-col>
++        <el-col :span="24"><el-form-item :label="t('wms.common.location')" prop="locationCd"><el-input v-model="createForm.locationCd" maxlength="30" /></el-form-item></el-col>
++        <el-col :span="24"><el-form-item :label="t('wms.common.remarks')"><el-input v-model="createForm.remarks" type="textarea" :rows="2" /></el-form-item></el-col>
++      </el-row>
++    </CpFormDialog>
+ 
+-    <!-- 再利用検索 Dialog -->
++    <!-- 予約 -->
++    <CpFormDialog
++      v-model="reserveDialog"
++      :title="t('wms.remnant.dlg.reserve') + ' — ' + (reserveTarget?.remnantNo ?? '')"
++      width="420"
++      :form="reserveForm"
++      :rules="reserveRules"
++      :submit="onReserve"
++      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
++      @saved="reloadList"
++    >
++      <el-form-item :label="t('wms.remnant.fld.reservedFor')" prop="reservedFor">
++        <el-input v-model="reserveForm.reservedFor" maxlength="30" />
++      </el-form-item>
++    </CpFormDialog>
++
++    <!-- 再利用検索 Dialog（查询工具 + 结果表，保留原机制） -->
+     <el-dialog v-model="matchDialog" :title="t('wms.remnant.dlg.match')" width="700">
+       <el-alert :title="t('wms.remnant.msg.matchHint')" type="info" :closable="false" show-icon style="margin-bottom: 12px" />
+       <el-form :model="matchForm" inline label-width="100px" size="small">
+         <el-form-item :label="t('wms.remnant.fld.matType')" required>
+           <el-select v-model="matchForm.materialType" style="width: 120px">
+             <el-option v-for="(l, v) in matTypeMap" :key="v" :label="l" :value="v" />
+           </el-select>
+         </el-form-item>
+         <el-form-item :label="t('wms.remnant.fld.minWidth')" required>
+           <el-input-number v-model="matchForm.minWidthMm" :min="1" controls-position="right" />
+         </el-form-item>
+         <el-form-item :label="t('wms.remnant.fld.minLength')" required>
+           <el-input-number v-model="matchForm.minLengthMm" :min="1" controls-position="right" />
+         </el-form-item>
+         <el-form-item>
+-          <el-button type="primary" @click="runMatch" :loading="loading">{{ t('wms.common.search') }}</el-button>
++          <el-button type="primary" @click="runMatch" :loading="matching">{{ t('wms.common.search') }}</el-button>
+         </el-form-item>
+       </el-form>
+       <el-table :data="matchResults" border stripe size="small" max-height="350">
+         <el-table-column prop="remnantNo" :label="t('wms.remnant.fld.no')" width="160" />
+         <el-table-column prop="materialGrade" :label="t('wms.remnant.fld.matGrade')" width="100" />
+         <el-table-column prop="widthMm" :label="t('wms.remnant.fld.widthMm')" width="90" align="right" />
+         <el-table-column prop="lengthMm" :label="t('wms.remnant.fld.lengthMm')" width="100" align="right" />
+         <el-table-column prop="quantity" :label="t('wms.remnant.fld.qty')" width="90" align="right" />
+         <el-table-column prop="locationCd" :label="t('wms.common.location')" width="140" />
+       </el-table>
+     </el-dialog>
+-  </div>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, computed, onMounted } from 'vue'
+-import { ElMessage, ElMessageBox } from 'element-plus'
++import { ref, reactive, computed } from 'vue'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import { type Tone } from '@/components/base/CpTag.vue'
+ import { remnantApi } from '@/api/wms/paperIndustry2'
+ import type { RemnantMaterial, RemnantSearchQuery } from '@/types/wms/wms'
+ import { formatQty as fmtQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+-const query = reactive<RemnantSearchQuery>({ pageSize: 100 })
+-const rows = ref<RemnantMaterial[]>([])
+-const loading = ref(false)
+-const saving = ref(false)
+-
+-const createDialog = ref(false)
+-const editing = ref<any>(null)
+-
+-const reserveDialog = ref(false)
+-const reserveTarget = ref<RemnantMaterial | null>(null)
+-const reserveFor = ref('')
+ 
+-const matchDialog = ref(false)
+-const matchForm = reactive({ materialType: 'PAPER', minWidthMm: 500, minLengthMm: 700 })
+-const matchResults = ref<RemnantMaterial[]>([])
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
+ 
+ const matTypeMap = computed<Record<string, string>>(() => ({
+   PAPER: t('wms.remnant.mat.paper'),
+   FILM: t('wms.remnant.mat.film'),
+   OTHER: t('wms.remnant.mat.other'),
+ }))
+-
+ const statusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.remnant.status.available'),
+   1: t('wms.remnant.status.reserved'),
+   2: t('wms.remnant.status.used'),
+   3: t('wms.remnant.status.disposed'),
+ }))
+-
+-function statusTagOf(s: number): 'success' | 'warning' | 'info' | 'danger' {
+-  return ({ 0: 'success', 1: 'warning', 2: 'info', 3: 'danger' } as const)[s as 0] || 'info'
++// 原 statusTagOf(success/warning/info/danger) → 设计系统 Tone（保色）
++function statusTone(s: number): Tone {
++  return ({ 0: 'ok', 1: 'warn', 2: 'info', 3: 'danger' } as const)[s as 0] || 'info'
++}
++function codeLabel(m: Record<number, string>, v: unknown): string {
++  return m[v as number] || (v == null ? '' : String(v))
+ }
+ function formatQty(n: number | undefined | null) {
+   if (n == null) return '0'
+   return fmtQty(n, 4)
+ }
+ 
+-async function reload() {
+-  loading.value = true
+-  try { rows.value = (await remnantApi.search(query)).data || [] }
+-  finally { loading.value = false }
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'remnantNo', label: t('wms.remnant.fld.no'), kind: 'mono', width: 180 },
++  { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
++    map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
++  { prop: 'materialType', label: t('wms.remnant.fld.matType'), width: 80,
++    map: (v) => ({ label: matTypeMap.value[v as string] || (v == null ? '' : String(v)) }) },
++  { prop: 'materialGrade', label: t('wms.remnant.fld.matGrade'), width: 100 },
++  { prop: 'widthMm', label: t('wms.remnant.fld.widthMm'), width: 90, kind: 'num' },
++  { prop: 'lengthMm', label: t('wms.remnant.fld.lengthMm'), width: 100, kind: 'num' },
++  { prop: 'thicknessUm', label: t('wms.remnant.fld.thickness'), width: 100, kind: 'num' },
++  { prop: 'quantity', label: t('wms.remnant.fld.qty'), width: 100, align: 'right',
++    map: (v, row) => ({ label: `${formatQty(v as number)} ${(row as RemnantMaterial).unitCd ?? ''}` }) },
++  { prop: 'sourceWorkOrderNo', label: t('wms.remnant.fld.sourceWO'), width: 160 },
++  { prop: 'sourceRollNo', label: t('wms.remnant.fld.sourceRoll'), width: 160 },
++  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 80 },
++  { prop: 'locationCd', label: t('wms.common.location'), width: 120 },
++  { prop: 'reservedFor', label: t('wms.remnant.fld.reservedFor'), width: 140 },
++  { prop: 'registeredAt', label: t('wms.sample.fld.registeredAt'), width: 170 },
++  { prop: '_action', label: t('wms.common.action'), width: 240, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('wms.common.search'),
++  reset: t('wms.common.clear'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'remnantNo', label: t('wms.remnant.fld.no'), type: 'text' },
++  {
++    key: 'materialType', label: t('wms.remnant.fld.matType'), type: 'select',
++    options: Object.entries(matTypeMap.value).map(([v, l]) => ({ label: l, value: v })),
++  },
++  { key: 'materialGrade', label: t('wms.remnant.fld.matGrade'), type: 'text' },
++  {
++    key: 'status', label: t('wms.common.status'), type: 'select',
++    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++  { key: 'sourceWorkOrderNo', label: t('wms.remnant.fld.sourceWO'), type: 'text' },
++])
++
++const fetchList: ListFetch = async ({ filters }) => {
++  const f = filters as Record<string, unknown>
++  const q: RemnantSearchQuery = { pageSize: 1000 }
++  if (f.remnantNo) q.remnantNo = String(f.remnantNo)
++  if (f.materialType) q.materialType = String(f.materialType)
++  if (f.materialGrade) q.materialGrade = String(f.materialGrade)
++  if (f.status !== undefined && f.status !== '' && f.status !== null) q.status = Number(f.status)
++  if (f.sourceWorkOrderNo) q.sourceWorkOrderNo = String(f.sourceWorkOrderNo)
++  const all = (await remnantApi.search(q)).data || []
++  return { rows: all, total: all.length }
+ }
+ 
++// —— 新建 ——
++const createDialog = ref(false)
++const createForm = reactive<Record<string, unknown>>({
++  materialType: 'PAPER', materialGrade: '', widthMm: 500, lengthMm: 700, thicknessUm: undefined,
++  quantity: 1, unitCd: 'SHT', sourceWorkOrderNo: '', sourceRollNo: '', warehouseCd: '', locationCd: '', remarks: '',
++})
++const createRules = computed<FormRules>(() => ({
++  materialType: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
++  widthMm: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
++  lengthMm: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
++  quantity: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
++  warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++  locationCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++}))
+ function openCreate() {
+-  editing.value = {
+-    materialType: 'PAPER', materialGrade: '',
+-    widthMm: 500, lengthMm: 700, thicknessUm: undefined,
+-    quantity: 1, unitCd: 'SHT',
+-    sourceWorkOrderNo: '', sourceRollNo: '',
+-    warehouseCd: '', locationCd: '',
+-  }
++  Object.assign(createForm, {
++    materialType: 'PAPER', materialGrade: '', widthMm: 500, lengthMm: 700, thicknessUm: undefined,
++    quantity: 1, unitCd: 'SHT', sourceWorkOrderNo: '', sourceRollNo: '', warehouseCd: '', locationCd: '', remarks: '',
++  })
+   createDialog.value = true
+ }
+-
+ async function onCreate() {
+-  saving.value = true
+-  try {
+-    const res = await remnantApi.create(editing.value)
+-    ElMessage.success(`${t('wms.common.success')}: ${res.data.remnantNo}`)
+-    createDialog.value = false
+-    await reload()
+-  } finally { saving.value = false }
++  const res = await remnantApi.create({ ...createForm } as unknown as RemnantMaterial)
++  ElMessage.success(`${t('wms.common.success')}: ${res.data.remnantNo}`)
+ }
+ 
++// —— 予約 ——
++const reserveDialog = ref(false)
++const reserveTarget = ref<RemnantMaterial | null>(null)
++const reserveForm = reactive<Record<string, unknown>>({ reservedFor: '' })
++const reserveRules = computed<FormRules>(() => ({
++  reservedFor: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++}))
+ function openReserve(row: RemnantMaterial) {
+   reserveTarget.value = row
+-  reserveFor.value = ''
++  Object.assign(reserveForm, { reservedFor: '' })
+   reserveDialog.value = true
+ }
+-
+ async function onReserve() {
+-  if (!reserveTarget.value || !reserveFor.value) { ElMessage.warning(t('wms.common.required')); return }
+-  saving.value = true
+-  try {
+-    await remnantApi.reserve(reserveTarget.value.remnantNo, reserveFor.value)
+-    ElMessage.success(t('wms.common.success'))
+-    reserveDialog.value = false
+-    await reload()
+-  } finally { saving.value = false }
++  await remnantApi.reserve(reserveTarget.value!.remnantNo, reserveForm.reservedFor as string)
++  ElMessage.success(t('wms.common.success'))
+ }
+ 
+ async function onUnreserve(row: RemnantMaterial) {
+   try {
+     await ElMessageBox.confirm(`${t('wms.remnant.btn.unreserve')}: ${row.remnantNo}`, t('wms.common.confirm'), { type: 'warning' })
+     await remnantApi.unreserve(row.remnantNo)
+     ElMessage.success(t('wms.common.success'))
+-    await reload()
++    reloadList()
+   } catch { /* */ }
+ }
+-
+ async function onUse(row: RemnantMaterial) {
+   try {
+     await ElMessageBox.confirm(`${t('wms.remnant.btn.use')}: ${row.remnantNo}`, t('wms.common.confirm'), { type: 'warning' })
+     await remnantApi.markUsed(row.remnantNo)
+     ElMessage.success(t('wms.common.success'))
+-    await reload()
++    reloadList()
+   } catch { /* */ }
+ }
+-
+ async function onDispose(row: RemnantMaterial) {
+   try {
+     await ElMessageBox.confirm(`${t('wms.remnant.btn.dispose')}: ${row.remnantNo}`, t('wms.common.confirm'), { type: 'warning' })
+     await remnantApi.dispose(row.remnantNo)
+     ElMessage.success(t('wms.common.success'))
+-    await reload()
++    reloadList()
+   } catch { /* */ }
+ }
+ 
++// —— 再利用検索 ——
++const matchDialog = ref(false)
++const matching = ref(false)
++const matchForm = reactive({ materialType: 'PAPER', minWidthMm: 500, minLengthMm: 700 })
++const matchResults = ref<RemnantMaterial[]>([])
+ async function runMatch() {
+-  loading.value = true
++  matching.value = true
+   try { matchResults.value = (await remnantApi.match(matchForm.materialType, matchForm.minWidthMm, matchForm.minLengthMm)).data || [] }
+-  finally { loading.value = false }
++  finally { matching.value = false }
+ }
+-
+-onMounted(reload)
+ </script>
+-
+-<style scoped>
+-.wms-remnant { padding: 16px; }
+-.search-card { margin-bottom: 12px; }
+-</style>
+diff --git a/cp6.web/src/views/wms/StockQueryView.vue b/cp6.web/src/views/wms/StockQueryView.vue
+index b1821d0..5b01499 100644
+--- a/cp6.web/src/views/wms/StockQueryView.vue
++++ b/cp6.web/src/views/wms/StockQueryView.vue
+@@ -1,92 +1,59 @@
++<!--
++  在庫照会 —— CpPageShell + CpListPage 迁移（WMS 批次5，服务端分页）。
++  数量列 map（formatQty）；有効在庫 col slot（负数红字）；期限/所有者/リコール/QC 走 col slot 保留条件 tag/占位。
++  hasStockOnly 复选（CpFilterBar 无 boolean 字段类型，缺口 #15）→ CpListPage toolbar slot，fetch 闭包读取 + 切换后 reload()。
++  QC 設定弹窗(radio+textarea, 自定义 res.code 处理) / 履歴弹窗(只读 descriptions+表) → 保留原 el-dialog（逃生舱）。
++  分页服务端：fetch 透传 page/size；QC 保存后 listRef.reload()。
++-->
+ <template>
+-  <div class="wms-stock">
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('wms.common.warehouse')"><el-input v-model="query.warehouseCd" clearable style="width: 120px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.location')"><el-input v-model="query.locationCd" clearable style="width: 140px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.product')"><el-input v-model="query.productCd" clearable style="width: 140px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.lot')"><el-input v-model="query.lotNo" clearable style="width: 140px" /></el-form-item>
+-        <el-form-item :label="t('wms.stock.fld.owner')">
+-          <el-select v-model="query.ownerType" clearable style="width: 120px">
+-            <el-option :label="t('wms.stock.fld.ownerSelf')" value="SELF" />
+-            <el-option :label="t('wms.stock.fld.ownerCustomer')" value="CUSTOMER" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-checkbox v-model="query.hasStockOnly">{{ t('wms.stock.fld.hasStockOnly') }}</el-checkbox>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-          <el-button @click="resetQuery">{{ t('wms.common.clear') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
++  <CpPageShell :title="t('wms.stock.title')" :count="total">
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      @total-change="total = $event"
++    >
++      <template #toolbar>
++        <el-checkbox v-model="hasStockOnly" @change="reloadList">{{ t('wms.stock.fld.hasStockOnly') }}</el-checkbox>
++      </template>
+ 
+-    <el-card shadow="never">
+-      <div style="margin-bottom: 8px"><el-tag size="small">{{ t('wms.common.total') }}: {{ total }}</el-tag></div>
+-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row @current-change="onSelect">
+-        <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="80" />
+-        <el-table-column prop="locationCd" :label="t('wms.common.location')" width="140" />
+-        <el-table-column prop="productCd" :label="t('wms.common.product')" width="120" />
+-        <el-table-column prop="lotNo" :label="t('wms.common.lot')" width="120" />
+-        <el-table-column prop="physicalQty" :label="t('wms.stock.col.physical')" width="120" align="right">
+-          <template #default="{ row }">{{ formatQty(row.physicalQty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="allocatedQty" :label="t('wms.stock.col.allocated')" width="120" align="right">
+-          <template #default="{ row }">{{ formatQty(row.allocatedQty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="availableQty" :label="t('wms.stock.col.available')" width="120" align="right">
+-          <template #default="{ row }">
+-            <span :class="{ neg: row.availableQty < 0 }">{{ formatQty(row.availableQty) }}</span>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="unitCd" :label="t('wms.common.unit')" width="80" />
+-        <el-table-column prop="expiryDate" :label="t('wms.common.expiryDate')" width="120">
+-          <template #default="{ row }">{{ row.expiryDate?.slice(0, 10) || '—' }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.stock.col.owner')" width="100">
+-          <template #default="{ row }">
+-            <el-tag v-if="row.ownerType === 'CUSTOMER'" type="warning" size="small">{{ t('wms.stock.flag.vmi') }}</el-tag>
+-            <span v-else>—</span>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.stock.col.flag')" width="100">
+-          <template #default="{ row }">
+-            <el-tag v-if="row.recallFlag" type="danger" size="small">{{ t('wms.stock.flag.recall') }}</el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.stock.col.qc')" width="100">
+-          <template #default="{ row }">
+-            <el-tag :type="qcTagOf(row.qcStatus)" size="small">
+-              {{ t(`wms.stock.qc.${row.qcStatus || 'PENDING'}`) }}
+-            </el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.common.action')" width="180" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="openHistory(row)">{{ t('wms.common.history') }}</el-button>
+-            <el-button link type="warning" size="small" @click="openQcDialog(row)">{{ t('wms.stock.qc.btn') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-      <el-pagination
+-        v-model:current-page="query.page" v-model:page-size="query.pageSize" :total="total"
+-        :page-sizes="[50, 100, 200]" layout="total, sizes, prev, pager, next, jumper"
+-        style="margin-top: 12px; justify-content: flex-end"
+-        @current-change="reload" @size-change="reload"
+-      />
+-    </el-card>
++      <template #col-availableQty="{ row }">
++        <span :class="{ neg: row.availableQty < 0 }">{{ formatQty(row.availableQty) }}</span>
++      </template>
++
++      <template #col-expiryDate="{ row }">{{ row.expiryDate?.slice(0, 10) || '—' }}</template>
++
++      <template #col-owner="{ row }">
++        <el-tag v-if="row.ownerType === 'CUSTOMER'" type="warning" size="small">{{ t('wms.stock.flag.vmi') }}</el-tag>
++        <span v-else>—</span>
++      </template>
+ 
+-    <!-- Phase 7 Gap 1.3 — QC 状态设置弹窗 -->
++      <template #col-flag="{ row }">
++        <el-tag v-if="row.recallFlag" type="danger" size="small">{{ t('wms.stock.flag.recall') }}</el-tag>
++      </template>
++
++      <template #col-qc="{ row }">
++        <el-tag :type="qcTagOf(row.qcStatus)" size="small">{{ t(`wms.stock.qc.${row.qcStatus || 'PENDING'}`) }}</el-tag>
++      </template>
++
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="openHistory(row)">{{ t('wms.common.history') }}</el-button>
++        <el-button link type="warning" size="small" @click="openQcDialog(row)">{{ t('wms.stock.qc.btn') }}</el-button>
++      </template>
++    </CpListPage>
++
++    <!-- Phase 7 Gap 1.3 — QC 状态设置弹窗（radio + 自定义结果处理，保留原机制） -->
+     <el-dialog v-model="qcDialogVisible" :title="t('wms.stock.qc.dlgTitle')" width="520">
+-      <div v-if="qcTarget" style="margin-bottom: 12px; padding: 8px 12px; background: #f5f7fa; border-radius: 4px; font-size: 13px">
++      <div v-if="qcTarget" class="qc-info">
+         <div><strong>{{ t('wms.common.product') }}</strong>: {{ qcTarget.productCd }} / <strong>{{ t('wms.common.lot') }}</strong>: {{ qcTarget.lotNo }}</div>
+         <div><strong>{{ t('wms.common.warehouse') }}</strong>: {{ qcTarget.warehouseCd }} / <strong>{{ t('wms.common.location') }}</strong>: {{ qcTarget.locationCd }}</div>
+         <div><strong>{{ t('wms.stock.qc.current') }}</strong>: <el-tag :type="qcTagOf(qcTarget.qcStatus)" size="small">{{ t(`wms.stock.qc.${qcTarget.qcStatus || 'PENDING'}`) }}</el-tag></div>
+       </div>
+ 
+       <el-form label-position="top">
+         <el-form-item :label="t('wms.stock.qc.newStatus')" required>
+           <el-radio-group v-model="qcNewStatus">
+             <el-radio-button value="PENDING">{{ t('wms.stock.qc.PENDING') }}</el-radio-button>
+             <el-radio-button value="PASSED">{{ t('wms.stock.qc.PASSED') }}</el-radio-button>
+@@ -108,20 +75,21 @@
+       </el-form>
+ 
+       <template #footer>
+         <el-button @click="qcDialogVisible = false" :disabled="qcSaving">{{ t('wms.common.cancel') }}</el-button>
+         <el-button type="primary" :loading="qcSaving" :disabled="!qcNewStatus" @click="onQcSave">
+           {{ t('wms.common.confirm') }}
+         </el-button>
+       </template>
+     </el-dialog>
+ 
++    <!-- 履歴弹窗（只读 descriptions + 表，保留原机制） -->
+     <el-dialog v-model="historyVisible" :title="t('wms.stock.dlg.history')" width="900">
+       <div v-if="historyStock" style="margin-bottom: 8px">
+         <el-descriptions :column="4" size="small" border>
+           <el-descriptions-item :label="t('wms.common.product')">{{ historyStock.productCd }}</el-descriptions-item>
+           <el-descriptions-item :label="t('wms.common.lot')">{{ historyStock.lotNo }}</el-descriptions-item>
+           <el-descriptions-item :label="t('wms.common.warehouse')">{{ historyStock.warehouseCd }}</el-descriptions-item>
+           <el-descriptions-item :label="t('wms.common.location')">{{ historyStock.locationCd }}</el-descriptions-item>
+         </el-descriptions>
+       </div>
+       <el-table :data="historyTxns" border stripe size="small" max-height="500">
+@@ -132,134 +100,149 @@
+           <template #default="{ row }"><el-tag size="small" :type="txnTagOf(row.txnType)">{{ row.txnType }}</el-tag></template>
+         </el-table-column>
+         <el-table-column prop="qty" :label="t('wms.common.qty')" width="100" align="right">
+           <template #default="{ row }">{{ formatQty(row.qty) }}</template>
+         </el-table-column>
+         <el-table-column prop="relatedNo" :label="t('wms.stock.col.relatedNo')" width="180" />
+         <el-table-column prop="operatorCd" :label="t('wms.common.operator')" width="100" />
+         <el-table-column prop="remark" :label="t('wms.common.remarks')" show-overflow-tooltip />
+       </el-table>
+     </el-dialog>
+-  </div>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, onMounted, reactive } from 'vue'
++import { ref, computed } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+ import { stockApi } from '@/api/wms/stock'
+ import type { Stock, StockTransaction } from '@/types/wms/wms'
+ import { formatQty as fmtQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+-const query = reactive<{
+-  warehouseCd?: string
+-  locationCd?: string
+-  productCd?: string
+-  lotNo?: string
+-  ownerType?: string
+-  hasStockOnly: boolean
+-  page: number
+-  pageSize: number
+-}>({ hasStockOnly: true, page: 1, pageSize: 50 })
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
+ 
+-const rows = ref<Stock[]>([])
+-const total = ref(0)
+-const loading = ref(false)
+-const selected = ref<Stock | null>(null)
+-
+-const historyVisible = ref(false)
+-const historyStock = ref<Stock | null>(null)
+-const historyTxns = ref<StockTransaction[]>([])
++// hasStockOnly：CpFilterBar 无 boolean 字段类型（缺口 #15）→ toolbar slot 复选，fetch 闭包读取
++const hasStockOnly = ref(true)
+ 
+ function formatQty(n: number | null | undefined): string {
+   if (n == null) return ''
+   return fmtQty(n, 4)
+ }
+ 
+-function txnTagOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
+-  return ({ IN: 'success', OUT: 'danger', RSV: 'warning', UNRSV: 'info', MOVE: 'primary', ADJ: 'info' } as const)[t as 'IN'] || 'info'
++function txnTagOf(v: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
++  return ({ IN: 'success', OUT: 'danger', RSV: 'warning', UNRSV: 'info', MOVE: 'primary', ADJ: 'info' } as const)[v as 'IN'] || 'info'
+ }
+-
+-function onSelect(row: Stock | null) { selected.value = row }
+-
+-async function reload() {
+-  loading.value = true
+-  try {
+-    const res = await stockApi.search(query)
+-    rows.value = res.data.items
+-    total.value = res.data.total
+-  } finally { loading.value = false }
++function qcTagOf(s?: string): 'success' | 'danger' | 'warning' | 'info' {
++  switch (s) {
++    case 'PASSED': return 'success'
++    case 'FAILED': return 'danger'
++    case 'HOLD': return 'warning'
++    case 'PENDING':
++    default: return 'info'
++  }
+ }
+ 
+-function resetQuery() {
+-  query.warehouseCd = undefined
+-  query.locationCd = undefined
+-  query.productCd = undefined
+-  query.lotNo = undefined
+-  query.ownerType = undefined
+-  query.hasStockOnly = true
+-  query.page = 1
+-  reload()
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 80 },
++  { prop: 'locationCd', label: t('wms.common.location'), width: 140 },
++  { prop: 'productCd', label: t('wms.common.product'), width: 120 },
++  { prop: 'lotNo', label: t('wms.common.lot'), width: 120 },
++  { prop: 'physicalQty', label: t('wms.stock.col.physical'), width: 120, align: 'right',
++    map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'allocatedQty', label: t('wms.stock.col.allocated'), width: 120, align: 'right',
++    map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'availableQty', label: t('wms.stock.col.available'), width: 120, align: 'right' },
++  { prop: 'unitCd', label: t('wms.common.unit'), width: 80 },
++  { prop: 'expiryDate', label: t('wms.common.expiryDate'), width: 120 },
++  { prop: 'owner', label: t('wms.stock.col.owner'), width: 100 },
++  { prop: 'flag', label: t('wms.stock.col.flag'), width: 100 },
++  { prop: 'qc', label: t('wms.stock.col.qc'), width: 100 },
++  { prop: '_action', label: t('wms.common.action'), width: 180, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('wms.common.search'),
++  reset: t('wms.common.clear'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'warehouseCd', label: t('wms.common.warehouse'), type: 'text' },
++  { key: 'locationCd', label: t('wms.common.location'), type: 'text' },
++  { key: 'productCd', label: t('wms.common.product'), type: 'text' },
++  { key: 'lotNo', label: t('wms.common.lot'), type: 'text' },
++  {
++    key: 'ownerType', label: t('wms.stock.fld.owner'), type: 'select',
++    options: [
++      { label: t('wms.stock.fld.ownerSelf'), value: 'SELF' },
++      { label: t('wms.stock.fld.ownerCustomer'), value: 'CUSTOMER' },
++    ],
++  },
++])
++
++const fetchList: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const q: Record<string, unknown> = { page, pageSize: size, hasStockOnly: hasStockOnly.value }
++  if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
++  if (f.locationCd) q.locationCd = String(f.locationCd)
++  if (f.productCd) q.productCd = String(f.productCd)
++  if (f.lotNo) q.lotNo = String(f.lotNo)
++  if (f.ownerType) q.ownerType = String(f.ownerType)
++  const res = await stockApi.search(q as never)
++  return { rows: res.data.items, total: res.data.total }
+ }
+ 
++// —— 履歴 ——
++const historyVisible = ref(false)
++const historyStock = ref<Stock | null>(null)
++const historyTxns = ref<StockTransaction[]>([])
+ async function openHistory(row: Stock) {
+   historyStock.value = row
+   const res = await stockApi.history(row.id, 365)
+   historyTxns.value = res.data.transactions
+   historyVisible.value = true
+ }
+ 
+-// ───── Phase 7 Gap 1.3 QC ステータス設定 ─────
++// —— Phase 7 Gap 1.3 QC ステータス設定 ——
+ const qcDialogVisible = ref(false)
+ const qcTarget = ref<Stock | null>(null)
+ const qcNewStatus = ref<string>('')
+ const qcReason = ref('')
+ const qcSaving = ref(false)
+ 
+-function qcTagOf(s?: string): 'success' | 'danger' | 'warning' | 'info' {
+-  switch (s) {
+-    case 'PASSED': return 'success'
+-    case 'FAILED': return 'danger'
+-    case 'HOLD': return 'warning'
+-    case 'PENDING':
+-    default: return 'info'
+-  }
+-}
+-
+ function openQcDialog(row: Stock) {
+   qcTarget.value = row
+   qcNewStatus.value = row.qcStatus || 'PENDING'
+   qcReason.value = ''
+   qcDialogVisible.value = true
+ }
+-
+ async function onQcSave() {
+   if (!qcTarget.value || !qcNewStatus.value) return
+   qcSaving.value = true
+   try {
+     const res = await stockApi.setQcStatus(qcTarget.value.id, qcNewStatus.value, qcReason.value || undefined)
+     if (res.code === 0 && res.data) {
+       ElMessage.success(t('wms.stock.qc.savedMsg'))
+       qcDialogVisible.value = false
+-      // 局部更新 + 列表全刷新
+       if (qcTarget.value) qcTarget.value.qcStatus = res.data.qcStatus
+-      await reload()
++      reloadList()
+     } else {
+       ElMessage.error(res.message || 'Unknown error')
+     }
+   } catch (e: any) {
+     ElMessage.error(e?.message ?? 'Network error')
+   } finally {
+     qcSaving.value = false
+   }
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+-.wms-stock { padding: 16px; }
+-.search-card { margin-bottom: 12px; }
+-.neg { color: #f56c6c; font-weight: 600; }
++.neg { color: var(--cp-danger); font-weight: 600; }
++.qc-info { margin-bottom: 12px; padding: 8px 12px; background: var(--cp-bg-th); border-radius: var(--cp-r-sm); font-size: var(--cp-fs-base); }
+ </style>
+diff --git a/cp6.web/src/views/wms/VmiView.vue b/cp6.web/src/views/wms/VmiView.vue
+index 0f2584b..780ca0b 100644
+--- a/cp6.web/src/views/wms/VmiView.vue
++++ b/cp6.web/src/views/wms/VmiView.vue
+@@ -1,267 +1,245 @@
++<!--
++  VMI 在庫（預り在庫）—— el-tabs 三视图，每个 tab 一张查询列表 → 各 tab 内嵌 CpListPage 迁移（WMS 批次5）。
++  el-tabs 是页面外壳（模板无对应契约，保留）；数量/金额列用 map；期限 col slot 保逾期红字；操作/確定/確定フラグ 走 col slot。
++  客户汇总无查询无分页(paginated=false)；明细无搜索栏，刷新+客户标签放 toolbar slot，fetch 闭包依 selectedCustomer 守卫。
++  跨 tab 联动：openDetails 切 tab + detailsRef.reload()；計算/確定 后 billingsRef.reload()。
++-->
+ <template>
+   <div class="wms-vmi">
+     <el-tabs v-model="activeTab" type="card">
+       <!-- ───── 客户汇总 ───── -->
+       <el-tab-pane :label="t('wms.vmi.tab.customers')" name="customers">
+-        <el-card shadow="never" class="search-card">
+-          <el-form inline size="small">
+-            <el-form-item :label="t('wms.vmi.fld.customerCd')">
+-              <el-input v-model="customerQuery" clearable style="width: 160px" />
+-            </el-form-item>
+-            <el-form-item>
+-              <el-button type="primary" @click="reloadCustomers" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-            </el-form-item>
+-          </el-form>
+-        </el-card>
+-
+-        <el-card shadow="never">
+-          <el-table :data="customers" border stripe size="small" max-height="600" highlight-current-row>
+-            <el-table-column prop="customerCd" :label="t('wms.vmi.fld.customerCd')" width="140" />
+-            <el-table-column prop="customerName" :label="t('wms.vmi.fld.customerName')" min-width="180" />
+-            <el-table-column prop="skuCount" :label="t('wms.vmi.fld.skuCount')" width="100" align="right" />
+-            <el-table-column prop="totalPhysicalQty" :label="t('wms.vmi.fld.physical')" width="120" align="right">
+-              <template #default="{ row }">{{ formatQty(row.totalPhysicalQty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="totalAllocatedQty" :label="t('wms.vmi.fld.allocated')" width="120" align="right">
+-              <template #default="{ row }">{{ formatQty(row.totalAllocatedQty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="totalAvailableQty" :label="t('wms.vmi.fld.available')" width="120" align="right">
+-              <template #default="{ row }">{{ formatQty(row.totalAvailableQty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="estimatedValue" :label="t('wms.vmi.fld.estValue')" width="140" align="right">
+-              <template #default="{ row }">{{ formatMoney(row.estimatedValue) }}</template>
+-            </el-table-column>
+-            <el-table-column :label="t('wms.common.action')" width="140" fixed="right">
+-              <template #default="{ row }">
+-                <el-button link type="primary" size="small" @click="openDetails(row.customerCd)">{{ t('wms.vmi.btn.viewDetail') }}</el-button>
+-              </template>
+-            </el-table-column>
+-          </el-table>
+-        </el-card>
++        <CpListPage
++          ref="customersRef"
++          :columns="customerColumns"
++          :fetch="fetchCustomers"
++          :search-fields="customerSearchFields"
++          :filter-labels="filterLabels"
++          :paginated="false"
++        >
++          <template #col-_action="{ row }">
++            <el-button link type="primary" size="small" @click="openDetails(row.customerCd)">{{ t('wms.vmi.btn.viewDetail') }}</el-button>
++          </template>
++        </CpListPage>
+       </el-tab-pane>
+ 
+       <!-- ───── 明细 ───── -->
+       <el-tab-pane :label="t('wms.vmi.tab.details') + (selectedCustomer ? ` (${selectedCustomer})` : '')" name="details" :disabled="!selectedCustomer">
+-        <el-card shadow="never" class="search-card">
+-          <el-form inline size="small">
+-            <el-form-item :label="t('wms.vmi.fld.customerCd')">
+-              <el-tag>{{ selectedCustomer }}</el-tag>
+-            </el-form-item>
+-            <el-form-item>
+-              <el-button @click="reloadDetails" :loading="loading">{{ t('wms.common.refresh') }}</el-button>
+-            </el-form-item>
+-          </el-form>
+-        </el-card>
+-
+-        <el-card shadow="never">
+-          <el-table :data="details" border stripe size="small" max-height="600">
+-            <el-table-column prop="productCd" :label="t('wms.common.product')" width="140" />
+-            <el-table-column prop="lotNo" :label="t('wms.common.lot')" width="140" />
+-            <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="100" />
+-            <el-table-column prop="locationCd" :label="t('wms.common.location')" width="140" />
+-            <el-table-column prop="physicalQty" :label="t('wms.vmi.fld.physical')" width="110" align="right">
+-              <template #default="{ row }">{{ formatQty(row.physicalQty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="availableQty" :label="t('wms.vmi.fld.available')" width="110" align="right">
+-              <template #default="{ row }">{{ formatQty(row.availableQty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="receiveDate" :label="t('wms.vmi.fld.receiveDate')" width="120" />
+-            <el-table-column prop="expiryDate" :label="t('wms.common.expiryDate')" width="120">
+-              <template #default="{ row }">
+-                <span :class="expiryClass(row.expiryDate)">{{ row.expiryDate || '-' }}</span>
+-              </template>
+-            </el-table-column>
+-          </el-table>
+-        </el-card>
++        <CpListPage
++          ref="detailsRef"
++          :columns="detailColumns"
++          :fetch="fetchDetails"
++          :paginated="false"
++        >
++          <template #toolbar>
++            <el-tag>{{ selectedCustomer }}</el-tag>
++            <el-button @click="reloadDetails">{{ t('wms.common.refresh') }}</el-button>
++          </template>
++          <template #col-expiryDate="{ row }">
++            <span :class="expiryClass(row.expiryDate)">{{ row.expiryDate || '-' }}</span>
++          </template>
++        </CpListPage>
+       </el-tab-pane>
+ 
+       <!-- ───── 保管料 ───── -->
+       <el-tab-pane :label="t('wms.vmi.tab.billings')" name="billings">
+-        <el-card shadow="never" class="search-card">
+-          <el-form inline size="small">
+-            <el-form-item :label="t('wms.vmi.fld.customerCd')">
+-              <el-input v-model="billingQuery.customerCd" clearable style="width: 140px" />
+-            </el-form-item>
+-            <el-form-item :label="t('wms.vmi.fld.yearMonth')">
+-              <el-input v-model="billingQuery.yearMonth" placeholder="2026-05" clearable style="width: 120px" />
+-            </el-form-item>
+-            <el-form-item :label="t('wms.vmi.fld.confirmed')">
+-              <el-select v-model="billingQuery.confirmed" clearable style="width: 120px">
+-                <el-option :label="t('wms.common.confirm')" :value="true" />
+-                <el-option label="—" :value="false" />
+-              </el-select>
+-            </el-form-item>
+-            <el-form-item>
+-              <el-button type="primary" @click="reloadBillings" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-              <el-button type="warning" @click="openCalc">{{ t('wms.vmi.btn.calculate') }}</el-button>
+-            </el-form-item>
+-          </el-form>
+-        </el-card>
+-
+-        <el-card shadow="never">
+-          <el-table :data="billings" border stripe size="small" max-height="600">
+-            <el-table-column prop="billingNo" :label="t('wms.vmi.fld.billingNo')" width="200" />
+-            <el-table-column prop="customerCd" :label="t('wms.vmi.fld.customerCd')" width="120" />
+-            <el-table-column prop="customerName" :label="t('wms.vmi.fld.customerName')" min-width="160" show-overflow-tooltip />
+-            <el-table-column prop="yearMonth" :label="t('wms.vmi.fld.yearMonth')" width="100" />
+-            <el-table-column prop="skuCount" :label="t('wms.vmi.fld.skuCount')" width="90" align="right" />
+-            <el-table-column prop="beginQty" :label="t('wms.vmi.fld.beginQty')" width="110" align="right">
+-              <template #default="{ row }">{{ formatQty(row.beginQty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="endQty" :label="t('wms.vmi.fld.endQty')" width="110" align="right">
+-              <template #default="{ row }">{{ formatQty(row.endQty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="avgQty" :label="t('wms.vmi.fld.avgQty')" width="110" align="right">
+-              <template #default="{ row }">{{ formatQty(row.avgQty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="dailyStorageRate" :label="t('wms.vmi.fld.dailyRate')" width="110" align="right">
+-              <template #default="{ row }">{{ formatMoney(row.dailyStorageRate) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="billingAmount" :label="t('wms.vmi.fld.billingAmt')" width="140" align="right">
+-              <template #default="{ row }"><b>{{ formatMoney(row.billingAmount) }}</b></template>
+-            </el-table-column>
+-            <el-table-column prop="calculatedAt" :label="t('wms.vmi.fld.calculatedAt')" width="170" />
+-            <el-table-column :label="t('wms.vmi.fld.confirmed')" width="100" align="center">
+-              <template #default="{ row }">
+-                <el-tag v-if="row.confirmed" type="success" size="small">{{ t('wms.common.confirm') }}</el-tag>
+-                <el-tag v-else type="info" size="small">-</el-tag>
+-              </template>
+-            </el-table-column>
+-            <el-table-column :label="t('wms.common.action')" width="120" fixed="right">
+-              <template #default="{ row }">
+-                <el-button v-if="!row.confirmed" link type="primary" size="small" @click="onConfirm(row)">{{ t('wms.vmi.btn.confirm') }}</el-button>
+-              </template>
+-            </el-table-column>
+-          </el-table>
+-        </el-card>
++        <CpListPage
++          ref="billingsRef"
++          :columns="billingColumns"
++          :fetch="fetchBillings"
++          :search-fields="billingSearchFields"
++          :filter-labels="filterLabels"
++          :paginated="false"
++        >
++          <template #toolbar>
++            <el-button type="warning" @click="openCalc">{{ t('wms.vmi.btn.calculate') }}</el-button>
++          </template>
++          <template #col-billingAmount="{ row }">
++            <b>{{ formatMoney(row.billingAmount) }}</b>
++          </template>
++          <template #col-confirmed="{ row }">
++            <el-tag v-if="row.confirmed" type="success" size="small">{{ t('wms.common.confirm') }}</el-tag>
++            <el-tag v-else type="info" size="small">-</el-tag>
++          </template>
++          <template #col-_action="{ row }">
++            <el-button v-if="!row.confirmed" link type="primary" size="small" @click="onConfirm(row)">{{ t('wms.vmi.btn.confirm') }}</el-button>
++          </template>
++        </CpListPage>
+       </el-tab-pane>
+     </el-tabs>
+ 
+     <!-- 计算保管料 Dialog -->
+-    <el-dialog v-model="calcDialog" :title="t('wms.vmi.dlg.calculate')" width="480">
++    <CpFormDialog
++      v-model="calcDialog"
++      :title="t('wms.vmi.dlg.calculate')"
++      width="480"
++      :form="calcForm"
++      :rules="calcRules"
++      :submit="onCalc"
++      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.vmi.btn.calculate') }"
++    >
+       <el-alert :title="t('wms.vmi.msg.calcHint')" type="info" :closable="false" show-icon style="margin-bottom: 12px" />
+-      <el-form :model="calcForm" label-width="160px" size="small">
+-        <el-form-item :label="t('wms.vmi.fld.yearMonth')" required>
+-          <el-input v-model="calcForm.yearMonth" placeholder="2026-05" maxlength="7" />
+-        </el-form-item>
+-        <el-form-item :label="t('wms.vmi.fld.dailyRate')" required>
+-          <el-input-number v-model="calcForm.dailyStorageRate" :min="0" :precision="4" controls-position="right" style="width: 100%" />
+-        </el-form-item>
+-      </el-form>
+-      <template #footer>
+-        <el-button @click="calcDialog = false">{{ t('wms.common.cancel') }}</el-button>
+-        <el-button type="primary" @click="onCalc" :loading="saving">{{ t('wms.vmi.btn.calculate') }}</el-button>
+-      </template>
+-    </el-dialog>
++      <el-form-item :label="t('wms.vmi.fld.yearMonth')" prop="yearMonth">
++        <el-input v-model="calcForm.yearMonth" placeholder="2026-05" maxlength="7" />
++      </el-form-item>
++      <el-form-item :label="t('wms.vmi.fld.dailyRate')" prop="dailyStorageRate">
++        <el-input-number v-model="calcForm.dailyStorageRate" :min="0" :precision="4" controls-position="right" style="width: 100%" />
++      </el-form-item>
++    </CpFormDialog>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, onMounted } from 'vue'
+-import { ElMessage, ElMessageBox } from 'element-plus'
++import { ref, reactive, computed } from 'vue'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
+ import { vmiApi } from '@/api/wms/paperIndustry'
+-import type { VmiCustomerSummary, VmiStockDetail, VmiBilling } from '@/types/wms/wms'
++import type { VmiBilling } from '@/types/wms/wms'
+ import { formatQty as fmtQty, formatCurrency } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ const activeTab = ref<'customers' | 'details' | 'billings'>('customers')
+-const loading = ref(false)
+-const saving = ref(false)
+ 
+-const customerQuery = ref('')
+-const customers = ref<VmiCustomerSummary[]>([])
++const customersRef = ref<InstanceType<typeof CpListPage> | null>(null)
++const detailsRef = ref<InstanceType<typeof CpListPage> | null>(null)
++const billingsRef = ref<InstanceType<typeof CpListPage> | null>(null)
+ 
+ const selectedCustomer = ref('')
+-const details = ref<VmiStockDetail[]>([])
+-
+-const billingQuery = reactive<{ customerCd?: string; yearMonth?: string; confirmed?: boolean }>({})
+-const billings = ref<VmiBilling[]>([])
+-
+-const calcDialog = ref(false)
+-const calcForm = reactive({ yearMonth: '', dailyStorageRate: 1.0 })
+ 
+ function formatQty(n: number | undefined | null) {
+   if (n == null) return '0'
+   return fmtQty(n, 2)
+ }
+ function formatMoney(n: number | undefined | null) {
+   if (n == null) return ''
+   return formatCurrency(n)
+ }
+ function expiryClass(d: string | undefined) {
+   if (!d) return ''
+   const days = Math.floor((new Date(d).getTime() - Date.now()) / 86400000)
+   if (days < 0) return 'expiry-expired'
+   if (days < 30) return 'expiry-soon'
+   return ''
+ }
+ 
+-async function reloadCustomers() {
+-  loading.value = true
+-  try { customers.value = (await vmiApi.customers(customerQuery.value || undefined)).data || [] }
+-  finally { loading.value = false }
++const filterLabels = computed(() => ({
++  search: t('wms.common.search'),
++  reset: t('wms.common.clear'),
++}))
++
++// ───── 客户汇总 ─────
++const customerColumns = computed<ListColumn[]>(() => [
++  { prop: 'customerCd', label: t('wms.vmi.fld.customerCd'), width: 140 },
++  { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 180 },
++  { prop: 'skuCount', label: t('wms.vmi.fld.skuCount'), width: 100, kind: 'num' },
++  { prop: 'totalPhysicalQty', label: t('wms.vmi.fld.physical'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'totalAllocatedQty', label: t('wms.vmi.fld.allocated'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'totalAvailableQty', label: t('wms.vmi.fld.available'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'estimatedValue', label: t('wms.vmi.fld.estValue'), width: 140, align: 'right', map: (v) => ({ label: formatMoney(v as number) }) },
++  { prop: '_action', label: t('wms.common.action'), width: 140, fixed: 'right' },
++])
++const customerSearchFields = computed<FilterField[]>(() => [
++  { key: 'customerCd', label: t('wms.vmi.fld.customerCd'), type: 'text' },
++])
++const fetchCustomers: ListFetch = async ({ filters }) => {
++  const cd = filters.customerCd ? String(filters.customerCd) : undefined
++  const all = (await vmiApi.customers(cd)).data || []
++  return { rows: all, total: all.length }
+ }
+ 
+ async function openDetails(cd: string) {
+   selectedCustomer.value = cd
+   activeTab.value = 'details'
+-  await reloadDetails()
++  detailsRef.value?.reload()
+ }
+ 
+-async function reloadDetails() {
+-  if (!selectedCustomer.value) return
+-  loading.value = true
+-  try { details.value = (await vmiApi.details(selectedCustomer.value)).data || [] }
+-  finally { loading.value = false }
++// ───── 明细 ─────
++const detailColumns = computed<ListColumn[]>(() => [
++  { prop: 'productCd', label: t('wms.common.product'), width: 140 },
++  { prop: 'lotNo', label: t('wms.common.lot'), width: 140 },
++  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 100 },
++  { prop: 'locationCd', label: t('wms.common.location'), width: 140 },
++  { prop: 'physicalQty', label: t('wms.vmi.fld.physical'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'availableQty', label: t('wms.vmi.fld.available'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'receiveDate', label: t('wms.vmi.fld.receiveDate'), width: 120 },
++  { prop: 'expiryDate', label: t('wms.common.expiryDate'), width: 120 },
++])
++const fetchDetails: ListFetch = async () => {
++  if (!selectedCustomer.value) return { rows: [], total: 0 }
++  const all = (await vmiApi.details(selectedCustomer.value)).data || []
++  return { rows: all, total: all.length }
+ }
+-
+-async function reloadBillings() {
+-  loading.value = true
+-  try { billings.value = (await vmiApi.billings(billingQuery.customerCd, billingQuery.yearMonth, billingQuery.confirmed)).data || [] }
+-  finally { loading.value = false }
++function reloadDetails() { detailsRef.value?.reload() }
++
++// ───── 保管料 ─────
++const billingColumns = computed<ListColumn[]>(() => [
++  { prop: 'billingNo', label: t('wms.vmi.fld.billingNo'), width: 200 },
++  { prop: 'customerCd', label: t('wms.vmi.fld.customerCd'), width: 120 },
++  { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 160, overflowTooltip: true },
++  { prop: 'yearMonth', label: t('wms.vmi.fld.yearMonth'), width: 100 },
++  { prop: 'skuCount', label: t('wms.vmi.fld.skuCount'), width: 90, kind: 'num' },
++  { prop: 'beginQty', label: t('wms.vmi.fld.beginQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'endQty', label: t('wms.vmi.fld.endQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'avgQty', label: t('wms.vmi.fld.avgQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'dailyStorageRate', label: t('wms.vmi.fld.dailyRate'), width: 110, align: 'right', map: (v) => ({ label: formatMoney(v as number) }) },
++  { prop: 'billingAmount', label: t('wms.vmi.fld.billingAmt'), width: 140, align: 'right' },
++  { prop: 'calculatedAt', label: t('wms.vmi.fld.calculatedAt'), width: 170 },
++  { prop: 'confirmed', label: t('wms.vmi.fld.confirmed'), width: 100, align: 'center' },
++  { prop: '_action', label: t('wms.common.action'), width: 120, fixed: 'right' },
++])
++const billingSearchFields = computed<FilterField[]>(() => [
++  { key: 'customerCd', label: t('wms.vmi.fld.customerCd'), type: 'text' },
++  { key: 'yearMonth', label: t('wms.vmi.fld.yearMonth'), type: 'text', placeholder: '2026-05' },
++  {
++    key: 'confirmed', label: t('wms.vmi.fld.confirmed'), type: 'select',
++    options: [
++      { label: t('wms.common.confirm'), value: true },
++      { label: '—', value: false },
++    ],
++  },
++])
++const fetchBillings: ListFetch = async ({ filters }) => {
++  const cd = filters.customerCd ? String(filters.customerCd) : undefined
++  const ym = filters.yearMonth ? String(filters.yearMonth) : undefined
++  const confirmed = filters.confirmed === undefined || filters.confirmed === '' ? undefined : Boolean(filters.confirmed)
++  const all = (await vmiApi.billings(cd, ym, confirmed)).data || []
++  return { rows: all, total: all.length }
+ }
+ 
++// —— 计算保管料 ——
++const calcDialog = ref(false)
++const calcForm = reactive({ yearMonth: '', dailyStorageRate: 1.0 })
++const calcRules = computed<FormRules>(() => ({
++  yearMonth: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++  dailyStorageRate: [{ required: true, trigger: 'change', validator: (_r, v, cb) => (typeof v === 'number' && v > 0 ? cb() : cb(new Error(t('wms.common.required')))) }],
++}))
+ function openCalc() {
+   const now = new Date()
+-  const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+-  calcForm.yearMonth = ym
++  calcForm.yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+   calcForm.dailyStorageRate = 1.0
+   calcDialog.value = true
+ }
+-
+ async function onCalc() {
+-  if (!calcForm.yearMonth || calcForm.dailyStorageRate <= 0) {
+-    ElMessage.warning(t('wms.common.required'))
+-    return
+-  }
+-  saving.value = true
+-  try {
+-    const res = await vmiApi.calculate(calcForm.yearMonth, calcForm.dailyStorageRate)
+-    ElMessage.success(t('wms.vmi.msg.upserted', { n: res.data.upserted }))
+-    calcDialog.value = false
+-    await reloadBillings()
+-  } finally { saving.value = false }
++  const res = await vmiApi.calculate(calcForm.yearMonth, calcForm.dailyStorageRate)
++  ElMessage.success(t('wms.vmi.msg.upserted', { n: res.data.upserted }))
++  billingsRef.value?.reload()
+ }
+ 
+ async function onConfirm(row: VmiBilling) {
+   try {
+     await ElMessageBox.confirm(`${t('wms.vmi.btn.confirm')}: ${row.billingNo}`, t('wms.common.confirm'), { type: 'warning' })
+     await vmiApi.confirm(row.billingNo)
+     ElMessage.success(t('wms.common.success'))
+-    await reloadBillings()
++    billingsRef.value?.reload()
+   } catch { /* */ }
+ }
+-
+-onMounted(() => {
+-  reloadCustomers()
+-  reloadBillings()
+-})
+ </script>
+ 
+ <style scoped>
+ .wms-vmi { padding: 16px; }
+-.search-card { margin-bottom: 12px; }
+-.expiry-expired { color: #f56c6c; font-weight: bold; }
+-.expiry-soon { color: #e6a23c; font-weight: bold; }
++.expiry-expired { color: var(--cp-danger); font-weight: bold; }
++.expiry-soon { color: var(--cp-warn); font-weight: bold; }
+ </style>

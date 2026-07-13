@@ -1,79 +1,56 @@
-# Task E-T1 报告：FlowSchemaValidator serviceTask 规则 + DesignerService.save 注册校验
+# Task E-T1 + E-T2 报告：WFS 内核 hardening i18n 五语 seed(12键) + gstack QA harness(只写不跑)
 
-状态：完成。TDD 红→绿。E-WF-016 / E-WF-017 / E-WF-018 全部落地并测试覆盖。
+> 注：本文件覆盖了同名的旧波(D-wave serviceTask 校验)报告；当前内容为 WFS 内核 hardening E 波。
 
-## 改动文件清单
+## Status: 完成（两 commit 均已 push）
 
-| 文件 | 改动 |
-|------|------|
-| `CP6.Core/Services/Wf/FlowSchemaValidator.cs` | 新增 `KnownServiceKinds`(引用 `ServiceKind` 常量，序数比较对齐引擎)；新增 ⑧ serviceTask 配置完整性+P2-3 成功出边(E-WF-016)、⑨ 错误出边规则(E-WF-017)。 |
-| `CP6.Core/Services/Oa/DesignerService.cs` | `SaveAsync` 在 schema 校验通过后加 ①b 注册名校验：dataWriteback ActionName 对照 `Kind==dataWriteback` 执行器 Key 集合、webApi ConnectorName 对照连接器 Name 集合，未注册 → E-WF-018。复用 C-T3 已注入的 `_execs`/`_connectors`。 |
-| `CP6.Tests/Wf/ServiceTaskValidatorTests.cs`(新增) | 11 个测试：8 静态验证器 + 3 save 注册校验。 |
+| Task | Commit | 内容 |
+|---|---|---|
+| E-T1 | `d0b7ba0` | `CP6.WebApi/Seed/I18nOaKernelHardeningScreenSeed.cs`（12键×五语）+ Program.cs concat 行 |
+| E-T2 | `ab2ea67` | `docs/superpowers/qa/wfs-kernel-hardening/`（README + seed.sql + ps1，只写不跑）|
 
-零 Space 污染。未新建分支，未 push。既有校验的抛错/收集风格沿用（验证器 collect+Distinct，save 抛 `InvalidOperationException`）。
+## 测试摘要
+- 后端全量 `dotnet test CP6.Tests`：**1887 passed / 5 skipped**（= 基线，零回退，终审者亲跑）。
+- `dotnet build CP6.WebApi`：成功（唯一告警 InboxService CS8601，既有，与本波无关）。
+- 前端未改动（E-T1/E-T2 全在后端 seed + docs QA 目录），vitest 基线 420 不受影响。
 
-## 测试命令与输出
+## E-T1 键清单交叉核对结论
+grep 复核（`CP6.WebApi/Seed/` 全库 + 全仓 `.cs` seed）：12 键**零重复，全部首插**。
+前端 t() / 后端 throw 实引用逐一核对——**引用了必种、种了必被引用，无裸键、无死键**：
 
-```
-dotnet test CP6.Tests/CP6.Tests.csproj --filter ServiceTaskValidatorTests
-  → Passed! Failed: 0, Passed: 11, Total: 11   (红阶段先 9 failed/2 passed)
+| 键 | 引用点（已实读确认） |
+|---|---|
+| `oa.designer.gw.inclusiveSplit` / `.inclusiveJoin` | `InclusiveGatewayNode.vue:20` t() |
+| `oa.designer.gw.branchReject` / `.cascade` / `.prune` / `.branchRejectHint` | `NodePropertyPanel.vue:292-297` t() |
+| `oa.designer.errInclusiveDefault` / `errInclusivePair` / `errBranchReject` | `designerModel.ts:202/217/223` validateClient |
+| `E-WF-019` | `AdvancedFlow.cs:141` throw |
+| `E-WF-020` | `InclusiveSplitNodeHandler.cs:37` + `FlowSchemaValidator.cs:116` |
+| `E-WF-021` | `FlowSchemaValidator.cs:124/130/137` |
 
-dotnet test CP6.Tests/CP6.Tests.csproj --filter Wf
-  → Passed! Failed: 0, Passed: 148, Total: 148   (Wf 闸全绿，字节等价)
+- 「引用了没种」：无。前端 6 个 `gw.*` + 3 个 `err*`（D-T2 报告所列）+ 3 个后端错误码，全部命中本 seed 的 12 键。
+- 「种了没引用」：无。三个 `E-WF-0xx` 是后端错误码，作 i18n 消息键被引擎/校验器抛出、由前端错误码本地化解析，非死键。
+- Program.cs 于 `I18nOaServiceTaskScreenSeed.Items` concat 行后新增 `I18nOaKernelHardeningScreenSeed.Items`；`SeedLangs` 运行期 `Where(!existingKeys)` + `GroupBy` 去重 → 首插即生效，无需 SQL 补丁。
 
-dotnet test --filter "~DesignerServiceTests|~FlowSchemaValidatorTests"
-  → Passed! Failed: 0, Passed: 13, Total: 13   (Oa 命名空间既有验证器/save 测试无回归)
-```
+## E-T2 剧本清单（7 条，只写不跑）
+三件套落 `docs/superpowers/qa/wfs-kernel-hardening/`（仿 wfs-service-task E-T3 先例）。
+seed.sql：5 用户 + 1 FormDef(`khd-demo-form`) + 4 FlowDef；`SET QUOTED_IDENTIFIER ON`、单数表名 `Wf_FlowDef`/`Wf_FormDef`、隔离库 `CP6DB_OA`、`IF NOT EXISTS` 幂等、raw INSERT 绕 DesignerService 校验（schema 均合法，仅为一致性 raw 插）。
 
-## 触发矩阵
+| # | FlowKey | 剧本 | e2e 覆盖 |
+|---|---|---|---|
+| 1 | `khd-inclusive` | inclusive 2/3 真边(goA/goB 真)→ 恰 2 待办、C/default 无待办 → 两支办结 Approved | ps1 |
+| 2 | `khd-inclusive` | 全假 → default 兜底唯一待办 → 办结 Approved | ps1 |
+| 3 | `khd-prune` | parallelSplit(onBranchReject=prune)；A 驳 → 实例 Running、B 待办健在、发起人收 BranchPruned 通知(Type=5) → B 同意 Approved | ps1（通知经 `/api/oa/notification/list` type==5 断言）|
+| 4 | `khd-cascade` | 同拓扑无 onBranchReject；A 驳 → 实例 Rejected、B 待办作废、无 Type=5 通知 | ps1 |
+| 5 | `khd-sameback` | (a1→a2, b1)；a2 退回 a1(SameBranch)→ b1 不扰 → 重走 A + b1 办结 Approved | ps1 |
+| 6 | `khd-sameback` | a2 退回 b1(SiblingBranch)→ HTTP 400 含 `E-WF-019`、零突变(a2/b1 待办健在、Running) | ps1 |
+| 7 | designer 真浏览器 | palette 拖 inclusiveSplit/Join(空心圆菱形)→ 配分支驳回策略 → 删 default 边保存 → 校验报 `oa.designer.errInclusiveDefault`(E-WF-020 镜像) i18n 显示；五语切换验证 | README §5 手动(gstack browse) |
 
-### E-WF-016（FlowSchemaValidator，serviceTask 配置不完整/非法）
-| 场景 | 触发 | 测试 |
-|------|:---:|------|
-| ServiceKind 不在 {dataWriteback,webApi,timer}（序数精确） | ✓ | （隐含于 kind 分支） |
-| webApi 缺 ServiceConnectorName | ✓ | `WebApi_MissingConnector_E_WF_016` |
-| webApi 缺 ServicePath | ✓ | （同分支覆盖） |
-| dataWriteback 缺 ServiceActionName | ✓ | `DataWriteback_MissingAction_E_WF_016` |
-| timer 缺 DelayMode 且缺 DelayValue | ✓ | `Timer_MissingDelay_E_WF_016` |
-| timer 只缺 DelayMode（DelayValue 有）| ✓ | `Timer_MissingOnlyDelayMode_E_WF_016`（后端双字段严查，防线分层） |
-| **非 end serviceTask 无非错误出边（P2-3，最危险洞）** | ✓ | `ServiceTask_NonEnd_NoSuccessEdge_E_WF_016` |
+关键机制已实读定案后写入 harness：条件求值(未知字段安全失败=假、空条件=default 边)、动态计票 join、prune vs cascade 语义、退回三规则先校验后写；用户名 + 节点 nodeId 精确选任务(避免跨实例重跑歧义)。
 
-### E-WF-017（FlowSchemaValidator，错误边非法）
-| 场景 | 触发 | 测试 |
-|------|:---:|------|
-| 一节点 >1 条 IsError 出边 | ✓ | `MoreThanOneErrorEdge_E_WF_017` |
-| IsError 边来源节点非 serviceTask（如 approval） | ✓ | `ErrorEdge_FromNonServiceTask_E_WF_017` |
+## 落码纪律核对
+- 零跨模块污染：改动仅 `CP6.WebApi/Seed/*` + `Program.cs` 一行 + `docs/superpowers/qa/*` 新目录。
+- 提交刻意剔除工作树中既存 `.md`(CT2/CT3/DT2/ET1-brief) 的 LF→CRLF 行尾 churn，仅提交本波交付物。
+- 两 commit 信息照计划 + 尾加 `Co-Authored-By: Claude Fable 5`。
 
-### E-WF-018（DesignerService.SaveAsync，引用名未注册）
-| 场景 | 触发 | 测试 |
-|------|:---:|------|
-| dataWriteback ActionName 不在 Kind==dataWriteback 执行器 Key 集合 | ✓ | `Save_DataWriteback_UnregisteredAction_ThrowsE_WF_018` |
-| webApi ConnectorName 不在连接器 Name 集合 | ✓ | `Save_WebApi_UnregisteredConnector_ThrowsE_WF_018` |
-| 引用名均已注册 → 正常落库 | 不触发 | `Save_RegisteredNames_Persists` |
-| 合法 serviceTask（webApi 配齐 + 1 成功边 + ≤1 错误边） | 不触发 | `ValidServiceTask_Passes` |
-
-## 自查发现
-
-- **kind 比较用序数（Ordinal）而非忽略大小写**：刻意为之。`ServiceTaskNodeHandler` 用 `kind == ServiceKind.WebApi/Timer` 精确匹配来分派 mode/executor；若验证器放行大小写不符的 kind，运行期会被当成非该 kind 静默降级（如 "WebApi" 被当 sync 无连接器）。验证器同用序数，把这类漂移在设计期拦成 E-WF-016，与运行期语义对齐。
-- **timer 后端双字段严查**：前端 `validateClient` 只查 delayValue；后端按 brief 对 DelayMode|DelayValue 任一缺失都判 E-WF-016（`Timer_MissingOnlyDelayMode` 专测此分层防线）。
-- **E-WF-018 只查"引用了但未注册"，不查缺名**：缺 ActionName/ConnectorName 属 E-WF-016，在 SaveAsync 上一步 schema 校验已拦并抛出，走不到 018 检查；018 的 `!IsNullOrWhiteSpace` 守卫是防御性冗余。校验顺序：schema(016/017) → 注册名(018) → 身份码唯一(009)。
-- **E-WF-018 作用域**：按 brief 精确采用 dataWriteback ActionName + webApi ConnectorName 两类，timer 的连接器/动作引用不在本任务范围。
-- **验证器插入位置**：⑧⑨ 放在并行网关校验之后、④可达性 BFS 之前，不影响既有规则求值；收集式 `errs.Add` + 末尾 `Distinct()`，E-WF-017 两条独立 if 即便同时命中也去重。
-
-## Fix Round 1
-
-审查 Approved 后顺手修 P2：E-WF-018 注册名校验的两个 HashSet 原用 `StringComparer.Ordinal`，与运行时三处解析字典（ServiceTaskNodeHandler / WfServiceJobService 的 executor Key、WebApiExecutor 的 connector Name，均 `OrdinalIgnoreCase`）不一致——save 比运行时严，仅大小写不符的注册名会被 save 误拒（运行时其实找得到）。
-
-**修法**：`DesignerService.cs:54-55` 两处 `ToHashSet(StringComparer.Ordinal)` → `ToHashSet(StringComparer.OrdinalIgnoreCase)`，镜像运行时字典比较语义。
-
-**回归测试**：`ServiceTaskValidatorTests.cs` 新增 `Save_ConnectorName_CaseInsensitive_Persists`——注册连接器名 "erpEcho"，schema 引用 "ErpEcho"（仅大小写不同），断言 save 成功落库（照 `Save_RegisteredNames_Persists` 写法）。
-
-**验证**：
-
-```
-$ dotnet test CP6.Tests/CP6.Tests.csproj --filter ServiceTaskValidatorTests
-Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12, Duration: 3 s - CP6.Tests.dll (net8.0)
-
-$ dotnet test CP6.Tests/CP6.Tests.csproj --filter Wf
-Passed!  - Failed:     0, Passed:   149, Skipped:     0, Total:   149, Duration: 5 s - CP6.Tests.dll (net8.0)
-```
+## 末期 live QA（用户在场，未跑）
+隔离库 `CP6DB_OA` 起后端(5181)+前端 → 跑 ps1 HTTP e2e + gstack 真浏览器走剧本 7。抓 bug 当场 TDD 修（回归补 `CP6.Tests/Wf`）。

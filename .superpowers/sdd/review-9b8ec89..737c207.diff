@@ -1,0 +1,639 @@
+# Review package: 9b8ec89..HEAD
+
+## Commits
+737c207 feat(space-web): 波5 生命周期页错误呈现统一(tOr/重复组展开/去规则页链接/生码seq守卫)
+
+## Files changed
+ .superpowers/sdd/task-7-brief.md                   | 29 ++++---
+ .superpowers/sdd/task-7-report.md                  | 95 +++++-----------------
+ cp6.web/src/i18n/__tests__/tOr.spec.ts             | 31 +++++++
+ cp6.web/src/i18n/tOr.ts                            | 26 ++++++
+ .../src/views/space/lifecycle/SpaceEventsView.vue  |  5 +-
+ .../src/views/space/lifecycle/SpacePublishView.vue | 28 +++++++
+ .../lifecycle/__tests__/SpacePublishView.spec.ts   | 80 +++++++++++++++++-
+ docs/seeds/space-i18n-seed-2.sql                   | 13 +--
+ 8 files changed, 213 insertions(+), 94 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-7-brief.md b/.superpowers/sdd/task-7-brief.md
+index 758c255..92c02e0 100644
+--- a/.superpowers/sdd/task-7-brief.md
++++ b/.superpowers/sdd/task-7-brief.md
+@@ -1,16 +1,21 @@
+-### Task 7: 回归 + 真库 QA（波4 DoD）
++### Task 7: 生命周期页错误呈现统一(前端)
+ 
+-- [ ] Step 1: 回归门四项（后端 1559 级 / 前端 364+新 / type-check / build）
+-- [ ] Step 2: 真库（容器 curl/sqlcmd 模式照前波）：执行 space-roleaction-seed.sql → 验证 MenuAction/RoleAction 行数；**403 验证**：建一个无 Space 动作权限的测试角色+用户（或用既有非 admin），调 POST /api/space/site → 403 `{code:403,message:无权限...}`；admin 调 → 200。
+-- [ ] Step 3: 审计验证：admin 改一个 site 的 SiteName → 查 Sys_FieldAuditLogs 有 Modified 行（EntityName=Space_Site）。
+-- [ ] Step 4: BizException 验证：无库存前提下停用一个草稿库位（Status=0）→ 400 且 message 为**词条译文**（ja culture 下日文）而非「E-SPACE-004: 中文」原串——验证 middleware+种子链路。409/告警链路有波1-3 证据不重验。
+-- [ ] Step 5: SpaceHub 冒烟：容器网络内 SignalR 客户端不便——降级为「发布一次 → 检查 cp6-api 日志无推送异常」+ 前端单测已锁订阅逻辑；真浏览器验证并入波5 视觉走查票。清理义务同前波。
+-- [ ] Step 6: 证据入报告；缺陷则 fix commit。
++**Files:**
++- Create: `cp6.web\src\i18n\tOr.ts`(回退助手)
++- Modify: `cp6.web\src\views\space\lifecycle\SpacePublishView.vue`(47-54 统计卡区、181-183 watcher else、198-234 runPrecheck/onGenerate)
++- Modify: `cp6.web\src\views\space\lifecycle\SpaceEventsView.vue`(108-110 showError)
++- Test: `cp6.web\src\views\space\lifecycle\__tests__\`(挨着既有测试)
+ 
+----
++**要点(四项):**
++1. `tOr(key, fallback?)` 助手:`te(key) ? t(key) : (fallback ?? key)`(vue-i18n `te` 判存;导出纯函数,组件内用 `useI18n` 组合)。
++2. **duplicateGroups 明细展开**:统计卡下加 `<el-collapse>`(仅 `pc.duplicateGroups.length>0` 时渲染),逐组列出重复码与所在库位 id 列表(数据已在 precheck 响应,照后端 DTO 字段名)。
++3. **precheckErrors 旁「去编码规则页」链接**:`<router-link :to="'/space/code-rule'">`(路由 `:180`),文案走 i18n key `space.publish.goCodeRule`(五语补 `cp6.web\src\i18n\locales\*` 的 space 命名空间,照波3 键组织)。
++4. **onGenerate/watcher seq 守卫**:`onGenerate` 响应处理前比对 `pcSeq` 快照(照 `runPrecheck:198-212` 的守卫写法);watcher else 分支(181-183)清空 `precheck` 时同步 `pcSeq++`,防在途 precheck 回填复活。
++5. EventsView `showError`:`row.lastError` 经 `tOr` 后展示(E-SPACE 码词条化,非码原样)。
++
++- [ ] **Step 1: 失败测试**(tOr 三例:已注册 key→译文/未注册→fallback/未注册无 fallback→key;PublishView 挂载态:dupGroups>0 渲染 collapse、errors>0 渲染 router-link)
++- [ ] **Step 2: 红 → 实现 → `npm run test` 绿 + `npm run type-check` 0 错**
++- [ ] **Step 3: Commit + push**(`feat(space-web): 波5 生命周期页错误呈现统一(tOr/重复组展开/去规则页链接/生码seq守卫)`)
+ 
+-## 自检记录
++---
+ 
+-- **覆盖对照 2026-07-05 横切基准探查**：审计=Task 1（11 实体，拦截器免改）；权限=Task 4/5（RequirePermission+MenuAction/RoleAction 种子+v-permission；MenuKey 波2/3 已备）；错误码=Task 2/3（C# 种子+BizException+catch 清理；E-7xx/8xx 段是 W-SPACE-701/702/801 库存叠加/路径**警告**——属 P2.5 未实现功能的预留码，本波不种[无消费方]，记波5）；SignalR=Task 6（SpaceHub+接口注入）。菜单种子已在波2/3 完成（含 MenuKey），本波无菜单改动。
+-- **决策留档**：BizException 迁 Core 保留 namespace（零涟漪）；编辑器域变更端点统一 space-floor:edit；WmsBin 不挂审计；SpaceHub 无分组全播（低频 YAGNI）；W-SPACE-404 是 throw 路径要进种子，W-701/702/801 不种。
+-- **执行顺序**：1→7 串行（3 依赖 2 的迁移；5 依赖 4 的映射表；6 独立但排 5 后；7 收尾）。Task 3 是重灾区（56+36+47 处机械替换）——executor 按文件逐个提交前编译，防大爆炸。
+diff --git a/.superpowers/sdd/task-7-report.md b/.superpowers/sdd/task-7-report.md
+index 35e34f9..be6030b 100644
+--- a/.superpowers/sdd/task-7-report.md
++++ b/.superpowers/sdd/task-7-report.md
+@@ -1,82 +1,31 @@
+-# Task 7 报告：回归 + 真库 QA（波4 DoD 验收）
++# Task 7 报告：波5 生命周期页错误呈现统一(前端)
+ 
+-分支 `feat/space-wave4-crosscutting` @ HEAD e2ddf74。执行日 2026-07-07。
+-无代码缺陷 → **无 fix commit**。步骤 3-6 的线上验证因环境不稳被降级（brief 明列许可，不算失败），详见下。
++分支 `feat/space-wave5`。执行日 2026-07-12。TDD 全绿：新增测试先落红→实现→377 全通过，type-check 0 错。
+ 
+----
++## 交付物
+ 
+-## Step 1 — 回归门（全绿）
++| 文件 | 变更 |
++|---|---|
++| `cp6.web/src/i18n/tOr.ts` | 新建。`tOr(i18n, key, fallback?)` 纯函数（`te?t:(fallback??key)`）+ `useTOr()` 组合式包装。 |
++| `cp6.web/src/i18n/__tests__/tOr.spec.ts` | 新建。三例：已注册→译文 / 未注册+fallback→fallback / 未注册无fallback→key 本身。 |
++| `cp6.web/src/views/space/lifecycle/SpacePublishView.vue` | ①重复码 `<el-collapse>` 明细（仅 `duplicateGroups.length>0`，逐组标题 `dupGroupTitle{n,c}` + 冲突库位 id 列表）②规则错误旁 `<router-link :to="'/space/code-rule'">`（`goCodeRule`）③`onGenerate` 生码前 `pcSeq` 快照，响应处理前 `seq!==pcSeq` 即 return ④watcher else 分支清空 precheck 时 `pcSeq++`。 |
++| `cp6.web/src/views/space/lifecycle/SpaceEventsView.vue` | `showError` 经 `useTOr()` 译出 `row.lastError`（E-SPACE 码词条化，非码原样）。 |
++| `cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts` | mountView 加 `RouterLinkStub`；新增 5 例（collapse 明细渲染/无重复不渲染/去规则页链接 to 断言/无错误不渲染/生码seq守卫丢弃过期提示）。 |
++| `docs/seeds/space-i18n-seed-2.sql` | 新增 `space.publish.goCodeRule` + `space.publish.dupGroupTitle`（五语齐全），头注/尾注计数 129→131、publish 45→47（MERGE 幂等，部署时重跑生效）。 |
+ 
+-| 门 | 结果 | 说明 |
+-|----|------|------|
+-| 后端 `dotnet test CP6.Tests` | **Passed! Failed:0, Passed:1565, Skipped:5, Total:1570 (56s)** | 命中 DoD 1565/5 |
+-| 前端 type-check `vue-tsc --build` | **exit 0，零错误** | 首跑默认堆下 OOM（`FATAL ERROR: Zone Allocation failed - process out of memory`，假 exit 0）；`NODE_OPTIONS=--max-old-space-size=6144` 重跑干净 |
+-| 前端 `vitest run` | **Test Files 57 passed, Tests 369 passed (369)** | 命中 DoD 369；首跑 fork worker 被 OOM 杀（2 file 假失败），改 `--pool=forks --no-file-parallelism` 单进程重跑全绿 |
+-| 前端 `vite build` | **✓ built in 6.74s，exit 0** | 仅 chunk>500kB 告警（既存，非本波） |
++## 关键实现说明
+ 
+-> 机器仅 8GB 物理内存（空闲 ~4.3GB）+ WSL VM 内 7 容器，前端两门首跑均因内存被 OOM 打断（假信号）；串行 + 限并发 + 提堆后均真绿，已如实记录。
++- **DTO 真相**：后端 `CodePrecheckResp.DuplicateGroups = List<List<Guid>>`（前端 `string[][]`），每组是**冲突 LocationId 列表**，不含「重复码」本身——故 collapse 逐组渲染库位 id 列表，组标题用 `dupGroupTitle{n,c}` 表达「第 n 组、c 个库位」。
++- **tOr 双形态**：纯函数便于脱离组件单测（注入 `i18n.global` composer）；`useTOr()` 供组件 setup 用。
++- **生码 seq 守卫**：复用既有 `pcSeq`（runPrecheck 内 `++pcSeq`）。生码在途切楼层/库区 → watcher 触发新 precheck bump pcSeq → 过期生码回填时 `seq!==pcSeq` 丢弃成功提示与重检。watcher else 分支 `pcSeq++` 堵住「清空后在途 precheck 回填复活」。
++- **RouterLink 测试**：三生命周期视图既有约定是 `vi.mock('vue-router', useRouter)`（不注册 RouterLink 全局组件），故 spec 的 mountView 追加 `stubs:{RouterLink:RouterLinkStub}`，以 `findComponent(RouterLinkStub).props('to')` 断言路由目标。
+ 
+-## Step 2 — 真库种子（成功）
++## 验证
+ 
+-执行 `docs/seeds/space-roleaction-seed.sql`（容器内 `/opt/mssql-tools18/bin/sqlcmd`，CP6DB，stdin 管道）：
++- `npm run test`：**377 passed / 58 files**（基线 369 → +8 新测试；tOr 3 + PublishView 5）。
++- `NODE_OPTIONS=--max-old-space-size=8192 npm run type-check`：**exit 0，零错误**。
+ 
+-```
+-=== Space 権限点シード 開始 ===
+-  租户数                    : 4
+-  MenuAction 件数(902-905)  : 52（租户数 × 13 想定）
+-  RoleAction 件数(管理者)   : 52（租户数 × 13 想定）
+-=== Space 権限点シード 完了 ===
+-```
++## 疑虑 / 待确认
+ 
+-- 前置：Sys_Tenants=4；种子前 MenuAction/RoleAction(902-905)=0/0。
+-- 种子后：**52 / 52**（= 4 租户 × 13 动作），逐租户确认展开（验证 SELECT 逐行列出 TenantId A1/B1/C1… 的 902-905 全动作）。幂等 NOT EXISTS，可重跑。
+-
+----
+-
+-## 环境根因（决定步骤 3-6 走降级）
+-
+-1. **运行中的 docker `cp6-api` 镜像 = 2026-07-03 构建**，早于**全部**波4 提交（2026-07-07）。故其 **无** 新的 403 权限强校验 / BizException 信封 / 字段审计 行为——对它验证波4 无意义。
+-2. **临时波4 后端起不来**：本分支 `CP6.WebApi` 构建干净（0 error），但 `dotnet run` 两次均在 `Program.cs:640 db.Database.Migrate()` 崩溃，SQL 错误 **10061（连接被拒）**。原因：docker 栈约每 30-60s 整体重建一次（7 容器同步 `Up Xs`、RestartCount=0、WSL VM load avg 5+ CPU 饱和 → 外部 keepalive/recreate 型抖动，非单容器 OOM）。启动 dotnet 的内存/CPU 峰值每次都与一次栈重建撞车 → Migrate 时 DB 正好宕。两次尝试、同一崩法。
+-3. 连纯 DB 的 `sqlcmd` 会话也只有 ~15s 稳定窗口（须 hammer 重试才落窗）。
+-
+-→ 命中 brief 降级条款：「新代码后端起不来（内存/DB 冲突）… 行为已由单测+反射测试锁定，线上验证待重部署」。WebApplicationFactory 在本仓仅 1 处浅用（`RequirePlatformAdminFilterTests`，无 `CreateClient` HTTP 集成先例），且真 SQL 集成同受抖动困，故不新建。
+-
+-## Step 3 — 403 权限（降级：源码 + 单测 + 真库数据锁定）
+-
+-- **源码实证**：`CP6.Core/Auth/RequirePermissionAttribute.cs:38` 无权限时正是
+-  `new ObjectResult(new { code = 403, message = $"无权限：{_menu}:{_action}" }) { StatusCode = 403 }` —— **精确匹配** brief 期望 `{code:403, message:无权限...}`；服务缺失时 500。
+-- **单测锁定**（在绿色 1565 内）：`RequirePermissionFilterTests.NoPermission_Sets403`（断言 403）、`FourGranularityIntegrationTests`、`PermissionChainIntegrationTests`、`Space/SpacePermissionAttributeTests`。
+-- **真库数据实证**：RoleAction(902-905) 52 行已种，admin RoleId=1 持全 13 动作 → admin 命中 200 路径；未授该动作的角色 → `HasActionAsync` 假 → 403。数据层齐备，仅缺可运行的波4 后端做端到端 HTTP。
+-
+-## Step 4 — 字段审计（降级：源码 + 表存在 + 单测锁定）
+-
+-- `CP6.Entity/DomainModels/Space/Space_Site.cs:11` = `Space_Site : BaseBizEntity, IAuditable` ✓（Task 1 接线）。
+-- **真库实证**：`Sys_FieldAuditLogs` 表存在（sys.tables 计数=1）——审计落库端已就绪。
+-- **单测锁定**：`Sys/FieldAuditR2RegressionTests`、`Sys/FieldAuditControllerTests`（拦截器写 Modified 行、Changes diff）。
+-- 未跑：`admin PUT site 改 SiteName → 查新 Modified 行` 需可运行波4 后端触发拦截器；待重部署。
+-
+-## Step 5 — BizException 词条译文（降级 + 关键真库发现）
+-
+-- **链路源码确认**：`LocationPublishService.DeactivateAsync` 对草稿库位（`Status != 1`）`throw new BizException("E-SPACE-004")`（line 117/119）→ `BizExceptionMiddleware`（`Middleware/BizExceptionMiddleware.cs:20-37`）在请求 culture 下经 `IStringLocalizer`(DbStringLocalizer 读 **Sys_Langs**) 解析，返回统一信封 `{ code: HttpStatus(400), message: <译文>, data: null }`；未命中回退码本身。culture 优先级含 `Accept-Language`（Program.cs:2494）。
+-- **词条源真值确认**：`CP6.WebApi/Seed/I18nSpaceScreenSeed.cs:19` 定义 E-SPACE-004 五语，日文 = 「ロケーションが存在しないか、公開済みコードは変更できません」。
+-- **关键真库发现**：CP6DB 内 `Sys_Langs` 中 **E-SPACE-* 词条数 = 0**（E-SPACE-004 计数=0）。即波4 i18n 词条**尚未落库**——因它由 C# 启动种子（I18nSpaceScreenSeed）在后端启动时写入，而(1)线上 cp6-api 是 7-03 旧镜像，(2)临时波4 后端从未越过 Migrate。故线上「ja → 日文译文而非 E-SPACE-004 中文原串」**无法当场演示**，待波4 后端重部署（启动即种词条）后方可验。
+-- **单测锁定**：`LocationPublishServiceTests` / `SpaceMasterServiceTests` 锁 DeactivateAsync 抛 E-SPACE-004；中间件翻译逻辑由源码审阅确认（catch→localizer[code,args]→信封）。
+-
+-## Step 6 — SpaceHub 冒烟（降级，符合 brief 预案）
+-
+-- 无可运行波4 后端 → 无法「发布一次看日志无推送异常」。前端订阅/自动刷新逻辑由 vitest（369 全绿，含 `@microsoft/signalr` 相关单测）锁定。
+-- 真浏览器验证按 brief 并入**波5 视觉走查票**。
+-
+----
+-
+-## 清理确认
+-
+-- 两次临时后端（task bcv8h7utd / bof8o5fw6，port 5177）均自行崩退（exit 127），无残留：`5177 not listening (clean)`，近 30 分钟 dotnet 进程数 0。
+-- 未创建任何端口转发/隧道。docker 栈与旧 cp6-api 未改动（临时后端用独立 5177，与 docker 9991 不冲突）。
+-- 种子为预期持久化数据（RoleAction/MenuAction 52+52），保留。
+-
+-## 问题 / 遗留
+-
+-1. **[环境, 阻断线上验证]** WSL/docker 栈约 30-60s 整体重建、CPU 饱和（8GB 机 + 7 容器），无法承载临时后端或稳定 DB 会话。波4 的 403/审计/BizException 三项**线上端到端**验证全部待「重构建 cp6-api 镜像并重部署」后补做——建议列波5 首票。
+-2. **[数据缺口]** CP6DB 的 `Sys_Langs` 尚无 E-SPACE-* 词条（0 条）；重部署波4 后端会自动种入（I18nSpaceScreenSeed），无需人工 SQL。
+-3. 无代码缺陷、无需 fix commit。回归门（1565/369/type-check/build）全绿构成波4 DoD 可自动化部分的通过证据。
++1. **i18n 键仅入 seed 未跑 DB**：新键已五语补进 `space-i18n-seed-2.sql`（MERGE 幂等），需在部署/上线时对目标库重跑该 seed，键才在运行时可见（测试用本地 i18nPlugin，不依赖 DB）。
++2. **precheckErrors 文本未过 tOr**：brief 第 5 项仅指定 EventsView.lastError 词条化；PublishView 的规则错误列表维持原样透出（未扩大范围）。若产品希望规则错误码亦本地化，可后续用 tOr 包一层（低风险）。
+diff --git a/cp6.web/src/i18n/__tests__/tOr.spec.ts b/cp6.web/src/i18n/__tests__/tOr.spec.ts
+new file mode 100644
+index 0000000..ea74a53
+--- /dev/null
++++ b/cp6.web/src/i18n/__tests__/tOr.spec.ts
+@@ -0,0 +1,31 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { createI18n } from 'vue-i18n'
++import { tOr } from '../tOr'
++
++// flatJson:true 匹配生产 i18n；global composer 暴露 te/t，作为 I18nLike 直接注入纯函数
++function composer() {
++  const i18n = createI18n({
++    legacy: false,
++    locale: 'ja',
++    flatJson: true,
++    missingWarn: false,
++    fallbackWarn: false,
++    messages: { ja: { 'e.space.307': '発行前チェックに失敗しました' } },
++  })
++  return i18n.global as unknown as { te: (k: string) => boolean; t: (k: string) => string }
++}
++
++describe('tOr', () => {
++  it('已注册 key → 返回译文', () => {
++    expect(tOr(composer(), 'e.space.307')).toBe('発行前チェックに失敗しました')
++  })
++
++  it('未注册 key + fallback → 返回 fallback', () => {
++    expect(tOr(composer(), 'e.space.999', 'boom')).toBe('boom')
++  })
++
++  it('未注册 key 且无 fallback → 返回 key 本身', () => {
++    expect(tOr(composer(), 'E-SPACE-999-RAW')).toBe('E-SPACE-999-RAW')
++  })
++})
+diff --git a/cp6.web/src/i18n/tOr.ts b/cp6.web/src/i18n/tOr.ts
+new file mode 100644
+index 0000000..4808239
+--- /dev/null
++++ b/cp6.web/src/i18n/tOr.ts
+@@ -0,0 +1,26 @@
++import { useI18n } from 'vue-i18n'
++
++/**
++ * i18n 回退助手：把可能是 i18n key 的字符串安全译出。
++ *  - key 已注册 → 返回译文
++ *  - 未注册且给了 fallback → 返回 fallback
++ *  - 未注册且无 fallback → 返回 key 本身（不出现空白/裸告警）
++ *
++ * 典型用途：后端错误码（E-SPACE-3xx 等）——注册了词条即本地化，未注册则原样透出。
++ */
++export interface I18nLike {
++  te: (key: string) => boolean
++  t: (key: string) => string
++}
++
++/** 纯函数形态（可脱离组件测试）：显式传入 vue-i18n composer（或任意含 te/t 的对象）。 */
++export function tOr(i18n: I18nLike, key: string, fallback?: string): string {
++  if (!key) return fallback ?? key
++  return i18n.te(key) ? i18n.t(key) : (fallback ?? key)
++}
++
++/** 组合式形态：组件 setup 内 `const tr = useTOr()`，调用 `tr(key, fallback?)`。 */
++export function useTOr() {
++  const i18n = useI18n()
++  return (key: string, fallback?: string): string => tOr(i18n as I18nLike, key, fallback)
++}
+diff --git a/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue b/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
+index 00c4244..de93fd8 100644
+--- a/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
++++ b/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
+@@ -37,27 +37,30 @@
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, computed, onMounted, onUnmounted } from 'vue'
+ import { ElMessageBox } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
+ import CpPageShell from '@/components/templates/CpPageShell.vue'
+ import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+ import { type Tone } from '@/components/base/CpTag.vue'
+ import { publishApi } from '@/api/space/publish'
++import { useTOr } from '@/i18n/tOr'
+ import type { SpaceEventVO } from '@/types/space/scene'
+ import {
+   startSpaceConnection, onLocationPublished, offLocationPublished,
+   type LocationPublishedPayload,
+ } from '@/utils/spaceHub'
+ 
+ const { t } = useI18n()
++// lastError 可能是 E-SPACE 码：注册了词条即本地化，否则原样透出
++const tr = useTOr()
+ 
+ const PAGE_SIZE = 50
+ const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+ const page = ref(1)
+ const loading = ref(false)
+ // 本页 rows.length===PAGE_SIZE 时才可能有下一页（无 total，游标翻页）
+ const lastCount = ref(0)
+ const hasNext = computed(() => lastCount.value === PAGE_SIZE)
+ 
+ // 状态六态 → CpTag 色调
+@@ -99,21 +102,21 @@ function prevPage() {
+   if (page.value <= 1) return
+   page.value -= 1
+   listRef.value?.reload()
+ }
+ function nextPage() {
+   if (!hasNext.value) return
+   page.value += 1
+   listRef.value?.reload()
+ }
+ function showError(msg: string) {
+-  ElMessageBox.alert(msg, t('space.events.col.lastError'), { type: 'error' })
++  ElMessageBox.alert(tr(msg), t('space.events.col.lastError'), { type: 'error' })
+ }
+ 
+ // SignalR：発布/停用プッシュ受信 → 第 1 頁へ戻して再取得（低頻イベント、全播）
+ function onPublished(_payload: LocationPublishedPayload) {
+   page.value = 1
+   listRef.value?.reload()
+ }
+ onMounted(() => {
+   startSpaceConnection()
+   onLocationPublished(onPublished)
+diff --git a/cp6.web/src/views/space/lifecycle/SpacePublishView.vue b/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+index 5d1c388..415d1b9 100644
+--- a/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
++++ b/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+@@ -42,23 +42,40 @@
+         <div class="sec-head">
+           <span class="sec-title">{{ t('space.publish.precheckTitle') }}</span>
+           <el-button size="small" @click="runPrecheck">{{ t('space.publish.recheck') }}</el-button>
+         </div>
+         <div class="pub-cards">
+           <CpStatCard :label="t('space.publish.emptyCode')" :value="pc.emptyCodeCount" :tone="pc.emptyCodeCount > 0 ? 'danger' : 'brand'" />
+           <CpStatCard :label="t('space.publish.dupGroups')" :value="pc.duplicateGroups.length" :tone="pc.duplicateGroups.length > 0 ? 'danger' : 'brand'" />
+           <CpStatCard :label="t('space.publish.ruleErrors')" :value="pc.precheckErrors.length" :tone="pc.precheckErrors.length > 0 ? 'danger' : 'brand'" />
+           <CpStatCard :label="t('space.publish.unplaced')" :value="pc.unplacedDraftCount" :tone="pc.unplacedDraftCount > 0 ? 'warn' : 'brand'" :sub="t('space.publish.unplacedHint')" />
+         </div>
++        <!-- 重复码明细：仅有重复组时展开，逐组列出冲突库位 id 列表（后端 DuplicateGroups = List<List<Guid>>） -->
++        <el-collapse v-if="pc.duplicateGroups.length" class="pub-dups">
++          <el-collapse-item
++            v-for="(grp, gi) in pc.duplicateGroups"
++            :key="gi"
++            :name="gi"
++            :title="t('space.publish.dupGroupTitle', { n: gi + 1, c: grp.length })"
++          >
++            <ul class="dup-locs">
++              <li v-for="(loc, li) in grp" :key="li" class="cp-mono">{{ loc }}</li>
++            </ul>
++          </el-collapse-item>
++        </el-collapse>
+         <ul v-if="pc.precheckErrors.length" class="pub-errs">
+           <li v-for="(e, i) in pc.precheckErrors" :key="i">{{ e }}</li>
+         </ul>
++        <!-- 规则错误存在时引导回编码规则页修复（路由 /space/code-rule） -->
++        <div v-if="pc.precheckErrors.length" class="pub-errs-link">
++          <router-link :to="'/space/code-rule'" class="cp-link">{{ t('space.publish.goCodeRule') }}</router-link>
++        </div>
+       </section>
+ 
+       <!-- ③ 生码 -->
+       <section class="pub-sec">
+         <div class="sec-head"><span class="sec-title">{{ t('space.publish.genTitle') }}</span></div>
+         <div class="pub-row">
+           <el-radio-group v-model="genMode">
+             <el-radio value="fill-empty">{{ t('space.publish.mode.fillEmpty') }}</el-radio>
+             <el-radio value="rebuild">{{ t('space.publish.mode.rebuild') }}</el-radio>
+           </el-radio-group>
+@@ -172,20 +189,21 @@ watch(selFloorId, async (nv) => {
+   cZones.value = []
+   if (selZoneId.value !== undefined) suppressZoneWatch = true // 仅当确有变更（保证 zone watcher 必触发以复位标志）
+   selZoneId.value = undefined
+   // 切楼层重置停用搜索态
+   searchRows.value = []
+   searched.value = false
+   if (nv) {
+     cZones.value = await zoneApi.list(nv).then((r) => r.data || []).catch(() => [])
+     await runPrecheck()
+   } else {
++    pcSeq++ // 作废任何在途 precheck，防其后到时回填复活已清空的结果
+     precheck.value = null
+   }
+ })
+ watch(selZoneId, () => {
+   if (suppressZoneWatch) { suppressZoneWatch = false; return } // 来自切楼层的连锁重置，floor watcher 已跑预检
+   if (selFloorId.value) runPrecheck()
+ })
+ 
+ // —— ② 预检 ——
+ const precheck = ref<CodePrecheckResp | null>(null)
+@@ -214,23 +232,25 @@ async function runPrecheck() {
+ // —— ③ 生码 ——
+ const genMode = ref<'fill-empty' | 'rebuild'>('fill-empty')
+ const genLoading = ref(false)
+ async function onGenerate() {
+   if (!selFloorId.value) return
+   if (genMode.value === 'rebuild') {
+     try {
+       await ElMessageBox.confirm(t('space.publish.rebuildWarn'), t('space.common.confirm'), { type: 'warning' })
+     } catch { return } // 取消
+   }
++  const seq = pcSeq // 生码前快照：期间若切楼层/库区（watcher bump pcSeq），本次结果作废
+   genLoading.value = true
+   try {
+     const res = await codeRuleApi.generate(selFloorId.value, genMode.value, selZoneId.value || undefined)
++    if (seq !== pcSeq) return // 作用域已变，丢弃过期的成功提示与重检
+     ElMessage.success(t('space.publish.genDone', { n: (res.data || []).length }))
+     await runPrecheck()
+   } catch {
+     /* 拦截器已提示 */
+   } finally {
+     genLoading.value = false
+   }
+ }
+ 
+ // —— ④ 发布 + 采纳 ——
+@@ -339,20 +359,28 @@ async function onDeactivate(row: LocateResult) {
+ .pub-sec { background: var(--cp-card); border-radius: var(--cp-r-lg); box-shadow: var(--cp-shadow-1); padding: 16px 20px; }
+ .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+ .sec-title { font-size: var(--cp-fs-base); font-weight: 800; color: var(--cp-ink); }
+ .pub-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+ .pub-gate { font-size: var(--cp-fs-sm); color: var(--cp-danger); font-weight: 700; }
+ 
+ .pub-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+ .pub-errs { margin: 14px 0 0; padding-left: 18px; color: #cf1322; font-size: var(--cp-fs-sm); }
+ .pub-errs li { margin: 2px 0; }
+ 
++.pub-dups { margin-top: 14px; }
++.dup-locs { margin: 0; padding-left: 18px; font-size: var(--cp-fs-sm); }
++.dup-locs li { margin: 2px 0; }
++
++.pub-errs-link { margin-top: 10px; font-size: var(--cp-fs-sm); }
++.cp-link { color: var(--cp-brand-deep); font-weight: 700; text-decoration: underline; cursor: pointer; }
++.cp-link:hover { color: var(--cp-brand); }
++
+ .adopt-codes { display: flex; flex-direction: column; gap: 8px; }
+ .adopt-hint { font-size: var(--cp-fs-sm); color: var(--cp-muted); }
+ .adopt-result { margin-top: 14px; font-size: var(--cp-fs-sm); }
+ .ar-imported { color: #389e0d; font-weight: 700; }
+ .ar-skipped { margin-top: 8px; }
+ .ar-skipped-lbl { color: var(--cp-warn); font-weight: 700; margin-bottom: 4px; }
+ .ar-skipped ul { margin: 0; padding-left: 18px; }
+ 
+ /* 本地补 .cp-mono（scoped；波2 前车之鉴——勿依赖模板全局类） */
+ .cp-mono { font-family: var(--cp-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+index a7bdae3..469a2d9 100644
+--- a/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+@@ -1,15 +1,15 @@
+ // @vitest-environment jsdom
+ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+-import { mount, flushPromises } from '@vue/test-utils'
++import { mount, flushPromises, RouterLinkStub } from '@vue/test-utils'
+ import { createI18n } from 'vue-i18n'
+-import ElementPlus, { ElSelect, ElMessageBox } from 'element-plus'
++import ElementPlus, { ElSelect, ElMessage, ElMessageBox } from 'element-plus'
+ import { codeRuleApi } from '@/api/space/codeRule'
+ import { publishApi } from '@/api/space/publish'
+ import { zoneApi } from '@/api/space/zone'
+ import { siteApi } from '@/api/space/site'
+ import { floorApi } from '@/api/space/floor'
+ import { locateApi } from '@/api/space/locate'
+ import CpStatCard from '@/components/templates/CpStatCard.vue'
+ import { permission } from '@/directives/permission'
+ import SpacePublishView from '../SpacePublishView.vue'
+ import type { SiteVO, FloorVO, ZoneVO, CodePrecheckResp } from '@/types/space/scene'
+@@ -59,21 +59,25 @@ function i18nPlugin() {
+       ja: {
+         'space.publish.imported': '取込 {n} 件',
+         'space.publish.skipped': 'スキップ {n} 件',
+       },
+     },
+   })
+ }
+ // attachTo document.body so el-dialog / ElMessageBox teleported content renders in jsdom
+ function mountView() {
+   return mount(SpacePublishView, {
+-    global: { plugins: [i18nPlugin(), ElementPlus], directives: { permission } },
++    global: {
++      plugins: [i18nPlugin(), ElementPlus],
++      directives: { permission },
++      stubs: { RouterLink: RouterLinkStub },
++    },
+     attachTo: document.body,
+   })
+ }
+ 
+ // 顶栏选择站点→楼层（emit update:modelValue 驱动 v-model；顺序：站点/楼层/库区）
+ async function selectFloor(w: ReturnType<typeof mountView>) {
+   const selects = w.findAllComponents(ElSelect)
+   selects[0].vm.$emit('update:modelValue', 's1')
+   await flushPromises()
+   const s2 = w.findAllComponents(ElSelect)
+@@ -213,11 +217,81 @@ describe('SpacePublishView', () => {
+   // ⑥ v-permission：缺 space-publish:publish 键 → 发布按钮移除，采纳按钮保留
+   it('缺 space-publish:publish 权时发布按钮从 DOM 移除，采纳按钮保留', async () => {
+     permHas.fn = (k) => k !== 'space-publish:publish'
+     const w = mountView()
+     await flushPromises()
+     await selectFloor(w)
+     const btns = w.findAll('button')
+     expect(btns.find((b) => b.text() === 'space.publish.doPublish')).toBeUndefined()
+     expect(btns.find((b) => b.text() === 'space.publish.adoptBtn')).toBeTruthy()
+   })
++
++  // ⑦ 重复码明细：duplicateGroups>0 渲染 el-collapse，逐组列出冲突库位 id
++  it('存在重复码组时渲染 collapse 明细并列出库位 id', async () => {
++    const dupPc: CodePrecheckResp = {
++      emptyCodeCount: 0,
++      duplicateGroups: [['loc-a1', 'loc-a2'], ['loc-b1', 'loc-b2', 'loc-b3']],
++      precheckErrors: [],
++      unplacedDraftCount: 0,
++    }
++    vi.mocked(codeRuleApi.precheck).mockResolvedValue({ code: 0, message: '', data: dupPc })
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    // collapse 存在，两组 → 两个 collapse-item
++    expect(w.find('.pub-dups').exists()).toBe(true)
++    expect(w.findAll('.pub-dups .el-collapse-item').length).toBe(2)
++    // 冲突库位 id 均已渲染（内容 v-show 折叠但仍在 DOM）
++    const dupText = w.find('.pub-dups').text()
++    expect(dupText).toContain('loc-a1')
++    expect(dupText).toContain('loc-a2')
++    expect(dupText).toContain('loc-b3')
++  })
++
++  it('无重复码组时不渲染 collapse', async () => {
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w) // cleanPrecheck
++    expect(w.find('.pub-dups').exists()).toBe(false)
++  })
++
++  // ⑧ 规则错误旁「去编码规则页」router-link，to=/space/code-rule
++  it('存在规则错误时渲染去编码规则页链接', async () => {
++    vi.mocked(codeRuleApi.precheck).mockResolvedValue({ code: 0, message: '', data: dirtyPrecheck })
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    const link = w.findComponent(RouterLinkStub)
++    expect(link.exists()).toBe(true)
++    expect(link.props('to')).toBe('/space/code-rule')
++    expect(link.text()).toBe('space.publish.goCodeRule')
++  })
++
++  it('无规则错误时不渲染去编码规则页链接', async () => {
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w) // cleanPrecheck
++    expect(w.findComponent(RouterLinkStub).exists()).toBe(false)
++  })
++
++  // ⑨ 生码 seq 守卫：生码在途时切库区 → 过期成功提示被丢弃
++  it('生码在途切换库区时过期成功提示被 seq 守卫丢弃', async () => {
++    let resolveGen!: (v: { code: number; message: string; data: string[] }) => void
++    vi.mocked(codeRuleApi.generate).mockImplementationOnce(() => new Promise((r) => { resolveGen = r }))
++    const successSpy = vi.spyOn(ElMessage, 'success').mockImplementation(() => ({}) as never)
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    // 点生成（fill-empty 默认，无确认框）→ generate 挂起
++    const genBtn = w.findAll('button').find((b) => b.text() === 'space.publish.genBtn')
++    await genBtn!.trigger('click')
++    await flushPromises()
++    // 生码在途，切库区 → 触发新 precheck，bump pcSeq
++    w.findAllComponents(ElSelect)[2].vm.$emit('update:modelValue', 'z1')
++    await flushPromises()
++    // 过期的生码此刻返回 → 被守卫丢弃，不弹成功提示
++    resolveGen({ code: 0, message: '', data: ['NEW-1'] })
++    await flushPromises()
++    expect(successSpy).not.toHaveBeenCalled()
++    successSpy.mockRestore()
++  })
+ })
+diff --git a/docs/seeds/space-i18n-seed-2.sql b/docs/seeds/space-i18n-seed-2.sql
+index 74ef447..23173fc 100644
+--- a/docs/seeds/space-i18n-seed-2.sql
++++ b/docs/seeds/space-i18n-seed-2.sql
+@@ -1,25 +1,25 @@
+ /* ============================================================
+- * Space 空間管理 i18n シード 第2弾（波3 生命周期・3 画面）
++ * Space 空間管理 i18n シード 第2弾（波3 生命周期・3 画面 + 波5 追補）
+  * ============================================================
+  * 範囲：space.rule.* / space.publish.* / space.events.*
+  * 対象テーブル：Sys_Langs（列 LangKey / ZhCN / ZhTW / En / Ja / Ko）
+  * 冪等：MERGE（既存キーは UPDATE、無ければ INSERT）
+  * 実行：sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/space-i18n-seed-2.sql -b
+  *
+  * キーの唯一の権威 = 3 コンポーネント実コード grep（Task 5 で対照済み）:
+  *   SpaceCodeRuleView.vue + SegmentsEditor.vue（space.rule.*・64 件）
+- *   SpacePublishView.vue（space.publish.*・45 件）
++ *   SpacePublishView.vue（space.publish.*・47 件、波5 で goCodeRule/dupGroupTitle 追補）
+  *   SpaceEventsView.vue（space.events.*・20 件）
+  * ★ space.common.* は 波2 space-i18n-seed.sql で登録済みのため本ファイルには含めない
+  *   （edit/delete/cancel/save/action/required/success/confirmDelete/confirm 等は再利用）。
+- * 合計 129 キー = rule 64 + publish 45 + events 20。
++ * 合計 131 キー = rule 64 + publish 47 + events 20。
+  * ============================================================ */
+ SET NOCOUNT ON; SET XACT_ABORT ON;
+ SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;
+ PRINT '=== Space i18n シード第2弾 開始 ===';
+ 
+ IF OBJECT_ID('tempdb..#i18n2') IS NOT NULL DROP TABLE #i18n2;
+ CREATE TABLE #i18n2 (
+     -- COLLATE DATABASE_DEFAULT: 一時テーブルが tempdb 既定照合順序（Latin1）を継承し
+     -- Sys_Langs.LangKey（Chinese_PRC_CI_AS）との MERGE 結合で照合順序衝突（Msg 468）を起こすのを回避。
+     LangKey nvarchar(200) COLLATE DATABASE_DEFAULT NOT NULL PRIMARY KEY,
+@@ -90,21 +90,21 @@ INSERT INTO #i18n2 VALUES
+   (N'space.rule.err.E-306',        N'缺少库位粒度段（col/level/depth）', N'缺少庫位粒度段（col/level/depth）', N'Missing location-granularity segment (col/level/depth)', N'ロケ粒度セグメントがありません（col/level/depth）', N'로케이션 단위 세그먼트 누락 (col/level/depth)'),
+   -- ── プレビューダイアログ ──
+   (N'space.rule.pv.title',         N'编码预览',   N'編碼預覽',   N'Code Preview',      N'採番プレビュー',      N'코드 미리보기'),
+   (N'space.rule.pv.samples',       N'样例',       N'樣例',       N'Samples',           N'サンプル',            N'샘플'),
+   (N'space.rule.pv.variableLen',   N'变长对比',   N'變長對比',   N'Variable Length',   N'可変長比較',          N'가변 길이'),
+   (N'space.rule.pv.withAisle',     N'含巷道',     N'含巷道',     N'With Aisle',        N'通路あり',            N'통로 포함'),
+   (N'space.rule.pv.withoutAisle',  N'无巷道',     N'無巷道',     N'Without Aisle',     N'通路なし',            N'통로 미포함'),
+   (N'space.rule.pv.precheck',      N'预检',       N'預檢',       N'Precheck',          N'事前チェック',        N'사전 검사'),
+   (N'space.rule.pv.ok',            N'校验通过',   N'校驗通過',   N'OK',                N'問題なし',            N'정상'),
+   (N'space.rule.pv.empty',         N'暂无预览',   N'尚無預覽',   N'No preview',        N'プレビューなし',      N'미리보기 없음'),
+-  -- ══ space.publish.*（SpacePublishView・45 件）══════════════════════════════
++  -- ══ space.publish.*（SpacePublishView・47 件）══════════════════════════════
+   (N'space.publish.title',         N'发布中心',   N'發佈中心',   N'Publish Center',    N'発行センター',        N'게시 센터'),
+   (N'space.publish.site',          N'站点',       N'站點',       N'Site',              N'拠点',                N'거점'),
+   (N'space.publish.floor',         N'楼层',       N'樓層',       N'Floor',             N'フロア',              N'층'),
+   (N'space.publish.zone',          N'库区',       N'庫區',       N'Zone',              N'ゾーン',              N'구역'),
+   (N'space.publish.selectSite',    N'请选择站点', N'請選擇站點', N'Select site',       N'拠点を選択',          N'거점 선택'),
+   (N'space.publish.selectFloor',   N'请选择楼层', N'請選擇樓層', N'Select floor',      N'フロアを選択',        N'층 선택'),
+   (N'space.publish.wholeFloorHint', N'整层（可空）', N'整層（可空）', N'Whole floor (optional)', N'フロア全体（任意）', N'층 전체(선택)'),
+   (N'space.publish.pickFloorFirst', N'请先选择楼层', N'請先選擇樓層', N'Select a floor first', N'先にフロアを選択してください', N'먼저 층을 선택하세요'),
+   (N'space.publish.precheckTitle', N'发布预检',   N'發佈預檢',   N'Pre-publish Check', N'発行プリチェック',    N'게시 사전 점검'),
+   (N'space.publish.recheck',       N'重新预检',   N'重新預檢',   N'Re-check',          N'再チェック',          N'다시 점검'),
+@@ -136,20 +136,23 @@ INSERT INTO #i18n2 VALUES
+   (N'space.publish.prefixPh',      N'输入编码前缀搜索', N'輸入編碼前綴搜尋', N'Search by code prefix', N'コード接頭辞で検索', N'코드 접두사로 검색'),
+   (N'space.publish.searchBtn',     N'搜索',       N'搜尋',       N'Search',            N'検索',                N'검색'),
+   (N'space.publish.noMatch',       N'无匹配库位', N'無匹配庫位', N'No matching locations', N'一致するロケーションなし', N'일치하는 로케이션 없음'),
+   (N'space.publish.deactivate',    N'停用',       N'停用',       N'Deactivate',        N'停止',                N'비활성화'),
+   (N'space.publish.deactivateWarn', N'确定停用库位 [{code}]？', N'確定停用庫位 [{code}]？', N'Deactivate location [{code}]?', N'ロケーション [{code}] を停止しますか？', N'로케이션 [{code}]을(를) 비활성화할까요?'),
+   (N'space.publish.col.code',      N'库位编码',   N'庫位編碼',   N'Location Code',     N'ロケーションコード',  N'로케이션 코드'),
+   (N'space.publish.col.status',    N'状态',       N'狀態',       N'Status',            N'状態',                N'상태'),
+   (N'space.publish.status.0',      N'草稿',       N'草稿',       N'Draft',             N'下書き',              N'초안'),
+   (N'space.publish.status.1',      N'已发布',     N'已發佈',     N'Published',         N'発行済',              N'게시됨'),
+   (N'space.publish.status.2',      N'已停用',     N'已停用',     N'Deactivated',       N'停止済',              N'비활성'),
++  -- ── 波5：错误呈现统一（重复码明细展开 + 去编码规则页引导）──
++  (N'space.publish.goCodeRule',    N'去编码规则页', N'前往編碼規則頁', N'Go to Code Rules', N'採番ルールへ',        N'코드 규칙으로 이동'),
++  (N'space.publish.dupGroupTitle', N'重复组 {n}（{c} 个库位）', N'重複組 {n}（{c} 個庫位）', N'Duplicate group {n} ({c} locations)', N'重複グループ {n}（{c} 件）', N'중복 그룹 {n} ({c}개 로케이션)'),
+   -- ══ space.events.*（SpaceEventsView・20 件）══════════════════════════════
+   (N'space.events.title',          N'集成事件监视', N'整合事件監視', N'Integration Events', N'連携イベント監視', N'연동 이벤트 모니터'),
+   (N'space.events.refresh',        N'刷新',       N'重新整理',   N'Refresh',           N'更新',                N'새로고침'),
+   (N'space.events.prevPage',       N'上一页',     N'上一頁',     N'Prev',              N'前へ',                N'이전'),
+   (N'space.events.nextPage',       N'下一页',     N'下一頁',     N'Next',              N'次へ',                N'다음'),
+   (N'space.events.pageLabel',      N'第 {page} 页', N'第 {page} 頁', N'Page {page}',     N'{page} ページ',       N'{page} 페이지'),
+   (N'space.events.empty',          N'暂无集成事件', N'暫無整合事件', N'No events',        N'連携イベントなし',    N'이벤트 없음'),
+   (N'space.events.detail',         N'详情',       N'詳情',       N'Detail',            N'詳細',                N'상세'),
+   (N'space.events.col.sourceNo',   N'来源单号',   N'來源單號',   N'Source No',         N'ソース番号',          N'원본 번호'),
+   (N'space.events.col.hookName',   N'钩子',       N'掛鉤',       N'Hook',              N'フック',              N'훅'),
+@@ -166,13 +169,13 @@ INSERT INTO #i18n2 VALUES
+   (N'space.events.status.COMPENSATED', N'已补偿', N'已補償',     N'Compensated',       N'補償済',              N'보상됨');
+ 
+ DECLARE @actionLog TABLE (act nvarchar(10));
+ MERGE Sys_Langs AS tgt USING #i18n2 AS src ON tgt.LangKey = src.LangKey
+ WHEN MATCHED THEN UPDATE SET tgt.ZhCN = src.ZhCN, tgt.ZhTW = src.ZhTW, tgt.En = src.En, tgt.Ja = src.Ja, tgt.Ko = src.Ko
+ WHEN NOT MATCHED BY TARGET THEN INSERT (LangKey, ZhCN, ZhTW, En, Ja, Ko) VALUES (src.LangKey, src.ZhCN, src.ZhTW, src.En, src.Ja, src.Ko)
+ OUTPUT $action INTO @actionLog;
+ 
+ DECLARE @ins INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'INSERT');
+ DECLARE @upd INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'UPDATE');
+-PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 129 キー想定）';
++PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 131 キー想定）';
+ DROP TABLE #i18n2;
+ PRINT '=== Done ===';

@@ -1,0 +1,620 @@
+# Review package: 2ba4fd8..5fe9a77
+
+## Commits
+5fe9a77 feat(pur): M-PUR T2 裸控制器贴 RequirePermission(14) + 705/706/707 MenuKey 显式赋值 + 接线 PurPermissionSeed
+aa274fd feat(pur): M-PUR T2 逐租户 PurPermissionSeed（全24键）+ 幂等/覆盖/锚定单测
+
+## Files changed
+ CP6.Tests/PurPermissionSeedTests.cs                | 186 +++++++++++++++++++++
+ .../Controllers/Pur/PurchaseRequestController.cs   |   4 +
+ CP6.WebApi/Controllers/Pur/RfqController.cs        |   8 +
+ .../Controllers/Pur/SubcontractController.cs       |   5 +
+ CP6.WebApi/Program.cs                              |  28 +---
+ CP6.WebApi/Seed/PurPermissionSeed.cs               | 108 ++++++++++++
+ 6 files changed, 318 insertions(+), 21 deletions(-)
+
+## Diff
+diff --git a/CP6.Tests/PurPermissionSeedTests.cs b/CP6.Tests/PurPermissionSeedTests.cs
+new file mode 100644
+index 0000000..da93591
+--- /dev/null
++++ b/CP6.Tests/PurPermissionSeedTests.cs
+@@ -0,0 +1,186 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-PUR 横切接线 Task 2：PurPermissionSeed 逐租户 Sys_MenuAction/Sys_RoleAction 幂等种子断言。
++///
++/// 三数闭环（真相源 docs/seeds/pur-permission-keys.md §一/§七 + 控制器 grep）：
++///   24 写端点（既有贴点 10 + 裸控制器新键 14）→ 无跨控制器归并 → 24 去重 (menu-key, action) 元组 → 24 种子元组。
++///   覆盖 7 个 menu-key（701–707）；708 pur-reconcile 为 GET-only 承载 0 action，不入种子。
++///   subcontract reconcile 只读 POST 归 view（真相源 §四），入种子占 707:view 一键。
++/// MenuId 锚定 Program.cs Pur 菜单 701–707；RoleAction 挂 admin RoleId=1。
++///
++/// ★ ExpectedTuples 为独立硬编码 oracle（非引用 PurPermissionSeed 内部常量），防自证假绿。
++///   本 oracle 直接誊自真相源 §一/§二，任何生产端误删/误改键即红。
++/// </summary>
++public class PurPermissionSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 期望的 24 去重种子元组（MenuId 锚定 Pur 菜单 701–707；action 逐字誊自真相源 §一，独立于生产常量）。
++    private static readonly (int MenuId, string Code)[] ExpectedTuples =
++    {
++        // 701 pur-supplier-price（既有）
++        (701, "add"), (701, "delete"),
++        // 702 pur-po（既有）
++        (702, "add"), (702, "submit"), (702, "cancel"),
++        // 703 pur-gr（既有）
++        (703, "add"), (703, "qc"),
++        // 704 pur-match（既有）
++        (704, "add"), (704, "release"), (704, "reject"),
++        // 706 pur-pr（新增）
++        (706, "add"), (706, "submit"), (706, "convert"),
++        // 705 pur-rfq（新增）
++        (705, "add"), (705, "invite"), (705, "quote"), (705, "rank"),
++        (705, "select"), (705, "writeback"), (705, "convert"),
++        // 707 pur-subcontract（新增，含 view 只读豁免键）
++        (707, "consign"), (707, "issue"), (707, "cost"), (707, "view"),
++    };
++
++    // 菜单键锚定表（701–707 ↔ pur-* 连字符，逐字誊自真相源 §二），供菜单锚定断言。
++    private static readonly (int MenuId, string RoutePath, string MenuKey)[] PurMenus =
++    {
++        (701, "/pur/supplier-price", "pur-supplier-price"),
++        (702, "/pur/po", "pur-po"),
++        (703, "/pur/gr", "pur-gr"),
++        (704, "/pur/match", "pur-match"),
++        (705, "/pur/rfq", "pur-rfq"),
++        (706, "/pur/pr", "pur-pr"),
++        (707, "/pur/subcontract", "pur-subcontract"),
++    };
++
++    private static readonly Guid TenantA = Guid.Parse("11111111-1111-1111-1111-111111111111");
++    private static readonly Guid TenantB = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static void SeedTenantsAndMenus(CP6Context db)
++    {
++        // 锚定菜单行须先在（RoleAction 挂 MenuId）。模拟 Program.cs Pur 菜单插入 + 705/706/707 MenuKey 显式赋值。
++        foreach (var (menuId, routePath, menuKey) in PurMenus)
++            db.Sys_Menus.Add(new Sys_Menu { MenuId = menuId, RoutePath = routePath, MenuKey = menuKey, Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantA, TenantCode = "TA", TenantName = "TenantA", Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantB, TenantCode = "TB", TenantName = "TenantB", Enable = true });
++        db.SaveChanges();
++    }
++
++    [Fact]
++    public void EnsureSeeded_SeedsExactly24TuplesPerTenant_ForBothMenuAndRoleAction()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        PurPermissionSeed.EnsureSeeded(db);
++
++        foreach (var tid in new[] { TenantA, TenantB })
++        {
++            var menuActions = db.Sys_MenuActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid).ToList();
++            var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
++
++            // 元组闭环计数：每租户各得全套 24。
++            Assert.Equal(24, menuActions.Count);
++            Assert.Equal(24, roleActions.Count);
++
++            // 逐元组精确匹配（漏种 0 / 多种 0）。
++            var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var expected = ExpectedTuples.ToHashSet();
++            Assert.Equal(expected, maSet);
++            Assert.Equal(expected, raSet);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_SecondCallNoNewRows()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        PurPermissionSeed.EnsureSeeded(db);
++        var ma1 = db.Sys_MenuActions.IgnoreQueryFilters().Count();
++        var ra1 = db.Sys_RoleActions.IgnoreQueryFilters().Count();
++
++        PurPermissionSeed.EnsureSeeded(db);   // 二次调用
++        Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++
++        // 2 租户 × 24 元组 = 48。
++        Assert.Equal(48, ma1);
++        Assert.Equal(48, ra1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        PurPermissionSeed.EnsureSeeded(db);
++
++        var anchoredMenuIds = ExpectedTuples.Select(t => t.MenuId).ToHashSet();
++        var roleActions = db.Sys_RoleActions.IgnoreQueryFilters().ToList();
++
++        Assert.NotEmpty(roleActions);
++        Assert.All(roleActions, ra => Assert.Equal(1, ra.RoleId));
++        // 每个 RoleAction.MenuId 必来自锚定表，且该菜单行存在、MenuKey 非 null 且 pur- 前缀连字符。
++        Assert.All(roleActions, ra => Assert.Contains(ra.MenuId, anchoredMenuIds));
++        foreach (var menuId in anchoredMenuIds)
++        {
++            var menu = db.Sys_Menus.Single(m => m.MenuId == menuId);
++            Assert.NotNull(menu.MenuKey);
++            Assert.StartsWith("pur-", menu.MenuKey!);
++            Assert.DoesNotContain('_', menu.MenuKey!);   // 全仓约定：连字符，禁下划线
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        PurPermissionSeed.EnsureSeeded(db);
++
++        // 逐租户显式 TenantId：两租户各得独立行，无一被盖成默认租户。
++        var tenantsSeen = db.Sys_RoleActions.IgnoreQueryFilters()
++            .Select(x => x.TenantId).Distinct().ToList();
++        Assert.Contains(TenantA, tenantsSeen);
++        Assert.Contains(TenantB, tenantsSeen);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTenants_NoOp()
++    {
++        using var db = NewDb();
++        // 菜单在，但无 Sys_Tenants 行。
++        foreach (var (menuId, routePath, menuKey) in PurMenus)
++            db.Sys_Menus.Add(new Sys_Menu { MenuId = menuId, RoutePath = routePath, MenuKey = menuKey, Enable = true });
++        db.SaveChanges();
++
++        PurPermissionSeed.EnsureSeeded(db);
++
++        Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++    }
++
++    [Fact]
++    public void ExpectedOracle_Covers24Tuples_Over7MenuKeys_NoDuplicates()
++    {
++        // oracle 自洽：24 元组、7 menu-key、无重复。
++        Assert.Equal(24, ExpectedTuples.Length);
++        Assert.Equal(24, ExpectedTuples.ToHashSet().Count);
++        Assert.Equal(7, ExpectedTuples.Select(t => t.MenuId).Distinct().Count());
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Pur/PurchaseRequestController.cs b/CP6.WebApi/Controllers/Pur/PurchaseRequestController.cs
+index 1f62005..6ecfb68 100644
+--- a/CP6.WebApi/Controllers/Pur/PurchaseRequestController.cs
++++ b/CP6.WebApi/Controllers/Pur/PurchaseRequestController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Pur;
+ using CP6.Entity.DomainModels.Pur;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Pur;
+ 
+ /// <summary>采购申请 REST —— 采购章05 §4/§5。/api/pur/pr。手工建单 + 送审 + PR→PO 按建议供应商分组转单。</summary>
+ [ApiController]
+ [Route("api/pur/pr")]
+@@ -23,32 +24,35 @@ public class PurchaseRequestController : ControllerBase
+         => Ok2(await _svc.ListAsync(status, source));
+ 
+     [HttpGet("{prNo}")]
+     public async Task<IActionResult> Get(string prNo)
+     {
+         var pr = await _svc.GetAsync(prNo);
+         return pr == null ? Err(new InvalidOperationException("E-PUR-056")) : Ok2(pr);
+     }
+ 
+     [HttpPost]
++    [RequirePermission("pur-pr", "add")]
+     public async Task<IActionResult> Create([FromBody] PrCreateDto dto)
+     {
+         try { return Ok2(await _svc.CreateAsync(dto, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>送审（草稿 → 审批 → 已批）。</summary>
+     [HttpPost("{prNo}/submit")]
++    [RequirePermission("pur-pr", "submit")]
+     public async Task<IActionResult> Submit(string prNo)
+     {
+         try { return Ok2(await _svc.SubmitForApprovalAsync(prNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>转 PO（仅已批；按建议供应商分组拆单，回填 ConvertedPoNo）。</summary>
+     [HttpPost("{prNo}/convert")]
++    [RequirePermission("pur-pr", "convert")]
+     public async Task<IActionResult> Convert(string prNo)
+     {
+         try { return Ok2(await _svc.ConvertToPoAsync(prNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ }
+diff --git a/CP6.WebApi/Controllers/Pur/RfqController.cs b/CP6.WebApi/Controllers/Pur/RfqController.cs
+index ab57479..eb92e74 100644
+--- a/CP6.WebApi/Controllers/Pur/RfqController.cs
++++ b/CP6.WebApi/Controllers/Pur/RfqController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Pur;
+ using CP6.Entity.DomainModels.Pur;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Pur;
+ 
+ /// <summary>
+ /// 询价 RFQ REST —— 采购章06。/api/pur/rfq。
+ /// 价格发现全流程：从 PR 发起 → 邀供应商 → 收报价 → 比价排名 → 按行选定 → 回写价表(Source=rfq) → 选中转 PO。
+@@ -27,68 +28,75 @@ public class RfqController : ControllerBase
+ 
+     [HttpGet("{rfqNo}")]
+     public async Task<IActionResult> Get(string rfqNo)
+     {
+         var rfq = await _svc.GetAsync(rfqNo);
+         return rfq == null ? Err(new InvalidOperationException("E-PUR-061")) : Ok2(rfq);
+     }
+ 
+     /// <summary>从 PR 发起询价（汇未定供应商的 PR 行，行级追溯）。</summary>
+     [HttpPost("from-pr/{prNo}")]
++    [RequirePermission("pur-rfq", "add")]
+     public async Task<IActionResult> CreateFromPr(string prNo)
+     {
+         try { return Ok2(await _svc.CreateFromPrAsync(prNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>邀请供应商（发注先，幂等，状态→邀请中）。</summary>
+     [HttpPost("{rfqNo}/suppliers")]
++    [RequirePermission("pur-rfq", "invite")]
+     public async Task<IActionResult> AddSuppliers(string rfqNo, [FromBody] List<string> supplierIds)
+     {
+         try { return Ok2(await _svc.AddSuppliersAsync(rfqNo, supplierIds ?? new(), CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>收报价（按行 upsert 报价矩阵，状态→报价中）。</summary>
+     [HttpPost("{rfqNo}/quote")]
++    [RequirePermission("pur-rfq", "quote")]
+     public async Task<IActionResult> RecordQuote(string rfqNo, [FromBody] RecordQuoteRequest req)
+     {
+         try { return Ok2(await _svc.RecordQuoteAsync(rfqNo, req.SupplierId, req.Lines ?? new(), CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>比价排名（按行，剔除过期，价格优先→交期；Rank 仅建议）。</summary>
+     [HttpPost("{rfqNo}/rank")]
++    [RequirePermission("pur-rfq", "rank")]
+     public async Task<IActionResult> Rank(string rfqNo, [FromBody] RankRequest? req)
+     {
+         try { return Ok2(await _svc.RankQuotesAsync(rfqNo, req?.AsOf, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>选定（按行可拆不同供应商，一行一选，校验未过期；全行选中→已选定）。</summary>
+     [HttpPost("{rfqNo}/select")]
++    [RequirePermission("pur-rfq", "select")]
+     public async Task<IActionResult> Select(string rfqNo, [FromBody] List<RfqSelectionDto> selections)
+     {
+         try { return Ok2(await _svc.SelectAsync(rfqNo, selections ?? new(), CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>回写采购价表（选中报价 Source=rfq，沉淀进价表）。</summary>
+     [HttpPost("{rfqNo}/writeback")]
++    [RequirePermission("pur-rfq", "writeback")]
+     public async Task<IActionResult> WriteBack(string rfqNo)
+     {
+         try { return Ok2(await _svc.WriteBackPricesAsync(rfqNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>选中报价转 PO（按选中供应商分组，用成交价；全行转出→已转 PO）。</summary>
+     [HttpPost("{rfqNo}/convert")]
++    [RequirePermission("pur-rfq", "convert")]
+     public async Task<IActionResult> Convert(string rfqNo)
+     {
+         try { return Ok2(await _svc.ConvertToPoAsync(rfqNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ }
+ 
+ /// <summary>收报价请求体：一个供应商对若干行的报价。</summary>
+ public class RecordQuoteRequest
+ {
+diff --git a/CP6.WebApi/Controllers/Pur/SubcontractController.cs b/CP6.WebApi/Controllers/Pur/SubcontractController.cs
+index 6256420..53e8be2 100644
+--- a/CP6.WebApi/Controllers/Pur/SubcontractController.cs
++++ b/CP6.WebApi/Controllers/Pur/SubcontractController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Pur;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Pur;
+ 
+ /// <summary>
+ /// 外注加工 REST —— 采购章07。/api/pur/subcontract。
+ /// 外注闭环：外注 PO(Type=2 成品行=加工费) → 登记/发支給材(IssuedQty 防吞料) → 收成品成本核算(加工费+料并入) → 防吞料对账。
+ /// </summary>
+@@ -24,44 +25,48 @@ public class SubcontractController : ControllerBase
+     [HttpGet("orders")]
+     public async Task<IActionResult> ListOrders() => Ok2(await _svc.ListOrdersAsync());
+ 
+     /// <summary>取某外注 PO（可指定行）的支給材清单。</summary>
+     [HttpGet("{poNo}/consign")]
+     public async Task<IActionResult> GetConsign(string poNo, [FromQuery] int? lineNo)
+         => Ok2(await _svc.GetConsignAsync(poNo, lineNo));
+ 
+     /// <summary>登记外注成品行的支給材（按成品 BOM 应发料，校验外注 Type=2，幂等 upsert）。</summary>
+     [HttpPost("{poNo}/{lineNo:int}/consign")]
++    [RequirePermission("pur-subcontract", "consign")]
+     public async Task<IActionResult> AddConsign(string poNo, int lineNo, [FromBody] List<ConsignMaterialDto> items)
+     {
+         try { return Ok2(await _svc.AddConsignAsync(poNo, lineNo, items ?? new(), CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>发支給材（委托 WMS 出库 Purpose=subcontract，累加 IssuedQty；body 为空→一次发齐剩余，否则分批）。</summary>
+     [HttpPost("{poNo}/{lineNo:int}/issue")]
++    [RequirePermission("pur-subcontract", "issue")]
+     public async Task<IActionResult> Issue(string poNo, int lineNo, [FromBody] List<ConsignIssueDto>? issuances)
+     {
+         try { return Ok2(await _svc.IssueConsignAsync(poNo, lineNo, issuances, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>收成品成本核算（加工费 + 支給材成本并入，接财务 06）。</summary>
+     [HttpPost("{poNo}/{lineNo:int}/finished-cost")]
++    [RequirePermission("pur-subcontract", "cost")]
+     public async Task<IActionResult> FinishedCost(string poNo, int lineNo, [FromBody] FinishedCostRequest req)
+     {
+         try { return Ok2(await _svc.CalcFinishedCostAsync(poNo, lineNo, req.FinishedQty, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>防吞料对账（实发 vs 成品反推应耗，超损耗容差→挂起核查）。</summary>
+     [HttpPost("{poNo}/{lineNo:int}/reconcile")]
++    [RequirePermission("pur-subcontract", "view")]   // 只读 POST 豁免归 view（真相源 §四：全方法无写副作用）
+     public async Task<IActionResult> Reconcile(string poNo, int lineNo, [FromBody] ReconcileRequest req)
+     {
+         try { return Ok2(await _svc.ReconcileConsignAsync(poNo, lineNo, req.FinishedQty, req.TolerancePct, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ }
+ 
+ /// <summary>成品成本核算请求体。</summary>
+ public class FinishedCostRequest
+ {
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 13df614..3a24b9d 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -1407,33 +1407,33 @@ using (var scope = app.Services.CreateScope())
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 704))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 704, MenuName = "三单匹配", RoutePath = "/pur/match", Icon = "Connection", ParentId = 700, OrderNo = 704, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 704 });
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 705))
+     {
+-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 705, MenuName = "询价比价", RoutePath = "/pur/rfq", Icon = "Histogram", ParentId = 700, OrderNo = 705, Enable = true });
++        db.Sys_Menus.Add(new Sys_Menu { MenuId = 705, MenuName = "询价比价", RoutePath = "/pur/rfq", MenuKey = "pur-rfq", Icon = "Histogram", ParentId = 700, OrderNo = 705, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 705 });
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 706))
+     {
+-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 706, MenuName = "采购申请", RoutePath = "/pur/pr", Icon = "Tickets", ParentId = 700, OrderNo = 706, Enable = true });
++        db.Sys_Menus.Add(new Sys_Menu { MenuId = 706, MenuName = "采购申请", RoutePath = "/pur/pr", MenuKey = "pur-pr", Icon = "Tickets", ParentId = 700, OrderNo = 706, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 706 });
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 707))
+     {
+-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 707, MenuName = "外注加工", RoutePath = "/pur/subcontract", Icon = "SetUp", ParentId = 700, OrderNo = 707, Enable = true });
++        db.Sys_Menus.Add(new Sys_Menu { MenuId = 707, MenuName = "外注加工", RoutePath = "/pur/subcontract", MenuKey = "pur-subcontract", Icon = "SetUp", ParentId = 700, OrderNo = 707, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 707 });
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 708))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 708, MenuName = "采购对账", RoutePath = "/pur/reconcile", Icon = "Finished", ParentId = 700, OrderNo = 708, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 708 });
+         db.SaveChanges();
+     }
+     // 计划中台（Plan）P1 MRP 菜单（730 组）—— 置于采购之后（OrderNo 246）
+@@ -1501,43 +1501,29 @@ using (var scope = app.Services.CreateScope())
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 738 });
+         db.SaveChanges();
+     }
+     // WFS 审批人解析：审批人映射维护菜单（739）—— 幂等，置于 C′ 738 之后
+     if (!db.Sys_Menus.Any(m => m.MenuId == 739))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 739, MenuName = "approverMap", RoutePath = "/oa/approver-map", Icon = "Edit", ParentId = 740, OrderNo = 739, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 739 });
+         db.SaveChanges();
+     }
+-    // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
++    // 采购功能权限点：701–704 MenuKey 回填（705/706/707 已在菜单插入时显式赋值，首启即就位，不依赖 :922 全局回填）。
+     {
+         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
+             pm.MenuKey = pm.RoutePath!.Trim('/').Replace('/', '-');
+         db.SaveChanges();
+-
+-        // (MenuId, ActionCode, ActionName) —— 与各控制器 [RequirePermission(menuKey, action)] 一一对应
+-        var purActions = new (int MenuId, string Code, string Name)[]
+-        {
+-            (701, "add", "新增/更新"), (701, "delete", "删除"),
+-            (702, "add", "建单"), (702, "submit", "送审"), (702, "cancel", "取消"),
+-            (703, "add", "确认收货"), (703, "qc", "检收应用"),
+-            (704, "add", "匹配建票"), (704, "release", "放行"), (704, "reject", "拒绝"),
+-        };
+-        foreach (var (menuId, code, name) in purActions)
+-        {
+-            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+-                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+-            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+-                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+-        }
+-        db.SaveChanges();
+     }
++    // 逐租户播 Pur 全 24 权限键（既有 10 + 新 14，含 subcontract:view）+ 授 admin(RoleId=1)。
++    // 取代原仅默认租户的内联块（真相源 docs/seeds/pur-permission-keys.md §六 硬前置②）；须置于 Pur 菜单 + 705/706/707 MenuKey 之后（RoleAction 挂锚定 MenuId 701–707）。
++    CP6.WebApi.Seed.PurPermissionSeed.EnsureSeeded(db);
+ 
+     // ═══════════════════════════════════════════════════════════
+     //  MSBBME010〜090 MES 製造執行 菜单
+     // ═══════════════════════════════════════════════════════════
+     if (!db.Sys_Menus.Any(m => m.MenuId == 300))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 300, MenuName = "製造執行(MES)", Icon = "SetUp", OrderNo = 300, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 300 });
+         db.SaveChanges();
+     }
+diff --git a/CP6.WebApi/Seed/PurPermissionSeed.cs b/CP6.WebApi/Seed/PurPermissionSeed.cs
+new file mode 100644
+index 0000000..ae848ba
+--- /dev/null
++++ b/CP6.WebApi/Seed/PurPermissionSeed.cs
+@@ -0,0 +1,108 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// 采购(Pur)権限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（M-PUR 横切接线 Task 2）。
++///
++/// 背景：Pur 8 控制器（7 含真写）逐写端点贴 <c>[RequirePermission("键","action")]</c>，但
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator</c> 以
++/// <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}"</c>
++/// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
++/// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
++///
++/// 取代 Program.cs 原内联块（仅默认租户、仅既有 10 键）：本 Seed 一次覆盖**全部 24 资源键**
++/// （既有 10：supplier-price/po/gr/match；新增 14：pr/rfq/subcontract），逐租户播齐——
++/// 修复真相源 docs/seeds/pur-permission-keys.md §六 头号硬前置②「既有种子仅默认租户」。
++///
++/// 数据来源（执行真相，与真相源 §一 24 行 1:1）：下方 <see cref="Actions"/> 清单逐字照
++/// docs/seeds/pur-permission-keys.md §一/§二；MenuId 锚定 Program.cs Pur 菜单 701–707。
++///
++/// 逐租户机制（照 WmsPermissionSeed 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表，非行级过滤）全部租户 Id，对每租户各插一份。
++///  - 显式设 <c>TenantId=tid</c> → <c>CP6Context.StampTenant</c> 仅盖 <c>TenantId==Guid.Empty</c>，不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，使跨租户既存行对当前上下文（默认租户作用域）可见，避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 Pur 菜单插入 + 705/706/707 MenuKey 显式赋值 **之后**调用（锚定菜单行须先在，RoleAction 挂 MenuId）。
++/// 幂等：重启不重复插（(TenantId,MenuId,ActionCode) 判存守卫）。
++/// </summary>
++public static class PurPermissionSeed
++{
++    /// <summary>
++    /// (MenuId, ActionCode, ActionName) —— 与 docs/seeds/pur-permission-keys.md §一 24 行逐字 1:1。
++    /// MenuId 锚定 Program.cs Pur 菜单 701–707；ActionName 为中文显示名。
++    /// 计 24 条，覆盖 7 个 menu-key（既有 10 键 + 新增 14 键，含 subcontract:view 只读豁免键）。
++    /// </summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        // 701 pur-supplier-price — 供应商价表（既有）
++        (701, "add", "新增/更新"), (701, "delete", "删除"),
++        // 702 pur-po — 采购订单（既有）
++        (702, "add", "建单"), (702, "submit", "送审"), (702, "cancel", "取消"),
++        // 703 pur-gr — 采购收货（既有）
++        (703, "add", "确认收货"), (703, "qc", "检收应用"),
++        // 704 pur-match — 三单匹配（既有）
++        (704, "add", "匹配建票"), (704, "release", "放行"), (704, "reject", "拒绝"),
++        // 706 pur-pr — 采购申请（新增）
++        (706, "add", "建单"), (706, "submit", "送审"), (706, "convert", "转PO"),
++        // 705 pur-rfq — 询价比价（新增）
++        (705, "add", "发起询价"), (705, "invite", "邀请供应商"), (705, "quote", "收报价"),
++        (705, "rank", "比价排名"), (705, "select", "选定"), (705, "writeback", "回写价表"),
++        (705, "convert", "转PO"),
++        // 707 pur-subcontract — 外注加工（新增，含只读豁免 view）
++        (707, "consign", "登记支給材"), (707, "issue", "发支給材"),
++        (707, "cost", "成品成本核算"), (707, "view", "对账查看"),
++    };
++
++    /// <summary>
++    /// 逐租户幂等播种 Pur 全部权限点 + 授管理员（RoleId=1）。
++    /// 须在 Pur 菜单插入 + 705/706/707 MenuKey 显式赋值之后调用（锚定菜单行须先在）。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖（仅盖 Guid.Empty）
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}

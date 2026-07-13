@@ -1,0 +1,722 @@
+# Review package: 13c0df0..HEAD
+
+## Commits
+63189dc fix(fin): C.3审查修复——FgUnitCost改标准口径(FG恒等/差异不双计)+COGS解析前置
+f21becb feat(fin): C.3 成本差异结转COGS(拍板②)——SettleAsync FG按标准+差异腿转COGS
+
+## Files changed
+ CP6.Core/Services/Fin/CostSettleService.cs      |  52 ++++-
+ CP6.Entity/DomainModels/Fin/CostSheet.cs        |  11 +-
+ CP6.Tests/CostSettleActualTests.cs              |  31 ++-
+ CP6.Tests/Fin/CostCollectServiceTests.cs        |   4 +-
+ CP6.Tests/Fin/CostSettleServiceTests.cs         |  13 +-
+ CP6.Tests/Fin/CostVarianceSettleTests.cs        | 277 ++++++++++++++++++++++++
+ CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs |  22 +-
+ 7 files changed, 382 insertions(+), 28 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Fin/CostSettleService.cs b/CP6.Core/Services/Fin/CostSettleService.cs
+index 9b99074..75e0aa8 100644
+--- a/CP6.Core/Services/Fin/CostSettleService.cs
++++ b/CP6.Core/Services/Fin/CostSettleService.cs
+@@ -1,20 +1,22 @@
+ using CP6.Core.EFDbContext;
+ using CP6.Entity.DomainModels.Fin;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Fin;
+ 
+ /// <summary>
+ /// 成本完工结转实现（章06 §5）。reversing 无关——结转是真实成本资本化：
+ /// ①料工费→WIP（借 WIP / 贷 原材料+直接人工+制造费用，applied-cost 吸收法，标准工费吸收入 WIP）；
+-/// ②WIP→FG（借 库存商品 / 贷 在制品）。出货时既有 AR.Cogs（借 COGS/贷 FG）再把 FG 转 COGS。
++/// ②WIP→FG（借 库存商品 / 贷 在制品；有标准成本时 FG 按标准资本化）；
++/// ③差异→COGS（拍板②：实际−标准 并入当期损益转 COGS，超支借COGS/贷WIP、有利反向；科目月末自然清零，不设留存差异科目/不分摊）。
++/// 出货时既有 AR.Cogs（借 COGS/贷 FG）再把 FG 转 COGS。
+ /// 全按 Role 取科目（模板可移植）。错误码：402 已结转 / 403 成本单不存在或未归集 / 141 角色缺失。
+ /// </summary>
+ public class CostSettleService : ICostSettleService
+ {
+     private readonly CP6Context _db;
+     private readonly IJournalEntryService _journal;
+ 
+     public CostSettleService(CP6Context db, IJournalEntryService journal)
+     {
+         _db = db;
+@@ -35,20 +37,35 @@ public class CostSettleService : ICostSettleService
+             sheet.ModifyDate = DateTime.Now;
+             await _db.SaveChangesAsync();
+             return FinResult.Pass();
+         }
+ 
+         var wip = await RoleIdAsync("WIP");
+         var fg = await RoleIdAsync("FG");
+         if (wip == null) return FinResult.Fail("E-FIN-141", "WIP");
+         if (fg == null) return FinResult.Fail("E-FIN-141", "FG");
+ 
++        // 拍板②：有标准成本时 FG 按【标准成本】资本化，实际与标准的差异结转 COGS（科目月末自然清零）。
++        // 无标准成本（StandardCost<=0，未定义标准的品目）或差异=0 → 维持现状：FG 按实际全额、无差异凭证。
++        var standardCost = sheet.StandardCost;          // 标准料+标准工+标准费
++        var hasStandard = standardCost > 0m;
++        var variance = total - standardCost;            // >0 超支 / <0 有利
++        var fgAmount = hasStandard ? standardCost : total;
++
++        // 差异腿要用的 COGS 前置解析：缺配置整体 fail 在任何过账前（避免 ①② 已提交后才 141，重试重复凭证）
++        Guid? cogs = null;
++        if (hasStandard && variance != 0m)
++        {
++            cogs = await RoleIdAsync("COGS");
++            if (cogs == null) return FinResult.Fail("E-FIN-141", "COGS");
++        }
++
+         var now = DateTime.Now;
+ 
+         // ① 料工费 → WIP（借 WIP / 贷 各成本来源）
+         var collect = new JournalEntry
+         {
+             VoucherDate = now,
+             Source = VoucherSource.Cost,
+             SourceDocNo = $"{sheet.No}#WIP",
+             Description = $"成本归集→在制品 {workOrderNo}",
+             Lines = { new JournalLine { AccountId = wip.Value, Debit = total } },
+@@ -67,36 +84,63 @@ public class CostSettleService : ICostSettleService
+         }
+         if (sheet.OverheadActual > 0m)
+         {
+             var oh = await RoleIdAsync("MFG_OVERHEAD");
+             if (oh == null) return FinResult.Fail("E-FIN-141", "MFG_OVERHEAD");
+             collect.Lines.Add(new JournalLine { AccountId = oh.Value, Credit = sheet.OverheadActual });
+         }
+         var r1 = await _journal.AutoPostAsync(collect);
+         if (!r1.Ok) return r1;
+ 
+-        // ② WIP → FG（借 库存商品 / 贷 在制品）
++        // ② WIP → FG（借 库存商品 / 贷 在制品；有标准成本时按标准，差异走 ③）
+         var settle = new JournalEntry
+         {
+             VoucherDate = now,
+             Source = VoucherSource.Cost,
+             SourceDocNo = $"{sheet.No}#FG",
+             Description = $"在制品→库存商品 {workOrderNo}",
+             Lines =
+             {
+-                new JournalLine { AccountId = fg.Value, Debit = total },
+-                new JournalLine { AccountId = wip.Value, Credit = total },
++                new JournalLine { AccountId = fg.Value, Debit = fgAmount },
++                new JournalLine { AccountId = wip.Value, Credit = fgAmount },
+             },
+         };
+         var r2 = await _journal.AutoPostAsync(settle);
+         if (!r2.Ok) return r2;
+ 
++        // ③ 成本差异结转 COGS（拍板②）：仅当有标准成本且差异非零（cogs 已前置解析）。
++        //    超支(variance>0) 借 COGS / 贷 WIP；有利(variance<0) 反向 借 WIP / 贷 COGS（|差异|）。
++        //    三腿合计 WIP 借贷净零：借WIP(actual) − 贷WIP(standard→FG) ∓ 差异腿 = 0。
++        if (cogs is Guid cogsId)
++        {
++            var varEntry = new JournalEntry
++            {
++                VoucherDate = now,
++                Source = VoucherSource.Cost,
++                SourceDocNo = $"{sheet.No}#VAR",
++                Description = $"成本差异结转 COGS {workOrderNo}",
++            };
++            if (variance > 0m)
++            {
++                varEntry.Lines.Add(new JournalLine { AccountId = cogsId, Debit = variance });
++                varEntry.Lines.Add(new JournalLine { AccountId = wip.Value, Credit = variance });
++            }
++            else
++            {
++                var abs = -variance;
++                varEntry.Lines.Add(new JournalLine { AccountId = wip.Value, Debit = abs });
++                varEntry.Lines.Add(new JournalLine { AccountId = cogsId, Credit = abs });
++            }
++            var r3 = await _journal.AutoPostAsync(varEntry);
++            if (!r3.Ok) return r3;
++        }
++
+         sheet.Status = CostSheetStatus.Settled;
+         sheet.JournalEntryId = settle.Id;
+         sheet.Modifier = user;
+         sheet.ModifyDate = now;
+         await _db.SaveChangesAsync();
+         return FinResult.Pass();
+     }
+ 
+     public async Task<decimal> FgUnitCostAsync(string workOrderNo)
+         => (await _db.CostSheets.AsNoTracking().FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo))?.FgUnitCost ?? 0m;
+diff --git a/CP6.Entity/DomainModels/Fin/CostSheet.cs b/CP6.Entity/DomainModels/Fin/CostSheet.cs
+index 236a1c3..f38a874 100644
+--- a/CP6.Entity/DomainModels/Fin/CostSheet.cs
++++ b/CP6.Entity/DomainModels/Fin/CostSheet.cs
+@@ -51,22 +51,29 @@ public class CostSheet : BaseTenantEntity
+     /// <summary>结转生成的凭证 Id（A-3 完工结转）</summary>
+     public Guid? JournalEntryId { get; set; }
+ 
+     // ── 计算属性（不持久化）──
+     /// <summary>实际总成本 = 实际料 + 实际工 + 实际费</summary>
+     [NotMapped] public decimal TotalActual => MaterialActual + LaborActual + OverheadActual;
+     /// <summary>标准总成本 = 标准料 + 标准工 + 标准费</summary>
+     [NotMapped] public decimal StandardCost => MaterialStandard + LaborStandard + OverheadStandard;
+     /// <summary>成本差异 = 实际 − 标准（&gt;0 超支）</summary>
+     [NotMapped] public decimal Variance => TotalActual - StandardCost;
+-    /// <summary>FG 完工单位成本 = 实际总成本 / 完工数（完工数为 0 时取 0）</summary>
+-    [NotMapped] public decimal FgUnitCost => CompletedQty > 0m ? Math.Round(TotalActual / CompletedQty, 4, MidpointRounding.AwayFromZero) : 0m;
++    /// <summary>
++    /// FG 完工单位成本（完工数为 0 时取 0）。拍板②（波C.3）：有标准成本时 FG 按【标准】资本化
++    /// （SettleAsync #FG 腿按 StandardCost 过账，差异已单独转 COGS），故单位成本 = 标准总成本 / 完工数
++    /// ——出货 AR.Cogs 按此贷 FG 才与结转口径恒等（FG 净零，COGS=出货标准+差异=实际）。
++    /// 无标准成本（StandardCost&lt;=0）维持实际口径 = 实际总成本 / 完工数。
++    /// </summary>
++    [NotMapped] public decimal FgUnitCost => CompletedQty > 0m
++        ? Math.Round((StandardCost > 0m ? StandardCost : TotalActual) / CompletedQty, 4, MidpointRounding.AwayFromZero)
++        : 0m;
+ 
+     /// <summary>归集明细行（料/工/费来源可追溯）</summary>
+     public List<CostSheetLine> Lines { get; set; } = new();
+ }
+ 
+ /// <summary>成本归集明细行（章06 §4）。每笔料/工/费的来源、用量、单价、金额，可追溯。</summary>
+ [Table("Fin_CostSheetLine")]
+ public class CostSheetLine : BaseTenantEntity
+ {
+     /// <summary>所属成本单 Id</summary>
+diff --git a/CP6.Tests/CostSettleActualTests.cs b/CP6.Tests/CostSettleActualTests.cs
+index eb096d1..b4d088c 100644
+--- a/CP6.Tests/CostSettleActualTests.cs
++++ b/CP6.Tests/CostSettleActualTests.cs
+@@ -1,45 +1,54 @@
+ using Microsoft.EntityFrameworkCore;
+ using CP6.Entity.DomainModels.Fin;
+ using CP6.Core.Services.Fin;
+ 
+ namespace CP6.Tests;
+ 
+ /// <summary>
+-/// A2 §4.5（Task D-3）：完工结转贷"实际额"。
+-/// SettleAsync 必须按真实成本入账：贷 DIRECT_LABOR = LaborActual、贷 MFG_OVERHEAD = OverheadActual，
+-/// WIP→FG 按 TotalActual（料+工+费实际）。差异为展示用，绝不生成差异凭证。
++/// A2 §4.5（Task D-3）→ 波C.3 拍板②更新：料工费归集贷【实际额】不变，但 WIP→FG 改按【标准成本】资本化，
++/// 实际与标准的差异结转 COGS（拍板②：差异并入当期损益转 COGS，科目月末自然清零）。
++/// ①归集：贷 DIRECT_LABOR = LaborActual、贷 MFG_OVERHEAD = OverheadActual（实际额，不变）；
++/// ②WIP→FG = StandardCost（标准料+标准工+标准费）；③差异 = TotalActual−StandardCost 转 COGS。
++/// 场景：实际 1560（料1000/工320/费240）vs 标准 1700（料1000/工400/费300）→ 有利差异 −140 → 借WIP140/贷COGS140。
+ /// </summary>
+ public class CostSettleActualTests
+ {
+     [Fact]
+-    public async Task Settle_CreditsActualLaborOverhead()
++    public async Task Settle_CreditsActualLaborOverhead_FgAtStandard_VarianceToCogs()
+     {
+         var db = TestHelper.CreateInMemoryContext();
+         // 科目角色（直接 seed：GlAccount 默认 IsLeaf=true，RoleIdAsync 只查 Role+IsActive，过账校验要求末级/启用）
+-        foreach (var role in new[] { "WIP", "FG", "INVENTORY", "DIRECT_LABOR", "MFG_OVERHEAD" })
++        foreach (var role in new[] { "WIP", "FG", "INVENTORY", "DIRECT_LABOR", "MFG_OVERHEAD", "COGS" })
+             db.GlAccounts.Add(new GlAccount { Code = role, Name = role, Role = role, IsActive = true });
+         db.CostSheets.Add(new CostSheet
+         {
+             Id = Guid.NewGuid(), No = "CS-1", WorkOrderNo = "WO1", CompletedQty = 100,
+             MaterialActual = 1000, MaterialStandard = 1000, LaborActual = 320, LaborStandard = 400,
+             OverheadActual = 240, OverheadStandard = 300, Status = CostSheetStatus.Collected,
+         });
+         await db.SaveChangesAsync();
+ 
+         var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
+         var svc = new CostSettleService(db, journal);
+         var r = await svc.SettleAsync("WO1", "admin");
+         Assert.True(r.Ok, r.Code);
+ 
+         var lines = await db.JournalLines.AsNoTracking().ToListAsync();
+-        Assert.Contains(lines, l => l.Credit == 320m);   // DIRECT_LABOR 实际额（非标准 400）
+-        Assert.Contains(lines, l => l.Credit == 240m);   // MFG_OVERHEAD 实际额（非标准 300）
++        Assert.Contains(lines, l => l.Credit == 320m);   // 归集贷 DIRECT_LABOR 实际额（非标准 400）
++        Assert.Contains(lines, l => l.Credit == 240m);   // 归集贷 MFG_OVERHEAD 实际额（非标准 300）
+ 
+-        // WIP→FG 按实际总成本 TotalActual = 1000 + 320 + 240 = 1560
++        // WIP→FG 按标准总成本 StandardCost = 1000 + 400 + 300 = 1700（非实际 1560）
+         var fgId = (await db.GlAccounts.FirstAsync(a => a.Role == "FG")).Id;
+-        Assert.Contains(lines, l => l.AccountId == fgId && l.Debit == 1560m);
++        Assert.Contains(lines, l => l.AccountId == fgId && l.Debit == 1700m);
+ 
+-        // 差异展示用：不得有任何标准额（400/300）落入凭证行
+-        Assert.DoesNotContain(lines, l => l.Credit == 400m || l.Credit == 300m);
++        // 差异 = 1560 − 1700 = −140（有利）→ 借 WIP 140 / 贷 COGS 140
++        var cogsId = (await db.GlAccounts.FirstAsync(a => a.Role == "COGS")).Id;
++        var wipId = (await db.GlAccounts.FirstAsync(a => a.Role == "WIP")).Id;
++        Assert.Contains(lines, l => l.AccountId == cogsId && l.Credit == 140m);
++        Assert.Contains(lines, l => l.AccountId == wipId && l.Debit == 140m);
++
++        // WIP 借贷净零（三腿合计）
++        var wipLines = lines.Where(l => l.AccountId == wipId).ToList();
++        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));
+     }
+ }
+diff --git a/CP6.Tests/Fin/CostCollectServiceTests.cs b/CP6.Tests/Fin/CostCollectServiceTests.cs
+index 698f27b..dff2d33 100644
+--- a/CP6.Tests/Fin/CostCollectServiceTests.cs
++++ b/CP6.Tests/Fin/CostCollectServiceTests.cs
+@@ -2,21 +2,21 @@ using CP6.Core.EFDbContext;
+ using CP6.Core.Services.Fin;
+ using CP6.Entity.DomainModels.Erp;
+ using CP6.Entity.DomainModels.Fin;
+ using CP6.Entity.DomainModels.Mes;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Tests.Fin;
+ 
+ /// <summary>
+ /// 财务章06 A：成本归集（★卖点）。料 = MES 实际消耗(WorkOrderMaterial.ActualQty) × BOM 供给单价(ProductMaterial.SupplyPrice)；
+-/// 标准料 = 计划用量×同单价 → 差额即料用量差异；工费标准估算；FG 单位成本 = 实际总成本/完工数。
++/// 标准料 = 计划用量×同单价 → 差额即料用量差异；工费标准估算；FG 单位成本 = 标准总成本/完工数（拍板②，无标准时实际口径）。
+ /// 场景：M1 计划100实际110单价5；M2 计划50实际50单价2；工300费200；完工10。
+ /// </summary>
+ public class CostCollectServiceTests
+ {
+     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString())
+         .Options);
+ 
+     private static CostCollectService Svc(CP6Context db) => new(db, new FinSequenceService(db), new CP6.Core.Services.Mes.ProcessCostRateService(db));
+ 
+@@ -57,21 +57,21 @@ public class CostCollectServiceTests
+     public async Task Collect_TotalActual_Variance_FgUnitCost()
+     {
+         using var db = NewDb();
+         await SeedAsync(db);
+         await Svc(db).CollectAsync("WO1", 300m, 200m, "u");
+ 
+         var cs = (await Svc(db).GetByWorkOrderAsync("WO1"))!;
+         Assert.Equal(1150m, cs.TotalActual);       // 650 + 300 + 200
+         Assert.Equal(1100m, cs.StandardCost);      // 600 + 300 + 200
+         Assert.Equal(50m, cs.Variance);            // 料用量差异：M1 多耗 10×5
+-        Assert.Equal(115m, cs.FgUnitCost);         // 1150 / 10
++        Assert.Equal(110m, cs.FgUnitCost);         // 拍板②标准口径：StandardCost 1100 / 10（差异 50 结转 COGS，不入 FG 单位成本）
+     }
+ 
+     [Fact]
+     public async Task Collect_Lines_RecordMaterialLaborOverhead()
+     {
+         using var db = NewDb();
+         await SeedAsync(db);
+         await Svc(db).CollectAsync("WO1", 300m, 200m, "u");
+ 
+         var cs = (await Svc(db).GetByWorkOrderAsync("WO1"))!;
+diff --git a/CP6.Tests/Fin/CostSettleServiceTests.cs b/CP6.Tests/Fin/CostSettleServiceTests.cs
+index ed2bdd2..4d7a767 100644
+--- a/CP6.Tests/Fin/CostSettleServiceTests.cs
++++ b/CP6.Tests/Fin/CostSettleServiceTests.cs
+@@ -67,23 +67,30 @@ public class CostSettleServiceTests
+         var lab = (await k.Gl.GetByRoleAsync("DIRECT_LABOR"))!.Id;
+         var oh = (await k.Gl.GetByRoleAsync("MFG_OVERHEAD"))!.Id;
+ 
+         var collect = await db.JournalEntries.Include(e => e.Lines).FirstAsync(e => e.SourceDocNo!.EndsWith("#WIP"));
+         Assert.Equal(VoucherSource.Cost, collect.Source);
+         Assert.Equal(1150m, collect.Lines.Single(l => l.AccountId == wip).Debit);    // 借 WIP 总成本
+         Assert.Equal(650m, collect.Lines.Single(l => l.AccountId == inv).Credit);    // 贷 原材料 实际料
+         Assert.Equal(300m, collect.Lines.Single(l => l.AccountId == lab).Credit);    // 贷 直接人工 吸收
+         Assert.Equal(200m, collect.Lines.Single(l => l.AccountId == oh).Credit);     // 贷 制造费用 吸收
+ 
++        // 拍板②：FG 按标准成本资本化。标准 = 料600(计划100×5+50×2) + 工300 + 费200 = 1100（料实际 650 含 +50 超用差异）
+         var settle = await db.JournalEntries.Include(e => e.Lines).FirstAsync(e => e.SourceDocNo!.EndsWith("#FG"));
+-        Assert.Equal(1150m, settle.Lines.Single(l => l.AccountId == fg).Debit);      // 借 库存商品
+-        Assert.Equal(1150m, settle.Lines.Single(l => l.AccountId == wip).Credit);    // 贷 在制品
++        Assert.Equal(1100m, settle.Lines.Single(l => l.AccountId == fg).Debit);      // 借 库存商品（标准）
++        Assert.Equal(1100m, settle.Lines.Single(l => l.AccountId == wip).Credit);    // 贷 在制品（标准）
++
++        // 差异 = 实际1150 − 标准1100 = +50 超支 → 借 COGS 50 / 贷 WIP 50
++        var cogs = (await k.Gl.GetByRoleAsync("COGS"))!.Id;
++        var varv = await db.JournalEntries.Include(e => e.Lines).FirstAsync(e => e.SourceDocNo!.EndsWith("#VAR"));
++        Assert.Equal(50m, varv.Lines.Single(l => l.AccountId == cogs).Debit);
++        Assert.Equal(50m, varv.Lines.Single(l => l.AccountId == wip).Credit);
+ 
+         var cs = await db.CostSheets.FirstAsync(s => s.WorkOrderNo == "WO1");
+         Assert.Equal(CostSheetStatus.Settled, cs.Status);
+         Assert.NotNull(cs.JournalEntryId);
+     }
+ 
+     [Fact]
+     public async Task Settle_WipNetsToZero_AfterCollectAndSettle()
+     {
+         using var db = NewDb();
+@@ -97,21 +104,21 @@ public class CostSettleServiceTests
+         Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));       // WIP 借1150=贷1150 净零
+     }
+ 
+     [Fact]
+     public async Task FgUnitCost_ReturnsCostSheetValue()
+     {
+         using var db = NewDb();
+         var k = await SetupAsync(db);
+         await SeedWoAsync(db);
+         await k.Collect.CollectAsync("WO1", 300m, 200m, "u");
+-        Assert.Equal(115m, await k.Settle.FgUnitCostAsync("WO1"));     // 1150 / 10
++        Assert.Equal(110m, await k.Settle.FgUnitCostAsync("WO1"));     // 拍板②标准口径：StandardCost 1100 / 10（实际1150 的 +50 差异已转 COGS）
+     }
+ 
+     [Fact]
+     public async Task Settle_NotCollected_Fails()
+     {
+         using var db = NewDb();
+         var k = await SetupAsync(db);
+         var r = await k.Settle.SettleAsync("NOPE", "u");
+         Assert.False(r.Ok);
+         Assert.Equal("E-FIN-403", r.Code);
+diff --git a/CP6.Tests/Fin/CostVarianceSettleTests.cs b/CP6.Tests/Fin/CostVarianceSettleTests.cs
+new file mode 100644
+index 0000000..6c610c4
+--- /dev/null
++++ b/CP6.Tests/Fin/CostVarianceSettleTests.cs
+@@ -0,0 +1,277 @@
++using CP6.Core.Services.Fin;
++using CP6.Entity.DomainModels.Fin;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests.Fin;
++
++/// <summary>
++/// F1 財務油路 波C.3 — 成本差异结转 COGS（用户拍板②）。
++///
++/// 拍板②：完工结转时，实际成本与标准成本的差异并入当期损益，转 COGS（不设留存差异科目、不分摊、月末科目自然清零）。
++/// SettleAsync 三腿：①料工费→WIP（借WIP 实际全额）②WIP→FG（借FG 按 <b>标准成本</b>）③差异→COGS。
++/// 差异 = TotalActual − StandardCost：&gt;0 超支 借COGS/贷WIP；&lt;0 有利 借WIP/贷COGS(|差异|)。
++/// 三腿合计 WIP 借贷净零：借WIP(actual) − 贷WIP(standard→FG) ∓ 差异腿 = 0。
++///
++/// 守卫：StandardCost&lt;=0（未定义标准成本）或差异=0 → 维持现状（FG 按实际全额、无差异凭证）。
++/// 幂等：差异凭证与 #WIP/#FG 同一 Settle 事务，靠 CostSheet.Status（Settled→E-FIN-402）防重放重记。
++/// </summary>
++public class CostVarianceSettleTests
++{
++    private static async Task<(CP6.Core.EFDbContext.CP6Context db, CostSettleService svc)> SetupAsync(
++        Action<CostSheet> configure)
++    {
++        var db = TestHelper.CreateInMemoryContext();
++        // 直接 seed 科目角色（GlAccount 默认 IsLeaf=true；RoleIdAsync 只查 Role+IsActive）
++        foreach (var role in new[] { "WIP", "FG", "INVENTORY", "DIRECT_LABOR", "MFG_OVERHEAD", "COGS" })
++            db.GlAccounts.Add(new GlAccount { Code = role, Name = role, Role = role, IsActive = true });
++
++        var sheet = new CostSheet
++        {
++            Id = Guid.NewGuid(), No = "CS-VAR", WorkOrderNo = "WOV", CompletedQty = 10,
++            Status = CostSheetStatus.Collected,
++        };
++        configure(sheet);
++        db.CostSheets.Add(sheet);
++        await db.SaveChangesAsync();
++
++        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
++        return (db, new CostSettleService(db, journal));
++    }
++
++    private static async Task<Guid> AccIdAsync(CP6.Core.EFDbContext.CP6Context db, string role)
++        => (await db.GlAccounts.FirstAsync(a => a.Role == role)).Id;
++
++    // ── 场景1：实际 > 标准（超支）→ 差异凭证 借 COGS / 贷 WIP；FG 按标准；WIP 净零 ──
++    [Fact]
++    public async Task Settle_ActualOverStandard_PostsVarianceDebitCogs_FgAtStandard_WipNetsZero()
++    {
++        var (db, svc) = await SetupAsync(s =>
++        {
++            s.MaterialActual = 600; s.MaterialStandard = 500;   // 料超支 100
++            s.LaborActual = 200; s.LaborStandard = 200;
++            s.OverheadActual = 100; s.OverheadStandard = 100;
++        });
++
++        var r = await svc.SettleAsync("WOV", "u");
++        Assert.True(r.Ok, r.Code);
++
++        var wip = await AccIdAsync(db, "WIP");
++        var fg = await AccIdAsync(db, "FG");
++        var cogs = await AccIdAsync(db, "COGS");
++
++        // ① 料工费 → WIP：借 WIP 实际全额 900
++        var collect = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#WIP"));
++        Assert.Equal(900m, collect.Lines.Single(l => l.AccountId == wip).Debit);
++
++        // ② WIP → FG：借 FG 按标准 800 / 贷 WIP 800
++        var settle = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
++        Assert.Equal(800m, settle.Lines.Single(l => l.AccountId == fg).Debit);
++        Assert.Equal(800m, settle.Lines.Single(l => l.AccountId == wip).Credit);
++
++        // ③ 差异 → COGS：超支 借 COGS 100 / 贷 WIP 100
++        var varv = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#VAR"));
++        Assert.Equal(VoucherSource.Cost, varv.Source);
++        Assert.Equal(100m, varv.Lines.Single(l => l.AccountId == cogs).Debit);
++        Assert.Equal(100m, varv.Lines.Single(l => l.AccountId == wip).Credit);
++
++        // WIP 借贷净零（三腿合计）
++        var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
++        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));
++    }
++
++    // ── 场景2：实际 < 标准（有利）→ 差异凭证反向 借 WIP / 贷 COGS；FG 按标准；WIP 净零 ──
++    [Fact]
++    public async Task Settle_ActualUnderStandard_PostsVarianceCreditCogs_FgAtStandard_WipNetsZero()
++    {
++        var (db, svc) = await SetupAsync(s =>
++        {
++            s.MaterialActual = 400; s.MaterialStandard = 500;   // 料节约 100
++            s.LaborActual = 200; s.LaborStandard = 200;
++            s.OverheadActual = 100; s.OverheadStandard = 100;
++        });
++
++        var r = await svc.SettleAsync("WOV", "u");
++        Assert.True(r.Ok, r.Code);
++
++        var wip = await AccIdAsync(db, "WIP");
++        var fg = await AccIdAsync(db, "FG");
++        var cogs = await AccIdAsync(db, "COGS");
++
++        var settle = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
++        Assert.Equal(800m, settle.Lines.Single(l => l.AccountId == fg).Debit);   // FG 按标准 800
++
++        // 有利差异 100：借 WIP 100 / 贷 COGS 100（COGS 冲减）
++        var varv = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#VAR"));
++        Assert.Equal(100m, varv.Lines.Single(l => l.AccountId == wip).Debit);
++        Assert.Equal(100m, varv.Lines.Single(l => l.AccountId == cogs).Credit);
++
++        var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
++        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));   // 净零
++    }
++
++    // ── 场景3：实际 == 标准 → 无差异凭证；FG 按标准(=实际) ──
++    [Fact]
++    public async Task Settle_ActualEqualsStandard_NoVarianceVoucher()
++    {
++        var (db, svc) = await SetupAsync(s =>
++        {
++            s.MaterialActual = 500; s.MaterialStandard = 500;
++            s.LaborActual = 200; s.LaborStandard = 200;
++            s.OverheadActual = 100; s.OverheadStandard = 100;
++        });
++
++        var r = await svc.SettleAsync("WOV", "u");
++        Assert.True(r.Ok, r.Code);
++
++        Assert.False(await db.JournalEntries.AnyAsync(e => e.SourceDocNo!.EndsWith("#VAR")));
++
++        var fg = await AccIdAsync(db, "FG");
++        var settle = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
++        Assert.Equal(800m, settle.Lines.Single(l => l.AccountId == fg).Debit);
++    }
++
++    // ── 场景4：无标准成本（StandardCost<=0）→ 维持现状：FG 按实际全额、无差异凭证 ──
++    [Fact]
++    public async Task Settle_NoStandardCost_KeepsActualFullAmount_NoVarianceVoucher()
++    {
++        var (db, svc) = await SetupAsync(s =>
++        {
++            s.MaterialActual = 500; s.MaterialStandard = 0;   // 未定义标准
++            s.LaborActual = 0; s.LaborStandard = 0;
++            s.OverheadActual = 0; s.OverheadStandard = 0;
++        });
++
++        var r = await svc.SettleAsync("WOV", "u");
++        Assert.True(r.Ok, r.Code);
++
++        Assert.False(await db.JournalEntries.AnyAsync(e => e.SourceDocNo!.EndsWith("#VAR")));
++
++        var fg = await AccIdAsync(db, "FG");
++        var settle = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
++        Assert.Equal(500m, settle.Lines.Single(l => l.AccountId == fg).Debit);   // 实际全额
++    }
++
++    // ════════════════════════════════════════════════════════════════════════
++    //  端到端恒等（审查 Important 修复验证）：完工结转 + 出货 AR.Cogs
++    //  → FG 借贷净零、COGS 合计 = 实际总成本。
++    //  关键：FgUnitCost 拍板②改标准口径（hasStandard 时 = StandardCost/CompletedQty），
++    //  出货按标准贷 FG 与 #FG 腿（借 FG 标准）恒等；COGS = 出货标准 + #VAR 差异 = 实际。
++    // ════════════════════════════════════════════════════════════════════════
++
++    private static async Task<(CP6.Core.EFDbContext.CP6Context db, CostSettleService settle, ArInvoiceService ar)>
++        SetupEndToEndAsync(Action<CostSheet> configure)
++    {
++        var db = TestHelper.CreateInMemoryContext();
++        var gl = new GlAccountService(db);
++        await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "seed");   // AR 过账需完整 COA（AR_CONTROL/REVENUE/TAX 等）
++        PostingRuleSeed.EnsureSeeded(db);                              // AR.Cogs 引擎规则（借 COGS/贷 FG）
++
++        var sheet = new CostSheet
++        {
++            Id = Guid.NewGuid(), No = "CS-E2E", WorkOrderNo = "WOE", CompletedQty = 10,
++            Status = CostSheetStatus.Collected,
++        };
++        configure(sheet);
++        db.CostSheets.Add(sheet);
++        await db.SaveChangesAsync();
++
++        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
++        var engine = new AutoVoucherEngine(db, journal);
++        var ar = new ArInvoiceService(db, engine, journal, new FinSequenceService(db));
++        return (db, new CostSettleService(db, journal), ar);
++    }
++
++    private static FinShipmentInvoiceRequest ShipAll() => new()
++    {
++        ShipmentId = "SHP-E2E", WorkOrderNo = "WOE", CustomerId = "CUST1",
++        InvoiceDate = new DateTime(2026, 6, 15), DueDate = new DateTime(2026, 7, 15),
++        EstimatedCost = 9999m,   // 应被 FgUnitCost 真实成本覆盖
++        Lines = { new FinShipmentInvoiceLine { ItemId = "P1", Qty = 10, UnitPrice = 100 } },
++    };
++
++    // ── 有标准：实际550/标准500 全出货 → FG 净零（借500结转=贷500出货）、COGS=500出货+50差异=550实际 ──
++    [Fact]
++    public async Task EndToEnd_SettleThenShip_WithStandard_FgNetsZero_CogsEqualsActual()
++    {
++        var (db, settle, ar) = await SetupEndToEndAsync(s =>
++        {
++            s.MaterialActual = 550; s.MaterialStandard = 500;   // 超支 +50
++        });
++
++        var r1 = await settle.SettleAsync("WOE", "u");
++        Assert.True(r1.Ok, r1.Code);
++        Assert.Equal(50m, await settle.FgUnitCostAsync("WOE"));   // 标准口径 500/10（非实际 55）
++
++        var (r2, _, _) = await ar.CreateFromShipmentAsync(ShipAll(), "u");
++        Assert.True(r2.Ok, r2.Code);
++        var inv = await db.ArInvoices.SingleAsync(x => x.ShipmentId == "SHP-E2E");
++        Assert.Equal(500m, inv.CostAmount);   // 标准单位成本 50 × 10，非估算 9999
++
++        var fg = await AccIdAsync(db, "FG");
++        var cogs = await AccIdAsync(db, "COGS");
++        var wip = await AccIdAsync(db, "WIP");
++
++        // FG 借贷净零：结转借 500（标准）= 出货贷 500（标准），无 −50 幻影残留
++        var fgLines = await db.JournalLines.Where(l => l.AccountId == fg).ToListAsync();
++        Assert.Equal(500m, fgLines.Sum(l => l.Debit));
++        Assert.Equal(fgLines.Sum(l => l.Debit), fgLines.Sum(l => l.Credit));
++
++        // COGS 合计 = 出货 500 + 差异 50 = 实际总成本 550（不超记）
++        var cogsLines = await db.JournalLines.Where(l => l.AccountId == cogs).ToListAsync();
++        Assert.Equal(550m, cogsLines.Sum(l => l.Debit) - cogsLines.Sum(l => l.Credit));
++
++        // WIP 亦净零
++        var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
++        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));
++    }
++
++    // ── 无标准：实际550 全出货 → FG 净零（借550实际=贷550出货）、COGS=550=实际、无 #VAR ──
++    [Fact]
++    public async Task EndToEnd_SettleThenShip_NoStandard_FgNetsZero_CogsEqualsActual()
++    {
++        var (db, settle, ar) = await SetupEndToEndAsync(s =>
++        {
++            s.MaterialActual = 550; s.MaterialStandard = 0;   // 未定义标准
++        });
++
++        var r1 = await settle.SettleAsync("WOE", "u");
++        Assert.True(r1.Ok, r1.Code);
++        Assert.Equal(55m, await settle.FgUnitCostAsync("WOE"));   // 实际口径 550/10
++
++        var (r2, _, _) = await ar.CreateFromShipmentAsync(ShipAll(), "u");
++        Assert.True(r2.Ok, r2.Code);
++        var inv = await db.ArInvoices.SingleAsync(x => x.ShipmentId == "SHP-E2E");
++        Assert.Equal(550m, inv.CostAmount);   // 实际单位成本 55 × 10
++
++        Assert.False(await db.JournalEntries.AnyAsync(e => e.SourceDocNo!.EndsWith("#VAR")));
++
++        var fg = await AccIdAsync(db, "FG");
++        var cogs = await AccIdAsync(db, "COGS");
++        var fgLines = await db.JournalLines.Where(l => l.AccountId == fg).ToListAsync();
++        Assert.Equal(550m, fgLines.Sum(l => l.Debit));
++        Assert.Equal(fgLines.Sum(l => l.Debit), fgLines.Sum(l => l.Credit));   // FG 净零
++        var cogsLines = await db.JournalLines.Where(l => l.AccountId == cogs).ToListAsync();
++        Assert.Equal(550m, cogsLines.Sum(l => l.Debit) - cogsLines.Sum(l => l.Credit));   // COGS = 实际
++    }
++
++    // ── 场景5：重放不重记（Status=Settled → E-FIN-402，差异凭证仍只 1 张）──
++    [Fact]
++    public async Task Settle_Replay_DoesNotDuplicateVarianceVoucher()
++    {
++        var (db, svc) = await SetupAsync(s =>
++        {
++            s.MaterialActual = 600; s.MaterialStandard = 500;
++            s.LaborActual = 200; s.LaborStandard = 200;
++            s.OverheadActual = 100; s.OverheadStandard = 100;
++        });
++
++        var r1 = await svc.SettleAsync("WOV", "u");
++        Assert.True(r1.Ok, r1.Code);
++        var r2 = await svc.SettleAsync("WOV", "u");   // 重放
++        Assert.False(r2.Ok);
++        Assert.Equal("E-FIN-402", r2.Code);
++
++        Assert.Equal(1, await db.JournalEntries.CountAsync(e => e.SourceDocNo!.EndsWith("#VAR")));
++        Assert.Equal(3, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));   // #WIP + #FG + #VAR
++    }
++}
+diff --git a/CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs b/CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs
+index 72990be..416db18 100644
+--- a/CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs
++++ b/CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs
+@@ -76,31 +76,41 @@ public class WorkOrderCompleteCostFlowTests
+         Assert.True(r.Success, r.Message);
+ 
+         var cs = await db.CostSheets.SingleAsync(s => s.WorkOrderNo == "WO1");
+         Assert.Equal(550m, cs.MaterialActual);                 // 反冲量×SupplyPrice 真值
+         Assert.Equal(CostSheetStatus.Settled, cs.Status);      // 归集后已结转
+         Assert.NotNull(cs.JournalEntryId);
+ 
+         var wip = (await k.Gl.GetByRoleAsync("WIP"))!.Id;
+         var fg = (await k.Gl.GetByRoleAsync("FG"))!.Id;
+         var inv = (await k.Gl.GetByRoleAsync("INVENTORY"))!.Id;
++        var cogs = (await k.Gl.GetByRoleAsync("COGS"))!.Id;
+ 
+-        // ① 料工费 → WIP：借 WIP 550 / 贷 原材料(INVENTORY) 550
++        // ① 料工费 → WIP：借 WIP 实际全额 550 / 贷 原材料(INVENTORY) 550
+         var collect = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#WIP"));
+         Assert.Equal(VoucherSource.Cost, collect.Source);
+         Assert.Equal(550m, collect.Lines.Single(l => l.AccountId == wip).Debit);
+         Assert.Equal(550m, collect.Lines.Single(l => l.AccountId == inv).Credit);
+ 
+-        // ② WIP → FG：借 库存商品(FG) 550 / 贷 在制品(WIP) 550
++        // ② WIP → FG：拍板②按标准成本 500（计划100×5）/ 贷 在制品(WIP) 500
+         var settle = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
+-        Assert.Equal(550m, settle.Lines.Single(l => l.AccountId == fg).Debit);
+-        Assert.Equal(550m, settle.Lines.Single(l => l.AccountId == wip).Credit);
++        Assert.Equal(500m, settle.Lines.Single(l => l.AccountId == fg).Debit);
++        Assert.Equal(500m, settle.Lines.Single(l => l.AccountId == wip).Credit);
++
++        // ③ 差异 = 实际550 − 标准500 = +50 超用（多耗10×5）→ 借 COGS 50 / 贷 WIP 50
++        var varv = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#VAR"));
++        Assert.Equal(50m, varv.Lines.Single(l => l.AccountId == cogs).Debit);
++        Assert.Equal(50m, varv.Lines.Single(l => l.AccountId == wip).Credit);
++
++        // WIP 借贷净零（三腿合计）
++        var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
++        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));
+     }
+ 
+     // ── Collect 失败（工单不存在 → E-FIN-401）则不 Settle：零凭证 ──
+     [Fact]
+     public async Task Hook_CollectFails_NoSettle_NoVouchers()
+     {
+         using var db = NewDb();
+         var k = await SetupHookAsync(db);   // 未 seed 工单
+ 
+         var r = await k.Hook.OnWorkOrderCompletedAsync("NOPE", "mes");
+@@ -117,22 +127,22 @@ public class WorkOrderCompleteCostFlowTests
+     {
+         using var db = NewDb();
+         var k = await SetupHookAsync(db);
+         SeedWoWithActual(db, "WO1", supplyPrice: 5m, actualQty: 110m);
+         await db.SaveChangesAsync();
+ 
+         var r1 = await k.Hook.OnWorkOrderCompletedAsync("WO1", "mes");
+         Assert.True(r1.Success, r1.Message);
+         var r2 = await k.Hook.OnWorkOrderCompletedAsync("WO1", "mes");   // 重放同完工事件
+ 
+-        // 仍只有 1 张 #WIP + 1 张 #FG（共 2 张 Cost 凭证）
+-        Assert.Equal(2, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
++        // 仍只有 1 张 #WIP + 1 张 #FG + 1 张 #VAR（料实际550 vs 标准500 有 +50 差异，共 3 张 Cost 凭证）
++        Assert.Equal(3, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
+         Assert.Equal(1, await db.CostSheets.CountAsync(s => s.WorkOrderNo == "WO1"));
+         Assert.False(r2.Success);   // 已结转 → 幂等跳过（非重复过账）
+     }
+ 
+     // ════════════════════════════════════════════════════════════════════════
+     //  断点1：真 ProductionResultService 完工 → 反冲回写 → 触发归集+结转（端到端）
+     // ════════════════════════════════════════════════════════════════════════
+     [Fact]
+     public async Task Complete_ThroughRealProductionResultService_BackflushThenCollectThenSettle()
+     {

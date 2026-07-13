@@ -1,0 +1,322 @@
+# Review package: a511e08..db23d8f
+
+## Commits
+db23d8f feat(space): 路由登记 + 菜单/i18n 种子（MenuId 900段，MenuKey 齐备）
+
+## Files changed
+ cp6.web/src/router/index.ts               |   4 +
+ cp6.web/src/views/space/SpaceHomeView.vue |   4 +-
+ docs/seeds/space-i18n-seed.sql            |  83 ++++++++++++++++++
+ docs/seeds/space-menu-seed.sql            | 135 ++++++++++++++++++++++++++++++
+ 4 files changed, 224 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/router/index.ts b/cp6.web/src/router/index.ts
+index 83a4c4f..3e69f6e 100644
+--- a/cp6.web/src/router/index.ts
++++ b/cp6.web/src/router/index.ts
+@@ -165,20 +165,24 @@ const viewModules: Record<string, () => Promise<any>> = {
+   '/wms/pallet':               () => import('@/views/wms/PalletView.vue'),
+   '/wms/vmi':                  () => import('@/views/wms/VmiView.vue'),
+   '/wms/sample-stock':         () => import('@/views/wms/SampleStockView.vue'),
+   // ───── Phase WM-7 連携（占位） ─────
+   '/wms/mobile-task':          () => import('@/views/wms/MobileTaskView.vue'),
+   '/wms/wcs-task':             () => import('@/views/wms/WcsTaskView.vue'),
+   '/wms/carrier':              () => import('@/views/wms/CarrierView.vue'),
+   '/wms/iot-monitor':          () => import('@/views/wms/IotMonitorView.vue'),
+   // ───── Phase WM-8 帳票（占位） ─────
+   '/wms/report-center':        () => import('@/views/wms/ReportCenterView.vue'),
++  // ── Space 空間管理（波2 P0）─────────────────────────────
++  '/space/home': () => import('@/views/space/SpaceHomeView.vue'),
++  '/space/site': () => import('@/views/space/master/SpaceSiteView.vue'),
++  '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
+ }
+ 
+ // 静态路由：登录页 / Layout壳子 / 独立窗口
+ const staticRoutes: RouteRecordRaw[] = [
+   // ── OA Phase B 旧路由重定向（菜单条目可能仍为 /wf/*；redirect 确保无论何时均自动跳转至信箱）──
+   { path: '/wf/todo',            redirect: '/oa/inbox' },
+   { path: '/wf/my-applications', redirect: '/oa/inbox' },
+   {
+     path: '/login',
+     name: 'login',
+diff --git a/cp6.web/src/views/space/SpaceHomeView.vue b/cp6.web/src/views/space/SpaceHomeView.vue
+index 96a0f6f..e95d443 100644
+--- a/cp6.web/src/views/space/SpaceHomeView.vue
++++ b/cp6.web/src/views/space/SpaceHomeView.vue
+@@ -17,21 +17,21 @@
+       <div v-for="s in sites" :key="s.id" class="site-card">
+         <CpSectionHeader :title="s.siteName">
+           <span class="cp-mono site-code">{{ s.siteCode }}</span>
+           <template #extra>
+             <el-button link type="primary" size="small" @click="gotoViewer(s)">{{ t('space.home.viewer3d') }}</el-button>
+             <el-button link type="primary" size="small" @click="gotoStacked(s)">{{ t('space.home.stacked') }}</el-button>
+           </template>
+         </CpSectionHeader>
+ 
+         <div class="floor-body">
+-          <div v-if="!(floorMap[s.id!] && floorMap[s.id!].length)" class="floor-empty">
++          <div v-if="!floorMap[s.id!]?.length" class="floor-empty">
+             {{ t('space.home.noFloor') }}
+           </div>
+           <div v-for="f in floorMap[s.id!]" :key="f.id" class="floor-row">
+             <span class="floor-label"><span class="cp-mono">L{{ f.level }}</span> {{ f.floorName }}</span>
+             <span class="floor-actions">
+               <el-button link type="primary" size="small" @click="gotoEditor(f)">{{ t('space.common.edit') }}</el-button>
+               <el-button link type="primary" size="small" @click="gotoFloorViewer(s, f)">{{ t('space.home.viewer3d') }}</el-button>
+             </span>
+           </div>
+         </div>
+@@ -62,21 +62,21 @@ const router = useRouter()
+ 
+ const sites = ref<SiteVO[]>([])
+ const floorMap = reactive<Record<string, FloorVO[]>>({})
+ const floorCount = computed(() => Object.values(floorMap).reduce((n, arr) => n + arr.length, 0))
+ 
+ onMounted(async () => {
+   const res = await siteApi.list()
+   sites.value = res.data || []
+   // 全站点楼层并发拉取汇总（Promise.all 取简；站点数量级小，无分页压力）
+   const results = await Promise.all(sites.value.map((s) => floorApi.list(s.id!)))
+-  sites.value.forEach((s, i) => { floorMap[s.id!] = results[i].data || [] })
++  sites.value.forEach((s, i) => { floorMap[s.id!] = results[i]?.data || [] })
+ })
+ 
+ // —— 导航：standalone 页一律 named-push（路径参数）——
+ function gotoViewer(s: SiteVO) { router.push({ name: 'space-viewer', params: { siteId: s.id } }) }
+ function gotoStacked(s: SiteVO) { router.push({ name: 'space-stacked', params: { siteId: s.id } }) }
+ function gotoEditor(f: FloorVO) { router.push({ name: 'space-editor', params: { floorId: f.id } }) }
+ function gotoFloorViewer(s: SiteVO, f: FloorVO) {
+   router.push({ name: 'space-viewer', params: { siteId: s.id }, query: { floorId: f.id } })
+ }
+ function gotoCreateSite() { router.push('/space/site') }
+diff --git a/docs/seeds/space-i18n-seed.sql b/docs/seeds/space-i18n-seed.sql
+new file mode 100644
+index 0000000..c0a9b9d
+--- /dev/null
++++ b/docs/seeds/space-i18n-seed.sql
+@@ -0,0 +1,83 @@
++/* ============================================================
++ * Space 空間管理 i18n シード（波2 P0）
++ * ============================================================
++ * 範囲：space.common.* / space.site.* / space.floor.* / space.home.*
++ * 対象テーブル：Sys_Langs（列 LangKey / ZhCN / ZhTW / En / Ja / Ko）
++ * 冪等：MERGE（既存キーは UPDATE、無ければ INSERT）
++ * 実行：sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/space-i18n-seed.sql -b
++ *
++ * キーの唯一の権威 = 3 コンポーネント実コード grep（Task 5 で対照）:
++ *   SpaceHomeView.vue / SpaceSiteView.vue / SpaceFloorView.vue
++ * ★ space.home.title は死キー（ページ未描画）につき種入から除外（主控裁決）。
++ * ★ space.common.* は 3 画面共用のため重複排除済み（14 件）。
++ * 合計 43 キー = common 14 + site 11 + floor 11 + home 7。
++ * ============================================================ */
++SET NOCOUNT ON; SET XACT_ABORT ON;
++PRINT '=== Space i18n シード開始 ===';
++
++IF OBJECT_ID('tempdb..#i18n') IS NOT NULL DROP TABLE #i18n;
++CREATE TABLE #i18n (
++    LangKey nvarchar(200) NOT NULL PRIMARY KEY,
++    ZhCN nvarchar(500), ZhTW nvarchar(500), En nvarchar(500), Ja nvarchar(500), Ko nvarchar(500)
++);
++
++INSERT INTO #i18n VALUES
++  -- ── space.common.*（3 画面共用・14 件）──────────────────────────────
++  (N'space.common.status',        N'状态',     N'狀態',     N'Status',            N'状態',                N'상태'),
++  (N'space.common.enabled',       N'启用',     N'啟用',     N'Enabled',           N'有効',                N'사용'),
++  (N'space.common.disabled',      N'停用',     N'停用',     N'Disabled',          N'無効',                N'사용 안 함'),
++  (N'space.common.action',        N'操作',     N'操作',     N'Actions',           N'操作',                N'작업'),
++  (N'space.common.edit',          N'编辑',     N'編輯',     N'Edit',              N'編集',                N'편집'),
++  (N'space.common.delete',        N'删除',     N'刪除',     N'Delete',            N'削除',                N'삭제'),
++  (N'space.common.search',        N'查询',     N'查詢',     N'Search',            N'検索',                N'검색'),
++  (N'space.common.clear',         N'重置',     N'重置',     N'Reset',             N'リセット',            N'초기화'),
++  (N'space.common.cancel',        N'取消',     N'取消',     N'Cancel',            N'キャンセル',          N'취소'),
++  (N'space.common.save',          N'保存',     N'儲存',     N'Save',              N'保存',                N'저장'),
++  (N'space.common.confirm',       N'确认',     N'確認',     N'Confirm',           N'確認',                N'확인'),
++  (N'space.common.confirmDelete', N'确认删除？', N'確認刪除？', N'Confirm deletion?', N'削除しますか？',      N'삭제하시겠습니까?'),
++  (N'space.common.required',      N'必填项',   N'必填項',   N'Required',          N'必須項目',            N'필수 항목'),
++  (N'space.common.success',       N'操作成功', N'操作成功', N'Done',              N'操作が完了しました',  N'완료되었습니다'),
++  -- ── space.site.*（SpaceSiteView・11 件）──────────────────────────────
++  (N'space.site.title',           N'站点管理', N'站點管理', N'Sites',             N'拠点管理',            N'거점 관리'),
++  (N'space.site.create',          N'新建站点', N'新增站點', N'New Site',          N'拠点を新規',          N'거점 신규'),
++  (N'space.site.floors',          N'楼层',     N'樓層',     N'Floors',            N'フロア',              N'층'),
++  (N'space.site.fld.code',        N'站点编码', N'站點編碼', N'Site Code',         N'拠点コード',          N'거점 코드'),
++  (N'space.site.fld.name',        N'站点名称', N'站點名稱', N'Site Name',         N'拠点名',              N'거점명'),
++  (N'space.site.fld.warehouseCd', N'倉庫CD',   N'倉庫CD',   N'Warehouse Cd',      N'倉庫CD',              N'창고 CD'),
++  (N'space.site.fld.address',     N'地址',     N'地址',     N'Address',           N'住所',                N'주소'),
++  (N'space.site.whDefault',       N'空=同站点编码', N'空=同站點編碼', N'Blank = same as Site Code', N'空欄=拠点コードと同じ', N'공백=거점 코드와 동일'),
++  (N'space.site.whDefaultTip',    N'未指定，发布时默认取站点编码 {code}', N'未指定，發佈時預設取站點編碼 {code}', N'Unset; publish defaults to site code {code}', N'未指定・発行時は拠点コード {code} を既定使用', N'미지정, 발행 시 거점 코드 {code} 기본 사용'),
++  (N'space.site.dlg.create',      N'新建站点', N'新增站點', N'New Site',          N'拠点の新規作成',      N'거점 신규 등록'),
++  (N'space.site.dlg.edit',        N'编辑站点', N'編輯站點', N'Edit Site',         N'拠点の編集',          N'거점 편집'),
++  -- ── space.floor.*（SpaceFloorView・11 件）────────────────────────────
++  (N'space.floor.title',          N'楼层管理', N'樓層管理', N'Floors',            N'フロア管理',          N'층 관리'),
++  (N'space.floor.create',         N'新建楼层', N'新增樓層', N'New Floor',         N'フロア新規',          N'층 신규'),
++  (N'space.floor.selectSite',     N'请选择站点', N'請選擇站點', N'Select site',    N'拠点を選択',          N'거점 선택'),
++  (N'space.floor.pickSiteFirst',  N'请先选择站点', N'請先選擇站點', N'Select a site first', N'先に拠点を選択してください', N'먼저 거점을 선택하세요'),
++  (N'space.floor.editor',         N'编辑画面', N'編輯畫面', N'Editor',            N'編集画面',            N'편집 화면'),
++  (N'space.floor.fld.level',      N'层号',     N'樓層號',   N'Level',             N'階層',                N'층 번호'),
++  (N'space.floor.fld.floorCode',  N'楼层编码', N'樓層編碼', N'Floor Code',        N'フロアコード',        N'층 코드'),
++  (N'space.floor.fld.floorName',  N'楼层名称', N'樓層名稱', N'Floor Name',        N'フロア名',            N'층 이름'),
++  (N'space.floor.fld.height',     N'层高 (mm)', N'樓層高度 (mm)', N'Height (mm)',  N'高さ (mm)',           N'높이 (mm)'),
++  (N'space.floor.dlg.create',     N'新建楼层', N'新增樓層', N'New Floor',         N'フロア新規',          N'층 신규'),
++  (N'space.floor.dlg.edit',       N'编辑楼层', N'編輯樓層', N'Edit Floor',        N'フロア編集',          N'층 편집'),
++  -- ── space.home.*（SpaceHomeView・7 件・title は死キーにつき除外）───────
++  (N'space.home.siteCount',       N'站点数',   N'站點數',   N'Sites',             N'サイト数',            N'사이트 수'),
++  (N'space.home.floorCount',      N'楼层数',   N'樓層數',   N'Floors',            N'フロア数',            N'플로어 수'),
++  (N'space.home.viewer3d',        N'3D',       N'3D',       N'3D',                N'3D',                  N'3D'),
++  (N'space.home.stacked',         N'全景',     N'全景',     N'Stacked',           N'全景',                N'전경'),
++  (N'space.home.noFloor',         N'暂无楼层', N'尚無樓層', N'No floors',         N'フロア未登録',        N'플로어 없음'),
++  (N'space.home.empty',           N'暂无站点', N'尚無站點', N'No sites yet',      N'サイトがありません',  N'사이트가 없습니다'),
++  (N'space.home.createSite',      N'去创建站点', N'前往建立站點', N'Create a site', N'サイトを作成',        N'사이트 만들기');
++
++DECLARE @actionLog TABLE (act nvarchar(10));
++MERGE Sys_Langs AS tgt USING #i18n AS src ON tgt.LangKey = src.LangKey
++WHEN MATCHED THEN UPDATE SET tgt.ZhCN = src.ZhCN, tgt.ZhTW = src.ZhTW, tgt.En = src.En, tgt.Ja = src.Ja, tgt.Ko = src.Ko
++WHEN NOT MATCHED BY TARGET THEN INSERT (LangKey, ZhCN, ZhTW, En, Ja, Ko) VALUES (src.LangKey, src.ZhCN, src.ZhTW, src.En, src.Ja, src.Ko)
++OUTPUT $action INTO @actionLog;
++
++DECLARE @ins INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'INSERT');
++DECLARE @upd INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'UPDATE');
++PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 43 キー想定）';
++DROP TABLE #i18n;
++PRINT '=== Done ===';
+diff --git a/docs/seeds/space-menu-seed.sql b/docs/seeds/space-menu-seed.sql
+new file mode 100644
+index 0000000..9527dc4
+--- /dev/null
++++ b/docs/seeds/space-menu-seed.sql
+@@ -0,0 +1,135 @@
++/* ============================================================
++ * Space 空間管理 メニュー シードデータ（波2 P0）
++ * ============================================================
++ * 対象 DB     : CP6 (SQL Server)
++ * 対象テーブル : Sys_Menus / Sys_RoleMenus
++ * 親メニューID : 900（空間管理 Space）
++ *
++ * ID 採番ルール（既存と衝突しない）:
++ *   900~919 : 空間管理 (Space) ← 本ファイル
++ *   （100~199 システム / 200~299 販売 / 300~399 MES /
++ *     400~499 WMS / 500~599 OA … と重複しない空段を採用）
++ *
++ * 階層構成:
++ *   900 空間管理(Space)
++ *   ├ 901 スペースホーム   /space/home
++ *   ├ 902 サイト管理       /space/site
++ *   └ 903 フロア管理       /space/floor
++ *
++ * ★ 実行前に必ず下記で 900 段が空いていることを複核すること:
++ *     SELECT MenuId FROM Sys_Menus WHERE MenuId BETWEEN 900 AND 919;
++ *   （静的検索では 900 段に占用なし・2026-07-06 裁決記録。
++ *     もし何らかの占用があれば採番を見直すこと。）
++ *
++ * 実行方法:
++ *   sqlcmd -S localhost -d CP6 -U sa -P <pw> -i space-menu-seed.sql
++ *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
++ *
++ * 冪等性:
++ *   各 INSERT 前に NOT EXISTS チェック → 重複実行しても安全。
++ *
++ * 権限割当:
++ *   既定で RoleId=1 (管理者) に全 Space メニューを付与（900~919 区間幂等）。
++ *
++ * Icon:
++ *   Element Plus 図標集に実在し、かつ wms/oa 種子で使用実績のある名を採用
++ *   （Grid=445パレット / OfficeBuilding=401倉庫マスタ / Files=410出荷指示一覧 と同名。
++ *     HomeFilled は Element Plus 標準アイコン）。
++ * ============================================================ */
++
++SET NOCOUNT ON;
++SET XACT_ABORT ON;
++BEGIN TRY
++BEGIN TRANSACTION;
++
++PRINT '=== Space メニュー シード開始 ===';
++
++/* ------------------------------------------------------------
++ * 1. 親メニュー (Top)  MenuId 900
++ * ------------------------------------------------------------ */
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 900)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
++    VALUES (900, N'空間管理(Space)', NULL, N'space', N'Grid', NULL, 900, 1, SYSDATETIME());
++
++/* ------------------------------------------------------------
++ * 2. 子メニュー  MenuId 901~903
++ * ------------------------------------------------------------ */
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 901)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
++    VALUES (901, N'スペースホーム', N'/space/home', N'space-home', N'HomeFilled', 900, 901, 1, SYSDATETIME());
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 902)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
++    VALUES (902, N'サイト管理', N'/space/site', N'space-site', N'OfficeBuilding', 900, 902, 1, SYSDATETIME());
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 903)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
++    VALUES (903, N'フロア管理', N'/space/floor', N'space-floor', N'Files', 900, 903, 1, SYSDATETIME());
++
++/* ------------------------------------------------------------
++ * 3. 管理者ロール (RoleId=1) に全 Space メニューを付与（900~919 幂等）
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_RoleMenus (RoleId, MenuId)
++SELECT 1, m.MenuId
++FROM Sys_Menus m
++WHERE m.MenuId BETWEEN 900 AND 919
++  AND NOT EXISTS (
++      SELECT 1 FROM Sys_RoleMenus rm
++      WHERE rm.RoleId = 1 AND rm.MenuId = m.MenuId
++  );
++
++/* ------------------------------------------------------------
++ * 4. 結果確認
++ * ------------------------------------------------------------ */
++DECLARE @MenuCount INT, @RoleMenuCount INT;
++SELECT @MenuCount     = COUNT(*) FROM Sys_Menus     WHERE MenuId BETWEEN 900 AND 919;
++SELECT @RoleMenuCount = COUNT(*) FROM Sys_RoleMenus WHERE MenuId BETWEEN 900 AND 919 AND RoleId = 1;
++
++PRINT N'  Space メニュー件数       : ' + CAST(@MenuCount AS NVARCHAR(10));
++PRINT N'  管理者ロール付与件数     : ' + CAST(@RoleMenuCount AS NVARCHAR(10));
++
++COMMIT TRANSACTION;
++PRINT '=== Space メニュー シード完了 ===';
++END TRY
++BEGIN CATCH
++    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
++    PRINT 'ERROR: ' + ERROR_MESSAGE();
++    THROW;
++END CATCH;
++GO
++
++/* ============================================================
++ * 5. 動作確認クエリ（実行後の検証用、任意）
++ * ============================================================ */
++-- Space メニュー階層を表示
++SELECT
++    REPLICATE(N'  ', CASE WHEN m.ParentId IS NULL THEN 0 ELSE 1 END)
++        + CAST(m.MenuId AS NVARCHAR(10)) + N' ' + m.MenuName AS MenuTree,
++    m.RoutePath,
++    m.MenuKey,
++    m.Icon,
++    m.OrderNo,
++    m.Enable
++FROM Sys_Menus m
++WHERE m.MenuId BETWEEN 900 AND 919
++ORDER BY m.OrderNo;
++
++-- 管理者ロールの Space メニュー付与状況
++SELECT
++    rm.RoleId,
++    r.RoleName,
++    COUNT(rm.MenuId) AS SpaceMenuCount
++FROM Sys_RoleMenus rm
++INNER JOIN Sys_Roles r ON rm.RoleId = r.RoleId
++WHERE rm.MenuId BETWEEN 900 AND 919
++GROUP BY rm.RoleId, r.RoleName;
++
++/* ============================================================
++ * 6. ロールバック用（緊急時のみ使用）
++ * ============================================================
++ * 注意: 関連 Sys_RoleMenus も先に削除されるため、慎重に。
++ * ------------------------------------------------------------ */
++/*
++BEGIN TRANSACTION;
++DELETE FROM Sys_RoleMenus WHERE MenuId BETWEEN 900 AND 919;
++DELETE FROM Sys_Menus     WHERE MenuId BETWEEN 900 AND 919;
++COMMIT TRANSACTION;
++*/

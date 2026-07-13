@@ -1,0 +1,228 @@
+# Review package: 81a92a5..HEAD
+
+## Commits
+e9da125 feat(wfs-hardening): A-T2 GatewayJoinHelper血缘感知动态计票+parallelJoin改造(旧场景全等回归)
+
+## Files changed
+ .../Services/Wf/NodeHandlers/GatewayJoinHelper.cs  |  48 +++++++++
+ .../Wf/NodeHandlers/ParallelJoinNodeHandler.cs     |  32 +-----
+ CP6.Tests/Wf/DynamicJoinCountTests.cs              | 111 +++++++++++++++++++++
+ 3 files changed, 162 insertions(+), 29 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/NodeHandlers/GatewayJoinHelper.cs b/CP6.Core/Services/Wf/NodeHandlers/GatewayJoinHelper.cs
+new file mode 100644
+index 0000000..cf56619
+--- /dev/null
++++ b/CP6.Core/Services/Wf/NodeHandlers/GatewayJoinHelper.cs
+@@ -0,0 +1,48 @@
++using CP6.Entity.DomainModels.Wf;
++
++namespace CP6.Core.Services.Wf;
++
++/// <summary>并行/包容 join 共享放行逻辑（D3 不合并 handler、抽静态辅助；D4 血缘感知动态计票）。
++/// 放行判据（spec §3.3）：本 join 到场数（同 ForkId Active）≥1 且 不存在「穿过本 fork 批次」的其他在途
++/// Active token（停在本 join 的到场 token 除外）。血缘感知 = 分支进入内层 split 后同 ForkId 无 Active、
++/// 但子 token 祖先链穿过本批次 → 仍挡放行（防「A 到场、B 在内层子 fork 在途」误判提前放行）。
++/// ForkId==null 退化（线性 token 进 join 的怪异 schema）→ 沿用旧静态入边计票，bit 级等价。
++/// 放行 = 消费同批到场 token + 续生一枚「上弹一层」血缘的 token 沿单出边继续（原 ParallelJoinNodeHandler 机制原样保留）。
++/// 计数本身即幂等闸：未齐重入 no-op，重入安全（剪枝补放行依赖此性质）。</summary>
++internal static class GatewayJoinHelper
++{
++    public static async Task TryReleaseAsync(NodeContext ctx, string historyAction)
++    {
++        var eng = ctx.Engine; var inst = ctx.Inst; var schema = ctx.Schema; var node = ctx.Node;
++        var all = eng.SnapshotTokens(inst.Id);
++
++        if (ctx.Token.ForkId is not Guid forkId)
++        {
++            // 退化路径：与旧 ParallelJoinNodeHandler 静态计票字节等价
++            var inEdges = schema.Edges.Count(e => e.To == node.Id);
++            var nullArrived = all.Count(t => t.NodeId == node.Id && t.ForkId == null
++                && t.Status == FlowTokenStatus.Active);
++            if (nullArrived < inEdges) return;
++        }
++        else
++        {
++            var arrivedCount = all.Count(t => t.NodeId == node.Id && t.ForkId == forkId
++                && t.Status == FlowTokenStatus.Active);
++            if (arrivedCount == 0) return;
++            bool blocking = all.Any(t => t.Status == FlowTokenStatus.Active
++                && !(t.NodeId == node.Id && t.ForkId == forkId)     // 停在本 join 的到场 token 除外
++                && TokenLineage.CrossesFork(all, t, forkId));
++            if (blocking) return;   // 还有活支（含内层子树在途）→ 停泊等
++        }
++
++        var batch = all.Where(t => t.NodeId == node.Id && t.ForkId == ctx.Token.ForkId
++            && t.Status == FlowTokenStatus.Active).ToList();
++        foreach (var t in batch) eng.ConsumeToken(t);
++
++        var parentTok = ctx.Token.ParentTokenId is Guid pid
++            ? all.FirstOrDefault(t => t.Id == pid) : null;
++        var cont = eng.SpawnToken(inst, node, parent: parentTok?.ParentTokenId, fork: parentTok?.ForkId);
++        eng.AddHistory(inst.Id, node.Id, inst.StarterId, historyAction, null);
++        await eng.AdvanceToken(inst, schema, cont);   // 续 token 沿 join 单出边继续
++    }
++}
+diff --git a/CP6.Core/Services/Wf/NodeHandlers/ParallelJoinNodeHandler.cs b/CP6.Core/Services/Wf/NodeHandlers/ParallelJoinNodeHandler.cs
+index 19a5516..0a0e172 100644
+--- a/CP6.Core/Services/Wf/NodeHandlers/ParallelJoinNodeHandler.cs
++++ b/CP6.Core/Services/Wf/NodeHandlers/ParallelJoinNodeHandler.cs
+@@ -1,37 +1,11 @@
+ using CP6.Entity.DomainModels.Wf;
+-using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Wf;
+ 
+-/// <summary>并行汇聚网关（WFS P1）：靠同 ForkId 认亲计数，等齐入边数才放行，否则停泊（计数本身即幂等闸）。
+-/// 放行=消费同批 token + 续生一枚"上弹一层"血缘的 token（恢复父 ForkId，供嵌套外层 join 认亲）沿单出边继续。</summary>
++/// <summary>并行汇聚网关（WFS P1 → hardening D4 动态计票）：放行判据与机制见 <see cref="GatewayJoinHelper"/>。
++/// 无剪枝/无嵌套时与旧静态入边计票行为全等（ParallelGatewayTests + DynamicJoinCountTests 回归锁定）。</summary>
+ internal sealed class ParallelJoinNodeHandler : INodeHandler
+ {
+     public string Type => "parallelJoin";
+-
+-    public async Task OnEnterAsync(NodeContext ctx)
+-    {
+-        var eng = ctx.Engine; var inst = ctx.Inst; var schema = ctx.Schema; var node = ctx.Node;
+-        var inEdges = schema.Edges.Count(e => e.To == node.Id);
+-
+-        var arrived = AllTokens(eng, inst.Id).Count(t => t.NodeId == node.Id
+-            && t.ForkId == ctx.Token.ForkId && t.Status == FlowTokenStatus.Active);
+-        if (arrived < inEdges) return;   // 未齐，停泊等其余分支（幂等闸=计数本身）
+-
+-        var batch = AllTokens(eng, inst.Id).Where(t => t.NodeId == node.Id
+-            && t.ForkId == ctx.Token.ForkId && t.Status == FlowTokenStatus.Active).ToList();
+-        foreach (var t in batch) eng.ConsumeToken(t);
+-
+-        var parentTok = ctx.Token.ParentTokenId is Guid pid
+-            ? AllTokens(eng, inst.Id).FirstOrDefault(t => t.Id == pid) : null;
+-        var cont = eng.SpawnToken(inst, node, parent: parentTok?.ParentTokenId, fork: parentTok?.ForkId);
+-        eng.AddHistory(inst.Id, node.Id, inst.StarterId, "parallelJoin", null);
+-        await eng.AdvanceToken(inst, schema, cont);   // 续 token 沿 join 单出边继续
+-    }
+-
+-    // 仅扫本实例的 token：Local（含本回合未落盘的）∪ DB（本实例已落盘的），按引用去重（EF 身份映射保证同实例同引用）。
+-    private static IEnumerable<Wf_FlowToken> AllTokens(FlowEngine eng, Guid instanceId)
+-        => eng.Db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId)
+-            .Concat(eng.Db.Wf_FlowTokens.Where(t => t.InstanceId == instanceId).AsEnumerable())
+-            .Distinct();
++    public Task OnEnterAsync(NodeContext ctx) => GatewayJoinHelper.TryReleaseAsync(ctx, "parallelJoin");
+ }
+diff --git a/CP6.Tests/Wf/DynamicJoinCountTests.cs b/CP6.Tests/Wf/DynamicJoinCountTests.cs
+new file mode 100644
+index 0000000..2c06d1a
+--- /dev/null
++++ b/CP6.Tests/Wf/DynamicJoinCountTests.cs
+@@ -0,0 +1,111 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Wf;
++using CP6.Entity.DomainModels.Wf;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests.Wf;
++
++/// <summary>D4 动态计票定点回归（hardening spec §3.3/§9）。旧场景全等由既有 ParallelGatewayTests 5 测锁定，
++/// 本文件补：①嵌套在途防提前放行（spec 评审抓过的洞）②ForkId==null 退化保持旧静态计票。</summary>
++public class DynamicJoinCountTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++    private static FlowEngine Engine(CP6Context db) => new(db, new ApproverResolver(db));
++
++    // start → split → ( a → innerSplit → (a1,a2) → innerJoin → join , b → join ) → join → end
++    private static FlowSchema NestedSchema(Guid u1, Guid u2, Guid ub) => new()
++    {
++        Start = "s",
++        Nodes =
++        {
++            new FlowNode { Id = "s", Type = "start" },
++            new FlowNode { Id = "split", Type = "parallelSplit" },
++            new FlowNode { Id = "a", Type = "parallelSplit" },
++            new FlowNode { Id = "a1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = u1 },
++            new FlowNode { Id = "a2", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = u2 },
++            new FlowNode { Id = "innerJoin", Type = "parallelJoin" },
++            new FlowNode { Id = "b", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = ub },
++            new FlowNode { Id = "join", Type = "parallelJoin" },
++            new FlowNode { Id = "end", Type = "end" },
++        },
++        Edges =
++        {
++            new FlowEdge { From = "s", To = "split" },
++            new FlowEdge { From = "split", To = "a" }, new FlowEdge { From = "split", To = "b" },
++            new FlowEdge { From = "a", To = "a1" }, new FlowEdge { From = "a", To = "a2" },
++            new FlowEdge { From = "a1", To = "innerJoin" }, new FlowEdge { From = "a2", To = "innerJoin" },
++            new FlowEdge { From = "innerJoin", To = "join" },
++            new FlowEdge { From = "b", To = "join" },
++            new FlowEdge { From = "join", To = "end" },
++        },
++    };
++
++    [Fact]
++    public async Task NestedInFlight_OuterJoinWaits_UntilInnerSubtreeDone()
++    {
++        using var db = NewDb();
++        Guid u1 = Guid.NewGuid(), u2 = Guid.NewGuid(), ub = Guid.NewGuid();
++        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "nst", FlowName = "nst", FormKey = "f",
++            SchemaJson = JsonSerializer.Serialize(NestedSchema(u1, u2, ub)), Version = 1, Enable = true });
++        await db.SaveChangesAsync();
++        await Engine(db).SubmitAsync("nst", Guid.NewGuid(), "{}");
++
++        // ★ 先审 b：外层 A 支在内层子 fork 在途（同外层 ForkId 无 Active，只有血缘链）→ 外层 join 必须等
++        var tb = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ub && t.Status == FlowTaskStatus.Pending);
++        await Engine(db).ActAsync(tb.Id, ub, approve: true);
++        Assert.Equal(FlowInstanceStatus.Running, (await db.Wf_FlowInstances.SingleAsync()).Status);
++        Assert.True(await db.Wf_FlowTasks.AnyAsync(t => t.AssigneeId == u1 && t.Status == FlowTaskStatus.Pending));
++        Assert.True(await db.Wf_FlowTokens.AnyAsync(t => t.NodeId == "join" && t.Status == FlowTokenStatus.Active));
++
++        var t1 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == u1 && t.Status == FlowTaskStatus.Pending);
++        await Engine(db).ActAsync(t1.Id, u1, approve: true);
++        Assert.Equal(FlowInstanceStatus.Running, (await db.Wf_FlowInstances.SingleAsync()).Status);
++
++        var t2 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == u2 && t.Status == FlowTaskStatus.Pending);
++        await Engine(db).ActAsync(t2.Id, u2, approve: true);   // 内层齐 → 上弹 → 外层齐 → end
++
++        Assert.Equal(FlowInstanceStatus.Approved, (await db.Wf_FlowInstances.SingleAsync()).Status);
++        Assert.False(await db.Wf_FlowTokens.AnyAsync(t => t.Status == FlowTokenStatus.Active));
++    }
++
++    [Fact]
++    public async Task NullFork_LinearTokenAtJoin_KeepsLegacyStaticCount_ParksForever()
++    {
++        using var db = NewDb();
++        var ua = Guid.NewGuid(); var ub = Guid.NewGuid();
++        // 怪异 schema：join 有 2 条入边，但 token 沿线性路径（无 split）到达 join，ForkId==null
++        var schema = new FlowSchema
++        {
++            Start = "s",
++            Nodes =
++            {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = ua },
++                new FlowNode { Id = "b", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = ub },
++                new FlowNode { Id = "join", Type = "parallelJoin" },
++                new FlowNode { Id = "end", Type = "end" },
++            },
++            Edges =
++            {
++                new FlowEdge { From = "s", To = "a" },
++                new FlowEdge { From = "a", To = "join" }, new FlowEdge { From = "b", To = "join" },
++                new FlowEdge { From = "join", To = "end" },
++            },
++        };
++        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "nullfork", FlowName = "x", FormKey = "f",
++            SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
++        await db.SaveChangesAsync();
++        await Engine(db).SubmitAsync("nullfork", Guid.NewGuid(), "{}");
++
++        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua && t.Status == FlowTaskStatus.Pending);
++        await Engine(db).ActAsync(ta.Id, ua, approve: true);
++
++        // 旧静态计票：到场 1 < 入边 2 → 永停泊。动态判据若不做 null 退化会在此放行 → 行为漂移（本测试拦住）
++        Assert.Equal(FlowInstanceStatus.Running, (await db.Wf_FlowInstances.SingleAsync()).Status);
++        Assert.True(await db.Wf_FlowTokens.AnyAsync(t => t.NodeId == "join" && t.Status == FlowTokenStatus.Active));
++    }
++}

@@ -1,30 +1,38 @@
-# Task C-T3 Report — 服务目录端点 GET /api/oa/designer/service-catalog
+# Task C-T3 报告：SendBackToNodeAsync 三规则接线 + E-WF-019 + 集成矩阵
 
-**STATUS:** DONE
-**Commit:** 7d9d61a — `feat(wfs-service-task): C-T3 service-catalog 端点（按 Kind/VisibleInDesigner 过滤）`
-**Branch:** feat/wfs-service-task-finish (本地 commit，未 push)
+Status: DONE / commit eedb054（push 完成，feat/wfs-kernel-hardening）
+（注：本文件覆盖了同名的 WFS-service-task 旧波 C-T3 报告——那是另一波次同编号任务，已过时。）
 
-## 改动文件清单（6 个，102 insertions / 2 deletions）
-- **Test（新增）** `CP6.Tests/Wf/ServiceCatalogTests.cs` — 服务层测试 `GetServiceCatalog_FiltersWebApiExecutor_From_Actions`。用真实 `SampleDataWritebackExecutor`（正例）+ `WebApiExecutor`（反例，注入空连接器）+ 2 个 fake（dataWriteback-但不可见 / 非 dataWriteback）覆盖过滤矩阵；连接器用真实 `EchoConnector` + 1 个 fake。
-- **Modify** `CP6.Core/Services/Oa/DesignerModels.cs` — 新增 `record ServiceCatalogItem(Name, Label)` + `record ServiceCatalog(Actions, Connectors)`；补 `using System.Collections.Generic;`。
-- **Modify** `CP6.Core/Services/Oa/IDesignerService.cs` — 接口加 `ServiceCatalog GetServiceCatalog();`。
-- **Modify** `CP6.Core/Services/Oa/DesignerService.cs` — 构造函数注入 `IEnumerable<IServiceTaskExecutor>` + `IEnumerable<IWfConnector>`（DI 自动解析已注册的两类）；实现 `GetServiceCatalog()` 按 brief Step 3 精确谓词：`actions = execs.Where(e => e.Kind == ServiceKind.DataWriteback && e.VisibleInDesigner).Select(e => new ServiceCatalogItem(e.Key, e.DisplayName))`，`connectors = conns.Select(c => new ServiceCatalogItem(c.Name, c.DisplayName))`。补 `using System.Collections.Generic; using System.Linq;`。
-- **Modify** `CP6.WebApi/Controllers/Oa/DesignerController.cs` — 新增 `[HttpGet("service-catalog")] public IActionResult ServiceCatalog() => Ok2(_designer.GetServiceCatalog());`。
-- **Modify** `CP6.Tests/Oa/DesignerServiceTests.cs` — 既有 `Svc(db)` 测试辅助改用新的 4-参构造（传 `Array.Empty<IServiceTaskExecutor>()` / `Array.Empty<IWfConnector>()`），仅为保持编译，语义不变。
+## 红绿证据
+- 红（实现前，`--filter SendBackThreeRuleTests`）：Failed 5 / Passed 1。SameBranch/BeforeSplit 场景现状抛 `E-WF-012`（CrossesParallelBlock 一刀切禁令）；Sibling 场景抛 `E-WF-012` 而非 `019`；Starter（天然 BeforeSplit）已过。
+- 绿（实现后，同 filter）：Passed 6 / Failed 0。
+- 全 Wf：Passed 249 / 0。
+- 全量：**Passed 1887 / Skipped 5**（基线 1881 + 本任务 6 新用例）。
+- EF：`has-pending-model-changes` → "No changes have been made to the model since the last migration."（clean，零迁移）。
 
-## Controller action 照哪个既有 action 的模式
-照同 controller 的 `List` action（`[HttpGet("list")]` → `Ok2(...)`）：简单读取端点，`LocalizedControllerBase` 基类 + `Ok2(...)` 统一包壳（`{code,message,data}`），类级 `[Authorize]`。与 `List` 一致，未额外用 `_ctx`（`ICurrentPermissionContext` 只在写操作 Save/Clone 用于取 UserId，目录查询无此需要）。返回值同步（`GetServiceCatalog()` 是纯内存过滤，无 DB/await），故 action 无 `async`。
+## 三规则行为矩阵（parallel + inclusive + nested 全覆盖）
+| 场景 | 目标 | 结果 |
+|---|---|---|
+| SameBranch（a2→a1，parallel） | 分支内上游 | 仅剥离本支子树重生，携剥离层血缘（ForkId 保留）；兄弟 b1 零扰动；重走后 join 认亲 → Approved |
+| BeforeSplit（a2→n0，parallel） | split 之前 | 全清场，单根重生 n0（ParentTokenId/ForkId=null）；b 支任务/FormTo 全清 |
+| SiblingBranch（a2→b1） | 兄弟支 | 抛 E-WF-019，先校验后写（任务/token/履历零突变） |
+| Starter（parallel 支上退回发起人） | starter | 天然 BeforeSplit：全清场 + 回 Draft |
+| Inclusive SameBranch + Sibling 目标 | — | 同支剥离兄弟存活+齐批 Approved；兄弟目标 E-WF-019 |
+| Nested（x1→h1，剥离外层支） | 内层 split 之前 | 内层兄弟 x2 连带剥离、外层兄弟 b 不倒、重生 h1 携外层 ForkId → Approved |
 
-## 测试命令与输出摘要
-- Step 2 FAIL（实现前）：`dotnet test ... --filter ServiceCatalogTests` → CS1729（无 4-参构造）+ CS1061（无 GetServiceCatalog），编译失败即红。
-- Step 4 PASS：
-  - `--filter ServiceCatalogTests` → **Passed! Failed: 0, Passed: 1**
-  - `--filter Wf`（Wf 闸）→ **Passed! Failed: 0, Passed: 137**（含本任务新增 1；既有全绿）
-  - `--filter DesignerServiceTests`（改了辅助）→ **Passed! Failed: 0, Passed: 5**
-  - `dotnet build CP6.WebApi` → **Build succeeded, 0 Error**
+## 线性现状铁闸证据（零 diff）
+`--filter "AdvancedFlowTests|SerialSendBackTests|ParallelGatewayTests"` → Passed 23 / 0，既有断言一个未改。线性流 `task.TokenId` 对应 token 的 fork 栈为空 → Analyze 返回 BeforeSplit → 走原全清场代码块（逐字保留）。ParallelGatewayTests 动态计票等价性铁闸绿。
 
-## 自查发现
-- `git show --stat 7d9d61a` 确认仅 6 个目标文件入 commit；`picture/`、`shots/` 等 untracked 为会话开始前既存，未 staged → 零 Space 污染。
-- 过滤谓词用常量 `ServiceKind.DataWriteback`（== "dataWriteback"）而非字面量，与 `SampleDataWritebackExecutor` 保持同源，语义与 brief 的 `e.Kind=="dataWriteback"` 等价。
-- DI：`DesignerService` 以 `AddScoped<IDesignerService, DesignerService>()` 注册，新增的两个 `IEnumerable<>` 依赖由容器自动从已注册的 `IServiceTaskExecutor`（WebApi/SampleWriteback）与 `IWfConnector`（EchoConnector）集合解析，无需改 Program.cs。
-- 无 concerns。spec D1~D11 未触碰；未重新设计。
+## 实现要点
+- `AdvancedFlow.cs` `SendBackToNodeAsync` 按计划三规则接线；删除死方法 `CrossesParallelBlock` / `NodesBetween`。
+- SameBranch：`CancelTokenSubtree(strip.Id)` 局部清场 + `SpawnToken(parent: strip.ParentTokenId, fork: strip.ForkId)` 携血缘重生。
+- BeforeSplit/线性：既有全清场（parent/fork=null 归零重生）逐字保留。
+- `SendBackToPrevStageAsync` / `SendBackToStarterAsync` 零改。
+
+## 与计划的一处必要偏差（评审须知）
+计划 Step 3 给出的代码把 `IsUpstreamReachable` 闸留在作用域分析**之前**。实测该顺序对**兄弟支目标**会先抛 E-WF-012（兄弟支天然不在 current 上游，IsUpstreamReachable=false），永远到不了 E-WF-019，两个 Sibling 用例因此失败。
+修正：作用域分析 + `SiblingBranch → E-WF-019` 抢先命中，`IsUpstreamReachable → E-WF-012` 下移一行，兜住 BeforeSplit/SameBranch 的伪（非上游）目标。语义完全等价于计划意图（先校验后写不变、E-WF-012 对真正非法目标仍抛），仅调整两行判定顺序，已加注释说明。
+
+## 疑虑
+- 无。CancelTokenSubtree 对 strip 根置 Cancelled（非 Consumed），C-T2 审查备忘曾提「strip 应 consumed」；实测 join 认亲（SameBranch/Nested/Inclusive 三例重走均达 Approved）不受影响，从行为面证伪该顾虑，按计划 CancelTokenSubtree 口径落码。
+- 提交仅含 `AdvancedFlow.cs` + 新测试文件；工作区另有 CT2/CT3 md 的 LF→CRLF 换行 churn（非本任务改动）未纳入提交。

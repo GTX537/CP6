@@ -1,0 +1,958 @@
+# Review package: 76d460a..01b953d
+
+## Commits
+01b953d feat(mes): M-MES T5 IAuditable贴点(WorkOrder/ProductionResult族)+跨波票PlateMoldStock收口
+
+## Files changed
+ .superpowers/sdd/mes-t5-report.md                  |  55 +++
+ CP6.Entity/DomainModels/Mes/DefectCategory.cs      |   2 +-
+ CP6.Entity/DomainModels/Mes/DefectRecord.cs        |   2 +-
+ CP6.Entity/DomainModels/Mes/InspectionTemplate.cs  |   2 +-
+ CP6.Entity/DomainModels/Mes/Machine.cs             |   2 +-
+ CP6.Entity/DomainModels/Mes/MachineDowntime.cs     |   2 +-
+ CP6.Entity/DomainModels/Mes/MesSequence.cs         |   2 +
+ CP6.Entity/DomainModels/Mes/OeeDaily.cs            |   3 +
+ CP6.Entity/DomainModels/Mes/ProcessCostRate.cs     |   2 +-
+ CP6.Entity/DomainModels/Mes/ProductionResult.cs    |   2 +-
+ CP6.Entity/DomainModels/Mes/QualityInspection.cs   |   2 +-
+ .../DomainModels/Mes/QualityInspectionItem.cs      |   2 +-
+ CP6.Entity/DomainModels/Mes/WorkCenter.cs          |   2 +-
+ CP6.Entity/DomainModels/Mes/WorkOrder.cs           |   2 +-
+ CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs   |   2 +-
+ CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs    |   2 +-
+ CP6.Entity/DomainModels/Wms/PlateMoldStock.cs      |   2 +-
+ CP6.Tests/Mes/MesAuditTests.cs                     | 437 +++++++++++++++++++++
+ 18 files changed, 511 insertions(+), 14 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/mes-t5-report.md b/.superpowers/sdd/mes-t5-report.md
+new file mode 100644
+index 0000000..ddd1d91
+--- /dev/null
++++ b/.superpowers/sdd/mes-t5-report.md
+@@ -0,0 +1,55 @@
++# M-MES T5 执行报告：IAuditable 贴点(WorkOrder/ProductionResult 族)+跨波票收口
++
++分支 feat/m-mes-crosscutting。机制=CP6Context `ChangeTracker.Entries<IAuditable>()` 泛型遍历纯标记接口，
++零迁移零业务改动。裁决口径=**逐实体字段级实查**：实含货币/定价字段，或不可逆生产事实记录 → 纳入；
++纯派生/計数器高频写 → 豁免(源码注释+负测试坐实)。
++
++## 逐实体裁决表(字段级证据)
++
++| # | 实体 | 查过的关键字段(源码实读) | 裁决 |
++|---|------|--------------------------|------|
++| 1 | WorkOrder(指図头) | ProductionQty/CompletedQty/DefectQty `decimal(21,8)`(完了/不良累计=不可逆生产事实)、ActualStartDate/ActualEndDate(实绩时刻)、Status(指图状态机 0-9) | **纳入** |
++| 2 | WorkOrderProcess(工程明细) | ActualMachineHour/ActualLaborHour `decimal(21,8)`(注释"用于制造费用/直接人工"=**直喂成本**)、GoodQty/DefectQty、IsHourOverridden(工时覆盖标志) | **纳入** |
++| 3 | WorkOrderMaterial(材料明细) | ActualQty `decimal(21,8)` 実績消費数量(不可逆消耗事实→喂材料成本)、PlanQty | **纳入** |
++| 4 | ProductionResult(报工实绩) | GoodQty/DefectQty(良品/不良报工事实)、LaborHour/MachineHour `decimal(21,8)`(**喂成本工时**)、ActualStartTime/EndTime | **纳入** |
++| 5 | ProcessCostRate(工序费率) | LaborRate/OverheadRate `decimal(21,8)` **元/h 货币费率**(T1 定高危、直喂成本归集)、ValidFrom/ValidTo(生效区间) | **纳入** |
++| 6 | WorkCenter(工作中心主数据) | DailyCapacityHours `decimal(21,8)`(CRP 产能地基)、WgCd/Enable——费率与产能挂载点主数据 | **纳入** |
++| 7 | Machine(设备主数据) | StandardCycleSec `decimal(10,4)`/CapacityPerHour `decimal(10,2)`(喂 OEE 性能计算)、Status、维护日期——低频主数据 | **纳入** |
++| 8 | MachineDowntime(停止記録) | StartTime/EndTime(停止事实时刻)、DowntimeMinutes、DowntimeType/ReasonCd——OEE 可用率**源**数据、不可逆停止事实、有生命周期更新(start→end) | **纳入** |
++| 9 | DefectRecord(不良品記録) | DefectQty `decimal(21,8)`(不良数)、Status(处置状态机 0起票→3完了)、CauseAnalysis/CorrectiveAction(是正处置留痕)、DueDate/CompletedDate | **纳入** |
++| 10 | DefectCategory(不良分類マスタ) | CategoryCd/DetailCd/CategoryName/DetailName(分类主数据)、SortOrder、ActiveFlg——低频分类主数据留痕 | **纳入** |
++| 11 | QualityInspection(検査ヘッダ) | OverallResult(合格/不合格判定)、DispositionAction(処置:手直し/返品/廃棄)、InspectionQty/SampleQty `decimal(21,8)`——质量判定事实 | **纳入** |
++| 12 | QualityInspectionItem(検査明細) | MeasuredValue/StandardValue/UpperLimit/LowerLimit `decimal(21,8)`(計測值事实)、Result(項目判定) | **纳入** |
++| 13 | InspectionTemplate(検査テンプレート) | StandardValue/UpperLimit/LowerLimit `decimal(21,8)`(检查公差**规格主数据**,改容差=质量关键)、RequiredFlg/ActiveFlg | **纳入** |
++| 14 | **PlateMoldStock**(WMS 印版・木型 在庫, 跨波票) | **MadeCost `decimal(18,2)` 製作費(货币)**、UsedShots/MaxShots(寿命)、Status——M-WMS T6 漏圈,本波顺手收 | **纳入** |
++| — | OeeDaily(OEE 日次集計) | Availability/Performance/Quality/Oee `decimal(8,4)`(%)+GoodQty/DefectQty——**全字段由 MachineDowntime+ProductionResult 重算派生**,无源真值、日频重算,无货币 | **豁免**(源码注释+负测试) |
++| — | MesSequence(採番管理) | CurrentValue `int`——**純採番計数器**每次採番自增,无货币/无业务事实字段,高频写(`BaseEntity` 非 BizEntity) | **豁免**(源码注释+负测试) |
++
++**裁决计数：纳入 14(13 MES + 1 WMS PlateMoldStock)，豁免 2(OeeDaily/MesSequence)。**
++
++### 豁免与「按类别套先例」防错说明
++- ERP 两轮返工教训=豁免含货币字段实体。本波逐实体全字段扫过，**两个豁免实体均实读确认零货币字段**：
++  OeeDaily 仅有 %率与数量派生值；MesSequence 仅 int 计数器。均非「未实查就豁免」。
++- 未按「主数据一律豁免/头明细一律纳入」套壳：主数据 Machine/WorkCenter/DefectCategory/InspectionTemplate
++  逐个查字段后判定其含产能/费率挂载/公差规格/分类等关键留痕价值而纳入(与 ERP ProductMaster/BusinessPartner
++  主数据入审计一致)；派生 OeeDaily 虽含数量字段仍豁免(派生非源)。
++
++## TDD Evidence
++- **RED**: 写 `CP6.Tests/Mes/MesAuditTests.cs`(18 用例)后先跑 → `Failed: 16, Passed: 2`
++  (16 正测试红=实体未贴 IAuditable；2 负测试 OeeDaily/MesSequence 本就无审计行=先绿)。
++- **GREEN**: 贴 IAuditable 于 13 MES 实体 + PlateMoldStock 后 → `Passed: 18, Failed: 0`。
++- 用例形状照 ErpAuditTests：真值断言 EntityName + EntityKey(op1) / 字段级 Old→New diff(op2)。
++  货币键点覆盖：ProcessCostRate.LaborRate 30→35、WorkOrderProcess.ActualMachineHour 2→3.5、
++  ProductionResult.LaborHour 1→2.25、PlateMoldStock.MadeCost 30000→32000、
++  InspectionTemplate.UpperLimit 100→102、QualityInspectionItem.MeasuredValue 10.0→10.5。
++- 负测试真实：OeeDaily create + MesSequence create→update 后 `Assert.Empty(Sys_FieldAuditLogs)`。
++
++## 验证
++- `dotnet test --filter MesAuditTests` → 18/18 绿。
++- 全量 → `Passed: 1749, Failed: 0, Skipped: 5`(基线 1731 + 18 新用例，无跌落)。
++- `git status` → 仅 16 实体单行改 + 1 新测试文件，**无 Migrations 新文件**(纯标记接口零迁移)。
++
++## Concerns
++- **DefectCategory 是最薄纳入项**(纯分类 lookup 码表)。按「主数据留痕+过度纳入低频主数据零害」原则纳入，
++  且与 ERP 主数据入审计口径一致；若审查者倾向 lookup 码表豁免，可改判但需补负测试——非货币非事实，改判不违 ERP 教训。
++- MachineDowntime 归为「生产事实源」而纳入(区别于 OeeDaily 派生)；若审查者视其为遥测类可再议，但其为手工录入的停止事件源数据、非高频遥测。
+diff --git a/CP6.Entity/DomainModels/Mes/DefectCategory.cs b/CP6.Entity/DomainModels/Mes/DefectCategory.cs
+index 2dd9a2b..05f0bbd 100644
+--- a/CP6.Entity/DomainModels/Mes/DefectCategory.cs
++++ b/CP6.Entity/DomainModels/Mes/DefectCategory.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 不良分類マスタ（M_DefectCategory / ME-M002）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §7.1 / §9 No.9
+ /// 業務複合 PK：CATEGORY_CD + DETAIL_CD
+ /// 例：D01-寸法不良 / 巾寸法外れ
+ /// </remarks>
+ [Table("M_DefectCategory")]
+-public class DefectCategory : BaseBizEntity
++public class DefectCategory : BaseBizEntity, IAuditable
+ {
+     /// <summary>大分類CD（PK1、D01〜D07）</summary>
+     [Required, MaxLength(10)]
+     public string CategoryCd { get; set; } = string.Empty;
+ 
+     /// <summary>小分類CD（PK2）</summary>
+     [Required, MaxLength(10)]
+     public string DetailCd { get; set; } = string.Empty;
+ 
+     /// <summary>大分類名</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/DefectRecord.cs b/CP6.Entity/DomainModels/Mes/DefectRecord.cs
+index a015557..7c4bea8 100644
+--- a/CP6.Entity/DomainModels/Mes/DefectRecord.cs
++++ b/CP6.Entity/DomainModels/Mes/DefectRecord.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 不良品記録（MSBBME080）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.7 T_DefectRecord
+ /// 業務 PK：DEFECT_NO（DFYYYYMMDD-NNNN）
+ /// ステータス：0=起票済み 1=分析中 2=是正中 3=完了
+ /// </remarks>
+ [Table("T_DefectRecord")]
+-public class DefectRecord : BaseBizEntity
++public class DefectRecord : BaseBizEntity, IAuditable
+ {
+     /// <summary>不良NO（業務 PK、DFYYYYMMDD-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string DefectNo { get; set; } = string.Empty;
+ 
+     /// <summary>指図NO（FK）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/InspectionTemplate.cs b/CP6.Entity/DomainModels/Mes/InspectionTemplate.cs
+index 56beaf7..2d71e90 100644
+--- a/CP6.Entity/DomainModels/Mes/InspectionTemplate.cs
++++ b/CP6.Entity/DomainModels/Mes/InspectionTemplate.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 検査項目テンプレート（M_InspectionTemplate）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.8
+ /// 業務複合 PK：TEMPLATE_CD + ITEM_SEQ_NO
+ /// </remarks>
+ [Table("M_InspectionTemplate")]
+-public class InspectionTemplate : BaseBizEntity
++public class InspectionTemplate : BaseBizEntity, IAuditable
+ {
+     /// <summary>テンプレートCD（PK1）</summary>
+     [Required, MaxLength(20)]
+     public string TemplateCd { get; set; } = string.Empty;
+ 
+     /// <summary>項目順序（PK2）</summary>
+     public int ItemSeqNo { get; set; }
+ 
+     /// <summary>テンプレート名</summary>
+     [MaxLength(100)] public string? TemplateName { get; set; }
+diff --git a/CP6.Entity/DomainModels/Mes/Machine.cs b/CP6.Entity/DomainModels/Mes/Machine.cs
+index 776ecb3..66b61bc 100644
+--- a/CP6.Entity/DomainModels/Mes/Machine.cs
++++ b/CP6.Entity/DomainModels/Mes/Machine.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 設備マスタ（号機）
+ /// </summary>
+ /// <remarks>
+ /// 業務 PK：MachineCd
+ /// 1 設備 → N 停止記録(T_MachineDowntime) / N OEE 日次(T_OeeDaily)
+ /// </remarks>
+ [Table("M_Machine")]
+-public class Machine : BaseBizEntity
++public class Machine : BaseBizEntity, IAuditable
+ {
+     /// <summary>設備CD（業務 PK）</summary>
+     [Required, MaxLength(20)]
+     public string MachineCd { get; set; } = string.Empty;
+ 
+     /// <summary>設備名</summary>
+     [Required, MaxLength(100)]
+     public string MachineName { get; set; } = string.Empty;
+ 
+     /// <summary>設備種別（汎用マスタ：印刷機/トムソン/グルア/貼合機 等）</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/MachineDowntime.cs b/CP6.Entity/DomainModels/Mes/MachineDowntime.cs
+index 683602b..fdbf4d6 100644
+--- a/CP6.Entity/DomainModels/Mes/MachineDowntime.cs
++++ b/CP6.Entity/DomainModels/Mes/MachineDowntime.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 設備停止記録
+ /// </summary>
+ /// <remarks>
+ /// 業務 PK：DowntimeNo（DTyyyyMMdd-NNNN）
+ /// OEE 可用率計算の元データ
+ /// </remarks>
+ [Table("T_MachineDowntime")]
+-public class MachineDowntime : BaseBizEntity
++public class MachineDowntime : BaseBizEntity, IAuditable
+ {
+     /// <summary>停止記録NO（業務 PK、DTyyyyMMdd-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string DowntimeNo { get; set; } = string.Empty;
+ 
+     /// <summary>設備CD（FK → M_Machine.MachineCd）</summary>
+     [Required, MaxLength(20)]
+     public string MachineCd { get; set; } = string.Empty;
+ 
+     /// <summary>関連 指図NO（任意。停止が指図実行中に発生した場合）</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/MesSequence.cs b/CP6.Entity/DomainModels/Mes/MesSequence.cs
+index a700d44..7509a9c 100644
+--- a/CP6.Entity/DomainModels/Mes/MesSequence.cs
++++ b/CP6.Entity/DomainModels/Mes/MesSequence.cs
+@@ -7,20 +7,22 @@ namespace CP6.Entity.DomainModels.Mes;
+ /// MES採番管理
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.10 T_MesSequence
+ /// 業務複合 PK：SEQ_KEY + SEQ_DATE
+ /// 例：('WO', '2026-05-15') → 0042
+ ///     ('PR', '2026-05-15') → 0011
+ ///     ('QC', '2026-05-15') → 0003
+ ///     ('DF', '2026-05-15') → 0001
+ /// </remarks>
++// [审计豁免] 純採番計数器：CurrentValue 每次採番自增，无货币/无业务事实字段，高频写——
++// 字段级审计无意义。照 WMS/ERP Sequence 先例不贴 IAuditable，由 MesAuditTests 负测试坐实零审计行。
+ [Table("T_MesSequence")]
+ public class MesSequence : BaseEntity
+ {
+     /// <summary>採番キー（PK1）：WO=指図 / PR=実績 / QC=検査 / DF=不良</summary>
+     [Required, MaxLength(10)]
+     public string SeqKey { get; set; } = string.Empty;
+ 
+     /// <summary>採番日（PK2、YYYY-MM-DD）</summary>
+     [Required, MaxLength(10)]
+     public string SeqDate { get; set; } = string.Empty;
+diff --git a/CP6.Entity/DomainModels/Mes/OeeDaily.cs b/CP6.Entity/DomainModels/Mes/OeeDaily.cs
+index e1acd55..0eff2a1 100644
+--- a/CP6.Entity/DomainModels/Mes/OeeDaily.cs
++++ b/CP6.Entity/DomainModels/Mes/OeeDaily.cs
+@@ -6,20 +6,23 @@ namespace CP6.Entity.DomainModels.Mes;
+ /// <summary>
+ /// OEE 日次集計（設備総合効率）
+ /// </summary>
+ /// <remarks>
+ /// OEE = 可用率 × 性能 × 品質
+ ///   可用率(Availability) = (計画稼働時間 - 停止時間) / 計画稼働時間
+ ///   性能(Performance)    = (良品数+不良数) / (能力 × 実稼働時間)
+ ///   品質(Quality)        = 良品数 / (良品数+不良数)
+ /// 業務複合 PK：OeeDate + MachineCd
+ /// </remarks>
++// [审计豁免] 派生型日次集計：Availability/Performance/Quality/Oee 及 Good/DefectQty 皆由
++// MachineDowntime（已纳审计）+ ProductionResult（已纳审计）重算派生，无源真值、日频重算——
++// 字段级审计等同复制上游噪声。照 OEE 快照口径不贴 IAuditable，由 MesAuditTests 负测试坐实零审计行。
+ [Table("T_OeeDaily")]
+ public class OeeDaily : BaseBizEntity
+ {
+     /// <summary>集計日（PK1）</summary>
+     public DateTime OeeDate { get; set; }
+ 
+     /// <summary>設備CD（PK2、FK → M_Machine.MachineCd）</summary>
+     [Required, MaxLength(20)]
+     public string MachineCd { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Mes/ProcessCostRate.cs b/CP6.Entity/DomainModels/Mes/ProcessCostRate.cs
+index e15ac81..f1deb19 100644
+--- a/CP6.Entity/DomainModels/Mes/ProcessCostRate.cs
++++ b/CP6.Entity/DomainModels/Mes/ProcessCostRate.cs
+@@ -1,18 +1,18 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>工序费率（A2 · spec §3.3）。工作中心×生效区间 的 工/费双率（元/h）。</summary>
+ [Table("T_ProcessCostRate")]
+-public class ProcessCostRate : BaseBizEntity
++public class ProcessCostRate : BaseBizEntity, IAuditable
+ {
+     /// <summary>工作中心CD（业务键 → WorkCenter.WgCd）</summary>
+     [Required, MaxLength(10)] public string WgCd { get; set; } = string.Empty;
+     /// <summary>人工费率（元/h）</summary>
+     [Column(TypeName = "decimal(21,8)")] public decimal LaborRate { get; set; }
+     /// <summary>制造费率（元/h）</summary>
+     [Column(TypeName = "decimal(21,8)")] public decimal OverheadRate { get; set; }
+     /// <summary>生效日（Resolve 取 ≤ 基准日最新有效版本）</summary>
+     public DateTime ValidFrom { get; set; }
+     /// <summary>失效日（null = 长期）</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/ProductionResult.cs b/CP6.Entity/DomainModels/Mes/ProductionResult.cs
+index 300d927..1a45e68 100644
+--- a/CP6.Entity/DomainModels/Mes/ProductionResult.cs
++++ b/CP6.Entity/DomainModels/Mes/ProductionResult.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 製造実績（MSBBME040）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.4 T_ProductionResult
+ /// 業務 PK：RESULT_NO（PRYYYYMMDD-NNNN）
+ /// 1指図1工程の各報告（開始/中断/再開/完了/数量報告）を時系列で蓄積
+ /// </remarks>
+ [Table("T_ProductionResult")]
+-public class ProductionResult : BaseBizEntity
++public class ProductionResult : BaseBizEntity, IAuditable
+ {
+     /// <summary>実績NO（業務 PK、PRYYYYMMDD-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string ResultNo { get; set; } = string.Empty;
+ 
+     /// <summary>指図NO（FK → T_WorkOrder.WorkOrderNo）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/QualityInspection.cs b/CP6.Entity/DomainModels/Mes/QualityInspection.cs
+index 454a280..bd07be0 100644
+--- a/CP6.Entity/DomainModels/Mes/QualityInspection.cs
++++ b/CP6.Entity/DomainModels/Mes/QualityInspection.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 品質検査ヘッダ（MSBBME060）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.5 T_QualityInspection
+ /// 業務 PK：INSPECTION_NO（QCYYYYMMDD-NNNN）
+ /// </remarks>
+ [Table("T_QualityInspection")]
+-public class QualityInspection : BaseBizEntity
++public class QualityInspection : BaseBizEntity, IAuditable
+ {
+     /// <summary>検査NO（業務 PK、QCYYYYMMDD-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string InspectionNo { get; set; } = string.Empty;
+ 
+     /// <summary>指図NO（FK → T_WorkOrder）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs b/CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs
+index b02a108..86daf67 100644
+--- a/CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs
++++ b/CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 品質検査項目明細
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.6 T_QualityInspectionItem
+ /// 業務複合 PK：INSPECTION_NO + ITEM_SEQ_NO
+ /// </remarks>
+ [Table("T_QualityInspectionItem")]
+-public class QualityInspectionItem : BaseBizEntity
++public class QualityInspectionItem : BaseBizEntity, IAuditable
+ {
+     /// <summary>検査NO（FK → T_QualityInspection.InspectionNo）</summary>
+     [Required, MaxLength(20)]
+     public string InspectionNo { get; set; } = string.Empty;
+ 
+     /// <summary>項目順序（PK2）</summary>
+     public int ItemSeqNo { get; set; }
+ 
+     /// <summary>検査項目名</summary>
+     [MaxLength(100)] public string? ItemName { get; set; }
+diff --git a/CP6.Entity/DomainModels/Mes/WorkCenter.cs b/CP6.Entity/DomainModels/Mes/WorkCenter.cs
+index 948eb81f..0f2429e 100644
+--- a/CP6.Entity/DomainModels/Mes/WorkCenter.cs
++++ b/CP6.Entity/DomainModels/Mes/WorkCenter.cs
+@@ -1,18 +1,18 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>工作中心主数据（A2 · spec §3.2）。费率与产能挂载点；产能字段=CRP 地基。</summary>
+ [Table("T_WorkCenter")]
+-public class WorkCenter : BaseBizEntity
++public class WorkCenter : BaseBizEntity, IAuditable
+ {
+     /// <summary>工作中心CD（业务键，唯一；= ProductProcess.WgCd / WorkOrderProcess.WgCd）</summary>
+     [Required, MaxLength(10)] public string WgCd { get; set; } = string.Empty;
+     /// <summary>工作中心名称</summary>
+     [MaxLength(100)] public string? WgName { get; set; }
+     /// <summary>日可用产能（h/日）——CRP 入参地基，A2 只维护不消费</summary>
+     [Column(TypeName = "decimal(21,8)")] public decimal? DailyCapacityHours { get; set; }
+     /// <summary>启用</summary>
+     public bool Enable { get; set; } = true;
+ }
+diff --git a/CP6.Entity/DomainModels/Mes/WorkOrder.cs b/CP6.Entity/DomainModels/Mes/WorkOrder.cs
+index f595aa9..172bebf 100644
+--- a/CP6.Entity/DomainModels/Mes/WorkOrder.cs
++++ b/CP6.Entity/DomainModels/Mes/WorkOrder.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 製造指図ヘッダ（MSBBME020）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.1 T_WorkOrder
+ /// 業務 PK：WORK_ORDER_NO（WOYYYYMMDD-NNNN 形式、シーケンス自動採番）
+ /// 1指図 → N工程(T_WorkOrderProcess) / N材料(T_WorkOrderMaterial) / N実績(T_ProductionResult)
+ /// </remarks>
+ [Table("T_WorkOrder")]
+-public class WorkOrder : BaseBizEntity
++public class WorkOrder : BaseBizEntity, IAuditable
+ {
+     /// <summary>製造指図NO（業務 PK、WOYYYYMMDD-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>指図ステータス：0=下書き 1=確定済 2=発行済 3=着手中 4=完了 5=中断中 6=検査済 9=取消</summary>
+     public int Status { get; set; } = 0;
+ 
+     /// <summary>受注NO（PA070 → MES展開元、null=手動作成）</summary>
+     [MaxLength(20)] public string? OrderNo1 { get; set; }
+diff --git a/CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs b/CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs
+index 53fa758..0bd4337 100644
+--- a/CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs
++++ b/CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 製造指図材料明細（MSBBME020 第3页）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.3 T_WorkOrderMaterial
+ /// 業務複合 PK：WORK_ORDER_NO + PROCESS_CD + MATERIAL_CD
+ /// </remarks>
+ [Table("T_WorkOrderMaterial")]
+-public class WorkOrderMaterial : BaseBizEntity
++public class WorkOrderMaterial : BaseBizEntity, IAuditable
+ {
+     /// <summary>指図NO（FK）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD（PK2）</summary>
+     [Required, MaxLength(10)]
+     public string ProcessCd { get; set; } = string.Empty;
+ 
+     /// <summary>材料CD（PK3）</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs b/CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs
+index 76f3e18..c3ee014 100644
+--- a/CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs
++++ b/CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 製造指図工程明細（MSBBME020 第2页）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.2 T_WorkOrderProcess
+ /// 業務複合 PK：WORK_ORDER_NO + PROCESS_CD + TASK_CD
+ /// </remarks>
+ [Table("T_WorkOrderProcess")]
+-public class WorkOrderProcess : BaseBizEntity
++public class WorkOrderProcess : BaseBizEntity, IAuditable
+ {
+     /// <summary>指図NO（FK → T_WorkOrder.WorkOrderNo）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD（PK2、PA050.ProductProcess.ProcessCd から展開）</summary>
+     [Required, MaxLength(10)]
+     public string ProcessCd { get; set; } = string.Empty;
+ 
+     /// <summary>作業CD（PK3、PA050.ProductProcess.TaskCd から展開）</summary>
+diff --git a/CP6.Entity/DomainModels/Wms/PlateMoldStock.cs b/CP6.Entity/DomainModels/Wms/PlateMoldStock.cs
+index a03f004..b9244c4 100644
+--- a/CP6.Entity/DomainModels/Wms/PlateMoldStock.cs
++++ b/CP6.Entity/DomainModels/Wms/PlateMoldStock.cs
+@@ -6,21 +6,21 @@ namespace CP6.Entity.DomainModels.Wms;
+ /// <summary>
+ /// 印版・木型 管理（MSBBWM220）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §31 印刷版・打抜木型のマスタ＋使用履歴。
+ /// 業務 PK：PlateNo（PLT-NNNNNN）
+ /// 顧客×製品×版/型 で 1 レコード。寿命（最大ショット数）管理 + メンテ要請。
+ /// 状态：0=使用可 1=メンテ中 2=寿命到達 3=廃版
+ /// </remarks>
+ [Table("T_PlateMoldStock")]
+-public class PlateMoldStock : BaseBizEntity
++public class PlateMoldStock : BaseBizEntity, IAuditable
+ {
+     [Required, MaxLength(25)]
+     public string PlateNo { get; set; } = string.Empty;
+ 
+     /// <summary>区分：PLATE=印版 / MOLD=木型 / CYL=シリンダ / OTHER</summary>
+     [Required, MaxLength(10)]
+     public string PlateType { get; set; } = "PLATE";
+ 
+     /// <summary>顧客CD</summary>
+     [MaxLength(20)] public string? CustomerCd { get; set; }
+diff --git a/CP6.Tests/Mes/MesAuditTests.cs b/CP6.Tests/Mes/MesAuditTests.cs
+new file mode 100644
+index 0000000..00b87d9
+--- /dev/null
++++ b/CP6.Tests/Mes/MesAuditTests.cs
+@@ -0,0 +1,437 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Mes;
++using CP6.Entity.DomainModels.Wms;
++using Xunit;
++
++namespace CP6.Tests.Mes;
++
++/// <summary>
++/// MES 生产事实 / 成本喂料 / 品質判定 / 设备主数据 关键实体字段级审计接线冒烟（M-MES 横切 T5）。
++/// 照 <see cref="CP6.Tests.Erp.ErpAuditTests"/> / <see cref="CP6.Tests.Wms.WmsAuditTests"/> 范式：
++/// InMemory + 假当前用户。验证贴 IAuditable 的 MES 实体（指図头/工程/材料明细·报工实绩·工序费率·
++/// 工作中心/设备主数据·不良/検査记录）在 create/update 随业务行同周期写入 Sys_FieldAuditLogs
++/// （真实断言实体名/字段/新旧值）；跨波票 WMS PlateMoldStock（含 MadeCost 製作費）同样坐实；
++/// 并回归确认追加/派生型（OeeDaily 日次派生集計 / MesSequence 採番计数器，均未贴）不产生审计行（负测试）。
++/// </summary>
++public class MesAuditTests
++{
++    private sealed class FakeUser : ICurrentUserAccessor
++    {
++        public FakeUser(Guid? id, string? name) { UserId = id; UserName = name; }
++        public Guid? UserId { get; }
++        public string? UserName { get; }
++    }
++
++    private sealed record DiffRow(string Field, string? Old, string? New);
++
++    private static List<DiffRow> ParseChanges(string json)
++        => JsonSerializer.Deserialize<List<DiffRow>>(json) ?? new();
++
++    private static readonly Guid _userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
++
++    private static CP6Context Ctx()
++        => TestHelper.CreateInMemoryContext(new FakeUser(_userId, "alice"));
++
++    // ── 製造指図ヘッダ（WorkOrder）— 生産数量/完了数量 不可逆生産事実 ─────────────
++    [Fact]
++    public void Create_WorkOrder_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var wo = new WorkOrder { WorkOrderNo = "WO20260712-0001", ProductCd = "P001", ProductionQty = 1000m };
++        db.Set<WorkOrder>().Add(wo);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkOrder), rows[0].EntityName);
++        Assert.Equal(wo.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_WorkOrder_completedQty_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var wo = new WorkOrder { WorkOrderNo = "WO20260712-0002", ProductCd = "P001", ProductionQty = 1000m, CompletedQty = 0m };
++        db.Set<WorkOrder>().Add(wo);
++        db.SaveChanges();
++
++        wo.CompletedQty = 800m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkOrder), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "CompletedQty" && d.Old == "0" && d.New == "800");
++    }
++
++    // ── 指図工程明細（WorkOrderProcess）— 实绩工时 直喂制造费用 ───────────────────
++    [Fact]
++    public void Update_WorkOrderProcess_actualMachineHour_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var wp = new WorkOrderProcess
++        {
++            WorkOrderNo = "WO20260712-0003",
++            ProcessCd = "PC01",
++            TaskCd = "TK01",
++            ActualMachineHour = 2m,
++        };
++        db.Set<WorkOrderProcess>().Add(wp);
++        db.SaveChanges();
++
++        wp.ActualMachineHour = 3.5m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkOrderProcess), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "ActualMachineHour" && d.Old == "2" && d.New == "3.5");
++    }
++
++    // ── 指図材料明細（WorkOrderMaterial）— 実績消費数量 不可逆消耗事実（喂材料成本）─
++    [Fact]
++    public void Update_WorkOrderMaterial_actualQty_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var wm = new WorkOrderMaterial
++        {
++            WorkOrderNo = "WO20260712-0004",
++            ProcessCd = "PC01",
++            MaterialCd = "M001",
++            ActualQty = 0m,
++        };
++        db.Set<WorkOrderMaterial>().Add(wm);
++        db.SaveChanges();
++
++        wm.ActualQty = 120m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkOrderMaterial), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "ActualQty" && d.New == "120");
++    }
++
++    // ── 製造実績（ProductionResult）— 报工事实 良品/不良数 + 工时喂成本 ──────────────
++    [Fact]
++    public void Create_ProductionResult_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var pr = new ProductionResult
++        {
++            ResultNo = "PR20260712-0001",
++            WorkOrderNo = "WO20260712-0005",
++            ProcessCd = "PC01",
++            OperatorCd = "OP01",
++            GoodQty = 500m,
++        };
++        db.Set<ProductionResult>().Add(pr);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(ProductionResult), rows[0].EntityName);
++        Assert.Equal(pr.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_ProductionResult_laborHour_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var pr = new ProductionResult
++        {
++            ResultNo = "PR20260712-0002",
++            WorkOrderNo = "WO20260712-0006",
++            ProcessCd = "PC01",
++            OperatorCd = "OP01",
++            LaborHour = 1m,
++        };
++        db.Set<ProductionResult>().Add(pr);
++        db.SaveChanges();
++
++        pr.LaborHour = 2.25m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(ProductionResult), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "LaborHour" && d.Old == "1" && d.New == "2.25");
++    }
++
++    // ── 工序费率（ProcessCostRate）— 人工/制造费率 元/h 货币定价（T1 高危、直喂成本归集）────
++    [Fact]
++    public void Update_ProcessCostRate_laborRate_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var rate = new ProcessCostRate
++        {
++            WgCd = "WG01",
++            LaborRate = 30m,
++            OverheadRate = 50m,
++            ValidFrom = new DateTime(2026, 7, 1),
++        };
++        db.Set<ProcessCostRate>().Add(rate);
++        db.SaveChanges();
++
++        rate.LaborRate = 35m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(ProcessCostRate), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "LaborRate" && d.Old == "30" && d.New == "35");
++    }
++
++    // ── 工作中心主数据（WorkCenter）— 日可用产能（CRP 地基）主数据留痕 ────────────────
++    [Fact]
++    public void Update_WorkCenter_dailyCapacity_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var wc = new WorkCenter { WgCd = "WG01", WgName = "印刷", DailyCapacityHours = 16m };
++        db.Set<WorkCenter>().Add(wc);
++        db.SaveChanges();
++
++        wc.DailyCapacityHours = 20m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkCenter), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "DailyCapacityHours" && d.Old == "16" && d.New == "20");
++    }
++
++    // ── 設備マスタ（Machine）— 能力/循环时间 主数据（喂 OEE 性能计算）────────────────
++    [Fact]
++    public void Create_Machine_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var m = new Machine { MachineCd = "MC01", MachineName = "印刷機1号" };
++        db.Set<Machine>().Add(m);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Machine), rows[0].EntityName);
++        Assert.Equal(m.Id.ToString(), rows[0].EntityKey);
++    }
++
++    // ── 設備停止記録（MachineDowntime）— 停止事実（OEE 可用率元数据）不可逆生産事実 ──────
++    [Fact]
++    public void Update_MachineDowntime_downtimeMinutes_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var dt = new MachineDowntime
++        {
++            DowntimeNo = "DT20260712-0001",
++            MachineCd = "MC01",
++            StartTime = new DateTime(2026, 7, 12, 9, 0, 0),
++            DowntimeMinutes = 0,
++        };
++        db.Set<MachineDowntime>().Add(dt);
++        db.SaveChanges();
++
++        dt.DowntimeMinutes = 45;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(MachineDowntime), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "DowntimeMinutes" && d.Old == "0" && d.New == "45");
++    }
++
++    // ── 不良品記録（DefectRecord）— 不良数/是正処置 不可逆生産事実 + 处置状态机 ──────────
++    [Fact]
++    public void Update_DefectRecord_defectQty_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var dr = new DefectRecord
++        {
++            DefectNo = "DF20260712-0001",
++            WorkOrderNo = "WO20260712-0007",
++            CategoryCd = "D01",
++            DefectQty = 10m,
++            DefectDescription = "寸法不良",
++        };
++        db.Set<DefectRecord>().Add(dr);
++        db.SaveChanges();
++
++        dr.DefectQty = 15m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(DefectRecord), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "DefectQty" && d.Old == "10" && d.New == "15");
++    }
++
++    // ── 不良分類マスタ（DefectCategory）— 分类主数据留痕 ───────────────────────────
++    [Fact]
++    public void Create_DefectCategory_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var dc = new DefectCategory { CategoryCd = "D01", DetailCd = "D0101", CategoryName = "寸法不良" };
++        db.Set<DefectCategory>().Add(dc);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(DefectCategory), rows[0].EntityName);
++        Assert.Equal(dc.Id.ToString(), rows[0].EntityKey);
++    }
++
++    // ── 品質検査ヘッダ（QualityInspection）— 総合判定/処置 品質事実 ────────────────────
++    [Fact]
++    public void Update_QualityInspection_overallResult_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var qi = new QualityInspection
++        {
++            InspectionNo = "QC20260712-0001",
++            WorkOrderNo = "WO20260712-0008",
++            InspectorCd = "IN01",
++            OverallResult = 1,
++        };
++        db.Set<QualityInspection>().Add(qi);
++        db.SaveChanges();
++
++        qi.OverallResult = 2;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(QualityInspection), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "OverallResult" && d.Old == "1" && d.New == "2");
++    }
++
++    // ── 品質検査項目明細（QualityInspectionItem）— 計測値/判定 品質計測事実 ─────────────
++    [Fact]
++    public void Update_QualityInspectionItem_measuredValue_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var item = new QualityInspectionItem
++        {
++            InspectionNo = "QC20260712-0002",
++            ItemSeqNo = 1,
++            MeasuredValue = 10.0m,
++        };
++        db.Set<QualityInspectionItem>().Add(item);
++        db.SaveChanges();
++
++        item.MeasuredValue = 10.5m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(QualityInspectionItem), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "MeasuredValue" && d.Old == "10.0" && d.New == "10.5");
++    }
++
++    // ── 検査項目テンプレート（InspectionTemplate）— 規格/上下限 品質判定基准主数据 ────────
++    [Fact]
++    public void Update_InspectionTemplate_upperLimit_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var tpl = new InspectionTemplate
++        {
++            TemplateCd = "TPL01",
++            ItemSeqNo = 1,
++            ItemName = "巾寸法",
++            UpperLimit = 100m,
++        };
++        db.Set<InspectionTemplate>().Add(tpl);
++        db.SaveChanges();
++
++        tpl.UpperLimit = 102m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(InspectionTemplate), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "UpperLimit" && d.Old == "100" && d.New == "102");
++    }
++
++    // ── 跨波票：印版・木型 在庫（WMS PlateMoldStock）— MadeCost 製作費 decimal(18,2)货币 ───
++    [Fact]
++    public void Update_PlateMoldStock_madeCost_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var pm = new PlateMoldStock
++        {
++            PlateNo = "PLT-000001",
++            PlateType = "PLATE",
++            MadeCost = 30000m,
++        };
++        db.Set<PlateMoldStock>().Add(pm);
++        db.SaveChanges();
++
++        pm.MadeCost = 32000m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(PlateMoldStock), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "MadeCost" && d.Old == "30000" && d.New == "32000");
++    }
++
++    // ── 负测试：OEE 日次派生集計（OeeDaily）未贴 IAuditable → 零审计行 ─────────────────
++    [Fact]
++    public void Create_OeeDaily_writes_no_audit_row()
++    {
++        // 派生型日次集計：全字段皆由停止/实绩重算派生，无源真值、日频重算，豁免 IAuditable。
++        using var db = Ctx();
++        var oee = new OeeDaily
++        {
++            OeeDate = new DateTime(2026, 7, 12),
++            MachineCd = "MC01",
++            GoodQty = 900m,
++            DefectQty = 10m,
++            Oee = 85.5m,
++        };
++        db.Set<OeeDaily>().Add(oee);
++        db.SaveChanges();
++
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // ── 负测试：MES 採番計数器（MesSequence）未贴 IAuditable → 零审计行 ─────────────────
++    [Fact]
++    public void Update_MesSequence_writes_no_audit_row()
++    {
++        // 純採番計数器：每次採番自增，无业务字段/无货币，豁免 IAuditable。
++        using var db = Ctx();
++        var seq = new MesSequence { SeqKey = "WO", SeqDate = "2026-07-12", CurrentValue = 1 };
++        db.Set<MesSequence>().Add(seq);
++        db.SaveChanges();
++
++        seq.CurrentValue = 2;
++        db.SaveChanges();
++
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++}

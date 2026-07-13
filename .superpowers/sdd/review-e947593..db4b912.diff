@@ -1,0 +1,478 @@
+# Review package: e947593..db4b912
+
+## Commits
+db4b912 feat(mes): M-MES T2 菜单MenuKey锚定(MesMenuSeed)+10键防御矫正
+
+## Files changed
+ .superpowers/sdd/mes-t2-report.md |  66 ++++++++++++++++++
+ CP6.Tests/MesMenuSeedTests.cs     | 128 +++++++++++++++++++++++++++++++++++
+ CP6.WebApi/Program.cs             |   7 ++
+ CP6.WebApi/Seed/MesMenuSeed.cs    | 139 ++++++++++++++++++++++++++++++++++++++
+ docs/seeds/mes-key-menu-anchor.md |  44 ++++++++++++
+ docs/seeds/mes-menu-seed.sql      |  24 +++++++
+ 6 files changed, 408 insertions(+)
+
+## Diff
+diff --git a/.superpowers/sdd/mes-t2-report.md b/.superpowers/sdd/mes-t2-report.md
+new file mode 100644
+index 0000000..2f337d9
+--- /dev/null
++++ b/.superpowers/sdd/mes-t2-report.md
+@@ -0,0 +1,66 @@
++# M-MES T2 报告：菜单 MenuKey 锚定(MesMenuSeed)
++
++生成于 2026-07-12。真相源 `docs/seeds/mes-permission-keys.md` §二/§六；同型先例 ErpMenuSeed。
++
++## 10 键锚定表（逐字取自真相源 §二）
++
++| # | menu-key | 锚定 MenuId | RoutePath | 裁决 |
++|---|---|---|---|---|
++| 1 | `mes-planning-board` | 301 | `/mes/planning-board` | 单页 |
++| 2 | `mes-work-order` | 302 | `/mes/work-order` | 入力锚定；303 一覧 null |
++| 3 | `mes-production-result` | 304 | `/mes/production-result` | 入力锚定；305 一覧 null |
++| 4 | `mes-quality-inspection` | 306 | `/mes/quality-inspection` | 入力锚定；307 一覧 null。键取菜单域名非 `inspections` |
++| 5 | `mes-defect` | 308 | `/mes/defect` | 单页 |
++| 6 | `mes-machine` | 310 | `/mes/machine-list` | ★命门2：显式赋 `mes-machine`（非回填 `mes-machine-list`）|
++| 7 | `mes-oee` | 311 | `/mes/oee` | 单页 |
++| 8 | `mes-plan-achievement` | 313 | `/mes/plan-achievement` | 单页，仅 view |
++| 9 | `mes-work-center` | 314 | `/mes/work-center` | 主数据 |
++| 10 | `mes-process-cost-rate` | 315 | `/mes/process-cost-rate` | 主数据 |
++
++非锚定行（MenuKey 留 null）：300 父 / 303,305,307 一覧 / 309 dashboard,312 control-tower（GET-only）。共 16 行 = 10 锚 + 6 null。
++
++## 矫正块作用域说明
++
++防御矫正块 `foreach (r in Rows) { if (r.Key == null) continue; ... }` — **作用域严限 10 个 `r.Key != null` 锚定行**。
++一覧页/看板/父行（6 行 null 键）不进入矫正，交由 Program.cs 回填派生 `*-list` 后缀键（无 action 引用、无害）。
++关键场景：既有库中 310 若被历史回填成 `mes-machine-list`，矫正块就地纠回 `mes-machine`（对应测试 `EnsureSeeded_CorrectsHistoricalBackfilledBareKey_ToMesPrefixed`）。
++
++## 回填时序落实
++
++`MesMenuSeed.EnsureSeeded(db)` 接入 Program.cs（WmsPermissionSeed 之后，约 :844），
++位于「无 MenuKey 菜单 RoutePath 自动回填」块（:894-901）**之前**，且在启动种子块无条件路径上。
++洁净首启即赋 10 锚定行 MenuKey，无「首启 null → 全 403 → 二次重启才生效」窗口（硬前置①解除）。
++现有 Program.cs MES 菜单 Add 块（:1511+）位于回填之后、Add 时不设 MenuKey——因 MesMenuSeed 已先插入这些 MenuId，
++其 `if (!Any(MenuId==...))` 守卫全部跳过，无重复插入（幂等）。
++
++## TDD Evidence
++
++- **RED**：先写 `MesMenuSeedTests.cs`（6 测试），`dotnet test --filter MesMenuSeedTests` →
++  编译失败 `CS0103: The name 'MesMenuSeed' does not exist`（实现未存在）。
++- **GREEN**：实现 `MesMenuSeed.cs` + Program.cs 接线后 → `Passed! Failed: 0, Passed: 6`。
++- **全量基线**：`dotnet test CP6.Tests` → `Passed: 1722, Skipped: 5`（基线 1716 + 新增 6，无回归下跌）。
++
++6 个测试：锚定 10 键→MenuId / machine 显式 mes-machine 非 mes-machine-list / 无两行共非空键(=10) /
++幂等(16 菜单+16 RoleMenu 二次不变) / 历史回填错配就地矫正 / 父行+一覧+GET-only 留 null。
++
++## Files changed
++
++- `CP6.WebApi/Seed/MesMenuSeed.cs`（新增，实现正本）
++- `CP6.Tests/MesMenuSeedTests.cs`（新增，6 测试）
++- `CP6.WebApi/Program.cs`（接线 1 处：WmsPermissionSeed 之后、回填块之前）
++- `docs/seeds/mes-key-menu-anchor.md`（新增，T3b 输入映射）
++- `docs/seeds/mes-menu-seed.sql`（新增，SQL 对照，头声明 C# 正本）
++
++## Self-review findings
++
++- 10 键与真相源 §二逐字一致 ✅；锚定 MenuId 与锚定表 md/SQL 三者一致 ✅。
++- 接线在回填块(:894)之前、启动无条件路径 ✅。
++- 矫正块严限 10 锚定行（`r.Key == null` 跳过）✅；machine-list 错配可被纠回 ✅。
++- 唯一索引安全（10 distinct 键，测试断言）✅；6 非锚定行留 null ✅。
++- 测试真实（删实现 → 编译红，已实证）；幂等二次调用 16/16 不变 ✅。
++- 无发现须修问题。
++
++## Concerns
++
++- 逐租户 RoleAction 传播（mes-* 键→admin 放行）不在本任务范围，属 T3b；沿用平台既有「首次补建管理员角色」机制。
++- ProcessCostRate 高危提级(§五归并5)为真相源待 T2 审计拍板项——本任务只锚定 menu-key，不涉及 action 分级，无影响。
+diff --git a/CP6.Tests/MesMenuSeedTests.cs b/CP6.Tests/MesMenuSeedTests.cs
+new file mode 100644
+index 0000000..ee3c6f1
+--- /dev/null
++++ b/CP6.Tests/MesMenuSeedTests.cs
+@@ -0,0 +1,128 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-MES 横切接线 Task 2：MesMenuSeed 幂等 + MenuKey 锚定断言。
++/// 头号命门回归：既有 300 段菜单在 Program.cs 回填块之后 Add 且未设 MenuKey → 洁净首启 null 全 403；
++///   且 310 RoutePath=/mes/machine-list 回填得 mes-machine-list ≠ 真相源 mes-machine（machine 键错配）。
++/// MesMenuSeed 须在回填前把 10 锚定行显式赋 mes-*，并把已被错误回填的行就地纠回。
++/// </summary>
++public class MesMenuSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 真相源 docs/seeds/mes-permission-keys.md §二 的 10 个 menu-key → 锚定 MenuId。
++    private static readonly (string Key, int MenuId)[] Anchors =
++    {
++        ("mes-planning-board", 301),
++        ("mes-work-order", 302),
++        ("mes-production-result", 304),
++        ("mes-quality-inspection", 306),
++        ("mes-defect", 308),
++        ("mes-machine", 310),
++        ("mes-oee", 311),
++        ("mes-plan-achievement", 313),
++        ("mes-work-center", 314),
++        ("mes-process-cost-rate", 315),
++    };
++
++    [Fact]
++    public void EnsureSeeded_AnchorsAll10KeysToExpectedMenuIds()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++
++        foreach (var (key, menuId) in Anchors)
++        {
++            var menu = db.Sys_Menus.SingleOrDefault(m => m.MenuId == menuId);
++            Assert.NotNull(menu);
++            Assert.Equal(key, menu!.MenuKey);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_MachineAnchoredToMesMachine_NotBackfilledMesMachineList()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++
++        // 命门2：菜单 310 RoutePath=/mes/machine-list（回填得 mes-machine-list），须显式赋 mes-machine。
++        var m = db.Sys_Menus.Single(x => x.MenuId == 310);
++        Assert.Equal("/mes/machine-list", m.RoutePath);
++        Assert.Equal("mes-machine", m.MenuKey);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTwoRowsShareANonNullMenuKey()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++
++        // Sys_Menus.MenuKey 有 IS NOT NULL 过滤唯一索引；一域两页禁共键。断言锚定键各占一行。
++        var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
++        Assert.Equal(keyed.Count, keyed.Distinct().Count());
++        Assert.Equal(10, keyed.Count);
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_NoDuplicateRowsOrRoleMenus()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++        var menuCount1 = db.Sys_Menus.Count();
++        var roleMenuCount1 = db.Sys_RoleMenus.Count();
++
++        MesMenuSeed.EnsureSeeded(db);   // 第二次
++        Assert.Equal(menuCount1, db.Sys_Menus.Count());
++        Assert.Equal(roleMenuCount1, db.Sys_RoleMenus.Count());
++
++        // 全 16 行（300 父 + 301–315）+ 各授管理员一条 RoleMenu。
++        Assert.Equal(16, menuCount1);
++        Assert.Equal(16, roleMenuCount1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_CorrectsHistoricalBackfilledBareKey_ToMesPrefixed()
++    {
++        using var db = NewDb();
++        // 模拟既有库：310 設備管理 曾被历史回填成 mes-machine-list（≠ 真相源 mes-machine）——命门2。
++        db.Sys_Menus.Add(new Sys_Menu
++        {
++            MenuId = 310, MenuName = "設備管理", RoutePath = "/mes/machine-list",
++            MenuKey = "mes-machine-list", ParentId = 300, OrderNo = 310, Enable = true,
++        });
++        db.SaveChanges();
++
++        MesMenuSeed.EnsureSeeded(db);
++
++        var m = db.Sys_Menus.Single(x => x.MenuId == 310);
++        Assert.Equal("mes-machine", m.MenuKey);   // 就地矫正
++    }
++
++    [Fact]
++    public void EnsureSeeded_ListPagesAndParentAndGetOnly_LeaveMenuKeyNull_ForBackfill()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++
++        // 父行 300 + 一覧页（303/305/307）+ GET-only 看板（309 dashboard / 312 control-tower）
++        // 不承载权限：MenuKey 留 null（交由回填派生后缀键，无 action 引用、无害）。
++        foreach (var id in new[] { 300, 303, 305, 307, 309, 312 })
++        {
++            var m = db.Sys_Menus.Single(x => x.MenuId == id);
++            Assert.Null(m.MenuKey);
++        }
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 8c986a5..d216ede 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -835,20 +835,27 @@ using (var scope = app.Services.CreateScope())
+     // Task 3a 给 10 控制器 35 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 ErpMenuSeed 之后（RoleAction 挂锚定 MenuId 202/204/206/208/209/210/212/213/215/218/220，菜单行须先在）。
+     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。30 去重元组（35 写端点去重）覆盖 11 有写端点 menu-key。
+     CP6.WebApi.Seed.ErpPermissionSeed.EnsureSeeded(db);
+ 
+     // M-WMS 横切接线 Task 3b：WMS 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
+     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+ 
++    // M-MES 横切接线 Task 2：MES 300 段菜单锚定 MenuKey（mes-*）。
++    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块（:894）之前：既有 300–315 由 Program.cs（本文件 :1511+）
++    //   在回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → MES 全 403。
++    //   本种子在回填前对 10 有菜单键各锚定一行显式设 mes-* MenuKey（含缺行补建），并防御矫正历史回填错配
++    //   （尤其 310 /mes/machine-list 回填得 mes-machine-list ≠ 真相源 mes-machine）。MES 无孤儿路由，纯锚定。
++    CP6.WebApi.Seed.MesMenuSeed.EnsureSeeded(db);
++
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+         db.SaveChanges();
+     }
+     // PUB 章00 组织模型：部门管理菜单
+     if (!db.Sys_Menus.Any(m => m.MenuId == 108))
+     {
+diff --git a/CP6.WebApi/Seed/MesMenuSeed.cs b/CP6.WebApi/Seed/MesMenuSeed.cs
+new file mode 100644
+index 0000000..fa0fe28
+--- /dev/null
++++ b/CP6.WebApi/Seed/MesMenuSeed.cs
+@@ -0,0 +1,139 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// MES 製造執行 菜单启动幂等种子（M-MES 横切接线 Task 2）。
++///
++/// 背景（头号命门·回填时序）：MES 300 段菜单（300–315）由 Program.cs 播种，但插入块位于
++/// 「无 MenuKey 菜单 RoutePath 自动回填」块（<c>MenuKey = RoutePath.Trim('/').Replace('/','-')</c>）
++/// **之后**，且 Add 时**均未设 MenuKey**。洁净部署首启：回填块先跑（MES 菜单尚不存在）→ 跳过；MES 菜单随后
++/// 插入 MenuKey 留 null → <see cref="Sys_Menu.MenuKey"/> 为 null 被 PermissionAggregator 过滤掉 → MES action
++/// 键无法 join 出 → 首启即 fail-closed 403，需二次重启回填才生效。本种子在回填块**之前**调用，把 10 个
++/// 有菜单的权限键各锚定到**一个**菜单行显式设 MenuKey=<c>mes-*</c>（含缺行补建），首启即生效。
++///
++/// 命门2·machine 键回填错配：菜单 310 RoutePath=<c>/mes/machine-list</c>，回填得 <c>mes-machine-list</c>
++/// ≠ 真相源 <c>docs/seeds/mes-permission-keys.md</c> §二 的 <c>mes-machine</c>。若依赖回填，Machine 全键
++/// （add/edit/del/status/downtime）锚定到错误键 → 与 T3 贴的 <c>mes-machine:*</c> 对不上 → Machine 全 403。
++/// 本种子对 310 显式赋 <c>MenuKey="mes-machine"</c>（RoutePath 不动），并由防御矫正块把已被历史回填写坏的
++/// 行就地纠回。
++///
++/// MenuKey 策略（与 ErpMenuSeed/WmsMenuSeed 一致）：
++///  - **锚定行**显式设 MenuKey = T1 权威键，**绝不靠 RoutePath 自动回填**。
++///  - **一域两页（入力 + 一覧）只锚定「入力/主操作页」一行**，一覧页（303/305/307）MenuKey 留 null
++///    （由 Program.cs 回填得 RoutePath 派生 <c>*-list</c> 键，不承载权限、无 RoleAction 引用）。
++///    GET-only 看板（309 dashboard / 312 control-tower）同理留 null。
++///    ★这是**硬约束**：<c>Sys_Menus.MenuKey</c> 有 <c>IS NOT NULL</c> 过滤唯一索引
++///    （HasIndex("MenuKey").IsUnique().HasFilter），两行共赋同一非空 MenuKey 会撞唯一键。
++///    故必须一键一锚定行（真相源 §二：MES 因回填按 RoutePath 天然差异化，10 锚定键互不相同）。
++///  - MES 无孤儿路由（T1 已证 15 前端页全映射到 300 段菜单），本种子纯锚定、无收编。
++///
++/// 幂等：MenuId 判存守卫不重复插入；防御矫正块把既有库中被历史回填写坏的 10 锚定行 MenuKey 就地纠回
++/// <c>mes-*</c>（作用域严限 10 锚定行 r.Key != null；一覧/看板/父行不动）。RoleMenu 默认授管理员
++/// （RoleId=1，默认租户由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
++/// </summary>
++public static class MesMenuSeed
++{
++    /// <summary>
++    /// 菜单定义：(MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey)。
++    /// MenuKey 非 null 者即 10 个权限锚定行；null 者为父行/一覧页/GET-only 看板（不承载权限）。
++    /// 300 段既有 300–315 已由 Program.cs 播种，本表含之仅为 (a) 显式锚定 MenuKey (b) 部分部署缺行时补建。
++    /// RoutePath 与 Program.cs 现有 MES 菜单块逐字一致（310 保持 /mes/machine-list）。
++    /// </summary>
++    private static readonly (int Id, string Name, string? Route, string Icon, int? Parent, int Order, string? Key)[] Rows =
++    {
++        // ── 親（Top） ───────────────────────────────────────────
++        (300, "製造執行(MES)",        null,                            "SetUp",       null, 300, null),
++
++        // ── 生産計画ボード（单页，锚定） ─────────────────────────
++        (301, "生産計画ボード",        "/mes/planning-board",           "Calendar",    300, 301, "mes-planning-board"),
++
++        // ── 製造指図（入力锚定 / 一覧留 null） ───────────────────
++        (302, "製造指図 入力",         "/mes/work-order",               "DocumentAdd", 300, 302, "mes-work-order"),
++        (303, "製造指図 一覧",         "/mes/work-order-list",          "Files",       300, 303, null),
++
++        // ── 製造実績（入力锚定 / 一覧留 null） ───────────────────
++        (304, "製造実績 入力",         "/mes/production-result",        "EditPen",     300, 304, "mes-production-result"),
++        (305, "製造実績 一覧",         "/mes/production-result-list",   "DataLine",    300, 305, null),
++
++        // ── 品質検査（入力锚定 / 一覧留 null；键取菜单域名 quality-inspection，非控制器路由 inspections）─
++        (306, "品質検査 入力",         "/mes/quality-inspection",       "Operation",   300, 306, "mes-quality-inspection"),
++        (307, "品質検査 一覧",         "/mes/quality-inspection-list",  "Histogram",   300, 307, null),
++
++        // ── 不良品管理（单页，锚定） ─────────────────────────────
++        (308, "不良品管理",           "/mes/defect",                   "Warning",     300, 308, "mes-defect"),
++
++        // ── GET-only 看板（留 null，不承载权限） ─────────────────
++        (309, "MESダッシュボード",     "/mes/dashboard",                "PieChart",    300, 309, null),
++
++        // ── 設備管理（★命门2：RoutePath /mes/machine-list，显式赋 mes-machine 而非回填 mes-machine-list）─
++        (310, "設備管理",             "/mes/machine-list",             "Monitor",     300, 310, "mes-machine"),
++
++        // ── OEE 分析（单页，锚定） ───────────────────────────────
++        (311, "OEE 分析",            "/mes/oee",                      "TrendCharts", 300, 311, "mes-oee"),
++
++        // ── Control Tower 大屏（GET-only 可视化，留 null） ───────
++        (312, "Control Tower 大屏",   "/mes/control-tower",            "Aim",         300, 312, null),
++
++        // ── 生産計画達成率（仅 view，锚定） ──────────────────────
++        (313, "生産計画達成率",        "/mes/plan-achievement",         "DataLine",    300, 313, "mes-plan-achievement"),
++
++        // ── 工作中心 / 工序费率 主数据（锚定） ───────────────────
++        (314, "工作中心",             "/mes/work-center",              "Setting",     300, 314, "mes-work-center"),
++        (315, "工序费率",             "/mes/process-cost-rate",        "Money",       300, 315, "mes-process-cost-rate"),
++    };
++
++    /// <summary>
++    /// 幂等播种全部 MES 菜单 + 授管理员（RoleId=1）+ 锚定行 MenuKey 显式矫正。
++    /// 须在 Program.cs 的「无 MenuKey 菜单 RoutePath 自动回填」块**之前**调用。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var changed = false;
++        foreach (var r in Rows)
++        {
++            if (!db.Sys_Menus.Any(m => m.MenuId == r.Id))
++            {
++                db.Sys_Menus.Add(new Sys_Menu
++                {
++                    MenuId = r.Id,
++                    MenuName = r.Name,
++                    RoutePath = r.Route,
++                    MenuKey = r.Key,
++                    Icon = r.Icon,
++                    ParentId = r.Parent,
++                    OrderNo = r.Order,
++                    Enable = true,
++                });
++                changed = true;
++            }
++
++            // 授管理员菜单（默认租户由 SaveChanges 拦截器盖章 TenantId）。菜单已存在但未授权时补授（幂等）。
++            if (!db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == r.Id))
++            {
++                db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = r.Id });
++                changed = true;
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++
++        // 锚定键防御：既有 300 段缺 MenuKey 时会被历史 RoutePath 回填写成派生键（310→mes-machine-list…），
++        // 就地矫正为 T1 权威键。作用域严限 10 个锚定行（r.Key != null），一覧页/看板/父行不动。幂等（已正确即跳过）。
++        var fixedAny = false;
++        foreach (var r in Rows)
++        {
++            if (r.Key == null) continue;
++            var menu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == r.Id);
++            if (menu != null && menu.MenuKey != r.Key)
++            {
++                menu.MenuKey = r.Key;
++                fixedAny = true;
++            }
++        }
++        if (fixedAny)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/mes-key-menu-anchor.md b/docs/seeds/mes-key-menu-anchor.md
+new file mode 100644
+index 0000000..9c222b3
+--- /dev/null
++++ b/docs/seeds/mes-key-menu-anchor.md
+@@ -0,0 +1,44 @@
++# MES menu-key → 锚定 MenuId 映射（M-MES Task 2 交付，T3b 输入）
++
++> 生成于 2026-07-12。**正本 = `CP6.WebApi/Seed/MesMenuSeed.cs`**（本表与 `mes-menu-seed.sql` 均为其对照/派生）。
++> 依据真相源 `docs/seeds/mes-permission-keys.md` §二（10 menu-key）/§六（硬前置）。
++> 用途：T3b `Sys_MenuAction`/`Sys_RoleAction` 逐租户种子以本表「键→MenuId」为锚。
++
++## 10 键锚定表
++
++| # | menu-key | 锚定 MenuId | RoutePath | 菜单名 | 裁决 |
++|---|---|---|---|---|---|
++| 1 | `mes-planning-board` | 301 | `/mes/planning-board` | 生産計画ボード | 单页，回填即一致，仍显式锚定规避时序 |
++| 2 | `mes-work-order` | 302 | `/mes/work-order` | 製造指図 入力 | 入力页锚定；303 一覧留 null |
++| 3 | `mes-production-result` | 304 | `/mes/production-result` | 製造実績 入力 | 入力页锚定；305 一覧留 null |
++| 4 | `mes-quality-inspection` | 306 | `/mes/quality-inspection` | 品質検査 入力 | 入力页锚定；307 一覧留 null。键取菜单域名，非控制器路由 `inspections` |
++| 5 | `mes-defect` | 308 | `/mes/defect` | 不良品管理 | 单页 |
++| 6 | `mes-machine` | 310 | `/mes/machine-list` | 設備管理 | ★命门2：RoutePath 回填得 `mes-machine-list`，**显式赋 `mes-machine`** + 防御矫正 |
++| 7 | `mes-oee` | 311 | `/mes/oee` | OEE 分析 | 单页 |
++| 8 | `mes-plan-achievement` | 313 | `/mes/plan-achievement` | 生産計画達成率 | 单页，仅 view |
++| 9 | `mes-work-center` | 314 | `/mes/work-center` | 工作中心 | 单页，主数据 |
++| 10 | `mes-process-cost-rate` | 315 | `/mes/process-cost-rate` | 工序费率 | 单页，主数据 |
++
++## 非锚定行（MenuKey 留 null，由回填派生后缀键，不承载权限）
++
++| MenuId | 菜单名 | RoutePath | 类别 |
++|---|---|---|---|
++| 300 | 製造執行(MES) | (null) | 父行 |
++| 303 | 製造指図 一覧 | `/mes/work-order-list` | 一覧页 |
++| 305 | 製造実績 一覧 | `/mes/production-result-list` | 一覧页 |
++| 307 | 品質検査 一覧 | `/mes/quality-inspection-list` | 一覧页 |
++| 309 | MESダッシュボード | `/mes/dashboard` | GET-only 看板 |
++| 312 | Control Tower 大屏 | `/mes/control-tower` | GET-only 可视化 |
++
++## 段位与孤儿
++
++- MenuId 段位 = 既有 300–315（16 行），**全部已由 Program.cs 播种，无新建缺行**。
++- MES **零孤儿路由**（T1 已证 15 前端页全映射到 300 段），本任务纯锚定、无收编（对比 ERP 216–220 收编 5 孤儿）。
++- 唯一索引安全：10 锚定键互不相同（真相源 §二，MES 回填按 RoutePath 天然差异化，一域两页仅锚入力页），
++  不撞 `Sys_Menus.MenuKey IS NOT NULL` 过滤唯一索引。
++
++## 硬前置落实
++
++1. **回填时序**：`MesMenuSeed.EnsureSeeded` 接入 Program.cs `~:844`（WmsPermissionSeed 之后），
++   **先于回填块 :894** 执行 → 洁净首启即赋 MenuKey，无 null-全-403 窗口。
++2. **machine 键错配**：310 显式 `mes-machine`（非回填 `mes-machine-list`），防御矫正块严限 10 锚定行就地纠回。
+diff --git a/docs/seeds/mes-menu-seed.sql b/docs/seeds/mes-menu-seed.sql
+new file mode 100644
+index 0000000..2b18e51
+--- /dev/null
++++ b/docs/seeds/mes-menu-seed.sql
+@@ -0,0 +1,24 @@
++-- ═══════════════════════════════════════════════════════════════════════════
++-- MES 菜单 MenuKey 锚定 — SQL 对照（M-MES Task 2）
++-- ─────────────────────────────────────────────────────────────────────────────
++-- ★正本 = CP6.WebApi/Seed/MesMenuSeed.cs（启动幂等 C# 种子）。本 SQL 仅为审计/手工核对对照，
++--   不参与运行时播种。以 C# 为准；若二者不一致，以 MesMenuSeed.cs + docs/seeds/mes-permission-keys.md §二 为真相源。
++-- 前置：300–315 菜单行由 Program.cs 播种；本脚本仅显式设 10 锚定行 MenuKey=mes-*，并矫正历史回填错配。
++-- 作用域严限 10 锚定行（MenuId in 301,302,304,306,308,310,311,313,314,315）；一覧/看板/父行 MenuKey 留 null。
++-- 幂等：仅当 MenuKey <> 目标 或 为 null 时更新。
++-- ═══════════════════════════════════════════════════════════════════════════
++
++UPDATE Sys_Menus SET MenuKey = 'mes-planning-board'     WHERE MenuId = 301 AND (MenuKey IS NULL OR MenuKey <> 'mes-planning-board');
++UPDATE Sys_Menus SET MenuKey = 'mes-work-order'         WHERE MenuId = 302 AND (MenuKey IS NULL OR MenuKey <> 'mes-work-order');
++UPDATE Sys_Menus SET MenuKey = 'mes-production-result'  WHERE MenuId = 304 AND (MenuKey IS NULL OR MenuKey <> 'mes-production-result');
++UPDATE Sys_Menus SET MenuKey = 'mes-quality-inspection' WHERE MenuId = 306 AND (MenuKey IS NULL OR MenuKey <> 'mes-quality-inspection');
++UPDATE Sys_Menus SET MenuKey = 'mes-defect'             WHERE MenuId = 308 AND (MenuKey IS NULL OR MenuKey <> 'mes-defect');
++-- ★命门2：310 RoutePath=/mes/machine-list 回填得 mes-machine-list，此处强制纠回 mes-machine。
++UPDATE Sys_Menus SET MenuKey = 'mes-machine'            WHERE MenuId = 310 AND (MenuKey IS NULL OR MenuKey <> 'mes-machine');
++UPDATE Sys_Menus SET MenuKey = 'mes-oee'                WHERE MenuId = 311 AND (MenuKey IS NULL OR MenuKey <> 'mes-oee');
++UPDATE Sys_Menus SET MenuKey = 'mes-plan-achievement'   WHERE MenuId = 313 AND (MenuKey IS NULL OR MenuKey <> 'mes-plan-achievement');
++UPDATE Sys_Menus SET MenuKey = 'mes-work-center'        WHERE MenuId = 314 AND (MenuKey IS NULL OR MenuKey <> 'mes-work-center');
++UPDATE Sys_Menus SET MenuKey = 'mes-process-cost-rate'  WHERE MenuId = 315 AND (MenuKey IS NULL OR MenuKey <> 'mes-process-cost-rate');
++
++-- 核对：应恰好 10 行非空 mes-* 键，且各占唯一 MenuId。
++-- SELECT MenuId, MenuKey, RoutePath FROM Sys_Menus WHERE MenuId BETWEEN 300 AND 315 ORDER BY MenuId;

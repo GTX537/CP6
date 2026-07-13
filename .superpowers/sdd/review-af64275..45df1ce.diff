@@ -1,0 +1,552 @@
+# Review package: af64275..45df1ce
+
+## Commits
+45df1ce feat(erp): M-ERP T5 钱与主数据实体贴 IAuditable(字段级审计)
+
+## Files changed
+ .superpowers/sdd/erp-t5-report.md              |  68 +++++++++++
+ CP6.Entity/DomainModels/Erp/CreditNote.cs      |   2 +-
+ CP6.Entity/DomainModels/Erp/EstimateCalc.cs    |   2 +-
+ CP6.Entity/DomainModels/Erp/FscChecklist.cs    |   2 +
+ CP6.Entity/DomainModels/Erp/FxRate.cs          |   2 +-
+ CP6.Entity/DomainModels/Erp/Order.cs           |   2 +-
+ CP6.Entity/DomainModels/Erp/OrderDetail.cs     |   2 +-
+ CP6.Entity/DomainModels/Erp/ProductLotPrice.cs |   2 +-
+ CP6.Entity/DomainModels/Erp/ProductMaster.cs   |   2 +-
+ CP6.Entity/DomainModels/Erp/Quotation.cs       |   2 +-
+ CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs  |   4 +-
+ CP6.Tests/Erp/ErpAuditTests.cs                 | 162 +++++++++++++++++++++++++
+ 12 files changed, 242 insertions(+), 10 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/erp-t5-report.md b/.superpowers/sdd/erp-t5-report.md
+new file mode 100644
+index 0000000..b1e3fb3
+--- /dev/null
++++ b/.superpowers/sdd/erp-t5-report.md
+@@ -0,0 +1,68 @@
++# M-ERP T5 执行报告：IAuditable 贴点(BusinessPartner/Product/价表/Order)
++
++## 结论
++钱与主数据关键 ERP 实体接入字段级审计（IAuditable 纯标记接口单行追加）。10 实体新贴 + BusinessPartner 早已贴（T1 f09af0f），共 11 实体覆盖。零 schema 改动、零迁移、零业务逻辑改动。新增 ErpAuditTests 7 用例（6 正测 + 1 负测），全绿；全量 1706 通过（1699 基线 + 7 新增），0 失败。
++
++## 逐实体裁决表（CP6.Entity/DomainModels/Erp/ 全 21 类实查）
++
++### 纳入（贴 IAuditable）
++| 实体 | 表 | 类别 | 理由 |
++|---|---|---|---|
++| BusinessPartner | T_WebBusinessPartner | 取引先主档 | 系统最复杂主数据；**T1(f09af0f) 已贴**，本任务无改动，纳入计数确认 |
++| ProductMaster | T_ProductMaster | 製品主档 | 核心主数据，受注快照源头 |
++| Order | T_Order | 受注头 | 交易钱路头（CurrencyCd/FxRate 冻结） |
++| OrderDetail | T_OrderDetail | 受注明细 | ~125 项含单价/金额快照——行级钱所在（brief 明列「头/明细」） |
++| FxRate | T_FxRate | 為替定价主数据 | 改它直接影响算价/换算额 |
++| SheetUnitPrice | T_SheetUnitPrice | シート単価表 | 定价主数据（价表核心） |
++| SheetUnitPriceEstimate | T_SheetUnitPriceEstimate | 見積用単価表 | 同结构价表，同「改它影响算价」原则 |
++| ProductLotPrice | T_ProductLotPrice | ロット別単価表 | 製品定价主数据 |
++| EstimateCalc | T_EstimateCalc | 見積計算書头 | 报价计算钱路头（brief 邀「Estimate 头」判断→纳入） |
++| Quotation | T_Quotation | 御見積書头 | 报价书钱路头（brief 邀「Quotation 头」判断→纳入） |
++| CreditNote | T_CreditNote | 信用票据 | 返金/交換 Amount 钱路 |
++
++### 豁免（不贴 IAuditable）
++| 实体 | 类别 | 豁免理由 | 留痕方式 |
++|---|---|---|---|
++| FscChecklist | 追加型 FSC 発行履歴 | 発行ごと 1 行追加不可变，字段审计无意义（照 WMS StockTransaction 先例） | **源码注释坐实 + 负测试坐实零审计行** |
++| OrderProcess | 受注加工工程子明细 | 头 Order/OrderDetail 承载钱，工程行高基数「头为主」 | 报告 + commit msg |
++| OrderMaterial | 受注加工材料子明细 | 同上，材料行高基数「头为主」 | 报告 + commit msg |
++| OrderProcessNote | 受注工程備考 | 备考文本子行，「头为主」 | 报告 + commit msg |
++| EstimateCalcProcess | 見積计算子工程明细 | 头 EstimateCalc 为主 | 报告 + commit msg |
++| QuotationCalc | 御見積-計算書中间关联表 | 头 Quotation 为主 | 报告 + commit msg |
++| QuotationDetail | 御見積印字用明细 | 头 Quotation 为主 | 报告 + commit msg |
++| ProductProcess | 製品加工工程子明细 | 头 ProductMaster 为主 | 报告 + commit msg |
++| ProductMaterial | 製品加工材料子明细 | 头 ProductMaster 为主 | 报告 + commit msg |
++| ProductCoProduct | 製品連産品子明细 | 头 ProductMaster 为主 | 报告 + commit msg |
++| PlateMold | 木型・版型管理マスタ | 主档但**非定价**、改定走 Rev 追加型历史（新增记录非原地改），超出本任务「钱与定价主数据」圈定范围；可后续波按主档审计需求单独评估 | 报告（borderline，记票） |
++
++**豁免注释策略**：brief req 3 将源码注释限定于「高频写入/追加型日志类」豁免（照 WMS Stock/StockTransaction 先例）。ERP 中唯一该类=FscChecklist（追加型履历），已加源码 `[审计豁免]` 注释 + 负测试。其余为「头为主」明细豁免（不同类别，WMS 先例亦仅 commit-msg 留痕，未逐文件注释），坐实于本表 + commit message，避免 11 文件注释churn（遵 Code Organization「零其他改动」）。
++
++## TDD Evidence
++- **RED**（贴点前跑 ErpAuditTests）：`Failed: 6, Passed: 1`——6 正测 `Assert.Single() Failure: collection was empty`（无审计行），负测试 FscChecklist 已绿。
++- **GREEN**（10 实体贴 IAuditable 后）：`Passed: 7, Failed: 0`。
++- **全量回归**：`Passed: 1706, Failed: 0, Skipped: 5`（基线 1699 + 7 新增，无退化）。
++
++## 测试内容（真实断言 Sys_FieldAuditLog 行内容）
++- Create_Order → op1 行，断言 EntityName=`Order` + EntityKey=Id
++- Update_Order_fxRate → op2 diff，断言 Field=`FxRate` Old=`1` New=`150`
++- Update_OrderDetail_amount → op2 diff，断言 Field=`Amount` New=`1200`（明细钱）
++- Create_ProductMaster → op1 行，EntityName + EntityKey
++- Update_FxRate_rate → op2 diff，Field=`Rate` Old=`150` New=`155`（定价主数据）
++- Create_SheetUnitPrice → op1 行（价表 master）
++- **负测试** Append_FscChecklist → `Assert.Empty` 零审计行（豁免坐实）
++
++## Files Changed
++- 实体单行追加接口（10 文件）：CreditNote / EstimateCalc / FxRate / Order / OrderDetail / ProductLotPrice / ProductMaster / Quotation / SheetUnitPrice(含 SheetUnitPriceEstimate 同文件)
++- FscChecklist.cs：新增 2 行 `[审计豁免]` 注释（零 schema/逻辑改动）
++- 新增测试：CP6.Tests/Erp/ErpAuditTests.cs（7 用例）
++
++## Self-Review
++- 逐实体裁决表完整（21 类全覆盖，纳入 11/豁免 11，BusinessPartner 计入纳入）✓
++- 豁免理由坐实：追加型 FscChecklist 源码注释 + 负测试；头为主明细报告/commit 留痕 ✓
++- 测试真实断言实体名/字段/新旧值，含负测试 ✓
++- 零业务逻辑改动；`git status` 无 Migrations 新文件 ✓
++- IAuditable 空标记接口不映射列 → EF 模型无漂移；全量 1706 绿含既有 EF 模型/迁移相关测试无退化 ✓
++
++## Concerns
++- **PlateMold（borderline 记票）**：木型・版型管理マスタ为主数据但非定价，本任务按「钱与定价主数据」圈定豁免。若后续以「全主档审计」为口径，应单独评估纳入（改定走 Rev 追加历史，字段审计价值主要在「訂正」原地改场景）。
++- OrderDetail 纳入是相对 WMS T6「单据明细头为主」豁免的**有据departure**：brief 明列「Order 头/明细」，且 OrderDetail 承载行级单价/金额快照（钱所在）；与 WMS 纳入 StockTakeDetail（主明细）一致。生产写审计行开销：受注为低频交易文档，非高频台账，开销可接受。
+diff --git a/CP6.Entity/DomainModels/Erp/CreditNote.cs b/CP6.Entity/DomainModels/Erp/CreditNote.cs
+index f7085e3..e7417ad 100644
+--- a/CP6.Entity/DomainModels/Erp/CreditNote.cs
++++ b/CP6.Entity/DomainModels/Erp/CreditNote.cs
+@@ -1,17 +1,17 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ [Table("T_CreditNote")]
+-public class CreditNote : BaseBizEntity
++public class CreditNote : BaseBizEntity, IAuditable
+ {
+     [Required, MaxLength(20)] public string CreditNoteNo { get; set; } = string.Empty;
+     [MaxLength(20)] public string? WebOrderNo { get; set; }
+     [MaxLength(20)] public string? RmaNo { get; set; }
+     [Required, MaxLength(20)] public string Type { get; set; } = CreditNoteType.Refund;
+     [Required, MaxLength(20)] public string CustomerCd { get; set; } = string.Empty;
+     [MaxLength(20)] public string? ProductCd { get; set; }
+     [MaxLength(30)] public string? LotNo { get; set; }
+     [Column(TypeName = "decimal(21,8)")] public decimal Qty { get; set; }
+     [Column(TypeName = "decimal(18,4)")] public decimal? Amount { get; set; }
+diff --git a/CP6.Entity/DomainModels/Erp/EstimateCalc.cs b/CP6.Entity/DomainModels/Erp/EstimateCalc.cs
+index e3bd8d7..00fa791 100644
+--- a/CP6.Entity/DomainModels/Erp/EstimateCalc.cs
++++ b/CP6.Entity/DomainModels/Erp/EstimateCalc.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 見積計算書（报价计算书）主表 - MSBBPA010
+ /// </summary>
+ /// <remarks>
+ /// 对应需求 §7.1 T_EstimateCalc
+ /// Phase 1 先实现 3 页 MVP 所必需的核心字段（~55 个）
+ /// 战略商品区分 03-10、容利法判定明细、決定見積補足等次要字段后续 Phase 再补
+ /// </remarks>
+ [Table("T_EstimateCalc")]
+-public class EstimateCalc : BaseBizEntity
++public class EstimateCalc : BaseBizEntity, IAuditable
+ {
+     // ───── 业务主键 ─────
+     /// <summary>見積計算書NO（XXXXXXXX-NN，11 字符：8 位主番 + '-' + 2 位枝番）</summary>
+     [Required]
+     [MaxLength(20)]
+     public string QtnCalcNo { get; set; } = string.Empty;
+ 
+     /// <summary>主番（NUMERIC 8）</summary>
+     public int QtnCalcNoMain { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Erp/FscChecklist.cs b/CP6.Entity/DomainModels/Erp/FscChecklist.cs
+index 3c771cf..06a5162 100644
+--- a/CP6.Entity/DomainModels/Erp/FscChecklist.cs
++++ b/CP6.Entity/DomainModels/Erp/FscChecklist.cs
+@@ -4,20 +4,22 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// FSC製品化チェックシート発行履歴（MSBBPA100）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §第一部分 PA100 — 発行ごとに 1 行を記録（FSC 管理 NO 採番管理）
+ /// 業務 PK：FscManagementNo
+ /// 実体は「発行履歴 + ダウンロード元」として機能。御見積書側の FscManagementNo / FSCチェックシート発行日 は別更新。
+ /// </remarks>
++// [审计豁免] 追加型 FSC 発行履歴（発行ごとに 1 行追加、不可变），字段级审计无意义——
++// 照 WMS StockTransaction 先例不贴 IAuditable，由 ErpAuditTests 负测试坐实零审计行。
+ [Table("T_FscChecklist")]
+ public class FscChecklist : BaseBizEntity
+ {
+     /// <summary>FSC 管理 NO（PK；採番ルール：頭文字 + ORACLEシーケンス）</summary>
+     [Required, MaxLength(20)]
+     public string FscManagementNo { get; set; } = string.Empty;
+ 
+     /// <summary>御見積書 NO</summary>
+     [Required, MaxLength(20)]
+     public string QtnNo { get; set; } = string.Empty;
+diff --git a/CP6.Entity/DomainModels/Erp/FxRate.cs b/CP6.Entity/DomainModels/Erp/FxRate.cs
+index 2b63800..a539064 100644
+--- a/CP6.Entity/DomainModels/Erp/FxRate.cs
++++ b/CP6.Entity/DomainModels/Erp/FxRate.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 為替レートマスタ（多通貨 Gap 4.3）。
+ /// </summary>
+ /// <remarks>
+ /// <see cref="Rate"/> は「外貨1単位あたりの基軸通貨額」。基軸通貨は <see cref="FxConstants.BaseCurrency"/>（JPY）。
+ /// 例：USD の Rate=150 → 1 USD = 150 JPY。基軸通貨換算額 = 外貨額 × Rate。
+ /// 受注時に得意先通貨の当日（基準日以前の最新）レートを <see cref="Order.FxRate"/> へ凍結する。
+ /// </remarks>
+ [Table("T_FxRate")]
+-public class FxRate : BaseBizEntity
++public class FxRate : BaseBizEntity, IAuditable
+ {
+     /// <summary>通貨CD（ISO 4217、例 USD/EUR/CNY）</summary>
+     [Required, MaxLength(3)]
+     public string CurrencyCd { get; set; } = string.Empty;
+ 
+     /// <summary>レート適用日（この日以降、次のレート登録日まで有効）</summary>
+     public DateTime RateDate { get; set; }
+ 
+     /// <summary>外貨1単位あたりの基軸通貨額（JPY/外貨）</summary>
+     [Column(TypeName = "decimal(18,6)")]
+diff --git a/CP6.Entity/DomainModels/Erp/Order.cs b/CP6.Entity/DomainModels/Erp/Order.cs
+index 7638383..0695d75 100644
+--- a/CP6.Entity/DomainModels/Erp/Order.cs
++++ b/CP6.Entity/DomainModels/Erp/Order.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 受注ヘッダー（MSBBPA070 第1页 基本情報のヘッダー部）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §11.1 T_Order
+ /// 業務 PK：Web受注NO（シーケンス自動採番）
+ /// 1 受注 → 多 OrderDetail → 多 OrderProcess / OrderMaterial
+ /// </remarks>
+ [Table("T_Order")]
+-public class Order : BaseBizEntity
++public class Order : BaseBizEntity, IAuditable
+ {
+     // ───── 業務主キー ─────
+     /// <summary>Web受注NO（業務 PK、シーケンス自動採番）</summary>
+     [Required, MaxLength(20)]
+     public string WebOrderNo { get; set; } = string.Empty;
+ 
+     // ───── 顧客・受注区分 ─────
+     /// <summary>得意先コード</summary>
+     [Required, MaxLength(20)]
+     public string CustomerCd { get; set; } = string.Empty;
+diff --git a/CP6.Entity/DomainModels/Erp/OrderDetail.cs b/CP6.Entity/DomainModels/Erp/OrderDetail.cs
+index bf2e72e..5153f08 100644
+--- a/CP6.Entity/DomainModels/Erp/OrderDetail.cs
++++ b/CP6.Entity/DomainModels/Erp/OrderDetail.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 受注明細（MSBBPA070 第2页 基本情報・構成情報・仕入情報・備考）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §11.2 T_OrderDetail（約125項目）
+ /// 業務 PK: (WebOrderNo, WebOrderDetailNo)
+ /// 受注時に製品基本マスタから大量フィールドをスナップショットコピーする設計
+ /// </remarks>
+ [Table("T_OrderDetail")]
+-public class OrderDetail : BaseBizEntity
++public class OrderDetail : BaseBizEntity, IAuditable
+ {
+     // ───── 業務主キー ─────
+     /// <summary>Web受注NO (FK→T_Order)</summary>
+     [Required, MaxLength(20)]
+     public string WebOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>Web受注明細NO（明細行連番）</summary>
+     public int WebOrderDetailNo { get; set; }
+ 
+     // ───── 手配NO 1〜4（Rev2.0 仕様） ─────
+diff --git a/CP6.Entity/DomainModels/Erp/ProductLotPrice.cs b/CP6.Entity/DomainModels/Erp/ProductLotPrice.cs
+index 869830b..7b72e0f 100644
+--- a/CP6.Entity/DomainModels/Erp/ProductLotPrice.cs
++++ b/CP6.Entity/DomainModels/Erp/ProductLotPrice.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 製品ロット別単価マスタ（MSBBPA050 第5页ロット別単価）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §14.4 T_ProductLotPrice
+ /// 業務複合 PK：製品コード + 明細NO
+ /// </remarks>
+ [Table("T_ProductLotPrice")]
+-public class ProductLotPrice : BaseBizEntity
++public class ProductLotPrice : BaseBizEntity, IAuditable
+ {
+     /// <summary>製品コード（FK + PK1）</summary>
+     [Required, MaxLength(20)]
+     public string ProductCd { get; set; } = string.Empty;
+ 
+     /// <summary>明細NO（PK2、行番号）</summary>
+     public int DetailNo { get; set; }
+ 
+     // ───── 品目CD+枝番（原価参照時使用） ─────
+     [MaxLength(15)] public string? ItemCd { get; set; }
+diff --git a/CP6.Entity/DomainModels/Erp/ProductMaster.cs b/CP6.Entity/DomainModels/Erp/ProductMaster.cs
+index e04df98..dd8d336 100644
+--- a/CP6.Entity/DomainModels/Erp/ProductMaster.cs
++++ b/CP6.Entity/DomainModels/Erp/ProductMaster.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 製品基本マスタ（MSBBPA050 第2页基本情報）— Web 製品マスタ主表
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §14.1 T_ProductMaster
+ /// 業務 PK：製品コード（VARCHAR 15）= 品目CD(連番) + 枝番1(行番) + 枝番2(MCNULLVAL) + 枝番3(MCNULLVAL)
+ /// 採番ルール（Rev.5）：登録時 BRANCH1 = "00" + 行番、BRANCH2/3 = "MCNULLVAL"
+ /// </remarks>
+ [Table("T_ProductMaster")]
+-public class ProductMaster : BaseBizEntity
++public class ProductMaster : BaseBizEntity, IAuditable
+ {
+     // ───── 業務主キー ─────
+     /// <summary>製品コード（機能コード+年月+自増13桁 + 枝番4桁=17桁、業務 PK、自動採番）</summary>
+     [Required, MaxLength(20)]
+     public string ProductCd { get; set; } = string.Empty;
+ 
+     /// <summary>品目コード（mcframe7 連携用：=製品コード連番部分）</summary>
+     [Required, MaxLength(15)]
+     public string ItemCd { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Erp/Quotation.cs b/CP6.Entity/DomainModels/Erp/Quotation.cs
+index edbcb53..a4412f2 100644
+--- a/CP6.Entity/DomainModels/Erp/Quotation.cs
++++ b/CP6.Entity/DomainModels/Erp/Quotation.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 御見積書（正式报价书）主表 - MSBBPA030
+ /// </summary>
+ /// <remarks>
+ /// 对应需求 §2.9.1 T_Quotation
+ /// 聚合根：一张御見積書聚合 N 张見積計算書（Quotation ⇄ QuotationCalc），
+ /// 并持有 N 行打印用明细（QuotationDetail）。
+ /// </remarks>
+ [Table("T_Quotation")]
+-public class Quotation : BaseBizEntity
++public class Quotation : BaseBizEntity, IAuditable
+ {
+     // ───── 业务主键 ─────
+     /// <summary>御見積書NO（10 字符，自动采番）</summary>
+     [Required]
+     [MaxLength(20)]
+     public string QtnNo { get; set; } = string.Empty;
+ 
+     /// <summary>主番（NUMERIC 8）——用于采番排序</summary>
+     public int QtnNoMain { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs b/CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs
+index b446b41..99c56fa 100644
+--- a/CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs
++++ b/CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// Web シート単価マスタ（PA130）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §7 — 13 項目複合 PK
+ /// 取込区分=シート単価 → 本テーブル / 取込区分=見積用 → SheetUnitPriceEstimate（同一構造）
+ /// </remarks>
+ [Table("T_SheetUnitPrice")]
+-public class SheetUnitPrice : BaseBizEntity
++public class SheetUnitPrice : BaseBizEntity, IAuditable
+ {
+     /// <summary>改定日（適用基準日；PK1）</summary>
+     public DateTime RevisionDate { get; set; }
+ 
+     /// <summary>拠点（PK2）</summary>
+     [Required, MaxLength(10)] public string BaseCd { get; set; } = string.Empty;
+ 
+     /// <summary>得意先 CD（PK3）— 取引先マスタ(得意先 FLG=1)</summary>
+     [Required, MaxLength(20)] public string CustomerCd { get; set; } = string.Empty;
+ 
+@@ -42,21 +42,21 @@ public class SheetUnitPrice : BaseBizEntity
+ 
+     /// <summary>営業担当（参照表示用：得意先担当マスタから引入）</summary>
+     [MaxLength(20)] public string? SalesStaffCd { get; set; }
+ }
+ 
+ /// <summary>
+ /// Web シート単価（見積用）マスタ — PA130 取込区分=見積用 の書込み先
+ /// </summary>
+ /// <remarks>SheetUnitPrice と同一構造の別テーブル（仕様書 §6 §7）。</remarks>
+ [Table("T_SheetUnitPriceEstimate")]
+-public class SheetUnitPriceEstimate : BaseBizEntity
++public class SheetUnitPriceEstimate : BaseBizEntity, IAuditable
+ {
+     public DateTime RevisionDate { get; set; }
+     [Required, MaxLength(10)] public string BaseCd { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string CustomerCd { get; set; } = string.Empty;
+     [Required, MaxLength(4)]  public string SheetFlute { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string PaperCdF { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string PrintCdF { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string EmbossCdF { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string PaperCdC { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string PrintCdC { get; set; } = string.Empty;
+diff --git a/CP6.Tests/Erp/ErpAuditTests.cs b/CP6.Tests/Erp/ErpAuditTests.cs
+new file mode 100644
+index 0000000..b3609fa
+--- /dev/null
++++ b/CP6.Tests/Erp/ErpAuditTests.cs
+@@ -0,0 +1,162 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Erp;
++using Xunit;
++
++namespace CP6.Tests.Erp;
++
++/// <summary>
++/// ERP 钱与主数据关键实体字段级审计接线冒烟（M-ERP 横切 T5）。
++/// 照 <see cref="CP6.Tests.Wms.WmsAuditTests"/> / <see cref="CP6.Tests.Space.SpaceAuditTests"/> 范式：
++/// InMemory + 假当前用户。验证贴 IAuditable 的 ERP 实体（受注头/明细·製品主档·价表定价主数据）
++/// 在 create/update 随业务行同周期写入 Sys_FieldAuditLogs（真实断言实体名/字段/新旧值）；
++/// 并回归确认追加型履历 FscChecklist（未贴）不产生审计行（负测试）。
++/// </summary>
++public class ErpAuditTests
++{
++    private sealed class FakeUser : ICurrentUserAccessor
++    {
++        public FakeUser(Guid? id, string? name) { UserId = id; UserName = name; }
++        public Guid? UserId { get; }
++        public string? UserName { get; }
++    }
++
++    private sealed record DiffRow(string Field, string? Old, string? New);
++
++    private static List<DiffRow> ParseChanges(string json)
++        => JsonSerializer.Deserialize<List<DiffRow>>(json) ?? new();
++
++    private static readonly Guid _userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
++
++    private static CP6Context Ctx()
++        => TestHelper.CreateInMemoryContext(new FakeUser(_userId, "alice"));
++
++    // ── 受注头（Order）──────────────────────────────────────────────
++    [Fact]
++    public void Create_Order_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var order = new Order { WebOrderNo = "WO20260712-001", CustomerCd = "C001", OrderType = "10" };
++        db.Set<Order>().Add(order);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Order), rows[0].EntityName);
++        Assert.Equal(order.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_Order_fxRate_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var order = new Order { WebOrderNo = "WO20260712-002", CustomerCd = "C001", OrderType = "10", FxRate = 1m };
++        db.Set<Order>().Add(order);
++        db.SaveChanges();
++
++        order.FxRate = 150m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Order), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "FxRate" && d.Old == "1" && d.New == "150");
++    }
++
++    // ── 受注明细（OrderDetail）— 价格快照·钱 ──────────────────────────
++    [Fact]
++    public void Update_OrderDetail_amount_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var detail = new OrderDetail
++        {
++            WebOrderNo = "WO20260712-003",
++            WebOrderDetailNo = 1,
++            ProductCd = "P001",
++            Amount = 1000m,
++        };
++        db.Set<OrderDetail>().Add(detail);
++        db.SaveChanges();
++
++        detail.Amount = 1200m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(OrderDetail), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Amount" && d.New == "1200");
++    }
++
++    // ── 製品主档（ProductMaster）─────────────────────────────────────
++    [Fact]
++    public void Create_ProductMaster_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var product = new ProductMaster { ProductCd = "PRD-000001" };
++        db.Set<ProductMaster>().Add(product);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(ProductMaster), rows[0].EntityName);
++        Assert.Equal(product.Id.ToString(), rows[0].EntityKey);
++    }
++
++    // ── 价表/定价主数据（FxRate 為替）— 改它影响算价 ────────────────────
++    [Fact]
++    public void Update_FxRate_rate_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var fx = new FxRate { CurrencyCd = "USD", RateDate = new DateTime(2026, 7, 12), Rate = 150m };
++        db.Set<FxRate>().Add(fx);
++        db.SaveChanges();
++
++        fx.Rate = 155m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(FxRate), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Rate" && d.Old == "150" && d.New == "155");
++    }
++
++    // ── 价表 master（SheetUnitPrice シート単価）──────────────────────
++    [Fact]
++    public void Create_SheetUnitPrice_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var price = new SheetUnitPrice { BaseCd = "B01", CustomerCd = "C001", SheetFlute = "A" };
++        db.Set<SheetUnitPrice>().Add(price);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(SheetUnitPrice), rows[0].EntityName);
++        Assert.Equal(price.Id.ToString(), rows[0].EntityKey);
++    }
++
++    // ── 负测试：追加型履历（FscChecklist）未贴 IAuditable → 零审计行 ──────
++    [Fact]
++    public void Append_FscChecklist_writes_no_audit_row()
++    {
++        // 追加型 FSC 発行履歴：豁免 IAuditable，插入不应产生任何字段审计行。
++        using var db = Ctx();
++        var fsc = new FscChecklist
++        {
++            FscManagementNo = "FSC20260712-001",
++            QtnNo = "QTN001",
++            QtnCalcNo = "QC001",
++        };
++        db.Set<FscChecklist>().Add(fsc);
++        db.SaveChanges();
++
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++}

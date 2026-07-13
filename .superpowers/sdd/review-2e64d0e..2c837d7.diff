@@ -1,0 +1,218 @@
+# Review package: 2e64d0e..2c837d7
+
+## Commits
+2c837d7 feat(space): Site/Floor 前端 API 层 + SiteDto 暴露 WarehouseCd 映射列（波1记票兑现）
+
+## Files changed
+ CP6.Core/Services/Space/SpaceMasterService.cs |  5 ++++-
+ CP6.Entity/DTOs/Space/SpaceMasterDtos.cs      |  2 ++
+ CP6.Tests/SpaceMasterServiceTests.cs          | 21 +++++++++++++++++++++
+ cp6.web/src/api/space/floor.ts                |  9 +++++++++
+ cp6.web/src/api/space/site.ts                 | 17 +++++++++++++++++
+ cp6.web/src/types/space/scene.ts              | 11 +++++++++++
+ 6 files changed, 64 insertions(+), 1 deletion(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/SpaceMasterService.cs b/CP6.Core/Services/Space/SpaceMasterService.cs
+index b09fb03..816ee57 100644
+--- a/CP6.Core/Services/Space/SpaceMasterService.cs
++++ b/CP6.Core/Services/Space/SpaceMasterService.cs
+@@ -40,48 +40,51 @@ public class SpaceMasterService : ISpaceMasterService
+             throw new InvalidOperationException("E-SPACE-001");
+         var e = new Space_Site
+         {
+             Id         = Guid.NewGuid(),
+             SiteCode   = d.SiteCode,
+             SiteName   = d.SiteName,
+             Address    = d.Address,
+             Lng        = d.Lng,
+             Lat        = d.Lat,
+             Enable     = d.Enable,
++            WarehouseCd = d.WarehouseCd,
+             Creator    = user,
+             CreateDate = DateTime.Now
+         };
+         _db.Space_Sites.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpdateSiteAsync(Guid id, SiteDto d, string? user)
+     {
+         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id)
+                 ?? throw new InvalidOperationException("E-SPACE-001");
+         e.SiteCode   = d.SiteCode;
+         e.SiteName   = d.SiteName;
+         e.Address    = d.Address;
+         e.Lng        = d.Lng;
+         e.Lat        = d.Lat;
+         e.Enable     = d.Enable;
++        e.WarehouseCd = d.WarehouseCd;
+         e.Modifier   = user;
+         e.ModifyDate = DateTime.Now;
+         await _db.SaveChangesAsync();
+     }
+ 
+     public async Task<List<SiteDto>> ListSitesAsync() =>
+         await _db.Space_Sites.Select(x => new SiteDto
+         {
+             Id = x.Id, SiteCode = x.SiteCode, SiteName = x.SiteName,
+-            Address = x.Address, Lng = x.Lng, Lat = x.Lat, Enable = x.Enable
++            Address = x.Address, Lng = x.Lng, Lat = x.Lat, Enable = x.Enable,
++            WarehouseCd = x.WarehouseCd
+         }).ToListAsync();
+ 
+     public async Task DeleteSiteAsync(Guid id)
+     {
+         if (await _db.Space_Floors.AnyAsync(x => x.SiteId == id))
+             throw new InvalidOperationException("E-SPACE-007");
+         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id);
+         if (e != null) { _db.Space_Sites.Remove(e); await _db.SaveChangesAsync(); }
+     }
+ 
+diff --git a/CP6.Entity/DTOs/Space/SpaceMasterDtos.cs b/CP6.Entity/DTOs/Space/SpaceMasterDtos.cs
+index f9d7e18..e57f00e 100644
+--- a/CP6.Entity/DTOs/Space/SpaceMasterDtos.cs
++++ b/CP6.Entity/DTOs/Space/SpaceMasterDtos.cs
+@@ -3,20 +3,22 @@ namespace CP6.Entity.DTOs.Space;
+ /// <summary>站场（Site）CRUD DTO（ch00 §9）</summary>
+ public class SiteDto
+ {
+     public Guid? Id { get; set; }
+     public string SiteCode { get; set; } = "";
+     public string SiteName { get; set; } = "";
+     public string? Address { get; set; }
+     public double? Lng { get; set; }
+     public double? Lat { get; set; }
+     public bool Enable { get; set; } = true;
++    /// <summary>WMS 仓库编码映射（ch04 §3.4：空=默认 WarehouseCd=SiteCode；≤10 字符，超长由发布侧 E-SPACE-405 守卫拦截）</summary>
++    public string? WarehouseCd { get; set; }
+ }
+ 
+ /// <summary>楼层（Floor）CRUD DTO</summary>
+ public class FloorDto
+ {
+     public Guid? Id { get; set; }
+     public Guid SiteId { get; set; }
+     public int Level { get; set; }
+     public string FloorCode { get; set; } = "";
+     public string FloorName { get; set; } = "";
+diff --git a/CP6.Tests/SpaceMasterServiceTests.cs b/CP6.Tests/SpaceMasterServiceTests.cs
+index 76bf883..00cae54 100644
+--- a/CP6.Tests/SpaceMasterServiceTests.cs
++++ b/CP6.Tests/SpaceMasterServiceTests.cs
+@@ -109,20 +109,41 @@ public class SpaceMasterServiceTests
+     [Fact]
+     public async Task ListSites_ReturnsCreated()
+     {
+         var (_, svc) = Make();
+         await svc.CreateSiteAsync(new SiteDto { SiteCode = "S1", SiteName = "Site1" }, "u");
+         await svc.CreateSiteAsync(new SiteDto { SiteCode = "S2", SiteName = "Site2" }, "u");
+         var list = await svc.ListSitesAsync();
+         Assert.Equal(2, list.Count);
+     }
+ 
++    /// <summary>
++    /// 波1 终审记票兑现：SiteDto 暴露 WarehouseCd（此前是只能 SQL 改的死配置列）。
++    /// Create 带 WarehouseCd → List 回显 → Update 改值 → List 回显新值。
++    /// </summary>
++    [Fact]
++    public async Task Site_WarehouseCd_RoundTrips_ThroughDtoAndService()
++    {
++        var (_, svc) = Make();
++        var id = await svc.CreateSiteAsync(
++            new SiteDto { SiteCode = "WH1", SiteName = "a", WarehouseCd = "MAIN" }, "u");
++
++        var created = (await svc.ListSitesAsync()).Single(x => x.Id == id);
++        Assert.Equal("MAIN", created.WarehouseCd);
++
++        await svc.UpdateSiteAsync(id,
++            new SiteDto { SiteCode = "WH1", SiteName = "a", WarehouseCd = "ALT" }, "u");
++
++        var updated = (await svc.ListSitesAsync()).Single(x => x.Id == id);
++        Assert.Equal("ALT", updated.WarehouseCd);
++    }
++
+     // ── B-4: 货架改位姿触发几何重算 ──────────────────────────────────────
+ 
+     [Fact]
+     public async Task UpdateRack_MovePosition_RecalcsLocations()
+     {
+         var (db, svc) = Make();
+         var rackId = await svc.CreateRackAsync(new RackDto
+         {
+             ZoneId = Guid.NewGuid(), RackCode = "R1",
+             X = 0, Y = 0, Cols = 1, Levels = 1, DepthCount = 1,
+diff --git a/cp6.web/src/api/space/floor.ts b/cp6.web/src/api/space/floor.ts
+index 03f735b..e66d36c 100644
+--- a/cp6.web/src/api/space/floor.ts
++++ b/cp6.web/src/api/space/floor.ts
+@@ -1,8 +1,17 @@
+ import http from '../http'
+ import type { FloorVO, Envelope } from '@/types/space/scene'
+ 
+ export const floorApi = {
+   list(siteId: string) {
+     return http.get<unknown, Envelope<FloorVO[]>>(`/space/floor`, { params: { siteId } })
+   },
++  create(d: FloorVO) {
++    return http.post<unknown, Envelope<{ id: string }>>(`/space/floor`, d)
++  },
++  update(id: string, d: FloorVO) {
++    return http.put<unknown, Envelope<unknown>>(`/space/floor/${encodeURIComponent(id)}`, d)
++  },
++  remove(id: string) {
++    return http.delete<unknown, Envelope<unknown>>(`/space/floor/${encodeURIComponent(id)}`)
++  },
+ }
+diff --git a/cp6.web/src/api/space/site.ts b/cp6.web/src/api/space/site.ts
+new file mode 100644
+index 0000000..486c083
+--- /dev/null
++++ b/cp6.web/src/api/space/site.ts
+@@ -0,0 +1,17 @@
++import http from '../http'
++import type { SiteVO, Envelope } from '@/types/space/scene'
++
++export const siteApi = {
++  list() {
++    return http.get<unknown, Envelope<SiteVO[]>>(`/space/site`)
++  },
++  create(d: SiteVO) {
++    return http.post<unknown, Envelope<{ id: string }>>(`/space/site`, d)
++  },
++  update(id: string, d: SiteVO) {
++    return http.put<unknown, Envelope<unknown>>(`/space/site/${encodeURIComponent(id)}`, d)
++  },
++  remove(id: string) {
++    return http.delete<unknown, Envelope<unknown>>(`/space/site/${encodeURIComponent(id)}`)
++  },
++}
+diff --git a/cp6.web/src/types/space/scene.ts b/cp6.web/src/types/space/scene.ts
+index b98486d..d2b5132 100644
+--- a/cp6.web/src/types/space/scene.ts
++++ b/cp6.web/src/types/space/scene.ts
+@@ -1,12 +1,23 @@
+ // Space 编辑器 VO 类型 — 镜像后端 DTOs（ch01 §E-1）
+ 
++export interface SiteVO {
++  id?: string
++  siteCode: string
++  siteName: string
++  address?: string | null
++  lng?: number | null
++  lat?: number | null
++  enable: boolean
++  warehouseCd?: string | null
++}
++
+ export interface FloorVO {
+   id: string
+   siteId: string
+   level: number
+   floorCode: string
+   floorName: string
+   height: number
+   underlayImage?: string | null
+   underlayScale?: number | null
+   underlayOffsetX: number

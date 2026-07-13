@@ -1,0 +1,94 @@
+# Review package: 4ffe26d..HEAD
+
+## Commits
+08891ab fix(space-p5): Kmin 用 3D 真边长而非 |Δz| — 修复倾斜连接体 A* admissibility（对抗审查 Blocking）
+
+## Files changed
+ cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts | 8 ++++++++
+ cp6.web/src/space-viewer/advanced/planMultiFloor.ts      | 4 ++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts b/cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts
+index 66bb06b..0f8570f 100644
+--- a/cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts
++++ b/cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts
+@@ -20,20 +20,28 @@ describe('buildMultiFloorGraph (time weights)', () => {
+   })
+   it('horizontal aisle edge = mmToSec(distance)', () => {
+     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+     const e = g.adj.get('F1:0,500')!.find((x) => x.to === 'F1:1000,500')
+     expect(e!.w).toBeCloseTo(mmToSec(1000))
+   })
+   it('hScale = Kmin = global min(time/physLen); horizontal dominates here', () => {
+     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+     expect(g.hScale).toBeCloseTo(1 / WALK_SPEED_MMPS)
+   })
++  it('slanted connector: Kmin uses true 3D edge length, not |Δz| (A* admissibility)', () => {
++    // 倾斜连接体：F1(500,500)→F2(1100,500)，Δxy=600、Δz=6000；时间=verticalSec(0,1,1)=1s（rate 极低 → 全图 Kmin）
++    const slanted = { connectorCode: 'S1', type: 1, waitSec: 0, travelSecPerFloor: 1, stops: [{ floorId: F1, x: 500, y: 500 }, { floorId: F2, x: 1100, y: 500 }] }
++    const g = buildMultiFloorGraph(floors, aislesByFloor, [slanted])
++    const physLen = Math.hypot(1100 - 500, 6000 - 0) // 真 3D 边长 = hypot(600,6000)，非 |Δz|=6000
++    // Kmin 必须用真边长；用 |Δz| 会高估最小 rate → 启发式不可采纳(inadmissible) → A* 可能次优
++    expect(g.hScale).toBeCloseTo(verticalSec(0, 1, 1) / physLen, 6)
++  })
+ })
+ 
+ describe('pathBetweenMF (time)', () => {
+   it('crosses floors via connector; z spans 0→6000; time > vertical 26s', () => {
+     const g = buildMultiFloorGraph(floors, aislesByFloor, connectors)
+     const r = pathBetweenMF(g, { floorId: F1, x: 100, y: 520 }, { floorId: F2, x: 900, y: 520 })
+     expect(r.degraded).toBe(false)
+     expect(Math.min(...r.points.map((p) => p.z))).toBeCloseTo(0)
+     expect(Math.max(...r.points.map((p) => p.z))).toBeCloseTo(6000)
+     expect(r.time).toBeGreaterThan(verticalSec(20, 6, 1))
+diff --git a/cp6.web/src/space-viewer/advanced/planMultiFloor.ts b/cp6.web/src/space-viewer/advanced/planMultiFloor.ts
+index 2c15671..fe6f0e5 100644
+--- a/cp6.web/src/space-viewer/advanced/planMultiFloor.ts
++++ b/cp6.web/src/space-viewer/advanced/planMultiFloor.ts
+@@ -3,21 +3,21 @@ import { buildCenterlineGraph, key, astar, type Pt } from './PickPathPlanner'
+ import { mfKey, dist3, type Pt3, type FloorMeta } from './multiFloor'
+ import { optimizeOrder, routeLengthByOrder } from './routeOptimize'
+ import { mmToSec, verticalSec, WALK_SPEED_MMPS } from './cost'
+ 
+ export interface MFGraph {
+   nodes: Map<string, Pt3>
+   adj: Map<string, Array<{ to: string; w: number }>>   // w = 时间(秒)
+   segments: Array<{ a: Pt; b: Pt; floorId: string }>
+   floorZ: Map<string, number>
+   floorLevel: Map<string, number>
+-  hScale: number                                        // Kmin = 全图 min(边时间/边物理长)，A* admissible 标定
++  hScale: number                                        // Kmin = 全图 min(边时间 / 边真3D长)，A* admissible 标定（h = 3D欧氏距 × hScale）
+ }
+ export interface AisleVOLite { aisleCode: string; centerline: string }
+ export interface ConnectorPath {
+   connectorCode: string; type: number
+   waitSec: number; travelSecPerFloor: number
+   stops: Array<{ floorId: string; x: number; y: number }>
+ }
+ 
+ function addMFEdge(g: MFGraph, ka: string, pa: Pt3, kb: string, pb: Pt3, w: number): void {
+   if (ka === kb) return
+@@ -80,21 +80,21 @@ export function buildMultiFloorGraph(
+         addMFEdge(g, nodeK, nodeP, `${s.floorId}:${key(acc.segB)}`, { x: acc.segB.x, y: acc.segB.y, z }, mmToSec(dB))
+       } else {
+         g.nodes.set(nodeK, nodeP)
+       }
+     }
+     const sorted = placed.slice().sort((a, b) => a.z - b.z)
+     for (let i = 0; i + 1 < sorted.length; i++) {
+       const a = sorted[i]!, b = sorted[i + 1]!
+       const span = Math.abs(a.level - b.level)
+       const w = verticalSec(c.waitSec, c.travelSecPerFloor, span)
+-      const physLen = Math.abs(a.z - b.z)
++      const physLen = dist3({ x: a.s.x, y: a.s.y, z: a.z }, { x: b.s.x, y: b.s.y, z: b.z }) // 真 3D 边长（含 xy 位移，倾斜连接体 admissible）
+       if (physLen > 0) minRate = Math.min(minRate, w / physLen)
+       addMFEdge(g, mfKey(a.s.floorId, a.s), { x: a.s.x, y: a.s.y, z: a.z },
+                    mfKey(b.s.floorId, b.s), { x: b.s.x, y: b.s.y, z: b.z }, w)
+     }
+   }
+   g.hScale = minRate
+   return g
+ }
+ 
+ export interface MFStop { floorId: string; x: number; y: number }

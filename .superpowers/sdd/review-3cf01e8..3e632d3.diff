@@ -1,0 +1,1157 @@
+# Review package: 3cf01e8..HEAD
+
+## Commits
+3e632d3 feat(fin): G.1 fin-period年结权限逐租户种子 + 存量COA缺行回填 + INTL本年利润3103
+0d3a18c feat(fin): G.1审计T4 IntegrationEvent operator透传——Creator落操作者非system
+
+## Files changed
+ CP6.Core/Services/Fin/FinBridgeHook.cs             |  22 +--
+ CP6.Core/Services/Fin/FinCoaTemplate.cs            |   1 +
+ CP6.Core/Services/Fin/StockFinBridge.cs            |  14 +-
+ CP6.Core/Services/Integration/BridgeHookBase.cs    |   7 +-
+ CP6.Core/Services/Mes/MesBridgeHook.cs             |   6 +-
+ CP6.Core/Services/Wms/ErpBridgeHook.cs             |  20 +--
+ CP6.Core/Services/Wms/WmsBridgeHook.cs             |  18 +--
+ CP6.Tests/Fin/BridgeOperatorPassthroughTests.cs    |  70 +++++++++
+ CP6.Tests/Fin/FinCoaBackfillSeedTests.cs           | 157 +++++++++++++++++++++
+ CP6.Tests/Fin/FinPeriodPermissionAttributeTests.cs |  74 ++++++++++
+ CP6.WebApi/Program.cs                              |   9 ++
+ CP6.WebApi/Seed/FinCoaBackfillSeed.cs              |  90 ++++++++++++
+ CP6.WebApi/Seed/FinPeriodPermissionSeed.cs         |  79 +++++++++++
+ 13 files changed, 525 insertions(+), 42 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Fin/FinBridgeHook.cs b/CP6.Core/Services/Fin/FinBridgeHook.cs
+index 52b8a5b..7f39638 100644
+--- a/CP6.Core/Services/Fin/FinBridgeHook.cs
++++ b/CP6.Core/Services/Fin/FinBridgeHook.cs
+@@ -27,112 +27,112 @@ public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
+ 
+     public async Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         try
+         {
+             var (r, _, no) = await _ar.CreateFromShipmentAsync(request, userName ?? "system");
+             if (!r.Ok)
+             {
+                 await PersistEventAsync("WMS", "FIN", nameof(OnShipmentConfirmedAsync),
+-                    request.ShipmentId, null, IntegrationEventStatus.Failed, r.Code, corrId, request);
++                    request.ShipmentId, null, IntegrationEventStatus.Failed, r.Code, corrId, request, userName);
+                 return FinBridgeResult.Failed(r.Code ?? "fail");
+             }
+             Logger.LogInformation("[FIN-Bridge] 出货 {Ship} → AR 发票 {No} 自动开票", request.ShipmentId, no);
+             await PersistEventAsync("WMS", "FIN", nameof(OnShipmentConfirmedAsync),
+-                request.ShipmentId, no, IntegrationEventStatus.Success, null, corrId, request);
++                request.ShipmentId, no, IntegrationEventStatus.Success, null, corrId, request, userName);
+             return FinBridgeResult.Ok(no);
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[FIN-Bridge] 出货 {Ship} 自动开票异常", request.ShipmentId);
+             await PersistEventAsync("WMS", "FIN", nameof(OnShipmentConfirmedAsync),
+-                request.ShipmentId, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, request);
++                request.ShipmentId, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, request, userName);
+             return FinBridgeResult.Failed(ex.Message);
+         }
+     }
+ 
+     public async Task<FinBridgeResult> OnShipmentCancelledAsync(string shipmentId, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         var payload = new { shipmentId, userName };
+         try
+         {
+             var inv = await Db.ArInvoices.FirstOrDefaultAsync(x => x.ShipmentId == shipmentId && !x.IsCreditMemo);
+             if (inv == null)
+             {
+                 await PersistEventAsync("WMS", "FIN", nameof(OnShipmentCancelledAsync),
+-                    shipmentId, null, IntegrationEventStatus.Skipped, "no invoice for shipment", corrId, payload);
++                    shipmentId, null, IntegrationEventStatus.Skipped, "no invoice for shipment", corrId, payload, userName);
+                 return FinBridgeResult.Skipped("no invoice for shipment");
+             }
+             var r = await _ar.ReverseAsync(inv.Id, userName ?? "system", "出货取消");
+             var status = r.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
+             await PersistEventAsync("WMS", "FIN", nameof(OnShipmentCancelledAsync),
+-                shipmentId, inv.No, status, r.Ok ? null : r.Code, corrId, payload);
++                shipmentId, inv.No, status, r.Ok ? null : r.Code, corrId, payload, userName);
+             return r.Ok ? FinBridgeResult.Ok(inv.No) : FinBridgeResult.Failed(r.Code ?? "fail");
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[FIN-Bridge] 出货 {Ship} 取消红冲异常", shipmentId);
+             await PersistEventAsync("WMS", "FIN", nameof(OnShipmentCancelledAsync),
+-                shipmentId, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                shipmentId, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
+             return FinBridgeResult.Failed(ex.Message);
+         }
+     }
+ 
+     public async Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         var user = userName ?? "system";
+         try
+         {
+             // ① 成本归集：工费留 0（自动归集只吃料真实反冲消耗，工费/制费由财务补录标准估算后再结转）。
+             var collect = await _cost.CollectAsync(workOrderNo, 0m, 0m, user);
+             if (!collect.Ok)
+             {
+                 // E-FIN-402 = 成本单已结转（重复完工事件）→ 幂等跳过，不重复归集/结转。
+                 if (collect.Code == "E-FIN-402")
+                 {
+                     await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                         workOrderNo, null, IntegrationEventStatus.Skipped, collect.Code, corrId,
+-                        new { workOrderNo, userName, step = "collect", note = "already settled" });
++                        new { workOrderNo, userName, step = "collect", note = "already settled" }, userName);
+                     return FinBridgeResult.Skipped("cost already settled");
+                 }
+                 await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                     workOrderNo, null, IntegrationEventStatus.Failed, collect.Code, corrId,
+-                    new { workOrderNo, userName, step = "collect" });
++                    new { workOrderNo, userName, step = "collect" }, userName);
+                 return FinBridgeResult.Failed(collect.Code ?? "collect fail");
+             }
+ 
+             // ②′ 零成本守卫（闸2）：TotalActual<=0 时不结转——CostSettle 会把零额单直接标 Settled 无凭证，
+             // 之后归集恒 E-FIN-402 → 永久锁死。留在 Collected 态，待反冲补偿/工费补录后重放可恢复。
+             var sheet = await Db.CostSheets.AsNoTracking().FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo);
+             if (sheet == null || sheet.TotalActual <= 0m)
+             {
+                 await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                     workOrderNo, null, IntegrationEventStatus.Skipped, "zero total cost", corrId,
+-                    new { workOrderNo, userName, step = "settle-guard", total = sheet?.TotalActual ?? 0m });
++                    new { workOrderNo, userName, step = "settle-guard", total = sheet?.TotalActual ?? 0m }, userName);
+                 Logger.LogWarning("[FIN-Bridge] 工单 {Wo} 归集后总成本<=0，跳过结转（成本单留在 Collected 可重试）", workOrderNo);
+                 return FinBridgeResult.Skipped("zero total cost, settle skipped");
+             }
+ 
+             // ② 完工结转：料工费→WIP + WIP→FG 两凭证（借贷/科目照 CostSettle 既有实现）。归集成功才结转。
+             var settle = await _settle.SettleAsync(workOrderNo, user);
+             var status = settle.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
+             await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+                 workOrderNo, null, status, settle.Ok ? null : settle.Code, corrId,
+-                new { workOrderNo, userName, step = settle.Ok ? "settled" : "settle" });
++                new { workOrderNo, userName, step = settle.Ok ? "settled" : "settle" }, userName);
+             if (settle.Ok)
+                 Logger.LogInformation("[FIN-Bridge] 工单 {Wo} 完工 → 成本归集+结转（料真实消耗→WIP→FG）", workOrderNo);
+             else
+                 Logger.LogWarning("[FIN-Bridge] 工单 {Wo} 成本已归集但结转失败 {Code}（成本单停在 Collected 待重试）", workOrderNo, settle.Code);
+             return settle.Ok ? FinBridgeResult.Ok(workOrderNo) : FinBridgeResult.Failed(settle.Code ?? "settle fail");
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[FIN-Bridge] 工单 {Wo} 成本归集/结转异常", workOrderNo);
+             await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+-                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, new { workOrderNo, userName });
++                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, new { workOrderNo, userName }, userName);
+             return FinBridgeResult.Failed(ex.Message);
+         }
+     }
+ }
+diff --git a/CP6.Core/Services/Fin/FinCoaTemplate.cs b/CP6.Core/Services/Fin/FinCoaTemplate.cs
+index 3a8a919..b2db279 100644
+--- a/CP6.Core/Services/Fin/FinCoaTemplate.cs
++++ b/CP6.Core/Services/Fin/FinCoaTemplate.cs
+@@ -126,20 +126,21 @@ public static class FinCoaTemplate
+         new("1300", "Raw Materials",           AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "INV", Role: "INVENTORY"),
+         new("1340", "Work in Progress",        AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "COST", Role: "WIP"),
+         new("1350", "Finished Goods",          AccountType.Asset, Dr, true, IsControl: true, SubLedgerType: "INV", Role: "FG"),
+         new("1900", "Pending Property Loss",   AccountType.Asset, Dr, true, Role: "PENDING_PROPERTY_LOSS"),   // 波A 盘亏清理
+         new("2100", "Accounts Payable",        AccountType.Liability, Cr, true, IsControl: true, SubLedgerType: "AP", RequirePartner: true, Role: "AP_CONTROL"),
+         new("2110", "Goods Received Not Invoiced", AccountType.Liability, Cr, true, Role: "GRNI"),             // 波A 收货未开票暂估（2150 已被 AR_ADVANCE 占用）
+         new("2150", "Advance from Customers",  AccountType.Liability, Cr, true, RequirePartner: true, Role: "AR_ADVANCE"),
+         new("2210", "Input Tax (VAT recoverable)", AccountType.Liability, Cr, true, Role: "TAX_INPUT"),
+         new("2220", "Output Tax (VAT payable)",    AccountType.Liability, Cr, true, Role: "TAX_OUTPUT"),
+         new("3000", "Share Capital",           AccountType.Equity, Cr, true, Role: "EQUITY_CAPITAL"),
++        new("3103", "Current Year Earnings",   AccountType.Equity, Cr, true),                             // 波G 年结本年利润（无 Role，按编码 3103 定位，与 CN 同码同义——PeriodCloseService.CurrentYearProfitCode）
+         new("3300", "Retained Earnings",       AccountType.Equity, Cr, true, Role: "RETAINED_EARNINGS"),
+         new("4000", "Sales Revenue",           AccountType.Revenue, Cr, true, Role: "REVENUE"),
+         new("4800", "Non-Operating Income",    AccountType.Revenue, Cr, true, Role: "NON_OP_INCOME"),        // 波A 盘盈利得
+         new("4900", "FX Gain",                 AccountType.Revenue, Cr, true, Role: "FX_GAIN"),
+         new("5000", "Cost of Goods Sold",      AccountType.Expense, Dr, true, Role: "COGS"),
+         new("5100", "Direct Material",         AccountType.Expense, Dr, true, Role: "DIRECT_MATERIAL"),
+         new("5200", "Direct Labor",            AccountType.Expense, Dr, true, Role: "DIRECT_LABOR"),
+         new("5300", "Manufacturing Overhead",  AccountType.Expense, Dr, true, Role: "MFG_OVERHEAD"),
+         new("6800", "Non-Operating Expense",   AccountType.Expense, Dr, true, Role: "NON_OP_EXPENSE"),       // 波A 报废净损
+         new("6900", "FX Loss",                 AccountType.Expense, Dr, true, Role: "FX_LOSS"),
+diff --git a/CP6.Core/Services/Fin/StockFinBridge.cs b/CP6.Core/Services/Fin/StockFinBridge.cs
+index 1324a96..7b2cf1a 100644
+--- a/CP6.Core/Services/Fin/StockFinBridge.cs
++++ b/CP6.Core/Services/Fin/StockFinBridge.cs
+@@ -37,60 +37,60 @@ public class StockFinBridge : BridgeHookBase, IStockFinBridge
+ 
+     public async Task<FinBridgeResult> OnStockMovedAsync(StockTransaction txn, string relatedType, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         var txnNo = txn?.TxnNo ?? "";
+         var payload = new { txnNo, txn?.TxnType, relatedType, txn?.Qty, txn?.UnitPrice };
+         try
+         {
+             var (eventType, skipReason) = Resolve(txn!.TxnType, relatedType, txn.Qty);
+             if (eventType == null)
+-                return await SkipAsync(txnNo, skipReason ?? "unmapped", corrId, payload);
++                return await SkipAsync(txnNo, skipReason ?? "unmapped", corrId, payload, userName);
+ 
+             // —— 金额守卫：|Qty×UnitPrice|；单价缺失或非正额 → 跳过（禁零额凭证）——
+             if (txn.UnitPrice is not decimal unit)
+-                return await SkipAsync(txnNo, "单价缺失，无法计价过账", corrId, payload);
++                return await SkipAsync(txnNo, "单价缺失，无法计价过账", corrId, payload, userName);
+ 
+             var amount = Math.Abs(Math.Round(txn.Qty * unit, 2, MidpointRounding.AwayFromZero));
+             if (amount <= 0m)
+-                return await SkipAsync(txnNo, "计价金额<=0，跳过（禁零额凭证）", corrId, payload);
++                return await SkipAsync(txnNo, "计价金额<=0，跳过（禁零额凭证）", corrId, payload, userName);
+ 
+             var evt = new FinBizEvent
+             {
+                 EventType = eventType,
+                 Source = VoucherSource.Inventory,
+                 SourceDocNo = txnNo,   // 幂等键 (Inventory, TxnNo)
+                 BizDate = txn.TxnDateTime,
+                 Description = $"库存移动自动过账 {txn.TxnType}/{relatedType} {txnNo}",
+             };
+             evt.HeaderAmounts["Amount"] = amount;
+ 
+             var r = await _engine.GenerateAsync(evt);
+             var status = r.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
+             await PersistEventAsync("WMS", "FIN", nameof(OnStockMovedAsync),
+-                txnNo, r.Ok ? eventType : null, status, r.Ok ? null : r.Code, corrId, payload);
++                txnNo, r.Ok ? eventType : null, status, r.Ok ? null : r.Code, corrId, payload, userName);
+             if (r.Ok) Logger.LogInformation("[Stock-Fin-Bridge] 库存移动 {Txn} {Evt} → 自动过账", txnNo, eventType);
+             return r.Ok ? FinBridgeResult.Ok(txnNo) : FinBridgeResult.Failed(r.Code ?? "fail");
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[Stock-Fin-Bridge] 库存移动 {Txn} 自动过账异常", txnNo);
+             await PersistEventAsync("WMS", "FIN", nameof(OnStockMovedAsync),
+-                txnNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                txnNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
+             return FinBridgeResult.Failed(ex.Message);
+         }
+     }
+ 
+-    private async Task<FinBridgeResult> SkipAsync(string txnNo, string reason, Guid corrId, object payload)
++    private async Task<FinBridgeResult> SkipAsync(string txnNo, string reason, Guid corrId, object payload, string? userName)
+     {
+         await PersistEventAsync("WMS", "FIN", nameof(OnStockMovedAsync),
+-            txnNo, null, IntegrationEventStatus.Skipped, reason, corrId, payload);
++            txnNo, null, IntegrationEventStatus.Skipped, reason, corrId, payload, userName);
+         return FinBridgeResult.Skipped(reason);
+     }
+ 
+     /// <summary>
+     /// 显式映射表：<c>(TxnType, RelatedType)</c> → EventType 或 (null, skipReason)。
+     /// 逐值来自 RelatedType 实际取值清单（INBOUND/OUTBOUND/MOVE/STOCKTAKE/RMA/REPLENISH/KIT_*/XDOCK_*/
+     /// EXPIRY_DISPOSE/SUBCONTRACT/WAVE_PICK + 波C引入 ISSUE/FG + 报废 SCRAP）。
+     /// </summary>
+     private static (string? eventType, string? skipReason) Resolve(string? txnType, string? relatedType, decimal qty)
+     {
+diff --git a/CP6.Core/Services/Integration/BridgeHookBase.cs b/CP6.Core/Services/Integration/BridgeHookBase.cs
+index 370d6b6..1356cd9 100644
+--- a/CP6.Core/Services/Integration/BridgeHookBase.cs
++++ b/CP6.Core/Services/Integration/BridgeHookBase.cs
+@@ -32,54 +32,57 @@ public abstract class BridgeHookBase
+     /// </summary>
+     /// <param name="sourceModule">ERP / MES / WMS</param>
+     /// <param name="targetModule">ERP / MES / WMS</param>
+     /// <param name="hookName">呼び出し元メソッド名（nameof 推奨）</param>
+     /// <param name="sourceNo">源業務番号</param>
+     /// <param name="targetNo">目標業務番号（Success 時のみ）</param>
+     /// <param name="status"><see cref="IntegrationEventStatus"/> 取値</param>
+     /// <param name="error">失敗時の詳細（Skipped 時は理由、Failed 時は ToString()）</param>
+     /// <param name="correlationId">端到端 trace 用 GUID</param>
+     /// <param name="payload">入力 payload（重試時に Dispatcher が反序列化）</param>
++    /// <param name="operatorUser">操作者（審計 T4 / spec §8）：呼び出し元の userName を透過して <see cref="IntegrationEvent.Creator"/> に落とす。
++    /// null/空白なら "system" に退避（operator を持たない存量桥の後方互換）。</param>
+     /// <remarks>
+     /// 失敗時のリトライ間隔は固定 60s で初期化（Worker が指数退避で更新）。
+     /// Persistence 自体が失敗しても親 hook には伝播させない（best-effort 強化）。
+     /// </remarks>
+     protected async Task PersistEventAsync(
+         string sourceModule,
+         string targetModule,
+         string hookName,
+         string sourceNo,
+         string? targetNo,
+         string status,
+         string? error,
+         Guid correlationId,
+-        object payload)
++        object payload,
++        string? operatorUser = null)
+     {
+         try
+         {
+             var evt = new IntegrationEvent
+             {
+                 Id = Guid.NewGuid(),
+                 SourceModule = sourceModule,
+                 TargetModule = targetModule,
+                 HookName = hookName,
+                 SourceNo = sourceNo,
+                 TargetNo = targetNo,
+                 Status = status,
+                 Attempts = 1,
+                 LastError = error,
+                 NextRetryAt = status == IntegrationEventStatus.Failed
+                     ? DateTime.UtcNow.AddSeconds(60)
+                     : (DateTime?)null,
+                 CorrelationId = correlationId,
+                 PayloadJson = SafeSerialize(payload),
+-                Creator = "system",
++                Creator = string.IsNullOrWhiteSpace(operatorUser) ? "system" : operatorUser,
+                 CreateDate = DateTime.Now,
+             };
+             Db.IntegrationEvents.Add(evt);
+             await Db.SaveChangesAsync();
+         }
+         catch (Exception ex)
+         {
+             // 持久化自体の失敗は親 hook には伝播させない（ILogger に残すのみ）
+             Logger.LogError(ex,
+                 "[BridgeHookBase] IntegrationEvent persistence failed for {Hook} {SourceNo}",
+diff --git a/CP6.Core/Services/Mes/MesBridgeHook.cs b/CP6.Core/Services/Mes/MesBridgeHook.cs
+index 650288e..2b8a66a 100644
+--- a/CP6.Core/Services/Mes/MesBridgeHook.cs
++++ b/CP6.Core/Services/Mes/MesBridgeHook.cs
+@@ -28,31 +28,31 @@ public class MesBridgeHook : BridgeHookBase, IMesBridgeHook
+         var corrId = Guid.NewGuid();
+         var payload = new { webOrderNo, userName };
+         try
+         {
+             var nos = await _woService.ExpandFromOrderAsync(
+                 new ExpandFromOrderRequest { WebOrderNo = webOrderNo }, userName);
+             Logger.LogInformation("[MES-Bridge] 受注 {Order} → 製造指図 {Count} 件自動展開（{Nos}）",
+                 webOrderNo, nos.Count, string.Join(",", nos));
+             await PersistEventAsync("ERP", "MES", nameof(OnOrderCreatedAsync),
+                 webOrderNo, nos.Count > 0 ? nos[0] : null,
+-                IntegrationEventStatus.Success, null, corrId, payload);
++                IntegrationEventStatus.Success, null, corrId, payload, userName);
+             return MesBridgeResult.Ok(nos);
+         }
+         catch (InvalidOperationException ex)
+         {
+             // 既に指図あり／対象明細なし等の業務エラー
+             Logger.LogWarning("[MES-Bridge] 受注 {Order} 指図展開スキップ: {Msg}", webOrderNo, ex.Message);
+             await PersistEventAsync("ERP", "MES", nameof(OnOrderCreatedAsync),
+-                webOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload);
++                webOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload, userName);
+             return MesBridgeResult.Skipped(ex.Message);
+         }
+         catch (Exception ex)
+         {
+             // 想定外（DB 接続不可等）— 親の受注作成は失敗させない
+             Logger.LogError(ex, "[MES-Bridge] 受注 {Order} 指図展開で予期せぬエラー", webOrderNo);
+             await PersistEventAsync("ERP", "MES", nameof(OnOrderCreatedAsync),
+-                webOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                webOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
+             return MesBridgeResult.Failed(ex.Message);
+         }
+     }
+ }
+diff --git a/CP6.Core/Services/Wms/ErpBridgeHook.cs b/CP6.Core/Services/Wms/ErpBridgeHook.cs
+index 64b5c71..06ca427 100644
+--- a/CP6.Core/Services/Wms/ErpBridgeHook.cs
++++ b/CP6.Core/Services/Wms/ErpBridgeHook.cs
+@@ -28,54 +28,54 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
+         var corrId = Guid.NewGuid();
+         var payload = new { outboundNo, userName };
+         try
+         {
+             var ob = await Db.OutboundOrders.AsNoTracking()
+                 .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted);
+             if (ob == null)
+             {
+                 var msg = $"出庫指示 [{outboundNo}] が見つかりません";
+                 await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
++                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
+                 return ErpBridgeResult.Skipped(msg);
+             }
+ 
+             // 出荷区分かつ受注紐付きのみ回写対象（材料出庫等は対象外）
+             if (ob.OutboundType != OutboundType.Shipping || string.IsNullOrWhiteSpace(ob.WebOrderNo))
+             {
+                 var msg = "出荷区分かつ受注紐付きの出庫ではありません";
+                 await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
++                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
+                 return ErpBridgeResult.Skipped(msg);
+             }
+ 
+             var webOrderNo = ob.WebOrderNo!;
+ 
+             var shippedLines = await Db.OutboundOrderDetails.AsNoTracking()
+                 .Where(d => d.OutboundNo == outboundNo && !d.IsDeleted && d.ShippedQty > 0)
+                 .OrderBy(d => d.LineNo)
+                 .ToListAsync();
+             if (shippedLines.Count == 0)
+             {
+                 var msg = "出荷数のある明細がありません";
+                 await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
++                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
+                 return ErpBridgeResult.Skipped(msg);
+             }
+ 
+             var order = await Db.Orders
+                 .FirstOrDefaultAsync(o => o.WebOrderNo == webOrderNo && !o.IsDeleted);
+             if (order == null)
+             {
+                 var msg = $"受注 [{webOrderNo}] が見つかりません";
+                 await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
++                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
+                 return ErpBridgeResult.Skipped(msg);
+             }
+ 
+             var orderDetails = await Db.OrderDetails
+                 .Where(d => d.WebOrderNo == webOrderNo && !d.IsDeleted)
+                 .OrderBy(d => d.WebOrderDetailNo)
+                 .ToListAsync();
+ 
+             var now = DateTime.Now;
+ 
+@@ -114,45 +114,45 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
+             order.ShipStatus = allShipped ? 9 : (anyShipped ? 5 : order.ShipStatus);
+             order.ActualShipDate = now;
+             order.Modifier = userName;
+             order.ModifyDate = now;
+ 
+             await Db.SaveChangesAsync();
+ 
+             Logger.LogInformation("[ERP-Bridge] 出庫 {Outbound} → 受注 {Order} 出荷実績回写（ShipStatus={Status}）",
+                 outboundNo, webOrderNo, order.ShipStatus);
+             await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+-                outboundNo, webOrderNo, IntegrationEventStatus.Success, null, corrId, payload);
++                outboundNo, webOrderNo, IntegrationEventStatus.Success, null, corrId, payload, userName);
+             return ErpBridgeResult.Ok(webOrderNo);
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[ERP-Bridge] 出庫 {Outbound} の受注回写で予期せぬエラー", outboundNo);
+             await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
+-                outboundNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                outboundNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
+             return ErpBridgeResult.Failed(ex.Message);
+         }
+     }
+ 
+     public async Task<ErpBridgeResult> OnReturnConfirmedAsync(string rmaNo, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         var payload = new { rmaNo, userName };
+         try
+         {
+             var rma = await Db.RmaHeaders.AsNoTracking()
+                 .FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted);
+             if (rma == null)
+             {
+                 const string msg = "WM-MSG-RMA-404";
+                 await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
+-                    rmaNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload);
++                    rmaNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
+                 return ErpBridgeResult.Skipped(msg);
+             }
+ 
+             var details = await Db.RmaDetails.AsNoTracking()
+                 .Where(d => d.RmaNo == rmaNo && !d.IsDeleted)
+                 .OrderBy(d => d.LineNo)
+                 .ToListAsync();
+             if (details.Count == 0)
+                 throw new InvalidOperationException("WM-MSG-020");
+ 
+@@ -205,35 +205,35 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
+                 });
+             }
+ 
+             await Db.SaveChangesAsync();
+ 
+             Logger.LogInformation(
+                 "[ERP-Bridge] RMA {RmaNo} -> {Count} credit notes generated, returned qty back-written",
+                 rmaNo, details.Count);
+             await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
+                 rmaNo, string.IsNullOrEmpty(firstCreditNoteNo) ? null : firstCreditNoteNo,
+-                IntegrationEventStatus.Success, null, corrId, payload);
++                IntegrationEventStatus.Success, null, corrId, payload, userName);
+             return ErpBridgeResult.Ok(rmaNo);
+         }
+         catch (InvalidOperationException ex)
+         {
+             Logger.LogWarning("[ERP-Bridge] RMA {RmaNo} credit-note bridge skipped: {Msg}", rmaNo, ex.Message);
+             await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
+-                rmaNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload);
++                rmaNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload, userName);
+             return ErpBridgeResult.Skipped(ex.Message);
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[ERP-Bridge] RMA {RmaNo} credit-note bridge failed", rmaNo);
+             await PersistEventAsync("WMS", "ERP", nameof(OnReturnConfirmedAsync),
+-                rmaNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                rmaNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
+             return ErpBridgeResult.Failed(ex.Message);
+         }
+     }
+ 
+     private async Task<string?> ResolveWebOrderNoAsync(RmaHeader rma)
+     {
+         if (string.IsNullOrWhiteSpace(rma.OriginalShippingNo))
+             return null;
+ 
+         var outbound = await Db.OutboundOrders.AsNoTracking()
+diff --git a/CP6.Core/Services/Wms/WmsBridgeHook.cs b/CP6.Core/Services/Wms/WmsBridgeHook.cs
+index 85427a2..01f6731 100644
+--- a/CP6.Core/Services/Wms/WmsBridgeHook.cs
++++ b/CP6.Core/Services/Wms/WmsBridgeHook.cs
+@@ -29,85 +29,85 @@ public class WmsBridgeHook : BridgeHookBase, IWmsBridgeHook
+ 
+     public async Task<WmsBridgeResult> OnWorkOrderIssuedAsync(string workOrderNo, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         var payload = new { workOrderNo, userName };
+         try
+         {
+             var no = await _outbound.CreateFromWorkOrderAsync(workOrderNo, userName);
+             Logger.LogInformation("[WMS-Bridge] WO {Wo} → 材料出庫指示 {OutboundNo} 自動生成", workOrderNo, no);
+             await PersistEventAsync("MES", "WMS", nameof(OnWorkOrderIssuedAsync),
+-                workOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload);
++                workOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload, userName);
+             return WmsBridgeResult.Ok(no);
+         }
+         catch (InvalidOperationException ex)
+         {
+             Logger.LogWarning("[WMS-Bridge] WO {Wo} 自動展開スキップ: {Msg}", workOrderNo, ex.Message);
+             await PersistEventAsync("MES", "WMS", nameof(OnWorkOrderIssuedAsync),
+-                workOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload);
++                workOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload, userName);
+             return WmsBridgeResult.Skipped(ex.Message);
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[WMS-Bridge] WO {Wo} 自動展開で予期せぬエラー", workOrderNo);
+             await PersistEventAsync("MES", "WMS", nameof(OnWorkOrderIssuedAsync),
+-                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
+             return WmsBridgeResult.Failed(ex.Message);
+         }
+     }
+ 
+     public async Task<WmsBridgeResult> OnOrderCreatedAsync(string webOrderNo, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         var payload = new { webOrderNo, userName };
+         try
+         {
+             var no = await _outbound.CreateFromOrderAsync(webOrderNo, userName);
+             Logger.LogInformation("[WMS-Bridge] 受注 {Order} → 出荷指示 {OutboundNo} 自動生成", webOrderNo, no);
+             await PersistEventAsync("ERP", "WMS", nameof(OnOrderCreatedAsync),
+-                webOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload);
++                webOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload, userName);
+             return WmsBridgeResult.Ok(no);
+         }
+         catch (InvalidOperationException ex)
+         {
+             Logger.LogWarning("[WMS-Bridge] 受注 {Order} 自動展開スキップ: {Msg}", webOrderNo, ex.Message);
+             await PersistEventAsync("ERP", "WMS", nameof(OnOrderCreatedAsync),
+-                webOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload);
++                webOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload, userName);
+             return WmsBridgeResult.Skipped(ex.Message);
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[WMS-Bridge] 受注 {Order} 自動展開で予期せぬエラー", webOrderNo);
+             await PersistEventAsync("ERP", "WMS", nameof(OnOrderCreatedAsync),
+-                webOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                webOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
+             return WmsBridgeResult.Failed(ex.Message);
+         }
+     }
+ 
+     public async Task<WmsBridgeResult> OnProductionCompletedAsync(string workOrderNo, decimal goodQty, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         var payload = new { workOrderNo, goodQty, userName };
+         try
+         {
+             var no = await _inbound.CreateFinishedGoodsFromWorkOrderAsync(workOrderNo, goodQty, userName);
+             Logger.LogInformation("[WMS-Bridge] 指図 {Wo} 完了 → 完成品入庫 {ReceiptNo} 自動生成（良品 {Qty}）", workOrderNo, no, goodQty);
+             await PersistEventAsync("MES", "WMS", nameof(OnProductionCompletedAsync),
+-                workOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload);
++                workOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload, userName);
+             return WmsBridgeResult.Ok(no);
+         }
+         catch (InvalidOperationException ex)
+         {
+             Logger.LogWarning("[WMS-Bridge] 指図 {Wo} 完成品入庫スキップ: {Msg}", workOrderNo, ex.Message);
+             await PersistEventAsync("MES", "WMS", nameof(OnProductionCompletedAsync),
+-                workOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload);
++                workOrderNo, null, IntegrationEventStatus.Skipped, ex.Message, corrId, payload, userName);
+             return WmsBridgeResult.Skipped(ex.Message);
+         }
+         catch (Exception ex)
+         {
+             Logger.LogError(ex, "[WMS-Bridge] 指図 {Wo} 完成品入庫で予期せぬエラー", workOrderNo);
+             await PersistEventAsync("MES", "WMS", nameof(OnProductionCompletedAsync),
+-                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
+             return WmsBridgeResult.Failed(ex.Message);
+         }
+     }
+ }
+diff --git a/CP6.Tests/Fin/BridgeOperatorPassthroughTests.cs b/CP6.Tests/Fin/BridgeOperatorPassthroughTests.cs
+new file mode 100644
+index 0000000..d307c7a
+--- /dev/null
++++ b/CP6.Tests/Fin/BridgeOperatorPassthroughTests.cs
+@@ -0,0 +1,70 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Fin;
++using CP6.Entity.DomainModels.Fin;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.Extensions.Logging.Abstractions;
++
++namespace CP6.Tests.Fin;
++
++/// <summary>
++/// 审计 T4（spec §8 尾项）：IntegrationEvent.Creator 由桥调用方 operator 透传，非硬编码 "system"。
++/// BridgeHookBase.PersistEventAsync 扩展了可选 operator 参数；本支油路桥（StockFinBridge/FinBridgeHook 等）
++/// 各将 userName 透传落 Creator。无 operator 的存量桥（SpaceBridgeHook）回退 "system"。
++/// </summary>
++public class BridgeOperatorPassthroughTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .Options);
++
++    /// <summary>Skip 路径不触引擎，仅需一个占位实现。</summary>
++    private sealed class NoopEngine : IAutoVoucherEngine
++    {
++        public Task<FinResult> GenerateAsync(FinBizEvent evt) => Task.FromResult(FinResult.Pass());
++    }
++
++    [Fact]
++    public async Task StockFinBridge_PersistsOperatorAsCreator_NotSystem()
++    {
++        using var db = NewDb();
++        var bridge = new StockFinBridge(db, new NoopEngine(), NullLogger<StockFinBridge>.Instance);
++
++        // MOVE = 显式 Skipped 路径（无 GL 影响）→ 落一条 Skipped IntegrationEvent，不触引擎。
++        var txn = new StockTransaction
++        {
++            TxnNo = "TXN-OP-001",
++            TxnType = WmsTxnType.OUT,
++            Qty = 5m,
++            UnitPrice = 10m,
++            TxnDateTime = DateTime.Now,
++        };
++
++        var r = await bridge.OnStockMovedAsync(txn, "MOVE", "alice");
++        Assert.False(r.Success);
++        Assert.StartsWith("SKIPPED:", r.Message);
++
++        var evt = db.IntegrationEvents.IgnoreQueryFilters().Single();
++        Assert.Equal("alice", evt.Creator);   // ★ 操作者透传，非 "system"
++    }
++
++    [Fact]
++    public async Task StockFinBridge_NullOperator_FallsBackToSystem()
++    {
++        using var db = NewDb();
++        var bridge = new StockFinBridge(db, new NoopEngine(), NullLogger<StockFinBridge>.Instance);
++        var txn = new StockTransaction
++        {
++            TxnNo = "TXN-OP-002",
++            TxnType = WmsTxnType.OUT,
++            Qty = 1m,
++            UnitPrice = 1m,
++            TxnDateTime = DateTime.Now,
++        };
++
++        await bridge.OnStockMovedAsync(txn, "MOVE", null);
++
++        var evt = db.IntegrationEvents.IgnoreQueryFilters().Single();
++        Assert.Equal("system", evt.Creator);   // operator 缺省 → 回退 system
++    }
++}
+diff --git a/CP6.Tests/Fin/FinCoaBackfillSeedTests.cs b/CP6.Tests/Fin/FinCoaBackfillSeedTests.cs
+new file mode 100644
+index 0000000..1d3c42a
+--- /dev/null
++++ b/CP6.Tests/Fin/FinCoaBackfillSeedTests.cs
+@@ -0,0 +1,157 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Fin;
++using CP6.Entity.DomainModels.Fin;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests.Fin;
++
++/// <summary>
++/// F1 波G G.1：存量租户 COA 缺行逐租户回填（<see cref="FinCoaBackfillSeed"/>）。
++/// 断言：存量租户缺 GRNI/本年利润 → 回填后有，且属性与模板一致；已全者零变动；只对已导入 scheme 的租户回填。
++/// </summary>
++public class FinCoaBackfillSeedTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .Options);
++
++    private static void AddTenant(CP6Context db, Guid tid, string code)
++    {
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = tid, TenantCode = code, TenantName = code, Enable = true });
++        db.SaveChanges();
++    }
++
++    /// <summary>用模板为某租户建 COA（显式 TenantId），可排除若干 Code 以模拟旧模板缺行。</summary>
++    private static void SeedTenantCoa(CP6Context db, Guid tid, string scheme, params string[] excludeCodes)
++    {
++        var rows = FinCoaTemplate.Get(scheme);
++        var byCode = rows.ToDictionary(r => r.Code, _ => Guid.NewGuid());
++        var excl = excludeCodes.ToHashSet();
++        foreach (var r in rows)
++        {
++            if (excl.Contains(r.Code)) continue;
++            db.GlAccounts.Add(new GlAccount
++            {
++                Id = byCode[r.Code],
++                TenantId = tid,
++                Code = r.Code,
++                Name = r.Name,
++                Type = r.Type,
++                NormalSide = r.NormalSide,
++                Level = r.Level,
++                IsLeaf = r.IsLeaf,
++                IsControl = r.IsControl,
++                SubLedgerType = r.SubLedgerType,
++                RequirePartner = r.RequirePartner,
++                Role = r.Role,
++                StandardScheme = scheme,
++                IsActive = true,
++                ParentId = r.ParentCode != null && byCode.TryGetValue(r.ParentCode, out var pid) ? pid : null,
++            });
++        }
++        db.SaveChanges();
++    }
++
++    private static GlAccount? Acct(CP6Context db, Guid tid, string scheme, string code) =>
++        db.GlAccounts.IgnoreQueryFilters()
++            .FirstOrDefault(a => a.TenantId == tid && a.StandardScheme == scheme && a.Code == code);
++
++    [Fact]
++    public void Backfill_CnTenantMissingGrni_InsertsGrniMatchingTemplate()
++    {
++        using var db = NewDb();
++        var tid = Guid.NewGuid();
++        AddTenant(db, tid, "T1");
++        SeedTenantCoa(db, tid, FinCoaTemplate.CnGaap, excludeCodes: "2204");
++
++        Assert.Null(Acct(db, tid, FinCoaTemplate.CnGaap, "2204"));   // 前置：缺行
++
++        FinCoaBackfillSeed.EnsureSeeded(db);
++
++        var grni = Acct(db, tid, FinCoaTemplate.CnGaap, "2204");
++        Assert.NotNull(grni);
++        // 金额科目属性与模板一致
++        var tmpl = FinCoaTemplate.CnGaapRows.Single(r => r.Code == "2204");
++        Assert.Equal(tmpl.Type, grni!.Type);
++        Assert.Equal(tmpl.NormalSide, grni.NormalSide);
++        Assert.Equal("GRNI", grni.Role);
++        Assert.False(grni.RequirePartner);
++        Assert.True(grni.IsActive);
++        // ParentCode 2000 → ParentId 解析到同租户既有 2000
++        var parent = Acct(db, tid, FinCoaTemplate.CnGaap, "2000");
++        Assert.Equal(parent!.Id, grni.ParentId);
++    }
++
++    [Fact]
++    public void Backfill_IntlTenantMissingRows_InsertsAllFiveIncludingCurrentYearEarnings()
++    {
++        using var db = NewDb();
++        var tid = Guid.NewGuid();
++        AddTenant(db, tid, "T1");
++        SeedTenantCoa(db, tid, FinCoaTemplate.Intl, "2110", "1900", "4800", "6800", "3103");
++
++        FinCoaBackfillSeed.EnsureSeeded(db);
++
++        // 波A 四行 + 波G 本年利润 3103 全部回填
++        Assert.Equal("GRNI", Acct(db, tid, FinCoaTemplate.Intl, "2110")!.Role);
++        Assert.Equal("PENDING_PROPERTY_LOSS", Acct(db, tid, FinCoaTemplate.Intl, "1900")!.Role);
++        Assert.Equal("NON_OP_INCOME", Acct(db, tid, FinCoaTemplate.Intl, "4800")!.Role);
++        Assert.Equal("NON_OP_EXPENSE", Acct(db, tid, FinCoaTemplate.Intl, "6800")!.Role);
++
++        var cye = Acct(db, tid, FinCoaTemplate.Intl, "3103");
++        Assert.NotNull(cye);
++        Assert.Equal(AccountType.Equity, cye!.Type);
++        Assert.Equal(AccountSide.Credit, cye.NormalSide);
++        Assert.Null(cye.Role);   // 本年利润无 Role（按编码 3103 定位）
++    }
++
++    [Fact]
++    public void Backfill_TenantAlreadyComplete_NoChange()
++    {
++        using var db = NewDb();
++        var tid = Guid.NewGuid();
++        AddTenant(db, tid, "T1");
++        SeedTenantCoa(db, tid, FinCoaTemplate.CnGaap);   // 全量含 2204
++
++        var before = db.GlAccounts.IgnoreQueryFilters().Count(a => a.TenantId == tid);
++        FinCoaBackfillSeed.EnsureSeeded(db);
++        var after = db.GlAccounts.IgnoreQueryFilters().Count(a => a.TenantId == tid);
++
++        Assert.Equal(before, after);   // 已全者零变动，无重复插
++    }
++
++    [Fact]
++    public void Backfill_MultiTenant_OnlyMissingTenantChanges()
++    {
++        using var db = NewDb();
++        var t1 = Guid.NewGuid();
++        var t2 = Guid.NewGuid();
++        AddTenant(db, t1, "T1");
++        AddTenant(db, t2, "T2");
++        SeedTenantCoa(db, t1, FinCoaTemplate.CnGaap, excludeCodes: "2204");   // 缺
++        SeedTenantCoa(db, t2, FinCoaTemplate.CnGaap);                          // 全
++
++        var t2Before = db.GlAccounts.IgnoreQueryFilters().Count(a => a.TenantId == t2);
++        FinCoaBackfillSeed.EnsureSeeded(db);
++
++        Assert.NotNull(Acct(db, t1, FinCoaTemplate.CnGaap, "2204"));           // T1 补上
++        var t2After = db.GlAccounts.IgnoreQueryFilters().Count(a => a.TenantId == t2);
++        Assert.Equal(t2Before, t2After);                                       // T2 不动（无重复）
++        // T1 恰好只多了 1 行（2204），未误插其它
++        Assert.Single(db.GlAccounts.IgnoreQueryFilters().Where(a => a.TenantId == t1 && a.Code == "2204"));
++    }
++
++    [Fact]
++    public void Backfill_TenantWithoutScheme_Skipped()
++    {
++        using var db = NewDb();
++        var tid = Guid.NewGuid();
++        AddTenant(db, tid, "T1");   // 有租户但未导入任何 COA
++
++        FinCoaBackfillSeed.EnsureSeeded(db);
++
++        Assert.Empty(db.GlAccounts.IgnoreQueryFilters().Where(a => a.TenantId == tid));   // 不凭空建 COA
++    }
++}
+diff --git a/CP6.Tests/Fin/FinPeriodPermissionAttributeTests.cs b/CP6.Tests/Fin/FinPeriodPermissionAttributeTests.cs
+new file mode 100644
+index 0000000..4bd8343
+--- /dev/null
++++ b/CP6.Tests/Fin/FinPeriodPermissionAttributeTests.cs
+@@ -0,0 +1,74 @@
++using System.Reflection;
++using System.Text.RegularExpressions;
++using CP6.Core.Auth;
++using CP6.WebApi.Controllers.Fin;
++using Microsoft.AspNetCore.Mvc;
++
++namespace CP6.Tests.Fin;
++
++/// <summary>
++/// F1 波G G.1 fail-closed 反射守卫（照 <c>WmsPermissionAttributeTests</c> 泛化）：
++/// 扫 <see cref="PeriodController"/>（本包新增两高危端点 year-close/reopen-year 所在控制器）全部变更端点，
++/// 断言每个 HttpPost/Put/Delete **必须**带 <c>[RequirePermission]</c>，menu 符 <c>^fin-[a-z0-9-]+$</c>、
++/// action 落在本控制器动作词汇集内。将来漏贴权限 = 测试红。
++///
++/// 范围仅 PeriodController（G.1 brief：勿扩大到全 Fin 存量——存量归 M-FIN 模块波）。
++/// </summary>
++public class FinPeriodPermissionAttributeTests
++{
++    private static readonly Regex MenuPattern = new("^fin-[a-z0-9-]+$", RegexOptions.Compiled);
++
++    /// <summary>PeriodController 动作词汇集（close/reopen 存量 + year-close/reopen-year 本包新增）。</summary>
++    private static readonly HashSet<string> ActionVocabulary = new()
++    {
++        "close", "reopen", "year-close", "reopen-year",
++    };
++
++    private static IEnumerable<MethodInfo> ActionMethods(Type t) =>
++        t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
++            .Where(m => !m.IsSpecialName);
++
++    private static bool IsMutating(MethodInfo m) =>
++        m.GetCustomAttributes<HttpPostAttribute>().Any()
++        || m.GetCustomAttributes<HttpPutAttribute>().Any()
++        || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
++
++    private static (string menu, string action)? ReadPermission(MethodInfo m)
++    {
++        var data = CustomAttributeData.GetCustomAttributes(m)
++            .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
++        if (data == null) return null;
++        var args = data.ConstructorArguments;
++        return ((string)args[0].Value!, (string)args[1].Value!);
++    }
++
++    [Fact]
++    public void PeriodController_EveryMutatingAction_HasRequirePermission_WithConventionalKey()
++    {
++        var offenders = new List<string>();
++        foreach (var m in ActionMethods(typeof(PeriodController)).Where(IsMutating))
++        {
++            var perm = ReadPermission(m);
++            if (perm == null)
++            {
++                offenders.Add($"{nameof(PeriodController)}.{m.Name}：变更端点缺 [RequirePermission]");
++                continue;
++            }
++            if (!MenuPattern.IsMatch(perm.Value.menu))
++                offenders.Add($"{m.Name}：menu '{perm.Value.menu}' 不符约定 ^fin-[a-z0-9-]+$");
++            if (!ActionVocabulary.Contains(perm.Value.action))
++                offenders.Add($"{m.Name}：action '{perm.Value.action}' 不在 PeriodController 动作词汇集（疑似 typo）");
++        }
++        Assert.True(offenders.Count == 0, "PeriodController 变更端点权限缺失/键不合约定:\n" + string.Join("\n", offenders));
++    }
++
++    [Fact]
++    public void PeriodController_NewYearEndpoints_UseFinPeriodKey()
++    {
++        // 显式锚定两个本包新增高危端点的键（防误改）。
++        var yc = ReadPermission(typeof(PeriodController).GetMethod(nameof(PeriodController.YearClose))!);
++        var ry = ReadPermission(typeof(PeriodController).GetMethod(nameof(PeriodController.ReopenYear))!);
++        Assert.Equal(("fin-period", "year-close"), yc);
++        Assert.Equal(("fin-period", "reopen-year"), ry);
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 9c4466a..6a13376 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -657,20 +657,24 @@ using (var scope = app.Services.CreateScope())
+ 
+     // 章10 默认租户种子（幂等，按 Id 判存）——登记进 Sys_Tenant 注册表供枚举/登录/管理用
+     CP6.Core.Services.Common.TenantSeed.EnsureSeeded(db);
+ 
+     // 章05 自动凭证记账规则种子（幂等，按 EventType 判存；只引用 Role 锚点，与 COA 模板包解耦）
+     CP6.Core.Services.Fin.PostingRuleSeed.EnsureSeeded(db);
+ 
+     // A3 §9 固定资产科目对账（既有库补 Role/新增 4 科目；空库由模板导入负责）
+     await CP6.WebApi.Seed.A3AccountSeed.EnsureAsync(db);
+ 
++    // F1 波G G.1：存量租户 COA 缺行逐租户回填（波A GRNI/盘盈亏 + 波G INTL 本年利润 3103），
++    // 只对已导入该 scheme 的租户按模板补插缺失行（只插不改不删）。空库由模板导入负责。幂等。
++    CP6.WebApi.Seed.FinCoaBackfillSeed.EnsureSeeded(db);
++
+     if (!db.Sys_Menus.Any())
+     {
+         // 菜单ID和角色ID都是自定义的，手动指定
+         db.Sys_Menus.AddRange(
+             new Sys_Menu { MenuId = 2, MenuName = "仪表盘", RoutePath = "/dashboard", Icon = "Odometer", OrderNo = 0, Enable = true },
+             new Sys_Menu { MenuId = 100, MenuName = "系统管理", Icon = "Setting", OrderNo = 100, Enable = true },
+             new Sys_Menu { MenuId = 101, MenuName = "角色管理", RoutePath = "/role", Icon = "UserFilled", ParentId = 100, OrderNo = 101, Enable = true },
+             new Sys_Menu { MenuId = 102, MenuName = "菜单管理", RoutePath = "/menu", Icon = "Menu", ParentId = 100, OrderNo = 102, Enable = true },
+             new Sys_Menu { MenuId = 103, MenuName = "权限分配", RoutePath = "/permission", Icon = "Lock", ParentId = 100, OrderNo = 103, Enable = true },
+             new Sys_Menu { MenuId = 104, MenuName = "用户管理", RoutePath = "/user", Icon = "User", ParentId = 100, OrderNo = 104, Enable = true },
+@@ -1215,20 +1219,25 @@ using (var scope = app.Services.CreateScope())
+         foreach (var (menuId, code, name) in finActions)
+         {
+             if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+                 db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+             if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+                 db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+         }
+         db.SaveChanges();
+     }
+ 
++    // F1 波G G.1：年结高危端点（PeriodController year-close/reopen-year）权限点逐租户种子。
++    // 上方 D-2 finActions 块仅默认租户（.Any 受行级过滤）；本块照 M-WMS T3b 逐租户显式 TenantId + IgnoreQueryFilters，
++    // 覆盖全部租户 admin（否则非默认租户 admin 年结 403）。须置于 Fin 权限块之后（MenuKey 604 已回填、菜单行已在）。幂等。
++    CP6.WebApi.Seed.FinPeriodPermissionSeed.EnsureSeeded(db);
++
+     // S 类认证加固（T8）：安全审计日志菜单（114，挂"系统管理"100 组）+ admin 授权 + query 操作权限点。
+     // 菜单驱动路由注册（无 Sys_Menu 则前端路由不注册 → 白屏不可达，A4 H-3 教训）。
+     if (!db.Sys_Menus.Any(m => m.MenuId == 114))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 114, MenuName = "安全日志", RoutePath = "/sys/security-log", Icon = "Lock", ParentId = 100, OrderNo = 114, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 114 });
+         db.SaveChanges();
+     }
+     // 安全日志权限点：PermissionService.HasActionAsync 无 admin 旁路，[RequirePermission("sys-security-log","query")]
+     // 须在此 seed + 授权 admin，否则 admin 也 403。幂等。MenuKey 本地回填（全局回填 §684 早于本菜单创建）。
+diff --git a/CP6.WebApi/Seed/FinCoaBackfillSeed.cs b/CP6.WebApi/Seed/FinCoaBackfillSeed.cs
+new file mode 100644
+index 0000000..3472673
+--- /dev/null
++++ b/CP6.WebApi/Seed/FinCoaBackfillSeed.cs
+@@ -0,0 +1,90 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Fin;
++using CP6.Entity.DomainModels.Fin;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// F1 波G G.1：存量租户 COA 缺行逐租户幂等回填（波A/波D 新增科目只进 <see cref="FinCoaTemplate"/> 模板，
++/// 已按旧模板建账的存量租户缺行 → 库存过账 <c>E-FIN-141</c> / 年结 <c>E-FIN-408</c>）。
++///
++/// 回填码单（从模板取属性，单一真相源，保证"金额科目属性与模板一致"）：
++///  - CN-GAAP：<c>2204</c> GRNI 暂估应付（波A 收货未开票）
++///  - INTL：<c>2110</c> GRNI / <c>1900</c> PENDING_PROPERTY_LOSS / <c>4800</c> NON_OP_INCOME /
++///          <c>6800</c> NON_OP_EXPENSE（波A 盘盈亏/报废）/ <c>3103</c> Current Year Earnings（波G 年结本年利润）
++///
++/// 规则（照 <see cref="A3AccountSeed"/> 精神，但升级为**逐租户**——GlAccount 是 BaseTenantEntity）：
++///  - 只对**已导入该 scheme**（该租户下有 ≥1 行同 scheme 科目）的租户回填，不给空租户凭空建 COA。
++///  - **只插缺失**（按 Code 判存）、**不动已有**（科目"不删只停用"，停用行 Code 仍在→不重插）、不删。
++///  - 逐租户显式 <c>TenantId</c> + <c>IgnoreQueryFilters</c>（跨租户可见，避免默认租户作用域误判）。
++///  - ParentId 从同租户同 scheme 既有科目按 ParentCode 解析（新增行的父级为存量科目，必已在）。
++///
++/// 接入：Program.cs 于 <see cref="A3AccountSeed"/> 附近（模板/迁移之后）调用。幂等可重入。
++/// </summary>
++public static class FinCoaBackfillSeed
++{
++    /// <summary>scheme → 需回填的科目编码集（属性一律从 <see cref="FinCoaTemplate"/> 取）。</summary>
++    private static readonly Dictionary<string, string[]> BackfillCodes = new()
++    {
++        [FinCoaTemplate.CnGaap] = new[] { "2204" },
++        [FinCoaTemplate.Intl] = new[] { "2110", "1900", "4800", "6800", "3103" },
++    };
++
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var (scheme, codes) in BackfillCodes)
++        {
++            var template = FinCoaTemplate.Get(scheme).ToDictionary(r => r.Code);
++
++            foreach (var tid in tenantIds)
++            {
++                // 该租户该 scheme 的既有科目（Code → Id），跨租户过滤器绕过。
++                var existing = db.GlAccounts.IgnoreQueryFilters()
++                    .Where(a => a.TenantId == tid && a.StandardScheme == scheme)
++                    .Select(a => new { a.Code, a.Id })
++                    .ToList();
++                if (existing.Count == 0) continue;   // 该租户未导入此 scheme → 不凭空建 COA
++
++                var byCode = existing.ToDictionary(x => x.Code, x => x.Id);
++
++                foreach (var code in codes)
++                {
++                    if (byCode.ContainsKey(code)) continue;   // 已有 → 不动
++                    if (!template.TryGetValue(code, out var row)) continue;   // 防御：码不在模板则跳过
++
++                    Guid? parentId = null;
++                    if (row.ParentCode != null && byCode.TryGetValue(row.ParentCode, out var pid))
++                        parentId = pid;
++
++                    db.GlAccounts.Add(new GlAccount
++                    {
++                        Id = Guid.NewGuid(),
++                        TenantId = tid,                 // 显式设 → StampTenant 不覆盖
++                        Code = row.Code,
++                        Name = row.Name,
++                        Type = row.Type,
++                        NormalSide = row.NormalSide,
++                        Level = row.Level,
++                        IsLeaf = row.IsLeaf,
++                        IsControl = row.IsControl,
++                        SubLedgerType = row.SubLedgerType,
++                        RequirePartner = row.RequirePartner,
++                        Role = row.Role,
++                        StandardScheme = scheme,
++                        IsActive = true,
++                        ParentId = parentId,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/CP6.WebApi/Seed/FinPeriodPermissionSeed.cs b/CP6.WebApi/Seed/FinPeriodPermissionSeed.cs
+new file mode 100644
+index 0000000..5b5457f
+--- /dev/null
++++ b/CP6.WebApi/Seed/FinPeriodPermissionSeed.cs
+@@ -0,0 +1,79 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// F1 波G Task G.1：年结高危端点权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
++///
++/// 背景：波D D.1 给 <c>PeriodController</c> 新增了两个高危端点
++/// <c>POST year-close/{fy}</c> / <c>POST reopen-year/{fy}</c>，各贴
++/// <c>[RequirePermission("fin-period","year-close"/"reopen-year")]</c>。
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 <c>Sys_RoleAction</c> 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator</c> 以 <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null →
++/// "{MenuKey}:{ActionCode}"</c> 聚合，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份。
++///
++/// 锚定：菜单 <c>604</c>（RoutePath <c>/fin/period</c> → MenuKey <c>fin-period</c>，由 Program.cs Fin 权限块回填），
++/// 与既有 <c>close/reopen</c>（Program.cs D-2 单租户块，仅默认租户）同菜单不同 action，无冲突。
++///
++/// 逐租户机制（照 <see cref="WmsPermissionSeed"/> M-WMS T3b 先例，比 D-2 单租户 finActions 更正确）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表）全部租户，对每租户各插一份，显式 <c>TenantId=tid</c>。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，跨租户可见避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 Fin 权限块（MenuKey 604 回填就位）**之后**调用。幂等可重入。
++/// </summary>
++public static class FinPeriodPermissionSeed
++{
++    private const int PeriodMenuId = 604;
++
++    /// <summary>(ActionCode, ActionName) —— 与 PeriodController 两个新高危端点 [RequirePermission] 一一对应。</summary>
++    private static readonly (string Code, string Name)[] Actions =
++    {
++        ("year-close", "年结"),
++        ("reopen-year", "反年结"),
++    };
++
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (code, name) in Actions)
++            {
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == PeriodMenuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,
++                        MenuId = PeriodMenuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == PeriodMenuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,
++                        RoleId = 1,
++                        MenuId = PeriodMenuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}

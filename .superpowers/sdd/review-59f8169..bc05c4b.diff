@@ -1,0 +1,178 @@
+# Review package: 59f8169..HEAD
+
+## Commits
+bc05c4b refactor(ui): ERP 迁移批次6——EstimateCalc向导+estimate steps token化
+
+## Files changed
+ cp6.web/src/views/erp/EstimateCalcView.vue        | 4 ++--
+ cp6.web/src/views/erp/estimate/Step1BasicInfo.vue | 2 +-
+ cp6.web/src/views/erp/estimate/Step2Processes.vue | 2 +-
+ cp6.web/src/views/erp/estimate/Step3Result.vue    | 8 ++++----
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/erp/EstimateCalcView.vue b/cp6.web/src/views/erp/EstimateCalcView.vue
+index 11ad76d..c3e0cd2 100644
+--- a/cp6.web/src/views/erp/EstimateCalcView.vue
++++ b/cp6.web/src/views/erp/EstimateCalcView.vue
+@@ -391,21 +391,21 @@ onMounted(async () => {
+   margin-bottom: 12px;
+ }
+ .header-left {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+ }
+ .qtn-no {
+   font-size: 16px;
+   font-weight: 600;
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ .step-bar {
+   margin-top: 8px;
+ }
+ .step-content {
+   flex: 1;
+   min-height: 400px;
+ }
+ .btn-row {
+   display: flex;
+@@ -457,21 +457,21 @@ onMounted(async () => {
+ }
+ /* sticky footer */
+ .estimate-calc.is-mobile .footer-card {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   margin: 0;
+   border-radius: 0;
+   z-index: 50;
+-  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
++  box-shadow: var(--cp-shadow-up);
+   padding-bottom: env(safe-area-inset-bottom, 0);
+ }
+ .estimate-calc.is-mobile .footer-card :deep(.el-card__body) {
+   padding: 10px 12px;
+ }
+ .estimate-calc.is-mobile .btn-row {
+   justify-content: stretch;
+   gap: 6px;
+ }
+ .estimate-calc.is-mobile .btn-row :deep(.el-button) {
+diff --git a/cp6.web/src/views/erp/estimate/Step1BasicInfo.vue b/cp6.web/src/views/erp/estimate/Step1BasicInfo.vue
+index d49cc6b..18fc9bf 100644
+--- a/cp6.web/src/views/erp/estimate/Step1BasicInfo.vue
++++ b/cp6.web/src/views/erp/estimate/Step1BasicInfo.vue
+@@ -619,16 +619,16 @@ onMounted(async () => {
+     }
+   } catch (e) {
+     console.error('主数据加载失败', e)
+   }
+ })
+ </script>
+ 
+ <style scoped>
+ :deep(.el-divider__text) {
+   font-weight: 600;
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ :deep(.el-form-item) {
+   margin-bottom: 12px;
+ }
+ </style>
+diff --git a/cp6.web/src/views/erp/estimate/Step2Processes.vue b/cp6.web/src/views/erp/estimate/Step2Processes.vue
+index e8bcf67..f82a66c 100644
+--- a/cp6.web/src/views/erp/estimate/Step2Processes.vue
++++ b/cp6.web/src/views/erp/estimate/Step2Processes.vue
+@@ -224,21 +224,21 @@ watch(rows, resequence, { deep: false })
+ </script>
+ 
+ <style scoped>
+ .card-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+ }
+ .title {
+   font-weight: 600;
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ .header-actions {
+   display: flex;
+   align-items: center;
+   gap: 6px;
+ }
+ .spec-cell {
+   display: flex;
+   gap: 4px;
+ }
+diff --git a/cp6.web/src/views/erp/estimate/Step3Result.vue b/cp6.web/src/views/erp/estimate/Step3Result.vue
+index 22a56ca..afde5eb 100644
+--- a/cp6.web/src/views/erp/estimate/Step3Result.vue
++++ b/cp6.web/src/views/erp/estimate/Step3Result.vue
+@@ -67,21 +67,21 @@
+       </div>
+     </el-card>
+ 
+     <!-- 計算ロジック透明化 -->
+     <el-card shadow="never" class="notes-card">
+       <template #header>
+         <span class="title">{{ t('計算ロジック') }}</span>
+       </template>
+       <ul class="notes">
+         <li v-for="(line, i) in result.notes" :key="i">{{ line }}</li>
+-        <li v-if="!result.notes.length" style="color:#999">{{ t('未計算') }}</li>
++        <li v-if="!result.notes.length" style="color: var(--cp-muted)">{{ t('未計算') }}</li>
+       </ul>
+     </el-card>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ const { t } = useI18n()
+ import { ref, onMounted } from 'vue'
+ import { storeToRefs } from 'pinia'
+@@ -151,35 +151,35 @@ onMounted(() => {
+   gap: 12px;
+ }
+ .calc-bar :deep(.el-card__body),
+ .summary-card :deep(.el-card__body),
+ .amount-card :deep(.el-card__body),
+ .notes-card :deep(.el-card__body) {
+   padding: 12px 16px;
+ }
+ .title {
+   font-weight: 600;
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ .right-btns {
+   text-align: right;
+ }
+ .highlight {
+   font-size: 16px;
+   font-weight: 700;
+-  color: #f56c6c;
++  color: var(--cp-danger);
+ }
+ .notes {
+   margin: 0;
+   padding-left: 20px;
+   font-family: Consolas, 'Courier New', monospace;
+   font-size: 13px;
+   line-height: 1.8;
+-  color: #666;
++  color: var(--cp-text);
+ }
+ .notes li {
+   list-style: decimal;
+ }
+ .empty {
+   padding: 8px 0;
+ }
+ </style>

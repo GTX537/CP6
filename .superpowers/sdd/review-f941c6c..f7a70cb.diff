@@ -1,0 +1,254 @@
+# Review package: f941c6c..f7a70cb
+
+## Commits
+f7a70cb docs(mes): M-MES T1 权限键清单——11控制器×30端点真相源
+
+## Files changed
+ .superpowers/sdd/mes-t1-report.md |  58 +++++++++++++
+ docs/seeds/mes-permission-keys.md | 173 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 231 insertions(+)
+
+## Diff
+diff --git a/.superpowers/sdd/mes-t1-report.md b/.superpowers/sdd/mes-t1-report.md
+new file mode 100644
+index 0000000..7e95020
+--- /dev/null
++++ b/.superpowers/sdd/mes-t1-report.md
+@@ -0,0 +1,58 @@
++# M-MES T1 报告：权限键清单（端点×权限键真相源）
++
++**Status:** DONE
++**交付物:** `C:\CP6\docs\seeds\mes-permission-keys.md`（纯文档，零代码改动）
++
++## 逐控制器计数表
++
++| 控制器 | 非GET端点 | 豁免 | 真写 | menu-key | 高危 |
++|---|---|---|---|---|---|
++| WorkOrderController | 5 | 0 | 5 | mes-work-order | — |
++| ProductionResultController | 5 | 0 | 5 | mes-production-result | complete |
++| DefectRecordController | 3 | 0 | 3 | mes-defect | — |
++| MachineController | 6 | 0 | 6 | mes-machine | — |
++| OeeController | 1 | 0 | 1 | mes-oee | — |
++| PlanningBoardController | 2 | 0 | 2 | mes-planning-board | — |
++| QualityInspectionController | 2 | 0 | 2 | mes-quality-inspection | — |
++| PlanAchievementController | 2 | 2 | 0 | mes-plan-achievement | — |
++| WorkCenterController | 2 | 0 | 2 | mes-work-center | — |
++| ProcessCostRateController | 2 | 0 | 2 | mes-process-cost-rate | edit |
++| MesDashboardController | 0（全GET） | — | — | (309/312 看板) | — |
++| **合计** | **30** | **2** | **28** | **10** | **2** |
++
++自洽：30 非GET = 2 豁免 + 28 真写；逐控制器真写累加 = 28 ✅。资源键去重 26；状态键 9。
++
++## 高危清单（2）
++
++- `mes-production-result:complete` — 工程完了触发 WMS完成品入庫 + BOM料耗反冲(OUT/ISSUE) + FIN成本归集/结转（ProductionResultService.cs:263-293）。会话记忆 P0「完工反冲」。
++- `mes-process-cost-rate:edit` — 工序费率修正，retroactive 改写已报工工单原価基础，经 CostCollectService 直喂 FIN 结转（ProcessCostRateService.cs:27-62；Program.cs:185）。简报点名。**与 ERP 费率 master 未提级不同**（MES 费率直喂已完工单成本，故提级；§五归并5 留降级出口待 T2 审计）。
++
++## 豁免论证索引（2，均读 Service 证得无写）
++
++- `mes-plan-achievement:view`（Summary）— PlanAchievementService.cs:33-96，仅 WorkOrders.AsNoTracking() 聚合，全类无 Add/SaveChanges。
++- `mes-plan-achievement:view`（ExportCsv）— :98-120，调 Summary 后拼 CSV，纯读。
++
++## §六 悬案/硬前置摘要
++
++1. **头号命门（时序）**：回填块 Program.cs:894-901 在 MES 菜单插入 :1511-1611 **之前**执行 → 洁净部署首启 MES 菜单 MenuKey=null → PermissionAggregator 过滤掉 → **MES 全 403 直到二次重启**。T2 须在 MES 插入块显式赋 `MenuKey="mes-*"`（同 WMS/ERP T2 型）。
++2. **命门2（machine 键错配）**：菜单 310 RoutePath=`/mes/machine-list` → 回填得 `mes-machine-list` ≠ 本表 `mes-machine`。T2 须对 310 显式赋 `mes-machine`。其余 9 键回填即正确（RoutePath 与键天然一致），但建议随 #1 一并显式化。
++3. **注**：quality-inspection 键取菜单域名 `mes-quality-inspection`（非控制器路由 `inspections`），回填自 306 即一致。
++4. **盘点差异（简报点名高危端点不存在直接 HTTP 端点）**：
++   - 工单强制关闭 = WorkOrderService.CancelAsync 存在但未暴露端点（仅 ERP 受注取消 Bridge 内部调用），受 `erp-order:cancel` 管辖。
++   - 报工修正 = 无独立修正/冲销端点；真高危为 complete（反冲，已提级）。
++   - 报废判定 = QualityInspection 无 judge 端点、DefectRecord 为记录 CRUD，MES 无独立报废判定端点。
++5. **ERP 对比利好**：MES RoutePath **有 `mes/` 前缀（非 ERP 裸路径命门）**，回填得 `mes-*`；**零孤儿路由**（15 个 views/mes/*.vue 全映射 300 段菜单，区别于 ERP 5 条孤儿）。
++
++## Files changed
++- 新增 `docs/seeds/mes-permission-keys.md`（真相源）
++- 新增 `.superpowers/sdd/mes-t1-report.md`（本报告）
++
++## Self-review findings
++- 计数三重核验通过（总=豁免+真写；逐控制器分解；资源键去重）。
++- 键全连字符 `mes-*`，高危 2 键各有 Service 行级佐证。
++- 豁免 2 条均逐条读 Service 证无写（非按端点名猜）。
++- §六 硬前置：RoutePath 形态（有 mes/ 前缀）、MenuId 段位（300-315）、回填时序命门、孤儿路由（零）、machine 键错配——均已查证并落 §六。
++
++## Concerns
++- **ProcessCostRate 高危提级为判断项**：与 ERP 费率 master 先例（未提级）不一致，理由是 MES 费率直喂已完工单成本归集。已在 §五归并5/§六.5 留「T2 审计可降级」出口。属需上层确认的裁决点，非硬错误。
++- **回填时序命门**是 T2 的真正拦路虎（洁净部署首启 403），已在 §六头条标红——T2 若照抄 ERP「显式 MenuKey 前置」即可闭合。
+diff --git a/docs/seeds/mes-permission-keys.md b/docs/seeds/mes-permission-keys.md
+new file mode 100644
+index 0000000..48e79cf
+--- /dev/null
++++ b/docs/seeds/mes-permission-keys.md
+@@ -0,0 +1,173 @@
++# MES 写端点 × 権限键清单（M-MES Task 1 真相源）
++
++> 生成于 2026-07-12。本表是 **M-MES 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填/显式赋值）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试）均以本表为准。
++> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/erp-permission-keys.md` / `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 MES 菜单种子 `CP6.WebApi/Program.cs` MenuId 300–315 + 逐 Service 实现读证的只读 POST 豁免判定。
++> 扫描范围：`CP6.WebApi/Controllers/Mes/` 下 **全部 11 个控制器**（计划口径 10，实扫 11，差异见 §七）。
++> **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
++
++## 约定
++
++- **资源键 = `{menu-key}:{action}`**，**menu-key 一律连字符小写、绝对禁止下划线**（全仓 100% RequirePermission 用连字符）。本波统一冠 `mes-` 业务域前缀（`mes-work-order`、`mes-production-result`…）。
++- **资源键必须能锚定到一个 `Sys_Menu` 行**（`PermissionAggregator.FillActionKeysAsync = Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → {MenuKey}:{ActionCode}`）。逐键给出锚定菜单 MenuId/RoutePath。
++- **`高危?` 列三值**（沿用 WMS/ERP 定义）：
++  - `是` = 触及**库存/金额/不可逆/级联反冲**（T3 贴点与 T2 审计的**最高优先级**，绝不可与 view/edit 混授）。
++  - `状态` = 独立工作流状态流转/发行（不直接动库存钱，但仍**单独成键**，不塞进 edit/view）。
++  - `否` = 四基粒度 `view/add/edit/del` 之一。
++- **只读 POST 豁免**：纯查询/计算/导出的 POST 归 `view`，表内标 `只读POST→view`，并在 §四逐条附**读 Service 实现证得的**无写副作用依据。GET 端点一律不列。
++
++---
++
++## 一、写端点映射表（POST/PUT/DELETE，共 30 行）
++
++| # | 控制器 | HTTP方法 + 路由 | 方法名 | 建议 menu-key | action | 高危? | 备注 |
++|---|---|---|---|---|---|---|---|
++| 1 | WorkOrderController | POST `/api/mes/work-orders` | Create | `mes-work-order` | add | 否 | 製造指図登録。菜单302 入力 |
++| 2 | WorkOrderController | PUT `/api/mes/work-orders/{no}` | Update | `mes-work-order` | edit | 否 | 訂正（Status 0/1 計画・未発行のみ，WorkOrderService.cs:230） |
++| 3 | WorkOrderController | DELETE `/api/mes/work-orders/{no}` | Delete | `mes-work-order` | del | 否 | 软删除（IsDeleted，Status 0/1 のみ，:307-321） |
++| 4 | WorkOrderController | POST `/api/mes/work-orders/{no}/issue` | Issue | `mes-work-order` | issue | 状态 | 指図発行（Status→2）＋触发 WMS 自動展開 Hook（best-effort，:323-343）。不直接动库存，归状态 |
++| 5 | WorkOrderController | POST `/api/mes/work-orders/expand-from-order` | ExpandFromOrder | `mes-work-order` | add | 否 | 受注→指図 自動展開（批量创建 WO）。复用 add（§五归并1，对标 WMS outbound-order:add 覆 FromOrder/FromWorkOrder） |
++| 6 | ProductionResultController | POST `/api/mes/production-results/start` | Start | `mes-production-result` | start | 状态 | 工程開始（proc/WO 状态流转，:152-160） |
++| 7 | ProductionResultController | POST `/api/mes/production-results/suspend` | Suspend | `mes-production-result` | suspend | 状态 | 工程中断（:161-168） |
++| 8 | ProductionResultController | POST `/api/mes/production-results/resume` | Resume | `mes-production-result` | suspend | 状态 | 中断解除，归并入 suspend（§五归并2，中断管理正/反操作） |
++| 9 | ProductionResultController | POST `/api/mes/production-results/complete` | Complete | `mes-production-result` | complete | **是** | **工程完了**：全工程完了时触发 ①WMS 完成品入庫 ②BOM 定额料耗**反冲 OUT/ISSUE** ③FIN 成本归集/结转。不可逆、动库存与成本（详§三，ProductionResultService.cs:263-293） |
++| 10 | ProductionResultController | POST `/api/mes/production-results` | Report | `mes-production-result` | report | 状态 | 数量報告（累加 GoodQty/DefectQty 到 proc+WO 头，:202-215）。本身不动库存/不触发反冲（反冲仅 complete 时），归状态 |
++| 11 | DefectRecordController | POST `/api/mes/defects` | Create | `mes-defect` | add | 否 | 不良品 手動起票 |
++| 12 | DefectRecordController | PUT `/api/mes/defects/{no}` | Update | `mes-defect` | edit | 否 | 原因分析/是正処置更新 |
++| 13 | DefectRecordController | DELETE `/api/mes/defects/{no}` | Delete | `mes-defect` | del | 否 | 软删除 |
++| 14 | MachineController | POST `/api/mes/machines` | Create | `mes-machine` | add | 否 | 設備マスタ登録。菜单310 |
++| 15 | MachineController | PUT `/api/mes/machines/{cd}` | Update | `mes-machine` | edit | 否 | |
++| 16 | MachineController | DELETE `/api/mes/machines/{cd}` | Delete | `mes-machine` | del | 否 | |
++| 17 | MachineController | POST `/api/mes/machines/{cd}/status` | ChangeStatus | `mes-machine` | status | 状态 | 設備状態変更（稼働/停止/保全，MachineService.ChangeStatusAsync） |
++| 18 | MachineController | POST `/api/mes/machines/downtimes` | RegisterDowntime | `mes-machine` | downtime | 状态 | 停止記録 起票（写 MachineDowntime，不动库存/金额） |
++| 19 | MachineController | POST `/api/mes/machines/downtimes/{no}/close` | CloseDowntime | `mes-machine` | downtime | 状态 | 停止記録 締め，归并入 downtime（§五归并3，停止記録生命周期同权限） |
++| 20 | OeeController | POST `/api/mes/oee/recalculate` | Recalculate | `mes-oee` | recalculate | 状态 | 指定日 OEE 再計算+保存（upsert OeeDaily 分析快照，OeeService.cs:66-121）。写分析结果表，不动库存/金额，归状态 |
++| 21 | PlanningBoardController | PUT `/api/mes/planning-board/reschedule` | Reschedule | `mes-planning-board` | reschedule | 状态 | ドラッグ後 計画日時更新（PlanningBoardService.RescheduleAsync） |
++| 22 | PlanningBoardController | POST `/api/mes/planning-board/auto-arrange` | AutoArrange | `mes-planning-board` | arrange | 状态 | 自動配置（按 Prio+納期 批量重排计划） |
++| 23 | QualityInspectionController | POST `/api/mes/inspections` | Create | `mes-quality-inspection` | add | 否 | 品質検査 新規登録。菜单306。**注：menu-key 取菜单 RoutePath 域名 `quality-inspection`，非控制器路由 `inspections`（§六注3）** |
++| 24 | QualityInspectionController | PUT `/api/mes/inspections/{no}` | Update | `mes-quality-inspection` | edit | 否 | 検査訂正 |
++| 25 | PlanAchievementController | POST `/api/mes/plan-achievement/summary` | Summary | `mes-plan-achievement` | view | 只读POST→view | 达成率汇总，PlanAchievementService 全类无写（§四）。菜单313 |
++| 26 | PlanAchievementController | POST `/api/mes/plan-achievement/export-csv` | ExportCsv | `mes-plan-achievement` | view | 只读POST→view | 达成率 CSV 导出，纯读（§四） |
++| 27 | WorkCenterController | POST `/api/mes/work-center/upsert` | Upsert | `mes-work-center` | edit | 否 | 工作中心 master upsert（create+update 合一，§五归并4）。菜单314 |
++| 28 | WorkCenterController | DELETE `/api/mes/work-center/{wgCd}` | Delete | `mes-work-center` | del | 否 | 软删除 |
++| 29 | ProcessCostRateController | POST `/api/mes/process-cost-rate/upsert` | Upsert | `mes-process-cost-rate` | edit | **是** | **工序费率修正**（人工/间接费率）。retroactive 费率（ValidFrom 过去）直接改写**已报工工单的原価計算基础**→FIN 成本归集/结转重算（详§三，ProcessCostRateService.cs:27-62）。菜单315。简报点名「成本费率修正」 |
++| 30 | ProcessCostRateController | DELETE `/api/mes/process-cost-rate/{id}` | Delete | `mes-process-cost-rate` | del | 否 | 软删除费率行 |
++
++> **GET-only 控制器（无 POST/PUT/DELETE，不在上表）**：
++> - `MesDashboardController`（`/api/mes/dashboard`，全 GET 看板/SP 版）——纯查询，无写端点。菜单309（+312 Control Tower 大屏为其可视化前端，共用看板 GET）。
++>
++> **有 POST 端点但全豁免（真写=0，不占「含写控制器」计数，见 §七）**：
++> - `PlanAchievementController`（`/api/mes/plan-achievement`，2 个 POST 均只读 POST 豁免→view）。
++
++---
++
++## 二、menu-key 汇总清单（去重，共 10 个）
++
++| # | menu-key | 锚定菜单（Program.cs MenuId / RoutePath） | 说明 |
++|---|---|---|---|
++| 1 | `mes-work-order` | 302 製造指図 入力 `/mes/work-order`（+ 303 一覧 `/mes/work-order-list`） | ✅有菜单行。回填自 302 RoutePath = `mes-work-order` ✅一致 |
++| 2 | `mes-production-result` | 304 製造実績 入力 `/mes/production-result`（+ 305 一覧） | ✅。回填自 304 = `mes-production-result` ✅一致 |
++| 3 | `mes-defect` | 308 不良品管理 `/mes/defect` | ✅。回填 = `mes-defect` ✅一致 |
++| 4 | `mes-machine` | 310 設備管理 `/mes/machine-list` | ✅有菜单行，**但回填自 RoutePath = `mes-machine-list` ≠ `mes-machine`**（§六头号命门2，T2 须显式赋 `mes-machine`） |
++| 5 | `mes-oee` | 311 OEE 分析 `/mes/oee` | ✅。回填 = `mes-oee` ✅一致 |
++| 6 | `mes-planning-board` | 301 生産計画ボード `/mes/planning-board` | ✅。回填 = `mes-planning-board` ✅一致 |
++| 7 | `mes-quality-inspection` | 306 品質検査 入力 `/mes/quality-inspection`（+ 307 一覧） | ✅。回填自 306 = `mes-quality-inspection` ✅一致（菜单域名≠控制器路由 `inspections`，以菜单为准，§六注3） |
++| 8 | `mes-plan-achievement` | 313 生産計画達成率 `/mes/plan-achievement` | ✅。仅 view（两端点均只读 POST 豁免）。回填 = `mes-plan-achievement` ✅一致 |
++| 9 | `mes-work-center` | 314 工作中心 `/mes/work-center` | ✅。回填 = `mes-work-center` ✅一致 |
++| 10 | `mes-process-cost-rate` | 315 工序费率 `/mes/process-cost-rate` | ✅。回填 = `mes-process-cost-rate` ✅一致 |
++
++> **全部 10 个 menu-key 均有对应菜单行，零孤儿路由**（与 ERP 5 条孤儿路由不同——MES 菜单齐全）。前端 15 个 `views/mes/*.vue` 页面逐一映射到 300 段菜单行（含 309 dashboard / 312 control-tower 两只读页），无「有页面无菜单」暗物质。
++> **一域两菜单行（入力+一覧）的 3 组**（work-order 302/303、production-result 304/305、quality-inspection 306/307）：动作键**单锚定入力页**（302/304/306），一覧页 MenuKey 由回填得 `*-list` 后缀键（无 action 引用、无害），天然规避 `Sys_Menus.MenuKey IS NOT NULL` 唯一索引冲突（对标 ERP `erp-key-menu-anchor.md` 单锚定裁决，MES 因回填按 RoutePath 天然差异化，不存在同键多行问题）。
++
++---
++
++## 三、高危动作清单（`是`：库存/金额/不可逆/反冲，共 2 个资源键）
++
++> T3 贴 `[RequirePermission]` 与 T2 审计（钱与库存优先）的**第一优先级**，**绝不可**与 view/edit 混授。
++
++| 资源键 | 为何高危独立 |
++|---|---|
++| `mes-production-result:complete` | 工程完了：全工程完了时级联触发 **WMS 完成品入庫 + BOM 定额料耗反冲(OUT/ISSUE) + FIN 成本归集/结转**（ProductionResultService.cs:263-293），动库存与成本、不可逆。会话记忆点名 P0「完工反冲」链，最高优先级 |
++| `mes-process-cost-rate:edit` | 工序费率修正：改写人工/间接费率，retroactive 费率（ValidFrom 过去）直接改写**已报工工单的原価計算基础**，经 `CostCollectService` 归集（Program.cs:185，料吃 MES 真实消耗×BOM 单价+工费标准）→ 影响 FIN 结转金额。简报点名「成本费率修正」。**注：区别于 ERP fx-rate/sheet-unit-price（仅影响未来估价、未提级）——MES 费率直喂已完工单的成本归集，故提级 `是`；若 T2 审计认为等同主数据 CRUD 可降级 `否`，见 §五归并5** |
++
++### 3b. 独立状态流转/发行动作键（`状态`，共 9 个，仍单独成键、不塞 edit）
++
++`mes-work-order:issue` · `mes-production-result:start` · `mes-production-result:suspend`（含 resume 归并）· `mes-production-result:report` · `mes-machine:status` · `mes-machine:downtime`（含 register+close 归并）· `mes-oee:recalculate` · `mes-planning-board:reschedule` · `mes-planning-board:arrange`
++
++> 非 CRUD 独立动作键合计 = 2（高危）+ 9（状态）= **11 个**。其余端点走 `add/edit/del/view` 四基粒度。
++
++---
++
++## 四、只读 POST 豁免清单（归 view，共 2 个 —— 均逐条读 Service 实现证得无写）
++
++| # | 端点（方法） | 豁免依据（读 Service 实现） |
++|---|---|---|
++| 1 | POST `/api/mes/plan-achievement/summary`（PlanAchievementService.GetSummaryAsync） | 仅 `WorkOrders.AsNoTracking()` 读→内存 GroupBy 聚合达成率 DTO，全类**无 `Add/Update/Remove/SaveChanges`**（PlanAchievementService.cs:33-96）。POST 仅为传复杂查询体 `PlanAchievementQuery` |
++| 2 | POST `/api/mes/plan-achievement/export-csv`（PlanAchievementService.ExportCsvAsync） | 调 GetSummaryAsync 后拼 CSV bytes，纯读导出，无写（:98-120） |
++
++> **复核结论（防望文生义）**：以下"看似分析/计算/发行"的 POST **确为写端点，不豁免**——
++> - `POST /api/mes/oee/recalculate`：`RecalculateAsync` 对 `OeeDailies` **Add/更新 + SaveChanges**（OeeService.cs:85-119），写分析快照 → 键 `mes-oee:recalculate`（状态）。对照：`GET /api/mes/oee/today` 是保存しない的即时计算（:47-63），为 GET 本就不列。
++> - `POST /api/mes/production-results/*`（start/suspend/resume/complete/report）：均经 `WriteAsync` 写 ProductionResult + proc/WO 状态（:129-305），complete 更触发反冲 → 已按上表贴权限。
++> - `POST /api/mes/planning-board/auto-arrange`、`PUT /reschedule`：均写计划日时/排序 → 已贴权限。
++> - `POST /api/mes/machines/downtimes`、`/status`：均写库表 → 已贴权限。
++
++---
++
++## 五、命名归并判断与疑点（供 T2/T3 复核）
++
++1. **`add` 复用于同域创建+自動展開**：`mes-work-order:add` 覆盖 Create（手動登録）+ ExpandFromOrder（受注自動展開批量创建）——同一"创建指図"粒度复用 add，不为自動展開造新键（对标 WMS `wms-outbound-order:add` 覆 Create/FromWorkOrder/FromOrder）。若审计要求"可手工建、不可自動展開"独立管控，T3 可拆 `expand`——**当前不拆**。
++2. **`mes-production-result:suspend` 归并 Suspend+Resume**：中断与中断解除为同一"中断管理"权限的正/反操作，归一键（对标 WMS `wms-remnant:reserve` 归并 Reserve/Unreserve）。若审计要求"可中断不可解除"更细授权，T3 可拆——**当前不拆**。
++3. **`mes-machine:downtime` 归并 Register+Close**：停止記録 起票与締め为同一"停止記録管理"权限，归一键（对标 WMS `wms-carrier:event` 归并多状态端点）。
++4. **`edit` 承载 Upsert（WorkCenter/ProcessCostRate）**：`upsert` 单端点内含 create+update 分支（Id 存在则改、否则建）。授权层归 `edit`（可维护该 master）。若需"可改不可新建"独立管控，T3 可拆 `add`——**当前归 edit**（无独立 create 端点，拆分无落点）。
++5. **ProcessCostRate 提级高危 vs ERP 费率 master 未提级**：本表 `mes-process-cost-rate:edit` 提级 `是`，而 ERP `erp-fx-rate`/`erp-sheet-unit-price` 保持 `否`。**理由差异**：ERP 费率仅影响未来估价/换算；MES 工序费率经 `CostCollectService` 直喂**已报工/完工工单**的成本归集与 FIN 结转（Program.cs:185），retroactive 修改会改写已固化成本。若 T2 审计认为二者应一致（均视为主数据 CRUD 不提级），可降级 `否`——**当前判定为 `是`，待 T2 审计拍板**。
++6. **`del` 一致语义**：全 MES 删除均为软删除（IsDeleted），统一 `del`。
++
++---
++
++## 六、命门与遗留（T2/T4 硬前置）
++
++1. **【头号命门·回填时序】MES 菜单插入（Program.cs:1511-1611）在资源键回填块（:894-901）之后 → 洁净部署首启 MenuKey 为 null → MES 全 403 直到二次重启**：
++   回填块 `menusNoKey = Sys_Menus.Where(MenuKey==null && RoutePath!=null)`（:895）在 :899 执行 `MenuKey = RoutePath.Trim('/').Replace('/','-')`。但 MES 菜单 300–315 在 :1511 之后才 Add（且 Add 时**未设 MenuKey**）。洁净库首启：回填块先跑（MES 菜单尚不存在）→ 跳过；MES 菜单随后插入，MenuKey 留 null。`PermissionAggregator` 过滤 MenuKey==null → **MES action 键无法 join 出 → 首启即 fail-closed 403，需二次重启回填才生效**（对标 WMS「TenantAdmin 新租户重启前 403」平台票）。
++   → **T2 必须在 MES 菜单插入块（:1517-1611）对各锚定行显式赋 `MenuKey="mes-*"`**（与 WMS/ERP T2「锚定行显式 MenuKey，置于回填块之前」同型），或在 MES 插入后补一次回填 pass。**这是 T2 不做则洁净部署首启失配的硬前置。**
++2. **【命门2·machine 键回填错配】菜单 310 RoutePath=`/mes/machine-list` → 回填得 `mes-machine-list` ≠ 本表 `mes-machine`**：
++   若 T2 依赖回填而非显式赋值，Machine 全键（add/edit/del/status/downtime）将锚定到错误键 `mes-machine-list` → 与 T3 贴的 `mes-machine:*` 对不上 → Machine 全 403。→ **T2 须对菜单 310 显式赋 `MenuKey="mes-machine"`**。其余 9 键的锚定页 RoutePath 与本表键天然一致（回填即正确，但仍建议随 #1 一并显式化以规避时序）。
++3. **【注·quality-inspection 键取菜单域名】** QualityInspectionController 路由 `/api/mes/inspections`，但锚定菜单 306/307 RoutePath=`/mes/quality-inspection(-list)`。本表 menu-key 取**菜单域名** `mes-quality-inspection`（回填自 306 即一致），非控制器路由 `inspections`——前端 `v-permission` 与 T3 贴点须逐字用 `mes-quality-inspection`（对标 WMS qc-inspection/ink 等路由≠菜单的先例，以菜单 MenuKey 为唯一基准）。
++4. **【盘点差异·简报点名高危端点在 MES 不存在直接 HTTP 端点】**：
++   - **「工单强制关闭」**：`WorkOrderService.CancelAsync`（WorkOrderService.cs:351-378）存在，但**未在 WorkOrderController 暴露为 HTTP 端点**——仅由 ERP 受注取消 Bridge Hook 内部调用（受注取消連動）。无直接写端点可贴权限，其入口受 ERP `erp-order:cancel` 高危键管辖。→ MES 侧无对应端点，**记为盘点差异**。
++   - **「报工修正」**：ProductionResult 无独立"修正/冲销"端点；报工经 Start/Suspend/Resume/Complete/Report 五态累加式写入，其中真高危为 `complete`（反冲，已提级 §三）。Report(数量報告) 为累加状态写、非修正。→ 无独立"报工修正"端点，**记为盘点差异**。
++   - **「报废判定」**：QualityInspection 仅 Create/Update（无 Judge/合否判定端点，区别于 WMS QC 的 judge）；DefectRecord 为不良品记录 CRUD（无报废处置写端点）。→ MES 无独立"报废判定"端点，**记为盘点差异**。
++5. **【待 T2 审计拍板】ProcessCostRate 高危提级**：见 §五归并5，本表提级 `是`，若审计要求与 ERP 费率 master 一致可降级 `否`。
++
++---
++
++## 七、计数收口
++
++- **扫描控制器**：11（DefectRecord / Machine / MesDashboard / Oee / PlanAchievement / PlanningBoard / ProcessCostRate / ProductionResult / QualityInspection / WorkCenter / WorkOrder）。**计划口径 10，实扫 11**——差异为计划未单列 `ProcessCostRate`（与 WorkCenter 同属 A2 工艺路线主数据、后补菜单 314/315），已全量纳入。
++- **GET-only 控制器（0 非 GET）**：1（MesDashboard）。
++- **有 POST 但全豁免（真写=0）**：1（PlanAchievement，2 端点均只读 POST→view）。
++- **含真写端点控制器**：9（除 MesDashboard、PlanAchievement）。
++- **POST/PUT/DELETE 端点行总数**：**30**（= §一表行数，精确吻合）。
++  - 其中**只读 POST 豁免（→view）**：**2**。
++  - **真·写端点**：**28**。
++- **menu-key（去重）**：**10**（全部有菜单行，零孤儿）。
++- **资源键（去重，含 view）**：**26**。
++- **高危键（是）**：**2**（`mes-production-result:complete`、`mes-process-cost-rate:edit`）。
++- **状态键**：**9**。
++
++### 逐控制器双向核对（控制器→表 / 表→控制器，零缺漏零 GET 误列）
++
++| 控制器 | POST/PUT/DELETE 端点数 | 其中豁免 | 真写 | 表内 # |
++|---|---|---|---|---|
++| WorkOrderController | 5（Create/Update/Delete/Issue/ExpandFromOrder；GET next-seq/list/{no} 不列） | 0 | 5 | 1–5 |
++| ProductionResultController | 5（Start/Suspend/Resume/Complete/Report；GET list/work-order 不列） | 0 | 5 | 6–10 |
++| DefectRecordController | 3（Create/Update/Delete；GET list/{no}/categories 不列） | 0 | 3 | 11–13 |
++| MachineController | 6（Create/Update/Delete/ChangeStatus/RegisterDowntime/CloseDowntime；GET list/{cd}/downtimes 不列） | 0 | 6 | 14–19 |
++| OeeController | 1（Recalculate；GET list/today/trend 不列） | 0 | 1 | 20 |
++| PlanningBoardController | 2（Reschedule/AutoArrange；GET bars/kpi 不列） | 0 | 2 | 21–22 |
++| QualityInspectionController | 2（Create/Update；GET list/{no}/templates 不列） | 0 | 2 | 23–24 |
++| PlanAchievementController | 2（Summary/ExportCsv，均只读 POST 豁免） | 2 | 0 | 25–26 |
++| WorkCenterController | 2（Upsert/Delete；GET list/{wgCd} 不列） | 0 | 2 | 27–28 |
++| ProcessCostRateController | 2（Upsert/Delete；GET list/resolve 不列） | 0 | 2 | 29–30 |
++| MesDashboardController | 0（全 GET，含 SP 版） | — | — | —— |
++| **合计** | **30** | **2** | **28** | **30 ✅** |
++
++> 自洽核验：总非 GET 端点 30 = 只读豁免 2 + 真写 28 ✅；逐控制器真写累加 5+5+3+6+1+2+2+0+2+2 = 28 ✅。

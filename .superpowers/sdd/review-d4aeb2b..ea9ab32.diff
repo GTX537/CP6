@@ -1,0 +1,1574 @@
+# Review package: d4aeb2b9f4858178ade747d0aa6c08c7e2529bb7..HEAD
+
+## Commits
+ea9ab32 docs(sdd): WFS波① T11过审台账——11票全完成待终审
+f01d49f fix(wfs-service-task): T11 CsrfMiddleware 豁免 /hubs 路径（修复 SignalR negotiate 被 CSRF 403 拦截）
+b2e45d7 docs(sdd): WFS波① T10过审台账——SeedLangs insert-only纠错+部署SQL记档
+150ba9b fix(wfs-service-task): T10 韩文译文润色（去 Konglish 音译，服务任务面板 6 词条）
+ccaba62 docs(sdd): WFS波① T9过审台账
+4b90463 fix(wfs-service-task): T9 错误边画布视觉区分（danger 虚线，Design System token）
+2c291e4 docs(sdd): WFS波① T8过审台账(Critical修复轮)+磁盘守卫收紧记档
+787b95b fix(wfs-service-task): T8修复 timerActionKind改backing ref——纯computed清理setter使write/api不可达(票面设计缺陷)
+d7135b7 fix(wfs-service-task): T8 定时器到点动作补 webApi 连接器/路径变体 UI + 互斥清理（补 spec §5.3 缺口，防 Snapshot 误外呼）
+ab8614a docs(sdd): WFS波① T7过审台账
+0dd80b6 fix(wfs-service-task): T7 服务目录加载失败露显式重试（修复停在 serviceTask 节点时下拉永久空白）
+6594bcf docs(sdd): WFS波① T3过审台账——后端组六票收口
+251c99c fix(wfs-service-task): T3 IWfConnector.MaxCallDuration + 启动期租约护栏（防长调用被 reaper 重投重复外呼）
+c07df2d docs(sdd): WFS波① T1过审台账
+0f2a1a5 fix(wfs-service-task): T1 Local.json 配置源插到 env vars 之前，恢复环境变量最高优先级（修复容器连接串被静默吞）
+d1e6bd4 docs(sdd): WFS波① T5过审台账
+614ef4e fix(wfs-service-task): T5 FlowSchemaValidator 补 ServiceMode 值域校验（sync|async → E-WF-016）
+c130703 docs(sdd): WFS波① T4过审台账+磁盘事件记档
+03e01cd fix(wfs-service-task): T4 ServiceVarsHelper 点路径限制文档化 + 设计期拦数组下标模板（E-WF-016）
+32ccc14 docs(sdd): WFS波① T6过审台账
+2382bae docs(sdd): WFS波① T6 报告——E-WF-018 异步路径结构化码收口(缺陷核实+TDD红绿+同步路径姊妹票)
+ca0dd45 fix(wfs-service-task): T6 E-WF-018 异步路径改结构化码 E-WF-018|detail（去本地化散文，前端可按码翻译）
+ed972ff docs(sdd): WFS波① T2过审台账
+67938ac fix(wfs-service-task): T2 尝试计数前移至executor调用前持久化, reaper不再自增
+86c840c docs(sdd): WFS波①开工——分支+顺序+基线更新记档
+
+## Files changed
+ .superpowers/sdd/progress.md                       |  16 +++
+ .superpowers/sdd/task-T2-report.md                 |  61 ++++++++
+ .superpowers/sdd/task-T6-report.md                 |  45 ++++++
+ CP6.Core/Services/Wf/Executors/WebApiExecutor.cs   |   8 +-
+ CP6.Core/Services/Wf/FlowSchemaValidator.cs        |   8 ++
+ CP6.Core/Services/Wf/IWfConnector.cs               |   5 +
+ CP6.Core/Services/Wf/ServiceVarsHelper.cs          |  23 +++
+ CP6.Core/Services/Wf/WfConnectorLeaseGuard.cs      |  23 +++
+ CP6.Core/Services/Wf/WfServiceJobService.cs        |  12 +-
+ CP6.Tests/Wf/CsrfHubExemptionTests.cs              |  24 ++++
+ CP6.Tests/Wf/ServiceJobScanTests.cs                |  27 +++-
+ CP6.Tests/Wf/ServiceTaskValidatorTests.cs          |  43 ++++++
+ CP6.Tests/Wf/ServiceVarsHelperTests.cs             |  11 ++
+ CP6.Tests/Wf/WebApiExecutorTests.cs                |  39 +++++
+ CP6.Tests/Wf/WfConnectorLeaseGuardTests.cs         |  36 +++++
+ CP6.WebApi/CP6.WebApi.csproj                       |   5 +
+ CP6.WebApi/Middleware/CsrfMiddleware.cs            |  12 +-
+ CP6.WebApi/Program.cs                              |  29 +++-
+ CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs     |  20 ++-
+ .../oa/designer/NodePropertyPanel.timer.spec.ts    | 157 +++++++++++++++++++++
+ .../src/views/oa/designer/NodePropertyPanel.vue    | 133 ++++++++++++++---
+ .../oa/designer/designerModel.serviceTask.spec.ts  |  26 ++++
+ cp6.web/src/views/oa/designer/designerModel.ts     |   4 +
+ docs/seeds/wfs-svc-ko-i18n-fix.sql                 |  47 ++++++
+ 24 files changed, 773 insertions(+), 41 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/progress.md b/.superpowers/sdd/progress.md
+index ba5bc42..d0ae07c 100644
+--- a/.superpowers/sdd/progress.md
++++ b/.superpowers/sdd/progress.md
+@@ -243,10 +243,26 @@ Space波5 T2: complete (commit 52486c7, Spec ✅ + Approved[opus审零Critical/I
+ Space波5 T3: complete (commit c6d1b79, Spec ✅ + Approved[opus审零Critical/Important; 三具名风险全核: 旧三分支git show逐行对照等价/双字典回填四插入点完备无漏/库存GroupBy谓词与旧SumAsync等价(叉积超集不污染精确pair命中)]; 消费端每item 3查→循环前批量预载(bins一次LoadAsync双字典binsById/binsByAnchor+库存一次GroupBy+锚字典命中), 批内自碰撞语义经循环内回填保留(生产不可达但SameBatch契约测试要求); 新增双DB等价测试(批量vs逐条同混合批逐项相等); 既有12用例零改动; 1813绿[1812+1]; Minor×2记档(均生产不可达如实记档): 同批改码锚键陈留/同批建bin→DEACTIVATE库存检查发散)
+ Space波5 T4: complete (commit c79c97e, Spec ✅ + Approved[opus审零Critical/Important; 三具名风险全核: null语义fail-safe无漏报路径(仅null↔""可能保守误拦记Minor)/词条五语齐+ja逐字+LangKey唯一/测试断言ex.Code非仅类型+SiteName-only负对照真有已发布库位在场]; UpdateSiteAsync锚护栏——SiteCode/WarehouseCd任一变更才查(Floor.SiteId→Location.FloorId, Status=1∧!IsDeleted, AnyAsync单往返), 命中抛E-SPACE-406(400), 非锚字段不受限; E-SPACE-406五语词条入I18nSpaceScreenSeed E-405/407之间; 3测试+SeedSiteWithPublishedLocationAsync帮手; 1816绿[1813+3]; Minor×1记档: null↔""保守误拦边角(fail-safe方向))
+ Space波5 T5: complete (commit 02e30a7, Spec ✅ + Approved[sonnet审零issue; 三具名风险全核: 控制器全文仅3动作无第三处漏改/测试直构控制器真调+断言Code非mock/601与004词条已在seed:19,47]; SpaceLocateController两裸BadRequest→BizException(601/004), HTTP仍400(middleware透传HttpStatus), 走culture翻译; 新增3控制器用例含happy path防误伤; 1819绿[1816+3])
+ Space波5 T6: complete (commits 6a32708+73f6aa8, Spec ✅ + Approved[opus审零Critical/Important; 四具名风险全核: 通道grep穷尽恰4处全接线/DeleteAisleAsync免接线证实(rehome/SetNull/DeactivateAsync均不删Location行)/两类唯一SaveChanges前调helper原子性完好/!IsActive护栏在:421]; internal static RemoveTombstoneBinsAsync单源共享两service; SceneService三通道汇入deletedLocIds统一清; 集成断言删→再建同码→publish→bin重建IsActive=true(锚碰撞REJECTED解除); 注释「记后续票」→「波5已清理」收口; 1824绿[1819+5]; Minor×1记档: DeleteRack deactivate模式两阶段无外层事务系pre-existing域外)
+ Space波5 T7: complete (commit 737c207, Spec ✅ + Approved[opus审零Critical/Important; 四具名风险全核: i18n单源证实(前端无locale文件,运行时HTTP拉DB词条,与波3同源同seed文件追加)/seq守卫竞态推演成立(else不bump则在途回填复活,bump后id失配丢弃)/DTO string[][]无码字段准确/te()不查fallback链系tOr设计内安全穿透]; tOr.ts+useTOr组合式/PublishView重复组el-collapse明细+去规则页router-link+onGenerate seq快照/watcher else pcSeq++/EventsView lastError经tOr/goCodeRule+dupGroupTitle五语入space-i18n-seed-2.sql幂等MERGE; vitest 377[369+8]+type-check 0; ⚠部署清单: 上线须重跑space-i18n-seed-2.sql补新词条; Minor×2: dup明细列裸UUID(DTO无码字段,产品后续票)/te fallback语义备忘)
+ Space波5 T8: complete (commit 50b05e1, Spec ✅ + Approved[opus审零Critical/Important; 四具名风险全核: EditZoneCmd与EditMarkerCmd同构(patch含name/code/type/color无polygon)且经stack.exec/⭐保存链三层核实真持久化(markDirty→dirty.upsert→save送zones→后端SceneService无条件更新ZoneCode/Name/Type)/SelectTool zone点选锁在!rackGroup分支rack框选证实不破/selectionInfo单源selectionIds]; PropertiesPanel四态(zone编辑/marker复用EditMarkerCmd/rack只读尺寸/空态Aisle一览)+最小zone点选(renderZone补id+name); 两自报未做项经审证实属范围铁律外非偷工: marker画布点选(渲染无id,后续小票同法放开)/aisle填充点击清选(禁动渲染的保守选择); vitest 385[377+8]+type-check 0+build过; Minor×1: selection类型cast可用discriminant复查替代)
+ Space波5 T9: complete (commits e445565+12a34ad修正, Spec ✅ + Approved[sonnet审零issue; 四具名风险全核: BindCodesDialog逐字节还原git show双版diff相同/过滤谓词字段与LocationVO精确一致/直改store经save()数据流核实不入dirty集无假保存/缺权测试真指令+真store形状非rubber-stamp]; 首轮实现者自揪真问题=unplaced行对GenSingleAsync守卫(RackId∧Placed)恒失败死UI→主控裁决守卫正当错在挂载点→修正迁PropertiesPanel rack分支(已落位无码子库位列表, genSingle成功直改store code消行+toast不入命令栈canUndo=false有断言, genInflight防连点, 空区不渲染); i18n键随迁space.rack.*五语; vitest 390[385撤3加5]+type-check 0; Minor×1: handleGenSingle不emit changed与commitZone不一致(canvas不渲染code现无害备忘))
+ Space波5 T10: complete (commit dcb7949, Spec ✅ + Approved[opus审零Critical/Important; 五具名风险全核: ⭐假绿风险证伪=过滤唯一索引在模型OnModelCreating HasFilter(CP6Context:2055)非仅迁移SQL,EnsureCreated真建/四断言逐个真实(两独立context并发/三次SaveChanges经NULL中转/异常类型经tx包装原样rethrow)/清理per-method实例Dispose+try/catch实证零残库/密码卫生diff与报告全打码/门控ctor Skip机制成立]; SqlServerFactAttribute+4测试真库化(CP6_TEST_SQLSERVER门控, 唯一临时库CP6Test_{Guid}, host须127.0.0.1非localhost[IPv6拒连已文档化]); 双模式实证: 无变量4 Skip/设变量4绿; 全量1824持平(skipped仍5,旧桩本就计skip); Minor×2: per-method EnsureCreated约44s(默认门控关不痛)/属性XML注释localhost陈旧. 波5全部10任务完成, 下=fable全支终审)
+ Space波5 全支终审: complete (fable终审 Ready=Yes, 1826/390双侧绿终审者亲跑; 跨任务接缝全核: T2×T3×T6组合/T4×T2 WarehouseCd语义一致/T8×T9同文件自洽/i18n五键闭环/基线链逐位自洽/零越界零秘密零迁移; 唯一Important=T6事件重试复活缝(删墓碑后Failed事件重试重建墓碑或幻影活跃bin,T1扫描器双盲)→修复17dbe37(消费端bin==null双分支存在性守卫,missingIds批量预载HashSet非逐条,SKIPPED收敛使Failed事件退役优于处方最低形态; 新2用例+11既有用例数据补种断言零改动,复核者逐hunk核实)+Minor#7 XML注释host修正; 复核裁定Ready=Yes; 跟踪票8项落档plan文末波5完成记录; 下=合并main+双镜像部署+seed重跑+冒烟)
+ Space波5 合并+部署: complete (main=5930ffe --no-ff已push, 分支留远端; 双镜像重建部署: cp6-api(publish→删Local/Dev→薄Dockerfile→up)+cp6-web(compose build, 6天stale解除); space-i18n-seed-2.sql重跑(+5新键全落库实证); 线上冒烟: SpaceBinReconciliationWorker启动日志在/PUT改WarehouseCd W5QA→W5QB得400 E-SPACE-406 ja全文/locate假码400 ja译文(不再裸E-SPACE-601)/E406词条+5新i18n键DB实证; 墓碑清理与复活缝守卫由1826测试面覆盖(含集成断言删→同码再发布)未做线上破坏性重放. Space波5 波完成. 3D Space P0五波+波5收尾全部落地, 剩P2.5(独立spec待细plan)与波次拣货后置合流)
++
++# ═══ WFS 二期波① 收尾票11票(branch=feat/wfs-cleanup-tickets, base=main d4aeb2b)2026-07-12 ═══
++# 依据: docs/superpowers/plans/2026-07-05-wfs-cleanup-tickets.md; 基线更新: 后端1826绿/5skip(计划写1509已过时)/前端390绿(计划写320已过时)
++# 顺序: 后端纯逻辑T2→T6(同文件WfServiceJobService串行)→T4→T5(同文件FlowSchemaValidator串行)→T1→T3→前端T7→T8(同文件NodePropertyPanel+seed串行)→T9→T10→T11; 计划写于07-05,行号可能漂移且缺陷可能已被后续波顺手修复,每票开工先核实缺陷仍在
++# 开工三件事已过: 孤儿FlowKey预检零孤儿(全库4实例全有Def)/D-T0已由P0-T1落地勿重做/双端基线绿亲证
++WFS波① T2: complete (commit 67938ac, Spec ✅ + Approved[opus审零issue; 四具名风险全证伪: 退避/失败分支无二次自增/executor抛异常状态机自洽(Running留待reaper回收且计数已持久化=计1,前移SaveChanges前崩溃=计0)/MaxAttempts判定读post-increment与原对齐/断言修正仅计划钦定一处]; reaper去自增只回收lease, 尝试计数前移executor调用前立即SaveChanges; 取消路径在前移点前不计数(正确); 新增抢占未执行不烧配额测试(未来NextAttemptAtUtc真隔离); Reaper_ResetsExpiredLease_Only断言2→1照计划; Wf 189绿, 1827绿[1826+1]; Minor×1: 前移SaveChanges未对称捕获并发异常(外层catch语义已正确)记档)
++WFS波① T6: complete (commits ca0dd45+2382bae, Spec ✅ + Approved[sonnet审零issue; 五具名风险全核: 结构化格式与brief字符级一致/机读明细用ex.GetType().Name非Message无散文夹带/消费端grep无LastError读方破坏(既有测试Contains宽松断言兼容)/T2语义零触碰/同步路径留票有主计划:505-511原文佐证]; 四处中文散文(WfServiceJobService:121+WebApiExecutor:35/40/44)→E-WF-018|<机读明细>; 新2测试照brief断言; Wf 191绿, 1829绿[1827+2]; 记票: 同步路径ServiceTaskNodeHandler:57同源散文+:75裸ex.Message(连码都无)——同步路径统一票一并收)
++WFS波① T4: complete (commit 03e01cd, Spec ✅ + Approved[sonnet审零Critical/Important; 四具名风险全核: 扫描面ServicePath+ServiceParamsJson与票面Step3b逐字一致/E-WF-016未私换/正则对抗样例核算合法a.b.c与JSON字面数组零误伤/T5的ServiceMode零触碰]; ServiceVarsHelper补方法级文档+ContainsUnsupportedSubscript, FlowSchemaValidator serviceTask分支扫下标→E-WF-016; Wf 193绿, 1831绿[1829+2]; Minor×1: 票面Step3a指定类级summary锚点未落(信息在方法级文档完整)记档给终审. ⚠环境: 执行中C盘第三次满盘, 代理自清WU缓存/publish-docker/nuget/ms-playwright修复编译损坏参考程序集后跑通; 主控已docker builder prune 2.2GB防vhdx增长; 扩容治本待用户)
++WFS波① T5: complete (commit 614ef4e, Spec ✅ + Approved[sonnet审零Critical/Important; 四具名风险全核: 值域校验与spec§6.1:475原文一致/Ordinal拒大写"Sync"与运行期==序数语义对齐(先前静默降级async现设计期拦)/T4下标扫描两行零字节变/两新测试真实归因(非法值schema其余全合法+三合法值DoesNotContain防误伤)]; KnownServiceModes常量集+bad谓词一行; Wf 195绿, 1833绿[1831+2]; Minor记票: 空串""(非null)校验层放行但运行期??不生效→静默按async, 系票面自带写法且运行期文件在本票白名单外——follow-up票=「未填」判定口径统一(校验层/运行期/前端clearable产出), 注意T5(重派)首派代理启动异常零工具即返已弃)
++WFS波① T1: complete (commit 0f2a1a5, Spec ✅ + Approved[sonnet审零issue; 五具名风险全核: 与票面代码逐字一致/ResolveFileProvider在/reloadOnChange保留/默认链唯一无前缀env源insert精确(bootstrap env裹在ChainedConfigurationSource类型不匹配不误伤)/命令行源仍最高]; Local.json源插到env vars前恢复标准优先级, 验证脚本FROM_LOCAL(缺陷证实)→FROM_ENV(修后); 1833持平; 附带效应: 部署「publish后手工删Local.json」绕行可退役(流程文档另记); Minor备忘: 未来若加前缀env源需留意break只插第一个前)
++WFS波① T3: complete (commit 251c99c, Spec ✅ + Approved[sonnet审零Critical/Important; 五具名风险全核: 默认接口成员TimeSpan? MaxCallDuration=>null与票面逐字/比较>=一致/fail-fast抛InvalidOperationException在Build()后Run()前非吞/null放行模式匹配/DI枚举单一注册点CreateScope正确规避Scoped根解析坑]; IWfConnector扩默认成员+WfConnectorLeaseGuard启动校验(LeaseDuration=5min); 三态测试照票面; Wf 197绿, 1835绿[1833+2]; Minor×1: 测试文件缺namespace系票面自带记档. 后端组T2/T6/T4/T5/T1/T3六票全过, 下=前端T7)
++WFS波① T7: complete (commit 0dd80b6, Spec ✅ + Approved[sonnet审零Critical/Important; 五具名风险全核: loadCatalog/catalogFailed/watch与票面逐字节一致/无vitest系票面明示type-check+build兜非跳步/i18n键仅落点偏差五语齐无重复/重试再失败无卡死(catalogFailed每次重置)/零硬编码色]; 服务目录加载失败露显式重试alert(el-collapse serviceTask内); vitest 390持平+type-check 0+build过+后端1835持平(seed改动); Minor×2: reloadCatalog键在执行重试组注释语义略误导(自报偏差)/重试钮无防连点(票面样例同缺)——UX润色票候选)
++WFS波① T8: complete (commits d7135b7+787b95b修复, Spec ✅ + Approved after fix[opus审; 首审Critical=票面Step2自带设计缺陷被忠实照抄: timerActionKind纯computed(getter字段推导/setter只清)使fresh timer选write/api立即弹回none功能不可达+回归原data-writeback下拉→修复=独立backing ref timerActionKindState(初始化/id变/切入timer重推导, 同节点回声仅derived≠none才覆盖保护pending选择, 用户选择驻留ref, 互斥清理保留防Snapshot误外呼); 复审四点全核: 驻留真成立/外部清空残留stale api经推演裁定fail-safe可接受(空connector运行期derive none不外呼,危险方向不可达)/id变重推导/3新用例红证对纯computed版3failed]; timer到点动作webApi连接器/路径变体UI+四键五语; vitest 400[397+3]+type-check 0+build过; ⚠环境: 修复中C盘第四次满盘(WU缓存复胀), 主控已将CP6-WUCache-Guard收紧4h→1h)
++WFS波① T9: complete (commit 4b90463, Spec ✅ + Approved[sonnet审零issue; 四具名风险全核: 视觉形态与票面逐字(var(--cp-danger)/2px/6 4虚线/animated false)/isError falsy零样式突变/graphToSchema只读data不读style序列化零污染/测试正反两向真断言含isError往返]; designerModel.ts错误边条件style渲染层注入; vitest 401[400+1]+type-check 0+build过)
++WFS波① T10: complete (commit 150ba9b, Spec ✅ + Approved[sonnet审零issue; 四具名风险全核: 6键Ko与定案表逐字+四语零触碰/SeedLangs insert-only判定经Program.cs:1755-1761实读证实(票面「覆盖式幂等」系误称)/补救SQL双重限定WHERE LangKey+旧Ko真幂等/T7/T8新键零动]; ⭐票面纠错: 改seed常量对已部署库不生效→新增docs/seeds/wfs-svc-ko-i18n-fix.sql, ⚠部署硬步骤: 每已存在租户库跑一次; 1835持平; 跟踪票候选: T8新键timerActionKind.*仍旧风格音译与本票润色风格不一)
++WFS波① T11: complete (commit f01d49f, Spec ✅ + Approved[opus审安全面从严零Critical/Important; 四具名风险全核: /hubs前缀经PathMatches段边界(/hubsx不误放)与票面B1逐字/⭐安全前提独立核验成立=4 hub全无状态变更方法(仅Subscribe组操作)+CORS allowlist+AllowCredentials挡跨站negotiate,WebSocket跨站攻击面无落点/InternalsVisibleTo扩WebApi照CP6.Core模式可接受/8测试正反齐(hubsxxx=false+业务POST仍拦)]; CsrfMiddleware豁免/hubs前缀覆盖4 hub含波4新增SpaceHub; 1843绿[1835+8]; Minor×3记档: 注释安全论据不实(称hub有认证实为匿名可达,真论据=无写方法+CORS,须改注释)/blanket前缀前瞻风险(未来hub写方法静默继承豁免,建议测试守卫)/浏览器复验留部署冒烟. 波①11票全完成, 下=fable全支终审)
+diff --git a/.superpowers/sdd/task-T2-report.md b/.superpowers/sdd/task-T2-report.md
+new file mode 100644
+index 0000000..435ddaf
+--- /dev/null
++++ b/.superpowers/sdd/task-T2-report.md
+@@ -0,0 +1,61 @@
++# Task T2 报告：reaper AttemptCount 不再对「抢占未执行」的 job 误计一次重试
++
++Status: **DONE**
++
++## 缺陷核实证据（改前当前代码）
++
++计划写于 07-05，行号已漂移，先核实缺陷仍在：
++
++- **reaper 段**（`WfServiceJobService.cs` 改前 `:60-67`）确实对所有过期租约无脑自增：
++  ```csharp
++  foreach (var j in expired) {
++      j.Status = ServiceJobStatus.Pending;
++      j.AttemptCount++;              // ← 缺陷：无条件烧配额
++      j.LockedBy = null; ...
++  }
++  ```
++- **执行段计数**（改前 `:106-107`）`job.AttemptCount++` 后**不立即持久化**——直到成功(`:144`)/退避(`:156`)/失败(`:166`)才 SaveChanges。
++- **lease 抢占**（`:81-85`）保存 `Status=Running` 是独立的一次 SaveChanges。
++
++→ 结论：job 若在「抢到 lease（已落库 Running, AttemptCount 未增）」与「执行段自增+持久化」之间崩溃（如状态闸 DB 查询期），本次尝试**从未执行**，但 reaper 会在租约过期后 `AttemptCount++`，烧掉一次配额。极端 infra 抖动下可在从未真正跑过的情况下耗尽 MaxAttempts。**缺陷确认仍在。**
++
++## 修法
++
++1. reaper 去掉 `j.AttemptCount++`，只重置 lease 回 Pending。
++2. 执行段 `job.AttemptCount++` 后**立即 `await _db.SaveChangesAsync(ct)`**，把「本次尝试已开始」落库，再调 executor。
++   - 崩溃于 executor 期间 → 计数已落库（记 1 次，正确）
++   - 崩溃于此保存之前 → 计数未增（记 0 次，正确）
++3. 后续成功/退避/失败三分支不改——读的仍是同一已自增的 `job.AttemptCount`，行为不变。
++
++零迁移（无实体/DbSet 改动）。
++
++## TDD 红绿
++
++**Step 1（RED）** 改 `Reaper_ResetsExpiredLease_Only` 断言 `AttemptCount==2` → `==1`（计划钦定），并新增 `Reaper_ClaimedButNeverExecuted_DoesNotBurnAttempt`（AttemptCount=0 抢占后崩溃 → reaper 回收后仍须 0）。
++
++跑 `--filter ServiceJobScanTests`：
++```
++Failed CP6.Tests.Wf.ServiceJobScanTests.Reaper_ClaimedButNeverExecuted_DoesNotBurnAttempt
++  Expected: 0  Actual: 1
++Failed CP6.Tests.Wf.ServiceJobScanTests.Reaper_ResetsExpiredLease_Only
++  Expected: 1  Actual: 2
++Failed!  - Failed: 2, Passed: 8, Skipped: 0, Total: 10
++```
++
++**Step 3（实现）→ Step 4（GREEN）** 跑 `--filter Wf`：
++```
++Passed!  - Failed: 0, Passed: 189, Skipped: 0, Total: 189
++```
++
++**全量后端**：
++```
++Passed!  - Failed: 0, Passed: 1827, Skipped: 5, Total: 1832
++```
++基线 1826 passed → 1827（+1 新测试），零回归，断言改动不减数。
++
++## 变更文件
++- `CP6.Core/Services/Wf/WfServiceJobService.cs`（reaper 去自增；执行段计数前移+立即 SaveChanges）
++- `CP6.Tests/Wf/ServiceJobScanTests.cs`（断言 2→1；新增 Reaper_ClaimedButNeverExecuted_DoesNotBurnAttempt）
++
++## 疑虑
++- 工作树内另有一处**非本任务**的预存改动 `.superpowers/sdd/task-2-brief.md`（Space Task 2 的 brief 被清空，属 Space 域），已按 Global Constraints「绝不碰 Space」排除出本次提交。
+diff --git a/.superpowers/sdd/task-T6-report.md b/.superpowers/sdd/task-T6-report.md
+new file mode 100644
+index 0000000..afc924e
+--- /dev/null
++++ b/.superpowers/sdd/task-T6-report.md
+@@ -0,0 +1,45 @@
++# Task T6 报告：E-WF-018 异步路径错误码结构化
++
++**Status: DONE** — commit `ca0dd45`（分支 feat/wfs-cleanup-tickets，已 push）
++
++## 缺陷核实（票面缺陷仍在，证据）
++
++T2 改动后重新以实际行号核实，四处自由中文散文均在：
++
++- `WfServiceJobService.cs:121`（异步引擎主循环，票面写 :117 已漂移）
++  `Fail($"E-WF-018 动作/连接器未注册:{key}")` → 落 `Wf_ServiceJob.LastError` + `FailServiceTokenAsync` 错误路由
++- `WebApiExecutor.cs:35` `Fail("E-WF-018 ActionRefJson 为空，无法解析连接器")`
++- `WebApiExecutor.cs:40` `Fail($"E-WF-018 ActionRefJson 解析失败: {ex.Message}")`
++- `WebApiExecutor.cs:44` `Fail($"E-WF-018 连接器未注册:{connectorName}")`
++
++散文与真实 detail（连接器名/异常）混在一起不可 `Split('|')` 解析，前端无法按码 i18n。
++
++## TDD 红绿
++
++- **红**：新增 2 测试（`UnknownConnector_Fails_WithStructuredCode_NoProse`、`EmptyActionRef_Fails_WithStructuredCode`）
++  → `Assert.StartsWith("E-WF-018|")` / `DoesNotContain("未注册"/"连接器"/"为空")` 失败，实际串为
++  `"E-WF-018 连接器未注册:ghost"` / `"E-WF-018 ActionRefJson 为空，无法解析连接器"`（Failed 2/Passed 3）。
++- **绿**：实现后 `--filter WebApiExecutorTests` 全过；`--filter Wf` 191 全绿；全量 **1829 passed / 5 skipped**（基线 1827 + 2 新测）。
++
++## 实现（结构化格式 `E-WF-018|<机读明细>`）
++
++`WebApiExecutor.cs`：
++- 空 ActionRef → `E-WF-018|actionRefEmpty`
++- 解析异常 → `E-WF-018|parseError:{ex.GetType().Name}`（去 `ex.Message` 本地化散文，仅异常类型名）
++- 连接器未注册 → `E-WF-018|{connectorName}`
++
++`WfServiceJobService.cs:121`（异步路径 executor 未注册）→ `E-WF-018|{key}`
++
++管道前=可翻译码（前端 `Error.Split('|')[0]` 取码 i18n），管道后=无空格机读 token。T2 语义（尝试计数前移/reaper 去自增/幂等退避路由）全未触碰。
++
++## 疑虑 / 跨波票候选
++
++- **同源姊妹缺陷（同步路径，本票范围外）**：`ServiceTaskNodeHandler.cs:57`（sync 内联路径）
++  仍有 `Fail($"E-WF-018 动作/连接器未注册:{key ?? "(none)"}")` 中文散文。本票标题明确限「异步路径」，
++  brief 仅列两文件，故未改（避免 scope 蔓延/未验证的测试面）。**建议开跟踪票**：同步路径统一为
++  `E-WF-018|{key ?? "(none)"}`，与异步路径口径对齐。此散文经 sync 失败降级异步或 catch 路径同样可能进 LastError。
++
++## 零污染核对
++
++`git show --stat`：仅 3 文件（WebApiExecutor.cs / WfServiceJobService.cs / WebApiExecutorTests.cs），
++45 insert / 4 delete。零迁移、零 i18n 新键（结构化码非新增可翻译键，E-WF-018 seed 已存在）、零 Space/跨模块触碰。
+diff --git a/CP6.Core/Services/Wf/Executors/WebApiExecutor.cs b/CP6.Core/Services/Wf/Executors/WebApiExecutor.cs
+index 8c3cfad..a99f545 100644
+--- a/CP6.Core/Services/Wf/Executors/WebApiExecutor.cs
++++ b/CP6.Core/Services/Wf/Executors/WebApiExecutor.cs
+@@ -24,26 +24,28 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
+         foreach (var c in connectors)
+             _connectors[c.Name] = c;
+     }
+ 
+     /// <summary>
+     /// 解析 ctx.ActionRefJson → 找连接器 → 委托 CallAsync。
+     /// 本执行器不做 HTTP，不持有 HttpClient——HTTP 由各连接器实现决定（D4/P1-5）。
+     /// </summary>
+     public async System.Threading.Tasks.Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx)
+     {
++        // E-WF-018 结构化格式：`E-WF-018|<机读明细>`。管道前=可翻译码（前端按码 i18n），
++        // 管道后=无本地化散文的机读 token（连接器名 / 空标记 / 异常类型名），供诊断解析。
+         if (string.IsNullOrEmpty(ctx.ActionRefJson))
+-            return ServiceTaskResult.Fail("E-WF-018 ActionRefJson 为空，无法解析连接器");
++            return ServiceTaskResult.Fail("E-WF-018|actionRefEmpty");
+ 
+         ServiceTaskActionRef r;
+         try { r = ServiceTaskActionRef.Parse(ctx.ActionRefJson); }
+         catch (System.Exception ex)
+-        { return ServiceTaskResult.Fail($"E-WF-018 ActionRefJson 解析失败: {ex.Message}"); }
++        { return ServiceTaskResult.Fail($"E-WF-018|parseError:{ex.GetType().Name}"); }
+ 
+         var connectorName = r.ConnectorName;
+         if (string.IsNullOrEmpty(connectorName) || !_connectors.TryGetValue(connectorName, out var connector))
+-            return ServiceTaskResult.Fail($"E-WF-018 连接器未注册:{connectorName}");
++            return ServiceTaskResult.Fail($"E-WF-018|{connectorName}");
+ 
+         // 把 path/paramsJson 原样传给连接器；连接器自己决定模板求值/method/headers/response-map（P1-5）
+         return await connector.CallAsync(r.Path ?? "", r.ParamsJson, ctx);
+     }
+ }
+diff --git a/CP6.Core/Services/Wf/FlowSchemaValidator.cs b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+index 0af7bd5..e14f030 100644
+--- a/CP6.Core/Services/Wf/FlowSchemaValidator.cs
++++ b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+@@ -3,20 +3,25 @@ namespace CP6.Core.Services.Wf;
+ /// <summary>流程 schema 静态校验（设计器保存前后端共用）。返回错误码列表（空=合法）。所有结构性问题统一 E-WF-010。</summary>
+ public static class FlowSchemaValidator
+ {
+     private static readonly HashSet<string> KnownStrategies =
+         new(new[] { "DirectManager", "DeptLeader", "Role", "Specified", "Starter", "FormField", "DataMap", "Group" }, StringComparer.OrdinalIgnoreCase);
+ 
+     // 服务任务合法 kind：引擎按 ServiceKind 常量精确匹配(ServiceTaskNodeHandler)，此处同用序数比较以对齐运行期语义。
+     private static readonly HashSet<string> KnownServiceKinds =
+         new(new[] { ServiceKind.DataWriteback, ServiceKind.WebApi, ServiceKind.Timer }, StringComparer.Ordinal);
+ 
++    // 服务任务合法 mode（spec §6.1；timer 由 handler 规整为 async，此处只校验用户显式填值）。
++    // 用序数比较对齐运行期语义（ServiceTaskNodeHandler 以 mode == ServiceMode.Sync 精确匹配，常量为小写 "sync"/"async"）。
++    private static readonly HashSet<string> KnownServiceModes =
++        new(new[] { ServiceMode.Sync, ServiceMode.Async }, StringComparer.Ordinal);
++
+     public static IReadOnlyList<string> Validate(FlowSchema schema)
+     {
+         var errs = new List<string>();
+         if (schema is null || schema.Nodes.Count == 0) { errs.Add("E-WF-010"); return errs; }
+ 
+         string T(FlowNode n) => (n.Type ?? "approval").Trim().ToLowerInvariant();
+         var ids = schema.Nodes.Select(n => n.Id).ToHashSet();
+ 
+         // ① 恰一 start ② 至少一 end
+         if (schema.Nodes.Count(n => T(n) == "start") != 1) errs.Add("E-WF-010");
+@@ -83,20 +88,23 @@ public static class FlowSchemaValidator
+         //    kind 非法 / dataWriteback 缺 ActionName / webApi 缺 Connector|Path / timer 缺 DelayMode|DelayValue → E-WF-016。
+         //    serviceTask 必非 end，若无任何"非错误"出边则成功路径无后继(引擎会误结 Approved) → E-WF-016。
+         foreach (var n in schema.Nodes.Where(n => T(n) == "servicetask"))
+         {
+             var kind = (n.ServiceKind ?? string.Empty).Trim();
+             bool bad =
+                 !KnownServiceKinds.Contains(kind)
+                 || (kind == ServiceKind.DataWriteback && string.IsNullOrWhiteSpace(n.ServiceActionName))
+                 || (kind == ServiceKind.WebApi && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
+                 || (kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(n.ServiceDelayMode) || string.IsNullOrWhiteSpace(n.ServiceDelayValue)))
++                || (!string.IsNullOrWhiteSpace(n.ServiceMode) && !KnownServiceModes.Contains(n.ServiceMode.Trim()))  // 票5：ServiceMode 值域(sync|async)
++                || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServicePath)         // 票4：路径模板不得含数组下标
++                || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServiceParamsJson)   // 票4：参数模板不得含数组下标
+                 || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
+             if (bad) { errs.Add("E-WF-016"); break; }
+         }
+ 
+         // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边仅允许出自 serviceTask 节点。
+         var serviceIds = schema.Nodes.Where(n => T(n) == "servicetask").Select(n => n.Id).ToHashSet();
+         if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
+         if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
+ 
+         // ④ 从 start 可达某 end（BFS）
+diff --git a/CP6.Core/Services/Wf/IWfConnector.cs b/CP6.Core/Services/Wf/IWfConnector.cs
+index 909b286..cac8304 100644
+--- a/CP6.Core/Services/Wf/IWfConnector.cs
++++ b/CP6.Core/Services/Wf/IWfConnector.cs
+@@ -1,14 +1,19 @@
+ namespace CP6.Core.Services.Wf;
+ 
+ /// <summary>注册式连接器契约（D4/D9/P1-5：连接器自己决定 baseURL/认证/HTTP method/headers/timeout/response→OutputVars 映射；
+ /// 密钥服务端配置，绝不进 SchemaJson）。
+ /// 实现应把 ctx.JobId 作幂等键发出：Idempotency-Key: wf-service-job-{JobId}。</summary>
+ public interface IWfConnector
+ {
+     string Name { get; }          // 设计器下拉用（唯一键，按 Name 索引）
+     string DisplayName { get; }
+ 
++    /// <summary>本连接器单次调用的上界耗时（含内部重试）。用于启动期校验其 &lt; 租约时长
++    /// （<see cref="WfServiceJobService.LeaseDuration"/>），防长调用被 reaper 误判崩溃而重投→重复外呼。
++    /// 默认 null = 未声明（假定安全，如 demo EchoConnector）；真实 HTTP 连接器应据 HttpClient.Timeout 如实声明。</summary>
++    TimeSpan? MaxCallDuration => null;
++
+     /// <summary>按路径+参数模板调用。连接器自己决定 baseURL/认证/HTTP method/headers/timeout/response→OutputVars 映射（D4/P1-5）。
+     /// 实现应把 ctx.JobId 作幂等键发出：Idempotency-Key: wf-service-job-{JobId}。</summary>
+     Task<ServiceTaskResult> CallAsync(string pathTemplate, string? paramsJson, ServiceTaskContext ctx);
+ }
+diff --git a/CP6.Core/Services/Wf/ServiceVarsHelper.cs b/CP6.Core/Services/Wf/ServiceVarsHelper.cs
+index 16c97a4..eb42742 100644
+--- a/CP6.Core/Services/Wf/ServiceVarsHelper.cs
++++ b/CP6.Core/Services/Wf/ServiceVarsHelper.cs
+@@ -1,14 +1,15 @@
+ using System;
+ using System.Collections.Generic;
+ using System.Text.Json;
+ using System.Text.Json.Nodes;
++using System.Text.RegularExpressions;
+ 
+ namespace CP6.Core.Services.Wf;
+ 
+ /// <summary>
+ /// 参数模板求值上下文（§3.6 P2-2）。
+ /// varsJson = inst.VarsJson（表单数据）；其余为引擎上下文字段。
+ /// </summary>
+ public record ServiceTemplateCtx(
+     string? varsJson,
+     string actorId,
+@@ -116,22 +117,44 @@ public static class ServiceVarsHelper
+         }
+ 
+         return new MergeResult
+         {
+             VarsJson    = root.ToJsonString(),
+             MergedKeys  = merged,
+             SkippedKeys = skipped
+         };
+     }
+ 
++    /// <summary>
++    /// 探测模板 token 是否含**不支持**的数组下标语法（<c>[...]</c>）。点路径求值（<see cref="ResolveValue"/> →
++    /// <c>ResolveDotPath</c>）仅支持嵌套对象的逐段导航（<c>$.a.b</c>）——**不支持**数组下标（<c>$.items[0]</c>：
++    /// <c>current["items[0]"]</c> 返回 null，模板静默求值为空串），也**无法**表达含点的键名（<c>{"a.b":1}</c> 与
++    /// 嵌套 <c>a.b</c> 二义，一律按嵌套解析）。这两类限制由设计期校验拦截（<c>FlowSchemaValidator</c> serviceTask
++    /// 分支 → <c>E-WF-016</c>），避免运行期静默失败。本方法只对 <c>$.</c>/<c>{...}</c> 模板 token 内的 <c>[</c>/<c>]</c>
++    /// 报真，避开字面 JSON 数组值（如 <c>{"list":[1,2,3]}</c>）。
++    /// </summary>
++    public static bool ContainsUnsupportedSubscript(string? text)
++    {
++        if (string.IsNullOrEmpty(text)) return false;
++        // $.path[...]  ——  $. 后跟标识符/点，直到出现下标括号
++        if (Regex.IsMatch(text, @"\$\.[A-Za-z0-9_.]*[\[\]]")) return true;
++        // {placeholder[...]}  ——  花括号占位内出现下标括号
++        if (Regex.IsMatch(text, @"\{[A-Za-z0-9_.]*[\[\]][^}]*\}")) return true;
++        return false;
++    }
++
+     // ── 内部辅助 ─────────────────────────────────────────────────────
+ 
++    /// <summary>
++    /// 点路径求值：<c>$.a.b</c> 逐段导航嵌套对象。**限制**（见 <see cref="ContainsUnsupportedSubscript"/>）：
++    /// 不支持数组下标 <c>[n]</c>，也无法表达含点的键名——两者在设计期由 <c>FlowSchemaValidator</c> 拦截。
++    /// </summary>
+     private static string ResolveDotPath(string path, string? varsJson)
+     {
+         if (string.IsNullOrWhiteSpace(varsJson) || string.IsNullOrWhiteSpace(path))
+             return "";
+ 
+         try
+         {
+             JsonNode? current = JsonNode.Parse(varsJson);
+             var parts = path.Split('.');
+             foreach (var part in parts)
+diff --git a/CP6.Core/Services/Wf/WfConnectorLeaseGuard.cs b/CP6.Core/Services/Wf/WfConnectorLeaseGuard.cs
+new file mode 100644
+index 0000000..ccc5d3d
+--- /dev/null
++++ b/CP6.Core/Services/Wf/WfConnectorLeaseGuard.cs
+@@ -0,0 +1,23 @@
++using System;
++using System.Collections.Generic;
++using System.Linq;
++
++namespace CP6.Core.Services.Wf;
++
++/// <summary>启动期护栏（票3）：任何连接器声明的单次调用上界 >= 租约时长即抛错快速失败，
++/// 逼真实连接器把 HTTP 超时配在租约内，杜绝「长调用未完 → reaper 复位重投 → 重复外呼」。</summary>
++public static class WfConnectorLeaseGuard
++{
++    public static void Validate(IEnumerable<IWfConnector> connectors)
++    {
++        var lease = WfServiceJobService.LeaseDuration;
++        var offenders = (connectors ?? Enumerable.Empty<IWfConnector>())
++            .Where(c => c.MaxCallDuration is TimeSpan d && d >= lease)
++            .Select(c => $"{c.Name}(MaxCallDuration={c.MaxCallDuration})")
++            .ToList();
++        if (offenders.Count > 0)
++            throw new InvalidOperationException(
++                $"WfConnector 租约校验失败：以下连接器 MaxCallDuration >= 租约 {lease}，" +
++                $"reaper 会误判崩溃并重投导致重复外呼——请把 HTTP 超时收进租约内：{string.Join(", ", offenders)}");
++    }
++}
+diff --git a/CP6.Core/Services/Wf/WfServiceJobService.cs b/CP6.Core/Services/Wf/WfServiceJobService.cs
+index 53f34bd..6b39730 100644
+--- a/CP6.Core/Services/Wf/WfServiceJobService.cs
++++ b/CP6.Core/Services/Wf/WfServiceJobService.cs
+@@ -45,29 +45,30 @@ public sealed class WfServiceJobService : IWfServiceJobService
+     public WfServiceJobService(CP6Context db, FlowEngine engine, IEnumerable<IServiceTaskExecutor> executors)
+     {
+         _db = db;
+         _engine = engine;
+         _executors = (executors ?? Array.Empty<IServiceTaskExecutor>())
+             .ToDictionary(e => e.Key, StringComparer.OrdinalIgnoreCase);
+     }
+ 
+     public async Task<int> ScanOnceAsync(DateTime nowUtc, string workerId, CancellationToken ct = default)
+     {
+-        // ① reaper（P0-4）：回收过期租约（Running 且 LockExpiresAtUtc < nowUtc）。AttemptCount++ 计入崩溃的那次执行。
++        // ① reaper（P0-4）：回收过期租约（Running 且 LockExpiresAtUtc < nowUtc）。
+         var expired = await _db.Wf_ServiceJobs
+             .Where(j => j.Status == ServiceJobStatus.Running
+                         && j.LockExpiresAtUtc != null && j.LockExpiresAtUtc < nowUtc)
+             .ToListAsync(ct);
+         foreach (var j in expired)
+         {
++            // reaper 只回收过期租约、复位为 Pending 重投；**不自增 AttemptCount**——尝试计数由执行段
++            // 在调 executor 之前持久化（见下 ⑤）。这样「抢到 lease 但从未执行就崩溃」不会烧掉重试配额（票2）。
+             j.Status = ServiceJobStatus.Pending;
+-            j.AttemptCount++;
+             j.LockedBy = null;
+             j.LockedAtUtc = null;
+             j.LockExpiresAtUtc = null;
+         }
+         if (expired.Count > 0) await _db.SaveChangesAsync(ct);
+ 
+         // ② 取到期 Pending（reaper 之后查，刚回收的也可能纳入本轮）
+         var jobs = await _db.Wf_ServiceJobs
+             .Where(j => j.Status == ServiceJobStatus.Pending && j.NextAttemptAtUtc <= nowUtc)
+             .OrderBy(j => j.NextAttemptAtUtc)
+@@ -96,32 +97,35 @@ public sealed class WfServiceJobService : IWfServiceJobService
+                 if (inst is null || inst.Status != FlowInstanceStatus.Running
+                     || tok is null || tok.Status != FlowTokenStatus.Active || tok.NodeId != job.NodeId)
+                 {
+                     job.Status = ServiceJobStatus.Cancelled;
+                     job.CompletedAtUtc = nowUtc;
+                     await _db.SaveChangesAsync(ct);
+                     processed++;
+                     continue;
+                 }
+ 
+-                // ⑤ 执行
++                // ⑤ 执行：先把「本次尝试已开始」持久化（AttemptCount++ 立即入库），再调 executor。
++                //    崩溃于 executor 期间 → 计数已落库（记 1 次）；崩溃于此保存之前 → 计数未增（记 0 次）。
++                //    reaper 因此无需（也不再）自增，杜绝「抢占未执行」误烧配额（票2）。
+                 job.AttemptCount++;
++                await _db.SaveChangesAsync(ct);
+                 ServiceTaskResult result;
+                 var actionRef = ServiceTaskActionRef.Parse(job.ActionRefJson ?? "{}");
+                 var key = ServiceTaskActionRef.ResolveExecutorKey(actionRef);
+                 if (key is null)
+                 {
+                     result = ServiceTaskResult.Ok();   // none = 纯等待 timer，无 executor 直接推进
+                 }
+                 else if (!_executors.TryGetValue(key, out var exec))
+                 {
+-                    result = ServiceTaskResult.Fail($"E-WF-018 动作/连接器未注册:{key}");
++                    result = ServiceTaskResult.Fail($"E-WF-018|{key}");
+                 }
+                 else
+                 {
+                     var sctx = new ServiceTaskContext
+                     {
+                         InstanceId = job.InstanceId,
+                         TokenId = job.TokenId,
+                         NodeId = job.NodeId,
+                         StarterId = inst.StarterId,
+                         JobId = job.Id,
+diff --git a/CP6.Tests/Wf/CsrfHubExemptionTests.cs b/CP6.Tests/Wf/CsrfHubExemptionTests.cs
+new file mode 100644
+index 0000000..a9805bf
+--- /dev/null
++++ b/CP6.Tests/Wf/CsrfHubExemptionTests.cs
+@@ -0,0 +1,24 @@
++using CP6.WebApi.Middleware;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++/// <summary>
++/// 票11：SignalR hub negotiate 是 POST，默认不带 X-CSRF-Token 头，被 CsrfMiddleware 双提交校验 403 拦截。
++/// B1：CsrfMiddleware 豁免 /hubs 前缀（段边界匹配，覆盖 notify/mes/wms/space 全部 hub 的 negotiate），
++/// 不误豁免 /hubsxxx，业务写请求仍受 CSRF 约束。
++/// </summary>
++public class CsrfHubExemptionTests
++{
++    [Theory]
++    [InlineData("/hubs/notify", true)]
++    [InlineData("/hubs/notify/negotiate", true)]
++    [InlineData("/hubs/mes/negotiate", true)]
++    [InlineData("/hubs/wms", true)]
++    [InlineData("/hubs/space/negotiate", true)]   // 波4 SpaceHub：/hubs 前缀一并覆盖
++    [InlineData("/api/auth/login", true)]          // 既有豁免仍在
++    [InlineData("/api/oa/designer/save", false)]   // 业务写请求仍受 CSRF 约束
++    [InlineData("/hubsxxx/notify", false)]         // 段边界：非 /hubs/ 前缀不豁免
++    public void HubPaths_AreExempt(string path, bool expectExempt)
++        => Assert.Equal(expectExempt, CsrfMiddleware.IsExempt(path));
++}
+diff --git a/CP6.Tests/Wf/ServiceJobScanTests.cs b/CP6.Tests/Wf/ServiceJobScanTests.cs
+index 8cd97f1..53ea2c3 100644
+--- a/CP6.Tests/Wf/ServiceJobScanTests.cs
++++ b/CP6.Tests/Wf/ServiceJobScanTests.cs
+@@ -231,51 +231,74 @@ public class ServiceJobScanTests
+         Assert.Equal("human", (await db.Wf_FlowTokens.SingleAsync()).NodeId);          // token 落到 human
+         Assert.Contains("serviceError", i.VarsJson);                                   // P1-4：wf.serviceError 写入
+         Assert.Equal(1, await db.Wf_FlowTasks.CountAsync(t => t.AssigneeId == approver && t.Status == FlowTaskStatus.Pending));
+     }
+ 
+     [Fact]
+     public async Task Reaper_ResetsExpiredLease_Only()
+     {
+         using var db = NewDb();
+         var eng = Engine(db);
+-        // A：Running 且租约已过期 → 应重置 Pending + AttemptCount++（NextAttemptAtUtc 设未来，避免本轮被再次取用，隔离 reaper 行为）
++        // A：Running 且租约已过期 → 应重置 Pending（不 ++；计数由执行段前移持久化负责）（NextAttemptAtUtc 设未来，避免本轮被再次取用，隔离 reaper 行为）
+         var a = new Wf_ServiceJob { Id = Guid.NewGuid(), InstanceId = Guid.NewGuid(), TokenId = Guid.NewGuid(),
+             NodeId = "svc", Kind = ServiceKind.WebApi, Status = ServiceJobStatus.Running,
+             AttemptCount = 1, MaxAttempts = 4, NextAttemptAtUtc = T0.AddHours(1),
+             LockedBy = "deadWorker", LockedAtUtc = T0.AddMinutes(-10), LockExpiresAtUtc = T0.AddMinutes(-1),
+             CreateDate = DateTime.UtcNow };
+         // B：Running 且租约未过期 → 不动
+         var b = new Wf_ServiceJob { Id = Guid.NewGuid(), InstanceId = Guid.NewGuid(), TokenId = Guid.NewGuid(),
+             NodeId = "svc", Kind = ServiceKind.WebApi, Status = ServiceJobStatus.Running,
+             AttemptCount = 0, MaxAttempts = 4, NextAttemptAtUtc = T0,
+             LockedBy = "liveWorker", LockedAtUtc = T0.AddMinutes(-1), LockExpiresAtUtc = T0.AddMinutes(5),
+             CreateDate = DateTime.UtcNow };
+         db.Wf_ServiceJobs.AddRange(a, b);
+         await db.SaveChangesAsync();
+ 
+         await Svc(db, eng).ScanOnceAsync(T0, "w1");
+ 
+         var ja = await db.Wf_ServiceJobs.SingleAsync(j => j.Id == a.Id);
+         Assert.Equal(ServiceJobStatus.Pending, ja.Status);
+-        Assert.Equal(2, ja.AttemptCount);          // ++（计入崩溃的那次）
++        Assert.Equal(1, ja.AttemptCount);          // reaper 只重置 lease，不再 ++（原持久化的尝试计数保持）
+         Assert.Null(ja.LockedBy);
+         Assert.Null(ja.LockedAtUtc);
+         Assert.Null(ja.LockExpiresAtUtc);
+ 
+         var jb = await db.Wf_ServiceJobs.SingleAsync(j => j.Id == b.Id);
+         Assert.Equal(ServiceJobStatus.Running, jb.Status);     // 未过期租约不回收
+         Assert.Equal(0, jb.AttemptCount);
+         Assert.Equal("liveWorker", jb.LockedBy);
+         Assert.Equal(T0.AddMinutes(5), jb.LockExpiresAtUtc);
+     }
+ 
++    [Fact]
++    public async Task Reaper_ClaimedButNeverExecuted_DoesNotBurnAttempt()
++    {
++        using var db = NewDb();
++        // 场景：worker 抢到 lease（Status=Running, AttemptCount=0）后、在真正执行前就崩溃。
++        // lease 过期 → reaper 回收，但因从未执行，AttemptCount 必须仍为 0（不烧配额）。
++        var j = new Wf_ServiceJob { Id = Guid.NewGuid(), InstanceId = Guid.NewGuid(), TokenId = Guid.NewGuid(),
++            NodeId = "svc", Kind = ServiceKind.WebApi, Status = ServiceJobStatus.Running,
++            AttemptCount = 0, MaxAttempts = 4, NextAttemptAtUtc = T0.AddHours(1),
++            LockedBy = "deadWorker", LockedAtUtc = T0.AddMinutes(-10), LockExpiresAtUtc = T0.AddMinutes(-1),
++            CreateDate = DateTime.UtcNow };
++        db.Wf_ServiceJobs.Add(j);
++        await db.SaveChangesAsync();
++
++        var eng = Engine(db);
++        await new WfServiceJobService(db, eng, Array.Empty<IServiceTaskExecutor>()).ScanOnceAsync(T0, "w1");
++
++        var reclaimed = await db.Wf_ServiceJobs.SingleAsync();
++        Assert.Equal(ServiceJobStatus.Pending, reclaimed.Status);
++        Assert.Equal(0, reclaimed.AttemptCount);   // 从未执行 → 不计数
++        Assert.Null(reclaimed.LockedBy);
++    }
++
+     [Fact]
+     public async Task StateGate_InstanceWithdrawn_CancelsJob_NoExecute()
+     {
+         using var db = NewDb();
+         var eng = Engine(db);
+         var exec = new FakeExec("act", succeed: true);
+         var (inst, _, _) = Park(db, eng, SchemaNoErrorEdge(), nextAttemptAtUtc: T0,
+             instStatus: FlowInstanceStatus.Withdrawn);   // 实例已撤回
+         await db.SaveChangesAsync();
+ 
+diff --git a/CP6.Tests/Wf/ServiceTaskValidatorTests.cs b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+index d92fb2b..a7121eb 100644
+--- a/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
++++ b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+@@ -122,20 +122,63 @@ public class ServiceTaskValidatorTests
+         };
+         Assert.Contains("E-WF-017", FlowSchemaValidator.Validate(s));
+     }
+ 
+     [Fact]
+     public void ValidServiceTask_Passes()
+     {
+         Assert.Empty(FlowSchemaValidator.Validate(Base()));
+     }
+ 
++    [Fact]
++    public void WebApi_PathWithArraySubscript_E_WF_016()
++    {
++        var s = Base();
++        Svc(s).ServicePath = "/o/{lines[0]}";   // 路径模板含数组下标 → 设计期拦
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    // ── 票5：ServiceMode 值域校验(sync|async) ──
++
++    [Fact]
++    public void ServiceMode_Invalid_E_WF_016()
++    {
++        var schema = new FlowSchema {
++            Nodes = {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "svc", Type = "serviceTask", ServiceKind = ServiceKind.DataWriteback,
++                    ServiceActionName = "sampleWriteback", ServiceMode = "batch" },   // 非法 mode
++                new FlowNode { Id = "e", Type = "end" },
++            },
++            Edges = { new FlowEdge { From = "s", To = "svc" }, new FlowEdge { From = "svc", To = "e" } },
++        };
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(schema));
++    }
++
++    [Fact]
++    public void ServiceMode_SyncOrAsync_Or_Null_Passes()
++    {
++        foreach (var mode in new string?[] { null, "sync", "async" })
++        {
++            var schema = new FlowSchema {
++                Nodes = {
++                    new FlowNode { Id = "s", Type = "start" },
++                    new FlowNode { Id = "svc", Type = "serviceTask", ServiceKind = ServiceKind.DataWriteback,
++                        ServiceActionName = "sampleWriteback", ServiceMode = mode },
++                    new FlowNode { Id = "e", Type = "end" },
++                },
++                Edges = { new FlowEdge { From = "s", To = "svc" }, new FlowEdge { From = "svc", To = "e" } },
++            };
++            Assert.DoesNotContain("E-WF-016", FlowSchemaValidator.Validate(schema));
++        }
++    }
++
+     // ── Step 4: DesignerService.save 注册名校验(E-WF-018) ──
+ 
+     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString())
+         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
+ 
+     private sealed class FakeExec : IServiceTaskExecutor
+     {
+         public string Key { get; init; } = "";
+         public string Kind { get; init; } = "";
+diff --git a/CP6.Tests/Wf/ServiceVarsHelperTests.cs b/CP6.Tests/Wf/ServiceVarsHelperTests.cs
+index 120ed1f..8cd3042 100644
+--- a/CP6.Tests/Wf/ServiceVarsHelperTests.cs
++++ b/CP6.Tests/Wf/ServiceVarsHelperTests.cs
+@@ -38,11 +38,22 @@ public class ServiceVarsHelperTests
+         Assert.DoesNotContain("\"wf.foo\"", res2.VarsJson);
+         Assert.Contains("\"wffoo\"", res2.VarsJson);
+     }
+ 
+     [Fact]
+     public void Merge_OverwriteExistingNonReserved()
+     {
+         var res = ServiceVarsHelper.MergeOutputVars("{\"a\":1}", new Dictionary<string, object?> { ["a"] = 9 });
+         Assert.Contains("\"a\":9", res.VarsJson);
+     }
++
++    [Fact]
++    public void ContainsUnsupportedSubscript_DetectsArrayIndex()
++    {
++        Assert.True(ServiceVarsHelper.ContainsUnsupportedSubscript("$.items[0]"));
++        Assert.True(ServiceVarsHelper.ContainsUnsupportedSubscript("/o/{lines[2]}"));
++        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("$.orderId"));
++        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("/o/{orderId}"));
++        // 字面 JSON 数组值（非模板下标）不误报：
++        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("{\"list\":[1,2,3]}"));
++    }
+ }
+diff --git a/CP6.Tests/Wf/WebApiExecutorTests.cs b/CP6.Tests/Wf/WebApiExecutorTests.cs
+index 8a1efb1..8bea92c 100644
+--- a/CP6.Tests/Wf/WebApiExecutorTests.cs
++++ b/CP6.Tests/Wf/WebApiExecutorTests.cs
+@@ -90,20 +90,59 @@ public class WebApiExecutorTests
+ 
+         var executor = new WebApiExecutor(new IWfConnector[] { new FakeConn() });
+ 
+         var result = await executor.ExecuteAsync(ctx);
+ 
+         Assert.False(result.Success);
+         Assert.NotNull(result.Error);
+         Assert.Contains("E-WF-018", result.Error!);
+     }
+ 
++    // ── T6: 未注册连接器 → 结构化码 E-WF-018|<connectorName>，无中文散文 ───────
++    [Fact]
++    public async Task UnknownConnector_Fails_WithStructuredCode_NoProse()
++    {
++        // actionRef 引用未注册连接器 → 结构化 "E-WF-018|<connectorName>"，无中文散文
++        var node = new FlowNode { Id = "n", Type = "serviceTask", ServiceKind = ServiceKind.WebApi,
++            ServiceConnectorName = "ghost", ServicePath = "/x" };
++        var ctx = new ServiceTaskContext {
++            InstanceId = System.Guid.NewGuid(), TokenId = System.Guid.NewGuid(), NodeId = "n",
++            StarterId = System.Guid.Empty, JobId = System.Guid.NewGuid(), AttemptNo = 1,
++            ActorId = System.Guid.Empty, NowUtc = System.DateTime.UtcNow,
++            ActionRefJson = ServiceTaskActionRef.Snapshot(node),
++        };
++        var exec = new CP6.Core.Services.Wf.Executors.WebApiExecutor(System.Array.Empty<IWfConnector>());
++        var r = await exec.ExecuteAsync(ctx);
++
++        Assert.False(r.Success);
++        Assert.StartsWith("E-WF-018", r.Error);        // 码在最前
++        Assert.Contains("|", r.Error);                 // 结构化分隔
++        Assert.Contains("ghost", r.Error!);            // 机读明细=连接器名
++        Assert.DoesNotContain("未注册", r.Error!);      // 无本地化中文散文
++        Assert.DoesNotContain("连接器", r.Error!);
++    }
++
++    // ── T6: 空 ActionRef → 结构化码，无中文散文 ──────────────────────────────
++    [Fact]
++    public async Task EmptyActionRef_Fails_WithStructuredCode()
++    {
++        var ctx = new ServiceTaskContext {
++            InstanceId = System.Guid.NewGuid(), TokenId = System.Guid.NewGuid(), NodeId = "n",
++            StarterId = System.Guid.Empty, JobId = System.Guid.NewGuid(), AttemptNo = 1,
++            ActorId = System.Guid.Empty, NowUtc = System.DateTime.UtcNow, ActionRefJson = null,
++        };
++        var r = await new CP6.Core.Services.Wf.Executors.WebApiExecutor(System.Array.Empty<IWfConnector>()).ExecuteAsync(ctx);
++        Assert.False(r.Success);
++        Assert.StartsWith("E-WF-018|", r.Error);
++        Assert.DoesNotContain("为空", r.Error!);
++    }
++
+     // ── T3: EchoConnector 自己把 {orderId} 解析 + 发出幂等键 ──────────────────
+     [Fact]
+     public async Task EchoConnector_ResolvesTemplate_And_EmitsIdempotencyKey()
+     {
+         var jobId = Guid.NewGuid();
+         var ctx = MakeCtx(jobId, varsJson: "{\"orderId\":\"PO-1\"}");
+         var connector = new EchoConnector();
+ 
+         var result = await connector.CallAsync("/o/{orderId}", "{}", ctx);
+ 
+diff --git a/CP6.Tests/Wf/WfConnectorLeaseGuardTests.cs b/CP6.Tests/Wf/WfConnectorLeaseGuardTests.cs
+new file mode 100644
+index 0000000..6be8e3e
+--- /dev/null
++++ b/CP6.Tests/Wf/WfConnectorLeaseGuardTests.cs
+@@ -0,0 +1,36 @@
++using System;
++using CP6.Core.Services.Wf;
++using Xunit;
++
++public class WfConnectorLeaseGuardTests
++{
++    private sealed class SafeConn : IWfConnector {
++        public string Name => "safe"; public string DisplayName => "Safe";
++        public TimeSpan? MaxCallDuration => TimeSpan.FromMinutes(1);   // < 5min 租约
++        public System.Threading.Tasks.Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext c)
++            => System.Threading.Tasks.Task.FromResult(ServiceTaskResult.Ok());
++    }
++    private sealed class SlowConn : IWfConnector {
++        public string Name => "slow"; public string DisplayName => "Slow";
++        public TimeSpan? MaxCallDuration => TimeSpan.FromMinutes(6);   // >= 5min 租约 → 非法
++        public System.Threading.Tasks.Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext c)
++            => System.Threading.Tasks.Task.FromResult(ServiceTaskResult.Ok());
++    }
++    private sealed class UndeclaredConn : IWfConnector {
++        public string Name => "echo"; public string DisplayName => "Echo";
++        // 不覆写 MaxCallDuration → 默认 null → 通过（假定安全，EchoConnector 同款）
++        public System.Threading.Tasks.Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext c)
++            => System.Threading.Tasks.Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    [Fact] public void Passes_WhenAllUnderLease()
++        => WfConnectorLeaseGuard.Validate(new IWfConnector[] { new SafeConn(), new UndeclaredConn() });
++
++    [Fact] public void Throws_WhenConnectorAtOrOverLease()
++    {
++        var ex = Assert.Throws<InvalidOperationException>(
++            () => WfConnectorLeaseGuard.Validate(new IWfConnector[] { new SafeConn(), new SlowConn() }));
++        Assert.Contains("slow", ex.Message);
++        Assert.Contains("MaxCallDuration", ex.Message);
++    }
++}
+diff --git a/CP6.WebApi/CP6.WebApi.csproj b/CP6.WebApi/CP6.WebApi.csproj
+index ddab064..190e36b 100644
+--- a/CP6.WebApi/CP6.WebApi.csproj
++++ b/CP6.WebApi/CP6.WebApi.csproj
+@@ -14,11 +14,16 @@
+     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.12">
+       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+       <PrivateAssets>all</PrivateAssets>
+     </PackageReference>
+   </ItemGroup>
+ 
+   <ItemGroup>
+     <ProjectReference Include="..\CP6.Core\CP6.Core.csproj" />
+   </ItemGroup>
+ 
++  <ItemGroup>
++    <!-- 票11：CsrfMiddleware.IsExempt 等 internal 静态谓词供测试直断（照 CP6.Core 既有模式） -->
++    <InternalsVisibleTo Include="CP6.Tests" />
++  </ItemGroup>
++
+ </Project>
+diff --git a/CP6.WebApi/Middleware/CsrfMiddleware.cs b/CP6.WebApi/Middleware/CsrfMiddleware.cs
+index a077e63..e6374bc 100644
+--- a/CP6.WebApi/Middleware/CsrfMiddleware.cs
++++ b/CP6.WebApi/Middleware/CsrfMiddleware.cs
+@@ -20,28 +20,34 @@ public class CsrfMiddleware
+     {
+         _next = next;
+         _enabled = opt.Value.Csrf.Enabled;
+     }
+ 
+     public async Task Invoke(HttpContext ctx)
+     {
+         if (_enabled)
+         {
+             var path = ctx.Request.Path.Value ?? "";
+-            // 带边界精确匹配：仅 /api/auth/login(/...) 豁免，杜绝 /api/auth/login-xxx 这类同前缀端点被静默豁免
+-            var exempt = PathMatches(path, "/api/auth/login");
+-            if (!exempt && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
++            if (!IsExempt(path) && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
+             {
+                 var cookie = ctx.Request.Cookies[AuthCookieWriter.CsrfCookie];
+                 var header = ctx.Request.Headers["X-CSRF-Token"].ToString();
+                 if (string.IsNullOrEmpty(cookie) || cookie != header)
+                     throw new BizException("E-SEC-010", 403);   // 403 Forbidden：CSRF 校验失败（spec §5.3）
+             }
+         }
+         await _next(ctx);
+     }
+ 
++    /// <summary>CSRF 豁免路径（段边界匹配，杜绝同前缀误豁免）：
++    /// ① 登录端点（登录时尚无 csrf cookie，杜绝 /api/auth/login-xxx 这类同前缀端点被静默豁免）；
++    /// ② SignalR hub 路径（negotiate 是 POST 但不改业务状态，hub 自身经 JWT/cookie 认证；
++    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub）。</summary>
++    internal static bool IsExempt(string path)
++        => PathMatches(path, "/api/auth/login")
++           || PathMatches(path, "/hubs");
++
+     /// <summary>路径段边界匹配：path == prefix 或 path 以 "prefix/" 起头（避免同前缀误匹配）。</summary>
+     internal static bool PathMatches(string path, string prefix)
+         => path.Equals(prefix, StringComparison.OrdinalIgnoreCase)
+            || path.StartsWith(prefix + "/", StringComparison.OrdinalIgnoreCase);
+ }
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 871b597..1a229cb 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -10,22 +10,40 @@ using Microsoft.IdentityModel.Tokens;
+ using System.Data;
+ using Microsoft.Data.SqlClient;
+ using CP6.Core.Utilities;
+ using CP6.WebApi.Filters;
+ using CP6.WebApi.Hubs;
+ using Prometheus;
+ 
+ var builder = WebApplication.CreateBuilder(args);
+ 
+ // 本地凭证覆盖（appsettings.Local.json 在 .gitignore，绝不入仓库）。
+-// 加载顺序：appsettings.json → appsettings.{Env}.json → appsettings.Local.json → env vars
+-builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
++// 优先级（低→高）：appsettings.json → appsettings.{Env}.json → appsettings.Local.json → env vars → 命令行。
++// 关键：CreateBuilder 已把 env vars/命令行源加在链尾（高优先级）。若用 AddJsonFile 追加，Local.json 会落到
++// 更后、反而覆盖 env vars —— 容器里 ConnectionStrings__* 环境变量会被静默吞。故把 Local.json 源**插到 env vars 源之前**，
++// 恢复标准 ASP.NET 优先级（env vars 最高）。
++var localJsonSource = new Microsoft.Extensions.Configuration.Json.JsonConfigurationSource
++{
++    Path = "appsettings.Local.json",
++    Optional = true,
++    ReloadOnChange = true,
++};
++localJsonSource.ResolveFileProvider();
++// 注意：Sources 是 IList<IConfigurationSource>，没有 List<T>.FindIndex——手写循环找 env vars 源下标。
++var envVarIdx = -1;
++for (var i = 0; i < builder.Configuration.Sources.Count; i++)
++    if (builder.Configuration.Sources[i] is Microsoft.Extensions.Configuration.EnvironmentVariables.EnvironmentVariablesConfigurationSource)
++    { envVarIdx = i; break; }
++if (envVarIdx >= 0)
++    builder.Configuration.Sources.Insert(envVarIdx, localJsonSource);   // 插到 env vars 之前 → env 仍最高
++else
++    builder.Configuration.Sources.Add(localJsonSource);                 // 兜底（理论不达）
+ 
+ // 1. 注册控制器（全局注册 OperLogFilter）
+ builder.Services.AddScoped<OperLogFilter>();
+ builder.Services.AddControllers(options =>
+ {
+     options.Filters.AddService<OperLogFilter>();
+ });
+ 
+ // 1.1 注册 SignalR
+ builder.Services.AddSignalR();
+@@ -636,20 +654,27 @@ builder.Services.AddCors(options =>
+ {
+     options.AddPolicy("AllowAll", policy =>
+         policy.WithOrigins(corsOrigins)
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials());
+ });
+ 
+ var app = builder.Build();
+ 
++// 票3：启动期校验已注册连接器的单次调用上界 < 服务任务租约（防长调用被 reaper 重投→重复外呼）。
++using (var _leaseScope = app.Services.CreateScope())
++{
++    CP6.Core.Services.Wf.WfConnectorLeaseGuard.Validate(
++        _leaseScope.ServiceProvider.GetServices<CP6.Core.Services.Wf.IWfConnector>());
++}
++
+ if (app.Environment.IsDevelopment())
+ {
+     app.UseSwagger();
+     app.UseSwaggerUI();
+ }
+ 
+ // 7. 初始化种子数据（首次启动时自动创建）
+ using (var scope = app.Services.CreateScope())
+ {
+     var db = scope.ServiceProvider.GetRequiredService<CP6Context>();
+diff --git a/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs b/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
+index 569ed98..96f21f7 100644
+--- a/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
++++ b/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
+@@ -1,57 +1,63 @@
+ using CP6.Entity.DomainModels.Sys;
+ 
+ namespace CP6.WebApi.Seed;
+ 
+ /// <summary>服务任务(serviceTask)画面词条：oa.designer.svc.*（D-T2/D-T3 前端引用）+ 前端校验 oa.designer.errServiceConfig + 后端错误码 E-WF-016/017/018。
+ /// 键面以 cp6.web/src/views/oa/designer 实际引用为权威（ServiceTaskNode.vue / NodePropertyPanel.vue / EdgePropertyPanel.vue / designerModel.ts）。
+-/// 去重：本文件全部 25 个 svc.* + errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
++/// 去重：本文件全部 30 个 svc.*（含票7 reloadCatalog + 票8 timerActionKind 四键）+ errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
+ public static class I18nOaServiceTaskScreenSeed
+ {
+     public static readonly Sys_Lang[] Items =
+     {
+         // ── 面板标题 / 服务类型 (ServiceTaskNode.vue + NodePropertyPanel.vue) ──
+-        new() { LangKey = "oa.designer.svc.title",              ZhCN = "服务任务",       ZhTW = "服務任務",       En = "Service Task",   Ja = "サービスタスク",   Ko = "서비스 태스크" },
++        new() { LangKey = "oa.designer.svc.title",              ZhCN = "服务任务",       ZhTW = "服務任務",       En = "Service Task",   Ja = "サービスタスク",   Ko = "서비스 작업" },
+         new() { LangKey = "oa.designer.svc.kind",               ZhCN = "服务类型",       ZhTW = "服務類型",       En = "Service Type",   Ja = "サービス種別",     Ko = "서비스 유형" },
+-        new() { LangKey = "oa.designer.svc.kind.dataWriteback", ZhCN = "数据回写",       ZhTW = "資料回寫",       En = "Data Writeback", Ja = "データ書き戻し",   Ko = "데이터 기록" },
++        new() { LangKey = "oa.designer.svc.kind.dataWriteback", ZhCN = "数据回写",       ZhTW = "資料回寫",       En = "Data Writeback", Ja = "データ書き戻し",   Ko = "데이터 쓰기" },
+         new() { LangKey = "oa.designer.svc.kind.webApi",        ZhCN = "接口调用",       ZhTW = "介面呼叫",       En = "API Call",       Ja = "API呼び出し",      Ko = "API 호출" },
+         new() { LangKey = "oa.designer.svc.kind.timer",         ZhCN = "定时器",         ZhTW = "計時器",         En = "Timer",          Ja = "タイマー",         Ko = "타이머" },
+ 
+         // ── 数据回写：动作 / 模式 / 参数模板 (NodePropertyPanel.vue) ──
+-        new() { LangKey = "oa.designer.svc.action",             ZhCN = "动作",           ZhTW = "動作",           En = "Action",         Ja = "アクション",       Ko = "액션" },
++        new() { LangKey = "oa.designer.svc.action",             ZhCN = "动作",           ZhTW = "動作",           En = "Action",         Ja = "アクション",       Ko = "동작" },
+         new() { LangKey = "oa.designer.svc.mode",               ZhCN = "执行模式",       ZhTW = "執行模式",       En = "Execution Mode", Ja = "実行モード",       Ko = "실행 모드" },
+         new() { LangKey = "oa.designer.svc.mode.sync",          ZhCN = "同步",           ZhTW = "同步",           En = "Synchronous",    Ja = "同期",             Ko = "동기" },
+         new() { LangKey = "oa.designer.svc.mode.async",         ZhCN = "异步",           ZhTW = "非同步",         En = "Asynchronous",   Ja = "非同期",           Ko = "비동기" },
+         new() { LangKey = "oa.designer.svc.params",             ZhCN = "参数模板",       ZhTW = "參數範本",       En = "Parameter Template", Ja = "パラメータテンプレート", Ko = "파라미터 템플릿" },
+         new() { LangKey = "oa.designer.svc.paramsHint",         ZhCN = "JSON 参数模板，支持表单字段占位", ZhTW = "JSON 參數範本，支援表單欄位佔位", En = "JSON parameter template; supports form-field placeholders", Ja = "JSONパラメータテンプレート（フォーム項目のプレースホルダに対応）", Ko = "JSON 파라미터 템플릿, 양식 필드 자리표시자 지원" },
+ 
+         // ── 接口调用：连接器 / 路径 (NodePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.connector",          ZhCN = "连接器",         ZhTW = "連接器",         En = "Connector",      Ja = "コネクタ",         Ko = "커넥터" },
+         new() { LangKey = "oa.designer.svc.path",               ZhCN = "路径",           ZhTW = "路徑",           En = "Path",           Ja = "パス",             Ko = "경로" },
+         new() { LangKey = "oa.designer.svc.pathHint",           ZhCN = "接口相对路径，如 /api/v1/orders", ZhTW = "介面相對路徑，如 /api/v1/orders", En = "API relative path, e.g. /api/v1/orders", Ja = "APIの相対パス（例 /api/v1/orders）", Ko = "API 상대 경로, 예 /api/v1/orders" },
+ 
+         // ── 定时器：延时模式 / 延时值 / 到点动作 (NodePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.delayMode",          ZhCN = "延时模式",       ZhTW = "延時模式",       En = "Delay Mode",     Ja = "遅延モード",       Ko = "지연 모드" },
+         new() { LangKey = "oa.designer.svc.delayMode.duration", ZhCN = "时长",           ZhTW = "時長",           En = "Duration",       Ja = "期間",             Ko = "기간" },
+         new() { LangKey = "oa.designer.svc.delayMode.untilDate",ZhCN = "到指定时间",     ZhTW = "到指定時間",     En = "Until Date",     Ja = "指定日時まで",     Ko = "지정 일시까지" },
+         new() { LangKey = "oa.designer.svc.delayMode.untilExpr",ZhCN = "到表达式时间",   ZhTW = "到運算式時間",   En = "Until Expression", Ja = "式で指定した時刻まで", Ko = "표현식 시각까지" },
+         new() { LangKey = "oa.designer.svc.delayValue",         ZhCN = "延时值",         ZhTW = "延時值",         En = "Delay Value",    Ja = "遅延値",           Ko = "지연 값" },
+         new() { LangKey = "oa.designer.svc.delayValueHint",     ZhCN = "如 3d/2h/30m，或日期/表达式", ZhTW = "如 3d/2h/30m，或日期/運算式", En = "e.g. 3d/2h/30m, or a date/expression", Ja = "例 3d/2h/30m、または日付/式", Ko = "예 3d/2h/30m 또는 날짜/표현식" },
+-        new() { LangKey = "oa.designer.svc.timerAction",        ZhCN = "到点动作",       ZhTW = "到點動作",       En = "On-Fire Action", Ja = "発火時アクション", Ko = "실행 시 액션" },
++        new() { LangKey = "oa.designer.svc.timerAction",        ZhCN = "到点动作",       ZhTW = "到點動作",       En = "On-Fire Action", Ja = "発火時アクション", Ko = "실행 시 동작" },
++        // 票8：到点动作类型（none / 数据回写 / webApi 连接器）——补 spec §5.3「定时到点发 webApi」缺口
++        new() { LangKey = "oa.designer.svc.timerActionKind",       ZhCN = "到点动作类型",   ZhTW = "到點動作類型",   En = "On-Fire Action Type", Ja = "発火時アクション種別", Ko = "실행 시 액션 유형" },
++        new() { LangKey = "oa.designer.svc.timerActionKind.none",  ZhCN = "无（纯等待）",   ZhTW = "無（純等待）",   En = "None (pure wait)",    Ja = "なし（待機のみ）",     Ko = "없음(대기만)" },
++        new() { LangKey = "oa.designer.svc.timerActionKind.write", ZhCN = "数据回写动作",   ZhTW = "資料回寫動作",   En = "Data-writeback action", Ja = "データ書き戻しアクション", Ko = "데이터 기록 액션" },
++        new() { LangKey = "oa.designer.svc.timerActionKind.api",   ZhCN = "接口调用",       ZhTW = "介面呼叫",       En = "API call",            Ja = "API呼び出し",          Ko = "API 호출" },
+ 
+         // ── 重试（三 kind 共用）(NodePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.maxRetries",         ZhCN = "最大重试次数",   ZhTW = "最大重試次數",   En = "Max Retries",    Ja = "最大リトライ回数", Ko = "최대 재시도 횟수" },
+         new() { LangKey = "oa.designer.svc.backoff",            ZhCN = "重试间隔（秒）", ZhTW = "重試間隔（秒）", En = "Retry Backoff (sec)", Ja = "リトライ間隔（秒）", Ko = "재시도 간격(초)" },
++        new() { LangKey = "oa.designer.svc.reloadCatalog",      ZhCN = "重新加载服务目录", ZhTW = "重新載入服務目錄", En = "Reload service catalog", Ja = "サービスカタログを再読み込み", Ko = "서비스 카탈로그 다시 불러오기" },
+ 
+         // ── 失败边 (EdgePropertyPanel.vue) ──
+-        new() { LangKey = "oa.designer.svc.errorEdge",          ZhCN = "失败边",         ZhTW = "失敗邊",         En = "Error Edge",     Ja = "失敗エッジ",       Ko = "실패 엣지" },
+-        new() { LangKey = "oa.designer.svc.errorEdgeHint",      ZhCN = "服务任务重试耗尽后沿此边流转", ZhTW = "服務任務重試耗盡後沿此邊流轉", En = "Taken when the service task exhausts its retries", Ja = "サービスタスクのリトライを使い切ったときにこのエッジを通ります", Ko = "서비스 태스크가 재시도를 모두 소진하면 이 엣지로 진행됩니다" },
++        new() { LangKey = "oa.designer.svc.errorEdge",          ZhCN = "失败边",         ZhTW = "失敗邊",         En = "Error Edge",     Ja = "失敗エッジ",       Ko = "실패 분기" },
++        new() { LangKey = "oa.designer.svc.errorEdgeHint",      ZhCN = "服务任务重试耗尽后沿此边流转", ZhTW = "服務任務重試耗盡後沿此邊流轉", En = "Taken when the service task exhausts its retries", Ja = "サービスタスクのリトライを使い切ったときにこのエッジを通ります", Ko = "서비스 태스크가 재시도를 모두 소진하면 이 분기로 진행됩니다" },
+ 
+         // ── 前端校验消息 (designerModel.ts validateClient) ──
+         new() { LangKey = "oa.designer.errServiceConfig",       ZhCN = "服务任务配置不完整", ZhTW = "服務任務配置不完整", En = "Service task config incomplete", Ja = "サービスタスクの設定が不完全です", Ko = "서비스 태스크 구성이 불완전합니다" },
+ 
+         // ── 后端错误码 (FlowSchemaValidator / DesignerService / Executors) ──
+         new() { LangKey = "E-WF-016", ZhCN = "服务任务节点配置不完整", ZhTW = "服務任務節點配置不完整", En = "Incomplete service task node configuration", Ja = "サービスタスクノードの設定が不完全です", Ko = "서비스 태스크 노드 구성이 불완전합니다" },
+         new() { LangKey = "E-WF-017", ZhCN = "错误出边配置非法",       ZhTW = "錯誤出邊配置非法",       En = "Invalid error edge configuration",           Ja = "エラーエッジの設定が不正です",           Ko = "오류 엣지 설정이 잘못되었습니다" },
+         new() { LangKey = "E-WF-018", ZhCN = "服务动作或连接器未注册", ZhTW = "服務動作或連接器未註冊", En = "Service action or connector not registered", Ja = "サービスアクションまたはコネクタが未登録です", Ko = "서비스 액션 또는 커넥터가 등록되지 않았습니다" },
+     };
+ }
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.timer.spec.ts b/cp6.web/src/views/oa/designer/NodePropertyPanel.timer.spec.ts
+new file mode 100644
+index 0000000..d957679
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.timer.spec.ts
+@@ -0,0 +1,157 @@
++// @vitest-environment jsdom
++// 票8：timer（定时器）到点动作补 webApi 连接器/路径变体 + 互斥清理。
++// 核心正确性：ServiceTaskActionRef.Snapshot 优先判 ConnectorName（timer + ConnectorName → webApi），
++// 故选「回写/无」时必须清空 serviceConnectorName，否则到点静默外呼用户以为已删的连接器。
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import ElementPlus from 'element-plus'
++import { nextTick } from 'vue'
++import type { SchemaNode } from './designerModel'
++
++vi.mock('@/api/oa/designer', () => ({
++  designerApi: {
++    getServiceCatalog: vi.fn().mockResolvedValue({
++      actions: [{ name: 'writeOrder', label: '写订单' }],
++      connectors: [{ name: 'erpEcho', label: 'ERP回声' }],
++    }),
++  },
++}))
++
++import NodePropertyPanel from './NodePropertyPanel.vue'
++
++const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })
++
++function timerNode(over: Partial<SchemaNode> = {}): SchemaNode {
++  return { id: 's1', type: 'serviceTask', serviceKind: 'timer', ...over } as SchemaNode
++}
++
++function mountPanel(node: SchemaNode) {
++  return mount(NodePropertyPanel, {
++    props: { node },
++    global: { plugins: [i18n, ElementPlus] },
++  })
++}
++
++function state(w: ReturnType<typeof mountPanel>) {
++  return (w.vm as unknown as { $: { setupState: Record<string, any> } }).$.setupState
++}
++
++describe('NodePropertyPanel timer 到点动作变体（票8）', () => {
++  beforeEach(() => vi.clearAllMocks())
++
++  // ── 审查修复回归：backing ref 使 write/api 可达（纯 computed 版 setter 只清字段，
++  //    getter 因 connector/action 仍空立即弹回 'none'，子表单永不渲染=鸡生蛋不可达）──
++
++  it('fresh timer 选 api：模式驻留（不弹回 none）且 connector/path 表单渲染', async () => {
++    const w = mountPanel(timerNode()) // 全空字段的新建 timer
++    await flushPromises()
++    expect(state(w).timerActionKind).toBe('none')
++    state(w).timerActionKind = 'api'
++    await nextTick()
++    expect(state(w).timerActionKind).toBe('api') // 纯 computed 版此处 'none'
++    const labels = w.findAll('.el-form-item__label').map(n => n.text())
++    expect(labels).toContain('oa.designer.svc.connector')
++    expect(labels).toContain('oa.designer.svc.path')
++  })
++
++  it('fresh timer 选 write：模式驻留且到点动作下拉渲染', async () => {
++    const w = mountPanel(timerNode())
++    await flushPromises()
++    state(w).timerActionKind = 'write'
++    await nextTick()
++    expect(state(w).timerActionKind).toBe('write')
++    const labels = w.findAll('.el-form-item__label').map(n => n.text())
++    expect(labels).toContain('oa.designer.svc.timerAction')
++    expect(labels).not.toContain('oa.designer.svc.connector')
++  })
++
++  it('选 api（已填 connector）后再切 write：connector/path 被清且 action 表单出现', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    expect(state(w).timerActionKind).toBe('api') // 初始化按字段派生
++    state(w).timerActionKind = 'write'
++    await nextTick()
++    expect(state(w).timerActionKind).toBe('write')
++    expect(state(w).local.serviceConnectorName).toBeUndefined()
++    expect(state(w).local.servicePath).toBeUndefined()
++    const labels = w.findAll('.el-form-item__label').map(n => n.text())
++    expect(labels).toContain('oa.designer.svc.timerAction')
++    expect(labels).not.toContain('oa.designer.svc.connector')
++  })
++
++  it('timerActionKind 初始化：据已填字段派生 none/write/api', async () => {
++    const wNone = mountPanel(timerNode())
++    await flushPromises()
++    expect(state(wNone).timerActionKind).toBe('none')
++
++    const wWrite = mountPanel(timerNode({ serviceActionName: 'writeOrder' }))
++    await flushPromises()
++    expect(state(wWrite).timerActionKind).toBe('write')
++
++    const wApi = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    // Snapshot 优先 ConnectorName → 有连接器即 api（即便 actionName 也在也按 api）
++    expect(state(wApi).timerActionKind).toBe('api')
++  })
++
++  it('setter：选 write 清连接器/路径（防 Snapshot 误判 webApi 到点外呼）', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    state(w).timerActionKind = 'write'
++    await nextTick()
++    expect(state(w).local.serviceConnectorName).toBeUndefined()
++    expect(state(w).local.servicePath).toBeUndefined()
++  })
++
++  it('setter：选 api 清回写动作（互斥）', async () => {
++    const w = mountPanel(timerNode({ serviceActionName: 'writeOrder' }))
++    await flushPromises()
++    state(w).timerActionKind = 'api'
++    await nextTick()
++    expect(state(w).local.serviceActionName).toBeUndefined()
++  })
++
++  it('setter：选 none 清全部三字段', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o', serviceActionName: 'writeOrder' }))
++    await flushPromises()
++    state(w).timerActionKind = 'none'
++    await nextTick()
++    expect(state(w).local.serviceConnectorName).toBeUndefined()
++    expect(state(w).local.servicePath).toBeUndefined()
++    expect(state(w).local.serviceActionName).toBeUndefined()
++  })
++
++  it('清理 watch：切到 timer 不清连接器/路径/动作（timer 三者可能合法）', async () => {
++    const w = mountPanel(timerNode({ serviceKind: 'webApi', serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    state(w).local.serviceKind = 'timer'
++    await nextTick()
++    expect(state(w).local.serviceConnectorName).toBe('erpEcho')
++    expect(state(w).local.servicePath).toBe('/o')
++  })
++
++  it('清理 watch：切到 dataWriteback 清连接器/路径；切到 webApi 清到点动作', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    state(w).local.serviceKind = 'dataWriteback'
++    await nextTick()
++    expect(state(w).local.serviceConnectorName).toBeUndefined()
++    expect(state(w).local.servicePath).toBeUndefined()
++
++    const w2 = mountPanel(timerNode({ serviceActionName: 'writeOrder' }))
++    await flushPromises()
++    state(w2).local.serviceKind = 'webApi'
++    await nextTick()
++    expect(state(w2).local.serviceActionName).toBeUndefined()
++  })
++
++  it('模板：timerActionKind=api 渲染连接器 + 路径入口', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    const labels = w.findAll('.el-form-item__label').map(n => n.text())
++    // 连接器/路径 label（i18n key，messages 空 → 回落 key 文本）
++    expect(labels).toContain('oa.designer.svc.connector')
++    expect(labels).toContain('oa.designer.svc.path')
++  })
++})
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+index 2e343d9..7c2c8c1 100644
+--- a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+@@ -22,86 +22,133 @@ function cloneNode(n: SchemaNode): SchemaNode {
+   }
+ }
+ 
+ const syncing = ref(false)
+ const local = ref<SchemaNode>(cloneNode(props.node))
+ 
+ watch(
+   () => props.node,
+   async (n) => {
+     syncing.value = true
++    const idChanged = n.id !== local.value.id
+     local.value = cloneNode(n)
++    // 票8：换节点时按新节点字段重推导「到点动作类型」；同节点回声（emit→父写回→deep 触发）
++    // 只在字段能明确指示变体（api/write）时才覆盖——否则会把用户刚选中、尚未填 connector/action
++    // 的 pending 选择弹回 'none'（纯 computed 版的鸡生蛋缺陷，审查已点名）。
++    const derived = deriveTimerActionKind(local.value)
++    if (idChanged || derived !== 'none') timerActionKindState.value = derived
+     await nextTick()
+     syncing.value = false
+   },
+   { deep: true },
+ )
+ 
+ watch(
+   local,
+   () => {
+     if (syncing.value) return
+     emit('update', { ...local.value, ccUsers: [...(local.value.ccUsers ?? [])] })
+   },
+   { deep: true },
+ )
+ 
+ // ── serviceKind 切换时清理另一分支的残留字段 ──────────────────────
+-// cloneNode/emit 全量展开：用户把 serviceTask 从 webApi 切到 timer/dataWriteback 后，
+-// serviceConnectorName/servicePath 面板不再展示却仍残留在 emit 出的 patch 里。
++// cloneNode/emit 全量展开：用户切换 serviceKind 后，面板不再展示的字段仍残留在 emit 出的 patch 里。
+ // 运行期 ServiceTaskActionRef.Snapshot 的优先级规则（timer + ConnectorName → actionKind='webApi'，
+-// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:54-73）会据此到点静默外呼用户以为已删的连接器。
++// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:59-73）会据此到点静默外呼用户以为已删的连接器。
+ // 故切 kind 时必须主动清残留——切勿删除本清理，否则复现 timer 静默 webApi 外呼缺陷。
+-// 注意：timer 的 serviceActionName 是面板可见的“到点动作”，是合法配置，必须保留。
++// 票8：三 kind 的合法字段面不同——
++//   dataWriteback：仅 serviceActionName 合法，无连接器/路径。
++//   webApi：仅连接器/路径合法，无“到点动作”。
++//   timer：connector/path/actionName 三者均可能合法（由「到点动作类型」timerActionKind 互斥控制），
++//         故切「到」timer 时不在此清理；切「离」timer 才由目标 kind 规则清。
+ // syncing 守卫复用上方模式：初始 clone / 节点切换加载期间 local 被整体替换，此时不清理（避免误清）。
+ watch(
+   () => local.value.serviceKind,
+   (kind) => {
+     if (syncing.value) return
+     if (local.value.type !== 'serviceTask') return
+-    if (kind !== 'webApi') {
++    if (kind === 'dataWriteback') {
+       local.value.serviceConnectorName = undefined
+       local.value.servicePath = undefined
+-    } else {
++    } else if (kind === 'webApi') {
+       local.value.serviceActionName = undefined // 卫生对称：webApi 无“到点动作”
++    } else if (kind === 'timer') {
++      // 切「到」timer：不清字段（三者均可能合法），但按现有字段重推导变体选择，
++      // 使子表单与残留字段一致（如从 webApi 带着 connector 切来 → 直接落 'api' 变体）。
++      timerActionKindState.value = deriveTimerActionKind(local.value)
+     }
+   },
+ )
+ 
++// ── 票8：timer「到点动作类型」——独立 backing ref（审查修复：纯 computed 版鸡生蛋不可达）──
++// 纯 computed（getter 从字段推导 / setter 只清字段）在新建 timer 上选 'api'/'write' 后，
++// getter 因 connector/action 仍空立即弹回 'none'，子表单永不渲染。故改 backing ref：
++// 用户选择直接驻留 ref，字段推导只用于初始化/换节点/切到 timer 时的同步。
++// 推导优先级与 Snapshot 一致（ServiceTaskActionRef.cs:59-73）：有 ConnectorName 即 'api'
++//（Snapshot 优先判 webApi），否则有 ActionName 即 'write'，否则 'none'。
++function deriveTimerActionKind(n: SchemaNode): 'none' | 'write' | 'api' {
++  return n.serviceConnectorName ? 'api' : n.serviceActionName ? 'write' : 'none'
++}
++
++const timerActionKindState = ref<'none' | 'write' | 'api'>(deriveTimerActionKind(local.value))
++
++// setter 保证互斥清理——选 write/none 时必须清 serviceConnectorName，否则运行期
++// Snapshot 优先判 webApi，到点会静默外呼用户以为已删的连接器。切勿删除本清理。
++const timerActionKind = computed<'none' | 'write' | 'api'>({
++  get: () => timerActionKindState.value,
++  set: (v) => {
++    timerActionKindState.value = v                         // 用户选择驻留（不再从字段反推弹回）
++    if (v === 'api') {
++      local.value.serviceActionName = undefined            // 互斥：webApi 变体清回写动作
++    } else if (v === 'write') {
++      local.value.serviceConnectorName = undefined         // 互斥：回写变体清连接器/路径
++      local.value.servicePath = undefined
++    } else {
++      local.value.serviceConnectorName = undefined         // none：全清
++      local.value.servicePath = undefined
++      local.value.serviceActionName = undefined
++    }
++  },
++})
++
+ // ── Timeout: stored as hours, UI shows days ───────────────────────
+ const timeoutDays = computed({
+   get: () => (local.value.timeoutHours != null ? local.value.timeoutHours / 24 : 0),
+   set: (v: number | null) => {
+     local.value.timeoutHours = v != null && v > 0 ? Math.round(v * 24) : undefined
+   },
+ })
+ 
+ const isApproval = computed(() => local.value.type === 'approval')
+ const isServiceTask = computed(() => local.value.type === 'serviceTask')
+ 
+ // ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
+ const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
+-
+-// 组件被 Vue 复用（node↔node 切换无 :key）时 onMounted 只跑一次，
+-// 首挂非 serviceTask 会永久漏拉；改用 watch(immediate) + 已加载标记，失败可重试。
+ const catalogLoaded = ref(false)
++const catalogFailed = ref(false)   // 票7：加载失败态，驱动模板露「重试」
++
++async function loadCatalog() {
++  catalogFailed.value = false
++  try {
++    catalog.value = await designerApi.getServiceCatalog()
++    catalogLoaded.value = true
++  } catch {
++    catalogFailed.value = true      // HTTP interceptor 已 toast；此处标失败让用户可主动重试
++  }
++}
++
++// 首拉：进入 serviceTask 节点时若未成功加载过，拉一次（组件被 Vue 复用无 :key，onMounted 只跑一次不可靠，
++// 故用 watch(immediate)）。票7：失败后不再依赖 isServiceTask 跳变——模板提供显式「重试」入口调 loadCatalog。
+ watch(
+   isServiceTask,
+-  async (v) => {
+-    if (!v || catalogLoaded.value) return
+-    catalogLoaded.value = true
+-    try {
+-      catalog.value = await designerApi.getServiceCatalog()
+-    } catch {
+-      catalogLoaded.value = false // HTTP interceptor toasts；允许下次重试
+-    }
+-  },
++  (v) => { if (v && !catalogLoaded.value) void loadCatalog() },
+   { immediate: true },
+ )
+ 
+ // ── 串簽启用状态 ──────────────────────────────────────────────────
+ const stageEnabled = computed(
+   () => Array.isArray(local.value.stages) && local.value.stages.length > 0,
+ )
+ 
+ function toggleStages(v: boolean) {
+   if (v) {
+@@ -363,20 +410,35 @@ async function searchCcUsers(kw: string) {
+         <el-form label-position="top" size="small" class="prop-form">
+           <!-- 服务类型 -->
+           <el-form-item :label="t('oa.designer.svc.kind')">
+             <el-select v-model="local.serviceKind" style="width: 100%">
+               <el-option value="dataWriteback" :label="t('oa.designer.svc.kind.dataWriteback')" />
+               <el-option value="webApi"        :label="t('oa.designer.svc.kind.webApi')" />
+               <el-option value="timer"         :label="t('oa.designer.svc.kind.timer')" />
+             </el-select>
+           </el-form-item>
+ 
++          <!-- 票7：目录加载失败时露显式重试（否则停在 serviceTask 节点将永久空下拉）-->
++          <el-alert
++            v-if="catalogFailed"
++            type="warning"
++            :closable="false"
++            show-icon
++            style="margin-bottom: 8px"
++          >
++            <template #title>
++              <el-button link type="primary" size="small" @click="loadCatalog">
++                {{ t('oa.designer.svc.reloadCatalog') }}
++              </el-button>
++            </template>
++          </el-alert>
++
+           <!-- 数据回写：动作 / 模式 / 参数模板 -->
+           <template v-if="local.serviceKind === 'dataWriteback'">
+             <el-form-item :label="t('oa.designer.svc.action')">
+               <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
+                 <el-option
+                   v-for="a in catalog.actions"
+                   :key="a.name"
+                   :value="a.name"
+                   :label="a.label || a.name"
+                 />
+@@ -431,48 +493,79 @@ async function searchCcUsers(kw: string) {
+             </el-form-item>
+ 
+             <el-form-item :label="t('oa.designer.svc.mode')">
+               <el-select v-model="local.serviceMode" style="width: 100%" clearable>
+                 <el-option value="sync"  :label="t('oa.designer.svc.mode.sync')" />
+                 <el-option value="async" :label="t('oa.designer.svc.mode.async')" />
+               </el-select>
+             </el-form-item>
+           </template>
+ 
+-          <!-- 定时器：延时模式 / 延时值 / 可选到点动作 -->
++          <!-- 定时器：延时模式 / 延时值 / 到点动作（none | 回写 | webApi 变体，票8 补 spec §5.3 缺口）-->
+           <template v-else-if="local.serviceKind === 'timer'">
+             <el-form-item :label="t('oa.designer.svc.delayMode')">
+               <el-radio-group v-model="local.serviceDelayMode">
+                 <el-radio value="duration">{{ t('oa.designer.svc.delayMode.duration') }}</el-radio>
+                 <el-radio value="untilDate">{{ t('oa.designer.svc.delayMode.untilDate') }}</el-radio>
+                 <el-radio value="untilExpr">{{ t('oa.designer.svc.delayMode.untilExpr') }}</el-radio>
+               </el-radio-group>
+             </el-form-item>
+ 
+             <el-form-item :label="t('oa.designer.svc.delayValue')">
+               <el-input
+                 v-model="local.serviceDelayValue"
+                 :placeholder="t('oa.designer.svc.delayValueHint')"
+                 clearable
+               />
+             </el-form-item>
+ 
+-            <el-form-item :label="t('oa.designer.svc.timerAction')">
++            <!-- 到点动作类型（互斥：none / 回写 / webApi 连接器）-->
++            <el-form-item :label="t('oa.designer.svc.timerActionKind')">
++              <el-select v-model="timerActionKind" style="width: 100%">
++                <el-option value="none"  :label="t('oa.designer.svc.timerActionKind.none')" />
++                <el-option value="write" :label="t('oa.designer.svc.timerActionKind.write')" />
++                <el-option value="api"   :label="t('oa.designer.svc.timerActionKind.api')" />
++              </el-select>
++            </el-form-item>
++
++            <!-- 回写变体：动作下拉 -->
++            <el-form-item v-if="timerActionKind === 'write'" :label="t('oa.designer.svc.timerAction')">
+               <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
+                 <el-option
+                   v-for="a in catalog.actions"
+                   :key="a.name"
+                   :value="a.name"
+                   :label="a.label || a.name"
+                 />
+               </el-select>
+             </el-form-item>
++
++            <!-- webApi 变体：连接器 + 路径（票8 补齐 spec §5.3 缺口）-->
++            <template v-else-if="timerActionKind === 'api'">
++              <el-form-item :label="t('oa.designer.svc.connector')">
++                <el-select v-model="local.serviceConnectorName" style="width: 100%" clearable>
++                  <el-option
++                    v-for="c in catalog.connectors"
++                    :key="c.name"
++                    :value="c.name"
++                    :label="c.label || c.name"
++                  />
++                </el-select>
++              </el-form-item>
++              <el-form-item :label="t('oa.designer.svc.path')">
++                <el-input
++                  v-model="local.servicePath"
++                  :placeholder="t('oa.designer.svc.pathHint')"
++                  clearable
++                />
++              </el-form-item>
++            </template>
+           </template>
+ 
+           <!-- 重试（三 kind 共用）-->
+           <el-form-item :label="t('oa.designer.svc.maxRetries')">
+             <el-input-number
+               v-model="local.serviceMaxRetries"
+               :min="0"
+               :max="10"
+               style="width: 100%"
+             />
+diff --git a/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts b/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts
+index 0e616c6..cb67cbe 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts
+@@ -19,10 +19,36 @@ describe('serviceTask round-trip', () => {
+     const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'webApi' /* 缺 connector/path */ }], edges:[] }
+     const errs = validateClient(schema as any)
+     expect(errs.some(e => e.includes('errServiceConfig') || e.includes('服务'))).toBe(true)
+   })
+   it('validateClient flags timer with delayValue but no delayMode (radio 未点，镜像后端 E-WF-016)', () => {
+     const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'timer', serviceDelayValue:'3d' /* 缺 delayMode */ }], edges:[] }
+     const errs = validateClient(schema as any)
+     expect(errs).toContain('oa.designer.errServiceConfig')
+   })
+ })
++
++describe('error edge visual', () => {
++  it('isError edge gets danger dashed style; normal edge does not', () => {
++    const g = schemaToGraph({
++      nodes: [
++        { id: 'svc', type: 'serviceTask' } as any,
++        { id: 'end', type: 'end' } as any,
++        { id: 'h', type: 'approval' } as any,
++      ],
++      edges: [
++        { from: 'svc', to: 'end' },              // 普通边
++        { from: 'svc', to: 'h', isError: true }, // 失败边
++      ],
++    } as any)
++
++    const normal = g.edges.find(e => e.target === 'end')!
++    const err = g.edges.find(e => e.target === 'h')!
++
++    // 普通边无自定义 stroke；失败边用 danger token 虚线
++    expect((err.style as any)?.stroke).toBe('var(--cp-danger)')
++    expect((err.style as any)?.strokeDasharray).toBeTruthy()
++    expect((normal as any).style?.stroke).toBeUndefined()
++    // data.isError round-trip 不受影响
++    expect((err.data as any)?.isError).toBe(true)
++  })
++})
+diff --git a/cp6.web/src/views/oa/designer/designerModel.ts b/cp6.web/src/views/oa/designer/designerModel.ts
+index 6352fc0..e5802a3 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.ts
+@@ -80,20 +80,24 @@ export function schemaToGraph(schema: FlowSchemaDto): { nodes: VFNode[]; edges:
+     position: { x: n.x ?? 80, y: n.y ?? i * 120 },        // 无坐标→竖排兜底
+     data: { ...n },
+     label: n.name || n.id,
+   }))
+   const edges: VFEdge[] = (schema.edges ?? []).map(e => ({
+     id: `${e.from}__${e.to}`,
+     source: e.from,
+     target: e.to,
+     data: { condition: e.condition, ccUsers: e.ccUsers, isError: e.isError },
+     label: e.condition || undefined,
++    // 票9：失败边（IsError）用 danger 虚线视觉区分。颜色走 Design System token（禁硬编码色）。
++    ...(e.isError === true
++      ? { style: { stroke: 'var(--cp-danger)', strokeWidth: 2, strokeDasharray: '6 4' }, class: 'edge-error', animated: false }
++      : {}),
+   }))
+   return { nodes, edges }
+ }
+ 
+ /**
+  * Vue Flow 图 → FlowSchema（start = type==='start' 的节点；回写 x/y）。
+  * 支持两种调用：`graphToSchema(nodes, edges)` 或 `graphToSchema(schemaToGraph(...))`。
+  */
+ export function graphToSchema(graph: { nodes: VFNode[]; edges: VFEdge[] }): FlowSchemaDto
+ export function graphToSchema(nodes: VFNode[], edges: VFEdge[]): FlowSchemaDto
+diff --git a/docs/seeds/wfs-svc-ko-i18n-fix.sql b/docs/seeds/wfs-svc-ko-i18n-fix.sql
+new file mode 100644
+index 0000000..2436bcc
+--- /dev/null
++++ b/docs/seeds/wfs-svc-ko-i18n-fix.sql
+@@ -0,0 +1,47 @@
++/* ============================================================
++ * WFS 波① T10：服务任务面板 韩文(Ko)译文润色（去 Konglish 音译）
++ * ============================================================
++ * 範囲：oa.designer.svc.*（6 词条，仅 Ko 字段）
++ * 背景：SeedLangs(Program.cs:1755) 为 insert-only（判存跳过），
++ *       改 I18nOaServiceTaskScreenSeed.cs 常量只对全新库生效；
++ *       已部署库这 6 个 LangKey 已存在，须本脚本 UPDATE 补齐。
++ * 冪等：UPDATE ... WHERE Ko = 旧值 —— 重复执行零副作用（新值不再匹配旧值）。
++ * 実行：sqlcmd -S "localhost\KOUSQLSERVER" -E -d CP6DB -f 65001 -i docs/seeds/wfs-svc-ko-i18n-fix.sql -b
++ * ============================================================ */
++SET NOCOUNT ON; SET XACT_ABORT ON;
++PRINT '=== WFS T10 服务任务 Ko 译文润色 開始 ===';
++
++DECLARE @n int = 0;
++
++-- oa.designer.svc.title：서비스 태스크 → 서비스 작업
++UPDATE Sys_Langs SET Ko = N'서비스 작업'
++  WHERE LangKey = N'oa.designer.svc.title' AND Ko = N'서비스 태스크';
++SET @n += @@ROWCOUNT;
++
++-- oa.designer.svc.kind.dataWriteback：데이터 기록 → 데이터 쓰기
++UPDATE Sys_Langs SET Ko = N'데이터 쓰기'
++  WHERE LangKey = N'oa.designer.svc.kind.dataWriteback' AND Ko = N'데이터 기록';
++SET @n += @@ROWCOUNT;
++
++-- oa.designer.svc.action：액션 → 동작
++UPDATE Sys_Langs SET Ko = N'동작'
++  WHERE LangKey = N'oa.designer.svc.action' AND Ko = N'액션';
++SET @n += @@ROWCOUNT;
++
++-- oa.designer.svc.timerAction：실행 시 액션 → 실행 시 동작
++UPDATE Sys_Langs SET Ko = N'실행 시 동작'
++  WHERE LangKey = N'oa.designer.svc.timerAction' AND Ko = N'실행 시 액션';
++SET @n += @@ROWCOUNT;
++
++-- oa.designer.svc.errorEdge：실패 엣지 → 실패 분기
++UPDATE Sys_Langs SET Ko = N'실패 분기'
++  WHERE LangKey = N'oa.designer.svc.errorEdge' AND Ko = N'실패 엣지';
++SET @n += @@ROWCOUNT;
++
++-- oa.designer.svc.errorEdgeHint：…이 엣지로 진행됩니다 → …이 분기로 진행됩니다
++UPDATE Sys_Langs SET Ko = N'서비스 태스크가 재시도를 모두 소진하면 이 분기로 진행됩니다'
++  WHERE LangKey = N'oa.designer.svc.errorEdgeHint'
++    AND Ko = N'서비스 태스크가 재시도를 모두 소진하면 이 엣지로 진행됩니다';
++SET @n += @@ROWCOUNT;
++
++PRINT CONCAT('=== WFS T10 完了: UPDATED=', @n, ' /6 (幂等重跑期望 0) ===');

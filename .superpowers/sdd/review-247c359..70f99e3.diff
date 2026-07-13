@@ -1,0 +1,458 @@
+# Review package: 247c359..70f99e3
+
+## Commits
+70f99e3 feat(erp): M-ERP T2 菜单MenuKey锚定+五孤儿路由收编
+
+## Files changed
+ CP6.Tests/ErpMenuSeedTests.cs     | 140 ++++++++++++++++++++++++++++++++++++++
+ CP6.WebApi/Program.cs             |   7 ++
+ CP6.WebApi/Seed/ErpMenuSeed.cs    | 126 ++++++++++++++++++++++++++++++++++
+ docs/seeds/erp-key-menu-anchor.md |  62 +++++++++++++++++
+ docs/seeds/erp-menu-seed.sql      |  60 ++++++++++++++++
+ 5 files changed, 395 insertions(+)
+
+## Diff
+diff --git a/CP6.Tests/ErpMenuSeedTests.cs b/CP6.Tests/ErpMenuSeedTests.cs
+new file mode 100644
+index 0000000..cd2b015
+--- /dev/null
++++ b/CP6.Tests/ErpMenuSeedTests.cs
+@@ -0,0 +1,140 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-ERP 横切接线 Task 2：ErpMenuSeed 幂等 + MenuKey 锚定断言。
++/// 头号命门回归：既有 201–215 裸路径若被回填成 order/product… 无 erp- 前缀会与真相源失配 → 全 ERP 403。
++/// </summary>
++public class ErpMenuSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 真相源 docs/seeds/erp-permission-keys.md §二 的 14 个 menu-key → 锚定 MenuId。
++    private static readonly (string Key, int MenuId)[] Anchors =
++    {
++        ("erp-estimate-calc", 202),
++        ("erp-quotation", 204),
++        ("erp-product", 206),
++        ("erp-order", 208),
++        ("erp-order-price-correction", 209),
++        ("erp-fsc-checklist", 210),
++        ("erp-business-partner", 212),
++        ("erp-sheet-unit-price", 213),
++        ("erp-plate-mold", 215),
++        ("erp-order-trace", 216),
++        ("erp-credit-note", 217),
++        ("erp-backorder", 218),
++        ("erp-otd-report", 219),
++        ("erp-fx-rate", 220),
++    };
++
++    [Fact]
++    public void EnsureSeeded_AnchorsAll14KeysToExpectedMenuIds()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++
++        foreach (var (key, menuId) in Anchors)
++        {
++            var menu = db.Sys_Menus.SingleOrDefault(m => m.MenuId == menuId);
++            Assert.NotNull(menu);
++            Assert.Equal(key, menu!.MenuKey);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_OrphanRoutes_216To220_CreatedWithRoutePathAndParent()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++
++        var orphans = new (int Id, string Route)[]
++        {
++            (216, "/erp/order-trace"),
++            (217, "/erp/credit-note"),
++            (218, "/erp/backorder"),
++            (219, "/erp/otd-report"),
++            (220, "/erp/fx-rate"),
++        };
++        foreach (var (id, route) in orphans)
++        {
++            var m = db.Sys_Menus.SingleOrDefault(x => x.MenuId == id);
++            Assert.NotNull(m);
++            Assert.Equal(route, m!.RoutePath);
++            Assert.Equal(200, m.ParentId);
++            Assert.True(m.Enable);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTwoRowsShareANonNullMenuKey()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++
++        // Sys_Menus.MenuKey 有 IS NOT NULL 过滤唯一索引；一域两页禁共键。断言锚定键各占一行。
++        var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
++        Assert.Equal(keyed.Count, keyed.Distinct().Count());
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_NoDuplicateRowsOrRoleMenus()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++        var menuCount1 = db.Sys_Menus.Count();
++        var roleMenuCount1 = db.Sys_RoleMenus.Count();
++
++        ErpMenuSeed.EnsureSeeded(db);   // 第二次
++        Assert.Equal(menuCount1, db.Sys_Menus.Count());
++        Assert.Equal(roleMenuCount1, db.Sys_RoleMenus.Count());
++
++        // 全 21 行（200 父 + 201–215 + 216–220）+ 各授管理员一条 RoleMenu。
++        Assert.Equal(21, menuCount1);
++        Assert.Equal(21, roleMenuCount1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_CorrectsHistoricalBackfilledBareKey_ToErpPrefixed()
++    {
++        using var db = NewDb();
++        // 模拟既有库：208 受注入力 曾被历史回填成裸键 "order"（无 erp- 前缀）——头号命门。
++        db.Sys_Menus.Add(new Sys_Menu
++        {
++            MenuId = 208, MenuName = "受注入力", RoutePath = "/order",
++            MenuKey = "order", ParentId = 200, OrderNo = 208, Enable = true,
++        });
++        db.SaveChanges();
++
++        ErpMenuSeed.EnsureSeeded(db);
++
++        var m = db.Sys_Menus.Single(x => x.MenuId == 208);
++        Assert.Equal("erp-order", m.MenuKey);   // 就地矫正
++    }
++
++    [Fact]
++    public void EnsureSeeded_ListPages_LeaveMenuKeyNull_ForBackfill()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++
++        // 一覧页（201/203/205/207/211/214）与父行 200 不承载权限：MenuKey 留 null（交由回填派生）。
++        foreach (var id in new[] { 200, 201, 203, 205, 207, 211, 214 })
++        {
++            var m = db.Sys_Menus.Single(x => x.MenuId == id);
++            Assert.Null(m.MenuKey);
++        }
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 6a13376..3e39c59 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -817,20 +817,27 @@ using (var scope = app.Services.CreateScope())
+     CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
+     CP6.WebApi.Seed.PurApprovalFlowSeed.Seed(db);   // 采购 PR/PO 审批流程 + 绑定（PUR_PR/PUR_PO）
+     CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
+     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
+ 
+     // M-WMS 横切接线 Task 2：WMS 400 段菜单启动幂等种子（洁净部署自动可达）+ 30 权限键锚定行显式 MenuKey。
+     // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：同一启动内非锚定 WMS 内容页(null key)获派生键，
+     //   而锚定行 MenuKey 非 null 不受回填影响（详见 WmsMenuSeed 注释）。
+     CP6.WebApi.Seed.WmsMenuSeed.EnsureSeeded(db);
+ 
++    // M-ERP 横切接线 Task 2：ERP 200 段菜单锚定 MenuKey（erp-*）+ 5 孤儿路由收编（216–220）。
++    // ★同样须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：既有 201–215 裸路径（/order…）
++    //   若被回填成 order/product… 无 erp- 前缀会与真相源 erp-* 键全体失配 → 全 ERP fail-closed 403。
++    //   本种子对 9 有菜单键 + 5 孤儿键各锚定一行显式设 erp-* MenuKey（一域两页仅锚定登録页，
++    //   一覧页留 null 由回填派生——因 MenuKey 有 IS NOT NULL 唯一索引，禁两行共键）。
++    CP6.WebApi.Seed.ErpMenuSeed.EnsureSeeded(db);
++
+     // M-WMS 横切接线 Task 3b：WMS 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
+     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+ 
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+diff --git a/CP6.WebApi/Seed/ErpMenuSeed.cs b/CP6.WebApi/Seed/ErpMenuSeed.cs
+new file mode 100644
+index 0000000..cb93d6e
+--- /dev/null
++++ b/CP6.WebApi/Seed/ErpMenuSeed.cs
+@@ -0,0 +1,126 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// ERP 販売管理 菜单启动幂等种子（M-ERP 横切接线 Task 2）。
++///
++/// 背景（头号命门）：ERP 菜单 200 段（201–215）早已由 Program.cs 播种，但**均缺 MenuKey 且 RoutePath 为裸路径**
++/// （<c>/order</c>、<c>/product</c>、<c>/estimate-calc</c>…无 <c>erp/</c> 段）。Program.cs 的「无 MenuKey 菜单
++/// RoutePath 自动回填」块（<c>MenuKey = RoutePath.Trim('/').Replace('/','-')</c>）会把它们回填成
++/// <c>order</c>/<c>product</c>/<c>estimate-calc</c>… **无 <c>erp-</c> 前缀**，与真相源
++/// <c>docs/seeds/erp-permission-keys.md</c> 的 <c>erp-*</c> 键全体失配 → 整个 ERP fail-closed 403。
++/// 本种子把 9 个有菜单的权限键各锚定到**一个**菜单行显式设 <see cref="Sys_Menu.MenuKey"/>=<c>erp-*</c>，
++/// 并收编 5 条孤儿路由（order-trace/credit-note/backorder/otd-report/fx-rate）补 Sys_Menu 行。
++/// 合计 14 个 <c>erp-*</c> menu-key 全部落定锚定 MenuId（供 T3b 种 Sys_RoleAction）。
++///
++/// MenuKey 策略（关键，与 WmsMenuSeed 一致）：
++///  - **锚定行**显式设 MenuKey = T1 权威键，**绝不靠 RoutePath 自动回填**。
++///  - **一域两页（一覧 + 登録）只锚定「登録/主操作页」一行**，一覧页 MenuKey 留 null
++///    （由 Program.cs 回填得 RoutePath 派生键，不承载权限、无 RoleAction 引用）。
++///    ★这是**硬约束**：<c>Sys_Menus.MenuKey</c> 有 <c>IS NOT NULL</c> 过滤唯一索引
++///    （见 CP6ContextModelSnapshot: HasIndex("MenuKey").IsUnique().HasFilter），
++///    两行共赋同一非空 MenuKey 会撞唯一键。故必须一键一锚定行（对齐 WMS inbound-order：
++///    405 登録锚定 wms-inbound-order、404 一覧留 null）。
++///  - 本方法在 Program.cs 的回填块**之前**调用：同一启动内非锚定 ERP 一覧页（null key）获派生键，
++///    而锚定行 MenuKey 非 null 不受回填影响。
++///
++/// 幂等：MenuId 判存守卫不重复插入；防御矫正块把既有库中被历史回填写坏的锚定行 MenuKey 就地纠回
++/// <c>erp-*</c>（仅矫正 9 个锚定行 + 5 孤儿行，一覧/父行不动）。RoleMenu 默认授管理员（RoleId=1，
++/// 默认租户由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
++/// </summary>
++public static class ErpMenuSeed
++{
++    /// <summary>
++    /// 菜单定义：(MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey)。
++    /// MenuKey 非 null 者即 14 个权限锚定行（9 既有 + 5 孤儿）；null 者为一覧页/父行（不承载权限）。
++    /// 200 段既有 201–215 已由 Program.cs 播种，本表含之仅为 (a) 显式锚定 MenuKey (b) 部分部署缺行时补建。
++    /// 孤儿行取号 216–220：ERP 现用 200–215，216–229 段经全仓扫描无占用（backlog/其他模块均不占），
++    /// 故取 215 之后最近连续段 216–220，OrderNo 同值使其紧随既有 ERP 菜单显示。
++    /// </summary>
++    private static readonly (int Id, string Name, string? Route, string Icon, int? Parent, int Order, string? Key)[] Rows =
++    {
++        // ── 親（Top） ───────────────────────────────────────────
++        (200, "販売管理(ERP)",          null,                        "ShoppingBag",    null, 200, null),
++
++        // ── 既有 201–215：一域两页只锚定「登録/主操作页」，一覧页 MenuKey 留 null ─────
++        (201, "見積計算書 照会",         "/estimate-calc-list",       "List",           200, 201, null),
++        (202, "見積計算書 登録",         "/estimate-calc",            "Money",          200, 202, "erp-estimate-calc"),
++        (203, "御見積書 一覧",           "/quotation-list",           "Tickets",        200, 203, null),
++        (204, "御見積書 登録",           "/quotation",                "EditPen",        200, 204, "erp-quotation"),
++        (205, "製品マスタ 一覧",         "/product-list",             "Goods",          200, 205, null),
++        (206, "製品マスタ 登録",         "/product",                  "Box",            200, 206, "erp-product"),
++        (207, "受注一覧照会",            "/order-list",               "Files",          200, 207, null),
++        (208, "受注入力",                "/order",                    "DocumentAdd",    200, 208, "erp-order"),
++        (209, "単価訂正",                "/order-price-correction",   "PriceTag",       200, 209, "erp-order-price-correction"),
++        (210, "FSC チェックシート",      "/fsc-checklist",            "Document",       200, 210, "erp-fsc-checklist"),
++        (211, "取引先マスタ 一覧",       "/business-partner-list",    "OfficeBuilding", 200, 211, null),
++        (212, "取引先マスタ 登録",       "/business-partner",         "User",           200, 212, "erp-business-partner"),
++        (213, "シート単価マスタ",        "/sheet-unit-price",         "Coin",           200, 213, "erp-sheet-unit-price"),
++        (214, "版型/木型 一覧",          "/plate-mold-list",          "Tools",          200, 214, null),
++        (215, "版型/木型 登録",          "/plate-mold",               "Stamp",          200, 215, "erp-plate-mold"),
++
++        // ── 孤儿路由收编 216–220（原计划 T4 并入）：前端路由已注册但无 Sys_Menu 行 ─────
++        // RoutePath 与 cp6.web/src/router/index.ts 的 /erp/* 精确一致（回填派生亦得 erp-*，此处仍显式锚定）。
++        (216, "受注トレース",            "/erp/order-trace",          "Search",         200, 216, "erp-order-trace"),
++        (217, "クレジットノート照会",    "/erp/credit-note",          "Document",       200, 217, "erp-credit-note"),
++        (218, "欠品・残数管理",          "/erp/backorder",            "Warning",        200, 218, "erp-backorder"),
++        (219, "OTD納期遵守レポート",     "/erp/otd-report",           "TrendCharts",    200, 219, "erp-otd-report"),
++        (220, "為替レートマスタ",        "/erp/fx-rate",              "Money",          200, 220, "erp-fx-rate"),
++    };
++
++    /// <summary>
++    /// 幂等播种全部 ERP 菜单 + 授管理员（RoleId=1）+ 锚定行 MenuKey 显式矫正。
++    /// 须在 Program.cs 的「无 MenuKey 菜单 RoutePath 自动回填」块**之前**调用。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var changed = false;
++        foreach (var r in Rows)
++        {
++            if (!db.Sys_Menus.Any(m => m.MenuId == r.Id))
++            {
++                db.Sys_Menus.Add(new Sys_Menu
++                {
++                    MenuId = r.Id,
++                    MenuName = r.Name,
++                    RoutePath = r.Route,
++                    MenuKey = r.Key,
++                    Icon = r.Icon,
++                    ParentId = r.Parent,
++                    OrderNo = r.Order,
++                    Enable = true,
++                });
++                changed = true;
++            }
++
++            // 授管理员菜单（默认租户由 SaveChanges 拦截器盖章 TenantId）。菜单已存在但未授权时补授（幂等）。
++            if (!db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == r.Id))
++            {
++                db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = r.Id });
++                changed = true;
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++
++        // 锚定键防御：既有 201–215 缺 MenuKey 时会被历史 RoutePath 回填写成裸派生键（order/product/
++        // estimate-calc…无 erp- 前缀），就地矫正为 T1 权威键。仅矫正 14 个锚定行（r.Key != null），
++        // 一覧页/父行不动。幂等（已正确即跳过）。
++        var fixedAny = false;
++        foreach (var r in Rows)
++        {
++            if (r.Key == null) continue;
++            var menu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == r.Id);
++            if (menu != null && menu.MenuKey != r.Key)
++            {
++                menu.MenuKey = r.Key;
++                fixedAny = true;
++            }
++        }
++        if (fixedAny)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/erp-key-menu-anchor.md b/docs/seeds/erp-key-menu-anchor.md
+new file mode 100644
+index 0000000..27f9a30
+--- /dev/null
++++ b/docs/seeds/erp-key-menu-anchor.md
+@@ -0,0 +1,62 @@
++# ERP 权限键 → 锚定 MenuId 映射（M-ERP Task 2 产出）
++
++> 生成于 2026-07-12。**本表是 T3b 种 `Sys_RoleAction` 的唯一输入**：为某权限键授某 action，须写
++> `Sys_RoleAction(RoleId, MenuId=下表锚定MenuId, ActionCode=action)`。运行时
++> `PermissionAggregator.FillActionKeysAsync` 以 `Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null`
++> 拼出 `"{MenuKey}:{ActionCode}"`，故 **RoleAction 必须挂在下表锚定 MenuId 上**（该行 MenuKey 已由 T2 显式设定）。
++>
++> 真相源：`docs/seeds/erp-permission-keys.md`（14 键 / §二）。接入正本：`CP6.WebApi/Seed/ErpMenuSeed.cs`（启动幂等，
++> 置于 Program.cs RoutePath 回填块之前）。文档对照：`docs/seeds/erp-menu-seed.sql`（与本表 + C# 正本一致）。
++
++## 锚定原则
++
++- **一键一锚定行**：每个权限键恰由一个菜单行承载 `MenuKey`（join 在 MenuId 上取该行 key）。
++- **一域两页共键只锚定「登録/主操作页」**：estimate-calc / quotation / product / order / business-partner /
++  plate-mold 各有「一覧」+「登録」两页，**只锚定登録页**，一覧页 MenuKey 留 null（不承载权限、无 RoleAction 引用）。
++  - **硬约束**：`Sys_Menus.MenuKey` 有 `IS NOT NULL` 过滤唯一索引
++    （`CP6ContextModelSnapshot`: `HasIndex("MenuKey").IsUnique().HasFilter("[MenuKey] IS NOT NULL")`），
++    **两行共赋同一非空 MenuKey 会撞唯一键**。故必须一键一锚定行（对齐 WMS：405 登録锚定 `wms-inbound-order`、
++    404 一覧留 null）。⚠ 真相源 §六.2「两行同赋同一 key」的建议已被此唯一索引否决，本表以单锚定行落定。
++- **显式设定，不靠 RoutePath 自动派生**：既有 201–215 的 RoutePath 为**裸路径**（`/order`、`/product`…无 `erp/` 段），
++  自动派生得 `order`/`product`… 无 `erp-` 前缀，与权威键失配。故 9 个既有键均由 `ErpMenuSeed` 显式设 `erp-*`
++  并含防御矫正块（历史被回填写坏就地纠回）。5 个孤儿键 RoutePath 为 `/erp/*`，派生虽已符 `erp-*`，仍显式锚定。
++
++## 锚定映射表（14 键全落定）
++
++| # | 权限 menu_key | 锚定 MenuId | 菜单名 | RoutePath | 备注 |
++|---|---|---|---|---|---|
++| 1 | `erp-estimate-calc` | 202 | 見積計算書 登録 | `/estimate-calc` | 主页；201 照会一覧不设 key |
++| 2 | `erp-quotation` | 204 | 御見積書 登録 | `/quotation` | 主页；203 一覧不设 key |
++| 3 | `erp-product` | 206 | 製品マスタ 登録 | `/product` | 主页；205 一覧不设 key |
++| 4 | `erp-order` | 208 | 受注入力 | `/order` | 主页；207 受注一覧照会不设 key。含 UnshippedOrder 只读子视图（view） |
++| 5 | `erp-order-price-correction` | 209 | 単価訂正 | `/order-price-correction` | 独立菜单行。**跨菜单**：OrderController.BatchUpdatePrice=correct 高危键归此，非 erp-order |
++| 6 | `erp-fsc-checklist` | 210 | FSC チェックシート | `/fsc-checklist` | 独立行 |
++| 7 | `erp-business-partner` | 212 | 取引先マスタ 登録 | `/business-partner` | 主页；211 一覧不设 key |
++| 8 | `erp-sheet-unit-price` | 213 | シート単価マスタ | `/sheet-unit-price` | 独立行 |
++| 9 | `erp-plate-mold` | 215 | 版型/木型 登録 | `/plate-mold` | 主页；214 一覧不设 key |
++| 10 | `erp-order-trace` | **216** | 受注トレース | `/erp/order-trace` | **T2 孤儿收编新增**。仅 view（GET-only 控制器） |
++| 11 | `erp-credit-note` | **217** | クレジットノート照会 | `/erp/credit-note` | **T2 孤儿收编新增**。仅 view（唯一端点为只读 POST 豁免） |
++| 12 | `erp-backorder` | **218** | 欠品・残数管理 | `/erp/backorder` | **T2 孤儿收编新增**。含 close/split 两状态键 |
++| 13 | `erp-otd-report` | **219** | OTD納期遵守レポート | `/erp/otd-report` | **T2 孤儿收编新增**。仅 view（两端点均只读 POST 豁免） |
++| 14 | `erp-fx-rate` | **220** | 為替レートマスタ | `/erp/fx-rate` | **T2 孤儿收编新增**。含 add/edit/del |
++
++> **全部 14 键均已落定锚定 MenuId。** 9 键锚定既有 202–215，5 键锚定新增 216–220（孤儿路由收编）。
++
++## 非锚定内容页（不承载权限，MenuKey 由 RoutePath 自动回填或留空）
++
++| MenuId | 菜单名 | RoutePath | 说明 |
++|---|---|---|---|
++| 200 | 販売管理(ERP) | (null) | 分组父节点，MenuKey 恒 null |
++| 201 | 見積計算書 照会 | `/estimate-calc-list` | 与 202 共域，仅浏览（view 权限走 202 的 erp-estimate-calc） |
++| 203 | 御見積書 一覧 | `/quotation-list` | 与 204 共域 |
++| 205 | 製品マスタ 一覧 | `/product-list` | 与 206 共域 |
++| 207 | 受注一覧照会 | `/order-list` | 与 208 共域 |
++| 211 | 取引先マスタ 一覧 | `/business-partner-list` | 与 212 共域 |
++| 214 | 版型/木型 一覧 | `/plate-mold-list` | 与 215 共域 |
++
++## MenuId 取号依据
++
++- ERP 现用 **200–215**（Program.cs 既有种子）。段位规约：100–199 系统 / 200–299 販売(ERP) / 300–399 MES /
++  400–499 WMS / 600–699 财务 / 700–704 采购 / 900 段 Space。
++- 5 孤儿行取 **216–220**：经全仓 `grep "MenuId = 21[6-9]|22[0-9]"` 扫描**无任何占用**（WMS backlog 波次拣货占的是
++  418/429，在 400 段，不影响 200 段）。故取 215 之后最近连续段 216–220，OrderNo 同值使其紧随既有 ERP 菜单显示。
+diff --git a/docs/seeds/erp-menu-seed.sql b/docs/seeds/erp-menu-seed.sql
+new file mode 100644
+index 0000000..de8ab36
+--- /dev/null
++++ b/docs/seeds/erp-menu-seed.sql
+@@ -0,0 +1,60 @@
++/* ============================================================
++ * MSBBPA 販売管理(ERP) メニュー MenuKey 锚定 + 孤儿路由收编 シード
++ * ============================================================
++ * 対象 DB      : CP6 (SQL Server)
++ * 対象テーブル  : Sys_Menus / Sys_RoleMenus
++ * 親メニューID  : 200（販売管理 ERP）
++ *
++ * 接入正本 = C# 起動シード `CP6.WebApi/Seed/ErpMenuSeed.cs`（起動毎冪等、
++ * Program.cs の RoutePath 自動回填ブロックより前に実行）。本 SQL は文書対照用
++ * （C# 正本と一致）。手動投入時は SSMS / sqlcmd で実行。
++ *
++ * 内容:
++ *   (A) 既有 201–215 の 9 錨定行に erp-* MenuKey を明示 UPDATE（一覧页は null 据え置き）。
++ *   (B) 孤儿路由 216–220 の 5 行を Sys_Menus へ INSERT（erp-* MenuKey 付き）+ 管理者(RoleId=1)へ RoleMenu 付与。
++ *
++ * 冪等性: UPDATE は値一致で無害再実行可；INSERT は NOT EXISTS ガード。
++ *
++ * ★MenuKey 唯一制約: Sys_Menus.MenuKey に IS NOT NULL フィルタ付きユニークインデックス有り。
++ *   一域两页は「登録页」1 行のみ錨定し、一覧页 MenuKey は null（唯一键衝突回避）。
++ * ============================================================ */
++
++/* ── (A) 既有 201–215：9 錨定行に erp-* MenuKey 明示（一覧页 201/203/205/207/211/214 は据え置き） ── */
++UPDATE Sys_Menus SET MenuKey = N'erp-estimate-calc'          WHERE MenuId = 202;
++UPDATE Sys_Menus SET MenuKey = N'erp-quotation'              WHERE MenuId = 204;
++UPDATE Sys_Menus SET MenuKey = N'erp-product'                WHERE MenuId = 206;
++UPDATE Sys_Menus SET MenuKey = N'erp-order'                  WHERE MenuId = 208;
++UPDATE Sys_Menus SET MenuKey = N'erp-order-price-correction' WHERE MenuId = 209;
++UPDATE Sys_Menus SET MenuKey = N'erp-fsc-checklist'          WHERE MenuId = 210;
++UPDATE Sys_Menus SET MenuKey = N'erp-business-partner'       WHERE MenuId = 212;
++UPDATE Sys_Menus SET MenuKey = N'erp-sheet-unit-price'       WHERE MenuId = 213;
++UPDATE Sys_Menus SET MenuKey = N'erp-plate-mold'             WHERE MenuId = 215;
++
++/* ── (B) 孤儿路由 216–220 収編（RoutePath は cp6.web/src/router/index.ts の /erp/* と一致） ── */
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 216)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (216, N'受注トレース',         N'/erp/order-trace', N'erp-order-trace', N'Search',      200, 216, 1);
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 217)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (217, N'クレジットノート照会', N'/erp/credit-note', N'erp-credit-note', N'Document',    200, 217, 1);
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 218)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (218, N'欠品・残数管理',       N'/erp/backorder',   N'erp-backorder',   N'Warning',     200, 218, 1);
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 219)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (219, N'OTD納期遵守レポート',  N'/erp/otd-report',  N'erp-otd-report',  N'TrendCharts', 200, 219, 1);
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 220)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (220, N'為替レートマスタ',     N'/erp/fx-rate',     N'erp-fx-rate',     N'Money',       200, 220, 1);
++
++/* ── 管理者(RoleId=1) へ孤儿菜单を付与（既定テナント; マルチテナントは各テナント TenantId 明示要） ── */
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 216)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 216);
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 217)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 217);
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 218)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 218);
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 219)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 219);
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 220)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 220);

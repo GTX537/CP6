@@ -1,0 +1,877 @@
+# Review package: e30124a..bdbc532
+
+## Commits
+bdbc532 feat(erp): M-ERP T3a 10控制器35写端点贴 [RequirePermission]
+
+## Files changed
+ CP6.WebApi/Controllers/Erp/BackorderController.cs       | 3 +++
+ CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs | 4 ++++
+ CP6.WebApi/Controllers/Erp/EstimateCalcController.cs    | 5 +++++
+ CP6.WebApi/Controllers/Erp/FscChecklistController.cs    | 2 ++
+ CP6.WebApi/Controllers/Erp/FxRateController.cs          | 4 ++++
+ CP6.WebApi/Controllers/Erp/OrderController.cs           | 6 ++++++
+ CP6.WebApi/Controllers/Erp/PlateMoldController.cs       | 5 +++++
+ CP6.WebApi/Controllers/Erp/ProductController.cs         | 5 +++++
+ CP6.WebApi/Controllers/Erp/QuotationController.cs       | 8 ++++++++
+ CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs  | 3 +++
+ 10 files changed, 45 insertions(+)
+
+## Diff
+diff --git a/CP6.WebApi/Controllers/Erp/BackorderController.cs b/CP6.WebApi/Controllers/Erp/BackorderController.cs
+index 260539c..6c57d8b 100644
+--- a/CP6.WebApi/Controllers/Erp/BackorderController.cs
++++ b/CP6.WebApi/Controllers/Erp/BackorderController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ [ApiController]
+ [Route("api/backorder")]
+ [Authorize]
+@@ -20,20 +21,21 @@ public class BackorderController : ControllerBase
+     private string? CurrentUser => User?.Identity?.Name;
+ 
+     [HttpGet("queue")]
+     public async Task<IActionResult> Queue([FromQuery] BackorderQueueQuery query, CancellationToken ct)
+     {
+         var data = await _service.GetQueueAsync(query ?? new BackorderQueueQuery(), ct);
+         return Ok(new { code = 0, message = "OK", data });
+     }
+ 
+     [HttpPost("{webOrderNo}/{detailNo:int}/close-remaining")]
++    [RequirePermission("erp-backorder", "close")]
+     public async Task<IActionResult> CloseRemaining(
+         string webOrderNo,
+         int detailNo,
+         [FromBody] BackorderActionRequest? request,
+         CancellationToken ct)
+     {
+         try
+         {
+             var data = await _service.CloseRemainingAsync(webOrderNo, detailNo, request ?? new BackorderActionRequest(), CurrentUser, ct);
+             return Ok(new { code = 0, message = "OK", data });
+@@ -42,20 +44,21 @@ public class BackorderController : ControllerBase
+         {
+             return NotFound(new { code = 404, message = ex.Message, data = (object?)null });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message, data = (object?)null });
+         }
+     }
+ 
+     [HttpPost("{webOrderNo}/{detailNo:int}/split-to-new-order")]
++    [RequirePermission("erp-backorder", "split")]
+     public async Task<IActionResult> SplitToNewOrder(
+         string webOrderNo,
+         int detailNo,
+         [FromBody] BackorderActionRequest? request,
+         CancellationToken ct)
+     {
+         try
+         {
+             var data = await _service.SplitToNewOrderAsync(webOrderNo, detailNo, request ?? new BackorderActionRequest(), CurrentUser, ct);
+             return Ok(new { code = 0, message = "OK", data });
+diff --git a/CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs b/CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs
+index 1ed4c8b..54b9e40 100644
+--- a/CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs
++++ b/CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs
+@@ -1,11 +1,12 @@
+ using System.Security.Claims;
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA110 / 120 — Web 取引先マスタ
+@@ -37,36 +38,38 @@ public class BusinessPartnerController : LocalizedControllerBase
+     /// <summary>取引先 CD 重複チェック — GET /api/business-partners/check-exists/{cd}</summary>
+     [HttpGet("check-exists/{bpCd}")]
+     public async Task<IActionResult> CheckExists(string bpCd)
+     {
+         var exists = await _service.ExistsAsync(bpCd);
+         return Ok(new { code = 0, message = "OK", data = new { exists } });
+     }
+ 
+     /// <summary>新規登録 — POST /api/business-partners?preRegister=true|false</summary>
+     [HttpPost]
++    [RequirePermission("erp-business-partner", "add")]
+     public async Task<IActionResult> Create([FromBody] BusinessPartnerDto dto, [FromQuery] bool preRegister = false)
+     {
+         try
+         {
+             var bpCd = await _service.CreateAsync(dto, UserName, preRegister);
+             var saved = await _service.GetByCdAsync(bpCd);
+             return Ok(new { code = 0, message = "OK", data = saved });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>訂正 — PUT /api/business-partners/{cd}</summary>
+     [HttpPut("{bpCd}")]
++    [RequirePermission("erp-business-partner", "edit")]
+     public async Task<IActionResult> Update(string bpCd, [FromBody] BusinessPartnerDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(bpCd, dto, UserName);
+             var saved = await _service.GetByCdAsync(bpCd);
+             return Ok(new { code = 0, message = "OK", data = saved });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+@@ -78,20 +81,21 @@ public class BusinessPartnerController : LocalizedControllerBase
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>削除 — DELETE /api/business-partners/{cd}（管理者のみ）</summary>
+     [HttpDelete("{bpCd}")]
+     [Authorize(Roles = "1,Admin")]   // RoleId=1 = 管理者
++    [RequirePermission("erp-business-partner", "del")]
+     public async Task<IActionResult> Delete(string bpCd, [FromBody] DeleteRequest? req = null)
+     {
+         try
+         {
+             await _service.DeleteAsync(bpCd, req?.RowVersion, UserName);
+             return Ok(new { code = 0, message = "OK", data = (object?)null });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             return Conflict(new { code = 409, message = Localizer["E10034: すでに更新済みです"] });
+diff --git a/CP6.WebApi/Controllers/Erp/EstimateCalcController.cs b/CP6.WebApi/Controllers/Erp/EstimateCalcController.cs
+index 4b0f2af..b709c2e 100644
+--- a/CP6.WebApi/Controllers/Erp/EstimateCalcController.cs
++++ b/CP6.WebApi/Controllers/Erp/EstimateCalcController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA010 - 見積計算書 Web API
+@@ -44,32 +45,34 @@ public class EstimateCalcController : LocalizedControllerBase
+         var dto = await _service.GetByNoAsync(no, includeDeleted);
+         if (dto == null) return NotFound(new { code = 404, message = Localizer["見積計算書NOが未登録です。"], msgId = "MSG-102" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>
+     /// 新建（登録）
+     /// POST /api/estimate-calcs
+     /// </summary>
+     [HttpPost]
++    [RequirePermission("erp-estimate-calc", "add")]
+     public async Task<IActionResult> Create([FromBody] EstimateCalcDto dto)
+     {
+         var no = await _service.CreateAsync(dto, CurrentUser);
+         var fresh = await _service.GetByNoAsync(no);
+         return Ok(new { code = 0, message = "OK", data = fresh });
+     }
+ 
+     /// <summary>
+     /// 修改（訂正）
+     /// PUT /api/estimate-calcs/{no}
+     /// </summary>
+     [HttpPut("{no}")]
++    [RequirePermission("erp-estimate-calc", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] EstimateCalcDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             var fresh = await _service.GetByNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -85,20 +88,21 @@ public class EstimateCalcController : LocalizedControllerBase
+             });
+         }
+     }
+ 
+     /// <summary>
+     /// 逻辑删除（削除）
+     /// DELETE /api/estimate-calcs/{no}
+     /// Body: { "rowVersion": "base64..." }
+     /// </summary>
+     [HttpDelete("{no}")]
++    [RequirePermission("erp-estimate-calc", "del")]
+     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? req)
+     {
+         try
+         {
+             await _service.DeleteAsync(no, req?.RowVersion, CurrentUser);
+             return Ok(new { code = 0, message = "OK" });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+@@ -107,20 +111,21 @@ public class EstimateCalcController : LocalizedControllerBase
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>
+     /// 复制新建（コピー）
+     /// POST /api/estimate-calcs/{no}/copy
+     /// </summary>
+     [HttpPost("{no}/copy")]
++    [RequirePermission("erp-estimate-calc", "add")]
+     public async Task<IActionResult> Copy(string no)
+     {
+         try
+         {
+             var newNo = await _service.CopyAsync(no, CurrentUser);
+             var fresh = await _service.GetByNoAsync(newNo);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+diff --git a/CP6.WebApi/Controllers/Erp/FscChecklistController.cs b/CP6.WebApi/Controllers/Erp/FscChecklistController.cs
+index 17eb8a2..82dc1ed 100644
+--- a/CP6.WebApi/Controllers/Erp/FscChecklistController.cs
++++ b/CP6.WebApi/Controllers/Erp/FscChecklistController.cs
+@@ -1,11 +1,12 @@
+ using System.Security.Claims;
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA100 — FSC 製品化チェックシート出力
+ /// </summary>
+@@ -41,20 +42,21 @@ public class FscChecklistController : LocalizedControllerBase
+     /// <summary>出力フォーマット一覧 — GET /api/fsc-checklists/formats</summary>
+     [HttpGet("formats")]
+     public IActionResult Formats()
+     {
+         var data = _service.GetFormats().Select(f => new { name = f.Name, templatePath = f.TemplatePath });
+         return Ok(new { code = 0, message = "OK", data });
+     }
+ 
+     /// <summary>チェックシート発行 — POST /api/fsc-checklists/issue</summary>
+     [HttpPost("issue")]
++    [RequirePermission("erp-fsc-checklist", "issue")]
+     public async Task<IActionResult> Issue([FromBody] FscIssueRequestDto req)
+     {
+         try
+         {
+             var result = await _service.IssueAsync(req, UserName);
+             return Ok(new { code = 0, message = "OK", data = result });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Erp/FxRateController.cs b/CP6.WebApi/Controllers/Erp/FxRateController.cs
+index 13c0d19..fc79b4b 100644
+--- a/CP6.WebApi/Controllers/Erp/FxRateController.cs
++++ b/CP6.WebApi/Controllers/Erp/FxRateController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DomainModels;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// 為替レートマスタ（多通貨 Gap 4.3）。
+ /// </summary>
+@@ -22,48 +23,51 @@ public class FxRateController : ControllerBase
+     [HttpGet]
+     public async Task<IActionResult> List([FromQuery] string? currencyCd)
+         => Ok(new { code = 0, message = "OK", data = await _svc.ListAsync(currencyCd) });
+ 
+     /// <summary>指定通貨・基準日の解決レートをプレビュー。</summary>
+     [HttpGet("resolve")]
+     public async Task<IActionResult> Resolve([FromQuery] string currencyCd, [FromQuery] DateTime? asOf)
+         => Ok(new { code = 0, message = "OK", data = await _svc.ResolveRateAsync(currencyCd ?? "", asOf ?? DateTime.Today) });
+ 
+     [HttpPost]
++    [RequirePermission("erp-fx-rate", "add")]
+     public async Task<IActionResult> Create([FromBody] FxRate rate)
+     {
+         try
+         {
+             var data = await _svc.CreateAsync(rate, CurrentUser);
+             return Ok(new { code = 0, message = "PA-MSG-FX-CREATED", data });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     [HttpPut("{id:guid}")]
++    [RequirePermission("erp-fx-rate", "edit")]
+     public async Task<IActionResult> Update(Guid id, [FromBody] FxRate rate)
+     {
+         try
+         {
+             await _svc.UpdateAsync(id, rate, CurrentUser);
+             return Ok(new { code = 0, message = "PA-MSG-FX-UPDATED" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     [HttpDelete("{id:guid}")]
++    [RequirePermission("erp-fx-rate", "del")]
+     public async Task<IActionResult> Delete(Guid id)
+     {
+         try
+         {
+             await _svc.DeleteAsync(id, CurrentUser);
+             return Ok(new { code = 0, message = "PA-MSG-FX-DELETED" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Erp/OrderController.cs b/CP6.WebApi/Controllers/Erp/OrderController.cs
+index 2b7ea6a..53093ee 100644
+--- a/CP6.WebApi/Controllers/Erp/OrderController.cs
++++ b/CP6.WebApi/Controllers/Erp/OrderController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA070 / 080 / 090 — Web 受注 / 受注一覧 / 単価訂正 Web API
+@@ -218,20 +219,21 @@ public class OrderController : LocalizedControllerBase
+     public async Task<IActionResult> CalcAmount(
+         string webOrderNo, int detailNo,
+         [FromQuery] decimal? indPrice, [FromQuery] decimal? setPrice)
+     {
+         var amount = await _service.CalcAmountAsync(webOrderNo, detailNo, indPrice, setPrice);
+         return Ok(new { code = 0, message = "OK", data = new { amount } });
+     }
+ 
+     /// <summary>単価訂正バッチ更新 — PUT /api/orders/price-correction/batch</summary>
+     [HttpPut("price-correction/batch")]
++    [RequirePermission("erp-order-price-correction", "correct")]
+     public async Task<IActionResult> BatchUpdatePrice([FromBody] OrderPriceCorrectionBatchUpdateDto req)
+     {
+         try
+         {
+             var result = await _service.BatchUpdatePriceAsync(req, CurrentUser);
+             return Ok(new { code = 0, message = "OK", data = result });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             return Conflict(new
+@@ -252,36 +254,38 @@ public class OrderController : LocalizedControllerBase
+     public async Task<IActionResult> Get(string webOrderNo, [FromQuery] bool includeDeleted = false)
+     {
+         var dto = await _service.GetByWebOrderNoAsync(webOrderNo, includeDeleted);
+         if (dto == null)
+             return NotFound(new { code = 404, message = Localizer["受注が見つかりません"] });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>受注登録 — POST /api/orders</summary>
+     [HttpPost]
++    [RequirePermission("erp-order", "add")]
+     public async Task<IActionResult> Create([FromBody] OrderDto dto)
+     {
+         try
+         {
+             var no = await _service.CreateAsync(dto, CurrentUser);
+             var fresh = await _service.GetByWebOrderNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>受注訂正 — PUT /api/orders/{webOrderNo}</summary>
+     [HttpPut("{webOrderNo}")]
++    [RequirePermission("erp-order", "edit")]
+     public async Task<IActionResult> Update(string webOrderNo, [FromBody] OrderDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(webOrderNo, dto, CurrentUser);
+             var fresh = await _service.GetByWebOrderNoAsync(webOrderNo);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -297,20 +301,21 @@ public class OrderController : LocalizedControllerBase
+             });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>受注削除（軟削除）— DELETE /api/orders/{webOrderNo}</summary>
+     [HttpDelete("{webOrderNo}")]
++    [RequirePermission("erp-order", "del")]
+     public async Task<IActionResult> Delete(string webOrderNo, [FromQuery] string? rowVersion)
+     {
+         try
+         {
+             byte[]? rv = null;
+             if (!string.IsNullOrEmpty(rowVersion))
+             {
+                 try { rv = Convert.FromBase64String(rowVersion); }
+                 catch { rv = null; }
+             }
+@@ -351,20 +356,21 @@ public class OrderController : LocalizedControllerBase
+ 
+     /// <summary>
+     /// 受注取消 — POST /api/orders/{webOrderNo}/cancel
+     /// </summary>
+     /// <remarks>
+     /// force=false（既定）: 探査モード — 関連 WO/Outbound の現状を返すのみ、DB 未変更。
+     ///   半路状態あれば Outcome=NeedsDecision、画面で確認後 force=true で再呼出。
+     /// force=true: 強制実施 — Bridge Hook 経由で全自動取消可能な WO/Outbound を取消。
+     /// </remarks>
+     [HttpPost("{webOrderNo}/cancel")]
++    [RequirePermission("erp-order", "cancel")]
+     public async Task<IActionResult> Cancel(string webOrderNo, [FromBody] OrderCancelRequest req)
+     {
+         if (req == null || string.IsNullOrWhiteSpace(req.Reason))
+         {
+             return BadRequest(new { code = 400, message = Localizer["取消理由（reason）は必須です"] });
+         }
+ 
+         var result = await _service.CancelAsync(webOrderNo, req.Reason, req.Force, CurrentUser);
+         return Ok(new { code = 0, message = "OK", data = result });
+     }
+diff --git a/CP6.WebApi/Controllers/Erp/PlateMoldController.cs b/CP6.WebApi/Controllers/Erp/PlateMoldController.cs
+index 43975e5..bb39658 100644
+--- a/CP6.WebApi/Controllers/Erp/PlateMoldController.cs
++++ b/CP6.WebApi/Controllers/Erp/PlateMoldController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA140/150 Web 版型/木型マスタ
+@@ -51,75 +52,79 @@ public class PlateMoldController : LocalizedControllerBase
+     }
+ 
+     [HttpGet("{wdPtnNo}/history")]
+     public async Task<IActionResult> History(string wdPtnNo)
+     {
+         var rows = await _service.GetHistoryAsync(wdPtnNo);
+         return Ok(new { code = 0, message = "OK", data = rows });
+     }
+ 
+     [HttpPost]
++    [RequirePermission("erp-plate-mold", "add")]
+     public async Task<IActionResult> Create([FromBody] PlateMoldDto dto)
+     {
+         var userName = User?.Identity?.Name;
+         try
+         {
+             var (no, rev, link, pe) = await _service.CreateAsync(dto, userName);
+             return Ok(new {
+                 code = 0, message = "OK",
+                 data = new { wdPtnNo = no, wdRev = rev, orderLink = link, peApi = pe }
+             });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     [HttpPut("{wdPtnNo}/revise")]
++    [RequirePermission("erp-plate-mold", "edit")]
+     public async Task<IActionResult> Revise(string wdPtnNo, [FromBody] PlateMoldDto dto)
+     {
+         var userName = User?.Identity?.Name;
+         try
+         {
+             var (rev, link, pe) = await _service.ReviseAsync(wdPtnNo, dto, userName);
+             return Ok(new {
+                 code = 0, message = "OK",
+                 data = new { wdPtnNo, wdRev = rev, orderLink = link, peApi = pe }
+             });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     [HttpPut("{wdPtnNo}/{wdRev:int}")]
++    [RequirePermission("erp-plate-mold", "edit")]
+     public async Task<IActionResult> Update(string wdPtnNo, int wdRev, [FromBody] PlateMoldDto dto)
+     {
+         var userName = User?.Identity?.Name;
+         try
+         {
+             await _service.UpdateAsync(wdPtnNo, wdRev, dto, userName);
+             return Ok(new { code = 0, message = "OK" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             return Conflict(new { code = 409, message = Localizer["E10023: すでに更新済みです。再検索してください。版型・木型No:{0} Rev:{1}", wdPtnNo, wdRev] });
+         }
+     }
+ 
+     [HttpDelete("{wdPtnNo}/{wdRev:int}")]
++    [RequirePermission("erp-plate-mold", "del")]
+     public async Task<IActionResult> Delete(string wdPtnNo, int wdRev, [FromQuery] string? rowVersion = null)
+     {
+         var userName = User?.Identity?.Name;
+         var rv = !string.IsNullOrEmpty(rowVersion) ? Convert.FromBase64String(rowVersion) : null;
+         await _service.DeleteAsync(wdPtnNo, wdRev, rv, userName);
+         return Ok(new { code = 0, message = "OK" });
+     }
+ 
+     // ─── PA150 ───
+ 
+diff --git a/CP6.WebApi/Controllers/Erp/ProductController.cs b/CP6.WebApi/Controllers/Erp/ProductController.cs
+index 232b51a..b5a1e14 100644
+--- a/CP6.WebApi/Controllers/Erp/ProductController.cs
++++ b/CP6.WebApi/Controllers/Erp/ProductController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA050 / MSBBPA060 - Web 製品マスタ Web API
+@@ -83,29 +84,31 @@ public class ProductController : LocalizedControllerBase
+     public async Task<IActionResult> Get(string cd, [FromQuery] bool includeDeleted = false)
+     {
+         var dto = await _service.GetByCdAsync(cd, includeDeleted);
+         if (dto == null)
+             return NotFound(new { code = 404, message = Localizer["製品マスタが未登録です。"] });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>新建（登録）— POST /api/products</summary>
+     [HttpPost]
++    [RequirePermission("erp-product", "add")]
+     public async Task<IActionResult> Create([FromBody] ProductDto dto)
+     {
+         var cd = await _service.CreateAsync(dto, CurrentUser);
+         var fresh = await _service.GetByCdAsync(cd);
+         return Ok(new { code = 0, message = "OK", data = fresh });
+     }
+ 
+     /// <summary>修改（訂正）— PUT /api/products/{cd}</summary>
+     [HttpPut("{cd}")]
++    [RequirePermission("erp-product", "edit")]
+     public async Task<IActionResult> Update(string cd, [FromBody] ProductDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(cd, dto, CurrentUser);
+             var fresh = await _service.GetByCdAsync(cd);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -117,39 +120,41 @@ public class ProductController : LocalizedControllerBase
+             {
+                 code = 409,
+                 message = Localizer["更新対象が、他の処理によって更新されています。最新情報を取得してください。"],
+                 msgId = "MSG-W10002"
+             });
+         }
+     }
+ 
+     /// <summary>逻辑删除 — DELETE /api/products/{cd}</summary>
+     [HttpDelete("{cd}")]
++    [RequirePermission("erp-product", "del")]
+     public async Task<IActionResult> Delete(string cd, [FromBody] DeleteRequest? req)
+     {
+         try
+         {
+             await _service.DeleteAsync(cd, req?.RowVersion, CurrentUser);
+             return Ok(new { code = 0, message = "OK" });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>复制新建 — POST /api/products/{cd}/copy</summary>
+     [HttpPost("{cd}/copy")]
++    [RequirePermission("erp-product", "add")]
+     public async Task<IActionResult> Copy(string cd)
+     {
+         try
+         {
+             var newCd = await _service.CopyAsync(cd, CurrentUser);
+             var fresh = await _service.GetByCdAsync(newCd);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+diff --git a/CP6.WebApi/Controllers/Erp/QuotationController.cs b/CP6.WebApi/Controllers/Erp/QuotationController.cs
+index ff2da4b..01ed10d 100644
+--- a/CP6.WebApi/Controllers/Erp/QuotationController.cs
++++ b/CP6.WebApi/Controllers/Erp/QuotationController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA030 / MSBBPA040 - 御見積書 Web API
+@@ -45,32 +46,34 @@ public class QuotationController : LocalizedControllerBase
+         if (dto == null)
+             return NotFound(new { code = 404, message = Localizer["御見積書NOが未登録です。"], msgId = "MSG-102" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>
+     /// 新建（登録）
+     /// POST /api/quotations
+     /// </summary>
+     [HttpPost]
++    [RequirePermission("erp-quotation", "add")]
+     public async Task<IActionResult> Create([FromBody] QuotationDto dto)
+     {
+         var no = await _service.CreateAsync(dto, CurrentUser);
+         var fresh = await _service.GetByNoAsync(no);
+         return Ok(new { code = 0, message = "OK", data = fresh });
+     }
+ 
+     /// <summary>
+     /// 修改（訂正）
+     /// PUT /api/quotations/{no}
+     /// </summary>
+     [HttpPut("{no}")]
++    [RequirePermission("erp-quotation", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] QuotationDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             var fresh = await _service.GetByNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -90,20 +93,21 @@ public class QuotationController : LocalizedControllerBase
+                 msgId = "MSG-W10002"
+             });
+         }
+     }
+ 
+     /// <summary>
+     /// 逻辑删除（削除）
+     /// DELETE /api/quotations/{no}
+     /// </summary>
+     [HttpDelete("{no}")]
++    [RequirePermission("erp-quotation", "del")]
+     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? req)
+     {
+         try
+         {
+             await _service.DeleteAsync(no, req?.RowVersion, CurrentUser);
+             return Ok(new { code = 0, message = "OK" });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+@@ -116,40 +120,42 @@ public class QuotationController : LocalizedControllerBase
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>
+     /// 复制新建（コピー）
+     /// POST /api/quotations/{no}/copy
+     /// </summary>
+     [HttpPost("{no}/copy")]
++    [RequirePermission("erp-quotation", "add")]
+     public async Task<IActionResult> Copy(string no)
+     {
+         try
+         {
+             var newNo = await _service.CopyAsync(no, CurrentUser);
+             var fresh = await _service.GetByNoAsync(newNo);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>
+     /// 確定登録
+     /// POST /api/quotations/{no}/confirm
+     /// Body: { "qtnCalcNos": ["..."], "rowVersion": "base64" }
+     /// </summary>
+     [HttpPost("{no}/confirm")]
++    [RequirePermission("erp-quotation", "confirm")]
+     public async Task<IActionResult> Confirm(string no, [FromBody] ConfirmRequest req)
+     {
+         try
+         {
+             await _service.ConfirmAsync(no, req, CurrentUser);
+             var fresh = await _service.GetByNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -165,20 +171,21 @@ public class QuotationController : LocalizedControllerBase
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>
+     /// 確定取消
+     /// POST /api/quotations/{no}/cancel-confirm
+     /// </summary>
+     [HttpPost("{no}/cancel-confirm")]
++    [RequirePermission("erp-quotation", "confirm")]
+     public async Task<IActionResult> CancelConfirm(string no, [FromBody] DeleteRequest? req)
+     {
+         try
+         {
+             await _service.CancelConfirmAsync(no, req?.RowVersion, CurrentUser);
+             var fresh = await _service.GetByNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -192,20 +199,21 @@ public class QuotationController : LocalizedControllerBase
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>
+     /// 発行帳票（当前阶段只更新日期 + 返回文件名；Phase 5 会返回真正的 PDF 流）
+     /// POST /api/quotations/{no}/issue
+     /// </summary>
+     [HttpPost("{no}/issue")]
++    [RequirePermission("erp-quotation", "issue")]
+     public async Task<IActionResult> Issue(string no, [FromBody] IssueRequest req)
+     {
+         try
+         {
+             var files = await _service.IssueAsync(no, req, CurrentUser);
+             return Ok(new { code = 0, message = "OK", data = new { files } });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs b/CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs
+index 020554f..9fe1869 100644
+--- a/CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs
++++ b/CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA130 Web シート単価マスタ
+ /// </summary>
+@@ -29,32 +30,34 @@ public class SheetUnitPriceController : LocalizedControllerBase
+         {
+             BaseDate = baseDate, BaseCd = baseCd, ImportDiv = importDiv,
+             CustomerCd = customerCd, SalesStaffCd = salesStaffCd,
+         });
+         return Ok(new { code = 0, message = "OK", data = rows });
+     }
+ 
+     /// <summary>Excel 取込（multipart upload）— POST /api/sheet-unit-prices/import</summary>
+     [HttpPost("import")]
+     [RequestSizeLimit(50_000_000)] // 50 MB
++    [RequirePermission("erp-sheet-unit-price", "import")]
+     public async Task<IActionResult> Import(
+         IFormFile file,
+         [FromForm] DateTime baseDate,
+         [FromForm] string baseCd,
+         [FromForm] SheetPriceImportDiv importDiv = SheetPriceImportDiv.Standard)
+     {
+         if (file == null || file.Length == 0)
+             return BadRequest(new { code = 400, message = Localizer["E10097: ファイルが選択されていません"] });
+         using var stream = file.OpenReadStream();
+         var result = await _service.ImportExcelAsync(stream, baseDate, baseCd, importDiv);
+         return Ok(new { code = 0, message = "OK", data = result });
+     }
+ 
+     /// <summary>選択行 一括更新（UPSERT） — PUT /api/sheet-unit-prices/batch-update</summary>
+     [HttpPut("batch-update")]
++    [RequirePermission("erp-sheet-unit-price", "edit")]
+     public async Task<IActionResult> BatchUpdate([FromBody] SheetPriceBatchUpdateDto request)
+     {
+         var userName = User?.Identity?.Name;
+         var count = await _service.BatchUpdateAsync(request, userName);
+         return Ok(new { code = 0, message = "OK", data = new { updated = count } });
+     }
+ }

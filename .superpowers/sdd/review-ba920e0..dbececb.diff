@@ -1,0 +1,198 @@
+# Review package: ba920e0..HEAD
+
+## Commits
+dbececb feat(wfs-hardening): A-T1 Pruned常量+SnapshotTokens快照+TokenLineage血缘辅助
+
+## Files changed
+ CP6.Core/Services/Wf/FlowEngine.Tokens.cs |  8 ++++
+ CP6.Core/Services/Wf/TokenLineage.cs      | 44 ++++++++++++++++++++
+ CP6.Core/Services/Wf/WfStatus.cs          |  2 +
+ CP6.Tests/Wf/TokenLineageTests.cs         | 69 +++++++++++++++++++++++++++++++
+ 4 files changed, 123 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/FlowEngine.Tokens.cs b/CP6.Core/Services/Wf/FlowEngine.Tokens.cs
+index cff5dcb..ab4609b 100644
+--- a/CP6.Core/Services/Wf/FlowEngine.Tokens.cs
++++ b/CP6.Core/Services/Wf/FlowEngine.Tokens.cs
+@@ -30,20 +30,28 @@ public partial class FlowEngine
+         if (token.Status != FlowTokenStatus.Active) return;
+         token.Status = FlowTokenStatus.Consumed;
+     }
+ 
+     /// <summary>驳回连坐 / 退回 / 撤回清场：本实例全 Active token → Cancelled。
+     /// 与 <see cref="HasActiveToken"/>/VoidPendingFormTos 同款安全合并：先按 Local（变更追踪器权威态）改，
+     /// 再补查 DB 中"未被本地追踪"的行（排除已在 Local 的 Id），避免把"DB 仍 Active 但本地已 Consumed"的 token 误翻 Cancelled。
+     /// <para>B-T3（P0-5 入队侧）：同时把该实例 <c>Status==Pending</c> 的 <see cref="Wf_ServiceJob"/> 行标
+     /// <c>Cancelled</c>（同款 Local + localIds-exclusion 惯用法），让扫描 worker 永不唤醒已终止实例的停泊 token。
+     /// <c>Status==Running</c> 的 job 不强杀——由 B-T1 <c>ScanOnceAsync</c> 执行前状态闸（§4.2 P0-5）在 worker 侧处理。</para></summary>
++    /// <summary>本实例 token 快照：Local（含本回合未落盘的）∪ DB（已落盘的），按引用去重
++    /// （EF 身份映射保证同实体同引用）。口径抽自 ParallelJoinNodeHandler.AllTokens，供双 join 动态计票、
++    /// 剪枝递归、退回作用域分析共用。</summary>
++    internal IReadOnlyList<Wf_FlowToken> SnapshotTokens(Guid instanceId)
++        => _db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId)
++            .Concat(_db.Wf_FlowTokens.Where(t => t.InstanceId == instanceId).AsEnumerable())
++            .Distinct().ToList();
++
+     internal void CancelAllActiveTokens(Guid instanceId)
+     {
+         // ── token 清场（既有逻辑，字节等价） ──
+         foreach (var t in _db.Wf_FlowTokens.Local
+             .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active).ToList())
+             t.Status = FlowTokenStatus.Cancelled;
+         var localIds = _db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId).Select(t => t.Id).ToHashSet();
+         foreach (var t in _db.Wf_FlowTokens
+             .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active && !localIds.Contains(t.Id)).ToList())
+             t.Status = FlowTokenStatus.Cancelled;
+diff --git a/CP6.Core/Services/Wf/TokenLineage.cs b/CP6.Core/Services/Wf/TokenLineage.cs
+new file mode 100644
+index 0000000..217db3f
+--- /dev/null
++++ b/CP6.Core/Services/Wf/TokenLineage.cs
+@@ -0,0 +1,44 @@
++using CP6.Entity.DomainModels.Wf;
++
++namespace CP6.Core.Services.Wf;
++
++/// <summary>token 血缘辅助（内核 hardening spec §3.3/§4/§5 共用同一口径）。全部纯函数，
++/// 输入为 <see cref="FlowEngine.SnapshotTokens"/> 的实例内 token 快照；祖先链走内存 ParentTokenId 上溯
++/// （单实例 token 数小，零额外查询）。环路防御：visited 集合。</summary>
++internal static class TokenLineage
++{
++    /// <summary>t 自身 + 沿 ParentTokenId 的全部祖先（自内向外）。</summary>
++    public static IEnumerable<Wf_FlowToken> AncestorChain(IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken t)
++    {
++        var seen = new HashSet<Guid>();
++        for (var cur = t; cur is not null && seen.Add(cur.Id);
++             cur = cur.ParentTokenId is Guid pid ? all.FirstOrDefault(x => x.Id == pid) : null)
++            yield return cur;
++    }
++
++    /// <summary>t「穿过」fork 批次 forkId ⇔ t 自身或祖先链上存在 ForkId==forkId 的 token（spec §3.3 定义）。</summary>
++    public static bool CrossesFork(IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken t, Guid forkId)
++        => AncestorChain(all, t).Any(x => x.ForkId == forkId);
++
++    /// <summary>生成 t.ForkId 批次的 token = Id==t.ParentTokenId 者；其 NodeId 即该批次的 split 节点（§4.1 定案）。
++    /// t 无父 → null。</summary>
++    public static Wf_FlowToken? ForkParent(IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken t)
++        => t.ParentTokenId is Guid pid ? all.FirstOrDefault(x => x.Id == pid) : null;
++
++    /// <summary>t 的 fork 栈（内→外）：祖先链上每个 ForkId 非空的 token 贡献一层
++    /// (该层分支代表 token, forkId, split 节点 id)。同 forkId 只取最靠 t 的一个（防御）。</summary>
++    public static List<(Wf_FlowToken BranchToken, Guid ForkId, string SplitNodeId)> ForkStack(
++        IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken t)
++    {
++        var stack = new List<(Wf_FlowToken, Guid, string)>();
++        var seenForks = new HashSet<Guid>();
++        foreach (var tok in AncestorChain(all, t))
++        {
++            if (tok.ForkId is not Guid f || !seenForks.Add(f)) continue;
++            var parent = ForkParent(all, tok);
++            if (parent is null) continue;   // 血缘断裂（不完整快照）→ 该层不可判定，跳过
++            stack.Add((tok, f, parent.NodeId));
++        }
++        return stack;
++    }
++}
+diff --git a/CP6.Core/Services/Wf/WfStatus.cs b/CP6.Core/Services/Wf/WfStatus.cs
+index 6b94cdb..1f13299 100644
+--- a/CP6.Core/Services/Wf/WfStatus.cs
++++ b/CP6.Core/Services/Wf/WfStatus.cs
+@@ -21,20 +21,22 @@ public static class FlowTaskStatus
+     public const int Cancelled = 3;   // 作废（节点已决/实例撤回/退回时清在途）
+     public const int Suspended = 4;   // 挂起（前加签时原审批人临时挂起，加签人审完再激活，章07 §3）
+ }
+ 
+ /// <summary>流程令牌状态（Wf_FlowToken.Status）。Active 才参与流转 / join 计数。</summary>
+ public static class FlowTokenStatus
+ {
+     public const int Active = 0;
+     public const int Consumed = 1;
+     public const int Cancelled = 2;
++    /// <summary>剪枝（分支驳回不连坐，spec §2.3）。区别 Cancelled=清场类作废：Pruned 是分支死亡，join 动态计票时天然从等待集消失。</summary>
++    public const int Pruned = 3;
+ }
+ 
+ /// <summary>传签履历关卡状态（Wf_FlowFormTo.Status）。</summary>
+ public static class FlowFormToStatus
+ {
+     public const int Pending = 0;     // 待签
+     public const int Approved = 1;    // 同意
+     public const int Rejected = 2;    // 驳回
+     public const int Transferred = 3; // 转交
+     public const int AddSigned = 4;   // 加签
+diff --git a/CP6.Tests/Wf/TokenLineageTests.cs b/CP6.Tests/Wf/TokenLineageTests.cs
+new file mode 100644
+index 0000000..1ee1081
+--- /dev/null
++++ b/CP6.Tests/Wf/TokenLineageTests.cs
+@@ -0,0 +1,69 @@
++using CP6.Core.Services.Wf;
++using CP6.Entity.DomainModels.Wf;
++
++namespace CP6.Tests.Wf;
++
++public class TokenLineageTests
++{
++    private static readonly Guid InstId = Guid.NewGuid();
++
++    private static Wf_FlowToken Tok(Guid id, string node, Guid? parent = null, Guid? fork = null,
++        int status = FlowTokenStatus.Active)
++        => new() { Id = id, InstanceId = InstId, NodeId = node, ParentTokenId = parent, ForkId = fork, Status = status };
++
++    [Fact]
++    public void FlowTokenStatus_Pruned_Is3()
++        => Assert.Equal(3, FlowTokenStatus.Pruned);
++
++    [Fact]
++    public void CrossesFork_SelfAndAncestor_True_Miss_False()
++    {
++        var f1 = Guid.NewGuid(); var f2 = Guid.NewGuid(); var fx = Guid.NewGuid();
++        var root  = Tok(Guid.NewGuid(), "split", status: FlowTokenStatus.Consumed);
++        var b     = Tok(Guid.NewGuid(), "innerSplit", parent: root.Id, fork: f1, status: FlowTokenStatus.Consumed);
++        var inner = Tok(Guid.NewGuid(), "x1", parent: b.Id, fork: f2);
++        var all = new[] { root, b, inner };
++
++        Assert.True(TokenLineage.CrossesFork(all, inner, f2));   // 自身 ForkId
++        Assert.True(TokenLineage.CrossesFork(all, inner, f1));   // 祖先链穿过外层批次（防提前放行的关键）
++        Assert.False(TokenLineage.CrossesFork(all, inner, fx));  // 无关批次
++        Assert.False(TokenLineage.CrossesFork(all, root, f1));   // 根不穿任何批次
++    }
++
++    [Fact]
++    public void ForkParent_ReturnsBatchGenerator()
++    {
++        var f1 = Guid.NewGuid();
++        var root = Tok(Guid.NewGuid(), "split", status: FlowTokenStatus.Consumed);
++        var a    = Tok(Guid.NewGuid(), "a", parent: root.Id, fork: f1);
++        var all = new[] { root, a };
++
++        var p = TokenLineage.ForkParent(all, a);
++        Assert.NotNull(p);
++        Assert.Equal(root.Id, p!.Id);
++        Assert.Equal("split", p.NodeId);                          // §4.1 定案：父 token.NodeId 即 split 节点
++        Assert.Null(TokenLineage.ForkParent(all, root));          // 根无父
++    }
++
++    [Fact]
++    public void ForkStack_Nested_InnerToOuter()
++    {
++        var f1 = Guid.NewGuid(); var f2 = Guid.NewGuid();
++        var root  = Tok(Guid.NewGuid(), "split", status: FlowTokenStatus.Consumed);
++        var b     = Tok(Guid.NewGuid(), "innerSplit", parent: root.Id, fork: f1, status: FlowTokenStatus.Consumed);
++        var inner = Tok(Guid.NewGuid(), "x1", parent: b.Id, fork: f2);
++        var all = new[] { root, b, inner };
++
++        var stack = TokenLineage.ForkStack(all, inner);
++        Assert.Equal(2, stack.Count);
++        Assert.Equal((inner.Id, f2, "innerSplit"), (stack[0].BranchToken.Id, stack[0].ForkId, stack[0].SplitNodeId));
++        Assert.Equal((b.Id, f1, "split"), (stack[1].BranchToken.Id, stack[1].ForkId, stack[1].SplitNodeId));
++    }
++
++    [Fact]
++    public void ForkStack_LinearToken_Empty()
++    {
++        var root = Tok(Guid.NewGuid(), "n1");
++        Assert.Empty(TokenLineage.ForkStack(new[] { root }, root));
++    }
++}

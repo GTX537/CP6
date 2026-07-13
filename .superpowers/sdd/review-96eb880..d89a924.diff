@@ -1,0 +1,429 @@
+# Review package: 96eb880..HEAD
+
+## Commits
+d89a924 feat(ui): CpListPage 契约扩展三轮——lazy search-first 模式 + sortable:'custom' 服务端排序透传
+
+## Files changed
+ cp6.web/src/components/templates/CpListPage.vue    |  50 ++++++-
+ .../templates/__tests__/CpListPage.spec.ts         | 144 +++++++++++++++++++++
+ docs/superpowers/plans/2026-07-04-ui-restyle.md    |   4 +-
+ 3 files changed, 189 insertions(+), 9 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/components/templates/CpListPage.vue b/cp6.web/src/components/templates/CpListPage.vue
+index 3abd5cf..508caa5 100644
+--- a/cp6.web/src/components/templates/CpListPage.vue
++++ b/cp6.web/src/components/templates/CpListPage.vue
+@@ -1,37 +1,49 @@
+ <!--
+   CpListPage —— 业务查询页核心模板（设计系统 §9.2；130+ 查询页的目标模板）。
+   组合结构：CpStatusStrip?（状态速览）→ CpFilterBar?（查询区）→ 表格卡 .tcard（toolbar slot + el-table + 分页）。
+-  行为：mounted 自动 fetch；search/reset/翻页/切状态卡重新 fetch（search/reset/切卡均重置 page=1）；
+-  fetch 期间 v-loading；fetch reject → ElMessage.error 且保留旧数据；rows 空 → CpEmpty；乱序响应只取最新。
++  行为：mounted 自动 fetch（lazy=true 时抑制，见下）；search/reset/翻页/切状态卡/列排序重新 fetch
++  （search/reset/切卡/排序均重置 page=1）；fetch 期间 v-loading；fetch reject → ElMessage.error 且保留旧数据；
++  rows 空 → CpEmpty；乱序响应只取最新。
+ 
+   Props:
+     - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag /
+                                    date→String(val).slice(0,10)，null/undefined 渲染空）。
+                                    列级透传：width / minWidth→min-width / overflowTooltip→show-overflow-tooltip /
+                                    fixed:'left'|'right'→fixed（钉列）。
+                                    map?: (val,row)=>{ label, tone? }：码值列声明式映射——label 替换单元格文案（任意 kind 生效）；
+                                    kind:'tag' 时按 tone 渲染 CpTag（tone 缺省 muted）。col-<prop> 插槽优先级高于 map。
+                                    map 的 tone 仅在 kind:'tag' 时生效，其他 kind 忽略（仅 label 替换文本）。
+                                    map 须为纯函数——每单元格可能被调用多次（label 与 tone 分别取值），含副作用或非确定性会导致两者不一致。
+-    - fetch: ListFetch             数据源：({ page,size,filters,statusKey? }) => Promise<{ rows,total }>。
++                                   sortable?: 'custom'：服务端排序列（仅接受 'custom'，不提供客户端排序语义）——
++                                   透传 el-table-column sortable，点击表头触发 @sort-change：page 重置 1、
++                                   sortField/sortOrder 并入 ListFetch query（order 规范化 ascending→'asc'/
++                                   descending→'desc'；取消排序时两键从 query 移除）并 emit sort-change。
++    - fetch: ListFetch             数据源：({ page,size,filters,statusKey?,sortField?,sortOrder? }) => Promise<{ rows,total }>。
++                                   sortField/sortOrder 仅在存在有效排序时出现（未排序/取消排序则两键缺省）。
++    - lazy?: boolean               默认 false。true = search-first 模式：mounted 不自动 fetch，表格以空态起步
++                                   （total=0、CpEmpty 可见、loading=false，分页器因 total=0 自然惰性）；
++                                   首查仅由显式手势触发——CpFilterBar search/reset、状态卡点击、exposed reload()、
++                                   分页交互或列排序（均为用户显式意图）。首查成功前不 emit total-change。
++                                   适配「先选必填条件再查询」的 ERP 形态（拠点必須・自動取得なし）。
+     - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
+     - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key；tone 用 CpTag 共享 Tone。
+     - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
+     - highlightCurrentRow?: boolean 透传 el-table 当前行高亮；默认 true（迁移页默认保留原行为）。
+     - paginated?: boolean          默认 true。false 时隐藏分页器、page 锁定 1，fetch 收到 size=UNPAGED_SIZE(1000)
+                                    一次取全量（单表滚动 + 跨全量勾选形态，如賞味期限一括廃棄）。
+     - filterLabels?: FilterBarLabels 透传 CpFilterBar 按钮文案覆盖（业务侧接 i18n；缺省中文）。
+     - emptyText?: string           透传 CpEmpty 空状态文案（缺省「暂无数据」）。
+   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
+   Emits: selection-change(rows) ｜ total-change(n)（每次成功加载后携带最新 total，供 CpPageShell :count 接线；
+-         受 seq 乱序守卫，过期响应不 emit）
++         受 seq 乱序守卫，过期响应不 emit）｜ sort-change({field,order})（排序状态变更时外发规范化值；
++         取消排序时 field/order 均为 undefined）
+   Expose: reload()（仅此一项）——命令式重新 fetch，保留当前 filters / page / statusKey（页内 in-place 变更后刷新，
+           替代重挂载 :key 方案）。注意：删除当前页最后一行后 reload() 仍停留原 page，可能显示空页（不自动收拢页码，
+           与原页 reload() 行为一致，记录在案）。
+ 
+   使用示例：
+     <CpPageShell title="出庫指示一覧" :count="total">
+       <CpListPage
+         :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' },
+                    { prop:'st', label:'状态', kind:'tag', map: (v) => ({ label: stLabel(v), tone: stTone(v) }) }]"
+         :fetch="loadShipments"
+@@ -50,26 +62,30 @@ import type { Tone } from '@/components/base/CpTag.vue'
+ export interface ListColumn {
+   prop: string
+   label: string
+   width?: number
+   minWidth?: number
+   align?: 'left' | 'right' | 'center'
+   kind?: 'text' | 'num' | 'mono' | 'tag' | 'date'
+   overflowTooltip?: boolean
+   fixed?: 'left' | 'right'
+   map?: (val: unknown, row: unknown) => { label: string; tone?: Tone }
++  sortable?: 'custom' // 仅服务端排序；不接受 true（避免混入 el-table 客户端排序语义）
+ }
++export type SortOrder = 'asc' | 'desc'
+ export type ListFetch = (q: {
+   page: number
+   size: number
+   filters: Record<string, unknown>
+   statusKey?: string
++  sortField?: string // 仅在存在有效排序时出现（见 sortable:'custom'）
++  sortOrder?: SortOrder
+ }) => Promise<{ rows: unknown[]; total: number }>
+ export interface StatusTab { key: string; label: string; count: number; tone?: Tone }
+ </script>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { ElMessage, ElPagination, ElTable, ElTableColumn, vLoading } from 'element-plus'
+ import CpStatusStrip from './CpStatusStrip.vue'
+ import CpFilterBar, { type FilterField, type FilterBarLabels } from './CpFilterBar.vue'
+ import CpTag from '@/components/base/CpTag.vue'
+@@ -77,77 +93,95 @@ import CpEmpty from '@/components/base/CpEmpty.vue'
+ 
+ const props = withDefaults(defineProps<{
+   columns: ListColumn[]
+   fetch: ListFetch
+   searchFields?: FilterField[]
+   statusTabs?: StatusTab[]
+   selectable?: boolean
+   rowKey?: string
+   highlightCurrentRow?: boolean
+   paginated?: boolean
++  lazy?: boolean
+   filterLabels?: FilterBarLabels
+   emptyText?: string
+-}>(), { highlightCurrentRow: true, paginated: true })
++}>(), { highlightCurrentRow: true, paginated: true, lazy: false })
+ 
+ const emit = defineEmits<{
+   (e: 'selection-change', rows: unknown[]): void
+   (e: 'total-change', total: number): void
++  (e: 'sort-change', payload: { field?: string; order?: SortOrder }): void
+ }>()
+ 
+ // —— 内部状态 ——
+ const page = ref(1)
+ const size = ref(20)
+ const filters = ref<Record<string, unknown>>({})
+ const statusKey = ref<string | undefined>(props.statusTabs?.[0]?.key)
+ const rows = ref<unknown[]>([])
+ const total = ref(0)
+ const loading = ref(false)
++const sortField = ref<string | undefined>(undefined)
++const sortOrder = ref<SortOrder | undefined>(undefined)
+ 
+ // paginated=false 时一次取数的 size 上限（无分页形态的全量口径；超过此量的数据源应保持分页）
+ const UNPAGED_SIZE = 1000
+ 
+ // —— load()：唯一取数入口；seq 守卫乱序响应（只有最新一次请求的结果生效）——
+ let seq = 0
+ async function load() {
+   const id = ++seq
+   loading.value = true
+   try {
+     const res = await props.fetch({
+       page: props.paginated ? page.value : 1, // 无分页形态 page 锁定 1
+       size: props.paginated ? size.value : UNPAGED_SIZE,
+       filters: filters.value,
+-      statusKey: statusKey.value
++      statusKey: statusKey.value,
++      // 仅在存在有效排序时并入两键（取消排序=两键均不出现，而非 undefined 占位）
++      ...(sortField.value !== undefined
++        ? { sortField: sortField.value, sortOrder: sortOrder.value }
++        : {})
+     })
+     if (id !== seq) return // 已有更新的请求发出，丢弃本次结果
+     rows.value = res.rows
+     total.value = res.total
+     emit('total-change', res.total) // 仅最新请求成功后 emit（供 CpPageShell :count 接线）
+   } catch (e) {
+     if (id !== seq) return
+     ElMessage.error((e as Error)?.message ?? String(e)) // 保留旧 rows/total（与 CpFormDialog 同一错误硬化契约）
+   } finally {
+     if (id === seq) loading.value = false
+   }
+ }
+-onMounted(load)
++onMounted(() => { if (!props.lazy) load() }) // lazy=true：search-first，首查由显式手势触发（见头注）
+ 
+ // —— 命令式刷新：保留当前 filters / page / statusKey 重新 fetch（页内 in-place 变更后调用）——
+ function reload() { return load() }
+ defineExpose({ reload }) // 仅暴露 reload，内部状态不外露
+ 
+ // —— 交互 ——
+ function onSearch() { page.value = 1; load() }
+ function onReset() { page.value = 1; load() } // CpFilterBar 已先回写清空后的 filters
+ function onStatus(key: string) { statusKey.value = key; page.value = 1; load() }
+ function onPageChange() { load() }
+ function onSizeChange() { page.value = 1; load() }
+ 
++// —— 服务端排序（#19）：el-table @sort-change → 规范化 → page=1 重新 fetch + emit ——
++// lazy 列表从未加载过时排序同样触发首查（用户手势=显式意图）。
++function onSortChange({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) {
++  sortField.value = order == null ? undefined : prop
++  sortOrder.value = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : undefined
++  page.value = 1
++  emit('sort-change', { field: sortField.value, order: sortOrder.value })
++  load()
++}
++
+ // —— 列渲染 ——
+ function cell(row: unknown, prop: string): unknown {
+   return (row as Record<string, unknown>)?.[prop]
+ }
+ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
+   return c.align ?? (c.kind === 'num' ? 'right' : 'left')
+ }
+ // 单元格文案：map.label > date 截断(yyyy-MM-dd) > 原值
+ function display(c: ListColumn, row: unknown): unknown {
+   const v = cell(row, c.prop)
+@@ -180,36 +214,38 @@ function mapTone(c: ListColumn, row: unknown): Tone | undefined {
+ 
+     <div class="tcard">
+       <div v-if="$slots.toolbar" class="toolbar"><slot name="toolbar" /></div>
+ 
+       <el-table
+         v-loading="loading"
+         :data="rows"
+         :row-key="rowKey"
+         :highlight-current-row="highlightCurrentRow"
+         @selection-change="emit('selection-change', $event)"
++        @sort-change="onSortChange"
+       >
+         <el-table-column v-if="$slots.expand" type="expand">
+           <template #default="{ row }"><slot name="expand" :row="row" /></template>
+         </el-table-column>
+ 
+         <el-table-column v-if="selectable" type="selection" width="44" />
+ 
+         <el-table-column
+           v-for="c in columns"
+           :key="c.prop"
+           :prop="c.prop"
+           :label="c.label"
+           :width="c.width"
+           :min-width="c.minWidth"
+           :show-overflow-tooltip="c.overflowTooltip"
+           :fixed="c.fixed"
++          :sortable="c.sortable ?? false"
+           :align="colAlign(c)"
+         >
+           <template #default="{ row }">
+             <slot :name="`col-${c.prop}`" :row="row">
+               <CpTag v-if="c.kind === 'tag' && c.map" :tone="mapTone(c, row)">{{ display(c, row) }}</CpTag>
+               <CpTag v-else-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
+               <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ display(c, row) }}</span>
+               <span v-else-if="c.kind === 'num'" class="num">{{ display(c, row) }}</span>
+               <template v-else>{{ display(c, row) }}</template>
+             </slot>
+diff --git a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+index 317a74e..1b10bbe 100644
+--- a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
++++ b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+@@ -332,10 +332,154 @@ describe('CpListPage 契约扩展（Milestone C）', () => {
+       total: 2
+     })
+     const w = mount(CpListPage, { props: { columns: c, fetch: f } })
+     await flushPromises()
+     expect(w.text()).toContain('2026-07-04')
+     expect(w.text()).not.toContain('2026-07-04T')
+     // 第二行日期单元格为空（null → ''，不出现 "null"）
+     expect(w.text()).not.toContain('null')
+   })
+ })
++
++// —— 契约扩展三轮（ERP批次1 复盘 #18 lazy / #19 sortable:'custom'）——
++describe('CpListPage 契约扩展三轮：#18 lazy search-first', () => {
++  it('lazy=true：mounted 不 fetch，CpEmpty 可见，total-change 未 emit', async () => {
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, lazy: true, searchFields } })
++    await flushPromises()
++    expect(f).not.toHaveBeenCalled()
++    expect(w.findComponent({ name: 'CpEmpty' }).exists()).toBe(true) // loading=false 的空态
++    expect(w.find('.el-loading-mask').exists()).toBe(false)
++    expect(w.emitted('total-change')).toBeUndefined() // 首查成功前不 emit
++  })
++
++  it('lazy=true：CpFilterBar 查询触发首查，且 fetch 恰好调用一次（page=1）', async () => {
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, lazy: true, searchFields } })
++    await flushPromises()
++    await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
++    await flushPromises()
++    expect(f).toHaveBeenCalledTimes(1)
++    expect(f).toHaveBeenCalledWith(expect.objectContaining({ page: 1 }))
++    expect(w.emitted('total-change')).toEqual([[1]]) // 首查成功后才 emit
++  })
++
++  it('lazy=true：切状态卡触发首查', async () => {
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, lazy: true,
++      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
++    await flushPromises()
++    expect(f).not.toHaveBeenCalled()
++    await w.findAll('.ss')[1].trigger('click')
++    await flushPromises()
++    expect(f).toHaveBeenCalledTimes(1)
++    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ statusKey: 'wait' }))
++  })
++
++  it('lazy=true：exposed reload() 触发首查', async () => {
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, lazy: true } })
++    await flushPromises()
++    expect(f).not.toHaveBeenCalled()
++    ;(w.vm as unknown as { reload: () => Promise<void> }).reload()
++    await flushPromises()
++    expect(f).toHaveBeenCalledTimes(1)
++  })
++
++  it('lazy=true：sort-change 也触发首查（显式用户手势）', async () => {
++    const sortCols: ListColumn[] = [{ prop: 'no', label: '单号', sortable: 'custom' }]
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f, lazy: true } })
++    await flushPromises()
++    expect(f).not.toHaveBeenCalled()
++    w.findComponent({ name: 'ElTable' }).vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
++    await flushPromises()
++    expect(f).toHaveBeenCalledTimes(1)
++    expect(f).toHaveBeenLastCalledWith(
++      expect.objectContaining({ sortField: 'no', sortOrder: 'asc' })
++    )
++  })
++})
++
++describe("CpListPage 契约扩展三轮：#19 sortable:'custom' 服务端排序", () => {
++  const sortCols: ListColumn[] = [
++    { prop: 'no', label: '单号', kind: 'mono', sortable: 'custom' },
++    { prop: 'qty', label: '数量', kind: 'num' }
++  ]
++
++  it("sortable:'custom' 透传 el-table-column；未声明列不透传", async () => {
++    const w = mount(CpListPage, { props: { columns: sortCols, fetch: makeFetch() } })
++    await flushPromises()
++    const tcs = w.findAllComponents({ name: 'ElTableColumn' })
++    expect(tcs.find((tc) => tc.props('label') === '单号')!.props('sortable')).toBe('custom')
++    expect(tcs.find((tc) => tc.props('label') === '数量')!.props('sortable')).toBe(false)
++  })
++
++  it('sort-change：fetch 收到 sortField/sortOrder（asc 规范化）且 page 重置为 1', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
++    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f } })
++    await flushPromises()
++    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
++    await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }))
++
++    w.findComponent({ name: 'ElTable' }).vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
++    await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(
++      expect.objectContaining({ page: 1, sortField: 'no', sortOrder: 'asc' })
++    )
++  })
++
++  it('sort-change：descending 规范化为 desc，并保持在后续翻页 fetch 中', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
++    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f } })
++    await flushPromises()
++    w.findComponent({ name: 'ElTable' }).vm.$emit('sort-change', { prop: 'no', order: 'descending' })
++    await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(
++      expect.objectContaining({ sortField: 'no', sortOrder: 'desc' })
++    )
++    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
++    await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(
++      expect.objectContaining({ page: 2, sortField: 'no', sortOrder: 'desc' })
++    )
++  })
++
++  it('取消排序（order:null）：query 中两键均不存在', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 1 })
++    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f } })
++    await flushPromises()
++    const table = w.findComponent({ name: 'ElTable' })
++    table.vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
++    await flushPromises()
++    table.vm.$emit('sort-change', { prop: 'no', order: null })
++    await flushPromises()
++    const q = f.mock.calls.at(-1)![0]
++    expect('sortField' in q).toBe(false)
++    expect('sortOrder' in q).toBe(false)
++  })
++
++  it('未排序的默认 fetch：query 中不含 sortField/sortOrder 键', async () => {
++    const f = makeFetch()
++    mount(CpListPage, { props: { columns: sortCols, fetch: f } })
++    await flushPromises()
++    const q = f.mock.calls.at(-1)![0]
++    expect('sortField' in q).toBe(false)
++    expect('sortOrder' in q).toBe(false)
++  })
++
++  it('sort-change 事件外发 {field, order}；取消时两者 undefined', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 1 })
++    const w = mount(CpListPage, { props: { columns: sortCols, fetch: f } })
++    await flushPromises()
++    const table = w.findComponent({ name: 'ElTable' })
++    table.vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
++    await flushPromises()
++    table.vm.$emit('sort-change', { prop: 'no', order: null })
++    await flushPromises()
++    expect(w.emitted('sort-change')).toEqual([
++      [{ field: 'no', order: 'asc' }],
++      [{ field: undefined, order: undefined }]
++    ])
++  })
++})
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 14a5ebc..6fbdf76 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -693,24 +693,24 @@ describe('CpListPage', () => {
+ - **FxRateView**（照会 CRUD 一覧，194 行）= 唯一素直に載る查询列表页 → **CpPageShell + CpListPage + CpFormDialog**。rateDate=kind:'date'、rate 6 桁固定=col-rate slot、subtitle+「基軸:JPY」CpTag=toolbar slot、新規/編集=CpFormDialog default slot（uppercase/input-number precision6 step0.5/textarea 保全）、削除=ElMessageBox+listRef.reload()。filterLabels={ search:erp.fxRate.btn.refresh(「通貨で再読込」語義の既存キー), reset:sales.btn.clear }。
+ - **FscChecklistView**（206 行）= 検索先行（拠点必須・自動取得なし・FROM≤TO/フォーマット必須のクロス検証・出力フォーマットはアクション引数）→ **token 化**。CpListPage の onMounted 自動 fetch 契約と相反するため強套せず、el-form/el-table/el-pagination/発行フロー原様、状態・件数・発行済 el-tag→CpTag(+tone)。
+ - **SheetUnitPriceView**（206 行）= Excel アップロード + 登録/参照デュアルモード + 行内選択グリッド + 一括更新（検索駆動の単一 fetch 形態でない）→ **token 化**。件数 el-tag→CpTag、選択ファイル名 #606266→--cp-muted。
+ - **BusinessPartnerListView**（219 行）= サーバサイド列ソート（@sort-change、CpListPage 未透過＝強套すると機能喪失）+ 属性 FLG×11 + 詳細検索コラプス（分類 1〜10）の構造化検索（CpFilterBar 平坦フィールドでは表現不能）→ **token 化**。ソート/CSV/行選択 原様、状態・件数 el-tag→CpTag(+tone)、FlgIcon 色 #67c23a/#dcdfe6→--cp-ok/--cp-line。WMS LocationList（双表→token 化）同处置。
+ - **OrderPriceCorrectionView**（237 行）= type=selection 連動の行内編集グリッド（変更後単価/特値/理由）+ 拠点必須・自動取得なし → **token 化**。WMS StockTake（編集テーブル→token 化）同处置。状態・件数・選択中 el-tag→CpTag(+tone)、仮単価警告 #e6a23c→--cp-warn。
+ 
+ 真栈证据（截图存 `.superpowers/sdd/shots/erp-*.png`）：FxRate（為替レート管理 +count 0 pill / CpFilterBar / toolbar「基軸:JPY」CpTag / CpEmpty / 新規=CpFormDialog 必須マーク+precision6 input-number）；FscChecklist（拠点必須*+ステータスチェック+出力フォーマット select+発行(0)+「合計 0 件」CpTag）；SheetUnitPrice（基準日/拠点必須+取込区分/操作種別 radio+Excel 選択+全選択/全解除+CpTag）；BusinessPartnerList（FLG×11 グリーンチェック --cp-ok+ソート可列+CSV+「合計 0 件」CpTag、検索実行=0 行空態）；OrderPriceCorrection（数量/金額 FROM-TO number+仮単価+selection+行内編集列+選択行を更新(0)+CpTag）。5 页种子データ無しのため空態レンダリング検証（BP は検索で 0 行確認）；表内ステータス CpTag tone は純関数+FxRate toolbar タグで描画済のため低リスク、記录在案。console 无本批新 error（残存 intlify object-flatten / Vue Router deprecation・No-match=menus 注入リロード由来＝既有基础设施）。type-check 0 error、`npm run test` 46 files/304 全绿（baseline 304 保持）。
+ 
+ 本批新增模板缺口 2 项（复盘评审补记：token 化处置本身各有依据并获维持，但反复出现的形态缺口应起票而非仅记录——「0 缺口」判定系本批缺陷）：
+ 
+-18. **CpListPage 无 search-first/lazy 模式**（Minor）
++18. **CpListPage 无 search-first/lazy 模式**（Minor）—— ✅ 已实现（契约扩展三轮 commit）：`lazy?: boolean`（默认 false），true 时 onMounted 不自动 fetch、空态起步（CpEmpty 可见/total=0 分页器自然惰性），首查由 search/切卡/reload()/分页/排序等显式手势触发，首查成功前不 emit total-change。
+     - 现象：现状 onMounted 必自动 fetch；ERP 反复出现「先选必填条件再查询」形态（本批 3/5 页有此形态：FscChecklist/OrderPriceCorrection 拠点必須・自動取得なし，SheetUnitPrice 基準日+拠点必須），与该契约相反，只能整页 token 化放弃模板。
+     - 建议契约：`lazy?: boolean`（默认 false），true 时抑制 onMounted(load)，首查仅由显式 search/reload() 触发。
+-19. **CpListPage 无服务端排序透传**（Minor）
++19. **CpListPage 无服务端排序透传**（Minor）—— ✅ 已实现（契约扩展三轮 commit）：ListColumn 增 `sortable?: 'custom'`（仅服务端语义），CpListPage 接 el-table @sort-change：order 规范化 asc/desc、page 重置 1、`sortField?/sortOrder?` 并入 ListFetch query（取消排序两键移除）并 emit sort-change({field,order})；lazy 未加载时排序亦触发首查。
+     - 现象：BusinessPartnerList 的 @sort-change 服务端排序是本批该页「decisive token-only reason」却未起票——CpListPage 未透传 el-table 同名事件，强套即丢排序功能。
+     - 建议契约：ListColumn 增 `sortable?: 'custom'`，CpListPage 接 el-table @sort-change，把 `sortField?/sortOrder?` 并入 ListFetch query（并 emit sort-change）。
+ 
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）

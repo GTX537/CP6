@@ -1,0 +1,199 @@
+# Review package: 02cce6c..HEAD
+
+## Commits
+c1a7f66 feat(space-p5): ConnectorPanel 成本输入 + 类型预填 + 列表项编辑保存成本
+
+## Files changed
+ .../views/space/editor/panels/ConnectorPanel.vue   | 50 ++++++++++++++++++++--
+ 1 file changed, 47 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/space/editor/panels/ConnectorPanel.vue b/cp6.web/src/views/space/editor/panels/ConnectorPanel.vue
+index 6247884..1078e80 100644
+--- a/cp6.web/src/views/space/editor/panels/ConnectorPanel.vue
++++ b/cp6.web/src/views/space/editor/panels/ConnectorPanel.vue
+@@ -1,16 +1,17 @@
+ <script setup lang="ts">
+ import { ref, onMounted, watch } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { connectorApi } from '@/api/space/connector'
+-import type { ConnectorVO } from '@/types/space/connector'
++import type { ConnectorVO, ConnectorUpdate } from '@/types/space/connector'
++import { TYPE_DEFAULT_COST } from '@/space-viewer/advanced/cost'
+ 
+ const { t } = useI18n()
+ 
+ const props = defineProps<{ siteId: string; floorId: string }>()
+ const emit = defineEmits<{
+   requestPlace: [connectorId: string]
+ }>()
+ 
+ const connectors = ref<ConnectorVO[]>([])
+ const loading = ref(false)
+@@ -18,21 +19,27 @@ const loading = ref(false)
+ const typeOptions = [
+   { value: 1, label: t('电梯') },
+   { value: 2, label: t('楼梯') },
+   { value: 3, label: t('坡道') },
+ ]
+ 
+ function typeLabel(tp: number): string {
+   return typeOptions.find(o => o.value === tp)?.label ?? String(tp)
+ }
+ 
+-const form = ref({ connectorCode: '', connectorType: 1, name: '' })
++const form = ref({ connectorCode: '', connectorType: 1, name: '', waitSec: 20, travelSecPerFloor: 6 })
++
++// 选类型时预填成本默认（用户可改）
++watch(() => form.value.connectorType, (tp) => {
++  const d = TYPE_DEFAULT_COST[tp]
++  if (d) { form.value.waitSec = d.waitSec; form.value.travelSecPerFloor = d.travelSecPerFloor }
++})
+ 
+ async function load(): Promise<void> {
+   if (!props.siteId) return
+   loading.value = true
+   try {
+     const res = await connectorApi.listBySite(props.siteId)
+     connectors.value = res.data ?? []
+   } catch {
+     ElMessage.error(t('加载连接体失败'))
+   } finally {
+@@ -48,23 +55,25 @@ async function createConnector(): Promise<void> {
+   if (!code) {
+     ElMessage.warning(t('请输入连接体编码'))
+     return
+   }
+   try {
+     await connectorApi.create({
+       siteId: props.siteId,
+       connectorCode: code,
+       connectorType: form.value.connectorType,
+       name: form.value.name.trim(),
++      waitSec: form.value.waitSec,
++      travelSecPerFloor: form.value.travelSecPerFloor,
+     })
+     ElMessage.success(t('新建成功'))
+-    form.value = { connectorCode: '', connectorType: 1, name: '' }
++    form.value = { connectorCode: '', connectorType: 1, name: '', waitSec: 20, travelSecPerFloor: 6 }
+     await load()
+   } catch {
+     ElMessage.error(t('新建失败'))
+   }
+ }
+ 
+ function placeHere(c: ConnectorVO): void {
+   emit('requestPlace', c.id)
+ }
+ 
+@@ -86,20 +95,30 @@ async function removeConnector(c: ConnectorVO): Promise<void> {
+   }
+   try {
+     await connectorApi.remove(c.id)
+     ElMessage.success(t('删除成功'))
+     await load()
+   } catch {
+     ElMessage.error(t('删除失败'))
+   }
+ }
+ 
++async function saveCost(c: ConnectorVO): Promise<void> {
++  try {
++    const d: ConnectorUpdate = { name: c.name, connectorType: c.connectorType, waitSec: c.waitSec, travelSecPerFloor: c.travelSecPerFloor }
++    await connectorApi.update(c.id, d)
++    ElMessage.success(t('成本已保存'))
++  } catch {
++    ElMessage.error(t('保存成本失败'))
++  }
++}
++
+ // Exposed so FloorEditor can refresh after a stop is placed on the canvas.
+ defineExpose({ refresh: load })
+ </script>
+ 
+ <template>
+   <div class="connector-panel">
+     <div class="panel-title">{{ t('连接体') }}</div>
+ 
+     <!-- New connector form -->
+     <div class="panel-section">{{ t('新建连接体') }}</div>
+@@ -108,35 +127,49 @@ defineExpose({ refresh: load })
+         <el-input v-model="form.connectorCode" :placeholder="t('如 ELV-01')" />
+       </el-form-item>
+       <el-form-item :label="t('类型')">
+         <el-select v-model="form.connectorType" style="width: 100%">
+           <el-option v-for="o in typeOptions" :key="o.value" :label="o.label" :value="o.value" />
+         </el-select>
+       </el-form-item>
+       <el-form-item :label="t('名称')">
+         <el-input v-model="form.name" />
+       </el-form-item>
++      <el-form-item :label="t('等待秒')">
++        <el-input-number v-model="form.waitSec" :min="0" :step="1" controls-position="right" style="width: 100%" />
++      </el-form-item>
++      <el-form-item :label="t('每层秒')">
++        <el-input-number v-model="form.travelSecPerFloor" :min="0" :step="1" controls-position="right" style="width: 100%" />
++      </el-form-item>
+     </el-form>
+     <el-button type="primary" size="small" style="width: 100%" @click="createConnector">
+       {{ t('新建连接体') }}
+     </el-button>
+ 
+     <!-- Connector list -->
+     <div class="panel-section">{{ t('连接体列表') }}</div>
+     <div v-loading="loading" class="conn-list">
+       <div v-for="c in connectors" :key="c.id" class="conn-item">
+         <div class="conn-head">
+           <span class="conn-name">{{ c.name || c.connectorCode }}</span>
+           <span class="conn-type">{{ typeLabel(c.connectorType) }}</span>
+         </div>
+         <div class="conn-code">{{ c.connectorCode }}</div>
+ 
++        <div class="conn-cost">
++          <span class="cost-label">{{ t('等待秒') }}</span>
++          <el-input-number v-model="c.waitSec" :min="0" :step="1" size="small" controls-position="right" style="width: 96px" />
++          <span class="cost-label">{{ t('每层秒') }}</span>
++          <el-input-number v-model="c.travelSecPerFloor" :min="0" :step="1" size="small" controls-position="right" style="width: 96px" />
++          <el-button size="small" type="primary" plain @click="saveCost(c)">{{ t('保存成本') }}</el-button>
++        </div>
++
+         <div class="stop-list">
+           <div v-for="s in c.stops" :key="s.floorId" class="stop-row">
+             <span :class="['stop-floor', { current: s.floorId === floorId }]">
+               {{ s.floorId === floorId ? t('本层') : t('其他层') + ' ' + s.floorId.slice(0, 8) }}
+             </span>
+             <span class="stop-xy">({{ Math.round(s.x) }}, {{ Math.round(s.y) }})</span>
+             <el-button link type="danger" size="small" @click="removeStop(c, s.floorId)">
+               {{ t('删除') }}
+             </el-button>
+           </div>
+@@ -231,17 +264,28 @@ defineExpose({ refresh: load })
+ }
+ .stop-xy {
+   color: #666;
+   flex: 1;
+ }
+ .conn-actions {
+   display: flex;
+   gap: 6px;
+   margin-top: 4px;
+ }
++.conn-cost {
++  display: flex;
++  align-items: center;
++  gap: 4px;
++  flex-wrap: wrap;
++  margin: 6px 0;
++}
++.cost-label {
++  font-size: 11px;
++  color: #666;
++}
+ .empty-tip {
+   font-size: 12px;
+   color: #bbb;
+   text-align: center;
+   padding: 12px;
+ }
+ </style>

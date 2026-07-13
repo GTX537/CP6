@@ -1,0 +1,123 @@
+# Review package: c130703..HEAD
+
+## Commits
+614ef4e fix(wfs-service-task): T5 FlowSchemaValidator 补 ServiceMode 值域校验（sync|async → E-WF-016）
+
+## Files changed
+ CP6.Core/Services/Wf/FlowSchemaValidator.cs |  6 +++++
+ CP6.Tests/Wf/ServiceTaskValidatorTests.cs   | 35 +++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/FlowSchemaValidator.cs b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+index f699417..e14f030 100644
+--- a/CP6.Core/Services/Wf/FlowSchemaValidator.cs
++++ b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+@@ -3,20 +3,25 @@ namespace CP6.Core.Services.Wf;
+ /// <summary>流程 schema 静态校验（设计器保存前后端共用）。返回错误码列表（空=合法）。所有结构性问题统一 E-WF-010。</summary>
+ public static class FlowSchemaValidator
+ {
+     private static readonly HashSet<string> KnownStrategies =
+         new(new[] { "DirectManager", "DeptLeader", "Role", "Specified", "Starter", "FormField", "DataMap", "Group" }, StringComparer.OrdinalIgnoreCase);
+ 
+     // 服务任务合法 kind：引擎按 ServiceKind 常量精确匹配(ServiceTaskNodeHandler)，此处同用序数比较以对齐运行期语义。
+     private static readonly HashSet<string> KnownServiceKinds =
+         new(new[] { ServiceKind.DataWriteback, ServiceKind.WebApi, ServiceKind.Timer }, StringComparer.Ordinal);
+ 
++    // 服务任务合法 mode（spec §6.1；timer 由 handler 规整为 async，此处只校验用户显式填值）。
++    // 用序数比较对齐运行期语义（ServiceTaskNodeHandler 以 mode == ServiceMode.Sync 精确匹配，常量为小写 "sync"/"async"）。
++    private static readonly HashSet<string> KnownServiceModes =
++        new(new[] { ServiceMode.Sync, ServiceMode.Async }, StringComparer.Ordinal);
++
+     public static IReadOnlyList<string> Validate(FlowSchema schema)
+     {
+         var errs = new List<string>();
+         if (schema is null || schema.Nodes.Count == 0) { errs.Add("E-WF-010"); return errs; }
+ 
+         string T(FlowNode n) => (n.Type ?? "approval").Trim().ToLowerInvariant();
+         var ids = schema.Nodes.Select(n => n.Id).ToHashSet();
+ 
+         // ① 恰一 start ② 至少一 end
+         if (schema.Nodes.Count(n => T(n) == "start") != 1) errs.Add("E-WF-010");
+@@ -83,20 +88,21 @@ public static class FlowSchemaValidator
+         //    kind 非法 / dataWriteback 缺 ActionName / webApi 缺 Connector|Path / timer 缺 DelayMode|DelayValue → E-WF-016。
+         //    serviceTask 必非 end，若无任何"非错误"出边则成功路径无后继(引擎会误结 Approved) → E-WF-016。
+         foreach (var n in schema.Nodes.Where(n => T(n) == "servicetask"))
+         {
+             var kind = (n.ServiceKind ?? string.Empty).Trim();
+             bool bad =
+                 !KnownServiceKinds.Contains(kind)
+                 || (kind == ServiceKind.DataWriteback && string.IsNullOrWhiteSpace(n.ServiceActionName))
+                 || (kind == ServiceKind.WebApi && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
+                 || (kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(n.ServiceDelayMode) || string.IsNullOrWhiteSpace(n.ServiceDelayValue)))
++                || (!string.IsNullOrWhiteSpace(n.ServiceMode) && !KnownServiceModes.Contains(n.ServiceMode.Trim()))  // 票5：ServiceMode 值域(sync|async)
+                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServicePath)         // 票4：路径模板不得含数组下标
+                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServiceParamsJson)   // 票4：参数模板不得含数组下标
+                 || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
+             if (bad) { errs.Add("E-WF-016"); break; }
+         }
+ 
+         // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边仅允许出自 serviceTask 节点。
+         var serviceIds = schema.Nodes.Where(n => T(n) == "servicetask").Select(n => n.Id).ToHashSet();
+         if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
+         if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
+diff --git a/CP6.Tests/Wf/ServiceTaskValidatorTests.cs b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+index e6dfac4..a7121eb 100644
+--- a/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
++++ b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+@@ -130,20 +130,55 @@ public class ServiceTaskValidatorTests
+     }
+ 
+     [Fact]
+     public void WebApi_PathWithArraySubscript_E_WF_016()
+     {
+         var s = Base();
+         Svc(s).ServicePath = "/o/{lines[0]}";   // 路径模板含数组下标 → 设计期拦
+         Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
+     }
+ 
++    // ── 票5：ServiceMode 值域校验(sync|async) ──
++
++    [Fact]
++    public void ServiceMode_Invalid_E_WF_016()
++    {
++        var schema = new FlowSchema {
++            Nodes = {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "svc", Type = "serviceTask", ServiceKind = ServiceKind.DataWriteback,
++                    ServiceActionName = "sampleWriteback", ServiceMode = "batch" },   // 非法 mode
++                new FlowNode { Id = "e", Type = "end" },
++            },
++            Edges = { new FlowEdge { From = "s", To = "svc" }, new FlowEdge { From = "svc", To = "e" } },
++        };
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(schema));
++    }
++
++    [Fact]
++    public void ServiceMode_SyncOrAsync_Or_Null_Passes()
++    {
++        foreach (var mode in new string?[] { null, "sync", "async" })
++        {
++            var schema = new FlowSchema {
++                Nodes = {
++                    new FlowNode { Id = "s", Type = "start" },
++                    new FlowNode { Id = "svc", Type = "serviceTask", ServiceKind = ServiceKind.DataWriteback,
++                        ServiceActionName = "sampleWriteback", ServiceMode = mode },
++                    new FlowNode { Id = "e", Type = "end" },
++                },
++                Edges = { new FlowEdge { From = "s", To = "svc" }, new FlowEdge { From = "svc", To = "e" } },
++            };
++            Assert.DoesNotContain("E-WF-016", FlowSchemaValidator.Validate(schema));
++        }
++    }
++
+     // ── Step 4: DesignerService.save 注册名校验(E-WF-018) ──
+ 
+     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString())
+         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
+ 
+     private sealed class FakeExec : IServiceTaskExecutor
+     {
+         public string Key { get; init; } = "";
+         public string Kind { get; init; } = "";

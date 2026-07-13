@@ -1,0 +1,361 @@
+# Review package: e043d57..HEAD
+
+## Commits
+e5b521a feat(fin): 波B-T1 ShipAsync 点火 FIN 开票桥——出货确定→AR 自动开票
+
+## Files changed
+ CP6.Core/Services/Wms/OutboundService.cs    |  69 ++++++++++-
+ CP6.Tests/Wms/OutboundShipFinBridgeTests.cs | 172 ++++++++++++++++++++++++++++
+ 2 files changed, 240 insertions(+), 1 deletion(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Wms/OutboundService.cs b/CP6.Core/Services/Wms/OutboundService.cs
+index f24f9a0..26f1047 100644
+--- a/CP6.Core/Services/Wms/OutboundService.cs
++++ b/CP6.Core/Services/Wms/OutboundService.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.Core.Services.Fin;
+ using CP6.Entity.DomainModels;
+ using CP6.Entity.DomainModels.Mes;
+ using CP6.Entity.DomainModels.Wms;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Wms;
+ 
+ /// <summary>
+ /// 出庫サービス実装。
+ /// </summary>
+@@ -15,42 +16,45 @@ namespace CP6.Core.Services.Wms;
+ /// FIFO + 期限優先 引当：Stock を ReceiveDate ASC, ExpiryDate ASC で抽出して順次採用。
+ /// 第一版では 1 明細 = 1 ロット の引当に限定（単一 Stock 行で必要量を確保できないと例外）。
+ /// </remarks>
+ public class OutboundService : IOutboundService
+ {
+     private readonly CP6Context _db;
+     private readonly IWmsSequenceService _seq;
+     private readonly IStockMovementService _stock;
+     private readonly IWmsNotifier _notifier;
+     private readonly IErpBridgeHook _erpBridge;
++    private readonly IFinBridgeHook _finBridge;
+     private readonly IMaterialShortageService? _shortage;
+     private readonly IMaterialShortageNotifier? _shortageNotifier;
+     private readonly IOutboundRoutingService? _routing;
+ 
+     private const string OrderPrefix = "OUT";
+     private const string PackagePrefix = "PKG";
+ 
+     public OutboundService(
+         CP6Context db,
+         IWmsSequenceService seq,
+         IStockMovementService stock,
+         IWmsNotifier? notifier = null,
+         IErpBridgeHook? erpBridge = null,
+         IMaterialShortageService? shortage = null,
+         IMaterialShortageNotifier? shortageNotifier = null,
+-        IOutboundRoutingService? routing = null)
++        IOutboundRoutingService? routing = null,
++        IFinBridgeHook? finBridge = null)
+     {
+         _db = db;
+         _seq = seq;
+         _stock = stock;
+         _notifier = notifier ?? new NoOpWmsNotifier();
+         _erpBridge = erpBridge ?? new NoOpErpBridgeHook();
++        _finBridge = finBridge ?? new NoOpFinBridgeHook();
+         _shortage = shortage;
+         _shortageNotifier = shortageNotifier;
+         _routing = routing;
+     }
+ 
+     // ═══════════════════════════════════════════════════════════
+     //  CRUD
+     // ═══════════════════════════════════════════════════════════
+ 
+     public async Task<List<OutboundOrder>> SearchOrdersAsync(OutboundOrderSearchQuery q)
+@@ -456,20 +460,23 @@ public class OutboundService : IOutboundService
+             throw new InvalidOperationException("WM-MSG-043: 引当済 or ピッキング中のみ出庫確定可");
+ 
+         var details = await _db.OutboundOrderDetails
+             .Where(d => d.OutboundNo == outboundNo && !d.IsDeleted && d.ShippedQty < d.AllocatedQty)
+             .OrderBy(d => d.LineNo)
+             .ToListAsync();
+ 
+         if (details.Count == 0)
+             throw new InvalidOperationException("WM-MSG-041: 出庫対象明細がありません");
+ 
++        // 今回出荷数のスナップショット（ループで ShippedQty が更新される前に確保）— FIN 自動開票の行数量に使用
++        var shippedByLine = details.ToDictionary(d => d.LineNo, d => d.AllocatedQty - d.ShippedQty);
++
+         foreach (var d in details)
+         {
+             var shipQty = d.AllocatedQty - d.ShippedQty;
+             if (shipQty <= 0) continue;
+ 
+             // 出庫（OUT）— OUT が AllocatedQty も同時に減らすので、UNRSV は不要
+             //  多倉庫ルーティング：引当時に確定した実倉庫(d.WarehouseCd)から出庫。旧データは header にフォールバック。
+             var txnNo = await _stock.ApplyAsync(new StockMovementRequest
+             {
+                 TxnType = WmsTxnType.OUT,
+@@ -521,23 +528,83 @@ public class OutboundService : IOutboundService
+         try { await _notifier.NotifyOutboundShippedAsync(outboundNo, packageNo); }
+         catch { /* best-effort */ }
+ 
+         // WMS→ERP 接缝：出荷区分の出庫確定 → 受注へ出荷実績を回写（best-effort）
+         if (header.OutboundType == OutboundType.Shipping && !string.IsNullOrWhiteSpace(header.WebOrderNo))
+         {
+             try { await _erpBridge.OnShipmentConfirmedAsync(outboundNo, userName); }
+             catch { /* best-effort：回写失敗は出荷確定を失敗させない */ }
+         }
+ 
++        // WMS→FIN 接缝：出荷区分の出庫確定 → AR 自動開票（幂等 ShipmentId=出庫号、best-effort）
++        //  受注售価を優先取得し、成本は工単成本単があれば消費端が実成本へ切替、無ければ EstimatedCost 回退（0=成本凭证保留）。
++        if (header.OutboundType == OutboundType.Shipping)
++        {
++            try
++            {
++                var finReq = await BuildFinInvoiceRequestAsync(header, details, shippedByLine);
++                if (finReq.Lines.Count > 0)
++                    await _finBridge.OnShipmentConfirmedAsync(finReq, userName);
++            }
++            catch { /* best-effort：自動開票失敗は出荷確定を失敗させない */ }
++        }
++
+         return packageNo;
+     }
+ 
++    /// <summary>
++    /// 出庫確定データから FIN 自動開票リクエストを組立てる。
++    /// 售価は受注明細 <see cref="OrderDetail.IndividualUnitPrice"/> を優先（引当で在庫成本価に汚染され得る
++    /// 出庫明細 UnitPrice を盲信しない）。取得できない場合のみ出庫明細 UnitPrice に回退する。
++    /// </summary>
++    private async Task<FinShipmentInvoiceRequest> BuildFinInvoiceRequestAsync(
++        OutboundOrder header, List<OutboundOrderDetail> details, IReadOnlyDictionary<int, decimal> shippedByLine)
++    {
++        // 受注明細の售価を製品CD別に索引（同製品複数明細は最初の非 null 価格を採用）
++        var orderPriceByProduct = new Dictionary<string, decimal?>();
++        if (!string.IsNullOrWhiteSpace(header.WebOrderNo))
++        {
++            var ods = await _db.OrderDetails.AsNoTracking()
++                .Where(d => d.WebOrderNo == header.WebOrderNo && !d.IsDeleted)
++                .ToListAsync();
++            orderPriceByProduct = ods
++                .GroupBy(d => d.ProductCd)
++                .ToDictionary(g => g.Key, g => g.Select(x => x.IndividualUnitPrice).FirstOrDefault(p => p.HasValue));
++        }
++
++        var lines = new List<FinShipmentInvoiceLine>();
++        foreach (var d in details)
++        {
++            if (!shippedByLine.TryGetValue(d.LineNo, out var qty) || qty <= 0m) continue;
++
++            decimal unitPrice = 0m;
++            if (orderPriceByProduct.TryGetValue(d.ProductCd, out var op) && op.HasValue)
++                unitPrice = op.Value;           // 受注售価を優先
++            else if (d.UnitPrice.HasValue)
++                unitPrice = d.UnitPrice.Value;  // 受注明細が引けない場合のみ出庫明細単価へ回退
++
++            lines.Add(new FinShipmentInvoiceLine { ItemId = d.ProductCd, Qty = qty, UnitPrice = unitPrice });
++        }
++
++        return new FinShipmentInvoiceRequest
++        {
++            ShipmentId = header.OutboundNo,   // 幂等键
++            OrderId = string.IsNullOrWhiteSpace(header.WebOrderNo) ? null : header.WebOrderNo,
++            WorkOrderNo = string.IsNullOrWhiteSpace(header.WorkOrderNo) ? null : header.WorkOrderNo,
++            CustomerId = header.CustomerCd ?? string.Empty,
++            InvoiceDate = DateTime.Today,
++            DueDate = DateTime.Today,
++            EstimatedCost = 0m,   // 工単成本単があれば消費端が実 FG 単位成本へ切替、無ければ成本凭证は保留（CostAmount>0 のみ計上）
++            Lines = lines,
++        };
++    }
++
+     // ═══════════════════════════════════════════════════════════
+     //  自動展開
+     // ═══════════════════════════════════════════════════════════
+ 
+     public async Task<string> CreateFromWorkOrderAsync(string workOrderNo, string? userName)
+     {
+         // 二重生成防止
+         var existing = await _db.OutboundOrders
+             .Where(x => x.WorkOrderNo == workOrderNo && !x.IsDeleted && x.Status != OutboundOrderStatus.Cancelled)
+             .FirstOrDefaultAsync();
+diff --git a/CP6.Tests/Wms/OutboundShipFinBridgeTests.cs b/CP6.Tests/Wms/OutboundShipFinBridgeTests.cs
+new file mode 100644
+index 0000000..57ec808
+--- /dev/null
++++ b/CP6.Tests/Wms/OutboundShipFinBridgeTests.cs
+@@ -0,0 +1,172 @@
++using CP6.Core.Services.Fin;
++using CP6.Core.Services.Integration;
++using CP6.Core.Services.Wms;
++using CP6.Entity.DomainModels.Erp;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests.Wms;
++
++/// <summary>
++/// 出庫確定（Ship）→ FIN 自動開票桥（IFinBridgeHook.OnShipmentConfirmedAsync）点火の回帰テスト（F1 財務油路 波B T-B.1）。
++///
++/// 検証観点：
++///  ① 出荷区分の出庫確定後、FIN 桥が呼ばれ、request.ShipmentId=出庫号 / Lines 数=出庫明細数。
++///  ② Lines.UnitPrice は受注明細 IndividualUnitPrice 由来（引当で在庫成本価に汚染された出庫明細 UnitPrice ではない）。
++///  ③ 材料出庫（非 Shipping）では FIN 桥は呼ばれない。
++///  ④ FIN 桥が例外を投げても出荷確定は成功する（best-effort、出荷をブロックしない）。
++/// </summary>
++public class OutboundShipFinBridgeTests
++{
++    /// <summary>呼び出しを記録する偽 IFinBridgeHook（mock フレームワーク不使用、仓内範式）。</summary>
++    private sealed class CapturingFinBridge : IFinBridgeHook
++    {
++        public int ConfirmCalls;
++        public FinShipmentInvoiceRequest? LastRequest;
++        public bool ThrowOnConfirm;
++
++        public Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
++        {
++            ConfirmCalls++;
++            LastRequest = request;
++            if (ThrowOnConfirm) throw new InvalidOperationException("FIN 桥爆炸测试");
++            return Task.FromResult(FinBridgeResult.Ok("INV-TEST"));
++        }
++
++        public Task<FinBridgeResult> OnShipmentCancelledAsync(string shipmentId, string? userName)
++            => Task.FromResult(FinBridgeResult.Skipped("n/a"));
++
++        public Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName)
++            => Task.FromResult(FinBridgeResult.Skipped("n/a"));
++    }
++
++    private static OutboundService CreateService(out CP6.Core.EFDbContext.CP6Context db, IFinBridgeHook finBridge)
++    {
++        db = TestHelper.CreateInMemoryContext();
++        db.Warehouses.Add(new Warehouse
++        {
++            WarehouseCd = "W01", WarehouseName = "メイン倉庫",
++            WarehouseType = WarehouseType.RawMaterial, AllowNegative = false,
++        });
++        db.SaveChanges();
++        var seq = new WmsSequenceService(db);
++        var stock = new StockMovementService(db, seq);
++        return new OutboundService(db, seq, stock, finBridge: finBridge);
++    }
++
++    private static async Task SeedStockAsync(CP6.Core.EFDbContext.CP6Context db,
++        string product, string lot, string location, decimal qty)
++    {
++        var seq = new WmsSequenceService(db);
++        var stock = new StockMovementService(db, seq);
++        await stock.ApplyAsync(new StockMovementRequest
++        {
++            TxnType = WmsTxnType.IN, WarehouseCd = "W01",
++            LocationCd = location, ProductCd = product, LotNo = lot, Qty = qty,
++            // 在庫成本価（受注售価とは別値）— 汚染判別のため意図的に異なる値
++            UnitPrice = 999m,
++        });
++    }
++
++    // ═════════ ①② Shipping：FIN 桥点火 + 受注售価由来 ═════════
++
++    [Fact]
++    public async Task Ship_ShippingWithOrder_FiresFinBridge_WithOrderSalePrice()
++    {
++        var bridge = new CapturingFinBridge();
++        var svc = CreateService(out var db, bridge);
++        await SeedStockAsync(db, "PROD-X", "L1", "L01", 100m);
++
++        db.Orders.Add(new Order
++        {
++            WebOrderNo = "WO_SALE1", CustomerCd = "C001", OrderDate = DateTime.Today,
++            OrderType = "01", Status = 1,
++        });
++        db.OrderDetails.Add(new OrderDetail
++        {
++            WebOrderNo = "WO_SALE1", WebOrderDetailNo = 1, ProductCd = "PROD-X",
++            Quantity = 20m, UnitPriceUnit = "EA", IndividualUnitPrice = 12.5m,
++        });
++        await db.SaveChangesAsync();
++
++        var no = await svc.CreateFromOrderAsync("WO_SALE1", "u");
++        await svc.ConfirmOrderAsync(no, "u");
++        await svc.AllocateAsync(no, "u");
++
++        // 引当後に出庫明細 UnitPrice を成本価で汚染 → FIN 桥は受注售価 12.5 を優先すべき
++        var det = await db.OutboundOrderDetails.SingleAsync(d => d.OutboundNo == no);
++        det.UnitPrice = 999m;
++        await db.SaveChangesAsync();
++
++        var pkg = await svc.ShipAsync(no, new ShipRequest(), "u");
++
++        Assert.NotNull(pkg);
++        Assert.Equal(1, bridge.ConfirmCalls);
++        var req = Assert.IsType<FinShipmentInvoiceRequest>(bridge.LastRequest);
++        Assert.Equal(no, req.ShipmentId);                 // 幂等键=出庫号
++        Assert.Equal("WO_SALE1", req.OrderId);
++        Assert.Equal("C001", req.CustomerId);
++        var line = Assert.Single(req.Lines);              // Lines 数=出庫明細数(1)
++        Assert.Equal("PROD-X", line.ItemId);
++        Assert.Equal(20m, line.Qty);
++        Assert.Equal(12.5m, line.UnitPrice);              // 受注售価，非汚染的 999
++    }
++
++    // ═════════ ③ 材料出庫では発火しない ═════════
++
++    [Fact]
++    public async Task Ship_MaterialType_DoesNotFireFinBridge()
++    {
++        var bridge = new CapturingFinBridge();
++        var svc = CreateService(out var db, bridge);
++        await SeedStockAsync(db, "P001", "L1", "L01", 100m);
++
++        var no = await svc.CreateOrderAsync(new OutboundOrderDto
++        {
++            OutboundType = OutboundType.Material,
++            WarehouseCd = "W01",
++            PlannedDate = DateTime.Today,
++            Details = new List<OutboundOrderDetailDto> { new() { ProductCd = "P001", RequiredQty = 30m } }
++        }, "u");
++        await svc.ConfirmOrderAsync(no, "u");
++        await svc.AllocateAsync(no, "u");
++        await svc.ShipAsync(no, new ShipRequest(), "u");
++
++        Assert.Equal(0, bridge.ConfirmCalls);
++        Assert.Null(bridge.LastRequest);
++    }
++
++    // ═════════ ④ FIN 桥例外は出荷をブロックしない（best-effort） ═════════
++
++    [Fact]
++    public async Task Ship_FinBridgeThrows_ShipmentStillSucceeds()
++    {
++        var bridge = new CapturingFinBridge { ThrowOnConfirm = true };
++        var svc = CreateService(out var db, bridge);
++        await SeedStockAsync(db, "PROD-X", "L1", "L01", 100m);
++
++        db.Orders.Add(new Order
++        {
++            WebOrderNo = "WO_SALE2", CustomerCd = "C002", OrderDate = DateTime.Today,
++            OrderType = "01", Status = 1,
++        });
++        db.OrderDetails.Add(new OrderDetail
++        {
++            WebOrderNo = "WO_SALE2", WebOrderDetailNo = 1, ProductCd = "PROD-X",
++            Quantity = 10m, UnitPriceUnit = "EA", IndividualUnitPrice = 8m,
++        });
++        await db.SaveChangesAsync();
++
++        var no = await svc.CreateFromOrderAsync("WO_SALE2", "u");
++        await svc.ConfirmOrderAsync(no, "u");
++        await svc.AllocateAsync(no, "u");
++
++        // 例外を投げても出荷確定は成功して packageNo を返す
++        var pkg = await svc.ShipAsync(no, new ShipRequest(), "u");
++
++        Assert.NotNull(pkg);
++        Assert.Equal(1, bridge.ConfirmCalls);             // 呼ばれた（が投げた）
++        var h = await db.OutboundOrders.SingleAsync(x => x.OutboundNo == no);
++        Assert.Equal(OutboundOrderStatus.Completed, h.Status);   // 出荷は確定済み
++    }
++}

@@ -1,0 +1,320 @@
+# Review package: b01c8de..37ca334
+
+## Commits
+37ca334 feat(space): 生命周期 API 层（codeRule/publish/zone + Segments 双向转换）
+
+## Files changed
+ cp6.web/src/api/space/__tests__/codeRule.spec.ts | 74 ++++++++++++++++++
+ cp6.web/src/api/space/codeRule.ts                | 98 ++++++++++++++++++++++++
+ cp6.web/src/api/space/publish.ts                 | 31 ++++++++
+ cp6.web/src/api/space/zone.ts                    |  9 +++
+ cp6.web/src/types/space/scene.ts                 | 55 +++++++++++++
+ 5 files changed, 267 insertions(+)
+
+## Diff
+diff --git a/cp6.web/src/api/space/__tests__/codeRule.spec.ts b/cp6.web/src/api/space/__tests__/codeRule.spec.ts
+new file mode 100644
+index 0000000..1e632d0
+--- /dev/null
++++ b/cp6.web/src/api/space/__tests__/codeRule.spec.ts
+@@ -0,0 +1,74 @@
++import { describe, it, expect } from 'vitest'
++import { parseRuleEntity } from '../codeRule'
++
++// GET /space/code-rule 直出实体：segments 是 JSON 字符串，经全局 camelCase 序列化后
++// 键为小写 `segments`。parseRuleEntity 把实体归一为 CodeRuleVO（segments 恒为数组）。
++describe('parseRuleEntity', () => {
++  const seg = {
++    key: 'zone',
++    name: '库区',
++    source: 'zone-code',
++    width: 2,
++    pad: '0',
++    start: 1,
++    step: 1,
++    sep: '-',
++    upper: true,
++    fixedValue: '',
++    optional: false,
++  }
++
++  it('合法 JSON 字符串 → segments 数组（小写键）', () => {
++    const vo = parseRuleEntity({
++      id: 'g1',
++      ruleName: 'R1',
++      scopeType: 1,
++      scopeId: 'f1',
++      isDefault: true,
++      segments: JSON.stringify([seg]),
++    })
++    expect(vo.segments).toHaveLength(1)
++    expect(vo.segments[0]).toMatchObject({ key: 'zone', width: 2, upper: true })
++    expect(vo.ruleName).toBe('R1')
++    expect(vo.scopeType).toBe(1)
++    expect(vo.scopeId).toBe('f1')
++    expect(vo.isDefault).toBe(true)
++    expect(vo.id).toBe('g1')
++  })
++
++  it('"[]" → 空数组', () => {
++    const vo = parseRuleEntity({ ruleName: 'R', scopeType: 0, isDefault: false, segments: '[]' })
++    expect(vo.segments).toEqual([])
++  })
++
++  it('空串 / undefined → 空数组', () => {
++    expect(parseRuleEntity({ segments: '' } as any).segments).toEqual([])
++    expect(parseRuleEntity({} as any).segments).toEqual([])
++  })
++
++  it('非法串不抛异常 → 空数组', () => {
++    expect(() => parseRuleEntity({ segments: '{not json' } as any)).not.toThrow()
++    expect(parseRuleEntity({ segments: '{not json' } as any).segments).toEqual([])
++  })
++
++  it('非数组 JSON（对象）→ 空数组', () => {
++    expect(parseRuleEntity({ segments: '{"a":1}' } as any).segments).toEqual([])
++  })
++
++  it('PascalCase 键容错（Segments/RuleName/…）', () => {
++    const vo = parseRuleEntity({
++      Id: 'g2',
++      RuleName: 'RP',
++      ScopeType: 2,
++      ScopeId: 'z9',
++      IsDefault: true,
++      Segments: JSON.stringify([seg]),
++    } as any)
++    expect(vo.segments).toHaveLength(1)
++    expect(vo.ruleName).toBe('RP')
++    expect(vo.scopeType).toBe(2)
++    expect(vo.scopeId).toBe('z9')
++    expect(vo.isDefault).toBe(true)
++    expect(vo.id).toBe('g2')
++  })
++})
+diff --git a/cp6.web/src/api/space/codeRule.ts b/cp6.web/src/api/space/codeRule.ts
+new file mode 100644
+index 0000000..2af25cf
+--- /dev/null
++++ b/cp6.web/src/api/space/codeRule.ts
+@@ -0,0 +1,98 @@
++import http from '../http'
++import type {
++  Envelope,
++  CodeRuleVO,
++  CodeSegmentDef,
++  CodePreviewResp,
++  CodePrecheckResp,
++} from '@/types/space/scene'
++
++// GET /space/code-rule 直出实体：segments 是 JSON 字符串（camelCase 序列化后键为小写
++// `segments`），其余字段亦为 camelCase。此处容错 PascalCase 键与非法串。
++type RawRuleEntity = {
++  id?: string
++  Id?: string
++  ruleName?: string
++  RuleName?: string
++  scopeType?: number
++  ScopeType?: number
++  scopeId?: string | null
++  ScopeId?: string | null
++  isDefault?: boolean
++  IsDefault?: boolean
++  segments?: string
++  Segments?: string
++  [k: string]: unknown
++}
++
++/**
++ * 实体 → VO 归一：segments 字符串 JSON.parse 为数组；空/"[]"/非法串/非数组 一律 []（不抛）。
++ * 兼容后端 camelCase（小写 segments）与偶发 PascalCase 键。
++ */
++export function parseRuleEntity(raw: RawRuleEntity): CodeRuleVO {
++  const rawSeg: unknown = raw.segments ?? raw.Segments
++  let segments: CodeSegmentDef[] = []
++  if (Array.isArray(rawSeg)) {
++    segments = rawSeg as CodeSegmentDef[]
++  } else if (typeof rawSeg === 'string' && rawSeg.trim()) {
++    try {
++      const parsed = JSON.parse(rawSeg)
++      if (Array.isArray(parsed)) segments = parsed as CodeSegmentDef[]
++    } catch {
++      segments = []
++    }
++  }
++  return {
++    id: (raw.id ?? raw.Id) as string | undefined,
++    ruleName: (raw.ruleName ?? raw.RuleName ?? '') as string,
++    scopeType: (raw.scopeType ?? raw.ScopeType ?? 0) as number,
++    scopeId: (raw.scopeId ?? raw.ScopeId ?? null) as string | null,
++    segments,
++    isDefault: (raw.isDefault ?? raw.IsDefault ?? false) as boolean,
++  }
++}
++
++export const codeRuleApi = {
++  // GET 直出实体列表 → 内部 parseRuleEntity 归一为 CodeRuleVO[]（segments 恒为数组）
++  async list(): Promise<Envelope<CodeRuleVO[]>> {
++    const res = await http.get<unknown, Envelope<RawRuleEntity[]>>('/space/code-rule')
++    return { ...res, data: (res.data ?? []).map(parseRuleEntity) }
++  },
++  // 提交 CodeRuleDto：segments 为数组直发（服务端序列化为 JSON 存库）
++  create(d: CodeRuleVO) {
++    return http.post<unknown, Envelope<{ id: string }>>('/space/code-rule', d)
++  },
++  update(id: string, d: CodeRuleVO) {
++    return http.put<unknown, Envelope<unknown>>(
++      `/space/code-rule/${encodeURIComponent(id)}`,
++      d,
++    )
++  },
++  remove(id: string) {
++    return http.delete<unknown, Envelope<unknown>>(`/space/code-rule/${encodeURIComponent(id)}`)
++  },
++  // 只发 segments，其余 CodePreviewReq 字段服务端不读
++  preview(segments: CodeSegmentDef[]) {
++    return http.post<unknown, Envelope<CodePreviewResp>>('/space/code-rule/preview', { segments })
++  },
++  // 批量生成库位编码；返回本次生成的编码列表
++  generate(floorId: string, mode: 'fill-empty' | 'rebuild', scopeZoneId?: string) {
++    return http.post<unknown, Envelope<string[]>>(
++      `/space/floor/${encodeURIComponent(floorId)}/generate-codes`,
++      { mode, scopeZoneId },
++    )
++  },
++  // 发布前编码预检（zoneId 可空 = 整层）
++  precheck(floorId: string, zoneId?: string) {
++    return http.get<unknown, Envelope<CodePrecheckResp>>(
++      `/space/floor/${encodeURIComponent(floorId)}/code-precheck`,
++      { params: { zoneId } },
++    )
++  },
++  // 单格生成
++  genSingle(locationId: string) {
++    return http.post<unknown, Envelope<{ code: string }>>(
++      `/space/location/${encodeURIComponent(locationId)}/gen-code`,
++    )
++  },
++}
+diff --git a/cp6.web/src/api/space/publish.ts b/cp6.web/src/api/space/publish.ts
+new file mode 100644
+index 0000000..3249daa
+--- /dev/null
++++ b/cp6.web/src/api/space/publish.ts
+@@ -0,0 +1,31 @@
++import http from '../http'
++import type { Envelope, SpaceEventVO } from '@/types/space/scene'
++
++export const publishApi = {
++  // 整层/库区发布（zoneId 可空 = 整层）；返回发布库位数
++  publishFloor(floorId: string, zoneId?: string) {
++    return http.post<unknown, Envelope<{ published: number }>>(
++      `/space/floor/${encodeURIComponent(floorId)}/publish`,
++      { zoneId },
++    )
++  },
++  // 停用已发布库位
++  deactivate(locationId: string) {
++    return http.put<unknown, Envelope<unknown>>(
++      `/space/location/${encodeURIComponent(locationId)}/deactivate`,
++    )
++  },
++  // 存量采纳导入
++  adopt(items: { code: string; attrs?: Record<string, unknown> }[]) {
++    return http.post<unknown, Envelope<{ imported: number; skipped: string[] }>>(
++      '/space/location/adopt',
++      { items },
++    )
++  },
++  // SPACE→WMS 集成事件（分页，无 total）
++  events(page: number, pageSize: number) {
++    return http.get<unknown, Envelope<SpaceEventVO[]>>('/space/publish/events', {
++      params: { page, pageSize },
++    })
++  },
++}
+diff --git a/cp6.web/src/api/space/zone.ts b/cp6.web/src/api/space/zone.ts
+new file mode 100644
+index 0000000..9e8518c
+--- /dev/null
++++ b/cp6.web/src/api/space/zone.ts
+@@ -0,0 +1,9 @@
++import http from '../http'
++import type { Envelope, ZoneVO } from '@/types/space/scene'
++
++export const zoneApi = {
++  // 列出楼层下全部库区
++  list(floorId: string) {
++    return http.get<unknown, Envelope<ZoneVO[]>>('/space/zone', { params: { floorId } })
++  },
++}
+diff --git a/cp6.web/src/types/space/scene.ts b/cp6.web/src/types/space/scene.ts
+index 26067e8..05610ea 100644
+--- a/cp6.web/src/types/space/scene.ts
++++ b/cp6.web/src/types/space/scene.ts
+@@ -132,10 +132,65 @@ export interface SceneSaveDto {
+   }
+ }
+ 
+ export interface UnplacedLocationDto {
+   id: string
+   locationCode: string
+   status: number
+ }
+ 
+ export type Envelope<T> = { code: number; message: string; data: T }
++
++// ── 生命周期（ch03 编码规则 / ch04 发布）VO —— 镜像后端 CodeRuleDtos.cs ──
++
++/** 编码段定义（CodeRuleDtos.cs:7，11 字段 camelCase 对齐）。 */
++export interface CodeSegmentDef {
++  key: string
++  name: string
++  source: string
++  width: number
++  pad: string
++  start: number
++  step: number
++  sep: string
++  upper: boolean
++  fixedValue: string
++  optional: boolean
++}
++
++/** 编码规则 VO（segments 归一后恒为数组；对应后端 CodeRuleDto）。 */
++export interface CodeRuleVO {
++  id?: string
++  ruleName: string
++  scopeType: number
++  scopeId?: string | null
++  segments: CodeSegmentDef[]
++  isDefault: boolean
++}
++
++/** 实时预览响应（ch03 §8）。 */
++export interface CodePreviewResp {
++  structure: { key: string; name: string; source: string; optional: boolean }[]
++  samples: string[]
++  variableLen: { withAisle: string; withoutAisle: string }
++  precheck: { ok: boolean; errors: string[] }
++}
++
++/** 发布前编码预检响应（ch03 §9.2）。 */
++export interface CodePrecheckResp {
++  emptyCodeCount: number
++  duplicateGroups: string[][]
++  precheckErrors: string[]
++  unplacedDraftCount: number
++}
++
++/** SPACE→WMS 集成事件 VO（ch04 §2）。 */
++export interface SpaceEventVO {
++  id: string
++  hookName: string
++  sourceNo: string
++  targetModule: string
++  status: string
++  attempts: number
++  createDate: string
++  lastError?: string | null
++}

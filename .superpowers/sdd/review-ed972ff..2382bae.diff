@@ -1,0 +1,192 @@
+# Review package: ed972ff..HEAD
+
+## Commits
+2382bae docs(sdd): WFS波① T6 报告——E-WF-018 异步路径结构化码收口(缺陷核实+TDD红绿+同步路径姊妹票)
+ca0dd45 fix(wfs-service-task): T6 E-WF-018 异步路径改结构化码 E-WF-018|detail（去本地化散文，前端可按码翻译）
+
+## Files changed
+ .superpowers/sdd/task-T6-report.md               | 45 ++++++++++++++++++++++++
+ CP6.Core/Services/Wf/Executors/WebApiExecutor.cs |  8 +++--
+ CP6.Core/Services/Wf/WfServiceJobService.cs      |  2 +-
+ CP6.Tests/Wf/WebApiExecutorTests.cs              | 39 ++++++++++++++++++++
+ 4 files changed, 90 insertions(+), 4 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-T6-report.md b/.superpowers/sdd/task-T6-report.md
+new file mode 100644
+index 0000000..afc924e
+--- /dev/null
++++ b/.superpowers/sdd/task-T6-report.md
+@@ -0,0 +1,45 @@
++# Task T6 报告：E-WF-018 异步路径错误码结构化
++
++**Status: DONE** — commit `ca0dd45`（分支 feat/wfs-cleanup-tickets，已 push）
++
++## 缺陷核实（票面缺陷仍在，证据）
++
++T2 改动后重新以实际行号核实，四处自由中文散文均在：
++
++- `WfServiceJobService.cs:121`（异步引擎主循环，票面写 :117 已漂移）
++  `Fail($"E-WF-018 动作/连接器未注册:{key}")` → 落 `Wf_ServiceJob.LastError` + `FailServiceTokenAsync` 错误路由
++- `WebApiExecutor.cs:35` `Fail("E-WF-018 ActionRefJson 为空，无法解析连接器")`
++- `WebApiExecutor.cs:40` `Fail($"E-WF-018 ActionRefJson 解析失败: {ex.Message}")`
++- `WebApiExecutor.cs:44` `Fail($"E-WF-018 连接器未注册:{connectorName}")`
++
++散文与真实 detail（连接器名/异常）混在一起不可 `Split('|')` 解析，前端无法按码 i18n。
++
++## TDD 红绿
++
++- **红**：新增 2 测试（`UnknownConnector_Fails_WithStructuredCode_NoProse`、`EmptyActionRef_Fails_WithStructuredCode`）
++  → `Assert.StartsWith("E-WF-018|")` / `DoesNotContain("未注册"/"连接器"/"为空")` 失败，实际串为
++  `"E-WF-018 连接器未注册:ghost"` / `"E-WF-018 ActionRefJson 为空，无法解析连接器"`（Failed 2/Passed 3）。
++- **绿**：实现后 `--filter WebApiExecutorTests` 全过；`--filter Wf` 191 全绿；全量 **1829 passed / 5 skipped**（基线 1827 + 2 新测）。
++
++## 实现（结构化格式 `E-WF-018|<机读明细>`）
++
++`WebApiExecutor.cs`：
++- 空 ActionRef → `E-WF-018|actionRefEmpty`
++- 解析异常 → `E-WF-018|parseError:{ex.GetType().Name}`（去 `ex.Message` 本地化散文，仅异常类型名）
++- 连接器未注册 → `E-WF-018|{connectorName}`
++
++`WfServiceJobService.cs:121`（异步路径 executor 未注册）→ `E-WF-018|{key}`
++
++管道前=可翻译码（前端 `Error.Split('|')[0]` 取码 i18n），管道后=无空格机读 token。T2 语义（尝试计数前移/reaper 去自增/幂等退避路由）全未触碰。
++
++## 疑虑 / 跨波票候选
++
++- **同源姊妹缺陷（同步路径，本票范围外）**：`ServiceTaskNodeHandler.cs:57`（sync 内联路径）
++  仍有 `Fail($"E-WF-018 动作/连接器未注册:{key ?? "(none)"}")` 中文散文。本票标题明确限「异步路径」，
++  brief 仅列两文件，故未改（避免 scope 蔓延/未验证的测试面）。**建议开跟踪票**：同步路径统一为
++  `E-WF-018|{key ?? "(none)"}`，与异步路径口径对齐。此散文经 sync 失败降级异步或 catch 路径同样可能进 LastError。
++
++## 零污染核对
++
++`git show --stat`：仅 3 文件（WebApiExecutor.cs / WfServiceJobService.cs / WebApiExecutorTests.cs），
++45 insert / 4 delete。零迁移、零 i18n 新键（结构化码非新增可翻译键，E-WF-018 seed 已存在）、零 Space/跨模块触碰。
+diff --git a/CP6.Core/Services/Wf/Executors/WebApiExecutor.cs b/CP6.Core/Services/Wf/Executors/WebApiExecutor.cs
+index 8c3cfad..a99f545 100644
+--- a/CP6.Core/Services/Wf/Executors/WebApiExecutor.cs
++++ b/CP6.Core/Services/Wf/Executors/WebApiExecutor.cs
+@@ -24,26 +24,28 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
+         foreach (var c in connectors)
+             _connectors[c.Name] = c;
+     }
+ 
+     /// <summary>
+     /// 解析 ctx.ActionRefJson → 找连接器 → 委托 CallAsync。
+     /// 本执行器不做 HTTP，不持有 HttpClient——HTTP 由各连接器实现决定（D4/P1-5）。
+     /// </summary>
+     public async System.Threading.Tasks.Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx)
+     {
++        // E-WF-018 结构化格式：`E-WF-018|<机读明细>`。管道前=可翻译码（前端按码 i18n），
++        // 管道后=无本地化散文的机读 token（连接器名 / 空标记 / 异常类型名），供诊断解析。
+         if (string.IsNullOrEmpty(ctx.ActionRefJson))
+-            return ServiceTaskResult.Fail("E-WF-018 ActionRefJson 为空，无法解析连接器");
++            return ServiceTaskResult.Fail("E-WF-018|actionRefEmpty");
+ 
+         ServiceTaskActionRef r;
+         try { r = ServiceTaskActionRef.Parse(ctx.ActionRefJson); }
+         catch (System.Exception ex)
+-        { return ServiceTaskResult.Fail($"E-WF-018 ActionRefJson 解析失败: {ex.Message}"); }
++        { return ServiceTaskResult.Fail($"E-WF-018|parseError:{ex.GetType().Name}"); }
+ 
+         var connectorName = r.ConnectorName;
+         if (string.IsNullOrEmpty(connectorName) || !_connectors.TryGetValue(connectorName, out var connector))
+-            return ServiceTaskResult.Fail($"E-WF-018 连接器未注册:{connectorName}");
++            return ServiceTaskResult.Fail($"E-WF-018|{connectorName}");
+ 
+         // 把 path/paramsJson 原样传给连接器；连接器自己决定模板求值/method/headers/response-map（P1-5）
+         return await connector.CallAsync(r.Path ?? "", r.ParamsJson, ctx);
+     }
+ }
+diff --git a/CP6.Core/Services/Wf/WfServiceJobService.cs b/CP6.Core/Services/Wf/WfServiceJobService.cs
+index 32d5540..6b39730 100644
+--- a/CP6.Core/Services/Wf/WfServiceJobService.cs
++++ b/CP6.Core/Services/Wf/WfServiceJobService.cs
+@@ -111,21 +111,21 @@ public sealed class WfServiceJobService : IWfServiceJobService
+                 await _db.SaveChangesAsync(ct);
+                 ServiceTaskResult result;
+                 var actionRef = ServiceTaskActionRef.Parse(job.ActionRefJson ?? "{}");
+                 var key = ServiceTaskActionRef.ResolveExecutorKey(actionRef);
+                 if (key is null)
+                 {
+                     result = ServiceTaskResult.Ok();   // none = 纯等待 timer，无 executor 直接推进
+                 }
+                 else if (!_executors.TryGetValue(key, out var exec))
+                 {
+-                    result = ServiceTaskResult.Fail($"E-WF-018 动作/连接器未注册:{key}");
++                    result = ServiceTaskResult.Fail($"E-WF-018|{key}");
+                 }
+                 else
+                 {
+                     var sctx = new ServiceTaskContext
+                     {
+                         InstanceId = job.InstanceId,
+                         TokenId = job.TokenId,
+                         NodeId = job.NodeId,
+                         StarterId = inst.StarterId,
+                         JobId = job.Id,
+diff --git a/CP6.Tests/Wf/WebApiExecutorTests.cs b/CP6.Tests/Wf/WebApiExecutorTests.cs
+index 8a1efb1..8bea92c 100644
+--- a/CP6.Tests/Wf/WebApiExecutorTests.cs
++++ b/CP6.Tests/Wf/WebApiExecutorTests.cs
+@@ -90,20 +90,59 @@ public class WebApiExecutorTests
+ 
+         var executor = new WebApiExecutor(new IWfConnector[] { new FakeConn() });
+ 
+         var result = await executor.ExecuteAsync(ctx);
+ 
+         Assert.False(result.Success);
+         Assert.NotNull(result.Error);
+         Assert.Contains("E-WF-018", result.Error!);
+     }
+ 
++    // ── T6: 未注册连接器 → 结构化码 E-WF-018|<connectorName>，无中文散文 ───────
++    [Fact]
++    public async Task UnknownConnector_Fails_WithStructuredCode_NoProse()
++    {
++        // actionRef 引用未注册连接器 → 结构化 "E-WF-018|<connectorName>"，无中文散文
++        var node = new FlowNode { Id = "n", Type = "serviceTask", ServiceKind = ServiceKind.WebApi,
++            ServiceConnectorName = "ghost", ServicePath = "/x" };
++        var ctx = new ServiceTaskContext {
++            InstanceId = System.Guid.NewGuid(), TokenId = System.Guid.NewGuid(), NodeId = "n",
++            StarterId = System.Guid.Empty, JobId = System.Guid.NewGuid(), AttemptNo = 1,
++            ActorId = System.Guid.Empty, NowUtc = System.DateTime.UtcNow,
++            ActionRefJson = ServiceTaskActionRef.Snapshot(node),
++        };
++        var exec = new CP6.Core.Services.Wf.Executors.WebApiExecutor(System.Array.Empty<IWfConnector>());
++        var r = await exec.ExecuteAsync(ctx);
++
++        Assert.False(r.Success);
++        Assert.StartsWith("E-WF-018", r.Error);        // 码在最前
++        Assert.Contains("|", r.Error);                 // 结构化分隔
++        Assert.Contains("ghost", r.Error!);            // 机读明细=连接器名
++        Assert.DoesNotContain("未注册", r.Error!);      // 无本地化中文散文
++        Assert.DoesNotContain("连接器", r.Error!);
++    }
++
++    // ── T6: 空 ActionRef → 结构化码，无中文散文 ──────────────────────────────
++    [Fact]
++    public async Task EmptyActionRef_Fails_WithStructuredCode()
++    {
++        var ctx = new ServiceTaskContext {
++            InstanceId = System.Guid.NewGuid(), TokenId = System.Guid.NewGuid(), NodeId = "n",
++            StarterId = System.Guid.Empty, JobId = System.Guid.NewGuid(), AttemptNo = 1,
++            ActorId = System.Guid.Empty, NowUtc = System.DateTime.UtcNow, ActionRefJson = null,
++        };
++        var r = await new CP6.Core.Services.Wf.Executors.WebApiExecutor(System.Array.Empty<IWfConnector>()).ExecuteAsync(ctx);
++        Assert.False(r.Success);
++        Assert.StartsWith("E-WF-018|", r.Error);
++        Assert.DoesNotContain("为空", r.Error!);
++    }
++
+     // ── T3: EchoConnector 自己把 {orderId} 解析 + 发出幂等键 ──────────────────
+     [Fact]
+     public async Task EchoConnector_ResolvesTemplate_And_EmitsIdempotencyKey()
+     {
+         var jobId = Guid.NewGuid();
+         var ctx = MakeCtx(jobId, varsJson: "{\"orderId\":\"PO-1\"}");
+         var connector = new EchoConnector();
+ 
+         var result = await connector.CallAsync("/o/{orderId}", "{}", ctx);
+ 

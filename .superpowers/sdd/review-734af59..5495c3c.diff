@@ -1,0 +1,538 @@
+# Review package: 734af59..5495c3c
+
+## Commits
+5495c3c refactor(ui): OA 迁移批次2——InboxView/InboxPending/InboxRunning/InboxDone/InboxDraft
+
+## Files changed
+ cp6.web/src/views/oa/inbox/InboxDone.vue        | 17 +++++++++--------
+ cp6.web/src/views/oa/inbox/InboxDraft.vue       |  6 ++++--
+ cp6.web/src/views/oa/inbox/InboxPending.vue     | 18 ++++++++++--------
+ cp6.web/src/views/oa/inbox/InboxRunning.vue     | 17 ++++++++++++-----
+ cp6.web/src/views/oa/inbox/InboxView.vue        | 21 +++++++++++----------
+ docs/superpowers/plans/2026-07-04-ui-restyle.md | 11 +++++++++++
+ 6 files changed, 57 insertions(+), 33 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/oa/inbox/InboxDone.vue b/cp6.web/src/views/oa/inbox/InboxDone.vue
+index 39077ca..50b56af 100644
+--- a/cp6.web/src/views/oa/inbox/InboxDone.vue
++++ b/cp6.web/src/views/oa/inbox/InboxDone.vue
+@@ -13,57 +13,59 @@
+         @change="load"
+       />
+       <el-tabs v-model="activeTab" class="done-tabs" @tab-change="load">
+         <el-tab-pane :label="t('oa.done.mine')" name="mine" />
+         <el-tab-pane :label="t('oa.done.all')" name="all" />
+         <el-tab-pane :label="t('oa.done.cc')" name="cc" />
+       </el-tabs>
+     </div>
+ 
+     <div class="table-toolbar">
+-      <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
++      <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
+       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
+     </div>
+ 
+     <el-table
+       :data="rows"
+       border
+       stripe
+       size="small"
+       max-height="560"
+       v-loading="loading"
+       style="cursor: pointer"
+       @row-click="onRowClick"
+     >
+       <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+       <el-table-column prop="starterName" :label="t('oa.col.starter')" width="120" />
+       <el-table-column :label="t('oa.col.status')" width="110">
+         <template #default="{ row }">
+-          <el-tag :type="formToTagType(row.formToStatus)" size="small">
++          <CpTag :tone="formToStatusTone(row.formToStatus)">
+             {{ t(formToStatusText(row.formToStatus)) }}
+-          </el-tag>
++          </CpTag>
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('oa.col.doneAt')" width="170">
+         <template #default="{ row }">{{ formatTime(row.doneAt) }}</template>
+       </el-table-column>
+     </el-table>
+-    <el-empty v-if="!loading && !rows.length" :image-size="80" :description="t('oa.done.empty')" />
++    <CpEmpty v-if="!loading && !rows.length" :text="t('oa.done.empty')" />
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { Refresh } from '@element-plus/icons-vue'
+ import { inboxApi } from '@/api/oa/inbox'
+ import { formToStatusText } from '@/views/oa/inbox/inboxModel'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
+ import type { DoneItem } from '@/types/oa/inbox'
+ 
+ const { t } = useI18n()
+ const emit = defineEmits<{ 'open-detail': [id: string] }>()
+ 
+ const rows = ref<DoneItem[]>([])
+ const loading = ref(false)
+ // Default: current month, mine tab
+ const now = new Date()
+ const selectedMonth = ref<string>(
+@@ -85,24 +87,23 @@ async function load() {
+     rows.value = ((res as any).data as DoneItem[]) || []
+   } finally {
+     loading.value = false
+   }
+ }
+ 
+ function onRowClick(row: DoneItem) {
+   emit('open-detail', row.instanceId)
+ }
+ 
+-// 0=pending(warning) 1=approved(success) 2=rejected(danger) 3+=info
+-type TagType = 'success' | 'warning' | 'danger' | 'info' | 'primary'
+-function formToTagType(s: number): TagType {
+-  const map: TagType[] = ['warning', 'success', 'danger', 'info', 'info', 'info', 'info']
++// 0=pending(warn) 1=approved(ok) 2=rejected(danger) 3+=info（对齐原 formToTagType：warning/success/danger/info…）
++function formToStatusTone(s: number): Tone {
++  const map: Tone[] = ['warn', 'ok', 'danger', 'info', 'info', 'info', 'info']
+   return map[s] ?? 'info'
+ }
+ 
+ function formatTime(s: string): string {
+   return s ? s.replace('T', ' ').slice(0, 19) : ''
+ }
+ 
+ onMounted(load)
+ </script>
+ 
+diff --git a/cp6.web/src/views/oa/inbox/InboxDraft.vue b/cp6.web/src/views/oa/inbox/InboxDraft.vue
+index 8f24398..4267920 100644
+--- a/cp6.web/src/views/oa/inbox/InboxDraft.vue
++++ b/cp6.web/src/views/oa/inbox/InboxDraft.vue
+@@ -1,14 +1,14 @@
+ <template>
+   <div class="inbox-draft">
+     <div class="table-toolbar">
+-      <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
++      <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
+       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
+     </div>
+ 
+     <el-table :data="rows" border stripe size="small" max-height="560" v-loading="loading">
+       <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+       <el-table-column :label="t('oa.col.createDate')" width="170">
+         <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
+       </el-table-column>
+       <el-table-column :label="t('oa.col.actions')" width="200" fixed="right">
+         <template #default="{ row }">
+@@ -17,21 +17,21 @@
+           </el-button>
+           <el-button type="success" link size="small" :loading="row._submitting" @click.stop="submitDraft(row)">
+             {{ t('oa.draft.submit') }}
+           </el-button>
+           <el-button type="danger" link size="small" @click.stop="removeDraft(row)">
+             {{ t('oa.draft.delete') }}
+           </el-button>
+         </template>
+       </el-table-column>
+     </el-table>
+-    <el-empty v-if="!loading && !rows.length" :image-size="80" :description="t('oa.draft.empty')" />
++    <CpEmpty v-if="!loading && !rows.length" :text="t('oa.draft.empty')" />
+ 
+     <!-- Edit dialog -->
+     <el-dialog v-model="editDialog.visible" :title="t('oa.draft.editTitle')" width="520px">
+       <el-input
+         v-model="editDialog.varsJson"
+         type="textarea"
+         :rows="8"
+         :placeholder="t('oa.draft.varsHint')"
+         maxlength="10000"
+         show-word-limit
+@@ -45,20 +45,22 @@
+     </el-dialog>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { onMounted, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { Refresh } from '@element-plus/icons-vue'
+ import { draftApi } from '@/api/oa/draft'
++import CpTag from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
+ 
+ const { t } = useI18n()
+ 
+ interface DraftItem {
+   instanceId: string
+   flowKey: string
+   flowName?: string
+   createDate: string
+   varsJson?: string
+   _submitting?: boolean
+diff --git a/cp6.web/src/views/oa/inbox/InboxPending.vue b/cp6.web/src/views/oa/inbox/InboxPending.vue
+index fad12f2..4d8be37 100644
+--- a/cp6.web/src/views/oa/inbox/InboxPending.vue
++++ b/cp6.web/src/views/oa/inbox/InboxPending.vue
+@@ -1,17 +1,17 @@
+ <template>
+   <div class="inbox-pending">
+     <el-tabs v-model="activeTab" @tab-change="onTabChange">
+       <!-- 待審核 -->
+       <el-tab-pane :label="t('oa.pending.toReview')" name="review">
+         <div class="table-toolbar">
+-          <el-tag size="small">{{ t('共 {n} 条', { n: reviewRows.length }) }}</el-tag>
++          <CpTag>{{ t('共 {n} 条', { n: reviewRows.length }) }}</CpTag>
+           <el-button :icon="Refresh" circle size="small" :loading="reviewLoading" @click="loadReview" />
+         </div>
+ 
+         <!-- Batch action bar -->
+         <div v-if="selected.length" class="batch-bar">
+           <span class="batch-info">{{ t('oa.pending.selected', { n: selected.length }) }}</span>
+           <el-input
+             v-model="batchComment"
+             :placeholder="t('oa.pending.commentHint')"
+             size="small"
+@@ -38,59 +38,61 @@
+           @selection-change="onSelectionChange"
+           @row-click="onReviewRowClick"
+         >
+           <el-table-column type="selection" width="46" />
+           <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+           <el-table-column prop="starterName" :label="t('oa.col.starter')" width="120" />
+           <el-table-column :label="t('oa.col.sentAt')" width="170">
+             <template #default="{ row }">{{ formatTime(row.sentAt) }}</template>
+           </el-table-column>
+         </el-table>
+-        <el-empty v-if="!reviewLoading && !reviewRows.length" :image-size="80" :description="t('oa.pending.empty')" />
++        <CpEmpty v-if="!reviewLoading && !reviewRows.length" :text="t('oa.pending.empty')" />
+       </el-tab-pane>
+ 
+       <!-- 抄送 CC -->
+       <el-tab-pane :label="t('oa.pending.cc')" name="cc">
+         <div class="table-toolbar">
+-          <el-tag size="small">{{ t('共 {n} 条', { n: ccRows.length }) }}</el-tag>
++          <CpTag>{{ t('共 {n} 条', { n: ccRows.length }) }}</CpTag>
+           <el-button :icon="Refresh" circle size="small" :loading="ccLoading" @click="loadCc" />
+         </div>
+         <el-table
+           :data="ccRows"
+           border
+           stripe
+           size="small"
+           max-height="560"
+           v-loading="ccLoading"
+           style="cursor: pointer"
+           @row-click="onCcRowClick"
+         >
+           <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+           <el-table-column prop="starterName" :label="t('oa.col.starter')" width="120" />
+           <el-table-column prop="atNodeId" :label="t('oa.col.atNode')" width="130" />
+           <el-table-column :label="t('oa.col.createDate')" width="170">
+             <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
+           </el-table-column>
+         </el-table>
+-        <el-empty v-if="!ccLoading && !ccRows.length" :image-size="80" :description="t('oa.pending.ccEmpty')" />
++        <CpEmpty v-if="!ccLoading && !ccRows.length" :text="t('oa.pending.ccEmpty')" />
+       </el-tab-pane>
+     </el-tabs>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { Refresh } from '@element-plus/icons-vue'
+ import type { ElTable } from 'element-plus'
+ import { inboxApi } from '@/api/oa/inbox'
++import CpTag from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
+ import type { PendingItem, CcItem, BatchResultItem } from '@/types/oa/inbox'
+ 
+ const { t } = useI18n()
+ const emit = defineEmits<{ 'open-detail': [id: string] }>()
+ 
+ // ── Tabs ────────────────────────────────────────────────────────
+ const activeTab = ref('review')
+ 
+ function onTabChange(name: string | number) {
+   if (name === 'cc' && !ccRows.value.length) loadCc()
+@@ -190,24 +192,24 @@ onMounted(loadReview)
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 8px;
+ }
+ .batch-bar {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   padding: 8px 12px;
+-  background: var(--el-color-primary-light-9);
+-  border: 1px solid var(--el-color-primary-light-7);
+-  border-radius: 4px;
++  background: var(--cp-brand-bg);
++  border: 1px solid color-mix(in srgb, var(--cp-brand) 24%, transparent);
++  border-radius: var(--cp-r-sm);
+   margin-bottom: 8px;
+ }
+ .batch-info {
+   font-size: 13px;
+-  color: var(--el-text-color-regular);
++  color: var(--cp-text);
+   white-space: nowrap;
+ }
+ :deep(.row-unread td) {
+   font-weight: 600;
+ }
+ </style>
+diff --git a/cp6.web/src/views/oa/inbox/InboxRunning.vue b/cp6.web/src/views/oa/inbox/InboxRunning.vue
+index 47ade07..21fbe6f 100644
+--- a/cp6.web/src/views/oa/inbox/InboxRunning.vue
++++ b/cp6.web/src/views/oa/inbox/InboxRunning.vue
+@@ -1,58 +1,65 @@
+ <template>
+   <div class="inbox-running">
+     <div class="table-toolbar">
+-      <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
++      <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
+       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
+     </div>
+ 
+     <el-table
+       :data="rows"
+       border
+       stripe
+       size="small"
+       max-height="620"
+       v-loading="loading"
+       style="cursor: pointer"
+       @row-click="onRowClick"
+     >
+       <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+       <el-table-column prop="currentNode" :label="t('oa.col.currentNode')" width="140" />
+       <el-table-column :label="t('oa.col.handlers')" width="180" show-overflow-tooltip>
+         <template #default="{ row }">{{ row.currentHandlers.join('、') }}</template>
+       </el-table-column>
+       <el-table-column :label="t('oa.col.status')" width="110">
+         <template #default="{ row }">
+-          <el-tag :type="(instanceStatusType(row.status) as any)" size="small">
++          <CpTag :tone="instanceStatusTone(row.status)">
+             {{ t(instanceStatusText(row.status)) }}
+-          </el-tag>
++          </CpTag>
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('oa.col.createDate')" width="170">
+         <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
+       </el-table-column>
+     </el-table>
+-    <el-empty v-if="!loading && !rows.length" :image-size="80" :description="t('oa.running.empty')" />
++    <CpEmpty v-if="!loading && !rows.length" :text="t('oa.running.empty')" />
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { Refresh } from '@element-plus/icons-vue'
+ import { inboxApi } from '@/api/oa/inbox'
+-import { instanceStatusType, instanceStatusText } from '@/views/oa/inbox/inboxModel'
++import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
+ import type { RunningItem } from '@/types/oa/inbox'
+ 
+ const { t } = useI18n()
+ const emit = defineEmits<{ 'open-detail': [id: string] }>()
+ 
++/** 実例状態码 → CpTag 色調（对齐 inboxModel.instanceStatusType：warning/success/danger/info/info）。 */
++function instanceStatusTone(s: number): Tone {
++  return (['warn', 'ok', 'danger', 'info', 'info'] as Tone[])[s] ?? 'info'
++}
++
+ const rows = ref<RunningItem[]>([])
+ const loading = ref(false)
+ 
+ async function load() {
+   loading.value = true
+   try {
+     const res = await inboxApi.running()
+     rows.value = ((res as any).data as RunningItem[]) || []
+   } finally {
+     loading.value = false
+diff --git a/cp6.web/src/views/oa/inbox/InboxView.vue b/cp6.web/src/views/oa/inbox/InboxView.vue
+index 0f0e229..6af888d 100644
+--- a/cp6.web/src/views/oa/inbox/InboxView.vue
++++ b/cp6.web/src/views/oa/inbox/InboxView.vue
+@@ -97,23 +97,23 @@
+       v-model="newDialogVisible"
+       :title="t('oa.inbox.newBtn')"
+       width="480px"
+     >
+       <div v-loading="flowsLoading">
+         <el-table :data="flows" size="small" stripe border>
+           <el-table-column prop="flowKey" label="流程编号" width="160" />
+           <el-table-column prop="flowName" label="流程名称" />
+           <el-table-column prop="enable" label="状态" width="80">
+             <template #default="{ row }">
+-              <el-tag :type="row.enable ? 'success' : 'info'" size="small">
++              <CpTag :tone="row.enable ? 'ok' : 'muted'">
+                 {{ row.enable ? '启用' : '停用' }}
+-              </el-tag>
++              </CpTag>
+             </template>
+           </el-table-column>
+         </el-table>
+         <div class="new-dialog-note">起草功能后续版本实现</div>
+       </div>
+       <template #footer>
+         <el-button @click="newDialogVisible = false">{{ t('oa.inbox.close') }}</el-button>
+       </template>
+     </el-dialog>
+   </el-container>
+@@ -131,20 +131,21 @@ import { getActingAs, setActingAs, clearActingAs } from '@/stores/oaActingAs'
+ import type { ActingAs } from '@/stores/oaActingAs'
+ import type { GrantUser } from '@/types/oa/advanced'
+ import type { InboxStats, FlowAdminItem } from '@/types/oa/inbox'
+ import ActingAsBanner from '@/components/oa/ActingAsBanner.vue'
+ import InboxDashboard from './InboxDashboard.vue'
+ import InboxPending from './InboxPending.vue'
+ import InboxRunning from './InboxRunning.vue'
+ import InboxDone from './InboxDone.vue'
+ import InboxDraft from './InboxDraft.vue'
+ import FormDetail from './FormDetail.vue'
++import CpTag from '@/components/base/CpTag.vue'
+ 
+ const { t } = useI18n()
+ const router = useRouter()
+ 
+ // ── act-as 态机 ──────────────────────────────────────────────────
+ const actingAs = ref<ActingAs | null>(getActingAs())
+ const canActAsList = ref<GrantUser[]>([])
+ 
+ async function loadGrants() {
+   try {
+@@ -235,51 +236,51 @@ async function openNewDialog() {
+     // 忽略
+   } finally {
+     flowsLoading.value = false
+   }
+ }
+ </script>
+ 
+ <style scoped>
+ .oa-inbox {
+   height: 100%;
+-  background: #f5f7fa;
++  background: var(--cp-bg);
+ }
+ 
+ .inbox-header {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   padding: 0 16px;
+-  background: #fff;
+-  border-bottom: 1px solid var(--el-border-color-light);
++  background: var(--cp-card);
++  border-bottom: 1px solid var(--cp-line-soft);
+   flex-shrink: 0;
+ }
+ 
+ .acting-as-dropdown {
+   margin-left: auto;
+ }
+ 
+ .inbox-title {
+   font-size: 16px;
+   font-weight: 650;
+-  color: #303133;
++  color: var(--cp-ink);
+ }
+ 
+ .inbox-body {
+   flex: 1;
+   overflow: hidden;
+ }
+ 
+ .inbox-aside {
+-  background: #fff;
+-  border-right: 1px solid var(--el-border-color-light);
++  background: var(--cp-card);
++  border-right: 1px solid var(--cp-line-soft);
+   overflow-y: auto;
+ }
+ 
+ .inbox-menu {
+   border-right: none;
+ }
+ 
+ .inbox-main {
+   padding: 16px;
+   overflow-y: auto;
+@@ -292,20 +293,20 @@ async function openNewDialog() {
+   justify-content: space-between;
+   width: 100%;
+ }
+ 
+ .menu-badge {
+   margin-left: 6px;
+ }
+ 
+ /* 流程管理分隔线效果 */
+ .flow-admin-item {
+-  border-top: 1px solid var(--el-border-color-light);
++  border-top: 1px solid var(--cp-line-soft);
+   margin-top: 4px;
+ }
+ 
+ .new-dialog-note {
+   margin-top: 12px;
+   font-size: 12px;
+-  color: var(--el-text-color-placeholder);
++  color: var(--cp-faint);
+ }
+ </style>
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 98187e1..1ea871e 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -737,20 +737,31 @@ describe('CpListPage', () => {
+ - **FormCatalog / FormInitiate**=非表格特殊页 token 化（`--el-*`→`--cp-*`：line-soft/ink/muted；el-empty→CpEmpty），不强套模板。
+ - **ApproverMapView**=行内编辑表格（inline el-input 行），特殊页 token 化：内联 style 提取为 class + `.tcard` 卡壳用 `--cp-card/--cp-r-md/--cp-shadow-1`。
+ 
+ 本批新增模板缺口 1 项：
+ 
+ 23. **CpFilterBar select 不支持 remote 远程搜索选项（异步 autocomplete）**（FormQuery 触发）
+    - 页面需要：FormQuery 的「发起人 / 处理人」两个查询字段是 `el-select filterable remote :remote-method`——随键盘输入调 `userApi.getList` 异步拉候选，非静态枚举。
+    - 模板缺：`FilterField` 的 `type:'select'` 只接受静态 `options[]`，无 `remote`/`remoteMethod`/`loading` 透传；若强改 CpFilterBar 会丢失用户远程搜索能力。加之本页还有 daterange+关键词共 6 字段、行点击→抽屉详情，整体判为「特殊页保留原机制保功能」，未强套 CpListPage/CpFilterBar（与 LocationList master-detail 保留同处置逻辑）。
+    - 建议契约扩展：`FilterField` 增可选 `remote?: boolean` + `remoteMethod?: (q:string)=>void` + `loading?: boolean`（或 `asyncOptions` 加载器），让远程搜索选择列也能声明式落入 CpFilterBar。
+ 
++### OA 迁移批次2 复盘（编号接续，本批无新增编号）
++
++批次2（InboxView/InboxPending/InboxRunning/InboxDone/InboxDraft——電子フォーム受信箱信箱族）迁移完成，真栈验收通过（tests 316 保持）。这五个文件是**信箱外壳 + 内嵌子面板族**：InboxView 是 `el-container` 壳（左菜单导航 + `<component :is>` 动态挂载子面板 + 详情抽屉 + 新建对话框），四个列表面板作为子面板挂在 `el-main` 内、经 `@open-detail` 上抛给壳打开抽屉——**均非独立路由查询页**。分类与处置（统一按 FormQuery 先例「特殊页保留原机制 + 无损基础件替换」，四同型面板处置一致）：
++- **InboxView**=导航壳特殊页 token 化：`#f5f7fa`→`--cp-bg`、`#fff`→`--cp-card`(×2)、`#303133`→`--cp-ink`、`--el-border-color-light`→`--cp-line-soft`(×3)、`--el-text-color-placeholder`→`--cp-faint`；新建对话框 flow 列表 `el-tag(启用/停用)`→`CpTag(ok/muted)`。保留 el-menu/el-drawer/el-dropdown/act-as 机制。
++- **InboxPending**=双 tab（審査/CC）+ 勾选批量条 + 未読行加粗 + 行点击标已読→抽屉：`el-tag`(2 处计数)→`CpTag`、`el-empty`(2 处)→`CpEmpty`；`.batch-bar` 的 `--el-color-primary-light-9/7`→`--cp-brand-bg` + `color-mix(--cp-brand 24%)`、`4px`→`--cp-r-sm`、`--el-text-color-regular`→`--cp-text`。保留 el-tabs/selection/batch/row-class/row-click。
++- **InboxRunning**=单表 + 状态列 + 行点击→抽屉：`el-tag`(计数)→`CpTag`、状态 `el-tag :type=instanceStatusType`→`CpTag :tone=instanceStatusTone`（本地 helper `['warn','ok','danger','info','info']` 对齐 inboxModel，与 FormQuery 同法）、`el-empty`→`CpEmpty`。移除已无用的 `instanceStatusType` import。
++- **InboxDone**=月份选择器 + 三 tab（自分/全件/CC）+ 单表 + 状态列 + 行点击：`el-tag`(计数)→`CpTag`、状态 `formToTagType`→改名 `formToStatusTone` 返回 Tone `['warn','ok','danger','info'...]`、`el-empty`→`CpEmpty`。保留 el-date-picker/el-tabs。
++- **InboxDraft**=单表 + 行内 编集/提出/削除 按钮 + 暂存编辑对话框：`el-tag`(计数)→`CpTag`、`el-empty`→`CpEmpty`。保留 el-dialog 编辑器与行操作。
++
++**本批无新增模板缺口编号**：四面板均为「信箱内嵌子面板」形态（行点击→壳抽屉、内部 tabs/月份筛选、勾选批量、未読行样式、行内多按钮），CpListPage 单表卡契约不表达这些（行激活钩子缺口 #16/#21 家族既知、单表 vs 多 tab、无 `:row-class-name` 透传），且强套后仍须按 §5 保留原机制——故与 OA 批次1 FormQuery 同处置，统一保留 el-table + 原交互并只做 token 化 + 无损基础件替换（`el-tag`→`CpTag`、`el-empty`→`CpEmpty`、硬编码色清零），未触发新的模板扩展需求。既有的 `size="small"` 弃用告警、SignalR CSRF 403 均为迁移前既有基础设施问题，非本批引入。
++
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+ 

@@ -1,0 +1,638 @@
+# Review package: 2f286a5..HEAD
+
+## Commits
+a92d8f2 docs(sdd): Task4 波5 UpdateSite锚护栏报告
+c79c97e feat(space): 波5 UpdateSite锚护栏E-SPACE-406——已发布库位在时拒改SiteCode/WarehouseCd
+
+## Files changed
+ .superpowers/sdd/task-2-report.md             |  89 ++++++++------
+ .superpowers/sdd/task-3-brief.md              |  38 +++---
+ .superpowers/sdd/task-3-report.md             | 168 +++++---------------------
+ .superpowers/sdd/task-4-brief.md              |  17 +++
+ .superpowers/sdd/task-4-report.md             |  92 +++-----------
+ CP6.Core/Services/Space/SpaceMasterService.cs |  14 +++
+ CP6.Tests/SpaceMasterServiceTests.cs          |  63 ++++++++++
+ CP6.WebApi/Seed/I18nSpaceScreenSeed.cs        |   1 +
+ 8 files changed, 212 insertions(+), 270 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-2-report.md b/.superpowers/sdd/task-2-report.md
+index 6ff97cb..cad3e96 100644
+--- a/.superpowers/sdd/task-2-report.md
++++ b/.superpowers/sdd/task-2-report.md
+@@ -1,49 +1,68 @@
+-# Task P0-T2 Report: JWT 过期配置双写清理
++# Task 2 报告：LocationPublishService.BuildItemAsync 批量化
+ 
+-**Status:** DONE
+-**Commit:** a34a337 chore(platform): 删除 JWT.ExpireMinutes 死配置——令牌时长唯一源=Security.Token.AccessTokenMinutes
++**分支** feat/space-wave5 · **提交** 52486c7（已 push，与 origin 同步）
+ 
+-(Note: this file previously held a stale report from an unrelated plan — Space wave4 BizException migration. Overwritten with the current P0-T2 report.)
++（注：本文件此前残留一份无关任务报告，已整体覆盖为本次 Task 2 报告。）
+ 
+-## What Changed
++## 实现
+ 
+-Only `CP6.WebApi/appsettings.json` required changes (1 file, +2/-2):
++将发布链路径解析从「事务内逐库位连查」重构为「一次预载 + 纯内存构建」。
+ 
+-1. **Deleted** `JWT.ExpireMinutes: 120` (was line 35) — the dead, misleading duplicate. Removed the now-trailing comma on the preceding `"Audience"` key to keep valid JSON. Retained all signing-related JWT keys (`_comment`, `Secret`, `Issuer`, `Audience`).
+-2. **Added** a `_comment` sibling inside the `Security` section, immediately above `Token`, marking it the single source of truth:
+-   `"_comment": "令牌时长唯一配置源 = Token.AccessTokenMinutes（旧 JWT.ExpireMinutes 死配置已删，见 AuthController）"`
+-   (Followed the file's existing `_comment` pseudo-key convention.)
++### 新增结构
++- `private sealed class PublishLookup`：Racks/Aisles/Zones/Floors/Sites 五个 `Dictionary<Guid, T>`（init-only）。
++- `private async Task<PublishLookup> LoadLookupAsync(IReadOnlyCollection<Space_Location> locs, CancellationToken ct)`
++  依赖链顺序加载，五张表各**一次** `Where(ids.Contains)`：
++  1. Rack ← locs 的 RackId 集合
++  2. Aisle ← racks 的 AisleId 集合
++  3. Zone ← racks 的 ZoneId 集合
++  4. Floor ← **zones 的 FloorId ∪ locs 的 FloorId**（并集：Path 链走 zone.FloorId，WarehouseCd 回退链走 l.FloorId 冗余列，两链共用同一 Floors/Sites 字典）
++  5. Site ← floors 的 SiteId 集合
++  每级 ids 空集直接跳过该查询。查询次数恒为常数 5，与库位数 N 无关。
+ 
+-No changes needed in the other variants — none contained `JWT.ExpireMinutes`:
+-- `appsettings.Development.json` — has `Security.Token.AccessTokenMinutes: 120` (the real dev override; untouched).
+-- `appsettings.Docker.json` — no JWT.ExpireMinutes, no Token override.
+-- `appsettings.Local.json` — gitignored; no JWT.ExpireMinutes (only `JWT.Secret`).
++### 改签名
++- `BuildItemAsync(l, op)` → `static LocationPublishItem BuildItem(Space_Location l, string op, PublishLookup lk)`（同步，纯查字典）。
++- `ResolveWarehouseCdAsync(l)` → `static string? ResolveWarehouseCd(Space_Location l, PublishLookup lk)`；E-SPACE-405 长度守卫、`Site.WarehouseCd ?? SiteCode` 回退、无楼层归属返回 null 全部原样保留。
+ 
+-## Step 1 Grep Evidence
++### 三调用方接线
++- `PublishFloorAsync`：批构造后、foreach 前 `var lk = await LoadLookupAsync(locs, default)`；循环内 `BuildItem(l, "UPSERT", lk)`。
++- `DeactivateAsync`：单库位也走统一预载——lookup 在①前置校验前加载一次，供 `ResolveWarehouseCd`（stock 预检）与后续 `BuildItem(l, "DEACTIVATE", lk)` 共用（期间 FloorId/RackId 不变）。
++- `RepublishAsync`：foreach 前加载 `lk`，循环内 `BuildItem(l, "UPSERT", lk)`。
+ 
+-Command: `grep -rn "ExpireMinutes"` across the repo.
+-Output — the only match in a config/code file was appsettings.json; the rest are docs:
+-```
+-docs\superpowers\specs\2026-06-21-auth-hardening-design.md:55: ...ExpireMinutes)...
+-docs\superpowers\plans\2026-07-07-p0-platform-hardening.md:46: (this task's own step text)
+-docs\superpowers\plans\2026-07-07-p0-platform-hardening.md:47: (this task's own step text)
+-CP6.WebApi\appsettings.json:35:    "ExpireMinutes": 120
+-```
+-Zero references in `CP6.WebApi`/`CP6.Core`/`CP6.Tests` C# code — confirms the audit finding (AuthController reads `Security.Token.AccessTokenMinutes`). No fallback edit was needed.
++## 重构前后查询次数
+ 
+-## Test Results
++| 路径 | 旧（事务内 / N 库位） | 新 |
++|---|---|---|
++| BuildItem 路径链 | 每库位最多 5 查（Rack/Aisle/Zone/Floor/Site）= 5×N | 预载 5 表各 1 = 5（含 WarehouseCd 链） |
++| ResolveWarehouseCd | 每库位 2 查（Floor/Site）= 2×N | 并入上面的 5，0 额外 |
++| **合计** | **约 7×N** | **常数 5** |
+ 
+-`dotnet test` full suite:
+-`Passed! - Failed: 0, Passed: 1570, Skipped: 5, Total: 1575, Duration: 44 s`
++Deactivate（N=1）：旧 2（预检）+ 最多 5（BuildItem）= 最多 7 → 新 5。
+ 
+-Matches baseline exactly (1570 green + 5 skipped). No drop.
++## 行为等价性
+ 
+-JSON validity verified independently: `appsettings.json valid JSON`.
++`BuildItem` 与旧 `BuildItemAsync` 逐字段等价，缺挂分支语义对齐：
++- aisle 缺失：旧 `aisle?.AisleCode`（null）↔ 新 TryGetValue 失败跳过（保持 null）。
++- site 缺失：旧 `site?.SiteCode`（null）↔ 新 TryGetValue 失败跳过（保持 null）。
++- zone/floor/rack 为 null 各级短路一致。
++- E-SPACE-405 抛出时机仍在循环内、`SaveChangesAsync` 之前——fail-fast 无孤儿性质不变。
+ 
+-## Self-Review Findings / Concerns
++## 测试结果
+ 
+-- Edit is minimal and config-only; no behavior change (the deleted key was never read).
+-- JSON remains valid (parsed clean; full test suite loads config at startup and passes).
+-- The added `_comment` sits as the first key of the `Security` object — JSON key order is irrelevant to .NET config binding, and `_comment` is not a bound config key, so no functional impact.
+-- No new tests required (pure dead-config deletion), per brief.
+-- No concerns.
++- 基线（重构前）：LocationPublishServiceTests 19 passed；全量 1811 passed / 5 skipped。
++- 新增 1 用例 `Publish_MixedMounting_FullFiveLevelAndFloorOnly_PathAndWarehouseCd_Equivalent`：
++  同层一次发布 2 库位——①满五级挂载（Site→Floor→Zone→**Aisle**→Rack，覆盖既有测试从未验的巷道支路 + 坐标 + WarehouseCd 回退）②只挂楼层（RackId=null，五级路径全 null/FloorLevel=0，WarehouseCd 仍走 l.FloorId→Site 回退到 "WH1"）。
++- 重构后：LocationPublishServiceTests 20 passed；**全量 1812 passed / 5 skipped**（≥ 基线 1811/5）。
++- 既有 20 断言零改动（等价性护栏）。5 skipped 为 SpaceSqlIntegrationTests（需 SQL Server，本环境一贯跳过，与本任务无关）。
++
++## 改动文件
++- `CP6.Core/Services/Space/LocationPublishService.cs`（PublishLookup + LoadLookupAsync + BuildItem/ResolveWarehouseCd 纯函数化 + 三调用方接线）
++- `CP6.Tests/LocationPublishServiceTests.cs`（新增 1 等价用例）
++
++## 自审
++- 五表恰好各一次查询：已核，每级 ids 空集短路，无 N 相关往返残留。
++- Floors/Sites 并集覆盖 WarehouseCd 链（l.FloorId）：已核，避免只挂楼层库位丢 WarehouseCd。
++- ToDictionary 无重复键风险：ids 均 Distinct，返回行按 PK 唯一。
++- InMemory 事务守卫、事件落库、SignalR 通知时序均未触碰。
++
++## 疑虑
++- 无阻断性疑虑。轻微：新查询在真库为 5 次串行往返（依赖链使然，无法并行），但相较旧 7×N 已是数量级改善，且发布批通常单事务内容量有限。
+diff --git a/.superpowers/sdd/task-3-brief.md b/.superpowers/sdd/task-3-brief.md
+index 16c505e..d69912e 100644
+--- a/.superpowers/sdd/task-3-brief.md
++++ b/.superpowers/sdd/task-3-brief.md
+@@ -1,30 +1,20 @@
+-# Task P0-T3: Sys_Role 租户化（拍板：租户级角色）
++### Task 3: WmsBinConsumer 批量化(每 item 3 查→批次 3 查)
+ 
+-（提取自 docs/superpowers/plans/2026-07-07-p0-platform-hardening.md）
++**Files:**
++- Modify: `CP6.Core\Services\Wms\WmsBinConsumer.cs`(`ConsumeAsync:27-118`)
++- Test: 既有 WmsBinConsumer 测试全绿 + 新增混合批(UPSERT×2+DEACTIVATE×1)等价测试
+ 
+-**Goal（包级）:** 修掉平台级生产隐患：Sys_Role 是全局实体，跨租户串号（任意租户可见/可改所有租户的角色）。用户拍板（2026-07-07）：Sys_Role 改租户级实体。
++**Interfaces:**
++- Consumes: `LocationPublishBatch.Items`(不变)。
++- 内部:循环前三次预载——①`var ids = batch.Items.Select(i => i.LocationId)…; var bins = await _db.WmsBins.Where(b => ids.Contains(b.Id)).ToDictionaryAsync(b => b.Id)`;②DEACTIVATE 项的库存合计一次 `GroupBy` 查询(照 `:69-71` 现有谓词,聚合成 `Dictionary<key, decimal>`);③anchor 查询(`:97-100` 谓词)按批次码集合一次载入。循环体改字典命中。
+ 
+-## Global Constraints
++**要点:** 三分支语义(upsert/墓碑/锚碰撞 REJECTED)与幂等 Version 判据逐行为等价;DeadLetter 路径不动。
+ 
+-- 基线不许跌：后端 `dotnet test` 全绿（当前 1570）；每 commit 立即 push。
+-- 迁移命令：`dotnet ef migrations add SysRoleTenantize --project CP6.Core --startup-project CP6.WebApi`；迁移文件必须只含预期变更，多出=模型漂移停下排查。
++- [ ] **Step 1: 写混合批等价测试**(2 upsert+1 deactivate,断言 bin 状态/Version/REJECTED 结果与逐条跑一致)
++- [ ] **Step 2: 基线绿确认**
++- [ ] **Step 3: 重构为三次预载+内存判定**
++- [ ] **Step 4: 全量后端绿**
++- [ ] **Step 5: Commit + push**(`perf(space): 波5 WMS消费端批量化——每item 3查收敛为批次3查`)
+ 
+-## Files
++---
+ 
+-- Modify: `CP6.Entity/DomainModels/Sys/Sys_Role.cs`（基类 → `BaseTenantEntity`，保留 `IAuditable`）
+-- Create: 迁移 `SysRoleTenantize`（加 TenantId 列 + 存量归户回填 SQL）
+-- Modify: 角色种子（预置角色改为逐租户播种，照 Space 波4 MenuAction/RoleAction 逐租户先例）
+-- Test: `CP6.Tests/Sys/RoleTenantIsolationTests.cs`（新建）
+-
+-## 存量归户策略（迁移内 SQL，必须按此顺序）
+-
+-- [ ] Step 1: 实体改基类，生成迁移；迁移 `Up()` 手工补数据段：
+-  1. 现有全部角色行 `TenantId = <DefaultTenant A1 的 Id>`（默认租户继承原行，RoleId 不变——A1 的 Sys_UserRole/Sys_RoleAction 引用零迁移）。
+-  2. 对 A1 之外每个租户 T：`INSERT` 复制一份角色行（新 Guid Id，TenantId=T），并建临时映射表 `(OldRoleId, TenantId) → NewRoleId`。
+-  3. `UPDATE` 租户 T 的 `Sys_UserRole`/`Sys_RoleAction` 行：RoleId 按映射表改指到 T 的角色副本。
+-  4. 校验段：任意租户的 UserRole/RoleAction 所指 RoleId 的 TenantId 必须等于该行 TenantId，不等则 `THROW`（迁移失败可回滚，不留半套）。
+-- [ ] Step 2: 唯一索引：角色名/编码若有全局唯一索引，确认基建自动升级为 `(TenantId, …)` 复合（`CP6Context.cs:2079` 反射机制，无需手写）；若该索引是手写的，删单列版。
+-- [ ] Step 3: 种子调整：预置角色（管理员/普通用户等）改为"新租户开通时复制默认集"，照 Space 波4 逐租户种子写法；启动种子对已存在租户幂等补种。
+-- [ ] Step 4: 测试：①A 租户上下文查角色只见 A 的（全局过滤生效）；②A 改角色名不影响 B（回填后两行独立）；③新建角色自动盖 TenantId（StampTenant）；④回填校验逻辑单测（映射完整性）。
+-- [ ] Step 5: 前端 PMS Role 页回归（无需改码——全局过滤对它透明），dev 冒烟一遍增删改查。
+-- [ ] Step 6: 全量测试绿 → commit + push（`fix(sys): Sys_Role 租户化——存量按租户归户复制,UserRole/RoleAction 重指,隔离测试`）。
+diff --git a/.superpowers/sdd/task-3-report.md b/.superpowers/sdd/task-3-report.md
+index 33d28b8..5a0c2ba 100644
+--- a/.superpowers/sdd/task-3-report.md
++++ b/.superpowers/sdd/task-3-report.md
+@@ -1,150 +1,40 @@
+-# Task P0-T3 报告：Sys_Role 租户化
++# Task 3 报告：Space 波5 WmsBinConsumer 批量化
+ 
+-**Status: DONE_WITH_CONCERNS**（两处受 schema 现实所迫、与 brief 假设不同的设计调整，均为唯一正确解，已文档化并可复核）
++## Status
++DONE。commit `c6d1b79`（分支 feat/space-wave5，已 push）。全量 1813 passed / 5 skipped（基线 1812 + 本任务新增 1 等价测试）。
+ 
+----
++## 实现
++`CP6.Core/Services/Wms/WmsBinConsumer.cs::ConsumeAsync` 循环前三次预载，替代旧「每 item 三次逐条查询」：
+ 
+-## 1. Recon 发现
++1. **bins 预载（覆盖旧查询①按 Id + ③按锚两处 DbSet 命中面）**：一次
++   `WmsBins.Where(idSet.Contains(Id) || (whSet.Contains(WarehouseCd) && codeSet.Contains(LocationCode))).LoadAsync()`，
++   再从 `_db.WmsBins.Local` 建 `binsById` 与 `binsByAnchor` 双字典（Local 含刚载入行 + 预先已跟踪行，等价旧 Local-first 优先级）。
++2. **库存合计预载（旧查询②）**：收集所有 DEACTIVATE 且 bin 已存在项的锚 `(bin.WarehouseCd, bin.LocationCode)`，一次
++   `Stocks.Where(...).GroupBy(...).Sum(PhysicalQty)` 聚成 `stockByAnchor`；循环内 `GetValueOrDefault(anchor, 0m)`（空集=0 等价旧 `SumAsync`）。
++3. 循环体三处逐条查询全部改为字典命中：`binsById.TryGetValue`（Id）/`stockByAnchor.GetValueOrDefault`（库存）/`binsByAnchor.TryGetValue`（锚碰撞）。
+ 
+-### 实体形态
+-- `Sys_Role`：主键 **`int RoleId`**，`DatabaseGeneratedOption.None`（用户自定义、原全局唯一）。字段：RoleName/Description/Enable/OrderNo/CreateDate。实现 `IAuditable`。表名 `Sys_Roles`。**无** RoleName/RoleCode 唯一索引，唯一约束即 PK。
+-- **关键背离 brief 假设 ①**：brief 假定 Sys_Role 可直接 `→ BaseTenantEntity` 且副本用「新 Guid Id」。实际 `BaseTenantEntity : BaseEntity` 带 `[Key] Guid Id` + Creator/Modifier/ModifyDate 列。若继承：
+-  - 与 `int RoleId` 主键冲突（双 `[Key]`）；
+-  - 新增 Guid Id + 3 审计列 = **schema 漂移**（违反「迁移只含 TenantId 列 + 索引变更」硬约束）。
+-- **既有先例**：`Sys_OperLog`（int Id 非 BaseTenantEntity）已确立「int 键租户表」的做法——手挂 `HasQueryFilter` + StampTenant 手补（CP6Context.cs:1986-1992, 2235-2237）。Sys_Role 情形完全相同，故采此先例。
++查询次数：旧 = O(3N)（N=批内 item 数）；新 = 恒定 2 次（bins 一次 Load + 库存一次 GroupBy，无 DEACTIVATE 时 1 次）。
+ 
+-### 子表引用拓扑（决定回填策略）
+-| 子表 | 基类 | 带 TenantId | RoleId 引用 |
+-|---|---|---|---|
+-| Sys_User | BaseTenantEntity | ✅ | `int? RoleId`（主角色） |
+-| Sys_UserRole | BaseTenantEntity | ✅ | int RoleId |
+-| Sys_RoleAction | BaseTenantEntity | ✅ | int RoleId |
+-| Sys_RoleDataScope | BaseTenantEntity | ✅ | int RoleId |
+-| Sys_RoleFieldPerm | BaseTenantEntity | ✅ | int RoleId |
+-| **Sys_RoleMenu** | 普通(int Id) | ❌ **无** | int RoleId |
++三分支语义（upsert 幂等 Version 判据 / 无 bin 墓碑防乱序复活 / 锚碰撞 REJECTED）、DetachOwnWrites/DeadLetter 路径、结果对象构造全部逐行为不动。
+ 
+-- **无任何物理 FK** 指向 `Sys_Role.RoleId`（snapshot 确认，仅值引用 + 普通索引）→ 改复合主键不破坏 FK。
+-- **关键背离 brief 假设 ②**：brief 的「新 Id 重指」策略对本拓扑**不可行且不必要**：
+-  - RoleId 是用户可见 int，生成新号会改动用户可见编号；
+-  - `Sys_RoleMenu` **无 TenantId**，无法「逐租户重指」其行 → 重指方案根本无法正确执行；
+-  - 而所有真正需隔离的子表**已各自携 TenantId** → 保持 RoleId 稳定即可在租户作用域内正确解析，**零重指**。
++## 批内自碰撞结论（brief 要求的可达性判定）
++**旧实现存在「批内新插行影响后续判定」的可达代码路径**——旧两处查询均 `Local.FirstOrDefault(...) ?? DB.FirstOrDefaultAsync(...)`，Local-first 使同批前一 item 刚 Add 的 bin 被后一 item 看到：
++- 同 LocationId 双条 → 第二条走版本门 SKIPPED（既有测试 `Upsert_SameBatch_DuplicateLocationId_NoDoubleAdd` 断言此）。
++- 同锚不同 LocationId 双条 → 第二条 REJECTED（旧代码注释显式声称覆盖）。
+ 
+-### 默认租户识别
+-`TenantContext.DefaultTenant = 00000000-0000-0000-0000-0000000000A1`（ITenantContext.cs:17），全系统哨兵常量（JwtHelper/StampTenant 均回退它）。租户表 `Sys_Tenants`，`Id` 即各表 TenantId 来源。迁移 SQL 用此常量字面量识别 A1——非猜测，是文档化的默认租户身份。
++**上游可达性**：生产调用方 `LocationPublishService.PublishFloorAsync` 先跑 `PrecheckAsync`，`DuplicateGroups.Count > 0` 直接抛 `E-SPACE-307`（重复码被闸死），且每条 item 源自不同 PK 的 `Space_Location` 行——故这两条批内自碰撞路径**生产调用方不可达**（RepublishAsync/DeactivateAsync 同理，均由 distinct PK 行构建）。
+ 
+----
++**但**消费端契约与既有测试要求保留该语义，故预载**不能**仅取批开始快照。处理：循环内每插入新 bin（UPSERT 新建 + DEACTIVATE 墓碑）**同步回填 binsById 与 binsByAnchor**，UPSERT 更新后按当前锚回填——使字典始终反映旧 Local 的实时可见性，判定完全等价。既有 12 用例（含 SameBatch/AnchorCollision）零改动全绿即为证。
+ 
+-## 2. 实现（逐步）
++## 改动文件
++- `CP6.Core/Services/Wms/WmsBinConsumer.cs`（重构 + 注释固化可达性结论）
++- `CP6.Tests/WmsBinConsumerTests.cs`（新增 `MixedBatch_TwoUpsertOneDeactivate_EquivalentToPerItem`：UPSERT×2+DEACTIVATE×1 含 REJECTED，双 DB 跑批量路径 vs 逐条独立消费，断言逐项 Status/Success 及最终 bin IsActive/Version 两路径逐一相等）
+ 
+-1. **实体** `Sys_Role.cs`：加 `Guid TenantId`；移除 `RoleId` 的 `[Key]`（改 fluent 复合主键），保留 `[DatabaseGenerated(None)]` 与 `IAuditable`。**不继承 BaseTenantEntity**（理由见 Recon ①）。
+-2. **CP6Context.OnModelCreating**：`Sys_Role` → `HasKey(new { TenantId, RoleId })` + `HasQueryFilter(x => x.TenantId == CurrentTenantId)`（照 Sys_OperLog 先例手挂）。
+-3. **StampTenant**：加 `Sys_Role` 循环（Added 且 TenantId 为空 → 盖 CurrentTenantId）。
+-4. **迁移 `SysRoleTenantize`**：`dotnet ef` 生成的 schema 段 = DropPK → AddColumn TenantId(默认空 Guid) → AddPK(TenantId,RoleId)，**零多余**（见 §5）。手工在 `Up()` 追加数据段（步骤 1/2/4，含 THROW）。
+-5. **种子**：
+-   - `TenantAdminService.CreateAsync`：新租户开通时同事务补建 `Sys_Role{TenantId=新租户, RoleId=1, 管理员}`（否则新租户 admin RoleId=1 无角色可解析）。
+-   - `Program.cs`：默认租户 seed 后加**启动幂等逐租户安全网**——为每个启用租户补齐 RoleId=1 管理员（迁移已回填存量，本块覆盖迁移后新建/遗漏租户）。
+-6. **RoleController.Update**：`FindAsync(RoleId)`（复合主键单参失效）→ `FirstOrDefaultAsync(r => r.RoleId == …)`（全局过滤自动限定当前租户）。
++## 自审
++- 三处查询谓词逐一对照旧代码：Id 精确、锚精确 `(WarehouseCd,LocationCode)` pair、库存 `WarehouseCd==bin.WarehouseCd && LocationCd==bin.LocationCode` 求和 → 均保留，预载 Where 用集合超集 + 字典精确键，聚合/命中值不受超集影响。
++- DEACTIVATE 库存快照 vs 循环内：循环内从不写库存，快照与逐条查询同值；跨 item「UPSERT 建 bin→同批 DEACTIVATE 同 id」新建 bin 无对应 stock 行（stock 独立表未变），SumAsync=0 与 GetValueOrDefault=0 等价（且此路径生产亦不可达）。
++- WmsBin.WarehouseCd/LocationCode 为非空 string，锚字典 key 安全；item.WarehouseCd 在锚检查处已过 null-guard，加 `!`。
++- 无 DEACTIVATE 时跳过库存查询；空批 `idSet/whSet` 为空，`Where` 谓词返回空集，`Local` 为空，安全。
+ 
+----
+-
+-## 3. TDD 证据
+-
+-新建 `CP6.Tests/Sys/RoleTenantIsolationTests.cs`（5 test）：①只见本租户角色 ②A 改名不影响 B ③新建自动盖 TenantId ④回填不变式完整性 ④反例：漏复制被检出。④/反例以纯函数 `BackfillInvariant.FindUnmatchedRefs` 镜像迁移 SQL 的 THROW 不变式（InMemory 不能跑 raw SQL）。
+-
+-**RED**（暂注释 `HasQueryFilter`，复合主键在位）：
+-```
+-CP6.Tests.Sys.RoleTenantIsolationTests.TenantContext_sees_only_own_roles [FAIL]
+-CP6.Tests.Sys.RoleTenantIsolationTests.New_role_auto_stamps_current_tenant [FAIL]
+-CP6.Tests.Sys.RoleTenantIsolationTests.Renaming_role_in_A_does_not_affect_B [FAIL]
+-Failed! - Failed: 3, Passed: 2  （2 个纯函数不变式测试与过滤无关，恒绿）
+-```
+-**GREEN**（恢复过滤 + StampTenant）：
+-```
+-Passed! - Failed: 0, Passed: 7 （5 隔离 + 2 FieldAudit 回归）
+-```
+-**全量**：`Passed! - Failed: 0, Passed: 1575, Skipped: 5, Total: 1580`（基线 1570 + 5 新，零回归）。
+-
+----
+-
+-## 4. 数据段 SQL 推理（顺序安全性 + THROW 守卫）
+-
+-执行序（AddPK 之后）：
+-1. `UPDATE Sys_Roles SET TenantId=@A1 WHERE TenantId=@Empty`——新列对存量行默认空 Guid，此步归户 A1。此时 (A1,RoleId) 仍两两不同 → 复合主键成立。
+-2. `INSERT … SELECT … CROSS JOIN Sys_Tenants WHERE r.TenantId=@A1 AND t.Id<>@A1 AND NOT EXISTS(…)`——对每个非默认租户复制**同 RoleId** 副本。`NOT EXISTS` 保幂等；无非默认租户时 CROSS JOIN 空集，安全。
+-3. 子表**零重指**（RoleId 稳定 + 子表各自带 TenantId → 租户作用域内解析）。
+-4. 校验：五子表(UserRole/RoleAction/RoleDataScope/RoleFieldPerm/Users)的 `(TenantId,RoleId)`，凡 RoleId 是**已知角色号**（`EXISTS Sys_Roles a WHERE a.RoleId=c.RoleId`，忽略预存孤儿引用）却在本租户**缺副本** → `THROW 50001` 中止事务、整体回滚（迁移在单事务内运行）。步骤 2 已把每个角色复制到每个租户，故守卫正常不触发；一旦复制不全即失败、留不下半套。
+-- `SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;` 置顶（对齐既有 seed SQL 兼容性要求）。
+-
+-**为何顺序安全**：先归户（收敛存量到 A1）→ 再复制（扩散到各租户，NOT EXISTS 幂等）→ 末校验（失败即回滚）。全程复合主键唯一性在每步后都成立。
+-
+----
+-
+-## 5. Migration 洁净性校验
+-
+-Snapshot diff（`CP6ContextModelSnapshot.cs`）仅：
+-```
+-+ b.Property<Guid>("TenantId").HasColumnType("uniqueidentifier");
+-- b.HasKey("RoleId");
+-+ b.HasKey("TenantId", "RoleId");
+-```
+-迁移 schema 段仅 DropPK/AddColumn TenantId/AddPK(TenantId,RoleId)——**零漂移**，符合硬约束。
+-
+----
+-
+-## 6. 变更文件
+-
+-| 文件 | 变更 |
+-|---|---|
+-| `CP6.Entity/DomainModels/Sys/Sys_Role.cs` | +TenantId，移 [Key]，注释 |
+-| `CP6.Core/EFDbContext/CP6Context.cs` | Sys_Role 复合主键+过滤；StampTenant 补 Sys_Role |
+-| `CP6.Core/Migrations/20260708093013_SysRoleTenantize.cs` | 新迁移 + 手写回填 SQL |
+-| `CP6.Core/Migrations/…Designer.cs` / `CP6ContextModelSnapshot.cs` | EF 自动 |
+-| `CP6.Core/Services/Platform/TenantAdminService.cs` | 新租户补建默认管理员角色 |
+-| `CP6.WebApi/Program.cs` | 启动幂等逐租户角色安全网 |
+-| `CP6.WebApi/Controllers/Sys/RoleController.cs` | FindAsync → FirstOrDefaultAsync |
+-| `CP6.Tests/Sys/RoleTenantIsolationTests.cs` | 新建，5 test |
+-| `CP6.Tests/Sys/FieldAuditR2RegressionTests.cs` | 见下 |
+-
+-**修改的既有测试及理由**：`FieldAuditR2RegressionTests` 因复合主键产生两处必然后果——(a) 审计 EntityKey 由 `"7001"` 变 `"<TenantId>|7001"`（ExtractKey 以 "|" 连接复合键，CP6Context.cs:2159），改断言为 `$"{DefaultTenant}|7001"`；(b) `FindAsync(7001)` 单参对复合主键失效 → 改 `FirstOrDefaultAsync(r=>r.RoleId==7001)`。均为设计的直接产物，非掩盖回归。
+-
+----
+-
+-## 7. 自审与关切
+-
+-- **偏离 brief 的两点（DONE_WITH_CONCERNS 供复核）**：①不继承 BaseTenantEntity（照 Sys_OperLog 先例，避 Guid Id 冲突 + 列漂移）；②回填「保持 RoleId 稳定、逐租户复制、子表零重指」而非「新 Id 重指」。二者均因 `int RoleId` 主键 + 子表已带 TenantId + `Sys_RoleMenu` 无 TenantId 的真实拓扑所决定，是**唯一正确解**，且达成与 brief 完全一致的终态（各租户独立角色集、跨租户隔离）。
+-- **Step 5（前端 PMS Role 页 dev 冒烟）**：需运行栈，按派单**延后至包 DoD / P0-T4 真库验证**。全局过滤对前端透明，无需改码。
+-- **Sys_RoleMenu 遗留隐患（超出本任务范围）**：该表无 TenantId 且 RoleController 的 GetRoleMenus/SaveRoleMenus/Delete 直接按 RoleId 操作它 → 跨租户同号 RoleId 会串。本任务未触碰（brief 仅要求 UserRole/RoleAction）。建议后续把 Sys_RoleMenu 租户化或迁往 Sys_RoleAction 体系。
+-- **迁移未在真 SQL Server 跑过**（本环境测试用 InMemory）；THROW/CROSS JOIN/UNION 为标准 T-SQL，真库验证归 P0-T4。
+-- StampTenant 对 Sys_Role 在 TenantId 为**主键一部分**时于 SaveChanges 覆盖前赋值——EF 允许改 Added 实体键值，先例风险低；测试③已覆盖自动盖章路径。
+-
+----
+-
+-## 8. 评审 Important 修复：Sys_RoleMenu 租户化补口（追加 2026-07-08）
+-
+-评审确认 §7 所报的 Sys_RoleMenu 隐患因本任务**被激活**（回填后各租户拥有同号 RoleId，A 改/删角色菜单映射串改 B），按指令补口闭合。
+-
+-### 变更
+-1. **实体** `Sys_RoleMenu.cs`：加 `Guid TenantId`；int 自增 Id 主键保留（全库确认 `Sys_RoleMenu.Id` 零引用）。
+-2. **CP6Context**：手挂 `HasQueryFilter(TenantId == CurrentTenantId)` + 非唯一索引 `IX_Sys_RoleMenu_Tenant_Role (TenantId, RoleId)`（Get/SaveRoleMenus、登录菜单聚合都按 RoleId 查）；StampTenant 加 Sys_RoleMenu 循环。
+-3. **迁移 `SysRoleMenuTenantize`（20260708100345）**：schema 段仅 AddColumn TenantId + CreateIndex（snapshot diff 零漂移）。手写数据段：`SET QUOTED_IDENTIFIER ON` → 归户 A1 → 逐非默认租户复制副本（NOT EXISTS 幂等；`EXISTS Sys_Roles(t.Id, RoleId)` 前置——**不扩散孤儿映射**；零非默认租户时 CROSS JOIN 空集安全）→ `THROW 50002` 校验（已知 RoleId 缺本租户角色副本即回滚；known-RoleId 守卫与 SysRoleTenantize 一致，预存孤儿不误杀）。
+-4. **消费点逐一核验**（指令 3）：
+-   - `RoleController.cs` Delete(91-92)/GetRoleMenus(104)/SaveRoleMenus(119-128)：经 EF 上下文 → 过滤自动圈定当前租户；新插入行 StampTenant 盖章。仅加注释，无行为改码。
+-   - 登录菜单树 `AuthController.BuildProfileAsync`(234)：Login 在其之前（181 行）已 `_tenant.CurrentTenantId = user.TenantId` → 过滤作用域正确，零改码。
+-   - `PermissionAggregator`(38)/`RolePermService`(68,84-88)：请求租户上下文内运行，过滤正确，零改码。
+-   - **`ImpersonationService.BuildMenusAsync`——唯一必须改码的读路径**：运行于平台租户上下文却要读目标租户的映射（原注释明言依赖"Sys_RoleMenu 全局表无过滤"）。改为 `IgnoreQueryFilters + rm.TenantId == targetTenantId` 显式钉住；两调用点分别传 `target.TenantId` / `impAdmin.TenantId`。这是**合理的** IgnoreQueryFilters（平台超管跨租户代入的既有语义，与 Sys_UserRole 同法）。
+-   - **`MenuController.Delete`(73-74)——刻意跨租户**：Sys_Menu 是全局表，删菜单须清**所有租户**的映射，改 `IgnoreQueryFilters`（否则他租留孤儿行）。
+-5. **种子**（指令 4）：既有行为确实播种 Sys_RoleMenu（Program.cs 管理员角色全菜单集）→ 按逐租户镜像：`TenantAdminService.CreateAsync` 建租户事务内复制默认租户 RoleId=1 映射集（否则新租户 admin 登录菜单为空）；Program.cs 启动安全网对 RoleId=1 映射**全缺**的启用租户整套补（只在全缺时补——租户管理员刻意删过的单条不复活）。Program.cs 既有增量种子块经 StampTenant 落默认租户，语义不变。
+-
+-### 测试证据
+-- **RED**（暂注释 Sys_RoleMenu 过滤）：`Editing_role_menus_in_A_does_not_affect_B [FAIL]`、`New_role_menu_auto_stamps_current_tenant [FAIL]`（Failed: 2, Passed: 5）。
+-- **GREEN**（恢复过滤）：RoleTenantIsolationTests(7) + ImpersonationServiceTests(14) 共 21 全绿。
+-- **全量**：`Passed! - Failed: 0, Passed: 1577, Skipped: 5, Total: 1582`（上轮 1575+5 → +2 新测试，零回归）。
+-- 回填不变式纯函数 `BackfillInvariant.FindUnmatchedRefs` 形状即 (TenantId, RoleId) 引用集，THROW 50002 是同一谓词——既有 ④/反例两测已覆盖，无需改。
+-
+-### 修改的既有测试及理由
+-`ImpersonationServiceTests.SeedMenusForRole` 加 `Guid tenantId` 参数（7 调用点：Start 路径 4 处传 TargetTenant，End 路径 3 处传 DefaultTenant——End 构建的是平台超管自身菜单）。原实现依赖"映射是全局表"，租户化后映射行必须落在角色所属租户，是设计的直接产物。
+-
+-### 关切
+-- `docs/seeds/*.sql` 历史运维脚本直插 `Sys_RoleMenus (RoleId, MenuId)` 不带 TenantId → 若将来重跑会落 TenantId=空 Guid（对所有租户不可见，且不会串数据）。这些是一次性已执行脚本，未改；后续新运维脚本须带 TenantId（记横切规范）。
+-- 增量菜单授权漂移：Program.cs 后续新增模块菜单的 RoleId=1 增量种子只落默认租户；非默认租户须由租户管理员在 UI 授权（或后续种子机制逐租户化）。属既有种子机制的多租户课题，超出本补口范围。
+-- 迁移仍未在真 SQL Server 执行（InMemory 测试）；真库验证归 P0-T4。
++## 疑虑
++- 理论边角（**非本任务回归、生产不可达**）：若同批内某 UPSERT 把已存在 bin 的 `LocationCode` 改成另一锚值，`binsByAnchor` 旧键会残留指向该 bin。但「发布后码冻结」（LocationCode 恒不变）是既有域不变式，无调用方触发码变更，既有测试亦不涉及；UPSERT 更新后已按当前锚回填新键，主路径无偏差。不视为缺口，仅记录。
+diff --git a/.superpowers/sdd/task-4-brief.md b/.superpowers/sdd/task-4-brief.md
+index e69de29..e84d17c 100644
+--- a/.superpowers/sdd/task-4-brief.md
++++ b/.superpowers/sdd/task-4-brief.md
+@@ -0,0 +1,17 @@
++### Task 4: UpdateSite 锚护栏(E-SPACE-406)
++
++**Files:**
++- Modify: `CP6.Core\Services\Space\SpaceMasterService.cs:60-74`(UpdateSiteAsync)
++- Modify: `CP6.WebApi\Seed\I18nSpaceScreenSeed.cs`(发布/停用/删除段加 E-SPACE-406)
++- Test: `CP6.Tests\Space\`(挨着既有 SpaceMasterService 测试)
++
++**要点:** `SiteCode`/`WarehouseCd` 任一与库中值不同,且站点下(`Floor.SiteId==id` → `Location.FloorId∈floors`)存在 `Status==1 && !IsDeleted` 库位 → `throw new BizException("E-SPACE-406")`。词条五语,语义:「站点下存在已发布库位,不可修改站点编码/仓库码(WMS 锚)」/ ja:「公開済みロケーションが存在するため、サイトコード/倉庫コードは変更できません」(En/ZhTW/Ko 同义自拟)。**其余字段(SiteName/Address/坐标/Enable)不受限**。两锚字段未变时护栏不触发(护栏查询也不要跑,避免每次改名多两查)。
++
++- [ ] **Step 1: 失败测试×3**(①改 SiteCode+有已发布库位→BizException E-SPACE-406 ②改 WarehouseCd 同 ③只改 SiteName+有已发布库位→成功)
++- [ ] **Step 2: 红**
++- [ ] **Step 3: 实现护栏+词条**
++- [ ] **Step 4: 绿+全量绿**
++- [ ] **Step 5: Commit + push**(`feat(space): 波5 UpdateSite锚护栏E-SPACE-406——已发布库位在时拒改SiteCode/WarehouseCd`)
++
++---
++
+diff --git a/.superpowers/sdd/task-4-report.md b/.superpowers/sdd/task-4-report.md
+index 13fa987..6be5460 100644
+--- a/.superpowers/sdd/task-4-report.md
++++ b/.superpowers/sdd/task-4-report.md
+@@ -1,79 +1,27 @@
+-# Task 4 报告：权限点接线（9 控制器 + 反射测试 + RoleAction 种子）
++### Task 4 报告: Space 波5 UpdateSite 锚护栏(E-SPACE-406)
+ 
+-## Status
+-完成。Commit `8a0e17f`（feat/space-wave4-crosscutting）。全量 `dotnet test` 1562 passed / 5 skipped / 0 failed（基线 1559 + 3 反射测试）；build 0 err。
++**Status:** ✅ 完成
+ 
+-## Implemented
+-1. 6 个变更型 Space 控制器逐端点贴 `[RequirePermission(menu, action)]`（`using CP6.Core.Auth;`），每控制器头注释加权限约定一行。
+-2. `CP6.Tests/Space/SpacePermissionAttributeTests.cs`——反射守卫（3 用例）。
+-3. `docs/seeds/space-roleaction-seed.sql`——Sys_MenuAction 登记 + Sys_RoleAction 授权（逐租户、幂等）。
+-4. 3 个只读控制器（SpaceLocate/Stock/Advanced）零改动（全 GET，反射测试确认无误贴）。
++**Commit:** c79c97e (feat/space-wave5, 已 push)
+ 
+-## 贴点清单（controller → action → 键）
+-### SpaceMasterController
+-- CreateSite/UpdateSite/DeleteSite → space-site:add / edit / delete
+-- CreateFloor/UpdateFloor/DeleteFloor → space-floor:add / edit / delete
+-- CreateZone/UpdateZone/DeleteZone → space-floor:edit（×3）
+-- CreateAisle/UpdateAisle/DeleteAisle → space-floor:edit（×3）
+-- CreateRack/UpdateRack/DeleteRack → space-floor:edit（×3）
+-- GET（ListSites/ListFloors/ListZones/ListAisles/ListRacks/Scene/Unplaced/Locations）→ 无（仅 [Authorize]）
++**改动文件:**
++- `CP6.Core/Services/Space/SpaceMasterService.cs` — UpdateSiteAsync 加锚护栏(取实体后、赋值前)
++- `CP6.WebApi/Seed/I18nSpaceScreenSeed.cs` — E-SPACE-406 五语词条(发布/停用/删除段, E-405 与 E-407 之间)
++- `CP6.Tests/SpaceMasterServiceTests.cs` — 3 测 + SeedSiteWithPublishedLocationAsync 帮手(挨着既有 Site 测试)
+ 
+-### LocationPublishController
+-- PublishFloor(POST) → space-publish:publish
+-- Deactivate(PUT) → space-publish:deactivate
+-- Adopt(POST) → space-publish:adopt
+-- ListEvents(GET) → 无
++**实现要点:**
++- 护栏条件: `e.SiteCode != d.SiteCode || e.WarehouseCd != d.WarehouseCd` 才查询(锚未变不跑, 避免每次改名多两查)
++- 命中查询: `Space_Floors.Where(SiteId==id).Select(Id)` → `Space_Locations.AnyAsync(FloorId∈floors && Status==1 && !IsDeleted)` → 抛 `BizException("E-SPACE-406")`(默认 400)
++- 实体链: Space_Location 无 SiteId, 走 Location.FloorId → Space_Floor.SiteId(brief 指定路径)
++- SiteName/Address/坐标/Enable 改动不受限
+ 
+-### CodeRuleController
+-- CreateRule/UpdateRule/DeleteRule → space-code-rule:add / edit / delete
+-- GenerateCodes(POST) / GenCode(POST) → space-code-rule:generate（×2）
+-- Preview(POST) → **豁免**（只读样例合成，不写库，仅 [Authorize]）
+-- ListRules(GET) / CodePrecheck(GET) → 无
++**测试:** 全量 1816 passed / 5 skipped(基线 1813+3 新, 达标)。三测 TDD 红(2 guard fail, SiteName-only pass)→ 实现 → 绿。
+ 
+-### TemplateController（全归楼层编辑）
+-- Create(POST) / Update(PUT) / Delete(DELETE) / Clone(POST) → space-floor:edit（×4）
+-- List(GET) → 无
++**Self-review:**
++- ja 词条用 brief 指定原文「公開済みロケーションが存在するため、サイトコード/倉庫コードは変更できません」✓
++- 连字符键 E-SPACE-406(仓约定)✓；词条位置在发布/停用/删除段 ✓
++- `!IsDeleted` 显式保留(Space_Location : BaseBizEntity 有 IsDeleted; 全局软删过滤存在时冗余但无害, 与 brief 口径一致)
++- 拒绝后锚字段原样(测试断言 SiteCode/WarehouseCd 未变)✓
++- 护栏置于 FirstOrDefault(取实体)之后、字段赋值之前——锚字段仍持旧值可比对 ✓
+ 
+-### ConnectorController（全归楼层编辑）
+-- Create(POST) / UpsertStop(PUT) / DeleteStop(DELETE) / Update(PUT) / Delete(DELETE) → space-floor:edit（×5）
+-- ListBySite(GET) → 无
+-
+-### SceneController（全归楼层编辑）
+-- SaveScene(POST) / Import(POST) / BindCodes(POST) → space-floor:edit（×3）
+-- Export(GET) → 无
+-
+-### 只读控制器（零改动）
+-- SpaceLocateController / SpaceStockController / SpaceAdvancedController：全部 GET 端点，无特性。
+-
+-## 反射断言方式说明
+-- **扫描面**：`typeof(SpaceMasterController).Assembly` → 过滤 `Namespace == "CP6.WebApi.Controllers.Space"` 且 `ControllerBase` 派生且非抽象。守卫用例断言恰好扫到 **9** 个 controller（防命名空间/程序集变动导致空扫空过）。
+-- **menu/action 读取**：`RequirePermissionAttribute` 的 `_menu`/`_action` 为 **private field**，实例反射不可读。故用 `CustomAttributeData.GetCustomAttributes(method)` 读取特性的**构造参数** `(menu, action)`——实现**白名单逐字校验**（非降级到存在性）。
+-- **用例①** `EveryMutatingAction_HasRequirePermission_InWhitelist`：每个带 HttpPost/HttpPut/HttpDelete 的 action（豁免项除外）必须带 `[RequirePermission]` 且 `"menu:action"` ∈ 13 键白名单（硬编码，与映射表逐字一致）。
+-- **用例②** `NoReadOnlyAction_HasRequirePermission`：每个只读端点（GET 且非变更，或豁免的只读 POST）必须**不带** `[RequirePermission]`（防误贴）。
+-- **豁免清单（显式）**：`CodeRuleController.Preview`——POST 但只读语义（合成样例、不写库），按「不得带特性」校验，与 GET 同待遇。
+-- **单测无 HTTP 管道**：RequirePermission 作为 `IAsyncAuthorizationFilter` 只在真实管道触发；本反射测试仅检查特性存在性与参数，不执行过滤器；既有直构控制器的服务层单测不受影响（全量绿证实）。
+-
+-## Files changed
+-- `CP6.WebApi/Controllers/Space/SpaceMasterController.cs`（+15 特性 + 头注释）
+-- `CP6.WebApi/Controllers/Space/LocationPublishController.cs`（+3 + 头注释）
+-- `CP6.WebApi/Controllers/Space/CodeRuleController.cs`（+5 + 头注释，Preview 豁免注释）
+-- `CP6.WebApi/Controllers/Space/TemplateController.cs`（+4 + 头注释）
+-- `CP6.WebApi/Controllers/Space/ConnectorController.cs`（+5 + 头注释）
+-- `CP6.WebApi/Controllers/Space/SceneController.cs`（+3 + 头注释）
+-- `CP6.Tests/Space/SpacePermissionAttributeTests.cs`（新建，3 用例）
+-- `docs/seeds/space-roleaction-seed.sql`（新建）
+-
+-## 种子要点
+-- **表结构核对**：Sys_MenuAction 列 = Id/MenuId/ActionCode(必)/ActionName(必)/Sort/CreateDate/TenantId（+ Creator/Modifier/ModifyDate 可空，省略）；唯一索引 UX (TenantId,MenuId,ActionCode)。Sys_RoleAction 列序按要求 (Id,RoleId,MenuId,ActionCode,CreateDate,TenantId)、Id=NEWID()。
+-- **逐租户**：`CROSS JOIN (SELECT Id FROM Sys_Tenants) t`（Sys_Tenants PK=Id[uniqueidentifier]，实体 Sys_Tenant : BaseEntity 确认）。
+-- **动作定义 13/租户**：902 add/edit/delete；903 add/edit/delete；904 add/edit/delete/generate；905 publish/deactivate/adopt；906 无。
+-- **幂等**：两表 INSERT 均 NOT EXISTS(TenantId+MenuId+ActionCode)。
+-- 含验证查询 + 回滚段（仅删本种子 902-905 动作码）+ CP6DB 连接串头注释（照 space-menu-seed-2.sql 骨架）。
+-
+-## Self-review
+-- 映射表逐字执行；zone/aisle/rack/scene/template/connector 全变更统一 space-floor:edit，符「避免动作爆炸」裁决。
+-- **偏差（已文档化）**：CodeRuleController.Preview 是 POST 但只读（合成样例不写库），映射表未列。按测试豁免清单显式登记为只读、不贴特性；控制器头注释与测试注释均说明。这是映射表「唯一权威」下唯一的读写语义与 HTTP 动词不一致点，判定为只读豁免。
+-- 反射测试用 CustomAttributeData 而非改共享 RequirePermissionAttribute 加公开属性——零涟漪，且实现完整白名单逐字校验（未降级）。
+-- 种子 MenuId 依赖 902-905 菜单存在（波2/3 已种），头注释已声明前提；本种子只登记动作点与授权，不建菜单。
+-- 全量测试绿、build 0 err、单 commit、Co-Authored-By 齐备。
+-- 未触碰 picture/、shots/ 等 session 起始既存的无关未跟踪文件。
++**疑虑:** 无。InMemory 测试口径与既有 SpaceMasterServiceTests 一致; 真库集成非本任务范畴。
+diff --git a/CP6.Core/Services/Space/SpaceMasterService.cs b/CP6.Core/Services/Space/SpaceMasterService.cs
+index e68f67d..6eafac8 100644
+--- a/CP6.Core/Services/Space/SpaceMasterService.cs
++++ b/CP6.Core/Services/Space/SpaceMasterService.cs
+@@ -54,20 +54,34 @@ public class SpaceMasterService : ISpaceMasterService
+         };
+         _db.Space_Sites.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpdateSiteAsync(Guid id, SiteDto d, string? user)
+     {
+         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id)
+                 ?? throw new BizException("E-SPACE-001");
++
++        // 锚护栏（E-SPACE-406）：SiteCode/WarehouseCd 是 WMS join 锚上游（发布时 WarehouseCd
++        // 回退=Site.WarehouseCd ?? SiteCode）。任一锚字段变更且站点下存在已发布库位
++        // （Floor.SiteId==id → Location.FloorId∈floors，Status==1 && !IsDeleted）→ 拒绝，
++        // 否则会让已发布 T_WmsBin 锚漂移。锚未变则不查询（避免每次改名多两查）。
++        if (e.SiteCode != d.SiteCode || e.WarehouseCd != d.WarehouseCd)
++        {
++            var floorIds = _db.Space_Floors.Where(f => f.SiteId == id).Select(f => f.Id);
++            if (await _db.Space_Locations.AnyAsync(
++                    l => l.FloorId != null && floorIds.Contains(l.FloorId.Value)
++                         && l.Status == 1 && !l.IsDeleted))
++                throw new BizException("E-SPACE-406");
++        }
++
+         e.SiteCode   = d.SiteCode;
+         e.SiteName   = d.SiteName;
+         e.Address    = d.Address;
+         e.Lng        = d.Lng;
+         e.Lat        = d.Lat;
+         e.Enable     = d.Enable;
+         e.WarehouseCd = d.WarehouseCd;
+         e.Modifier   = user;
+         e.ModifyDate = DateTime.Now;
+         await _db.SaveChangesAsync();
+diff --git a/CP6.Tests/SpaceMasterServiceTests.cs b/CP6.Tests/SpaceMasterServiceTests.cs
+index 2f232f8..4efa8ab 100644
+--- a/CP6.Tests/SpaceMasterServiceTests.cs
++++ b/CP6.Tests/SpaceMasterServiceTests.cs
+@@ -131,20 +131,83 @@ public class SpaceMasterServiceTests
+         var created = (await svc.ListSitesAsync()).Single(x => x.Id == id);
+         Assert.Equal("MAIN", created.WarehouseCd);
+ 
+         await svc.UpdateSiteAsync(id,
+             new SiteDto { SiteCode = "WH1", SiteName = "a", WarehouseCd = "ALT" }, "u");
+ 
+         var updated = (await svc.ListSitesAsync()).Single(x => x.Id == id);
+         Assert.Equal("ALT", updated.WarehouseCd);
+     }
+ 
++    // ── 波5 Task4: UpdateSite 锚护栏（E-SPACE-406）────────────────────────
++    // SiteCode/WarehouseCd 是 WMS join 锚上游；站点下有已发布库位（Status=1 && !IsDeleted）
++    // 时任一锚字段变更 → 拒绝（改锚会让已发布 T_WmsBin 锚漂移）。锚未变则护栏不查询。
++
++    /// <summary>种子：site→floor→published loc（Status=1, FloorId=floor 走 Floor.SiteId 链）。</summary>
++    private static async Task<Guid> SeedSiteWithPublishedLocationAsync(
++        CP6Context db, string siteCode, string? warehouseCd)
++    {
++        var siteId  = Guid.NewGuid();
++        var floorId = Guid.NewGuid();
++        db.Space_Sites.Add(new Space_Site { Id = siteId, SiteCode = siteCode, SiteName = "s", WarehouseCd = warehouseCd });
++        db.Space_Floors.Add(new Space_Floor { Id = floorId, SiteId = siteId, Level = 1, FloorCode = "F1", FloorName = "1F" });
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = Guid.NewGuid(), FloorId = floorId, RackId = Guid.NewGuid(),
++            Placed = true, Status = 1, CodeOrigin = 1, Version = 1, LocationCode = "A-01-01-01"
++        });
++        await db.SaveChangesAsync();
++        return siteId;
++    }
++
++    [Fact]
++    public async Task UpdateSite_ChangeSiteCode_WithPublishedLocation_Throws_E406()
++    {
++        var (db, svc) = Make();
++        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
++
++        var ex = await Assert.ThrowsAsync<BizException>(
++            () => svc.UpdateSiteAsync(siteId,
++                new SiteDto { SiteCode = "WH2", SiteName = "s", WarehouseCd = "MAIN" }, "u"));
++        Assert.Equal("E-SPACE-406", ex.Code);
++
++        // 拒绝后锚原样
++        Assert.Equal("WH1", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).SiteCode);
++    }
++
++    [Fact]
++    public async Task UpdateSite_ChangeWarehouseCd_WithPublishedLocation_Throws_E406()
++    {
++        var (db, svc) = Make();
++        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
++
++        var ex = await Assert.ThrowsAsync<BizException>(
++            () => svc.UpdateSiteAsync(siteId,
++                new SiteDto { SiteCode = "WH1", SiteName = "s", WarehouseCd = "ALT" }, "u"));
++        Assert.Equal("E-SPACE-406", ex.Code);
++
++        Assert.Equal("MAIN", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).WarehouseCd);
++    }
++
++    [Fact]
++    public async Task UpdateSite_ChangeOnlySiteName_WithPublishedLocation_Succeeds()
++    {
++        var (db, svc) = Make();
++        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
++
++        // 锚未变（SiteCode/WarehouseCd 同库中值）→ 护栏不触发，SiteName 改动放行
++        await svc.UpdateSiteAsync(siteId,
++            new SiteDto { SiteCode = "WH1", SiteName = "改名", WarehouseCd = "MAIN" }, "u");
++
++        Assert.Equal("改名", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).SiteName);
++    }
++
+     // ── B-4: 货架改位姿触发几何重算 ──────────────────────────────────────
+ 
+     [Fact]
+     public async Task UpdateRack_MovePosition_RecalcsLocations()
+     {
+         var (db, svc) = Make();
+         var rackId = await svc.CreateRackAsync(new RackDto
+         {
+             ZoneId = Guid.NewGuid(), RackCode = "R1",
+             X = 0, Y = 0, Cols = 1, Levels = 1, DepthCount = 1,
+diff --git a/CP6.WebApi/Seed/I18nSpaceScreenSeed.cs b/CP6.WebApi/Seed/I18nSpaceScreenSeed.cs
+index be575b3..d65fc17 100644
+--- a/CP6.WebApi/Seed/I18nSpaceScreenSeed.cs
++++ b/CP6.WebApi/Seed/I18nSpaceScreenSeed.cs
+@@ -28,20 +28,21 @@ public static class I18nSpaceScreenSeed
+         new Sys_Lang { LangKey = "E-SPACE-304", ZhCN = "编码重复（批内重复或与既有编码冲突）", ZhTW = "編碼重複（批內重複或與既有編碼衝突）", En = "Duplicate code (within batch or conflicts with an existing code)", Ja = "コードが重複しています（バッチ内または既存と競合）", Ko = "코드가 중복됩니다(배치 내 또는 기존과 충돌)" },
+         new Sys_Lang { LangKey = "E-SPACE-305", ZhCN = "巷道字段段未标记为可选", ZhTW = "巷道欄位段未標記為可選", En = "Aisle segment is not marked optional", Ja = "通路セグメントが任意に設定されていません", Ko = "통로 세그먼트가 선택 항목으로 표시되지 않았습니다" },
+         new Sys_Lang { LangKey = "E-SPACE-306", ZhCN = "编码规则缺少库位粒度字段段", ZhTW = "編碼規則缺少庫位粒度欄位段", En = "Code rule lacks location-level segments", Ja = "コード規則にロケーション粒度のセグメントがありません", Ko = "코드 규칙에 로케이션 단위 세그먼트가 없습니다" },
+         new Sys_Lang { LangKey = "E-SPACE-307", ZhCN = "存在空码或重复码，无法发布", ZhTW = "存在空碼或重複碼，無法發布", En = "Empty or duplicate codes exist; cannot publish", Ja = "空コードまたは重複コードがあり公開できません", Ko = "빈 코드 또는 중복 코드가 있어 게시할 수 없습니다" },
+ 
+         // ── 发布 / 停用 / 删除护栏（04 章 §11）──
+         new Sys_Lang { LangKey = "E-SPACE-401", ZhCN = "库位仍有库存，不能停用", ZhTW = "庫位仍有庫存，不能停用", En = "Location still has stock; cannot deactivate", Ja = "ロケーションに在庫が残っており無効化できません", Ko = "로케이션에 재고가 남아 있어 비활성화할 수 없습니다" },
+         new Sys_Lang { LangKey = "E-SPACE-402", ZhCN = "该巷道下有已发布库位，不能直接删除（可用 mode=deactivate|rehome）", ZhTW = "該巷道下有已發布庫位，不能直接刪除（可用 mode=deactivate|rehome）", En = "Aisle has published locations; cannot delete directly (use mode=deactivate|rehome)", Ja = "通路に公開済みロケーションがあり直接削除できません（mode=deactivate|rehome を使用）", Ko = "통로에 게시된 로케이션이 있어 직접 삭제할 수 없습니다(mode=deactivate|rehome 사용)" },
+         new Sys_Lang { LangKey = "E-SPACE-403", ZhCN = "该货架下有已发布库位，请先停用（或 mode=deactivate|rehome）", ZhTW = "該貨架下有已發布庫位，請先停用（或 mode=deactivate|rehome）", En = "Rack has published locations; deactivate them first (or mode=deactivate|rehome)", Ja = "ラックに公開済みロケーションがあります。先に無効化してください（または mode=deactivate|rehome）", Ko = "랙에 게시된 로케이션이 있습니다. 먼저 비활성화하세요(또는 mode=deactivate|rehome)" },
+         new Sys_Lang { LangKey = "E-SPACE-405", ZhCN = "站点编码超过 10 字符且未配置 WarehouseCd 映射，无法发布/停用", ZhTW = "站點編碼超過 10 字元且未設定 WarehouseCd 對應，無法發布/停用", En = "Site code exceeds 10 chars with no WarehouseCd mapping; cannot publish/deactivate", Ja = "サイトコードが10文字を超え WarehouseCd マッピング未設定のため公開/無効化できません", Ko = "사이트 코드가 10자를 초과하고 WarehouseCd 매핑이 없어 게시/비활성화할 수 없습니다" },
++        new Sys_Lang { LangKey = "E-SPACE-406", ZhCN = "站点下存在已发布库位，不可修改站点编码/仓库码（WMS 锚）", ZhTW = "站點下存在已發布庫位，不可修改站點編碼/倉庫碼（WMS 錨）", En = "Site has published locations; site code / warehouse code cannot be changed (WMS anchor)", Ja = "公開済みロケーションが存在するため、サイトコード/倉庫コードは変更できません", Ko = "게시된 로케이션이 있어 사이트 코드/창고 코드를 변경할 수 없습니다(WMS 앵커)" },
+         new Sys_Lang { LangKey = "E-SPACE-407", ZhCN = "目标巷道不存在，或与货架不在同一库区", ZhTW = "目標巷道不存在，或與貨架不在同一庫區", En = "Target aisle not found, or not in the same zone as the rack", Ja = "移動先の通路が存在しないか、ラックと同じゾーンにありません", Ko = "대상 통로가 없거나 랙과 같은 존에 있지 않습니다" },
+         new Sys_Lang { LangKey = "E-SPACE-408", ZhCN = "已发布库位不可删除，请先停用", ZhTW = "已發布庫位不可刪除，請先停用", En = "Published locations cannot be deleted; deactivate first", Ja = "公開済みロケーションは削除できません。先に無効化してください", Ko = "게시된 로케이션은 삭제할 수 없습니다. 먼저 비활성화하세요" },
+ 
+         // ── 连接器（05 章）──
+         new Sys_Lang { LangKey = "E-SPACE-501", ZhCN = "连接器编码已存在", ZhTW = "連接器編碼已存在", En = "Connector code already exists", Ja = "コネクタコードは既に存在します", Ko = "커넥터 코드가 이미 존재합니다" },
+         new Sys_Lang { LangKey = "E-SPACE-502", ZhCN = "连接器不存在", ZhTW = "連接器不存在", En = "Connector not found", Ja = "コネクタが存在しません", Ko = "커넥터가 없습니다" },
+ 
+         // ── 定位（06 章）──
+         new Sys_Lang { LangKey = "E-SPACE-601", ZhCN = "未找到该编码对应的库位", ZhTW = "未找到該編碼對應的庫位", En = "No location found for this code", Ja = "このコードに該当するロケーションが見つかりません", Ko = "이 코드에 해당하는 로케이션을 찾을 수 없습니다" },
+ 

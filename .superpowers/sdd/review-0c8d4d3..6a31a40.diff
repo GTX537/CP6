@@ -1,0 +1,3903 @@
+# Review package: 0c8d4d3..HEAD
+
+## Commits
+6a31a40 docs(sdd): M-ERP T6过审(7用例真值锚定独立复算)——T1-T6全完成待终审
+a5551de test(erp): M-ERP T6 核心算价路径回归(Quotation报价/Order建单算价)
+d58911d docs(sdd): M-ERP T5两轮修复后过审(纳入17/豁免5,字段级口径)+跨波票PlateMoldStock+T6简报
+f605ce0 fix(erp): M-ERP T5 二复审——PlateMold 货币字段失实豁免收口→纳入 IAuditable
+df878f1 fix(erp): M-ERP T5 复审修复——5含价明细实体补贴 IAuditable
+45df1ce feat(erp): M-ERP T5 钱与主数据实体贴 IAuditable(字段级审计)
+af64275 docs(sdd): M-ERP T4过审(三闸精确计数,反向验证自洽)+T5简报
+acf5d1c test(erp): M-ERP T4 fail-closed 权限反射测试(防回潮闸)
+afa74da docs(sdd): M-ERP T3b过审(30元组四方对账双向一致)+T4简报
+c765b81 feat(erp): M-ERP T3b ERP权限点逐租户种子——30元组×MenuAction/RoleAction
+31e1895 docs(sdd): M-ERP T3a过审(35/35双向逐字,10控制器口径裁定)+T3b简报
+bdbc532 feat(erp): M-ERP T3a 10控制器35写端点贴 [RequirePermission]
+e30124a docs(sdd): M-ERP T2补审通过(opus,三具名风险全证伪)+T3a简报
+70f99e3 feat(erp): M-ERP T2 菜单MenuKey锚定+五孤儿路由收编
+247c359 docs(sdd): M-ERP波开工台账——T1权限键真相源完成(46行/14键)+T2硬前置与裁决点记录
+af80923 docs(erp): T1审查修复——豁免计数11/写端点35自洽订正
+fe644b8 docs(erp): M-ERP T1 权限键清单——15控制器写端点×权限键真相源
+
+## Files changed
+ .superpowers/sdd/erp-t2-brief.md                   |  21 ++
+ .superpowers/sdd/erp-t2-report.md                  |  19 ++
+ .superpowers/sdd/erp-t3a-brief.md                  |  23 ++
+ .superpowers/sdd/erp-t3a-report.md                 |  57 +++++
+ .superpowers/sdd/erp-t3b-brief.md                  |  27 +++
+ .superpowers/sdd/erp-t3b-report.md                 |  73 ++++++
+ .superpowers/sdd/erp-t4-brief.md                   |  22 ++
+ .superpowers/sdd/erp-t4-report.md                  |  67 ++++++
+ .superpowers/sdd/erp-t5-brief.md                   |  23 ++
+ .superpowers/sdd/erp-t5-report.md                  | 151 +++++++++++++
+ .superpowers/sdd/erp-t6-brief.md                   |  19 ++
+ .superpowers/sdd/erp-t6-report.md                  |  69 ++++++
+ .superpowers/sdd/progress.md                       |  13 +-
+ CP6.Entity/DomainModels/Erp/CreditNote.cs          |   2 +-
+ CP6.Entity/DomainModels/Erp/EstimateCalc.cs        |   2 +-
+ CP6.Entity/DomainModels/Erp/FscChecklist.cs        |   2 +
+ CP6.Entity/DomainModels/Erp/FxRate.cs              |   2 +-
+ CP6.Entity/DomainModels/Erp/Order.cs               |   2 +-
+ CP6.Entity/DomainModels/Erp/OrderDetail.cs         |   2 +-
+ CP6.Entity/DomainModels/Erp/OrderMaterial.cs       |   2 +-
+ CP6.Entity/DomainModels/Erp/OrderProcess.cs        |   2 +-
+ CP6.Entity/DomainModels/Erp/PlateMold.cs           |   2 +-
+ CP6.Entity/DomainModels/Erp/ProductLotPrice.cs     |   2 +-
+ CP6.Entity/DomainModels/Erp/ProductMaster.cs       |   2 +-
+ CP6.Entity/DomainModels/Erp/ProductMaterial.cs     |   2 +-
+ CP6.Entity/DomainModels/Erp/ProductProcess.cs      |   2 +-
+ CP6.Entity/DomainModels/Erp/Quotation.cs           |   2 +-
+ CP6.Entity/DomainModels/Erp/QuotationDetail.cs     |   2 +-
+ CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs      |   4 +-
+ CP6.Tests/Erp/ErpAuditTests.cs                     | 247 +++++++++++++++++++++
+ CP6.Tests/Erp/OrderCalcTests.cs                    | 152 +++++++++++++
+ CP6.Tests/Erp/QuotationCalcTests.cs                | 111 +++++++++
+ CP6.Tests/ErpMenuSeedTests.cs                      | 140 ++++++++++++
+ CP6.Tests/ErpPermissionAttributeTests.cs           | 204 +++++++++++++++++
+ CP6.Tests/ErpPermissionSeedTests.cs                | 153 +++++++++++++
+ CP6.WebApi/Controllers/Erp/BackorderController.cs  |   3 +
+ .../Controllers/Erp/BusinessPartnerController.cs   |   4 +
+ .../Controllers/Erp/EstimateCalcController.cs      |   5 +
+ .../Controllers/Erp/FscChecklistController.cs      |   2 +
+ CP6.WebApi/Controllers/Erp/FxRateController.cs     |   4 +
+ CP6.WebApi/Controllers/Erp/OrderController.cs      |   6 +
+ CP6.WebApi/Controllers/Erp/PlateMoldController.cs  |   5 +
+ CP6.WebApi/Controllers/Erp/ProductController.cs    |   5 +
+ CP6.WebApi/Controllers/Erp/QuotationController.cs  |   8 +
+ .../Controllers/Erp/SheetUnitPriceController.cs    |   3 +
+ CP6.WebApi/Program.cs                              |  13 ++
+ CP6.WebApi/Seed/ErpMenuSeed.cs                     | 126 +++++++++++
+ CP6.WebApi/Seed/ErpPermissionSeed.cs               | 120 ++++++++++
+ docs/seeds/erp-key-menu-anchor.md                  |  62 ++++++
+ docs/seeds/erp-menu-seed.sql                       |  60 +++++
+ docs/seeds/erp-permission-keys.md                  | 194 ++++++++++++++++
+ docs/seeds/erp-permission-seed.sql                 | 161 ++++++++++++++
+ 52 files changed, 2389 insertions(+), 17 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/erp-t2-brief.md b/.superpowers/sdd/erp-t2-brief.md
+new file mode 100644
+index 0000000..40c6faa
+--- /dev/null
++++ b/.superpowers/sdd/erp-t2-brief.md
+@@ -0,0 +1,21 @@
++# M-ERP T2 任务简报：菜单 MenuKey 锚定 + 五孤儿路由收编
++
++## 背景与位置
++M-ERP 横切接线波(branch=feat/m-erp-crosscutting, base=0c8d4d3)第二任务。T1 已产出权限键真相源 `docs/seeds/erp-permission-keys.md`(15控制器/35真写端点+11只读POST豁免=46行/14个 erp-* menu-key)。本任务为 T3b 权限种子提供「键→菜单行」锚定,并收编计划点名的五条孤儿路由(原计划 T4 前置并入,因 T3b 种子依赖菜单行存在)。
++
++## 需求(真相源=台账 2026-07-12 T1 条目 + 计划 M-ERP 段 + M-WMS T2 先例)
++
++1. **ErpMenuSeed 启动幂等种子**,接入 Program.cs 且**必须先于 RoutePath 回填块执行**。
++   - 🔴硬前置(T1 审查者独立实证): 既有 ERP 菜单 201-215 的 RoutePath 是裸路径(如 `/order`,无 `/erp/` 段),若被回填块先跑,派生键无 `erp-` 前缀,与 T1 的 erp-* 键全体失配 → 全 ERP 403。
++2. **14 个 menu-key 各定唯一锚定菜单行**,显式赋 erp-* MenuKey。
++   - 约束: Sys_Menu.MenuKey 有 IS NOT NULL 唯一(过滤)索引,禁两行共键;6 个域存在「一覧+登録」双菜单行,须择一为锚(另一行 MenuKey 留 null)。
++3. **防御矫正块**: 对已被回填成错误键(无 erp- 前缀)的存量行就地纠回,作用域严限 ERP 锚定行,无其他副作用(照 M-WMS T2 先例)。
++4. **五孤儿路由收编**: `/erp/order-trace`、`/erp/credit-note`、`/erp/backorder`、`/erp/otd-report`、`/erp/fx-rate` 补 Sys_Menu 行(含 erp-* MenuKey)+ RoleMenu 授管理员;新 MenuId 段位不得与既有行碰撞(M-WMS 曾有 429 避让先例)。
++5. **输出锚定表** `docs/seeds/erp-key-menu-anchor.md`(14 键 → MenuId 映射,T3b 输入)+ SQL 对照 `docs/seeds/erp-menu-seed.sql`(与 C# 正本一致)。
++6. **测试**: ErpMenuSeedTests 覆盖锚定/孤儿收编/唯一键/幂等/矫正等关键行为,断言真实(删实现会红)。
++7. 键名一律**连字符**(erp-order 等),禁下划线——全仓约定,跨波命门。
++
++## Global Constraints(计划原文)
++- 基线不许跌(本波基线=1683 后端全绿);每 commit 立即 push。
++- 权限贴点节奏: MenuKey 命名与 MenuId 段位先登记再播种。
++- 每波结尾跑该模块 fail-closed 反射测试 + 全量回归(T4 兑现,非本任务)。
+diff --git a/.superpowers/sdd/erp-t2-report.md b/.superpowers/sdd/erp-t2-report.md
+new file mode 100644
+index 0000000..e4f914b
+--- /dev/null
++++ b/.superpowers/sdd/erp-t2-report.md
+@@ -0,0 +1,19 @@
++# M-ERP T2 实现者报告(注: 上会话实现后中断,详细报告散失;以下为 commit 70f99e3 正文原文,作为实现者主张对待)
++
++ErpMenuSeed 启动幂等种子(置于 Program.cs RoutePath 回填块之前):
++- 既有 201-215 九个权限键各锚定登録/主页显式设 erp-* MenuKey,一覧页留 null
++  (MenuKey 有 IS NOT NULL 唯一索引,禁两行共键——否决真相源§六.2两行同赋建议)
++- 头号命门修复: 裸路径 /order 等被回填成无 erp- 前缀键→全 ERP 403,防御矫正块就地纠回
++- 五孤儿路由收编 216-220: order-trace/credit-note/backorder/otd-report/fx-rate
++  补 Sys_Menu 行含 erp-* MenuKey + RoleMenu 授管理员
++- docs/seeds/erp-key-menu-anchor.md(14 键锚定表,T3b 输入)+ erp-menu-seed.sql 对照
++- ErpMenuSeedTests 6 测试(锚定/孤儿/唯一键/幂等/矫正/一覧null)
++
++全量 1689 绿(1683 基线 + 6 新)
++
++变更文件:
++- CP6.Tests/ErpMenuSeedTests.cs     | 140 +
++- CP6.WebApi/Program.cs             |   7 +
++- CP6.WebApi/Seed/ErpMenuSeed.cs    | 126 +
++- docs/seeds/erp-key-menu-anchor.md |  62 +
++- docs/seeds/erp-menu-seed.sql     |  60 +
+diff --git a/.superpowers/sdd/erp-t3a-brief.md b/.superpowers/sdd/erp-t3a-brief.md
+new file mode 100644
+index 0000000..48229be
+--- /dev/null
++++ b/.superpowers/sdd/erp-t3a-brief.md
+@@ -0,0 +1,23 @@
++# M-ERP T3a 任务简报：15 控制器贴 [RequirePermission]
++
++## 背景与位置
++M-ERP 横切接线波第三任务(branch=feat/m-erp-crosscutting)。T1 已产出权限键真相源,T2 已完成菜单 MenuKey 锚定。本任务只做控制器贴点;权限种子由 T3b 单独任务完成。
++
++## 必读(按顺序)
++1. `docs/00-横切接线规范.md`(P1 横切规范,本任务是其机械执行)
++2. `docs/seeds/erp-permission-keys.md`(T1 真相源——键值以此为准逐字使用,46 行:35 真写端点×键 + 11 只读 POST 豁免)
++3. 样板: M-WMS T3a 先例 commit 8aecc71(git show 8aecc71 看典型贴法)
++
++## 需求
++1. 对真相源列出的 **15 个 ERP 控制器、35 个真写端点**逐方法贴 `[RequirePermission("key:action")]`,键值与真相源**逐字一致**(连字符 erp-*,禁下划线;高危键如 order:cancel、sheet-unit-price:correct 不得降级为 edit)。
++2. **11 个只读 POST 豁免不贴**(真相源已逐条豁免,勿自行加贴)。
++3. **裁决点(主控已裁)**: `EstimateCalcController.Calculate` 挂 `[AllowAnonymous]`(EstimateCalcController.cs:136 附近)——**保留不动**,本任务不贴不删;T4 反射测试将显式豁免;已记终审票待用户裁处。在报告中确认其现状未被触碰。
++4. 纯注解叠加: **零方法体改动**,类级 `[Authorize]` 全部保留。
++5. 交付自查表: 逐控制器「端点→键」1:1 对账(35=35),写入报告。
++
++## 验证与提交
++- `dotnet build` 0 Error;全量测试(基线 1689 绿,T2 后)不许跌。
++- 单 commit,message 说明贴点计数;commit 后立即 push(用户硬性纪律)。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\erp-t3a-report.md`(逐控制器对账表+自查+测试输出摘要)。回复只返回: 状态(DONE/DONE_WITH_CONCERNS/NEEDS_CONTEXT/BLOCKED)、commit sha、一行测试结论、concerns(若有)。
+diff --git a/.superpowers/sdd/erp-t3a-report.md b/.superpowers/sdd/erp-t3a-report.md
+new file mode 100644
+index 0000000..794ad48
+--- /dev/null
++++ b/.superpowers/sdd/erp-t3a-report.md
+@@ -0,0 +1,57 @@
++# M-ERP T3a 执行报告：15 控制器贴 [RequirePermission]
++
++## 实施内容
++
++对真相源 `docs/seeds/erp-permission-keys.md` §一 列出的 35 个真写端点逐方法贴 `[RequirePermission("menu-key","action")]`，键值逐字取自真相源。纯注解叠加：每个受影响文件加 `using CP6.Core.Auth;`，每个写方法在其 `[HttpXxx]` 属性之后加一行 `[RequirePermission]`。零方法体改动，类级 `[Authorize]` 全部保留。
++
++11 个只读 POST 豁免**未贴**（按简报要求，与 WMS T3a 给 Summary 贴 view 的做法不同——ERP 简报明确豁免不贴）。
++
++## 逐控制器对账表（35 = 35）
++
++| 控制器 | 真写端点数 | 贴点数 | 端点→键 |
++|---|---|---|---|
++| OrderController | 5 | 5 | Create→erp-order:add / Update→erp-order:edit / Delete→erp-order:del / BatchUpdatePrice→erp-order-price-correction:correct / Cancel→erp-order:cancel |
++| BackorderController | 2 | 2 | CloseRemaining→erp-backorder:close / SplitToNewOrder→erp-backorder:split |
++| FxRateController | 3 | 3 | Create→erp-fx-rate:add / Update→erp-fx-rate:edit / Delete→erp-fx-rate:del |
++| EstimateCalcController | 4 | 4 | Create→erp-estimate-calc:add / Update→erp-estimate-calc:edit / Delete→erp-estimate-calc:del / Copy→erp-estimate-calc:add |
++| QuotationController | 7 | 7 | Create→add / Update→edit / Delete→del / Copy→add / Confirm→confirm / CancelConfirm→confirm / Issue→issue（均 erp-quotation） |
++| ProductController | 4 | 4 | Create→add / Update→edit / Delete→del / Copy→add（均 erp-product） |
++| BusinessPartnerController | 3 | 3 | Create→erp-business-partner:add / Update→edit / Delete→del（Delete 保留既有 [Authorize(Roles="1,Admin")] 双闸） |
++| FscChecklistController | 1 | 1 | Issue→erp-fsc-checklist:issue |
++| SheetUnitPriceController | 2 | 2 | Import→erp-sheet-unit-price:import / BatchUpdate→erp-sheet-unit-price:edit |
++| PlateMoldController | 4 | 4 | Create→add / Revise→edit / Update→edit / Delete→del（均 erp-plate-mold） |
++| **合计** | **35** | **35** | ✅ |
++
++### 未贴（豁免/无写端点）控制器
++- CreditNoteController：唯一端点 Search 为只读 POST 豁免 → 0 贴点
++- OtdReportController：Summary/ExportCsv 均只读 POST 豁免 → 0 贴点
++- UnshippedOrderController：Search/ExportCsv 均只读 POST 豁免 → 0 贴点
++- MasterDataController / OrderTraceController：GET-only，无写端点 → 0 贴点
++
++### 11 个只读 POST 豁免（确认未贴）
++lead-time / calc-product-category / calc-materials / report（OrderController 4 个），calculate（EstimateCalc），label（PlateMold），credit-note/search，otd summary，otd export-csv，unshipped search，unshipped export-csv。
++
++## 裁决点确认
++`EstimateCalcController.Calculate`（:135-141）现挂 `[AllowAnonymous]`，**未被触碰**——本任务不贴不删，保持原状。T4 反射测试将显式豁免。
++
++## 验证与提交
++- `dotnet build CP6.WebApi/CP6.WebApi.csproj -c Debug`：**Build succeeded，0 Error**（1 个既有 InboundService.cs 警告，与本任务无关）。
++- `dotnet test CP6.Tests`：**Passed! Failed: 0, Passed: 1689, Skipped: 5, Total: 1694**——与基线 1689 绿完全一致，零跌落。
++- grep 校验：`RequirePermission("erp` 在 Erp 目录命中 **35** 行。
++
++## 变更文件（10 个控制器）
++- CP6.WebApi/Controllers/Erp/OrderController.cs
++- CP6.WebApi/Controllers/Erp/BackorderController.cs
++- CP6.WebApi/Controllers/Erp/FxRateController.cs
++- CP6.WebApi/Controllers/Erp/EstimateCalcController.cs
++- CP6.WebApi/Controllers/Erp/QuotationController.cs
++- CP6.WebApi/Controllers/Erp/ProductController.cs
++- CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs
++- CP6.WebApi/Controllers/Erp/FscChecklistController.cs
++- CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs
++- CP6.WebApi/Controllers/Erp/PlateMoldController.cs
++
++## 自查结论
++- Completeness：35/35 全贴，键值逐字与真相源一致（连字符，无下划线，无降级）。高危键 erp-order:cancel、erp-order-price-correction:correct 独立成键未降级 edit；状态键 confirm/issue/import/close/split 独立成键。11 豁免确未贴。
++- Discipline：零方法体改动；GET 端点无贴点；未越界改其他模块；类级 [Authorize] 与 BusinessPartner.Delete 的 [Authorize(Roles)] 双闸均保留；EstimateCalc.Calculate 的 [AllowAnonymous] 未动。
++- Concern（非本任务，供 T3b/T4）：5 个 menu-key（erp-order-price-correction 除外，实为菜单209存在……实际是 erp-backorder/credit-note/otd-report/fx-rate/order-trace）对应孤儿路由菜单缺失，T3b 种子与 T4 补菜单前，这些键会 fail-closed 403（真相源 §六已记为 T2/T4 硬前置）。本任务仅贴点，符合预期。
+diff --git a/.superpowers/sdd/erp-t3b-brief.md b/.superpowers/sdd/erp-t3b-brief.md
+new file mode 100644
+index 0000000..5f6c4f3
+--- /dev/null
++++ b/.superpowers/sdd/erp-t3b-brief.md
+@@ -0,0 +1,27 @@
++# M-ERP T3b 任务简报：逐租户 MenuAction/RoleAction 权限种子
++
++## 背景与位置
++M-ERP 横切接线波第四任务。T2 已锚定 14 个 erp-* MenuKey 并产出锚定表;T3a 已把 35 个写端点贴上 [RequirePermission]。本任务把「键:action」种成逐租户的 Sys_MenuAction + Sys_RoleAction 行,使 admin(RoleId=1)在每个租户都放行。
++
++## 必读(按顺序)
++1. `docs/seeds/erp-key-menu-anchor.md`(T2 锚定表——key→MenuId 映射的唯一依据)
++2. `docs/seeds/erp-permission-keys.md`(T1 真相源——(menu-key, action) 元组清单来源)
++3. 样板: **WmsPermissionSeed**(`git show 358ee7e` / CP6.WebApi/Seed/WmsPermissionSeed.cs)——本任务是其 ERP 同型复制,四要件照抄:
++   - 枚举 Sys_Tenants 逐租户播种,显式赋 TenantId
++   - `IgnoreQueryFilters()` 查重(load-bearing,否则查询被租户过滤器遮蔽导致重复插入)
++   - MenuAction + RoleAction 双种,RoleAction 挂 RoleId=1
++   - StampTenant 不得覆盖显式 TenantId 值
++
++## 需求
++1. 新建 `ErpPermissionSeed.EnsureSeeded`,接入 Program.cs 于 ErpMenuSeed 之后(菜单行须先存在),每启动幂等。
++2. 种子元组=T1 真相源 35 写端点按 (menu-key, action) **去重**后的集合,经锚定表映射到 (MenuId, ActionCode)。交付对账: 控制器 35 端点 → 去重 (key,action) 元组数 → 种子元组数,三数闭环写入报告(漏种 0 多种 0;M-WMS 先例为 125 端点→112 元组)。
++3. 只读 POST 豁免 11 条与 AllowAnonymous 裁决点**不入种子**(未贴点即无键可种)。
++4. 测试: ErpPermissionSeedTests——至少覆盖 幂等(二次调用行数不变)/逐租户(两租户各得全套)/元组闭环计数/RoleAction 挂 RoleId=1 且 MenuId 来自锚定表。断言真实,删实现会红。
++5. SQL 对照文件 `docs/seeds/erp-permission-seed.sql`(照 space-roleaction-seed.sql 的 CROSS JOIN Sys_Tenants 风格,文件头声明 C# 为正本)。
++
++## Global Constraints
++- 基线不许跌(T3a 后基线以其报告为准);每 commit 立即 push。
++- 键一律连字符;资源键=锚定菜单行 MenuKey;RoleAction 逐租户(存量 Fin/Sys 仅默认租户的做法是已知缺口,勿模仿)。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\erp-t3b-report.md`(三数闭环对账+测试输出摘要)。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+diff --git a/.superpowers/sdd/erp-t3b-report.md b/.superpowers/sdd/erp-t3b-report.md
+new file mode 100644
+index 0000000..3455aa6
+--- /dev/null
++++ b/.superpowers/sdd/erp-t3b-report.md
+@@ -0,0 +1,73 @@
++# M-ERP T3b 执行报告：逐租户 MenuAction/RoleAction 权限种子
++
++- 分支 `feat/m-erp-crosscutting`，commit **c765b81**（已 push）。
++- 基线 1689 绿 → **1694 绿**（+5 新测试，0 失败，5 跳过既有）。
++
++## 一、实现内容
++
++新增/改动 4 文件：
++1. `CP6.WebApi/Seed/ErpPermissionSeed.cs`（新建）——`EnsureSeeded(CP6Context)`：逐租户幂等播种 30 元组的 `Sys_MenuAction` + `Sys_RoleAction`（RoleId=1）。WmsPermissionSeed 同型复制。
++2. `CP6.Tests/ErpPermissionSeedTests.cs`（新建）——5 例断言。
++3. `CP6.WebApi/Program.cs`（改）——`ErpMenuSeed.EnsureSeeded` 之后、`WmsPermissionSeed` 之前接入 `ErpPermissionSeed.EnsureSeeded(db)`（第 834 行附近）。
++4. `docs/seeds/erp-permission-seed.sql`（新建）——CROSS JOIN Sys_Tenants 风格文档留档，文件头声明 C# 为正本。
++
++## 二、三数闭环对账表
++
++| 阶段 | 数 | 依据 |
++|---|---|---|
++| 控制器写端点（[RequirePermission] 贴点） | **35** | `grep RequirePermission Controllers/Erp` = 35 行，与真相源 §七「真·写端点 35」吻合 |
++| 去重 (menu-key, action) 元组 | **30** | 35 − 5 重复。重复 5 处：estimate-calc:add(16,19)、quotation:add(21,24)、quotation:confirm(25,26)、product:add(28,31)、plate-mold:edit(39,40) |
++| 种子元组（Actions[] 长度） | **30** | ErpPermissionSeed.Actions；漏种 0 / 多种 0 |
++
++覆盖 menu-key：**11**（有写端点者）。另 3 键 `erp-order-trace` / `erp-credit-note` / `erp-otd-report` 仅 view 端点（GET-only 或只读 POST 豁免），未贴点即无键可种，故不在本种子——与 14 键总数不矛盾（brief §3 一致）。11 只读 POST 豁免 + AllowAnonymous（estimate-calc:calculate）不入种子。
++
++### 30 元组明细（MenuId 来自锚定表逐字）
++- 202 erp-estimate-calc: add/edit/del（3）
++- 204 erp-quotation: add/edit/del/confirm/issue（5）
++- 206 erp-product: add/edit/del（3）
++- 208 erp-order: add/edit/del/cancel（4）
++- 209 erp-order-price-correction: correct（1）
++- 210 erp-fsc-checklist: issue（1）
++- 212 erp-business-partner: add/edit/del（3）
++- 213 erp-sheet-unit-price: import/edit（2）
++- 215 erp-plate-mold: add/edit/del（3）
++- 218 erp-backorder: close/split（2）
++- 220 erp-fx-rate: add/edit/del（3）
++合计 3+5+3+4+1+1+3+2+3+2+3 = **30**。
++
++ActionCode 与控制器 [RequirePermission] 第二实参逐字核对通过（grep 35 行 vs Actions[]），差一字全链 403 已排除。
++
++## 三、TDD 证据
++
++**RED**（实现前，仅有测试）：`dotnet test --filter ErpPermissionSeedTests`
++```
++error CS0103: The name 'ErpPermissionSeed' does not exist in the current context  ×6
++```
++原因：`ErpPermissionSeed` 类尚未创建，测试引用编译失败。
++
++**GREEN**（实现后）：
++```
++Passed!  - Failed: 0, Passed: 5, Skipped: 0, Total: 5, Duration: 5 s
++```
++
++**全量**：
++```
++Passed!  - Failed: 0, Passed: 1694, Skipped: 5, Total: 1699, Duration: 58 s
++```
++
++5 例覆盖：①每租户各得全套 30 且逐元组精确匹配（MenuAction+RoleAction）②幂等（二次调用行数不变，2×30=60）③RoleAction 全挂 RoleId=1 且 MenuId 来自锚定表、菜单行 MenuKey 非 null 且 erp- 前缀 ④显式 TenantId 两租户各独立行 ⑤空 Sys_Tenants → NoOp。
++
++## 四、Self-Review
++
++- 三数闭环 35→30→30 自洽 ✅（写入报告）。
++- 四要件齐：逐租户显式 `TenantId=tid` ✅ / `IgnoreQueryFilters()` 查重 ✅ / MenuAction+RoleAction 双种 RoleId=1 ✅ / StampTenant 仅盖 Guid.Empty 不覆盖显式值（WmsPermissionSeed 同型）✅。
++- 测试真实：删实现即 RED（CS0103 已证）；幂等二次调用行数不变已断言。
++- SQL 文件头声明「正本是 C#」✅。
++- 接入位置：紧随 ErpMenuSeed.EnsureSeeded 之后 ✅（菜单锚定行先在，RoleAction 挂 MenuId 有效）。
++
++无 self-review 遗留问题。
++
++## 五、Concerns
++
++- 平台已知票（非本任务范畴）：`TenantAdminService` 新建租户时不复制 RoleAction，新租户 admin 重启前可能 403，重启自愈（启动种子逐租户补齐）——与 M-WMS T3b 同一残项，本任务未扩大也未修复。
++- 线上生效需重建 cp6-api 镜像并重启（启动种子跑一遍）——部署动作留待波尾统一执行，与 WMS/ERP T2 同批。
+diff --git a/.superpowers/sdd/erp-t4-brief.md b/.superpowers/sdd/erp-t4-brief.md
+new file mode 100644
+index 0000000..622ae96
+--- /dev/null
++++ b/.superpowers/sdd/erp-t4-brief.md
+@@ -0,0 +1,22 @@
++# M-ERP T4 任务简报：fail-closed 反射测试
++
++## 背景与位置
++M-ERP 横切接线波第五任务。T3a 已给 10 控制器 35 写端点贴 [RequirePermission](commit bdbc532)。本任务写反射测试把「新写端点漏贴即红」锁死——与已合并的 WmsPermissionAttributeTests(commit 0efb717)同型,先 `git show 0efb717` 学其结构。
++
++## 需求
++1. 新建 `ErpPermissionAttributeTests`(CP6.Tests),照 WMS 先例三件套:
++   - **discovery 守卫**: 断言扫描到的 ERP 控制器数=实际数(防命名空间移动后空扫假绿)。扫描面=T1 真相源 §七 的 15 控制器(以程序集反射按命名空间/路由前缀圈定,方式照 WMS 先例)。
++   - **fail-closed 核心闸**: 全部非 GET 端点要么贴 [RequirePermission] 要么在显式豁免清单——贴点数 35=35 精确;新增写端点未贴且未豁免即红。
++   - **键约定断言**: 键匹配 `^erp-[a-z0-9-]+$`(连字符,禁下划线),action 属于真相源实际使用的 action 集合(逐词相等)。
++2. **显式豁免清单**(与真相源逐条对齐,每条带理由注释):
++   - 11 个只读 POST 豁免(真相源 §一 逐条);
++   - `EstimateCalcController.Calculate` 挂 [AllowAnonymous](主控裁决保留,已记终审票待用户裁处)——豁免清单中显式列出并断言其确实挂着 [AllowAnonymous](防止有人删了 AllowAnonymous 却忘贴权限)。
++3. 反向验证写进报告: 任选一贴点临时删属性跑测试确认变红(验完恢复,工作树干净)。
++4. 仅新增测试文件,零生产代码改动。
++
++## 验证与提交
++- `dotnet test --filter ErpPermissionAttributeTests` 全绿;全量测试(以 T3b 后基线为准)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\erp-t4-report.md`(豁免清单对账+反向验证证据)。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+diff --git a/.superpowers/sdd/erp-t4-report.md b/.superpowers/sdd/erp-t4-report.md
+new file mode 100644
+index 0000000..310119b
+--- /dev/null
++++ b/.superpowers/sdd/erp-t4-report.md
+@@ -0,0 +1,67 @@
++# M-ERP T4 执行报告：fail-closed 反射测试
++
++## 一、实现内容
++
++新增单一测试文件 `CP6.Tests/ErpPermissionAttributeTests.cs`（namespace `CP6.Tests`，与兄弟 `ErpMenuSeedTests`/`ErpPermissionSeedTests` 同置根目录）。**零生产代码改动**。照 WMS 先例（commit 0efb717 `WmsPermissionAttributeTests`）三件套，ERP 化并按真相源扩两处。
++
++5 个 `[Fact]`：
++
++1. **`ErpControllers_AreDiscovered`（discovery 守卫）**：断言 `CP6.WebApi.Controllers.Erp` 下继承 `ControllerBase` 的非抽象类 == **15**（含 MasterData/OrderTrace 两个 GET-only）。防命名空间/程序集移动后「空扫假绿」。实测程序集反射得 15，与真相源 §七扫描面吻合。
++2. **`EveryMutatingAction_IsGuarded_WithConventionalKeyOrExemption`（fail-closed 核心闸）**：遍历全部变更端点（HttpPost/HttpPut/HttpDelete），每个要么贴 `[RequirePermission]`、要么在 11 条只读 POST 豁免清单内，二者皆非即 offender 红。并收口：贴点数精确 `== 35`、豁免命中数精确 `== 11`（46 = 35 + 11）。键约定：menu 匹配 `^erp-[a-z0-9-]+$`（连字符禁下划线），action 逐词相等落在真相源 action 集。既贴键又列豁免亦报冲突。
++3. **`ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints`（豁免防腐）**：清单每条须实存、确为变更端点、且当前未贴权限键。防豁免清单陈旧（端点改名/被贴/被删）却仍白名单遮蔽某真·写端点丢键。并断言清单条数 `== 11`。
++4. **`Calculate_RetainsAllowAnonymous`（AllowAnonymous 锁）**：断言 `EstimateCalcController.Calculate` 确实挂 `[AllowAnonymous]`。见「AllowAnonymous 断言的锁死路径」。
++5. **`NoReadOnlyGetAction_HasRequirePermission`（只读误贴防护，WMS 先例第四件）**：纯 GET 端点不应贴 `[RequirePermission]`（本波未给 GET 贴）。
++
++### action 词汇集（逐词相等，非宽松包含）
++从实际贴的 35 个属性 grep 出真实集：`add, edit, del, cancel, correct, confirm, issue, import, close, split`（10 词）。**刻意不含 `view`**——只读 POST 归 view 但不贴键（未打属性），故 view 不在 tagged action 集内。多一词/少一词即红。
++
++## 二、豁免清单对账表（11 条，与真相源 §四逐条对齐）
++
++| # | 豁免条目（Controller.Method） | 真相源 §四 | HTTP | 依据 |
++|---|---|---|---|---|
++| 1 | OrderController.CalcLeadTime | #1 | POST /api/orders/lead-time | 纯营业日逆算，无 _db 触碰 |
++| 2 | OrderController.CalcProductCategory | #2 | POST calc-product-category | ProductMasters.AsNoTracking 读 |
++| 3 | OrderController.CalcMaterials | #3 | POST calc-materials | BOM 展开纯读投影 |
++| 4 | OrderController.ExportReport | #4 | POST report | 受注伝票导出，读拼 bytes |
++| 5 | EstimateCalcController.Calculate | #5 | POST calculate | 计算引擎仅写内存 DTO；**另挂 [AllowAnonymous]** |
++| 6 | PlateMoldController.Label | #6 | POST label | ラベル CSV，AsNoTracking 读 |
++| 7 | CreditNoteController.Search | #7 | POST search | CreditNoteService 全类无写 |
++| 8 | OtdReportController.Summary | #8 | POST summary | OtdReportService 全类无写 |
++| 9 | OtdReportController.ExportCsv | #9 | POST export-csv | 同上，纯读导出 |
++| 10 | UnshippedOrderController.Search | #10 | POST search | UnshippedOrderService 全类无写 |
++| 11 | UnshippedOrderController.ExportCsv | #11 | POST export-csv | 同上，纯读导出 |
++
++收口：15 控制器 / 46 变更端点 = **35 贴点 + 11 豁免**，与真相源 §七逐数吻合。RequirePermission grep 实测 35（BackorderController 2 + BusinessPartner 3 + EstimateCalc 4 + FscChecklist 1 + FxRate 3 + Order 5 + PlateMold 4 + Product 4 + Quotation 7 + SheetUnitPrice 2 = 35）。
++
++### AllowAnonymous 断言的锁死路径
++Calculate 在豁免清单内，核心闸不会拦其「缺键」。若有人删掉 `[AllowAnonymous]` 却不贴 `[RequirePermission]`，核心闸仍放行（因它在豁免集）——这是漏洞。`Calculate_RetainsAllowAnonymous` 独立断言其挂着 AllowAnonymous：一旦被删即红，逼开发者重新决策（复原匿名 或 移出豁免 + 贴 RequirePermission）。这条路被真正锁住。
++
++## 三、反向验证证据
++
++**删哪个贴点**：临时删 `OrderController.Cancel`（高危键 `erp-order:cancel`）的 `[RequirePermission("erp-order", "cancel")]`。
++
++**红的输出**（`dotnet test --filter ErpPermissionAttributeTests`）：
++```
++变更端点权限点缺失/键不合约定/豁免冲突:
++OrderController.Cancel：变更端点缺 [RequirePermission] 且不在只读 POST 豁免清单
++Failed!  - Failed:     1, Passed:     4, Skipped:     0, Total:     5
++```
++核心闸（Test 2）精确捕获漏贴端点，其余 4 绿。
++
++**恢复后绿**：改回属性 → `git status --short` 仅剩 `?? CP6.Tests/ErpPermissionAttributeTests.cs`（生产代码工作树干净，OrderController 无残留 diff）→ 重跑 `Passed! Failed: 0, Passed: 5`。
++
++## 四、Files changed
++- 新增：`CP6.Tests/ErpPermissionAttributeTests.cs`（唯一改动，测试文件）
++- 生产代码：**零改动**（反向验证的临时删除已恢复，工作树验证干净）
++
++## 五、Self-review 结论
++- discovery 守卫 15 = 程序集实扫 15，吻合（防空扫）。✅
++- fail-closed 闸 35=35 精确（taggedCount 断言）；豁免 11 逐条带真相源编号 + 依据注释，与 §四对齐。✅
++- AllowAnonymous 断言独立锁死「删 AllowAnonymous 忘贴权限」路径（Calculate 在豁免集，唯此断言拦得住）。✅
++- 键正则 `^erp-[a-z0-9-]+$` + action 集**逐词相等**（HashSet.Contains，非子串包含），刻意排除未贴的 view。✅
++- 反向验证做了（删 Cancel→红→恢复→绿），工作树已恢复干净（仅新测试文件未跟踪）。✅
++- 全量：**1699 passed / 0 failed / 5 skipped**（基线 1694 + 新 5，无回归）。✅
++
++## 六、Concerns
++- **豁免清单为文档判定的静态镜像**：11 条豁免依据真相源 §四「读 Service 实现证得无写」。若某只读 POST 的 Service 未来被改成有写副作用，本测试不会自动发现（它只校验「未贴键 = 豁免」的结构，不重跑 Service 无写证明）。缓解：Test 3 至少保证豁免条目仍是「未贴键的变更端点」，一旦被贴键即报冲突强制复核。语义层无写证明仍靠人工/Service 单测守。
++- **Calculate 的 [AllowAnonymous] 是已记终审票的遗留裁决**（真相源 §六#3）。本测试把现状锁成「必须挂 AllowAnonymous」——这是 fail-closed 意义上锁死回潮，但也意味着「撤销匿名开放」这一未来正当变更会触发红灯，届时须同步移出豁免 + 贴键 + 更新本断言。此为预期行为，非缺陷。
+diff --git a/.superpowers/sdd/erp-t5-brief.md b/.superpowers/sdd/erp-t5-brief.md
+new file mode 100644
+index 0000000..491e82f
+--- /dev/null
++++ b/.superpowers/sdd/erp-t5-brief.md
+@@ -0,0 +1,23 @@
++# M-ERP T5 任务简报：IAuditable 贴点(BusinessPartner/Product/价表/Order)
++
++## 背景与位置
++M-ERP 横切接线波第六任务(计划原文: 「T5 IAuditable：BusinessPartner/Product/价表/Order 贴点」——钱与主数据优先原则)。同型先例=M-WMS T6(commit eb5fb51): 纯标记接口单行追加,无 schema 改动无迁移(Sys_FieldAuditLog 已存在,运行时 ChangeTracker 捕获),豁免须源码注释坐实理由,配 WmsAuditTests 式测试(含负测试)。先 `git show eb5fb51` 学样。
++
++## 需求
++1. 圈定贴点实体(在 CP6 实体目录实查,不要凭名单猜): 
++   - BusinessPartner(取引先)主档
++   - Product(製品)主档
++   - 价表类: SheetUnitPrice(用紙単価)及 FxRate(為替)等 ERP 定价主数据实体——以「改它会影响算价/金额」为圈定原则
++   - Order(受注)头/明细
++   - 相邻同类实体(如 Quotation/Estimate 头)是否纳入由你按「钱与主数据优先」判断,报告里给出纳入/豁免的逐实体裁决表
++2. 每实体单行追加 `IAuditable` 标记接口,零其他改动。
++3. 豁免的实体(高频写入/追加型日志类)在源码注释坐实理由,照 WMS Stock/StockTransaction 先例。
++4. 测试: ErpAuditTests 照 WmsAuditTests 形状——贴点实体变更被 ChangeTracker/拦截器捕获产生 Sys_FieldAuditLog 行(真实断言),含负测试(未贴实体不产日志)。
++5. 零业务逻辑改动;若发现某实体贴点会引入迁移(schema 变化),停下报 DONE_WITH_CONCERNS/BLOCKED,勿自行加迁移。
++
++## 验证与提交
++- `dotnet test --filter ErpAuditTests` 全绿;全量测试(以 T4 后基线为准)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\erp-t5-report.md`(逐实体裁决表+豁免理由+测试证据)。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+diff --git a/.superpowers/sdd/erp-t5-report.md b/.superpowers/sdd/erp-t5-report.md
+new file mode 100644
+index 0000000..a2e9b64
+--- /dev/null
++++ b/.superpowers/sdd/erp-t5-report.md
+@@ -0,0 +1,151 @@
++# M-ERP T5 执行报告：IAuditable 贴点(BusinessPartner/Product/价表/Order)
++
++## 结论
++钱与主数据关键 ERP 实体接入字段级审计（IAuditable 纯标记接口单行追加）。10 实体新贴 + BusinessPartner 早已贴（T1 f09af0f），共 11 实体覆盖。零 schema 改动、零迁移、零业务逻辑改动。新增 ErpAuditTests 7 用例（6 正测 + 1 负测），全绿；全量 1706 通过（1699 基线 + 7 新增），0 失败。
++
++## 逐实体裁决表（CP6.Entity/DomainModels/Erp/ 全 21 类实查）
++
++### 纳入（贴 IAuditable）
++| 实体 | 表 | 类别 | 理由 |
++|---|---|---|---|
++| BusinessPartner | T_WebBusinessPartner | 取引先主档 | 系统最复杂主数据；**T1(f09af0f) 已贴**，本任务无改动，纳入计数确认 |
++| ProductMaster | T_ProductMaster | 製品主档 | 核心主数据，受注快照源头 |
++| Order | T_Order | 受注头 | 交易钱路头（CurrencyCd/FxRate 冻结） |
++| OrderDetail | T_OrderDetail | 受注明细 | ~125 项含单价/金额快照——行级钱所在（brief 明列「头/明细」） |
++| FxRate | T_FxRate | 為替定价主数据 | 改它直接影响算价/换算额 |
++| SheetUnitPrice | T_SheetUnitPrice | シート単価表 | 定价主数据（价表核心） |
++| SheetUnitPriceEstimate | T_SheetUnitPriceEstimate | 見積用単価表 | 同结构价表，同「改它影响算价」原则 |
++| ProductLotPrice | T_ProductLotPrice | ロット別単価表 | 製品定价主数据 |
++| EstimateCalc | T_EstimateCalc | 見積計算書头 | 报价计算钱路头（brief 邀「Estimate 头」判断→纳入） |
++| Quotation | T_Quotation | 御見積書头 | 报价书钱路头（brief 邀「Quotation 头」判断→纳入） |
++| CreditNote | T_CreditNote | 信用票据 | 返金/交換 Amount 钱路 |
++| OrderProcess | T_OrderProcess | 受注加工工程明细 | **含 PurchaseUnitPrice(採購単価)/FixedPrice(固定単価)**——行级定价，改它影响算价（复审纳入） |
++| OrderMaterial | T_OrderMaterial | 受注加工材料明细 | **含 SupplyUnitPrice(支給単価)**——行级定价，改它影响算价（复审纳入） |
++| QuotationDetail | T_QuotationDetail | 御見積書印字明细 | **含 UnitPrice(単価)/Amount(金額=数量×単価)**——打印到正式对客报价书 PDF 的行级金额（复审纳入，与 OrderDetail 同口径） |
++| ProductProcess | T_ProductProcess | 製品加工工程明细 | **含 PurchasePrice(仕入単価)/FixedPrice(指値)**——行级定价，改它影响算价（复审纳入） |
++| ProductMaterial | T_ProductMaterial | 製品加工材料明细 | **含 SupplyPrice(受給単価)**——行级定价，改它影响算价（复审纳入） |
++| PlateMold | T_PlateMold | 木型・版型管理マスタ | **含 EstimateAmount(見積金額)/DecisionAmount(決定金額)/PurchaseAmount(購入金額)** — 版型采购定价决策的钱路，与 OrderProcess/ProductProcess 同口径（二复审纳入） |
++
++### 豁免（不贴 IAuditable）— 全部经字段级实查
++| 实体 | 类别 | 豁免理由（字段级实查结论） | 留痕方式 |
++|---|---|---|---|
++| FscChecklist | 追加型 FSC 発行履歴 | 発行ごと 1 行追加不可变，**实查无货币字段**（FscManagementNo/QtnNo/QtnCalcNo 等标识+履历字段），照 WMS StockTransaction 先例 | **源码注释坐实 + 负测试坐实零审计行** |
++| OrderProcessNote | 受注工程備考 | **实查仅 Note1/Note2 文本备考**（+ WebOrderNo/DetailNo/ProductCd/OperationCd 主键），无货币字段 | 报告 + commit msg |
++| EstimateCalcProcess | 見積计算子工程明细 | **实查无货币字段**（工程名/作業名/仕様1-7 Label+Val/PlateNo/ProcNote 皆文本），单価/金額落在头 EstimateCalc 与工序汇总，此明细不承载钱 | 报告 + commit msg |
++| QuotationCalc | 御見積-計算書 M:N 中间关联表 | **实查无货币字段**（QtnNo/QtnCalcNo 关联键 + EstimateCheckFlg/MasterConfirmFlg 状态标志 + 日期 + FscManagementNo），纯关联/状态表 | 报告 + commit msg |
++| ProductCoProduct | 製品連産品明细 | **实查无货币字段**：CoProductName(名称)/QtyRatio(数量産出比率，非钱)/NextProcessCd(次工程CD)，定价落在 ProductProcess/ProductMaterial | 报告 + commit msg |
++
++> **PlateMold 已于二复审移入纳入侧**（见纳入表末行）。首版「实查非定价」表述失实——`PlateMold.cs:103-105` 实有 EstimateAmount/DecisionAmount/PurchaseAmount 三个 decimal 货币字段。
++
++**豁免注释策略**：brief req 3 将源码注释限定于「高频写入/追加型日志类」豁免（照 WMS Stock/StockTransaction 先例）。ERP 中唯一该类=FscChecklist（追加型履历），已加源码 `[审计豁免]` 注释 + 负测试。其余为「头为主」明细豁免（不同类别，WMS 先例亦仅 commit-msg 留痕，未逐文件注释），坐实于本表 + commit message，避免 11 文件注释churn（遵 Code Organization「零其他改动」）。
++
++## TDD Evidence
++- **RED**（贴点前跑 ErpAuditTests）：`Failed: 6, Passed: 1`——6 正测 `Assert.Single() Failure: collection was empty`（无审计行），负测试 FscChecklist 已绿。
++- **GREEN**（10 实体贴 IAuditable 后）：`Passed: 7, Failed: 0`。
++- **全量回归**：`Passed: 1706, Failed: 0, Skipped: 5`（基线 1699 + 7 新增，无退化）。
++
++## 测试内容（真实断言 Sys_FieldAuditLog 行内容）
++- Create_Order → op1 行，断言 EntityName=`Order` + EntityKey=Id
++- Update_Order_fxRate → op2 diff，断言 Field=`FxRate` Old=`1` New=`150`
++- Update_OrderDetail_amount → op2 diff，断言 Field=`Amount` New=`1200`（明细钱）
++- Create_ProductMaster → op1 行，EntityName + EntityKey
++- Update_FxRate_rate → op2 diff，Field=`Rate` Old=`150` New=`155`（定价主数据）
++- Create_SheetUnitPrice → op1 行（价表 master）
++- **负测试** Append_FscChecklist → `Assert.Empty` 零审计行（豁免坐实）
++
++## Files Changed
++- 实体单行追加接口（10 文件）：CreditNote / EstimateCalc / FxRate / Order / OrderDetail / ProductLotPrice / ProductMaster / Quotation / SheetUnitPrice(含 SheetUnitPriceEstimate 同文件)
++- FscChecklist.cs：新增 2 行 `[审计豁免]` 注释（零 schema/逻辑改动）
++- 新增测试：CP6.Tests/Erp/ErpAuditTests.cs（7 用例）
++
++## Self-Review
++- 逐实体裁决表完整（21 类全覆盖；最终纳入 17/豁免 5，BusinessPartner 计入纳入；PlateMold 于二复审并入纳入）✓
++- 豁免理由坐实：追加型 FscChecklist 源码注释 + 负测试；头为主明细报告/commit 留痕 ✓
++- 测试真实断言实体名/字段/新旧值，含负测试 ✓
++- 零业务逻辑改动；`git status` 无 Migrations 新文件 ✓
++- IAuditable 空标记接口不映射列 → EF 模型无漂移；全量 1706 绿含既有 EF 模型/迁移相关测试无退化 ✓
++
++## Concerns
++- ~~**PlateMold（borderline 记票）**~~ **【二复审已收口→纳入】**：首版误判为「非定价」，实则 `PlateMold.cs:103-105` 有 EstimateAmount/DecisionAmount/PurchaseAmount 三个 decimal 货币字段（版型采购定价决策钱路）。二复审已贴 IAuditable 纳入，口径与 OrderProcess/ProductProcess 一致。详见文末「二复审修复」段。
++- OrderDetail 纳入是相对 WMS T6「单据明细头为主」豁免的**有据departure**：brief 明列「Order 头/明细」，且 OrderDetail 承载行级单价/金额快照（钱所在）；与 WMS 纳入 StockTakeDetail（主明细）一致。生产写审计行开销：受注为低频交易文档，非高频台账，开销可接受。
++
++---
++
++## 复审修复（审查者字段级实查后，verdict=Needs fixes）
++
++### 背景
++审查者按字段级实查推翻了本报告首版「头为主」类豁免的裁决：5 个被豁免的明细实体实含真实货币/定价字段，豁免理由「不承载钱」与源码事实矛盾，且与 OrderDetail「行级钱所在→纳入」的标准不一致。本次修复接受该裁决并统一口径为「实体实含货币/定价字段即纳入」，不再按实体类别（头/明细）套用先例。
++
++### 修复动作
++1. **新增 5 实体贴 IAuditable**（纯标记单行，零其他改动、零迁移）：
++   - `OrderProcess.cs:72-73` — PurchaseUnitPrice(採購単価)/FixedPrice(固定単価)
++   - `OrderMaterial.cs:43-44` — SupplyUnitPrice(支給単価)
++   - `QuotationDetail.cs:37-38,44-46` — UnitPrice(単価)/Amount(金額=数量×単価，打印到正式对客报价书 PDF)
++   - `ProductProcess.cs:75,79` — PurchasePrice(仕入単価)/FixedPrice(指値)
++   - `ProductMaterial.cs:43` — SupplyPrice(受給単価)
++2. **剩余豁免逐一字段级复核**（不再套先例，见上方修订后裁决表）：
++   - OrderProcessNote：仅 Note1/Note2 文本 → 豁免维持
++   - EstimateCalcProcess：工程/作業/仕様 皆文本，无単価金額 → 豁免维持
++   - QuotationCalc：M:N 关联键 + 状态 FLG + 日期，无货币 → 豁免维持
++   - ProductCoProduct：名称 + QtyRatio(产出比率，非钱) + 次工程CD → 豁免维持
++   - FscChecklist：追加型履历，无货币字段 → 豁免维持（审查者确认）
++   - PlateMold：主档非定价，Rev 追加历史 → 豁免维持（审查者确认）
++3. **修正首版误述**：OrderProcess/OrderMaterial「头承载钱、明细不承载钱」的表述与源码矛盾，已更正为「明细行级承载定价字段」。
++4. **测试补充**：为新贴实体补 2 真值断言用例（照既有形状，货币字段旧值→新值被捕获），既有 7 用例不动：
++   - `Update_OrderProcess_purchaseUnitPrice_writes_op2_diff` → op2 diff，Field=`PurchaseUnitPrice` Old=`100` New=`120`
++   - `Update_QuotationDetail_amount_writes_op2_diff` → op2 diff，Field=`Amount` Old=`500` New=`600`
++
++### 复审后覆盖计数
++- **纳入 16 实体**（首版 11 + 复审新增 5）；**豁免 6 实体**（全部经字段级实查，均无货币/定价字段）。
++- 圈定原则统一为：**实体实含货币/定价字段 → 纳入**（与 OrderDetail 口径一致），不再按头/明细类别套用先例。
++- ⚠️ 此计数为**第一次复审后**快照；PlateMold 于其后**二复审**并入纳入，最终计数=**纳入 17/豁免 5**（见文末「二复审修复」段）。
++
++### 测试命令与输出
++```
++$ dotnet test --filter ErpAuditTests
++Passed!  - Failed: 0, Passed: 9, Skipped: 0, Total: 9 - CP6.Tests.dll (net8.0)
++
++$ dotnet test
++Passed!  - Failed: 0, Passed: 1708, Skipped: 5, Total: 1713 - CP6.Tests.dll (net8.0)
++```
++- ErpAuditTests：9 绿（7 既有 + 2 新补）。
++- 全量：1708 绿（基线 1706 + 2 新增），0 失败，无退化。
++- `git status`：仅 5 实体 + 测试文件改动，**无 Migrations 新文件**（IAuditable 空标记不映射列，EF 模型无漂移）。
++
++### Files Changed（复审）
++- 5 实体单行追加 `IAuditable`：OrderProcess / OrderMaterial / QuotationDetail / ProductProcess / ProductMaterial
++- 测试新增 2 用例：CP6.Tests/Erp/ErpAuditTests.cs（7→9）
++- 本报告裁决表修订 + 复审段追加
++
++---
++
++## 二复审修复（PlateMold 货币字段失实豁免收口）
++
++### 背景
++二复审字段级实查发现首版对 **PlateMold（木型・版型管理マスタ）** 的豁免理由「实查非定价」与源码矛盾：`CP6.Entity/DomainModels/Erp/PlateMold.cs:103-105` 实有三个 `decimal(15,4)` 货币字段 **EstimateAmount(見積金額)/DecisionAmount(決定金額)/PurchaseAmount(購入金額)**——版型采购定价决策的钱路。按本任务已确立口径「实体实含货币/定价字段即纳入」（与 OrderProcess/ProductProcess 同理），PlateMold 应纳入。接受裁决。
++
++### 修复动作
++1. **PlateMold 贴 IAuditable**（纯标记单行，零其他改动、零迁移）：`public class PlateMold : BaseBizEntity, IAuditable`。
++2. **裁决表修正**：PlateMold 从豁免侧移入纳入侧；订正首版「实查非定价」失实表述与相关整体性断言；Self-Review 计数同步更新。
++3. **同族实体检查**：`*Plate*`/`*Mold*` glob 全仓仅 `PlateMold.cs` 一个类。版型履历用**同表 T_PlateMold 的 WdRev 多行**管理（(WdPtnNo, WdRev) 业务 PK，改定=Rev+1 追加），无独立明细/履历实体类。结论：**无同族货币字段实体待处理**。
++4. **测试补充**：新增 1 真值断言用例 `Update_PlateMold_decisionAmount_writes_op2_diff` → op2 diff，Field=`DecisionAmount` Old=`30000` New=`32000`。既有 9 用例不动。
++
++### 最终覆盖计数
++- **纳入 17 实体**（首版 11 + 一复审 5 + 二复审 PlateMold 1）；**豁免 5 实体**（FscChecklist / OrderProcessNote / EstimateCalcProcess / QuotationCalc / ProductCoProduct，全部经字段级实查确认无货币/定价字段）。
++
++### 测试命令与输出
++```
++$ dotnet test --filter ErpAuditTests
++Passed!  - Failed: 0, Passed: 10, Skipped: 0, Total: 10 - CP6.Tests.dll (net8.0)
++
++$ dotnet test
++Passed!  - Failed: 0, Passed: 1709, Skipped: 5, Total: 1714 - CP6.Tests.dll (net8.0)
++```
++- ErpAuditTests：10 绿（9 既有 + 1 新补）。
++- 全量：1709 绿（基线 1708 + 1 新增），0 失败，无退化。
++- `git status`：仅 PlateMold.cs + 测试 + 本报告改动，**无 Migrations 新文件**（IAuditable 空标记不映射列，EF 模型无漂移）。
++
++### Files Changed（二复审）
++- `CP6.Entity/DomainModels/Erp/PlateMold.cs`：类声明单行追加 `IAuditable`。
++- `CP6.Tests/Erp/ErpAuditTests.cs`：新增 1 用例（9→10）。
++- 本报告裁决表修订 + 二复审段追加。
+diff --git a/.superpowers/sdd/erp-t6-brief.md b/.superpowers/sdd/erp-t6-brief.md
+new file mode 100644
+index 0000000..ee0f85f
+--- /dev/null
++++ b/.superpowers/sdd/erp-t6-brief.md
+@@ -0,0 +1,19 @@
++# M-ERP T6 任务简报：测试补网(Quotation 报价计算 / Order 建单算价)
++
++## 背景与位置
++M-ERP 横切接线波末任务(计划原文: 「T6 测试补网(审计 T5/#6 零→有): QuotationService 报价计算、OrderService 建单算价核心用例」)。同型先例=M-WMS T7(commit 653a7fc): 5 用例绑定真实计算,服务算错会真红,不重复既有覆盖,零生产改动。先 `git show 653a7fc` 学样。
++
++## 需求
++1. 先盘点既有覆盖: grep CP6.Tests 中 Quotation/Order 相关既有测试,新用例不得与其重复(报告列出盘点结论)。
++2. QuotationService 报价计算核心用例: 找到其计算主路径(单价/数量/金额/折算等),写「给定输入→手算期望值」的真值断言用例,覆盖至少一条正常路径+一条边界(如零数量/空明细/舍入)。
++3. OrderService 建单算价核心用例: 建单主路径的价格来源/金额计算/明细汇总真值断言,同样正常+边界。
++4. 断言必须是**手算期望值**(服务算错会红),禁止「调用后把服务输出当期望值」的套套逻辑。
++5. 零生产代码改动;若发现真实缺陷,不修——记入报告 concerns(交主控裁决)。
++6. 用例数量以覆盖质量为准(M-WMS T7 为 5 用例量级),勿凑数。
++
++## 验证与提交
++- 焦点 filter 全绿;全量测试(以 T5 后基线为准)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\erp-t6-report.md`(既有覆盖盘点+逐用例「输入→手算期望」演算+测试输出)。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+diff --git a/.superpowers/sdd/erp-t6-report.md b/.superpowers/sdd/erp-t6-report.md
+new file mode 100644
+index 0000000..87b83de
+--- /dev/null
++++ b/.superpowers/sdd/erp-t6-report.md
+@@ -0,0 +1,69 @@
++# M-ERP T6 报告：测试补网(Quotation 报价计算 / Order 建单算价)
++
++## 既有覆盖盘点结论
++
++对 CP6.Tests 全仓 grep（Quotation / Order / 算价关键字），既有 ERP 相关测试仅两处，**均不触及计算式**：
++
++| 文件 | 覆盖内容 | 是否触及金额计算式 |
++|---|---|---|
++| `CP6.Tests/Erp/ErpAuditTests.cs` (T5) | 字段级审计接线冒烟——**直接给实体 `Amount`/`FxRate` 赋值**再断言产生 `Sys_FieldAuditLogs` 行 | 否。把 Amount 当输入直接写，从不验证 `数量×単価` 是否算对 |
++| `CP6.Tests/OrderServiceCancelTests.cs` (Phase6) | `OrderService.CancelAsync` 取消状态机（Rejected/NeedsDecision/Cancelled/PartiallyCancelled 分支 + Bridge Hook mock） | 否。纯生命周期状态，无算价 |
++
++结论：`QuotationService` 报价计算（行金额=数量×単価、合計=Σ行金額、訂正再计算）与 `OrderService` 建单算价（价格来源 SalesPriceDiv 分岐、`CalcAmountAsync`、`BatchUpdatePriceAsync` 金额再计算）核心路径**测试为零**。本任务 7 用例与既有零重复。
++
++## 计算主路径（生产代码，零改动）
++
++- QuotationService.CreateAsync/UpdateAsync：`amount = (Quantity ?? 0) * (UnitPrice ?? 0)`；`TotalAmount = Σ amount`（UpdateAsync 只累加 incoming 明细，软删除行被排除）。
++- OrderService.CalcAmountAsync：`qty * (SalesPriceDiv=="1" ? newIndPrice : newSetPrice)`——价格来源由 SalesPriceDiv 决定（"1"=個別売取個別単価，其余=セット売取セット単価）。
++- OrderService.BatchUpdatePriceAsync：单价訂正保存时 `entity.Amount = (Quantity ?? 0) * (SalesPriceDiv=="1" ? IndividualUnitPrice : SetUnitPrice)`；单价变更则 ApprovalStatus 差戻し=1 + WF 起票计数。
++
++## 逐用例「输入 → 手算演算 → 期望值」
++
++### QuotationCalcTests.cs（QuotationService）
++
++| 用例 | 输入 | 手算演算 | 期望值 |
++|---|---|---|---|
++| Q1 正常 `Create_TwoDetails_ComputesLineAmountAndTotal` | 行1 Qty=12 UP=150；行2 Qty=3 UP=2000 | 行1=12×150=1800；行2=3×2000=6000；合計=1800+6000 | d1.Amount=1800, d2.Amount=6000, Total=7800 |
++| Q2 边界 `Create_NullQtyOrZeroPrice_...` | 行1 Qty=null UP=500；行2 Qty=10 UP=0；行3 Qty=5 UP=100 | 行1=(0)×500=0；行2=10×0=0；行3=5×100=500；合計=0+0+500 | d1=0, d2=0, d3=500, Total=500 |
++| Q3 訂正再计算 `Update_RemoveDetailAndChangeQty_RecomputesTotal` | 建单 行1 Qty=10 UP=100(=1000)+行2 Qty=2 UP=250(=500)，Total=1500；訂正=删行2、行1 Qty 10→8 | 行1=8×100=800；行2 论理削除→排除合計；合計=800 | 明细仅剩1行, d1.Amount=800, Total=800 |
++
++### OrderCalcTests.cs（OrderService）
++
++| 用例 | 输入 | 手算演算 | 期望值 |
++|---|---|---|---|
++| O1 正常個別売 `CalcAmount_IndividualSalesDiv_...` | 明细 Qty=100 Div="1"；调用 newInd=25.5 newSet=999 | Div="1"→取個別単価 25.5；100×25.5（セット 999 无视） | 2550 |
++| O2 正常セット売 `CalcAmount_SetSalesDiv_...` | 明细 Qty=100 Div="2"；调用 newInd=25.5 newSet=30 | Div≠"1"→取セット単価 30；100×30（個別 25.5 无视） | 3000 |
++| O3 边界 `CalcAmount_MissingDetailOrNullPrice_ReturnsZero` | (a)误 NO 999；(b)明细 Div="2" newSet=null | (a)明细不在→0；(b)セット単価 null→100×0 | 两断言均=0 |
++| O4 バッチ算价 `BatchUpdatePrice_MultiLine_...` | 2 明细同受注 Div="1"；item1 IndAfter=25、item2 IndAfter=10（原単価 null） | l1=100×25=2500；l2=40×10=400；两行単価变更→各 ApprovalStatus=1、WF 计 2 | UpdatedCount=2, WfRequestedCount=2, pe.Calls=2, l1.Amount=2500(ApprovalStatus=1), l2.Amount=400 |
++
++## 测试命令与输出
++
++聚焦：
++```
++dotnet test CP6.Tests/CP6.Tests.csproj --filter "FullyQualifiedName~CP6.Tests.Erp.QuotationCalcTests|FullyQualifiedName~CP6.Tests.Erp.OrderCalcTests"
++Passed! - Failed: 0, Passed: 7, Skipped: 0, Total: 7
++```
++全量（基线 1709）：
++```
++dotnet test CP6.Tests/CP6.Tests.csproj
++Passed! - Failed: 0, Passed: 1716, Skipped: 5, Total: 1721
++```
++1709 + 7 = 1716，无回归下跌。
++
++## Files changed
++
++- `CP6.Tests/Erp/QuotationCalcTests.cs`（新增，3 用例）
++- `CP6.Tests/Erp/OrderCalcTests.cs`（新增，4 用例）
++- 零生产代码改动。
++
++## Self-review
++
++- 断言全为手算期望值（1800/6000/7800/500/800/2550/3000/0/2500/400），无「以服务输出为期望」的套套逻辑。✔
++- 与既有 ErpAuditTests / OrderServiceCancelTests 零重复（盘点见上）。✔
++- 每服务正常+边界各覆盖：Quotation 正常(Q1)+边界(Q2 null/0)+訂正(Q3)；Order 正常(O1/O2)+边界(O3)+バッチ(O4)。✔
++- 零生产改动。✔
++
++## Concerns
++
++1. **【测试局限，非缺陷】set 单价一括伝播路径 InMemory 不可测**：`BatchUpdatePriceAsync` 在 `item.SetUnitPriceAfter.HasValue` 时用 `ExecuteUpdateAsync` 把同一 WebOrderNo 全明细的 SetUnitPrice 一括更新。`ExecuteUpdateAsync` 是 relational 专属扩展，EF InMemory 8.0.12 抛「could not be translated」。故本单元测试仅覆盖個別売(Div="1")保存路径（不触发 ExecuteUpdate），セット単価一括伝播（明细横断汇总）留待 relational 集成测试。O4 已注释说明。**未发现服务缺陷**——手算与服务输出全部一致。
++2. 计算式本身健壮（null 用 `?? 0` 兜底），本轮真值锚定未暴露任何算价 bug。
+diff --git a/.superpowers/sdd/progress.md b/.superpowers/sdd/progress.md
+index 46eaaba..07dfd38 100644
+--- a/.superpowers/sdd/progress.md
++++ b/.superpowers/sdd/progress.md
+@@ -164,17 +164,28 @@ FIN C.2: complete (commits 87e0632+13c0df0修复, Approved after fix[opus审+复
+ FIN C.3: complete (commits f21becb+63189dc修复, Approved after fix[opus审+复审Fixed]; 拍板②落地=FG腿改StandardCost+差异腿COGS对WIP[>0借COGS/<0反向], 四象限WIP净零演算+断言更新非凑数逐处核实[1560/1700/-140等真种子演算]; 修复=审查Important[FgUnitCost仍实际口径→出货FG幻影残差-50+差异双计COGS600]: FgUnitCost有标准时=StandardCost/CompletedQty, 全仓6消费点核查无漏, 新增2端到端恒等测试[完工+出货→FG净零+COGS=实际550]; Minor修=COGS Role前置零凭证态fail; 全量1640绿[1638+7]. 🔴部署门票: 口径切换对历史「已结转未出货且有标准」成本单追溯生效→一次性残差, FIN刚开工线上应零存量, 部署时确认. 顾虑留档: CostController FgUnitCost字段语义变标准口径[现无前端消费]/三腿AutoPostAsync自身失败跨腿窗口系既有)
+ # 波C完成(C.1+C.2+C.3, 两拍板落地). 下=波F盘点冻结
+ FIN F.1: complete (commits 191e83a+bff6e3d修复, Approved after fix[opus审+复审Fixed]; 查询式冻结[活跃盘点单AnyAsync,解冻=状态流转天然,无冻结位可忘]/粒度=StockTakeDetail库位/守卫在Validate后事务前零副作用/WM-MSG-304独立核实无冲突/反冲撞冻结全链真测试[报工成功+零反冲+零成本凭证三真值]; 修复=审查Important主控裁决[ADJ豁免收窄为+RelatedType=STOCKTAKE, Expiry:72/RMA:219真被拦有测试镜像其请求形状]+顺手MoveAsync双端预检[腿1前拒目标冻结,测试LOC2定向冻结隔离验证]; 全量1650绿[1640+10]. 留档: 预检→腿2残余TOCTOU窗口极小注释已注/冻结查询索引运维观测项/StockTakeService类注释未提非STOCKTAKE ADJ新拒[化妆级])
+ # 波F完成. 下=波D年结
+ # 🔴运维票(磁盘): C盘50G仅剩~550M(99%). 大头=WSL vhdx 10.9G(docker七容器栈,压缩需wsl --shutdown会断栈——不可自主动)/Windows 12G/pagefile 6G. 本会话已清bin/obj+nuget http-cache+git gc(~700M). 需用户: 扩容 或 维护窗口wsl compact. 部署门前须确认余量足够镜像构建(上次publish-docker约数百M).
+ FIN D.1: complete (commits aedb2db+de71fbe修复, Approved after fix[opus审+复审Fixed]; YearCloseAsync双向净利净亏/12期闸E-FIN-405/幂等406/3103编码定位408/锁年YearClosed=2+AutoPost与手工双路E-FIN-404在112前[Closed期行为字节级不动]/空财年不产凭证仍锁/期初=滚算延续零快照表[YAGNI]; 修复=审查Important[ReopenYear用ReverseAsync多冲: TrialBalance滤Posted致原凭证消失红冲计入→P&L翻倍+再年结加倍]: 弃ReverseAsync改净额取负投YC-{fy}-REOPEN反向Carryover经AutoPostAsync, 原凭证留Posted, 复审逐轮演算close→reopen→close任意轮次零残差, 回归锁真值[rev-1000/cogs+600/3103=0/3104=0, 再年结3104=-400不翻倍]; 全量1661绿[1650+11]. 波G票: INTL模板无3103→年结E-FIN-408 fail-closed需补COA. Minor终审票: SourceDocNo多轮不唯一[YC-2026#2后缀建议]/暂开末期窗口无try-finally/E-FIN码151-403跳空404撞HTTP语感[化妆级])
+ FIN D.2: complete (commit 98eb50c, Spec ✅ + Approved[sonnet审]; 本年利润=本财年发生额, 财年起点AddMonths(-(PeriodNo-1))经ComputeFiscal建模核实对非日历财年/期缺失均正确; 合成行3104.PY承接往年未结损益, priorPl+CurrentProfit≡plTotal代数恒等→IsBalanced不变量保持; 年结后priorPl恒0是真行为非巧合[Carryover凭证日期<fyStart同查询捕获]; 下游反查实害评估=ReportController纯透传+前端泛列渲染不炸; 既有测试零变动结构性成立; 1665绿[1661+4]. Minor终审票: 类doc陈旧/FindAsync双查/负priorPl无测试/3104.PY排序尾置[全化妆级])
+ # 波D完成(D.1+D.2). 下=波E油路探测器E2E×4
+ FIN 波E: complete (commit 3cf01e8, Spec ✅ + Approved[sonnet审]; 四链全从上游业务服务起真链[采购单确认收货/受注配货ShipAsync/工单CompleteAsync/盘点五步承认], 张数断言CountAsync精确=非>=[双记必红], E3金额逐项对源验算[反冲20×5=100/标准90/差异10三腿WIP净零], E2手工紐付WorkOrderNo坐实为「生产无自动受注→工单绑定路径」的装配便利——下游GL逻辑真实但紐付步生产不可达; 1669绿[1665+4]零生产改动. Follow-up票: 受注→工单绑定落地后补真链 或 ArInvoiceServiceTests显式documenting该支线现仅手工可达)
+ # 波E完成. 下=波G横切收口
+-FIN G.1: complete (commits 0d3a18c+3e632d3, Spec ✅ + Approved[opus审]; 四件全落: ①fin-period权限=菜单604 RoutePath派生fin-period[Fin局部回填块在种子前re-run关掉M-WMS时序命门]+逐租户种子逐行匹配WmsPermissionSeed样板+PeriodController fail-closed反射测试 ②COA回填=StandardScheme非空列定scheme不可能跨插+只插不改不删+三风险测试真载荷 ③INTL 3103同码同义D.1定位不改 ④operator透传可选尾参零破坏五桥落Creator; 1678绿[1669+9]. Minor: 回填行Creator/CreateDate缺省[审计化妆差]/close-reopen存量默认租户块归M-FIN[已周知])
++FIN G.1: complete (commits 0d3a18c+3e632d3, Spec ✅ + Approved[opus审]; 四件全落: ①fin-period权限=菜单604 RoutePath派生fin-period[Fin局部回填块在种子前re-run关掉M-WMS时序命门]+逐租户种子逐行匹配WmsPermissionSeed样板+PeriodController fail-closed反射测试 ②COA回填=StandardScheme非空列定scheme不可能跨插+只插不改不删+三风险测试真载荷 ③INTL 3103同码同义D.1定位不改 ④operator透传可选尾参零破坏五桥落Creator; 1678绿[1669+9]. Minor: 回填行Creator/CreateDate缺省[审计化妆差]/close-reopen存量默认租户块归M-FIN[已周知]
++
++# ═══ M-ERP 横切接线波（branch=feat/m-erp-crosscutting, base=0c8d4d3）2026-07-12 ═══
++# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md M-ERP段 + docs/00-横切接线规范.md; 基线1683绿
++# 任务重排(照M-WMS学得): T1权限键清单→T2菜单MenuKey锚定+五孤儿路由收编(原计划T4前置并入,T3b种子依赖菜单行)→T3a贴RequirePermission→T3b逐租户MenuAction/RoleAction种子→T4 fail-closed反射测试→T5 IAuditable(BP/Product/价表/Order)→T6测试补网(Quotation报价/Order建单算价)
++M-ERP T1: complete (commits fe644b8+af80923修复, Spec ✅ + Approved[opus审全量重数46/46双向零缺漏+豁免11条逐Service读证无写库+高危拆分实证]; 15控制器/35真写+11只读POST豁免=46行/14 menu-key(erp-*连字符)/2高危(order:cancel force级联+sheet-unit-price:correct)+6状态键; 修复=豁免计数12→11自洽订正. 真相源=docs/seeds/erp-permission-keys.md. 🔴T2硬前置(审查者独立实证): ERP菜单201-215 RoutePath裸路径(无erp/段)→回填键无erp-前缀全体失配, T2须显式赋MenuKey且先于回填块. ⚠T3裁决点: EstimateCalcController.Calculate挂[AllowAnonymous](:136), 主控倾向保留+反射测试显式豁免+记终审票用户裁处. 备忘: credit-note在ERP无写端点(签发在FIN域,计划点名的高危不存在系计划口径误差); 6域「一覧+登録」双菜单行共键,T2需定唯一锚定行))
++M-ERP T2: complete (commit 70f99e3, Spec ✅ + Approved[opus补审,上会话实现后中断本会话补审]; 三具名风险全证伪: ①14键与T1真相源§二逐字一致[9既有锚202/204/206/208/209/210/212/213/215+5孤儿216-220=14精确] ②Program.cs:832种子确在:888-895回填块前且每启动无条件跑 ③216-220段位Seed全目录grep无碰撞[FinCoa 2204/3103系科目码非MenuId]; 登録页承键一覧留null正确应对IS NOT NULL唯一索引[否决T1§六.2两行同赋并在anchor.md记裁决]; 防御矫正块严限14锚定行; 6测试真实断言删实现会红; 1689绿[1683+6]. Minor×3记档: 唯一键测试InMemory不证生产约束/菜单复活与WmsMenuSeed先例一致[设计一致性]/SQL对照(A)块无条件UPDATE与C#正本兼顾缺行语义差[文件头已声明SQL仅文书对照])
++M-ERP T3a: complete (commit bdbc532, Spec ✅ + Approved[opus审]; 35个RequirePermission与真相源§一双向逐字核对零漏贴零私造零降级; 口径差裁定=10控制器为正确贴点面[T1的15=扫描面, CreditNote/OtdReport/Unshipped全员只读豁免+MasterData/OrderTrace纯GET合规缺席]; 归并全照真相源§五[Copy复用add/CancelConfirm归confirm/PlateMold Revise+Update归edit]; 高危erp-order:cancel+erp-order-price-correction:correct独立未降级; 45插入=10 using+35属性零方法体改动; AllowAnonymous(EstimateCalc.Calculate)与BusinessPartner.Delete双闸均保留; 1689绿持平. Minor: 孤儿5键在T3b种子前fail-closed 403系预期[T2菜单行已在,T3b勿漏])
++M-ERP T3b: complete (commit c765b81, Spec ✅ + Approved[opus审,独立去重35贴点→30元组四方对账(种子Actions/测试ExpectedTuples/SQL@Actions/grep贴点)双向一致漏0多0]; 11有写端点key+3无键可种(order-trace GET-only/credit-note·otd-report全豁免)=14键算术成立; MenuId锚定11行逐核含跨菜单correct→209; 四要件与WmsPermissionSeed字节级同构[IgnoreQueryFilters确在查重Any上load-bearing/StampTenant仅盖Guid.Empty]; 接入Program.cs在ErpMenuSeed后无条件路径; 测试ExpectedTuples为独立oracle非自证+逐租户逐元组集合相等强断言; 1694绿[1689+5]. Minor: StampTenant测试Contains弱断言与Test1重叠[不影响正确性]. Concern沿袭: TenantAdminService不复制RoleAction平台票未扩大/线上生效待波尾镜像重建)
++M-ERP T4: complete (commit acf5d1c, Spec ✅ + Approved[sonnet审,三具名风险独立核实全排除]; discovery守卫15控制器与Erp目录Glob+namespace grep 15/15精确对应非空扫; fail-closed=Assert.Equal(35)+Equal(11豁免)+offenders==0三闸精确计数非弱包含[独立grep 35吻合]; 豁免11条逐条对真相源§四带编号注释,多贴+豁免冲突场景也显式捕获; AllowAnonymous(Calculate)独立锁真锁「删匿名忘贴键」路径; 反向验证删Cancel贴点→红→恢复绿与代码路径自洽; 仅新增测试零生产改动; 1699绿[1694+5]. Minor记终审triage: 类头注释「均直接继承ControllerBase」失准[9个实际经LocalizedControllerBase,DeclaredOnly当前安全但注释是该假设唯一书面依据,若基类未来加HTTP action会静默漏扫,建议改准确表述]. Concern留档: 豁免清单是「Service读证无写」的静态镜像,语义层无写靠Service单测守)
++M-ERP T5: complete (commits 45df1ce+df878f1+f605ce0两轮修复, Approved after fixes[sonnet审×3]; 首轮Important=「头为主」豁免未做字段级实查,5实体实含货币字段被漏(OrderProcess采购/固定单价/OrderMaterial支给单价/QuotationDetail单价+金额[对客报价书行级]/ProductProcess/ProductMaterial)→补贴+口径统一「实含货币/定价字段即纳入」; 二轮同类抓漏=PlateMold「实查非定价」失实(EstimateAmount/DecisionAmount/PurchaseAmount三货币字段:103-105)→纳入; 终态纳入17/豁免5(FscChecklist追加型/OrderProcessNote/EstimateCalcProcess/QuotationCalc/ProductCoProduct均字段级坐实); 全程纯标记单行零迁移零业务改动; 拦截器ChangeTracker.Entries<IAuditable>泛型遍历天然生效,RowVersion并发令牌不污染diff[捕获在SaveChanges前IsModified=false]; ErpAuditTests 10用例真值断言(Field/Old/New)含负测试; 1709绿[1699+10]. 🔴跨波票(复审发现): Wms域PlateMoldStock含MadeCost decimal(18,2)未贴IAuditable——M-WMS T6当时未圈入,终审triage. Minor: 报告「21类全覆盖」系文件数措辞/「全仓glob」应为Erp域内)
++M-ERP T6: complete (commit a5551de, Spec ✅ + Approved[sonnet审,7用例期望值全部对生产算式独立重算吻合——非跑服务抄输出]; Q1创建12×150+3×2000=7800/Q3订正软删除排除合計/O1-O3価格来源分岐+null兜底边界/O4批量两行算价+审批差戻ApprovalStatus=1+WF计数2; 断言全字面常量改系数即红; 与ErpAuditTests(直写字段验审计)/OrderServiceCancelTests(状态机)零重复经逐一核对; 零生产改动; 1716绿[1709+7]. Concern核实属实且规避精确: BatchUpdatePriceAsync的ExecuteUpdateAsync(セット単価一括伝播)relational专属InMemory不可译,O4只设IndividualUnitPriceAfter精确避开且仍覆盖该接口其余真实计算与副作用——非借口; 记票: 该分支留待relational集成测试[UseSqlite/TestContainers]. M-ERP T1-T6 全部完成并逐任务过审, 下=fable全支终审)
+ # ═══ 全部8波编码完成(B/0/A/C/F/D/E/G), 1589→1678绿. 下=fable全支终审→合并→部署 ═══
+ FIN 全支终审: complete (fable终审 With fixes→修复361729d+1aece34→复核Fixed+Ready=Yes; 四大接缝全景过[归属零双记显式映射逐值核/幂等/best-effort全点火SaveChanges后/借贷恒等AutoPostAsync全覆盖]; 无Critical; Important#1反冲行间失败锁死→行级快照幂等+即时落库+集约抛保C.2闸[复核演算无双记只偏跳过]; #2年结v2缺投空财年分支锁3103→残额补投YC-{fy}-RE+三处try/finally[成功路径不误恢复]; #3 COGS腿生产不可达升优先级票[收入可达COGS缺失→利润高估, interim建议EstimatedCost回退源]; #4 ReverseAsync双重负记系统性[全仓Payment/Receipt/AssetDisposal中招, 系既有root cause记M-FIN]; #5 PostingRule仅默认租户vs COA回填逐租户不对称[B1/C1租户Failed事件噪音, 记M-FIN]; 微残余记票: 同料跨工序续传粒度/年结残态+期间插记双故障组合[均可自愈欠记不双记]; 全量1680绿[基线1589→1680]. 票池裁选全表在终审报告. M-FIN收口票打包: ReverseAsync root fix/PostingRule逐租户/AutoPost直投查重兜底/close-reopen租户块. 部署三门: C.3存量成本单确认零/磁盘余量/非默认租户Failed事件观察)
+ FIN G.1追补: complete (COA回填码单补年结依赖三行[CN 3103本年利润/3104未分配利润+INTL 3300 Retained Earnings]——上会话遗留TDD红灯[测试先行实现未落]; 模板属性单源不变, 幂等/只插缺失语义不变; 全量1683绿[1680+3])
+ # ═══ FIN 部署完成 2026-07-12 (main=11f9978 镜像c6efe55a5804) ═══
+ FIN 部署: complete (publish→删Local/Dev配置→薄镜像build 488MB→compose up cp6-api; 启动日志Application started+迁移无错; 种子线上实证=DEFAULT租户3103本年利润/3104未分配利润两行Creator=system[11f9978新码单当场生效]; B1/C1无COA正确跳过[不凭空建]. 三门: ①C.3存量成本单=1条非零→CS-2026-06-00001/WO2026060003/Status=2已结转JournalEntry非空/Material全零/2026-06-18 admin建=6月QA遗留, 已结不可重结风险低, 记票待用户裁处 ②磁盘=4.49GB✅(清理见下) ③Failed事件=0[SKIPPED 4/SUCCESS 7], 持续观察B1/C1)
+ # 🔴运维事故与治本 2026-07-12: 7/11 12:16 WU下载2.8GB→C盘0字节→WSL swap vhdx I/O error→dockerd 22:40崩→全栈停机~2h(且WSL 15:20曾重启致keep-alive丢失, 每条wsl命令唤醒VM形成弹跳假象). 处置: WU缓存cmd rd清除(2848→42MB)+旧Claude CLI版本+npm缓存+diskpart compact vhdx(10.92→10.46GB), C盘0→4.49GB; keep-alive重拉+新增计划任务CP6-WSL-KeepAlive-Watchdog每5min幂等自愈(原ONLOGON任务无人登录不触发是单点). 遗留: pagefile 6GB可缩(需重启)/50GB系统盘结构性太紧建议扩容
+diff --git a/CP6.Entity/DomainModels/Erp/CreditNote.cs b/CP6.Entity/DomainModels/Erp/CreditNote.cs
+index f7085e3..e7417ad 100644
+--- a/CP6.Entity/DomainModels/Erp/CreditNote.cs
++++ b/CP6.Entity/DomainModels/Erp/CreditNote.cs
+@@ -1,17 +1,17 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ [Table("T_CreditNote")]
+-public class CreditNote : BaseBizEntity
++public class CreditNote : BaseBizEntity, IAuditable
+ {
+     [Required, MaxLength(20)] public string CreditNoteNo { get; set; } = string.Empty;
+     [MaxLength(20)] public string? WebOrderNo { get; set; }
+     [MaxLength(20)] public string? RmaNo { get; set; }
+     [Required, MaxLength(20)] public string Type { get; set; } = CreditNoteType.Refund;
+     [Required, MaxLength(20)] public string CustomerCd { get; set; } = string.Empty;
+     [MaxLength(20)] public string? ProductCd { get; set; }
+     [MaxLength(30)] public string? LotNo { get; set; }
+     [Column(TypeName = "decimal(21,8)")] public decimal Qty { get; set; }
+     [Column(TypeName = "decimal(18,4)")] public decimal? Amount { get; set; }
+diff --git a/CP6.Entity/DomainModels/Erp/EstimateCalc.cs b/CP6.Entity/DomainModels/Erp/EstimateCalc.cs
+index e3bd8d7..00fa791 100644
+--- a/CP6.Entity/DomainModels/Erp/EstimateCalc.cs
++++ b/CP6.Entity/DomainModels/Erp/EstimateCalc.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 見積計算書（报价计算书）主表 - MSBBPA010
+ /// </summary>
+ /// <remarks>
+ /// 对应需求 §7.1 T_EstimateCalc
+ /// Phase 1 先实现 3 页 MVP 所必需的核心字段（~55 个）
+ /// 战略商品区分 03-10、容利法判定明细、決定見積補足等次要字段后续 Phase 再补
+ /// </remarks>
+ [Table("T_EstimateCalc")]
+-public class EstimateCalc : BaseBizEntity
++public class EstimateCalc : BaseBizEntity, IAuditable
+ {
+     // ───── 业务主键 ─────
+     /// <summary>見積計算書NO（XXXXXXXX-NN，11 字符：8 位主番 + '-' + 2 位枝番）</summary>
+     [Required]
+     [MaxLength(20)]
+     public string QtnCalcNo { get; set; } = string.Empty;
+ 
+     /// <summary>主番（NUMERIC 8）</summary>
+     public int QtnCalcNoMain { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Erp/FscChecklist.cs b/CP6.Entity/DomainModels/Erp/FscChecklist.cs
+index 3c771cf..06a5162 100644
+--- a/CP6.Entity/DomainModels/Erp/FscChecklist.cs
++++ b/CP6.Entity/DomainModels/Erp/FscChecklist.cs
+@@ -4,20 +4,22 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// FSC製品化チェックシート発行履歴（MSBBPA100）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §第一部分 PA100 — 発行ごとに 1 行を記録（FSC 管理 NO 採番管理）
+ /// 業務 PK：FscManagementNo
+ /// 実体は「発行履歴 + ダウンロード元」として機能。御見積書側の FscManagementNo / FSCチェックシート発行日 は別更新。
+ /// </remarks>
++// [审计豁免] 追加型 FSC 発行履歴（発行ごとに 1 行追加、不可变），字段级审计无意义——
++// 照 WMS StockTransaction 先例不贴 IAuditable，由 ErpAuditTests 负测试坐实零审计行。
+ [Table("T_FscChecklist")]
+ public class FscChecklist : BaseBizEntity
+ {
+     /// <summary>FSC 管理 NO（PK；採番ルール：頭文字 + ORACLEシーケンス）</summary>
+     [Required, MaxLength(20)]
+     public string FscManagementNo { get; set; } = string.Empty;
+ 
+     /// <summary>御見積書 NO</summary>
+     [Required, MaxLength(20)]
+     public string QtnNo { get; set; } = string.Empty;
+diff --git a/CP6.Entity/DomainModels/Erp/FxRate.cs b/CP6.Entity/DomainModels/Erp/FxRate.cs
+index 2b63800..a539064 100644
+--- a/CP6.Entity/DomainModels/Erp/FxRate.cs
++++ b/CP6.Entity/DomainModels/Erp/FxRate.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 為替レートマスタ（多通貨 Gap 4.3）。
+ /// </summary>
+ /// <remarks>
+ /// <see cref="Rate"/> は「外貨1単位あたりの基軸通貨額」。基軸通貨は <see cref="FxConstants.BaseCurrency"/>（JPY）。
+ /// 例：USD の Rate=150 → 1 USD = 150 JPY。基軸通貨換算額 = 外貨額 × Rate。
+ /// 受注時に得意先通貨の当日（基準日以前の最新）レートを <see cref="Order.FxRate"/> へ凍結する。
+ /// </remarks>
+ [Table("T_FxRate")]
+-public class FxRate : BaseBizEntity
++public class FxRate : BaseBizEntity, IAuditable
+ {
+     /// <summary>通貨CD（ISO 4217、例 USD/EUR/CNY）</summary>
+     [Required, MaxLength(3)]
+     public string CurrencyCd { get; set; } = string.Empty;
+ 
+     /// <summary>レート適用日（この日以降、次のレート登録日まで有効）</summary>
+     public DateTime RateDate { get; set; }
+ 
+     /// <summary>外貨1単位あたりの基軸通貨額（JPY/外貨）</summary>
+     [Column(TypeName = "decimal(18,6)")]
+diff --git a/CP6.Entity/DomainModels/Erp/Order.cs b/CP6.Entity/DomainModels/Erp/Order.cs
+index 7638383..0695d75 100644
+--- a/CP6.Entity/DomainModels/Erp/Order.cs
++++ b/CP6.Entity/DomainModels/Erp/Order.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 受注ヘッダー（MSBBPA070 第1页 基本情報のヘッダー部）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §11.1 T_Order
+ /// 業務 PK：Web受注NO（シーケンス自動採番）
+ /// 1 受注 → 多 OrderDetail → 多 OrderProcess / OrderMaterial
+ /// </remarks>
+ [Table("T_Order")]
+-public class Order : BaseBizEntity
++public class Order : BaseBizEntity, IAuditable
+ {
+     // ───── 業務主キー ─────
+     /// <summary>Web受注NO（業務 PK、シーケンス自動採番）</summary>
+     [Required, MaxLength(20)]
+     public string WebOrderNo { get; set; } = string.Empty;
+ 
+     // ───── 顧客・受注区分 ─────
+     /// <summary>得意先コード</summary>
+     [Required, MaxLength(20)]
+     public string CustomerCd { get; set; } = string.Empty;
+diff --git a/CP6.Entity/DomainModels/Erp/OrderDetail.cs b/CP6.Entity/DomainModels/Erp/OrderDetail.cs
+index bf2e72e..5153f08 100644
+--- a/CP6.Entity/DomainModels/Erp/OrderDetail.cs
++++ b/CP6.Entity/DomainModels/Erp/OrderDetail.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 受注明細（MSBBPA070 第2页 基本情報・構成情報・仕入情報・備考）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §11.2 T_OrderDetail（約125項目）
+ /// 業務 PK: (WebOrderNo, WebOrderDetailNo)
+ /// 受注時に製品基本マスタから大量フィールドをスナップショットコピーする設計
+ /// </remarks>
+ [Table("T_OrderDetail")]
+-public class OrderDetail : BaseBizEntity
++public class OrderDetail : BaseBizEntity, IAuditable
+ {
+     // ───── 業務主キー ─────
+     /// <summary>Web受注NO (FK→T_Order)</summary>
+     [Required, MaxLength(20)]
+     public string WebOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>Web受注明細NO（明細行連番）</summary>
+     public int WebOrderDetailNo { get; set; }
+ 
+     // ───── 手配NO 1〜4（Rev2.0 仕様） ─────
+diff --git a/CP6.Entity/DomainModels/Erp/OrderMaterial.cs b/CP6.Entity/DomainModels/Erp/OrderMaterial.cs
+index 1392cb2..04ba19e 100644
+--- a/CP6.Entity/DomainModels/Erp/OrderMaterial.cs
++++ b/CP6.Entity/DomainModels/Erp/OrderMaterial.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 受注加工材料（MSBBPA070 材料設定）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §11.4 T_OrderMaterial
+ /// 業務 PK: (WebOrderNo, WebOrderDetailNo, ProductCd, ProcessCd, MaterialCd)
+ /// </remarks>
+ [Table("T_OrderMaterial")]
+-public class OrderMaterial : BaseBizEntity
++public class OrderMaterial : BaseBizEntity, IAuditable
+ {
+     [Required, MaxLength(20)]
+     public string WebOrderNo { get; set; } = string.Empty;
+ 
+     public int WebOrderDetailNo { get; set; }
+ 
+     [Required, MaxLength(20)]
+     public string ProductCd { get; set; } = string.Empty;
+ 
+     [Required, MaxLength(15)]
+diff --git a/CP6.Entity/DomainModels/Erp/OrderProcess.cs b/CP6.Entity/DomainModels/Erp/OrderProcess.cs
+index 7f230c0..349b752 100644
+--- a/CP6.Entity/DomainModels/Erp/OrderProcess.cs
++++ b/CP6.Entity/DomainModels/Erp/OrderProcess.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 受注加工工程（MSBBPA070 第3页 工程情報）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §11.3 T_OrderProcess
+ /// 業務 PK: (WebOrderNo, WebOrderDetailNo, ProductCd, OperationCd)
+ /// </remarks>
+ [Table("T_OrderProcess")]
+-public class OrderProcess : BaseBizEntity
++public class OrderProcess : BaseBizEntity, IAuditable
+ {
+     [Required, MaxLength(20)]
+     public string WebOrderNo { get; set; } = string.Empty;
+ 
+     public int WebOrderDetailNo { get; set; }
+ 
+     /// <summary>製品コード</summary>
+     [Required, MaxLength(20)]
+     public string ProductCd { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Erp/PlateMold.cs b/CP6.Entity/DomainModels/Erp/PlateMold.cs
+index a7e0e29..d940574 100644
+--- a/CP6.Entity/DomainModels/Erp/PlateMold.cs
++++ b/CP6.Entity/DomainModels/Erp/PlateMold.cs
+@@ -6,21 +6,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ /// <summary>
+ /// 木型・版型管理マスタ（PA140）— ★★★ 最複雑マスタ
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 MAM_木型版型管理マスタ
+ /// 業務 PK：(WdPtnNo, WdRev) — 1 版型 N Rev で版型履歴管理
+ /// 改定時は最大 Rev+1 で新レコード追加、前 Rev の適用終了日を新適用開始日 -1 にセット。
+ /// 登録/改定/訂正時に「版型受注連携」（T_Order + T_OrderDetail 118 項）+ PE API 連携（53 項）を実行。
+ /// </remarks>
+ [Table("T_PlateMold")]
+-public class PlateMold : BaseBizEntity
++public class PlateMold : BaseBizEntity, IAuditable
+ {
+     /// <summary>木型・版型 NO（PK1, 自動採番）</summary>
+     [Required, MaxLength(40)]
+     public string WdPtnNo { get; set; } = string.Empty;
+ 
+     /// <summary>Rev（PK2, 登録=1, 改定=最大Rev+1）</summary>
+     public int WdRev { get; set; } = 1;
+ 
+     [Required, MaxLength(20)] public string BaseCd { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Erp/ProductLotPrice.cs b/CP6.Entity/DomainModels/Erp/ProductLotPrice.cs
+index 869830b..7b72e0f 100644
+--- a/CP6.Entity/DomainModels/Erp/ProductLotPrice.cs
++++ b/CP6.Entity/DomainModels/Erp/ProductLotPrice.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 製品ロット別単価マスタ（MSBBPA050 第5页ロット別単価）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §14.4 T_ProductLotPrice
+ /// 業務複合 PK：製品コード + 明細NO
+ /// </remarks>
+ [Table("T_ProductLotPrice")]
+-public class ProductLotPrice : BaseBizEntity
++public class ProductLotPrice : BaseBizEntity, IAuditable
+ {
+     /// <summary>製品コード（FK + PK1）</summary>
+     [Required, MaxLength(20)]
+     public string ProductCd { get; set; } = string.Empty;
+ 
+     /// <summary>明細NO（PK2、行番号）</summary>
+     public int DetailNo { get; set; }
+ 
+     // ───── 品目CD+枝番（原価参照時使用） ─────
+     [MaxLength(15)] public string? ItemCd { get; set; }
+diff --git a/CP6.Entity/DomainModels/Erp/ProductMaster.cs b/CP6.Entity/DomainModels/Erp/ProductMaster.cs
+index e04df98..dd8d336 100644
+--- a/CP6.Entity/DomainModels/Erp/ProductMaster.cs
++++ b/CP6.Entity/DomainModels/Erp/ProductMaster.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 製品基本マスタ（MSBBPA050 第2页基本情報）— Web 製品マスタ主表
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §14.1 T_ProductMaster
+ /// 業務 PK：製品コード（VARCHAR 15）= 品目CD(連番) + 枝番1(行番) + 枝番2(MCNULLVAL) + 枝番3(MCNULLVAL)
+ /// 採番ルール（Rev.5）：登録時 BRANCH1 = "00" + 行番、BRANCH2/3 = "MCNULLVAL"
+ /// </remarks>
+ [Table("T_ProductMaster")]
+-public class ProductMaster : BaseBizEntity
++public class ProductMaster : BaseBizEntity, IAuditable
+ {
+     // ───── 業務主キー ─────
+     /// <summary>製品コード（機能コード+年月+自増13桁 + 枝番4桁=17桁、業務 PK、自動採番）</summary>
+     [Required, MaxLength(20)]
+     public string ProductCd { get; set; } = string.Empty;
+ 
+     /// <summary>品目コード（mcframe7 連携用：=製品コード連番部分）</summary>
+     [Required, MaxLength(15)]
+     public string ItemCd { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Erp/ProductMaterial.cs b/CP6.Entity/DomainModels/Erp/ProductMaterial.cs
+index f5a4522..2055410 100644
+--- a/CP6.Entity/DomainModels/Erp/ProductMaterial.cs
++++ b/CP6.Entity/DomainModels/Erp/ProductMaterial.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 製品加工材料マスタ（MSBBPA050 第4页材料設定）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §14.3 T_ProductMaterial
+ /// 業務複合 PK：製品コード + 工程コード + 材料CD
+ /// </remarks>
+ [Table("T_ProductMaterial")]
+-public class ProductMaterial : BaseBizEntity
++public class ProductMaterial : BaseBizEntity, IAuditable
+ {
+     /// <summary>製品コード（FK + PK1）</summary>
+     [Required, MaxLength(20)]
+     public string ProductCd { get; set; } = string.Empty;
+ 
+     /// <summary>工程コード（PK2）</summary>
+     [Required, MaxLength(10)]
+     public string ProcessCd { get; set; } = string.Empty;
+ 
+     /// <summary>材料CD（PK3）</summary>
+diff --git a/CP6.Entity/DomainModels/Erp/ProductProcess.cs b/CP6.Entity/DomainModels/Erp/ProductProcess.cs
+index 09819d0..b19370a 100644
+--- a/CP6.Entity/DomainModels/Erp/ProductProcess.cs
++++ b/CP6.Entity/DomainModels/Erp/ProductProcess.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 製品加工工程マスタ（MSBBPA050 第3页工程情報）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §14.2 T_ProductProcess
+ /// 業務複合 PK：製品コード + 作業コード（TaskCd）
+ /// </remarks>
+ [Table("T_ProductProcess")]
+-public class ProductProcess : BaseBizEntity
++public class ProductProcess : BaseBizEntity, IAuditable
+ {
+     /// <summary>製品コード（FK → T_ProductMaster.ProductCd）</summary>
+     [Required, MaxLength(20)]
+     public string ProductCd { get; set; } = string.Empty;
+ 
+     /// <summary>作業コード（業務 PK2、mcframe7 の工程コードに相当）</summary>
+     [Required, MaxLength(10)]
+     public string TaskCd { get; set; } = string.Empty;
+ 
+     /// <summary>工程コード（mcframe7 の品目コードに相当）</summary>
+diff --git a/CP6.Entity/DomainModels/Erp/Quotation.cs b/CP6.Entity/DomainModels/Erp/Quotation.cs
+index edbcb53..a4412f2 100644
+--- a/CP6.Entity/DomainModels/Erp/Quotation.cs
++++ b/CP6.Entity/DomainModels/Erp/Quotation.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 御見積書（正式报价书）主表 - MSBBPA030
+ /// </summary>
+ /// <remarks>
+ /// 对应需求 §2.9.1 T_Quotation
+ /// 聚合根：一张御見積書聚合 N 张見積計算書（Quotation ⇄ QuotationCalc），
+ /// 并持有 N 行打印用明细（QuotationDetail）。
+ /// </remarks>
+ [Table("T_Quotation")]
+-public class Quotation : BaseBizEntity
++public class Quotation : BaseBizEntity, IAuditable
+ {
+     // ───── 业务主键 ─────
+     /// <summary>御見積書NO（10 字符，自动采番）</summary>
+     [Required]
+     [MaxLength(20)]
+     public string QtnNo { get; set; } = string.Empty;
+ 
+     /// <summary>主番（NUMERIC 8）——用于采番排序</summary>
+     public int QtnNoMain { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Erp/QuotationDetail.cs b/CP6.Entity/DomainModels/Erp/QuotationDetail.cs
+index 809def7..b57c4c6 100644
+--- a/CP6.Entity/DomainModels/Erp/QuotationDetail.cs
++++ b/CP6.Entity/DomainModels/Erp/QuotationDetail.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// 御見積書明細(印字用) - MSBBPA030 §2.9.3
+ /// </summary>
+ /// <remarks>
+ /// 打印到正式报价书 PDF 上的明细数据。
+ /// 每行可关联一个 見積計算書NO（来自「使用」チェックの自動追加），也可手工追加。
+ /// </remarks>
+ [Table("T_QuotationDetail")]
+-public class QuotationDetail : BaseBizEntity
++public class QuotationDetail : BaseBizEntity, IAuditable
+ {
+     /// <summary>御見積書NO（复合主键一部分；FK → T_Quotation）</summary>
+     [Required]
+     [MaxLength(20)]
+     public string QtnNo { get; set; } = string.Empty;
+ 
+     /// <summary>明細NO（行序号；复合主键一部分）</summary>
+     public int DetailNo { get; set; }
+ 
+     /// <summary>商品名1（品名1）</summary>
+diff --git a/CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs b/CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs
+index b446b41..99c56fa 100644
+--- a/CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs
++++ b/CP6.Entity/DomainModels/Erp/SheetUnitPrice.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Erp;
+ 
+ /// <summary>
+ /// Web シート単価マスタ（PA130）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §7 — 13 項目複合 PK
+ /// 取込区分=シート単価 → 本テーブル / 取込区分=見積用 → SheetUnitPriceEstimate（同一構造）
+ /// </remarks>
+ [Table("T_SheetUnitPrice")]
+-public class SheetUnitPrice : BaseBizEntity
++public class SheetUnitPrice : BaseBizEntity, IAuditable
+ {
+     /// <summary>改定日（適用基準日；PK1）</summary>
+     public DateTime RevisionDate { get; set; }
+ 
+     /// <summary>拠点（PK2）</summary>
+     [Required, MaxLength(10)] public string BaseCd { get; set; } = string.Empty;
+ 
+     /// <summary>得意先 CD（PK3）— 取引先マスタ(得意先 FLG=1)</summary>
+     [Required, MaxLength(20)] public string CustomerCd { get; set; } = string.Empty;
+ 
+@@ -42,21 +42,21 @@ public class SheetUnitPrice : BaseBizEntity
+ 
+     /// <summary>営業担当（参照表示用：得意先担当マスタから引入）</summary>
+     [MaxLength(20)] public string? SalesStaffCd { get; set; }
+ }
+ 
+ /// <summary>
+ /// Web シート単価（見積用）マスタ — PA130 取込区分=見積用 の書込み先
+ /// </summary>
+ /// <remarks>SheetUnitPrice と同一構造の別テーブル（仕様書 §6 §7）。</remarks>
+ [Table("T_SheetUnitPriceEstimate")]
+-public class SheetUnitPriceEstimate : BaseBizEntity
++public class SheetUnitPriceEstimate : BaseBizEntity, IAuditable
+ {
+     public DateTime RevisionDate { get; set; }
+     [Required, MaxLength(10)] public string BaseCd { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string CustomerCd { get; set; } = string.Empty;
+     [Required, MaxLength(4)]  public string SheetFlute { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string PaperCdF { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string PrintCdF { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string EmbossCdF { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string PaperCdC { get; set; } = string.Empty;
+     [Required, MaxLength(20)] public string PrintCdC { get; set; } = string.Empty;
+diff --git a/CP6.Tests/Erp/ErpAuditTests.cs b/CP6.Tests/Erp/ErpAuditTests.cs
+new file mode 100644
+index 0000000..c0b169c
+--- /dev/null
++++ b/CP6.Tests/Erp/ErpAuditTests.cs
+@@ -0,0 +1,247 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Erp;
++using Xunit;
++
++namespace CP6.Tests.Erp;
++
++/// <summary>
++/// ERP 钱与主数据关键实体字段级审计接线冒烟（M-ERP 横切 T5）。
++/// 照 <see cref="CP6.Tests.Wms.WmsAuditTests"/> / <see cref="CP6.Tests.Space.SpaceAuditTests"/> 范式：
++/// InMemory + 假当前用户。验证贴 IAuditable 的 ERP 实体（受注头/明细·製品主档·价表定价主数据）
++/// 在 create/update 随业务行同周期写入 Sys_FieldAuditLogs（真实断言实体名/字段/新旧值）；
++/// 并回归确认追加型履历 FscChecklist（未贴）不产生审计行（负测试）。
++/// </summary>
++public class ErpAuditTests
++{
++    private sealed class FakeUser : ICurrentUserAccessor
++    {
++        public FakeUser(Guid? id, string? name) { UserId = id; UserName = name; }
++        public Guid? UserId { get; }
++        public string? UserName { get; }
++    }
++
++    private sealed record DiffRow(string Field, string? Old, string? New);
++
++    private static List<DiffRow> ParseChanges(string json)
++        => JsonSerializer.Deserialize<List<DiffRow>>(json) ?? new();
++
++    private static readonly Guid _userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
++
++    private static CP6Context Ctx()
++        => TestHelper.CreateInMemoryContext(new FakeUser(_userId, "alice"));
++
++    // ── 受注头（Order）──────────────────────────────────────────────
++    [Fact]
++    public void Create_Order_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var order = new Order { WebOrderNo = "WO20260712-001", CustomerCd = "C001", OrderType = "10" };
++        db.Set<Order>().Add(order);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Order), rows[0].EntityName);
++        Assert.Equal(order.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_Order_fxRate_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var order = new Order { WebOrderNo = "WO20260712-002", CustomerCd = "C001", OrderType = "10", FxRate = 1m };
++        db.Set<Order>().Add(order);
++        db.SaveChanges();
++
++        order.FxRate = 150m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Order), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "FxRate" && d.Old == "1" && d.New == "150");
++    }
++
++    // ── 受注明细（OrderDetail）— 价格快照·钱 ──────────────────────────
++    [Fact]
++    public void Update_OrderDetail_amount_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var detail = new OrderDetail
++        {
++            WebOrderNo = "WO20260712-003",
++            WebOrderDetailNo = 1,
++            ProductCd = "P001",
++            Amount = 1000m,
++        };
++        db.Set<OrderDetail>().Add(detail);
++        db.SaveChanges();
++
++        detail.Amount = 1200m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(OrderDetail), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Amount" && d.New == "1200");
++    }
++
++    // ── 製品主档（ProductMaster）─────────────────────────────────────
++    [Fact]
++    public void Create_ProductMaster_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var product = new ProductMaster { ProductCd = "PRD-000001" };
++        db.Set<ProductMaster>().Add(product);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(ProductMaster), rows[0].EntityName);
++        Assert.Equal(product.Id.ToString(), rows[0].EntityKey);
++    }
++
++    // ── 价表/定价主数据（FxRate 為替）— 改它影响算价 ────────────────────
++    [Fact]
++    public void Update_FxRate_rate_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var fx = new FxRate { CurrencyCd = "USD", RateDate = new DateTime(2026, 7, 12), Rate = 150m };
++        db.Set<FxRate>().Add(fx);
++        db.SaveChanges();
++
++        fx.Rate = 155m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(FxRate), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Rate" && d.Old == "150" && d.New == "155");
++    }
++
++    // ── 价表 master（SheetUnitPrice シート単価）──────────────────────
++    [Fact]
++    public void Create_SheetUnitPrice_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var price = new SheetUnitPrice { BaseCd = "B01", CustomerCd = "C001", SheetFlute = "A" };
++        db.Set<SheetUnitPrice>().Add(price);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(SheetUnitPrice), rows[0].EntityName);
++        Assert.Equal(price.Id.ToString(), rows[0].EntityKey);
++    }
++
++    // ── 受注加工工程明细（OrderProcess）— 採購/固定単価·钱 ───────────────
++    [Fact]
++    public void Update_OrderProcess_purchaseUnitPrice_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var proc = new OrderProcess
++        {
++            WebOrderNo = "WO20260712-004",
++            WebOrderDetailNo = 1,
++            ProductCd = "P001",
++            OperationCd = "OP01",
++            ProcessCd = "PC01",
++            PurchaseUnitPrice = 100m,
++        };
++        db.Set<OrderProcess>().Add(proc);
++        db.SaveChanges();
++
++        proc.PurchaseUnitPrice = 120m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(OrderProcess), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "PurchaseUnitPrice" && d.Old == "100" && d.New == "120");
++    }
++
++    // ── 御見積書明细（QuotationDetail）— 打印到对客报价书的行级単価/金額 ─────
++    [Fact]
++    public void Update_QuotationDetail_amount_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var detail = new QuotationDetail
++        {
++            QtnNo = "QTN20260712-001",
++            DetailNo = 1,
++            UnitPrice = 50m,
++            Amount = 500m,
++        };
++        db.Set<QuotationDetail>().Add(detail);
++        db.SaveChanges();
++
++        detail.Amount = 600m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(QuotationDetail), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Amount" && d.Old == "500" && d.New == "600");
++    }
++
++    // ── 木型・版型管理マスタ（PlateMold）— 版型采购定价决策·钱 ─────────────
++    [Fact]
++    public void Update_PlateMold_decisionAmount_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var mold = new PlateMold
++        {
++            WdPtnNo = "WP20260712-001",
++            WdRev = 1,
++            BaseCd = "B01",
++            DecisionEstimateNo = "DE001",
++            VrsnName = "版型A",
++            CustomerCd = "C001",
++            RepresentativeProductCd = "P001",
++            SupplierCd = "S001",
++            DecisionAmount = 30000m,
++        };
++        db.Set<PlateMold>().Add(mold);
++        db.SaveChanges();
++
++        mold.DecisionAmount = 32000m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(PlateMold), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "DecisionAmount" && d.Old == "30000" && d.New == "32000");
++    }
++
++    // ── 负测试：追加型履历（FscChecklist）未贴 IAuditable → 零审计行 ──────
++    [Fact]
++    public void Append_FscChecklist_writes_no_audit_row()
++    {
++        // 追加型 FSC 発行履歴：豁免 IAuditable，插入不应产生任何字段审计行。
++        using var db = Ctx();
++        var fsc = new FscChecklist
++        {
++            FscManagementNo = "FSC20260712-001",
++            QtnNo = "QTN001",
++            QtnCalcNo = "QC001",
++        };
++        db.Set<FscChecklist>().Add(fsc);
++        db.SaveChanges();
++
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++}
+diff --git a/CP6.Tests/Erp/OrderCalcTests.cs b/CP6.Tests/Erp/OrderCalcTests.cs
+new file mode 100644
+index 0000000..d501069
+--- /dev/null
++++ b/CP6.Tests/Erp/OrderCalcTests.cs
+@@ -0,0 +1,152 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Erp;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels;
++using CP6.Entity.DomainModels.Erp;
++using CP6.Entity.DTOs.Erp;
++using Xunit;
++
++namespace CP6.Tests.Erp;
++
++/// <summary>
++/// Web 受注 建单算价「钱路」真値回帰（M-ERP 横切 T6 補網）。
++///
++/// 全局审计 T5/#6：受注金額の計算主路径に既存テストがゼロ。
++///  ① 価格来源：SalesPriceDiv=="1"（個別売）→ 個別単価、それ以外（セット売）→ セット単価。
++///  ② 金額 = 数量 × 選ばれた単価（<see cref="OrderService.CalcAmountAsync"/>）。
++///  ③ 単価訂正保存（BatchUpdatePriceAsync）：金額再計算 + 承認差戻し
++///     + セット単価の同一受注内一括伝播（明細横断の汇总）。
++/// 既存 <see cref="ErpAuditTests"/>（Amount 直書換→審計行）/
++/// <see cref="CP6.Tests.OrderServiceCancelTests"/>（取消状態機）とは非重複。
++///
++/// 断言は全て手算期望値。
++/// </summary>
++public class OrderCalcTests
++{
++    /// <summary>WF 起票は連携環境無し前提の No-Op（起票成功したことにする）。</summary>
++    private sealed class FakePowerEgg : IPowerEggWorkflowService
++    {
++        public int Calls { get; private set; }
++        public Task<bool> RequestPriceCorrectionAsync(OrderDetail entity, string? applicantStaffCd, CancellationToken ct = default)
++        {
++            Calls++;
++            return Task.FromResult(true);
++        }
++    }
++
++    private static OrderService NewSvc(CP6Context db, IPowerEggWorkflowService? pe = null)
++        => new(db, pe ?? new FakePowerEgg(), new NoOpWmsBridgeHook());
++
++    private static OrderDetail SeedDetail(CP6Context db, string webOrderNo, int no,
++        decimal? qty, string? salesPriceDiv, decimal? setPrice = null, decimal? amount = null)
++    {
++        var d = new OrderDetail
++        {
++            WebOrderNo = webOrderNo,
++            WebOrderDetailNo = no,
++            ProductCd = $"P{no:D3}",
++            Quantity = qty,
++            SalesPriceDiv = salesPriceDiv,
++            SetUnitPrice = setPrice,
++            Amount = amount,
++            ApprovalStatus = 0,
++        };
++        db.OrderDetails.Add(d);
++        db.SaveChanges();
++        return d;
++    }
++
++    // ═════════ ① 価格来源＝個別売（SalesPriceDiv="1"）→ 個別単価を採用 ═════════
++
++    [Fact]
++    public async Task CalcAmount_IndividualSalesDiv_UsesIndividualPrice()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        SeedDetail(db, "WO-IND", 1, qty: 100m, salesPriceDiv: "1");
++        var svc = NewSvc(db);
++
++        // 手算：個別売 → 100 × 25.5 = 2550（セット単価 999 は無視される）
++        var amount = await svc.CalcAmountAsync("WO-IND", 1, newIndPrice: 25.5m, newSetPrice: 999m);
++
++        Assert.Equal(2550m, amount);
++    }
++
++    // ═════════ ② 価格来源＝セット売（SalesPriceDiv≠"1"）→ セット単価を採用 ═════════
++
++    [Fact]
++    public async Task CalcAmount_SetSalesDiv_UsesSetPrice()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        SeedDetail(db, "WO-SET", 1, qty: 100m, salesPriceDiv: "2");
++        var svc = NewSvc(db);
++
++        // 手算：セット売 → 100 × 30 = 3000（個別単価 25.5 は無視される）
++        var amount = await svc.CalcAmountAsync("WO-SET", 1, newIndPrice: 25.5m, newSetPrice: 30m);
++
++        Assert.Equal(3000m, amount);
++    }
++
++    // ═════════ ③ 边界：明細不在→0、単価 null→数量×0=0 ═════════
++
++    [Fact]
++    public async Task CalcAmount_MissingDetailOrNullPrice_ReturnsZero()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        SeedDetail(db, "WO-B", 1, qty: 100m, salesPriceDiv: "2");
++        var svc = NewSvc(db);
++
++        // 明細不在（誤 NO）→ 0
++        Assert.Equal(0m, await svc.CalcAmountAsync("WO-B", 999, newIndPrice: 10m, newSetPrice: 10m));
++        // セット売で セット単価 null → 100 × 0 = 0
++        Assert.Equal(0m, await svc.CalcAmountAsync("WO-B", 1, newIndPrice: 77m, newSetPrice: null));
++    }
++
++    // ═════════ ④ 単価訂正バッチ保存：各行の金額再計算（個別売）+ 承認差戻し集計 ═════════
++    // 個別売（div="1"）路径のみ検証。セット単価一括伝播は ExecuteUpdate（relational 専用、
++    // InMemory 非対応）に依存するため本ユニットテストの対象外（concerns 記載）。
++
++    [Fact]
++    public async Task BatchUpdatePrice_MultiLine_RecomputesEachAmount_AndAggregatesWfReset()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        // 同一受注 WO-BATCH に 2 明細（共に個別売、個別単価未設定）
++        SeedDetail(db, "WO-BATCH", 1, qty: 100m, salesPriceDiv: "1", amount: 0m);
++        SeedDetail(db, "WO-BATCH", 2, qty: 40m, salesPriceDiv: "1", amount: 0m);
++        var pe = new FakePowerEgg();
++        var svc = NewSvc(db, pe);
++
++        var req = new OrderPriceCorrectionBatchUpdateDto
++        {
++            Items =
++            {
++                new OrderPriceCorrectionUpdateDto
++                {
++                    WebOrderNo = "WO-BATCH", WebOrderDetailNo = 1,
++                    IndividualUnitPriceAfter = 25m, PriceChangeReason = "客先交渉",
++                },
++                new OrderPriceCorrectionUpdateDto
++                {
++                    WebOrderNo = "WO-BATCH", WebOrderDetailNo = 2,
++                    IndividualUnitPriceAfter = 10m, PriceChangeReason = "客先交渉",
++                },
++            },
++        };
++
++        var result = await svc.BatchUpdatePriceAsync(req, "bob");
++
++        // 集計：2 件更新、両行とも単価変更ありなので WF 2 件起票
++        Assert.Equal(2, result.UpdatedCount);
++        Assert.Equal(2, result.WfRequestedCount);
++        Assert.Empty(result.ConflictedKeys);
++        Assert.Equal(2, pe.Calls);
++
++        // 手算：明細1 = 100 × 25 = 2500、明細2 = 40 × 10 = 400（各行独立に個別単価で再計算）
++        var l1 = db.OrderDetails.Single(x => x.WebOrderNo == "WO-BATCH" && x.WebOrderDetailNo == 1);
++        var l2 = db.OrderDetails.Single(x => x.WebOrderNo == "WO-BATCH" && x.WebOrderDetailNo == 2);
++        Assert.Equal(2500m, l1.Amount);
++        Assert.Equal(25m, l1.IndividualUnitPrice);
++        Assert.Equal(1, l1.ApprovalStatus); // 単価変更 → 承認差戻し(=1)
++        Assert.Equal(400m, l2.Amount);
++        Assert.Equal(10m, l2.IndividualUnitPrice);
++    }
++}
+diff --git a/CP6.Tests/Erp/QuotationCalcTests.cs b/CP6.Tests/Erp/QuotationCalcTests.cs
+new file mode 100644
+index 0000000..c8a812a
+--- /dev/null
++++ b/CP6.Tests/Erp/QuotationCalcTests.cs
+@@ -0,0 +1,111 @@
++using CP6.Core.Services.Erp;
++using CP6.Entity.DTOs.Erp;
++using Xunit;
++
++namespace CP6.Tests.Erp;
++
++/// <summary>
++/// 御見積書 報価計算「钱路」真値回帰（M-ERP 横切 T6 補網）。
++///
++/// 全局审计 T5/#6：QuotationService の 金額 = 数量 × 単価、合計 = Σ 行金額 の
++/// 計算主路径に既存テストがゼロ。既存 <see cref="ErpAuditTests"/> は
++/// 「Amount フィールドを直接書換え→審計行が出るか」だけを見ており、
++/// 計算式そのものは一度も検証していない（本ファイルと非重複）。
++///
++/// 断言は全て手算期望値。サービスが誤算すれば真っ赤になる。
++/// </summary>
++public class QuotationCalcTests
++{
++    private static QuotationDto NewHeader() => new()
++    {
++        BaseCd = "B01",
++        StaffCd = "S001",
++        CustomerCd = "C001",
++        CustomerName = "得意先A",
++    };
++
++    private static QuotationDetailDto Line(int no, decimal? qty, decimal? unitPrice) => new()
++    {
++        DetailNo = no,
++        ItemName1 = $"品名{no}",
++        Quantity = qty,
++        UnitPrice = unitPrice,
++    };
++
++    // ═════════ ① 正常路径：行金額 = 数量 × 単価、合計 = Σ ═════════
++
++    [Fact]
++    public async Task Create_TwoDetails_ComputesLineAmountAndTotal()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var svc = new QuotationService(db);
++
++        var dto = NewHeader();
++        // 手算：行1 = 12 × 150 = 1800、行2 = 3 × 2000 = 6000、合計 = 7800
++        dto.Details.Add(Line(1, 12m, 150m));
++        dto.Details.Add(Line(2, 3m, 2000m));
++
++        var qtnNo = await svc.CreateAsync(dto, "alice");
++
++        var saved = await svc.GetByNoAsync(qtnNo);
++        Assert.NotNull(saved);
++        var d1 = saved!.Details.Single(d => d.DetailNo == 1);
++        var d2 = saved.Details.Single(d => d.DetailNo == 2);
++        Assert.Equal(1800m, d1.Amount);
++        Assert.Equal(6000m, d2.Amount);
++        Assert.Equal(7800m, saved.TotalAmount);
++    }
++
++    // ═════════ ② 边界：数量 null / 単価 0 の行は金額 0、合計から実質除外 ═════════
++
++    [Fact]
++    public async Task Create_NullQtyOrZeroPrice_LineAmountsZero_TotalCountsOnlyRealLines()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var svc = new QuotationService(db);
++
++        var dto = NewHeader();
++        // 手算：行1 = (null→0) × 500 = 0、行2 = 10 × 0 = 0、行3 = 5 × 100 = 500
++        //       合計 = 0 + 0 + 500 = 500
++        dto.Details.Add(Line(1, null, 500m));
++        dto.Details.Add(Line(2, 10m, 0m));
++        dto.Details.Add(Line(3, 5m, 100m));
++
++        var qtnNo = await svc.CreateAsync(dto, "alice");
++
++        var saved = await svc.GetByNoAsync(qtnNo);
++        Assert.NotNull(saved);
++        Assert.Equal(0m, saved!.Details.Single(d => d.DetailNo == 1).Amount);
++        Assert.Equal(0m, saved.Details.Single(d => d.DetailNo == 2).Amount);
++        Assert.Equal(500m, saved.Details.Single(d => d.DetailNo == 3).Amount);
++        Assert.Equal(500m, saved.TotalAmount);
++    }
++
++    // ═════════ ③ 訂正：明細削除＋数量変更で合計を再計算（削除行は合計から除外） ═════════
++
++    [Fact]
++    public async Task Update_RemoveDetailAndChangeQty_RecomputesTotal()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var svc = new QuotationService(db);
++
++        // 初期：行1 = 10 × 100 = 1000、行2 = 2 × 250 = 500、合計 = 1500
++        var create = NewHeader();
++        create.Details.Add(Line(1, 10m, 100m));
++        create.Details.Add(Line(2, 2m, 250m));
++        var qtnNo = await svc.CreateAsync(create, "alice");
++        Assert.Equal(1500m, (await svc.GetByNoAsync(qtnNo))!.TotalAmount);
++
++        // 訂正：行2 を削除、行1 の数量 10→8（手算：8 × 100 = 800、合計 = 800）
++        var update = NewHeader();
++        update.QtnNo = qtnNo;
++        update.Details.Add(Line(1, 8m, 100m));
++        await svc.UpdateAsync(qtnNo, update, "bob");
++
++        var saved = await svc.GetByNoAsync(qtnNo);
++        Assert.NotNull(saved);
++        Assert.Single(saved!.Details); // 行2 は論理削除され取得されない
++        Assert.Equal(800m, saved.Details.Single(d => d.DetailNo == 1).Amount);
++        Assert.Equal(800m, saved.TotalAmount);
++    }
++}
+diff --git a/CP6.Tests/ErpMenuSeedTests.cs b/CP6.Tests/ErpMenuSeedTests.cs
+new file mode 100644
+index 0000000..cd2b015
+--- /dev/null
++++ b/CP6.Tests/ErpMenuSeedTests.cs
+@@ -0,0 +1,140 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-ERP 横切接线 Task 2：ErpMenuSeed 幂等 + MenuKey 锚定断言。
++/// 头号命门回归：既有 201–215 裸路径若被回填成 order/product… 无 erp- 前缀会与真相源失配 → 全 ERP 403。
++/// </summary>
++public class ErpMenuSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 真相源 docs/seeds/erp-permission-keys.md §二 的 14 个 menu-key → 锚定 MenuId。
++    private static readonly (string Key, int MenuId)[] Anchors =
++    {
++        ("erp-estimate-calc", 202),
++        ("erp-quotation", 204),
++        ("erp-product", 206),
++        ("erp-order", 208),
++        ("erp-order-price-correction", 209),
++        ("erp-fsc-checklist", 210),
++        ("erp-business-partner", 212),
++        ("erp-sheet-unit-price", 213),
++        ("erp-plate-mold", 215),
++        ("erp-order-trace", 216),
++        ("erp-credit-note", 217),
++        ("erp-backorder", 218),
++        ("erp-otd-report", 219),
++        ("erp-fx-rate", 220),
++    };
++
++    [Fact]
++    public void EnsureSeeded_AnchorsAll14KeysToExpectedMenuIds()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++
++        foreach (var (key, menuId) in Anchors)
++        {
++            var menu = db.Sys_Menus.SingleOrDefault(m => m.MenuId == menuId);
++            Assert.NotNull(menu);
++            Assert.Equal(key, menu!.MenuKey);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_OrphanRoutes_216To220_CreatedWithRoutePathAndParent()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++
++        var orphans = new (int Id, string Route)[]
++        {
++            (216, "/erp/order-trace"),
++            (217, "/erp/credit-note"),
++            (218, "/erp/backorder"),
++            (219, "/erp/otd-report"),
++            (220, "/erp/fx-rate"),
++        };
++        foreach (var (id, route) in orphans)
++        {
++            var m = db.Sys_Menus.SingleOrDefault(x => x.MenuId == id);
++            Assert.NotNull(m);
++            Assert.Equal(route, m!.RoutePath);
++            Assert.Equal(200, m.ParentId);
++            Assert.True(m.Enable);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTwoRowsShareANonNullMenuKey()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++
++        // Sys_Menus.MenuKey 有 IS NOT NULL 过滤唯一索引；一域两页禁共键。断言锚定键各占一行。
++        var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
++        Assert.Equal(keyed.Count, keyed.Distinct().Count());
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_NoDuplicateRowsOrRoleMenus()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++        var menuCount1 = db.Sys_Menus.Count();
++        var roleMenuCount1 = db.Sys_RoleMenus.Count();
++
++        ErpMenuSeed.EnsureSeeded(db);   // 第二次
++        Assert.Equal(menuCount1, db.Sys_Menus.Count());
++        Assert.Equal(roleMenuCount1, db.Sys_RoleMenus.Count());
++
++        // 全 21 行（200 父 + 201–215 + 216–220）+ 各授管理员一条 RoleMenu。
++        Assert.Equal(21, menuCount1);
++        Assert.Equal(21, roleMenuCount1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_CorrectsHistoricalBackfilledBareKey_ToErpPrefixed()
++    {
++        using var db = NewDb();
++        // 模拟既有库：208 受注入力 曾被历史回填成裸键 "order"（无 erp- 前缀）——头号命门。
++        db.Sys_Menus.Add(new Sys_Menu
++        {
++            MenuId = 208, MenuName = "受注入力", RoutePath = "/order",
++            MenuKey = "order", ParentId = 200, OrderNo = 208, Enable = true,
++        });
++        db.SaveChanges();
++
++        ErpMenuSeed.EnsureSeeded(db);
++
++        var m = db.Sys_Menus.Single(x => x.MenuId == 208);
++        Assert.Equal("erp-order", m.MenuKey);   // 就地矫正
++    }
++
++    [Fact]
++    public void EnsureSeeded_ListPages_LeaveMenuKeyNull_ForBackfill()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);
++
++        // 一覧页（201/203/205/207/211/214）与父行 200 不承载权限：MenuKey 留 null（交由回填派生）。
++        foreach (var id in new[] { 200, 201, 203, 205, 207, 211, 214 })
++        {
++            var m = db.Sys_Menus.Single(x => x.MenuId == id);
++            Assert.Null(m.MenuKey);
++        }
++    }
++}
+diff --git a/CP6.Tests/ErpPermissionAttributeTests.cs b/CP6.Tests/ErpPermissionAttributeTests.cs
+new file mode 100644
+index 0000000..5358582
+--- /dev/null
++++ b/CP6.Tests/ErpPermissionAttributeTests.cs
+@@ -0,0 +1,204 @@
++using System.Reflection;
++using System.Text.RegularExpressions;
++using CP6.Core.Auth;
++using CP6.WebApi.Controllers.Erp;
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// 反射守卫（M-ERP 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
++/// Controllers.Erp 命名空间全部 controller，锁死「未来新增 ERP 写端点漏贴权限键即红」。
++/// 与已合并的 <c>WmsPermissionAttributeTests</c>（commit 0efb717）同型三件套 + ERP 特有两处扩展。
++/// 真相源：docs/seeds/erp-permission-keys.md（15 控制器扫描面 / 46 写端点 / 35 贴点 / 11 只读 POST 豁免）。
++///
++/// ① discovery 守卫：断言扫到 15 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
++/// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
++///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 35、
++///    豁免命中数精确 == 11（46 = 35 + 11 收口）。将来谁新增 ERP 写端点忘贴权限，本用例立刻红。
++/// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
++///    ^erp-[a-z0-9-]+$（连字符，禁下划线），action **逐词相等**落在真相源实际使用的 action 集合内。
++/// ④ 豁免防腐：每条豁免必须确为「变更端点 且 未贴权限」——防豁免清单变陈旧（端点改名/被贴/被删）
++///    却仍白名单遮蔽某个真·写端点丢键。
++/// ⑤ AllowAnonymous 锁：EstimateCalcController.Calculate 现挂 [AllowAnonymous]（主控裁决保留，
++///    已记终审票待用户裁处）。断言其确实挂着——防有人删了 AllowAnonymous 却忘贴权限：Calculate 在
++///    豁免清单内，核心闸不会拦，唯本断言把这条路锁死。
++///
++/// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
++/// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
++/// 继承说明：15 个 ERP 控制器均直接继承 ControllerBase、写端点均为手写声明方法（无 CodeGen
++/// 继承端点），故 DeclaredOnly 反射不漏扫。
++/// </summary>
++public class ErpPermissionAttributeTests
++{
++    /// <summary>menu 键约定：erp- 前缀 + 小写字母数字连字符。</summary>
++    private static readonly Regex MenuPattern = new("^erp-[a-z0-9-]+$", RegexOptions.Compiled);
++
++    /// <summary>
++    /// 真相源实际使用的 action 集合（从已贴的 35 个 [RequirePermission] grep 出的真实 action，非凭空造）。
++    /// 只读 POST 豁免归 view 但**不贴键**（未打属性），故本集合**不含 view**——逐词相等，多一词/少一词即红。
++    /// 新 action 词若出现须显式加入本集合，否则视为疑似 typo 报错。
++    /// </summary>
++    private static readonly HashSet<string> ActionVocabulary = new()
++    {
++        "add", "edit", "del",          // 四基粒度写（view 未贴，不入集）
++        "cancel", "correct",           // 高危键（真相源 §三：erp-order:cancel / erp-order-price-correction:correct）
++        "confirm", "issue",            // 状态键：見積確定管理 / 帳票発行
++        "import",                      // 状态键：シート単価 Excel 取込
++        "close", "split",              // 状态键：欠品残数 关闭 / 拆分新受注
++    };
++
++    /// <summary>
++    /// 只读 POST 豁免清单（真相源 §四，共 11 条 —— 均逐条读 Service 实现证得无写副作用；归 view，不贴权限键）。
++    /// 键 = "ControllerName.MethodName"。每条带真相源编号 + 豁免依据。
++    /// </summary>
++    private static readonly HashSet<string> ReadOnlyPostExemptions = new()
++    {
++        "OrderController.CalcLeadTime",         // §四#1 纯营业日逆算，Task.FromResult，无 _db 触碰
++        "OrderController.CalcProductCategory",  // §四#2 仅 ProductMasters.AsNoTracking 读，无 SaveChanges
++        "OrderController.CalcMaterials",        // §四#3 BOM 展开纯读投影 DTO
++        "OrderController.ExportReport",         // §四#4 受注伝票导出，AsNoTracking 读→拼文本 bytes
++        "EstimateCalcController.Calculate",     // §四#5 计算引擎仅写内存 DTO List，无 _db.Add/SaveChanges；⚠另挂 [AllowAnonymous]（见 Calculate_RetainsAllowAnonymous）
++        "PlateMoldController.Label",            // §四#6 ラベル CSV 生成，AsNoTracking 读
++        "CreditNoteController.Search",          // §四#7 CreditNoteService 全类无写，纯分页查询
++        "OtdReportController.Summary",          // §四#8 OtdReportService 全类无写，纯汇总读
++        "OtdReportController.ExportCsv",        // §四#9 同上，纯读导出
++        "UnshippedOrderController.Search",      // §四#10 UnshippedOrderService 全类无写，纯分页查询
++        "UnshippedOrderController.ExportCsv",   // §四#11 同上，纯读导出
++    };
++
++    private static IEnumerable<Type> ErpControllers =>
++        typeof(OrderController).Assembly.GetTypes()
++            .Where(t => t.Namespace == "CP6.WebApi.Controllers.Erp"
++                        && typeof(ControllerBase).IsAssignableFrom(t)
++                        && !t.IsAbstract)
++            .OrderBy(t => t.Name);
++
++    private static IEnumerable<MethodInfo> ActionMethods(Type t) =>
++        t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
++            .Where(m => !m.IsSpecialName);
++
++    private static bool IsMutating(MethodInfo m) =>
++        m.GetCustomAttributes<HttpPostAttribute>().Any()
++        || m.GetCustomAttributes<HttpPutAttribute>().Any()
++        || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
++
++    private static bool IsGet(MethodInfo m) => m.GetCustomAttributes<HttpGetAttribute>().Any();
++
++    private static string Key(Type c, MethodInfo m) => $"{c.Name}.{m.Name}";
++
++    /// <summary>经 CustomAttributeData 读构造参数 (menu, action)；无特性返回 null。</summary>
++    private static (string menu, string action)? ReadPermission(MethodInfo m)
++    {
++        var data = CustomAttributeData.GetCustomAttributes(m)
++            .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
++        if (data == null) return null;
++        var args = data.ConstructorArguments;
++        return ((string)args[0].Value!, (string)args[1].Value!);
++    }
++
++    [Fact]
++    public void ErpControllers_AreDiscovered()
++    {
++        // 守卫：CP6.WebApi.Controllers.Erp 下继承 ControllerBase 的非抽象类共 15
++        //      （含 MasterData / OrderTrace 两个 GET-only 控制器）。防空扫假绿。
++        Assert.Equal(15, ErpControllers.Count());
++    }
++
++    [Fact]
++    public void EveryMutatingAction_IsGuarded_WithConventionalKeyOrExemption()
++    {
++        var offenders = new List<string>();
++        var taggedCount = 0;
++        var exemptHit = new HashSet<string>();
++
++        foreach (var c in ErpControllers)
++        foreach (var m in ActionMethods(c).Where(IsMutating))
++        {
++            var key = Key(c, m);
++            var perm = ReadPermission(m);
++
++            if (perm == null)
++            {
++                // 未贴权限：唯有在显式只读 POST 豁免清单内才放行。
++                if (ReadOnlyPostExemptions.Contains(key))
++                    exemptHit.Add(key);
++                else
++                    offenders.Add($"{key}：变更端点缺 [RequirePermission] 且不在只读 POST 豁免清单");
++                continue;
++            }
++
++            // 已贴权限却又列入豁免 = 语义冲突（豁免应无键）。
++            if (ReadOnlyPostExemptions.Contains(key))
++                offenders.Add($"{key}：既贴 [RequirePermission] 又在豁免清单，二者互斥");
++
++            taggedCount++;
++            if (!MenuPattern.IsMatch(perm.Value.menu))
++                offenders.Add($"{key}：menu '{perm.Value.menu}' 不符约定 ^erp-[a-z0-9-]+$");
++            if (!ActionVocabulary.Contains(perm.Value.action))
++                offenders.Add($"{key}：action '{perm.Value.action}' 不在真相源 action 集（疑似 typo，须显式加入）");
++        }
++
++        Assert.True(offenders.Count == 0,
++            "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
++
++        // 收口断言：贴点 35 + 豁免命中 11 = 全 46 变更端点，精确吻合真相源 §七。
++        Assert.Equal(35, taggedCount);
++        Assert.Equal(11, exemptHit.Count);
++    }
++
++    [Fact]
++    public void ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints()
++    {
++        // 豁免防腐：清单每一条都必须实存、确为变更端点、且当前未贴权限键。
++        // 防清单变陈旧（端点被改名/删除/后来贴了键）却仍白名单遮蔽某真·写端点丢键。
++        var byKey = ErpControllers
++            .SelectMany(c => ActionMethods(c).Select(m => (key: Key(c, m), method: m)))
++            .ToDictionary(x => x.key, x => x.method);
++
++        var stale = new List<string>();
++        foreach (var ex in ReadOnlyPostExemptions)
++        {
++            if (!byKey.TryGetValue(ex, out var m))
++            {
++                stale.Add($"{ex}：豁免清单条目在源码中已不存在（须清理豁免清单）");
++                continue;
++            }
++            if (!IsMutating(m))
++                stale.Add($"{ex}：豁免条目已非变更端点（须从豁免清单移除）");
++            if (ReadPermission(m) != null)
++                stale.Add($"{ex}：豁免条目现已贴 [RequirePermission]（须从豁免清单移除，交核心闸校验键）");
++        }
++
++        Assert.True(stale.Count == 0, "只读 POST 豁免清单已陈旧:\n" + string.Join("\n", stale));
++        Assert.Equal(11, ReadOnlyPostExemptions.Count);
++    }
++
++    [Fact]
++    public void Calculate_RetainsAllowAnonymous()
++    {
++        // 主控裁决：EstimateCalcController.Calculate 保留 [AllowAnonymous]（已记终审票待用户裁处）。
++        // 该端点在豁免清单内，核心闸不会拦其缺键；此断言独立锁死「删 AllowAnonymous 却忘贴权限」这条路：
++        // 一旦有人去掉匿名开放，本用例即红，逼其重新决策（复原匿名 或 移出豁免+贴 RequirePermission）。
++        var m = typeof(EstimateCalcController).GetMethod(nameof(EstimateCalcController.Calculate));
++        Assert.NotNull(m);
++        Assert.True(m!.GetCustomAttributes<AllowAnonymousAttribute>().Any(),
++            "EstimateCalcController.Calculate 应保留 [AllowAnonymous]；若已撤销，须同步给该端点贴 [RequirePermission] 并移出只读 POST 豁免清单。");
++    }
++
++    [Fact]
++    public void NoReadOnlyGetAction_HasRequirePermission()
++    {
++        // 只读误贴防护：纯 HttpGet（且非变更）端点不应带 [RequirePermission]（本波未给 GET 贴）。
++        var offenders = new List<string>();
++        foreach (var c in ErpControllers)
++        foreach (var m in ActionMethods(c))
++        {
++            var readOnly = IsGet(m) && !IsMutating(m);
++            if (readOnly && ReadPermission(m) != null)
++                offenders.Add($"{Key(c, m)}：只读 GET 端点误贴 [RequirePermission]");
++        }
++        Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
++    }
++}
+diff --git a/CP6.Tests/ErpPermissionSeedTests.cs b/CP6.Tests/ErpPermissionSeedTests.cs
+new file mode 100644
+index 0000000..4b497a9
+--- /dev/null
++++ b/CP6.Tests/ErpPermissionSeedTests.cs
+@@ -0,0 +1,153 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-ERP 横切接线 Task 3b：ErpPermissionSeed 逐租户 Sys_MenuAction/Sys_RoleAction 幂等种子断言。
++///
++/// 三数闭环（真相源 docs/seeds/erp-permission-keys.md + 控制器 grep）：
++///   35 写端点（[RequirePermission] 贴点）→ 去重 (menu-key, action) 30 元组 → 30 种子元组。
++///   （11 只读 POST 豁免不贴点、不入种子；erp-order-trace/erp-credit-note/erp-otd-report 三键只有
++///    view 端点被豁免或 GET-only，故无写元组，不在本种子——覆盖 11 键。）
++/// MenuId 经锚定表 docs/seeds/erp-key-menu-anchor.md 映射；RoleAction 挂 admin RoleId=1。
++/// </summary>
++public class ErpPermissionSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 期望的 30 去重种子元组（MenuId 来自锚定表；action 来自 T3a 控制器贴点，逐字核对）。
++    private static readonly (int MenuId, string Code)[] ExpectedTuples =
++    {
++        (202, "add"), (202, "edit"), (202, "del"),                                   // erp-estimate-calc
++        (204, "add"), (204, "edit"), (204, "del"), (204, "confirm"), (204, "issue"), // erp-quotation
++        (206, "add"), (206, "edit"), (206, "del"),                                   // erp-product
++        (208, "add"), (208, "edit"), (208, "del"), (208, "cancel"),                  // erp-order
++        (209, "correct"),                                                            // erp-order-price-correction
++        (210, "issue"),                                                              // erp-fsc-checklist
++        (212, "add"), (212, "edit"), (212, "del"),                                   // erp-business-partner
++        (213, "import"), (213, "edit"),                                              // erp-sheet-unit-price
++        (215, "add"), (215, "edit"), (215, "del"),                                   // erp-plate-mold
++        (218, "close"), (218, "split"),                                              // erp-backorder
++        (220, "add"), (220, "edit"), (220, "del"),                                   // erp-fx-rate
++    };
++
++    private static readonly Guid TenantA = Guid.Parse("11111111-1111-1111-1111-111111111111");
++    private static readonly Guid TenantB = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static void SeedTenantsAndMenus(CP6Context db)
++    {
++        // 锚定菜单行须先在（RoleAction 挂 MenuId）。
++        ErpMenuSeed.EnsureSeeded(db);
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantA, TenantCode = "TA", TenantName = "TenantA", Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantB, TenantCode = "TB", TenantName = "TenantB", Enable = true });
++        db.SaveChanges();
++    }
++
++    [Fact]
++    public void EnsureSeeded_SeedsExactly30TuplesPerTenant_ForBothMenuAndRoleAction()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        ErpPermissionSeed.EnsureSeeded(db);
++
++        foreach (var tid in new[] { TenantA, TenantB })
++        {
++            var menuActions = db.Sys_MenuActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid).ToList();
++            var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
++
++            // 元组闭环计数：每租户各得全套 30。
++            Assert.Equal(30, menuActions.Count);
++            Assert.Equal(30, roleActions.Count);
++
++            // 逐元组精确匹配（漏种 0 / 多种 0）。
++            var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var expected = ExpectedTuples.ToHashSet();
++            Assert.Equal(expected, maSet);
++            Assert.Equal(expected, raSet);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_SecondCallNoNewRows()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        ErpPermissionSeed.EnsureSeeded(db);
++        var ma1 = db.Sys_MenuActions.IgnoreQueryFilters().Count();
++        var ra1 = db.Sys_RoleActions.IgnoreQueryFilters().Count();
++
++        ErpPermissionSeed.EnsureSeeded(db);   // 二次调用
++        Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++
++        // 2 租户 × 30 元组 = 60。
++        Assert.Equal(60, ma1);
++        Assert.Equal(60, ra1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        ErpPermissionSeed.EnsureSeeded(db);
++
++        var anchoredMenuIds = ExpectedTuples.Select(t => t.MenuId).ToHashSet();
++        var roleActions = db.Sys_RoleActions.IgnoreQueryFilters().ToList();
++
++        Assert.NotEmpty(roleActions);
++        Assert.All(roleActions, ra => Assert.Equal(1, ra.RoleId));
++        // 每个 RoleAction.MenuId 必来自锚定表，且该菜单行确实存在且 MenuKey 非 null。
++        Assert.All(roleActions, ra => Assert.Contains(ra.MenuId, anchoredMenuIds));
++        foreach (var menuId in anchoredMenuIds)
++        {
++            var menu = db.Sys_Menus.Single(m => m.MenuId == menuId);
++            Assert.NotNull(menu.MenuKey);
++            Assert.StartsWith("erp-", menu.MenuKey!);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        ErpPermissionSeed.EnsureSeeded(db);
++
++        // 逐租户显式 TenantId：两租户各得独立行，无一被盖成默认租户。
++        var tenantsSeen = db.Sys_RoleActions.IgnoreQueryFilters()
++            .Select(x => x.TenantId).Distinct().ToList();
++        Assert.Contains(TenantA, tenantsSeen);
++        Assert.Contains(TenantB, tenantsSeen);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTenants_NoOp()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);   // 菜单在，但无 Sys_Tenants 行
++
++        ErpPermissionSeed.EnsureSeeded(db);
++
++        Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Erp/BackorderController.cs b/CP6.WebApi/Controllers/Erp/BackorderController.cs
+index 260539c..6c57d8b 100644
+--- a/CP6.WebApi/Controllers/Erp/BackorderController.cs
++++ b/CP6.WebApi/Controllers/Erp/BackorderController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ [ApiController]
+ [Route("api/backorder")]
+ [Authorize]
+@@ -20,20 +21,21 @@ public class BackorderController : ControllerBase
+     private string? CurrentUser => User?.Identity?.Name;
+ 
+     [HttpGet("queue")]
+     public async Task<IActionResult> Queue([FromQuery] BackorderQueueQuery query, CancellationToken ct)
+     {
+         var data = await _service.GetQueueAsync(query ?? new BackorderQueueQuery(), ct);
+         return Ok(new { code = 0, message = "OK", data });
+     }
+ 
+     [HttpPost("{webOrderNo}/{detailNo:int}/close-remaining")]
++    [RequirePermission("erp-backorder", "close")]
+     public async Task<IActionResult> CloseRemaining(
+         string webOrderNo,
+         int detailNo,
+         [FromBody] BackorderActionRequest? request,
+         CancellationToken ct)
+     {
+         try
+         {
+             var data = await _service.CloseRemainingAsync(webOrderNo, detailNo, request ?? new BackorderActionRequest(), CurrentUser, ct);
+             return Ok(new { code = 0, message = "OK", data });
+@@ -42,20 +44,21 @@ public class BackorderController : ControllerBase
+         {
+             return NotFound(new { code = 404, message = ex.Message, data = (object?)null });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message, data = (object?)null });
+         }
+     }
+ 
+     [HttpPost("{webOrderNo}/{detailNo:int}/split-to-new-order")]
++    [RequirePermission("erp-backorder", "split")]
+     public async Task<IActionResult> SplitToNewOrder(
+         string webOrderNo,
+         int detailNo,
+         [FromBody] BackorderActionRequest? request,
+         CancellationToken ct)
+     {
+         try
+         {
+             var data = await _service.SplitToNewOrderAsync(webOrderNo, detailNo, request ?? new BackorderActionRequest(), CurrentUser, ct);
+             return Ok(new { code = 0, message = "OK", data });
+diff --git a/CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs b/CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs
+index 1ed4c8b..54b9e40 100644
+--- a/CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs
++++ b/CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs
+@@ -1,11 +1,12 @@
+ using System.Security.Claims;
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA110 / 120 — Web 取引先マスタ
+@@ -37,36 +38,38 @@ public class BusinessPartnerController : LocalizedControllerBase
+     /// <summary>取引先 CD 重複チェック — GET /api/business-partners/check-exists/{cd}</summary>
+     [HttpGet("check-exists/{bpCd}")]
+     public async Task<IActionResult> CheckExists(string bpCd)
+     {
+         var exists = await _service.ExistsAsync(bpCd);
+         return Ok(new { code = 0, message = "OK", data = new { exists } });
+     }
+ 
+     /// <summary>新規登録 — POST /api/business-partners?preRegister=true|false</summary>
+     [HttpPost]
++    [RequirePermission("erp-business-partner", "add")]
+     public async Task<IActionResult> Create([FromBody] BusinessPartnerDto dto, [FromQuery] bool preRegister = false)
+     {
+         try
+         {
+             var bpCd = await _service.CreateAsync(dto, UserName, preRegister);
+             var saved = await _service.GetByCdAsync(bpCd);
+             return Ok(new { code = 0, message = "OK", data = saved });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>訂正 — PUT /api/business-partners/{cd}</summary>
+     [HttpPut("{bpCd}")]
++    [RequirePermission("erp-business-partner", "edit")]
+     public async Task<IActionResult> Update(string bpCd, [FromBody] BusinessPartnerDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(bpCd, dto, UserName);
+             var saved = await _service.GetByCdAsync(bpCd);
+             return Ok(new { code = 0, message = "OK", data = saved });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+@@ -78,20 +81,21 @@ public class BusinessPartnerController : LocalizedControllerBase
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>削除 — DELETE /api/business-partners/{cd}（管理者のみ）</summary>
+     [HttpDelete("{bpCd}")]
+     [Authorize(Roles = "1,Admin")]   // RoleId=1 = 管理者
++    [RequirePermission("erp-business-partner", "del")]
+     public async Task<IActionResult> Delete(string bpCd, [FromBody] DeleteRequest? req = null)
+     {
+         try
+         {
+             await _service.DeleteAsync(bpCd, req?.RowVersion, UserName);
+             return Ok(new { code = 0, message = "OK", data = (object?)null });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             return Conflict(new { code = 409, message = Localizer["E10034: すでに更新済みです"] });
+diff --git a/CP6.WebApi/Controllers/Erp/EstimateCalcController.cs b/CP6.WebApi/Controllers/Erp/EstimateCalcController.cs
+index 4b0f2af..b709c2e 100644
+--- a/CP6.WebApi/Controllers/Erp/EstimateCalcController.cs
++++ b/CP6.WebApi/Controllers/Erp/EstimateCalcController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA010 - 見積計算書 Web API
+@@ -44,32 +45,34 @@ public class EstimateCalcController : LocalizedControllerBase
+         var dto = await _service.GetByNoAsync(no, includeDeleted);
+         if (dto == null) return NotFound(new { code = 404, message = Localizer["見積計算書NOが未登録です。"], msgId = "MSG-102" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>
+     /// 新建（登録）
+     /// POST /api/estimate-calcs
+     /// </summary>
+     [HttpPost]
++    [RequirePermission("erp-estimate-calc", "add")]
+     public async Task<IActionResult> Create([FromBody] EstimateCalcDto dto)
+     {
+         var no = await _service.CreateAsync(dto, CurrentUser);
+         var fresh = await _service.GetByNoAsync(no);
+         return Ok(new { code = 0, message = "OK", data = fresh });
+     }
+ 
+     /// <summary>
+     /// 修改（訂正）
+     /// PUT /api/estimate-calcs/{no}
+     /// </summary>
+     [HttpPut("{no}")]
++    [RequirePermission("erp-estimate-calc", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] EstimateCalcDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             var fresh = await _service.GetByNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -85,20 +88,21 @@ public class EstimateCalcController : LocalizedControllerBase
+             });
+         }
+     }
+ 
+     /// <summary>
+     /// 逻辑删除（削除）
+     /// DELETE /api/estimate-calcs/{no}
+     /// Body: { "rowVersion": "base64..." }
+     /// </summary>
+     [HttpDelete("{no}")]
++    [RequirePermission("erp-estimate-calc", "del")]
+     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? req)
+     {
+         try
+         {
+             await _service.DeleteAsync(no, req?.RowVersion, CurrentUser);
+             return Ok(new { code = 0, message = "OK" });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+@@ -107,20 +111,21 @@ public class EstimateCalcController : LocalizedControllerBase
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>
+     /// 复制新建（コピー）
+     /// POST /api/estimate-calcs/{no}/copy
+     /// </summary>
+     [HttpPost("{no}/copy")]
++    [RequirePermission("erp-estimate-calc", "add")]
+     public async Task<IActionResult> Copy(string no)
+     {
+         try
+         {
+             var newNo = await _service.CopyAsync(no, CurrentUser);
+             var fresh = await _service.GetByNoAsync(newNo);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+diff --git a/CP6.WebApi/Controllers/Erp/FscChecklistController.cs b/CP6.WebApi/Controllers/Erp/FscChecklistController.cs
+index 17eb8a2..82dc1ed 100644
+--- a/CP6.WebApi/Controllers/Erp/FscChecklistController.cs
++++ b/CP6.WebApi/Controllers/Erp/FscChecklistController.cs
+@@ -1,11 +1,12 @@
+ using System.Security.Claims;
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA100 — FSC 製品化チェックシート出力
+ /// </summary>
+@@ -41,20 +42,21 @@ public class FscChecklistController : LocalizedControllerBase
+     /// <summary>出力フォーマット一覧 — GET /api/fsc-checklists/formats</summary>
+     [HttpGet("formats")]
+     public IActionResult Formats()
+     {
+         var data = _service.GetFormats().Select(f => new { name = f.Name, templatePath = f.TemplatePath });
+         return Ok(new { code = 0, message = "OK", data });
+     }
+ 
+     /// <summary>チェックシート発行 — POST /api/fsc-checklists/issue</summary>
+     [HttpPost("issue")]
++    [RequirePermission("erp-fsc-checklist", "issue")]
+     public async Task<IActionResult> Issue([FromBody] FscIssueRequestDto req)
+     {
+         try
+         {
+             var result = await _service.IssueAsync(req, UserName);
+             return Ok(new { code = 0, message = "OK", data = result });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Erp/FxRateController.cs b/CP6.WebApi/Controllers/Erp/FxRateController.cs
+index 13c0d19..fc79b4b 100644
+--- a/CP6.WebApi/Controllers/Erp/FxRateController.cs
++++ b/CP6.WebApi/Controllers/Erp/FxRateController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DomainModels;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// 為替レートマスタ（多通貨 Gap 4.3）。
+ /// </summary>
+@@ -22,48 +23,51 @@ public class FxRateController : ControllerBase
+     [HttpGet]
+     public async Task<IActionResult> List([FromQuery] string? currencyCd)
+         => Ok(new { code = 0, message = "OK", data = await _svc.ListAsync(currencyCd) });
+ 
+     /// <summary>指定通貨・基準日の解決レートをプレビュー。</summary>
+     [HttpGet("resolve")]
+     public async Task<IActionResult> Resolve([FromQuery] string currencyCd, [FromQuery] DateTime? asOf)
+         => Ok(new { code = 0, message = "OK", data = await _svc.ResolveRateAsync(currencyCd ?? "", asOf ?? DateTime.Today) });
+ 
+     [HttpPost]
++    [RequirePermission("erp-fx-rate", "add")]
+     public async Task<IActionResult> Create([FromBody] FxRate rate)
+     {
+         try
+         {
+             var data = await _svc.CreateAsync(rate, CurrentUser);
+             return Ok(new { code = 0, message = "PA-MSG-FX-CREATED", data });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     [HttpPut("{id:guid}")]
++    [RequirePermission("erp-fx-rate", "edit")]
+     public async Task<IActionResult> Update(Guid id, [FromBody] FxRate rate)
+     {
+         try
+         {
+             await _svc.UpdateAsync(id, rate, CurrentUser);
+             return Ok(new { code = 0, message = "PA-MSG-FX-UPDATED" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     [HttpDelete("{id:guid}")]
++    [RequirePermission("erp-fx-rate", "del")]
+     public async Task<IActionResult> Delete(Guid id)
+     {
+         try
+         {
+             await _svc.DeleteAsync(id, CurrentUser);
+             return Ok(new { code = 0, message = "PA-MSG-FX-DELETED" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Erp/OrderController.cs b/CP6.WebApi/Controllers/Erp/OrderController.cs
+index 2b7ea6a..53093ee 100644
+--- a/CP6.WebApi/Controllers/Erp/OrderController.cs
++++ b/CP6.WebApi/Controllers/Erp/OrderController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA070 / 080 / 090 — Web 受注 / 受注一覧 / 単価訂正 Web API
+@@ -218,20 +219,21 @@ public class OrderController : LocalizedControllerBase
+     public async Task<IActionResult> CalcAmount(
+         string webOrderNo, int detailNo,
+         [FromQuery] decimal? indPrice, [FromQuery] decimal? setPrice)
+     {
+         var amount = await _service.CalcAmountAsync(webOrderNo, detailNo, indPrice, setPrice);
+         return Ok(new { code = 0, message = "OK", data = new { amount } });
+     }
+ 
+     /// <summary>単価訂正バッチ更新 — PUT /api/orders/price-correction/batch</summary>
+     [HttpPut("price-correction/batch")]
++    [RequirePermission("erp-order-price-correction", "correct")]
+     public async Task<IActionResult> BatchUpdatePrice([FromBody] OrderPriceCorrectionBatchUpdateDto req)
+     {
+         try
+         {
+             var result = await _service.BatchUpdatePriceAsync(req, CurrentUser);
+             return Ok(new { code = 0, message = "OK", data = result });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             return Conflict(new
+@@ -252,36 +254,38 @@ public class OrderController : LocalizedControllerBase
+     public async Task<IActionResult> Get(string webOrderNo, [FromQuery] bool includeDeleted = false)
+     {
+         var dto = await _service.GetByWebOrderNoAsync(webOrderNo, includeDeleted);
+         if (dto == null)
+             return NotFound(new { code = 404, message = Localizer["受注が見つかりません"] });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>受注登録 — POST /api/orders</summary>
+     [HttpPost]
++    [RequirePermission("erp-order", "add")]
+     public async Task<IActionResult> Create([FromBody] OrderDto dto)
+     {
+         try
+         {
+             var no = await _service.CreateAsync(dto, CurrentUser);
+             var fresh = await _service.GetByWebOrderNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>受注訂正 — PUT /api/orders/{webOrderNo}</summary>
+     [HttpPut("{webOrderNo}")]
++    [RequirePermission("erp-order", "edit")]
+     public async Task<IActionResult> Update(string webOrderNo, [FromBody] OrderDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(webOrderNo, dto, CurrentUser);
+             var fresh = await _service.GetByWebOrderNoAsync(webOrderNo);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -297,20 +301,21 @@ public class OrderController : LocalizedControllerBase
+             });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>受注削除（軟削除）— DELETE /api/orders/{webOrderNo}</summary>
+     [HttpDelete("{webOrderNo}")]
++    [RequirePermission("erp-order", "del")]
+     public async Task<IActionResult> Delete(string webOrderNo, [FromQuery] string? rowVersion)
+     {
+         try
+         {
+             byte[]? rv = null;
+             if (!string.IsNullOrEmpty(rowVersion))
+             {
+                 try { rv = Convert.FromBase64String(rowVersion); }
+                 catch { rv = null; }
+             }
+@@ -351,20 +356,21 @@ public class OrderController : LocalizedControllerBase
+ 
+     /// <summary>
+     /// 受注取消 — POST /api/orders/{webOrderNo}/cancel
+     /// </summary>
+     /// <remarks>
+     /// force=false（既定）: 探査モード — 関連 WO/Outbound の現状を返すのみ、DB 未変更。
+     ///   半路状態あれば Outcome=NeedsDecision、画面で確認後 force=true で再呼出。
+     /// force=true: 強制実施 — Bridge Hook 経由で全自動取消可能な WO/Outbound を取消。
+     /// </remarks>
+     [HttpPost("{webOrderNo}/cancel")]
++    [RequirePermission("erp-order", "cancel")]
+     public async Task<IActionResult> Cancel(string webOrderNo, [FromBody] OrderCancelRequest req)
+     {
+         if (req == null || string.IsNullOrWhiteSpace(req.Reason))
+         {
+             return BadRequest(new { code = 400, message = Localizer["取消理由（reason）は必須です"] });
+         }
+ 
+         var result = await _service.CancelAsync(webOrderNo, req.Reason, req.Force, CurrentUser);
+         return Ok(new { code = 0, message = "OK", data = result });
+     }
+diff --git a/CP6.WebApi/Controllers/Erp/PlateMoldController.cs b/CP6.WebApi/Controllers/Erp/PlateMoldController.cs
+index 43975e5..bb39658 100644
+--- a/CP6.WebApi/Controllers/Erp/PlateMoldController.cs
++++ b/CP6.WebApi/Controllers/Erp/PlateMoldController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA140/150 Web 版型/木型マスタ
+@@ -51,75 +52,79 @@ public class PlateMoldController : LocalizedControllerBase
+     }
+ 
+     [HttpGet("{wdPtnNo}/history")]
+     public async Task<IActionResult> History(string wdPtnNo)
+     {
+         var rows = await _service.GetHistoryAsync(wdPtnNo);
+         return Ok(new { code = 0, message = "OK", data = rows });
+     }
+ 
+     [HttpPost]
++    [RequirePermission("erp-plate-mold", "add")]
+     public async Task<IActionResult> Create([FromBody] PlateMoldDto dto)
+     {
+         var userName = User?.Identity?.Name;
+         try
+         {
+             var (no, rev, link, pe) = await _service.CreateAsync(dto, userName);
+             return Ok(new {
+                 code = 0, message = "OK",
+                 data = new { wdPtnNo = no, wdRev = rev, orderLink = link, peApi = pe }
+             });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     [HttpPut("{wdPtnNo}/revise")]
++    [RequirePermission("erp-plate-mold", "edit")]
+     public async Task<IActionResult> Revise(string wdPtnNo, [FromBody] PlateMoldDto dto)
+     {
+         var userName = User?.Identity?.Name;
+         try
+         {
+             var (rev, link, pe) = await _service.ReviseAsync(wdPtnNo, dto, userName);
+             return Ok(new {
+                 code = 0, message = "OK",
+                 data = new { wdPtnNo, wdRev = rev, orderLink = link, peApi = pe }
+             });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     [HttpPut("{wdPtnNo}/{wdRev:int}")]
++    [RequirePermission("erp-plate-mold", "edit")]
+     public async Task<IActionResult> Update(string wdPtnNo, int wdRev, [FromBody] PlateMoldDto dto)
+     {
+         var userName = User?.Identity?.Name;
+         try
+         {
+             await _service.UpdateAsync(wdPtnNo, wdRev, dto, userName);
+             return Ok(new { code = 0, message = "OK" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             return Conflict(new { code = 409, message = Localizer["E10023: すでに更新済みです。再検索してください。版型・木型No:{0} Rev:{1}", wdPtnNo, wdRev] });
+         }
+     }
+ 
+     [HttpDelete("{wdPtnNo}/{wdRev:int}")]
++    [RequirePermission("erp-plate-mold", "del")]
+     public async Task<IActionResult> Delete(string wdPtnNo, int wdRev, [FromQuery] string? rowVersion = null)
+     {
+         var userName = User?.Identity?.Name;
+         var rv = !string.IsNullOrEmpty(rowVersion) ? Convert.FromBase64String(rowVersion) : null;
+         await _service.DeleteAsync(wdPtnNo, wdRev, rv, userName);
+         return Ok(new { code = 0, message = "OK" });
+     }
+ 
+     // ─── PA150 ───
+ 
+diff --git a/CP6.WebApi/Controllers/Erp/ProductController.cs b/CP6.WebApi/Controllers/Erp/ProductController.cs
+index 232b51a..b5a1e14 100644
+--- a/CP6.WebApi/Controllers/Erp/ProductController.cs
++++ b/CP6.WebApi/Controllers/Erp/ProductController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA050 / MSBBPA060 - Web 製品マスタ Web API
+@@ -83,29 +84,31 @@ public class ProductController : LocalizedControllerBase
+     public async Task<IActionResult> Get(string cd, [FromQuery] bool includeDeleted = false)
+     {
+         var dto = await _service.GetByCdAsync(cd, includeDeleted);
+         if (dto == null)
+             return NotFound(new { code = 404, message = Localizer["製品マスタが未登録です。"] });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>新建（登録）— POST /api/products</summary>
+     [HttpPost]
++    [RequirePermission("erp-product", "add")]
+     public async Task<IActionResult> Create([FromBody] ProductDto dto)
+     {
+         var cd = await _service.CreateAsync(dto, CurrentUser);
+         var fresh = await _service.GetByCdAsync(cd);
+         return Ok(new { code = 0, message = "OK", data = fresh });
+     }
+ 
+     /// <summary>修改（訂正）— PUT /api/products/{cd}</summary>
+     [HttpPut("{cd}")]
++    [RequirePermission("erp-product", "edit")]
+     public async Task<IActionResult> Update(string cd, [FromBody] ProductDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(cd, dto, CurrentUser);
+             var fresh = await _service.GetByCdAsync(cd);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -117,39 +120,41 @@ public class ProductController : LocalizedControllerBase
+             {
+                 code = 409,
+                 message = Localizer["更新対象が、他の処理によって更新されています。最新情報を取得してください。"],
+                 msgId = "MSG-W10002"
+             });
+         }
+     }
+ 
+     /// <summary>逻辑删除 — DELETE /api/products/{cd}</summary>
+     [HttpDelete("{cd}")]
++    [RequirePermission("erp-product", "del")]
+     public async Task<IActionResult> Delete(string cd, [FromBody] DeleteRequest? req)
+     {
+         try
+         {
+             await _service.DeleteAsync(cd, req?.RowVersion, CurrentUser);
+             return Ok(new { code = 0, message = "OK" });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>复制新建 — POST /api/products/{cd}/copy</summary>
+     [HttpPost("{cd}/copy")]
++    [RequirePermission("erp-product", "add")]
+     public async Task<IActionResult> Copy(string cd)
+     {
+         try
+         {
+             var newCd = await _service.CopyAsync(cd, CurrentUser);
+             var fresh = await _service.GetByCdAsync(newCd);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+diff --git a/CP6.WebApi/Controllers/Erp/QuotationController.cs b/CP6.WebApi/Controllers/Erp/QuotationController.cs
+index ff2da4b..01ed10d 100644
+--- a/CP6.WebApi/Controllers/Erp/QuotationController.cs
++++ b/CP6.WebApi/Controllers/Erp/QuotationController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA030 / MSBBPA040 - 御見積書 Web API
+@@ -45,32 +46,34 @@ public class QuotationController : LocalizedControllerBase
+         if (dto == null)
+             return NotFound(new { code = 404, message = Localizer["御見積書NOが未登録です。"], msgId = "MSG-102" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>
+     /// 新建（登録）
+     /// POST /api/quotations
+     /// </summary>
+     [HttpPost]
++    [RequirePermission("erp-quotation", "add")]
+     public async Task<IActionResult> Create([FromBody] QuotationDto dto)
+     {
+         var no = await _service.CreateAsync(dto, CurrentUser);
+         var fresh = await _service.GetByNoAsync(no);
+         return Ok(new { code = 0, message = "OK", data = fresh });
+     }
+ 
+     /// <summary>
+     /// 修改（訂正）
+     /// PUT /api/quotations/{no}
+     /// </summary>
+     [HttpPut("{no}")]
++    [RequirePermission("erp-quotation", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] QuotationDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             var fresh = await _service.GetByNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -90,20 +93,21 @@ public class QuotationController : LocalizedControllerBase
+                 msgId = "MSG-W10002"
+             });
+         }
+     }
+ 
+     /// <summary>
+     /// 逻辑删除（削除）
+     /// DELETE /api/quotations/{no}
+     /// </summary>
+     [HttpDelete("{no}")]
++    [RequirePermission("erp-quotation", "del")]
+     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? req)
+     {
+         try
+         {
+             await _service.DeleteAsync(no, req?.RowVersion, CurrentUser);
+             return Ok(new { code = 0, message = "OK" });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+@@ -116,40 +120,42 @@ public class QuotationController : LocalizedControllerBase
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>
+     /// 复制新建（コピー）
+     /// POST /api/quotations/{no}/copy
+     /// </summary>
+     [HttpPost("{no}/copy")]
++    [RequirePermission("erp-quotation", "add")]
+     public async Task<IActionResult> Copy(string no)
+     {
+         try
+         {
+             var newNo = await _service.CopyAsync(no, CurrentUser);
+             var fresh = await _service.GetByNoAsync(newNo);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>
+     /// 確定登録
+     /// POST /api/quotations/{no}/confirm
+     /// Body: { "qtnCalcNos": ["..."], "rowVersion": "base64" }
+     /// </summary>
+     [HttpPost("{no}/confirm")]
++    [RequirePermission("erp-quotation", "confirm")]
+     public async Task<IActionResult> Confirm(string no, [FromBody] ConfirmRequest req)
+     {
+         try
+         {
+             await _service.ConfirmAsync(no, req, CurrentUser);
+             var fresh = await _service.GetByNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -165,20 +171,21 @@ public class QuotationController : LocalizedControllerBase
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>
+     /// 確定取消
+     /// POST /api/quotations/{no}/cancel-confirm
+     /// </summary>
+     [HttpPost("{no}/cancel-confirm")]
++    [RequirePermission("erp-quotation", "confirm")]
+     public async Task<IActionResult> CancelConfirm(string no, [FromBody] DeleteRequest? req)
+     {
+         try
+         {
+             await _service.CancelConfirmAsync(no, req?.RowVersion, CurrentUser);
+             var fresh = await _service.GetByNoAsync(no);
+             return Ok(new { code = 0, message = "OK", data = fresh });
+         }
+         catch (KeyNotFoundException ex)
+         {
+@@ -192,20 +199,21 @@ public class QuotationController : LocalizedControllerBase
+         {
+             return Conflict(new { code = 409, message = Localizer["排他锁冲突"], msgId = "MSG-W10002" });
+         }
+     }
+ 
+     /// <summary>
+     /// 発行帳票（当前阶段只更新日期 + 返回文件名；Phase 5 会返回真正的 PDF 流）
+     /// POST /api/quotations/{no}/issue
+     /// </summary>
+     [HttpPost("{no}/issue")]
++    [RequirePermission("erp-quotation", "issue")]
+     public async Task<IActionResult> Issue(string no, [FromBody] IssueRequest req)
+     {
+         try
+         {
+             var files = await _service.IssueAsync(no, req, CurrentUser);
+             return Ok(new { code = 0, message = "OK", data = new { files } });
+         }
+         catch (KeyNotFoundException ex)
+         {
+             return NotFound(new { code = 404, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs b/CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs
+index 020554f..9fe1869 100644
+--- a/CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs
++++ b/CP6.WebApi/Controllers/Erp/SheetUnitPriceController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services;
+ using CP6.Entity.DTOs;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Erp;
+ 
+ /// <summary>
+ /// MSBBPA130 Web シート単価マスタ
+ /// </summary>
+@@ -29,32 +30,34 @@ public class SheetUnitPriceController : LocalizedControllerBase
+         {
+             BaseDate = baseDate, BaseCd = baseCd, ImportDiv = importDiv,
+             CustomerCd = customerCd, SalesStaffCd = salesStaffCd,
+         });
+         return Ok(new { code = 0, message = "OK", data = rows });
+     }
+ 
+     /// <summary>Excel 取込（multipart upload）— POST /api/sheet-unit-prices/import</summary>
+     [HttpPost("import")]
+     [RequestSizeLimit(50_000_000)] // 50 MB
++    [RequirePermission("erp-sheet-unit-price", "import")]
+     public async Task<IActionResult> Import(
+         IFormFile file,
+         [FromForm] DateTime baseDate,
+         [FromForm] string baseCd,
+         [FromForm] SheetPriceImportDiv importDiv = SheetPriceImportDiv.Standard)
+     {
+         if (file == null || file.Length == 0)
+             return BadRequest(new { code = 400, message = Localizer["E10097: ファイルが選択されていません"] });
+         using var stream = file.OpenReadStream();
+         var result = await _service.ImportExcelAsync(stream, baseDate, baseCd, importDiv);
+         return Ok(new { code = 0, message = "OK", data = result });
+     }
+ 
+     /// <summary>選択行 一括更新（UPSERT） — PUT /api/sheet-unit-prices/batch-update</summary>
+     [HttpPut("batch-update")]
++    [RequirePermission("erp-sheet-unit-price", "edit")]
+     public async Task<IActionResult> BatchUpdate([FromBody] SheetPriceBatchUpdateDto request)
+     {
+         var userName = User?.Identity?.Name;
+         var count = await _service.BatchUpdateAsync(request, userName);
+         return Ok(new { code = 0, message = "OK", data = new { updated = count } });
+     }
+ }
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 6a13376..8c986a5 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -817,20 +817,33 @@ using (var scope = app.Services.CreateScope())
+     CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
+     CP6.WebApi.Seed.PurApprovalFlowSeed.Seed(db);   // 采购 PR/PO 审批流程 + 绑定（PUR_PR/PUR_PO）
+     CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
+     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
+ 
+     // M-WMS 横切接线 Task 2：WMS 400 段菜单启动幂等种子（洁净部署自动可达）+ 30 权限键锚定行显式 MenuKey。
+     // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：同一启动内非锚定 WMS 内容页(null key)获派生键，
+     //   而锚定行 MenuKey 非 null 不受回填影响（详见 WmsMenuSeed 注释）。
+     CP6.WebApi.Seed.WmsMenuSeed.EnsureSeeded(db);
+ 
++    // M-ERP 横切接线 Task 2：ERP 200 段菜单锚定 MenuKey（erp-*）+ 5 孤儿路由收编（216–220）。
++    // ★同样须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：既有 201–215 裸路径（/order…）
++    //   若被回填成 order/product… 无 erp- 前缀会与真相源 erp-* 键全体失配 → 全 ERP fail-closed 403。
++    //   本种子对 9 有菜单键 + 5 孤儿键各锚定一行显式设 erp-* MenuKey（一域两页仅锚定登録页，
++    //   一覧页留 null 由回填派生——因 MenuKey 有 IS NOT NULL 唯一索引，禁两行共键）。
++    CP6.WebApi.Seed.ErpMenuSeed.EnsureSeeded(db);
++
++    // M-ERP 横切接线 Task 3b：ERP 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
++    // Task 3a 给 10 控制器 35 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
++    // 须置于 ErpMenuSeed 之后（RoleAction 挂锚定 MenuId 202/204/206/208/209/210/212/213/215/218/220，菜单行须先在）。
++    // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。30 去重元组（35 写端点去重）覆盖 11 有写端点 menu-key。
++    CP6.WebApi.Seed.ErpPermissionSeed.EnsureSeeded(db);
++
+     // M-WMS 横切接线 Task 3b：WMS 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
+     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+ 
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+diff --git a/CP6.WebApi/Seed/ErpMenuSeed.cs b/CP6.WebApi/Seed/ErpMenuSeed.cs
+new file mode 100644
+index 0000000..cb93d6e
+--- /dev/null
++++ b/CP6.WebApi/Seed/ErpMenuSeed.cs
+@@ -0,0 +1,126 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// ERP 販売管理 菜单启动幂等种子（M-ERP 横切接线 Task 2）。
++///
++/// 背景（头号命门）：ERP 菜单 200 段（201–215）早已由 Program.cs 播种，但**均缺 MenuKey 且 RoutePath 为裸路径**
++/// （<c>/order</c>、<c>/product</c>、<c>/estimate-calc</c>…无 <c>erp/</c> 段）。Program.cs 的「无 MenuKey 菜单
++/// RoutePath 自动回填」块（<c>MenuKey = RoutePath.Trim('/').Replace('/','-')</c>）会把它们回填成
++/// <c>order</c>/<c>product</c>/<c>estimate-calc</c>… **无 <c>erp-</c> 前缀**，与真相源
++/// <c>docs/seeds/erp-permission-keys.md</c> 的 <c>erp-*</c> 键全体失配 → 整个 ERP fail-closed 403。
++/// 本种子把 9 个有菜单的权限键各锚定到**一个**菜单行显式设 <see cref="Sys_Menu.MenuKey"/>=<c>erp-*</c>，
++/// 并收编 5 条孤儿路由（order-trace/credit-note/backorder/otd-report/fx-rate）补 Sys_Menu 行。
++/// 合计 14 个 <c>erp-*</c> menu-key 全部落定锚定 MenuId（供 T3b 种 Sys_RoleAction）。
++///
++/// MenuKey 策略（关键，与 WmsMenuSeed 一致）：
++///  - **锚定行**显式设 MenuKey = T1 权威键，**绝不靠 RoutePath 自动回填**。
++///  - **一域两页（一覧 + 登録）只锚定「登録/主操作页」一行**，一覧页 MenuKey 留 null
++///    （由 Program.cs 回填得 RoutePath 派生键，不承载权限、无 RoleAction 引用）。
++///    ★这是**硬约束**：<c>Sys_Menus.MenuKey</c> 有 <c>IS NOT NULL</c> 过滤唯一索引
++///    （见 CP6ContextModelSnapshot: HasIndex("MenuKey").IsUnique().HasFilter），
++///    两行共赋同一非空 MenuKey 会撞唯一键。故必须一键一锚定行（对齐 WMS inbound-order：
++///    405 登録锚定 wms-inbound-order、404 一覧留 null）。
++///  - 本方法在 Program.cs 的回填块**之前**调用：同一启动内非锚定 ERP 一覧页（null key）获派生键，
++///    而锚定行 MenuKey 非 null 不受回填影响。
++///
++/// 幂等：MenuId 判存守卫不重复插入；防御矫正块把既有库中被历史回填写坏的锚定行 MenuKey 就地纠回
++/// <c>erp-*</c>（仅矫正 9 个锚定行 + 5 孤儿行，一覧/父行不动）。RoleMenu 默认授管理员（RoleId=1，
++/// 默认租户由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
++/// </summary>
++public static class ErpMenuSeed
++{
++    /// <summary>
++    /// 菜单定义：(MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey)。
++    /// MenuKey 非 null 者即 14 个权限锚定行（9 既有 + 5 孤儿）；null 者为一覧页/父行（不承载权限）。
++    /// 200 段既有 201–215 已由 Program.cs 播种，本表含之仅为 (a) 显式锚定 MenuKey (b) 部分部署缺行时补建。
++    /// 孤儿行取号 216–220：ERP 现用 200–215，216–229 段经全仓扫描无占用（backlog/其他模块均不占），
++    /// 故取 215 之后最近连续段 216–220，OrderNo 同值使其紧随既有 ERP 菜单显示。
++    /// </summary>
++    private static readonly (int Id, string Name, string? Route, string Icon, int? Parent, int Order, string? Key)[] Rows =
++    {
++        // ── 親（Top） ───────────────────────────────────────────
++        (200, "販売管理(ERP)",          null,                        "ShoppingBag",    null, 200, null),
++
++        // ── 既有 201–215：一域两页只锚定「登録/主操作页」，一覧页 MenuKey 留 null ─────
++        (201, "見積計算書 照会",         "/estimate-calc-list",       "List",           200, 201, null),
++        (202, "見積計算書 登録",         "/estimate-calc",            "Money",          200, 202, "erp-estimate-calc"),
++        (203, "御見積書 一覧",           "/quotation-list",           "Tickets",        200, 203, null),
++        (204, "御見積書 登録",           "/quotation",                "EditPen",        200, 204, "erp-quotation"),
++        (205, "製品マスタ 一覧",         "/product-list",             "Goods",          200, 205, null),
++        (206, "製品マスタ 登録",         "/product",                  "Box",            200, 206, "erp-product"),
++        (207, "受注一覧照会",            "/order-list",               "Files",          200, 207, null),
++        (208, "受注入力",                "/order",                    "DocumentAdd",    200, 208, "erp-order"),
++        (209, "単価訂正",                "/order-price-correction",   "PriceTag",       200, 209, "erp-order-price-correction"),
++        (210, "FSC チェックシート",      "/fsc-checklist",            "Document",       200, 210, "erp-fsc-checklist"),
++        (211, "取引先マスタ 一覧",       "/business-partner-list",    "OfficeBuilding", 200, 211, null),
++        (212, "取引先マスタ 登録",       "/business-partner",         "User",           200, 212, "erp-business-partner"),
++        (213, "シート単価マスタ",        "/sheet-unit-price",         "Coin",           200, 213, "erp-sheet-unit-price"),
++        (214, "版型/木型 一覧",          "/plate-mold-list",          "Tools",          200, 214, null),
++        (215, "版型/木型 登録",          "/plate-mold",               "Stamp",          200, 215, "erp-plate-mold"),
++
++        // ── 孤儿路由收编 216–220（原计划 T4 并入）：前端路由已注册但无 Sys_Menu 行 ─────
++        // RoutePath 与 cp6.web/src/router/index.ts 的 /erp/* 精确一致（回填派生亦得 erp-*，此处仍显式锚定）。
++        (216, "受注トレース",            "/erp/order-trace",          "Search",         200, 216, "erp-order-trace"),
++        (217, "クレジットノート照会",    "/erp/credit-note",          "Document",       200, 217, "erp-credit-note"),
++        (218, "欠品・残数管理",          "/erp/backorder",            "Warning",        200, 218, "erp-backorder"),
++        (219, "OTD納期遵守レポート",     "/erp/otd-report",           "TrendCharts",    200, 219, "erp-otd-report"),
++        (220, "為替レートマスタ",        "/erp/fx-rate",              "Money",          200, 220, "erp-fx-rate"),
++    };
++
++    /// <summary>
++    /// 幂等播种全部 ERP 菜单 + 授管理员（RoleId=1）+ 锚定行 MenuKey 显式矫正。
++    /// 须在 Program.cs 的「无 MenuKey 菜单 RoutePath 自动回填」块**之前**调用。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var changed = false;
++        foreach (var r in Rows)
++        {
++            if (!db.Sys_Menus.Any(m => m.MenuId == r.Id))
++            {
++                db.Sys_Menus.Add(new Sys_Menu
++                {
++                    MenuId = r.Id,
++                    MenuName = r.Name,
++                    RoutePath = r.Route,
++                    MenuKey = r.Key,
++                    Icon = r.Icon,
++                    ParentId = r.Parent,
++                    OrderNo = r.Order,
++                    Enable = true,
++                });
++                changed = true;
++            }
++
++            // 授管理员菜单（默认租户由 SaveChanges 拦截器盖章 TenantId）。菜单已存在但未授权时补授（幂等）。
++            if (!db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == r.Id))
++            {
++                db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = r.Id });
++                changed = true;
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++
++        // 锚定键防御：既有 201–215 缺 MenuKey 时会被历史 RoutePath 回填写成裸派生键（order/product/
++        // estimate-calc…无 erp- 前缀），就地矫正为 T1 权威键。仅矫正 14 个锚定行（r.Key != null），
++        // 一覧页/父行不动。幂等（已正确即跳过）。
++        var fixedAny = false;
++        foreach (var r in Rows)
++        {
++            if (r.Key == null) continue;
++            var menu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == r.Id);
++            if (menu != null && menu.MenuKey != r.Key)
++            {
++                menu.MenuKey = r.Key;
++                fixedAny = true;
++            }
++        }
++        if (fixedAny)
++            db.SaveChanges();
++    }
++}
+diff --git a/CP6.WebApi/Seed/ErpPermissionSeed.cs b/CP6.WebApi/Seed/ErpPermissionSeed.cs
+new file mode 100644
+index 0000000..5c71aca
+--- /dev/null
++++ b/CP6.WebApi/Seed/ErpPermissionSeed.cs
+@@ -0,0 +1,120 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// ERP 販売管理 権限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（M-ERP 横切接线 Task 3b）。
++///
++/// 背景：Task 3a 为 10 个 ERP 控制器的 35 个写端点贴了 <c>[RequirePermission("键","action")]</c>，但
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator.FillActionKeysAsync</c> 以
++/// <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}"</c>
++/// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
++/// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
++///
++/// 三数闭环（本 C# 为正本，与真相源 1:1）：
++///  - 控制器写端点：<b>35</b>（grep <c>CP6.WebApi/Controllers/Erp/*.cs</c> 的 [RequirePermission]，逐字核对）。
++///  - 去重 (menu-key, action) 元组：<b>30</b>（Copy 复用 add、CancelConfirm 归并 confirm、Revise 归并 edit 等
++///    5 处重复消解：estimate-calc:add / quotation:add / quotation:confirm / product:add / plate-mold:edit 各出现两次）。
++///  - 种子元组：<b>30</b>（下方 <see cref="Actions"/>；漏种 0 / 多种 0）。
++///  - 覆盖 <b>11</b> 个 menu-key（有写端点者）。另 3 键 erp-order-trace / erp-credit-note / erp-otd-report
++///    仅有 view 端点（GET-only 或只读 POST 豁免），未贴点即无键可种，故不在本种子——与 14 键总数不矛盾。
++///
++/// 数据来源（执行真相）：
++///  - MenuId 经锚定表 <c>docs/seeds/erp-key-menu-anchor.md</c> 由权限键映射而得（14 键 → 锚定 MenuId）。
++///  - ActionCode 与 <c>CP6.WebApi/Controllers/Erp/*.cs</c> 的 [RequirePermission] 第二实参逐字一致（差一字全链 403）。
++///  - 文档留档：<c>docs/seeds/erp-permission-seed.sql</c>（本 C# 为正本，SQL 与此一致）。
++///
++/// 逐租户机制（关键，照 WmsPermissionSeed / space-roleaction-seed.sql 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表，非行级过滤）全部租户 Id，对每租户各插一份。
++///  - 显式设 <c>TenantId=tid</c> → <c>CP6Context.StampTenant</c> 仅盖 <c>TenantId==Guid.Empty</c>，不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，使跨租户既存行对当前上下文（默认租户作用域）可见，避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 <see cref="ErpMenuSeed.EnsureSeeded"/> **之后**调用（锚定菜单行须先在，RoleAction 挂 MenuId）。
++/// 幂等：重启不重复插（(TenantId,MenuId,ActionCode) / (TenantId,RoleId,MenuId,ActionCode) 判存守卫）。
++/// </summary>
++public static class ErpPermissionSeed
++{
++    /// <summary>
++    /// (MenuId, ActionCode, ActionName) —— 与各 ERP 控制器 [RequirePermission(键, action)] 去重后 1:1。
++    /// MenuId 依 <c>docs/seeds/erp-key-menu-anchor.md</c> 锚定；ActionName 为中文显示名（照 WMS/Fin 种子风格）。
++    /// 计 30 条，覆盖 11 个有写端点的 menu-key。
++    /// </summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        // 202 erp-estimate-calc — 見積計算書 登録（Create/Update/Delete/Copy；Copy 复用 add，Calculate 只读豁免）
++        (202, "add", "新建"), (202, "edit", "编辑"), (202, "del", "删除"),
++        // 204 erp-quotation — 御見積書 登録（confirm 含 CancelConfirm 归并）
++        (204, "add", "新建"), (204, "edit", "编辑"), (204, "del", "删除"),
++        (204, "confirm", "确定"), (204, "issue", "发行"),
++        // 206 erp-product — 製品マスタ 登録（Copy 复用 add）
++        (206, "add", "新建"), (206, "edit", "编辑"), (206, "del", "删除"),
++        // 208 erp-order — 受注入力（4 只读计算 POST 与未出荷子视图豁免；cancel 高危独立键）
++        (208, "add", "新建"), (208, "edit", "编辑"), (208, "del", "删除"), (208, "cancel", "受注取消"),
++        // 209 erp-order-price-correction — 単価訂正（跨菜单：OrderController.BatchUpdatePrice=correct 高危）
++        (209, "correct", "单价订正"),
++        // 210 erp-fsc-checklist — FSC チェックシート（Issue 写发行履历）
++        (210, "issue", "发行"),
++        // 212 erp-business-partner — 取引先マスタ 登録（del 另挂 Roles 闸，双闸并存）
++        (212, "add", "新建"), (212, "edit", "编辑"), (212, "del", "删除"),
++        // 213 erp-sheet-unit-price — シート単価マスタ（Import 状态键 / BatchUpdate=edit）
++        (213, "import", "取込"), (213, "edit", "编辑"),
++        // 215 erp-plate-mold — 版型/木型 登録（Revise 归并 edit；Label 只读豁免）
++        (215, "add", "新建"), (215, "edit", "编辑"), (215, "del", "删除"),
++        // 218 erp-backorder — 欠品・残数管理（close/split 两状态键，孤儿收编菜单）
++        (218, "close", "关闭残数"), (218, "split", "拆分新单"),
++        // 220 erp-fx-rate — 為替レートマスタ（add/edit/del，孤儿收编菜单）
++        (220, "add", "新建"), (220, "edit", "编辑"), (220, "del", "删除"),
++    };
++
++    /// <summary>
++    /// 逐租户幂等播种 ERP 全部权限点 + 授管理员（RoleId=1）。
++    /// 须在 <see cref="ErpMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖（仅盖 Guid.Empty）
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/erp-key-menu-anchor.md b/docs/seeds/erp-key-menu-anchor.md
+new file mode 100644
+index 0000000..27f9a30
+--- /dev/null
++++ b/docs/seeds/erp-key-menu-anchor.md
+@@ -0,0 +1,62 @@
++# ERP 权限键 → 锚定 MenuId 映射（M-ERP Task 2 产出）
++
++> 生成于 2026-07-12。**本表是 T3b 种 `Sys_RoleAction` 的唯一输入**：为某权限键授某 action，须写
++> `Sys_RoleAction(RoleId, MenuId=下表锚定MenuId, ActionCode=action)`。运行时
++> `PermissionAggregator.FillActionKeysAsync` 以 `Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null`
++> 拼出 `"{MenuKey}:{ActionCode}"`，故 **RoleAction 必须挂在下表锚定 MenuId 上**（该行 MenuKey 已由 T2 显式设定）。
++>
++> 真相源：`docs/seeds/erp-permission-keys.md`（14 键 / §二）。接入正本：`CP6.WebApi/Seed/ErpMenuSeed.cs`（启动幂等，
++> 置于 Program.cs RoutePath 回填块之前）。文档对照：`docs/seeds/erp-menu-seed.sql`（与本表 + C# 正本一致）。
++
++## 锚定原则
++
++- **一键一锚定行**：每个权限键恰由一个菜单行承载 `MenuKey`（join 在 MenuId 上取该行 key）。
++- **一域两页共键只锚定「登録/主操作页」**：estimate-calc / quotation / product / order / business-partner /
++  plate-mold 各有「一覧」+「登録」两页，**只锚定登録页**，一覧页 MenuKey 留 null（不承载权限、无 RoleAction 引用）。
++  - **硬约束**：`Sys_Menus.MenuKey` 有 `IS NOT NULL` 过滤唯一索引
++    （`CP6ContextModelSnapshot`: `HasIndex("MenuKey").IsUnique().HasFilter("[MenuKey] IS NOT NULL")`），
++    **两行共赋同一非空 MenuKey 会撞唯一键**。故必须一键一锚定行（对齐 WMS：405 登録锚定 `wms-inbound-order`、
++    404 一覧留 null）。⚠ 真相源 §六.2「两行同赋同一 key」的建议已被此唯一索引否决，本表以单锚定行落定。
++- **显式设定，不靠 RoutePath 自动派生**：既有 201–215 的 RoutePath 为**裸路径**（`/order`、`/product`…无 `erp/` 段），
++  自动派生得 `order`/`product`… 无 `erp-` 前缀，与权威键失配。故 9 个既有键均由 `ErpMenuSeed` 显式设 `erp-*`
++  并含防御矫正块（历史被回填写坏就地纠回）。5 个孤儿键 RoutePath 为 `/erp/*`，派生虽已符 `erp-*`，仍显式锚定。
++
++## 锚定映射表（14 键全落定）
++
++| # | 权限 menu_key | 锚定 MenuId | 菜单名 | RoutePath | 备注 |
++|---|---|---|---|---|---|
++| 1 | `erp-estimate-calc` | 202 | 見積計算書 登録 | `/estimate-calc` | 主页；201 照会一覧不设 key |
++| 2 | `erp-quotation` | 204 | 御見積書 登録 | `/quotation` | 主页；203 一覧不设 key |
++| 3 | `erp-product` | 206 | 製品マスタ 登録 | `/product` | 主页；205 一覧不设 key |
++| 4 | `erp-order` | 208 | 受注入力 | `/order` | 主页；207 受注一覧照会不设 key。含 UnshippedOrder 只读子视图（view） |
++| 5 | `erp-order-price-correction` | 209 | 単価訂正 | `/order-price-correction` | 独立菜单行。**跨菜单**：OrderController.BatchUpdatePrice=correct 高危键归此，非 erp-order |
++| 6 | `erp-fsc-checklist` | 210 | FSC チェックシート | `/fsc-checklist` | 独立行 |
++| 7 | `erp-business-partner` | 212 | 取引先マスタ 登録 | `/business-partner` | 主页；211 一覧不设 key |
++| 8 | `erp-sheet-unit-price` | 213 | シート単価マスタ | `/sheet-unit-price` | 独立行 |
++| 9 | `erp-plate-mold` | 215 | 版型/木型 登録 | `/plate-mold` | 主页；214 一覧不设 key |
++| 10 | `erp-order-trace` | **216** | 受注トレース | `/erp/order-trace` | **T2 孤儿收编新增**。仅 view（GET-only 控制器） |
++| 11 | `erp-credit-note` | **217** | クレジットノート照会 | `/erp/credit-note` | **T2 孤儿收编新增**。仅 view（唯一端点为只读 POST 豁免） |
++| 12 | `erp-backorder` | **218** | 欠品・残数管理 | `/erp/backorder` | **T2 孤儿收编新增**。含 close/split 两状态键 |
++| 13 | `erp-otd-report` | **219** | OTD納期遵守レポート | `/erp/otd-report` | **T2 孤儿收编新增**。仅 view（两端点均只读 POST 豁免） |
++| 14 | `erp-fx-rate` | **220** | 為替レートマスタ | `/erp/fx-rate` | **T2 孤儿收编新增**。含 add/edit/del |
++
++> **全部 14 键均已落定锚定 MenuId。** 9 键锚定既有 202–215，5 键锚定新增 216–220（孤儿路由收编）。
++
++## 非锚定内容页（不承载权限，MenuKey 由 RoutePath 自动回填或留空）
++
++| MenuId | 菜单名 | RoutePath | 说明 |
++|---|---|---|---|
++| 200 | 販売管理(ERP) | (null) | 分组父节点，MenuKey 恒 null |
++| 201 | 見積計算書 照会 | `/estimate-calc-list` | 与 202 共域，仅浏览（view 权限走 202 的 erp-estimate-calc） |
++| 203 | 御見積書 一覧 | `/quotation-list` | 与 204 共域 |
++| 205 | 製品マスタ 一覧 | `/product-list` | 与 206 共域 |
++| 207 | 受注一覧照会 | `/order-list` | 与 208 共域 |
++| 211 | 取引先マスタ 一覧 | `/business-partner-list` | 与 212 共域 |
++| 214 | 版型/木型 一覧 | `/plate-mold-list` | 与 215 共域 |
++
++## MenuId 取号依据
++
++- ERP 现用 **200–215**（Program.cs 既有种子）。段位规约：100–199 系统 / 200–299 販売(ERP) / 300–399 MES /
++  400–499 WMS / 600–699 财务 / 700–704 采购 / 900 段 Space。
++- 5 孤儿行取 **216–220**：经全仓 `grep "MenuId = 21[6-9]|22[0-9]"` 扫描**无任何占用**（WMS backlog 波次拣货占的是
++  418/429，在 400 段，不影响 200 段）。故取 215 之后最近连续段 216–220，OrderNo 同值使其紧随既有 ERP 菜单显示。
+diff --git a/docs/seeds/erp-menu-seed.sql b/docs/seeds/erp-menu-seed.sql
+new file mode 100644
+index 0000000..de8ab36
+--- /dev/null
++++ b/docs/seeds/erp-menu-seed.sql
+@@ -0,0 +1,60 @@
++/* ============================================================
++ * MSBBPA 販売管理(ERP) メニュー MenuKey 锚定 + 孤儿路由收编 シード
++ * ============================================================
++ * 対象 DB      : CP6 (SQL Server)
++ * 対象テーブル  : Sys_Menus / Sys_RoleMenus
++ * 親メニューID  : 200（販売管理 ERP）
++ *
++ * 接入正本 = C# 起動シード `CP6.WebApi/Seed/ErpMenuSeed.cs`（起動毎冪等、
++ * Program.cs の RoutePath 自動回填ブロックより前に実行）。本 SQL は文書対照用
++ * （C# 正本と一致）。手動投入時は SSMS / sqlcmd で実行。
++ *
++ * 内容:
++ *   (A) 既有 201–215 の 9 錨定行に erp-* MenuKey を明示 UPDATE（一覧页は null 据え置き）。
++ *   (B) 孤儿路由 216–220 の 5 行を Sys_Menus へ INSERT（erp-* MenuKey 付き）+ 管理者(RoleId=1)へ RoleMenu 付与。
++ *
++ * 冪等性: UPDATE は値一致で無害再実行可；INSERT は NOT EXISTS ガード。
++ *
++ * ★MenuKey 唯一制約: Sys_Menus.MenuKey に IS NOT NULL フィルタ付きユニークインデックス有り。
++ *   一域两页は「登録页」1 行のみ錨定し、一覧页 MenuKey は null（唯一键衝突回避）。
++ * ============================================================ */
++
++/* ── (A) 既有 201–215：9 錨定行に erp-* MenuKey 明示（一覧页 201/203/205/207/211/214 は据え置き） ── */
++UPDATE Sys_Menus SET MenuKey = N'erp-estimate-calc'          WHERE MenuId = 202;
++UPDATE Sys_Menus SET MenuKey = N'erp-quotation'              WHERE MenuId = 204;
++UPDATE Sys_Menus SET MenuKey = N'erp-product'                WHERE MenuId = 206;
++UPDATE Sys_Menus SET MenuKey = N'erp-order'                  WHERE MenuId = 208;
++UPDATE Sys_Menus SET MenuKey = N'erp-order-price-correction' WHERE MenuId = 209;
++UPDATE Sys_Menus SET MenuKey = N'erp-fsc-checklist'          WHERE MenuId = 210;
++UPDATE Sys_Menus SET MenuKey = N'erp-business-partner'       WHERE MenuId = 212;
++UPDATE Sys_Menus SET MenuKey = N'erp-sheet-unit-price'       WHERE MenuId = 213;
++UPDATE Sys_Menus SET MenuKey = N'erp-plate-mold'             WHERE MenuId = 215;
++
++/* ── (B) 孤儿路由 216–220 収編（RoutePath は cp6.web/src/router/index.ts の /erp/* と一致） ── */
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 216)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (216, N'受注トレース',         N'/erp/order-trace', N'erp-order-trace', N'Search',      200, 216, 1);
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 217)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (217, N'クレジットノート照会', N'/erp/credit-note', N'erp-credit-note', N'Document',    200, 217, 1);
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 218)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (218, N'欠品・残数管理',       N'/erp/backorder',   N'erp-backorder',   N'Warning',     200, 218, 1);
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 219)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (219, N'OTD納期遵守レポート',  N'/erp/otd-report',  N'erp-otd-report',  N'TrendCharts', 200, 219, 1);
++IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 220)
++    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable)
++    VALUES (220, N'為替レートマスタ',     N'/erp/fx-rate',     N'erp-fx-rate',     N'Money',       200, 220, 1);
++
++/* ── 管理者(RoleId=1) へ孤儿菜单を付与（既定テナント; マルチテナントは各テナント TenantId 明示要） ── */
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 216)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 216);
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 217)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 217);
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 218)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 218);
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 219)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 219);
++IF NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 220)
++    INSERT INTO Sys_RoleMenus (RoleId, MenuId) VALUES (1, 220);
+diff --git a/docs/seeds/erp-permission-keys.md b/docs/seeds/erp-permission-keys.md
+new file mode 100644
+index 0000000..76f1c54
+--- /dev/null
++++ b/docs/seeds/erp-permission-keys.md
+@@ -0,0 +1,194 @@
++# ERP 写端点 × 権限键清单（M-ERP Task 1 真相源）
++
++> 生成于 2026-07-12。本表是 **M-ERP 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填）与 T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试 + 收编五条孤儿路由菜单）均以本表为准。
++> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 样板 `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 ERP 菜单种子 `CP6.WebApi/Program.cs` MenuId 200–215（**16 行均缺 MenuKey，且 RoutePath 为裸路径无 `erp/` 前缀**——见 §六 头号命门）+ 逐 Service 实现读证的只读 POST 豁免判定。
++> 扫描范围：`CP6.WebApi/Controllers/Erp/` 下 **全部 15 个控制器**。
++> **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
++
++## 约定
++
++- **资源键 = `{menu-key}:{action}`**，**menu-key 一律连字符小写、绝对禁止下划线**（全仓 100% RequirePermission 用连字符）。本波统一冠 `erp-` 业务域前缀（`erp-order`、`erp-quotation`…）。
++- **资源键必须能锚定到一个 `Sys_Menu` 行**（`PermissionAggregator.FillActionKeysAsync = Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → {MenuKey}:{ActionCode}`）。逐键给出锚定菜单 MenuId/RoutePath；无菜单行的键标注「**T4 需补菜单**」。
++- **`高危?` 列三值**（沿用 WMS 定义）：
++  - `是` = 触及**金额/不可逆/级联取消**（T3 贴点与 T2 审计的**最高优先级**，绝不可与 view/edit 混授）。
++  - `状态` = 独立工作流状态流转/文档发行（不直接动钱，但仍**单独成键**，不塞进 edit/view）。
++  - `否` = 四基粒度 `view/add/edit/del` 之一。
++- **只读 POST 豁免**：纯查询/计算/导出的 POST 归 `view`，表内标 `只读POST→view`，并在 §四逐条附**读 Service 实现证得的**无写副作用依据。GET 端点一律不列。
++
++---
++
++## 一、写端点映射表（POST/PUT/DELETE，共 46 行）
++
++| # | 控制器 | HTTP方法 + 路由 | 方法名 | 建议 menu-key | action | 高危? | 备注 |
++|---|---|---|---|---|---|---|---|
++| 1 | OrderController | POST `/api/orders/lead-time` | CalcLeadTime | `erp-order` | view | 只读POST→view | 纯计算，营业日逆算，无 DB（详§四） |
++| 2 | OrderController | POST `/api/orders/calc-product-category` | CalcProductCategory | `erp-order` | view | 只读POST→view | AsNoTracking 读，无写（§四） |
++| 3 | OrderController | POST `/api/orders/calc-materials` | CalcMaterials | `erp-order` | view | 只读POST→view | BOM 展开纯读（§四） |
++| 4 | OrderController | POST `/api/orders/report` | ExportReport | `erp-order` | view | 只读POST→view | 受注伝票 PDF/txt 导出，纯读（§四） |
++| 5 | OrderController | POST `/api/orders` | Create | `erp-order` | add | 否 | 受注登録。菜单208 受注入力。**注：触发 ERP→MES 前向 Hook 自动展开製造指図**（Program.cs 4.14），仍属正常创建，不提级 |
++| 6 | OrderController | PUT `/api/orders/{webOrderNo}` | Update | `erp-order` | edit | 否 | 受注訂正 |
++| 7 | OrderController | DELETE `/api/orders/{webOrderNo}` | Delete | `erp-order` | del | 否 | 软删除 |
++| 8 | OrderController | PUT `/api/orders/price-correction/batch` | BatchUpdatePrice | `erp-order-price-correction` | correct | **是** | **单价订正**（金额批量改写，已確定受注）。**跨菜单**：归菜单209 単価訂正，非 erp-order。简报点名高危 |
++| 9 | OrderController | POST `/api/orders/{webOrderNo}/cancel` | Cancel | `erp-order` | cancel | **是** | **受注取消**（force=true 经 Bridge Hook 级联取消 WO/Outbound，不可逆）。简报点名高危。force=false 为探査模式无写，但端点整体须护 |
++| 10 | BackorderController | POST `/api/backorder/{webOrderNo}/{detailNo}/close-remaining` | CloseRemaining | `erp-backorder` | close | 状态 | 关闭残数（欠品履行状态流转）。**T4 需补菜单** |
++| 11 | BackorderController | POST `/api/backorder/{webOrderNo}/{detailNo}/split-to-new-order` | SplitToNewOrder | `erp-backorder` | split | 状态 | 残数拆分生成新受注（履行状态流转，写新单）。**T4 需补菜单** |
++| 12 | CreditNoteController | POST `/api/credit-note/search` | Search | `erp-credit-note` | view | 只读POST→view | 纯分页查询，CreditNoteService 全类无写（§四）。**T4 需补菜单** |
++| 13 | FxRateController | POST `/api/erp/fx-rate` | Create | `erp-fx-rate` | add | 否 | 為替レート master。**T4 需补菜单**。金额-adjacent 见§六注 |
++| 14 | FxRateController | PUT `/api/erp/fx-rate/{id}` | Update | `erp-fx-rate` | edit | 否 | |
++| 15 | FxRateController | DELETE `/api/erp/fx-rate/{id}` | Delete | `erp-fx-rate` | del | 否 | |
++| 16 | EstimateCalcController | POST `/api/estimate-calcs` | Create | `erp-estimate-calc` | add | 否 | 見積計算書登録。菜单201/202 |
++| 17 | EstimateCalcController | PUT `/api/estimate-calcs/{no}` | Update | `erp-estimate-calc` | edit | 否 | |
++| 18 | EstimateCalcController | DELETE `/api/estimate-calcs/{no}` | Delete | `erp-estimate-calc` | del | 否 | |
++| 19 | EstimateCalcController | POST `/api/estimate-calcs/{no}/copy` | Copy | `erp-estimate-calc` | add | 否 | 复制新建，复用 add（§五归并3） |
++| 20 | EstimateCalcController | POST `/api/estimate-calcs/calculate` | Calculate | `erp-estimate-calc` | view | 只读POST→view | 纯计算引擎，仅写内存 DTO（§四）。**⚠端点现挂 `[AllowAnonymous]`**（§六注） |
++| 21 | QuotationController | POST `/api/quotations` | Create | `erp-quotation` | add | 否 | 御見積書登録。菜单203/204 |
++| 22 | QuotationController | PUT `/api/quotations/{no}` | Update | `erp-quotation` | edit | 否 | |
++| 23 | QuotationController | DELETE `/api/quotations/{no}` | Delete | `erp-quotation` | del | 否 | |
++| 24 | QuotationController | POST `/api/quotations/{no}/copy` | Copy | `erp-quotation` | add | 否 | 复用 add（§五归并3） |
++| 25 | QuotationController | POST `/api/quotations/{no}/confirm` | Confirm | `erp-quotation` | confirm | 状态 | 確定登録（状态流转，可逆） |
++| 26 | QuotationController | POST `/api/quotations/{no}/cancel-confirm` | CancelConfirm | `erp-quotation` | confirm | 状态 | 確定取消，归并入 confirm（§五归并2） |
++| 27 | QuotationController | POST `/api/quotations/{no}/issue` | Issue | `erp-quotation` | issue | 状态 | 発行帳票（更新発行日、返文件名） |
++| 28 | ProductController | POST `/api/products` | Create | `erp-product` | add | 否 | 製品マスタ登録。菜单205/206 |
++| 29 | ProductController | PUT `/api/products/{cd}` | Update | `erp-product` | edit | 否 | |
++| 30 | ProductController | DELETE `/api/products/{cd}` | Delete | `erp-product` | del | 否 | |
++| 31 | ProductController | POST `/api/products/{cd}/copy` | Copy | `erp-product` | add | 否 | 复用 add（§五归并3） |
++| 32 | BusinessPartnerController | POST `/api/business-partners` | Create | `erp-business-partner` | add | 否 | 取引先登録。菜单211/212 |
++| 33 | BusinessPartnerController | PUT `/api/business-partners/{bpCd}` | Update | `erp-business-partner` | edit | 否 | |
++| 34 | BusinessPartnerController | DELETE `/api/business-partners/{bpCd}` | Delete | `erp-business-partner` | del | 否 | **控制器已挂 `[Authorize(Roles="1,Admin")]`**（管理者限定）；T3 贴 del 键后为双闸，勿去掉既有 Roles 闸 |
++| 35 | FscChecklistController | POST `/api/fsc-checklists/issue` | Issue | `erp-fsc-checklist` | issue | 状态 | チェックシート発行→写 FscChecklist 发行履历（§四证：确为写端点，非豁免）。菜单210 |
++| 36 | SheetUnitPriceController | POST `/api/sheet-unit-prices/import` | Import | `erp-sheet-unit-price` | import | 状态 | Excel 批量取込→写单价 master。菜单213。价格-adjacent 见§六注 |
++| 37 | SheetUnitPriceController | PUT `/api/sheet-unit-prices/batch-update` | BatchUpdate | `erp-sheet-unit-price` | edit | 否 | 选择行 UPSERT（单价 master 编辑） |
++| 38 | PlateMoldController | POST `/api/plate-molds` | Create | `erp-plate-mold` | add | 否 | 版型/木型登録。菜单214/215 |
++| 39 | PlateMoldController | PUT `/api/plate-molds/{wdPtnNo}/revise` | Revise | `erp-plate-mold` | edit | 否 | 版本升级（Rev+1），归并 edit（§五归并4、简报#5 裁决） |
++| 40 | PlateMoldController | PUT `/api/plate-molds/{wdPtnNo}/{wdRev}` | Update | `erp-plate-mold` | edit | 否 | 就地订正指定 Rev |
++| 41 | PlateMoldController | DELETE `/api/plate-molds/{wdPtnNo}/{wdRev}` | Delete | `erp-plate-mold` | del | 否 | |
++| 42 | PlateMoldController | POST `/api/plate-molds/label` | Label | `erp-plate-mold` | view | 只读POST→view | ラベル CSV 生成，AsNoTracking 读（§四） |
++| 43 | OtdReportController | POST `/api/otd-report/summary` | Summary | `erp-otd-report` | view | 只读POST→view | OTD 报表汇总，OtdReportService 全类无写（§四）。**T4 需补菜单** |
++| 44 | OtdReportController | POST `/api/otd-report/export-csv` | ExportCsv | `erp-otd-report` | view | 只读POST→view | OTD CSV 导出，纯读（§四）。**T4 需补菜单** |
++| 45 | UnshippedOrderController | POST `/api/orders/unshipped/search` | Search | `erp-order` | view | 只读POST→view | 未出荷残一覧查询，UnshippedOrderService 全类无写（§四）。归 erp-order（受注域子视图） |
++| 46 | UnshippedOrderController | POST `/api/orders/unshipped/export-csv` | ExportCsv | `erp-order` | view | 只读POST→view | 未出荷 CSV 导出，纯读（§四）。归 erp-order |
++
++> **GET-only 控制器（无 POST/PUT/DELETE，不在上表）**：
++> - `MasterDataController`（`/api/master`，全 GET 下拉/lookup）——纯查询，无写端点。
++> - `OrderTraceController`（`/api/order-trace`，仅 GET `{webOrderNo}`）——纯查询，无写端点；但对应前端页 `/erp/order-trace` 为孤儿路由，**T4 需补菜单**（键 `erp-order-trace:view`，见 §二）。
++
++---
++
++## 二、menu-key 汇总清单（去重，共 14 个）
++
++| # | menu-key | 锚定菜单（Program.cs MenuId / RoutePath） | 说明 |
++|---|---|---|---|
++| 1 | `erp-estimate-calc` | 201 見積計算書 照会 `/estimate-calc-list` + 202 登録 `/estimate-calc` | ✅有菜单行（一域两行：照会+登録），缺 MenuKey→T2 补 |
++| 2 | `erp-quotation` | 203 御見積書 一覧 `/quotation-list` + 204 登録 `/quotation` | ✅一域两行 |
++| 3 | `erp-product` | 205 製品マスタ 一覧 `/product-list` + 206 登録 `/product` | ✅一域两行 |
++| 4 | `erp-order` | 207 受注一覧照会 `/order-list` + 208 受注入力 `/order` | ✅一域两行。含 UnshippedOrder 只读子视图 |
++| 5 | `erp-order-price-correction` | 209 単価訂正 `/order-price-correction` | ✅独立菜单行。**同 OrderController 跨菜单**（correct 高危键归此，非 erp-order） |
++| 6 | `erp-fsc-checklist` | 210 FSC チェックシート `/fsc-checklist` | ✅ |
++| 7 | `erp-business-partner` | 211 取引先 一覧 `/business-partner-list` + 212 登録 `/business-partner` | ✅一域两行 |
++| 8 | `erp-sheet-unit-price` | 213 シート単価マスタ `/sheet-unit-price` | ✅ |
++| 9 | `erp-plate-mold` | 214 版型/木型 一覧 `/plate-mold-list` + 215 登録 `/plate-mold` | ✅一域两行 |
++| 10 | `erp-order-trace` | —— | **T4 需补菜单**（孤儿路由 `/erp/order-trace`）。仅 view（GET-only） |
++| 11 | `erp-credit-note` | —— | **T4 需补菜单**（孤儿路由 `/erp/credit-note`）。仅 view（唯一端点为只读 POST 豁免） |
++| 12 | `erp-backorder` | —— | **T4 需补菜单**（孤儿路由 `/erp/backorder`）。含 close/split 两状态键 |
++| 13 | `erp-otd-report` | —— | **T4 需补菜单**（孤儿路由 `/erp/otd-report`）。仅 view（两端点均只读 POST 豁免） |
++| 14 | `erp-fx-rate` | —— | **T4 需补菜单**（孤儿路由 `/erp/fx-rate`）。含 add/edit/del |
++
++> **9 个 menu-key 有对应菜单行**（MenuId 201–215，缺 MenuKey，T2 统一补显式 `erp-*`）；**5 个 menu-key 菜单缺**（order-trace / credit-note / backorder / otd-report / fx-rate）——即简报点名的 T4 五条孤儿路由。
++
++---
++
++## 三、高危动作清单（`是`：金额/不可逆/级联，共 2 个资源键）
++
++> T3 贴 `[RequirePermission]` 与 T2 审计（钱与不可逆优先）的**第一优先级**，**绝不可**与 view/edit 混授。
++
++| 资源键 | 为何高危独立 |
++|---|---|
++| `erp-order:cancel` | 受注取消：force=true 经 Bridge Hook **级联取消下游 WO / Outbound**，不可逆，简报点名 |
++| `erp-order-price-correction:correct` | 単価訂正：对已確定受注**批量改写金额**，简报点名「价格修正」 |
++
++### 3b. 独立状态流转/发行动作键（`状态`，共 6 个，仍单独成键、不塞 edit）
++
++`erp-quotation:confirm`（含 cancel-confirm 归并）· `erp-quotation:issue` · `erp-fsc-checklist:issue` · `erp-sheet-unit-price:import` · `erp-backorder:close` · `erp-backorder:split`
++
++> 非 CRUD 独立动作键合计 = 2（高危）+ 6（状态）= **8 个**。其余端点走 `add/edit/del/view` 四基粒度。
++
++---
++
++## 四、只读 POST 豁免清单（归 view，共 11 个 —— 均逐条读 Service 实现证得无写）
++
++| # | 端点（方法） | 豁免依据（读 Service 实现） |
++|---|---|---|
++| 1 | POST `/api/orders/lead-time`（OrderService.CalcLeadTimeAsync） | 纯营业日逆算，`Task.FromResult`，**无 `_db` 触碰**（OrderService.cs:702-721） |
++| 2 | POST `/api/orders/calc-product-category`（CalcProductCategoryAsync） | 仅 `ProductMasters.AsNoTracking()` 读，返回区分，无 SaveChanges（:1027-1040） |
++| 3 | POST `/api/orders/calc-materials`（CalcMaterialsAsync） | 仅 `ProductMaterials.AsNoTracking()` 读并投影 DTO，无写（:1042-1073） |
++| 4 | POST `/api/orders/report`（ExportOrderReportPdfAsync） | 仅 `OrderDetails.AsNoTracking()` 读→拼文本 bytes，无写（:1095-1131） |
++| 5 | POST `/api/estimate-calcs/calculate`（EstimateCalcService.CalculateAsync） | 计算引擎，仅对 `result.AmountRows/Notes`（内存 DTO List）Add，**无 `_db.*.Add`/无 SaveChanges**（:239-346） |
++| 6 | POST `/api/plate-molds/label`（PlateMoldService.IssueLabelCsvAsync） | 仅 `PlateMolds.AsNoTracking()` 读→拼 CSV bytes，无写（PlateMoldService.cs:514-541） |
++| 7 | POST `/api/credit-note/search`（CreditNoteService.SearchAsync） | 全类 grep 无 `SaveChanges/Add/Update/Remove/ExecuteUpdate/ExecuteDelete`，纯查询 |
++| 8 | POST `/api/otd-report/summary`（OtdReportService.GetSummaryAsync） | OtdReportService 全类无任何写操作，纯汇总读 |
++| 9 | POST `/api/otd-report/export-csv`（OtdReportService.ExportCsvAsync） | 同上，纯读导出 |
++| 10 | POST `/api/orders/unshipped/search`（UnshippedOrderService.SearchAsync） | UnshippedOrderService 全类无任何写操作，纯分页查询 |
++| 11 | POST `/api/orders/unshipped/export-csv`（UnshippedOrderService.ExportCsvAsync） | 同上，纯读导出 |
++
++> **复核结论（防望文生义）**：以下"看似导出/发行"的 POST **确为写端点，不豁免**——
++> - `POST /api/fsc-checklists/issue`：`FscChecklistService.IssueAsync` 在 FscChecklists **Add + SaveChangesAsync**（FscChecklistService.cs:156,189），写发行履历 → 键 `erp-fsc-checklist:issue`。
++> - `PUT /api/sheet-unit-prices/batch-update` 与 `POST /import`：均写单价 master → 已按上表贴权限。
++> - `POST /api/orders/{no}/cancel`（force=true）：级联写 → 高危键。
++
++---
++
++## 五、命名归并判断与疑点（供 T2/T3 复核）
++
++1. **一控制器跨两 menu-key**：`OrderController` 同时承载受注（`erp-order`：Create/Update/Delete/Cancel + 4 只读计算 + 未出荷子视图）与単価訂正（`erp-order-price-correction`：BatchUpdatePrice=correct）两个菜单域。T3 贴点须按端点分别贴不同 menu-key，勿一刀切归 erp-order。（对标 WMS WarehouseController 跨 wms-warehouse/wms-location。）
++2. **`erp-quotation:confirm` 归并 Confirm+CancelConfirm**：確定登録与確定取消为同一"確定管理"权限的正/反操作，归一键（对标 WMS `wms-remnant:reserve` 归并 Reserve/Unreserve）。若审计要求"可确定但不可撤销確定"更细授权，T3 可拆 `cancel-confirm`——**当前判定为不拆**。
++3. **`add` 复用于同域创建+复制**：`erp-estimate-calc:add`（Create+Copy）、`erp-quotation:add`（Create+Copy）、`erp-product:add`（Create+Copy）——Copy 本质为创建新单，复用 add，不为复制造新键。若需"可新建不可复制"，T3 再拆——**当前不拆**。
++4. **PlateMold Revise 归并 edit（简报#5 裁决）**：Revise（Rev+1 版本升级）与 Update（就地订正）在授权层同为"修改此版型 master"权限，且 Revise **不触及库存/金额、无独立业务风险**（仅版本记录），故归 `erp-plate-mold:edit`。**建议**：若后续版本治理需"可订正不可升版"独立管控，T3 可增 `revise` 键——当前判定统一 edit。
++5. **`del` 一致语义**：全 ERP 删除均为软删除（IsDeleted），统一 `del`。BusinessPartner.Delete 额外挂 `[Authorize(Roles="1,Admin")]`，T3 贴 `erp-business-partner:del` 后与 Roles 闸并存（双闸更严，保留）。
++6. **`status/confirm/issue` 档不提级高危的理由**：Quotation confirm/issue、Fsc issue、SheetPrice import 均**不直接动金额交易/不可逆**（confirm 可 cancel-confirm 回退），归 `状态`。仅受注 cancel（级联不可逆）与 単価訂正 correct（改已確定金额）提级 `是`。
++7. **Backorder split-to-new-order 未提级高危**：虽写新受注，但属履行状态流转（对标 WMS `from-order` 生成出库单归 add/否），归 `状态:split`。若审计视"自动生成商业单据"为高危，T2 可提级——**待 T2 审计拍板**。
++
++---
++
++## 六、命门与遗留（T2/T4 硬前置，头号风险）
++
++1. **【头号命门】ERP 现有菜单 RoutePath 裸路径、无 `erp-` 前缀 → 回填键与本表键不匹配**：
++   Program.cs 对无 MenuKey 菜单执行 `MenuKey = RoutePath.Trim('/').Replace('/','-')`（:882-886）。ERP 菜单 201–215 的 RoutePath 是 `/order`、`/product`、`/estimate-calc`、`/order-price-correction`… **无 `erp/` 段**，回填后得 `order`、`product`… **无 `erp-` 前缀**，与本表 `erp-order`… **对不上**，PermissionAggregator join 不到键 → **全 ERP fail-closed 403**。
++   → **T2 必须在两处菜单种子块（初始 :684-699 与幂等启动 :935-1031）对 201–215 显式赋 `MenuKey="erp-*"`，且置于回填块（:882）之前**（对标 WMS T2「30 权限键锚定行显式 MenuKey，须置于回填块之前」）。**这是 T2 不做则整波失配的硬前置。**
++2. **一域两菜单行的 MenuKey 分配**：estimate-calc/quotation/product/order/business-partner/plate-mold 各有「一覧+登録」两菜单行。T2 需决定 MenuKey 落在哪行——**建议两行同赋同一 `erp-*` MenuKey**（一覧页承 view、登録页承 add/edit/del），并确认 `Sys_Menu.MenuKey` 无唯一约束阻挡同键多行（WMS inbound-order 404/405 两行共 `wms-inbound-order` 已有先例，应可行；T2 落库前复验）。
++3. **`EstimateCalcController.Calculate` 现挂 `[AllowAnonymous]`**（:136）：试算引擎当前对匿名开放。本表给 `erp-estimate-calc:view`，但 T3 贴 RequirePermission 前须先决定是否撤 `[AllowAnonymous]`——**若保留匿名则该端点不受权限键管辖**（反射测试须把它列入豁免白名单，否则 fail-closed 断言会误判）。**待拍板。**
++4. **credit-note 高危写端点在 ERP 不存在**：简报点名「信用単(credit note)操作」为高危，但 `CreditNoteController` 当前**只有 POST `/search`（只读）**，无任何签发/冲销写端点。信用単实际签发大概率在 FIN 模块。→ ERP 侧 credit-note 仅 `view`；高危 credit-note 操作键应在 FIN 波盘点，本波无对应端点可贴。**记为盘点差异，供上层裁处。**
++5. **price/rate master 的金额-adjacent 边界**：`erp-fx-rate:add/edit/del`（为替レート）与 `erp-sheet-unit-price:import/edit`（单价 master）会影响金额换算/估价，但属**主数据 CRUD**（对标 WMS master 编辑归否），本表未提级高危。若 T2 审计要求"影响定价的主数据变更"入高危审计范围，可单独提级——**待 T2 审计拍板。**
++
++---
++
++## 七、计数收口
++
++- **扫描控制器**：15（Backorder / BusinessPartner / CreditNote / EstimateCalc / FscChecklist / FxRate / MasterData / Order / OrderTrace / OtdReport / PlateMold / Product / Quotation / SheetUnitPrice / UnshippedOrder）。
++- **含写端点控制器**：13（除 MasterData、OrderTrace 两个 GET-only）。
++- **POST/PUT/DELETE 端点行总数**：**46**（= §一表行数，精确吻合）。
++  - 其中**只读 POST 豁免（→view）**：**11**。
++  - **真·写端点**：**35**。
++- **menu-key（去重）**：**14**（9 有菜单 / 5 孤儿待 T4）。
++- **高危键（是）**：**2**（`erp-order:cancel`、`erp-order-price-correction:correct`）。
++- **状态键**：**6**。
++
++### 逐控制器双向核对（控制器→表 / 表→控制器，零缺漏零 GET 误列）
++
++| 控制器 | POST/PUT/DELETE 端点数 | 表内 # |
++|---|---|---|
++| OrderController | 9（Create/Update/Delete/BatchPrice/Cancel + 4 只读POST；其余 16 个均 GET 不列） | 1–9 |
++| BackorderController | 2（GET queue 不列） | 10–11 |
++| CreditNoteController | 1（唯一端点，只读POST） | 12 |
++| FxRateController | 3（GET List/Resolve 不列） | 13–15 |
++| EstimateCalcController | 5（Create/Update/Delete/Copy/Calculate；GET List/Get 不列） | 16–20 |
++| QuotationController | 7（Create/Update/Delete/Copy/Confirm/CancelConfirm/Issue；GET List/Get/calcs 不列） | 21–27 |
++| ProductController | 4（Create/Update/Delete/Copy；GET 6 个不列） | 28–31 |
++| BusinessPartnerController | 3（Create/Update/Delete；GET List/Get/check/export 不列） | 32–34 |
++| FscChecklistController | 1（Issue；GET list/formats/download 不列） | 35 |
++| SheetUnitPriceController | 2（Import/BatchUpdate；GET list 不列） | 36–37 |
++| PlateMoldController | 5（Create/Revise/Update/Delete/Label；GET 7 个不列） | 38–42 |
++| OtdReportController | 2（Summary/ExportCsv，均只读POST） | 43–44 |
++| UnshippedOrderController | 2（Search/ExportCsv，均只读POST） | 45–46 |
++| MasterDataController | 0（全 GET） | —— |
++| OrderTraceController | 0（全 GET） | —— |
++| **合计** | **46** | **46 ✅** |
+diff --git a/docs/seeds/erp-permission-seed.sql b/docs/seeds/erp-permission-seed.sql
+new file mode 100644
+index 0000000..7cbbe7f
+--- /dev/null
++++ b/docs/seeds/erp-permission-seed.sql
+@@ -0,0 +1,161 @@
++/* ============================================================
++ * ERP 販売管理 権限点（MenuAction / RoleAction）シードデータ（M-ERP 横切接線 Task 3b）
++ * ============================================================
++ * 対象 DB     : CP6DB (SQL Server)
++ * 対象テーブル : Sys_MenuAction（授権可能な操作点の登記）
++ *              Sys_RoleAction（管理者ロール RoleId=1 への全動作授権）
++ *
++ * ★正本は C#：CP6.WebApi/Seed/ErpPermissionSeed.cs（起動時逐租户冪等種子）。
++ *   本 SQL は同一集合の文書留档・手動投入用であり、C# と 1:1 一致。乖離時は C# を正とする。
++ *
++ * 前提:
++ *   ERP メニュー 202/204/206/208/209/210/212/213/215/218/220 は Task 2 種子
++ *   （ErpMenuSeed / docs/seeds/erp-menu-seed.sql）で MenuKey=erp-* 锚定済みであること。
++ *   RoleAction は当該 MenuId 上に挂かり、実行時 PermissionAggregator が
++ *   Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}" を組む。
++ *
++ * 三数閉環（真相源 docs/seeds/erp-permission-keys.md + 控制器 grep）:
++ *   写端点 35 → 去重 (menu-key, action) 30 元组 → 種子 30 元组（漏種 0 / 多種 0）。
++ *   11 只读 POST 豁免は未貼点＝不入種子。erp-order-trace / erp-credit-note / erp-otd-report
++ *   の 3 键は view 端点のみ（GET-only 或豁免）→ 写元组なし→本種子対象外。覆盖 11 有写端点 menu-key。
++ *
++ * 動作定義（docs/seeds/erp-key-menu-anchor.md 锚定 MenuId × 控制器 [RequirePermission] action 逐字）:
++ *   202 erp-estimate-calc           : add / edit / del
++ *   204 erp-quotation               : add / edit / del / confirm / issue
++ *   206 erp-product                 : add / edit / del
++ *   208 erp-order                   : add / edit / del / cancel（cancel 高危）
++ *   209 erp-order-price-correction  : correct（高危・跨菜单）
++ *   210 erp-fsc-checklist           : issue
++ *   212 erp-business-partner        : add / edit / del
++ *   213 erp-sheet-unit-price        : import / edit
++ *   215 erp-plate-mold              : add / edit / del
++ *   218 erp-backorder               : close / split
++ *   220 erp-fx-rate                 : add / edit / del
++ *
++ * マルチテナント:
++ *   Sys_MenuAction / Sys_RoleAction は BaseTenantEntity（TenantId 必須・行級隔離）。
++ *   全テナントへ一括投入するため `CROSS JOIN (SELECT Id FROM Sys_Tenants) t` で逐租户展開。
++ *
++ * 実行方法:
++ *   sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/erp-permission-seed.sql -b
++ *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
++ *
++ * 冪等性:
++ *   各 INSERT 前に NOT EXISTS チェック（TenantId+MenuId+ActionCode 単位）→ 重複実行安全。
++ * ============================================================ */
++
++SET NOCOUNT ON;
++SET XACT_ABORT ON;
++SET QUOTED_IDENTIFIER ON;
++SET ANSI_NULLS ON;
++BEGIN TRY
++BEGIN TRANSACTION;
++
++PRINT '=== ERP 権限点（MenuAction/RoleAction）シード 開始 ===';
++
++/* ------------------------------------------------------------
++ * 0. 動作定義テーブル（MenuId, ActionCode, ActionName, Sort）— 計 30 動作／租户
++ * ------------------------------------------------------------ */
++DECLARE @Actions TABLE (MenuId INT, ActionCode NVARCHAR(50), ActionName NVARCHAR(100), Sort INT);
++INSERT INTO @Actions (MenuId, ActionCode, ActionName, Sort) VALUES
++ (202, N'add',     N'新建',       0),
++ (202, N'edit',    N'编辑',       0),
++ (202, N'del',     N'删除',       0),
++ (204, N'add',     N'新建',       0),
++ (204, N'edit',    N'编辑',       0),
++ (204, N'del',     N'删除',       0),
++ (204, N'confirm', N'确定',       0),
++ (204, N'issue',   N'发行',       0),
++ (206, N'add',     N'新建',       0),
++ (206, N'edit',    N'编辑',       0),
++ (206, N'del',     N'删除',       0),
++ (208, N'add',     N'新建',       0),
++ (208, N'edit',    N'编辑',       0),
++ (208, N'del',     N'删除',       0),
++ (208, N'cancel',  N'受注取消',   0),
++ (209, N'correct', N'单价订正',   0),
++ (210, N'issue',   N'发行',       0),
++ (212, N'add',     N'新建',       0),
++ (212, N'edit',    N'编辑',       0),
++ (212, N'del',     N'删除',       0),
++ (213, N'import',  N'取込',       0),
++ (213, N'edit',    N'编辑',       0),
++ (215, N'add',     N'新建',       0),
++ (215, N'edit',    N'编辑',       0),
++ (215, N'del',     N'删除',       0),
++ (218, N'close',   N'关闭残数',   0),
++ (218, N'split',   N'拆分新单',   0),
++ (220, N'add',     N'新建',       0),
++ (220, N'edit',    N'编辑',       0),
++ (220, N'del',     N'删除',       0);
++-- 合計 30 動作定義／租户
++
++/* ------------------------------------------------------------
++ * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_MenuAction (Id, MenuId, ActionCode, ActionName, Sort, CreateDate, TenantId)
++SELECT NEWID(), a.MenuId, a.ActionCode, a.ActionName, a.Sort, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_MenuAction ma
++    WHERE ma.TenantId = t.Id AND ma.MenuId = a.MenuId AND ma.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 2. Sys_RoleAction 管理者(RoleId=1) へ全動作授権（逐租户・冪等）
++ *    列序: (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_RoleAction (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++SELECT NEWID(), 1, a.MenuId, a.ActionCode, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_RoleAction ra
++    WHERE ra.TenantId = t.Id AND ra.RoleId = 1 AND ra.MenuId = a.MenuId AND ra.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 3. 結果確認（PRINT）
++ * ------------------------------------------------------------ */
++DECLARE @Tn INT, @Ma INT, @Ra INT;
++DECLARE @Menus TABLE (MenuId INT);
++INSERT INTO @Menus VALUES (202),(204),(206),(208),(209),(210),(212),(213),(215),(218),(220);
++SELECT @Tn = COUNT(*) FROM Sys_Tenants;
++SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId IN (SELECT MenuId FROM @Menus);
++SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId IN (SELECT MenuId FROM @Menus) AND RoleId = 1;
++
++PRINT N'  租户数                  : ' + CAST(@Tn AS NVARCHAR(10));
++PRINT N'  MenuAction 件数(ERP)    : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 30 想定）';
++PRINT N'  RoleAction 件数(管理者) : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 30 想定）';
++
++COMMIT TRANSACTION;
++PRINT '=== ERP 権限点シード 完了 ===';
++END TRY
++BEGIN CATCH
++    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
++    PRINT 'ERROR: ' + ERROR_MESSAGE();
++    THROW;
++END CATCH;
++GO
++
++/* ============================================================
++ * 4. 動作確認クエリ（実行後の検証用、任意）
++ * ============================================================ */
++-- 管理者ロールの ERP 授権（RoleAction）一覧
++SELECT CONVERT(varchar(36), ra.TenantId) AS TenantId, ra.RoleId, ra.MenuId, ra.ActionCode
++FROM Sys_RoleAction ra
++WHERE ra.MenuId IN (202,204,206,208,209,210,212,213,215,218,220) AND ra.RoleId = 1
++ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
++
++/* ============================================================
++ * 5. ロールバック用（緊急時のみ使用）
++ * ============================================================
++ * 注意: RoleId=1 限定（本种子只授过管理员；不限定会连带删掉日后经 UI 授出的其他角色 ERP 授权）。
++ * ------------------------------------------------------------ */
++/*
++BEGIN TRANSACTION;
++DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId IN (202,204,206,208,209,210,212,213,215,218,220);
++DELETE FROM Sys_MenuAction WHERE MenuId IN (202,204,206,208,209,210,212,213,215,218,220);
++COMMIT TRANSACTION;
++*/

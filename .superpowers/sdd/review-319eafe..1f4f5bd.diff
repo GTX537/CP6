@@ -1,0 +1,817 @@
+# Review package: 319eafe..HEAD
+
+## Commits
+1f4f5bd refactor(ui): ERP 迁移批次1——FxRate/FscChecklist/SheetUnitPrice/BusinessPartnerList/OrderPriceCorrection
+
+## Files changed
+ cp6.web/src/views/erp/BusinessPartnerListView.vue  |  21 +-
+ cp6.web/src/views/erp/FscChecklistView.vue         |  14 +-
+ cp6.web/src/views/erp/FxRateView.vue               | 257 ++++++++++-----------
+ cp6.web/src/views/erp/OrderPriceCorrectionView.vue |  26 ++-
+ cp6.web/src/views/erp/SheetUnitPriceView.vue       |  12 +-
+ docs/superpowers/plans/2026-07-04-ui-restyle.md    |  14 ++
+ 6 files changed, 188 insertions(+), 156 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/erp/BusinessPartnerListView.vue b/cp6.web/src/views/erp/BusinessPartnerListView.vue
+index 8c1b3a1..dc9c15d 100644
+--- a/cp6.web/src/views/erp/BusinessPartnerListView.vue
++++ b/cp6.web/src/views/erp/BusinessPartnerListView.vue
+@@ -1,10 +1,16 @@
++<!--
++  取引先一覧 —— サーバサイド列ソート（@sort-change）＋ 属性 FLG 11 チェックボックス群 ＋ 詳細検索コラプス（分類 1〜10）
++  ＋ 行選択→照会/編集 ＋ CSV 出力の重厚検索页。CpListPage はサーバソート未透過・CpFilterBar は構造化検索群を
++  表現できず、強套すると列ソート機能を喪失するため「非表格特殊页」として token 化：el-form/el-table/el-pagination/
++  ソート/CSV は原様保全し、状態・件数 el-tag → CpTag(+tone)、FLG アイコン色値 → --cp-ok/--cp-line トークン化のみ。
++-->
+ <template>
+   <div class="bp-list">
+     <el-card shadow="never" class="search-card">
+       <el-form :model="query" label-width="100px" size="small" inline>
+         <el-divider content-position="left">{{ t('sales.search.required') }} FLG</el-divider>
+         <div class="flg-row">
+           <el-checkbox v-model="query.includeCustomer">{{ t('sales.role.customer') }}</el-checkbox>
+           <el-checkbox v-model="query.includeAccountsReceivable">{{ t('sales.role.ar') }}</el-checkbox>
+           <el-checkbox v-model="query.includeBilling">{{ t('sales.role.billing') }}</el-checkbox>
+           <el-checkbox v-model="query.includeReceipt">{{ t('sales.role.receipt') }}</el-checkbox>
+@@ -45,29 +51,29 @@
+         <el-form-item>
+           <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
+           <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
+           <el-button :icon="Download" @click="exportCsv" :loading="exporting">{{ t('sales.btn.exportCsv') }}</el-button>
+         </el-form-item>
+       </el-form>
+     </el-card>
+ 
+     <el-card shadow="never">
+       <div style="margin-bottom: 8px;">
+-        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
++        <CpTag tone="info">{{ t('sales.list.totalCount', { n: total }) }}</CpTag>
+         <el-button v-if="selectedRow" type="primary" link size="small" style="margin-left: 12px" @click="goView">{{ t('sales.btn.openView') }}</el-button>
+         <el-button v-if="selectedRow" type="warning" link size="small" style="margin-left: 4px" @click="goEdit">{{ t('sales.op.edit') }}</el-button>
+       </div>
+       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" highlight-current-row @current-change="onCurrentChange" @sort-change="onSortChange">
+         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
+         <el-table-column prop="status" :label="t('sales.term.status')" width="100" sortable="custom">
+           <template #default="{ row }">
+-            <el-tag :type="statusTagType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
++            <CpTag :tone="statusTone(row.status)">{{ statusLabel(row.status) }}</CpTag>
+           </template>
+         </el-table-column>
+         <el-table-column prop="bpCd" :label="t('sales.term.bp')" width="120" sortable="custom" />
+         <el-table-column prop="bpName" :label="t('sales.term.bpName')" min-width="200" sortable="custom" />
+         <el-table-column prop="bpAbbrev" :label="t('略称')" width="120" sortable="custom" />
+         <el-table-column prop="salesStaffCd" :label="t('sales.term.salesStaff')" width="120" sortable="custom" />
+         <el-table-column prop="businessStaffCd" :label="t('sales.term.businessStaff')" width="120" sortable="custom" />
+         <el-table-column prop="ein" :label="t('法人番号')" width="140" sortable="custom" />
+         <el-table-column prop="stdCoCd" :label="t('標準企業')" width="140" sortable="custom" />
+         <el-table-column prop="addr1" :label="t('住所1')" width="120" />
+@@ -101,30 +107,32 @@
+     </el-card>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, reactive, h } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRouter } from 'vue-router'
+ import { ElMessage } from 'element-plus'
+ import { Download, Check } from '@element-plus/icons-vue'
++import CpTag from '@/components/base/CpTag.vue'
++import { type Tone } from '@/components/base/CpTag.vue'
+ import { bpApi } from '@/api/erp/businessPartner'
+ import type { BpQueryDto, BpListItemDto } from '@/types/erp/businessPartner'
+ 
+ const { t } = useI18n()
+ const router = useRouter()
+ 
+ // 简易内联组件：FLG 图标
+ const FlgIcon = (props: { on: boolean }) => props.on
+-  ? h(Check, { color: '#67c23a', style: 'font-size: 16px' })
+-  : h('span', { style: 'color:#dcdfe6' }, '-')
++  ? h(Check, { style: 'color: var(--cp-ok); font-size: 16px' })
++  : h('span', { style: 'color: var(--cp-line)' }, '-')
+ 
+ const query = reactive<BpQueryDto>({
+   includeCustomer: true, includeAccountsReceivable: true, includeBilling: true,
+   includeReceipt: true, includeDelivery: true, includeCreditMgmt: true,
+   includeSupplier: true, includeAccountsPayable: true, includePaymentSchedule: true,
+   includePayment: true, includeMaker: true,
+   includePreRegistered: true, includeRegistered: true,
+   page: 1, pageSize: 100,
+   sortField: '', sortOrder: '',
+ })
+@@ -200,20 +208,21 @@ function goView() {
+ }
+ 
+ function goEdit() {
+   if (!selectedRow.value) return
+   router.push({ path: '/business-partner', query: { bpCd: selectedRow.value.bpCd, mode: 'edit' } })
+ }
+ 
+ function statusLabel(s: number): string {
+   return s === 0 ? t('sales.op.preregister') : s === 1 ? t('sales.op.register') : s === 9 ? t('sales.op.delete') : '-'
+ }
+-function statusTagType(s: number): 'info' | 'success' | 'danger' {
+-  return s === 0 ? 'info' : s === 1 ? 'success' : 'danger'
++// status → CpTag Tone（原 statusTagType の info/success/danger 意図を保色）
++function statusTone(s: number): Tone {
++  return s === 0 ? 'info' : s === 1 ? 'ok' : 'danger'
+ }
+ </script>
+ 
+ <style scoped>
+ .bp-list { padding: 16px; }
+ .search-card { margin-bottom: 12px; }
+ .flg-row { display: flex; gap: 12px; flex-wrap: wrap; padding: 4px 8px; }
+ </style>
+diff --git a/cp6.web/src/views/erp/FscChecklistView.vue b/cp6.web/src/views/erp/FscChecklistView.vue
+index 8c6e916..d8d83af 100644
+--- a/cp6.web/src/views/erp/FscChecklistView.vue
++++ b/cp6.web/src/views/erp/FscChecklistView.vue
+@@ -1,10 +1,15 @@
++<!--
++  FSC チェックシート —— 検索先行（拠点必須・自動取得なし・FROM≤TO/フォーマット必須のクロス項目検証）＋発行アクションの特殊页。
++  CpListPage の onMounted 自動 fetch 契約と相反（拠点未指定では取得しない）ため「非表格特殊页」として token 化：
++  el-form 検索区／el-table／el-pagination／発行フローは原様保全し、状態・件数・発行済 el-tag → CpTag(+tone) のみ置換。
++-->
+ <template>
+   <div class="fsc-view">
+     <el-card shadow="never" class="search-card">
+       <el-form :model="query" label-width="120px" size="small" inline>
+         <el-form-item :label="t('sales.term.base')" required>
+           <el-input v-model="query.baseCd" :placeholder="t('sales.search.required')" style="width: 130px" />
+         </el-form-item>
+         <el-form-item :label="t('sales.term.staff')">
+           <el-input v-model="query.staffCd" style="width: 130px" />
+         </el-form-item>
+@@ -32,54 +37,54 @@
+           <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
+           <el-button type="success" :icon="Document" @click="onIssue" :loading="issuing" :disabled="checkedCount === 0">
+             {{ t('sales.btn.issue') }}（{{ checkedCount }}）
+           </el-button>
+         </el-form-item>
+       </el-form>
+     </el-card>
+ 
+     <el-card shadow="never">
+       <div style="margin-bottom: 8px;">
+-        <el-tag size="small">{{ t('sales.list.totalCount', { n: total }) }}</el-tag>
+-        <el-tag v-if="checkedCount > 0" type="success" size="small" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</el-tag>
++        <CpTag tone="info">{{ t('sales.list.totalCount', { n: total }) }}</CpTag>
++        <CpTag v-if="checkedCount > 0" tone="ok" style="margin-left: 8px;">{{ t('sales.btn.issue') }} ☑ {{ checkedCount }}</CpTag>
+       </div>
+       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600">
+         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
+         <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="100" />
+         <el-table-column prop="staffName" :label="t('sales.term.staff') + t('sales.term.bpName').slice(-1)" width="120" />
+         <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" />
+         <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" width="160" />
+         <el-table-column prop="projectNo" :label="t('sales.fsc.case')" width="120" />
+         <el-table-column prop="qtnNo" :label="t('sales.term.qtnNo')" width="130" />
+         <el-table-column prop="qtnIssueDate" :label="t('sales.qtn.issueDate')" width="110">
+           <template #default="{ row }">{{ row.qtnIssueDate?.slice(0, 10) }}</template>
+         </el-table-column>
+         <el-table-column prop="customerItemName1" :label="t('sales.fsc.itemName1')" min-width="160" />
+         <el-table-column prop="customerItemName2" :label="t('sales.fsc.itemName2')" min-width="160" />
+         <el-table-column prop="quantity" :label="t('sales.fsc.estimateQty')" width="100" align="right" />
+         <el-table-column prop="unitPrice" :label="t('sales.term.unitPrice')" width="120" align="right" />
+         <el-table-column prop="amount" :label="t('sales.term.amount')" width="120" align="right" />
+         <el-table-column prop="totalAmount" :label="t('sales.fsc.totalAmount')" width="130" align="right" />
+         <el-table-column :label="t('sales.term.status')" width="100" align="center">
+           <template #default="{ row }">
+-            <el-tag :type="row.status === 1 ? 'success' : 'info'" size="small">{{ row.status === 1 ? t('sales.fsc.confirmed') : t('sales.fsc.notConfirmed') }}</el-tag>
++            <CpTag :tone="row.status === 1 ? 'ok' : 'info'">{{ row.status === 1 ? t('sales.fsc.confirmed') : t('sales.fsc.notConfirmed') }}</CpTag>
+           </template>
+         </el-table-column>
+         <el-table-column :label="t('sales.btn.issue') + '☑'" width="80" align="center">
+           <template #default="{ row }">
+             <el-checkbox v-model="row.issue" />
+           </template>
+         </el-table-column>
+         <el-table-column prop="fscManagementNo" :label="t('sales.fsc.mgmtNo')" width="130" />
+         <el-table-column :label="t('sales.fsc.issued')" width="80" align="center">
+           <template #default="{ row }">
+-            <el-tag v-if="row.issuedLabel" type="success" size="small">{{ row.issuedLabel }}</el-tag>
++            <CpTag v-if="row.issuedLabel" tone="ok">{{ row.issuedLabel }}</CpTag>
+           </template>
+         </el-table-column>
+       </el-table>
+ 
+       <el-pagination
+         v-model:current-page="query.page"
+         v-model:page-size="query.pageSize"
+         :total="total"
+         :page-sizes="[50, 100, 200]"
+         layout="total, sizes, prev, pager, next, jumper"
+@@ -88,20 +93,21 @@
+       />
+     </el-card>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, reactive, computed, onMounted } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { Document } from '@element-plus/icons-vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { fscApi } from '@/api/erp/fsc'
+ import type { FscChecklistQueryDto, FscChecklistItemDto, FscFormat } from '@/types/erp/fsc'
+ 
+ const { t } = useI18n()
+ 
+ const query = reactive<FscChecklistQueryDto>({
+   includeUnissued: true, includeIssued: false,
+   page: 1, pageSize: 100,
+ })
+ const rows = ref<FscChecklistItemDto[]>([])
+diff --git a/cp6.web/src/views/erp/FxRateView.vue b/cp6.web/src/views/erp/FxRateView.vue
+index a020966..7911278 100644
+--- a/cp6.web/src/views/erp/FxRateView.vue
++++ b/cp6.web/src/views/erp/FxRateView.vue
+@@ -1,194 +1,179 @@
++<!--
++  為替レート —— CpPageShell + CpListPage + CpFormDialog 迁移（ERP 批次1）。
++  查询列表页（onMounted 自动取数、无强制查询条件）：currencyCd 过滤 → searchFields text；rateDate → kind:'date'；
++  rate 6 桁固定小数 → col-rate slot（formatQty(v,6) 保原样）；remarks → overflowTooltip。
++  base:JPY 信息标签 → toolbar slot（CpTag tone:info）；subtitle 同置 toolbar 保留原文案。
++  新建/编辑 → CpFormDialog default slot（保留 uppercase / input-number precision6 step0.5 / textarea 特有控件）；
++  删除 → ElMessageBox.confirm；in-place 変更後 listRef.reload() 保留当前筛选/页码。
++-->
+ <template>
+-  <div class="fx-rate">
+-    <div class="page-header">
+-      <h2>{{ t('erp.fxRate.title') }}</h2>
+-      <span class="subtitle">{{ t('erp.fxRate.subtitle') }}</span>
+-    </div>
+-
+-    <el-card shadow="never">
+-      <div class="table-toolbar">
+-        <el-button type="primary" size="small" @click="openCreate">{{ t('erp.fxRate.btn.create') }}</el-button>
+-        <el-input
+-          v-model="filterCurrency"
+-          size="small"
+-          clearable
+-          :placeholder="t('erp.fxRate.filter.currency')"
+-          style="width: 140px"
+-          @keyup.enter="reload"
+-          @clear="reload"
+-        />
+-        <el-button size="small" @click="reload">{{ t('erp.fxRate.btn.refresh') }}</el-button>
+-        <el-tag size="small" type="info">{{ t('erp.fxRate.base') }}: JPY</el-tag>
+-      </div>
+-
+-      <el-table :data="rows" border stripe size="small" max-height="560" v-loading="loading">
+-        <el-table-column prop="currencyCd" :label="t('erp.fxRate.col.currency')" width="120" />
+-        <el-table-column prop="rateDate" :label="t('erp.fxRate.col.rateDate')" width="150">
+-          <template #default="{ row }">{{ formatDate(row.rateDate) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="rate" :label="t('erp.fxRate.col.rate')" width="160" align="right">
+-          <template #default="{ row }">{{ formatRate(row.rate) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="remarks" :label="t('erp.fxRate.col.remarks')" min-width="180" show-overflow-tooltip />
+-        <el-table-column :label="t('erp.fxRate.col.action')" width="140" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('erp.fxRate.btn.edit') }}</el-button>
+-            <el-button link type="danger" size="small" @click="remove(row)">{{ t('erp.fxRate.btn.delete') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
+-
+-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="480">
+-      <el-form :model="form" label-width="110px">
+-        <el-form-item :label="t('erp.fxRate.col.currency')" required>
+-          <el-input v-model="form.currencyCd" maxlength="3" style="text-transform: uppercase" :placeholder="t('erp.fxRate.hint.currency')" />
+-        </el-form-item>
+-        <el-form-item :label="t('erp.fxRate.col.rateDate')" required>
+-          <el-date-picker v-model="form.rateDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
+-        </el-form-item>
+-        <el-form-item :label="t('erp.fxRate.col.rate')" required>
+-          <el-input-number v-model="form.rate" :min="0" :precision="6" :step="0.5" style="width: 100%" />
+-          <span class="hint">{{ t('erp.fxRate.hint.rate') }}</span>
+-        </el-form-item>
+-        <el-form-item :label="t('erp.fxRate.col.remarks')">
+-          <el-input v-model="form.remarks" type="textarea" :rows="2" maxlength="200" />
+-        </el-form-item>
+-      </el-form>
+-      <template #footer>
+-        <el-button @click="dialogVisible = false" :disabled="saving">{{ t('erp.fxRate.btn.cancel') }}</el-button>
+-        <el-button type="primary" :loading="saving" @click="submit">{{ t('erp.fxRate.btn.confirm') }}</el-button>
++  <CpPageShell :title="t('erp.fxRate.title')" :count="total">
++    <template #actions>
++      <el-button type="primary" @click="openCreate">{{ t('erp.fxRate.btn.create') }}</el-button>
++    </template>
++
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      @total-change="total = $event"
++    >
++      <template #toolbar>
++        <span class="fx-sub">{{ t('erp.fxRate.subtitle') }}</span>
++        <CpTag tone="info">{{ t('erp.fxRate.base') }}: JPY</CpTag>
+       </template>
+-    </el-dialog>
+-  </div>
++
++      <template #col-rate="{ row }">
++        <span class="num">{{ formatRate(row.rate) }}</span>
++      </template>
++
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('erp.fxRate.btn.edit') }}</el-button>
++        <el-button link type="danger" size="small" @click="remove(row)">{{ t('erp.fxRate.btn.delete') }}</el-button>
++      </template>
++    </CpListPage>
++
++    <CpFormDialog
++      v-model="dialogVisible"
++      :title="dialogTitle"
++      width="480"
++      :form="form"
++      :rules="rules"
++      :submit="onSubmit"
++      :labels="{ cancel: t('erp.fxRate.btn.cancel'), confirm: t('erp.fxRate.btn.confirm') }"
++      @saved="reloadList"
++    >
++      <el-form-item :label="t('erp.fxRate.col.currency')" prop="currencyCd">
++        <el-input v-model="form.currencyCd" maxlength="3" style="text-transform: uppercase" :placeholder="t('erp.fxRate.hint.currency')" />
++      </el-form-item>
++      <el-form-item :label="t('erp.fxRate.col.rateDate')" prop="rateDate">
++        <el-date-picker v-model="form.rateDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
++      </el-form-item>
++      <el-form-item :label="t('erp.fxRate.col.rate')" prop="rate">
++        <el-input-number v-model="form.rate" :min="0" :precision="6" :step="0.5" style="width: 100%" />
++        <span class="hint">{{ t('erp.fxRate.hint.rate') }}</span>
++      </el-form-item>
++      <el-form-item :label="t('erp.fxRate.col.remarks')" prop="remarks">
++        <el-input v-model="form.remarks" type="textarea" :rows="2" maxlength="200" />
++      </el-form-item>
++    </CpFormDialog>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { computed, onMounted, reactive, ref } from 'vue'
++import { computed, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+-import { ElMessage, ElMessageBox } from 'element-plus'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { fxRateApi } from '@/api/erp/fxRate'
+ import { formatQty } from '@/utils/format'
+ import type { FxRate } from '@/types/erp/fxRate'
+ 
+ const { t } = useI18n()
+ 
+-const rows = ref<FxRate[]>([])
+-const loading = ref(false)
+-const saving = ref(false)
+-const filterCurrency = ref('')
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
++
++// —— 列定义（rate 6 桁固定 → col slot；rateDate → kind:'date'）——
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'currencyCd', label: t('erp.fxRate.col.currency'), width: 120 },
++  { prop: 'rateDate', label: t('erp.fxRate.col.rateDate'), width: 150, kind: 'date' },
++  { prop: 'rate', label: t('erp.fxRate.col.rate'), width: 160, align: 'right' },
++  { prop: 'remarks', label: t('erp.fxRate.col.remarks'), minWidth: 180, overflowTooltip: true },
++  { prop: '_action', label: t('erp.fxRate.col.action'), width: 140, fixed: 'right' },
++])
++
++// filterLabels：search→refresh（原页 filter 即「通貨で再読込」语义）、reset→既存の sales.btn.clear
++const filterLabels = computed(() => ({
++  search: t('erp.fxRate.btn.refresh'),
++  reset: t('sales.btn.clear'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'currencyCd', label: t('erp.fxRate.col.currency'), type: 'text', placeholder: t('erp.fxRate.filter.currency') },
++])
++
++// —— 取数：fxRateApi.list(currency?)；后端返回扁平数组无 total → 客户端分页 ——
++const fetchList: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const currency = f.currencyCd ? String(f.currencyCd).trim() : undefined
++  const res = await fxRateApi.list(currency || undefined)
++  const all = (res?.data || []) as FxRate[]
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
++}
+ 
++function formatRate(value: number): string {
++  return formatQty(value || 0, 6)
++}
++
++// —— 新建 / 编辑弹窗 ——
+ const dialogVisible = ref(false)
+ const editingId = ref<string | null>(null)
+ const dialogTitle = computed(() =>
+   editingId.value ? t('erp.fxRate.dlg.editTitle') : t('erp.fxRate.dlg.createTitle'),
+ )
+ 
+ function emptyForm(): FxRate {
+   return { currencyCd: '', rateDate: formatToday(), rate: 1, remarks: null }
+ }
+ const form = reactive<FxRate>(emptyForm())
+ 
+-async function reload() {
+-  loading.value = true
+-  try {
+-    const res = await fxRateApi.list(filterCurrency.value?.trim() || undefined)
+-    rows.value = (res?.data || []) as FxRate[]
+-  } finally {
+-    loading.value = false
+-  }
+-}
++const rules = computed<FormRules>(() => ({
++  currencyCd: [{ required: true, message: t('erp.fxRate.msg.required'), trigger: 'blur' }],
++  rateDate: [{ required: true, message: t('erp.fxRate.msg.required'), trigger: 'change' }],
++  rate: [{ required: true, message: t('erp.fxRate.msg.required'), trigger: 'change' }],
++}))
+ 
+ function openCreate() {
+   editingId.value = null
+   Object.assign(form, emptyForm())
+   dialogVisible.value = true
+ }
+ 
+ function openEdit(row: FxRate) {
+   editingId.value = row.id || null
+   Object.assign(form, { ...emptyForm(), ...row, rateDate: (row.rateDate || '').slice(0, 10) })
+   dialogVisible.value = true
+ }
+ 
+-async function submit() {
+-  if (!form.currencyCd?.trim() || !form.rateDate || !form.rate) {
+-    ElMessage.warning(t('erp.fxRate.msg.required'))
+-    return
+-  }
+-  saving.value = true
+-  try {
+-    const payload: FxRate = { ...form, currencyCd: form.currencyCd.trim().toUpperCase(), remarks: form.remarks || null }
+-    if (editingId.value) {
+-      await fxRateApi.update(editingId.value, payload)
+-      ElMessage.success(t('erp.fxRate.msg.updated'))
+-    } else {
+-      await fxRateApi.create(payload)
+-      ElMessage.success(t('erp.fxRate.msg.created'))
+-    }
+-    dialogVisible.value = false
+-    await reload()
+-  } catch (e: any) {
+-    ElMessage.error(e?.response?.data?.message || t('erp.fxRate.msg.failed'))
+-  } finally {
+-    saving.value = false
++async function onSubmit() {
++  const payload: FxRate = { ...form, currencyCd: form.currencyCd.trim().toUpperCase(), remarks: form.remarks || null }
++  if (editingId.value) {
++    await fxRateApi.update(editingId.value, payload)
++    ElMessage.success(t('erp.fxRate.msg.updated'))
++  } else {
++    await fxRateApi.create(payload)
++    ElMessage.success(t('erp.fxRate.msg.created'))
+   }
+ }
+ 
+ async function remove(row: FxRate) {
+   await ElMessageBox.confirm(
+-    t('erp.fxRate.msg.deleteConfirm', { cur: row.currencyCd, date: formatDate(row.rateDate) }),
++    t('erp.fxRate.msg.deleteConfirm', { cur: row.currencyCd, date: (row.rateDate || '').slice(0, 10) }),
+     t('erp.fxRate.btn.delete'),
+     { type: 'warning' },
+   )
+   if (!row.id) return
+   await fxRateApi.remove(row.id)
+   ElMessage.success(t('erp.fxRate.msg.deleted'))
+-  await reload()
+-}
+-
+-function formatDate(value?: string): string {
+-  return value ? value.slice(0, 10) : ''
+-}
+-
+-function formatRate(value: number): string {
+-  return formatQty(value || 0, 6)
++  reloadList()
+ }
+ 
+ function formatToday(): string {
+   const d = new Date()
+   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+-.fx-rate {
+-  padding: 16px;
+-}
+-.page-header {
+-  margin-bottom: 12px;
+-}
+-.page-header h2 {
+-  margin: 0;
+-  color: #303133;
+-  font-size: 20px;
+-  font-weight: 650;
+-}
+-.subtitle {
+-  color: #909399;
+-  font-size: 12px;
+-}
+-.table-toolbar {
+-  margin-bottom: 8px;
+-  display: flex;
+-  gap: 8px;
+-  align-items: center;
+-}
+-.hint {
+-  color: #909399;
+-  font-size: 12px;
+-  margin-left: 8px;
+-}
++.fx-sub { font-size: var(--cp-fs-sm); color: var(--cp-muted); margin-right: auto; }
++.hint { color: var(--cp-muted); font-size: var(--cp-fs-sm); margin-left: 8px; }
+ </style>
+diff --git a/cp6.web/src/views/erp/OrderPriceCorrectionView.vue b/cp6.web/src/views/erp/OrderPriceCorrectionView.vue
+index 75e0552..c0e875c 100644
+--- a/cp6.web/src/views/erp/OrderPriceCorrectionView.vue
++++ b/cp6.web/src/views/erp/OrderPriceCorrectionView.vue
+@@ -1,10 +1,17 @@
++<!--
++  受注単価訂正 —— 検索先行（拠点必須・自動取得なし）＋ type=selection 選択に連動する行内編集グリッド
++  （変更後単価/特値/理由の el-input-number・checkbox・input を選択行のみ活性化）＋ 一括更新の特殊页。
++  行内編集グリッド形態は CpListPage の読取リスト契約に載らないため「非表格特殊页」として token 化：
++  el-form/el-table/行内エディタ/一括更新フローは原様保全し、状態・件数 el-tag → CpTag(+tone)、仮単価警告アイコン
++  色値 #e6a23c → --cp-warn トークン化のみ。
++-->
+ <template>
+   <div class="price-correction">
+     <!-- 検索条件 -->
+     <el-card shadow="never" class="search-card">
+       <el-form :model="query" label-width="100px" size="small" inline>
+         <el-form-item :label="t('sales.term.base')" required>
+           <el-input v-model="query.baseCd" style="width: 120px" :placeholder="t('sales.search.required')" />
+         </el-form-item>
+         <el-form-item :label="t('sales.term.customer') + ' ' + t('sales.search.from')">
+           <el-input v-model="query.customerCd" style="width: 130px" />
+@@ -46,31 +53,31 @@
+           <el-button type="success" @click="onSubmit" :loading="submitting" :disabled="selectedRows.length === 0">
+             {{ t('sales.pc.updateSelected') }}（{{ selectedRows.length }}）
+           </el-button>
+         </el-form-item>
+       </el-form>
+     </el-card>
+ 
+     <!-- 結果 -->
+     <el-card shadow="never">
+       <div style="margin-bottom: 8px;">
+-        <el-tag size="small">{{ t('合計 {n} 件', { n: total }) }}</el-tag>
+-        <el-tag v-if="selectedRows.length > 0" type="success" size="small" style="margin-left: 8px;">
++        <CpTag tone="info">{{ t('合計 {n} 件', { n: total }) }}</CpTag>
++        <CpTag v-if="selectedRows.length > 0" tone="ok" style="margin-left: 8px;">
+           {{ t('選択中 {n} 件', { n: selectedRows.length }) }}
+-        </el-tag>
++        </CpTag>
+       </div>
+       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" @selection-change="onSelectionChange">
+         <el-table-column type="selection" width="50" />
+         <el-table-column prop="rowNo" label="No" width="60" align="center" />
+         <el-table-column :label="t('状態')" width="80" align="center">
+           <template #default="{ row }">
+-            <el-tag :type="approvalTagType(row.approvalStatus)" size="small">{{ approvalLabel(row.approvalStatus) }}</el-tag>
++            <CpTag :tone="approvalTone(row.approvalStatus)">{{ approvalLabel(row.approvalStatus) }}</CpTag>
+           </template>
+         </el-table-column>
+         <el-table-column prop="customerCd" :label="t('得意先')" width="100" />
+         <el-table-column prop="customerName" :label="t('得意先名')" width="160" />
+         <el-table-column prop="salesPersonName" :label="t('売上担当')" width="120" />
+         <el-table-column prop="orderSheetNo" :label="t('注文書NO')" width="120" />
+         <el-table-column prop="haibaiNo1" :label="t('手配NO1')" width="140" />
+         <el-table-column prop="productCd" :label="t('製品CD')" width="140" />
+         <el-table-column prop="cpItemName1" :label="t('品名1')" min-width="160" />
+         <el-table-column prop="orderDate" :label="t('受注日')" width="100" />
+@@ -90,21 +97,21 @@
+             <el-input-number v-model="row.setUnitPriceAfter" :disabled="!isRowSelected(row)" :precision="4" :controls="false" size="small" style="width: 130px" />
+           </template>
+         </el-table-column>
+         <el-table-column :label="t('特値')" width="60" align="center">
+           <template #default="{ row }">
+             <el-checkbox v-model="row.specialPriceFlg" true-value="1" false-value="0" :disabled="!isRowSelected(row)" />
+           </template>
+         </el-table-column>
+         <el-table-column :label="t('仮単価')" width="60" align="center">
+           <template #default="{ row }">
+-            <el-icon v-if="row.provisionalPriceFlg" color="#e6a23c"><Warning /></el-icon>
++            <el-icon v-if="row.provisionalPriceFlg" class="prov-warn"><Warning /></el-icon>
+           </template>
+         </el-table-column>
+         <el-table-column :label="t('単価変更理由')" min-width="180">
+           <template #default="{ row }">
+             <el-input v-model="row.priceChangeReason" :disabled="!isRowSelected(row)" size="small" />
+           </template>
+         </el-table-column>
+         <el-table-column prop="amount" :label="t('金額')" width="130" align="right" />
+       </el-table>
+ 
+@@ -122,20 +129,21 @@
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, reactive } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ 
+ const { t } = useI18n()
+ import { Warning } from '@element-plus/icons-vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { orderApi } from '@/api/erp/order'
+ import type {
+   OrderPriceCorrectionQueryDto,
+   OrderPriceCorrectionItemDto,
+ } from '@/types/erp/order'
+ 
+ const query = reactive<OrderPriceCorrectionQueryDto>({
+   page: 1,
+   pageSize: 100,
+ })
+@@ -217,21 +225,23 @@ async function onSubmit() {
+   } catch { /* */ } finally {
+     submitting.value = false
+   }
+ }
+ 
+ function approvalLabel(s?: number): string {
+   if (s === 1) return t('承認依頼中')
+   if (s === 9) return t('承認済')
+   return t('未')
+ }
+-function approvalTagType(s?: number): 'info' | 'warning' | 'success' {
+-  if (s === 1) return 'warning'
+-  if (s === 9) return 'success'
++// approvalStatus → CpTag Tone（原 approvalTagType の warning/success/info 意図を保色）
++function approvalTone(s?: number): Tone {
++  if (s === 1) return 'warn'
++  if (s === 9) return 'ok'
+   return 'info'
+ }
+ </script>
+ 
+ <style scoped>
+ .price-correction { padding: 16px; }
+ .search-card { margin-bottom: 12px; }
++.prov-warn { color: var(--cp-warn); }
+ </style>
+diff --git a/cp6.web/src/views/erp/SheetUnitPriceView.vue b/cp6.web/src/views/erp/SheetUnitPriceView.vue
+index bc51452..ad90e6e 100644
+--- a/cp6.web/src/views/erp/SheetUnitPriceView.vue
++++ b/cp6.web/src/views/erp/SheetUnitPriceView.vue
+@@ -1,10 +1,16 @@
++<!--
++  シート単価取込／参照 —— Excel アップロード + 登録/参照デュアルモード + 行内選択グリッド + 一括更新の特殊页。
++  検索駆動の単一 fetch 形態でなく（登録モードは検索なし・アップロード起点）、CpListPage 契約に載らないため
++  「非表格特殊页」として token 化：el-upload/モード radio/el-table/一括更新フローは原様保全し、件数 el-tag → CpTag、
++  インライン色値 #606266 → --cp-muted トークン化のみ。
++-->
+ <template>
+   <div class="sheet-unit-price">
+     <el-card shadow="never" class="form-card">
+       <el-form :model="form" label-width="120px" size="small" inline>
+         <el-form-item :label="t('sales.sup.baseDate')" required>
+           <el-date-picker v-model="form.baseDate" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
+         </el-form-item>
+         <el-form-item :label="t('sales.term.base')" required>
+           <el-input v-model="form.baseCd" style="width: 130px" />
+         </el-form-item>
+@@ -27,41 +33,41 @@
+         <el-form-item :label="t('sales.sup.filePath')">
+           <el-upload
+             ref="uploadRef"
+             :auto-upload="false"
+             :on-change="onFileChange"
+             :show-file-list="false"
+             accept=".xls,.xlsx"
+           >
+             <el-button :icon="Upload" type="primary">{{ t('sales.sup.selectExcel') }}</el-button>
+           </el-upload>
+-          <span v-if="selectedFile" style="margin-left: 12px; color: #606266;">{{ selectedFile.name }}</span>
++          <span v-if="selectedFile" class="file-name">{{ selectedFile.name }}</span>
+         </el-form-item>
+       </el-form>
+ 
+       <!-- 参照モード：得意先・営業担当 -->
+       <el-form v-else :model="form" label-width="120px" size="small" inline>
+         <el-form-item :label="t('sales.term.customer')">
+           <el-input v-model="form.customerCd" style="width: 160px" />
+         </el-form-item>
+         <el-form-item :label="t('sales.term.salesStaff')">
+           <el-input v-model="form.salesStaffCd" style="width: 160px" />
+         </el-form-item>
+         <el-form-item>
+           <el-button type="primary" @click="onSearch" :loading="loading">{{ t('sales.btn.show') }}</el-button>
+         </el-form-item>
+       </el-form>
+     </el-card>
+ 
+     <el-card shadow="never">
+       <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 12px;">
+-        <el-tag size="small">{{ t('sales.list.totalCount', { n: rows.length }) }}</el-tag>
++        <CpTag tone="info">{{ t('sales.list.totalCount', { n: rows.length }) }}</CpTag>
+         <el-checkbox v-if="opType === 'register'" v-model="allSelected" @change="onToggleAll">{{ t('sales.sup.allSelect') }}</el-checkbox>
+         <el-button v-if="opType === 'register' && rows.length > 0" type="success" @click="onUpdate" :loading="updating">
+           {{ t('sales.btn.update') }}（{{ checkedCount }}）
+         </el-button>
+         <el-button @click="reset">{{ t('sales.btn.clear') }}</el-button>
+       </div>
+ 
+       <el-table :data="rows" border stripe size="small" max-height="600" style="width: 100%">
+         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />
+         <el-table-column v-if="opType === 'register'" label="☑" width="60" align="center">
+@@ -92,20 +98,21 @@
+       </el-table>
+     </el-card>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, computed, reactive } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { Upload } from '@element-plus/icons-vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { sheetUnitPriceApi } from '@/api/erp/sheetUnitPrice'
+ import { formatNumber } from '@/utils/format'
+ import type { SheetUnitPriceDto, SheetPriceQueryDto } from '@/types/erp/sheetUnitPrice'
+ import { SheetPriceImportDiv } from '@/types/erp/sheetUnitPrice'
+ 
+ const { t } = useI18n()
+ 
+ const opType = ref<'register' | 'view'>('register')
+ const form = reactive<SheetPriceQueryDto>({
+   baseDate: new Date().toISOString().slice(0, 10),
+@@ -196,11 +203,12 @@ function reset() {
+   rows.value = []
+   selectedFile.value = null
+   form.customerCd = undefined
+   form.salesStaffCd = undefined
+ }
+ </script>
+ 
+ <style scoped>
+ .sheet-unit-price { padding: 16px; }
+ .form-card { margin-bottom: 12px; }
++.file-name { margin-left: 12px; color: var(--cp-muted); }
+ </style>
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 5a1896c..f037d2f 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -679,20 +679,34 @@ describe('CpListPage', () => {
+ - **StockDwellView**（在庫滞留レポート，456 行）= 仪表盘/分析特殊页（KPI×4 + 滞留バケット横棒グラフ + 明細テーブル + モバイル表示）。按「非表格特殊页只做 token 化 + 基础件替换」处置：el-tag→CpTag、el-empty→CpEmpty、内联全色値（#303133/#606266/#409eff/#f56c6c/#e6a23c/#67c23a/#d93026/#eef2f7/#ebeef5）→ `--cp-ink/muted/info/danger/warn/ok/line/line-soft` token 化。滞留バケット 4 色は「意味づけ色（新鮮→期限超過）」で設計トークンに 1:1 対応するため §2.5 図表色免除は使わずトークン化（grep が `/* cp-chart-color */` 免除行ゼロ＝完全クリーンで返る）。
+ 
+ **Part B 模块硬编码清扫**：全 `#hex`/`rgba()` 真彩值仅 StockDwell + KitView 内联残留（其余 wms 页 grep 命中均为 `template #default` 正则误报——"defa" 4 位十六进制字符，非色值），已随两页迁移清零。`var(--el-*)` 残留 5 处一并 token 化：InboundReceipt/InboundOrder/Kit 的 action-bar（`--el-bg-color`/`--el-border-color-lighter`→`--cp-card`/`--cp-line-soft`，与 Slotting 统一）、LotTrace 的 `.qty-in/.qty-out`（`--el-color-success`/`--el-color-danger`→`--cp-ok`/`--cp-danger`）。最终 grep：非 `#default` 误报行 = 0。
+ 
+ **Part C 累积清理**（并入 fix commit ②）：① SlottingView 删除死 CSS `.wms-slotting{padding:16px}`（模板根为 CpPageShell，该类无宿主）；`listRef` 从悬空改为接线——新增 `listDirty` 脏标记，onApprove/onCancel 成功后置位，`backToList()` 在返回一覧时命令式 `reload()`（CpListPage 为 `v-show` 常挂不自动重取，故手动刷新，等价 RmaView `v-if` 重挂的フレッシュネス；真栈证实：承認後戻る→`GET /wms/slotting` 触发、一覧显示 SLP2026070001/承認済/admin）。② 删除 detail action-bar 重复「戻る」（保留 header #actions 版）。③ **CrossDock xDockNo 大小写修正**：后端实体 `XDockNo` camelCase 序列化为 `xDockNo`（大写 D），前端行读取用了 `xdockNo`（小写 d）→ 単号列空白 + 実行/取消 POST `/cross-dock/undefined/execute`。修正 CrossDockView 列 prop + onExecute/onCancel 行读取 + `CrossDockOrder` 类型定义三处为 `xDockNo`（create 响应体后端返回的是字面 `{ xdockNo }` 匿名对象，保持不变；search 过滤键 `xdockNo` 走后端大小写不敏感模型绑定，工作正常，未动）。真栈证实：単号列显示 XD2026070001、`POST /api/wms/cross-dock/XD2026070001/execute → 200`（原为 `/undefined/execute → 400`）。
+ 
+ 真栈证据（截图存 `.superpowers/sdd/shots/`）：Kit マスタ一覧（Total 2 + ON pill + 開く/削除）/マスタ detail（フォーム+BOM 編集+行追加）/組立一覧（Total 3 + 方向/状態 pill）/組立 detail（下書き=muted・組立=ok の CpTag ヘッダ + 実行/取消 action-bar）；StockDwell（KPI×4 トークン枠色 + バケット横棒 --cp-ok/info + 基準日 CpTag）；CrossDock（単号 XD2026070001 + 実行 200）；Slotting（承認→戻る→一覧リロード=承認済 反映）。console 无本批新 error（SignalR CSRF 403 / EP small·label 弃用警告 = 環境·既有基础设施，非本批引入）。type-check 0 error、`npm run test` 304 全绿。
+ 
+ **本批无新增模板缺口**——两页均落在既有契约（CpListPage toolbar/col slot #15/#16、default-filter-in-fetch #17）与「特殊页 token 化」处置内，未触发新的模板扩展需求。
+ 
++### ERP批次1 复盘（Milestone C 首模块，无新增模板缺口，编号仍止于 #17）
++
++批次1（FxRate/FscChecklist/SheetUnitPrice/BusinessPartnerList/OrderPriceCorrection）迁移完成，功能零丢失、真栈验收通过（5 页均无菜单入口，localStorage.menus 注入 + route 直达）。ERP 页 i18n 用 erp.*/sales.* 键族（非 wms.common.*），filter-labels 与 CpTag 文案均取原页现有键、未臆造。**诚实分类判定**（CpListPage 契约 = onMounted 自动 fetch + 单一 fetch；auto-load 无害且无必须检索条件的照会一覧才模板化，余者按「特殊页 token 化不强套」）：
++
++- **FxRateView**（照会 CRUD 一覧，194 行）= 唯一素直に載る查询列表页 → **CpPageShell + CpListPage + CpFormDialog**。rateDate=kind:'date'、rate 6 桁固定=col-rate slot、subtitle+「基軸:JPY」CpTag=toolbar slot、新規/編集=CpFormDialog default slot（uppercase/input-number precision6 step0.5/textarea 保全）、削除=ElMessageBox+listRef.reload()。filterLabels={ search:erp.fxRate.btn.refresh(「通貨で再読込」語義の既存キー), reset:sales.btn.clear }。
++- **FscChecklistView**（206 行）= 検索先行（拠点必須・自動取得なし・FROM≤TO/フォーマット必須のクロス検証・出力フォーマットはアクション引数）→ **token 化**。CpListPage の onMounted 自動 fetch 契約と相反するため強套せず、el-form/el-table/el-pagination/発行フロー原様、状態・件数・発行済 el-tag→CpTag(+tone)。
++- **SheetUnitPriceView**（206 行）= Excel アップロード + 登録/参照デュアルモード + 行内選択グリッド + 一括更新（検索駆動の単一 fetch 形態でない）→ **token 化**。件数 el-tag→CpTag、選択ファイル名 #606266→--cp-muted。
++- **BusinessPartnerListView**（219 行）= サーバサイド列ソート（@sort-change、CpListPage 未透過＝強套すると機能喪失）+ 属性 FLG×11 + 詳細検索コラプス（分類 1〜10）の構造化検索（CpFilterBar 平坦フィールドでは表現不能）→ **token 化**。ソート/CSV/行選択 原様、状態・件数 el-tag→CpTag(+tone)、FlgIcon 色 #67c23a/#dcdfe6→--cp-ok/--cp-line。WMS LocationList（双表→token 化）同处置。
++- **OrderPriceCorrectionView**（237 行）= type=selection 連動の行内編集グリッド（変更後単価/特値/理由）+ 拠点必須・自動取得なし → **token 化**。WMS StockTake（編集テーブル→token 化）同处置。状態・件数・選択中 el-tag→CpTag(+tone)、仮単価警告 #e6a23c→--cp-warn。
++
++真栈证据（截图存 `.superpowers/sdd/shots/erp-*.png`）：FxRate（為替レート管理 +count 0 pill / CpFilterBar / toolbar「基軸:JPY」CpTag / CpEmpty / 新規=CpFormDialog 必須マーク+precision6 input-number）；FscChecklist（拠点必須*+ステータスチェック+出力フォーマット select+発行(0)+「合計 0 件」CpTag）；SheetUnitPrice（基準日/拠点必須+取込区分/操作種別 radio+Excel 選択+全選択/全解除+CpTag）；BusinessPartnerList（FLG×11 グリーンチェック --cp-ok+ソート可列+CSV+「合計 0 件」CpTag、検索実行=0 行空態）；OrderPriceCorrection（数量/金額 FROM-TO number+仮単価+selection+行内編集列+選択行を更新(0)+CpTag）。5 页种子データ無しのため空態レンダリング検証（BP は検索で 0 行確認）；表内ステータス CpTag tone は純関数+FxRate toolbar タグで描画済のため低リスク、記录在案。console 无本批新 error（残存 intlify object-flatten / Vue Router deprecation・No-match=menus 注入リロード由来＝既有基础设施）。type-check 0 error、`npm run test` 46 files/304 全绿（baseline 304 保持）。
++
++**本批无新增模板缺口**——5 页均落在既有契約（CpListPage/CpFormDialog 標準 + #15/#16/#17）与「特殊页 token 化」処置内。BusinessPartnerList のサーバソート未対応は既知制約（#16 @row-click 近傍）で当该页 token 化選択の決め手として記録、机能は token 化で保全済、新規缺口としては未起票。
++
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+ 

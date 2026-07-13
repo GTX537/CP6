@@ -1,0 +1,197 @@
+# Review package: b0f280d..HEAD
+
+## Commits
+cccfea0 feat(wfs-hardening): B-T1 BranchPruned通知契约(类型5+IWfNotifier方法+四实现三渠道)
+
+## Files changed
+ CP6.Core/Services/Wf/IWfNotifier.cs              |  4 +++
+ CP6.Entity/DomainModels/Wf/WfNotificationType.cs |  3 ++
+ CP6.Tests/Oa/NotificationEngineHookTests.cs      | 14 +++++++++
+ CP6.WebApi/Services/PersistentWfNotifier.cs      | 38 ++++++++++++++++++++++++
+ CP6.WebApi/Services/SignalRWfNotifier.cs         |  2 ++
+ 5 files changed, 61 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/IWfNotifier.cs b/CP6.Core/Services/Wf/IWfNotifier.cs
+index 9b4f73d..f389d58 100644
+--- a/CP6.Core/Services/Wf/IWfNotifier.cs
++++ b/CP6.Core/Services/Wf/IWfNotifier.cs
+@@ -7,19 +7,23 @@ namespace CP6.Core.Services.Wf;
+ public interface IWfNotifier
+ {
+     /// <summary>新待办产生 → 推送给处理人。</summary>
+     Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey);
+ 
+     /// <summary>流程签核完成（整体通过）→ 推送给发起人（OA Phase D-1）。</summary>
+     Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey);
+ 
+     /// <summary>流程被驳回 → 推送给发起人（OA Phase D-1）。</summary>
+     Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment);
++
++    /// <summary>并行/包容分支被剪枝（不连坐）→ 推送给发起人（内核 hardening spec §4.2.2）。</summary>
++    Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment);
+ }
+ 
+ /// <summary>空实现（无 SignalR 环境 / 单测用）。</summary>
+ public sealed class NullWfNotifier : IWfNotifier
+ {
+     public Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey) => Task.CompletedTask;
+     public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey) => Task.CompletedTask;
+     public Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment) => Task.CompletedTask;
++    public Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment) => Task.CompletedTask;
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/WfNotificationType.cs b/CP6.Entity/DomainModels/Wf/WfNotificationType.cs
+index 67f44c7..d909b0a 100644
+--- a/CP6.Entity/DomainModels/Wf/WfNotificationType.cs
++++ b/CP6.Entity/DomainModels/Wf/WfNotificationType.cs
+@@ -10,11 +10,14 @@ public static class WfNotificationType
+     public const int TodoCreated = 1;
+ 
+     /// <summary>流程签核完成（整体通过）→ 推送给发起人。</summary>
+     public const int FlowApproved = 2;
+ 
+     /// <summary>流程被驳回 → 推送给发起人。</summary>
+     public const int FlowRejected = 3;
+ 
+     /// <summary>超时提醒 → 推送给处理人/上级。</summary>
+     public const int Timeout = 4;
++
++    /// <summary>分支被剪枝（内核 hardening）→ 推送给发起人。独立类型键：偏好矩阵须与驳回可独立开关（信箱 spec §2.1 联动口径）。</summary>
++    public const int BranchPruned = 5;
+ }
+diff --git a/CP6.Tests/Oa/NotificationEngineHookTests.cs b/CP6.Tests/Oa/NotificationEngineHookTests.cs
+index b199a7b..bad1f29 100644
+--- a/CP6.Tests/Oa/NotificationEngineHookTests.cs
++++ b/CP6.Tests/Oa/NotificationEngineHookTests.cs
+@@ -15,24 +15,33 @@ namespace CP6.Tests.Oa;
+ public class NotificationEngineHookTests
+ {
+     // ── CountingNotifier ────────────────────────────────────────────────────
+     private sealed class CountingNotifier : IWfNotifier
+     {
+         public int ApprovedCount { get; private set; }
+         public int RejectedCount { get; private set; }
+         public Guid LastApprovedStarterId { get; private set; }
+         public Guid LastRejectedStarterId { get; private set; }
+         public string? LastRejectedComment { get; private set; }
++        public int PrunedCount { get; private set; }
++        public string? LastPrunedNodeId { get; private set; }
+ 
+         public Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey)
+             => Task.CompletedTask;
+ 
++        public Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment)
++        {
++            PrunedCount++;
++            LastPrunedNodeId = nodeId;
++            return Task.CompletedTask;
++        }
++
+         public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey)
+         {
+             ApprovedCount++;
+             LastApprovedStarterId = starterId;
+             return Task.CompletedTask;
+         }
+ 
+         public Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment)
+         {
+             RejectedCount++;
+@@ -170,11 +179,16 @@ public class NotificationEngineHookTests
+         var t2 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == approver2);
+         await engine.ActAsync(t1.Id, actorId: approver1, approve: true);
+         await engine.ActAsync(t2.Id, actorId: approver2, approve: true);
+ 
+         Assert.Equal(1, notifier.ApprovedCount);
+         Assert.Equal(0, notifier.RejectedCount);
+ 
+         var inst = await db.Wf_FlowInstances.SingleAsync();
+         Assert.Equal(FlowInstanceStatus.Approved, inst.Status);
+     }
++
++    /// <summary>BranchPruned 通知类型键 = 5（独立类型，偏好矩阵须与驳回可独立开关）。</summary>
++    [Fact]
++    public void WfNotificationType_BranchPruned_Is5()
++        => Assert.Equal(5, CP6.Entity.DomainModels.Wf.WfNotificationType.BranchPruned);
+ }
+diff --git a/CP6.WebApi/Services/PersistentWfNotifier.cs b/CP6.WebApi/Services/PersistentWfNotifier.cs
+index 81a7888..d101d4a 100644
+--- a/CP6.WebApi/Services/PersistentWfNotifier.cs
++++ b/CP6.WebApi/Services/PersistentWfNotifier.cs
+@@ -153,20 +153,58 @@ public class PersistentWfNotifier : IWfNotifier
+         catch (Exception ex)
+         {
+             _logger.LogWarning(ex,
+                 "SignalR WfNotification(FlowRejected) 失败，忽略（用户 {UserId}）", starterId);
+         }
+ 
+         if (prefs.Email)
+             await TrySendEmailAsync(starterId, title, body);
+     }
+ 
++    // ── BranchPrunedAsync（内核 hardening）────────────────────────────────
++
++    /// <inheritdoc />
++    public async Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment)
++    {
++        // 偏好：BranchPruned 是新类型键，现行 NotificationPrefs 无对应字段 → 缺键默认 true（信箱 spec §2.1 三态坍缩口径），
++        // 本方法 v1 不做偏好门控；偏好矩阵化由信箱 spec 落地时统一改造。
++        const string title = "您的申请有分支被驳回（其余分支继续）";
++        var body = string.IsNullOrWhiteSpace(comment)
++            ? $"流程 {flowKey} 的分支 {nodeId} 被驳回剪除，其余分支继续审批"
++            : $"流程 {flowKey} 的分支 {nodeId} 被驳回剪除（{comment}），其余分支继续审批";
++
++        await _notif.CreateAsync(
++            starterId, WfNotificationType.BranchPruned,
++            title, body, instanceId, taskId: null, flowKey);
++
++        try
++        {
++            await _hub.Clients.All.SendAsync("WfNotification", new
++            {
++                type       = WfNotificationType.BranchPruned,
++                userId     = starterId,
++                instanceId,
++                taskId     = (Guid?)null,
++                flowKey
++            });
++        }
++        catch (Exception ex)
++        {
++            _logger.LogWarning(ex,
++                "SignalR WfNotification(BranchPruned) 失败，忽略（用户 {UserId}）", starterId);
++        }
++
++        var prefs = await _pref.GetNotifyPrefsAsync(starterId);
++        if (prefs.Email)
++            await TrySendEmailAsync(starterId, title, body);
++    }
++
+     // ── Private helpers ─────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 查用户邮箱并发送，全 best-effort：任何异常吞掉+记 Warning，不冒泡。
+     /// </summary>
+     private async Task TrySendEmailAsync(Guid userId, string subject, string body)
+     {
+         try
+         {
+             var userEmail = await _db.Sys_Users
+diff --git a/CP6.WebApi/Services/SignalRWfNotifier.cs b/CP6.WebApi/Services/SignalRWfNotifier.cs
+index ac47c39..00e1ff4 100644
+--- a/CP6.WebApi/Services/SignalRWfNotifier.cs
++++ b/CP6.WebApi/Services/SignalRWfNotifier.cs
+@@ -12,11 +12,13 @@ public class SignalRWfNotifier : IWfNotifier
+ {
+     private readonly IHubContext<NotifyHub> _hub;
+     public SignalRWfNotifier(IHubContext<NotifyHub> hub) => _hub = hub;
+ 
+     public Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey)
+         => _hub.Clients.All.SendAsync("WfTodoCreated", new { assigneeId, instanceId, taskId, flowKey });
+ 
+     // Temporary no-op implementations — replaced by PersistentWfNotifier in N-T4.
+     public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey) => Task.CompletedTask;
+     public Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment) => Task.CompletedTask;
++    // no-op：分支剪枝通知由 PersistentWfNotifier 三渠道承载（内核 hardening）。
++    public Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment) => Task.CompletedTask;
+ }

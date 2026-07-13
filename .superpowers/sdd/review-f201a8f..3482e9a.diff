@@ -1,0 +1,235 @@
+# Review package: f201a8f..HEAD
+
+## Commits
+3482e9a fix(ui): ERP批次7修正——7处无损el-tag转CpTag(豁免仅opLabel)
+
+## Files changed
+ cp6.web/src/views/erp/ProductMasterView.vue         | 11 +++++------
+ cp6.web/src/views/erp/product/Step1TargetSelect.vue | 17 +++++++++--------
+ cp6.web/src/views/erp/product/Step3ProcessInfo.vue  |  8 ++++----
+ 3 files changed, 18 insertions(+), 18 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/erp/ProductMasterView.vue b/cp6.web/src/views/erp/ProductMasterView.vue
+index 2f9e6e5..a6531fe 100644
+--- a/cp6.web/src/views/erp/ProductMasterView.vue
++++ b/cp6.web/src/views/erp/ProductMasterView.vue
+@@ -3,26 +3,24 @@
+     <!-- 顶部：操作种别 + 製品 CD + 步骤条 -->
+     <el-card shadow="never" class="header-card">
+       <div class="header-row">
+         <div class="header-left">
+           <el-tag :type="opTagType" size="large" effect="dark">
+             {{ opLabel }}
+           </el-tag>
+           <span v-if="store.productCd" class="product-cd">
+             {{ t('製品CD') }}: {{ store.productCd }}
+           </span>
+-          <el-tag v-else-if="store.isNew" type="info" size="small" effect="plain">
+-            {{ t('自動採番待ち') }}
+-          </el-tag>
+-          <el-tag v-if="store.status === 1" type="warning" size="small">{{ t('承認待ち') }}</el-tag>
+-          <el-tag v-else-if="store.status === 9" type="success" size="small">{{ t('承認済') }}</el-tag>
+-          <el-tag v-if="store.mcTransferFlg" type="info" size="small">{{ t('mc転送済') }}</el-tag>
++          <CpTag v-else-if="store.isNew" tone="info">{{ t('自動採番待ち') }}</CpTag>
++          <CpTag v-if="store.status === 1" tone="warn">{{ t('承認待ち') }}</CpTag>
++          <CpTag v-else-if="store.status === 9" tone="ok">{{ t('承認済') }}</CpTag>
++          <CpTag v-if="store.mcTransferFlg" tone="info">{{ t('mc転送済') }}</CpTag>
+         </div>
+         <div class="header-right">
+           <el-radio-group v-model="opModel" size="small" :disabled="hasNoCd">
+             <el-radio-button :value="ProductOperationType.New">{{ t('sales.btn.new') }}</el-radio-button>
+             <el-radio-button :value="ProductOperationType.Edit" :disabled="hasNoCd">{{ t('sales.op.edit') }}</el-radio-button>
+             <el-radio-button :value="ProductOperationType.Copy" :disabled="hasNoCd">{{ t('sales.op.copy') }}</el-radio-button>
+             <el-radio-button :value="ProductOperationType.View" :disabled="hasNoCd">{{ t('sales.op.view') }}</el-radio-button>
+             <el-radio-button :value="ProductOperationType.Delete" :disabled="hasNoCd">{{ t('sales.op.delete') }}</el-radio-button>
+           </el-radio-group>
+         </div>
+@@ -88,20 +86,21 @@
+ 
+ <script setup lang="ts">
+ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRoute } from 'vue-router'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { useProductMasterStore } from '@/stores/productMaster'
+ import { useProductConflictHandler } from '@/composables/useProductConflictHandler'
+ import { ProductOperationType } from '@/types/erp/productMaster'
+ import { productApi } from '@/api/erp/product'
++import CpTag from '@/components/base/CpTag.vue'
+ import Step1TargetSelect from './product/Step1TargetSelect.vue'
+ import Step2BasicInfo from './product/Step2BasicInfo.vue'
+ import Step3ProcessInfo from './product/Step3ProcessInfo.vue'
+ import Step4MaterialSetting from './product/Step4MaterialSetting.vue'
+ import Step5LotPriceOther from './product/Step5LotPriceOther.vue'
+ 
+ const { t } = useI18n()
+ const store = useProductMasterStore()
+ const route = useRoute()
+ const { handle: handleConflict } = useProductConflictHandler()
+diff --git a/cp6.web/src/views/erp/product/Step1TargetSelect.vue b/cp6.web/src/views/erp/product/Step1TargetSelect.vue
+index 9f90b23..ef8d828 100644
+--- a/cp6.web/src/views/erp/product/Step1TargetSelect.vue
++++ b/cp6.web/src/views/erp/product/Step1TargetSelect.vue
+@@ -85,23 +85,23 @@
+           :disabled="!store.canEdit"
+           @click="onClearForm"
+         >{{ t('クリア') }}</el-button>
+         <el-button
+           :icon="Document"
+           size="small"
+           :disabled="!selectedRowNo || !selectedEstimateCalcNo"
+           @click="onOpenEstimateDetail"
+         >{{ t('見積詳細') }}</el-button>
+       </el-button-group>
+-      <el-tag v-if="store.wipCheckResult" :type="wipTagType" size="small" style="margin-left: 12px">
++      <CpTag v-if="store.wipCheckResult" :tone="wipTone" style="margin-left: 12px">
+         {{ t('仕掛チェック') }}: {{ wipLabel }}
+-      </el-tag>
++      </CpTag>
+     </div>
+ 
+     <el-table
+       :data="store.members"
+       border
+       stripe
+       highlight-current-row
+       style="width: 100%"
+       size="small"
+       @current-change="onCurrentRowChange">
+@@ -132,21 +132,21 @@
+           <el-input v-model="row.projectNoMaterial" :disabled="!store.canEdit" size="small" />
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('顧客品名 1')" min-width="160">
+         <template #default="{ row }">
+           <el-input v-model="row.customerProductName1" :disabled="!store.canEdit" size="small" />
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('状態')" width="90">
+         <template #default="{ row }">
+-          <el-tag size="small" :type="statusTagType(row.status)">{{ statusLabel(row.status) }}</el-tag>
++          <CpTag :tone="statusTone(row.status)">{{ statusLabel(row.status) }}</CpTag>
+         </template>
+       </el-table-column>
+       <el-table-column label="WF" width="60" align="center">
+         <template #default="{ row }">
+           <el-icon v-if="row.wfApproved" color="var(--cp-ok)"><Check /></el-icon>
+           <span v-else>-</span>
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('連携')" width="60" align="center">
+         <template #default="{ row }">
+@@ -187,20 +187,21 @@
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ const { t } = useI18n()
+ import { ref, computed } from 'vue'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { Search, Plus, Check, Link, Delete, Top, Bottom, RefreshLeft, Document } from '@element-plus/icons-vue'
+ import type { ProductMemberDto } from '@/types/erp/productMaster'
+ import { useProductMasterStore } from '@/stores/productMaster'
+ import { productApi } from '@/api/erp/product'
+ import MasterReferenceDialog from '@/components/master/MasterReferenceDialog.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import type { CustomerLookupItem, ProductLookupItem } from '@/api/erp/master'
+ 
+ const store = useProductMasterStore()
+ 
+ // ───── Master Popup ─────
+ const customerPickerVisible = ref(false)
+ const productPickerVisible = ref(false)
+ 
+ function openCustomerPicker() {
+   if (!store.canEdit) return
+@@ -288,28 +289,28 @@ function onOpenEstimateDetail() {
+     return
+   }
+   // 見積詳細画面 (MSBBPA040) は外部画面のため別ウィンドウで開く想定
+   const url = `/estimate-detail?no=${encodeURIComponent(selectedEstimateCalcNo.value)}`
+   window.open(url, '_blank')
+ }
+ 
+ function statusLabel(s: number): string {
+   return s === 9 ? t('承認済') : s === 1 ? t('承認待') : t('未作成')
+ }
+-function statusTagType(s: number): 'info' | 'warning' | 'success' {
+-  return s === 9 ? 'success' : s === 1 ? 'warning' : 'info'
++function statusTone(s: number): Tone {
++  return s === 9 ? 'ok' : s === 1 ? 'warn' : 'info'
+ }
+ 
+-const wipTagType = computed<'success' | 'warning' | 'danger'>(() => {
++const wipTone = computed<Tone>(() => {
+   const lv = store.wipCheckResult?.level ?? 0
+-  if (lv === 0) return 'success'
+-  if (lv === 1) return 'warning'
++  if (lv === 0) return 'ok'
++  if (lv === 1) return 'warn'
+   return 'danger'
+ })
+ const wipLabel = computed(() => {
+   const lv = store.wipCheckResult?.level ?? 0
+   if (lv === 0) return t('問題なし')
+   if (lv === 1) return t('警告（続行可）')
+   if (lv === 2) return t('エラー（確定済）')
+   return t('エラー（指図済）')
+ })
+ 
+diff --git a/cp6.web/src/views/erp/product/Step3ProcessInfo.vue b/cp6.web/src/views/erp/product/Step3ProcessInfo.vue
+index b1915f7..70a96b1 100644
+--- a/cp6.web/src/views/erp/product/Step3ProcessInfo.vue
++++ b/cp6.web/src/views/erp/product/Step3ProcessInfo.vue
+@@ -248,27 +248,26 @@
+       :close-on-click-modal="false"
+     >
+       <div style="margin-bottom: 8px">
+         <el-button
+           type="primary"
+           :icon="Plus"
+           size="small"
+           :disabled="!store.canEdit"
+           @click="addCoProduct"
+         >{{ t('行追加') }}</el-button>
+-        <el-tag
+-          :type="coRatioOk ? 'success' : 'danger'"
+-          size="small"
++        <CpTag
++          :tone="coRatioOk ? 'ok' : 'danger'"
+           style="margin-left: 12px"
+         >
+           QtyRatio{{ t('合計') }}: {{ coRatioSum.toFixed(4) }} {{ coRatioOk ? '✓' : t('(=1.0 必須)') }}
+-        </el-tag>
++        </CpTag>
+       </div>
+       <el-table :data="currentCoList" border stripe size="small" style="width: 100%">
+         <el-table-column prop="rowNo" label="No" width="60" align="center" />
+         <el-table-column :label="t('連産品名')" min-width="180">
+           <template #default="{ row }">
+             <el-input v-model="row.coProductName" :disabled="!store.canEdit" size="small" />
+           </template>
+         </el-table-column>
+         <el-table-column :label="t('比率')" width="120">
+           <template #default="{ row }">
+@@ -308,20 +307,21 @@
+   </el-card>
+ </template>
+ 
+ <script setup lang="ts">
+ import { useI18n } from 'vue-i18n'
+ const { t } = useI18n()
+ import { ref, computed } from 'vue'
+ import { ElMessage } from 'element-plus'
+ import { Plus } from '@element-plus/icons-vue'
+ import { useProductMasterStore } from '@/stores/productMaster'
++import CpTag from '@/components/base/CpTag.vue'
+ import type { ProductProcessDto, ProductCoProductDto } from '@/types/erp/productMaster'
+ 
+ const store = useProductMasterStore()
+ 
+ // トムソン系工程 CD（仕様書 §10 / §第3页 Popup 制約）
+ const COPRODUCT_PROCESS_CDS = ['0600', '0601', '0602']
+ function isCoProductable(row: ProductProcessDto): boolean {
+   return !!row.processCd && COPRODUCT_PROCESS_CDS.includes(row.processCd)
+ }
+ 

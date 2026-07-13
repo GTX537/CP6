@@ -1,0 +1,659 @@
+# Review package: 4b5f956..35e90a7
+
+## Commits
+35e90a7 feat(mes): M-MES T3a 9控制器28写端点贴 [RequirePermission]
+
+## Files changed
+ .superpowers/sdd/mes-t3a-report.md                 | 84 ++++++++++++++++++++++
+ .../Controllers/Mes/DefectRecordController.cs      |  4 ++
+ CP6.WebApi/Controllers/Mes/MachineController.cs    |  7 ++
+ CP6.WebApi/Controllers/Mes/OeeController.cs        |  2 +
+ .../Controllers/Mes/PlanningBoardController.cs     |  3 +
+ .../Controllers/Mes/ProcessCostRateController.cs   |  9 ++-
+ .../Controllers/Mes/ProductionResultController.cs  |  6 ++
+ .../Controllers/Mes/QualityInspectionController.cs |  3 +
+ CP6.WebApi/Controllers/Mes/WorkCenterController.cs |  3 +
+ CP6.WebApi/Controllers/Mes/WorkOrderController.cs  |  6 ++
+ 10 files changed, 125 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/mes-t3a-report.md b/.superpowers/sdd/mes-t3a-report.md
+new file mode 100644
+index 0000000..7e2abf2
+--- /dev/null
++++ b/.superpowers/sdd/mes-t3a-report.md
+@@ -0,0 +1,84 @@
++# M-MES T3a 执行报告：9 控制器 28 写端点贴 [RequirePermission]
++
++- **任务**：M-MES 横切接线波 T3a——9 个含真写端点的 MES 控制器逐方法贴 `[RequirePermission("menu-key","action")]`。
++- **真相源**：`docs/seeds/mes-permission-keys.md`（键值逐字取用，未创造/未改名任何键）。
++- **样板**：M-ERP T3a 先例 commit `bdbc532`（attribute 紧贴 `[HttpXxx]` 之下、`using CP6.Core.Auth;` 置顶）。
++- **性质**：纯注解叠加，零方法体改动，类级 `[Authorize]` 全保留。
++
++## 逐控制器「端点 → 键」1:1 对账表（28 = 28）
++
++| # | 控制器 | HTTP + 路由 | 方法 | 键 | action | 高危 |
++|---|---|---|---|---|---|---|
++| 1 | WorkOrderController | POST `/api/mes/work-orders` | Create | `mes-work-order` | add | 否 |
++| 2 | WorkOrderController | PUT `/api/mes/work-orders/{no}` | Update | `mes-work-order` | edit | 否 |
++| 3 | WorkOrderController | DELETE `/api/mes/work-orders/{no}` | Delete | `mes-work-order` | del | 否 |
++| 4 | WorkOrderController | POST `/api/mes/work-orders/{no}/issue` | Issue | `mes-work-order` | issue | 状态 |
++| 5 | WorkOrderController | POST `/api/mes/work-orders/expand-from-order` | ExpandFromOrder | `mes-work-order` | add | 否 |
++| 6 | ProductionResultController | POST `/production-results/start` | Start | `mes-production-result` | start | 状态 |
++| 7 | ProductionResultController | POST `/production-results/suspend` | Suspend | `mes-production-result` | suspend | 状态 |
++| 8 | ProductionResultController | POST `/production-results/resume` | Resume | `mes-production-result` | suspend | 状态 |
++| 9 | ProductionResultController | POST `/production-results/complete` | Complete | `mes-production-result` | complete | **是** |
++| 10 | ProductionResultController | POST `/production-results` | Report | `mes-production-result` | report | 状态 |
++| 11 | DefectRecordController | POST `/api/mes/defects` | Create | `mes-defect` | add | 否 |
++| 12 | DefectRecordController | PUT `/api/mes/defects/{no}` | Update | `mes-defect` | edit | 否 |
++| 13 | DefectRecordController | DELETE `/api/mes/defects/{no}` | Delete | `mes-defect` | del | 否 |
++| 14 | MachineController | POST `/api/mes/machines` | Create | `mes-machine` | add | 否 |
++| 15 | MachineController | PUT `/api/mes/machines/{cd}` | Update | `mes-machine` | edit | 否 |
++| 16 | MachineController | DELETE `/api/mes/machines/{cd}` | Delete | `mes-machine` | del | 否 |
++| 17 | MachineController | POST `/api/mes/machines/{cd}/status` | ChangeStatus | `mes-machine` | status | 状态 |
++| 18 | MachineController | POST `/api/mes/machines/downtimes` | RegisterDowntime | `mes-machine` | downtime | 状态 |
++| 19 | MachineController | POST `/api/mes/machines/downtimes/{no}/close` | CloseDowntime | `mes-machine` | downtime | 状态 |
++| 20 | OeeController | POST `/api/mes/oee/recalculate` | Recalculate | `mes-oee` | recalculate | 状态 |
++| 21 | PlanningBoardController | PUT `/planning-board/reschedule` | Reschedule | `mes-planning-board` | reschedule | 状态 |
++| 22 | PlanningBoardController | POST `/planning-board/auto-arrange` | AutoArrange | `mes-planning-board` | arrange | 状态 |
++| 23 | QualityInspectionController | POST `/api/mes/inspections` | Create | `mes-quality-inspection` | add | 否 |
++| 24 | QualityInspectionController | PUT `/api/mes/inspections/{no}` | Update | `mes-quality-inspection` | edit | 否 |
++| 25 | WorkCenterController | POST `/work-center/upsert` | Upsert | `mes-work-center` | edit | 否 |
++| 26 | WorkCenterController | DELETE `/work-center/{wgCd}` | Delete | `mes-work-center` | del | 否 |
++| 27 | ProcessCostRateController | POST `/process-cost-rate/upsert` | Upsert | `mes-process-cost-rate` | edit | **是** |
++| 28 | ProcessCostRateController | DELETE `/process-cost-rate/{id}` | Delete | `mes-process-cost-rate` | del | 否 |
++
++> 真相源表行 25/26（PlanAchievement Summary/ExportCsv）为只读 POST 豁免（→view），T3a **不贴**；其余表行 1–24、27–30 即本表 1–28（真相源 §一为 30 行含 2 豁免，去豁免后 28 真写，精确吻合）。
++
++### 逐控制器计数（grep `RequirePermission("mes-` 实证）
++
++| 控制器 | 贴点数 |
++|---|---|
++| WorkOrderController | 5 |
++| ProductionResultController | 5 |
++| DefectRecordController | 3 |
++| MachineController | 6 |
++| OeeController | 1 |
++| PlanningBoardController | 2 |
++| QualityInspectionController | 2 |
++| WorkCenterController | 2 |
++| ProcessCostRateController | 2 |
++| **合计** | **28** ✅ |
++
++## 合规缺席说明（两控制器不贴，符合真相源）
++
++- **MesDashboardController**：纯 GET 看板/SP 版，0 非 GET 端点 → 无贴点。合规。
++- **PlanAchievementController**：2 个 POST（Summary/ExportCsv）均为只读 POST 豁免（→view，真相源 §四读 Service 实证无写副作用），真写=0 → 全员豁免不贴。合规。
++- grep 验证：`RequirePermission` 在 PlanAchievementController.cs 出现 0 次 ✅。
++
++## 自查清单
++
++- [x] 28 端点全贴，键值与真相源逐字一致（连字符 `mes-*`，无下划线，无自造/改名键）。
++- [x] 2 只读 POST 豁免未贴（PlanAchievement Summary/ExportCsv）。
++- [x] 高危未降级：`mes-production-result:complete`（是）、`mes-process-cost-rate:edit`（是）逐字保留独立键。状态键 9 个（issue/start/suspend×2/report/status/downtime×2/recalculate/reschedule/arrange）单独成键，未塞进 edit/view。
++- [x] 归并键按真相源：resume→suspend（§五归并2）、CloseDowntime→downtime（§五归并3）、Upsert→edit（§五归并4）、ExpandFromOrder→add（§五归并1）。
++- [x] quality-inspection 键取菜单域名（非控制器路由 `inspections`），逐字 `mes-quality-inspection`（§六注3）。
++- [x] 零 GET 端点被贴（人工核对 + grep 各贴点均紧贴 POST/PUT/DELETE）。
++- [x] 零方法体改动：仅新增 `using CP6.Core.Auth;`（9 文件各 1 行）+ 28 行 `[RequirePermission]` attribute。
++- [x] 类级 `[Authorize]` 9 控制器全保留。
++
++## 验证输出摘要
++
++- **Build**：`dotnet build CP6.WebApi` → `Build succeeded. 0 Error(s)`（1 既有 CS8601 warning，与本任务无关）。
++- **Test**：`dotnet test` → `Passed! Failed: 0, Passed: 1722, Skipped: 5, Total: 1727`。基线 1722 绿，零跌。
++
++## 交接给后续任务
++
++- T3b：`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子（本任务只贴点，不种子）。
++- T4：反射 fail-closed 测试。
++- 硬前置提醒（真相源 §六，属 T2/T4 范畴，非本任务）：菜单 310 须显式赋 `MenuKey="mes-machine"`（回填得 `mes-machine-list` ≠ 贴点 `mes-machine`），否则 Machine 全 403；MES 菜单插入在回填块之后，洁净首启 MenuKey null 需 T2 显式赋值治理。
+diff --git a/CP6.WebApi/Controllers/Mes/DefectRecordController.cs b/CP6.WebApi/Controllers/Mes/DefectRecordController.cs
+index 30d4821..b5458fe 100644
+--- a/CP6.WebApi/Controllers/Mes/DefectRecordController.cs
++++ b/CP6.WebApi/Controllers/Mes/DefectRecordController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>
+ /// MSBBME080 — 不良品管理 Web API
+ /// </summary>
+@@ -31,50 +32,53 @@ public class DefectRecordController : ControllerBase
+     [HttpGet("{no}")]
+     public async Task<IActionResult> Get(string no)
+     {
+         var dto = await _service.GetByNoAsync(no);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>ME080 — 手動起票</summary>
+     [HttpPost]
++    [RequirePermission("mes-defect", "add")]
+     public async Task<IActionResult> Create([FromBody] DefectRecordDto dto)
+     {
+         try
+         {
+             var no = await _service.CreateAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { defectNo = no } });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME080 — 更新（原因分析 / 是正処置）</summary>
+     [HttpPut("{no}")]
++    [RequirePermission("mes-defect", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] DefectRecordDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME080 — 削除</summary>
+     [HttpDelete("{no}")]
++    [RequirePermission("mes-defect", "del")]
+     public async Task<IActionResult> Delete(string no)
+     {
+         try
+         {
+             await _service.DeleteAsync(no, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Mes/MachineController.cs b/CP6.WebApi/Controllers/Mes/MachineController.cs
+index 0a2c636..c13352e 100644
+--- a/CP6.WebApi/Controllers/Mes/MachineController.cs
++++ b/CP6.WebApi/Controllers/Mes/MachineController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>MES Phase 4 — 設備管理 Web API</summary>
+ [ApiController]
+ [Route("api/mes/machines")]
+@@ -25,85 +26,91 @@ public class MachineController : ControllerBase
+ 
+     [HttpGet("{cd}")]
+     public async Task<IActionResult> Get(string cd)
+     {
+         var dto = await _service.GetByCdAsync(cd);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     [HttpPost]
++    [RequirePermission("mes-machine", "add")]
+     public async Task<IActionResult> Create([FromBody] MachineDto dto)
+     {
+         try
+         {
+             var cd = await _service.CreateAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { machineCd = cd } });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     [HttpPut("{cd}")]
++    [RequirePermission("mes-machine", "edit")]
+     public async Task<IActionResult> Update(string cd, [FromBody] MachineDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(cd, dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     [HttpDelete("{cd}")]
++    [RequirePermission("mes-machine", "del")]
+     public async Task<IActionResult> Delete(string cd)
+     {
+         try
+         {
+             await _service.DeleteAsync(cd, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     /// <summary>設備状態変更</summary>
+     [HttpPost("{cd}/status")]
++    [RequirePermission("mes-machine", "status")]
+     public async Task<IActionResult> ChangeStatus(string cd, [FromBody] ChangeStatusRequest req)
+     {
+         try
+         {
+             await _service.ChangeStatusAsync(cd, req.Status, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     // ─────── 停止記録 ───────
+ 
+     [HttpGet("downtimes")]
+     public async Task<IActionResult> SearchDowntimes([FromQuery] DowntimeSearchQuery query)
+     {
+         var r = await _service.SearchDowntimesAsync(query);
+         return Ok(new { code = 0, message = "OK", data = r });
+     }
+ 
+     [HttpPost("downtimes")]
++    [RequirePermission("mes-machine", "downtime")]
+     public async Task<IActionResult> RegisterDowntime([FromBody] MachineDowntimeDto dto)
+     {
+         try
+         {
+             var no = await _service.RegisterDowntimeAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { downtimeNo = no } });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     [HttpPost("downtimes/{no}/close")]
++    [RequirePermission("mes-machine", "downtime")]
+     public async Task<IActionResult> CloseDowntime(string no, [FromBody] CloseDowntimeRequest req)
+     {
+         try
+         {
+             await _service.CloseDowntimeAsync(no, req.EndTime, req.RecoveryOperatorCd, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+diff --git a/CP6.WebApi/Controllers/Mes/OeeController.cs b/CP6.WebApi/Controllers/Mes/OeeController.cs
+index c78ff00..10b6016 100644
+--- a/CP6.WebApi/Controllers/Mes/OeeController.cs
++++ b/CP6.WebApi/Controllers/Mes/OeeController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>MES Phase 4 — OEE 分析 Web API</summary>
+ [ApiController]
+ [Route("api/mes/oee")]
+@@ -34,16 +35,17 @@ public class OeeController : ControllerBase
+     /// <summary>過去 N 日 OEE 推移（折線用、設備別）</summary>
+     [HttpGet("trend")]
+     public async Task<IActionResult> Trend([FromQuery] int days = 30, [FromQuery] string? machineCd = null)
+     {
+         var r = await _service.GetTrendAsync(days, machineCd);
+         return Ok(new { code = 0, message = "OK", data = r });
+     }
+ 
+     /// <summary>指定日 再計算（保存）</summary>
+     [HttpPost("recalculate")]
++    [RequirePermission("mes-oee", "recalculate")]
+     public async Task<IActionResult> Recalculate([FromBody] OeeRecalcRequest req)
+     {
+         var n = await _service.RecalculateAsync(req, CurrentUser);
+         return Ok(new { code = 0, message = "ME-MSG-041", data = new { recalculated = n } });
+     }
+ }
+diff --git a/CP6.WebApi/Controllers/Mes/PlanningBoardController.cs b/CP6.WebApi/Controllers/Mes/PlanningBoardController.cs
+index 554b0ae..a24197a 100644
+--- a/CP6.WebApi/Controllers/Mes/PlanningBoardController.cs
++++ b/CP6.WebApi/Controllers/Mes/PlanningBoardController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>MSBBME010 — 生産計画ボード Web API</summary>
+ [ApiController]
+ [Route("api/mes/planning-board")]
+@@ -27,31 +28,33 @@ public class PlanningBoardController : ControllerBase
+     /// <summary>KPI サマリ</summary>
+     [HttpGet("kpi")]
+     public async Task<IActionResult> GetKpi([FromQuery] PlanningBoardQuery query)
+     {
+         var kpi = await _service.GetKpiAsync(query);
+         return Ok(new { code = 0, message = "OK", data = kpi });
+     }
+ 
+     /// <summary>ドラッグ後 日時更新</summary>
+     [HttpPut("reschedule")]
++    [RequirePermission("mes-planning-board", "reschedule")]
+     public async Task<IActionResult> Reschedule([FromBody] RescheduleRequest req)
+     {
+         try
+         {
+             await _service.RescheduleAsync(req, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>自動配置（PA050 ManufOrderPrio + 納期で並び替え）</summary>
+     [HttpPost("auto-arrange")]
++    [RequirePermission("mes-planning-board", "arrange")]
+     public async Task<IActionResult> AutoArrange([FromBody] AutoArrangeRequest req)
+     {
+         var changed = await _service.AutoArrangeAsync(req, CurrentUser);
+         return Ok(new { code = 0, message = "ME-MSG-041", data = new { changed } });
+     }
+ }
+diff --git a/CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs b/CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs
+index 7375179..3146d4a 100644
+--- a/CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs
++++ b/CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DomainModels.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ [ApiController]
+ [Route("api/mes/process-cost-rate")]
+ [Authorize]
+@@ -12,15 +13,19 @@ public class ProcessCostRateController : ControllerBase
+ {
+     private readonly IProcessCostRateService _svc;
+     public ProcessCostRateController(IProcessCostRateService svc) => _svc = svc;
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet] public async Task<IActionResult> List([FromQuery] string? wgCd) => Ok2(await _svc.ListAsync(wgCd));
+     [HttpGet("resolve")] public async Task<IActionResult> Resolve([FromQuery] string wgCd, [FromQuery] DateTime onDate)
+         => Ok2(await _svc.ResolveAsync(wgCd, onDate));
+-    [HttpPost("upsert")] public async Task<IActionResult> Upsert([FromBody] ProcessCostRate dto)
++    [HttpPost("upsert")]
++    [RequirePermission("mes-process-cost-rate", "edit")]
++    public async Task<IActionResult> Upsert([FromBody] ProcessCostRate dto)
+     { try { await _svc.UpsertAsync(dto, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+-    [HttpDelete("{id:Guid}")] public async Task<IActionResult> Delete(Guid id)
++    [HttpDelete("{id:Guid}")]
++    [RequirePermission("mes-process-cost-rate", "del")]
++    public async Task<IActionResult> Delete(Guid id)
+     { try { await _svc.DeleteAsync(id, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+ }
+diff --git a/CP6.WebApi/Controllers/Mes/ProductionResultController.cs b/CP6.WebApi/Controllers/Mes/ProductionResultController.cs
+index 094de24..2161d54 100644
+--- a/CP6.WebApi/Controllers/Mes/ProductionResultController.cs
++++ b/CP6.WebApi/Controllers/Mes/ProductionResultController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>
+ /// MSBBME040 / 050 — 製造実績 入力 / 一覧 Web API
+ /// </summary>
+@@ -31,36 +32,41 @@ public class ProductionResultController : ControllerBase
+     [HttpGet("work-order/{no}")]
+     public async Task<IActionResult> GetWorkOrderSummary(string no)
+     {
+         var dto = await _service.GetWorkOrderSummaryAsync(no);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>ME040 — 工程開始 POST /api/mes/production-results/start</summary>
+     [HttpPost("start")]
++    [RequirePermission("mes-production-result", "start")]
+     public Task<IActionResult> Start([FromBody] ProductionResultRequest req) => Run(req, _service.StartAsync);
+ 
+     /// <summary>ME040 — 工程中断 POST /api/mes/production-results/suspend</summary>
+     [HttpPost("suspend")]
++    [RequirePermission("mes-production-result", "suspend")]
+     public Task<IActionResult> Suspend([FromBody] ProductionResultRequest req) => Run(req, _service.SuspendAsync);
+ 
+     /// <summary>ME040 — 中断解除 POST /api/mes/production-results/resume</summary>
+     [HttpPost("resume")]
++    [RequirePermission("mes-production-result", "suspend")]
+     public Task<IActionResult> Resume([FromBody] ProductionResultRequest req) => Run(req, _service.ResumeAsync);
+ 
+     /// <summary>ME040 — 工程完了 POST /api/mes/production-results/complete</summary>
+     [HttpPost("complete")]
++    [RequirePermission("mes-production-result", "complete")]
+     public Task<IActionResult> Complete([FromBody] ProductionResultRequest req) => Run(req, _service.CompleteAsync);
+ 
+     /// <summary>ME040 — 数量報告 POST /api/mes/production-results</summary>
+     [HttpPost]
++    [RequirePermission("mes-production-result", "report")]
+     public Task<IActionResult> Report([FromBody] ProductionResultRequest req) => Run(req, _service.ReportAsync);
+ 
+     private async Task<IActionResult> Run(ProductionResultRequest req, Func<ProductionResultRequest, string?, Task<string>> action)
+     {
+         try
+         {
+             var resultNo = await action(req, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { resultNo } });
+         }
+         catch (InvalidOperationException ex)
+diff --git a/CP6.WebApi/Controllers/Mes/QualityInspectionController.cs b/CP6.WebApi/Controllers/Mes/QualityInspectionController.cs
+index 4516ea3..bf5ee2a 100644
+--- a/CP6.WebApi/Controllers/Mes/QualityInspectionController.cs
++++ b/CP6.WebApi/Controllers/Mes/QualityInspectionController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>
+ /// MSBBME060 / 070 — 品質検査 Web API
+ /// </summary>
+@@ -31,35 +32,37 @@ public class QualityInspectionController : ControllerBase
+     [HttpGet("{no}")]
+     public async Task<IActionResult> Get(string no)
+     {
+         var dto = await _service.GetByNoAsync(no);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>ME060 — 新規登録</summary>
+     [HttpPost]
++    [RequirePermission("mes-quality-inspection", "add")]
+     public async Task<IActionResult> Create([FromBody] QualityInspectionDto dto)
+     {
+         try
+         {
+             var no = await _service.CreateAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { inspectionNo = no } });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME060 — 訂正</summary>
+     [HttpPut("{no}")]
++    [RequirePermission("mes-quality-inspection", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] QualityInspectionDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Mes/WorkCenterController.cs b/CP6.WebApi/Controllers/Mes/WorkCenterController.cs
+index 9177d4c..4c083d3 100644
+--- a/CP6.WebApi/Controllers/Mes/WorkCenterController.cs
++++ b/CP6.WebApi/Controllers/Mes/WorkCenterController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DomainModels.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ [ApiController]
+ [Route("api/mes/work-center")]
+ [Authorize]
+@@ -13,17 +14,19 @@ public class WorkCenterController : ControllerBase
+     private readonly IWorkCenterService _svc;
+     public WorkCenterController(IWorkCenterService svc) => _svc = svc;
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet] public async Task<IActionResult> List([FromQuery] string? keyword) => Ok2(await _svc.ListAsync(keyword));
+     [HttpGet("{wgCd}")] public async Task<IActionResult> Get(string wgCd) => Ok2(await _svc.GetAsync(wgCd));
+ 
+     [HttpPost("upsert")]
++    [RequirePermission("mes-work-center", "edit")]
+     public async Task<IActionResult> Upsert([FromBody] WorkCenter dto)
+     { try { await _svc.UpsertAsync(dto, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+ 
+     [HttpDelete("{wgCd}")]
++    [RequirePermission("mes-work-center", "del")]
+     public async Task<IActionResult> Delete(string wgCd)
+     { try { await _svc.DeleteAsync(wgCd, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+ }
+diff --git a/CP6.WebApi/Controllers/Mes/WorkOrderController.cs b/CP6.WebApi/Controllers/Mes/WorkOrderController.cs
+index a42d6af..4b27768 100644
+--- a/CP6.WebApi/Controllers/Mes/WorkOrderController.cs
++++ b/CP6.WebApi/Controllers/Mes/WorkOrderController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>
+ /// MSBBME020 / 030 — 製造指図入力・一覧 Web API
+ /// </summary>
+@@ -39,80 +40,85 @@ public class WorkOrderController : ControllerBase
+     [HttpGet("{no}")]
+     public async Task<IActionResult> Get(string no)
+     {
+         var dto = await _service.GetByNoAsync(no);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>ME020 — 新建 POST /api/mes/work-orders</summary>
+     [HttpPost]
++    [RequirePermission("mes-work-order", "add")]
+     public async Task<IActionResult> Create([FromBody] WorkOrderDto dto)
+     {
+         try
+         {
+             var no = await _service.CreateAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { workOrderNo = no } });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME020 — 訂正 PUT /api/mes/work-orders/{no}</summary>
+     [HttpPut("{no}")]
++    [RequirePermission("mes-work-order", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] WorkOrderDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME030 — 削除 DELETE /api/mes/work-orders/{no}</summary>
+     [HttpDelete("{no}")]
++    [RequirePermission("mes-work-order", "del")]
+     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? body = null)
+     {
+         try
+         {
+             await _service.DeleteAsync(no, body?.RowVersion, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME020 — 指図発行 POST /api/mes/work-orders/{no}/issue</summary>
+     [HttpPost("{no}/issue")]
++    [RequirePermission("mes-work-order", "issue")]
+     public async Task<IActionResult> Issue(string no)
+     {
+         try
+         {
+             await _service.IssueAsync(no, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME020 — 受注 → 指図 自動展開 POST /api/mes/work-orders/expand-from-order</summary>
+     [HttpPost("expand-from-order")]
++    [RequirePermission("mes-work-order", "add")]
+     public async Task<IActionResult> ExpandFromOrder([FromBody] ExpandFromOrderRequest req)
+     {
+         try
+         {
+             var nos = await _service.ExpandFromOrderAsync(req, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { workOrderNos = nos } });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });

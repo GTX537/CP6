@@ -1,0 +1,184 @@
+# Review package: bc05c4b..HEAD
+
+## Commits
+f201a8f refactor(ui): ERP 迁移批次7——ProductMaster向导+product steps token化
+
+## Files changed
+ cp6.web/src/views/erp/ProductMasterView.vue            | 2 +-
+ cp6.web/src/views/erp/product/Step1TargetSelect.vue    | 4 ++--
+ cp6.web/src/views/erp/product/Step2BasicInfo.vue       | 2 +-
+ cp6.web/src/views/erp/product/Step3ProcessInfo.vue     | 2 +-
+ cp6.web/src/views/erp/product/Step4MaterialSetting.vue | 2 +-
+ cp6.web/src/views/erp/product/Step5LotPriceOther.vue   | 2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/erp/ProductMasterView.vue b/cp6.web/src/views/erp/ProductMasterView.vue
+index 4ef1ed9..2f9e6e5 100644
+--- a/cp6.web/src/views/erp/ProductMasterView.vue
++++ b/cp6.web/src/views/erp/ProductMasterView.vue
+@@ -487,21 +487,21 @@ onMounted(async () => {
+   margin-bottom: 12px;
+ }
+ .header-left {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+ }
+ .product-cd {
+   font-size: 16px;
+   font-weight: 600;
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ .step-bar {
+   margin-top: 8px;
+ }
+ .step-content {
+   flex: 1;
+   min-height: 400px;
+ }
+ .btn-row {
+   display: flex;
+diff --git a/cp6.web/src/views/erp/product/Step1TargetSelect.vue b/cp6.web/src/views/erp/product/Step1TargetSelect.vue
+index c5eb759..9f90b23 100644
+--- a/cp6.web/src/views/erp/product/Step1TargetSelect.vue
++++ b/cp6.web/src/views/erp/product/Step1TargetSelect.vue
+@@ -137,27 +137,27 @@
+           <el-input v-model="row.customerProductName1" :disabled="!store.canEdit" size="small" />
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('状態')" width="90">
+         <template #default="{ row }">
+           <el-tag size="small" :type="statusTagType(row.status)">{{ statusLabel(row.status) }}</el-tag>
+         </template>
+       </el-table-column>
+       <el-table-column label="WF" width="60" align="center">
+         <template #default="{ row }">
+-          <el-icon v-if="row.wfApproved" color="#67c23a"><Check /></el-icon>
++          <el-icon v-if="row.wfApproved" color="var(--cp-ok)"><Check /></el-icon>
+           <span v-else>-</span>
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('連携')" width="60" align="center">
+         <template #default="{ row }">
+-          <el-icon v-if="row.masterLinked" color="#409eff"><Link /></el-icon>
++          <el-icon v-if="row.masterLinked" color="var(--cp-brand)"><Link /></el-icon>
+           <span v-else>-</span>
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('操作')" width="80" align="center" fixed="right">
+         <template #default="{ row }">
+           <el-button
+             link
+             type="danger"
+             size="small"
+             :disabled="!store.canEdit"
+diff --git a/cp6.web/src/views/erp/product/Step2BasicInfo.vue b/cp6.web/src/views/erp/product/Step2BasicInfo.vue
+index fcf2a05..9e2ebf7 100644
+--- a/cp6.web/src/views/erp/product/Step2BasicInfo.vue
++++ b/cp6.web/src/views/erp/product/Step2BasicInfo.vue
+@@ -4,21 +4,21 @@
+     <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center" v-if="store.canEdit">
+       <span style="font-weight: 600">{{ t('見積計算書 NO 引入：') }}</span>
+       <el-input
+         v-model="estimateCalcNoInput"
+         size="small"
+         :placeholder="t('例: 00000001-01')"
+         clearable
+         style="width: 200px"
+       />
+       <el-button size="small" type="primary" :icon="Search" @click="onLoadFromEstimateCalc">{{ t('引入') }}</el-button>
+-      <span style="color: #909399; font-size: 12px">
++      <span style="color: var(--cp-muted); font-size: 12px">
+         {{ t('※ 見積計算書から基本情報を読み込みます（既存の入力値は上書きされます）') }}
+       </span>
+     </div>
+ 
+     <el-form
+       :model="store.basicInfo"
+       label-width="120px"
+       :disabled="store.isPageReadOnly"
+       size="small"
+     >
+diff --git a/cp6.web/src/views/erp/product/Step3ProcessInfo.vue b/cp6.web/src/views/erp/product/Step3ProcessInfo.vue
+index e696edc..b1915f7 100644
+--- a/cp6.web/src/views/erp/product/Step3ProcessInfo.vue
++++ b/cp6.web/src/views/erp/product/Step3ProcessInfo.vue
+@@ -6,21 +6,21 @@
+         :icon="Plus"
+         size="small"
+         :disabled="!store.canEdit"
+         @click="addProcess"
+       >{{ t('工程行追加') }}</el-button>
+       <el-button
+         size="small"
+         :disabled="!store.canEdit || store.processes.length === 0"
+         @click="reSort"
+       >{{ t('並び順再採番') }}</el-button>
+-      <span style="color: #909399; font-size: 12px">
++      <span style="color: var(--cp-muted); font-size: 12px">
+         {{ t('※ 工程CD 0600/0601/0602（トムソン系）は連産品ボタンが活性化') }}
+       </span>
+     </div>
+ 
+     <el-table
+       :data="store.processes"
+       border
+       stripe
+       style="width: 100%"
+       size="small"
+diff --git a/cp6.web/src/views/erp/product/Step4MaterialSetting.vue b/cp6.web/src/views/erp/product/Step4MaterialSetting.vue
+index e816092..273cd78 100644
+--- a/cp6.web/src/views/erp/product/Step4MaterialSetting.vue
++++ b/cp6.web/src/views/erp/product/Step4MaterialSetting.vue
+@@ -6,21 +6,21 @@
+         :icon="Plus"
+         size="small"
+         :disabled="!store.canEdit"
+         @click="addMaterial"
+       >{{ t('材料行追加') }}</el-button>
+       <el-button
+         size="small"
+         :disabled="!store.canEdit || store.materials.length === 0"
+         @click="reSort"
+       >{{ t('並び順再採番') }}</el-button>
+-      <span style="color: #909399; font-size: 12px">
++      <span style="color: var(--cp-muted); font-size: 12px">
+         {{ t('※ 材料区分: 1=主材料 / 2=副資材 / 3=梱包材') }}
+       </span>
+     </div>
+ 
+     <el-table
+       :data="store.materials"
+       border
+       stripe
+       style="width: 100%"
+       size="small"
+diff --git a/cp6.web/src/views/erp/product/Step5LotPriceOther.vue b/cp6.web/src/views/erp/product/Step5LotPriceOther.vue
+index d035428..9f2be17 100644
+--- a/cp6.web/src/views/erp/product/Step5LotPriceOther.vue
++++ b/cp6.web/src/views/erp/product/Step5LotPriceOther.vue
+@@ -3,21 +3,21 @@
+     <el-divider content-position="left">{{ t('ロット別単価') }}</el-divider>
+ 
+     <div style="margin-bottom: 8px; display: flex; gap: 8px; align-items: center">
+       <el-button
+         type="primary"
+         :icon="Plus"
+         size="small"
+         :disabled="!store.canEdit"
+         @click="addLotPrice"
+       >{{ t('行追加') }}</el-button>
+-      <span style="color: #909399; font-size: 12px">
++      <span style="color: var(--cp-muted); font-size: 12px">
+         {{ t('※ 現在価格は表示用、新価格は次回適用 — 適用日付を必ず入力') }}
+       </span>
+     </div>
+ 
+     <el-table
+       :data="store.lotPrices"
+       border
+       stripe
+       style="width: 100%"
+       size="small"

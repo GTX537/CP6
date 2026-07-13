@@ -1,0 +1,140 @@
+# Review package: c07df2d..HEAD
+
+## Commits
+251c99c fix(wfs-service-task): T3 IWfConnector.MaxCallDuration + 启动期租约护栏（防长调用被 reaper 重投重复外呼）
+
+## Files changed
+ CP6.Core/Services/Wf/IWfConnector.cs          |  5 ++++
+ CP6.Core/Services/Wf/WfConnectorLeaseGuard.cs | 23 +++++++++++++++++
+ CP6.Tests/Wf/WfConnectorLeaseGuardTests.cs    | 36 +++++++++++++++++++++++++++
+ CP6.WebApi/Program.cs                         |  7 ++++++
+ 4 files changed, 71 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/IWfConnector.cs b/CP6.Core/Services/Wf/IWfConnector.cs
+index 909b286..cac8304 100644
+--- a/CP6.Core/Services/Wf/IWfConnector.cs
++++ b/CP6.Core/Services/Wf/IWfConnector.cs
+@@ -1,14 +1,19 @@
+ namespace CP6.Core.Services.Wf;
+ 
+ /// <summary>注册式连接器契约（D4/D9/P1-5：连接器自己决定 baseURL/认证/HTTP method/headers/timeout/response→OutputVars 映射；
+ /// 密钥服务端配置，绝不进 SchemaJson）。
+ /// 实现应把 ctx.JobId 作幂等键发出：Idempotency-Key: wf-service-job-{JobId}。</summary>
+ public interface IWfConnector
+ {
+     string Name { get; }          // 设计器下拉用（唯一键，按 Name 索引）
+     string DisplayName { get; }
+ 
++    /// <summary>本连接器单次调用的上界耗时（含内部重试）。用于启动期校验其 &lt; 租约时长
++    /// （<see cref="WfServiceJobService.LeaseDuration"/>），防长调用被 reaper 误判崩溃而重投→重复外呼。
++    /// 默认 null = 未声明（假定安全，如 demo EchoConnector）；真实 HTTP 连接器应据 HttpClient.Timeout 如实声明。</summary>
++    TimeSpan? MaxCallDuration => null;
++
+     /// <summary>按路径+参数模板调用。连接器自己决定 baseURL/认证/HTTP method/headers/timeout/response→OutputVars 映射（D4/P1-5）。
+     /// 实现应把 ctx.JobId 作幂等键发出：Idempotency-Key: wf-service-job-{JobId}。</summary>
+     Task<ServiceTaskResult> CallAsync(string pathTemplate, string? paramsJson, ServiceTaskContext ctx);
+ }
+diff --git a/CP6.Core/Services/Wf/WfConnectorLeaseGuard.cs b/CP6.Core/Services/Wf/WfConnectorLeaseGuard.cs
+new file mode 100644
+index 0000000..ccc5d3d
+--- /dev/null
++++ b/CP6.Core/Services/Wf/WfConnectorLeaseGuard.cs
+@@ -0,0 +1,23 @@
++using System;
++using System.Collections.Generic;
++using System.Linq;
++
++namespace CP6.Core.Services.Wf;
++
++/// <summary>启动期护栏（票3）：任何连接器声明的单次调用上界 >= 租约时长即抛错快速失败，
++/// 逼真实连接器把 HTTP 超时配在租约内，杜绝「长调用未完 → reaper 复位重投 → 重复外呼」。</summary>
++public static class WfConnectorLeaseGuard
++{
++    public static void Validate(IEnumerable<IWfConnector> connectors)
++    {
++        var lease = WfServiceJobService.LeaseDuration;
++        var offenders = (connectors ?? Enumerable.Empty<IWfConnector>())
++            .Where(c => c.MaxCallDuration is TimeSpan d && d >= lease)
++            .Select(c => $"{c.Name}(MaxCallDuration={c.MaxCallDuration})")
++            .ToList();
++        if (offenders.Count > 0)
++            throw new InvalidOperationException(
++                $"WfConnector 租约校验失败：以下连接器 MaxCallDuration >= 租约 {lease}，" +
++                $"reaper 会误判崩溃并重投导致重复外呼——请把 HTTP 超时收进租约内：{string.Join(", ", offenders)}");
++    }
++}
+diff --git a/CP6.Tests/Wf/WfConnectorLeaseGuardTests.cs b/CP6.Tests/Wf/WfConnectorLeaseGuardTests.cs
+new file mode 100644
+index 0000000..6be8e3e
+--- /dev/null
++++ b/CP6.Tests/Wf/WfConnectorLeaseGuardTests.cs
+@@ -0,0 +1,36 @@
++using System;
++using CP6.Core.Services.Wf;
++using Xunit;
++
++public class WfConnectorLeaseGuardTests
++{
++    private sealed class SafeConn : IWfConnector {
++        public string Name => "safe"; public string DisplayName => "Safe";
++        public TimeSpan? MaxCallDuration => TimeSpan.FromMinutes(1);   // < 5min 租约
++        public System.Threading.Tasks.Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext c)
++            => System.Threading.Tasks.Task.FromResult(ServiceTaskResult.Ok());
++    }
++    private sealed class SlowConn : IWfConnector {
++        public string Name => "slow"; public string DisplayName => "Slow";
++        public TimeSpan? MaxCallDuration => TimeSpan.FromMinutes(6);   // >= 5min 租约 → 非法
++        public System.Threading.Tasks.Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext c)
++            => System.Threading.Tasks.Task.FromResult(ServiceTaskResult.Ok());
++    }
++    private sealed class UndeclaredConn : IWfConnector {
++        public string Name => "echo"; public string DisplayName => "Echo";
++        // 不覆写 MaxCallDuration → 默认 null → 通过（假定安全，EchoConnector 同款）
++        public System.Threading.Tasks.Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext c)
++            => System.Threading.Tasks.Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    [Fact] public void Passes_WhenAllUnderLease()
++        => WfConnectorLeaseGuard.Validate(new IWfConnector[] { new SafeConn(), new UndeclaredConn() });
++
++    [Fact] public void Throws_WhenConnectorAtOrOverLease()
++    {
++        var ex = Assert.Throws<InvalidOperationException>(
++            () => WfConnectorLeaseGuard.Validate(new IWfConnector[] { new SafeConn(), new SlowConn() }));
++        Assert.Contains("slow", ex.Message);
++        Assert.Contains("MaxCallDuration", ex.Message);
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 2b233df..1a229cb 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -654,20 +654,27 @@ builder.Services.AddCors(options =>
+ {
+     options.AddPolicy("AllowAll", policy =>
+         policy.WithOrigins(corsOrigins)
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials());
+ });
+ 
+ var app = builder.Build();
+ 
++// 票3：启动期校验已注册连接器的单次调用上界 < 服务任务租约（防长调用被 reaper 重投→重复外呼）。
++using (var _leaseScope = app.Services.CreateScope())
++{
++    CP6.Core.Services.Wf.WfConnectorLeaseGuard.Validate(
++        _leaseScope.ServiceProvider.GetServices<CP6.Core.Services.Wf.IWfConnector>());
++}
++
+ if (app.Environment.IsDevelopment())
+ {
+     app.UseSwagger();
+     app.UseSwaggerUI();
+ }
+ 
+ // 7. 初始化种子数据（首次启动时自动创建）
+ using (var scope = app.Services.CreateScope())
+ {
+     var db = scope.ServiceProvider.GetRequiredService<CP6Context>();

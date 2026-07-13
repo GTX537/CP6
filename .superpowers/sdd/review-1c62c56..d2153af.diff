@@ -1,0 +1,275 @@
+# Review package: 1c62c56..d2153af
+
+## Commits
+d2153af fix(space): 停用库存校验带仓维度（评审 H7）+ 并发冲突映射 409 E-SPACE-009（评审 H8）
+
+## Files changed
+ CP6.Core/Services/Integration/IWmsStockQuery.cs           |  6 +++---
+ CP6.Core/Services/Space/LocationPublishService.cs         |  7 ++++---
+ CP6.Core/Services/Wms/WmsStockQuery.cs                    |  8 ++++++--
+ CP6.Tests/LocationPublishServiceTests.cs                  |  2 +-
+ CP6.Tests/WmsStockQueryTests.cs                           | 15 +++++++++++++++
+ CP6.WebApi/Controllers/Space/LocationPublishController.cs | 15 +++++++++++++++
+ 6 files changed, 44 insertions(+), 9 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Integration/IWmsStockQuery.cs b/CP6.Core/Services/Integration/IWmsStockQuery.cs
+index a0db073..e6878f8 100644
+--- a/CP6.Core/Services/Integration/IWmsStockQuery.cs
++++ b/CP6.Core/Services/Integration/IWmsStockQuery.cs
+@@ -7,22 +7,22 @@ namespace CP6.Core.Services.Integration;
+ public interface IWmsStockQuery
+ {
+     /// <summary>批量按库位编码查库存（叠加主力）。未命中编码不在结果集。</summary>
+     Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
+         IReadOnlyCollection<string> locationCodes, CancellationToken ct = default);
+ 
+     /// <summary>按物料/批次/容器反查"哪些库位有它"（D8 P2 半）。</summary>
+     Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
+         StockLocateQuery query, CancellationToken ct = default);
+ 
+-    /// <summary>单库位库存量（= 批量的单元素特例；04 停用前置 0 库存校验用）。</summary>
+-    Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default);
++    /// <summary>单库位库存量（04 停用前置校验用）。warehouseCd 给定时按 (仓,码) 锚查（§3.4 多仓防串仓）。</summary>
++    Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default);
+ }
+ 
+ /// <summary>库位库存叠加 DTO（join key=LocationCode）。</summary>
+ public sealed class WmsStockDto
+ {
+     public string  LocationCode { get; set; } = "";
+     public int     BinStatus    { get; set; }   // 0空 1有货 2满 3锁定 4在拣
+     public decimal Qty          { get; set; }   // ΣPhysicalQty
+     public decimal AllocatedQty { get; set; }   // ΣAllocatedQty
+     public decimal? Capacity    { get; set; }   // Location.CapacityQty（0/未设→null）
+@@ -50,13 +50,13 @@ public sealed class WmsLocationHit
+ public sealed class StubWmsStockQuery : IWmsStockQuery
+ {
+     public Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
+         IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
+         => Task.FromResult<IReadOnlyList<WmsStockDto>>(Array.Empty<WmsStockDto>());
+ 
+     public Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
+         StockLocateQuery query, CancellationToken ct = default)
+         => Task.FromResult<IReadOnlyList<WmsLocationHit>>(Array.Empty<WmsLocationHit>());
+ 
+-    public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default)
++    public Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default)
+         => Task.FromResult(0m);
+ }
+diff --git a/CP6.Core/Services/Space/LocationPublishService.cs b/CP6.Core/Services/Space/LocationPublishService.cs
+index 7f97ef3..d3f4c45 100644
+--- a/CP6.Core/Services/Space/LocationPublishService.cs
++++ b/CP6.Core/Services/Space/LocationPublishService.cs
+@@ -103,32 +103,33 @@ public class LocationPublishService : ILocationPublishService
+     }
+ 
+     /// <inheritdoc/>
+     public async Task DeactivateAsync(Guid locationId, string? user)
+     {
+         var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId)
+                 ?? throw new InvalidOperationException("E-SPACE-004: 库位不存在");
+         if (l.Status != 1)
+             throw new InvalidOperationException("E-SPACE-004: 库位未处于已发布状态");
+ 
+-        // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①）
+-        var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "");
++        // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
++        var warehouseCd = await ResolveWarehouseCdAsync(l);
++        var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
+         if (qty > 0)
+             throw new InvalidOperationException("E-SPACE-401: 库位仍有库存，无法停用");
+ 
+         // ② 同步 RPC：WMS 按实时库存权威判定（TOCTOU 防护；ch04 §6.1② v1.1）
+         var newVersion = l.Version + 1;
+         var resp = await _deactivator.DeactivateAsync(new WmsDeactivateRequest
+         {
+             LocationId = l.Id,
+             LocationCode = l.LocationCode ?? "",
+-            WarehouseCd = await ResolveWarehouseCdAsync(l),
++            WarehouseCd = warehouseCd,
+             Version = newVersion,
+             User = user
+         });
+ 
+         // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
+         if (!resp.Success)
+             throw new InvalidOperationException("W-SPACE-404: WMS 侧仍有库存，停用未生效");
+ 
+         l.Status = 2;
+         l.Version = newVersion;
+diff --git a/CP6.Core/Services/Wms/WmsStockQuery.cs b/CP6.Core/Services/Wms/WmsStockQuery.cs
+index a828551..04420ff 100644
+--- a/CP6.Core/Services/Wms/WmsStockQuery.cs
++++ b/CP6.Core/Services/Wms/WmsStockQuery.cs
+@@ -4,22 +4,26 @@ using CP6.Entity.DomainModels.Wms;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Wms;
+ 
+ /// <summary>WMS 库存只读查询接真实现（读 T_Stock/T_Location/T_OutboundOrder*；纯读，多租户全局过滤自动隔离）。</summary>
+ public class WmsStockQuery : IWmsStockQuery
+ {
+     private readonly CP6Context _db;
+     public WmsStockQuery(CP6Context db) => _db = db;
+ 
+-    public async Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default)
+-        => await _db.Stocks.Where(s => s.LocationCd == locationCode).SumAsync(s => s.PhysicalQty, ct);
++    public async Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default)
++    {
++        var q = _db.Stocks.Where(s => s.LocationCd == locationCode);
++        if (!string.IsNullOrEmpty(warehouseCd)) q = q.Where(s => s.WarehouseCd == warehouseCd);
++        return await q.SumAsync(s => s.PhysicalQty, ct);
++    }
+ 
+     public async Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
+         IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
+     {
+         var codes = locationCodes.Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+         if (codes.Count == 0) return Array.Empty<WmsStockDto>();
+ 
+         var stockRows = await _db.Stocks.Where(s => codes.Contains(s.LocationCd)).ToListAsync(ct);
+         var stockByLoc = stockRows.GroupBy(s => s.LocationCd).ToDictionary(g => g.Key, g => new
+         {
+diff --git a/CP6.Tests/LocationPublishServiceTests.cs b/CP6.Tests/LocationPublishServiceTests.cs
+index 85be49f..a0697e7 100644
+--- a/CP6.Tests/LocationPublishServiceTests.cs
++++ b/CP6.Tests/LocationPublishServiceTests.cs
+@@ -324,21 +324,21 @@ public class LocationPublishServiceTests
+         var (imported, skipped) = await svc.AdoptAsync(items, "u");
+         Assert.Equal(1, imported);
+         Assert.Single(skipped);
+         Assert.Contains("EXT-001", skipped);
+     }
+ 
+     private sealed class FixedStockQuery : IWmsStockQuery
+     {
+         private readonly decimal _qty;
+         public FixedStockQuery(int qty) => _qty = qty;
+-        public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default) => Task.FromResult(_qty);
++        public Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default) => Task.FromResult(_qty);
+         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>> GetStockByLocationsAsync(
+             IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
+             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>>(Array.Empty<CP6.Core.Services.Integration.WmsStockDto>());
+         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>> FindLocationsAsync(
+             CP6.Core.Services.Integration.StockLocateQuery query, CancellationToken ct = default)
+             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>>(Array.Empty<CP6.Core.Services.Integration.WmsLocationHit>());
+     }
+ 
+     private sealed class RejectingDeactivator : IWmsBinDeactivator
+     {
+diff --git a/CP6.Tests/WmsStockQueryTests.cs b/CP6.Tests/WmsStockQueryTests.cs
+index 881bb61..aa78fbd 100644
+--- a/CP6.Tests/WmsStockQueryTests.cs
++++ b/CP6.Tests/WmsStockQueryTests.cs
+@@ -171,20 +171,35 @@ public class WmsStockQueryTests
+         Assert.Equal("A-09", Assert.Single(hits).LocationCode);
+     }
+ 
+     [Fact]
+     public async Task FindLocations_AllEmpty_ReturnsEmpty()
+     {
+         using var db = NewDb();
+         Assert.Empty(await Stock(db).FindLocationsAsync(new StockLocateQuery()));
+     }
+ 
++    [Fact]
++    public async Task GetStockQty_WarehouseScoped_ExcludesOtherWarehouses()
++    {
++        // H7：多仓同码时不带仓维度会跨仓求和 → 误拦他仓同码库位的停用
++        using var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
++        db.Stocks.Add(new Stock { Id = Guid.NewGuid(), WarehouseCd = "W1", LocationCd = "A-01", ProductCd = "P", LotNo = "", PhysicalQty = 3m });
++        db.Stocks.Add(new Stock { Id = Guid.NewGuid(), WarehouseCd = "W2", LocationCd = "A-01", ProductCd = "P", LotNo = "", PhysicalQty = 7m });
++        await db.SaveChangesAsync();
++
++        var q = new WmsStockQuery(db);
++        Assert.Equal(10m, await q.GetStockQtyAsync("A-01"));        // 兼容：不带仓维度=跨仓求和
++        Assert.Equal(3m, await q.GetStockQtyAsync("A-01", "W1"));   // 带仓维度只算本仓
++    }
++
+     [Fact]
+     public async Task GetStockByLocations_TenantIsolated()
+     {
+         var dbName = Guid.NewGuid().ToString();
+         var optsA = new DbContextOptionsBuilder<CP6Context>().UseInMemoryDatabase(dbName).Options;
+         var t2 = new CP6.Core.Services.Common.TenantContext { CurrentTenantId = Guid.NewGuid() };
+ 
+         // 租户2 播一条
+         using (var db2 = new CP6Context(optsA, t2))
+         {
+diff --git a/CP6.WebApi/Controllers/Space/LocationPublishController.cs b/CP6.WebApi/Controllers/Space/LocationPublishController.cs
+index cb95dd6..ac254d9 100644
+--- a/CP6.WebApi/Controllers/Space/LocationPublishController.cs
++++ b/CP6.WebApi/Controllers/Space/LocationPublishController.cs
+@@ -37,55 +37,70 @@ public class LocationPublishController : ControllerBase
+     {
+         try
+         {
+             var count = await _svc.PublishFloorAsync(id, req?.ZoneId, CurrentUser);
+             return Ok2(new { published = count });
+         }
+         catch (InvalidOperationException e)
+         {
+             return BadRequest(new { code = 400, message = e.Message });
+         }
++        catch (DbUpdateConcurrencyException)
++        {
++            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
++            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
++        }
+     }
+ 
+     // ── PUT /api/space/location/{id}/deactivate ───────────────────────────
+ 
+     /// <summary>停用已发布库位（ch04 §6）。</summary>
+     [HttpPut("location/{id:guid}/deactivate")]
+     public async Task<IActionResult> Deactivate(Guid id)
+     {
+         try
+         {
+             await _svc.DeactivateAsync(id, CurrentUser);
+             return Ok2();
+         }
+         catch (InvalidOperationException e)
+         {
+             return BadRequest(new { code = 400, message = e.Message });
+         }
++        catch (DbUpdateConcurrencyException)
++        {
++            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
++            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
++        }
+     }
+ 
+     // ── POST /api/space/location/adopt ────────────────────────────────────
+ 
+     /// <summary>存量采纳导入（ch04 §8.1）。</summary>
+     [HttpPost("location/adopt")]
+     public async Task<IActionResult> Adopt([FromBody] AdoptRequest req)
+     {
+         try
+         {
+             var items = req.Items.Select(i => (i.Code, (Dictionary<string, object?>?)i.Attrs));
+             var (imported, skipped) = await _svc.AdoptAsync(items, CurrentUser);
+             return Ok2(new { imported, skipped });
+         }
+         catch (InvalidOperationException e)
+         {
+             return BadRequest(new { code = 400, message = e.Message });
+         }
++        catch (DbUpdateConcurrencyException)
++        {
++            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
++            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
++        }
+     }
+ 
+     // ── GET /api/space/publish/events ─────────────────────────────────────
+ 
+     /// <summary>列出 SPACE→WMS 集成事件（ch04 §2）。</summary>
+     [HttpGet("publish/events")]
+     public async Task<IActionResult> ListEvents([FromQuery] int page = 1, [FromQuery] int pageSize = 50)
+     {
+         var events = await _db.IntegrationEvents
+             .Where(e => e.SourceModule == "SPACE")

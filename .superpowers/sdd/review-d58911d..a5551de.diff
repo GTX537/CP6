@@ -1,0 +1,362 @@
+# Review package: d58911d..a5551de
+
+## Commits
+a5551de test(erp): M-ERP T6 核心算价路径回归(Quotation报价/Order建单算价)
+
+## Files changed
+ .superpowers/sdd/erp-t6-report.md   |  69 ++++++++++++++++
+ CP6.Tests/Erp/OrderCalcTests.cs     | 152 ++++++++++++++++++++++++++++++++++++
+ CP6.Tests/Erp/QuotationCalcTests.cs | 111 ++++++++++++++++++++++++++
+ 3 files changed, 332 insertions(+)
+
+## Diff
+diff --git a/.superpowers/sdd/erp-t6-report.md b/.superpowers/sdd/erp-t6-report.md
+new file mode 100644
+index 0000000..87b83de
+--- /dev/null
++++ b/.superpowers/sdd/erp-t6-report.md
+@@ -0,0 +1,69 @@
++# M-ERP T6 报告：测试补网(Quotation 报价计算 / Order 建单算价)
++
++## 既有覆盖盘点结论
++
++对 CP6.Tests 全仓 grep（Quotation / Order / 算价关键字），既有 ERP 相关测试仅两处，**均不触及计算式**：
++
++| 文件 | 覆盖内容 | 是否触及金额计算式 |
++|---|---|---|
++| `CP6.Tests/Erp/ErpAuditTests.cs` (T5) | 字段级审计接线冒烟——**直接给实体 `Amount`/`FxRate` 赋值**再断言产生 `Sys_FieldAuditLogs` 行 | 否。把 Amount 当输入直接写，从不验证 `数量×単価` 是否算对 |
++| `CP6.Tests/OrderServiceCancelTests.cs` (Phase6) | `OrderService.CancelAsync` 取消状态机（Rejected/NeedsDecision/Cancelled/PartiallyCancelled 分支 + Bridge Hook mock） | 否。纯生命周期状态，无算价 |
++
++结论：`QuotationService` 报价计算（行金额=数量×単価、合計=Σ行金額、訂正再计算）与 `OrderService` 建单算价（价格来源 SalesPriceDiv 分岐、`CalcAmountAsync`、`BatchUpdatePriceAsync` 金额再计算）核心路径**测试为零**。本任务 7 用例与既有零重复。
++
++## 计算主路径（生产代码，零改动）
++
++- QuotationService.CreateAsync/UpdateAsync：`amount = (Quantity ?? 0) * (UnitPrice ?? 0)`；`TotalAmount = Σ amount`（UpdateAsync 只累加 incoming 明细，软删除行被排除）。
++- OrderService.CalcAmountAsync：`qty * (SalesPriceDiv=="1" ? newIndPrice : newSetPrice)`——价格来源由 SalesPriceDiv 决定（"1"=個別売取個別単価，其余=セット売取セット単価）。
++- OrderService.BatchUpdatePriceAsync：单价訂正保存时 `entity.Amount = (Quantity ?? 0) * (SalesPriceDiv=="1" ? IndividualUnitPrice : SetUnitPrice)`；单价变更则 ApprovalStatus 差戻し=1 + WF 起票计数。
++
++## 逐用例「输入 → 手算演算 → 期望值」
++
++### QuotationCalcTests.cs（QuotationService）
++
++| 用例 | 输入 | 手算演算 | 期望值 |
++|---|---|---|---|
++| Q1 正常 `Create_TwoDetails_ComputesLineAmountAndTotal` | 行1 Qty=12 UP=150；行2 Qty=3 UP=2000 | 行1=12×150=1800；行2=3×2000=6000；合計=1800+6000 | d1.Amount=1800, d2.Amount=6000, Total=7800 |
++| Q2 边界 `Create_NullQtyOrZeroPrice_...` | 行1 Qty=null UP=500；行2 Qty=10 UP=0；行3 Qty=5 UP=100 | 行1=(0)×500=0；行2=10×0=0；行3=5×100=500；合計=0+0+500 | d1=0, d2=0, d3=500, Total=500 |
++| Q3 訂正再计算 `Update_RemoveDetailAndChangeQty_RecomputesTotal` | 建单 行1 Qty=10 UP=100(=1000)+行2 Qty=2 UP=250(=500)，Total=1500；訂正=删行2、行1 Qty 10→8 | 行1=8×100=800；行2 论理削除→排除合計；合計=800 | 明细仅剩1行, d1.Amount=800, Total=800 |
++
++### OrderCalcTests.cs（OrderService）
++
++| 用例 | 输入 | 手算演算 | 期望值 |
++|---|---|---|---|
++| O1 正常個別売 `CalcAmount_IndividualSalesDiv_...` | 明细 Qty=100 Div="1"；调用 newInd=25.5 newSet=999 | Div="1"→取個別単価 25.5；100×25.5（セット 999 无视） | 2550 |
++| O2 正常セット売 `CalcAmount_SetSalesDiv_...` | 明细 Qty=100 Div="2"；调用 newInd=25.5 newSet=30 | Div≠"1"→取セット単価 30；100×30（個別 25.5 无视） | 3000 |
++| O3 边界 `CalcAmount_MissingDetailOrNullPrice_ReturnsZero` | (a)误 NO 999；(b)明细 Div="2" newSet=null | (a)明细不在→0；(b)セット単価 null→100×0 | 两断言均=0 |
++| O4 バッチ算价 `BatchUpdatePrice_MultiLine_...` | 2 明细同受注 Div="1"；item1 IndAfter=25、item2 IndAfter=10（原単価 null） | l1=100×25=2500；l2=40×10=400；两行単価变更→各 ApprovalStatus=1、WF 计 2 | UpdatedCount=2, WfRequestedCount=2, pe.Calls=2, l1.Amount=2500(ApprovalStatus=1), l2.Amount=400 |
++
++## 测试命令与输出
++
++聚焦：
++```
++dotnet test CP6.Tests/CP6.Tests.csproj --filter "FullyQualifiedName~CP6.Tests.Erp.QuotationCalcTests|FullyQualifiedName~CP6.Tests.Erp.OrderCalcTests"
++Passed! - Failed: 0, Passed: 7, Skipped: 0, Total: 7
++```
++全量（基线 1709）：
++```
++dotnet test CP6.Tests/CP6.Tests.csproj
++Passed! - Failed: 0, Passed: 1716, Skipped: 5, Total: 1721
++```
++1709 + 7 = 1716，无回归下跌。
++
++## Files changed
++
++- `CP6.Tests/Erp/QuotationCalcTests.cs`（新增，3 用例）
++- `CP6.Tests/Erp/OrderCalcTests.cs`（新增，4 用例）
++- 零生产代码改动。
++
++## Self-review
++
++- 断言全为手算期望值（1800/6000/7800/500/800/2550/3000/0/2500/400），无「以服务输出为期望」的套套逻辑。✔
++- 与既有 ErpAuditTests / OrderServiceCancelTests 零重复（盘点见上）。✔
++- 每服务正常+边界各覆盖：Quotation 正常(Q1)+边界(Q2 null/0)+訂正(Q3)；Order 正常(O1/O2)+边界(O3)+バッチ(O4)。✔
++- 零生产改动。✔
++
++## Concerns
++
++1. **【测试局限，非缺陷】set 单价一括伝播路径 InMemory 不可测**：`BatchUpdatePriceAsync` 在 `item.SetUnitPriceAfter.HasValue` 时用 `ExecuteUpdateAsync` 把同一 WebOrderNo 全明细的 SetUnitPrice 一括更新。`ExecuteUpdateAsync` 是 relational 专属扩展，EF InMemory 8.0.12 抛「could not be translated」。故本单元测试仅覆盖個別売(Div="1")保存路径（不触发 ExecuteUpdate），セット単価一括伝播（明细横断汇总）留待 relational 集成测试。O4 已注释说明。**未发现服务缺陷**——手算与服务输出全部一致。
++2. 计算式本身健壮（null 用 `?? 0` 兜底），本轮真值锚定未暴露任何算价 bug。
+diff --git a/CP6.Tests/Erp/OrderCalcTests.cs b/CP6.Tests/Erp/OrderCalcTests.cs
+new file mode 100644
+index 0000000..d501069
+--- /dev/null
++++ b/CP6.Tests/Erp/OrderCalcTests.cs
+@@ -0,0 +1,152 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Erp;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels;
++using CP6.Entity.DomainModels.Erp;
++using CP6.Entity.DTOs.Erp;
++using Xunit;
++
++namespace CP6.Tests.Erp;
++
++/// <summary>
++/// Web 受注 建单算价「钱路」真値回帰（M-ERP 横切 T6 補網）。
++///
++/// 全局审计 T5/#6：受注金額の計算主路径に既存テストがゼロ。
++///  ① 価格来源：SalesPriceDiv=="1"（個別売）→ 個別単価、それ以外（セット売）→ セット単価。
++///  ② 金額 = 数量 × 選ばれた単価（<see cref="OrderService.CalcAmountAsync"/>）。
++///  ③ 単価訂正保存（BatchUpdatePriceAsync）：金額再計算 + 承認差戻し
++///     + セット単価の同一受注内一括伝播（明細横断の汇总）。
++/// 既存 <see cref="ErpAuditTests"/>（Amount 直書換→審計行）/
++/// <see cref="CP6.Tests.OrderServiceCancelTests"/>（取消状態機）とは非重複。
++///
++/// 断言は全て手算期望値。
++/// </summary>
++public class OrderCalcTests
++{
++    /// <summary>WF 起票は連携環境無し前提の No-Op（起票成功したことにする）。</summary>
++    private sealed class FakePowerEgg : IPowerEggWorkflowService
++    {
++        public int Calls { get; private set; }
++        public Task<bool> RequestPriceCorrectionAsync(OrderDetail entity, string? applicantStaffCd, CancellationToken ct = default)
++        {
++            Calls++;
++            return Task.FromResult(true);
++        }
++    }
++
++    private static OrderService NewSvc(CP6Context db, IPowerEggWorkflowService? pe = null)
++        => new(db, pe ?? new FakePowerEgg(), new NoOpWmsBridgeHook());
++
++    private static OrderDetail SeedDetail(CP6Context db, string webOrderNo, int no,
++        decimal? qty, string? salesPriceDiv, decimal? setPrice = null, decimal? amount = null)
++    {
++        var d = new OrderDetail
++        {
++            WebOrderNo = webOrderNo,
++            WebOrderDetailNo = no,
++            ProductCd = $"P{no:D3}",
++            Quantity = qty,
++            SalesPriceDiv = salesPriceDiv,
++            SetUnitPrice = setPrice,
++            Amount = amount,
++            ApprovalStatus = 0,
++        };
++        db.OrderDetails.Add(d);
++        db.SaveChanges();
++        return d;
++    }
++
++    // ═════════ ① 価格来源＝個別売（SalesPriceDiv="1"）→ 個別単価を採用 ═════════
++
++    [Fact]
++    public async Task CalcAmount_IndividualSalesDiv_UsesIndividualPrice()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        SeedDetail(db, "WO-IND", 1, qty: 100m, salesPriceDiv: "1");
++        var svc = NewSvc(db);
++
++        // 手算：個別売 → 100 × 25.5 = 2550（セット単価 999 は無視される）
++        var amount = await svc.CalcAmountAsync("WO-IND", 1, newIndPrice: 25.5m, newSetPrice: 999m);
++
++        Assert.Equal(2550m, amount);
++    }
++
++    // ═════════ ② 価格来源＝セット売（SalesPriceDiv≠"1"）→ セット単価を採用 ═════════
++
++    [Fact]
++    public async Task CalcAmount_SetSalesDiv_UsesSetPrice()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        SeedDetail(db, "WO-SET", 1, qty: 100m, salesPriceDiv: "2");
++        var svc = NewSvc(db);
++
++        // 手算：セット売 → 100 × 30 = 3000（個別単価 25.5 は無視される）
++        var amount = await svc.CalcAmountAsync("WO-SET", 1, newIndPrice: 25.5m, newSetPrice: 30m);
++
++        Assert.Equal(3000m, amount);
++    }
++
++    // ═════════ ③ 边界：明細不在→0、単価 null→数量×0=0 ═════════
++
++    [Fact]
++    public async Task CalcAmount_MissingDetailOrNullPrice_ReturnsZero()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        SeedDetail(db, "WO-B", 1, qty: 100m, salesPriceDiv: "2");
++        var svc = NewSvc(db);
++
++        // 明細不在（誤 NO）→ 0
++        Assert.Equal(0m, await svc.CalcAmountAsync("WO-B", 999, newIndPrice: 10m, newSetPrice: 10m));
++        // セット売で セット単価 null → 100 × 0 = 0
++        Assert.Equal(0m, await svc.CalcAmountAsync("WO-B", 1, newIndPrice: 77m, newSetPrice: null));
++    }
++
++    // ═════════ ④ 単価訂正バッチ保存：各行の金額再計算（個別売）+ 承認差戻し集計 ═════════
++    // 個別売（div="1"）路径のみ検証。セット単価一括伝播は ExecuteUpdate（relational 専用、
++    // InMemory 非対応）に依存するため本ユニットテストの対象外（concerns 記載）。
++
++    [Fact]
++    public async Task BatchUpdatePrice_MultiLine_RecomputesEachAmount_AndAggregatesWfReset()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        // 同一受注 WO-BATCH に 2 明細（共に個別売、個別単価未設定）
++        SeedDetail(db, "WO-BATCH", 1, qty: 100m, salesPriceDiv: "1", amount: 0m);
++        SeedDetail(db, "WO-BATCH", 2, qty: 40m, salesPriceDiv: "1", amount: 0m);
++        var pe = new FakePowerEgg();
++        var svc = NewSvc(db, pe);
++
++        var req = new OrderPriceCorrectionBatchUpdateDto
++        {
++            Items =
++            {
++                new OrderPriceCorrectionUpdateDto
++                {
++                    WebOrderNo = "WO-BATCH", WebOrderDetailNo = 1,
++                    IndividualUnitPriceAfter = 25m, PriceChangeReason = "客先交渉",
++                },
++                new OrderPriceCorrectionUpdateDto
++                {
++                    WebOrderNo = "WO-BATCH", WebOrderDetailNo = 2,
++                    IndividualUnitPriceAfter = 10m, PriceChangeReason = "客先交渉",
++                },
++            },
++        };
++
++        var result = await svc.BatchUpdatePriceAsync(req, "bob");
++
++        // 集計：2 件更新、両行とも単価変更ありなので WF 2 件起票
++        Assert.Equal(2, result.UpdatedCount);
++        Assert.Equal(2, result.WfRequestedCount);
++        Assert.Empty(result.ConflictedKeys);
++        Assert.Equal(2, pe.Calls);
++
++        // 手算：明細1 = 100 × 25 = 2500、明細2 = 40 × 10 = 400（各行独立に個別単価で再計算）
++        var l1 = db.OrderDetails.Single(x => x.WebOrderNo == "WO-BATCH" && x.WebOrderDetailNo == 1);
++        var l2 = db.OrderDetails.Single(x => x.WebOrderNo == "WO-BATCH" && x.WebOrderDetailNo == 2);
++        Assert.Equal(2500m, l1.Amount);
++        Assert.Equal(25m, l1.IndividualUnitPrice);
++        Assert.Equal(1, l1.ApprovalStatus); // 単価変更 → 承認差戻し(=1)
++        Assert.Equal(400m, l2.Amount);
++        Assert.Equal(10m, l2.IndividualUnitPrice);
++    }
++}
+diff --git a/CP6.Tests/Erp/QuotationCalcTests.cs b/CP6.Tests/Erp/QuotationCalcTests.cs
+new file mode 100644
+index 0000000..c8a812a
+--- /dev/null
++++ b/CP6.Tests/Erp/QuotationCalcTests.cs
+@@ -0,0 +1,111 @@
++using CP6.Core.Services.Erp;
++using CP6.Entity.DTOs.Erp;
++using Xunit;
++
++namespace CP6.Tests.Erp;
++
++/// <summary>
++/// 御見積書 報価計算「钱路」真値回帰（M-ERP 横切 T6 補網）。
++///
++/// 全局审计 T5/#6：QuotationService の 金額 = 数量 × 単価、合計 = Σ 行金額 の
++/// 計算主路径に既存テストがゼロ。既存 <see cref="ErpAuditTests"/> は
++/// 「Amount フィールドを直接書換え→審計行が出るか」だけを見ており、
++/// 計算式そのものは一度も検証していない（本ファイルと非重複）。
++///
++/// 断言は全て手算期望値。サービスが誤算すれば真っ赤になる。
++/// </summary>
++public class QuotationCalcTests
++{
++    private static QuotationDto NewHeader() => new()
++    {
++        BaseCd = "B01",
++        StaffCd = "S001",
++        CustomerCd = "C001",
++        CustomerName = "得意先A",
++    };
++
++    private static QuotationDetailDto Line(int no, decimal? qty, decimal? unitPrice) => new()
++    {
++        DetailNo = no,
++        ItemName1 = $"品名{no}",
++        Quantity = qty,
++        UnitPrice = unitPrice,
++    };
++
++    // ═════════ ① 正常路径：行金額 = 数量 × 単価、合計 = Σ ═════════
++
++    [Fact]
++    public async Task Create_TwoDetails_ComputesLineAmountAndTotal()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var svc = new QuotationService(db);
++
++        var dto = NewHeader();
++        // 手算：行1 = 12 × 150 = 1800、行2 = 3 × 2000 = 6000、合計 = 7800
++        dto.Details.Add(Line(1, 12m, 150m));
++        dto.Details.Add(Line(2, 3m, 2000m));
++
++        var qtnNo = await svc.CreateAsync(dto, "alice");
++
++        var saved = await svc.GetByNoAsync(qtnNo);
++        Assert.NotNull(saved);
++        var d1 = saved!.Details.Single(d => d.DetailNo == 1);
++        var d2 = saved.Details.Single(d => d.DetailNo == 2);
++        Assert.Equal(1800m, d1.Amount);
++        Assert.Equal(6000m, d2.Amount);
++        Assert.Equal(7800m, saved.TotalAmount);
++    }
++
++    // ═════════ ② 边界：数量 null / 単価 0 の行は金額 0、合計から実質除外 ═════════
++
++    [Fact]
++    public async Task Create_NullQtyOrZeroPrice_LineAmountsZero_TotalCountsOnlyRealLines()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var svc = new QuotationService(db);
++
++        var dto = NewHeader();
++        // 手算：行1 = (null→0) × 500 = 0、行2 = 10 × 0 = 0、行3 = 5 × 100 = 500
++        //       合計 = 0 + 0 + 500 = 500
++        dto.Details.Add(Line(1, null, 500m));
++        dto.Details.Add(Line(2, 10m, 0m));
++        dto.Details.Add(Line(3, 5m, 100m));
++
++        var qtnNo = await svc.CreateAsync(dto, "alice");
++
++        var saved = await svc.GetByNoAsync(qtnNo);
++        Assert.NotNull(saved);
++        Assert.Equal(0m, saved!.Details.Single(d => d.DetailNo == 1).Amount);
++        Assert.Equal(0m, saved.Details.Single(d => d.DetailNo == 2).Amount);
++        Assert.Equal(500m, saved.Details.Single(d => d.DetailNo == 3).Amount);
++        Assert.Equal(500m, saved.TotalAmount);
++    }
++
++    // ═════════ ③ 訂正：明細削除＋数量変更で合計を再計算（削除行は合計から除外） ═════════
++
++    [Fact]
++    public async Task Update_RemoveDetailAndChangeQty_RecomputesTotal()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var svc = new QuotationService(db);
++
++        // 初期：行1 = 10 × 100 = 1000、行2 = 2 × 250 = 500、合計 = 1500
++        var create = NewHeader();
++        create.Details.Add(Line(1, 10m, 100m));
++        create.Details.Add(Line(2, 2m, 250m));
++        var qtnNo = await svc.CreateAsync(create, "alice");
++        Assert.Equal(1500m, (await svc.GetByNoAsync(qtnNo))!.TotalAmount);
++
++        // 訂正：行2 を削除、行1 の数量 10→8（手算：8 × 100 = 800、合計 = 800）
++        var update = NewHeader();
++        update.QtnNo = qtnNo;
++        update.Details.Add(Line(1, 8m, 100m));
++        await svc.UpdateAsync(qtnNo, update, "bob");
++
++        var saved = await svc.GetByNoAsync(qtnNo);
++        Assert.NotNull(saved);
++        Assert.Single(saved!.Details); // 行2 は論理削除され取得されない
++        Assert.Equal(800m, saved.Details.Single(d => d.DetailNo == 1).Amount);
++        Assert.Equal(800m, saved.TotalAmount);
++    }
++}

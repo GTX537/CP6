@@ -1,0 +1,1610 @@
+1ec4167 fix(space): 波2走查修复——种子SQL兼容性（QUOTED_IDENTIFIER + tempdb照合順序衝突）
+53bf112 feat(space): 编辑器 Zone 创建工具（拖框+命令栈+差量保存，解建模鸡蛋问题）
+db23d8f feat(space): 路由登记 + 菜单/i18n 种子（MenuId 900段，MenuKey 齐备）
+a511e08 feat(space): Space 落地页（站点/楼层导航，消灭孤儿路由）
+73bb4fa feat(space): 楼层管理页（站点下拉+CRUD+跳编辑器）
+f44e4fe feat(space): 站点管理页（CRUD+WarehouseCd 映射编辑，Cp* 模板）
+2c837d7 feat(space): Site/Floor 前端 API 层 + SiteDto 暴露 WarehouseCd 映射列（波1记票兑现）
+2e64d0e docs(space): 波2 前端P0执行计划（菜单种子/落地页/Site·Floor管理/Zone创建工具，7任务）
+
+ CP6.Core/Services/Space/SpaceMasterService.cs      |   5 +-
+ CP6.Entity/DTOs/Space/SpaceMasterDtos.cs           |   2 +
+ CP6.Tests/SpaceMasterServiceTests.cs               |  21 ++
+ cp6.web/src/api/space/floor.ts                     |  11 +
+ cp6.web/src/api/space/site.ts                      |  17 ++
+ cp6.web/src/router/index.ts                        |   4 +
+ cp6.web/src/space-editor/command/commands.spec.ts  |  23 +-
+ .../space-editor/command/commands/AddZoneCmd.ts    |  19 ++
+ .../space-editor/interact/InteractionManager.ts    |  12 +-
+ .../src/space-editor/interact/tools/ZoneTool.ts    | 102 +++++++
+ .../space-editor/interact/tools/zoneGeom.spec.ts   |  29 ++
+ .../src/space-editor/interact/tools/zoneGeom.ts    |  21 ++
+ cp6.web/src/types/space/scene.ts                   |  11 +
+ cp6.web/src/views/space/SpaceHomeView.vue          | 118 ++++++++
+ .../views/space/__tests__/SpaceHomeView.spec.ts    | 105 +++++++
+ cp6.web/src/views/space/editor/FloorEditor.vue     | 121 ++++++++
+ cp6.web/src/views/space/master/SpaceFloorView.vue  | 176 ++++++++++++
+ cp6.web/src/views/space/master/SpaceSiteView.vue   | 165 +++++++++++
+ .../space/master/__tests__/SpaceFloorView.spec.ts  |  80 ++++++
+ .../space/master/__tests__/SpaceSiteView.spec.ts   |  71 +++++
+ docs/seeds/space-i18n-seed.sql                     |  87 ++++++
+ docs/seeds/space-menu-seed.sql                     | 138 +++++++++
+ .../plans/2026-07-06-space-wave2-frontend-p0.md    | 314 +++++++++++++++++++++
+ 23 files changed, 1649 insertions(+), 3 deletions(-)
+
+=== diff 排除 docs/ ===
+diff --git a/CP6.Core/Services/Space/SpaceMasterService.cs b/CP6.Core/Services/Space/SpaceMasterService.cs
+index b09fb03..816ee57 100644
+--- a/CP6.Core/Services/Space/SpaceMasterService.cs
++++ b/CP6.Core/Services/Space/SpaceMasterService.cs
+@@ -40,48 +40,51 @@ public class SpaceMasterService : ISpaceMasterService
+             throw new InvalidOperationException("E-SPACE-001");
+         var e = new Space_Site
+         {
+             Id         = Guid.NewGuid(),
+             SiteCode   = d.SiteCode,
+             SiteName   = d.SiteName,
+             Address    = d.Address,
+             Lng        = d.Lng,
+             Lat        = d.Lat,
+             Enable     = d.Enable,
++            WarehouseCd = d.WarehouseCd,
+             Creator    = user,
+             CreateDate = DateTime.Now
+         };
+         _db.Space_Sites.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpdateSiteAsync(Guid id, SiteDto d, string? user)
+     {
+         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id)
+                 ?? throw new InvalidOperationException("E-SPACE-001");
+         e.SiteCode   = d.SiteCode;
+         e.SiteName   = d.SiteName;
+         e.Address    = d.Address;
+         e.Lng        = d.Lng;
+         e.Lat        = d.Lat;
+         e.Enable     = d.Enable;
++        e.WarehouseCd = d.WarehouseCd;
+         e.Modifier   = user;
+         e.ModifyDate = DateTime.Now;
+         await _db.SaveChangesAsync();
+     }
+ 
+     public async Task<List<SiteDto>> ListSitesAsync() =>
+         await _db.Space_Sites.Select(x => new SiteDto
+         {
+             Id = x.Id, SiteCode = x.SiteCode, SiteName = x.SiteName,
+-            Address = x.Address, Lng = x.Lng, Lat = x.Lat, Enable = x.Enable
++            Address = x.Address, Lng = x.Lng, Lat = x.Lat, Enable = x.Enable,
++            WarehouseCd = x.WarehouseCd
+         }).ToListAsync();
+ 
+     public async Task DeleteSiteAsync(Guid id)
+     {
+         if (await _db.Space_Floors.AnyAsync(x => x.SiteId == id))
+             throw new InvalidOperationException("E-SPACE-007");
+         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id);
+         if (e != null) { _db.Space_Sites.Remove(e); await _db.SaveChangesAsync(); }
+     }
+ 
+diff --git a/CP6.Entity/DTOs/Space/SpaceMasterDtos.cs b/CP6.Entity/DTOs/Space/SpaceMasterDtos.cs
+index f9d7e18..e57f00e 100644
+--- a/CP6.Entity/DTOs/Space/SpaceMasterDtos.cs
++++ b/CP6.Entity/DTOs/Space/SpaceMasterDtos.cs
+@@ -3,20 +3,22 @@ namespace CP6.Entity.DTOs.Space;
+ /// <summary>站场（Site）CRUD DTO（ch00 §9）</summary>
+ public class SiteDto
+ {
+     public Guid? Id { get; set; }
+     public string SiteCode { get; set; } = "";
+     public string SiteName { get; set; } = "";
+     public string? Address { get; set; }
+     public double? Lng { get; set; }
+     public double? Lat { get; set; }
+     public bool Enable { get; set; } = true;
++    /// <summary>WMS 仓库编码映射（ch04 §3.4：空=默认 WarehouseCd=SiteCode；≤10 字符，超长由发布侧 E-SPACE-405 守卫拦截）</summary>
++    public string? WarehouseCd { get; set; }
+ }
+ 
+ /// <summary>楼层（Floor）CRUD DTO</summary>
+ public class FloorDto
+ {
+     public Guid? Id { get; set; }
+     public Guid SiteId { get; set; }
+     public int Level { get; set; }
+     public string FloorCode { get; set; } = "";
+     public string FloorName { get; set; } = "";
+diff --git a/CP6.Tests/SpaceMasterServiceTests.cs b/CP6.Tests/SpaceMasterServiceTests.cs
+index 76bf883..00cae54 100644
+--- a/CP6.Tests/SpaceMasterServiceTests.cs
++++ b/CP6.Tests/SpaceMasterServiceTests.cs
+@@ -109,20 +109,41 @@ public class SpaceMasterServiceTests
+     [Fact]
+     public async Task ListSites_ReturnsCreated()
+     {
+         var (_, svc) = Make();
+         await svc.CreateSiteAsync(new SiteDto { SiteCode = "S1", SiteName = "Site1" }, "u");
+         await svc.CreateSiteAsync(new SiteDto { SiteCode = "S2", SiteName = "Site2" }, "u");
+         var list = await svc.ListSitesAsync();
+         Assert.Equal(2, list.Count);
+     }
+ 
++    /// <summary>
++    /// 波1 终审记票兑现：SiteDto 暴露 WarehouseCd（此前是只能 SQL 改的死配置列）。
++    /// Create 带 WarehouseCd → List 回显 → Update 改值 → List 回显新值。
++    /// </summary>
++    [Fact]
++    public async Task Site_WarehouseCd_RoundTrips_ThroughDtoAndService()
++    {
++        var (_, svc) = Make();
++        var id = await svc.CreateSiteAsync(
++            new SiteDto { SiteCode = "WH1", SiteName = "a", WarehouseCd = "MAIN" }, "u");
++
++        var created = (await svc.ListSitesAsync()).Single(x => x.Id == id);
++        Assert.Equal("MAIN", created.WarehouseCd);
++
++        await svc.UpdateSiteAsync(id,
++            new SiteDto { SiteCode = "WH1", SiteName = "a", WarehouseCd = "ALT" }, "u");
++
++        var updated = (await svc.ListSitesAsync()).Single(x => x.Id == id);
++        Assert.Equal("ALT", updated.WarehouseCd);
++    }
++
+     // ── B-4: 货架改位姿触发几何重算 ──────────────────────────────────────
+ 
+     [Fact]
+     public async Task UpdateRack_MovePosition_RecalcsLocations()
+     {
+         var (db, svc) = Make();
+         var rackId = await svc.CreateRackAsync(new RackDto
+         {
+             ZoneId = Guid.NewGuid(), RackCode = "R1",
+             X = 0, Y = 0, Cols = 1, Levels = 1, DepthCount = 1,
+diff --git a/cp6.web/src/api/space/floor.ts b/cp6.web/src/api/space/floor.ts
+index 03f735b..dd2969d 100644
+--- a/cp6.web/src/api/space/floor.ts
++++ b/cp6.web/src/api/space/floor.ts
+@@ -1,8 +1,19 @@
+ import http from '../http'
+ import type { FloorVO, Envelope } from '@/types/space/scene'
+ 
+ export const floorApi = {
+   list(siteId: string) {
+     return http.get<unknown, Envelope<FloorVO[]>>(`/space/floor`, { params: { siteId } })
+   },
++  // create 载荷无 id（后端生成 Guid）；收窄为 Partial 以匹配「新建时无 id」的现实
++  // （照 api/space/template.ts 的 Partial 惯例；FloorVO 本身不改——编辑器代码假定 id 存在）。
++  create(d: Partial<FloorVO>) {
++    return http.post<unknown, Envelope<{ id: string }>>(`/space/floor`, d)
++  },
++  update(id: string, d: FloorVO) {
++    return http.put<unknown, Envelope<unknown>>(`/space/floor/${encodeURIComponent(id)}`, d)
++  },
++  remove(id: string) {
++    return http.delete<unknown, Envelope<unknown>>(`/space/floor/${encodeURIComponent(id)}`)
++  },
+ }
+diff --git a/cp6.web/src/api/space/site.ts b/cp6.web/src/api/space/site.ts
+new file mode 100644
+index 0000000..486c083
+--- /dev/null
++++ b/cp6.web/src/api/space/site.ts
+@@ -0,0 +1,17 @@
++import http from '../http'
++import type { SiteVO, Envelope } from '@/types/space/scene'
++
++export const siteApi = {
++  list() {
++    return http.get<unknown, Envelope<SiteVO[]>>(`/space/site`)
++  },
++  create(d: SiteVO) {
++    return http.post<unknown, Envelope<{ id: string }>>(`/space/site`, d)
++  },
++  update(id: string, d: SiteVO) {
++    return http.put<unknown, Envelope<unknown>>(`/space/site/${encodeURIComponent(id)}`, d)
++  },
++  remove(id: string) {
++    return http.delete<unknown, Envelope<unknown>>(`/space/site/${encodeURIComponent(id)}`)
++  },
++}
+diff --git a/cp6.web/src/router/index.ts b/cp6.web/src/router/index.ts
+index 83a4c4f..3e69f6e 100644
+--- a/cp6.web/src/router/index.ts
++++ b/cp6.web/src/router/index.ts
+@@ -165,20 +165,24 @@ const viewModules: Record<string, () => Promise<any>> = {
+   '/wms/pallet':               () => import('@/views/wms/PalletView.vue'),
+   '/wms/vmi':                  () => import('@/views/wms/VmiView.vue'),
+   '/wms/sample-stock':         () => import('@/views/wms/SampleStockView.vue'),
+   // ───── Phase WM-7 連携（占位） ─────
+   '/wms/mobile-task':          () => import('@/views/wms/MobileTaskView.vue'),
+   '/wms/wcs-task':             () => import('@/views/wms/WcsTaskView.vue'),
+   '/wms/carrier':              () => import('@/views/wms/CarrierView.vue'),
+   '/wms/iot-monitor':          () => import('@/views/wms/IotMonitorView.vue'),
+   // ───── Phase WM-8 帳票（占位） ─────
+   '/wms/report-center':        () => import('@/views/wms/ReportCenterView.vue'),
++  // ── Space 空間管理（波2 P0）─────────────────────────────
++  '/space/home': () => import('@/views/space/SpaceHomeView.vue'),
++  '/space/site': () => import('@/views/space/master/SpaceSiteView.vue'),
++  '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
+ }
+ 
+ // 静态路由：登录页 / Layout壳子 / 独立窗口
+ const staticRoutes: RouteRecordRaw[] = [
+   // ── OA Phase B 旧路由重定向（菜单条目可能仍为 /wf/*；redirect 确保无论何时均自动跳转至信箱）──
+   { path: '/wf/todo',            redirect: '/oa/inbox' },
+   { path: '/wf/my-applications', redirect: '/oa/inbox' },
+   {
+     path: '/login',
+     name: 'login',
+diff --git a/cp6.web/src/space-editor/command/commands.spec.ts b/cp6.web/src/space-editor/command/commands.spec.ts
+index b9dcd04..b90f658 100644
+--- a/cp6.web/src/space-editor/command/commands.spec.ts
++++ b/cp6.web/src/space-editor/command/commands.spec.ts
+@@ -1,21 +1,22 @@
+ // H-2 命令单测（ch02 §4/§5/§7）
+ import { describe, it, expect } from 'vitest'
+ import { MoveRackCmd } from './commands/MoveRackCmd'
+ import { RotateRackCmd } from './commands/RotateRackCmd'
+ import { AddMarkerCmd } from './commands/AddMarkerCmd'
++import { AddZoneCmd } from './commands/AddZoneCmd'
+ import { MoveMarkerCmd } from './commands/MoveMarkerCmd'
+ import { EditMarkerCmd } from './commands/EditMarkerCmd'
+ import { DeleteCmd } from './commands/DeleteCmd'
+ import { BatchCmd } from './commands/BatchCmd'
+ import type { EditorContext } from './Command'
+-import type { EditorScene, RackVO, MarkerVO } from '@/types/space/scene'
++import type { EditorScene, RackVO, MarkerVO, ZoneVO } from '@/types/space/scene'
+ 
+ function makeScene(racks: Partial<RackVO>[] = [], markers: Partial<MarkerVO>[] = []): EditorScene {
+   return {
+     floor: {} as any,
+     zones: [],
+     aisles: [],
+     racks: racks as RackVO[],
+     locations: [],
+     markers: markers as MarkerVO[],
+   }
+@@ -107,20 +108,40 @@ describe('AddMarkerCmd', () => {
+     cmd.do(ctx)
+     expect(scene.markers).toHaveLength(1)
+     expect(scene.markers[0]!.id).toBe('m1')
+     expect(ctx.dirtyIds).toContain('m1')
+     cmd.undo(ctx)
+     expect(scene.markers).toHaveLength(0)
+     expect(ctx.deleteIds).toContain('m1')
+   })
+ })
+ 
++// ─── AddZoneCmd ───────────────────────────────────────────────────────────────
++describe('AddZoneCmd', () => {
++  it('do 插入 zone；undo 删除', () => {
++    const scene = makeScene()
++    const ctx = makeCtx(scene)
++    const zone: ZoneVO = {
++      id: 'z1', floorId: 'f1', zoneCode: 'Z-001', zoneName: '库区A',
++      zoneType: 1, polygon: '[[0,0],[1000,0],[1000,1000],[0,1000]]', enable: true,
++    }
++    const cmd = new AddZoneCmd(zone)
++    cmd.do(ctx)
++    expect(scene.zones).toHaveLength(1)
++    expect(scene.zones[0]!.id).toBe('z1')
++    expect(ctx.dirtyIds).toContain('z1')
++    cmd.undo(ctx)
++    expect(scene.zones).toHaveLength(0)
++    expect(ctx.deleteIds).toContain('z1')
++  })
++})
++
+ // ─── MoveMarkerCmd ────────────────────────────────────────────────────────────
+ describe('MoveMarkerCmd', () => {
+   it('do/undo 改 marker x/y', () => {
+     const scene = makeScene([], [{ id: 'm1', x: 0, y: 0 }])
+     const ctx = makeCtx(scene)
+     const cmd = new MoveMarkerCmd('m1', { x: 0, y: 0 }, { x: 50, y: 80 })
+     cmd.do(ctx)
+     expect(scene.markers[0]!.x).toBe(50)
+     expect(scene.markers[0]!.y).toBe(80)
+     cmd.undo(ctx)
+diff --git a/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts b/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts
+new file mode 100644
+index 0000000..7f6f9ce
+--- /dev/null
++++ b/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts
+@@ -0,0 +1,19 @@
++import type { Command, EditorContext } from '../Command'
++import type { ZoneVO } from '@/types/space/scene'
++
++export class AddZoneCmd implements Command {
++  label = 'AddZone'
++
++  constructor(private zone: ZoneVO) {}
++
++  do(ctx: EditorContext): void {
++    ctx.scene.zones.push(this.zone)
++    ctx.markDirty(this.zone.id)
++  }
++
++  undo(ctx: EditorContext): void {
++    const idx = ctx.scene.zones.findIndex(z => z.id === this.zone.id)
++    if (idx >= 0) ctx.scene.zones.splice(idx, 1)
++    ctx.markDirtyDelete(this.zone.id)
++  }
++}
+diff --git a/cp6.web/src/space-editor/interact/InteractionManager.ts b/cp6.web/src/space-editor/interact/InteractionManager.ts
+index 633113a..0d7bf72 100644
+--- a/cp6.web/src/space-editor/interact/InteractionManager.ts
++++ b/cp6.web/src/space-editor/interact/InteractionManager.ts
+@@ -1,40 +1,44 @@
+ // InteractionManager — Konva 事件分发 + 工具状态机（ch02 §2/§3）
+ import Konva from 'konva'
+ import type { SceneStage } from '../SceneStage'
+ import type { useSpaceEditorStore } from '@/stores/spaceEditor'
+ import { SnapEngine } from './snap/SnapEngine'
+ import { SelectTool } from './tools/SelectTool'
+ import { DragTool } from './tools/DragTool'
+ import { RotateTool } from './tools/RotateTool'
+ import { MarkerTool } from './tools/MarkerTool'
++import { ZoneTool } from './tools/ZoneTool'
++import type { WorldRect } from './select/lassoHit'
+ 
+-export type ToolType = 'select' | 'drag' | 'rotate' | 'marker'
++export type ToolType = 'select' | 'drag' | 'rotate' | 'marker' | 'zone'
+ type Store = ReturnType<typeof useSpaceEditorStore>
+ 
+ export interface ITool {
+   onMouseDown?(e: Konva.KonvaEventObject<MouseEvent>): void
+   onMouseMove?(e: Konva.KonvaEventObject<MouseEvent>): void
+   onMouseUp?(e: Konva.KonvaEventObject<MouseEvent>): void
+   onClick?(e: Konva.KonvaEventObject<MouseEvent>): void
+   onActivate?(): void
+   onDeactivate?(): void
+   onEscape?(): void
+ }
+ 
+ export interface ToolContext {
+   stage: SceneStage
+   store: Store
+   snap: SnapEngine
+   ctrlHeld: () => boolean
+   afterCommand: () => void
+   transformer: Konva.Transformer
++  /** ZoneTool 拖框完成回调——由 FloorEditor 注入，接手校验/命名/命令栈业务。 */
++  onZoneRectDrawn?: (rect: WorldRect) => void
+ }
+ 
+ // ── Shared helpers (exported for tools) ──────────────────────────────────────
+ 
+ /** Walk up parent chain to find the nearest Konva.Group with name='rack'. */
+ export function findRackGroup(target: Konva.Node): Konva.Group | null {
+   let node: Konva.Node | null = target as Konva.Node
+   while (node) {
+     if (node instanceof Konva.Group && node.name() === 'rack') return node
+     node = node.getParent() as unknown as Konva.Node | null
+@@ -82,39 +86,45 @@ export class InteractionManager {
+       ctrlHeld: () => this._ctrlHeld,
+       afterCommand,
+       transformer: this.transformer,
+     }
+ 
+     this.tools = {
+       select: new SelectTool(this.ctx),
+       drag: new DragTool(this.ctx),
+       rotate: new RotateTool(this.ctx),
+       marker: new MarkerTool(this.ctx),
++      zone: new ZoneTool(this.ctx),
+     }
+ 
+     this.bindEvents()
+     this.tools.select.onActivate?.()
+   }
+ 
+   get activeTool(): ToolType { return this._activeTool }
+ 
+   switchTool(type: ToolType): void {
+     if (type === this._activeTool) return
+     this.tools[this._activeTool].onDeactivate?.()
+     this._activeTool = type
+     this.tools[type].onActivate?.()
+   }
+ 
+   setCtrlHeld(held: boolean): void {
+     this._ctrlHeld = held
+   }
+ 
++  /** 注入 ZoneTool 拖框完成回调（FloorEditor 在此接手弹窗/校验/命令栈）。 */
++  setZoneRectHandler(fn: (rect: WorldRect) => void): void {
++    this.ctx.onZoneRectDrawn = fn
++  }
++
+   /** Disable all event handling (e.g. during placement mode). */
+   setEnabled(enabled: boolean): void {
+     this._enabled = enabled
+     if (!enabled) {
+       this.transformer.nodes([])
+       this.ctx.stage.layers.rack.batchDraw()
+     }
+   }
+ 
+   /** Select all racks in the current scene. */
+diff --git a/cp6.web/src/space-editor/interact/tools/ZoneTool.ts b/cp6.web/src/space-editor/interact/tools/ZoneTool.ts
+new file mode 100644
+index 0000000..f5b62c1
+--- /dev/null
++++ b/cp6.web/src/space-editor/interact/tools/ZoneTool.ts
+@@ -0,0 +1,102 @@
++// ZoneTool — 拖矩形建库区（橡皮筋几何照 SelectTool；只管几何，业务校验在 FloorEditor 回调）
++import Konva from 'konva'
++import type { ITool, ToolContext } from '../InteractionManager'
++import type { WorldRect } from '../select/lassoHit'
++
++export class ZoneTool implements ITool {
++  private ctx: ToolContext
++  private rectNode: Konva.Rect | null = null
++  private start: { x: number; y: number } | null = null
++  private isDragging = false
++
++  constructor(ctx: ToolContext) {
++    this.ctx = ctx
++  }
++
++  onActivate(): void {
++    // 建库区模式下不需要 transformer
++    this.ctx.transformer.nodes([])
++    this.ctx.stage.layers.rack.batchDraw()
++  }
++
++  onDeactivate(): void {
++    this.cancel()
++  }
++
++  onEscape(): void {
++    this.cancel()
++  }
++
++  onMouseDown(_e: Konva.KonvaEventObject<MouseEvent>): void {
++    const pos = this.ctx.stage.stage.getPointerPosition()
++    if (!pos) return
++
++    this.isDragging = true
++    this.start = { x: pos.x, y: pos.y }
++    this.rectNode = new Konva.Rect({
++      x: pos.x, y: pos.y,
++      width: 0, height: 0,
++      stroke: '#67c23a',
++      strokeWidth: 1,
++      fill: 'rgba(103,194,58,0.08)',
++      dash: [4, 2],
++      listening: false,
++    })
++    this.ctx.stage.layers.ghost.add(this.rectNode)
++    this.ctx.stage.layers.ghost.batchDraw()
++  }
++
++  onMouseMove(_e: Konva.KonvaEventObject<MouseEvent>): void {
++    if (!this.isDragging || !this.rectNode || !this.start) return
++    const pos = this.ctx.stage.stage.getPointerPosition()
++    if (!pos) return
++
++    const x = Math.min(pos.x, this.start.x)
++    const y = Math.min(pos.y, this.start.y)
++    const w = Math.abs(pos.x - this.start.x)
++    const h = Math.abs(pos.y - this.start.y)
++    this.rectNode.setAttrs({ x, y, width: w, height: h })
++    this.ctx.stage.layers.ghost.batchDraw()
++  }
++
++  onMouseUp(_e: Konva.KonvaEventObject<MouseEvent>): void {
++    if (!this.isDragging || !this.start) {
++      this.isDragging = false
++      return
++    }
++
++    const pos = this.ctx.stage.stage.getPointerPosition() ?? this.start
++    const selX = Math.min(pos.x, this.start.x)
++    const selY = Math.min(pos.y, this.start.y)
++    const selW = Math.abs(pos.x - this.start.x)
++    const selH = Math.abs(pos.y - this.start.y)
++
++    this.cancel()
++
++    // 极小拖动视为误点，不触发命名弹窗
++    if (selW < 3 && selH < 3) return
++
++    // 屏幕两角 → 世界轴对齐矩形（worldToScreen 无旋转，世界仍轴对齐）
++    const wA = this.ctx.stage.screenToWorld({ x: selX, y: selY })
++    const wB = this.ctx.stage.screenToWorld({ x: selX + selW, y: selY + selH })
++    const worldRect: WorldRect = {
++      minX: Math.min(wA.x, wB.x),
++      minY: Math.min(wA.y, wB.y),
++      maxX: Math.max(wA.x, wB.x),
++      maxY: Math.max(wA.y, wB.y),
++    }
++
++    // 引擎事件 → 页面处理业务（校验/命名/命令栈全在 FloorEditor 回调）
++    this.ctx.onZoneRectDrawn?.(worldRect)
++  }
++
++  private cancel(): void {
++    this.isDragging = false
++    this.start = null
++    if (this.rectNode) {
++      this.rectNode.destroy()
++      this.rectNode = null
++      this.ctx.stage.layers.ghost.batchDraw()
++    }
++  }
++}
+diff --git a/cp6.web/src/space-editor/interact/tools/zoneGeom.spec.ts b/cp6.web/src/space-editor/interact/tools/zoneGeom.spec.ts
+new file mode 100644
+index 0000000..d9b1585
+--- /dev/null
++++ b/cp6.web/src/space-editor/interact/tools/zoneGeom.spec.ts
+@@ -0,0 +1,29 @@
++// zoneGeom 纯函数单测（Task 6：矩形→polygon 四点顺序 + 短边校验）
++import { describe, it, expect } from 'vitest'
++import { rectToPolygon, rectShortEdge } from './zoneGeom'
++import type { WorldRect } from '../select/lassoHit'
++
++describe('rectToPolygon', () => {
++  it('输出四点顺序 [x0,y0],[x1,y0],[x1,y1],[x0,y1]（不重复首点）', () => {
++    const rect: WorldRect = { minX: 100, minY: 200, maxX: 900, maxY: 700 }
++    const poly = rectToPolygon(rect)
++    expect(poly).toEqual([
++      [100, 200],
++      [900, 200],
++      [900, 700],
++      [100, 700],
++    ])
++    expect(poly).toHaveLength(4)
++  })
++})
++
++describe('rectShortEdge', () => {
++  it('返回宽高中的较短边', () => {
++    expect(rectShortEdge({ minX: 0, minY: 0, maxX: 1000, maxY: 400 })).toBe(400)
++    expect(rectShortEdge({ minX: 0, minY: 0, maxX: 300, maxY: 900 })).toBe(300)
++  })
++
++  it('正方形时宽高相等', () => {
++    expect(rectShortEdge({ minX: 0, minY: 0, maxX: 500, maxY: 500 })).toBe(500)
++  })
++})
+diff --git a/cp6.web/src/space-editor/interact/tools/zoneGeom.ts b/cp6.web/src/space-editor/interact/tools/zoneGeom.ts
+new file mode 100644
+index 0000000..6e4ebc2
+--- /dev/null
++++ b/cp6.web/src/space-editor/interact/tools/zoneGeom.ts
+@@ -0,0 +1,21 @@
++// zoneGeom — Zone 工具的纯几何（无 Konva 依赖，供单测）
++import type { WorldRect } from '../select/lassoHit'
++
++/**
++ * 世界系轴对齐矩形 → 库区多边形四点。
++ * 顺序 [x0,y0],[x1,y0],[x1,y1],[x0,y1]（首点不重复），mm，floor 局部系。
++ * 与 FloorEditor.placementValid 的 corners 顺序一致。
++ */
++export function rectToPolygon(rect: WorldRect): [number, number][] {
++  return [
++    [rect.minX, rect.minY],
++    [rect.maxX, rect.minY],
++    [rect.maxX, rect.maxY],
++    [rect.minX, rect.maxY],
++  ]
++}
++
++/** 矩形短边长度（mm）——用于「太小」校验。 */
++export function rectShortEdge(rect: WorldRect): number {
++  return Math.min(rect.maxX - rect.minX, rect.maxY - rect.minY)
++}
+diff --git a/cp6.web/src/types/space/scene.ts b/cp6.web/src/types/space/scene.ts
+index b98486d..d2b5132 100644
+--- a/cp6.web/src/types/space/scene.ts
++++ b/cp6.web/src/types/space/scene.ts
+@@ -1,12 +1,23 @@
+ // Space 编辑器 VO 类型 — 镜像后端 DTOs（ch01 §E-1）
+ 
++export interface SiteVO {
++  id?: string
++  siteCode: string
++  siteName: string
++  address?: string | null
++  lng?: number | null
++  lat?: number | null
++  enable: boolean
++  warehouseCd?: string | null
++}
++
+ export interface FloorVO {
+   id: string
+   siteId: string
+   level: number
+   floorCode: string
+   floorName: string
+   height: number
+   underlayImage?: string | null
+   underlayScale?: number | null
+   underlayOffsetX: number
+diff --git a/cp6.web/src/views/space/SpaceHomeView.vue b/cp6.web/src/views/space/SpaceHomeView.vue
+new file mode 100644
+index 0000000..e95d443
+--- /dev/null
++++ b/cp6.web/src/views/space/SpaceHomeView.vue
+@@ -0,0 +1,118 @@
++<!--
++  Space 落地页 —— 站点/楼层导航入口（Space 波2；消灭 3D 编辑器/浏览器/层叠视图三条孤儿 standalone 路由）。
++  范式=WmsDashboardView 的 CpStatCard 网格 + CpSectionHeader 卡片区（不套 el-card #header 插槽，改用普通 div，
++  便于单测直取——本页无表格）。数据：siteApi.list 拉全站点，再 Promise.all 各站点 floorApi.list 汇总楼层。
++  跳 standalone 页一律 named-push：space-viewer(params.siteId[,query.floorId]) / space-stacked / space-editor(params.floorId)。
++  无站点 → CpEmpty +「去创建站点」push /space/site（普通菜单路由，非 standalone）。
++  自写标签 cp-mono 须本组件补 scoped 类（SpaceSiteView 前车之鉴：slot 内 cp-mono 因 scoped 隔离而失样）。
++-->
++<template>
++  <div class="space-home">
++    <div class="stat-grid">
++      <CpStatCard :label="t('space.home.siteCount')" :value="sites.length" tone="brand" />
++      <CpStatCard :label="t('space.home.floorCount')" :value="floorCount" tone="brand" />
++    </div>
++
++    <template v-if="sites.length">
++      <div v-for="s in sites" :key="s.id" class="site-card">
++        <CpSectionHeader :title="s.siteName">
++          <span class="cp-mono site-code">{{ s.siteCode }}</span>
++          <template #extra>
++            <el-button link type="primary" size="small" @click="gotoViewer(s)">{{ t('space.home.viewer3d') }}</el-button>
++            <el-button link type="primary" size="small" @click="gotoStacked(s)">{{ t('space.home.stacked') }}</el-button>
++          </template>
++        </CpSectionHeader>
++
++        <div class="floor-body">
++          <div v-if="!floorMap[s.id!]?.length" class="floor-empty">
++            {{ t('space.home.noFloor') }}
++          </div>
++          <div v-for="f in floorMap[s.id!]" :key="f.id" class="floor-row">
++            <span class="floor-label"><span class="cp-mono">L{{ f.level }}</span> {{ f.floorName }}</span>
++            <span class="floor-actions">
++              <el-button link type="primary" size="small" @click="gotoEditor(f)">{{ t('space.common.edit') }}</el-button>
++              <el-button link type="primary" size="small" @click="gotoFloorViewer(s, f)">{{ t('space.home.viewer3d') }}</el-button>
++            </span>
++          </div>
++        </div>
++      </div>
++    </template>
++
++    <CpEmpty v-else :text="t('space.home.empty')">
++      <template #action>
++        <el-button type="primary" @click="gotoCreateSite">{{ t('space.home.createSite') }}</el-button>
++      </template>
++    </CpEmpty>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { ref, reactive, computed, onMounted } from 'vue'
++import { useRouter } from 'vue-router'
++import { useI18n } from 'vue-i18n'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import type { SiteVO, FloorVO } from '@/types/space/scene'
++
++const { t } = useI18n()
++const router = useRouter()
++
++const sites = ref<SiteVO[]>([])
++const floorMap = reactive<Record<string, FloorVO[]>>({})
++const floorCount = computed(() => Object.values(floorMap).reduce((n, arr) => n + arr.length, 0))
++
++onMounted(async () => {
++  const res = await siteApi.list()
++  sites.value = res.data || []
++  // 全站点楼层并发拉取汇总（Promise.all 取简；站点数量级小，无分页压力）
++  const results = await Promise.all(sites.value.map((s) => floorApi.list(s.id!)))
++  sites.value.forEach((s, i) => { floorMap[s.id!] = results[i]?.data || [] })
++})
++
++// —— 导航：standalone 页一律 named-push（路径参数）——
++function gotoViewer(s: SiteVO) { router.push({ name: 'space-viewer', params: { siteId: s.id } }) }
++function gotoStacked(s: SiteVO) { router.push({ name: 'space-stacked', params: { siteId: s.id } }) }
++function gotoEditor(f: FloorVO) { router.push({ name: 'space-editor', params: { floorId: f.id } }) }
++function gotoFloorViewer(s: SiteVO, f: FloorVO) {
++  router.push({ name: 'space-viewer', params: { siteId: s.id }, query: { floorId: f.id } })
++}
++function gotoCreateSite() { router.push('/space/site') }
++</script>
++
++<style scoped>
++.space-home { padding: 16px; }
++
++.stat-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
++  gap: 12px;
++}
++
++.site-card {
++  margin-top: 12px;
++  background: var(--cp-card);
++  border-radius: var(--cp-r-lg);
++  box-shadow: var(--cp-shadow-1);
++  overflow: hidden;
++}
++.site-code { margin-right: 2px; }
++
++.floor-body { padding: 4px 20px 8px; }
++.floor-empty { padding: 16px 0; text-align: center; color: var(--cp-muted); font-size: var(--cp-fs-sm); }
++.floor-row {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  padding: 10px 0;
++  border-bottom: 1px solid var(--cp-line-soft);
++}
++.floor-row:last-child { border-bottom: none; }
++.floor-label { font-size: var(--cp-fs-sm); color: var(--cp-ink); font-weight: 700; }
++.floor-actions { display: flex; align-items: center; gap: 4px; }
++
++/* SpaceSiteView 前车之鉴：slot/自写标签内 cp-mono 因 scoped 隔离失样，本组件自补 */
++.cp-mono { font-weight: 800; color: var(--cp-brand-deep); font-size: var(--cp-fs-sm); }
++</style>
+diff --git a/cp6.web/src/views/space/__tests__/SpaceHomeView.spec.ts b/cp6.web/src/views/space/__tests__/SpaceHomeView.spec.ts
+new file mode 100644
+index 0000000..a682fac
+--- /dev/null
++++ b/cp6.web/src/views/space/__tests__/SpaceHomeView.spec.ts
+@@ -0,0 +1,105 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++import SpaceHomeView from '../SpaceHomeView.vue'
++import type { SiteVO, FloorVO } from '@/types/space/scene'
++
++// router.push 用稳定 mock（hoisted，供导航断言）
++const { push } = vi.hoisted(() => ({ push: vi.fn() }))
++
++// 站点/楼层 API 全 mock；vue-router 注入 stub（照 SpaceFloorView.spec 先例）
++vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
++vi.mock('@/api/space/floor', () => ({ floorApi: { list: vi.fn() } }))
++vi.mock('vue-router', () => ({ useRouter: () => ({ push }) }))
++
++const sites: SiteVO[] = [
++  { id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true },
++  { id: 's2', siteCode: 'OSK', siteName: '大阪DC', enable: true },
++]
++const floorsBySite: Record<string, FloorVO[]> = {
++  s1: [
++    { id: 'f1', siteId: 's1', level: 1, floorCode: 'FL1', floorName: '1階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++    { id: 'f2', siteId: 's1', level: 2, floorCode: 'FL2', floorName: '2階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++  ],
++  s2: [
++    { id: 'f3', siteId: 's2', level: 1, floorCode: 'FL1', floorName: '1F', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++  ],
++}
++
++function mountView() {
++  const i18n = createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
++  return mount(SpaceHomeView, { global: { plugins: [i18n] } })
++}
++
++function btnsByText(w: ReturnType<typeof mountView>, text: string) {
++  return w.findAll('el-button').filter((b) => b.text() === text)
++}
++
++describe('SpaceHomeView', () => {
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
++    vi.mocked(floorApi.list).mockImplementation((siteId: string) =>
++      Promise.resolve({ code: 0, message: '', data: floorsBySite[siteId] || [] }),
++    )
++  })
++
++  it('StatCard 数值汇总正确，站点卡片与楼层行渲染', async () => {
++    const w = mountView()
++    await flushPromises()
++
++    expect(siteApi.list).toHaveBeenCalled()
++    expect(floorApi.list).toHaveBeenCalledWith('s1')
++    expect(floorApi.list).toHaveBeenCalledWith('s2')
++
++    // StatCard×2：站点数=2 / 楼层数=全站点汇总=3
++    const cards = w.findAllComponents(CpStatCard)
++    expect(cards).toHaveLength(2)
++    expect(cards[0].props('value')).toBe(2)
++    expect(cards[1].props('value')).toBe(3)
++
++    // 站点卡片 + 楼层行
++    expect(w.text()).toContain('TKY')
++    expect(w.text()).toContain('東京DC')
++    expect(w.text()).toContain('OSK')
++    expect(w.text()).toContain('1階')
++    expect(w.text()).toContain('2階')
++    expect(w.text()).toContain('L1')
++  })
++
++  it('卡头/楼层行按钮 named-push 参数正确', async () => {
++    const w = mountView()
++    await flushPromises()
++
++    // 卡头「3D」→ space-viewer(params.siteId)；「全景」→ space-stacked(params.siteId)
++    for (const b of btnsByText(w, 'space.home.viewer3d')) await b.trigger('click')
++    for (const b of btnsByText(w, 'space.home.stacked')) await b.trigger('click')
++    // 楼层行「編集」→ space-editor(params.floorId)
++    for (const b of btnsByText(w, 'space.common.edit')) await b.trigger('click')
++
++    expect(push).toHaveBeenCalledWith({ name: 'space-viewer', params: { siteId: 's1' } })
++    expect(push).toHaveBeenCalledWith({ name: 'space-stacked', params: { siteId: 's1' } })
++    expect(push).toHaveBeenCalledWith({ name: 'space-editor', params: { floorId: 'f1' } })
++    // 楼层行「3D」携 query.floorId
++    expect(push).toHaveBeenCalledWith({ name: 'space-viewer', params: { siteId: 's1' }, query: { floorId: 'f1' } })
++  })
++
++  it('空态：无站点 → CpEmpty + 「去创建站点」push /space/site', async () => {
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: [] })
++    const w = mountView()
++    await flushPromises()
++
++    expect(w.findComponent(CpEmpty).exists()).toBe(true)
++    expect(w.text()).not.toContain('TKY')
++
++    const createBtns = btnsByText(w, 'space.home.createSite')
++    expect(createBtns.length).toBeGreaterThan(0)
++    await createBtns[0].trigger('click')
++    expect(push).toHaveBeenCalledWith('/space/site')
++  })
++})
+diff --git a/cp6.web/src/views/space/editor/FloorEditor.vue b/cp6.web/src/views/space/editor/FloorEditor.vue
+index 57c976b..afc22da 100644
+--- a/cp6.web/src/views/space/editor/FloorEditor.vue
++++ b/cp6.web/src/views/space/editor/FloorEditor.vue
+@@ -3,20 +3,23 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+ import { useRoute, useRouter } from 'vue-router'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { sceneApi } from '@/api/space/scene'
+ import { useSpaceEditorStore } from '@/stores/spaceEditor'
+ import { SceneStage } from '@/space-editor/SceneStage'
+ import { genZoneArray } from '@/space-editor/generate/genZoneArray'
+ import type { ZoneVO, RackVO } from '@/types/space/scene'
+ import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
+ import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
++import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
++import { rectToPolygon, rectShortEdge } from '@/space-editor/interact/tools/zoneGeom'
++import type { WorldRect } from '@/space-editor/interact/select/lassoHit'
+ import { scanCollisions } from '@/space-editor/interact/collide/CollisionHint'
+ import TemplatePanel from './panels/TemplatePanel.vue'
+ import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
+ import BindCodesDialog from './panels/BindCodesDialog.vue'
+ import ConnectorPanel from './panels/ConnectorPanel.vue'
+ import { connectorApi } from '@/api/space/connector'
+ import { arrayFootprint } from '@/space-editor/generate/arrayFootprint'
+ import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
+ 
+ const { t } = useI18n()
+@@ -105,20 +108,21 @@ function afterCommand(): void {
+ // ── Lifecycle ─────────────────────────────────────────────────────────────────
+ 
+ onMounted(async () => {
+   const res = await sceneApi.get(floorId.value)
+   store.load(res.data)
+ 
+   if (canvasRef.value) {
+     stageRef = new SceneStage(canvasRef.value)
+     stageRef.render(res.data)
+     imRef.value = new InteractionManager(stageRef, store, afterCommand)
++    imRef.value.setZoneRectHandler(onZoneRectDrawn)
+     bindStageClick()
+   }
+ 
+   document.addEventListener('keydown', onKeydown)
+   document.addEventListener('keyup', onKeyup)
+ })
+ 
+ onBeforeUnmount(() => {
+   document.removeEventListener('keydown', onKeydown)
+   document.removeEventListener('keyup', onKeyup)
+@@ -215,20 +219,98 @@ function handleUndo(): void {
+   afterCommand()
+ }
+ 
+ function handleRedo(): void {
+   if (!store.canRedo) return
+   store.stack.redo(store.buildEditorContext())
+   store.updateUndoRedo()
+   afterCommand()
+ }
+ 
++// ── New Zone (拖框建库区，解建模鸡蛋问题) ───────────────────────────────────
++
++const MIN_ZONE_EDGE = 500  // mm，短边下限
++
++const zoneDialogVisible = ref(false)
++const pendingZoneRect = ref<WorldRect | null>(null)
++const zoneForm = ref<{ zoneCode: string; zoneName: string; zoneType: number; color: string }>({
++  zoneCode: '',
++  zoneName: '',
++  zoneType: 1,
++  color: '#67c23a',
++})
++
++const zoneTypeOptions = [
++  { value: 1, label: t('存储区') },
++  { value: 2, label: t('拣选区') },
++  { value: 3, label: t('收货区') },
++  { value: 4, label: t('发货区') },
++]
++
++/** ZoneTool 拖框完成 → 校验短边 → 弹命名弹窗（业务全在页面侧） */
++function onZoneRectDrawn(rect: WorldRect): void {
++  if (rectShortEdge(rect) < MIN_ZONE_EDGE) {
++    ElMessage.warning(t('库区太小，请拖大一点'))
++    switchTool('select')
++    return
++  }
++  pendingZoneRect.value = rect
++  zoneForm.value = { zoneCode: '', zoneName: '', zoneType: 1, color: '#67c23a' }
++  zoneDialogVisible.value = true
++}
++
++/** 弹窗确认：校验必填 + zoneCode 不重 → AddZoneCmd 进栈 → 重渲染 → 切回 select */
++function confirmZone(): void {
++  const rect = pendingZoneRect.value
++  const s = store.scene
++  if (!rect || !s) return
++
++  const code = zoneForm.value.zoneCode.trim()
++  const name = zoneForm.value.zoneName.trim()
++  if (!code) { ElMessage.warning(t('请输入库区编码')); return }
++  if (!name) { ElMessage.warning(t('请输入库区名称')); return }
++  if (s.zones.some(z => z.zoneCode === code)) {
++    ElMessage.warning(t('库区编码已存在'))
++    return
++  }
++
++  const zone: ZoneVO = {
++    id: crypto.randomUUID(),
++    floorId: floorId.value,
++    zoneCode: code,
++    zoneName: name,
++    zoneType: zoneForm.value.zoneType,
++    polygon: JSON.stringify(rectToPolygon(rect)),
++    color: zoneForm.value.color || null,
++    enable: true,
++  }
++
++  const cmd = new AddZoneCmd(zone)
++  store.stack.exec(cmd, store.buildEditorContext())
++  store.updateUndoRedo()
++  afterCommand()
++
++  closeZoneDialog()
++  ElMessage.success(t('库区已创建'))
++}
++
++/** 取消：丢弃矩形，不产生命令 */
++function cancelZone(): void {
++  closeZoneDialog()
++}
++
++function closeZoneDialog(): void {
++  zoneDialogVisible.value = false
++  pendingZoneRect.value = null
++  switchTool('select')
++}
++
+ // ── Placement mode (F-3 template → canvas) ───────────────────────────────────
+ 
+ function bindStageClick(): void {
+   if (!stageRef) return
+   stageRef.stage.on('click', () => {
+     // P4: connector stop placement takes priority when active
+     if (connectorPlacementMode.value && pendingConnectorId.value) {
+       const cptr = stageRef!.stage.getPointerPosition()
+       if (!cptr) return
+       const cworld = stageRef!.screenToWorld(cptr)
+@@ -475,20 +557,25 @@ async function handleImportFile(e: Event): Promise<void> {
+         <el-button
+           :type="activeTool === 'rotate' ? 'primary' : 'default'"
+           @click="switchTool('rotate')"
+           :title="t('旋转 (R)')"
+         >{{ t('旋转') }}</el-button>
+         <el-button
+           :type="activeTool === 'marker' ? 'primary' : 'default'"
+           @click="switchTool('marker')"
+           :title="t('打点 (M)')"
+         >{{ t('打点') }}</el-button>
++        <el-button
++          :type="activeTool === 'zone' ? 'primary' : 'default'"
++          @click="switchTool('zone')"
++          :title="t('拖框新建库区')"
++        >{{ t('新建库区') }}</el-button>
+       </el-button-group>
+ 
+       <!-- Undo / Redo -->
+       <el-button size="small" :disabled="!store.canUndo" @click="handleUndo">
+         {{ t('撤销') }}
+       </el-button>
+       <el-button size="small" :disabled="!store.canRedo" @click="handleRedo">
+         {{ t('重做') }}
+       </el-button>
+ 
+@@ -568,20 +655,54 @@ async function handleImportFile(e: Event): Promise<void> {
+ 
+     <!-- hidden file input for import -->
+     <input
+       ref="importInputRef"
+       type="file"
+       accept=".json"
+       style="display: none"
+       @change="handleImportFile"
+     />
+ 
++    <!-- New Zone Dialog (拖框建库区) -->
++    <el-dialog
++      v-model="zoneDialogVisible"
++      :title="t('新建库区')"
++      width="420px"
++      @closed="cancelZone"
++    >
++      <el-form label-width="80px">
++        <el-form-item :label="t('库区编码')" required>
++          <el-input v-model="zoneForm.zoneCode" :placeholder="t('请输入库区编码')" />
++        </el-form-item>
++        <el-form-item :label="t('库区名称')" required>
++          <el-input v-model="zoneForm.zoneName" :placeholder="t('请输入库区名称')" />
++        </el-form-item>
++        <el-form-item :label="t('库区类型')">
++          <el-select v-model="zoneForm.zoneType" style="width: 100%">
++            <el-option
++              v-for="opt in zoneTypeOptions"
++              :key="opt.value"
++              :label="opt.label"
++              :value="opt.value"
++            />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('颜色')">
++          <el-color-picker v-model="zoneForm.color" />
++        </el-form-item>
++      </el-form>
++      <template #footer>
++        <el-button @click="cancelZone">{{ t('取消') }}</el-button>
++        <el-button type="primary" @click="confirmZone">{{ t('确定') }}</el-button>
++      </template>
++    </el-dialog>
++
+     <!-- Bind Codes Dialog (I-2) -->
+     <BindCodesDialog
+       v-if="selectedRack !== null"
+       v-model="bindDialogVisible"
+       :rack-id="selectedRack.id"
+       :rack="selectedRack"
+       :floor-id="floorId"
+       @bound="handleBound"
+     />
+   </div>
+diff --git a/cp6.web/src/views/space/master/SpaceFloorView.vue b/cp6.web/src/views/space/master/SpaceFloorView.vue
+new file mode 100644
+index 0000000..bb1a8a9
+--- /dev/null
++++ b/cp6.web/src/views/space/master/SpaceFloorView.vue
+@@ -0,0 +1,176 @@
++<!--
++  楼层マスタ —— CpPageShell + CpListPage + CpFormDialog（Space 波2）。
++  1:1 套用 SpaceSiteView 范式（单表 CRUD、前端切片分页、in-place 变更后 listRef.reload()）；
++  差异在「站点上下文」：顶部工具栏站点下拉（siteApi.list 填充、route.query.siteId 预选）；
++  未选站点显示 CpEmpty，选定后才渲染列表；站点间切换命令式 reload（首次选定由 v-if 挂载自动首查）。
++  underlay/origin 属编辑器域，不进本表单（YAGNI）；新建时 siteId 由当前选中站点隐式带入。
++  「編集画面」named-push {name:'space-editor', params:{floorId}} 进全屏编辑器。
++  删除失败的后端护栏 message 由 http 拦截器原样 ElMessage.error（此处 catch 仅止崩）。
++-->
++<template>
++  <CpPageShell :title="t('space.floor.title')" :count="total">
++    <template #actions>
++      <el-select
++        v-model="selectedSiteId"
++        :placeholder="t('space.floor.selectSite')"
++        filterable
++        style="width: 240px"
++      >
++        <el-option
++          v-for="s in sites"
++          :key="s.id"
++          :label="`${s.siteCode}　${s.siteName}`"
++          :value="s.id!"
++        />
++      </el-select>
++      <el-button :disabled="!selectedSiteId" @click="openCreate">{{ t('space.floor.create') }}</el-button>
++    </template>
++
++    <CpListPage
++      v-if="selectedSiteId"
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      @total-change="total = $event"
++    >
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
++        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
++        <el-button link type="primary" size="small" @click="gotoEditor(row)">{{ t('space.floor.editor') }}</el-button>
++      </template>
++    </CpListPage>
++    <CpEmpty v-else :text="t('space.floor.pickSiteFirst')" />
++
++    <CpFormDialog
++      v-model="dialogVisible"
++      :title="dialogTitle"
++      width="560"
++      :form="form"
++      :rules="rules"
++      :submit="onSave"
++      :labels="{ cancel: t('space.common.cancel'), confirm: t('space.common.save') }"
++      @saved="reloadList"
++    >
++      <el-form-item :label="t('space.floor.fld.level')" prop="level">
++        <el-input-number v-model="form.level" :min="0" :step="1" :precision="0" controls-position="right" />
++      </el-form-item>
++      <el-form-item :label="t('space.floor.fld.floorCode')" prop="floorCode">
++        <el-input v-model="form.floorCode" maxlength="50" />
++      </el-form-item>
++      <el-form-item :label="t('space.floor.fld.floorName')" prop="floorName">
++        <el-input v-model="form.floorName" maxlength="100" />
++      </el-form-item>
++      <el-form-item :label="t('space.floor.fld.height')" prop="height">
++        <el-input-number v-model="form.height" :min="0" :step="500" :precision="0" controls-position="right" />
++      </el-form-item>
++    </CpFormDialog>
++  </CpPageShell>
++</template>
++
++<script setup lang="ts">
++import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
++import { useRouter, useRoute } from 'vue-router'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
++import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import type { SiteVO, FloorVO } from '@/types/space/scene'
++
++const { t } = useI18n()
++const router = useRouter()
++const route = useRoute()
++
++const total = ref<number>()
++// in-place 变更后命令式刷新（保留当前筛选/页码）
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
++
++// —— 站点上下文 ——
++const sites = ref<SiteVO[]>([])
++const selectedSiteId = ref<string | undefined>()
++
++onMounted(async () => {
++  const res = await siteApi.list()
++  sites.value = res.data || []
++  const qid = route.query.siteId
++  if (typeof qid === 'string' && qid) selectedSiteId.value = qid // 预选（站点页「楼层」跳转带入）
++})
++
++// 站点切换：站点→站点时命令式 reload；首次选定（undefined→id）由 v-if 挂载自动首查，无需重复。
++watch(selectedSiteId, (nv, ov) => {
++  if (nv && ov) nextTick(reloadList)
++})
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'level', label: t('space.floor.fld.level'), width: 100, kind: 'num' },
++  { prop: 'floorCode', label: t('space.floor.fld.floorCode'), width: 160, kind: 'mono' },
++  { prop: 'floorName', label: t('space.floor.fld.floorName'), minWidth: 200 },
++  { prop: 'height', label: t('space.floor.fld.height'), width: 140, kind: 'num' },
++  { prop: '_action', label: t('space.common.action'), width: 220, fixed: 'right' },
++])
++
++// list 端点按 siteId 返回全量 → 前端切片分页（照 SpaceSiteView 切片写法）
++const fetchList: ListFetch = async ({ page, size }) => {
++  if (!selectedSiteId.value) return { rows: [], total: 0 }
++  const res = await floorApi.list(selectedSiteId.value)
++  const all = res.data || []
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
++}
++
++// —— 新建/編集对话框 —— form 为 Partial（新建无 id / underlay·origin 不进表单）
++const dialogVisible = ref(false)
++const form = reactive<Partial<FloorVO>>({ level: undefined, floorCode: '', floorName: '', height: 6000 })
++const dialogTitle = computed(() => (form.id ? t('space.floor.dlg.edit') : t('space.floor.dlg.create')))
++const rules = computed<FormRules>(() => ({
++  level: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++  floorCode: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++  floorName: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++}))
++
++function openCreate() {
++  Object.assign(form, { id: undefined, level: undefined, floorCode: '', floorName: '', height: 6000 })
++  dialogVisible.value = true
++}
++function openEdit(row: FloorVO) {
++  Object.assign(form, { ...row }) // 保留 underlay/origin（更新时回传，避免编辑器域被清零）
++  dialogVisible.value = true
++}
++
++async function onSave() {
++  // 只取表单四字段 + 当前站点；编辑时并入原行其余字段（underlay/origin）后回传。
++  const editable: Partial<FloorVO> = {
++    siteId: selectedSiteId.value,
++    level: form.level,
++    floorCode: form.floorCode,
++    floorName: form.floorName,
++    height: form.height,
++  }
++  if (form.id) {
++    await floorApi.update(form.id, { ...form, ...editable } as FloorVO)
++  } else {
++    await floorApi.create(editable)
++  }
++  ElMessage.success(t('space.common.success'))
++}
++
++async function onDelete(row: FloorVO) {
++  try {
++    await ElMessageBox.confirm(`${t('space.common.confirmDelete')} [${row.floorCode}]`, t('space.common.confirm'), { type: 'warning' })
++    await floorApi.remove(row.id)
++    ElMessage.success(t('space.common.success'))
++    reloadList()
++  } catch { /* 取消 / 后端子级护栏错误（后者已由 http 拦截器原样提示） */ }
++}
++
++function gotoEditor(row: FloorVO) {
++  router.push({ name: 'space-editor', params: { floorId: row.id } })
++}
++</script>
++
++<style scoped>
++</style>
+diff --git a/cp6.web/src/views/space/master/SpaceSiteView.vue b/cp6.web/src/views/space/master/SpaceSiteView.vue
+new file mode 100644
+index 0000000..867a957
+--- /dev/null
++++ b/cp6.web/src/views/space/master/SpaceSiteView.vue
+@@ -0,0 +1,165 @@
++<!--
++  站点マスタ —— CpPageShell + CpListPage + CpFormDialog（Space 波2）。
++  1:1 套用 WarehouseListView 范式：单表 CRUD、前端切片分页（list 端点无分页）、
++  in-place 变更后 listRef.reload() 命令式刷新（保留筛选/页码）。
++  warehouseCd 列空显示「—」并 title 提示发布时默认取站点编码；enable 走 kind:tag map。
++  编辑时 siteCode 只读（发布后 code 是映射锚——保守禁改，波1.5 终审 M 项背书）。
++  删除失败的后端护栏 message 由 http 拦截器原样 ElMessage.error（此处 catch 仅止崩）。
++-->
++<template>
++  <CpPageShell :title="t('space.site.title')" :count="total">
++    <template #actions>
++      <el-button @click="openCreate">{{ t('space.site.create') }}</el-button>
++    </template>
++
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      @total-change="total = $event"
++    >
++      <template #col-warehouseCd="{ row }">
++        <span v-if="row.warehouseCd" class="cp-mono">{{ row.warehouseCd }}</span>
++        <span v-else class="cp-dash" :title="t('space.site.whDefaultTip', { code: row.siteCode })">—</span>
++      </template>
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
++        <el-button link type="primary" size="small" @click="gotoFloor(row)">{{ t('space.site.floors') }}</el-button>
++        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
++      </template>
++    </CpListPage>
++
++    <CpFormDialog
++      v-model="dialogVisible"
++      :title="dialogTitle"
++      width="560"
++      :form="form"
++      :rules="rules"
++      :submit="onSave"
++      :labels="{ cancel: t('space.common.cancel'), confirm: t('space.common.save') }"
++      @saved="reloadList"
++    >
++      <el-form-item :label="t('space.site.fld.code')" prop="siteCode">
++        <el-input v-model="form.siteCode" :disabled="!!form.id" maxlength="50" />
++      </el-form-item>
++      <el-form-item :label="t('space.site.fld.name')" prop="siteName">
++        <el-input v-model="form.siteName" maxlength="100" />
++      </el-form-item>
++      <el-form-item :label="t('space.site.fld.warehouseCd')" prop="warehouseCd">
++        <el-input v-model="form.warehouseCd" maxlength="10" :placeholder="t('space.site.whDefault')" />
++      </el-form-item>
++      <el-form-item :label="t('space.site.fld.address')">
++        <el-input v-model="form.address" maxlength="200" />
++      </el-form-item>
++      <el-form-item :label="t('space.common.status')">
++        <el-switch v-model="form.enable" />
++      </el-form-item>
++    </CpFormDialog>
++  </CpPageShell>
++</template>
++
++<script setup lang="ts">
++import { ref, reactive, computed } from 'vue'
++import { useRouter } from 'vue-router'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
++import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import { siteApi } from '@/api/space/site'
++import type { SiteVO } from '@/types/space/scene'
++
++const { t } = useI18n()
++const router = useRouter()
++
++const total = ref<number>()
++// in-place 变更后命令式刷新（保留当前筛选/页码）
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'siteCode', label: t('space.site.fld.code'), width: 160, kind: 'mono' },
++  { prop: 'siteName', label: t('space.site.fld.name'), minWidth: 200 },
++  { prop: 'warehouseCd', label: t('space.site.fld.warehouseCd'), width: 140 },
++  { prop: 'address', label: t('space.site.fld.address'), minWidth: 220, overflowTooltip: true },
++  { prop: 'enable', label: t('space.common.status'), width: 110, align: 'center', kind: 'tag',
++    map: (v) => (v
++      ? { label: t('space.common.enabled'), tone: 'ok' }
++      : { label: t('space.common.disabled'), tone: 'muted' }) },
++  { prop: '_action', label: t('space.common.action'), width: 200, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('space.common.search'),
++  reset: t('space.common.clear'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'siteCode', label: t('space.site.fld.code'), type: 'text' },
++  { key: 'siteName', label: t('space.site.fld.name'), type: 'text' },
++])
++
++// list 端点无分页/筛选 → 前端拉全量、切片分页（照 WarehouseListView 切片写法）
++const fetchList: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const res = await siteApi.list()
++  let all = res.data || []
++  if (f.siteCode) {
++    const kw = String(f.siteCode).toLowerCase()
++    all = all.filter((r) => (r.siteCode || '').toLowerCase().includes(kw))
++  }
++  if (f.siteName) {
++    const kw = String(f.siteName).toLowerCase()
++    all = all.filter((r) => (r.siteName || '').toLowerCase().includes(kw))
++  }
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
++}
++
++// —— 新建/編集对话框 ——
++const dialogVisible = ref(false)
++const form = reactive<SiteVO>({ siteCode: '', siteName: '', warehouseCd: '', address: '', enable: true })
++const dialogTitle = computed(() => (form.id ? t('space.site.dlg.edit') : t('space.site.dlg.create')))
++const rules = computed<FormRules>(() => ({
++  siteCode: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++  siteName: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++}))
++
++function openCreate() {
++  Object.assign(form, { id: undefined, siteCode: '', siteName: '', warehouseCd: '', address: '', enable: true })
++  dialogVisible.value = true
++}
++function openEdit(row: SiteVO) {
++  Object.assign(form, { warehouseCd: '', address: '', ...row })
++  dialogVisible.value = true
++}
++
++async function onSave() {
++  if (form.id) {
++    await siteApi.update(form.id, { ...form })
++  } else {
++    await siteApi.create({ ...form })
++  }
++  ElMessage.success(t('space.common.success'))
++}
++
++async function onDelete(row: SiteVO) {
++  try {
++    await ElMessageBox.confirm(`${t('space.common.confirmDelete')} [${row.siteCode}]`, t('space.common.confirm'), { type: 'warning' })
++    await siteApi.remove(row.id!)
++    ElMessage.success(t('space.common.success'))
++    reloadList()
++  } catch { /* 取消 / 后端子级护栏错误（后者已由 http 拦截器原样提示） */ }
++}
++
++function gotoFloor(row: SiteVO) {
++  router.push({ path: '/space/floor', query: { siteId: row.id } })
++}
++</script>
++
++<style scoped>
++.cp-dash { color: var(--cp-muted); }
++</style>
+diff --git a/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts b/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts
+new file mode 100644
+index 0000000..b352940
+--- /dev/null
++++ b/cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts
+@@ -0,0 +1,80 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import SpaceFloorView from '../SpaceFloorView.vue'
++import type { SiteVO, FloorVO } from '@/types/space/scene'
++
++// router.push 用稳定 mock（hoisted，供跳编辑器断言）
++const { push } = vi.hoisted(() => ({ push: vi.fn() }))
++
++// 站点/楼层 API 全 mock；vue-router 注入 stub（照 SpaceSiteView.spec 先例）
++vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
++vi.mock('@/api/space/floor', () => ({
++  floorApi: { list: vi.fn(), create: vi.fn(), update: vi.fn(), remove: vi.fn() },
++}))
++vi.mock('vue-router', () => ({
++  useRouter: () => ({ push }),
++  useRoute: () => ({ query: { siteId: 's1' } }), // 预选 s1
++}))
++
++const sites: SiteVO[] = [
++  { id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true },
++  { id: 's2', siteCode: 'OSK', siteName: '大阪DC', enable: true },
++]
++const floors: FloorVO[] = [
++  { id: 'f1', siteId: 's1', level: 1, floorCode: 'FL1', floorName: '1階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++  { id: 'f2', siteId: 's1', level: 2, floorCode: 'FL2', floorName: '2階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++]
++
++function mountView() {
++  const i18n = createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
++  return mount(SpaceFloorView, { global: { plugins: [i18n] } })
++}
++
++describe('SpaceFloorView', () => {
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
++    vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
++    vi.mocked(floorApi.create).mockResolvedValue({ code: 0, message: '', data: { id: 'new' } })
++  })
++
++  it('route.query.siteId 预选后按站点渲染楼层行', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(siteApi.list).toHaveBeenCalled()
++    expect(floorApi.list).toHaveBeenCalledWith('s1')
++    expect(w.text()).toContain('FL1')
++    expect(w.text()).toContain('FL2')
++  })
++
++  it('「編集画面」按钮 named-push 到 space-editor 且 params.floorId 正确', async () => {
++    const w = mountView()
++    await flushPromises()
++    // _action 列 fixed:'right' → el-table 双渲染（主表 + 固定层）；点全部「編集画面」按钮，
++    // toHaveBeenCalledWith 命中携真实行的那次即可。
++    const editorBtns = w.findAll('el-button').filter((b) => b.text() === 'space.floor.editor')
++    expect(editorBtns.length).toBeGreaterThan(0)
++    for (const b of editorBtns) await b.trigger('click')
++    expect(push).toHaveBeenCalledWith({ name: 'space-editor', params: { floorId: 'f1' } })
++  })
++
++  it('新建保存后触发楼层 list 二次调用', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(floorApi.list).toHaveBeenCalledTimes(1)
++
++    const dlg = w.findComponent(CpFormDialog)
++    // 走对话框 submit 契约（onSave → floorApi.create），再触发 saved → reload
++    await (dlg.props('submit') as (f: Record<string, unknown>) => Promise<void>)(dlg.props('form'))
++    dlg.vm.$emit('saved')
++    await flushPromises()
++
++    expect(floorApi.create).toHaveBeenCalledTimes(1)
++    expect(floorApi.list).toHaveBeenCalledTimes(2)
++  })
++})
+diff --git a/cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts b/cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts
+new file mode 100644
+index 0000000..800094b
+--- /dev/null
++++ b/cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts
+@@ -0,0 +1,71 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import { siteApi } from '@/api/space/site'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import SpaceSiteView from '../SpaceSiteView.vue'
++import type { SiteVO } from '@/types/space/scene'
++
++// 站点 API 全 mock（list 返回两行样例；create 成功）
++vi.mock('@/api/space/site', () => ({
++  siteApi: {
++    list: vi.fn(),
++    create: vi.fn(),
++    update: vi.fn(),
++    remove: vi.fn(),
++  },
++}))
++
++// 视图内 useRouter（「楼层」跳转）——测试无需真实路由
++vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
++
++const rows: SiteVO[] = [
++  { id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true, warehouseCd: 'WH01', address: '東京都' },
++  { id: 's2', siteCode: 'OSK', siteName: '大阪DC', enable: false, warehouseCd: null, address: null },
++]
++
++function mountView() {
++  const i18n = createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
++  return mount(SpaceSiteView, { global: { plugins: [i18n] } })
++}
++
++describe('SpaceSiteView', () => {
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: rows })
++    vi.mocked(siteApi.create).mockResolvedValue({ code: 0, message: '', data: { id: 'new' } })
++  })
++
++  it('挂载后渲染两行站点编码', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(siteApi.list).toHaveBeenCalled()
++    expect(w.text()).toContain('TKY')
++    expect(w.text()).toContain('OSK')
++  })
++
++  it('点「新建站点」后 CpFormDialog 可见', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(w.findComponent(CpFormDialog).props('modelValue')).toBe(false)
++    await w.find('.cp-page-actions el-button').trigger('click')
++    expect(w.findComponent(CpFormDialog).props('modelValue')).toBe(true)
++  })
++
++  it('保存（create）后触发 list 二次调用', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(siteApi.list).toHaveBeenCalledTimes(1)
++
++    await w.find('.cp-page-actions el-button').trigger('click')
++    const dlg = w.findComponent(CpFormDialog)
++    // 走对话框 submit 契约（onSave → siteApi.create），再触发 saved → reload
++    await (dlg.props('submit') as (f: Record<string, unknown>) => Promise<void>)(dlg.props('form'))
++    dlg.vm.$emit('saved')
++    await flushPromises()
++
++    expect(siteApi.create).toHaveBeenCalledTimes(1)
++    expect(siteApi.list).toHaveBeenCalledTimes(2)
++  })
++})

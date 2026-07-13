@@ -1,0 +1,3738 @@
+# Review package: 2041b3a..HEAD
+
+## Commits
+28d6251 docs(sdd): M-OA/WF T5过审after evidence-fix——全任务完成待终审
+afef783 docs(oawf): T5 Wf_FlowTask 豁免注释补 assignee 改写论证(审查修复)
+372677e feat(oawf): M-OA/WF T5 IAuditable 贴点——Wf 治理/授权族纳入5+运行时豁免12
+66a9237 docs(sdd): M-OA/WF T4过审(五风险零issue)+T5简报
+1e75f38 test(oawf): M-OA/WF T4 fail-closed 权限反射守卫(双命名空间16控制器/31贴点/2豁免)
+d0a814a docs(sdd): T2b过审after doc-fix(锚定表两处残留主控直修)+T4简报
+ac733ee feat(oawf): M-OA/WF T2 追补——双栈孤儿路由收编(用户裁决2026-07-12)
+6128342 docs(sdd): M-OA/WF T3b过审(31→20→20零issue)+用户裁决收编+T2追补简报
+5fe2a70 feat(oawf): M-OA/WF T3b 逐租户MenuAction/RoleAction权限种子(31→20→20)
+87cc371 docs(sdd): M-OA/WF T3a过审(31全量零issue)+T3b简报
+55b58ee feat(oawf): M-OA/WF T3a 16控制器31写端点贴 [RequirePermission]
+8392907 docs(sdd): M-OA/WF T2过审(五风险全证,命门解除)+T3a简报
+e87a609 ops: WU下载缓存守卫计划任务CP6-WUCache-Guard每4h——两次磁盘满事故自愈闸
+8efc132 feat(oawf): M-OA/WF T2 菜单MenuKey锚定(OawfMenuSeed)+委派双键合一
+3035d42 docs(sdd): M-OA/WF T1过审(33全量零漏扫,双栈材料实)+两拍板+T2简报
+90bfbd3 docs(oawf): M-OA/WF T1 权限键清单——16控制器×31写端点权限键真相源
+6739894 docs(sdd): M-OA/WF波开工台账段+T1简报
+
+## Files changed
+ .superpowers/sdd/oawf-t1-brief.md                  |  20 ++
+ .superpowers/sdd/oawf-t1-report.md                 |  82 +++++
+ .superpowers/sdd/oawf-t2-brief.md                  |  23 ++
+ .superpowers/sdd/oawf-t2-report.md                 |  62 ++++
+ .superpowers/sdd/oawf-t2b-brief.md                 |  22 ++
+ .superpowers/sdd/oawf-t2b-report.md                |  51 ++++
+ .superpowers/sdd/oawf-t3a-brief.md                 |  24 ++
+ .superpowers/sdd/oawf-t3a-report.md                |  75 +++++
+ .superpowers/sdd/oawf-t3b-brief.md                 |  22 ++
+ .superpowers/sdd/oawf-t3b-report.md                |  77 +++++
+ .superpowers/sdd/oawf-t4-brief.md                  |  20 ++
+ .superpowers/sdd/oawf-t4-report.md                 |  57 ++++
+ .superpowers/sdd/oawf-t5-brief.md                  |  20 ++
+ .superpowers/sdd/oawf-t5-report.md                 |  61 ++++
+ .superpowers/sdd/progress.md                       |  14 +
+ CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs   |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs       |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs            |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowData.cs          |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs           |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs      |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs        |   4 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs       |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs      |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs          |   9 +
+ CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs         |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FormData.cs          |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_FormDef.cs           |   4 +-
+ CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs      |   1 +
+ CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs         |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_Notification.cs      |   2 +
+ CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs        |   2 +
+ CP6.Tests/OawfMenuSeedTests.cs                     | 184 +++++++++++
+ CP6.Tests/OawfPermissionAttributeTests.cs          | 198 ++++++++++++
+ CP6.Tests/OawfPermissionSeedTests.cs               | 162 ++++++++++
+ CP6.Tests/Wf/OawfAuditTests.cs                     | 339 +++++++++++++++++++++
+ CP6.WebApi/Controllers/Oa/ApproverMapController.cs |   4 +
+ CP6.WebApi/Controllers/Oa/CatalogController.cs     |   2 +
+ CP6.WebApi/Controllers/Oa/DelegateController.cs    |   3 +
+ CP6.WebApi/Controllers/Oa/DesignerController.cs    |   3 +
+ CP6.WebApi/Controllers/Oa/DraftController.cs       |   5 +
+ CP6.WebApi/Controllers/Oa/FlowAdminController.cs   |   2 +
+ CP6.WebApi/Controllers/Oa/InboxController.cs       |   6 +
+ .../Controllers/Oa/NotificationController.cs       |   3 +
+ CP6.WebApi/Controllers/Oa/PrefController.cs        |   2 +
+ .../Controllers/Wf/AdvancedFlowController.cs       |   4 +
+ CP6.WebApi/Controllers/Wf/ApprovalController.cs    |   2 +
+ CP6.WebApi/Controllers/Wf/FlowController.cs        |   4 +
+ CP6.WebApi/Controllers/Wf/FormController.cs        |   3 +
+ CP6.WebApi/Controllers/Wf/TaskController.cs        |   2 +
+ CP6.WebApi/Program.cs                              |  14 +
+ CP6.WebApi/Seed/OawfMenuSeed.cs                    | 129 ++++++++
+ CP6.WebApi/Seed/OawfPermissionSeed.cs              | 118 +++++++
+ docs/seeds/oawf-key-menu-anchor.md                 |  52 ++++
+ docs/seeds/oawf-menu-seed.sql                      |  43 +++
+ docs/seeds/oawf-permission-keys.md                 | 212 +++++++++++++
+ docs/seeds/oawf-permission-seed.sql                | 153 ++++++++++
+ scripts/wu-cache-guard.ps1                         |  26 ++
+ 58 files changed, 2352 insertions(+), 5 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/oawf-t1-brief.md b/.superpowers/sdd/oawf-t1-brief.md
+new file mode 100644
+index 0000000..20784fe
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t1-brief.md
+@@ -0,0 +1,20 @@
++# M-OA/WF T1 任务简报：权限键清单(端点×权限键真相源)
++
++## 背景与位置
++M-OA/WF 横切接线波首任务(branch=feat/m-oawf-crosscutting)。第四个同型波(M-WMS/M-ERP/M-MES 已上线)。清单质量决定全波,键错一字全链 403。
++
++## 必读(按顺序)
++1. `docs/00-横切接线规范.md`
++2. 同型先例: `docs/seeds/mes-permission-keys.md`(最新最严的一版,结构 §一~§七 照抄)
++3. 扫描对象: `CP6.WebApi/Controllers/Oa/`(11 控制器: ApproverMap/Catalog/Delegate/Designer/Draft/FlowAdmin/Forecast/Inbox/Notification/Pref/Query)+ `CP6.WebApi/Controllers/Wf/`(5 控制器: AdvancedFlow/Approval/Flow/Form/Task)
++
++## 需求
++1. **全量扫描**: 16 控制器全部非 GET 端点逐方法列表,双向验证计数闭环。
++2. **逐端点定键**: 键前缀按锚定菜单归属定(OA 菜单锚→`oa-*`,WF 菜单锚→`wf-*`,连字符);先查 Program.cs 中 OA/WF 菜单段(500 段已见 501/502)的 MenuId/RoutePath/MenuKey 现状,给出每键锚定菜单候选;RoutePath 形态与回填时序命门照 M-ERP/M-MES 先例排查并在 §六 标注。
++3. **高危键独立**(计划点名: 流程定义保存/发布[Designer/Flow]、委托授予[Delegate]、FlowAdmin 干预;实扫另有不可逆操作一并拆分),逐个佐证。
++4. **只读 POST 豁免**: 查询/预测/通知已读类逐条读 Service 证得无写库才豁免(注意「标记已读」是写不是读)。**个人偏好类写端点(Pref)与收件箱操作(Inbox 审批动作)不豁免**——审批动作是全系统最高危写路径之一。
++5. **⚠特别盘点(供用户裁决,不做决定)**: `/wf/form-designer`、`/wf/flow-designer` 两条路由的现状——前端路由在不在?菜单行在不在?对应控制器/页面是新栈(SSO 后)还是旧栈遗留?把证据列进 §六「用户裁决点」,退役/收编两案的影响面各写一句。
++6. **交付**: `docs/seeds/oawf-permission-keys.md`(§一~§七 照 MES 版结构,计数自洽)。纯文档零代码。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\oawf-t1-report.md`。回复只返回: 状态、commit sha、一行计数摘要(N控制器/M真写/K豁免/J键/高危数)、concerns、报告路径(15 行内)。单 commit(docs)即 push。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/oawf-t1-report.md b/.superpowers/sdd/oawf-t1-report.md
+new file mode 100644
+index 0000000..d030e90
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t1-report.md
+@@ -0,0 +1,82 @@
++# M-OA/WF T1 报告：权限键清单（端点 × 权限键真相源）
++
++**任务**：M-OA/WF 横切接线波 T1，纯文档零代码。
++**交付**：`docs/seeds/oawf-permission-keys.md`（§一~§七 照 MES 版结构）。
++**分支**：feat/m-oawf-crosscutting。
++
++## 一行计数摘要
++16 控制器 / 31 真写 / 2 豁免 / 7 menu-key / 23 资源键 / **9 高危键** / 3 状态键。
++非 GET 端点 33 = 豁免 2 + 真写 31（自洽 ✅）。
++
++## 逐控制器计数表
++
++| 控制器 | 非GET端点 | 豁免 | 真写 | menu-key |
++|---|---|---|---|---|
++| ApproverMap | 3 | 0 | 3 | oa-approver-map |
++| Catalog | 1 | 0 | 1 | oa-form-catalog |
++| Delegate | 2 | 0 | 2 | oa-settings |
++| Designer | 2 | 0 | 2 | oa-designer |
++| Draft | 4 | 0 | 4 | oa-form-catalog |
++| FlowAdmin | 1 | 0 | 1 | oa-flow-admin |
++| Forecast | 1 | 1 | 0 | oa-form-catalog |
++| Inbox | 5 | 0 | 5 | oa-inbox |
++| Notification | 2 | 0 | 2 | oa-inbox |
++| Pref | 1 | 0 | 1 | oa-settings |
++| Query | 1 | 1 | 0 | oa-form-search |
++| AdvancedFlow | 3 | 0 | 3 | oa-inbox |
++| Approval | 1 | 0 | 1 | oa-form-catalog |
++| Flow | 3 | 0 | 3 | oa-inbox / oa-form-catalog / oa-designer |
++| Form | 2 | 0 | 2 | oa-designer / oa-form-catalog |
++| Task | 1 | 0 | 1 | oa-inbox |
++| **合计** | **33** | **2** | **31** | **7 去重** |
++
++## 高危键清单（9，均逐个佐证）
++1. `oa-inbox:approve` — 审批办理（承认/否认），Inbox 批量#17+Flow 单件 act#30，触发 IApprovalCallback 级联（预算激活/PO 确认/PR 批准，Program.cs:124-126）。全系统最高危。
++2. `oa-inbox:transfer` — 转交（改派处理人，审批权转移）。
++3. `oa-inbox:sendback` — 退回（作废审批痕迹，Inbox#19+AdvancedFlow#24 归并）。
++4. `oa-inbox:addsign` — 加签（改审批链结构，章07§3）。
++5. `oa-inbox:delegate` — 委派登记（授代理审批权，章07§5）。
++6. `oa-settings:delegate` — 代理授权授予/撤销（OA DelegateController，计划点名「委托授予」）。
++7. `oa-designer:edit` — 流程定义保存（新栈 Designer.Save#7 + 旧栈 Flow.SaveDef#28 同写 Wf_FlowDef，计划点名）。
++8. `oa-designer:add` — 克隆流程定义（新建 Wf_FlowDef）。
++9. `oa-designer:form-save` — 表单定义保存（旧栈 Form.SaveDef#31，孤儿路由，待裁决）。
++
++## 豁免论证索引（2，逐条读 Service 证无写）
++- `oa-forecast/preview` → **view**：ForecastService.ForecastAsync（ForecastService.cs:18-70）仅读 Wf_FlowDefs + 内存遍历 schema，全类无 Add/Update/Remove/SaveChanges。不产生实例。
++- `oa-query/search` → **view**：InboxService.QueryAsync（InboxService.cs:255-278）仅 Wf_FlowInstances 多条件查询 + join，.Take(500).ToListAsync 投影，无写。
++- 反向复核（确为写、不豁免）：4 个「标记已读」端点（InboxService.cs:89/97 SaveChanges + NotificationService.MarkRead*）、Catalog favorite（FavoriteService.cs:12-25 Add/Remove+SaveChanges）、Pref save（计划明示不豁免）——均按写贴权限。
++
++## §六 悬案摘要
++
++### 头号命门·回填时序（洁净首启 OA 全 403）
++OA 菜单 733–740 在 Program.cs :1446–1496 才 Add 且未设 MenuKey；唯一回填块在 :908（在 OA 菜单插入之前）。洁净首启 OA 菜单 MenuKey=null → PermissionAggregator 过滤 → OA/WF 全 403，须二次重启。ERP(:827)/MES(:845) 有「回填前显式赋值」T2 块，OA 尚无。→ **T2 硬前置**：在 733–739 插入块显式赋 `MenuKey="oa-*"` 或插入后补回填 pass。
++
++### 派生键一致性
++733–739 RoutePath 派生键与本表 menu-key 逐字一致（无 MES machine-list 错配），但仍受时序命门影响，须随头号命门一并显式化。
++
++### ⚠ 用户裁决点·双栈孤儿路由（只记录不裁决）
++- 前端 `/wf/form-designer`、`/wf/flow-designer`（router/index.ts:46-47）仅在 viewModules 组件表，**无 Sys_Menu 菜单行**、不在 platform/oaSub/静态路由列 → `addDynamicRoutes`(:332-343) 永不注册 → **洁净部署不可达（暗物质）**。旁证 :188-189 旧 /wf/todo 等已 redirect 到 /oa/inbox，唯二设计器未处置。
++- 后端旧栈 def 保存：FormController `/api/wf/form/def`(#31 Wf_FormDef) + FlowController `/api/wf/flow/def`(#28 Wf_FlowDef)。新栈：DesignerController `/api/oa/designer/save`（同写 Wf_FlowDef）+ menu 738 可达。→ **流程定义保存双后端路径；表单定义保存仅旧栈**。
++- 退役案：收敛权限面到单一 oa-designer:*；风险=须先查 SaveDef 是否被种子/测试/集成引用。
++- 收编案：补菜单行可达，但与新栈功能重叠、双维护，且 wf-* 键破坏 oa-* 前缀统一。
++- T1 占位：flow/def 归并 oa-designer:edit、form/def 记 oa-designer:form-save，T2 贴权限前须用户裁定。
++
++### 注·委派双端点
++`oa-inbox:delegate`(AdvancedFlow#26) 与 `oa-settings:delegate`(OA#5) 同语义、不同锚定页，T2 复核是否合一。
++
++### 注·无菜单锚控制器
++/api/wf/* 五引擎控制器 + Notification 无自己菜单行，按「消费页」锚定（判断非硬事实，T2 复核）。
++
++## Self-review 结论
++- 计数自洽 ✅（33=2+31；逐控制器真写累加=31；表 #1–33 连续）。
++- 键全连字符小写、无下划线 ✅。
++- 9 高危键逐个佐证（含 Service/Program.cs 行号）✅。
++- 2 豁免逐条读 Service 证无写（文件:行）✅。
++- §六 头号命门（回填时序）+ 双栈裁决点证据齐（router 行号 + addDynamicRoutes 逻辑 + 双后端路径 + 两案影响面）✅。
++
++## Concerns
++1. **命门未修**（T1 仅记录）：洁净部署 OA 全 403 的时序命门确凿，T2 若不显式赋 MenuKey 则首启失配。
++2. **双栈裁决未决**：旧栈 2 个 def 端点的键（oa-designer:edit 合并项 + form-save）悬于「不可达路由概念」，须用户在 T2 前裁定退役/收编。
++3. **委派双键**：oa-inbox:delegate 与 oa-settings:delegate 可能应合一，留 T2。
++4. **FlowAdmin enable 归 状态 vs 是**：计划点名高危，本表判 状态（可逆、不动在途），待 T2 审计拍板。
++5. 计划简报提及「500 段已见 501/502」与实际不符——OA 菜单实为 733–740 段，本表按实际锚定。
+diff --git a/.superpowers/sdd/oawf-t2-brief.md b/.superpowers/sdd/oawf-t2-brief.md
+new file mode 100644
+index 0000000..6a1e97a
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t2-brief.md
+@@ -0,0 +1,23 @@
++# M-OA/WF T2 任务简报：菜单 MenuKey 锚定(OawfMenuSeed)
++
++## 背景与位置
++M-OA/WF 横切接线波第二任务。T1 真相源 `docs/seeds/oawf-permission-keys.md` 已过审(7 menu-key/23 资源键)。同型先例=MesMenuSeed(最新版,含按 MenuId 定位的防御矫正块)——先读 CP6.WebApi/Seed/MesMenuSeed.cs+MesMenuSeedTests.cs 学样。
++
++## 主控已拍板(T2 执行前提,同步更新真相源)
++1. **委派双键合一**: `oa-inbox:delegate` 与 `oa-settings:delegate` 合一为 **`oa-settings:delegate`**(权限面统一,防一处授一处漏)。真相源相应行改写并留裁决记录(引用审查建议)。
++2. **`oa-flow-admin:enable` 维持状态级**(可逆、不动在途实例)。
++3. **双栈退役/收编未裁决**(用户回来拍板)——本任务不动 /wf/*-designer 路由与旧栈端点,仅做菜单锚定;旧栈写端点键(oa-designer:*)照真相源锚定到新设计器菜单行。
++
++## 需求
++1. **OawfMenuSeed 启动幂等种子**,接入 Program.cs 紧随 MesPermissionSeed 之后、**先于全局回填块(:908 附近)**。
++   - 🔴硬前置(T1 审查坐实): OA 菜单 733-739 在 :1446 插入且未设 MenuKey,回填块更早→洁净首启 OA/WF 全 403。OawfMenuSeed 须显式赋 7 键(含缺行补建,照 MesMenuSeed 兼顾缺行做法)。
++2. **7 个 menu-key 锚定 733-739**(照真相源 §二;740 父组行不锚定;唯一索引安全)。
++3. **防御矫正块**按 MenuId 定位(照 MesMenuSeed :388 正解——按 Key 找会漏),严限 7 锚定行,纠回已被回填成 RoutePath 派生键的存量行。
++4. **交付**: `docs/seeds/oawf-key-menu-anchor.md` + `docs/seeds/oawf-menu-seed.sql`(头声明 C# 正本)+ 真相源合一裁决更新。
++5. **测试**: OawfMenuSeedTests 照 MesMenuSeedTests(锚定/唯一键/幂等/矫正/非锚定行 null)。
++
++## Global Constraints
++- 基线 1758 不许跌;每 commit 立即 push;键连字符。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\oawf-t2-report.md`。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/oawf-t2-report.md b/.superpowers/sdd/oawf-t2-report.md
+new file mode 100644
+index 0000000..48fe88b
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t2-report.md
+@@ -0,0 +1,62 @@
++# M-OA/WF T2 执行报告：菜单 MenuKey 锚定(OawfMenuSeed)
++
++生成于 2026-07-12。执行者：subagent（Opus 4.8）。分支 `feat/m-oawf-crosscutting`。
++
++## 交付物
++
++| 文件 | 类型 | 说明 |
++|---|---|---|
++| `CP6.WebApi/Seed/OawfMenuSeed.cs` | 正本 | 启动幂等种子（缺行补建 + 7 键显式锚定 + 防御矫正块） |
++| `CP6.Tests/OawfMenuSeedTests.cs` | 测试 | 6 用例（锚定/RoutePath/唯一键/幂等/矫正/父行 null） |
++| `CP6.WebApi/Program.cs` | 接线 | `OawfMenuSeed.EnsureSeeded(db)` 置于 MesPermissionSeed 之后（~:857）、全局回填块（:908）之前 |
++| `docs/seeds/oawf-key-menu-anchor.md` | 交付文档 | 7 键锚定表 + 硬前置落实 |
++| `docs/seeds/oawf-menu-seed.sql` | SQL 对照 | 头声明 C# 正本；7 行 UPDATE 严限 733–739 |
++| `docs/seeds/oawf-permission-keys.md` | 真相源更新 | 委派双键合一裁决（§一#26/§二/§三/§六注4/§七 全同步） |
++
++## 7 键锚定表（真相源 §二 逐字一致）
++
++| menu-key | MenuId | RoutePath | 菜单名 |
++|---|---|---|---|
++| `oa-inbox` | 733 | `/oa/inbox` | 电子表单信箱 |
++| `oa-flow-admin` | 734 | `/oa/flow-admin` | 流程管理 |
++| `oa-form-catalog` | 735 | `/oa/form-catalog` | 填單 |
++| `oa-form-search` | 736 | `/oa/form-search` | 表单查询 |
++| `oa-settings` | 737 | `/oa/settings` | 设定 |
++| `oa-designer` | 738 | `/oa/designer` | 流程设计器 |
++| `oa-approver-map` | 739 | `/oa/approver-map` | approverMap |
++
++非锚定：**740 OA工作流父组行**（无 RoutePath，MenuKey 留 null，回填因 RoutePath==null 亦跳过）。
++
++## 矫正块作用域
++
++- **按 MenuId 定位**（照 MesMenuSeed 正解，非按 Key——按 Key 找会漏被写坏行）。
++- **严限 7 锚定行**（`r.Key != null` → 733–739）；740 父行不动。
++- 幂等：`menu.MenuKey != r.Key` 时才写，已正确即跳过。
++- **OA 特性（与 MES 差异）**：OA 733–739 RoutePath 派生键与真相源逐字一致（`/oa/inbox`→`oa-inbox` …），**零错配**。命门纯为**回填时序**（非 MES machine-list 键值错配）。故矫正块正常恒 no-op，仅为结构对齐 + 防御历史/异常写坏保留。硬前置由「先于 :908 回填执行」这一接线位置解决。
++
++## 三主控拍板落实
++
++1. **委派双键合一** → `oa-settings:delegate`：真相源 §一#26 改锚 oa-settings、§三删 `oa-inbox:delegate` 行并合并、§六注4 记 T1 建议→T2 裁决全过程、§七 高危 9→8 / 资源键 23→22 同步。**menu-key 集不变（仍 7 键）**——合一在 action 层，oa-inbox/oa-settings 两菜单键均照旧锚定，故本 seed 无需改动。
++2. **`oa-flow-admin:enable` 维持状态级**：734 菜单照锚，未提级、未拆键。
++3. **双栈未裁决**：不动 /wf/*-designer 路由；旧栈 `oa-designer:*` 键照真相源锚定到 738 流程设计器菜单行。
++
++## TDD Evidence
++
++- **先红**（mutation 验证测试有牙）：将 733 锚定键临时改为 `oa-inbox-MUTATED` → `dotnet test --filter OawfMenuSeedTests` = **Failed: 2, Passed: 4**（`AnchorsAll7KeysToExpectedMenuIds` + `AnchoredRowsMatchTruthSourceRoutePaths` 双红），随即还原。
++- **后绿**：`dotnet test --filter OawfMenuSeedTests` = **Passed: 6, Failed: 0**（4s）。
++- **全量**：`dotnet test CP6.Tests` = **Passed: 1764, Failed: 0, Skipped: 5, Total: 1769**（1m3s）。基线 1758 + 新增 6 = 1764，**零回归、无下跌**。
++
++## Self-Review 核对
++
++| 检查项 | 结论 |
++|---|---|
++| 7 键与真相源（合一后）逐字一致 | ✅ 7 键 = §二 表；合一不影响 menu-key 集 |
++| 接线在全局回填块（:908）前无条件路径 | ✅ 置于 :857（MesPermissionSeed 后），无条件调用，先于 :908 |
++| 矫正块按 MenuId 严限 7 行 | ✅ `if (r.Key == null) continue` + `FirstOrDefault(MenuId==r.Id)`，740 跳过 |
++| 唯一索引安全 | ✅ 7 锚定键互异，740 留 null；不撞 `MenuKey IS NOT NULL` 过滤唯一索引（CP6Context.cs:602） |
++| 测试删实现会红 | ✅ mutation 验证 2 红（且删 class 会编译失败红） |
++
++## 遗留（不属本任务范围）
++
++- 双栈孤儿路由 `/wf/form-designer`、`/wf/flow-designer` 退役/收编待用户裁决（真相源 §六头号裁决点）——T3 贴权限前须裁定，否则旧栈 def 端点键概念上锚不可达路由。
++- **环境事故复现**：执行中 C 盘 0GB（WU Download 缓存 2.7GB 撑满，即 7/12 已复盘的磁盘满事故）。已清 WU 缓存 + 用户 temp 释放至 1.59GB 完成构建；**扩容仍是治本建议**（记忆已录）。
+diff --git a/.superpowers/sdd/oawf-t2b-brief.md b/.superpowers/sdd/oawf-t2b-brief.md
+new file mode 100644
+index 0000000..276c2e2
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t2b-brief.md
+@@ -0,0 +1,22 @@
++# M-OA/WF T2 追补任务简报：双栈收编(用户裁决 2026-07-12)
++
++## 背景
++用户裁决=**收编**: 补 Sys_Menu 行使旧设计器 `/wf/form-designer`、`/wf/flow-designer` 可达,双栈并存,不删旧栈端点。权限面不变(旧栈写端点已贴 oa-designer:* 锚 738)。
++
++## 需求
++1. **OawfMenuSeed 追加两条收编行**(照 ErpMenuSeed 五孤儿收编先例):
++   - RoutePath=`/wf/form-designer`、`/wf/flow-designer`;MenuName 用日文照旧设计器页面语义(如 フォームデザイナー(旧)/フローデザイナー(旧),「(旧)」后缀区分新设计器);ParentId=740(OA工作流父组);Icon 照 738 新设计器同款或近似;Enable=true。
++   - **MenuId 段位先查占用再定**(741/742 候选,grep Seed 目录+Program.cs 种子段+迁移确认无碰撞,查证结论写报告)。
++   - **MenuKey 留 null**(权限锚在 738,不得共键;回填块会派生 wf-form-designer/wf-flow-designer 键,无 RoleAction 引用,无害——与 MES 非锚定行同型,注释说明)。
++   - RoleMenu 授 admin(RoleId=1),照收编先例。
++2. **前端可达性自查**: 两 RoutePath 与 router viewModules 既有映射(index.ts:46-47)逐字一致(菜单行 RoutePath 必须精确等于 viewModules 键,否则 addDynamicRoutes 仍不注册)——对照写进报告。
++3. 更新 `docs/seeds/oawf-key-menu-anchor.md`(追记收编行与裁决)+ `oawf-menu-seed.sql` 对照。
++4. 测试: OawfMenuSeedTests 追加 2 用例(收编行存在+RoutePath 精确/幂等含新行)。
++5. 真相源 §六 双栈条目追记「2026-07-12 用户裁决=收编,已落地」。
++
++## 验证与提交
++- `dotnet test --filter OawfMenuSeedTests` 全绿;全量(基线 1769)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++报告写入 `C:\CP6\.superpowers\sdd\oawf-t2b-report.md`。回复只返回: 状态、commit、一行测试结论、段位查证一行、concerns(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/oawf-t2b-report.md b/.superpowers/sdd/oawf-t2b-report.md
+new file mode 100644
+index 0000000..0556d06
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t2b-report.md
+@@ -0,0 +1,51 @@
++# M-OA/WF T2 追补：双栈收编 执行报告
++
++生成于 2026-07-12。任务：用户裁决=收编，补 Sys_Menu 行使旧设计器 `/wf/form-designer`、`/wf/flow-designer` 可达。
++
++## 实现内容
++
++1. **`CP6.WebApi/Seed/OawfMenuSeed.cs`**：Rows 追加两行
++   - `(741, "フォームデザイナー(旧)", "/wf/form-designer", "Edit", 740, 741, null)`
++   - `(742, "フローデザイナー(旧)", "/wf/flow-designer", "Edit", 740, 742, null)`
++   - MenuKey 均留 null（权限维持锚 738 `oa-designer:edit`/`oa-designer:form-save`，若 741/742 也赋非空键会与 738 撞 `Sys_Menus.MenuKey IS NOT NULL` 过滤唯一索引）；类头注释「双栈收编裁决」段落说明理由及回填后果（派生 `wf-form-designer`/`wf-flow-designer`，无 RoleAction 引用，无害，与 MES 非锚定行同型）。
++   - RoleMenu 授 admin（RoleId=1），沿用既有循环逻辑自动处理。
++   - 防御矫正块（`r.Key != null` 过滤）天然跳过 741/742，不会误赋值。
++
++2. **段位查证**：全仓 grep `CP6.WebApi/Seed/*.cs` + `Program.cs` + `Migrations/*.cs`（MenuId 字面量），确认 741/742 无占用——OA 段止于 740，PLAN 段 730–732 不重叠；迁移文件名中出现的 `741`/`742` 子串（如 `20260523064741_...`、`20260616143741_...`）系时间戳误命中，非 MenuId。取号照 `ErpMenuSeed` 五孤儿收编先例（216–220）就近连续取号。
++
++3. **前端可达性核对**：`cp6.web/src/router/index.ts:46-47` viewModules 现有映射：
++   ```
++   '/wf/form-designer': () => import('@/views/wf/designer/FormDesigner.vue'),
++   '/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue'),
++   ```
++   与新增两行 RoutePath 逐字一致，`addDynamicRoutes` 匹配条件满足，收编后前端可达。
++
++4. **`CP6.Tests/OawfMenuSeedTests.cs`**：追加 2 用例
++   - `EnsureSeeded_CollectsOrphanDesignerRoutes_741And742_WithNullMenuKeyAndRoutePathMatchingViewModules`：断言 741/742 存在、RoutePath 精确、MenuKey null、ParentId=740、Enable=true、RoleMenu 授 admin。
++   - `EnsureSeeded_IsIdempotent_WithOrphanCollectionRows_NoDuplicatesOnSecondRun`：断言二次调用不重复、MenuKey 仍 null、未与 7 锚定键共键（`oa-designer` 仍恰一行持有于 738）。
++   - 同步订正既有 `EnsureSeeded_IsIdempotent_NoDuplicateRowsOrRoleMenus` 硬编码行数 8→10（Rows 总数从 8 增至 10）。
++
++5. **文档同步**：
++   - `docs/seeds/oawf-key-menu-anchor.md` 追加「T2 追补：双栈孤儿路由收编」节（表格+段位查证+前端核对+RoleMenu+唯一索引安全说明），并删除旧「待用户裁决」措辞。
++   - `docs/seeds/oawf-menu-seed.sql` 追加 741/742 对照 INSERT 语句块（幂等 WHERE NOT EXISTS 写法，与既有 UPDATE 块同风格）。
++   - `docs/seeds/oawf-permission-keys.md`（真相源）§六头号裁决点标题追记「已裁决=收编」，裁决段落正文追记落地说明+文件指向，§七计数收口同步措辞（menu-key 仍 7，孤儿路由标注已收编而非待裁决）。
++
++## 验证
++
++- `dotnet test --filter OawfMenuSeedTests`：8/8 passed（6 原有 + 2 新增）。
++- 全量 `dotnet test`：**1771 passed**, 5 skipped（既有 skip，非本任务引入），0 failed。基线 1769 → 1771（+2 恰为新增测试数），无回归。
++
++## Self-review checklist
++
++- [x] 段位查证写了（grep Seed 目录+Program.cs+Migrations，741/742 无占用，含迁移文件名误命中排除说明）
++- [x] RoutePath 与 viewModules 逐字对照写了（router/index.ts:46-47 引用原文对照）
++- [x] MenuKey null 注释在（OawfMenuSeed.cs 类头「双栈收编裁决」段落 + Rows 内联注释 + 文档表格「裁决」列）
++- [x] 真相源裁决追记了（oawf-permission-keys.md §六标题+正文+§七计数收口三处）
++
++## Commit
++
++`ac733ee` — `feat(oawf): M-OA/WF T2 追补——双栈孤儿路由收编(用户裁决2026-07-12)`，已 push 至 `feat/m-oawf-crosscutting`。
++
++## Concerns
++
++- 无功能性 concern。唯一需留意点：741/742 MenuKey 为 null，属「挂菜单树但不承载权限」类行，与 738 共享 `oa-designer:*` 权限语义——若未来审计要求区分新旧栈权限面，需重新拍板（当前用户裁决明确「不删旧栈端点、权限面不变」，故此为预期设计而非缺陷）。
+diff --git a/.superpowers/sdd/oawf-t3a-brief.md b/.superpowers/sdd/oawf-t3a-brief.md
+new file mode 100644
+index 0000000..6867222
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t3a-brief.md
+@@ -0,0 +1,24 @@
++# M-OA/WF T3a 任务简报：16 控制器 31 写端点贴 [RequirePermission]
++
++## 背景与位置
++M-OA/WF 横切接线波第三任务。T1 真相源(已含 T2 委派合一裁决)+T2 菜单锚定已过审。本任务只做贴点;种子=T3b。
++
++## 必读(按顺序)
++1. `docs/00-横切接线规范.md`
++2. `docs/seeds/oawf-permission-keys.md`(T1 真相源合一后版本——键值逐字使用: 31 真写端点×键 + 2 只读 POST 豁免[Forecast.Preview/Query.Search])
++3. 样板: M-MES T3a 先例 commit 35e90a7(git show 学贴法)
++
++## 需求
++1. 真相源列出的 **16 控制器 31 写端点**逐方法贴 `[RequirePermission("key","action")]`,键值逐字一致(连字符;8 高危不得降级;三个 delegate 端点统一贴 `("oa-settings","delegate")` 照 §六注4)。
++2. **2 豁免不贴**(Forecast.Preview/Query.Search)。
++3. **双栈端点照贴**: 旧栈 Flow/Form.SaveDef 等已在真相源定键(oa-designer:*)——退役裁决未出前照真相源贴点(不裸奔);若日后退役端点连属性一起删,无冲突。本任务不删不改任何路由/端点。
++4. 纯注解叠加: 零方法体改动,类级 [Authorize] 保留。
++5. 交付自查表: 逐控制器 1:1 对账(31=31)写入报告。
++6. 顺手项(审查处方): Program.cs OawfMenuSeed 接线注释的漂移行号(:857/:908)改为内容描述(「紧随 MesPermissionSeed 之后」「下方全局回填块之前」),去行号化。
++
++## 验证与提交
++- dotnet build 0 Error;全量测试(基线 1764 绿)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\oawf-t3a-report.md`。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/oawf-t3a-report.md b/.superpowers/sdd/oawf-t3a-report.md
+new file mode 100644
+index 0000000..8d751a3
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t3a-report.md
+@@ -0,0 +1,75 @@
++# M-OA/WF T3a 执行报告：16 控制器 31 写端点贴 [RequirePermission]
++
++生成于 2026-07-12。基线 1764 绿。分支 `feat/m-oawf-crosscutting`。
++
++## 结论
++
++- **贴点 31/31 全贴**，键值逐字取自 T1 真相源 `docs/seeds/oawf-permission-keys.md`（合一后版本）。
++- **2 豁免未贴**：ForecastController.Preview、QueryController.Search（只读 POST→view，无 `using CP6.Core.Auth;`、无属性）。
++- **三 delegate 端点统一键** `("oa-settings","delegate")`：OA Delegate.Add / Delegate.Remove + AdvancedFlow.Delegate（§注4 委派双键合一）。
++- **8 高危键全独立不降级**：`oa-inbox:approve/transfer/sendback/addsign` + `oa-settings:delegate` + `oa-designer:edit/add/form-save`。
++- **零方法体改动**：纯注解叠加；类级 `[Authorize]` 16 控制器全保留；未删改任何路由/端点（双栈 Flow/Form.SaveDef 照真相源贴 `oa-designer:edit`/`oa-designer:form-save`，不删不改）。
++- **顺手项**：Program.cs OawfMenuSeed 接线注释去行号化（`:908`/`:1446–1496` 硬编码行号改为「紧随 MesPermissionSeed 之后」「全局回填块之前」「本文件下方 OA 菜单插入块」内容描述）。
++
++## 逐控制器 1:1 对账表（31 真写 + 2 豁免）
++
++| # | 控制器 | 方法 | menu-key | action | 高危 | 已贴 |
++|---|---|---|---|---|---|---|
++| 1 | ApproverMap | Create | oa-approver-map | add | 否 | ✅ |
++| 2 | ApproverMap | Update | oa-approver-map | edit | 否 | ✅ |
++| 3 | ApproverMap | Delete | oa-approver-map | del | 否 | ✅ |
++| 4 | Catalog | Favorite | oa-form-catalog | favorite | 否 | ✅ |
++| 5 | Delegate | Add | oa-settings | delegate | **是** | ✅ |
++| 6 | Delegate | Remove | oa-settings | delegate | **是** | ✅ |
++| 7 | Designer | Save | oa-designer | edit | **是** | ✅ |
++| 8 | Designer | Clone | oa-designer | add | **是** | ✅ |
++| 9 | Draft | Save | oa-form-catalog | add | 否 | ✅ |
++| 10 | Draft | Update | oa-form-catalog | edit | 否 | ✅ |
++| 11 | Draft | Submit | oa-form-catalog | submit | 状态 | ✅ |
++| 12 | Draft | Delete | oa-form-catalog | del | 否 | ✅ |
++| 13 | FlowAdmin | Enable | oa-flow-admin | enable | 状态 | ✅ |
++| 14 | Forecast | Preview | — | (view) | 豁免 | ⛔不贴 |
++| 15 | Inbox | MarkTaskRead | oa-inbox | read | 否 | ✅ |
++| 16 | Inbox | MarkCcRead | oa-inbox | read | 否 | ✅ |
++| 17 | Inbox | Batch | oa-inbox | approve | **是** | ✅ |
++| 18 | Inbox | Transfer | oa-inbox | transfer | **是** | ✅ |
++| 19 | Inbox | SendBack | oa-inbox | sendback | **是** | ✅ |
++| 20 | Notification | Read | oa-inbox | read | 否 | ✅ |
++| 21 | Notification | ReadAll | oa-inbox | read | 否 | ✅ |
++| 22 | Pref | Save | oa-settings | edit | 否 | ✅ |
++| 23 | Query | Search | — | (view) | 豁免 | ⛔不贴 |
++| 24 | AdvancedFlow | SendBack | oa-inbox | sendback | **是** | ✅ |
++| 25 | AdvancedFlow | AddSign | oa-inbox | addsign | **是** | ✅ |
++| 26 | AdvancedFlow | Delegate | oa-settings | delegate | **是** | ✅ |
++| 27 | Approval | Submit | oa-form-catalog | submit | 状态 | ✅ |
++| 28 | Flow | SaveDef | oa-designer | edit | **是** | ✅ |
++| 29 | Flow | Submit | oa-form-catalog | submit | 状态 | ✅ |
++| 30 | Flow | Act | oa-inbox | approve | **是** | ✅ |
++| 31 | Form | SaveDef | oa-designer | form-save | **是** | ✅ |
++| 32 | Form | SubmitData | oa-form-catalog | submit | 状态 | ✅ |
++| 33 | Task | Withdraw | oa-inbox | withdraw | 状态 | ✅ |
++
++自洽：33 非 GET 端点 = 31 真写贴点 + 2 豁免。grep `RequirePermission("oa-` = 31（跨 14 控制器；Forecast/Query 各 0）。
++
++### 逐控制器贴点数核对（grep 计数）
++PrefController 1 / NotificationController 2 / InboxController 5 / FlowAdminController 1 / DraftController 4 / TaskController 1 / FormController 2 / FlowController 3 / ApprovalController 1 / AdvancedFlowController 3 / DesignerController 2 / ApproverMapController 3 / CatalogController 1 / DelegateController 2 = **31** ✅
++
++## 验证
++
++- `dotnet build CP6.WebApi`：**Build succeeded, 0 Error**（1 既有 warning，与本任务无关）。
++- `dotnet test`（全量）：**Passed! Failed: 0, Passed: 1764, Skipped: 5, Total: 1769**。基线 1764 零跌。
++
++## 自查（六问）
++
++1. 31 全贴逐字？✅ 键值逐字对齐真相源 §一表。
++2. 2 豁免未贴？✅ Forecast/Query 无属性、无 using。
++3. 三 delegate 统一键？✅ 均 `("oa-settings","delegate")`。
++4. 零方法体改动？✅ 仅 `using` + 属性行；方法体、类级 [Authorize] 未动。
++5. 高危未降级？✅ 8 高危键独立，approve/transfer/sendback/addsign/delegate 未与 read/edit/view 混授。
++6. 逐控制器对账？✅ 见上表（33=31+2）。
++
++## 交接给下游
++
++- T3b：逐租户 `Sys_MenuAction`/`Sys_RoleAction` 种子（本任务不种；PermissionService 无 admin 旁路，未种前 admin 亦 403）。
++- T4：反射 fail-closed 测试。
++- 双栈孤儿路由 `/wf/form-designer`、`/wf/flow-designer`（真相源 §六头号裁决点）仍待用户裁决退役/收编——本任务照真相源贴 `oa-designer:*`，退役时属性随端点一并删无冲突。
+diff --git a/.superpowers/sdd/oawf-t3b-brief.md b/.superpowers/sdd/oawf-t3b-brief.md
+new file mode 100644
+index 0000000..ea0a635
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t3b-brief.md
+@@ -0,0 +1,22 @@
++# M-OA/WF T3b 任务简报：逐租户 MenuAction/RoleAction 权限种子
++
++## 背景与位置
++M-OA/WF 横切接线波第四任务。T2 锚定表+T3a 31 贴点已过审。样板=**MesPermissionSeed**(最新版,CP6.WebApi/Seed/MesPermissionSeed.cs+Tests)。
++
++## 必读(按顺序)
++1. `docs/seeds/oawf-key-menu-anchor.md`(T2 锚定表——key→MenuId 唯一依据,733-739)
++2. `docs/seeds/oawf-permission-keys.md`(合一后真相源——(menu-key,action) 元组来源,22 资源键)
++3. MesPermissionSeed 四要件照抄: 枚举 Sys_Tenants 显式 TenantId / IgnoreQueryFilters 查重 / MenuAction+RoleAction 双种 RoleId=1 / StampTenant 不覆盖。
++
++## 需求
++1. 新建 `OawfPermissionSeed.EnsureSeeded`,接入 Program.cs 紧随 OawfMenuSeed 之后,每启动幂等。
++2. 种子元组=31 贴点按 (menu-key,action) 去重(归并含: 三 delegate 合一/新旧栈 SaveDef 同键等,以 grep 实际贴点为准),经锚定表映射 (MenuId,ActionCode)。三数闭环(31→N→N)写入报告,漏 0 多 0。
++3. 2 豁免不入种子。
++4. 测试: OawfPermissionSeedTests——ExpectedTuples 独立硬编码 oracle/逐租户逐元组集合相等/幂等行数级/RoleId=1+MenuId 来自锚定表。
++5. SQL 对照 `docs/seeds/oawf-permission-seed.sql`(CROSS JOIN+NOT EXISTS,头声明 C# 正本)。
++
++## Global Constraints
++- 基线 1764 不许跌;每 commit 即 push;键连字符;RoleAction 逐租户。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\oawf-t3b-report.md`(三数闭环+TDD 证据)。回复只返回: 状态、commit sha、一行测试结论、三数闭环一行、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/oawf-t3b-report.md b/.superpowers/sdd/oawf-t3b-report.md
+new file mode 100644
+index 0000000..0834892
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t3b-report.md
+@@ -0,0 +1,77 @@
++# M-OA/WF T3b 执行报告：逐租户 MenuAction/RoleAction 权限种子
++
++生成于 2026-07-12。分支 `feat/m-oawf-crosscutting`。样板 = MesPermissionSeed。
++
++## 交付物
++
++| 文件 | 角色 |
++|---|---|
++| `CP6.WebApi/Seed/OawfPermissionSeed.cs` | 正本：20 元组逐租户幂等种子（MenuAction+RoleAction，RoleId=1） |
++| `CP6.WebApi/Program.cs`（OawfMenuSeed 之后） | 接入点：紧随菜单锚定，每启动幂等 |
++| `CP6.Tests/OawfPermissionSeedTests.cs` | 5 断言，ExpectedTuples 独立硬编码 oracle |
++| `docs/seeds/oawf-permission-seed.sql` | 文档留档（CROSS JOIN + NOT EXISTS，头声明 C# 为正本） |
++
++## 三数闭环对账（31 → 20 → 20，漏 0 多 0）
++
++**① 控制器真写端点 = 31**（grep `Controllers/Oa/*.cs` 21 + `Controllers/Wf/*.cs` 10 的 `[RequirePermission]`）：
++
++Oa 21：Pref edit / Draft add,edit,submit,del / Catalog favorite / Notification read×2 / Designer edit,add /
++Inbox read×2,approve,transfer,sendback / ApproverMap add,edit,del / Delegate delegate×2 / FlowAdmin enable。
++
++Wf 10：Task withdraw / Approval submit / Form form-save,submit / AdvancedFlow sendback,addsign,delegate /
++Flow edit,submit,approve。
++
++**② 去重 (menu-key, action) = 20**（跨控制器归并消解 11 处重复，真相源 §五）：
++- `oa-inbox:read` 覆 Inbox task/cc-read + Notification read/read-all（4→1）
++- `oa-inbox:approve` 覆 Inbox batch + Flow act（2→1）
++- `oa-inbox:sendback` 覆 Inbox + AdvancedFlow（2→1）
++- `oa-form-catalog:submit` 覆 Draft submit + Approval submit + Form data + Flow submit（4→1）
++- `oa-settings:delegate` 覆 Delegate add/remove + AdvancedFlow delegate（3→1，T2 委派合一拍板1）
++- `oa-designer:edit` 覆 Designer save + Flow def（2→1）
++
++31 − 11 归并 = 20 唯一元组。
++
++**③ 种子元组 = 20**（`OawfPermissionSeed.Actions`）：
++
++| MenuId | menu-key | actions | 计 |
++|---|---|---|---|
++| 733 | oa-inbox | read, approve, transfer, sendback, addsign, withdraw | 6 |
++| 734 | oa-flow-admin | enable | 1 |
++| 735 | oa-form-catalog | add, edit, submit, del, favorite | 5 |
++| 737 | oa-settings | edit, delegate | 2 |
++| 738 | oa-designer | edit, add, form-save | 3 |
++| 739 | oa-approver-map | add, edit, del | 3 |
++| | | **合计** | **20** |
++
++**闭环：31 真写端点 → 20 去重元组 → 20 种子元组。漏种 0 / 多种 0 ✅**
++
++## 覆盖与豁免
++
++- 覆盖 **6** 个有写端点 menu-key（733/734/735/737/738/739）。
++- `oa-form-search`(736) 仅 1 只读 POST（Query search 豁免→view，未贴点），无键可种，故不在本种子——与 7 键总数不矛盾。
++- 2 只读 POST 豁免（Forecast preview→`oa-form-catalog:view` / Query search→`oa-form-search:view`）未入种子。
++- 资源键总 22（真相源 §七）= 本 20 写键 + 2 view 豁免键 ✅ 自洽。
++
++## 四要件核对（照 MesPermissionSeed）
++
++1. 枚举 `Sys_Tenants` 显式 TenantId ✅（`tenantIds` foreach，每租户各插一份）
++2. `IgnoreQueryFilters()` 查重 ✅（跨租户可见，避默认租户作用域误判）
++3. MenuAction + RoleAction 双种 RoleId=1 ✅
++4. StampTenant 不覆盖显式 TenantId ✅（显式设 tid，拦截器仅盖 Guid.Empty）
++
++## TDD Evidence
++
++| 阶段 | 命令 | 结果 |
++|---|---|---|
++| 🔴 红 | `dotnet test --filter OawfPermissionSeedTests`（种子未建） | CS0103 `OawfPermissionSeed` 不存在 —— 编译失败 |
++| 🟢 绿 | 同上（种子建成 + 接入） | **Passed 5 / Failed 0**（20/租户元组集合相等 + 幂等行数级 40 + RoleId=1 & MenuId 锚定 & oa- 前缀 + 逐租户显式 TenantId + 无租户 no-op） |
++| 全量 | `dotnet test CP6.Tests` | **Passed 1769 / Failed 0 / Skipped 5**（基线 1764 + 新增 5，无跌） |
++
++## Oracle 独立性
++
++`ExpectedTuples` 为测试内独立硬编码 20 元组常量（非引用 `OawfPermissionSeed.Actions`），
++两侧各自从真相源手抄，集合相等断言（`Assert.Equal(expected, maSet/raSet)`）双向校验，防自证假绿。
++
++## SQL 头声明
++
++`docs/seeds/oawf-permission-seed.sql` 头注明「★正本は C#：OawfPermissionSeed.cs，本 SQL は同一集合の文書留档，乖離時は C# を正とする」。CROSS JOIN Sys_Tenants + NOT EXISTS 幂等，与 C# 20 元组 1:1。
+diff --git a/.superpowers/sdd/oawf-t4-brief.md b/.superpowers/sdd/oawf-t4-brief.md
+new file mode 100644
+index 0000000..8c1e749
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t4-brief.md
+@@ -0,0 +1,20 @@
++# M-OA/WF T4 任务简报：fail-closed 反射测试
++
++## 背景与位置
++M-OA/WF 横切接线波第五任务。T3a 已给 14 控制器 31 写端点贴 [RequirePermission](2 控制器全豁免)。同型先例=**MesPermissionAttributeTests**(最新版)——先读学三件套+豁免防腐结构。真相源=docs/seeds/oawf-permission-keys.md(合一后)。
++
++## 需求
++1. 新建 `OawfPermissionAttributeTests`:
++   - **discovery 守卫**: 扫描面=Oa 命名空间 11 + Wf 命名空间 5 = 16 控制器(两命名空间,谓词覆盖两个;计数断言 16 防空扫)。基类形态自查后写准确注释(DeclaredOnly 安全前提)。
++   - **fail-closed 核心闸**: 全部非 GET 端点 ∈ 贴点 ∪ 豁免;Assert.Equal(31, taggedCount)+Assert.Equal(2, exemptHit)+offenders==0 精确计数。
++   - **键约定**: 键匹配 `^oa-[a-z0-9-]+$`(本波全部键为 oa-* 前缀,含 Wf 控制器上的贴点——真相源如此);action 集与真相源实际词汇逐词相等(HashSet)。
++2. **显式豁免清单**: Forecast.Preview/Query.Search 两条,带真相源编号理由注释;贴键+豁免冲突场景显式捕获。
++3. 反向验证: 临时删一处贴点(建议 Inbox 审批族)确认红→恢复绿,证据写报告,工作树干净。
++4. 仅新增测试文件,零生产改动。
++
++## 验证与提交
++- `dotnet test --filter OawfPermissionAttributeTests` 全绿;全量(基线 1771)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++报告写入 `C:\CP6\.superpowers\sdd\oawf-t4-report.md`。回复只返回: 状态、commit、一行测试结论、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/oawf-t4-report.md b/.superpowers/sdd/oawf-t4-report.md
+new file mode 100644
+index 0000000..3dd31d3
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t4-report.md
+@@ -0,0 +1,57 @@
++# M-OA/WF T4 执行报告：fail-closed 权限反射测试
++
++## 状态：DONE
++
++新增 `CP6.Tests/OawfPermissionAttributeTests.cs`（4 用例），零生产改动。真相源 `docs/seeds/oawf-permission-keys.md`。
++
++## 扫描面收口对账（与真相源 §七逐项吻合）
++
++| 项 | 真相源 | 测试断言 | 核对 |
++|---|---|---|---|
++| 扫描控制器 | 16（Oa 11 + Wf 5，双命名空间） | `OawfControllers_AreDiscovered` == 16 | ✅ |
++| 非 GET 端点总 | 33 | 31 贴 + 2 豁免 = 33 | ✅ |
++| 真·写贴点 | 31 | `Assert.Equal(31, taggedCount)` | ✅ |
++| 只读 POST 豁免 | 2 | `Assert.Equal(2, exemptHit.Count)` | ✅ |
++| menu-key 去重 | 7（全 oa-*） | `^oa-[a-z0-9-]+$` 正则 | ✅ |
++
++## 贴点计数（从控制器源码逐词读出，31=31）
++
++grep `RequirePermission(` 于 Oa+Wf 共 **31** 处，distinct action **14 词**，全部落入 `ActionVocabulary`：
++add(3) edit(5) del(2) favorite(1) read(4) submit(4) enable(1) withdraw(1) approve(2) transfer(1) sendback(2) addsign(1) delegate(3) form-save(1) = 31。
++menu 全部 `oa-*`（含 Wf 5 控制器——键锚定 OA 消费页菜单，真相源 §一/§二，本波无 wf-* 键）。
++
++## 豁免对账（2 条，精确）
++
++| 键 | 真相源 | 依据 |
++|---|---|---|
++| `ForecastController.Preview` | §四#1 | ForecastService 全类无写，POST 仅传 varsJson 复杂体 |
++| `QueryController.Search` | §四#2 | InboxService.QueryAsync 纯读投影，POST 仅传 FormQueryFilter |
++
++两方法均为 HttpPost 且无 [RequirePermission]，已逐条读源码确认。`ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints` 防腐守卫锁死其「实存·仍是变更端点·仍未贴键」。
++
++## 基类继承链自查（DeclaredOnly 安全前提）
++
++逐类 grep 类头结果：
++- **Oa 11 控制器全部** `: LocalizedControllerBase`
++- **Wf**：AdvancedFlow/Approval/Flow/Form `: LocalizedControllerBase`；TaskController `: ControllerBase`
++- 即：15 个经 `LocalizedControllerBase`，1 个（Wf.TaskController）直继 `ControllerBase`。
++
++已读 `CP6.WebApi/Controllers/LocalizedControllerBase.cs`：抽象基类，仅惰性暴露 `Localizer` 属性，**零 [HttpXxx] action 声明**。故所有写端点均为子类手写声明方法，`BindingFlags.DeclaredOnly` 反射不漏扫。注释已按此实况准确记录（区别于 MES 版「全直继 ControllerBase」，沿用 ERP 版「混合基类」措辞）。
++
++## 反向验证证据（fail-closed 真闸）
++
++1. 临时删 `InboxController.Batch` 的 `[RequirePermission("oa-inbox","approve")]`（审批族最高危写路径）。
++2. `dotnet test --filter OawfPermissionAttributeTests` → **红**：
++   `InboxController.Batch：变更端点缺 [RequirePermission] 且不在只读 POST 豁免清单`
++   Failed: 1, Passed: 3（核心闸 offender + taggedCount 31→30 双重触发）。
++3. 恢复贴点 → **绿**：Passed 4/4。
++4. `git status --porcelain` → 仅 `?? CP6.Tests/OawfPermissionAttributeTests.cs`，工作树干净（生产文件无残留改动）。
++
++## 验证结果
++
++- `dotnet test --filter OawfPermissionAttributeTests`：**Passed 4/4**。
++- 全量：**Passed 1775, Failed 0, Skipped 5**（1771 基线 + 4 新增，无回归）。
++
++## concerns
++
++无。真相源 §六头号命门（洁净首启 OA MenuKey 回填时序 403）属 T2 职责，非 T4 范围；本测试为编译期/属性级反射守卫，不涉运行期 aggregator，故不受该命门影响。
+diff --git a/.superpowers/sdd/oawf-t5-brief.md b/.superpowers/sdd/oawf-t5-brief.md
+new file mode 100644
+index 0000000..5c7b54b
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t5-brief.md
+@@ -0,0 +1,20 @@
++# M-OA/WF T5 任务简报：IAuditable 贴点(Wf_FlowDef/Wf_ApprovalBinding 族)
++
++## 背景与位置
++M-OA/WF 横切接线波末任务(计划原文: 「T5 IAuditable: Wf_FlowDef/Wf_ApprovalBinding 贴点」)。先例=M-MES T5(01b953d,一次过审): **豁免裁决逐实体字段级实查**,禁按类别套先例;豁免须源码注释+负测试。拦截器: CP6Context ChangeTracker.Entries<IAuditable>() 纯标记零迁移。
++
++## 需求
++1. 圈定贴点实体(CP6.Entity 中 Wf_*/Oa 域实体目录**全量**实查):
++   - **Wf_FlowDef**(流程定义——本波高危键 oa-designer:* 的落库对象,定义变更影响所有在途流程)与 **Wf_ApprovalBinding**(审批绑定单源——计划点名)必贴。
++   - 其余 Wf_/Oa 域实体(FormDef/Instance/Task/Token/委托/ApproverMap/收藏/偏好/通知等)按「**不可逆治理配置或权限授予类即纳入;高频运行时流转/追加型即评估豁免**」口径逐实体裁决——运行时实例/任务/令牌类大概率豁免(高频写+状态机流转由引擎测试锁),但**委托授权(Delegate 类实体)与 ApproverMap 是权限授予面,应纳入**。
++   - 逐实体裁决表(实体|字段级/语义证据|裁决)是交付物核心;全量对账(目录 N=纳入+豁免,零漏)。
++2. 每实体单行 IAuditable,零其他改动零迁移。
++3. 测试: OawfAuditTests 照 MesAuditTests 形状(Field/Old/New 真值+负测试)。
++4. 若贴点引发迁移,停手报 BLOCKED。
++
++## 验证与提交
++- `dotnet test --filter OawfAuditTests` 全绿;全量(基线 1775)不许跌;git status 无 Migrations。
++- 单 commit 即 push。
++
++## 报告契约
++报告写入 `C:\CP6\.superpowers\sdd\oawf-t5-report.md`(全量裁决表+TDD 证据)。回复只返回: 状态、commit、一行测试结论、裁决计数一行(纳入N/豁免M/目录全量对账)、concerns(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/oawf-t5-report.md b/.superpowers/sdd/oawf-t5-report.md
+new file mode 100644
+index 0000000..2462849
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t5-report.md
+@@ -0,0 +1,61 @@
++# M-OA/WF T5 报告：IAuditable 贴点(Wf_FlowDef/Wf_ApprovalBinding 族)
++
++## 结论
++- 目录全量对账：CP6.Entity/DomainModels/Wf 域 **17 个实体**（+1 `WfNotificationType` 静态常量类，非实体不计入）。
++- **纳入 5 / 豁免 12 / 目录 17（零漏）**。
++- 每实体单行 `IAuditable`（纳入）或 `[审计豁免]` 源码注释（豁免），**零业务字段改动、零迁移**（`git status CP6.Core/Migrations/` = 0）。
++- `dotnet test --filter OawfAuditTests` = **21/21 绿**；全量 = **1796 passed / 5 skipped / 0 failed**（= 基线 1775 + 本任务 21，基线未跌）。
++
++## 裁决方法
++口径（brief §需求1）：**不可逆治理配置 或 权限授予类 → 纳入；高频运行时流转 / 追加型 / 用户偏好 → 豁免**。
++逐实体字段级实查（非按类别套先例）。拦截器 `CP6Context.CaptureFieldAuditBeforeSave` 走 `ChangeTracker.Entries<IAuditable>()` 泛型标记，EntityName=`ClrType.Name`，PK=Id(Guid)→EntityKey，元字段(Id/TenantId/Creator/CreateDate/Modifier/ModifyDate)与 [AuditIgnore]/密钥/RowVersion 由 `BuildChanges` 跳过。
++
++## 全量裁决表（17 实体）
++
++| # | 实体 | 字段级/语义证据 | 裁决 |
++|---|------|----------------|------|
++| 1 | **Wf_FlowDef** | 流程定义：SchemaJson(节点/边有向图)、FlowKey/FormKey 绑定、Version、Enable、FunctionId/FlowCode。**高危键 oa-designer:* 落库对象**，schema/启停变更影响所有在途流程走向。设计期治理配置。 | **纳入** |
++| 2 | **Wf_ApprovalBinding** | 审批绑定单源：BizType→FlowKey 映射、Enable、ConditionJson。改绑/停用直接改变某业务是否走审批、走哪条流程。计划点名。治理配置面。 | **纳入** |
++| 3 | **Wf_FormDef** | 表单定义：SchemaJson(字段定义)、Version、Enable、Category。oa-designer 落库对象，schema 改前端渲染+后端 required/类型复核规则。设计期治理配置。 | **纳入** |
++| 4 | **Wf_FlowDelegate** | 审批委派：GrantorId→DelegateId、ValidFrom/To、Enable、Scope。委托人把审批权授予代理人——谁把审批权给了谁/何时收回。**权限授予面**（brief 点名 Delegate 类应纳入）。 | **纳入** |
++| 5 | **Wf_ApproverMap** | 审批人映射：MapKey/MatchValue→ApproverUserId/ApproverRoleId、OrderNo、Enable。改一行即改某匹配值由谁审批=授予/回收审批权。**权限授予面**（brief 点名 ApproverMap 应纳入）。数据驱动。 | **纳入** |
++| 6 | Wf_FlowInstance | 运行时状态载体：CurrentNode/Status/VarsJson 每次推进即变；RowVersion 乐观锁。正确性由 FlowEngine 引擎测试锁定。 | 豁免 |
++| 7 | Wf_FlowTask | 高频待办任务：一节点多条(会签)、Status/IsRead/StageIndex/StageRound 幂等流转。引擎测试锁定。**复审补记**：AssigneeId(审批权归属)有两条原地改写路径——AdvancedFlow.TransferAsync(AdvancedFlow.cs:94)改派、WfTimeoutService escalate(WfTimeoutService.cs:85)超时升级；均有结构化补偿留痕（Wf_FlowFormTo 新行+原行标记, FlowEngine.ReadModel.cs:135-155；Wf_FlowHistory「超时升级：{old}→{new}」, WfTimeoutService.cs:80-84），字段级 diff 豁免不丢证据，维持豁免。 | 豁免 |
++| 8 | Wf_FlowToken | 运行时执行点令牌：分叉/合流内核态 Status/StagePlanJson 高频翻转。FlowToken 内核测试锁定。 | 豁免 |
++| 9 | Wf_FlowHistory | **仅追加事件日志**：submit/approve/reject… 每动作追加一条、不更新。本身即审批时间线(审计源而非被审计对象)。 | 豁免 |
++| 10 | Wf_FlowData | 每关卡不可变表单快照：按 StepSeq 追加"每步变化轨迹"留痕，建后不改。运行时读模型。 | 豁免 |
++| 11 | Wf_FlowFormTo | 传签履历台账：运行时读模型，送签建/处理更新(Status/HandledAt 随流转)。引擎测试锁定。 | 豁免 |
++| 12 | Wf_FlowCc | 抄送运行时读模型：随流转落行、IsRead/ReadAt 高频翻转。 | 豁免 |
++| 13 | Wf_FormData | 表单提交数据：运行时一次提交一行的字段值快照(DataJson)，改版不动旧数据本身即留痕。 | 豁免 |
++| 14 | Wf_Notification | 站内通知：运行时随事件追加、IsRead/ReadAt 高频翻转。 | 豁免 |
++| 15 | Wf_FormFavorite | 用户个人偏好：填單☆收藏(UserId,FormKey)。 | 豁免 |
++| 16 | Wf_InboxPref | 用户个人偏好：信箱显示偏好 PrefsJson 自由结构。 | 豁免 |
++| 17 | Wf_ServiceJob | 服务任务异步作业台账：运行时队列 AttemptCount/Status/Lock*/NextAttemptAtUtc 高频翻转 + RowVersion 并发。ServiceJob 扫描/租约测试锁定。 | 豁免 |
++| — | WfNotificationType | 静态常量类（`public static class`，无 BaseEntity/无 [Table]/无行）→ **非实体，不计入目录**。 | N/A |
++
++豁免注释已全部落源码（每行 `[审计豁免]` 头注，均标注"OawfAuditTests 负测试坐实零审计行"）。
++
++## TDD 证据（先红后绿）
++- **RED**（贴点前跑 OawfAuditTests）：`Failed: 9, Passed: 12, Total: 21` —— 9 个纳入正测试全红（无审计行），12 个豁免负测试已绿。
++- **GREEN**（5 实体贴 IAuditable 后）：`Failed: 0, Passed: 21, Total: 21`。
++- 纳入正测试真值断言：op1 断言 `EntityName==nameof(...)` + `EntityKey==Id.ToString()`；op2 断言 diff `Field/Old/New` 真值（如 FlowDef.Enable `True→False`、ApprovalBinding.FlowKey `oa-po→oa-po-v2`、FormDef.Version `1→2`、FlowDelegate.Enable 收回 `True→False`、ApproverMap.ApproverRoleId `5→9`）。
++- 豁免负测试真实：12 个 `Assert.Empty(db.Sys_FieldAuditLogs.ToList())`，含 Notification create+update(IsRead 翻转)双段。
++
++## 全量回归
++`dotnet test`（全量）= **1796 passed / 5 skipped / 0 failed**（1 m 5 s）。基线 1775 未跌，+21 本任务。
++
++## 零迁移证据
++`git status --porcelain CP6.Core/Migrations/` = 0 行。IAuditable 为无列标记接口（`interface IAuditable {}`），不映射任何列，EF 模型无 diff。改动面：17 个 Wf 实体文件（5 加接口 + 12 加注释）+ 1 新测试文件。
++
++## Concerns
++- 无。IAuditable 为纯标记，零业务逻辑/零 schema 变更；豁免逐条源码注释可追溯；负测试覆盖全部 12 豁免实体。
++
++## 复审修复记录（Important finding：Wf_FlowTask 豁免语义未覆盖 assignee 改写风险）
++- **finding**：审查者指出 Wf_FlowTask 豁免注释未点名 `AssigneeId`（审批权归属）字段级改写这一具体风险点——`AdvancedFlow.cs:94` TransferAsync 改派、`WfTimeoutService.cs:85` escalate 超时升级均直接原地改写该字段。
++- **核实结论**：亲自读码逐一核对，四处引用全部属实——
++  1. `AdvancedFlow.cs:94` `task.AssigneeId = toUserId;`（TransferAsync 改派）；
++  2. `WfTimeoutService.cs:85` `task.AssigneeId = up;`（escalate 分支超时升级）；
++  3. `FlowEngine.ReadModel.cs:135-155` `TransferFormToAsync`：原行标 `Transferred`/`ActualHandlerId=fromUserId`，追加新行 `ExpectedHandlerId=toUserId`；
++  4. `WfTimeoutService.cs:80-84` 写 `Wf_FlowHistory`，`Comment=$"超时升级：{task.AssigneeId} → {up}"`。
++- **裁决**：豁免结论维持不变（两条改写路径均有结构化补偿留痕，非静默改写），但补丢证据——已把该论证写入 `Wf_FlowTask.cs`/`Wf_FlowFormTo.cs` 源码豁免注释与上表 #7 行，供后续审计/审查者无需重新推演。
++- **改动性质**：纯注释/文档，零业务逻辑改动，零迁移。
+diff --git a/.superpowers/sdd/progress.md b/.superpowers/sdd/progress.md
+index c6e4f3d..d2c29f2 100644
+--- a/.superpowers/sdd/progress.md
++++ b/.superpowers/sdd/progress.md
+@@ -201,10 +201,24 @@ FIN 部署: complete (publish→删Local/Dev配置→薄镜像build 488MB→comp
+ # 教训前置: T5审计豁免须字段级实查(M-ERP两轮返工); Mes目录实有11控制器(计划口径10, 以实扫为准)
+ M-MES T1: complete (commit f7a70cb, Spec ✅ + Approved[opus审,独立全量重数11控制器30端点零偏差]; 30非GET=28真写+2豁免(PlanAchievement Summary/ExportCsv全类AsNoTracking读证)/10 menu-key/26资源键去重/9状态键/2高危(oee:recalculate写库不豁免·process-cost-rate提级经CostCollectService:100直喂完工成本归集佐证成立留降级出口); 计划点名三高危(工单强制关闭/报工修正/报废判定)实扫无直接HTTP端点系盘点差异[WorkOrderService.CancelAsync:351存在但未暴露,受erp-order:cancel管辖]; 真相源=docs/seeds/mes-permission-keys.md. 🔴T2硬前置(审查坐实): ①回填块:894在MES菜单插入:1519-1608之前→洁净部署首启MenuKey=null全403,须显式MenuKey前置 ②菜单310 RoutePath=/mes/machine-list回填得mes-machine-list≠表内mes-machine错配须显式赋值. 利好: RoutePath带mes/前缀+零孤儿路由(15前端页全映射). Minor: §六.1行号近似:1511实为:1519/action新词7个系MES域正当扩展)
+ M-MES T2: complete (commit db4b912, Spec ✅ + Approved[opus审,五具名风险全核过]; 10键与真相源§二逐字双向一致+6非锚定行留null与锚定表一致; 接线Program.cs:850确在回填块:902前无条件路径[硬前置①解除]; 矫正块按MenuId定位(:388)命中存量mes-machine-list错配行——按Key找会漏,实现规避了该陷阱,测试真模拟错配态预置310再断言纠回[硬前置②解除]; 唯一索引安全(keyed.Count==Distinct==10)+回填派生*-list后缀键不与锚定键碰撞; MenuId 300-315全仓grep无跨模块碰撞; 既有:1518+ Add块含RoleMenu嵌套在判存守卫内,MesMenuSeed先插则整块跳过幂等成立; 交付三件套齐(Seed+anchor md+SQL对照声明C#正本); MesMenuSeedTests 6/6 RED→GREEN; 1722绿[1716+6]. Minor: SQL对照仅UPDATE不含缺行补建[头注已声明作用域]/接线注释:894实为:902行号漂移)
+ M-MES T3a: complete (commit 35e90a7, Spec ✅ + Approved[opus审,28全量双向核对零偏差非抽样]; 高危mes-production-result:complete+mes-process-cost-rate:edit未降级; 四归并全照真相源§五(resume→suspend/CloseDowntime→downtime/ExpandFromOrder→add/Upsert→edit)无自行归并; PlanAchievement/MesDashboard合规缺席; 9文件=9 using+28属性零方法体改动(ProcessCostRate两处单行方法排版拆行无功能影响); 1722绿持平)
+ M-MES T3b: complete (commit 38dad3e, Spec ✅ + Approved[opus审]; 三数闭环28→25→25独立grep证实[恰3组重复: work-order:add(:50/:114)/production-result:suspend(:47/:52)/machine:downtime(:94/:106); Upsert→edit系改名非去重经裁定]; 元组三面一致(种子Actions/测试ExpectedTuples/SQL)双向相等漏0幽灵0; MenuId 9键逐行对锚定表无错配[plan-achievement只读正确排除,覆盖9键非10自洽]; 四要件源码级证真[StampTenant仅盖Guid.Empty=CP6Context:2251实证/IgnoreQueryFilters在查重上]; oracle独立硬编码非引用生产常量; 接入紧随MesMenuSeed无条件路径; 1727绿[1722+5]. Minor: 后续加端点须同步oracle提示)
+ M-MES T4: complete (commit f8200ef, Spec ✅ + Approved[sonnet审,四风险全独立实证]; discovery=Mes命名空间11控制器grep逐一对应非空扫; fail-closed=Assert.Equal(11/28/2)硬编码收口+offenders==0+互斥场景显式捕获+豁免防腐用例(改名/被贴/被删主动红); 13词action集逐词相等; 反向验证删WorkOrder.Create→双闸联动红→恢复绿与代码自洽; 基类claim属实(11控制器全直接ControllerBase,DeclaredOnly前提成立,未重蹈ERP注释失实); 仅新增测试零生产改动; 1731绿[1727+4]. Minor: 4 Fact少于ERP版5系ERP第5例为AllowAnonymous域专属非缺项)
+ M-MES T5: complete (commit 01b953d, Spec ✅ + Approved[sonnet审,一次过——M-ERP教训未复现]; Mes目录15文件全量对账=13纳入+2豁免零漏扫; 豁免OeeDaily(全字段实读零货币,Good/DefectQty系ProductionResult同源派生值)/MesSequence(纯计数器)均源码注释+负测试坐实; 跨波票收口=Wms PlateMoldStock.MadeCost单行贴+30000→32000真值测试[M-ERP终审票④关闭]; 16处hunk纯标记单行零迁移; 测试DiffRow与拦截器FieldChange字段名对齐,审查者独立复跑18/18; 1749绿[1731+18]. Minor记档: DefectCategory/MachineDowntime归类偏宽系无害过度纳入方向,供后续波口径参考)
+ M-MES T6: complete (commit 8fae0a1, Spec ✅ + Approved[sonnet审,真值全独立复算吻合]; 状态机5用例(非法流转拒绝断言服务字面ME-MSG-042/024/012/003/043错误码/全流转落库状态+时间戳/末工序完了spy锁参数真值WO_D+良品17+Calls==1非仅调用与否)+PlanningBoard 4用例(改期落库真值/三守卫/现状pin/AutoArrange三段配置手算08:00-16:00逐段吻合); 零重复经核实(WorkOrderCompleteCostFlow全程NoOp桥未验发火契约/WmsErpClosedLoop仅单工序——多工序发火契约系真缺口非重复); 零生产改动; 1758绿[1749+9]. 🔴记票(审查裁定为真实缺口待产品裁决,非by-design): ①RescheduleAsync无过去日期/号机冲突检知(PlanningBoardService:125-145仅三道校验) ②AutoArrange不避已占用时段(machinePointer每次从baseTime空白重建:174-195). Minor: 报告by-design归因引§2.3过度解读[规格原文无此条]. M-MES T1-T6全部完成, 下=fable全支终审)
+ M-MES 全支终审: complete (fable终审 Ready=Yes零必修——质量高于ERP波终审时点; 四层键一致性28→25→10全量逐元组零失配[含mes-quality-inspection菜单域名≠路由inspections与310机台键两处易错点]; 启动链Program.cs:845-856 Mes双种子在回填块:907前+legacy块:1524判存跳过洁净首启单遍即通; MES服务全tracked SaveChanges无ExecuteUpdate审计盲区[全目录grep零命中,Dapper仅只读]+11控制器零AllowAnonymous; 1758绿终审者实跑复验; Important记票×2: ①retention票升级措辞=MES上线前须有归档策略或至少容量告警[报工每动作≥3审计行,全系统最高频写路径] ②MES前端0条v-permission并入UX票; Minor记票: 贴点⊆种子互锁测试跨模块补强/注释行号去锚定化/种子不过滤Enable三处同型; 票据triage关闭6/记票4; 跟踪票全落档plan文末M-MES完成记录小节)
+ M-MES 合并+部署: complete (main=afe9252 --no-ff已push, 分支留远端; 镜像重建部署; 线上实证: 10锚定键300段就位[310=mes-machine错配已矫,非锚定行回填*-list后缀不碰撞设计内]/Sys_RoleAction MES段100=25元组×4租户精确/两高危端点无认证403(production-results/complete + process-cost-rate/upsert)/admin+CSRF穿透业务层(complete→400 ME-MSG-001/upsert→400模型校验); Important#1落地=scripts/audit-log-monitor.ps1+计划任务CP6-AuditLog-Monitor每4h容量告警[基线835行/0.6MB,阈值100万行/500MB],归档策略本体留票待用户裁决. M-MES 波完成. 下一波=M-OA/WF)
++
++# ═══ M-OA/WF 横切接线波(branch=feat/m-oawf-crosscutting, base=2041b3a)2026-07-12 ═══
++# 依据: plan M-OA/WF段 + docs/00-横切接线规范.md; 基线1758绿; Oa 11控制器+Wf 5控制器
++# 任务重排(照M-ERP/M-MES): T1权限键清单→T2菜单MenuKey锚定→T3a贴RequirePermission→T3b逐租户种子→T4反射测试→T5 IAuditable(Wf_FlowDef/Wf_ApprovalBinding)→T6按需(计划无测试补网任务)
++# ⚠计划T4孤儿路由(/wf/form-designer /wf/flow-designer)新旧双栈裁决须问用户——旧栈退役则删路由而非补菜单; T1先摸清现状留档,裁决点等用户回来拍板,不阻塞其余任务
++# 计划周知: 与审批解耦包对齐(IApprovalService+Wf_ApprovalBinding已落地非待建,无并行冲突)
++M-OA/WF T1: complete (commit 90bfbd3, Spec ✅ + Approved[opus审,16控制器33非GET全量重数1:1吻合零漏扫]; 33=31真写+2豁免(Forecast纯读schema遍历/Query AsQueryable投影均读证)/7 menu-key(733-739)/23资源键/9高危(全部审批写路径batch·transfer·sendback·addsign·act·委派无一降级)/「标记已读」「收藏」「保存偏好」全判写不豁免经代码证实; §六命门坐实: OA菜单733-739在:1446插入未设MenuKey且全局回填块:908更早→洁净首启OA/WF全403,T2硬前置(WMS/ERP/MES各有显式赋值块OA独无); 双栈孤儿路由裁决材料经独立复核为真(router:46-47 viewModules有映射无菜单行→addDynamicRoutes:334永不注册,旧栈Flow/Form.SaveDef写Wf_FlowDef/FormDef已被oa-designer:*键覆盖不裸奔)——退役/收编留用户拍板; 真相源=docs/seeds/oawf-permission-keys.md. 主控拍板(采审查者建议): 委派双键合一为oa-settings:delegate(权限面统一防一处授一处漏)/oa-flow-admin:enable维持状态级(可逆不动在途). Minor: 「唯一回填块」宜作「唯一全局回填块」/§六标题740混入(父组行非锚定))
++M-OA/WF T2: complete (commit 8efc132, Spec ✅ + Approved[opus审,五具名风险全证]; 7键锚定733-739与合一后真相源逐字双向一致/740父行null; 接线Program.cs:863<全局回填块:915无条件路径命门解除; 「矫正恒no-op」claim逐键核算属实(OA RoutePath派生键与锚定键全等,矫正纯防御非load-bearing); 委派合一五处真相源同步无残留(三delegate端点统一锚737/oa-settings,高危9→8资源键23→22,menu-key仍7); 与MesMenuSeed逐字同构含缺行补建; OawfMenuSeedTests 6/6含mutation红证; 1764绿[1758+6]. Minor: 注释行号漂移(:857实为:863/:908实为:915)排序不变式成立. 波间运维: 执行中C盘再遭WU缓存2.7GB撑满(第二次)——已加计划任务CP6-WUCache-Guard每4h自愈(scripts/wu-cache-guard.ps1, e87a609), 扩容仍是治本)
++M-OA/WF T3a: complete (commit 55b58ee, Spec ✅ + Approved[opus审零issue,31全量逐行双向核验]; Inbox审批族(batch→approve/transfer/sendback/read)与Wf旧栈(Flow.SaveDef→oa-designer:edit归并新栈/Form.SaveDef→form-save/Flow.Act→oa-inbox:approve)键逐字全中; 三delegate统一oa-settings:delegate零残留; 8高危独立不降级; 豁免面干净(Forecast/Query各仅1写端点无顺带漏); 16控制器无遗漏(14贴+2豁免); 零方法体改动; 顺手项Program.cs注释去行号化落地; 1764绿持平)
++# 🔴用户裁决 2026-07-12: 双栈孤儿路由=收编(补Sys_Menu行使旧设计器/wf/form-designer与/wf/flow-designer可达,双栈并存,不删旧栈端点)——T2追补任务落实(T3b后派): OawfMenuSeed加两收编行(段位先查占用,MenuKey留null由回填派生[无RoleAction引用无害],RoleMenu授admin),照ERP五孤儿收编先例; 权限面不变(旧栈端点已贴oa-designer:*锚738)
++M-OA/WF T3b: complete (commit 5fe2a70, Spec ✅ + Approved[opus审零issue,独立grep+手工去重复现31→20→20]; 跨控制器归并面为四波最大且全落实(inbox:read四端点/approve双栈/sendback双栈/form-catalog:submit四端点/delegate三端点/designer:edit双栈); 元组三方(种子/oracle/SQL)双向相等漏0多0; MenuId 6键733-739逐行核+736只读正确排除+740父行不种; 四要件源码证真(IgnoreQueryFilters在:406,420查重上); oracle独立(private Actions无法引用,双向集合相等); 接入OawfMenuSeed后无条件路径; 1769绿[1764+5])
++M-OA/WF T2追补(收编): complete (commits ac733ee+锚定表直修, Approved after doc-fix[sonnet审+主控直修]; 核心实现五项全verified: 741/742段位查证无占用[迁移文件名时间戳误命中已排除]/RoutePath与viewModules:46-47逐字符一致/MenuKey null+注释+矫正块continue跳过不共键738/RoleMenu授admin+幂等/2新测试真实(误删误共键会红)/真相源三处追记同步; 审查Important=锚定表:16「未裁决」与:52「不动路由」两处残留与新收编节自相矛盾(T3b输入文件误导风险)→主控照审查处方直修两行; OawfMenuSeedTests 8/8; 1771绿[1769+2]. 双栈收编用户裁决落地完毕)
++M-OA/WF T4: complete (commit 1e75f38, Spec ✅ + Approved[sonnet审零issue,五风险源码级交叉核对]; discovery双命名空间16精确(Oa11+Wf5无子空间无多类); 33=31贴点+2豁免咬合无缝(差集恰为Forecast.Preview/Query.Search); Assert.Equal精确计数+反向验证删Inbox.Batch双重失败结构自洽; 14 action词逐词相等; 基类claim据实(15经LocalizedControllerBase零HttpXxx声明/1直继,DeclaredOnly安全,非MES式注释失实); RequirePermission构造参数顺序无错位; 仅新增测试零生产改动; 1775绿[1771+4])
++M-OA/WF T5: complete (commits 372677e+afef783证据补记, Approved after evidence-fix[sonnet审+主控抽验]; 目录全量17实体=纳入5(FlowDef/ApprovalBinding/FormDef治理配置+FlowDelegate/ApproverMap权限授予面)+豁免12零漏[WfNotificationType静态类非实体核实]; 纳入5纯标记单行零迁移; 豁免12逐条源码注释+负测试,审查者独立重跑21/21; 审查Important=Wf_FlowTask.AssigneeId两条改写路径(TransferAsync改派:94/超时escalate:85)未在豁免证据中论证——审查者追查出补偿留痕(Wf_FlowFormTo结构化新行ExpectedHandlerId+Wf_FlowHistory升级文本)结论成立但推演未落交付物→修复=注释扩写点名两路径+留痕依据+裁决表同步,四处代码引用核实属实; 1796绿[1775+21]. M-OA/WF T1/T2/T2b/T3a/T3b/T4/T5 全部完成, 下=fable全支终审)
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs b/CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs
+index 00906e4..09a0ee1 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_ApprovalBinding.cs
+@@ -1,22 +1,24 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 审批绑定（OA 章05 §3）。业务类型 → 审批流程的映射：业务侧调 IApprovalService.SubmitAsync(bizType,…)
+ /// 时，按本表的 BizType 找到对应 FlowKey 起流程。一种业务类型一条启用绑定（UX 唯一索引）。
+ /// ConditionJson 预留"按表单字段选不同流程"（v1 直用 FlowKey，条件选流程后续增强）。
+ /// </summary>
++// [审计纳入] 审批绑定单源＝业务类型→审批流程的治理映射（BizType→FlowKey、启停）。改绑/停用直接改变
++// 某业务是否走审批、走哪条流程——治理配置面，须字段级留痕。贴 IAuditable。
+ [Table("Wf_ApprovalBinding")]
+-public class Wf_ApprovalBinding : BaseTenantEntity
++public class Wf_ApprovalBinding : BaseTenantEntity, IAuditable
+ {
+     /// <summary>业务类型标识（如 "FinJournalPost"、"PO"），与 IApprovalService/IApprovalCallback 对应</summary>
+     [Required, MaxLength(50)]
+     public string BizType { get; set; } = string.Empty;
+ 
+     /// <summary>绑定的流程定义 FlowKey（Wf_FlowDef.FlowKey）</summary>
+     [Required, MaxLength(100)]
+     public string FlowKey { get; set; } = string.Empty;
+ 
+     /// <summary>是否启用（停用后该业务类型不再走审批）</summary>
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs b/CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs
+index 6ecea3e..4a6c466 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_ApproverMap.cs
+@@ -1,18 +1,20 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>审批人映射表(②b Menu 数据驱动)。一条=某命名映射下某匹配值对应一个审批目标(用户或角色)。
+ /// 同 (MapKey,MatchValue) 可多行(多审批人→会签组)。租户隔离走 BaseTenantEntity 全局过滤器。
+ /// 表名单数 Wf_ApproverMap，对齐全部 Wf_* 实体命名约定(DbSet 复数/[Table] 单数)。</summary>
++// [审计纳入] 审批人映射＝数据驱动的权限授予面：MapKey/MatchValue→审批目标(ApproverUserId/ApproverRoleId)。
++// 改一行即改变某匹配值由谁审批，等同授予/回收审批权——权限授予面，须字段级留痕。贴 IAuditable。
+ [Table("Wf_ApproverMap")]
+-public class Wf_ApproverMap : BaseTenantEntity
++public class Wf_ApproverMap : BaseTenantEntity, IAuditable
+ {
+     [MaxLength(100)] public string MapKey { get; set; } = "";
+     [MaxLength(200)] public string MatchValue { get; set; } = "";
+     public Guid? ApproverUserId { get; set; }
+     public int? ApproverRoleId { get; set; }
+     public int OrderNo { get; set; }
+     public bool Enable { get; set; } = true;
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs
+index 770394b..4a18e48 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowCc.cs
+@@ -1,15 +1,17 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>抄送（WFS 读模型）。节点/路徑/提交/结束抄送均落一行；IsRead 给信箱"未读"标记。</summary>
++// [审计豁免] 抄送运行时读模型：随流转落行、IsRead/ReadAt 高频翻转，非治理配置/权限授予面。
++// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowCc")]
+ public class Wf_FlowCc : BaseTenantEntity
+ {
+     public Guid InstanceId { get; set; }
+     public Guid RecipientId { get; set; }
+     [MaxLength(100)] public string? AtNodeId { get; set; }
+     public bool IsRead { get; set; }
+     public DateTime? ReadAt { get; set; }
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowData.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowData.cs
+index 2f18289..6352701 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowData.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowData.cs
+@@ -1,18 +1,20 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 每关卡表单快照（WFS 读模型）。每到一关 / 每次办结存一份当时表单字段值（不可变留痕）。
+ /// 区别 Wf_FormData（整单最新）/ VarsJson（流程变量，会被覆盖）：本表按 StepSeq 串"每步变化轨迹"。
+ /// </summary>
++// [审计豁免] 每关卡不可变表单快照：按 StepSeq 追加"每步变化轨迹"留痕(建后不改)，运行时读模型非治理配置。
++// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowData")]
+ public class Wf_FlowData : BaseTenantEntity
+ {
+     public Guid InstanceId { get; set; }
+     public Guid? TokenId { get; set; }
+     public int StepSeq { get; set; }
+     [MaxLength(100)] public string NodeId { get; set; } = string.Empty;
+     [Column(TypeName = "nvarchar(max)")] public string DataJson { get; set; } = "{}";
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs
+index e390313..4b9e516 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowDef.cs
+@@ -1,21 +1,23 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程定义（OA 章03 §3）。SchemaJson = 节点+边有向图，驱动流程引擎状态机。
+ /// 绑定一张表单（FormKey）。改版只升 Version，在途实例按其快照运行（阶段1 简化：实例不存 schema 快照，按 FlowKey 取最新——单租户手配场景可接受，多版本并行留扩展）。
+ /// </summary>
++// [审计纳入] 流程定义＝设计期治理配置（SchemaJson 节点/边有向图、FlowKey 绑定、版本）。高危键 oa-designer:*
++// 的落库对象，schema/启停变更影响所有在途流程走向——须字段级留痕谁在何时改了流程结构。贴 IAuditable。
+ [Table("Wf_FlowDef")]
+-public class Wf_FlowDef : BaseTenantEntity
++public class Wf_FlowDef : BaseTenantEntity, IAuditable
+ {
+     /// <summary>流程稳定业务键（本阶段全局唯一）。建后不可改</summary>
+     [Required, MaxLength(100)]
+     public string FlowKey { get; set; } = string.Empty;
+ 
+     /// <summary>流程名称</summary>
+     [Required, MaxLength(200)]
+     public string FlowName { get; set; } = string.Empty;
+ 
+     /// <summary>绑定的表单定义 FormKey</summary>
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs
+index 25bde3b..6a50700 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowDelegate.cs
+@@ -1,22 +1,24 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 审批委派（OA 章07 §5）。委托人在有效期内把自己的审批权委派给代理人：流程引擎<b>建待办时</b>
+ /// 若原审批人正处委派期，则把 AssigneeId 替换为代理人，并在痕迹双记"代 X 审批"。
+ /// v1 仅"建待办时替换"（存量在途待办转派后续增强）；Scope 预留按流程限定（空=全部流程）。
+ /// </summary>
++// [审计纳入] 审批委派＝权限授予面：委托人在有效期内把自己的审批权授予代理人（Grantor→Delegate、有效期、启停）。
++// 谁把审批权给了谁/何时收回是权限授予的敏感事实，须字段级留痕。贴 IAuditable。
+ [Table("Wf_FlowDelegate")]
+-public class Wf_FlowDelegate : BaseTenantEntity
++public class Wf_FlowDelegate : BaseTenantEntity, IAuditable
+ {
+     /// <summary>委托人（原审批人）→ Sys_User.Id</summary>
+     public Guid GrantorId { get; set; }
+ 
+     /// <summary>代理人（受托人）→ Sys_User.Id</summary>
+     public Guid DelegateId { get; set; }
+ 
+     /// <summary>委派生效时间（含）</summary>
+     public DateTime ValidFrom { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs
+index 4987ba7..fa619bd 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowFormTo.cs
+@@ -1,19 +1,23 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 传签履历台账（WFS 读模型）。token 每到一个人工关卡落一行：送签时建、处理时更新。
+ /// 带 TokenId → 并行多分支履历各成一串。与 Wf_FlowHistory（纯追加事件日志）分工互补。
+ /// </summary>
++// [审计豁免] 传签履历台账：运行时读模型，token 每到人工关卡送签建、处理更新(Status/HandledAt 随流转)，
++// 由引擎测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
++// 本表是 Wf_FlowTask.AssigneeId 改派(TransferAsync)的结构化审计源：转出行标 Transferred/ActualHandlerId，
++// 受让人新起 Pending 行 ExpectedHandlerId=toUserId（见 FlowEngine.ReadModel.cs:135-155 TransferFormToAsync）。
+ [Table("Wf_FlowFormTo")]
+ public class Wf_FlowFormTo : BaseTenantEntity
+ {
+     public Guid InstanceId { get; set; }
+     public Guid? TokenId { get; set; }
+     public int StepSeq { get; set; }
+ 
+     [MaxLength(100)] public string? FromNodeId { get; set; }
+     [MaxLength(100)] public string NodeId { get; set; } = string.Empty;
+     [MaxLength(100)] public string? NodeCode { get; set; }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs
+index 83376fe..2b2e552 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowHistory.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程审批痕迹（OA 章03 §3）。每次动作（提交/同意/驳回/撤回/挂起…）追加一条，构成审批时间线。
+ /// 仅追加、不更新，CreateDate(BaseEntity) = 动作发生时刻。
+ /// </summary>
++// [审计豁免] 仅追加事件日志：本身即审批时间线(submit/approve/reject… 每动作追加一条、不更新)，
++// 是审计源而非被审计对象。字段级审计等同复制自身。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowHistory")]
+ public class Wf_FlowHistory : BaseTenantEntity
+ {
+     /// <summary>所属流程实例 → Wf_FlowInstance.Id</summary>
+     public Guid InstanceId { get; set; }
+ 
+     /// <summary>动作所在节点 Id</summary>
+     [MaxLength(100)]
+     public string NodeId { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs
+index 07ad47f..399bc4f 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowInstance.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程实例（OA 章03 §3）。状态机的"状态载体"：CurrentNode = 当前停留节点，Status = 实例总态。
+ /// VarsJson 存表单字段值快照（条件流转 ConditionEvaluator 的取值源）。全状态落库、幂等可重放。
+ /// </summary>
++// [审计豁免] 运行时状态载体：CurrentNode/Status/VarsJson 皆高频状态机流转（每次推进即变），
++// 正确性由 FlowEngine 引擎测试 + RowVersion 乐观锁锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowInstance")]
+ public class Wf_FlowInstance : BaseTenantEntity
+ {
+     /// <summary>所属流程定义 FlowKey</summary>
+     [Required, MaxLength(100)]
+     public string FlowKey { get; set; } = string.Empty;
+ 
+     /// <summary>业务类型（阶段2 接业务用；阶段1 可空）</summary>
+     [MaxLength(50)]
+     public string? BizType { get; set; }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs
+index cde7690..c112650 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowTask.cs
+@@ -1,19 +1,28 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程待办任务（OA 章03 §3）。一个节点可建多条（会签：多人各一条）。
+ /// Status!=0 即"已办"，是 ActAsync 幂等闸门的依据。
+ /// </summary>
++// [审计豁免] 高频运行时待办任务：一节点多条(会签)、Status/IsRead/StageIndex 幂等流转，正确性由 FlowEngine
++// 引擎测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
++// 复审补记(审批权归属字段级变更 AssigneeId 改写)：两条原地改写路径——
++//   ① AdvancedFlow.TransferAsync (AdvancedFlow.cs:94) task.AssigneeId = toUserId 改派；
++//   ② WfTimeoutService escalate 分支 (WfTimeoutService.cs:85) task.AssigneeId = up 超时升级。
++// 两处均有结构化补偿留痕，非静默改写：①同步调 TransferFormToAsync(FlowEngine.ReadModel.cs:135-155)
++// 在 Wf_FlowFormTo 追加新行(ExpectedHandlerId=toUserId)+原行标 Transferred/ActualHandlerId=fromUserId；
++// ②同步 AddHistory-style 写 Wf_FlowHistory「超时升级：{old}→{new}」(WfTimeoutService.cs:80-84)。
++// 审批权归属变更本身已被下游读模型/日志表结构化记录，故 AssigneeId 字段级 diff 豁免不丢证据，维持豁免。
+ [Table("Wf_FlowTask")]
+ public class Wf_FlowTask : BaseTenantEntity
+ {
+     /// <summary>所属流程实例 → Wf_FlowInstance.Id</summary>
+     public Guid InstanceId { get; set; }
+ 
+     /// <summary>所在节点 Id</summary>
+     [MaxLength(100)]
+     public string NodeId { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs b/CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs
+index 9a91502..50b7d55 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FlowToken.cs
+@@ -2,20 +2,22 @@ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 流程令牌（WFS P1 运行时内核）。一个 token = 实例内一个活动执行点（停留节点）。
+ /// 单路径审批：一实例恒一 Active token；并行分叉：一实例多 Active token 并存。
+ /// 血缘：ParentTokenId 串嵌套层级；ForkId 标同批分叉（parallelJoin 靠"同 ForkId 计数"认亲）。
+ /// "实例进行中" = 存在 Active token（取代旧"CurrentNode 单值"判定）。
+ /// </summary>
++// [审计豁免] 运行时执行点令牌：分叉/合流内核态(Status/StagePlanJson 高频翻转)，正确性由 FlowToken 内核测试锁定，
++// 非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FlowToken")]
+ public class Wf_FlowToken : BaseTenantEntity
+ {
+     public Guid InstanceId { get; set; }
+ 
+     [MaxLength(100)]
+     public string NodeId { get; set; } = string.Empty;
+ 
+     /// <summary>0=Active 1=Consumed 2=Cancelled。见 FlowTokenStatus。</summary>
+     public int Status { get; set; }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FormData.cs b/CP6.Entity/DomainModels/Wf/Wf_FormData.cs
+index 976d84e..4626330 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FormData.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FormData.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 表单数据（OA 章02）。一次提交一行，DataJson 存字段值快照；与流程实例经 BizId 关联
+ /// （阶段1 BizId 可空，阶段3 接业务后回填流程实例 Id / 业务单号）。
+ /// </summary>
++// [审计豁免] 表单提交数据：运行时一次提交一行的字段值快照(DataJson)，改版不动旧数据本身即留痕，
++// 非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FormData")]
+ public class Wf_FormData : BaseTenantEntity
+ {
+     /// <summary>对应表单定义 FormKey</summary>
+     [Required, MaxLength(100)]
+     public string FormKey { get; set; } = string.Empty;
+ 
+     /// <summary>提交时的表单定义版本（留痕：改版不动旧数据）</summary>
+     public int FormVersion { get; set; }
+ 
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FormDef.cs b/CP6.Entity/DomainModels/Wf/Wf_FormDef.cs
+index 4a759ce..a6788e7 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FormDef.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FormDef.cs
+@@ -1,22 +1,24 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 表单定义（OA 章02）。SchemaJson 驱动前端动态渲染 + 后端 required/类型复核。
+ /// JSON 列直存 nvarchar(max)，不用 EAV（OA-D4 / 08 章）。继承 BaseEntity，Enable 软停用，
+ /// 本阶段不带 TenantId（OA 阶段4 多租户统一加）。
+ /// </summary>
++// [审计纳入] 表单定义＝设计期治理配置（SchemaJson 字段定义、版本、启停）。oa-designer 落库对象，
++// schema 变更改变前端渲染 + 后端 required/类型复核规则——治理配置面，须字段级留痕。贴 IAuditable。
+ [Table("Wf_FormDef")]
+-public class Wf_FormDef : BaseTenantEntity
++public class Wf_FormDef : BaseTenantEntity, IAuditable
+ {
+     /// <summary>表单稳定业务键（本阶段全局唯一；多租户后改租户内唯一）。建后不可改</summary>
+     [Required, MaxLength(100)]
+     public string FormKey { get; set; } = string.Empty;
+ 
+     /// <summary>表单名称</summary>
+     [Required, MaxLength(200)]
+     public string FormName { get; set; } = string.Empty;
+ 
+     /// <summary>表单 schema（字段定义 JSON）</summary>
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs b/CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs
+index af09347..456301c 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_FormFavorite.cs
+@@ -1,12 +1,13 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>填單☆收藏（信箱 L2，umbrella §2.5）。唯一 (TenantId,UserId,FormKey)。</summary>
++// [审计豁免] 用户个人偏好：填單☆收藏，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_FormFavorite")]
+ public class Wf_FormFavorite : BaseTenantEntity
+ {
+     public Guid UserId { get; set; }
+     [MaxLength(100)] public string FormKey { get; set; } = string.Empty;
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs b/CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs
+index a1d33208..5321dce 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_InboxPref.cs
+@@ -1,12 +1,14 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>信箱显示偏好（umbrella §2.5）。每用户一行，PrefsJson 自由结构。唯一 (TenantId,UserId)。</summary>
++// [审计豁免] 用户个人偏好：信箱显示偏好 PrefsJson 自由结构，非治理配置/权限授予面。
++// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_InboxPref")]
+ public class Wf_InboxPref : BaseTenantEntity
+ {
+     public Guid UserId { get; set; }
+     [Column(TypeName = "nvarchar(max)")] public string PrefsJson { get; set; } = "{}";
+ }
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_Notification.cs b/CP6.Entity/DomainModels/Wf/Wf_Notification.cs
+index 57fb64b..bf594d9 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_Notification.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_Notification.cs
+@@ -1,20 +1,22 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>
+ /// 站内通知持久化（OA Phase D-1 §通知中心）。
+ /// 每事件产生一行，随引擎 SaveChanges 同一工作单元落库。
+ /// 收件人=UserId（新待办→处理人；签核完成/驳回→发起人；超时→处理人）。
+ /// </summary>
++// [审计豁免] 站内通知：运行时随事件追加、IsRead/ReadAt 高频翻转，非治理配置/权限授予面。
++// 不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_Notification")]
+ public class Wf_Notification : BaseTenantEntity
+ {
+     /// <summary>收件人 → Sys_User.Id</summary>
+     public Guid UserId { get; set; }
+ 
+     /// <summary>通知类型（WfNotificationType 常量）</summary>
+     public int Type { get; set; }
+ 
+     /// <summary>通知标题（最长 200 字符）</summary>
+diff --git a/CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs b/CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs
+index ae651df..09b8201 100644
+--- a/CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs
++++ b/CP6.Entity/DomainModels/Wf/Wf_ServiceJob.cs
+@@ -1,19 +1,21 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Wf;
+ 
+ /// <summary>服务任务异步停泊作业台账(§2.3)。
+ /// 每条记录 = 一个停泊等待执行/重试的服务任务 job。
+ /// 活跃 job(Status IN Pending/Running)靠 filtered unique index 保证同 token 同 node 至多一条。
+ /// 表名单数 Wf_ServiceJob,DbSet 复数 Wf_ServiceJobs(对齐全部 Wf_* 实体命名约定)。</summary>
++// [审计豁免] 服务任务异步作业台账：运行时队列(AttemptCount/Status/Lock*/NextAttemptAtUtc 高频翻转 + RowVersion 并发),
++// 正确性由 ServiceJob 扫描/租约测试锁定，非治理配置/权限授予面。不贴 IAuditable，OawfAuditTests 负测试坐实零审计行。
+ [Table("Wf_ServiceJob")]
+ public class Wf_ServiceJob : BaseTenantEntity
+ {
+     // TenantId 来自 BaseTenantEntity；Id/CreateDate/ModifyDate 来自 BaseEntity
+ 
+     public Guid InstanceId { get; set; }           // FK→Wf_FlowInstance
+     public Guid TokenId { get; set; }              // 要恢复的停泊 token
+     [MaxLength(100)] public string NodeId { get; set; } = "";   // 服务任务节点 Id(与 Wf_FlowToken.NodeId / Wf_FlowInstance.CurrentNode 同口径)
+     [MaxLength(50)]  public string Kind { get; set; } = "";     // dataWriteback/webApi/timer
+ 
+diff --git a/CP6.Tests/OawfMenuSeedTests.cs b/CP6.Tests/OawfMenuSeedTests.cs
+new file mode 100644
+index 0000000..8523af1
+--- /dev/null
++++ b/CP6.Tests/OawfMenuSeedTests.cs
+@@ -0,0 +1,184 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-OA/WF 横切接线 Task 2：OawfMenuSeed 幂等 + MenuKey 锚定断言。
++/// 头号命门回归：OA 菜单 733–740 在 Program.cs 回填块（:908）之后 Add 且未设 MenuKey → 洁净首启 null 全 403。
++///   OawfMenuSeed 须在回填前把 7 锚定行显式赋 oa-*（含缺行补建），并把已被历史回填/异常写坏的行就地纠回。
++///   与 MES 不同：OA 派生键与真相源逐字一致（零错配），命门纯为时序；矫正块仍严限 7 锚定行按 MenuId 定位。
++/// </summary>
++public class OawfMenuSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 真相源 docs/seeds/oawf-permission-keys.md §二 的 7 个 menu-key → 锚定 MenuId。
++    private static readonly (string Key, int MenuId)[] Anchors =
++    {
++        ("oa-inbox", 733),
++        ("oa-flow-admin", 734),
++        ("oa-form-catalog", 735),
++        ("oa-form-search", 736),
++        ("oa-settings", 737),
++        ("oa-designer", 738),
++        ("oa-approver-map", 739),
++    };
++
++    [Fact]
++    public void EnsureSeeded_AnchorsAll7KeysToExpectedMenuIds()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++
++        foreach (var (key, menuId) in Anchors)
++        {
++            var menu = db.Sys_Menus.SingleOrDefault(m => m.MenuId == menuId);
++            Assert.NotNull(menu);
++            Assert.Equal(key, menu!.MenuKey);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_AnchoredRowsMatchTruthSourceRoutePaths()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++
++        // OA RoutePath 与 menu-key 天然对齐（回填即一致），仍显式锚定规避时序命门；断言 RoutePath 不被改动。
++        var expected = new (int Id, string Route, string Key)[]
++        {
++            (733, "/oa/inbox", "oa-inbox"),
++            (734, "/oa/flow-admin", "oa-flow-admin"),
++            (735, "/oa/form-catalog", "oa-form-catalog"),
++            (736, "/oa/form-search", "oa-form-search"),
++            (737, "/oa/settings", "oa-settings"),
++            (738, "/oa/designer", "oa-designer"),
++            (739, "/oa/approver-map", "oa-approver-map"),
++        };
++        foreach (var (id, route, key) in expected)
++        {
++            var m = db.Sys_Menus.Single(x => x.MenuId == id);
++            Assert.Equal(route, m.RoutePath);
++            Assert.Equal(key, m.MenuKey);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTwoRowsShareANonNullMenuKey()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++
++        // Sys_Menus.MenuKey 有 IS NOT NULL 过滤唯一索引；两行禁共键。断言 7 锚定键各占一行。
++        var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
++        Assert.Equal(keyed.Count, keyed.Distinct().Count());
++        Assert.Equal(7, keyed.Count);
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_NoDuplicateRowsOrRoleMenus()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++        var menuCount1 = db.Sys_Menus.Count();
++        var roleMenuCount1 = db.Sys_RoleMenus.Count();
++
++        OawfMenuSeed.EnsureSeeded(db);   // 第二次（含新收编行，幂等不重复插入）
++        Assert.Equal(menuCount1, db.Sys_Menus.Count());
++        Assert.Equal(roleMenuCount1, db.Sys_RoleMenus.Count());
++
++        // 全 10 行（740 父 + 733–739 七锚定 + 741/742 双栈收编）+ 各授管理员一条 RoleMenu。
++        Assert.Equal(10, menuCount1);
++        Assert.Equal(10, roleMenuCount1);
++    }
++
++    // ── 双栈收编（用户裁决 2026-07-12）：追补 2 用例 ──────────────────────────
++
++    [Fact]
++    public void EnsureSeeded_CollectsOrphanDesignerRoutes_741And742_WithNullMenuKeyAndRoutePathMatchingViewModules()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++
++        // 收编行存在，RoutePath 须与 cp6.web/src/router/index.ts:46-47 viewModules 键逐字一致，
++        // 否则 addDynamicRoutes 仍不注册（前端仍不可达）。MenuKey 留 null：权限已锚 738 oa-designer。
++        var formDesigner = db.Sys_Menus.SingleOrDefault(m => m.MenuId == 741);
++        Assert.NotNull(formDesigner);
++        Assert.Equal("/wf/form-designer", formDesigner!.RoutePath);
++        Assert.Null(formDesigner.MenuKey);
++        Assert.Equal(740, formDesigner.ParentId);
++        Assert.True(formDesigner.Enable);
++
++        var flowDesigner = db.Sys_Menus.SingleOrDefault(m => m.MenuId == 742);
++        Assert.NotNull(flowDesigner);
++        Assert.Equal("/wf/flow-designer", flowDesigner!.RoutePath);
++        Assert.Null(flowDesigner.MenuKey);
++        Assert.Equal(740, flowDesigner.ParentId);
++        Assert.True(flowDesigner.Enable);
++
++        // 均授管理员菜单（RoleId=1），照收编先例。
++        Assert.True(db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == 741));
++        Assert.True(db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == 742));
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_WithOrphanCollectionRows_NoDuplicatesOnSecondRun()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++        OawfMenuSeed.EnsureSeeded(db);   // 第二次
++
++        // 741/742 各恰一行、MenuKey 仍为 null（未被防御矫正块误赋值——该块严限 r.Key != null）。
++        Assert.Equal(1, db.Sys_Menus.Count(m => m.MenuId == 741));
++        Assert.Equal(1, db.Sys_Menus.Count(m => m.MenuId == 742));
++        Assert.Null(db.Sys_Menus.Single(m => m.MenuId == 741).MenuKey);
++        Assert.Null(db.Sys_Menus.Single(m => m.MenuId == 742).MenuKey);
++
++        // 唯一索引安全：非空 MenuKey 仍恰 7 个（733–739 锚定，"oa-designer" 仅 738 一行持有），
++        // 741/742 未与 738 共键——若共键会撞 Sys_Menus.MenuKey IS NOT NULL 过滤唯一索引。
++        var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
++        Assert.Equal(7, keyed.Count);
++        Assert.Equal(1, keyed.Count(k => k == "oa-designer"));
++    }
++
++    [Fact]
++    public void EnsureSeeded_CorrectsHistoricalWrongKey_ToOaAuthoritative()
++    {
++        using var db = NewDb();
++        // 模拟既有库：738 流程设计器 曾被异常写成 wf-flow-designer（≠ 真相源 oa-designer）。
++        db.Sys_Menus.Add(new Sys_Menu
++        {
++            MenuId = 738, MenuName = "流程设计器", RoutePath = "/oa/designer",
++            MenuKey = "wf-flow-designer", ParentId = 740, OrderNo = 738, Enable = true,
++        });
++        db.SaveChanges();
++
++        OawfMenuSeed.EnsureSeeded(db);
++
++        var m = db.Sys_Menus.Single(x => x.MenuId == 738);
++        Assert.Equal("oa-designer", m.MenuKey);   // 就地矫正（按 MenuId 定位）
++    }
++
++    [Fact]
++    public void EnsureSeeded_ParentRow740_LeavesMenuKeyNull()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++
++        // 740 OA工作流 父组行无 RoutePath、不承载权限：MenuKey 留 null。
++        var m = db.Sys_Menus.Single(x => x.MenuId == 740);
++        Assert.Null(m.MenuKey);
++        Assert.Null(m.RoutePath);
++    }
++}
+diff --git a/CP6.Tests/OawfPermissionAttributeTests.cs b/CP6.Tests/OawfPermissionAttributeTests.cs
+new file mode 100644
+index 0000000..448edaf
+--- /dev/null
++++ b/CP6.Tests/OawfPermissionAttributeTests.cs
+@@ -0,0 +1,198 @@
++using System.Reflection;
++using System.Text.RegularExpressions;
++using CP6.Core.Auth;
++using CP6.WebApi.Controllers.Oa;
++using CP6.WebApi.Controllers.Wf;
++using Microsoft.AspNetCore.Mvc;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// 反射守卫（M-OA/WF 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
++/// **两个命名空间** Controllers.Oa（11）+ Controllers.Wf（5）= 16 controller，锁死
++/// 「未来新增 OA/WF 写端点漏贴权限键即红」。与已合并的 <c>WmsPermissionAttributeTests</c> /
++/// <c>ErpPermissionAttributeTests</c> / <c>MesPermissionAttributeTests</c> 同型三件套。
++/// 真相源：docs/seeds/oawf-permission-keys.md（16 控制器扫描面 / 33 非GET端点 / 31 贴点 / 2 只读 POST 豁免）。
++///
++/// ① discovery 守卫：断言扫到 16 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
++///    谓词覆盖 **两个** 命名空间（Oa ∪ Wf），计数断言 16 防单侧空扫。
++/// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
++///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 31、
++///    豁免命中数精确 == 2（33 = 31 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
++/// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
++///    ^oa-[a-z0-9-]+$（连字符，禁下划线）。**注**：Wf 命名空间 5 控制器（Flow/Form/Task/AdvancedFlow/
++///    Approval）无自己菜单行，其键锚定「消费页」OA 菜单，故 **全部键仍为 oa-* 前缀**（真相源 §一/§二）——
++///    本波不存在 wf-* 键。action **逐词相等**落在真相源实际使用的 action 集合内。
++/// ④ 豁免防腐：每条豁免必须确为「变更端点 且 未贴权限」——防豁免清单变陈旧（端点改名/被贴/被删）
++///    却仍白名单遮蔽某个真·写端点丢键。
++///
++/// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
++/// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
++/// 继承说明：16 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 15 个
++/// （Oa 全 11 + Wf 的 AdvancedFlow/Approval/Flow/Form）经 <c>LocalizedControllerBase</c>（抽象基类，
++/// 仅惰性暴露 Localizer 属性，**零 [HttpXxx] action 声明**）继承 ControllerBase；因各级基类均无端点
++/// 声明，写端点均为子类手写声明方法，故 BindingFlags.DeclaredOnly 反射不会漏扫端点（逐类自查类头，
++/// 见 oawf-t4-report.md 继承链核对）。若未来在共享基类（LocalizedControllerBase 或 ControllerBase
++/// 派生链上）新增 [HttpXxx] 方法，DeclaredOnly 会静默漏扫该端点——届时须调整扫描策略（如改用非
++/// DeclaredOnly 并按声明类型过滤）。
++/// </summary>
++public class OawfPermissionAttributeTests
++{
++    /// <summary>
++    /// menu 键约定：**oa-** 前缀 + 小写字母数字连字符。Wf 命名空间控制器键锚定 OA 消费页菜单，
++    /// 故亦为 oa-* 前缀（真相源 §一/§二：/api/wf/* 五控制器无自己菜单行）。
++    /// </summary>
++    private static readonly Regex MenuPattern = new("^oa-[a-z0-9-]+$", RegexOptions.Compiled);
++
++    /// <summary>
++    /// 真相源实际使用的 action 集合（从已贴的 31 个 [RequirePermission] 逐词读出的真实 action，非凭空造）。
++    /// 只读 POST 豁免归 view 但**不贴键**（未打属性），故本集合**不含 view**——逐词相等，多一词/少一词即红。
++    /// 新 action 词若出现须显式加入本集合，否则视为疑似 typo 报错。
++    /// </summary>
++    private static readonly HashSet<string> ActionVocabulary = new()
++    {
++        "add", "edit", "del",                       // 四基粒度写（view 未贴，不入集）
++        "favorite",                                 // 低危个性化写：oa-form-catalog:favorite 收藏表单
++        "read",                                     // 低危写：oa-inbox:read 标记已读（归并 Inbox/CC/Notification，§五归并4）
++        "submit",                                   // 状态键：oa-form-catalog:submit 起流程/提交（归并 Draft/Flow/Approval/Form，§五归并3）
++        "enable",                                   // 状态键：oa-flow-admin:enable 流程启停干预（§五归并6）
++        "withdraw",                                 // 状态键：oa-inbox:withdraw 撤回申请
++        "approve", "transfer", "sendback",          // 高危键：审批办理/转交/退回（§三，归并 Inbox+Flow/AdvancedFlow）
++        "addsign",                                  // 高危键：oa-inbox:addsign 加签改审批链（§三）
++        "delegate",                                 // 高危键：oa-settings:delegate 委派授权（合一 OA #5/#6 + AdvancedFlow #26，§三/§六注4）
++        "form-save",                                // 高危键：oa-designer:form-save 表单定义保存（旧栈 Form.SaveDef，§三）
++    };
++
++    /// <summary>
++    /// 只读 POST 豁免清单（真相源 §四，共 2 条 —— 均逐条读 Service 实现证得无写副作用；归 view，不贴权限键）。
++    /// 键 = "ControllerName.MethodName"。每条带真相源编号 + 豁免依据。
++    /// </summary>
++    private static readonly HashSet<string> ReadOnlyPostExemptions = new()
++    {
++        "ForecastController.Preview",   // §四#1 ForecastService.ForecastAsync 仅 Wf_FlowDefs 读定义→内存遍历 schema 算预计审批路径，不产生实例、全类无 Add/Update/Remove/SaveChanges；POST 仅为传 varsJson 复杂体
++        "QueryController.Search",       // §四#2 InboxService.QueryAsync 仅 Wf_FlowInstances 多条件筛选 + join，Take(500).ToListAsync 投影 DTO，无写；POST 仅为传 FormQueryFilter 复杂体
++    };
++
++    private static IEnumerable<Type> OawfControllers =>
++        typeof(InboxController).Assembly.GetTypes()
++            .Where(t => (t.Namespace == "CP6.WebApi.Controllers.Oa"
++                         || t.Namespace == "CP6.WebApi.Controllers.Wf")
++                        && typeof(ControllerBase).IsAssignableFrom(t)
++                        && !t.IsAbstract)
++            .OrderBy(t => t.Name);
++
++    private static IEnumerable<MethodInfo> ActionMethods(Type t) =>
++        t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
++            .Where(m => !m.IsSpecialName);
++
++    private static bool IsMutating(MethodInfo m) =>
++        m.GetCustomAttributes<HttpPostAttribute>().Any()
++        || m.GetCustomAttributes<HttpPutAttribute>().Any()
++        || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
++
++    private static bool IsGet(MethodInfo m) => m.GetCustomAttributes<HttpGetAttribute>().Any();
++
++    private static string Key(Type c, MethodInfo m) => $"{c.Name}.{m.Name}";
++
++    /// <summary>经 CustomAttributeData 读构造参数 (menu, action)；无特性返回 null。</summary>
++    private static (string menu, string action)? ReadPermission(MethodInfo m)
++    {
++        var data = CustomAttributeData.GetCustomAttributes(m)
++            .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
++        if (data == null) return null;
++        var args = data.ConstructorArguments;
++        return ((string)args[0].Value!, (string)args[1].Value!);
++    }
++
++    [Fact]
++    public void OawfControllers_AreDiscovered()
++    {
++        // 守卫：Controllers.Oa（11）+ Controllers.Wf（5）下继承 ControllerBase 的非抽象类共 16
++        //      （含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
++        Assert.Equal(16, OawfControllers.Count());
++    }
++
++    [Fact]
++    public void EveryMutatingAction_IsGuarded_WithConventionalKeyOrExemption()
++    {
++        var offenders = new List<string>();
++        var taggedCount = 0;
++        var exemptHit = new HashSet<string>();
++
++        foreach (var c in OawfControllers)
++        foreach (var m in ActionMethods(c).Where(IsMutating))
++        {
++            var key = Key(c, m);
++            var perm = ReadPermission(m);
++
++            if (perm == null)
++            {
++                // 未贴权限：唯有在显式只读 POST 豁免清单内才放行。
++                if (ReadOnlyPostExemptions.Contains(key))
++                    exemptHit.Add(key);
++                else
++                    offenders.Add($"{key}：变更端点缺 [RequirePermission] 且不在只读 POST 豁免清单");
++                continue;
++            }
++
++            // 已贴权限却又列入豁免 = 语义冲突（豁免应无键）。
++            if (ReadOnlyPostExemptions.Contains(key))
++                offenders.Add($"{key}：既贴 [RequirePermission] 又在豁免清单，二者互斥");
++
++            taggedCount++;
++            if (!MenuPattern.IsMatch(perm.Value.menu))
++                offenders.Add($"{key}：menu '{perm.Value.menu}' 不符约定 ^oa-[a-z0-9-]+$");
++            if (!ActionVocabulary.Contains(perm.Value.action))
++                offenders.Add($"{key}：action '{perm.Value.action}' 不在真相源 action 集（疑似 typo，须显式加入）");
++        }
++
++        Assert.True(offenders.Count == 0,
++            "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
++
++        // 收口断言：贴点 31 + 豁免命中 2 = 全 33 非GET端点，精确吻合真相源 §七。
++        Assert.Equal(31, taggedCount);
++        Assert.Equal(2, exemptHit.Count);
++    }
++
++    [Fact]
++    public void ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints()
++    {
++        // 豁免防腐：清单每一条都必须实存、确为变更端点、且当前未贴权限键。
++        // 防清单变陈旧（端点被改名/删除/后来贴了键）却仍白名单遮蔽某真·写端点丢键。
++        var byKey = OawfControllers
++            .SelectMany(c => ActionMethods(c).Select(m => (key: Key(c, m), method: m)))
++            .ToDictionary(x => x.key, x => x.method);
++
++        var stale = new List<string>();
++        foreach (var ex in ReadOnlyPostExemptions)
++        {
++            if (!byKey.TryGetValue(ex, out var m))
++            {
++                stale.Add($"{ex}：豁免清单条目在源码中已不存在（须清理豁免清单）");
++                continue;
++            }
++            if (!IsMutating(m))
++                stale.Add($"{ex}：豁免条目已非变更端点（须从豁免清单移除）");
++            if (ReadPermission(m) != null)
++                stale.Add($"{ex}：豁免条目现已贴 [RequirePermission]（须从豁免清单移除，交核心闸校验键）");
++        }
++
++        Assert.True(stale.Count == 0, "只读 POST 豁免清单已陈旧:\n" + string.Join("\n", stale));
++        Assert.Equal(2, ReadOnlyPostExemptions.Count);
++    }
++
++    [Fact]
++    public void NoReadOnlyGetAction_HasRequirePermission()
++    {
++        // 只读误贴防护：纯 HttpGet（且非变更）端点不应带 [RequirePermission]（本波未给 GET 贴）。
++        var offenders = new List<string>();
++        foreach (var c in OawfControllers)
++        foreach (var m in ActionMethods(c))
++        {
++            var readOnly = IsGet(m) && !IsMutating(m);
++            if (readOnly && ReadPermission(m) != null)
++                offenders.Add($"{Key(c, m)}：只读 GET 端点误贴 [RequirePermission]");
++        }
++        Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
++    }
++}
+diff --git a/CP6.Tests/OawfPermissionSeedTests.cs b/CP6.Tests/OawfPermissionSeedTests.cs
+new file mode 100644
+index 0000000..d23b80b
+--- /dev/null
++++ b/CP6.Tests/OawfPermissionSeedTests.cs
+@@ -0,0 +1,162 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-OA/WF 横切接线 Task 3b：OawfPermissionSeed 逐租户 Sys_MenuAction/Sys_RoleAction 幂等种子断言。
++///
++/// 三数闭环（真相源 docs/seeds/oawf-permission-keys.md §一/§七 + 控制器 grep）：
++///   31 写端点（[RequirePermission] 贴点：Oa 21 + Wf 10）→ 去重 (menu-key, action) 20 元组 → 20 种子元组（漏种 0 / 多种 0）。
++///   多处跨控制器归并消解重复（真相源 §五）：
++///     oa-inbox:read 覆 Inbox task/cc-read + Notification read/read-all（4→1）；
++///     oa-inbox:approve 覆 Inbox batch + Flow act（2→1）；oa-inbox:sendback 覆 Inbox + AdvancedFlow（2→1）；
++///     oa-form-catalog:submit 覆 Draft submit + Approval submit + Form data + Flow submit（4→1）；
++///     oa-settings:delegate 覆 Delegate add/remove + AdvancedFlow delegate（3→1，T2 委派合一拍板1）；
++///     oa-designer:edit 覆 Designer save + Flow def（2→1）。
++///   2 只读 POST 豁免（Forecast preview→oa-form-catalog:view / Query search→oa-form-search:view）未贴点＝不入种子。
++///   → 覆盖 6 有写端点 menu-key（733/734/735/737/738/739）；oa-form-search(736) 仅 view 豁免故不种，非 7。
++/// MenuId 经锚定表 docs/seeds/oawf-key-menu-anchor.md 映射；RoleAction 挂 admin RoleId=1。
++///
++/// ★ ExpectedTuples 为独立硬编码 oracle（非引用 OawfPermissionSeed 内部常量），防自证假绿。
++/// </summary>
++public class OawfPermissionSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 期望的 20 去重种子元组（MenuId 来自锚定表 oawf-key-menu-anchor.md；action 来自 T3a 控制器贴点，逐字核对）。
++    private static readonly (int MenuId, string Code)[] ExpectedTuples =
++    {
++        // 733 oa-inbox（信箱 + /wf 引擎审批动作）
++        (733, "read"), (733, "approve"), (733, "transfer"), (733, "sendback"), (733, "addsign"), (733, "withdraw"),
++        // 734 oa-flow-admin
++        (734, "enable"),
++        // 735 oa-form-catalog（填單：收藏 + 草稿 CRUD + 起流程/提交）
++        (735, "add"), (735, "edit"), (735, "submit"), (735, "del"), (735, "favorite"),
++        // 737 oa-settings（设定：偏好 + 委派合一）
++        (737, "edit"), (737, "delegate"),
++        // 738 oa-designer（设计器：新栈 save/clone + 旧栈 flow/form def）
++        (738, "edit"), (738, "add"), (738, "form-save"),
++        // 739 oa-approver-map
++        (739, "add"), (739, "edit"), (739, "del"),
++    };
++
++    private static readonly Guid TenantA = Guid.Parse("11111111-1111-1111-1111-111111111111");
++    private static readonly Guid TenantB = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static void SeedTenantsAndMenus(CP6Context db)
++    {
++        // 锚定菜单行须先在（RoleAction 挂 MenuId；OawfMenuSeed 缺行补建并显式赋 oa-* MenuKey）。
++        OawfMenuSeed.EnsureSeeded(db);
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantA, TenantCode = "TA", TenantName = "TenantA", Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantB, TenantCode = "TB", TenantName = "TenantB", Enable = true });
++        db.SaveChanges();
++    }
++
++    [Fact]
++    public void EnsureSeeded_SeedsExactly20TuplesPerTenant_ForBothMenuAndRoleAction()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        OawfPermissionSeed.EnsureSeeded(db);
++
++        foreach (var tid in new[] { TenantA, TenantB })
++        {
++            var menuActions = db.Sys_MenuActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid).ToList();
++            var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
++
++            // 元组闭环计数：每租户各得全套 20。
++            Assert.Equal(20, menuActions.Count);
++            Assert.Equal(20, roleActions.Count);
++
++            // 逐元组精确匹配（漏种 0 / 多种 0）。
++            var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var expected = ExpectedTuples.ToHashSet();
++            Assert.Equal(expected, maSet);
++            Assert.Equal(expected, raSet);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_SecondCallNoNewRows()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        OawfPermissionSeed.EnsureSeeded(db);
++        var ma1 = db.Sys_MenuActions.IgnoreQueryFilters().Count();
++        var ra1 = db.Sys_RoleActions.IgnoreQueryFilters().Count();
++
++        OawfPermissionSeed.EnsureSeeded(db);   // 二次调用
++        Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++
++        // 2 租户 × 20 元组 = 40。
++        Assert.Equal(40, ma1);
++        Assert.Equal(40, ra1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        OawfPermissionSeed.EnsureSeeded(db);
++
++        var anchoredMenuIds = ExpectedTuples.Select(t => t.MenuId).ToHashSet();
++        var roleActions = db.Sys_RoleActions.IgnoreQueryFilters().ToList();
++
++        Assert.NotEmpty(roleActions);
++        Assert.All(roleActions, ra => Assert.Equal(1, ra.RoleId));
++        // 每个 RoleAction.MenuId 必来自锚定表，且该菜单行确实存在且 MenuKey 非 null 且 oa- 前缀。
++        Assert.All(roleActions, ra => Assert.Contains(ra.MenuId, anchoredMenuIds));
++        foreach (var menuId in anchoredMenuIds)
++        {
++            var menu = db.Sys_Menus.Single(m => m.MenuId == menuId);
++            Assert.NotNull(menu.MenuKey);
++            Assert.StartsWith("oa-", menu.MenuKey!);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        OawfPermissionSeed.EnsureSeeded(db);
++
++        // 逐租户显式 TenantId：两租户各得独立行，无一被盖成默认租户。
++        var tenantsSeen = db.Sys_RoleActions.IgnoreQueryFilters()
++            .Select(x => x.TenantId).Distinct().ToList();
++        Assert.Contains(TenantA, tenantsSeen);
++        Assert.Contains(TenantB, tenantsSeen);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTenants_NoOp()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);   // 菜单在，但无 Sys_Tenants 行
++
++        OawfPermissionSeed.EnsureSeeded(db);
++
++        Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++    }
++}
+diff --git a/CP6.Tests/Wf/OawfAuditTests.cs b/CP6.Tests/Wf/OawfAuditTests.cs
+new file mode 100644
+index 0000000..8e5884c
+--- /dev/null
++++ b/CP6.Tests/Wf/OawfAuditTests.cs
+@@ -0,0 +1,339 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Wf;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++/// <summary>
++/// OA/WF 治理配置 / 权限授予面 关键实体字段级审计接线冒烟（M-OA/WF 横切 T5）。
++/// 照 <see cref="CP6.Tests.Mes.MesAuditTests"/> 范式：InMemory + 假当前用户。
++/// 验证贴 IAuditable 的 5 个设计期治理/授权实体（流程定义 Wf_FlowDef·审批绑定单源 Wf_ApprovalBinding·
++/// 表单定义 Wf_FormDef·审批委派 Wf_FlowDelegate·审批人映射 Wf_ApproverMap）在 create/update
++/// 随业务行同周期写入 Sys_FieldAuditLogs（真实断言实体名/字段/新旧值）；
++/// 并回归确认 12 个高频运行时流转 / 追加型 / 用户偏好 实体（实例·任务·令牌·痕迹·关卡快照·传签履历·
++/// 抄送·表单数据·通知·收藏·信箱偏好·服务作业）均未贴 → 零审计行（负测试，全量豁免对账）。
++/// </summary>
++public class OawfAuditTests
++{
++    private sealed class FakeUser : ICurrentUserAccessor
++    {
++        public FakeUser(Guid? id, string? name) { UserId = id; UserName = name; }
++        public Guid? UserId { get; }
++        public string? UserName { get; }
++    }
++
++    private sealed record DiffRow(string Field, string? Old, string? New);
++
++    private static List<DiffRow> ParseChanges(string json)
++        => JsonSerializer.Deserialize<List<DiffRow>>(json) ?? new();
++
++    private static readonly Guid _userId = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static CP6Context Ctx()
++        => TestHelper.CreateInMemoryContext(new FakeUser(_userId, "alice"));
++
++    // ════════════════════════════════════════════════════════════════════════
++    //  纳入：治理配置 / 权限授予面（5 实体）
++    // ════════════════════════════════════════════════════════════════════════
++
++    // ── 流程定义（Wf_FlowDef）— SchemaJson/FlowKey 设计期治理配置，改版影响所有在途流程 ──
++    [Fact]
++    public void Create_FlowDef_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var fd = new Wf_FlowDef { FlowKey = "oa-leave", FlowName = "请假流程", FormKey = "fm-leave" };
++        db.Set<Wf_FlowDef>().Add(fd);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FlowDef), rows[0].EntityName);
++        Assert.Equal(fd.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_FlowDef_enable_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var fd = new Wf_FlowDef { FlowKey = "oa-leave", FlowName = "请假流程", FormKey = "fm-leave", Enable = true };
++        db.Set<Wf_FlowDef>().Add(fd);
++        db.SaveChanges();
++
++        fd.Enable = false;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FlowDef), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Enable" && d.Old == "True" && d.New == "False");
++    }
++
++    // ── 审批绑定单源（Wf_ApprovalBinding）— BizType→FlowKey 映射，改绑改变谁的审批走哪条流程 ──
++    [Fact]
++    public void Create_ApprovalBinding_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var b = new Wf_ApprovalBinding { BizType = "FinJournalPost", FlowKey = "oa-journal", Enable = true };
++        db.Set<Wf_ApprovalBinding>().Add(b);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_ApprovalBinding), rows[0].EntityName);
++        Assert.Equal(b.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_ApprovalBinding_flowKey_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var b = new Wf_ApprovalBinding { BizType = "PO", FlowKey = "oa-po", Enable = true };
++        db.Set<Wf_ApprovalBinding>().Add(b);
++        db.SaveChanges();
++
++        b.FlowKey = "oa-po-v2";
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_ApprovalBinding), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "FlowKey" && d.Old == "oa-po" && d.New == "oa-po-v2");
++    }
++
++    // ── 表单定义（Wf_FormDef）— SchemaJson/Version 设计期治理配置（oa-designer 落库对象）──
++    [Fact]
++    public void Update_FormDef_version_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var f = new Wf_FormDef { FormKey = "fm-leave", FormName = "请假单", Version = 1 };
++        db.Set<Wf_FormDef>().Add(f);
++        db.SaveChanges();
++
++        f.Version = 2;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FormDef), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Version" && d.Old == "1" && d.New == "2");
++    }
++
++    // ── 审批委派（Wf_FlowDelegate）— 委托人把审批权授予代理人：权限授予面 ────────────────
++    [Fact]
++    public void Create_FlowDelegate_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var d = new Wf_FlowDelegate
++        {
++            GrantorId = Guid.NewGuid(),
++            DelegateId = Guid.NewGuid(),
++            ValidFrom = new DateTime(2026, 7, 12),
++            ValidTo = new DateTime(2026, 7, 20),
++            Enable = true,
++        };
++        db.Set<Wf_FlowDelegate>().Add(d);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FlowDelegate), rows[0].EntityName);
++        Assert.Equal(d.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_FlowDelegate_enable_revoke_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var d = new Wf_FlowDelegate
++        {
++            GrantorId = Guid.NewGuid(),
++            DelegateId = Guid.NewGuid(),
++            ValidFrom = new DateTime(2026, 7, 12),
++            ValidTo = new DateTime(2026, 7, 20),
++            Enable = true,
++        };
++        db.Set<Wf_FlowDelegate>().Add(d);
++        db.SaveChanges();
++
++        d.Enable = false;   // 即时收回委派
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_FlowDelegate), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "Enable" && d.Old == "True" && d.New == "False");
++    }
++
++    // ── 审批人映射（Wf_ApproverMap）— MapKey→审批目标(用户/角色)：数据驱动的权限授予面 ────
++    [Fact]
++    public void Create_ApproverMap_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var m = new Wf_ApproverMap { MapKey = "dept-manager", MatchValue = "D01", ApproverRoleId = 5, Enable = true };
++        db.Set<Wf_ApproverMap>().Add(m);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_ApproverMap), rows[0].EntityName);
++        Assert.Equal(m.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_ApproverMap_approverRoleId_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var m = new Wf_ApproverMap { MapKey = "dept-manager", MatchValue = "D01", ApproverRoleId = 5, Enable = true };
++        db.Set<Wf_ApproverMap>().Add(m);
++        db.SaveChanges();
++
++        m.ApproverRoleId = 9;   // 改派审批目标角色
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Wf_ApproverMap), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "ApproverRoleId" && d.Old == "5" && d.New == "9");
++    }
++
++    // ════════════════════════════════════════════════════════════════════════
++    //  豁免负测试：高频运行时流转 / 追加型 / 用户偏好（12 实体，全量对账）
++    // ════════════════════════════════════════════════════════════════════════
++
++    // 运行时状态载体：CurrentNode/Status 高频状态机流转，正确性由 FlowEngine 引擎测试锁定，豁免。
++    [Fact]
++    public void Create_FlowInstance_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowInstance>().Add(new Wf_FlowInstance { FlowKey = "oa-leave", CurrentNode = "start", StarterId = Guid.NewGuid() });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 高频待办任务：一节点多条、Status 幂等流转，引擎测试锁定，豁免。
++    [Fact]
++    public void Create_FlowTask_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowTask>().Add(new Wf_FlowTask { InstanceId = Guid.NewGuid(), NodeId = "n1", AssigneeId = Guid.NewGuid() });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 运行时执行点令牌：分叉/合流内核态，引擎测试锁定，豁免。
++    [Fact]
++    public void Create_FlowToken_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowToken>().Add(new Wf_FlowToken { InstanceId = Guid.NewGuid(), NodeId = "n1", Status = 0 });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 审批痕迹：仅追加事件日志（本身即审计时间线），豁免。
++    [Fact]
++    public void Create_FlowHistory_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowHistory>().Add(new Wf_FlowHistory { InstanceId = Guid.NewGuid(), NodeId = "n1", ActorId = Guid.NewGuid(), Action = "approve" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 每关卡表单快照：不可变追加留痕，豁免。
++    [Fact]
++    public void Create_FlowData_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowData>().Add(new Wf_FlowData { InstanceId = Guid.NewGuid(), StepSeq = 1, NodeId = "n1" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 传签履历台账：运行时读模型，豁免。
++    [Fact]
++    public void Create_FlowFormTo_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowFormTo>().Add(new Wf_FlowFormTo { InstanceId = Guid.NewGuid(), StepSeq = 1, NodeId = "n1", ExpectedHandlerId = Guid.NewGuid(), SentAt = DateTime.Now });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 抄送读模型：IsRead 高频翻转，豁免。
++    [Fact]
++    public void Create_FlowCc_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FlowCc>().Add(new Wf_FlowCc { InstanceId = Guid.NewGuid(), RecipientId = Guid.NewGuid() });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 表单提交数据：运行时一次提交一行的字段值快照，豁免。
++    [Fact]
++    public void Create_FormData_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FormData>().Add(new Wf_FormData { FormKey = "fm-leave", FormVersion = 1, DataJson = "{}" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 站内通知：运行时追加 + IsRead 高频翻转，豁免（create 与 update 皆零审计行）。
++    [Fact]
++    public void CreateUpdate_Notification_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        var n = new Wf_Notification { UserId = Guid.NewGuid(), Type = WfNotificationType.TodoCreated, Title = "新待办", IsRead = false };
++        db.Set<Wf_Notification>().Add(n);
++        db.SaveChanges();
++
++        n.IsRead = true;
++        db.SaveChanges();
++
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 填單收藏：用户个人偏好，豁免。
++    [Fact]
++    public void Create_FormFavorite_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_FormFavorite>().Add(new Wf_FormFavorite { UserId = Guid.NewGuid(), FormKey = "fm-leave" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 信箱显示偏好：用户个人偏好，豁免。
++    [Fact]
++    public void Create_InboxPref_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_InboxPref>().Add(new Wf_InboxPref { UserId = Guid.NewGuid(), PrefsJson = "{}" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // 服务任务异步作业台账：运行时队列（AttemptCount/Lock/Status 高频翻转），引擎测试锁定，豁免。
++    [Fact]
++    public void Create_ServiceJob_writes_no_audit_row()
++    {
++        using var db = Ctx();
++        db.Set<Wf_ServiceJob>().Add(new Wf_ServiceJob { InstanceId = Guid.NewGuid(), TokenId = Guid.NewGuid(), NodeId = "n1", Kind = "timer" });
++        db.SaveChanges();
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Oa/ApproverMapController.cs b/CP6.WebApi/Controllers/Oa/ApproverMapController.cs
+index 06440da..c6f5f76 100644
+--- a/CP6.WebApi/Controllers/Oa/ApproverMapController.cs
++++ b/CP6.WebApi/Controllers/Oa/ApproverMapController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>审批人映射维护(②b Menu 数据驱动)。/api/oa/approver-map。</summary>
+ [ApiController]
+ [Route("api/oa/approver-map")]
+ [Authorize]
+@@ -19,26 +20,29 @@ public class ApproverMapController : LocalizedControllerBase
+     public record CreateReq(string MapKey, string MatchValue, Guid? ApproverUserId, int? ApproverRoleId, int OrderNo);
+     public record UpdateReq(string MatchValue, Guid? ApproverUserId, int? ApproverRoleId, int OrderNo, bool Enable);
+ 
+     [HttpGet("list")]
+     public async Task<IActionResult> List([FromQuery] string? mapKey) => Ok2(await _svc.ListAsync(mapKey));
+ 
+     [HttpGet("keys")]
+     public async Task<IActionResult> Keys() => Ok2(await _svc.DistinctKeysAsync());
+ 
+     [HttpPost]
++    [RequirePermission("oa-approver-map", "add")]
+     public async Task<IActionResult> Create([FromBody] CreateReq r)
+     {
+         try { return Ok2(await _svc.CreateAsync(r.MapKey, r.MatchValue, r.ApproverUserId, r.ApproverRoleId, r.OrderNo)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpPut("{id}")]
++    [RequirePermission("oa-approver-map", "edit")]
+     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateReq r)
+     {
+         try { await _svc.UpdateAsync(id, r.MatchValue, r.ApproverUserId, r.ApproverRoleId, r.OrderNo, r.Enable); return Ok2(); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpDelete("{id}")]
++    [RequirePermission("oa-approver-map", "del")]
+     public async Task<IActionResult> Delete(Guid id) { await _svc.DeleteAsync(id); return Ok2(); }
+ }
+diff --git a/CP6.WebApi/Controllers/Oa/CatalogController.cs b/CP6.WebApi/Controllers/Oa/CatalogController.cs
+index 42a7d06..683f1f3 100644
+--- a/CP6.WebApi/Controllers/Oa/CatalogController.cs
++++ b/CP6.WebApi/Controllers/Oa/CatalogController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 表单分类目录 REST（Phase C）。/api/oa/catalog — 分类树（含收藏标注）/ 收藏切换。
+ /// </summary>
+@@ -35,20 +36,21 @@ public class CatalogController : LocalizedControllerBase
+     {
+         var me = await CurrentUserIdAsync();
+         return Ok2(await _catalog.CatalogAsync(me));
+     }
+ 
+     // ── 收藏 / 取消收藏 ──
+ 
+     public record FavoriteReq(string FormKey, bool On);
+ 
+     [HttpPost("favorite")]
++    [RequirePermission("oa-form-catalog", "favorite")]
+     public async Task<IActionResult> Favorite([FromBody] FavoriteReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             if (r.On)
+                 await _favorite.AddAsync(me, r.FormKey);
+             else
+                 await _favorite.RemoveAsync(me, r.FormKey);
+             return Ok2();
+diff --git a/CP6.WebApi/Controllers/Oa/DelegateController.cs b/CP6.WebApi/Controllers/Oa/DelegateController.cs
+index 7634fd8..8d4f9de 100644
+--- a/CP6.WebApi/Controllers/Oa/DelegateController.cs
++++ b/CP6.WebApi/Controllers/Oa/DelegateController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 代理授权管理 REST（Phase C）。/api/oa/delegate — 我能代理谁/我授出的委派/增删。
+ /// act-as 授权方向：Wf_FlowDelegate{GrantorId=委托人, DelegateId=代理人}。
+@@ -43,36 +44,38 @@ public class DelegateController : LocalizedControllerBase
+     {
+         var me = await CurrentUserIdAsync();
+         return Ok2(await _delegate.ListMyDelegatesAsync(me));
+     }
+ 
+     // ── 新增委派 ──
+ 
+     public record AddDelegateReq(Guid DelegateId, DateTime ValidFrom, DateTime ValidTo, string? Scope, string? Remark);
+ 
+     [HttpPost("add")]
++    [RequirePermission("oa-settings", "delegate")]
+     public async Task<IActionResult> Add([FromBody] AddDelegateReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             var id = await _delegate.AddDelegateAsync(me, r.DelegateId, r.ValidFrom, r.ValidTo, r.Scope, r.Remark);
+             return Ok2(new { id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 删除委派 ──
+ 
+     public record RemoveDelegateReq(Guid Id);
+ 
+     [HttpPost("remove")]
++    [RequirePermission("oa-settings", "delegate")]
+     public async Task<IActionResult> Remove([FromBody] RemoveDelegateReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _delegate.RemoveDelegateAsync(me, r.Id);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Oa/DesignerController.cs b/CP6.WebApi/Controllers/Oa/DesignerController.cs
+index f7ddbb0..3edb123 100644
+--- a/CP6.WebApi/Controllers/Oa/DesignerController.cs
++++ b/CP6.WebApi/Controllers/Oa/DesignerController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 流程设计器 REST（Phase C′）。/api/oa/designer — 列表/加载/保存/克隆。
+@@ -42,34 +43,36 @@ public class DesignerController : LocalizedControllerBase
+     {
+         var summary = await _designer.LoadAsync(flowKey);
+         if (summary is null) return NotFound(new { code = 404, message = "E-WF-006" });
+         var def = await _flowDef.GetDefAsync(flowKey);
+         return Ok2(new { summary, schemaJson = def?.SchemaJson ?? "{}" });
+     }
+ 
+     public record SaveReq(string FlowKey, string FlowName, string FormKey, string? FunctionId, string? FlowCode, string SchemaJson);
+ 
+     [HttpPost("save")]
++    [RequirePermission("oa-designer", "edit")]
+     public async Task<IActionResult> Save([FromBody] SaveReq r)
+     {
+         try
+         {
+             var user = (await _ctx.GetAsync()).UserId.ToString();
+             await _designer.SaveAsync(new SaveFlowRequest(r.FlowKey, r.FlowName, r.FormKey, r.FunctionId, r.FlowCode, r.SchemaJson), user);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     public record CloneReq(string SourceFlowKey, string NewFlowKey, string NewFlowName);
+ 
+     [HttpPost("clone")]
++    [RequirePermission("oa-designer", "add")]
+     public async Task<IActionResult> Clone([FromBody] CloneReq r)
+     {
+         try
+         {
+             var user = (await _ctx.GetAsync()).UserId.ToString();
+             await _designer.CloneAsync(new CloneRequest(r.SourceFlowKey, r.NewFlowKey, r.NewFlowName), user);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Oa/DraftController.cs b/CP6.WebApi/Controllers/Oa/DraftController.cs
+index bdbe45a..0790549 100644
+--- a/CP6.WebApi/Controllers/Oa/DraftController.cs
++++ b/CP6.WebApi/Controllers/Oa/DraftController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 草稿（暂存）REST（Phase B）。/api/oa/draft — 新建/更新/列表/删除/提交草稿。
+ /// 草稿 = Wf_FlowInstance.Status=Draft；提交后经 L0 引擎推进。
+@@ -32,62 +33,66 @@ public class DraftController : LocalizedControllerBase
+     [HttpGet("list")]
+     public async Task<IActionResult> List()
+     {
+         var me = await CurrentUserIdAsync();
+         return Ok2(await _draft.ListDraftsAsync(me));
+     }
+ 
+     // ── 新建草稿 ──
+ 
+     [HttpPost("save")]
++    [RequirePermission("oa-form-catalog", "add")]
+     public async Task<IActionResult> Save([FromBody] SaveDraftReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             var id = await _draft.SaveDraftAsync(me, r.FlowKey, r.VarsJson ?? "{}");
+             return Ok2(new { id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 更新草稿 ──
+ 
+     [HttpPost("update")]
++    [RequirePermission("oa-form-catalog", "edit")]
+     public async Task<IActionResult> Update([FromBody] UpdateDraftReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _draft.UpdateDraftAsync(me, r.Id, r.VarsJson ?? "{}");
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 提交草稿 ──
+ 
+     [HttpPost("submit")]
++    [RequirePermission("oa-form-catalog", "submit")]
+     public async Task<IActionResult> Submit([FromBody] IdReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _draft.SubmitDraftAsync(me, r.Id);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 删除草稿 ──
+ 
+     [HttpPost("delete")]
++    [RequirePermission("oa-form-catalog", "del")]
+     public async Task<IActionResult> Delete([FromBody] IdReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _draft.DeleteDraftAsync(me, r.Id);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Oa/FlowAdminController.cs b/CP6.WebApi/Controllers/Oa/FlowAdminController.cs
+index c4f5207..5d810af 100644
+--- a/CP6.WebApi/Controllers/Oa/FlowAdminController.cs
++++ b/CP6.WebApi/Controllers/Oa/FlowAdminController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 轻量流程管理 REST（Phase B）。/api/oa/flow-admin — 流程列表/启停（每表单1:1）。
+ /// 流程管理面向平台管理员，[Authorize] 登录态即可（P1 不加细粒度权限属性）。
+ /// </summary>
+@@ -38,20 +39,21 @@ public class FlowAdminController : LocalizedControllerBase
+     {
+         var item = await _admin.GetFlowAsync(flowKey);
+         return item is null
+             ? NotFound(new { code = 404, message = "E-WF-006" })
+             : Ok2(item);
+     }
+ 
+     // ── 启停 ──
+ 
+     [HttpPost("enable")]
++    [RequirePermission("oa-flow-admin", "enable")]
+     public async Task<IActionResult> Enable([FromBody] EnableReq r)
+     {
+         try
+         {
+             await _admin.SetEnabledAsync(r.FlowKey, r.Enabled);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+diff --git a/CP6.WebApi/Controllers/Oa/InboxController.cs b/CP6.WebApi/Controllers/Oa/InboxController.cs
+index fa9f733..e07792e 100644
+--- a/CP6.WebApi/Controllers/Oa/InboxController.cs
++++ b/CP6.WebApi/Controllers/Oa/InboxController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 电子表单信箱 REST（Phase B + C）。/api/oa/inbox — 未处理/在途/已处理/详情/批量办理/转交。
+@@ -125,70 +126,75 @@ public class InboxController : LocalizedControllerBase
+             return detail is null
+                 ? NotFound(new { code = 404, message = "E-WF-007" })
+                 : Ok2(detail);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 已读标记 ──
+ 
+     [HttpPost("task/read")]
++    [RequirePermission("oa-inbox", "read")]
+     public async Task<IActionResult> MarkTaskRead([FromBody] IdReq r)
+     {
+         var me = await CurrentUserIdAsync();
+         await _inbox.MarkTaskReadAsync(me, r.Id);
+         return Ok2(new { success = true });
+     }
+ 
+     [HttpPost("cc/read")]
++    [RequirePermission("oa-inbox", "read")]
+     public async Task<IActionResult> MarkCcRead([FromBody] IdReq r)
+     {
+         var me = await CurrentUserIdAsync();
+         await _inbox.MarkCcReadAsync(me, r.Id);
+         return Ok2(new { success = true });
+     }
+ 
+     // ── 批量办理（act-as 版）──
+ 
+     [HttpPost("batch")]
++    [RequirePermission("oa-inbox", "approve")]
+     public async Task<IActionResult> Batch([FromBody] BatchReq r)
+     {
+         try
+         {
+             var me = (await _ctx.GetAsync()).UserId;
+             var (eff, onBehalf) = await EffectiveAsync();
+             return Ok2(await _inbox.ActBatchAsAsync(me, onBehalf, r.TaskIds, r.Approve, r.Comment));
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 转交 ──
+ 
+     public record TransferReq(Guid TaskId, Guid ToUserId, string? Comment);
+ 
+     [HttpPost("transfer")]
++    [RequirePermission("oa-inbox", "transfer")]
+     public async Task<IActionResult> Transfer([FromBody] TransferReq r)
+     {
+         try
+         {
+             var (eff, _) = await EffectiveAsync();   // 转出人=有效用户（act-as 时=被代理人）
+             await _engine.TransferAsync(r.TaskId, eff, r.ToUserId, r.Comment);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 退回 ──
+ 
+     public record SendBackReq(Guid TaskId, string Kind, string? NodeId, string? Comment);
+ 
+     [HttpPost("sendback")]
++    [RequirePermission("oa-inbox", "sendback")]
+     public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
+     {
+         try
+         {
+             var (eff, _) = await EffectiveAsync();   // 退回人=有效用户（act-as 时=被代理人）
+             await _engine.SendBackAsync(r.TaskId, eff, new SendBackTarget(r.Kind, r.NodeId), r.Comment);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Oa/NotificationController.cs b/CP6.WebApi/Controllers/Oa/NotificationController.cs
+index 3919972..882f38a 100644
+--- a/CP6.WebApi/Controllers/Oa/NotificationController.cs
++++ b/CP6.WebApi/Controllers/Oa/NotificationController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 通知中心 REST（OA Phase D-1 §通知中心 N-T6）。
+ /// /api/oa/notification — 列表/未读数/标记已读/全部已读。
+@@ -44,29 +45,31 @@ public class NotificationController : LocalizedControllerBase
+     [HttpGet("unread-count")]
+     public async Task<IActionResult> UnreadCount()
+     {
+         var me = await CurrentUserIdAsync();
+         return Ok2(new { count = await _notif.UnreadCountAsync(me) });
+     }
+ 
+     // ── 标记单条已读 ──
+ 
+     [HttpPost("read")]
++    [RequirePermission("oa-inbox", "read")]
+     public async Task<IActionResult> Read([FromBody] IdReq r)
+     {
+         var me = await CurrentUserIdAsync();
+         await _notif.MarkReadAsync(me, r.Id);
+         return Ok2();
+     }
+ 
+     // ── 全部标记已读 ──
+ 
+     [HttpPost("read-all")]
++    [RequirePermission("oa-inbox", "read")]
+     public async Task<IActionResult> ReadAll()
+     {
+         var me = await CurrentUserIdAsync();
+         await _notif.MarkAllReadAsync(me);
+         return Ok2();
+     }
+ 
+     public record IdReq(Guid Id);
+ }
+diff --git a/CP6.WebApi/Controllers/Oa/PrefController.cs b/CP6.WebApi/Controllers/Oa/PrefController.cs
+index ba875fd..cb1e68c 100644
+--- a/CP6.WebApi/Controllers/Oa/PrefController.cs
++++ b/CP6.WebApi/Controllers/Oa/PrefController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 用户偏好设置 REST（Phase C）。/api/oa/pref — 读取 / 保存 JSON 格式偏好（主题、列宽、排序等）。
+ /// </summary>
+@@ -34,20 +35,21 @@ public class PrefController : LocalizedControllerBase
+         var me = await CurrentUserIdAsync();
+         var prefsJson = await _pref.GetAsync(me);
+         return Ok2(new { prefsJson });
+     }
+ 
+     // ── 保存偏好 ──
+ 
+     public record SavePrefReq(string PrefsJson);
+ 
+     [HttpPost("save")]
++    [RequirePermission("oa-settings", "edit")]
+     public async Task<IActionResult> Save([FromBody] SavePrefReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _pref.SaveAsync(me, r.PrefsJson);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Wf/AdvancedFlowController.cs b/CP6.WebApi/Controllers/Wf/AdvancedFlowController.cs
+index 18a427e..9d6d061 100644
+--- a/CP6.WebApi/Controllers/Wf/AdvancedFlowController.cs
++++ b/CP6.WebApi/Controllers/Wf/AdvancedFlowController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>
+ /// 高级流程动作 REST（OA 章07）。/api/wf/advanced —— 退回 / 加签 / 委派维护。
+ /// 发起人/操作人取登录用户（不接受客户端传 id）。
+@@ -21,46 +22,49 @@ public class AdvancedFlowController : LocalizedControllerBase
+     {
+         _engine = engine;
+         _ctx = ctx;
+     }
+ 
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     /// <summary>退回到目标节点（章07 §2）。</summary>
+     [HttpPost("sendback")]
++    [RequirePermission("oa-inbox", "sendback")]
+     public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
+     {
+         try
+         {
+             var actor = (await _ctx.GetAsync()).UserId;
+             await _engine.SendBackAsync(r.TaskId, actor, r.TargetNodeId, r.Comment);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>加签（章07 §3）。source: before(前) / after(后)。</summary>
+     [HttpPost("addsign")]
++    [RequirePermission("oa-inbox", "addsign")]
+     public async Task<IActionResult> AddSign([FromBody] AddSignReq r)
+     {
+         try
+         {
+             var actor = (await _ctx.GetAsync()).UserId;
+             var id = await _engine.AddSignAsync(r.TaskId, actor, r.AddSigneeId, r.Source, r.Comment);
+             return Ok2(new { taskId = id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>登记委派（章07 §5）。委托人=登录用户。</summary>
+     [HttpPost("delegate")]
++    [RequirePermission("oa-settings", "delegate")]
+     public async Task<IActionResult> Delegate([FromBody] DelegateReq r)
+     {
+         try
+         {
+             var grantor = (await _ctx.GetAsync()).UserId;
+             var id = await _engine.SetDelegateAsync(grantor, r.DelegateId, r.ValidFrom, r.ValidTo, r.Scope, r.Remark);
+             return Ok2(new { delegateId = id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Wf/ApprovalController.cs b/CP6.WebApi/Controllers/Wf/ApprovalController.cs
+index 1c6b06a..f28ba6c 100644
+--- a/CP6.WebApi/Controllers/Wf/ApprovalController.cs
++++ b/CP6.WebApi/Controllers/Wf/ApprovalController.cs
+@@ -1,11 +1,12 @@
+ using System.Text.Json;
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>
+ /// 审批集成 REST（OA 章05 阶段2）。/api/wf/approval —— 业务模块接入 OA 的入口：
+ /// 起业务审批（按绑定选流程）+ 查业务单据审批状态。发起人取登录用户（不接受客户端传 id）。
+@@ -22,20 +23,21 @@ public class ApprovalController : LocalizedControllerBase
+     {
+         _approval = approval;
+         _ctx = ctx;
+     }
+ 
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     /// <summary>起业务审批（按 bizType 绑定的流程）。返回流程实例 Id。</summary>
+     [HttpPost("submit")]
++    [RequirePermission("oa-form-catalog", "submit")]
+     public async Task<IActionResult> Submit([FromBody] ApprovalSubmitReq r)
+     {
+         try
+         {
+             var starter = (await _ctx.GetAsync()).UserId;
+             // formSnapshot 透传为对象（已是 JsonElement / 由业务侧序列化）
+             object? snapshot = r.FormSnapshot.ValueKind == JsonValueKind.Undefined ? null : r.FormSnapshot;
+             var id = await _approval.SubmitAsync(r.BizType, r.BizId, starter, snapshot);
+             return Ok2(new { instanceId = id });
+         }
+diff --git a/CP6.WebApi/Controllers/Wf/FlowController.cs b/CP6.WebApi/Controllers/Wf/FlowController.cs
+index 98535c2..f17dcb2 100644
+--- a/CP6.WebApi/Controllers/Wf/FlowController.cs
++++ b/CP6.WebApi/Controllers/Wf/FlowController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>
+ /// 流程 REST（OA 章03/04）。/api/wf —— 定义 CRUD + 起流程 + 办理 + 实例详情。
+ /// 发起人/办理人一律取登录用户（不接受客户端传 id，防冒充）。执行委托 IFlowEngine。
+@@ -26,48 +27,51 @@ public class FlowController : LocalizedControllerBase
+     }
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private async Task<Guid> CurrentUserIdAsync() => (await _ctx.GetAsync()).UserId;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     // ── 流程定义 ──
+ 
+     [HttpPost("flow/def")]
++    [RequirePermission("oa-designer", "edit")]
+     public async Task<IActionResult> SaveDef([FromBody] FlowDefReq r)
+     {
+         try { return Ok2(new { id = await _defSvc.SaveDefAsync(r.FlowKey, r.FlowName, r.FormKey, r.SchemaJson, CurrentUser) }); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpGet("flow/def/{flowKey}")]
+     public async Task<IActionResult> GetDef(string flowKey)
+     {
+         var def = await _defSvc.GetDefAsync(flowKey);
+         return def is null ? NotFound(new { code = 404, message = Localizer["流程定义不存在"] }) : Ok2(def);
+     }
+ 
+     // ── 起流程 / 办理 ──
+ 
+     [HttpPost("flow/submit")]
++    [RequirePermission("oa-form-catalog", "submit")]
+     public async Task<IActionResult> Submit([FromBody] SubmitReq r)
+     {
+         try
+         {
+             var starter = await CurrentUserIdAsync();
+             var id = await _engine.SubmitAsync(r.FlowKey, starter, r.VarsJson ?? "{}", r.BizType, r.BizId);
+             return Ok2(new { instanceId = id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpPost("task/{id}/act")]
++    [RequirePermission("oa-inbox", "approve")]
+     public async Task<IActionResult> Act(Guid id, [FromBody] ActReq r)
+     {
+         try
+         {
+             var actor = await CurrentUserIdAsync();
+             await _engine.ActAsync(id, actor, r.Approve, r.Comment);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Wf/FormController.cs b/CP6.WebApi/Controllers/Wf/FormController.cs
+index 53b9161..dc84bfd 100644
+--- a/CP6.WebApi/Controllers/Wf/FormController.cs
++++ b/CP6.WebApi/Controllers/Wf/FormController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>表单 REST（OA 章02）。/api/wf —— 表单定义建取 + 数据提交（服务端 schema 复核）。</summary>
+ [ApiController]
+ [Route("api/wf")]
+@@ -12,33 +13,35 @@ namespace CP6.WebApi.Controllers.Wf;
+ public class FormController : LocalizedControllerBase
+ {
+     private readonly IFormService _svc;
+     public FormController(IFormService svc) => _svc = svc;
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpPost("form/def")]
++    [RequirePermission("oa-designer", "form-save")]
+     public async Task<IActionResult> SaveDef([FromBody] FormDefReq r)
+     {
+         try { return Ok2(new { id = await _svc.SaveDefAsync(r.FormKey, r.FormName, r.SchemaJson, CurrentUser) }); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpGet("form/def/{formKey}")]
+     public async Task<IActionResult> GetDef(string formKey)
+     {
+         var def = await _svc.GetDefAsync(formKey);
+         return def is null ? NotFound(new { code = 404, message = Localizer["表单定义不存在"] }) : Ok2(def);
+     }
+ 
+     [HttpPost("form/data")]
++    [RequirePermission("oa-form-catalog", "submit")]
+     public async Task<IActionResult> SubmitData([FromBody] FormDataReq r)
+     {
+         try { return Ok2(new { id = await _svc.SubmitDataAsync(r.FormKey, r.BizId, r.DataJson, CurrentUser) }); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     public record FormDefReq(string FormKey, string FormName, string SchemaJson);
+     public record FormDataReq(string FormKey, string? BizId, string DataJson);
+ }
+diff --git a/CP6.WebApi/Controllers/Wf/TaskController.cs b/CP6.WebApi/Controllers/Wf/TaskController.cs
+index c35c763..59719d1 100644
+--- a/CP6.WebApi/Controllers/Wf/TaskController.cs
++++ b/CP6.WebApi/Controllers/Wf/TaskController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>待办中心 REST（OA 章04）。/api/wf —— 我的待办 / 我的申请 / 撤回。用户取登录上下文。</summary>
+ [ApiController]
+ [Route("api/wf")]
+@@ -24,16 +25,17 @@ public class TaskController : ControllerBase
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet("my-todos")]
+     public async Task<IActionResult> MyTodos() => Ok2(await _svc.MyTodosAsync(await MeAsync()));
+ 
+     [HttpGet("my-applications")]
+     public async Task<IActionResult> MyApplications() => Ok2(await _svc.MyApplicationsAsync(await MeAsync()));
+ 
+     [HttpPost("flow/{id}/withdraw")]
++    [RequirePermission("oa-inbox", "withdraw")]
+     public async Task<IActionResult> Withdraw(Guid id)
+     {
+         try { await _svc.WithdrawAsync(id, await MeAsync()); return Ok2(); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ }
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 75ebaf5..13df614 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -848,20 +848,34 @@ using (var scope = app.Services.CreateScope())
+     //   本种子在回填前对 10 有菜单键各锚定一行显式设 mes-* MenuKey（含缺行补建），并防御矫正历史回填错配
+     //   （尤其 310 /mes/machine-list 回填得 mes-machine-list ≠ 真相源 mes-machine）。MES 无孤儿路由，纯锚定。
+     CP6.WebApi.Seed.MesMenuSeed.EnsureSeeded(db);
+ 
+     // M-MES 横切接线 Task 3b：MES 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+     // Task 3a 给 9 控制器 28 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 MesMenuSeed 之后（RoleAction 挂锚定 MenuId 301/302/304/306/308/310/311/314/315，菜单行须先在）。
+     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。25 去重元组（28 写端点去重）覆盖 9 有写端点 menu-key（plan-achievement 仅 view 不种）。
+     CP6.WebApi.Seed.MesPermissionSeed.EnsureSeeded(db);
+ 
++    // M-OA/WF 横切接线 Task 2：OA/WF 菜单锚定 MenuKey（oa-*，真相源 §二 7 键）。紧随 MesPermissionSeed 之后执行。
++    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」（全局回填块）之前：OA 菜单 733–740 由本文件下方 OA 菜单插入块
++    //   在全局回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → OA/WF 全 403
++    //   （真相源 §六头号命门）。本种子在回填前对 733–739 各显式设 oa-* MenuKey（含缺行补建）；740 父行留 null。
++    //   OA 派生键与真相源逐字一致（零错配，不同于 MES machine-list），命门纯为时序；矫正块严限 7 锚定行按 MenuId 定位。
++    CP6.WebApi.Seed.OawfMenuSeed.EnsureSeeded(db);
++
++    // M-OA/WF 横切接线 Task 3b：OA/WF 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
++    // Task 3a 给 16 控制器 31 真写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
++    // 须置于 OawfMenuSeed 之后（RoleAction 挂锚定 MenuId 733/734/735/737/738/739，菜单行须先在）。
++    // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。20 去重元组（31 写端点去重）覆盖 6 有写端点 menu-key
++    // （oa-form-search(736) 仅 Query search 只读豁免→view，不种）。
++    CP6.WebApi.Seed.OawfPermissionSeed.EnsureSeeded(db);
++
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+         db.SaveChanges();
+     }
+     // PUB 章00 组织模型：部门管理菜单
+     if (!db.Sys_Menus.Any(m => m.MenuId == 108))
+     {
+diff --git a/CP6.WebApi/Seed/OawfMenuSeed.cs b/CP6.WebApi/Seed/OawfMenuSeed.cs
+new file mode 100644
+index 0000000..d048122
+--- /dev/null
++++ b/CP6.WebApi/Seed/OawfMenuSeed.cs
+@@ -0,0 +1,129 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// OA/WF 電子表单・工作流 菜单启动幂等种子（M-OA/WF 横切接线 Task 2）。
++///
++/// 背景（头号命门·回填时序）：OA 菜单 733–740 由 Program.cs 播种（:1446–1496），但插入块位于
++/// 「无 MenuKey 菜单 RoutePath 自动回填」块（:908，<c>MenuKey = RoutePath.Trim('/').Replace('/','-')</c>）
++/// **之后**，且 Add 时**均未设 MenuKey**。洁净部署首启：回填块先跑（OA 菜单尚不存在）→ 跳过；OA 菜单随后
++/// 插入 MenuKey 留 null → <see cref="Sys_Menu.MenuKey"/> 为 null 被 PermissionAggregator 过滤掉 → OA/WF action
++/// 键无法 join 出 → 首启即 fail-closed 403，需二次重启回填才生效（真相源 §六头号命门）。本种子在回填块**之前**
++/// 调用（Program.cs 紧随 MesPermissionSeed 之后、先于 :908 回填），把 7 个有菜单的 menu-key 各锚定到**一个**
++/// 菜单行显式设 MenuKey=<c>oa-*</c>（含缺行补建），首启即生效。
++///
++/// 与 MES 不同：OA 733–739 的 RoutePath 派生键与真相源 menu-key **逐字一致**（<c>/oa/inbox</c>→<c>oa-inbox</c> …），
++/// **零错配**（不同于 MES machine-list 命门）。故本种子的防御矫正块在正常运行下恒为 no-op，仅为结构对齐与
++/// 防御历史/异常写坏而保留（严限 7 锚定行）。命门纯粹是**时序**：显式赋值须先于回填以消除 null-全-403 窗口。
++///
++/// MenuKey 策略（与 ErpMenuSeed/WmsMenuSeed/MesMenuSeed 一致）：
++///  - **锚定行**显式设 MenuKey = T1 权威键（真相源 §二 7 键），**绝不靠 RoutePath 自动回填**。
++///  - **740 父组行**（OA工作流，无 RoutePath）MenuKey 留 null，不承载权限（回填因 RoutePath==null 亦跳过）。
++///    ★<c>Sys_Menus.MenuKey</c> 有 <c>IS NOT NULL</c> 过滤唯一索引（HasIndex("MenuKey").IsUnique().HasFilter，
++///    CP6Context.cs:602）——两行共赋同一非空 MenuKey 会撞唯一键。7 锚定键互不相同（真相源 §二，OA RoutePath
++///    与键天然对齐），安全。
++///  - **委派双键合一裁决**（主控 T2 拍板1）：<c>oa-inbox:delegate</c> 与 <c>oa-settings:delegate</c> 在 action
++///    层合一为 <c>oa-settings:delegate</c>（权限面统一），**不影响 menu-key 集**——<c>oa-inbox</c>/<c>oa-settings</c>
++///    两菜单键均照旧锚定。<c>oa-flow-admin:enable</c> 维持状态级（拍板2）。
++///  - **双栈收编裁决**（用户 2026-07-12，拍板3 落地）：旧设计器孤儿路由 <c>/wf/form-designer</c>、
++///    <c>/wf/flow-designer</c>（前端 router/index.ts:46-47 viewModules 已注册组件映射，但无 Sys_Menu 行 →
++///    <c>addDynamicRoutes</c> 不注册 → 洁净部署下不可达，真相源 §六头号裁决点）**收编而非退役**：补两行
++///    Sys_Menu（741/742）令其可达，双栈并存，旧栈写端点不删。<b>MenuKey 留 null</b>——权限已锚在 738
++///    （<c>oa-designer:edit</c>/<c>oa-designer:form-save</c>，旧栈 FlowController.SaveDef/FormController.SaveDef
++///    归并入该键，真相源 §一 #28/#31），741/742 若也赋 <c>oa-designer</c> 会与 738 撞
++///    <c>Sys_Menus.MenuKey IS NOT NULL</c> 过滤唯一索引（同键不可两行）。留 null 后由 Program.cs :908 回填块
++///    派生 <c>wf-form-designer</c>/<c>wf-flow-designer</c>——无 RoleAction 引用，纯挂菜单树无害（与 MES
++///    非锚定行同型）。
++///
++/// 幂等：MenuId 判存守卫不重复插入；防御矫正块把既有库中被历史回填/异常写坏的 7 锚定行 MenuKey 就地纠回
++/// <c>oa-*</c>（作用域严限 7 锚定行 r.Key != null；740 父行、741/742 收编行不动）。RoleMenu 默认授管理员
++/// （RoleId=1，默认租户由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
++/// </summary>
++public static class OawfMenuSeed
++{
++    /// <summary>
++    /// 菜单定义：(MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey)。
++    /// MenuKey 非 null 者即 7 个权限锚定行（733–739）；null 者为 740 父行（不承载权限）+ 741/742 双栈
++    /// 收编行（承载权限，但锚在 738，本行故意不赋键）。
++    /// 733–740 既有由 Program.cs（:1446–1496）播种，本表含之仅为 (a) 显式锚定 MenuKey (b) 部分部署缺行时补建。
++    /// RoutePath/Icon/ParentId/OrderNo 与 Program.cs 现有 OA 菜单块逐字一致。
++    /// 741/742 取号：全仓扫描（Seed 目录 + Program.cs + 迁移）740 段仅占用至 740，741/742 无占用
++    /// （730–732 计划中台段与本段不重叠），照 ErpMenuSeed 五孤儿收编先例（216–220）就近连续取号。
++    /// </summary>
++    private static readonly (int Id, string Name, string? Route, string? Icon, int? Parent, int Order, string? Key)[] Rows =
++    {
++        // ── 親（Top，无 RoutePath，不锚定） ─────────────────────────────
++        (740, "OA工作流",     null,               "MessageBox", null, 249, null),
++
++        // ── 7 锚定行（真相源 §二，回填派生键与 menu-key 逐字一致，仍显式赋值规避时序命门） ──
++        (733, "电子表单信箱",  "/oa/inbox",         "Inbox",     740, 733, "oa-inbox"),
++        (734, "流程管理",      "/oa/flow-admin",    "Operation", 740, 734, "oa-flow-admin"),
++        (735, "填單",          "/oa/form-catalog",  "EditPen",   740, 735, "oa-form-catalog"),
++        (736, "表单查询",      "/oa/form-search",   "Search",    740, 736, "oa-form-search"),
++        (737, "设定",          "/oa/settings",      "Setting",   740, 737, "oa-settings"),
++        (738, "流程设计器",    "/oa/designer",      "Edit",      740, 738, "oa-designer"),
++        (739, "approverMap",   "/oa/approver-map",  "Edit",      740, 739, "oa-approver-map"),
++
++        // ── 双栈孤儿路由收编 741–742（用户裁决 2026-07-12，照 ErpMenuSeed 五孤儿先例）：RoutePath 与
++        // cp6.web/src/router/index.ts:46-47 viewModules 键逐字一致，令其经 addDynamicRoutes 可达。
++        // MenuKey 留 null（权限已锚 738，见上方类注释「双栈收编裁决」），Icon 照 738 同款 Edit。
++        (741, "フォームデザイナー(旧)", "/wf/form-designer", "Edit", 740, 741, null),
++        (742, "フローデザイナー(旧)",   "/wf/flow-designer", "Edit", 740, 742, null),
++    };
++
++    /// <summary>
++    /// 幂等播种全部 OA/WF 菜单 + 授管理员（RoleId=1）+ 锚定行 MenuKey 显式矫正。
++    /// 须在 Program.cs 的「无 MenuKey 菜单 RoutePath 自动回填」块（:908）**之前**调用。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var changed = false;
++        foreach (var r in Rows)
++        {
++            if (!db.Sys_Menus.Any(m => m.MenuId == r.Id))
++            {
++                db.Sys_Menus.Add(new Sys_Menu
++                {
++                    MenuId = r.Id,
++                    MenuName = r.Name,
++                    RoutePath = r.Route,
++                    MenuKey = r.Key,
++                    Icon = r.Icon,
++                    ParentId = r.Parent,
++                    OrderNo = r.Order,
++                    Enable = true,
++                });
++                changed = true;
++            }
++
++            // 授管理员菜单（默认租户由 SaveChanges 拦截器盖章 TenantId）。菜单已存在但未授权时补授（幂等）。
++            if (!db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == r.Id))
++            {
++                db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = r.Id });
++                changed = true;
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++
++        // 锚定键防御：既有 733–739 缺 MenuKey 时会被历史 RoutePath 回填写成派生键（OA 派生即等于目标，正常
++        // 恒一致）；若因异常/半迁移写坏则就地矫正为 T1 权威键。作用域严限 7 锚定行（r.Key != null，按 MenuId
++        // 定位——按 Key 找会漏被写坏行），740 父行不动。幂等（已正确即跳过）。
++        var fixedAny = false;
++        foreach (var r in Rows)
++        {
++            if (r.Key == null) continue;
++            var menu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == r.Id);
++            if (menu != null && menu.MenuKey != r.Key)
++            {
++                menu.MenuKey = r.Key;
++                fixedAny = true;
++            }
++        }
++        if (fixedAny)
++            db.SaveChanges();
++    }
++}
+diff --git a/CP6.WebApi/Seed/OawfPermissionSeed.cs b/CP6.WebApi/Seed/OawfPermissionSeed.cs
+new file mode 100644
+index 0000000..3ab0438
+--- /dev/null
++++ b/CP6.WebApi/Seed/OawfPermissionSeed.cs
+@@ -0,0 +1,118 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// OA/WF 電子表单・工作流 権限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（M-OA/WF 横切接线 Task 3b）。
++///
++/// 背景：Task 3a 为 OA/WF 16 控制器的 31 个真写端点贴了 <c>[RequirePermission("键","action")]</c>（Oa 21 + Wf 10），但
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator.FillActionKeysAsync</c> 以
++/// <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}"</c>
++/// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
++/// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
++///
++/// 三数闭环（本 C# 为正本，与真相源 docs/seeds/oawf-permission-keys.md §一/§七 1:1）：
++///  - 控制器真写端点：<b>31</b>（grep <c>Controllers/Oa/*.cs</c> 21 + <c>Controllers/Wf/*.cs</c> 10 的 [RequirePermission]，逐字核对）。
++///  - 去重 (menu-key, action) 元组：<b>20</b>（多处跨控制器归并消解重复，真相源 §五）：
++///    <c>oa-inbox:read</c> 覆 Inbox task/cc-read + Notification read/read-all（4→1）；
++///    <c>oa-inbox:approve</c> 覆 Inbox batch + Flow act（2→1）；<c>oa-inbox:sendback</c> 覆 Inbox + AdvancedFlow（2→1）；
++///    <c>oa-form-catalog:submit</c> 覆 Draft submit + Approval submit + Form data + Flow submit（4→1）；
++///    <c>oa-settings:delegate</c> 覆 Delegate add/remove + AdvancedFlow delegate（3→1，T2 委派合一拍板1）；
++///    <c>oa-designer:edit</c> 覆 Designer save + Flow def（2→1）。
++///  - 种子元组：<b>20</b>（下方 <see cref="Actions"/>；漏种 0 / 多种 0）。
++///  - 覆盖 <b>6</b> 个 menu-key（有写端点者：733/734/735/737/738/739）。另 1 键 <c>oa-form-search</c>(736)
++///    仅有 1 只读 POST 端点（Query search 豁免→view，未贴点），无键可种，故不在本种子——与 7 键总数不矛盾。
++///  - 2 只读 POST 豁免（Forecast preview→<c>oa-form-catalog:view</c> / Query search→<c>oa-form-search:view</c>）
++///    未贴点＝不入种子。资源键总 22 = 本 20 写键 + 2 view 豁免键。
++///
++/// 数据来源（执行真相）：
++///  - MenuId 经锚定表 <c>docs/seeds/oawf-key-menu-anchor.md</c> 由 7 权限键映射而得（OA RoutePath 与键天然对齐，零错配）。
++///  - ActionCode 与 <c>Controllers/Oa|Wf/*.cs</c> 的 [RequirePermission] 第二实参逐字一致（差一字审批全链 403）。
++///  - 文档留档：<c>docs/seeds/oawf-permission-seed.sql</c>（本 C# 为正本，SQL 与此一致）。
++///
++/// 逐租户机制（照 MesPermissionSeed / ErpPermissionSeed / WmsPermissionSeed 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表，非行级过滤）全部租户 Id，对每租户各插一份。
++///  - 显式设 <c>TenantId=tid</c> → <c>CP6Context.StampTenant</c> 仅盖 <c>TenantId==Guid.Empty</c>，不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，使跨租户既存行对当前上下文（默认租户作用域）可见，避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 <see cref="OawfMenuSeed.EnsureSeeded"/> **之后**调用（锚定菜单行须先在，RoleAction 挂 MenuId）。
++/// 幂等：重启不重复插（(TenantId,MenuId,ActionCode) / (TenantId,RoleId,MenuId,ActionCode) 判存守卫）。
++/// </summary>
++public static class OawfPermissionSeed
++{
++    /// <summary>
++    /// (MenuId, ActionCode, ActionName) —— 与各 OA/WF 控制器 [RequirePermission(键, action)] 去重后 1:1。
++    /// MenuId 依 <c>docs/seeds/oawf-key-menu-anchor.md</c> 锚定；ActionName 为中文显示名（照 MES/ERP/WMS 种子风格，
++    /// 仅供 UI 显示，非权限判定依据——判定只看 ActionCode）。
++    /// 计 20 条，覆盖 6 个有写端点的 menu-key。
++    /// </summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        // 733 oa-inbox — 电子表单信箱 + /wf 引擎审批动作（read 归并 4 已读端点；approve/sendback 跨控制器归并）
++        (733, "read", "标记已读"), (733, "approve", "审批"), (733, "transfer", "转交"),
++        (733, "sendback", "退回"), (733, "addsign", "加签"), (733, "withdraw", "撤回"),
++        // 734 oa-flow-admin — 流程管理（enable 状态键，流程启停干预）
++        (734, "enable", "启停"),
++        // 735 oa-form-catalog — 填單（收藏 + 草稿 CRUD + 起流程/提交；submit 归并 4 起流程端点）
++        (735, "add", "新建"), (735, "edit", "编辑"), (735, "submit", "提交"),
++        (735, "del", "删除"), (735, "favorite", "收藏"),
++        // 737 oa-settings — 设定（偏好 edit + 委派合一 delegate，含 OA add/remove + AdvancedFlow delegate）
++        (737, "edit", "编辑"), (737, "delegate", "委派"),
++        // 738 oa-designer — 流程设计器（新栈 save/clone + 旧栈 flow/form def；edit 归并 Save+FlowDef）
++        (738, "edit", "编辑"), (738, "add", "克隆"), (738, "form-save", "表单保存"),
++        // 739 oa-approver-map — 审批人映射维护
++        (739, "add", "新建"), (739, "edit", "编辑"), (739, "del", "删除"),
++    };
++
++    /// <summary>
++    /// 逐租户幂等播种 OA/WF 全部权限点 + 授管理员（RoleId=1）。
++    /// 须在 <see cref="OawfMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖（仅盖 Guid.Empty）
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/oawf-key-menu-anchor.md b/docs/seeds/oawf-key-menu-anchor.md
+new file mode 100644
+index 0000000..b2ea9e3
+--- /dev/null
++++ b/docs/seeds/oawf-key-menu-anchor.md
+@@ -0,0 +1,52 @@
++# OA/WF menu-key → 锚定 MenuId 映射（M-OA/WF Task 2 交付，T3b 输入）
++
++> 生成于 2026-07-12。**正本 = `CP6.WebApi/Seed/OawfMenuSeed.cs`**（本表与 `oawf-menu-seed.sql` 均为其对照/派生）。
++> 依据真相源 `docs/seeds/oawf-permission-keys.md` §二（7 menu-key）/§六（硬前置·回填时序命门）。
++> 用途：T3b `Sys_MenuAction`/`Sys_RoleAction` 逐租户种子以本表「键→MenuId」为锚。
++
++## 7 键锚定表
++
++| # | menu-key | 锚定 MenuId | RoutePath | 菜单名 | 裁决 |
++|---|---|---|---|---|---|
++| 1 | `oa-inbox` | 733 | `/oa/inbox` | 电子表单信箱 | 承载 Inbox + /wf 引擎审批动作（approve/transfer/sendback/addsign/withdraw/read）。回填即一致，仍显式锚定规避时序 |
++| 2 | `oa-flow-admin` | 734 | `/oa/flow-admin` | 流程管理 | 承载 FlowAdmin `enable`（**维持状态级**，主控拍板2） |
++| 3 | `oa-form-catalog` | 735 | `/oa/form-catalog` | 填單 | 承载 Catalog 收藏 + Draft CRUD + Forecast 预览 + 起流程/提交（submit） |
++| 4 | `oa-form-search` | 736 | `/oa/form-search` | 表单查询 | 仅 view（唯一端点只读豁免） |
++| 5 | `oa-settings` | 737 | `/oa/settings` | 设定 | 承载 Delegate 授权（**委派双键合一后唯一 delegate 锚**，主控拍板1）+ Pref 偏好 |
++| 6 | `oa-designer` | 738 | `/oa/designer` | 流程设计器 | 承载 Designer save/clone（新栈）+ Flow/Form def（旧栈）。**双栈已裁决=收编（2026-07-12 用户拍板，见下方 T2 追补节），双栈并存，旧栈键照锚 738 不变** |
++| 7 | `oa-approver-map` | 739 | `/oa/approver-map` | approverMap | 审批人映射维护 |
++
++## 非锚定行（MenuKey 留 null，不承载权限）
++
++| MenuId | 菜单名 | RoutePath | 类别 |
++|---|---|---|---|
++| 740 | OA工作流 | (null) | 父组行（无 RoutePath，回填亦跳过） |
++
++## 段位与孤儿
++
++- MenuId 段位 = 既有 733–740（8 行），**全部已由 Program.cs（:1446–1496）播种，OawfMenuSeed 无新建缺行**（缺行补建逻辑保留作防御）。
++- OA/WF **零孤儿 menu-key**（7 键全落 733–739）。
++- 唯一索引安全：7 锚定键互不相同（真相源 §二，OA RoutePath 与键天然对齐），不撞 `Sys_Menus.MenuKey IS NOT NULL` 过滤唯一索引（`CP6Context.cs:602`）。
++
++## T2 追补：双栈孤儿路由收编（用户裁决 2026-07-12，已落地）
++
++真相源 §六头号裁决点 `/wf/form-designer`、`/wf/flow-designer` 两条前端孤儿*路由*（router/index.ts:46-47 viewModules 已注册组件映射但无 Sys_Menu 行 → 洁净部署下不可达）：**用户裁决=收编**（旧设计器可达，双栈并存，不删旧栈端点）。
++
++| MenuId | 菜单名 | RoutePath | ParentId | MenuKey | 裁决 |
++|---|---|---|---|---|---|
++| 741 | フォームデザイナー(旧) | `/wf/form-designer` | 740 | **null** | 权限已锚 738（`oa-designer:form-save`，旧栈 FormController.SaveDef，真相源 §一 #31）；本行赋非空键会与 738 撞 `MenuKey IS NOT NULL` 过滤唯一索引，故留 null（回填得 `wf-form-designer`，无 RoleAction 引用，无害） |
++| 742 | フローデザイナー(旧) | `/wf/flow-designer` | 740 | **null** | 权限已锚 738（`oa-designer:edit`，旧栈 FlowController.SaveDef，真相源 §一 #28）；同上理由留 null（回填得 `wf-flow-designer`，无害） |
++
++- **段位查证**：全仓 grep `CP6.WebApi/Seed/*.cs` + `Program.cs` + `Migrations/*.cs`（InsertData/MenuId 字面量）确认 741/742 无占用（OA 段止于 740，PLAN 段 730–732 不重叠，迁移文件名内 `741`/`742` 子串均为时间戳误命中，非 MenuId）。取号照 `ErpMenuSeed` 五孤儿收编先例（216–220）就近连续取号。
++- **前端可达性核对**：RoutePath `/wf/form-designer`、`/wf/flow-designer` 与 `cp6.web/src/router/index.ts:46-47` viewModules 键逐字一致（`'/wf/form-designer': () => import('@/views/wf/designer/FormDesigner.vue')` / `'/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue')`）——`addDynamicRoutes` 匹配条件满足，两页收编后前端可达。
++- RoleMenu 均授 admin（RoleId=1），照收编先例。
++- 唯一索引安全：741/742 MenuKey 均 null，不与 7 锚定键（含 738 `oa-designer`）冲突。
++
++## 硬前置落实（真相源 §六头号命门）
++
++1. **回填时序**：`OawfMenuSeed.EnsureSeeded` 接入 Program.cs 紧随 `MesPermissionSeed` 之后（`~:857`），
++   **先于全局回填块 :908** 执行 → 洁净首启即赋 7 个 `oa-*` MenuKey，消除 null-全-403 窗口。
++2. **零错配（与 MES 差异）**：OA 733–739 RoutePath 派生键与真相源 menu-key **逐字一致**（`/oa/inbox`→`oa-inbox` …），
++   命门纯为**时序**（非 MES machine-list 那种键值错配）。防御矫正块（按 MenuId 定位、严限 7 锚定行）正常恒为 no-op，
++   仅为结构对齐与防御历史/异常写坏而保留。
++3. **主控三拍板**：①委派双键合一→`oa-settings:delegate`（menu-key 集不变，action 层合一）；②`oa-flow-admin:enable` 维持状态级；③双栈原留待用户裁决；**2026-07-12 用户拍板=收编，T2 追补已落地**（741/742 两收编行使 /wf/*-designer 可达，见下方 T2 追补节），权限面不变。
+diff --git a/docs/seeds/oawf-menu-seed.sql b/docs/seeds/oawf-menu-seed.sql
+new file mode 100644
+index 0000000..a3af48f
+--- /dev/null
++++ b/docs/seeds/oawf-menu-seed.sql
+@@ -0,0 +1,43 @@
++-- ═══════════════════════════════════════════════════════════════════════════
++-- OA/WF 菜单 MenuKey 锚定 — SQL 对照（M-OA/WF Task 2）
++-- ─────────────────────────────────────────────────────────────────────────────
++-- ★正本 = CP6.WebApi/Seed/OawfMenuSeed.cs（启动幂等 C# 种子）。本 SQL 仅为审计/手工核对对照，
++--   不参与运行时播种。以 C# 为准；若二者不一致，以 OawfMenuSeed.cs + docs/seeds/oawf-permission-keys.md §二 为真相源。
++-- 前置：733–740 菜单行由 Program.cs（:1446–1496）播种；本脚本仅显式设 7 锚定行 MenuKey=oa-*，并矫正历史/异常写坏。
++-- 作用域严限 7 锚定行（MenuId in 733,734,735,736,737,738,739）；740 父行 MenuKey 留 null。
++-- 幂等：仅当 MenuKey <> 目标 或 为 null 时更新。
++-- OA 派生键与真相源逐字一致（零错配，不同于 MES machine-list）；命门纯为回填时序，故须先于回填块执行。
++-- ═══════════════════════════════════════════════════════════════════════════
++
++UPDATE Sys_Menus SET MenuKey = 'oa-inbox'        WHERE MenuId = 733 AND (MenuKey IS NULL OR MenuKey <> 'oa-inbox');
++UPDATE Sys_Menus SET MenuKey = 'oa-flow-admin'   WHERE MenuId = 734 AND (MenuKey IS NULL OR MenuKey <> 'oa-flow-admin');
++UPDATE Sys_Menus SET MenuKey = 'oa-form-catalog' WHERE MenuId = 735 AND (MenuKey IS NULL OR MenuKey <> 'oa-form-catalog');
++UPDATE Sys_Menus SET MenuKey = 'oa-form-search'  WHERE MenuId = 736 AND (MenuKey IS NULL OR MenuKey <> 'oa-form-search');
++UPDATE Sys_Menus SET MenuKey = 'oa-settings'     WHERE MenuId = 737 AND (MenuKey IS NULL OR MenuKey <> 'oa-settings');
++UPDATE Sys_Menus SET MenuKey = 'oa-designer'     WHERE MenuId = 738 AND (MenuKey IS NULL OR MenuKey <> 'oa-designer');
++UPDATE Sys_Menus SET MenuKey = 'oa-approver-map' WHERE MenuId = 739 AND (MenuKey IS NULL OR MenuKey <> 'oa-approver-map');
++
++-- 核对：应恰好 7 行非空 oa-* 键，且各占唯一 MenuId；740 父行 MenuKey 留 null。
++-- SELECT MenuId, MenuKey, RoutePath FROM Sys_Menus WHERE MenuId BETWEEN 733 AND 740 ORDER BY MenuId;
++
++-- ═══════════════════════════════════════════════════════════════════════════
++-- T2 追补：双栈孤儿路由收编（用户裁决 2026-07-12，照 ErpMenuSeed 五孤儿先例）
++-- 权限锚在 738（oa-designer:edit/form-save），741/742 故意不赋 MenuKey（留 null，避免撞 738 的唯一索引）。
++-- ═══════════════════════════════════════════════════════════════════════════
++
++INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey, Enable)
++SELECT 741, N'フォームデザイナー(旧)', '/wf/form-designer', 'Edit', 740, 741, NULL, 1
++WHERE NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 741);
++
++INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey, Enable)
++SELECT 742, N'フローデザイナー(旧)', '/wf/flow-designer', 'Edit', 740, 742, NULL, 1
++WHERE NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 742);
++
++INSERT INTO Sys_RoleMenus (RoleId, MenuId)
++SELECT 1, 741 WHERE NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 741);
++
++INSERT INTO Sys_RoleMenus (RoleId, MenuId)
++SELECT 1, 742 WHERE NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 742);
++
++-- 核对：741/742 RoutePath 须与 cp6.web/src/router/index.ts:46-47 viewModules 键逐字一致，MenuKey 恒 null。
++-- SELECT MenuId, MenuKey, RoutePath FROM Sys_Menus WHERE MenuId IN (741, 742) ORDER BY MenuId;
+diff --git a/docs/seeds/oawf-permission-keys.md b/docs/seeds/oawf-permission-keys.md
+new file mode 100644
+index 0000000..5da2f82
+--- /dev/null
++++ b/docs/seeds/oawf-permission-keys.md
+@@ -0,0 +1,212 @@
++# OA/WF 写端点 × 権限键清单（M-OA/WF Task 1 真相源）
++
++> 生成于 2026-07-12。本表是 **M-OA/WF 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填/显式赋值）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试）均以本表为准。
++> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/mes-permission-keys.md` / `docs/seeds/erp-permission-keys.md`（格式与结构基准，§一~§七 照抄）+ 现有 OA 菜单种子 `CP6.WebApi/Program.cs` MenuId 733–740 + 逐 Service 实现读证的只读 POST 豁免判定。
++> 扫描范围：`CP6.WebApi/Controllers/Oa/`（11 控制器）+ `CP6.WebApi/Controllers/Wf/`（5 控制器），**共 16 个控制器全量**。
++> **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
++
++## 约定
++
++- **资源键 = `{menu-key}:{action}`**，**menu-key 一律连字符小写、绝对禁止下划线**（全仓 100% RequirePermission 用连字符）。本波统一冠 `oa-` 业务域前缀（`oa-inbox`、`oa-form-catalog`…）。
++- **键锚定「消费页菜单」而非「控制器路由段」**：`/api/wf/*` 五个引擎控制器（Flow/Form/Task/AdvancedFlow/Approval）及 Notification 均**无自己的菜单行**，是 OA 前端页面（信箱/填單/设计器）的后端 REST 面 —— 其键锚定到调用它的 OA 菜单（同 MES `quality-inspection`≠控制器 `inspections` 先例）。
++- **资源键必须能锚定到一个 `Sys_Menu` 行**（`PermissionAggregator = Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → {MenuKey}:{ActionCode}`）。逐键给出锚定菜单 MenuId/RoutePath。
++- **`高危?` 列三值**（沿用 WMS/ERP/MES 定义）：
++  - `是` = 触及**不可逆写/审批放行/权限授予/流程定义变更（影响所有在途或未来流程）**。审批动作（approve/reject/sendback/transfer/addsign）+ 委托授予 + 流程/表单定义保存 = 全系统最高危写路径，T3 贴点与 T2 审计**最高优先级**，绝不可与 view/edit 混授。
++  - `状态` = 独立工作流状态流转（起流程/提交/撤回/启停），单独成键、不塞 edit/view。
++  - `否` = 四基粒度 `view/add/edit/del`（+ `favorite`/`read` 等低危个性化写）之一。
++- **只读 POST 豁免**：纯查询/预览类 POST 归 `view`，表内标 `只读POST→view`，§四逐条附**读 Service 实现证得的**无写副作用依据。GET 端点一律不列。
++
++---
++
++## 一、写端点映射表（POST/PUT/DELETE，共 33 行）
++
++| # | 控制器 | HTTP方法 + 路由 | 方法名 | 建议 menu-key | action | 高危? | 备注 |
++|---|---|---|---|---|---|---|---|
++| 1 | ApproverMapController | POST `/api/oa/approver-map` | Create | `oa-approver-map` | add | 否 | 审批人映射登録。菜单739 |
++| 2 | ApproverMapController | PUT `/api/oa/approver-map/{id}` | Update | `oa-approver-map` | edit | 否 | 映射订正 |
++| 3 | ApproverMapController | DELETE `/api/oa/approver-map/{id}` | Delete | `oa-approver-map` | del | 否 | 删除映射 |
++| 4 | CatalogController | POST `/api/oa/catalog/favorite` | Favorite | `oa-form-catalog` | favorite | 否 | 收藏/取消表单（写 Wf_FormFavorite，FavoriteService.cs:12-25 SaveChanges）。个人化写、低危。菜单735 |
++| 5 | DelegateController | POST `/api/oa/delegate/add` | Add | `oa-settings` | delegate | **是** | **代理授权授予**：授出后被代理人可以你身份审批（act-as）。安全敏感、权限授予（详§三）。菜单737 设定页 |
++| 6 | DelegateController | POST `/api/oa/delegate/remove` | Remove | `oa-settings` | delegate | **是** | 撤销代理授权，归并入 delegate（§五归并1，授予/撤销同权限） |
++| 7 | DesignerController | POST `/api/oa/designer/save` | Save | `oa-designer` | edit | **是** | **流程定义保存**（Wf_FlowDef upsert，经 IDesignerService 校验）。不可逆影响所有在途/未来实例（详§三）。计划点名。菜单738 |
++| 8 | DesignerController | POST `/api/oa/designer/clone` | Clone | `oa-designer` | add | **是** | **克隆流程定义**（新建 Wf_FlowDef）。同属流程定义变更高危，单独 add 键（§五归并2） |
++| 9 | DraftController | POST `/api/oa/draft/save` | Save | `oa-form-catalog` | add | 否 | 新建草稿（Wf_FlowInstance.Status=Draft）。菜单735 填單 |
++| 10 | DraftController | POST `/api/oa/draft/update` | Update | `oa-form-catalog` | edit | 否 | 更新草稿 VarsJson |
++| 11 | DraftController | POST `/api/oa/draft/submit` | Submit | `oa-form-catalog` | submit | 状态 | 提交草稿→经 L0 引擎推进起流程（DraftService.SubmitDraftAsync）。状态流转，归并入 submit（§五归并3） |
++| 12 | DraftController | POST `/api/oa/draft/delete` | Delete | `oa-form-catalog` | del | 否 | 删除草稿 |
++| 13 | FlowAdminController | POST `/api/oa/flow-admin/enable` | Enable | `oa-flow-admin` | enable | 状态 | **流程启停干预**（SetEnabledAsync，控制流程能否被起）。计划点名「FlowAdmin 干预」——单独成键、绝不塞 edit。可逆、不动在途，故归 `状态`（若审计要求提级 `是` 见§五归并6）。菜单734 |
++| 14 | ForecastController | POST `/api/oa/forecast/preview` | Preview | `oa-form-catalog` | view | 只读POST→view | 发起前预览审批路径，**不产生实例**，ForecastService 全类无写（§四）。菜单735 |
++| 15 | InboxController | POST `/api/oa/inbox/task/read` | MarkTaskRead | `oa-inbox` | read | 否 | **标记待办已读=写**（InboxService.cs:89 SaveChanges）。低危。菜单733 |
++| 16 | InboxController | POST `/api/oa/inbox/cc/read` | MarkCcRead | `oa-inbox` | read | 否 | 标记抄送已读=写（:97 SaveChanges），归并入 read（§五归并4） |
++| 17 | InboxController | POST `/api/oa/inbox/batch` | Batch | `oa-inbox` | approve | **是** | **批量审批办理（承认/否认）**——全系统最高危写路径（ActBatchAsAsync 经 L0 引擎流转+回调，可触发业务单据状态/预算激活/PO 确认等级联，详§三）。act-as 版记实际执行人+onBehalfOf |
++| 18 | InboxController | POST `/api/oa/inbox/transfer` | Transfer | `oa-inbox` | transfer | **是** | **转交待办**（IFlowEngine.TransferAsync 改派处理人）。审批权转移、不可逆 |
++| 19 | InboxController | POST `/api/oa/inbox/sendback` | SendBack | `oa-inbox` | sendback | **是** | **退回**（IFlowEngine.SendBackAsync 回退到目标节点，作废已产生审批痕迹）。不可逆流程回退 |
++| 20 | NotificationController | POST `/api/oa/notification/read` | Read | `oa-inbox` | read | 否 | 通知标记已读=写（MarkReadAsync）。归并入 oa-inbox:read（§五归并4，同「标记已读」低危语义；Notification 无自己菜单，锚 733，§六注3） |
++| 21 | NotificationController | POST `/api/oa/notification/read-all` | ReadAll | `oa-inbox` | read | 否 | 全部标记已读=写，归并入 read（§五归并4） |
++| 22 | PrefController | POST `/api/oa/pref/save` | Save | `oa-settings` | edit | 否 | **保存个人偏好=写**（PrefService.SaveAsync，主题/列宽/排序）。计划明示**不豁免**。菜单737 设定页 |
++| 23 | QueryController | POST `/api/oa/query/search` | Search | `oa-form-search` | view | 只读POST→view | 跨流程多条件查询，InboxService.QueryAsync 纯读（§四）。POST 仅为传 FormQueryFilter 复杂体。菜单736 |
++| 24 | AdvancedFlowController | POST `/api/wf/advanced/sendback` | SendBack | `oa-inbox` | sendback | **是** | 退回到目标节点（章07 §2，IFlowEngine.SendBackAsync）。归并入 oa-inbox:sendback（§五归并5，与 #19 同引擎同语义） |
++| 25 | AdvancedFlowController | POST `/api/wf/advanced/addsign` | AddSign | `oa-inbox` | addsign | **是** | **加签**（章07 §3，AddSignAsync 动态插入审批人，改变审批链）。不可逆流程结构变更 |
++| 26 | AdvancedFlowController | POST `/api/wf/advanced/delegate` | Delegate | `oa-settings` | delegate | **是** | **登记委派**（章07 §5，SetDelegateAsync 授予代理审批权）。与 OA `/api/oa/delegate/add`(#5) 同语义——**T2 主控拍板：委派双键合一为 `oa-settings:delegate`**（原 `oa-inbox:delegate` 退役，权限面统一防一处授一处漏；§六注4 裁决记录） |
++| 27 | ApprovalController | POST `/api/wf/approval/submit` | Submit | `oa-form-catalog` | submit | 状态 | **起业务审批**（业务模块接入 OA 入口，按 bizType 绑定流程起实例）。归并入 submit（§五归并3）。无自己菜单，锚填單页（§六注3） |
++| 28 | FlowController | POST `/api/wf/flow/def` | SaveDef | `oa-designer` | edit | **是** | **流程定义保存（旧栈设计器）**——与新栈 DesignerController.Save(#7) **同写 Wf_FlowDef**，归并入 oa-designer:edit（§五归并2）。对应孤儿路由 `/wf/flow-designer`，**待用户裁决退役/收编（§六头号裁决点）** |
++| 29 | FlowController | POST `/api/wf/flow/submit` | Submit | `oa-form-catalog` | submit | 状态 | 起流程（IFlowEngine.SubmitAsync），归并入 submit（§五归并3） |
++| 30 | FlowController | POST `/api/wf/task/{id}/act` | Act | `oa-inbox` | approve | **是** | **单件审批办理（承认/否认）**（IFlowEngine.ActAsync）。与 #17 批量同语义，归并入 oa-inbox:approve（§五归并5）。最高危 |
++| 31 | FormController | POST `/api/wf/form/def` | SaveDef | `oa-designer` | form-save | **是** | **表单定义保存（旧栈设计器）**（Wf_FormDef schema upsert，影响所有引用该 formKey 的表单渲染）。对应孤儿路由 `/wf/form-designer`，**待用户裁决（§六头号裁决点）**。暂锚 oa-designer |
++| 32 | FormController | POST `/api/wf/form/data` | SubmitData | `oa-form-catalog` | submit | 状态 | 提交表单数据（服务端 schema 复核后落库），归并入 submit（§五归并3） |
++| 33 | TaskController | POST `/api/wf/flow/{id}/withdraw` | Withdraw | `oa-inbox` | withdraw | 状态 | **撤回申请**（ITaskCenterService.WithdrawAsync 撤销在途流程）。状态流转、单独成键 |
++
++> **GET-only 控制器（无 POST/PUT/DELETE，不在上表）**：无（16 控制器每个至少 1 个非 GET）。
++>
++> **有 POST 端点但全豁免（真写=0，不占「含真写控制器」计数，见 §七）**：
++> - `ForecastController`（1 POST，preview 只读豁免→view）。
++> - `QueryController`（1 POST，search 只读豁免→view）。
++
++---
++
++## 二、menu-key 汇总清单（去重，共 7 个）
++
++| # | menu-key | 锚定菜单（Program.cs MenuId / RoutePath） | 说明 |
++|---|---|---|---|
++| 1 | `oa-inbox` | 733 电子表单信箱 `/oa/inbox` | ✅有菜单行。回填自 RoutePath = `oa-inbox` ✅一致。承载 Inbox + /wf 引擎的审批动作（approve/transfer/sendback/addsign/withdraw/read）。**委派动作已合一迁出至 `oa-settings:delegate`**（T2 拍板1） |
++| 2 | `oa-flow-admin` | 734 流程管理 `/oa/flow-admin` | ✅。回填 = `oa-flow-admin` ✅一致。承载 FlowAdmin 启停 |
++| 3 | `oa-form-catalog` | 735 填單 `/oa/form-catalog` | ✅。回填 = `oa-form-catalog` ✅一致。承载 Catalog 收藏 + Draft CRUD + Forecast 预览 + 起流程/提交（submit） |
++| 4 | `oa-form-search` | 736 表单查询 `/oa/form-search` | ✅。仅 view（唯一端点只读豁免）。回填 = `oa-form-search` ✅一致 |
++| 5 | `oa-settings` | 737 设定 `/oa/settings` | ✅。回填 = `oa-settings` ✅一致。承载 Delegate 授权（**委派双键合一后唯一 delegate 锚**：OA #5/#6 + AdvancedFlow #26）+ Pref 偏好 |
++| 6 | `oa-designer` | 738 流程设计器 `/oa/designer` | ✅。回填 = `oa-designer` ✅一致。承载 Designer save/clone（新栈）+ Flow/Form def（旧栈，§六裁决） |
++| 7 | `oa-approver-map` | 739 审批人映射 `/oa/approver-map` | ✅。回填 = `oa-approver-map` ✅一致 |
++
++> **全部 7 个 menu-key 均有对应菜单行（733–739），回填派生键与本表逐字一致，零错配**（不同于 MES machine-list 命门；OA RoutePath 与键天然对齐）。**但存在洁净首启回填时序命门**（§六头号命门）与 **2 条前端孤儿路由**（`/wf/form-designer`、`/wf/flow-designer`，§六头号裁决点）。
++> `/api/wf/*` 五控制器与 Notification 无自己的菜单行——锚定到其**消费页**菜单（引擎审批动作→733、起流程/提交→735、通知已读→733），非控制器路由段。此为「键锚定菜单」原则的必然结果，T2/T3/前端须逐字用 `oa-*` 消费页键。
++
++---
++
++## 三、高危动作清单（`是`：审批放行/权限授予/流程定义变更/不可逆，共 8 个资源键；T2 委派合一后 9→8）
++
++> 生成于 2026-07-12；**2026-07-12 T2 更新**：委派双键合一（`oa-inbox:delegate` 退役并入 `oa-settings:delegate`），高危键 9→8、资源键 23→22（详§六注4、§七）。
++> T3 贴 `[RequirePermission]` 与 T2 审计的**第一优先级**，**绝不可**与 view/edit 混授。OA/WF 域高危集中在**审批写路径**与**流程/表单定义变更**——前者一次误授即他人可越权承认单据（触发预算激活/PO 确认/成本结转等业务级联），后者一次误改即所有在途/未来流程受影响。
++
++| 资源键 | 为何高危独立 |
++|---|---|
++| `oa-inbox:approve` | **审批办理（承认/否认）**，覆盖 Inbox 批量(#17)+Flow 单件 act(#30)。经 L0 引擎流转并触发 IApprovalCallback 级联（预算版本激活/PO 转 Confirmed/PR 转 Approved，Program.cs:124-126）。全系统最高危写路径，会话记忆 P0「审批油路」核心 |
++| `oa-inbox:transfer` | **转交**：改派待办处理人，审批权转移、不可逆 |
++| `oa-inbox:sendback` | **退回**：回退到目标节点、作废已产生审批痕迹（Inbox #19 + AdvancedFlow #24 同引擎归并）。不可逆流程回退 |
++| `oa-inbox:addsign` | **加签**：动态插入审批人、改变审批链结构（章07 §3）。不可逆 |
++| `oa-settings:delegate` | **代理授权授予/撤销 + 委派登记（合一键）**：**T2 主控拍板1——委派双键合一**，收编 OA DelegateController Add/Remove(#5/#6) + AdvancedFlow SetDelegate(#26)。授予他人以你身份审批的代理权（act-as），安全敏感权限授予。原 `oa-inbox:delegate` 退役（§六注4） |
++| `oa-designer:edit` | **流程定义保存**：新栈 DesignerController.Save(#7) + 旧栈 FlowController.SaveDef(#28) 同写 Wf_FlowDef。改流程定义不可逆影响所有在途/未来实例。计划点名 |
++| `oa-designer:add` | **克隆流程定义**（#8）：新建 Wf_FlowDef，同属流程定义变更 |
++| `oa-designer:form-save` | **表单定义保存**（旧栈 FormController.SaveDef #31）：改 Wf_FormDef schema，影响所有引用该 formKey 的表单渲染。**对应孤儿路由 /wf/form-designer，待裁决（§六）** |
++
++### 3b. 独立状态流转动作键（`状态`，共 3 个，仍单独成键、不塞 edit）
++
++`oa-form-catalog:submit`（起流程/起审/提交草稿/提交表单数据，归并 Draft.submit + Flow.submit + Approval.submit + Form.form-data）· `oa-flow-admin:enable`（流程启停干预，计划点名，见§五归并6）· `oa-inbox:withdraw`（撤回申请）
++
++> 非四基粒度独立动作键合计 = 8（高危，T2 委派合一后 9→8）+ 3（状态）= **11 个**。其余端点走 `add/edit/del/view` 四基粒度 + `favorite`/`read` 两个低危个性化写键。
++
++---
++
++## 四、只读 POST 豁免清单（归 view，共 2 个 —— 均逐条读 Service 实现证得无写）
++
++| # | 端点（方法） | 豁免依据（读 Service 实现，文件:行） |
++|---|---|---|
++| 1 | POST `/api/oa/forecast/preview`（ForecastService.ForecastAsync） | 仅 `_db.Wf_FlowDefs.FirstOrDefaultAsync` 读定义→内存遍历 schema 节点/边计算预计审批路径，返回 ForecastResult DTO，**不产生实例、全类无 `Add/Update/Remove/SaveChanges`**（ForecastService.cs:18-70；ResolveRuleNamesAsync 仅 _approver.ResolveAsync + OaUserNames 读）。POST 仅为传 varsJson 复杂体 |
++| 2 | POST `/api/oa/query/search`（InboxService.QueryAsync） | 仅 `_db.Wf_FlowInstances.AsQueryable()` 多条件筛选 + join Wf_FlowDefs/Sys_Users，`.Take(500).ToListAsync()` 投影 DTO，**无写**（InboxService.cs:255-278）。POST 仅为传 FormQueryFilter 复杂体 |
++
++> **复核结论（防望文生义）**：以下「看似查询/预览/通知」的 POST **确为写端点，不豁免**——
++> - `POST /api/oa/inbox/task/read`、`/cc/read`、`/api/oa/notification/read`、`/read-all`：**「标记已读」是写**（InboxService.cs:89/97 SaveChanges；NotificationService.MarkRead*）→ 归低危 `read` 键（计划明示）。
++> - `POST /api/oa/catalog/favorite`：写 Wf_FormFavorite（FavoriteService.cs:12-25 Add/Remove+SaveChanges）→ `favorite` 键。
++> - `POST /api/oa/pref/save`：写用户偏好（计划明示不豁免）→ `oa-settings:edit`。
++> - `POST /api/oa/draft/*`、`/api/wf/flow/submit`、`/api/wf/approval/submit`、`/api/wf/form/data`：均经引擎/服务写实例/定义/数据 → 已按上表贴权限。
++
++---
++
++## 五、命名归并判断与疑点（供 T2/T3 复核）
++
++1. **`oa-settings:delegate` 归并 Add+Remove**：代理授权授予与撤销为同一「代理管理」权限的正/反操作，归一键（对标 MES `suspend` 归并中断/解除）。若审计要求「可授不可撤」更细授权，T3 可拆——**当前不拆**。
++2. **`oa-designer` 三键（edit/add/form-save）**：`edit`=流程定义保存（新栈 Save #7 + 旧栈 flow/def #28 同写 Wf_FlowDef，天然合一）；`add`=克隆流程定义（#8 新建 Wf_FlowDef）；`form-save`=表单定义保存（#31 旧栈 Wf_FormDef，异实体故独立）。若审计认为「设计器」应单一 `edit` 通吃，可归并——**当前按写入实体/语义分三键**。
++3. **`oa-form-catalog:submit` 归并起流程全家**：Draft.submit(#11) + Flow.flow/submit(#29) + Approval.submit(#27) + Form.form/data(#32) 均为「填單→提交/起流程/起审」同一发起权限，归一 `submit` 状态键。若审计要求区分「起草提交」与「业务集成起审」，T3 可拆——**当前归一**。
++4. **`oa-inbox:read` 归并四个已读端点**：Inbox task/read(#15)+cc/read(#16) + Notification read(#20)+read-all(#21) 为同一「标记已读」低危写，归一键。Notification 无自己菜单，锚 oa-inbox（§六注3）。若通知中心后续独立菜单，可迁 `oa-notification:read`。
++5. **`oa-inbox:approve`/`:sendback` 跨控制器归并**：approve = Inbox 批量(#17) + Flow 单件 act(#30)；sendback = Inbox(#19) + AdvancedFlow(#24)。均同引擎(IFlowEngine)同语义，归一键。审批「批量 vs 单件」若需分权，T3 可拆 `approve`/`approve-batch`——**当前归一**。
++6. **`oa-flow-admin:enable` 归 `状态` vs 提级 `是`**：流程启停控制「流程能否被起」，可逆、不动在途实例，故本表归 `状态`。但计划点名「FlowAdmin 干预」为高危候选——若 T2 审计认为「停用生产流程=业务中断」应提级 `是`，可改判。**当前判定 `状态`，待 T2 审计拍板。**
++7. **`del` 一致语义**：ApproverMap/Draft 删除按各自 Service 实现（草稿为记录删、映射为行删），统一 `del`。
++
++---
++
++## 六、命门与遗留（T2/T4 硬前置 + 用户裁决点）
++
++### 头号命门·回填时序（洁净首启 OA 全 403）
++
++**OA 菜单 733–740 在 Program.cs :1446–1496 才 Add，且 Add 时均未设 MenuKey（如 :1454 `new Sys_Menu{...RoutePath="/oa/inbox"...}` 无 MenuKey 字段）；而唯一的 MenuKey 回填块在 :908**（`menusNoKey = Sys_Menus.Where(MenuKey==null && RoutePath!=null)` → :912 `MenuKey = RoutePath.Trim('/').Replace('/','-')`）。回填块(:908)在 OA 菜单插入(:1446)**之前**执行。
++- 洁净库首启：回填块先跑（OA 菜单尚不存在）→ 跳过；OA 菜单随后插入，MenuKey 留 **null** → `PermissionAggregator` 过滤 MenuKey==null → **OA/WF 全 action 键 join 不出 → 首启即 fail-closed 403，须二次重启回填才生效**（对标 MES 命门#1、WMS「TenantAdmin 新租户重启前 403」平台票）。
++- **注**：ERP(:827)/MES(:845) 各有「回填前显式赋 MenuKey」的 T2 块，OA 尚无——OA 完全依赖 :908 回填，故首启失配确凿。
++- → **T2 必须在 OA 菜单插入块（:1446–1496）对 733–739 各行显式赋 `MenuKey="oa-*"`**（与 WMS/ERP/MES T2 同型，置于回填逻辑之前/内联），或在 OA 菜单插入后补一次回填 pass。**这是 T2 不做则洁净部署首启失配的硬前置。**
++
++### 注·派生键一致性（无错配，但仍建议显式化）
++
++733–739 全部 RoutePath 派生键与本表 menu-key **逐字一致**（`/oa/inbox`→`oa-inbox` … `/oa/approver-map`→`oa-approver-map`），无 MES `machine-list` 那种错配。回填即正确——**但仍受头号命门时序影响**，故 T2 显式赋值须随头号命门一并做。
++
++### 注3·无菜单锚控制器（判断非硬事实，T2 复核）
++
++`/api/wf/*` 五引擎控制器（Flow/Form/Task/AdvancedFlow/Approval）+ Notification + ApprovalController 均无自己菜单行，本表按「消费页」锚定（审批动作→733；起流程/提交→735；通知已读→733）。此为「键锚定菜单」原则的必然，非漏配。若未来给通知中心/业务审批集成单独建菜单，相关键随迁。
++
++### ⚠ 头号用户裁决点·双栈孤儿路由（`/wf/form-designer`、`/wf/flow-designer`）—— **2026-07-12 已裁决=收编（见下方追记）**
++
++**证据链**：
++- 前端：`router/index.ts:46-47` 的 `viewModules` 组件映射表登记 `'/wf/form-designer' → views/wf/designer/FormDesigner.vue`、`'/wf/flow-designer' → views/wf/designer/FlowDesigner.vue`（注释「OA 章09 旧设计器保留」）。**二者无对应 Sys_Menu 菜单行**（OA 菜单 733–740 无 `/wf/*-designer` 路径），且不在 `platformRoutePaths`(:303) / `oaSubRoutePaths`(:319) / 静态路由(:190-288) 之列。
++- `addDynamicRoutes`(:332-343) 仅注册「有菜单行且 routePath 命中 viewModules」的项 → **这两条路由永不被注册 → 洁净部署下不可达（暗物质路由）**。旁证：:188-189 旧 `/wf/todo`、`/wf/my-applications` 已 redirect 至 `/oa/inbox`（旧 /wf/* UI 已被 Phase B 迁移收编），唯独这两个设计器未处置。
++- 后端：旧栈 def 保存端点 = FormController `POST /api/wf/form/def`（Wf_FormDef #31）+ FlowController `POST /api/wf/flow/def`（Wf_FlowDef #28）。
++- 新栈（Phase C′/SSO 后）：DesignerController `POST /api/oa/designer/save`（**同写 Wf_FlowDef**，经 IDesignerService 校验+upsert）+ `/clone`，菜单 738 `/oa/designer` 有行、有页 `DesignerView.vue`、可达。
++- 结论：**流程定义保存存在双后端路径**（新 `/oa/designer/save` 与旧 `/wf/flow/def` 同写 Wf_FlowDef）；**表单定义保存仅旧栈** `/wf/form/def`（新栈 DesignerView 是否覆盖表单设计需另确认；FormDesigner.vue 仍在但入口不可达）。
++
++**两案影响面（各一句，不做决定）**：
++- **退役案**（删 `/wf/*-designer` 两路由 + FormDesigner/FlowDesigner.vue + 视引用情况删 FormController.SaveDef/FlowController.SaveDef）：消除旧栈重复的高危「流程/表单定义保存」入口，权限面收敛到单一 `oa-designer:*`；**风险**=若两 SaveDef 仍被种子/测试/外部集成调用需先查引用，否则退役断链。
++- **收编案**（给两路由补 Sys_Menu 行 + MenuKey，或并入 738 designer 菜单）：两路由变可达并纳入权限体系，但与新栈 `/oa/designer` 功能重叠形成双维护面与用户困惑；新增 `wf-*` 菜单键还与「OA 域统一 `oa-*` 前缀」不一致。
++
++**T1 处置（待裁决前的占位）**：本表将旧栈 `flow/def`(#28) 归并入 `oa-designer:edit`（与新栈同写 Wf_FlowDef、同权限语义），`form/def`(#31) 记为 `oa-designer:form-save`（暂锚 738）。**T2 贴权限前须由用户裁定退役/收编**，否则旧栈 def 端点将挂一个「概念上锚定不可达路由」的键。
++
++**2026-07-12 用户裁决 = 收编，已落地**：补 Sys_Menu 741（フォームデザイナー(旧)，`/wf/form-designer`）、742（フローデザイナー(旧)，`/wf/flow-designer`），ParentId=740，MenuKey 留 null（权限维持锚 738，不与之共键），RoutePath 与 `router/index.ts:46-47` viewModules 键逐字一致，两页收编后前端可达；旧栈端点不删，双栈并存。落地见 `CP6.WebApi/Seed/OawfMenuSeed.cs`（Rows 741/742）+ `docs/seeds/oawf-key-menu-anchor.md`「T2 追补」节 + `docs/seeds/oawf-menu-seed.sql`。上文「两案影响面」中的「收编案」为最终选定方案。
++
++### 注4·委派双端点合一裁决（T2 主控拍板1，2026-07-12 已裁决）
++
++AdvancedFlow `/api/wf/advanced/delegate`(#26) 与 OA `/api/oa/delegate/add`/`remove`(#5/#6) 语义相同（均授予/撤销代理审批权，act-as），T1 曾按锚定页各成 `oa-inbox:delegate` 与 `oa-settings:delegate` 两键。**T1 审查建议合一**（引用：委派授权面若分散于信箱与设定两键，则「一处授一处漏」，安全敏感权限授予绝不应双面维护）。
++**T2 主控裁决：合一为 `oa-settings:delegate`（设定页为委派管理归属地）**。`oa-inbox:delegate` **退役**；#26 改锚 `oa-settings:delegate`（§一表已改写）。影响：高危资源键 9→8、资源键去重 23→22（§七同步）。T3 贴点时 AdvancedFlow.Delegate、OA DelegateController.Add/Remove 三端点统一贴 `[RequirePermission("oa-settings","delegate")]`。
++
++---
++
++## 七、计数收口
++
++- **扫描控制器**：16（OA 11：ApproverMap / Catalog / Delegate / Designer / Draft / FlowAdmin / Forecast / Inbox / Notification / Pref / Query；WF 5：AdvancedFlow / Approval / Flow / Form / Task）。与计划口径 16 精确吻合。
++- **GET-only 控制器（0 非 GET）**：0。
++- **有 POST 但全豁免（真写=0）**：2（Forecast、Query，各 1 端点只读 POST→view）。
++- **含真写端点控制器**：14（除 Forecast、Query）。
++- **POST/PUT/DELETE 端点行总数**：**33**（= §一表行数，精确吻合）。
++  - 其中**只读 POST 豁免（→view）**：**2**。
++  - **真·写端点**：**31**。
++- **menu-key（去重）**：**7**（全部有菜单行 733–739，零孤儿 menu-key）。另有 2 条前端孤儿*路由* /wf/*-designer **已于 2026-07-12 裁决收编**（补 Sys_Menu 741/742，MenuKey 留 null 不新增 menu-key，权限仍锚 738，§六）。
++- **资源键（去重，含 view）**：**22**（T2 委派合一后 23→22，`oa-inbox:delegate` 退役并入 `oa-settings:delegate`）。
++- **高危键（是）**：**8**（T2 委派合一后 9→8）：`oa-inbox:approve/transfer/sendback/addsign` + `oa-settings:delegate`（合一 OA #5/#6 + AdvancedFlow #26）+ `oa-designer:edit/add/form-save`。
++- **状态键**：**3**（`oa-form-catalog:submit`、`oa-flow-admin:enable`、`oa-inbox:withdraw`）。
++
++### 逐控制器双向核对（控制器→表 / 表→控制器，零缺漏零 GET 误列）
++
++| 控制器 | POST/PUT/DELETE 端点数 | 其中豁免 | 真写 | 表内 # |
++|---|---|---|---|---|
++| ApproverMapController | 3（Create/Update/Delete；GET list/keys 不列） | 0 | 3 | 1–3 |
++| CatalogController | 1（Favorite；GET tree 不列） | 0 | 1 | 4 |
++| DelegateController | 2（Add/Remove；GET my-grants/list 不列） | 0 | 2 | 5–6 |
++| DesignerController | 2（Save/Clone；GET list/service-catalog/load 不列） | 0 | 2 | 7–8 |
++| DraftController | 4（Save/Update/Submit/Delete；GET list 不列） | 0 | 4 | 9–12 |
++| FlowAdminController | 1（Enable；GET list/{flowKey} 不列） | 0 | 1 | 13 |
++| ForecastController | 1（Preview，只读豁免） | 1 | 0 | 14 |
++| InboxController | 5（MarkTaskRead/MarkCcRead/Batch/Transfer/SendBack；GET pending/pending-cc/running/done/stats/detail 不列） | 0 | 5 | 15–19 |
++| NotificationController | 2（Read/ReadAll；GET list/unread-count 不列） | 0 | 2 | 20–21 |
++| PrefController | 1（Save；GET get 不列） | 0 | 1 | 22 |
++| QueryController | 1（Search，只读豁免） | 1 | 0 | 23 |
++| AdvancedFlowController | 3（SendBack/AddSign/Delegate） | 0 | 3 | 24–26 |
++| ApprovalController | 1（Submit；GET status 不列） | 0 | 1 | 27 |
++| FlowController | 3（SaveDef/Submit/Act；GET flow/def/{k}、flow/instance/{id} 不列） | 0 | 3 | 28–30 |
++| FormController | 2（SaveDef/SubmitData；GET form/def/{k} 不列） | 0 | 2 | 31–32 |
++| TaskController | 1（Withdraw；GET my-todos/my-applications 不列） | 0 | 1 | 33 |
++| **合计** | **33** | **2** | **31** | **33 ✅** |
++
++> 自洽核验：总非 GET 端点 33 = 只读豁免 2 + 真写 31 ✅；逐控制器真写累加 3+1+2+2+4+1+0+5+2+1+0+3+1+3+2+1 = 31 ✅；表行 #1–#33 连续无跳号 ✅。
+diff --git a/docs/seeds/oawf-permission-seed.sql b/docs/seeds/oawf-permission-seed.sql
+new file mode 100644
+index 0000000..c0bf75d
+--- /dev/null
++++ b/docs/seeds/oawf-permission-seed.sql
+@@ -0,0 +1,153 @@
++/* ============================================================
++ * OA/WF 電子表单・工作流 権限点（MenuAction / RoleAction）シードデータ（M-OA/WF 横切接線 Task 3b）
++ * ============================================================
++ * 対象 DB     : CP6DB (SQL Server)
++ * 対象テーブル : Sys_MenuAction（授権可能な操作点の登記）
++ *              Sys_RoleAction（管理者ロール RoleId=1 への全動作授権）
++ *
++ * ★正本は C#：CP6.WebApi/Seed/OawfPermissionSeed.cs（起動時逐租户冪等種子）。
++ *   本 SQL は同一集合の文書留档・手動投入用であり、C# と 1:1 一致。乖離時は C# を正とする。
++ *
++ * 前提:
++ *   OA/WF メニュー 733/734/735/737/738/739 は Task 2 種子
++ *   （OawfMenuSeed / docs/seeds/oawf-menu-seed.sql）で MenuKey=oa-* 锚定済みであること。
++ *   （OA は RoutePath 派生キー＝真相源キー逐字一致、零錯配。命門は回填時序＝OawfMenuSeed が回填前に明示赋値。）
++ *   RoleAction は当該 MenuId 上に挂かり、実行時 PermissionAggregator が
++ *   Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}" を組む。
++ *
++ * 三数閉環（真相源 docs/seeds/oawf-permission-keys.md §一/§七 + 控制器 grep）:
++ *   真写端点 31（Oa 21 + Wf 10）→ 去重 (menu-key, action) 20 元组 → 種子 20 元组（漏種 0 / 多種 0）。
++ *   多处跨控制器归并（§五）消解重复：
++ *     oa-inbox:read 覆 Inbox task/cc-read + Notification read/read-all（4→1）；
++ *     oa-inbox:approve 覆 Inbox batch + Flow act（2→1）；oa-inbox:sendback 覆 Inbox + AdvancedFlow（2→1）；
++ *     oa-form-catalog:submit 覆 Draft submit + Approval submit + Form data + Flow submit（4→1）；
++ *     oa-settings:delegate 覆 Delegate add/remove + AdvancedFlow delegate（3→1，T2 委派合一拍板1）；
++ *     oa-designer:edit 覆 Designer save + Flow def（2→1）。
++ *   2 只読 POST 豁免（Forecast preview→oa-form-catalog:view / Query search→oa-form-search:view）は未貼点＝不入種子
++ *   → 覆盖 6 有写端点 menu-key（oa-form-search(736) 仅 view 豁免故不種，非 7）。
++ *
++ * 動作定義（docs/seeds/oawf-key-menu-anchor.md 锚定 MenuId × 控制器 [RequirePermission] action 逐字）:
++ *   733 oa-inbox        : read / approve（高危）/ transfer（高危）/ sendback（高危）/ addsign（高危）/ withdraw（状态）
++ *   734 oa-flow-admin   : enable（状态）
++ *   735 oa-form-catalog : add / edit / submit（状态）/ del / favorite
++ *   737 oa-settings     : edit / delegate（高危・委派合一）
++ *   738 oa-designer     : edit（高危）/ add（高危・克隆）/ form-save（高危）
++ *   739 oa-approver-map : add / edit / del
++ *
++ * マルチテナント:
++ *   Sys_MenuAction / Sys_RoleAction は BaseTenantEntity（TenantId 必須・行級隔離）。
++ *   全テナントへ一括投入するため `CROSS JOIN (SELECT Id FROM Sys_Tenants) t` で逐租户展開。
++ *
++ * 実行方法:
++ *   sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/oawf-permission-seed.sql -b
++ *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
++ *
++ * 冪等性:
++ *   各 INSERT 前に NOT EXISTS チェック（TenantId+MenuId+ActionCode 単位）→ 重複実行安全。
++ * ============================================================ */
++
++SET NOCOUNT ON;
++SET XACT_ABORT ON;
++SET QUOTED_IDENTIFIER ON;
++SET ANSI_NULLS ON;
++BEGIN TRY
++BEGIN TRANSACTION;
++
++PRINT '=== OA/WF 権限点（MenuAction/RoleAction）シード 開始 ===';
++
++/* ------------------------------------------------------------
++ * 0. 動作定義テーブル（MenuId, ActionCode, ActionName, Sort）— 計 20 動作／租户
++ * ------------------------------------------------------------ */
++DECLARE @Actions TABLE (MenuId INT, ActionCode NVARCHAR(50), ActionName NVARCHAR(100), Sort INT);
++INSERT INTO @Actions (MenuId, ActionCode, ActionName, Sort) VALUES
++ (733, N'read',      N'标记已读',   0),
++ (733, N'approve',   N'审批',       0),
++ (733, N'transfer',  N'转交',       0),
++ (733, N'sendback',  N'退回',       0),
++ (733, N'addsign',   N'加签',       0),
++ (733, N'withdraw',  N'撤回',       0),
++ (734, N'enable',    N'启停',       0),
++ (735, N'add',       N'新建',       0),
++ (735, N'edit',      N'编辑',       0),
++ (735, N'submit',    N'提交',       0),
++ (735, N'del',       N'删除',       0),
++ (735, N'favorite',  N'收藏',       0),
++ (737, N'edit',      N'编辑',       0),
++ (737, N'delegate',  N'委派',       0),
++ (738, N'edit',      N'编辑',       0),
++ (738, N'add',       N'克隆',       0),
++ (738, N'form-save', N'表单保存',   0),
++ (739, N'add',       N'新建',       0),
++ (739, N'edit',      N'编辑',       0),
++ (739, N'del',       N'删除',       0);
++-- 合計 20 動作定義／租户
++
++/* ------------------------------------------------------------
++ * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_MenuAction (Id, MenuId, ActionCode, ActionName, Sort, CreateDate, TenantId)
++SELECT NEWID(), a.MenuId, a.ActionCode, a.ActionName, a.Sort, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_MenuAction ma
++    WHERE ma.TenantId = t.Id AND ma.MenuId = a.MenuId AND ma.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 2. Sys_RoleAction 管理者(RoleId=1) へ全動作授権（逐租户・冪等）
++ *    列序: (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_RoleAction (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++SELECT NEWID(), 1, a.MenuId, a.ActionCode, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_RoleAction ra
++    WHERE ra.TenantId = t.Id AND ra.RoleId = 1 AND ra.MenuId = a.MenuId AND ra.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 3. 結果確認（PRINT）
++ * ------------------------------------------------------------ */
++DECLARE @Tn INT, @Ma INT, @Ra INT;
++DECLARE @Menus TABLE (MenuId INT);
++INSERT INTO @Menus VALUES (733),(734),(735),(737),(738),(739);
++SELECT @Tn = COUNT(*) FROM Sys_Tenants;
++SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId IN (SELECT MenuId FROM @Menus);
++SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId IN (SELECT MenuId FROM @Menus) AND RoleId = 1;
++
++PRINT N'  租户数                  : ' + CAST(@Tn AS NVARCHAR(10));
++PRINT N'  MenuAction 件数(OA/WF)  : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 20 想定）';
++PRINT N'  RoleAction 件数(管理者) : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 20 想定）';
++
++COMMIT TRANSACTION;
++PRINT '=== OA/WF 権限点シード 完了 ===';
++END TRY
++BEGIN CATCH
++    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
++    PRINT 'ERROR: ' + ERROR_MESSAGE();
++    THROW;
++END CATCH;
++GO
++
++/* ============================================================
++ * 4. 動作確認クエリ（実行後の検証用、任意）
++ * ============================================================ */
++-- 管理者ロールの OA/WF 授権（RoleAction）一覧
++SELECT CONVERT(varchar(36), ra.TenantId) AS TenantId, ra.RoleId, ra.MenuId, ra.ActionCode
++FROM Sys_RoleAction ra
++WHERE ra.MenuId IN (733,734,735,737,738,739) AND ra.RoleId = 1
++ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
++
++/* ============================================================
++ * 5. ロールバック用（緊急時のみ使用）
++ * ============================================================
++ * 注意: RoleId=1 限定（本种子只授过管理员；不限定会连带删掉日后经 UI 授出的其他角色 OA/WF 授权）。
++ * ------------------------------------------------------------ */
++/*
++BEGIN TRANSACTION;
++DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId IN (733,734,735,737,738,739);
++DELETE FROM Sys_MenuAction WHERE MenuId IN (733,734,735,737,738,739);
++COMMIT TRANSACTION;
++*/
+diff --git a/scripts/wu-cache-guard.ps1 b/scripts/wu-cache-guard.ps1
+new file mode 100644
+index 0000000..2c54526
+--- /dev/null
++++ b/scripts/wu-cache-guard.ps1
+@@ -0,0 +1,26 @@
++# WU 下载缓存守卫(7/12 与本日两次磁盘满事故的自愈闸)
++# 计划任务 CP6-WUCache-Guard 每 4h: WU Download 缓存 >500MB 或 C 盘余量 <4GB 时清缓存
++# 只清 SoftwareDistribution\Download(WU 会按需重下,微软官方认可的安全清理点),不动其他
++$ErrorActionPreference = "Stop"
++$logFile = "C:\CP6Backups\wu-cache-guard.log"
++$dl = "C:\Windows\SoftwareDistribution\Download"
++try {
++    $freeGB = [math]::Round((Get-PSDrive C).Free / 1GB, 2)
++    $sizeMB = 0
++    if (Test-Path $dl) {
++        $sum = (Get-ChildItem $dl -Recurse -Force -File -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
++        if ($null -eq $sum) { $sum = 0 }
++        $sizeMB = [math]::Round($sum / 1MB, 0)
++    }
++    if ($sizeMB -gt 500 -or ($freeGB -lt 4 -and $sizeMB -gt 50)) {
++        try { Stop-Service wuauserv -Force -ErrorAction Stop } catch {}
++        Remove-Item "$dl\*" -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue
++        try { Start-Service wuauserv -ErrorAction Stop } catch {}
++        $freeAfter = [math]::Round((Get-PSDrive C).Free / 1GB, 2)
++        Add-Content $logFile ("{0} [CLEANED] WU cache {1}MB purged; C free {2}GB -> {3}GB" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"), $sizeMB, $freeGB, $freeAfter)
++    } else {
++        Add-Content $logFile ("{0} [OK] WU cache {1}MB, C free {2}GB" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"), $sizeMB, $freeGB)
++    }
++} catch {
++    Add-Content $logFile ("{0} [ERROR] {1}" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"), $_.Exception.Message)
++}

@@ -1,0 +1,825 @@
+# Review package: 37ca334..66c21a6
+
+## Commits
+66c21a6 feat(space): 编码规则管理页（段编辑器+实时预览+作用域级联）
+
+## Files changed
+ cp6.web/src/router/index.ts                        |   2 +
+ .../src/views/space/lifecycle/SegmentsEditor.vue   | 165 ++++++++++
+ .../views/space/lifecycle/SpaceCodeRuleView.vue    | 362 +++++++++++++++++++++
+ .../lifecycle/__tests__/SpaceCodeRuleView.spec.ts  | 112 +++++++
+ .../lifecycle/__tests__/codeRuleValidate.spec.ts   |  49 +++
+ .../src/views/space/lifecycle/codeRuleValidate.ts  |  65 ++++
+ 6 files changed, 755 insertions(+)
+
+## Diff
+diff --git a/cp6.web/src/router/index.ts b/cp6.web/src/router/index.ts
+index 3e69f6e..afd885b 100644
+--- a/cp6.web/src/router/index.ts
++++ b/cp6.web/src/router/index.ts
+@@ -169,20 +169,22 @@ const viewModules: Record<string, () => Promise<any>> = {
+   '/wms/mobile-task':          () => import('@/views/wms/MobileTaskView.vue'),
+   '/wms/wcs-task':             () => import('@/views/wms/WcsTaskView.vue'),
+   '/wms/carrier':              () => import('@/views/wms/CarrierView.vue'),
+   '/wms/iot-monitor':          () => import('@/views/wms/IotMonitorView.vue'),
+   // ───── Phase WM-8 帳票（占位） ─────
+   '/wms/report-center':        () => import('@/views/wms/ReportCenterView.vue'),
+   // ── Space 空間管理（波2 P0）─────────────────────────────
+   '/space/home': () => import('@/views/space/SpaceHomeView.vue'),
+   '/space/site': () => import('@/views/space/master/SpaceSiteView.vue'),
+   '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
++  // ── Space 波3 生命周期 ─────────────────────────────
++  '/space/code-rule': () => import('@/views/space/lifecycle/SpaceCodeRuleView.vue'),
+ }
+ 
+ // 静态路由：登录页 / Layout壳子 / 独立窗口
+ const staticRoutes: RouteRecordRaw[] = [
+   // ── OA Phase B 旧路由重定向（菜单条目可能仍为 /wf/*；redirect 确保无论何时均自动跳转至信箱）──
+   { path: '/wf/todo',            redirect: '/oa/inbox' },
+   { path: '/wf/my-applications', redirect: '/oa/inbox' },
+   {
+     path: '/login',
+     name: 'login',
+diff --git a/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue b/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue
+new file mode 100644
+index 0000000..736baba
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue
+@@ -0,0 +1,165 @@
++<!--
++  SegmentsEditor —— 编码规则「段」编辑器（波3 生命周期）。CodeRuleVO.segments 的 v-model 子组件。
++  列内编辑：key/name/source(12 值域分组下拉)/width/pad/start/step/sep/upper/fixedValue/optional。
++  字段启用联动（codeRuleValidate）：width·pad·start·step 仅序号源；upper 仅码源(fixed 无效)；
++  fixedValue 仅 fixed。切到巷道源(aisle-*)自动置 optional=true。行操作 上移/下移/删除；末尾「段追加」。
++  页脚黄条：本地镜像校验 E-303/305/306（不阻断保存——权威口径以后端 preview.precheck 为准）。
++  内部持本地 list（自 modelValue 同步 + 变更即 emit），既支持父级回写亦支持脱离父级独立渲染。
++-->
++<template>
++  <div class="seg-editor">
++    <div class="seg-bar">
++      <span class="seg-title">{{ t('space.rule.seg.title') }}</span>
++      <el-button size="small" @click="addSeg">{{ t('space.rule.seg.add') }}</el-button>
++    </div>
++
++    <el-table :data="list" size="small" border>
++      <el-table-column type="index" width="44" />
++      <el-table-column :label="t('space.rule.seg.key')" width="120">
++        <template #default="{ row }">
++          <el-input v-model="row.key" size="small" maxlength="20" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.name')" width="120">
++        <template #default="{ row }">
++          <el-input v-model="row.name" size="small" maxlength="30" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.source')" width="160">
++        <template #default="{ row }">
++          <el-select v-model="row.source" size="small" @change="onSourceChange(row)">
++            <el-option-group v-for="g in sourceGroups" :key="g.label" :label="g.label">
++              <el-option v-for="s in g.items" :key="s" :label="srcLabel(s)" :value="s" />
++            </el-option-group>
++          </el-select>
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.width')" width="90">
++        <template #default="{ row }">
++          <el-input-number v-model="row.width" size="small" :min="0" :max="20" :precision="0"
++            controls-position="right" :disabled="!seqFieldsEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.pad')" width="72">
++        <template #default="{ row }">
++          <el-input v-model="row.pad" size="small" maxlength="1"
++            :disabled="!seqFieldsEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.start')" width="90">
++        <template #default="{ row }">
++          <el-input-number v-model="row.start" size="small" :precision="0" controls-position="right"
++            :disabled="!seqFieldsEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.step')" width="90">
++        <template #default="{ row }">
++          <el-input-number v-model="row.step" size="small" :precision="0" controls-position="right"
++            :disabled="!seqFieldsEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.sep')" width="72">
++        <template #default="{ row }">
++          <el-input v-model="row.sep" size="small" maxlength="1" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.upper')" width="72" align="center">
++        <template #default="{ row }">
++          <el-checkbox v-model="row.upper" :disabled="!upperEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.fixedValue')" width="130">
++        <template #default="{ row }">
++          <el-input v-model="row.fixedValue" size="small" maxlength="20"
++            :disabled="!fixedValueEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.optional')" width="80" align="center">
++        <template #default="{ row }">
++          <el-checkbox v-model="row.optional" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.op')" width="120" fixed="right">
++        <template #default="{ $index }">
++          <el-button link size="small" :disabled="$index === 0" @click="move($index, -1)">↑</el-button>
++          <el-button link size="small" :disabled="$index === list.length - 1" @click="move($index, 1)">↓</el-button>
++          <el-button link type="danger" size="small" @click="remove($index)">{{ t('space.rule.seg.del') }}</el-button>
++        </template>
++      </el-table-column>
++
++      <template #empty>
++        <span class="seg-empty">{{ t('space.rule.seg.empty') }}</span>
++      </template>
++    </el-table>
++
++    <div v-if="warnings.length" class="seg-warn">
++      <span class="seg-warn-ico">⚠</span>
++      <ul>
++        <li v-for="code in warnings" :key="code">{{ t(`space.rule.err.${code}`) }}</li>
++      </ul>
++    </div>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { ref, computed, watch } from 'vue'
++import { useI18n } from 'vue-i18n'
++import type { CodeSegmentDef } from '@/types/space/scene'
++import {
++  FIXED_SOURCE, CODE_SOURCES, SEQ_SOURCES, newSegment, validateSegmentsLocal,
++  seqFieldsEnabled, upperEnabled, fixedValueEnabled, isAisleSource,
++} from './codeRuleValidate'
++
++const props = defineProps<{ modelValue: CodeSegmentDef[] }>()
++const emit = defineEmits<{ (e: 'update:modelValue', v: CodeSegmentDef[]): void }>()
++const { t } = useI18n()
++
++// 本地工作副本：自 modelValue 同步；变更即 emit。父级回写同一引用时 watch 跳过（防抖动）。
++const list = ref<CodeSegmentDef[]>([...(props.modelValue || [])])
++watch(
++  () => props.modelValue,
++  (nv) => { if (nv !== list.value) list.value = [...(nv || [])] },
++)
++
++function emitChange() { emit('update:modelValue', list.value) }
++
++// el-select 含 t() 的选项 → computed 包裹（避免运行期告警/失响应）
++const sourceGroups = computed(() => [
++  { label: t('space.rule.src.group.fixed'), items: [FIXED_SOURCE] },
++  { label: t('space.rule.src.group.code'), items: [...CODE_SOURCES] },
++  { label: t('space.rule.src.group.seq'), items: [...SEQ_SOURCES] },
++])
++const srcLabel = (s: string) => t(`space.rule.src.${s}`)
++
++const warnings = computed(() => validateSegmentsLocal(list.value))
++
++function onSourceChange(row: CodeSegmentDef) {
++  if (isAisleSource(row.source)) row.optional = true // 巷道段 optional 应为 true（E-305）
++  emitChange()
++}
++function addSeg() { list.value.push(newSegment()); emitChange() }
++function remove(i: number) { list.value.splice(i, 1); emitChange() }
++function move(i: number, dir: -1 | 1) {
++  const j = i + dir
++  const arr = list.value
++  const a = arr[i]
++  const b = arr[j]
++  if (a === undefined || b === undefined) return // 越界守卫（同时满足 noUncheckedIndexedAccess）
++  arr[i] = b
++  arr[j] = a
++  emitChange()
++}
++
++defineExpose({ seqFieldsEnabled, upperEnabled, fixedValueEnabled })
++</script>
++
++<style scoped>
++.seg-editor { display: flex; flex-direction: column; gap: 10px; }
++.seg-bar { display: flex; align-items: center; justify-content: space-between; }
++.seg-title { font-weight: 700; color: var(--cp-ink); }
++.seg-empty { color: var(--cp-muted); font-size: var(--cp-fs-sm); }
++.seg-warn { display: flex; gap: 8px; padding: 8px 12px; border-radius: var(--cp-r-sm, 6px);
++  background: #fff7e6; border: 1px solid #ffd591; color: #ad6800; font-size: var(--cp-fs-sm); }
++.seg-warn-ico { line-height: 1.5; }
++.seg-warn ul { margin: 0; padding-left: 4px; list-style: none; }
++</style>
+diff --git a/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue b/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue
+new file mode 100644
+index 0000000..27dc8c6
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue
+@@ -0,0 +1,362 @@
++<!--
++  编码规则管理 —— CpPageShell + CpListPage + CpFormDialog（Space 波3 生命周期）。
++  套用 SpaceSiteView/FloorView 范式：codeRuleApi.list() 前端切片、in-place 变更后 listRef.reload()。
++  差异点：
++   - scopeId 显示名解析：list 后并发拉 site→floor(→zone) 建索引，scopeNames 反查显示；失败留裸 id 截断。
++   - 作用域级联表单：scopeType=1 站点→楼层；=2 站点→楼层→库区；=0 隐藏。编辑时以索引反查回填级联。
++   - SegmentsEditor（段编辑器，v-model form.segments）+ 本地镜像校验黄条（权威=后端 preview）。
++   - 预览弹窗：编辑中/行 segments 直接 POST preview，展示 samples / variableLen / precheck。
++   - isDefault 提示「设为默认将自动取消同作用域其他默认」（后端自动清，无冲突报错）。
++  删除失败的后端护栏 message 由 http 拦截器原样 ElMessage.error（此处 catch 仅止崩）。
++-->
++<template>
++  <CpPageShell :title="t('space.rule.title')" :count="total">
++    <template #actions>
++      <el-button @click="openCreate">{{ t('space.rule.create') }}</el-button>
++    </template>
++
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      @total-change="total = $event"
++    >
++      <template #col-scopeId="{ row }">
++        <span>{{ scopeDisplay(row) }}</span>
++      </template>
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
++        <el-button link type="primary" size="small" @click="openPreview(row.segments)">{{ t('space.rule.preview') }}</el-button>
++        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
++      </template>
++    </CpListPage>
++
++    <CpFormDialog
++      v-model="dialogVisible"
++      :title="dialogTitle"
++      width="960"
++      :form="form"
++      :rules="rules"
++      :submit="onSave"
++      :labels="{ cancel: t('space.common.cancel'), confirm: t('space.common.save') }"
++      @saved="reloadList"
++    >
++      <el-form-item :label="t('space.rule.fld.ruleName')" prop="ruleName">
++        <el-input v-model="form.ruleName" maxlength="100" />
++      </el-form-item>
++
++      <el-form-item :label="t('space.rule.fld.scopeType')">
++        <el-select v-model="form.scopeType" style="width: 240px" @change="onScopeTypeChange">
++          <el-option v-for="o in scopeTypeOptions" :key="o.value" :label="o.label" :value="o.value" />
++        </el-select>
++      </el-form-item>
++
++      <template v-if="form.scopeType === 1">
++        <el-form-item :label="t('space.rule.fld.site')">
++          <el-select v-model="selSiteId" filterable style="width: 320px" :placeholder="t('space.rule.selectSite')">
++            <el-option v-for="s in cSites" :key="s.id" :label="`${s.siteCode}　${s.siteName}`" :value="s.id!" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('space.rule.fld.floor')" prop="scopeId">
++          <el-select v-model="form.scopeId" filterable style="width: 320px" :placeholder="t('space.rule.selectFloor')">
++            <el-option v-for="f in cFloors" :key="f.id" :label="`${f.floorCode}　${f.floorName}`" :value="f.id" />
++          </el-select>
++        </el-form-item>
++      </template>
++
++      <template v-else-if="form.scopeType === 2">
++        <el-form-item :label="t('space.rule.fld.site')">
++          <el-select v-model="selSiteId" filterable style="width: 320px" :placeholder="t('space.rule.selectSite')">
++            <el-option v-for="s in cSites" :key="s.id" :label="`${s.siteCode}　${s.siteName}`" :value="s.id!" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('space.rule.fld.floor')">
++          <el-select v-model="selFloorId" filterable style="width: 320px" :placeholder="t('space.rule.selectFloor')">
++            <el-option v-for="f in cFloors" :key="f.id" :label="`${f.floorCode}　${f.floorName}`" :value="f.id" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('space.rule.fld.zone')" prop="scopeId">
++          <el-select v-model="form.scopeId" filterable style="width: 320px" :placeholder="t('space.rule.selectZone')">
++            <el-option v-for="z in cZones" :key="z.id" :label="`${z.zoneCode}　${z.zoneName}`" :value="z.id" />
++          </el-select>
++        </el-form-item>
++      </template>
++
++      <el-form-item :label="t('space.rule.fld.isDefault')">
++        <el-checkbox v-model="form.isDefault">{{ t('space.rule.fld.isDefault') }}</el-checkbox>
++        <span class="rule-tip">{{ t('space.rule.isDefaultTip') }}</span>
++      </el-form-item>
++
++      <SegmentsEditor v-model="form.segments" />
++
++      <div class="rule-pv-actions">
++        <el-button @click="openPreview(form.segments)">{{ t('space.rule.preview') }}</el-button>
++      </div>
++    </CpFormDialog>
++
++    <!-- 预览弹窗（独立 el-dialog，不走 CpFormDialog） -->
++    <el-dialog v-model="previewVisible" :title="t('space.rule.pv.title')" width="560">
++      <div v-loading="previewLoading" class="rule-pv">
++        <template v-if="previewData">
++          <div class="pv-sec">
++            <div class="pv-label">{{ t('space.rule.pv.samples') }}</div>
++            <div class="pv-samples">
++              <span v-for="(s, i) in previewData.samples" :key="i" class="cp-mono pv-sample">{{ s }}</span>
++              <span v-if="!previewData.samples.length" class="pv-muted">—</span>
++            </div>
++          </div>
++
++          <div class="pv-sec">
++            <div class="pv-label">{{ t('space.rule.pv.variableLen') }}</div>
++            <div class="pv-vl">
++              <span class="pv-muted">{{ t('space.rule.pv.withAisle') }}:</span>
++              <span class="cp-mono">{{ previewData.variableLen.withAisle }}</span>
++            </div>
++            <div class="pv-vl">
++              <span class="pv-muted">{{ t('space.rule.pv.withoutAisle') }}:</span>
++              <span class="cp-mono">{{ previewData.variableLen.withoutAisle }}</span>
++            </div>
++          </div>
++
++          <div class="pv-sec">
++            <div class="pv-label">{{ t('space.rule.pv.precheck') }}</div>
++            <div v-if="previewData.precheck.ok" class="pv-ok">{{ t('space.rule.pv.ok') }}</div>
++            <ul v-else class="pv-errs">
++              <li v-for="(e, i) in previewData.precheck.errors" :key="i">{{ e }}</li>
++            </ul>
++          </div>
++        </template>
++        <div v-else-if="!previewLoading" class="pv-muted">{{ t('space.rule.pv.empty') }}</div>
++      </div>
++    </el-dialog>
++  </CpPageShell>
++</template>
++
++<script setup lang="ts">
++import { ref, reactive, computed, watch, nextTick } from 'vue'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
++import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import type { Tone } from '@/components/base/CpTag.vue'
++import SegmentsEditor from './SegmentsEditor.vue'
++import { codeRuleApi } from '@/api/space/codeRule'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import { zoneApi } from '@/api/space/zone'
++import type { CodeRuleVO, CodeSegmentDef, CodePreviewResp, SiteVO, FloorVO, ZoneVO } from '@/types/space/scene'
++
++const { t } = useI18n()
++
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
++
++// —— 作用域显示名解析（list 后并发建索引；反查回填编辑级联）——
++const scopeNames = ref<Record<string, string>>({})
++const floorIndex = ref<Record<string, { siteId: string; name: string }>>({})
++const zoneIndex = ref<Record<string, { floorId: string; name: string }>>({})
++
++function truncId(id: string): string {
++  return id.length > 10 ? `${id.slice(0, 10)}…` : id
++}
++function scopeDisplay(row: CodeRuleVO): string {
++  if (row.scopeType === 0 || !row.scopeId) return '—'
++  return scopeNames.value[row.scopeId] || truncId(row.scopeId)
++}
++
++// best-effort：仅当存在 type1/2 规则才拉；任意子请求失败静默（留裸 id 截断）
++async function resolveScopeNames(rules: CodeRuleVO[]) {
++  const needFloor = rules.some((r) => r.scopeType === 1 || r.scopeType === 2)
++  const needZone = rules.some((r) => r.scopeType === 2)
++  if (!needFloor) return
++  try {
++    const sitesRes = await siteApi.list()
++    const sitesArr = sitesRes.data || []
++    const floorLists = await Promise.all(
++      sitesArr.map((s) => floorApi.list(s.id!).then((r) => r.data || []).catch(() => [] as FloorVO[])),
++    )
++    const allFloors = floorLists.flat()
++    const names: Record<string, string> = { ...scopeNames.value }
++    const fIdx: Record<string, { siteId: string; name: string }> = { ...floorIndex.value }
++    for (const f of allFloors) {
++      const nm = `${f.floorCode} ${f.floorName}`
++      fIdx[f.id] = { siteId: f.siteId, name: nm }
++      names[f.id] = nm
++    }
++    floorIndex.value = fIdx
++    if (needZone) {
++      const zoneLists = await Promise.all(
++        allFloors.map((f) => zoneApi.list(f.id).then((r) => r.data || []).catch(() => [] as ZoneVO[])),
++      )
++      const zIdx: Record<string, { floorId: string; name: string }> = { ...zoneIndex.value }
++      for (const z of zoneLists.flat()) {
++        const nm = `${z.zoneCode} ${z.zoneName}`
++        zIdx[z.id] = { floorId: z.floorId, name: nm }
++        names[z.id] = nm
++      }
++      zoneIndex.value = zIdx
++    }
++    scopeNames.value = names
++  } catch { /* best-effort：失败留裸 id 截断 */ }
++}
++
++const scopeTypeOptions = computed(() => [
++  { value: 0, label: t('space.rule.scope.0') },
++  { value: 1, label: t('space.rule.scope.1') },
++  { value: 2, label: t('space.rule.scope.2') },
++])
++const scopeTone = (v: number): Tone => (v === 1 ? 'info' : v === 2 ? 'warn' : 'muted')
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'ruleName', label: t('space.rule.fld.ruleName'), minWidth: 200 },
++  { prop: 'scopeType', label: t('space.rule.fld.scopeType'), width: 130, kind: 'tag',
++    map: (v) => ({ label: t(`space.rule.scope.${v as number}`), tone: scopeTone(v as number) }) },
++  { prop: 'scopeId', label: t('space.rule.fld.scopeId'), minWidth: 180 },
++  { prop: 'segments', label: t('space.rule.fld.segments'), width: 110, align: 'center',
++    map: (v) => ({ label: String((v as CodeSegmentDef[] | undefined)?.length ?? 0) }) },
++  { prop: 'isDefault', label: t('space.rule.fld.isDefault'), width: 110, align: 'center', kind: 'tag',
++    map: (v) => (v
++      ? { label: t('space.rule.default.yes'), tone: 'ok' }
++      : { label: t('space.rule.default.no'), tone: 'muted' }) },
++  { prop: '_action', label: t('space.common.action'), width: 220, fixed: 'right' },
++])
++
++// list 端点无分页 → 前端切片；并发触发显示名解析（fire-and-forget）
++const fetchList: ListFetch = async ({ page, size }) => {
++  const res = await codeRuleApi.list()
++  const all = res.data || []
++  void resolveScopeNames(all)
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
++}
++
++// —— 新建/编辑对话框 ——
++const dialogVisible = ref(false)
++const form = reactive<CodeRuleVO>({ ruleName: '', scopeType: 0, scopeId: null, segments: [], isDefault: false })
++const dialogTitle = computed(() => (form.id ? t('space.rule.dlg.edit') : t('space.rule.dlg.create')))
++const rules = computed<FormRules>(() => ({
++  ruleName: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++  ...(form.scopeType !== 0
++    ? { scopeId: [{ required: true, message: t('space.common.required'), trigger: 'change' }] }
++    : {}),
++}))
++
++// —— 级联选项与中间选择 ——
++const cSites = ref<SiteVO[]>([])
++const cFloors = ref<FloorVO[]>([])
++const cZones = ref<ZoneVO[]>([])
++const selSiteId = ref<string | undefined>()
++const selFloorId = ref<string | undefined>()
++const hydrating = ref(false) // 编辑回填期抑制级联联动清空
++
++async function loadSites() {
++  if (cSites.value.length) return
++  const res = await siteApi.list().catch(() => ({ data: [] as SiteVO[] }) as { data: SiteVO[] })
++  cSites.value = res.data || []
++}
++
++watch(selSiteId, async (nv) => {
++  cFloors.value = []
++  cZones.value = []
++  if (!hydrating.value) { selFloorId.value = undefined; form.scopeId = null }
++  if (nv) cFloors.value = await floorApi.list(nv).then((r) => r.data || []).catch(() => [])
++})
++watch(selFloorId, async (nv) => {
++  cZones.value = []
++  if (!hydrating.value && form.scopeType === 2) form.scopeId = null
++  if (nv) cZones.value = await zoneApi.list(nv).then((r) => r.data || []).catch(() => [])
++})
++
++function onScopeTypeChange() {
++  form.scopeId = null
++  selSiteId.value = undefined
++  selFloorId.value = undefined
++  cFloors.value = []
++  cZones.value = []
++}
++
++async function openCreate() {
++  Object.assign(form, { id: undefined, ruleName: '', scopeType: 0, scopeId: null, segments: [], isDefault: false })
++  selSiteId.value = undefined
++  selFloorId.value = undefined
++  await loadSites()
++  dialogVisible.value = true
++}
++
++async function openEdit(row: CodeRuleVO) {
++  Object.assign(form, {
++    id: row.id, ruleName: row.ruleName, scopeType: row.scopeType, scopeId: row.scopeId,
++    isDefault: row.isDefault, segments: (row.segments || []).map((s) => ({ ...s })), // 深拷贝段，避免直改列表行
++  })
++  hydrating.value = true
++  await loadSites()
++  if (row.scopeType === 1 && row.scopeId) {
++    selSiteId.value = floorIndex.value[row.scopeId]?.siteId
++    await nextTick()
++  } else if (row.scopeType === 2 && row.scopeId) {
++    const zi = zoneIndex.value[row.scopeId]
++    selSiteId.value = zi ? floorIndex.value[zi.floorId]?.siteId : undefined
++    await nextTick()
++    selFloorId.value = zi?.floorId
++    await nextTick()
++  }
++  hydrating.value = false
++  dialogVisible.value = true
++}
++
++async function onSave() {
++  const payload: CodeRuleVO = { ...form, segments: form.segments }
++  if (form.scopeType === 0) payload.scopeId = null
++  if (form.id) await codeRuleApi.update(form.id, payload)
++  else await codeRuleApi.create(payload)
++  ElMessage.success(t('space.common.success'))
++}
++
++async function onDelete(row: CodeRuleVO) {
++  try {
++    await ElMessageBox.confirm(`${t('space.common.confirmDelete')} [${row.ruleName}]`, t('space.common.confirm'), { type: 'warning' })
++    await codeRuleApi.remove(row.id!)
++    ElMessage.success(t('space.common.success'))
++    reloadList()
++  } catch { /* 取消 / 后端护栏错误（后者已由 http 拦截器原样提示） */ }
++}
++
++// —— 预览弹窗 ——
++const previewVisible = ref(false)
++const previewLoading = ref(false)
++const previewData = ref<CodePreviewResp | null>(null)
++async function openPreview(segments: CodeSegmentDef[]) {
++  previewVisible.value = true
++  previewLoading.value = true
++  previewData.value = null
++  try {
++    const res = await codeRuleApi.preview(segments || [])
++    previewData.value = res.data
++  } catch {
++    previewData.value = null // 错误 message 已由 http 拦截器提示
++  } finally {
++    previewLoading.value = false
++  }
++}
++</script>
++
++<style scoped>
++.rule-tip { margin-left: 12px; color: var(--cp-muted); font-size: var(--cp-fs-sm); }
++.rule-pv-actions { display: flex; justify-content: flex-end; margin-top: 12px; }
++
++.rule-pv { display: flex; flex-direction: column; gap: 16px; }
++.pv-sec { display: flex; flex-direction: column; gap: 6px; }
++.pv-label { font-weight: 700; color: var(--cp-ink); }
++.pv-samples { display: flex; flex-wrap: wrap; gap: 8px; }
++.pv-sample { padding: 2px 8px; background: var(--cp-brand-bg, #eef2ff); border-radius: 4px; }
++.pv-vl { display: flex; gap: 8px; align-items: baseline; }
++.pv-muted { color: var(--cp-muted); }
++.pv-ok { color: #389e0d; font-weight: 700; }
++.pv-errs { margin: 0; padding-left: 18px; color: #cf1322; }
++
++/* 本地补 .cp-mono（scoped；波2 前车之鉴——勿依赖模板全局类） */
++.cp-mono { font-family: var(--cp-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
++  font-weight: 700; color: var(--cp-brand-deep); }
++</style>
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts
+new file mode 100644
+index 0000000..7b3b4fb
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts
+@@ -0,0 +1,112 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import ElementPlus from 'element-plus'
++import { codeRuleApi } from '@/api/space/codeRule'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import { zoneApi } from '@/api/space/zone'
++import SpaceCodeRuleView from '../SpaceCodeRuleView.vue'
++import SegmentsEditor from '../SegmentsEditor.vue'
++import { newSegment } from '../codeRuleValidate'
++import type { CodeRuleVO, CodeSegmentDef, CodePreviewResp, SiteVO, FloorVO } from '@/types/space/scene'
++
++vi.mock('@/api/space/codeRule', () => ({
++  codeRuleApi: { list: vi.fn(), create: vi.fn(), update: vi.fn(), remove: vi.fn(), preview: vi.fn() },
++}))
++vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
++vi.mock('@/api/space/floor', () => ({ floorApi: { list: vi.fn() } }))
++vi.mock('@/api/space/zone', () => ({ zoneApi: { list: vi.fn() } }))
++vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
++
++function seg(source: string, optional = false): CodeSegmentDef {
++  return { ...newSegment(), source, optional }
++}
++
++const rules: CodeRuleVO[] = [
++  { id: 'r1', ruleName: 'テナント既定ルール', scopeType: 0, scopeId: null, isDefault: true,
++    segments: [seg('zone-code'), seg('col')] },
++  { id: 'r2', ruleName: 'フロア専用ルール', scopeType: 1, scopeId: 'f1', isDefault: false,
++    segments: [seg('zone-code'), seg('aisle-code', true), seg('col')] },
++]
++const sites: SiteVO[] = [{ id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true }]
++const floors: FloorVO[] = [
++  { id: 'f1', siteId: 's1', level: 1, floorCode: 'FL1', floorName: '1階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++]
++const previewResp: CodePreviewResp = {
++  structure: [],
++  samples: ['A-01-01', 'A-01-02', 'A-02-01'],
++  variableLen: { withAisle: 'Z-AA-01-01', withoutAisle: 'Z-01-01' },
++  precheck: { ok: true, errors: [] },
++}
++
++function i18nPlugin() {
++  return createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
++}
++function mountView(opts: Record<string, unknown> = {}) {
++  return mount(SpaceCodeRuleView, { global: { plugins: [i18nPlugin()], ...(opts.global as object || {}) } })
++}
++
++describe('SpaceCodeRuleView', () => {
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(codeRuleApi.list).mockResolvedValue({ code: 0, message: '', data: rules })
++    vi.mocked(codeRuleApi.preview).mockResolvedValue({ code: 0, message: '', data: previewResp })
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
++    vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
++    vi.mocked(zoneApi.list).mockResolvedValue({ code: 0, message: '', data: [] })
++  })
++
++  // ① mock list → 渲染规则名与段数
++  it('挂载后渲染规则名与段数', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(codeRuleApi.list).toHaveBeenCalled()
++    expect(w.text()).toContain('テナント既定ルール')
++    expect(w.text()).toContain('フロア専用ルール')
++    // r2 有 3 段
++    expect(w.text()).toContain('3')
++  })
++
++  // ③ preview mock → samples 文本渲染
++  it('点行「预览」后渲染 preview samples 文本', async () => {
++    const w = mountView({ global: { plugins: [i18nPlugin()], stubs: { teleport: true } } })
++    await flushPromises()
++    const pvBtns = w.findAll('el-button').filter((b) => b.text() === 'space.rule.preview')
++    expect(pvBtns.length).toBeGreaterThan(0)
++    await pvBtns[0].trigger('click')
++    await flushPromises()
++    expect(codeRuleApi.preview).toHaveBeenCalled()
++    expect(w.text()).toContain('A-01-01')
++    expect(w.text()).toContain('A-02-01')
++  })
++})
++
++// ② 新建弹窗添加两段 → 本地校验提示出现（缺库位粒度段 E-306）——直接测 SegmentsEditor
++// SegmentsEditor 独立挂载须注册 ElementPlus（el-table 需其管理作用域插槽）。
++describe('SegmentsEditor 本地校验', () => {
++  function mountEditor(modelValue: CodeSegmentDef[]) {
++    return mount(SegmentsEditor, {
++      props: { modelValue, 'onUpdate:modelValue': (v: CodeSegmentDef[]) => (modelValue = v) },
++      global: { plugins: [i18nPlugin(), ElementPlus] },
++    })
++  }
++
++  it('添加两段（默认 zone-code，无库位粒度段）→ 出现 E-306 提示', async () => {
++    const w = mountEditor([])
++    const addBtn = w.findAll('button').find((b) => b.text().includes('space.rule.seg.add'))
++    expect(addBtn).toBeTruthy()
++    await addBtn!.trigger('click')
++    await addBtn!.trigger('click')
++    await flushPromises()
++    // 两段皆 zone-code，缺 col/level/depth → E-306 提示条出现
++    expect(w.text()).toContain('space.rule.err.E-306')
++  })
++
++  it('含库位粒度段时不出现 E-306 提示', async () => {
++    const w = mountEditor([seg('zone-code'), seg('col')])
++    await flushPromises()
++    expect(w.text()).not.toContain('space.rule.err.E-306')
++  })
++})
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/codeRuleValidate.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/codeRuleValidate.spec.ts
+new file mode 100644
+index 0000000..2329e7a
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/__tests__/codeRuleValidate.spec.ts
+@@ -0,0 +1,49 @@
++import { describe, it, expect } from 'vitest'
++import { validateSegmentsLocal, newSegment } from '../codeRuleValidate'
++import type { CodeSegmentDef } from '@/types/space/scene'
++
++// 造段助手：以 newSegment 为底覆盖 source/optional
++function seg(source: string, optional = false): CodeSegmentDef {
++  return { ...newSegment(), source, optional }
++}
++
++describe('validateSegmentsLocal', () => {
++  // —— E-303 缺 Zone 区分段 ——
++  it('E-303 反例：有 zone-code 段则不报（另配库位粒度段避免 E-306 干扰）', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('col')])
++    expect(errs).not.toContain('E-303')
++  })
++  it('E-303 反例：site-code + floor-level 组合替代 Zone 段', () => {
++    const errs = validateSegmentsLocal([seg('site-code'), seg('floor-level'), seg('col')])
++    expect(errs).not.toContain('E-303')
++  })
++  it('E-303 正例：既无 Zone 段也无 site+floor 组合', () => {
++    const errs = validateSegmentsLocal([seg('rack-code'), seg('col')])
++    expect(errs).toContain('E-303')
++  })
++
++  // —— E-305 巷道段未 Optional ——
++  it('E-305 正例：aisle-code 段 optional=false', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('aisle-code', false), seg('col')])
++    expect(errs).toContain('E-305')
++  })
++  it('E-305 反例：aisle-seq 段 optional=true 不报', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('aisle-seq', true), seg('col')])
++    expect(errs).not.toContain('E-305')
++  })
++
++  // —— E-306 缺库位粒度段 ——
++  it('E-306 正例：col/level/depth 全无', () => {
++    const errs = validateSegmentsLocal([seg('zone-code')])
++    expect(errs).toContain('E-306')
++  })
++  it('E-306 反例：含 level 段不报', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('level')])
++    expect(errs).not.toContain('E-306')
++  })
++
++  it('全合规组合无任何错误码', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('aisle-code', true), seg('col'), seg('level')])
++    expect(errs).toEqual([])
++  })
++})
+diff --git a/cp6.web/src/views/space/lifecycle/codeRuleValidate.ts b/cp6.web/src/views/space/lifecycle/codeRuleValidate.ts
+new file mode 100644
+index 0000000..40d5440
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/codeRuleValidate.ts
+@@ -0,0 +1,65 @@
++// 编码规则段——值域常量 + 字段启用联动 + 本地镜像校验（纯函数，便于单测）。
++// 权威校验在后端 preview（E-3xx 全量）；此处三条为编辑期即时提示（黄条不阻断保存）。
++import type { CodeSegmentDef } from '@/types/space/scene'
++
++/** 固定源（单独成组；仅 fixedValue 有效）。 */
++export const FIXED_SOURCE = 'fixed'
++
++/** 码源组（除 fixed 外）——upper 仅对这些启用；site-code/floor-level 参与 E-303 组合判定。 */
++export const CODE_SOURCES = ['site-code', 'floor-level', 'zone-code', 'aisle-code', 'rack-code'] as const
++
++/** 序号源组——width/pad/start/step 仅对这些启用。 */
++export const SEQ_SOURCES = ['zone-seq', 'aisle-seq', 'rack-seq', 'col', 'level', 'depth'] as const
++
++/** 下拉全 12 值域（渲染顺序：固定 → 码源 → 序号源）。 */
++export const ALL_SOURCES = [FIXED_SOURCE, ...CODE_SOURCES, ...SEQ_SOURCES] as const
++
++/** 巷道段（optional 应为 true——E-305）。 */
++export const AISLE_SOURCES = ['aisle-code', 'aisle-seq'] as const
++
++export const isFixedSource = (s: string): boolean => s === FIXED_SOURCE
++export const isCodeSource = (s: string): boolean => (CODE_SOURCES as readonly string[]).includes(s)
++export const isSeqSource = (s: string): boolean => (SEQ_SOURCES as readonly string[]).includes(s)
++export const isAisleSource = (s: string): boolean => (AISLE_SOURCES as readonly string[]).includes(s)
++
++/** width / pad / start / step —— 仅序号源启用。 */
++export const seqFieldsEnabled = (s: string): boolean => isSeqSource(s)
++/** upper —— 仅码源启用（fixed 无效）。 */
++export const upperEnabled = (s: string): boolean => isCodeSource(s)
++/** fixedValue —— 仅 fixed 启用。 */
++export const fixedValueEnabled = (s: string): boolean => isFixedSource(s)
++
++/**
++ * 本地镜像校验——返回错误码数组（空=无提示）。三条：
++ *  - E-303 缺 Zone 区分段：无 zone-code/zone-seq，且无 site-code + floor-level 组合。
++ *  - E-305 巷道段未 Optional：存在 aisle-code/aisle-seq 段但 optional=false。
++ *  - E-306 缺库位粒度段：col / level / depth 全无。
++ * 纯函数：无副作用、幂等；权威口径以后端 preview.precheck 为准。
++ */
++export function validateSegmentsLocal(segments: CodeSegmentDef[]): string[] {
++  const errs: string[] = []
++  const sources = (segments || []).map((s) => s.source)
++  const has = (s: string) => sources.includes(s)
++
++  // E-303：缺 Zone 区分段
++  const hasZoneSeg = has('zone-code') || has('zone-seq')
++  const hasSiteFloorCombo = has('site-code') && has('floor-level')
++  if (!hasZoneSeg && !hasSiteFloorCombo) errs.push('E-303')
++
++  // E-305：巷道段未 Optional
++  const aisleNotOptional = (segments || []).some((s) => isAisleSource(s.source) && !s.optional)
++  if (aisleNotOptional) errs.push('E-305')
++
++  // E-306：缺库位粒度段
++  if (!has('col') && !has('level') && !has('depth')) errs.push('E-306')
++
++  return errs
++}
++
++/** 新段初始值（对齐后端默认）。 */
++export function newSegment(): CodeSegmentDef {
++  return {
++    key: '', name: '', source: 'zone-code', width: 0, pad: '0',
++    start: 1, step: 1, sep: '-', upper: false, fixedValue: '', optional: false,
++  }
++}

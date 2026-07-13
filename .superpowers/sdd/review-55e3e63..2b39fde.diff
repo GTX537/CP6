@@ -1,0 +1,187 @@
+# Review package: 55e3e63..2b39fde
+
+## Commits
+2b39fde refactor(ui): OA 迁移批次5——InboxSettings+NotificationBell token化 + 模块硬编码清扫与el-tag收尾
+
+## Files changed
+ cp6.web/src/views/oa/designer/designerModel.ts     | 12 ++++++----
+ .../src/views/oa/notification/NotificationBell.vue | 28 +++++++++++-----------
+ 2 files changed, 21 insertions(+), 19 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/oa/designer/designerModel.ts b/cp6.web/src/views/oa/designer/designerModel.ts
+index 2f68ac0..f03c535 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.ts
+@@ -39,26 +39,28 @@ export interface SchemaNode {
+   approverFieldName?: string
+   approverMapKey?: string
+   approverWhen?: string
+   approverFilter?: string
+   approverMembers?: ApproverSpecDto[]
+   x?: number; y?: number
+ }
+ export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[] }
+ export interface FlowSchemaDto { start?: string; nodes: SchemaNode[]; edges: SchemaEdge[] }
+ 
++// node-identity swatches (categorical, chart-color family §2.5). Rendering uses the
++// tokenized `.dot-<type>` CSS classes in DesignerCanvas; this `color` field is legacy metadata.
+ export const NODE_PALETTE = [
+-  { type: 'start',         label: '填單(发起)', color: '#67c23a' },
+-  { type: 'approval',      label: '審批',       color: '#409eff' },
+-  { type: 'parallelSplit', label: '并行分叉',   color: '#e6a23c' },
+-  { type: 'parallelJoin',  label: '并行汇聚',   color: '#e6a23c' },
+-  { type: 'end',           label: '結束',       color: '#909399' },
++  { type: 'start',         label: '填單(发起)', color: '#67c23a' }, /* cp-chart-color */
++  { type: 'approval',      label: '審批',       color: '#409eff' }, /* cp-chart-color */
++  { type: 'parallelSplit', label: '并行分叉',   color: '#e6a23c' }, /* cp-chart-color */
++  { type: 'parallelJoin',  label: '并行汇聚',   color: '#e6a23c' }, /* cp-chart-color */
++  { type: 'end',           label: '結束',       color: '#909399' }, /* cp-chart-color */
+ ] as const
+ 
+ /** FlowSchema → Vue Flow 图（节点带 position + data 全字段；边 source/target + data 条件/CC）。 */
+ export function schemaToGraph(schema: FlowSchemaDto): { nodes: VFNode[]; edges: VFEdge[] } {
+   const nodes: VFNode[] = (schema.nodes ?? []).map((n, i) => ({
+     id: n.id,
+     type: n.type || 'approval',
+     position: { x: n.x ?? 80, y: n.y ?? i * 120 },        // 无坐标→竖排兜底
+     data: { ...n },
+     label: n.name || n.id,
+diff --git a/cp6.web/src/views/oa/notification/NotificationBell.vue b/cp6.web/src/views/oa/notification/NotificationBell.vue
+index 4b59f20..29dfb30 100644
+--- a/cp6.web/src/views/oa/notification/NotificationBell.vue
++++ b/cp6.web/src/views/oa/notification/NotificationBell.vue
+@@ -187,64 +187,64 @@ onUnmounted(() => {
+ })
+ </script>
+ 
+ <style scoped>
+ .bell-badge {
+   display: flex;
+   align-items: center;
+ }
+ .bell-btn {
+   padding: 4px 6px;
+-  color: #606266;
++  color: var(--cp-muted);
+ }
+ .bell-btn:hover {
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ 
+ /* Popover 内容 */
+ .notify-panel {
+   padding: 4px 0;
+   min-height: 80px;
+ }
+ .notify-panel-header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 0 4px;
+ }
+ .notify-panel-title {
+   font-weight: 600;
+   font-size: 14px;
+-  color: #303133;
++  color: var(--cp-ink);
+ }
+ 
+ /* 空状态 */
+ .notify-empty {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   padding: 24px 0;
+-  color: #909399;
++  color: var(--cp-muted);
+   font-size: 13px;
+   gap: 8px;
+ }
+ .notify-empty-icon {
+-  color: #dcdfe6;
++  color: var(--cp-faint);
+ }
+ 
+ /* 加载 */
+ .notify-loading {
+   display: flex;
+   justify-content: center;
+   padding: 24px 0;
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ .is-loading {
+   animation: rotating 1.5s linear infinite;
+ }
+ @keyframes rotating {
+   from { transform: rotate(0deg); }
+   to   { transform: rotate(360deg); }
+ }
+ 
+ /* 通知列表 */
+@@ -253,54 +253,54 @@ onUnmounted(() => {
+   margin: 0;
+   padding: 0;
+   max-height: 320px;
+   overflow-y: auto;
+ }
+ .notify-item {
+   display: flex;
+   align-items: flex-start;
+   gap: 8px;
+   padding: 10px 4px;
+-  border-radius: 6px;
++  border-radius: var(--cp-r-sm);
+   cursor: pointer;
+   transition: background 0.15s;
+ }
+ .notify-item:hover {
+-  background: #f5f7fa;
++  background: var(--cp-bg-hover);
+ }
+ .notify-item + .notify-item {
+-  border-top: 1px solid #f0f0f0;
++  border-top: 1px solid var(--cp-line-soft);
+ }
+ .notify-item.is-unread {
+-  background: #f0f7ff;
++  background: var(--cp-brand-bg);
+ }
+ .notify-item.is-unread:hover {
+-  background: #e8f3ff;
++  background: color-mix(in srgb, var(--cp-brand) 14%, var(--cp-card));
+ }
+ 
+ /* 未读小圆点 */
+ .notify-item-dot {
+   flex-shrink: 0;
+   width: 7px;
+   height: 7px;
+   border-radius: 50%;
+-  background: #409eff;
++  background: var(--cp-brand);
+   margin-top: 5px;
+ }
+ 
+ .notify-item-body {
+   flex: 1;
+   min-width: 0;
+ }
+ .notify-item-title {
+   font-size: 13px;
+-  color: #303133;
++  color: var(--cp-ink);
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+ }
+ .notify-item-time {
+   font-size: 11px;
+-  color: #909399;
++  color: var(--cp-muted);
+   margin-top: 2px;
+ }
+ </style>

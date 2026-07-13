@@ -1,0 +1,1028 @@
+# Review package: 7648b56..HEAD
+
+## Commits
+4f8c1b5 refactor(ui): WMS 迁移批次2——LotTrace/Replenish/InboundReceipt/Slotting/ProductionInbound
+
+## Files changed
+ cp6.web/src/views/wms/LotTraceView.vue          |  18 +-
+ cp6.web/src/views/wms/ProductionInboundView.vue |   7 +-
+ cp6.web/src/views/wms/ReplenishView.vue         | 321 ++++++++++++++----------
+ cp6.web/src/views/wms/SlottingView.vue          | 312 +++++++++++++----------
+ docs/superpowers/plans/2026-07-04-ui-restyle.md |  11 +
+ 5 files changed, 382 insertions(+), 287 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/wms/LotTraceView.vue b/cp6.web/src/views/wms/LotTraceView.vue
+index e03a092..1b8f3a0 100644
+--- a/cp6.web/src/views/wms/LotTraceView.vue
++++ b/cp6.web/src/views/wms/LotTraceView.vue
+@@ -32,36 +32,36 @@
+             </div>
+           </template>
+           <el-descriptions :column="4" size="small" border>
+             <el-descriptions-item :label="t('wms.common.product')">{{ summary.productCd }}</el-descriptions-item>
+             <el-descriptions-item :label="t('wms.common.lot')">{{ summary.lotNo }}</el-descriptions-item>
+             <el-descriptions-item :label="t('wms.stock.col.physical')">{{ formatQty(summary.totalPhysicalQty) }}</el-descriptions-item>
+             <el-descriptions-item :label="t('wms.stock.col.available')">{{ formatQty(summary.totalAvailableQty) }}</el-descriptions-item>
+             <el-descriptions-item :label="t('wms.lotTrace.summary.locationCount')">{{ summary.locationCount }}</el-descriptions-item>
+             <el-descriptions-item :label="t('wms.common.expiryDate')">{{ summary.expiryDate?.slice(0, 10) || '—' }}</el-descriptions-item>
+             <el-descriptions-item :label="t('wms.stock.flag.recall')">
+-              <el-tag v-if="summary.recallFlag" type="danger" size="small">{{ t('wms.lotTrace.summary.recalled') }}</el-tag>
++              <CpTag v-if="summary.recallFlag" tone="danger">{{ t('wms.lotTrace.summary.recalled') }}</CpTag>
+               <span v-else>—</span>
+             </el-descriptions-item>
+           </el-descriptions>
+         </el-card>
+       </el-col>
+     </el-row>
+ 
+     <el-row v-if="result" :gutter="12">
+       <!-- 影响 list（顾客 or 仕入先） -->
+       <el-col :span="10">
+         <el-card shadow="never">
+           <template #header>
+             <span style="font-weight: 600">
+               {{ direction === 'FORWARD' ? t('wms.lotTrace.affected.customers') : t('wms.lotTrace.affected.suppliers') }}
+-              <el-tag size="small" type="warning" style="margin-left: 8px">{{ affectedList.length }}</el-tag>
++              <CpTag tone="warn" style="margin-left: 8px">{{ affectedList.length }}</CpTag>
+             </span>
+           </template>
+           <el-empty v-if="affectedList.length === 0" :description="t('wms.lotTrace.affected.none')" />
+           <el-table v-else :data="affectedList" size="small" border max-height="500">
+             <el-table-column v-if="direction === 'FORWARD'" prop="customerCd" :label="t('wms.outbound.fld.customerCd')" width="100" />
+             <el-table-column v-if="direction === 'FORWARD'" prop="customerName" :label="t('wms.outbound.fld.customerName')" min-width="150" show-overflow-tooltip />
+             <el-table-column v-if="direction === 'FORWARD'" prop="outboundNo" :label="t('wms.outbound.fld.no')" width="180" />
+             <el-table-column v-if="direction === 'BACKWARD'" prop="supplierCd" :label="t('wms.inbound.fld.supplierCd')" width="100" />
+             <el-table-column v-if="direction === 'BACKWARD'" prop="supplierName" :label="t('wms.inbound.fld.supplierName')" min-width="150" show-overflow-tooltip />
+             <el-table-column v-if="direction === 'BACKWARD'" prop="inboundNo" :label="t('wms.receipt.title')" width="180" />
+@@ -74,71 +74,77 @@
+           </el-table>
+         </el-card>
+       </el-col>
+ 
+       <!-- 时序トランザクション -->
+       <el-col :span="14">
+         <el-card shadow="never">
+           <template #header>
+             <span style="font-weight: 600">
+               {{ t('wms.lotTrace.nodes.title') }}
+-              <el-tag size="small" style="margin-left: 8px">{{ result.nodes.length }}</el-tag>
++              <CpTag tone="muted" style="margin-left: 8px">{{ result.nodes.length }}</CpTag>
+             </span>
+           </template>
+           <el-empty v-if="result.nodes.length === 0" :description="t('wms.common.noSelection')" />
+           <el-timeline v-else>
+             <el-timeline-item v-for="n in result.nodes" :key="n.txnNo"
+                 :type="timelineTypeOf(n.txnType)" :timestamp="n.txnAt?.replace('T', ' ').slice(0, 19)">
+-              <el-tag :type="txnTagOf(n.txnType)" size="small">{{ n.txnType }}</el-tag>
++              <CpTag :tone="txnTone(n.txnType)">{{ n.txnType }}</CpTag>
+               <span style="margin-left: 8px">{{ n.warehouseCd }} - {{ n.locationCd }}</span>
+               <span :class="n.qty < 0 ? 'qty-out' : 'qty-in'" style="margin-left: 8px; font-weight: 600">
+                 {{ n.qty > 0 ? '+' : '' }}{{ formatQty(n.qty) }}
+               </span>
+-              <div v-if="n.relatedNo" style="color: #909399; font-size: 12px; margin-top: 4px">
++              <div v-if="n.relatedNo" style="color: var(--cp-muted); font-size: 12px; margin-top: 4px">
+                 [{{ n.relatedType }}] {{ n.relatedNo }}
+               </div>
+-              <div v-if="n.remark" style="color: #606266; font-size: 12px; margin-top: 4px">{{ n.remark }}</div>
++              <div v-if="n.remark" style="color: var(--cp-text); font-size: 12px; margin-top: 4px">{{ n.remark }}</div>
+             </el-timeline-item>
+           </el-timeline>
+         </el-card>
+       </el-col>
+     </el-row>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, computed } from 'vue'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { lotTraceApi } from '@/api/wms/lotTrace'
+ import type { LotTraceResult, LotStockSummary } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+ const productCd = ref('')
+ const lotNo = ref('')
+ const direction = ref<'FORWARD' | 'BACKWARD'>('FORWARD')
+ const loading = ref(false)
+ 
+ const result = ref<LotTraceResult | null>(null)
+ const summary = ref<LotStockSummary | null>(null)
+ 
+ const affectedList = computed<any[]>(() => {
+   if (!result.value) return []
+   return direction.value === 'FORWARD' ? result.value.affectedCustomers : result.value.affectedSuppliers
+ })
+ 
++// el-timeline-item :type 用 EP type（时间轴圆点色，el-timeline 为特殊组件保留）
+ function txnTagOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
+   return ({ IN: 'success', OUT: 'danger', RSV: 'warning', UNRSV: 'info', MOVE: 'primary', ADJ: 'info' } as const)[t as 'IN'] || 'info'
+ }
+ function timelineTypeOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' { return txnTagOf(t) }
++// CpTag 用共享 Tone（保色：success→ok / danger→danger / warning→warn / primary→info / info→muted）
++function txnTone(t: string): Tone {
++  return ({ IN: 'ok', OUT: 'danger', RSV: 'warn', UNRSV: 'muted', MOVE: 'info', ADJ: 'muted' } as const)[t as 'IN'] || 'muted'
++}
+ 
+ async function trace() {
+   if (!productCd.value || !lotNo.value) { ElMessage.warning(t('wms.common.required')); return }
+   loading.value = true
+   try {
+     const res = direction.value === 'FORWARD'
+       ? await lotTraceApi.forward(productCd.value, lotNo.value)
+       : await lotTraceApi.backward(productCd.value, lotNo.value)
+     result.value = res.data
+     // 同時に summary も取得
+diff --git a/cp6.web/src/views/wms/ProductionInboundView.vue b/cp6.web/src/views/wms/ProductionInboundView.vue
+index 0f71504..9ce6f4d 100644
+--- a/cp6.web/src/views/wms/ProductionInboundView.vue
++++ b/cp6.web/src/views/wms/ProductionInboundView.vue
+@@ -1,21 +1,21 @@
+ <template>
+   <div class="wms-prod-inbound">
+     <el-row :gutter="12">
+       <!-- 左：簡易入庫フォーム -->
+       <el-col :xs="24" :md="14">
+         <el-card shadow="never" class="big-card">
+           <template #header>
+             <div class="card-hd">
+               <el-icon><Box /></el-icon>
+               <span>{{ t('wms.prodIn.title') }}</span>
+-              <el-tag type="success" effect="dark" style="margin-left: auto">{{ t('wms.prodIn.sourceProduction') }}</el-tag>
++              <CpTag tone="ok" style="margin-left: auto">{{ t('wms.prodIn.sourceProduction') }}</CpTag>
+             </div>
+           </template>
+ 
+           <el-form :model="form" label-width="140px" size="large" @submit.prevent>
+             <!-- WO スキャン入力（フォーカス枠） -->
+             <el-form-item :label="t('wms.prodIn.fld.workOrder')">
+               <el-input
+                 ref="woInputRef" v-model="form.workOrderNo"
+                 :placeholder="t('wms.prodIn.msg.scanWO')"
+                 size="large" clearable
+@@ -47,21 +47,21 @@
+             <el-form-item :label="t('wms.prodIn.fld.quality')" required>
+               <el-radio-group v-model="form.quality" size="large">
+                 <el-radio-button value="GOOD">{{ t('wms.prodIn.quality.good') }}</el-radio-button>
+                 <el-radio-button value="DEFECTIVE">{{ t('wms.prodIn.quality.defective') }}</el-radio-button>
+               </el-radio-group>
+             </el-form-item>
+ 
+             <el-form-item :label="t('wms.common.warehouse')" required>
+               <el-input v-model="form.warehouseCd" size="large">
+                 <template #append>
+-                  <span style="color: #909399; font-size: 12px">{{ qualityWhHint }}</span>
++                  <span style="color: var(--cp-muted); font-size: 12px">{{ qualityWhHint }}</span>
+                 </template>
+               </el-input>
+             </el-form-item>
+ 
+             <el-form-item :label="t('wms.common.location')" required>
+               <el-input v-model="form.locationCd" size="large" />
+             </el-form-item>
+ 
+             <el-form-item :label="t('wms.common.expiryDate')">
+               <el-date-picker v-model="form.expiryDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" size="large" />
+@@ -101,20 +101,21 @@
+       </el-col>
+     </el-row>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, reactive, computed, nextTick, onMounted } from 'vue'
+ import { ElMessage } from 'element-plus'
+ import { Box, Aim, Check, List, Refresh } from '@element-plus/icons-vue'
+ import { useI18n } from 'vue-i18n'
++import CpTag from '@/components/base/CpTag.vue'
+ import { inboundReceiptApi } from '@/api/wms/inboundReceipt'
+ import type { InboundReceipt } from '@/types/wms/wms'
+ 
+ const { t } = useI18n()
+ const saving = ref(false)
+ const woInputRef = ref()
+ 
+ const form = reactive({
+   workOrderNo: '',
+   productCd: '',
+@@ -206,13 +207,13 @@ async function onConfirm() {
+ }
+ 
+ onMounted(() => {
+   reload()
+   nextTick(() => woInputRef.value?.focus())
+ })
+ </script>
+ 
+ <style scoped>
+ .wms-prod-inbound { padding: 16px; }
+-.big-card :deep(.el-card__header) { background: #f0f9ff; }
++.big-card :deep(.el-card__header) { background: var(--cp-brand-bg); }
+ .card-hd { display: flex; align-items: center; gap: 8px; }
+ </style>
+diff --git a/cp6.web/src/views/wms/ReplenishView.vue b/cp6.web/src/views/wms/ReplenishView.vue
+index aa43ea4..e4b9db3 100644
+--- a/cp6.web/src/views/wms/ReplenishView.vue
++++ b/cp6.web/src/views/wms/ReplenishView.vue
+@@ -1,195 +1,238 @@
++<!--
++  補充指示一覧 —— WMS 迁移批次2（CpListPage 消费者）。
++  结构：CpPageShell（标题 + 计数 pill）→ CpListPage（列/搜索/取数包装/行操作 col slot）＋ 两个 CpFormDialog（新規作成 / バッチ生成）。
++  码值列（状態/優先度/トリガ）走 ListColumn map + kind:'tag'（label 走 t() computed，tone 用共享 Tone）；
++  数量列用 map(formatQty)+kind:'num'；実行日時用 map 自定义 datetime 格式；操作列走 col-_action 具名插槽。
++  数据源 replenishApi.search 返回扁平数组无 total → fetch 包装内客户端分页；页内変更后用 listRef.reload() 就地刷新。
++-->
+ <template>
+-  <div class="wms-replenish">
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('wms.replenish.fld.no')"><el-input v-model="query.replenishNo" clearable style="width: 180px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.product')"><el-input v-model="query.productCd" clearable style="width: 140px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.warehouse')"><el-input v-model="query.warehouseCd" clearable style="width: 120px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.status')">
+-          <el-select v-model="query.status" clearable style="width: 130px">
+-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-          <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+-          <el-button type="warning" @click="batchDialog = true">{{ t('wms.replenish.btn.genBatch') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
+-
+-    <el-card shadow="never">
+-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row>
+-        <el-table-column prop="replenishNo" :label="t('wms.replenish.fld.no')" width="180" />
+-        <el-table-column :label="t('wms.common.status')" width="100">
+-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.replenish.fld.priority')" width="90">
+-          <template #default="{ row }">
+-            <el-tag :type="row.priority === 1 ? 'danger' : 'info'" size="small">{{ priorityMap[row.priority] }}</el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.replenish.fld.trigger')" width="100">
+-          <template #default="{ row }">
+-            <el-tag size="small" :type="row.triggerType === 'BATCH' ? 'success' : (row.triggerType === 'ALERT' ? 'warning' : 'info')">
+-              {{ triggerMap[row.triggerType] }}
+-            </el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="productCd" :label="t('wms.common.product')" width="120" />
+-        <el-table-column prop="fromLocationCd" :label="t('wms.replenish.fld.fromLoc')" width="140" />
+-        <el-table-column prop="toLocationCd" :label="t('wms.replenish.fld.toLoc')" width="140" />
+-        <el-table-column prop="lotNo" :label="t('wms.common.lot')" width="120" />
+-        <el-table-column prop="qty" :label="t('wms.common.qty')" width="100" align="right">
+-          <template #default="{ row }">{{ formatQty(row.qty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="executedAt" :label="t('wms.kit.fld.executedAt')" width="160">
+-          <template #default="{ row }">{{ row.executedAt?.replace('T', ' ').slice(0, 16) || '—' }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.common.action')" width="160" fixed="right">
+-          <template #default="{ row }">
+-            <el-button v-if="row.status === 0" link type="success" size="small" @click="onExecute(row)">{{ t('wms.kit.btn.execute') }}</el-button>
+-            <el-button v-if="row.status === 0" link type="danger" size="small" @click="onCancel(row)">{{ t('wms.outbound.btn.cancel') }}</el-button>
+-            <span v-else style="color: #909399">—</span>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
+-
+-    <el-dialog v-model="batchDialog" :title="t('wms.replenish.dlg.batch')" width="500">
+-      <el-form :model="batchForm" label-width="160px" size="small">
+-        <el-form-item :label="t('wms.common.warehouse')" required>
+-          <el-input v-model="batchForm.warehouseCd" maxlength="10" />
+-        </el-form-item>
+-        <el-form-item :label="t('wms.replenish.fld.minQty')">
+-          <el-input-number v-model="batchForm.minQty" :min="1" :precision="2" controls-position="right" />
+-        </el-form-item>
+-        <el-alert type="info" :closable="false" :title="t('wms.replenish.msg.batchHint')" />
+-      </el-form>
+-      <template #footer>
+-        <el-button @click="batchDialog = false">{{ t('wms.common.cancel') }}</el-button>
+-        <el-button type="primary" @click="onGenerateBatch" :loading="saving">{{ t('wms.replenish.btn.genBatch') }}</el-button>
+-      </template>
+-    </el-dialog>
+-
+-    <el-dialog v-model="dialogVisible" :title="t('wms.replenish.dlg.create')" width="500">
+-      <el-form v-if="editing" :model="editing" label-width="160px" size="small">
+-        <el-form-item :label="t('wms.replenish.fld.priority')">
+-          <el-select v-model="editing.priority"><el-option :label="t('wms.replenish.priority.urgent')" :value="1" /><el-option :label="t('wms.replenish.priority.normal')" :value="2" /></el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('wms.common.product')" required><el-input v-model="editing.productCd" maxlength="20" /></el-form-item>
+-        <el-form-item :label="t('wms.common.warehouse')" required><el-input v-model="editing.warehouseCd" maxlength="10" /></el-form-item>
+-        <el-form-item :label="t('wms.replenish.fld.fromLoc')" required><el-input v-model="editing.fromLocationCd" placeholder="RES-A-01" maxlength="30" /></el-form-item>
+-        <el-form-item :label="t('wms.replenish.fld.toLoc')" required><el-input v-model="editing.toLocationCd" placeholder="PIK-A-01" maxlength="30" /></el-form-item>
+-        <el-form-item :label="t('wms.common.lot')"><el-input v-model="editing.lotNo" maxlength="30" /></el-form-item>
+-        <el-form-item :label="t('wms.common.qty')" required>
+-          <el-input-number v-model="editing.qty" :min="0" :precision="2" controls-position="right" style="width: 100%" />
+-        </el-form-item>
+-      </el-form>
+-      <template #footer>
+-        <el-button @click="dialogVisible = false">{{ t('wms.common.cancel') }}</el-button>
+-        <el-button type="primary" @click="onSave" :loading="saving">{{ t('wms.common.save') }}</el-button>
++  <CpPageShell :title="t('wms.replenish.title')" :count="total">
++    <template #actions>
++      <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
++      <el-button type="warning" @click="batchDialog = true">{{ t('wms.replenish.btn.genBatch') }}</el-button>
++    </template>
++
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      @total-change="total = $event"
++    >
++      <template #col-_action="{ row }">
++        <template v-if="row.status === 0">
++          <el-button link type="success" size="small" @click="onExecute(row)">{{ t('wms.kit.btn.execute') }}</el-button>
++          <el-button link type="danger" size="small" @click="onCancel(row)">{{ t('wms.outbound.btn.cancel') }}</el-button>
++        </template>
++        <span v-else class="cp-dash">—</span>
+       </template>
+-    </el-dialog>
+-  </div>
++    </CpListPage>
++
++    <!-- 新規作成 -->
++    <CpFormDialog
++      v-model="dialogVisible"
++      :title="t('wms.replenish.dlg.create')"
++      width="500"
++      :form="createForm"
++      :rules="createRules"
++      :submit="submitCreate"
++      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
++      @saved="onReload"
++    >
++      <el-form-item :label="t('wms.replenish.fld.priority')" prop="priority">
++        <el-select v-model="createForm.priority">
++          <el-option :label="t('wms.replenish.priority.urgent')" :value="1" />
++          <el-option :label="t('wms.replenish.priority.normal')" :value="2" />
++        </el-select>
++      </el-form-item>
++      <el-form-item :label="t('wms.common.product')" prop="productCd">
++        <el-input v-model="createForm.productCd" maxlength="20" />
++      </el-form-item>
++      <el-form-item :label="t('wms.common.warehouse')" prop="warehouseCd">
++        <el-input v-model="createForm.warehouseCd" maxlength="10" />
++      </el-form-item>
++      <el-form-item :label="t('wms.replenish.fld.fromLoc')" prop="fromLocationCd">
++        <el-input v-model="createForm.fromLocationCd" placeholder="RES-A-01" maxlength="30" />
++      </el-form-item>
++      <el-form-item :label="t('wms.replenish.fld.toLoc')" prop="toLocationCd">
++        <el-input v-model="createForm.toLocationCd" placeholder="PIK-A-01" maxlength="30" />
++      </el-form-item>
++      <el-form-item :label="t('wms.common.lot')" prop="lotNo">
++        <el-input v-model="createForm.lotNo" maxlength="30" />
++      </el-form-item>
++      <el-form-item :label="t('wms.common.qty')" prop="qty">
++        <el-input-number v-model="createForm.qty" :min="0" :precision="2" controls-position="right" style="width: 100%" />
++      </el-form-item>
++    </CpFormDialog>
++
++    <!-- バッチ生成 -->
++    <CpFormDialog
++      v-model="batchDialog"
++      :title="t('wms.replenish.dlg.batch')"
++      width="500"
++      :form="batchForm"
++      :rules="batchRules"
++      :submit="submitBatch"
++      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.replenish.btn.genBatch') }"
++      @saved="onReload"
++    >
++      <el-form-item :label="t('wms.common.warehouse')" prop="warehouseCd">
++        <el-input v-model="batchForm.warehouseCd" maxlength="10" />
++      </el-form-item>
++      <el-form-item :label="t('wms.replenish.fld.minQty')" prop="minQty">
++        <el-input-number v-model="batchForm.minQty" :min="1" :precision="2" controls-position="right" />
++      </el-form-item>
++      <el-alert type="info" :closable="false" :title="t('wms.replenish.msg.batchHint')" />
++    </CpFormDialog>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, computed, onMounted } from 'vue'
+-import { ElMessage, ElMessageBox } from 'element-plus'
++import { ref, reactive, computed } from 'vue'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import { type Tone } from '@/components/base/CpTag.vue'
+ import { replenishApi } from '@/api/wms/logistics'
+ import type { ReplenishOrder, ReplenishSearchQuery } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+-const query = reactive<ReplenishSearchQuery>({ pageSize: 100 })
+-const rows = ref<ReplenishOrder[]>([])
+-const loading = ref(false)
+-const dialogVisible = ref(false)
+-const batchDialog = ref(false)
+-const editing = ref<ReplenishOrder | null>(null)
+-const batchForm = reactive({ warehouseCd: '', minQty: 10 })
+-const saving = ref(false)
+ 
++// —— 头部计数 pill ——
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage>>()
++function onReload() { listRef.value?.reload() }
++
++// —— 码值映射（i18n 反应式） ——
+ const statusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.replenish.status.pending'),
+   1: t('wms.replenish.status.executed'),
+   9: t('wms.replenish.status.cancelled'),
+ }))
+ const priorityMap = computed<Record<number, string>>(() => ({
+   1: t('wms.replenish.priority.urgent'),
+   2: t('wms.replenish.priority.normal'),
+ }))
+ const triggerMap = computed<Record<string, string>>(() => ({
+   BATCH: t('wms.replenish.trigger.batch'),
+   MANUAL: t('wms.replenish.trigger.manual'),
+   ALERT: t('wms.replenish.trigger.alert'),
+ }))
+ 
+-function statusTagOf(s: number): 'info' | 'success' | 'danger' {
+-  return ({ 0: 'info', 1: 'success', 9: 'danger' } as const)[s as 0] || 'info'
++// —— EP type → 共享 Tone（保色：info→muted / success→ok / danger→danger / warning→warn） ——
++function statusTone(s: number): Tone {
++  return ({ 0: 'muted', 1: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
++}
++function triggerTone(v: string): Tone {
++  return v === 'BATCH' ? 'ok' : v === 'ALERT' ? 'warn' : 'muted'
+ }
++function codeLabel(m: Record<string, string> | Record<number, string>, v: unknown): string {
++  return (m as Record<string, string>)[String(v)] || (v == null ? '' : String(v))
++}
++
++// —— 列定义 ——
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'replenishNo', label: t('wms.replenish.fld.no'), kind: 'mono', width: 180 },
++  { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
++    map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
++  { prop: 'priority', label: t('wms.replenish.fld.priority'), width: 90, kind: 'tag',
++    map: (v) => ({ label: codeLabel(priorityMap.value, v), tone: v === 1 ? 'danger' : 'muted' }) },
++  { prop: 'triggerType', label: t('wms.replenish.fld.trigger'), width: 100, kind: 'tag',
++    map: (v) => ({ label: codeLabel(triggerMap.value, v), tone: triggerTone(v as string) }) },
++  { prop: 'productCd', label: t('wms.common.product'), width: 120 },
++  { prop: 'fromLocationCd', label: t('wms.replenish.fld.fromLoc'), width: 140 },
++  { prop: 'toLocationCd', label: t('wms.replenish.fld.toLoc'), width: 140 },
++  { prop: 'lotNo', label: t('wms.common.lot'), width: 120 },
++  { prop: 'qty', label: t('wms.common.qty'), width: 100, kind: 'num', map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), width: 160,
++    map: (v) => ({ label: v ? String(v).replace('T', ' ').slice(0, 16) : '—' }) },
++  { prop: '_action', label: t('wms.common.action'), width: 160, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({ search: t('wms.common.search'), reset: t('wms.common.clear') }))
+ 
+-async function reload() {
+-  loading.value = true
+-  try { rows.value = (await replenishApi.search(query)).data || [] }
+-  finally { loading.value = false }
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'replenishNo', label: t('wms.replenish.fld.no'), type: 'text' },
++  { key: 'productCd', label: t('wms.common.product'), type: 'text' },
++  { key: 'warehouseCd', label: t('wms.common.warehouse'), type: 'text' },
++  {
++    key: 'status', label: t('wms.common.status'), type: 'select',
++    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++])
++
++// —— 取数：包装 replenishApi.search；扁平数组无 total → 客户端分页 ——
++const PAGE_CAP = 500
++const fetchList: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const q: ReplenishSearchQuery = { pageSize: PAGE_CAP }
++  if (f.replenishNo) q.replenishNo = String(f.replenishNo)
++  if (f.productCd) q.productCd = String(f.productCd)
++  if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
++  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
++  const res = await replenishApi.search(q)
++  const all = res.data || []
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
++// —— 新規作成弹窗 ——
++const dialogVisible = ref(false)
++const createForm = reactive({
++  priority: 2, productCd: '', warehouseCd: '', fromLocationCd: '', toLocationCd: '', lotNo: '', qty: 0,
++})
++const createRules = computed<FormRules>(() => ({
++  productCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++  warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++  fromLocationCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++  toLocationCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++  qty: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
++}))
+ function openCreate() {
+-  editing.value = {
+-    priority: 2, productCd: '', warehouseCd: '',
+-    fromLocationCd: '', toLocationCd: '', lotNo: '', qty: 0,
+-    triggerType: 'MANUAL', status: 0,
+-  }
++  Object.assign(createForm, { priority: 2, productCd: '', warehouseCd: '', fromLocationCd: '', toLocationCd: '', lotNo: '', qty: 0 })
+   dialogVisible.value = true
+ }
+-
+-async function onSave() {
+-  if (!editing.value) return
+-  saving.value = true
+-  try {
+-    const res = await replenishApi.create(editing.value)
+-    ElMessage.success(`${t('wms.common.success')}: ${res.data.replenishNo}`)
+-    dialogVisible.value = false
+-    await reload()
+-  } finally { saving.value = false }
++async function submitCreate() {
++  const dto: ReplenishOrder = { ...createForm, triggerType: 'MANUAL', status: 0 }
++  const res = await replenishApi.create(dto)
++  ElMessage.success(`${t('wms.common.success')}: ${res.data.replenishNo}`)
+ }
+ 
+-async function onGenerateBatch() {
+-  if (!batchForm.warehouseCd) { ElMessage.warning(t('wms.common.required')); return }
+-  saving.value = true
+-  try {
+-    const res = await replenishApi.generateBatch(batchForm.warehouseCd, batchForm.minQty)
+-    ElMessage.success(t('wms.replenish.msg.batchGen', { n: res.data.generated }))
+-    batchDialog.value = false
+-    await reload()
+-  } finally { saving.value = false }
++// —— バッチ生成弹窗 ——
++const batchDialog = ref(false)
++const batchForm = reactive({ warehouseCd: '', minQty: 10 })
++const batchRules = computed<FormRules>(() => ({
++  warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++}))
++async function submitBatch() {
++  const res = await replenishApi.generateBatch(batchForm.warehouseCd, batchForm.minQty)
++  ElMessage.success(t('wms.replenish.msg.batchGen', { n: res.data.generated }))
+ }
+ 
++// —— 行操作 ——
+ async function onExecute(row: ReplenishOrder) {
+   try {
+     await ElMessageBox.confirm(t('wms.replenish.msg.executeAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await replenishApi.execute(row.replenishNo!)
+     ElMessage.success(t('wms.common.success'))
+-    await reload()
++    onReload()
+   } catch { /* */ }
+ }
+-
+ async function onCancel(row: ReplenishOrder) {
+   try {
+     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await replenishApi.cancel(row.replenishNo!)
+     ElMessage.success(t('wms.common.success'))
+-    await reload()
++    onReload()
+   } catch { /* */ }
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+-.wms-replenish { padding: 16px; }
+-.search-card { margin-bottom: 12px; }
++.cp-dash { color: var(--cp-muted); }
+ </style>
+diff --git a/cp6.web/src/views/wms/SlottingView.vue b/cp6.web/src/views/wms/SlottingView.vue
+index f538624..d653e1a 100644
+--- a/cp6.web/src/views/wms/SlottingView.vue
++++ b/cp6.web/src/views/wms/SlottingView.vue
+@@ -1,206 +1,240 @@
++<!--
++  スロッティング計画 —— WMS 迁移批次2。一覧/明细双态同一组件：
++  一覧态 → CpPageShell + CpListPage（状態 tag map / 数字列 num / 実行日時 map；操作 col slot 開く）；分析用 CpFormDialog（default slot）。
++  明细态 → CpDetailPanel（基本情報）＋ 推薦 el-table（特殊子表：ABCランク/要移動 用 CpTag，保留 el-table 承载静态推薦数据）＋ el-affix 操作条。
++  CpListPage 用 v-show 常挂（切明细不卸载），保留筛选/页码上下文；模式与原页 mode ref 一致，功能零丢失。
++-->
+ <template>
+-  <div class="wms-slotting">
+-    <el-card v-if="mode === 'list'" shadow="never" class="search-card">
+-      <el-form inline size="small">
+-        <el-form-item :label="t('wms.common.warehouse')"><el-input v-model="filterWh" clearable style="width: 140px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.status')">
+-          <el-select v-model="filterStatus" clearable style="width: 130px">
+-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-          <el-button @click="analyzeDialog = true">{{ t('wms.slotting.btn.analyze') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
+-
+-    <el-card v-if="mode === 'list'" shadow="never">
+-      <el-table :data="plans" border stripe size="small" max-height="600" highlight-current-row>
+-        <el-table-column prop="slottingPlanNo" :label="t('wms.slotting.fld.no')" width="200" />
+-        <el-table-column :label="t('wms.common.status')" width="120">
+-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
+-        </el-table-column>
+-        <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="100" />
+-        <el-table-column prop="analysisDays" :label="t('wms.slotting.fld.analysisDays')" width="130" align="right" />
+-        <el-table-column prop="txnSampleCount" :label="t('wms.slotting.fld.sampleCount')" width="130" align="right" />
+-        <el-table-column prop="recommendationCount" :label="t('wms.slotting.fld.recCount')" width="130" align="right" />
+-        <el-table-column prop="analyzedAt" :label="t('wms.slotting.fld.analyzedAt')" width="160">
+-          <template #default="{ row }">{{ row.analyzedAt?.replace('T', ' ').slice(0, 16) || '—' }}</template>
+-        </el-table-column>
+-        <el-table-column prop="approverCd" :label="t('wms.stocktake.fld.approver')" width="120" />
+-        <el-table-column :label="t('wms.common.action')" width="100" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="openDetail(row.slottingPlanNo)">{{ t('wms.common.open') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
++  <CpPageShell :title="t('wms.slotting.title')" :count="mode === 'list' ? total : undefined">
++    <template #actions>
++      <el-button v-if="mode === 'list'" @click="analyzeDialog = true">{{ t('wms.slotting.btn.analyze') }}</el-button>
++      <el-button v-else @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
++    </template>
+ 
+-    <template v-if="mode === 'detail' && currentResult">
+-      <el-card shadow="never">
+-        <template #header>
+-          <div style="display: flex; align-items: center; gap: 12px">
+-            <span style="font-weight: 600">{{ t('wms.slotting.title') }} [{{ currentResult.plan.slottingPlanNo }}]</span>
+-            <el-tag :type="statusTagOf(currentResult.plan.status)" size="small">{{ statusMap[currentResult.plan.status] }}</el-tag>
+-          </div>
+-        </template>
+-        <el-descriptions :column="4" size="small" border>
+-          <el-descriptions-item :label="t('wms.common.warehouse')">{{ currentResult.plan.warehouseCd }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.slotting.fld.analysisDays')">{{ currentResult.plan.analysisDays }} {{ t('wms.slotting.unit.day') }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.slotting.fld.sampleCount')">{{ currentResult.plan.txnSampleCount }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.slotting.fld.recCount')">{{ currentResult.plan.recommendationCount }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.slotting.fld.analyzedAt')">{{ currentResult.plan.analyzedAt?.replace('T', ' ').slice(0, 16) }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.stocktake.fld.approver')">{{ currentResult.plan.approverCd || '—' }}</el-descriptions-item>
+-        </el-descriptions>
+-      </el-card>
+-
+-      <el-card shadow="never" style="margin-top: 12px">
+-        <template #header>
+-          <div style="display: flex; justify-content: space-between; align-items: center">
+-            <span style="font-weight: 600">
+-              {{ t('wms.slotting.rec.title') }}
+-              <el-tag type="warning" size="small" style="margin-left: 8px">
+-                {{ t('wms.slotting.rec.needsMove') }}: {{ relocCount }}
+-              </el-tag>
+-            </span>
+-          </div>
++    <!-- 一覧态（常挂，切明细用 v-show 隐藏以保留筛选上下文） -->
++    <div v-show="mode === 'list'">
++      <CpListPage
++        ref="listRef"
++        :columns="columns"
++        :fetch="fetchList"
++        :search-fields="searchFields"
++        :filter-labels="filterLabels"
++        @total-change="total = $event"
++      >
++        <template #col-_action="{ row }">
++          <el-button link type="primary" size="small" @click="openDetail(row.slottingPlanNo)">{{ t('wms.common.open') }}</el-button>
+         </template>
+-        <el-table :data="currentResult.recommendations" border size="small" stripe max-height="500">
+-          <el-table-column type="index" :label="t('wms.common.line')" width="50" align="center" />
+-          <el-table-column :label="t('wms.slotting.rec.rank')" width="80" align="center">
+-            <template #default="{ row }">
+-              <el-tag :type="rankTagOf(row.abcRank)" size="small">{{ row.abcRank }}</el-tag>
+-            </template>
+-          </el-table-column>
+-          <el-table-column prop="productCd" :label="t('wms.common.product')" min-width="140" />
+-          <el-table-column prop="outCount" :label="t('wms.slotting.rec.outCount')" width="100" align="right" />
+-          <el-table-column prop="outQty" :label="t('wms.slotting.rec.outQty')" width="120" align="right">
+-            <template #default="{ row }">{{ formatQty(row.outQty) }}</template>
+-          </el-table-column>
+-          <el-table-column prop="currentLocationCd" :label="t('wms.slotting.rec.currentLoc')" width="180" />
+-          <el-table-column prop="recommendedLocationPattern" :label="t('wms.slotting.rec.recPattern')" width="180" />
+-          <el-table-column :label="t('wms.slotting.rec.needsMove')" width="110" align="center">
+-            <template #default="{ row }">
+-              <el-tag v-if="row.needsRelocation" type="warning" size="small">{{ t('wms.common.confirm') }}</el-tag>
+-              <span v-else style="color: #909399">—</span>
+-            </template>
+-          </el-table-column>
+-        </el-table>
+-      </el-card>
++      </CpListPage>
++    </div>
++
++    <!-- 明细态 -->
++    <template v-if="mode === 'detail' && currentResult">
++      <div class="cp-card">
++        <CpSectionHeader :title="`${t('wms.slotting.title')} [${currentResult.plan.slottingPlanNo}]`">
++          <template #extra>
++            <CpTag :tone="statusTone(currentResult.plan.status)">{{ codeLabel(statusMap, currentResult.plan.status) }}</CpTag>
++          </template>
++        </CpSectionHeader>
++        <div class="cp-card-body">
++          <CpDetailPanel :cols="4" :items="planItems" />
++        </div>
++      </div>
++
++      <div class="cp-card">
++        <CpSectionHeader :title="t('wms.slotting.rec.title')">
++          <template #extra>
++            <CpTag tone="warn">{{ t('wms.slotting.rec.needsMove') }}: {{ relocCount }}</CpTag>
++          </template>
++        </CpSectionHeader>
++        <div class="cp-card-body">
++          <el-table :data="currentResult.recommendations" border size="small" stripe max-height="500">
++            <el-table-column type="index" :label="t('wms.common.line')" width="50" align="center" />
++            <el-table-column :label="t('wms.slotting.rec.rank')" width="80" align="center">
++              <template #default="{ row }"><CpTag :tone="rankTone(row.abcRank)">{{ row.abcRank }}</CpTag></template>
++            </el-table-column>
++            <el-table-column prop="productCd" :label="t('wms.common.product')" min-width="140" />
++            <el-table-column prop="outCount" :label="t('wms.slotting.rec.outCount')" width="100" align="right" />
++            <el-table-column prop="outQty" :label="t('wms.slotting.rec.outQty')" width="120" align="right">
++              <template #default="{ row }">{{ formatQty(row.outQty) }}</template>
++            </el-table-column>
++            <el-table-column prop="currentLocationCd" :label="t('wms.slotting.rec.currentLoc')" width="180" />
++            <el-table-column prop="recommendedLocationPattern" :label="t('wms.slotting.rec.recPattern')" width="180" />
++            <el-table-column :label="t('wms.slotting.rec.needsMove')" width="110" align="center">
++              <template #default="{ row }">
++                <CpTag v-if="row.needsRelocation" tone="warn">{{ t('wms.common.confirm') }}</CpTag>
++                <span v-else class="cp-dash">—</span>
++              </template>
++            </el-table-column>
++          </el-table>
++        </div>
++      </div>
+ 
+       <el-affix position="bottom" :offset="0">
+         <div class="action-bar">
+           <el-button @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
+           <el-button v-if="currentResult.plan.status === 1" type="success" @click="onApprove">{{ t('wms.stocktake.btn.approve') }}</el-button>
+           <el-button v-if="currentResult.plan.status !== 9 && currentResult.plan.status !== 2" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+         </div>
+       </el-affix>
+     </template>
+ 
+-    <el-dialog v-model="analyzeDialog" :title="t('wms.slotting.btn.analyze')" width="500">
+-      <el-form :model="analyzeForm" label-width="160px" size="small">
+-        <el-form-item :label="t('wms.common.warehouse')" required>
+-          <el-input v-model="analyzeForm.warehouseCd" maxlength="10" />
+-        </el-form-item>
+-        <el-form-item :label="t('wms.slotting.fld.analysisDays')">
+-          <el-input-number v-model="analyzeForm.analysisDays" :min="1" :max="365" controls-position="right" />
+-        </el-form-item>
+-        <el-alert type="info" :closable="false" :title="t('wms.slotting.msg.analyzeHint')" />
+-      </el-form>
+-      <template #footer>
+-        <el-button @click="analyzeDialog = false">{{ t('wms.common.cancel') }}</el-button>
+-        <el-button type="primary" @click="onAnalyze" :loading="saving">{{ t('wms.slotting.btn.analyze') }}</el-button>
+-      </template>
+-    </el-dialog>
+-  </div>
++    <!-- 分析 -->
++    <CpFormDialog
++      v-model="analyzeDialog"
++      :title="t('wms.slotting.btn.analyze')"
++      width="500"
++      :form="analyzeForm"
++      :rules="analyzeRules"
++      :submit="submitAnalyze"
++      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.slotting.btn.analyze') }"
++    >
++      <el-form-item :label="t('wms.common.warehouse')" prop="warehouseCd">
++        <el-input v-model="analyzeForm.warehouseCd" maxlength="10" />
++      </el-form-item>
++      <el-form-item :label="t('wms.slotting.fld.analysisDays')" prop="analysisDays">
++        <el-input-number v-model="analyzeForm.analysisDays" :min="1" :max="365" controls-position="right" />
++      </el-form-item>
++      <el-alert type="info" :closable="false" :title="t('wms.slotting.msg.analyzeHint')" />
++    </CpFormDialog>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, computed, onMounted } from 'vue'
+-import { ElMessage, ElMessageBox } from 'element-plus'
++import { ref, reactive, computed } from 'vue'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import CpDetailPanel, { type DetailItem } from '@/components/templates/CpDetailPanel.vue'
++import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { slottingApi } from '@/api/wms/logistics'
+-import type { SlottingPlan, SlottingPlanResult } from '@/types/wms/wms'
++import type { SlottingPlanResult } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ const mode = ref<'list' | 'detail'>('list')
+-const filterWh = ref('')
+-const filterStatus = ref<number | undefined>()
+-const plans = ref<SlottingPlan[]>([])
+-const loading = ref(false)
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage>>()
+ const currentResult = ref<SlottingPlanResult | null>(null)
+-const analyzeDialog = ref(false)
+-const analyzeForm = reactive({ warehouseCd: '', analysisDays: 90 })
+-const saving = ref(false)
+ 
++// —— 码值映射 ——
+ const statusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.slotting.status.analyzing'),
+   1: t('wms.slotting.status.recommended'),
+   2: t('wms.slotting.status.approved'),
+   9: t('wms.slotting.status.cancelled'),
+ }))
++function statusTone(s: number): Tone {
++  return ({ 0: 'muted', 1: 'info', 2: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
++}
++function rankTone(r: string): Tone {
++  return ({ A: 'ok', B: 'warn', C: 'muted' } as const)[r as 'A'] || 'muted'
++}
++function codeLabel(m: Record<number, string>, v: unknown): string {
++  return m[v as number] || (v == null ? '' : String(v))
++}
+ 
+ const relocCount = computed(() =>
+   currentResult.value?.recommendations.filter(r => r.needsRelocation).length || 0)
+ 
+-function statusTagOf(s: number): 'info' | 'primary' | 'success' | 'danger' {
+-  return ({ 0: 'info', 1: 'primary', 2: 'success', 9: 'danger' } as const)[s as 0] || 'info'
+-}
+-function rankTagOf(r: string): 'success' | 'warning' | 'info' {
+-  return ({ A: 'success', B: 'warning', C: 'info' } as const)[r as 'A'] || 'info'
+-}
+-
+-async function reload() {
+-  loading.value = true
+-  try { plans.value = (await slottingApi.search(filterWh.value || undefined, filterStatus.value)).data || [] }
+-  finally { loading.value = false }
++// —— 明细基本情報（CpDetailPanel） ——
++const planItems = computed<DetailItem[]>(() => {
++  const p = currentResult.value?.plan
++  if (!p) return []
++  return [
++    { label: t('wms.common.warehouse'), value: p.warehouseCd },
++    { label: t('wms.slotting.fld.analysisDays'), value: `${p.analysisDays} ${t('wms.slotting.unit.day')}` },
++    { label: t('wms.slotting.fld.sampleCount'), value: p.txnSampleCount, kind: 'num' },
++    { label: t('wms.slotting.fld.recCount'), value: p.recommendationCount, kind: 'num' },
++    { label: t('wms.slotting.fld.analyzedAt'), value: p.analyzedAt ? String(p.analyzedAt).replace('T', ' ').slice(0, 16) : '—' },
++    { label: t('wms.stocktake.fld.approver'), value: p.approverCd || '—' },
++  ]
++})
++
++// —— 一覧列 ——
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'slottingPlanNo', label: t('wms.slotting.fld.no'), kind: 'mono', width: 200 },
++  { prop: 'status', label: t('wms.common.status'), width: 120, kind: 'tag',
++    map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
++  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 100 },
++  { prop: 'analysisDays', label: t('wms.slotting.fld.analysisDays'), width: 130, kind: 'num' },
++  { prop: 'txnSampleCount', label: t('wms.slotting.fld.sampleCount'), width: 130, kind: 'num' },
++  { prop: 'recommendationCount', label: t('wms.slotting.fld.recCount'), width: 130, kind: 'num' },
++  { prop: 'analyzedAt', label: t('wms.slotting.fld.analyzedAt'), width: 160,
++    map: (v) => ({ label: v ? String(v).replace('T', ' ').slice(0, 16) : '—' }) },
++  { prop: 'approverCd', label: t('wms.stocktake.fld.approver'), width: 120 },
++  { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({ search: t('wms.common.search'), reset: t('wms.common.clear') }))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'warehouseCd', label: t('wms.common.warehouse'), type: 'text' },
++  {
++    key: 'status', label: t('wms.common.status'), type: 'select',
++    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++])
++
++// —— 取数：slottingApi.search(wh, status) 返回扁平数组无 total → 客户端分页 ——
++const fetchList: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const wh = f.warehouseCd ? String(f.warehouseCd) : undefined
++  const status = f.status !== undefined && f.status !== '' ? Number(f.status) : undefined
++  const res = await slottingApi.search(wh, status)
++  const all = res.data || []
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
+ async function openDetail(no: string) {
+   const res = await slottingApi.get(no)
+   currentResult.value = res.data
+   mode.value = 'detail'
+ }
+ 
+-async function onAnalyze() {
+-  if (!analyzeForm.warehouseCd) { ElMessage.warning(t('wms.common.required')); return }
+-  saving.value = true
+-  try {
+-    const res = await slottingApi.analyze(analyzeForm.warehouseCd, analyzeForm.analysisDays)
+-    ElMessage.success(`${t('wms.common.success')}: ${res.data.slottingPlanNo}`)
+-    analyzeDialog.value = false
+-    await openDetail(res.data.slottingPlanNo)
+-  } finally { saving.value = false }
++// —— 分析弹窗 ——
++const analyzeDialog = ref(false)
++const analyzeForm = reactive({ warehouseCd: '', analysisDays: 90 })
++const analyzeRules = computed<FormRules>(() => ({
++  warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
++}))
++async function submitAnalyze() {
++  const res = await slottingApi.analyze(analyzeForm.warehouseCd, analyzeForm.analysisDays)
++  ElMessage.success(`${t('wms.common.success')}: ${res.data.slottingPlanNo}`)
++  await openDetail(res.data.slottingPlanNo)
+ }
+ 
++// —— 明细操作 ——
+ async function onApprove() {
+   if (!currentResult.value) return
+   try {
+     await ElMessageBox.confirm(t('wms.slotting.msg.approveAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await slottingApi.approve(currentResult.value.plan.slottingPlanNo)
+     ElMessage.success(t('wms.common.success'))
+     await openDetail(currentResult.value.plan.slottingPlanNo)
+   } catch { /* */ }
+ }
+-
+ async function onCancel() {
+   if (!currentResult.value) return
+   try {
+     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await slottingApi.cancel(currentResult.value.plan.slottingPlanNo)
+     ElMessage.success(t('wms.common.success'))
+     await openDetail(currentResult.value.plan.slottingPlanNo)
+   } catch { /* */ }
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+-.wms-slotting { padding: 16px; padding-bottom: 60px; }
+-.search-card { margin-bottom: 12px; }
+-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
++.wms-slotting { padding: 16px; }
++/* 卡片壳（复用设计系统卡片 token；非硬编码） */
++.cp-card { background: var(--cp-card); border-radius: var(--cp-r-md); box-shadow: var(--cp-shadow-1); overflow: hidden; }
++.cp-card-body { padding: 16px 20px; }
++.cp-dash { color: var(--cp-muted); }
++.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line); padding: 12px 16px; text-align: right; }
+ .action-bar > * { margin-left: 8px; }
+ </style>
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index e564393..dbbb721 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -620,20 +620,31 @@ describe('CpListPage', () => {
+     - 代偿：父级持 `reloadKey` ref，`:key="reloadKey"` 绑定 CpListPage，变更成功后 `reloadKey++` 强制重挂载重查。**副作用**：重挂载会把 CpListPage 内部 `filters`（重置为 `{}`）与 `page`（重置为 1）清空 → 用户当前搜索/翻页上下文丢失（Warehouse 编辑后列表回到未筛选首页最明显）。数据正确性优先，故采用；记为已知降级。
+     - 建议：CpListPage `defineExpose({ reload })`（父级 `ref` 命令式刷新，保留 filters/page），或增 `refreshKey?: number` prop 内部 `watch` 触发 `load()`（不重置状态）。这是本批最值得回填的契约扩展。
+ 
+ 13. **FilterField 无单日期 `date` 类型**（Minor，批次1评审补记）—— ✅ 已实现（契约扩展二轮 commit）：FilterField 增 `type:'date'`（单日 el-date-picker 透传，配 valueFormat 用）；InboundOrderList「予定入荷 从/至」已拆回两个独立字段，单侧开区间查询恢复。
+     - 现象：InboundOrderList 原「予定入荷 从/至」为两个**独立**单日期 `el-date-picker`（可只填一侧做开区间查询）。FilterField 仅 text/select/daterange，被并成一个 daterange —— 单侧开区间查询能力丢失（daterange 必须成对选起止）。
+     - 代偿：合并为 daterange（documented compensation，见批次1报告盘点）；fetch 内拆回 arrivalFrom/arrivalTo。
+     - 建议：FilterField 增 `type:'date'`（单日 el-date-picker 透传），恢复独立起/止字段形态。
+ 
+ （注：所有页 CpFilterBar `expand/collapse` 仍留组件内中文默认「展开更多/收起」、CpEmpty 空态仍为中文「暂无数据」——沿用 Task 11 试点约定，属 follow-up #6，非本批新增。）
+ 
++### WMS 迁移批次2 复盘（编号接续，从 #14 起）
++
++批次2（LotTrace/Replenish/InboundReceipt/Slotting/ProductionInbound）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：Replenish=查询列表页（CpListPage+2×CpFormDialog）；Slotting=一覧/明细双态同组件（CpListPage v-show 常挂 + CpDetailPanel + 分析 CpFormDialog）；LotTrace/ProductionInbound/InboundReceipt=非表格特殊页（token 化 + 基础件替换）。以下为唯一新增缺口：
++
++14. **CpDetailPanel 的 tag 值无 tone 映射（不支持 ListColumn.map 式码值→tone）**（Minor）
++    - 现象：Slotting 明细「基本情報」用 CpDetailPanel 铺 6 项；其中「状態」是数字码需 码→文案 + 码→tone 两步映射。CpDetailPanel 的 `kind:'tag'` 与 CpTag 一样只认「已是状态词」的原始值（走 STATUS_TONE，日文标签命不中→muted），无 `map?: (val)=>{label,tone?}`（对照 ListColumn 已有 map）。
++    - 代偿：把带 tone 的状態 CpTag 放到明细卡 `CpSectionHeader` 的 `#extra` 槽（原页状态也在标题行），CpDetailPanel 只铺纯文本/数字项——功能与视觉均保全，未丢 tone。
++    - 建议：CpDetailPanel.items 增可选 `tone?: Tone`（或 `map`），与 ListColumn.map 对齐，让详情面板码值状态也能声明式着色。
++
++（注：CpListPage 的 el-pagination 触发 element-plus 内部 `[el-pagination] small … deprecated` 警告——EP 库内部 size-changer 自带，warning 级、非本批引入、CpListPage 本体未改，记录在案非阻塞。InboundReceipt 为全页可编辑录入页，原本即已 token 化合规（el-card overrides + var() 令牌，零禁用硬编码、无状态 pill 可替换），本批审计后维持原结构。）
++
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+ 

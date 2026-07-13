@@ -1,0 +1,609 @@
+# Review package: d470abb..HEAD
+
+## Commits
+73f6aa8 docs(space): 波5 Task6 报告 + Deletes.Locations 注释收口(锚清理记后续票→波5已清理)
+6a32708 feat(space): 波5 库位删除清理T_WmsBin墓碑锚——同码再发布不再REJECTED
+
+## Files changed
+ .superpowers/sdd/task-5-report.md             |  60 +++++---------
+ .superpowers/sdd/task-6-brief.md              |  22 ++---
+ .superpowers/sdd/task-6-report.md             | 113 +++++++++++---------------
+ CP6.Core/Services/Space/SceneService.cs       |  19 ++++-
+ CP6.Core/Services/Space/SpaceMasterService.cs |  29 ++++++-
+ CP6.Tests/SceneServiceTests.cs                |  23 ++++++
+ CP6.Tests/SpaceMasterServiceTests.cs          | 109 ++++++++++++++++++++++++-
+ 7 files changed, 254 insertions(+), 121 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-5-report.md b/.superpowers/sdd/task-5-report.md
+index 31875a4..da334b5 100644
+--- a/.superpowers/sdd/task-5-report.md
++++ b/.superpowers/sdd/task-5-report.md
+@@ -1,45 +1,29 @@
+-# 波4 Task 5 Report: 前端 v-permission 接线（4 页按钮）
++# 波5 Task 5 报告：SpaceLocateController 裸 BadRequest → BizException 化
+ 
+-## Status
+-DONE — commit `54f4080` on `feat/space-wave4-crosscutting`（单 commit）。
++**Status: DONE** — commit `02e30a7` on `feat/space-wave5`（已 push）。
+ 
+-## Implemented
+-四页管理/发布按钮贴 `v-permission="'<menuKey>:<action>'"`，键与后端 Task 4（`CP6.Tests/Space/SpacePermissionAttributeTests.cs` L27-31）逐字一致。指令已在 main.ts 全局注册（`app.directive('permission', permission)`）：store loaded 且缺键→removeChild，未加载 fail-open。本 Task 未触碰指令本体。
++## 改动
++- `CP6.WebApi/Controllers/Space/SpaceLocateController.cs`
++  - 新增 `using CP6.WebApi.Localization;`
++  - `Locate` 未命中：`return BadRequest(new { code=400, message="E-SPACE-601" })` → `throw new BizException("E-SPACE-601")`
++  - `Detail` 未命中：`return BadRequest(new { code=400, message="E-SPACE-004" })` → `throw new BizException("E-SPACE-004")`
++- 两处现走 BizExceptionMiddleware 按 culture 翻译；词条已在 I18nSpaceScreenSeed，零新增词条。
+ 
+-## 贴点清单
+-| 页面 | 按钮 | 权限键 | 不贴 |
+-|---|---|---|---|
+-| SpaceSiteView | 新建 / 编辑 / 削除 | space-site:add / edit / delete | 「楼层」跳转 |
+-| SpaceFloorView | 新建 / 编辑 / 削除 | space-floor:add / edit / delete | 「編集画面」跳转 |
+-| SpaceCodeRuleView | 新建 / 编辑 / 削除 | space-code-rule:add / edit / delete | 预览（只读） |
+-| SpacePublishView | 生成编码 / 发布 / 停用 / 存量采纳 | space-code-rule:generate / space-publish:publish / space-publish:deactivate / space-publish:adopt | 预检重跑等只读手势 |
++## TDD
++- 新建 `CP6.Tests/Space/SpaceLocateControllerTests.cs`（3 用例，直构 controller 绕过 [Authorize]）：
++  - `Locate_NotFound_ThrowsBizException_601` — 断言抛 BizException 且 Code=="E-SPACE-601"
++  - `Detail_NotFound_ThrowsBizException_004` — 断言抛 BizException 且 Code=="E-SPACE-004"
++  - `Locate_Found_ReturnsOkEnvelope` — happy path 仍返 OkObjectResult
++- 先红（2 fail：No exception was thrown）→ 实现 → 绿。
++- 既有 `SpaceLocateServiceTests` 为 service 层（断言 service 返 null），无裸 400 信封断言，无需改。
+ 
+-CpListPage 行内按钮在 `#col-_action` slot 内——v-permission 直接贴 el-button，指令 mounted 时移除元素（fixed:'right' 双渲染的两份皆被移除）。publish 页 deactivate 键贴在 `v-if="row.status===1"` 的按钮上（两指令共存）。
++## 测试
++全量 `dotnet test`：**1819 passed / 5 skipped / 0 failed**（基线 1816 + 本次新增 3 用例；未减数）。
+ 
+-## 测试 stub 方案
+-- **既有先例**：4 个 spec 此前均无 pinia、无 usePermissionStore mock 先例（模板此前无 v-permission）。故采最小自建 stub。
+-- **store mock**：每 spec 顶部 `vi.hoisted` 造 `permHas` 持有器 + `vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (k) => permHas.fn(k) }) }))`。默认 `has()=>true`（全授权，既有断言零涟漪）；`beforeEach` 复位 `permHas.fn=()=>true`；新断言内翻转 `permHas.fn=(k)=>k!=='<被测键>'`。此设计避免污染同文件其它测试（尤其 SpacePublishView 6 个既有测试依赖发布按钮存在）。
+-- **指令注册**：mount 时 `global.directives: { permission }`（import `@/directives/permission`）——最小方案，无需装全套 plugin；store 已 mock 成纯函数，`usePermissionStore()` 不需活动 pinia。SpaceCodeRuleView 的 mountView 用 `directives` 置于 opts 展开之前，保证预览测试（传自定义 global）仍保留指令。
+-- **断言**：缺 `:delete`/`:publish` 键 → 该按钮从 DOM 移除（filter length===0 / find undefined）；同页排他键按钮（编辑 / 采纳）仍在。site/floor/code-rule 页 el-button 未解析为真组件（无 ElementPlus）→ 查 `'el-button'` 标签；publish 页装了 ElementPlus → 查真实 `'button'`。
+-
+-## Files changed (8)
+-- cp6.web/src/views/space/master/SpaceSiteView.vue
+-- cp6.web/src/views/space/master/SpaceFloorView.vue
+-- cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue
+-- cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+-- cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts
+-- cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts
+-- cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts
+-- cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+-
+-## Verification
+-- type-check（`node --max-old-space-size=8192 vue-tsc --build`）：0 error。
+-- vitest full：57 files / **368 passed**（364 基线 + 4 新断言）。
+-- vite build：✓ built（仅既有 chunk>500kB 提示）。
++## 疑虑
++- 无。BizException 默认 HttpStatus=400，与原裸 400 状态码一致，仅信封由中间件统一为译文，行为对齐 M-* 波既有约定。
+ 
+ ## Self-review
+-- 键逐字核对后端 Task 4 权限清单（SpacePermissionAttributeTests L27-31），完全一致。
+-- SpaceFloorView 删除按钮 fixed 列双渲染——两份均被指令移除，断言 length===0 稳健。
+-- fail-open 语义（loaded=false 保留）由指令保证；admin 全授权下 UI 无变化。
+-- 未贴：所有跳转/预览/只读手势，符合 brief「页面级菜单权限已管」。
+-- 仅 8 个目标文件变更；未提交 dist / picture / shots 等无关文件。
++- 两处 return BadRequest 已确认全消（grep controller 无 BadRequest 残留）。
++- BizException namespace = CP6.WebApi.Localization（类物理在 CP6.Core），using 正确。
++- 仅 3 文件变更（brief + 新测试 + 控制器），未扫入无关文件。
+diff --git a/.superpowers/sdd/task-6-brief.md b/.superpowers/sdd/task-6-brief.md
+index 6e5f698..15ba829 100644
+--- a/.superpowers/sdd/task-6-brief.md
++++ b/.superpowers/sdd/task-6-brief.md
+@@ -1,16 +1,18 @@
+-### Task 6: SignalR SpaceHub（发布推送 + events 页自动刷新）
++### Task 6: 库位删除时清理 T_WmsBin 墓碑锚
+ 
+ **Files:**
+-- Create: `CP6.Core/Services/Integration/ISpaceNotifier.cs`——`Task NotifyLocationPublishedAsync(string batchNo, int count, string status)`（+ `NoOpSpaceNotifier` 内联，测试/降级用）
+-- Create: `CP6.WebApi/Hubs/SpaceHub.cs`（照 WmsHub：OnConnected/Disconnected 日志；无分组——Space 事件低频全播即可，YAGNI）
+-- Create: `CP6.WebApi/Services/SignalRSpaceNotifier.cs`（照 SignalRWmsNotifier：注入 `IHubContext<SpaceHub>`，`Clients.All.SendAsync("LocationPublished", new { batchNo, count, status })`，try/catch 吞错记日志——推送失败不影响业务）
+-- Modify: `CP6.Core/Services/Space/LocationPublishService.cs`——ctor 追加 `ISpaceNotifier notifier`（第 7 参）；`PublishFloorAsync` 成功 Commit 后、`DeactivateAsync` 兜底事件后各调一次 notify（**在事务 Commit 之后**，推送不进事务）；测试帮手 MakePublishSvc 加 `new NoOpSpaceNotifier()`
+-- Modify: `CP6.WebApi/Program.cs`——DI `AddScoped<ISpaceNotifier, SignalRSpaceNotifier>()` + `app.MapHub<CP6.WebApi.Hubs.SpaceHub>("/hubs/space");`（:2524 后）
+-- Create: `cp6.web/src/utils/spaceHub.ts`（照 wmsHub.ts 单例：withUrl('/hubs/space') 无 accessTokenFactory，cookie 隐式认证）
+-- Modify: `cp6.web/src/views/space/lifecycle/SpaceEventsView.vue`——onMounted 订阅 `LocationPublished` → `listRef.reload()`（回第 1 页可接受）；onUnmounted 取消订阅（照 IoT 轮询清理先例）
+-- Test: 后端 `Mock<IHubContext<SpaceHub>>` 链（照 CP6.Tests/DeadLetterNotifierTests.cs:49 范式）验证 SendCoreAsync 参数；LocationPublishServiceTests 加 1 断言（publish 后 notifier 被调——用记录桩）；前端 spec：mock spaceHub 模块，事件回调触发 reload
++- Modify: `CP6.Core\Services\Space\SpaceMasterService.cs`(`DeleteRackAsync:415-501`、`DeleteAisleAsync:260-334` 中删 `Space_Locations` 处;另 grep 全仓其余 `Space_Locations.Remove` 删除通道——含 SceneService 保存删除分支,一并接线)
++- Test: `CP6.Tests\Space\`
+ 
+-- [ ] Step 1: TDD → 实现 → 后端全量 + 前端三件套 → Commit `feat(space): SpaceHub 发布推送 + 事件页自动刷新（ISpaceNotifier 接口注入）`
++**Interfaces:**
++- Produces: `SpaceMasterService` 内 `private async Task RemoveTombstoneBinsAsync(List<Guid> locationIds)`:`_db.WmsBins.Where(b => locationIds.Contains(b.Id) && !b.IsActive)` → `RemoveRange`。**仅删 IsActive=false 的墓碑行**(活跃 bin 理论不可达——Status=1 不可删 E-SPACE-408;护栏兜底:命中活跃 bin 时不删并保留)。SceneService 若在别类,提取为 `internal static` 帮助或复制同构块并注释互指。
++
++**要点:** 与库位删除**同一事务/同一 SaveChanges**;删除后同码再发布不再 REJECTED(锚释放)。顺带更新 `:495-499` 注释(「锚清理记后续票」→「波5 已清理」)。
++
++- [ ] **Step 1: 失败测试×2**(①删 Status=2 库位(带 IsActive=false bin)→bin 行消失 ②删 Status=0 库位(无 bin)→不炸)
++- [ ] **Step 2: 红 → 实现(所有删除通道接线)→ 绿 → 全量绿**
++- [ ] **Step 3: 追加集成断言**:同码重发布不再碰撞(构造 删→再建同码→publish→bin 重建 IsActive=true)
++- [ ] **Step 4: Commit + push**(`feat(space): 波5 库位删除清理T_WmsBin墓碑锚——同码再发布不再REJECTED`)
+ 
+ ---
+ 
+diff --git a/.superpowers/sdd/task-6-report.md b/.superpowers/sdd/task-6-report.md
+index 6cb0a50..04e4ecc 100644
+--- a/.superpowers/sdd/task-6-report.md
++++ b/.superpowers/sdd/task-6-report.md
+@@ -1,82 +1,65 @@
+-# Task 6 Report — SignalR SpaceHub（发布推送 + events 页自动刷新）
++# Task 6 报告：库位删除时清理 T_WmsBin 墓碑锚
+ 
+-**Status:** DONE
+-**Commit:** `e2ddf74` on `feat/space-wave4-crosscutting` (single commit)
+-**Architecture:** 接口注入（照 SignalRWmsNotifier 模式，无反射）
++**Status:** COMPLETE — 1824 passed / 5 skipped（基线 1819 + 5 新测），commit `6a32708`（代码+测试）+ 注释收尾 commit。
+ 
+----
++## 根因与修法
+ 
+-## Implemented
++停用位（Status=2）删除此前只删 `Space_Location` 不碰 `T_WmsBin`。停用留下的墓碑 bin
++（`IsActive=false`，主键 `Id` = 同 `LocationId`）成孤儿，其 `(WarehouseCd, LocationCode)`
++仍占 join 锚。同码新库位再发布时被 `WmsBinConsumer` 的锚碰撞检查（唯一索引→业务拒绝链）判 **REJECTED**。
+ 
+-### Backend
+-- **Create** `CP6.Core/Services/Integration/ISpaceNotifier.cs` — `Task NotifyLocationPublishedAsync(string batchNo, int count, string status)` + 同文件内联 `sealed NoOpSpaceNotifier`（空实现，测试/降级）。接口注释写明契约「实现不得抛出」（best-effort，推送失败绝不影响业务）。
+-- **Create** `CP6.WebApi/Hubs/SpaceHub.cs` — 照 WmsHub：OnConnected/Disconnected 日志、注释含前端 `withUrl('/hubs/space')` 连接样例；**无分组**（低频全播 YAGNI）。
+-- **Create** `CP6.WebApi/Services/SignalRSpaceNotifier.cs` — 注入 `IHubContext<SpaceHub>`，`Clients.All.SendAsync("LocationPublished", new { batchNo, count, status })`，try/catch 吞错 `LogWarning`（推送失败不传播）。
+-- **Modify** `CP6.Core/Services/Space/LocationPublishService.cs` — ctor 追加 `ISpaceNotifier notifier`（第 7 参）；
+-  - `PublishFloorAsync`：**在 `tx.CommitAsync()` 之后、`return locs.Count` 之前** notify（status="SUCCESS", count=locs.Count）。
+-  - `DeactivateAsync`：兜底事件 hook（`OnLocationPublishedAsync`）调用后 notify（batch.BatchNo, count=1, "SUCCESS"）。
+-  - 服务层直调（不额外包 try/catch）——契约由实现层吞错保证。
+-- **Modify** `CP6.WebApi/Program.cs` — `AddScoped<ISpaceNotifier, SignalRSpaceNotifier>()`（ILocationPublishService 注册之后，Space DI 段）；`app.MapHub<SpaceHub>("/hubs/space")`（既有三个 MapHub 之后）。
++新增单源 helper（`SpaceMasterService.cs`）：
+ 
+-### Frontend
+-- **Create** `cp6.web/src/utils/spaceHub.ts` — 照 wmsHub.ts 单例：`withUrl('/hubs/space')` 无 accessTokenFactory（cookie 隐式认证）+ `withAutomaticReconnect([0,2000,5000,10000,30000])` + Disconnected 状态守卫。导出 `getSpaceConnection/startSpaceConnection/stopSpaceConnection/onLocationPublished/offLocationPublished` + `LocationPublishedPayload` 类型。
+-- **Modify** `cp6.web/src/views/space/lifecycle/SpaceEventsView.vue` — onMounted `startSpaceConnection()` + `onLocationPublished(handler)`；handler `page=1` 后 `listRef.reload()`；onUnmounted `offLocationPublished(handler)`（不 stop 共享连接，仅解绑回调）。无新增 UI 文案 → 无新 i18n key。
++```csharp
++internal static async Task RemoveTombstoneBinsAsync(CP6Context db, List<Guid> locationIds)
++// _db.WmsBins.Where(b => locationIds.Contains(b.Id) && !b.IsActive) → RemoveRange
++// 不自带 SaveChanges——由调用方与库位删除同一 SaveChanges/同事务提交。
++```
+ 
+----
++- **仅删 `IsActive=false` 墓碑行**；活跃 bin 由 `!IsActive` 过滤天然排除（护栏兜底：活跃 bin 理论
++  不可达，因 Status=1 不可删 E-SPACE-408），绝不误清活跃库位目录。
++- **签名与 brief 的偏差（已选并说明）**：brief 建议 `private async Task RemoveTombstoneBinsAsync(List<Guid>)`。
++  实际改为 `internal static`（入参加 `CP6Context db`），使 `SpaceMasterService` 与 `SceneService`
++  两类**共用同一份实现**（brief 允许的「提取 internal static 帮助」选项），避免同构块漂移。SceneService
++  以 `SpaceMasterService.RemoveTombstoneBinsAsync(_db, ...)` 调用，注释互指。
+ 
+-## 构造点同步清单（grep `new LocationPublishService(` 全覆盖，共 4 处 + 1 帮手默认）
++## 全仓删除通道清单及接线方式
+ 
+-| 文件 | 帮手 | 同步 |
+-|---|---|---|
+-| `CP6.Tests/LocationPublishServiceTests.cs:33` | `MakePublishSvc` | 加第 7 参 + 可选 `ISpaceNotifier? notifier` 参（默认 `NoOpSpaceNotifier`） |
+-| `CP6.Tests/BindCodesTests.cs:23` | `Make` (SceneService) | 加 `new NoOpSpaceNotifier()` |
+-| `CP6.Tests/SceneServiceTests.cs:24` | `Make` (SceneService) | 加 `new NoOpSpaceNotifier()` |
+-| `CP6.Tests/SpaceMasterServiceTests.cs:33` | `Make` (SpaceMasterService) | 加 `new NoOpSpaceNotifier()` |
++以 `grep 'Space_Locations\.(Remove|RemoveRange)'` 为真相源，共 4 处库位删除点，全部接线：
+ 
+-（3 个测试文件均已 `using CP6.Core.Services.Integration;`——`NoOpSpaceNotifier` 直接可见，无需加 using。）
++| # | 文件:位置 | 通道 | 接线方式 |
++|---|-----------|------|----------|
++| 1 | `SpaceMasterService.cs` DeleteRackAsync（默认/deactivate 后级联删） | 删 rack 下全部库位 | 删 `children` 后即 `await RemoveTombstoneBinsAsync(_db, children.Select(l=>l.Id).ToList())`，随后同一 `SaveChanges` 提交 |
++| 2 | `SceneService.cs` H2 缩格幽灵位清理（`outOfBounds`） | 越界草稿/停用位连带删 | 删除时 ID 入 `deletedLocIds` |
++| 3 | `SceneService.cs` Deletes.Locations | 单库位删除（Status=0/2） | 删除时 `e.Id` 入 `deletedLocIds` |
++| 4 | `SceneService.cs` Deletes.Racks | 删架级联删库位（`children`） | 删除时 children ID 入 `deletedLocIds` |
+ 
+----
++SceneService 三通道（2/3/4）累积到一个 `HashSet<Guid> deletedLocIds`，在 `SaveSceneAsync` 唯一
++`SaveChanges` **之前**一次性 `await SpaceMasterService.RemoveTombstoneBinsAsync(_db, deletedLocIds.ToList())`
++——与库位删除同事务、同 SaveChanges。
+ 
+-## TDD Evidence
++**未接线（经核实无需）：`DeleteAisleAsync`** ——巷道删除走 `rack.AisleId = null`（SetNull）语义，
++不删任何 `Space_Location`（deactivate 模式亦仅 Status→2 后 SetNull 保留库位），故不产生孤儿 bin。
++grep 亦证实其内无 `Space_Locations.Remove`。brief 对它的行号引用系沿用 plan 泛述，实测非库位删除通道。
+ 
+-**新增测试：**
+-- `CP6.Tests/SignalRSpaceNotifierTests.cs`（2）——`Mock<IHubContext<SpaceHub>>` 链照 DeadLetterNotifierTests:49 范式：
+-  - `Notify_PushesLocationPublishedToAllClients`：Verify `SendCoreAsync("LocationPublished", args, ct)` Times.Once。
+-  - `Notify_SwallowsHubException_DoesNotPropagate`：ClientProxy.SendCoreAsync `ThrowsAsync` → `Record.ExceptionAsync` 断言 `Null`（吞错不传播）。
+-- `CP6.Tests/LocationPublishServiceTests.cs` +1——`Publish_GatePassed_NotifiesSignalR`：内联 `RecordingSpaceNotifier` 桩，断言 `Calls==1` / `LastBatchNo` 非空且 `StartsWith("LPUB-")` / `LastCount==1` / `LastStatus=="SUCCESS"`。
+-- `cp6.web/.../SpaceEventsView.spec.ts` +1——`vi.mock('@/utils/spaceHub')` 捕获 `onLocationPublished` 回调；触发回调后断言 `publishApi.events` 二次调用 + `toHaveBeenLastCalledWith(1, 50)`（回第 1 页）。
++## 注释收口
+ 
+-**验证结果：**
+-- 后端全量：`dotnet test CP6.Tests` → **Passed 1565, Failed 0, Skipped 5**（1562 → +3：SignalRSpaceNotifier ×2 + LocationPublishService ×1）。
+-- 前端全量：`npx vitest run` → **Test Files 57 passed, Tests 369 passed**（368 → +1）。
+-- 前端 type-check：`vue-tsc --build` → 0 error。
+-- Build：`dotnet build CP6.Tests.csproj` → Build succeeded, 0 Error（6 既有 warning，与本任务无关）。
++- `SpaceMasterService.DeleteRackAsync`：「其码仍占 T_WmsBin 锚……锚清理记后续票」→「波5 已清理：删库位时一并清其 T_WmsBin 墓碑锚（同一 SaveChanges/同事务）」。
++- `SceneService` Deletes.Locations：「锚清理机制记后续票，此为拍板时已知代价」→「波5 已清理：……本事务末尾一并清除，同码新库位发布不再被锚碰撞 REJECTED」。
+ 
+----
++## 消费端不受影响
+ 
+-## Files Changed
+-```
+-Create  CP6.Core/Services/Integration/ISpaceNotifier.cs
+-Create  CP6.WebApi/Hubs/SpaceHub.cs
+-Create  CP6.WebApi/Services/SignalRSpaceNotifier.cs
+-Create  CP6.Tests/SignalRSpaceNotifierTests.cs
+-Create  cp6.web/src/utils/spaceHub.ts
+-Modify  CP6.Core/Services/Space/LocationPublishService.cs
+-Modify  CP6.WebApi/Program.cs
+-Modify  CP6.Tests/BindCodesTests.cs
+-Modify  CP6.Tests/SceneServiceTests.cs
+-Modify  CP6.Tests/SpaceMasterServiceTests.cs
+-Modify  CP6.Tests/LocationPublishServiceTests.cs
+-Modify  cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
+-Modify  cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts
+-```
++波3 已有的消费端 DEACTIVATE 墓碑分支（`WmsBinConsumer` H6 乱序防护 / `WmsBinDeactivator` H6 墓碑）
++未改动——本任务只管 **Space 侧删除时**的 bin 清理，消费端墓碑落库/幂等语义原样保留。
++
++## 测试（TDD）
+ 
+----
++新增 5 项（全绿）：
++- `DeleteRack_DisabledLocationWithTombstoneBin_RemovesBin` — ① 删 Status=2 带墓碑 bin → bin 消失。
++- `DeleteRack_DraftLocationNoBin_DoesNotThrow` — ② 删 Status=0 无 bin → 不炸。
++- `DeleteRack_ActiveBin_NotRemoved_Guardrail` — 护栏：活跃 bin 命中不删。
++- `DeleteRack_ThenRepublishSameCode_BinRebuiltActive_NotRejected` — 集成（Step 3）：删→同码再建→真 `WmsBinConsumer` publish→UPSERTED（非 REJECTED），bin 重建 `IsActive=true`。
++- `SaveScene_DeleteDisabledLocation_RemovesTombstoneBin` — SceneService 删除通道断言。
++- 更新既有 `DeleteRack_ModeDeactivate_DeactivatesThenCascades`：墓碑 bin 现随删除清除（`WmsBins.Count==0`），取代旧「bin 独立留存」断言（预期行为变更）。
+ 
+-## Self-review
+-- **推送时序正确**：PublishFloorAsync 的 notify 严格在 `tx.CommitAsync()` 之后——只通知已确定的事件，推送不进事务。DeactivateAsync 在兜底事件 hook（已 SaveChanges）后 notify。
+-- **吞错契约双保险**：SignalRSpaceNotifier 实现层 try/catch 吞错；服务层因此直调不再包 try/catch（避免冗余）。测试专门覆盖 hub 抛错不传播。
+-- **无分组决策**：Space 事件低频，全播 `Clients.All` 足够，未引入 warehouse/product 式分组（YAGNI，符合 brief）。
+-- **前端连接生命周期**：onUnmounted 仅 `off` 回调、不 `stop` 单例连接——避免误伤其他潜在 Space 消费者；当前 SpaceEventsView 是唯一消费者，连接由 startSpaceConnection 惰性启动一次。
+-- **未提交无关文件**：工作树中预存的 `picture/`、`shots/` 未跟踪文件已排除，仅提交 13 个任务文件。
+-- **eslint**：项目无 eslint 配置（`eslint.config.*` 不存在），三件套以 type-check + vitest 为编译/测试门禁，均通过。
++全量：`dotnet test CP6.Tests/CP6.Tests.csproj` → **1824 passed / 5 skipped**（基线 1819+5）。
+diff --git a/CP6.Core/Services/Space/SceneService.cs b/CP6.Core/Services/Space/SceneService.cs
+index ef060f3..a8ebec0 100644
+--- a/CP6.Core/Services/Space/SceneService.cs
++++ b/CP6.Core/Services/Space/SceneService.cs
+@@ -28,20 +28,21 @@ public class SceneService : ISceneService
+     public async Task<Dictionary<Guid, Guid>> SaveSceneAsync(Guid floorId, SceneSaveDto dto, string? user)
+     {
+         // InMemory 安全事务守卫：真库开事务，InMemory 降级无事务
+         IDbContextTransaction? tx = _db.Database.IsRelational()
+             ? await _db.Database.BeginTransactionAsync()
+             : null;
+         try
+         {
+             var changedRackIds = new HashSet<Guid>();
+             var pathChangedRackIds = new HashSet<Guid>();   // H4：层级归属（ZoneId/AisleId）变更的货架
++            var deletedLocIds = new HashSet<Guid>();         // 波5：本次保存删除的库位 Id（幽灵位清理 + Deletes.Locations/Racks），末尾统一清 T_WmsBin 墓碑锚
+ 
+             // ── Zones ──────────────────────────────────────────────
+             foreach (var zd in dto.Zones ?? new List<ZoneDto>())
+             {
+                 var existing = zd.Id.HasValue
+                     ? await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zd.Id.Value)
+                     : null;
+                 if (existing != null)
+                 {
+                     existing.ZoneCode   = zd.ZoneCode;
+@@ -118,21 +119,24 @@ public class SceneService : ISceneService
+                     // H2 缩格护栏（2026-07-06 拍板：Restrict）：越界库位——已发布阻断，草稿/停用连带删
+                     if (rd.Cols < existing.Cols || rd.Levels < existing.Levels || rd.DepthCount < existing.DepthCount)
+                     {
+                         var outOfBounds = await _db.Space_Locations
+                             .Where(l => l.RackId == existing.Id &&
+                                         (l.Col > rd.Cols || l.Level > rd.Levels || l.Depth > rd.DepthCount))
+                             .ToListAsync();
+                         if (outOfBounds.Any(l => l.Status == 1))
+                             throw new BizException("E-SPACE-403");
+                         if (outOfBounds.Count > 0)
++                        {
+                             _db.Space_Locations.RemoveRange(outOfBounds);   // 幽灵位清理（H2）
++                            foreach (var l in outOfBounds) deletedLocIds.Add(l.Id);  // 波5：停用幽灵位可能留 T_WmsBin 墓碑
++                        }
+                     }
+ 
+                     // 位姿/尺寸变更检测
+                     if (existing.X != rd.X || existing.Y != rd.Y || existing.Z != rd.Z ||
+                         existing.RotationZ != rd.RotationZ || existing.Cols != rd.Cols ||
+                         existing.Levels != rd.Levels || existing.DepthCount != rd.DepthCount ||
+                         existing.CellW != rd.CellW || existing.CellH != rd.CellH || existing.CellD != rd.CellD)
+                     {
+                         changedRackIds.Add(existing.Id);
+                     }
+@@ -270,34 +274,39 @@ public class SceneService : ISceneService
+                     });
+                 }
+             }
+ 
+             // ── Deletes ────────────────────────────────────────────
+             foreach (var locId in dto.Deletes?.Locations ?? new List<Guid>())
+             {
+                 var e = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId);
+                 if (e == null) continue;
+                 // 已发布不可删（须先停用）；草稿/停用可删（2026-07-06 拍板）。
+-                // 注意：停用位删除后其码仍被 T_WmsBin 停用行占据 join 锚，同码新库位发布会被
+-                // 锚碰撞 REJECTED——锚清理机制记后续票，此为拍板时已知代价。
++                // 波5 已清理：停用位删除后其 T_WmsBin 墓碑行（占 join 锚）在本事务末尾一并清除
++                // （deletedLocIds→RemoveTombstoneBinsAsync），同码新库位发布不再被锚碰撞 REJECTED。
+                 if (e.Status == 1)
+                     throw new BizException("E-SPACE-408");
+                 _db.Space_Locations.Remove(e);
++                deletedLocIds.Add(e.Id);   // 波5：停用位删除后清其 T_WmsBin 墓碑锚
+             }
+ 
+             foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
+             {
+                 // ch04 §7.1：有已发布库位 → Restrict；全草稿/停用 → 库位连带删（旧 E-003 全拦废止）
+                 if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId && l.Status == 1))
+                     throw new BizException("E-SPACE-403");
+                 var children = await _db.Space_Locations.Where(l => l.RackId == rackId).ToListAsync();
+-                if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
++                if (children.Count > 0)
++                {
++                    _db.Space_Locations.RemoveRange(children);
++                    foreach (var l in children) deletedLocIds.Add(l.Id);   // 波5：级联删库位清其 T_WmsBin 墓碑锚
++                }
+                 var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId);
+                 if (e != null) _db.Space_Racks.Remove(e);
+             }
+ 
+             foreach (var aisleId in dto.Deletes?.Aisles ?? new List<Guid>())
+             {
+                 // SetNull：保留货架但解除巷道关联
+                 var racks = await _db.Space_Racks.Where(r => r.AisleId == aisleId).ToListAsync();
+                 foreach (var r in racks) r.AisleId = null;
+                 var e = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == aisleId);
+@@ -309,20 +318,24 @@ public class SceneService : ISceneService
+                 var e = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zoneId);
+                 if (e != null) _db.Space_Zones.Remove(e);
+             }
+ 
+             foreach (var markerId in dto.Deletes?.Markers ?? new List<Guid>())
+             {
+                 var e = await _db.Space_Markers.FirstOrDefaultAsync(m => m.Id == markerId);
+                 if (e != null) _db.Space_Markers.Remove(e);
+             }
+ 
++            // ── 波5：删除库位一并清 T_WmsBin 墓碑锚（同一 SaveChanges/同事务，同码再发布不再被消费端 REJECTED）──
++            //    单源 helper 与 SpaceMasterService.DeleteRackAsync 共用（见其 XML 注释）；仅删 IsActive=false 墓碑行。
++            await SpaceMasterService.RemoveTombstoneBinsAsync(_db, deletedLocIds.ToList());
++
+             // ── 保存（乐观并发冲突→E-SPACE-009）─────────────────────
+             try
+             {
+                 await _db.SaveChangesAsync();
+             }
+             catch (DbUpdateConcurrencyException)
+             {
+                 throw new BizException("E-SPACE-009", 409);
+             }
+ 
+diff --git a/CP6.Core/Services/Space/SpaceMasterService.cs b/CP6.Core/Services/Space/SpaceMasterService.cs
+index 6eafac8..39118fe 100644
+--- a/CP6.Core/Services/Space/SpaceMasterService.cs
++++ b/CP6.Core/Services/Space/SpaceMasterService.cs
+@@ -499,28 +499,51 @@ public class SpaceMasterService : ISpaceMasterService
+                     // → 落到下方级联删（停用位可删，2026-07-06 拍板②——与巷道 SetNull 落点不同）。
+                     foreach (var locId in published)
+                         await _publish.DeactivateAsync(locId, user);
+                     break;
+ 
+                 default:
+                     throw new BizException("E-SPACE-403");
+             }
+         }
+ 
+-        // 无已发布（或 deactivate 后）→ 库位级联删 + 删货架（停用位可删，2026-07-06 拍板；
+-        // 其码仍占 T_WmsBin 锚，同码再发布会被 REJECTED——锚清理记后续票）。
++        // 无已发布（或 deactivate 后）→ 库位级联删 + 删货架（停用位可删，2026-07-06 拍板）。
++        // 波5 已清理：删库位时一并清其 T_WmsBin 墓碑锚（同一 SaveChanges/同事务）——停用位的 bin
++        // （IsActive=false，主键=同 LocationId）此前留孤儿占住 (WarehouseCd, LocationCode) join 锚，
++        // 同码再发布会被消费端锚碰撞 REJECTED；清墓碑即释放锚。
+         var children = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
+-        if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
++        if (children.Count > 0)
++        {
++            _db.Space_Locations.RemoveRange(children);
++            await RemoveTombstoneBinsAsync(_db, children.Select(l => l.Id).ToList());
++        }
+         _db.Space_Racks.Remove(rack);
+         await _db.SaveChangesAsync();
+     }
+ 
++    /// <summary>
++    /// 波5：库位删除时清理其 T_WmsBin 墓碑锚（不自带 SaveChanges——由调用方与库位删除同一 SaveChanges/同事务提交）。
++    /// 仅删 IsActive=false 的墓碑行：停用位删除后其 (WarehouseCd, LocationCode) join 锚仍被墓碑占用，
++    /// 同码再发布会被消费端锚碰撞 REJECTED（WmsBinConsumer 唯一索引→业务拒绝链）；清墓碑即释放锚。
++    /// 护栏兜底：活跃 bin（IsActive=true）理论不可达——已发布库位 Status=1 不可删（E-SPACE-408），
++    /// 命中亦不删（Where !IsActive 已排除，绝不误删活跃库位目录）。
++    /// internal static 单源：SpaceMasterService.DeleteRackAsync 与 SceneService 各库位删除通道共用（避免同构块漂移）。
++    /// </summary>
++    internal static async Task RemoveTombstoneBinsAsync(CP6Context db, List<Guid> locationIds)
++    {
++        if (locationIds.Count == 0) return;
++        var tombstones = await db.WmsBins
++            .Where(b => locationIds.Contains(b.Id) && !b.IsActive)
++            .ToListAsync();
++        if (tombstones.Count > 0) db.WmsBins.RemoveRange(tombstones);
++    }
++
+     // ══════════════════════════════════════════════════════════════════════
+     // 场景聚合 / 待绑定 / 库位列表
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     public async Task<SceneDto> GetSceneAsync(Guid floorId)
+     {
+         var scene = new SceneDto { FloorId = floorId };
+ 
+         // 楼层对象（编辑器底图标定 + 局部系原点需要；viewer 也可用，不需亦无害）
+         scene.Floor = await _db.Space_Floors
+diff --git a/CP6.Tests/SceneServiceTests.cs b/CP6.Tests/SceneServiceTests.cs
+index 8b6ab32..4deb4e2 100644
+--- a/CP6.Tests/SceneServiceTests.cs
++++ b/CP6.Tests/SceneServiceTests.cs
+@@ -500,11 +500,34 @@ public class SceneServiceTests
+         var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+         {
+             Locations = new List<SceneLocationSaveDto>
+             {
+                 new SceneLocationSaveDto { Id = loc.Id, RackId = rack.Id, Col = 5, Level = 1, Depth = 1, Placed = true }   // 5 > Cols=2
+             }
+         }, "u"));
+         Assert.Equal("E-SPACE-002", ex.Code);
+         Assert.Equal(1, (await db.Space_Locations.AsNoTracking().SingleAsync()).Col);   // 草稿原位
+     }
++
++    // ── 波5 Task 6: 场景保存删除库位通道也清 T_WmsBin 墓碑锚 ────────────────────
++    [Fact]
++    public async Task SaveScene_DeleteDisabledLocation_RemovesTombstoneBin()
++    {
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++        var locId   = Guid.NewGuid();
++        // 停用位（Status=2，Deletes 可删）+ 其 T_WmsBin 墓碑（Id=同 LocationId，IsActive=false）
++        db.Space_Locations.Add(new Space_Location
++            { Id = locId, FloorId = floorId, RackId = Guid.NewGuid(), Placed = true, Status = 2, CodeOrigin = 1, LocationCode = "A-01-01-01" });
++        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
++            { Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", IsActive = false, Version = 2 });
++        await db.SaveChangesAsync();
++
++        await svc.SaveSceneAsync(floorId, new SceneSaveDto
++        {
++            Deletes = new Deletes { Locations = new List<Guid> { locId } }
++        }, "u");
++
++        Assert.Equal(0, await db.Space_Locations.CountAsync());
++        Assert.Equal(0, await db.WmsBins.CountAsync());   // 墓碑锚随库位删除一并释放
++    }
+ }
+diff --git a/CP6.Tests/SpaceMasterServiceTests.cs b/CP6.Tests/SpaceMasterServiceTests.cs
+index 4efa8ab..b385a86 100644
+--- a/CP6.Tests/SpaceMasterServiceTests.cs
++++ b/CP6.Tests/SpaceMasterServiceTests.cs
+@@ -351,23 +351,128 @@ public class SpaceMasterServiceTests
+         var (db, svc) = Make();
+         var s = await SeedPublishedAisleAsync(db);
+ 
+         await svc.DeleteRackAsync(s.rackId, mode: "deactivate", user: "u");
+ 
+         // 停用后级联删（拍板②：停用位可删）——货架与库位全删
+         Assert.Equal(0, await db.Space_Racks.CountAsync());
+         Assert.Equal(0, await db.Space_Locations.CountAsync());
+         // DEACTIVATE 事件已落库
+         Assert.True(await db.IntegrationEvents.CountAsync() >= 1);
+-        // 真 WmsBinDeactivator 组装：T_WmsBin 墓碑 IsActive=false（loc 已被级联删，bin 独立留存）
++        // 波5：删库位时其 T_WmsBin 墓碑锚一并被清（此前留孤儿占锚，同码再发布 REJECTED）
++        Assert.Equal(0, await db.WmsBins.CountAsync());
++    }
++
++    // ── 波5 Task 6: 库位删除时清理 T_WmsBin 墓碑锚 ────────────────────────────
++    // 停用位删除只删 Space_Location 不碰 T_WmsBin → 墓碑 bin（IsActive=false，主键=同 LocationId）
++    // 留孤儿占住 (WarehouseCd, LocationCode) join 锚，同码再发布被消费端 REJECTED。删库位须同事务清墓碑。
++
++    /// <summary>①删 Status=2 库位（带 IsActive=false 墓碑 bin）→ bin 行随库位一并消失（同 SaveChanges）。</summary>
++    [Fact]
++    public async Task DeleteRack_DisabledLocationWithTombstoneBin_RemovesBin()
++    {
++        var (db, svc) = Make();
++        var rackId = Guid.NewGuid();
++        var locId  = Guid.NewGuid();
++        db.Space_Racks.Add(new Space_Rack { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
++        // 停用位（Status=2，可删）+ 其 T_WmsBin 墓碑（Id=同 LocationId，IsActive=false）
++        db.Space_Locations.Add(new Space_Location
++            { Id = locId, RackId = rackId, Placed = true, Status = 2, CodeOrigin = 1, LocationCode = "A-01-01-01" });
++        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
++            { Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", IsActive = false, Version = 2 });
++        await db.SaveChangesAsync();
++
++        await svc.DeleteRackAsync(rackId);
++
++        Assert.Equal(0, await db.Space_Racks.CountAsync());
++        Assert.Equal(0, await db.Space_Locations.CountAsync());
++        Assert.Equal(0, await db.WmsBins.CountAsync());   // 墓碑锚已释放
++    }
++
++    /// <summary>②删 Status=0 库位（无 bin）→ 不炸（helper 空集/无墓碑安全短路）。</summary>
++    [Fact]
++    public async Task DeleteRack_DraftLocationNoBin_DoesNotThrow()
++    {
++        var (db, svc) = Make();
++        var rackId = Guid.NewGuid();
++        db.Space_Racks.Add(new Space_Rack { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
++        db.Space_Locations.Add(new Space_Location
++            { Id = Guid.NewGuid(), RackId = rackId, Placed = true, Status = 0, CodeOrigin = 1 });
++        await db.SaveChangesAsync();
++
++        await svc.DeleteRackAsync(rackId);   // 无墓碑 bin，正常删除不抛
++
++        Assert.Equal(0, await db.Space_Racks.CountAsync());
++        Assert.Equal(0, await db.Space_Locations.CountAsync());
++        Assert.Equal(0, await db.WmsBins.CountAsync());
++    }
++
++    /// <summary>护栏：命中活跃 bin（IsActive=true）不删——绝不误清活跃库位目录（Where !IsActive 排除）。</summary>
++    [Fact]
++    public async Task DeleteRack_ActiveBin_NotRemoved_Guardrail()
++    {
++        var (db, svc) = Make();
++        var rackId = Guid.NewGuid();
++        var locId  = Guid.NewGuid();
++        db.Space_Racks.Add(new Space_Rack { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
++        // 草稿位可删；同 Id 挂一条活跃 bin（理论不可达，护栏兜底验证）
++        db.Space_Locations.Add(new Space_Location
++            { Id = locId, RackId = rackId, Placed = true, Status = 0, CodeOrigin = 1 });
++        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
++            { Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", IsActive = true, Version = 1 });
++        await db.SaveChangesAsync();
++
++        await svc.DeleteRackAsync(rackId);
++
++        Assert.Equal(0, await db.Space_Locations.CountAsync());
++        Assert.Equal(1, await db.WmsBins.CountAsync());        // 活跃 bin 保留
++        Assert.True((await db.WmsBins.SingleAsync()).IsActive);
++    }
++
++    /// <summary>
++    /// 集成断言（Step 3）：停用位删除清墓碑锚 → 同码再建 → publish（WmsBinConsumer 消费）→
++    /// bin 重建 IsActive=true（不再被 join 锚碰撞 REJECTED）。
++    /// </summary>
++    [Fact]
++    public async Task DeleteRack_ThenRepublishSameCode_BinRebuiltActive_NotRejected()
++    {
++        var (db, svc) = Make();
++        var s = await SeedPublishedAisleAsync(db);   // loc code "A-01-01-01"，WarehouseCd 沿 Floor→Site="S1" 解析
++
++        // 删货架（mode=deactivate）：停用→落墓碑 bin→级联删库位→波5 清墓碑锚
++        await svc.DeleteRackAsync(s.rackId, mode: "deactivate", user: "u");
++        Assert.Equal(0, await db.WmsBins.CountAsync());   // 锚已释放
++
++        // 同码再发布：新库位（不同 LocationId，同码 "A-01-01-01"，同仓锚）经真消费端 upsert
++        var newLocId = Guid.NewGuid();
++        var batch = new CP6.Entity.DTOs.Space.LocationPublishBatch
++        {
++            BatchNo = "LPUB-20260712-0001",
++            PublishedBy = "u",
++            Items = new List<CP6.Entity.DTOs.Space.LocationPublishItem>
++            {
++                new()
++                {
++                    Op = "UPSERT", LocationId = newLocId, LocationCode = "A-01-01-01",
++                    CodeOrigin = 1, Version = 1, WarehouseCd = "S1",
++                    Path = new CP6.Entity.DTOs.Space.LocationPath
++                        { SiteCode = "S1", FloorLevel = 1, ZoneCode = "Z1", RackCode = "R1", Col = 1, Level = 1, Depth = 1 }
++                }
++            }
++        };
++        var r = await new CP6.Core.Services.Wms.WmsBinConsumer(db).ConsumeAsync(batch);
++
++        Assert.True(r.Success);                                    // 锚已释放 → 不再 REJECTED
++        Assert.Equal("UPSERTED", r.Items.Single().Status);
+         var bin = await db.WmsBins.SingleAsync();
+-        Assert.False(bin.IsActive);
++        Assert.Equal(newLocId, bin.Id);                           // 新 LocationId 持锚
++        Assert.True(bin.IsActive);                                // 重建为活跃
+     }
+ 
+     [Fact]
+     public async Task DeleteRack_ModeRehome_MovesLocations_Republishes()
+     {
+         var (db, svc) = Make();
+         // 源架 R1（1x1x1）+ published loc（Version=1, Col=1）
+         var siteId  = Guid.NewGuid();
+         var floorId = Guid.NewGuid();
+         var zoneId  = Guid.NewGuid();

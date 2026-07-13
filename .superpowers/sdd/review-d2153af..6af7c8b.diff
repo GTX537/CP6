@@ -1,0 +1,120 @@
+# Review package: d2153af..6af7c8b
+
+## Commits
+6af7c8b fix(space): 场景保存状态机护栏——Status/CodeOrigin 拒绝 DTO 覆盖，新建强制草稿（评审 H1）
+
+## Files changed
+ CP6.Core/Services/Space/SceneService.cs |  8 +++---
+ CP6.Tests/SceneServiceTests.cs          | 46 +++++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+), 4 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/SceneService.cs b/CP6.Core/Services/Space/SceneService.cs
+index 08e5b44..3c2e577 100644
+--- a/CP6.Core/Services/Space/SceneService.cs
++++ b/CP6.Core/Services/Space/SceneService.cs
+@@ -204,38 +204,38 @@ public class SceneService : ISceneService
+                 var existing = ld.Id.HasValue
+                     ? await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == ld.Id.Value)
+                     : null;
+                 if (existing != null)
+                 {
+                     existing.RackId     = ld.RackId;
+                     existing.Col        = ld.Col;
+                     existing.Level      = ld.Level;
+                     existing.Depth      = ld.Depth;
+                     existing.Placed     = ld.Placed;
+-                    existing.Status     = ld.Status;
+-                    existing.CodeOrigin = ld.CodeOrigin;
++                    // H1 状态机护栏：Status/CodeOrigin 不接受场景保存覆盖——
++                    // 状态只经 publish/deactivate 通道流转（ch04 §4），来源标签只在生码/采纳时落定
+                     existing.Modifier   = user;
+                     existing.ModifyDate = DateTime.Now;
+                 }
+                 else
+                 {
+                     _db.Space_Locations.Add(new Space_Location
+                     {
+                         Id         = ld.Id ?? Guid.NewGuid(),
+                         RackId     = ld.RackId,
+                         FloorId    = floorId,
+                         Col        = ld.Col,
+                         Level      = ld.Level,
+                         Depth      = ld.Depth,
+                         Placed     = ld.Placed,
+-                        Status     = ld.Status,
+-                        CodeOrigin = ld.CodeOrigin,
++                        Status     = 0,   // H1：编辑器新建恒草稿（发布走 publish、采纳走 adopt/bind-codes）
++                        CodeOrigin = 1,
+                         Creator    = user,
+                         CreateDate = DateTime.Now
+                     });
+                 }
+             }
+ 
+             // ── Deletes ────────────────────────────────────────────
+             foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
+             {
+                 if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId))
+diff --git a/CP6.Tests/SceneServiceTests.cs b/CP6.Tests/SceneServiceTests.cs
+index 6cee6a0..685b482 100644
+--- a/CP6.Tests/SceneServiceTests.cs
++++ b/CP6.Tests/SceneServiceTests.cs
+@@ -155,11 +155,57 @@ public class SceneServiceTests
+ 
+         var dto = new SceneSaveDto
+         {
+             Deletes = new Deletes { Racks = new List<Guid> { rackId } }
+         };
+ 
+         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+             () => svc.SaveSceneAsync(floorId, dto, "u"));
+         Assert.Equal("E-SPACE-003", ex.Message);
+     }
++
++    [Fact]
++    public async Task SaveScene_CannotFlipPublishedStatus_OrCodeOrigin()
++    {
++        // H1：场景保存曾可任意覆盖 Status/CodeOrigin——绕过 publish/deactivate 状态机的后门
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++        var locId = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = floorId, RackId = null,
++            Placed = false, Status = 1, CodeOrigin = 2, LocationCode = "EXT-001", Version = 3
++        });
++        await db.SaveChangesAsync();
++
++        await svc.SaveSceneAsync(floorId, new SceneSaveDto
++        {
++            Locations = new List<SceneLocationSaveDto>
++            {
++                new SceneLocationSaveDto { Id = locId, RackId = Guid.Empty, Col = 1, Level = 1, Depth = 1, Placed = false, Status = 0, CodeOrigin = 1 }
++            }
++        }, "u");
++
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(1, loc.Status);       // 发布状态不被场景保存改写
++        Assert.Equal(2, loc.CodeOrigin);   // 来源标签（对账依据）同理
++    }
++
++    [Fact]
++    public async Task SaveScene_NewLocation_ForcedDraft()
++    {
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++
++        await svc.SaveSceneAsync(floorId, new SceneSaveDto
++        {
++            Locations = new List<SceneLocationSaveDto>
++            {
++                new SceneLocationSaveDto { Id = Guid.NewGuid(), RackId = Guid.Empty, Col = 1, Level = 1, Depth = 1, Placed = false, Status = 1, CodeOrigin = 2 }
++            }
++        }, "u");
++
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(0, loc.Status);       // 编辑器新建恒草稿；发布走 publish、采纳走 adopt
++        Assert.Equal(1, loc.CodeOrigin);
++    }
+ }
