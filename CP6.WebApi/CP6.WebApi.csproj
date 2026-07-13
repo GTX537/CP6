@@ -21,4 +21,9 @@
     <ProjectReference Include="..\CP6.Core\CP6.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- 票11：CsrfMiddleware.IsExempt 等 internal 静态谓词供测试直断（照 CP6.Core 既有模式） -->
+    <InternalsVisibleTo Include="CP6.Tests" />
+  </ItemGroup>
+
 </Project>

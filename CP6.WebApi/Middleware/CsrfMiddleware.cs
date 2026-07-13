@@ -27,9 +27,7 @@ public class CsrfMiddleware
         if (_enabled)
         {
             var path = ctx.Request.Path.Value ?? "";
-            // 带边界精确匹配：仅 /api/auth/login(/...) 豁免，杜绝 /api/auth/login-xxx 这类同前缀端点被静默豁免
-            var exempt = PathMatches(path, "/api/auth/login");
-            if (!exempt && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
+            if (!IsExempt(path) && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
             {
                 var cookie = ctx.Request.Cookies[AuthCookieWriter.CsrfCookie];
                 var header = ctx.Request.Headers["X-CSRF-Token"].ToString();
@@ -39,6 +37,14 @@ public class CsrfMiddleware
         }
         await _next(ctx);
     }
+
+    /// <summary>CSRF 豁免路径（段边界匹配，杜绝同前缀误豁免）：
+    /// ① 登录端点（登录时尚无 csrf cookie，杜绝 /api/auth/login-xxx 这类同前缀端点被静默豁免）；
+    /// ② SignalR hub 路径（negotiate 是 POST 但不改业务状态，hub 自身经 JWT/cookie 认证；
+    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub）。</summary>
+    internal static bool IsExempt(string path)
+        => PathMatches(path, "/api/auth/login")
+           || PathMatches(path, "/hubs");
 
     /// <summary>路径段边界匹配：path == prefix 或 path 以 "prefix/" 起头（避免同前缀误匹配）。</summary>
     internal static bool PathMatches(string path, string prefix)
