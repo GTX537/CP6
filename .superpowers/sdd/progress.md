@@ -268,3 +268,8 @@ WFS波① T10: complete (commit 150ba9b, Spec ✅ + Approved[sonnet审零issue; 
 WFS波① T11: complete (commit f01d49f, Spec ✅ + Approved[opus审安全面从严零Critical/Important; 四具名风险全核: /hubs前缀经PathMatches段边界(/hubsx不误放)与票面B1逐字/⭐安全前提独立核验成立=4 hub全无状态变更方法(仅Subscribe组操作)+CORS allowlist+AllowCredentials挡跨站negotiate,WebSocket跨站攻击面无落点/InternalsVisibleTo扩WebApi照CP6.Core模式可接受/8测试正反齐(hubsxxx=false+业务POST仍拦)]; CsrfMiddleware豁免/hubs前缀覆盖4 hub含波4新增SpaceHub; 1843绿[1835+8]; Minor×3记档: 注释安全论据不实(称hub有认证实为匿名可达,真论据=无写方法+CORS,须改注释)/blanket前缀前瞻风险(未来hub写方法静默继承豁免,建议测试守卫)/浏览器复验留部署冒烟. 波①11票全完成, 下=fable全支终审)
 WFS波① 全支终审: complete (fable终审 With fixes→修复8aae00b→复核Ready=Yes; 双侧全量终审者亲跑1843/5skip+401/401, EF clean, 24文件全映射11票零Space触碰零秘密; 跨票四缝全核: T2×T3无新洞(RowVersion+外层catch兜迟到写,残余双外呼窗口仅不声明MaxCallDuration连接器=票面设计内)/T4×T5同bad析取break单码无重复/T7×T8恰四watcher经syncing守卫一轮收敛无抖动/T11豁免前提独立核验成立; 两Important修复=CSRF注释真实论据化(hub匿名可达,真论据=无写方法+CORS allowlist)+timerActionKind组Ko两键对齐T10(未部署键零成本窗口); 跟踪票7项落档plan文末波①完成记录; 下=合并main+双镜像部署+Ko SQL+冒烟)
 WFS波① 合并+部署: complete (main=30bbf16 --no-ff已push, 分支留远端; 双镜像重建部署+wfs-svc-ko-i18n-fix.sql落库(UPDATED 6/6); 线上冒烟: hubs/notify/negotiate无CSRF头200(修复前403)/业务POST无CSRF头仍403 E-SEC-010(防护面完好)/启动干净含SpaceBinReconciliationWorker. WFS波① 波完成. 下=波②内核hardening(plan 2026-07-05-wfs-kernel-hardening.md, 15任务 H-A→{H-B‖H-C}→H-D→H-E, 零迁移)
+
+# ═══ WFS 二期波② 内核hardening(branch=feat/wfs-kernel-hardening, base=main 30bbf16)2026-07-13 ═══
+# 依据: plan 2026-07-05-wfs-kernel-hardening.md(15任务, 每Task必读spec对应章节 2026-07-05-wfs-kernel-hardening-design.md, D1~D5全锁)+侦察定案表(执行者不二次侦察)
+# 基线更新: 后端1843绿/5skip(计划1509过时)/前端401绿(计划320过时); 27个既有Wf不变量测试断言不许改(唯一例外D-T1 palette清单); 零迁移; commit即push(用户纪律覆盖计划"不push")
+# 顺序: H-A(A-T1→A-T2→A-T3→A-T4)→H-B(B-T1→B-T2→B-T3)→H-C(C-T1→C-T2→C-T3)→H-D(D-T1→D-T2)→H-E(E-T1→E-T2→E-T3紧跟不过夜)
