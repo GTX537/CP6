@@ -29,7 +29,10 @@
       - All request bodies use ASCII-only values (no CJK).
       - Dev backend MUST have CSRF disabled (Security:Csrf:Enabled=false) -- the admin
         POSTs are cookie-auth'd; the JWT cp6_at cookie flows via -WebSession. The message
-        /fire endpoint is [AllowAnonymous] + X-Api-Key header (no cookie, no CSRF).
+        /fire endpoint is [AllowAnonymous] + X-Api-Key header; under production CSRF
+        (Enabled=true) it works ONLY because CsrfMiddleware carries a SHAPE-EXACT exemption
+        for /api/oa/flow-triggers/{guid}/fire (wave-3 final-review C-1) -- CSRF *does*
+        apply to all sibling admin endpoints, which stay cookie-auth'd and protected.
 
     Cross-checked endpoints (file:line in report):
       - Login       : POST /api/auth/login                         { userName, password } -> cp6_at cookie

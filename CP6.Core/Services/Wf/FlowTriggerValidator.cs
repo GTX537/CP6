@@ -30,6 +30,10 @@ public static class FlowTriggerValidator
                 var cfg = WfTriggerConfig.ParseTimer(req.ConfigJson);
                 if (!WfCronHelper.IsValid(cfg.Cron))
                     throw new InvalidOperationException("E-WF-022: cron 解析失败（NCrontab 标准 5 段）");
+                // 波③终审 I-1：语法合法但永不触发（如 "0 0 30 2 *"，2/30 不存在）——NextUtc 返回 null，
+                // 若放行则 enabled 触发器带 NextDueUtc=null 入库静默死掉（无流水、无报错、扫描永不拾取）。
+                if (WfCronHelper.NextUtc(cfg.Cron, DateTime.UtcNow) == null)
+                    throw new InvalidOperationException("E-WF-022: cron 表达式永不触发");
                 if (!string.IsNullOrWhiteSpace(cfg.VarsJson) && !IsJsonObject(cfg.VarsJson))
                     throw new InvalidOperationException("E-WF-022: varsJson 须为 JSON 对象");
                 break;

@@ -30,8 +30,8 @@ namespace CP6.Tests;
 ///
 /// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
 /// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
-/// 继承说明：16 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 15 个
-/// （Oa 全 11 + Wf 的 AdvancedFlow/Approval/Flow/Form）经 <c>LocalizedControllerBase</c>（抽象基类，
+/// 继承说明：17 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 16 个
+/// （Oa 全 12 + Wf 的 AdvancedFlow/Approval/Flow/Form）经 <c>LocalizedControllerBase</c>（抽象基类，
 /// 仅惰性暴露 Localizer 属性，**零 [HttpXxx] action 声明**）继承 ControllerBase；因各级基类均无端点
 /// 声明，写端点均为子类手写声明方法，故 BindingFlags.DeclaredOnly 反射不会漏扫端点（逐类自查类头，
 /// 见 oawf-t4-report.md 继承链核对）。若未来在共享基类（LocalizedControllerBase 或 ControllerBase

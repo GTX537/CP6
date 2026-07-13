@@ -85,6 +85,17 @@ public class FlowTriggerValidatorTests
             Req(WfTriggerType.Timer, starter2, "{\"cron\":\"0 9 * * *\"}"), "E-WF-023");
     }
 
+    /// <summary>波③终审 I-1：语法合法但永不触发的 cron（2/30 不存在）——B-T1 修后 NextUtc 返回 null，
+    /// 若保存侧只查 IsValid 则 enabled 触发器带 NextDueUtc=null 入库静默死掉（无流水、无报错、扫描永不拾取）。</summary>
+    [Fact]
+    public async Task Timer_NeverFiringCron_EWF022()
+    {
+        using var conn = NewSqliteWithSchema();
+        var (starter, _) = await SeedFlowAndUsersAsync(conn);
+        await AssertThrowsCodeAsync(conn,
+            Req(WfTriggerType.Timer, starter, "{\"cron\":\"0 0 30 2 *\"}"), "E-WF-022");
+    }
+
     [Fact]
     public async Task Timer_BadVarsJson_EWF022()
     {

@@ -7,7 +7,7 @@ namespace CP6.WebApi.Controllers.Integration;
 /// <summary>Echo 样例事件源（QA harness 用，对齐 ServiceTask EchoConnector 先例，spec §3.3）。
 /// 业务模块接入真实事件 = 与本控制器同款「一行调用」IWfTriggerBridgeHook.OnEventAsync。
 /// 落 Controllers.Integration（与 BridgeHealthController 同族）：本控制器是 Integration 桥接 hook
-/// 的 QA 触点，非业务 OA 写端点，不进 OA/WF 权限键守卫扫描面（OawfPermissionAttributeTests 计数锁 16）。</summary>
+/// 的 QA 触点，非业务 OA 写端点，不进 OA/WF 权限键守卫扫描面（OawfPermissionAttributeTests 计数锁 17）。</summary>
 [ApiController]
 [Route("api/oa/wf-trigger-echo")]
 [Authorize]

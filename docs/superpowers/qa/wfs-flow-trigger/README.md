@@ -88,7 +88,14 @@ dotnet run --urls "http://localhost:5181"
 - The `WfTriggerWorker` hosted service starts automatically (scenario 3 depends on it).
 - Dev CSRF must be **disabled** (`Security:Csrf:Enabled=false`, the dev default): the admin
   POSTs are cookie-auth'd and would 403 under CSRF. The message `/fire` endpoint is
-  `[AllowAnonymous]` + `X-Api-Key` header (no cookie, no CSRF).
+  `[AllowAnonymous]` + `X-Api-Key` header and is **CSRF-exempt by a shape-exact middleware
+  exemption** for `/api/oa/flow-triggers/{guid}/fire` (wave-③ final-review C-1) -- without
+  that exemption production `Csrf.Enabled=true` would 403 it; the sibling admin endpoints
+  stay CSRF-protected.
+- **Deployment smoke (mandatory)**: after deploy, fire the endpoint once from a **cookie-less
+  external process** (e.g. `curl` in a fresh session, only `X-Api-Key` + `Idempotency-Key`
+  headers, real API key) expecting `201 { instanceId }` -- this is the exact production path
+  (no cookie + CSRF enabled) that all three test layers missed in wave ③.
 
 ---
 

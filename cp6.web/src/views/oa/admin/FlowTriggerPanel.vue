@@ -132,7 +132,11 @@ async function manualFire(row: FlowTriggerItem) {
 }
 
 async function resetKey(row: FlowTriggerItem) {
-  await ElMessageBox.confirm(t('oa.flowtrigger.resetKeyConfirm'), t('oa.flowtrigger.resetKey'))
+  try { await ElMessageBox.confirm(t('oa.flowtrigger.resetKeyConfirm'), t('oa.flowtrigger.resetKey')) }
+  catch {
+    // 取消即静默返回（confirm 取消以 reject 收场，不接住会抛 unhandled rejection）
+    return
+  }
   const r = await flowTriggerApi.resetKey(row.id)
   showKeyOnce(r.apiKeyPlain)
 }
