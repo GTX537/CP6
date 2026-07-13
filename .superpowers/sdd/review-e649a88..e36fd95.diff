@@ -1,0 +1,415 @@
+# Review package: e649a88..e36fd95
+
+## Commits
+e36fd95 feat(wfs-inbox): A-T4 设置页通知矩阵卡片(格子禁用+恢复默认+服务端合并写)
+
+## Files changed
+ cp6.web/src/api/oa/pref.ts                         |   4 +
+ cp6.web/src/views/oa/settings/InboxSettings.vue    | 138 ++++++++++++---------
+ .../views/oa/settings/notifyMatrixModel.test.ts    |  65 ++++++++++
+ cp6.web/src/views/oa/settings/notifyMatrixModel.ts |  54 ++++++++
+ 4 files changed, 201 insertions(+), 60 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/api/oa/pref.ts b/cp6.web/src/api/oa/pref.ts
+index 00e85ed..16371e8 100644
+--- a/cp6.web/src/api/oa/pref.ts
++++ b/cp6.web/src/api/oa/pref.ts
+@@ -1,6 +1,10 @@
+ import http from '../http'
+ 
+ export const prefApi = {
+   get:  ()                     => http.get('/oa/pref/get'),
+   save: (prefsJson: string)    => http.post('/oa/pref/save', { prefsJson }),
++  /** 服务端顶层键合并写（保他键；值 null=删键恢复默认） */
++  saveMerge: (partialJson: string) => http.post('/oa/pref/save', { prefsJson: partialJson, merge: true }),
++  /** 通知矩阵元数据（类型轴 + 通道支持标志） */
++  notifyMatrix: () => http.get('/oa/pref/notify-matrix'),
+ }
+diff --git a/cp6.web/src/views/oa/settings/InboxSettings.vue b/cp6.web/src/views/oa/settings/InboxSettings.vue
+index a807dfb..ff0e1a7 100644
+--- a/cp6.web/src/views/oa/settings/InboxSettings.vue
++++ b/cp6.web/src/views/oa/settings/InboxSettings.vue
+@@ -36,46 +36,54 @@
+             <el-switch v-model="prefs.showSummary" />
+           </el-form-item>
+           <el-form-item>
+             <el-button type="primary" :loading="prefSaving" @click="savePref">
+               {{ t('common.save') }}
+             </el-button>
+           </el-form-item>
+         </el-form>
+       </el-tab-pane>
+ 
+-      <!-- Tab 3: 通知设定 -->
++      <!-- Tab 3: 通知设定（类型×通道矩阵，wfs-inbox-ux §2.3） -->
+       <el-tab-pane :label="t('oa.notify.settings.tab')" name="notify">
+-        <el-card shadow="never" style="max-width: 500px; margin-top: 16px">
+-          <el-form label-width="130px">
+-            <el-form-item :label="t('oa.notify.settings.email')">
+-              <el-switch v-model="notifyPrefs.email" />
+-            </el-form-item>
+-            <el-divider content-position="left">{{ t('oa.notify.settings.eventTitle') }}</el-divider>
+-            <el-form-item :label="t('oa.notify.settings.todo')">
+-              <el-switch v-model="notifyPrefs.todo" />
+-            </el-form-item>
+-            <el-form-item :label="t('oa.notify.settings.approved')">
+-              <el-switch v-model="notifyPrefs.approved" />
+-            </el-form-item>
+-            <el-form-item :label="t('oa.notify.settings.rejected')">
+-              <el-switch v-model="notifyPrefs.rejected" />
+-            </el-form-item>
+-            <el-form-item :label="t('oa.notify.settings.timeout')">
+-              <el-switch v-model="notifyPrefs.timeout" />
+-            </el-form-item>
+-            <el-form-item>
+-              <el-button type="primary" :loading="notifySaving" @click="saveNotifyPref">
+-                {{ t('common.save') }}
+-              </el-button>
+-            </el-form-item>
+-          </el-form>
++        <el-card shadow="never" style="max-width: 640px; margin-top: 16px">
++          <el-table :data="matrixRows" size="small" border>
++            <el-table-column :label="t('oa.notify.matrix.colType')" min-width="180">
++              <template #default="{ row }">{{ t('oa.notify.type.' + row.typeKey) }}</template>
++            </el-table-column>
++            <el-table-column :label="t('oa.notify.matrix.colInApp')" width="110" align="center">
++              <template #default="{ row }">
++                <el-tooltip :disabled="row.inAppSupported" :content="t('oa.notify.matrix.unsupported')">
++                  <el-switch
++                    v-model="matrixState[row.typeKey]!.inApp"
++                    :disabled="!row.inAppSupported"
++                  />
++                </el-tooltip>
++              </template>
++            </el-table-column>
++            <el-table-column :label="t('oa.notify.matrix.colEmail')" width="110" align="center">
++              <template #default="{ row }">
++                <el-tooltip :disabled="row.emailSupported" :content="t('oa.notify.matrix.unsupported')">
++                  <el-switch
++                    v-model="matrixState[row.typeKey]!.email"
++                    :disabled="!row.emailSupported"
++                  />
++                </el-tooltip>
++              </template>
++            </el-table-column>
++          </el-table>
++          <div class="matrix-actions">
++            <el-button type="primary" :loading="notifySaving" @click="saveNotifyMatrix">
++              {{ t('common.save') }}
++            </el-button>
++            <el-button @click="resetNotifyMatrix">{{ t('oa.notify.matrix.reset') }}</el-button>
++          </div>
+         </el-card>
+       </el-tab-pane>
+     </el-tabs>
+ 
+     <!-- Add Delegate Dialog -->
+     <el-dialog
+       v-model="addDialogVisible"
+       :title="t('oa.settings.addDelegate')"
+       width="500px"
+       @close="resetAddForm"
+@@ -136,20 +144,21 @@
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, onMounted } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { delegateApi } from '@/api/oa/delegate'
+ import { prefApi } from '@/api/oa/pref'
+ import { userApi } from '@/api/sys/user'
+ import type { DelegateItem } from '@/types/oa/advanced'
++import { buildMatrixState, toNotifyPatch, type MatrixState, type NotifyMatrixRow } from './notifyMatrixModel'
+ 
+ const { t } = useI18n()
+ 
+ const activeTab = ref('delegate')
+ 
+ // ─── Delegate tab ────────────────────────────────────────────────────────────
+ 
+ const delegates = ref<DelegateItem[]>([])
+ const delegateLoading = ref(false)
+ 
+@@ -255,105 +264,114 @@ async function removeDelegate(row: DelegateItem) {
+ }
+ 
+ // ─── Pref tab ────────────────────────────────────────────────────────────────
+ 
+ interface Prefs {
+   pageSize: number
+   hideCancelled: boolean
+   showSummary: boolean
+ }
+ 
+-interface NotifyPrefs {
+-  email: boolean
+-  todo: boolean
+-  approved: boolean
+-  rejected: boolean
+-  timeout: boolean
+-}
+-
+ // Full raw PrefsJson object kept in memory so that any partial save preserves
+ // all sub-keys written by other sections (display prefs / notify prefs / future keys).
+ const storedRaw = ref<Record<string, unknown>>({})
+ 
+ const prefs = ref<Prefs>({ pageSize: 20, hideCancelled: false, showSummary: true })
+ const prefSaving = ref(false)
+ 
+-// Notify prefs — defaults all true (matches backend GetNotifyPrefsAsync default)
+-const notifyPrefs = ref<NotifyPrefs>({ email: true, todo: true, approved: true, rejected: true, timeout: true })
++// ─── Notify matrix tab ───────────────────────────────────────────────────────
++const matrixRows = ref<NotifyMatrixRow[]>([])
++const matrixState = ref<MatrixState>({})
+ const notifySaving = ref(false)
+ 
++async function loadNotifyMatrix(prefsJson: string) {
++  try {
++    const res = await prefApi.notifyMatrix()
++    matrixRows.value = (((res as any).data as NotifyMatrixRow[]) || [])
++    matrixState.value = buildMatrixState(prefsJson, matrixRows.value)
++  } catch {
++    // HTTP interceptor auto-toasts
++  }
++}
++
++async function saveNotifyMatrix() {
++  notifySaving.value = true
++  try {
++    await prefApi.saveMerge(toNotifyPatch(matrixState.value))   // 服务端合并：保 pageSize/rowMode 等他键
++    ElMessage.success(t('oa.notify.matrix.saveOk'))
++    await loadPref()
++  } finally {
++    notifySaving.value = false
++  }
++}
++
++async function resetNotifyMatrix() {
++  try {
++    await prefApi.saveMerge('{"notify":null}')                  // 删键 = 恢复默认全开（三态坍缩）
++    ElMessage.success(t('oa.notify.matrix.resetOk'))
++    await loadPref()
++  } catch {
++    // HTTP interceptor auto-toasts
++  }
++}
++
+ async function loadPref() {
+   try {
+     const res = await prefApi.get()
+     // Backend returns Ok2(new { prefsJson = "..." }) → envelope { code, data: { prefsJson } }
+     // http interceptor returns response.data (the envelope body), so:
+     const prefsJson: string | undefined = (res as any).data?.prefsJson
+     if (prefsJson) {
+       const parsed = JSON.parse(prefsJson) as Record<string, any>
+       // Keep the full raw object so partial saves can always merge into it
+       storedRaw.value = parsed
+       prefs.value = {
+         pageSize: parsed.pageSize ?? 20,
+         hideCancelled: parsed.hideCancelled ?? false,
+         showSummary: parsed.showSummary ?? true,
+       }
+-      const n: Partial<NotifyPrefs> = (parsed.notify as Partial<NotifyPrefs>) ?? {}
+-      notifyPrefs.value = {
+-        email: n.email ?? true,
+-        todo: n.todo ?? true,
+-        approved: n.approved ?? true,
+-        rejected: n.rejected ?? true,
+-        timeout: n.timeout ?? true,
+-      }
+     }
++    // 矩阵行始终渲染（无 prefsJson 时传 '{}' 走三态坍缩全开）
++    await loadNotifyMatrix(prefsJson ?? '{}')
+   } catch {
+     // use defaults silently
+   }
+ }
+ 
+ async function savePref() {
+   prefSaving.value = true
+   try {
+-    // Merge display-pref fields into full raw object (preserves notify + any other sub-keys)
++    // 显示偏好三键顶层合并写（服务端保 notify/rowMode 等他键；storedRaw spread 兜底不删）
+     const merged = { ...storedRaw.value, ...prefs.value }
+     storedRaw.value = merged
+-    await prefApi.save(JSON.stringify(merged))
++    await prefApi.saveMerge(JSON.stringify(prefs.value))
+     ElMessage.success(t('oa.settings.prefSaveOk'))
+   } catch {
+     // HTTP interceptor auto-toasts
+   } finally {
+     prefSaving.value = false
+   }
+ }
+ 
+-async function saveNotifyPref() {
+-  notifySaving.value = true
+-  try {
+-    // Only overwrite the `notify` sub-key; leave all other PrefsJson keys intact
+-    const merged = { ...storedRaw.value, notify: { ...notifyPrefs.value } }
+-    storedRaw.value = merged
+-    await prefApi.save(JSON.stringify(merged))
+-    ElMessage.success(t('oa.settings.prefSaveOk'))
+-  } catch {
+-    // HTTP interceptor auto-toasts
+-  } finally {
+-    notifySaving.value = false
+-  }
+-}
+-
+ // ─── Init ────────────────────────────────────────────────────────────────────
+ 
+ onMounted(() => {
+   loadDelegates()
+   loadPref()
+ })
+ </script>
+ 
+ <style scoped>
+ .inbox-settings {
+   padding: 16px;
+ }
+ 
+ .tab-toolbar {
+   margin-bottom: 12px;
+ }
++
++.matrix-actions {
++  display: flex;
++  gap: 10px;
++  margin-top: 14px;
++}
+ </style>
+diff --git a/cp6.web/src/views/oa/settings/notifyMatrixModel.test.ts b/cp6.web/src/views/oa/settings/notifyMatrixModel.test.ts
+new file mode 100644
+index 0000000..bc33477
+--- /dev/null
++++ b/cp6.web/src/views/oa/settings/notifyMatrixModel.test.ts
+@@ -0,0 +1,65 @@
++import { describe, it, expect } from 'vitest'
++import { buildMatrixState, toNotifyPatch, type NotifyMatrixRow } from './notifyMatrixModel'
++
++const rows: NotifyMatrixRow[] = [
++  { typeKey: 'todoCreated',  typeValue: 1, inAppSupported: true,  emailSupported: true },
++  { typeKey: 'flowApproved', typeValue: 2, inAppSupported: true,  emailSupported: true },
++  { typeKey: 'flowRejected', typeValue: 3, inAppSupported: true,  emailSupported: true },
++  { typeKey: 'timeout',      typeValue: 4, inAppSupported: false, emailSupported: false },
++]
++
++describe('notifyMatrixModel', () => {
++  it('三态坍缩：空/缺键/畸形 → 全 true', () => {
++    for (const json of ['', '{}', '{"notify":{}}', 'NOT_JSON{{{']) {
++      const s = buildMatrixState(json, rows)
++      expect(s.todoCreated).toEqual({ inApp: true, email: true })
++      expect(s.timeout).toEqual({ inApp: true, email: true })
++    }
++  })
++
++  it('新矩阵形态逐格解析（仅字面 false 为关）', () => {
++    const s = buildMatrixState('{"notify":{"flowRejected":{"inApp":true,"email":false}}}', rows)
++    expect(s.flowRejected).toEqual({ inApp: true, email: false })
++    expect(s.flowApproved).toEqual({ inApp: true, email: true })
++  })
++
++  it('遗留扁平形态回落（镜像后端 NotifyMatrix.IsEnabled）', () => {
++    const s = buildMatrixState('{"notify":{"todo":false,"email":false,"approved":true}}', rows)
++    expect(s.todoCreated).toEqual({ inApp: false, email: false })   // 事件关 → 双关
++    expect(s.flowApproved).toEqual({ inApp: true, email: false })   // 全局 email 关 → 仅邮件关
++  })
++
++  it('toNotifyPatch 产出可回读的 notify patch', () => {
++    const s = buildMatrixState('{}', rows)
++    s.flowRejected!.email = false
++    const patch = JSON.parse(toNotifyPatch(s))
++    expect(patch.notify.flowRejected).toEqual({ inApp: true, email: false })
++    expect(patch.notify.todoCreated).toEqual({ inApp: true, email: true })
++    expect(Object.keys(patch)).toEqual(['notify'])                  // 只 patch notify 顶层键
++  })
++})
++
++// ── 波②反射轴自增第 5 行：branchPruned（无遗留键，逐位镜像后端 IsEnabled line 63） ──
++const rows5: NotifyMatrixRow[] = [
++  ...rows,
++  { typeKey: 'branchPruned', typeValue: 5, inAppSupported: true, emailSupported: true },
++]
++
++describe('notifyMatrixModel · branchPruned（新类型无遗留形态）', () => {
++  it('三态坍缩 → 全 true', () => {
++    for (const json of ['', '{}', '{"notify":{}}', 'NOT_JSON{{{']) {
++      expect(buildMatrixState(json, rows5).branchPruned).toEqual({ inApp: true, email: true })
++    }
++  })
++
++  it('遗留扁平 email:false 不波及新类型（镜像后端：无遗留键 → 双开）', () => {
++    const s = buildMatrixState('{"notify":{"todo":false,"email":false}}', rows5)
++    expect(s.branchPruned).toEqual({ inApp: true, email: true })    // 后端 line 63 无条件 true
++    expect(s.todoCreated).toEqual({ inApp: false, email: false })   // 既有类型仍受遗留键约束
++  })
++
++  it('新矩阵形态逐格解析对新类型同样生效', () => {
++    const s = buildMatrixState('{"notify":{"branchPruned":{"inApp":false,"email":true}}}', rows5)
++    expect(s.branchPruned).toEqual({ inApp: false, email: true })
++  })
++})
+diff --git a/cp6.web/src/views/oa/settings/notifyMatrixModel.ts b/cp6.web/src/views/oa/settings/notifyMatrixModel.ts
+new file mode 100644
+index 0000000..ab08f56
+--- /dev/null
++++ b/cp6.web/src/views/oa/settings/notifyMatrixModel.ts
+@@ -0,0 +1,54 @@
++/** 通知矩阵纯函数（wfs-inbox-ux §2.3）。解析语义逐位镜像后端 NotifyMatrix.IsEnabled。 */
++export interface NotifyMatrixRow {
++  typeKey: string
++  typeValue: number
++  inAppSupported: boolean
++  emailSupported: boolean
++}
++
++export type MatrixState = Record<string, { inApp: boolean; email: boolean }>
++
++/** 新类型键 → 遗留扁平键 映射（仅既有四类型有遗留形态；镜像后端 LegacyKeyMap）。 */
++const LEGACY_KEY: Record<string, string> = {
++  todoCreated: 'todo',
++  flowApproved: 'approved',
++  flowRejected: 'rejected',
++  timeout: 'timeout',
++}
++
++export function buildMatrixState(prefsJson: string, rows: NotifyMatrixRow[]): MatrixState {
++  let notify: Record<string, unknown> = {}
++  try {
++    const parsed = JSON.parse(prefsJson || '{}')
++    if (parsed && typeof parsed.notify === 'object' && parsed.notify !== null) notify = parsed.notify
++  } catch {
++    notify = {} // 畸形 → 全默认 true
++  }
++  const state: MatrixState = {}
++  for (const r of rows) {
++    const cell = notify[r.typeKey]
++    if (cell && typeof cell === 'object') {
++      const c = cell as Record<string, unknown>
++      state[r.typeKey] = { inApp: c.inApp !== false, email: c.email !== false }
++    } else {
++      const legacyKey = LEGACY_KEY[r.typeKey]
++      if (legacyKey) {
++        // 遗留扁平回落：事件键 false → 双关；全局 email false → 仅邮件关
++        const eventOn = notify[legacyKey] !== false
++        const emailOn = notify['email'] !== false
++        state[r.typeKey] = { inApp: eventOn, email: eventOn && emailOn }
++      } else {
++        // 新类型无遗留形态：逐位镜像后端 IsEnabled（LegacyKeyMap 缺失 → 双通道无条件默认开）
++        state[r.typeKey] = { inApp: true, email: true }
++      }
++    }
++  }
++  return state
++}
++
++/** 序列化为顶层 notify patch（配 prefApi.saveMerge，服务端合并保他键）。 */
++export function toNotifyPatch(state: MatrixState): string {
++  const notify: Record<string, { inApp: boolean; email: boolean }> = {}
++  for (const [k, v] of Object.entries(state)) notify[k] = { inApp: v.inApp, email: v.email }
++  return JSON.stringify({ notify })
++}
