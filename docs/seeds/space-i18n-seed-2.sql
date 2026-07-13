@@ -12,7 +12,7 @@
  *   SpaceEventsView.vue（space.events.*・20 件）
  * ★ space.common.* は 波2 space-i18n-seed.sql で登録済みのため本ファイルには含めない
  *   （edit/delete/cancel/save/action/required/success/confirmDelete/confirm 等は再利用）。
- * 合計 131 キー = rule 64 + publish 47 + events 20。
+ * 合計 134 キー = rule 64 + publish 47 + events 20 + bind 3（波5 BindCodesDialog 追補）。
  * ============================================================ */
 SET NOCOUNT ON; SET XACT_ABORT ON;
 SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;
@@ -166,7 +166,11 @@ INSERT INTO #i18n2 VALUES
   (N'space.events.status.PENDING', N'待处理',     N'待處理',     N'Pending',           N'保留中',              N'대기'),
   (N'space.events.status.FAILED',  N'失败',       N'失敗',       N'Failed',            N'失敗',                N'실패'),
   (N'space.events.status.DEAD',    N'死信',       N'死信',       N'Dead',              N'デッド',              N'데드'),
-  (N'space.events.status.COMPENSATED', N'已补偿', N'已補償',     N'Compensated',       N'補償済',              N'보상됨');
+  (N'space.events.status.COMPENSATED', N'已补偿', N'已補償',     N'Compensated',       N'補償済',              N'보상됨'),
+  -- ── 波5：反向建模弹窗 单格补码（BindCodesDialog・3 件）────────────────────
+  (N'space.bind.unplacedTitle',    N'待绑定库位（可补码）', N'待綁定庫位（可補碼）', N'Unbound locations (code-able)', N'未割当ロケーション（採番可）', N'미배정 로케이션 (코드 생성 가능)'),
+  (N'space.bind.genSingle',        N'补码',       N'補碼',       N'Gen Code',          N'採番',                N'코드 생성'),
+  (N'space.bind.genDone',          N'已生成编码：{code}', N'已產生編碼：{code}', N'Code generated: {code}', N'採番完了：{code}', N'코드 생성됨: {code}');
 
 DECLARE @actionLog TABLE (act nvarchar(10));
 MERGE Sys_Langs AS tgt USING #i18n2 AS src ON tgt.LangKey = src.LangKey
@@ -176,6 +180,6 @@ OUTPUT $action INTO @actionLog;
 
 DECLARE @ins INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'INSERT');
 DECLARE @upd INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'UPDATE');
-PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 131 キー想定）';
+PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 134 キー想定）';
 DROP TABLE #i18n2;
 PRINT '=== Done ===';
