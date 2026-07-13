@@ -61,6 +61,20 @@ public class SpaceMasterService : ISpaceMasterService
     {
         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new BizException("E-SPACE-001");
+
+        // 锚护栏（E-SPACE-406）：SiteCode/WarehouseCd 是 WMS join 锚上游（发布时 WarehouseCd
+        // 回退=Site.WarehouseCd ?? SiteCode）。任一锚字段变更且站点下存在已发布库位
+        // （Floor.SiteId==id → Location.FloorId∈floors，Status==1 && !IsDeleted）→ 拒绝，
+        // 否则会让已发布 T_WmsBin 锚漂移。锚未变则不查询（避免每次改名多两查）。
+        if (e.SiteCode != d.SiteCode || e.WarehouseCd != d.WarehouseCd)
+        {
+            var floorIds = _db.Space_Floors.Where(f => f.SiteId == id).Select(f => f.Id);
+            if (await _db.Space_Locations.AnyAsync(
+                    l => l.FloorId != null && floorIds.Contains(l.FloorId.Value)
+                         && l.Status == 1 && !l.IsDeleted))
+                throw new BizException("E-SPACE-406");
+        }
+
         e.SiteCode   = d.SiteCode;
         e.SiteName   = d.SiteName;
         e.Address    = d.Address;

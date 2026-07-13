@@ -1,49 +1,68 @@
-# Task P0-T2 Report: JWT 过期配置双写清理
+# Task 2 报告：LocationPublishService.BuildItemAsync 批量化
 
-**Status:** DONE
-**Commit:** a34a337 chore(platform): 删除 JWT.ExpireMinutes 死配置——令牌时长唯一源=Security.Token.AccessTokenMinutes
+**分支** feat/space-wave5 · **提交** 52486c7（已 push，与 origin 同步）
 
-(Note: this file previously held a stale report from an unrelated plan — Space wave4 BizException migration. Overwritten with the current P0-T2 report.)
+（注：本文件此前残留一份无关任务报告，已整体覆盖为本次 Task 2 报告。）
 
-## What Changed
+## 实现
 
-Only `CP6.WebApi/appsettings.json` required changes (1 file, +2/-2):
+将发布链路径解析从「事务内逐库位连查」重构为「一次预载 + 纯内存构建」。
 
-1. **Deleted** `JWT.ExpireMinutes: 120` (was line 35) — the dead, misleading duplicate. Removed the now-trailing comma on the preceding `"Audience"` key to keep valid JSON. Retained all signing-related JWT keys (`_comment`, `Secret`, `Issuer`, `Audience`).
-2. **Added** a `_comment` sibling inside the `Security` section, immediately above `Token`, marking it the single source of truth:
-   `"_comment": "令牌时长唯一配置源 = Token.AccessTokenMinutes（旧 JWT.ExpireMinutes 死配置已删，见 AuthController）"`
-   (Followed the file's existing `_comment` pseudo-key convention.)
+### 新增结构
+- `private sealed class PublishLookup`：Racks/Aisles/Zones/Floors/Sites 五个 `Dictionary<Guid, T>`（init-only）。
+- `private async Task<PublishLookup> LoadLookupAsync(IReadOnlyCollection<Space_Location> locs, CancellationToken ct)`
+  依赖链顺序加载，五张表各**一次** `Where(ids.Contains)`：
+  1. Rack ← locs 的 RackId 集合
+  2. Aisle ← racks 的 AisleId 集合
+  3. Zone ← racks 的 ZoneId 集合
+  4. Floor ← **zones 的 FloorId ∪ locs 的 FloorId**（并集：Path 链走 zone.FloorId，WarehouseCd 回退链走 l.FloorId 冗余列，两链共用同一 Floors/Sites 字典）
+  5. Site ← floors 的 SiteId 集合
+  每级 ids 空集直接跳过该查询。查询次数恒为常数 5，与库位数 N 无关。
 
-No changes needed in the other variants — none contained `JWT.ExpireMinutes`:
-- `appsettings.Development.json` — has `Security.Token.AccessTokenMinutes: 120` (the real dev override; untouched).
-- `appsettings.Docker.json` — no JWT.ExpireMinutes, no Token override.
-- `appsettings.Local.json` — gitignored; no JWT.ExpireMinutes (only `JWT.Secret`).
+### 改签名
+- `BuildItemAsync(l, op)` → `static LocationPublishItem BuildItem(Space_Location l, string op, PublishLookup lk)`（同步，纯查字典）。
+- `ResolveWarehouseCdAsync(l)` → `static string? ResolveWarehouseCd(Space_Location l, PublishLookup lk)`；E-SPACE-405 长度守卫、`Site.WarehouseCd ?? SiteCode` 回退、无楼层归属返回 null 全部原样保留。
 
-## Step 1 Grep Evidence
+### 三调用方接线
+- `PublishFloorAsync`：批构造后、foreach 前 `var lk = await LoadLookupAsync(locs, default)`；循环内 `BuildItem(l, "UPSERT", lk)`。
+- `DeactivateAsync`：单库位也走统一预载——lookup 在①前置校验前加载一次，供 `ResolveWarehouseCd`（stock 预检）与后续 `BuildItem(l, "DEACTIVATE", lk)` 共用（期间 FloorId/RackId 不变）。
+- `RepublishAsync`：foreach 前加载 `lk`，循环内 `BuildItem(l, "UPSERT", lk)`。
 
-Command: `grep -rn "ExpireMinutes"` across the repo.
-Output — the only match in a config/code file was appsettings.json; the rest are docs:
-```
-docs\superpowers\specs\2026-06-21-auth-hardening-design.md:55: ...ExpireMinutes)...
-docs\superpowers\plans\2026-07-07-p0-platform-hardening.md:46: (this task's own step text)
-docs\superpowers\plans\2026-07-07-p0-platform-hardening.md:47: (this task's own step text)
-CP6.WebApi\appsettings.json:35:    "ExpireMinutes": 120
-```
-Zero references in `CP6.WebApi`/`CP6.Core`/`CP6.Tests` C# code — confirms the audit finding (AuthController reads `Security.Token.AccessTokenMinutes`). No fallback edit was needed.
+## 重构前后查询次数
 
-## Test Results
+| 路径 | 旧（事务内 / N 库位） | 新 |
+|---|---|---|
+| BuildItem 路径链 | 每库位最多 5 查（Rack/Aisle/Zone/Floor/Site）= 5×N | 预载 5 表各 1 = 5（含 WarehouseCd 链） |
+| ResolveWarehouseCd | 每库位 2 查（Floor/Site）= 2×N | 并入上面的 5，0 额外 |
+| **合计** | **约 7×N** | **常数 5** |
 
-`dotnet test` full suite:
-`Passed! - Failed: 0, Passed: 1570, Skipped: 5, Total: 1575, Duration: 44 s`
+Deactivate（N=1）：旧 2（预检）+ 最多 5（BuildItem）= 最多 7 → 新 5。
 
-Matches baseline exactly (1570 green + 5 skipped). No drop.
+## 行为等价性
 
-JSON validity verified independently: `appsettings.json valid JSON`.
+`BuildItem` 与旧 `BuildItemAsync` 逐字段等价，缺挂分支语义对齐：
+- aisle 缺失：旧 `aisle?.AisleCode`（null）↔ 新 TryGetValue 失败跳过（保持 null）。
+- site 缺失：旧 `site?.SiteCode`（null）↔ 新 TryGetValue 失败跳过（保持 null）。
+- zone/floor/rack 为 null 各级短路一致。
+- E-SPACE-405 抛出时机仍在循环内、`SaveChangesAsync` 之前——fail-fast 无孤儿性质不变。
 
-## Self-Review Findings / Concerns
+## 测试结果
 
-- Edit is minimal and config-only; no behavior change (the deleted key was never read).
-- JSON remains valid (parsed clean; full test suite loads config at startup and passes).
-- The added `_comment` sits as the first key of the `Security` object — JSON key order is irrelevant to .NET config binding, and `_comment` is not a bound config key, so no functional impact.
-- No new tests required (pure dead-config deletion), per brief.
-- No concerns.
+- 基线（重构前）：LocationPublishServiceTests 19 passed；全量 1811 passed / 5 skipped。
+- 新增 1 用例 `Publish_MixedMounting_FullFiveLevelAndFloorOnly_PathAndWarehouseCd_Equivalent`：
+  同层一次发布 2 库位——①满五级挂载（Site→Floor→Zone→**Aisle**→Rack，覆盖既有测试从未验的巷道支路 + 坐标 + WarehouseCd 回退）②只挂楼层（RackId=null，五级路径全 null/FloorLevel=0，WarehouseCd 仍走 l.FloorId→Site 回退到 "WH1"）。
+- 重构后：LocationPublishServiceTests 20 passed；**全量 1812 passed / 5 skipped**（≥ 基线 1811/5）。
+- 既有 20 断言零改动（等价性护栏）。5 skipped 为 SpaceSqlIntegrationTests（需 SQL Server，本环境一贯跳过，与本任务无关）。
+
+## 改动文件
+- `CP6.Core/Services/Space/LocationPublishService.cs`（PublishLookup + LoadLookupAsync + BuildItem/ResolveWarehouseCd 纯函数化 + 三调用方接线）
+- `CP6.Tests/LocationPublishServiceTests.cs`（新增 1 等价用例）
+
+## 自审
+- 五表恰好各一次查询：已核，每级 ids 空集短路，无 N 相关往返残留。
+- Floors/Sites 并集覆盖 WarehouseCd 链（l.FloorId）：已核，避免只挂楼层库位丢 WarehouseCd。
+- ToDictionary 无重复键风险：ids 均 Distinct，返回行按 PK 唯一。
+- InMemory 事务守卫、事件落库、SignalR 通知时序均未触碰。
+
+## 疑虑
+- 无阻断性疑虑。轻微：新查询在真库为 5 次串行往返（依赖链使然，无法并行），但相较旧 7×N 已是数量级改善，且发布批通常单事务内容量有限。

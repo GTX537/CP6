@@ -138,6 +138,69 @@ public class SpaceMasterServiceTests
         Assert.Equal("ALT", updated.WarehouseCd);
     }
 
+    // ── 波5 Task4: UpdateSite 锚护栏（E-SPACE-406）────────────────────────
+    // SiteCode/WarehouseCd 是 WMS join 锚上游；站点下有已发布库位（Status=1 && !IsDeleted）
+    // 时任一锚字段变更 → 拒绝（改锚会让已发布 T_WmsBin 锚漂移）。锚未变则护栏不查询。
+
+    /// <summary>种子：site→floor→published loc（Status=1, FloorId=floor 走 Floor.SiteId 链）。</summary>
+    private static async Task<Guid> SeedSiteWithPublishedLocationAsync(
+        CP6Context db, string siteCode, string? warehouseCd)
+    {
+        var siteId  = Guid.NewGuid();
+        var floorId = Guid.NewGuid();
+        db.Space_Sites.Add(new Space_Site { Id = siteId, SiteCode = siteCode, SiteName = "s", WarehouseCd = warehouseCd });
+        db.Space_Floors.Add(new Space_Floor { Id = floorId, SiteId = siteId, Level = 1, FloorCode = "F1", FloorName = "1F" });
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = Guid.NewGuid(),
+            Placed = true, Status = 1, CodeOrigin = 1, Version = 1, LocationCode = "A-01-01-01"
+        });
+        await db.SaveChangesAsync();
+        return siteId;
+    }
+
+    [Fact]
+    public async Task UpdateSite_ChangeSiteCode_WithPublishedLocation_Throws_E406()
+    {
+        var (db, svc) = Make();
+        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
+
+        var ex = await Assert.ThrowsAsync<BizException>(
+            () => svc.UpdateSiteAsync(siteId,
+                new SiteDto { SiteCode = "WH2", SiteName = "s", WarehouseCd = "MAIN" }, "u"));
+        Assert.Equal("E-SPACE-406", ex.Code);
+
+        // 拒绝后锚原样
+        Assert.Equal("WH1", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).SiteCode);
+    }
+
+    [Fact]
+    public async Task UpdateSite_ChangeWarehouseCd_WithPublishedLocation_Throws_E406()
+    {
+        var (db, svc) = Make();
+        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
+
+        var ex = await Assert.ThrowsAsync<BizException>(
+            () => svc.UpdateSiteAsync(siteId,
+                new SiteDto { SiteCode = "WH1", SiteName = "s", WarehouseCd = "ALT" }, "u"));
+        Assert.Equal("E-SPACE-406", ex.Code);
+
+        Assert.Equal("MAIN", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).WarehouseCd);
+    }
+
+    [Fact]
+    public async Task UpdateSite_ChangeOnlySiteName_WithPublishedLocation_Succeeds()
+    {
+        var (db, svc) = Make();
+        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
+
+        // 锚未变（SiteCode/WarehouseCd 同库中值）→ 护栏不触发，SiteName 改动放行
+        await svc.UpdateSiteAsync(siteId,
+            new SiteDto { SiteCode = "WH1", SiteName = "改名", WarehouseCd = "MAIN" }, "u");
+
+        Assert.Equal("改名", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).SiteName);
+    }
+
     // ── B-4: 货架改位姿触发几何重算 ──────────────────────────────────────
 
     [Fact]

@@ -1,150 +1,40 @@
-# Task P0-T3 报告：Sys_Role 租户化
+# Task 3 报告：Space 波5 WmsBinConsumer 批量化
 
-**Status: DONE_WITH_CONCERNS**（两处受 schema 现实所迫、与 brief 假设不同的设计调整，均为唯一正确解，已文档化并可复核）
+## Status
+DONE。commit `c6d1b79`（分支 feat/space-wave5，已 push）。全量 1813 passed / 5 skipped（基线 1812 + 本任务新增 1 等价测试）。
 
----
+## 实现
+`CP6.Core/Services/Wms/WmsBinConsumer.cs::ConsumeAsync` 循环前三次预载，替代旧「每 item 三次逐条查询」：
 
-## 1. Recon 发现
+1. **bins 预载（覆盖旧查询①按 Id + ③按锚两处 DbSet 命中面）**：一次
+   `WmsBins.Where(idSet.Contains(Id) || (whSet.Contains(WarehouseCd) && codeSet.Contains(LocationCode))).LoadAsync()`，
+   再从 `_db.WmsBins.Local` 建 `binsById` 与 `binsByAnchor` 双字典（Local 含刚载入行 + 预先已跟踪行，等价旧 Local-first 优先级）。
+2. **库存合计预载（旧查询②）**：收集所有 DEACTIVATE 且 bin 已存在项的锚 `(bin.WarehouseCd, bin.LocationCode)`，一次
+   `Stocks.Where(...).GroupBy(...).Sum(PhysicalQty)` 聚成 `stockByAnchor`；循环内 `GetValueOrDefault(anchor, 0m)`（空集=0 等价旧 `SumAsync`）。
+3. 循环体三处逐条查询全部改为字典命中：`binsById.TryGetValue`（Id）/`stockByAnchor.GetValueOrDefault`（库存）/`binsByAnchor.TryGetValue`（锚碰撞）。
 
-### 实体形态
-- `Sys_Role`：主键 **`int RoleId`**，`DatabaseGeneratedOption.None`（用户自定义、原全局唯一）。字段：RoleName/Description/Enable/OrderNo/CreateDate。实现 `IAuditable`。表名 `Sys_Roles`。**无** RoleName/RoleCode 唯一索引，唯一约束即 PK。
-- **关键背离 brief 假设 ①**：brief 假定 Sys_Role 可直接 `→ BaseTenantEntity` 且副本用「新 Guid Id」。实际 `BaseTenantEntity : BaseEntity` 带 `[Key] Guid Id` + Creator/Modifier/ModifyDate 列。若继承：
-  - 与 `int RoleId` 主键冲突（双 `[Key]`）；
-  - 新增 Guid Id + 3 审计列 = **schema 漂移**（违反「迁移只含 TenantId 列 + 索引变更」硬约束）。
-- **既有先例**：`Sys_OperLog`（int Id 非 BaseTenantEntity）已确立「int 键租户表」的做法——手挂 `HasQueryFilter` + StampTenant 手补（CP6Context.cs:1986-1992, 2235-2237）。Sys_Role 情形完全相同，故采此先例。
+查询次数：旧 = O(3N)（N=批内 item 数）；新 = 恒定 2 次（bins 一次 Load + 库存一次 GroupBy，无 DEACTIVATE 时 1 次）。
 
-### 子表引用拓扑（决定回填策略）
-| 子表 | 基类 | 带 TenantId | RoleId 引用 |
-|---|---|---|---|
-| Sys_User | BaseTenantEntity | ✅ | `int? RoleId`（主角色） |
-| Sys_UserRole | BaseTenantEntity | ✅ | int RoleId |
-| Sys_RoleAction | BaseTenantEntity | ✅ | int RoleId |
-| Sys_RoleDataScope | BaseTenantEntity | ✅ | int RoleId |
-| Sys_RoleFieldPerm | BaseTenantEntity | ✅ | int RoleId |
-| **Sys_RoleMenu** | 普通(int Id) | ❌ **无** | int RoleId |
+三分支语义（upsert 幂等 Version 判据 / 无 bin 墓碑防乱序复活 / 锚碰撞 REJECTED）、DetachOwnWrites/DeadLetter 路径、结果对象构造全部逐行为不动。
 
-- **无任何物理 FK** 指向 `Sys_Role.RoleId`（snapshot 确认，仅值引用 + 普通索引）→ 改复合主键不破坏 FK。
-- **关键背离 brief 假设 ②**：brief 的「新 Id 重指」策略对本拓扑**不可行且不必要**：
-  - RoleId 是用户可见 int，生成新号会改动用户可见编号；
-  - `Sys_RoleMenu` **无 TenantId**，无法「逐租户重指」其行 → 重指方案根本无法正确执行；
-  - 而所有真正需隔离的子表**已各自携 TenantId** → 保持 RoleId 稳定即可在租户作用域内正确解析，**零重指**。
+## 批内自碰撞结论（brief 要求的可达性判定）
+**旧实现存在「批内新插行影响后续判定」的可达代码路径**——旧两处查询均 `Local.FirstOrDefault(...) ?? DB.FirstOrDefaultAsync(...)`，Local-first 使同批前一 item 刚 Add 的 bin 被后一 item 看到：
+- 同 LocationId 双条 → 第二条走版本门 SKIPPED（既有测试 `Upsert_SameBatch_DuplicateLocationId_NoDoubleAdd` 断言此）。
+- 同锚不同 LocationId 双条 → 第二条 REJECTED（旧代码注释显式声称覆盖）。
 
-### 默认租户识别
-`TenantContext.DefaultTenant = 00000000-0000-0000-0000-0000000000A1`（ITenantContext.cs:17），全系统哨兵常量（JwtHelper/StampTenant 均回退它）。租户表 `Sys_Tenants`，`Id` 即各表 TenantId 来源。迁移 SQL 用此常量字面量识别 A1——非猜测，是文档化的默认租户身份。
+**上游可达性**：生产调用方 `LocationPublishService.PublishFloorAsync` 先跑 `PrecheckAsync`，`DuplicateGroups.Count > 0` 直接抛 `E-SPACE-307`（重复码被闸死），且每条 item 源自不同 PK 的 `Space_Location` 行——故这两条批内自碰撞路径**生产调用方不可达**（RepublishAsync/DeactivateAsync 同理，均由 distinct PK 行构建）。
 
----
+**但**消费端契约与既有测试要求保留该语义，故预载**不能**仅取批开始快照。处理：循环内每插入新 bin（UPSERT 新建 + DEACTIVATE 墓碑）**同步回填 binsById 与 binsByAnchor**，UPSERT 更新后按当前锚回填——使字典始终反映旧 Local 的实时可见性，判定完全等价。既有 12 用例（含 SameBatch/AnchorCollision）零改动全绿即为证。
 
-## 2. 实现（逐步）
+## 改动文件
+- `CP6.Core/Services/Wms/WmsBinConsumer.cs`（重构 + 注释固化可达性结论）
+- `CP6.Tests/WmsBinConsumerTests.cs`（新增 `MixedBatch_TwoUpsertOneDeactivate_EquivalentToPerItem`：UPSERT×2+DEACTIVATE×1 含 REJECTED，双 DB 跑批量路径 vs 逐条独立消费，断言逐项 Status/Success 及最终 bin IsActive/Version 两路径逐一相等）
 
-1. **实体** `Sys_Role.cs`：加 `Guid TenantId`；移除 `RoleId` 的 `[Key]`（改 fluent 复合主键），保留 `[DatabaseGenerated(None)]` 与 `IAuditable`。**不继承 BaseTenantEntity**（理由见 Recon ①）。
-2. **CP6Context.OnModelCreating**：`Sys_Role` → `HasKey(new { TenantId, RoleId })` + `HasQueryFilter(x => x.TenantId == CurrentTenantId)`（照 Sys_OperLog 先例手挂）。
-3. **StampTenant**：加 `Sys_Role` 循环（Added 且 TenantId 为空 → 盖 CurrentTenantId）。
-4. **迁移 `SysRoleTenantize`**：`dotnet ef` 生成的 schema 段 = DropPK → AddColumn TenantId(默认空 Guid) → AddPK(TenantId,RoleId)，**零多余**（见 §5）。手工在 `Up()` 追加数据段（步骤 1/2/4，含 THROW）。
-5. **种子**：
-   - `TenantAdminService.CreateAsync`：新租户开通时同事务补建 `Sys_Role{TenantId=新租户, RoleId=1, 管理员}`（否则新租户 admin RoleId=1 无角色可解析）。
-   - `Program.cs`：默认租户 seed 后加**启动幂等逐租户安全网**——为每个启用租户补齐 RoleId=1 管理员（迁移已回填存量，本块覆盖迁移后新建/遗漏租户）。
-6. **RoleController.Update**：`FindAsync(RoleId)`（复合主键单参失效）→ `FirstOrDefaultAsync(r => r.RoleId == …)`（全局过滤自动限定当前租户）。
+## 自审
+- 三处查询谓词逐一对照旧代码：Id 精确、锚精确 `(WarehouseCd,LocationCode)` pair、库存 `WarehouseCd==bin.WarehouseCd && LocationCd==bin.LocationCode` 求和 → 均保留，预载 Where 用集合超集 + 字典精确键，聚合/命中值不受超集影响。
+- DEACTIVATE 库存快照 vs 循环内：循环内从不写库存，快照与逐条查询同值；跨 item「UPSERT 建 bin→同批 DEACTIVATE 同 id」新建 bin 无对应 stock 行（stock 独立表未变），SumAsync=0 与 GetValueOrDefault=0 等价（且此路径生产亦不可达）。
+- WmsBin.WarehouseCd/LocationCode 为非空 string，锚字典 key 安全；item.WarehouseCd 在锚检查处已过 null-guard，加 `!`。
+- 无 DEACTIVATE 时跳过库存查询；空批 `idSet/whSet` 为空，`Where` 谓词返回空集，`Local` 为空，安全。
 
----
-
-## 3. TDD 证据
-
-新建 `CP6.Tests/Sys/RoleTenantIsolationTests.cs`（5 test）：①只见本租户角色 ②A 改名不影响 B ③新建自动盖 TenantId ④回填不变式完整性 ④反例：漏复制被检出。④/反例以纯函数 `BackfillInvariant.FindUnmatchedRefs` 镜像迁移 SQL 的 THROW 不变式（InMemory 不能跑 raw SQL）。
-
-**RED**（暂注释 `HasQueryFilter`，复合主键在位）：
-```
-CP6.Tests.Sys.RoleTenantIsolationTests.TenantContext_sees_only_own_roles [FAIL]
-CP6.Tests.Sys.RoleTenantIsolationTests.New_role_auto_stamps_current_tenant [FAIL]
-CP6.Tests.Sys.RoleTenantIsolationTests.Renaming_role_in_A_does_not_affect_B [FAIL]
-Failed! - Failed: 3, Passed: 2  （2 个纯函数不变式测试与过滤无关，恒绿）
-```
-**GREEN**（恢复过滤 + StampTenant）：
-```
-Passed! - Failed: 0, Passed: 7 （5 隔离 + 2 FieldAudit 回归）
-```
-**全量**：`Passed! - Failed: 0, Passed: 1575, Skipped: 5, Total: 1580`（基线 1570 + 5 新，零回归）。
-
----
-
-## 4. 数据段 SQL 推理（顺序安全性 + THROW 守卫）
-
-执行序（AddPK 之后）：
-1. `UPDATE Sys_Roles SET TenantId=@A1 WHERE TenantId=@Empty`——新列对存量行默认空 Guid，此步归户 A1。此时 (A1,RoleId) 仍两两不同 → 复合主键成立。
-2. `INSERT … SELECT … CROSS JOIN Sys_Tenants WHERE r.TenantId=@A1 AND t.Id<>@A1 AND NOT EXISTS(…)`——对每个非默认租户复制**同 RoleId** 副本。`NOT EXISTS` 保幂等；无非默认租户时 CROSS JOIN 空集，安全。
-3. 子表**零重指**（RoleId 稳定 + 子表各自带 TenantId → 租户作用域内解析）。
-4. 校验：五子表(UserRole/RoleAction/RoleDataScope/RoleFieldPerm/Users)的 `(TenantId,RoleId)`，凡 RoleId 是**已知角色号**（`EXISTS Sys_Roles a WHERE a.RoleId=c.RoleId`，忽略预存孤儿引用）却在本租户**缺副本** → `THROW 50001` 中止事务、整体回滚（迁移在单事务内运行）。步骤 2 已把每个角色复制到每个租户，故守卫正常不触发；一旦复制不全即失败、留不下半套。
-- `SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;` 置顶（对齐既有 seed SQL 兼容性要求）。
-
-**为何顺序安全**：先归户（收敛存量到 A1）→ 再复制（扩散到各租户，NOT EXISTS 幂等）→ 末校验（失败即回滚）。全程复合主键唯一性在每步后都成立。
-
----
-
-## 5. Migration 洁净性校验
-
-Snapshot diff（`CP6ContextModelSnapshot.cs`）仅：
-```
-+ b.Property<Guid>("TenantId").HasColumnType("uniqueidentifier");
-- b.HasKey("RoleId");
-+ b.HasKey("TenantId", "RoleId");
-```
-迁移 schema 段仅 DropPK/AddColumn TenantId/AddPK(TenantId,RoleId)——**零漂移**，符合硬约束。
-
----
-
-## 6. 变更文件
-
-| 文件 | 变更 |
-|---|---|
-| `CP6.Entity/DomainModels/Sys/Sys_Role.cs` | +TenantId，移 [Key]，注释 |
-| `CP6.Core/EFDbContext/CP6Context.cs` | Sys_Role 复合主键+过滤；StampTenant 补 Sys_Role |
-| `CP6.Core/Migrations/20260708093013_SysRoleTenantize.cs` | 新迁移 + 手写回填 SQL |
-| `CP6.Core/Migrations/…Designer.cs` / `CP6ContextModelSnapshot.cs` | EF 自动 |
-| `CP6.Core/Services/Platform/TenantAdminService.cs` | 新租户补建默认管理员角色 |
-| `CP6.WebApi/Program.cs` | 启动幂等逐租户角色安全网 |
-| `CP6.WebApi/Controllers/Sys/RoleController.cs` | FindAsync → FirstOrDefaultAsync |
-| `CP6.Tests/Sys/RoleTenantIsolationTests.cs` | 新建，5 test |
-| `CP6.Tests/Sys/FieldAuditR2RegressionTests.cs` | 见下 |
-
-**修改的既有测试及理由**：`FieldAuditR2RegressionTests` 因复合主键产生两处必然后果——(a) 审计 EntityKey 由 `"7001"` 变 `"<TenantId>|7001"`（ExtractKey 以 "|" 连接复合键，CP6Context.cs:2159），改断言为 `$"{DefaultTenant}|7001"`；(b) `FindAsync(7001)` 单参对复合主键失效 → 改 `FirstOrDefaultAsync(r=>r.RoleId==7001)`。均为设计的直接产物，非掩盖回归。
-
----
-
-## 7. 自审与关切
-
-- **偏离 brief 的两点（DONE_WITH_CONCERNS 供复核）**：①不继承 BaseTenantEntity（照 Sys_OperLog 先例，避 Guid Id 冲突 + 列漂移）；②回填「保持 RoleId 稳定、逐租户复制、子表零重指」而非「新 Id 重指」。二者均因 `int RoleId` 主键 + 子表已带 TenantId + `Sys_RoleMenu` 无 TenantId 的真实拓扑所决定，是**唯一正确解**，且达成与 brief 完全一致的终态（各租户独立角色集、跨租户隔离）。
-- **Step 5（前端 PMS Role 页 dev 冒烟）**：需运行栈，按派单**延后至包 DoD / P0-T4 真库验证**。全局过滤对前端透明，无需改码。
-- **Sys_RoleMenu 遗留隐患（超出本任务范围）**：该表无 TenantId 且 RoleController 的 GetRoleMenus/SaveRoleMenus/Delete 直接按 RoleId 操作它 → 跨租户同号 RoleId 会串。本任务未触碰（brief 仅要求 UserRole/RoleAction）。建议后续把 Sys_RoleMenu 租户化或迁往 Sys_RoleAction 体系。
-- **迁移未在真 SQL Server 跑过**（本环境测试用 InMemory）；THROW/CROSS JOIN/UNION 为标准 T-SQL，真库验证归 P0-T4。
-- StampTenant 对 Sys_Role 在 TenantId 为**主键一部分**时于 SaveChanges 覆盖前赋值——EF 允许改 Added 实体键值，先例风险低；测试③已覆盖自动盖章路径。
-
----
-
-## 8. 评审 Important 修复：Sys_RoleMenu 租户化补口（追加 2026-07-08）
-
-评审确认 §7 所报的 Sys_RoleMenu 隐患因本任务**被激活**（回填后各租户拥有同号 RoleId，A 改/删角色菜单映射串改 B），按指令补口闭合。
-
-### 变更
-1. **实体** `Sys_RoleMenu.cs`：加 `Guid TenantId`；int 自增 Id 主键保留（全库确认 `Sys_RoleMenu.Id` 零引用）。
-2. **CP6Context**：手挂 `HasQueryFilter(TenantId == CurrentTenantId)` + 非唯一索引 `IX_Sys_RoleMenu_Tenant_Role (TenantId, RoleId)`（Get/SaveRoleMenus、登录菜单聚合都按 RoleId 查）；StampTenant 加 Sys_RoleMenu 循环。
-3. **迁移 `SysRoleMenuTenantize`（20260708100345）**：schema 段仅 AddColumn TenantId + CreateIndex（snapshot diff 零漂移）。手写数据段：`SET QUOTED_IDENTIFIER ON` → 归户 A1 → 逐非默认租户复制副本（NOT EXISTS 幂等；`EXISTS Sys_Roles(t.Id, RoleId)` 前置——**不扩散孤儿映射**；零非默认租户时 CROSS JOIN 空集安全）→ `THROW 50002` 校验（已知 RoleId 缺本租户角色副本即回滚；known-RoleId 守卫与 SysRoleTenantize 一致，预存孤儿不误杀）。
-4. **消费点逐一核验**（指令 3）：
-   - `RoleController.cs` Delete(91-92)/GetRoleMenus(104)/SaveRoleMenus(119-128)：经 EF 上下文 → 过滤自动圈定当前租户；新插入行 StampTenant 盖章。仅加注释，无行为改码。
-   - 登录菜单树 `AuthController.BuildProfileAsync`(234)：Login 在其之前（181 行）已 `_tenant.CurrentTenantId = user.TenantId` → 过滤作用域正确，零改码。
-   - `PermissionAggregator`(38)/`RolePermService`(68,84-88)：请求租户上下文内运行，过滤正确，零改码。
-   - **`ImpersonationService.BuildMenusAsync`——唯一必须改码的读路径**：运行于平台租户上下文却要读目标租户的映射（原注释明言依赖"Sys_RoleMenu 全局表无过滤"）。改为 `IgnoreQueryFilters + rm.TenantId == targetTenantId` 显式钉住；两调用点分别传 `target.TenantId` / `impAdmin.TenantId`。这是**合理的** IgnoreQueryFilters（平台超管跨租户代入的既有语义，与 Sys_UserRole 同法）。
-   - **`MenuController.Delete`(73-74)——刻意跨租户**：Sys_Menu 是全局表，删菜单须清**所有租户**的映射，改 `IgnoreQueryFilters`（否则他租留孤儿行）。
-5. **种子**（指令 4）：既有行为确实播种 Sys_RoleMenu（Program.cs 管理员角色全菜单集）→ 按逐租户镜像：`TenantAdminService.CreateAsync` 建租户事务内复制默认租户 RoleId=1 映射集（否则新租户 admin 登录菜单为空）；Program.cs 启动安全网对 RoleId=1 映射**全缺**的启用租户整套补（只在全缺时补——租户管理员刻意删过的单条不复活）。Program.cs 既有增量种子块经 StampTenant 落默认租户，语义不变。
-
-### 测试证据
-- **RED**（暂注释 Sys_RoleMenu 过滤）：`Editing_role_menus_in_A_does_not_affect_B [FAIL]`、`New_role_menu_auto_stamps_current_tenant [FAIL]`（Failed: 2, Passed: 5）。
-- **GREEN**（恢复过滤）：RoleTenantIsolationTests(7) + ImpersonationServiceTests(14) 共 21 全绿。
-- **全量**：`Passed! - Failed: 0, Passed: 1577, Skipped: 5, Total: 1582`（上轮 1575+5 → +2 新测试，零回归）。
-- 回填不变式纯函数 `BackfillInvariant.FindUnmatchedRefs` 形状即 (TenantId, RoleId) 引用集，THROW 50002 是同一谓词——既有 ④/反例两测已覆盖，无需改。
-
-### 修改的既有测试及理由
-`ImpersonationServiceTests.SeedMenusForRole` 加 `Guid tenantId` 参数（7 调用点：Start 路径 4 处传 TargetTenant，End 路径 3 处传 DefaultTenant——End 构建的是平台超管自身菜单）。原实现依赖"映射是全局表"，租户化后映射行必须落在角色所属租户，是设计的直接产物。
-
-### 关切
-- `docs/seeds/*.sql` 历史运维脚本直插 `Sys_RoleMenus (RoleId, MenuId)` 不带 TenantId → 若将来重跑会落 TenantId=空 Guid（对所有租户不可见，且不会串数据）。这些是一次性已执行脚本，未改；后续新运维脚本须带 TenantId（记横切规范）。
-- 增量菜单授权漂移：Program.cs 后续新增模块菜单的 RoleId=1 增量种子只落默认租户；非默认租户须由租户管理员在 UI 授权（或后续种子机制逐租户化）。属既有种子机制的多租户课题，超出本补口范围。
-- 迁移仍未在真 SQL Server 执行（InMemory 测试）；真库验证归 P0-T4。
+## 疑虑
+- 理论边角（**非本任务回归、生产不可达**）：若同批内某 UPSERT 把已存在 bin 的 `LocationCode` 改成另一锚值，`binsByAnchor` 旧键会残留指向该 bin。但「发布后码冻结」（LocationCode 恒不变）是既有域不变式，无调用方触发码变更，既有测试亦不涉及；UPSERT 更新后已按当前锚回填新键，主路径无偏差。不视为缺口，仅记录。
