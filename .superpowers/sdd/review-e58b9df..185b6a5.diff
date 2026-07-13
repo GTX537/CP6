@@ -1,0 +1,527 @@
+# Review package: e58b9df..185b6a5
+
+## Commits
+185b6a5 feat(wfs-inbox): A-T3 PersistentWfNotifier 接矩阵偏好 逐收件人×逐通道独立跳过
+
+## Files changed
+ CP6.Tests/Oa/PersistentWfNotifierTests.cs   | 214 ++++++++++++++++++++++++++++
+ CP6.WebApi/Services/PersistentWfNotifier.cs | 191 ++++++++++++++-----------
+ 2 files changed, 319 insertions(+), 86 deletions(-)
+
+## Diff
+diff --git a/CP6.Tests/Oa/PersistentWfNotifierTests.cs b/CP6.Tests/Oa/PersistentWfNotifierTests.cs
+new file mode 100644
+index 0000000..8aae3c4
+--- /dev/null
++++ b/CP6.Tests/Oa/PersistentWfNotifierTests.cs
+@@ -0,0 +1,214 @@
++// CP6.Tests/Oa/PersistentWfNotifierTests.cs
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Oa;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Sys;
++using CP6.Entity.DomainModels.Wf;
++using CP6.WebApi.Hubs;
++using CP6.WebApi.Services;
++using Microsoft.AspNetCore.SignalR;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Microsoft.Extensions.Logging.Abstractions;
++using Xunit;
++
++namespace CP6.Tests.Oa;
++
++public class PersistentWfNotifierTests
++{
++    // ── 手写 fakes ──────────────────────────────────────────────────────────
++    private sealed class RecordingNotif : INotificationService
++    {
++        public readonly List<(Guid UserId, int Type)> Created = new();
++        public Task CreateAsync(Guid userId, int type, string title, string body, Guid? instanceId, Guid? taskId, string? flowKey)
++        { Created.Add((userId, type)); return Task.CompletedTask; }
++        public Task<IReadOnlyList<NotificationItem>> ListAsync(Guid userId, bool unreadOnly, int page, int pageSize)
++            => Task.FromResult<IReadOnlyList<NotificationItem>>(Array.Empty<NotificationItem>());
++        public Task<int> UnreadCountAsync(Guid userId) => Task.FromResult(0);
++        public Task MarkReadAsync(Guid userId, Guid id) => Task.CompletedTask;
++        public Task MarkAllReadAsync(Guid userId) => Task.CompletedTask;
++    }
++
++    private sealed class RecordingEmail : IEmailSender
++    {
++        public readonly List<(string To, string Subject)> Sent = new();
++        public Task SendAsync(string to, string subject, string body)
++        { Sent.Add((to, subject)); return Task.CompletedTask; }
++    }
++
++    private sealed class FakeClientProxy : IClientProxy
++    {
++        public int SendCount;
++        public Task SendCoreAsync(string method, object?[] args, CancellationToken ct = default)
++        { SendCount++; return Task.CompletedTask; }
++    }
++
++    private sealed class FakeHubClients : IHubClients
++    {
++        public readonly FakeClientProxy Proxy = new();
++        public IClientProxy All => Proxy;
++        public IClientProxy AllExcept(IReadOnlyList<string> x) => Proxy;
++        public IClientProxy Client(string x) => Proxy;
++        public IClientProxy Clients(IReadOnlyList<string> x) => Proxy;
++        public IClientProxy Group(string x) => Proxy;
++        public IClientProxy Groups(IReadOnlyList<string> x) => Proxy;
++        public IClientProxy GroupExcept(string x, IReadOnlyList<string> y) => Proxy;
++        public IClientProxy User(string x) => Proxy;
++        public IClientProxy Users(IReadOnlyList<string> x) => Proxy;
++    }
++
++    private sealed class FakeHub : IHubContext<NotifyHub>
++    {
++        public readonly FakeHubClients FakeClients = new();
++        public IHubClients Clients => FakeClients;
++        public IGroupManager Groups => null!;   // 通知器不触达 Groups
++    }
++
++    // ── 脚手架 ──────────────────────────────────────────────────────────────
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++
++    private sealed record Rig(CP6Context Db, PersistentWfNotifier Notifier,
++        RecordingNotif Notif, RecordingEmail Email, FakeHub Hub);
++
++    private static async Task<Rig> BuildAsync(Guid user, string? prefsJson)
++    {
++        var db = NewDb();
++        db.Sys_Users.Add(new Sys_User { Id = user, UserName = "u1", NickName = "用户一", Password = "x", Email = "u1@cp6.local" });
++        if (prefsJson is not null)
++            db.Wf_InboxPrefs.Add(new Wf_InboxPref { Id = Guid.NewGuid(), UserId = user, PrefsJson = prefsJson });
++        await db.SaveChangesAsync();
++        var notif = new RecordingNotif();
++        var email = new RecordingEmail();
++        var hub = new FakeHub();
++        var notifier = new PersistentWfNotifier(db, notif, new PrefService(db), email, hub,
++            NullLogger<PersistentWfNotifier>.Instance);
++        return new Rig(db, notifier, notif, email, hub);
++    }
++
++    // ── 跳过矩阵（spec §7）──────────────────────────────────────────────────
++    [Fact]
++    public async Task Default_NoPrefRow_PersistsPushesAndEmails()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, prefsJson: null);
++        await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
++        Assert.Single(r.Notif.Created);
++        Assert.Equal(WfNotificationType.TodoCreated, r.Notif.Created[0].Type);
++        Assert.Equal(1, r.Hub.FakeClients.Proxy.SendCount);
++        Assert.Single(r.Email.Sent);
++    }
++
++    [Fact]
++    public async Task InAppOff_SkipsPersistAndPush_EmailStillSent()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"todoCreated":{"inApp":false,"email":true}}}""");
++        await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
++        Assert.Empty(r.Notif.Created);
++        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
++        Assert.Single(r.Email.Sent);                       // 通道独立：邮件照发
++    }
++
++    [Fact]
++    public async Task EmailOff_PersistsAndPushes_NoEmail()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"flowApproved":{"email":false}}}""");
++        await r.Notifier.FlowApprovedAsync(user, Guid.NewGuid(), "leave");
++        Assert.Single(r.Notif.Created);
++        Assert.Equal(WfNotificationType.FlowApproved, r.Notif.Created[0].Type);
++        Assert.Equal(1, r.Hub.FakeClients.Proxy.SendCount);
++        Assert.Empty(r.Email.Sent);
++    }
++
++    [Fact]
++    public async Task BothOff_SkipsEverything()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"flowRejected":{"inApp":false,"email":false}}}""");
++        await r.Notifier.FlowRejectedAsync(user, Guid.NewGuid(), "leave", "缺附件");
++        Assert.Empty(r.Notif.Created);
++        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
++        Assert.Empty(r.Email.Sent);
++    }
++
++    [Fact]
++    public async Task TypesIndependent_RejectedOff_TodoStillFull()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"flowRejected":{"inApp":false,"email":false}}}""");
++        await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
++        Assert.Single(r.Notif.Created);
++        Assert.Single(r.Email.Sent);
++    }
++
++    // ── 遗留扁平数据回归（C2：旧用户已存开关不失效）──
++    [Fact]
++    public async Task LegacyFlat_TodoOff_SkipsAllChannels()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"todo":false,"email":true}}""");
++        await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
++        Assert.Empty(r.Notif.Created);
++        Assert.Empty(r.Email.Sent);
++    }
++
++    [Fact]
++    public async Task LegacyFlat_GlobalEmailOff_SkipsOnlyEmail()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"email":false}}""");
++        await r.Notifier.FlowApprovedAsync(user, Guid.NewGuid(), "leave");
++        Assert.Single(r.Notif.Created);
++        Assert.Empty(r.Email.Sent);
++    }
++
++    // ── 第 4 方法 BranchPrunedAsync 矩阵门控（hardening 波已合入；typeKey="branchPruned"）──
++    [Fact]
++    public async Task BranchPruned_Default_PersistsPushesAndEmails()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, prefsJson: null);
++        await r.Notifier.BranchPrunedAsync(user, Guid.NewGuid(), "leave", "node2", "分支驳回");
++        Assert.Single(r.Notif.Created);
++        Assert.Equal(WfNotificationType.BranchPruned, r.Notif.Created[0].Type);
++        Assert.Equal(1, r.Hub.FakeClients.Proxy.SendCount);
++        Assert.Single(r.Email.Sent);
++    }
++
++    [Fact]
++    public async Task BranchPruned_InAppOff_SkipsPersistAndPush_EmailStillSent()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"branchPruned":{"inApp":false,"email":true}}}""");
++        await r.Notifier.BranchPrunedAsync(user, Guid.NewGuid(), "leave", "node2", "分支驳回");
++        Assert.Empty(r.Notif.Created);
++        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
++        Assert.Single(r.Email.Sent);                       // 通道独立：邮件照发
++    }
++
++    [Fact]
++    public async Task BranchPruned_EmailOff_PersistsAndPushes_NoEmail()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"branchPruned":{"email":false}}}""");
++        await r.Notifier.BranchPrunedAsync(user, Guid.NewGuid(), "leave", "node2", "分支驳回");
++        Assert.Single(r.Notif.Created);
++        Assert.Equal(WfNotificationType.BranchPruned, r.Notif.Created[0].Type);
++        Assert.Equal(1, r.Hub.FakeClients.Proxy.SendCount);
++        Assert.Empty(r.Email.Sent);
++    }
++
++    [Fact]
++    public async Task BranchPruned_BothOff_SkipsEverything()
++    {
++        var user = Guid.NewGuid();
++        var r = await BuildAsync(user, """{"notify":{"branchPruned":{"inApp":false,"email":false}}}""");
++        await r.Notifier.BranchPrunedAsync(user, Guid.NewGuid(), "leave", "node2", "分支驳回");
++        Assert.Empty(r.Notif.Created);
++        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
++        Assert.Empty(r.Email.Sent);
++    }
++}
+diff --git a/CP6.WebApi/Services/PersistentWfNotifier.cs b/CP6.WebApi/Services/PersistentWfNotifier.cs
+index d101d4a..4edceb6 100644
+--- a/CP6.WebApi/Services/PersistentWfNotifier.cs
++++ b/CP6.WebApi/Services/PersistentWfNotifier.cs
+@@ -11,21 +11,23 @@ namespace CP6.WebApi.Services;
+ 
+ /// <summary>
+ /// 复合工作流通知器（OA Phase D-1 N-T4）：持久化站内通知 + SignalR 实时 + 邮件三渠道。
+ /// <para>
+ /// 铁律：<br/>
+ /// ① 持久化走引擎共享 <see cref="CP6Context"/>（DI Scoped，与引擎同实例），
+ ///    <see cref="INotificationService.CreateAsync"/> 仅 Add、不 SaveChanges，
+ ///    随引擎 SaveChanges 一起落库（仿 Phase A 读模型钩子），<b>绝不在此处对 context 调 SaveChanges</b>。<br/>
+ /// ② SignalR + 邮件是 best-effort 副作用，各自独立 try/catch 吞异常，
+ ///    任一失败绝不冒泡、绝不破坏审批流。<br/>
+-/// ③ 偏好事件开关关 → 整个事件跳过（不持久化、不推、不邮件）。
++/// ③ 偏好按 收件人×类型×通道 独立生效（矩阵，A-T1/A-T2）：
++///    每方法逐通道查 <see cref="IPrefService.IsEnabledAsync"/>——
++///    inApp 关 → 跳过持久化+SignalR；email 关 → 跳过邮件；两者皆关 → 整个事件跳过。
+ /// </para>
+ /// </summary>
+ public class PersistentWfNotifier : IWfNotifier
+ {
+     private readonly CP6Context _db;
+     private readonly INotificationService _notif;
+     private readonly IPrefService _pref;
+     private readonly IEmailSender _email;
+     private readonly IHubContext<NotifyHub> _hub;
+     private readonly ILogger<PersistentWfNotifier> _logger;
+@@ -44,164 +46,181 @@ public class PersistentWfNotifier : IWfNotifier
+         _email  = email;
+         _hub    = hub;
+         _logger = logger;
+     }
+ 
+     // ── TodoCreatedAsync ────────────────────────────────────────────────
+ 
+     /// <inheritdoc />
+     public async Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey)
+     {
+-        // 1. 读偏好；事件关 → 整个跳过
+-        var prefs = await _pref.GetNotifyPrefsAsync(assigneeId);
+-        if (!prefs.Todo) return;
++        // 1. 逐收件人 × 逐通道查矩阵偏好（per-request 缓存在 IPrefService 内）
++        var inApp = await _pref.IsEnabledAsync(assigneeId, "todoCreated", NotifyMatrix.ChannelInApp);
++        var email = await _pref.IsEnabledAsync(assigneeId, "todoCreated", NotifyMatrix.ChannelEmail);
++        if (!inApp && !email) return;
+ 
+         const string title = "您有新的待办";
+         var body = $"您有新的待办：{flowKey}";
+ 
+-        // 2. 持久化（仅 Add，不 SaveChanges）
+-        await _notif.CreateAsync(
+-            assigneeId, WfNotificationType.TodoCreated,
+-            title, body, instanceId, taskId, flowKey);
+-
+-        // 3. SignalR（best-effort）
+-        try
++        if (inApp)
+         {
+-            await _hub.Clients.All.SendAsync("WfNotification", new
++            // 2. 持久化（仅 Add，不 SaveChanges）
++            await _notif.CreateAsync(
++                assigneeId, WfNotificationType.TodoCreated,
++                title, body, instanceId, taskId, flowKey);
++
++            // 3. SignalR（best-effort）
++            try
+             {
+-                type       = WfNotificationType.TodoCreated,
+-                userId     = assigneeId,
+-                instanceId,
+-                taskId,
+-                flowKey
+-            });
+-        }
+-        catch (Exception ex)
+-        {
+-            _logger.LogWarning(ex,
+-                "SignalR WfNotification(TodoCreated) 失败，忽略（用户 {UserId}）", assigneeId);
++                await _hub.Clients.All.SendAsync("WfNotification", new
++                {
++                    type       = WfNotificationType.TodoCreated,
++                    userId     = assigneeId,
++                    instanceId,
++                    taskId,
++                    flowKey
++                });
++            }
++            catch (Exception ex)
++            {
++                _logger.LogWarning(ex,
++                    "SignalR WfNotification(TodoCreated) 失败，忽略（用户 {UserId}）", assigneeId);
++            }
+         }
+ 
+-        // 4. 邮件（best-effort，需偏好开 + 用户有 Email）
+-        if (prefs.Email)
++        // 4. 邮件（best-effort，独立通道）
++        if (email)
+             await TrySendEmailAsync(assigneeId, title, body);
+     }
+ 
+     // ── FlowApprovedAsync ───────────────────────────────────────────────
+ 
+     /// <inheritdoc />
+     public async Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey)
+     {
+-        var prefs = await _pref.GetNotifyPrefsAsync(starterId);
+-        if (!prefs.Approved) return;
++        var inApp = await _pref.IsEnabledAsync(starterId, "flowApproved", NotifyMatrix.ChannelInApp);
++        var email = await _pref.IsEnabledAsync(starterId, "flowApproved", NotifyMatrix.ChannelEmail);
++        if (!inApp && !email) return;
+ 
+         const string title = "您的申请已通过";
+         var body = $"您的申请已通过：{flowKey}";
+ 
+-        await _notif.CreateAsync(
+-            starterId, WfNotificationType.FlowApproved,
+-            title, body, instanceId, taskId: null, flowKey);
+-
+-        try
++        if (inApp)
+         {
+-            await _hub.Clients.All.SendAsync("WfNotification", new
++            await _notif.CreateAsync(
++                starterId, WfNotificationType.FlowApproved,
++                title, body, instanceId, taskId: null, flowKey);
++
++            try
+             {
+-                type       = WfNotificationType.FlowApproved,
+-                userId     = starterId,
+-                instanceId,
+-                taskId     = (Guid?)null,
+-                flowKey
+-            });
+-        }
+-        catch (Exception ex)
+-        {
+-            _logger.LogWarning(ex,
+-                "SignalR WfNotification(FlowApproved) 失败，忽略（用户 {UserId}）", starterId);
++                await _hub.Clients.All.SendAsync("WfNotification", new
++                {
++                    type       = WfNotificationType.FlowApproved,
++                    userId     = starterId,
++                    instanceId,
++                    taskId     = (Guid?)null,
++                    flowKey
++                });
++            }
++            catch (Exception ex)
++            {
++                _logger.LogWarning(ex,
++                    "SignalR WfNotification(FlowApproved) 失败，忽略（用户 {UserId}）", starterId);
++            }
+         }
+ 
+-        if (prefs.Email)
++        if (email)
+             await TrySendEmailAsync(starterId, title, body);
+     }
+ 
+     // ── FlowRejectedAsync ───────────────────────────────────────────────
+ 
+     /// <inheritdoc />
+     public async Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment)
+     {
+-        var prefs = await _pref.GetNotifyPrefsAsync(starterId);
+-        if (!prefs.Rejected) return;
++        var inApp = await _pref.IsEnabledAsync(starterId, "flowRejected", NotifyMatrix.ChannelInApp);
++        var email = await _pref.IsEnabledAsync(starterId, "flowRejected", NotifyMatrix.ChannelEmail);
++        if (!inApp && !email) return;
+ 
+         const string title = "您的申请被驳回";
+         var body = string.IsNullOrWhiteSpace(comment)
+             ? $"您的申请被驳回：{flowKey}"
+             : $"您的申请被驳回：{flowKey}（{comment}）";
+ 
+-        await _notif.CreateAsync(
+-            starterId, WfNotificationType.FlowRejected,
+-            title, body, instanceId, taskId: null, flowKey);
+-
+-        try
++        if (inApp)
+         {
+-            await _hub.Clients.All.SendAsync("WfNotification", new
++            await _notif.CreateAsync(
++                starterId, WfNotificationType.FlowRejected,
++                title, body, instanceId, taskId: null, flowKey);
++
++            try
+             {
+-                type       = WfNotificationType.FlowRejected,
+-                userId     = starterId,
+-                instanceId,
+-                taskId     = (Guid?)null,
+-                flowKey
+-            });
+-        }
+-        catch (Exception ex)
+-        {
+-            _logger.LogWarning(ex,
+-                "SignalR WfNotification(FlowRejected) 失败，忽略（用户 {UserId}）", starterId);
++                await _hub.Clients.All.SendAsync("WfNotification", new
++                {
++                    type       = WfNotificationType.FlowRejected,
++                    userId     = starterId,
++                    instanceId,
++                    taskId     = (Guid?)null,
++                    flowKey
++                });
++            }
++            catch (Exception ex)
++            {
++                _logger.LogWarning(ex,
++                    "SignalR WfNotification(FlowRejected) 失败，忽略（用户 {UserId}）", starterId);
++            }
+         }
+ 
+-        if (prefs.Email)
++        if (email)
+             await TrySendEmailAsync(starterId, title, body);
+     }
+ 
+     // ── BranchPrunedAsync（内核 hardening）────────────────────────────────
+ 
+     /// <inheritdoc />
+     public async Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment)
+     {
+-        // 偏好：BranchPruned 是新类型键，现行 NotificationPrefs 无对应字段 → 缺键默认 true（信箱 spec §2.1 三态坍缩口径），
+-        // 本方法 v1 不做偏好门控；偏好矩阵化由信箱 spec 落地时统一改造。
++        // 偏好矩阵（A-T3）：branchPruned 独立类型键，双通道有效（NotifyMatrix.Support）。
++        var inApp = await _pref.IsEnabledAsync(starterId, "branchPruned", NotifyMatrix.ChannelInApp);
++        var email = await _pref.IsEnabledAsync(starterId, "branchPruned", NotifyMatrix.ChannelEmail);
++        if (!inApp && !email) return;
++
+         const string title = "您的申请有分支被驳回（其余分支继续）";
+         var body = string.IsNullOrWhiteSpace(comment)
+             ? $"流程 {flowKey} 的分支 {nodeId} 被驳回剪除，其余分支继续审批"
+             : $"流程 {flowKey} 的分支 {nodeId} 被驳回剪除（{comment}），其余分支继续审批";
+ 
+-        await _notif.CreateAsync(
+-            starterId, WfNotificationType.BranchPruned,
+-            title, body, instanceId, taskId: null, flowKey);
+-
+-        try
++        if (inApp)
+         {
+-            await _hub.Clients.All.SendAsync("WfNotification", new
++            await _notif.CreateAsync(
++                starterId, WfNotificationType.BranchPruned,
++                title, body, instanceId, taskId: null, flowKey);
++
++            try
+             {
+-                type       = WfNotificationType.BranchPruned,
+-                userId     = starterId,
+-                instanceId,
+-                taskId     = (Guid?)null,
+-                flowKey
+-            });
+-        }
+-        catch (Exception ex)
+-        {
+-            _logger.LogWarning(ex,
+-                "SignalR WfNotification(BranchPruned) 失败，忽略（用户 {UserId}）", starterId);
++                await _hub.Clients.All.SendAsync("WfNotification", new
++                {
++                    type       = WfNotificationType.BranchPruned,
++                    userId     = starterId,
++                    instanceId,
++                    taskId     = (Guid?)null,
++                    flowKey
++                });
++            }
++            catch (Exception ex)
++            {
++                _logger.LogWarning(ex,
++                    "SignalR WfNotification(BranchPruned) 失败，忽略（用户 {UserId}）", starterId);
++            }
+         }
+ 
+-        var prefs = await _pref.GetNotifyPrefsAsync(starterId);
+-        if (prefs.Email)
++        if (email)
+             await TrySendEmailAsync(starterId, title, body);
+     }
+ 
+     // ── Private helpers ─────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 查用户邮箱并发送，全 best-effort：任何异常吞掉+记 Warning，不冒泡。
+     /// </summary>
+     private async Task TrySendEmailAsync(Guid userId, string subject, string body)
+     {
