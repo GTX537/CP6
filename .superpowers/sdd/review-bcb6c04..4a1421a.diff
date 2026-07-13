@@ -1,0 +1,510 @@
+# Review package: bcb6c04..4a1421a
+
+## Commits
+4a1421a feat(wfs-trigger): F-T2 FlowTrigger权限点+五语i18n seed+E-T1守卫收编
+
+## Files changed
+ .superpowers/sdd/w3-FT2-report.md                  | 58 ++++++++++++++++
+ CP6.Tests/OawfPermissionAttributeTests.cs          | 29 ++++----
+ .../FlowTriggerAdminController.cs                  | 19 ++---
+ CP6.WebApi/Program.cs                              |  5 ++
+ CP6.WebApi/Seed/FlowTriggerPermissionSeed.cs       | 80 ++++++++++++++++++++++
+ CP6.WebApi/Seed/I18nOaFlowTriggerScreenSeed.cs     | 70 +++++++++++++++++++
+ 6 files changed, 240 insertions(+), 21 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/w3-FT2-report.md b/.superpowers/sdd/w3-FT2-report.md
+new file mode 100644
+index 0000000..b6b0d15
+--- /dev/null
++++ b/.superpowers/sdd/w3-FT2-report.md
+@@ -0,0 +1,58 @@
++# Task F-T2 报告：权限点/i18n seed + E-T1 守卫收编
++
++STATUS: DONE（全量 1969 passed / 5 skipped，与基线一致；零迁移；前端未触）
++
++## 交付文件（surgical，5 项）
++- 新增 `CP6.WebApi/Seed/I18nOaFlowTriggerScreenSeed.cs`（53 键五语）
++- 新增 `CP6.WebApi/Seed/FlowTriggerPermissionSeed.cs`（FlowTrigger.View/Edit 逐租户权限种子）
++- 改 `CP6.WebApi/Program.cs`（FlowTriggerPermissionSeed 接入 + i18n concat 追加）
++- 移 `Controllers/Integration/FlowTriggerAdminController.cs` → `Controllers/Oa/`（git mv 保历史，命名空间改 + GET 去键）
++- 改 `CP6.Tests/OawfPermissionAttributeTests.cs`（词表 + 计数常量 + 计数描述注释）
++
++## 交接注记落实
++1. **菜单 734 MenuKey 回填跳过**：`OawfMenuSeed` 已落地 `oa-flow-admin`（M-OA/WF 波），本任务不重做、不加竞争回填。已核对 brief Step-1 内联回填块（RoleId=1 范本）被本任务丢弃。
++2. **权限种子逐租户**：未用 brief 的 Program.cs 内联 RoleId=1 块。选择**创建 sibling** `FlowTriggerPermissionSeed.cs`（照 `OawfPermissionSeed` 逐租户 + IgnoreQueryFilters 幂等 + 显式 TenantId 模式），而非扩 OawfPermissionSeed——后者的 XML doc 是 M-OA/WF 波精确台账（20 元组/31 贴点/6 menu-key），注入波③ trigger 会污染该波账本；sibling 隔离波次、git 更 surgical。接入点在 `OawfPermissionSeed.EnsureSeeded` 之后（菜单 734 须先在）。
++3. **E-T1 守卫收编**：见下「守卫 re-baseline」。
++4. **i18n 键面双向对账**：见下「键面对账」。
++
++## 键面对账（双向 grep，零缺零孤儿）
++权威源 = `cp6.web/src/views/oa/admin` 三新文件 + `flowTriggerModel.ts` 的 `t()`/`labelKey`/校验返回键。
++
++| 类别 | 引用键数 | 归属 |
++|---|---|---|
++| `oa.flowtrigger.*` | 49 | **全新 → 本 seed** |
++| `oa.flowadmin.tab.flows` | 1 | **新（E-T2 tab）→ 本 seed** |
++| `oa.flowadmin.*` 其余 10（title/uniqueHint/empty/col.×5/enabled/disabled） | 10 | 既有 `I18nOaInboxScreenSeed`，**不重复** |
++| `common.*`（add/save/ok/edit/cancel） | 5 | 既有通用键，**不重复** |
++| `E-WF-022/023/024` | 3 | 后端错误码，grep 确认全库未 seed → 本 seed |
++
++- 本 seed Items 计 **53** = 49 + 1 + 3。
++- 正向（文件→seed）：49 `oa.flowtrigger.*` + `oa.flowadmin.tab.flows` 全部命中本 seed（其余 10 flowadmin + 5 common 命中既有 seed）→ 零缺失。
++- 反向（seed→文件）：49 `oa.flowtrigger.*` + tab.flows 均有 `t()`/`labelKey` 引用；3 个 E-WF 为后端 message 错误码（非前端 t()，属故意 LangKey）→ 零孤儿。
++- 去重 grep：`oa.flowtrigger.*`/`E-WF-022~024` 在 `CP6.WebApi/Seed/` 均无既存条目；`oa.flowadmin.*` 10 键仅存于 InboxSeed，本 seed 只补 tab.flows。
++- ja/ko 为真译（非中文照抄），逐条核对（例：keyOnce ja「このキーは一度しか表示されません…」/ ko「이 키는 한 번만 표시됩니다…」）。
++- concat 接在 `I18nOaKernelHardeningScreenSeed.Items` 之后（Program.cs，仿 kernel-hardening 先例）。
++
++## 守卫 re-baseline（E-T1 交接票）+ 一处附加口径修正
++控制器 `FlowTriggerAdminController` 由 `Controllers.Integration` 收编回 `Controllers.Oa`（命名空间改、路由 `api/oa/flow-triggers` 不动）。
++
++**跑测得实数（未盲信 brief）**：
++- `OawfControllers_AreDiscovered`：16 → **17**（Oa 11→12 + Wf 5）。
++- `EveryMutatingAction_IsGuarded` taggedCount：31 → **37**（+6 = FlowTrigger 变更端点：Create/Update/Enable/ResetKey/ManualFire=Edit ×5，CronPreview=View ×1）；33 → 39 非GET端点（37 贴点 + 2 豁免）。
++- `ActionVocabulary`：+`FlowTrigger.View`、+`FlowTrigger.Edit`。
++- 测试改动**仅限**词表 + 计数常量（16→17 / 31→37）+ 计数描述性注释，**无断言逻辑弱化**、无豁免清单变动。
++
++**附加口径（E-T1 报告 + brief 均未预见的第 4 处锁）**：`NoReadOnlyGetAction_HasRequirePermission` 禁只读 GET 贴 `[RequirePermission]`。原控制器在 Integration 时 3 个 GET（list/{id}/{id}/fires）贴了 `FlowTrigger.View`；收编入 Oa 后该守卫会红。按「不弱化断言 + 全绿」硬门，将这 3 个 GET 去键——与**同菜单 `oa-flow-admin` 兄弟控制器 `FlowAdminController`**（其 GET 仅 `[Authorize]`、只 Enable 写端点贴键）既有约定完全一致。`FlowTrigger.View` 仍保留在 CronPreview（POST）上，故词表与「贴点⊆种子」互锁不受影响（贴点 action 集 {View(CronPreview), Edit×5} ⊆ 种子 {View, Edit}）。
++
++## 「贴点⊆种子」互锁
++控制器实际使用 action = {FlowTrigger.View, FlowTrigger.Edit}；种子登记 = {FlowTrigger.View, FlowTrigger.Edit}（menu 734）→ 无孤儿键、无漏种。
++
++## 门槛核验
++1. `dotnet test CP6.slnx`：**1969 passed / 5 skipped**（含改后 OawfPermissionAttributeTests 4/4）。与基线 1969/5skip 一致（本任务未加新测试，仅原地改守卫）。
++2. `dotnet ef migrations has-pending-model-changes`：No changes（零迁移）。
++3. 前端未触（仅后端 seed + 控制器移 + 测试）→ vitest 无需重跑。
++4. `git show --stat`：仅 brief 文件 + 记档的收编文件（5 项，含 R100 rename）。
++
++## 偏差/关切
++- **[需复核] GET 读授权口径微调**：收编导致 list/{id}/{id}/fires 由「须 FlowTrigger.View（种子仅授 RoleId=1）」放宽为「[Authorize] 登录态 + 租户隔离」。这与同菜单兄弟控制器 FlowAdminController 一致（该控制器注释明言「面向平台管理员，[Authorize] 登录态即可，P1 不加细粒度权限属性」），且 GET 不返回明文 key（key 仅 hash 存、仅 Create/ResetKey 一次性明文回）。fail-closed 守卫现覆盖本控制器 6 写端点（净安全增益）。此为「全绿 + 移动 + 不弱化断言」三约束下的唯一解，E-T1 报告与 brief 均只列了 3 处锁、未预见此第 4 处 GET 锁——特此显式记档供终审裁定。
++- 引擎零改动；DI 无新增（服务 E-T1 已注册）。
+diff --git a/CP6.Tests/OawfPermissionAttributeTests.cs b/CP6.Tests/OawfPermissionAttributeTests.cs
+index 448edaf..59b904b 100644
+--- a/CP6.Tests/OawfPermissionAttributeTests.cs
++++ b/CP6.Tests/OawfPermissionAttributeTests.cs
+@@ -2,30 +2,32 @@ using System.Reflection;
+ using System.Text.RegularExpressions;
+ using CP6.Core.Auth;
+ using CP6.WebApi.Controllers.Oa;
+ using CP6.WebApi.Controllers.Wf;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.Tests;
+ 
+ /// <summary>
+ /// 反射守卫（M-OA/WF 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
+-/// **两个命名空间** Controllers.Oa（11）+ Controllers.Wf（5）= 16 controller，锁死
++/// **两个命名空间** Controllers.Oa（12）+ Controllers.Wf（5）= 17 controller，锁死
+ /// 「未来新增 OA/WF 写端点漏贴权限键即红」。与已合并的 <c>WmsPermissionAttributeTests</c> /
+ /// <c>ErpPermissionAttributeTests</c> / <c>MesPermissionAttributeTests</c> 同型三件套。
+-/// 真相源：docs/seeds/oawf-permission-keys.md（16 控制器扫描面 / 33 非GET端点 / 31 贴点 / 2 只读 POST 豁免）。
++/// 真相源：docs/seeds/oawf-permission-keys.md（17 控制器扫描面 / 39 非GET端点 / 37 贴点 / 2 只读 POST 豁免）。
++/// **F-T2（WFS 波③ 事件触发，E-T1 交接票）**：FlowTriggerAdminController 由 Controllers.Integration 收编回
++/// Controllers.Oa 纳入本守卫，贡献 6 变更端点（Edit×5 + View×1=CronPreview），计数 16→17 / 贴点 31→37 / 33→39 非GET。
+ ///
+-/// ① discovery 守卫：断言扫到 16 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
+-///    谓词覆盖 **两个** 命名空间（Oa ∪ Wf），计数断言 16 防单侧空扫。
++/// ① discovery 守卫：断言扫到 17 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
++///    谓词覆盖 **两个** 命名空间（Oa ∪ Wf），计数断言 17 防单侧空扫。
+ /// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
+-///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 31、
+-///    豁免命中数精确 == 2（33 = 31 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
++///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 37、
++///    豁免命中数精确 == 2（39 = 37 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
+ /// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
+ ///    ^oa-[a-z0-9-]+$（连字符，禁下划线）。**注**：Wf 命名空间 5 控制器（Flow/Form/Task/AdvancedFlow/
+ ///    Approval）无自己菜单行，其键锚定「消费页」OA 菜单，故 **全部键仍为 oa-* 前缀**（真相源 §一/§二）——
+ ///    本波不存在 wf-* 键。action **逐词相等**落在真相源实际使用的 action 集合内。
+ /// ④ 豁免防腐：每条豁免必须确为「变更端点 且 未贴权限」——防豁免清单变陈旧（端点改名/被贴/被删）
+ ///    却仍白名单遮蔽某个真·写端点丢键。
+ ///
+ /// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
+ /// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
+ /// 继承说明：16 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 15 个
+@@ -38,36 +40,39 @@ namespace CP6.Tests;
+ /// </summary>
+ public class OawfPermissionAttributeTests
+ {
+     /// <summary>
+     /// menu 键约定：**oa-** 前缀 + 小写字母数字连字符。Wf 命名空间控制器键锚定 OA 消费页菜单，
+     /// 故亦为 oa-* 前缀（真相源 §一/§二：/api/wf/* 五控制器无自己菜单行）。
+     /// </summary>
+     private static readonly Regex MenuPattern = new("^oa-[a-z0-9-]+$", RegexOptions.Compiled);
+ 
+     /// <summary>
+-    /// 真相源实际使用的 action 集合（从已贴的 31 个 [RequirePermission] 逐词读出的真实 action，非凭空造）。
++    /// 真相源实际使用的 action 集合（从已贴的 37 个 [RequirePermission] 逐词读出的真实 action，非凭空造）。
+     /// 只读 POST 豁免归 view 但**不贴键**（未打属性），故本集合**不含 view**——逐词相等，多一词/少一词即红。
+     /// 新 action 词若出现须显式加入本集合，否则视为疑似 typo 报错。
+     /// </summary>
+     private static readonly HashSet<string> ActionVocabulary = new()
+     {
+         "add", "edit", "del",                       // 四基粒度写（view 未贴，不入集）
+         "favorite",                                 // 低危个性化写：oa-form-catalog:favorite 收藏表单
+         "read",                                     // 低危写：oa-inbox:read 标记已读（归并 Inbox/CC/Notification，§五归并4）
+         "submit",                                   // 状态键：oa-form-catalog:submit 起流程/提交（归并 Draft/Flow/Approval/Form，§五归并3）
+         "enable",                                   // 状态键：oa-flow-admin:enable 流程启停干预（§五归并6）
+         "withdraw",                                 // 状态键：oa-inbox:withdraw 撤回申请
+         "approve", "transfer", "sendback",          // 高危键：审批办理/转交/退回（§三，归并 Inbox+Flow/AdvancedFlow）
+         "addsign",                                  // 高危键：oa-inbox:addsign 加签改审批链（§三）
+         "delegate",                                 // 高危键：oa-settings:delegate 委派授权（合一 OA #5/#6 + AdvancedFlow #26，§三/§六注4）
+         "form-save",                                // 高危键：oa-designer:form-save 表单定义保存（旧栈 Form.SaveDef，§三）
++        // WFS 波③ 事件触发 F-T2（E-T1 交接票）：FlowTriggerAdminController 由 Integration 收编回 Controllers.Oa，
++        // 纳入本 fail-closed 守卫扫描面。Edit=增改/启停/试发/重置key（5 端点），View=cron 预览（1 端点，POST）。
++        "FlowTrigger.View", "FlowTrigger.Edit",     // oa-flow-admin:FlowTrigger.*（点式 action，与 spec §6 权限点名逐字一致）
+     };
+ 
+     /// <summary>
+     /// 只读 POST 豁免清单（真相源 §四，共 2 条 —— 均逐条读 Service 实现证得无写副作用；归 view，不贴权限键）。
+     /// 键 = "ControllerName.MethodName"。每条带真相源编号 + 豁免依据。
+     /// </summary>
+     private static readonly HashSet<string> ReadOnlyPostExemptions = new()
+     {
+         "ForecastController.Preview",   // §四#1 ForecastService.ForecastAsync 仅 Wf_FlowDefs 读定义→内存遍历 schema 算预计审批路径，不产生实例、全类无 Add/Update/Remove/SaveChanges；POST 仅为传 varsJson 复杂体
+         "QueryController.Search",       // §四#2 InboxService.QueryAsync 仅 Wf_FlowInstances 多条件筛选 + join，Take(500).ToListAsync 投影 DTO，无写；POST 仅为传 FormQueryFilter 复杂体
+@@ -100,23 +105,23 @@ public class OawfPermissionAttributeTests
+         var data = CustomAttributeData.GetCustomAttributes(m)
+             .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
+         if (data == null) return null;
+         var args = data.ConstructorArguments;
+         return ((string)args[0].Value!, (string)args[1].Value!);
+     }
+ 
+     [Fact]
+     public void OawfControllers_AreDiscovered()
+     {
+-        // 守卫：Controllers.Oa（11）+ Controllers.Wf（5）下继承 ControllerBase 的非抽象类共 16
+-        //      （含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
+-        Assert.Equal(16, OawfControllers.Count());
++        // 守卫：Controllers.Oa（12，含 F-T2 收编的 FlowTriggerAdminController）+ Controllers.Wf（5）下
++        //      继承 ControllerBase 的非抽象类共 17（含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
++        Assert.Equal(17, OawfControllers.Count());
+     }
+ 
+     [Fact]
+     public void EveryMutatingAction_IsGuarded_WithConventionalKeyOrExemption()
+     {
+         var offenders = new List<string>();
+         var taggedCount = 0;
+         var exemptHit = new HashSet<string>();
+ 
+         foreach (var c in OawfControllers)
+@@ -142,22 +147,22 @@ public class OawfPermissionAttributeTests
+             taggedCount++;
+             if (!MenuPattern.IsMatch(perm.Value.menu))
+                 offenders.Add($"{key}：menu '{perm.Value.menu}' 不符约定 ^oa-[a-z0-9-]+$");
+             if (!ActionVocabulary.Contains(perm.Value.action))
+                 offenders.Add($"{key}：action '{perm.Value.action}' 不在真相源 action 集（疑似 typo，须显式加入）");
+         }
+ 
+         Assert.True(offenders.Count == 0,
+             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
+ 
+-        // 收口断言：贴点 31 + 豁免命中 2 = 全 33 非GET端点，精确吻合真相源 §七。
+-        Assert.Equal(31, taggedCount);
++        // 收口断言：贴点 37 + 豁免命中 2 = 全 39 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 端点。
++        Assert.Equal(37, taggedCount);
+         Assert.Equal(2, exemptHit.Count);
+     }
+ 
+     [Fact]
+     public void ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints()
+     {
+         // 豁免防腐：清单每一条都必须实存、确为变更端点、且当前未贴权限键。
+         // 防清单变陈旧（端点被改名/删除/后来贴了键）却仍白名单遮蔽某真·写端点丢键。
+         var byKey = OawfControllers
+             .SelectMany(c => ActionMethods(c).Select(m => (key: Key(c, m), method: m)))
+diff --git a/CP6.WebApi/Controllers/Integration/FlowTriggerAdminController.cs b/CP6.WebApi/Controllers/Oa/FlowTriggerAdminController.cs
+similarity index 79%
+rename from CP6.WebApi/Controllers/Integration/FlowTriggerAdminController.cs
+rename to CP6.WebApi/Controllers/Oa/FlowTriggerAdminController.cs
+index 9e4568b..2188686 100644
+--- a/CP6.WebApi/Controllers/Integration/FlowTriggerAdminController.cs
++++ b/CP6.WebApi/Controllers/Oa/FlowTriggerAdminController.cs
+@@ -1,42 +1,44 @@
+ using CP6.Core.Auth;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+-namespace CP6.WebApi.Controllers.Integration;
++namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>流程触发器管理（spec §4，流程管理页「触发器」tab 后端）。
+-/// 权限点（spec §6 OA.FlowTrigger.* → 映射表②）：View=查，Edit=增改/启停/试发/重置 key。
++/// 权限点（spec §6 OA.FlowTrigger.* → 映射表②）：Edit=增改/启停/试发/重置 key；View=cron 预览。
+ ///
+-/// 命名空间放 Controllers.Integration（非 spec 落点 Controllers.Oa）：OawfPermissionAttributeTests 锁死
+-/// Oa∪Wf==16 控制器 / 贴点==31 / action 词表，而本控制器权限点 action="FlowTrigger.View"/"FlowTrigger.Edit"
+-/// 尚未纳入该词表（ActionCode/RoleAction seed 是 F-T2 的职责）。循 C-T2 WfTriggerEchoController /
+-/// D-T2 FlowTriggerFireController 先例移出该守卫扫描面，路由保持 spec 原文 api/oa/flow-triggers。</summary>
++/// 命名空间 Controllers.Oa（spec 原落点）：F-T2 已把 FlowTrigger.View/Edit 纳入
++/// OawfPermissionAttributeTests 的 ActionVocabulary 并逐租户播种（FlowTriggerPermissionSeed），
++/// E-T1 交接票要求把本管理面收编回 fail-closed 守卫扫描面（计数 16→17 / 贴点 31→37）。
++/// 变更端点（Create/Update/Enable/ResetKey/ManualFire=Edit；CronPreview=View）均贴 [RequirePermission]。
++/// 只读 GET（list/{id}/{id}/fires）循同菜单 oa-flow-admin 的 <see cref="FlowAdminController"/> 既有约定
++/// 仅 [Authorize] 不贴细粒度键（守卫 NoReadOnlyGetAction 禁 GET 贴键）；读授权=登录态+租户隔离，
++/// 与流程管理页兄弟控制器一致。路由保持 spec 原文 api/oa/flow-triggers。
++/// 匿名/[Authorize]-only 的 WfTriggerEchoController(C-T2)/FlowTriggerFireController(D-T2) 仍留 Integration。</summary>
+ [ApiController]
+ [Route("api/oa/flow-triggers")]
+ [Authorize]
+ public class FlowTriggerAdminController : LocalizedControllerBase
+ {
+     private readonly IFlowTriggerAdminService _admin;
+ 
+     public FlowTriggerAdminController(IFlowTriggerAdminService admin) { _admin = admin; }
+ 
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet("list")]
+-    [RequirePermission("oa-flow-admin", "FlowTrigger.View")]
+     public async Task<IActionResult> List(CancellationToken ct) => Ok2(await _admin.ListAsync(ct));
+ 
+     [HttpGet("{id:guid}")]
+-    [RequirePermission("oa-flow-admin", "FlowTrigger.View")]
+     public async Task<IActionResult> Get(Guid id, CancellationToken ct)
+     {
+         var item = await _admin.GetAsync(id, ct);
+         return item is null ? NotFound(new { code = 404, message = "E-WF-022" }) : Ok2(item);
+     }
+ 
+     [HttpPost]
+     [RequirePermission("oa-flow-admin", "FlowTrigger.Edit")]
+     public async Task<IActionResult> Create([FromBody] FlowTriggerSaveReq req, CancellationToken ct)
+     {
+@@ -80,21 +82,20 @@ public class FlowTriggerAdminController : LocalizedControllerBase
+         {
+             var r = await _admin.ManualFireAsync(id, ct);
+             return r.Success
+                 ? Ok2(new { r.InstanceId })
+                 : BadRequest(new { code = 400, message = r.Error });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpGet("{id:guid}/fires")]
+-    [RequirePermission("oa-flow-admin", "FlowTrigger.View")]
+     public async Task<IActionResult> Fires(Guid id, [FromQuery] int take, CancellationToken ct)
+         => Ok2(await _admin.ListFiresAsync(id, take <= 0 ? 20 : take, ct));
+ 
+     [HttpPost("cron-preview")]
+     [RequirePermission("oa-flow-admin", "FlowTrigger.View")]
+     public IActionResult CronPreview([FromBody] CronPreviewReq r)
+         => WfCronHelper.IsValid(r.Cron)
+             ? Ok2(new { next = WfCronHelper.PreviewUtc(r.Cron, DateTime.UtcNow, 5) })
+             : BadRequest(new { code = 400, message = "E-WF-022" });
+ 
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 2a5a290..3eaee7f 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -897,20 +897,24 @@ using (var scope = app.Services.CreateScope())
+     //   OA 派生键与真相源逐字一致（零错配，不同于 MES machine-list），命门纯为时序；矫正块严限 7 锚定行按 MenuId 定位。
+     CP6.WebApi.Seed.OawfMenuSeed.EnsureSeeded(db);
+ 
+     // M-OA/WF 横切接线 Task 3b：OA/WF 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+     // Task 3a 给 16 控制器 31 真写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 OawfMenuSeed 之后（RoleAction 挂锚定 MenuId 733/734/735/737/738/739，菜单行须先在）。
+     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。20 去重元组（31 写端点去重）覆盖 6 有写端点 menu-key
+     // （oa-form-search(736) 仅 Query search 只读豁免→view，不种）。
+     CP6.WebApi.Seed.OawfPermissionSeed.EnsureSeeded(db);
+ 
++    // WFS 波③ 事件触发 F-T2：流程触发器权限点 FlowTrigger.View/Edit（菜单 734 oa-flow-admin）逐租户幂等种子。
++    // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 MenuKey 回填）之后。「贴点⊆种子」互锁。
++    CP6.WebApi.Seed.FlowTriggerPermissionSeed.EnsureSeeded(db);
++
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+         db.SaveChanges();
+     }
+     // PUB 章00 组织模型：部门管理菜单
+     if (!db.Sys_Menus.Any(m => m.MenuId == 108))
+     {
+@@ -1944,20 +1948,21 @@ using (var scope = app.Services.CreateScope())
+             .Concat(CP6.WebApi.Seed.I18nSecAuditScreenSeed.Items) // S 类 #4 字段审计 sec.audit.* 画面词条（只读模块，无错误码）
+             .Concat(CP6.WebApi.Seed.I18nTenantComplianceSeed.Items) // S 类 #5 多租户合规 E-SEC-031~038 + 事件 19~30 + platform.* 画面词条（带外平台区）
+             .Concat(CP6.WebApi.Seed.I18nOaInboxScreenSeed.Items)   // OA Phase B 电子表单信箱 oa.*/E-WF-001~008/nav.733/734/740
+             .Concat(CP6.WebApi.Seed.I18nOaAdvancedScreenSeed.Items) // OA Phase C 填單/查詢/設定/轉交 oa.catalog.*/oa.initiate.*/oa.settings.*/oa.transfer.*/nav.735/736/737
+             .Concat(CP6.WebApi.Seed.I18nOaDesignerScreenSeed.Items) // OA Phase C′ 流程设计器 oa.designer.*/nav.738
+             .Concat(CP6.WebApi.Seed.I18nOaNotifyScreenSeed.Items)  // OA Phase D-1 通知中心 oa.notify.*/oa.notify.settings.*
+             .Concat(CP6.WebApi.Seed.I18nOaSerialSignScreenSeed.Items)  // WFS 串簽 退回选择器 oa.detail.sendback.* + oa.sendback.* + oa.timeline.sentBack + 设计器档位 oa.designer.stage.* + E-WF-011/012/013
+             .Concat(CP6.WebApi.Seed.I18nOaApproverScreenSeed.Items)  // 审批人解析高级策略 oa.designer.strategy.*/oa.approverMap.*/nav.739/E-WF-014/015
+             .Concat(CP6.WebApi.Seed.I18nOaServiceTaskScreenSeed.Items)  // WFS 服务任务 oa.designer.svc.* + oa.designer.errServiceConfig + E-WF-016/017/018
+             .Concat(CP6.WebApi.Seed.I18nOaKernelHardeningScreenSeed.Items)  // 内核 hardening oa.designer.gw.* + errInclusive*/errBranchReject + E-WF-019/020/021
++            .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
+             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
+             .Where(i => !existingKeys.Contains(i.LangKey))
+             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
+             .ToList();
+         if (toAdd.Count > 0)
+         {
+             SeedLangs(toAdd.ToArray());
+             db.SaveChanges();
+         }
+ 
+diff --git a/CP6.WebApi/Seed/FlowTriggerPermissionSeed.cs b/CP6.WebApi/Seed/FlowTriggerPermissionSeed.cs
+new file mode 100644
+index 0000000..cfd4559
+--- /dev/null
++++ b/CP6.WebApi/Seed/FlowTriggerPermissionSeed.cs
+@@ -0,0 +1,80 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// 流程触发器权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（WFS 波③ 事件触发 F-T2）。
++///
++/// 背景：波③ FlowTriggerAdminController（流程管理页「触发器」tab 后端，菜单 734 oa-flow-admin）为其
++/// 变更端点贴了 <c>[RequirePermission("oa-flow-admin", "FlowTrigger.View" | "FlowTrigger.Edit")]</c>：
++///  - <b>FlowTrigger.Edit</b>：Create / Update / Enable / ResetKey / ManualFire（增改·启停·试发·重置 key）。
++///  - <b>FlowTrigger.View</b>：CronPreview（cron 预览 POST，只算不写；GET list/get/fires 循 oa-flow-admin
++///    菜单既有约定[FlowAdminController]仅 [Authorize] 不贴细粒度键）。
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 亦 403。
++///
++/// 「贴点⊆种子」互锁：控制器实际用到的 action 集 {FlowTrigger.View, FlowTrigger.Edit} 恰为本种子登记集，
++/// 无孤儿键、无漏种。菜单 734 <c>MenuKey="oa-flow-admin"</c> 回填已由 <see cref="OawfMenuSeed"/> 落地
++/// （M-OA/WF 波），本种子仅挂 Sys_MenuAction/Sys_RoleAction，不重做 MenuKey 回填。
++///
++/// 逐租户机制（照 <see cref="OawfPermissionSeed"/> / MesPermissionSeed 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表）全部租户 Id，对每租户各插一份，显式 <c>TenantId=tid</c>
++///    → <c>CP6Context.StampTenant</c> 仅盖 Guid.Empty 不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>（跨租户可见），避免默认租户作用域误判缺失重复插。
++///
++/// 接入：Program.cs 于 <see cref="OawfPermissionSeed.EnsureSeeded"/> **之后**调用（锚定菜单 734 须先在）。
++/// </summary>
++public static class FlowTriggerPermissionSeed
++{
++    /// <summary>(MenuId, ActionCode, ActionName) —— 与 FlowTriggerAdminController [RequirePermission] 第二实参逐字一致。</summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        (734, "FlowTrigger.View", "触发器查看"),
++        (734, "FlowTrigger.Edit", "触发器编辑"),
++    };
++
++    /// <summary>逐租户幂等播种 FlowTrigger.View/Edit 权限点 + 授管理员（RoleId=1）。须在 OawfPermissionSeed 之后调用。</summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/CP6.WebApi/Seed/I18nOaFlowTriggerScreenSeed.cs b/CP6.WebApi/Seed/I18nOaFlowTriggerScreenSeed.cs
+new file mode 100644
+index 0000000..8b321ff
+--- /dev/null
++++ b/CP6.WebApi/Seed/I18nOaFlowTriggerScreenSeed.cs
+@@ -0,0 +1,70 @@
++using CP6.Entity.DomainModels.Sys;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>流程触发器画面五语（WFS 波③ 事件触发 wfs-trigger；E-WF-022~024 错误码同表）。
++/// 键面以 cp6.web/src/views/oa/admin 下三新文件实际 t()/labelKey 引用为权威
++/// （FlowAdmin.vue 新增 tab 键 / FlowTriggerPanel.vue / FlowTriggerDialog.vue / flowTriggerModel.ts）——
++/// 双向 grep 对账零缺零孤儿（49 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022~024）。
++/// 去重：oa.flowadmin.* 其余 10 键（title/uniqueHint/empty/col.*/enabled/disabled）已在
++/// I18nOaInboxScreenSeed 播种，本 seed 只补新增的 oa.flowadmin.tab.flows；common.*（add/save/ok/edit/cancel）
++/// 属既有通用键，不在本 seed 重复。SeedLangs 对既有键 insert-only，故本 seed 全为新键，部署库洁净套用。</summary>
++public static class I18nOaFlowTriggerScreenSeed
++{
++    public static readonly Sys_Lang[] Items =
++    {
++        new() { LangKey = "oa.flowadmin.tab.flows", ZhCN = "流程", ZhTW = "流程", En = "Flows", Ja = "フロー", Ko = "플로우" },
++        new() { LangKey = "oa.flowtrigger.tab", ZhCN = "触发器", ZhTW = "觸發器", En = "Triggers", Ja = "トリガー", Ko = "트리거" },
++        new() { LangKey = "oa.flowtrigger.new", ZhCN = "新建触发器", ZhTW = "新建觸發器", En = "New Trigger", Ja = "トリガー作成", Ko = "트리거 생성" },
++        new() { LangKey = "oa.flowtrigger.empty", ZhCN = "暂无触发器", ZhTW = "暫無觸發器", En = "No triggers", Ja = "トリガーなし", Ko = "트리거 없음" },
++        new() { LangKey = "oa.flowtrigger.col.type", ZhCN = "类型", ZhTW = "類型", En = "Type", Ja = "種別", Ko = "유형" },
++        new() { LangKey = "oa.flowtrigger.col.flowKey", ZhCN = "目标流程", ZhTW = "目標流程", En = "Target Flow", Ja = "対象フロー", Ko = "대상 플로우" },
++        new() { LangKey = "oa.flowtrigger.col.eventKey", ZhCN = "事件键", ZhTW = "事件鍵", En = "Event Key", Ja = "イベントキー", Ko = "이벤트 키" },
++        new() { LangKey = "oa.flowtrigger.col.enabled", ZhCN = "启用", ZhTW = "啟用", En = "Enabled", Ja = "有効", Ko = "사용" },
++        new() { LangKey = "oa.flowtrigger.col.nextDue", ZhCN = "下次触发", ZhTW = "下次觸發", En = "Next Due", Ja = "次回実行", Ko = "다음 실행" },
++        new() { LangKey = "oa.flowtrigger.col.lastFired", ZhCN = "上次触发", ZhTW = "上次觸發", En = "Last Fired", Ja = "前回実行", Ko = "마지막 실행" },
++        new() { LangKey = "oa.flowtrigger.col.actions", ZhCN = "操作", ZhTW = "操作", En = "Actions", Ja = "操作", Ko = "작업" },
++        new() { LangKey = "oa.flowtrigger.type.timer", ZhCN = "定时", ZhTW = "定時", En = "Timer", Ja = "タイマー", Ko = "타이머" },
++        new() { LangKey = "oa.flowtrigger.type.event", ZhCN = "事件", ZhTW = "事件", En = "Event", Ja = "イベント", Ko = "이벤트" },
++        new() { LangKey = "oa.flowtrigger.type.message", ZhCN = "外呼", ZhTW = "外呼", En = "Message", Ja = "メッセージ", Ko = "메시지" },
++        new() { LangKey = "oa.flowtrigger.manualFire", ZhCN = "试发", ZhTW = "試發", En = "Test Fire", Ja = "テスト実行", Ko = "테스트 실행" },
++        new() { LangKey = "oa.flowtrigger.fires", ZhCN = "流水", ZhTW = "流水", En = "Fire Log", Ja = "実行履歴", Ko = "실행 이력" },
++        new() { LangKey = "oa.flowtrigger.resetKey", ZhCN = "重置密钥", ZhTW = "重置密鑰", En = "Reset Key", Ja = "キー再発行", Ko = "키 재설정" },
++        new() { LangKey = "oa.flowtrigger.resetKeyConfirm", ZhCN = "重置后旧密钥立即失效，确认？", ZhTW = "重置後舊密鑰立即失效，確認？", En = "The old key becomes invalid immediately. Continue?", Ja = "再発行すると旧キーは即時無効になります。続行しますか？", Ko = "재설정하면 기존 키가 즉시 무효화됩니다. 계속하시겠습니까?" },
++        new() { LangKey = "oa.flowtrigger.keyTitle", ZhCN = "API 密钥", ZhTW = "API 密鑰", En = "API Key", Ja = "API キー", Ko = "API 키" },
++        new() { LangKey = "oa.flowtrigger.keyOnce", ZhCN = "密钥仅此一次显示，请立即妥善保存", ZhTW = "密鑰僅此一次顯示，請立即妥善保存", En = "This key is shown only once. Store it securely now.", Ja = "このキーは一度しか表示されません。今すぐ安全に保管してください。", Ko = "이 키는 한 번만 표시됩니다. 지금 안전하게 보관하세요." },
++        new() { LangKey = "oa.flowtrigger.keyCreateHint", ZhCN = "保存后将生成并显示一次 API 密钥", ZhTW = "保存後將生成並顯示一次 API 密鑰", En = "An API key will be generated and shown once after saving", Ja = "保存後に API キーが生成され一度だけ表示されます", Ko = "저장 후 API 키가 생성되어 한 번만 표시됩니다" },
++        new() { LangKey = "oa.flowtrigger.fired", ZhCN = "已发起", ZhTW = "已發起", En = "Fired", Ja = "起動済み", Ko = "실행됨" },
++        new() { LangKey = "oa.flowtrigger.fire.time", ZhCN = "时间", ZhTW = "時間", En = "Time", Ja = "時刻", Ko = "시각" },
++        new() { LangKey = "oa.flowtrigger.fire.result", ZhCN = "结果", ZhTW = "結果", En = "Result", Ja = "結果", Ko = "결과" },
++        new() { LangKey = "oa.flowtrigger.fire.instance", ZhCN = "实例", ZhTW = "實例", En = "Instance", Ja = "インスタンス", Ko = "인스턴스" },
++        new() { LangKey = "oa.flowtrigger.fire.error", ZhCN = "错误", ZhTW = "錯誤", En = "Error", Ja = "エラー", Ko = "오류" },
++        new() { LangKey = "oa.flowtrigger.fire.ok", ZhCN = "成功", ZhTW = "成功", En = "OK", Ja = "成功", Ko = "성공" },
++        new() { LangKey = "oa.flowtrigger.fire.fail", ZhCN = "失败", ZhTW = "失敗", En = "Failed", Ja = "失敗", Ko = "실패" },
++        new() { LangKey = "oa.flowtrigger.fire.pending", ZhCN = "进行中", ZhTW = "進行中", En = "Pending", Ja = "処理中", Ko = "진행 중" },
++        new() { LangKey = "oa.flowtrigger.form.type", ZhCN = "触发器类型", ZhTW = "觸發器類型", En = "Trigger Type", Ja = "トリガー種別", Ko = "트리거 유형" },
++        new() { LangKey = "oa.flowtrigger.form.flowKey", ZhCN = "目标流程", ZhTW = "目標流程", En = "Target Flow", Ja = "対象フロー", Ko = "대상 플로우" },
++        new() { LangKey = "oa.flowtrigger.form.starter", ZhCN = "名义发起人", ZhTW = "名義發起人", En = "Nominal Starter", Ja = "名義起動者", Ko = "명의 시작자" },
++        new() { LangKey = "oa.flowtrigger.form.starterHint", ZhCN = "用户 Id（审批人 starter.* 解析依赖它）", ZhTW = "用戶 Id（審批人 starter.* 解析依賴它）", En = "User Id (starter.* approver resolution depends on it)", Ja = "ユーザー Id（starter.* 承認者解決が依存）", Ko = "사용자 Id (starter.* 결재자 해석에 사용)" },
++        new() { LangKey = "oa.flowtrigger.form.cron", ZhCN = "cron 表达式", ZhTW = "cron 表達式", En = "Cron Expression", Ja = "cron 式", Ko = "cron 식" },
++        new() { LangKey = "oa.flowtrigger.form.cronPreset", ZhCN = "常用预设", ZhTW = "常用預設", En = "Presets", Ja = "プリセット", Ko = "프리셋" },
++        new() { LangKey = "oa.flowtrigger.form.previewTz", ZhCN = "下次触发预览（服务器默认时区）", ZhTW = "下次觸發預覽（伺服器默認時區）", En = "Next occurrences (server default timezone)", Ja = "次回実行プレビュー（サーバー既定タイムゾーン）", Ko = "다음 실행 미리보기 (서버 기본 시간대)" },
++        new() { LangKey = "oa.flowtrigger.form.varsJson", ZhCN = "初始流程变量", ZhTW = "初始流程變量", En = "Initial Variables", Ja = "初期変数", Ko = "초기 변수" },
++        new() { LangKey = "oa.flowtrigger.form.eventKey", ZhCN = "事件键", ZhTW = "事件鍵", En = "Event Key", Ja = "イベントキー", Ko = "이벤트 키" },
++        new() { LangKey = "oa.flowtrigger.form.varsMap", ZhCN = "变量映射", ZhTW = "變量映射", En = "Variable Mapping", Ja = "変数マッピング", Ko = "변수 매핑" },
++        new() { LangKey = "oa.flowtrigger.form.varName", ZhCN = "变量名", ZhTW = "變量名", En = "Variable", Ja = "変数名", Ko = "변수명" },
++        new() { LangKey = "oa.flowtrigger.form.varsSchema", ZhCN = "白名单字段", ZhTW = "白名單欄位", En = "Allowed Fields", Ja = "許可フィールド", Ko = "허용 필드" },
++        new() { LangKey = "oa.flowtrigger.form.varsSchemaHint", ZhCN = "逗号分隔；不在名单的负载键将被丢弃", ZhTW = "逗號分隔；不在名單的負載鍵將被丟棄", En = "Comma separated; payload keys not listed are dropped", Ja = "カンマ区切り；リスト外のキーは破棄", Ko = "쉼표 구분; 목록에 없는 키는 삭제됨" },
++        new() { LangKey = "oa.flowtrigger.preset.daily", ZhCN = "每日 9 点", ZhTW = "每日 9 點", En = "Daily 09:00", Ja = "毎日 9 時", Ko = "매일 9시" },
++        new() { LangKey = "oa.flowtrigger.preset.monday", ZhCN = "每周一 9 点", ZhTW = "每週一 9 點", En = "Monday 09:00", Ja = "毎週月曜 9 時", Ko = "매주 월요일 9시" },
++        new() { LangKey = "oa.flowtrigger.preset.day25", ZhCN = "每月 25 日 9 点", ZhTW = "每月 25 日 9 點", En = "25th 09:00", Ja = "毎月 25 日 9 時", Ko = "매월 25일 9시" },
++        new() { LangKey = "oa.flowtrigger.preset.monthEnd", ZhCN = "每月末（按 28 日近似）", ZhTW = "每月末（按 28 日近似）", En = "Month end (approx. 28th)", Ja = "月末（28 日で近似）", Ko = "월말 (28일로 근사)" },
++        new() { LangKey = "oa.flowtrigger.err.flowKey", ZhCN = "请填写目标流程", ZhTW = "請填寫目標流程", En = "Target flow is required", Ja = "対象フローを入力してください", Ko = "대상 플로우를 입력하세요" },
++        new() { LangKey = "oa.flowtrigger.err.starter", ZhCN = "请填写名义发起人", ZhTW = "請填寫名義發起人", En = "Nominal starter is required", Ja = "名義起動者を入力してください", Ko = "명의 시작자를 입력하세요" },
++        new() { LangKey = "oa.flowtrigger.err.cron", ZhCN = "请填写 cron 表达式", ZhTW = "請填寫 cron 表達式", En = "Cron expression is required", Ja = "cron 式を入力してください", Ko = "cron 식을 입력하세요" },
++        new() { LangKey = "oa.flowtrigger.err.eventKey", ZhCN = "请填写事件键", ZhTW = "請填寫事件鍵", En = "Event key is required", Ja = "イベントキーを入力してください", Ko = "이벤트 키를 입력하세요" },
++        new() { LangKey = "E-WF-022", ZhCN = "触发器配置无效", ZhTW = "觸發器配置無效", En = "Invalid trigger configuration", Ja = "トリガー設定が無効です", Ko = "트리거 구성이 잘못되었습니다" },
++        new() { LangKey = "E-WF-023", ZhCN = "目标流程不可发起", ZhTW = "目標流程不可發起", En = "Target flow cannot be started", Ja = "対象フローを起動できません", Ko = "대상 플로우를 시작할 수 없습니다" },
++        new() { LangKey = "E-WF-024", ZhCN = "触发发起失败", ZhTW = "觸發發起失敗", En = "Trigger fire failed", Ja = "トリガー起動に失敗しました", Ko = "트리거 실행에 실패했습니다" },
++    };
++}
