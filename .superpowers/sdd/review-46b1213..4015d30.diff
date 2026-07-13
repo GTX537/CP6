@@ -1,0 +1,295 @@
+# Review package: 46b1213..4015d30
+
+## Commits
+4015d30 feat(wfs-inbox): A-T2 PrefService 矩阵读取/合并写/rowMode + save Merge 分流 + notify-matrix 端点
+
+## Files changed
+ CP6.Core/Services/Oa/IPrefService.cs        |  10 +++
+ CP6.Core/Services/Oa/PrefService.cs         |  67 ++++++++++++++++
+ CP6.Tests/Oa/PrefMergeTests.cs              | 118 ++++++++++++++++++++++++++++
+ CP6.WebApi/Controllers/Oa/PrefController.cs |  12 ++-
+ 4 files changed, 205 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Oa/IPrefService.cs b/CP6.Core/Services/Oa/IPrefService.cs
+index b759a51..8ed214a 100644
+--- a/CP6.Core/Services/Oa/IPrefService.cs
++++ b/CP6.Core/Services/Oa/IPrefService.cs
+@@ -4,11 +4,21 @@ public interface IPrefService
+ {
+     Task<string> GetAsync(Guid userId);           // 无则 "{}"
+     Task SaveAsync(Guid userId, string prefsJson); // upsert
+ 
+     /// <summary>
+     /// 读取用户通知偏好（N-T3）。
+     /// 解析 Wf_InboxPref.PrefsJson 的 <c>notify</c> 子对象；
+     /// 无行 / 无键 / 缺字段 / 解析失败 → 该项默认 true（全开）。
+     /// </summary>
+     Task<NotificationPrefs> GetNotifyPrefsAsync(Guid userId);
++
++    /// <summary>矩阵偏好查询（wfs-inbox-ux §2.2）。逐收件人×逐通道；Scoped 实例内字典缓存（= per-request）。</summary>
++    Task<bool> IsEnabledAsync(Guid userId, string type, string channel);
++
++    /// <summary>顶层键合并写（wfs-inbox-ux §6）：读-改-写单次 SaveChanges；patch 键值为 null → 删除该键。
++    /// patch 非法 JSON → InvalidOperationException("oa.pref.errBadJson")。</summary>
++    Task SaveMergeAsync(Guid userId, string partialJson);
++
++    /// <summary>rowMode 显示偏好（wfs-inbox-ux §5）："merged"（默认）| "expanded"。</summary>
++    Task<string> GetRowModeAsync(Guid userId);
+ }
+diff --git a/CP6.Core/Services/Oa/PrefService.cs b/CP6.Core/Services/Oa/PrefService.cs
+index 80382c5..f9e1b39 100644
+--- a/CP6.Core/Services/Oa/PrefService.cs
++++ b/CP6.Core/Services/Oa/PrefService.cs
+@@ -22,20 +22,87 @@ public class PrefService : IPrefService
+         await _db.SaveChangesAsync();
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<NotificationPrefs> GetNotifyPrefsAsync(Guid userId)
+     {
+         var json = await GetAsync(userId);
+         return ParseNotifyPrefs(json);
+     }
+ 
++    // ── wfs-inbox-ux：矩阵偏好 + 合并写 ────────────────────────────────────
++
++    /// <summary>per-request 缓存：本服务 Scoped 注册（Program.cs），实例生命周期=单请求。</summary>
++    private readonly Dictionary<Guid, string> _prefsCache = new();
++
++    private async Task<string> GetCachedAsync(Guid userId)
++    {
++        if (_prefsCache.TryGetValue(userId, out var cached)) return cached;
++        var json = await GetAsync(userId);
++        _prefsCache[userId] = json;
++        return json;
++    }
++
++    /// <inheritdoc/>
++    public async Task<bool> IsEnabledAsync(Guid userId, string type, string channel) =>
++        NotifyMatrix.IsEnabled(await GetCachedAsync(userId), type, channel);
++
++    /// <inheritdoc/>
++    public async Task SaveMergeAsync(Guid userId, string partialJson)
++    {
++        System.Text.Json.Nodes.JsonObject patch;
++        try
++        {
++            patch = System.Text.Json.Nodes.JsonNode.Parse(
++                string.IsNullOrWhiteSpace(partialJson) ? "{}" : partialJson) as System.Text.Json.Nodes.JsonObject
++                ?? throw new InvalidOperationException("oa.pref.errBadJson");
++        }
++        catch (JsonException)
++        {
++            throw new InvalidOperationException("oa.pref.errBadJson");
++        }
++
++        System.Text.Json.Nodes.JsonObject baseObj;
++        try
++        {
++            baseObj = System.Text.Json.Nodes.JsonNode.Parse(await GetAsync(userId)) as System.Text.Json.Nodes.JsonObject
++                      ?? new System.Text.Json.Nodes.JsonObject();
++        }
++        catch (JsonException)
++        {
++            baseObj = new System.Text.Json.Nodes.JsonObject();   // 库内畸形 → 以 patch 重建（与解析回落口径一致）
++        }
++
++        foreach (var kv in patch.ToList())
++        {
++            if (kv.Value is null) baseObj.Remove(kv.Key);                       // null → 删键（恢复默认）
++            else baseObj[kv.Key] = kv.Value.DeepClone();                        // 顶层键整体替换
++        }
++
++        await SaveAsync(userId, baseObj.ToJsonString());
++        _prefsCache.Remove(userId);                                             // 同请求内后续读取到新值
++    }
++
++    /// <inheritdoc/>
++    public async Task<string> GetRowModeAsync(Guid userId)
++    {
++        try
++        {
++            using var doc = JsonDocument.Parse(await GetCachedAsync(userId));
++            if (doc.RootElement.TryGetProperty("rowMode", out var el)
++                && el.ValueKind == JsonValueKind.String && el.GetString() == "expanded")
++                return "expanded";
++        }
++        catch (JsonException) { }
++        return "merged";
++    }
++
+     // ── internal helpers ─────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 从 PrefsJson 字符串解析 notify 子对象 → NotificationPrefs。
+     /// 解析失败 / 缺键 / 缺字段 → 回落 true（默认开启）。
+     /// </summary>
+     internal static NotificationPrefs ParseNotifyPrefs(string prefsJson)
+     {
+         try
+         {
+diff --git a/CP6.Tests/Oa/PrefMergeTests.cs b/CP6.Tests/Oa/PrefMergeTests.cs
+new file mode 100644
+index 0000000..74d125a
+--- /dev/null
++++ b/CP6.Tests/Oa/PrefMergeTests.cs
+@@ -0,0 +1,118 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Oa;
++using CP6.Entity.DomainModels.Wf;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using System.Text.Json;
++using Xunit;
++
++namespace CP6.Tests.Oa;
++
++public class PrefMergeTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++    private static PrefService Svc(CP6Context db) => new(db);
++
++    // ── 合并写不覆盖他键（spec §7）──
++    [Fact]
++    public async Task SaveMerge_PatchesTopLevelKey_PreservesOthers()
++    {
++        using var db = NewDb();
++        var me = Guid.NewGuid();
++        await Svc(db).SaveAsync(me, """{"pageSize":50,"notify":{"todo":false}}""");
++
++        await Svc(db).SaveMergeAsync(me, """{"rowMode":"expanded"}""");
++
++        using var doc = JsonDocument.Parse(await Svc(db).GetAsync(me));
++        Assert.Equal(50, doc.RootElement.GetProperty("pageSize").GetInt32());              // 他键保留
++        Assert.False(doc.RootElement.GetProperty("notify").GetProperty("todo").GetBoolean());
++        Assert.Equal("expanded", doc.RootElement.GetProperty("rowMode").GetString());       // 新键并入
++    }
++
++    [Fact]
++    public async Task SaveMerge_ReplacesKeyWholesale_And_NullDeletesKey()
++    {
++        using var db = NewDb();
++        var me = Guid.NewGuid();
++        await Svc(db).SaveAsync(me, """{"pageSize":50,"notify":{"todo":false,"email":false}}""");
++
++        await Svc(db).SaveMergeAsync(me, """{"notify":{"todoCreated":{"inApp":false}}}""");  // 顶层键整体替换
++        using (var doc = JsonDocument.Parse(await Svc(db).GetAsync(me)))
++        {
++            var notify = doc.RootElement.GetProperty("notify");
++            Assert.False(notify.TryGetProperty("todo", out _));                              // 旧扁平键被替换掉
++            Assert.False(notify.GetProperty("todoCreated").GetProperty("inApp").GetBoolean());
++            Assert.Equal(50, doc.RootElement.GetProperty("pageSize").GetInt32());
++        }
++
++        await Svc(db).SaveMergeAsync(me, """{"notify":null}""");                             // 恢复默认 = 删键
++        using (var doc = JsonDocument.Parse(await Svc(db).GetAsync(me)))
++        {
++            Assert.False(doc.RootElement.TryGetProperty("notify", out _));
++            Assert.Equal(50, doc.RootElement.GetProperty("pageSize").GetInt32());
++        }
++    }
++
++    [Fact]
++    public async Task SaveMerge_NoRow_CreatesRow()
++    {
++        using var db = NewDb();
++        var me = Guid.NewGuid();
++        await Svc(db).SaveMergeAsync(me, """{"rowMode":"expanded"}""");
++        Assert.Equal(1, await db.Wf_InboxPrefs.CountAsync(p => p.UserId == me));
++    }
++
++    [Fact]
++    public async Task SaveMerge_BadPatchJson_Throws_i18nKey()
++    {
++        using var db = NewDb();
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++            () => Svc(db).SaveMergeAsync(Guid.NewGuid(), "NOT_JSON{{{"));
++        Assert.Equal("oa.pref.errBadJson", ex.Message);
++    }
++
++    // ── IsEnabledAsync：查库 + per-request 缓存（缓存不跨请求，spec §7）──
++    [Fact]
++    public async Task IsEnabledAsync_ReadsMatrix_FromDb()
++    {
++        using var db = NewDb();
++        var me = Guid.NewGuid();
++        await Svc(db).SaveAsync(me, """{"notify":{"flowRejected":{"email":false}}}""");
++        var svc = Svc(db);
++        Assert.True (await svc.IsEnabledAsync(me, "flowRejected", "inApp"));
++        Assert.False(await svc.IsEnabledAsync(me, "flowRejected", "email"));
++        Assert.True (await svc.IsEnabledAsync(Guid.NewGuid(), "flowRejected", "email"));   // 无行 → true
++    }
++
++    [Fact]
++    public async Task IsEnabledAsync_CachesWithinInstance_NotAcrossInstances()
++    {
++        using var db = NewDb();
++        var me = Guid.NewGuid();
++        db.Wf_InboxPrefs.Add(new Wf_InboxPref { Id = Guid.NewGuid(), UserId = me, PrefsJson = "{}" });
++        await db.SaveChangesAsync();
++
++        var svc1 = Svc(db);                                             // 模拟请求 1（Scoped 实例）
++        Assert.True(await svc1.IsEnabledAsync(me, "todoCreated", "inApp"));   // 首查 → 缓存 "{}"
++
++        var row = await db.Wf_InboxPrefs.SingleAsync(p => p.UserId == me);
++        row.PrefsJson = """{"notify":{"todoCreated":{"inApp":false}}}""";
++        await db.SaveChangesAsync();
++
++        Assert.True(await svc1.IsEnabledAsync(me, "todoCreated", "inApp"));   // 同实例（同请求）：命中缓存，仍 true
++        Assert.False(await Svc(db).IsEnabledAsync(me, "todoCreated", "inApp")); // 新实例（新请求）：读到新值
++    }
++
++    [Fact]
++    public async Task SaveMerge_InvalidatesOwnCache()
++    {
++        using var db = NewDb();
++        var me = Guid.NewGuid();
++        var svc = Svc(db);
++        Assert.True(await svc.IsEnabledAsync(me, "todoCreated", "inApp"));                 // 缓存默认 "{}"
++        await svc.SaveMergeAsync(me, """{"notify":{"todoCreated":{"inApp":false}}}""");
++        Assert.False(await svc.IsEnabledAsync(me, "todoCreated", "inApp"));                // 同实例保存后读到新值
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Oa/PrefController.cs b/CP6.WebApi/Controllers/Oa/PrefController.cs
+index cb1e68c..2e543b0 100644
+--- a/CP6.WebApi/Controllers/Oa/PrefController.cs
++++ b/CP6.WebApi/Controllers/Oa/PrefController.cs
+@@ -32,25 +32,33 @@ public class PrefController : LocalizedControllerBase
+     [HttpGet("get")]
+     public async Task<IActionResult> Get()
+     {
+         var me = await CurrentUserIdAsync();
+         var prefsJson = await _pref.GetAsync(me);
+         return Ok2(new { prefsJson });
+     }
+ 
+     // ── 保存偏好 ──
+ 
+-    public record SavePrefReq(string PrefsJson);
++    /// <summary>Merge=false：整串覆盖（既有行为不变）；Merge=true：服务端顶层键合并写（wfs-inbox-ux §6）。</summary>
++    /// <remarks>加默认参 Merge=false：既有前端只传 { prefsJson }，JSON 绑定缺字段取默认 → 既有调用方零变化。</remarks>
++    public record SavePrefReq(string PrefsJson, bool Merge = false);
+ 
+     [HttpPost("save")]
+     [RequirePermission("oa-settings", "edit")]
+     public async Task<IActionResult> Save([FromBody] SavePrefReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+-            await _pref.SaveAsync(me, r.PrefsJson);
++            if (r.Merge) await _pref.SaveMergeAsync(me, r.PrefsJson);
++            else await _pref.SaveAsync(me, r.PrefsJson);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
++
++    // ── 通知矩阵元数据（类型轴 + 通道支持标志，驱动设置 UI 格子禁用）──
++
++    [HttpGet("notify-matrix")]
++    public IActionResult NotifyMatrixRows() => Ok2(NotifyMatrix.Rows());
+ }
