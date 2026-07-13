@@ -29,7 +29,13 @@ watch(
   () => props.node,
   async (n) => {
     syncing.value = true
+    const idChanged = n.id !== local.value.id
     local.value = cloneNode(n)
+    // 票8：换节点时按新节点字段重推导「到点动作类型」；同节点回声（emit→父写回→deep 触发）
+    // 只在字段能明确指示变体（api/write）时才覆盖——否则会把用户刚选中、尚未填 connector/action
+    // 的 pending 选择弹回 'none'（纯 computed 版的鸡生蛋缺陷，审查已点名）。
+    const derived = deriveTimerActionKind(local.value)
+    if (idChanged || derived !== 'none') timerActionKindState.value = derived
     await nextTick()
     syncing.value = false
   },
@@ -66,20 +72,32 @@ watch(
       local.value.servicePath = undefined
     } else if (kind === 'webApi') {
       local.value.serviceActionName = undefined // 卫生对称：webApi 无“到点动作”
+    } else if (kind === 'timer') {
+      // 切「到」timer：不清字段（三者均可能合法），但按现有字段重推导变体选择，
+      // 使子表单与残留字段一致（如从 webApi 带着 connector 切来 → 直接落 'api' 变体）。
+      timerActionKindState.value = deriveTimerActionKind(local.value)
     }
-    // kind === 'timer'：不在此清理；由 timerActionKind 切换负责清非选中变体（见下）。
   },
 )
 
-// ── 票8：timer「到点动作类型」——从当前已填字段派生，切换时清非选中变体的残留 ──
-// 派生优先级与 Snapshot 一致：有 ConnectorName 即 'api'（Snapshot 优先判 webApi），
-// 否则有 ActionName 即 'write'，否则 'none'。setter 保证互斥清理——选 write/none 时
-// 必须清 serviceConnectorName，否则到点会静默外呼（见上方 Snapshot 优先级说明）。
+// ── 票8：timer「到点动作类型」——独立 backing ref（审查修复：纯 computed 版鸡生蛋不可达）──
+// 纯 computed（getter 从字段推导 / setter 只清字段）在新建 timer 上选 'api'/'write' 后，
+// getter 因 connector/action 仍空立即弹回 'none'，子表单永不渲染。故改 backing ref：
+// 用户选择直接驻留 ref，字段推导只用于初始化/换节点/切到 timer 时的同步。
+// 推导优先级与 Snapshot 一致（ServiceTaskActionRef.cs:59-73）：有 ConnectorName 即 'api'
+//（Snapshot 优先判 webApi），否则有 ActionName 即 'write'，否则 'none'。
+function deriveTimerActionKind(n: SchemaNode): 'none' | 'write' | 'api' {
+  return n.serviceConnectorName ? 'api' : n.serviceActionName ? 'write' : 'none'
+}
+
+const timerActionKindState = ref<'none' | 'write' | 'api'>(deriveTimerActionKind(local.value))
+
+// setter 保证互斥清理——选 write/none 时必须清 serviceConnectorName，否则运行期
+// Snapshot 优先判 webApi，到点会静默外呼用户以为已删的连接器。切勿删除本清理。
 const timerActionKind = computed<'none' | 'write' | 'api'>({
-  get: () => local.value.serviceConnectorName ? 'api'
-           : local.value.serviceActionName ? 'write'
-           : 'none',
+  get: () => timerActionKindState.value,
   set: (v) => {
+    timerActionKindState.value = v                         // 用户选择驻留（不再从字段反推弹回）
     if (v === 'api') {
       local.value.serviceActionName = undefined            // 互斥：webApi 变体清回写动作
     } else if (v === 'write') {

@@ -40,7 +40,47 @@ function state(w: ReturnType<typeof mountPanel>) {
 describe('NodePropertyPanel timer 到点动作变体（票8）', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('timerActionKind getter：据已填字段派生 none/write/api', async () => {
+  // ── 审查修复回归：backing ref 使 write/api 可达（纯 computed 版 setter 只清字段，
+  //    getter 因 connector/action 仍空立即弹回 'none'，子表单永不渲染=鸡生蛋不可达）──
+
+  it('fresh timer 选 api：模式驻留（不弹回 none）且 connector/path 表单渲染', async () => {
+    const w = mountPanel(timerNode()) // 全空字段的新建 timer
+    await flushPromises()
+    expect(state(w).timerActionKind).toBe('none')
+    state(w).timerActionKind = 'api'
+    await nextTick()
+    expect(state(w).timerActionKind).toBe('api') // 纯 computed 版此处 'none'
+    const labels = w.findAll('.el-form-item__label').map(n => n.text())
+    expect(labels).toContain('oa.designer.svc.connector')
+    expect(labels).toContain('oa.designer.svc.path')
+  })
+
+  it('fresh timer 选 write：模式驻留且到点动作下拉渲染', async () => {
+    const w = mountPanel(timerNode())
+    await flushPromises()
+    state(w).timerActionKind = 'write'
+    await nextTick()
+    expect(state(w).timerActionKind).toBe('write')
+    const labels = w.findAll('.el-form-item__label').map(n => n.text())
+    expect(labels).toContain('oa.designer.svc.timerAction')
+    expect(labels).not.toContain('oa.designer.svc.connector')
+  })
+
+  it('选 api（已填 connector）后再切 write：connector/path 被清且 action 表单出现', async () => {
+    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
+    await flushPromises()
+    expect(state(w).timerActionKind).toBe('api') // 初始化按字段派生
+    state(w).timerActionKind = 'write'
+    await nextTick()
+    expect(state(w).timerActionKind).toBe('write')
+    expect(state(w).local.serviceConnectorName).toBeUndefined()
+    expect(state(w).local.servicePath).toBeUndefined()
+    const labels = w.findAll('.el-form-item__label').map(n => n.text())
+    expect(labels).toContain('oa.designer.svc.timerAction')
+    expect(labels).not.toContain('oa.designer.svc.connector')
+  })
+
+  it('timerActionKind 初始化：据已填字段派生 none/write/api', async () => {
     const wNone = mountPanel(timerNode())
     await flushPromises()
     expect(state(wNone).timerActionKind).toBe('none')
