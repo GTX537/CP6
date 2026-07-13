@@ -52,15 +52,16 @@ public sealed class WfServiceJobService : IWfServiceJobService
 
     public async Task<int> ScanOnceAsync(DateTime nowUtc, string workerId, CancellationToken ct = default)
     {
-        // ① reaper（P0-4）：回收过期租约（Running 且 LockExpiresAtUtc < nowUtc）。AttemptCount++ 计入崩溃的那次执行。
+        // ① reaper（P0-4）：回收过期租约（Running 且 LockExpiresAtUtc < nowUtc）。
         var expired = await _db.Wf_ServiceJobs
             .Where(j => j.Status == ServiceJobStatus.Running
                         && j.LockExpiresAtUtc != null && j.LockExpiresAtUtc < nowUtc)
             .ToListAsync(ct);
         foreach (var j in expired)
         {
+            // reaper 只回收过期租约、复位为 Pending 重投；**不自增 AttemptCount**——尝试计数由执行段
+            // 在调 executor 之前持久化（见下 ⑤）。这样「抢到 lease 但从未执行就崩溃」不会烧掉重试配额（票2）。
             j.Status = ServiceJobStatus.Pending;
-            j.AttemptCount++;
             j.LockedBy = null;
             j.LockedAtUtc = null;
             j.LockExpiresAtUtc = null;
@@ -103,8 +104,11 @@ public sealed class WfServiceJobService : IWfServiceJobService
                     continue;
                 }
 
-                // ⑤ 执行
+                // ⑤ 执行：先把「本次尝试已开始」持久化（AttemptCount++ 立即入库），再调 executor。
+                //    崩溃于 executor 期间 → 计数已落库（记 1 次）；崩溃于此保存之前 → 计数未增（记 0 次）。
+                //    reaper 因此无需（也不再）自增，杜绝「抢占未执行」误烧配额（票2）。
                 job.AttemptCount++;
+                await _db.SaveChangesAsync(ct);
                 ServiceTaskResult result;
                 var actionRef = ServiceTaskActionRef.Parse(job.ActionRefJson ?? "{}");
                 var key = ServiceTaskActionRef.ResolveExecutorKey(actionRef);
