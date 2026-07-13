@@ -1,0 +1,87 @@
+# Review package: cab4d1a..6b5ef08
+
+## Commits
+6b5ef08 feat(wfs-trigger): B-T3 WfTriggerWorker 逐租户扫描(照 TenantScopeRunner 现状口径)+DI
+
+## Files changed
+ CP6.WebApi/BackgroundServices/WfTriggerWorker.cs | 44 ++++++++++++++++++++++++
+ CP6.WebApi/Program.cs                            |  1 +
+ 2 files changed, 45 insertions(+)
+
+## Diff
+diff --git a/CP6.WebApi/BackgroundServices/WfTriggerWorker.cs b/CP6.WebApi/BackgroundServices/WfTriggerWorker.cs
+new file mode 100644
+index 0000000..4fc12e4
+--- /dev/null
++++ b/CP6.WebApi/BackgroundServices/WfTriggerWorker.cs
+@@ -0,0 +1,44 @@
++using CP6.Core.Services.Wf;
++
++namespace CP6.WebApi.BackgroundServices;
++
++/// <summary>流程触发器 timer 扫描（spec §3.2）。逐租户 scope 切换照 TenantScopeRunner 现状口径（spec §6）；
++/// 多实例安全：抢占 = Wf_FlowTrigger.RowVersion 乐观并发 + NextDueUtc 前移 + 占坑唯一键，无需 lease。</summary>
++public class WfTriggerWorker : BackgroundService
++{
++    private static readonly TimeSpan Interval = TimeSpan.FromSeconds(30);   // cron 最小粒度 1min，30s 扫描足够
++    private readonly IServiceScopeFactory _scopeFactory;
++    private readonly ILogger<WfTriggerWorker> _logger;
++
++    public WfTriggerWorker(IServiceScopeFactory scopeFactory, ILogger<WfTriggerWorker> logger)
++    {
++        _scopeFactory = scopeFactory;
++        _logger = logger;
++    }
++
++    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
++    {
++        _logger.LogInformation("Wf 触发器扫描 Worker 启动");
++        try
++        {
++            while (!stoppingToken.IsCancellationRequested)
++            {
++                try
++                {
++                    await TenantScopeRunner.ForEachTenantAsync(_scopeFactory, async (sp, tenantId, ct) =>
++                    {
++                        var svc = sp.GetRequiredService<IFlowTriggerService>();
++                        var n = await svc.ScanTimersOnceAsync(ct);
++                        if (n > 0) _logger.LogInformation("Wf 触发器扫描处理租户 {Tenant} {Count} 条", tenantId, n);
++                    }, _logger, stoppingToken);
++                }
++                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { throw; }
++                catch (Exception ex) { _logger.LogError(ex, "Wf 触发器扫描异常"); }
++
++                await Task.Delay(Interval, stoppingToken);
++            }
++        }
++        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { }
++        finally { _logger.LogInformation("Wf 触发器扫描 Worker 停止"); }
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 9038947..1df6ec3 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -148,20 +148,21 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Serv
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetService, CP6.Core.Services.Fin.BudgetService>();            // A5 预算方案/版本 CRUD + 送审 + OA 回调
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetLineService, CP6.Core.Services.Fin.BudgetLineService>();    // A5 预算行 Upsert/Delete + Excel 导入
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetReportService, CP6.Core.Services.Fin.BudgetReportService>(); // A5 预算 vs 实际报告 + 预控预检
+ builder.Services.AddScoped<CP6.Core.Services.Fin.FinSequenceService>();                                             // A5 BudgetService ctor 注入具体类型（已注册接口；此处补具体类使 DI 可直接解析）
+ 
+ // 4.0c OA(Wf) 阶段3 高级流程（章07）：超时扫描 + Worker（退回/加签/委派为 FlowEngine 自带方法）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Services.Wf.WfTimeoutService>();    // 章07 §4 超时扫描（remind/approve/reject/escalate）
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfServiceJobService, CP6.Core.Services.Wf.WfServiceJobService>();  // B-T2 服务任务异步底座扫描服务（spec §4.1）
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobScanWorker>();                          // B-T2 服务任务扫描 Worker（20s 周期，lease 抢占，v1 单实例）
++builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTriggerWorker>();                                 // B-T3 事件触发 start：timer 扫描（30s 周期，RowVersion+占坑抢占，无 lease）
+ // C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.SampleDataWritebackExecutor>(); // C-T2 样例 dataWriteback 执行器（设计器可见，黄金模板；纯计算回写，不落库）
+ 
+ // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IFlowAdminService, CP6.Core.Services.Oa.FlowAdminService>();
