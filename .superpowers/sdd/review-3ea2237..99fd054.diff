@@ -1,0 +1,203 @@
+# Review package: 3ea2237..99fd054
+
+## Commits
+99fd054 feat(wfs-inbox): C-T2 详情页移动端堆叠+审批操作钉底栏(安全区)+转交/退回对话框全屏化
+
+## Files changed
+ cp6.web/src/views/oa/inbox/FormDetail.vue     | 34 +++++++++++++++++++++++++--
+ cp6.web/src/views/oa/inbox/SendBackDialog.vue |  5 +++-
+ cp6.web/src/views/oa/inbox/TransferDialog.vue |  5 +++-
+ 3 files changed, 40 insertions(+), 4 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/oa/inbox/FormDetail.vue b/cp6.web/src/views/oa/inbox/FormDetail.vue
+index c1cdb6e..085f7f4 100644
+--- a/cp6.web/src/views/oa/inbox/FormDetail.vue
++++ b/cp6.web/src/views/oa/inbox/FormDetail.vue
+@@ -6,36 +6,36 @@
+     <!-- Load error / empty -->
+     <CpEmpty
+       v-else-if="!detail"
+       :text="t('oa.detail.loadFailed')"
+     />
+ 
+     <!-- Content -->
+     <template v-else>
+       <el-row :gutter="16" class="detail-body">
+         <!-- LEFT: read-only form (~55%) -->
+-        <el-col :span="14" class="detail-left">
++        <el-col :xs="24" :sm="14" class="detail-left">
+           <div class="panel-title">{{ t('oa.detail.formPanel') }}</div>
+           <DynamicForm
+             v-if="parsedSchema.fields.length"
+             :schema="parsedSchema"
+             v-model="formData"
+             :mask="readonlyMask"
+           />
+           <CpEmpty
+             v-else
+             :text="t('oa.detail.noFormData')"
+           />
+         </el-col>
+ 
+         <!-- RIGHT: timeline + CC (~45%) -->
+-        <el-col :span="10" class="detail-right">
++        <el-col :xs="24" :sm="10" class="detail-right">
+           <div class="panel-title">{{ t('oa.detail.timeline') }}</div>
+           <FlowTimeline
+             :timeline="detail.timeline"
+             :forecast="detail.forecast"
+           />
+           <template v-if="detail.cc?.length">
+             <div class="cc-title">{{ t('oa.detail.cc') }}</div>
+             <div class="cc-tags">
+               <CpTag
+                 v-for="c in detail.cc"
+@@ -277,11 +277,41 @@ watch(() => props.instanceId, loadDetail)
+ }
+ 
+ .action-bar {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   padding: 14px 0 4px;
+   margin-top: 16px;
+   border-top: 1px solid var(--cp-line);
+ }
++
++@media (max-width: 767px) {
++  .detail-left {
++    border-right: none;
++    padding-right: 0;
++  }
++
++  .detail-right {
++    max-height: none;
++    padding-left: 0;
++    margin-top: 16px;
++    overflow-y: visible;
++  }
++
++  /* 审批操作钉底栏（安全区适配，spec §4） */
++  .action-bar {
++    position: sticky;
++    bottom: 0;
++    z-index: 5;
++    flex-wrap: wrap;
++    background: var(--cp-card);
++    box-shadow: var(--cp-shadow-up);
++    margin: 16px -16px 0;
++    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
++  }
++
++  .action-bar .el-input {
++    width: 100% !important;   /* 覆盖行内 280px（同 OtdReportView 既有 !important 口径） */
++  }
++}
+ </style>
+diff --git a/cp6.web/src/views/oa/inbox/SendBackDialog.vue b/cp6.web/src/views/oa/inbox/SendBackDialog.vue
+index 6836a0a..07c25a6 100644
+--- a/cp6.web/src/views/oa/inbox/SendBackDialog.vue
++++ b/cp6.web/src/views/oa/inbox/SendBackDialog.vue
+@@ -1,15 +1,16 @@
+ <template>
+   <el-dialog
+     :model-value="modelValue"
+     :title="t('oa.detail.sendback')"
+-    width="440px"
++    :width="isMobile ? '100vw' : '440px'"
++    :fullscreen="isMobile"
+     @close="onClose"
+   >
+     <el-form label-width="90px">
+       <el-form-item :label="t('oa.sendback.target')">
+         <el-radio-group v-model="kind" style="display:flex; flex-direction:column; gap:6px;">
+           <el-radio :value="'starter'">{{ t('oa.detail.sendback.starter') }}</el-radio>
+           <el-radio v-if="canSendBackPrevStage" :value="'prevStage'">{{ t('oa.detail.sendback.prevStage') }}</el-radio>
+           <el-radio :value="'node'" :disabled="upstreamNodes.length === 0">{{ t('oa.detail.sendback.node') }}</el-radio>
+         </el-radio-group>
+       </el-form-item>
+@@ -50,31 +51,33 @@
+     </template>
+   </el-dialog>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, computed } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { inboxApi } from '@/api/oa/inbox'
+ import type { TimelineRow } from '@/types/oa/inbox'
++import { useBreakpoint } from '@/composables/useBreakpoint'
+ 
+ const props = defineProps<{
+   taskId: string
+   modelValue: boolean
+   canSendBackPrevStage: boolean
+   timeline: TimelineRow[]
+   currentNodeId?: string
+ }>()
+ const emit = defineEmits<{ done: []; 'update:modelValue': [val: boolean] }>()
+ 
+ const { t } = useI18n()
++const { isMobile } = useBreakpoint()
+ 
+ const kind = ref<'prevStage' | 'starter' | 'node'>('starter')
+ const nodeId = ref('')
+ const comment = ref('')
+ const submitting = ref(false)
+ 
+ /** Distinct upstream nodes from the persisted timeline, excluding the current node. */
+ const upstreamNodes = computed((): { nodeId: string; nodeName?: string }[] => {
+   const seen = new Set<string>()
+   const result: { nodeId: string; nodeName?: string }[] = []
+diff --git a/cp6.web/src/views/oa/inbox/TransferDialog.vue b/cp6.web/src/views/oa/inbox/TransferDialog.vue
+index 16c30ff..259a18b 100644
+--- a/cp6.web/src/views/oa/inbox/TransferDialog.vue
++++ b/cp6.web/src/views/oa/inbox/TransferDialog.vue
+@@ -1,15 +1,16 @@
+ <template>
+   <el-dialog
+     :model-value="modelValue"
+     :title="t('oa.transfer.title')"
+-    width="440px"
++    :width="isMobile ? '100vw' : '440px'"
++    :fullscreen="isMobile"
+     @close="onClose"
+   >
+     <el-form label-width="80px">
+       <el-form-item :label="t('oa.transfer.toUser')">
+         <el-select
+           v-model="toUserId"
+           filterable
+           remote
+           :remote-method="searchUsers"
+           :loading="userSearchLoading"
+@@ -47,25 +48,27 @@
+     </template>
+   </el-dialog>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { transferApi } from '@/api/oa/transfer'
+ import { userApi } from '@/api/sys/user'
++import { useBreakpoint } from '@/composables/useBreakpoint'
+ 
+ const props = defineProps<{ taskId: string; modelValue: boolean }>()
+ const emit = defineEmits<{ done: []; 'update:modelValue': [val: boolean] }>()
+ 
+ const { t } = useI18n()
++const { isMobile } = useBreakpoint()
+ 
+ const toUserId = ref('')
+ const comment = ref('')
+ const submitting = ref(false)
+ 
+ interface UserOption {
+   label: string
+   value: string
+ }
+ const userOptions = ref<UserOption[]>([])
