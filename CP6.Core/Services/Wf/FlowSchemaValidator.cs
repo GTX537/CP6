@@ -10,6 +10,11 @@ public static class FlowSchemaValidator
     private static readonly HashSet<string> KnownServiceKinds =
         new(new[] { ServiceKind.DataWriteback, ServiceKind.WebApi, ServiceKind.Timer }, StringComparer.Ordinal);
 
+    // 服务任务合法 mode（spec §6.1；timer 由 handler 规整为 async，此处只校验用户显式填值）。
+    // 用序数比较对齐运行期语义（ServiceTaskNodeHandler 以 mode == ServiceMode.Sync 精确匹配，常量为小写 "sync"/"async"）。
+    private static readonly HashSet<string> KnownServiceModes =
+        new(new[] { ServiceMode.Sync, ServiceMode.Async }, StringComparer.Ordinal);
+
     public static IReadOnlyList<string> Validate(FlowSchema schema)
     {
         var errs = new List<string>();
@@ -90,6 +95,7 @@ public static class FlowSchemaValidator
                 || (kind == ServiceKind.DataWriteback && string.IsNullOrWhiteSpace(n.ServiceActionName))
                 || (kind == ServiceKind.WebApi && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
                 || (kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(n.ServiceDelayMode) || string.IsNullOrWhiteSpace(n.ServiceDelayValue)))
+                || (!string.IsNullOrWhiteSpace(n.ServiceMode) && !KnownServiceModes.Contains(n.ServiceMode.Trim()))  // 票5：ServiceMode 值域(sync|async)
                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServicePath)         // 票4：路径模板不得含数组下标
                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServiceParamsJson)   // 票4：参数模板不得含数组下标
                 || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边

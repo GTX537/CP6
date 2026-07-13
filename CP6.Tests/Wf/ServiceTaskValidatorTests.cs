@@ -137,6 +137,41 @@ public class ServiceTaskValidatorTests
         Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
     }
 
+    // ── 票5：ServiceMode 值域校验(sync|async) ──
+
+    [Fact]
+    public void ServiceMode_Invalid_E_WF_016()
+    {
+        var schema = new FlowSchema {
+            Nodes = {
+                new FlowNode { Id = "s", Type = "start" },
+                new FlowNode { Id = "svc", Type = "serviceTask", ServiceKind = ServiceKind.DataWriteback,
+                    ServiceActionName = "sampleWriteback", ServiceMode = "batch" },   // 非法 mode
+                new FlowNode { Id = "e", Type = "end" },
+            },
+            Edges = { new FlowEdge { From = "s", To = "svc" }, new FlowEdge { From = "svc", To = "e" } },
+        };
+        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(schema));
+    }
+
+    [Fact]
+    public void ServiceMode_SyncOrAsync_Or_Null_Passes()
+    {
+        foreach (var mode in new string?[] { null, "sync", "async" })
+        {
+            var schema = new FlowSchema {
+                Nodes = {
+                    new FlowNode { Id = "s", Type = "start" },
+                    new FlowNode { Id = "svc", Type = "serviceTask", ServiceKind = ServiceKind.DataWriteback,
+                        ServiceActionName = "sampleWriteback", ServiceMode = mode },
+                    new FlowNode { Id = "e", Type = "end" },
+                },
+                Edges = { new FlowEdge { From = "s", To = "svc" }, new FlowEdge { From = "svc", To = "e" } },
+            };
+            Assert.DoesNotContain("E-WF-016", FlowSchemaValidator.Validate(schema));
+        }
+    }
+
     // ── Step 4: DesignerService.save 注册名校验(E-WF-018) ──
 
     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
