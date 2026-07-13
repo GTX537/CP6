@@ -4,7 +4,7 @@ namespace CP6.WebApi.Seed;
 
 /// <summary>服务任务(serviceTask)画面词条：oa.designer.svc.*（D-T2/D-T3 前端引用）+ 前端校验 oa.designer.errServiceConfig + 后端错误码 E-WF-016/017/018。
 /// 键面以 cp6.web/src/views/oa/designer 实际引用为权威（ServiceTaskNode.vue / NodePropertyPanel.vue / EdgePropertyPanel.vue / designerModel.ts）。
-/// 去重：本文件全部 25 个 svc.* + errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
+/// 去重：本文件全部 26 个 svc.*（含票7 reloadCatalog）+ errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
 public static class I18nOaServiceTaskScreenSeed
 {
     public static readonly Sys_Lang[] Items =
@@ -41,6 +41,7 @@ public static class I18nOaServiceTaskScreenSeed
         // ── 重试（三 kind 共用）(NodePropertyPanel.vue) ──
         new() { LangKey = "oa.designer.svc.maxRetries",         ZhCN = "最大重试次数",   ZhTW = "最大重試次數",   En = "Max Retries",    Ja = "最大リトライ回数", Ko = "최대 재시도 횟수" },
         new() { LangKey = "oa.designer.svc.backoff",            ZhCN = "重试间隔（秒）", ZhTW = "重試間隔（秒）", En = "Retry Backoff (sec)", Ja = "リトライ間隔（秒）", Ko = "재시도 간격(초)" },
+        new() { LangKey = "oa.designer.svc.reloadCatalog",      ZhCN = "重新加载服务目录", ZhTW = "重新載入服務目錄", En = "Reload service catalog", Ja = "サービスカタログを再読み込み", Ko = "서비스 카탈로그 다시 불러오기" },
 
         // ── 失败边 (EdgePropertyPanel.vue) ──
         new() { LangKey = "oa.designer.svc.errorEdge",          ZhCN = "失败边",         ZhTW = "失敗邊",         En = "Error Edge",     Ja = "失敗エッジ",       Ko = "실패 엣지" },

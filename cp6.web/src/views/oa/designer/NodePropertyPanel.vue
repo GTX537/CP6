@@ -80,21 +80,24 @@ const isServiceTask = computed(() => local.value.type === 'serviceTask')
 
 // ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
 const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
-
-// 组件被 Vue 复用（node↔node 切换无 :key）时 onMounted 只跑一次，
-// 首挂非 serviceTask 会永久漏拉；改用 watch(immediate) + 已加载标记，失败可重试。
 const catalogLoaded = ref(false)
+const catalogFailed = ref(false)   // 票7：加载失败态，驱动模板露「重试」
+
+async function loadCatalog() {
+  catalogFailed.value = false
+  try {
+    catalog.value = await designerApi.getServiceCatalog()
+    catalogLoaded.value = true
+  } catch {
+    catalogFailed.value = true      // HTTP interceptor 已 toast；此处标失败让用户可主动重试
+  }
+}
+
+// 首拉：进入 serviceTask 节点时若未成功加载过，拉一次（组件被 Vue 复用无 :key，onMounted 只跑一次不可靠，
+// 故用 watch(immediate)）。票7：失败后不再依赖 isServiceTask 跳变——模板提供显式「重试」入口调 loadCatalog。
 watch(
   isServiceTask,
-  async (v) => {
-    if (!v || catalogLoaded.value) return
-    catalogLoaded.value = true
-    try {
-      catalog.value = await designerApi.getServiceCatalog()
-    } catch {
-      catalogLoaded.value = false // HTTP interceptor toasts；允许下次重试
-    }
-  },
+  (v) => { if (v && !catalogLoaded.value) void loadCatalog() },
   { immediate: true },
 )
 
@@ -369,6 +372,21 @@ async function searchCcUsers(kw: string) {
               <el-option value="timer"         :label="t('oa.designer.svc.kind.timer')" />
             </el-select>
           </el-form-item>
+
+          <!-- 票7：目录加载失败时露显式重试（否则停在 serviceTask 节点将永久空下拉）-->
+          <el-alert
+            v-if="catalogFailed"
+            type="warning"
+            :closable="false"
+            show-icon
+            style="margin-bottom: 8px"
+          >
+            <template #title>
+              <el-button link type="primary" size="small" @click="loadCatalog">
+                {{ t('oa.designer.svc.reloadCatalog') }}
+              </el-button>
+            </template>
+          </el-alert>
 
           <!-- 数据回写：动作 / 模式 / 参数模板 -->
           <template v-if="local.serviceKind === 'dataWriteback'">
