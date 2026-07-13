@@ -63,3 +63,47 @@ grep 亦证实其内无 `Space_Locations.Remove`。brief 对它的行号引用�
 - 更新既有 `DeleteRack_ModeDeactivate_DeactivatesThenCascades`：墓碑 bin 现随删除清除（`WmsBins.Count==0`），取代旧「bin 独立留存」断言（预期行为变更）。
 
 全量：`dotnet test CP6.Tests/CP6.Tests.csproj` → **1824 passed / 5 skipped**（基线 1819+5）。
+
+---
+
+## 修复节：波5 终审 Important #1（消费端 bin==null 复活守卫）
+
+**问题**：T6 在库位删除时清 `T_WmsBin` 墓碑并硬删 `Space_Location` 行，但没清在途/Failed 的
+SPACE→WMS 集成事件。窗口——某库位事件 Failed（`SpaceBridgeHook` 同步消费吞异常落 Failed，
+`IntegrationEventRetryWorker` 重试）→期间用户删该停用位（墓碑被 T6 清）→重试到达 `WmsBinConsumer`：
+① `bin==null` 的 DEACTIVATE 分支重建墓碑=孤儿锚回归；② 更糟，`bin==null` 的 UPSERT 分支给已删除
+库位重建 `IsActive=true` 幻影 bin（复活已删库位）。
+
+**处方（终审方案 a）**：`WmsBinConsumer.ConsumeAsync` 循环前一次性预载「本批中 `binsById` 无命中的
+LocationId」的存在性——`Space_Locations.Where(missingIds.Contains).Select(Id)` 成 `HashSet`
+（不在循环里逐条 `AnyAsync`，保 T3 批量化纪律）。`bin==null` 两分支（DEACTIVATE 重建墓碑 / UPSERT
+重建活跃 bin）先查该集合；库位已删（不在集合）→ 结果记 `SKIPPED`，Reason=「库位已删除，拒绝复活锚
+（波5 终审守卫）」。存在性快照循环前取即可（删除不走消费端，批内无 T6 场景）；同批前面 item 新插的
+bin 走 `binsById` 命中不进 `bin==null` 分支，守卫不影响批内自碰撞语义。
+
+顺手（终审 Minor #7）：`CP6.Tests/Infra/SqlServerFactAttribute.cs` XML 注释示例 host
+`localhost`→`127.0.0.1`（一行）。
+
+**测试**：
+- 新增 `WmsBinConsumerTests.Consume_LocationDeleted_NoBin_RefusesToReviveAnchor`——库位无行 + 无 bin，
+  一批含 DEACTIVATE + UPSERT 各一 item → 两者 SKIPPED、`WmsBins` 零新行、Success/AllSkipped=true。
+- 新增对照 `WmsBinConsumerTests.Consume_LocationExists_NoBin_OriginalSemanticsPreserved`——库位存在 +
+  无 bin → 守卫放行，DEACTIVATE 落墓碑（IsActive=false）/ UPSERT 建活跃 bin，原语义不变。
+- 既有用例数据补种（断言零改动）：新守卫要求「库位存在」语义的用例补 `Space_Location` 行——
+  `WmsBinConsumerTests` 内补种 `SeedLoc` 辅助并接入：`Upsert_NewLocation_CreatesBin`、
+  `Upsert_StaleVersion_Skipped_NoWrite`、`Upsert_NewerVersion_UpdatesBin`、
+  `Upsert_AnchorCollision_DifferentLocationId_Rejected`（idA+idB 均种，否则 idB 走守卫 SKIPPED 而非锚碰撞
+  REJECTED）、`Upsert_SameBatch_DuplicateLocationId_NoDoubleAdd`、`Deactivate_NoBin_CreatesTombstone`、
+  `Deactivate_NoBin_NoWarehouseCd_Skipped`、`Deactivate_Tombstone_ThenLateUpsert_Skipped`、
+  `Deactivate_WithStock_Rejected`、`MixedBatch_TwoUpsertOneDeactivate_EquivalentToPerItem`（Seed 内种
+  idA/idB/idC）、`Deactivate_NoStock_SetsInactive_AndVersion`；`SpaceMasterServiceTests`
+  `DeleteRack_ThenRepublishSameCode_BinRebuiltActive_NotRejected` 补种新库位 `newLocId` 的
+  `Space_Location`（真实再发布流程会先建新库位行）。
+- `Upsert_MissingWarehouseCd_Rejected` 无需补种——UPSERT 缺 WarehouseCd 在 `bin==null` 守卫前即 REJECTED。
+
+**覆盖测试命令与输出**：
+```
+dotnet test CP6.Tests/CP6.Tests.csproj
+Passed!  - Failed: 0, Passed: 1826, Skipped: 5, Total: 1831
+```
+（基线 1824→1826，新增两用例使上升；skipped 5 不变。）

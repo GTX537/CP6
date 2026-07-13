@@ -444,6 +444,10 @@ public class SpaceMasterServiceTests
 
         // 同码再发布：新库位（不同 LocationId，同码 "A-01-01-01"，同仓锚）经真消费端 upsert
         var newLocId = Guid.NewGuid();
+        // 波5 终审守卫：消费端 bin==null 分支要求 Space_Location 行仍在；真实再发布流程会先建新库位行，
+        // 本测试补种之（数据补种，断言不动）。
+        db.Space_Locations.Add(new Space_Location { Id = newLocId, LocationCode = "A-01-01-01", Status = 1 });
+        await db.SaveChangesAsync();
         var batch = new CP6.Entity.DTOs.Space.LocationPublishBatch
         {
             BatchNo = "LPUB-20260712-0001",

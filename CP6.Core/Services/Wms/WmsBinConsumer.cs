@@ -53,6 +53,20 @@ public class WmsBinConsumer : IWmsLocationConsumer
                 binsByAnchor[(b.WarehouseCd, b.LocationCode)] = b;
         }
 
+        // 波5 终审守卫：bin==null 两分支（DEACTIVATE 重建墓碑 / UPSERT 重建活跃幻影 bin）会为库位复活
+        //    join 锚。窗口——某库位事件 Failed（SpaceBridgeHook 吞异常落 Failed，RetryWorker 重试）期间，
+        //    用户删掉该停用位（T6 RemoveTombstoneBinsAsync 已清墓碑 + Space_Location 行硬删）→ 迟到重试到达
+        //    本消费端时若无守卫，DEACTIVATE 分支会重建墓碑（孤儿锚回归）、UPSERT 分支更会重建 IsActive=true
+        //    幻影 bin（复活已删库位）。守卫：bin==null 分支须确认 Space_Location 行仍在，否则拒绝复活。
+        // 批量化纪律（T3）：循环前把「本批中 binsById 无命中的 LocationId」一次性查存在性成 HashSet，
+        //    循环内查集合——不在循环里逐条 AnyAsync。删除不走消费端，故批内无 T6 场景，循环前取快照即可；
+        //    同批前面 item 新插的 bin 走 binsById 命中不进 bin==null 分支，守卫不影响批内自碰撞语义。
+        var missingIds = idSet.Where(id => !binsById.ContainsKey(id)).ToHashSet();
+        var existingLocationIds = missingIds.Count > 0
+            ? (await _db.Space_Locations.Where(l => missingIds.Contains(l.Id)).Select(l => l.Id).ToListAsync())
+                .ToHashSet()
+            : new HashSet<Guid>();
+
         // ② 库存合计预载：仅 DEACTIVATE 且已有 bin 的项需要按 (bin.WarehouseCd, bin.LocationCode) 锚查库存。
         //    收集这些锚，一次 GroupBy 聚合成字典（旧代码每项一次 SumAsync；SumAsync 空集=0 → GetValueOrDefault 0 等价）。
         //    循环内不写库存，故批开始快照与逐条查询结果一致。
@@ -93,6 +107,12 @@ public class WmsBinConsumer : IWmsLocationConsumer
             {
                 if (bin == null)
                 {
+                    // 波5 终审守卫：库位已删除（墓碑被 T6 清 + Space_Location 硬删）→ 拒绝重建墓碑复活孤儿锚。
+                    if (!existingLocationIds.Contains(item.LocationId))
+                    {
+                        result.Items.Add(Item(item, "SKIPPED", "库位已删除，拒绝复活锚（波5 终审守卫）"));
+                        continue;
+                    }
                     // H6 乱序防护（对契约 §5.1 的修正）：对应 UPSERT 事件可能仍在重试队列，
                     // 直接跳过会让迟到的旧版 UPSERT 复活已停用库位 → 落墓碑行（IsActive=false + Version 占位），
                     // 版本单调判据自动掐死后到的旧版。无仓维度（建不了 join 锚）才退回幂等跳过。
@@ -145,6 +165,12 @@ public class WmsBinConsumer : IWmsLocationConsumer
             }
             if (bin == null)
             {
+                // 波5 终审守卫：库位已删除（墓碑被 T6 清 + Space_Location 硬删）→ 拒绝重建 IsActive=true 幻影 bin 复活已删库位。
+                if (!existingLocationIds.Contains(item.LocationId))
+                {
+                    result.Items.Add(Item(item, "SKIPPED", "库位已删除，拒绝复活锚（波5 终审守卫）"));
+                    continue;
+                }
                 // 终审 #3：join 锚碰撞检查——同 (WarehouseCd, LocationCode) 被不同 LocationId（含墓碑）
                 // 占用时，直接 Add 会撞唯一索引走异常毒化链；改为业务拒绝链（REJECTED + Success=false）。
                 // 波5：预载锚字典命中（新插入行循环内已回填），覆盖同批两条不同 LocationId 却撞同锚的场景。
