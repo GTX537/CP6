@@ -87,6 +87,10 @@ export function schemaToGraph(schema: FlowSchemaDto): { nodes: VFNode[]; edges: 
     target: e.to,
     data: { condition: e.condition, ccUsers: e.ccUsers, isError: e.isError },
     label: e.condition || undefined,
+    // 票9：失败边（IsError）用 danger 虚线视觉区分。颜色走 Design System token（禁硬编码色）。
+    ...(e.isError === true
+      ? { style: { stroke: 'var(--cp-danger)', strokeWidth: 2, strokeDasharray: '6 4' }, class: 'edge-error', animated: false }
+      : {}),
   }))
   return { nodes, edges }
 }
