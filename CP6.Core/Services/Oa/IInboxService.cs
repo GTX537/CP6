@@ -21,4 +21,7 @@ public interface IInboxService
     Task<InboxStats> StatsAsync(Guid userId);
     // ── 表單查詢（Phase C）──
     Task<IReadOnlyList<FormQueryItem>> QueryAsync(FormQueryFilter filter);
+    // ── 在途批量转单（wfs-inbox-ux §3）── actorId=操作者（管理员本人）；逐条独立事务（引擎 TransferAsync 内部 SaveChanges）
+    Task<BatchTransferReport> BatchTransferAsync(Guid actorId, Guid fromUserId, Guid toUserId, string? comment, BatchTransferFilter? filter = null);
+    Task<BatchTransferPreview> BatchTransferPreviewAsync(Guid fromUserId, BatchTransferFilter? filter = null);
 }

@@ -25,6 +25,12 @@ public record InboxStats(int PendingCount, int RunningCount, int DoneThisMonth, 
 // ── 批量 ──
 public record BatchActResultItem(Guid TaskId, bool Ok, string? Error);
 
+// ── 在途批量转单（wfs-inbox-ux §3）──
+public record BatchTransferFilter(string? FlowKey = null, DateTime? BeforeUtc = null, IReadOnlyList<Guid>? TaskIds = null);
+public record BatchTransferItemResult(Guid TaskId, string FlowKey, bool Ok, string? Error);
+public record BatchTransferReport(int Total, int Succeeded, IReadOnlyList<BatchTransferItemResult> Failed);
+public record BatchTransferPreview(int Total, IReadOnlyList<InboxPendingItem> Sample);
+
 // ── 详情（左读右签）──
 public record TimelineRow(int StepSeq, Guid? TokenId, string NodeId, string? NodeName,
     Guid ExpectedHandlerId, string ExpectedHandlerName, Guid? ActualHandlerId, string? ActualHandlerName,
