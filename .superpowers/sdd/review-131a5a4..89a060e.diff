@@ -1,0 +1,665 @@
+# Review package: 131a5a4..89a060e
+
+## Commits
+89a060e feat(wfs-inbox): C-T1 信箱壳+待办/在途/已办列表移动端卡片化+筛选抽屉(767px断点)
+
+## Files changed
+ cp6.web/src/views/oa/inbox/InboxDone.vue    |  80 +++++++++++++++++++-
+ cp6.web/src/views/oa/inbox/InboxPending.vue | 111 ++++++++++++++++++++++++++++
+ cp6.web/src/views/oa/inbox/InboxRunning.vue |  55 ++++++++++++++
+ cp6.web/src/views/oa/inbox/InboxView.vue    |  60 ++++++++++++++-
+ 4 files changed, 302 insertions(+), 4 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/oa/inbox/InboxDone.vue b/cp6.web/src/views/oa/inbox/InboxDone.vue
+index 50b56af..5ce866f 100644
+--- a/cp6.web/src/views/oa/inbox/InboxDone.vue
++++ b/cp6.web/src/views/oa/inbox/InboxDone.vue
+@@ -1,37 +1,58 @@
+ <template>
+   <div class="inbox-done">
+     <!-- Controls: month picker + tabs -->
+-    <div class="done-controls">
++    <div v-if="!isMobile" class="done-controls">
+       <el-date-picker
+         v-model="selectedMonth"
+         type="month"
+         value-format="YYYY-MM"
+         :placeholder="t('oa.done.allMonths')"
+         clearable
+         size="small"
+         style="width: 150px"
+         @change="load"
+       />
+       <el-tabs v-model="activeTab" class="done-tabs" @tab-change="load">
+         <el-tab-pane :label="t('oa.done.mine')" name="mine" />
+         <el-tab-pane :label="t('oa.done.all')" name="all" />
+         <el-tab-pane :label="t('oa.done.cc')" name="cc" />
+       </el-tabs>
+     </div>
+ 
+     <div class="table-toolbar">
+       <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
+       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
++      <el-button v-if="isMobile" :icon="Filter" size="small" round @click="filterDrawer = true">
++        {{ t('oa.inbox.mobileFilter') }}
++      </el-button>
+     </div>
+ 
++    <!-- 移动端：筛选底部抽屉 -->
++    <el-drawer v-model="filterDrawer" direction="btt" size="40%" :title="t('oa.inbox.mobileFilter')">
++      <el-form label-width="90px">
++        <el-form-item :label="t('oa.done.allMonths')">
++          <el-date-picker v-model="selectedMonth" type="month" value-format="YYYY-MM"
++            :placeholder="t('oa.done.allMonths')" clearable style="width: 100%" @change="load" />
++        </el-form-item>
++        <el-form-item>
++          <el-radio-group v-model="activeTab" @change="load">
++            <el-radio-button label="mine">{{ t('oa.done.mine') }}</el-radio-button>
++            <el-radio-button label="all">{{ t('oa.done.all') }}</el-radio-button>
++            <el-radio-button label="cc">{{ t('oa.done.cc') }}</el-radio-button>
++          </el-radio-group>
++        </el-form-item>
++      </el-form>
++    </el-drawer>
++
+     <el-table
++      v-if="!isMobile"
+       :data="rows"
+       border
+       stripe
+       size="small"
+       max-height="560"
+       v-loading="loading"
+       style="cursor: pointer"
+       @row-click="onRowClick"
+     >
+       <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+@@ -40,36 +61,52 @@
+         <template #default="{ row }">
+           <CpTag :tone="formToStatusTone(row.formToStatus)">
+             {{ t(formToStatusText(row.formToStatus)) }}
+           </CpTag>
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('oa.col.doneAt')" width="170">
+         <template #default="{ row }">{{ formatTime(row.doneAt) }}</template>
+       </el-table-column>
+     </el-table>
++
++    <div v-if="isMobile" class="mobile-list" v-loading="loading">
++      <div v-for="row in rows" :key="row.instanceId" class="mobile-row" @click="onRowClick(row)">
++        <div class="mobile-main">
++          <span class="mobile-flow">{{ row.flowName }}</span>
++          <CpTag :tone="formToStatusTone(row.formToStatus)">{{ t(formToStatusText(row.formToStatus)) }}</CpTag>
++        </div>
++        <div class="mobile-meta">
++          <span>{{ row.starterName }}</span>
++          <span>{{ formatTime(row.doneAt) }}</span>
++        </div>
++      </div>
++    </div>
+     <CpEmpty v-if="!loading && !rows.length" :text="t('oa.done.empty')" />
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+-import { Refresh } from '@element-plus/icons-vue'
++import { Filter, Refresh } from '@element-plus/icons-vue'
+ import { inboxApi } from '@/api/oa/inbox'
+ import { formToStatusText } from '@/views/oa/inbox/inboxModel'
+ import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import CpEmpty from '@/components/base/CpEmpty.vue'
+ import type { DoneItem } from '@/types/oa/inbox'
++import { useBreakpoint } from '@/composables/useBreakpoint'
+ 
+ const { t } = useI18n()
+ const emit = defineEmits<{ 'open-detail': [id: string] }>()
++const { isMobile } = useBreakpoint()
++const filterDrawer = ref(false)
+ 
+ const rows = ref<DoneItem[]>([])
+ const loading = ref(false)
+ // Default: current month, mine tab
+ const now = new Date()
+ const selectedMonth = ref<string>(
+   `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+ )
+ const activeTab = ref('mine')
+ 
+@@ -123,11 +160,50 @@ onMounted(load)
+ .done-tabs :deep(.el-tabs__header) {
+   margin-bottom: 0;
+ }
+ .table-toolbar {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 8px;
+   margin-top: 8px;
+ }
++
++.mobile-list {
++  display: flex;
++  flex-direction: column;
++}
++
++.mobile-row {
++  padding: 12px 2px;
++  border-bottom: 1px solid var(--cp-line);
++  cursor: pointer;
++}
++
++.mobile-row:last-child {
++  border-bottom: none;
++}
++
++.mobile-main {
++  display: flex;
++  align-items: center;
++  gap: 8px;
++  color: var(--cp-ink);
++  font-size: 14px;
++  margin-bottom: 6px;
++}
++
++.mobile-flow {
++  flex: 1;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
++}
++
++.mobile-meta {
++  display: flex;
++  justify-content: space-between;
++  gap: 10px;
++  color: var(--cp-muted);
++  font-size: 12px;
++}
+ </style>
+diff --git a/cp6.web/src/views/oa/inbox/InboxPending.vue b/cp6.web/src/views/oa/inbox/InboxPending.vue
+index 4d8be37..85ca0d5 100644
+--- a/cp6.web/src/views/oa/inbox/InboxPending.vue
++++ b/cp6.web/src/views/oa/inbox/InboxPending.vue
+@@ -19,84 +19,137 @@
+           />
+           <el-button type="primary" size="small" :loading="batchActing" @click="doBatch(true)">
+             {{ t('oa.pending.approve') }}
+           </el-button>
+           <el-button type="danger" size="small" :loading="batchActing" @click="doBatch(false)">
+             {{ t('oa.pending.reject') }}
+           </el-button>
+         </div>
+ 
+         <el-table
++          v-if="!isMobile"
+           ref="reviewTableRef"
+           :data="reviewRows"
+           border
+           stripe
+           size="small"
+           max-height="560"
+           v-loading="reviewLoading"
+           :row-class-name="reviewRowClass"
+           style="cursor: pointer"
+           @selection-change="onSelectionChange"
+           @row-click="onReviewRowClick"
+         >
+           <el-table-column type="selection" width="46" />
+           <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+           <el-table-column prop="starterName" :label="t('oa.col.starter')" width="120" />
+           <el-table-column :label="t('oa.col.sentAt')" width="170">
+             <template #default="{ row }">{{ formatTime(row.sentAt) }}</template>
+           </el-table-column>
+         </el-table>
++
++        <div v-if="isMobile" class="mobile-list" v-loading="reviewLoading">
++          <div
++            v-for="row in reviewRows"
++            :key="row.taskId"
++            class="mobile-row"
++            :class="{ 'row-unread': !row.isRead }"
++            @click="onReviewRowClick(row)"
++          >
++            <div class="mobile-main">
++              <el-checkbox
++                :model-value="isSelected(row)"
++                @click.stop
++                @change="toggleMobileSelect(row)"
++              />
++              <span class="mobile-flow">{{ row.flowName }}</span>
++              <CpTag tone="info">{{ row.stageName || row.nodeId }}</CpTag>
++            </div>
++            <div class="mobile-meta">
++              <span class="mobile-key">{{ row.flowKey }}</span>
++              <span>{{ row.starterName }}</span>
++              <span>{{ formatTime(row.sentAt) }}</span>
++            </div>
++          </div>
++        </div>
+         <CpEmpty v-if="!reviewLoading && !reviewRows.length" :text="t('oa.pending.empty')" />
+       </el-tab-pane>
+ 
+       <!-- 抄送 CC -->
+       <el-tab-pane :label="t('oa.pending.cc')" name="cc">
+         <div class="table-toolbar">
+           <CpTag>{{ t('共 {n} 条', { n: ccRows.length }) }}</CpTag>
+           <el-button :icon="Refresh" circle size="small" :loading="ccLoading" @click="loadCc" />
+         </div>
+         <el-table
++          v-if="!isMobile"
+           :data="ccRows"
+           border
+           stripe
+           size="small"
+           max-height="560"
+           v-loading="ccLoading"
+           style="cursor: pointer"
+           @row-click="onCcRowClick"
+         >
+           <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+           <el-table-column prop="starterName" :label="t('oa.col.starter')" width="120" />
+           <el-table-column prop="atNodeId" :label="t('oa.col.atNode')" width="130" />
+           <el-table-column :label="t('oa.col.createDate')" width="170">
+             <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
+           </el-table-column>
+         </el-table>
++
++        <div v-if="isMobile" class="mobile-list" v-loading="ccLoading">
++          <div v-for="row in ccRows" :key="row.ccId" class="mobile-row" @click="onCcRowClick(row)">
++            <div class="mobile-main">
++              <span class="mobile-flow">{{ row.flowName }}</span>
++              <CpTag tone="info">{{ row.atNodeId }}</CpTag>
++            </div>
++            <div class="mobile-meta">
++              <span>{{ row.starterName }}</span>
++              <span>{{ formatTime(row.createDate) }}</span>
++            </div>
++          </div>
++        </div>
+         <CpEmpty v-if="!ccLoading && !ccRows.length" :text="t('oa.pending.ccEmpty')" />
+       </el-tab-pane>
+     </el-tabs>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { Refresh } from '@element-plus/icons-vue'
+ import type { ElTable } from 'element-plus'
+ import { inboxApi } from '@/api/oa/inbox'
+ import CpTag from '@/components/base/CpTag.vue'
+ import CpEmpty from '@/components/base/CpEmpty.vue'
+ import type { PendingItem, CcItem, BatchResultItem } from '@/types/oa/inbox'
++import { useBreakpoint } from '@/composables/useBreakpoint'
+ 
+ const { t } = useI18n()
+ const emit = defineEmits<{ 'open-detail': [id: string] }>()
++const { isMobile } = useBreakpoint()
++
++/** 移动端卡片多选：直接维护同一 selected 数组（批量条 doBatch 复用零改动） */
++function isSelected(row: PendingItem): boolean {
++  return selected.value.some((r) => r.taskId === row.taskId)
++}
++
++function toggleMobileSelect(row: PendingItem) {
++  selected.value = isSelected(row)
++    ? selected.value.filter((r) => r.taskId !== row.taskId)
++    : [...selected.value, row]
++}
+ 
+ // ── Tabs ────────────────────────────────────────────────────────
+ const activeTab = ref('review')
+ 
+ function onTabChange(name: string | number) {
+   if (name === 'cc' && !ccRows.value.length) loadCc()
+ }
+ 
+ // ── Review tab ──────────────────────────────────────────────────
+ const reviewRows = ref<PendingItem[]>([])
+@@ -205,11 +258,69 @@ onMounted(loadReview)
+   margin-bottom: 8px;
+ }
+ .batch-info {
+   font-size: 13px;
+   color: var(--cp-text);
+   white-space: nowrap;
+ }
+ :deep(.row-unread td) {
+   font-weight: 600;
+ }
++
++.mobile-list {
++  display: flex;
++  flex-direction: column;
++}
++
++.mobile-row {
++  padding: 12px 2px;
++  border-bottom: 1px solid var(--cp-line);
++  cursor: pointer;
++}
++
++.mobile-row:last-child {
++  border-bottom: none;
++}
++
++.mobile-main {
++  display: flex;
++  align-items: center;
++  gap: 8px;
++  color: var(--cp-ink);
++  font-size: 14px;
++  margin-bottom: 6px;
++}
++
++.mobile-flow {
++  flex: 1;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
++}
++
++.mobile-meta {
++  display: flex;
++  justify-content: space-between;
++  gap: 10px;
++  color: var(--cp-muted);
++  font-size: 12px;
++}
++
++.mobile-key {
++  font-family: monospace;
++}
++
++.mobile-row.row-unread .mobile-flow {
++  font-weight: 650;
++}
++
++@media (max-width: 767px) {
++  .batch-bar {
++    flex-wrap: wrap;
++  }
++
++  .batch-bar .el-input {
++    width: 100% !important;
++    order: 3;
++  }
++}
+ </style>
+diff --git a/cp6.web/src/views/oa/inbox/InboxRunning.vue b/cp6.web/src/views/oa/inbox/InboxRunning.vue
+index 21fbe6f..b5bc671 100644
+--- a/cp6.web/src/views/oa/inbox/InboxRunning.vue
++++ b/cp6.web/src/views/oa/inbox/InboxRunning.vue
+@@ -1,18 +1,19 @@
+ <template>
+   <div class="inbox-running">
+     <div class="table-toolbar">
+       <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
+       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
+     </div>
+ 
+     <el-table
++      v-if="!isMobile"
+       :data="rows"
+       border
+       stripe
+       size="small"
+       max-height="620"
+       v-loading="loading"
+       style="cursor: pointer"
+       @row-click="onRowClick"
+     >
+       <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+@@ -24,36 +25,51 @@
+         <template #default="{ row }">
+           <CpTag :tone="instanceStatusTone(row.status)">
+             {{ t(instanceStatusText(row.status)) }}
+           </CpTag>
+         </template>
+       </el-table-column>
+       <el-table-column :label="t('oa.col.createDate')" width="170">
+         <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
+       </el-table-column>
+     </el-table>
++
++    <div v-if="isMobile" class="mobile-list" v-loading="loading">
++      <div v-for="row in rows" :key="row.instanceId" class="mobile-row" @click="onRowClick(row)">
++        <div class="mobile-main">
++          <span class="mobile-flow">{{ row.flowName }}</span>
++          <CpTag :tone="instanceStatusTone(row.status)">{{ t(instanceStatusText(row.status)) }}</CpTag>
++        </div>
++        <div class="mobile-meta">
++          <span>{{ row.currentNode }} · {{ row.currentHandlers.join('、') }}</span>
++          <span>{{ formatTime(row.createDate) }}</span>
++        </div>
++      </div>
++    </div>
+     <CpEmpty v-if="!loading && !rows.length" :text="t('oa.running.empty')" />
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { Refresh } from '@element-plus/icons-vue'
+ import { inboxApi } from '@/api/oa/inbox'
+ import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
+ import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import CpEmpty from '@/components/base/CpEmpty.vue'
+ import type { RunningItem } from '@/types/oa/inbox'
++import { useBreakpoint } from '@/composables/useBreakpoint'
+ 
+ const { t } = useI18n()
+ const emit = defineEmits<{ 'open-detail': [id: string] }>()
++const { isMobile } = useBreakpoint()
+ 
+ /** 実例状態码 → CpTag 色調（对齐 inboxModel.instanceStatusType：warning/success/danger/info/info）。 */
+ function instanceStatusTone(s: number): Tone {
+   return (['warn', 'ok', 'danger', 'info', 'info'] as Tone[])[s] ?? 'info'
+ }
+ 
+ const rows = ref<RunningItem[]>([])
+ const loading = ref(false)
+ 
+ async function load() {
+@@ -80,11 +96,50 @@ onMounted(load)
+ <style scoped>
+ .inbox-running {
+   padding: 0;
+ }
+ .table-toolbar {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 8px;
+ }
++
++.mobile-list {
++  display: flex;
++  flex-direction: column;
++}
++
++.mobile-row {
++  padding: 12px 2px;
++  border-bottom: 1px solid var(--cp-line);
++  cursor: pointer;
++}
++
++.mobile-row:last-child {
++  border-bottom: none;
++}
++
++.mobile-main {
++  display: flex;
++  align-items: center;
++  gap: 8px;
++  color: var(--cp-ink);
++  font-size: 14px;
++  margin-bottom: 6px;
++}
++
++.mobile-flow {
++  flex: 1;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
++}
++
++.mobile-meta {
++  display: flex;
++  justify-content: space-between;
++  gap: 10px;
++  color: var(--cp-muted);
++  font-size: 12px;
++}
+ </style>
+diff --git a/cp6.web/src/views/oa/inbox/InboxView.vue b/cp6.web/src/views/oa/inbox/InboxView.vue
+index 6af888d..65d1632 100644
+--- a/cp6.web/src/views/oa/inbox/InboxView.vue
++++ b/cp6.web/src/views/oa/inbox/InboxView.vue
+@@ -37,23 +37,37 @@
+             </el-dropdown-item>
+           </el-dropdown-menu>
+         </template>
+       </el-dropdown>
+ 
+       <el-button type="primary" size="small" @click="openNewDialog">
+         {{ t('oa.inbox.newBtn') }}
+       </el-button>
+     </el-header>
+ 
++    <!-- 移动端文件夹横滑条（替代左侧菜单） -->
++    <div v-if="isMobile" class="mobile-folder-bar">
++      <el-button
++        v-for="f in folderList"
++        :key="f.key"
++        size="small"
++        round
++        :type="folder === f.key ? 'primary' : 'default'"
++        @click="onSelect(f.key)"
++      >
++        {{ f.label }}<template v-if="f.key === 'pending' && stats?.pendingCount"> ({{ stats.pendingCount }})</template>
++      </el-button>
++    </div>
++
+     <!-- 左侧菜单 + 右侧内容 -->
+     <el-container class="inbox-body">
+-      <el-aside width="200px" class="inbox-aside">
++      <el-aside v-if="!isMobile" width="200px" class="inbox-aside">
+         <el-menu
+           :default-active="folder"
+           class="inbox-menu"
+           @select="onSelect"
+         >
+           <el-menu-item index="dashboard">
+             {{ t('oa.inbox.dashboard') }}
+           </el-menu-item>
+ 
+           <el-menu-item index="pending">
+@@ -78,21 +92,21 @@
+       </el-aside>
+ 
+       <el-main class="inbox-main">
+         <component :is="currentComp" @open-detail="openDetail" />
+       </el-main>
+     </el-container>
+ 
+     <!-- 表单详情抽屉 -->
+     <el-drawer
+       v-model="drawerVisible"
+-      size="60%"
++      :size="isMobile ? '100%' : '60%'"
+       :title="t('oa.inbox.detailTitle')"
+       destroy-on-close
+     >
+       <FormDetail v-if="detail.id" :instance-id="detail.id" />
+     </el-drawer>
+ 
+     <!-- 新建/填单对话框（占位；起草功能后续实现） -->
+     <el-dialog
+       v-model="newDialogVisible"
+       :title="t('oa.inbox.newBtn')"
+@@ -132,23 +146,35 @@ import type { ActingAs } from '@/stores/oaActingAs'
+ import type { GrantUser } from '@/types/oa/advanced'
+ import type { InboxStats, FlowAdminItem } from '@/types/oa/inbox'
+ import ActingAsBanner from '@/components/oa/ActingAsBanner.vue'
+ import InboxDashboard from './InboxDashboard.vue'
+ import InboxPending from './InboxPending.vue'
+ import InboxRunning from './InboxRunning.vue'
+ import InboxDone from './InboxDone.vue'
+ import InboxDraft from './InboxDraft.vue'
+ import FormDetail from './FormDetail.vue'
+ import CpTag from '@/components/base/CpTag.vue'
++import { useBreakpoint } from '@/composables/useBreakpoint'
+ 
+ const { t } = useI18n()
+ const router = useRouter()
++const { isMobile } = useBreakpoint()
++
++/** 移动端文件夹横滑条（含流程管理路由项） */
++const folderList = computed(() => [
++  { key: 'dashboard',  label: t('oa.inbox.dashboard') },
++  { key: 'pending',    label: t('oa.inbox.pending') },
++  { key: 'running',    label: t('oa.inbox.running') },
++  { key: 'done',       label: t('oa.inbox.done') },
++  { key: 'draft',      label: t('oa.inbox.draft') },
++  { key: 'flow-admin', label: t('oa.inbox.flowAdmin') },
++])
+ 
+ // ── act-as 态机 ──────────────────────────────────────────────────
+ const actingAs = ref<ActingAs | null>(getActingAs())
+ const canActAsList = ref<GrantUser[]>([])
+ 
+ async function loadGrants() {
+   try {
+     const res = await delegateApi.myGrants()
+     const data = (res as any)?.data ?? res
+     canActAsList.value = (data?.iCanActAs as GrantUser[]) || []
+@@ -302,11 +328,41 @@ async function openNewDialog() {
+ .flow-admin-item {
+   border-top: 1px solid var(--cp-line-soft);
+   margin-top: 4px;
+ }
+ 
+ .new-dialog-note {
+   margin-top: 12px;
+   font-size: 12px;
+   color: var(--cp-faint);
+ }
++
++.mobile-folder-bar {
++  display: flex;
++  gap: 6px;
++  padding: 8px 12px;
++  overflow-x: auto;
++  background: var(--cp-card);
++  border-bottom: 1px solid var(--cp-line-soft);
++  flex-shrink: 0;
++  -webkit-overflow-scrolling: touch;
++}
++
++.mobile-folder-bar .el-button {
++  flex-shrink: 0;
++  margin-left: 0;
++}
++
++@media (max-width: 767px) {
++  .inbox-header {
++    padding: 0 12px;
++  }
++
++  .inbox-title {
++    font-size: 14px;
++  }
++
++  .inbox-main {
++    padding: 10px;
++  }
++}
+ </style>
