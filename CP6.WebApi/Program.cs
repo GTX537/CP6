@@ -1961,6 +1961,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaKernelHardeningScreenSeed.Items)  // 内核 hardening oa.designer.gw.* + errInclusive*/errBranchReject + E-WF-019/020/021
             .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
+            .Concat(CP6.WebApi.Seed.I18nOaInboxUxScreenSeed.Items)  // WFS 波④ 信箱体验：通知矩阵/批量改派/rowMode/移动端 oa.notify.matrix.*/oa.notify.type.*/oa.bt.*/oa.inbox.rowMode.*/oa.inbox.mobileFilter/oa.pref.errBadJson
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
