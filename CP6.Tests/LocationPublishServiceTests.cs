@@ -270,6 +270,65 @@ public class LocationPublishServiceTests
     }
 
     [Fact]
+    public async Task Publish_MixedMounting_FullFiveLevelAndFloorOnly_PathAndWarehouseCd_Equivalent()
+    {
+        // 波5 批量化行为等价护栏：同层 2 库位一次发布——
+        // ① 满五级挂载（Site→Floor→Zone→Aisle→Rack，AisleCode 非空，这是既有测试从未覆盖的巷道支路）
+        // ② 只挂楼层（RackId=null，五级路径全缺省，WarehouseCd 仍走 l.FloorId→Site 回退）
+        // 断言 PathJson 逐字段 + WarehouseCd 与旧逐条查询实现一致（LoadLookupAsync+BuildItem 纯内存构建后不许漂移）。
+        using var db = Db();
+        var floorId = Guid.NewGuid();
+        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1", WarehouseCd = null };
+        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 7, FloorCode = "F1", FloorName = "F1" };
+        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
+        var aisle = new Space_Aisle { Id = Guid.NewGuid(), ZoneId = zone.Id, AisleCode = "AI1" };
+        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, AisleId = aisle.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+        db.Space_CodeRules.Add(new Space_CodeRule { Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true, Segments = ValidSegmentsJson() });
+        db.AddRange(site, floor, zone, aisle, rack);
+
+        var rackedId = Guid.NewGuid();
+        var floorOnlyId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location { Id = rackedId, FloorId = floorId, RackId = rack.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "FULL-01", Col = 2, Level = 3, Depth = 4, SizeW = 100, SizeH = 200, SizeD = 300 });
+        db.Space_Locations.Add(new Space_Location { Id = floorOnlyId, FloorId = floorId, RackId = null, Placed = false, Status = 0, CodeOrigin = 2, LocationCode = "FLOOR-01", Col = 5, Level = 6, Depth = 7 });
+        await db.SaveChangesAsync();
+
+        var n = await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
+        Assert.Equal(2, n);
+
+        var evt = await db.IntegrationEvents.SingleAsync();
+        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+        var items = payload.GetProperty("Items").EnumerateArray().ToList();
+        Assert.Equal(2, items.Count);
+
+        // ① 满五级：路径每一级 + 巷道 + 坐标 + WarehouseCd 回退全对齐
+        var full = items.Single(i => i.GetProperty("LocationId").GetGuid() == rackedId);
+        Assert.Equal("WH1", full.GetProperty("WarehouseCd").GetString());
+        var fp = full.GetProperty("Path");
+        Assert.Equal("WH1", fp.GetProperty("SiteCode").GetString());
+        Assert.Equal(7, fp.GetProperty("FloorLevel").GetInt32());
+        Assert.Equal("Z1", fp.GetProperty("ZoneCode").GetString());
+        Assert.Equal("AI1", fp.GetProperty("AisleCode").GetString());
+        Assert.Equal("R1", fp.GetProperty("RackCode").GetString());
+        Assert.Equal(2, fp.GetProperty("Col").GetInt32());
+        Assert.Equal(3, fp.GetProperty("Level").GetInt32());
+        Assert.Equal(4, fp.GetProperty("Depth").GetInt32());
+
+        // ② 只挂楼层：RackId=null → 五级路径全缺省（SiteCode/ZoneCode/AisleCode/RackCode 为 null，FloorLevel=0）
+        //    但 WarehouseCd 走 l.FloorId→Site 独立链，仍回退到 SiteCode "WH1"
+        var floorOnly = items.Single(i => i.GetProperty("LocationId").GetGuid() == floorOnlyId);
+        Assert.Equal("WH1", floorOnly.GetProperty("WarehouseCd").GetString());
+        var op = floorOnly.GetProperty("Path");
+        Assert.Equal(JsonValueKind.Null, op.GetProperty("SiteCode").ValueKind);
+        Assert.Equal(JsonValueKind.Null, op.GetProperty("ZoneCode").ValueKind);
+        Assert.Equal(JsonValueKind.Null, op.GetProperty("AisleCode").ValueKind);
+        Assert.Equal(JsonValueKind.Null, op.GetProperty("RackCode").ValueKind);
+        Assert.Equal(0, op.GetProperty("FloorLevel").GetInt32());
+        Assert.Equal(5, op.GetProperty("Col").GetInt32());
+        Assert.Equal(6, op.GetProperty("Level").GetInt32());
+        Assert.Equal(7, op.GetProperty("Depth").GetInt32());
+    }
+
+    [Fact]
     public async Task Publish_WithZoneId_OnlyPublishesThatZone_GateZoneScoped()
     {
         using var db = Db();

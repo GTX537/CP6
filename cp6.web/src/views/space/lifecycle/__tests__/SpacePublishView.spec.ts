@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount, flushPromises, RouterLinkStub } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
-import ElementPlus, { ElSelect, ElMessageBox } from 'element-plus'
+import ElementPlus, { ElSelect, ElMessage, ElMessageBox } from 'element-plus'
 import { codeRuleApi } from '@/api/space/codeRule'
 import { publishApi } from '@/api/space/publish'
 import { zoneApi } from '@/api/space/zone'
@@ -66,7 +66,11 @@ function i18nPlugin() {
 // attachTo document.body so el-dialog / ElMessageBox teleported content renders in jsdom
 function mountView() {
   return mount(SpacePublishView, {
-    global: { plugins: [i18nPlugin(), ElementPlus], directives: { permission } },
+    global: {
+      plugins: [i18nPlugin(), ElementPlus],
+      directives: { permission },
+      stubs: { RouterLink: RouterLinkStub },
+    },
     attachTo: document.body,
   })
 }
@@ -219,5 +223,75 @@ describe('SpacePublishView', () => {
     const btns = w.findAll('button')
     expect(btns.find((b) => b.text() === 'space.publish.doPublish')).toBeUndefined()
     expect(btns.find((b) => b.text() === 'space.publish.adoptBtn')).toBeTruthy()
+  })
+
+  // ⑦ 重复码明细：duplicateGroups>0 渲染 el-collapse，逐组列出冲突库位 id
+  it('存在重复码组时渲染 collapse 明细并列出库位 id', async () => {
+    const dupPc: CodePrecheckResp = {
+      emptyCodeCount: 0,
+      duplicateGroups: [['loc-a1', 'loc-a2'], ['loc-b1', 'loc-b2', 'loc-b3']],
+      precheckErrors: [],
+      unplacedDraftCount: 0,
+    }
+    vi.mocked(codeRuleApi.precheck).mockResolvedValue({ code: 0, message: '', data: dupPc })
+    const w = mountView()
+    await flushPromises()
+    await selectFloor(w)
+    // collapse 存在，两组 → 两个 collapse-item
+    expect(w.find('.pub-dups').exists()).toBe(true)
+    expect(w.findAll('.pub-dups .el-collapse-item').length).toBe(2)
+    // 冲突库位 id 均已渲染（内容 v-show 折叠但仍在 DOM）
+    const dupText = w.find('.pub-dups').text()
+    expect(dupText).toContain('loc-a1')
+    expect(dupText).toContain('loc-a2')
+    expect(dupText).toContain('loc-b3')
+  })
+
+  it('无重复码组时不渲染 collapse', async () => {
+    const w = mountView()
+    await flushPromises()
+    await selectFloor(w) // cleanPrecheck
+    expect(w.find('.pub-dups').exists()).toBe(false)
+  })
+
+  // ⑧ 规则错误旁「去编码规则页」router-link，to=/space/code-rule
+  it('存在规则错误时渲染去编码规则页链接', async () => {
+    vi.mocked(codeRuleApi.precheck).mockResolvedValue({ code: 0, message: '', data: dirtyPrecheck })
+    const w = mountView()
+    await flushPromises()
+    await selectFloor(w)
+    const link = w.findComponent(RouterLinkStub)
+    expect(link.exists()).toBe(true)
+    expect(link.props('to')).toBe('/space/code-rule')
+    expect(link.text()).toBe('space.publish.goCodeRule')
+  })
+
+  it('无规则错误时不渲染去编码规则页链接', async () => {
+    const w = mountView()
+    await flushPromises()
+    await selectFloor(w) // cleanPrecheck
+    expect(w.findComponent(RouterLinkStub).exists()).toBe(false)
+  })
+
+  // ⑨ 生码 seq 守卫：生码在途时切库区 → 过期成功提示被丢弃
+  it('生码在途切换库区时过期成功提示被 seq 守卫丢弃', async () => {
+    let resolveGen!: (v: { code: number; message: string; data: string[] }) => void
+    vi.mocked(codeRuleApi.generate).mockImplementationOnce(() => new Promise((r) => { resolveGen = r }))
+    const successSpy = vi.spyOn(ElMessage, 'success').mockImplementation(() => ({}) as never)
+    const w = mountView()
+    await flushPromises()
+    await selectFloor(w)
+    // 点生成（fill-empty 默认，无确认框）→ generate 挂起
+    const genBtn = w.findAll('button').find((b) => b.text() === 'space.publish.genBtn')
+    await genBtn!.trigger('click')
+    await flushPromises()
+    // 生码在途，切库区 → 触发新 precheck，bump pcSeq
+    w.findAllComponents(ElSelect)[2].vm.$emit('update:modelValue', 'z1')
+    await flushPromises()
+    // 过期的生码此刻返回 → 被守卫丢弃，不弹成功提示
+    resolveGen({ code: 0, message: '', data: ['NEW-1'] })
+    await flushPromises()
+    expect(successSpy).not.toHaveBeenCalled()
+    successSpy.mockRestore()
   })
 })

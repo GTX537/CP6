@@ -84,13 +84,14 @@ public class LocationPublishService : ILocationPublishService
                 TenantId = _t.CurrentTenantId,  // DTO 字段，不被 EF 盖章，必须显式赋值
                 PublishedBy = user
             };
+            var lk = await LoadLookupAsync(locs, default);   // 波5：五表各一次预载，替代循环内逐库位连查
             foreach (var l in locs)
             {
                 l.Status = 1;
                 l.Version += 1;
                 l.Modifier = user;
                 l.ModifyDate = DateTime.Now;
-                batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
+                batch.Items.Add(BuildItem(l, "UPSERT", lk));
             }
             await _db.SaveChangesAsync();
 
@@ -119,7 +120,9 @@ public class LocationPublishService : ILocationPublishService
             throw new BizException("E-SPACE-004");
 
         // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
-        var warehouseCd = await ResolveWarehouseCdAsync(l);
+        // 波5：单库位也走统一预载，前置校验与后续 BuildItem 共用同一 lookup（FloorId/RackId 期间不变）。
+        var lk = await LoadLookupAsync(new[] { l }, default);
+        var warehouseCd = ResolveWarehouseCd(l, lk);
         var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
         if (qty > 0)
             throw new BizException("E-SPACE-401");
@@ -151,7 +154,7 @@ public class LocationPublishService : ILocationPublishService
             TenantId = _t.CurrentTenantId,
             PublishedBy = user
         };
-        batch.Items.Add(await BuildItemAsync(l, "DEACTIVATE"));
+        batch.Items.Add(BuildItem(l, "DEACTIVATE", lk));
         await _db.SaveChangesAsync();
 
         // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
@@ -185,12 +188,13 @@ public class LocationPublishService : ILocationPublishService
                 TenantId = _t.CurrentTenantId,
                 PublishedBy = user
             };
+            var lk = await LoadLookupAsync(locs, default);   // 波5：五表各一次预载，替代循环内逐库位连查
             foreach (var l in locs)
             {
                 l.Version += 1;                 // 码冻结不变，只升版刷新 path（§7.2 B）
                 l.Modifier = user;
                 l.ModifyDate = DateTime.Now;
-                batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
+                batch.Items.Add(BuildItem(l, "UPSERT", lk));
             }
             await _db.SaveChangesAsync();
             await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
@@ -242,7 +246,75 @@ public class LocationPublishService : ILocationPublishService
         return (n, skipped);
     }
 
-    private async Task<LocationPublishItem> BuildItemAsync(Space_Location l, string op)
+    /// <summary>
+    /// 发布链路径解析预载字典（波5 批量化）。五级挂载（Rack→Aisle→Zone→Floor→Site）+
+    /// WarehouseCd 回退（Site.WarehouseCd ?? SiteCode）所需的全部父级实体，按 Id 预索引。
+    /// 由 <see cref="LoadLookupAsync"/> 五张表各一次查询填充，供纯内存的 <see cref="BuildItem"/> 消费。
+    /// </summary>
+    private sealed class PublishLookup
+    {
+        public Dictionary<Guid, Space_Rack> Racks { get; init; } = new();
+        public Dictionary<Guid, Space_Aisle> Aisles { get; init; } = new();
+        public Dictionary<Guid, Space_Zone> Zones { get; init; } = new();
+        public Dictionary<Guid, Space_Floor> Floors { get; init; } = new();
+        public Dictionary<Guid, Space_Site> Sites { get; init; } = new();
+    }
+
+    /// <summary>
+    /// 发布链路径预载（波5 批量化）：按 locs 的 RackId / FloorId 集合，五张表各**一次**
+    /// <c>Where(ids.Contains)</c> 载入成字典——替代旧 BuildItemAsync 事务内逐库位 5 连查 +
+    /// ResolveWarehouseCdAsync 2 查（旧实现每库位约 7 次往返、总量随 N 线性放大）。
+    /// 依赖链决定加载顺序：Rack →（Aisle/Zone by rack）→ Floor →（Site by floor）。
+    /// 楼层集合 = 货架链 zone.FloorId（供 Path.FloorLevel/SiteCode）∪ 库位冗余 l.FloorId
+    /// （供 WarehouseCd 回退——两条链共用同一 Floors/Sites 字典，各自 TryGetValue 语义不变）。
+    /// 无论 N 多少，查询恒为常数 5 次；全空集合直接跳过对应查询。
+    /// </summary>
+    private async Task<PublishLookup> LoadLookupAsync(IReadOnlyCollection<Space_Location> locs, CancellationToken ct)
+    {
+        var rackIds = locs.Where(l => l.RackId != null).Select(l => l.RackId!.Value).Distinct().ToList();
+        var racks = rackIds.Count == 0
+            ? new List<Space_Rack>()
+            : await _db.Space_Racks.Where(r => rackIds.Contains(r.Id)).ToListAsync(ct);
+
+        var aisleIds = racks.Where(r => r.AisleId != null).Select(r => r.AisleId!.Value).Distinct().ToList();
+        var aisles = aisleIds.Count == 0
+            ? new List<Space_Aisle>()
+            : await _db.Space_Aisles.Where(a => aisleIds.Contains(a.Id)).ToListAsync(ct);
+
+        var zoneIds = racks.Select(r => r.ZoneId).Distinct().ToList();
+        var zones = zoneIds.Count == 0
+            ? new List<Space_Zone>()
+            : await _db.Space_Zones.Where(z => zoneIds.Contains(z.Id)).ToListAsync(ct);
+
+        // Path 链走 zone.FloorId；WarehouseCd 链走 l.FloorId（冗余列）——并集一次载全，两链各自查同一字典。
+        var floorIds = zones.Select(z => z.FloorId)
+            .Concat(locs.Where(l => l.FloorId != null).Select(l => l.FloorId!.Value))
+            .Distinct().ToList();
+        var floors = floorIds.Count == 0
+            ? new List<Space_Floor>()
+            : await _db.Space_Floors.Where(f => floorIds.Contains(f.Id)).ToListAsync(ct);
+
+        var siteIds = floors.Select(f => f.SiteId).Distinct().ToList();
+        var sites = siteIds.Count == 0
+            ? new List<Space_Site>()
+            : await _db.Space_Sites.Where(s => siteIds.Contains(s.Id)).ToListAsync(ct);
+
+        return new PublishLookup
+        {
+            Racks = racks.ToDictionary(r => r.Id),
+            Aisles = aisles.ToDictionary(a => a.Id),
+            Zones = zones.ToDictionary(z => z.Id),
+            Floors = floors.ToDictionary(f => f.Id),
+            Sites = sites.ToDictionary(s => s.Id)
+        };
+    }
+
+    /// <summary>
+    /// 纯内存构建单条发布载荷（波5 批量化后的 BuildItemAsync）。逐字段等价旧实现：
+    /// PathJson 五级路径、缺挂（rack/aisle/zone/floor/site 任一 null）分支、WarehouseCd 回退全保持，
+    /// 唯一区别是父级从 <paramref name="lk"/> 预载字典 TryGetValue 取，不再事务内逐条 FirstOrDefaultAsync。
+    /// </summary>
+    private static LocationPublishItem BuildItem(Space_Location l, string op, PublishLookup lk)
     {
         var path = new LocationPath
         {
@@ -251,28 +323,19 @@ public class LocationPublishService : ILocationPublishService
             Depth = l.Depth ?? 0
         };
 
-        if (l.RackId != null)
+        if (l.RackId != null && lk.Racks.TryGetValue(l.RackId.Value, out var rack))
         {
-            var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == l.RackId);
-            if (rack != null)
+            path.RackCode = rack.RackCode;
+            if (rack.AisleId != null && lk.Aisles.TryGetValue(rack.AisleId.Value, out var aisle))
+                path.AisleCode = aisle.AisleCode;   // aisle 缺失 → AisleCode 保持 null（等价 aisle?.AisleCode）
+            if (lk.Zones.TryGetValue(rack.ZoneId, out var zone))
             {
-                path.RackCode = rack.RackCode;
-                if (rack.AisleId != null)
+                path.ZoneCode = zone.ZoneCode;
+                if (lk.Floors.TryGetValue(zone.FloorId, out var floor))
                 {
-                    var aisle = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == rack.AisleId);
-                    path.AisleCode = aisle?.AisleCode;
-                }
-                var zone = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == rack.ZoneId);
-                if (zone != null)
-                {
-                    path.ZoneCode = zone.ZoneCode;
-                    var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == zone.FloorId);
-                    if (floor != null)
-                    {
-                        path.FloorLevel = floor.Level;
-                        var site = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId);
-                        path.SiteCode = site?.SiteCode;
-                    }
+                    path.FloorLevel = floor.Level;
+                    if (lk.Sites.TryGetValue(floor.SiteId, out var site))
+                        path.SiteCode = site.SiteCode;   // site 缺失 → SiteCode 保持 null（等价 site?.SiteCode）
                 }
             }
         }
@@ -290,7 +353,7 @@ public class LocationPublishService : ILocationPublishService
             LocationCode = l.LocationCode ?? "",
             CodeOrigin = l.CodeOrigin,
             Version = l.Version,
-            WarehouseCd = await ResolveWarehouseCdAsync(l),
+            WarehouseCd = ResolveWarehouseCd(l, lk),
             Path = path,
             Attrs = attrs
         };
@@ -299,22 +362,21 @@ public class LocationPublishService : ILocationPublishService
     /// <summary>
     /// SiteCode↔WarehouseCd 映射（ch04 §3.4）：Site.WarehouseCd 显式配置优先，空则默认 = SiteCode。
     /// 走 FloorId → Site 链（比 Rack 链短，且停用未落位库位也可能有 FloorId）；无楼层归属返回 null。
+    /// 波5 批量化后从 <paramref name="lk"/> 预载字典取父级（旧实现逐库位 2 查），逐字段行为不变。
     ///
     /// 长度守卫（终审 #1）：WmsBin.WarehouseCd / Space_Site.WarehouseCd 均为 nvarchar(10)，而
     /// Space_Site.SiteCode 是 MaxLength(50)。默认回退 WarehouseCd=SiteCode 时若 SiteCode 超 10 字符，
     /// 消费端真库 SaveChanges 会截断/抛异常 → 毒化共享 CP6Context → 状态已翻/无 bin/无事件的三无孤儿。
-    /// 本方法在 BuildItemAsync（发布）/ DeactivateAsync（停用）内被调用。发布路径虽在循环里先写了
+    /// 本方法在 BuildItem（发布/re-publish）/ DeactivateAsync（停用）内被调用。发布路径虽在循环里先写了
     /// 内存态 l.Status = 1，但抛异常发生在 _db.SaveChangesAsync() 之前——内存翻转从不落库，且外层
     /// 发布事务（tx）未 Commit 即 Dispose 回滚。因此天然 fail-fast：库位 Status 不持久化、无 bin、无事件、无孤儿。
     /// 显式配置的 Space_Site.WarehouseCd 本身受 MaxLength(10) 列约束护住，超长只可能来自 SiteCode 默认回退。
     /// </summary>
-    private async Task<string?> ResolveWarehouseCdAsync(Space_Location l)
+    private static string? ResolveWarehouseCd(Space_Location l, PublishLookup lk)
     {
         if (l.FloorId == null) return null;
-        var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == l.FloorId);
-        if (floor == null) return null;
-        var site = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId);
-        if (site == null) return null;
+        if (!lk.Floors.TryGetValue(l.FloorId.Value, out var floor)) return null;
+        if (!lk.Sites.TryGetValue(floor.SiteId, out var site)) return null;
         var warehouseCd = string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
         if (warehouseCd.Length > 10)
             throw new BizException("E-SPACE-405");

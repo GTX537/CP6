@@ -49,9 +49,26 @@
           <CpStatCard :label="t('space.publish.ruleErrors')" :value="pc.precheckErrors.length" :tone="pc.precheckErrors.length > 0 ? 'danger' : 'brand'" />
           <CpStatCard :label="t('space.publish.unplaced')" :value="pc.unplacedDraftCount" :tone="pc.unplacedDraftCount > 0 ? 'warn' : 'brand'" :sub="t('space.publish.unplacedHint')" />
         </div>
+        <!-- 重复码明细：仅有重复组时展开，逐组列出冲突库位 id 列表（后端 DuplicateGroups = List<List<Guid>>） -->
+        <el-collapse v-if="pc.duplicateGroups.length" class="pub-dups">
+          <el-collapse-item
+            v-for="(grp, gi) in pc.duplicateGroups"
+            :key="gi"
+            :name="gi"
+            :title="t('space.publish.dupGroupTitle', { n: gi + 1, c: grp.length })"
+          >
+            <ul class="dup-locs">
+              <li v-for="(loc, li) in grp" :key="li" class="cp-mono">{{ loc }}</li>
+            </ul>
+          </el-collapse-item>
+        </el-collapse>
         <ul v-if="pc.precheckErrors.length" class="pub-errs">
           <li v-for="(e, i) in pc.precheckErrors" :key="i">{{ e }}</li>
         </ul>
+        <!-- 规则错误存在时引导回编码规则页修复（路由 /space/code-rule） -->
+        <div v-if="pc.precheckErrors.length" class="pub-errs-link">
+          <router-link :to="'/space/code-rule'" class="cp-link">{{ t('space.publish.goCodeRule') }}</router-link>
+        </div>
       </section>
 
       <!-- ③ 生码 -->
@@ -179,6 +196,7 @@ watch(selFloorId, async (nv) => {
     cZones.value = await zoneApi.list(nv).then((r) => r.data || []).catch(() => [])
     await runPrecheck()
   } else {
+    pcSeq++ // 作废任何在途 precheck，防其后到时回填复活已清空的结果
     precheck.value = null
   }
 })
@@ -221,9 +239,11 @@ async function onGenerate() {
       await ElMessageBox.confirm(t('space.publish.rebuildWarn'), t('space.common.confirm'), { type: 'warning' })
     } catch { return } // 取消
   }
+  const seq = pcSeq // 生码前快照：期间若切楼层/库区（watcher bump pcSeq），本次结果作废
   genLoading.value = true
   try {
     const res = await codeRuleApi.generate(selFloorId.value, genMode.value, selZoneId.value || undefined)
+    if (seq !== pcSeq) return // 作用域已变，丢弃过期的成功提示与重检
     ElMessage.success(t('space.publish.genDone', { n: (res.data || []).length }))
     await runPrecheck()
   } catch {
@@ -345,6 +365,14 @@ async function onDeactivate(row: LocateResult) {
 .pub-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .pub-errs { margin: 14px 0 0; padding-left: 18px; color: #cf1322; font-size: var(--cp-fs-sm); }
 .pub-errs li { margin: 2px 0; }
+
+.pub-dups { margin-top: 14px; }
+.dup-locs { margin: 0; padding-left: 18px; font-size: var(--cp-fs-sm); }
+.dup-locs li { margin: 2px 0; }
+
+.pub-errs-link { margin-top: 10px; font-size: var(--cp-fs-sm); }
+.cp-link { color: var(--cp-brand-deep); font-weight: 700; text-decoration: underline; cursor: pointer; }
+.cp-link:hover { color: var(--cp-brand); }
 
 .adopt-codes { display: flex; flex-direction: column; gap: 8px; }
 .adopt-hint { font-size: var(--cp-fs-sm); color: var(--cp-muted); }

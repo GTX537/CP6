@@ -138,6 +138,69 @@ public class SpaceMasterServiceTests
         Assert.Equal("ALT", updated.WarehouseCd);
     }
 
+    // ── 波5 Task4: UpdateSite 锚护栏（E-SPACE-406）────────────────────────
+    // SiteCode/WarehouseCd 是 WMS join 锚上游；站点下有已发布库位（Status=1 && !IsDeleted）
+    // 时任一锚字段变更 → 拒绝（改锚会让已发布 T_WmsBin 锚漂移）。锚未变则护栏不查询。
+
+    /// <summary>种子：site→floor→published loc（Status=1, FloorId=floor 走 Floor.SiteId 链）。</summary>
+    private static async Task<Guid> SeedSiteWithPublishedLocationAsync(
+        CP6Context db, string siteCode, string? warehouseCd)
+    {
+        var siteId  = Guid.NewGuid();
+        var floorId = Guid.NewGuid();
+        db.Space_Sites.Add(new Space_Site { Id = siteId, SiteCode = siteCode, SiteName = "s", WarehouseCd = warehouseCd });
+        db.Space_Floors.Add(new Space_Floor { Id = floorId, SiteId = siteId, Level = 1, FloorCode = "F1", FloorName = "1F" });
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = Guid.NewGuid(),
+            Placed = true, Status = 1, CodeOrigin = 1, Version = 1, LocationCode = "A-01-01-01"
+        });
+        await db.SaveChangesAsync();
+        return siteId;
+    }
+
+    [Fact]
+    public async Task UpdateSite_ChangeSiteCode_WithPublishedLocation_Throws_E406()
+    {
+        var (db, svc) = Make();
+        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
+
+        var ex = await Assert.ThrowsAsync<BizException>(
+            () => svc.UpdateSiteAsync(siteId,
+                new SiteDto { SiteCode = "WH2", SiteName = "s", WarehouseCd = "MAIN" }, "u"));
+        Assert.Equal("E-SPACE-406", ex.Code);
+
+        // 拒绝后锚原样
+        Assert.Equal("WH1", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).SiteCode);
+    }
+
+    [Fact]
+    public async Task UpdateSite_ChangeWarehouseCd_WithPublishedLocation_Throws_E406()
+    {
+        var (db, svc) = Make();
+        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
+
+        var ex = await Assert.ThrowsAsync<BizException>(
+            () => svc.UpdateSiteAsync(siteId,
+                new SiteDto { SiteCode = "WH1", SiteName = "s", WarehouseCd = "ALT" }, "u"));
+        Assert.Equal("E-SPACE-406", ex.Code);
+
+        Assert.Equal("MAIN", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).WarehouseCd);
+    }
+
+    [Fact]
+    public async Task UpdateSite_ChangeOnlySiteName_WithPublishedLocation_Succeeds()
+    {
+        var (db, svc) = Make();
+        var siteId = await SeedSiteWithPublishedLocationAsync(db, "WH1", "MAIN");
+
+        // 锚未变（SiteCode/WarehouseCd 同库中值）→ 护栏不触发，SiteName 改动放行
+        await svc.UpdateSiteAsync(siteId,
+            new SiteDto { SiteCode = "WH1", SiteName = "改名", WarehouseCd = "MAIN" }, "u");
+
+        Assert.Equal("改名", (await db.Space_Sites.SingleAsync(x => x.Id == siteId)).SiteName);
+    }
+
     // ── B-4: 货架改位姿触发几何重算 ──────────────────────────────────────
 
     [Fact]
@@ -295,9 +358,118 @@ public class SpaceMasterServiceTests
         Assert.Equal(0, await db.Space_Locations.CountAsync());
         // DEACTIVATE 事件已落库
         Assert.True(await db.IntegrationEvents.CountAsync() >= 1);
-        // 真 WmsBinDeactivator 组装：T_WmsBin 墓碑 IsActive=false（loc 已被级联删，bin 独立留存）
+        // 波5：删库位时其 T_WmsBin 墓碑锚一并被清（此前留孤儿占锚，同码再发布 REJECTED）
+        Assert.Equal(0, await db.WmsBins.CountAsync());
+    }
+
+    // ── 波5 Task 6: 库位删除时清理 T_WmsBin 墓碑锚 ────────────────────────────
+    // 停用位删除只删 Space_Location 不碰 T_WmsBin → 墓碑 bin（IsActive=false，主键=同 LocationId）
+    // 留孤儿占住 (WarehouseCd, LocationCode) join 锚，同码再发布被消费端 REJECTED。删库位须同事务清墓碑。
+
+    /// <summary>①删 Status=2 库位（带 IsActive=false 墓碑 bin）→ bin 行随库位一并消失（同 SaveChanges）。</summary>
+    [Fact]
+    public async Task DeleteRack_DisabledLocationWithTombstoneBin_RemovesBin()
+    {
+        var (db, svc) = Make();
+        var rackId = Guid.NewGuid();
+        var locId  = Guid.NewGuid();
+        db.Space_Racks.Add(new Space_Rack { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
+        // 停用位（Status=2，可删）+ 其 T_WmsBin 墓碑（Id=同 LocationId，IsActive=false）
+        db.Space_Locations.Add(new Space_Location
+            { Id = locId, RackId = rackId, Placed = true, Status = 2, CodeOrigin = 1, LocationCode = "A-01-01-01" });
+        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
+            { Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", IsActive = false, Version = 2 });
+        await db.SaveChangesAsync();
+
+        await svc.DeleteRackAsync(rackId);
+
+        Assert.Equal(0, await db.Space_Racks.CountAsync());
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
+        Assert.Equal(0, await db.WmsBins.CountAsync());   // 墓碑锚已释放
+    }
+
+    /// <summary>②删 Status=0 库位（无 bin）→ 不炸（helper 空集/无墓碑安全短路）。</summary>
+    [Fact]
+    public async Task DeleteRack_DraftLocationNoBin_DoesNotThrow()
+    {
+        var (db, svc) = Make();
+        var rackId = Guid.NewGuid();
+        db.Space_Racks.Add(new Space_Rack { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
+        db.Space_Locations.Add(new Space_Location
+            { Id = Guid.NewGuid(), RackId = rackId, Placed = true, Status = 0, CodeOrigin = 1 });
+        await db.SaveChangesAsync();
+
+        await svc.DeleteRackAsync(rackId);   // 无墓碑 bin，正常删除不抛
+
+        Assert.Equal(0, await db.Space_Racks.CountAsync());
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
+        Assert.Equal(0, await db.WmsBins.CountAsync());
+    }
+
+    /// <summary>护栏：命中活跃 bin（IsActive=true）不删——绝不误清活跃库位目录（Where !IsActive 排除）。</summary>
+    [Fact]
+    public async Task DeleteRack_ActiveBin_NotRemoved_Guardrail()
+    {
+        var (db, svc) = Make();
+        var rackId = Guid.NewGuid();
+        var locId  = Guid.NewGuid();
+        db.Space_Racks.Add(new Space_Rack { Id = rackId, ZoneId = Guid.NewGuid(), RackCode = "R" });
+        // 草稿位可删；同 Id 挂一条活跃 bin（理论不可达，护栏兜底验证）
+        db.Space_Locations.Add(new Space_Location
+            { Id = locId, RackId = rackId, Placed = true, Status = 0, CodeOrigin = 1 });
+        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
+            { Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", IsActive = true, Version = 1 });
+        await db.SaveChangesAsync();
+
+        await svc.DeleteRackAsync(rackId);
+
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
+        Assert.Equal(1, await db.WmsBins.CountAsync());        // 活跃 bin 保留
+        Assert.True((await db.WmsBins.SingleAsync()).IsActive);
+    }
+
+    /// <summary>
+    /// 集成断言（Step 3）：停用位删除清墓碑锚 → 同码再建 → publish（WmsBinConsumer 消费）→
+    /// bin 重建 IsActive=true（不再被 join 锚碰撞 REJECTED）。
+    /// </summary>
+    [Fact]
+    public async Task DeleteRack_ThenRepublishSameCode_BinRebuiltActive_NotRejected()
+    {
+        var (db, svc) = Make();
+        var s = await SeedPublishedAisleAsync(db);   // loc code "A-01-01-01"，WarehouseCd 沿 Floor→Site="S1" 解析
+
+        // 删货架（mode=deactivate）：停用→落墓碑 bin→级联删库位→波5 清墓碑锚
+        await svc.DeleteRackAsync(s.rackId, mode: "deactivate", user: "u");
+        Assert.Equal(0, await db.WmsBins.CountAsync());   // 锚已释放
+
+        // 同码再发布：新库位（不同 LocationId，同码 "A-01-01-01"，同仓锚）经真消费端 upsert
+        var newLocId = Guid.NewGuid();
+        // 波5 终审守卫：消费端 bin==null 分支要求 Space_Location 行仍在；真实再发布流程会先建新库位行，
+        // 本测试补种之（数据补种，断言不动）。
+        db.Space_Locations.Add(new Space_Location { Id = newLocId, LocationCode = "A-01-01-01", Status = 1 });
+        await db.SaveChangesAsync();
+        var batch = new CP6.Entity.DTOs.Space.LocationPublishBatch
+        {
+            BatchNo = "LPUB-20260712-0001",
+            PublishedBy = "u",
+            Items = new List<CP6.Entity.DTOs.Space.LocationPublishItem>
+            {
+                new()
+                {
+                    Op = "UPSERT", LocationId = newLocId, LocationCode = "A-01-01-01",
+                    CodeOrigin = 1, Version = 1, WarehouseCd = "S1",
+                    Path = new CP6.Entity.DTOs.Space.LocationPath
+                        { SiteCode = "S1", FloorLevel = 1, ZoneCode = "Z1", RackCode = "R1", Col = 1, Level = 1, Depth = 1 }
+                }
+            }
+        };
+        var r = await new CP6.Core.Services.Wms.WmsBinConsumer(db).ConsumeAsync(batch);
+
+        Assert.True(r.Success);                                    // 锚已释放 → 不再 REJECTED
+        Assert.Equal("UPSERTED", r.Items.Single().Status);
         var bin = await db.WmsBins.SingleAsync();
-        Assert.False(bin.IsActive);
+        Assert.Equal(newLocId, bin.Id);                           // 新 LocationId 持锚
+        Assert.True(bin.IsActive);                                // 重建为活跃
     }
 
     [Fact]

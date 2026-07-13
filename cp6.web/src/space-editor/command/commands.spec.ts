@@ -6,6 +6,7 @@ import { AddMarkerCmd } from './commands/AddMarkerCmd'
 import { AddZoneCmd } from './commands/AddZoneCmd'
 import { MoveMarkerCmd } from './commands/MoveMarkerCmd'
 import { EditMarkerCmd } from './commands/EditMarkerCmd'
+import { EditZoneCmd } from './commands/EditZoneCmd'
 import { DeleteCmd } from './commands/DeleteCmd'
 import { BatchCmd } from './commands/BatchCmd'
 import type { EditorContext } from './Command'
@@ -162,6 +163,55 @@ describe('EditMarkerCmd', () => {
     cmd.undo(ctx)
     expect(scene.markers[0]!.text).toBe('before')
     expect(scene.markers[0]!.markerType).toBe(1)
+  })
+})
+
+// ─── EditZoneCmd ──────────────────────────────────────────────────────────────
+describe('EditZoneCmd', () => {
+  function sceneWithZone(z: Partial<ZoneVO>): EditorScene {
+    const s = makeScene()
+    s.zones.push({
+      id: 'z1', floorId: 'f1', zoneCode: 'Z-001', zoneName: '库区A',
+      zoneType: 1, polygon: '[[0,0],[1,0],[1,1],[0,1]]', enable: true, ...z,
+    } as ZoneVO)
+    return s
+  }
+
+  it('do 应用新字段（名/码/类型/色）；undo 还原快照', () => {
+    const scene = sceneWithZone({})
+    const ctx = makeCtx(scene)
+    const cmd = new EditZoneCmd(
+      'z1',
+      { zoneName: '库区A', zoneCode: 'Z-001', zoneType: 1, color: null },
+      { zoneName: '库区B', zoneCode: 'Z-002', zoneType: 2, color: '#67c23a' },
+    )
+    cmd.do(ctx)
+    expect(scene.zones[0]!.zoneName).toBe('库区B')
+    expect(scene.zones[0]!.zoneCode).toBe('Z-002')
+    expect(scene.zones[0]!.zoneType).toBe(2)
+    expect(scene.zones[0]!.color).toBe('#67c23a')
+    expect(ctx.dirtyIds).toContain('z1')
+
+    cmd.undo(ctx)
+    expect(scene.zones[0]!.zoneName).toBe('库区A')
+    expect(scene.zones[0]!.zoneCode).toBe('Z-001')
+    expect(scene.zones[0]!.zoneType).toBe(1)
+    expect(scene.zones[0]!.color).toBe(null)
+    expect(ctx.dirtyIds).toContain('z1')
+  })
+
+  it('部分补丁（仅改名）只动指定字段', () => {
+    const scene = sceneWithZone({ zoneCode: 'KEEP' })
+    const ctx = makeCtx(scene)
+    new EditZoneCmd('z1', { zoneName: '库区A' }, { zoneName: '改后' }).do(ctx)
+    expect(scene.zones[0]!.zoneName).toBe('改后')
+    expect(scene.zones[0]!.zoneCode).toBe('KEEP') // 未在补丁内 → 不动
+  })
+
+  it('目标 zone 不存在时静默无操作', () => {
+    const scene = makeScene()
+    const ctx = makeCtx(scene)
+    expect(() => new EditZoneCmd('nope', { zoneName: 'a' }, { zoneName: 'b' }).do(ctx)).not.toThrow()
   })
 })
 

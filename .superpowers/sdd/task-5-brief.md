@@ -1,11 +1,14 @@
-### Task 5: 前端 v-permission 接线（4 页按钮）
+### Task 5: SpaceLocateController 裸 BadRequest → BizException(E-SPACE-601/004)
 
-**Files:** SpaceSiteView/SpaceFloorView/SpaceCodeRuleView/SpacePublishView（+spec 各 1 断言）
+**Files:**
+- Modify: `CP6.WebApi\Controllers\Space\SpaceLocateController.cs:27,41`
+- Test: 既有 SpaceLocate 测试(若断言了裸 400 信封需同步改断言为 BizException 语义)
 
-规格：按钮贴 `v-permission="'<menuKey>:<action>'"`，键与 Task 4 映射表逐字一致——site 页新建/编辑/削除（add/edit/delete）；floor 页同（编辑器跳转按钮**不贴**——页面级菜单权限已管）；code-rule 页新建/编辑/削除/生码相关（预览只读不贴）；publish 页生成编码（space-code-rule:generate）/发布（space-publish:publish）/停用（deactivate）/采纳（adopt）。指令 fail-open（store 未加载保留元素）——admin 全授权下 UI 无变化。
-测试：每页 spec 加 1 断言——mock permission store `loaded=true` 且缺某键时对应按钮从 DOM 移除（v-permission mounted 移除元素；照 directives/permission.ts 行为；store mock 用 pinia testing 或直接 stub usePermissionStore——看既有 spec 有无先例，无则最小 stub）。
+**要点:** 两处 `return BadRequest(new { code=400, message="E-SPACE-xxx" })` 改 `throw new BizException("E-SPACE-601")` / `("E-SPACE-004")`,走 BizExceptionMiddleware 按 culture 翻译(词条已在 seed,零新增)。
 
-- [ ] Step 1: TDD → 实现 → type-check/vitest/build 三件套 → Commit `feat(space): 管理与发布页按钮接入 v-permission`
+- [ ] **Step 1: 失败/改写测试**(断言 message 不再是裸码——单测层面断言抛 BizException 且 code 正确)
+- [ ] **Step 2: 红 → 实现 → 绿 → 全量绿**
+- [ ] **Step 3: Commit + push**(`fix(space): 波5 E-SPACE-601/004 BizException化——定位端点统一走中间件翻译`)
 
 ---
 

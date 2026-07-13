@@ -143,6 +143,8 @@ export class SceneStage {
       flat.push(s.x, s.y)
     }
     const poly = new Konva.Line({
+      id: zone.id,
+      name: 'zone',
       points: flat,
       closed: true,
       fill: zone.color ?? 'rgba(100,160,255,0.12)',

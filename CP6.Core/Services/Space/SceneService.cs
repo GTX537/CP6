@@ -35,6 +35,7 @@ public class SceneService : ISceneService
         {
             var changedRackIds = new HashSet<Guid>();
             var pathChangedRackIds = new HashSet<Guid>();   // H4：层级归属（ZoneId/AisleId）变更的货架
+            var deletedLocIds = new HashSet<Guid>();         // 波5：本次保存删除的库位 Id（幽灵位清理 + Deletes.Locations/Racks），末尾统一清 T_WmsBin 墓碑锚
 
             // ── Zones ──────────────────────────────────────────────
             foreach (var zd in dto.Zones ?? new List<ZoneDto>())
@@ -125,7 +126,10 @@ public class SceneService : ISceneService
                         if (outOfBounds.Any(l => l.Status == 1))
                             throw new BizException("E-SPACE-403");
                         if (outOfBounds.Count > 0)
+                        {
                             _db.Space_Locations.RemoveRange(outOfBounds);   // 幽灵位清理（H2）
+                            foreach (var l in outOfBounds) deletedLocIds.Add(l.Id);  // 波5：停用幽灵位可能留 T_WmsBin 墓碑
+                        }
                     }
 
                     // 位姿/尺寸变更检测
@@ -277,11 +281,12 @@ public class SceneService : ISceneService
                 var e = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId);
                 if (e == null) continue;
                 // 已发布不可删（须先停用）；草稿/停用可删（2026-07-06 拍板）。
-                // 注意：停用位删除后其码仍被 T_WmsBin 停用行占据 join 锚，同码新库位发布会被
-                // 锚碰撞 REJECTED——锚清理机制记后续票，此为拍板时已知代价。
+                // 波5 已清理：停用位删除后其 T_WmsBin 墓碑行（占 join 锚）在本事务末尾一并清除
+                // （deletedLocIds→RemoveTombstoneBinsAsync），同码新库位发布不再被锚碰撞 REJECTED。
                 if (e.Status == 1)
                     throw new BizException("E-SPACE-408");
                 _db.Space_Locations.Remove(e);
+                deletedLocIds.Add(e.Id);   // 波5：停用位删除后清其 T_WmsBin 墓碑锚
             }
 
             foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
@@ -290,7 +295,11 @@ public class SceneService : ISceneService
                 if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId && l.Status == 1))
                     throw new BizException("E-SPACE-403");
                 var children = await _db.Space_Locations.Where(l => l.RackId == rackId).ToListAsync();
-                if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
+                if (children.Count > 0)
+                {
+                    _db.Space_Locations.RemoveRange(children);
+                    foreach (var l in children) deletedLocIds.Add(l.Id);   // 波5：级联删库位清其 T_WmsBin 墓碑锚
+                }
                 var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId);
                 if (e != null) _db.Space_Racks.Remove(e);
             }
@@ -315,6 +324,10 @@ public class SceneService : ISceneService
                 var e = await _db.Space_Markers.FirstOrDefaultAsync(m => m.Id == markerId);
                 if (e != null) _db.Space_Markers.Remove(e);
             }
+
+            // ── 波5：删除库位一并清 T_WmsBin 墓碑锚（同一 SaveChanges/同事务，同码再发布不再被消费端 REJECTED）──
+            //    单源 helper 与 SpaceMasterService.DeleteRackAsync 共用（见其 XML 注释）；仅删 IsActive=false 墓碑行。
+            await SpaceMasterService.RemoveTombstoneBinsAsync(_db, deletedLocIds.ToList());
 
             // ── 保存（乐观并发冲突→E-SPACE-009）─────────────────────
             try

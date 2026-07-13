@@ -1,36 +1,54 @@
-# Task 8 报告：场景保存状态机护栏（H1）
+# Task 8 报告：编辑器属性面板(Zone 选中编辑 + Marker 编辑 + Aisle 一览)
 
-**Status:** DONE
+分支 `feat/space-wave5`，commit `50b05e1`（已 push）。
 
-## Implemented
-`SceneService.SaveSceneAsync` 的 Locations 差量块加护栏：
-- 已存在库位：移除 `existing.Status = ld.Status` / `existing.CodeOrigin = ld.CodeOrigin` 两行——不再接受场景保存 DTO 覆盖。
-- 新建库位：`Status`/`CodeOrigin` 硬编码为 `0` / `1`（编辑器新建恒草稿）。
-- 状态流转唯一通道保留：publish / deactivate / adopt / bind-codes。
+## 交付物
 
-## TDD Evidence
-- **RED**：新增 2 测试 `SaveScene_CannotFlipPublishedStatus_OrCodeOrigin`、`SaveScene_NewLocation_ForcedDraft` → 2 FAIL（DTO 值直通落库：CannotFlip 得 0 应 1；ForcedDraft 得 1 应 0）。
-- **GREEN（护栏后）**：
-  - Scene 全套 `SceneServiceTests|SceneIoServiceTests|BindCodesTests` → 9 passed / 0 failed。
-  - 全量回归 → **1528 passed / 5 skipped**（基线 1526 + 本任务 2 新测试，零回归）。
-- 构建 `dotnet build CP6.slnx` → 0 Error（1 既有 warning，与本改动无关）。
+| 文件 | 动作 |
+|---|---|
+| `cp6.web/src/space-editor/command/commands/EditZoneCmd.ts` | **新建** —— 照 EditMarkerCmd 同构（prev/next 快照 `apply(after)`/`apply(before)`），`ZonePatch` 覆盖 zoneName/zoneCode/zoneType/color，**polygon 不在补丁内** |
+| `cp6.web/src/views/space/editor/panels/PropertiesPanel.vue` | **新建** —— 四态面板：zone 编辑 / marker 编辑 / rack 只读 / 空态 Aisle 一览 |
+| `cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts` | **新建** —— 5 用例 |
+| `cp6.web/src/space-editor/command/commands.spec.ts` | 追加 EditZoneCmd 3 用例 |
+| `cp6.web/src/views/space/editor/FloorEditor.vue` | selectedZone/selectedMarker/selectionInfo computed + aside 挂 PropertiesPanel |
+| `cp6.web/src/space-editor/SceneStage.ts` | renderZone 的 Konva.Line 补 `id`+`name:'zone'`（使 zone 可命中） |
+| `cp6.web/src/space-editor/interact/tools/SelectTool.ts` | onClick 空击分支加 zone 点选（findZoneShapeId） |
 
-## SceneIoService 核实结论
-**不受影响。** 导入路径（`SceneIoService.cs:162-196`）通过库位全枚举**直接构造** `Space_Location` 实体并 `_db.Space_Locations.AddRange(...)`，Status/CodeOrigin 在实体上直接写 `0`/`1`，**不经 SaveSceneAsync**，故护栏不会降级导入。无需任何改动（brief 头部担心的"导入依赖 SaveSceneAsync 保留 Status"不成立）。
+## 选中态接线方式
 
-## BindCodes 核实结论
-`SceneService.BindCodesAsync` 走独立端点，只改 RackId/Placed，不经 Locations 差量块——不受影响，测试确认 BindCodesTests 全绿。
+- **selectionIds 单源**：zone/marker 与 rack 同用 `store.selectionIds`（扁平 id 数组）。FloorEditor 新增 `selectedZone`/`selectedMarker` computed（与既有 `selectedRack` 同构：单选时按 id 反查 scene.zones/markers），再合成 `selectionInfo: SelectionInfo`（判别联合，rack 优先→zone→marker→none）传入面板。
+- **画布点选**：zone 原渲染为无 id 的 Konva.Line（不可命中）。已补 `id`+`name:'zone'`；SelectTool.onClick 在"无 rack 命中"分支沿父链找 `name==='zone'` 的图形取其 id → `setSelection([zoneId])`（Ctrl 切换）。rack 仍在更高图层，rack 点击不受影响；仅 zone 空白区点击才落到 zone。
+- Marker **未加**画布点选（见下"没做的事"）。
 
-## 既有断言核实
-`SceneServiceTests`/`SceneIoServiceTests`/`BindCodesTests` 中**无**任何"场景保存能写入 Status=1 或 CodeOrigin=2"的既有断言（若有会在护栏后转红，实际全绿）。故无需更新旧断言。
+## 命令栈接入证据（undo/redo 生效）
 
-## Files changed
-- `CP6.Core/Services/Space/SceneService.cs`（Locations 差量块护栏）
-- `CP6.Tests/SceneServiceTests.cs`（+2 测试）
+- 面板内直接持 `useSpaceEditorStore()`，提交走 `store.stack.exec(cmd, store.buildEditorContext())` + `store.updateUndoRedo()`，与 FloorEditor 既有命令调用完全一致 → Ctrl+Z/Ctrl+Shift+Z 天然生效。
+- 提交后 `emit('changed')`，FloorEditor `@changed="afterCommand"` 触发重渲染+碰撞刷新。**保存仍走既有场景保存通道**（EditZoneCmd/EditMarkerCmd 只改 store + markDirty，`store.save()` 差量上行不变）。
+- 单测实证：`选中 zone → setValue → blur → store.scene.zones[0].zoneName 已变 + store.canUndo===true + stack.undo 还原`。EditZoneCmd 单测覆盖全字段 do/undo 往返、部分补丁、目标不存在静默。
 
-## Self-review / 偏离说明
-- **DTO 偏离**：brief Step 1 测试代码用 `SceneLocationSaveDto { RackId = null }`，但 `SceneSaveDto.cs:27` 的 `RackId` 为**非空 `Guid`**（编译错误 CS0037）。按最小偏离原则，仅将两处 DTO 的 `RackId = null` 改为 `RackId = Guid.Empty`——RackId 值与 Status/CodeOrigin 断言无关，不改 DTO 定义（避免扩大改动面）。已在 commit message 记录。
-- 实体（预置库位）的 `RackId = null` 无需改（`Space_Location.RackId` 本就是 `Guid?`）。
+## i18n 先例
 
-## Commit
-`6af7c8b fix(space): 场景保存状态机护栏——Status/CodeOrigin 拒绝 DTO 覆盖，新建强制草稿（评审 H1）`
+**跟随 FloorEditor / TemplatePanel 的编辑器先例 = 中文字面量作 i18n key**（如 `t('保存')`、`t('模板库')`）。seed-2.sql 只覆盖 `space.rule.*/publish.*/events.*`（生命周期三画面），编辑器不在其列。故新面板文案用 `t('库区属性')` 等中文字面量，**未追加 SQL 种子行**（字面量即回退，五语由既有 Sys_Langs 命中则译、未命中显中文，与编辑器现状一致）。
+
+## 零硬编码色
+
+新 UI 全部用 Design System token：`var(--cp-line)`/`--cp-ink`/`--cp-text`/`--cp-muted`/`--cp-bg-hover`/`--cp-fs-*` 等（注：既有 TemplatePanel 用裸 hex，本任务不回改旧文件）。
+
+## Aisle 一览口径
+
+只读三列 + 巷道码。**方向** = 由 centerline 首尾点 |dx| vs |dy| 判横向/纵向；**所属库区** = zoneId 反查 zoneName；**命中库位** = 库位中心 (absX,absY) 落入巷道 polygon 的几何计数（`pointInPolygon`）。无手绘/编辑入口。
+
+## 没做的事（范围铁律照单确认）
+
+1. **不做 Zone 几何编辑** —— EditZoneCmd 补丁仅 name/code/type/color，polygon 绝不动；面板注明"几何形状请在画布上调整"。
+2. **Marker 复用 EditMarkerCmd** —— 面板只是入口，未新建 marker 命令。
+3. **Aisle 只读** —— 一览无新增/编辑/删除，不做手绘。
+4. **rack 只读展示尺寸** —— 反向建模入口保持在工具栏（未搬入面板），面板仅提示。
+5. **Marker 画布点选未加** —— 现状 markers 渲染为无 id 的 Circle/Text，本就不可点选。brief 铁律仅授权"若 zone 不可选中加最小 zone 点选"，marker"若已可选中就不动"。marker 既不可选中且非授权范围，故**未动 marker 选中链**；PropertiesPanel 的 marker 分支与 FloorEditor 的 selectedMarker computed 已就位，一旦将来接入 marker 点选即自动可用。当前 marker 编辑通过面板可达性受限于此——如需放开属后续小票（加 marker id/name + SelectTool marker 命中，与本波 zone 同法）。
+6. **aisle 图层 listening 未改** —— 保守起见未把 aisle Line 设为 non-listening；后果：点击恰好落在"排间巷道"填充上会清选而非选中所属 zone（zone 空白区点击正常选中）。属可接受的最小行为，未做以免触碰 aisle 渲染。
+
+## 验证
+
+- `npm run test`：**59 files / 385 passed**（基线 377 + 新增 8：EditZoneCmd 3 + 面板 5）。
+- `NODE_OPTIONS=--max-old-space-size=8192 npm run type-check`：**0 错**。
+- `npm run build`：**通过**（FloorEditor chunk 242 kB）。
