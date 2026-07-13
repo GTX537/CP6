@@ -43,32 +43,40 @@
         </el-form>
       </el-tab-pane>
 
-      <!-- Tab 3: 通知设定 -->
+      <!-- Tab 3: 通知设定（类型×通道矩阵，wfs-inbox-ux §2.3） -->
       <el-tab-pane :label="t('oa.notify.settings.tab')" name="notify">
-        <el-card shadow="never" style="max-width: 500px; margin-top: 16px">
-          <el-form label-width="130px">
-            <el-form-item :label="t('oa.notify.settings.email')">
-              <el-switch v-model="notifyPrefs.email" />
-            </el-form-item>
-            <el-divider content-position="left">{{ t('oa.notify.settings.eventTitle') }}</el-divider>
-            <el-form-item :label="t('oa.notify.settings.todo')">
-              <el-switch v-model="notifyPrefs.todo" />
-            </el-form-item>
-            <el-form-item :label="t('oa.notify.settings.approved')">
-              <el-switch v-model="notifyPrefs.approved" />
-            </el-form-item>
-            <el-form-item :label="t('oa.notify.settings.rejected')">
-              <el-switch v-model="notifyPrefs.rejected" />
-            </el-form-item>
-            <el-form-item :label="t('oa.notify.settings.timeout')">
-              <el-switch v-model="notifyPrefs.timeout" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" :loading="notifySaving" @click="saveNotifyPref">
-                {{ t('common.save') }}
-              </el-button>
-            </el-form-item>
-          </el-form>
+        <el-card shadow="never" style="max-width: 640px; margin-top: 16px">
+          <el-table :data="matrixRows" size="small" border>
+            <el-table-column :label="t('oa.notify.matrix.colType')" min-width="180">
+              <template #default="{ row }">{{ t('oa.notify.type.' + row.typeKey) }}</template>
+            </el-table-column>
+            <el-table-column :label="t('oa.notify.matrix.colInApp')" width="110" align="center">
+              <template #default="{ row }">
+                <el-tooltip :disabled="row.inAppSupported" :content="t('oa.notify.matrix.unsupported')">
+                  <el-switch
+                    v-model="matrixState[row.typeKey]!.inApp"
+                    :disabled="!row.inAppSupported"
+                  />
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('oa.notify.matrix.colEmail')" width="110" align="center">
+              <template #default="{ row }">
+                <el-tooltip :disabled="row.emailSupported" :content="t('oa.notify.matrix.unsupported')">
+                  <el-switch
+                    v-model="matrixState[row.typeKey]!.email"
+                    :disabled="!row.emailSupported"
+                  />
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="matrix-actions">
+            <el-button type="primary" :loading="notifySaving" @click="saveNotifyMatrix">
+              {{ t('common.save') }}
+            </el-button>
+            <el-button @click="resetNotifyMatrix">{{ t('oa.notify.matrix.reset') }}</el-button>
+          </div>
         </el-card>
       </el-tab-pane>
     </el-tabs>
@@ -143,6 +151,7 @@ import { delegateApi } from '@/api/oa/delegate'
 import { prefApi } from '@/api/oa/pref'
 import { userApi } from '@/api/sys/user'
 import type { DelegateItem } from '@/types/oa/advanced'
+import { buildMatrixState, toNotifyPatch, type MatrixState, type NotifyMatrixRow } from './notifyMatrixModel'
 
 const { t } = useI18n()
 
@@ -262,14 +271,6 @@ interface Prefs {
   showSummary: boolean
 }
 
-interface NotifyPrefs {
-  email: boolean
-  todo: boolean
-  approved: boolean
-  rejected: boolean
-  timeout: boolean
-}
-
 // Full raw PrefsJson object kept in memory so that any partial save preserves
 // all sub-keys written by other sections (display prefs / notify prefs / future keys).
 const storedRaw = ref<Record<string, unknown>>({})
@@ -277,9 +278,41 @@ const storedRaw = ref<Record<string, unknown>>({})
 const prefs = ref<Prefs>({ pageSize: 20, hideCancelled: false, showSummary: true })
 const prefSaving = ref(false)
 
-// Notify prefs — defaults all true (matches backend GetNotifyPrefsAsync default)
-const notifyPrefs = ref<NotifyPrefs>({ email: true, todo: true, approved: true, rejected: true, timeout: true })
+// ─── Notify matrix tab ───────────────────────────────────────────────────────
+const matrixRows = ref<NotifyMatrixRow[]>([])
+const matrixState = ref<MatrixState>({})
 const notifySaving = ref(false)
+
+async function loadNotifyMatrix(prefsJson: string) {
+  try {
+    const res = await prefApi.notifyMatrix()
+    matrixRows.value = (((res as any).data as NotifyMatrixRow[]) || [])
+    matrixState.value = buildMatrixState(prefsJson, matrixRows.value)
+  } catch {
+    // HTTP interceptor auto-toasts
+  }
+}
+
+async function saveNotifyMatrix() {
+  notifySaving.value = true
+  try {
+    await prefApi.saveMerge(toNotifyPatch(matrixState.value))   // 服务端合并：保 pageSize/rowMode 等他键
+    ElMessage.success(t('oa.notify.matrix.saveOk'))
+    await loadPref()
+  } finally {
+    notifySaving.value = false
+  }
+}
+
+async function resetNotifyMatrix() {
+  try {
+    await prefApi.saveMerge('{"notify":null}')                  // 删键 = 恢复默认全开（三态坍缩）
+    ElMessage.success(t('oa.notify.matrix.resetOk'))
+    await loadPref()
+  } catch {
+    // HTTP interceptor auto-toasts
+  }
+}
 
 async function loadPref() {
   try {
@@ -296,15 +329,9 @@ async function loadPref() {
         hideCancelled: parsed.hideCancelled ?? false,
         showSummary: parsed.showSummary ?? true,
       }
-      const n: Partial<NotifyPrefs> = (parsed.notify as Partial<NotifyPrefs>) ?? {}
-      notifyPrefs.value = {
-        email: n.email ?? true,
-        todo: n.todo ?? true,
-        approved: n.approved ?? true,
-        rejected: n.rejected ?? true,
-        timeout: n.timeout ?? true,
-      }
     }
+    // 矩阵行始终渲染（无 prefsJson 时传 '{}' 走三态坍缩全开）
+    await loadNotifyMatrix(prefsJson ?? '{}')
   } catch {
     // use defaults silently
   }
@@ -313,30 +340,15 @@ async function loadPref() {
 async function savePref() {
   prefSaving.value = true
   try {
-    // Merge display-pref fields into full raw object (preserves notify + any other sub-keys)
+    // 显示偏好三键顶层合并写（服务端保 notify/rowMode 等他键；storedRaw spread 兜底不删）
     const merged = { ...storedRaw.value, ...prefs.value }
     storedRaw.value = merged
-    await prefApi.save(JSON.stringify(merged))
+    await prefApi.saveMerge(JSON.stringify(prefs.value))
     ElMessage.success(t('oa.settings.prefSaveOk'))
   } catch {
     // HTTP interceptor auto-toasts
   } finally {
     prefSaving.value = false
-  }
-}
-
-async function saveNotifyPref() {
-  notifySaving.value = true
-  try {
-    // Only overwrite the `notify` sub-key; leave all other PrefsJson keys intact
-    const merged = { ...storedRaw.value, notify: { ...notifyPrefs.value } }
-    storedRaw.value = merged
-    await prefApi.save(JSON.stringify(merged))
-    ElMessage.success(t('oa.settings.prefSaveOk'))
-  } catch {
-    // HTTP interceptor auto-toasts
-  } finally {
-    notifySaving.value = false
   }
 }
 
@@ -355,5 +367,11 @@ onMounted(() => {
 
 .tab-toolbar {
   margin-bottom: 12px;
+}
+
+.matrix-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
 }
 </style>
