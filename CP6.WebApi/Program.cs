@@ -904,6 +904,10 @@ using (var scope = app.Services.CreateScope())
     // （oa-form-search(736) 仅 Query search 只读豁免→view，不种）。
     CP6.WebApi.Seed.OawfPermissionSeed.EnsureSeeded(db);
 
+    // WFS 波③ 事件触发 F-T2：流程触发器权限点 FlowTrigger.View/Edit（菜单 734 oa-flow-admin）逐租户幂等种子。
+    // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 MenuKey 回填）之后。「贴点⊆种子」互锁。
+    CP6.WebApi.Seed.FlowTriggerPermissionSeed.EnsureSeeded(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {
@@ -1951,6 +1955,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaApproverScreenSeed.Items)  // 审批人解析高级策略 oa.designer.strategy.*/oa.approverMap.*/nav.739/E-WF-014/015
             .Concat(CP6.WebApi.Seed.I18nOaServiceTaskScreenSeed.Items)  // WFS 服务任务 oa.designer.svc.* + oa.designer.errServiceConfig + E-WF-016/017/018
             .Concat(CP6.WebApi.Seed.I18nOaKernelHardeningScreenSeed.Items)  // 内核 hardening oa.designer.gw.* + errInclusive*/errBranchReject + E-WF-019/020/021
+            .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
