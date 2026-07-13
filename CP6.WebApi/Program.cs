@@ -485,6 +485,9 @@ else
     builder.Services.AddScoped<CP6.Core.Services.Integration.IMesBridgeHook, CP6.Core.Services.Integration.NoOpMesBridgeHook>();
 }
 
+// 事件触发 start：WF 触发器桥接 hook（BridgeHook 家族，D4；NoOpWfTriggerBridgeHook 备配置停用切换）
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWfTriggerBridgeHook, CP6.Core.Services.Wf.WfTriggerBridgeHook>();
+
 // MES 実時間通知（SignalR 実装）
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesNotifier, CP6.WebApi.Services.SignalRMesNotifier>();
 
