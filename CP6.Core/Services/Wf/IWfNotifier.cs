@@ -14,6 +14,9 @@ public interface IWfNotifier
 
     /// <summary>流程被驳回 → 推送给发起人（OA Phase D-1）。</summary>
     Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment);
+
+    /// <summary>并行/包容分支被剪枝（不连坐）→ 推送给发起人（内核 hardening spec §4.2.2）。</summary>
+    Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment);
 }
 
 /// <summary>空实现（无 SignalR 环境 / 单测用）。</summary>
@@ -22,4 +25,5 @@ public sealed class NullWfNotifier : IWfNotifier
     public Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey) => Task.CompletedTask;
     public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey) => Task.CompletedTask;
     public Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment) => Task.CompletedTask;
+    public Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment) => Task.CompletedTask;
 }

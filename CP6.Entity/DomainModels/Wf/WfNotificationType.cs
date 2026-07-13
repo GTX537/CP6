@@ -17,4 +17,7 @@ public static class WfNotificationType
 
     /// <summary>超时提醒 → 推送给处理人/上级。</summary>
     public const int Timeout = 4;
+
+    /// <summary>分支被剪枝（内核 hardening）→ 推送给发起人。独立类型键：偏好矩阵须与驳回可独立开关（信箱 spec §2.1 联动口径）。</summary>
+    public const int BranchPruned = 5;
 }

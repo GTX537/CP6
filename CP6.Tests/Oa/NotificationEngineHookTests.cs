@@ -22,9 +22,18 @@ public class NotificationEngineHookTests
         public Guid LastApprovedStarterId { get; private set; }
         public Guid LastRejectedStarterId { get; private set; }
         public string? LastRejectedComment { get; private set; }
+        public int PrunedCount { get; private set; }
+        public string? LastPrunedNodeId { get; private set; }
 
         public Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey)
             => Task.CompletedTask;
+
+        public Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment)
+        {
+            PrunedCount++;
+            LastPrunedNodeId = nodeId;
+            return Task.CompletedTask;
+        }
 
         public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey)
         {
@@ -177,4 +186,9 @@ public class NotificationEngineHookTests
         var inst = await db.Wf_FlowInstances.SingleAsync();
         Assert.Equal(FlowInstanceStatus.Approved, inst.Status);
     }
+
+    /// <summary>BranchPruned 通知类型键 = 5（独立类型，偏好矩阵须与驳回可独立开关）。</summary>
+    [Fact]
+    public void WfNotificationType_BranchPruned_Is5()
+        => Assert.Equal(5, CP6.Entity.DomainModels.Wf.WfNotificationType.BranchPruned);
 }
