@@ -33,13 +33,14 @@ public partial class FlowEngine : IFlowEngine
         _planner = planner ?? new ApprovalStagePlanner(_approver);   // 测试 Engine(db) 不传 → 内部 new,保 Wf 测绿
     }
 
-    // ★ T5：start/approval/end + parallelSplit/parallelJoin 五 handler。
-    // ★ 服务任务 A-T6：第 6 个 serviceTask handler（fallback 用空 executor 列表；DI 实例携真实 executor）。
+    // ★ T5：start/approval/end + parallelSplit/parallelJoin；A-T6：serviceTask；
+    // ★ hardening A-T3：inclusiveSplit/inclusiveJoin（第 7/8 个，spec D3）。八 handler。
     private static IEnumerable<INodeHandler> DefaultHandlers() => new INodeHandler[]
     {
         new StartNodeHandler(), new ApprovalNodeHandler(), new EndNodeHandler(),
         new ParallelSplitNodeHandler(), new ParallelJoinNodeHandler(),
         new ServiceTaskNodeHandler(Array.Empty<IServiceTaskExecutor>()),
+        new InclusiveSplitNodeHandler(), new InclusiveJoinNodeHandler(),
     };
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
