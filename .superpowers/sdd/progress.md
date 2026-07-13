@@ -273,3 +273,4 @@ WFS波① 合并+部署: complete (main=30bbf16 --no-ff已push, 分支留远端;
 # 依据: plan 2026-07-05-wfs-kernel-hardening.md(15任务, 每Task必读spec对应章节 2026-07-05-wfs-kernel-hardening-design.md, D1~D5全锁)+侦察定案表(执行者不二次侦察)
 # 基线更新: 后端1843绿/5skip(计划1509过时)/前端401绿(计划320过时); 27个既有Wf不变量测试断言不许改(唯一例外D-T1 palette清单); 零迁移; commit即push(用户纪律覆盖计划"不push")
 # 顺序: H-A(A-T1→A-T2→A-T3→A-T4)→H-B(B-T1→B-T2→B-T3)→H-C(C-T1→C-T2→C-T3)→H-D(D-T1→D-T2)→H-E(E-T1→E-T2→E-T3紧跟不过夜)
+WFS波② A-T1: complete (commit dbececb, Spec ✅ + Approved[opus审零Critical/Important; 五具名风险全核: 契约五签名与共享契约节字符级一致/SnapshotTokens与AllTokens字节同构(Local先DB后,Distinct引用相等+EF身份映射=Local wins)/四血缘函数语义手工trace含两层嵌套fork/5测试真纯函数断言/Pruned=3零冲突]; FlowTokenStatus.Pruned+SnapshotTokens抽取+TokenLineage{AncestorChain,CrossesFork,ForkParent,ForkStack}; 1848绿[1843+5]+ef clean; Minor×2记档: SnapshotTokens插入点致CancelAllActiveTokens的XML doc孤儿化(注释归属错乱,建议随后续任务顺手修)/Wf_FlowToken.Status字段doc未提Pruned=3)
