@@ -1,4 +1,5 @@
 using CP6.Core.Services.Space;
+using CP6.WebApi.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ public class SpaceLocateController : ControllerBase
     public async Task<IActionResult> Locate([FromQuery] string code)
     {
         var r = await _svc.LocateAsync(code);
-        if (r == null) return BadRequest(new { code = 400, message = "E-SPACE-601" });
+        if (r == null) throw new BizException("E-SPACE-601");
         return Ok2(r);
     }
 
@@ -38,7 +39,7 @@ public class SpaceLocateController : ControllerBase
     public async Task<IActionResult> Detail(Guid id)
     {
         var r = await _svc.DetailAsync(id);
-        if (r == null) return BadRequest(new { code = 400, message = "E-SPACE-004" });
+        if (r == null) throw new BizException("E-SPACE-004");
         return Ok2(r);
     }
 }
