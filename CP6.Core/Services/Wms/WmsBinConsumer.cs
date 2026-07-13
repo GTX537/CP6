@@ -24,13 +24,63 @@ public class WmsBinConsumer : IWmsLocationConsumer
     public async Task<WmsConsumeResult> ConsumeAsync(LocationPublishBatch batch)
     {
         var result = new WmsConsumeResult { Success = true };
+
+        // 波5 批量化：循环前三次预载，把旧实现「每 item 三次逐条查询」收敛为整批常数次查询。
+        // 逐行为等价的关键是保留旧实现的 Local-first 语义——旧代码先看同批未保存的 Added 实体（Local）、
+        // 再落库查；同批前面 item 刚插入的 bin 会被后面 item 看到（批内自碰撞）。故预载后在循环内插入
+        // 新 bin 时同步维护字典，命中/版本判定与旧的 Local+DB 双查完全一致。
+        // 上游可达性结论（写入报告）：生产调用方 PublishFloorAsync 先跑 PrecheckAsync，DuplicateGroups>0
+        // 直接 E-SPACE-307 抛死，且每条 item 源自不同 PK 的库位行——故批内「同 LocationId」「同锚不同
+        // LocationId」两条自碰撞路径生产不可达；但消费端契约（及既有 SameBatch 测试）要求保留该语义，
+        // 循环内维护字典即为等价保真。
+        var binsById = new Dictionary<Guid, WmsBin>();
+        var binsByAnchor = new Dictionary<(string WarehouseCd, string LocationCode), WmsBin>();
+
+        // ① bins 预载：按批次 LocationId 集合 ∪ 锚 (WarehouseCd, LocationCode) 集合一次载入，
+        //    覆盖旧代码「按 Id 查」与「按锚查」两处 DbSet 命中面；载入即进 Local，连同预先已跟踪的
+        //    WmsBin 一并入字典（等价旧 Local-first：Local 已跟踪行优先于 DB）。
+        var idSet = batch.Items.Select(i => i.LocationId).ToHashSet();
+        var codeSet = batch.Items.Select(i => i.LocationCode).ToHashSet();
+        var whSet = batch.Items.Where(i => !string.IsNullOrEmpty(i.WarehouseCd))
+            .Select(i => i.WarehouseCd!).ToHashSet();
+        await _db.WmsBins
+            .Where(b => idSet.Contains(b.Id) || (whSet.Contains(b.WarehouseCd) && codeSet.Contains(b.LocationCode)))
+            .LoadAsync();
+        foreach (var b in _db.WmsBins.Local)
+        {
+            binsById[b.Id] = b;
+            if (!string.IsNullOrEmpty(b.WarehouseCd) && b.LocationCode != null)
+                binsByAnchor[(b.WarehouseCd, b.LocationCode)] = b;
+        }
+
+        // ② 库存合计预载：仅 DEACTIVATE 且已有 bin 的项需要按 (bin.WarehouseCd, bin.LocationCode) 锚查库存。
+        //    收集这些锚，一次 GroupBy 聚合成字典（旧代码每项一次 SumAsync；SumAsync 空集=0 → GetValueOrDefault 0 等价）。
+        //    循环内不写库存，故批开始快照与逐条查询结果一致。
+        var deactAnchors = new HashSet<(string WarehouseCd, string LocationCode)>();
+        foreach (var item in batch.Items.Where(i => i.Op == "DEACTIVATE"))
+        {
+            if (binsById.TryGetValue(item.LocationId, out var b)
+                && !string.IsNullOrEmpty(b.WarehouseCd) && b.LocationCode != null)
+                deactAnchors.Add((b.WarehouseCd, b.LocationCode));
+        }
+        var stockByAnchor = new Dictionary<(string WarehouseCd, string LocationCode), decimal>();
+        if (deactAnchors.Count > 0)
+        {
+            var stockWh = deactAnchors.Select(a => a.WarehouseCd).ToHashSet();
+            var stockCode = deactAnchors.Select(a => a.LocationCode).ToHashSet();
+            var grouped = await _db.Stocks
+                .Where(s => stockWh.Contains(s.WarehouseCd) && stockCode.Contains(s.LocationCd))
+                .GroupBy(s => new { s.WarehouseCd, s.LocationCd })
+                .Select(g => new { g.Key.WarehouseCd, g.Key.LocationCd, Qty = g.Sum(x => x.PhysicalQty) })
+                .ToListAsync();
+            foreach (var g in grouped)
+                stockByAnchor[(g.WarehouseCd, g.LocationCd)] = g.Qty;
+        }
+
         foreach (var item in batch.Items)
         {
-            // 终审 #3：先看同批未保存的 Added 实体（Local），再落库查——顺手兜掉批内同 LocationId 双 Add。
-            // 注意 FindAsync 会看见 Local 但绕过全局查询过滤器（不做租户核对），此处用 Local+过滤查询双查更稳；
-            // 本表 PK=LocationId 为全局唯一 GUID，跨租户误命中现实无虞。
-            var bin = _db.WmsBins.Local.FirstOrDefault(b => b.Id == item.LocationId)
-                      ?? await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == item.LocationId);
+            // 波5：旧「Local + DB 双查」→ 预载字典命中（新插入的 bin 在循环内已回填 binsById，等价 Local-first）。
+            binsById.TryGetValue(item.LocationId, out var bin);
 
             // 陈旧/重复事件 → 幂等跳过（§5.1 关键行，至少一次投递安全）
             if (bin != null && item.Version <= bin.Version)
@@ -62,13 +112,17 @@ public class WmsBinConsumer : IWmsLocationConsumer
                     };
                     Stamp(tomb, item.Version, batch.PublishedBy);
                     _db.WmsBins.Add(tomb);
+                    // 波5：新插入行回填字典，保后续同批 item 的 Id/锚命中等价旧 Local-first。
+                    binsById[tomb.Id] = tomb;
+                    if (!string.IsNullOrEmpty(tomb.WarehouseCd) && tomb.LocationCode != null)
+                        binsByAnchor[(tomb.WarehouseCd, tomb.LocationCode)] = tomb;
                     result.Items.Add(Item(item, "DEACTIVATED", "墓碑落库（bin 未曾消费，防乱序复活）"));
                     continue;
                 }
-                // TOCTOU 权威校验：库存真相在 WMS（§6），按 (WarehouseCd, LocationCode) 锚查
-                var qty = await _db.Stocks
-                    .Where(s => s.WarehouseCd == bin.WarehouseCd && s.LocationCd == bin.LocationCode)
-                    .SumAsync(s => s.PhysicalQty);
+                // TOCTOU 权威校验：库存真相在 WMS（§6），按 (WarehouseCd, LocationCode) 锚查（波5：预载合计命中，空=0 等价 SumAsync）
+                var qty = (!string.IsNullOrEmpty(bin.WarehouseCd) && bin.LocationCode != null)
+                    ? stockByAnchor.GetValueOrDefault((bin.WarehouseCd, bin.LocationCode), 0m)
+                    : 0m;
                 if (qty > 0)
                 {
                     result.Items.Add(Item(item, "REJECTED", "W-SPACE-404 库存非0"));
@@ -93,12 +147,9 @@ public class WmsBinConsumer : IWmsLocationConsumer
             {
                 // 终审 #3：join 锚碰撞检查——同 (WarehouseCd, LocationCode) 被不同 LocationId（含墓碑）
                 // 占用时，直接 Add 会撞唯一索引走异常毒化链；改为业务拒绝链（REJECTED + Success=false）。
-                // 含 Local 同批检查，覆盖同批两条不同 LocationId 却撞同锚的场景。
-                var anchorHolder = _db.WmsBins.Local
-                        .FirstOrDefault(b => b.WarehouseCd == item.WarehouseCd && b.LocationCode == item.LocationCode)
-                    ?? await _db.WmsBins.FirstOrDefaultAsync(
-                        b => b.WarehouseCd == item.WarehouseCd && b.LocationCode == item.LocationCode);
-                if (anchorHolder != null && anchorHolder.Id != item.LocationId)
+                // 波5：预载锚字典命中（新插入行循环内已回填），覆盖同批两条不同 LocationId 却撞同锚的场景。
+                if (binsByAnchor.TryGetValue((item.WarehouseCd!, item.LocationCode), out var anchorHolder)
+                    && anchorHolder.Id != item.LocationId)
                 {
                     result.Items.Add(Item(item, "REJECTED",
                         "join 锚 (WarehouseCd, LocationCode) 已被其他 LocationId 占用（唯一索引冲突转业务拒绝）"));
@@ -107,6 +158,8 @@ public class WmsBinConsumer : IWmsLocationConsumer
                 }
                 bin = new WmsBin { Id = item.LocationId };
                 _db.WmsBins.Add(bin);
+                // 波5：新插入行回填字典，保后续同批 item 的 Id/锚命中等价旧 Local-first。
+                binsById[bin.Id] = bin;
             }
             bin.LocationCode = item.LocationCode;   // 理论不变（发布后码冻结）
             bin.WarehouseCd = item.WarehouseCd;
@@ -114,6 +167,8 @@ public class WmsBinConsumer : IWmsLocationConsumer
             bin.AttrsJson = JsonSerializer.Serialize(item.Attrs, Json);
             bin.IsActive = true;
             Stamp(bin, item.Version, batch.PublishedBy);
+            // 波5：更新后按当前锚回填（含新建；发布后码冻结，锚通常不变），保后续同批锚查等价。
+            binsByAnchor[(bin.WarehouseCd, bin.LocationCode)] = bin;
             result.Items.Add(Item(item, "UPSERTED", null));
         }
 

@@ -223,6 +223,81 @@ public class WmsBinConsumerTests
     }
 
     [Fact]
+    public async Task MixedBatch_TwoUpsertOneDeactivate_EquivalentToPerItem()
+    {
+        // 波5 批量化等价守卫：一次混合批（UPSERT×2 + DEACTIVATE×1，含 REJECTED）的结果，
+        // 必须与逐条单项批（各自独立 ConsumeAsync）的最终 bin 状态/Version/逐项 Status 完全一致。
+        // 覆盖三处预载：按 Id 命中（B/A 已存在）、库存 GroupBy（A 锚有 5 库存→REJECTED）、锚查（C 新建）。
+        var idA = Guid.NewGuid();   // 已存在 v1，将被 DEACTIVATE，但锚上有库存 → REJECTED
+        var idB = Guid.NewGuid();   // 已存在 v1，将被 UPSERT 到 v2
+        var idC = Guid.NewGuid();   // 全新，UPSERT 新建
+
+        async Task Seed(CP6Context db)
+        {
+            var c = new WmsBinConsumer(db);
+            await c.ConsumeAsync(Batch(Upsert(idA, "A-01-01-01", 1)));
+            await c.ConsumeAsync(Batch(Upsert(idB, "B-01-01-01", 1)));
+            db.Stocks.Add(new Stock
+            {
+                Id = Guid.NewGuid(), WarehouseCd = "WH1", LocationCd = "A-01-01-01",
+                ProductCd = "P1", LotNo = "", PhysicalQty = 5m
+            });
+            await db.SaveChangesAsync();
+        }
+
+        LocationPublishItem Deact(Guid id, string code, long v)
+        {
+            var it = Upsert(id, code, v);
+            it.Op = "DEACTIVATE";
+            return it;
+        }
+
+        // --- 批量路径：三项一次消费 ---
+        using var batched = Db();
+        await Seed(batched);
+        var rBatch = await new WmsBinConsumer(batched).ConsumeAsync(Batch(
+            Upsert(idB, "B-01-01-01", 2),         // UPSERT 升版
+            Upsert(idC, "C-01-01-01", 1),         // UPSERT 新建
+            Deact(idA, "A-01-01-01", 2)));        // DEACTIVATE 被库存拦 → REJECTED
+
+        // --- 逐条路径：同三项各自独立消费 ---
+        using var perItem = Db();
+        await Seed(perItem);
+        var pc = new WmsBinConsumer(perItem);
+        var p1 = await pc.ConsumeAsync(Batch(Upsert(idB, "B-01-01-01", 2)));
+        var p2 = await pc.ConsumeAsync(Batch(Upsert(idC, "C-01-01-01", 1)));
+        var p3 = await pc.ConsumeAsync(Batch(Deact(idA, "A-01-01-01", 2)));
+
+        // 逐项 Status 一致（批内顺序 = B,C,A）
+        Assert.Equal("UPSERTED", rBatch.Items[0].Status);
+        Assert.Equal("UPSERTED", rBatch.Items[1].Status);
+        Assert.Equal("REJECTED", rBatch.Items[2].Status);
+        Assert.Equal(p1.Items.Single().Status, rBatch.Items[0].Status);
+        Assert.Equal(p2.Items.Single().Status, rBatch.Items[1].Status);
+        Assert.Equal(p3.Items.Single().Status, rBatch.Items[2].Status);
+
+        // 整批 Success：含 REJECTED → false（逐条中 A 项批也 false）
+        Assert.False(rBatch.Success);
+        Assert.False(p3.Success);
+
+        // 最终 bin 状态/Version 两路径逐一相等
+        async Task AssertBin(Guid id, bool expectActive, long expectVersion)
+        {
+            var b = await batched.WmsBins.SingleAsync(x => x.Id == id);
+            var p = await perItem.WmsBins.SingleAsync(x => x.Id == id);
+            Assert.Equal(expectActive, b.IsActive);
+            Assert.Equal(expectVersion, b.Version);
+            Assert.Equal(p.IsActive, b.IsActive);
+            Assert.Equal(p.Version, b.Version);
+        }
+        await AssertBin(idB, expectActive: true, expectVersion: 2);   // 升版成功
+        await AssertBin(idC, expectActive: true, expectVersion: 1);   // 新建
+        await AssertBin(idA, expectActive: true, expectVersion: 1);   // REJECTED：仍 active、版本不动
+        Assert.Equal(3, await batched.WmsBins.CountAsync());
+        Assert.Equal(await perItem.WmsBins.CountAsync(), await batched.WmsBins.CountAsync());
+    }
+
+    [Fact]
     public async Task Deactivate_NoStock_SetsInactive_AndVersion()
     {
         using var db = Db();
