@@ -3911,3 +3911,19 @@ git add -A && git commit -m "feat(wfs-trigger): F-T2 菜单734 MenuKey 回填+Fl
 
 
 
+
+---
+
+## 波③ 完成记录(2026-07-13, 主控追记)
+
+14任务全过逐任务审查+DoD+fable全支终审(With fixes→修复6f399c7→复核Ready=Yes)。终审唯一Critical=CsrfMiddleware无豁免使message外呼端点生产配置下403死路(三层测试环境集体遮蔽的跨任务接缝)→形状精确豁免修复(兄弟端点全留CSRF面+7负例护栏)。同车修=保存侧拒永不触发cron(E-WF-022)。最终门禁: 后端1979绿/5skip+EF clean+前端425/type-check 0/build过+恰一迁移+引擎零diff+零污染+零硬编码色。
+
+### 跟踪票(波③遗留)
+
+1. **触发器桥接生产化票**: ①dispatcher的??NoOp静默吞守卫(删Program.cs注册行即WF重放无声no-op,加DI解析断言) ②DISPATCH-400不拦{}空对象(eventId null被ReplayEventAsync fail-safe拒,备注级) ③WfTriggerEchoController [Authorize]-only可伪造任意业务事件以名义发起人拉起流程(滋扰向量)——生产启用event触发器前加权限键或配置开关。
+2. **message双发声明闸票**: 真并发同Idempotency-Key双POST存在双实例窗口(终审量化: timer结构性免疫/event时序串行/message唯一真窗口,几十ms级,后果有界可救济)——对Wf_TriggerFire占坑行做条件UPDATE CAS或未来迁移加RowVersion。
+3. **GET读面产品裁决票**: FlowTrigger.View现仅存CronPreview(POST), 3个GET降[Authorize]-only(NoReadOnlyGetAction守卫×强制收编联立唯一解,与FlowAdminController口径一致)——触发器ConfigJson+fires台账(含E-WF-024异常message)对任意登录租户用户可读; 产品二选一: 服务层读门控或裁定登录+租户隔离足够归档。
+4. **spec澄清票**: ①FlowKey空→E-WF-023语义边界(022枚举未含FlowKey) ②月末预设plan文字(0 0 28)vs代码三处自洽(0 9 28)口径对齐 ③带detail错误文案不走i18n(ja/ko用户原文直出,与既有口径一致) ④userName未落IntegrationEvent.Creator恒"system"(payload内保留)。
+5. **部署冒烟必做项**: 无cookie外部进程(curl独立会话)真API key打线上`POST /api/oa/flow-triggers/{id}/fire`期望201——本波唯一被三层测试遮蔽路径的线上实证(harness README已列)。
+6. **前端清理备忘**: resetKey确认后API失败/showKeyOnce alert X关闭仍unhandled rejection(拦截器已toast仅控制台噪音,E-T2既有形态)。
+7. **live QA**: harness 8剧本written-not-run待用户在场执行(隔离库CP6DB_OA, docs/superpowers/qa/wfs-flow-trigger/)。
