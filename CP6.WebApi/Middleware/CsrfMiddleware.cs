@@ -40,8 +40,13 @@ public class CsrfMiddleware
 
     /// <summary>CSRF 豁免路径（段边界匹配，杜绝同前缀误豁免）：
     /// ① 登录端点（登录时尚无 csrf cookie，杜绝 /api/auth/login-xxx 这类同前缀端点被静默豁免）；
-    /// ② SignalR hub 路径（negotiate 是 POST 但不改业务状态，hub 自身经 JWT/cookie 认证；
-    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub）。</summary>
+    /// ② SignalR hub 路径（negotiate 是 POST 但不改业务状态）——豁免安全论据：
+    ///    (a) 现有 4 个 hub(notify/mes/wms/space)均无状态变更方法，仅 Subscribe/Unsubscribe 组操作
+    ///        (Groups.Add/RemoveToGroupAsync)，即便被跨站触发也无业务副作用；
+    ///    (b) CORS 显式 allowlist（Program.cs WithOrigins + AllowCredentials，无通配源）挡跨站 negotiate。
+    ///    ⚠ 前瞻警示：未来若给任一 hub 加可 invoke 的状态变更方法，须重新评估此豁免（届时应移除 /hubs 整段
+    ///      豁免或改为仅豁免 negotiate 端点），否则跨站可经 hub 方法绕过 CSRF。
+    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub。</summary>
     internal static bool IsExempt(string path)
         => PathMatches(path, "/api/auth/login")
            || PathMatches(path, "/hubs");

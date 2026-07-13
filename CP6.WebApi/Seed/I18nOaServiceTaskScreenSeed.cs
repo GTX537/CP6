@@ -38,9 +38,9 @@ public static class I18nOaServiceTaskScreenSeed
         new() { LangKey = "oa.designer.svc.delayValueHint",     ZhCN = "如 3d/2h/30m，或日期/表达式", ZhTW = "如 3d/2h/30m，或日期/運算式", En = "e.g. 3d/2h/30m, or a date/expression", Ja = "例 3d/2h/30m、または日付/式", Ko = "예 3d/2h/30m 또는 날짜/표현식" },
         new() { LangKey = "oa.designer.svc.timerAction",        ZhCN = "到点动作",       ZhTW = "到點動作",       En = "On-Fire Action", Ja = "発火時アクション", Ko = "실행 시 동작" },
         // 票8：到点动作类型（none / 数据回写 / webApi 连接器）——补 spec §5.3「定时到点发 webApi」缺口
-        new() { LangKey = "oa.designer.svc.timerActionKind",       ZhCN = "到点动作类型",   ZhTW = "到點動作類型",   En = "On-Fire Action Type", Ja = "発火時アクション種別", Ko = "실행 시 액션 유형" },
+        new() { LangKey = "oa.designer.svc.timerActionKind",       ZhCN = "到点动作类型",   ZhTW = "到點動作類型",   En = "On-Fire Action Type", Ja = "発火時アクション種別", Ko = "실행 시 동작 유형" },
         new() { LangKey = "oa.designer.svc.timerActionKind.none",  ZhCN = "无（纯等待）",   ZhTW = "無（純等待）",   En = "None (pure wait)",    Ja = "なし（待機のみ）",     Ko = "없음(대기만)" },
-        new() { LangKey = "oa.designer.svc.timerActionKind.write", ZhCN = "数据回写动作",   ZhTW = "資料回寫動作",   En = "Data-writeback action", Ja = "データ書き戻しアクション", Ko = "데이터 기록 액션" },
+        new() { LangKey = "oa.designer.svc.timerActionKind.write", ZhCN = "数据回写动作",   ZhTW = "資料回寫動作",   En = "Data-writeback action", Ja = "データ書き戻しアクション", Ko = "데이터 쓰기 동작" },
         new() { LangKey = "oa.designer.svc.timerActionKind.api",   ZhCN = "接口调用",       ZhTW = "介面呼叫",       En = "API call",            Ja = "API呼び出し",          Ko = "API 호출" },
 
         // ── 重试（三 kind 共用）(NodePropertyPanel.vue) ──
