@@ -93,7 +93,25 @@ public partial class FlowEngine
             // 外层 cascade / 无外层 → 实例 Rejected（既有连坐终态；DispatchIfFinished 由 ActOnceAsync 尾部统一做）
             inst.Status = FlowInstanceStatus.Rejected;
             CancelAllActiveTokens(inst.Id);
+            CancelAllPendingTasks(inst.Id);   // 递归上弹连坐：清场兄弟支遗留的孤儿待办（token 由上一行清、任务在此清）
             VoidPendingFormTos(inst.Id);
         }
+    }
+
+    /// <summary>递归上弹全剪光坍缩本实例时，把全部 Pending/Suspended 待办 → Cancelled。
+    /// 剪本支的待办已由 <see cref="CancelPendingTasksOfToken"/> 逐支清；本方法补清「从未被剪、
+    /// 仅因外层坍缩而连坐」的兄弟支孤儿待办（如嵌套外层 cascade 时的外层兄弟）。
+    /// Local + localIds-exclusion 惯用法，镜像 CancelPendingTasksOfToken。仅走剪枝坍缩路径，
+    /// 既有默认 cascade（ActOnceAsync !pruned 分支）零改。</summary>
+    private void CancelAllPendingTasks(Guid instanceId)
+    {
+        foreach (var t in _db.Wf_FlowTasks.Local.Where(t => t.InstanceId == instanceId
+            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)).ToList())
+            t.Status = FlowTaskStatus.Cancelled;
+        var localIds = _db.Wf_FlowTasks.Local.Where(t => t.InstanceId == instanceId).Select(t => t.Id).ToHashSet();
+        foreach (var t in _db.Wf_FlowTasks.Where(t => t.InstanceId == instanceId
+            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)
+            && !localIds.Contains(t.Id)).ToList())
+            t.Status = FlowTaskStatus.Cancelled;
     }
 }
