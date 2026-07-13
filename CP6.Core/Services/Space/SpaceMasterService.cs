@@ -506,12 +506,35 @@ public class SpaceMasterService : ISpaceMasterService
             }
         }
 
-        // 无已发布（或 deactivate 后）→ 库位级联删 + 删货架（停用位可删，2026-07-06 拍板；
-        // 其码仍占 T_WmsBin 锚，同码再发布会被 REJECTED——锚清理记后续票）。
+        // 无已发布（或 deactivate 后）→ 库位级联删 + 删货架（停用位可删，2026-07-06 拍板）。
+        // 波5 已清理：删库位时一并清其 T_WmsBin 墓碑锚（同一 SaveChanges/同事务）——停用位的 bin
+        // （IsActive=false，主键=同 LocationId）此前留孤儿占住 (WarehouseCd, LocationCode) join 锚，
+        // 同码再发布会被消费端锚碰撞 REJECTED；清墓碑即释放锚。
         var children = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
-        if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
+        if (children.Count > 0)
+        {
+            _db.Space_Locations.RemoveRange(children);
+            await RemoveTombstoneBinsAsync(_db, children.Select(l => l.Id).ToList());
+        }
         _db.Space_Racks.Remove(rack);
         await _db.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// 波5：库位删除时清理其 T_WmsBin 墓碑锚（不自带 SaveChanges——由调用方与库位删除同一 SaveChanges/同事务提交）。
+    /// 仅删 IsActive=false 的墓碑行：停用位删除后其 (WarehouseCd, LocationCode) join 锚仍被墓碑占用，
+    /// 同码再发布会被消费端锚碰撞 REJECTED（WmsBinConsumer 唯一索引→业务拒绝链）；清墓碑即释放锚。
+    /// 护栏兜底：活跃 bin（IsActive=true）理论不可达——已发布库位 Status=1 不可删（E-SPACE-408），
+    /// 命中亦不删（Where !IsActive 已排除，绝不误删活跃库位目录）。
+    /// internal static 单源：SpaceMasterService.DeleteRackAsync 与 SceneService 各库位删除通道共用（避免同构块漂移）。
+    /// </summary>
+    internal static async Task RemoveTombstoneBinsAsync(CP6Context db, List<Guid> locationIds)
+    {
+        if (locationIds.Count == 0) return;
+        var tombstones = await db.WmsBins
+            .Where(b => locationIds.Contains(b.Id) && !b.IsActive)
+            .ToListAsync();
+        if (tombstones.Count > 0) db.WmsBins.RemoveRange(tombstones);
     }
 
     // ══════════════════════════════════════════════════════════════════════

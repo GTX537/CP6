@@ -1,16 +1,18 @@
-### Task 6: SignalR SpaceHub（发布推送 + events 页自动刷新）
+### Task 6: 库位删除时清理 T_WmsBin 墓碑锚
 
 **Files:**
-- Create: `CP6.Core/Services/Integration/ISpaceNotifier.cs`——`Task NotifyLocationPublishedAsync(string batchNo, int count, string status)`（+ `NoOpSpaceNotifier` 内联，测试/降级用）
-- Create: `CP6.WebApi/Hubs/SpaceHub.cs`（照 WmsHub：OnConnected/Disconnected 日志；无分组——Space 事件低频全播即可，YAGNI）
-- Create: `CP6.WebApi/Services/SignalRSpaceNotifier.cs`（照 SignalRWmsNotifier：注入 `IHubContext<SpaceHub>`，`Clients.All.SendAsync("LocationPublished", new { batchNo, count, status })`，try/catch 吞错记日志——推送失败不影响业务）
-- Modify: `CP6.Core/Services/Space/LocationPublishService.cs`——ctor 追加 `ISpaceNotifier notifier`（第 7 参）；`PublishFloorAsync` 成功 Commit 后、`DeactivateAsync` 兜底事件后各调一次 notify（**在事务 Commit 之后**，推送不进事务）；测试帮手 MakePublishSvc 加 `new NoOpSpaceNotifier()`
-- Modify: `CP6.WebApi/Program.cs`——DI `AddScoped<ISpaceNotifier, SignalRSpaceNotifier>()` + `app.MapHub<CP6.WebApi.Hubs.SpaceHub>("/hubs/space");`（:2524 后）
-- Create: `cp6.web/src/utils/spaceHub.ts`（照 wmsHub.ts 单例：withUrl('/hubs/space') 无 accessTokenFactory，cookie 隐式认证）
-- Modify: `cp6.web/src/views/space/lifecycle/SpaceEventsView.vue`——onMounted 订阅 `LocationPublished` → `listRef.reload()`（回第 1 页可接受）；onUnmounted 取消订阅（照 IoT 轮询清理先例）
-- Test: 后端 `Mock<IHubContext<SpaceHub>>` 链（照 CP6.Tests/DeadLetterNotifierTests.cs:49 范式）验证 SendCoreAsync 参数；LocationPublishServiceTests 加 1 断言（publish 后 notifier 被调——用记录桩）；前端 spec：mock spaceHub 模块，事件回调触发 reload
+- Modify: `CP6.Core\Services\Space\SpaceMasterService.cs`(`DeleteRackAsync:415-501`、`DeleteAisleAsync:260-334` 中删 `Space_Locations` 处;另 grep 全仓其余 `Space_Locations.Remove` 删除通道——含 SceneService 保存删除分支,一并接线)
+- Test: `CP6.Tests\Space\`
 
-- [ ] Step 1: TDD → 实现 → 后端全量 + 前端三件套 → Commit `feat(space): SpaceHub 发布推送 + 事件页自动刷新（ISpaceNotifier 接口注入）`
+**Interfaces:**
+- Produces: `SpaceMasterService` 内 `private async Task RemoveTombstoneBinsAsync(List<Guid> locationIds)`:`_db.WmsBins.Where(b => locationIds.Contains(b.Id) && !b.IsActive)` → `RemoveRange`。**仅删 IsActive=false 的墓碑行**(活跃 bin 理论不可达——Status=1 不可删 E-SPACE-408;护栏兜底:命中活跃 bin 时不删并保留)。SceneService 若在别类,提取为 `internal static` 帮助或复制同构块并注释互指。
+
+**要点:** 与库位删除**同一事务/同一 SaveChanges**;删除后同码再发布不再 REJECTED(锚释放)。顺带更新 `:495-499` 注释(「锚清理记后续票」→「波5 已清理」)。
+
+- [ ] **Step 1: 失败测试×2**(①删 Status=2 库位(带 IsActive=false bin)→bin 行消失 ②删 Status=0 库位(无 bin)→不炸)
+- [ ] **Step 2: 红 → 实现(所有删除通道接线)→ 绿 → 全量绿**
+- [ ] **Step 3: 追加集成断言**:同码重发布不再碰撞(构造 删→再建同码→publish→bin 重建 IsActive=true)
+- [ ] **Step 4: Commit + push**(`feat(space): 波5 库位删除清理T_WmsBin墓碑锚——同码再发布不再REJECTED`)
 
 ---
 

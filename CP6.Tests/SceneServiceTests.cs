@@ -507,4 +507,27 @@ public class SceneServiceTests
         Assert.Equal("E-SPACE-002", ex.Code);
         Assert.Equal(1, (await db.Space_Locations.AsNoTracking().SingleAsync()).Col);   // 草稿原位
     }
+
+    // ── 波5 Task 6: 场景保存删除库位通道也清 T_WmsBin 墓碑锚 ────────────────────
+    [Fact]
+    public async Task SaveScene_DeleteDisabledLocation_RemovesTombstoneBin()
+    {
+        var (db, svc) = Make();
+        var floorId = Guid.NewGuid();
+        var locId   = Guid.NewGuid();
+        // 停用位（Status=2，Deletes 可删）+ 其 T_WmsBin 墓碑（Id=同 LocationId，IsActive=false）
+        db.Space_Locations.Add(new Space_Location
+            { Id = locId, FloorId = floorId, RackId = Guid.NewGuid(), Placed = true, Status = 2, CodeOrigin = 1, LocationCode = "A-01-01-01" });
+        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
+            { Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", IsActive = false, Version = 2 });
+        await db.SaveChangesAsync();
+
+        await svc.SaveSceneAsync(floorId, new SceneSaveDto
+        {
+            Deletes = new Deletes { Locations = new List<Guid> { locId } }
+        }, "u");
+
+        Assert.Equal(0, await db.Space_Locations.CountAsync());
+        Assert.Equal(0, await db.WmsBins.CountAsync());   // 墓碑锚随库位删除一并释放
+    }
 }
