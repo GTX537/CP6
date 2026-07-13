@@ -18,8 +18,21 @@ public static class WfCronHelper
         var afterLocal = TimeZoneInfo.ConvertTimeFromUtc(
             DateTime.SpecifyKind(afterUtc, DateTimeKind.Utc), TimeZoneInfo.Local);
         var nextLocal = sched.GetNextOccurrence(afterLocal);
-        return TimeZoneInfo.ConvertTimeToUtc(
-            DateTime.SpecifyKind(nextLocal, DateTimeKind.Unspecified), TimeZoneInfo.Local);
+        // 审查修复 Finding 1：语法合法但永不匹配的 cron（如 "0 0 30 2 *"）——NCrontab 回吐内部哨兵
+        // 9999-12-31T23:59:59.9999999 而非报"无"。契约意图 null=无下一次，故 Year>=9999 视为"永不"。
+        if (nextLocal.Year >= 9999) return null;
+        return ToUtcSafe(nextLocal);
+    }
+
+    /// <summary>本地时刻→UTC。审查修复 Finding 2：DST 春季跳变缺口内的本地时刻不存在，
+    /// ConvertTimeToUtc 会抛 ArgumentException；命中无效时刻则按 30 分钟步进推进至有效时刻
+    /// （DST 缺口 30–60 分钟，最多 6 步做安全网上界）。</summary>
+    private static DateTime ToUtcSafe(DateTime local)
+    {
+        var unspecified = DateTime.SpecifyKind(local, DateTimeKind.Unspecified);
+        for (var guard = 0; guard < 6 && TimeZoneInfo.Local.IsInvalidTime(unspecified); guard++)
+            unspecified = unspecified.AddMinutes(30);
+        return TimeZoneInfo.ConvertTimeToUtc(unspecified, TimeZoneInfo.Local);
     }
 
     /// <summary>fromUtc 起未来 count 次到期（UTC 升序）——管理页「下次触发时间预览」用。</summary>

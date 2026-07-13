@@ -59,4 +59,33 @@ public class WfCronHelperTests
         Assert.Equal(5, list.Count);
         for (var i = 1; i < list.Count; i++) Assert.True(list[i] > list[i - 1]);
     }
+
+    // ── 审查修复 Finding 1：不可达 cron（语法合法但永不匹配）返回 null，不得回吐 NCrontab 哨兵日期 9999-12-31 ──
+    [Fact]
+    public void NextUtc_UnreachableCron_ReturnsNull()
+    {
+        // "0 0 30 2 *" = 2 月 30 日，永不存在 → NCrontab 返回内部哨兵 9999-12-31T23:59:59.9999999
+        var start = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        Assert.Null(WfCronHelper.NextUtc("0 0 30 2 *", start));
+    }
+
+    [Fact]
+    public void PreviewUtc_UnreachableCron_ReturnsEmpty()
+    {
+        var start = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var list = WfCronHelper.PreviewUtc("0 0 30 2 *", start, 3);
+        Assert.Empty(list);
+    }
+
+    // ── 审查修复 Finding 2：DST 春季跳变守卫——2:30 AM 每日 cron 扫过 PST 春季 2:00–3:00 缺口不得抛 ArgumentException ──
+    [Fact]
+    public void NextUtc_AcrossDstTransitions_NeverThrows_StrictlyIncreasing()
+    {
+        // 2:30 每日；从 2026-01-01 起算 400 次跨越 PST 春季（2026-03-08 2:00→3:00 跳变）与秋季两个转换点。
+        // 非 DST 主机上此测试平凡通过（不存在无效本地时刻）。
+        var start = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var list = WfCronHelper.PreviewUtc("30 2 * * *", start, 400);
+        Assert.Equal(400, list.Count);
+        for (var i = 1; i < list.Count; i++) Assert.True(list[i] > list[i - 1]);
+    }
 }
