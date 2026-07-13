@@ -87,6 +87,46 @@ public partial class FlowEngine
             t.Status = FlowTaskStatus.Cancelled;
     }
 
+    /// <summary>剥离层子树清场（hardening spec §5.2 SameBranch）：root 及其 ParentTokenId 后代闭包内
+    /// Active token → Cancelled；这些 token 的 Pending/Suspended 任务 → Cancelled、Pending FormTo → Voided、
+    /// Pending ServiceJob → Cancelled。绝不触碰子树外（兄弟分支零扰动）、绝不改 inst.Status。
+    /// 闭包正确性：join 续 token 血缘「上弹一层」重挂剥离层同级，故任何在途延续 token 要么在闭包内、
+    /// 要么本身就是作用域分析选出的剥离层（侦察结论表第 3 行论证）。</summary>
+    internal void CancelTokenSubtree(Guid instanceId, Guid rootTokenId)
+    {
+        var all = SnapshotTokens(instanceId);
+        var subtree = new HashSet<Guid> { rootTokenId };
+        bool grew = true;
+        while (grew)
+        {
+            grew = false;
+            foreach (var t in all)
+                if (t.ParentTokenId is Guid p && subtree.Contains(p) && subtree.Add(t.Id)) grew = true;
+        }
+        foreach (var t in all)
+            if (subtree.Contains(t.Id) && t.Status == FlowTokenStatus.Active)
+                t.Status = FlowTokenStatus.Cancelled;
+        foreach (var id in subtree)
+        {
+            CancelPendingTasksOfToken(instanceId, id);
+            VoidPendingFormTos(instanceId, tokenId: id);
+            CancelPendingServiceJobsOfToken(instanceId, id);
+        }
+    }
+
+    /// <summary>本 token 的 Pending 服务作业 → Cancelled（镜像 CancelAllActiveTokens 的 B-T3 job 清场，tokenId 过滤）。</summary>
+    internal void CancelPendingServiceJobsOfToken(Guid instanceId, Guid tokenId)
+    {
+        var now = DateTime.UtcNow;
+        foreach (var j in _db.Wf_ServiceJobs.Local.Where(j => j.InstanceId == instanceId && j.TokenId == tokenId
+            && j.Status == ServiceJobStatus.Pending).ToList())
+        { j.Status = ServiceJobStatus.Cancelled; j.CompletedAtUtc = now; }
+        var localJobIds = _db.Wf_ServiceJobs.Local.Where(j => j.InstanceId == instanceId).Select(j => j.Id).ToHashSet();
+        foreach (var j in _db.Wf_ServiceJobs.Where(j => j.InstanceId == instanceId && j.TokenId == tokenId
+            && j.Status == ServiceJobStatus.Pending && !localJobIds.Contains(j.Id)).ToList())
+        { j.Status = ServiceJobStatus.Cancelled; j.CompletedAtUtc = now; }
+    }
+
     /// <summary>无 Active token 残留 ⇒ 实例正常通过（置 Approved；dispatch 由调用方在 SaveChanges 前做）。</summary>
     internal void FinishIfDrained(Wf_FlowInstance inst)
     {
