@@ -221,9 +221,21 @@ public partial class FlowEngine : IFlowEngine
         }
         else
         {
-            inst.Status = FlowInstanceStatus.Rejected;
-            CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
-            VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
+            // hardening B-T2 驳回分流（spec §4.1）：token 有 fork 血缘且本层 split 配 prune → 剪枝；否则既有连坐一行不改。
+            // ForkId==null 时不 LoadSchema（cascade 默认路径零额外开销）。
+            var rejTok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
+            var pruned = false;
+            if (rejTok is not null && rejTok.ForkId is not null)
+            {
+                var pruneSchema = await LoadSchemaAsync(inst.FlowKey);
+                pruned = await TryPruneBranchAsync(inst, pruneSchema, rejTok, actorId, comment);
+            }
+            if (!pruned)
+            {
+                inst.Status = FlowInstanceStatus.Rejected;
+                CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
+                VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
+            }
         }
         await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
         await _db.SaveChangesAsync();

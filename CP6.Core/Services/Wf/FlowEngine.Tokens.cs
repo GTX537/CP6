@@ -74,6 +74,19 @@ public partial class FlowEngine
         }
     }
 
+    /// <summary>本 token 的在途/挂起任务 → Cancelled（剪枝/子树清场用）。Local + localIds-exclusion 惯用法。</summary>
+    internal void CancelPendingTasksOfToken(Guid instanceId, Guid tokenId)
+    {
+        foreach (var t in _db.Wf_FlowTasks.Local.Where(t => t.InstanceId == instanceId && t.TokenId == tokenId
+            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)).ToList())
+            t.Status = FlowTaskStatus.Cancelled;
+        var localIds = _db.Wf_FlowTasks.Local.Where(t => t.InstanceId == instanceId).Select(t => t.Id).ToHashSet();
+        foreach (var t in _db.Wf_FlowTasks.Where(t => t.InstanceId == instanceId && t.TokenId == tokenId
+            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)
+            && !localIds.Contains(t.Id)).ToList())
+            t.Status = FlowTaskStatus.Cancelled;
+    }
+
     /// <summary>无 Active token 残留 ⇒ 实例正常通过（置 Approved；dispatch 由调用方在 SaveChanges 前做）。</summary>
     internal void FinishIfDrained(Wf_FlowInstance inst)
     {
