@@ -5,6 +5,16 @@ import { findRackGroup, isTransformerNode } from '../InteractionManager'
 import { rackCorners } from '../collide/CollisionHint'
 import { obbIntersectsRect, type WorldRect } from '../select/lassoHit'
 
+/** 沿父链找到 name='zone' 的图形并返回其 id（zone 图形是单 Line，target 即该图形）。 */
+function findZoneShapeId(target: Konva.Node): string | null {
+  let node: Konva.Node | null = target as Konva.Node
+  while (node) {
+    if (typeof node.name === 'function' && node.name() === 'zone') return node.id()
+    node = node.getParent() as unknown as Konva.Node | null
+  }
+  return null
+}
+
 export class SelectTool implements ITool {
   private ctx: ToolContext
   // Lasso state
@@ -124,7 +134,19 @@ export class SelectTool implements ITool {
 
     const rackGroup = findRackGroup(e.target)
     if (!rackGroup) {
-      // Click on empty → clear selection
+      // 无 rack 命中 → 尝试点选 zone（最小选中支持，与 rack 同 selectionIds 语义）
+      const zoneId = findZoneShapeId(e.target)
+      if (zoneId) {
+        const zevt = e.evt
+        if (zevt.ctrlKey || zevt.metaKey) {
+          this.ctx.store.toggleSelection(zoneId, !this.ctx.store.isSelected(zoneId))
+        } else {
+          this.ctx.store.setSelection([zoneId])
+        }
+        this.refreshTransformer()
+        return
+      }
+      // Click on truly empty → clear selection
       this.ctx.store.clearSelection()
       this.refreshTransformer()
       return

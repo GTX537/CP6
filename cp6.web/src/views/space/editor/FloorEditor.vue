@@ -7,7 +7,7 @@ import { sceneApi } from '@/api/space/scene'
 import { useSpaceEditorStore } from '@/stores/spaceEditor'
 import { SceneStage } from '@/space-editor/SceneStage'
 import { genZoneArray } from '@/space-editor/generate/genZoneArray'
-import type { ZoneVO, RackVO } from '@/types/space/scene'
+import type { ZoneVO, RackVO, MarkerVO } from '@/types/space/scene'
 import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
 import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
 import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
@@ -18,6 +18,7 @@ import TemplatePanel from './panels/TemplatePanel.vue'
 import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
 import BindCodesDialog from './panels/BindCodesDialog.vue'
 import ConnectorPanel from './panels/ConnectorPanel.vue'
+import PropertiesPanel, { type SelectionInfo } from './panels/PropertiesPanel.vue'
 import { connectorApi } from '@/api/space/connector'
 import { arrayFootprint } from '@/space-editor/generate/arrayFootprint'
 import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
@@ -60,6 +61,27 @@ const selectedRack = computed<RackVO | null>(() => {
   if (store.selectionIds.length !== 1) return null
   const id = store.selectionIds[0]!
   return store.scene?.racks.find(r => r.id === id) ?? null
+})
+
+// 选中态扩展（波5）：zone / marker 与 rack 同 selectionIds 语义，单选时按 id 反查
+const selectedZone = computed<ZoneVO | null>(() => {
+  if (store.selectionIds.length !== 1) return null
+  const id = store.selectionIds[0]!
+  return store.scene?.zones.find(z => z.id === id) ?? null
+})
+
+const selectedMarker = computed<MarkerVO | null>(() => {
+  if (store.selectionIds.length !== 1) return null
+  const id = store.selectionIds[0]!
+  return store.scene?.markers.find(m => m.id === id) ?? null
+})
+
+/** 单一选中态 → 属性面板三分支；无匹配则空态（Aisle 一览）。rack 优先（与既有反向建模一致）。 */
+const selectionInfo = computed<SelectionInfo>(() => {
+  if (selectedRack.value) return { kind: 'rack', rack: selectedRack.value }
+  if (selectedZone.value) return { kind: 'zone', zone: selectedZone.value }
+  if (selectedMarker.value) return { kind: 'marker', marker: selectedMarker.value }
+  return { kind: 'none' }
 })
 
 function openBindDialog(): void {
@@ -645,6 +667,7 @@ async function handleImportFile(e: Event): Promise<void> {
           :floor-id="floorId"
           @request-place="onConnectorPlaceRequest"
         />
+        <PropertiesPanel :selection="selectionInfo" @changed="afterCommand" />
       </aside>
     </div>
 
