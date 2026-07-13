@@ -118,7 +118,7 @@ public sealed class WfServiceJobService : IWfServiceJobService
                 }
                 else if (!_executors.TryGetValue(key, out var exec))
                 {
-                    result = ServiceTaskResult.Fail($"E-WF-018 动作/连接器未注册:{key}");
+                    result = ServiceTaskResult.Fail($"E-WF-018|{key}");
                 }
                 else
                 {

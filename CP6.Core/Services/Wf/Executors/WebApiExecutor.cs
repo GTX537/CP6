@@ -31,17 +31,19 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
     /// </summary>
     public async System.Threading.Tasks.Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx)
     {
+        // E-WF-018 结构化格式：`E-WF-018|<机读明细>`。管道前=可翻译码（前端按码 i18n），
+        // 管道后=无本地化散文的机读 token（连接器名 / 空标记 / 异常类型名），供诊断解析。
         if (string.IsNullOrEmpty(ctx.ActionRefJson))
-            return ServiceTaskResult.Fail("E-WF-018 ActionRefJson 为空，无法解析连接器");
+            return ServiceTaskResult.Fail("E-WF-018|actionRefEmpty");
 
         ServiceTaskActionRef r;
         try { r = ServiceTaskActionRef.Parse(ctx.ActionRefJson); }
         catch (System.Exception ex)
-        { return ServiceTaskResult.Fail($"E-WF-018 ActionRefJson 解析失败: {ex.Message}"); }
+        { return ServiceTaskResult.Fail($"E-WF-018|parseError:{ex.GetType().Name}"); }
 
         var connectorName = r.ConnectorName;
         if (string.IsNullOrEmpty(connectorName) || !_connectors.TryGetValue(connectorName, out var connector))
-            return ServiceTaskResult.Fail($"E-WF-018 连接器未注册:{connectorName}");
+            return ServiceTaskResult.Fail($"E-WF-018|{connectorName}");
 
         // 把 path/paramsJson 原样传给连接器；连接器自己决定模板求值/method/headers/response-map（P1-5）
         return await connector.CallAsync(r.Path ?? "", r.ParamsJson, ctx);
