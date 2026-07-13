@@ -246,3 +246,21 @@ Worker(照 FinReconciliationWorker 全文逐字同构,把勾稽逻辑换成调 `
 2. 合并 main(--no-ff)+ push,重建 cp6-api 镜像部署(宿主 `dotnet publish -o publish-docker` → 删 appsettings.Local/Development → `docker build` 薄 Dockerfile → `compose up -d cp6-api`),cp6-web 同步重建(本波有前端)。
 3. 线上冒烟:①对账 worker 启动日志 ②UpdateSite 改锚 400/E-SPACE-406 ③locate 裸码端点 ja 译文 ④删停用位→T_WmsBin 墓碑行消失→同码再发布成功 ⑤rehome/H4 republish 真库冒烟(波1.5 遗留) ⑥浏览器视觉走查(900 段菜单/三生命周期页/编辑器新面板/Zone 弹窗 ghost 矩形)。
 4. 台账+票据落档(平台票不动:CpFormDialog 二次 toast/403 信封中文/总纲 §16.3 错误码表同步)。
+
+---
+
+## 波5 完成记录(2026-07-12,fable 终审 Ready=Yes)
+
+10 任务全过逐任务审查(Spec✅+Approved)+fable 全支终审;唯一 Important(事件重试复活缝)已修(17dbe37:消费端 bin==null 双分支存在性守卫批量预载,SKIPPED 收敛使 Failed 事件退役);后端 1808→1826 绿/前端 369→390 绿。
+
+**跟踪票(不阻断,后续波/票池认领):**
+1. 编辑器 i18n 债扩容:PropertiesPanel 约 25 个中文字面 t() 键不在 seed(与 FloorEditor 既有约定同型),ja/en 用户见中文原文——并入既有「编辑器 i18n 债」票。
+2. 双 worker 循环加固:SpaceBinReconciliationWorker 与 FinReconciliationWorker 同构地在租户枚举层抛瞬时异常时 while 循环终结静默死亡至重启——双 worker 一并加 try/catch 小票。
+3. T1 扫描器反向盲区:孤儿 bin(bin 无对应 Space_Location)不在 join 面——加反向告警查询。
+4. Marker 画布点选:renderMarker 无 id 不可达 PropertiesPanel marker 分支(面板已就位),与 zone 同法放开(SceneStage 补 id/name+SelectTool 分支)。
+5. 发布中心重复组明细列裸 UUID(precheck DTO 无码字段),产品若要人类可读需后端 DTO 扩展。
+6. GenSingleAsync rackSeq 硬编码 seq=1 最小实现(CodeEngineService TODO,pre-existing)。
+7. T3 两个生产不可达契约发散(同批改码锚键陈留/同批建 bin→DEACTIVATE 库存 miss)已记档留证。
+8. 平台票(原样滚动):CpFormDialog axios error 二次 toast/403 信封 message 硬编码中文/总纲 §16.3 错误码表与契约重名同步修订。
+
+**部署硬步骤**:双镜像重建(本波前后端都动)+重跑 docs/seeds/space-i18n-seed-2.sql(+5 新键:space.publish.goCodeRule/dupGroupTitle、space.rack.uncodedTitle/genSingle/genDone)。
