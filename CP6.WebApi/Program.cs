@@ -908,6 +908,10 @@ using (var scope = app.Services.CreateScope())
     // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 MenuKey 回填）之后。「贴点⊆种子」互锁。
     CP6.WebApi.Seed.FlowTriggerPermissionSeed.EnsureSeeded(db);
 
+    // WFS 波④ 信箱体验 B-T2：OA 信箱批量改派权限点 batch-transfer（菜单 733 oa-inbox）逐租户幂等种子。
+    // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 733 MenuKey 回填）之后。「贴点⊆种子」互锁。
+    CP6.WebApi.Seed.InboxBatchTransferPermissionSeed.EnsureSeeded(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {

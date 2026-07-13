@@ -199,6 +199,38 @@ public class InboxController : LocalizedControllerBase
         catch (InvalidOperationException e) { return Err(e); }
     }
 
+    // ── 在途批量转单（wfs-inbox-ux §3；权限点 = spec OA.Inbox.BatchTransfer → (oa-inbox, batch-transfer)）──
+    // 审计：OperLogFilter 全局记 POST 请求体（操作者/from/to）+ 引擎 Wf_FlowHistory/Wf_FlowFormTo 逐条记录（R3）。
+
+    public record BatchTransferFilterReq(string? FlowKey, DateTime? BeforeUtc, List<Guid>? TaskIds);
+    public record BatchTransferReq(Guid FromUserId, Guid ToUserId, string? Comment, BatchTransferFilterReq? Filter);
+
+    private static BatchTransferFilter? ToFilter(BatchTransferFilterReq? f) =>
+        f is null ? null : new BatchTransferFilter(f.FlowKey, f.BeforeUtc, f.TaskIds);
+
+    [HttpPost("batch-transfer")]
+    [RequirePermission("oa-inbox", "batch-transfer")]
+    public async Task<IActionResult> BatchTransfer([FromBody] BatchTransferReq r)
+    {
+        try
+        {
+            var me = await CurrentUserIdAsync();   // 操作者=登录管理员本人（管理动作不走 act-as）
+            return Ok2(await _inbox.BatchTransferAsync(me, r.FromUserId, r.ToUserId, r.Comment, ToFilter(r.Filter)));
+        }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
+
+    [HttpPost("batch-transfer/preview")]
+    [RequirePermission("oa-inbox", "batch-transfer")]
+    public async Task<IActionResult> BatchTransferPreview([FromBody] BatchTransferReq r)
+    {
+        try
+        {
+            return Ok2(await _inbox.BatchTransferPreviewAsync(r.FromUserId, ToFilter(r.Filter)));
+        }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
+
     public record IdReq(Guid Id);
     public record BatchReq(List<Guid> TaskIds, bool Approve, string? Comment);
 }
