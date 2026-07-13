@@ -17,8 +17,26 @@ using Prometheus;
 var builder = WebApplication.CreateBuilder(args);
 
 // 本地凭证覆盖（appsettings.Local.json 在 .gitignore，绝不入仓库）。
-// 加载顺序：appsettings.json → appsettings.{Env}.json → appsettings.Local.json → env vars
-builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+// 优先级（低→高）：appsettings.json → appsettings.{Env}.json → appsettings.Local.json → env vars → 命令行。
+// 关键：CreateBuilder 已把 env vars/命令行源加在链尾（高优先级）。若用 AddJsonFile 追加，Local.json 会落到
+// 更后、反而覆盖 env vars —— 容器里 ConnectionStrings__* 环境变量会被静默吞。故把 Local.json 源**插到 env vars 源之前**，
+// 恢复标准 ASP.NET 优先级（env vars 最高）。
+var localJsonSource = new Microsoft.Extensions.Configuration.Json.JsonConfigurationSource
+{
+    Path = "appsettings.Local.json",
+    Optional = true,
+    ReloadOnChange = true,
+};
+localJsonSource.ResolveFileProvider();
+// 注意：Sources 是 IList<IConfigurationSource>，没有 List<T>.FindIndex——手写循环找 env vars 源下标。
+var envVarIdx = -1;
+for (var i = 0; i < builder.Configuration.Sources.Count; i++)
+    if (builder.Configuration.Sources[i] is Microsoft.Extensions.Configuration.EnvironmentVariables.EnvironmentVariablesConfigurationSource)
+    { envVarIdx = i; break; }
+if (envVarIdx >= 0)
+    builder.Configuration.Sources.Insert(envVarIdx, localJsonSource);   // 插到 env vars 之前 → env 仍最高
+else
+    builder.Configuration.Sources.Add(localJsonSource);                 // 兜底（理论不达）
 
 // 1. 注册控制器（全局注册 OperLogFilter）
 builder.Services.AddScoped<OperLogFilter>();
