@@ -255,3 +255,4 @@ Space波5 合并+部署: complete (main=5930ffe --no-ff已push, 分支留远端;
 # 依据: docs/superpowers/plans/2026-07-05-wfs-cleanup-tickets.md; 基线更新: 后端1826绿/5skip(计划写1509已过时)/前端390绿(计划写320已过时)
 # 顺序: 后端纯逻辑T2→T6(同文件WfServiceJobService串行)→T4→T5(同文件FlowSchemaValidator串行)→T1→T3→前端T7→T8(同文件NodePropertyPanel+seed串行)→T9→T10→T11; 计划写于07-05,行号可能漂移且缺陷可能已被后续波顺手修复,每票开工先核实缺陷仍在
 # 开工三件事已过: 孤儿FlowKey预检零孤儿(全库4实例全有Def)/D-T0已由P0-T1落地勿重做/双端基线绿亲证
+WFS波① T2: complete (commit 67938ac, Spec ✅ + Approved[opus审零issue; 四具名风险全证伪: 退避/失败分支无二次自增/executor抛异常状态机自洽(Running留待reaper回收且计数已持久化=计1,前移SaveChanges前崩溃=计0)/MaxAttempts判定读post-increment与原对齐/断言修正仅计划钦定一处]; reaper去自增只回收lease, 尝试计数前移executor调用前立即SaveChanges; 取消路径在前移点前不计数(正确); 新增抢占未执行不烧配额测试(未来NextAttemptAtUtc真隔离); Reaper_ResetsExpiredLease_Only断言2→1照计划; Wf 189绿, 1827绿[1826+1]; Minor×1: 前移SaveChanges未对称捕获并发异常(外层catch语义已正确)记档)
