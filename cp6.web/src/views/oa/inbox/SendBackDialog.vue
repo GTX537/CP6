@@ -2,7 +2,8 @@
   <el-dialog
     :model-value="modelValue"
     :title="t('oa.detail.sendback')"
-    width="440px"
+    :width="isMobile ? '100vw' : '440px'"
+    :fullscreen="isMobile"
     @close="onClose"
   >
     <el-form label-width="90px">
@@ -57,6 +58,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { inboxApi } from '@/api/oa/inbox'
 import type { TimelineRow } from '@/types/oa/inbox'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const props = defineProps<{
   taskId: string
@@ -68,6 +70,7 @@ const props = defineProps<{
 const emit = defineEmits<{ done: []; 'update:modelValue': [val: boolean] }>()
 
 const { t } = useI18n()
+const { isMobile } = useBreakpoint()
 
 const kind = ref<'prevStage' | 'starter' | 'node'>('starter')
 const nodeId = ref('')

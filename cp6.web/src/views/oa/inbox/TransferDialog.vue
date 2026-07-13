@@ -2,7 +2,8 @@
   <el-dialog
     :model-value="modelValue"
     :title="t('oa.transfer.title')"
-    width="440px"
+    :width="isMobile ? '100vw' : '440px'"
+    :fullscreen="isMobile"
     @close="onClose"
   >
     <el-form label-width="80px">
@@ -54,11 +55,13 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { transferApi } from '@/api/oa/transfer'
 import { userApi } from '@/api/sys/user'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const props = defineProps<{ taskId: string; modelValue: boolean }>()
 const emit = defineEmits<{ done: []; 'update:modelValue': [val: boolean] }>()
 
 const { t } = useI18n()
+const { isMobile } = useBreakpoint()
 
 const toUserId = ref('')
 const comment = ref('')
