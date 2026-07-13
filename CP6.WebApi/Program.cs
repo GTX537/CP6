@@ -125,6 +125,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverMapService, CP6.Core.Se
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
 builder.Services.AddScoped<CP6.Core.Services.Wf.FlowEngine>();                                                // 章03 流程引擎状态机（会签/条件/幂等）；WfServiceJobService ctor 注入具体类型（internal Resume/FailServiceTokenAsync 不在接口上）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine>(sp => sp.GetRequiredService<CP6.Core.Services.Wf.FlowEngine>()); // 接口与具体类共享同一 scoped 实例
+builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowTriggerService, CP6.Core.Services.Wf.FlowTriggerService>(); // 事件触发 start：三入口单一出口（D2）
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.StartNodeHandler>();      // WFS T4 节点处理器：开始
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ApprovalNodeHandler>();   // WFS T4 节点处理器：审批
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.EndNodeHandler>();        // WFS T4 节点处理器：结束
