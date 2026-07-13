@@ -37,6 +37,14 @@ public partial class FlowEngine
     /// <para>B-T3（P0-5 入队侧）：同时把该实例 <c>Status==Pending</c> 的 <see cref="Wf_ServiceJob"/> 行标
     /// <c>Cancelled</c>（同款 Local + localIds-exclusion 惯用法），让扫描 worker 永不唤醒已终止实例的停泊 token。
     /// <c>Status==Running</c> 的 job 不强杀——由 B-T1 <c>ScanOnceAsync</c> 执行前状态闸（§4.2 P0-5）在 worker 侧处理。</para></summary>
+    /// <summary>本实例 token 快照：Local（含本回合未落盘的）∪ DB（已落盘的），按引用去重
+    /// （EF 身份映射保证同实体同引用）。口径抽自 ParallelJoinNodeHandler.AllTokens，供双 join 动态计票、
+    /// 剪枝递归、退回作用域分析共用。</summary>
+    internal IReadOnlyList<Wf_FlowToken> SnapshotTokens(Guid instanceId)
+        => _db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId)
+            .Concat(_db.Wf_FlowTokens.Where(t => t.InstanceId == instanceId).AsEnumerable())
+            .Distinct().ToList();
+
     internal void CancelAllActiveTokens(Guid instanceId)
     {
         // ── token 清场（既有逻辑，字节等价） ──

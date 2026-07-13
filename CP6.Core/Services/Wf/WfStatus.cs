@@ -28,6 +28,8 @@ public static class FlowTokenStatus
     public const int Active = 0;
     public const int Consumed = 1;
     public const int Cancelled = 2;
+    /// <summary>剪枝（分支驳回不连坐，spec §2.3）。区别 Cancelled=清场类作废：Pruned 是分支死亡，join 动态计票时天然从等待集消失。</summary>
+    public const int Pruned = 3;
 }
 
 /// <summary>传签履历关卡状态（Wf_FlowFormTo.Status）。</summary>
