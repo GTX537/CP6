@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
@@ -172,6 +172,23 @@ async function loadReview() {
 function onSelectionChange(rows: PendingItem[]) {
   selected.value = rows
 }
+
+/**
+ * 跨断点多选回填：el-table 受 v-if 门控，mobile→desktop 时表格重挂载内部选中态为空，
+ * 而 @selection-change 是单向覆盖 selected 数组——用户在移动端勾选后旋转到桌面再触碰任一
+ * 原生复选框，会把之前的移动端选择静默丢弃（批量条计数与提交 ids 背离）。此处在切到桌面后
+ * nextTick 内把 selected 中的行逐一 toggleRowSelection(row, true) 回填进重挂载的表格。
+ * 反方向 desktop→mobile 无需处理：卡片直接读同一 selected 数组，天然一致。
+ */
+watch(isMobile, async (mobile, prev) => {
+  if (prev === true && mobile === false) {
+    await nextTick()
+    const ids = new Set(selected.value.map((r) => r.taskId))
+    for (const row of reviewRows.value) {
+      if (ids.has(row.taskId)) reviewTableRef.value?.toggleRowSelection(row, true)
+    }
+  }
+})
 
 function reviewRowClass({ row }: { row: PendingItem }): string {
   return row.isRead ? '' : 'row-unread'
