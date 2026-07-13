@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { reactive, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 import { useSpaceEditorStore } from '@/stores/spaceEditor'
+import { codeRuleApi } from '@/api/space/codeRule'
 import { EditZoneCmd } from '@/space-editor/command/commands/EditZoneCmd'
 import { EditMarkerCmd } from '@/space-editor/command/commands/EditMarkerCmd'
 import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
-import type { ZoneVO, MarkerVO, RackVO, AisleVO } from '@/types/space/scene'
+import type { ZoneVO, MarkerVO, RackVO, AisleVO, LocationVO } from '@/types/space/scene'
 
 /** 选中态描述——FloorEditor 从 selectionIds 解析后注入。三分支 zone/marker/rack + 空态(Aisle 一览)。 */
 export type SelectionInfo =
@@ -95,6 +97,41 @@ function commitMarker(field: 'text' | 'markerType'): void {
   store.stack.exec(cmd, store.buildEditorContext())
   store.updateUndoRedo()
   emit('changed')
+}
+
+// ── Rack 分支：单格补码（波5）────────────────────────────────────────────────
+// 对象 = 选中货架下「已落位(placed)且无码」的子库位。后端 GenSingleAsync 守卫
+// RackId!=null ∧ Placed==true，故此挂载面与契约吻合（unplaced 行恒失败，已弃）。
+const uncodedLocs = computed<LocationVO[]>(() => {
+  if (props.selection.kind !== 'rack') return []
+  const rid = props.selection.rack.id
+  return (store.scene?.locations ?? []).filter(
+    l => l.rackId === rid && l.placed && !(l.locationCode ?? '').trim(),
+  )
+})
+
+// per-loc 进行中集合防连点（按钮 loading+disabled + 重入守卫）
+const genInflight = reactive(new Set<string>())
+
+// 点「补码」→ genSingle(loc.id)。成功：直改 store 中该库位 code（生码是后端持久化动作，
+// 不属命令栈 undo 范畴）→ uncodedLocs 随之消行 + 成功 toast。失败：http 拦截器已弹，
+// catch 仅止崩（照生命周期页范式）。
+async function handleGenSingle(loc: LocationVO): Promise<void> {
+  if (genInflight.has(loc.id)) return
+  genInflight.add(loc.id)
+  try {
+    const res = await codeRuleApi.genSingle(loc.id)
+    const code = res.data?.code ?? ''
+    if (code) {
+      const target = store.scene?.locations.find(l => l.id === loc.id)
+      if (target) target.locationCode = code
+      ElMessage.success(t('space.rack.genDone', { code }))
+    }
+  } catch {
+    /* 拦截器已提示 */
+  } finally {
+    genInflight.delete(loc.id)
+  }
 }
 
 // ── Aisle 一览（只读：方向 / 所属库区 / 命中库位数）───────────────────────────
@@ -197,6 +234,30 @@ function aisleHitCount(a: AisleVO): number {
         <dt>{{ t('单格尺寸mm') }}</dt>
         <dd>{{ selection.rack.cellW }} × {{ selection.rack.cellH }} × {{ selection.rack.cellD }}</dd>
       </dl>
+
+      <!-- 单格补码（波5）：已落位且无码的子库位逐行补码；无无码行时整区不渲染 -->
+      <div v-if="uncodedLocs.length > 0" class="gen-section" data-test="uncoded-section">
+        <div class="gen-title">{{ t('space.rack.uncodedTitle') }}</div>
+        <div
+          v-for="l in uncodedLocs"
+          :key="l.id"
+          class="gen-row"
+          data-test="uncoded-row"
+        >
+          <span class="gen-pos">{{ l.col }} - {{ l.level }} - {{ l.depth }}</span>
+          <el-button
+            v-permission="'space-code-rule:generate'"
+            size="small"
+            :loading="genInflight.has(l.id)"
+            :disabled="genInflight.has(l.id)"
+            data-test="gen-btn"
+            @click="handleGenSingle(l)"
+          >
+            {{ t('space.rack.genSingle') }}
+          </el-button>
+        </div>
+      </div>
+
       <div class="panel-hint">{{ t('库位码绑定请用工具栏「反向建模」') }}</div>
     </template>
 
@@ -288,6 +349,34 @@ function aisleHitCount(a: AisleVO): number {
 .a-zone {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 单格补码区（波5）——配色一律取面板既有主题变量，零硬编码色 */
+.gen-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--cp-line);
+  font-size: var(--cp-fs-xs);
+}
+.gen-title {
+  color: var(--cp-muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.gen-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 2px;
+  border-bottom: 1px solid var(--cp-line-soft);
+}
+.gen-row:hover {
+  background: var(--cp-bg-hover);
+}
+.gen-pos {
+  color: var(--cp-text);
   white-space: nowrap;
 }
 </style>

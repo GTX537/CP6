@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { sceneApi } from '@/api/space/scene'
-import { codeRuleApi } from '@/api/space/codeRule'
 import type { RackVO, UnplacedLocationDto } from '@/types/space/scene'
 import {
   enumerateSlots,
@@ -37,10 +36,6 @@ const pairs = ref<PairRow[]>([])
 const loading = ref(false)
 const submitting = ref(false)
 
-// ── 单格补码（波5）：per-row 进行中 id 集合防连点 + 生成结果内联缓存（按 locationId） ──
-const genInflight = reactive(new Set<string>())
-const genCodes = reactive<Record<string, string>>({})
-
 // ── v-model wrapper ────────────────────────────────────────────────────────────
 
 const visible = computed({
@@ -54,9 +49,6 @@ watch(
   () => props.modelValue,
   async (open) => {
     if (!open) return
-    // 新会话重置补码态（避免上次弹窗残留内联码/进行中标记）
-    genInflight.clear()
-    for (const k of Object.keys(genCodes)) delete genCodes[k]
     await loadUnplaced()
   },
 )
@@ -140,28 +132,6 @@ async function handleSubmit(): Promise<void> {
     ElMessage.error(t('绑定失败，请检查库位状态或网络'))
   } finally {
     submitting.value = false
-  }
-}
-
-// ── 单格补码（波5）─────────────────────────────────────────────────────────────
-// 点击行内「补码」→ genSingle(row.id)。成功：行内展示新码 + 刷新 unplaced 列表。
-// 失败：http 拦截器已弹业务错误码，此处 catch 仅止崩（照生命周期页范式）。
-// genInflight 集合防连点（进行中按钮 loading+disabled，重入直接 return）。
-async function handleGenSingle(row: UnplacedLocationDto): Promise<void> {
-  if (genInflight.has(row.id)) return
-  genInflight.add(row.id)
-  try {
-    const res = await codeRuleApi.genSingle(row.id)
-    const code = res.data?.code ?? ''
-    if (code) {
-      genCodes[row.id] = code
-      ElMessage.success(t('space.bind.genDone', { code }))
-    }
-    await loadUnplaced()
-  } catch {
-    /* 拦截器已提示 */
-  } finally {
-    genInflight.delete(row.id)
   }
 }
 
@@ -279,39 +249,6 @@ function handleClose(): void {
         </div>
       </div>
 
-      <!-- 单格补码（波5）：待绑定库位逐行补码 -->
-      <div v-if="unplacedList.length > 0" class="gen-section">
-        <div class="gen-title">{{ t('space.bind.unplacedTitle') }}</div>
-        <div
-          v-for="u in unplacedList"
-          :key="u.id"
-          class="gen-row"
-          data-test="unplaced-row"
-        >
-          <span class="gen-code-cur">{{ u.locationCode }}</span>
-          <el-tag
-            v-if="genCodes[u.id]"
-            type="success"
-            size="small"
-            class="gen-code-new"
-            data-test="gen-code"
-          >
-            {{ genCodes[u.id] }}
-          </el-tag>
-          <div class="gen-spacer"></div>
-          <el-button
-            v-permission="'space-code-rule:generate'"
-            size="small"
-            :loading="genInflight.has(u.id)"
-            :disabled="genInflight.has(u.id)"
-            data-test="gen-btn"
-            @click="handleGenSingle(u)"
-          >
-            {{ t('space.bind.genSingle') }}
-          </el-button>
-        </div>
-      </div>
-
     </div>
 
     <template #footer>
@@ -393,45 +330,5 @@ function handleClose(): void {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-}
-
-/* 单格补码区（波5）——配色一律取 Element Plus 主题变量，随亮/暗主题切换 */
-.gen-section {
-  margin-top: 14px;
-  padding: 10px 14px;
-  border: 1px solid var(--el-border-color);
-  border-radius: 6px;
-  background: var(--el-fill-color-light);
-}
-
-.gen-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--el-text-color-regular);
-  margin-bottom: 8px;
-}
-
-.gen-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 0;
-}
-
-.gen-row + .gen-row {
-  border-top: 1px solid var(--el-border-color-lighter);
-}
-
-.gen-code-cur {
-  font-size: 13px;
-  color: var(--el-text-color-primary);
-}
-
-.gen-code-new {
-  margin: 0;
-}
-
-.gen-spacer {
-  flex: 1 1 auto;
 }
 </style>

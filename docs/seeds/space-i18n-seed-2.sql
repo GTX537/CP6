@@ -12,7 +12,7 @@
  *   SpaceEventsView.vue（space.events.*・20 件）
  * ★ space.common.* は 波2 space-i18n-seed.sql で登録済みのため本ファイルには含めない
  *   （edit/delete/cancel/save/action/required/success/confirmDelete/confirm 等は再利用）。
- * 合計 134 キー = rule 64 + publish 47 + events 20 + bind 3（波5 BindCodesDialog 追補）。
+ * 合計 134 キー = rule 64 + publish 47 + events 20 + rack 3（波5 PropertiesPanel 単格採番 追補）。
  * ============================================================ */
 SET NOCOUNT ON; SET XACT_ABORT ON;
 SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;
@@ -167,10 +167,10 @@ INSERT INTO #i18n2 VALUES
   (N'space.events.status.FAILED',  N'失败',       N'失敗',       N'Failed',            N'失敗',                N'실패'),
   (N'space.events.status.DEAD',    N'死信',       N'死信',       N'Dead',              N'デッド',              N'데드'),
   (N'space.events.status.COMPENSATED', N'已补偿', N'已補償',     N'Compensated',       N'補償済',              N'보상됨'),
-  -- ── 波5：反向建模弹窗 单格补码（BindCodesDialog・3 件）────────────────────
-  (N'space.bind.unplacedTitle',    N'待绑定库位（可补码）', N'待綁定庫位（可補碼）', N'Unbound locations (code-able)', N'未割当ロケーション（採番可）', N'미배정 로케이션 (코드 생성 가능)'),
-  (N'space.bind.genSingle',        N'补码',       N'補碼',       N'Gen Code',          N'採番',                N'코드 생성'),
-  (N'space.bind.genDone',          N'已生成编码：{code}', N'已產生編碼：{code}', N'Code generated: {code}', N'採番完了：{code}', N'코드 생성됨: {code}');
+  -- ── 波5：属性面板 rack 分支 单格补码（PropertiesPanel・3 件）──────────────
+  (N'space.rack.uncodedTitle',     N'无码库位（可补码）', N'無碼庫位（可補碼）', N'Uncoded locations (code-able)', N'未採番ロケーション（採番可）', N'미채번 로케이션 (코드 생성 가능)'),
+  (N'space.rack.genSingle',        N'补码',       N'補碼',       N'Gen Code',          N'採番',                N'코드 생성'),
+  (N'space.rack.genDone',          N'已生成编码：{code}', N'已產生編碼：{code}', N'Code generated: {code}', N'採番完了：{code}', N'코드 생성됨: {code}');
 
 DECLARE @actionLog TABLE (act nvarchar(10));
 MERGE Sys_Langs AS tgt USING #i18n2 AS src ON tgt.LangKey = src.LangKey
