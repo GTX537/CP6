@@ -281,8 +281,8 @@ public class SceneService : ISceneService
                 var e = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId);
                 if (e == null) continue;
                 // 已发布不可删（须先停用）；草稿/停用可删（2026-07-06 拍板）。
-                // 注意：停用位删除后其码仍被 T_WmsBin 停用行占据 join 锚，同码新库位发布会被
-                // 锚碰撞 REJECTED——锚清理机制记后续票，此为拍板时已知代价。
+                // 波5 已清理：停用位删除后其 T_WmsBin 墓碑行（占 join 锚）在本事务末尾一并清除
+                // （deletedLocIds→RemoveTombstoneBinsAsync），同码新库位发布不再被锚碰撞 REJECTED。
                 if (e.Status == 1)
                     throw new BizException("E-SPACE-408");
                 _db.Space_Locations.Remove(e);
