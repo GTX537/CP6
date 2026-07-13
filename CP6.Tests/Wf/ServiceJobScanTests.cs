@@ -238,7 +238,7 @@ public class ServiceJobScanTests
     {
         using var db = NewDb();
         var eng = Engine(db);
-        // A：Running 且租约已过期 → 应重置 Pending + AttemptCount++（NextAttemptAtUtc 设未来，避免本轮被再次取用，隔离 reaper 行为）
+        // A：Running 且租约已过期 → 应重置 Pending（不 ++；计数由执行段前移持久化负责）（NextAttemptAtUtc 设未来，避免本轮被再次取用，隔离 reaper 行为）
         var a = new Wf_ServiceJob { Id = Guid.NewGuid(), InstanceId = Guid.NewGuid(), TokenId = Guid.NewGuid(),
             NodeId = "svc", Kind = ServiceKind.WebApi, Status = ServiceJobStatus.Running,
             AttemptCount = 1, MaxAttempts = 4, NextAttemptAtUtc = T0.AddHours(1),
@@ -257,7 +257,7 @@ public class ServiceJobScanTests
 
         var ja = await db.Wf_ServiceJobs.SingleAsync(j => j.Id == a.Id);
         Assert.Equal(ServiceJobStatus.Pending, ja.Status);
-        Assert.Equal(2, ja.AttemptCount);          // ++（计入崩溃的那次）
+        Assert.Equal(1, ja.AttemptCount);          // reaper 只重置 lease，不再 ++（原持久化的尝试计数保持）
         Assert.Null(ja.LockedBy);
         Assert.Null(ja.LockedAtUtc);
         Assert.Null(ja.LockExpiresAtUtc);
@@ -267,6 +267,29 @@ public class ServiceJobScanTests
         Assert.Equal(0, jb.AttemptCount);
         Assert.Equal("liveWorker", jb.LockedBy);
         Assert.Equal(T0.AddMinutes(5), jb.LockExpiresAtUtc);
+    }
+
+    [Fact]
+    public async Task Reaper_ClaimedButNeverExecuted_DoesNotBurnAttempt()
+    {
+        using var db = NewDb();
+        // 场景：worker 抢到 lease（Status=Running, AttemptCount=0）后、在真正执行前就崩溃。
+        // lease 过期 → reaper 回收，但因从未执行，AttemptCount 必须仍为 0（不烧配额）。
+        var j = new Wf_ServiceJob { Id = Guid.NewGuid(), InstanceId = Guid.NewGuid(), TokenId = Guid.NewGuid(),
+            NodeId = "svc", Kind = ServiceKind.WebApi, Status = ServiceJobStatus.Running,
+            AttemptCount = 0, MaxAttempts = 4, NextAttemptAtUtc = T0.AddHours(1),
+            LockedBy = "deadWorker", LockedAtUtc = T0.AddMinutes(-10), LockExpiresAtUtc = T0.AddMinutes(-1),
+            CreateDate = DateTime.UtcNow };
+        db.Wf_ServiceJobs.Add(j);
+        await db.SaveChangesAsync();
+
+        var eng = Engine(db);
+        await new WfServiceJobService(db, eng, Array.Empty<IServiceTaskExecutor>()).ScanOnceAsync(T0, "w1");
+
+        var reclaimed = await db.Wf_ServiceJobs.SingleAsync();
+        Assert.Equal(ServiceJobStatus.Pending, reclaimed.Status);
+        Assert.Equal(0, reclaimed.AttemptCount);   // 从未执行 → 不计数
+        Assert.Null(reclaimed.LockedBy);
     }
 
     [Fact]

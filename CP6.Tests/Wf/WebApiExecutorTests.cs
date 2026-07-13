@@ -97,6 +97,45 @@ public class WebApiExecutorTests
         Assert.Contains("E-WF-018", result.Error!);
     }
 
+    // ── T6: 未注册连接器 → 结构化码 E-WF-018|<connectorName>，无中文散文 ───────
+    [Fact]
+    public async Task UnknownConnector_Fails_WithStructuredCode_NoProse()
+    {
+        // actionRef 引用未注册连接器 → 结构化 "E-WF-018|<connectorName>"，无中文散文
+        var node = new FlowNode { Id = "n", Type = "serviceTask", ServiceKind = ServiceKind.WebApi,
+            ServiceConnectorName = "ghost", ServicePath = "/x" };
+        var ctx = new ServiceTaskContext {
+            InstanceId = System.Guid.NewGuid(), TokenId = System.Guid.NewGuid(), NodeId = "n",
+            StarterId = System.Guid.Empty, JobId = System.Guid.NewGuid(), AttemptNo = 1,
+            ActorId = System.Guid.Empty, NowUtc = System.DateTime.UtcNow,
+            ActionRefJson = ServiceTaskActionRef.Snapshot(node),
+        };
+        var exec = new CP6.Core.Services.Wf.Executors.WebApiExecutor(System.Array.Empty<IWfConnector>());
+        var r = await exec.ExecuteAsync(ctx);
+
+        Assert.False(r.Success);
+        Assert.StartsWith("E-WF-018", r.Error);        // 码在最前
+        Assert.Contains("|", r.Error);                 // 结构化分隔
+        Assert.Contains("ghost", r.Error!);            // 机读明细=连接器名
+        Assert.DoesNotContain("未注册", r.Error!);      // 无本地化中文散文
+        Assert.DoesNotContain("连接器", r.Error!);
+    }
+
+    // ── T6: 空 ActionRef → 结构化码，无中文散文 ──────────────────────────────
+    [Fact]
+    public async Task EmptyActionRef_Fails_WithStructuredCode()
+    {
+        var ctx = new ServiceTaskContext {
+            InstanceId = System.Guid.NewGuid(), TokenId = System.Guid.NewGuid(), NodeId = "n",
+            StarterId = System.Guid.Empty, JobId = System.Guid.NewGuid(), AttemptNo = 1,
+            ActorId = System.Guid.Empty, NowUtc = System.DateTime.UtcNow, ActionRefJson = null,
+        };
+        var r = await new CP6.Core.Services.Wf.Executors.WebApiExecutor(System.Array.Empty<IWfConnector>()).ExecuteAsync(ctx);
+        Assert.False(r.Success);
+        Assert.StartsWith("E-WF-018|", r.Error);
+        Assert.DoesNotContain("为空", r.Error!);
+    }
+
     // ── T3: EchoConnector 自己把 {orderId} 解析 + 发出幂等键 ──────────────────
     [Fact]
     public async Task EchoConnector_ResolvesTemplate_And_EmitsIdempotencyKey()

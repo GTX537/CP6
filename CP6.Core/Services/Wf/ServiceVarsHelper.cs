@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace CP6.Core.Services.Wf;
 
@@ -123,8 +124,30 @@ public static class ServiceVarsHelper
         };
     }
 
+    /// <summary>
+    /// 探测模板 token 是否含**不支持**的数组下标语法（<c>[...]</c>）。点路径求值（<see cref="ResolveValue"/> →
+    /// <c>ResolveDotPath</c>）仅支持嵌套对象的逐段导航（<c>$.a.b</c>）——**不支持**数组下标（<c>$.items[0]</c>：
+    /// <c>current["items[0]"]</c> 返回 null，模板静默求值为空串），也**无法**表达含点的键名（<c>{"a.b":1}</c> 与
+    /// 嵌套 <c>a.b</c> 二义，一律按嵌套解析）。这两类限制由设计期校验拦截（<c>FlowSchemaValidator</c> serviceTask
+    /// 分支 → <c>E-WF-016</c>），避免运行期静默失败。本方法只对 <c>$.</c>/<c>{...}</c> 模板 token 内的 <c>[</c>/<c>]</c>
+    /// 报真，避开字面 JSON 数组值（如 <c>{"list":[1,2,3]}</c>）。
+    /// </summary>
+    public static bool ContainsUnsupportedSubscript(string? text)
+    {
+        if (string.IsNullOrEmpty(text)) return false;
+        // $.path[...]  ——  $. 后跟标识符/点，直到出现下标括号
+        if (Regex.IsMatch(text, @"\$\.[A-Za-z0-9_.]*[\[\]]")) return true;
+        // {placeholder[...]}  ——  花括号占位内出现下标括号
+        if (Regex.IsMatch(text, @"\{[A-Za-z0-9_.]*[\[\]][^}]*\}")) return true;
+        return false;
+    }
+
     // ── 内部辅助 ─────────────────────────────────────────────────────
 
+    /// <summary>
+    /// 点路径求值：<c>$.a.b</c> 逐段导航嵌套对象。**限制**（见 <see cref="ContainsUnsupportedSubscript"/>）：
+    /// 不支持数组下标 <c>[n]</c>，也无法表达含点的键名——两者在设计期由 <c>FlowSchemaValidator</c> 拦截。
+    /// </summary>
     private static string ResolveDotPath(string path, string? varsJson)
     {
         if (string.IsNullOrWhiteSpace(varsJson) || string.IsNullOrWhiteSpace(path))

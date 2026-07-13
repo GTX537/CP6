@@ -1065,3 +1065,20 @@ npm run build                                              # 构建成功
 > **同文件冲突提示：** `FlowSchemaValidator.cs`（T4+T5）、`WfServiceJobService.cs`（T2+T6）、`NodePropertyPanel.vue`（T7+T8）、`I18nOaServiceTaskScreenSeed.cs`（T7+T8+T10）各被多票触碰——这些票**必须串行**（一票 commit 后再起下一票），不可并发子代理同时改。
 >
 > **T4/T5 互保提示：** 两票都改 `FlowSchemaValidator.cs` 的同一个 `bool bad = ...` 表达式，且各自代码块只展示了"本票视角"的最终形态——**后跑的票不可整块照抄**，必须在当前文件实际内容上**追加自己那一行**并保留先跑票已加的行（T4=两行 `ContainsUnsupportedSubscript`，T5=一行 `KnownServiceModes`）。
+
+---
+
+## 波①完成记录(2026-07-12/13,fable 终审 Ready=Yes)
+
+11 票全过逐票审查+fable 全支终审;T8 经 Critical 修复轮(票面自带纯 computed 缺陷→backing ref);终审两 Important 已修(8aae00b:CSRF 豁免注释真实论据化+timerActionKind 组 Ko 对齐 T10 风格);后端 1826→1843 绿/前端 390→401 绿/EF clean。
+
+**跟踪票(终审记档):**
+1. T3 护栏 fail-open:IWfConnector.MaxCallDuration 默认 null=放行,未来连接器不声明即绕过——对非 demo 连接器要求显式声明或启动期对 null 打 warning。
+2. claim 环不闸 MaxAttempts(pre-existing):持续崩溃于 executor 期间的 job 无限重投且 AttemptCount 可见超 MaxAttempts——claim 时对 AttemptCount>=MaxAttempts 直接失败路由。
+3. ServiceMode「未填」判定口径统一:校验层 Trim+IsNullOrWhiteSpace vs 运行期不 trim 且 ?? 只认 null(" sync "/"" 静默按 async)+前端 clearable 产出——三层对齐。
+4. /hubs 前瞻守卫:反射测试「hub 类不得声明非 Subscribe 语义公有方法」,防未来写方法静默继承 CSRF 豁免。
+5. 同步路径错误码统一票:ServiceTaskNodeHandler 同源中文散文+:75 裸 ex.Message(连 E-WF-018 码都无)。
+6. T7 UX 润色候选:目录重试钮无防连点(票面样例同缺);reloadCatalog 键组注释语义。
+7. T8 stale-api 残留(fail-safe 已裁定可接受):外部清字段(撤销)后 ref 残留旧模式,如未来有 undo 信号可同步。
+
+**部署硬步骤**:双镜像重建(前后端都动)+**每已存在租户库跑一次 `docs/seeds/wfs-svc-ko-i18n-fix.sql`**(SeedLangs insert-only,改常量对已部署库不生效——T10 纠错);T1 生效后「publish 删 Local.json」绕行可退役(保留亦无害)。

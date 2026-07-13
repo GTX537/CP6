@@ -45,4 +45,15 @@ public class ServiceVarsHelperTests
         var res = ServiceVarsHelper.MergeOutputVars("{\"a\":1}", new Dictionary<string, object?> { ["a"] = 9 });
         Assert.Contains("\"a\":9", res.VarsJson);
     }
+
+    [Fact]
+    public void ContainsUnsupportedSubscript_DetectsArrayIndex()
+    {
+        Assert.True(ServiceVarsHelper.ContainsUnsupportedSubscript("$.items[0]"));
+        Assert.True(ServiceVarsHelper.ContainsUnsupportedSubscript("/o/{lines[2]}"));
+        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("$.orderId"));
+        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("/o/{orderId}"));
+        // 字面 JSON 数组值（非模板下标）不误报：
+        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("{\"list\":[1,2,3]}"));
+    }
 }

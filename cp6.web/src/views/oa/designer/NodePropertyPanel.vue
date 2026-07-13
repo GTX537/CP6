@@ -29,7 +29,13 @@ watch(
   () => props.node,
   async (n) => {
     syncing.value = true
+    const idChanged = n.id !== local.value.id
     local.value = cloneNode(n)
+    // 票8：换节点时按新节点字段重推导「到点动作类型」；同节点回声（emit→父写回→deep 触发）
+    // 只在字段能明确指示变体（api/write）时才覆盖——否则会把用户刚选中、尚未填 connector/action
+    // 的 pending 选择弹回 'none'（纯 computed 版的鸡生蛋缺陷，审查已点名）。
+    const derived = deriveTimerActionKind(local.value)
+    if (idChanged || derived !== 'none') timerActionKindState.value = derived
     await nextTick()
     syncing.value = false
   },
@@ -46,26 +52,64 @@ watch(
 )
 
 // ── serviceKind 切换时清理另一分支的残留字段 ──────────────────────
-// cloneNode/emit 全量展开：用户把 serviceTask 从 webApi 切到 timer/dataWriteback 后，
-// serviceConnectorName/servicePath 面板不再展示却仍残留在 emit 出的 patch 里。
+// cloneNode/emit 全量展开：用户切换 serviceKind 后，面板不再展示的字段仍残留在 emit 出的 patch 里。
 // 运行期 ServiceTaskActionRef.Snapshot 的优先级规则（timer + ConnectorName → actionKind='webApi'，
-// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:54-73）会据此到点静默外呼用户以为已删的连接器。
+// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:59-73）会据此到点静默外呼用户以为已删的连接器。
 // 故切 kind 时必须主动清残留——切勿删除本清理，否则复现 timer 静默 webApi 外呼缺陷。
-// 注意：timer 的 serviceActionName 是面板可见的“到点动作”，是合法配置，必须保留。
+// 票8：三 kind 的合法字段面不同——
+//   dataWriteback：仅 serviceActionName 合法，无连接器/路径。
+//   webApi：仅连接器/路径合法，无“到点动作”。
+//   timer：connector/path/actionName 三者均可能合法（由「到点动作类型」timerActionKind 互斥控制），
+//         故切「到」timer 时不在此清理；切「离」timer 才由目标 kind 规则清。
 // syncing 守卫复用上方模式：初始 clone / 节点切换加载期间 local 被整体替换，此时不清理（避免误清）。
 watch(
   () => local.value.serviceKind,
   (kind) => {
     if (syncing.value) return
     if (local.value.type !== 'serviceTask') return
-    if (kind !== 'webApi') {
+    if (kind === 'dataWriteback') {
       local.value.serviceConnectorName = undefined
       local.value.servicePath = undefined
-    } else {
+    } else if (kind === 'webApi') {
       local.value.serviceActionName = undefined // 卫生对称：webApi 无“到点动作”
+    } else if (kind === 'timer') {
+      // 切「到」timer：不清字段（三者均可能合法），但按现有字段重推导变体选择，
+      // 使子表单与残留字段一致（如从 webApi 带着 connector 切来 → 直接落 'api' 变体）。
+      timerActionKindState.value = deriveTimerActionKind(local.value)
     }
   },
 )
+
+// ── 票8：timer「到点动作类型」——独立 backing ref（审查修复：纯 computed 版鸡生蛋不可达）──
+// 纯 computed（getter 从字段推导 / setter 只清字段）在新建 timer 上选 'api'/'write' 后，
+// getter 因 connector/action 仍空立即弹回 'none'，子表单永不渲染。故改 backing ref：
+// 用户选择直接驻留 ref，字段推导只用于初始化/换节点/切到 timer 时的同步。
+// 推导优先级与 Snapshot 一致（ServiceTaskActionRef.cs:59-73）：有 ConnectorName 即 'api'
+//（Snapshot 优先判 webApi），否则有 ActionName 即 'write'，否则 'none'。
+function deriveTimerActionKind(n: SchemaNode): 'none' | 'write' | 'api' {
+  return n.serviceConnectorName ? 'api' : n.serviceActionName ? 'write' : 'none'
+}
+
+const timerActionKindState = ref<'none' | 'write' | 'api'>(deriveTimerActionKind(local.value))
+
+// setter 保证互斥清理——选 write/none 时必须清 serviceConnectorName，否则运行期
+// Snapshot 优先判 webApi，到点会静默外呼用户以为已删的连接器。切勿删除本清理。
+const timerActionKind = computed<'none' | 'write' | 'api'>({
+  get: () => timerActionKindState.value,
+  set: (v) => {
+    timerActionKindState.value = v                         // 用户选择驻留（不再从字段反推弹回）
+    if (v === 'api') {
+      local.value.serviceActionName = undefined            // 互斥：webApi 变体清回写动作
+    } else if (v === 'write') {
+      local.value.serviceConnectorName = undefined         // 互斥：回写变体清连接器/路径
+      local.value.servicePath = undefined
+    } else {
+      local.value.serviceConnectorName = undefined         // none：全清
+      local.value.servicePath = undefined
+      local.value.serviceActionName = undefined
+    }
+  },
+})
 
 // ── Timeout: stored as hours, UI shows days ───────────────────────
 const timeoutDays = computed({
@@ -80,21 +124,24 @@ const isServiceTask = computed(() => local.value.type === 'serviceTask')
 
 // ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
 const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
-
-// 组件被 Vue 复用（node↔node 切换无 :key）时 onMounted 只跑一次，
-// 首挂非 serviceTask 会永久漏拉；改用 watch(immediate) + 已加载标记，失败可重试。
 const catalogLoaded = ref(false)
+const catalogFailed = ref(false)   // 票7：加载失败态，驱动模板露「重试」
+
+async function loadCatalog() {
+  catalogFailed.value = false
+  try {
+    catalog.value = await designerApi.getServiceCatalog()
+    catalogLoaded.value = true
+  } catch {
+    catalogFailed.value = true      // HTTP interceptor 已 toast；此处标失败让用户可主动重试
+  }
+}
+
+// 首拉：进入 serviceTask 节点时若未成功加载过，拉一次（组件被 Vue 复用无 :key，onMounted 只跑一次不可靠，
+// 故用 watch(immediate)）。票7：失败后不再依赖 isServiceTask 跳变——模板提供显式「重试」入口调 loadCatalog。
 watch(
   isServiceTask,
-  async (v) => {
-    if (!v || catalogLoaded.value) return
-    catalogLoaded.value = true
-    try {
-      catalog.value = await designerApi.getServiceCatalog()
-    } catch {
-      catalogLoaded.value = false // HTTP interceptor toasts；允许下次重试
-    }
-  },
+  (v) => { if (v && !catalogLoaded.value) void loadCatalog() },
   { immediate: true },
 )
 
@@ -370,6 +417,21 @@ async function searchCcUsers(kw: string) {
             </el-select>
           </el-form-item>
 
+          <!-- 票7：目录加载失败时露显式重试（否则停在 serviceTask 节点将永久空下拉）-->
+          <el-alert
+            v-if="catalogFailed"
+            type="warning"
+            :closable="false"
+            show-icon
+            style="margin-bottom: 8px"
+          >
+            <template #title>
+              <el-button link type="primary" size="small" @click="loadCatalog">
+                {{ t('oa.designer.svc.reloadCatalog') }}
+              </el-button>
+            </template>
+          </el-alert>
+
           <!-- 数据回写：动作 / 模式 / 参数模板 -->
           <template v-if="local.serviceKind === 'dataWriteback'">
             <el-form-item :label="t('oa.designer.svc.action')">
@@ -438,7 +500,7 @@ async function searchCcUsers(kw: string) {
             </el-form-item>
           </template>
 
-          <!-- 定时器：延时模式 / 延时值 / 可选到点动作 -->
+          <!-- 定时器：延时模式 / 延时值 / 到点动作（none | 回写 | webApi 变体，票8 补 spec §5.3 缺口）-->
           <template v-else-if="local.serviceKind === 'timer'">
             <el-form-item :label="t('oa.designer.svc.delayMode')">
               <el-radio-group v-model="local.serviceDelayMode">
@@ -456,7 +518,17 @@ async function searchCcUsers(kw: string) {
               />
             </el-form-item>
 
-            <el-form-item :label="t('oa.designer.svc.timerAction')">
+            <!-- 到点动作类型（互斥：none / 回写 / webApi 连接器）-->
+            <el-form-item :label="t('oa.designer.svc.timerActionKind')">
+              <el-select v-model="timerActionKind" style="width: 100%">
+                <el-option value="none"  :label="t('oa.designer.svc.timerActionKind.none')" />
+                <el-option value="write" :label="t('oa.designer.svc.timerActionKind.write')" />
+                <el-option value="api"   :label="t('oa.designer.svc.timerActionKind.api')" />
+              </el-select>
+            </el-form-item>
+
+            <!-- 回写变体：动作下拉 -->
+            <el-form-item v-if="timerActionKind === 'write'" :label="t('oa.designer.svc.timerAction')">
               <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
                 <el-option
                   v-for="a in catalog.actions"
@@ -466,6 +538,27 @@ async function searchCcUsers(kw: string) {
                 />
               </el-select>
             </el-form-item>
+
+            <!-- webApi 变体：连接器 + 路径（票8 补齐 spec §5.3 缺口）-->
+            <template v-else-if="timerActionKind === 'api'">
+              <el-form-item :label="t('oa.designer.svc.connector')">
+                <el-select v-model="local.serviceConnectorName" style="width: 100%" clearable>
+                  <el-option
+                    v-for="c in catalog.connectors"
+                    :key="c.name"
+                    :value="c.name"
+                    :label="c.label || c.name"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="t('oa.designer.svc.path')">
+                <el-input
+                  v-model="local.servicePath"
+                  :placeholder="t('oa.designer.svc.pathHint')"
+                  clearable
+                />
+              </el-form-item>
+            </template>
           </template>
 
           <!-- 重试（三 kind 共用）-->

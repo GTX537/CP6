@@ -26,3 +26,29 @@ describe('serviceTask round-trip', () => {
     expect(errs).toContain('oa.designer.errServiceConfig')
   })
 })
+
+describe('error edge visual', () => {
+  it('isError edge gets danger dashed style; normal edge does not', () => {
+    const g = schemaToGraph({
+      nodes: [
+        { id: 'svc', type: 'serviceTask' } as any,
+        { id: 'end', type: 'end' } as any,
+        { id: 'h', type: 'approval' } as any,
+      ],
+      edges: [
+        { from: 'svc', to: 'end' },              // 普通边
+        { from: 'svc', to: 'h', isError: true }, // 失败边
+      ],
+    } as any)
+
+    const normal = g.edges.find(e => e.target === 'end')!
+    const err = g.edges.find(e => e.target === 'h')!
+
+    // 普通边无自定义 stroke；失败边用 danger token 虚线
+    expect((err.style as any)?.stroke).toBe('var(--cp-danger)')
+    expect((err.style as any)?.strokeDasharray).toBeTruthy()
+    expect((normal as any).style?.stroke).toBeUndefined()
+    // data.isError round-trip 不受影响
+    expect((err.data as any)?.isError).toBe(true)
+  })
+})
