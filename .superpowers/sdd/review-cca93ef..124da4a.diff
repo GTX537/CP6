@@ -1,0 +1,151 @@
+# Review package: cca93ef..124da4a
+
+## Commits
+124da4a feat(wfs-trigger): B-T1 NCrontab 3.3.3 引包+WfCronHelper 时区口径/严格未来/预览
+
+## Files changed
+ CP6.Core/CP6.Core.csproj             |  1 +
+ CP6.Core/Services/Wf/WfCronHelper.cs | 39 +++++++++++++++++++++++
+ CP6.Tests/Wf/WfCronHelperTests.cs    | 62 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 102 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/CP6.Core.csproj b/CP6.Core/CP6.Core.csproj
+index 20fa3d6..b024740 100644
+--- a/CP6.Core/CP6.Core.csproj
++++ b/CP6.Core/CP6.Core.csproj
+@@ -11,20 +11,21 @@
+ 
+   <ItemGroup>
+     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+     <PackageReference Include="Otp.NET" Version="1.4.0" />
+     <PackageReference Include="ClosedXML" Version="0.105.0" />
+     <PackageReference Include="Confluent.Kafka" Version="2.6.1" />
+     <PackageReference Include="Dapper" Version="2.1.72" />
+     <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.12" />
+     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.12" />
+     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.12" />
++    <PackageReference Include="NCrontab" Version="3.3.3" />
+     <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
+     <PackageReference Include="Scriban" Version="7.2.4" />
+     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
+     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.17.0" />
+   </ItemGroup>
+ 
+   <PropertyGroup>
+     <TargetFramework>net8.0</TargetFramework>
+     <ImplicitUsings>enable</ImplicitUsings>
+     <Nullable>enable</Nullable>
+diff --git a/CP6.Core/Services/Wf/WfCronHelper.cs b/CP6.Core/Services/Wf/WfCronHelper.cs
+new file mode 100644
+index 0000000..c485aaa
+--- /dev/null
++++ b/CP6.Core/Services/Wf/WfCronHelper.cs
+@@ -0,0 +1,39 @@
++using NCrontab;
++
++namespace CP6.Core.Services.Wf;
++
++/// <summary>NCrontab 包装（D3）。cron 5 段标准，按 app 默认时区解释（spec §9 一期口径，UI 文案标注时区），
++/// 存储/比较一律 UTC。无 L 语义（映射表③：「每月末」预设按 28 日近似）。</summary>
++public static class WfCronHelper
++{
++    public static bool IsValid(string? cron)
++        => !string.IsNullOrWhiteSpace(cron) && CrontabSchedule.TryParse(cron) != null;
++
++    /// <summary>afterUtc 之后（严格未来）的下一次到期（UTC）；cron 非法返回 null。
++    /// 从「当前时刻」起算即天然实现 misfire 口径：宕机跨过的历史到期点直接跳过（spec §3.2）。</summary>
++    public static DateTime? NextUtc(string cron, DateTime afterUtc)
++    {
++        var sched = CrontabSchedule.TryParse(cron);
++        if (sched == null) return null;
++        var afterLocal = TimeZoneInfo.ConvertTimeFromUtc(
++            DateTime.SpecifyKind(afterUtc, DateTimeKind.Utc), TimeZoneInfo.Local);
++        var nextLocal = sched.GetNextOccurrence(afterLocal);
++        return TimeZoneInfo.ConvertTimeToUtc(
++            DateTime.SpecifyKind(nextLocal, DateTimeKind.Unspecified), TimeZoneInfo.Local);
++    }
++
++    /// <summary>fromUtc 起未来 count 次到期（UTC 升序）——管理页「下次触发时间预览」用。</summary>
++    public static IReadOnlyList<DateTime> PreviewUtc(string cron, DateTime fromUtc, int count)
++    {
++        var list = new List<DateTime>(count);
++        var cursor = fromUtc;
++        for (var i = 0; i < count; i++)
++        {
++            var next = NextUtc(cron, cursor);
++            if (next == null) break;
++            list.Add(next.Value);
++            cursor = next.Value;
++        }
++        return list;
++    }
++}
+diff --git a/CP6.Tests/Wf/WfCronHelperTests.cs b/CP6.Tests/Wf/WfCronHelperTests.cs
+new file mode 100644
+index 0000000..778a47d
+--- /dev/null
++++ b/CP6.Tests/Wf/WfCronHelperTests.cs
+@@ -0,0 +1,62 @@
++using System;
++using CP6.Core.Services.Wf;
++using Xunit;
++
++public class WfCronHelperTests
++{
++    [Fact]
++    public void IsValid_AcceptsStandard5Field_RejectsGarbage()
++    {
++        Assert.True(WfCronHelper.IsValid("0 0 25 * *"));
++        Assert.True(WfCronHelper.IsValid("*/5 * * * *"));
++        Assert.False(WfCronHelper.IsValid("not a cron"));
++        Assert.False(WfCronHelper.IsValid(""));
++        Assert.False(WfCronHelper.IsValid(null));
++        Assert.False(WfCronHelper.IsValid("0 0 25 * * ?"));   // 6 段 Quartz 风格拒绝
++    }
++
++    [Fact]
++    public void NextUtc_IsStrictlyFuture()
++    {
++        var after = DateTime.UtcNow;
++        var next = WfCronHelper.NextUtc("*/5 * * * *", after);
++        Assert.NotNull(next);
++        Assert.True(next > after);
++        Assert.Equal(DateTimeKind.Utc, next!.Value.Kind);
++    }
++
++    [Fact]
++    public void NextUtc_BadCron_ReturnsNull()
++    {
++        Assert.Null(WfCronHelper.NextUtc("garbage", DateTime.UtcNow));
++    }
++
++    [Fact]
++    public void NextUtc_Day31_SkipsShortMonths()
++    {
++        // 2026-04-01（4 月无 31 日）→ 下一次 "0 0 31 * *" 应落在 5 月 31 日（NCrontab 跳过无效日期）
++        var april = new DateTime(2026, 4, 1, 0, 0, 0, DateTimeKind.Utc);
++        var next = WfCronHelper.NextUtc("0 0 31 * *", april)!.Value;
++        var local = TimeZoneInfo.ConvertTimeFromUtc(next, TimeZoneInfo.Local);
++        Assert.Equal(5, local.Month);
++        Assert.Equal(31, local.Day);
++    }
++
++    [Fact]
++    public void NextUtc_Feb29_OnlyLeapYear()
++    {
++        // 2026 非闰年 → "0 0 29 2 *" 下一次落 2028-02-29
++        var start = new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc);
++        var next = WfCronHelper.NextUtc("0 0 29 2 *", start)!.Value;
++        var local = TimeZoneInfo.ConvertTimeFromUtc(next, TimeZoneInfo.Local);
++        Assert.Equal(2028, local.Year);
++    }
++
++    [Fact]
++    public void PreviewUtc_ReturnsAscending_NCount()
++    {
++        var list = WfCronHelper.PreviewUtc("0 9 * * *", DateTime.UtcNow, 5);
++        Assert.Equal(5, list.Count);
++        for (var i = 1; i < list.Count; i++) Assert.True(list[i] > list[i - 1]);
++    }
++}
