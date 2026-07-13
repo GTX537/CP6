@@ -129,6 +129,14 @@ public class ServiceTaskValidatorTests
         Assert.Empty(FlowSchemaValidator.Validate(Base()));
     }
 
+    [Fact]
+    public void WebApi_PathWithArraySubscript_E_WF_016()
+    {
+        var s = Base();
+        Svc(s).ServicePath = "/o/{lines[0]}";   // 路径模板含数组下标 → 设计期拦
+        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
+    }
+
     // ── Step 4: DesignerService.save 注册名校验(E-WF-018) ──
 
     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
