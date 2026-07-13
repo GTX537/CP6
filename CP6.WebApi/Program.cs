@@ -661,6 +661,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// 票3：启动期校验已注册连接器的单次调用上界 < 服务任务租约（防长调用被 reaper 重投→重复外呼）。
+using (var _leaseScope = app.Services.CreateScope())
+{
+    CP6.Core.Services.Wf.WfConnectorLeaseGuard.Validate(
+        _leaseScope.ServiceProvider.GetServices<CP6.Core.Services.Wf.IWfConnector>());
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
