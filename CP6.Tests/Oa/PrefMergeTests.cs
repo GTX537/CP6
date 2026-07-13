@@ -115,4 +115,24 @@ public class PrefMergeTests
         await svc.SaveMergeAsync(me, """{"notify":{"todoCreated":{"inApp":false}}}""");
         Assert.False(await svc.IsEnabledAsync(me, "todoCreated", "inApp"));                // 同实例保存后读到新值
     }
+
+    // ── GetRowModeAsync（D-T1 消费）──
+    [Theory]
+    [InlineData(null, "merged")]                                  // 无行 → 默认
+    [InlineData("{}", "merged")]                                  // 无键 → 默认
+    [InlineData("""{"rowMode":"expanded"}""", "expanded")]
+    [InlineData("""{"rowMode":"merged"}""", "merged")]
+    [InlineData("""{"rowMode":"garbage"}""", "merged")]           // 非法值 → 默认
+    [InlineData("NOT_JSON{{{", "merged")]                         // 畸形 → 默认
+    public async Task GetRowMode_ParsesTopLevelKey_DefaultMerged(string? prefsJson, string expected)
+    {
+        using var db = NewDb();
+        var me = Guid.NewGuid();
+        if (prefsJson is not null)
+        {
+            db.Wf_InboxPrefs.Add(new Wf_InboxPref { Id = Guid.NewGuid(), UserId = me, PrefsJson = prefsJson });
+            await db.SaveChangesAsync();
+        }
+        Assert.Equal(expected, await Svc(db).GetRowModeAsync(me));
+    }
 }

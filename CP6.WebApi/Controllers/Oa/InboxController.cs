@@ -21,14 +21,16 @@ public class InboxController : LocalizedControllerBase
     private readonly ICurrentPermissionContext _ctx;
     private readonly IDelegateService _delegate;
     private readonly IFlowEngine _engine;
+    private readonly IPrefService _pref;
 
     public InboxController(IInboxService inbox, ICurrentPermissionContext ctx,
-        IDelegateService @delegate, IFlowEngine engine)
+        IDelegateService @delegate, IFlowEngine engine, IPrefService pref)
     {
         _inbox = inbox;
         _ctx = ctx;
         _delegate = @delegate;
         _engine = engine;
+        _pref = pref;
     }
 
     private async Task<Guid> CurrentUserIdAsync() => (await _ctx.GetAsync()).UserId;
@@ -53,12 +55,16 @@ public class InboxController : LocalizedControllerBase
     // ── 未处理 ──
 
     [HttpGet("pending")]
-    public async Task<IActionResult> Pending()
+    public async Task<IActionResult> Pending([FromQuery] string? rowMode = null,
+        [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
     {
         try
         {
             var (eff, _) = await EffectiveAsync();
-            return Ok2(await _inbox.PendingAsync(eff));
+            // 显示偏好属查看者本人（me），与 act-as 被代理人（eff）无关
+            var me = await CurrentUserIdAsync();
+            var mode = rowMode is "merged" or "expanded" ? rowMode : await _pref.GetRowModeAsync(me);
+            return Ok2(await _inbox.PendingAsync(eff, mode, page, pageSize));
         }
         catch (InvalidOperationException e) { return Err(e); }
     }

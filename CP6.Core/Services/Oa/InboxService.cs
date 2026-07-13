@@ -16,7 +16,7 @@ public class InboxService : IInboxService
         _db = db; _engine = engine; _forecast = forecast;
     }
 
-    public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId)
+    public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId, string rowMode = "merged", int? page = null, int? pageSize = null)
     {
         var rows = await (from t in _db.Wf_FlowTasks
                           where t.AssigneeId == userId && t.Status == FlowTaskStatus.Pending
@@ -28,6 +28,15 @@ public class InboxService : IInboxService
                           from s in ss.DefaultIfEmpty()
                           orderby t.CreateDate descending
                           select new { t, i, FlowName = d == null ? null : d.FlowName, Starter = s }).ToListAsync();
+
+        // ── rowMode（wfs-inbox-ux §5）：merged=同实例合并取最新（照 DoneAsync 既有口径）；分组先于分页 ──
+        if (rowMode != "expanded")
+            rows = rows.GroupBy(x => x.i.Id)
+                       .Select(g => g.OrderByDescending(x => x.t.CreateDate).First())
+                       .OrderByDescending(x => x.t.CreateDate)
+                       .ToList();
+        if (page is { } p && pageSize is { } ps && p >= 1 && ps >= 1)
+            rows = rows.Skip((p - 1) * ps).Take(ps).ToList();
 
         // Batch-load frozen stage plans for tokens that carry multi-stage plans
         var tokenIds = rows.Where(x => x.t.TokenId.HasValue).Select(x => x.t.TokenId!.Value).Distinct().ToList();
@@ -371,7 +380,7 @@ public class InboxService : IInboxService
     {
         var candidates = await QueryTransferCandidatesAsync(fromUserId, filter);
         var candidateIds = candidates.Select(c => c.TaskId).Take(10).ToHashSet();
-        var all = await PendingAsync(fromUserId);                                  // 复用列表读模型拿展示字段（现签名=逐任务行 expanded 语义，R5）
+        var all = await PendingAsync(fromUserId, rowMode: "expanded");             // 逐任务行拿展示字段（C5：merged 现为默认，preview 须显式 expanded 保 sample 逐任务口径，R5）
         var sample = all.Where(p => candidateIds.Contains(p.TaskId)).ToList();
         return new BatchTransferPreview(candidates.Count, sample);
     }
