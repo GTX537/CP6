@@ -1,0 +1,368 @@
+# Review package: 5c6a20c..13570a1
+
+## Commits
+13570a1 feat(wfs-inbox): D-T1 PendingAsync rowMode合并/平铺+分组先于分页+端点偏好回落
+
+## Files changed
+ CP6.Core/Services/Oa/IInboxService.cs        |   6 +-
+ CP6.Core/Services/Oa/InboxService.cs         |  13 ++-
+ CP6.Tests/Oa/PendingRowModeTests.cs          | 152 +++++++++++++++++++++++++++
+ CP6.Tests/Oa/PrefMergeTests.cs               |  20 ++++
+ CP6.WebApi/Controllers/Oa/InboxController.cs |  12 ++-
+ 5 files changed, 196 insertions(+), 7 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Oa/IInboxService.cs b/CP6.Core/Services/Oa/IInboxService.cs
+index f5dde2c..05d1af3 100644
+--- a/CP6.Core/Services/Oa/IInboxService.cs
++++ b/CP6.Core/Services/Oa/IInboxService.cs
+@@ -1,17 +1,19 @@
+ namespace CP6.Core.Services.Oa;
+ 
+ /// <summary>电子表单信箱读模型服务（umbrella §4.3）。读 L1，写动作经 L0 引擎。T5~T8 增量。</summary>
+ public interface IInboxService
+ {
+-    // ── 未處理（T5）──
+-    Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId);     // 待審核：我的待办
++    // ── 未處理（T5 + wfs-inbox-ux §5 rowMode）──
++    // rowMode: "merged"(默认，同实例多任务合并一行显最新态) | "expanded"(逐任务平铺)。
++    // page/pageSize 可选（null=全量，现状不变）；merged 下分组先于分页（跨页正确性）。
++    Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId, string rowMode = "merged", int? page = null, int? pageSize = null);
+     Task<IReadOnlyList<InboxCcItem>> PendingCcAsync(Guid userId);        // CC：抄送我
+     Task MarkTaskReadAsync(Guid userId, Guid taskId);                    // 幂等、仅本人
+     Task MarkCcReadAsync(Guid userId, Guid ccId);                        // 幂等、仅本人
+     // ── 在途（T6）──
+     Task<IReadOnlyList<InboxRunningItem>> RunningAsync(Guid userId);
+     // ── 已處理（T6）──：tab = mine | cc | all；year/month 可空（null=不限月）
+     Task<IReadOnlyList<InboxDoneItem>> DoneAsync(Guid userId, int? year, int? month, string tab = "mine");
+     // ── 批量办理（T7）──
+     Task<IReadOnlyList<BatchActResultItem>> ActBatchAsync(Guid userId, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null);
+     // ── 批量办理（act-as，Phase C T8）── actorId=实际执行人；onBehalfOf=被代理人（null=本人操作）
+diff --git a/CP6.Core/Services/Oa/InboxService.cs b/CP6.Core/Services/Oa/InboxService.cs
+index 2c0e175..637d060 100644
+--- a/CP6.Core/Services/Oa/InboxService.cs
++++ b/CP6.Core/Services/Oa/InboxService.cs
+@@ -9,33 +9,42 @@ namespace CP6.Core.Services.Oa;
+ public class InboxService : IInboxService
+ {
+     private readonly CP6Context _db;
+     private readonly IFlowEngine _engine;       // T7 批量办理
+     private readonly IForecastService _forecast; // T8 详情预计段
+     public InboxService(CP6Context db, IFlowEngine engine, IForecastService forecast)
+     {
+         _db = db; _engine = engine; _forecast = forecast;
+     }
+ 
+-    public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId)
++    public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId, string rowMode = "merged", int? page = null, int? pageSize = null)
+     {
+         var rows = await (from t in _db.Wf_FlowTasks
+                           where t.AssigneeId == userId && t.Status == FlowTaskStatus.Pending
+                           join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
+                           where i.Status == FlowInstanceStatus.Running
+                           join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
+                           from d in dd.DefaultIfEmpty()
+                           join s in _db.Sys_Users on i.StarterId equals s.Id into ss
+                           from s in ss.DefaultIfEmpty()
+                           orderby t.CreateDate descending
+                           select new { t, i, FlowName = d == null ? null : d.FlowName, Starter = s }).ToListAsync();
+ 
++        // ── rowMode（wfs-inbox-ux §5）：merged=同实例合并取最新（照 DoneAsync 既有口径）；分组先于分页 ──
++        if (rowMode != "expanded")
++            rows = rows.GroupBy(x => x.i.Id)
++                       .Select(g => g.OrderByDescending(x => x.t.CreateDate).First())
++                       .OrderByDescending(x => x.t.CreateDate)
++                       .ToList();
++        if (page is { } p && pageSize is { } ps && p >= 1 && ps >= 1)
++            rows = rows.Skip((p - 1) * ps).Take(ps).ToList();
++
+         // Batch-load frozen stage plans for tokens that carry multi-stage plans
+         var tokenIds = rows.Where(x => x.t.TokenId.HasValue).Select(x => x.t.TokenId!.Value).Distinct().ToList();
+         var tokenPlans = new Dictionary<(Guid tokenId, int stageIndex), (string? name, string? code)>();
+         if (tokenIds.Count > 0)
+         {
+             var tokens = await _db.Wf_FlowTokens
+                 .Where(tok => tokenIds.Contains(tok.Id) && tok.StagePlanJson != null)
+                 .Select(tok => new { tok.Id, tok.StagePlanJson })
+                 .ToListAsync();
+             foreach (var tok in tokens)
+@@ -364,15 +373,15 @@ public class InboxService : IInboxService
+             }
+         }
+         return new BatchTransferReport(candidates.Count, succeeded, failed);
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<BatchTransferPreview> BatchTransferPreviewAsync(Guid fromUserId, BatchTransferFilter? filter = null)
+     {
+         var candidates = await QueryTransferCandidatesAsync(fromUserId, filter);
+         var candidateIds = candidates.Select(c => c.TaskId).Take(10).ToHashSet();
+-        var all = await PendingAsync(fromUserId);                                  // 复用列表读模型拿展示字段（现签名=逐任务行 expanded 语义，R5）
++        var all = await PendingAsync(fromUserId, rowMode: "expanded");             // 逐任务行拿展示字段（C5：merged 现为默认，preview 须显式 expanded 保 sample 逐任务口径，R5）
+         var sample = all.Where(p => candidateIds.Contains(p.TaskId)).ToList();
+         return new BatchTransferPreview(candidates.Count, sample);
+     }
+ }
+diff --git a/CP6.Tests/Oa/PendingRowModeTests.cs b/CP6.Tests/Oa/PendingRowModeTests.cs
+new file mode 100644
+index 0000000..569f217
+--- /dev/null
++++ b/CP6.Tests/Oa/PendingRowModeTests.cs
+@@ -0,0 +1,152 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Oa;
++using CP6.Core.Services.Wf;
++using CP6.Entity.DomainModels.Sys;
++using CP6.Entity.DomainModels.Wf;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using System.Text.Json;
++using Xunit;
++
++namespace CP6.Tests.Oa;
++
++public class PendingRowModeTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++    private static FlowEngine Engine(CP6Context db) => new(db, new ApproverResolver(db));
++    private static IInboxService Inbox(CP6Context db) => new InboxService(db, Engine(db),
++        new ForecastService(db, new ApproverResolver(db), new ApprovalStagePlanner(new ApproverResolver(db))));
++
++    /// <summary>并行三分支同审批人 → 同实例 3 个 Pending 任务（多状态多行素材）。返回 instanceId。</summary>
++    private static async Task<Guid> SeedParallelSameApproverAsync(CP6Context db, Guid starter, Guid approver, string flowKey)
++    {
++        if (!await db.Sys_Users.AnyAsync(u => u.Id == starter))
++            db.Sys_Users.Add(new Sys_User { Id = starter, UserName = "s", NickName = "发起人", Password = "x" });
++        if (!await db.Sys_Users.AnyAsync(u => u.Id == approver))
++            db.Sys_Users.Add(new Sys_User { Id = approver, UserName = "a", NickName = "审批人", Password = "x" });
++        var schema = new FlowSchema
++        {
++            Nodes =
++            {
++                new FlowNode { Id = "split", Type = "parallelSplit" },
++                new FlowNode { Id = "n1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = approver },
++                new FlowNode { Id = "n2", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = approver },
++                new FlowNode { Id = "n3", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = approver },
++                new FlowNode { Id = "join", Type = "parallelJoin" },
++                new FlowNode { Id = "end", Type = "end" },
++            },
++            Edges =
++            {
++                new FlowEdge { From = "split", To = "n1" },
++                new FlowEdge { From = "split", To = "n2" },
++                new FlowEdge { From = "split", To = "n3" },
++                new FlowEdge { From = "n1", To = "join" },
++                new FlowEdge { From = "n2", To = "join" },
++                new FlowEdge { From = "n3", To = "join" },
++                new FlowEdge { From = "join", To = "end" },
++            },
++        };
++        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = flowKey, FlowName = flowKey, FormKey = flowKey,
++            SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
++        await db.SaveChangesAsync();
++        return await Engine(db).SubmitAsync(flowKey, starter, "{}");
++    }
++
++    /// <summary>把用户全部 Pending 任务的 CreateDate 摆成确定性阶梯（排序/分页稳定）。</summary>
++    private static async Task StaircaseAsync(CP6Context db, Guid approver)
++    {
++        // 按创建时序（非随机 Guid.Id）铺阶梯：同一 SubmitAsync 的并行任务共块，
++        // 后提交实例的任务严格更晚（.NET8/Windows 高精度 DateTime.Now），保证「先提交实例 < 后提交实例」确定性。
++        var tasks = await db.Wf_FlowTasks.Where(t => t.AssigneeId == approver)
++            .OrderBy(t => t.CreateDate).ThenBy(t => t.Id).ToListAsync();
++        var baseline = new DateTime(2026, 7, 1, 8, 0, 0);
++        for (var i = 0; i < tasks.Count; i++) tasks[i].CreateDate = baseline.AddMinutes(i);
++        await db.SaveChangesAsync();
++    }
++
++    [Fact]
++    public async Task Merged_SameInstanceThreeTasks_CollapsesToOneRow_LatestState()
++    {
++        using var db = NewDb();
++        var starter = Guid.NewGuid(); var approver = Guid.NewGuid();
++        var instId = await SeedParallelSameApproverAsync(db, starter, approver, "par");
++        await StaircaseAsync(db, approver);
++
++        var rows = await Inbox(db).PendingAsync(approver, rowMode: "merged");
++
++        var row = Assert.Single(rows);
++        Assert.Equal(instId, row.InstanceId);
++        // 显最新态：合并行 = CreateDate 最大的那个任务
++        var latest = await db.Wf_FlowTasks.Where(t => t.AssigneeId == approver)
++            .OrderByDescending(t => t.CreateDate).FirstAsync();
++        Assert.Equal(latest.Id, row.TaskId);
++    }
++
++    [Fact]
++    public async Task Expanded_SameInstanceThreeTasks_ThreeRows()
++    {
++        using var db = NewDb();
++        var starter = Guid.NewGuid(); var approver = Guid.NewGuid();
++        await SeedParallelSameApproverAsync(db, starter, approver, "par");
++
++        var rows = await Inbox(db).PendingAsync(approver, rowMode: "expanded");
++        Assert.Equal(3, rows.Count);
++        Assert.Equal(3, rows.Select(r => r.TaskId).Distinct().Count());
++    }
++
++    [Fact]
++    public async Task Default_IsMerged()
++    {
++        using var db = NewDb();
++        var starter = Guid.NewGuid(); var approver = Guid.NewGuid();
++        await SeedParallelSameApproverAsync(db, starter, approver, "par");
++
++        Assert.Single(await Inbox(db).PendingAsync(approver));   // 缺省参数 = merged（spec D5）
++    }
++
++    // ── 分页正确性：同实例 3 任务跨页界（spec §7）──
++    [Fact]
++    public async Task Merged_Paging_GroupsBeforeSkipTake_NoInstanceStraddlesPages()
++    {
++        using var db = NewDb();
++        var starter = Guid.NewGuid(); var approver = Guid.NewGuid();
++        var instA = await SeedParallelSameApproverAsync(db, starter, approver, "parA");   // 3 任务
++        var instB = await SeedParallelSameApproverAsync(db, starter, approver, "parB");   // 3 任务
++        await StaircaseAsync(db, approver);                                                // A(0-2分) < B(3-5分)
++
++        var page1 = await Inbox(db).PendingAsync(approver, "merged", page: 1, pageSize: 1);
++        var page2 = await Inbox(db).PendingAsync(approver, "merged", page: 2, pageSize: 1);
++        var page3 = await Inbox(db).PendingAsync(approver, "merged", page: 3, pageSize: 1);
++
++        Assert.Equal(instB, Assert.Single(page1).InstanceId);   // 分组后按最新 CreateDate 倒序
++        Assert.Equal(instA, Assert.Single(page2).InstanceId);
++        Assert.Empty(page3);                                     // 若分组晚于分页会错误地出现第 3 页
++    }
++
++    [Fact]
++    public async Task Expanded_Paging_SkipTakeOverTaskRows()
++    {
++        using var db = NewDb();
++        var starter = Guid.NewGuid(); var approver = Guid.NewGuid();
++        await SeedParallelSameApproverAsync(db, starter, approver, "par");
++        await StaircaseAsync(db, approver);
++
++        var page1 = await Inbox(db).PendingAsync(approver, "expanded", page: 1, pageSize: 2);
++        var page2 = await Inbox(db).PendingAsync(approver, "expanded", page: 2, pageSize: 2);
++
++        Assert.Equal(2, page1.Count);
++        Assert.Single(page2);
++        Assert.Equal(3, page1.Concat(page2).Select(r => r.TaskId).Distinct().Count());   // 无重复无遗漏
++    }
++
++    [Fact]
++    public async Task NoPaging_ReturnsAll_BehaviourUnchanged()
++    {
++        using var db = NewDb();
++        var starter = Guid.NewGuid(); var approver = Guid.NewGuid();
++        await SeedParallelSameApproverAsync(db, starter, approver, "par");
++        Assert.Equal(3, (await Inbox(db).PendingAsync(approver, "expanded")).Count);
++    }
++}
+diff --git a/CP6.Tests/Oa/PrefMergeTests.cs b/CP6.Tests/Oa/PrefMergeTests.cs
+index 74d125a..5656c21 100644
+--- a/CP6.Tests/Oa/PrefMergeTests.cs
++++ b/CP6.Tests/Oa/PrefMergeTests.cs
+@@ -108,11 +108,31 @@ public class PrefMergeTests
+     [Fact]
+     public async Task SaveMerge_InvalidatesOwnCache()
+     {
+         using var db = NewDb();
+         var me = Guid.NewGuid();
+         var svc = Svc(db);
+         Assert.True(await svc.IsEnabledAsync(me, "todoCreated", "inApp"));                 // 缓存默认 "{}"
+         await svc.SaveMergeAsync(me, """{"notify":{"todoCreated":{"inApp":false}}}""");
+         Assert.False(await svc.IsEnabledAsync(me, "todoCreated", "inApp"));                // 同实例保存后读到新值
+     }
++
++    // ── GetRowModeAsync（D-T1 消费）──
++    [Theory]
++    [InlineData(null, "merged")]                                  // 无行 → 默认
++    [InlineData("{}", "merged")]                                  // 无键 → 默认
++    [InlineData("""{"rowMode":"expanded"}""", "expanded")]
++    [InlineData("""{"rowMode":"merged"}""", "merged")]
++    [InlineData("""{"rowMode":"garbage"}""", "merged")]           // 非法值 → 默认
++    [InlineData("NOT_JSON{{{", "merged")]                         // 畸形 → 默认
++    public async Task GetRowMode_ParsesTopLevelKey_DefaultMerged(string? prefsJson, string expected)
++    {
++        using var db = NewDb();
++        var me = Guid.NewGuid();
++        if (prefsJson is not null)
++        {
++            db.Wf_InboxPrefs.Add(new Wf_InboxPref { Id = Guid.NewGuid(), UserId = me, PrefsJson = prefsJson });
++            await db.SaveChangesAsync();
++        }
++        Assert.Equal(expected, await Svc(db).GetRowModeAsync(me));
++    }
+ }
+diff --git a/CP6.WebApi/Controllers/Oa/InboxController.cs b/CP6.WebApi/Controllers/Oa/InboxController.cs
+index 885b389..bb9c5de 100644
+--- a/CP6.WebApi/Controllers/Oa/InboxController.cs
++++ b/CP6.WebApi/Controllers/Oa/InboxController.cs
+@@ -14,28 +14,30 @@ namespace CP6.WebApi.Controllers.Oa;
+ /// </summary>
+ [ApiController]
+ [Route("api/oa/inbox")]
+ [Authorize]
+ public class InboxController : LocalizedControllerBase
+ {
+     private readonly IInboxService _inbox;
+     private readonly ICurrentPermissionContext _ctx;
+     private readonly IDelegateService _delegate;
+     private readonly IFlowEngine _engine;
++    private readonly IPrefService _pref;
+ 
+     public InboxController(IInboxService inbox, ICurrentPermissionContext ctx,
+-        IDelegateService @delegate, IFlowEngine engine)
++        IDelegateService @delegate, IFlowEngine engine, IPrefService pref)
+     {
+         _inbox = inbox;
+         _ctx = ctx;
+         _delegate = @delegate;
+         _engine = engine;
++        _pref = pref;
+     }
+ 
+     private async Task<Guid> CurrentUserIdAsync() => (await _ctx.GetAsync()).UserId;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     /// <summary>
+     /// 读请求头 X-Acting-As：非空且非本人 → 校验授权（E-WF-001）→ 返回被代理人；否则返回本人。
+     /// </summary>
+     private async Task<(Guid effective, Guid? onBehalfOf)> EffectiveAsync()
+@@ -46,26 +48,30 @@ public class InboxController : LocalizedControllerBase
+         {
+             await _delegate.AssertActiveGrantAsync(me, x);   // 失败抛 E-WF-001
+             return (x, x);
+         }
+         return (me, null);
+     }
+ 
+     // ── 未处理 ──
+ 
+     [HttpGet("pending")]
+-    public async Task<IActionResult> Pending()
++    public async Task<IActionResult> Pending([FromQuery] string? rowMode = null,
++        [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
+     {
+         try
+         {
+             var (eff, _) = await EffectiveAsync();
+-            return Ok2(await _inbox.PendingAsync(eff));
++            // 显示偏好属查看者本人（me），与 act-as 被代理人（eff）无关
++            var me = await CurrentUserIdAsync();
++            var mode = rowMode is "merged" or "expanded" ? rowMode : await _pref.GetRowModeAsync(me);
++            return Ok2(await _inbox.PendingAsync(eff, mode, page, pageSize));
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpGet("pending-cc")]
+     public async Task<IActionResult> PendingCc()
+     {
+         try
+         {
+             var (eff, _) = await EffectiveAsync();
