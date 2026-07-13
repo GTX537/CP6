@@ -1,4 +1,5 @@
 import http from '../http'
+import type { BatchTransferReq } from '@/types/oa/inbox'
 
 export const inboxApi = {
   pending:   () => http.get('/oa/inbox/pending'),
@@ -13,4 +14,6 @@ export const inboxApi = {
     http.post('/oa/inbox/batch', { taskIds, approve, comment }),
   sendBack: (taskId: string, kind: 'prevStage' | 'starter' | 'node', nodeId?: string, comment?: string) =>
     http.post('/oa/inbox/sendback', { taskId, kind, nodeId, comment }),
+  batchTransfer: (p: BatchTransferReq) => http.post('/oa/inbox/batch-transfer', p),
+  batchTransferPreview: (p: BatchTransferReq) => http.post('/oa/inbox/batch-transfer/preview', p),
 }

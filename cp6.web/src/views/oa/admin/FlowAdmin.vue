@@ -8,6 +8,9 @@
 <template>
   <CpPageShell :title="t('oa.flowadmin.title')" :count="activeTab === 'flows' ? total : undefined">
     <template #actions>
+      <el-button v-if="activeTab === 'flows'" type="warning" plain @click="batchTransferVisible = true">
+        {{ t('oa.bt.entry') }}
+      </el-button>
       <el-button v-if="activeTab === 'flows'" :icon="Refresh" circle :loading="refreshing" @click="refresh" />
     </template>
 
@@ -39,6 +42,8 @@
         <FlowTriggerPanel />
       </el-tab-pane>
     </el-tabs>
+
+    <BatchTransferDialog v-model="batchTransferVisible" />
   </CpPageShell>
 </template>
 
@@ -50,12 +55,14 @@ import { Refresh } from '@element-plus/icons-vue'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
 import FlowTriggerPanel from './FlowTriggerPanel.vue'
+import BatchTransferDialog from './BatchTransferDialog.vue'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
 import type { FlowAdminItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
 
 const activeTab = ref<'flows' | 'triggers'>('flows')
+const batchTransferVisible = ref(false)
 const total = ref<number>()
 const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
 const refreshing = ref(false)
