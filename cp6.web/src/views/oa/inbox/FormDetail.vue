@@ -169,7 +169,7 @@ async function loadDetail() {
   try {
     const [detailRes, pendingRes] = await Promise.all([
       inboxApi.detail(props.instanceId),
-      inboxApi.pending(),
+      inboxApi.pending('expanded'),
     ])
     detail.value = (detailRes as any).data as InboxDetail
     const pendingList: PendingItem[] =

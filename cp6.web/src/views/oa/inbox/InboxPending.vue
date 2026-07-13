@@ -6,6 +6,10 @@
         <div class="table-toolbar">
           <CpTag>{{ t('共 {n} 条', { n: reviewRows.length }) }}</CpTag>
           <el-button :icon="Refresh" circle size="small" :loading="reviewLoading" @click="loadReview" />
+          <el-radio-group v-model="rowMode" size="small" class="rowmode-toggle" @change="onRowModeChange">
+            <el-radio-button label="merged">{{ t('oa.inbox.rowMode.merged') }}</el-radio-button>
+            <el-radio-button label="expanded">{{ t('oa.inbox.rowMode.expanded') }}</el-radio-button>
+          </el-radio-group>
         </div>
 
         <!-- Batch action bar -->
@@ -124,6 +128,8 @@ import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import type { ElTable } from 'element-plus'
 import { inboxApi } from '@/api/oa/inbox'
+import { prefApi } from '@/api/oa/pref'
+import { parseRowMode } from '@/views/oa/inbox/inboxModel'
 import CpTag from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { PendingItem, CcItem, BatchResultItem } from '@/types/oa/inbox'
@@ -159,10 +165,31 @@ const selected = ref<PendingItem[]>([])
 const batchComment = ref('')
 const batchActing = ref(false)
 
+// ── rowMode（wfs-inbox-ux §5：切换即写回偏好 + 重载列表）──
+const rowMode = ref<'merged' | 'expanded'>('merged')
+
+async function initRowMode() {
+  try {
+    const res: any = await prefApi.get()
+    rowMode.value = parseRowMode(res.data?.prefsJson)
+  } catch {
+    // 默认 merged
+  }
+}
+
+async function onRowModeChange() {
+  try {
+    await prefApi.saveMerge(JSON.stringify({ rowMode: rowMode.value }))   // 顶层键合并：不碰 notify/pageSize 等
+  } catch {
+    // HTTP interceptor auto-toasts；写回失败不阻塞本次切换显示
+  }
+  await loadReview()
+}
+
 async function loadReview() {
   reviewLoading.value = true
   try {
-    const res = await inboxApi.pending()
+    const res = await inboxApi.pending(rowMode.value)
     reviewRows.value = ((res as any).data as PendingItem[]) || []
   } finally {
     reviewLoading.value = false
@@ -251,7 +278,10 @@ function formatTime(s: string): string {
   return s ? s.replace('T', ' ').slice(0, 19) : ''
 }
 
-onMounted(loadReview)
+onMounted(async () => {
+  await initRowMode()
+  await loadReview()
+})
 </script>
 
 <style scoped>
@@ -263,6 +293,9 @@ onMounted(loadReview)
   align-items: center;
   gap: 10px;
   margin-bottom: 8px;
+}
+.rowmode-toggle {
+  margin-left: auto;
 }
 .batch-bar {
   display: flex;

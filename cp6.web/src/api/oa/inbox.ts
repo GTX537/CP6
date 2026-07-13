@@ -2,7 +2,7 @@ import http from '../http'
 import type { BatchTransferReq } from '@/types/oa/inbox'
 
 export const inboxApi = {
-  pending:   () => http.get('/oa/inbox/pending'),
+  pending:   (rowMode?: 'merged' | 'expanded') => http.get('/oa/inbox/pending', { params: { rowMode } }),
   pendingCc: () => http.get('/oa/inbox/pending-cc'),
   running:   () => http.get('/oa/inbox/running'),
   done:      (p: { year?: number; month?: number; tab?: string }) => http.get('/oa/inbox/done', { params: p }),
