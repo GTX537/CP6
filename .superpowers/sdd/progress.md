@@ -295,3 +295,4 @@ WFS波② 合并+部署: complete (main=41a69b7 --no-ff已push, 分支留远端;
 # 基线更新: 后端1890绿/5skip(计划1509过时)/前端420绿(计划320过时); base=main 2b3f277(计划fb90d75过时); commit即push(用户纪律覆盖计划"不push")
 # ⚠预检口径修正(计划07-05写就,被07-12 M-OA/WF波推翻2处): ①734 MenuKey="oa-flow-admin"回填已由OawfMenuSeed落地,F-T2勿重做勿加竞争回填 ②权限种子架构现行=OawfPermissionSeed逐租户模式(非计划引的Program.cs:850-856 RoleId=1内联范本),FlowTrigger.View/Edit两ActionCode按逐租户模式并入,「贴点⊆种子」互锁; FlowAdminController已有[RequirePermission("oa-flow-admin","enable")]先例可循
 # 预检核实仍成立: NCrontab全仓无(绿地引包)/FlowAdmin.vue无el-tabs(E-T2锚点在)/孤儿FlowKey预检波①开工已过(零孤儿)
+WFS波③ A-T1: complete (commit cfbd0b1, Spec ✅ + Approved[opus审零Critical/Important; 契约10+7字段逐一致/4索引含UX_Idem唯一无filter/迁移ef生成Up恰2表4索引Down净删/测试与brief逐字符一致/引擎零diff/唯一域外hunk=陈旧task-1-brief.md删除无害]; 1893绿[1890+3]+has-pending-model-changes clean; Minor×2记档: IX_Scan以Enabled打头无TenantId列系plan-mandated[逐租户scope下全局过滤追加,低区分度,timer扫描任务若显性能再议]/Down顺序无FK无关)
