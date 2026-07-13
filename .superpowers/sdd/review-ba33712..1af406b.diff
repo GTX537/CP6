@@ -1,0 +1,3928 @@
+# Review package: ba33712..HEAD
+
+## Commits
+1af406b docs(sdd): M-MES T6过审(真值独立复算,两排产缺口记票)——T1-T6全完成待终审
+8fae0a1 test(mes): M-MES T6 測試補網——報工状態機5用例+PlanningBoard排産改期4用例
+9104100 docs(sdd): M-MES T5一次过审(15文件全量对账,跨波票关闭)+T6简报
+01b953d feat(mes): M-MES T5 IAuditable贴点(WorkOrder/ProductionResult族)+跨波票PlateMoldStock收口
+76d460a docs(sdd): M-MES T4过审(四风险实证)+T5简报(含跨波票PlateMoldStock收口)
+f8200ef test(mes): M-MES T4 fail-closed 权限反射测试——28贴点+2豁免精确收口
+7465606 docs(sdd): M-MES T3b过审(28→25三面一致,四要件源码证真)+T4简报
+38dad3e feat(mes): M-MES T3b 逐租户MenuAction/RoleAction权限种子 28→25→25
+a6a530b docs(sdd): M-MES T3a过审(28双向零偏差)+T3b简报
+35e90a7 feat(mes): M-MES T3a 9控制器28写端点贴 [RequirePermission]
+4b5f956 docs(sdd): M-MES T2过审(五具名风险全核过,两硬前置解除)+T3a简报
+db4b912 feat(mes): M-MES T2 菜单MenuKey锚定(MesMenuSeed)+10键防御矫正
+e947593 docs(sdd): M-MES T1过审(独立重数零偏差,两命门坐实)+T2简报
+f7a70cb docs(mes): M-MES T1 权限键清单——11控制器×30端点真相源
+f941c6c docs(sdd): 撤匿名收口记录+M-MES波开工台账段+T1简报
+
+## Files changed
+ .superpowers/sdd/mes-t1-brief.md                   |  24 ++
+ .superpowers/sdd/mes-t1-report.md                  |  58 +++
+ .superpowers/sdd/mes-t2-brief.md                   |  20 +
+ .superpowers/sdd/mes-t2-report.md                  |  66 ++++
+ .superpowers/sdd/mes-t3a-brief.md                  |  22 ++
+ .superpowers/sdd/mes-t3a-report.md                 |  84 ++++
+ .superpowers/sdd/mes-t3b-brief.md                  |  22 ++
+ .superpowers/sdd/mes-t3b-report.md                 |  77 ++++
+ .superpowers/sdd/mes-t4-brief.md                   |  20 +
+ .superpowers/sdd/mes-t4-report.md                  |  58 +++
+ .superpowers/sdd/mes-t5-brief.md                   |  22 ++
+ .superpowers/sdd/mes-t5-report.md                  |  55 +++
+ .superpowers/sdd/mes-t6-brief.md                   |  18 +
+ .superpowers/sdd/mes-t6-report.md                  | 155 ++++++++
+ .superpowers/sdd/progress.md                       |  15 +
+ CP6.Entity/DomainModels/Mes/DefectCategory.cs      |   2 +-
+ CP6.Entity/DomainModels/Mes/DefectRecord.cs        |   2 +-
+ CP6.Entity/DomainModels/Mes/InspectionTemplate.cs  |   2 +-
+ CP6.Entity/DomainModels/Mes/Machine.cs             |   2 +-
+ CP6.Entity/DomainModels/Mes/MachineDowntime.cs     |   2 +-
+ CP6.Entity/DomainModels/Mes/MesSequence.cs         |   2 +
+ CP6.Entity/DomainModels/Mes/OeeDaily.cs            |   3 +
+ CP6.Entity/DomainModels/Mes/ProcessCostRate.cs     |   2 +-
+ CP6.Entity/DomainModels/Mes/ProductionResult.cs    |   2 +-
+ CP6.Entity/DomainModels/Mes/QualityInspection.cs   |   2 +-
+ .../DomainModels/Mes/QualityInspectionItem.cs      |   2 +-
+ CP6.Entity/DomainModels/Mes/WorkCenter.cs          |   2 +-
+ CP6.Entity/DomainModels/Mes/WorkOrder.cs           |   2 +-
+ CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs   |   2 +-
+ CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs    |   2 +-
+ CP6.Entity/DomainModels/Wms/PlateMoldStock.cs      |   2 +-
+ CP6.Tests/Mes/MesAuditTests.cs                     | 437 +++++++++++++++++++++
+ CP6.Tests/Mes/PlanningBoardServiceTests.cs         | 169 ++++++++
+ CP6.Tests/Mes/ProductionResultStateMachineTests.cs | 216 ++++++++++
+ CP6.Tests/MesMenuSeedTests.cs                      | 128 ++++++
+ CP6.Tests/MesPermissionAttributeTests.cs           | 185 +++++++++
+ CP6.Tests/MesPermissionSeedTests.cs                | 154 ++++++++
+ .../Controllers/Mes/DefectRecordController.cs      |   4 +
+ CP6.WebApi/Controllers/Mes/MachineController.cs    |   7 +
+ CP6.WebApi/Controllers/Mes/OeeController.cs        |   2 +
+ .../Controllers/Mes/PlanningBoardController.cs     |   3 +
+ .../Controllers/Mes/ProcessCostRateController.cs   |   9 +-
+ .../Controllers/Mes/ProductionResultController.cs  |   6 +
+ .../Controllers/Mes/QualityInspectionController.cs |   3 +
+ CP6.WebApi/Controllers/Mes/WorkCenterController.cs |   3 +
+ CP6.WebApi/Controllers/Mes/WorkOrderController.cs  |   6 +
+ CP6.WebApi/Program.cs                              |  13 +
+ CP6.WebApi/Seed/MesMenuSeed.cs                     | 139 +++++++
+ CP6.WebApi/Seed/MesPermissionSeed.cs               | 118 ++++++
+ docs/seeds/mes-key-menu-anchor.md                  |  44 +++
+ docs/seeds/mes-menu-seed.sql                       |  24 ++
+ docs/seeds/mes-permission-keys.md                  | 173 ++++++++
+ docs/seeds/mes-permission-seed.sql                 | 156 ++++++++
+ 53 files changed, 2732 insertions(+), 16 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/mes-t1-brief.md b/.superpowers/sdd/mes-t1-brief.md
+new file mode 100644
+index 0000000..dfc52d7
+--- /dev/null
++++ b/.superpowers/sdd/mes-t1-brief.md
+@@ -0,0 +1,24 @@
++# M-MES T1 任务简报：权限键清单(端点×权限键真相源)
++
++## 背景与位置
++M-MES 横切接线波首任务(branch=feat/m-mes-crosscutting)。本波按 M-WMS/M-ERP 同型流程收口授权粒度: T1 产出「端点×权限键」真相源,是后续 T2 菜单锚定/T3a 贴点/T3b 种子/T4 反射测试的唯一依据——**键错一字全链 403,清单质量决定整波**。
++
++## 必读(按顺序)
++1. `docs/00-横切接线规范.md`(命门: 键连字符非下划线/资源键=锚定菜单 MenuKey/RoleAction 逐租户)
++2. 同型先例: `docs/seeds/erp-permission-keys.md`(M-ERP T1 交付物——结构、豁免论证方式、§七扫描面口径照此)与 `docs/seeds/wms-permission-keys.md`
++3. 扫描对象: `CP6.WebApi/Controllers/Mes/` 全部控制器(实有 11 个: DefectRecord/Machine/MesDashboard/Oee/PlanAchievement/PlanningBoard/ProcessCostRate/ProductionResult/QualityInspection/WorkCenter/WorkOrder;计划口径 10,以实扫为准并在 §七 说明差异)
++
++## 需求
++1. **全量扫描**: 11 控制器全部非 GET 端点逐方法列表,双向验证(端点数闭环,零缺漏零 GET 误列)。
++2. **逐端点定键**: `mes-xxx:action` 格式(连字符!),资源键按「锚定菜单」原则规划——先查 Sys_Menu 现有 MES 菜单行(Program.cs 种子/迁移里 MES 段 MenuId 与 RoutePath),给出每键的锚定菜单候选;RoutePath 若为裸路径(M-ERP 曾因此全体失配),在 §硬前置 里标红提示 T2。
++3. **高危键独立**(计划点名: 报工修正/工单强制关闭;实扫如有其他不可逆/钱相关操作一并拆分,如报废判定、成本费率修正),每个高危拆分给一句佐证。
++4. **只读 POST 豁免**: 查询/报表/看板类 POST 端点逐条读 Service 证得无写库才可豁免,逐条记论证(照 ERP §四格式)。
++5. **交付**: `docs/seeds/mes-permission-keys.md`(§一 端点×键全表/§二 menu-key 与锚定菜单候选/§三 高危佐证/§四 豁免论证/§五 归并裁决/§六 T2 硬前置与悬案/§七 扫描面口径与计数自洽)。
++6. 纯文档任务,零代码改动。计数必须自洽(总端点=真写+豁免,逐控制器分解可复核)。
++
++## 验证与提交
++- 无测试要求(文档任务),但 §七 计数自洽是审查硬门。
++- 单 commit(docs 前缀)即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\mes-t1-report.md`(逐控制器计数表+悬案清单)。回复只返回: 状态、commit sha、一行计数摘要(N控制器/M真写/K豁免/J键)、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/mes-t1-report.md b/.superpowers/sdd/mes-t1-report.md
+new file mode 100644
+index 0000000..7e95020
+--- /dev/null
++++ b/.superpowers/sdd/mes-t1-report.md
+@@ -0,0 +1,58 @@
++# M-MES T1 报告：权限键清单（端点×权限键真相源）
++
++**Status:** DONE
++**交付物:** `C:\CP6\docs\seeds\mes-permission-keys.md`（纯文档，零代码改动）
++
++## 逐控制器计数表
++
++| 控制器 | 非GET端点 | 豁免 | 真写 | menu-key | 高危 |
++|---|---|---|---|---|---|
++| WorkOrderController | 5 | 0 | 5 | mes-work-order | — |
++| ProductionResultController | 5 | 0 | 5 | mes-production-result | complete |
++| DefectRecordController | 3 | 0 | 3 | mes-defect | — |
++| MachineController | 6 | 0 | 6 | mes-machine | — |
++| OeeController | 1 | 0 | 1 | mes-oee | — |
++| PlanningBoardController | 2 | 0 | 2 | mes-planning-board | — |
++| QualityInspectionController | 2 | 0 | 2 | mes-quality-inspection | — |
++| PlanAchievementController | 2 | 2 | 0 | mes-plan-achievement | — |
++| WorkCenterController | 2 | 0 | 2 | mes-work-center | — |
++| ProcessCostRateController | 2 | 0 | 2 | mes-process-cost-rate | edit |
++| MesDashboardController | 0（全GET） | — | — | (309/312 看板) | — |
++| **合计** | **30** | **2** | **28** | **10** | **2** |
++
++自洽：30 非GET = 2 豁免 + 28 真写；逐控制器真写累加 = 28 ✅。资源键去重 26；状态键 9。
++
++## 高危清单（2）
++
++- `mes-production-result:complete` — 工程完了触发 WMS完成品入庫 + BOM料耗反冲(OUT/ISSUE) + FIN成本归集/结转（ProductionResultService.cs:263-293）。会话记忆 P0「完工反冲」。
++- `mes-process-cost-rate:edit` — 工序费率修正，retroactive 改写已报工工单原価基础，经 CostCollectService 直喂 FIN 结转（ProcessCostRateService.cs:27-62；Program.cs:185）。简报点名。**与 ERP 费率 master 未提级不同**（MES 费率直喂已完工单成本，故提级；§五归并5 留降级出口待 T2 审计）。
++
++## 豁免论证索引（2，均读 Service 证得无写）
++
++- `mes-plan-achievement:view`（Summary）— PlanAchievementService.cs:33-96，仅 WorkOrders.AsNoTracking() 聚合，全类无 Add/SaveChanges。
++- `mes-plan-achievement:view`（ExportCsv）— :98-120，调 Summary 后拼 CSV，纯读。
++
++## §六 悬案/硬前置摘要
++
++1. **头号命门（时序）**：回填块 Program.cs:894-901 在 MES 菜单插入 :1511-1611 **之前**执行 → 洁净部署首启 MES 菜单 MenuKey=null → PermissionAggregator 过滤掉 → **MES 全 403 直到二次重启**。T2 须在 MES 插入块显式赋 `MenuKey="mes-*"`（同 WMS/ERP T2 型）。
++2. **命门2（machine 键错配）**：菜单 310 RoutePath=`/mes/machine-list` → 回填得 `mes-machine-list` ≠ 本表 `mes-machine`。T2 须对 310 显式赋 `mes-machine`。其余 9 键回填即正确（RoutePath 与键天然一致），但建议随 #1 一并显式化。
++3. **注**：quality-inspection 键取菜单域名 `mes-quality-inspection`（非控制器路由 `inspections`），回填自 306 即一致。
++4. **盘点差异（简报点名高危端点不存在直接 HTTP 端点）**：
++   - 工单强制关闭 = WorkOrderService.CancelAsync 存在但未暴露端点（仅 ERP 受注取消 Bridge 内部调用），受 `erp-order:cancel` 管辖。
++   - 报工修正 = 无独立修正/冲销端点；真高危为 complete（反冲，已提级）。
++   - 报废判定 = QualityInspection 无 judge 端点、DefectRecord 为记录 CRUD，MES 无独立报废判定端点。
++5. **ERP 对比利好**：MES RoutePath **有 `mes/` 前缀（非 ERP 裸路径命门）**，回填得 `mes-*`；**零孤儿路由**（15 个 views/mes/*.vue 全映射 300 段菜单，区别于 ERP 5 条孤儿）。
++
++## Files changed
++- 新增 `docs/seeds/mes-permission-keys.md`（真相源）
++- 新增 `.superpowers/sdd/mes-t1-report.md`（本报告）
++
++## Self-review findings
++- 计数三重核验通过（总=豁免+真写；逐控制器分解；资源键去重）。
++- 键全连字符 `mes-*`，高危 2 键各有 Service 行级佐证。
++- 豁免 2 条均逐条读 Service 证无写（非按端点名猜）。
++- §六 硬前置：RoutePath 形态（有 mes/ 前缀）、MenuId 段位（300-315）、回填时序命门、孤儿路由（零）、machine 键错配——均已查证并落 §六。
++
++## Concerns
++- **ProcessCostRate 高危提级为判断项**：与 ERP 费率 master 先例（未提级）不一致，理由是 MES 费率直喂已完工单成本归集。已在 §五归并5/§六.5 留「T2 审计可降级」出口。属需上层确认的裁决点，非硬错误。
++- **回填时序命门**是 T2 的真正拦路虎（洁净部署首启 403），已在 §六头条标红——T2 若照抄 ERP「显式 MenuKey 前置」即可闭合。
+diff --git a/.superpowers/sdd/mes-t2-brief.md b/.superpowers/sdd/mes-t2-brief.md
+new file mode 100644
+index 0000000..0eef1a0
+--- /dev/null
++++ b/.superpowers/sdd/mes-t2-brief.md
+@@ -0,0 +1,20 @@
++# M-MES T2 任务简报：菜单 MenuKey 锚定(MesMenuSeed)
++
++## 背景与位置
++M-MES 横切接线波第二任务。T1 真相源 `docs/seeds/mes-permission-keys.md` 已过审(10 个 mes-* menu-key)。本任务为 T3b 种子提供「键→菜单行」锚定。同型先例=ErpMenuSeed(M-ERP T2, CP6.WebApi/Seed/ErpMenuSeed.cs)——结构、幂等、防御矫正块、测试形状照抄。MES 无孤儿路由(T1 已证 15 前端页全映射),故本任务纯锚定,无收编。
++
++## 需求(真相源 §二/§六 为准)
++1. **MesMenuSeed 启动幂等种子**,接入 Program.cs 且**必须先于 RoutePath 回填块(:894-901)执行**(与 ErpMenuSeed/ErpPermissionSeed 相邻位置)。
++   - 🔴硬前置①(T1 审查坐实): 既有 MES 菜单 Add 块在 :1519-1608 且全部未设 MenuKey、位于回填块**之后**→洁净部署首启 MenuKey=null 全 403。MesMenuSeed 须在回填前把 10 键锚定行(含缺行补建,照 ErpMenuSeed 兼顾缺行的做法)显式赋 MenuKey。
++   - 🔴硬前置②: 菜单 310 RoutePath=/mes/machine-list 回填派生 mes-machine-list ≠ 真相源 mes-machine——防御矫正块须把此类已被错误回填的行就地纠回(作用域严限 10 锚定行)。
++2. **10 个 menu-key 各定唯一锚定菜单行**(MenuKey IS NOT NULL 唯一索引禁两行共键;若存在一覧/登録双行,择一为锚另一行留 null,照 ERP 先例并在锚定表记裁决)。
++3. **交付**: `docs/seeds/mes-key-menu-anchor.md`(10 键→MenuId 映射,T3b 输入)+ `docs/seeds/mes-menu-seed.sql` 对照(文件头声明 C# 为正本)。
++4. **测试**: MesMenuSeedTests 照 ErpMenuSeedTests 形状(锚定/唯一键/幂等/矫正/非锚定行留 null),真实断言删实现会红。
++5. 键一律连字符;MenuId 段位=既有 300-315,新建缺行(如有)段位先查占用再定,写进锚定表。
++
++## Global Constraints
++- 基线不许跌(当前 1716 绿);每 commit 立即 push。
++- MenuKey 命名与 MenuId 段位先登记再播种。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\mes-t2-report.md`。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/mes-t2-report.md b/.superpowers/sdd/mes-t2-report.md
+new file mode 100644
+index 0000000..2f337d9
+--- /dev/null
++++ b/.superpowers/sdd/mes-t2-report.md
+@@ -0,0 +1,66 @@
++# M-MES T2 报告：菜单 MenuKey 锚定(MesMenuSeed)
++
++生成于 2026-07-12。真相源 `docs/seeds/mes-permission-keys.md` §二/§六；同型先例 ErpMenuSeed。
++
++## 10 键锚定表（逐字取自真相源 §二）
++
++| # | menu-key | 锚定 MenuId | RoutePath | 裁决 |
++|---|---|---|---|---|
++| 1 | `mes-planning-board` | 301 | `/mes/planning-board` | 单页 |
++| 2 | `mes-work-order` | 302 | `/mes/work-order` | 入力锚定；303 一覧 null |
++| 3 | `mes-production-result` | 304 | `/mes/production-result` | 入力锚定；305 一覧 null |
++| 4 | `mes-quality-inspection` | 306 | `/mes/quality-inspection` | 入力锚定；307 一覧 null。键取菜单域名非 `inspections` |
++| 5 | `mes-defect` | 308 | `/mes/defect` | 单页 |
++| 6 | `mes-machine` | 310 | `/mes/machine-list` | ★命门2：显式赋 `mes-machine`（非回填 `mes-machine-list`）|
++| 7 | `mes-oee` | 311 | `/mes/oee` | 单页 |
++| 8 | `mes-plan-achievement` | 313 | `/mes/plan-achievement` | 单页，仅 view |
++| 9 | `mes-work-center` | 314 | `/mes/work-center` | 主数据 |
++| 10 | `mes-process-cost-rate` | 315 | `/mes/process-cost-rate` | 主数据 |
++
++非锚定行（MenuKey 留 null）：300 父 / 303,305,307 一覧 / 309 dashboard,312 control-tower（GET-only）。共 16 行 = 10 锚 + 6 null。
++
++## 矫正块作用域说明
++
++防御矫正块 `foreach (r in Rows) { if (r.Key == null) continue; ... }` — **作用域严限 10 个 `r.Key != null` 锚定行**。
++一覧页/看板/父行（6 行 null 键）不进入矫正，交由 Program.cs 回填派生 `*-list` 后缀键（无 action 引用、无害）。
++关键场景：既有库中 310 若被历史回填成 `mes-machine-list`，矫正块就地纠回 `mes-machine`（对应测试 `EnsureSeeded_CorrectsHistoricalBackfilledBareKey_ToMesPrefixed`）。
++
++## 回填时序落实
++
++`MesMenuSeed.EnsureSeeded(db)` 接入 Program.cs（WmsPermissionSeed 之后，约 :844），
++位于「无 MenuKey 菜单 RoutePath 自动回填」块（:894-901）**之前**，且在启动种子块无条件路径上。
++洁净首启即赋 10 锚定行 MenuKey，无「首启 null → 全 403 → 二次重启才生效」窗口（硬前置①解除）。
++现有 Program.cs MES 菜单 Add 块（:1511+）位于回填之后、Add 时不设 MenuKey——因 MesMenuSeed 已先插入这些 MenuId，
++其 `if (!Any(MenuId==...))` 守卫全部跳过，无重复插入（幂等）。
++
++## TDD Evidence
++
++- **RED**：先写 `MesMenuSeedTests.cs`（6 测试），`dotnet test --filter MesMenuSeedTests` →
++  编译失败 `CS0103: The name 'MesMenuSeed' does not exist`（实现未存在）。
++- **GREEN**：实现 `MesMenuSeed.cs` + Program.cs 接线后 → `Passed! Failed: 0, Passed: 6`。
++- **全量基线**：`dotnet test CP6.Tests` → `Passed: 1722, Skipped: 5`（基线 1716 + 新增 6，无回归下跌）。
++
++6 个测试：锚定 10 键→MenuId / machine 显式 mes-machine 非 mes-machine-list / 无两行共非空键(=10) /
++幂等(16 菜单+16 RoleMenu 二次不变) / 历史回填错配就地矫正 / 父行+一覧+GET-only 留 null。
++
++## Files changed
++
++- `CP6.WebApi/Seed/MesMenuSeed.cs`（新增，实现正本）
++- `CP6.Tests/MesMenuSeedTests.cs`（新增，6 测试）
++- `CP6.WebApi/Program.cs`（接线 1 处：WmsPermissionSeed 之后、回填块之前）
++- `docs/seeds/mes-key-menu-anchor.md`（新增，T3b 输入映射）
++- `docs/seeds/mes-menu-seed.sql`（新增，SQL 对照，头声明 C# 正本）
++
++## Self-review findings
++
++- 10 键与真相源 §二逐字一致 ✅；锚定 MenuId 与锚定表 md/SQL 三者一致 ✅。
++- 接线在回填块(:894)之前、启动无条件路径 ✅。
++- 矫正块严限 10 锚定行（`r.Key == null` 跳过）✅；machine-list 错配可被纠回 ✅。
++- 唯一索引安全（10 distinct 键，测试断言）✅；6 非锚定行留 null ✅。
++- 测试真实（删实现 → 编译红，已实证）；幂等二次调用 16/16 不变 ✅。
++- 无发现须修问题。
++
++## Concerns
++
++- 逐租户 RoleAction 传播（mes-* 键→admin 放行）不在本任务范围，属 T3b；沿用平台既有「首次补建管理员角色」机制。
++- ProcessCostRate 高危提级(§五归并5)为真相源待 T2 审计拍板项——本任务只锚定 menu-key，不涉及 action 分级，无影响。
+diff --git a/.superpowers/sdd/mes-t3a-brief.md b/.superpowers/sdd/mes-t3a-brief.md
+new file mode 100644
+index 0000000..c1615ad
+--- /dev/null
++++ b/.superpowers/sdd/mes-t3a-brief.md
+@@ -0,0 +1,22 @@
++# M-MES T3a 任务简报：9 控制器贴 [RequirePermission](28 写端点)
++
++## 背景与位置
++M-MES 横切接线波第三任务。T1 真相源+T2 菜单锚定已过审。本任务只做控制器贴点;种子由 T3b 完成。
++
++## 必读(按顺序)
++1. `docs/00-横切接线规范.md`
++2. `docs/seeds/mes-permission-keys.md`(T1 真相源——键值逐字使用: 28 真写端点×键 + 2 只读 POST 豁免)
++3. 样板: M-ERP T3a 先例 commit bdbc532(git show 看贴法: attribute 位置/using/与既有 attribute 叠放)
++
++## 需求
++1. 真相源列出的 **9 个有真写端点的控制器、28 个写端点**逐方法贴 `[RequirePermission("key","action")]`,键值与真相源**逐字一致**(连字符 mes-*;高危 oee:recalculate、process-cost-rate 不得降级)。
++2. **2 个只读 POST 豁免不贴**(PlanAchievement Summary/ExportCsv);MesDashboard 纯 GET 无贴点,PlanAchievement 全员豁免——两控制器合规缺席,报告里说明。
++3. 纯注解叠加: 零方法体改动,类级 [Authorize] 全部保留。
++4. 交付自查表: 逐控制器「端点→键」1:1 对账(28=28)写入报告。
++
++## 验证与提交
++- dotnet build 0 Error;全量测试(基线 1722 绿)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\mes-t3a-report.md`。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/mes-t3a-report.md b/.superpowers/sdd/mes-t3a-report.md
+new file mode 100644
+index 0000000..7e2abf2
+--- /dev/null
++++ b/.superpowers/sdd/mes-t3a-report.md
+@@ -0,0 +1,84 @@
++# M-MES T3a 执行报告：9 控制器 28 写端点贴 [RequirePermission]
++
++- **任务**：M-MES 横切接线波 T3a——9 个含真写端点的 MES 控制器逐方法贴 `[RequirePermission("menu-key","action")]`。
++- **真相源**：`docs/seeds/mes-permission-keys.md`（键值逐字取用，未创造/未改名任何键）。
++- **样板**：M-ERP T3a 先例 commit `bdbc532`（attribute 紧贴 `[HttpXxx]` 之下、`using CP6.Core.Auth;` 置顶）。
++- **性质**：纯注解叠加，零方法体改动，类级 `[Authorize]` 全保留。
++
++## 逐控制器「端点 → 键」1:1 对账表（28 = 28）
++
++| # | 控制器 | HTTP + 路由 | 方法 | 键 | action | 高危 |
++|---|---|---|---|---|---|---|
++| 1 | WorkOrderController | POST `/api/mes/work-orders` | Create | `mes-work-order` | add | 否 |
++| 2 | WorkOrderController | PUT `/api/mes/work-orders/{no}` | Update | `mes-work-order` | edit | 否 |
++| 3 | WorkOrderController | DELETE `/api/mes/work-orders/{no}` | Delete | `mes-work-order` | del | 否 |
++| 4 | WorkOrderController | POST `/api/mes/work-orders/{no}/issue` | Issue | `mes-work-order` | issue | 状态 |
++| 5 | WorkOrderController | POST `/api/mes/work-orders/expand-from-order` | ExpandFromOrder | `mes-work-order` | add | 否 |
++| 6 | ProductionResultController | POST `/production-results/start` | Start | `mes-production-result` | start | 状态 |
++| 7 | ProductionResultController | POST `/production-results/suspend` | Suspend | `mes-production-result` | suspend | 状态 |
++| 8 | ProductionResultController | POST `/production-results/resume` | Resume | `mes-production-result` | suspend | 状态 |
++| 9 | ProductionResultController | POST `/production-results/complete` | Complete | `mes-production-result` | complete | **是** |
++| 10 | ProductionResultController | POST `/production-results` | Report | `mes-production-result` | report | 状态 |
++| 11 | DefectRecordController | POST `/api/mes/defects` | Create | `mes-defect` | add | 否 |
++| 12 | DefectRecordController | PUT `/api/mes/defects/{no}` | Update | `mes-defect` | edit | 否 |
++| 13 | DefectRecordController | DELETE `/api/mes/defects/{no}` | Delete | `mes-defect` | del | 否 |
++| 14 | MachineController | POST `/api/mes/machines` | Create | `mes-machine` | add | 否 |
++| 15 | MachineController | PUT `/api/mes/machines/{cd}` | Update | `mes-machine` | edit | 否 |
++| 16 | MachineController | DELETE `/api/mes/machines/{cd}` | Delete | `mes-machine` | del | 否 |
++| 17 | MachineController | POST `/api/mes/machines/{cd}/status` | ChangeStatus | `mes-machine` | status | 状态 |
++| 18 | MachineController | POST `/api/mes/machines/downtimes` | RegisterDowntime | `mes-machine` | downtime | 状态 |
++| 19 | MachineController | POST `/api/mes/machines/downtimes/{no}/close` | CloseDowntime | `mes-machine` | downtime | 状态 |
++| 20 | OeeController | POST `/api/mes/oee/recalculate` | Recalculate | `mes-oee` | recalculate | 状态 |
++| 21 | PlanningBoardController | PUT `/planning-board/reschedule` | Reschedule | `mes-planning-board` | reschedule | 状态 |
++| 22 | PlanningBoardController | POST `/planning-board/auto-arrange` | AutoArrange | `mes-planning-board` | arrange | 状态 |
++| 23 | QualityInspectionController | POST `/api/mes/inspections` | Create | `mes-quality-inspection` | add | 否 |
++| 24 | QualityInspectionController | PUT `/api/mes/inspections/{no}` | Update | `mes-quality-inspection` | edit | 否 |
++| 25 | WorkCenterController | POST `/work-center/upsert` | Upsert | `mes-work-center` | edit | 否 |
++| 26 | WorkCenterController | DELETE `/work-center/{wgCd}` | Delete | `mes-work-center` | del | 否 |
++| 27 | ProcessCostRateController | POST `/process-cost-rate/upsert` | Upsert | `mes-process-cost-rate` | edit | **是** |
++| 28 | ProcessCostRateController | DELETE `/process-cost-rate/{id}` | Delete | `mes-process-cost-rate` | del | 否 |
++
++> 真相源表行 25/26（PlanAchievement Summary/ExportCsv）为只读 POST 豁免（→view），T3a **不贴**；其余表行 1–24、27–30 即本表 1–28（真相源 §一为 30 行含 2 豁免，去豁免后 28 真写，精确吻合）。
++
++### 逐控制器计数（grep `RequirePermission("mes-` 实证）
++
++| 控制器 | 贴点数 |
++|---|---|
++| WorkOrderController | 5 |
++| ProductionResultController | 5 |
++| DefectRecordController | 3 |
++| MachineController | 6 |
++| OeeController | 1 |
++| PlanningBoardController | 2 |
++| QualityInspectionController | 2 |
++| WorkCenterController | 2 |
++| ProcessCostRateController | 2 |
++| **合计** | **28** ✅ |
++
++## 合规缺席说明（两控制器不贴，符合真相源）
++
++- **MesDashboardController**：纯 GET 看板/SP 版，0 非 GET 端点 → 无贴点。合规。
++- **PlanAchievementController**：2 个 POST（Summary/ExportCsv）均为只读 POST 豁免（→view，真相源 §四读 Service 实证无写副作用），真写=0 → 全员豁免不贴。合规。
++- grep 验证：`RequirePermission` 在 PlanAchievementController.cs 出现 0 次 ✅。
++
++## 自查清单
++
++- [x] 28 端点全贴，键值与真相源逐字一致（连字符 `mes-*`，无下划线，无自造/改名键）。
++- [x] 2 只读 POST 豁免未贴（PlanAchievement Summary/ExportCsv）。
++- [x] 高危未降级：`mes-production-result:complete`（是）、`mes-process-cost-rate:edit`（是）逐字保留独立键。状态键 9 个（issue/start/suspend×2/report/status/downtime×2/recalculate/reschedule/arrange）单独成键，未塞进 edit/view。
++- [x] 归并键按真相源：resume→suspend（§五归并2）、CloseDowntime→downtime（§五归并3）、Upsert→edit（§五归并4）、ExpandFromOrder→add（§五归并1）。
++- [x] quality-inspection 键取菜单域名（非控制器路由 `inspections`），逐字 `mes-quality-inspection`（§六注3）。
++- [x] 零 GET 端点被贴（人工核对 + grep 各贴点均紧贴 POST/PUT/DELETE）。
++- [x] 零方法体改动：仅新增 `using CP6.Core.Auth;`（9 文件各 1 行）+ 28 行 `[RequirePermission]` attribute。
++- [x] 类级 `[Authorize]` 9 控制器全保留。
++
++## 验证输出摘要
++
++- **Build**：`dotnet build CP6.WebApi` → `Build succeeded. 0 Error(s)`（1 既有 CS8601 warning，与本任务无关）。
++- **Test**：`dotnet test` → `Passed! Failed: 0, Passed: 1722, Skipped: 5, Total: 1727`。基线 1722 绿，零跌。
++
++## 交接给后续任务
++
++- T3b：`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子（本任务只贴点，不种子）。
++- T4：反射 fail-closed 测试。
++- 硬前置提醒（真相源 §六，属 T2/T4 范畴，非本任务）：菜单 310 须显式赋 `MenuKey="mes-machine"`（回填得 `mes-machine-list` ≠ 贴点 `mes-machine`），否则 Machine 全 403；MES 菜单插入在回填块之后，洁净首启 MenuKey null 需 T2 显式赋值治理。
+diff --git a/.superpowers/sdd/mes-t3b-brief.md b/.superpowers/sdd/mes-t3b-brief.md
+new file mode 100644
+index 0000000..d527e14
+--- /dev/null
++++ b/.superpowers/sdd/mes-t3b-brief.md
+@@ -0,0 +1,22 @@
++# M-MES T3b 任务简报：逐租户 MenuAction/RoleAction 权限种子
++
++## 背景与位置
++M-MES 横切接线波第四任务。T2 锚定表+T3a 贴点(28 端点)已过审。本任务把 (key,action) 种成逐租户 Sys_MenuAction+Sys_RoleAction,admin(RoleId=1)每租户放行。
++
++## 必读(按顺序)
++1. `docs/seeds/mes-key-menu-anchor.md`(T2 锚定表——key→MenuId 唯一依据)
++2. `docs/seeds/mes-permission-keys.md`(T1 真相源——(menu-key,action) 元组来源)
++3. 样板: **ErpPermissionSeed**(CP6.WebApi/Seed/ErpPermissionSeed.cs+ErpPermissionSeedTests.cs,M-ERP T3b 已上线)——MES 同型复制,四要件照抄: 枚举 Sys_Tenants 显式 TenantId / IgnoreQueryFilters 查重(load-bearing) / MenuAction+RoleAction 双种 RoleId=1 / StampTenant 不覆盖显式值。
++
++## 需求
++1. 新建 `MesPermissionSeed.EnsureSeeded`,接入 Program.cs 紧随 MesMenuSeed 之后,每启动幂等。
++2. 种子元组=28 写端点按 (menu-key,action) **去重**后的集合(真相源§五四处归并→去重数<28),经锚定表映射 (MenuId,ActionCode)。三数闭环(28 端点→去重 N 元组→N 种子)写入报告,漏 0 多 0。
++3. 2 只读豁免不入种子。
++4. 测试: MesPermissionSeedTests 照 ErpPermissionSeedTests——**ExpectedTuples 独立硬编码 oracle**(非引用种子常量)/逐租户逐元组集合相等/幂等行数级/RoleId=1+MenuId 来自锚定表。
++5. SQL 对照 `docs/seeds/mes-permission-seed.sql`(CROSS JOIN Sys_Tenants+NOT EXISTS,文件头声明 C# 正本)。
++
++## Global Constraints
++- 基线 1722 不许跌;每 commit 立即 push;键连字符;RoleAction 逐租户。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\mes-t3b-report.md`(三数闭环对账+TDD 证据)。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/mes-t3b-report.md b/.superpowers/sdd/mes-t3b-report.md
+new file mode 100644
+index 0000000..5b894a3
+--- /dev/null
++++ b/.superpowers/sdd/mes-t3b-report.md
+@@ -0,0 +1,77 @@
++# M-MES T3b 执行报告：逐租户 MenuAction/RoleAction 权限种子
++
++> 执行于 2026-07-12。分支 `feat/m-mes-crosscutting`。样板 = ErpPermissionSeed（M-ERP T3b）同型复制。
++
++## 三数闭环对账表
++
++| 阶段 | 数 | 依据 |
++|---|---|---|
++| ① 控制器写端点（[RequirePermission] 贴点） | **28** | `grep RequirePermission CP6.WebApi/Controllers/Mes/*.cs` = 28 行，与真相源 §七「真写 28」精确吻合 |
++| ② 去重 (menu-key, action) 元组 | **25** | 28 − 3 归并重复（见下）= 25 |
++| ③ 种子元组（MesPermissionSeed.Actions） | **25** | 漏种 0 / 多种 0，测试逐元组集合相等验证 |
++
++**闭环：28 → 25 → 25。** 覆盖 **9** 个有写端点 menu-key（`mes-plan-achievement` 仅 2 只读 POST 豁免→view，未贴点，不入种子，故非 10）。
++
++### 3 处归并（真相源 §五 1/2/3，消解重复）
++| 归并键 | 覆盖的两端点 |
++|---|---|
++| `mes-work-order:add` (302) | Create + ExpandFromOrder |
++| `mes-production-result:suspend` (304) | Suspend + Resume |
++| `mes-machine:downtime` (310) | RegisterDowntime + CloseDowntime |
++
++（§五归并4「upsert=edit」是单端点内 create/update 合一，不产生重复行，故不计入去重消解。）
++
++### 25 元组 × 锚定 MenuId（锚定表 mes-key-menu-anchor.md）
++| menu-key | MenuId | actions | 数 |
++|---|---|---|---|
++| mes-planning-board | 301 | reschedule, arrange | 2 |
++| mes-work-order | 302 | add, edit, del, issue | 4 |
++| mes-production-result | 304 | start, suspend, complete, report | 4 |
++| mes-quality-inspection | 306 | add, edit | 2 |
++| mes-defect | 308 | add, edit, del | 3 |
++| mes-machine | 310 | add, edit, del, status, downtime | 5 |
++| mes-oee | 311 | recalculate | 1 |
++| mes-work-center | 314 | edit, del | 2 |
++| mes-process-cost-rate | 315 | edit, del | 2 |
++| **合计** | | | **25** |
++
++grep 逐控制器核对（28 贴点）：ProcessCostRate 2 / WorkOrder 5(add×2) / DefectRecord 3 / PlanningBoard 2 / WorkCenter 2 / Machine 6(downtime×2) / QualityInspection 2 / Oee 1 / ProductionResult 5(suspend×2) = 28 ✅。ActionCode 与贴点第二实参逐字一致。
++
++## TDD Evidence
++
++### RED
++`dotnet test --filter MesPermissionSeedTests` → 编译失败：
++```
++error CS0103: The name 'MesPermissionSeed' does not exist in the current context (×6)
++```
++（测试已写、断言 25/50，但被测类未建 → 红。）
++
++### GREEN
++新建 `MesPermissionSeed.cs` + 接入 Program.cs 后：
++```
++Passed!  - Failed: 0, Passed: 5, Skipped: 0, Total: 5 - CP6.Tests.dll
++```
++5 测试：25 元组/租户逐元组集合相等（Menu+Role）/ 幂等二次调用零新增(2×25=50) / RoleId=1 且 MenuId 全来自锚定表且 MenuKey mes- 前缀 / 显式 TenantId 两租户各独立行 / 无租户 no-op。
++
++### 全量回归
++```
++Passed!  - Failed: 0, Passed: 1727, Skipped: 5, Total: 1732 - CP6.Tests.dll
++```
++= 基线 1722 + 本任务 5 新测试。**基线未跌。**
++
++## 四要件自检（照 ErpPermissionSeed）
++- ✅ 逐租户显式 TenantId：`TenantId = tid`（枚举 Sys_Tenants）→ StampTenant 仅盖 Guid.Empty 不覆盖显式值。
++- ✅ IgnoreQueryFilters 在查重上：MenuAction/RoleAction 判存均 `.IgnoreQueryFilters().Any(...)`，跨租户可见。
++- ✅ 双种 RoleId=1：MenuAction（操作点目录）+ RoleAction（授管理员 RoleId=1）各一份。
++- ✅ 测试 oracle 独立：`ExpectedTuples` 为测试内独立硬编码 25 元组，非引用 `MesPermissionSeed.Actions`，防自证假绿。
++
++## Files changed
++- `CP6.WebApi/Seed/MesPermissionSeed.cs`（新建，正本）
++- `CP6.WebApi/Program.cs`（接入，MesMenuSeed 之后）
++- `CP6.Tests/MesPermissionSeedTests.cs`（新建，5 测试，独立 oracle）
++- `docs/seeds/mes-permission-seed.sql`（新建，文档留档，头声明 C# 正本，CROSS JOIN Sys_Tenants + NOT EXISTS）
++
++## Concerns
++- 无阻断性 concern。ActionName（改期/自动排产/中断/停机记录 等）为 UI 显示名，非权限判定依据（判定只看 ActionCode），措辞可后续微调不影响功能。
++- 洁净部署首启依赖 MesMenuSeed（T2）已在回填块之前显式赋 mes- MenuKey——本任务接入点严格置于 MesMenuSeed 之后，满足「锚定菜单行须先在」前提。
++- 与 WMS/ERP 同类平台票一致：TenantAdminService 若不复制 RoleAction，新租户 admin 重启前可能 403（重启自愈），非本任务范围。
+diff --git a/.superpowers/sdd/mes-t4-brief.md b/.superpowers/sdd/mes-t4-brief.md
+new file mode 100644
+index 0000000..1785335
+--- /dev/null
++++ b/.superpowers/sdd/mes-t4-brief.md
+@@ -0,0 +1,20 @@
++# M-MES T4 任务简报：fail-closed 反射测试
++
++## 背景与位置
++M-MES 横切接线波第五任务。T3a 已给 9 控制器 28 写端点贴 [RequirePermission]。本任务写反射测试锁死「新写端点漏贴即红」。同型先例=**ErpPermissionAttributeTests**(CP6.Tests/ErpPermissionAttributeTests.cs,含终审后注释纠偏)——先读它学三件套+豁免防腐结构,再 MES 化。
++
++## 需求
++1. 新建 `MesPermissionAttributeTests`:
++   - **discovery 守卫**: 扫描面=Mes 命名空间 11 控制器,断言计数(防空扫假绿)。注意基类问题: ERP 版类头注释已写明 DeclaredOnly 安全前提(基类无 HTTP action)——MES 控制器的基类形态自查后照写准确注释。
++   - **fail-closed 核心闸**: 全部非 GET 端点 ∈ 贴点 ∪ 豁免,且 Assert.Equal(28, taggedCount)+Assert.Equal(2, exemptHit)精确计数+offenders==0。
++   - **键约定**: `^mes-[a-z0-9-]+$` + action 集与真相源实际使用词汇逐词相等(HashSet)。
++2. **显式豁免清单**: PlanAchievement Summary/ExportCsv 两条,带真相源 §四 编号理由注释;既贴键又在豁免的冲突场景显式捕获(照 ERP 版)。
++3. 反向验证: 临时删一处贴点跑测试确认红,恢复后绿,证据写报告,工作树干净。
++4. 仅新增测试文件,零生产改动。
++
++## 验证与提交
++- `dotnet test --filter MesPermissionAttributeTests` 全绿;全量(基线 1727)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\mes-t4-report.md`(豁免对账+反向验证证据)。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/mes-t4-report.md b/.superpowers/sdd/mes-t4-report.md
+new file mode 100644
+index 0000000..831ec2f
+--- /dev/null
++++ b/.superpowers/sdd/mes-t4-report.md
+@@ -0,0 +1,58 @@
++# M-MES T4 执行报告：fail-closed 权限反射测试
++
++## 概要
++- 新增文件（零生产改动）：`CP6.Tests/MesPermissionAttributeTests.cs`（4 个 [Fact]）。
++- 真相源：`docs/seeds/mes-permission-keys.md`（§七 计数收口 + §四 豁免 + §三 高危/状态键）。
++- 同型先例：`CP6.Tests/ErpPermissionAttributeTests.cs`（含 fable 终审后的 DeclaredOnly 注释纠偏），已 MES 化。
++
++## 计数对账（与真相源 §七逐项吻合）
++| 维度 | 真相源 | 测试断言 | 实扫 |
++|---|---|---|---|
++| 扫描控制器（Mes 命名空间，非抽象继承 ControllerBase） | 11 | `Assert.Equal(11,…)` | 11 ✅ |
++| 非 GET 端点（POST/PUT/DELETE）总数 | 30 | 28 + 2 = 30 | 30 ✅ |
++| 贴点（真写，taggedCount） | 28 | `Assert.Equal(28, taggedCount)` | 28 ✅ |
++| 只读 POST 豁免命中（exemptHit） | 2 | `Assert.Equal(2, exemptHit.Count)` | 2 ✅ |
++| menu-key 去重 | 10 | 正则 `^mes-[a-z0-9-]+$` 校验 | — |
++
++- 28 贴点实证（grep RequirePermission）：WorkOrder 5、ProductionResult 5、Machine 6、Defect 3、QualityInspection 2、WorkCenter 2、ProcessCostRate 2、Oee 1、PlanningBoard 2 = 28。
++- 30 非 GET 端点（grep `[HttpPost|Put|Delete]`）：上述 28 + PlanAchievement 2（全豁免）= 30。
++
++## 豁免清单对账（§四，共 2 条，逐条带真相源编号理由注释）
++| 键 | 真相源编号 | 理由（注释内） |
++|---|---|---|
++| `PlanAchievementController.Summary` | §四#1 | `GetSummaryAsync` 仅 `WorkOrders.AsNoTracking` 读→内存 GroupBy 达成率 DTO，全类无 Add/Update/Remove/SaveChanges；POST 仅为传复杂查询体 |
++| `PlanAchievementController.ExportCsv` | §四#2 | 调 GetSummaryAsync 后拼 CSV bytes，纯读导出，无写 |
++
++- 已复核 `PlanAchievementController.cs`：两方法均 `[HttpPost(...)]`、无 `[RequirePermission]`、类级 `[Authorize]`（登录即可用），与豁免语义一致。
++- 「既贴键又在豁免」冲突场景已显式捕获（照 ERP 版：`offenders.Add(…二者互斥)`）。
++- 豁免防腐用例 `ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints`：每条豁免必须实存、仍是变更端点、且未贴键。
++
++## action 词汇集（逐词相等 HashSet，13 词，均从已贴 28 键读出，不含 view）
++`add, edit, del, issue, start, suspend, complete, report, status, downtime, recalculate, reschedule, arrange`
++- `view` 不入集（豁免归 view 但未贴属性）。
++- `complete`（mes-production-result:complete）+ `edit`（mes-process-cost-rate:edit）为 §三 两高危键，其余 9 状态键落在集内。
++- 多一词/少一词或任何 typo 即红。
++
++## 基类继承链自查（DeclaredOnly 安全前提）
++- 逐类核对 11 个 MES 控制器类头：**全部直接 `: ControllerBase`**（WorkOrder/ProductionResult/DefectRecord/Machine/Oee/PlanningBoard/QualityInspection/PlanAchievement/WorkCenter/ProcessCostRate/MesDashboard）。
++- **无 LocalizedControllerBase、无任何中间抽象基类**（比 ERP 更简单——ERP 有 9 个经 LocalizedControllerBase）。
++- `ControllerBase` 自身不声明任何 `[HttpXxx]` action，所有写端点均为子类手写方法 → `BindingFlags.DeclaredOnly` 不漏扫。
++- 注释已按 MES 实际形态准确书写，并保留「未来若引入声明 action 的共享基类须改扫描策略」的前瞻告警。
++
++## 反向验证证据（临时删贴点 → 红 → 恢复 → 绿 → 工作树干净）
++1. 临时删除 `WorkOrderController.Create` 的 `[RequirePermission("mes-work-order","add")]`。
++2. `dotnet test --filter MesPermissionAttributeTests` → **Failed! 1 failed / 3 passed**，报错精确：
++   ```
++   变更端点权限点缺失/键不合约定/豁免冲突:
++   WorkOrderController.Create：变更端点缺 [RequirePermission] 且不在只读 POST 豁免清单
++   ```
++   （同时 taggedCount 28→27 触发 `Assert.Equal(28,…)`，双闸命中。）
++3. 恢复贴点 → `dotnet test --filter MesPermissionAttributeTests` → **Passed! 4/4**。
++4. `git status --short` 仅列 `?? CP6.Tests/MesPermissionAttributeTests.cs`（生产文件无残留改动，工作树干净）。
++
++## 验证结果
++- `dotnet test --filter MesPermissionAttributeTests`：**Passed! 4/4**（338ms）。
++- 全量：**Passed! 1731 / Failed 0 / Skipped 5**（基线 1727 + 4 新用例 = 1731，未跌）。
++
++## Concerns
++- 无。零生产改动，纯结构性测试，计数与真相源三处硬编码（11/28/2）精确锚定，任何漂移即红。
+diff --git a/.superpowers/sdd/mes-t5-brief.md b/.superpowers/sdd/mes-t5-brief.md
+new file mode 100644
+index 0000000..40aedbc
+--- /dev/null
++++ b/.superpowers/sdd/mes-t5-brief.md
+@@ -0,0 +1,22 @@
++# M-MES T5 任务简报：IAuditable 贴点(WorkOrder/ProductionResult 族)+跨波票收口
++
++## 背景与位置
++M-MES 横切接线波第六任务(计划原文: 「T4 IAuditable: WorkOrder/ProductionResult 贴点」)。先例=M-WMS T6(eb5fb51)与 M-ERP T5(45df1ce+df878f1+f605ce0——**注意它经历两轮返工,教训=豁免裁决必须逐实体字段级实查,禁止按实体类别/头明细套先例**)。拦截器机制: CP6Context ChangeTracker.Entries<IAuditable>() 泛型遍历,纯标记接口零迁移。
++
++## 需求
++1. 圈定贴点实体(CP6.Entity/DomainModels/Mes/ 全目录实查):
++   - WorkOrder(工单)头/相关明细
++   - ProductionResult(报工/生产实绩)
++   - 其余 MES 实体(Machine/WorkCenter/ProcessCostRate/DefectRecord/QualityInspection/Oee 快照等)按**「实含货币/定价字段,或不可逆生产事实记录」即纳入**口径逐实体裁决——ProcessCostRate(工序费率,直喂成本归集,T1 已定高危)显然应纳入;高频追加型(如 OEE 快照/机台遥测类)可豁免但须源码注释+负测试坐实。
++   - **逐实体裁决表**(纳入/豁免+字段级证据)是交付物核心,每行给出「查过哪些字段」。
++2. **跨波票收口**: `CP6.Entity/DomainModels/Wms/PlateMoldStock.cs` 含 MadeCost decimal(18,2) 未贴 IAuditable(M-WMS T6 未圈入,M-ERP 终审记票指定本波顺手收)——单行补贴+一条真值测试。
++3. 每实体单行追加 IAuditable,零其他改动、零迁移、零业务逻辑改动。
++4. 测试: MesAuditTests 照 ErpAuditTests 形状——真值断言(EntityName/Field/Old/New)含负测试(豁免实体不产日志)。
++5. 若发现贴点引发迁移,停手报 DONE_WITH_CONCERNS/BLOCKED。
++
++## 验证与提交
++- `dotnet test --filter MesAuditTests` 全绿;全量(基线 1731)不许跌;git status 无 Migrations 新文件。
++- 单 commit 即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\mes-t5-report.md`(逐实体裁决表+字段级证据+TDD 证据)。回复只返回: 状态、commit sha、一行测试结论、裁决计数一行(纳入N/豁免M)、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/mes-t5-report.md b/.superpowers/sdd/mes-t5-report.md
+new file mode 100644
+index 0000000..ddd1d91
+--- /dev/null
++++ b/.superpowers/sdd/mes-t5-report.md
+@@ -0,0 +1,55 @@
++# M-MES T5 执行报告：IAuditable 贴点(WorkOrder/ProductionResult 族)+跨波票收口
++
++分支 feat/m-mes-crosscutting。机制=CP6Context `ChangeTracker.Entries<IAuditable>()` 泛型遍历纯标记接口，
++零迁移零业务改动。裁决口径=**逐实体字段级实查**：实含货币/定价字段，或不可逆生产事实记录 → 纳入；
++纯派生/計数器高频写 → 豁免(源码注释+负测试坐实)。
++
++## 逐实体裁决表(字段级证据)
++
++| # | 实体 | 查过的关键字段(源码实读) | 裁决 |
++|---|------|--------------------------|------|
++| 1 | WorkOrder(指図头) | ProductionQty/CompletedQty/DefectQty `decimal(21,8)`(完了/不良累计=不可逆生产事实)、ActualStartDate/ActualEndDate(实绩时刻)、Status(指图状态机 0-9) | **纳入** |
++| 2 | WorkOrderProcess(工程明细) | ActualMachineHour/ActualLaborHour `decimal(21,8)`(注释"用于制造费用/直接人工"=**直喂成本**)、GoodQty/DefectQty、IsHourOverridden(工时覆盖标志) | **纳入** |
++| 3 | WorkOrderMaterial(材料明细) | ActualQty `decimal(21,8)` 実績消費数量(不可逆消耗事实→喂材料成本)、PlanQty | **纳入** |
++| 4 | ProductionResult(报工实绩) | GoodQty/DefectQty(良品/不良报工事实)、LaborHour/MachineHour `decimal(21,8)`(**喂成本工时**)、ActualStartTime/EndTime | **纳入** |
++| 5 | ProcessCostRate(工序费率) | LaborRate/OverheadRate `decimal(21,8)` **元/h 货币费率**(T1 定高危、直喂成本归集)、ValidFrom/ValidTo(生效区间) | **纳入** |
++| 6 | WorkCenter(工作中心主数据) | DailyCapacityHours `decimal(21,8)`(CRP 产能地基)、WgCd/Enable——费率与产能挂载点主数据 | **纳入** |
++| 7 | Machine(设备主数据) | StandardCycleSec `decimal(10,4)`/CapacityPerHour `decimal(10,2)`(喂 OEE 性能计算)、Status、维护日期——低频主数据 | **纳入** |
++| 8 | MachineDowntime(停止記録) | StartTime/EndTime(停止事实时刻)、DowntimeMinutes、DowntimeType/ReasonCd——OEE 可用率**源**数据、不可逆停止事实、有生命周期更新(start→end) | **纳入** |
++| 9 | DefectRecord(不良品記録) | DefectQty `decimal(21,8)`(不良数)、Status(处置状态机 0起票→3完了)、CauseAnalysis/CorrectiveAction(是正处置留痕)、DueDate/CompletedDate | **纳入** |
++| 10 | DefectCategory(不良分類マスタ) | CategoryCd/DetailCd/CategoryName/DetailName(分类主数据)、SortOrder、ActiveFlg——低频分类主数据留痕 | **纳入** |
++| 11 | QualityInspection(検査ヘッダ) | OverallResult(合格/不合格判定)、DispositionAction(処置:手直し/返品/廃棄)、InspectionQty/SampleQty `decimal(21,8)`——质量判定事实 | **纳入** |
++| 12 | QualityInspectionItem(検査明細) | MeasuredValue/StandardValue/UpperLimit/LowerLimit `decimal(21,8)`(計測值事实)、Result(項目判定) | **纳入** |
++| 13 | InspectionTemplate(検査テンプレート) | StandardValue/UpperLimit/LowerLimit `decimal(21,8)`(检查公差**规格主数据**,改容差=质量关键)、RequiredFlg/ActiveFlg | **纳入** |
++| 14 | **PlateMoldStock**(WMS 印版・木型 在庫, 跨波票) | **MadeCost `decimal(18,2)` 製作費(货币)**、UsedShots/MaxShots(寿命)、Status——M-WMS T6 漏圈,本波顺手收 | **纳入** |
++| — | OeeDaily(OEE 日次集計) | Availability/Performance/Quality/Oee `decimal(8,4)`(%)+GoodQty/DefectQty——**全字段由 MachineDowntime+ProductionResult 重算派生**,无源真值、日频重算,无货币 | **豁免**(源码注释+负测试) |
++| — | MesSequence(採番管理) | CurrentValue `int`——**純採番計数器**每次採番自增,无货币/无业务事实字段,高频写(`BaseEntity` 非 BizEntity) | **豁免**(源码注释+负测试) |
++
++**裁决计数：纳入 14(13 MES + 1 WMS PlateMoldStock)，豁免 2(OeeDaily/MesSequence)。**
++
++### 豁免与「按类别套先例」防错说明
++- ERP 两轮返工教训=豁免含货币字段实体。本波逐实体全字段扫过，**两个豁免实体均实读确认零货币字段**：
++  OeeDaily 仅有 %率与数量派生值；MesSequence 仅 int 计数器。均非「未实查就豁免」。
++- 未按「主数据一律豁免/头明细一律纳入」套壳：主数据 Machine/WorkCenter/DefectCategory/InspectionTemplate
++  逐个查字段后判定其含产能/费率挂载/公差规格/分类等关键留痕价值而纳入(与 ERP ProductMaster/BusinessPartner
++  主数据入审计一致)；派生 OeeDaily 虽含数量字段仍豁免(派生非源)。
++
++## TDD Evidence
++- **RED**: 写 `CP6.Tests/Mes/MesAuditTests.cs`(18 用例)后先跑 → `Failed: 16, Passed: 2`
++  (16 正测试红=实体未贴 IAuditable；2 负测试 OeeDaily/MesSequence 本就无审计行=先绿)。
++- **GREEN**: 贴 IAuditable 于 13 MES 实体 + PlateMoldStock 后 → `Passed: 18, Failed: 0`。
++- 用例形状照 ErpAuditTests：真值断言 EntityName + EntityKey(op1) / 字段级 Old→New diff(op2)。
++  货币键点覆盖：ProcessCostRate.LaborRate 30→35、WorkOrderProcess.ActualMachineHour 2→3.5、
++  ProductionResult.LaborHour 1→2.25、PlateMoldStock.MadeCost 30000→32000、
++  InspectionTemplate.UpperLimit 100→102、QualityInspectionItem.MeasuredValue 10.0→10.5。
++- 负测试真实：OeeDaily create + MesSequence create→update 后 `Assert.Empty(Sys_FieldAuditLogs)`。
++
++## 验证
++- `dotnet test --filter MesAuditTests` → 18/18 绿。
++- 全量 → `Passed: 1749, Failed: 0, Skipped: 5`(基线 1731 + 18 新用例，无跌落)。
++- `git status` → 仅 16 实体单行改 + 1 新测试文件，**无 Migrations 新文件**(纯标记接口零迁移)。
++
++## Concerns
++- **DefectCategory 是最薄纳入项**(纯分类 lookup 码表)。按「主数据留痕+过度纳入低频主数据零害」原则纳入，
++  且与 ERP 主数据入审计口径一致；若审查者倾向 lookup 码表豁免，可改判但需补负测试——非货币非事实，改判不违 ERP 教训。
++- MachineDowntime 归为「生产事实源」而纳入(区别于 OeeDaily 派生)；若审查者视其为遥测类可再议，但其为手工录入的停止事件源数据、非高频遥测。
+diff --git a/.superpowers/sdd/mes-t6-brief.md b/.superpowers/sdd/mes-t6-brief.md
+new file mode 100644
+index 0000000..cb958ad
+--- /dev/null
++++ b/.superpowers/sdd/mes-t6-brief.md
+@@ -0,0 +1,18 @@
++# M-MES T6 任务简报：测试补网(报工状态机 / PlanningBoard 排产改期)
++
++## 背景与位置
++M-MES 横切接线波末任务(计划原文: 「T5 测试补网(审计 T5/#7 零→有): 报工状态机(开始/中断/完工/全工序完工触发入库)、PlanningBoard 排产/改期核心用例。(反冲的测试在 F1 包。)」)。先例=M-WMS T7(653a7fc)/M-ERP T6(a5551de): 真值锚定,期望值先手算再验,服务算错会红,零生产改动。
++
++## 需求
++1. 先盘点既有覆盖: grep CP6.Tests 中 ProductionResult/WorkOrder/PlanningBoard/反冲(F1 波 C.1/C.2 已有 justCompleted/反冲/CostCollect 链测试)相关既有用例,新用例不得重复——**反冲/成本归集链明确排除**(F1 已覆盖),本任务聚焦状态机与排产本身。
++2. **报工状态机**: ProductionResultService 的 开始(Start)/中断(Suspend)/再開(Resume)/完工(Complete) 状态流转核心用例——非法流转被拒(如未开始直接完工/重复开始)、合法流转落库状态与时间戳、**全工序完工触发入库**(Complete 最后工序→InboundService 生产入库路径,断言到入库单/库存侧真值,若该链在 F1 测试已锚定则只补状态机侧缺口并在报告说明)。
++3. **PlanningBoard 排产/改期**: Reschedule/AutoArrange 核心用例——改期落库(计划日期/机台变更真值)、边界(改到过去日期/冲突机台的行为,以服务实际语义为准,手算期望)。
++4. 断言=手算期望值,禁套套逻辑;发现真实缺陷不修,记 concerns。
++5. 零生产改动;用例量级照 M-WMS T7(5 用例级,以覆盖质量为准)。
++
++## 验证与提交
++- 焦点 filter 全绿;全量(基线 1749)不许跌。
++- 单 commit 即 push。
++
++## 报告契约
++详细报告写入 `C:\CP6\.superpowers\sdd\mes-t6-report.md`(既有覆盖盘点+逐用例输入→手算→期望表)。回复只返回: 状态、commit sha、一行测试结论、concerns、报告路径(15 行内)。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/mes-t6-report.md b/.superpowers/sdd/mes-t6-report.md
+new file mode 100644
+index 0000000..0b7f1b6
+--- /dev/null
++++ b/.superpowers/sdd/mes-t6-report.md
+@@ -0,0 +1,155 @@
++# M-MES T6 実施報告：測試補網（報工状態機 / PlanningBoard 排産改期）
++
++- 分支：`feat/m-mes-crosscutting`　基線：1749 緑
++- 結果：焦点 9 用例 全緑 → 全量 **1758 passed / 5 skipped**（＝1749 + 9、基線不跌）
++- 生産改動：**ゼロ**（新規テスト 2 ファイルのみ）
++  - `CP6.Tests/Mes/ProductionResultStateMachineTests.cs`（状態機 5 用例）
++  - `CP6.Tests/Mes/PlanningBoardServiceTests.cs`（排産改期 4 用例）
++
++---
++
++## 1. 既有覆盖盘点（重複回避の根拠）
++
++grep（ProductionResult/WorkOrder/PlanningBoard/Backflush/justCompleted/CostCollect）で既存テストを実読：
++
++| 対象 | 既存テスト | 本 T6 との棲み分け |
++|---|---|---|
++| 反冲（OUT/ISSUE）＋ActualQty 回写＋負在庫＋冪等＋部分失敗重放 | `CP6.Tests/Mes/BackflushTests.cs`（5 用例） | **除外**（F1 波 C.1 で錨定済）。状態機テストは backflush=null で注入せず |
++| 完工→反冲→成本归集→结转（料工費 WIP/FG/VAR 凭証・金額・冪等・2 闸） | `CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs`（6 用例） | **除外**（F1 波 C.2 で錨定済）。同ファイルは `NoOpWmsBridgeHook` を使用＝入庫フック発火契約は未検証 |
++| 工時派生（機時合併/人工累加/覆盖/中断控除） | `CP6.Tests/ProductionResultHourTests.cs`（4 用例） | **除外**（A2 で錨定済）。本 T6 は状態遷移・時間戳のみ |
++| 完成品入庫の在庫側真値（`InboundService.CreateFinishedGoodsFromWorkOrderAsync` → W01 完成品在庫・冪等） | `CP6.Tests/WmsErpClosedLoopTests.cs`（line 134-137） | **在庫側は錨定済**。本 T6 は「状態機が末工程完了で入庫フックを正しい良品累計で一度だけ発火するか」の**状態機側缺口のみ**を spy で補完 |
++| 報工状態機（開始/中断/再開/完了・非法/合法流転・トリガ発火） | **なし（審計 #7＝ゼロ）** | ← 本 T6 で新規 |
++| PlanningBoardService（Reschedule/AutoArrange） | **なし（審計 #7＝ゼロ）** | ← 本 T6 で新規 |
++
++結論：**反冲・成本归集・工時派生・入庫在庫真値は全て既存で錨定済**。本 T6 は状態機の遷移／ガード／トリガ発火契約と、排産改期の落库真値・並び替えロジックに限定し、既存とゼロ重複。
++
++---
++
++## 2. 報工状態機 用例（`ProductionResultStateMachineTests.cs`）
++
++`ProductionResultService.WriteAsync` は明示トランザクションを使うため、DB は `InMemoryEventId.TransactionIgnoredWarning` を抑止した `NewDb()` を使用（F1 テストと同姿勢）。backflush/finBridge は null 注入（F1 で錨定済のため）。
++
++### 用例① Complete_WhenNotStarted_Rejected_NothingPersisted（非法流転）
++- 入力：WO_A（Status=2 発行済）＋ 工程 OP1（ProcessStatus=0 未着手）に対し `CompleteAsync(good=5)`
++- 手算：case4 の先頭 `proc.ProcessStatus != 1` で mutation 前に throw。tx 未 commit → 何も落库しない。
++
++| 断言 | 手算期望 |
++|---|---|
++| 例外 message | `ME-MSG-042` |
++| ProductionResult 件数 | 0 |
++| proc.ProcessStatus | 0（不変） |
++| wo.Status | 2（不変） |
++
++### 用例② Start_WhenAlreadyStarted_Rejected（非法流転：重複開始）
++- 入力：WO_B ＋ OP1（ProcessStatus=1 着手中）に `StartAsync`
++- 手算：case1 先頭 `proc.ProcessStatus != 0` で throw。
++
++| 断言 | 手算期望 |
++|---|---|
++| 例外 message | `ME-MSG-042` |
++| ProductionResult 件数 | 0 |
++| proc.ProcessStatus | 1（不変） |
++
++### 用例③ FullLifecycle_Start_Suspend_Resume_Complete（合法全流転＋時間戳）
++唯一工程 OP1（初期 status0）に Start→Suspend(理由R01)→Resume→Complete(good=8) を順次実行。
++
++| ステップ | proc.ProcessStatus | wo.Status | 時間戳 / 数量 | PR type |
++|---|---|---|---|---|
++| Start | 0→**1** | →**3** InProgress | proc.ActualStartTime=NOW / wo.ActualStartDate=NOW | 1 |
++| Suspend | 1→**3** | →**5** Interrupted | — | 2 |
++| Resume | 3→**1** | →**3** InProgress | — | 3 |
++| Complete(8) | 1→**2** | →**4** Completed（全工程完了） | proc.ActualEndTime=NOW / proc.GoodQty=8 / wo.ActualEndDate=NOW / wo.CompletedQty=8 | 4 |
++
++- PR 合計 **4 件**、type 昇順 = `[1,2,3,4]`。全て断言済（時間戳は `>= t0` 手算下界で検証、套套回避）。
++
++### 用例④ Complete_LastProcess_FiresInboundHookOnce_WithAccumulatedGoodQty（全工程完了トリガ入庫）
++2 工程 OP1/OP2（両者 status1 着手中）、`RecordingWmsBridge` spy 注入。
++
++| 操作 | allDone? | wo.Status | wo.CompletedQty | フック発火 |
++|---|---|---|---|---|
++| Complete(OP1, 10) | OP2 が status1 → **false** | 3 のまま | 0→**10** | 0 回 |
++| Complete(OP2, 7) | OP1=2 & OP2=当該 → **true** | →**4** | 10→**17** | **1 回**：`OnProductionCompletedAsync("WO_D", 17, tester)` |
++
++- 断言：中間工程では spy.Calls=0・wo.Status=3；末工程で spy.Calls=**1**・LastWorkOrderNo="WO_D"・LastGoodQty=**17**（良品累計 10+7）・wo.ActualEndDate 非 null。
++- **状態機側缺口の補完**：既存 F1／端到端テストは `NoOpWmsBridgeHook` を使うため、この「末工程だけ・累計良品数で・一度だけ」発火契約は本 T6 が初めて錨定。入庫先の在庫真値は `WmsErpClosedLoopTests` が別途錨定済（重複回避）。
++
++### 用例⑤ Guards_SuspendNeedsReason_CompleteNeedsPositiveGood（境界ガード）
++- WO_E/OP1(status1) に `SuspendAsync`（理由なし）→ 手算：case2 で proc 変更前に理由空チェック → `ME-MSG-024`。proc.ProcessStatus=1 不変。
++- WO_F/OP1(status1) に `CompleteAsync(good=0)` → 手算：case4 で proc 変更前に `GoodQty<=0` チェック → `ME-MSG-012`。proc.ProcessStatus=1 不変。
++- 両 WO とも PR 0 件。
++
++---
++
++## 3. PlanningBoard 排産/改期 用例（`PlanningBoardServiceTests.cs`）
++
++`RescheduleAsync`/`AutoArrangeAsync` は明示トランザクション不使用のため素の InMemory（`TestHelper.CreateInMemoryContext`）で十分。
++
++### 用例① Reschedule_UnstartedProcess_PersistsNewTimesAndMachine（改期落库真値）
++- 入力：OP1（status0、旧 08:00-10:00、M0）を `Reschedule(2026-08-01 09:00 → 17:00, M9)`
++- 手算：Id 一致 → status0 通過 → start<end 通過 → 3 値上書き。
++
++| 断言 | 手算期望 |
++|---|---|
++| PlanStartTime | 2026-08-01 09:00 |
++| PlanEndTime | 2026-08-01 17:00 |
++| MachineCd | M9 |
++| Modifier | planner |
++
++### 用例② Reschedule_Guards_StartAfterEnd_Started_NotFound（改期3ガード）
++
++| 入力 | 手算期望 message |
++|---|---|
++| status0 工程に start(8/2) > end(8/1) | `ME-MSG-003` |
++| status1（着手中）工程に valid 改期 | `ME-MSG-042`（発行後ドラッグ不可） |
++| 不存在 Id | `ME-MSG-043` |
++
++### 用例③ Reschedule_PastDate_And_MachineOverlap_AreAccepted_NoConflictGuard（境界＝現状仕様 pin）
++- (a) status0 工程を **過去日付 2020-01-01 08:00-10:00** に改期 → 手算：過去日付ガード無し（`start<end` のみ検証）→ **受理**・落库。
++- (b) 同一号機 M1 上で既存工程 A(2026-07-15 08:00-10:00) と**完全重複**する 08:00-10:00 に改期 → 手算：号機衝突検知ロジック無し → **受理**・落库。A も 08:00-10:00 を占有し続ける（重複許容）。
++- **これは缺陷ではなく現状仕様の記録**：サーバは単にドラッグ位置を永続化し、過去/衝突は UI・計画側の責務（§2.3 コメント準拠）。自動衝突回避が要件化された場合の缺口として concerns に記載。
++
++### 用例④ AutoArrange_OrdersByPriorityDeliverySort_PacksPerMachine_SkipsStarted（自動配置真値）
++BaseDate=2026-07-15（baseTime=08:00）、DefaultHoursPerJob=2。
++
++対象工程（status0）：
++
++| 工程 | 所属WO(優先度/納期) | 号機 | Sort | LeadTime | 導出 hours |
++|---|---|---|---|---|---|
++| P_A | WO_HI(3 / 7-20) | M1 | 1 | null | default **2** |
++| P_C | WO_HI(3 / 7-20) | M2 | 2 | 1 日 | (int)max(1, 1×8)=**8** |
++| P_B | WO_LO(1 / 7-18) | M1 | 1 | null | default **2** |
++| P_D | WO_HI(3) | M1 | 3 | — | **対象外**（status1 着手済） |
++
++- 並び（優先度DESC→納期ASC→Sort）＝`[P_A, P_C, P_B]`（WO_HI 群が先、群内 Sort、最後に WO_LO）。
++- 号機別カーソル配置（初期 08:00）：
++
++| 工程 | 号機 | 開始 | 終了 | 号機 ptr 更新 |
++|---|---|---|---|---|
++| P_A | M1 | 08:00 | 10:00 | M1→10:00 |
++| P_C | M2 | 08:00 | 16:00（8h） | M2→16:00 |
++| P_B | M1 | 10:00（P_A の後に連続） | 12:00 | M1→12:00 |
++
++| 断言 | 手算期望 |
++|---|---|
++| changed | 3 |
++| P_A | 08:00-10:00 |
++| P_C | 08:00-16:00 |
++| P_B | 10:00-12:00 |
++| P_D | PlanStart/End とも null（不変） |
++
++全て一致。服務出力＝手算。
++
++---
++
++## 4. Self-review
++
++- 断言は全て手算固定値（状態値・時間戳・数量・並び位置・changed 件数・例外 message）。套套逻辑（サービス出力を再計算して同値比較）なし。時間戳は `>= t0` 手算下界で検証。
++- 既存カバレッジとゼロ重複（§1 の盘点根拠）。反冲・成本・工時・入庫在庫真値は全て除外。
++- 状態機：非法流転（②未開始完了/②重複開始）＋合法全流転（③）＋全工程完了トリガ入庫（④）＋境界ガード（⑤）を網羅。
++- PlanningBoard：改期落库真値（①）＋3ガード（②）＋境界現状仕様 pin（③）＋自動配置並び替え真値（④）。
++- 生産コード改動ゼロ。焦点 9/9 緑、全量 1758 緑（基線 1749 不跌）。
++
++## 5. Concerns（缺陷は修正せず記票）
++
++1. **[軽微・仕様記録] `RescheduleAsync` に過去日付ガード・号機衝突検知が無い**（用例③で pin 済）。現状は「サーバはドラッグ位置を永続化するだけ、衝突/過去は UI・計画側の責務」という設計。もし将来「同一号機の時間重複を自動回避／過去日付を拒否」が要件化されれば、ここが缺口になる。現時点では **by-design と判断**（§2.3 コメント準拠）、缺陷として修正せず記票のみ。
++2. **[観察] `AutoArrange` は既存の他工程の計画時間を無視して号機カーソルを baseTime から再構築する**。status0 の対象工程のみを並べ直すため、同一号機に既に status0 でない（着手中等）工程が別時間帯を占有していても、その占有を考慮せず 08:00 から詰める。用例④では対象外工程を検証済だが、「着手中工程の実占有と重ならないか」は保証しない。これも現状は計画者の目視前提の設計と解釈。缺陷判定は保留、記票のみ。
+diff --git a/.superpowers/sdd/progress.md b/.superpowers/sdd/progress.md
+index 077307d..c85cdb8 100644
+--- a/.superpowers/sdd/progress.md
++++ b/.superpowers/sdd/progress.md
+@@ -184,10 +184,25 @@ M-ERP T4: complete (commit acf5d1c, Spec ✅ + Approved[sonnet审,三具名风
+ M-ERP T5: complete (commits 45df1ce+df878f1+f605ce0两轮修复, Approved after fixes[sonnet审×3]; 首轮Important=「头为主」豁免未做字段级实查,5实体实含货币字段被漏(OrderProcess采购/固定单价/OrderMaterial支给单价/QuotationDetail单价+金额[对客报价书行级]/ProductProcess/ProductMaterial)→补贴+口径统一「实含货币/定价字段即纳入」; 二轮同类抓漏=PlateMold「实查非定价」失实(EstimateAmount/DecisionAmount/PurchaseAmount三货币字段:103-105)→纳入; 终态纳入17/豁免5(FscChecklist追加型/OrderProcessNote/EstimateCalcProcess/QuotationCalc/ProductCoProduct均字段级坐实); 全程纯标记单行零迁移零业务改动; 拦截器ChangeTracker.Entries<IAuditable>泛型遍历天然生效,RowVersion并发令牌不污染diff[捕获在SaveChanges前IsModified=false]; ErpAuditTests 10用例真值断言(Field/Old/New)含负测试; 1709绿[1699+10]. 🔴跨波票(复审发现): Wms域PlateMoldStock含MadeCost decimal(18,2)未贴IAuditable——M-WMS T6当时未圈入,终审triage. Minor: 报告「21类全覆盖」系文件数措辞/「全仓glob」应为Erp域内)
+ M-ERP T6: complete (commit a5551de, Spec ✅ + Approved[sonnet审,7用例期望值全部对生产算式独立重算吻合——非跑服务抄输出]; Q1创建12×150+3×2000=7800/Q3订正软删除排除合計/O1-O3価格来源分岐+null兜底边界/O4批量两行算价+审批差戻ApprovalStatus=1+WF计数2; 断言全字面常量改系数即红; 与ErpAuditTests(直写字段验审计)/OrderServiceCancelTests(状态机)零重复经逐一核对; 零生产改动; 1716绿[1709+7]. Concern核实属实且规避精确: BatchUpdatePriceAsync的ExecuteUpdateAsync(セット単価一括伝播)relational专属InMemory不可译,O4只设IndividualUnitPriceAfter精确避开且仍覆盖该接口其余真实计算与副作用——非借口; 记票: 该分支留待relational集成测试[UseSqlite/TestContainers]. M-ERP T1-T6 全部完成并逐任务过审, 下=fable全支终审)
+ M-ERP 全支终审: complete (fable终审 With fixes→必修739d695→Ready; 四层键一致性46端点全量对账零失配[真相源↔35贴点↔30元组四方↔MenuId锚定三方]; Program.cs启动链顺序正确且逐一排除Fin/Pur局部回填块相互作用[无M-WMS同类时序命门]; 测试网33新测试互相咬合实测绿; 无Critical; Important×3全记票放行: ①ExecuteUpdateAsync审计盲区(単価訂正SetUnitPrice一括伝播OrderService:992+级联软删:354/ProductService:502零审计行) ②Sys_FieldAuditLog Added全字段快照无retention(结合磁盘事故史记运维观测) ③DoD真库冒烟入部署清单(两高危端点403/216-220可达/段占用预查); 必修=T4注释纠偏+真相源§六.2勘误指针; 票据triage: 关闭6/记票4(含跨波PlateMoldStock+前端v-permission UX票)/用户裁决1; 🔴AllowAnonymous(EstimateCalc.Calculate)终审建议撤销匿名改[Authorize](定价主数据公网可探测)待用户裁处; 跟踪票全落档plan文末M-ERP完成记录小节; 全量1716绿合并门过)
+ M-ERP 合并+部署: complete (main=82af17b --no-ff已push, 分支留远端; cp6-api镜像重建部署[宿主publish→删Local/Dev配置→薄镜像21.6s→compose up]; 线上实证: 应用Application started无错/216-220菜单erp-*键落库/Sys_RoleAction ERP键120行=30元组×4租户精确/两高危端点无认证403(POST orders/{no}/cancel + PUT price-correction/batch)/admin+CSRF放行(cancel→200业务层受注不在/price-correction→400模型校验层——权限穿透到下层); 部署前216-220段占用预查=空(终审Minor#7). DoD真库冒烟闭环. M-ERP 波完成, 下一波=M-MES. 悬案待用户: AllowAnonymous(EstimateCalc.Calculate)终审建议撤销匿名)
+ # ═══ 全部8波编码完成(B/0/A/C/F/D/E/G), 1589→1678绿. 下=fable全支终审→合并→部署 ═══
+ FIN 全支终审: complete (fable终审 With fixes→修复361729d+1aece34→复核Fixed+Ready=Yes; 四大接缝全景过[归属零双记显式映射逐值核/幂等/best-effort全点火SaveChanges后/借贷恒等AutoPostAsync全覆盖]; 无Critical; Important#1反冲行间失败锁死→行级快照幂等+即时落库+集约抛保C.2闸[复核演算无双记只偏跳过]; #2年结v2缺投空财年分支锁3103→残额补投YC-{fy}-RE+三处try/finally[成功路径不误恢复]; #3 COGS腿生产不可达升优先级票[收入可达COGS缺失→利润高估, interim建议EstimatedCost回退源]; #4 ReverseAsync双重负记系统性[全仓Payment/Receipt/AssetDisposal中招, 系既有root cause记M-FIN]; #5 PostingRule仅默认租户vs COA回填逐租户不对称[B1/C1租户Failed事件噪音, 记M-FIN]; 微残余记票: 同料跨工序续传粒度/年结残态+期间插记双故障组合[均可自愈欠记不双记]; 全量1680绿[基线1589→1680]. 票池裁选全表在终审报告. M-FIN收口票打包: ReverseAsync root fix/PostingRule逐租户/AutoPost直投查重兜底/close-reopen租户块. 部署三门: C.3存量成本单确认零/磁盘余量/非默认租户Failed事件观察)
+ FIN G.1追补: complete (COA回填码单补年结依赖三行[CN 3103本年利润/3104未分配利润+INTL 3300 Retained Earnings]——上会话遗留TDD红灯[测试先行实现未落]; 模板属性单源不变, 幂等/只插缺失语义不变; 全量1683绿[1680+3])
+ # ═══ FIN 部署完成 2026-07-12 (main=11f9978 镜像c6efe55a5804) ═══
+ FIN 部署: complete (publish→删Local/Dev配置→薄镜像build 488MB→compose up cp6-api; 启动日志Application started+迁移无错; 种子线上实证=DEFAULT租户3103本年利润/3104未分配利润两行Creator=system[11f9978新码单当场生效]; B1/C1无COA正确跳过[不凭空建]. 三门: ①C.3存量成本单=1条非零→CS-2026-06-00001/WO2026060003/Status=2已结转JournalEntry非空/Material全零/2026-06-18 admin建=6月QA遗留, 已结不可重结风险低, 记票待用户裁处 ②磁盘=4.49GB✅(清理见下) ③Failed事件=0[SKIPPED 4/SUCCESS 7], 持续观察B1/C1)
+ # 🔴运维事故与治本 2026-07-12: 7/11 12:16 WU下载2.8GB→C盘0字节→WSL swap vhdx I/O error→dockerd 22:40崩→全栈停机~2h(且WSL 15:20曾重启致keep-alive丢失, 每条wsl命令唤醒VM形成弹跳假象). 处置: WU缓存cmd rd清除(2848→42MB)+旧Claude CLI版本+npm缓存+diskpart compact vhdx(10.92→10.46GB), C盘0→4.49GB; keep-alive重拉+新增计划任务CP6-WSL-KeepAlive-Watchdog每5min幂等自愈(原ONLOGON任务无人登录不触发是单点). 遗留: pagefile 6GB可缩(需重启)/50GB系统盘结构性太紧建议扩容
++
++# ═══ AllowAnonymous 撤销 2026-07-12(用户裁决, main=ba33712) ═══
++撤匿名: complete (EstimateCalc.Calculate删AllowAnonymous回落类级Authorize不贴权限键仍留只读豁免; T4测试改写为防回潮断言(不再挂匿名+仍无RequirePermission+仍在豁免); 真相源§六#3记裁决; 前端grep=走共享axios withCredentials不破坏; 1716绿计数不变; 镜像立即重建部署, 线上验证calculate无认证403生效)
++
++# ═══ M-MES 横切接线波(branch=feat/m-mes-crosscutting, base=ba33712)2026-07-12 ═══
++# 依据: docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md M-MES段 + docs/00-横切接线规范.md; 基线1716绿
++# 任务重排(照M-ERP): T1权限键清单→T2菜单MenuKey锚定+孤儿路由→T3a贴RequirePermission→T3b逐租户种子→T4反射测试→T5 IAuditable(WorkOrder/ProductionResult+顺手收跨波票Wms PlateMoldStock.MadeCost)→T6测试补网(报工状态机/PlanningBoard排产改期; 反冲测试F1已有)
++# 教训前置: T5审计豁免须字段级实查(M-ERP两轮返工); Mes目录实有11控制器(计划口径10, 以实扫为准)
++M-MES T1: complete (commit f7a70cb, Spec ✅ + Approved[opus审,独立全量重数11控制器30端点零偏差]; 30非GET=28真写+2豁免(PlanAchievement Summary/ExportCsv全类AsNoTracking读证)/10 menu-key/26资源键去重/9状态键/2高危(oee:recalculate写库不豁免·process-cost-rate提级经CostCollectService:100直喂完工成本归集佐证成立留降级出口); 计划点名三高危(工单强制关闭/报工修正/报废判定)实扫无直接HTTP端点系盘点差异[WorkOrderService.CancelAsync:351存在但未暴露,受erp-order:cancel管辖]; 真相源=docs/seeds/mes-permission-keys.md. 🔴T2硬前置(审查坐实): ①回填块:894在MES菜单插入:1519-1608之前→洁净部署首启MenuKey=null全403,须显式MenuKey前置 ②菜单310 RoutePath=/mes/machine-list回填得mes-machine-list≠表内mes-machine错配须显式赋值. 利好: RoutePath带mes/前缀+零孤儿路由(15前端页全映射). Minor: §六.1行号近似:1511实为:1519/action新词7个系MES域正当扩展)
++M-MES T2: complete (commit db4b912, Spec ✅ + Approved[opus审,五具名风险全核过]; 10键与真相源§二逐字双向一致+6非锚定行留null与锚定表一致; 接线Program.cs:850确在回填块:902前无条件路径[硬前置①解除]; 矫正块按MenuId定位(:388)命中存量mes-machine-list错配行——按Key找会漏,实现规避了该陷阱,测试真模拟错配态预置310再断言纠回[硬前置②解除]; 唯一索引安全(keyed.Count==Distinct==10)+回填派生*-list后缀键不与锚定键碰撞; MenuId 300-315全仓grep无跨模块碰撞; 既有:1518+ Add块含RoleMenu嵌套在判存守卫内,MesMenuSeed先插则整块跳过幂等成立; 交付三件套齐(Seed+anchor md+SQL对照声明C#正本); MesMenuSeedTests 6/6 RED→GREEN; 1722绿[1716+6]. Minor: SQL对照仅UPDATE不含缺行补建[头注已声明作用域]/接线注释:894实为:902行号漂移)
++M-MES T3a: complete (commit 35e90a7, Spec ✅ + Approved[opus审,28全量双向核对零偏差非抽样]; 高危mes-production-result:complete+mes-process-cost-rate:edit未降级; 四归并全照真相源§五(resume→suspend/CloseDowntime→downtime/ExpandFromOrder→add/Upsert→edit)无自行归并; PlanAchievement/MesDashboard合规缺席; 9文件=9 using+28属性零方法体改动(ProcessCostRate两处单行方法排版拆行无功能影响); 1722绿持平)
++M-MES T3b: complete (commit 38dad3e, Spec ✅ + Approved[opus审]; 三数闭环28→25→25独立grep证实[恰3组重复: work-order:add(:50/:114)/production-result:suspend(:47/:52)/machine:downtime(:94/:106); Upsert→edit系改名非去重经裁定]; 元组三面一致(种子Actions/测试ExpectedTuples/SQL)双向相等漏0幽灵0; MenuId 9键逐行对锚定表无错配[plan-achievement只读正确排除,覆盖9键非10自洽]; 四要件源码级证真[StampTenant仅盖Guid.Empty=CP6Context:2251实证/IgnoreQueryFilters在查重上]; oracle独立硬编码非引用生产常量; 接入紧随MesMenuSeed无条件路径; 1727绿[1722+5]. Minor: 后续加端点须同步oracle提示)
++M-MES T4: complete (commit f8200ef, Spec ✅ + Approved[sonnet审,四风险全独立实证]; discovery=Mes命名空间11控制器grep逐一对应非空扫; fail-closed=Assert.Equal(11/28/2)硬编码收口+offenders==0+互斥场景显式捕获+豁免防腐用例(改名/被贴/被删主动红); 13词action集逐词相等; 反向验证删WorkOrder.Create→双闸联动红→恢复绿与代码自洽; 基类claim属实(11控制器全直接ControllerBase,DeclaredOnly前提成立,未重蹈ERP注释失实); 仅新增测试零生产改动; 1731绿[1727+4]. Minor: 4 Fact少于ERP版5系ERP第5例为AllowAnonymous域专属非缺项)
++M-MES T5: complete (commit 01b953d, Spec ✅ + Approved[sonnet审,一次过——M-ERP教训未复现]; Mes目录15文件全量对账=13纳入+2豁免零漏扫; 豁免OeeDaily(全字段实读零货币,Good/DefectQty系ProductionResult同源派生值)/MesSequence(纯计数器)均源码注释+负测试坐实; 跨波票收口=Wms PlateMoldStock.MadeCost单行贴+30000→32000真值测试[M-ERP终审票④关闭]; 16处hunk纯标记单行零迁移; 测试DiffRow与拦截器FieldChange字段名对齐,审查者独立复跑18/18; 1749绿[1731+18]. Minor记档: DefectCategory/MachineDowntime归类偏宽系无害过度纳入方向,供后续波口径参考)
++M-MES T6: complete (commit 8fae0a1, Spec ✅ + Approved[sonnet审,真值全独立复算吻合]; 状态机5用例(非法流转拒绝断言服务字面ME-MSG-042/024/012/003/043错误码/全流转落库状态+时间戳/末工序完了spy锁参数真值WO_D+良品17+Calls==1非仅调用与否)+PlanningBoard 4用例(改期落库真值/三守卫/现状pin/AutoArrange三段配置手算08:00-16:00逐段吻合); 零重复经核实(WorkOrderCompleteCostFlow全程NoOp桥未验发火契约/WmsErpClosedLoop仅单工序——多工序发火契约系真缺口非重复); 零生产改动; 1758绿[1749+9]. 🔴记票(审查裁定为真实缺口待产品裁决,非by-design): ①RescheduleAsync无过去日期/号机冲突检知(PlanningBoardService:125-145仅三道校验) ②AutoArrange不避已占用时段(machinePointer每次从baseTime空白重建:174-195). Minor: 报告by-design归因引§2.3过度解读[规格原文无此条]. M-MES T1-T6全部完成, 下=fable全支终审)
+diff --git a/CP6.Entity/DomainModels/Mes/DefectCategory.cs b/CP6.Entity/DomainModels/Mes/DefectCategory.cs
+index 2dd9a2b..05f0bbd 100644
+--- a/CP6.Entity/DomainModels/Mes/DefectCategory.cs
++++ b/CP6.Entity/DomainModels/Mes/DefectCategory.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 不良分類マスタ（M_DefectCategory / ME-M002）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §7.1 / §9 No.9
+ /// 業務複合 PK：CATEGORY_CD + DETAIL_CD
+ /// 例：D01-寸法不良 / 巾寸法外れ
+ /// </remarks>
+ [Table("M_DefectCategory")]
+-public class DefectCategory : BaseBizEntity
++public class DefectCategory : BaseBizEntity, IAuditable
+ {
+     /// <summary>大分類CD（PK1、D01〜D07）</summary>
+     [Required, MaxLength(10)]
+     public string CategoryCd { get; set; } = string.Empty;
+ 
+     /// <summary>小分類CD（PK2）</summary>
+     [Required, MaxLength(10)]
+     public string DetailCd { get; set; } = string.Empty;
+ 
+     /// <summary>大分類名</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/DefectRecord.cs b/CP6.Entity/DomainModels/Mes/DefectRecord.cs
+index a015557..7c4bea8 100644
+--- a/CP6.Entity/DomainModels/Mes/DefectRecord.cs
++++ b/CP6.Entity/DomainModels/Mes/DefectRecord.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 不良品記録（MSBBME080）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.7 T_DefectRecord
+ /// 業務 PK：DEFECT_NO（DFYYYYMMDD-NNNN）
+ /// ステータス：0=起票済み 1=分析中 2=是正中 3=完了
+ /// </remarks>
+ [Table("T_DefectRecord")]
+-public class DefectRecord : BaseBizEntity
++public class DefectRecord : BaseBizEntity, IAuditable
+ {
+     /// <summary>不良NO（業務 PK、DFYYYYMMDD-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string DefectNo { get; set; } = string.Empty;
+ 
+     /// <summary>指図NO（FK）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/InspectionTemplate.cs b/CP6.Entity/DomainModels/Mes/InspectionTemplate.cs
+index 56beaf7..2d71e90 100644
+--- a/CP6.Entity/DomainModels/Mes/InspectionTemplate.cs
++++ b/CP6.Entity/DomainModels/Mes/InspectionTemplate.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 検査項目テンプレート（M_InspectionTemplate）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.8
+ /// 業務複合 PK：TEMPLATE_CD + ITEM_SEQ_NO
+ /// </remarks>
+ [Table("M_InspectionTemplate")]
+-public class InspectionTemplate : BaseBizEntity
++public class InspectionTemplate : BaseBizEntity, IAuditable
+ {
+     /// <summary>テンプレートCD（PK1）</summary>
+     [Required, MaxLength(20)]
+     public string TemplateCd { get; set; } = string.Empty;
+ 
+     /// <summary>項目順序（PK2）</summary>
+     public int ItemSeqNo { get; set; }
+ 
+     /// <summary>テンプレート名</summary>
+     [MaxLength(100)] public string? TemplateName { get; set; }
+diff --git a/CP6.Entity/DomainModels/Mes/Machine.cs b/CP6.Entity/DomainModels/Mes/Machine.cs
+index 776ecb3..66b61bc 100644
+--- a/CP6.Entity/DomainModels/Mes/Machine.cs
++++ b/CP6.Entity/DomainModels/Mes/Machine.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 設備マスタ（号機）
+ /// </summary>
+ /// <remarks>
+ /// 業務 PK：MachineCd
+ /// 1 設備 → N 停止記録(T_MachineDowntime) / N OEE 日次(T_OeeDaily)
+ /// </remarks>
+ [Table("M_Machine")]
+-public class Machine : BaseBizEntity
++public class Machine : BaseBizEntity, IAuditable
+ {
+     /// <summary>設備CD（業務 PK）</summary>
+     [Required, MaxLength(20)]
+     public string MachineCd { get; set; } = string.Empty;
+ 
+     /// <summary>設備名</summary>
+     [Required, MaxLength(100)]
+     public string MachineName { get; set; } = string.Empty;
+ 
+     /// <summary>設備種別（汎用マスタ：印刷機/トムソン/グルア/貼合機 等）</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/MachineDowntime.cs b/CP6.Entity/DomainModels/Mes/MachineDowntime.cs
+index 683602b..fdbf4d6 100644
+--- a/CP6.Entity/DomainModels/Mes/MachineDowntime.cs
++++ b/CP6.Entity/DomainModels/Mes/MachineDowntime.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 設備停止記録
+ /// </summary>
+ /// <remarks>
+ /// 業務 PK：DowntimeNo（DTyyyyMMdd-NNNN）
+ /// OEE 可用率計算の元データ
+ /// </remarks>
+ [Table("T_MachineDowntime")]
+-public class MachineDowntime : BaseBizEntity
++public class MachineDowntime : BaseBizEntity, IAuditable
+ {
+     /// <summary>停止記録NO（業務 PK、DTyyyyMMdd-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string DowntimeNo { get; set; } = string.Empty;
+ 
+     /// <summary>設備CD（FK → M_Machine.MachineCd）</summary>
+     [Required, MaxLength(20)]
+     public string MachineCd { get; set; } = string.Empty;
+ 
+     /// <summary>関連 指図NO（任意。停止が指図実行中に発生した場合）</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/MesSequence.cs b/CP6.Entity/DomainModels/Mes/MesSequence.cs
+index a700d44..7509a9c 100644
+--- a/CP6.Entity/DomainModels/Mes/MesSequence.cs
++++ b/CP6.Entity/DomainModels/Mes/MesSequence.cs
+@@ -7,20 +7,22 @@ namespace CP6.Entity.DomainModels.Mes;
+ /// MES採番管理
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.10 T_MesSequence
+ /// 業務複合 PK：SEQ_KEY + SEQ_DATE
+ /// 例：('WO', '2026-05-15') → 0042
+ ///     ('PR', '2026-05-15') → 0011
+ ///     ('QC', '2026-05-15') → 0003
+ ///     ('DF', '2026-05-15') → 0001
+ /// </remarks>
++// [审计豁免] 純採番計数器：CurrentValue 每次採番自增，无货币/无业务事实字段，高频写——
++// 字段级审计无意义。照 WMS/ERP Sequence 先例不贴 IAuditable，由 MesAuditTests 负测试坐实零审计行。
+ [Table("T_MesSequence")]
+ public class MesSequence : BaseEntity
+ {
+     /// <summary>採番キー（PK1）：WO=指図 / PR=実績 / QC=検査 / DF=不良</summary>
+     [Required, MaxLength(10)]
+     public string SeqKey { get; set; } = string.Empty;
+ 
+     /// <summary>採番日（PK2、YYYY-MM-DD）</summary>
+     [Required, MaxLength(10)]
+     public string SeqDate { get; set; } = string.Empty;
+diff --git a/CP6.Entity/DomainModels/Mes/OeeDaily.cs b/CP6.Entity/DomainModels/Mes/OeeDaily.cs
+index e1acd55..0eff2a1 100644
+--- a/CP6.Entity/DomainModels/Mes/OeeDaily.cs
++++ b/CP6.Entity/DomainModels/Mes/OeeDaily.cs
+@@ -6,20 +6,23 @@ namespace CP6.Entity.DomainModels.Mes;
+ /// <summary>
+ /// OEE 日次集計（設備総合効率）
+ /// </summary>
+ /// <remarks>
+ /// OEE = 可用率 × 性能 × 品質
+ ///   可用率(Availability) = (計画稼働時間 - 停止時間) / 計画稼働時間
+ ///   性能(Performance)    = (良品数+不良数) / (能力 × 実稼働時間)
+ ///   品質(Quality)        = 良品数 / (良品数+不良数)
+ /// 業務複合 PK：OeeDate + MachineCd
+ /// </remarks>
++// [审计豁免] 派生型日次集計：Availability/Performance/Quality/Oee 及 Good/DefectQty 皆由
++// MachineDowntime（已纳审计）+ ProductionResult（已纳审计）重算派生，无源真值、日频重算——
++// 字段级审计等同复制上游噪声。照 OEE 快照口径不贴 IAuditable，由 MesAuditTests 负测试坐实零审计行。
+ [Table("T_OeeDaily")]
+ public class OeeDaily : BaseBizEntity
+ {
+     /// <summary>集計日（PK1）</summary>
+     public DateTime OeeDate { get; set; }
+ 
+     /// <summary>設備CD（PK2、FK → M_Machine.MachineCd）</summary>
+     [Required, MaxLength(20)]
+     public string MachineCd { get; set; } = string.Empty;
+ 
+diff --git a/CP6.Entity/DomainModels/Mes/ProcessCostRate.cs b/CP6.Entity/DomainModels/Mes/ProcessCostRate.cs
+index e15ac81..f1deb19 100644
+--- a/CP6.Entity/DomainModels/Mes/ProcessCostRate.cs
++++ b/CP6.Entity/DomainModels/Mes/ProcessCostRate.cs
+@@ -1,18 +1,18 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>工序费率（A2 · spec §3.3）。工作中心×生效区间 的 工/费双率（元/h）。</summary>
+ [Table("T_ProcessCostRate")]
+-public class ProcessCostRate : BaseBizEntity
++public class ProcessCostRate : BaseBizEntity, IAuditable
+ {
+     /// <summary>工作中心CD（业务键 → WorkCenter.WgCd）</summary>
+     [Required, MaxLength(10)] public string WgCd { get; set; } = string.Empty;
+     /// <summary>人工费率（元/h）</summary>
+     [Column(TypeName = "decimal(21,8)")] public decimal LaborRate { get; set; }
+     /// <summary>制造费率（元/h）</summary>
+     [Column(TypeName = "decimal(21,8)")] public decimal OverheadRate { get; set; }
+     /// <summary>生效日（Resolve 取 ≤ 基准日最新有效版本）</summary>
+     public DateTime ValidFrom { get; set; }
+     /// <summary>失效日（null = 长期）</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/ProductionResult.cs b/CP6.Entity/DomainModels/Mes/ProductionResult.cs
+index 300d927..1a45e68 100644
+--- a/CP6.Entity/DomainModels/Mes/ProductionResult.cs
++++ b/CP6.Entity/DomainModels/Mes/ProductionResult.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 製造実績（MSBBME040）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.4 T_ProductionResult
+ /// 業務 PK：RESULT_NO（PRYYYYMMDD-NNNN）
+ /// 1指図1工程の各報告（開始/中断/再開/完了/数量報告）を時系列で蓄積
+ /// </remarks>
+ [Table("T_ProductionResult")]
+-public class ProductionResult : BaseBizEntity
++public class ProductionResult : BaseBizEntity, IAuditable
+ {
+     /// <summary>実績NO（業務 PK、PRYYYYMMDD-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string ResultNo { get; set; } = string.Empty;
+ 
+     /// <summary>指図NO（FK → T_WorkOrder.WorkOrderNo）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/QualityInspection.cs b/CP6.Entity/DomainModels/Mes/QualityInspection.cs
+index 454a280..bd07be0 100644
+--- a/CP6.Entity/DomainModels/Mes/QualityInspection.cs
++++ b/CP6.Entity/DomainModels/Mes/QualityInspection.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 品質検査ヘッダ（MSBBME060）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.5 T_QualityInspection
+ /// 業務 PK：INSPECTION_NO（QCYYYYMMDD-NNNN）
+ /// </remarks>
+ [Table("T_QualityInspection")]
+-public class QualityInspection : BaseBizEntity
++public class QualityInspection : BaseBizEntity, IAuditable
+ {
+     /// <summary>検査NO（業務 PK、QCYYYYMMDD-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string InspectionNo { get; set; } = string.Empty;
+ 
+     /// <summary>指図NO（FK → T_WorkOrder）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs b/CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs
+index b02a108..86daf67 100644
+--- a/CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs
++++ b/CP6.Entity/DomainModels/Mes/QualityInspectionItem.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 品質検査項目明細
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.6 T_QualityInspectionItem
+ /// 業務複合 PK：INSPECTION_NO + ITEM_SEQ_NO
+ /// </remarks>
+ [Table("T_QualityInspectionItem")]
+-public class QualityInspectionItem : BaseBizEntity
++public class QualityInspectionItem : BaseBizEntity, IAuditable
+ {
+     /// <summary>検査NO（FK → T_QualityInspection.InspectionNo）</summary>
+     [Required, MaxLength(20)]
+     public string InspectionNo { get; set; } = string.Empty;
+ 
+     /// <summary>項目順序（PK2）</summary>
+     public int ItemSeqNo { get; set; }
+ 
+     /// <summary>検査項目名</summary>
+     [MaxLength(100)] public string? ItemName { get; set; }
+diff --git a/CP6.Entity/DomainModels/Mes/WorkCenter.cs b/CP6.Entity/DomainModels/Mes/WorkCenter.cs
+index 948eb81f..0f2429e 100644
+--- a/CP6.Entity/DomainModels/Mes/WorkCenter.cs
++++ b/CP6.Entity/DomainModels/Mes/WorkCenter.cs
+@@ -1,18 +1,18 @@
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>工作中心主数据（A2 · spec §3.2）。费率与产能挂载点；产能字段=CRP 地基。</summary>
+ [Table("T_WorkCenter")]
+-public class WorkCenter : BaseBizEntity
++public class WorkCenter : BaseBizEntity, IAuditable
+ {
+     /// <summary>工作中心CD（业务键，唯一；= ProductProcess.WgCd / WorkOrderProcess.WgCd）</summary>
+     [Required, MaxLength(10)] public string WgCd { get; set; } = string.Empty;
+     /// <summary>工作中心名称</summary>
+     [MaxLength(100)] public string? WgName { get; set; }
+     /// <summary>日可用产能（h/日）——CRP 入参地基，A2 只维护不消费</summary>
+     [Column(TypeName = "decimal(21,8)")] public decimal? DailyCapacityHours { get; set; }
+     /// <summary>启用</summary>
+     public bool Enable { get; set; } = true;
+ }
+diff --git a/CP6.Entity/DomainModels/Mes/WorkOrder.cs b/CP6.Entity/DomainModels/Mes/WorkOrder.cs
+index f595aa9..172bebf 100644
+--- a/CP6.Entity/DomainModels/Mes/WorkOrder.cs
++++ b/CP6.Entity/DomainModels/Mes/WorkOrder.cs
+@@ -5,21 +5,21 @@ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 製造指図ヘッダ（MSBBME020）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.1 T_WorkOrder
+ /// 業務 PK：WORK_ORDER_NO（WOYYYYMMDD-NNNN 形式、シーケンス自動採番）
+ /// 1指図 → N工程(T_WorkOrderProcess) / N材料(T_WorkOrderMaterial) / N実績(T_ProductionResult)
+ /// </remarks>
+ [Table("T_WorkOrder")]
+-public class WorkOrder : BaseBizEntity
++public class WorkOrder : BaseBizEntity, IAuditable
+ {
+     /// <summary>製造指図NO（業務 PK、WOYYYYMMDD-NNNN）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>指図ステータス：0=下書き 1=確定済 2=発行済 3=着手中 4=完了 5=中断中 6=検査済 9=取消</summary>
+     public int Status { get; set; } = 0;
+ 
+     /// <summary>受注NO（PA070 → MES展開元、null=手動作成）</summary>
+     [MaxLength(20)] public string? OrderNo1 { get; set; }
+diff --git a/CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs b/CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs
+index 53fa758..0bd4337 100644
+--- a/CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs
++++ b/CP6.Entity/DomainModels/Mes/WorkOrderMaterial.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 製造指図材料明細（MSBBME020 第3页）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.3 T_WorkOrderMaterial
+ /// 業務複合 PK：WORK_ORDER_NO + PROCESS_CD + MATERIAL_CD
+ /// </remarks>
+ [Table("T_WorkOrderMaterial")]
+-public class WorkOrderMaterial : BaseBizEntity
++public class WorkOrderMaterial : BaseBizEntity, IAuditable
+ {
+     /// <summary>指図NO（FK）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD（PK2）</summary>
+     [Required, MaxLength(10)]
+     public string ProcessCd { get; set; } = string.Empty;
+ 
+     /// <summary>材料CD（PK3）</summary>
+diff --git a/CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs b/CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs
+index 76f3e18..c3ee014 100644
+--- a/CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs
++++ b/CP6.Entity/DomainModels/Mes/WorkOrderProcess.cs
+@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
+ namespace CP6.Entity.DomainModels.Mes;
+ 
+ /// <summary>
+ /// 製造指図工程明細（MSBBME020 第2页）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §9 No.2 T_WorkOrderProcess
+ /// 業務複合 PK：WORK_ORDER_NO + PROCESS_CD + TASK_CD
+ /// </remarks>
+ [Table("T_WorkOrderProcess")]
+-public class WorkOrderProcess : BaseBizEntity
++public class WorkOrderProcess : BaseBizEntity, IAuditable
+ {
+     /// <summary>指図NO（FK → T_WorkOrder.WorkOrderNo）</summary>
+     [Required, MaxLength(20)]
+     public string WorkOrderNo { get; set; } = string.Empty;
+ 
+     /// <summary>工程CD（PK2、PA050.ProductProcess.ProcessCd から展開）</summary>
+     [Required, MaxLength(10)]
+     public string ProcessCd { get; set; } = string.Empty;
+ 
+     /// <summary>作業CD（PK3、PA050.ProductProcess.TaskCd から展開）</summary>
+diff --git a/CP6.Entity/DomainModels/Wms/PlateMoldStock.cs b/CP6.Entity/DomainModels/Wms/PlateMoldStock.cs
+index a03f004..b9244c4 100644
+--- a/CP6.Entity/DomainModels/Wms/PlateMoldStock.cs
++++ b/CP6.Entity/DomainModels/Wms/PlateMoldStock.cs
+@@ -6,21 +6,21 @@ namespace CP6.Entity.DomainModels.Wms;
+ /// <summary>
+ /// 印版・木型 管理（MSBBWM220）
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §31 印刷版・打抜木型のマスタ＋使用履歴。
+ /// 業務 PK：PlateNo（PLT-NNNNNN）
+ /// 顧客×製品×版/型 で 1 レコード。寿命（最大ショット数）管理 + メンテ要請。
+ /// 状态：0=使用可 1=メンテ中 2=寿命到達 3=廃版
+ /// </remarks>
+ [Table("T_PlateMoldStock")]
+-public class PlateMoldStock : BaseBizEntity
++public class PlateMoldStock : BaseBizEntity, IAuditable
+ {
+     [Required, MaxLength(25)]
+     public string PlateNo { get; set; } = string.Empty;
+ 
+     /// <summary>区分：PLATE=印版 / MOLD=木型 / CYL=シリンダ / OTHER</summary>
+     [Required, MaxLength(10)]
+     public string PlateType { get; set; } = "PLATE";
+ 
+     /// <summary>顧客CD</summary>
+     [MaxLength(20)] public string? CustomerCd { get; set; }
+diff --git a/CP6.Tests/Mes/MesAuditTests.cs b/CP6.Tests/Mes/MesAuditTests.cs
+new file mode 100644
+index 0000000..00b87d9
+--- /dev/null
++++ b/CP6.Tests/Mes/MesAuditTests.cs
+@@ -0,0 +1,437 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Mes;
++using CP6.Entity.DomainModels.Wms;
++using Xunit;
++
++namespace CP6.Tests.Mes;
++
++/// <summary>
++/// MES 生产事实 / 成本喂料 / 品質判定 / 设备主数据 关键实体字段级审计接线冒烟（M-MES 横切 T5）。
++/// 照 <see cref="CP6.Tests.Erp.ErpAuditTests"/> / <see cref="CP6.Tests.Wms.WmsAuditTests"/> 范式：
++/// InMemory + 假当前用户。验证贴 IAuditable 的 MES 实体（指図头/工程/材料明细·报工实绩·工序费率·
++/// 工作中心/设备主数据·不良/検査记录）在 create/update 随业务行同周期写入 Sys_FieldAuditLogs
++/// （真实断言实体名/字段/新旧值）；跨波票 WMS PlateMoldStock（含 MadeCost 製作費）同样坐实；
++/// 并回归确认追加/派生型（OeeDaily 日次派生集計 / MesSequence 採番计数器，均未贴）不产生审计行（负测试）。
++/// </summary>
++public class MesAuditTests
++{
++    private sealed class FakeUser : ICurrentUserAccessor
++    {
++        public FakeUser(Guid? id, string? name) { UserId = id; UserName = name; }
++        public Guid? UserId { get; }
++        public string? UserName { get; }
++    }
++
++    private sealed record DiffRow(string Field, string? Old, string? New);
++
++    private static List<DiffRow> ParseChanges(string json)
++        => JsonSerializer.Deserialize<List<DiffRow>>(json) ?? new();
++
++    private static readonly Guid _userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
++
++    private static CP6Context Ctx()
++        => TestHelper.CreateInMemoryContext(new FakeUser(_userId, "alice"));
++
++    // ── 製造指図ヘッダ（WorkOrder）— 生産数量/完了数量 不可逆生産事実 ─────────────
++    [Fact]
++    public void Create_WorkOrder_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var wo = new WorkOrder { WorkOrderNo = "WO20260712-0001", ProductCd = "P001", ProductionQty = 1000m };
++        db.Set<WorkOrder>().Add(wo);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkOrder), rows[0].EntityName);
++        Assert.Equal(wo.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_WorkOrder_completedQty_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var wo = new WorkOrder { WorkOrderNo = "WO20260712-0002", ProductCd = "P001", ProductionQty = 1000m, CompletedQty = 0m };
++        db.Set<WorkOrder>().Add(wo);
++        db.SaveChanges();
++
++        wo.CompletedQty = 800m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkOrder), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "CompletedQty" && d.Old == "0" && d.New == "800");
++    }
++
++    // ── 指図工程明細（WorkOrderProcess）— 实绩工时 直喂制造费用 ───────────────────
++    [Fact]
++    public void Update_WorkOrderProcess_actualMachineHour_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var wp = new WorkOrderProcess
++        {
++            WorkOrderNo = "WO20260712-0003",
++            ProcessCd = "PC01",
++            TaskCd = "TK01",
++            ActualMachineHour = 2m,
++        };
++        db.Set<WorkOrderProcess>().Add(wp);
++        db.SaveChanges();
++
++        wp.ActualMachineHour = 3.5m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkOrderProcess), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "ActualMachineHour" && d.Old == "2" && d.New == "3.5");
++    }
++
++    // ── 指図材料明細（WorkOrderMaterial）— 実績消費数量 不可逆消耗事実（喂材料成本）─
++    [Fact]
++    public void Update_WorkOrderMaterial_actualQty_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var wm = new WorkOrderMaterial
++        {
++            WorkOrderNo = "WO20260712-0004",
++            ProcessCd = "PC01",
++            MaterialCd = "M001",
++            ActualQty = 0m,
++        };
++        db.Set<WorkOrderMaterial>().Add(wm);
++        db.SaveChanges();
++
++        wm.ActualQty = 120m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkOrderMaterial), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "ActualQty" && d.New == "120");
++    }
++
++    // ── 製造実績（ProductionResult）— 报工事实 良品/不良数 + 工时喂成本 ──────────────
++    [Fact]
++    public void Create_ProductionResult_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var pr = new ProductionResult
++        {
++            ResultNo = "PR20260712-0001",
++            WorkOrderNo = "WO20260712-0005",
++            ProcessCd = "PC01",
++            OperatorCd = "OP01",
++            GoodQty = 500m,
++        };
++        db.Set<ProductionResult>().Add(pr);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(ProductionResult), rows[0].EntityName);
++        Assert.Equal(pr.Id.ToString(), rows[0].EntityKey);
++    }
++
++    [Fact]
++    public void Update_ProductionResult_laborHour_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var pr = new ProductionResult
++        {
++            ResultNo = "PR20260712-0002",
++            WorkOrderNo = "WO20260712-0006",
++            ProcessCd = "PC01",
++            OperatorCd = "OP01",
++            LaborHour = 1m,
++        };
++        db.Set<ProductionResult>().Add(pr);
++        db.SaveChanges();
++
++        pr.LaborHour = 2.25m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(ProductionResult), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "LaborHour" && d.Old == "1" && d.New == "2.25");
++    }
++
++    // ── 工序费率（ProcessCostRate）— 人工/制造费率 元/h 货币定价（T1 高危、直喂成本归集）────
++    [Fact]
++    public void Update_ProcessCostRate_laborRate_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var rate = new ProcessCostRate
++        {
++            WgCd = "WG01",
++            LaborRate = 30m,
++            OverheadRate = 50m,
++            ValidFrom = new DateTime(2026, 7, 1),
++        };
++        db.Set<ProcessCostRate>().Add(rate);
++        db.SaveChanges();
++
++        rate.LaborRate = 35m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(ProcessCostRate), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "LaborRate" && d.Old == "30" && d.New == "35");
++    }
++
++    // ── 工作中心主数据（WorkCenter）— 日可用产能（CRP 地基）主数据留痕 ────────────────
++    [Fact]
++    public void Update_WorkCenter_dailyCapacity_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var wc = new WorkCenter { WgCd = "WG01", WgName = "印刷", DailyCapacityHours = 16m };
++        db.Set<WorkCenter>().Add(wc);
++        db.SaveChanges();
++
++        wc.DailyCapacityHours = 20m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(WorkCenter), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "DailyCapacityHours" && d.Old == "16" && d.New == "20");
++    }
++
++    // ── 設備マスタ（Machine）— 能力/循环时间 主数据（喂 OEE 性能计算）────────────────
++    [Fact]
++    public void Create_Machine_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var m = new Machine { MachineCd = "MC01", MachineName = "印刷機1号" };
++        db.Set<Machine>().Add(m);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(Machine), rows[0].EntityName);
++        Assert.Equal(m.Id.ToString(), rows[0].EntityKey);
++    }
++
++    // ── 設備停止記録（MachineDowntime）— 停止事実（OEE 可用率元数据）不可逆生産事実 ──────
++    [Fact]
++    public void Update_MachineDowntime_downtimeMinutes_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var dt = new MachineDowntime
++        {
++            DowntimeNo = "DT20260712-0001",
++            MachineCd = "MC01",
++            StartTime = new DateTime(2026, 7, 12, 9, 0, 0),
++            DowntimeMinutes = 0,
++        };
++        db.Set<MachineDowntime>().Add(dt);
++        db.SaveChanges();
++
++        dt.DowntimeMinutes = 45;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(MachineDowntime), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "DowntimeMinutes" && d.Old == "0" && d.New == "45");
++    }
++
++    // ── 不良品記録（DefectRecord）— 不良数/是正処置 不可逆生産事実 + 处置状态机 ──────────
++    [Fact]
++    public void Update_DefectRecord_defectQty_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var dr = new DefectRecord
++        {
++            DefectNo = "DF20260712-0001",
++            WorkOrderNo = "WO20260712-0007",
++            CategoryCd = "D01",
++            DefectQty = 10m,
++            DefectDescription = "寸法不良",
++        };
++        db.Set<DefectRecord>().Add(dr);
++        db.SaveChanges();
++
++        dr.DefectQty = 15m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(DefectRecord), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "DefectQty" && d.Old == "10" && d.New == "15");
++    }
++
++    // ── 不良分類マスタ（DefectCategory）— 分类主数据留痕 ───────────────────────────
++    [Fact]
++    public void Create_DefectCategory_writes_op1_audit_row()
++    {
++        using var db = Ctx();
++        var dc = new DefectCategory { CategoryCd = "D01", DetailCd = "D0101", CategoryName = "寸法不良" };
++        db.Set<DefectCategory>().Add(dc);
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 1).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(DefectCategory), rows[0].EntityName);
++        Assert.Equal(dc.Id.ToString(), rows[0].EntityKey);
++    }
++
++    // ── 品質検査ヘッダ（QualityInspection）— 総合判定/処置 品質事実 ────────────────────
++    [Fact]
++    public void Update_QualityInspection_overallResult_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var qi = new QualityInspection
++        {
++            InspectionNo = "QC20260712-0001",
++            WorkOrderNo = "WO20260712-0008",
++            InspectorCd = "IN01",
++            OverallResult = 1,
++        };
++        db.Set<QualityInspection>().Add(qi);
++        db.SaveChanges();
++
++        qi.OverallResult = 2;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(QualityInspection), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "OverallResult" && d.Old == "1" && d.New == "2");
++    }
++
++    // ── 品質検査項目明細（QualityInspectionItem）— 計測値/判定 品質計測事実 ─────────────
++    [Fact]
++    public void Update_QualityInspectionItem_measuredValue_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var item = new QualityInspectionItem
++        {
++            InspectionNo = "QC20260712-0002",
++            ItemSeqNo = 1,
++            MeasuredValue = 10.0m,
++        };
++        db.Set<QualityInspectionItem>().Add(item);
++        db.SaveChanges();
++
++        item.MeasuredValue = 10.5m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(QualityInspectionItem), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "MeasuredValue" && d.Old == "10.0" && d.New == "10.5");
++    }
++
++    // ── 検査項目テンプレート（InspectionTemplate）— 規格/上下限 品質判定基准主数据 ────────
++    [Fact]
++    public void Update_InspectionTemplate_upperLimit_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var tpl = new InspectionTemplate
++        {
++            TemplateCd = "TPL01",
++            ItemSeqNo = 1,
++            ItemName = "巾寸法",
++            UpperLimit = 100m,
++        };
++        db.Set<InspectionTemplate>().Add(tpl);
++        db.SaveChanges();
++
++        tpl.UpperLimit = 102m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(InspectionTemplate), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "UpperLimit" && d.Old == "100" && d.New == "102");
++    }
++
++    // ── 跨波票：印版・木型 在庫（WMS PlateMoldStock）— MadeCost 製作費 decimal(18,2)货币 ───
++    [Fact]
++    public void Update_PlateMoldStock_madeCost_writes_op2_diff()
++    {
++        using var db = Ctx();
++        var pm = new PlateMoldStock
++        {
++            PlateNo = "PLT-000001",
++            PlateType = "PLATE",
++            MadeCost = 30000m,
++        };
++        db.Set<PlateMoldStock>().Add(pm);
++        db.SaveChanges();
++
++        pm.MadeCost = 32000m;
++        db.SaveChanges();
++
++        var rows = db.Sys_FieldAuditLogs.Where(x => x.Operation == 2).ToList();
++        Assert.Single(rows);
++        Assert.Equal(nameof(PlateMoldStock), rows[0].EntityName);
++
++        var diffs = ParseChanges(rows[0].Changes);
++        Assert.Contains(diffs, d => d.Field == "MadeCost" && d.Old == "30000" && d.New == "32000");
++    }
++
++    // ── 负测试：OEE 日次派生集計（OeeDaily）未贴 IAuditable → 零审计行 ─────────────────
++    [Fact]
++    public void Create_OeeDaily_writes_no_audit_row()
++    {
++        // 派生型日次集計：全字段皆由停止/实绩重算派生，无源真值、日频重算，豁免 IAuditable。
++        using var db = Ctx();
++        var oee = new OeeDaily
++        {
++            OeeDate = new DateTime(2026, 7, 12),
++            MachineCd = "MC01",
++            GoodQty = 900m,
++            DefectQty = 10m,
++            Oee = 85.5m,
++        };
++        db.Set<OeeDaily>().Add(oee);
++        db.SaveChanges();
++
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++
++    // ── 负测试：MES 採番計数器（MesSequence）未贴 IAuditable → 零审计行 ─────────────────
++    [Fact]
++    public void Update_MesSequence_writes_no_audit_row()
++    {
++        // 純採番計数器：每次採番自增，无业务字段/无货币，豁免 IAuditable。
++        using var db = Ctx();
++        var seq = new MesSequence { SeqKey = "WO", SeqDate = "2026-07-12", CurrentValue = 1 };
++        db.Set<MesSequence>().Add(seq);
++        db.SaveChanges();
++
++        seq.CurrentValue = 2;
++        db.SaveChanges();
++
++        Assert.Empty(db.Sys_FieldAuditLogs.ToList());
++    }
++}
+diff --git a/CP6.Tests/Mes/PlanningBoardServiceTests.cs b/CP6.Tests/Mes/PlanningBoardServiceTests.cs
+new file mode 100644
+index 0000000..9df04bd
+--- /dev/null
++++ b/CP6.Tests/Mes/PlanningBoardServiceTests.cs
+@@ -0,0 +1,169 @@
++using CP6.Core.Services.Mes;
++using CP6.Entity.DomainModels.Mes;
++using CP6.Entity.DTOs.Mes;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests.Mes;
++
++/// <summary>
++/// M-MES T6 — 生産計画ボード（PlanningBoardService）排産/改期 核心用例。
++///
++/// 全局審計 #7：PlanningBoard 零テスト → 補網。真値錨定（期望値手算）。
++/// RescheduleAsync/AutoArrangeAsync は明示トランザクション不使用のため素の InMemory で十分。
++/// </summary>
++public class PlanningBoardServiceTests
++{
++    private static WorkOrderProcess Proc(string wo, string proc, int status, string? machine,
++        int sort = 1, decimal? leadTime = null, DateTime? planStart = null, DateTime? planEnd = null)
++        => new()
++        {
++            WorkOrderNo = wo, ProcessCd = proc, TaskCd = "T1", ProcessStatus = status,
++            MachineCd = machine, SortOrder = sort, LeadTime = leadTime,
++            PlanStartTime = planStart, PlanEndTime = planEnd,
++        };
++
++    // ══════════════════════════════════════════════════════════════════
++    //  Reschedule（ドラッグ改期）
++    // ══════════════════════════════════════════════════════════════════
++
++    // ── ① 改期落库真値：未着手(0)工程の計画日時＋号機が上書きされる ──
++    // 手算：Id 一致 → status0 通過 → start<end 通過 → PlanStart/PlanEnd/MachineCd を req 値で上書き。
++    [Fact]
++    public async Task Reschedule_UnstartedProcess_PersistsNewTimesAndMachine()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var p = Proc("WO1", "OP1", status: 0, machine: "M0",
++            planStart: new DateTime(2026, 7, 15, 8, 0, 0), planEnd: new DateTime(2026, 7, 15, 10, 0, 0));
++        db.Set<WorkOrderProcess>().Add(p);
++        await db.SaveChangesAsync();
++
++        var newStart = new DateTime(2026, 8, 1, 9, 0, 0);
++        var newEnd = new DateTime(2026, 8, 1, 17, 0, 0);
++        await new PlanningBoardService(db).RescheduleAsync(
++            new RescheduleRequest { Id = p.Id, PlanStartTime = newStart, PlanEndTime = newEnd, MachineCd = "M9" }, "planner");
++
++        var got = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == p.Id);
++        Assert.Equal(newStart, got.PlanStartTime);
++        Assert.Equal(newEnd, got.PlanEndTime);
++        Assert.Equal("M9", got.MachineCd);
++        Assert.Equal("planner", got.Modifier);
++    }
++
++    // ── ② 改期の3ガード：start>end(ME-MSG-003) / 着手済(ME-MSG-042) / 不存在(ME-MSG-043) ──
++    // 手算：
++    //   start>end → ME-MSG-003
++    //   ProcessStatus!=0（例：1 着手中）→ ME-MSG-042（発行後はドラッグ不可）
++    //   Id 不一致 → ME-MSG-043
++    [Fact]
++    public async Task Reschedule_Guards_StartAfterEnd_Started_NotFound()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var pUnstarted = Proc("WO2", "OP1", status: 0, machine: "M1");
++        var pStarted = Proc("WO2", "OP2", status: 1, machine: "M1", sort: 2);
++        db.Set<WorkOrderProcess>().AddRange(pUnstarted, pStarted);
++        await db.SaveChangesAsync();
++        var svc = new PlanningBoardService(db);
++
++        // start > end（未着手でも日時逆転で拒否）
++        var ex3 = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.RescheduleAsync(
++            new RescheduleRequest { Id = pUnstarted.Id, PlanStartTime = new DateTime(2026, 8, 2), PlanEndTime = new DateTime(2026, 8, 1) }, "planner"));
++        Assert.Equal("ME-MSG-003", ex3.Message);
++
++        // 着手中 → 改期不可
++        var ex42 = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.RescheduleAsync(
++            new RescheduleRequest { Id = pStarted.Id, PlanStartTime = new DateTime(2026, 8, 1), PlanEndTime = new DateTime(2026, 8, 2) }, "planner"));
++        Assert.Equal("ME-MSG-042", ex42.Message);
++
++        // 不存在 Id
++        var ex43 = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.RescheduleAsync(
++            new RescheduleRequest { Id = Guid.NewGuid(), PlanStartTime = new DateTime(2026, 8, 1), PlanEndTime = new DateTime(2026, 8, 2) }, "planner"));
++        Assert.Equal("ME-MSG-043", ex43.Message);
++    }
++
++    // ── ③ 境界（服務の実語義を pin）：過去日付／同一号機の時間重複 いずれもガードなし＝受理 ──
++    // 手算：RescheduleAsync は start<end のみ検証。過去日付ガード無し・号機衝突検知無し → どちらも落库成功。
++    // ※これは「サーバは単にドラッグ位置を永続化するだけ、衝突/過去は UI/計画側の責務」という現状仕様の記録。
++    //   自動衝突回避が要件なら缺陷（concerns 参照）。
++    [Fact]
++    public async Task Reschedule_PastDate_And_MachineOverlap_AreAccepted_NoConflictGuard()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        // 既存：M1 上 2026-07-15 08:00-10:00 を占有する未着手工程 A
++        var a = Proc("WO3", "OP1", status: 0, machine: "M1",
++            planStart: new DateTime(2026, 7, 15, 8, 0, 0), planEnd: new DateTime(2026, 7, 15, 10, 0, 0));
++        var b = Proc("WO3", "OP2", status: 0, machine: "M1", sort: 2);
++        db.Set<WorkOrderProcess>().AddRange(a, b);
++        await db.SaveChangesAsync();
++        var svc = new PlanningBoardService(db);
++
++        // (a) 過去日付（2020 年）→ ガード無し、受理
++        await svc.RescheduleAsync(new RescheduleRequest
++        { Id = b.Id, PlanStartTime = new DateTime(2020, 1, 1, 8, 0, 0), PlanEndTime = new DateTime(2020, 1, 1, 10, 0, 0), MachineCd = "M1" }, "planner");
++        var afterPast = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == b.Id);
++        Assert.Equal(new DateTime(2020, 1, 1, 8, 0, 0), afterPast.PlanStartTime);
++
++        // (b) 号機 M1 上で A(08:00-10:00) と完全重複する 08:00-10:00 → 衝突検知無し、受理
++        await svc.RescheduleAsync(new RescheduleRequest
++        { Id = b.Id, PlanStartTime = new DateTime(2026, 7, 15, 8, 0, 0), PlanEndTime = new DateTime(2026, 7, 15, 10, 0, 0), MachineCd = "M1" }, "planner");
++        var afterOverlap = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == b.Id);
++        Assert.Equal(new DateTime(2026, 7, 15, 8, 0, 0), afterOverlap.PlanStartTime);
++        Assert.Equal(new DateTime(2026, 7, 15, 10, 0, 0), afterOverlap.PlanEndTime);
++        // A は依然 08:00-10:00 を占有（重複を許容）
++        var stillA = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == a.Id);
++        Assert.Equal(new DateTime(2026, 7, 15, 8, 0, 0), stillA.PlanStartTime);
++    }
++
++    // ══════════════════════════════════════════════════════════════════
++    //  AutoArrange（自動配置）
++    // ══════════════════════════════════════════════════════════════════
++
++    // ── ④ 自動配置：優先度降順→納期昇順→SortOrder で並べ、号機別に連続配置。着手済は対象外 ──
++    // 手算（BaseDate=2026-07-15、baseTime=07-15 08:00、DefaultHoursPerJob=2）：
++    //   対象（status0）を優先度DESC/納期ASC/SortOrder で並べる：
++    //     P_A: WO_HI(prio3), M1, sort1, LeadTime=null → hours=default2
++    //     P_C: WO_HI(prio3), M2, sort2, LeadTime=1日 → hours=(int)max(1,1*8)=8
++    //     P_B: WO_LO(prio1), M1, sort1, LeadTime=null → hours=default2
++    //   並び = [P_A, P_C, P_B]（WO_HI 群が先、群内は sort、最後に WO_LO）
++    //   配置（号機別カーソル、初期=08:00）：
++    //     P_A(M1): 08:00→10:00、M1 ptr=10:00
++    //     P_C(M2): 08:00→16:00（8h）、M2 ptr=16:00
++    //     P_B(M1): 10:00→12:00（M1 の続き）、M1 ptr=12:00
++    //   changed=3。着手済 P_D(status1,M1) は対象外＝計画日時 null のまま。
++    [Fact]
++    public async Task AutoArrange_OrdersByPriorityDeliverySort_PacksPerMachine_SkipsStarted()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_HI", ProductCd = "P1", Priority = 3, DeliveryDate = new DateTime(2026, 7, 20) });
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_LO", ProductCd = "P1", Priority = 1, DeliveryDate = new DateTime(2026, 7, 18) });
++
++        var pA = Proc("WO_HI", "OP1", status: 0, machine: "M1", sort: 1);
++        var pC = Proc("WO_HI", "OP2", status: 0, machine: "M2", sort: 2, leadTime: 1m);
++        var pB = Proc("WO_LO", "OP1", status: 0, machine: "M1", sort: 1);
++        var pD = Proc("WO_HI", "OP3", status: 1, machine: "M1", sort: 3); // 着手済 → 対象外
++        db.Set<WorkOrderProcess>().AddRange(pA, pC, pB, pD);
++        await db.SaveChangesAsync();
++
++        var changed = await new PlanningBoardService(db).AutoArrangeAsync(
++            new AutoArrangeRequest { BaseDate = new DateTime(2026, 7, 15), DefaultHoursPerJob = 2 }, "planner");
++
++        Assert.Equal(3, changed);
++
++        var gA = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == pA.Id);
++        var gB = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == pB.Id);
++        var gC = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == pC.Id);
++        var gD = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == pD.Id);
++
++        // P_A(M1): 08:00-10:00
++        Assert.Equal(new DateTime(2026, 7, 15, 8, 0, 0), gA.PlanStartTime);
++        Assert.Equal(new DateTime(2026, 7, 15, 10, 0, 0), gA.PlanEndTime);
++        // P_C(M2): 08:00-16:00（LeadTime 1日=8h）
++        Assert.Equal(new DateTime(2026, 7, 15, 8, 0, 0), gC.PlanStartTime);
++        Assert.Equal(new DateTime(2026, 7, 15, 16, 0, 0), gC.PlanEndTime);
++        // P_B(M1): 10:00-12:00（M1 で P_A の後に連続）
++        Assert.Equal(new DateTime(2026, 7, 15, 10, 0, 0), gB.PlanStartTime);
++        Assert.Equal(new DateTime(2026, 7, 15, 12, 0, 0), gB.PlanEndTime);
++        // 着手済 P_D は不変（配置対象外）
++        Assert.Null(gD.PlanStartTime);
++        Assert.Null(gD.PlanEndTime);
++    }
++}
+diff --git a/CP6.Tests/Mes/ProductionResultStateMachineTests.cs b/CP6.Tests/Mes/ProductionResultStateMachineTests.cs
+new file mode 100644
+index 0000000..a574653
+--- /dev/null
++++ b/CP6.Tests/Mes/ProductionResultStateMachineTests.cs
+@@ -0,0 +1,216 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
++using CP6.Core.Services.Mes;
++using CP6.Entity.DomainModels.Mes;
++using CP6.Entity.DTOs.Mes;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests.Mes;
++
++/// <summary>
++/// M-MES T6 — 報工状態機（ProductionResultService 開始/中断/再開/完了）核心用例。
++///
++/// 全局審計 #7：報工状態機 零テスト → 補網。真値錨定（期望値手算，服務算錯会红）。
++///
++/// 境界（F1 波との棲み分け）：
++///  ・反冲（OUT/ISSUE）＋成本归集+结转链は F1 波 BackflushTests / WorkOrderCompleteCostFlowTests が既に錨定済 → 本ファイルでは再現しない。
++///  ・完成品入庫の在庫側真値（InboundService.CreateFinishedGoodsFromWorkOrderAsync → W01 完成品在庫）は
++///    WmsErpClosedLoopTests が既に錨定済 → 本ファイルは「状態機が末工程完了で入庫フックを正しい良品累計で一度だけ発火するか」
++///    という状態機側の缺口のみを spy で検証（F1/端到端テストは NoOpWmsBridgeHook を使い、この発火契約は未検証だった）。
++/// </summary>
++public class ProductionResultStateMachineTests
++{
++    // WriteAsync は明示トランザクションを使うため InMemory の TransactionIgnoredWarning を抑止。
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++        .Options);
++
++    private static ProductionResultService NewService(CP6Context db, IWmsBridgeHook? wms = null)
++    {
++        var seq = new MesSequenceService(db);
++        var wo = new WorkOrderService(db, seq, new NoOpWmsBridgeHook());
++        // backflush/finBridge は null（反冲・成本链は F1 波で錨定済のため状態機テストでは注入しない）
++        return new ProductionResultService(db, seq, wo, new NoOpMesNotifier(), wms ?? new NoOpWmsBridgeHook());
++    }
++
++    private static ProductionResultRequest Req(string wo, string proc, decimal good = 0m,
++        decimal defect = 0m, string? suspendReason = null)
++        => new() { WorkOrderNo = wo, ProcessCd = proc, OperatorCd = "OP1", GoodQty = good, DefectQty = defect, SuspendReasonCd = suspendReason };
++
++    // ── ① 非法流転：未開始（ProcessStatus=0）で直接完了 → ME-MSG-042 で拒否、何も落库しない ──
++    // 手算：case4 の先頭 `proc.ProcessStatus != 1` で throw（mutation 前）。tx 未 commit → PR 0 件、proc/wo 不変。
++    [Fact]
++    public async Task Complete_WhenNotStarted_Rejected_NothingPersisted()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_A", ProductCd = "P1", Status = WorkOrderStatus.Issued });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_A", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 0 });
++        await db.SaveChangesAsync();
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => NewService(db).CompleteAsync(Req("WO_A", "OP1", good: 5m), "tester"));
++        Assert.Equal("ME-MSG-042", ex.Message);
++
++        Assert.Equal(0, await db.Set<ProductionResult>().CountAsync());
++        var proc = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_A");
++        Assert.Equal(0, proc.ProcessStatus);                                  // 未着手のまま
++        var wo = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_A");
++        Assert.Equal(WorkOrderStatus.Issued, wo.Status);                      // 指図も不変
++    }
++
++    // ── ② 非法流転：着手中（ProcessStatus=1）で再度開始 → ME-MSG-042 で拒否 ──
++    // 手算：case1 の先頭 `proc.ProcessStatus != 0` で throw。PR 0 件、proc 不変。
++    [Fact]
++    public async Task Start_WhenAlreadyStarted_Rejected()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_B", ProductCd = "P1", Status = WorkOrderStatus.InProgress });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_B", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        await db.SaveChangesAsync();
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => NewService(db).StartAsync(Req("WO_B", "OP1"), "tester"));
++        Assert.Equal("ME-MSG-042", ex.Message);
++
++        Assert.Equal(0, await db.Set<ProductionResult>().CountAsync());
++        var proc = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_B");
++        Assert.Equal(1, proc.ProcessStatus);                                  // 着手中のまま
++    }
++
++    // ── ③ 合法全流転：開始→中断→再開→完了（唯一工程 → 完了で指図=完了）──
++    // 手算（時系列）：
++    //   Start :  proc 0→1、proc.ActualStartTime=NOW、wo.Status→3、wo.ActualStartDate=NOW、PR type=1
++    //   Suspend: proc 1→3、wo.Status→5、PR type=2
++    //   Resume:  proc 3→1、wo.Status→3、PR type=3
++    //   Complete(good=8): proc 1→2、proc.ActualEndTime=NOW、proc.GoodQty 0→8、
++    //                     全工程完了 → wo.Status→4、wo.ActualEndDate=NOW、wo.CompletedQty 0→8、PR type=4
++    //   PR 合計 4 件（type 1/2/3/4 各 1）
++    [Fact]
++    public async Task FullLifecycle_Start_Suspend_Resume_Complete_TransitionsAndTimestamps()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_C", ProductCd = "P1", Status = WorkOrderStatus.Issued, ProductionQty = 8m });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_C", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 0 });
++        await db.SaveChangesAsync();
++        var svc = NewService(db);
++        var t0 = DateTime.Now.AddSeconds(-1);
++
++        await svc.StartAsync(Req("WO_C", "OP1"), "tester");
++        var p1 = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_C");
++        var w1 = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_C");
++        Assert.Equal(1, p1.ProcessStatus);
++        Assert.NotNull(p1.ActualStartTime);
++        Assert.True(p1.ActualStartTime >= t0);
++        Assert.Equal(WorkOrderStatus.InProgress, w1.Status);
++        Assert.NotNull(w1.ActualStartDate);
++
++        await svc.SuspendAsync(Req("WO_C", "OP1", suspendReason: "R01"), "tester");
++        var p2 = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_C");
++        var w2 = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_C");
++        Assert.Equal(3, p2.ProcessStatus);                                   // 中断
++        Assert.Equal(WorkOrderStatus.Interrupted, w2.Status);                // 5
++
++        await svc.ResumeAsync(Req("WO_C", "OP1"), "tester");
++        var p3 = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_C");
++        var w3 = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_C");
++        Assert.Equal(1, p3.ProcessStatus);                                   // 着手中に復帰
++        Assert.Equal(WorkOrderStatus.InProgress, w3.Status);                 // 3
++
++        await svc.CompleteAsync(Req("WO_C", "OP1", good: 8m), "tester");
++        var p4 = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_C");
++        var w4 = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_C");
++        Assert.Equal(2, p4.ProcessStatus);                                   // 完了
++        Assert.NotNull(p4.ActualEndTime);
++        Assert.Equal(8m, p4.GoodQty);
++        Assert.Equal(WorkOrderStatus.Completed, w4.Status);                  // 4（全工程完了）
++        Assert.NotNull(w4.ActualEndDate);
++        Assert.Equal(8m, w4.CompletedQty);
++
++        // PR 4 件（type 1/2/3/4）
++        var prTypes = await db.Set<ProductionResult>().AsNoTracking().Where(r => r.WorkOrderNo == "WO_C")
++            .Select(r => r.ResultType).OrderBy(t => t).ToListAsync();
++        Assert.Equal(new[] { 1, 2, 3, 4 }, prTypes);
++    }
++
++    // ── ④ 全工程完了トリガ入庫：中間工程完了では発火せず、末工程完了で良品累計(=17)で一度だけ発火 ──
++    // 手算：2 工程 OP1/OP2 いずれも着手中(1)。
++    //   Complete(OP1,10): OP1 1→2。allDone? OP2 が status1 → false。wo.Status=3 のまま、フック 0 回。CompletedQty 0→10。
++    //   Complete(OP2, 7): OP2 1→2。allDone? OP1=2 & OP2=当該 → true。wo.Status→4、CompletedQty 10→17、
++    //                     justCompleted → OnProductionCompletedAsync(WO_D, 17, tester) 一度だけ発火。
++    [Fact]
++    public async Task Complete_LastProcess_FiresInboundHookOnce_WithAccumulatedGoodQty()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_D", ProductCd = "P1", Status = WorkOrderStatus.InProgress, ProductionQty = 17m });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_D", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_D", ProcessCd = "OP2", TaskCd = "T1", SortOrder = 2, ProcessStatus = 1 });
++        await db.SaveChangesAsync();
++
++        var spy = new RecordingWmsBridge();
++        var svc = NewService(db, spy);
++
++        // 中間工程 OP1 完了 → まだ全工程完了ではない
++        await svc.CompleteAsync(Req("WO_D", "OP1", good: 10m), "tester");
++        var wMid = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_D");
++        Assert.Equal(WorkOrderStatus.InProgress, wMid.Status);               // 3 のまま
++        Assert.Equal(10m, wMid.CompletedQty);
++        Assert.Equal(0, spy.Calls);                                          // フック未発火
++
++        // 末工程 OP2 完了 → 全工程完了 → 入庫フック発火
++        await svc.CompleteAsync(Req("WO_D", "OP2", good: 7m), "tester");
++        var wEnd = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_D");
++        Assert.Equal(WorkOrderStatus.Completed, wEnd.Status);               // 4
++        Assert.NotNull(wEnd.ActualEndDate);
++        Assert.Equal(17m, wEnd.CompletedQty);
++
++        Assert.Equal(1, spy.Calls);                                         // 一度だけ発火
++        Assert.Equal("WO_D", spy.LastWorkOrderNo);
++        Assert.Equal(17m, spy.LastGoodQty);                                // 良品累計（10+7）で入庫
++    }
++
++    // ── ⑤ 境界：中断は理由必須（ME-MSG-024）／完了は良品数>0 必須（ME-MSG-012）。拒否時は状態不変・PR 0 件 ──
++    // 手算：case2 は proc 変更前に理由空チェックで throw。case4 は proc 変更前に GoodQty<=0 チェックで throw。
++    [Fact]
++    public async Task Guards_SuspendNeedsReason_CompleteNeedsPositiveGood()
++    {
++        using var db = NewDb();
++        // 中断：理由なし → ME-MSG-024
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_E", ProductCd = "P1", Status = WorkOrderStatus.InProgress });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_E", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        // 完了：良品数 0 → ME-MSG-012
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_F", ProductCd = "P1", Status = WorkOrderStatus.InProgress });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_F", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        await db.SaveChangesAsync();
++        var svc = NewService(db);
++
++        var exS = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SuspendAsync(Req("WO_E", "OP1"), "tester"));
++        Assert.Equal("ME-MSG-024", exS.Message);
++        Assert.Equal(1, (await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_E")).ProcessStatus);
++
++        var exC = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.CompleteAsync(Req("WO_F", "OP1", good: 0m), "tester"));
++        Assert.Equal("ME-MSG-012", exC.Message);
++        Assert.Equal(1, (await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_F")).ProcessStatus);
++
++        Assert.Equal(0, await db.Set<ProductionResult>().CountAsync());       // 両 WO とも PR 0 件
++    }
++
++    /// <summary>入庫フック発火の記録用 spy（実 InboundService/在庫側は WmsErpClosedLoopTests が別途錨定）。</summary>
++    private sealed class RecordingWmsBridge : IWmsBridgeHook
++    {
++        public int Calls;
++        public string? LastWorkOrderNo;
++        public decimal LastGoodQty;
++
++        public Task<WmsBridgeResult> OnWorkOrderIssuedAsync(string workOrderNo, string? userName)
++            => Task.FromResult(WmsBridgeResult.Skipped("n/a"));
++        public Task<WmsBridgeResult> OnOrderCreatedAsync(string webOrderNo, string? userName)
++            => Task.FromResult(WmsBridgeResult.Skipped("n/a"));
++        public Task<WmsBridgeResult> OnProductionCompletedAsync(string workOrderNo, decimal goodQty, string? userName)
++        {
++            Calls++;
++            LastWorkOrderNo = workOrderNo;
++            LastGoodQty = goodQty;
++            return Task.FromResult(WmsBridgeResult.Ok("RCPT-TEST"));
++        }
++    }
++}
+diff --git a/CP6.Tests/MesMenuSeedTests.cs b/CP6.Tests/MesMenuSeedTests.cs
+new file mode 100644
+index 0000000..ee3c6f1
+--- /dev/null
++++ b/CP6.Tests/MesMenuSeedTests.cs
+@@ -0,0 +1,128 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-MES 横切接线 Task 2：MesMenuSeed 幂等 + MenuKey 锚定断言。
++/// 头号命门回归：既有 300 段菜单在 Program.cs 回填块之后 Add 且未设 MenuKey → 洁净首启 null 全 403；
++///   且 310 RoutePath=/mes/machine-list 回填得 mes-machine-list ≠ 真相源 mes-machine（machine 键错配）。
++/// MesMenuSeed 须在回填前把 10 锚定行显式赋 mes-*，并把已被错误回填的行就地纠回。
++/// </summary>
++public class MesMenuSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 真相源 docs/seeds/mes-permission-keys.md §二 的 10 个 menu-key → 锚定 MenuId。
++    private static readonly (string Key, int MenuId)[] Anchors =
++    {
++        ("mes-planning-board", 301),
++        ("mes-work-order", 302),
++        ("mes-production-result", 304),
++        ("mes-quality-inspection", 306),
++        ("mes-defect", 308),
++        ("mes-machine", 310),
++        ("mes-oee", 311),
++        ("mes-plan-achievement", 313),
++        ("mes-work-center", 314),
++        ("mes-process-cost-rate", 315),
++    };
++
++    [Fact]
++    public void EnsureSeeded_AnchorsAll10KeysToExpectedMenuIds()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++
++        foreach (var (key, menuId) in Anchors)
++        {
++            var menu = db.Sys_Menus.SingleOrDefault(m => m.MenuId == menuId);
++            Assert.NotNull(menu);
++            Assert.Equal(key, menu!.MenuKey);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_MachineAnchoredToMesMachine_NotBackfilledMesMachineList()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++
++        // 命门2：菜单 310 RoutePath=/mes/machine-list（回填得 mes-machine-list），须显式赋 mes-machine。
++        var m = db.Sys_Menus.Single(x => x.MenuId == 310);
++        Assert.Equal("/mes/machine-list", m.RoutePath);
++        Assert.Equal("mes-machine", m.MenuKey);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTwoRowsShareANonNullMenuKey()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++
++        // Sys_Menus.MenuKey 有 IS NOT NULL 过滤唯一索引；一域两页禁共键。断言锚定键各占一行。
++        var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
++        Assert.Equal(keyed.Count, keyed.Distinct().Count());
++        Assert.Equal(10, keyed.Count);
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_NoDuplicateRowsOrRoleMenus()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++        var menuCount1 = db.Sys_Menus.Count();
++        var roleMenuCount1 = db.Sys_RoleMenus.Count();
++
++        MesMenuSeed.EnsureSeeded(db);   // 第二次
++        Assert.Equal(menuCount1, db.Sys_Menus.Count());
++        Assert.Equal(roleMenuCount1, db.Sys_RoleMenus.Count());
++
++        // 全 16 行（300 父 + 301–315）+ 各授管理员一条 RoleMenu。
++        Assert.Equal(16, menuCount1);
++        Assert.Equal(16, roleMenuCount1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_CorrectsHistoricalBackfilledBareKey_ToMesPrefixed()
++    {
++        using var db = NewDb();
++        // 模拟既有库：310 設備管理 曾被历史回填成 mes-machine-list（≠ 真相源 mes-machine）——命门2。
++        db.Sys_Menus.Add(new Sys_Menu
++        {
++            MenuId = 310, MenuName = "設備管理", RoutePath = "/mes/machine-list",
++            MenuKey = "mes-machine-list", ParentId = 300, OrderNo = 310, Enable = true,
++        });
++        db.SaveChanges();
++
++        MesMenuSeed.EnsureSeeded(db);
++
++        var m = db.Sys_Menus.Single(x => x.MenuId == 310);
++        Assert.Equal("mes-machine", m.MenuKey);   // 就地矫正
++    }
++
++    [Fact]
++    public void EnsureSeeded_ListPagesAndParentAndGetOnly_LeaveMenuKeyNull_ForBackfill()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);
++
++        // 父行 300 + 一覧页（303/305/307）+ GET-only 看板（309 dashboard / 312 control-tower）
++        // 不承载权限：MenuKey 留 null（交由回填派生后缀键，无 action 引用、无害）。
++        foreach (var id in new[] { 300, 303, 305, 307, 309, 312 })
++        {
++            var m = db.Sys_Menus.Single(x => x.MenuId == id);
++            Assert.Null(m.MenuKey);
++        }
++    }
++}
+diff --git a/CP6.Tests/MesPermissionAttributeTests.cs b/CP6.Tests/MesPermissionAttributeTests.cs
+new file mode 100644
+index 0000000..431dc7c
+--- /dev/null
++++ b/CP6.Tests/MesPermissionAttributeTests.cs
+@@ -0,0 +1,185 @@
++using System.Reflection;
++using System.Text.RegularExpressions;
++using CP6.Core.Auth;
++using CP6.WebApi.Controllers.Mes;
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// 反射守卫（M-MES 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
++/// Controllers.Mes 命名空间全部 controller，锁死「未来新增 MES 写端点漏贴权限键即红」。
++/// 与已合并的 <c>ErpPermissionAttributeTests</c> / <c>WmsPermissionAttributeTests</c> 同型三件套。
++/// 真相源：docs/seeds/mes-permission-keys.md（11 控制器扫描面 / 30 非GET端点 / 28 贴点 / 2 只读 POST 豁免）。
++///
++/// ① discovery 守卫：断言扫到 11 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
++/// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
++///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 28、
++///    豁免命中数精确 == 2（30 = 28 + 2 收口）。将来谁新增 MES 写端点忘贴权限，本用例立刻红。
++/// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
++///    ^mes-[a-z0-9-]+$（连字符，禁下划线），action **逐词相等**落在真相源实际使用的 action 集合内。
++/// ④ 豁免防腐：每条豁免必须确为「变更端点 且 未贴权限」——防豁免清单变陈旧（端点改名/被贴/被删）
++///    却仍白名单遮蔽某个真·写端点丢键。
++///
++/// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
++/// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
++/// 继承说明：11 个 MES 控制器**全部直接继承 ControllerBase**（无 LocalizedControllerBase 或任何
++/// 中间抽象基类；已逐类自查类头，见 mes-t4-report.md 继承链核对）。ControllerBase 自身不声明任何
++/// [HttpXxx] action，故所有写端点均为各子类手写声明方法，BindingFlags.DeclaredOnly 反射不会漏扫端点。
++/// 若未来引入共享基类（如 LocalizedControllerBase）并在其上声明 [HttpXxx] 方法，DeclaredOnly 会静默
++/// 漏扫该端点——届时须调整扫描策略（如改用非 DeclaredOnly 并按声明类型过滤）。
++/// </summary>
++public class MesPermissionAttributeTests
++{
++    /// <summary>menu 键约定：mes- 前缀 + 小写字母数字连字符。</summary>
++    private static readonly Regex MenuPattern = new("^mes-[a-z0-9-]+$", RegexOptions.Compiled);
++
++    /// <summary>
++    /// 真相源实际使用的 action 集合（从已贴的 28 个 [RequirePermission] 逐词读出的真实 action，非凭空造）。
++    /// 只读 POST 豁免归 view 但**不贴键**（未打属性），故本集合**不含 view**——逐词相等，多一词/少一词即红。
++    /// 新 action 词若出现须显式加入本集合，否则视为疑似 typo 报错。
++    /// </summary>
++    private static readonly HashSet<string> ActionVocabulary = new()
++    {
++        "add", "edit", "del",                       // 四基粒度写（view 未贴，不入集）
++        "issue",                                    // 状态键：mes-work-order:issue 指図発行
++        "start", "suspend", "complete", "report",   // 状态/高危键：mes-production-result:* 报工五态（complete 高危·反冲，§三）
++        "status", "downtime",                       // 状态键：mes-machine:status 設備状態 / mes-machine:downtime 停止記録（含 close 归并）
++        "recalculate",                              // 状态键：mes-oee:recalculate OEE 再計算
++        "reschedule", "arrange",                    // 状态键：mes-planning-board:* 計画変更/自動配置
++                                                    // （process-cost-rate:edit 高危复用 edit，§三；work-center/process-cost-rate 复用 edit/del）
++    };
++
++    /// <summary>
++    /// 只读 POST 豁免清单（真相源 §四，共 2 条 —— 均逐条读 Service 实现证得无写副作用；归 view，不贴权限键）。
++    /// 键 = "ControllerName.MethodName"。每条带真相源编号 + 豁免依据。
++    /// </summary>
++    private static readonly HashSet<string> ReadOnlyPostExemptions = new()
++    {
++        "PlanAchievementController.Summary",    // §四#1 PlanAchievementService.GetSummaryAsync 仅 WorkOrders.AsNoTracking 读→内存 GroupBy 达成率 DTO，全类无 Add/Update/Remove/SaveChanges；POST 仅为传复杂查询体
++        "PlanAchievementController.ExportCsv",  // §四#2 调 GetSummaryAsync 后拼 CSV bytes，纯读导出，无写
++    };
++
++    private static IEnumerable<Type> MesControllers =>
++        typeof(WorkOrderController).Assembly.GetTypes()
++            .Where(t => t.Namespace == "CP6.WebApi.Controllers.Mes"
++                        && typeof(ControllerBase).IsAssignableFrom(t)
++                        && !t.IsAbstract)
++            .OrderBy(t => t.Name);
++
++    private static IEnumerable<MethodInfo> ActionMethods(Type t) =>
++        t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
++            .Where(m => !m.IsSpecialName);
++
++    private static bool IsMutating(MethodInfo m) =>
++        m.GetCustomAttributes<HttpPostAttribute>().Any()
++        || m.GetCustomAttributes<HttpPutAttribute>().Any()
++        || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
++
++    private static bool IsGet(MethodInfo m) => m.GetCustomAttributes<HttpGetAttribute>().Any();
++
++    private static string Key(Type c, MethodInfo m) => $"{c.Name}.{m.Name}";
++
++    /// <summary>经 CustomAttributeData 读构造参数 (menu, action)；无特性返回 null。</summary>
++    private static (string menu, string action)? ReadPermission(MethodInfo m)
++    {
++        var data = CustomAttributeData.GetCustomAttributes(m)
++            .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
++        if (data == null) return null;
++        var args = data.ConstructorArguments;
++        return ((string)args[0].Value!, (string)args[1].Value!);
++    }
++
++    [Fact]
++    public void MesControllers_AreDiscovered()
++    {
++        // 守卫：CP6.WebApi.Controllers.Mes 下继承 ControllerBase 的非抽象类共 11
++        //      （含 MesDashboard GET-only + PlanAchievement 全豁免 两个无真写控制器）。防空扫假绿。
++        Assert.Equal(11, MesControllers.Count());
++    }
++
++    [Fact]
++    public void EveryMutatingAction_IsGuarded_WithConventionalKeyOrExemption()
++    {
++        var offenders = new List<string>();
++        var taggedCount = 0;
++        var exemptHit = new HashSet<string>();
++
++        foreach (var c in MesControllers)
++        foreach (var m in ActionMethods(c).Where(IsMutating))
++        {
++            var key = Key(c, m);
++            var perm = ReadPermission(m);
++
++            if (perm == null)
++            {
++                // 未贴权限：唯有在显式只读 POST 豁免清单内才放行。
++                if (ReadOnlyPostExemptions.Contains(key))
++                    exemptHit.Add(key);
++                else
++                    offenders.Add($"{key}：变更端点缺 [RequirePermission] 且不在只读 POST 豁免清单");
++                continue;
++            }
++
++            // 已贴权限却又列入豁免 = 语义冲突（豁免应无键）。
++            if (ReadOnlyPostExemptions.Contains(key))
++                offenders.Add($"{key}：既贴 [RequirePermission] 又在豁免清单，二者互斥");
++
++            taggedCount++;
++            if (!MenuPattern.IsMatch(perm.Value.menu))
++                offenders.Add($"{key}：menu '{perm.Value.menu}' 不符约定 ^mes-[a-z0-9-]+$");
++            if (!ActionVocabulary.Contains(perm.Value.action))
++                offenders.Add($"{key}：action '{perm.Value.action}' 不在真相源 action 集（疑似 typo，须显式加入）");
++        }
++
++        Assert.True(offenders.Count == 0,
++            "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
++
++        // 收口断言：贴点 28 + 豁免命中 2 = 全 30 非GET端点，精确吻合真相源 §七。
++        Assert.Equal(28, taggedCount);
++        Assert.Equal(2, exemptHit.Count);
++    }
++
++    [Fact]
++    public void ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints()
++    {
++        // 豁免防腐：清单每一条都必须实存、确为变更端点、且当前未贴权限键。
++        // 防清单变陈旧（端点被改名/删除/后来贴了键）却仍白名单遮蔽某真·写端点丢键。
++        var byKey = MesControllers
++            .SelectMany(c => ActionMethods(c).Select(m => (key: Key(c, m), method: m)))
++            .ToDictionary(x => x.key, x => x.method);
++
++        var stale = new List<string>();
++        foreach (var ex in ReadOnlyPostExemptions)
++        {
++            if (!byKey.TryGetValue(ex, out var m))
++            {
++                stale.Add($"{ex}：豁免清单条目在源码中已不存在（须清理豁免清单）");
++                continue;
++            }
++            if (!IsMutating(m))
++                stale.Add($"{ex}：豁免条目已非变更端点（须从豁免清单移除）");
++            if (ReadPermission(m) != null)
++                stale.Add($"{ex}：豁免条目现已贴 [RequirePermission]（须从豁免清单移除，交核心闸校验键）");
++        }
++
++        Assert.True(stale.Count == 0, "只读 POST 豁免清单已陈旧:\n" + string.Join("\n", stale));
++        Assert.Equal(2, ReadOnlyPostExemptions.Count);
++    }
++
++    [Fact]
++    public void NoReadOnlyGetAction_HasRequirePermission()
++    {
++        // 只读误贴防护：纯 HttpGet（且非变更）端点不应带 [RequirePermission]（本波未给 GET 贴）。
++        var offenders = new List<string>();
++        foreach (var c in MesControllers)
++        foreach (var m in ActionMethods(c))
++        {
++            var readOnly = IsGet(m) && !IsMutating(m);
++            if (readOnly && ReadPermission(m) != null)
++                offenders.Add($"{Key(c, m)}：只读 GET 端点误贴 [RequirePermission]");
++        }
++        Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
++    }
++}
+diff --git a/CP6.Tests/MesPermissionSeedTests.cs b/CP6.Tests/MesPermissionSeedTests.cs
+new file mode 100644
+index 0000000..a3ac065
+--- /dev/null
++++ b/CP6.Tests/MesPermissionSeedTests.cs
+@@ -0,0 +1,154 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-MES 横切接线 Task 3b：MesPermissionSeed 逐租户 Sys_MenuAction/Sys_RoleAction 幂等种子断言。
++///
++/// 三数闭环（真相源 docs/seeds/mes-permission-keys.md §一/§七 + 控制器 grep）：
++///   28 写端点（[RequirePermission] 贴点）→ 去重 (menu-key, action) 25 元组 → 25 种子元组（漏种 0 / 多种 0）。
++///   （3 处归并消解重复：mes-work-order:add 覆 Create+ExpandFromOrder / mes-production-result:suspend
++///    覆 Suspend+Resume / mes-machine:downtime 覆 Register+Close。2 只读 POST 豁免
++///    mes-plan-achievement:view 未贴点→不入种子，故覆盖 9 有写端点 menu-key，非 10。）
++/// MenuId 经锚定表 docs/seeds/mes-key-menu-anchor.md 映射；RoleAction 挂 admin RoleId=1。
++///
++/// ★ ExpectedTuples 为独立硬编码 oracle（非引用 MesPermissionSeed 内部常量），防自证假绿。
++/// </summary>
++public class MesPermissionSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 期望的 25 去重种子元组（MenuId 来自锚定表 mes-key-menu-anchor.md；action 来自 T3a 控制器贴点，逐字核对）。
++    private static readonly (int MenuId, string Code)[] ExpectedTuples =
++    {
++        (301, "reschedule"), (301, "arrange"),                                        // mes-planning-board
++        (302, "add"), (302, "edit"), (302, "del"), (302, "issue"),                    // mes-work-order
++        (304, "start"), (304, "suspend"), (304, "complete"), (304, "report"),         // mes-production-result
++        (306, "add"), (306, "edit"),                                                  // mes-quality-inspection
++        (308, "add"), (308, "edit"), (308, "del"),                                    // mes-defect
++        (310, "add"), (310, "edit"), (310, "del"), (310, "status"), (310, "downtime"),// mes-machine
++        (311, "recalculate"),                                                         // mes-oee
++        (314, "edit"), (314, "del"),                                                  // mes-work-center
++        (315, "edit"), (315, "del"),                                                  // mes-process-cost-rate
++    };
++
++    private static readonly Guid TenantA = Guid.Parse("11111111-1111-1111-1111-111111111111");
++    private static readonly Guid TenantB = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static void SeedTenantsAndMenus(CP6Context db)
++    {
++        // 锚定菜单行须先在（RoleAction 挂 MenuId；MesMenuSeed 缺行补建并显式赋 mes-* MenuKey）。
++        MesMenuSeed.EnsureSeeded(db);
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantA, TenantCode = "TA", TenantName = "TenantA", Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantB, TenantCode = "TB", TenantName = "TenantB", Enable = true });
++        db.SaveChanges();
++    }
++
++    [Fact]
++    public void EnsureSeeded_SeedsExactly25TuplesPerTenant_ForBothMenuAndRoleAction()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        MesPermissionSeed.EnsureSeeded(db);
++
++        foreach (var tid in new[] { TenantA, TenantB })
++        {
++            var menuActions = db.Sys_MenuActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid).ToList();
++            var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
++
++            // 元组闭环计数：每租户各得全套 25。
++            Assert.Equal(25, menuActions.Count);
++            Assert.Equal(25, roleActions.Count);
++
++            // 逐元组精确匹配（漏种 0 / 多种 0）。
++            var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var expected = ExpectedTuples.ToHashSet();
++            Assert.Equal(expected, maSet);
++            Assert.Equal(expected, raSet);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_SecondCallNoNewRows()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        MesPermissionSeed.EnsureSeeded(db);
++        var ma1 = db.Sys_MenuActions.IgnoreQueryFilters().Count();
++        var ra1 = db.Sys_RoleActions.IgnoreQueryFilters().Count();
++
++        MesPermissionSeed.EnsureSeeded(db);   // 二次调用
++        Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++
++        // 2 租户 × 25 元组 = 50。
++        Assert.Equal(50, ma1);
++        Assert.Equal(50, ra1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        MesPermissionSeed.EnsureSeeded(db);
++
++        var anchoredMenuIds = ExpectedTuples.Select(t => t.MenuId).ToHashSet();
++        var roleActions = db.Sys_RoleActions.IgnoreQueryFilters().ToList();
++
++        Assert.NotEmpty(roleActions);
++        Assert.All(roleActions, ra => Assert.Equal(1, ra.RoleId));
++        // 每个 RoleAction.MenuId 必来自锚定表，且该菜单行确实存在且 MenuKey 非 null 且 mes- 前缀。
++        Assert.All(roleActions, ra => Assert.Contains(ra.MenuId, anchoredMenuIds));
++        foreach (var menuId in anchoredMenuIds)
++        {
++            var menu = db.Sys_Menus.Single(m => m.MenuId == menuId);
++            Assert.NotNull(menu.MenuKey);
++            Assert.StartsWith("mes-", menu.MenuKey!);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        MesPermissionSeed.EnsureSeeded(db);
++
++        // 逐租户显式 TenantId：两租户各得独立行，无一被盖成默认租户。
++        var tenantsSeen = db.Sys_RoleActions.IgnoreQueryFilters()
++            .Select(x => x.TenantId).Distinct().ToList();
++        Assert.Contains(TenantA, tenantsSeen);
++        Assert.Contains(TenantB, tenantsSeen);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTenants_NoOp()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);   // 菜单在，但无 Sys_Tenants 行
++
++        MesPermissionSeed.EnsureSeeded(db);
++
++        Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Mes/DefectRecordController.cs b/CP6.WebApi/Controllers/Mes/DefectRecordController.cs
+index 30d4821..b5458fe 100644
+--- a/CP6.WebApi/Controllers/Mes/DefectRecordController.cs
++++ b/CP6.WebApi/Controllers/Mes/DefectRecordController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>
+ /// MSBBME080 — 不良品管理 Web API
+ /// </summary>
+@@ -31,50 +32,53 @@ public class DefectRecordController : ControllerBase
+     [HttpGet("{no}")]
+     public async Task<IActionResult> Get(string no)
+     {
+         var dto = await _service.GetByNoAsync(no);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>ME080 — 手動起票</summary>
+     [HttpPost]
++    [RequirePermission("mes-defect", "add")]
+     public async Task<IActionResult> Create([FromBody] DefectRecordDto dto)
+     {
+         try
+         {
+             var no = await _service.CreateAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { defectNo = no } });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME080 — 更新（原因分析 / 是正処置）</summary>
+     [HttpPut("{no}")]
++    [RequirePermission("mes-defect", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] DefectRecordDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME080 — 削除</summary>
+     [HttpDelete("{no}")]
++    [RequirePermission("mes-defect", "del")]
+     public async Task<IActionResult> Delete(string no)
+     {
+         try
+         {
+             await _service.DeleteAsync(no, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Mes/MachineController.cs b/CP6.WebApi/Controllers/Mes/MachineController.cs
+index 0a2c636..c13352e 100644
+--- a/CP6.WebApi/Controllers/Mes/MachineController.cs
++++ b/CP6.WebApi/Controllers/Mes/MachineController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>MES Phase 4 — 設備管理 Web API</summary>
+ [ApiController]
+ [Route("api/mes/machines")]
+@@ -25,85 +26,91 @@ public class MachineController : ControllerBase
+ 
+     [HttpGet("{cd}")]
+     public async Task<IActionResult> Get(string cd)
+     {
+         var dto = await _service.GetByCdAsync(cd);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     [HttpPost]
++    [RequirePermission("mes-machine", "add")]
+     public async Task<IActionResult> Create([FromBody] MachineDto dto)
+     {
+         try
+         {
+             var cd = await _service.CreateAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { machineCd = cd } });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     [HttpPut("{cd}")]
++    [RequirePermission("mes-machine", "edit")]
+     public async Task<IActionResult> Update(string cd, [FromBody] MachineDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(cd, dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     [HttpDelete("{cd}")]
++    [RequirePermission("mes-machine", "del")]
+     public async Task<IActionResult> Delete(string cd)
+     {
+         try
+         {
+             await _service.DeleteAsync(cd, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     /// <summary>設備状態変更</summary>
+     [HttpPost("{cd}/status")]
++    [RequirePermission("mes-machine", "status")]
+     public async Task<IActionResult> ChangeStatus(string cd, [FromBody] ChangeStatusRequest req)
+     {
+         try
+         {
+             await _service.ChangeStatusAsync(cd, req.Status, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     // ─────── 停止記録 ───────
+ 
+     [HttpGet("downtimes")]
+     public async Task<IActionResult> SearchDowntimes([FromQuery] DowntimeSearchQuery query)
+     {
+         var r = await _service.SearchDowntimesAsync(query);
+         return Ok(new { code = 0, message = "OK", data = r });
+     }
+ 
+     [HttpPost("downtimes")]
++    [RequirePermission("mes-machine", "downtime")]
+     public async Task<IActionResult> RegisterDowntime([FromBody] MachineDowntimeDto dto)
+     {
+         try
+         {
+             var no = await _service.RegisterDowntimeAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { downtimeNo = no } });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+     [HttpPost("downtimes/{no}/close")]
++    [RequirePermission("mes-machine", "downtime")]
+     public async Task<IActionResult> CloseDowntime(string no, [FromBody] CloseDowntimeRequest req)
+     {
+         try
+         {
+             await _service.CloseDowntimeAsync(no, req.EndTime, req.RecoveryOperatorCd, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+     }
+ 
+diff --git a/CP6.WebApi/Controllers/Mes/OeeController.cs b/CP6.WebApi/Controllers/Mes/OeeController.cs
+index c78ff00..10b6016 100644
+--- a/CP6.WebApi/Controllers/Mes/OeeController.cs
++++ b/CP6.WebApi/Controllers/Mes/OeeController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>MES Phase 4 — OEE 分析 Web API</summary>
+ [ApiController]
+ [Route("api/mes/oee")]
+@@ -34,16 +35,17 @@ public class OeeController : ControllerBase
+     /// <summary>過去 N 日 OEE 推移（折線用、設備別）</summary>
+     [HttpGet("trend")]
+     public async Task<IActionResult> Trend([FromQuery] int days = 30, [FromQuery] string? machineCd = null)
+     {
+         var r = await _service.GetTrendAsync(days, machineCd);
+         return Ok(new { code = 0, message = "OK", data = r });
+     }
+ 
+     /// <summary>指定日 再計算（保存）</summary>
+     [HttpPost("recalculate")]
++    [RequirePermission("mes-oee", "recalculate")]
+     public async Task<IActionResult> Recalculate([FromBody] OeeRecalcRequest req)
+     {
+         var n = await _service.RecalculateAsync(req, CurrentUser);
+         return Ok(new { code = 0, message = "ME-MSG-041", data = new { recalculated = n } });
+     }
+ }
+diff --git a/CP6.WebApi/Controllers/Mes/PlanningBoardController.cs b/CP6.WebApi/Controllers/Mes/PlanningBoardController.cs
+index 554b0ae..a24197a 100644
+--- a/CP6.WebApi/Controllers/Mes/PlanningBoardController.cs
++++ b/CP6.WebApi/Controllers/Mes/PlanningBoardController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>MSBBME010 — 生産計画ボード Web API</summary>
+ [ApiController]
+ [Route("api/mes/planning-board")]
+@@ -27,31 +28,33 @@ public class PlanningBoardController : ControllerBase
+     /// <summary>KPI サマリ</summary>
+     [HttpGet("kpi")]
+     public async Task<IActionResult> GetKpi([FromQuery] PlanningBoardQuery query)
+     {
+         var kpi = await _service.GetKpiAsync(query);
+         return Ok(new { code = 0, message = "OK", data = kpi });
+     }
+ 
+     /// <summary>ドラッグ後 日時更新</summary>
+     [HttpPut("reschedule")]
++    [RequirePermission("mes-planning-board", "reschedule")]
+     public async Task<IActionResult> Reschedule([FromBody] RescheduleRequest req)
+     {
+         try
+         {
+             await _service.RescheduleAsync(req, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>自動配置（PA050 ManufOrderPrio + 納期で並び替え）</summary>
+     [HttpPost("auto-arrange")]
++    [RequirePermission("mes-planning-board", "arrange")]
+     public async Task<IActionResult> AutoArrange([FromBody] AutoArrangeRequest req)
+     {
+         var changed = await _service.AutoArrangeAsync(req, CurrentUser);
+         return Ok(new { code = 0, message = "ME-MSG-041", data = new { changed } });
+     }
+ }
+diff --git a/CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs b/CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs
+index 7375179..3146d4a 100644
+--- a/CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs
++++ b/CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DomainModels.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ [ApiController]
+ [Route("api/mes/process-cost-rate")]
+ [Authorize]
+@@ -12,15 +13,19 @@ public class ProcessCostRateController : ControllerBase
+ {
+     private readonly IProcessCostRateService _svc;
+     public ProcessCostRateController(IProcessCostRateService svc) => _svc = svc;
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet] public async Task<IActionResult> List([FromQuery] string? wgCd) => Ok2(await _svc.ListAsync(wgCd));
+     [HttpGet("resolve")] public async Task<IActionResult> Resolve([FromQuery] string wgCd, [FromQuery] DateTime onDate)
+         => Ok2(await _svc.ResolveAsync(wgCd, onDate));
+-    [HttpPost("upsert")] public async Task<IActionResult> Upsert([FromBody] ProcessCostRate dto)
++    [HttpPost("upsert")]
++    [RequirePermission("mes-process-cost-rate", "edit")]
++    public async Task<IActionResult> Upsert([FromBody] ProcessCostRate dto)
+     { try { await _svc.UpsertAsync(dto, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+-    [HttpDelete("{id:Guid}")] public async Task<IActionResult> Delete(Guid id)
++    [HttpDelete("{id:Guid}")]
++    [RequirePermission("mes-process-cost-rate", "del")]
++    public async Task<IActionResult> Delete(Guid id)
+     { try { await _svc.DeleteAsync(id, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+ }
+diff --git a/CP6.WebApi/Controllers/Mes/ProductionResultController.cs b/CP6.WebApi/Controllers/Mes/ProductionResultController.cs
+index 094de24..2161d54 100644
+--- a/CP6.WebApi/Controllers/Mes/ProductionResultController.cs
++++ b/CP6.WebApi/Controllers/Mes/ProductionResultController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>
+ /// MSBBME040 / 050 — 製造実績 入力 / 一覧 Web API
+ /// </summary>
+@@ -31,36 +32,41 @@ public class ProductionResultController : ControllerBase
+     [HttpGet("work-order/{no}")]
+     public async Task<IActionResult> GetWorkOrderSummary(string no)
+     {
+         var dto = await _service.GetWorkOrderSummaryAsync(no);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>ME040 — 工程開始 POST /api/mes/production-results/start</summary>
+     [HttpPost("start")]
++    [RequirePermission("mes-production-result", "start")]
+     public Task<IActionResult> Start([FromBody] ProductionResultRequest req) => Run(req, _service.StartAsync);
+ 
+     /// <summary>ME040 — 工程中断 POST /api/mes/production-results/suspend</summary>
+     [HttpPost("suspend")]
++    [RequirePermission("mes-production-result", "suspend")]
+     public Task<IActionResult> Suspend([FromBody] ProductionResultRequest req) => Run(req, _service.SuspendAsync);
+ 
+     /// <summary>ME040 — 中断解除 POST /api/mes/production-results/resume</summary>
+     [HttpPost("resume")]
++    [RequirePermission("mes-production-result", "suspend")]
+     public Task<IActionResult> Resume([FromBody] ProductionResultRequest req) => Run(req, _service.ResumeAsync);
+ 
+     /// <summary>ME040 — 工程完了 POST /api/mes/production-results/complete</summary>
+     [HttpPost("complete")]
++    [RequirePermission("mes-production-result", "complete")]
+     public Task<IActionResult> Complete([FromBody] ProductionResultRequest req) => Run(req, _service.CompleteAsync);
+ 
+     /// <summary>ME040 — 数量報告 POST /api/mes/production-results</summary>
+     [HttpPost]
++    [RequirePermission("mes-production-result", "report")]
+     public Task<IActionResult> Report([FromBody] ProductionResultRequest req) => Run(req, _service.ReportAsync);
+ 
+     private async Task<IActionResult> Run(ProductionResultRequest req, Func<ProductionResultRequest, string?, Task<string>> action)
+     {
+         try
+         {
+             var resultNo = await action(req, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { resultNo } });
+         }
+         catch (InvalidOperationException ex)
+diff --git a/CP6.WebApi/Controllers/Mes/QualityInspectionController.cs b/CP6.WebApi/Controllers/Mes/QualityInspectionController.cs
+index 4516ea3..bf5ee2a 100644
+--- a/CP6.WebApi/Controllers/Mes/QualityInspectionController.cs
++++ b/CP6.WebApi/Controllers/Mes/QualityInspectionController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>
+ /// MSBBME060 / 070 — 品質検査 Web API
+ /// </summary>
+@@ -31,35 +32,37 @@ public class QualityInspectionController : ControllerBase
+     [HttpGet("{no}")]
+     public async Task<IActionResult> Get(string no)
+     {
+         var dto = await _service.GetByNoAsync(no);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>ME060 — 新規登録</summary>
+     [HttpPost]
++    [RequirePermission("mes-quality-inspection", "add")]
+     public async Task<IActionResult> Create([FromBody] QualityInspectionDto dto)
+     {
+         try
+         {
+             var no = await _service.CreateAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { inspectionNo = no } });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME060 — 訂正</summary>
+     [HttpPut("{no}")]
++    [RequirePermission("mes-quality-inspection", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] QualityInspectionDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Controllers/Mes/WorkCenterController.cs b/CP6.WebApi/Controllers/Mes/WorkCenterController.cs
+index 9177d4c..4c083d3 100644
+--- a/CP6.WebApi/Controllers/Mes/WorkCenterController.cs
++++ b/CP6.WebApi/Controllers/Mes/WorkCenterController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DomainModels.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ [ApiController]
+ [Route("api/mes/work-center")]
+ [Authorize]
+@@ -13,17 +14,19 @@ public class WorkCenterController : ControllerBase
+     private readonly IWorkCenterService _svc;
+     public WorkCenterController(IWorkCenterService svc) => _svc = svc;
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet] public async Task<IActionResult> List([FromQuery] string? keyword) => Ok2(await _svc.ListAsync(keyword));
+     [HttpGet("{wgCd}")] public async Task<IActionResult> Get(string wgCd) => Ok2(await _svc.GetAsync(wgCd));
+ 
+     [HttpPost("upsert")]
++    [RequirePermission("mes-work-center", "edit")]
+     public async Task<IActionResult> Upsert([FromBody] WorkCenter dto)
+     { try { await _svc.UpsertAsync(dto, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+ 
+     [HttpDelete("{wgCd}")]
++    [RequirePermission("mes-work-center", "del")]
+     public async Task<IActionResult> Delete(string wgCd)
+     { try { await _svc.DeleteAsync(wgCd, CurrentUser); return Ok2(); } catch (InvalidOperationException e) { return Err(e); } }
+ }
+diff --git a/CP6.WebApi/Controllers/Mes/WorkOrderController.cs b/CP6.WebApi/Controllers/Mes/WorkOrderController.cs
+index a42d6af..4b27768 100644
+--- a/CP6.WebApi/Controllers/Mes/WorkOrderController.cs
++++ b/CP6.WebApi/Controllers/Mes/WorkOrderController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Mes;
+ 
+ /// <summary>
+ /// MSBBME020 / 030 — 製造指図入力・一覧 Web API
+ /// </summary>
+@@ -39,80 +40,85 @@ public class WorkOrderController : ControllerBase
+     [HttpGet("{no}")]
+     public async Task<IActionResult> Get(string no)
+     {
+         var dto = await _service.GetByNoAsync(no);
+         if (dto == null) return NotFound(new { code = 404, message = "ME-MSG-040" });
+         return Ok(new { code = 0, message = "OK", data = dto });
+     }
+ 
+     /// <summary>ME020 — 新建 POST /api/mes/work-orders</summary>
+     [HttpPost]
++    [RequirePermission("mes-work-order", "add")]
+     public async Task<IActionResult> Create([FromBody] WorkOrderDto dto)
+     {
+         try
+         {
+             var no = await _service.CreateAsync(dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { workOrderNo = no } });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME020 — 訂正 PUT /api/mes/work-orders/{no}</summary>
+     [HttpPut("{no}")]
++    [RequirePermission("mes-work-order", "edit")]
+     public async Task<IActionResult> Update(string no, [FromBody] WorkOrderDto dto)
+     {
+         try
+         {
+             await _service.UpdateAsync(no, dto, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME030 — 削除 DELETE /api/mes/work-orders/{no}</summary>
+     [HttpDelete("{no}")]
++    [RequirePermission("mes-work-order", "del")]
+     public async Task<IActionResult> Delete(string no, [FromBody] DeleteRequest? body = null)
+     {
+         try
+         {
+             await _service.DeleteAsync(no, body?.RowVersion, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME020 — 指図発行 POST /api/mes/work-orders/{no}/issue</summary>
+     [HttpPost("{no}/issue")]
++    [RequirePermission("mes-work-order", "issue")]
+     public async Task<IActionResult> Issue(string no)
+     {
+         try
+         {
+             await _service.IssueAsync(no, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041" });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+         }
+     }
+ 
+     /// <summary>ME020 — 受注 → 指図 自動展開 POST /api/mes/work-orders/expand-from-order</summary>
+     [HttpPost("expand-from-order")]
++    [RequirePermission("mes-work-order", "add")]
+     public async Task<IActionResult> ExpandFromOrder([FromBody] ExpandFromOrderRequest req)
+     {
+         try
+         {
+             var nos = await _service.ExpandFromOrderAsync(req, CurrentUser);
+             return Ok(new { code = 0, message = "ME-MSG-041", data = new { workOrderNos = nos } });
+         }
+         catch (InvalidOperationException ex)
+         {
+             return BadRequest(new { code = 400, message = ex.Message });
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 8c986a5..75ebaf5 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -835,20 +835,33 @@ using (var scope = app.Services.CreateScope())
+     // Task 3a 给 10 控制器 35 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 ErpMenuSeed 之后（RoleAction 挂锚定 MenuId 202/204/206/208/209/210/212/213/215/218/220，菜单行须先在）。
+     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。30 去重元组（35 写端点去重）覆盖 11 有写端点 menu-key。
+     CP6.WebApi.Seed.ErpPermissionSeed.EnsureSeeded(db);
+ 
+     // M-WMS 横切接线 Task 3b：WMS 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
+     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+ 
++    // M-MES 横切接线 Task 2：MES 300 段菜单锚定 MenuKey（mes-*）。
++    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块（:894）之前：既有 300–315 由 Program.cs（本文件 :1511+）
++    //   在回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → MES 全 403。
++    //   本种子在回填前对 10 有菜单键各锚定一行显式设 mes-* MenuKey（含缺行补建），并防御矫正历史回填错配
++    //   （尤其 310 /mes/machine-list 回填得 mes-machine-list ≠ 真相源 mes-machine）。MES 无孤儿路由，纯锚定。
++    CP6.WebApi.Seed.MesMenuSeed.EnsureSeeded(db);
++
++    // M-MES 横切接线 Task 3b：MES 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
++    // Task 3a 给 9 控制器 28 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
++    // 须置于 MesMenuSeed 之后（RoleAction 挂锚定 MenuId 301/302/304/306/308/310/311/314/315，菜单行须先在）。
++    // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。25 去重元组（28 写端点去重）覆盖 9 有写端点 menu-key（plan-achievement 仅 view 不种）。
++    CP6.WebApi.Seed.MesPermissionSeed.EnsureSeeded(db);
++
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+         db.SaveChanges();
+     }
+     // PUB 章00 组织模型：部门管理菜单
+     if (!db.Sys_Menus.Any(m => m.MenuId == 108))
+     {
+diff --git a/CP6.WebApi/Seed/MesMenuSeed.cs b/CP6.WebApi/Seed/MesMenuSeed.cs
+new file mode 100644
+index 0000000..fa0fe28
+--- /dev/null
++++ b/CP6.WebApi/Seed/MesMenuSeed.cs
+@@ -0,0 +1,139 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// MES 製造執行 菜单启动幂等种子（M-MES 横切接线 Task 2）。
++///
++/// 背景（头号命门·回填时序）：MES 300 段菜单（300–315）由 Program.cs 播种，但插入块位于
++/// 「无 MenuKey 菜单 RoutePath 自动回填」块（<c>MenuKey = RoutePath.Trim('/').Replace('/','-')</c>）
++/// **之后**，且 Add 时**均未设 MenuKey**。洁净部署首启：回填块先跑（MES 菜单尚不存在）→ 跳过；MES 菜单随后
++/// 插入 MenuKey 留 null → <see cref="Sys_Menu.MenuKey"/> 为 null 被 PermissionAggregator 过滤掉 → MES action
++/// 键无法 join 出 → 首启即 fail-closed 403，需二次重启回填才生效。本种子在回填块**之前**调用，把 10 个
++/// 有菜单的权限键各锚定到**一个**菜单行显式设 MenuKey=<c>mes-*</c>（含缺行补建），首启即生效。
++///
++/// 命门2·machine 键回填错配：菜单 310 RoutePath=<c>/mes/machine-list</c>，回填得 <c>mes-machine-list</c>
++/// ≠ 真相源 <c>docs/seeds/mes-permission-keys.md</c> §二 的 <c>mes-machine</c>。若依赖回填，Machine 全键
++/// （add/edit/del/status/downtime）锚定到错误键 → 与 T3 贴的 <c>mes-machine:*</c> 对不上 → Machine 全 403。
++/// 本种子对 310 显式赋 <c>MenuKey="mes-machine"</c>（RoutePath 不动），并由防御矫正块把已被历史回填写坏的
++/// 行就地纠回。
++///
++/// MenuKey 策略（与 ErpMenuSeed/WmsMenuSeed 一致）：
++///  - **锚定行**显式设 MenuKey = T1 权威键，**绝不靠 RoutePath 自动回填**。
++///  - **一域两页（入力 + 一覧）只锚定「入力/主操作页」一行**，一覧页（303/305/307）MenuKey 留 null
++///    （由 Program.cs 回填得 RoutePath 派生 <c>*-list</c> 键，不承载权限、无 RoleAction 引用）。
++///    GET-only 看板（309 dashboard / 312 control-tower）同理留 null。
++///    ★这是**硬约束**：<c>Sys_Menus.MenuKey</c> 有 <c>IS NOT NULL</c> 过滤唯一索引
++///    （HasIndex("MenuKey").IsUnique().HasFilter），两行共赋同一非空 MenuKey 会撞唯一键。
++///    故必须一键一锚定行（真相源 §二：MES 因回填按 RoutePath 天然差异化，10 锚定键互不相同）。
++///  - MES 无孤儿路由（T1 已证 15 前端页全映射到 300 段菜单），本种子纯锚定、无收编。
++///
++/// 幂等：MenuId 判存守卫不重复插入；防御矫正块把既有库中被历史回填写坏的 10 锚定行 MenuKey 就地纠回
++/// <c>mes-*</c>（作用域严限 10 锚定行 r.Key != null；一覧/看板/父行不动）。RoleMenu 默认授管理员
++/// （RoleId=1，默认租户由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
++/// </summary>
++public static class MesMenuSeed
++{
++    /// <summary>
++    /// 菜单定义：(MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey)。
++    /// MenuKey 非 null 者即 10 个权限锚定行；null 者为父行/一覧页/GET-only 看板（不承载权限）。
++    /// 300 段既有 300–315 已由 Program.cs 播种，本表含之仅为 (a) 显式锚定 MenuKey (b) 部分部署缺行时补建。
++    /// RoutePath 与 Program.cs 现有 MES 菜单块逐字一致（310 保持 /mes/machine-list）。
++    /// </summary>
++    private static readonly (int Id, string Name, string? Route, string Icon, int? Parent, int Order, string? Key)[] Rows =
++    {
++        // ── 親（Top） ───────────────────────────────────────────
++        (300, "製造執行(MES)",        null,                            "SetUp",       null, 300, null),
++
++        // ── 生産計画ボード（单页，锚定） ─────────────────────────
++        (301, "生産計画ボード",        "/mes/planning-board",           "Calendar",    300, 301, "mes-planning-board"),
++
++        // ── 製造指図（入力锚定 / 一覧留 null） ───────────────────
++        (302, "製造指図 入力",         "/mes/work-order",               "DocumentAdd", 300, 302, "mes-work-order"),
++        (303, "製造指図 一覧",         "/mes/work-order-list",          "Files",       300, 303, null),
++
++        // ── 製造実績（入力锚定 / 一覧留 null） ───────────────────
++        (304, "製造実績 入力",         "/mes/production-result",        "EditPen",     300, 304, "mes-production-result"),
++        (305, "製造実績 一覧",         "/mes/production-result-list",   "DataLine",    300, 305, null),
++
++        // ── 品質検査（入力锚定 / 一覧留 null；键取菜单域名 quality-inspection，非控制器路由 inspections）─
++        (306, "品質検査 入力",         "/mes/quality-inspection",       "Operation",   300, 306, "mes-quality-inspection"),
++        (307, "品質検査 一覧",         "/mes/quality-inspection-list",  "Histogram",   300, 307, null),
++
++        // ── 不良品管理（单页，锚定） ─────────────────────────────
++        (308, "不良品管理",           "/mes/defect",                   "Warning",     300, 308, "mes-defect"),
++
++        // ── GET-only 看板（留 null，不承载权限） ─────────────────
++        (309, "MESダッシュボード",     "/mes/dashboard",                "PieChart",    300, 309, null),
++
++        // ── 設備管理（★命门2：RoutePath /mes/machine-list，显式赋 mes-machine 而非回填 mes-machine-list）─
++        (310, "設備管理",             "/mes/machine-list",             "Monitor",     300, 310, "mes-machine"),
++
++        // ── OEE 分析（单页，锚定） ───────────────────────────────
++        (311, "OEE 分析",            "/mes/oee",                      "TrendCharts", 300, 311, "mes-oee"),
++
++        // ── Control Tower 大屏（GET-only 可视化，留 null） ───────
++        (312, "Control Tower 大屏",   "/mes/control-tower",            "Aim",         300, 312, null),
++
++        // ── 生産計画達成率（仅 view，锚定） ──────────────────────
++        (313, "生産計画達成率",        "/mes/plan-achievement",         "DataLine",    300, 313, "mes-plan-achievement"),
++
++        // ── 工作中心 / 工序费率 主数据（锚定） ───────────────────
++        (314, "工作中心",             "/mes/work-center",              "Setting",     300, 314, "mes-work-center"),
++        (315, "工序费率",             "/mes/process-cost-rate",        "Money",       300, 315, "mes-process-cost-rate"),
++    };
++
++    /// <summary>
++    /// 幂等播种全部 MES 菜单 + 授管理员（RoleId=1）+ 锚定行 MenuKey 显式矫正。
++    /// 须在 Program.cs 的「无 MenuKey 菜单 RoutePath 自动回填」块**之前**调用。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var changed = false;
++        foreach (var r in Rows)
++        {
++            if (!db.Sys_Menus.Any(m => m.MenuId == r.Id))
++            {
++                db.Sys_Menus.Add(new Sys_Menu
++                {
++                    MenuId = r.Id,
++                    MenuName = r.Name,
++                    RoutePath = r.Route,
++                    MenuKey = r.Key,
++                    Icon = r.Icon,
++                    ParentId = r.Parent,
++                    OrderNo = r.Order,
++                    Enable = true,
++                });
++                changed = true;
++            }
++
++            // 授管理员菜单（默认租户由 SaveChanges 拦截器盖章 TenantId）。菜单已存在但未授权时补授（幂等）。
++            if (!db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == r.Id))
++            {
++                db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = r.Id });
++                changed = true;
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++
++        // 锚定键防御：既有 300 段缺 MenuKey 时会被历史 RoutePath 回填写成派生键（310→mes-machine-list…），
++        // 就地矫正为 T1 权威键。作用域严限 10 个锚定行（r.Key != null），一覧页/看板/父行不动。幂等（已正确即跳过）。
++        var fixedAny = false;
++        foreach (var r in Rows)
++        {
++            if (r.Key == null) continue;
++            var menu = db.Sys_Menus.FirstOrDefault(m => m.MenuId == r.Id);
++            if (menu != null && menu.MenuKey != r.Key)
++            {
++                menu.MenuKey = r.Key;
++                fixedAny = true;
++            }
++        }
++        if (fixedAny)
++            db.SaveChanges();
++    }
++}
+diff --git a/CP6.WebApi/Seed/MesPermissionSeed.cs b/CP6.WebApi/Seed/MesPermissionSeed.cs
+new file mode 100644
+index 0000000..9fb7ac3
+--- /dev/null
++++ b/CP6.WebApi/Seed/MesPermissionSeed.cs
+@@ -0,0 +1,118 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// MES 製造執行 権限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（M-MES 横切接线 Task 3b）。
++///
++/// 背景：Task 3a 为 9 个 MES 控制器的 28 个写端点贴了 <c>[RequirePermission("键","action")]</c>，但
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator.FillActionKeysAsync</c> 以
++/// <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}"</c>
++/// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
++/// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
++///
++/// 三数闭环（本 C# 为正本，与真相源 1:1）：
++///  - 控制器写端点：<b>28</b>（grep <c>CP6.WebApi/Controllers/Mes/*.cs</c> 的 [RequirePermission]，逐字核对）。
++///  - 去重 (menu-key, action) 元组：<b>25</b>（3 处归并消解重复：
++///    mes-work-order:add 覆 Create+ExpandFromOrder / mes-production-result:suspend 覆 Suspend+Resume /
++///    mes-machine:downtime 覆 RegisterDowntime+CloseDowntime。真相源 §五 归并 1/2/3）。
++///  - 种子元组：<b>25</b>（下方 <see cref="Actions"/>；漏种 0 / 多种 0）。
++///  - 覆盖 <b>9</b> 个 menu-key（有写端点者）。另 1 键 mes-plan-achievement 仅有 2 只读 POST 端点
++///    （豁免→view，未贴点），无键可种，故不在本种子——与 10 键总数不矛盾。
++///
++/// 数据来源（执行真相）：
++///  - MenuId 经锚定表 <c>docs/seeds/mes-key-menu-anchor.md</c> 由权限键映射而得（10 键 → 锚定 MenuId）。
++///  - ActionCode 与 <c>CP6.WebApi/Controllers/Mes/*.cs</c> 的 [RequirePermission] 第二实参逐字一致（差一字全链 403）。
++///  - 文档留档：<c>docs/seeds/mes-permission-seed.sql</c>（本 C# 为正本，SQL 与此一致）。
++///
++/// 逐租户机制（关键，照 ErpPermissionSeed / WmsPermissionSeed 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表，非行级过滤）全部租户 Id，对每租户各插一份。
++///  - 显式设 <c>TenantId=tid</c> → <c>CP6Context.StampTenant</c> 仅盖 <c>TenantId==Guid.Empty</c>，不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，使跨租户既存行对当前上下文（默认租户作用域）可见，避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 <see cref="MesMenuSeed.EnsureSeeded"/> **之后**调用（锚定菜单行须先在，RoleAction 挂 MenuId）。
++/// 幂等：重启不重复插（(TenantId,MenuId,ActionCode) / (TenantId,RoleId,MenuId,ActionCode) 判存守卫）。
++/// </summary>
++public static class MesPermissionSeed
++{
++    /// <summary>
++    /// (MenuId, ActionCode, ActionName) —— 与各 MES 控制器 [RequirePermission(键, action)] 去重后 1:1。
++    /// MenuId 依 <c>docs/seeds/mes-key-menu-anchor.md</c> 锚定；ActionName 为中文显示名（照 ERP/WMS 种子风格，
++    /// 仅供 UI 显示，非权限判定依据——判定只看 ActionCode）。
++    /// 计 25 条，覆盖 9 个有写端点的 menu-key。
++    /// </summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        // 301 mes-planning-board — 生産計画ボード（reschedule/arrange 两状态键）
++        (301, "reschedule", "改期"), (301, "arrange", "自动排产"),
++        // 302 mes-work-order — 製造指図 入力（add 复用 Create+ExpandFromOrder；issue 状态键）
++        (302, "add", "新建"), (302, "edit", "编辑"), (302, "del", "删除"), (302, "issue", "发行"),
++        // 304 mes-production-result — 製造実績 入力（suspend 归并 Suspend+Resume；complete 高危反冲）
++        (304, "start", "开始"), (304, "suspend", "中断"), (304, "complete", "完了"), (304, "report", "报工"),
++        // 306 mes-quality-inspection — 品質検査 入力
++        (306, "add", "新建"), (306, "edit", "编辑"),
++        // 308 mes-defect — 不良品管理
++        (308, "add", "新建"), (308, "edit", "编辑"), (308, "del", "删除"),
++        // 310 mes-machine — 設備管理（downtime 归并 Register+Close；status 状态键）
++        (310, "add", "新建"), (310, "edit", "编辑"), (310, "del", "删除"),
++        (310, "status", "状态变更"), (310, "downtime", "停机记录"),
++        // 311 mes-oee — OEE 分析（recalculate 状态键）
++        (311, "recalculate", "重算"),
++        // 314 mes-work-center — 工作中心 master（upsert=edit）
++        (314, "edit", "编辑"), (314, "del", "删除"),
++        // 315 mes-process-cost-rate — 工序费率 master（upsert=edit，高危）
++        (315, "edit", "编辑"), (315, "del", "删除"),
++    };
++
++    /// <summary>
++    /// 逐租户幂等播种 MES 全部权限点 + 授管理员（RoleId=1）。
++    /// 须在 <see cref="MesMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖（仅盖 Guid.Empty）
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/mes-key-menu-anchor.md b/docs/seeds/mes-key-menu-anchor.md
+new file mode 100644
+index 0000000..9c222b3
+--- /dev/null
++++ b/docs/seeds/mes-key-menu-anchor.md
+@@ -0,0 +1,44 @@
++# MES menu-key → 锚定 MenuId 映射（M-MES Task 2 交付，T3b 输入）
++
++> 生成于 2026-07-12。**正本 = `CP6.WebApi/Seed/MesMenuSeed.cs`**（本表与 `mes-menu-seed.sql` 均为其对照/派生）。
++> 依据真相源 `docs/seeds/mes-permission-keys.md` §二（10 menu-key）/§六（硬前置）。
++> 用途：T3b `Sys_MenuAction`/`Sys_RoleAction` 逐租户种子以本表「键→MenuId」为锚。
++
++## 10 键锚定表
++
++| # | menu-key | 锚定 MenuId | RoutePath | 菜单名 | 裁决 |
++|---|---|---|---|---|---|
++| 1 | `mes-planning-board` | 301 | `/mes/planning-board` | 生産計画ボード | 单页，回填即一致，仍显式锚定规避时序 |
++| 2 | `mes-work-order` | 302 | `/mes/work-order` | 製造指図 入力 | 入力页锚定；303 一覧留 null |
++| 3 | `mes-production-result` | 304 | `/mes/production-result` | 製造実績 入力 | 入力页锚定；305 一覧留 null |
++| 4 | `mes-quality-inspection` | 306 | `/mes/quality-inspection` | 品質検査 入力 | 入力页锚定；307 一覧留 null。键取菜单域名，非控制器路由 `inspections` |
++| 5 | `mes-defect` | 308 | `/mes/defect` | 不良品管理 | 单页 |
++| 6 | `mes-machine` | 310 | `/mes/machine-list` | 設備管理 | ★命门2：RoutePath 回填得 `mes-machine-list`，**显式赋 `mes-machine`** + 防御矫正 |
++| 7 | `mes-oee` | 311 | `/mes/oee` | OEE 分析 | 单页 |
++| 8 | `mes-plan-achievement` | 313 | `/mes/plan-achievement` | 生産計画達成率 | 单页，仅 view |
++| 9 | `mes-work-center` | 314 | `/mes/work-center` | 工作中心 | 单页，主数据 |
++| 10 | `mes-process-cost-rate` | 315 | `/mes/process-cost-rate` | 工序费率 | 单页，主数据 |
++
++## 非锚定行（MenuKey 留 null，由回填派生后缀键，不承载权限）
++
++| MenuId | 菜单名 | RoutePath | 类别 |
++|---|---|---|---|
++| 300 | 製造執行(MES) | (null) | 父行 |
++| 303 | 製造指図 一覧 | `/mes/work-order-list` | 一覧页 |
++| 305 | 製造実績 一覧 | `/mes/production-result-list` | 一覧页 |
++| 307 | 品質検査 一覧 | `/mes/quality-inspection-list` | 一覧页 |
++| 309 | MESダッシュボード | `/mes/dashboard` | GET-only 看板 |
++| 312 | Control Tower 大屏 | `/mes/control-tower` | GET-only 可视化 |
++
++## 段位与孤儿
++
++- MenuId 段位 = 既有 300–315（16 行），**全部已由 Program.cs 播种，无新建缺行**。
++- MES **零孤儿路由**（T1 已证 15 前端页全映射到 300 段），本任务纯锚定、无收编（对比 ERP 216–220 收编 5 孤儿）。
++- 唯一索引安全：10 锚定键互不相同（真相源 §二，MES 回填按 RoutePath 天然差异化，一域两页仅锚入力页），
++  不撞 `Sys_Menus.MenuKey IS NOT NULL` 过滤唯一索引。
++
++## 硬前置落实
++
++1. **回填时序**：`MesMenuSeed.EnsureSeeded` 接入 Program.cs `~:844`（WmsPermissionSeed 之后），
++   **先于回填块 :894** 执行 → 洁净首启即赋 MenuKey，无 null-全-403 窗口。
++2. **machine 键错配**：310 显式 `mes-machine`（非回填 `mes-machine-list`），防御矫正块严限 10 锚定行就地纠回。
+diff --git a/docs/seeds/mes-menu-seed.sql b/docs/seeds/mes-menu-seed.sql
+new file mode 100644
+index 0000000..2b18e51
+--- /dev/null
++++ b/docs/seeds/mes-menu-seed.sql
+@@ -0,0 +1,24 @@
++-- ═══════════════════════════════════════════════════════════════════════════
++-- MES 菜单 MenuKey 锚定 — SQL 对照（M-MES Task 2）
++-- ─────────────────────────────────────────────────────────────────────────────
++-- ★正本 = CP6.WebApi/Seed/MesMenuSeed.cs（启动幂等 C# 种子）。本 SQL 仅为审计/手工核对对照，
++--   不参与运行时播种。以 C# 为准；若二者不一致，以 MesMenuSeed.cs + docs/seeds/mes-permission-keys.md §二 为真相源。
++-- 前置：300–315 菜单行由 Program.cs 播种；本脚本仅显式设 10 锚定行 MenuKey=mes-*，并矫正历史回填错配。
++-- 作用域严限 10 锚定行（MenuId in 301,302,304,306,308,310,311,313,314,315）；一覧/看板/父行 MenuKey 留 null。
++-- 幂等：仅当 MenuKey <> 目标 或 为 null 时更新。
++-- ═══════════════════════════════════════════════════════════════════════════
++
++UPDATE Sys_Menus SET MenuKey = 'mes-planning-board'     WHERE MenuId = 301 AND (MenuKey IS NULL OR MenuKey <> 'mes-planning-board');
++UPDATE Sys_Menus SET MenuKey = 'mes-work-order'         WHERE MenuId = 302 AND (MenuKey IS NULL OR MenuKey <> 'mes-work-order');
++UPDATE Sys_Menus SET MenuKey = 'mes-production-result'  WHERE MenuId = 304 AND (MenuKey IS NULL OR MenuKey <> 'mes-production-result');
++UPDATE Sys_Menus SET MenuKey = 'mes-quality-inspection' WHERE MenuId = 306 AND (MenuKey IS NULL OR MenuKey <> 'mes-quality-inspection');
++UPDATE Sys_Menus SET MenuKey = 'mes-defect'             WHERE MenuId = 308 AND (MenuKey IS NULL OR MenuKey <> 'mes-defect');
++-- ★命门2：310 RoutePath=/mes/machine-list 回填得 mes-machine-list，此处强制纠回 mes-machine。
++UPDATE Sys_Menus SET MenuKey = 'mes-machine'            WHERE MenuId = 310 AND (MenuKey IS NULL OR MenuKey <> 'mes-machine');
++UPDATE Sys_Menus SET MenuKey = 'mes-oee'                WHERE MenuId = 311 AND (MenuKey IS NULL OR MenuKey <> 'mes-oee');
++UPDATE Sys_Menus SET MenuKey = 'mes-plan-achievement'   WHERE MenuId = 313 AND (MenuKey IS NULL OR MenuKey <> 'mes-plan-achievement');
++UPDATE Sys_Menus SET MenuKey = 'mes-work-center'        WHERE MenuId = 314 AND (MenuKey IS NULL OR MenuKey <> 'mes-work-center');
++UPDATE Sys_Menus SET MenuKey = 'mes-process-cost-rate'  WHERE MenuId = 315 AND (MenuKey IS NULL OR MenuKey <> 'mes-process-cost-rate');
++
++-- 核对：应恰好 10 行非空 mes-* 键，且各占唯一 MenuId。
++-- SELECT MenuId, MenuKey, RoutePath FROM Sys_Menus WHERE MenuId BETWEEN 300 AND 315 ORDER BY MenuId;
+diff --git a/docs/seeds/mes-permission-keys.md b/docs/seeds/mes-permission-keys.md
+new file mode 100644
+index 0000000..48e79cf
+--- /dev/null
++++ b/docs/seeds/mes-permission-keys.md
+@@ -0,0 +1,173 @@
++# MES 写端点 × 権限键清单（M-MES Task 1 真相源）
++
++> 生成于 2026-07-12。本表是 **M-MES 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填/显式赋值）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试）均以本表为准。
++> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/erp-permission-keys.md` / `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 MES 菜单种子 `CP6.WebApi/Program.cs` MenuId 300–315 + 逐 Service 实现读证的只读 POST 豁免判定。
++> 扫描范围：`CP6.WebApi/Controllers/Mes/` 下 **全部 11 个控制器**（计划口径 10，实扫 11，差异见 §七）。
++> **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
++
++## 约定
++
++- **资源键 = `{menu-key}:{action}`**，**menu-key 一律连字符小写、绝对禁止下划线**（全仓 100% RequirePermission 用连字符）。本波统一冠 `mes-` 业务域前缀（`mes-work-order`、`mes-production-result`…）。
++- **资源键必须能锚定到一个 `Sys_Menu` 行**（`PermissionAggregator.FillActionKeysAsync = Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → {MenuKey}:{ActionCode}`）。逐键给出锚定菜单 MenuId/RoutePath。
++- **`高危?` 列三值**（沿用 WMS/ERP 定义）：
++  - `是` = 触及**库存/金额/不可逆/级联反冲**（T3 贴点与 T2 审计的**最高优先级**，绝不可与 view/edit 混授）。
++  - `状态` = 独立工作流状态流转/发行（不直接动库存钱，但仍**单独成键**，不塞进 edit/view）。
++  - `否` = 四基粒度 `view/add/edit/del` 之一。
++- **只读 POST 豁免**：纯查询/计算/导出的 POST 归 `view`，表内标 `只读POST→view`，并在 §四逐条附**读 Service 实现证得的**无写副作用依据。GET 端点一律不列。
++
++---
++
++## 一、写端点映射表（POST/PUT/DELETE，共 30 行）
++
++| # | 控制器 | HTTP方法 + 路由 | 方法名 | 建议 menu-key | action | 高危? | 备注 |
++|---|---|---|---|---|---|---|---|
++| 1 | WorkOrderController | POST `/api/mes/work-orders` | Create | `mes-work-order` | add | 否 | 製造指図登録。菜单302 入力 |
++| 2 | WorkOrderController | PUT `/api/mes/work-orders/{no}` | Update | `mes-work-order` | edit | 否 | 訂正（Status 0/1 計画・未発行のみ，WorkOrderService.cs:230） |
++| 3 | WorkOrderController | DELETE `/api/mes/work-orders/{no}` | Delete | `mes-work-order` | del | 否 | 软删除（IsDeleted，Status 0/1 のみ，:307-321） |
++| 4 | WorkOrderController | POST `/api/mes/work-orders/{no}/issue` | Issue | `mes-work-order` | issue | 状态 | 指図発行（Status→2）＋触发 WMS 自動展開 Hook（best-effort，:323-343）。不直接动库存，归状态 |
++| 5 | WorkOrderController | POST `/api/mes/work-orders/expand-from-order` | ExpandFromOrder | `mes-work-order` | add | 否 | 受注→指図 自動展開（批量创建 WO）。复用 add（§五归并1，对标 WMS outbound-order:add 覆 FromOrder/FromWorkOrder） |
++| 6 | ProductionResultController | POST `/api/mes/production-results/start` | Start | `mes-production-result` | start | 状态 | 工程開始（proc/WO 状态流转，:152-160） |
++| 7 | ProductionResultController | POST `/api/mes/production-results/suspend` | Suspend | `mes-production-result` | suspend | 状态 | 工程中断（:161-168） |
++| 8 | ProductionResultController | POST `/api/mes/production-results/resume` | Resume | `mes-production-result` | suspend | 状态 | 中断解除，归并入 suspend（§五归并2，中断管理正/反操作） |
++| 9 | ProductionResultController | POST `/api/mes/production-results/complete` | Complete | `mes-production-result` | complete | **是** | **工程完了**：全工程完了时触发 ①WMS 完成品入庫 ②BOM 定额料耗**反冲 OUT/ISSUE** ③FIN 成本归集/结转。不可逆、动库存与成本（详§三，ProductionResultService.cs:263-293） |
++| 10 | ProductionResultController | POST `/api/mes/production-results` | Report | `mes-production-result` | report | 状态 | 数量報告（累加 GoodQty/DefectQty 到 proc+WO 头，:202-215）。本身不动库存/不触发反冲（反冲仅 complete 时），归状态 |
++| 11 | DefectRecordController | POST `/api/mes/defects` | Create | `mes-defect` | add | 否 | 不良品 手動起票 |
++| 12 | DefectRecordController | PUT `/api/mes/defects/{no}` | Update | `mes-defect` | edit | 否 | 原因分析/是正処置更新 |
++| 13 | DefectRecordController | DELETE `/api/mes/defects/{no}` | Delete | `mes-defect` | del | 否 | 软删除 |
++| 14 | MachineController | POST `/api/mes/machines` | Create | `mes-machine` | add | 否 | 設備マスタ登録。菜单310 |
++| 15 | MachineController | PUT `/api/mes/machines/{cd}` | Update | `mes-machine` | edit | 否 | |
++| 16 | MachineController | DELETE `/api/mes/machines/{cd}` | Delete | `mes-machine` | del | 否 | |
++| 17 | MachineController | POST `/api/mes/machines/{cd}/status` | ChangeStatus | `mes-machine` | status | 状态 | 設備状態変更（稼働/停止/保全，MachineService.ChangeStatusAsync） |
++| 18 | MachineController | POST `/api/mes/machines/downtimes` | RegisterDowntime | `mes-machine` | downtime | 状态 | 停止記録 起票（写 MachineDowntime，不动库存/金额） |
++| 19 | MachineController | POST `/api/mes/machines/downtimes/{no}/close` | CloseDowntime | `mes-machine` | downtime | 状态 | 停止記録 締め，归并入 downtime（§五归并3，停止記録生命周期同权限） |
++| 20 | OeeController | POST `/api/mes/oee/recalculate` | Recalculate | `mes-oee` | recalculate | 状态 | 指定日 OEE 再計算+保存（upsert OeeDaily 分析快照，OeeService.cs:66-121）。写分析结果表，不动库存/金额，归状态 |
++| 21 | PlanningBoardController | PUT `/api/mes/planning-board/reschedule` | Reschedule | `mes-planning-board` | reschedule | 状态 | ドラッグ後 計画日時更新（PlanningBoardService.RescheduleAsync） |
++| 22 | PlanningBoardController | POST `/api/mes/planning-board/auto-arrange` | AutoArrange | `mes-planning-board` | arrange | 状态 | 自動配置（按 Prio+納期 批量重排计划） |
++| 23 | QualityInspectionController | POST `/api/mes/inspections` | Create | `mes-quality-inspection` | add | 否 | 品質検査 新規登録。菜单306。**注：menu-key 取菜单 RoutePath 域名 `quality-inspection`，非控制器路由 `inspections`（§六注3）** |
++| 24 | QualityInspectionController | PUT `/api/mes/inspections/{no}` | Update | `mes-quality-inspection` | edit | 否 | 検査訂正 |
++| 25 | PlanAchievementController | POST `/api/mes/plan-achievement/summary` | Summary | `mes-plan-achievement` | view | 只读POST→view | 达成率汇总，PlanAchievementService 全类无写（§四）。菜单313 |
++| 26 | PlanAchievementController | POST `/api/mes/plan-achievement/export-csv` | ExportCsv | `mes-plan-achievement` | view | 只读POST→view | 达成率 CSV 导出，纯读（§四） |
++| 27 | WorkCenterController | POST `/api/mes/work-center/upsert` | Upsert | `mes-work-center` | edit | 否 | 工作中心 master upsert（create+update 合一，§五归并4）。菜单314 |
++| 28 | WorkCenterController | DELETE `/api/mes/work-center/{wgCd}` | Delete | `mes-work-center` | del | 否 | 软删除 |
++| 29 | ProcessCostRateController | POST `/api/mes/process-cost-rate/upsert` | Upsert | `mes-process-cost-rate` | edit | **是** | **工序费率修正**（人工/间接费率）。retroactive 费率（ValidFrom 过去）直接改写**已报工工单的原価計算基础**→FIN 成本归集/结转重算（详§三，ProcessCostRateService.cs:27-62）。菜单315。简报点名「成本费率修正」 |
++| 30 | ProcessCostRateController | DELETE `/api/mes/process-cost-rate/{id}` | Delete | `mes-process-cost-rate` | del | 否 | 软删除费率行 |
++
++> **GET-only 控制器（无 POST/PUT/DELETE，不在上表）**：
++> - `MesDashboardController`（`/api/mes/dashboard`，全 GET 看板/SP 版）——纯查询，无写端点。菜单309（+312 Control Tower 大屏为其可视化前端，共用看板 GET）。
++>
++> **有 POST 端点但全豁免（真写=0，不占「含写控制器」计数，见 §七）**：
++> - `PlanAchievementController`（`/api/mes/plan-achievement`，2 个 POST 均只读 POST 豁免→view）。
++
++---
++
++## 二、menu-key 汇总清单（去重，共 10 个）
++
++| # | menu-key | 锚定菜单（Program.cs MenuId / RoutePath） | 说明 |
++|---|---|---|---|
++| 1 | `mes-work-order` | 302 製造指図 入力 `/mes/work-order`（+ 303 一覧 `/mes/work-order-list`） | ✅有菜单行。回填自 302 RoutePath = `mes-work-order` ✅一致 |
++| 2 | `mes-production-result` | 304 製造実績 入力 `/mes/production-result`（+ 305 一覧） | ✅。回填自 304 = `mes-production-result` ✅一致 |
++| 3 | `mes-defect` | 308 不良品管理 `/mes/defect` | ✅。回填 = `mes-defect` ✅一致 |
++| 4 | `mes-machine` | 310 設備管理 `/mes/machine-list` | ✅有菜单行，**但回填自 RoutePath = `mes-machine-list` ≠ `mes-machine`**（§六头号命门2，T2 须显式赋 `mes-machine`） |
++| 5 | `mes-oee` | 311 OEE 分析 `/mes/oee` | ✅。回填 = `mes-oee` ✅一致 |
++| 6 | `mes-planning-board` | 301 生産計画ボード `/mes/planning-board` | ✅。回填 = `mes-planning-board` ✅一致 |
++| 7 | `mes-quality-inspection` | 306 品質検査 入力 `/mes/quality-inspection`（+ 307 一覧） | ✅。回填自 306 = `mes-quality-inspection` ✅一致（菜单域名≠控制器路由 `inspections`，以菜单为准，§六注3） |
++| 8 | `mes-plan-achievement` | 313 生産計画達成率 `/mes/plan-achievement` | ✅。仅 view（两端点均只读 POST 豁免）。回填 = `mes-plan-achievement` ✅一致 |
++| 9 | `mes-work-center` | 314 工作中心 `/mes/work-center` | ✅。回填 = `mes-work-center` ✅一致 |
++| 10 | `mes-process-cost-rate` | 315 工序费率 `/mes/process-cost-rate` | ✅。回填 = `mes-process-cost-rate` ✅一致 |
++
++> **全部 10 个 menu-key 均有对应菜单行，零孤儿路由**（与 ERP 5 条孤儿路由不同——MES 菜单齐全）。前端 15 个 `views/mes/*.vue` 页面逐一映射到 300 段菜单行（含 309 dashboard / 312 control-tower 两只读页），无「有页面无菜单」暗物质。
++> **一域两菜单行（入力+一覧）的 3 组**（work-order 302/303、production-result 304/305、quality-inspection 306/307）：动作键**单锚定入力页**（302/304/306），一覧页 MenuKey 由回填得 `*-list` 后缀键（无 action 引用、无害），天然规避 `Sys_Menus.MenuKey IS NOT NULL` 唯一索引冲突（对标 ERP `erp-key-menu-anchor.md` 单锚定裁决，MES 因回填按 RoutePath 天然差异化，不存在同键多行问题）。
++
++---
++
++## 三、高危动作清单（`是`：库存/金额/不可逆/反冲，共 2 个资源键）
++
++> T3 贴 `[RequirePermission]` 与 T2 审计（钱与库存优先）的**第一优先级**，**绝不可**与 view/edit 混授。
++
++| 资源键 | 为何高危独立 |
++|---|---|
++| `mes-production-result:complete` | 工程完了：全工程完了时级联触发 **WMS 完成品入庫 + BOM 定额料耗反冲(OUT/ISSUE) + FIN 成本归集/结转**（ProductionResultService.cs:263-293），动库存与成本、不可逆。会话记忆点名 P0「完工反冲」链，最高优先级 |
++| `mes-process-cost-rate:edit` | 工序费率修正：改写人工/间接费率，retroactive 费率（ValidFrom 过去）直接改写**已报工工单的原価計算基础**，经 `CostCollectService` 归集（Program.cs:185，料吃 MES 真实消耗×BOM 单价+工费标准）→ 影响 FIN 结转金额。简报点名「成本费率修正」。**注：区别于 ERP fx-rate/sheet-unit-price（仅影响未来估价、未提级）——MES 费率直喂已完工单的成本归集，故提级 `是`；若 T2 审计认为等同主数据 CRUD 可降级 `否`，见 §五归并5** |
++
++### 3b. 独立状态流转/发行动作键（`状态`，共 9 个，仍单独成键、不塞 edit）
++
++`mes-work-order:issue` · `mes-production-result:start` · `mes-production-result:suspend`（含 resume 归并）· `mes-production-result:report` · `mes-machine:status` · `mes-machine:downtime`（含 register+close 归并）· `mes-oee:recalculate` · `mes-planning-board:reschedule` · `mes-planning-board:arrange`
++
++> 非 CRUD 独立动作键合计 = 2（高危）+ 9（状态）= **11 个**。其余端点走 `add/edit/del/view` 四基粒度。
++
++---
++
++## 四、只读 POST 豁免清单（归 view，共 2 个 —— 均逐条读 Service 实现证得无写）
++
++| # | 端点（方法） | 豁免依据（读 Service 实现） |
++|---|---|---|
++| 1 | POST `/api/mes/plan-achievement/summary`（PlanAchievementService.GetSummaryAsync） | 仅 `WorkOrders.AsNoTracking()` 读→内存 GroupBy 聚合达成率 DTO，全类**无 `Add/Update/Remove/SaveChanges`**（PlanAchievementService.cs:33-96）。POST 仅为传复杂查询体 `PlanAchievementQuery` |
++| 2 | POST `/api/mes/plan-achievement/export-csv`（PlanAchievementService.ExportCsvAsync） | 调 GetSummaryAsync 后拼 CSV bytes，纯读导出，无写（:98-120） |
++
++> **复核结论（防望文生义）**：以下"看似分析/计算/发行"的 POST **确为写端点，不豁免**——
++> - `POST /api/mes/oee/recalculate`：`RecalculateAsync` 对 `OeeDailies` **Add/更新 + SaveChanges**（OeeService.cs:85-119），写分析快照 → 键 `mes-oee:recalculate`（状态）。对照：`GET /api/mes/oee/today` 是保存しない的即时计算（:47-63），为 GET 本就不列。
++> - `POST /api/mes/production-results/*`（start/suspend/resume/complete/report）：均经 `WriteAsync` 写 ProductionResult + proc/WO 状态（:129-305），complete 更触发反冲 → 已按上表贴权限。
++> - `POST /api/mes/planning-board/auto-arrange`、`PUT /reschedule`：均写计划日时/排序 → 已贴权限。
++> - `POST /api/mes/machines/downtimes`、`/status`：均写库表 → 已贴权限。
++
++---
++
++## 五、命名归并判断与疑点（供 T2/T3 复核）
++
++1. **`add` 复用于同域创建+自動展開**：`mes-work-order:add` 覆盖 Create（手動登録）+ ExpandFromOrder（受注自動展開批量创建）——同一"创建指図"粒度复用 add，不为自動展開造新键（对标 WMS `wms-outbound-order:add` 覆 Create/FromWorkOrder/FromOrder）。若审计要求"可手工建、不可自動展開"独立管控，T3 可拆 `expand`——**当前不拆**。
++2. **`mes-production-result:suspend` 归并 Suspend+Resume**：中断与中断解除为同一"中断管理"权限的正/反操作，归一键（对标 WMS `wms-remnant:reserve` 归并 Reserve/Unreserve）。若审计要求"可中断不可解除"更细授权，T3 可拆——**当前不拆**。
++3. **`mes-machine:downtime` 归并 Register+Close**：停止記録 起票与締め为同一"停止記録管理"权限，归一键（对标 WMS `wms-carrier:event` 归并多状态端点）。
++4. **`edit` 承载 Upsert（WorkCenter/ProcessCostRate）**：`upsert` 单端点内含 create+update 分支（Id 存在则改、否则建）。授权层归 `edit`（可维护该 master）。若需"可改不可新建"独立管控，T3 可拆 `add`——**当前归 edit**（无独立 create 端点，拆分无落点）。
++5. **ProcessCostRate 提级高危 vs ERP 费率 master 未提级**：本表 `mes-process-cost-rate:edit` 提级 `是`，而 ERP `erp-fx-rate`/`erp-sheet-unit-price` 保持 `否`。**理由差异**：ERP 费率仅影响未来估价/换算；MES 工序费率经 `CostCollectService` 直喂**已报工/完工工单**的成本归集与 FIN 结转（Program.cs:185），retroactive 修改会改写已固化成本。若 T2 审计认为二者应一致（均视为主数据 CRUD 不提级），可降级 `否`——**当前判定为 `是`，待 T2 审计拍板**。
++6. **`del` 一致语义**：全 MES 删除均为软删除（IsDeleted），统一 `del`。
++
++---
++
++## 六、命门与遗留（T2/T4 硬前置）
++
++1. **【头号命门·回填时序】MES 菜单插入（Program.cs:1511-1611）在资源键回填块（:894-901）之后 → 洁净部署首启 MenuKey 为 null → MES 全 403 直到二次重启**：
++   回填块 `menusNoKey = Sys_Menus.Where(MenuKey==null && RoutePath!=null)`（:895）在 :899 执行 `MenuKey = RoutePath.Trim('/').Replace('/','-')`。但 MES 菜单 300–315 在 :1511 之后才 Add（且 Add 时**未设 MenuKey**）。洁净库首启：回填块先跑（MES 菜单尚不存在）→ 跳过；MES 菜单随后插入，MenuKey 留 null。`PermissionAggregator` 过滤 MenuKey==null → **MES action 键无法 join 出 → 首启即 fail-closed 403，需二次重启回填才生效**（对标 WMS「TenantAdmin 新租户重启前 403」平台票）。
++   → **T2 必须在 MES 菜单插入块（:1517-1611）对各锚定行显式赋 `MenuKey="mes-*"`**（与 WMS/ERP T2「锚定行显式 MenuKey，置于回填块之前」同型），或在 MES 插入后补一次回填 pass。**这是 T2 不做则洁净部署首启失配的硬前置。**
++2. **【命门2·machine 键回填错配】菜单 310 RoutePath=`/mes/machine-list` → 回填得 `mes-machine-list` ≠ 本表 `mes-machine`**：
++   若 T2 依赖回填而非显式赋值，Machine 全键（add/edit/del/status/downtime）将锚定到错误键 `mes-machine-list` → 与 T3 贴的 `mes-machine:*` 对不上 → Machine 全 403。→ **T2 须对菜单 310 显式赋 `MenuKey="mes-machine"`**。其余 9 键的锚定页 RoutePath 与本表键天然一致（回填即正确，但仍建议随 #1 一并显式化以规避时序）。
++3. **【注·quality-inspection 键取菜单域名】** QualityInspectionController 路由 `/api/mes/inspections`，但锚定菜单 306/307 RoutePath=`/mes/quality-inspection(-list)`。本表 menu-key 取**菜单域名** `mes-quality-inspection`（回填自 306 即一致），非控制器路由 `inspections`——前端 `v-permission` 与 T3 贴点须逐字用 `mes-quality-inspection`（对标 WMS qc-inspection/ink 等路由≠菜单的先例，以菜单 MenuKey 为唯一基准）。
++4. **【盘点差异·简报点名高危端点在 MES 不存在直接 HTTP 端点】**：
++   - **「工单强制关闭」**：`WorkOrderService.CancelAsync`（WorkOrderService.cs:351-378）存在，但**未在 WorkOrderController 暴露为 HTTP 端点**——仅由 ERP 受注取消 Bridge Hook 内部调用（受注取消連動）。无直接写端点可贴权限，其入口受 ERP `erp-order:cancel` 高危键管辖。→ MES 侧无对应端点，**记为盘点差异**。
++   - **「报工修正」**：ProductionResult 无独立"修正/冲销"端点；报工经 Start/Suspend/Resume/Complete/Report 五态累加式写入，其中真高危为 `complete`（反冲，已提级 §三）。Report(数量報告) 为累加状态写、非修正。→ 无独立"报工修正"端点，**记为盘点差异**。
++   - **「报废判定」**：QualityInspection 仅 Create/Update（无 Judge/合否判定端点，区别于 WMS QC 的 judge）；DefectRecord 为不良品记录 CRUD（无报废处置写端点）。→ MES 无独立"报废判定"端点，**记为盘点差异**。
++5. **【待 T2 审计拍板】ProcessCostRate 高危提级**：见 §五归并5，本表提级 `是`，若审计要求与 ERP 费率 master 一致可降级 `否`。
++
++---
++
++## 七、计数收口
++
++- **扫描控制器**：11（DefectRecord / Machine / MesDashboard / Oee / PlanAchievement / PlanningBoard / ProcessCostRate / ProductionResult / QualityInspection / WorkCenter / WorkOrder）。**计划口径 10，实扫 11**——差异为计划未单列 `ProcessCostRate`（与 WorkCenter 同属 A2 工艺路线主数据、后补菜单 314/315），已全量纳入。
++- **GET-only 控制器（0 非 GET）**：1（MesDashboard）。
++- **有 POST 但全豁免（真写=0）**：1（PlanAchievement，2 端点均只读 POST→view）。
++- **含真写端点控制器**：9（除 MesDashboard、PlanAchievement）。
++- **POST/PUT/DELETE 端点行总数**：**30**（= §一表行数，精确吻合）。
++  - 其中**只读 POST 豁免（→view）**：**2**。
++  - **真·写端点**：**28**。
++- **menu-key（去重）**：**10**（全部有菜单行，零孤儿）。
++- **资源键（去重，含 view）**：**26**。
++- **高危键（是）**：**2**（`mes-production-result:complete`、`mes-process-cost-rate:edit`）。
++- **状态键**：**9**。
++
++### 逐控制器双向核对（控制器→表 / 表→控制器，零缺漏零 GET 误列）
++
++| 控制器 | POST/PUT/DELETE 端点数 | 其中豁免 | 真写 | 表内 # |
++|---|---|---|---|---|
++| WorkOrderController | 5（Create/Update/Delete/Issue/ExpandFromOrder；GET next-seq/list/{no} 不列） | 0 | 5 | 1–5 |
++| ProductionResultController | 5（Start/Suspend/Resume/Complete/Report；GET list/work-order 不列） | 0 | 5 | 6–10 |
++| DefectRecordController | 3（Create/Update/Delete；GET list/{no}/categories 不列） | 0 | 3 | 11–13 |
++| MachineController | 6（Create/Update/Delete/ChangeStatus/RegisterDowntime/CloseDowntime；GET list/{cd}/downtimes 不列） | 0 | 6 | 14–19 |
++| OeeController | 1（Recalculate；GET list/today/trend 不列） | 0 | 1 | 20 |
++| PlanningBoardController | 2（Reschedule/AutoArrange；GET bars/kpi 不列） | 0 | 2 | 21–22 |
++| QualityInspectionController | 2（Create/Update；GET list/{no}/templates 不列） | 0 | 2 | 23–24 |
++| PlanAchievementController | 2（Summary/ExportCsv，均只读 POST 豁免） | 2 | 0 | 25–26 |
++| WorkCenterController | 2（Upsert/Delete；GET list/{wgCd} 不列） | 0 | 2 | 27–28 |
++| ProcessCostRateController | 2（Upsert/Delete；GET list/resolve 不列） | 0 | 2 | 29–30 |
++| MesDashboardController | 0（全 GET，含 SP 版） | — | — | —— |
++| **合计** | **30** | **2** | **28** | **30 ✅** |
++
++> 自洽核验：总非 GET 端点 30 = 只读豁免 2 + 真写 28 ✅；逐控制器真写累加 5+5+3+6+1+2+2+0+2+2 = 28 ✅。
+diff --git a/docs/seeds/mes-permission-seed.sql b/docs/seeds/mes-permission-seed.sql
+new file mode 100644
+index 0000000..89a1f83
+--- /dev/null
++++ b/docs/seeds/mes-permission-seed.sql
+@@ -0,0 +1,156 @@
++/* ============================================================
++ * MES 製造執行 権限点（MenuAction / RoleAction）シードデータ（M-MES 横切接線 Task 3b）
++ * ============================================================
++ * 対象 DB     : CP6DB (SQL Server)
++ * 対象テーブル : Sys_MenuAction（授権可能な操作点の登記）
++ *              Sys_RoleAction（管理者ロール RoleId=1 への全動作授権）
++ *
++ * ★正本は C#：CP6.WebApi/Seed/MesPermissionSeed.cs（起動時逐租户冪等種子）。
++ *   本 SQL は同一集合の文書留档・手動投入用であり、C# と 1:1 一致。乖離時は C# を正とする。
++ *
++ * 前提:
++ *   MES メニュー 301/302/304/306/308/310/311/314/315 は Task 2 種子
++ *   （MesMenuSeed / docs/seeds/mes-menu-seed.sql）で MenuKey=mes-* 锚定済みであること。
++ *   （特に 310 は RoutePath=/mes/machine-list だが MenuKey=mes-machine を明示赋値済み。）
++ *   RoleAction は当該 MenuId 上に挂かり、実行時 PermissionAggregator が
++ *   Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}" を組む。
++ *
++ * 三数閉環（真相源 docs/seeds/mes-permission-keys.md §一/§七 + 控制器 grep）:
++ *   写端点 28 → 去重 (menu-key, action) 25 元组 → 種子 25 元组（漏種 0 / 多種 0）。
++ *   3 处归并（§五 1/2/3）消解重复：mes-work-order:add 覆 Create+ExpandFromOrder /
++ *   mes-production-result:suspend 覆 Suspend+Resume / mes-machine:downtime 覆 Register+Close。
++ *   2 只读 POST 豁免（mes-plan-achievement:view）は未貼点＝不入種子→覆盖 9 有写端点 menu-key（非 10）。
++ *
++ * 動作定義（docs/seeds/mes-key-menu-anchor.md 锚定 MenuId × 控制器 [RequirePermission] action 逐字）:
++ *   301 mes-planning-board     : reschedule / arrange
++ *   302 mes-work-order         : add / edit / del / issue
++ *   304 mes-production-result  : start / suspend / complete（高危・反冲）/ report
++ *   306 mes-quality-inspection : add / edit
++ *   308 mes-defect             : add / edit / del
++ *   310 mes-machine            : add / edit / del / status / downtime
++ *   311 mes-oee                : recalculate
++ *   314 mes-work-center        : edit / del
++ *   315 mes-process-cost-rate  : edit（高危）/ del
++ *
++ * マルチテナント:
++ *   Sys_MenuAction / Sys_RoleAction は BaseTenantEntity（TenantId 必須・行級隔離）。
++ *   全テナントへ一括投入するため `CROSS JOIN (SELECT Id FROM Sys_Tenants) t` で逐租户展開。
++ *
++ * 実行方法:
++ *   sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/mes-permission-seed.sql -b
++ *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
++ *
++ * 冪等性:
++ *   各 INSERT 前に NOT EXISTS チェック（TenantId+MenuId+ActionCode 単位）→ 重複実行安全。
++ * ============================================================ */
++
++SET NOCOUNT ON;
++SET XACT_ABORT ON;
++SET QUOTED_IDENTIFIER ON;
++SET ANSI_NULLS ON;
++BEGIN TRY
++BEGIN TRANSACTION;
++
++PRINT '=== MES 権限点（MenuAction/RoleAction）シード 開始 ===';
++
++/* ------------------------------------------------------------
++ * 0. 動作定義テーブル（MenuId, ActionCode, ActionName, Sort）— 計 25 動作／租户
++ * ------------------------------------------------------------ */
++DECLARE @Actions TABLE (MenuId INT, ActionCode NVARCHAR(50), ActionName NVARCHAR(100), Sort INT);
++INSERT INTO @Actions (MenuId, ActionCode, ActionName, Sort) VALUES
++ (301, N'reschedule',  N'改期',       0),
++ (301, N'arrange',     N'自动排产',   0),
++ (302, N'add',         N'新建',       0),
++ (302, N'edit',        N'编辑',       0),
++ (302, N'del',         N'删除',       0),
++ (302, N'issue',       N'发行',       0),
++ (304, N'start',       N'开始',       0),
++ (304, N'suspend',     N'中断',       0),
++ (304, N'complete',    N'完了',       0),
++ (304, N'report',      N'报工',       0),
++ (306, N'add',         N'新建',       0),
++ (306, N'edit',        N'编辑',       0),
++ (308, N'add',         N'新建',       0),
++ (308, N'edit',        N'编辑',       0),
++ (308, N'del',         N'删除',       0),
++ (310, N'add',         N'新建',       0),
++ (310, N'edit',        N'编辑',       0),
++ (310, N'del',         N'删除',       0),
++ (310, N'status',      N'状态变更',   0),
++ (310, N'downtime',    N'停机记录',   0),
++ (311, N'recalculate', N'重算',       0),
++ (314, N'edit',        N'编辑',       0),
++ (314, N'del',         N'删除',       0),
++ (315, N'edit',        N'编辑',       0),
++ (315, N'del',         N'删除',       0);
++-- 合計 25 動作定義／租户
++
++/* ------------------------------------------------------------
++ * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_MenuAction (Id, MenuId, ActionCode, ActionName, Sort, CreateDate, TenantId)
++SELECT NEWID(), a.MenuId, a.ActionCode, a.ActionName, a.Sort, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_MenuAction ma
++    WHERE ma.TenantId = t.Id AND ma.MenuId = a.MenuId AND ma.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 2. Sys_RoleAction 管理者(RoleId=1) へ全動作授権（逐租户・冪等）
++ *    列序: (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_RoleAction (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++SELECT NEWID(), 1, a.MenuId, a.ActionCode, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_RoleAction ra
++    WHERE ra.TenantId = t.Id AND ra.RoleId = 1 AND ra.MenuId = a.MenuId AND ra.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 3. 結果確認（PRINT）
++ * ------------------------------------------------------------ */
++DECLARE @Tn INT, @Ma INT, @Ra INT;
++DECLARE @Menus TABLE (MenuId INT);
++INSERT INTO @Menus VALUES (301),(302),(304),(306),(308),(310),(311),(314),(315);
++SELECT @Tn = COUNT(*) FROM Sys_Tenants;
++SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId IN (SELECT MenuId FROM @Menus);
++SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId IN (SELECT MenuId FROM @Menus) AND RoleId = 1;
++
++PRINT N'  租户数                  : ' + CAST(@Tn AS NVARCHAR(10));
++PRINT N'  MenuAction 件数(MES)    : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 25 想定）';
++PRINT N'  RoleAction 件数(管理者) : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 25 想定）';
++
++COMMIT TRANSACTION;
++PRINT '=== MES 権限点シード 完了 ===';
++END TRY
++BEGIN CATCH
++    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
++    PRINT 'ERROR: ' + ERROR_MESSAGE();
++    THROW;
++END CATCH;
++GO
++
++/* ============================================================
++ * 4. 動作確認クエリ（実行後の検証用、任意）
++ * ============================================================ */
++-- 管理者ロールの MES 授権（RoleAction）一覧
++SELECT CONVERT(varchar(36), ra.TenantId) AS TenantId, ra.RoleId, ra.MenuId, ra.ActionCode
++FROM Sys_RoleAction ra
++WHERE ra.MenuId IN (301,302,304,306,308,310,311,314,315) AND ra.RoleId = 1
++ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
++
++/* ============================================================
++ * 5. ロールバック用（緊急時のみ使用）
++ * ============================================================
++ * 注意: RoleId=1 限定（本种子只授过管理员；不限定会连带删掉日后经 UI 授出的其他角色 MES 授权）。
++ * ------------------------------------------------------------ */
++/*
++BEGIN TRANSACTION;
++DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId IN (301,302,304,306,308,310,311,314,315);
++DELETE FROM Sys_MenuAction WHERE MenuId IN (301,302,304,306,308,310,311,314,315);
++COMMIT TRANSACTION;
++*/

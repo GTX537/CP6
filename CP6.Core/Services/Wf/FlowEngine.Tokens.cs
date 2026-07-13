@@ -31,6 +31,14 @@ public partial class FlowEngine
         token.Status = FlowTokenStatus.Consumed;
     }
 
+    /// <summary>本实例 token 快照：Local（含本回合未落盘的）∪ DB（已落盘的），按引用去重
+    /// （EF 身份映射保证同实体同引用）。口径抽自 ParallelJoinNodeHandler.AllTokens，供双 join 动态计票、
+    /// 剪枝递归、退回作用域分析共用。</summary>
+    internal IReadOnlyList<Wf_FlowToken> SnapshotTokens(Guid instanceId)
+        => _db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId)
+            .Concat(_db.Wf_FlowTokens.Where(t => t.InstanceId == instanceId).AsEnumerable())
+            .Distinct().ToList();
+
     /// <summary>驳回连坐 / 退回 / 撤回清场：本实例全 Active token → Cancelled。
     /// 与 <see cref="HasActiveToken"/>/VoidPendingFormTos 同款安全合并：先按 Local（变更追踪器权威态）改，
     /// 再补查 DB 中"未被本地追踪"的行（排除已在 Local 的 Id），避免把"DB 仍 Active 但本地已 Consumed"的 token 误翻 Cancelled。
@@ -64,6 +72,59 @@ public partial class FlowEngine
             j.Status = ServiceJobStatus.Cancelled;
             j.CompletedAtUtc = now;
         }
+    }
+
+    /// <summary>本 token 的在途/挂起任务 → Cancelled（剪枝/子树清场用）。Local + localIds-exclusion 惯用法。</summary>
+    internal void CancelPendingTasksOfToken(Guid instanceId, Guid tokenId)
+    {
+        foreach (var t in _db.Wf_FlowTasks.Local.Where(t => t.InstanceId == instanceId && t.TokenId == tokenId
+            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)).ToList())
+            t.Status = FlowTaskStatus.Cancelled;
+        var localIds = _db.Wf_FlowTasks.Local.Where(t => t.InstanceId == instanceId).Select(t => t.Id).ToHashSet();
+        foreach (var t in _db.Wf_FlowTasks.Where(t => t.InstanceId == instanceId && t.TokenId == tokenId
+            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)
+            && !localIds.Contains(t.Id)).ToList())
+            t.Status = FlowTaskStatus.Cancelled;
+    }
+
+    /// <summary>剥离层子树清场（hardening spec §5.2 SameBranch）：root 及其 ParentTokenId 后代闭包内
+    /// Active token → Cancelled；这些 token 的 Pending/Suspended 任务 → Cancelled、Pending FormTo → Voided、
+    /// Pending ServiceJob → Cancelled。绝不触碰子树外（兄弟分支零扰动）、绝不改 inst.Status。
+    /// 闭包正确性：join 续 token 血缘「上弹一层」重挂剥离层同级，故任何在途延续 token 要么在闭包内、
+    /// 要么本身就是作用域分析选出的剥离层（侦察结论表第 3 行论证）。</summary>
+    internal void CancelTokenSubtree(Guid instanceId, Guid rootTokenId)
+    {
+        var all = SnapshotTokens(instanceId);
+        var subtree = new HashSet<Guid> { rootTokenId };
+        bool grew = true;
+        while (grew)
+        {
+            grew = false;
+            foreach (var t in all)
+                if (t.ParentTokenId is Guid p && subtree.Contains(p) && subtree.Add(t.Id)) grew = true;
+        }
+        foreach (var t in all)
+            if (subtree.Contains(t.Id) && t.Status == FlowTokenStatus.Active)
+                t.Status = FlowTokenStatus.Cancelled;
+        foreach (var id in subtree)
+        {
+            CancelPendingTasksOfToken(instanceId, id);
+            VoidPendingFormTos(instanceId, tokenId: id);
+            CancelPendingServiceJobsOfToken(instanceId, id);
+        }
+    }
+
+    /// <summary>本 token 的 Pending 服务作业 → Cancelled（镜像 CancelAllActiveTokens 的 B-T3 job 清场，tokenId 过滤）。</summary>
+    internal void CancelPendingServiceJobsOfToken(Guid instanceId, Guid tokenId)
+    {
+        var now = DateTime.UtcNow;
+        foreach (var j in _db.Wf_ServiceJobs.Local.Where(j => j.InstanceId == instanceId && j.TokenId == tokenId
+            && j.Status == ServiceJobStatus.Pending).ToList())
+        { j.Status = ServiceJobStatus.Cancelled; j.CompletedAtUtc = now; }
+        var localJobIds = _db.Wf_ServiceJobs.Local.Where(j => j.InstanceId == instanceId).Select(j => j.Id).ToHashSet();
+        foreach (var j in _db.Wf_ServiceJobs.Where(j => j.InstanceId == instanceId && j.TokenId == tokenId
+            && j.Status == ServiceJobStatus.Pending && !localJobIds.Contains(j.Id)).ToList())
+        { j.Status = ServiceJobStatus.Cancelled; j.CompletedAtUtc = now; }
     }
 
     /// <summary>无 Active token 残留 ⇒ 实例正常通过（置 Approved；dispatch 由调用方在 SaveChanges 前做）。</summary>

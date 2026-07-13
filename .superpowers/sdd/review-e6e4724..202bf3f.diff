@@ -1,0 +1,1566 @@
+# Review package: e6e4724..HEAD
+
+## Commits
+202bf3f feat(ui): Dashboard 重做——KPI sparkline + 制造进度环图 + 新布局
+
+## Files changed
+ cp6.web/src/views/dashboard/DashboardView.vue      | 934 ++++++++++++---------
+ .../src/views/dashboard/components/DonutChart.vue  | 152 ++++
+ cp6.web/src/views/dashboard/components/KpiCard.vue | 142 ++++
+ 3 files changed, 848 insertions(+), 380 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/dashboard/DashboardView.vue b/cp6.web/src/views/dashboard/DashboardView.vue
+index 4fccabd..2f88d98 100644
+--- a/cp6.web/src/views/dashboard/DashboardView.vue
++++ b/cp6.web/src/views/dashboard/DashboardView.vue
+@@ -1,84 +1,76 @@
+ <template>
+-  <div class="dashboard" :class="{ 'is-ready': dashboardReady }">
+-    <!-- 实时业务通知横幅 -->
+-    <transition name="el-fade-in">
+-      <el-alert
+-        v-if="latestNotice"
+-        :title="`[${latestNotice.source || 'SYS'}] ${latestNotice.title} ${latestNotice.refNo || ''}`"
+-        :description="latestNotice.message"
+-        :type="alertType(latestNotice.level)"
+-        show-icon
+-        :closable="true"
+-        @close="latestNotice = null"
+-        style="margin-bottom: 12px"
+-      />
+-    </transition>
++  <div class="cp-dash" :class="{ 'is-ready': dashboardReady }">
++    <!-- page-head：标题 + 日期 + 预警摘要，右侧操作钮 -->
++    <div class="page-head reveal-item" style="--delay: 0ms">
++      <div>
++        <h1>{{ t('dashboard.title') }}</h1>
++        <p>
++          {{ pageDateLabel }}
++          <template v-if="headAlertParts.length"> · <b>{{ headAlertParts.join('、') }}</b></template>
++        </p>
++      </div>
++      <div v-if="canGo('/order')" class="head-actions">
++        <button class="btn btn-primary" @click="go('/order')">
++          <el-icon class="i"><DocumentAdd /></el-icon>{{ t('dashboard.qOrder') }}
++        </button>
++      </div>
++    </div>
+ 
+     <!-- KPI 卡片 -->
+-    <el-row :gutter="16" class="stat-cards">
+-      <el-col
+-        v-for="(card, index) in statCards"
++    <section class="kpis reveal-item" style="--delay: 70ms">
++      <div
++        v-for="card in statCards"
+         :key="card.key"
+-        :xs="12"
+-        :sm="12"
+-        :md="6"
+-        :lg="6"
+-        class="reveal-item"
+-        :style="{ '--delay': `${index * 70}ms` }"
++        class="kpi-cell"
++        @click="onCardClick(card.to)"
+       >
+-        <el-card
+-          shadow="hover"
+-          class="stat-card"
+-          :class="{ clickable: canGo(card.to) }"
+-          :body-style="{ padding: '20px' }"
+-          @click="onCardClick(card.to)"
++        <KpiCard
++          :label="t('dashboard.' + card.key)"
++          :value="card.value"
++          :tone="kpiTone(card)"
++          :clickable="canGo(card.to)"
+         >
+-          <div class="stat-card-inner">
+-            <div>
+-              <div class="stat-label">
+-                {{ t('dashboard.' + card.key) }}
+-                <el-icon v-if="canGo(card.to)" class="goto-hint"><component :is="'Right'" /></el-icon>
+-              </div>
+-              <div class="stat-value" :class="{ 'is-alert': card.alert && card.value > 0 }">
+-                {{ card.value }}
++          <template #icon><component :is="card.icon" /></template>
++        </KpiCard>
++      </div>
++    </section>
++
++    <!-- 双列 -->
++    <section class="cols">
++      <!-- 左列 -->
++      <div class="col">
++        <!-- 出货状态 -->
++        <div class="card reveal-item" style="--delay: 140ms">
++          <div class="card-head"><h2><el-icon class="i"><Van /></el-icon>{{ t('dashboard.shipStatus') }}</h2></div>
++          <div class="ship">
++            <div class="block">
++              <div class="v num">{{ shipSummary.shipped }}</div>
++              <div class="l">{{ t('dashboard.ship9') }}</div>
++            </div>
++            <div class="track">
++              <div class="bar">
++                <i :style="{ width: shipSummary.pct + '%', background: 'var(--cp-brand-grad)' }" />
++                <i :style="{ width: (100 - shipSummary.pct) + '%', background: 'var(--cp-line-soft)' }" />
+               </div>
++              <div class="bl"><span class="num">{{ shipSummary.pct }}%</span></div>
++            </div>
++            <div class="block">
++              <div class="v num" style="color: var(--cp-warn)">{{ shipSummary.pending }}</div>
++              <div class="l">{{ t('dashboard.ship0') }}</div>
+             </div>
+-            <el-icon :size="38" :color="card.alert && card.value > 0 ? '#f56c6c' : card.color">
+-              <component :is="card.icon" />
+-            </el-icon>
+           </div>
+-        </el-card>
+-      </el-col>
+-    </el-row>
+-
+-    <!-- 快捷入口 -->
+-    <el-card shadow="hover" class="quick-card reveal-item" style="--delay: 560ms; margin-top: 16px">
+-      <template #header>{{ t('dashboard.quickEntry') }}</template>
+-      <div class="quick-grid">
+-        <div
+-          v-for="link in quickLinks"
+-          :key="link.path"
+-          class="quick-item"
+-          @click="go(link.path)"
+-        >
+-          <el-icon :size="22" :color="link.color"><component :is="link.icon" /></el-icon>
+-          <span>{{ t('dashboard.' + link.key) }}</span>
+         </div>
+-      </div>
+-    </el-card>
+ 
+-    <!-- 面板：最近受注 / 制造进度 / 实时通知 -->
+-    <el-row :gutter="16" style="margin-top: 16px">
+-      <el-col :xs="24" :sm="24" :md="10" :lg="10" class="dash-col reveal-item" style="--delay: 640ms">
+-        <el-card shadow="hover" class="dash-panel">
+-          <template #header>{{ t('dashboard.recentOrders') }}</template>
++        <!-- 最近受注 -->
++        <div class="card reveal-item" style="--delay: 200ms">
++          <div class="card-head"><h2><el-icon class="i"><List /></el-icon>{{ t('dashboard.recentOrders') }}</h2></div>
+ 
+           <el-table v-if="recentOrders.length && !isMobile" :data="recentOrders" stripe size="small">
+             <el-table-column prop="webOrderNo" :label="t('dashboard.orderNo')" min-width="130" />
+             <el-table-column prop="customerCd" :label="t('dashboard.customer')" min-width="90" />
+             <el-table-column prop="quantity" :label="t('dashboard.qty')" width="80" align="right">
+               <template #default="{ row }">{{ fmtQty(row.quantity) }}</template>
+             </el-table-column>
+             <el-table-column :label="t('dashboard.shipStatus')" width="90">
+               <template #default="{ row }">
+                 <el-tag :type="shipColor(row.shipStatus)" size="small">{{ shipLabel(row.shipStatus) }}</el-tag>
+@@ -87,247 +79,250 @@
+           </el-table>
+ 
+           <div v-else-if="recentOrders.length && isMobile" class="simple-list">
+             <div v-for="o in recentOrders" :key="o.webOrderNo" class="simple-row">
+               <span class="simple-row-name">{{ o.webOrderNo }}</span>
+               <el-tag :type="shipColor(o.shipStatus)" size="small">{{ shipLabel(o.shipStatus) }}</el-tag>
+             </div>
+           </div>
+ 
+           <el-empty v-else :description="t('dashboard.noData')" :image-size="60" />
+-        </el-card>
+-      </el-col>
+-
+-      <el-col :xs="24" :sm="24" :md="7" :lg="7" class="dash-col reveal-item" style="--delay: 720ms">
+-        <el-card shadow="hover" class="dash-panel">
+-          <template #header>{{ t('dashboard.workOrderStatus') }}</template>
++        </div>
+ 
+-          <div v-if="workOrderStatus.length">
+-            <div v-for="s in workOrderStatus" :key="s.status" class="method-row">
+-              <el-tag :type="woColor(s.status)" size="small" style="width: 78px; text-align: center">
+-                {{ woLabel(s.status) }}
+-              </el-tag>
+-              <el-progress
+-                :percentage="woPercent(s.count)"
+-                :stroke-width="16"
+-                :show-text="true"
+-                :format="() => String(s.count)"
+-                style="flex: 1; margin-left: 12px"
+-              />
++        <!-- 快捷入口 -->
++        <div class="card reveal-item" style="--delay: 260ms">
++          <div class="card-head"><h2><el-icon class="i"><Grid /></el-icon>{{ t('dashboard.quickEntry') }}</h2></div>
++          <div class="quick">
++            <div v-for="link in quickLinks" :key="link.path" class="q" @click="go(link.path)">
++              <el-icon class="i" :size="21"><component :is="link.icon" /></el-icon>
++              <span>{{ t('dashboard.' + link.key) }}</span>
+             </div>
+           </div>
++        </div>
++      </div>
+ 
+-          <el-empty v-else :description="t('dashboard.noData')" :image-size="60" />
+-        </el-card>
+-      </el-col>
++      <!-- 右列 -->
++      <div class="col">
++        <!-- 预警条幅：实时业务通知（最新一条） -->
++        <transition name="el-fade-in">
++          <div v-if="latestNotice" class="alertbar reveal-item" style="--delay: 140ms" :style="alertBarStyle(latestNotice.level)">
++            <el-icon class="i"><Warning /></el-icon>
++            <p>
++              <small>{{ latestNotice.source || 'SYS' }}</small>
++              {{ latestNotice.title }} {{ latestNotice.refNo }} — {{ latestNotice.message }}
++            </p>
++            <span class="act" @click="latestNotice = null">✕</span>
++          </div>
++        </transition>
++
++        <!-- 制造进度 -->
++        <div class="card reveal-item" style="--delay: 200ms">
++          <div class="card-head"><h2><el-icon class="i"><SetUp /></el-icon>{{ t('dashboard.workOrderStatus') }}</h2></div>
++          <DonutChart :segments="donutSegments" :center-label="t('dashboard.workOrderStatus')">
++            <template #empty><span class="lg-empty">{{ t('dashboard.noData') }}</span></template>
++          </DonutChart>
++        </div>
+ 
+-      <el-col :xs="24" :sm="24" :md="7" :lg="7" class="dash-col reveal-item" style="--delay: 800ms">
+-        <el-card shadow="hover" class="dash-panel">
+-          <template #header>{{ t('dashboard.liveFeed') }}</template>
++        <!-- 实时业务通知 feed -->
++        <div class="card reveal-item" style="--delay: 260ms">
++          <div class="card-head"><h2><el-icon class="i"><Bell /></el-icon>{{ t('dashboard.liveFeed') }}</h2></div>
+ 
+           <div v-if="feed.length" class="feed-list">
+             <div v-for="(n, i) in feed" :key="i" class="feed-row">
+-              <span class="feed-dot" :class="`lvl-${(n.level || 'info').toLowerCase()}`"></span>
++              <span class="feed-dot" :class="`lvl-${(n.level || 'info').toLowerCase()}`" />
+               <div class="feed-body">
+                 <div class="feed-title">{{ n.title }} <em>{{ n.refNo }}</em></div>
+                 <div class="feed-msg">{{ n.message }}</div>
+               </div>
+               <span class="feed-time">{{ fmtTime(n.createDate) }}</span>
+             </div>
+           </div>
+ 
+           <el-empty v-else :description="t('dashboard.waitingFeed')" :image-size="60" />
+-        </el-card>
+-      </el-col>
+-    </el-row>
++        </div>
++      </div>
++    </section>
+ 
+     <!-- Phase 8 — 受注済未出荷 Dashboard (Gap 3.4) -->
+-    <el-row :gutter="16" style="margin-top: 16px">
+-      <el-col :xs="24" :sm="24" :md="24" :lg="24" class="dash-col reveal-item" style="--delay: 880ms">
+-        <el-card shadow="hover" class="dash-panel">
+-          <template #header>
+-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+-              <span>
+-                {{ t('dashboard.unshipped.title') }}
+-                <el-tag v-if="unshippedTotal > 0" size="small" type="warning" style="margin-left: 8px">
+-                  {{ unshippedTotal }}
+-                </el-tag>
+-              </span>
+-              <div style="display: flex; gap: 12px; align-items: center">
+-                <el-switch
+-                  v-model="onlyOverdue"
+-                  :active-text="t('dashboard.unshipped.onlyOverdue')"
+-                  @change="loadUnshipped"
+-                />
+-                <el-button :icon="Refresh" size="small" @click="loadUnshipped" :loading="unshippedLoading" />
+-              </div>
+-            </div>
+-          </template>
+-
+-          <el-table
+-            v-if="unshippedRows.length && !isMobile"
+-            :data="unshippedRows"
+-            stripe
+-            size="small"
+-            @row-click="goOrderDetail"
+-            style="cursor: pointer"
+-          >
+-            <el-table-column prop="webOrderNo" :label="t('dashboard.unshipped.no')" min-width="130" />
+-            <el-table-column :label="t('dashboard.unshipped.customer')" min-width="120">
+-              <template #default="{ row }">
+-                {{ row.customerName || row.customerCd }}
+-              </template>
+-            </el-table-column>
+-            <el-table-column :label="t('dashboard.unshipped.deliveryDate')" min-width="140">
+-              <template #default="{ row }">
+-                <span :class="{ 'overdue-text': row.isOverdue }">
+-                  {{ fmtDate(row.customerDeliveryDate) }}
+-                </span>
+-                <el-tag
+-                  v-if="row.isOverdue"
+-                  type="danger"
+-                  size="small"
+-                  style="margin-left: 6px"
+-                >
+-                  {{ t('dashboard.unshipped.overdue') }}
+-                </el-tag>
+-                <el-tag
+-                  v-else-if="row.daysUntilDue !== null && row.daysUntilDue !== undefined && row.daysUntilDue <= 3"
+-                  type="warning"
+-                  size="small"
+-                  style="margin-left: 6px"
+-                >
+-                  D-{{ row.daysUntilDue }}
+-                </el-tag>
+-              </template>
+-            </el-table-column>
+-            <el-table-column :label="t('dashboard.unshipped.status')" min-width="120">
+-              <template #default="{ row }">
+-                <el-tag :type="orderLifecycleColor(row.orderStatus)" size="small">
+-                  {{ t(`dashboard.unshipped.lifecycle.${row.orderStatus}`) }}
+-                </el-tag>
+-              </template>
+-            </el-table-column>
+-            <el-table-column :label="t('dashboard.unshipped.qty')" width="170" align="right">
+-              <template #default="{ row }">
+-                {{ fmtQty(row.shippedQty) }} / {{ fmtQty(row.orderedQty) }}
+-                <span style="color: #f56c6c; margin-left: 4px">(-{{ fmtQty(row.remainingQty) }})</span>
+-              </template>
+-            </el-table-column>
+-            <el-table-column :label="t('dashboard.unshipped.mes')" min-width="180">
+-              <template #default="{ row }">
+-                <span style="font-size: 12px; color: #606266">{{ row.mesStatusSummary || '—' }}</span>
+-              </template>
+-            </el-table-column>
+-            <el-table-column :label="t('dashboard.unshipped.wms')" min-width="180">
+-              <template #default="{ row }">
+-                <span style="font-size: 12px; color: #606266">{{ row.wmsStatusSummary || '—' }}</span>
+-              </template>
+-            </el-table-column>
+-          </el-table>
++    <div class="card reveal-item" style="--delay: 320ms">
++      <div class="card-head card-head-wrap">
++        <h2>
++          {{ t('dashboard.unshipped.title') }}
++          <el-tag v-if="unshippedTotal > 0" size="small" type="warning" style="margin-left: 8px">
++            {{ unshippedTotal }}
++          </el-tag>
++        </h2>
++        <div class="card-head-controls">
++          <el-switch
++            v-model="onlyOverdue"
++            :active-text="t('dashboard.unshipped.onlyOverdue')"
++            @change="loadUnshipped"
++          />
++          <el-button :icon="Refresh" size="small" @click="loadUnshipped" :loading="unshippedLoading" />
++        </div>
++      </div>
+ 
+-          <!-- 手机端简化列表 -->
+-          <div v-else-if="unshippedRows.length && isMobile" class="simple-list">
+-            <div
+-              v-for="row in unshippedRows"
+-              :key="row.webOrderNo"
+-              class="simple-row"
+-              @click="goOrderDetail(row)"
+-              style="cursor: pointer"
+-            >
+-              <span class="simple-row-name">
+-                {{ row.webOrderNo }} — {{ row.customerName || row.customerCd }}
++      <div class="card-body">
++        <el-table
++          v-if="unshippedRows.length && !isMobile"
++          :data="unshippedRows"
++          stripe
++          size="small"
++          @row-click="goOrderDetail"
++          style="cursor: pointer"
++        >
++          <el-table-column prop="webOrderNo" :label="t('dashboard.unshipped.no')" min-width="130" />
++          <el-table-column :label="t('dashboard.unshipped.customer')" min-width="120">
++            <template #default="{ row }">
++              {{ row.customerName || row.customerCd }}
++            </template>
++          </el-table-column>
++          <el-table-column :label="t('dashboard.unshipped.deliveryDate')" min-width="140">
++            <template #default="{ row }">
++              <span :class="{ 'overdue-text': row.isOverdue }">
++                {{ fmtDate(row.customerDeliveryDate) }}
+               </span>
+-              <el-tag v-if="row.isOverdue" type="danger" size="small">
++              <el-tag
++                v-if="row.isOverdue"
++                type="danger"
++                size="small"
++                style="margin-left: 6px"
++              >
+                 {{ t('dashboard.unshipped.overdue') }}
+               </el-tag>
+-            </div>
++              <el-tag
++                v-else-if="row.daysUntilDue !== null && row.daysUntilDue !== undefined && row.daysUntilDue <= 3"
++                type="warning"
++                size="small"
++                style="margin-left: 6px"
++              >
++                D-{{ row.daysUntilDue }}
++              </el-tag>
++            </template>
++          </el-table-column>
++          <el-table-column :label="t('dashboard.unshipped.status')" min-width="120">
++            <template #default="{ row }">
++              <el-tag :type="orderLifecycleColor(row.orderStatus)" size="small">
++                {{ t(`dashboard.unshipped.lifecycle.${row.orderStatus}`) }}
++              </el-tag>
++            </template>
++          </el-table-column>
++          <el-table-column :label="t('dashboard.unshipped.qty')" width="170" align="right">
++            <template #default="{ row }">
++              {{ fmtQty(row.shippedQty) }} / {{ fmtQty(row.orderedQty) }}
++              <span style="color: #f56c6c; margin-left: 4px">(-{{ fmtQty(row.remainingQty) }})</span>
++            </template>
++          </el-table-column>
++          <el-table-column :label="t('dashboard.unshipped.mes')" min-width="180">
++            <template #default="{ row }">
++              <span style="font-size: 12px; color: #606266">{{ row.mesStatusSummary || '—' }}</span>
++            </template>
++          </el-table-column>
++          <el-table-column :label="t('dashboard.unshipped.wms')" min-width="180">
++            <template #default="{ row }">
++              <span style="font-size: 12px; color: #606266">{{ row.wmsStatusSummary || '—' }}</span>
++            </template>
++          </el-table-column>
++        </el-table>
++
++        <!-- 手机端简化列表 -->
++        <div v-else-if="unshippedRows.length && isMobile" class="simple-list">
++          <div
++            v-for="row in unshippedRows"
++            :key="row.webOrderNo"
++            class="simple-row"
++            @click="goOrderDetail(row)"
++            style="cursor: pointer"
++          >
++            <span class="simple-row-name">
++              {{ row.webOrderNo }} — {{ row.customerName || row.customerCd }}
++            </span>
++            <el-tag v-if="row.isOverdue" type="danger" size="small">
++              {{ t('dashboard.unshipped.overdue') }}
++            </el-tag>
+           </div>
++        </div>
+ 
+-          <el-empty v-else :description="t('dashboard.noData')" :image-size="60" />
++        <el-empty v-else :description="t('dashboard.noData')" :image-size="60" />
++
++        <el-pagination
++          v-if="unshippedTotal > unshippedQuery.pageSize"
++          v-model:current-page="unshippedQuery.page"
++          v-model:page-size="unshippedQuery.pageSize"
++          :page-sizes="[10, 25, 50, 100]"
++          :total="unshippedTotal"
++          layout="total, sizes, prev, pager, next"
++          small
++          background
++          style="margin-top: 12px; justify-content: flex-end"
++          @current-change="loadUnshipped"
++          @size-change="loadUnshipped"
++        />
++      </div>
++    </div>
++
++    <!-- T13 — 90天以上滞留库存 -->
++    <div class="card reveal-item" style="--delay: 380ms">
++      <div class="card-head card-head-wrap">
++        <h2>
++          {{ t('dashboard.stockDwell.title') }}
++          <el-tag
++            v-if="(stockDwellSummary?.over90Qty || 0) > 0"
++            size="small"
++            type="danger"
++            style="margin-left: 8px"
++          >
++            {{ fmtQty(stockDwellSummary?.over90Qty) }}
++          </el-tag>
++        </h2>
++        <div class="card-head-controls">
++          <el-button :icon="Refresh" size="small" @click="loadStockDwell" :loading="stockDwellLoading" />
++          <a href="javascript:void(0)" @click="go('/wms/stock-dwell')">{{ t('dashboard.stockDwell.open') }}</a>
++        </div>
++      </div>
+ 
+-          <el-pagination
+-            v-if="unshippedTotal > unshippedQuery.pageSize"
+-            v-model:current-page="unshippedQuery.page"
+-            v-model:page-size="unshippedQuery.pageSize"
+-            :page-sizes="[10, 25, 50, 100]"
+-            :total="unshippedTotal"
+-            layout="total, sizes, prev, pager, next"
+-            small
+-            background
+-            style="margin-top: 12px; justify-content: flex-end"
+-            @current-change="loadUnshipped"
+-            @size-change="loadUnshipped"
+-          />
+-        </el-card>
+-      </el-col>
+-    </el-row>
+-
+-    <el-row :gutter="16" style="margin-top: 16px">
+-      <el-col :xs="24" :sm="24" :md="24" :lg="24" class="dash-col reveal-item" style="--delay: 960ms">
+-        <el-card shadow="hover" class="dash-panel">
+-          <template #header>
+-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+-              <span>
+-                {{ t('dashboard.stockDwell.title') }}
+-                <el-tag
+-                  v-if="(stockDwellSummary?.over90Qty || 0) > 0"
+-                  size="small"
+-                  type="danger"
+-                  style="margin-left: 8px"
+-                >
+-                  {{ fmtQty(stockDwellSummary?.over90Qty) }}
+-                </el-tag>
+-              </span>
+-              <div style="display: flex; gap: 12px; align-items: center">
+-                <el-button :icon="Refresh" size="small" @click="loadStockDwell" :loading="stockDwellLoading" />
+-                <el-button link type="primary" @click="go('/wms/stock-dwell')">
+-                  {{ t('dashboard.stockDwell.open') }}
+-                </el-button>
+-              </div>
+-            </div>
+-          </template>
+-
+-          <div v-if="stockDwellRows.length" class="stock-dwell-widget">
+-            <div v-for="row in stockDwellRows" :key="row.groupKey" class="stock-dwell-widget-row">
+-              <span class="stock-dwell-widget-name">{{ row.groupLabel }}</span>
+-              <span class="stock-dwell-widget-qty">{{ fmtQty(row.bucketOver90Qty) }}</span>
+-              <el-progress
+-                :percentage="stockDwellPercent(row.bucketOver90Qty)"
+-                :stroke-width="12"
+-                :show-text="false"
+-              />
+-            </div>
++      <div class="card-body">
++        <div v-if="stockDwellRows.length" class="stock-dwell-widget">
++          <div v-for="row in stockDwellRows" :key="row.groupKey" class="stock-dwell-widget-row">
++            <span class="stock-dwell-widget-name">{{ row.groupLabel }}</span>
++            <span class="stock-dwell-widget-qty">{{ fmtQty(row.bucketOver90Qty) }}</span>
++            <el-progress
++              :percentage="stockDwellPercent(row.bucketOver90Qty)"
++              :stroke-width="12"
++              :show-text="false"
++            />
+           </div>
++        </div>
+ 
+-          <el-empty v-else :description="t('dashboard.noData')" :image-size="60" />
+-        </el-card>
+-      </el-col>
+-    </el-row>
++        <el-empty v-else :description="t('dashboard.noData')" :image-size="60" />
++      </div>
++    </div>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRouter } from 'vue-router'
+-import { Refresh } from '@element-plus/icons-vue'
++import { Refresh, DocumentAdd, Van, List, Grid, Warning, SetUp, Bell } from '@element-plus/icons-vue'
+ import { dashboardApi } from '@/api/sys/dashboard'
+ import { orderApi } from '@/api/erp/order'
+ import { stockDwellApi } from '@/api/wms/stockDwell'
+ import { formatQty } from '@/utils/format'
+ import { getConnection, startConnection } from '@/utils/signalr'
+ import { useBreakpoint } from '@/composables/useBreakpoint'
++import KpiCard from './components/KpiCard.vue'
++import DonutChart from './components/DonutChart.vue'
+ import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/erp/order'
+ import type { StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
+ 
+-const { t } = useI18n()
++const { t, locale } = useI18n()
+ const router = useRouter()
+ const { isMobile } = useBreakpoint()
+ 
+ interface Summary {
+   todayOrders: number
+   monthOrders: number
+   activeWorkOrders: number
+   monthCompleted: number
+   pendingOutbound: number
+   stockWarnings: number
+@@ -383,56 +378,104 @@ const statCards = computed<StatCard[]>(() => [
+ ])
+ 
+ // 仅当目标路由已注册时，卡片才可点击跳转
+ function canGo(to?: string) {
+   return !!to && router.resolve(to).matched.length > 0
+ }
+ function onCardClick(to?: string) {
+   if (canGo(to)) go(to as string)
+ }
+ 
++// KPI 卡视觉基调：alert 系一律 danger；其余按原有 color 语义映射到 token 基调
++function kpiTone(card: StatCard): 'brand' | 'info' | 'warn' | 'danger' {
++  if (card.alert && card.value > 0) return 'danger'
++  if (card.color === '#e6a23c') return 'warn'
++  if (card.color === '#409eff') return 'info'
++  return 'brand'
++}
++
+ // 快捷入口（仅显示已注册的路由）
+ const allQuickLinks = [
+   { key: 'qOrder',     path: '/order',                 icon: 'DocumentAdd', color: '#409eff' },
+   { key: 'qWorkOrder', path: '/mes/work-order',        icon: 'SetUp',       color: '#e6a23c' },
+   { key: 'qInbound',   path: '/wms/inbound-receipt',   icon: 'Download',    color: '#67c23a' },
+   { key: 'qOutbound',  path: '/wms/outbound-order',    icon: 'Upload',      color: '#f56c6c' },
+   { key: 'qStock',     path: '/wms/stock',             icon: 'Box',         color: '#909399' },
+   { key: 'qStockTake', path: '/wms/stock-take-list',   icon: 'Files',       color: '#606266' }
+ ]
+ const quickLinks = computed(() =>
+   allQuickLinks.filter(l => router.resolve(l.path).matched.length > 0)
+ )
+ 
+ function go(path: string) {
+   router.push(path).catch(() => {})
+ }
+ 
++// ── page-head：日期 + 预警摘要（沿用现有 summary 字段与既有 key，不新增 API/文案）──
++const pageDateLabel = computed(() => {
++  const map: Record<string, string> = { 'zh-CN': 'zh-CN', 'zh-TW': 'zh-TW', ja: 'ja-JP', ko: 'ko-KR', en: 'en-US' }
++  const loc = map[locale.value] || 'ja-JP'
++  try {
++    return new Date().toLocaleDateString(loc, { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })
++  } catch {
++    return new Date().toLocaleDateString()
++  }
++})
++const headAlertParts = computed(() => {
++  const parts: string[] = []
++  if (summary.value.stockWarnings > 0) parts.push(`${summary.value.stockWarnings} ${t('dashboard.stockWarnings')}`)
++  if (summary.value.pendingApprovals > 0) parts.push(`${summary.value.pendingApprovals} ${t('dashboard.pendingApprovals')}`)
++  return parts
++})
++
++// ── 出货状态条（来自已加载的 recentOrders，非新 API，仅为该列表样本的出货占比）──
++const shipSummary = computed(() => {
++  const total = recentOrders.value.length
++  const shipped = recentOrders.value.filter(o => o.shipStatus === 9).length
++  const pending = total - shipped
++  const pct = total ? Math.round((shipped / total) * 100) : 0
++  return { total, shipped, pending, pct }
++})
++
++// ── 制造进度环图（来自既有 workOrderStatus）──
++const woChartColor: Record<number, string> = {
++  0: 'var(--cp-faint)',
++  1: 'var(--cp-info)',
++  2: 'var(--cp-brand)',
++  3: 'var(--cp-warn)',
++  4: 'var(--cp-brand-2)',
++  5: 'var(--cp-danger)',
++  6: 'var(--cp-ok)',
++  9: 'var(--cp-faint)'
++}
++const donutSegments = computed(() =>
++  workOrderStatus.value.map(s => ({
++    label: woLabel(s.status),
++    value: s.count,
++    color: woChartColor[s.status] || 'var(--cp-faint)'
++  }))
++)
++
+ // ── 出荷ステータス ──
+ function shipLabel(s: number) { return t(`dashboard.ship${s}`) }
+ function shipColor(s: number) {
+   return ({ 0: 'info', 5: 'warning', 9: 'success' } as Record<number, any>)[s] || 'info'
+ }
+ 
+ // ── 製造指図ステータス ──
+-const maxWo = computed(() => Math.max(...workOrderStatus.value.map(s => s.count), 1))
+-function woPercent(c: number) { return Math.round((c / maxWo.value) * 100) }
+ function woLabel(s: number) { return t(`dashboard.wo${s}`) }
+-function woColor(s: number) {
+-  return ({ 0: 'info', 1: 'primary', 2: 'primary', 3: 'warning', 4: 'success', 5: 'danger', 6: 'success', 9: 'info' } as Record<number, any>)[s] || 'info'
+-}
+ 
+-function alertType(level?: string) {
++function alertBarStyle(level?: string) {
+   const l = (level || '').toLowerCase()
+-  if (l === 'error') return 'error'
+-  if (l === 'warning') return 'warning'
+-  return 'success'
++  if (l === 'error') return { background: 'linear-gradient(115deg, var(--cp-danger), #F0777B)' }
++  if (l === 'warning') return { background: 'linear-gradient(115deg, var(--cp-warn), #F5B65C)' }
++  return { background: 'linear-gradient(115deg, var(--cp-brand-deep), var(--cp-brand-2))' }
+ }
+ 
+ function fmtQty(q?: number) {
+   if (q === null || q === undefined) return '-'
+   return formatQty(q)
+ }
+ function fmtTime(d?: string) {
+   if (!d) return ''
+   const dt = new Date(d)
+   return `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`
+@@ -576,299 +619,430 @@ onMounted(async () => {
+ })
+ 
+ onUnmounted(() => {
+   const conn = getConnection()
+   conn.off('BusinessNotification')
+   conn.off('NewOperLog')
+ })
+ </script>
+ 
+ <style scoped>
+-.dashboard {
++.cp-dash {
+   position: relative;
+-}
+-
+-.stat-cards {
+-  margin-bottom: 0;
++  display: flex;
++  flex-direction: column;
++  gap: 20px;
+ }
+ 
+ .reveal-item {
+   opacity: 0;
+   transform: translateY(22px) scale(0.985);
+   filter: blur(10px);
+ }
+ 
+-.dashboard.is-ready .reveal-item {
++.cp-dash.is-ready .reveal-item {
+   animation: dashboard-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+   animation-delay: var(--delay, 0ms);
+ }
+ 
+-.stat-card,
+-.dash-panel,
+-.quick-card {
+-  border: 1px solid rgba(255, 255, 255, 0.72);
+-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.92));
+-  box-shadow:
+-    0 18px 40px rgba(148, 163, 184, 0.12),
+-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+-  backdrop-filter: blur(14px);
+-  transition: transform 0.24s ease, box-shadow 0.24s ease;
++/* ===== page-head ===== */
++.page-head {
++  display: flex;
++  align-items: flex-end;
++  justify-content: space-between;
++  gap: 14px;
++  flex-wrap: wrap;
+ }
+-
+-.stat-card:hover,
+-.dash-panel:hover {
+-  transform: translateY(-4px);
+-  box-shadow:
+-    0 24px 52px rgba(148, 163, 184, 0.16),
+-    inset 0 1px 0 rgba(255, 255, 255, 0.86);
++.page-head h1 {
++  font-size: var(--cp-fs-3xl);
++  font-weight: 800;
++  color: var(--cp-ink);
++  letter-spacing: -.3px;
++}
++.page-head p {
++  font-size: var(--cp-fs-base);
++  color: var(--cp-muted);
++  margin-top: 5px;
++  font-weight: 600;
++}
++.page-head p b {
++  color: var(--cp-danger);
++}
++.btn {
++  display: inline-flex;
++  align-items: center;
++  gap: 7px;
++  border: none;
++  border-radius: 11px;
++  padding: 9px 16px;
++  font-size: var(--cp-fs-base);
++  font-weight: 800;
++  cursor: pointer;
++  font-family: inherit;
++  transition: var(--cp-t-base);
++}
++.btn-primary {
++  background: var(--cp-brand-grad);
++  color: #fff;
++  box-shadow: var(--cp-brand-glow);
++}
++.btn-primary:hover {
++  transform: translateY(-1px);
+ }
+ 
+-.stat-cards :deep(.el-col) {
+-  margin-bottom: 16px;
++/* ===== KPI 区 ===== */
++.kpis {
++  display: grid;
++  grid-template-columns: repeat(4, 1fr);
++  gap: 16px;
++}
++.kpi-cell {
++  min-width: 0;
+ }
+ 
+-.stat-card-inner {
++/* ===== 双列 ===== */
++.cols {
++  display: grid;
++  grid-template-columns: 1.62fr 1fr;
++  gap: 18px;
++  align-items: start;
++}
++.col {
++  display: flex;
++  flex-direction: column;
++  gap: 18px;
++  min-width: 0;
++}
++.card {
++  background: var(--cp-card);
++  border-radius: var(--cp-r-lg);
++  box-shadow: var(--cp-shadow-1);
++}
++.card-head {
+   display: flex;
++  align-items: center;
+   justify-content: space-between;
++  padding: 16px 20px;
++  border-bottom: 1px solid var(--cp-line-soft);
++  gap: 12px;
++  flex-wrap: wrap;
++}
++.card-head h2 {
++  font-size: var(--cp-fs-lg);
++  font-weight: 800;
++  color: var(--cp-ink);
++  display: flex;
+   align-items: center;
++  gap: 9px;
+ }
+-
+-.stat-label {
+-  color: #909399;
+-  font-size: 14px;
+-  margin-bottom: 8px;
++.card-head h2 .i {
++  font-size: 16px;
++  color: var(--cp-brand-deep);
+ }
+-
+-.stat-value {
+-  font-size: 28px;
+-  font-weight: bold;
+-  color: #303133;
++.card-head a {
++  font-size: var(--cp-fs-xs);
++  font-weight: 800;
++  color: var(--cp-brand-deep);
++  cursor: pointer;
+ }
+-
+-.stat-value.is-alert {
+-  color: #f56c6c;
++.card-head a:hover {
++  text-decoration: underline;
+ }
+-
+-.stat-card.clickable {
+-  cursor: pointer;
++.card-head-wrap {
++  justify-content: space-between;
+ }
+-
+-.goto-hint {
+-  font-size: 12px;
+-  color: #c0c4cc;
+-  vertical-align: middle;
+-  opacity: 0;
+-  transform: translateX(-3px);
+-  transition: opacity 0.2s ease, transform 0.2s ease;
++.card-head-controls {
++  display: flex;
++  gap: 12px;
++  align-items: center;
++}
++.card-body {
++  padding: 14px 20px 18px;
+ }
+ 
+-.stat-card.clickable:hover .goto-hint {
+-  opacity: 1;
+-  transform: translateX(0);
++/* 出货焦点条 */
++.ship {
++  display: flex;
++  align-items: center;
++  gap: 22px;
++  padding: 18px 22px;
++}
++.ship .block {
++  text-align: center;
++  min-width: 74px;
++}
++.ship .block .v {
++  font-size: 30px;
++  font-weight: 800;
++  color: var(--cp-ink);
++  line-height: 1;
++}
++.ship .block .l {
++  font-size: var(--cp-fs-2xs);
++  color: var(--cp-muted);
++  font-weight: 800;
++  margin-top: 5px;
++  letter-spacing: .8px;
++}
++.ship .track {
++  flex: 1;
++}
++.ship .bar {
++  height: 9px;
++  border-radius: 6px;
++  background: var(--cp-line-soft);
++  overflow: hidden;
++  display: flex;
++  gap: 2px;
++}
++.ship .bar i {
++  height: 100%;
++  border-radius: 6px;
++}
++.ship .bl {
++  display: flex;
++  justify-content: flex-end;
++  font-size: 11.5px;
++  color: var(--cp-muted);
++  font-weight: 700;
++  margin-top: 8px;
+ }
+ 
+ /* 快捷入口 */
+-.quick-grid {
++.quick {
+   display: grid;
+   grid-template-columns: repeat(6, 1fr);
+   gap: 12px;
++  padding: 16px 20px;
+ }
+-
+-.quick-item {
++.q {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+-  gap: 8px;
+-  padding: 16px 8px;
+-  border-radius: 10px;
++  gap: 9px;
++  padding: 15px 6px;
++  border-radius: var(--cp-r-md);
++  border: 1px solid var(--cp-line);
++  font-size: var(--cp-fs-sm);
++  font-weight: 800;
++  color: var(--cp-ink);
+   cursor: pointer;
+-  font-size: 13px;
+-  color: #303133;
+-  background: rgba(64, 158, 255, 0.04);
+-  border: 1px solid rgba(64, 158, 255, 0.08);
+-  transition: transform 0.18s ease, background 0.18s ease;
++  transition: var(--cp-t-base);
+ }
+-
+-.quick-item:hover {
++.q .i {
++  font-size: 21px;
++  color: var(--cp-brand-deep);
++}
++.q:hover {
++  border-color: var(--cp-brand);
++  background: var(--cp-brand-bg);
+   transform: translateY(-3px);
+-  background: rgba(64, 158, 255, 0.1);
++  box-shadow: var(--cp-shadow-1);
+ }
+ 
+-.method-row {
++/* 预警条幅 */
++.alertbar {
++  border-radius: var(--cp-r-lg);
++  padding: 18px 20px;
+   display: flex;
+   align-items: center;
+-  margin-bottom: 12px;
++  gap: 14px;
++  color: #fff;
++  box-shadow: var(--cp-brand-glow);
++  position: relative;
++  overflow: hidden;
++}
++.alertbar .i {
++  font-size: 22px;
++  flex-shrink: 0;
++}
++.alertbar p {
++  flex: 1;
++  font-size: var(--cp-fs-md);
++  font-weight: 800;
++  line-height: 1.4;
++  position: relative;
++  z-index: 1;
++}
++.alertbar p small {
++  display: block;
++  font-size: var(--cp-fs-2xs);
++  font-weight: 700;
++  opacity: .8;
++  letter-spacing: 1.4px;
++  margin-bottom: 3px;
++}
++.alertbar .act {
++  cursor: pointer;
++  position: relative;
++  z-index: 1;
++  font-weight: 800;
++  opacity: .85;
++  flex-shrink: 0;
++}
++.alertbar .act:hover {
++  opacity: 1;
+ }
+ 
+ /* 实时通知 feed */
+ .feed-list {
+   display: flex;
+   flex-direction: column;
+   max-height: 320px;
+   overflow-y: auto;
++  padding: 4px 20px 12px;
+ }
+-
+ .feed-row {
+   display: flex;
+   align-items: flex-start;
+   gap: 8px;
+   padding: 10px 0;
+-  border-bottom: 1px solid #f0f2f5;
++  border-bottom: 1px dashed var(--cp-line);
+ }
+-
+ .feed-row:last-child {
+   border-bottom: none;
+ }
+-
+ .feed-dot {
+   width: 8px;
+   height: 8px;
+   border-radius: 50%;
+   margin-top: 6px;
+   flex-shrink: 0;
+-  background: #409eff;
++  background: var(--cp-brand);
+ }
+-
+-.feed-dot.lvl-warning { background: #e6a23c; }
+-.feed-dot.lvl-error { background: #f56c6c; }
+-
++.feed-dot.lvl-warning { background: var(--cp-warn); }
++.feed-dot.lvl-error { background: var(--cp-danger); }
+ .feed-body {
+   flex: 1;
+   min-width: 0;
+ }
+-
+ .feed-title {
+-  font-size: 13px;
+-  font-weight: 600;
+-  color: #303133;
++  font-size: var(--cp-fs-sm);
++  font-weight: 700;
++  color: var(--cp-ink);
+ }
+-
+ .feed-title em {
+   font-style: normal;
+-  color: #909399;
++  color: var(--cp-muted);
+   font-weight: 400;
+ }
+-
+ .feed-msg {
+-  font-size: 12px;
+-  color: #909399;
++  font-size: var(--cp-fs-xs);
++  color: var(--cp-muted);
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+ }
+-
+ .feed-time {
+-  font-size: 11px;
+-  color: #c0c4cc;
++  font-size: var(--cp-fs-2xs);
++  color: var(--cp-faint);
+   flex-shrink: 0;
+ }
+ 
++.lg-empty {
++  font-size: var(--cp-fs-xs);
++  color: var(--cp-muted);
++  font-weight: 700;
++}
++
+ .simple-list {
+   display: flex;
+   flex-direction: column;
++  padding: 4px 20px 12px;
+ }
+-
+ .simple-row {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 10px 0;
+-  border-bottom: 1px solid #f0f2f5;
+-  font-size: 14px;
++  border-bottom: 1px solid var(--cp-line-soft);
++  font-size: var(--cp-fs-base);
+ }
+-
+ .simple-row:last-child {
+   border-bottom: none;
+ }
+-
+ .simple-row-name {
+   flex: 1;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+-  color: #303133;
++  color: var(--cp-ink);
+   margin-right: 8px;
+ }
+ 
+ .stock-dwell-widget {
+   display: grid;
+   gap: 12px;
+ }
+-
+ .stock-dwell-widget-row {
+   display: grid;
+   grid-template-columns: minmax(180px, 1fr) 110px minmax(160px, 260px);
+   align-items: center;
+   gap: 12px;
+ }
+-
+ .stock-dwell-widget-name {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+-  color: #303133;
+-  font-size: 13px;
++  color: var(--cp-ink);
++  font-size: var(--cp-fs-base);
+ }
+-
+ .stock-dwell-widget-qty {
+-  color: #d93026;
++  color: var(--cp-danger);
+   font-weight: 650;
+-  font-size: 13px;
++  font-size: var(--cp-fs-base);
+   text-align: right;
+ }
++.overdue-text {
++  color: var(--cp-danger);
++}
+ 
+ @keyframes dashboard-rise {
+   from {
+     opacity: 0;
+     transform: translateY(22px) scale(0.985);
+     filter: blur(10px);
+   }
+   to {
+     opacity: 1;
+     transform: translateY(0) scale(1);
+     filter: blur(0);
+   }
+ }
+ 
+ @media (prefers-reduced-motion: reduce) {
+   .reveal-item,
+-  .dashboard.is-ready .reveal-item,
+-  .stat-card,
+-  .dash-panel,
+-  .quick-card {
++  .cp-dash.is-ready .reveal-item {
+     animation: none !important;
+-    transition: none !important;
+     transform: none !important;
+     filter: none !important;
+     opacity: 1 !important;
+   }
+ }
+ 
+-@media (max-width: 991px) {
+-  .quick-grid {
+-    grid-template-columns: repeat(3, 1fr);
++@media (max-width: 1180px) {
++  .kpis {
++    grid-template-columns: repeat(2, 1fr);
+   }
+-
+-  .stock-dwell-widget-row {
+-    grid-template-columns: 1fr 92px;
++  .cols {
++    grid-template-columns: 1fr;
+   }
+-
+-  .stock-dwell-widget-row :deep(.el-progress) {
+-    grid-column: 1 / -1;
++  .quick {
++    grid-template-columns: repeat(3, 1fr);
+   }
+ }
+ 
+ @media (max-width: 767px) {
+-  .dash-col {
+-    margin-bottom: 12px;
++  .kpis {
++    grid-template-columns: repeat(2, 1fr);
+   }
+-  .stat-value {
+-    font-size: 22px;
++  .quick {
++    grid-template-columns: repeat(3, 1fr);
+   }
+-  .stat-label {
+-    font-size: 12px;
++  .stock-dwell-widget-row {
++    grid-template-columns: 1fr 92px;
+   }
+-  .quick-grid {
+-    grid-template-columns: repeat(3, 1fr);
++  .stock-dwell-widget-row :deep(.el-progress) {
++    grid-column: 1 / -1;
+   }
+ }
+ </style>
+diff --git a/cp6.web/src/views/dashboard/components/DonutChart.vue b/cp6.web/src/views/dashboard/components/DonutChart.vue
+new file mode 100644
+index 0000000..d2abcba
+--- /dev/null
++++ b/cp6.web/src/views/dashboard/components/DonutChart.vue
+@@ -0,0 +1,152 @@
++<script setup lang="ts">
++// DonutChart：环图 + 右侧图例。segments 为空（或合计为 0）时渲染灰色整环占位。
++import { computed } from 'vue'
++
++interface Segment { label: string; value: number; color: string }
++
++const props = defineProps<{
++  segments: Segment[]
++  centerLabel: string
++}>()
++
++const R = 46
++const C = 2 * Math.PI * R // ≈ 289.03
++const GAP = 3
++
++const total = computed(() => props.segments.reduce((sum, s) => sum + (s.value || 0), 0))
++
++interface Arc { label: string; value: number; color: string; dasharray: string; dashoffset: number; pct: number }
++
++const arcs = computed<Arc[]>(() => {
++  if (!props.segments.length || total.value <= 0) return []
++  let acc = 0
++  return props.segments
++    .filter(s => (s.value || 0) > 0)
++    .map((s) => {
++      const raw = (s.value / total.value) * C
++      const len = Math.max(raw - GAP, 0)
++      const arc: Arc = {
++        label: s.label,
++        value: s.value,
++        color: s.color,
++        dasharray: `${len} ${C}`,
++        dashoffset: -acc,
++        pct: (s.value / total.value) * 100,
++      }
++      acc += raw
++      return arc
++    })
++})
++
++const isEmpty = computed(() => arcs.value.length === 0)
++</script>
++
++<template>
++  <div class="donut-wrap">
++    <div class="donut">
++      <svg width="118" height="118" viewBox="0 0 118 118">
++        <circle cx="59" cy="59" :r="R" fill="none" stroke="var(--cp-line-soft)" stroke-width="13" />
++        <circle
++          v-if="isEmpty"
++          cx="59" cy="59" :r="R" fill="none" stroke="var(--cp-faint)" stroke-width="13"
++        />
++        <circle
++          v-for="(a, i) in arcs"
++          :key="i"
++          cx="59" cy="59" :r="R" fill="none"
++          :stroke="a.color"
++          stroke-width="13"
++          stroke-linecap="round"
++          :stroke-dasharray="a.dasharray"
++          :stroke-dashoffset="a.dashoffset"
++        />
++      </svg>
++      <div class="center">
++        <b class="num">{{ isEmpty ? '-' : total }}</b>
++        <span>{{ centerLabel }}</span>
++      </div>
++    </div>
++    <div class="lgs">
++      <div v-for="(a, i) in arcs" :key="i" class="lg">
++        <span class="sq" :style="{ background: a.color }" />
++        {{ a.label }}
++        <b class="num">{{ a.value }}</b>
++        <span class="pct num">{{ a.pct.toFixed(1) }}%</span>
++      </div>
++      <slot v-if="isEmpty" name="empty" />
++    </div>
++  </div>
++</template>
++
++<style scoped>
++.donut-wrap {
++  display: flex;
++  align-items: center;
++  gap: 20px;
++  padding: 18px 20px;
++}
++.donut {
++  position: relative;
++  width: 118px;
++  height: 118px;
++  flex-shrink: 0;
++}
++.donut svg {
++  transform: rotate(-90deg);
++}
++.donut .center {
++  position: absolute;
++  inset: 0;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  justify-content: center;
++}
++.donut .center b {
++  font-size: 26px;
++  font-weight: 800;
++  color: var(--cp-ink);
++  line-height: 1;
++}
++.donut .center span {
++  font-size: var(--cp-fs-2xs);
++  color: var(--cp-muted);
++  font-weight: 800;
++  letter-spacing: .8px;
++  margin-top: 3px;
++  text-align: center;
++}
++.lgs {
++  flex: 1;
++  display: flex;
++  flex-direction: column;
++  gap: 11px;
++  min-width: 0;
++}
++.lg {
++  display: flex;
++  align-items: center;
++  gap: 9px;
++  font-size: var(--cp-fs-base);
++  font-weight: 700;
++  color: var(--cp-text);
++}
++.lg .sq {
++  width: 8px;
++  height: 8px;
++  border-radius: 2.5px;
++  flex-shrink: 0;
++}
++.lg b {
++  margin-left: auto;
++  color: var(--cp-ink);
++  font-weight: 800;
++}
++.lg .pct {
++  color: var(--cp-muted);
++  font-size: var(--cp-fs-xs);
++  width: 48px;
++  text-align: right;
++  font-weight: 700;
++}
++</style>
+diff --git a/cp6.web/src/views/dashboard/components/KpiCard.vue b/cp6.web/src/views/dashboard/components/KpiCard.vue
+new file mode 100644
+index 0000000..f38b9ad
+--- /dev/null
++++ b/cp6.web/src/views/dashboard/components/KpiCard.vue
+@@ -0,0 +1,142 @@
++<script setup lang="ts">
++// KpiCard：仪表盘 KPI 卡。trend 传 7 日数值数组时渲染 sparkline（现有 API 无该数据源时不传，不造假数据）。
++// 用法：<KpiCard label="在制指令" :value="10" suffix="件" tone="brand" sub="完成率 36.4%"><template #icon><SetUp /></template></KpiCard>
++const props = withDefaults(defineProps<{
++  label: string
++  value: number | string
++  suffix?: string
++  tone?: 'brand' | 'info' | 'warn' | 'danger'
++  trend?: number[]
++  sub?: string
++  /** 卡片本身是否可点击跳转（由外层容器负责实际 @click/路由）：为 true 时在 sub 行追加一个 → 提示。 */
++  clickable?: boolean
++}>(), { tone: 'brand' })
++
++type Tone = 'brand' | 'info' | 'warn' | 'danger'
++
++const chipStyle: Record<Tone, { bg: string; color: string }> = {
++  brand: { bg: 'rgba(20,184,196,.10)', color: 'var(--cp-brand-deep)' },
++  info: { bg: 'var(--cp-info-bg)', color: 'var(--cp-info)' },
++  warn: { bg: 'var(--cp-warn-bg)', color: 'var(--cp-warn)' },
++  danger: { bg: 'var(--cp-danger-bg)', color: 'var(--cp-danger)' },
++}
++const toneVar: Record<Tone, string> = {
++  brand: 'var(--cp-brand)',
++  info: 'var(--cp-info)',
++  warn: 'var(--cp-warn)',
++  danger: 'var(--cp-danger)',
++}
++
++function points(t: number[]): string {
++  const max = Math.max(...t, 1)
++  const min = Math.min(...t, 0)
++  return t.map((v, i) => `${(i / (t.length - 1 || 1)) * 100},${28 - ((v - min) / (max - min || 1)) * 24}`).join(' ')
++}
++</script>
++
++<template>
++  <div class="kpi cp-hover-lift" :class="{ alert: tone === 'danger', clickable }">
++    <div class="top">
++      <span class="lbl">{{ label }}</span>
++      <span
++        v-if="$slots.icon"
++        class="chip"
++        :style="{ background: chipStyle[props.tone].bg, color: chipStyle[props.tone].color }"
++      >
++        <slot name="icon" />
++      </span>
++    </div>
++    <div class="val num">{{ value }}<small v-if="suffix"> {{ suffix }}</small></div>
++    <div v-if="sub || clickable" class="sub">
++      <slot name="sub">{{ sub }}</slot>
++      <span v-if="clickable" class="go">→</span>
++    </div>
++    <svg v-if="trend?.length" class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
++      <polyline
++        :points="points(trend)"
++        :stroke="toneVar[props.tone]"
++        stroke-width="2"
++        fill="none"
++        stroke-linecap="round"
++      />
++    </svg>
++  </div>
++</template>
++
++<style scoped>
++.kpi {
++  background: var(--cp-card);
++  border-radius: var(--cp-r-lg);
++  box-shadow: var(--cp-shadow-1);
++  padding: 17px 20px 13px;
++  position: relative;
++  border: 1px solid transparent;
++  overflow: hidden;
++}
++.kpi .top {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++}
++.kpi .lbl {
++  font-size: var(--cp-fs-xs);
++  color: var(--cp-muted);
++  font-weight: 800;
++  letter-spacing: .6px;
++}
++.kpi .chip {
++  width: 36px;
++  height: 36px;
++  border-radius: var(--cp-r-md);
++  display: grid;
++  place-items: center;
++  font-size: 17px;
++  flex-shrink: 0;
++}
++.kpi .val {
++  font-size: var(--cp-fs-num-lg);
++  font-weight: 800;
++  color: var(--cp-ink);
++  line-height: 1.05;
++  margin: 8px 0 2px;
++  letter-spacing: -.5px;
++}
++.kpi .val small {
++  font-size: var(--cp-fs-base);
++  color: var(--cp-muted);
++  font-weight: 700;
++  letter-spacing: 0;
++}
++.kpi .sub {
++  font-size: var(--cp-fs-xs);
++  color: var(--cp-muted);
++  font-weight: 700;
++  display: flex;
++  align-items: center;
++  gap: 5px;
++  margin-bottom: 4px;
++}
++.kpi.alert {
++  border-color: rgba(229, 72, 77, .25);
++}
++.kpi.alert .val {
++  color: var(--cp-danger);
++}
++.kpi.clickable {
++  cursor: pointer;
++}
++.kpi .go {
++  margin-left: auto;
++  color: var(--cp-brand-deep);
++  font-weight: 800;
++}
++.kpi.alert .go {
++  color: var(--cp-danger);
++}
++.spark {
++  display: block;
++  width: 100%;
++  height: 30px;
++  margin-top: 2px;
++}
++</style>

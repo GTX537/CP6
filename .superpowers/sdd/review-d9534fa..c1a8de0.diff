@@ -1,0 +1,479 @@
+# Review package: d9534fa..HEAD
+
+## Commits
+c1a8de0 feat(ui): CpListPage 查询页模板 + CpStatCard 抽取
+
+## Files changed
+ cp6.web/src/components/templates/CpListPage.vue    | 201 +++++++++++++++++++++
+ .../templates/CpStatCard.vue}                      |  22 ++-
+ .../templates/__tests__/CpListPage.spec.ts         | 154 ++++++++++++++++
+ cp6.web/src/views/dashboard/DashboardView.vue      |   6 +-
+ 4 files changed, 378 insertions(+), 5 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/components/templates/CpListPage.vue b/cp6.web/src/components/templates/CpListPage.vue
+new file mode 100644
+index 0000000..6919bf4
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpListPage.vue
+@@ -0,0 +1,201 @@
++<!--
++  CpListPage —— 业务查询页核心模板（设计系统 §9.2；130+ 查询页的目标模板）。
++  组合结构：CpStatusStrip?（状态速览）→ CpFilterBar?（查询区）→ 表格卡 .tcard（toolbar slot + el-table + 分页）。
++  行为：mounted 自动 fetch；search/reset/翻页/切状态卡重新 fetch（search/reset/切卡均重置 page=1）；
++  fetch 期间 v-loading；fetch reject → ElMessage.error 且保留旧数据；rows 空 → CpEmpty；乱序响应只取最新。
++
++  Props:
++    - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag / date→暂原样）。
++    - fetch: ListFetch             数据源：({ page,size,filters,statusKey? }) => Promise<{ rows,total }>。
++    - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
++    - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key。
++    - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
++  Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
++  Emits: selection-change(rows)
++
++  使用示例：
++    <CpPageShell title="出庫指示一覧" :count="total">
++      <CpListPage
++        :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' }]"
++        :fetch="loadShipments"
++        :search-fields="[{ key:'q', label:'单号', type:'text' }]"
++        :status-tabs="[{ key:'all', label:'全部', count:28 }]"
++        selectable row-key="id"
++        @selection-change="onSel">
++        <template #toolbar><el-button>批量出库</el-button></template>
++      </CpListPage>
++    </CpPageShell>
++-->
++<script lang="ts">
++export interface ListColumn {
++  prop: string
++  label: string
++  width?: number
++  align?: 'left' | 'right' | 'center'
++  kind?: 'text' | 'num' | 'mono' | 'tag' | 'date'
++}
++export type ListFetch = (q: {
++  page: number
++  size: number
++  filters: Record<string, unknown>
++  statusKey?: string
++}) => Promise<{ rows: unknown[]; total: number }>
++export interface StatusTab { key: string; label: string; count: number; tone?: string }
++</script>
++
++<script setup lang="ts">
++import { onMounted, ref } from 'vue'
++import { ElMessage, ElPagination, ElTable, ElTableColumn, vLoading } from 'element-plus'
++import CpStatusStrip from './CpStatusStrip.vue'
++import CpFilterBar, { type FilterField } from './CpFilterBar.vue'
++import CpTag from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++
++const props = defineProps<{
++  columns: ListColumn[]
++  fetch: ListFetch
++  searchFields?: FilterField[]
++  statusTabs?: StatusTab[]
++  selectable?: boolean
++  rowKey?: string
++}>()
++
++const emit = defineEmits<{ (e: 'selection-change', rows: unknown[]): void }>()
++
++// —— 内部状态 ——
++const page = ref(1)
++const size = ref(20)
++const filters = ref<Record<string, unknown>>({})
++const statusKey = ref<string | undefined>(props.statusTabs?.[0]?.key)
++const rows = ref<unknown[]>([])
++const total = ref(0)
++const loading = ref(false)
++
++// —— load()：唯一取数入口；seq 守卫乱序响应（只有最新一次请求的结果生效）——
++let seq = 0
++async function load() {
++  const id = ++seq
++  loading.value = true
++  try {
++    const res = await props.fetch({
++      page: page.value,
++      size: size.value,
++      filters: filters.value,
++      statusKey: statusKey.value
++    })
++    if (id !== seq) return // 已有更新的请求发出，丢弃本次结果
++    rows.value = res.rows
++    total.value = res.total
++  } catch (e) {
++    if (id !== seq) return
++    ElMessage.error((e as Error).message) // 保留旧 rows/total
++  } finally {
++    if (id === seq) loading.value = false
++  }
++}
++onMounted(load)
++
++// —— 交互 ——
++function onSearch() { page.value = 1; load() }
++function onReset() { page.value = 1; load() } // CpFilterBar 已先回写清空后的 filters
++function onStatus(key: string) { statusKey.value = key; page.value = 1; load() }
++function onPageChange() { load() }
++function onSizeChange() { page.value = 1; load() }
++
++// —— 列渲染 ——
++function cell(row: unknown, prop: string): unknown {
++  return (row as Record<string, unknown>)?.[prop]
++}
++function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
++  return c.align ?? (c.kind === 'num' ? 'right' : 'left')
++}
++</script>
++
++<template>
++  <div class="cp-list">
++    <CpStatusStrip
++      v-if="statusTabs?.length"
++      :items="statusTabs"
++      :model-value="statusKey ?? ''"
++      @update:model-value="onStatus"
++    />
++
++    <CpFilterBar
++      v-if="searchFields?.length"
++      v-model="filters"
++      :fields="searchFields"
++      @search="onSearch"
++      @reset="onReset"
++    />
++
++    <div class="tcard">
++      <div v-if="$slots.toolbar" class="toolbar"><slot name="toolbar" /></div>
++
++      <el-table
++        v-loading="loading"
++        :data="rows"
++        :row-key="rowKey"
++        @selection-change="emit('selection-change', $event)"
++      >
++        <el-table-column v-if="$slots.expand" type="expand">
++          <template #default="{ row }"><slot name="expand" :row="row" /></template>
++        </el-table-column>
++
++        <el-table-column v-if="selectable" type="selection" width="44" />
++
++        <el-table-column
++          v-for="c in columns"
++          :key="c.prop"
++          :prop="c.prop"
++          :label="c.label"
++          :width="c.width"
++          :align="colAlign(c)"
++        >
++          <template #default="{ row }">
++            <slot :name="`col-${c.prop}`" :row="row">
++              <CpTag v-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
++              <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ cell(row, c.prop) }}</span>
++              <span v-else-if="c.kind === 'num'" class="num">{{ cell(row, c.prop) }}</span>
++              <template v-else>{{ cell(row, c.prop) }}</template>
++            </slot>
++          </template>
++        </el-table-column>
++
++        <template #empty>
++          <CpEmpty v-if="!loading" />
++        </template>
++      </el-table>
++
++      <div class="pager">
++        <el-pagination
++          v-model:current-page="page"
++          v-model:page-size="size"
++          :total="total"
++          :page-sizes="[20, 50, 100]"
++          layout="total, sizes, prev, pager, next"
++          @current-change="onPageChange"
++          @size-change="onSizeChange"
++        />
++      </div>
++    </div>
++  </div>
++</template>
++
++<style scoped>
++.cp-list { display:flex; flex-direction:column; gap:16px; }
++
++/* 表格卡（mockup-final-b .tcard） */
++.tcard { background:var(--cp-card); border-radius:var(--cp-r-md); box-shadow:var(--cp-shadow-1);
++  overflow:hidden; display:flex; flex-direction:column; }
++
++/* 批量操作区（mockup-final-b .toolbar） */
++.toolbar { display:flex; align-items:center; gap:8px; padding:12px 16px;
++  border-bottom:1px solid var(--cp-line-soft); }
++
++/* 分页行（mockup-final-b .pager；控件观感由 Element Plus overrides 保证） */
++.pager { display:flex; align-items:center; justify-content:flex-end; gap:8px; padding:13px 16px;
++  font-size:var(--cp-fs-sm); font-weight:700; color:var(--cp-muted); }
++
++/* 单号样式（mockup-final-b .mono；暂无全局工具类，先在模板内定义） */
++.cp-mono { font-weight:800; color:var(--cp-brand-deep); font-size:var(--cp-fs-sm); }
++</style>
+diff --git a/cp6.web/src/views/dashboard/components/KpiCard.vue b/cp6.web/src/components/templates/CpStatCard.vue
+similarity index 77%
+rename from cp6.web/src/views/dashboard/components/KpiCard.vue
+rename to cp6.web/src/components/templates/CpStatCard.vue
+index ef3cfb2..254ad0c 100644
+--- a/cp6.web/src/views/dashboard/components/KpiCard.vue
++++ b/cp6.web/src/components/templates/CpStatCard.vue
+@@ -1,13 +1,31 @@
++<!--
++  CpStatCard —— KPI 统计卡（原 views/dashboard/components/KpiCard.vue 平移；设计系统 §9.2）。
++  标签 + 大数字 + 可选角标图标 / 副文案 / sparkline；tone 控制角标与折线着色，danger 时整卡告警态。
++  trend 传 7 日数值数组时渲染 sparkline（现有 API 无该数据源时不传，不造假数据）。
++
++  Props:
++    - label: string                     标签文字。
++    - value: number | string            主数值。
++    - suffix?: string                   数值后缀（如「件」）。
++    - tone?: 'brand'|'info'|'warn'|'danger'  色调，缺省 brand；danger 时整卡告警。
++    - trend?: number[]                  ≥2 个点时渲染 sparkline。
++    - sub?: string                      副文案（sub slot 优先）。
++    - clickable?: boolean               外层负责实际 @click/路由；true 时 sub 行追加 → 提示。
++  Slots: icon（右上角标图标）｜ sub（副文案，覆盖 sub prop）
++
++  使用示例：
++    <CpStatCard label="在制指令" :value="10" suffix="件" tone="brand" sub="完成率 36.4%">
++      <template #icon><SetUp /></template>
++    </CpStatCard>
++-->
+ <script setup lang="ts">
+-// KpiCard：仪表盘 KPI 卡。trend 传 7 日数值数组时渲染 sparkline（现有 API 无该数据源时不传，不造假数据）。
+-// 用法：<KpiCard label="在制指令" :value="10" suffix="件" tone="brand" sub="完成率 36.4%"><template #icon><SetUp /></template></KpiCard>
+ const props = withDefaults(defineProps<{
+   label: string
+   value: number | string
+   suffix?: string
+   tone?: 'brand' | 'info' | 'warn' | 'danger'
+   trend?: number[]
+   sub?: string
+   /** 卡片本身是否可点击跳转（由外层容器负责实际 @click/路由）：为 true 时在 sub 行追加一个 → 提示。 */
+   clickable?: boolean
+ }>(), { tone: 'brand' })
+diff --git a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+new file mode 100644
+index 0000000..47af864
+--- /dev/null
++++ b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+@@ -0,0 +1,154 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { nextTick } from 'vue'
++import { ElMessage } from 'element-plus'
++import CpListPage from '../CpListPage.vue'
++import type { FilterField } from '../CpFilterBar.vue'
++const cols = [{ prop: 'no', label: '单号', kind: 'mono' }, { prop: 'qty', label: '数量', kind: 'num' }]
++function makeFetch(rows = [{ no: 'SHP-1', qty: 1000 }]) {
++  return vi.fn().mockResolvedValue({ rows, total: rows.length })
++}
++describe('CpListPage', () => {
++  it('mounted 自动调用 fetch(page=1)', async () => {
++    const f = makeFetch(); mount(CpListPage, { props: { columns: cols, fetch: f } })
++    await flushPromises()
++    expect(f).toHaveBeenCalledWith(expect.objectContaining({ page: 1 }))
++  })
++  it('渲染行数据与列格式', async () => {
++    const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch() } })
++    await flushPromises()
++    expect(w.text()).toContain('SHP-1')
++  })
++  it('fetch 空结果显示 CpEmpty', async () => {
++    const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch([]) } })
++    await flushPromises()
++    expect(w.findComponent({ name: 'CpEmpty' }).exists()).toBe(true)
++  })
++  it('fetch 失败保留 UI 不崩', async () => {
++    const f = vi.fn().mockRejectedValue(new Error('boom'))
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f } })
++    await flushPromises()
++    expect(w.find('.cp-list').exists()).toBe(true)
++  })
++  it('切换状态卡以 statusKey 重新 fetch', async () => {
++    const f = makeFetch()
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f,
++      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
++    await flushPromises()
++    await w.findAll('.ss')[1].trigger('click'); await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ statusKey: 'wait' }))
++  })
++  it('selection-change 透传', async () => {
++    const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch(), selectable: true } })
++    await flushPromises()
++    w.findComponent({ name: 'ElTable' }).vm.$emit('selection-change', [{ no: 'SHP-1' }])
++    expect(w.emitted('selection-change')![0][0]).toHaveLength(1)
++  })
++})
++
++// —— 行为契约补充测试（错误保留旧行 / 翻页与 search 重置 / 乱序守卫 / loading）——
++const searchFields: FilterField[] = [{ key: 'q', label: '单号', type: 'text' }]
++
++describe('CpListPage 行为契约补充', () => {
++  it('fetch 失败：ElMessage.error(错误消息) 且表格保留旧行', async () => {
++    const errSpy = vi.spyOn(ElMessage, 'error').mockImplementation((() => undefined) as never)
++    const f = vi.fn()
++      .mockResolvedValueOnce({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 1 })
++      .mockRejectedValueOnce(new Error('boom'))
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields } })
++    await flushPromises()
++    expect(w.text()).toContain('SHP-1')
++
++    await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
++    await flushPromises()
++    expect(errSpy).toHaveBeenCalledWith('boom')
++    expect(w.text()).toContain('SHP-1') // 旧数据仍在
++    errSpy.mockRestore()
++  })
++
++  it('翻页以对应 page 重新 fetch；search 将 page 重置为 1', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields } })
++    await flushPromises()
++
++    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
++    await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }))
++
++    await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
++    await flushPromises()
++    expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ page: 1 }))
++  })
++
++  it('reset 清空筛选、page=1 并重新 fetch', async () => {
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields } })
++    await flushPromises()
++    await w.get('.fld input').setValue('SHP-9')
++    await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
++    await flushPromises()
++
++    await w.findAll('button').find((b) => b.text().includes('重置'))!.trigger('click')
++    await flushPromises()
++    const q = f.mock.calls.at(-1)![0]
++    expect(q.page).toBe(1)
++    expect(q.filters.q).toBeUndefined()
++  })
++
++  it('乱序响应：慢的旧请求不得覆盖新结果', async () => {
++    let resolveFirst!: (v: { rows: unknown[]; total: number }) => void
++    const f = vi.fn()
++      .mockImplementationOnce(() => new Promise((r) => { resolveFirst = r }))
++      .mockResolvedValueOnce({ rows: [{ no: 'SHP-NEW', qty: 2 }], total: 1 })
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f,
++      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
++    await flushPromises()
++    await w.findAll('.ss')[1].trigger('click')
++    await flushPromises()
++    expect(w.text()).toContain('SHP-NEW')
++
++    resolveFirst({ rows: [{ no: 'SHP-OLD', qty: 1 }], total: 1 })
++    await flushPromises()
++    expect(w.text()).not.toContain('SHP-OLD')
++    expect(w.text()).toContain('SHP-NEW')
++  })
++
++  it('fetch 期间表格显示 v-loading 遮罩', async () => {
++    let resolve!: (v: { rows: unknown[]; total: number }) => void
++    const f = vi.fn(() => new Promise<{ rows: unknown[]; total: number }>((r) => { resolve = r }))
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f } })
++    await nextTick()
++    expect(w.find('.el-loading-mask').exists()).toBe(true)
++    resolve({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 1 })
++    await flushPromises()
++    expect(w.text()).toContain('SHP-1')
++  })
++
++  it('kind 渲染：mono→.cp-mono、num→.num、tag→CpTag', async () => {
++    const tagCols = [
++      { prop: 'no', label: '单号', kind: 'mono' },
++      { prop: 'qty', label: '数量', kind: 'num' },
++      { prop: 'st', label: '状态', kind: 'tag' }
++    ]
++    const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000, st: '已出库' }], total: 1 })
++    const w = mount(CpListPage, { props: { columns: tagCols, fetch: f } })
++    await flushPromises()
++    expect(w.find('td .cp-mono').text()).toBe('SHP-1')
++    expect(w.find('td .num').text()).toBe('1000')
++    // 断言真实单元格里的 CpTag（el-table-column 会额外渲染一个空 row 的隐藏占位，不取它）
++    const tag = w.find('td .cp-tag')
++    expect(tag.exists()).toBe(true)
++    expect(tag.text()).toBe('已出库')
++  })
++
++  it('col-<prop> slot 优先于默认渲染', async () => {
++    const w = mount(CpListPage, {
++      props: { columns: cols, fetch: makeFetch() },
++      slots: { 'col-no': `<template #col-no="{ row }"><b class="custom">C-{{ row.no }}</b></template>` }
++    })
++    await flushPromises()
++    expect(w.find('.custom').text()).toBe('C-SHP-1')
++    expect(w.find('.cp-mono').exists()).toBe(false)
++  })
++})
+diff --git a/cp6.web/src/views/dashboard/DashboardView.vue b/cp6.web/src/views/dashboard/DashboardView.vue
+index f32b576..21e15ca 100644
+--- a/cp6.web/src/views/dashboard/DashboardView.vue
++++ b/cp6.web/src/views/dashboard/DashboardView.vue
+@@ -17,28 +17,28 @@
+     </div>
+ 
+     <!-- KPI 卡片 -->
+     <section class="kpis reveal-item" style="--delay: 70ms">
+       <div
+         v-for="card in statCards"
+         :key="card.key"
+         class="kpi-cell"
+         @click="onCardClick(card.to)"
+       >
+-        <KpiCard
++        <CpStatCard
+           :label="t('dashboard.' + card.key)"
+           :value="card.value"
+           :tone="kpiTone(card)"
+           :clickable="canGo(card.to)"
+         >
+           <template #icon><component :is="card.icon" /></template>
+-        </KpiCard>
++        </CpStatCard>
+       </div>
+     </section>
+ 
+     <!-- 双列 -->
+     <section class="cols">
+       <!-- 左列 -->
+       <div class="col">
+         <!-- 出货状态 -->
+         <div class="card reveal-item" style="--delay: 140ms">
+           <div class="card-head"><h2><el-icon class="i"><Van /></el-icon>{{ t('dashboard.shipStatus') }}</h2></div>
+@@ -308,21 +308,21 @@
+ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRouter } from 'vue-router'
+ import { Refresh, DocumentAdd, Van, List, Grid, Warning, SetUp, Bell } from '@element-plus/icons-vue'
+ import { dashboardApi } from '@/api/sys/dashboard'
+ import { orderApi } from '@/api/erp/order'
+ import { stockDwellApi } from '@/api/wms/stockDwell'
+ import { formatQty } from '@/utils/format'
+ import { getConnection, startConnection } from '@/utils/signalr'
+ import { useBreakpoint } from '@/composables/useBreakpoint'
+-import KpiCard from './components/KpiCard.vue'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
+ import DonutChart from './components/DonutChart.vue'
+ import type { UnshippedOrderItemDto, UnshippedOrderQuery } from '@/types/erp/order'
+ import type { StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
+ 
+ const { t, locale } = useI18n()
+ const router = useRouter()
+ const { isMobile } = useBreakpoint()
+ 
+ interface Summary {
+   todayOrders: number

@@ -1,0 +1,387 @@
+# Review package: c1a8de0..HEAD
+
+## Commits
+57ae2ea feat(ui): CpFormDialog 表单弹窗 + CpDetailPanel 详情面板
+
+## Files changed
+ cp6.web/src/components/templates/CpDetailPanel.vue |  58 ++++++++
+ cp6.web/src/components/templates/CpFormDialog.vue  | 159 +++++++++++++++++++++
+ .../templates/__tests__/CpFormDialog.spec.ts       | 140 ++++++++++++++++++
+ 3 files changed, 357 insertions(+)
+
+## Diff
+diff --git a/cp6.web/src/components/templates/CpDetailPanel.vue b/cp6.web/src/components/templates/CpDetailPanel.vue
+new file mode 100644
+index 0000000..075c59a
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpDetailPanel.vue
+@@ -0,0 +1,58 @@
++<!--
++  CpDetailPanel —— 详情描述面板（设计系统 §9.2；详情页「基本信息」等描述区目标模板）。
++  按 items 声明以 CSS 栅格铺开「标签 / 值」对；kind 控制值的格式化，与 CpListPage 列约定一致
++  （num→数字体右倾 / mono→单号样式 / tag→CpTag / text→原样）。
++
++  Props:
++    - items: { label:string; value:unknown; kind?:'text'|'num'|'mono'|'tag' }[]  描述项。
++    - cols?: number   栅格列数，默认 2。
++
++  使用示例：
++    <CpDetailPanel :cols="3" :items="[
++      { label:'单号', value:'SHP-1001', kind:'mono' },
++      { label:'数量', value:1000, kind:'num' },
++      { label:'状态', value:'已出库', kind:'tag' }
++    ]" />
++-->
++<script lang="ts">
++export interface DetailItem {
++  label: string
++  value: unknown
++  kind?: 'text' | 'num' | 'mono' | 'tag'
++}
++</script>
++
++<script setup lang="ts">
++import { computed } from 'vue'
++import CpTag from '@/components/base/CpTag.vue'
++
++const props = defineProps<{ items: DetailItem[]; cols?: number }>()
++
++const gridStyle = computed(() => ({
++  gridTemplateColumns: `repeat(${props.cols ?? 2}, minmax(0, 1fr))`
++}))
++</script>
++
++<template>
++  <dl class="cp-detail" :style="gridStyle">
++    <div v-for="(it, i) in items" :key="i" class="cp-detail-item">
++      <dt class="cp-detail-label">{{ it.label }}</dt>
++      <dd class="cp-detail-value">
++        <CpTag v-if="it.kind === 'tag'" :status="String(it.value ?? '')" />
++        <span v-else-if="it.kind === 'mono'" class="cp-mono">{{ it.value }}</span>
++        <span v-else-if="it.kind === 'num'" class="num">{{ it.value }}</span>
++        <template v-else>{{ it.value }}</template>
++      </dd>
++    </div>
++  </dl>
++</template>
++
++<style scoped>
++.cp-detail { display:grid; gap:16px 24px; margin:0; }
++.cp-detail-item { display:flex; flex-direction:column; gap:5px; min-width:0; }
++.cp-detail-label { font-size:var(--cp-fs-2xs); font-weight:800; color:var(--cp-muted); letter-spacing:.5px; }
++.cp-detail-value { margin:0; font-size:var(--cp-fs-base); font-weight:700; color:var(--cp-ink);
++  overflow:hidden; text-overflow:ellipsis; }
++/* 单号样式（同 CpListPage .mono；暂无全局工具类，先在模板内定义） */
++.cp-mono { font-weight:800; color:var(--cp-brand-deep); font-size:var(--cp-fs-sm); }
++</style>
+diff --git a/cp6.web/src/components/templates/CpFormDialog.vue b/cp6.web/src/components/templates/CpFormDialog.vue
+new file mode 100644
+index 0000000..d82e753
+--- /dev/null
++++ b/cp6.web/src/components/templates/CpFormDialog.vue
+@@ -0,0 +1,159 @@
++<!--
++  CpFormDialog —— 表单弹窗（设计系统 §9.2；新建/编辑类操作的目标模板）。
++  组合结构：el-dialog + el-form（观感由 Element Plus overrides 保证），footer = ghost 取消 + primary 确认。
++  按 fields 声明自组表单；或用默认 slot 自定义复杂表单（与 fields 互斥，slot 优先）。
++  行为：点确认先 elForm.validate()；校验失败不提交、不关闭、不弹错（el-form 内联提示）；
++  submit resolve → emit saved + update:modelValue(false)；reject → ElMessage.error 且保持打开；提交期间确认钮 loading。
++
++  Props:
++    - modelValue: boolean               弹窗开合（v-model）。
++    - title: string                     标题。
++    - fields?: FormField[]              字段声明；默认 slot 存在时被忽略。
++    - form: Record<string,unknown>      表单对象（父级持有并负责重置）。
++    - rules?: FormRules                 校验规则；同 key 覆盖 required 自动规则。
++    - submit: (form) => Promise<void>   提交回调；resolve 视为成功。
++    - width?: string                    弹窗宽度，透传 el-dialog。
++  Slots: default（自定义表单体，替代 fields；仍在 el-form 内，parent 提供 el-form-item 规则同样生效）。
++  Emits: update:modelValue(open) ｜ saved()
++
++  使用示例：
++    <CpFormDialog v-model="open" title="新建物料" :form="form" :submit="save"
++      :fields="[{ key:'name', label:'名称', type:'text', required:true },
++                { key:'qty', label:'数量', type:'number' }]"
++      @saved="reload" />
++-->
++<script lang="ts">
++export interface FormField {
++  key: string
++  label: string
++  type: 'text' | 'number' | 'select' | 'date' | 'textarea'
++  options?: { label: string; value: unknown }[]
++  required?: boolean
++}
++</script>
++
++<script setup lang="ts">
++import { computed, ref } from 'vue'
++import type { FormInstance, FormRules } from 'element-plus'
++import {
++  ElDialog, ElForm, ElFormItem, ElInput, ElInputNumber,
++  ElSelect, ElOption, ElDatePicker, ElButton, ElMessage
++} from 'element-plus'
++
++const props = defineProps<{
++  modelValue: boolean
++  title: string
++  fields?: FormField[]
++  form: Record<string, unknown>
++  rules?: FormRules
++  submit: (form: Record<string, unknown>) => Promise<void>
++  width?: string
++}>()
++
++const emit = defineEmits<{
++  (e: 'update:modelValue', open: boolean): void
++  (e: 'saved'): void
++}>()
++
++const formRef = ref<FormInstance>()
++const submitting = ref(false)
++
++// required 字段自动生成必填规则；显式 rules 同 key 覆盖（explicit wins）
++const mergedRules = computed<FormRules>(() => {
++  const out: FormRules = {}
++  for (const f of props.fields ?? []) {
++    if (f.required) {
++      const trigger = f.type === 'select' || f.type === 'date' ? 'change' : 'blur'
++      out[f.key] = [{ required: true, message: `${f.label}为必填项`, trigger }]
++    }
++  }
++  for (const [k, v] of Object.entries(props.rules ?? {})) out[k] = v
++  return out
++})
++
++// 就地写回表单字段（父级持有 form 对象，表单编辑即改其属性）
++function setVal(key: string, value: unknown) {
++  props.form[key] = value
++}
++
++function close() {
++  emit('update:modelValue', false)
++}
++
++async function onConfirm() {
++  const valid = await formRef.value?.validate().catch(() => false)
++  if (!valid) return // 校验失败：不提交、不关闭、el-form 已内联提示
++  submitting.value = true
++  try {
++    await props.submit(props.form)
++    emit('saved')
++    emit('update:modelValue', false)
++  } catch (err) {
++    ElMessage.error((err as Error)?.message ?? String(err))
++  } finally {
++    submitting.value = false
++  }
++}
++</script>
++
++<template>
++  <el-dialog
++    :model-value="modelValue"
++    :title="title"
++    :width="width"
++    @update:model-value="emit('update:modelValue', $event)"
++  >
++    <el-form ref="formRef" :model="form" :rules="mergedRules" label-position="top">
++      <slot v-if="$slots.default" />
++      <template v-else>
++        <el-form-item v-for="f in fields" :key="f.key" :label="f.label" :prop="f.key">
++          <el-input
++            v-if="f.type === 'text'"
++            :model-value="(form[f.key] as string | undefined)"
++            @update:model-value="setVal(f.key, $event)"
++          />
++          <el-input
++            v-else-if="f.type === 'textarea'"
++            type="textarea"
++            :model-value="(form[f.key] as string | undefined)"
++            @update:model-value="setVal(f.key, $event)"
++          />
++          <el-input-number
++            v-else-if="f.type === 'number'"
++            :model-value="(form[f.key] as number | undefined)"
++            @update:model-value="setVal(f.key, $event)"
++          />
++          <el-select
++            v-else-if="f.type === 'select'"
++            :model-value="(form[f.key] as any)"
++            @update:model-value="setVal(f.key, $event)"
++          >
++            <el-option
++              v-for="o in f.options"
++              :key="String(o.value)"
++              :label="o.label"
++              :value="(o.value as any)"
++            />
++          </el-select>
++          <el-date-picker
++            v-else-if="f.type === 'date'"
++            type="date"
++            :model-value="(form[f.key] as any)"
++            @update:model-value="setVal(f.key, $event)"
++          />
++        </el-form-item>
++      </template>
++    </el-form>
++
++    <template #footer>
++      <div class="cp-fd-footer">
++        <el-button @click="close">取消</el-button>
++        <el-button type="primary" :loading="submitting" @click="onConfirm">确认</el-button>
++      </div>
++    </template>
++  </el-dialog>
++</template>
++
++<style scoped>
++.cp-fd-footer { display:flex; justify-content:flex-end; gap:8px; }
++</style>
+diff --git a/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts b/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts
+new file mode 100644
+index 0000000..8eedb4f
+--- /dev/null
++++ b/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts
+@@ -0,0 +1,140 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, afterEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { nextTick } from 'vue'
++import { ElMessage } from 'element-plus'
++import CpFormDialog, { type FormField } from '../CpFormDialog.vue'
++
++const fields: FormField[] = [
++  { key: 'name', label: '名称', type: 'text', required: true },
++  { key: 'qty', label: '数量', type: 'number' }
++]
++
++// el-dialog teleports its content to document.body — query there.
++function bodyButton(text: string): HTMLButtonElement {
++  return Array.from(document.body.querySelectorAll('.el-dialog button')).find((b) =>
++    b.textContent?.includes(text)
++  ) as HTMLButtonElement
++}
++
++// attachTo document.body so the teleported dialog content actually renders in jsdom.
++function mountDialog(props: Record<string, unknown>) {
++  return mount(CpFormDialog, { props, attachTo: document.body })
++}
++
++// Reach the internal <el-form> instance the component holds via `formRef`.
++// Element Plus' async validation does not settle under jsdom, so we drive the
++// validate() outcome at this seam to deterministically exercise onConfirm's gate
++// (validate → submit). The required-rule *wiring* is asserted separately through
++// the rendered is-required asterisk.
++function elFormOf(w: ReturnType<typeof mountDialog>) {
++  return (w.vm as unknown as { $: { setupState: { formRef: { validate: unknown } } } }).$
++    .setupState.formRef
++}
++
++afterEach(() => {
++  document.body.innerHTML = ''
++})
++
++describe('CpFormDialog', () => {
++  it('打开后渲染 title、fields 标签，且 required 字段生成必填规则（asterisk）', async () => {
++    const w = mountDialog({ modelValue: true, title: '新建物料', fields, form: { name: '', qty: 0 }, submit: vi.fn() })
++    await flushPromises()
++    expect(document.body.textContent).toContain('新建物料')
++    expect(document.body.textContent).toContain('名称')
++    expect(document.body.textContent).toContain('数量')
++    // required:true → mergedRules → el-form-item 标记必填
++    const items = w.findAll('.el-form-item')
++    expect(items[0].classes()).toContain('is-required') // name 必填
++    expect(items[1].classes()).not.toContain('is-required') // qty 非必填
++  })
++
++  it('校验失败：不调用 submit，不 emit saved / close', async () => {
++    const submit = vi.fn().mockResolvedValue(undefined)
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: '', qty: 0 }, submit })
++    await flushPromises()
++    // 模拟 el-form 校验失败（真实场景中 validate() 对空必填项 reject）
++    elFormOf(w).validate = vi.fn().mockRejectedValue({ name: [{ message: '名称为必填项' }] })
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(submit).not.toHaveBeenCalled()
++    expect(w.emitted('saved')).toBeUndefined()
++    expect(w.emitted('update:modelValue')).toBeUndefined()
++  })
++
++  it('submit resolve：先 validate 再 submit → emit saved + update:modelValue(false)', async () => {
++    const form = { name: 'M-1', qty: 10 }
++    const submit = vi.fn().mockResolvedValue(undefined)
++    const w = mountDialog({ modelValue: true, title: 't', fields, form, submit })
++    await flushPromises()
++    const validate = vi.fn().mockResolvedValue(true)
++    elFormOf(w).validate = validate
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(validate).toHaveBeenCalled() // 提交前先校验
++    expect(submit).toHaveBeenCalledTimes(1)
++    expect(submit).toHaveBeenCalledWith(form)
++    expect(w.emitted('saved')).toEqual([[]])
++    expect(w.emitted('update:modelValue')).toEqual([[false]])
++  })
++
++  it('submit reject：ElMessage.error 且不关闭（无 saved）', async () => {
++    const errSpy = vi.spyOn(ElMessage, 'error').mockImplementation((() => undefined) as never)
++    const submit = vi.fn().mockRejectedValue(new Error('保存失败'))
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
++    await flushPromises()
++    elFormOf(w).validate = vi.fn().mockResolvedValue(true)
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(errSpy).toHaveBeenCalledWith('保存失败')
++    expect(w.emitted('saved')).toBeUndefined()
++    expect(w.emitted('update:modelValue')).toBeUndefined()
++    errSpy.mockRestore()
++  })
++
++  it('submit reject 非 Error：ElMessage.error 收到字符串（不产生 [object Object]）', async () => {
++    const errSpy = vi.spyOn(ElMessage, 'error').mockImplementation((() => undefined) as never)
++    const submit = vi.fn().mockRejectedValue('网络异常')
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
++    await flushPromises()
++    elFormOf(w).validate = vi.fn().mockResolvedValue(true)
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(errSpy).toHaveBeenCalledWith('网络异常')
++    errSpy.mockRestore()
++  })
++
++  it('提交进行中：确认按钮进入 loading 态，结束后解除', async () => {
++    let release!: () => void
++    const submit = vi.fn(() => new Promise<void>((r) => { release = r }))
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
++    await flushPromises()
++    elFormOf(w).validate = vi.fn().mockResolvedValue(true)
++    bodyButton('确认').click()
++    await flushPromises()
++    expect(bodyButton('确认').classList.contains('is-loading')).toBe(true)
++    release()
++    await flushPromises()
++    expect(bodyButton('确认').classList.contains('is-loading')).toBe(false)
++  })
++
++  it('提供默认 slot 时替代 fields 自组表单', async () => {
++    const w = mountDialog({
++      modelValue: true, title: 't', fields, form: {}, submit: vi.fn(),
++      // 具名传入默认插槽
++    })
++    await flushPromises()
++    w.unmount()
++    // 重新挂载并带默认 slot
++    const w2 = mount(CpFormDialog, {
++      props: { modelValue: true, title: 't', fields, form: {}, submit: vi.fn() },
++      slots: { default: '<div class="custom-body">自定义表单</div>' },
++      attachTo: document.body
++    })
++    await flushPromises()
++    expect(document.body.querySelector('.custom-body')).not.toBeNull()
++    // fields 生成的 el-form-item 不应渲染
++    expect(document.body.querySelectorAll('.el-form-item').length).toBe(0)
++    w2.unmount()
++  })
++})

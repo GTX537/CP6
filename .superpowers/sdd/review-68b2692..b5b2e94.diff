@@ -1,0 +1,78 @@
+# Review package: 68b2692..HEAD
+
+## Commits
+b5b2e94 feat(space-p5): astar 加可选 hScale=1（启发标定，SP3 距离图缺省零回归）
+
+## Files changed
+ .../src/space-viewer/advanced/PickPathPlanner.spec.ts   | 17 +++++++++++++++++
+ cp6.web/src/space-viewer/advanced/PickPathPlanner.ts    |  3 ++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
+
+## Diff
+diff --git a/cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts b/cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts
+index c89b2d1..76f4c56 100644
+--- a/cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts
++++ b/cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts
+@@ -152,10 +152,27 @@ describe('PickPathPlanner', () => {
+       ['A', [{ to: 'B', w: 10 }]],
+       ['B', [{ to: 'A', w: 10 }, { to: 'C', w: 10 }]],
+       ['C', [{ to: 'B', w: 10 }]],
+     ])
+     const coords: Record<string, { x: number; y: number; z?: number }> = {
+       A: { x: 0, y: 0, z: 0 }, B: { x: 0, y: 0, z: 10 }, C: { x: 0, y: 0, z: 20 },
+     }
+     expect(astar(adj, 'A', 'C', (k) => coords[k]!)).toEqual(['A', 'B', 'C'])
+   })
+ })
++
++describe('astar hScale (admissibility 标定)', () => {
++  const adj = new Map<string, Array<{ to: string; w: number }>>([
++    ['A', [{ to: 'B', w: 10 }]],
++    ['B', [{ to: 'A', w: 10 }, { to: 'C', w: 10 }]],
++    ['C', [{ to: 'B', w: 10 }]],
++  ])
++  const pts: Record<string, { x: number; y: number }> = { A: { x: 0, y: 0 }, B: { x: 10, y: 0 }, C: { x: 20, y: 0 } }
++  const nodePt = (k: string) => pts[k]!
++
++  it('default hScale equals explicit 1 (SP3 zero-regression)', () => {
++    expect(astar(adj, 'A', 'C', nodePt)).toEqual(astar(adj, 'A', 'C', nodePt, 1))
++  })
++  it('still finds optimal path with a tiny hScale (conservative heuristic)', () => {
++    expect(astar(adj, 'A', 'C', nodePt, 0.0001)).toEqual(['A', 'B', 'C'])
++  })
++})
+diff --git a/cp6.web/src/space-viewer/advanced/PickPathPlanner.ts b/cp6.web/src/space-viewer/advanced/PickPathPlanner.ts
+index 233c404..91ac96d 100644
+--- a/cp6.web/src/space-viewer/advanced/PickPathPlanner.ts
++++ b/cp6.web/src/space-viewer/advanced/PickPathPlanner.ts
+@@ -92,28 +92,29 @@ function nearestAccess(g: Graph, p: Pt): { foot: Pt; segA: Pt; segB: Pt } | null
+   return best ? { foot: best.foot, segA: best.segA, segB: best.segB } : null
+ }
+ 
+ /** A\*（邻接表 + 欧氏启发式 + 临时接入节点 FA/FB）。返回 key 序列或 null。
+  *  nodePt：取节点坐标（FA/FB→各自 foot，其余→g.nodes）；h(k)=dist(nodePt(k),nodePt(end))，admissible。 */
+ export function astar(
+   adj: Map<string, Array<{ to: string; w: number }>>,
+   start: string,
+   end: string,
+   nodePt: (k: string) => { x: number; y: number; z?: number },
++  hScale = 1,
+ ): string[] | null {
+   const g = new Map<string, number>()       // 已知最短 g 值
+   const f = new Map<string, number>()        // f = g + h
+   const prev = new Map<string, string>()
+   const visited = new Set<string>()
+   const endPt = nodePt(end)
+   const h = (a: { x: number; y: number; z?: number }, b: { x: number; y: number; z?: number }): number =>
+-    Math.hypot(a.x - b.x, a.y - b.y, (a.z ?? 0) - (b.z ?? 0))
++    Math.hypot(a.x - b.x, a.y - b.y, (a.z ?? 0) - (b.z ?? 0)) * hScale
+   g.set(start, 0)
+   f.set(start, h(nodePt(start), endPt))
+   while (true) {
+     // 开集取最小 f（节点数小，O(V^2) 选最小可接受，不引堆）
+     let u: string | null = null
+     let best = Infinity
+     for (const [k, fk] of f) if (!visited.has(k) && fk < best) { best = fk; u = k }
+     if (u === null) break
+     if (u === end) break
+     visited.add(u)

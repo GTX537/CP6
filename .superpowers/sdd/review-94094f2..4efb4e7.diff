@@ -1,0 +1,131 @@
+# Review package: 94094f2..4efb4e7
+
+## Commits
+4efb4e7 fix(space): 缩格护栏——已发布越界 Restrict 阻断+幽灵草稿连带删（评审 H2）
+
+## Files changed
+ CP6.Core/Services/Space/SceneService.cs | 14 +++++++
+ CP6.Tests/SceneServiceTests.cs          | 65 +++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/SceneService.cs b/CP6.Core/Services/Space/SceneService.cs
+index b23578e..96eb2db 100644
+--- a/CP6.Core/Services/Space/SceneService.cs
++++ b/CP6.Core/Services/Space/SceneService.cs
+@@ -107,20 +107,34 @@ public class SceneService : ISceneService
+                     : null;
+                 if (existing != null)
+                 {
+                     // 乐观锁：设置 OriginalValue，SaveChanges 会在 WHERE 附加 RowVersion
+                     _db.Entry(existing).Property(x => x.RowVersion).OriginalValue = rd.RowVersion;
+ 
+                     // H4（ch04 §7.2 路径B）：层级归属变更检测——纯几何不发布，但 path 归属变更须 re-publish
+                     if (existing.ZoneId != rd.ZoneId || existing.AisleId != rd.AisleId)
+                         pathChangedRackIds.Add(existing.Id);
+ 
++                    // H2 缩格护栏（2026-07-06 拍板：Restrict）：越界库位——已发布阻断，草稿/停用连带删
++                    if (rd.Cols < existing.Cols || rd.Levels < existing.Levels || rd.DepthCount < existing.DepthCount)
++                    {
++                        var outOfBounds = await _db.Space_Locations
++                            .Where(l => l.RackId == existing.Id &&
++                                        (l.Col > rd.Cols || l.Level > rd.Levels || l.Depth > rd.DepthCount))
++                            .ToListAsync();
++                        if (outOfBounds.Any(l => l.Status == 1))
++                            throw new InvalidOperationException(
++                                "E-SPACE-403: 缩格触及已发布库位，请先停用越界库位再缩格");
++                        if (outOfBounds.Count > 0)
++                            _db.Space_Locations.RemoveRange(outOfBounds);   // 幽灵位清理（H2）
++                    }
++
+                     // 位姿/尺寸变更检测
+                     if (existing.X != rd.X || existing.Y != rd.Y || existing.Z != rd.Z ||
+                         existing.RotationZ != rd.RotationZ || existing.Cols != rd.Cols ||
+                         existing.Levels != rd.Levels || existing.DepthCount != rd.DepthCount ||
+                         existing.CellW != rd.CellW || existing.CellH != rd.CellH || existing.CellD != rd.CellD)
+                     {
+                         changedRackIds.Add(existing.Id);
+                     }
+ 
+                     existing.ZoneId     = rd.ZoneId;
+diff --git a/CP6.Tests/SceneServiceTests.cs b/CP6.Tests/SceneServiceTests.cs
+index b4aa8d2..c5a1f6b 100644
+--- a/CP6.Tests/SceneServiceTests.cs
++++ b/CP6.Tests/SceneServiceTests.cs
+@@ -279,11 +279,76 @@ public class SceneServiceTests
+                     X = 5000, Y = 3000, Z = 0, RotationZ = 90,   // 只挪位旋转
+                     Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,
+                     Enable = true, RowVersion = rack.RowVersion
+                 }
+             }
+         }, "u");
+ 
+         Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Version);   // 版本不动
+         Assert.Equal(0, await db.IntegrationEvents.CountAsync());            // 零事件
+     }
++
++    [Fact]
++    public async Task SaveScene_ShrinkRack_PublishedOutOfBounds_Throws403_NothingSaved()
++    {
++        // H2（2026-07-06 拍板：Restrict 阻断，非契约§4字面的自动停用）
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
++        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 3, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        db.AddRange(zone, rack);
++        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "Z1-03", Col = 3, Level = 1, Depth = 1, Version = 1 });
++        await db.SaveChangesAsync();
++
++        var dto = new SceneSaveDto
++        {
++            Racks = new List<RackDto>
++            {
++                new RackDto
++                {
++                    Id = rack.Id, ZoneId = zone.Id, AisleId = null, RackCode = "R1",
++                    X = 0, Y = 0, Z = 0, RotationZ = 0,
++                    Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,   // 3→2 缩格
++                    Enable = true, RowVersion = rack.RowVersion
++                }
++            }
++        };
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
++        Assert.StartsWith("E-SPACE-403", ex.Message);
++        Assert.Equal(3, (await db.Space_Racks.AsNoTracking().SingleAsync()).Cols);   // 缩格未生效
++        Assert.Equal(1, await db.Space_Locations.CountAsync());                      // 库位仍在
++    }
++
++    [Fact]
++    public async Task SaveScene_ShrinkRack_DraftOutOfBounds_CascadeDeleted()
++    {
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
++        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 3, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        db.AddRange(zone, rack);
++        var inBounds = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 0, CodeOrigin = 1, Col = 1, Level = 1, Depth = 1 };
++        var ghost = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 0, CodeOrigin = 1, Col = 3, Level = 1, Depth = 1 };
++        db.AddRange(inBounds, ghost);
++        await db.SaveChangesAsync();
++
++        await svc.SaveSceneAsync(floorId, new SceneSaveDto
++        {
++            Racks = new List<RackDto>
++            {
++                new RackDto
++                {
++                    Id = rack.Id, ZoneId = zone.Id, AisleId = null, RackCode = "R1",
++                    X = 0, Y = 0, Z = 0, RotationZ = 0,
++                    Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,
++                    Enable = true, RowVersion = rack.RowVersion
++                }
++            }
++        }, "u");
++
++        Assert.Equal(2, (await db.Space_Racks.SingleAsync()).Cols);
++        var remaining = await db.Space_Locations.ToListAsync();
++        Assert.Single(remaining);                                   // 幽灵位已连带删
++        Assert.Equal(inBounds.Id, remaining[0].Id);
++    }
+ }

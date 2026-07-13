@@ -1,0 +1,313 @@
+# Review package: 6128342..ac733ee
+
+## Commits
+ac733ee feat(oawf): M-OA/WF T2 追补——双栈孤儿路由收编(用户裁决2026-07-12)
+
+## Files changed
+ CP6.Tests/OawfMenuSeedTests.cs     | 57 +++++++++++++++++++++++++++++++++++---
+ CP6.WebApi/Seed/OawfMenuSeed.cs    | 27 ++++++++++++++----
+ docs/seeds/oawf-key-menu-anchor.md | 16 ++++++++++-
+ docs/seeds/oawf-menu-seed.sql      | 22 +++++++++++++++
+ docs/seeds/oawf-permission-keys.md |  6 ++--
+ 5 files changed, 116 insertions(+), 12 deletions(-)
+
+## Diff
+diff --git a/CP6.Tests/OawfMenuSeedTests.cs b/CP6.Tests/OawfMenuSeedTests.cs
+index b0f0024..8523af1 100644
+--- a/CP6.Tests/OawfMenuSeedTests.cs
++++ b/CP6.Tests/OawfMenuSeedTests.cs
+@@ -87,27 +87,76 @@ public class OawfMenuSeedTests
+     }
+ 
+     [Fact]
+     public void EnsureSeeded_IsIdempotent_NoDuplicateRowsOrRoleMenus()
+     {
+         using var db = NewDb();
+         OawfMenuSeed.EnsureSeeded(db);
+         var menuCount1 = db.Sys_Menus.Count();
+         var roleMenuCount1 = db.Sys_RoleMenus.Count();
+ 
+-        OawfMenuSeed.EnsureSeeded(db);   // 第二次
++        OawfMenuSeed.EnsureSeeded(db);   // 第二次（含新收编行，幂等不重复插入）
+         Assert.Equal(menuCount1, db.Sys_Menus.Count());
+         Assert.Equal(roleMenuCount1, db.Sys_RoleMenus.Count());
+ 
+-        // 全 8 行（740 父 + 733–739）+ 各授管理员一条 RoleMenu。
+-        Assert.Equal(8, menuCount1);
+-        Assert.Equal(8, roleMenuCount1);
++        // 全 10 行（740 父 + 733–739 七锚定 + 741/742 双栈收编）+ 各授管理员一条 RoleMenu。
++        Assert.Equal(10, menuCount1);
++        Assert.Equal(10, roleMenuCount1);
++    }
++
++    // ── 双栈收编（用户裁决 2026-07-12）：追补 2 用例 ──────────────────────────
++
++    [Fact]
++    public void EnsureSeeded_CollectsOrphanDesignerRoutes_741And742_WithNullMenuKeyAndRoutePathMatchingViewModules()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++
++        // 收编行存在，RoutePath 须与 cp6.web/src/router/index.ts:46-47 viewModules 键逐字一致，
++        // 否则 addDynamicRoutes 仍不注册（前端仍不可达）。MenuKey 留 null：权限已锚 738 oa-designer。
++        var formDesigner = db.Sys_Menus.SingleOrDefault(m => m.MenuId == 741);
++        Assert.NotNull(formDesigner);
++        Assert.Equal("/wf/form-designer", formDesigner!.RoutePath);
++        Assert.Null(formDesigner.MenuKey);
++        Assert.Equal(740, formDesigner.ParentId);
++        Assert.True(formDesigner.Enable);
++
++        var flowDesigner = db.Sys_Menus.SingleOrDefault(m => m.MenuId == 742);
++        Assert.NotNull(flowDesigner);
++        Assert.Equal("/wf/flow-designer", flowDesigner!.RoutePath);
++        Assert.Null(flowDesigner.MenuKey);
++        Assert.Equal(740, flowDesigner.ParentId);
++        Assert.True(flowDesigner.Enable);
++
++        // 均授管理员菜单（RoleId=1），照收编先例。
++        Assert.True(db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == 741));
++        Assert.True(db.Sys_RoleMenus.Any(rm => rm.RoleId == 1 && rm.MenuId == 742));
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_WithOrphanCollectionRows_NoDuplicatesOnSecondRun()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);
++        OawfMenuSeed.EnsureSeeded(db);   // 第二次
++
++        // 741/742 各恰一行、MenuKey 仍为 null（未被防御矫正块误赋值——该块严限 r.Key != null）。
++        Assert.Equal(1, db.Sys_Menus.Count(m => m.MenuId == 741));
++        Assert.Equal(1, db.Sys_Menus.Count(m => m.MenuId == 742));
++        Assert.Null(db.Sys_Menus.Single(m => m.MenuId == 741).MenuKey);
++        Assert.Null(db.Sys_Menus.Single(m => m.MenuId == 742).MenuKey);
++
++        // 唯一索引安全：非空 MenuKey 仍恰 7 个（733–739 锚定，"oa-designer" 仅 738 一行持有），
++        // 741/742 未与 738 共键——若共键会撞 Sys_Menus.MenuKey IS NOT NULL 过滤唯一索引。
++        var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
++        Assert.Equal(7, keyed.Count);
++        Assert.Equal(1, keyed.Count(k => k == "oa-designer"));
+     }
+ 
+     [Fact]
+     public void EnsureSeeded_CorrectsHistoricalWrongKey_ToOaAuthoritative()
+     {
+         using var db = NewDb();
+         // 模拟既有库：738 流程设计器 曾被异常写成 wf-flow-designer（≠ 真相源 oa-designer）。
+         db.Sys_Menus.Add(new Sys_Menu
+         {
+             MenuId = 738, MenuName = "流程设计器", RoutePath = "/oa/designer",
+diff --git a/CP6.WebApi/Seed/OawfMenuSeed.cs b/CP6.WebApi/Seed/OawfMenuSeed.cs
+index 339eab8..d048122 100644
+--- a/CP6.WebApi/Seed/OawfMenuSeed.cs
++++ b/CP6.WebApi/Seed/OawfMenuSeed.cs
+@@ -19,48 +19,65 @@ namespace CP6.WebApi.Seed;
+ /// 防御历史/异常写坏而保留（严限 7 锚定行）。命门纯粹是**时序**：显式赋值须先于回填以消除 null-全-403 窗口。
+ ///
+ /// MenuKey 策略（与 ErpMenuSeed/WmsMenuSeed/MesMenuSeed 一致）：
+ ///  - **锚定行**显式设 MenuKey = T1 权威键（真相源 §二 7 键），**绝不靠 RoutePath 自动回填**。
+ ///  - **740 父组行**（OA工作流，无 RoutePath）MenuKey 留 null，不承载权限（回填因 RoutePath==null 亦跳过）。
+ ///    ★<c>Sys_Menus.MenuKey</c> 有 <c>IS NOT NULL</c> 过滤唯一索引（HasIndex("MenuKey").IsUnique().HasFilter，
+ ///    CP6Context.cs:602）——两行共赋同一非空 MenuKey 会撞唯一键。7 锚定键互不相同（真相源 §二，OA RoutePath
+ ///    与键天然对齐），安全。
+ ///  - **委派双键合一裁决**（主控 T2 拍板1）：<c>oa-inbox:delegate</c> 与 <c>oa-settings:delegate</c> 在 action
+ ///    层合一为 <c>oa-settings:delegate</c>（权限面统一），**不影响 menu-key 集**——<c>oa-inbox</c>/<c>oa-settings</c>
+-///    两菜单键均照旧锚定。<c>oa-flow-admin:enable</c> 维持状态级（拍板2）。双栈退役/收编未裁决（拍板3）：本
+-///    任务不动 /wf/*-designer 路由，旧栈 <c>oa-designer:*</c> 键照真相源锚定到 738 流程设计器菜单行。
++///    两菜单键均照旧锚定。<c>oa-flow-admin:enable</c> 维持状态级（拍板2）。
++///  - **双栈收编裁决**（用户 2026-07-12，拍板3 落地）：旧设计器孤儿路由 <c>/wf/form-designer</c>、
++///    <c>/wf/flow-designer</c>（前端 router/index.ts:46-47 viewModules 已注册组件映射，但无 Sys_Menu 行 →
++///    <c>addDynamicRoutes</c> 不注册 → 洁净部署下不可达，真相源 §六头号裁决点）**收编而非退役**：补两行
++///    Sys_Menu（741/742）令其可达，双栈并存，旧栈写端点不删。<b>MenuKey 留 null</b>——权限已锚在 738
++///    （<c>oa-designer:edit</c>/<c>oa-designer:form-save</c>，旧栈 FlowController.SaveDef/FormController.SaveDef
++///    归并入该键，真相源 §一 #28/#31），741/742 若也赋 <c>oa-designer</c> 会与 738 撞
++///    <c>Sys_Menus.MenuKey IS NOT NULL</c> 过滤唯一索引（同键不可两行）。留 null 后由 Program.cs :908 回填块
++///    派生 <c>wf-form-designer</c>/<c>wf-flow-designer</c>——无 RoleAction 引用，纯挂菜单树无害（与 MES
++///    非锚定行同型）。
+ ///
+ /// 幂等：MenuId 判存守卫不重复插入；防御矫正块把既有库中被历史回填/异常写坏的 7 锚定行 MenuKey 就地纠回
+-/// <c>oa-*</c>（作用域严限 7 锚定行 r.Key != null；740 父行不动）。RoleMenu 默认授管理员（RoleId=1，默认租户
+-/// 由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
++/// <c>oa-*</c>（作用域严限 7 锚定行 r.Key != null；740 父行、741/742 收编行不动）。RoleMenu 默认授管理员
++/// （RoleId=1，默认租户由 SaveChanges 拦截器盖章 TenantId；逐租户传播由 Program.cs「首次补建管理员角色」块负责）。
+ /// </summary>
+ public static class OawfMenuSeed
+ {
+     /// <summary>
+     /// 菜单定义：(MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey)。
+-    /// MenuKey 非 null 者即 7 个权限锚定行（733–739）；null 者为 740 父行（不承载权限）。
++    /// MenuKey 非 null 者即 7 个权限锚定行（733–739）；null 者为 740 父行（不承载权限）+ 741/742 双栈
++    /// 收编行（承载权限，但锚在 738，本行故意不赋键）。
+     /// 733–740 既有由 Program.cs（:1446–1496）播种，本表含之仅为 (a) 显式锚定 MenuKey (b) 部分部署缺行时补建。
+     /// RoutePath/Icon/ParentId/OrderNo 与 Program.cs 现有 OA 菜单块逐字一致。
++    /// 741/742 取号：全仓扫描（Seed 目录 + Program.cs + 迁移）740 段仅占用至 740，741/742 无占用
++    /// （730–732 计划中台段与本段不重叠），照 ErpMenuSeed 五孤儿收编先例（216–220）就近连续取号。
+     /// </summary>
+     private static readonly (int Id, string Name, string? Route, string? Icon, int? Parent, int Order, string? Key)[] Rows =
+     {
+         // ── 親（Top，无 RoutePath，不锚定） ─────────────────────────────
+         (740, "OA工作流",     null,               "MessageBox", null, 249, null),
+ 
+         // ── 7 锚定行（真相源 §二，回填派生键与 menu-key 逐字一致，仍显式赋值规避时序命门） ──
+         (733, "电子表单信箱",  "/oa/inbox",         "Inbox",     740, 733, "oa-inbox"),
+         (734, "流程管理",      "/oa/flow-admin",    "Operation", 740, 734, "oa-flow-admin"),
+         (735, "填單",          "/oa/form-catalog",  "EditPen",   740, 735, "oa-form-catalog"),
+         (736, "表单查询",      "/oa/form-search",   "Search",    740, 736, "oa-form-search"),
+         (737, "设定",          "/oa/settings",      "Setting",   740, 737, "oa-settings"),
+         (738, "流程设计器",    "/oa/designer",      "Edit",      740, 738, "oa-designer"),
+         (739, "approverMap",   "/oa/approver-map",  "Edit",      740, 739, "oa-approver-map"),
++
++        // ── 双栈孤儿路由收编 741–742（用户裁决 2026-07-12，照 ErpMenuSeed 五孤儿先例）：RoutePath 与
++        // cp6.web/src/router/index.ts:46-47 viewModules 键逐字一致，令其经 addDynamicRoutes 可达。
++        // MenuKey 留 null（权限已锚 738，见上方类注释「双栈收编裁决」），Icon 照 738 同款 Edit。
++        (741, "フォームデザイナー(旧)", "/wf/form-designer", "Edit", 740, 741, null),
++        (742, "フローデザイナー(旧)",   "/wf/flow-designer", "Edit", 740, 742, null),
+     };
+ 
+     /// <summary>
+     /// 幂等播种全部 OA/WF 菜单 + 授管理员（RoleId=1）+ 锚定行 MenuKey 显式矫正。
+     /// 须在 Program.cs 的「无 MenuKey 菜单 RoutePath 自动回填」块（:908）**之前**调用。
+     /// </summary>
+     public static void EnsureSeeded(CP6Context db)
+     {
+         var changed = false;
+         foreach (var r in Rows)
+diff --git a/docs/seeds/oawf-key-menu-anchor.md b/docs/seeds/oawf-key-menu-anchor.md
+index bd39908..9875bb0 100644
+--- a/docs/seeds/oawf-key-menu-anchor.md
++++ b/docs/seeds/oawf-key-menu-anchor.md
+@@ -18,21 +18,35 @@
+ 
+ ## 非锚定行（MenuKey 留 null，不承载权限）
+ 
+ | MenuId | 菜单名 | RoutePath | 类别 |
+ |---|---|---|---|
+ | 740 | OA工作流 | (null) | 父组行（无 RoutePath，回填亦跳过） |
+ 
+ ## 段位与孤儿
+ 
+ - MenuId 段位 = 既有 733–740（8 行），**全部已由 Program.cs（:1446–1496）播种，OawfMenuSeed 无新建缺行**（缺行补建逻辑保留作防御）。
+-- OA/WF **零孤儿 menu-key**（7 键全落 733–739）。另有 2 条前端孤儿*路由* `/wf/form-designer`、`/wf/flow-designer`（真相源 §六头号裁决点）**待用户裁决退役/收编**——本任务不动，旧栈 `oa-designer:*` 键照真相源暂锚 738。
++- OA/WF **零孤儿 menu-key**（7 键全落 733–739）。
+ - 唯一索引安全：7 锚定键互不相同（真相源 §二，OA RoutePath 与键天然对齐），不撞 `Sys_Menus.MenuKey IS NOT NULL` 过滤唯一索引（`CP6Context.cs:602`）。
+ 
++## T2 追补：双栈孤儿路由收编（用户裁决 2026-07-12，已落地）
++
++真相源 §六头号裁决点 `/wf/form-designer`、`/wf/flow-designer` 两条前端孤儿*路由*（router/index.ts:46-47 viewModules 已注册组件映射但无 Sys_Menu 行 → 洁净部署下不可达）：**用户裁决=收编**（旧设计器可达，双栈并存，不删旧栈端点）。
++
++| MenuId | 菜单名 | RoutePath | ParentId | MenuKey | 裁决 |
++|---|---|---|---|---|---|
++| 741 | フォームデザイナー(旧) | `/wf/form-designer` | 740 | **null** | 权限已锚 738（`oa-designer:form-save`，旧栈 FormController.SaveDef，真相源 §一 #31）；本行赋非空键会与 738 撞 `MenuKey IS NOT NULL` 过滤唯一索引，故留 null（回填得 `wf-form-designer`，无 RoleAction 引用，无害） |
++| 742 | フローデザイナー(旧) | `/wf/flow-designer` | 740 | **null** | 权限已锚 738（`oa-designer:edit`，旧栈 FlowController.SaveDef，真相源 §一 #28）；同上理由留 null（回填得 `wf-flow-designer`，无害） |
++
++- **段位查证**：全仓 grep `CP6.WebApi/Seed/*.cs` + `Program.cs` + `Migrations/*.cs`（InsertData/MenuId 字面量）确认 741/742 无占用（OA 段止于 740，PLAN 段 730–732 不重叠，迁移文件名内 `741`/`742` 子串均为时间戳误命中，非 MenuId）。取号照 `ErpMenuSeed` 五孤儿收编先例（216–220）就近连续取号。
++- **前端可达性核对**：RoutePath `/wf/form-designer`、`/wf/flow-designer` 与 `cp6.web/src/router/index.ts:46-47` viewModules 键逐字一致（`'/wf/form-designer': () => import('@/views/wf/designer/FormDesigner.vue')` / `'/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue')`）——`addDynamicRoutes` 匹配条件满足，两页收编后前端可达。
++- RoleMenu 均授 admin（RoleId=1），照收编先例。
++- 唯一索引安全：741/742 MenuKey 均 null，不与 7 锚定键（含 738 `oa-designer`）冲突。
++
+ ## 硬前置落实（真相源 §六头号命门）
+ 
+ 1. **回填时序**：`OawfMenuSeed.EnsureSeeded` 接入 Program.cs 紧随 `MesPermissionSeed` 之后（`~:857`），
+    **先于全局回填块 :908** 执行 → 洁净首启即赋 7 个 `oa-*` MenuKey，消除 null-全-403 窗口。
+ 2. **零错配（与 MES 差异）**：OA 733–739 RoutePath 派生键与真相源 menu-key **逐字一致**（`/oa/inbox`→`oa-inbox` …），
+    命门纯为**时序**（非 MES machine-list 那种键值错配）。防御矫正块（按 MenuId 定位、严限 7 锚定行）正常恒为 no-op，
+    仅为结构对齐与防御历史/异常写坏而保留。
+ 3. **主控三拍板**：①委派双键合一→`oa-settings:delegate`（menu-key 集不变，action 层合一）；②`oa-flow-admin:enable` 维持状态级；③双栈未裁决，本任务仅菜单锚定、不动 /wf/*-designer 路由。
+diff --git a/docs/seeds/oawf-menu-seed.sql b/docs/seeds/oawf-menu-seed.sql
+index 72aeeaa..a3af48f 100644
+--- a/docs/seeds/oawf-menu-seed.sql
++++ b/docs/seeds/oawf-menu-seed.sql
+@@ -12,10 +12,32 @@
+ UPDATE Sys_Menus SET MenuKey = 'oa-inbox'        WHERE MenuId = 733 AND (MenuKey IS NULL OR MenuKey <> 'oa-inbox');
+ UPDATE Sys_Menus SET MenuKey = 'oa-flow-admin'   WHERE MenuId = 734 AND (MenuKey IS NULL OR MenuKey <> 'oa-flow-admin');
+ UPDATE Sys_Menus SET MenuKey = 'oa-form-catalog' WHERE MenuId = 735 AND (MenuKey IS NULL OR MenuKey <> 'oa-form-catalog');
+ UPDATE Sys_Menus SET MenuKey = 'oa-form-search'  WHERE MenuId = 736 AND (MenuKey IS NULL OR MenuKey <> 'oa-form-search');
+ UPDATE Sys_Menus SET MenuKey = 'oa-settings'     WHERE MenuId = 737 AND (MenuKey IS NULL OR MenuKey <> 'oa-settings');
+ UPDATE Sys_Menus SET MenuKey = 'oa-designer'     WHERE MenuId = 738 AND (MenuKey IS NULL OR MenuKey <> 'oa-designer');
+ UPDATE Sys_Menus SET MenuKey = 'oa-approver-map' WHERE MenuId = 739 AND (MenuKey IS NULL OR MenuKey <> 'oa-approver-map');
+ 
+ -- 核对：应恰好 7 行非空 oa-* 键，且各占唯一 MenuId；740 父行 MenuKey 留 null。
+ -- SELECT MenuId, MenuKey, RoutePath FROM Sys_Menus WHERE MenuId BETWEEN 733 AND 740 ORDER BY MenuId;
++
++-- ═══════════════════════════════════════════════════════════════════════════
++-- T2 追补：双栈孤儿路由收编（用户裁决 2026-07-12，照 ErpMenuSeed 五孤儿先例）
++-- 权限锚在 738（oa-designer:edit/form-save），741/742 故意不赋 MenuKey（留 null，避免撞 738 的唯一索引）。
++-- ═══════════════════════════════════════════════════════════════════════════
++
++INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey, Enable)
++SELECT 741, N'フォームデザイナー(旧)', '/wf/form-designer', 'Edit', 740, 741, NULL, 1
++WHERE NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 741);
++
++INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, Icon, ParentId, OrderNo, MenuKey, Enable)
++SELECT 742, N'フローデザイナー(旧)', '/wf/flow-designer', 'Edit', 740, 742, NULL, 1
++WHERE NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 742);
++
++INSERT INTO Sys_RoleMenus (RoleId, MenuId)
++SELECT 1, 741 WHERE NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 741);
++
++INSERT INTO Sys_RoleMenus (RoleId, MenuId)
++SELECT 1, 742 WHERE NOT EXISTS (SELECT 1 FROM Sys_RoleMenus WHERE RoleId = 1 AND MenuId = 742);
++
++-- 核对：741/742 RoutePath 须与 cp6.web/src/router/index.ts:46-47 viewModules 键逐字一致，MenuKey 恒 null。
++-- SELECT MenuId, MenuKey, RoutePath FROM Sys_Menus WHERE MenuId IN (741, 742) ORDER BY MenuId;
+diff --git a/docs/seeds/oawf-permission-keys.md b/docs/seeds/oawf-permission-keys.md
+index daf113f..5da2f82 100644
+--- a/docs/seeds/oawf-permission-keys.md
++++ b/docs/seeds/oawf-permission-keys.md
+@@ -142,52 +142,54 @@
+ - → **T2 必须在 OA 菜单插入块（:1446–1496）对 733–739 各行显式赋 `MenuKey="oa-*"`**（与 WMS/ERP/MES T2 同型，置于回填逻辑之前/内联），或在 OA 菜单插入后补一次回填 pass。**这是 T2 不做则洁净部署首启失配的硬前置。**
+ 
+ ### 注·派生键一致性（无错配，但仍建议显式化）
+ 
+ 733–739 全部 RoutePath 派生键与本表 menu-key **逐字一致**（`/oa/inbox`→`oa-inbox` … `/oa/approver-map`→`oa-approver-map`），无 MES `machine-list` 那种错配。回填即正确——**但仍受头号命门时序影响**，故 T2 显式赋值须随头号命门一并做。
+ 
+ ### 注3·无菜单锚控制器（判断非硬事实，T2 复核）
+ 
+ `/api/wf/*` 五引擎控制器（Flow/Form/Task/AdvancedFlow/Approval）+ Notification + ApprovalController 均无自己菜单行，本表按「消费页」锚定（审批动作→733；起流程/提交→735；通知已读→733）。此为「键锚定菜单」原则的必然，非漏配。若未来给通知中心/业务审批集成单独建菜单，相关键随迁。
+ 
+-### ⚠ 头号用户裁决点·双栈孤儿路由（`/wf/form-designer`、`/wf/flow-designer`）—— 只记录不裁决
++### ⚠ 头号用户裁决点·双栈孤儿路由（`/wf/form-designer`、`/wf/flow-designer`）—— **2026-07-12 已裁决=收编（见下方追记）**
+ 
+ **证据链**：
+ - 前端：`router/index.ts:46-47` 的 `viewModules` 组件映射表登记 `'/wf/form-designer' → views/wf/designer/FormDesigner.vue`、`'/wf/flow-designer' → views/wf/designer/FlowDesigner.vue`（注释「OA 章09 旧设计器保留」）。**二者无对应 Sys_Menu 菜单行**（OA 菜单 733–740 无 `/wf/*-designer` 路径），且不在 `platformRoutePaths`(:303) / `oaSubRoutePaths`(:319) / 静态路由(:190-288) 之列。
+ - `addDynamicRoutes`(:332-343) 仅注册「有菜单行且 routePath 命中 viewModules」的项 → **这两条路由永不被注册 → 洁净部署下不可达（暗物质路由）**。旁证：:188-189 旧 `/wf/todo`、`/wf/my-applications` 已 redirect 至 `/oa/inbox`（旧 /wf/* UI 已被 Phase B 迁移收编），唯独这两个设计器未处置。
+ - 后端：旧栈 def 保存端点 = FormController `POST /api/wf/form/def`（Wf_FormDef #31）+ FlowController `POST /api/wf/flow/def`（Wf_FlowDef #28）。
+ - 新栈（Phase C′/SSO 后）：DesignerController `POST /api/oa/designer/save`（**同写 Wf_FlowDef**，经 IDesignerService 校验+upsert）+ `/clone`，菜单 738 `/oa/designer` 有行、有页 `DesignerView.vue`、可达。
+ - 结论：**流程定义保存存在双后端路径**（新 `/oa/designer/save` 与旧 `/wf/flow/def` 同写 Wf_FlowDef）；**表单定义保存仅旧栈** `/wf/form/def`（新栈 DesignerView 是否覆盖表单设计需另确认；FormDesigner.vue 仍在但入口不可达）。
+ 
+ **两案影响面（各一句，不做决定）**：
+ - **退役案**（删 `/wf/*-designer` 两路由 + FormDesigner/FlowDesigner.vue + 视引用情况删 FormController.SaveDef/FlowController.SaveDef）：消除旧栈重复的高危「流程/表单定义保存」入口，权限面收敛到单一 `oa-designer:*`；**风险**=若两 SaveDef 仍被种子/测试/外部集成调用需先查引用，否则退役断链。
+ - **收编案**（给两路由补 Sys_Menu 行 + MenuKey，或并入 738 designer 菜单）：两路由变可达并纳入权限体系，但与新栈 `/oa/designer` 功能重叠形成双维护面与用户困惑；新增 `wf-*` 菜单键还与「OA 域统一 `oa-*` 前缀」不一致。
+ 
+ **T1 处置（待裁决前的占位）**：本表将旧栈 `flow/def`(#28) 归并入 `oa-designer:edit`（与新栈同写 Wf_FlowDef、同权限语义），`form/def`(#31) 记为 `oa-designer:form-save`（暂锚 738）。**T2 贴权限前须由用户裁定退役/收编**，否则旧栈 def 端点将挂一个「概念上锚定不可达路由」的键。
+ 
++**2026-07-12 用户裁决 = 收编，已落地**：补 Sys_Menu 741（フォームデザイナー(旧)，`/wf/form-designer`）、742（フローデザイナー(旧)，`/wf/flow-designer`），ParentId=740，MenuKey 留 null（权限维持锚 738，不与之共键），RoutePath 与 `router/index.ts:46-47` viewModules 键逐字一致，两页收编后前端可达；旧栈端点不删，双栈并存。落地见 `CP6.WebApi/Seed/OawfMenuSeed.cs`（Rows 741/742）+ `docs/seeds/oawf-key-menu-anchor.md`「T2 追补」节 + `docs/seeds/oawf-menu-seed.sql`。上文「两案影响面」中的「收编案」为最终选定方案。
++
+ ### 注4·委派双端点合一裁决（T2 主控拍板1，2026-07-12 已裁决）
+ 
+ AdvancedFlow `/api/wf/advanced/delegate`(#26) 与 OA `/api/oa/delegate/add`/`remove`(#5/#6) 语义相同（均授予/撤销代理审批权，act-as），T1 曾按锚定页各成 `oa-inbox:delegate` 与 `oa-settings:delegate` 两键。**T1 审查建议合一**（引用：委派授权面若分散于信箱与设定两键，则「一处授一处漏」，安全敏感权限授予绝不应双面维护）。
+ **T2 主控裁决：合一为 `oa-settings:delegate`（设定页为委派管理归属地）**。`oa-inbox:delegate` **退役**；#26 改锚 `oa-settings:delegate`（§一表已改写）。影响：高危资源键 9→8、资源键去重 23→22（§七同步）。T3 贴点时 AdvancedFlow.Delegate、OA DelegateController.Add/Remove 三端点统一贴 `[RequirePermission("oa-settings","delegate")]`。
+ 
+ ---
+ 
+ ## 七、计数收口
+ 
+ - **扫描控制器**：16（OA 11：ApproverMap / Catalog / Delegate / Designer / Draft / FlowAdmin / Forecast / Inbox / Notification / Pref / Query；WF 5：AdvancedFlow / Approval / Flow / Form / Task）。与计划口径 16 精确吻合。
+ - **GET-only 控制器（0 非 GET）**：0。
+ - **有 POST 但全豁免（真写=0）**：2（Forecast、Query，各 1 端点只读 POST→view）。
+ - **含真写端点控制器**：14（除 Forecast、Query）。
+ - **POST/PUT/DELETE 端点行总数**：**33**（= §一表行数，精确吻合）。
+   - 其中**只读 POST 豁免（→view）**：**2**。
+   - **真·写端点**：**31**。
+-- **menu-key（去重）**：**7**（全部有菜单行 733–739，零孤儿 menu-key；另有 2 条前端孤儿*路由* /wf/*-designer 待裁决，§六）。
++- **menu-key（去重）**：**7**（全部有菜单行 733–739，零孤儿 menu-key）。另有 2 条前端孤儿*路由* /wf/*-designer **已于 2026-07-12 裁决收编**（补 Sys_Menu 741/742，MenuKey 留 null 不新增 menu-key，权限仍锚 738，§六）。
+ - **资源键（去重，含 view）**：**22**（T2 委派合一后 23→22，`oa-inbox:delegate` 退役并入 `oa-settings:delegate`）。
+ - **高危键（是）**：**8**（T2 委派合一后 9→8）：`oa-inbox:approve/transfer/sendback/addsign` + `oa-settings:delegate`（合一 OA #5/#6 + AdvancedFlow #26）+ `oa-designer:edit/add/form-save`。
+ - **状态键**：**3**（`oa-form-catalog:submit`、`oa-flow-admin:enable`、`oa-inbox:withdraw`）。
+ 
+ ### 逐控制器双向核对（控制器→表 / 表→控制器，零缺漏零 GET 误列）
+ 
+ | 控制器 | POST/PUT/DELETE 端点数 | 其中豁免 | 真写 | 表内 # |
+ |---|---|---|---|---|
+ | ApproverMapController | 3（Create/Update/Delete；GET list/keys 不列） | 0 | 3 | 1–3 |
+ | CatalogController | 1（Favorite；GET tree 不列） | 0 | 1 | 4 |

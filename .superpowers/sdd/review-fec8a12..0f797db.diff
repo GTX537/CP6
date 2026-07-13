@@ -1,0 +1,385 @@
+# Review package: fec8a12..0f797db
+
+## Commits
+0f797db fix(space): 编辑器差量删除死代码——deletes 直发记录的 id 而非按 scene 过滤（波2终审 P1）
+
+## Files changed
+ cp6.web/src/space-editor/command/Command.ts        |  5 +-
+ .../space-editor/command/commands/AddMarkerCmd.ts  |  2 +-
+ .../space-editor/command/commands/AddZoneCmd.ts    |  2 +-
+ .../src/space-editor/command/commands/DeleteCmd.ts |  4 +-
+ cp6.web/src/stores/spaceEditor.spec.ts             | 91 ++++++++++++++++++++++
+ cp6.web/src/stores/spaceEditor.ts                  | 57 ++++++++++----
+ cp6.web/src/types/space/scene.ts                   |  4 +
+ 7 files changed, 146 insertions(+), 19 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/space-editor/command/Command.ts b/cp6.web/src/space-editor/command/Command.ts
+index 997a518..b633288 100644
+--- a/cp6.web/src/space-editor/command/Command.ts
++++ b/cp6.web/src/space-editor/command/Command.ts
+@@ -1,18 +1,19 @@
+ // Command 接口 + EditorContext（ch02 §9）
+-import type { EditorScene } from '@/types/space/scene'
++import type { EditorScene, DeleteKind } from '@/types/space/scene'
+ 
+ /** 命令执行上下文：注入 scene 引用 + dirty 标记；单测可传 {} as any */
+ export interface EditorContext {
+   scene: EditorScene
+   markDirty: (id: string) => void
+-  markDirtyDelete: (id: string) => void
++  /** 记录一个待删除 id；kind 指明落入 deletes 的哪个桶（省略则 save 时回退 scene 过滤分桶并告警） */
++  markDirtyDelete: (id: string, kind?: DeleteKind) => void
+ }
+ 
+ /**
+  * Command 接口：do/undo 均接收 EditorContext，通过它改 scene 对象图。
+  * merge?: 栈顶命令可选实现，返回 true 表示已吸收 next（同类型连续操作合为一步）。
+  */
+ export interface Command {
+   label: string
+   do(ctx: EditorContext): void
+   undo(ctx: EditorContext): void
+diff --git a/cp6.web/src/space-editor/command/commands/AddMarkerCmd.ts b/cp6.web/src/space-editor/command/commands/AddMarkerCmd.ts
+index 11aff65..eb15985 100644
+--- a/cp6.web/src/space-editor/command/commands/AddMarkerCmd.ts
++++ b/cp6.web/src/space-editor/command/commands/AddMarkerCmd.ts
+@@ -7,13 +7,13 @@ export class AddMarkerCmd implements Command {
+   constructor(private marker: MarkerVO) {}
+ 
+   do(ctx: EditorContext): void {
+     ctx.scene.markers.push(this.marker)
+     ctx.markDirty(this.marker.id)
+   }
+ 
+   undo(ctx: EditorContext): void {
+     const idx = ctx.scene.markers.findIndex(m => m.id === this.marker.id)
+     if (idx >= 0) ctx.scene.markers.splice(idx, 1)
+-    ctx.markDirtyDelete(this.marker.id)
++    ctx.markDirtyDelete(this.marker.id, 'marker')
+   }
+ }
+diff --git a/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts b/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts
+index 7f6f9ce..4ce3f02 100644
+--- a/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts
++++ b/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts
+@@ -7,13 +7,13 @@ export class AddZoneCmd implements Command {
+   constructor(private zone: ZoneVO) {}
+ 
+   do(ctx: EditorContext): void {
+     ctx.scene.zones.push(this.zone)
+     ctx.markDirty(this.zone.id)
+   }
+ 
+   undo(ctx: EditorContext): void {
+     const idx = ctx.scene.zones.findIndex(z => z.id === this.zone.id)
+     if (idx >= 0) ctx.scene.zones.splice(idx, 1)
+-    ctx.markDirtyDelete(this.zone.id)
++    ctx.markDirtyDelete(this.zone.id, 'zone')
+   }
+ }
+diff --git a/cp6.web/src/space-editor/command/commands/DeleteCmd.ts b/cp6.web/src/space-editor/command/commands/DeleteCmd.ts
+index 3ac9055..753e8f3 100644
+--- a/cp6.web/src/space-editor/command/commands/DeleteCmd.ts
++++ b/cp6.web/src/space-editor/command/commands/DeleteCmd.ts
+@@ -10,26 +10,26 @@ export interface DeleteSnapshot {
+ export class DeleteCmd implements Command {
+   label = 'Delete'
+ 
+   constructor(private snapshot: DeleteSnapshot) {}
+ 
+   do(ctx: EditorContext): void {
+     const { racks = [], markers = [] } = this.snapshot
+     for (const rack of racks) {
+       const idx = ctx.scene.racks.findIndex(r => r.id === rack.id)
+       if (idx >= 0) ctx.scene.racks.splice(idx, 1)
+-      ctx.markDirtyDelete(rack.id)
++      ctx.markDirtyDelete(rack.id, 'rack')
+     }
+     for (const marker of markers) {
+       const idx = ctx.scene.markers.findIndex(m => m.id === marker.id)
+       if (idx >= 0) ctx.scene.markers.splice(idx, 1)
+-      ctx.markDirtyDelete(marker.id)
++      ctx.markDirtyDelete(marker.id, 'marker')
+     }
+   }
+ 
+   undo(ctx: EditorContext): void {
+     const { racks = [], markers = [] } = this.snapshot
+     for (const rack of racks) {
+       ctx.scene.racks.push(rack)
+       ctx.markDirty(rack.id)
+     }
+     for (const marker of markers) {
+diff --git a/cp6.web/src/stores/spaceEditor.spec.ts b/cp6.web/src/stores/spaceEditor.spec.ts
+new file mode 100644
+index 0000000..b817832
+--- /dev/null
++++ b/cp6.web/src/stores/spaceEditor.spec.ts
+@@ -0,0 +1,91 @@
++// spaceEditor store 差量删除单测（波2终审 P1 回归）——deletes 直发记录的 id 而非按 scene 过滤
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { setActivePinia, createPinia } from 'pinia'
++import { useSpaceEditorStore } from './spaceEditor'
++import { sceneApi } from '@/api/space/scene'
++import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
++import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
++import type { EditorScene, RackVO, ZoneVO, SceneSaveDto } from '@/types/space/scene'
++
++vi.mock('@/api/space/scene', () => ({
++  sceneApi: { save: vi.fn() },
++}))
++
++const rack = (id: string): RackVO => ({
++  id, zoneId: 'z', floorId: 'f', rackCode: id, x: 0, y: 0, z: 0, rotationZ: 0,
++  cols: 1, levels: 1, depthCount: 1, cellW: 1000, cellH: 1000, cellD: 1000,
++})
++const zone = (id: string): ZoneVO => ({
++  id, floorId: 'f', zoneCode: id, zoneName: id, zoneType: 1,
++  polygon: '[[0,0],[1000,0],[1000,1000],[0,1000]]', enable: true,
++})
++
++function makeScene(): EditorScene {
++  return { floor: {} as any, zones: [], aisles: [], racks: [], locations: [], markers: [] }
++}
++
++/** 抓取 save() 实际下发给后端的 DTO */
++function lastDto(): SceneSaveDto {
++  return vi.mocked(sceneApi.save).mock.calls.at(-1)![1]
++}
++
++describe('spaceEditor.save — 差量删除载荷', () => {
++  beforeEach(() => {
++    setActivePinia(createPinia())
++    vi.clearAllMocks()
++    vi.mocked(sceneApi.save).mockResolvedValue({ code: 0, message: '', data: { idMap: {} } } as any)
++  })
++
++  it('删除已存在货架 → deletes.racks 含该 id（原 P1 死代码 RED：过去恒空）', async () => {
++    const store = useSpaceEditorStore()
++    const scene = makeScene()
++    scene.racks.push(rack('r1'))
++    store.load(scene)
++
++    // 走真实命令：DeleteCmd.do 会把 rack 从 scene 移除并 markDirtyDelete
++    new DeleteCmd({ racks: [rack('r1')] }).do(store.buildEditorContext())
++    expect(store.scene!.racks).toHaveLength(0) // 实体已离场——旧 filter 在此必然抓不到
++
++    await store.save('f1')
++    expect(lastDto().deletes!.racks).toContain('r1')
++  })
++
++  it('undo 新建库区（AddZoneCmd.undo → markDirtyDelete）→ deletes.zones 含 id（后端 null-skip 无害）', async () => {
++    const store = useSpaceEditorStore()
++    store.load(makeScene())
++    const ctx = store.buildEditorContext()
++    const cmd = new AddZoneCmd(zone('z1'))
++    cmd.do(ctx)   // 新建
++    cmd.undo(ctx) // 撤销 → 记入 del(zone)
++
++    await store.save('f1')
++    expect(lastDto().deletes!.zones).toContain('z1')
++    // 撤销后 upsert 不应再含该 id
++    expect(lastDto().zones).not.toContainEqual(expect.objectContaining({ id: 'z1' }))
++  })
++
++  it('redo/再 markDirty 同一 id → del 集不再含它（收敛，避免同 id 既上行又删）', async () => {
++    const store = useSpaceEditorStore()
++    store.load(makeScene())
++    store.markDirtyDelete('x1', 'rack') // 先记删除
++    store.markDirty('x1')               // redo 新建 → 应从 del 移出
++    expect(store.dirty.del.has('x1')).toBe(false)
++    expect(store.dirty.upsert.has('x1')).toBe(true)
++
++    store.scene!.racks.push(rack('x1'))
++    await store.save('f1')
++    expect(lastDto().deletes!.racks).not.toContain('x1')
++    expect(lastDto().racks).toContainEqual(expect.objectContaining({ id: 'x1' }))
++  })
++
++  it('save 后 dirty 清空（del 为 Map）', async () => {
++    const store = useSpaceEditorStore()
++    const scene = makeScene()
++    scene.racks.push(rack('r1'))
++    store.load(scene)
++    new DeleteCmd({ racks: [rack('r1')] }).do(store.buildEditorContext())
++    await store.save('f1')
++    expect(store.dirty.del.size).toBe(0)
++    expect(store.dirty.upsert.size).toBe(0)
++  })
++})
+diff --git a/cp6.web/src/stores/spaceEditor.ts b/cp6.web/src/stores/spaceEditor.ts
+index 3c5a1d8..71befb3 100644
+--- a/cp6.web/src/stores/spaceEditor.ts
++++ b/cp6.web/src/stores/spaceEditor.ts
+@@ -1,47 +1,51 @@
+ import { defineStore } from 'pinia'
+ import { ref } from 'vue'
+-import type { EditorScene, RackVO, SceneSaveDto } from '@/types/space/scene'
++import type { EditorScene, RackVO, SceneSaveDto, DeleteKind } from '@/types/space/scene'
+ import { sceneApi } from '@/api/space/scene'
+ import { CommandStack } from '@/space-editor/command/CommandStack'
+ import type { EditorContext } from '@/space-editor/command/Command'
+ 
+ export const useSpaceEditorStore = defineStore('spaceEditor', () => {
+   const scene = ref<EditorScene | null>(null)
+-  const dirty = ref({ upsert: new Set<string>(), del: new Set<string>() })
++  // upsert：待新增/更新 id 集；del：待删除 id → 种类（种类决定进 deletes 哪个桶）。
++  // del 用 Map 直接记录 id+kind——被删实体已从 scene 移除，save 时无法再靠 scene 过滤反查（原 P1 死代码根因）。
++  const dirty = ref({ upsert: new Set<string>(), del: new Map<string, DeleteKind | undefined>() })
+ 
+   // Reactive selection (array so Vue tracks mutations)
+   const selectionIds = ref<string[]>([])
+ 
+   // Undo/redo state (updated manually after stack operations)
+   const canUndo = ref(false)
+   const canRedo = ref(false)
+ 
+   // CommandStack — plain instance exposed for tools
+   const stack = new CommandStack()
+ 
+   function load(s: EditorScene): void {
+     scene.value = s
+-    dirty.value = { upsert: new Set(), del: new Set() }
++    dirty.value = { upsert: new Set(), del: new Map() }
+     selectionIds.value = []
+     canUndo.value = false
+     canRedo.value = false
+     stack.undoStack.length = 0
+     stack.redoStack.length = 0
+   }
+ 
+   function markDirty(id: string): void {
+     dirty.value.upsert.add(id)
++    // redo 收敛：id 重新变为 upsert（如 redo 新建）时，必须移出 del，避免同一 id 既发上行又发删除
++    dirty.value.del.delete(id)
+   }
+ 
+-  function markDirtyDelete(id: string): void {
+-    dirty.value.del.add(id)
++  function markDirtyDelete(id: string, kind?: DeleteKind): void {
++    dirty.value.del.set(id, kind)
+     dirty.value.upsert.delete(id)
+   }
+ 
+   function rackById(id: string): RackVO | undefined {
+     return scene.value?.racks.find(r => r.id === id)
+   }
+ 
+   /** Build EditorContext for passing to CommandStack */
+   function buildEditorContext(): EditorContext {
+     return {
+@@ -79,38 +83,65 @@ export const useSpaceEditorStore = defineStore('spaceEditor', () => {
+     return selectionIds.value.includes(id)
+   }
+ 
+   // ── Persistence ───────────────────────────────────────────────────────────
+ 
+   async function save(floorId: string): Promise<void> {
+     const s = scene.value
+     if (!s) return
+ 
+     const ids = dirty.value.upsert
+-    const delIds = dirty.value.del
++    const del = dirty.value.del
++
++    // deletes 直接由 del(Map) 按记录的 kind 分桶下发 id——不再过滤 scene（实体早已被 DeleteCmd/undo 移除，
++    // 旧 s.racks.filter(delIds.has) 恒空 → 后端永远收不到删除，是原 P1 死代码）。
++    const deletes = {
++      racks: [] as string[],
++      aisles: [] as string[],
++      zones: [] as string[],
++      markers: [] as string[],
++      locations: [] as string[],
++    }
++    const unclassified: string[] = []
++    for (const [id, kind] of del) {
++      switch (kind) {
++        case 'rack': deletes.racks.push(id); break
++        case 'aisle': deletes.aisles.push(id); break
++        case 'zone': deletes.zones.push(id); break
++        case 'marker': deletes.markers.push(id); break
++        case 'location': deletes.locations.push(id); break
++        default: unclassified.push(id); break
++      }
++    }
++    if (unclassified.length > 0) {
++      // 安全网：markDirtyDelete 未带 kind（理论上不应发生——所有调用点已补 kind）。
++      // 回退旧 filter 行为（已从 scene 移除的实体在此恒不命中，仅防遗漏）并告警。
++      console.warn('[spaceEditor] markDirtyDelete 缺少 kind，回退 scene 过滤分桶：', unclassified)
++      const rest = new Set(unclassified)
++      for (const r of s.racks) if (rest.has(r.id)) deletes.racks.push(r.id)
++      for (const a of s.aisles) if (rest.has(a.id)) deletes.aisles.push(a.id)
++      for (const z of s.zones) if (rest.has(z.id)) deletes.zones.push(z.id)
++      for (const m of s.markers) if (rest.has(m.id)) deletes.markers.push(m.id)
++      for (const l of s.locations) if (rest.has(l.id)) deletes.locations.push(l.id)
++    }
+ 
+     const dto: SceneSaveDto = {
+       racks: s.racks.filter(r => ids.has(r.id)),
+       zones: s.zones.filter(z => ids.has(z.id)),
+       aisles: s.aisles.filter(a => ids.has(a.id)),
+       markers: s.markers.filter(m => ids.has(m.id)),
+       locations: s.locations.filter(l => ids.has(l.id)),
+-      deletes: {
+-        racks: s.racks.filter(r => delIds.has(r.id)).map(r => r.id),
+-        aisles: s.aisles.filter(a => delIds.has(a.id)).map(a => a.id),
+-        zones: s.zones.filter(z => delIds.has(z.id)).map(z => z.id),
+-        markers: s.markers.filter(m => delIds.has(m.id)).map(m => m.id),
+-      },
++      deletes,
+     }
+ 
+     await sceneApi.save(floorId, dto)
+-    dirty.value = { upsert: new Set(), del: new Set() }
++    dirty.value = { upsert: new Set(), del: new Map() }
+   }
+ 
+   return {
+     scene,
+     dirty,
+     selectionIds,
+     canUndo,
+     canRedo,
+     stack,
+     load,
+diff --git a/cp6.web/src/types/space/scene.ts b/cp6.web/src/types/space/scene.ts
+index d2b5132..26067e8 100644
+--- a/cp6.web/src/types/space/scene.ts
++++ b/cp6.web/src/types/space/scene.ts
+@@ -107,31 +107,35 @@ export interface EditorScene {
+ }
+ 
+ export interface TemplateVO {
+   id?: string
+   templateCode: string
+   templateName: string
+   templateType: number
+   params: string
+ }
+ 
++/** 差量删除的实体种类——决定 id 进 deletes 的哪个桶（后端 Deletes 五列表镜像） */
++export type DeleteKind = 'rack' | 'aisle' | 'zone' | 'marker' | 'location'
++
+ export interface SceneSaveDto {
+   racks?: RackVO[]
+   aisles?: AisleVO[]
+   zones?: ZoneVO[]
+   markers?: MarkerVO[]
+   locations?: LocationVO[]
+   deletes?: {
+     racks?: string[]
+     aisles?: string[]
+     zones?: string[]
+     markers?: string[]
++    locations?: string[]
+   }
+ }
+ 
+ export interface UnplacedLocationDto {
+   id: string
+   locationCode: string
+   status: number
+ }
+ 
+ export type Envelope<T> = { code: number; message: string; data: T }

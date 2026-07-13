@@ -1,0 +1,574 @@
+# Review package: a6a530b..38dad3e
+
+## Commits
+38dad3e feat(mes): M-MES T3b 逐租户MenuAction/RoleAction权限种子 28→25→25
+
+## Files changed
+ .superpowers/sdd/mes-t3b-report.md   |  77 +++++++++++++++++
+ CP6.Tests/MesPermissionSeedTests.cs  | 154 ++++++++++++++++++++++++++++++++++
+ CP6.WebApi/Program.cs                |   6 ++
+ CP6.WebApi/Seed/MesPermissionSeed.cs | 118 ++++++++++++++++++++++++++
+ docs/seeds/mes-permission-seed.sql   | 156 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 511 insertions(+)
+
+## Diff
+diff --git a/.superpowers/sdd/mes-t3b-report.md b/.superpowers/sdd/mes-t3b-report.md
+new file mode 100644
+index 0000000..5b894a3
+--- /dev/null
++++ b/.superpowers/sdd/mes-t3b-report.md
+@@ -0,0 +1,77 @@
++# M-MES T3b 执行报告：逐租户 MenuAction/RoleAction 权限种子
++
++> 执行于 2026-07-12。分支 `feat/m-mes-crosscutting`。样板 = ErpPermissionSeed（M-ERP T3b）同型复制。
++
++## 三数闭环对账表
++
++| 阶段 | 数 | 依据 |
++|---|---|---|
++| ① 控制器写端点（[RequirePermission] 贴点） | **28** | `grep RequirePermission CP6.WebApi/Controllers/Mes/*.cs` = 28 行，与真相源 §七「真写 28」精确吻合 |
++| ② 去重 (menu-key, action) 元组 | **25** | 28 − 3 归并重复（见下）= 25 |
++| ③ 种子元组（MesPermissionSeed.Actions） | **25** | 漏种 0 / 多种 0，测试逐元组集合相等验证 |
++
++**闭环：28 → 25 → 25。** 覆盖 **9** 个有写端点 menu-key（`mes-plan-achievement` 仅 2 只读 POST 豁免→view，未贴点，不入种子，故非 10）。
++
++### 3 处归并（真相源 §五 1/2/3，消解重复）
++| 归并键 | 覆盖的两端点 |
++|---|---|
++| `mes-work-order:add` (302) | Create + ExpandFromOrder |
++| `mes-production-result:suspend` (304) | Suspend + Resume |
++| `mes-machine:downtime` (310) | RegisterDowntime + CloseDowntime |
++
++（§五归并4「upsert=edit」是单端点内 create/update 合一，不产生重复行，故不计入去重消解。）
++
++### 25 元组 × 锚定 MenuId（锚定表 mes-key-menu-anchor.md）
++| menu-key | MenuId | actions | 数 |
++|---|---|---|---|
++| mes-planning-board | 301 | reschedule, arrange | 2 |
++| mes-work-order | 302 | add, edit, del, issue | 4 |
++| mes-production-result | 304 | start, suspend, complete, report | 4 |
++| mes-quality-inspection | 306 | add, edit | 2 |
++| mes-defect | 308 | add, edit, del | 3 |
++| mes-machine | 310 | add, edit, del, status, downtime | 5 |
++| mes-oee | 311 | recalculate | 1 |
++| mes-work-center | 314 | edit, del | 2 |
++| mes-process-cost-rate | 315 | edit, del | 2 |
++| **合计** | | | **25** |
++
++grep 逐控制器核对（28 贴点）：ProcessCostRate 2 / WorkOrder 5(add×2) / DefectRecord 3 / PlanningBoard 2 / WorkCenter 2 / Machine 6(downtime×2) / QualityInspection 2 / Oee 1 / ProductionResult 5(suspend×2) = 28 ✅。ActionCode 与贴点第二实参逐字一致。
++
++## TDD Evidence
++
++### RED
++`dotnet test --filter MesPermissionSeedTests` → 编译失败：
++```
++error CS0103: The name 'MesPermissionSeed' does not exist in the current context (×6)
++```
++（测试已写、断言 25/50，但被测类未建 → 红。）
++
++### GREEN
++新建 `MesPermissionSeed.cs` + 接入 Program.cs 后：
++```
++Passed!  - Failed: 0, Passed: 5, Skipped: 0, Total: 5 - CP6.Tests.dll
++```
++5 测试：25 元组/租户逐元组集合相等（Menu+Role）/ 幂等二次调用零新增(2×25=50) / RoleId=1 且 MenuId 全来自锚定表且 MenuKey mes- 前缀 / 显式 TenantId 两租户各独立行 / 无租户 no-op。
++
++### 全量回归
++```
++Passed!  - Failed: 0, Passed: 1727, Skipped: 5, Total: 1732 - CP6.Tests.dll
++```
++= 基线 1722 + 本任务 5 新测试。**基线未跌。**
++
++## 四要件自检（照 ErpPermissionSeed）
++- ✅ 逐租户显式 TenantId：`TenantId = tid`（枚举 Sys_Tenants）→ StampTenant 仅盖 Guid.Empty 不覆盖显式值。
++- ✅ IgnoreQueryFilters 在查重上：MenuAction/RoleAction 判存均 `.IgnoreQueryFilters().Any(...)`，跨租户可见。
++- ✅ 双种 RoleId=1：MenuAction（操作点目录）+ RoleAction（授管理员 RoleId=1）各一份。
++- ✅ 测试 oracle 独立：`ExpectedTuples` 为测试内独立硬编码 25 元组，非引用 `MesPermissionSeed.Actions`，防自证假绿。
++
++## Files changed
++- `CP6.WebApi/Seed/MesPermissionSeed.cs`（新建，正本）
++- `CP6.WebApi/Program.cs`（接入，MesMenuSeed 之后）
++- `CP6.Tests/MesPermissionSeedTests.cs`（新建，5 测试，独立 oracle）
++- `docs/seeds/mes-permission-seed.sql`（新建，文档留档，头声明 C# 正本，CROSS JOIN Sys_Tenants + NOT EXISTS）
++
++## Concerns
++- 无阻断性 concern。ActionName（改期/自动排产/中断/停机记录 等）为 UI 显示名，非权限判定依据（判定只看 ActionCode），措辞可后续微调不影响功能。
++- 洁净部署首启依赖 MesMenuSeed（T2）已在回填块之前显式赋 mes- MenuKey——本任务接入点严格置于 MesMenuSeed 之后，满足「锚定菜单行须先在」前提。
++- 与 WMS/ERP 同类平台票一致：TenantAdminService 若不复制 RoleAction，新租户 admin 重启前可能 403（重启自愈），非本任务范围。
+diff --git a/CP6.Tests/MesPermissionSeedTests.cs b/CP6.Tests/MesPermissionSeedTests.cs
+new file mode 100644
+index 0000000..a3ac065
+--- /dev/null
++++ b/CP6.Tests/MesPermissionSeedTests.cs
+@@ -0,0 +1,154 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-MES 横切接线 Task 3b：MesPermissionSeed 逐租户 Sys_MenuAction/Sys_RoleAction 幂等种子断言。
++///
++/// 三数闭环（真相源 docs/seeds/mes-permission-keys.md §一/§七 + 控制器 grep）：
++///   28 写端点（[RequirePermission] 贴点）→ 去重 (menu-key, action) 25 元组 → 25 种子元组（漏种 0 / 多种 0）。
++///   （3 处归并消解重复：mes-work-order:add 覆 Create+ExpandFromOrder / mes-production-result:suspend
++///    覆 Suspend+Resume / mes-machine:downtime 覆 Register+Close。2 只读 POST 豁免
++///    mes-plan-achievement:view 未贴点→不入种子，故覆盖 9 有写端点 menu-key，非 10。）
++/// MenuId 经锚定表 docs/seeds/mes-key-menu-anchor.md 映射；RoleAction 挂 admin RoleId=1。
++///
++/// ★ ExpectedTuples 为独立硬编码 oracle（非引用 MesPermissionSeed 内部常量），防自证假绿。
++/// </summary>
++public class MesPermissionSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 期望的 25 去重种子元组（MenuId 来自锚定表 mes-key-menu-anchor.md；action 来自 T3a 控制器贴点，逐字核对）。
++    private static readonly (int MenuId, string Code)[] ExpectedTuples =
++    {
++        (301, "reschedule"), (301, "arrange"),                                        // mes-planning-board
++        (302, "add"), (302, "edit"), (302, "del"), (302, "issue"),                    // mes-work-order
++        (304, "start"), (304, "suspend"), (304, "complete"), (304, "report"),         // mes-production-result
++        (306, "add"), (306, "edit"),                                                  // mes-quality-inspection
++        (308, "add"), (308, "edit"), (308, "del"),                                    // mes-defect
++        (310, "add"), (310, "edit"), (310, "del"), (310, "status"), (310, "downtime"),// mes-machine
++        (311, "recalculate"),                                                         // mes-oee
++        (314, "edit"), (314, "del"),                                                  // mes-work-center
++        (315, "edit"), (315, "del"),                                                  // mes-process-cost-rate
++    };
++
++    private static readonly Guid TenantA = Guid.Parse("11111111-1111-1111-1111-111111111111");
++    private static readonly Guid TenantB = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static void SeedTenantsAndMenus(CP6Context db)
++    {
++        // 锚定菜单行须先在（RoleAction 挂 MenuId；MesMenuSeed 缺行补建并显式赋 mes-* MenuKey）。
++        MesMenuSeed.EnsureSeeded(db);
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantA, TenantCode = "TA", TenantName = "TenantA", Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantB, TenantCode = "TB", TenantName = "TenantB", Enable = true });
++        db.SaveChanges();
++    }
++
++    [Fact]
++    public void EnsureSeeded_SeedsExactly25TuplesPerTenant_ForBothMenuAndRoleAction()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        MesPermissionSeed.EnsureSeeded(db);
++
++        foreach (var tid in new[] { TenantA, TenantB })
++        {
++            var menuActions = db.Sys_MenuActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid).ToList();
++            var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
++
++            // 元组闭环计数：每租户各得全套 25。
++            Assert.Equal(25, menuActions.Count);
++            Assert.Equal(25, roleActions.Count);
++
++            // 逐元组精确匹配（漏种 0 / 多种 0）。
++            var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var expected = ExpectedTuples.ToHashSet();
++            Assert.Equal(expected, maSet);
++            Assert.Equal(expected, raSet);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_SecondCallNoNewRows()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        MesPermissionSeed.EnsureSeeded(db);
++        var ma1 = db.Sys_MenuActions.IgnoreQueryFilters().Count();
++        var ra1 = db.Sys_RoleActions.IgnoreQueryFilters().Count();
++
++        MesPermissionSeed.EnsureSeeded(db);   // 二次调用
++        Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++
++        // 2 租户 × 25 元组 = 50。
++        Assert.Equal(50, ma1);
++        Assert.Equal(50, ra1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        MesPermissionSeed.EnsureSeeded(db);
++
++        var anchoredMenuIds = ExpectedTuples.Select(t => t.MenuId).ToHashSet();
++        var roleActions = db.Sys_RoleActions.IgnoreQueryFilters().ToList();
++
++        Assert.NotEmpty(roleActions);
++        Assert.All(roleActions, ra => Assert.Equal(1, ra.RoleId));
++        // 每个 RoleAction.MenuId 必来自锚定表，且该菜单行确实存在且 MenuKey 非 null 且 mes- 前缀。
++        Assert.All(roleActions, ra => Assert.Contains(ra.MenuId, anchoredMenuIds));
++        foreach (var menuId in anchoredMenuIds)
++        {
++            var menu = db.Sys_Menus.Single(m => m.MenuId == menuId);
++            Assert.NotNull(menu.MenuKey);
++            Assert.StartsWith("mes-", menu.MenuKey!);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        MesPermissionSeed.EnsureSeeded(db);
++
++        // 逐租户显式 TenantId：两租户各得独立行，无一被盖成默认租户。
++        var tenantsSeen = db.Sys_RoleActions.IgnoreQueryFilters()
++            .Select(x => x.TenantId).Distinct().ToList();
++        Assert.Contains(TenantA, tenantsSeen);
++        Assert.Contains(TenantB, tenantsSeen);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTenants_NoOp()
++    {
++        using var db = NewDb();
++        MesMenuSeed.EnsureSeeded(db);   // 菜单在，但无 Sys_Tenants 行
++
++        MesPermissionSeed.EnsureSeeded(db);
++
++        Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index d216ede..75ebaf5 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -842,20 +842,26 @@ using (var scope = app.Services.CreateScope())
+     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
+     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+ 
+     // M-MES 横切接线 Task 2：MES 300 段菜单锚定 MenuKey（mes-*）。
+     // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块（:894）之前：既有 300–315 由 Program.cs（本文件 :1511+）
+     //   在回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → MES 全 403。
+     //   本种子在回填前对 10 有菜单键各锚定一行显式设 mes-* MenuKey（含缺行补建），并防御矫正历史回填错配
+     //   （尤其 310 /mes/machine-list 回填得 mes-machine-list ≠ 真相源 mes-machine）。MES 无孤儿路由，纯锚定。
+     CP6.WebApi.Seed.MesMenuSeed.EnsureSeeded(db);
+ 
++    // M-MES 横切接线 Task 3b：MES 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
++    // Task 3a 给 9 控制器 28 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
++    // 须置于 MesMenuSeed 之后（RoleAction 挂锚定 MenuId 301/302/304/306/308/310/311/314/315，菜单行须先在）。
++    // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。25 去重元组（28 写端点去重）覆盖 9 有写端点 menu-key（plan-achievement 仅 view 不种）。
++    CP6.WebApi.Seed.MesPermissionSeed.EnsureSeeded(db);
++
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+         db.SaveChanges();
+     }
+     // PUB 章00 组织模型：部门管理菜单
+     if (!db.Sys_Menus.Any(m => m.MenuId == 108))
+     {
+diff --git a/CP6.WebApi/Seed/MesPermissionSeed.cs b/CP6.WebApi/Seed/MesPermissionSeed.cs
+new file mode 100644
+index 0000000..9fb7ac3
+--- /dev/null
++++ b/CP6.WebApi/Seed/MesPermissionSeed.cs
+@@ -0,0 +1,118 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// MES 製造執行 権限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（M-MES 横切接线 Task 3b）。
++///
++/// 背景：Task 3a 为 9 个 MES 控制器的 28 个写端点贴了 <c>[RequirePermission("键","action")]</c>，但
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator.FillActionKeysAsync</c> 以
++/// <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}"</c>
++/// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
++/// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
++///
++/// 三数闭环（本 C# 为正本，与真相源 1:1）：
++///  - 控制器写端点：<b>28</b>（grep <c>CP6.WebApi/Controllers/Mes/*.cs</c> 的 [RequirePermission]，逐字核对）。
++///  - 去重 (menu-key, action) 元组：<b>25</b>（3 处归并消解重复：
++///    mes-work-order:add 覆 Create+ExpandFromOrder / mes-production-result:suspend 覆 Suspend+Resume /
++///    mes-machine:downtime 覆 RegisterDowntime+CloseDowntime。真相源 §五 归并 1/2/3）。
++///  - 种子元组：<b>25</b>（下方 <see cref="Actions"/>；漏种 0 / 多种 0）。
++///  - 覆盖 <b>9</b> 个 menu-key（有写端点者）。另 1 键 mes-plan-achievement 仅有 2 只读 POST 端点
++///    （豁免→view，未贴点），无键可种，故不在本种子——与 10 键总数不矛盾。
++///
++/// 数据来源（执行真相）：
++///  - MenuId 经锚定表 <c>docs/seeds/mes-key-menu-anchor.md</c> 由权限键映射而得（10 键 → 锚定 MenuId）。
++///  - ActionCode 与 <c>CP6.WebApi/Controllers/Mes/*.cs</c> 的 [RequirePermission] 第二实参逐字一致（差一字全链 403）。
++///  - 文档留档：<c>docs/seeds/mes-permission-seed.sql</c>（本 C# 为正本，SQL 与此一致）。
++///
++/// 逐租户机制（关键，照 ErpPermissionSeed / WmsPermissionSeed 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表，非行级过滤）全部租户 Id，对每租户各插一份。
++///  - 显式设 <c>TenantId=tid</c> → <c>CP6Context.StampTenant</c> 仅盖 <c>TenantId==Guid.Empty</c>，不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，使跨租户既存行对当前上下文（默认租户作用域）可见，避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 <see cref="MesMenuSeed.EnsureSeeded"/> **之后**调用（锚定菜单行须先在，RoleAction 挂 MenuId）。
++/// 幂等：重启不重复插（(TenantId,MenuId,ActionCode) / (TenantId,RoleId,MenuId,ActionCode) 判存守卫）。
++/// </summary>
++public static class MesPermissionSeed
++{
++    /// <summary>
++    /// (MenuId, ActionCode, ActionName) —— 与各 MES 控制器 [RequirePermission(键, action)] 去重后 1:1。
++    /// MenuId 依 <c>docs/seeds/mes-key-menu-anchor.md</c> 锚定；ActionName 为中文显示名（照 ERP/WMS 种子风格，
++    /// 仅供 UI 显示，非权限判定依据——判定只看 ActionCode）。
++    /// 计 25 条，覆盖 9 个有写端点的 menu-key。
++    /// </summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        // 301 mes-planning-board — 生産計画ボード（reschedule/arrange 两状态键）
++        (301, "reschedule", "改期"), (301, "arrange", "自动排产"),
++        // 302 mes-work-order — 製造指図 入力（add 复用 Create+ExpandFromOrder；issue 状态键）
++        (302, "add", "新建"), (302, "edit", "编辑"), (302, "del", "删除"), (302, "issue", "发行"),
++        // 304 mes-production-result — 製造実績 入力（suspend 归并 Suspend+Resume；complete 高危反冲）
++        (304, "start", "开始"), (304, "suspend", "中断"), (304, "complete", "完了"), (304, "report", "报工"),
++        // 306 mes-quality-inspection — 品質検査 入力
++        (306, "add", "新建"), (306, "edit", "编辑"),
++        // 308 mes-defect — 不良品管理
++        (308, "add", "新建"), (308, "edit", "编辑"), (308, "del", "删除"),
++        // 310 mes-machine — 設備管理（downtime 归并 Register+Close；status 状态键）
++        (310, "add", "新建"), (310, "edit", "编辑"), (310, "del", "删除"),
++        (310, "status", "状态变更"), (310, "downtime", "停机记录"),
++        // 311 mes-oee — OEE 分析（recalculate 状态键）
++        (311, "recalculate", "重算"),
++        // 314 mes-work-center — 工作中心 master（upsert=edit）
++        (314, "edit", "编辑"), (314, "del", "删除"),
++        // 315 mes-process-cost-rate — 工序费率 master（upsert=edit，高危）
++        (315, "edit", "编辑"), (315, "del", "删除"),
++    };
++
++    /// <summary>
++    /// 逐租户幂等播种 MES 全部权限点 + 授管理员（RoleId=1）。
++    /// 须在 <see cref="MesMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖（仅盖 Guid.Empty）
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/mes-permission-seed.sql b/docs/seeds/mes-permission-seed.sql
+new file mode 100644
+index 0000000..89a1f83
+--- /dev/null
++++ b/docs/seeds/mes-permission-seed.sql
+@@ -0,0 +1,156 @@
++/* ============================================================
++ * MES 製造執行 権限点（MenuAction / RoleAction）シードデータ（M-MES 横切接線 Task 3b）
++ * ============================================================
++ * 対象 DB     : CP6DB (SQL Server)
++ * 対象テーブル : Sys_MenuAction（授権可能な操作点の登記）
++ *              Sys_RoleAction（管理者ロール RoleId=1 への全動作授権）
++ *
++ * ★正本は C#：CP6.WebApi/Seed/MesPermissionSeed.cs（起動時逐租户冪等種子）。
++ *   本 SQL は同一集合の文書留档・手動投入用であり、C# と 1:1 一致。乖離時は C# を正とする。
++ *
++ * 前提:
++ *   MES メニュー 301/302/304/306/308/310/311/314/315 は Task 2 種子
++ *   （MesMenuSeed / docs/seeds/mes-menu-seed.sql）で MenuKey=mes-* 锚定済みであること。
++ *   （特に 310 は RoutePath=/mes/machine-list だが MenuKey=mes-machine を明示赋値済み。）
++ *   RoleAction は当該 MenuId 上に挂かり、実行時 PermissionAggregator が
++ *   Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}" を組む。
++ *
++ * 三数閉環（真相源 docs/seeds/mes-permission-keys.md §一/§七 + 控制器 grep）:
++ *   写端点 28 → 去重 (menu-key, action) 25 元组 → 種子 25 元组（漏種 0 / 多種 0）。
++ *   3 处归并（§五 1/2/3）消解重复：mes-work-order:add 覆 Create+ExpandFromOrder /
++ *   mes-production-result:suspend 覆 Suspend+Resume / mes-machine:downtime 覆 Register+Close。
++ *   2 只读 POST 豁免（mes-plan-achievement:view）は未貼点＝不入種子→覆盖 9 有写端点 menu-key（非 10）。
++ *
++ * 動作定義（docs/seeds/mes-key-menu-anchor.md 锚定 MenuId × 控制器 [RequirePermission] action 逐字）:
++ *   301 mes-planning-board     : reschedule / arrange
++ *   302 mes-work-order         : add / edit / del / issue
++ *   304 mes-production-result  : start / suspend / complete（高危・反冲）/ report
++ *   306 mes-quality-inspection : add / edit
++ *   308 mes-defect             : add / edit / del
++ *   310 mes-machine            : add / edit / del / status / downtime
++ *   311 mes-oee                : recalculate
++ *   314 mes-work-center        : edit / del
++ *   315 mes-process-cost-rate  : edit（高危）/ del
++ *
++ * マルチテナント:
++ *   Sys_MenuAction / Sys_RoleAction は BaseTenantEntity（TenantId 必須・行級隔離）。
++ *   全テナントへ一括投入するため `CROSS JOIN (SELECT Id FROM Sys_Tenants) t` で逐租户展開。
++ *
++ * 実行方法:
++ *   sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/mes-permission-seed.sql -b
++ *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
++ *
++ * 冪等性:
++ *   各 INSERT 前に NOT EXISTS チェック（TenantId+MenuId+ActionCode 単位）→ 重複実行安全。
++ * ============================================================ */
++
++SET NOCOUNT ON;
++SET XACT_ABORT ON;
++SET QUOTED_IDENTIFIER ON;
++SET ANSI_NULLS ON;
++BEGIN TRY
++BEGIN TRANSACTION;
++
++PRINT '=== MES 権限点（MenuAction/RoleAction）シード 開始 ===';
++
++/* ------------------------------------------------------------
++ * 0. 動作定義テーブル（MenuId, ActionCode, ActionName, Sort）— 計 25 動作／租户
++ * ------------------------------------------------------------ */
++DECLARE @Actions TABLE (MenuId INT, ActionCode NVARCHAR(50), ActionName NVARCHAR(100), Sort INT);
++INSERT INTO @Actions (MenuId, ActionCode, ActionName, Sort) VALUES
++ (301, N'reschedule',  N'改期',       0),
++ (301, N'arrange',     N'自动排产',   0),
++ (302, N'add',         N'新建',       0),
++ (302, N'edit',        N'编辑',       0),
++ (302, N'del',         N'删除',       0),
++ (302, N'issue',       N'发行',       0),
++ (304, N'start',       N'开始',       0),
++ (304, N'suspend',     N'中断',       0),
++ (304, N'complete',    N'完了',       0),
++ (304, N'report',      N'报工',       0),
++ (306, N'add',         N'新建',       0),
++ (306, N'edit',        N'编辑',       0),
++ (308, N'add',         N'新建',       0),
++ (308, N'edit',        N'编辑',       0),
++ (308, N'del',         N'删除',       0),
++ (310, N'add',         N'新建',       0),
++ (310, N'edit',        N'编辑',       0),
++ (310, N'del',         N'删除',       0),
++ (310, N'status',      N'状态变更',   0),
++ (310, N'downtime',    N'停机记录',   0),
++ (311, N'recalculate', N'重算',       0),
++ (314, N'edit',        N'编辑',       0),
++ (314, N'del',         N'删除',       0),
++ (315, N'edit',        N'编辑',       0),
++ (315, N'del',         N'删除',       0);
++-- 合計 25 動作定義／租户
++
++/* ------------------------------------------------------------
++ * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_MenuAction (Id, MenuId, ActionCode, ActionName, Sort, CreateDate, TenantId)
++SELECT NEWID(), a.MenuId, a.ActionCode, a.ActionName, a.Sort, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_MenuAction ma
++    WHERE ma.TenantId = t.Id AND ma.MenuId = a.MenuId AND ma.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 2. Sys_RoleAction 管理者(RoleId=1) へ全動作授権（逐租户・冪等）
++ *    列序: (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_RoleAction (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++SELECT NEWID(), 1, a.MenuId, a.ActionCode, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_RoleAction ra
++    WHERE ra.TenantId = t.Id AND ra.RoleId = 1 AND ra.MenuId = a.MenuId AND ra.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 3. 結果確認（PRINT）
++ * ------------------------------------------------------------ */
++DECLARE @Tn INT, @Ma INT, @Ra INT;
++DECLARE @Menus TABLE (MenuId INT);
++INSERT INTO @Menus VALUES (301),(302),(304),(306),(308),(310),(311),(314),(315);
++SELECT @Tn = COUNT(*) FROM Sys_Tenants;
++SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId IN (SELECT MenuId FROM @Menus);
++SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId IN (SELECT MenuId FROM @Menus) AND RoleId = 1;
++
++PRINT N'  租户数                  : ' + CAST(@Tn AS NVARCHAR(10));
++PRINT N'  MenuAction 件数(MES)    : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 25 想定）';
++PRINT N'  RoleAction 件数(管理者) : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 25 想定）';
++
++COMMIT TRANSACTION;
++PRINT '=== MES 権限点シード 完了 ===';
++END TRY
++BEGIN CATCH
++    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
++    PRINT 'ERROR: ' + ERROR_MESSAGE();
++    THROW;
++END CATCH;
++GO
++
++/* ============================================================
++ * 4. 動作確認クエリ（実行後の検証用、任意）
++ * ============================================================ */
++-- 管理者ロールの MES 授権（RoleAction）一覧
++SELECT CONVERT(varchar(36), ra.TenantId) AS TenantId, ra.RoleId, ra.MenuId, ra.ActionCode
++FROM Sys_RoleAction ra
++WHERE ra.MenuId IN (301,302,304,306,308,310,311,314,315) AND ra.RoleId = 1
++ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
++
++/* ============================================================
++ * 5. ロールバック用（緊急時のみ使用）
++ * ============================================================
++ * 注意: RoleId=1 限定（本种子只授过管理员；不限定会连带删掉日后经 UI 授出的其他角色 MES 授权）。
++ * ------------------------------------------------------------ */
++/*
++BEGIN TRANSACTION;
++DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId IN (301,302,304,306,308,310,311,314,315);
++DELETE FROM Sys_MenuAction WHERE MenuId IN (301,302,304,306,308,310,311,314,315);
++COMMIT TRANSACTION;
++*/

@@ -1,0 +1,281 @@
+# Review package: fc2ad3b..94094f2
+
+## Commits
+94094f2 feat(space): 货架改挂库区/巷道自动 re-publish（评审 H4，ch04 §7.2 路径B）
+
+## Files changed
+ CP6.Core/Services/Space/SceneService.cs | 20 ++++++++-
+ CP6.Tests/BindCodesTests.cs             |  7 ++-
+ CP6.Tests/SceneServiceTests.cs          | 80 ++++++++++++++++++++++++++++++++-
+ 3 files changed, 104 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/SceneService.cs b/CP6.Core/Services/Space/SceneService.cs
+index 3c2e577..b23578e 100644
+--- a/CP6.Core/Services/Space/SceneService.cs
++++ b/CP6.Core/Services/Space/SceneService.cs
+@@ -7,37 +7,40 @@ using Microsoft.EntityFrameworkCore.Storage;
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// 场景差量保存 + D7 绑码服务实现（ch01 §G-1/I-1，v1.1 多租户规则）。
+ /// 构造注入 CP6Context + LocationGeometryService；租户隔离由全局过滤+盖章自动施加。
+ /// </summary>
+ public class SceneService : ISceneService
+ {
+     private readonly CP6Context _db;
+     private readonly LocationGeometryService _geo;
++    private readonly ILocationPublishService _publish;
+ 
+-    public SceneService(CP6Context db, LocationGeometryService geo)
++    public SceneService(CP6Context db, LocationGeometryService geo, ILocationPublishService publish)
+     {
+         _db  = db;
+         _geo = geo;
++        _publish = publish;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<Dictionary<Guid, Guid>> SaveSceneAsync(Guid floorId, SceneSaveDto dto, string? user)
+     {
+         // InMemory 安全事务守卫：真库开事务，InMemory 降级无事务
+         IDbContextTransaction? tx = _db.Database.IsRelational()
+             ? await _db.Database.BeginTransactionAsync()
+             : null;
+         try
+         {
+             var changedRackIds = new HashSet<Guid>();
++            var pathChangedRackIds = new HashSet<Guid>();   // H4：层级归属（ZoneId/AisleId）变更的货架
+ 
+             // ── Zones ──────────────────────────────────────────────
+             foreach (var zd in dto.Zones ?? new List<ZoneDto>())
+             {
+                 var existing = zd.Id.HasValue
+                     ? await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zd.Id.Value)
+                     : null;
+                 if (existing != null)
+                 {
+                     existing.ZoneCode   = zd.ZoneCode;
+@@ -100,20 +103,24 @@ public class SceneService : ISceneService
+             foreach (var rd in dto.Racks ?? new List<RackDto>())
+             {
+                 var existing = rd.Id.HasValue
+                     ? await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rd.Id.Value)
+                     : null;
+                 if (existing != null)
+                 {
+                     // 乐观锁：设置 OriginalValue，SaveChanges 会在 WHERE 附加 RowVersion
+                     _db.Entry(existing).Property(x => x.RowVersion).OriginalValue = rd.RowVersion;
+ 
++                    // H4（ch04 §7.2 路径B）：层级归属变更检测——纯几何不发布，但 path 归属变更须 re-publish
++                    if (existing.ZoneId != rd.ZoneId || existing.AisleId != rd.AisleId)
++                        pathChangedRackIds.Add(existing.Id);
++
+                     // 位姿/尺寸变更检测
+                     if (existing.X != rd.X || existing.Y != rd.Y || existing.Z != rd.Z ||
+                         existing.RotationZ != rd.RotationZ || existing.Cols != rd.Cols ||
+                         existing.Levels != rd.Levels || existing.DepthCount != rd.DepthCount ||
+                         existing.CellW != rd.CellW || existing.CellH != rd.CellH || existing.CellD != rd.CellD)
+                     {
+                         changedRackIds.Add(existing.Id);
+                     }
+ 
+                     existing.ZoneId     = rd.ZoneId;
+@@ -272,20 +279,31 @@ public class SceneService : ISceneService
+             }
+             catch (DbUpdateConcurrencyException)
+             {
+                 throw new InvalidOperationException("E-SPACE-009");
+             }
+ 
+             // ── 位姿变更货架→重算库位绝对坐标 ─────────────────────────
+             foreach (var rid in changedRackIds)
+                 await _geo.RecalcRackLocationsAsync(rid);
+ 
++            // ── H4：改挂货架下的已发布库位 re-publish（在本事务内，RepublishAsync 嵌套守卫自动加入）──
++            if (pathChangedRackIds.Count > 0)
++            {
++                var republishIds = await _db.Space_Locations
++                    .Where(l => l.RackId != null && pathChangedRackIds.Contains(l.RackId.Value) && l.Status == 1)
++                    .Select(l => l.Id)
++                    .ToListAsync();
++                if (republishIds.Count > 0)
++                    await _publish.RepublishAsync(republishIds, user);
++            }
++
+             if (tx != null) await tx.CommitAsync();
+         }
+         catch
+         {
+             if (tx != null) await tx.RollbackAsync();
+             throw;
+         }
+         finally
+         {
+             tx?.Dispose();
+diff --git a/CP6.Tests/BindCodesTests.cs b/CP6.Tests/BindCodesTests.cs
+index 61d1552..99206ab 100644
+--- a/CP6.Tests/BindCodesTests.cs
++++ b/CP6.Tests/BindCodesTests.cs
+@@ -1,29 +1,34 @@
+ using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DomainModels.Space;
+ using Microsoft.EntityFrameworkCore;
++using Microsoft.Extensions.Logging.Abstractions;
+ using Xunit;
+ 
+ namespace CP6.Tests;
+ 
+ /// <summary>
+ /// I-1 绑码测试：绑后 Placed/RackId/AbsX 填且 Code/Id/Version 不变；状态不合法→E-004。
+ /// </summary>
+ public class BindCodesTests
+ {
+     private static (CP6Context db, SceneService svc) Make()
+     {
+         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+         var geo = new LocationGeometryService(db);
+-        return (db, new SceneService(db, geo));
++        var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
++            new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
++            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
++        return (db, new SceneService(db, geo, publish));
+     }
+ 
+     [Fact]
+     public async Task BindCodes_SetsPlacedRackIdAbsX_DoesNotChangeCodeIdVersion()
+     {
+         var (db, svc) = Make();
+ 
+         var rackId  = Guid.NewGuid();
+         var floorId = Guid.NewGuid();
+         var locId   = Guid.NewGuid();
+diff --git a/CP6.Tests/SceneServiceTests.cs b/CP6.Tests/SceneServiceTests.cs
+index 685b482..b4aa8d2 100644
+--- a/CP6.Tests/SceneServiceTests.cs
++++ b/CP6.Tests/SceneServiceTests.cs
+@@ -1,30 +1,35 @@
+ using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
++using Microsoft.Extensions.Logging.Abstractions;
+ using Xunit;
+ 
+ namespace CP6.Tests;
+ 
+ /// <summary>
+ /// G-1 场景差量保存测试：新增货架/库位落库且 AbsX 重算；位姿变更触发重算；删有库位货架→E-003。
+ /// </summary>
+ public class SceneServiceTests
+ {
+     private static (CP6Context db, SceneService svc) Make()
+     {
+         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+         var geo = new LocationGeometryService(db);
+-        return (db, new SceneService(db, geo));
++        var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
++            new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
++            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
++        return (db, new SceneService(db, geo, publish));
+     }
+ 
+     [Fact]
+     public async Task SaveScene_NewRack_PersistedAndAbsXRecalculated()
+     {
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         var zoneId  = Guid.NewGuid();
+         var rackId  = Guid.NewGuid();
+         var locId   = Guid.NewGuid();
+@@ -201,11 +206,84 @@ public class SceneServiceTests
+             Locations = new List<SceneLocationSaveDto>
+             {
+                 new SceneLocationSaveDto { Id = Guid.NewGuid(), RackId = Guid.Empty, Col = 1, Level = 1, Depth = 1, Placed = false, Status = 1, CodeOrigin = 2 }
+             }
+         }, "u");
+ 
+         var loc = await db.Space_Locations.SingleAsync();
+         Assert.Equal(0, loc.Status);       // 编辑器新建恒草稿；发布走 publish、采纳走 adopt
+         Assert.Equal(1, loc.CodeOrigin);
+     }
++
++    [Fact]
++    public async Task SaveScene_RackZoneChanged_RepublishesPublishedLocations()
++    {
++        // H4（ch04 §7.2 路径B）：层级归属变更 → 已发布库位自动 re-publish 刷新 WMS path
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1" };
++        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
++        var zoneA = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZA", ZoneName = "A" };
++        var zoneB = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZB", ZoneName = "B" };
++        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneA.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        var pubLoc = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "ZA-01", Col = 1, Level = 1, Depth = 1, Version = 1 };
++        var draftLoc = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = null, Col = 1, Level = 1, Depth = 1 };
++        db.AddRange(site, floor, zoneA, zoneB, rack, pubLoc, draftLoc);
++        await db.SaveChangesAsync();
++        var rowVersion = rack.RowVersion;
++
++        await svc.SaveSceneAsync(floorId, new SceneSaveDto
++        {
++            Racks = new List<RackDto>
++            {
++                new RackDto
++                {
++                    Id = rack.Id, ZoneId = zoneB.Id, AisleId = null, RackCode = "R1",
++                    X = 0, Y = 0, Z = 0, RotationZ = 0,
++                    Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,
++                    Enable = true, RowVersion = rowVersion
++                }
++            }
++        }, "u");
++
++        var loc = await db.Space_Locations.SingleAsync(l => l.Id == pubLoc.Id);
++        Assert.Equal(2, loc.Version);                       // re-publish 升版
++        Assert.Equal(1, loc.Status);                        // 状态不变
++        var evt = await db.IntegrationEvents.SingleAsync();
++        var payload = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(evt.PayloadJson);
++        var item = payload.GetProperty("Items")[0];
++        Assert.Equal("UPSERT", item.GetProperty("Op").GetString());
++        Assert.Equal("ZB", item.GetProperty("Path").GetProperty("ZoneCode").GetString());   // 新归属
++        // 草稿库位不受波及
++        Assert.Equal(0, (await db.Space_Locations.SingleAsync(l => l.Id == draftLoc.Id)).Version);
++    }
++
++    [Fact]
++    public async Task SaveScene_GeometryOnlyChange_NoRepublish()
++    {
++        // D4：纯几何（挪位/旋转/改尺寸不缩格）不发布——join key 不漂移
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
++        var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        db.AddRange(zone, rack);
++        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "Z1-01", Col = 1, Level = 1, Depth = 1, Version = 1 });
++        await db.SaveChangesAsync();
++
++        await svc.SaveSceneAsync(floorId, new SceneSaveDto
++        {
++            Racks = new List<RackDto>
++            {
++                new RackDto
++                {
++                    Id = rack.Id, ZoneId = zone.Id, AisleId = null, RackCode = "R1",
++                    X = 5000, Y = 3000, Z = 0, RotationZ = 90,   // 只挪位旋转
++                    Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,
++                    Enable = true, RowVersion = rack.RowVersion
++                }
++            }
++        }, "u");
++
++        Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Version);   // 版本不动
++        Assert.Equal(0, await db.IntegrationEvents.CountAsync());            // 零事件
++    }
+ }

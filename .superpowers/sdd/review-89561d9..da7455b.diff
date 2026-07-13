@@ -1,0 +1,1116 @@
+# Review package: 89561d9..HEAD
+
+## Commits
+da7455b refactor(ui): WMS 迁移批次6——QcInspection/PlateMold/Rma/OutboundOrder/PickingWork
+
+## Files changed
+ cp6.web/src/views/wms/OutboundOrderView.vue |  19 +--
+ cp6.web/src/views/wms/PickingWorkView.vue   |  39 +++---
+ cp6.web/src/views/wms/PlateMoldView.vue     | 186 ++++++++++++++++------------
+ cp6.web/src/views/wms/QcInspectionView.vue  | 184 +++++++++++++++------------
+ cp6.web/src/views/wms/RmaView.vue           | 139 ++++++++++++---------
+ 5 files changed, 327 insertions(+), 240 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/wms/OutboundOrderView.vue b/cp6.web/src/views/wms/OutboundOrderView.vue
+index a8a58ef..23bed59 100644
+--- a/cp6.web/src/views/wms/OutboundOrderView.vue
++++ b/cp6.web/src/views/wms/OutboundOrderView.vue
+@@ -1,18 +1,18 @@
+ <template>
+   <div class="wms-outbound-order">
+     <el-card shadow="never">
+       <template #header>
+-        <div style="display: flex; align-items: center; gap: 12px">
+-          <span style="font-weight: 600">{{ isNew ? t('wms.outbound.titleNew') : `${t('wms.outbound.title')} [${form.outboundNo}]` }}</span>
+-          <el-tag :type="statusTagOf(form.status)" size="small">{{ statusMap[form.status] || '—' }}</el-tag>
+-          <el-tag size="small" :type="form.outboundType === 1 ? 'info' : 'warning'">{{ typeMap[form.outboundType] }}</el-tag>
++        <div class="card-hd">
++          <span class="hd-title">{{ isNew ? t('wms.outbound.titleNew') : `${t('wms.outbound.title')} [${form.outboundNo}]` }}</span>
++          <CpTag :tone="statusTone(form.status)">{{ statusMap[form.status] || '—' }}</CpTag>
++          <CpTag :tone="form.outboundType === 1 ? 'info' : 'warn'">{{ typeMap[form.outboundType] }}</CpTag>
+         </div>
+       </template>
+ 
+       <el-form :model="form" label-width="160px" size="small">
+         <el-row :gutter="16">
+           <el-col :span="8">
+             <el-form-item :label="t('wms.common.type')" required>
+               <el-select v-model="form.outboundType" :disabled="!editable">
+                 <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="Number(v)" />
+               </el-select>
+@@ -147,20 +147,21 @@
+       </template>
+     </el-dialog>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, reactive, computed, onMounted } from 'vue'
+ import { useRoute, useRouter } from 'vue-router'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { outboundOrderApi } from '@/api/wms/outboundOrder'
+ import type { OutboundOrder, OutboundOrderDetail, ShipRequest } from '@/types/wms/wms'
+ import { formatQty as fmtQty } from '@/utils/format'
+ 
+ const route = useRoute()
+ const router = useRouter()
+ const { t } = useI18n()
+ const saving = ref(false)
+ 
+ const statusMap = computed<Record<number, string>>(() => ({
+@@ -189,22 +190,22 @@ const isNew = computed(() => !form.outboundNo)
+ const editable = computed(() => form.status === 0)
+ const canConfirm = computed(() => !isNew.value && form.status === 0)
+ const canAllocate = computed(() => !isNew.value && form.status === 1)
+ const canShip = computed(() => !isNew.value && (form.status === 2 || form.status === 3))
+ const canCancel = computed(() => !isNew.value && form.status !== 4 && form.status !== 9)
+ const canDelete = computed(() => !isNew.value && form.status === 0)
+ 
+ const shipDialog = ref(false)
+ const shipReq = reactive<ShipRequest>({ caseQty: 1 })
+ 
+-function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'danger' {
+-  return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'warning', 4: 'success', 9: 'danger' } as const)[s as 0] || 'info'
++function statusTone(s: number): Tone {
++  return ({ 0: 'info', 1: 'info', 2: 'warn', 3: 'warn', 4: 'ok', 9: 'muted' } as const)[s as 0] || 'info'
+ }
+ function formatQty(n: number | null | undefined): string {
+   if (n == null) return '0'
+   return fmtQty(n, 4)
+ }
+ 
+ function addLine() {
+   form.details.push({ lineNo: form.details.length + 1, productCd: '', requiredQty: 0, allocatedQty: 0, shippedQty: 0 } as OutboundOrderDetail)
+ }
+ function removeLine(idx: number) {
+@@ -290,14 +291,16 @@ async function onDelete() {
+ function goBack() { router.push('/wms/outbound-order-list') }
+ 
+ onMounted(async () => {
+   const no = route.query.no as string | undefined
+   if (no) await loadByNo(no)
+ })
+ </script>
+ 
+ <style scoped>
+ .wms-outbound-order { padding: 16px; padding-bottom: 60px; }
+-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
++.card-hd { display: flex; align-items: center; gap: 12px; }
++.hd-title { font-weight: 600; }
++.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
+ .action-bar > * { margin-left: 8px; }
+-.ok { color: var(--el-color-success); font-weight: 600; }
++.ok { color: var(--cp-ok); font-weight: 600; }
+ </style>
+diff --git a/cp6.web/src/views/wms/PickingWorkView.vue b/cp6.web/src/views/wms/PickingWorkView.vue
+index 8967e01..e6177f4 100644
+--- a/cp6.web/src/views/wms/PickingWorkView.vue
++++ b/cp6.web/src/views/wms/PickingWorkView.vue
+@@ -34,28 +34,28 @@
+         <el-card shadow="never" v-if="!current">
+           <el-empty :description="t('wms.pick.msg.noTask')" />
+         </el-card>
+ 
+         <template v-else>
+           <!-- ヘッダ情報 -->
+           <el-card shadow="never" class="hd-card">
+             <div class="hd-row">
+               <div>
+                 <h2 style="margin: 0">{{ current.outboundNo }}</h2>
+-                <div style="color: #666; font-size: 13px">
++                <div class="hd-sub">
+                   {{ current.customerName || current.workOrderNo }}
+                 </div>
+               </div>
+               <div class="hd-progress">
+-                <span style="font-size: 12px; color: #666">{{ t('wms.pick.fld.pickedQty') }}</span>
++                <span class="hd-cap">{{ t('wms.pick.fld.pickedQty') }}</span>
+                 <el-progress :percentage="progressPct" :stroke-width="14" />
+-                <div style="font-size: 11px; color: #666">{{ pickedLines }} / {{ current.details?.length || 0 }} {{ t('wms.pick.fld.lineNo') }}</div>
++                <div class="hd-count">{{ pickedLines }} / {{ current.details?.length || 0 }} {{ t('wms.pick.fld.lineNo') }}</div>
+               </div>
+               <div>
+                 <el-button v-if="current.status === 2" type="warning" size="large" @click="onStart">{{ t('wms.pick.btn.start') }}</el-button>
+                 <el-button v-if="current.status === 3 && allDone" type="success" size="large" @click="onComplete">{{ t('wms.pick.btn.complete') }}</el-button>
+               </div>
+             </div>
+           </el-card>
+ 
+           <!-- 明細リスト -->
+           <el-card shadow="never">
+@@ -71,25 +71,25 @@
+             <div v-for="line in current.details" :key="line.lineNo"
+               class="line-item" :class="{ done: lineState[line.lineNo]?.done, active: activeLine?.lineNo === line.lineNo }">
+               <div class="line-hd">
+                 <span class="line-no">#{{ line.lineNo }}</span>
+                 <el-tag v-if="lineState[line.lineNo]?.done" type="success" size="small">✓ {{ t('wms.pick.fld.pickedQty') }}</el-tag>
+                 <el-tag v-else-if="lineState[line.lineNo]?.short" type="danger" size="small">{{ t('wms.pick.status.shortage') }}</el-tag>
+                 <el-tag v-else type="info" size="small">{{ t('wms.pick.status.allocated') }}</el-tag>
+               </div>
+               <el-row :gutter="8" class="line-row">
+                 <el-col :span="6"><b>{{ t('wms.pick.fld.fromLoc') }}</b><div>{{ line.locationCd || '—' }}</div></el-col>
+-                <el-col :span="6"><b>{{ t('wms.pick.fld.product') }}</b><div>{{ line.productCd }}<br/><span style="font-size:11px;color:#888">{{ line.productName || '' }}</span></div></el-col>
++                <el-col :span="6"><b>{{ t('wms.pick.fld.product') }}</b><div>{{ line.productCd }}<br/><span class="prod-sub">{{ line.productName || '' }}</span></div></el-col>
+                 <el-col :span="6"><b>{{ t('wms.pick.fld.lot') }}</b><div>{{ line.lotNo || '—' }}</div></el-col>
+                 <el-col :span="6">
+                   <b>{{ t('wms.pick.fld.reqQty') }}</b>
+-                  <div>{{ formatQty(line.requiredQty) }} → <b style="color:#67c23a">{{ formatQty(lineState[line.lineNo]?.actualQty ?? 0) }}</b></div>
++                  <div>{{ formatQty(line.requiredQty) }} → <b class="picked-qty">{{ formatQty(lineState[line.lineNo]?.actualQty ?? 0) }}</b></div>
+                 </el-col>
+               </el-row>
+               <div v-if="!lineState[line.lineNo]?.done && !lineState[line.lineNo]?.short && current.status === 3" class="line-actions">
+                 <el-button size="small" type="primary" @click="openPickDialog(line)">{{ t('wms.pick.btn.confirmLine') }}</el-button>
+                 <el-button size="small" type="warning" @click="openShortDialog(line)">{{ t('wms.pick.btn.short') }}</el-button>
+               </div>
+             </div>
+           </el-card>
+         </template>
+       </el-col>
+@@ -269,35 +269,40 @@ async function onComplete() {
+ }
+ 
+ onMounted(reloadTasks)
+ </script>
+ 
+ <style scoped>
+ .wms-picking { padding: 12px; }
+ .card-hd { display: flex; align-items: center; gap: 8px; }
+ .task-card :deep(.el-card__body) { padding: 8px; max-height: 720px; overflow-y: auto; }
+ .task-item {
+-  padding: 10px 12px; border: 1px solid #ebeef5; border-radius: 6px; margin-bottom: 6px; cursor: pointer;
+-  transition: all 0.15s;
++  padding: 10px 12px; border: 1px solid var(--cp-line); border-radius: var(--cp-r-sm); margin-bottom: 6px; cursor: pointer;
++  transition: all var(--cp-t-base);
+ }
+-.task-item:hover { background: #f5f7fa; border-color: #c0c4cc; }
+-.task-item.active { background: #ecf5ff; border-color: #409eff; }
+-.task-no { font-weight: bold; font-size: 14px; }
++.task-item:hover { background: var(--cp-bg-hover); border-color: var(--cp-faint); }
++.task-item.active { background: var(--cp-brand-bg); border-color: var(--cp-brand); }
++.task-no { font-weight: bold; font-size: var(--cp-fs-lg); }
+ .task-meta { display: flex; gap: 4px; margin: 4px 0; }
+-.task-info { font-size: 12px; color: #606266; }
++.task-info { font-size: var(--cp-fs-xs); color: var(--cp-text); }
+ 
+ .hd-card { margin-bottom: 12px; }
+ .hd-row { display: flex; align-items: center; gap: 20px; }
+ .hd-progress { flex: 1; }
++.hd-sub { color: var(--cp-text); font-size: var(--cp-fs-base); }
++.hd-cap { font-size: var(--cp-fs-xs); color: var(--cp-text); }
++.hd-count { font-size: var(--cp-fs-2xs); color: var(--cp-text); }
+ 
+ .line-item {
+-  padding: 12px; border: 1px solid #ebeef5; border-radius: 8px; margin-bottom: 8px;
+-  background: #fafafa;
++  padding: 12px; border: 1px solid var(--cp-line); border-radius: var(--cp-r-sm); margin-bottom: 8px;
++  background: var(--cp-bg-th);
+ }
+-.line-item.done { background: #f0f9eb; border-color: #95d475; opacity: 0.75; }
+-.line-item.active { border-color: #409eff; box-shadow: 0 0 6px rgba(64, 158, 255, 0.3); }
++.line-item.done { background: var(--cp-ok-bg); border-color: var(--cp-ok); opacity: 0.75; }
++.line-item.active { border-color: var(--cp-brand); box-shadow: var(--cp-shadow-1); }
+ .line-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+-.line-no { font-weight: bold; font-size: 16px; color: #303133; }
+-.line-row b { color: #606266; font-size: 12px; display: block; margin-bottom: 2px; }
++.line-no { font-weight: bold; font-size: var(--cp-fs-xl); color: var(--cp-ink); }
++.line-row b { color: var(--cp-text); font-size: var(--cp-fs-xs); display: block; margin-bottom: 2px; }
+ .line-row > .el-col { padding: 4px 0; }
+ .line-actions { margin-top: 8px; display: flex; gap: 6px; }
++.prod-sub { font-size: var(--cp-fs-2xs); color: var(--cp-muted); }
++.picked-qty { color: var(--cp-ok); }
+ </style>
+diff --git a/cp6.web/src/views/wms/PlateMoldView.vue b/cp6.web/src/views/wms/PlateMoldView.vue
+index 581a636..76256e4 100644
+--- a/cp6.web/src/views/wms/PlateMoldView.vue
++++ b/cp6.web/src/views/wms/PlateMoldView.vue
+@@ -1,72 +1,50 @@
++<!--
++  版・金型在庫 —— 査詢一覧ページ → CpPageShell + CpListPage（単表スクロール paginated=false）。
++  状態=kind:'tag'+map（共有 Tone）；種別=map（タグなし文案置換）；寿命比率=col slot（el-progress 保持）；操作=col slot（状態別ボタン, 補償 #16）。
++  新規/使用記録/メンテ開始/寿命警報 は編集ダイアログとして el-dialog 保持（CpFormDialog 契約に載らない複合フォーム）。
++  変更後は listRef.reload()（:key 再マウント不使用）。
++-->
+ <template>
+   <div class="wms-plate-mold">
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('wms.plate.fld.no')"><el-input v-model="query.plateNo" clearable style="width: 180px" /></el-form-item>
+-        <el-form-item :label="t('wms.plate.fld.type')">
+-          <el-select v-model="query.plateType" clearable style="width: 120px">
+-            <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="v" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('wms.plate.fld.customer')"><el-input v-model="query.customerCd" clearable style="width: 120px" /></el-form-item>
+-        <el-form-item :label="t('wms.plate.fld.product')"><el-input v-model="query.productCd" clearable style="width: 120px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.status')">
+-          <el-select v-model="query.status" clearable style="width: 130px">
+-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-          <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+-          <el-button type="warning" @click="openWarnings">{{ t('wms.plate.btn.warnings') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
++    <CpPageShell :title="t('wms.plate.title')" :count="total">
++      <template #actions>
++        <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
++        <el-button type="warning" @click="openWarnings">{{ t('wms.plate.btn.warnings') }}</el-button>
++      </template>
+ 
+-    <el-card shadow="never">
+-      <el-table :data="rows" border stripe size="small" max-height="600" highlight-current-row>
+-        <el-table-column prop="plateNo" :label="t('wms.plate.fld.no')" width="160" />
+-        <el-table-column :label="t('wms.common.status')" width="110">
+-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.plate.fld.type')" width="80">
+-          <template #default="{ row }">{{ typeMap[row.plateType] || row.plateType }}</template>
+-        </el-table-column>
+-        <el-table-column prop="customerCd" :label="t('wms.plate.fld.customer')" width="100" />
+-        <el-table-column prop="productCd" :label="t('wms.plate.fld.product')" width="100" />
+-        <el-table-column prop="productName" :label="t('wms.common.productName')" min-width="160" show-overflow-tooltip />
+-        <el-table-column prop="colorCount" :label="t('wms.plate.fld.colorCount')" width="80" align="right" />
+-        <el-table-column prop="sizeNote" :label="t('wms.plate.fld.sizeNote')" width="120" />
+-        <el-table-column :label="t('wms.plate.fld.lifeRatio')" width="180">
+-          <template #default="{ row }">
+-            <div style="font-size: 11px">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
+-            <el-progress
+-              v-if="row.maxShots"
+-              :percentage="Math.min(100, Math.round((row.usedShots / row.maxShots) * 100))"
+-              :stroke-width="6" :show-text="false"
+-              :status="lifeStatus(row)"
+-            />
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="lastUsedAt" :label="t('wms.plate.fld.lastUsed')" width="160" />
+-        <el-table-column prop="nextMaintenanceDate" :label="t('wms.plate.fld.nextMaint')" width="130" />
+-        <el-table-column :label="t('wms.common.action')" width="260" fixed="right">
+-          <template #default="{ row }">
+-            <el-button v-if="row.status === 0" link type="primary" size="small" @click="openUse(row)">{{ t('wms.plate.btn.use') }}</el-button>
+-            <el-button v-if="row.status === 0 || row.status === 2" link type="warning" size="small" @click="openMaintStart(row)">{{ t('wms.plate.btn.maintStart') }}</el-button>
+-            <el-button v-if="row.status === 1" link type="success" size="small" @click="onMaintEnd(row)">{{ t('wms.plate.btn.maintEnd') }}</el-button>
+-            <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDiscard(row)">{{ t('wms.plate.btn.discard') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
++      <CpListPage
++        ref="listRef"
++        :columns="columns"
++        :fetch="fetchList"
++        :search-fields="searchFields"
++        :filter-labels="filterLabels"
++        :paginated="false"
++        @total-change="total = $event"
++      >
++        <template #col-lifeRatio="{ row }">
++          <div class="life-txt">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
++          <el-progress
++            v-if="row.maxShots"
++            :percentage="Math.min(100, Math.round((row.usedShots / row.maxShots) * 100))"
++            :stroke-width="6" :show-text="false"
++            :status="lifeStatus(row)"
++          />
++        </template>
++        <template #col-_action="{ row }">
++          <el-button v-if="row.status === 0" link type="primary" size="small" @click="openUse(row)">{{ t('wms.plate.btn.use') }}</el-button>
++          <el-button v-if="row.status === 0 || row.status === 2" link type="warning" size="small" @click="openMaintStart(row)">{{ t('wms.plate.btn.maintStart') }}</el-button>
++          <el-button v-if="row.status === 1" link type="success" size="small" @click="onMaintEnd(row)">{{ t('wms.plate.btn.maintEnd') }}</el-button>
++          <el-button v-if="row.status !== 3" link type="danger" size="small" @click="onDiscard(row)">{{ t('wms.plate.btn.discard') }}</el-button>
++        </template>
++      </CpListPage>
++    </CpPageShell>
+ 
+     <!-- 新建 Dialog -->
+     <el-dialog v-model="createDialog" :title="t('wms.plate.dlg.create')" width="700">
+       <el-alert :title="t('wms.plate.msg.lifeAuto')" type="info" :closable="false" show-icon style="margin-bottom: 12px" />
+       <el-form v-if="editing" :model="editing" label-width="140px" size="small">
+         <el-row :gutter="12">
+           <el-col :span="12"><el-form-item :label="t('wms.plate.fld.type')" required>
+             <el-select v-model="editing.plateType">
+               <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="v" />
+             </el-select>
+@@ -121,50 +99,53 @@
+         <el-button type="primary" @click="onMaintStart" :loading="saving">{{ t('wms.plate.btn.maintStart') }}</el-button>
+       </template>
+     </el-dialog>
+ 
+     <!-- 寿命警報 Dialog -->
+     <el-dialog v-model="warningsDialog" :title="t('wms.plate.btn.warnings')" width="800">
+       <el-alert :title="t('wms.plate.msg.warnHint')" type="warning" :closable="false" show-icon style="margin-bottom: 12px" />
+       <el-table :data="warningsList" border stripe size="small" max-height="450">
+         <el-table-column prop="plateNo" :label="t('wms.plate.fld.no')" width="160" />
+         <el-table-column :label="t('wms.common.status')" width="110">
+-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
++          <template #default="{ row }"><CpTag :tone="statusTone(row.status)">{{ statusMap[row.status] }}</CpTag></template>
+         </el-table-column>
+         <el-table-column prop="customerCd" :label="t('wms.plate.fld.customer')" width="100" />
+         <el-table-column prop="productCd" :label="t('wms.plate.fld.product')" width="120" />
+         <el-table-column :label="t('wms.plate.fld.lifeRatio')" min-width="200">
+           <template #default="{ row }">
+-            <div style="font-size: 11px">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
++            <div class="life-txt">{{ formatQty(row.usedShots) || 0 }} / {{ formatQty(row.maxShots) || '—' }}</div>
+             <el-progress v-if="row.maxShots"
+               :percentage="Math.min(100, Math.round((row.usedShots / row.maxShots) * 100))"
+               :stroke-width="8" :status="lifeStatus(row)" />
+           </template>
+         </el-table-column>
+       </el-table>
+     </el-dialog>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, computed, onMounted } from 'vue'
++import { ref, computed } from 'vue'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { plateMoldApi } from '@/api/wms/paperIndustry2'
+ import type { PlateMoldStock, PlateMoldSearchQuery } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+-const query = reactive<PlateMoldSearchQuery>({ pageSize: 100 })
+-const rows = ref<PlateMoldStock[]>([])
+-const loading = ref(false)
++const total = ref<number>()
+ const saving = ref(false)
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+ 
+ const createDialog = ref(false)
+ const editing = ref<any>(null)
+ 
+ const useDialog = ref(false)
+ const useTarget = ref<PlateMoldStock | null>(null)
+ const useShots = ref(0)
+ 
+ const maintDialog = ref(false)
+ const maintTarget = ref<PlateMoldStock | null>(null)
+@@ -180,115 +161,158 @@ const typeMap = computed<Record<string, string>>(() => ({
+   OTHER: t('wms.plate.type.other'),
+ }))
+ 
+ const statusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.plate.status.usable'),
+   1: t('wms.plate.status.maintenance'),
+   2: t('wms.plate.status.lifeReached'),
+   3: t('wms.plate.status.discarded'),
+ }))
+ 
+-function statusTagOf(s: number): 'success' | 'warning' | 'danger' | 'info' {
+-  return ({ 0: 'success', 1: 'warning', 2: 'danger', 3: 'info' } as const)[s as 0] || 'info'
++function statusTone(s: number): Tone {
++  return ({ 0: 'ok', 1: 'warn', 2: 'danger', 3: 'muted' } as const)[s as 0] || 'info'
+ }
+ 
+ function lifeStatus(row: PlateMoldStock): 'success' | 'warning' | 'exception' | undefined {
+   if (!row.maxShots) return undefined
+   const r = row.usedShots / row.maxShots
+   if (r >= 1) return 'exception'
+   if (r >= 0.9) return 'warning'
+   return 'success'
+ }
+ 
+-async function reload() {
+-  loading.value = true
+-  try { rows.value = (await plateMoldApi.search(query)).data || [] }
+-  finally { loading.value = false }
++// —— 一覧 ——
++const filterLabels = computed(() => ({
++  search: t('wms.common.search'),
++  reset: t('wms.common.clear'),
++}))
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'plateNo', label: t('wms.plate.fld.no'), kind: 'mono', width: 160 },
++  { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
++    map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
++  { prop: 'plateType', label: t('wms.plate.fld.type'), width: 80,
++    map: (v) => ({ label: typeMap.value[v as string] || (v == null ? '' : String(v)) }) },
++  { prop: 'customerCd', label: t('wms.plate.fld.customer'), width: 100 },
++  { prop: 'productCd', label: t('wms.plate.fld.product'), width: 100 },
++  { prop: 'productName', label: t('wms.common.productName'), minWidth: 160, overflowTooltip: true },
++  { prop: 'colorCount', label: t('wms.plate.fld.colorCount'), width: 80, kind: 'num' },
++  { prop: 'sizeNote', label: t('wms.plate.fld.sizeNote'), width: 120 },
++  { prop: 'lifeRatio', label: t('wms.plate.fld.lifeRatio'), width: 180 },
++  { prop: 'lastUsedAt', label: t('wms.plate.fld.lastUsed'), width: 160 },
++  { prop: 'nextMaintenanceDate', label: t('wms.plate.fld.nextMaint'), width: 130 },
++  { prop: '_action', label: t('wms.common.action'), width: 260, fixed: 'right' },
++])
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'plateNo', label: t('wms.plate.fld.no'), type: 'text' },
++  {
++    key: 'plateType', label: t('wms.plate.fld.type'), type: 'select',
++    options: Object.entries(typeMap.value).map(([v, l]) => ({ label: l, value: v })),
++  },
++  { key: 'customerCd', label: t('wms.plate.fld.customer'), type: 'text' },
++  { key: 'productCd', label: t('wms.plate.fld.product'), type: 'text' },
++  {
++    key: 'status', label: t('wms.common.status'), type: 'select',
++    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++])
++
++const fetchList: ListFetch = async ({ filters }) => {
++  const f = filters as Record<string, unknown>
++  const q: PlateMoldSearchQuery = { pageSize: 500 }
++  if (f.plateNo) q.plateNo = String(f.plateNo)
++  if (f.plateType) q.plateType = String(f.plateType)
++  if (f.customerCd) q.customerCd = String(f.customerCd)
++  if (f.productCd) q.productCd = String(f.productCd)
++  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
++  const all = (await plateMoldApi.search(q)).data || []
++  return { rows: all, total: all.length }
+ }
+ 
++function reloadList() { listRef.value?.reload() }
++
+ function openCreate() {
+   editing.value = {
+     plateType: 'PLATE', customerCd: '', customerName: '',
+     productCd: '', productName: '', colorCount: 4, sizeNote: '',
+     madeDate: undefined, madeCost: undefined, maxShots: undefined,
+     nextMaintenanceDate: undefined, warehouseCd: '', locationCd: '',
+   }
+   createDialog.value = true
+ }
+ 
+ async function onCreate() {
+   saving.value = true
+   try {
+     const res = await plateMoldApi.create(editing.value)
+     ElMessage.success(`${t('wms.common.success')}: ${res.data.plateNo}`)
+     createDialog.value = false
+-    await reload()
++    reloadList()
+   } finally { saving.value = false }
+ }
+ 
+ function openUse(row: PlateMoldStock) {
+   useTarget.value = row
+   useShots.value = 0
+   useDialog.value = true
+ }
+ 
+ async function onUse() {
+   if (!useTarget.value || useShots.value <= 0) { ElMessage.warning(t('wms.common.required')); return }
+   saving.value = true
+   try {
+     await plateMoldApi.recordUsage(useTarget.value.plateNo, useShots.value)
+     ElMessage.success(t('wms.common.success'))
+     useDialog.value = false
+-    await reload()
++    reloadList()
+   } finally { saving.value = false }
+ }
+ 
+ function openMaintStart(row: PlateMoldStock) {
+   maintTarget.value = row
+   maintNextDate.value = row.nextMaintenanceDate
+   maintDialog.value = true
+ }
+ 
+ async function onMaintStart() {
+   if (!maintTarget.value) return
+   saving.value = true
+   try {
+     await plateMoldApi.startMaintenance(maintTarget.value.plateNo, maintNextDate.value)
+     ElMessage.success(t('wms.common.success'))
+     maintDialog.value = false
+-    await reload()
++    reloadList()
+   } finally { saving.value = false }
+ }
+ 
+ async function onMaintEnd(row: PlateMoldStock) {
+   try {
+     await ElMessageBox.confirm(`${t('wms.plate.btn.maintEnd')}: ${row.plateNo}`, t('wms.common.confirm'), { type: 'warning' })
+     await plateMoldApi.completeMaintenance(row.plateNo)
+     ElMessage.success(t('wms.common.success'))
+-    await reload()
++    reloadList()
+   } catch { /* */ }
+ }
+ 
+ async function onDiscard(row: PlateMoldStock) {
+   try {
+     await ElMessageBox.confirm(`${t('wms.plate.btn.discard')}: ${row.plateNo}`, t('wms.common.confirm'), { type: 'warning' })
+     await plateMoldApi.discard(row.plateNo)
+     ElMessage.success(t('wms.common.success'))
+-    await reload()
++    reloadList()
+   } catch { /* */ }
+ }
+ 
+ async function openWarnings() {
+-  loading.value = true
++  saving.value = true
+   try {
+     warningsList.value = (await plateMoldApi.warnings(0.9)).data || []
+     warningsDialog.value = true
+-  } finally { loading.value = false }
++  } finally { saving.value = false }
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+ .wms-plate-mold { padding: 16px; }
+-.search-card { margin-bottom: 12px; }
++.life-txt { font-size: var(--cp-fs-2xs); }
+ </style>
+diff --git a/cp6.web/src/views/wms/QcInspectionView.vue b/cp6.web/src/views/wms/QcInspectionView.vue
+index 377a497..f945eeb 100644
+--- a/cp6.web/src/views/wms/QcInspectionView.vue
++++ b/cp6.web/src/views/wms/QcInspectionView.vue
+@@ -1,82 +1,59 @@
++<!--
++  受入検品 —— list+detail 単一ファイル（mode トグル）。
++  list モード → CpPageShell（:count←total）+ CpListPage（単表スクロール paginated=false）。
++    状態=kind:'tag'+map（共有 Tone）；判定=col slot（null 時タグ非表示を保つ）；到着日時=col slot（yyyy-MM-dd HH:mm）。
++    検索 4：inspectionNo/inboundNo/status/finalJudgement。fromInbound は CpPageShell #actions。
++  detail モード（特殊エディタ領域）→ 基本情報を CpDetailPanel 化、明細編集テーブルは保持、action-bar/判定ダイアログを token 化。
++    back で mode=list → CpListPage が再マウントし自動 reload。
++-->
+ <template>
+   <div class="wms-qc">
+-    <el-card v-if="mode === 'list'" shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('wms.qc.fld.inspectionNo')"><el-input v-model="query.inspectionNo" clearable style="width: 180px" /></el-form-item>
+-        <el-form-item :label="t('wms.inbound.fld.no')"><el-input v-model="query.inboundNo" clearable style="width: 180px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.status')">
+-          <el-select v-model="query.status" clearable style="width: 140px">
+-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('wms.qc.fld.judgement')">
+-          <el-select v-model="query.finalJudgement" clearable style="width: 140px">
+-            <el-option v-for="(l, v) in judgementMap" :key="v" :label="l" :value="v" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-          <el-button @click="bridgeDialog = true">{{ t('wms.qc.btn.fromInbound') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
++    <!-- ───── 一覧 ───── -->
++    <CpPageShell v-if="mode === 'list'" :title="t('wms.qc.title')" :count="total">
++      <template #actions>
++        <el-button @click="bridgeDialog = true">{{ t('wms.qc.btn.fromInbound') }}</el-button>
++      </template>
+ 
+-    <el-card v-if="mode === 'list'" shadow="never">
+-      <el-table :data="rows" border stripe size="small" max-height="650" highlight-current-row>
+-        <el-table-column prop="inspectionNo" :label="t('wms.qc.fld.inspectionNo')" width="180" />
+-        <el-table-column :label="t('wms.common.status')" width="110">
+-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.qc.fld.judgement')" width="120">
+-          <template #default="{ row }">
+-            <el-tag v-if="row.finalJudgement" :type="judgementTagOf(row.finalJudgement)" size="small">{{ judgementMap[row.finalJudgement] }}</el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="inboundNo" :label="t('wms.inbound.fld.no')" width="180" />
+-        <el-table-column prop="supplierName" :label="t('wms.inbound.fld.supplierName')" min-width="160" show-overflow-tooltip />
+-        <el-table-column prop="arrivalDateTime" :label="t('wms.qc.fld.arrivalDateTime')" width="160">
+-          <template #default="{ row }">{{ row.arrivalDateTime?.replace('T', ' ').slice(0, 16) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="generatedReceiptNo" :label="t('wms.qc.fld.generatedReceipt')" width="180" />
+-        <el-table-column :label="t('wms.common.action')" width="100" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="openDetail(row.inspectionNo)">{{ t('wms.common.open') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
++      <CpListPage
++        :columns="columns"
++        :fetch="fetchList"
++        :search-fields="searchFields"
++        :filter-labels="filterLabels"
++        :paginated="false"
++        @total-change="total = $event"
++      >
++        <template #col-finalJudgement="{ row }">
++          <CpTag v-if="row.finalJudgement" :tone="judgementTone(row.finalJudgement)">{{ judgementMap[row.finalJudgement] }}</CpTag>
++        </template>
++        <template #col-arrivalDateTime="{ row }">{{ row.arrivalDateTime?.replace('T', ' ').slice(0, 16) }}</template>
++        <template #col-_action="{ row }">
++          <el-button link type="primary" size="small" @click="openDetail(row.inspectionNo)">{{ t('wms.common.open') }}</el-button>
++        </template>
++      </CpListPage>
++    </CpPageShell>
+ 
+-    <!-- Detail editor -->
++    <!-- ───── 詳細エディタ ───── -->
+     <template v-if="mode === 'detail' && current">
+       <el-card shadow="never">
+         <template #header>
+-          <div style="display: flex; align-items: center; gap: 12px">
+-            <span style="font-weight: 600">{{ t('wms.qc.title') }} [{{ current.inspectionNo }}]</span>
+-            <el-tag :type="statusTagOf(current.status)" size="small">{{ statusMap[current.status] }}</el-tag>
+-            <el-tag v-if="current.finalJudgement" :type="judgementTagOf(current.finalJudgement)" size="small">
+-              {{ judgementMap[current.finalJudgement] }}
+-            </el-tag>
++          <div class="card-hd">
++            <span class="hd-title">{{ t('wms.qc.title') }} [{{ current.inspectionNo }}]</span>
++            <CpTag :tone="statusTone(current.status)">{{ statusMap[current.status] }}</CpTag>
++            <CpTag v-if="current.finalJudgement" :tone="judgementTone(current.finalJudgement)">{{ judgementMap[current.finalJudgement] }}</CpTag>
+           </div>
+         </template>
+-        <el-descriptions :column="3" size="small" border>
+-          <el-descriptions-item :label="t('wms.inbound.fld.no')">{{ current.inboundNo || '—' }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.inbound.fld.supplierName')">{{ current.supplierName || '—' }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.qc.fld.arrivalDateTime')">{{ current.arrivalDateTime?.replace('T', ' ').slice(0, 16) }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.qc.fld.inspector')">{{ current.inspectorCd || '—' }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.qc.fld.generatedReceipt')">{{ current.generatedReceiptNo || '—' }}</el-descriptions-item>
+-          <el-descriptions-item :label="t('wms.qc.fld.judgementReason')">{{ current.judgementReason || '—' }}</el-descriptions-item>
+-        </el-descriptions>
++        <CpDetailPanel :cols="3" :items="detailItems" />
+       </el-card>
+ 
+       <el-card shadow="never" style="margin-top: 12px">
+-        <template #header><span style="font-weight: 600">{{ t('wms.common.detail') }}</span></template>
++        <template #header><span class="hd-title">{{ t('wms.common.detail') }}</span></template>
+         <el-table :data="current.items" border size="small" max-height="500">
+           <el-table-column type="index" :label="t('wms.common.line')" width="50" align="center" />
+           <el-table-column :label="t('wms.common.product')" width="120">
+             <template #default="{ row }">{{ row.productCd }}</template>
+           </el-table-column>
+           <el-table-column :label="t('wms.common.productName')" min-width="160">
+             <template #default="{ row }">{{ row.productName }}</template>
+           </el-table-column>
+           <el-table-column :label="t('wms.inbound.col.expectedQty')" width="100" align="right">
+             <template #default="{ row }">{{ formatQty(row.expectedQty) }}</template>
+@@ -137,46 +114,49 @@
+           <el-select v-model="judgeForm.finalJudgement" style="width: 100%">
+             <el-option v-for="(l, v) in judgementMap" :key="v" :label="l" :value="v" />
+           </el-select>
+         </el-form-item>
+         <el-form-item :label="t('wms.qc.fld.judgementReason')">
+           <el-input v-model="judgeForm.reason" type="textarea" :rows="2" />
+         </el-form-item>
+         <el-form-item v-if="judgeForm.finalJudgement === 'PASS'" :label="t('wms.qc.fld.acceptWh')">
+           <el-input v-model="judgeForm.acceptWarehouseCd" :placeholder="t('（空=元入庫予定の倉庫）')" />
+         </el-form-item>
+-        <div v-if="judgeForm.finalJudgement === 'PASS'" style="margin-left: 160px; color: #909399; font-size: 12px">
++        <div v-if="judgeForm.finalJudgement === 'PASS'" class="judge-hint">
+           {{ t('wms.qc.msg.passAutoReceipt') }}
+         </div>
+       </el-form>
+       <template #footer>
+         <el-button @click="judgeDialog = false">{{ t('wms.common.cancel') }}</el-button>
+         <el-button type="primary" @click="onJudgeConfirm" :loading="saving">{{ t('wms.common.confirm') }}</el-button>
+       </template>
+     </el-dialog>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, computed, onMounted } from 'vue'
++import { ref, reactive, computed } from 'vue'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpDetailPanel, { type DetailItem } from '@/components/templates/CpDetailPanel.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { qcInspectionApi } from '@/api/wms/qcInspection'
+ import type { QcInspection, QcInspectionSearchQuery, QcJudgeRequest } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+ const mode = ref<'list' | 'detail'>('list')
+-const query = reactive<QcInspectionSearchQuery>({ pageSize: 100 })
+-const rows = ref<QcInspection[]>([])
+-const loading = ref(false)
++const total = ref<number>()
+ 
+ const current = ref<QcInspection | null>(null)
+ const saving = ref(false)
+ 
+ const bridgeDialog = ref(false)
+ const bridgeInboundNo = ref('')
+ const bridging = ref(false)
+ 
+ const judgeDialog = ref(false)
+ const judgeForm = reactive<QcJudgeRequest>({ finalJudgement: 'PASS' })
+@@ -192,33 +172,83 @@ const judgementMap = computed<Record<string, string>>(() => ({
+   CONDITIONAL: t('wms.qc.judge.conditional'),
+   HOLD: t('wms.qc.judge.hold'),
+   FAIL: t('wms.qc.judge.fail'),
+   RETURN: t('wms.qc.judge.return'),
+ }))
+ 
+ const editable = computed(() => current.value && (current.value.status === 0 || current.value.status === 1))
+ const canJudge = computed(() => current.value && current.value.status !== 2 && current.value.status !== 9)
+ const canCancel = computed(() => current.value && current.value.status !== 2 && current.value.status !== 9)
+ 
+-function statusTagOf(s: number): 'info' | 'primary' | 'success' | 'danger' {
+-  return ({ 0: 'info', 1: 'primary', 2: 'success', 9: 'danger' } as const)[s as 0] || 'info'
++function statusTone(s: number): Tone {
++  return ({ 0: 'muted', 1: 'info', 2: 'ok', 9: 'muted' } as const)[s as 0] || 'info'
+ }
+-function judgementTagOf(j: string): 'success' | 'warning' | 'danger' | 'info' {
+-  return ({ PASS: 'success', CONDITIONAL: 'warning', HOLD: 'warning', FAIL: 'danger', RETURN: 'danger' } as const)[j as 'PASS'] || 'info'
++function judgementTone(j: string): Tone {
++  return ({ PASS: 'ok', CONDITIONAL: 'warn', HOLD: 'warn', FAIL: 'danger', RETURN: 'danger' } as const)[j as 'PASS'] || 'info'
+ }
+ 
+-async function reload() {
+-  loading.value = true
+-  try { rows.value = (await qcInspectionApi.search(query)).data || [] }
+-  finally { loading.value = false }
++// —— 一覧 ——
++const filterLabels = computed(() => ({
++  search: t('wms.common.search'),
++  reset: t('wms.common.clear'),
++}))
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'inspectionNo', label: t('wms.qc.fld.inspectionNo'), kind: 'mono', width: 180 },
++  { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
++    map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
++  { prop: 'finalJudgement', label: t('wms.qc.fld.judgement'), width: 120 },
++  { prop: 'inboundNo', label: t('wms.inbound.fld.no'), width: 180 },
++  { prop: 'supplierName', label: t('wms.inbound.fld.supplierName'), minWidth: 160, overflowTooltip: true },
++  { prop: 'arrivalDateTime', label: t('wms.qc.fld.arrivalDateTime'), width: 160 },
++  { prop: 'generatedReceiptNo', label: t('wms.qc.fld.generatedReceipt'), width: 180 },
++  { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
++])
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'inspectionNo', label: t('wms.qc.fld.inspectionNo'), type: 'text' },
++  { key: 'inboundNo', label: t('wms.inbound.fld.no'), type: 'text' },
++  {
++    key: 'status', label: t('wms.common.status'), type: 'select',
++    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++  {
++    key: 'finalJudgement', label: t('wms.qc.fld.judgement'), type: 'select',
++    options: Object.entries(judgementMap.value).map(([v, l]) => ({ label: l, value: v })),
++  },
++])
++
++const fetchList: ListFetch = async ({ filters }) => {
++  const f = filters as Record<string, unknown>
++  const q: QcInspectionSearchQuery = { pageSize: 500 }
++  if (f.inspectionNo) q.inspectionNo = String(f.inspectionNo)
++  if (f.inboundNo) q.inboundNo = String(f.inboundNo)
++  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
++  if (f.finalJudgement) q.finalJudgement = String(f.finalJudgement)
++  const all = (await qcInspectionApi.search(q)).data || []
++  return { rows: all, total: all.length }
+ }
+ 
++// —— 詳細（基本情報 → CpDetailPanel） ——
++const detailItems = computed<DetailItem[]>(() => {
++  const c = current.value
++  if (!c) return []
++  return [
++    { label: t('wms.inbound.fld.no'), value: c.inboundNo || '—' },
++    { label: t('wms.inbound.fld.supplierName'), value: c.supplierName || '—' },
++    { label: t('wms.qc.fld.arrivalDateTime'), value: c.arrivalDateTime?.replace('T', ' ').slice(0, 16) || '—' },
++    { label: t('wms.qc.fld.inspector'), value: c.inspectorCd || '—' },
++    { label: t('wms.qc.fld.generatedReceipt'), value: c.generatedReceiptNo || '—' },
++    { label: t('wms.qc.fld.judgementReason'), value: c.judgementReason || '—' },
++  ]
++})
++
+ async function openDetail(no: string) {
+   const res = await qcInspectionApi.get(no)
+   current.value = res.data
+   mode.value = 'detail'
+ }
+ 
+ async function onBridge() {
+   if (!bridgeInboundNo.value) return
+   bridging.value = true
+   try {
+@@ -264,20 +294,20 @@ async function onJudgeConfirm() {
+ 
+ async function onCancel() {
+   if (!current.value) return
+   try {
+     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await qcInspectionApi.cancel(current.value.inspectionNo!)
+     ElMessage.success(t('wms.common.success'))
+     await openDetail(current.value.inspectionNo!)
+   } catch { /* */ }
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+ .wms-qc { padding: 16px; padding-bottom: 60px; }
+-.search-card { margin-bottom: 12px; }
+-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
++.card-hd { display: flex; align-items: center; gap: 12px; }
++.hd-title { font-weight: 600; }
++.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
+ .action-bar > * { margin-left: 8px; }
++.judge-hint { margin-left: 160px; color: var(--cp-muted); font-size: var(--cp-fs-xs); }
+ </style>
+diff --git a/cp6.web/src/views/wms/RmaView.vue b/cp6.web/src/views/wms/RmaView.vue
+index 377e996..e1ed4b6 100644
+--- a/cp6.web/src/views/wms/RmaView.vue
++++ b/cp6.web/src/views/wms/RmaView.vue
+@@ -1,76 +1,64 @@
++<!--
++  返品 (RMA) —— list+detail 単一ファイル（mode トグル）。
++  list モード → CpPageShell（:count←total）+ CpListPage（単表スクロール paginated=false）。
++    状態=kind:'tag'+map（共有 Tone）；申請日=kind:'date'；create は CpPageShell #actions。
++  detail モード（特殊エディタ領域：新規/閲覧兼用フォーム + 明細編集テーブル）→ ヘッダ状態を CpTag 化、action-bar を token 化。
++    back で mode=list → CpListPage が再マウントし自動 reload。
++-->
+ <template>
+   <div class="wms-rma">
+-    <el-card v-if="mode === 'list'" shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('wms.rma.fld.no')"><el-input v-model="query.rmaNo" clearable style="width: 180px" /></el-form-item>
+-        <el-form-item :label="t('wms.outbound.fld.customerCd')"><el-input v-model="query.customerCd" clearable style="width: 130px" /></el-form-item>
+-        <el-form-item :label="t('wms.rma.fld.originalShipping')"><el-input v-model="query.originalShippingNo" clearable style="width: 180px" /></el-form-item>
+-        <el-form-item :label="t('wms.common.status')">
+-          <el-select v-model="query.status" clearable style="width: 140px">
+-            <el-option v-for="(l, v) in statusMap" :key="v" :label="l" :value="Number(v)" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" @click="reload" :loading="loading">{{ t('wms.common.search') }}</el-button>
+-          <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
++    <!-- ───── 一覧 ───── -->
++    <CpPageShell v-if="mode === 'list'" :title="t('wms.rma.title')" :count="total">
++      <template #actions>
++        <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
++      </template>
+ 
+-    <el-card v-if="mode === 'list'" shadow="never">
+-      <el-table :data="rows" border stripe size="small" max-height="650" highlight-current-row>
+-        <el-table-column prop="rmaNo" :label="t('wms.rma.fld.no')" width="180" />
+-        <el-table-column :label="t('wms.common.status')" width="120">
+-          <template #default="{ row }"><el-tag :type="statusTagOf(row.status)" size="small">{{ statusMap[row.status] }}</el-tag></template>
+-        </el-table-column>
+-        <el-table-column prop="customerCd" :label="t('wms.outbound.fld.customerCd')" width="100" />
+-        <el-table-column prop="customerName" :label="t('wms.outbound.fld.customerName')" min-width="140" show-overflow-tooltip />
+-        <el-table-column prop="originalShippingNo" :label="t('wms.rma.fld.originalShipping')" width="180" />
+-        <el-table-column prop="appliedDate" :label="t('wms.rma.fld.appliedDate')" width="120">
+-          <template #default="{ row }">{{ row.appliedDate?.slice(0, 10) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="90" />
+-        <el-table-column prop="returnReason" :label="t('wms.rma.fld.returnReason')" min-width="180" show-overflow-tooltip />
+-        <el-table-column :label="t('wms.common.action')" width="100" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="openDetail(row.rmaNo)">{{ t('wms.common.open') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
++      <CpListPage
++        :columns="columns"
++        :fetch="fetchList"
++        :search-fields="searchFields"
++        :filter-labels="filterLabels"
++        :paginated="false"
++        @total-change="total = $event"
++      >
++        <template #col-_action="{ row }">
++          <el-button link type="primary" size="small" @click="openDetail(row.rmaNo)">{{ t('wms.common.open') }}</el-button>
++        </template>
++      </CpListPage>
++    </CpPageShell>
+ 
+-    <!-- Detail / Create -->
++    <!-- ───── 詳細 / 新規 ───── -->
+     <template v-if="mode === 'detail' && current">
+       <el-card shadow="never">
+         <template #header>
+-          <div style="display: flex; align-items: center; gap: 12px">
+-            <span style="font-weight: 600">{{ isNew ? t('wms.rma.titleNew') : `${t('wms.rma.title')} [${current.rmaNo}]` }}</span>
+-            <el-tag v-if="!isNew" :type="statusTagOf(current.status)" size="small">{{ statusMap[current.status] }}</el-tag>
++          <div class="card-hd">
++            <span class="hd-title">{{ isNew ? t('wms.rma.titleNew') : `${t('wms.rma.title')} [${current.rmaNo}]` }}</span>
++            <CpTag v-if="!isNew" :tone="statusTone(current.status)">{{ statusMap[current.status] }}</CpTag>
+           </div>
+         </template>
+         <el-form :model="current" label-width="160px" size="small">
+           <el-row :gutter="16">
+             <el-col :span="8"><el-form-item :label="t('wms.outbound.fld.customerCd')" required><el-input v-model="current.customerCd" :disabled="!isNew" maxlength="20" /></el-form-item></el-col>
+             <el-col :span="8"><el-form-item :label="t('wms.outbound.fld.customerName')"><el-input v-model="current.customerName" :disabled="!isNew" maxlength="100" /></el-form-item></el-col>
+             <el-col :span="8"><el-form-item :label="t('wms.rma.fld.appliedDate')"><el-date-picker v-model="current.appliedDate" type="date" value-format="YYYY-MM-DD" :disabled="!isNew" style="width: 100%" /></el-form-item></el-col>
+             <el-col :span="8"><el-form-item :label="t('wms.common.warehouse')" required><el-input v-model="current.warehouseCd" :disabled="!isNew" maxlength="10" /></el-form-item></el-col>
+             <el-col :span="16"><el-form-item :label="t('wms.rma.fld.originalShipping')"><el-input v-model="current.originalShippingNo" :disabled="!isNew" maxlength="20" /></el-form-item></el-col>
+             <el-col :span="24"><el-form-item :label="t('wms.rma.fld.returnReason')"><el-input v-model="current.returnReason" type="textarea" :rows="2" :disabled="!isNew" /></el-form-item></el-col>
+           </el-row>
+         </el-form>
+       </el-card>
+ 
+       <el-card shadow="never" style="margin-top: 12px">
+         <template #header>
+-          <div style="display: flex; justify-content: space-between; align-items: center">
+-            <span style="font-weight: 600">{{ t('wms.common.detail') }}</span>
++          <div class="card-hd hd-between">
++            <span class="hd-title">{{ t('wms.common.detail') }}</span>
+             <el-button v-if="isNew" type="primary" size="small" @click="addLine">{{ t('wms.common.addLine') }}</el-button>
+           </div>
+         </template>
+         <el-table :data="current.details" border size="small" max-height="500">
+           <el-table-column type="index" :label="t('wms.common.line')" width="50" align="center" />
+           <el-table-column :label="t('wms.common.product')" min-width="120">
+             <template #default="{ row }">
+               <el-input v-if="isNew" v-model="row.productCd" maxlength="20" />
+               <span v-else>{{ row.productCd }}</span>
+             </template>
+@@ -135,33 +123,36 @@
+           <el-button v-if="canJudge" type="success" @click="onJudge">{{ t('wms.rma.btn.judge') }}</el-button>
+           <el-button v-if="canClose" type="success" plain @click="onClose">{{ t('wms.rma.btn.close') }}</el-button>
+           <el-button v-if="canCancel" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+         </div>
+       </el-affix>
+     </template>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, computed, onMounted } from 'vue'
++import { ref, reactive, computed } from 'vue'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { rmaApi } from '@/api/wms/rma'
+ import type { RmaHeader, RmaDetail, RmaSearchQuery, RmaDispositionInput } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+ const mode = ref<'list' | 'detail'>('list')
+-const query = reactive<RmaSearchQuery>({ pageSize: 100 })
+-const rows = ref<RmaHeader[]>([])
+-const loading = ref(false)
++const total = ref<number>()
++const query = reactive<RmaSearchQuery>({ pageSize: 500 })
+ 
+ const current = ref<RmaHeader | null>(null)
+ const saving = ref(false)
+ 
+ const statusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.rma.status.applied'),
+   1: t('wms.rma.status.authorized'),
+   2: t('wms.rma.status.received'),
+   3: t('wms.rma.status.inspecting'),
+   4: t('wms.rma.status.judged'),
+@@ -180,28 +171,62 @@ const judgementMap = computed<Record<string, string>>(() => ({
+   SUPPLIER_RETURN: t('wms.rma.judge.supplierReturn'),
+ }))
+ 
+ const isNew = computed(() => current.value !== null && !current.value.rmaNo)
+ const canReceive = computed(() => current.value && current.value.status === 1)
+ const canStartInsp = computed(() => current.value && current.value.status === 2)
+ const canJudge = computed(() => current.value && (current.value.status === 2 || current.value.status === 3))
+ const canClose = computed(() => current.value && current.value.status === 4)
+ const canCancel = computed(() => current.value && current.value.status !== 5 && current.value.status !== 9 && !isNew.value)
+ 
+-function statusTagOf(s: number): 'info' | 'primary' | 'warning' | 'success' | 'danger' {
+-  return ({ 0: 'info', 1: 'primary', 2: 'warning', 3: 'warning', 4: 'success', 5: 'success', 9: 'danger' } as const)[s as 0] || 'info'
++function statusTone(s: number): Tone {
++  return ({ 0: 'info', 1: 'info', 2: 'warn', 3: 'warn', 4: 'ok', 5: 'ok', 9: 'muted' } as const)[s as 0] || 'info'
+ }
+ 
+-async function reload() {
+-  loading.value = true
+-  try { rows.value = (await rmaApi.search(query)).data || [] }
+-  finally { loading.value = false }
++// —— 一覧 ——
++const filterLabels = computed(() => ({
++  search: t('wms.common.search'),
++  reset: t('wms.common.clear'),
++}))
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'rmaNo', label: t('wms.rma.fld.no'), kind: 'mono', width: 180 },
++  { prop: 'status', label: t('wms.common.status'), width: 120, kind: 'tag',
++    map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
++  { prop: 'customerCd', label: t('wms.outbound.fld.customerCd'), width: 100 },
++  { prop: 'customerName', label: t('wms.outbound.fld.customerName'), minWidth: 140, overflowTooltip: true },
++  { prop: 'originalShippingNo', label: t('wms.rma.fld.originalShipping'), width: 180 },
++  { prop: 'appliedDate', label: t('wms.rma.fld.appliedDate'), width: 120, kind: 'date' },
++  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 90 },
++  { prop: 'returnReason', label: t('wms.rma.fld.returnReason'), minWidth: 180, overflowTooltip: true },
++  { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
++])
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'rmaNo', label: t('wms.rma.fld.no'), type: 'text' },
++  { key: 'customerCd', label: t('wms.outbound.fld.customerCd'), type: 'text' },
++  { key: 'originalShippingNo', label: t('wms.rma.fld.originalShipping'), type: 'text' },
++  {
++    key: 'status', label: t('wms.common.status'), type: 'select',
++    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++])
++
++const fetchList: ListFetch = async ({ filters }) => {
++  const f = filters as Record<string, unknown>
++  const q: RmaSearchQuery = { ...query }
++  q.rmaNo = f.rmaNo ? String(f.rmaNo) : undefined
++  q.customerCd = f.customerCd ? String(f.customerCd) : undefined
++  q.originalShippingNo = f.originalShippingNo ? String(f.originalShippingNo) : undefined
++  q.status = f.status !== undefined && f.status !== '' ? Number(f.status) : undefined
++  const all = (await rmaApi.search(q)).data || []
++  return { rows: all, total: all.length }
+ }
+ 
+ function openCreate() {
+   current.value = {
+     customerCd: '',
+     appliedDate: new Date().toISOString().slice(0, 10),
+     warehouseCd: '',
+     status: 0,
+     details: [],
+   }
+@@ -281,20 +306,20 @@ async function onClose() {
+ 
+ async function onCancel() {
+   if (!current.value) return
+   try {
+     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await rmaApi.cancel(current.value.rmaNo!)
+     ElMessage.success(t('wms.common.success'))
+     await openDetail(current.value.rmaNo!)
+   } catch { /* */ }
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+ .wms-rma { padding: 16px; padding-bottom: 60px; }
+-.search-card { margin-bottom: 12px; }
+-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
++.card-hd { display: flex; align-items: center; gap: 12px; }
++.hd-between { justify-content: space-between; }
++.hd-title { font-weight: 600; }
++.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
+ .action-bar > * { margin-left: 8px; }
+ </style>

@@ -1,0 +1,385 @@
+# Review package: 05f46c7..d27c066
+
+## Commits
+d27c066 feat(space): 停用改同步 RPC 决策模型（ch04 §6 v1.1）——消灭孤儿库位与乐观回滚
+
+## Files changed
+ .../Services/Integration/IWmsBinDeactivator.cs     | 31 ++++++++
+ CP6.Core/Services/Space/LocationPublishService.cs  | 35 ++++++---
+ CP6.Core/Services/Wms/WmsBinDeactivator.cs         | 61 +++++++++++++++
+ CP6.Tests/LocationPublishServiceTests.cs           | 88 +++++++++++++++++++++-
+ CP6.WebApi/Program.cs                              |  1 +
+ 5 files changed, 202 insertions(+), 14 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Integration/IWmsBinDeactivator.cs b/CP6.Core/Services/Integration/IWmsBinDeactivator.cs
+new file mode 100644
+index 0000000..9c47ed4
+--- /dev/null
++++ b/CP6.Core/Services/Integration/IWmsBinDeactivator.cs
+@@ -0,0 +1,31 @@
++namespace CP6.Core.Services.Integration;
++
++/// <summary>
++/// 停用同步 RPC 契约（ch04 §6 v1.1，Space 侧定义、WMS 实现，与 IWmsStockQuery 同构的单向抽象）。
++/// Space 停用前同步调用，WMS 按实时库存权威判定（TOCTOU 防护）；
++/// Space 据同步返回决定本地 Status——成功才 1→2，不再乐观翻转+回滚（§6.3 无孤儿库位）。
++/// </summary>
++public interface IWmsBinDeactivator
++{
++    Task<WmsDeactivateResult> DeactivateAsync(WmsDeactivateRequest req, CancellationToken ct = default);
++}
++
++/// <summary>停用同步请求（对应契约 POST /api/wms/bins/deactivate 的进程内形态）。</summary>
++public sealed class WmsDeactivateRequest
++{
++    public Guid LocationId { get; set; }
++    public string LocationCode { get; set; } = "";
++    /// <summary>仓库维度（§3.4 映射；bin 已落库时以 bin 记录为准）</summary>
++    public string? WarehouseCd { get; set; }
++    /// <summary>停用后的新版本号（= Space 侧 Version+1），成功时写入 T_WmsBin.Version</summary>
++    public long Version { get; set; }
++    public string? User { get; set; }
++}
++
++/// <summary>停用同步返回。</summary>
++public sealed class WmsDeactivateResult
++{
++    public bool Success { get; set; }
++    /// <summary>拒绝原因（如 W-SPACE-404 库存非0）</summary>
++    public string? Reason { get; set; }
++}
+diff --git a/CP6.Core/Services/Space/LocationPublishService.cs b/CP6.Core/Services/Space/LocationPublishService.cs
+index a86c6b7..41f4525 100644
+--- a/CP6.Core/Services/Space/LocationPublishService.cs
++++ b/CP6.Core/Services/Space/LocationPublishService.cs
+@@ -15,33 +15,36 @@ namespace CP6.Core.Services.Space;
+ ///   · 查询不写 .Where(TenantId)——全局过滤自动按当前租户隔离。
+ ///   · 创建实体不写 TenantId——SaveChanges 盖章自动补当前租户。
+ /// </summary>
+ public class LocationPublishService : ILocationPublishService
+ {
+     private readonly CP6Context _db;
+     private readonly ITenantContext _t;
+     private readonly ICodeEngineService _code;
+     private readonly ISpaceBridgeHook _hook;
+     private readonly IWmsStockQuery _stock;
++    private readonly IWmsBinDeactivator _deactivator;
+ 
+     public LocationPublishService(
+         CP6Context db,
+         ITenantContext t,
+         ICodeEngineService code,
+         ISpaceBridgeHook hook,
+-        IWmsStockQuery stock)
++        IWmsStockQuery stock,
++        IWmsBinDeactivator deactivator)
+     {
+         _db = db;
+         _t = t;
+         _code = code;
+         _hook = hook;
+         _stock = stock;
++        _deactivator = deactivator;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<int> PublishFloorAsync(Guid floorId, Guid? zoneId, string? user)
+     {
+         // 1. 闸门（ch03 §9.2）
+         var pre = await _code.PrecheckAsync(floorId);
+         if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
+             throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
+ 
+@@ -79,49 +82,57 @@ public class LocationPublishService : ILocationPublishService
+     }
+ 
+     /// <inheritdoc/>
+     public async Task DeactivateAsync(Guid locationId, string? user)
+     {
+         var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId)
+                 ?? throw new InvalidOperationException("E-SPACE-004: 库位不存在");
+         if (l.Status != 1)
+             throw new InvalidOperationException("E-SPACE-004: 库位未处于已发布状态");
+ 
+-        // D6 前置校验：查 WMS 库存
++        // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①）
+         var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "");
+         if (qty > 0)
+             throw new InvalidOperationException("E-SPACE-401: 库位仍有库存，无法停用");
+ 
++        // ② 同步 RPC：WMS 按实时库存权威判定（TOCTOU 防护；ch04 §6.1② v1.1）
++        var newVersion = l.Version + 1;
++        var resp = await _deactivator.DeactivateAsync(new WmsDeactivateRequest
++        {
++            LocationId = l.Id,
++            LocationCode = l.LocationCode ?? "",
++            WarehouseCd = await ResolveWarehouseCdAsync(l),
++            Version = newVersion,
++            User = user
++        });
++
++        // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
++        if (!resp.Success)
++            throw new InvalidOperationException("W-SPACE-404: WMS 侧仍有库存，停用未生效");
++
+         l.Status = 2;
+-        l.Version += 1;
++        l.Version = newVersion;
+         l.Modifier = user;
+         l.ModifyDate = DateTime.Now;
+ 
+         var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
+         var batch = new LocationPublishBatch
+         {
+             BatchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}",
+             TenantId = _t.CurrentTenantId,
+             PublishedBy = user
+         };
+         batch.Items.Add(await BuildItemAsync(l, "DEACTIVATE"));
+         await _db.SaveChangesAsync();
+ 
+-        var r = await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+-        if (!r.Success)
+-        {
+-            // WMS 拒绝 → 回滚状态
+-            l.Status = 1;
+-            l.Version += 1;
+-            await _db.SaveChangesAsync();
+-            throw new InvalidOperationException("W-SPACE-404: WMS 拒绝停用，已回滚");
+-        }
++        // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
++        await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<(int imported, List<string> skipped)> AdoptAsync(
+         IEnumerable<(string code, Dictionary<string, object?>? attrs)> items, string? user)
+     {
+         var existing = await _db.Space_Locations
+             .Where(l => l.LocationCode != null)
+             .Select(l => l.LocationCode!)
+             .ToListAsync();
+diff --git a/CP6.Core/Services/Wms/WmsBinDeactivator.cs b/CP6.Core/Services/Wms/WmsBinDeactivator.cs
+new file mode 100644
+index 0000000..55cc4d5
+--- /dev/null
++++ b/CP6.Core/Services/Wms/WmsBinDeactivator.cs
+@@ -0,0 +1,61 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Core.Services.Wms;
++
++/// <summary>
++/// 停用同步 RPC 真实现（ch04 §6.1② v1.1）：再查一次实时库存做 TOCTOU 权威校验，
++/// 无库存 → T_WmsBin.IsActive=false + Version 落定；有库存 → 拒绝 W-SPACE-404。
++/// bin 尚未消费落库（如 UPSERT 事件还在重试）→ 无库存即放行，异步兜底事件会幂等收敛（§6.1④）。
++/// </summary>
++public class WmsBinDeactivator : IWmsBinDeactivator
++{
++    private readonly CP6Context _db;
++
++    public WmsBinDeactivator(CP6Context db) => _db = db;
++
++    /// <inheritdoc/>
++    public async Task<WmsDeactivateResult> DeactivateAsync(WmsDeactivateRequest req, CancellationToken ct = default)
++    {
++        var bin = await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == req.LocationId, ct);
++
++        // 权威库存判定：优先按 bin 落库的 (WarehouseCd, LocationCode) 锚；bin 未落库退回请求携带的键
++        var warehouseCd = bin?.WarehouseCd ?? req.WarehouseCd;
++        var code = bin?.LocationCode ?? req.LocationCode;
++        var stocks = _db.Stocks.Where(s => s.LocationCd == code);
++        if (!string.IsNullOrEmpty(warehouseCd))
++            stocks = stocks.Where(s => s.WarehouseCd == warehouseCd);
++        var qty = await stocks.SumAsync(s => s.PhysicalQty, ct);
++        if (qty > 0)
++            return new WmsDeactivateResult { Success = false, Reason = "W-SPACE-404 库存非0" };
++
++        if (bin != null)
++        {
++            bin.IsActive = false;
++            bin.Version = req.Version;
++            bin.LastPublishedAt = DateTime.Now;
++            bin.LastPublishedBy = req.User;
++            await _db.SaveChangesAsync(ct);
++        }
++        else if (!string.IsNullOrEmpty(req.WarehouseCd))
++        {
++            // H6 乱序防护墓碑：同步 RPC 是权威停用时点。bin 未曾消费（UPSERT 事件可能仍在重试）
++            // 也要占住 (Id, Version)，防止迟到的旧版 UPSERT 事后复活该库位。
++            _db.WmsBins.Add(new WmsBin
++            {
++                Id = req.LocationId,
++                LocationCode = req.LocationCode,
++                WarehouseCd = req.WarehouseCd,
++                IsActive = false,
++                Version = req.Version,
++                LastPublishedAt = DateTime.Now,
++                LastPublishedBy = req.User
++            });
++            await _db.SaveChangesAsync(ct);
++        }
++        // bin 不存在且无仓维度（如采纳态无楼层归属）→ 无库存即放行，异步兜底事件幂等收敛
++        return new WmsDeactivateResult { Success = true };
++    }
++}
+diff --git a/CP6.Tests/LocationPublishServiceTests.cs b/CP6.Tests/LocationPublishServiceTests.cs
+index 81d9874..0b77965 100644
+--- a/CP6.Tests/LocationPublishServiceTests.cs
++++ b/CP6.Tests/LocationPublishServiceTests.cs
+@@ -14,27 +14,29 @@ namespace CP6.Tests;
+ /// LocationPublishService 测试（ch04 D-3/D-4/D-5）。[InMemory 仅测逻辑]
+ /// </summary>
+ public class LocationPublishServiceTests
+ {
+     private static CP6Context Db() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+ 
+     private static LocationPublishService MakePublishSvc(
+         CP6Context db,
+         IWmsStockQuery? stock = null,
+-        ISpaceBridgeHook? hook = null)
++        ISpaceBridgeHook? hook = null,
++        IWmsBinDeactivator? deact = null)
+     {
+         var t = new TenantContext();
+         var code = new CodeEngineService(db);
+         hook ??= new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
+         stock ??= new StubWmsStockQuery();
+-        return new LocationPublishService(db, t, code, hook, stock);
++        deact ??= new CP6.Core.Services.Wms.WmsBinDeactivator(db);
++        return new LocationPublishService(db, t, code, hook, stock, deact);
+     }
+ 
+     // ── D-3: 整层发布 ──────────────────────────────────────────────────────
+ 
+     private static string ValidSegmentsJson() => JsonSerializer.Serialize(new[]
+     {
+         new CodeSegmentDef { Key = "zone", Source = "zone-code", Sep = "-" },
+         new CodeSegmentDef { Key = "col",  Source = "col",       Sep = "" }
+     });
+ 
+@@ -303,11 +305,93 @@ public class LocationPublishServiceTests
+         private readonly decimal _qty;
+         public FixedStockQuery(int qty) => _qty = qty;
+         public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default) => Task.FromResult(_qty);
+         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>> GetStockByLocationsAsync(
+             IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
+             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>>(Array.Empty<CP6.Core.Services.Integration.WmsStockDto>());
+         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>> FindLocationsAsync(
+             CP6.Core.Services.Integration.StockLocateQuery query, CancellationToken ct = default)
+             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>>(Array.Empty<CP6.Core.Services.Integration.WmsLocationHit>());
+     }
++
++    private sealed class RejectingDeactivator : IWmsBinDeactivator
++    {
++        public Task<WmsDeactivateResult> DeactivateAsync(WmsDeactivateRequest req, CancellationToken ct = default)
++            => Task.FromResult(new WmsDeactivateResult { Success = false, Reason = "W-SPACE-404 库存非0" });
++    }
++
++    [Fact]
++    public async Task Deactivate_WmsRejects_StatusStays1_NoEvent()
++    {
++        using var db = Db();
++        var locId = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
++            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1, Version = 1
++        });
++        await db.SaveChangesAsync();
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++            () => MakePublishSvc(db, deact: new RejectingDeactivator()).DeactivateAsync(locId, "u"));
++
++        Assert.StartsWith("W-SPACE-404", ex.Message);
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(1, loc.Status);            // §6.3：不前进、无翻转回滚
++        Assert.Equal(1, loc.Version);           // 版本不动
++        Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 决策失败不发兜底事件
++    }
++
++    [Fact]
++    public async Task Deactivate_Success_WmsBinInactive_VersionSynced()
++    {
++        using var db = Db();
++        var locId = Guid.NewGuid();
++        // 预置已消费的 bin（模拟此前 UPSERT 已落库）
++        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
++        {
++            Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", Version = 1, IsActive = true
++        });
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
++            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1, Version = 1
++        });
++        await db.SaveChangesAsync();
++
++        await MakePublishSvc(db).DeactivateAsync(locId, "u");
++
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(2, loc.Status);
++        Assert.Equal(2, loc.Version);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.False(bin.IsActive);
++        Assert.Equal(2, bin.Version);           // 同步 RPC 落定的新版本
++        Assert.Equal(1, await db.IntegrationEvents.CountAsync());   // ④ 兜底事件已补发
++    }
++
++    [Fact]
++    public async Task Deactivate_NoBinYet_SyncRpc_WritesTombstone()
++    {
++        // H6：UPSERT 事件尚未消费（bin 不存在）时停用 → 同步 RPC 落墓碑占住 (Id, Version)
++        using var db = Db();
++        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);   // WarehouseCd 默认=SiteCode "WH1"
++        var locId = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = floorId, RackId = rackId,
++            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1, Version = 1
++        });
++        await db.SaveChangesAsync();
++
++        await MakePublishSvc(db).DeactivateAsync(locId, "u");
++
++        var tomb = await db.WmsBins.SingleAsync();
++        Assert.False(tomb.IsActive);
++        Assert.Equal(2, tomb.Version);
++        Assert.Equal("WH1", tomb.WarehouseCd);
++        Assert.Equal(2, (await db.Space_Locations.SingleAsync()).Status);
++    }
+ }
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index e4d9e9d..479f416 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -392,20 +392,21 @@ builder.Services.AddScoped<CP6.Core.Services.Space.ISceneService, CP6.Core.Servi
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISceneIoService, CP6.Core.Services.Space.SceneIoService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.IConnectorService, CP6.Core.Services.Space.ConnectorService>();
+ // 4.x.3 Space ch06 viewer 定位查询（locate/search/detail）
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceLocateService, CP6.Core.Services.Space.SpaceLocateService>();
+ // 4.x.1 Space ch04 — 库位发布 + WMS 桩（SpaceBridgeHook 需同时注册具体类和接口，Dispatcher 注入接口）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.SpaceBridgeHook>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceBridgeHook, CP6.Core.Services.Integration.SpaceBridgeHook>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ILocationPublishService, CP6.Core.Services.Space.LocationPublishService>();
+ // ch04 v1.1 §5.3：真消费端（T_WmsBin 幂等 upsert，方案A 2026-07-05）。回滚开关：换回 NoOpWmsLocationConsumer 即断开。
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Wms.WmsBinConsumer>();
++builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsBinDeactivator, CP6.Core.Services.Wms.WmsBinDeactivator>(); // ch04 §6 v1.1 停用同步 RPC 真实现（TOCTOU 权威库存判定 + T_WmsBin 停用/墓碑）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsStockQuery, CP6.Core.Services.Wms.WmsStockQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsPickTaskQuery, CP6.Core.Services.Wms.WmsPickTaskQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsWorkloadQuery, CP6.Core.Services.Wms.WmsWorkloadQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsDeviceQuery, CP6.Core.Services.Wms.WmsDeviceQuery>();
+ 
+ // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
+ builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
+ builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
+ builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.Wms.IotService>();
+ 

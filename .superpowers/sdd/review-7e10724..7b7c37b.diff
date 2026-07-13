@@ -1,0 +1,1655 @@
+# Review package: 7e10724..HEAD
+
+## Commits
+7b7c37b refactor(ui): ERP 迁移批次3——QuotationList/Backorder/OtdReport/OrderTrace/OrderCancelDialog
+
+## Files changed
+ cp6.web/src/views/erp/BackorderListView.vue | 370 ++++++----------------
+ cp6.web/src/views/erp/OrderCancelDialog.vue |  21 +-
+ cp6.web/src/views/erp/OrderTraceView.vue    |  55 ++--
+ cp6.web/src/views/erp/OtdReportView.vue     |  27 +-
+ cp6.web/src/views/erp/QuotationListView.vue | 463 +++++++---------------------
+ 5 files changed, 270 insertions(+), 666 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/erp/BackorderListView.vue b/cp6.web/src/views/erp/BackorderListView.vue
+index 5c7da74..80c5535 100644
+--- a/cp6.web/src/views/erp/BackorderListView.vue
++++ b/cp6.web/src/views/erp/BackorderListView.vue
+@@ -1,136 +1,58 @@
++<!--
++  受注残一覧 —— ERP 迁移批次3（CpPageShell + CpListPage）。
++  照会一覧（backorderApi.queue は扁平配列・ページングなし）→ paginated=false（単表スクロール、原 max-height 相当）。
++  webOrderNo/remainingQty/操作＝col slot、数量列＝kind:'num'+map formatQty、得意先＝map(name||cd)。
++  close/split アクションは確認ダイアログを CpListPage 外の兄弟要素で保持（原様、reason 必須検証保全）。
++  件数は toolbar CpTag（原 table-toolbar の erp.backorder.total 文言を保持）、更新ボタンも toolbar。
++-->
+ <template>
+-  <div class="backorder-list">
+-    <div class="page-header">
+-      <h2>{{ t('erp.backorder.title') }}</h2>
+-    </div>
+-
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small" @submit.prevent>
+-        <el-form-item :label="t('erp.backorder.search.customer')">
+-          <el-input v-model="query.customerCd" clearable class="filter-input" @keyup.enter="search" />
+-        </el-form-item>
+-        <el-form-item :label="t('erp.backorder.search.dateFrom')">
+-          <el-date-picker
+-            v-model="query.dateFrom"
+-            type="date"
+-            value-format="YYYY-MM-DD"
+-            clearable
+-            class="filter-date"
+-          />
+-        </el-form-item>
+-        <el-form-item :label="t('erp.backorder.search.dateTo')">
+-          <el-date-picker
+-            v-model="query.dateTo"
+-            type="date"
+-            value-format="YYYY-MM-DD"
+-            clearable
+-            class="filter-date"
+-          />
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" :icon="Search" :loading="loading" @click="search">
+-            {{ t('erp.backorder.btn.search') }}
+-          </el-button>
+-          <el-button :icon="RefreshLeft" :disabled="loading" @click="resetQuery">
+-            {{ t('erp.backorder.btn.reset') }}
+-          </el-button>
+-          <el-button :icon="Refresh" circle :loading="loading" @click="reload" />
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
++  <CpPageShell :title="t('erp.backorder.title')">
++    <CpListPage
++      ref="listRef"
++      :paginated="false"
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      :empty-text="t('erp.backorder.empty')"
++      @total-change="total = $event"
++    >
++      <template #toolbar>
++        <CpTag tone="info">{{ t('erp.backorder.total', { n: total ?? 0 }) }}</CpTag>
++        <div class="tb-spacer" />
++        <el-button :icon="Refresh" circle :loading="loading" @click="listRef?.reload()" />
++      </template>
+ 
+-    <el-card shadow="never" class="table-card">
+-      <div class="table-toolbar">
+-        <el-tag size="small">{{ t('erp.backorder.total', { n: rows.length }) }}</el-tag>
+-      </div>
++      <template #col-webOrderNo="{ row }">
++        <el-button link type="primary" size="small" @click="goOrder(row.webOrderNo)">
++          {{ row.webOrderNo }}
++        </el-button>
++      </template>
+ 
+-      <el-table v-if="!isMobile" :data="rows" border stripe size="small" max-height="620" v-loading="loading">
+-        <el-table-column prop="webOrderNo" :label="t('erp.backorder.col.webOrderNo')" width="155">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="goOrder(row.webOrderNo)">
+-              {{ row.webOrderNo }}
+-            </el-button>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('erp.backorder.col.customer')" min-width="180" show-overflow-tooltip>
+-          <template #default="{ row }">
+-            {{ row.customerName || row.customerCd }}
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="detailNo" :label="t('erp.backorder.col.detailNo')" width="88" align="right" />
+-        <el-table-column prop="productCd" :label="t('erp.backorder.col.product')" width="140" show-overflow-tooltip />
+-        <el-table-column prop="orderedQty" :label="t('erp.backorder.col.orderedQty')" width="120" align="right">
+-          <template #default="{ row }">{{ formatQty(row.orderedQty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="shippedQty" :label="t('erp.backorder.col.shippedQty')" width="120" align="right">
+-          <template #default="{ row }">{{ formatQty(row.shippedQty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="backorderQty" :label="t('erp.backorder.col.backorderQty')" width="120" align="right">
+-          <template #default="{ row }">{{ formatQty(row.backorderQty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="remainingQty" :label="t('erp.backorder.col.remainingQty')" width="130" align="right">
+-          <template #default="{ row }">
+-            <strong class="remaining">{{ formatQty(row.remainingQty) }}</strong>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="lastShipDate" :label="t('erp.backorder.col.lastShipDate')" width="128">
+-          <template #default="{ row }">{{ formatDate(row.lastShipDate) || '-' }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('erp.backorder.col.actions')" width="190" fixed="right">
+-          <template #default="{ row }">
+-            <div class="row-actions">
+-              <el-button type="warning" link size="small" :icon="Check" @click="openAction(row, 'close')">
+-                {{ t('erp.backorder.btn.close') }}
+-              </el-button>
+-              <el-button type="primary" link size="small" :icon="CopyDocument" @click="openAction(row, 'split')">
+-                {{ t('erp.backorder.btn.split') }}
+-              </el-button>
+-            </div>
+-          </template>
+-        </el-table-column>
+-      </el-table>
++      <template #col-remainingQty="{ row }">
++        <strong class="remaining">{{ formatQty(row.remainingQty) }}</strong>
++      </template>
+ 
+-      <div v-else class="bo-card-list" v-loading="loading">
+-        <el-empty v-if="!rows.length && !loading" :description="t('erp.backorder.empty')" :image-size="80" />
+-        <div v-for="row in rows" :key="`${row.webOrderNo}-${row.detailNo}`" class="bo-card">
+-          <div class="card-head">
+-            <div>
+-              <el-button link type="primary" size="small" class="card-no" @click="goOrder(row.webOrderNo)">
+-                {{ row.webOrderNo }}
+-              </el-button>
+-              <div class="card-sub">{{ row.customerName || row.customerCd }}</div>
+-            </div>
+-            <el-tag type="warning" size="small">{{ formatQty(row.remainingQty) }}</el-tag>
+-          </div>
+-          <div class="card-grid">
+-            <span>{{ t('erp.backorder.col.detailNo') }}</span>
+-            <strong>{{ row.detailNo }}</strong>
+-            <span>{{ t('erp.backorder.col.product') }}</span>
+-            <strong>{{ row.productCd }}</strong>
+-            <span>{{ t('erp.backorder.col.shippedQty') }}</span>
+-            <strong>{{ formatQty(row.shippedQty) }} / {{ formatQty(row.orderedQty) }}</strong>
+-            <span>{{ t('erp.backorder.col.lastShipDate') }}</span>
+-            <strong>{{ formatDate(row.lastShipDate) || '-' }}</strong>
+-          </div>
+-          <div class="card-actions">
+-            <el-button type="warning" size="small" :icon="Check" @click="openAction(row, 'close')">
+-              {{ t('erp.backorder.btn.close') }}
+-            </el-button>
+-            <el-button type="primary" size="small" :icon="CopyDocument" @click="openAction(row, 'split')">
+-              {{ t('erp.backorder.btn.split') }}
+-            </el-button>
+-          </div>
++      <template #col-_action="{ row }">
++        <div class="row-actions">
++          <el-button type="warning" link size="small" :icon="Check" @click="openAction(row, 'close')">
++            {{ t('erp.backorder.btn.close') }}
++          </el-button>
++          <el-button type="primary" link size="small" :icon="CopyDocument" @click="openAction(row, 'split')">
++            {{ t('erp.backorder.btn.split') }}
++          </el-button>
+         </div>
+-      </div>
+-    </el-card>
++      </template>
++    </CpListPage>
+ 
++    <!-- close / split 確認ダイアログ（CpListPage 外の兄弟要素） -->
+     <el-dialog
+       v-model="dialog.visible"
+       :title="dialog.action === 'close' ? t('erp.backorder.dialog.closeTitle') : t('erp.backorder.dialog.splitTitle')"
+       width="460px"
+       class="backorder-dialog"
+     >
+       <div v-if="dialog.row" class="dialog-target">
+         <span>{{ dialog.row.webOrderNo }} / {{ dialog.row.detailNo }}</span>
+         <strong>{{ formatQty(dialog.row.remainingQty) }}</strong>
+       </div>
+@@ -146,81 +68,104 @@
+           />
+         </el-form-item>
+       </el-form>
+       <template #footer>
+         <el-button @click="dialog.visible = false">{{ t('erp.backorder.btn.cancel') }}</el-button>
+         <el-button type="primary" :loading="actionLoading" @click="submitAction">
+           {{ t('erp.backorder.btn.confirm') }}
+         </el-button>
+       </template>
+     </el-dialog>
+-  </div>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { onMounted, reactive, ref } from 'vue'
++import { computed, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRouter } from 'vue-router'
+ import { ElMessage } from 'element-plus'
+-import { Check, CopyDocument, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
++import { Check, CopyDocument, Refresh } from '@element-plus/icons-vue'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { backorderApi } from '@/api/erp/backorder'
+-import { useBreakpoint } from '@/composables/useBreakpoint'
+ import { formatQty } from '@/utils/format'
+-import type { BackorderQueueItem, BackorderQueueQuery } from '@/types/erp/backorder'
++import type { BackorderQueueItem } from '@/types/erp/backorder'
+ 
+ type BackorderAction = 'close' | 'split'
+ 
+ const { t } = useI18n()
+ const router = useRouter()
+-const { isMobile } = useBreakpoint()
+ 
+-const query = reactive<BackorderQueueQuery>({})
+-const rows = ref<BackorderQueueItem[]>([])
++const listRef = ref<InstanceType<typeof CpListPage>>()
++const total = ref<number>()
+ const loading = ref(false)
+ const actionLoading = ref(false)
++
+ const dialog = reactive<{
+   visible: boolean
+   action: BackorderAction
+   row: BackorderQueueItem | null
+   reason: string
+ }>({
+   visible: false,
+   action: 'close',
+   row: null,
+   reason: '',
+ })
+ 
+-async function reload() {
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'webOrderNo', label: t('erp.backorder.col.webOrderNo'), width: 155 },
++  { prop: 'customerName', label: t('erp.backorder.col.customer'), minWidth: 180, overflowTooltip: true,
++    map: (_v, row) => ({ label: (row as BackorderQueueItem).customerName || (row as BackorderQueueItem).customerCd || '' }) },
++  { prop: 'detailNo', label: t('erp.backorder.col.detailNo'), width: 88, align: 'right' },
++  { prop: 'productCd', label: t('erp.backorder.col.product'), width: 140, overflowTooltip: true },
++  { prop: 'orderedQty', label: t('erp.backorder.col.orderedQty'), width: 120, kind: 'num',
++    map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'shippedQty', label: t('erp.backorder.col.shippedQty'), width: 120, kind: 'num',
++    map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'backorderQty', label: t('erp.backorder.col.backorderQty'), width: 120, kind: 'num',
++    map: (v) => ({ label: formatQty(v as number) }) },
++  { prop: 'remainingQty', label: t('erp.backorder.col.remainingQty'), width: 130, align: 'right' },
++  { prop: 'lastShipDate', label: t('erp.backorder.col.lastShipDate'), width: 128,
++    map: (v) => ({ label: formatDate(v as string) || '-' }) },
++  { prop: '_action', label: t('erp.backorder.col.actions'), width: 190, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('erp.backorder.btn.search'),
++  reset: t('erp.backorder.btn.reset'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'customerCd', label: t('erp.backorder.search.customer'), type: 'text' },
++  { key: 'dateFrom', label: t('erp.backorder.search.dateFrom'), type: 'date', valueFormat: 'YYYY-MM-DD' },
++  { key: 'dateTo', label: t('erp.backorder.search.dateTo'), type: 'date', valueFormat: 'YYYY-MM-DD' },
++])
++
++const fetchList: ListFetch = async ({ filters }) => {
++  const f = filters as Record<string, unknown>
+   loading.value = true
+   try {
+     const res = await backorderApi.queue({
+-      customerCd: query.customerCd,
+-      dateFrom: query.dateFrom,
+-      dateTo: query.dateTo,
++      customerCd: (f.customerCd as string) || undefined,
++      dateFrom: (f.dateFrom as string) || undefined,
++      dateTo: (f.dateTo as string) || undefined,
+     })
+-    rows.value = res.data || []
++    const all = res.data || []
++    return { rows: all, total: all.length }
+   } finally {
+     loading.value = false
+   }
+ }
+ 
+-function search() {
+-  reload()
+-}
+-
+-function resetQuery() {
+-  query.customerCd = undefined
+-  query.dateFrom = undefined
+-  query.dateTo = undefined
+-  reload()
+-}
+-
+ function openAction(row: BackorderQueueItem, action: BackorderAction) {
+   dialog.row = row
+   dialog.action = action
+   dialog.reason = ''
+   dialog.visible = true
+ }
+ 
+ async function submitAction() {
+   const row = dialog.row
+   const reason = dialog.reason.trim()
+@@ -236,183 +181,60 @@ async function submitAction() {
+     const res = dialog.action === 'close'
+       ? await backorderApi.closeRemaining(row.webOrderNo, row.detailNo, request)
+       : await backorderApi.splitToNewOrder(row.webOrderNo, row.detailNo, request)
+ 
+     dialog.visible = false
+     if (dialog.action === 'split' && res.data?.newWebOrderNo) {
+       ElMessage.success(t('erp.backorder.msg.split', { no: res.data.newWebOrderNo }))
+     } else {
+       ElMessage.success(t('erp.backorder.msg.closed'))
+     }
+-    await reload()
++    await listRef.value?.reload()
+   } finally {
+     actionLoading.value = false
+   }
+ }
+ 
+ function goOrder(webOrderNo: string) {
+   router.push({ path: '/order', query: { webOrderNo } })
+ }
+ 
+ function formatDate(value?: string): string {
+   return value ? value.slice(0, 10) : ''
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+-.backorder-list {
+-  padding: 16px;
+-}
+-
+-.page-header {
+-  margin-bottom: 12px;
+-}
+-
+-.page-header h2 {
+-  margin: 0;
+-  color: #303133;
+-  font-size: 20px;
+-  font-weight: 650;
+-  line-height: 1.3;
+-}
+-
+-.search-card {
+-  margin-bottom: 12px;
+-}
+-
+-.filter-input {
+-  width: 160px;
+-}
+-
+-.filter-date {
+-  width: 150px;
+-}
+-
+-.table-toolbar {
+-  margin-bottom: 8px;
+-}
++.tb-spacer { flex: 1; }
+ 
+ .remaining {
+-  color: #b88230;
++  color: var(--cp-warn);
+   font-weight: 650;
+ }
+ 
+ .row-actions {
+   display: flex;
+   align-items: center;
+   gap: 2px;
+ }
+ 
+-.bo-card-list {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 10px;
+-}
+-
+-.bo-card {
+-  background: #fff;
+-  border: 1px solid #ebeef5;
+-  border-radius: 8px;
+-  padding: 12px;
+-}
+-
+-.card-head {
+-  display: flex;
+-  align-items: flex-start;
+-  justify-content: space-between;
+-  gap: 10px;
+-  padding-bottom: 8px;
+-  border-bottom: 1px dashed #ebeef5;
+-  margin-bottom: 8px;
+-}
+-
+-.card-no {
+-  padding: 0;
+-  font-size: 15px;
+-  font-weight: 650;
+-}
+-
+-.card-sub {
+-  color: #909399;
+-  font-size: 12px;
+-  margin-top: 2px;
+-}
+-
+-.card-grid {
+-  display: grid;
+-  grid-template-columns: minmax(88px, auto) minmax(0, 1fr);
+-  gap: 7px 12px;
+-  font-size: 13px;
+-}
+-
+-.card-grid span {
+-  color: #909399;
+-}
+-
+-.card-grid strong {
+-  color: #303133;
+-  font-weight: 500;
+-  text-align: right;
+-  word-break: break-all;
+-}
+-
+-.card-actions {
+-  display: grid;
+-  grid-template-columns: 1fr 1fr;
+-  gap: 8px;
+-  margin-top: 12px;
+-}
+-
+ .dialog-target {
+   display: flex;
+   justify-content: space-between;
+   gap: 16px;
+   padding: 8px 10px;
+   margin-bottom: 12px;
+-  background: #f5f7fa;
+-  border-radius: 6px;
+-  color: #606266;
++  background: var(--cp-bg);
++  border-radius: var(--cp-r-sm);
++  color: var(--cp-text);
+ }
+ 
+ .dialog-target strong {
+-  color: #b88230;
++  color: var(--cp-warn);
+ }
+ 
+ @media (max-width: 767px) {
+-  .backorder-list {
+-    padding: 12px;
+-  }
+-
+-  .search-card :deep(.el-card__body),
+-  .table-card :deep(.el-card__body) {
+-    padding: 12px;
+-  }
+-
+-  .search-card :deep(.el-form-item) {
+-    display: flex;
+-    flex-direction: column;
+-    align-items: stretch;
+-    margin-right: 0;
+-    margin-bottom: 12px;
+-    width: 100%;
+-  }
+-
+-  .search-card :deep(.el-form-item__label) {
+-    justify-content: flex-start;
+-    height: auto;
+-    line-height: 20px;
+-    margin-bottom: 4px;
+-  }
+-
+-  .search-card :deep(.el-form-item__content),
+-  .filter-input,
+-  .filter-date {
+-    width: 100% !important;
+-  }
+-
+   .backorder-dialog {
+     width: calc(100vw - 24px) !important;
+   }
+ }
+ </style>
+diff --git a/cp6.web/src/views/erp/OrderCancelDialog.vue b/cp6.web/src/views/erp/OrderCancelDialog.vue
+index 0b53667..5b967e3 100644
+--- a/cp6.web/src/views/erp/OrderCancelDialog.vue
++++ b/cp6.web/src/views/erp/OrderCancelDialog.vue
+@@ -51,48 +51,40 @@
+         <h4 style="margin: 8px 0">{{ t('sales.cancel.relatedWO') }}</h4>
+         <el-table :data="result.relatedWorkOrders" size="small" border>
+           <el-table-column prop="workOrderNo" :label="t('sales.cancel.no')" />
+           <el-table-column prop="status" :label="t('sales.cancel.status')" width="100" align="center">
+             <template #default="{ row }">
+               {{ woStatusLabel(row.status) }}
+             </template>
+           </el-table-column>
+           <el-table-column :label="t('sales.cancel.autoCancellable')" width="120" align="center">
+             <template #default="{ row }">
+-              <el-tag v-if="row.autoCancellable" type="success" size="small">
+-                {{ t('sales.cancel.yes') }}
+-              </el-tag>
+-              <el-tag v-else type="danger" size="small">
+-                {{ t('sales.cancel.no_') }}
+-              </el-tag>
++              <CpTag v-if="row.autoCancellable" tone="ok">{{ t('sales.cancel.yes') }}</CpTag>
++              <CpTag v-else tone="danger">{{ t('sales.cancel.no_') }}</CpTag>
+             </template>
+           </el-table-column>
+         </el-table>
+       </div>
+ 
+       <div v-if="result?.relatedOutbounds.length" style="margin-top: 10px">
+         <h4 style="margin: 8px 0">{{ t('sales.cancel.relatedOutbound') }}</h4>
+         <el-table :data="result.relatedOutbounds" size="small" border>
+           <el-table-column prop="outboundNo" :label="t('sales.cancel.no')" />
+           <el-table-column prop="status" :label="t('sales.cancel.status')" width="100" align="center">
+             <template #default="{ row }">
+               {{ outboundStatusLabel(row.status) }}
+             </template>
+           </el-table-column>
+           <el-table-column :label="t('sales.cancel.autoCancellable')" width="120" align="center">
+             <template #default="{ row }">
+-              <el-tag v-if="row.autoCancellable" type="success" size="small">
+-                {{ t('sales.cancel.yes') }}
+-              </el-tag>
+-              <el-tag v-else type="danger" size="small">
+-                {{ t('sales.cancel.no_') }}
+-              </el-tag>
++              <CpTag v-if="row.autoCancellable" tone="ok">{{ t('sales.cancel.yes') }}</CpTag>
++              <CpTag v-else tone="danger">{{ t('sales.cancel.no_') }}</CpTag>
+             </template>
+           </el-table-column>
+         </el-table>
+       </div>
+     </div>
+ 
+     <!-- Step 3: 完了結果 -->
+     <div v-else-if="step === 'done'">
+       <el-result
+         :icon="result?.outcome === 'Cancelled' ? 'success' : 'warning'"
+@@ -129,34 +121,37 @@
+     </template>
+   </el-dialog>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, watch } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { orderApi } from '@/api/erp/order'
+ import type { OrderCancelResult } from '@/types/erp/order'
++import CpTag from '@/components/base/CpTag.vue'
+ 
+ const { t } = useI18n()
+ 
+ const props = defineProps<{
+   modelValue: boolean
+   webOrderNo: string
+ }>()
+ 
+ const emit = defineEmits<{
+   (e: 'update:modelValue', v: boolean): void
+   (e: 'cancelled'): void
+ }>()
+ 
+-const visible = ref(false)
++// modelValue から初期化：呼出元が v-if でマウント（modelValue 既に true）した場合でも
++// 非 immediate watch では visible が false のまま開かない回帰を防ぐ。
++const visible = ref(props.modelValue)
+ const step = ref<'input' | 'decision' | 'done'>('input')
+ const reason = ref('')
+ const loading = ref(false)
+ const result = ref<OrderCancelResult | null>(null)
+ 
+ watch(() => props.modelValue, v => (visible.value = v))
+ watch(visible, v => emit('update:modelValue', v))
+ 
+ function reset() {
+   step.value = 'input'
+diff --git a/cp6.web/src/views/erp/OrderTraceView.vue b/cp6.web/src/views/erp/OrderTraceView.vue
+index d29c901..1700faf 100644
+--- a/cp6.web/src/views/erp/OrderTraceView.vue
++++ b/cp6.web/src/views/erp/OrderTraceView.vue
+@@ -20,35 +20,35 @@
+     <el-card v-if="trace" shadow="never" class="summary-card">
+       <div class="summary-grid">
+         <div class="summary-main">
+           <div class="summary-no">{{ trace.webOrderNo }}</div>
+           <div class="summary-meta">
+             <span>{{ t('erp.orderTrace.label.customer') }}: {{ trace.customerName || '-' }}</span>
+             <span>{{ t('erp.orderTrace.label.orderDate') }}: {{ formatDate(trace.orderDate) || '-' }}</span>
+           </div>
+         </div>
+         <div class="kpi-strip">
+-          <el-tag type="info" effect="plain">
++          <CpTag tone="info">
+             {{ t('erp.orderTrace.summary.totalEvents') }}: {{ trace.summary.totalEvents }}
+-          </el-tag>
+-          <el-tag type="success" effect="plain">
++          </CpTag>
++          <CpTag tone="ok">
+             {{ t('erp.orderTrace.summary.success') }}: {{ trace.summary.successCount }}
+-          </el-tag>
+-          <el-tag :type="trace.summary.failedCount > 0 ? 'danger' : 'info'" effect="plain">
++          </CpTag>
++          <CpTag :tone="trace.summary.failedCount > 0 ? 'danger' : 'info'">
+             {{ t('erp.orderTrace.summary.failed') }}: {{ trace.summary.failedCount }}
+-          </el-tag>
+-          <el-tag :type="trace.summary.deadCount > 0 ? 'danger' : 'info'" effect="plain">
++          </CpTag>
++          <CpTag :tone="trace.summary.deadCount > 0 ? 'danger' : 'info'">
+             {{ t('erp.orderTrace.summary.dead') }}: {{ trace.summary.deadCount }}
+-          </el-tag>
+-          <el-tag type="warning" effect="plain">
++          </CpTag>
++          <CpTag tone="warn">
+             {{ t('erp.orderTrace.summary.distinctChains') }}: {{ trace.summary.distinctCorrelationIds }}
+-          </el-tag>
++          </CpTag>
+         </div>
+       </div>
+     </el-card>
+ 
+     <el-card shadow="never" class="timeline-panel" v-loading="loading">
+       <template #header>
+         <div class="panel-header">
+           <span>{{ t('erp.orderTrace.kindLabel.BRIDGE_HOOK') }}</span>
+           <el-switch
+             v-if="canGroup"
+@@ -61,21 +61,21 @@
+       <el-empty
+         v-if="!loading && (!trace || trace.timeline.length === 0)"
+         :description="t('erp.orderTrace.timeline.empty')"
+       />
+ 
+       <el-collapse v-else-if="trace && groupByCorrelation && canGroup" v-model="activeGroups" class="chain-list">
+         <el-collapse-item v-for="group in groupedTimeline" :key="group.correlationId" :name="group.correlationId">
+           <template #title>
+             <div class="chain-title">
+               <span>{{ shortCorrelation(group.correlationId) }}</span>
+-              <el-tag size="small" type="info">{{ group.items.length }}</el-tag>
++              <CpTag tone="info">{{ group.items.length }}</CpTag>
+             </div>
+           </template>
+           <el-timeline>
+             <el-timeline-item
+               v-for="item in group.items"
+               :key="item.eventTime + item.sourceNo + item.status"
+               :timestamp="formatDateTime(item.eventTime)"
+               :type="timelineType(item.status)"
+               :icon="statusIcon(item.status)"
+             >
+@@ -101,32 +101,33 @@
+         </el-timeline-item>
+       </el-timeline>
+     </el-card>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { computed, defineComponent, h, reactive, ref, watch } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { useRoute, useRouter } from 'vue-router'
+-import { ElButton, ElMessage, ElTag, ElTooltip } from 'element-plus'
++import { ElButton, ElMessage, ElTooltip } from 'element-plus'
+ import {
+   CircleCheckFilled,
+   CircleCloseFilled,
+   DocumentCopy,
+   InfoFilled,
+   Refresh,
+   Search,
+   WarningFilled,
+ } from '@element-plus/icons-vue'
+ import { orderTraceApi } from '@/api/erp/orderTrace'
+ import type { OrderTrace, OrderTraceTimelineItem } from '@/types/erp/orderTrace'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ 
+ const { t } = useI18n()
+ const route = useRoute()
+ const router = useRouter()
+ 
+ const form = reactive({ webOrderNo: '' })
+ const trace = ref<OrderTrace | null>(null)
+ const loading = ref(false)
+ const groupByCorrelation = ref(false)
+ const activeGroups = ref<string[]>([])
+@@ -146,26 +147,26 @@ const groupedTimeline = computed(() => {
+ 
+ const EventContent = defineComponent({
+   name: 'EventContent',
+   props: {
+     item: { type: Object as () => OrderTraceTimelineItem, required: true },
+   },
+   setup(props) {
+     return () => h('div', { class: 'event-content' }, [
+       h('div', { class: 'event-head' }, [
+         h('div', { class: 'event-route' }, [
+-          h(ElTag, { size: 'small', type: 'info' }, () => props.item.sourceModule),
++          h(CpTag, { tone: 'info' }, () => props.item.sourceModule),
+           h('span', { class: 'route-arrow' }, '->'),
+-          h(ElTag, { size: 'small' }, () => props.item.targetModule),
++          h(CpTag, { tone: 'muted' }, () => props.item.targetModule),
+           h('span', { class: 'hook-name' }, props.item.hookName),
+         ]),
+-        h(ElTag, { size: 'small', type: statusTagType(props.item.status) }, () => statusLabel(props.item.status)),
++        h(CpTag, { tone: statusTone(props.item.status) }, () => statusLabel(props.item.status)),
+       ]),
+       h('div', { class: 'event-nos' }, [
+         h('span', props.item.sourceNo),
+         props.item.targetNo ? h('span', [' -> ', props.item.targetNo]) : null,
+       ]),
+       h('div', { class: 'event-foot' }, [
+         renderMessage(props.item.message),
+         h(ElButton, {
+           link: true,
+           type: 'primary',
+@@ -193,20 +194,28 @@ function statusTagType(status: string): 'success' | 'warning' | 'danger' | 'info
+   if (status === 'SUCCESS') return 'success'
+   if (status === 'FAILED' || status === 'DEAD') return 'danger'
+   if (status === 'PENDING') return 'warning'
+   return 'info'
+ }
+ 
+ function timelineType(status: string): 'success' | 'warning' | 'danger' | 'info' {
+   return statusTagType(status)
+ }
+ 
++// status → CpTag 语义色调（沿用 statusTagType 意图，映射到设计系统共享 Tone）
++function statusTone(status: string): Tone {
++  if (status === 'SUCCESS') return 'ok'
++  if (status === 'FAILED' || status === 'DEAD') return 'danger'
++  if (status === 'PENDING') return 'warn'
++  return 'info'
++}
++
+ function statusIcon(status: string) {
+   if (status === 'SUCCESS') return CircleCheckFilled
+   if (status === 'FAILED' || status === 'DEAD') return CircleCloseFilled
+   if (status === 'PENDING') return WarningFilled
+   return InfoFilled
+ }
+ 
+ function formatDate(value?: string): string {
+   return value ? value.slice(0, 10) : ''
+ }
+@@ -283,21 +292,21 @@ watch(
+ 
+ .trace-toolbar {
+   align-items: flex-start;
+   display: flex;
+   gap: 12px;
+   justify-content: space-between;
+   margin-bottom: 12px;
+ }
+ 
+ .trace-toolbar h2 {
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 20px;
+   font-weight: 650;
+   line-height: 1.3;
+   margin: 0;
+ }
+ 
+ .trace-search {
+   justify-content: flex-end;
+ }
+ 
+@@ -310,28 +319,28 @@ watch(
+ }
+ 
+ .summary-grid {
+   align-items: center;
+   display: grid;
+   gap: 12px;
+   grid-template-columns: minmax(220px, 1fr) auto;
+ }
+ 
+ .summary-no {
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 18px;
+   font-weight: 650;
+   line-height: 1.2;
+ }
+ 
+ .summary-meta {
+-  color: #606266;
++  color: var(--cp-text);
+   display: flex;
+   flex-wrap: wrap;
+   font-size: 13px;
+   gap: 8px 16px;
+   margin-top: 6px;
+ }
+ 
+ .kpi-strip {
+   display: flex;
+   flex-wrap: wrap;
+@@ -355,21 +364,21 @@ watch(
+ }
+ 
+ .chain-title {
+   align-items: center;
+   display: flex;
+   gap: 8px;
+   min-width: 0;
+ }
+ 
+ .event-box {
+-  border: 1px solid #ebeef5;
++  border: 1px solid var(--cp-line);
+   border-radius: 8px;
+   padding: 10px 12px;
+ }
+ 
+ .event-content {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+ }
+ 
+@@ -382,44 +391,44 @@ watch(
+ 
+ .event-route {
+   align-items: center;
+   display: flex;
+   flex-wrap: wrap;
+   gap: 6px;
+   min-width: 0;
+ }
+ 
+ .route-arrow {
+-  color: #909399;
++  color: var(--cp-muted);
+ }
+ 
+ .hook-name {
+-  color: #303133;
++  color: var(--cp-ink);
+   font-weight: 600;
+   word-break: break-all;
+ }
+ 
+ .event-nos {
+-  color: #606266;
++  color: var(--cp-text);
+   font-size: 13px;
+   word-break: break-all;
+ }
+ 
+ .event-foot {
+   align-items: center;
+   display: flex;
+   gap: 8px;
+   justify-content: space-between;
+ }
+ 
+ .event-message {
+-  color: #909399;
++  color: var(--cp-muted);
+   font-size: 13px;
+   min-width: 0;
+   word-break: break-word;
+ }
+ 
+ @media (max-width: 767px) {
+   .order-trace {
+     padding: 12px;
+   }
+ 
+diff --git a/cp6.web/src/views/erp/OtdReportView.vue b/cp6.web/src/views/erp/OtdReportView.vue
+index f95a74b..aea1e4d 100644
+--- a/cp6.web/src/views/erp/OtdReportView.vue
++++ b/cp6.web/src/views/erp/OtdReportView.vue
+@@ -66,21 +66,21 @@
+           <div class="kpi-label">{{ t('erp.otdReport.kpi.lateCount') }}</div>
+           <div class="kpi-value late">{{ formatNumber(summary.lateCount) }}</div>
+         </el-card>
+       </el-col>
+     </el-row>
+ 
+     <el-card shadow="never" class="chart-card">
+       <template #header>
+         <div class="panel-header">
+           <span>{{ t('erp.otdReport.chart.title') }}</span>
+-          <el-tag size="small" type="info">{{ rows.length }}</el-tag>
++          <CpTag tone="info">{{ rows.length }}</CpTag>
+         </div>
+       </template>
+       <div v-loading="loading" class="bar-list">
+         <el-empty v-if="!rows.length && !loading" :image-size="80" />
+         <div v-for="row in chartRows" :key="row.groupKey" class="bar-row">
+           <div class="bar-label" :title="row.groupLabel">{{ row.groupLabel }}</div>
+           <div class="bar-track">
+             <div class="bar-fill" :class="barClass(row.onTimeRate)" :style="{ width: progressPercent(row.onTimeRate) + '%' }" />
+           </div>
+           <div class="bar-value">{{ formatPercent(row.onTimeRate) }}</div>
+@@ -118,20 +118,21 @@
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { computed, onMounted, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { Download, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
+ import { otdReportApi } from '@/api/erp/otdReport'
+ import { formatQty } from '@/utils/format'
++import CpTag from '@/components/base/CpTag.vue'
+ import type { OtdReportGroupBy, OtdReportQuery, OtdReportRow, OtdReportSummary } from '@/types/erp/otdReport'
+ 
+ const { t } = useI18n()
+ 
+ const query = reactive<OtdReportQuery>({
+   dateFrom: formatDate(addDays(new Date(), -90)),
+   dateTo: formatDate(new Date()),
+   groupBy: 'customer',
+ })
+ const summary = reactive<OtdReportSummary>({
+@@ -250,21 +251,21 @@ onMounted(loadSummary)
+ }
+ 
+ .page-header {
+   align-items: center;
+   display: flex;
+   justify-content: space-between;
+   margin-bottom: 12px;
+ }
+ 
+ .page-header h2 {
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 20px;
+   font-weight: 650;
+   line-height: 1.3;
+   margin: 0;
+ }
+ 
+ .filter-card,
+ .kpi-row,
+ .chart-card {
+   margin-bottom: 12px;
+@@ -276,44 +277,44 @@ onMounted(loadSummary)
+ 
+ .customer-input {
+   width: 150px;
+ }
+ 
+ .kpi-card :deep(.el-card__body) {
+   padding: 14px 16px;
+ }
+ 
+ .kpi-card.warn {
+-  border-color: #f3d19e;
++  border-color: var(--cp-warn);
+ }
+ 
+ .kpi-label {
+-  color: #909399;
++  color: var(--cp-muted);
+   font-size: 12px;
+   line-height: 1.2;
+   margin-bottom: 6px;
+ }
+ 
+ .kpi-value {
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 24px;
+   font-weight: 700;
+   line-height: 1.1;
+ }
+ 
+ .kpi-value.rate {
+-  color: #2f8f63;
++  color: var(--cp-ok);
+ }
+ 
+ .kpi-value.late,
+ .lateText {
+-  color: #c45656;
++  color: var(--cp-danger);
+   font-weight: 650;
+ }
+ 
+ .panel-header {
+   align-items: center;
+   display: flex;
+   justify-content: space-between;
+ }
+ 
+ .bar-list {
+@@ -324,53 +325,53 @@ onMounted(loadSummary)
+ }
+ 
+ .bar-row {
+   align-items: center;
+   display: grid;
+   gap: 10px;
+   grid-template-columns: minmax(120px, 220px) minmax(120px, 1fr) 62px;
+ }
+ 
+ .bar-label {
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 13px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+ }
+ 
+ .bar-track {
+-  background: #edf2f7;
++  background: var(--cp-line-soft);
+   border-radius: 6px;
+   height: 12px;
+   overflow: hidden;
+ }
+ 
+ .bar-fill {
+   height: 100%;
+   min-width: 2px;
+ }
+ 
+ .bar-fill.good {
+-  background: #2f8f63;
++  background: var(--cp-ok);
+ }
+ 
+ .bar-fill.warn {
+-  background: #d99b2b;
++  background: var(--cp-warn);
+ }
+ 
+ .bar-fill.bad {
+-  background: #c45656;
++  background: var(--cp-danger);
+ }
+ 
+ .bar-value {
+-  color: #606266;
++  color: var(--cp-text);
+   font-size: 12px;
+   text-align: right;
+ }
+ 
+ .progress-cell {
+   align-items: center;
+   display: grid;
+   gap: 8px;
+   grid-template-columns: 1fr 54px;
+ }
+diff --git a/cp6.web/src/views/erp/QuotationListView.vue b/cp6.web/src/views/erp/QuotationListView.vue
+index 0afc030..ea1e096 100644
+--- a/cp6.web/src/views/erp/QuotationListView.vue
++++ b/cp6.web/src/views/erp/QuotationListView.vue
+@@ -1,295 +1,155 @@
++<!--
++  御見積一覧 —— ERP 迁移批次3（CpListPage）。
++  照会一覧（onMounted 自動取得）+ サーバソート（#19 sortable:'custom'）。ページ標題キー無し（不臆造）→ CpListPage スタンドアロン、件数はページャ total。
++  qtnNo=kind:'mono'、issueDate=kind:'date'、数量/単価/金額=kind:'num'+map（formatQty/formatNumber）、status=kind:'tag'+map（statusTone）。
++  staffCd（担当者名 tooltip）/操作=col slot。ステータス複数チェック（0/9/C）=toolbar（#15、fetch closure が statusSel を読む、@reset で #22 クリア）、新規=toolbar（#16）。
++  参照/訂正/流用は別タブ MSBBPA030（openInWindow）、子タブ postMessage（cp6-quotation saved/deleted）→ reload。モバイル専用カードは設計システム標準（横スクロール）へ統一。
++-->
+ <template>
+   <div class="quotation-list">
+-    <!-- 検索エリア -->
+-    <el-card shadow="never" class="search-card">
+-      <el-form inline :model="query" @submit.prevent="onSearch">
+-        <el-form-item :label="t('sales.term.qtnNo')">
+-          <el-input v-model="query.qtnNoFrom" :placeholder="t('sales.search.from')" clearable style="width: 140px" />
+-          <span style="margin: 0 4px">~</span>
+-          <el-input v-model="query.qtnNoTo" :placeholder="t('sales.search.to')" clearable style="width: 140px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.qtn.issueDate')">
+-          <el-date-picker
+-            v-model="dateRange"
+-            type="daterange"
+-            value-format="YYYY-MM-DD"
+-            range-separator="~"
+-            :start-placeholder="t('sales.search.dateFrom')"
+-            :end-placeholder="t('sales.search.dateTo')"
+-            style="width: 260px"
+-          />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.base')">
+-          <el-select v-model="query.baseCd" :placeholder="t('全部')" clearable style="width: 160px">
+-            <el-option
+-              v-for="b in bases"
+-              :key="b.baseCd"
+-              :value="b.baseCd"
+-              :label="`${b.baseCd} ${b.baseName}`"
+-            />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.staff')">
+-          <el-input v-model="query.staffCd" :placeholder="t('sales.term.staff') + ' CD'" clearable style="width: 120px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.customer')">
+-          <el-input v-model="query.customerCd" :placeholder="t('sales.term.customer') + ' CD'" clearable style="width: 140px" />
+-        </el-form-item>
+-        <el-form-item :label="t('親案件')">
+-          <el-input v-model="query.projectNoParent" clearable style="width: 120px" />
+-        </el-form-item>
+-        <el-form-item :label="t('品名')">
+-          <el-input v-model="query.customerProductName1" clearable style="width: 200px" />
+-        </el-form-item>
+-        <el-form-item :label="t('sales.term.status')">
+-          <el-checkbox-group v-model="statusSel">
+-            <el-checkbox value="0">{{ t('sales.fsc.notConfirmed') }}</el-checkbox>
+-            <el-checkbox value="9">{{ t('sales.status.approved') }}</el-checkbox>
+-            <el-checkbox value="C">{{ t('sales.status.confirmed') }}</el-checkbox>
+-          </el-checkbox-group>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" :icon="Search" @click="onSearch">{{ t('sales.btn.search') }}</el-button>
+-          <el-button :icon="RefreshLeft" @click="onReset">{{ t('sales.btn.clear') }}</el-button>
+-          <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
+-
+-    <!-- 一覧 -->
+-    <el-card shadow="never" class="table-card">
+-      <!-- 桌面端：完整表格 -->
+-      <el-table
+-        v-if="!isMobile"
+-        :data="rows"
+-        v-loading="loading"
+-        stripe
+-        border
+-        style="width: 100%"
+-        @row-dblclick="(row: QuotationListItem) => onView(row)"
+-        @sort-change="onSortChange"
+-      >
+-        <el-table-column prop="qtnNo" :label="t('sales.term.qtnNo')" width="120" fixed="left" sortable="custom" />
+-        <el-table-column prop="qtnIssueDate" :label="t('sales.qtn.issueDate')" width="110" sortable="custom">
+-          <template #default="{ row }">{{ fmtDate(row.qtnIssueDate) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="baseCd" :label="t('sales.term.base')" width="70" sortable="custom" />
+-        <el-table-column prop="staffCd" :label="t('sales.term.staff')" width="80" sortable="custom">
+-          <template #default="{ row }">
+-            <el-tooltip v-if="row.staffName" :content="row.staffName" placement="top">
+-              <span>{{ row.staffCd }}</span>
+-            </el-tooltip>
+-            <span v-else>{{ row.staffCd }}</span>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="customerCd" :label="t('sales.term.customer') + ' CD'" width="90" sortable="custom" />
+-        <el-table-column prop="customerName" :label="t('sales.term.customer') + t('sales.term.bpName').slice(-1)" min-width="160" show-overflow-tooltip sortable="custom" />
+-        <el-table-column prop="projectNoParent" :label="t('親案件')" width="110" sortable="custom" />
+-        <el-table-column prop="projectNoChild" :label="t('子案件')" width="110" sortable="custom" />
+-        <el-table-column prop="itemName1" :label="t('品名1')" min-width="160" show-overflow-tooltip />
+-        <el-table-column :label="t('初行数量')" width="100" align="right">
+-          <template #default="{ row }">{{ fmtNum(row.firstQuantity) }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('初行') + t('sales.term.unitPrice')" width="110" align="right">
+-          <template #default="{ row }">{{ fmtMoney(row.firstUnitPrice) }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('初行') + t('sales.term.amount')" width="130" align="right">
+-          <template #default="{ row }">{{ fmtMoney(row.firstAmount) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="totalAmount" :label="t('sales.fsc.totalAmount')" width="130" align="right" sortable="custom">
+-          <template #default="{ row }">{{ fmtMoney(row.totalAmount) }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('sales.term.status')" width="100">
+-          <template #default="{ row }">
+-            <el-tag :type="statusTagType(row.status)" size="small">
+-              {{ row.status }}
+-            </el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column :label="t('sales.list.action')" width="320" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
+-            <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+-            <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+-            <el-button link type="info" @click="onIssue(row)">{{ t('sales.btn.issue') }}</el-button>
+-            <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-
+-      <!-- 手机端：卡片列表 -->
+-      <div v-else class="mobile-card-list" v-loading="loading">
+-        <el-empty v-if="!rows.length && !loading" :image-size="80" />
+-        <div
+-          v-for="row in rows"
+-          :key="row.qtnNo"
+-          class="mobile-card"
+-          @click="onView(row)"
+-        >
+-          <div class="mc-head">
+-            <div class="mc-no">{{ row.qtnNo }}</div>
+-            <el-tag :type="statusTagType(row.status) as any" size="small">{{ row.status }}</el-tag>
+-          </div>
+-          <div class="mc-title">{{ row.customerName || row.customerCd }}</div>
+-          <div class="mc-meta">
+-            <span>{{ fmtDate(row.qtnIssueDate) }}</span>
+-            <span class="mc-price">{{ t('合計: ¥{amount}', { amount: fmtMoney(row.totalAmount) }) }}</span>
+-          </div>
+-          <div v-if="row.itemName1" class="mc-meta">
+-            <span class="mc-truncate">{{ t('品: {name}', { name: row.itemName1 }) }}</span>
+-          </div>
+-          <div class="mc-actions" @click.stop>
+-            <el-button link type="warning" size="small" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+-            <el-button link type="success" size="small" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+-            <el-button link type="info" size="small" @click="onIssue(row)">{{ t('sales.btn.issue') }}</el-button>
+-            <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
+-          </div>
+-        </div>
+-      </div>
+-
+-      <div class="pagination">
+-        <el-pagination
+-          v-model:current-page="query.page"
+-          v-model:page-size="query.pageSize"
+-          :total="total"
+-          :page-sizes="[10, 20, 50, 100]"
+-          :layout="isMobile ? 'prev, pager, next' : 'total, sizes, prev, pager, next'"
+-          :pager-count="isMobile ? 5 : 7"
+-          :small="isMobile"
+-          background
+-          @current-change="loadData"
+-          @size-change="loadData"
+-        />
+-      </div>
+-    </el-card>
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      @reset="onFilterReset"
++    >
++      <template #toolbar>
++        <el-checkbox-group v-model="statusSel" @change="listRef?.reload()">
++          <el-checkbox value="0">{{ t('sales.fsc.notConfirmed') }}</el-checkbox>
++          <el-checkbox value="9">{{ t('sales.status.approved') }}</el-checkbox>
++          <el-checkbox value="C">{{ t('sales.status.confirmed') }}</el-checkbox>
++        </el-checkbox-group>
++        <div class="tb-spacer" />
++        <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
++      </template>
++
++      <template #col-staffCd="{ row }">
++        <el-tooltip v-if="row.staffName" :content="row.staffName" placement="top">
++          <span>{{ row.staffCd }}</span>
++        </el-tooltip>
++        <span v-else>{{ row.staffCd }}</span>
++      </template>
++
++      <template #col-_action="{ row }">
++        <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
++        <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
++        <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
++        <el-button link type="info" @click="onIssue(row)">{{ t('sales.btn.issue') }}</el-button>
++        <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
++      </template>
++    </CpListPage>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
++import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+-
+-const { t } = useI18n()
+ import { ElMessage, ElMessageBox } from 'element-plus'
+-import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue'
++import { Plus } from '@element-plus/icons-vue'
++import CpListPage, { type ListColumn, type ListFetch, type SortOrder } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import { type Tone } from '@/components/base/CpTag.vue'
+ import { quotationApi } from '@/api/erp/quotation'
+ import { masterApi } from '@/api/erp/master'
+ import type { QuotationListItem, QuotationQuery } from '@/types/erp/quotation'
+ import type { MasterBase } from '@/types/erp/estimateCalc'
+-import { useBreakpoint } from '@/composables/useBreakpoint'
+ import { formatQty, formatNumber } from '@/utils/format'
+ 
+-const { isMobile } = useBreakpoint()
++const { t } = useI18n()
+ 
+-const loading = ref(false)
+-const rows = ref<QuotationListItem[]>([])
+-const total = ref(0)
++const listRef = ref<InstanceType<typeof CpListPage>>()
+ const bases = ref<MasterBase[]>([])
+ 
+-const query = reactive<QuotationQuery>({
+-  page: 1,
+-  pageSize: 20,
+-  qtnNoFrom: '',
+-  qtnNoTo: '',
+-  baseCd: '',
+-  staffCd: '',
+-  customerCd: '',
+-  projectNoParent: '',
+-  projectNoChild: '',
+-  projectNoMaterial: '',
+-  customerProductName1: '',
+-  customerProductName2: '',
+-  issueDateFrom: '',
+-  issueDateTo: '',
+-  statuses: [],
+-  sortField: '',
+-  sortOrder: '',
+-})
+-const dateRange = ref<[string, string] | null>(null)
++// —— ステータス複数チェック（#15、toolbar）——
+ const statusSel = ref<string[]>([])
+-
+-function onSortChange({ prop, order }: { prop: string; order: string | null }) {
+-  query.sortField = order ? prop : ''
+-  query.sortOrder = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : ''
+-  query.page = 1
+-  loadData()
++// クリア連動（#22 reset 透传）：原 onReset は statusSel も初期化していた。
++// emit は reset 起因の load() より先に同期発火するため、直後の fetch は既にクリア済みの値を読む。
++function onFilterReset() {
++  statusSel.value = []
+ }
+ 
+-watch(statusSel, v => (query.statuses = v.length ? [...v] : undefined))
+-
+-function fmtDate(v?: string) {
+-  return v ? v.slice(0, 10) : ''
+-}
+ function fmtNum(v?: number) {
+   return v == null ? '' : formatQty(v)
+ }
+ function fmtMoney(v?: number) {
+   return v == null ? '' : formatNumber(v, 'decimal')
+ }
+-function statusTagType(s?: string): 'info' | 'warning' | 'success' {
+-  if (s === '見積確定済') return 'success'
+-  if (s === '承認済') return 'warning'
++function statusTone(s?: string): Tone {
++  if (s === '見積確定済') return 'ok'
++  if (s === '承認済') return 'warn'
+   return 'info'
+ }
+ 
+-async function loadData() {
+-  try {
+-    loading.value = true
+-    if (dateRange.value) {
+-      query.issueDateFrom = dateRange.value[0]
+-      query.issueDateTo = dateRange.value[1]
+-    } else {
+-      query.issueDateFrom = ''
+-      query.issueDateTo = ''
+-    }
+-    // 空字符串不要发送给后端
+-    const payload = { ...query } as unknown as Record<string, unknown>
+-    Object.keys(payload).forEach(k => {
+-      const v = payload[k]
+-      if (v === '' || v === null) delete payload[k]
+-    })
+-    const res = await quotationApi.getList(payload as unknown as QuotationQuery)
+-    if (res.code === 0) {
+-      rows.value = res.data.rows ?? []
+-      total.value = res.data.total ?? 0
+-    }
+-  } finally {
+-    loading.value = false
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'qtnNo', label: t('sales.term.qtnNo'), kind: 'mono', width: 120, fixed: 'left', sortable: 'custom' },
++  { prop: 'qtnIssueDate', label: t('sales.qtn.issueDate'), kind: 'date', width: 110, sortable: 'custom' },
++  { prop: 'baseCd', label: t('sales.term.base'), width: 70, sortable: 'custom' },
++  { prop: 'staffCd', label: t('sales.term.staff'), width: 80, sortable: 'custom' },
++  { prop: 'customerCd', label: t('sales.term.customer') + ' CD', width: 90, sortable: 'custom' },
++  { prop: 'customerName', label: t('sales.term.customer') + t('sales.term.bpName').slice(-1), minWidth: 160, overflowTooltip: true, sortable: 'custom' },
++  { prop: 'projectNoParent', label: t('親案件'), width: 110, sortable: 'custom' },
++  { prop: 'projectNoChild', label: t('子案件'), width: 110, sortable: 'custom' },
++  { prop: 'itemName1', label: t('品名1'), minWidth: 160, overflowTooltip: true },
++  { prop: 'firstQuantity', label: t('初行数量'), width: 100, kind: 'num', map: (v) => ({ label: fmtNum(v as number) }) },
++  { prop: 'firstUnitPrice', label: t('初行') + t('sales.term.unitPrice'), width: 110, kind: 'num', map: (v) => ({ label: fmtMoney(v as number) }) },
++  { prop: 'firstAmount', label: t('初行') + t('sales.term.amount'), width: 130, kind: 'num', map: (v) => ({ label: fmtMoney(v as number) }) },
++  { prop: 'totalAmount', label: t('sales.fsc.totalAmount'), width: 130, kind: 'num', sortable: 'custom', map: (v) => ({ label: fmtMoney(v as number) }) },
++  { prop: 'status', label: t('sales.term.status'), width: 100, kind: 'tag', map: (v) => ({ label: String(v ?? ''), tone: statusTone(v as string) }) },
++  { prop: '_action', label: t('sales.list.action'), width: 320, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('sales.btn.search'),
++  reset: t('sales.btn.clear'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'qtnNoFrom', label: t('sales.term.qtnNo') + ' ' + t('sales.search.from'), type: 'text' },
++  { key: 'qtnNoTo', label: t('sales.term.qtnNo') + ' ' + t('sales.search.to'), type: 'text' },
++  { key: 'issueDate', label: t('sales.qtn.issueDate'), type: 'daterange', valueFormat: 'YYYY-MM-DD' },
++  { key: 'baseCd', label: t('sales.term.base'), type: 'select',
++    options: bases.value.map(b => ({ label: `${b.baseCd} ${b.baseName}`, value: b.baseCd })) },
++  { key: 'staffCd', label: t('sales.term.staff'), type: 'text' },
++  { key: 'customerCd', label: t('sales.term.customer'), type: 'text' },
++  { key: 'projectNoParent', label: t('親案件'), type: 'text' },
++  { key: 'customerProductName1', label: t('品名'), type: 'text' },
++])
++
++const fetchList: ListFetch = async ({ page, size, filters, sortField, sortOrder }) => {
++  const f = filters as Record<string, unknown>
++  const range = f.issueDate as [string, string] | undefined
++  const q: Record<string, unknown> = {
++    qtnNoFrom: f.qtnNoFrom,
++    qtnNoTo: f.qtnNoTo,
++    baseCd: f.baseCd,
++    staffCd: f.staffCd,
++    customerCd: f.customerCd,
++    projectNoParent: f.projectNoParent,
++    customerProductName1: f.customerProductName1,
++    issueDateFrom: range?.[0],
++    issueDateTo: range?.[1],
++    statuses: statusSel.value.length ? [...statusSel.value] : undefined,
++    sortField: sortField as string | undefined,
++    sortOrder: sortOrder as SortOrder | undefined,
++    page,
++    pageSize: size,
+   }
+-}
+-
+-function onSearch() {
+-  query.page = 1
+-  loadData()
+-}
+-function onReset() {
+-  Object.assign(query, {
+-    page: 1,
+-    pageSize: 20,
+-    qtnNoFrom: '',
+-    qtnNoTo: '',
+-    baseCd: '',
+-    staffCd: '',
+-    customerCd: '',
+-    projectNoParent: '',
+-    projectNoChild: '',
+-    projectNoMaterial: '',
+-    customerProductName1: '',
+-    customerProductName2: '',
+-    issueDateFrom: '',
+-    issueDateTo: '',
+-    statuses: [],
++  Object.keys(q).forEach((k) => {
++    const v = q[k]
++    if (v === '' || v === null || v === undefined) delete q[k]
+   })
+-  dateRange.value = null
+-  statusSel.value = []
+-  loadData()
++  const res = await quotationApi.getList(q as unknown as QuotationQuery)
++  if (res.code === 0) return { rows: res.data.rows ?? [], total: res.data.total ?? 0 }
++  return { rows: [], total: 0 }
+ }
+ 
+ /** 新しいタブで MSBBPA030 を開く */
+ function openInWindow(opc: 'new' | 'view' | 'edit' | 'copy', no?: string) {
+   const qs = new URLSearchParams({ op: opc })
+   if (no) qs.set('no', no)
+   const url = `${window.location.origin}/quotation/window?${qs.toString()}`
+   const w = window.open(url, '_blank')
+   if (!w) {
+     ElMessage.warning(t('新しいタブがブロックされました。このサイトに対してポップアップを許可してください'))
+@@ -323,21 +183,21 @@ async function onIssue(row: QuotationListItem) {
+       }
+     )
+     const set = new Set(String(choices).split(',').map(s => s.trim().toUpperCase()))
+     const res = await quotationApi.issue(row.qtnNo, {
+       issueQuotation: set.has('Q'),
+       issueSubmitCalc: set.has('SC'),
+       issueCalc: set.has('C'),
+     })
+     if (res.code === 0) {
+       ElMessage.success(t('発行しました: {files}', { files: res.data.files.join(' , ') || t('(ファイルなし)') }))
+-      loadData()
++      listRef.value?.reload()
+     }
+   } catch {
+     /* キャンセル */
+   }
+ }
+ 
+ async function onDelete(row: QuotationListItem) {
+   if (row.status === '見積確定済') {
+     ElMessage.warning(t('確定済の御見積書は削除できません。先に確定取消してください'))
+     return
+@@ -348,124 +208,41 @@ async function onDelete(row: QuotationListItem) {
+       t('削除確認'),
+       { type: 'warning' }
+     )
+   } catch {
+     return
+   }
+   try {
+     const res = await quotationApi.remove(row.qtnNo)
+     if (res.code === 0) {
+       ElMessage.success(t('削除しました'))
+-      loadData()
++      listRef.value?.reload()
+     }
+   } catch {
+     /* interceptor toast */
+   }
+ }
+ 
+ // 子タブから保存/削除通知を受け取ったら自動リロード
+ function handleMessage(e: MessageEvent) {
+   if (e.origin !== window.location.origin) return
+   const data = e.data
+   if (data?.source === 'cp6-quotation' && (data.type === 'saved' || data.type === 'deleted')) {
+-    loadData()
++    listRef.value?.reload()
+   }
+ }
+ 
+ onMounted(async () => {
+   window.addEventListener('message', handleMessage)
+-  const [baseRes] = await Promise.all([masterApi.getBases(), loadData()])
++  const baseRes = await masterApi.getBases()
+   bases.value = baseRes.data ?? []
+ })
+ 
+ onBeforeUnmount(() => {
+   window.removeEventListener('message', handleMessage)
+ })
+ </script>
+ 
+ <style scoped>
+-.quotation-list {
+-  padding: 12px;
+-  display: flex;
+-  flex-direction: column;
+-  gap: 12px;
+-}
+-.search-card :deep(.el-card__body),
+-.table-card :deep(.el-card__body) {
+-  padding: 12px 16px;
+-}
+-.pagination {
+-  margin-top: 12px;
+-  text-align: right;
+-}
+-
+-/* 手机卡片 */
+-.mobile-card-list {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 10px;
+-}
+-.mobile-card {
+-  background: #fff;
+-  border: 1px solid #ebeef5;
+-  border-radius: 10px;
+-  padding: 12px 14px;
+-  cursor: pointer;
+-  transition: box-shadow 0.15s ease;
+-}
+-.mobile-card:active {
+-  box-shadow: 0 2px 8px rgba(64,158,255,0.15);
+-}
+-.mc-head {
+-  display: flex;
+-  justify-content: space-between;
+-  align-items: center;
+-  margin-bottom: 6px;
+-}
+-.mc-no {
+-  font-weight: 600;
+-  font-size: 15px;
+-  color: #303133;
+-}
+-.mc-title {
+-  font-size: 14px;
+-  color: #303133;
+-  margin-bottom: 8px;
+-  overflow: hidden;
+-  text-overflow: ellipsis;
+-  white-space: nowrap;
+-}
+-.mc-meta {
+-  display: flex;
+-  justify-content: space-between;
+-  font-size: 12px;
+-  color: #909399;
+-  padding: 2px 0;
+-}
+-.mc-truncate {
+-  overflow: hidden;
+-  text-overflow: ellipsis;
+-  white-space: nowrap;
+-}
+-.mc-price {
+-  color: #f56c6c;
+-  font-weight: 600;
+-}
+-.mc-actions {
+-  display: flex;
+-  justify-content: flex-end;
+-  flex-wrap: wrap;
+-  gap: 4px;
+-  margin-top: 8px;
+-  padding-top: 8px;
+-  border-top: 1px dashed #ebeef5;
+-}
+-
+-@media (max-width: 767px) {
+-  .quotation-list {
+-    padding: 12px;
+-  }
+-  .pagination {
+-    text-align: center;
+-  }
+-}
++.quotation-list { padding: 0; }
++.tb-spacer { flex: 1; }
+ </style>

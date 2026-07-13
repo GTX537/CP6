@@ -1,0 +1,165 @@
+# Review package: 32ccc14..HEAD
+
+## Commits
+03e01cd fix(wfs-service-task): T4 ServiceVarsHelper 点路径限制文档化 + 设计期拦数组下标模板（E-WF-016）
+
+## Files changed
+ CP6.Core/Services/Wf/FlowSchemaValidator.cs |  2 ++
+ CP6.Core/Services/Wf/ServiceVarsHelper.cs   | 23 +++++++++++++++++++++++
+ CP6.Tests/Wf/ServiceTaskValidatorTests.cs   |  8 ++++++++
+ CP6.Tests/Wf/ServiceVarsHelperTests.cs      | 11 +++++++++++
+ 4 files changed, 44 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/FlowSchemaValidator.cs b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+index 0af7bd5..f699417 100644
+--- a/CP6.Core/Services/Wf/FlowSchemaValidator.cs
++++ b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+@@ -83,20 +83,22 @@ public static class FlowSchemaValidator
+         //    kind 非法 / dataWriteback 缺 ActionName / webApi 缺 Connector|Path / timer 缺 DelayMode|DelayValue → E-WF-016。
+         //    serviceTask 必非 end，若无任何"非错误"出边则成功路径无后继(引擎会误结 Approved) → E-WF-016。
+         foreach (var n in schema.Nodes.Where(n => T(n) == "servicetask"))
+         {
+             var kind = (n.ServiceKind ?? string.Empty).Trim();
+             bool bad =
+                 !KnownServiceKinds.Contains(kind)
+                 || (kind == ServiceKind.DataWriteback && string.IsNullOrWhiteSpace(n.ServiceActionName))
+                 || (kind == ServiceKind.WebApi && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
+                 || (kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(n.ServiceDelayMode) || string.IsNullOrWhiteSpace(n.ServiceDelayValue)))
++                || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServicePath)         // 票4：路径模板不得含数组下标
++                || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServiceParamsJson)   // 票4：参数模板不得含数组下标
+                 || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
+             if (bad) { errs.Add("E-WF-016"); break; }
+         }
+ 
+         // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边仅允许出自 serviceTask 节点。
+         var serviceIds = schema.Nodes.Where(n => T(n) == "servicetask").Select(n => n.Id).ToHashSet();
+         if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
+         if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
+ 
+         // ④ 从 start 可达某 end（BFS）
+diff --git a/CP6.Core/Services/Wf/ServiceVarsHelper.cs b/CP6.Core/Services/Wf/ServiceVarsHelper.cs
+index 16c97a4..eb42742 100644
+--- a/CP6.Core/Services/Wf/ServiceVarsHelper.cs
++++ b/CP6.Core/Services/Wf/ServiceVarsHelper.cs
+@@ -1,14 +1,15 @@
+ using System;
+ using System.Collections.Generic;
+ using System.Text.Json;
+ using System.Text.Json.Nodes;
++using System.Text.RegularExpressions;
+ 
+ namespace CP6.Core.Services.Wf;
+ 
+ /// <summary>
+ /// 参数模板求值上下文（§3.6 P2-2）。
+ /// varsJson = inst.VarsJson（表单数据）；其余为引擎上下文字段。
+ /// </summary>
+ public record ServiceTemplateCtx(
+     string? varsJson,
+     string actorId,
+@@ -116,22 +117,44 @@ public static class ServiceVarsHelper
+         }
+ 
+         return new MergeResult
+         {
+             VarsJson    = root.ToJsonString(),
+             MergedKeys  = merged,
+             SkippedKeys = skipped
+         };
+     }
+ 
++    /// <summary>
++    /// 探测模板 token 是否含**不支持**的数组下标语法（<c>[...]</c>）。点路径求值（<see cref="ResolveValue"/> →
++    /// <c>ResolveDotPath</c>）仅支持嵌套对象的逐段导航（<c>$.a.b</c>）——**不支持**数组下标（<c>$.items[0]</c>：
++    /// <c>current["items[0]"]</c> 返回 null，模板静默求值为空串），也**无法**表达含点的键名（<c>{"a.b":1}</c> 与
++    /// 嵌套 <c>a.b</c> 二义，一律按嵌套解析）。这两类限制由设计期校验拦截（<c>FlowSchemaValidator</c> serviceTask
++    /// 分支 → <c>E-WF-016</c>），避免运行期静默失败。本方法只对 <c>$.</c>/<c>{...}</c> 模板 token 内的 <c>[</c>/<c>]</c>
++    /// 报真，避开字面 JSON 数组值（如 <c>{"list":[1,2,3]}</c>）。
++    /// </summary>
++    public static bool ContainsUnsupportedSubscript(string? text)
++    {
++        if (string.IsNullOrEmpty(text)) return false;
++        // $.path[...]  ——  $. 后跟标识符/点，直到出现下标括号
++        if (Regex.IsMatch(text, @"\$\.[A-Za-z0-9_.]*[\[\]]")) return true;
++        // {placeholder[...]}  ——  花括号占位内出现下标括号
++        if (Regex.IsMatch(text, @"\{[A-Za-z0-9_.]*[\[\]][^}]*\}")) return true;
++        return false;
++    }
++
+     // ── 内部辅助 ─────────────────────────────────────────────────────
+ 
++    /// <summary>
++    /// 点路径求值：<c>$.a.b</c> 逐段导航嵌套对象。**限制**（见 <see cref="ContainsUnsupportedSubscript"/>）：
++    /// 不支持数组下标 <c>[n]</c>，也无法表达含点的键名——两者在设计期由 <c>FlowSchemaValidator</c> 拦截。
++    /// </summary>
+     private static string ResolveDotPath(string path, string? varsJson)
+     {
+         if (string.IsNullOrWhiteSpace(varsJson) || string.IsNullOrWhiteSpace(path))
+             return "";
+ 
+         try
+         {
+             JsonNode? current = JsonNode.Parse(varsJson);
+             var parts = path.Split('.');
+             foreach (var part in parts)
+diff --git a/CP6.Tests/Wf/ServiceTaskValidatorTests.cs b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+index d92fb2b..e6dfac4 100644
+--- a/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
++++ b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+@@ -122,20 +122,28 @@ public class ServiceTaskValidatorTests
+         };
+         Assert.Contains("E-WF-017", FlowSchemaValidator.Validate(s));
+     }
+ 
+     [Fact]
+     public void ValidServiceTask_Passes()
+     {
+         Assert.Empty(FlowSchemaValidator.Validate(Base()));
+     }
+ 
++    [Fact]
++    public void WebApi_PathWithArraySubscript_E_WF_016()
++    {
++        var s = Base();
++        Svc(s).ServicePath = "/o/{lines[0]}";   // 路径模板含数组下标 → 设计期拦
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
+     // ── Step 4: DesignerService.save 注册名校验(E-WF-018) ──
+ 
+     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString())
+         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
+ 
+     private sealed class FakeExec : IServiceTaskExecutor
+     {
+         public string Key { get; init; } = "";
+         public string Kind { get; init; } = "";
+diff --git a/CP6.Tests/Wf/ServiceVarsHelperTests.cs b/CP6.Tests/Wf/ServiceVarsHelperTests.cs
+index 120ed1f..8cd3042 100644
+--- a/CP6.Tests/Wf/ServiceVarsHelperTests.cs
++++ b/CP6.Tests/Wf/ServiceVarsHelperTests.cs
+@@ -38,11 +38,22 @@ public class ServiceVarsHelperTests
+         Assert.DoesNotContain("\"wf.foo\"", res2.VarsJson);
+         Assert.Contains("\"wffoo\"", res2.VarsJson);
+     }
+ 
+     [Fact]
+     public void Merge_OverwriteExistingNonReserved()
+     {
+         var res = ServiceVarsHelper.MergeOutputVars("{\"a\":1}", new Dictionary<string, object?> { ["a"] = 9 });
+         Assert.Contains("\"a\":9", res.VarsJson);
+     }
++
++    [Fact]
++    public void ContainsUnsupportedSubscript_DetectsArrayIndex()
++    {
++        Assert.True(ServiceVarsHelper.ContainsUnsupportedSubscript("$.items[0]"));
++        Assert.True(ServiceVarsHelper.ContainsUnsupportedSubscript("/o/{lines[2]}"));
++        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("$.orderId"));
++        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("/o/{orderId}"));
++        // 字面 JSON 数组值（非模板下标）不误报：
++        Assert.False(ServiceVarsHelper.ContainsUnsupportedSubscript("{\"list\":[1,2,3]}"));
++    }
+ }

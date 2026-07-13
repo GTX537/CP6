@@ -1,0 +1,2502 @@
+# Review package: fff117e..446b7a2
+
+## Commits
+446b7a2 refactor(space): 错误码 BizException 化——61 throw/36 catch/7 测试文件，中间件统一翻译
+
+## Files changed
+ CP6.Core/Services/Space/CodeEngineService.cs       | 25 ++++-----
+ CP6.Core/Services/Space/ConnectorService.cs        |  7 +--
+ CP6.Core/Services/Space/LocationGeometryService.cs |  3 +-
+ CP6.Core/Services/Space/LocationPublishService.cs  | 14 ++---
+ CP6.Core/Services/Space/SceneIoService.cs          |  3 +-
+ CP6.Core/Services/Space/SceneService.cs            | 21 ++++----
+ CP6.Core/Services/Space/SpaceMasterService.cs      | 59 +++++++++++-----------
+ CP6.Core/Services/Space/TemplateService.cs         |  7 +--
+ CP6.Tests/BindCodesTests.cs                        |  9 ++--
+ CP6.Tests/CodeEngineServiceTests.cs                |  5 +-
+ CP6.Tests/LocationPublishServiceTests.cs           | 21 ++++----
+ CP6.Tests/SceneServiceTests.cs                     | 23 +++++----
+ CP6.Tests/Space/ConnectorServiceTests.cs           |  9 ++--
+ CP6.Tests/SpaceMasterServiceTests.cs               | 53 +++++++++----------
+ CP6.Tests/TemplateServiceTests.cs                  |  5 +-
+ CP6.WebApi/Controllers/Space/CodeRuleController.cs | 21 +++-----
+ .../Controllers/Space/ConnectorController.cs       |  9 ++--
+ .../Controllers/Space/LocationPublishController.cs | 12 -----
+ CP6.WebApi/Controllers/Space/SceneController.cs    | 19 +++----
+ .../Controllers/Space/SpaceMasterController.cs     | 45 ++++++-----------
+ CP6.WebApi/Controllers/Space/TemplateController.cs | 12 ++---
+ 21 files changed, 172 insertions(+), 210 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/CodeEngineService.cs b/CP6.Core/Services/Space/CodeEngineService.cs
+index c88c2ed..19d4447 100644
+--- a/CP6.Core/Services/Space/CodeEngineService.cs
++++ b/CP6.Core/Services/Space/CodeEngineService.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using System.Text.Json;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// 可配置库位编码引擎实现（ch03）。
+ ///
+@@ -51,41 +52,41 @@ public class CodeEngineService : ICodeEngineService
+         };
+         _db.Space_CodeRules.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task UpdateRuleAsync(Guid id, CodeRuleDto d, string? user)
+     {
+         var e = await _db.Space_CodeRules.FirstOrDefaultAsync(r => r.Id == id)
+-                ?? throw new InvalidOperationException("E-SPACE-301");
++                ?? throw new BizException("E-SPACE-301");
+ 
+         // 改为默认时，把同作用域其他规则 IsDefault 置 false（排除自身，同批 SaveChanges）
+         if (d.IsDefault && !e.IsDefault)
+             await ClearDefaultAsync(d.ScopeType, d.ScopeId, excludeId: id);
+ 
+         e.RuleName   = d.RuleName;
+         e.ScopeType  = d.ScopeType;
+         e.ScopeId    = d.ScopeId;
+         e.Segments   = JsonSerializer.Serialize(d.Segments);
+         e.IsDefault  = d.IsDefault;
+         e.Modifier   = user;
+         e.ModifyDate = DateTime.Now;
+         await _db.SaveChangesAsync();
+     }
+ 
+     /// <inheritdoc/>
+     public async Task DeleteRuleAsync(Guid id)
+     {
+         var e = await _db.Space_CodeRules.FirstOrDefaultAsync(r => r.Id == id)
+-                ?? throw new InvalidOperationException("E-SPACE-301");
++                ?? throw new BizException("E-SPACE-301");
+         _db.Space_CodeRules.Remove(e);
+         await _db.SaveChangesAsync();
+     }
+ 
+     /// <summary>
+     /// 将同作用域（ScopeType + ScopeId）的其他规则 IsDefault 置 false（不立即 SaveChanges，由调用方统一提交）。
+     /// </summary>
+     private async Task ClearDefaultAsync(int scopeType, Guid? scopeId, Guid? excludeId)
+     {
+         var others = await _db.Space_CodeRules
+@@ -190,32 +191,32 @@ public class CodeEngineService : ICodeEngineService
+         }
+ 
+         // ── 7. 值级唯一校验（ch03 §6.2）——批内重复 + 与库内既有码冲突 ──
+ 
+         // ① 批内重复检查
+         var dupInBatch = candidates
+             .GroupBy(c => c.Code, StringComparer.OrdinalIgnoreCase)
+             .Where(g => g.Count() > 1)
+             .ToList();
+         if (dupInBatch.Count > 0)
+-            throw new InvalidOperationException("E-SPACE-304");
++            throw new BizException("E-SPACE-304");
+ 
+         // ② 与库内既有非空码比对（全局过滤已按当前租户隔离）
+         var idsInBatch = candidates.Select(c => c.Loc.Id).ToHashSet();
+         // 拉现有库存码（排除本批自身，避免 rebuild 时自身被排斥）
+         var existingCodes = await _db.Space_Locations
+             .Where(l => l.LocationCode != null && !idsInBatch.Contains(l.Id))
+             .Select(l => l.LocationCode!)
+             .ToListAsync();
+         var existingSet = existingCodes.ToHashSet(StringComparer.OrdinalIgnoreCase);
+         if (candidates.Any(c => existingSet.Contains(c.Code)))
+-            throw new InvalidOperationException("E-SPACE-304");
++            throw new BizException("E-SPACE-304");
+ 
+         // ── 8. 两阶段写回（ch03 §7.2）─────────────────────────────────
+ 
+         if (mode == "rebuild")
+         {
+             // 阶段一：所有目标草稿 LocationCode 置 NULL。
+             // 必须先 SaveChanges，防止 SQL Server 过滤唯一索引
+             // (TenantId, LocationCode) WHERE LocationCode IS NOT NULL
+             // 在 A↔B 交换时中途违约。InMemory 不触约束，仍须实现（真库 D-9 会测）。
+             foreach (var l in drafts)
+@@ -312,49 +313,49 @@ public class CodeEngineService : ICodeEngineService
+ 
+         foreach (var z in zones)
+         {
+             try
+             {
+                 var rule = PickRule(rules, z.Id, floorId);
+                 var segs = DeserializeSegs(rule.Segments);
+                 foreach (var err in CodePrecheck.Validate(segs))
+                     precheckErrs.Add(err);
+             }
+-            catch (InvalidOperationException ex)
++            catch (BizException ex)
+             {
+                 // E-SPACE-301 (无规则) / E-SPACE-302 (多规则无默认)
+-                precheckErrs.Add(ex.Message);
++                precheckErrs.Add(ex.Code);
+             }
+         }
+ 
+         resp.PrecheckErrors = precheckErrs.ToList();
+         return resp;
+     }
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // GenSingleAsync — 单格生成（ch03 §10，最小实现）
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     /// <inheritdoc/>
+     public async Task<string> GenSingleAsync(Guid locationId)
+     {
+         // TODO: rackSeq 在大规则集下应取 Zone 级完整排序；此处取 1 作最小实现（计划 §10 补全）
+         var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locationId)
+-                  ?? throw new InvalidOperationException("E-SPACE-301");
++                  ?? throw new BizException("E-SPACE-301");
+ 
+         if (loc.RackId == null || !loc.Placed)
+-            throw new InvalidOperationException("E-SPACE-301");
++            throw new BizException("E-SPACE-301");
+ 
+         var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == loc.RackId)
+-                   ?? throw new InvalidOperationException("E-SPACE-301");
++                   ?? throw new BizException("E-SPACE-301");
+         var zone = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == rack.ZoneId)
+-                   ?? throw new InvalidOperationException("E-SPACE-301");
++                   ?? throw new BizException("E-SPACE-301");
+         Space_Aisle? aisle = rack.AisleId.HasValue
+             ? await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == rack.AisleId)
+             : null;
+ 
+         var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == rack.FloorId);
+         var site  = floor != null
+             ? await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId)
+             : null;
+ 
+         var rules   = await _db.Space_CodeRules.ToListAsync();
+@@ -387,27 +388,27 @@ public class CodeEngineService : ICodeEngineService
+     /// </summary>
+     private static Space_CodeRule PickRule(List<Space_CodeRule> rules, Guid zoneId, Guid floorId)
+     {
+         // 按作用域从高到低依次尝试
+         var hit = rules.Where(r => r.ScopeType == 2 && r.ScopeId == zoneId).ToList();
+         if (hit.Count == 0)
+             hit = rules.Where(r => r.ScopeType == 1 && r.ScopeId == floorId).ToList();
+         if (hit.Count == 0)
+             hit = rules.Where(r => r.ScopeType == 0).ToList();
+         if (hit.Count == 0)
+-            throw new InvalidOperationException("E-SPACE-301");
++            throw new BizException("E-SPACE-301");
+ 
+         // IsDefault 优先；否则仅一条直接用；多条无默认 → 歧义错误
+         var def = hit.FirstOrDefault(r => r.IsDefault);
+         if (def != null) return def;
+         if (hit.Count == 1) return hit[0];
+-        throw new InvalidOperationException("E-SPACE-302");
++        throw new BizException("E-SPACE-302");
+     }
+ 
+     /// <summary>
+     /// 拼装单个库位编码（ch03 §5）。
+     ///
+     /// 巷道条件段（aisle-code/aisle-seq，Optional=true）：
+     ///   aisle==null 时 continue 跳过整段，包括其 Sep，实现变长拼接。
+     ///
+     /// 末尾分隔符处理：各段依次 Append(Render) + Append(Sep)，末段 Sep 常设 ""；
+     ///   若末段有非空 Sep，用 TrimEnd 清理遗留分隔符保证格式整洁。
+diff --git a/CP6.Core/Services/Space/ConnectorService.cs b/CP6.Core/Services/Space/ConnectorService.cs
+index b818d83..9df5171 100644
+--- a/CP6.Core/Services/Space/ConnectorService.cs
++++ b/CP6.Core/Services/Space/ConnectorService.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>连接体 CRUD（构造只注 CP6Context；TenantId 由 SaveChanges 盖章，查询走全局过滤）。</summary>
+ public class ConnectorService : IConnectorService
+ {
+     private readonly CP6Context _db;
+@@ -29,38 +30,38 @@ public class ConnectorService : IConnectorService
+             Id = c.Id, ConnectorCode = c.ConnectorCode, ConnectorType = c.ConnectorType, Name = c.Name,
+             WaitSec = c.WaitSec, TravelSecPerFloor = c.TravelSecPerFloor,
+             Stops = stops.Where(s => s.ConnectorId == c.Id)
+                          .Select(s => new ConnectorStopView { FloorId = s.FloorId, X = s.X, Y = s.Y }).ToList()
+         }).ToList();
+     }
+ 
+     public async Task<Guid> CreateAsync(ConnectorDto d, string? user)
+     {
+         if (await _db.Space_Connectors.AnyAsync(c => c.SiteId == d.SiteId && c.ConnectorCode == d.ConnectorCode))
+-            throw new InvalidOperationException("E-SPACE-501");
++            throw new BizException("E-SPACE-501");
+         var (wait, perFloor) = (d.WaitSec <= 0 && d.TravelSecPerFloor <= 0)
+             ? DefaultCost(d.ConnectorType) : (d.WaitSec, d.TravelSecPerFloor);
+         var e = new Space_Connector
+         {
+             Id = Guid.NewGuid(), SiteId = d.SiteId, ConnectorCode = d.ConnectorCode,
+             ConnectorType = d.ConnectorType, Name = d.Name, WaitSec = wait, TravelSecPerFloor = perFloor,
+             Creator = user, CreateDate = DateTime.Now
+         };
+         _db.Space_Connectors.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpsertStopAsync(Guid connectorId, ConnectorStopDto d, string? user)
+     {
+         _ = await _db.Space_Connectors.FirstOrDefaultAsync(c => c.Id == connectorId)
+-            ?? throw new InvalidOperationException("E-SPACE-502");
++            ?? throw new BizException("E-SPACE-502");
+         var s = await _db.Space_ConnectorStops.FirstOrDefaultAsync(x => x.ConnectorId == connectorId && x.FloorId == d.FloorId);
+         if (s is null)
+         {
+             _db.Space_ConnectorStops.Add(new Space_ConnectorStop
+             {
+                 Id = Guid.NewGuid(), ConnectorId = connectorId, FloorId = d.FloorId, X = d.X, Y = d.Y,
+                 Creator = user, CreateDate = DateTime.Now
+             });
+         }
+         else { s.X = d.X; s.Y = d.Y; s.Modifier = user; s.ModifyDate = DateTime.Now; }
+@@ -81,17 +82,17 @@ public class ConnectorService : IConnectorService
+         if (conn is null) return;
+         var stops = await _db.Space_ConnectorStops.Where(s => s.ConnectorId == id).ToListAsync();
+         _db.Space_ConnectorStops.RemoveRange(stops);
+         _db.Space_Connectors.Remove(conn);
+         await _db.SaveChangesAsync();
+     }
+ 
+     public async Task UpdateAsync(Guid id, ConnectorUpdateDto d, string? user)
+     {
+         var e = await _db.Space_Connectors.FirstOrDefaultAsync(c => c.Id == id)
+-            ?? throw new InvalidOperationException("E-SPACE-502");
++            ?? throw new BizException("E-SPACE-502");
+         e.Name = d.Name; e.ConnectorType = d.ConnectorType;
+         e.WaitSec = d.WaitSec; e.TravelSecPerFloor = d.TravelSecPerFloor;
+         e.Modifier = user; e.ModifyDate = DateTime.Now;
+         await _db.SaveChangesAsync();
+     }
+ }
+diff --git a/CP6.Core/Services/Space/LocationGeometryService.cs b/CP6.Core/Services/Space/LocationGeometryService.cs
+index 26f590b..9ea1d01 100644
+--- a/CP6.Core/Services/Space/LocationGeometryService.cs
++++ b/CP6.Core/Services/Space/LocationGeometryService.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Entity.DomainModels.Space;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// 库位绝对坐标缓存重算（Space 章00 §6.2）。几何可动、码不漂移：只改 AbsX/Y/Z，不动
+ /// LocationCode/Status/Version。构造只注入 CP6Context —— 租户隔离由全局查询过滤自动施加（v1.1）。
+ /// </summary>
+ public class LocationGeometryService
+@@ -29,18 +30,18 @@ public class LocationGeometryService
+         int absZ = rack.Z + (int)Math.Round(localZ);
+         return (absX, absY, absZ);
+     }
+ 
+     /// <summary>
+     /// 重算某货架下全部「已放置」库位坐标缓存。不触发 LocationPublished（发布载荷无几何，章04）。
+     /// </summary>
+     public async Task RecalcRackLocationsAsync(Guid rackId)
+     {
+         var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId)
+-                   ?? throw new InvalidOperationException("E-SPACE-002");
++                   ?? throw new BizException("E-SPACE-002");
+         var locs = await _db.Space_Locations
+             .Where(l => l.RackId == rackId && l.Placed).ToListAsync();
+         foreach (var l in locs)
+             (l.AbsX, l.AbsY, l.AbsZ) = ComputeAbs(rack, l.Col!.Value, l.Level!.Value, l.Depth!.Value);
+         await _db.SaveChangesAsync();
+     }
+ }
+diff --git a/CP6.Core/Services/Space/LocationPublishService.cs b/CP6.Core/Services/Space/LocationPublishService.cs
+index 1ed9acc..6fd09af 100644
+--- a/CP6.Core/Services/Space/LocationPublishService.cs
++++ b/CP6.Core/Services/Space/LocationPublishService.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Core.Services.Common;
+ using CP6.Core.Services.Integration;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Microsoft.EntityFrameworkCore.Storage;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+@@ -48,21 +49,21 @@ public class LocationPublishService : ILocationPublishService
+         // 事务范围＝闸门→翻状态→WMS 消费(T_WmsBin 写入)→事件落库，全部同库原子提交，
+         // 修复"翻了状态但事件静默丢失"的窗口（同一 CP6Context 实例，hook 内 SaveChanges 同事务）。
+         IDbContextTransaction? tx = _db.Database.IsRelational()
+             ? await _db.Database.BeginTransactionAsync()
+             : null;
+         try
+         {
+             // 1. 闸门（ch03 §9.2；zoneId 给定时按库区收窄，H5）
+             var pre = await _code.PrecheckAsync(floorId, zoneId);
+             if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
+-                throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
++                throw new BizException("E-SPACE-307");
+ 
+             // 2. 取 Status=0 且编码就绪的库位（zoneId 给定时经 Rack.ZoneId 收窄）
+             var locQuery = _db.Space_Locations
+                 .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null);
+             if (zoneId != null)
+             {
+                 var rackIds = await _db.Space_Racks.Where(r => r.ZoneId == zoneId).Select(r => r.Id).ToListAsync();
+                 locQuery = locQuery.Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value));
+             }
+             var locs = await locQuery.ToListAsync();
+@@ -99,44 +100,44 @@ public class LocationPublishService : ILocationPublishService
+         finally
+         {
+             if (tx != null) await tx.DisposeAsync();   // 未 Commit 即 Dispose = 回滚
+         }
+     }
+ 
+     /// <inheritdoc/>
+     public async Task DeactivateAsync(Guid locationId, string? user)
+     {
+         var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId)
+-                ?? throw new InvalidOperationException("E-SPACE-004: 库位不存在");
++                ?? throw new BizException("E-SPACE-004");
+         if (l.Status != 1)
+-            throw new InvalidOperationException("E-SPACE-004: 库位未处于已发布状态");
++            throw new BizException("E-SPACE-004");
+ 
+         // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
+         var warehouseCd = await ResolveWarehouseCdAsync(l);
+         var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
+         if (qty > 0)
+-            throw new InvalidOperationException("E-SPACE-401: 库位仍有库存，无法停用");
++            throw new BizException("E-SPACE-401");
+ 
+         // ② 同步 RPC：WMS 按实时库存权威判定（TOCTOU 防护；ch04 §6.1② v1.1）
+         var newVersion = l.Version + 1;
+         var resp = await _deactivator.DeactivateAsync(new WmsDeactivateRequest
+         {
+             LocationId = l.Id,
+             LocationCode = l.LocationCode ?? "",
+             WarehouseCd = warehouseCd,
+             Version = newVersion,
+             User = user
+         });
+ 
+         // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
+         if (!resp.Success)
+-            throw new InvalidOperationException("W-SPACE-404: WMS 侧仍有库存，停用未生效");
++            throw new BizException("W-SPACE-404");
+ 
+         l.Status = 2;
+         l.Version = newVersion;
+         l.Modifier = user;
+         l.ModifyDate = DateTime.Now;
+ 
+         var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
+         var batch = new LocationPublishBatch
+         {
+             BatchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}",
+@@ -298,15 +299,14 @@ public class LocationPublishService : ILocationPublishService
+     /// </summary>
+     private async Task<string?> ResolveWarehouseCdAsync(Space_Location l)
+     {
+         if (l.FloorId == null) return null;
+         var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == l.FloorId);
+         if (floor == null) return null;
+         var site = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId);
+         if (site == null) return null;
+         var warehouseCd = string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
+         if (warehouseCd.Length > 10)
+-            throw new InvalidOperationException(
+-                "E-SPACE-405: 站点编码超过 10 字符且未配置 WarehouseCd 映射，无法发布/停用");
++            throw new BizException("E-SPACE-405");
+         return warehouseCd;
+     }
+ }
+diff --git a/CP6.Core/Services/Space/SceneIoService.cs b/CP6.Core/Services/Space/SceneIoService.cs
+index 6bab0bd..85e6b23 100644
+--- a/CP6.Core/Services/Space/SceneIoService.cs
++++ b/CP6.Core/Services/Space/SceneIoService.cs
+@@ -1,32 +1,33 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// 场景导入导出服务实现（ch01 §G-3，v1.1 多租户规则）。
+ /// 构造只注入 CP6Context；租户由 SaveChanges StampTenant 自动盖章。
+ /// </summary>
+ public class SceneIoService : ISceneIoService
+ {
+     private readonly CP6Context _db;
+ 
+     public SceneIoService(CP6Context db) => _db = db;
+ 
+     /// <inheritdoc/>
+     public async Task<SceneExportDto> ExportAsync(Guid floorId)
+     {
+         var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == floorId)
+-                    ?? throw new InvalidOperationException("E-SPACE-001");
++                    ?? throw new BizException("E-SPACE-001");
+ 
+         var zones = await _db.Space_Zones
+             .Where(z => z.FloorId == floorId)
+             .Select(z => new ZoneExportDto
+             {
+                 Id = z.Id, ZoneCode = z.ZoneCode, ZoneName = z.ZoneName,
+                 ZoneType = z.ZoneType, Polygon = z.Polygon, Color = z.Color
+             }).ToListAsync();
+ 
+         var zoneIds = zones.Select(z => z.Id).ToList();
+diff --git a/CP6.Core/Services/Space/SceneService.cs b/CP6.Core/Services/Space/SceneService.cs
+index c64a603..ef060f3 100644
+--- a/CP6.Core/Services/Space/SceneService.cs
++++ b/CP6.Core/Services/Space/SceneService.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Microsoft.EntityFrameworkCore.Storage;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// 场景差量保存 + D7 绑码服务实现（ch01 §G-1/I-1，v1.1 多租户规则）。
+ /// 构造注入 CP6Context + LocationGeometryService；租户隔离由全局过滤+盖章自动施加。
+@@ -115,22 +116,21 @@ public class SceneService : ISceneService
+                         pathChangedRackIds.Add(existing.Id);
+ 
+                     // H2 缩格护栏（2026-07-06 拍板：Restrict）：越界库位——已发布阻断，草稿/停用连带删
+                     if (rd.Cols < existing.Cols || rd.Levels < existing.Levels || rd.DepthCount < existing.DepthCount)
+                     {
+                         var outOfBounds = await _db.Space_Locations
+                             .Where(l => l.RackId == existing.Id &&
+                                         (l.Col > rd.Cols || l.Level > rd.Levels || l.Depth > rd.DepthCount))
+                             .ToListAsync();
+                         if (outOfBounds.Any(l => l.Status == 1))
+-                            throw new InvalidOperationException(
+-                                "E-SPACE-403: 缩格触及已发布库位，请先停用越界库位再缩格");
++                            throw new BizException("E-SPACE-403");
+                         if (outOfBounds.Count > 0)
+                             _db.Space_Locations.RemoveRange(outOfBounds);   // 幽灵位清理（H2）
+                     }
+ 
+                     // 位姿/尺寸变更检测
+                     if (existing.X != rd.X || existing.Y != rd.Y || existing.Z != rd.Z ||
+                         existing.RotationZ != rd.RotationZ || existing.Cols != rd.Cols ||
+                         existing.Levels != rd.Levels || existing.DepthCount != rd.DepthCount ||
+                         existing.CellW != rd.CellW || existing.CellH != rd.CellH || existing.CellD != rd.CellD)
+                     {
+@@ -227,22 +227,21 @@ public class SceneService : ISceneService
+ 
+                 var existing = ld.Id.HasValue
+                     ? await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == ld.Id.Value)
+                     : null;
+                 if (existing != null)
+                 {
+                     // I3②：已发布库位的落位不可经场景保存变更（改挂走货架 rehome，废弃走停用）——值未变的回显不触发
+                     if (existing.Status == 1 &&
+                         (existing.RackId != incomingRack || existing.Col != ld.Col ||
+                          existing.Level != ld.Level || existing.Depth != ld.Depth))
+-                        throw new InvalidOperationException(
+-                            "E-SPACE-004: 已发布库位的落位不可经场景保存变更（改挂走货架 rehome，废弃走停用）");
++                        throw new BizException("E-SPACE-004");
+ 
+                     // I3③：越界护栏（闭合 H2 同帧缩格绕过）——同帧已缩格的货架经 identity-map 返回新网格
+                     await AssertLocationInBoundsAsync(incomingRack, ld);
+ 
+                     existing.RackId     = incomingRack;
+                     existing.Col        = ld.Col;
+                     existing.Level      = ld.Level;
+                     existing.Depth      = ld.Depth;
+                     existing.Placed     = ld.Placed;
+                     // H1 状态机护栏：Status/CodeOrigin 不接受场景保存覆盖——
+@@ -274,29 +273,29 @@ public class SceneService : ISceneService
+ 
+             // ── Deletes ────────────────────────────────────────────
+             foreach (var locId in dto.Deletes?.Locations ?? new List<Guid>())
+             {
+                 var e = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId);
+                 if (e == null) continue;
+                 // 已发布不可删（须先停用）；草稿/停用可删（2026-07-06 拍板）。
+                 // 注意：停用位删除后其码仍被 T_WmsBin 停用行占据 join 锚，同码新库位发布会被
+                 // 锚碰撞 REJECTED——锚清理机制记后续票，此为拍板时已知代价。
+                 if (e.Status == 1)
+-                    throw new InvalidOperationException("E-SPACE-408: 已发布库位不可删除，请先停用");
++                    throw new BizException("E-SPACE-408");
+                 _db.Space_Locations.Remove(e);
+             }
+ 
+             foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
+             {
+                 // ch04 §7.1：有已发布库位 → Restrict；全草稿/停用 → 库位连带删（旧 E-003 全拦废止）
+                 if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId && l.Status == 1))
+-                    throw new InvalidOperationException("E-SPACE-403: 该货架下有已发布库位，请先停用");
++                    throw new BizException("E-SPACE-403");
+                 var children = await _db.Space_Locations.Where(l => l.RackId == rackId).ToListAsync();
+                 if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
+                 var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId);
+                 if (e != null) _db.Space_Racks.Remove(e);
+             }
+ 
+             foreach (var aisleId in dto.Deletes?.Aisles ?? new List<Guid>())
+             {
+                 // SetNull：保留货架但解除巷道关联
+                 var racks = await _db.Space_Racks.Where(r => r.AisleId == aisleId).ToListAsync();
+@@ -317,21 +316,21 @@ public class SceneService : ISceneService
+                 if (e != null) _db.Space_Markers.Remove(e);
+             }
+ 
+             // ── 保存（乐观并发冲突→E-SPACE-009）─────────────────────
+             try
+             {
+                 await _db.SaveChangesAsync();
+             }
+             catch (DbUpdateConcurrencyException)
+             {
+-                throw new InvalidOperationException("E-SPACE-009");
++                throw new BizException("E-SPACE-009", 409);
+             }
+ 
+             // ── 位姿变更货架→重算库位绝对坐标 ─────────────────────────
+             foreach (var rid in changedRackIds)
+                 await _geo.RecalcRackLocationsAsync(rid);
+ 
+             // ── H4：改挂货架下的已发布库位 re-publish（在本事务内，RepublishAsync 嵌套守卫自动加入）──
+             if (pathChangedRackIds.Count > 0)
+             {
+                 var republishIds = await _db.Space_Locations
+@@ -361,36 +360,36 @@ public class SceneService : ISceneService
+     /// I3③ 越界护栏：库位落点必须落在货架网格内。incomingRack 为 null（未落位）→ 放过；
+     /// 货架查不到（同帧新建架未落库 / 真不存在）→ 放过（FK 语义由既有行为兜）。
+     /// 同帧已缩格的货架经 EF identity-map 返回被追踪的新网格值，闭合 H2 同帧缩格绕过。
+     /// </summary>
+     private async Task AssertLocationInBoundsAsync(Guid? incomingRack, SceneLocationSaveDto ld)
+     {
+         if (incomingRack == null) return;
+         var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == incomingRack.Value);
+         if (rack == null) return;
+         if (ld.Col > rack.Cols || ld.Level > rack.Levels || ld.Depth > rack.DepthCount)
+-            throw new InvalidOperationException("E-SPACE-002: 库位落点超出货架网格");
++            throw new BizException("E-SPACE-002");
+     }
+ 
+     /// <inheritdoc/>
+     public async Task BindCodesAsync(Guid rackId, IEnumerable<(Guid locId, int col, int level, int depth)> pairs, string? user)
+     {
+         var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId)
+-                   ?? throw new InvalidOperationException("E-SPACE-002");
++                   ?? throw new BizException("E-SPACE-002");
+ 
+         foreach (var (locId, col, level, depth) in pairs)
+         {
+             var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId)
+-                      ?? throw new InvalidOperationException("E-SPACE-004");
++                      ?? throw new BizException("E-SPACE-004");
+ 
+             if (loc.Status != 1 || loc.Placed || loc.CodeOrigin != 2)
+-                throw new InvalidOperationException("E-SPACE-004");
++                throw new BizException("E-SPACE-004");
+ 
+             var (absX, absY, absZ) = LocationGeometryService.ComputeAbs(rack, col, level, depth);
+ 
+             loc.RackId   = rackId;
+             loc.FloorId  = rack.FloorId;
+             loc.Col      = col;
+             loc.Level    = level;
+             loc.Depth    = depth;
+             loc.AbsX     = absX;
+             loc.AbsY     = absY;
+diff --git a/CP6.Core/Services/Space/SpaceMasterService.cs b/CP6.Core/Services/Space/SpaceMasterService.cs
+index 816ee57..e68f67d 100644
+--- a/CP6.Core/Services/Space/SpaceMasterService.cs
++++ b/CP6.Core/Services/Space/SpaceMasterService.cs
+@@ -1,11 +1,12 @@
+ using System.Text.Json;
++using CP6.WebApi.Localization;
+ using CP6.Core.EFDbContext;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Microsoft.EntityFrameworkCore.Storage;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// Space 主数据服务实现（ch00 §9，v1.1 多租户规则）。
+@@ -30,21 +31,21 @@ public class SpaceMasterService : ISpaceMasterService
+         _publish = publish;
+     }
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // Site
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     public async Task<Guid> CreateSiteAsync(SiteDto d, string? user)
+     {
+         if (await _db.Space_Sites.AnyAsync(x => x.SiteCode == d.SiteCode))
+-            throw new InvalidOperationException("E-SPACE-001");
++            throw new BizException("E-SPACE-001");
+         var e = new Space_Site
+         {
+             Id         = Guid.NewGuid(),
+             SiteCode   = d.SiteCode,
+             SiteName   = d.SiteName,
+             Address    = d.Address,
+             Lng        = d.Lng,
+             Lat        = d.Lat,
+             Enable     = d.Enable,
+             WarehouseCd = d.WarehouseCd,
+@@ -52,21 +53,21 @@ public class SpaceMasterService : ISpaceMasterService
+             CreateDate = DateTime.Now
+         };
+         _db.Space_Sites.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpdateSiteAsync(Guid id, SiteDto d, string? user)
+     {
+         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id)
+-                ?? throw new InvalidOperationException("E-SPACE-001");
++                ?? throw new BizException("E-SPACE-001");
+         e.SiteCode   = d.SiteCode;
+         e.SiteName   = d.SiteName;
+         e.Address    = d.Address;
+         e.Lng        = d.Lng;
+         e.Lat        = d.Lat;
+         e.Enable     = d.Enable;
+         e.WarehouseCd = d.WarehouseCd;
+         e.Modifier   = user;
+         e.ModifyDate = DateTime.Now;
+         await _db.SaveChangesAsync();
+@@ -76,33 +77,33 @@ public class SpaceMasterService : ISpaceMasterService
+         await _db.Space_Sites.Select(x => new SiteDto
+         {
+             Id = x.Id, SiteCode = x.SiteCode, SiteName = x.SiteName,
+             Address = x.Address, Lng = x.Lng, Lat = x.Lat, Enable = x.Enable,
+             WarehouseCd = x.WarehouseCd
+         }).ToListAsync();
+ 
+     public async Task DeleteSiteAsync(Guid id)
+     {
+         if (await _db.Space_Floors.AnyAsync(x => x.SiteId == id))
+-            throw new InvalidOperationException("E-SPACE-007");
++            throw new BizException("E-SPACE-007");
+         var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id);
+         if (e != null) { _db.Space_Sites.Remove(e); await _db.SaveChangesAsync(); }
+     }
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // Floor
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     public async Task<Guid> CreateFloorAsync(FloorDto d, string? user)
+     {
+         if (await _db.Space_Floors.AnyAsync(x => x.SiteId == d.SiteId && x.FloorCode == d.FloorCode))
+-            throw new InvalidOperationException("E-SPACE-001");
++            throw new BizException("E-SPACE-001");
+         var e = new Space_Floor
+         {
+             Id              = Guid.NewGuid(),
+             SiteId          = d.SiteId,
+             Level           = d.Level,
+             FloorCode       = d.FloorCode,
+             FloorName       = d.FloorName,
+             Height          = d.Height,
+             UnderlayImage   = d.UnderlayImage,
+             UnderlayScale   = d.UnderlayScale,
+@@ -114,21 +115,21 @@ public class SpaceMasterService : ISpaceMasterService
+             CreateDate      = DateTime.Now
+         };
+         _db.Space_Floors.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpdateFloorAsync(Guid id, FloorDto d, string? user)
+     {
+         var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id)
+-                ?? throw new InvalidOperationException("E-SPACE-001");
++                ?? throw new BizException("E-SPACE-001");
+         e.Level           = d.Level;
+         e.FloorCode       = d.FloorCode;
+         e.FloorName       = d.FloorName;
+         e.Height          = d.Height;
+         e.UnderlayImage   = d.UnderlayImage;
+         e.UnderlayScale   = d.UnderlayScale;
+         e.UnderlayOffsetX = d.UnderlayOffsetX;
+         e.UnderlayOffsetY = d.UnderlayOffsetY;
+         e.OriginX         = d.OriginX;
+         e.OriginY         = d.OriginY;
+@@ -143,34 +144,34 @@ public class SpaceMasterService : ISpaceMasterService
+             Id = x.Id, SiteId = x.SiteId, Level = x.Level, FloorCode = x.FloorCode,
+             FloorName = x.FloorName, Height = x.Height, UnderlayImage = x.UnderlayImage,
+             UnderlayScale = x.UnderlayScale, UnderlayOffsetX = x.UnderlayOffsetX,
+             UnderlayOffsetY = x.UnderlayOffsetY, OriginX = x.OriginX, OriginY = x.OriginY
+         }).ToListAsync();
+ 
+     public async Task DeleteFloorAsync(Guid id)
+     {
+         if (await _db.Space_Zones.AnyAsync(x => x.FloorId == id) ||
+             await _db.Space_Markers.AnyAsync(x => x.FloorId == id))
+-            throw new InvalidOperationException("E-SPACE-007");
++            throw new BizException("E-SPACE-007");
+         var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id);
+         if (e != null) { _db.Space_Floors.Remove(e); await _db.SaveChangesAsync(); }
+     }
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // Zone
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     public async Task<Guid> CreateZoneAsync(ZoneDto d, string? user)
+     {
+         ValidatePolygon(d.Polygon);  // E-SPACE-006
+         if (await _db.Space_Zones.AnyAsync(x => x.FloorId == d.FloorId && x.ZoneCode == d.ZoneCode))
+-            throw new InvalidOperationException("E-SPACE-001");
++            throw new BizException("E-SPACE-001");
+         var e = new Space_Zone
+         {
+             Id         = Guid.NewGuid(),
+             FloorId    = d.FloorId,
+             ZoneCode   = d.ZoneCode,
+             ZoneName   = d.ZoneName,
+             ZoneType   = d.ZoneType,
+             Polygon    = d.Polygon,
+             Color      = d.Color,
+             Enable     = d.Enable,
+@@ -179,21 +180,21 @@ public class SpaceMasterService : ISpaceMasterService
+         };
+         _db.Space_Zones.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpdateZoneAsync(Guid id, ZoneDto d, string? user)
+     {
+         ValidatePolygon(d.Polygon);
+         var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id)
+-                ?? throw new InvalidOperationException("E-SPACE-001");
++                ?? throw new BizException("E-SPACE-001");
+         e.ZoneCode   = d.ZoneCode;
+         e.ZoneName   = d.ZoneName;
+         e.ZoneType   = d.ZoneType;
+         e.Polygon    = d.Polygon;
+         e.Color      = d.Color;
+         e.Enable     = d.Enable;
+         e.Modifier   = user;
+         e.ModifyDate = DateTime.Now;
+         await _db.SaveChangesAsync();
+     }
+@@ -202,52 +203,52 @@ public class SpaceMasterService : ISpaceMasterService
+         await _db.Space_Zones.Where(x => x.FloorId == floorId).Select(x => new ZoneDto
+         {
+             Id = x.Id, FloorId = x.FloorId, ZoneCode = x.ZoneCode, ZoneName = x.ZoneName,
+             ZoneType = x.ZoneType, Polygon = x.Polygon, Color = x.Color, Enable = x.Enable
+         }).ToListAsync();
+ 
+     public async Task DeleteZoneAsync(Guid id)
+     {
+         if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == id) ||
+             await _db.Space_Racks.AnyAsync(x => x.ZoneId == id))
+-            throw new InvalidOperationException("E-SPACE-007");
++            throw new BizException("E-SPACE-007");
+         var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id);
+         if (e != null) { _db.Space_Zones.Remove(e); await _db.SaveChangesAsync(); }
+     }
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // Aisle
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     public async Task<Guid> CreateAisleAsync(AisleDto d, string? user)
+     {
+         if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == d.ZoneId && x.AisleCode == d.AisleCode))
+-            throw new InvalidOperationException("E-SPACE-001");
++            throw new BizException("E-SPACE-001");
+         var e = new Space_Aisle
+         {
+             Id         = Guid.NewGuid(),
+             ZoneId     = d.ZoneId,
+             AisleCode  = d.AisleCode,
+             Polygon    = d.Polygon,
+             Centerline = d.Centerline,
+             Creator    = user,
+             CreateDate = DateTime.Now
+         };
+         _db.Space_Aisles.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpdateAisleAsync(Guid id, AisleDto d, string? user)
+     {
+         var e = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id)
+-                ?? throw new InvalidOperationException("E-SPACE-001");
++                ?? throw new BizException("E-SPACE-001");
+         e.AisleCode  = d.AisleCode;
+         e.Polygon    = d.Polygon;
+         e.Centerline = d.Centerline;
+         e.Modifier   = user;
+         e.ModifyDate = DateTime.Now;
+         await _db.SaveChangesAsync();
+     }
+ 
+     public async Task<List<AisleDto>> ListAislesAsync(Guid zoneId) =>
+         await _db.Space_Aisles.Where(x => x.ZoneId == zoneId).Select(x => new AisleDto
+@@ -256,39 +257,39 @@ public class SpaceMasterService : ISpaceMasterService
+             Polygon = x.Polygon, Centerline = x.Centerline
+         }).ToListAsync();
+ 
+     public async Task DeleteAisleAsync(Guid id, string? mode = null, Guid? targetAisleId = null, string? user = null)
+     {
+         var aisle = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id);
+         if (aisle == null) return;
+ 
+         // I2：mode 白名单（在取 published 之前）——未知 mode 直接拒绝，不静默降级默认删除
+         if (mode is not (null or "deactivate" or "rehome"))
+-            throw new InvalidOperationException("E-SPACE-002: 未知 mode（可用 deactivate|rehome）");
++            throw new BizException("E-SPACE-002");
+ 
+         var racks = await _db.Space_Racks.Where(r => r.AisleId == id).ToListAsync();
+         var rackIds = racks.Select(r => r.Id).ToList();
+         var published = await _db.Space_Locations
+             .Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value) && l.Status == 1)
+             .Select(l => l.Id)
+             .ToListAsync();
+ 
+         // 路径B（ch04 §7.2）：改挂目标巷道（null=脱巷道也是 path 变更）→ re-publish → 删。
+         // I2：rehome 无论 published 数量都走本分支——「搬走」语义对全草稿同样成立（草稿只改挂不 re-publish）。
+         if (mode == "rehome")
+         {
+             if (targetAisleId != null)
+             {
+                 var target = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == targetAisleId.Value)
+-                             ?? throw new InvalidOperationException("E-SPACE-407: 目标巷道不存在");
++                             ?? throw new BizException("E-SPACE-407");
+                 if (racks.Any(r => r.ZoneId != target.ZoneId))
+-                    throw new InvalidOperationException("E-SPACE-407: 目标巷道与货架不在同一库区");
++                    throw new BizException("E-SPACE-407");
+             }
+             // I1：改挂 + re-publish + 删源 三段提交包一层事务（RepublishAsync 嵌套守卫自动加入，非原子重试黑洞闭合）
+             IDbContextTransaction? tx = _db.Database.IsRelational()
+                 ? await _db.Database.BeginTransactionAsync()
+                 : null;
+             try
+             {
+                 foreach (var r in racks) r.AisleId = targetAisleId;
+                 await _db.SaveChangesAsync();                    // 先落改挂，BuildItemAsync 才拼得出新 path
+                 if (published.Count > 0)
+@@ -314,44 +315,43 @@ public class SpaceMasterService : ISpaceMasterService
+             switch (mode)
+             {
+                 case "deactivate":
+                     // 路径A（ch04 §7.2）：逐个走停用同步 RPC。不包事务——停用是同步决策模型，
+                     // 部分完成时已停用的保持停用（安全方向），重试幂等收敛。
+                     foreach (var locId in published)
+                         await _publish.DeactivateAsync(locId, user);
+                     break;
+ 
+                 default:
+-                    throw new InvalidOperationException(
+-                        $"E-SPACE-402: 该巷道下有 {published.Count} 个已发布库位，不能直接删除（可用 mode=deactivate|rehome）");
++                    throw new BizException("E-SPACE-402");
+             }
+         }
+ 
+         // 默认路径（无已发布 / deactivate 后落到这里）——SetNull 保留货架。
+         // 注：deactivate 后库位已 Status=2，其 WMS bin 已带最终态，path 陈旧无消费方，不再 re-publish。
+         foreach (var r in racks) r.AisleId = null;
+         _db.Space_Aisles.Remove(aisle);
+         await _db.SaveChangesAsync();
+     }
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // Rack
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     public async Task<Guid> CreateRackAsync(RackDto d, string? user)
+     {
+         if (d.ZoneId == Guid.Empty)
+-            throw new InvalidOperationException("E-SPACE-002");  // 货架必须归库区
++            throw new BizException("E-SPACE-002");  // 货架必须归库区
+         if (d.Cols < 1 || d.Levels < 1 || d.DepthCount < 1 || d.CellW <= 0 || d.CellH <= 0 || d.CellD <= 0)
+-            throw new InvalidOperationException("E-SPACE-002");  // 尺寸不变量
++            throw new BizException("E-SPACE-002");  // 尺寸不变量
+         if (await _db.Space_Racks.AnyAsync(x => x.ZoneId == d.ZoneId && x.RackCode == d.RackCode))
+-            throw new InvalidOperationException("E-SPACE-001");
++            throw new BizException("E-SPACE-001");
+         // 冗余回填 FloorId（从 Zone 查）
+         var floorId = await _db.Space_Zones
+             .Where(z => z.Id == d.ZoneId)
+             .Select(z => z.FloorId)
+             .FirstOrDefaultAsync();
+         var e = new Space_Rack
+         {
+             Id         = Guid.NewGuid(),
+             ZoneId     = d.ZoneId,
+             AisleId    = d.AisleId,
+@@ -373,38 +373,38 @@ public class SpaceMasterService : ISpaceMasterService
+             CreateDate = DateTime.Now
+         };
+         _db.Space_Racks.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     public async Task UpdateRackAsync(Guid id, RackDto d, string? user)
+     {
+         var e = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id)
+-                ?? throw new InvalidOperationException("E-SPACE-002");
++                ?? throw new BizException("E-SPACE-002");
+         // 乐观并发（真库生效；InMemory 测试跳过冲突）
+         _db.Entry(e).Property(x => x.RowVersion).OriginalValue = d.RowVersion;
+         e.X          = d.X;
+         e.Y          = d.Y;
+         e.Z          = d.Z;
+         e.RotationZ  = d.RotationZ;
+         e.Cols       = d.Cols;
+         e.Levels     = d.Levels;
+         e.DepthCount = d.DepthCount;
+         e.CellW      = d.CellW;
+         e.CellH      = d.CellH;
+         e.CellD      = d.CellD;
+         e.AisleId    = d.AisleId;
+         e.Modifier   = user;
+         e.ModifyDate = DateTime.Now;
+         try { await _db.SaveChangesAsync(); }
+-        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-SPACE-009"); }
++        catch (DbUpdateConcurrencyException) { throw new BizException("E-SPACE-009", 409); }
+         // ★ 位姿/尺寸变更后重算其下所有已放置库位的绝对坐标缓存
+         await _geo.RecalcRackLocationsAsync(id);
+     }
+ 
+     public async Task<List<RackDto>> ListRacksAsync(Guid zoneId) =>
+         await _db.Space_Racks.Where(x => x.ZoneId == zoneId).Select(x => new RackDto
+         {
+             Id = x.Id, ZoneId = x.ZoneId, AisleId = x.AisleId, TemplateId = x.TemplateId,
+             RackCode = x.RackCode, X = x.X, Y = x.Y, Z = x.Z, RotationZ = x.RotationZ,
+             Cols = x.Cols, Levels = x.Levels, DepthCount = x.DepthCount,
+@@ -412,42 +412,42 @@ public class SpaceMasterService : ISpaceMasterService
+             RowVersion = x.RowVersion
+         }).ToListAsync();
+ 
+     public async Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null)
+     {
+         var rack = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id);
+         if (rack == null) return;
+ 
+         // I2：mode 白名单（在取 published 之前）——未知 mode 直接拒绝，不静默降级默认删除
+         if (mode is not (null or "deactivate" or "rehome"))
+-            throw new InvalidOperationException("E-SPACE-002: 未知 mode（可用 deactivate|rehome）");
++            throw new BizException("E-SPACE-002");
+ 
+         var published = await _db.Space_Locations
+             .Where(l => l.RackId == id && l.Status == 1)
+             .Select(l => l.Id)
+             .ToListAsync();
+ 
+         // 路径B（同规格换架）：C1——目标必须同库区（同 zone ⇒ 同 floor 同 site，
+         // WarehouseCd 锚绝不漂移；比照巷道 rehome E-407 先例）；目标网格 ≥ 源、且无自有库位（否则格口冲突）。
+         // I2：rehome 无论 published 数量都走本分支——「搬走」语义对全草稿同样成立（草稿只改挂不 re-publish）。
+         if (mode == "rehome")
+         {
+             if (targetRackId == null)
+-                throw new InvalidOperationException("E-SPACE-002: mode=rehome 需要 targetRackId");
++                throw new BizException("E-SPACE-002");
+             var target = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetRackId.Value)
+-                         ?? throw new InvalidOperationException("E-SPACE-002: 目标货架不存在");
++                         ?? throw new BizException("E-SPACE-002");
+             if (target.ZoneId != rack.ZoneId)
+-                throw new InvalidOperationException("E-SPACE-002: 目标货架与源货架不在同一库区，无法改挂");
++                throw new BizException("E-SPACE-002");
+             if (target.Cols < rack.Cols || target.Levels < rack.Levels || target.DepthCount < rack.DepthCount)
+-                throw new InvalidOperationException("E-SPACE-002: 目标货架网格小于源货架，无法改挂");
++                throw new BizException("E-SPACE-002");
+             if (await _db.Space_Locations.AnyAsync(l => l.RackId == target.Id))
+-                throw new InvalidOperationException("E-SPACE-002: 目标货架已有库位，无法改挂");
++                throw new BizException("E-SPACE-002");
+ 
+             // I1：改挂 + re-publish + 删源 三段提交包一层事务（RepublishAsync 嵌套守卫自动加入，非原子重试黑洞闭合）
+             IDbContextTransaction? tx = _db.Database.IsRelational()
+                 ? await _db.Database.BeginTransactionAsync()
+                 : null;
+             try
+             {
+                 var movable = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
+                 foreach (var l in movable)
+                 {
+@@ -481,22 +481,21 @@ public class SpaceMasterService : ISpaceMasterService
+             switch (mode)
+             {
+                 case "deactivate":
+                     // 路径A（ch04 §7.2）：逐个停用（同步 RPC 决策模型，不包事务，部分完成重试幂等）
+                     // → 落到下方级联删（停用位可删，2026-07-06 拍板②——与巷道 SetNull 落点不同）。
+                     foreach (var locId in published)
+                         await _publish.DeactivateAsync(locId, user);
+                     break;
+ 
+                 default:
+-                    throw new InvalidOperationException(
+-                        "E-SPACE-403: 该货架下有已发布库位，请先停用（或 mode=deactivate|rehome）");
++                    throw new BizException("E-SPACE-403");
+             }
+         }
+ 
+         // 无已发布（或 deactivate 后）→ 库位级联删 + 删货架（停用位可删，2026-07-06 拍板；
+         // 其码仍占 T_WmsBin 锚，同码再发布会被 REJECTED——锚清理记后续票）。
+         var children = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
+         if (children.Count > 0) _db.Space_Locations.RemoveRange(children);
+         _db.Space_Racks.Remove(rack);
+         await _db.SaveChangesAsync();
+     }
+@@ -611,13 +610,13 @@ public class SpaceMasterService : ISpaceMasterService
+                 Status       = l.Status
+             }).ToListAsync();
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // 内部工具
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     private static void ValidatePolygon(string json)
+     {
+         var pts = JsonSerializer.Deserialize<List<List<int>>>(json) ?? new();
+-        if (pts.Count < 3) throw new InvalidOperationException("E-SPACE-006");
++        if (pts.Count < 3) throw new BizException("E-SPACE-006");
+     }
+ }
+diff --git a/CP6.Core/Services/Space/TemplateService.cs b/CP6.Core/Services/Space/TemplateService.cs
+index def5b4b..cc444d1 100644
+--- a/CP6.Core/Services/Space/TemplateService.cs
++++ b/CP6.Core/Services/Space/TemplateService.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// 模板服务实现（ch01 §F-1，v1.1 多租户规则）。
+ /// 构造只注入 CP6Context；查询/盖章由全局过滤+SaveChanges 自动施加。
+ /// </summary>
+@@ -20,63 +21,63 @@ public class TemplateService : ITemplateService
+         await _db.Space_Templates.Select(t => new TemplateDto
+         {
+             Id = t.Id, TemplateCode = t.TemplateCode, TemplateName = t.TemplateName,
+             TemplateType = t.TemplateType, Params = t.Params
+         }).ToListAsync();
+ 
+     /// <inheritdoc/>
+     public async Task<Guid> CreateAsync(TemplateDto d, string? user)
+     {
+         if (await _db.Space_Templates.AnyAsync(t => t.TemplateCode == d.TemplateCode))
+-            throw new InvalidOperationException("E-SPACE-001");
++            throw new BizException("E-SPACE-001");
+ 
+         var e = new Space_Template
+         {
+             Id           = d.Id ?? Guid.NewGuid(),
+             TemplateCode = d.TemplateCode,
+             TemplateName = d.TemplateName,
+             TemplateType = d.TemplateType,
+             Params       = d.Params,
+             Creator      = user,
+             CreateDate   = DateTime.Now
+         };
+         _db.Space_Templates.Add(e);
+         await _db.SaveChangesAsync();
+         return e.Id;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task UpdateAsync(Guid id, TemplateDto d, string? user)
+     {
+         var e = await _db.Space_Templates.FirstOrDefaultAsync(t => t.Id == id)
+-                ?? throw new InvalidOperationException("E-SPACE-001");
++                ?? throw new BizException("E-SPACE-001");
+         e.TemplateCode = d.TemplateCode;
+         e.TemplateName = d.TemplateName;
+         e.TemplateType = d.TemplateType;
+         e.Params       = d.Params;
+         e.Modifier     = user;
+         e.ModifyDate   = DateTime.Now;
+         await _db.SaveChangesAsync();
+     }
+ 
+     /// <inheritdoc/>
+     public async Task DeleteAsync(Guid id)
+     {
+         var e = await _db.Space_Templates.FirstOrDefaultAsync(t => t.Id == id);
+         if (e != null) { _db.Space_Templates.Remove(e); await _db.SaveChangesAsync(); }
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<Guid> CloneAsync(Guid id, string? user)
+     {
+         var src = await _db.Space_Templates.FirstOrDefaultAsync(t => t.Id == id)
+-                  ?? throw new InvalidOperationException("E-SPACE-001");
++                  ?? throw new BizException("E-SPACE-001");
+ 
+         // 生成不碰撞的克隆编码：{code}-COPY → -COPY2 → -COPY3 ...
+         var candidate = src.TemplateCode + "-COPY";
+         int n = 2;
+         while (await _db.Space_Templates.AnyAsync(t => t.TemplateCode == candidate))
+             candidate = src.TemplateCode + "-COPY" + n++;
+ 
+         var clone = new Space_Template
+         {
+             Id           = Guid.NewGuid(),
+diff --git a/CP6.Tests/BindCodesTests.cs b/CP6.Tests/BindCodesTests.cs
+index 99206ab..4319456 100644
+--- a/CP6.Tests/BindCodesTests.cs
++++ b/CP6.Tests/BindCodesTests.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Core.Services.Integration;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DomainModels.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Microsoft.Extensions.Logging.Abstractions;
+ using Xunit;
+ 
+ namespace CP6.Tests;
+ 
+ /// <summary>
+@@ -77,23 +78,23 @@ public class BindCodesTests
+             RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1,
+             CellW = 1000, CellH = 1000, CellD = 1000
+         });
+         // Status=0 (草稿) 不允许绑码
+         db.Space_Locations.Add(new Space_Location
+         {
+             Id = locId, Status = 0, Placed = false, CodeOrigin = 2
+         });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.BindCodesAsync(rackId, new[] { (locId, 1, 1, 1) }, "u"));
+-        Assert.Equal("E-SPACE-004", ex.Message);
++        Assert.Equal("E-SPACE-004", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task BindCodes_AlreadyPlaced_ThrowsE004()
+     {
+         var (db, svc) = Make();
+ 
+         var rackId = Guid.NewGuid();
+         var locId  = Guid.NewGuid();
+ 
+@@ -103,15 +104,15 @@ public class BindCodesTests
+             RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1,
+             CellW = 1000, CellH = 1000, CellD = 1000
+         });
+         // Already placed
+         db.Space_Locations.Add(new Space_Location
+         {
+             Id = locId, Status = 1, Placed = true, CodeOrigin = 2
+         });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.BindCodesAsync(rackId, new[] { (locId, 1, 1, 1) }, "u"));
+-        Assert.Equal("E-SPACE-004", ex.Message);
++        Assert.Equal("E-SPACE-004", ex.Code);
+     }
+ }
+diff --git a/CP6.Tests/CodeEngineServiceTests.cs b/CP6.Tests/CodeEngineServiceTests.cs
+index 9847808..405b704 100644
+--- a/CP6.Tests/CodeEngineServiceTests.cs
++++ b/CP6.Tests/CodeEngineServiceTests.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using System.Text.Json;
+ using Xunit;
+ 
+ namespace CP6.Tests;
+ 
+ /// <summary>
+@@ -247,23 +248,23 @@ public class CodeEngineServiceTests
+     {
+         // 两个库位完全相同坐标 → 拼出相同码 → 批内重复 → E-SPACE-304 整体不写
+         using var db = Db();
+         var (floorId, _, rackId) = SeedFloorZoneRack(db);
+         db.Space_CodeRules.Add(DefaultRule());
+         db.Space_Locations.AddRange(
+             Draft(rackId, floorId, 1, 1, 1),
+             Draft(rackId, floorId, 1, 1, 1));   // 同坐标 → 同码
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => Svc(db).GenerateAsync(floorId, "rebuild", null));
+-        Assert.Equal("E-SPACE-304", ex.Message);
++        Assert.Equal("E-SPACE-304", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task Generate_Rebuild_TwoPhase_OldCodeReplaced()
+     {
+         // rebuild 模式两阶段：旧码全部替换为新码（InMemory 测逻辑正确性）
+         using var db = Db();
+         var (floorId, _, rackId) = SeedFloorZoneRack(db);
+         db.Space_CodeRules.Add(DefaultRule());
+         var loc = Draft(rackId, floorId, 1, 1, 1, code: "OLD-CODE");
+diff --git a/CP6.Tests/LocationPublishServiceTests.cs b/CP6.Tests/LocationPublishServiceTests.cs
+index 9dd1db9..b5f6f3e 100644
+--- a/CP6.Tests/LocationPublishServiceTests.cs
++++ b/CP6.Tests/LocationPublishServiceTests.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Core.Services.Common;
+ using CP6.Core.Services.Integration;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Microsoft.Extensions.Logging.Abstractions;
+ using System.Text.Json;
+ 
+ namespace CP6.Tests;
+@@ -93,23 +94,23 @@ public class LocationPublishServiceTests
+         // Alternatively, add a location with null code → EmptyCodeCount > 0 → E-307
+         var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
+         db.Space_Zones.Add(zone);
+         db.Space_Locations.Add(new Space_Location
+         {
+             Id = Guid.NewGuid(), FloorId = floorId, RackId = Guid.NewGuid(),
+             Placed = true, Status = 0, CodeOrigin = 1, LocationCode = null
+         });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => MakePublishSvc(db).PublishFloorAsync(floorId, null, "u"));
+-        Assert.StartsWith("E-SPACE-307", ex.Message);
++        Assert.Equal("E-SPACE-307", ex.Code);
+         Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+     }
+ 
+     [Fact]
+     public async Task Publish_NoLocations_Returns0()
+     {
+         using var db = Db();
+         var floorId = Guid.NewGuid();
+         var n = await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
+         Assert.Equal(0, n);
+@@ -193,23 +194,23 @@ public class LocationPublishServiceTests
+         db.Space_CodeRules.Add(new Space_CodeRule { Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true, Segments = ValidSegmentsJson() });
+         db.AddRange(site, floor, zone, rack);
+         db.Space_Locations.Add(new Space_Location
+         {
+             Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
+             Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
+             Col = 1, Level = 1, Depth = 1
+         });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => MakePublishSvc(db).PublishFloorAsync(floorId, null, "u"));
+-        Assert.StartsWith("E-SPACE-405", ex.Message);
++        Assert.Equal("E-SPACE-405", ex.Code);
+ 
+         // AsNoTracking 读 InMemory 存储快照（SaveChanges 从未运行）→ Status 仍 0
+         var loc = await db.Space_Locations.AsNoTracking().SingleAsync();
+         Assert.Equal(0, loc.Status);
+         Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+     }
+ 
+     [Fact]
+     public async Task Publish_WithZoneId_OnlyPublishesThatZone_GateZoneScoped()
+     {
+@@ -281,40 +282,40 @@ public class LocationPublishServiceTests
+         var locId = Guid.NewGuid();
+         db.Space_Locations.Add(new Space_Location
+         {
+             Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
+             Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "X-01-01-01",
+             Col = 1, Level = 1, Depth = 1, Version = 1
+         });
+         await db.SaveChangesAsync();
+ 
+         var stockStub = new FixedStockQuery(5);
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => MakePublishSvc(db, stock: stockStub).DeactivateAsync(locId, "u"));
+-        Assert.StartsWith("E-SPACE-401", ex.Message);
++        Assert.Equal("E-SPACE-401", ex.Code);
+         Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+     }
+ 
+     [Fact]
+     public async Task Deactivate_NotPublished_Throws_E004()
+     {
+         using var db = Db();
+         var locId = Guid.NewGuid();
+         db.Space_Locations.Add(new Space_Location
+         {
+             Id = locId, FloorId = Guid.NewGuid(), Status = 0, LocationCode = "Y-01-01-01"
+         });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => MakePublishSvc(db).DeactivateAsync(locId, "u"));
+-        Assert.StartsWith("E-SPACE-004", ex.Message);
++        Assert.Equal("E-SPACE-004", ex.Code);
+     }
+ 
+     // ── §7.2 路径B: re-publish ────────────────────────────────────────────
+ 
+     [Fact]
+     public async Task Republish_PublishedLocation_BumpsVersion_EmitsUpsert()
+     {
+         using var db = Db();
+         var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);
+         var locId = Guid.NewGuid();
+@@ -445,24 +446,24 @@ public class LocationPublishServiceTests
+         using var db = Db();
+         var locId = Guid.NewGuid();
+         db.Space_Locations.Add(new Space_Location
+         {
+             Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
+             Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
+             Col = 1, Level = 1, Depth = 1, Version = 1
+         });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => MakePublishSvc(db, deact: new RejectingDeactivator()).DeactivateAsync(locId, "u"));
+ 
+-        Assert.StartsWith("W-SPACE-404", ex.Message);
++        Assert.Equal("W-SPACE-404", ex.Code);
+         var loc = await db.Space_Locations.SingleAsync();
+         Assert.Equal(1, loc.Status);            // §6.3：不前进、无翻转回滚
+         Assert.Equal(1, loc.Version);           // 版本不动
+         Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 决策失败不发兜底事件
+     }
+ 
+     [Fact]
+     public async Task Deactivate_Success_WmsBinInactive_VersionSynced()
+     {
+         using var db = Db();
+diff --git a/CP6.Tests/SceneServiceTests.cs b/CP6.Tests/SceneServiceTests.cs
+index 654313d..1e98d4f 100644
+--- a/CP6.Tests/SceneServiceTests.cs
++++ b/CP6.Tests/SceneServiceTests.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Core.Services.Integration;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Microsoft.Extensions.Logging.Abstractions;
+ using Xunit;
+ 
+ namespace CP6.Tests;
+ 
+@@ -312,22 +313,22 @@ public class SceneServiceTests
+                 new RackDto
+                 {
+                     Id = rack.Id, ZoneId = zone.Id, AisleId = null, RackCode = "R1",
+                     X = 0, Y = 0, Z = 0, RotationZ = 0,
+                     Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,   // 3→2 缩格
+                     Enable = true, RowVersion = rack.RowVersion
+                 }
+             }
+         };
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
+-        Assert.StartsWith("E-SPACE-403", ex.Message);
++        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
++        Assert.Equal("E-SPACE-403", ex.Code);
+         Assert.Equal(3, (await db.Space_Racks.AsNoTracking().SingleAsync()).Cols);   // 缩格未生效
+         Assert.Equal(1, await db.Space_Locations.CountAsync());                      // 库位仍在
+     }
+ 
+     [Fact]
+     public async Task SaveScene_ShrinkRack_DraftOutOfBounds_CascadeDeleted()
+     {
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+@@ -371,25 +372,25 @@ public class SceneServiceTests
+         await db.SaveChangesAsync();
+ 
+         // 草稿+停用：删除成功
+         await svc.SaveSceneAsync(floorId, new SceneSaveDto
+         {
+             Deletes = new Deletes { Locations = new List<Guid> { draft.Id, deact.Id } }
+         }, "u");
+         Assert.Equal(1, await db.Space_Locations.CountAsync());
+ 
+         // 已发布：拒绝
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
++        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+         {
+             Deletes = new Deletes { Locations = new List<Guid> { pub.Id } }
+         }, "u"));
+-        Assert.StartsWith("E-SPACE-408", ex.Message);
++        Assert.Equal("E-SPACE-408", ex.Code);
+         Assert.Equal(1, await db.Space_Locations.CountAsync());
+     }
+ 
+     [Fact]
+     public async Task SaveScene_DeleteRack_DraftLocationsOnly_Cascades()
+     {
+         // ch04 §7.1：全草稿 → 连带删（替代旧 E-003 全拦）
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+@@ -411,25 +412,25 @@ public class SceneServiceTests
+     public async Task SaveScene_DeleteRack_WithPublishedLocation_Throws403()
+     {
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+         var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+         db.AddRange(zone, rack);
+         db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Status = 1, LocationCode = "Z1-01", Col = 1, Level = 1, Depth = 1, Version = 1 });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
++        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+         {
+             Deletes = new Deletes { Racks = new List<Guid> { rack.Id } }
+         }, "u"));
+-        Assert.StartsWith("E-SPACE-403", ex.Message);
++        Assert.Equal("E-SPACE-403", ex.Code);
+         Assert.Equal(1, await db.Space_Racks.CountAsync());
+     }
+ 
+     // ── 波1.5 终审 I3: 场景库位落位护栏（E-SPACE-004 已发布落位冻结 / E-SPACE-002 越界）─────
+ 
+     [Fact]
+     public async Task SaveScene_SameFrameShrinkAndMovePublishedOutOfBounds_Throws_NothingSaved()
+     {
+         // H2 同帧缩格绕过闭合：同一帧「缩格 + 把已发布位移到越界格」——须抛（E-004 或 E-002 先命中），库表无变化
+         var (db, svc) = Make();
+@@ -448,62 +449,62 @@ public class SceneServiceTests
+                     X = 0, Y = 0, Z = 0, RotationZ = 0,
+                     Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000,   // 3→2 缩格
+                     Enable = true, RowVersion = rack.RowVersion }
+             },
+             Locations = new List<SceneLocationSaveDto>
+             {
+                 new SceneLocationSaveDto { Id = loc.Id, RackId = rack.Id, Col = 3, Level = 1, Depth = 1, Placed = true }   // 移到越界格
+             }
+         };
+ 
+-        await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
++        await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, dto, "u"));
+         Assert.Equal(3, (await db.Space_Racks.AsNoTracking().SingleAsync()).Cols);       // 缩格未生效
+         Assert.Equal(1, (await db.Space_Locations.AsNoTracking().SingleAsync()).Col);    // 库位原位
+     }
+ 
+     [Fact]
+     public async Task SaveScene_RepointPublishedLocation_Throws004()
+     {
+         // 已发布库位改挂他架不可经场景保存（改挂走货架 rehome）——E-SPACE-004
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+         var rackA = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "RA", Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+         var rackB = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "RB", Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+         var loc = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rackA.Id, Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "Z1-01", Col = 1, Level = 1, Depth = 1, Version = 1 };
+         db.AddRange(zone, rackA, rackB, loc);
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
++        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+         {
+             Locations = new List<SceneLocationSaveDto>
+             {
+                 new SceneLocationSaveDto { Id = loc.Id, RackId = rackB.Id, Col = 1, Level = 1, Depth = 1, Placed = true }
+             }
+         }, "u"));
+-        Assert.StartsWith("E-SPACE-004", ex.Message);
++        Assert.Equal("E-SPACE-004", ex.Code);
+         Assert.Equal(rackA.Id, (await db.Space_Locations.AsNoTracking().SingleAsync()).RackId);   // 仍挂 A
+     }
+ 
+     [Fact]
+     public async Task SaveScene_MoveDraftLocationOutOfBounds_Throws002()
+     {
+         // 草稿库位移到越界格 → E-SPACE-002（草稿不受 E-004，仅越界护栏）
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z" };
+         var rack = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 2, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
+         var loc = new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rack.Id, Placed = true, Status = 0, CodeOrigin = 1, Col = 1, Level = 1, Depth = 1 };
+         db.AddRange(zone, rack, loc);
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
++        var ex = await Assert.ThrowsAsync<BizException>(() => svc.SaveSceneAsync(floorId, new SceneSaveDto
+         {
+             Locations = new List<SceneLocationSaveDto>
+             {
+                 new SceneLocationSaveDto { Id = loc.Id, RackId = rack.Id, Col = 5, Level = 1, Depth = 1, Placed = true }   // 5 > Cols=2
+             }
+         }, "u"));
+-        Assert.StartsWith("E-SPACE-002", ex.Message);
++        Assert.Equal("E-SPACE-002", ex.Code);
+         Assert.Equal(1, (await db.Space_Locations.AsNoTracking().SingleAsync()).Col);   // 草稿原位
+     }
+ }
+diff --git a/CP6.Tests/Space/ConnectorServiceTests.cs b/CP6.Tests/Space/ConnectorServiceTests.cs
+index acc36f5..3f7f9ff 100644
+--- a/CP6.Tests/Space/ConnectorServiceTests.cs
++++ b/CP6.Tests/Space/ConnectorServiceTests.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Xunit;
+ 
+ namespace CP6.Tests.Space;
+ 
+ public class ConnectorServiceTests
+ {
+     private static (CP6Context, ConnectorService) Make()
+@@ -29,23 +30,23 @@ public class ConnectorServiceTests
+         Assert.Equal("E1", list[0].ConnectorCode);
+         Assert.Equal(2, list[0].Stops.Count);
+     }
+ 
+     [Fact]
+     public async Task Create_DuplicateCode_same_site_throws_E501()
+     {
+         var (_, svc) = Make();
+         var site = Guid.NewGuid();
+         await svc.CreateAsync(new ConnectorDto { SiteId = site, ConnectorCode = "E1", ConnectorType = 1, Name = "a" }, "u");
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.CreateAsync(new ConnectorDto { SiteId = site, ConnectorCode = "E1", ConnectorType = 1, Name = "b" }, "u"));
+-        Assert.Equal("E-SPACE-501", ex.Message);
++        Assert.Equal("E-SPACE-501", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task UpsertStop_same_floor_twice_updates_not_duplicates()
+     {
+         var (_, svc) = Make();
+         var site = Guid.NewGuid(); var f1 = Guid.NewGuid();
+         var cid = await svc.CreateAsync(new ConnectorDto { SiteId = site, ConnectorCode = "E1", ConnectorType = 1, Name = "a" }, "u");
+         await svc.UpsertStopAsync(cid, new ConnectorStopDto { FloorId = f1, X = 100, Y = 100 }, "u");
+         await svc.UpsertStopAsync(cid, new ConnectorStopDto { FloorId = f1, X = 200, Y = 200 }, "u");
+@@ -86,15 +87,15 @@ public class ConnectorServiceTests
+         var list = await svc.ListBySiteAsync(site);
+         Assert.Equal("b", list[0].Name);
+         Assert.Equal(3, list[0].ConnectorType);
+         Assert.Equal(9, list[0].TravelSecPerFloor);
+     }
+ 
+     [Fact]
+     public async Task Update_missing_throws_E502()
+     {
+         var (_, svc) = Make();
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.UpdateAsync(Guid.NewGuid(), new ConnectorUpdateDto { Name = "x", ConnectorType = 1 }, "u"));
+-        Assert.Equal("E-SPACE-502", ex.Message);
++        Assert.Equal("E-SPACE-502", ex.Code);
+     }
+ }
+diff --git a/CP6.Tests/SpaceMasterServiceTests.cs b/CP6.Tests/SpaceMasterServiceTests.cs
+index 00cae54..9ccea38 100644
+--- a/CP6.Tests/SpaceMasterServiceTests.cs
++++ b/CP6.Tests/SpaceMasterServiceTests.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Core.Services.Integration;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Microsoft.Extensions.Logging.Abstractions;
+ using System.Text.Json;
+ using Xunit;
+ 
+ namespace CP6.Tests;
+@@ -34,23 +35,23 @@ public class SpaceMasterServiceTests
+         return (db, new SpaceMasterService(db, geo, publish));
+     }
+ 
+     // ── B-3: Site/Zone 唯一校验 + 多边形顶点数 ────────────────────────────
+ 
+     [Fact]
+     public async Task CreateSite_DuplicateCode_Throws_E001()
+     {
+         var (_, svc) = Make();
+         await svc.CreateSiteAsync(new SiteDto { SiteCode = "WH1", SiteName = "a" }, "u");
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.CreateSiteAsync(new SiteDto { SiteCode = "WH1", SiteName = "b" }, "u"));
+-        Assert.Equal("E-SPACE-001", ex.Message);
++        Assert.Equal("E-SPACE-001", ex.Code);
+     }
+ 
+     /// <summary>编辑器 reconciliation：scene 须含完整 Floor 对象（底图标定 + 原点）。</summary>
+     [Fact]
+     public async Task GetScene_IncludesFloorObject()
+     {
+         var (_, svc) = Make();
+         var siteId = await svc.CreateSiteAsync(new SiteDto { SiteCode = "S", SiteName = "s" }, "u");
+         var floorId = await svc.CreateFloorAsync(new FloorDto
+         {
+@@ -69,48 +70,48 @@ public class SpaceMasterServiceTests
+     {
+         var (_, svc) = Make();
+         var id = await svc.CreateSiteAsync(new SiteDto { SiteCode = "WH1", SiteName = "a" }, "u");
+         Assert.NotEqual(Guid.Empty, id);
+     }
+ 
+     [Fact]
+     public async Task CreateZone_PolygonLessThan3Vertices_Throws_E006()
+     {
+         var (_, svc) = Make();
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.CreateZoneAsync(
+                 new ZoneDto { FloorId = Guid.NewGuid(), ZoneCode = "A", Polygon = "[[0,0],[1,1]]" }, "u"));
+-        Assert.Equal("E-SPACE-006", ex.Message);
++        Assert.Equal("E-SPACE-006", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task CreateZone_ValidPolygon_Succeeds()
+     {
+         var (_, svc) = Make();
+         var id = await svc.CreateZoneAsync(
+             new ZoneDto { FloorId = Guid.NewGuid(), ZoneCode = "A",
+                           Polygon = "[[0,0],[100,0],[100,100]]" }, "u");
+         Assert.NotEqual(Guid.Empty, id);
+     }
+ 
+     [Fact]
+     public async Task UpdateZone_InvalidPolygon_Throws_E006()
+     {
+         var (_, svc) = Make();
+         var floorId = Guid.NewGuid();
+         var id = await svc.CreateZoneAsync(
+             new ZoneDto { FloorId = floorId, ZoneCode = "Z1",
+                           Polygon = "[[0,0],[1,0],[1,1]]" }, "u");
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.UpdateZoneAsync(id,
+                 new ZoneDto { FloorId = floorId, ZoneCode = "Z1", Polygon = "[[0,0]]" }, "u"));
+-        Assert.Equal("E-SPACE-006", ex.Message);
++        Assert.Equal("E-SPACE-006", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task ListSites_ReturnsCreated()
+     {
+         var (_, svc) = Make();
+         await svc.CreateSiteAsync(new SiteDto { SiteCode = "S1", SiteName = "Site1" }, "u");
+         await svc.CreateSiteAsync(new SiteDto { SiteCode = "S2", SiteName = "Site2" }, "u");
+         var list = await svc.ListSitesAsync();
+         Assert.Equal(2, list.Count);
+@@ -176,42 +177,42 @@ public class SpaceMasterServiceTests
+     public async Task CreateRack_DuplicateCodeInZone_Throws_E001()
+     {
+         var (_, svc) = Make();
+         var zoneId = Guid.NewGuid();
+         await svc.CreateRackAsync(new RackDto
+         {
+             ZoneId = zoneId, RackCode = "R1",
+             Cols = 1, Levels = 1, DepthCount = 1,
+             CellW = 1000, CellH = 1000, CellD = 1000
+         }, "u");
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.CreateRackAsync(new RackDto
+             {
+                 ZoneId = zoneId, RackCode = "R1",
+                 Cols = 1, Levels = 1, DepthCount = 1,
+                 CellW = 1000, CellH = 1000, CellD = 1000
+             }, "u"));
+-        Assert.Equal("E-SPACE-001", ex.Message);
++        Assert.Equal("E-SPACE-001", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task CreateRack_EmptyZoneId_Throws_E002()
+     {
+         var (_, svc) = Make();
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.CreateRackAsync(new RackDto
+             {
+                 ZoneId = Guid.Empty, RackCode = "R1",
+                 Cols = 1, Levels = 1, DepthCount = 1,
+                 CellW = 1000, CellH = 1000, CellD = 1000
+             }, "u"));
+-        Assert.Equal("E-SPACE-002", ex.Message);
++        Assert.Equal("E-SPACE-002", ex.Code);
+     }
+ 
+     // ── B-5: 删除护栏 ─────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 契约变更（§7.1 + 2026-07-06 拍板）：旧 E-SPACE-003「有库位一律拦」全废止。
+     /// 无 Status=1 已发布库位时，删货架级联删其下（草稿）库位，不再抛 E-003。
+     /// </summary>
+     [Fact]
+     public async Task DeleteRack_WithLocations_CascadeDeletes_E003Abolished()
+@@ -264,23 +265,23 @@ public class SpaceMasterServiceTests
+         Assert.Equal(0, await db.Space_Racks.CountAsync());
+         Assert.Equal(0, await db.Space_Locations.CountAsync());
+     }
+ 
+     [Fact]
+     public async Task DeleteRack_WithPublished_NoMode_Throws403()
+     {
+         var (db, svc) = Make();
+         var s = await SeedPublishedAisleAsync(db);
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.DeleteRackAsync(s.rackId));
+-        Assert.StartsWith("E-SPACE-403", ex.Message);
++        Assert.Equal("E-SPACE-403", ex.Code);
+ 
+         // 护栏拦下：货架与库位原样
+         Assert.Equal(1, await db.Space_Racks.CountAsync());
+         Assert.Equal(1, await db.Space_Locations.CountAsync());
+         Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Status);
+     }
+ 
+     [Fact]
+     public async Task DeleteRack_ModeDeactivate_DeactivatesThenCascades()
+     {
+@@ -367,23 +368,23 @@ public class SpaceMasterServiceTests
+             { Id = targetId, ZoneId = zoneB, FloorId = floorId, RackCode = "R2",
+               Cols = 1, Levels = 1, DepthCount = 1, CellW = 1000, CellH = 1000, CellD = 1000 });
+         db.Space_Locations.Add(new Space_Location
+         {
+             Id = locId, FloorId = floorId, RackId = srcId,
+             Placed = true, Status = 1, CodeOrigin = 1, Version = 1,
+             LocationCode = "A-01-01-01", Col = 1, Level = 1, Depth = 1
+         });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.DeleteRackAsync(srcId, mode: "rehome", targetRackId: targetId, user: "u"));
+-        Assert.StartsWith("E-SPACE-002", ex.Message);
++        Assert.Equal("E-SPACE-002", ex.Code);
+ 
+         // 拒绝后：源架仍在，库位仍挂源架（锚未动）
+         Assert.NotNull(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == srcId));
+         Assert.Equal(srcId, (await db.Space_Locations.SingleAsync()).RackId);
+     }
+ 
+     [Fact]
+     public async Task DeleteRack_ModeRehome_DraftOnly_MovesLocations_NotDeleted()
+     {
+         // I2：全草稿货架 rehome——「搬走」语义对草稿同样成立（改挂 target，不删、不 re-publish）
+@@ -414,23 +415,23 @@ public class SpaceMasterServiceTests
+         Assert.NotNull(await db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetId)); // 目标架仍在
+     }
+ 
+     [Fact]
+     public async Task DeleteRack_UnknownMode_Throws_NoSideEffect()
+     {
+         // I2：未知 mode 白名单拦截——不静默降级删除，零副作用
+         var (db, svc) = Make();
+         var s = await SeedPublishedAisleAsync(db);
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.DeleteRackAsync(s.rackId, mode: "bogus", user: "u"));
+-        Assert.StartsWith("E-SPACE-002", ex.Message);
++        Assert.Equal("E-SPACE-002", ex.Code);
+ 
+         Assert.Equal(1, await db.Space_Racks.CountAsync());
+         Assert.Equal(1, await db.Space_Locations.CountAsync());
+         Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Status);
+     }
+ 
+     [Fact]
+     public async Task DeleteAisle_SetsNullRackAisleId()
+     {
+         var (db, svc) = Make();
+@@ -481,23 +482,23 @@ public class SpaceMasterServiceTests
+         await db.SaveChangesAsync();
+         return (siteId, floorId, zoneId, aisleId, rackId, locId);
+     }
+ 
+     [Fact]
+     public async Task DeleteAisle_WithPublishedLocations_NoMode_Throws402()
+     {
+         var (db, svc) = Make();
+         var s = await SeedPublishedAisleAsync(db);
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.DeleteAisleAsync(s.aisleId));
+-        Assert.StartsWith("E-SPACE-402", ex.Message);
++        Assert.Equal("E-SPACE-402", ex.Code);
+ 
+         // 护栏拦下：巷道仍在，货架 AisleId 未被置空
+         Assert.Equal(1, await db.Space_Aisles.CountAsync());
+         Assert.Equal(s.aisleId, (await db.Space_Racks.SingleAsync()).AisleId);
+     }
+ 
+     [Fact]
+     public async Task DeleteAisle_ModeDeactivate_DeactivatesThenDeletes()
+     {
+         var (db, svc) = Make();
+@@ -551,74 +552,74 @@ public class SpaceMasterServiceTests
+         var (db, svc) = Make();
+         var s = await SeedPublishedAisleAsync(db, aisleCode: "SRC");
+         // target 巷道在另一 zone
+         var otherZoneId = Guid.NewGuid();
+         var targetId = Guid.NewGuid();
+         db.Space_Zones.Add(new Space_Zone
+             { Id = otherZoneId, FloorId = s.floorId, ZoneCode = "Z2", ZoneName = "Zone2", Polygon = "[[0,0],[1,0],[1,1]]" });
+         db.Space_Aisles.Add(new Space_Aisle { Id = targetId, ZoneId = otherZoneId, AisleCode = "DST" });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.DeleteAisleAsync(s.aisleId, mode: "rehome", targetAisleId: targetId, user: "u"));
+-        Assert.StartsWith("E-SPACE-407", ex.Message);
++        Assert.Equal("E-SPACE-407", ex.Code);
+ 
+         // 拒绝后：src 仍在，货架仍挂 src
+         Assert.Equal(s.aisleId, (await db.Space_Racks.SingleAsync()).AisleId);
+         Assert.NotNull(await db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == s.aisleId));
+     }
+ 
+     [Fact]
+     public async Task DeleteSite_WithFloor_Throws_E007()
+     {
+         var (db, svc) = Make();
+         var siteId = Guid.NewGuid();
+         db.Space_Sites.Add(new Space_Site { Id = siteId, SiteCode = "S", SiteName = "s" });
+         db.Space_Floors.Add(new Space_Floor { Id = Guid.NewGuid(), SiteId = siteId, FloorCode = "F", FloorName = "f" });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.DeleteSiteAsync(siteId));
+-        Assert.Equal("E-SPACE-007", ex.Message);
++        Assert.Equal("E-SPACE-007", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task DeleteFloor_WithZone_Throws_E007()
+     {
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         db.Space_Floors.Add(new Space_Floor { Id = floorId, SiteId = Guid.NewGuid(), FloorCode = "F", FloorName = "f" });
+         db.Space_Zones.Add(new Space_Zone
+             { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z", ZoneName = "z",
+               Polygon = "[[0,0],[1,0],[1,1]]" });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.DeleteFloorAsync(floorId));
+-        Assert.Equal("E-SPACE-007", ex.Message);
++        Assert.Equal("E-SPACE-007", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task DeleteZone_WithAisle_Throws_E007()
+     {
+         var (db, svc) = Make();
+         var zoneId = Guid.NewGuid();
+         db.Space_Zones.Add(new Space_Zone
+             { Id = zoneId, FloorId = Guid.NewGuid(), ZoneCode = "Z", ZoneName = "z",
+               Polygon = "[[0,0],[1,0],[1,1]]" });
+         db.Space_Aisles.Add(new Space_Aisle
+             { Id = Guid.NewGuid(), ZoneId = zoneId, AisleCode = "A" });
+         await db.SaveChangesAsync();
+ 
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.DeleteZoneAsync(zoneId));
+-        Assert.Equal("E-SPACE-007", ex.Message);
++        Assert.Equal("E-SPACE-007", ex.Code);
+     }
+ 
+     // ── B-6: 场景聚合 / 待绑定 ──────────────────────────────────────────
+ 
+     [Fact]
+     public async Task GetScene_OnlyReturnsPlacedLocations()
+     {
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         db.Space_Locations.AddRange(
+diff --git a/CP6.Tests/TemplateServiceTests.cs b/CP6.Tests/TemplateServiceTests.cs
+index 312fba6..e49ebb9 100644
+--- a/CP6.Tests/TemplateServiceTests.cs
++++ b/CP6.Tests/TemplateServiceTests.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.EFDbContext;
++using CP6.WebApi.Localization;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
+ using Xunit;
+ 
+ namespace CP6.Tests;
+ 
+ /// <summary>
+ /// F-1 模板服务测试：编码唯一 + clone（新 Id / 同 Params / 不同编码）。
+ /// </summary>
+@@ -16,23 +17,23 @@ public class TemplateServiceTests
+         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+         return (db, new TemplateService(db));
+     }
+ 
+     [Fact]
+     public async Task CreateTemplate_DuplicateCode_Throws_E001()
+     {
+         var (_, svc) = Make();
+         await svc.CreateAsync(new TemplateDto { TemplateCode = "T1", TemplateName = "tmpl1", TemplateType = 1, Params = "{}" }, "u");
+-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++        var ex = await Assert.ThrowsAsync<BizException>(
+             () => svc.CreateAsync(new TemplateDto { TemplateCode = "T1", TemplateName = "tmpl2", TemplateType = 1, Params = "{}" }, "u"));
+-        Assert.Equal("E-SPACE-001", ex.Message);
++        Assert.Equal("E-SPACE-001", ex.Code);
+     }
+ 
+     [Fact]
+     public async Task CloneTemplate_ProducesNewId_SameParams_DifferentCode()
+     {
+         var (_, svc) = Make();
+         var id = await svc.CreateAsync(
+             new TemplateDto { TemplateCode = "T1", TemplateName = "tmpl1", TemplateType = 2, Params = "{\"cols\":4}" }, "u");
+         var cloneId = await svc.CloneAsync(id, "u");
+         Assert.NotEqual(id, cloneId);
+diff --git a/CP6.WebApi/Controllers/Space/CodeRuleController.cs b/CP6.WebApi/Controllers/Space/CodeRuleController.cs
+index 8890f28..2c22815 100644
+--- a/CP6.WebApi/Controllers/Space/CodeRuleController.cs
++++ b/CP6.WebApi/Controllers/Space/CodeRuleController.cs
+@@ -26,85 +26,78 @@ public class CodeRuleController : ControllerBase
+ 
+     /// <summary>列出全部编码规则（按作用域 + 名称排序）。</summary>
+     [HttpGet("code-rule")]
+     public async Task<IActionResult> ListRules() =>
+         Ok2(await _svc.ListRulesAsync());
+ 
+     /// <summary>新建编码规则。IsDefault=true 时同作用域其他规则 IsDefault 自动置 false。</summary>
+     [HttpPost("code-rule")]
+     public async Task<IActionResult> CreateRule([FromBody] CodeRuleDto d)
+     {
+-        try { return Ok2(new { id = await _svc.CreateRuleAsync(d, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CreateRuleAsync(d, CurrentUser) });
+     }
+ 
+     /// <summary>修改编码规则。</summary>
+     [HttpPut("code-rule/{id:guid}")]
+     public async Task<IActionResult> UpdateRule(Guid id, [FromBody] CodeRuleDto d)
+     {
+-        try { await _svc.UpdateRuleAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpdateRuleAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     /// <summary>删除编码规则。</summary>
+     [HttpDelete("code-rule/{id:guid}")]
+     public async Task<IActionResult> DeleteRule(Guid id)
+     {
+-        try { await _svc.DeleteRuleAsync(id); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.DeleteRuleAsync(id); return Ok2();
+     }
+ 
+     /// <summary>实时预览编码样例（ch03 §8）。合成两路（有/无巷道），不写库。</summary>
+     [HttpPost("code-rule/preview")]
+     public async Task<IActionResult> Preview([FromBody] CodePreviewReq req)
+     {
+-        try { return Ok2(await _svc.PreviewAsync(req)); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(await _svc.PreviewAsync(req));
+     }
+ 
+     // ── 批量生成 ───────────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 批量生成库位编码（ch03 §4.2）。
+     /// body: { mode: "fill-empty"|"rebuild", scopeZoneId?: guid }
+     /// 返回本次生成的编码列表。
+     /// </summary>
+     [HttpPost("floor/{id:guid}/generate-codes")]
+     public async Task<IActionResult> GenerateCodes(Guid id, [FromBody] GenerateCodesReq req)
+     {
+-        try { return Ok2(await _svc.GenerateAsync(id, req.Mode, req.ScopeZoneId)); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(await _svc.GenerateAsync(id, req.Mode, req.ScopeZoneId));
+     }
+ 
+     // ── 发布前编码预检 ─────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 发布前编码预检（ch03 §9.2，04 发布闸门）。
+     /// 返回：空码数 / 重复码组 / 规则静态错误 / 未落位数。
+     /// </summary>
+     [HttpGet("floor/{id:guid}/code-precheck")]
+     public async Task<IActionResult> CodePrecheck(Guid id, [FromQuery] Guid? zoneId = null)
+     {
+-        try { return Ok2(await _svc.PrecheckAsync(id, zoneId)); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(await _svc.PrecheckAsync(id, zoneId));
+     }
+ 
+     // ── 单格生成 ───────────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 单格生成（ch03 §10）。对单个库位走同样的 Assemble 路径写回 LocationCode。
+     /// </summary>
+     [HttpPost("location/{id:guid}/gen-code")]
+     public async Task<IActionResult> GenCode(Guid id)
+     {
+-        try { return Ok2(new { code = await _svc.GenSingleAsync(id) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { code = await _svc.GenSingleAsync(id) });
+     }
+ }
+ 
+ /// <summary>批量生成请求体。</summary>
+ public class GenerateCodesReq
+ {
+     /// <summary>生成模式：fill-empty（仅填空码）/ rebuild（两阶段全量重排）。</summary>
+     public string Mode { get; set; } = "fill-empty";
+ 
+     /// <summary>限定库区（null = 楼层全部库区）。</summary>
+diff --git a/CP6.WebApi/Controllers/Space/ConnectorController.cs b/CP6.WebApi/Controllers/Space/ConnectorController.cs
+index f0c037c..7cf1a8c 100644
+--- a/CP6.WebApi/Controllers/Space/ConnectorController.cs
++++ b/CP6.WebApi/Controllers/Space/ConnectorController.cs
+@@ -15,34 +15,31 @@ public class ConnectorController : ControllerBase
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null, string msg = "OK") => Ok(new { code = 0, message = msg, data });
+ 
+     [HttpGet("site/{siteId:guid}/connector")]
+     public async Task<IActionResult> ListBySite(Guid siteId) => Ok2(await _svc.ListBySiteAsync(siteId));
+ 
+     [HttpPost("connector")]
+     public async Task<IActionResult> Create([FromBody] ConnectorDto d)
+     {
+-        try { return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("connector/{id:guid}/stop")]
+     public async Task<IActionResult> UpsertStop(Guid id, [FromBody] ConnectorStopDto d)
+     {
+-        try { await _svc.UpsertStopAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpsertStopAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("connector/{id:guid}/stop/{floorId:guid}")]
+     public async Task<IActionResult> DeleteStop(Guid id, Guid floorId) { await _svc.DeleteStopAsync(id, floorId); return Ok2(); }
+ 
+     [HttpPut("connector/{id:guid}")]
+     public async Task<IActionResult> Update(Guid id, [FromBody] ConnectorUpdateDto d)
+     {
+-        try { await _svc.UpdateAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("connector/{id:guid}")]
+     public async Task<IActionResult> Delete(Guid id) { await _svc.DeleteAsync(id); return Ok2(); }
+ }
+diff --git a/CP6.WebApi/Controllers/Space/LocationPublishController.cs b/CP6.WebApi/Controllers/Space/LocationPublishController.cs
+index ac254d9..f024cfb 100644
+--- a/CP6.WebApi/Controllers/Space/LocationPublishController.cs
++++ b/CP6.WebApi/Controllers/Space/LocationPublishController.cs
+@@ -33,69 +33,57 @@ public class LocationPublishController : ControllerBase
+ 
+     /// <summary>整层/库区发布（ch04 §4）。</summary>
+     [HttpPost("floor/{id:guid}/publish")]
+     public async Task<IActionResult> PublishFloor(Guid id, [FromBody] PublishFloorRequest? req)
+     {
+         try
+         {
+             var count = await _svc.PublishFloorAsync(id, req?.ZoneId, CurrentUser);
+             return Ok2(new { published = count });
+         }
+-        catch (InvalidOperationException e)
+-        {
+-            return BadRequest(new { code = 400, message = e.Message });
+-        }
+         catch (DbUpdateConcurrencyException)
+         {
+             // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
+             return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
+         }
+     }
+ 
+     // ── PUT /api/space/location/{id}/deactivate ───────────────────────────
+ 
+     /// <summary>停用已发布库位（ch04 §6）。</summary>
+     [HttpPut("location/{id:guid}/deactivate")]
+     public async Task<IActionResult> Deactivate(Guid id)
+     {
+         try
+         {
+             await _svc.DeactivateAsync(id, CurrentUser);
+             return Ok2();
+         }
+-        catch (InvalidOperationException e)
+-        {
+-            return BadRequest(new { code = 400, message = e.Message });
+-        }
+         catch (DbUpdateConcurrencyException)
+         {
+             // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
+             return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
+         }
+     }
+ 
+     // ── POST /api/space/location/adopt ────────────────────────────────────
+ 
+     /// <summary>存量采纳导入（ch04 §8.1）。</summary>
+     [HttpPost("location/adopt")]
+     public async Task<IActionResult> Adopt([FromBody] AdoptRequest req)
+     {
+         try
+         {
+             var items = req.Items.Select(i => (i.Code, (Dictionary<string, object?>?)i.Attrs));
+             var (imported, skipped) = await _svc.AdoptAsync(items, CurrentUser);
+             return Ok2(new { imported, skipped });
+         }
+-        catch (InvalidOperationException e)
+-        {
+-            return BadRequest(new { code = 400, message = e.Message });
+-        }
+         catch (DbUpdateConcurrencyException)
+         {
+             // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
+             return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
+         }
+     }
+ 
+     // ── GET /api/space/publish/events ─────────────────────────────────────
+ 
+     /// <summary>列出 SPACE→WMS 集成事件（ch04 §2）。</summary>
+diff --git a/CP6.WebApi/Controllers/Space/SceneController.cs b/CP6.WebApi/Controllers/Space/SceneController.cs
+index f0eda07..eea33bb 100644
+--- a/CP6.WebApi/Controllers/Space/SceneController.cs
++++ b/CP6.WebApi/Controllers/Space/SceneController.cs
+@@ -27,47 +27,40 @@ public class SceneController : ControllerBase
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null, string msg = "OK") =>
+         Ok(new { code = 0, message = msg, data });
+ 
+     // ── G-1 差量保存 ─────────────────────────────────────────────────────
+ 
+     /// <summary>整层差量保存（upsert zones/aisles/racks/markers/locations + deletes）</summary>
+     [HttpPost("floor/{id:guid}/scene")]
+     public async Task<IActionResult> SaveScene(Guid id, [FromBody] SceneSaveDto dto)
+     {
+-        try { return Ok2(new { idMap = await _scene.SaveSceneAsync(id, dto, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { idMap = await _scene.SaveSceneAsync(id, dto, CurrentUser) });
+     }
+ 
+     // ── G-3 导入导出 ──────────────────────────────────────────────────────
+ 
+     /// <summary>导出楼层几何（不含敏感字段）</summary>
+     [HttpGet("floor/{id:guid}/export")]
+     public async Task<IActionResult> Export(Guid id)
+     {
+-        try { return Ok2(await _io.ExportAsync(id)); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(await _io.ExportAsync(id));
+     }
+ 
+     /// <summary>导入场景到指定站点（新 GUID 映射，库位按货架参数全枚举重建）</summary>
+     [HttpPost("site/{id:guid}/import")]
+     public async Task<IActionResult> Import(Guid id, [FromBody] SceneExportDto dto)
+     {
+-        try { return Ok2(new { floorId = await _io.ImportAsync(id, dto, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { floorId = await _io.ImportAsync(id, dto, CurrentUser) });
+     }
+ 
+     // ── I-1 D7 绑码 ──────────────────────────────────────────────────────
+ 
+     /// <summary>D7 反向建模绑码：校验 Status==1 &amp;&amp; !Placed &amp;&amp; CodeOrigin==2，回填几何坐标，不动 Code/Id/Status/Version</summary>
+     [HttpPost("rack/{id:guid}/bind-codes")]
+     public async Task<IActionResult> BindCodes(Guid id, [FromBody] BindCodesDto dto)
+     {
+-        try
+-        {
+-            var pairs = dto.Pairs.Select(p => (p.LocationId, p.Col, p.Level, p.Depth));
+-            await _scene.BindCodesAsync(id, pairs, CurrentUser);
+-            return Ok2();
+-        }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        var pairs = dto.Pairs.Select(p => (p.LocationId, p.Col, p.Level, p.Depth));
++        await _scene.BindCodesAsync(id, pairs, CurrentUser);
++        return Ok2();
+     }
+ }
+diff --git a/CP6.WebApi/Controllers/Space/SpaceMasterController.cs b/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
+index 75d11a9..23cc2ba 100644
+--- a/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
++++ b/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
+@@ -22,144 +22,129 @@ public class SpaceMasterController : ControllerBase
+         Ok(new { code = 0, message = msg, data });
+ 
+     // ── Site ──────────────────────────────────────────────────────────────
+ 
+     [HttpGet("site")]
+     public async Task<IActionResult> ListSites() => Ok2(await _svc.ListSitesAsync());
+ 
+     [HttpPost("site")]
+     public async Task<IActionResult> CreateSite([FromBody] SiteDto d)
+     {
+-        try { return Ok2(new { id = await _svc.CreateSiteAsync(d, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CreateSiteAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("site/{id:guid}")]
+     public async Task<IActionResult> UpdateSite(Guid id, [FromBody] SiteDto d)
+     {
+-        try { await _svc.UpdateSiteAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpdateSiteAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("site/{id:guid}")]
+     public async Task<IActionResult> DeleteSite(Guid id)
+     {
+-        try { await _svc.DeleteSiteAsync(id); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.DeleteSiteAsync(id); return Ok2();
+     }
+ 
+     // ── Floor ─────────────────────────────────────────────────────────────
+ 
+     [HttpGet("floor")]
+     public async Task<IActionResult> ListFloors([FromQuery] Guid siteId) =>
+         Ok2(await _svc.ListFloorsAsync(siteId));
+ 
+     [HttpPost("floor")]
+     public async Task<IActionResult> CreateFloor([FromBody] FloorDto d)
+     {
+-        try { return Ok2(new { id = await _svc.CreateFloorAsync(d, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CreateFloorAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("floor/{id:guid}")]
+     public async Task<IActionResult> UpdateFloor(Guid id, [FromBody] FloorDto d)
+     {
+-        try { await _svc.UpdateFloorAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpdateFloorAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("floor/{id:guid}")]
+     public async Task<IActionResult> DeleteFloor(Guid id)
+     {
+-        try { await _svc.DeleteFloorAsync(id); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.DeleteFloorAsync(id); return Ok2();
+     }
+ 
+     // ── Zone ──────────────────────────────────────────────────────────────
+ 
+     [HttpGet("zone")]
+     public async Task<IActionResult> ListZones([FromQuery] Guid floorId) =>
+         Ok2(await _svc.ListZonesAsync(floorId));
+ 
+     [HttpPost("zone")]
+     public async Task<IActionResult> CreateZone([FromBody] ZoneDto d)
+     {
+-        try { return Ok2(new { id = await _svc.CreateZoneAsync(d, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CreateZoneAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("zone/{id:guid}")]
+     public async Task<IActionResult> UpdateZone(Guid id, [FromBody] ZoneDto d)
+     {
+-        try { await _svc.UpdateZoneAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpdateZoneAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("zone/{id:guid}")]
+     public async Task<IActionResult> DeleteZone(Guid id)
+     {
+-        try { await _svc.DeleteZoneAsync(id); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.DeleteZoneAsync(id); return Ok2();
+     }
+ 
+     // ── Aisle ─────────────────────────────────────────────────────────────
+ 
+     [HttpGet("aisle")]
+     public async Task<IActionResult> ListAisles([FromQuery] Guid zoneId) =>
+         Ok2(await _svc.ListAislesAsync(zoneId));
+ 
+     [HttpPost("aisle")]
+     public async Task<IActionResult> CreateAisle([FromBody] AisleDto d)
+     {
+-        try { return Ok2(new { id = await _svc.CreateAisleAsync(d, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CreateAisleAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("aisle/{id:guid}")]
+     public async Task<IActionResult> UpdateAisle(Guid id, [FromBody] AisleDto d)
+     {
+-        try { await _svc.UpdateAisleAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpdateAisleAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("aisle/{id:guid}")]
+     public async Task<IActionResult> DeleteAisle(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetAisleId = null)
+     {
+-        try { await _svc.DeleteAisleAsync(id, mode, targetAisleId, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.DeleteAisleAsync(id, mode, targetAisleId, CurrentUser); return Ok2();
+     }
+ 
+     // ── Rack ──────────────────────────────────────────────────────────────
+ 
+     [HttpGet("rack")]
+     public async Task<IActionResult> ListRacks([FromQuery] Guid zoneId) =>
+         Ok2(await _svc.ListRacksAsync(zoneId));
+ 
+     [HttpPost("rack")]
+     public async Task<IActionResult> CreateRack([FromBody] RackDto d)
+     {
+-        try { return Ok2(new { id = await _svc.CreateRackAsync(d, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CreateRackAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("rack/{id:guid}")]
+     public async Task<IActionResult> UpdateRack(Guid id, [FromBody] RackDto d)
+     {
+-        try { await _svc.UpdateRackAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpdateRackAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("rack/{id:guid}")]
+     public async Task<IActionResult> DeleteRack(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetRackId = null)
+     {
+-        try { await _svc.DeleteRackAsync(id, mode, targetRackId, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.DeleteRackAsync(id, mode, targetRackId, CurrentUser); return Ok2();
+     }
+ 
+     // ── 场景聚合 / 待绑定 / 库位列表 ────────────────────────────────────
+ 
+     [HttpGet("floor/{id:guid}/scene")]
+     public async Task<IActionResult> Scene(Guid id) =>
+         Ok2(await _svc.GetSceneAsync(id));
+ 
+     [HttpGet("location/unplaced")]
+     public async Task<IActionResult> Unplaced([FromQuery] Guid floorId) =>
+diff --git a/CP6.WebApi/Controllers/Space/TemplateController.cs b/CP6.WebApi/Controllers/Space/TemplateController.cs
+index 0675882..c4f5ca4 100644
+--- a/CP6.WebApi/Controllers/Space/TemplateController.cs
++++ b/CP6.WebApi/Controllers/Space/TemplateController.cs
+@@ -22,38 +22,34 @@ public class TemplateController : ControllerBase
+         Ok(new { code = 0, message = msg, data });
+ 
+     /// <summary>列出全部模板</summary>
+     [HttpGet("template")]
+     public async Task<IActionResult> List() => Ok2(await _svc.ListAsync());
+ 
+     /// <summary>创建模板</summary>
+     [HttpPost("template")]
+     public async Task<IActionResult> Create([FromBody] TemplateDto d)
+     {
+-        try { return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
+     }
+ 
+     /// <summary>更新模板</summary>
+     [HttpPut("template/{id:guid}")]
+     public async Task<IActionResult> Update(Guid id, [FromBody] TemplateDto d)
+     {
+-        try { await _svc.UpdateAsync(id, d, CurrentUser); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     /// <summary>删除模板</summary>
+     [HttpDelete("template/{id:guid}")]
+     public async Task<IActionResult> Delete(Guid id)
+     {
+-        try { await _svc.DeleteAsync(id); return Ok2(); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        await _svc.DeleteAsync(id); return Ok2();
+     }
+ 
+     /// <summary>克隆模板（新 Id + 新编码，同 Params/Type）</summary>
+     [HttpPost("template/{id:guid}/clone")]
+     public async Task<IActionResult> Clone(Guid id)
+     {
+-        try { return Ok2(new { id = await _svc.CloneAsync(id, CurrentUser) }); }
+-        catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
++        return Ok2(new { id = await _svc.CloneAsync(id, CurrentUser) });
+     }
+ }

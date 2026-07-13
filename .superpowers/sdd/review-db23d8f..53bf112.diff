@@ -1,0 +1,606 @@
+# Review package: db23d8f..53bf112
+
+## Commits
+53bf112 feat(space): 编辑器 Zone 创建工具（拖框+命令栈+差量保存，解建模鸡蛋问题）
+
+## Files changed
+ cp6.web/src/space-editor/command/commands.spec.ts  |  23 +++-
+ .../space-editor/command/commands/AddZoneCmd.ts    |  19 ++++
+ .../space-editor/interact/InteractionManager.ts    |  12 +-
+ .../src/space-editor/interact/tools/ZoneTool.ts    | 102 +++++++++++++++++
+ .../space-editor/interact/tools/zoneGeom.spec.ts   |  29 +++++
+ .../src/space-editor/interact/tools/zoneGeom.ts    |  21 ++++
+ cp6.web/src/views/space/editor/FloorEditor.vue     | 121 +++++++++++++++++++++
+ 7 files changed, 325 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/space-editor/command/commands.spec.ts b/cp6.web/src/space-editor/command/commands.spec.ts
+index b9dcd04..b90f658 100644
+--- a/cp6.web/src/space-editor/command/commands.spec.ts
++++ b/cp6.web/src/space-editor/command/commands.spec.ts
+@@ -1,21 +1,22 @@
+ // H-2 命令单测（ch02 §4/§5/§7）
+ import { describe, it, expect } from 'vitest'
+ import { MoveRackCmd } from './commands/MoveRackCmd'
+ import { RotateRackCmd } from './commands/RotateRackCmd'
+ import { AddMarkerCmd } from './commands/AddMarkerCmd'
++import { AddZoneCmd } from './commands/AddZoneCmd'
+ import { MoveMarkerCmd } from './commands/MoveMarkerCmd'
+ import { EditMarkerCmd } from './commands/EditMarkerCmd'
+ import { DeleteCmd } from './commands/DeleteCmd'
+ import { BatchCmd } from './commands/BatchCmd'
+ import type { EditorContext } from './Command'
+-import type { EditorScene, RackVO, MarkerVO } from '@/types/space/scene'
++import type { EditorScene, RackVO, MarkerVO, ZoneVO } from '@/types/space/scene'
+ 
+ function makeScene(racks: Partial<RackVO>[] = [], markers: Partial<MarkerVO>[] = []): EditorScene {
+   return {
+     floor: {} as any,
+     zones: [],
+     aisles: [],
+     racks: racks as RackVO[],
+     locations: [],
+     markers: markers as MarkerVO[],
+   }
+@@ -107,20 +108,40 @@ describe('AddMarkerCmd', () => {
+     cmd.do(ctx)
+     expect(scene.markers).toHaveLength(1)
+     expect(scene.markers[0]!.id).toBe('m1')
+     expect(ctx.dirtyIds).toContain('m1')
+     cmd.undo(ctx)
+     expect(scene.markers).toHaveLength(0)
+     expect(ctx.deleteIds).toContain('m1')
+   })
+ })
+ 
++// ─── AddZoneCmd ───────────────────────────────────────────────────────────────
++describe('AddZoneCmd', () => {
++  it('do 插入 zone；undo 删除', () => {
++    const scene = makeScene()
++    const ctx = makeCtx(scene)
++    const zone: ZoneVO = {
++      id: 'z1', floorId: 'f1', zoneCode: 'Z-001', zoneName: '库区A',
++      zoneType: 1, polygon: '[[0,0],[1000,0],[1000,1000],[0,1000]]', enable: true,
++    }
++    const cmd = new AddZoneCmd(zone)
++    cmd.do(ctx)
++    expect(scene.zones).toHaveLength(1)
++    expect(scene.zones[0]!.id).toBe('z1')
++    expect(ctx.dirtyIds).toContain('z1')
++    cmd.undo(ctx)
++    expect(scene.zones).toHaveLength(0)
++    expect(ctx.deleteIds).toContain('z1')
++  })
++})
++
+ // ─── MoveMarkerCmd ────────────────────────────────────────────────────────────
+ describe('MoveMarkerCmd', () => {
+   it('do/undo 改 marker x/y', () => {
+     const scene = makeScene([], [{ id: 'm1', x: 0, y: 0 }])
+     const ctx = makeCtx(scene)
+     const cmd = new MoveMarkerCmd('m1', { x: 0, y: 0 }, { x: 50, y: 80 })
+     cmd.do(ctx)
+     expect(scene.markers[0]!.x).toBe(50)
+     expect(scene.markers[0]!.y).toBe(80)
+     cmd.undo(ctx)
+diff --git a/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts b/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts
+new file mode 100644
+index 0000000..7f6f9ce
+--- /dev/null
++++ b/cp6.web/src/space-editor/command/commands/AddZoneCmd.ts
+@@ -0,0 +1,19 @@
++import type { Command, EditorContext } from '../Command'
++import type { ZoneVO } from '@/types/space/scene'
++
++export class AddZoneCmd implements Command {
++  label = 'AddZone'
++
++  constructor(private zone: ZoneVO) {}
++
++  do(ctx: EditorContext): void {
++    ctx.scene.zones.push(this.zone)
++    ctx.markDirty(this.zone.id)
++  }
++
++  undo(ctx: EditorContext): void {
++    const idx = ctx.scene.zones.findIndex(z => z.id === this.zone.id)
++    if (idx >= 0) ctx.scene.zones.splice(idx, 1)
++    ctx.markDirtyDelete(this.zone.id)
++  }
++}
+diff --git a/cp6.web/src/space-editor/interact/InteractionManager.ts b/cp6.web/src/space-editor/interact/InteractionManager.ts
+index 633113a..0d7bf72 100644
+--- a/cp6.web/src/space-editor/interact/InteractionManager.ts
++++ b/cp6.web/src/space-editor/interact/InteractionManager.ts
+@@ -1,40 +1,44 @@
+ // InteractionManager — Konva 事件分发 + 工具状态机（ch02 §2/§3）
+ import Konva from 'konva'
+ import type { SceneStage } from '../SceneStage'
+ import type { useSpaceEditorStore } from '@/stores/spaceEditor'
+ import { SnapEngine } from './snap/SnapEngine'
+ import { SelectTool } from './tools/SelectTool'
+ import { DragTool } from './tools/DragTool'
+ import { RotateTool } from './tools/RotateTool'
+ import { MarkerTool } from './tools/MarkerTool'
++import { ZoneTool } from './tools/ZoneTool'
++import type { WorldRect } from './select/lassoHit'
+ 
+-export type ToolType = 'select' | 'drag' | 'rotate' | 'marker'
++export type ToolType = 'select' | 'drag' | 'rotate' | 'marker' | 'zone'
+ type Store = ReturnType<typeof useSpaceEditorStore>
+ 
+ export interface ITool {
+   onMouseDown?(e: Konva.KonvaEventObject<MouseEvent>): void
+   onMouseMove?(e: Konva.KonvaEventObject<MouseEvent>): void
+   onMouseUp?(e: Konva.KonvaEventObject<MouseEvent>): void
+   onClick?(e: Konva.KonvaEventObject<MouseEvent>): void
+   onActivate?(): void
+   onDeactivate?(): void
+   onEscape?(): void
+ }
+ 
+ export interface ToolContext {
+   stage: SceneStage
+   store: Store
+   snap: SnapEngine
+   ctrlHeld: () => boolean
+   afterCommand: () => void
+   transformer: Konva.Transformer
++  /** ZoneTool 拖框完成回调——由 FloorEditor 注入，接手校验/命名/命令栈业务。 */
++  onZoneRectDrawn?: (rect: WorldRect) => void
+ }
+ 
+ // ── Shared helpers (exported for tools) ──────────────────────────────────────
+ 
+ /** Walk up parent chain to find the nearest Konva.Group with name='rack'. */
+ export function findRackGroup(target: Konva.Node): Konva.Group | null {
+   let node: Konva.Node | null = target as Konva.Node
+   while (node) {
+     if (node instanceof Konva.Group && node.name() === 'rack') return node
+     node = node.getParent() as unknown as Konva.Node | null
+@@ -82,39 +86,45 @@ export class InteractionManager {
+       ctrlHeld: () => this._ctrlHeld,
+       afterCommand,
+       transformer: this.transformer,
+     }
+ 
+     this.tools = {
+       select: new SelectTool(this.ctx),
+       drag: new DragTool(this.ctx),
+       rotate: new RotateTool(this.ctx),
+       marker: new MarkerTool(this.ctx),
++      zone: new ZoneTool(this.ctx),
+     }
+ 
+     this.bindEvents()
+     this.tools.select.onActivate?.()
+   }
+ 
+   get activeTool(): ToolType { return this._activeTool }
+ 
+   switchTool(type: ToolType): void {
+     if (type === this._activeTool) return
+     this.tools[this._activeTool].onDeactivate?.()
+     this._activeTool = type
+     this.tools[type].onActivate?.()
+   }
+ 
+   setCtrlHeld(held: boolean): void {
+     this._ctrlHeld = held
+   }
+ 
++  /** 注入 ZoneTool 拖框完成回调（FloorEditor 在此接手弹窗/校验/命令栈）。 */
++  setZoneRectHandler(fn: (rect: WorldRect) => void): void {
++    this.ctx.onZoneRectDrawn = fn
++  }
++
+   /** Disable all event handling (e.g. during placement mode). */
+   setEnabled(enabled: boolean): void {
+     this._enabled = enabled
+     if (!enabled) {
+       this.transformer.nodes([])
+       this.ctx.stage.layers.rack.batchDraw()
+     }
+   }
+ 
+   /** Select all racks in the current scene. */
+diff --git a/cp6.web/src/space-editor/interact/tools/ZoneTool.ts b/cp6.web/src/space-editor/interact/tools/ZoneTool.ts
+new file mode 100644
+index 0000000..f5b62c1
+--- /dev/null
++++ b/cp6.web/src/space-editor/interact/tools/ZoneTool.ts
+@@ -0,0 +1,102 @@
++// ZoneTool — 拖矩形建库区（橡皮筋几何照 SelectTool；只管几何，业务校验在 FloorEditor 回调）
++import Konva from 'konva'
++import type { ITool, ToolContext } from '../InteractionManager'
++import type { WorldRect } from '../select/lassoHit'
++
++export class ZoneTool implements ITool {
++  private ctx: ToolContext
++  private rectNode: Konva.Rect | null = null
++  private start: { x: number; y: number } | null = null
++  private isDragging = false
++
++  constructor(ctx: ToolContext) {
++    this.ctx = ctx
++  }
++
++  onActivate(): void {
++    // 建库区模式下不需要 transformer
++    this.ctx.transformer.nodes([])
++    this.ctx.stage.layers.rack.batchDraw()
++  }
++
++  onDeactivate(): void {
++    this.cancel()
++  }
++
++  onEscape(): void {
++    this.cancel()
++  }
++
++  onMouseDown(_e: Konva.KonvaEventObject<MouseEvent>): void {
++    const pos = this.ctx.stage.stage.getPointerPosition()
++    if (!pos) return
++
++    this.isDragging = true
++    this.start = { x: pos.x, y: pos.y }
++    this.rectNode = new Konva.Rect({
++      x: pos.x, y: pos.y,
++      width: 0, height: 0,
++      stroke: '#67c23a',
++      strokeWidth: 1,
++      fill: 'rgba(103,194,58,0.08)',
++      dash: [4, 2],
++      listening: false,
++    })
++    this.ctx.stage.layers.ghost.add(this.rectNode)
++    this.ctx.stage.layers.ghost.batchDraw()
++  }
++
++  onMouseMove(_e: Konva.KonvaEventObject<MouseEvent>): void {
++    if (!this.isDragging || !this.rectNode || !this.start) return
++    const pos = this.ctx.stage.stage.getPointerPosition()
++    if (!pos) return
++
++    const x = Math.min(pos.x, this.start.x)
++    const y = Math.min(pos.y, this.start.y)
++    const w = Math.abs(pos.x - this.start.x)
++    const h = Math.abs(pos.y - this.start.y)
++    this.rectNode.setAttrs({ x, y, width: w, height: h })
++    this.ctx.stage.layers.ghost.batchDraw()
++  }
++
++  onMouseUp(_e: Konva.KonvaEventObject<MouseEvent>): void {
++    if (!this.isDragging || !this.start) {
++      this.isDragging = false
++      return
++    }
++
++    const pos = this.ctx.stage.stage.getPointerPosition() ?? this.start
++    const selX = Math.min(pos.x, this.start.x)
++    const selY = Math.min(pos.y, this.start.y)
++    const selW = Math.abs(pos.x - this.start.x)
++    const selH = Math.abs(pos.y - this.start.y)
++
++    this.cancel()
++
++    // 极小拖动视为误点，不触发命名弹窗
++    if (selW < 3 && selH < 3) return
++
++    // 屏幕两角 → 世界轴对齐矩形（worldToScreen 无旋转，世界仍轴对齐）
++    const wA = this.ctx.stage.screenToWorld({ x: selX, y: selY })
++    const wB = this.ctx.stage.screenToWorld({ x: selX + selW, y: selY + selH })
++    const worldRect: WorldRect = {
++      minX: Math.min(wA.x, wB.x),
++      minY: Math.min(wA.y, wB.y),
++      maxX: Math.max(wA.x, wB.x),
++      maxY: Math.max(wA.y, wB.y),
++    }
++
++    // 引擎事件 → 页面处理业务（校验/命名/命令栈全在 FloorEditor 回调）
++    this.ctx.onZoneRectDrawn?.(worldRect)
++  }
++
++  private cancel(): void {
++    this.isDragging = false
++    this.start = null
++    if (this.rectNode) {
++      this.rectNode.destroy()
++      this.rectNode = null
++      this.ctx.stage.layers.ghost.batchDraw()
++    }
++  }
++}
+diff --git a/cp6.web/src/space-editor/interact/tools/zoneGeom.spec.ts b/cp6.web/src/space-editor/interact/tools/zoneGeom.spec.ts
+new file mode 100644
+index 0000000..d9b1585
+--- /dev/null
++++ b/cp6.web/src/space-editor/interact/tools/zoneGeom.spec.ts
+@@ -0,0 +1,29 @@
++// zoneGeom 纯函数单测（Task 6：矩形→polygon 四点顺序 + 短边校验）
++import { describe, it, expect } from 'vitest'
++import { rectToPolygon, rectShortEdge } from './zoneGeom'
++import type { WorldRect } from '../select/lassoHit'
++
++describe('rectToPolygon', () => {
++  it('输出四点顺序 [x0,y0],[x1,y0],[x1,y1],[x0,y1]（不重复首点）', () => {
++    const rect: WorldRect = { minX: 100, minY: 200, maxX: 900, maxY: 700 }
++    const poly = rectToPolygon(rect)
++    expect(poly).toEqual([
++      [100, 200],
++      [900, 200],
++      [900, 700],
++      [100, 700],
++    ])
++    expect(poly).toHaveLength(4)
++  })
++})
++
++describe('rectShortEdge', () => {
++  it('返回宽高中的较短边', () => {
++    expect(rectShortEdge({ minX: 0, minY: 0, maxX: 1000, maxY: 400 })).toBe(400)
++    expect(rectShortEdge({ minX: 0, minY: 0, maxX: 300, maxY: 900 })).toBe(300)
++  })
++
++  it('正方形时宽高相等', () => {
++    expect(rectShortEdge({ minX: 0, minY: 0, maxX: 500, maxY: 500 })).toBe(500)
++  })
++})
+diff --git a/cp6.web/src/space-editor/interact/tools/zoneGeom.ts b/cp6.web/src/space-editor/interact/tools/zoneGeom.ts
+new file mode 100644
+index 0000000..6e4ebc2
+--- /dev/null
++++ b/cp6.web/src/space-editor/interact/tools/zoneGeom.ts
+@@ -0,0 +1,21 @@
++// zoneGeom — Zone 工具的纯几何（无 Konva 依赖，供单测）
++import type { WorldRect } from '../select/lassoHit'
++
++/**
++ * 世界系轴对齐矩形 → 库区多边形四点。
++ * 顺序 [x0,y0],[x1,y0],[x1,y1],[x0,y1]（首点不重复），mm，floor 局部系。
++ * 与 FloorEditor.placementValid 的 corners 顺序一致。
++ */
++export function rectToPolygon(rect: WorldRect): [number, number][] {
++  return [
++    [rect.minX, rect.minY],
++    [rect.maxX, rect.minY],
++    [rect.maxX, rect.maxY],
++    [rect.minX, rect.maxY],
++  ]
++}
++
++/** 矩形短边长度（mm）——用于「太小」校验。 */
++export function rectShortEdge(rect: WorldRect): number {
++  return Math.min(rect.maxX - rect.minX, rect.maxY - rect.minY)
++}
+diff --git a/cp6.web/src/views/space/editor/FloorEditor.vue b/cp6.web/src/views/space/editor/FloorEditor.vue
+index 57c976b..afc22da 100644
+--- a/cp6.web/src/views/space/editor/FloorEditor.vue
++++ b/cp6.web/src/views/space/editor/FloorEditor.vue
+@@ -3,20 +3,23 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+ import { useRoute, useRouter } from 'vue-router'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { sceneApi } from '@/api/space/scene'
+ import { useSpaceEditorStore } from '@/stores/spaceEditor'
+ import { SceneStage } from '@/space-editor/SceneStage'
+ import { genZoneArray } from '@/space-editor/generate/genZoneArray'
+ import type { ZoneVO, RackVO } from '@/types/space/scene'
+ import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
+ import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
++import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
++import { rectToPolygon, rectShortEdge } from '@/space-editor/interact/tools/zoneGeom'
++import type { WorldRect } from '@/space-editor/interact/select/lassoHit'
+ import { scanCollisions } from '@/space-editor/interact/collide/CollisionHint'
+ import TemplatePanel from './panels/TemplatePanel.vue'
+ import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
+ import BindCodesDialog from './panels/BindCodesDialog.vue'
+ import ConnectorPanel from './panels/ConnectorPanel.vue'
+ import { connectorApi } from '@/api/space/connector'
+ import { arrayFootprint } from '@/space-editor/generate/arrayFootprint'
+ import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
+ 
+ const { t } = useI18n()
+@@ -105,20 +108,21 @@ function afterCommand(): void {
+ // ── Lifecycle ─────────────────────────────────────────────────────────────────
+ 
+ onMounted(async () => {
+   const res = await sceneApi.get(floorId.value)
+   store.load(res.data)
+ 
+   if (canvasRef.value) {
+     stageRef = new SceneStage(canvasRef.value)
+     stageRef.render(res.data)
+     imRef.value = new InteractionManager(stageRef, store, afterCommand)
++    imRef.value.setZoneRectHandler(onZoneRectDrawn)
+     bindStageClick()
+   }
+ 
+   document.addEventListener('keydown', onKeydown)
+   document.addEventListener('keyup', onKeyup)
+ })
+ 
+ onBeforeUnmount(() => {
+   document.removeEventListener('keydown', onKeydown)
+   document.removeEventListener('keyup', onKeyup)
+@@ -215,20 +219,98 @@ function handleUndo(): void {
+   afterCommand()
+ }
+ 
+ function handleRedo(): void {
+   if (!store.canRedo) return
+   store.stack.redo(store.buildEditorContext())
+   store.updateUndoRedo()
+   afterCommand()
+ }
+ 
++// ── New Zone (拖框建库区，解建模鸡蛋问题) ───────────────────────────────────
++
++const MIN_ZONE_EDGE = 500  // mm，短边下限
++
++const zoneDialogVisible = ref(false)
++const pendingZoneRect = ref<WorldRect | null>(null)
++const zoneForm = ref<{ zoneCode: string; zoneName: string; zoneType: number; color: string }>({
++  zoneCode: '',
++  zoneName: '',
++  zoneType: 1,
++  color: '#67c23a',
++})
++
++const zoneTypeOptions = [
++  { value: 1, label: t('存储区') },
++  { value: 2, label: t('拣选区') },
++  { value: 3, label: t('收货区') },
++  { value: 4, label: t('发货区') },
++]
++
++/** ZoneTool 拖框完成 → 校验短边 → 弹命名弹窗（业务全在页面侧） */
++function onZoneRectDrawn(rect: WorldRect): void {
++  if (rectShortEdge(rect) < MIN_ZONE_EDGE) {
++    ElMessage.warning(t('库区太小，请拖大一点'))
++    switchTool('select')
++    return
++  }
++  pendingZoneRect.value = rect
++  zoneForm.value = { zoneCode: '', zoneName: '', zoneType: 1, color: '#67c23a' }
++  zoneDialogVisible.value = true
++}
++
++/** 弹窗确认：校验必填 + zoneCode 不重 → AddZoneCmd 进栈 → 重渲染 → 切回 select */
++function confirmZone(): void {
++  const rect = pendingZoneRect.value
++  const s = store.scene
++  if (!rect || !s) return
++
++  const code = zoneForm.value.zoneCode.trim()
++  const name = zoneForm.value.zoneName.trim()
++  if (!code) { ElMessage.warning(t('请输入库区编码')); return }
++  if (!name) { ElMessage.warning(t('请输入库区名称')); return }
++  if (s.zones.some(z => z.zoneCode === code)) {
++    ElMessage.warning(t('库区编码已存在'))
++    return
++  }
++
++  const zone: ZoneVO = {
++    id: crypto.randomUUID(),
++    floorId: floorId.value,
++    zoneCode: code,
++    zoneName: name,
++    zoneType: zoneForm.value.zoneType,
++    polygon: JSON.stringify(rectToPolygon(rect)),
++    color: zoneForm.value.color || null,
++    enable: true,
++  }
++
++  const cmd = new AddZoneCmd(zone)
++  store.stack.exec(cmd, store.buildEditorContext())
++  store.updateUndoRedo()
++  afterCommand()
++
++  closeZoneDialog()
++  ElMessage.success(t('库区已创建'))
++}
++
++/** 取消：丢弃矩形，不产生命令 */
++function cancelZone(): void {
++  closeZoneDialog()
++}
++
++function closeZoneDialog(): void {
++  zoneDialogVisible.value = false
++  pendingZoneRect.value = null
++  switchTool('select')
++}
++
+ // ── Placement mode (F-3 template → canvas) ───────────────────────────────────
+ 
+ function bindStageClick(): void {
+   if (!stageRef) return
+   stageRef.stage.on('click', () => {
+     // P4: connector stop placement takes priority when active
+     if (connectorPlacementMode.value && pendingConnectorId.value) {
+       const cptr = stageRef!.stage.getPointerPosition()
+       if (!cptr) return
+       const cworld = stageRef!.screenToWorld(cptr)
+@@ -475,20 +557,25 @@ async function handleImportFile(e: Event): Promise<void> {
+         <el-button
+           :type="activeTool === 'rotate' ? 'primary' : 'default'"
+           @click="switchTool('rotate')"
+           :title="t('旋转 (R)')"
+         >{{ t('旋转') }}</el-button>
+         <el-button
+           :type="activeTool === 'marker' ? 'primary' : 'default'"
+           @click="switchTool('marker')"
+           :title="t('打点 (M)')"
+         >{{ t('打点') }}</el-button>
++        <el-button
++          :type="activeTool === 'zone' ? 'primary' : 'default'"
++          @click="switchTool('zone')"
++          :title="t('拖框新建库区')"
++        >{{ t('新建库区') }}</el-button>
+       </el-button-group>
+ 
+       <!-- Undo / Redo -->
+       <el-button size="small" :disabled="!store.canUndo" @click="handleUndo">
+         {{ t('撤销') }}
+       </el-button>
+       <el-button size="small" :disabled="!store.canRedo" @click="handleRedo">
+         {{ t('重做') }}
+       </el-button>
+ 
+@@ -568,20 +655,54 @@ async function handleImportFile(e: Event): Promise<void> {
+ 
+     <!-- hidden file input for import -->
+     <input
+       ref="importInputRef"
+       type="file"
+       accept=".json"
+       style="display: none"
+       @change="handleImportFile"
+     />
+ 
++    <!-- New Zone Dialog (拖框建库区) -->
++    <el-dialog
++      v-model="zoneDialogVisible"
++      :title="t('新建库区')"
++      width="420px"
++      @closed="cancelZone"
++    >
++      <el-form label-width="80px">
++        <el-form-item :label="t('库区编码')" required>
++          <el-input v-model="zoneForm.zoneCode" :placeholder="t('请输入库区编码')" />
++        </el-form-item>
++        <el-form-item :label="t('库区名称')" required>
++          <el-input v-model="zoneForm.zoneName" :placeholder="t('请输入库区名称')" />
++        </el-form-item>
++        <el-form-item :label="t('库区类型')">
++          <el-select v-model="zoneForm.zoneType" style="width: 100%">
++            <el-option
++              v-for="opt in zoneTypeOptions"
++              :key="opt.value"
++              :label="opt.label"
++              :value="opt.value"
++            />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('颜色')">
++          <el-color-picker v-model="zoneForm.color" />
++        </el-form-item>
++      </el-form>
++      <template #footer>
++        <el-button @click="cancelZone">{{ t('取消') }}</el-button>
++        <el-button type="primary" @click="confirmZone">{{ t('确定') }}</el-button>
++      </template>
++    </el-dialog>
++
+     <!-- Bind Codes Dialog (I-2) -->
+     <BindCodesDialog
+       v-if="selectedRack !== null"
+       v-model="bindDialogVisible"
+       :rack-id="selectedRack.id"
+       :rack="selectedRack"
+       :floor-id="floorId"
+       @bound="handleBound"
+     />
+   </div>

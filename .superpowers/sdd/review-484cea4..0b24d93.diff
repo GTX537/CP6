@@ -1,0 +1,27 @@
+# Review package: 484cea4..HEAD
+
+## Commits
+0b24d93 test(ui): 组件测试基建（@vue/test-utils + jsdom pragma）
+
+## Files changed
+ cp6.web/src/components/base/__tests__/smoke.spec.ts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+## Diff
+diff --git a/cp6.web/src/components/base/__tests__/smoke.spec.ts b/cp6.web/src/components/base/__tests__/smoke.spec.ts
+new file mode 100644
+index 0000000..6c63def
+--- /dev/null
++++ b/cp6.web/src/components/base/__tests__/smoke.spec.ts
+@@ -0,0 +1,11 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import { defineComponent } from 'vue'
++
++describe('component test infra', () => {
++  it('mounts a component under jsdom', () => {
++    const w = mount(defineComponent({ template: '<p>ok</p>' }))
++    expect(w.text()).toBe('ok')
++  })
++})

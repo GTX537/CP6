@@ -1,0 +1,392 @@
+# Review package: 52724a5..HEAD
+
+## Commits
+5c904e8 feat(wfs-hardening): B-T2 驳回剪枝路径(触发分流+PruneToken+join补放行护栏,cascade零diff)
+
+## Files changed
+ CP6.Core/Services/Wf/FlowEngine.Prune.cs  |  99 ++++++++++++++++
+ CP6.Core/Services/Wf/FlowEngine.Tokens.cs |  13 +++
+ CP6.Core/Services/Wf/FlowEngine.cs        |  18 ++-
+ CP6.Tests/Wf/BranchPruneTests.cs          | 187 ++++++++++++++++++++++++++++++
+ 4 files changed, 314 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/FlowEngine.Prune.cs b/CP6.Core/Services/Wf/FlowEngine.Prune.cs
+new file mode 100644
+index 0000000..a47175b
+--- /dev/null
++++ b/CP6.Core/Services/Wf/FlowEngine.Prune.cs
+@@ -0,0 +1,99 @@
++using CP6.Entity.DomainModels.Wf;
++
++namespace CP6.Core.Services.Wf;
++
++/// <summary>驳回剪枝（hardening spec §4）。partial：与 FlowEngine 共享 scoped DbContext 与内部方法。
++/// 铁律：剪枝绝不改 inst.Status（除全剪光递归到顶走既有 Rejected 路径）；不自行 SaveChanges
++/// （随 ActOnceAsync 尾部统一落库）；终态分发接缝（DispatchIfFinished 在 SaveChanges 前）保持不动。</summary>
++public partial class FlowEngine
++{
++    /// <summary>剪枝入口（ActOnceAsync 驳回分支调用）。true=已按 prune 处理；false=按 cascade（调用方走既有连坐）。
++    /// 仅当 token 有 fork 血缘、且其本层 split 配置 onBranchReject=="prune" 时才剪。</summary>
++    internal async Task<bool> TryPruneBranchAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken token,
++        Guid actorId, string? comment)
++    {
++        var all = SnapshotTokens(inst.Id);
++        var split = FindSplitNode(schema, all, token);
++        if (split is null || !IsPrune(split)) return false;
++        await PruneTokenAsync(inst, schema, token, actorId, comment);
++        return true;
++    }
++
++    /// <summary>定位生成 token.ForkId 批次的 split 节点：ForkParent(token).NodeId（§4.1 定案：ParentTokenId 上溯，零迁移）。</summary>
++    internal static FlowNode? FindSplitNode(FlowSchema schema, IReadOnlyList<Wf_FlowToken> all, Wf_FlowToken token)
++    {
++        if (token.ForkId is null) return null;
++        var parent = TokenLineage.ForkParent(all, token);
++        return parent is null ? null : FindNode(schema, parent.NodeId);
++    }
++
++    internal static bool IsPrune(FlowNode split)
++        => string.Equals(split.OnBranchReject?.Trim(), "prune", StringComparison.OrdinalIgnoreCase);
++
++    private static bool IsJoinType(FlowNode n) => FlowGraph.IsJoinType(n);
++
++    /// <summary>剪本支：token → Pruned；本支任务 Cancelled、Pending FormTo → Voided（tokenId 过滤复用）；
++    /// 记 branchPruned 履历 + BranchPruned 通知；再做 join 补放行探测与全剪光递归上弹。</summary>
++    private async Task PruneTokenAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken token,
++        Guid actorId, string? comment)
++    {
++        token.Status = FlowTokenStatus.Pruned;
++        CancelPendingTasksOfToken(inst.Id, token.Id);
++        VoidPendingFormTos(inst.Id, tokenId: token.Id);
++        AddHistory(inst.Id, token.NodeId, actorId, "branchPruned", comment);
++        await _notifier.BranchPrunedAsync(inst.StarterId, inst.Id, inst.FlowKey, token.NodeId, comment);
++        await ReleaseOrCollapseAsync(inst, schema, token, actorId, comment);
++    }
++
++    /// <summary>剪枝后的 fork 批次收束（spec §4.2.3/§4.2.4，顺序敏感）：
++    /// ① join 补放行：同 ForkId 停在 join 型节点的 Active token 重入 OnEnterAsync（计数幂等，重入安全）；
++    ///    检测到任一停泊 token 变为 Consumed（即 join 已齐批放行）→ 立即返回——续 token 已上弹属上层批次，
++    ///    此时「无 Active 穿过本批次」是正常收束而非剪光，若继续判剪光会误递归驳回（计划期新发现护栏）。
++    /// ② 全剪光检测（血缘感知，与 §3.3 同款判据）：不存在「穿过本 fork 批次」的在途 Active token →
++    ///    视同该 fork 的续 token 被驳回，递归应用上一层 fork 的 OnBranchReject：
++    ///    外层 prune → 剪外层该支（记痕+通知+递归收束）；外层 cascade / 无外层 → 实例 Rejected 走既有终态路径。</summary>
++    private async Task ReleaseOrCollapseAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken deadBranchToken,
++        Guid actorId, string? comment)
++    {
++        var forkId = deadBranchToken.ForkId!.Value;
++
++        // ① join 补放行探测
++        var all = SnapshotTokens(inst.Id);
++        bool released = false;
++        var parkedByNode = all.Where(t => t.ForkId == forkId && t.Status == FlowTokenStatus.Active)
++            .GroupBy(t => t.NodeId).ToList();
++        foreach (var g in parkedByNode)
++        {
++            var node = FindNode(schema, g.Key);
++            if (node is null || !IsJoinType(node)) continue;
++            var probe = g.First();
++            await EnterNodeAsync(inst, schema, node, probe);
++            if (probe.Status == FlowTokenStatus.Consumed) released = true;   // join 齐批放行了
++        }
++        if (released) return;   // 正常收束，绝不判剪光
++
++        // ② 全剪光递归上弹（血缘感知：内层子树在途也算活支）
++        all = SnapshotTokens(inst.Id);
++        if (all.Any(t => t.Status == FlowTokenStatus.Active && TokenLineage.CrossesFork(all, t, forkId)))
++            return;   // 还有活支 → 本批次继续等
++
++        var forkParent = TokenLineage.ForkParent(all, deadBranchToken);
++        var outerSplit = forkParent is null || forkParent.ForkId is null
++            ? null : FindSplitNode(schema, all, forkParent);
++        if (forkParent is not null && outerSplit is not null && IsPrune(outerSplit))
++        {
++            // 外层 prune：视同 forkParent（外层该支代表）被驳回 → 剪外层该支并继续递归收束。
++            // forkParent 已 Consumed（进 split 时退场），无需改状态；其在途后代刚被判定为零。
++            AddHistory(inst.Id, forkParent.NodeId, actorId, "branchPruned", comment);
++            await _notifier.BranchPrunedAsync(inst.StarterId, inst.Id, inst.FlowKey, forkParent.NodeId, comment);
++            await ReleaseOrCollapseAsync(inst, schema, forkParent, actorId, comment);
++        }
++        else
++        {
++            // 外层 cascade / 无外层 → 实例 Rejected（既有连坐终态；DispatchIfFinished 由 ActOnceAsync 尾部统一做）
++            inst.Status = FlowInstanceStatus.Rejected;
++            CancelAllActiveTokens(inst.Id);
++            VoidPendingFormTos(inst.Id);
++        }
++    }
++}
+diff --git a/CP6.Core/Services/Wf/FlowEngine.Tokens.cs b/CP6.Core/Services/Wf/FlowEngine.Tokens.cs
+index ab4609b..4a68a5c 100644
+--- a/CP6.Core/Services/Wf/FlowEngine.Tokens.cs
++++ b/CP6.Core/Services/Wf/FlowEngine.Tokens.cs
+@@ -67,20 +67,33 @@ public partial class FlowEngine
+         var localJobIds = _db.Wf_ServiceJobs.Local
+             .Where(j => j.InstanceId == instanceId).Select(j => j.Id).ToHashSet();
+         foreach (var j in _db.Wf_ServiceJobs
+             .Where(j => j.InstanceId == instanceId && j.Status == ServiceJobStatus.Pending && !localJobIds.Contains(j.Id)).ToList())
+         {
+             j.Status = ServiceJobStatus.Cancelled;
+             j.CompletedAtUtc = now;
+         }
+     }
+ 
++    /// <summary>本 token 的在途/挂起任务 → Cancelled（剪枝/子树清场用）。Local + localIds-exclusion 惯用法。</summary>
++    internal void CancelPendingTasksOfToken(Guid instanceId, Guid tokenId)
++    {
++        foreach (var t in _db.Wf_FlowTasks.Local.Where(t => t.InstanceId == instanceId && t.TokenId == tokenId
++            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)).ToList())
++            t.Status = FlowTaskStatus.Cancelled;
++        var localIds = _db.Wf_FlowTasks.Local.Where(t => t.InstanceId == instanceId).Select(t => t.Id).ToHashSet();
++        foreach (var t in _db.Wf_FlowTasks.Where(t => t.InstanceId == instanceId && t.TokenId == tokenId
++            && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended)
++            && !localIds.Contains(t.Id)).ToList())
++            t.Status = FlowTaskStatus.Cancelled;
++    }
++
+     /// <summary>无 Active token 残留 ⇒ 实例正常通过（置 Approved；dispatch 由调用方在 SaveChanges 前做）。</summary>
+     internal void FinishIfDrained(Wf_FlowInstance inst)
+     {
+         if (HasActiveToken(inst.Id)) return;
+         if (inst.Status != FlowInstanceStatus.Running) return;   // 已驳回/撤回，不覆盖
+         inst.Status = FlowInstanceStatus.Approved;
+     }
+ 
+     /// <summary>本实例是否仍有 Active token。变更追踪器(Local)对已加载 token 是权威态（含本回合未落盘的 consume/cancel）；
+     /// DB 仅补查"未被本地追踪"的 token（如并行兄弟分支上回合落盘的），<b>排除已在 Local 的 Id 避免读到落盘旧值</b>。</summary>
+diff --git a/CP6.Core/Services/Wf/FlowEngine.cs b/CP6.Core/Services/Wf/FlowEngine.cs
+index 870bcaf..0c08c63 100644
+--- a/CP6.Core/Services/Wf/FlowEngine.cs
++++ b/CP6.Core/Services/Wf/FlowEngine.cs
+@@ -214,23 +214,35 @@ public partial class FlowEngine : IFlowEngine
+                     await EnterStageAsync(inst, schema, node, tok!, plan, k1);   // 同节点同 token 建下档
+                 }
+                 else
+                 {
+                     await AdvanceToken(inst, schema, tok!);                       // 末档过 → 去下一节点
+                 }
+             }
+         }
+         else
+         {
+-            inst.Status = FlowInstanceStatus.Rejected;
+-            CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
+-            VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
++            // hardening B-T2 驳回分流（spec §4.1）：token 有 fork 血缘且本层 split 配 prune → 剪枝；否则既有连坐一行不改。
++            // ForkId==null 时不 LoadSchema（cascade 默认路径零额外开销）。
++            var rejTok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
++            var pruned = false;
++            if (rejTok is not null && rejTok.ForkId is not null)
++            {
++                var pruneSchema = await LoadSchemaAsync(inst.FlowKey);
++                pruned = await TryPruneBranchAsync(inst, pruneSchema, rejTok, actorId, comment);
++            }
++            if (!pruned)
++            {
++                inst.Status = FlowInstanceStatus.Rejected;
++                CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
++                VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
++            }
+         }
+         await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
+         await _db.SaveChangesAsync();
+     }
+ 
+     /// <summary>
+     /// 若实例已达终态（通过/驳回），调终态分发器反向回调业务。<b>必须在最终 SaveChangesAsync 之前调用</b>：
+     /// 回调与本引擎共享 scoped DbContext，回调若抛异常则流程终态与业务变更一并不落库（原子，OA2-D5）。
+     /// </summary>
+     private async Task DispatchIfFinishedAsync(Wf_FlowInstance inst, Guid decidedBy, string? reason)
+diff --git a/CP6.Tests/Wf/BranchPruneTests.cs b/CP6.Tests/Wf/BranchPruneTests.cs
+new file mode 100644
+index 0000000..67ff156
+--- /dev/null
++++ b/CP6.Tests/Wf/BranchPruneTests.cs
+@@ -0,0 +1,187 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Wf;
++using CP6.Entity.DomainModels.Wf;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests.Wf;
++
++/// <summary>驳回剪枝矩阵（hardening spec §4/§9）：单支剪/兄弟继续/剪后 join 补放行/全剪光→Rejected/
++/// cascade 默认零 diff/FormTo 履历状态。通知计数用 CountingPruneNotifier（仿 NotificationEngineHookTests）。</summary>
++public class BranchPruneTests
++{
++    private sealed class CountingPruneNotifier : IWfNotifier
++    {
++        public int PrunedCount { get; private set; }
++        public int RejectedCount { get; private set; }
++        public Task TodoCreatedAsync(Guid assigneeId, Guid instanceId, Guid taskId, string flowKey) => Task.CompletedTask;
++        public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey) => Task.CompletedTask;
++        public Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment)
++        { RejectedCount++; return Task.CompletedTask; }
++        public Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment)
++        { PrunedCount++; return Task.CompletedTask; }
++    }
++
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++    private static FlowEngine Engine(CP6Context db, IWfNotifier? n = null) => new(db, new ApproverResolver(db), n);
++
++    // start → split[onBranchReject 可配] → (a, b) → join → end
++    private static FlowSchema ForkSchema(Guid ua, Guid ub, string? onBranchReject) => new()
++    {
++        Start = "s",
++        Nodes =
++        {
++            new FlowNode { Id = "s", Type = "start" },
++            new FlowNode { Id = "split", Type = "parallelSplit", OnBranchReject = onBranchReject },
++            new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = ua },
++            new FlowNode { Id = "b", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = ub },
++            new FlowNode { Id = "join", Type = "parallelJoin" },
++            new FlowNode { Id = "end", Type = "end" },
++        },
++        Edges =
++        {
++            new FlowEdge { From = "s", To = "split" },
++            new FlowEdge { From = "split", To = "a" }, new FlowEdge { From = "split", To = "b" },
++            new FlowEdge { From = "a", To = "join" }, new FlowEdge { From = "b", To = "join" },
++            new FlowEdge { From = "join", To = "end" },
++        },
++    };
++
++    private static async Task SeedAsync(CP6Context db, Guid ua, Guid ub, string? obr)
++    {
++        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "pr", FlowName = "pr", FormKey = "f",
++            SchemaJson = JsonSerializer.Serialize(ForkSchema(ua, ub, obr)), Version = 1, Enable = true });
++        await db.SaveChangesAsync();
++    }
++
++    [Fact]
++    public async Task Prune_SingleBranch_SiblingContinues_ThenApproves()
++    {
++        using var db = NewDb();
++        var notifier = new CountingPruneNotifier();
++        var ua = Guid.NewGuid(); var ub = Guid.NewGuid();
++        await SeedAsync(db, ua, ub, "prune");
++        await Engine(db, notifier).SubmitAsync("pr", Guid.NewGuid(), "{}");
++
++        // a 驳回 → 只剪 a 支
++        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua && t.Status == FlowTaskStatus.Pending);
++        await Engine(db, notifier).ActAsync(ta.Id, ua, approve: false, "a 部门否");
++
++        var inst = await db.Wf_FlowInstances.SingleAsync();
++        Assert.Equal(FlowInstanceStatus.Running, inst.Status);                       // ★ 不连坐
++        Assert.True(await db.Wf_FlowTokens.AnyAsync(t => t.NodeId == "a" && t.Status == FlowTokenStatus.Pruned));
++        Assert.True(await db.Wf_FlowTasks.AnyAsync(t => t.AssigneeId == ub && t.Status == FlowTaskStatus.Pending)); // 兄弟不倒
++        Assert.Equal(1, await db.Wf_FlowHistories.CountAsync(h => h.Action == "branchPruned"));
++        Assert.Equal(1, notifier.PrunedCount);
++        Assert.Equal(0, notifier.RejectedCount);
++        // a 支 Pending 履历 → Voided；b 支不受扰
++        Assert.False(await db.Wf_FlowFormTos.AnyAsync(f => f.NodeId == "a" && f.Status == FlowFormToStatus.Pending));
++        Assert.True(await db.Wf_FlowFormTos.AnyAsync(f => f.NodeId == "b" && f.Status == FlowFormToStatus.Pending));
++
++        // b 过 → join 动态计票（Pruned 从等待集消失）→ Approved
++        var tb = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ub && t.Status == FlowTaskStatus.Pending);
++        await Engine(db, notifier).ActAsync(tb.Id, ub, approve: true);
++        Assert.Equal(FlowInstanceStatus.Approved, (await db.Wf_FlowInstances.SingleAsync()).Status);
++    }
++
++    [Fact]
++    public async Task Prune_JoinBackfill_ParkedSiblingReleases_NoFalseCollapse()
++    {
++        using var db = NewDb();
++        var notifier = new CountingPruneNotifier();
++        var ua = Guid.NewGuid(); var ub = Guid.NewGuid();
++        await SeedAsync(db, ua, ub, "prune");
++        await Engine(db, notifier).SubmitAsync("pr", Guid.NewGuid(), "{}");
++
++        // 先 b 过（b 到场 join 停泊），再驳 a → 剪枝使 join 凑齐 → 补放行 → Approved（且不得误判全剪光）
++        var tb = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ub && t.Status == FlowTaskStatus.Pending);
++        await Engine(db, notifier).ActAsync(tb.Id, ub, approve: true);
++        Assert.Equal(FlowInstanceStatus.Running, (await db.Wf_FlowInstances.SingleAsync()).Status);
++
++        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua && t.Status == FlowTaskStatus.Pending);
++        await Engine(db, notifier).ActAsync(ta.Id, ua, approve: false, "否");
++
++        var inst = await db.Wf_FlowInstances.SingleAsync();
++        Assert.Equal(FlowInstanceStatus.Approved, inst.Status);                      // ★ 补放行成功
++        Assert.Equal(1, notifier.PrunedCount);
++        Assert.Equal(0, notifier.RejectedCount);                                     // ★ 未误判剪光递归驳回
++        Assert.False(await db.Wf_FlowTokens.AnyAsync(t => t.Status == FlowTokenStatus.Active));
++    }
++
++    [Fact]
++    public async Task Prune_AllBranches_CollapsesToInstanceRejected()
++    {
++        using var db = NewDb();
++        var notifier = new CountingPruneNotifier();
++        var ua = Guid.NewGuid(); var ub = Guid.NewGuid();
++        await SeedAsync(db, ua, ub, "prune");
++        await Engine(db, notifier).SubmitAsync("pr", Guid.NewGuid(), "{}");
++
++        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua && t.Status == FlowTaskStatus.Pending);
++        await Engine(db, notifier).ActAsync(ta.Id, ua, approve: false);
++        Assert.Equal(FlowInstanceStatus.Running, (await db.Wf_FlowInstances.SingleAsync()).Status);
++
++        var tb = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ub && t.Status == FlowTaskStatus.Pending);
++        await Engine(db, notifier).ActAsync(tb.Id, ub, approve: false);              // 最后一支也剪 → 全剪光
++
++        var inst = await db.Wf_FlowInstances.SingleAsync();
++        Assert.Equal(FlowInstanceStatus.Rejected, inst.Status);                      // ★ 上弹到顶（无外层）→ Rejected
++        Assert.Equal(2, notifier.PrunedCount);
++        Assert.Equal(1, notifier.RejectedCount);                                     // 终态分发照走
++        Assert.False(await db.Wf_FlowTokens.AnyAsync(t => t.Status == FlowTokenStatus.Active));
++        Assert.False(await db.Wf_FlowFormTos.AnyAsync(f => f.Status == FlowFormToStatus.Pending));
++    }
++
++    [Theory]
++    [InlineData(null)]          // 未配置（现状）
++    [InlineData("cascade")]     // 显式 cascade
++    public async Task Cascade_Default_ZeroDiff_RejectTerminatesWholeInstance(string? obr)
++    {
++        using var db = NewDb();
++        var notifier = new CountingPruneNotifier();
++        var ua = Guid.NewGuid(); var ub = Guid.NewGuid();
++        await SeedAsync(db, ua, ub, obr);
++        await Engine(db, notifier).SubmitAsync("pr", Guid.NewGuid(), "{}");
++
++        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua && t.Status == FlowTaskStatus.Pending);
++        await Engine(db, notifier).ActAsync(ta.Id, ua, approve: false, "no");
++
++        // 与 ParallelGatewayTests.Parallel_RejectTerminates 逐字等价的终态
++        var inst = await db.Wf_FlowInstances.SingleAsync();
++        Assert.Equal(FlowInstanceStatus.Rejected, inst.Status);
++        Assert.Equal(0, await db.Wf_FlowTokens.CountAsync(t => t.Status == FlowTokenStatus.Active));
++        Assert.Equal(0, await db.Wf_FlowTokens.CountAsync(t => t.Status == FlowTokenStatus.Pruned));  // ★ cascade 不产生 Pruned
++        Assert.Equal(0, notifier.PrunedCount);
++        Assert.Equal(0, await db.Wf_FlowHistories.CountAsync(h => h.Action == "branchPruned"));
++    }
++
++    [Fact]
++    public async Task Prune_LinearFlow_NoFork_FallsBackToCascade()
++    {
++        // 线性流（token ForkId==null）上即便某节点被驳回，也走既有连坐路径（prune 只对分支 token 有意义）
++        using var db = NewDb();
++        var ua = Guid.NewGuid();
++        var schema = new FlowSchema
++        {
++            Start = "s",
++            Nodes =
++            {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = ua },
++                new FlowNode { Id = "end", Type = "end" },
++            },
++            Edges = { new FlowEdge { From = "s", To = "a" }, new FlowEdge { From = "a", To = "end" } },
++        };
++        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "lin", FlowName = "lin", FormKey = "f",
++            SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
++        await db.SaveChangesAsync();
++        await Engine(db).SubmitAsync("lin", Guid.NewGuid(), "{}");
++
++        var ta = await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending);
++        await Engine(db).ActAsync(ta.Id, ua, approve: false);
++        Assert.Equal(FlowInstanceStatus.Rejected, (await db.Wf_FlowInstances.SingleAsync()).Status);
++    }
++}

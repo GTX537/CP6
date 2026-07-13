@@ -1,0 +1,852 @@
+# Review package: 7a4e093..8a0e17f
+
+## Commits
+8a0e17f feat(space): 细粒度权限点——9 控制器 RequirePermission + MenuAction/RoleAction 种子
+
+## Files changed
+ CP6.Tests/Space/SpacePermissionAttributeTests.cs   | 112 +++++++++++++++++
+ CP6.WebApi/Controllers/Space/CodeRuleController.cs |   8 ++
+ .../Controllers/Space/ConnectorController.cs       |  11 ++
+ .../Controllers/Space/LocationPublishController.cs |   5 +
+ CP6.WebApi/Controllers/Space/SceneController.cs    |   6 +
+ .../Controllers/Space/SpaceMasterController.cs     |  18 +++
+ CP6.WebApi/Controllers/Space/TemplateController.cs |   7 ++
+ docs/seeds/space-roleaction-seed.sql               | 140 +++++++++++++++++++++
+ 8 files changed, 307 insertions(+)
+
+## Diff
+diff --git a/CP6.Tests/Space/SpacePermissionAttributeTests.cs b/CP6.Tests/Space/SpacePermissionAttributeTests.cs
+new file mode 100644
+index 0000000..fdb837b
+--- /dev/null
++++ b/CP6.Tests/Space/SpacePermissionAttributeTests.cs
+@@ -0,0 +1,112 @@
++using System.Reflection;
++using CP6.Core.Auth;
++using CP6.WebApi.Controllers.Space;
++using Microsoft.AspNetCore.Mvc;
++
++namespace CP6.Tests.Space;
++
++/// <summary>
++/// 反射守卫（波4 权限点接线）：扫 CP6.WebApi 程序集 Controllers.Space 命名空间全部 controller。
++/// ① 每个变更端点（HttpPost/HttpPut/HttpDelete）必须带 [RequirePermission]，且 (menu,action)
++///    落在映射白名单集合内（与 2026-07-07-space-wave4-crosscutting.md Global Constraints 映射表逐字一致）。
++/// ② 每个只读端点（HttpGet，且非变更）必须**不带** [RequirePermission]（防误贴）。
++///
++/// 断言方式说明：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读。
++/// 故用 <see cref="CustomAttributeData"/> 读取该特性的构造参数 (menu, action)，实现白名单逐字校验
++/// （非降级到存在性）。
++///
++/// 豁免清单（显式，只读语义的 POST）：
++///   - CodeRuleController.Preview —— POST code-rule/preview 仅合成样例、不写库，按只读语义仅 [Authorize]。
++///     豁免项按「不得带特性」校验（与 GET 同待遇）。
++/// </summary>
++public class SpacePermissionAttributeTests
++{
++    /// <summary>映射白名单 "menu:action"——计划 Global Constraints 映射表逐字。</summary>
++    private static readonly HashSet<string> Whitelist = new()
++    {
++        "space-site:add", "space-site:edit", "space-site:delete",
++        "space-floor:add", "space-floor:edit", "space-floor:delete",
++        "space-code-rule:add", "space-code-rule:edit", "space-code-rule:delete",
++        "space-code-rule:generate",
++        "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
++    };
++
++    /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
++    private static readonly HashSet<string> ReadOnlyPostExemptions = new()
++    {
++        "CodeRuleController.Preview",
++    };
++
++    private static IEnumerable<Type> SpaceControllers =>
++        typeof(SpaceMasterController).Assembly.GetTypes()
++            .Where(t => t.Namespace == "CP6.WebApi.Controllers.Space"
++                        && typeof(ControllerBase).IsAssignableFrom(t)
++                        && !t.IsAbstract)
++            .OrderBy(t => t.Name);
++
++    private static IEnumerable<MethodInfo> ActionMethods(Type t) =>
++        t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
++            .Where(m => !m.IsSpecialName);
++
++    private static bool IsMutating(MethodInfo m) =>
++        m.GetCustomAttributes<HttpPostAttribute>().Any()
++        || m.GetCustomAttributes<HttpPutAttribute>().Any()
++        || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
++
++    private static bool IsGet(MethodInfo m) => m.GetCustomAttributes<HttpGetAttribute>().Any();
++
++    private static bool IsExempt(Type c, MethodInfo m) =>
++        ReadOnlyPostExemptions.Contains($"{c.Name}.{m.Name}");
++
++    /// <summary>经 CustomAttributeData 读构造参数 (menu, action)；无特性返回 null。</summary>
++    private static (string menu, string action)? ReadPermission(MethodInfo m)
++    {
++        var data = CustomAttributeData.GetCustomAttributes(m)
++            .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
++        if (data == null) return null;
++        var args = data.ConstructorArguments;
++        return ((string)args[0].Value!, (string)args[1].Value!);
++    }
++
++    [Fact]
++    public void SpaceControllers_AreDiscovered()
++    {
++        // 守卫：确保反射确实扫到 9 个 controller（防命名空间/程序集变动导致「空扫空过」）。
++        Assert.Equal(9, SpaceControllers.Count());
++    }
++
++    [Fact]
++    public void EveryMutatingAction_HasRequirePermission_InWhitelist()
++    {
++        var offenders = new List<string>();
++        foreach (var c in SpaceControllers)
++        foreach (var m in ActionMethods(c).Where(IsMutating))
++        {
++            if (IsExempt(c, m)) continue; // 豁免项在专门用例校验「不得带」
++            var perm = ReadPermission(m);
++            if (perm == null)
++            {
++                offenders.Add($"{c.Name}.{m.Name}：变更端点缺 [RequirePermission]");
++                continue;
++            }
++            var key = $"{perm.Value.menu}:{perm.Value.action}";
++            if (!Whitelist.Contains(key))
++                offenders.Add($"{c.Name}.{m.Name}：键 '{key}' 不在映射白名单");
++        }
++        Assert.True(offenders.Count == 0, "变更端点权限点缺失/越界:\n" + string.Join("\n", offenders));
++    }
++
++    [Fact]
++    public void NoReadOnlyAction_HasRequirePermission()
++    {
++        var offenders = new List<string>();
++        foreach (var c in SpaceControllers)
++        foreach (var m in ActionMethods(c))
++        {
++            var readOnly = (IsGet(m) && !IsMutating(m)) || IsExempt(c, m);
++            if (readOnly && ReadPermission(m) != null)
++                offenders.Add($"{c.Name}.{m.Name}：只读端点误贴 [RequirePermission]");
++        }
++        Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Space/CodeRuleController.cs b/CP6.WebApi/Controllers/Space/CodeRuleController.cs
+index 2c22815..5fc53d9 100644
+--- a/CP6.WebApi/Controllers/Space/CodeRuleController.cs
++++ b/CP6.WebApi/Controllers/Space/CodeRuleController.cs
+@@ -1,20 +1,23 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Space;
+ 
+ /// <summary>
+ /// 编码规则与编码引擎 Web API（ch03）。
+ /// 路由前缀 /api/space；租户隔离由 TenantMiddleware + CP6Context 全局查询过滤自动施加。
++/// 权限约定（波4）：变更端点（POST/PUT/DELETE）贴 [RequirePermission]，GET 只 [Authorize]。
++/// 例外：POST code-rule/preview 为只读样例合成（不写库），按只读语义仅 [Authorize] 不贴。
+ /// </summary>
+ [ApiController]
+ [Route("api/space")]
+ [Authorize]
+ public class CodeRuleController : ControllerBase
+ {
+     private readonly ICodeEngineService _svc;
+     public CodeRuleController(ICodeEngineService svc) => _svc = svc;
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+@@ -24,54 +27,58 @@ public class CodeRuleController : ControllerBase
+ 
+     // ── CodeRule CRUD ──────────────────────────────────────────────────────
+ 
+     /// <summary>列出全部编码规则（按作用域 + 名称排序）。</summary>
+     [HttpGet("code-rule")]
+     public async Task<IActionResult> ListRules() =>
+         Ok2(await _svc.ListRulesAsync());
+ 
+     /// <summary>新建编码规则。IsDefault=true 时同作用域其他规则 IsDefault 自动置 false。</summary>
+     [HttpPost("code-rule")]
++    [RequirePermission("space-code-rule", "add")]
+     public async Task<IActionResult> CreateRule([FromBody] CodeRuleDto d)
+     {
+         return Ok2(new { id = await _svc.CreateRuleAsync(d, CurrentUser) });
+     }
+ 
+     /// <summary>修改编码规则。</summary>
+     [HttpPut("code-rule/{id:guid}")]
++    [RequirePermission("space-code-rule", "edit")]
+     public async Task<IActionResult> UpdateRule(Guid id, [FromBody] CodeRuleDto d)
+     {
+         await _svc.UpdateRuleAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     /// <summary>删除编码规则。</summary>
+     [HttpDelete("code-rule/{id:guid}")]
++    [RequirePermission("space-code-rule", "delete")]
+     public async Task<IActionResult> DeleteRule(Guid id)
+     {
+         await _svc.DeleteRuleAsync(id); return Ok2();
+     }
+ 
+     /// <summary>实时预览编码样例（ch03 §8）。合成两路（有/无巷道），不写库。</summary>
+     [HttpPost("code-rule/preview")]
+     public async Task<IActionResult> Preview([FromBody] CodePreviewReq req)
+     {
+         return Ok2(await _svc.PreviewAsync(req));
+     }
+ 
+     // ── 批量生成 ───────────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 批量生成库位编码（ch03 §4.2）。
+     /// body: { mode: "fill-empty"|"rebuild", scopeZoneId?: guid }
+     /// 返回本次生成的编码列表。
+     /// </summary>
+     [HttpPost("floor/{id:guid}/generate-codes")]
++    [RequirePermission("space-code-rule", "generate")]
+     public async Task<IActionResult> GenerateCodes(Guid id, [FromBody] GenerateCodesReq req)
+     {
+         return Ok2(await _svc.GenerateAsync(id, req.Mode, req.ScopeZoneId));
+     }
+ 
+     // ── 发布前编码预检 ─────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 发布前编码预检（ch03 §9.2，04 发布闸门）。
+     /// 返回：空码数 / 重复码组 / 规则静态错误 / 未落位数。
+@@ -81,20 +88,21 @@ public class CodeRuleController : ControllerBase
+     {
+         return Ok2(await _svc.PrecheckAsync(id, zoneId));
+     }
+ 
+     // ── 单格生成 ───────────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 单格生成（ch03 §10）。对单个库位走同样的 Assemble 路径写回 LocationCode。
+     /// </summary>
+     [HttpPost("location/{id:guid}/gen-code")]
++    [RequirePermission("space-code-rule", "generate")]
+     public async Task<IActionResult> GenCode(Guid id)
+     {
+         return Ok2(new { code = await _svc.GenSingleAsync(id) });
+     }
+ }
+ 
+ /// <summary>批量生成请求体。</summary>
+ public class GenerateCodesReq
+ {
+     /// <summary>生成模式：fill-empty（仅填空码）/ rebuild（两阶段全量重排）。</summary>
+diff --git a/CP6.WebApi/Controllers/Space/ConnectorController.cs b/CP6.WebApi/Controllers/Space/ConnectorController.cs
+index 7cf1a8c..2a26999 100644
+--- a/CP6.WebApi/Controllers/Space/ConnectorController.cs
++++ b/CP6.WebApi/Controllers/Space/ConnectorController.cs
+@@ -1,45 +1,56 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Space;
+ 
++/// <summary>
++/// 连接体（电梯/楼梯等跨层设施）Web API。
++/// 权限约定（波4）：变更端点（POST/PUT/DELETE）贴 [RequirePermission]，GET 只 [Authorize]。
++/// 连接体全部变更归楼层编辑单一动作 space-floor:edit（映射表裁决）。
++/// </summary>
+ [ApiController]
+ [Route("api/space")]
+ [Authorize]
+ public class ConnectorController : ControllerBase
+ {
+     private readonly IConnectorService _svc;
+     public ConnectorController(IConnectorService svc) => _svc = svc;
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null, string msg = "OK") => Ok(new { code = 0, message = msg, data });
+ 
+     [HttpGet("site/{siteId:guid}/connector")]
+     public async Task<IActionResult> ListBySite(Guid siteId) => Ok2(await _svc.ListBySiteAsync(siteId));
+ 
+     [HttpPost("connector")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> Create([FromBody] ConnectorDto d)
+     {
+         return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("connector/{id:guid}/stop")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> UpsertStop(Guid id, [FromBody] ConnectorStopDto d)
+     {
+         await _svc.UpsertStopAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("connector/{id:guid}/stop/{floorId:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> DeleteStop(Guid id, Guid floorId) { await _svc.DeleteStopAsync(id, floorId); return Ok2(); }
+ 
+     [HttpPut("connector/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> Update(Guid id, [FromBody] ConnectorUpdateDto d)
+     {
+         await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("connector/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> Delete(Guid id) { await _svc.DeleteAsync(id); return Ok2(); }
+ }
+diff --git a/CP6.WebApi/Controllers/Space/LocationPublishController.cs b/CP6.WebApi/Controllers/Space/LocationPublishController.cs
+index f024cfb..6902ed7 100644
+--- a/CP6.WebApi/Controllers/Space/LocationPublishController.cs
++++ b/CP6.WebApi/Controllers/Space/LocationPublishController.cs
+@@ -1,22 +1,24 @@
++using CP6.Core.Auth;
+ using CP6.Core.EFDbContext;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DomainModels;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.WebApi.Controllers.Space;
+ 
+ /// <summary>
+ /// 库位发布、停用、采纳、事件查询 Web API（ch04）。
+ /// 路由前缀 /api/space；租户隔离由 TenantMiddleware + CP6Context 全局查询过滤自动施加。
++/// 权限约定（波4）：变更端点（POST/PUT/DELETE）贴 [RequirePermission]，GET（events）只 [Authorize]。
+ /// </summary>
+ [ApiController]
+ [Route("api/space")]
+ [Authorize]
+ public class LocationPublishController : ControllerBase
+ {
+     private readonly ILocationPublishService _svc;
+     private readonly CP6Context _db;
+ 
+     public LocationPublishController(ILocationPublishService svc, CP6Context db)
+@@ -26,56 +28,59 @@ public class LocationPublishController : ControllerBase
+     }
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null, string msg = "OK") =>
+         Ok(new { code = 0, message = msg, data });
+ 
+     // ── POST /api/space/floor/{id}/publish ────────────────────────────────
+ 
+     /// <summary>整层/库区发布（ch04 §4）。</summary>
+     [HttpPost("floor/{id:guid}/publish")]
++    [RequirePermission("space-publish", "publish")]
+     public async Task<IActionResult> PublishFloor(Guid id, [FromBody] PublishFloorRequest? req)
+     {
+         try
+         {
+             var count = await _svc.PublishFloorAsync(id, req?.ZoneId, CurrentUser);
+             return Ok2(new { published = count });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
+             return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
+         }
+     }
+ 
+     // ── PUT /api/space/location/{id}/deactivate ───────────────────────────
+ 
+     /// <summary>停用已发布库位（ch04 §6）。</summary>
+     [HttpPut("location/{id:guid}/deactivate")]
++    [RequirePermission("space-publish", "deactivate")]
+     public async Task<IActionResult> Deactivate(Guid id)
+     {
+         try
+         {
+             await _svc.DeactivateAsync(id, CurrentUser);
+             return Ok2();
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+             // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
+             return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
+         }
+     }
+ 
+     // ── POST /api/space/location/adopt ────────────────────────────────────
+ 
+     /// <summary>存量采纳导入（ch04 §8.1）。</summary>
+     [HttpPost("location/adopt")]
++    [RequirePermission("space-publish", "adopt")]
+     public async Task<IActionResult> Adopt([FromBody] AdoptRequest req)
+     {
+         try
+         {
+             var items = req.Items.Select(i => (i.Code, (Dictionary<string, object?>?)i.Attrs));
+             var (imported, skipped) = await _svc.AdoptAsync(items, CurrentUser);
+             return Ok2(new { imported, skipped });
+         }
+         catch (DbUpdateConcurrencyException)
+         {
+diff --git a/CP6.WebApi/Controllers/Space/SceneController.cs b/CP6.WebApi/Controllers/Space/SceneController.cs
+index eea33bb..7c08002 100644
+--- a/CP6.WebApi/Controllers/Space/SceneController.cs
++++ b/CP6.WebApi/Controllers/Space/SceneController.cs
+@@ -1,21 +1,24 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Space;
+ 
+ /// <summary>
+ /// 场景差量保存 + 导入导出 + D7 绑码 Web API（ch01 §G-1/G-3/I-1）。
+ /// 注意：GET /floor/{id}/scene 已由 SpaceMasterController 实现；
+ /// 本控制器只加 POST 差量保存（不冲突）+ export/import/bind-codes。
++/// 权限约定（波4）：变更端点（POST/PUT/DELETE）贴 [RequirePermission]，GET（export）只 [Authorize]。
++/// 场景全部变更归楼层编辑单一动作 space-floor:edit（映射表裁决）。
+ /// </summary>
+ [ApiController]
+ [Route("api/space")]
+ [Authorize]
+ public class SceneController : ControllerBase
+ {
+     private readonly ISceneService _scene;
+     private readonly ISceneIoService _io;
+ 
+     public SceneController(ISceneService scene, ISceneIoService io)
+@@ -25,42 +28,45 @@ public class SceneController : ControllerBase
+     }
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null, string msg = "OK") =>
+         Ok(new { code = 0, message = msg, data });
+ 
+     // ── G-1 差量保存 ─────────────────────────────────────────────────────
+ 
+     /// <summary>整层差量保存（upsert zones/aisles/racks/markers/locations + deletes）</summary>
+     [HttpPost("floor/{id:guid}/scene")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> SaveScene(Guid id, [FromBody] SceneSaveDto dto)
+     {
+         return Ok2(new { idMap = await _scene.SaveSceneAsync(id, dto, CurrentUser) });
+     }
+ 
+     // ── G-3 导入导出 ──────────────────────────────────────────────────────
+ 
+     /// <summary>导出楼层几何（不含敏感字段）</summary>
+     [HttpGet("floor/{id:guid}/export")]
+     public async Task<IActionResult> Export(Guid id)
+     {
+         return Ok2(await _io.ExportAsync(id));
+     }
+ 
+     /// <summary>导入场景到指定站点（新 GUID 映射，库位按货架参数全枚举重建）</summary>
+     [HttpPost("site/{id:guid}/import")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> Import(Guid id, [FromBody] SceneExportDto dto)
+     {
+         return Ok2(new { floorId = await _io.ImportAsync(id, dto, CurrentUser) });
+     }
+ 
+     // ── I-1 D7 绑码 ──────────────────────────────────────────────────────
+ 
+     /// <summary>D7 反向建模绑码：校验 Status==1 &amp;&amp; !Placed &amp;&amp; CodeOrigin==2，回填几何坐标，不动 Code/Id/Status/Version</summary>
+     [HttpPost("rack/{id:guid}/bind-codes")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> BindCodes(Guid id, [FromBody] BindCodesDto dto)
+     {
+         var pairs = dto.Pairs.Select(p => (p.LocationId, p.Col, p.Level, p.Depth));
+         await _scene.BindCodesAsync(id, pairs, CurrentUser);
+         return Ok2();
+     }
+ }
+diff --git a/CP6.WebApi/Controllers/Space/SpaceMasterController.cs b/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
+index 23cc2ba..77b141b 100644
+--- a/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
++++ b/CP6.WebApi/Controllers/Space/SpaceMasterController.cs
+@@ -1,147 +1,165 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Space;
+ 
+ /// <summary>
+ /// Space 主数据 Web API（ch00 §9）。
+ /// 路由前缀 /api/space；租户隔离由 TenantMiddleware + CP6Context 全局查询过滤自动施加。
++/// 权限约定（波4）：变更端点（POST/PUT/DELETE）贴 [RequirePermission]，GET 只 [Authorize]。
++/// zone/aisle/rack 变更统一归 space-floor:edit（楼层编辑单一动作，避免动作爆炸）。
+ /// </summary>
+ [ApiController]
+ [Route("api/space")]
+ [Authorize]
+ public class SpaceMasterController : ControllerBase
+ {
+     private readonly ISpaceMasterService _svc;
+     public SpaceMasterController(ISpaceMasterService svc) => _svc = svc;
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null, string msg = "OK") =>
+         Ok(new { code = 0, message = msg, data });
+ 
+     // ── Site ──────────────────────────────────────────────────────────────
+ 
+     [HttpGet("site")]
+     public async Task<IActionResult> ListSites() => Ok2(await _svc.ListSitesAsync());
+ 
+     [HttpPost("site")]
++    [RequirePermission("space-site", "add")]
+     public async Task<IActionResult> CreateSite([FromBody] SiteDto d)
+     {
+         return Ok2(new { id = await _svc.CreateSiteAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("site/{id:guid}")]
++    [RequirePermission("space-site", "edit")]
+     public async Task<IActionResult> UpdateSite(Guid id, [FromBody] SiteDto d)
+     {
+         await _svc.UpdateSiteAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("site/{id:guid}")]
++    [RequirePermission("space-site", "delete")]
+     public async Task<IActionResult> DeleteSite(Guid id)
+     {
+         await _svc.DeleteSiteAsync(id); return Ok2();
+     }
+ 
+     // ── Floor ─────────────────────────────────────────────────────────────
+ 
+     [HttpGet("floor")]
+     public async Task<IActionResult> ListFloors([FromQuery] Guid siteId) =>
+         Ok2(await _svc.ListFloorsAsync(siteId));
+ 
+     [HttpPost("floor")]
++    [RequirePermission("space-floor", "add")]
+     public async Task<IActionResult> CreateFloor([FromBody] FloorDto d)
+     {
+         return Ok2(new { id = await _svc.CreateFloorAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("floor/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> UpdateFloor(Guid id, [FromBody] FloorDto d)
+     {
+         await _svc.UpdateFloorAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("floor/{id:guid}")]
++    [RequirePermission("space-floor", "delete")]
+     public async Task<IActionResult> DeleteFloor(Guid id)
+     {
+         await _svc.DeleteFloorAsync(id); return Ok2();
+     }
+ 
+     // ── Zone ──────────────────────────────────────────────────────────────
+ 
+     [HttpGet("zone")]
+     public async Task<IActionResult> ListZones([FromQuery] Guid floorId) =>
+         Ok2(await _svc.ListZonesAsync(floorId));
+ 
+     [HttpPost("zone")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> CreateZone([FromBody] ZoneDto d)
+     {
+         return Ok2(new { id = await _svc.CreateZoneAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("zone/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> UpdateZone(Guid id, [FromBody] ZoneDto d)
+     {
+         await _svc.UpdateZoneAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("zone/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> DeleteZone(Guid id)
+     {
+         await _svc.DeleteZoneAsync(id); return Ok2();
+     }
+ 
+     // ── Aisle ─────────────────────────────────────────────────────────────
+ 
+     [HttpGet("aisle")]
+     public async Task<IActionResult> ListAisles([FromQuery] Guid zoneId) =>
+         Ok2(await _svc.ListAislesAsync(zoneId));
+ 
+     [HttpPost("aisle")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> CreateAisle([FromBody] AisleDto d)
+     {
+         return Ok2(new { id = await _svc.CreateAisleAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("aisle/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> UpdateAisle(Guid id, [FromBody] AisleDto d)
+     {
+         await _svc.UpdateAisleAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("aisle/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> DeleteAisle(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetAisleId = null)
+     {
+         await _svc.DeleteAisleAsync(id, mode, targetAisleId, CurrentUser); return Ok2();
+     }
+ 
+     // ── Rack ──────────────────────────────────────────────────────────────
+ 
+     [HttpGet("rack")]
+     public async Task<IActionResult> ListRacks([FromQuery] Guid zoneId) =>
+         Ok2(await _svc.ListRacksAsync(zoneId));
+ 
+     [HttpPost("rack")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> CreateRack([FromBody] RackDto d)
+     {
+         return Ok2(new { id = await _svc.CreateRackAsync(d, CurrentUser) });
+     }
+ 
+     [HttpPut("rack/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> UpdateRack(Guid id, [FromBody] RackDto d)
+     {
+         await _svc.UpdateRackAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     [HttpDelete("rack/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> DeleteRack(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetRackId = null)
+     {
+         await _svc.DeleteRackAsync(id, mode, targetRackId, CurrentUser); return Ok2();
+     }
+ 
+     // ── 场景聚合 / 待绑定 / 库位列表 ────────────────────────────────────
+ 
+     [HttpGet("floor/{id:guid}/scene")]
+     public async Task<IActionResult> Scene(Guid id) =>
+         Ok2(await _svc.GetSceneAsync(id));
+diff --git a/CP6.WebApi/Controllers/Space/TemplateController.cs b/CP6.WebApi/Controllers/Space/TemplateController.cs
+index c4f5ca4..7407592 100644
+--- a/CP6.WebApi/Controllers/Space/TemplateController.cs
++++ b/CP6.WebApi/Controllers/Space/TemplateController.cs
+@@ -1,55 +1,62 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Space;
+ 
+ /// <summary>
+ /// 模板 Web API（ch01 §F-1）。
+ /// 路由 /api/space/template*；租户隔离由 TenantMiddleware + CP6Context 全局过滤自动施加。
++/// 权限约定（波4）：变更端点（POST/PUT/DELETE，含 clone）贴 [RequirePermission]，GET 只 [Authorize]。
++/// 模板变更归楼层编辑单一动作 space-floor:edit（映射表裁决）。
+ /// </summary>
+ [ApiController]
+ [Route("api/space")]
+ [Authorize]
+ public class TemplateController : ControllerBase
+ {
+     private readonly ITemplateService _svc;
+     public TemplateController(ITemplateService svc) => _svc = svc;
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null, string msg = "OK") =>
+         Ok(new { code = 0, message = msg, data });
+ 
+     /// <summary>列出全部模板</summary>
+     [HttpGet("template")]
+     public async Task<IActionResult> List() => Ok2(await _svc.ListAsync());
+ 
+     /// <summary>创建模板</summary>
+     [HttpPost("template")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> Create([FromBody] TemplateDto d)
+     {
+         return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
+     }
+ 
+     /// <summary>更新模板</summary>
+     [HttpPut("template/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> Update(Guid id, [FromBody] TemplateDto d)
+     {
+         await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
+     }
+ 
+     /// <summary>删除模板</summary>
+     [HttpDelete("template/{id:guid}")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> Delete(Guid id)
+     {
+         await _svc.DeleteAsync(id); return Ok2();
+     }
+ 
+     /// <summary>克隆模板（新 Id + 新编码，同 Params/Type）</summary>
+     [HttpPost("template/{id:guid}/clone")]
++    [RequirePermission("space-floor", "edit")]
+     public async Task<IActionResult> Clone(Guid id)
+     {
+         return Ok2(new { id = await _svc.CloneAsync(id, CurrentUser) });
+     }
+ }
+diff --git a/docs/seeds/space-roleaction-seed.sql b/docs/seeds/space-roleaction-seed.sql
+new file mode 100644
+index 0000000..367615b
+--- /dev/null
++++ b/docs/seeds/space-roleaction-seed.sql
+@@ -0,0 +1,140 @@
++/* ============================================================
++ * Space 空間管理 権限点（MenuAction / RoleAction）シードデータ（波4 横切）
++ * ============================================================
++ * 対象 DB     : CP6DB (SQL Server)
++ * 対象テーブル : Sys_MenuAction（授権可能な操作点の登記）
++ *              Sys_RoleAction（管理者ロール RoleId=1 への全動作授権）
++ *
++ * 前提:
++ *   Space メニュー 902~906 は波2/波3 種子（space-menu-seed.sql /
++ *   space-menu-seed-2.sql）で作成済みであること:
++ *     902 space-site（サイト管理） / 903 space-floor（フロア管理） /
++ *     904 space-code-rule（コード規則） / 905 space-publish（発行センター） /
++ *     906 space-events（連携イベント・授権動作なし）
++ *
++ * 動作定義（計画 2026-07-07-space-wave4-crosscutting.md Global Constraints 映射表 逐字）:
++ *   902 space-site      : add / edit / delete
++ *   903 space-floor     : add / edit / delete（zone/aisle/rack/scene/template/connector の
++ *                         全変更は「フロア編集」単一動作 edit に集約——動作爆発回避）
++ *   904 space-code-rule : add / edit / delete / generate（generate-codes + gen-code）
++ *   905 space-publish   : publish / deactivate / adopt
++ *   906 space-events    : 動作なし（只读・[Authorize] のみ）
++ *
++ * マルチテナント:
++ *   Sys_MenuAction / Sys_RoleAction は BaseTenantEntity（TenantId 必須・行級隔離）。
++ *   全テナントへ一括投入するため `CROSS JOIN (SELECT Id FROM Sys_Tenants) t` で逐租户展開。
++ *   （Sys_Tenants の主键は Id[uniqueidentifier]。qa 種子 02_seed_roleaction_BC.sql の
++ *     明示 TenantId 挿入と同系だが、本種子は全租户を自動列挙する。）
++ *
++ * 実行方法:
++ *   sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/space-roleaction-seed.sql -b
++ *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
++ *
++ * 冪等性:
++ *   各 INSERT 前に NOT EXISTS チェック（TenantId+MenuId+ActionCode 単位）→ 重複実行安全。
++ * ============================================================ */
++
++SET NOCOUNT ON;
++SET XACT_ABORT ON;
++SET QUOTED_IDENTIFIER ON;
++SET ANSI_NULLS ON;
++BEGIN TRY
++BEGIN TRANSACTION;
++
++PRINT '=== Space 権限点（MenuAction/RoleAction）シード 開始 ===';
++
++/* ------------------------------------------------------------
++ * 0. 動作定義テーブル（MenuId, ActionCode, ActionName, Sort）
++ * ------------------------------------------------------------ */
++DECLARE @Actions TABLE (MenuId INT, ActionCode NVARCHAR(50), ActionName NVARCHAR(100), Sort INT);
++INSERT INTO @Actions (MenuId, ActionCode, ActionName, Sort) VALUES
++ (902, N'add',        N'サイト作成',       1),
++ (902, N'edit',       N'サイト編集',       2),
++ (902, N'delete',     N'サイト削除',       3),
++ (903, N'add',        N'フロア作成',       1),
++ (903, N'edit',       N'フロア編集',       2),
++ (903, N'delete',     N'フロア削除',       3),
++ (904, N'add',        N'コード規則作成',   1),
++ (904, N'edit',       N'コード規則編集',   2),
++ (904, N'delete',     N'コード規則削除',   3),
++ (904, N'generate',   N'コード生成',       4),
++ (905, N'publish',    N'発行',             1),
++ (905, N'deactivate', N'停止',             2),
++ (905, N'adopt',      N'採納',             3);
++-- 合計 13 動作定義／租户
++
++/* ------------------------------------------------------------
++ * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_MenuAction (Id, MenuId, ActionCode, ActionName, Sort, CreateDate, TenantId)
++SELECT NEWID(), a.MenuId, a.ActionCode, a.ActionName, a.Sort, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_MenuAction ma
++    WHERE ma.TenantId = t.Id AND ma.MenuId = a.MenuId AND ma.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 2. Sys_RoleAction 管理者(RoleId=1) へ全動作授権（逐租户・冪等）
++ *    列序: (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_RoleAction (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++SELECT NEWID(), 1, a.MenuId, a.ActionCode, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_RoleAction ra
++    WHERE ra.TenantId = t.Id AND ra.RoleId = 1 AND ra.MenuId = a.MenuId AND ra.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 3. 結果確認（PRINT）
++ * ------------------------------------------------------------ */
++DECLARE @Tn INT, @Ma INT, @Ra INT;
++SELECT @Tn = COUNT(*) FROM Sys_Tenants;
++SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId BETWEEN 902 AND 905;
++SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId BETWEEN 902 AND 905 AND RoleId = 1;
++
++PRINT N'  租户数                    : ' + CAST(@Tn AS NVARCHAR(10));
++PRINT N'  MenuAction 件数(902-905)  : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 13 想定）';
++PRINT N'  RoleAction 件数(管理者)   : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 13 想定）';
++
++COMMIT TRANSACTION;
++PRINT '=== Space 権限点シード 完了 ===';
++END TRY
++BEGIN CATCH
++    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
++    PRINT 'ERROR: ' + ERROR_MESSAGE();
++    THROW;
++END CATCH;
++GO
++
++/* ============================================================
++ * 4. 動作確認クエリ（実行後の検証用、任意）
++ * ============================================================ */
++-- 各テナントの Space 権限点（MenuAction）一覧
++SELECT CONVERT(varchar(36), ma.TenantId) AS TenantId, ma.MenuId, ma.ActionCode, ma.ActionName, ma.Sort
++FROM Sys_MenuAction ma
++WHERE ma.MenuId BETWEEN 902 AND 905
++ORDER BY ma.TenantId, ma.MenuId, ma.Sort;
++
++-- 管理者ロールの授権（RoleAction）一覧
++SELECT CONVERT(varchar(36), ra.TenantId) AS TenantId, ra.RoleId, ra.MenuId, ra.ActionCode
++FROM Sys_RoleAction ra
++WHERE ra.MenuId BETWEEN 902 AND 905 AND ra.RoleId = 1
++ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
++
++/* ============================================================
++ * 5. ロールバック用（緊急時のみ使用）
++ * ============================================================
++ * 注意: 本ファイルが追加した 902~905 の Space 権限点のみを対象とする。
++ * ------------------------------------------------------------ */
++/*
++BEGIN TRANSACTION;
++DELETE FROM Sys_RoleAction WHERE MenuId BETWEEN 902 AND 905 AND ActionCode IN
++ (N'add', N'edit', N'delete', N'generate', N'publish', N'deactivate', N'adopt');
++DELETE FROM Sys_MenuAction WHERE MenuId BETWEEN 902 AND 905 AND ActionCode IN
++ (N'add', N'edit', N'delete', N'generate', N'publish', N'deactivate', N'adopt');
++COMMIT TRANSACTION;
++*/

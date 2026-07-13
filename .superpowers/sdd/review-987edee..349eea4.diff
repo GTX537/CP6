@@ -1,0 +1,854 @@
+# Review package: 987edee..HEAD
+
+## Commits
+349eea4 docs(sdd): Task 8 报告——属性面板(Zone编辑/Marker/Aisle一览)自评+范围铁律确认
+50b05e1 feat(space-web): 波5 编辑器属性面板——Zone选中编辑(EditZoneCmd)/Marker编辑/Aisle一览
+
+## Files changed
+ .superpowers/sdd/task-8-report.md                  |  72 +++--
+ cp6.web/src/space-editor/SceneStage.ts             |   2 +
+ cp6.web/src/space-editor/command/commands.spec.ts  |  50 ++++
+ .../space-editor/command/commands/EditZoneCmd.ts   |  38 +++
+ .../src/space-editor/interact/tools/SelectTool.ts  |  24 +-
+ cp6.web/src/views/space/editor/FloorEditor.vue     |  25 +-
+ .../space/editor/__tests__/PropertiesPanel.spec.ts | 112 ++++++++
+ .../views/space/editor/panels/PropertiesPanel.vue  | 293 +++++++++++++++++++++
+ 8 files changed, 587 insertions(+), 29 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-8-report.md b/.superpowers/sdd/task-8-report.md
+index 3885dbc..88a0891 100644
+--- a/.superpowers/sdd/task-8-report.md
++++ b/.superpowers/sdd/task-8-report.md
+@@ -1,36 +1,54 @@
+-# Task 8 报告：场景保存状态机护栏（H1）
++# Task 8 报告：编辑器属性面板(Zone 选中编辑 + Marker 编辑 + Aisle 一览)
+ 
+-**Status:** DONE
++分支 `feat/space-wave5`，commit `50b05e1`（已 push）。
+ 
+-## Implemented
+-`SceneService.SaveSceneAsync` 的 Locations 差量块加护栏：
+-- 已存在库位：移除 `existing.Status = ld.Status` / `existing.CodeOrigin = ld.CodeOrigin` 两行——不再接受场景保存 DTO 覆盖。
+-- 新建库位：`Status`/`CodeOrigin` 硬编码为 `0` / `1`（编辑器新建恒草稿）。
+-- 状态流转唯一通道保留：publish / deactivate / adopt / bind-codes。
++## 交付物
+ 
+-## TDD Evidence
+-- **RED**：新增 2 测试 `SaveScene_CannotFlipPublishedStatus_OrCodeOrigin`、`SaveScene_NewLocation_ForcedDraft` → 2 FAIL（DTO 值直通落库：CannotFlip 得 0 应 1；ForcedDraft 得 1 应 0）。
+-- **GREEN（护栏后）**：
+-  - Scene 全套 `SceneServiceTests|SceneIoServiceTests|BindCodesTests` → 9 passed / 0 failed。
+-  - 全量回归 → **1528 passed / 5 skipped**（基线 1526 + 本任务 2 新测试，零回归）。
+-- 构建 `dotnet build CP6.slnx` → 0 Error（1 既有 warning，与本改动无关）。
++| 文件 | 动作 |
++|---|---|
++| `cp6.web/src/space-editor/command/commands/EditZoneCmd.ts` | **新建** —— 照 EditMarkerCmd 同构（prev/next 快照 `apply(after)`/`apply(before)`），`ZonePatch` 覆盖 zoneName/zoneCode/zoneType/color，**polygon 不在补丁内** |
++| `cp6.web/src/views/space/editor/panels/PropertiesPanel.vue` | **新建** —— 四态面板：zone 编辑 / marker 编辑 / rack 只读 / 空态 Aisle 一览 |
++| `cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts` | **新建** —— 5 用例 |
++| `cp6.web/src/space-editor/command/commands.spec.ts` | 追加 EditZoneCmd 3 用例 |
++| `cp6.web/src/views/space/editor/FloorEditor.vue` | selectedZone/selectedMarker/selectionInfo computed + aside 挂 PropertiesPanel |
++| `cp6.web/src/space-editor/SceneStage.ts` | renderZone 的 Konva.Line 补 `id`+`name:'zone'`（使 zone 可命中） |
++| `cp6.web/src/space-editor/interact/tools/SelectTool.ts` | onClick 空击分支加 zone 点选（findZoneShapeId） |
+ 
+-## SceneIoService 核实结论
+-**不受影响。** 导入路径（`SceneIoService.cs:162-196`）通过库位全枚举**直接构造** `Space_Location` 实体并 `_db.Space_Locations.AddRange(...)`，Status/CodeOrigin 在实体上直接写 `0`/`1`，**不经 SaveSceneAsync**，故护栏不会降级导入。无需任何改动（brief 头部担心的"导入依赖 SaveSceneAsync 保留 Status"不成立）。
++## 选中态接线方式
+ 
+-## BindCodes 核实结论
+-`SceneService.BindCodesAsync` 走独立端点，只改 RackId/Placed，不经 Locations 差量块——不受影响，测试确认 BindCodesTests 全绿。
++- **selectionIds 单源**：zone/marker 与 rack 同用 `store.selectionIds`（扁平 id 数组）。FloorEditor 新增 `selectedZone`/`selectedMarker` computed（与既有 `selectedRack` 同构：单选时按 id 反查 scene.zones/markers），再合成 `selectionInfo: SelectionInfo`（判别联合，rack 优先→zone→marker→none）传入面板。
++- **画布点选**：zone 原渲染为无 id 的 Konva.Line（不可命中）。已补 `id`+`name:'zone'`；SelectTool.onClick 在"无 rack 命中"分支沿父链找 `name==='zone'` 的图形取其 id → `setSelection([zoneId])`（Ctrl 切换）。rack 仍在更高图层，rack 点击不受影响；仅 zone 空白区点击才落到 zone。
++- Marker **未加**画布点选（见下"没做的事"）。
+ 
+-## 既有断言核实
+-`SceneServiceTests`/`SceneIoServiceTests`/`BindCodesTests` 中**无**任何"场景保存能写入 Status=1 或 CodeOrigin=2"的既有断言（若有会在护栏后转红，实际全绿）。故无需更新旧断言。
++## 命令栈接入证据（undo/redo 生效）
+ 
+-## Files changed
+-- `CP6.Core/Services/Space/SceneService.cs`（Locations 差量块护栏）
+-- `CP6.Tests/SceneServiceTests.cs`（+2 测试）
++- 面板内直接持 `useSpaceEditorStore()`，提交走 `store.stack.exec(cmd, store.buildEditorContext())` + `store.updateUndoRedo()`，与 FloorEditor 既有命令调用完全一致 → Ctrl+Z/Ctrl+Shift+Z 天然生效。
++- 提交后 `emit('changed')`，FloorEditor `@changed="afterCommand"` 触发重渲染+碰撞刷新。**保存仍走既有场景保存通道**（EditZoneCmd/EditMarkerCmd 只改 store + markDirty，`store.save()` 差量上行不变）。
++- 单测实证：`选中 zone → setValue → blur → store.scene.zones[0].zoneName 已变 + store.canUndo===true + stack.undo 还原`。EditZoneCmd 单测覆盖全字段 do/undo 往返、部分补丁、目标不存在静默。
+ 
+-## Self-review / 偏离说明
+-- **DTO 偏离**：brief Step 1 测试代码用 `SceneLocationSaveDto { RackId = null }`，但 `SceneSaveDto.cs:27` 的 `RackId` 为**非空 `Guid`**（编译错误 CS0037）。按最小偏离原则，仅将两处 DTO 的 `RackId = null` 改为 `RackId = Guid.Empty`——RackId 值与 Status/CodeOrigin 断言无关，不改 DTO 定义（避免扩大改动面）。已在 commit message 记录。
+-- 实体（预置库位）的 `RackId = null` 无需改（`Space_Location.RackId` 本就是 `Guid?`）。
++## i18n 先例
+ 
+-## Commit
+-`6af7c8b fix(space): 场景保存状态机护栏——Status/CodeOrigin 拒绝 DTO 覆盖，新建强制草稿（评审 H1）`
++**跟随 FloorEditor / TemplatePanel 的编辑器先例 = 中文字面量作 i18n key**（如 `t('保存')`、`t('模板库')`）。seed-2.sql 只覆盖 `space.rule.*/publish.*/events.*`（生命周期三画面），编辑器不在其列。故新面板文案用 `t('库区属性')` 等中文字面量，**未追加 SQL 种子行**（字面量即回退，五语由既有 Sys_Langs 命中则译、未命中显中文，与编辑器现状一致）。
++
++## 零硬编码色
++
++新 UI 全部用 Design System token：`var(--cp-line)`/`--cp-ink`/`--cp-text`/`--cp-muted`/`--cp-bg-hover`/`--cp-fs-*` 等（注：既有 TemplatePanel 用裸 hex，本任务不回改旧文件）。
++
++## Aisle 一览口径
++
++只读三列 + 巷道码。**方向** = 由 centerline 首尾点 |dx| vs |dy| 判横向/纵向；**所属库区** = zoneId 反查 zoneName；**命中库位** = 库位中心 (absX,absY) 落入巷道 polygon 的几何计数（`pointInPolygon`）。无手绘/编辑入口。
++
++## 没做的事（范围铁律照单确认）
++
++1. **不做 Zone 几何编辑** —— EditZoneCmd 补丁仅 name/code/type/color，polygon 绝不动；面板注明"几何形状请在画布上调整"。
++2. **Marker 复用 EditMarkerCmd** —— 面板只是入口，未新建 marker 命令。
++3. **Aisle 只读** —— 一览无新增/编辑/删除，不做手绘。
++4. **rack 只读展示尺寸** —— 反向建模入口保持在工具栏（未搬入面板），面板仅提示。
++5. **Marker 画布点选未加** —— 现状 markers 渲染为无 id 的 Circle/Text，本就不可点选。brief 铁律仅授权"若 zone 不可选中加最小 zone 点选"，marker"若已可选中就不动"。marker 既不可选中且非授权范围，故**未动 marker 选中链**；PropertiesPanel 的 marker 分支与 FloorEditor 的 selectedMarker computed 已就位，一旦将来接入 marker 点选即自动可用。当前 marker 编辑通过面板可达性受限于此——如需放开属后续小票（加 marker id/name + SelectTool marker 命中，与本波 zone 同法）。
++6. **aisle 图层 listening 未改** —— 保守起见未把 aisle Line 设为 non-listening；后果：点击恰好落在"排间巷道"填充上会清选而非选中所属 zone（zone 空白区点击正常选中）。属可接受的最小行为，未做以免触碰 aisle 渲染。
++
++## 验证
++
++- `npm run test`：**59 files / 385 passed**（基线 377 + 新增 8：EditZoneCmd 3 + 面板 5）。
++- `NODE_OPTIONS=--max-old-space-size=8192 npm run type-check`：**0 错**。
++- `npm run build`：**通过**（FloorEditor chunk 242 kB）。
+diff --git a/cp6.web/src/space-editor/SceneStage.ts b/cp6.web/src/space-editor/SceneStage.ts
+index 7a6806d..54677e3 100644
+--- a/cp6.web/src/space-editor/SceneStage.ts
++++ b/cp6.web/src/space-editor/SceneStage.ts
+@@ -136,20 +136,22 @@ export class SceneStage {
+   private renderZone(zone: ZoneVO): void {
+     let pts: number[][] = []
+     try { pts = JSON.parse(zone.polygon) as number[][] } catch { return }
+     if (pts.length < 2) return
+     const flat: number[] = []
+     for (const pt of pts) {
+       const s = worldToScreen({ x: pt[0] ?? 0, y: pt[1] ?? 0 }, this.view)
+       flat.push(s.x, s.y)
+     }
+     const poly = new Konva.Line({
++      id: zone.id,
++      name: 'zone',
+       points: flat,
+       closed: true,
+       fill: zone.color ?? 'rgba(100,160,255,0.12)',
+       stroke: zone.color ?? '#6aa0ff',
+       strokeWidth: 1,
+     })
+     this.layers.zone.add(poly)
+   }
+ 
+   private renderAisle(aisle: AisleVO): void {
+diff --git a/cp6.web/src/space-editor/command/commands.spec.ts b/cp6.web/src/space-editor/command/commands.spec.ts
+index b90f658..18c3380 100644
+--- a/cp6.web/src/space-editor/command/commands.spec.ts
++++ b/cp6.web/src/space-editor/command/commands.spec.ts
+@@ -1,18 +1,19 @@
+ // H-2 命令单测（ch02 §4/§5/§7）
+ import { describe, it, expect } from 'vitest'
+ import { MoveRackCmd } from './commands/MoveRackCmd'
+ import { RotateRackCmd } from './commands/RotateRackCmd'
+ import { AddMarkerCmd } from './commands/AddMarkerCmd'
+ import { AddZoneCmd } from './commands/AddZoneCmd'
+ import { MoveMarkerCmd } from './commands/MoveMarkerCmd'
+ import { EditMarkerCmd } from './commands/EditMarkerCmd'
++import { EditZoneCmd } from './commands/EditZoneCmd'
+ import { DeleteCmd } from './commands/DeleteCmd'
+ import { BatchCmd } from './commands/BatchCmd'
+ import type { EditorContext } from './Command'
+ import type { EditorScene, RackVO, MarkerVO, ZoneVO } from '@/types/space/scene'
+ 
+ function makeScene(racks: Partial<RackVO>[] = [], markers: Partial<MarkerVO>[] = []): EditorScene {
+   return {
+     floor: {} as any,
+     zones: [],
+     aisles: [],
+@@ -158,20 +159,69 @@ describe('EditMarkerCmd', () => {
+     const cmd = new EditMarkerCmd('m1', { text: 'before', markerType: 1 }, { text: 'after', markerType: 2 })
+     cmd.do(ctx)
+     expect(scene.markers[0]!.text).toBe('after')
+     expect(scene.markers[0]!.markerType).toBe(2)
+     cmd.undo(ctx)
+     expect(scene.markers[0]!.text).toBe('before')
+     expect(scene.markers[0]!.markerType).toBe(1)
+   })
+ })
+ 
++// ─── EditZoneCmd ──────────────────────────────────────────────────────────────
++describe('EditZoneCmd', () => {
++  function sceneWithZone(z: Partial<ZoneVO>): EditorScene {
++    const s = makeScene()
++    s.zones.push({
++      id: 'z1', floorId: 'f1', zoneCode: 'Z-001', zoneName: '库区A',
++      zoneType: 1, polygon: '[[0,0],[1,0],[1,1],[0,1]]', enable: true, ...z,
++    } as ZoneVO)
++    return s
++  }
++
++  it('do 应用新字段（名/码/类型/色）；undo 还原快照', () => {
++    const scene = sceneWithZone({})
++    const ctx = makeCtx(scene)
++    const cmd = new EditZoneCmd(
++      'z1',
++      { zoneName: '库区A', zoneCode: 'Z-001', zoneType: 1, color: null },
++      { zoneName: '库区B', zoneCode: 'Z-002', zoneType: 2, color: '#67c23a' },
++    )
++    cmd.do(ctx)
++    expect(scene.zones[0]!.zoneName).toBe('库区B')
++    expect(scene.zones[0]!.zoneCode).toBe('Z-002')
++    expect(scene.zones[0]!.zoneType).toBe(2)
++    expect(scene.zones[0]!.color).toBe('#67c23a')
++    expect(ctx.dirtyIds).toContain('z1')
++
++    cmd.undo(ctx)
++    expect(scene.zones[0]!.zoneName).toBe('库区A')
++    expect(scene.zones[0]!.zoneCode).toBe('Z-001')
++    expect(scene.zones[0]!.zoneType).toBe(1)
++    expect(scene.zones[0]!.color).toBe(null)
++    expect(ctx.dirtyIds).toContain('z1')
++  })
++
++  it('部分补丁（仅改名）只动指定字段', () => {
++    const scene = sceneWithZone({ zoneCode: 'KEEP' })
++    const ctx = makeCtx(scene)
++    new EditZoneCmd('z1', { zoneName: '库区A' }, { zoneName: '改后' }).do(ctx)
++    expect(scene.zones[0]!.zoneName).toBe('改后')
++    expect(scene.zones[0]!.zoneCode).toBe('KEEP') // 未在补丁内 → 不动
++  })
++
++  it('目标 zone 不存在时静默无操作', () => {
++    const scene = makeScene()
++    const ctx = makeCtx(scene)
++    expect(() => new EditZoneCmd('nope', { zoneName: 'a' }, { zoneName: 'b' }).do(ctx)).not.toThrow()
++  })
++})
++
+ // ─── DeleteCmd ────────────────────────────────────────────────────────────────
+ describe('DeleteCmd', () => {
+   it('do 删除；undo 快照还原', () => {
+     const rack: RackVO = { id: 'r1', zoneId:'z', floorId:'f', rackCode:'R1', x:0, y:0, z:0, rotationZ:0, cols:1, levels:1, depthCount:1, cellW:1000, cellH:1000, cellD:1000 }
+     const marker: MarkerVO = { id: 'm1', floorId:'f', x:0, y:0, z:0, markerType:1, text:'T' }
+     const scene = makeScene([rack], [marker])
+     const ctx = makeCtx(scene)
+ 
+     const cmd = new DeleteCmd({ racks: [rack], markers: [marker] })
+     cmd.do(ctx)
+diff --git a/cp6.web/src/space-editor/command/commands/EditZoneCmd.ts b/cp6.web/src/space-editor/command/commands/EditZoneCmd.ts
+new file mode 100644
+index 0000000..1f34d72
+--- /dev/null
++++ b/cp6.web/src/space-editor/command/commands/EditZoneCmd.ts
+@@ -0,0 +1,38 @@
++import type { Command, EditorContext } from '../Command'
++
++/** Zone 非几何属性补丁（改名/改码/类型/颜色）。polygon 不在此列——波5 不做几何编辑。 */
++export type ZonePatch = Partial<{
++  zoneName: string
++  zoneCode: string
++  zoneType: number
++  color: string | null
++}>
++
++/** EditZoneCmd —— 照 EditMarkerCmd 同构：prev/next 快照 do/undo（undo/redo 生效）。 */
++export class EditZoneCmd implements Command {
++  label = 'EditZone'
++
++  constructor(
++    private zoneId: string,
++    private before: ZonePatch,
++    private after: ZonePatch,
++  ) {}
++
++  private apply(ctx: EditorContext, patch: ZonePatch): void {
++    const z = ctx.scene.zones.find(z => z.id === this.zoneId)
++    if (!z) return
++    if (patch.zoneName !== undefined) z.zoneName = patch.zoneName
++    if (patch.zoneCode !== undefined) z.zoneCode = patch.zoneCode
++    if (patch.zoneType !== undefined) z.zoneType = patch.zoneType
++    if (patch.color !== undefined) z.color = patch.color
++    ctx.markDirty(this.zoneId)
++  }
++
++  do(ctx: EditorContext): void {
++    this.apply(ctx, this.after)
++  }
++
++  undo(ctx: EditorContext): void {
++    this.apply(ctx, this.before)
++  }
++}
+diff --git a/cp6.web/src/space-editor/interact/tools/SelectTool.ts b/cp6.web/src/space-editor/interact/tools/SelectTool.ts
+index 82ea2f7..395bd95 100644
+--- a/cp6.web/src/space-editor/interact/tools/SelectTool.ts
++++ b/cp6.web/src/space-editor/interact/tools/SelectTool.ts
+@@ -1,17 +1,27 @@
+ // SelectTool — 点选 / Ctrl 加减选 / Shift 追加 / 框选橡皮筋 / Ctrl+A（ch02 §2）
+ import Konva from 'konva'
+ import type { ITool, ToolContext } from '../InteractionManager'
+ import { findRackGroup, isTransformerNode } from '../InteractionManager'
+ import { rackCorners } from '../collide/CollisionHint'
+ import { obbIntersectsRect, type WorldRect } from '../select/lassoHit'
+ 
++/** 沿父链找到 name='zone' 的图形并返回其 id（zone 图形是单 Line，target 即该图形）。 */
++function findZoneShapeId(target: Konva.Node): string | null {
++  let node: Konva.Node | null = target as Konva.Node
++  while (node) {
++    if (typeof node.name === 'function' && node.name() === 'zone') return node.id()
++    node = node.getParent() as unknown as Konva.Node | null
++  }
++  return null
++}
++
+ export class SelectTool implements ITool {
+   private ctx: ToolContext
+   // Lasso state
+   private lassoRect: Konva.Rect | null = null
+   private lassoStart: { x: number; y: number } | null = null
+   private isDraggingLasso = false
+   private justLassoed = false
+ 
+   constructor(ctx: ToolContext) {
+     this.ctx = ctx
+@@ -117,21 +127,33 @@ export class SelectTool implements ITool {
+     if (isTransformerNode(e.target)) return
+ 
+     // After lasso: onClick fires but selection was already set in onMouseUp
+     if (this.justLassoed) {
+       this.justLassoed = false
+       return
+     }
+ 
+     const rackGroup = findRackGroup(e.target)
+     if (!rackGroup) {
+-      // Click on empty → clear selection
++      // 无 rack 命中 → 尝试点选 zone（最小选中支持，与 rack 同 selectionIds 语义）
++      const zoneId = findZoneShapeId(e.target)
++      if (zoneId) {
++        const zevt = e.evt
++        if (zevt.ctrlKey || zevt.metaKey) {
++          this.ctx.store.toggleSelection(zoneId, !this.ctx.store.isSelected(zoneId))
++        } else {
++          this.ctx.store.setSelection([zoneId])
++        }
++        this.refreshTransformer()
++        return
++      }
++      // Click on truly empty → clear selection
+       this.ctx.store.clearSelection()
+       this.refreshTransformer()
+       return
+     }
+ 
+     const id = rackGroup.id()
+     const evt = e.evt
+     if (evt.ctrlKey || evt.metaKey) {
+       // Toggle
+       this.ctx.store.toggleSelection(id, !this.ctx.store.isSelected(id))
+diff --git a/cp6.web/src/views/space/editor/FloorEditor.vue b/cp6.web/src/views/space/editor/FloorEditor.vue
+index afc22da..1c83f1e 100644
+--- a/cp6.web/src/views/space/editor/FloorEditor.vue
++++ b/cp6.web/src/views/space/editor/FloorEditor.vue
+@@ -1,30 +1,31 @@
+ <script setup lang="ts">
+ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+ import { useRoute, useRouter } from 'vue-router'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { sceneApi } from '@/api/space/scene'
+ import { useSpaceEditorStore } from '@/stores/spaceEditor'
+ import { SceneStage } from '@/space-editor/SceneStage'
+ import { genZoneArray } from '@/space-editor/generate/genZoneArray'
+-import type { ZoneVO, RackVO } from '@/types/space/scene'
++import type { ZoneVO, RackVO, MarkerVO } from '@/types/space/scene'
+ import { InteractionManager, type ToolType } from '@/space-editor/interact/InteractionManager'
+ import { DeleteCmd } from '@/space-editor/command/commands/DeleteCmd'
+ import { AddZoneCmd } from '@/space-editor/command/commands/AddZoneCmd'
+ import { rectToPolygon, rectShortEdge } from '@/space-editor/interact/tools/zoneGeom'
+ import type { WorldRect } from '@/space-editor/interact/select/lassoHit'
+ import { scanCollisions } from '@/space-editor/interact/collide/CollisionHint'
+ import TemplatePanel from './panels/TemplatePanel.vue'
+ import type { TemplatePanelSelection } from './panels/TemplatePanel.vue'
+ import BindCodesDialog from './panels/BindCodesDialog.vue'
+ import ConnectorPanel from './panels/ConnectorPanel.vue'
++import PropertiesPanel, { type SelectionInfo } from './panels/PropertiesPanel.vue'
+ import { connectorApi } from '@/api/space/connector'
+ import { arrayFootprint } from '@/space-editor/generate/arrayFootprint'
+ import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
+ 
+ const { t } = useI18n()
+ const route = useRoute()
+ const router = useRouter()
+ const store = useSpaceEditorStore()
+ 
+ const canvasRef = ref<HTMLDivElement>()
+@@ -55,20 +56,41 @@ const saving = ref(false)
+ // ── Bind Codes (I-2) ───────────────────────────────────────────────────────────
+ 
+ const bindDialogVisible = ref(false)
+ 
+ const selectedRack = computed<RackVO | null>(() => {
+   if (store.selectionIds.length !== 1) return null
+   const id = store.selectionIds[0]!
+   return store.scene?.racks.find(r => r.id === id) ?? null
+ })
+ 
++// 选中态扩展（波5）：zone / marker 与 rack 同 selectionIds 语义，单选时按 id 反查
++const selectedZone = computed<ZoneVO | null>(() => {
++  if (store.selectionIds.length !== 1) return null
++  const id = store.selectionIds[0]!
++  return store.scene?.zones.find(z => z.id === id) ?? null
++})
++
++const selectedMarker = computed<MarkerVO | null>(() => {
++  if (store.selectionIds.length !== 1) return null
++  const id = store.selectionIds[0]!
++  return store.scene?.markers.find(m => m.id === id) ?? null
++})
++
++/** 单一选中态 → 属性面板三分支；无匹配则空态（Aisle 一览）。rack 优先（与既有反向建模一致）。 */
++const selectionInfo = computed<SelectionInfo>(() => {
++  if (selectedRack.value) return { kind: 'rack', rack: selectedRack.value }
++  if (selectedZone.value) return { kind: 'zone', zone: selectedZone.value }
++  if (selectedMarker.value) return { kind: 'marker', marker: selectedMarker.value }
++  return { kind: 'none' }
++})
++
+ function openBindDialog(): void {
+   if (!selectedRack.value) {
+     ElMessage.warning(t('请先在画布上选中一个货架'))
+     return
+   }
+   bindDialogVisible.value = true
+ }
+ 
+ async function handleBound(): Promise<void> {
+   try {
+@@ -638,20 +660,21 @@ async function handleImportFile(e: Event): Promise<void> {
+ 
+       <aside class="side-panel">
+         <TemplatePanel @select="onTemplateSelect" />
+         <ConnectorPanel
+           v-if="siteId"
+           ref="connectorPanelRef"
+           :site-id="siteId"
+           :floor-id="floorId"
+           @request-place="onConnectorPlaceRequest"
+         />
++        <PropertiesPanel :selection="selectionInfo" @changed="afterCommand" />
+       </aside>
+     </div>
+ 
+     <!-- Collision badge (bottom-right) -->
+     <div v-if="collisionCount > 0" class="collision-badge">
+       ⚠ {{ collisionCount }} {{ t('碰撞/越界') }}
+     </div>
+ 
+     <!-- hidden file input for import -->
+     <input
+diff --git a/cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts b/cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts
+new file mode 100644
+index 0000000..d0c05a4
+--- /dev/null
++++ b/cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts
+@@ -0,0 +1,112 @@
++// @vitest-environment jsdom
++// 波5 属性面板单测：Zone 选中编辑走 EditZoneCmd（store 值变 + undo 生效）/ Aisle 一览渲染行数
++import { describe, it, expect, beforeEach } from 'vitest'
++import { mount } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import ElementPlus from 'element-plus'
++import { setActivePinia, createPinia } from 'pinia'
++import { useSpaceEditorStore } from '@/stores/spaceEditor'
++import PropertiesPanel from '../panels/PropertiesPanel.vue'
++import type { SelectionInfo } from '../panels/PropertiesPanel.vue'
++import type { EditorScene, ZoneVO, AisleVO } from '@/types/space/scene'
++
++const zone = (over: Partial<ZoneVO> = {}): ZoneVO => ({
++  id: 'z1', floorId: 'f1', zoneCode: 'Z-001', zoneName: '库区A',
++  zoneType: 1, polygon: '[[0,0],[1000,0],[1000,1000],[0,1000]]', color: null, enable: true, ...over,
++})
++
++const aisle = (over: Partial<AisleVO> = {}): AisleVO => ({
++  id: 'a1', zoneId: 'z1', aisleCode: 'A001',
++  polygon: '[[0,0],[1000,0],[1000,200],[0,200]]',
++  centerline: '[[0,100],[1000,100]]', ...over,
++})
++
++function makeScene(over: Partial<EditorScene> = {}): EditorScene {
++  return { floor: {} as any, zones: [], aisles: [], racks: [], locations: [], markers: [], ...over }
++}
++
++const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })
++
++function mountPanel(selection: SelectionInfo) {
++  return mount(PropertiesPanel, {
++    props: { selection },
++    global: { plugins: [i18n, ElementPlus] },
++  })
++}
++
++describe('PropertiesPanel', () => {
++  beforeEach(() => {
++    setActivePinia(createPinia())
++  })
++
++  it('选中 zone 渲染名称输入，blur 后 store 值变 + 命令进栈可撤销', async () => {
++    const store = useSpaceEditorStore()
++    const z = zone()
++    store.load(makeScene({ zones: [z] }))
++
++    const w = mountPanel({ kind: 'zone', zone: z })
++    const nameInput = w.find('input[data-test="zone-name"]')
++    expect(nameInput.exists()).toBe(true)
++
++    await nameInput.setValue('库区改后')
++    await nameInput.trigger('blur')
++
++    // store 值已变
++    expect(store.scene!.zones[0]!.zoneName).toBe('库区改后')
++    // 命令进栈 → 可撤销
++    expect(store.canUndo).toBe(true)
++
++    // undo 往返还原
++    store.stack.undo(store.buildEditorContext())
++    expect(store.scene!.zones[0]!.zoneName).toBe('库区A')
++  })
++
++  it('zone 名称清空不提交（回滚为原值，不产生命令）', async () => {
++    const store = useSpaceEditorStore()
++    const z = zone()
++    store.load(makeScene({ zones: [z] }))
++
++    const w = mountPanel({ kind: 'zone', zone: z })
++    const nameInput = w.find('input[data-test="zone-name"]')
++    await nameInput.setValue('   ')
++    await nameInput.trigger('blur')
++
++    expect(store.scene!.zones[0]!.zoneName).toBe('库区A')
++    expect(store.canUndo).toBe(false)
++  })
++
++  it('changed 事件在提交后发出（供父级重渲染画布）', async () => {
++    const store = useSpaceEditorStore()
++    const z = zone()
++    store.load(makeScene({ zones: [z] }))
++
++    const w = mountPanel({ kind: 'zone', zone: z })
++    const codeInput = w.find('input[data-test="zone-code"]')
++    await codeInput.setValue('Z-999')
++    await codeInput.trigger('blur')
++
++    expect(w.emitted('changed')).toBeTruthy()
++  })
++
++  it('空态渲染 Aisle 一览，行数等于场景巷道数', () => {
++    const store = useSpaceEditorStore()
++    store.load(makeScene({ zones: [zone()], aisles: [aisle({ id: 'a1' }), aisle({ id: 'a2', aisleCode: 'A002' })] }))
++
++    const w = mountPanel({ kind: 'none' })
++    expect(w.findAll('[data-test="aisle-row"]').length).toBe(2)
++    expect(w.text()).toContain('A001')
++    expect(w.text()).toContain('A002')
++  })
++
++  it('rack 分支只读展示尺寸', () => {
++    const store = useSpaceEditorStore()
++    store.load(makeScene())
++    const rack = {
++      id: 'r1', zoneId: 'z1', floorId: 'f1', rackCode: 'R001', x: 0, y: 0, z: 0, rotationZ: 0,
++      cols: 4, levels: 5, depthCount: 1, cellW: 1000, cellH: 1200, cellD: 800,
++    }
++    const w = mountPanel({ kind: 'rack', rack })
++    expect(w.find('[data-test="rack-code"]').text()).toBe('R001')
++    expect(w.text()).toContain('4 × 5 × 1')
++  })
++})
+diff --git a/cp6.web/src/views/space/editor/panels/PropertiesPanel.vue b/cp6.web/src/views/space/editor/panels/PropertiesPanel.vue
+new file mode 100644
+index 0000000..2902c3c
+--- /dev/null
++++ b/cp6.web/src/views/space/editor/panels/PropertiesPanel.vue
+@@ -0,0 +1,293 @@
++<script setup lang="ts">
++import { reactive, computed, watch } from 'vue'
++import { useI18n } from 'vue-i18n'
++import { useSpaceEditorStore } from '@/stores/spaceEditor'
++import { EditZoneCmd } from '@/space-editor/command/commands/EditZoneCmd'
++import { EditMarkerCmd } from '@/space-editor/command/commands/EditMarkerCmd'
++import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
++import type { ZoneVO, MarkerVO, RackVO, AisleVO } from '@/types/space/scene'
++
++/** 选中态描述——FloorEditor 从 selectionIds 解析后注入。三分支 zone/marker/rack + 空态(Aisle 一览)。 */
++export type SelectionInfo =
++  | { kind: 'none' }
++  | { kind: 'zone'; zone: ZoneVO }
++  | { kind: 'marker'; marker: MarkerVO }
++  | { kind: 'rack'; rack: RackVO }
++
++const props = defineProps<{ selection: SelectionInfo }>()
++/** 命令改 store 后通知父级重渲染画布（保存仍走既有场景保存通道）。 */
++const emit = defineEmits<{ changed: [] }>()
++
++const { t } = useI18n()
++const store = useSpaceEditorStore()
++
++const zoneTypeOptions = [
++  { value: 1, label: t('存储区') },
++  { value: 2, label: t('拣选区') },
++  { value: 3, label: t('收货区') },
++  { value: 4, label: t('发货区') },
++]
++const markerTypeOptions = [
++  { value: 0, label: t('普通标注') },
++  { value: 1, label: t('提示') },
++  { value: 2, label: t('警示') },
++]
++
++// ── Zone 编辑本地态（改名/改码/类型/色，全走 EditZoneCmd；不做几何编辑）────────
++const zoneForm = reactive<{ zoneName: string; zoneCode: string; zoneType: number; color: string | null }>({
++  zoneName: '', zoneCode: '', zoneType: 1, color: null,
++})
++watch(
++  () => (props.selection.kind === 'zone' ? props.selection.zone : null),
++  (z) => {
++    if (!z) return
++    zoneForm.zoneName = z.zoneName
++    zoneForm.zoneCode = z.zoneCode
++    zoneForm.zoneType = z.zoneType
++    zoneForm.color = z.color ?? null
++  },
++  { immediate: true, deep: true },
++)
++
++/** 提交单个 zone 字段：以 store 现值为 before、表单值为 after，构 EditZoneCmd 进栈。 */
++function commitZone(field: 'zoneName' | 'zoneCode' | 'zoneType' | 'color'): void {
++  if (props.selection.kind !== 'zone') return
++  const z = store.scene?.zones.find(x => x.id === (props.selection as { zone: ZoneVO }).zone.id)
++  if (!z) return
++  const next = zoneForm[field]
++  const prev = (z[field] ?? null) as string | number | null
++  const normNext = (next ?? null) as string | number | null
++  if (prev === normNext) return
++  // zoneName / zoneCode 空串回滚（禁清空业务码/名）
++  if ((field === 'zoneName' || field === 'zoneCode') && String(next).trim() === '') {
++    zoneForm[field] = z[field]
++    return
++  }
++  const cmd = new EditZoneCmd(z.id, { [field]: z[field] }, { [field]: next })
++  store.stack.exec(cmd, store.buildEditorContext())
++  store.updateUndoRedo()
++  emit('changed')
++}
++
++// ── Marker 编辑（复用 EditMarkerCmd；面板只是入口）───────────────────────────
++const markerForm = reactive<{ text: string; markerType: number }>({ text: '', markerType: 0 })
++watch(
++  () => (props.selection.kind === 'marker' ? props.selection.marker : null),
++  (m) => {
++    if (!m) return
++    markerForm.text = m.text
++    markerForm.markerType = m.markerType
++  },
++  { immediate: true, deep: true },
++)
++
++function commitMarker(field: 'text' | 'markerType'): void {
++  if (props.selection.kind !== 'marker') return
++  const m = store.scene?.markers.find(x => x.id === (props.selection as { marker: MarkerVO }).marker.id)
++  if (!m) return
++  const next = markerForm[field]
++  if (m[field] === next) return
++  if (field === 'text' && String(next).trim() === '') {
++    markerForm.text = m.text
++    return
++  }
++  const cmd = new EditMarkerCmd(m.id, { [field]: m[field] }, { [field]: next })
++  store.stack.exec(cmd, store.buildEditorContext())
++  store.updateUndoRedo()
++  emit('changed')
++}
++
++// ── Aisle 一览（只读：方向 / 所属库区 / 命中库位数）───────────────────────────
++const aisles = computed<AisleVO[]>(() => store.scene?.aisles ?? [])
++
++function aisleDirection(a: AisleVO): string {
++  try {
++    const cl = JSON.parse(a.centerline) as number[][]
++    const p0 = cl[0]
++    const p1 = cl[cl.length - 1]
++    if (!p0 || !p1) return '—'
++    const dx = Math.abs((p1[0] ?? 0) - (p0[0] ?? 0))
++    const dy = Math.abs((p1[1] ?? 0) - (p0[1] ?? 0))
++    return dx >= dy ? t('横向') : t('纵向')
++  } catch {
++    return '—'
++  }
++}
++
++function aisleZoneName(a: AisleVO): string {
++  return store.scene?.zones.find(z => z.id === a.zoneId)?.zoneName ?? a.zoneId
++}
++
++/** 命中库位数：库位中心(absX,absY)落入该巷道多边形者计数（几何命中，只读统计）。 */
++function aisleHitCount(a: AisleVO): number {
++  let poly: [number, number][]
++  try {
++    poly = JSON.parse(a.polygon) as [number, number][]
++  } catch {
++    return 0
++  }
++  const locs = store.scene?.locations ?? []
++  let n = 0
++  for (const l of locs) if (pointInPolygon(l.absX, l.absY, poly)) n++
++  return n
++}
++</script>
++
++<template>
++  <div class="props-panel">
++    <!-- Zone 分支 -->
++    <template v-if="selection.kind === 'zone'">
++      <div class="panel-title">{{ t('库区属性') }}</div>
++      <el-form label-width="72px" size="small" class="props-form">
++        <el-form-item :label="t('库区名称')">
++          <el-input
++            v-model="zoneForm.zoneName"
++            data-test="zone-name"
++            @blur="commitZone('zoneName')"
++            @keyup.enter="commitZone('zoneName')"
++          />
++        </el-form-item>
++        <el-form-item :label="t('库区编码')">
++          <el-input
++            v-model="zoneForm.zoneCode"
++            data-test="zone-code"
++            @blur="commitZone('zoneCode')"
++            @keyup.enter="commitZone('zoneCode')"
++          />
++        </el-form-item>
++        <el-form-item :label="t('库区类型')">
++          <el-select v-model="zoneForm.zoneType" style="width: 100%" @change="commitZone('zoneType')">
++            <el-option v-for="o in zoneTypeOptions" :key="o.value" :label="o.label" :value="o.value" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('颜色')">
++          <el-color-picker v-model="zoneForm.color" @change="commitZone('color')" />
++        </el-form-item>
++      </el-form>
++      <div class="panel-hint">{{ t('几何形状请在画布上调整；此处仅改属性') }}</div>
++    </template>
++
++    <!-- Marker 分支 -->
++    <template v-else-if="selection.kind === 'marker'">
++      <div class="panel-title">{{ t('标注属性') }}</div>
++      <el-form label-width="72px" size="small" class="props-form">
++        <el-form-item :label="t('文本')">
++          <el-input
++            v-model="markerForm.text"
++            data-test="marker-text"
++            @blur="commitMarker('text')"
++            @keyup.enter="commitMarker('text')"
++          />
++        </el-form-item>
++        <el-form-item :label="t('类型')">
++          <el-select v-model="markerForm.markerType" style="width: 100%" @change="commitMarker('markerType')">
++            <el-option v-for="o in markerTypeOptions" :key="o.value" :label="o.label" :value="o.value" />
++          </el-select>
++        </el-form-item>
++      </el-form>
++    </template>
++
++    <!-- Rack 分支（只读尺寸；反向建模入口保持在工具栏）-->
++    <template v-else-if="selection.kind === 'rack'">
++      <div class="panel-title">{{ t('货架属性') }}</div>
++      <dl class="props-readonly">
++        <dt>{{ t('货架编码') }}</dt><dd data-test="rack-code">{{ selection.rack.rackCode }}</dd>
++        <dt>{{ t('列 × 层 × 深') }}</dt>
++        <dd>{{ selection.rack.cols }} × {{ selection.rack.levels }} × {{ selection.rack.depthCount }}</dd>
++        <dt>{{ t('单格尺寸mm') }}</dt>
++        <dd>{{ selection.rack.cellW }} × {{ selection.rack.cellH }} × {{ selection.rack.cellD }}</dd>
++      </dl>
++      <div class="panel-hint">{{ t('库位码绑定请用工具栏「反向建模」') }}</div>
++    </template>
++
++    <!-- 空态：Aisle 一览 -->
++    <template v-else>
++      <div class="panel-title">{{ t('巷道一览') }}</div>
++      <div v-if="aisles.length === 0" class="panel-hint">{{ t('暂无巷道（阵列生成时勾选「排间生成巷道」）') }}</div>
++      <div v-else class="aisle-table">
++        <div class="aisle-head">
++          <span>{{ t('巷道') }}</span>
++          <span>{{ t('方向') }}</span>
++          <span>{{ t('所属库区') }}</span>
++          <span>{{ t('命中库位') }}</span>
++        </div>
++        <div v-for="a in aisles" :key="a.id" class="aisle-row" data-test="aisle-row">
++          <span class="a-code">{{ a.aisleCode }}</span>
++          <span>{{ aisleDirection(a) }}</span>
++          <span class="a-zone">{{ aisleZoneName(a) }}</span>
++          <span>{{ aisleHitCount(a) }}</span>
++        </div>
++      </div>
++      <div class="panel-hint">{{ t('点选画布上的库区 / 货架 / 标注以编辑属性') }}</div>
++    </template>
++  </div>
++</template>
++
++<style scoped>
++.props-panel {
++  padding: 12px;
++  border-top: 1px solid var(--cp-line);
++}
++.panel-title {
++  font-size: var(--cp-fs-base);
++  font-weight: 600;
++  margin-bottom: 8px;
++  color: var(--cp-ink);
++}
++.panel-hint {
++  font-size: var(--cp-fs-xs);
++  color: var(--cp-muted);
++  margin-top: 8px;
++  line-height: 1.4;
++}
++.props-form {
++  margin-top: 4px;
++}
++.props-readonly {
++  margin: 0;
++  display: grid;
++  grid-template-columns: auto 1fr;
++  gap: 4px 10px;
++  font-size: var(--cp-fs-xs);
++}
++.props-readonly dt {
++  color: var(--cp-muted);
++  white-space: nowrap;
++}
++.props-readonly dd {
++  margin: 0;
++  color: var(--cp-text);
++}
++.aisle-table {
++  font-size: var(--cp-fs-xs);
++}
++.aisle-head,
++.aisle-row {
++  display: grid;
++  grid-template-columns: 1.2fr 0.9fr 1.4fr 0.8fr;
++  gap: 4px;
++  padding: 4px 2px;
++  align-items: center;
++}
++.aisle-head {
++  color: var(--cp-muted);
++  font-weight: 600;
++  border-bottom: 1px solid var(--cp-line);
++}
++.aisle-row {
++  color: var(--cp-text);
++  border-bottom: 1px solid var(--cp-line-soft);
++}
++.aisle-row:hover {
++  background: var(--cp-bg-hover);
++}
++.a-code {
++  font-weight: 600;
++  color: var(--cp-ink);
++}
++.a-zone {
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
++}
++</style>

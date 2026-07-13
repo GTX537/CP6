@@ -1,0 +1,697 @@
+# Review package: 2b2aac9..HEAD
+
+## Commits
+4a03a44 fix(ui): 终审加固——CpTag空状态兜底/错误提示硬化/防双提交/daterange占位/i18n标签覆盖
+
+## Files changed
+ cp6.web/src/components/base/CpTag.vue              |  7 +++---
+ .../src/components/base/__tests__/CpTag.spec.ts    |  5 +++++
+ cp6.web/src/components/templates/CpFilterBar.vue   | 24 ++++++++++++++++----
+ cp6.web/src/components/templates/CpFormDialog.vue  | 20 ++++++++++++-----
+ cp6.web/src/components/templates/CpListPage.vue    | 11 ++++++---
+ .../templates/__tests__/CpFilterBar.spec.ts        | 26 ++++++++++++++++++++++
+ .../templates/__tests__/CpFormDialog.spec.ts       | 15 +++++++++++++
+ .../templates/__tests__/CpListPage.spec.ts         | 20 +++++++++++++++++
+ cp6.web/src/views/wms/OutboundOrderListView.vue    |  8 ++++++-
+ docs/superpowers/plans/2026-07-04-ui-restyle.md    | 21 +++++++++++------
+ 10 files changed, 133 insertions(+), 24 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/components/base/CpTag.vue b/cp6.web/src/components/base/CpTag.vue
+index 4611507..c89ae3d 100644
+--- a/cp6.web/src/components/base/CpTag.vue
++++ b/cp6.web/src/components/base/CpTag.vue
+@@ -1,15 +1,15 @@
+ <!--
+   CpTag —— 状态 pill（圆点 + 文字，设计系统 §9.1）。
+ 
+   Props:
+-    - status?: string  业务状态词；经 STATUS_TONE 集中映射到色调，未命中回退 muted。
++    - status?: string  业务状态词；经 STATUS_TONE 集中映射到色调，空串/未命中均回退 muted。
+     - tone?: 'ok'|'warn'|'danger'|'info'|'muted'  显式指定色调，优先级高于 status。
+   Slots:
+     - default  标签文案；缺省时回退渲染 status 文本。
+   Export:
+     - STATUS_TONE  状态→色调映射表，供业务侧查询/复用。
+ 
+   使用示例：
+     <CpTag status="已出库">已出库</CpTag>
+     <CpTag status="拣货中" />            （info；文案回退 status）
+     <CpTag tone="danger">超期</CpTag>     （显式色调）
+@@ -19,23 +19,24 @@ export const STATUS_TONE: Record<string, string> = {
+   '已出库': 'ok', '已出货': 'ok', '已完成': 'ok', '已对账': 'ok', '已批准': 'ok',
+   '未出库': 'warn', '未出货': 'warn', '待审批': 'warn', '待处理': 'warn',
+   '拣货中': 'info', '进行中': 'info', '已发行': 'info',
+   '已取消': 'muted', '已作废': 'muted',
+   '超期': 'danger', '今日': 'danger', '已驳回': 'danger'
+ }
+ </script>
+ <script setup lang="ts">
+ import { computed } from 'vue'
+ const props = defineProps<{ status?: string; tone?: 'ok'|'warn'|'danger'|'info'|'muted' }>()
+-const t = computed(() => props.tone ?? (props.status && STATUS_TONE[props.status]) ?? 'muted')
++// status='' 或未命中 → || 'muted' 兜底（?? 无法拦截空串这类 falsy-非 nullish 值，会漏出 't-' 空色调）
++const t = computed(() => props.tone ?? ((props.status && STATUS_TONE[props.status]) || 'muted'))
+ </script>
+ <template><span class="cp-tag" :class="`t-${t}`"><slot>{{ status }}</slot></span></template>
+ <style scoped>
+ .cp-tag { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:800;
+-  padding:3px 10px; border-radius:999px; }
++  padding:3px 10px; border-radius:999px; white-space:nowrap; }
+ .cp-tag::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
+ .t-ok { background:var(--cp-ok-bg); color:var(--cp-ok); }
+ .t-warn { background:var(--cp-warn-bg); color:var(--cp-warn); }
+ .t-danger { background:var(--cp-danger-bg); color:var(--cp-danger); }
+ .t-info { background:var(--cp-info-bg); color:var(--cp-info); }
+ .t-muted { background:var(--cp-line-soft); color:var(--cp-muted); }
+ </style>
+diff --git a/cp6.web/src/components/base/__tests__/CpTag.spec.ts b/cp6.web/src/components/base/__tests__/CpTag.spec.ts
+index a29908f..3f2dea4 100644
+--- a/cp6.web/src/components/base/__tests__/CpTag.spec.ts
++++ b/cp6.web/src/components/base/__tests__/CpTag.spec.ts
+@@ -5,16 +5,21 @@ import CpTag, { STATUS_TONE } from '../CpTag.vue'
+ 
+ describe('CpTag', () => {
+   it('maps known status to tone class', () => {
+     const w = mount(CpTag, { props: { status: '已出库' }, slots: { default: '已出库' } })
+     expect(w.classes()).toContain('t-ok')
+   })
+   it('falls back to muted for unknown status', () => {
+     const w = mount(CpTag, { props: { status: '莫名状态' } })
+     expect(w.classes()).toContain('t-muted')
+   })
++  it('falls back to muted for empty status (no bare t- class)', () => {
++    const w = mount(CpTag, { props: { status: '' } })
++    expect(w.classes()).toContain('t-muted')
++    expect(w.classes()).not.toContain('t-')
++  })
+   it('explicit tone overrides status', () => {
+     const w = mount(CpTag, { props: { status: '已出库', tone: 'danger' } })
+     expect(w.classes()).toContain('t-danger')
+   })
+   it('exports STATUS_TONE map', () => { expect(STATUS_TONE['拣货中']).toBe('info') })
+ })
+diff --git a/cp6.web/src/components/templates/CpFilterBar.vue b/cp6.web/src/components/templates/CpFilterBar.vue
+index 16d88d6..e62529d 100644
+--- a/cp6.web/src/components/templates/CpFilterBar.vue
++++ b/cp6.web/src/components/templates/CpFilterBar.vue
+@@ -1,18 +1,21 @@
+ <!--
+   CpFilterBar —— 列表页查询区（设计系统 §9.2）。
+   按 fields 声明渲染一排查询字段（text / select / daterange，控件观感由 Element Plus overrides 保证），
+   右侧提供「展开更多 / 重置 / 查询」。字段超过 4 个时自动折叠，多出的字段隐藏在「展开更多」后。
+ 
+   Props:
+     - fields: FilterField[]              字段声明表（见 FilterField）。
+     - modelValue: Record<string,unknown> 查询条件对象；键为 field.key，值为该字段当前值。
++    - labels?: FilterBarLabels           按钮文案覆盖（search/reset/expand/collapse）；缺省中文，供业务侧接 i18n。
++  说明：daterange 字段的 el-date-picker 忽略单个 placeholder，故把 field.placeholder 同时接到
++        start-placeholder / end-placeholder（起止用同一串），保证占位提示可见。
+   Emits:
+     - update:modelValue (next)  任一字段变更/重置时抛出「全新对象」（不原地修改入参）。
+     - search                    点击「查询」时抛出（无载荷；父级读自身 model）。
+     - reset                     点击「重置」时抛出（清空 model 后一并触发）。
+ 
+   使用示例：
+     <CpFilterBar
+       v-model="query"
+       :fields="[
+         { key:'q',    label:'单号', type:'text', placeholder:'搜索单号' },
+@@ -22,27 +25,38 @@
+       @search="load" @reset="load" />
+ -->
+ <script lang="ts">
+ export interface FilterField {
+   key: string
+   label: string
+   type: 'text' | 'select' | 'daterange'
+   options?: { label: string; value: unknown }[]
+   placeholder?: string
+ }
++// 按钮文案覆盖：缺省中文，业务侧可传 i18n 词条覆盖任一按钮
++export interface FilterBarLabels {
++  search?: string
++  reset?: string
++  expand?: string
++  collapse?: string
++}
+ </script>
+ 
+ <script setup lang="ts">
+ import { computed, ref } from 'vue'
+ import { ElInput, ElSelect, ElOption, ElDatePicker, ElButton } from 'element-plus'
+ 
+-const props = defineProps<{ fields: FilterField[]; modelValue: Record<string, unknown> }>()
++const props = defineProps<{
++  fields: FilterField[]
++  modelValue: Record<string, unknown>
++  labels?: FilterBarLabels
++}>()
+ const emit = defineEmits<{
+   (e: 'update:modelValue', next: Record<string, unknown>): void
+   (e: 'search'): void
+   (e: 'reset'): void
+ }>()
+ 
+ const COLLAPSE_AT = 4
+ const expanded = ref(false)
+ const showToggle = computed(() => props.fields.length > COLLAPSE_AT)
+ const visibleFields = computed(() =>
+@@ -88,36 +102,38 @@ function onReset() {
+           :label="o.label"
+           :value="(o.value as any)"
+         />
+       </el-select>
+ 
+       <el-date-picker
+         v-else-if="f.type === 'daterange'"
+         type="daterange"
+         :model-value="(modelValue[f.key] as any)"
+         :placeholder="f.placeholder"
++        :start-placeholder="f.placeholder"
++        :end-placeholder="f.placeholder"
+         range-separator="→"
+         @update:model-value="setField(f.key, $event)"
+       />
+     </div>
+ 
+     <span class="spacer" />
+ 
+     <div class="fbtns">
+       <button
+         v-if="showToggle"
+         type="button"
+         class="link-btn"
+         @click="expanded = !expanded"
+-      >{{ expanded ? '收起' : '展开更多' }} ▾</button>
+-      <el-button @click="onReset">重置</el-button>
+-      <el-button type="primary" @click="emit('search')">查询</el-button>
++      >{{ expanded ? (labels?.collapse ?? '收起') : (labels?.expand ?? '展开更多') }} ▾</button>
++      <el-button @click="onReset">{{ labels?.reset ?? '重置' }}</el-button>
++      <el-button type="primary" @click="emit('search')">{{ labels?.search ?? '查询' }}</el-button>
+     </div>
+   </div>
+ </template>
+ 
+ <style scoped>
+ .cp-filter { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;
+   background:var(--cp-card); border-radius:var(--cp-r-md); box-shadow:var(--cp-shadow-1);
+   padding:14px 18px; }
+ .fld { display:flex; flex-direction:column; gap:5px; }
+ .fld label { font-size:var(--cp-fs-2xs); font-weight:800; color:var(--cp-muted); letter-spacing:.5px; }
+diff --git a/cp6.web/src/components/templates/CpFormDialog.vue b/cp6.web/src/components/templates/CpFormDialog.vue
+index d82e753..0ca3fa5 100644
+--- a/cp6.web/src/components/templates/CpFormDialog.vue
++++ b/cp6.web/src/components/templates/CpFormDialog.vue
+@@ -6,20 +6,22 @@
+   submit resolve → emit saved + update:modelValue(false)；reject → ElMessage.error 且保持打开；提交期间确认钮 loading。
+ 
+   Props:
+     - modelValue: boolean               弹窗开合（v-model）。
+     - title: string                     标题。
+     - fields?: FormField[]              字段声明；默认 slot 存在时被忽略。
+     - form: Record<string,unknown>      表单对象（父级持有并负责重置）。
+     - rules?: FormRules                 校验规则；同 key 覆盖 required 自动规则。
+     - submit: (form) => Promise<void>   提交回调；resolve 视为成功。
+     - width?: string                    弹窗宽度，透传 el-dialog。
++    - labels?: { cancel?; confirm? }    footer 按钮文案覆盖；缺省中文，供业务侧接 i18n。
++    - requiredMessage?: (label) => string  自动必填规则文案生成器；缺省 `${label}为必填项`。
+   Slots: default（自定义表单体，替代 fields；仍在 el-form 内，parent 提供 el-form-item 规则同样生效）。
+   Emits: update:modelValue(open) ｜ saved()
+ 
+   使用示例：
+     <CpFormDialog v-model="open" title="新建物料" :form="form" :submit="save"
+       :fields="[{ key:'name', label:'名称', type:'text', required:true },
+                 { key:'qty', label:'数量', type:'number' }]"
+       @saved="reload" />
+ -->
+ <script lang="ts">
+@@ -41,57 +43,63 @@ import {
+ } from 'element-plus'
+ 
+ const props = defineProps<{
+   modelValue: boolean
+   title: string
+   fields?: FormField[]
+   form: Record<string, unknown>
+   rules?: FormRules
+   submit: (form: Record<string, unknown>) => Promise<void>
+   width?: string
++  labels?: { cancel?: string; confirm?: string }
++  requiredMessage?: (label: string) => string
+ }>()
+ 
++// 自动必填规则文案：缺省中文，业务侧可传 requiredMessage 覆盖（接 i18n）
++const defaultRequiredMessage = (label: string) => `${label}为必填项`
++
+ const emit = defineEmits<{
+   (e: 'update:modelValue', open: boolean): void
+   (e: 'saved'): void
+ }>()
+ 
+ const formRef = ref<FormInstance>()
+ const submitting = ref(false)
+ 
+ // required 字段自动生成必填规则；显式 rules 同 key 覆盖（explicit wins）
+ const mergedRules = computed<FormRules>(() => {
+   const out: FormRules = {}
+   for (const f of props.fields ?? []) {
+     if (f.required) {
+       const trigger = f.type === 'select' || f.type === 'date' ? 'change' : 'blur'
+-      out[f.key] = [{ required: true, message: `${f.label}为必填项`, trigger }]
++      out[f.key] = [{ required: true, message: (props.requiredMessage ?? defaultRequiredMessage)(f.label), trigger }]
+     }
+   }
+   for (const [k, v] of Object.entries(props.rules ?? {})) out[k] = v
+   return out
+ })
+ 
+ // 就地写回表单字段（父级持有 form 对象，表单编辑即改其属性）
+ function setVal(key: string, value: unknown) {
+   props.form[key] = value
+ }
+ 
+ function close() {
+   emit('update:modelValue', false)
+ }
+ 
+ async function onConfirm() {
+-  const valid = await formRef.value?.validate().catch(() => false)
+-  if (!valid) return // 校验失败：不提交、不关闭、el-form 已内联提示
+-  submitting.value = true
++  if (submitting.value) return // 防双提交：校验/提交在途时二次点击直接忽略
++  submitting.value = true // 提前置位——覆盖 validate 在途窗口，杜绝并发进入
+   try {
++    const valid = await formRef.value?.validate().catch(() => false)
++    if (!valid) return // 校验失败：不提交、不关闭、el-form 已内联提示（finally 复位 submitting）
+     await props.submit(props.form)
+     emit('saved')
+     emit('update:modelValue', false)
+   } catch (err) {
+     ElMessage.error((err as Error)?.message ?? String(err))
+   } finally {
+     submitting.value = false
+   }
+ }
+ </script>
+@@ -140,20 +148,20 @@ async function onConfirm() {
+             type="date"
+             :model-value="(form[f.key] as any)"
+             @update:model-value="setVal(f.key, $event)"
+           />
+         </el-form-item>
+       </template>
+     </el-form>
+ 
+     <template #footer>
+       <div class="cp-fd-footer">
+-        <el-button @click="close">取消</el-button>
+-        <el-button type="primary" :loading="submitting" @click="onConfirm">确认</el-button>
++        <el-button @click="close">{{ labels?.cancel ?? '取消' }}</el-button>
++        <el-button type="primary" :loading="submitting" @click="onConfirm">{{ labels?.confirm ?? '确认' }}</el-button>
+       </div>
+     </template>
+   </el-dialog>
+ </template>
+ 
+ <style scoped>
+ .cp-fd-footer { display:flex; justify-content:flex-end; gap:8px; }
+ </style>
+diff --git a/cp6.web/src/components/templates/CpListPage.vue b/cp6.web/src/components/templates/CpListPage.vue
+index 6919bf4..6cbb27d 100644
+--- a/cp6.web/src/components/templates/CpListPage.vue
++++ b/cp6.web/src/components/templates/CpListPage.vue
+@@ -3,20 +3,22 @@
+   组合结构：CpStatusStrip?（状态速览）→ CpFilterBar?（查询区）→ 表格卡 .tcard（toolbar slot + el-table + 分页）。
+   行为：mounted 自动 fetch；search/reset/翻页/切状态卡重新 fetch（search/reset/切卡均重置 page=1）；
+   fetch 期间 v-loading；fetch reject → ElMessage.error 且保留旧数据；rows 空 → CpEmpty；乱序响应只取最新。
+ 
+   Props:
+     - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag / date→暂原样）。
+     - fetch: ListFetch             数据源：({ page,size,filters,statusKey? }) => Promise<{ rows,total }>。
+     - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
+     - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key。
+     - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
++    - filterLabels?: FilterBarLabels 透传 CpFilterBar 按钮文案覆盖（业务侧接 i18n；缺省中文）。
++    - emptyText?: string           透传 CpEmpty 空状态文案（缺省「暂无数据」）。
+   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
+   Emits: selection-change(rows)
+ 
+   使用示例：
+     <CpPageShell title="出庫指示一覧" :count="total">
+       <CpListPage
+         :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' }]"
+         :fetch="loadShipments"
+         :search-fields="[{ key:'q', label:'单号', type:'text' }]"
+         :status-tabs="[{ key:'all', label:'全部', count:28 }]"
+@@ -40,31 +42,33 @@ export type ListFetch = (q: {
+   filters: Record<string, unknown>
+   statusKey?: string
+ }) => Promise<{ rows: unknown[]; total: number }>
+ export interface StatusTab { key: string; label: string; count: number; tone?: string }
+ </script>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { ElMessage, ElPagination, ElTable, ElTableColumn, vLoading } from 'element-plus'
+ import CpStatusStrip from './CpStatusStrip.vue'
+-import CpFilterBar, { type FilterField } from './CpFilterBar.vue'
++import CpFilterBar, { type FilterField, type FilterBarLabels } from './CpFilterBar.vue'
+ import CpTag from '@/components/base/CpTag.vue'
+ import CpEmpty from '@/components/base/CpEmpty.vue'
+ 
+ const props = defineProps<{
+   columns: ListColumn[]
+   fetch: ListFetch
+   searchFields?: FilterField[]
+   statusTabs?: StatusTab[]
+   selectable?: boolean
+   rowKey?: string
++  filterLabels?: FilterBarLabels
++  emptyText?: string
+ }>()
+ 
+ const emit = defineEmits<{ (e: 'selection-change', rows: unknown[]): void }>()
+ 
+ // —— 内部状态 ——
+ const page = ref(1)
+ const size = ref(20)
+ const filters = ref<Record<string, unknown>>({})
+ const statusKey = ref<string | undefined>(props.statusTabs?.[0]?.key)
+ const rows = ref<unknown[]>([])
+@@ -81,21 +85,21 @@ async function load() {
+       page: page.value,
+       size: size.value,
+       filters: filters.value,
+       statusKey: statusKey.value
+     })
+     if (id !== seq) return // 已有更新的请求发出，丢弃本次结果
+     rows.value = res.rows
+     total.value = res.total
+   } catch (e) {
+     if (id !== seq) return
+-    ElMessage.error((e as Error).message) // 保留旧 rows/total
++    ElMessage.error((e as Error)?.message ?? String(e)) // 保留旧 rows/total（与 CpFormDialog 同一错误硬化契约）
+   } finally {
+     if (id === seq) loading.value = false
+   }
+ }
+ onMounted(load)
+ 
+ // —— 交互 ——
+ function onSearch() { page.value = 1; load() }
+ function onReset() { page.value = 1; load() } // CpFilterBar 已先回写清空后的 filters
+ function onStatus(key: string) { statusKey.value = key; page.value = 1; load() }
+@@ -117,20 +121,21 @@ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
+       v-if="statusTabs?.length"
+       :items="statusTabs"
+       :model-value="statusKey ?? ''"
+       @update:model-value="onStatus"
+     />
+ 
+     <CpFilterBar
+       v-if="searchFields?.length"
+       v-model="filters"
+       :fields="searchFields"
++      :labels="filterLabels"
+       @search="onSearch"
+       @reset="onReset"
+     />
+ 
+     <div class="tcard">
+       <div v-if="$slots.toolbar" class="toolbar"><slot name="toolbar" /></div>
+ 
+       <el-table
+         v-loading="loading"
+         :data="rows"
+@@ -155,21 +160,21 @@ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
+             <slot :name="`col-${c.prop}`" :row="row">
+               <CpTag v-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
+               <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ cell(row, c.prop) }}</span>
+               <span v-else-if="c.kind === 'num'" class="num">{{ cell(row, c.prop) }}</span>
+               <template v-else>{{ cell(row, c.prop) }}</template>
+             </slot>
+           </template>
+         </el-table-column>
+ 
+         <template #empty>
+-          <CpEmpty v-if="!loading" />
++          <CpEmpty v-if="!loading" :text="emptyText" />
+         </template>
+       </el-table>
+ 
+       <div class="pager">
+         <el-pagination
+           v-model:current-page="page"
+           v-model:page-size="size"
+           :total="total"
+           :page-sizes="[20, 50, 100]"
+           layout="total, sizes, prev, pager, next"
+diff --git a/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts b/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts
+index df87332..c67e675 100644
+--- a/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts
++++ b/cp6.web/src/components/templates/__tests__/CpFilterBar.spec.ts
+@@ -64,11 +64,37 @@ describe('CpFilterBar', () => {
+ 
+     await findButton(w, '展开更多').trigger('click')
+     expect(w.findAll('.fld')).toHaveLength(5)
+     expect(w.text()).toContain('担当')
+   })
+ 
+   it('shows no expand toggle when fields.length <= 4', () => {
+     const w = mount(CpFilterBar, { props: { fields, modelValue: {} } })
+     expect(w.findAll('button').some((b) => b.text().includes('展开更多'))).toBe(false)
+   })
++
++  it('daterange field renders and wires start/end placeholders from field.placeholder', () => {
++    const drFields: FilterField[] = [{ key: 'date', label: '计划出库日', type: 'daterange', placeholder: '选择日期' }]
++    const w = mount(CpFilterBar, { props: { fields: drFields, modelValue: {} } })
++    const inputs = w.findAll('.el-range-input')
++    expect(inputs).toHaveLength(2) // 起 / 止 两个输入
++    expect(inputs[0].attributes('placeholder')).toBe('选择日期')
++    expect(inputs[1].attributes('placeholder')).toBe('选择日期')
++  })
++
++  it('renders custom button labels when labels prop supplied', () => {
++    const many: FilterField[] = [...fields, { key: 'operator', label: '担当', type: 'text' }]
++    const w = mount(CpFilterBar, {
++      props: {
++        fields: many,
++        modelValue: {},
++        labels: { search: '検索', reset: 'クリア', expand: 'もっと見る', collapse: '閉じる' }
++      }
++    })
++    expect(w.findAll('button').some((b) => b.text().includes('検索'))).toBe(true)
++    expect(w.findAll('button').some((b) => b.text().includes('クリア'))).toBe(true)
++    expect(w.findAll('button').some((b) => b.text().includes('もっと見る'))).toBe(true)
++    // 无 labels 时的中文默认不应再出现
++    expect(w.text()).not.toContain('查询')
++    expect(w.text()).not.toContain('重置')
++  })
+ })
+diff --git a/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts b/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts
+index 8eedb4f..35f0dec 100644
+--- a/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts
++++ b/cp6.web/src/components/templates/__tests__/CpFormDialog.spec.ts
+@@ -97,20 +97,35 @@ describe('CpFormDialog', () => {
+     const submit = vi.fn().mockRejectedValue('网络异常')
+     const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
+     await flushPromises()
+     elFormOf(w).validate = vi.fn().mockResolvedValue(true)
+     bodyButton('确认').click()
+     await flushPromises()
+     expect(errSpy).toHaveBeenCalledWith('网络异常')
+     errSpy.mockRestore()
+   })
+ 
++  it('防双提交：validate 在途期间二次 onConfirm → submit 仅一次', async () => {
++    const submit = vi.fn().mockResolvedValue(undefined)
++    const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
++    await flushPromises()
++    const state = (w.vm as unknown as { $: { setupState: Record<string, any> } }).$.setupState
++    // validate 保持 pending，模拟校验尚未完成时的第二次点击
++    let resolveValidate!: (v: boolean) => void
++    state.formRef.validate = vi.fn(() => new Promise((r) => { resolveValidate = r }))
++    state.onConfirm()
++    state.onConfirm() // 二次快速触发：应被 submitting 守卫拦下
++    resolveValidate(true)
++    await flushPromises()
++    expect(submit).toHaveBeenCalledTimes(1)
++  })
++
+   it('提交进行中：确认按钮进入 loading 态，结束后解除', async () => {
+     let release!: () => void
+     const submit = vi.fn(() => new Promise<void>((r) => { release = r }))
+     const w = mountDialog({ modelValue: true, title: 't', fields, form: { name: 'M-1', qty: 10 }, submit })
+     await flushPromises()
+     elFormOf(w).validate = vi.fn().mockResolvedValue(true)
+     bodyButton('确认').click()
+     await flushPromises()
+     expect(bodyButton('确认').classList.contains('is-loading')).toBe(true)
+     release()
+diff --git a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+index 47af864..0652e13 100644
+--- a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
++++ b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+@@ -60,20 +60,40 @@ describe('CpListPage 行为契约补充', () => {
+     await flushPromises()
+     expect(w.text()).toContain('SHP-1')
+ 
+     await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
+     await flushPromises()
+     expect(errSpy).toHaveBeenCalledWith('boom')
+     expect(w.text()).toContain('SHP-1') // 旧数据仍在
+     errSpy.mockRestore()
+   })
+ 
++  it('fetch reject 非 Error：ElMessage.error 收到字符串（与 CpFormDialog 同一硬化契约，不产生 undefined）', async () => {
++    const errSpy = vi.spyOn(ElMessage, 'error').mockImplementation((() => undefined) as never)
++    const f = vi.fn().mockRejectedValue('网络异常') // 非 Error（无 .message）
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f } })
++    await flushPromises()
++    expect(errSpy).toHaveBeenCalledWith('网络异常')
++    expect(w.find('.cp-list').exists()).toBe(true)
++    errSpy.mockRestore()
++  })
++
++  it('emptyText 透传 CpEmpty', async () => {
++    const w = mount(CpListPage, {
++      props: { columns: cols, fetch: makeFetch([]), emptyText: '該当データなし' }
++    })
++    await flushPromises()
++    const empty = w.findComponent({ name: 'CpEmpty' })
++    expect(empty.exists()).toBe(true)
++    expect(empty.text()).toContain('該当データなし')
++  })
++
+   it('翻页以对应 page 重新 fetch；search 将 page 重置为 1', async () => {
+     const f = vi.fn().mockResolvedValue({ rows: [{ no: 'SHP-1', qty: 1000 }], total: 100 })
+     const w = mount(CpListPage, { props: { columns: cols, fetch: f, searchFields } })
+     await flushPromises()
+ 
+     await w.findAll('.el-pager li').find((li) => li.text() === '2')!.trigger('click')
+     await flushPromises()
+     expect(f).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }))
+ 
+     await w.findAll('button').find((b) => b.text().includes('查询'))!.trigger('click')
+diff --git a/cp6.web/src/views/wms/OutboundOrderListView.vue b/cp6.web/src/views/wms/OutboundOrderListView.vue
+index 2e37e13..7b7843a 100644
+--- a/cp6.web/src/views/wms/OutboundOrderListView.vue
++++ b/cp6.web/src/views/wms/OutboundOrderListView.vue
+@@ -3,21 +3,21 @@
+   结构：CpPageShell（标题 + actions：新建 / 桥接展开）→ CpListPage（搜索区 + 表格卡 + 分页）。
+   数据源 outboundOrderApi.search 返回扁平数组且无 total，故 fetch 包装内做客户端分页（见 fetchList）。
+ -->
+ <template>
+   <CpPageShell :title="t('wms.outbound.titleList')">
+     <template #actions>
+       <el-button @click="goCreate">{{ t('wms.common.create') }}</el-button>
+       <el-button type="warning" @click="bridgeDialog = true">{{ t('wms.outbound.bridge.title') }}</el-button>
+     </template>
+ 
+-    <CpListPage :columns="columns" :fetch="fetchList" :search-fields="searchFields">
++    <CpListPage :columns="columns" :fetch="fetchList" :search-fields="searchFields" :filter-labels="filterLabels">
+       <!-- 種別 -->
+       <template #col-outboundType="{ row }">
+         <CpTag :tone="row.outboundType === 1 ? 'info' : 'warn'">
+           {{ typeMap[row.outboundType] || row.outboundType }}
+         </CpTag>
+       </template>
+       <!-- 状態 -->
+       <template #col-status="{ row }">
+         <CpTag :tone="statusTone(row.status)">
+           {{ statusMap[row.status] || row.status }}
+@@ -110,20 +110,26 @@ const columns = computed<ListColumn[]>(() => [
+   { prop: 'status', label: t('wms.common.status'), width: 110 },
+   { prop: 'workOrderNo', label: t('wms.outbound.fld.workOrderNo'), width: 160 },
+   { prop: 'webOrderNo', label: t('wms.outbound.fld.webOrderNo'), width: 160 },
+   { prop: 'customerName', label: t('wms.outbound.fld.customerName') },
+   { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 80 },
+   { prop: 'plannedDate', label: t('wms.outbound.fld.plannedDate'), width: 110 },
+   { prop: 'priority', label: t('wms.outbound.fld.priority'), width: 80 },
+   { prop: '_action', label: t('wms.common.action'), width: 100 },
+ ])
+ 
++// —— CpFilterBar 按钮文案接 i18n（沿用现有词条；expand/collapse 无对应 key，留组件默认） ——
++const filterLabels = computed(() => ({
++  search: t('wms.common.search'),
++  reset: t('wms.common.clear'),
++}))
++
+ // —— 搜索字段 ——（对应原 el-form 6 个查询项） ——
+ const searchFields = computed<FilterField[]>(() => [
+   { key: 'outboundNo', label: t('wms.outbound.fld.no'), type: 'text' },
+   {
+     key: 'outboundType', label: t('wms.common.type'), type: 'select',
+     options: Object.entries(typeMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+   },
+   {
+     key: 'status', label: t('wms.common.status'), type: 'select',
+     options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index a0b1527..4b40f66 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -533,21 +533,21 @@ describe('CpListPage', () => {
+   })
+   it('selection-change 透传', async () => {
+     const w = mount(CpListPage, { props: { columns: cols, fetch: makeFetch(), selectable: true } })
+     await flushPromises()
+     w.findComponent({ name: 'ElTable' }).vm.$emit('selection-change', [{ no: 'SHP-1' }])
+     expect(w.emitted('selection-change')![0][0]).toHaveLength(1)
+   })
+ })
+ ```
+ 
+-- [ ] **Step 2: 实现 CpListPage.vue**——组合结构：`CpStatusStrip?` → `CpFilterBar?` → 表格卡（toolbar slot + el-table + el-pagination）。内部状态 `page/size/filters/statusKey/rows/total/loading`；统一 `load()` 调 `props.fetch`，catch 里 `ElMessage.error((e as Error).message)`。列渲染按 `kind` 分支（`tag`→`<CpTag :status="row[prop]" />`；`mono`→`class="cp-mono"`；`num`→`class="num" align=right`）；`col-<prop>` slot 存在时优先。视觉值抄 mockup-final-b `.tcard/.toolbar/.pager`。
++- [ ] **Step 2: 实现 CpListPage.vue**——组合结构：`CpStatusStrip?` → `CpFilterBar?` → 表格卡（toolbar slot + el-table + el-pagination）。内部状态 `page/size/filters/statusKey/rows/total/loading`；统一 `load()` 调 `props.fetch`，catch 里 `ElMessage.error((e as Error)?.message ?? String(e))`（原弱形式 `(e as Error).message` 已在终审 hardening commit 修复为与 CpFormDialog 一致的硬化形式；Milestone C brief 不得再抄弱形式）。列渲染按 `kind` 分支（`tag`→`<CpTag :status="row[prop]" />`；`mono`→`class="cp-mono"`；`num`→`class="num" align=right`）；`col-<prop>` slot 存在时优先。视觉值抄 mockup-final-b `.tcard/.toolbar/.pager`。
+ - [ ] **Step 3:** 抽 CpStatCard：KpiCard.vue 内容平移 + 文件头注释，`DashboardView` import 路径改 `@/components/templates/CpStatCard.vue`，删 `views/dashboard/components/KpiCard.vue`。
+ - [ ] **Step 4:** Run `npm run test` → 全 PASS；`npm run type-check` 0 error。
+ - [ ] **Step 5:** Commit：`feat(ui): CpListPage 查询页模板 + CpStatCard 抽取`。
+ 
+ ---
+ 
+ ### Task 10: CpFormDialog + CpDetailPanel
+ 
+ **Files:**
+ - Create: `cp6.web/src/components/templates/CpFormDialog.vue`、`CpDetailPanel.vue`
+@@ -614,26 +614,33 @@ describe('CpListPage', () => {
+ 2. **ListColumn / 表格级配置缺字段：`minWidth`、`overflowTooltip`、`fixed`、`highlight-current-row`**。
+    - 页面需要：客先名列原为 `min-width:160 + show-overflow-tooltip`（长客户名省略号 + 悬浮全文）；操作列原为 `fixed="right"`（横向滚动时行按钮钉在右侧）；表格原有 `highlight-current-row`（点击行高亮当前行）。
+    - 模板缺：ListColumn 仅有 `width`，无最小宽 / 无溢出 tooltip / 无 `fixed`；CpListPage 也不透传表格级 `highlight-current-row`。迁移后这三项行为丢失（undocumented behavior change，本次试点复盘补记）：横向滚动时操作按钮不再钉住、当前行不再高亮。
+    - 建议契约扩展：ListColumn 增 `minWidth?: number`、`overflowTooltip?: boolean`、`fixed?: 'left' | 'right'`，透传 el-table-column 的 `min-width` / `show-overflow-tooltip` / `fixed`；CpListPage 增 `highlightCurrentRow?: boolean`（或直接默认开启）透传 el-table。
+ 
+ 3. **kind:'tag' 仅认「已是 CpTag 状态词」的原始值，码值状态列仍需自绘插槽**。
+    - 页面需要：区分 / ステータス / 優先度 三列是数字码（0..9），要「码→i18n 文案」+「码→语义 tone」两步映射。
+    - 模板缺：kind:'tag' 直接把单元格原值当 CpTag `status`，对数字码既显不出文案也命不中 tone；只能改用 `col-<prop>` 插槽 + `<CpTag :tone>` 自绘（功能已保全，但每个码值列都要重复样板）。
+    - 建议契约扩展：ListColumn 增可选 `map?: (val, row) => { label: string; tone?: Tone }`（或 `valueMap` 字典），让码值状态/枚举列声明式着色，免去逐列插槽。
+ 
+-4. **CpTag 文本在窄列内换行**（小视觉缺陷）。
++4. **CpTag 文本在窄列内换行**（小视觉缺陷）—— ✅ 已修复（终审 hardening commit）。
+    - 现象：区分列 90px / 状态列 110px 下，「ピッキング」被折成「ピッキン グ」，pill 竖向撑高。
+-   - 模板缺：CpTag 未设 `white-space:nowrap`。
+-   - 建议：CpTag `.cp-tag` 加 `white-space:nowrap`（纯样式微调，不改契约）。
++   - 修复：CpTag `.cp-tag` 已加 `white-space:nowrap`（纯样式微调，未改契约）。
+ 
+ 5. **数据源无 total，ListFetch 只能客户端分页**（记录而非模板缺口——受「不改后端/API 契约」约束）。
+    - 现象：`outboundOrderApi.search` 返回扁平数组无总数，而 ListFetch 契约要求 `{ rows, total }`。
+    - 适配：fetch 包装以 `pageSize:500` 取一批，`total = 数组长度`，按 page/size 客户端切片（真栈验证 37 条 → 20/页 2 页、翻页正确）。
+    - 后续：待后端补 `WmsPaged<T>`（total/page/pageSize 已有类型）后，fetch 包装可直接透传 page/size 做服务端分页；无需改模板。
+ 
+-6. **CpFilterBar 按钮文案硬编码中文 → i18n 回归**（Important，评审补记）。
++6. **CpFilterBar 按钮文案硬编码中文 → i18n 回归**（Important，评审补记）—— ⏳ 部分修复（终审 hardening commit）。
+    - 页面需要：原页面查询/重置按钮走 `t('wms.common.search')` 等词条，随语言切换；默认语言为 ja。
+-   - 模板缺：CpFilterBar 的「查询 / 重置 / 展开更多(收起)」为硬编码中文（CpFilterBar.vue:111-113），迁移后 ja 默认语言下这三个按钮只显示中文——相对原页面是 i18n 回归。
+-   - 建议契约扩展：CpFilterBar 按钮文案支持 i18n——组件内改用 `$t`（约定词条 key，如 `common.search` / `common.reset` / `common.expandMore`）或增 `labels?: { search?; reset?; expand?; collapse? }` props；模板修复后本页无需改动。Milestone C 批量迁移前应优先修此项，否则每个迁移页都会引入同样回归。
++   - 已做：CpFilterBar 增 `labels?: { search?; reset?; expand?; collapse? }`，CpFormDialog 增 `labels?: { cancel?; confirm? }` + `requiredMessage?`，CpEmpty 沿用既有 `text?`；CpListPage 透传 `filterLabels?` / `emptyText?`。试点页 `OutboundOrderListView.vue` 已就现有词条接线（`search→wms.common.search`、`reset→wms.common.clear`）；`expand/collapse` 无对应 key，保留组件内中文默认（未臆造 Sys_Langs 词条）。
++   - 剩余 follow-up（Milestone C）：采用共享词条（如 `common.search/reset/expandMore/collapse`）或组件内直接 `t()`，让 expand/collapse 等也随语言切换、免每页手动传 labels。
++
++7. **共享 `Tone` 类型导出 + STATUS_TONE 强类型**（终审提出，Milestone C 票，未在本次修复）。
++   - 现状：`CpTag` 的 tone 联合类型 `'ok'|'warn'|'danger'|'info'|'muted'` 内联在 props；`STATUS_TONE` 值为宽松 `Record<string,string>`；`ListColumn.map`（缺口#3 提案）、`StatusTab.tone`、页面 `statusTone()` 等各处对 tone 各写各的字面量，无单一事实来源。
++   - 建议：从 `CpTag.vue` 导出 `export type Tone = ...`，`STATUS_TONE: Record<string, Tone>`，各消费点复用该类型，编译期约束非法 tone。
++
++8. **`kind:'date'` 死词汇**（终审提出，Milestone C 前实现或删除）。
++   - 现状：`ListColumn.kind` 声明含 `'date'`，但 CpListPage 列渲染分支未实现 date 格式化（落到 `<template v-else>` 原样输出），头注也写「date→暂原样」。试点页日期列走 `col-plannedDate` 插槽自行 `slice`，`kind:'date'` 从未生效——属死词汇。
++   - 建议：Milestone C 前二选一——要么实现 date 格式化分支（按 i18n `d()`/`format`），要么从 `kind` 联合类型删除 `'date'`，避免误导后续迁移页声明无效 kind。
+ 
+ 模板本次「够用」的原因：CpListPage 的 `col-<prop>` 具名插槽是逃生舱——凡 kind 表达不了的列（码值 tag、日期截断、行操作按钮、自定义 tone）都能落到插槽里保功能，因此上述缺口都不是阻塞项，而是「省样板 / 补计数」的契约增强。

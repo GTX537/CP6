@@ -1,0 +1,191 @@
+# Review package: 72d5d16..fc2ad3b
+
+## Commits
+fc2ad3b feat(space): RepublishAsync 路径元数据再发布基元（ch04 §7.2 路径B，码冻结只升版）
+
+## Files changed
+ CP6.Core/Services/Space/ILocationPublishService.cs |  7 +++
+ CP6.Core/Services/Space/LocationPublishService.cs  | 42 +++++++++++++++
+ CP6.Tests/LocationPublishServiceTests.cs           | 61 ++++++++++++++++++++++
+ 3 files changed, 110 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/ILocationPublishService.cs b/CP6.Core/Services/Space/ILocationPublishService.cs
+index 67b79b1..20037ac 100644
+--- a/CP6.Core/Services/Space/ILocationPublishService.cs
++++ b/CP6.Core/Services/Space/ILocationPublishService.cs
+@@ -4,14 +4,21 @@ namespace CP6.Core.Services.Space;
+ /// 库位发布、停用、采纳服务契约（ch04）。
+ /// </summary>
+ public interface ILocationPublishService
+ {
+     /// <summary>整层/库区发布：过闸门 → 草稿 Status0→1 → 发 UPSERT 事件。返回发布条数。</summary>
+     Task<int> PublishFloorAsync(Guid floorId, Guid? zoneId, string? user);
+ 
+     /// <summary>停用已发布库位（D6 双重校验：Space 前置查库存 + WMS hook）。</summary>
+     Task DeactivateAsync(Guid locationId, string? user);
+ 
++    /// <summary>
++    /// 路径元数据 re-publish（ch04 §7.2 路径B）：层级归属（Zone/Aisle/Rack 挂载）变更后，
++    /// 对已发布(Status=1)库位 Version+1 并发 UPSERT 事件刷新 WMS 侧 path——码冻结不变、状态不变。
++    /// 非发布态/无码的 id 自动忽略。返回实际 re-publish 条数。
++    /// </summary>
++    Task<int> RepublishAsync(IReadOnlyCollection<Guid> locationIds, string? user);
++
+     /// <summary>存量采纳导入（CodeOrigin=2，不发事件）。返回 (imported, skipped codes)。</summary>
+     Task<(int imported, List<string> skipped)> AdoptAsync(
+         IEnumerable<(string code, Dictionary<string, object?>? attrs)> items, string? user);
+ }
+diff --git a/CP6.Core/Services/Space/LocationPublishService.cs b/CP6.Core/Services/Space/LocationPublishService.cs
+index fdfd3cd..1ed9acc 100644
+--- a/CP6.Core/Services/Space/LocationPublishService.cs
++++ b/CP6.Core/Services/Space/LocationPublishService.cs
+@@ -143,20 +143,62 @@ public class LocationPublishService : ILocationPublishService
+             TenantId = _t.CurrentTenantId,
+             PublishedBy = user
+         };
+         batch.Items.Add(await BuildItemAsync(l, "DEACTIVATE"));
+         await _db.SaveChangesAsync();
+ 
+         // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
+         await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+     }
+ 
++    /// <inheritdoc/>
++    public async Task<int> RepublishAsync(IReadOnlyCollection<Guid> locationIds, string? user)
++    {
++        if (locationIds.Count == 0) return 0;
++
++        // 嵌套事务守卫：本方法会被 SceneService 场景保存事务（H4 改挂）或删除放行路径包裹调用；
++        // 已有环境事务时直接加入（同连接嵌套 BeginTransaction 会抛），无事务时自开（惯例守卫）。
++        var ownsTx = _db.Database.IsRelational() && _db.Database.CurrentTransaction == null;
++        IDbContextTransaction? tx = ownsTx ? await _db.Database.BeginTransactionAsync() : null;
++        try
++        {
++            var locs = await _db.Space_Locations
++                .Where(l => locationIds.Contains(l.Id) && l.Status == 1 && l.LocationCode != null)
++                .ToListAsync();
++            if (locs.Count == 0) return 0;
++
++            var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
++            var batch = new LocationPublishBatch
++            {
++                BatchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}",
++                TenantId = _t.CurrentTenantId,
++                PublishedBy = user
++            };
++            foreach (var l in locs)
++            {
++                l.Version += 1;                 // 码冻结不变，只升版刷新 path（§7.2 B）
++                l.Modifier = user;
++                l.ModifyDate = DateTime.Now;
++                batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
++            }
++            await _db.SaveChangesAsync();
++            await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
++
++            if (tx != null) await tx.CommitAsync();
++            return locs.Count;
++        }
++        finally
++        {
++            if (tx != null) await tx.DisposeAsync();
++        }
++    }
++
+     /// <inheritdoc/>
+     public async Task<(int imported, List<string> skipped)> AdoptAsync(
+         IEnumerable<(string code, Dictionary<string, object?>? attrs)> items, string? user)
+     {
+         var existing = await _db.Space_Locations
+             .Where(l => l.LocationCode != null)
+             .Select(l => l.LocationCode!)
+             .ToListAsync();
+         var set = existing.ToHashSet(StringComparer.Ordinal);
+ 
+diff --git a/CP6.Tests/LocationPublishServiceTests.cs b/CP6.Tests/LocationPublishServiceTests.cs
+index 9c389a3..9dd1db9 100644
+--- a/CP6.Tests/LocationPublishServiceTests.cs
++++ b/CP6.Tests/LocationPublishServiceTests.cs
+@@ -303,20 +303,81 @@ public class LocationPublishServiceTests
+         {
+             Id = locId, FloorId = Guid.NewGuid(), Status = 0, LocationCode = "Y-01-01-01"
+         });
+         await db.SaveChangesAsync();
+ 
+         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+             () => MakePublishSvc(db).DeactivateAsync(locId, "u"));
+         Assert.StartsWith("E-SPACE-004", ex.Message);
+     }
+ 
++    // ── §7.2 路径B: re-publish ────────────────────────────────────────────
++
++    [Fact]
++    public async Task Republish_PublishedLocation_BumpsVersion_EmitsUpsert()
++    {
++        using var db = Db();
++        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);
++        var locId = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = floorId, RackId = rackId,
++            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1, Version = 3
++        });
++        await db.SaveChangesAsync();
++
++        var n = await MakePublishSvc(db).RepublishAsync(new[] { locId }, "u");
++
++        Assert.Equal(1, n);
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(1, loc.Status);                    // 状态不变（不是重新发布生命周期）
++        Assert.Equal(4, loc.Version);                   // 只升版
++        Assert.Equal("A-01-01-01", loc.LocationCode);   // 码冻结不变（§7.2 B 精髓）
++        var evt = await db.IntegrationEvents.SingleAsync();
++        var payload = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(evt.PayloadJson);
++        Assert.Equal("UPSERT", payload.GetProperty("Items")[0].GetProperty("Op").GetString());
++        Assert.Equal(4, payload.GetProperty("Items")[0].GetProperty("Version").GetInt64());
++    }
++
++    [Fact]
++    public async Task Republish_IgnoresDraftAndDeactivated()
++    {
++        using var db = Db();
++        var draftId = Guid.NewGuid();
++        var deactId = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = draftId, FloorId = Guid.NewGuid(), Status = 0, LocationCode = "D-01", Version = 0
++        });
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = deactId, FloorId = Guid.NewGuid(), Status = 2, LocationCode = "X-01", Version = 2
++        });
++        await db.SaveChangesAsync();
++
++        var n = await MakePublishSvc(db).RepublishAsync(new[] { draftId, deactId }, "u");
++
++        Assert.Equal(0, n);
++        Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 非发布态不产生事件
++        Assert.Equal(0, (await db.Space_Locations.FirstAsync(l => l.Id == draftId)).Version);
++    }
++
++    [Fact]
++    public async Task Republish_EmptyInput_Returns0_NoEvent()
++    {
++        using var db = Db();
++        var n = await MakePublishSvc(db).RepublishAsync(Array.Empty<Guid>(), "u");
++        Assert.Equal(0, n);
++        Assert.Equal(0, await db.IntegrationEvents.CountAsync());
++    }
++
+     // ── D-5: 采纳导入 ──────────────────────────────────────────────────────
+ 
+     [Fact]
+     public async Task Adopt_NewCode_Creates_Status1_CodeOrigin2_PlacedFalse()
+     {
+         using var db = Db();
+         var svc = MakePublishSvc(db);
+         var items = new List<(string, Dictionary<string, object?>?)>
+         {
+             ("EXT-001", null),

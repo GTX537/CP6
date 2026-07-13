@@ -19,7 +19,7 @@ public class Wf_FlowToken : BaseTenantEntity
     [MaxLength(100)]
     public string NodeId { get; set; } = string.Empty;
 
-    /// <summary>0=Active 1=Consumed 2=Cancelled。见 FlowTokenStatus。</summary>
+    /// <summary>0=Active 1=Consumed 2=Cancelled 3=Pruned。见 FlowTokenStatus。</summary>
     public int Status { get; set; }
 
     /// <summary>父令牌 Id（嵌套血缘）。根 token=null。</summary>

@@ -1,0 +1,2471 @@
+# Review package: 4055dd4..HEAD
+
+## Commits
+0cbaaa4 docs(wfs-service-task): E-T3 修正——README 补 starter 详情读取权限假设(审查 P2)
+f25c778 test(wfs-service-task): E-T3 gstack QA harness(6 剧本+seed+e2e 脚本)
+a2dab52 feat(wfs-service-task): E-T2 I18nOaServiceTaskScreenSeed 五语+concat
+c148c62 fix(wfs-service-task): E-T1 修正——E-WF-018 注册名比较 OrdinalIgnoreCase 镜像运行时字典
+657c692 feat(wfs-service-task): E-T1 FlowSchemaValidator+save 校验 E-WF-016/017/018
+065b1d1 fix(wfs-service-task): D-T3 修正——catalog 拉取 watch 化(组件复用不重挂载时 onMounted 失效)
+808a95f feat(wfs-service-task): D-T3 属性面板服务任务段+错误边复选+服务目录拉取
+4870159 feat(wfs-service-task): D-T2 ServiceTaskNode 自定义节点+画布接线
+e08b9f4 fix(wfs-service-task): D-T1 修正——serviceDelayValue 镜像后端 string + 调色板 key 唯一化
+f56bf7d feat(wfs-service-task): D-T1 designerModel 调色板+Service*/IsError round-trip+validateClient
+7d9d61a feat(wfs-service-task): C-T3 service-catalog 端点（按 Kind/VisibleInDesigner 过滤）
+f593f19 feat(wfs-service-task): C-T2 样例 dataWriteback executor
+
+## Files changed
+ CP6.Core/Services/Oa/DesignerModels.cs             |   8 +
+ CP6.Core/Services/Oa/DesignerService.cs            |  33 +-
+ CP6.Core/Services/Oa/IDesignerService.cs           |   1 +
+ .../Wf/Executors/SampleDataWritebackExecutor.cs    |  79 +++++
+ CP6.Core/Services/Wf/FlowSchemaValidator.cs        |  24 ++
+ CP6.Tests/Oa/DesignerServiceTests.cs               |   3 +-
+ CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs   | 107 +++++++
+ CP6.Tests/Wf/ServiceCatalogTests.cs                |  71 +++++
+ CP6.Tests/Wf/ServiceTaskValidatorTests.cs          | 214 +++++++++++++
+ CP6.WebApi/Controllers/Oa/DesignerController.cs    |   4 +
+ CP6.WebApi/Program.cs                              |   2 +
+ CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs     |  57 ++++
+ cp6.web/src/api/oa/designer.ts                     |  10 +
+ cp6.web/src/views/oa/designer/DesignerCanvas.vue   |  40 ++-
+ .../src/views/oa/designer/EdgePropertyPanel.vue    |  13 +
+ .../src/views/oa/designer/NodePropertyPanel.vue    | 160 +++++++++-
+ .../oa/designer/designerModel.serviceTask.spec.ts  |  23 ++
+ .../src/views/oa/designer/designerModel.test.ts    |   6 +-
+ cp6.web/src/views/oa/designer/designerModel.ts     |  47 ++-
+ .../views/oa/designer/nodes/ServiceTaskNode.vue    |  91 ++++++
+ docs/superpowers/qa/wfs-service-task/README.md     | 240 +++++++++++++++
+ .../qa/wfs-service-task/qa_service_task.ps1        | 337 +++++++++++++++++++++
+ docs/superpowers/qa/wfs-service-task/seed.sql      | 208 +++++++++++++
+ 23 files changed, 1756 insertions(+), 22 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Oa/DesignerModels.cs b/CP6.Core/Services/Oa/DesignerModels.cs
+index 611ec51..0cd6828 100644
+--- a/CP6.Core/Services/Oa/DesignerModels.cs
++++ b/CP6.Core/Services/Oa/DesignerModels.cs
+@@ -1,7 +1,15 @@
++using System.Collections.Generic;
++
+ namespace CP6.Core.Services.Oa;
+ 
+ public record SaveFlowRequest(string FlowKey, string FlowName, string FormKey,
+     string? FunctionId, string? FlowCode, string SchemaJson);
+ public record CloneRequest(string SourceFlowKey, string NewFlowKey, string NewFlowName);
+ public record FlowDefSummary(string FlowKey, string FlowName, string FormKey,
+     string? FunctionId, string? FlowCode, int Version, bool Enable);
++
++// 服务目录（P1-6）：设计器拉取可绑定的回写动作 + 连接器。每项 {name, label(DisplayName)}。
++public record ServiceCatalogItem(string Name, string Label);
++public record ServiceCatalog(
++    IReadOnlyList<ServiceCatalogItem> Actions,
++    IReadOnlyList<ServiceCatalogItem> Connectors);
+diff --git a/CP6.Core/Services/Oa/DesignerService.cs b/CP6.Core/Services/Oa/DesignerService.cs
+index 9490fea..6f22172 100644
+--- a/CP6.Core/Services/Oa/DesignerService.cs
++++ b/CP6.Core/Services/Oa/DesignerService.cs
+@@ -1,23 +1,38 @@
+ using CP6.Core.EFDbContext;
+ using CP6.Core.Services.Wf;
+ using Microsoft.EntityFrameworkCore;
++using System.Collections.Generic;
++using System.Linq;
+ using System.Text.Json;
+ 
+ namespace CP6.Core.Services.Oa;
+ 
+ public class DesignerService : IDesignerService
+ {
+     private static readonly JsonSerializerOptions JsonOpts = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = true };
+     private readonly CP6Context _db;
+     private readonly IFlowDefService _flowDef;
+-    public DesignerService(CP6Context db, IFlowDefService flowDef) { _db = db; _flowDef = flowDef; }
++    private readonly IEnumerable<IServiceTaskExecutor> _execs;
++    private readonly IEnumerable<IWfConnector> _connectors;
++    public DesignerService(CP6Context db, IFlowDefService flowDef,
++        IEnumerable<IServiceTaskExecutor> execs, IEnumerable<IWfConnector> connectors)
++    {
++        _db = db; _flowDef = flowDef; _execs = execs; _connectors = connectors;
++    }
++
++    /// <summary>P1-6 服务目录：actions 只含 Kind==dataWriteback 且 VisibleInDesigner 的执行器
++    /// （WebApiExecutor 被排除）；connectors 含全部注册连接器。每项 {name, label(DisplayName)}。</summary>
++    public ServiceCatalog GetServiceCatalog() => new(
++        _execs.Where(e => e.Kind == ServiceKind.DataWriteback && e.VisibleInDesigner)
++              .Select(e => new ServiceCatalogItem(e.Key, e.DisplayName)).ToList(),
++        _connectors.Select(c => new ServiceCatalogItem(c.Name, c.DisplayName)).ToList());
+ 
+     public async Task<IReadOnlyList<FlowDefSummary>> ListAsync(string? functionId = null)
+     {
+         var q = _db.Wf_FlowDefs.AsQueryable();
+         if (!string.IsNullOrWhiteSpace(functionId)) q = q.Where(d => d.FunctionId == functionId);
+         return await q.OrderBy(d => d.FunctionId).ThenBy(d => d.FlowKey)
+             .Select(d => new FlowDefSummary(d.FlowKey, d.FlowName, d.FormKey, d.FunctionId, d.FlowCode, d.Version, d.Enable))
+             .ToListAsync();
+     }
+ 
+@@ -26,20 +41,36 @@ public class DesignerService : IDesignerService
+             .Select(d => new FlowDefSummary(d.FlowKey, d.FlowName, d.FormKey, d.FunctionId, d.FlowCode, d.Version, d.Enable))
+             .FirstOrDefaultAsync();
+ 
+     public async Task SaveAsync(SaveFlowRequest req, string? user)
+     {
+         // ① schema 校验
+         var schema = JsonSerializer.Deserialize<FlowSchema>(req.SchemaJson, JsonOpts) ?? new FlowSchema();
+         var schemaErrs = FlowSchemaValidator.Validate(schema);
+         if (schemaErrs.Count > 0) throw new InvalidOperationException(schemaErrs[0]);
+ 
++        // ①b 服务任务引用注册名校验(E-WF-018)：dataWriteback 的 ActionName 须命中 Kind==dataWriteback 的执行器 Key；
++        //     webApi 的 ConnectorName 须命中连接器 Name。缺名属 E-WF-016(上一步已拦)，此处只查"引用了但未注册"。
++        var actionKeys = _execs.Where(e => e.Kind == ServiceKind.DataWriteback)
++            .Select(e => e.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
++        var connNames = _connectors.Select(c => c.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
++        foreach (var n in schema.Nodes.Where(n =>
++            string.Equals((n.Type ?? string.Empty).Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)))
++        {
++            if (n.ServiceKind == ServiceKind.DataWriteback && !string.IsNullOrWhiteSpace(n.ServiceActionName)
++                && !actionKeys.Contains(n.ServiceActionName))
++                throw new InvalidOperationException("E-WF-018");
++            if (n.ServiceKind == ServiceKind.WebApi && !string.IsNullOrWhiteSpace(n.ServiceConnectorName)
++                && !connNames.Contains(n.ServiceConnectorName))
++                throw new InvalidOperationException("E-WF-018");
++        }
++
+         // ② 身份码租户内唯一（排除自身 FlowKey）
+         if (!string.IsNullOrWhiteSpace(req.FunctionId) &&
+             await _db.Wf_FlowDefs.AnyAsync(d => d.FunctionId == req.FunctionId && d.FlowKey != req.FlowKey))
+             throw new InvalidOperationException("E-WF-009");
+         if (!string.IsNullOrWhiteSpace(req.FlowCode) &&
+             await _db.Wf_FlowDefs.AnyAsync(d => d.FlowCode == req.FlowCode && d.FlowKey != req.FlowKey))
+             throw new InvalidOperationException("E-WF-009");
+ 
+         // ③ upsert（SaveDef 升版） + 身份码落库
+         await _flowDef.SaveDefAsync(req.FlowKey, req.FlowName, req.FormKey, req.SchemaJson, user);
+diff --git a/CP6.Core/Services/Oa/IDesignerService.cs b/CP6.Core/Services/Oa/IDesignerService.cs
+index f1d956e..d1183c5 100644
+--- a/CP6.Core/Services/Oa/IDesignerService.cs
++++ b/CP6.Core/Services/Oa/IDesignerService.cs
+@@ -1,10 +1,11 @@
+ namespace CP6.Core.Services.Oa;
+ 
+ /// <summary>流程设计器服务（umbrella §4.8）。校验 + 身份唯一 + upsert（消费 IFlowDefService）+ 模板克隆。</summary>
+ public interface IDesignerService
+ {
+     Task<IReadOnlyList<FlowDefSummary>> ListAsync(string? functionId = null);  // functionId 非空=按功能筛
+     Task<FlowDefSummary?> LoadAsync(string flowKey);                            // 取定义摘要（schema 经 GetDef 取）
+     Task SaveAsync(SaveFlowRequest req, string? user);                          // 校验 E-WF-010 + 唯一 E-WF-009 + SaveDef
+     Task CloneAsync(CloneRequest req, string? user);                           // 独立副本
++    ServiceCatalog GetServiceCatalog();                                        // P1-6 服务目录：可见回写动作 + 全部连接器
+ }
+diff --git a/CP6.Core/Services/Wf/Executors/SampleDataWritebackExecutor.cs b/CP6.Core/Services/Wf/Executors/SampleDataWritebackExecutor.cs
+new file mode 100644
+index 0000000..060e38b
+--- /dev/null
++++ b/CP6.Core/Services/Wf/Executors/SampleDataWritebackExecutor.cs
+@@ -0,0 +1,79 @@
++using System.Collections.Generic;
++using System.Globalization;
++
++namespace CP6.Core.Services.Wf.Executors;
++
++/// <summary>
++/// 样例 dataWriteback 执行器（§3.1 首个对设计器可见的回写动作，C-T2）。
++/// Key = "sampleWriteback"；Kind = "dataWriteback"；VisibleInDesigner = true（进服务目录，P1-6）。
++/// <para>
++/// 演示动作：读表单 <c>$.amount</c> × 1，写回流程变量 <c>writebackEcho</c>，
++/// 并发出幂等键 <c>writebackIdempotencyKey = wf-writeback-job-{JobId}</c>。
++/// 纯计算、无 I/O——真实业务回写（PO 确认 / 凭证过账等）由后续按需各加一个 executor，照本模板复制。
++/// </para>
++///
++/// <para><b>黄金模板三铁律（后续 dataWriteback executor 照此模板复制——架构审查 2026-07-05 裁定）</b></para>
++/// <para>
++/// 背景：sync 路径下 executor 与引擎共享同一 DbContext/事务；executor 半途抛异常时，
++/// 已改的追踪实体会被引擎外层 SaveChanges 一并提交（ServiceTaskNodeHandler.cs 入队降级路径不回滚脏改）。
++/// 因此：
++/// <list type="number">
++///   <item><b>先校验全部前置条件，再执行任何写操作</b>——校验失败直接
++///     <see cref="ServiceTaskResult.Fail(string)"/>，不留半截脏改。本例先解析 + 校验 amount，
++///     全部通过后才构造 OutputVars。</item>
++///   <item><b>幂等</b>——用 ctx 语义键（<c>JobId</c>/<c>InstanceId</c>）判重，重复执行结果一致。
++///     本例输出是输入的纯函数（amount × 1）且带 <c>wf-writeback-job-{JobId}</c> 幂等键，
++///     at-least-once 重投结果字节等价。</item>
++///   <item><b>绝不自行 <c>SaveChanges()</c>、不开独立事务、不发外部 HTTP</b>——落库交给引擎的原子接缝
++///     （引擎把 OutputVars 经 <see cref="ServiceVarsHelper.MergeOutputVars"/> 合并回 inst.VarsJson 后统一 SaveChanges）；
++///     外呼只属于 webApi kind 经 IWfConnector。</item>
++/// </list>
++/// 如需读 DB，注入 <c>CP6Context</c>（同 scoped，sync 路径原子前提，spec §4.5），但仍不得自行 SaveChanges。
++/// </para>
++/// </summary>
++public sealed class SampleDataWritebackExecutor : IServiceTaskExecutor
++{
++    public string Key               => "sampleWriteback";
++    public string Kind              => ServiceKind.DataWriteback;   // "dataWriteback"
++    public bool   VisibleInDesigner => true;                       // dataWriteback 动作进服务目录（P1-6）
++    public string DisplayName       => "样例数据回写";
++
++    /// <summary>
++    /// 读 <c>$.amount</c> × 1 → 写回 <c>writebackEcho</c>。纯计算，无 I/O。
++    /// 律1：先校验 amount 存在且为数值，任一不满足直接 Fail（不构造任何 OutputVars）。
++    /// </summary>
++    public System.Threading.Tasks.Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx)
++    {
++        // ── 律1：先校验全部前置条件，再执行任何写操作 ──────────────────────
++        var tplCtx = new ServiceTemplateCtx(
++            varsJson:   ctx.VarsJson,
++            actorId:    ctx.ActorId.ToString(),
++            jobId:      ctx.JobId.ToString(),
++            instanceId: ctx.InstanceId.ToString(),
++            nowUtcIso:  ctx.NowUtc.ToString("O"));
++
++        var amountRaw = ServiceVarsHelper.ResolveValue("$.amount", tplCtx);
++        if (string.IsNullOrWhiteSpace(amountRaw))
++            return Done(ServiceTaskResult.Fail("E-WF-019 缺少必填表单字段 amount，无法回写"));
++
++        if (!decimal.TryParse(amountRaw, NumberStyles.Number, CultureInfo.InvariantCulture, out var amount))
++            return Done(ServiceTaskResult.Fail($"E-WF-019 表单字段 amount 非数值:{amountRaw}"));
++
++        // ── 律2：幂等键（at-least-once 重投判重依据）─────────────────────────
++        var idempotencyKey = $"wf-writeback-job-{ctx.JobId}";
++
++        // ── 律3：只返回 OutputVars，绝不自行 SaveChanges / 开事务 / 发 HTTP ──
++        // 演示回写：amount × 1（换成真实业务计算即为下一个 executor）。
++        var writeback = amount * 1m;
++        var outputVars = new Dictionary<string, object?>
++        {
++            ["writebackEcho"]           = writeback,
++            ["writebackIdempotencyKey"] = idempotencyKey,
++        };
++
++        return Done(ServiceTaskResult.Ok(outputVars));
++    }
++
++    private static System.Threading.Tasks.Task<ServiceTaskResult> Done(ServiceTaskResult r)
++        => System.Threading.Tasks.Task.FromResult(r);
++}
+diff --git a/CP6.Core/Services/Wf/FlowSchemaValidator.cs b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+index 8efe002..0af7bd5 100644
+--- a/CP6.Core/Services/Wf/FlowSchemaValidator.cs
++++ b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+@@ -1,18 +1,22 @@
+ namespace CP6.Core.Services.Wf;
+ 
+ /// <summary>流程 schema 静态校验（设计器保存前后端共用）。返回错误码列表（空=合法）。所有结构性问题统一 E-WF-010。</summary>
+ public static class FlowSchemaValidator
+ {
+     private static readonly HashSet<string> KnownStrategies =
+         new(new[] { "DirectManager", "DeptLeader", "Role", "Specified", "Starter", "FormField", "DataMap", "Group" }, StringComparer.OrdinalIgnoreCase);
+ 
++    // 服务任务合法 kind：引擎按 ServiceKind 常量精确匹配(ServiceTaskNodeHandler)，此处同用序数比较以对齐运行期语义。
++    private static readonly HashSet<string> KnownServiceKinds =
++        new(new[] { ServiceKind.DataWriteback, ServiceKind.WebApi, ServiceKind.Timer }, StringComparer.Ordinal);
++
+     public static IReadOnlyList<string> Validate(FlowSchema schema)
+     {
+         var errs = new List<string>();
+         if (schema is null || schema.Nodes.Count == 0) { errs.Add("E-WF-010"); return errs; }
+ 
+         string T(FlowNode n) => (n.Type ?? "approval").Trim().ToLowerInvariant();
+         var ids = schema.Nodes.Select(n => n.Id).ToHashSet();
+ 
+         // ① 恰一 start ② 至少一 end
+         if (schema.Nodes.Count(n => T(n) == "start") != 1) errs.Add("E-WF-010");
+@@ -68,20 +72,40 @@ public static class FlowSchemaValidator
+             }
+             if (stageBad014) { errs.Add("E-WF-014"); break; }
+         }
+ 
+         // ⑥ 并行网关入/出边数
+         foreach (var n in schema.Nodes.Where(n => T(n) == "parallelsplit"))
+             if (schema.Edges.Count(e => e.From == n.Id) < 2) { errs.Add("E-WF-010"); break; }
+         foreach (var n in schema.Nodes.Where(n => T(n) == "paralleljoin"))
+             if (schema.Edges.Count(e => e.To == n.Id) < 2) { errs.Add("E-WF-010"); break; }
+ 
++        // ⑧ 服务任务节点配置完整性(E-WF-016) + 非 end 须有成功出边(P2-3)。
++        //    kind 非法 / dataWriteback 缺 ActionName / webApi 缺 Connector|Path / timer 缺 DelayMode|DelayValue → E-WF-016。
++        //    serviceTask 必非 end，若无任何"非错误"出边则成功路径无后继(引擎会误结 Approved) → E-WF-016。
++        foreach (var n in schema.Nodes.Where(n => T(n) == "servicetask"))
++        {
++            var kind = (n.ServiceKind ?? string.Empty).Trim();
++            bool bad =
++                !KnownServiceKinds.Contains(kind)
++                || (kind == ServiceKind.DataWriteback && string.IsNullOrWhiteSpace(n.ServiceActionName))
++                || (kind == ServiceKind.WebApi && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
++                || (kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(n.ServiceDelayMode) || string.IsNullOrWhiteSpace(n.ServiceDelayValue)))
++                || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
++            if (bad) { errs.Add("E-WF-016"); break; }
++        }
++
++        // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边仅允许出自 serviceTask 节点。
++        var serviceIds = schema.Nodes.Where(n => T(n) == "servicetask").Select(n => n.Id).ToHashSet();
++        if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
++        if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
++
+         // ④ 从 start 可达某 end（BFS）
+         var start = schema.Nodes.FirstOrDefault(n => T(n) == "start");
+         if (start is not null)
+         {
+             var adj = schema.Edges.GroupBy(e => e.From).ToDictionary(g => g.Key, g => g.Select(e => e.To).ToList());
+             var seen = new HashSet<string> { start.Id };
+             var q = new Queue<string>(); q.Enqueue(start.Id);
+             bool reachedEnd = false;
+             while (q.Count > 0)
+             {
+diff --git a/CP6.Tests/Oa/DesignerServiceTests.cs b/CP6.Tests/Oa/DesignerServiceTests.cs
+index 4a85885..2220fe6 100644
+--- a/CP6.Tests/Oa/DesignerServiceTests.cs
++++ b/CP6.Tests/Oa/DesignerServiceTests.cs
+@@ -6,21 +6,22 @@ using Microsoft.EntityFrameworkCore;
+ using Microsoft.EntityFrameworkCore.Diagnostics;
+ using System.Text.Json;
+ 
+ namespace CP6.Tests;
+ 
+ public class DesignerServiceTests
+ {
+     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString())
+         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
+-    private static IDesignerService Svc(CP6Context db) => new DesignerService(db, new FlowDefService(db));
++    private static IDesignerService Svc(CP6Context db) => new DesignerService(db, new FlowDefService(db),
++        Array.Empty<IServiceTaskExecutor>(), Array.Empty<IWfConnector>());
+ 
+     private static string ValidSchema() => JsonSerializer.Serialize(new FlowSchema
+     {
+         Start = "s",
+         Nodes = { new FlowNode { Id = "s", Type = "start" },
+                   new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
+                   new FlowNode { Id = "e", Type = "end" } },
+         Edges = { new FlowEdge { From = "s", To = "a" }, new FlowEdge { From = "a", To = "e" } },
+     });
+ 
+diff --git a/CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs b/CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs
+new file mode 100644
+index 0000000..8398b72
+--- /dev/null
++++ b/CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs
+@@ -0,0 +1,107 @@
++// CP6.Tests/Wf/SampleDataWritebackExecutorTests.cs
++using System;
++using System.Collections.Generic;
++using System.Threading.Tasks;
++using CP6.Core.Services.Wf;
++using CP6.Core.Services.Wf.Executors;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++public class SampleDataWritebackExecutorTests
++{
++    private static ServiceTaskContext MakeCtx(Guid jobId, string? varsJson = null) =>
++        new ServiceTaskContext
++        {
++            InstanceId    = Guid.NewGuid(),
++            TokenId       = Guid.NewGuid(),
++            NodeId        = "n1",
++            StarterId     = Guid.NewGuid(),
++            JobId         = jobId,
++            AttemptNo     = 1,
++            ActorId       = Guid.Empty,
++            NowUtc        = new DateTime(2026, 6, 29, 0, 0, 0, DateTimeKind.Utc),
++            VarsJson      = varsJson,
++            ActionRefJson = null
++        };
++
++    // ── T1: 元数据（设计器可见的 dataWriteback 动作）────────────────────────
++    [Fact]
++    public void Metadata_Is_DataWriteback_Visible_SampleWriteback()
++    {
++        var executor = new SampleDataWritebackExecutor();
++        Assert.Equal("sampleWriteback", executor.Key);
++        Assert.Equal("dataWriteback", executor.Kind);
++        Assert.Equal(ServiceKind.DataWriteback, executor.Kind);
++        Assert.True(executor.VisibleInDesigner);
++        Assert.False(string.IsNullOrWhiteSpace(executor.DisplayName));
++    }
++
++    // ── T2: happy path — 读 $.amount × 1 写回 writebackEcho + 幂等键 ──────────
++    [Fact]
++    public async Task HappyPath_Writes_Echo_And_IdempotencyKey()
++    {
++        var jobId = Guid.NewGuid();
++        var ctx = MakeCtx(jobId, varsJson: "{\"amount\":100}");
++        var executor = new SampleDataWritebackExecutor();
++
++        var result = await executor.ExecuteAsync(ctx);
++
++        Assert.True(result.Success);
++        Assert.Null(result.Error);
++        Assert.NotNull(result.OutputVars);
++        Assert.True(result.OutputVars!.ContainsKey("writebackEcho"));
++        Assert.Equal("100", result.OutputVars["writebackEcho"]?.ToString());
++        Assert.Equal($"wf-writeback-job-{jobId}", result.OutputVars["writebackIdempotencyKey"]?.ToString());
++    }
++
++    // ── T3: 律2 幂等 — 同 ctx 重复执行结果字节等价 ─────────────────────────
++    [Fact]
++    public async Task Idempotent_RepeatedExecution_SameResult()
++    {
++        var jobId = Guid.NewGuid();
++        var ctx = MakeCtx(jobId, varsJson: "{\"amount\":42.5}");
++        var executor = new SampleDataWritebackExecutor();
++
++        var r1 = await executor.ExecuteAsync(ctx);
++        var r2 = await executor.ExecuteAsync(ctx);
++
++        Assert.True(r1.Success);
++        Assert.True(r2.Success);
++        Assert.Equal(r1.OutputVars!["writebackEcho"]?.ToString(), r2.OutputVars!["writebackEcho"]?.ToString());
++        Assert.Equal("42.5", r1.OutputVars["writebackEcho"]?.ToString());
++        Assert.Equal(
++            r1.OutputVars["writebackIdempotencyKey"]?.ToString(),
++            r2.OutputVars["writebackIdempotencyKey"]?.ToString());
++    }
++
++    // ── T4: 律1 先校验 — 缺 amount → Fail，不留半截脏改 ─────────────────────
++    [Fact]
++    public async Task MissingAmount_Fails_NoPartialWrite()
++    {
++        var ctx = MakeCtx(Guid.NewGuid(), varsJson: "{\"other\":1}");
++        var executor = new SampleDataWritebackExecutor();
++
++        var result = await executor.ExecuteAsync(ctx);
++
++        Assert.False(result.Success);
++        Assert.Null(result.OutputVars);
++        Assert.NotNull(result.Error);
++        Assert.Contains("E-WF-019", result.Error!);
++    }
++
++    // ── T5: 律1 先校验 — amount 非数值 → Fail ──────────────────────────────
++    [Fact]
++    public async Task NonNumericAmount_Fails()
++    {
++        var ctx = MakeCtx(Guid.NewGuid(), varsJson: "{\"amount\":\"abc\"}");
++        var executor = new SampleDataWritebackExecutor();
++
++        var result = await executor.ExecuteAsync(ctx);
++
++        Assert.False(result.Success);
++        Assert.Null(result.OutputVars);
++        Assert.NotNull(result.Error);
++        Assert.Contains("E-WF-019", result.Error!);
++    }
++}
+diff --git a/CP6.Tests/Wf/ServiceCatalogTests.cs b/CP6.Tests/Wf/ServiceCatalogTests.cs
+new file mode 100644
+index 0000000..f732fa0
+--- /dev/null
++++ b/CP6.Tests/Wf/ServiceCatalogTests.cs
+@@ -0,0 +1,71 @@
++// CP6.Tests/Wf/ServiceCatalogTests.cs
++using System;
++using System.Threading.Tasks;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Oa;
++using CP6.Core.Services.Wf;
++using CP6.Core.Services.Wf.Executors;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++public class ServiceCatalogTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++
++    // fake executor to cover the rest of the filter matrix (dataWriteback-but-hidden / wrong-kind)
++    private sealed class FakeExec : IServiceTaskExecutor
++    {
++        public string Key { get; init; } = "";
++        public string Kind { get; init; } = "";
++        public bool VisibleInDesigner { get; init; }
++        public string DisplayName { get; init; } = "";
++        public Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx) => Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    private sealed class FakeConnector : IWfConnector
++    {
++        public string Name { get; init; } = "";
++        public string DisplayName { get; init; } = "";
++        public Task<ServiceTaskResult> CallAsync(string pathTemplate, string? paramsJson, ServiceTaskContext ctx)
++            => Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    [Fact]
++    public void GetServiceCatalog_FiltersWebApiExecutor_From_Actions()
++    {
++        using var db = NewDb();
++
++        var execs = new IServiceTaskExecutor[]
++        {
++            new SampleDataWritebackExecutor(),                                   // dataWriteback + visible → 入
++            new WebApiExecutor(Array.Empty<IWfConnector>()),                     // webApi + invisible → 出（反例）
++            new FakeExec { Key = "hiddenWb",      Kind = ServiceKind.DataWriteback, VisibleInDesigner = false, DisplayName = "隐藏回写" }, // dataWriteback 但不可见 → 出
++            new FakeExec { Key = "internalThing", Kind = "internal",               VisibleInDesigner = true,  DisplayName = "内部件"   }, // 非 dataWriteback → 出
++        };
++        var conns = new IWfConnector[]
++        {
++            new EchoConnector(),                                                 // erpEcho / ERP Echo (demo)
++            new FakeConnector { Name = "erp2", DisplayName = "ERP Two" },
++        };
++
++        var svc = new DesignerService(db, new FlowDefService(db), execs, conns);
++
++        var catalog = svc.GetServiceCatalog();
++
++        // actions: 只含 Kind==dataWriteback && VisibleInDesigner 的 → 恰好 sampleWriteback
++        var action = Assert.Single(catalog.Actions);
++        Assert.Equal("sampleWriteback", action.Name);
++        Assert.Equal("样例数据回写", action.Label);   // label = DisplayName
++        Assert.DoesNotContain(catalog.Actions, a => a.Name == "webApi");        // WebApiExecutor 不出现
++
++        // connectors: 含全部；每项 {name, label(DisplayName)}
++        Assert.Equal(2, catalog.Connectors.Count);
++        Assert.Contains(catalog.Connectors, c => c.Name == "erpEcho" && c.Label == "ERP Echo (demo)");
++        Assert.Contains(catalog.Connectors, c => c.Name == "erp2"    && c.Label == "ERP Two");
++    }
++}
+diff --git a/CP6.Tests/Wf/ServiceTaskValidatorTests.cs b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+new file mode 100644
+index 0000000..d92fb2b
+--- /dev/null
++++ b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+@@ -0,0 +1,214 @@
++// CP6.Tests/Wf/ServiceTaskValidatorTests.cs
++// E-T1: FlowSchemaValidator serviceTask 规则(E-WF-016/017) + DesignerService.save 注册校验(E-WF-018)。
++using System;
++using System.Linq;
++using System.Text.Json;
++using System.Threading.Tasks;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Oa;
++using CP6.Core.Services.Wf;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++public class ServiceTaskValidatorTests
++{
++    // ── 基准合法 schema：webApi serviceTask，配齐 connector+path，1 成功出边 + 1 错误出边 ──
++    // s(start) → svc(serviceTask/webApi) → e(end,成功)  ；svc → ee(end) 标 IsError
++    private static FlowSchema Base() => new()
++    {
++        Start = "s",
++        Nodes =
++        {
++            new FlowNode { Id = "s", Type = "start" },
++            new FlowNode
++            {
++                Id = "svc", Type = "serviceTask",
++                ServiceKind = ServiceKind.WebApi,
++                ServiceConnectorName = "erpEcho",
++                ServicePath = "/orders/{{id}}",
++            },
++            new FlowNode { Id = "e", Type = "end" },
++            new FlowNode { Id = "ee", Type = "end" },
++        },
++        Edges =
++        {
++            new FlowEdge { From = "s", To = "svc" },
++            new FlowEdge { From = "svc", To = "e" },
++            new FlowEdge { From = "svc", To = "ee", IsError = true },
++        },
++    };
++
++    private static FlowNode Svc(FlowSchema s) => s.Nodes.First(n => n.Id == "svc");
++
++    // ── Step 1/3: FlowSchemaValidator serviceTask 规则 ──
++
++    [Fact]
++    public void WebApi_MissingConnector_E_WF_016()
++    {
++        var s = Base(); Svc(s).ServiceConnectorName = null;   // webApi 缺 connector
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void DataWriteback_MissingAction_E_WF_016()
++    {
++        var s = Base();
++        Svc(s).ServiceKind = ServiceKind.DataWriteback;
++        Svc(s).ServiceActionName = null;                       // dataWriteback 缺 action
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void Timer_MissingDelay_E_WF_016()
++    {
++        var s = Base();
++        Svc(s).ServiceKind = ServiceKind.Timer;
++        Svc(s).ServiceDelayMode = null;                        // timer 缺 delayMode
++        Svc(s).ServiceDelayValue = null;                       // 及 delayValue（后端双字段严查）
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void Timer_MissingOnlyDelayMode_E_WF_016()
++    {
++        var s = Base();
++        Svc(s).ServiceKind = ServiceKind.Timer;
++        Svc(s).ServiceDelayMode = null;                        // 只缺 mode（delayValue 有）→ 后端仍拦
++        Svc(s).ServiceDelayValue = "3d";
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void ServiceTask_NonEnd_NoSuccessEdge_E_WF_016()
++    {
++        // P2-3 最危险的洞：serviceTask 仅配错误出边 → 引擎成功路径无后继 → 误结 Approved。
++        var s = Base();
++        s.Edges.RemoveAll(e => e.From == "svc" && e.IsError != true);   // 删掉唯一成功出边
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void MoreThanOneErrorEdge_E_WF_017()
++    {
++        var s = Base();
++        s.Nodes.Add(new FlowNode { Id = "ee2", Type = "end" });
++        s.Edges.Add(new FlowEdge { From = "svc", To = "ee2", IsError = true });   // 第 2 条错误出边
++        Assert.Contains("E-WF-017", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void ErrorEdge_FromNonServiceTask_E_WF_017()
++    {
++        // IsError 边出自 approval 节点 → 非法。
++        var s = new FlowSchema
++        {
++            Start = "s",
++            Nodes =
++            {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "e", Type = "end" },
++                new FlowNode { Id = "ee", Type = "end" },
++            },
++            Edges =
++            {
++                new FlowEdge { From = "s", To = "a" },
++                new FlowEdge { From = "a", To = "e" },
++                new FlowEdge { From = "a", To = "ee", IsError = true },   // 错误边来源非 serviceTask
++            },
++        };
++        Assert.Contains("E-WF-017", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void ValidServiceTask_Passes()
++    {
++        Assert.Empty(FlowSchemaValidator.Validate(Base()));
++    }
++
++    // ── Step 4: DesignerService.save 注册名校验(E-WF-018) ──
++
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++
++    private sealed class FakeExec : IServiceTaskExecutor
++    {
++        public string Key { get; init; } = "";
++        public string Kind { get; init; } = "";
++        public bool VisibleInDesigner { get; init; } = true;
++        public string DisplayName { get; init; } = "";
++        public Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx) => Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    private sealed class FakeConnector : IWfConnector
++    {
++        public string Name { get; init; } = "";
++        public string DisplayName { get; init; } = "";
++        public Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext ctx) => Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    private static DesignerService SvcWith(CP6Context db, string actionKey, string connName) =>
++        new(db, new FlowDefService(db),
++            new IServiceTaskExecutor[] { new FakeExec { Key = actionKey, Kind = ServiceKind.DataWriteback, DisplayName = actionKey } },
++            new IWfConnector[] { new FakeConnector { Name = connName, DisplayName = connName } });
++
++    private static string Json(FlowSchema s) => JsonSerializer.Serialize(s);
++
++    private static FlowSchema DataWritebackSchema(string actionName)
++    {
++        var s = Base();
++        Svc(s).ServiceKind = ServiceKind.DataWriteback;
++        Svc(s).ServiceConnectorName = null;
++        Svc(s).ServicePath = null;
++        Svc(s).ServiceActionName = actionName;
++        return s;
++    }
++
++    [Fact]
++    public async Task Save_DataWriteback_UnregisteredAction_ThrowsE_WF_018()
++    {
++        using var db = NewDb();
++        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
++        var req = new SaveFlowRequest("dw", "回写流程", "leave", null, null, Json(DataWritebackSchema("ghostAction")));
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveAsync(req, null));
++        Assert.Equal("E-WF-018", ex.Message);
++    }
++
++    [Fact]
++    public async Task Save_WebApi_UnregisteredConnector_ThrowsE_WF_018()
++    {
++        using var db = NewDb();
++        var svc = SvcWith(db, actionKey: "realWb", connName: "realConn");
++        var s = Base(); Svc(s).ServiceConnectorName = "ghostConn";   // webApi 引用未注册连接器
++        var req = new SaveFlowRequest("wa", "webApi流程", "leave", null, null, Json(s));
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveAsync(req, null));
++        Assert.Equal("E-WF-018", ex.Message);
++    }
++
++    [Fact]
++    public async Task Save_RegisteredNames_Persists()
++    {
++        using var db = NewDb();
++        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
++        var req = new SaveFlowRequest("ok", "合法流程", "leave", null, null, Json(DataWritebackSchema("realWb")));
++        await svc.SaveAsync(req, "tester");                          // action 已注册 → 不抛
++        Assert.NotNull(await db.Wf_FlowDefs.SingleOrDefaultAsync(d => d.FlowKey == "ok"));
++    }
++
++    [Fact]
++    public async Task Save_ConnectorName_CaseInsensitive_Persists()
++    {
++        // E-WF-018 注册名比较须镜像运行时字典(OrdinalIgnoreCase)：
++        // 注册名 "erpEcho" vs schema 引用 "ErpEcho" 仅大小写不同 → 运行时找得到 → save 也须放行。
++        using var db = NewDb();
++        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
++        var s = Base(); Svc(s).ServiceConnectorName = "ErpEcho";      // 大小写不符的已注册连接器
++        var req = new SaveFlowRequest("ci", "大小写流程", "leave", null, null, Json(s));
++        await svc.SaveAsync(req, "tester");                          // 不应抛 E-WF-018
++        Assert.NotNull(await db.Wf_FlowDefs.SingleOrDefaultAsync(d => d.FlowKey == "ci"));
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Oa/DesignerController.cs b/CP6.WebApi/Controllers/Oa/DesignerController.cs
+index 918d245..f7ddbb0 100644
+--- a/CP6.WebApi/Controllers/Oa/DesignerController.cs
++++ b/CP6.WebApi/Controllers/Oa/DesignerController.cs
+@@ -26,20 +26,24 @@ public class DesignerController : LocalizedControllerBase
+         _ctx = ctx;
+     }
+ 
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet("list")]
+     public async Task<IActionResult> List([FromQuery] string? functionId)
+         => Ok2(await _designer.ListAsync(functionId));
+ 
++    [HttpGet("service-catalog")]
++    public IActionResult ServiceCatalog()
++        => Ok2(_designer.GetServiceCatalog());   // P1-6：按 Kind/VisibleInDesigner 过滤的回写动作 + 连接器
++
+     [HttpGet("load/{flowKey}")]
+     public async Task<IActionResult> Load(string flowKey)
+     {
+         var summary = await _designer.LoadAsync(flowKey);
+         if (summary is null) return NotFound(new { code = 404, message = "E-WF-006" });
+         var def = await _flowDef.GetDefAsync(flowKey);
+         return Ok2(new { summary, schemaJson = def?.SchemaJson ?? "{}" });
+     }
+ 
+     public record SaveReq(string FlowKey, string FlowName, string FormKey, string? FunctionId, string? FlowCode, string SchemaJson);
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 0e65393..db51a4d 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -129,20 +129,21 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetReportService, CP6.Core.
+ builder.Services.AddScoped<CP6.Core.Services.Fin.FinSequenceService>();                                             // A5 BudgetService ctor 注入具体类型（已注册接口；此处补具体类使 DI 可直接解析）
+ 
+ // 4.0c OA(Wf) 阶段3 高级流程（章07）：超时扫描 + Worker（退回/加签/委派为 FlowEngine 自带方法）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Services.Wf.WfTimeoutService>();    // 章07 §4 超时扫描（remind/approve/reject/escalate）
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfServiceJobService, CP6.Core.Services.Wf.WfServiceJobService>();  // B-T2 服务任务异步底座扫描服务（spec §4.1）
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobScanWorker>();                          // B-T2 服务任务扫描 Worker（20s 周期，lease 抢占，v1 单实例）
+ // C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
++builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.SampleDataWritebackExecutor>(); // C-T2 样例 dataWriteback 执行器（设计器可见，黄金模板；纯计算回写，不落库）
+ 
+ // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IFlowAdminService, CP6.Core.Services.Oa.FlowAdminService>();
+ 
+ // 4.0e OA 信箱进阶（Phase C）
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IDelegateService, CP6.Core.Services.Oa.DelegateService>();
+ builder.Services.AddScoped<CP6.Core.Services.Oa.IFavoriteService, CP6.Core.Services.Oa.FavoriteService>();
+@@ -1808,20 +1809,21 @@ using (var scope = app.Services.CreateScope())
+             .Concat(CP6.WebApi.Seed.I18nSec2faScreenSeed.Items)   // S 类 #2 2FA E-SEC-011~019(含012非法策略) + 事件 9~14 + sec.2fa.* 画面词条
+             .Concat(CP6.WebApi.Seed.I18nSecSsoScreenSeed.Items)   // S 类 #3 SSO E-SEC-020~029 + 事件 15~18 + 登录/落地/配置页 + nav.116
+             .Concat(CP6.WebApi.Seed.I18nSecAuditScreenSeed.Items) // S 类 #4 字段审计 sec.audit.* 画面词条（只读模块，无错误码）
+             .Concat(CP6.WebApi.Seed.I18nTenantComplianceSeed.Items) // S 类 #5 多租户合规 E-SEC-031~038 + 事件 19~30 + platform.* 画面词条（带外平台区）
+             .Concat(CP6.WebApi.Seed.I18nOaInboxScreenSeed.Items)   // OA Phase B 电子表单信箱 oa.*/E-WF-001~008/nav.733/734/740
+             .Concat(CP6.WebApi.Seed.I18nOaAdvancedScreenSeed.Items) // OA Phase C 填單/查詢/設定/轉交 oa.catalog.*/oa.initiate.*/oa.settings.*/oa.transfer.*/nav.735/736/737
+             .Concat(CP6.WebApi.Seed.I18nOaDesignerScreenSeed.Items) // OA Phase C′ 流程设计器 oa.designer.*/nav.738
+             .Concat(CP6.WebApi.Seed.I18nOaNotifyScreenSeed.Items)  // OA Phase D-1 通知中心 oa.notify.*/oa.notify.settings.*
+             .Concat(CP6.WebApi.Seed.I18nOaSerialSignScreenSeed.Items)  // WFS 串簽 退回选择器 oa.detail.sendback.* + oa.sendback.* + oa.timeline.sentBack + 设计器档位 oa.designer.stage.* + E-WF-011/012/013
+             .Concat(CP6.WebApi.Seed.I18nOaApproverScreenSeed.Items)  // 审批人解析高级策略 oa.designer.strategy.*/oa.approverMap.*/nav.739/E-WF-014/015
++            .Concat(CP6.WebApi.Seed.I18nOaServiceTaskScreenSeed.Items)  // WFS 服务任务 oa.designer.svc.* + oa.designer.errServiceConfig + E-WF-016/017/018
+             .Where(i => !existingKeys.Contains(i.LangKey))
+             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
+             .ToList();
+         if (toAdd.Count > 0)
+         {
+             SeedLangs(toAdd.ToArray());
+             db.SaveChanges();
+         }
+ 
+         // vue-i18n の特殊文字（@ | { }）はメッセージ編集でコンパイル失敗→画面/タブが空白になる。
+diff --git a/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs b/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
+new file mode 100644
+index 0000000..569ed98
+--- /dev/null
++++ b/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
+@@ -0,0 +1,57 @@
++using CP6.Entity.DomainModels.Sys;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>服务任务(serviceTask)画面词条：oa.designer.svc.*（D-T2/D-T3 前端引用）+ 前端校验 oa.designer.errServiceConfig + 后端错误码 E-WF-016/017/018。
++/// 键面以 cp6.web/src/views/oa/designer 实际引用为权威（ServiceTaskNode.vue / NodePropertyPanel.vue / EdgePropertyPanel.vue / designerModel.ts）。
++/// 去重：本文件全部 25 个 svc.* + errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
++public static class I18nOaServiceTaskScreenSeed
++{
++    public static readonly Sys_Lang[] Items =
++    {
++        // ── 面板标题 / 服务类型 (ServiceTaskNode.vue + NodePropertyPanel.vue) ──
++        new() { LangKey = "oa.designer.svc.title",              ZhCN = "服务任务",       ZhTW = "服務任務",       En = "Service Task",   Ja = "サービスタスク",   Ko = "서비스 태스크" },
++        new() { LangKey = "oa.designer.svc.kind",               ZhCN = "服务类型",       ZhTW = "服務類型",       En = "Service Type",   Ja = "サービス種別",     Ko = "서비스 유형" },
++        new() { LangKey = "oa.designer.svc.kind.dataWriteback", ZhCN = "数据回写",       ZhTW = "資料回寫",       En = "Data Writeback", Ja = "データ書き戻し",   Ko = "데이터 기록" },
++        new() { LangKey = "oa.designer.svc.kind.webApi",        ZhCN = "接口调用",       ZhTW = "介面呼叫",       En = "API Call",       Ja = "API呼び出し",      Ko = "API 호출" },
++        new() { LangKey = "oa.designer.svc.kind.timer",         ZhCN = "定时器",         ZhTW = "計時器",         En = "Timer",          Ja = "タイマー",         Ko = "타이머" },
++
++        // ── 数据回写：动作 / 模式 / 参数模板 (NodePropertyPanel.vue) ──
++        new() { LangKey = "oa.designer.svc.action",             ZhCN = "动作",           ZhTW = "動作",           En = "Action",         Ja = "アクション",       Ko = "액션" },
++        new() { LangKey = "oa.designer.svc.mode",               ZhCN = "执行模式",       ZhTW = "執行模式",       En = "Execution Mode", Ja = "実行モード",       Ko = "실행 모드" },
++        new() { LangKey = "oa.designer.svc.mode.sync",          ZhCN = "同步",           ZhTW = "同步",           En = "Synchronous",    Ja = "同期",             Ko = "동기" },
++        new() { LangKey = "oa.designer.svc.mode.async",         ZhCN = "异步",           ZhTW = "非同步",         En = "Asynchronous",   Ja = "非同期",           Ko = "비동기" },
++        new() { LangKey = "oa.designer.svc.params",             ZhCN = "参数模板",       ZhTW = "參數範本",       En = "Parameter Template", Ja = "パラメータテンプレート", Ko = "파라미터 템플릿" },
++        new() { LangKey = "oa.designer.svc.paramsHint",         ZhCN = "JSON 参数模板，支持表单字段占位", ZhTW = "JSON 參數範本，支援表單欄位佔位", En = "JSON parameter template; supports form-field placeholders", Ja = "JSONパラメータテンプレート（フォーム項目のプレースホルダに対応）", Ko = "JSON 파라미터 템플릿, 양식 필드 자리표시자 지원" },
++
++        // ── 接口调用：连接器 / 路径 (NodePropertyPanel.vue) ──
++        new() { LangKey = "oa.designer.svc.connector",          ZhCN = "连接器",         ZhTW = "連接器",         En = "Connector",      Ja = "コネクタ",         Ko = "커넥터" },
++        new() { LangKey = "oa.designer.svc.path",               ZhCN = "路径",           ZhTW = "路徑",           En = "Path",           Ja = "パス",             Ko = "경로" },
++        new() { LangKey = "oa.designer.svc.pathHint",           ZhCN = "接口相对路径，如 /api/v1/orders", ZhTW = "介面相對路徑，如 /api/v1/orders", En = "API relative path, e.g. /api/v1/orders", Ja = "APIの相対パス（例 /api/v1/orders）", Ko = "API 상대 경로, 예 /api/v1/orders" },
++
++        // ── 定时器：延时模式 / 延时值 / 到点动作 (NodePropertyPanel.vue) ──
++        new() { LangKey = "oa.designer.svc.delayMode",          ZhCN = "延时模式",       ZhTW = "延時模式",       En = "Delay Mode",     Ja = "遅延モード",       Ko = "지연 모드" },
++        new() { LangKey = "oa.designer.svc.delayMode.duration", ZhCN = "时长",           ZhTW = "時長",           En = "Duration",       Ja = "期間",             Ko = "기간" },
++        new() { LangKey = "oa.designer.svc.delayMode.untilDate",ZhCN = "到指定时间",     ZhTW = "到指定時間",     En = "Until Date",     Ja = "指定日時まで",     Ko = "지정 일시까지" },
++        new() { LangKey = "oa.designer.svc.delayMode.untilExpr",ZhCN = "到表达式时间",   ZhTW = "到運算式時間",   En = "Until Expression", Ja = "式で指定した時刻まで", Ko = "표현식 시각까지" },
++        new() { LangKey = "oa.designer.svc.delayValue",         ZhCN = "延时值",         ZhTW = "延時值",         En = "Delay Value",    Ja = "遅延値",           Ko = "지연 값" },
++        new() { LangKey = "oa.designer.svc.delayValueHint",     ZhCN = "如 3d/2h/30m，或日期/表达式", ZhTW = "如 3d/2h/30m，或日期/運算式", En = "e.g. 3d/2h/30m, or a date/expression", Ja = "例 3d/2h/30m、または日付/式", Ko = "예 3d/2h/30m 또는 날짜/표현식" },
++        new() { LangKey = "oa.designer.svc.timerAction",        ZhCN = "到点动作",       ZhTW = "到點動作",       En = "On-Fire Action", Ja = "発火時アクション", Ko = "실행 시 액션" },
++
++        // ── 重试（三 kind 共用）(NodePropertyPanel.vue) ──
++        new() { LangKey = "oa.designer.svc.maxRetries",         ZhCN = "最大重试次数",   ZhTW = "最大重試次數",   En = "Max Retries",    Ja = "最大リトライ回数", Ko = "최대 재시도 횟수" },
++        new() { LangKey = "oa.designer.svc.backoff",            ZhCN = "重试间隔（秒）", ZhTW = "重試間隔（秒）", En = "Retry Backoff (sec)", Ja = "リトライ間隔（秒）", Ko = "재시도 간격(초)" },
++
++        // ── 失败边 (EdgePropertyPanel.vue) ──
++        new() { LangKey = "oa.designer.svc.errorEdge",          ZhCN = "失败边",         ZhTW = "失敗邊",         En = "Error Edge",     Ja = "失敗エッジ",       Ko = "실패 엣지" },
++        new() { LangKey = "oa.designer.svc.errorEdgeHint",      ZhCN = "服务任务重试耗尽后沿此边流转", ZhTW = "服務任務重試耗盡後沿此邊流轉", En = "Taken when the service task exhausts its retries", Ja = "サービスタスクのリトライを使い切ったときにこのエッジを通ります", Ko = "서비스 태스크가 재시도를 모두 소진하면 이 엣지로 진행됩니다" },
++
++        // ── 前端校验消息 (designerModel.ts validateClient) ──
++        new() { LangKey = "oa.designer.errServiceConfig",       ZhCN = "服务任务配置不完整", ZhTW = "服務任務配置不完整", En = "Service task config incomplete", Ja = "サービスタスクの設定が不完全です", Ko = "서비스 태스크 구성이 불완전합니다" },
++
++        // ── 后端错误码 (FlowSchemaValidator / DesignerService / Executors) ──
++        new() { LangKey = "E-WF-016", ZhCN = "服务任务节点配置不完整", ZhTW = "服務任務節點配置不完整", En = "Incomplete service task node configuration", Ja = "サービスタスクノードの設定が不完全です", Ko = "서비스 태스크 노드 구성이 불완전합니다" },
++        new() { LangKey = "E-WF-017", ZhCN = "错误出边配置非法",       ZhTW = "錯誤出邊配置非法",       En = "Invalid error edge configuration",           Ja = "エラーエッジの設定が不正です",           Ko = "오류 엣지 설정이 잘못되었습니다" },
++        new() { LangKey = "E-WF-018", ZhCN = "服务动作或连接器未注册", ZhTW = "服務動作或連接器未註冊", En = "Service action or connector not registered", Ja = "サービスアクションまたはコネクタが未登録です", Ko = "서비스 액션 또는 커넥터가 등록되지 않았습니다" },
++    };
++}
+diff --git a/cp6.web/src/api/oa/designer.ts b/cp6.web/src/api/oa/designer.ts
+index 5967eb5..ec4a308 100644
+--- a/cp6.web/src/api/oa/designer.ts
++++ b/cp6.web/src/api/oa/designer.ts
+@@ -1,10 +1,20 @@
+ import http from '../http'
+ import type { SaveFlowBody } from '@/types/oa/designer'
+ 
++// 服务目录（C-T3 后端 GET /oa/designer/service-catalog）。Ok2 包壳 {code,message,data}，
++// data 为 camelCase {actions,connectors}，各项 {name,label}。剥壳沿用 DesignerView 的 `res.data ?? res` 约定。
++export interface ServiceCatalogItem { name: string; label: string }
++export interface ServiceCatalog { actions: ServiceCatalogItem[]; connectors: ServiceCatalogItem[] }
++
+ export const designerApi = {
+   list:  (functionId?: string) => http.get('/oa/designer/list', { params: { functionId } }),
+   load:  (flowKey: string) => http.get(`/oa/designer/load/${flowKey}`),
+   save:  (body: SaveFlowBody) => http.post('/oa/designer/save', body),
+   clone: (sourceFlowKey: string, newFlowKey: string, newFlowName: string) =>
+            http.post('/oa/designer/clone', { sourceFlowKey, newFlowKey, newFlowName }),
++  getServiceCatalog: async (): Promise<ServiceCatalog> => {
++    const res = await http.get('/oa/designer/service-catalog') as any
++    const d = res?.data ?? res
++    return { actions: d?.actions ?? [], connectors: d?.connectors ?? [] }
++  },
+ }
+diff --git a/cp6.web/src/views/oa/designer/DesignerCanvas.vue b/cp6.web/src/views/oa/designer/DesignerCanvas.vue
+index 7aca701..281aad3 100644
+--- a/cp6.web/src/views/oa/designer/DesignerCanvas.vue
++++ b/cp6.web/src/views/oa/designer/DesignerCanvas.vue
+@@ -10,20 +10,21 @@ import { Controls } from '@vue-flow/controls'
+ import '@vue-flow/core/dist/style.css'
+ import '@vue-flow/core/dist/theme-default.css'
+ import { useI18n } from 'vue-i18n'
+ 
+ import { schemaToGraph, graphToSchema, NODE_PALETTE } from './designerModel'
+ import type { FlowSchemaDto } from './designerModel'
+ import StartNode from './nodes/StartNode.vue'
+ import ApprovalNode from './nodes/ApprovalNode.vue'
+ import GatewayNode from './nodes/GatewayNode.vue'
+ import EndNode from './nodes/EndNode.vue'
++import ServiceTaskNode from './nodes/ServiceTaskNode.vue'
+ 
+ // ── Props & emits ──────────────────────────────────────────────────
+ const props = defineProps<{ modelValue: FlowSchemaDto }>()
+ const emit = defineEmits<{
+   'update:modelValue': [value: FlowSchemaDto]
+   'select': [val: { kind: 'node' | 'edge' | null; id: string | null }]
+ }>()
+ 
+ const { t } = useI18n()
+ 
+@@ -174,53 +175,63 @@ function onKeydown(e: KeyboardEvent) {
+ 
+ onMounted(() => {
+   document.addEventListener('keydown', onKeydown)
+   pushHistory()
+ })
+ onUnmounted(() => {
+   document.removeEventListener('keydown', onKeydown)
+ })
+ 
+ // ── Palette drag-and-drop ──────────────────────────────────────────
+-let dragType = ''
++// dragKey uniquely identifies a palette entry: `type` for single-type nodes,
++// `serviceTask:<kind>` for the three serviceTask entries (same type, distinct kind).
++let dragKey = ''
+ 
+-function onPaletteDragStart(e: DragEvent, type: string) {
+-  dragType = type
+-  e.dataTransfer?.setData('text/plain', type)
++function paletteKey(item: (typeof NODE_PALETTE)[number]): string {
++  return 'kind' in item ? `${item.type}:${item.kind}` : item.type
++}
++
++function onPaletteDragStart(e: DragEvent, item: (typeof NODE_PALETTE)[number]) {
++  dragKey = paletteKey(item)
++  e.dataTransfer?.setData('text/plain', dragKey)
+ }
+ 
+ function onCanvasDragOver(e: DragEvent) {
+   e.preventDefault()
+   if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy'
+ }
+ 
+ function onCanvasDrop(e: DragEvent) {
+   e.preventDefault()
+-  const type = dragType || e.dataTransfer?.getData('text/plain') || ''
+-  if (!type) return
++  const key = dragKey || e.dataTransfer?.getData('text/plain') || ''
++  if (!key) return
+   const el = vfWrapperRef.value
+   if (!el) return
+   const rect = el.getBoundingClientRect()
+   // project(): converts VueFlow-container-relative coordinates to flow coordinates
+   const pos = project({ x: e.clientX - rect.left, y: e.clientY - rect.top })
+-  const palette = NODE_PALETTE.find((p) => p.type === type)
++  const palette = NODE_PALETTE.find((p) => paletteKey(p) === key)
++  if (!palette) { dragKey = ''; return }
++  const type = palette.type
++  // serviceTask 落点预置 serviceKind（D-T1 graphToSchema 会随 data 透传，保证 round-trip）。
++  const serviceKind = 'kind' in palette ? palette.kind : undefined
+   pushHistory()
+   addNodes([
+     {
+       id: `n${Date.now()}`,
+       type,
+       position: pos,
+-      label: palette?.label ?? type,
+-      data: { type, name: palette?.label ?? type },
++      label: palette.label,
++      data: { type, name: palette.label, ...(serviceKind ? { serviceKind } : {}) },
+     } satisfies Node,
+   ])
+-  dragType = ''
++  dragKey = ''
+ }
+ 
+ // ── Auto layout (BFS from start node) ─────────────────────────────
+ function autoLayout() {
+   const ns = nodes.value
+   const es = edges.value
+   if (!ns.length) return
+ 
+   const startNode = ns.find((n) => n.type === 'start') ?? ns[0]
+   if (!startNode) return                     // guarded by ns.length check above; keeps TS happy
+@@ -334,24 +345,24 @@ function focusNode(nodeId: string) {
+               <span class="sr-name">{{ (n.data as Record<string, unknown>)?.name as string }}</span>
+             </div>
+           </div>
+         </div>
+ 
+         <div class="palette-label">{{ t('oa.designer.palette') }}</div>
+ 
+         <!-- Palette node types -->
+         <div
+           v-for="item in NODE_PALETTE"
+-          :key="item.type"
++          :key="item.label"
+           class="palette-item"
+           draggable="true"
+-          @dragstart="onPaletteDragStart($event, item.type)"
++          @dragstart="onPaletteDragStart($event, item)"
+         >
+           <span class="palette-dot" :class="`dot-${item.type}`" />
+           {{ item.label }}
+         </div>
+       </div>
+ 
+       <!-- VueFlow canvas wrapper -->
+       <div
+         ref="vfWrapperRef"
+         class="canvas-flow-wrap"
+@@ -375,20 +386,23 @@ function focusNode(nodeId: string) {
+           </template>
+           <template #node-parallelSplit="nodeProps">
+             <GatewayNode v-bind="nodeProps" />
+           </template>
+           <template #node-parallelJoin="nodeProps">
+             <GatewayNode v-bind="nodeProps" />
+           </template>
+           <template #node-end="nodeProps">
+             <EndNode v-bind="nodeProps" />
+           </template>
++          <template #node-serviceTask="nodeProps">
++            <ServiceTaskNode v-bind="nodeProps" />
++          </template>
+ 
+           <!-- Background & Controls -->
+           <Background v-if="showGrid" variant="lines" />
+           <Controls />
+         </VueFlow>
+       </div>
+     </div>
+   </div>
+ </template>
+ 
+@@ -495,20 +509,22 @@ function focusNode(nodeId: string) {
+   border-radius: 50%;
+   flex-shrink: 0;
+ }
+ /* Palette legend swatches — node-type semantic colors, kept in lockstep
+    with the rendered node borders (StartNode/ApprovalNode/GatewayNode/EndNode). */
+ .dot-start { background: var(--cp-ok); }
+ .dot-approval { background: var(--cp-info); }
+ .dot-parallelSplit,
+ .dot-parallelJoin { background: var(--cp-warn); }
+ .dot-end { background: var(--cp-muted); }
++/* serviceTask 三 kind 共用 brand 青，与 ServiceTaskNode 节点身份一致（虚线机器节点）。 */
++.dot-serviceTask { background: var(--cp-brand); }
+ 
+ .canvas-flow-wrap {
+   flex: 1;
+   min-width: 0;
+   min-height: 0;
+   position: relative;
+ }
+ 
+ /* VueFlow fills the wrapper */
+ .canvas-flow-wrap :deep(.vue-flow) {
+diff --git a/cp6.web/src/views/oa/designer/EdgePropertyPanel.vue b/cp6.web/src/views/oa/designer/EdgePropertyPanel.vue
+index 1a80d06..85da494 100644
+--- a/cp6.web/src/views/oa/designer/EdgePropertyPanel.vue
++++ b/cp6.web/src/views/oa/designer/EdgePropertyPanel.vue
+@@ -86,20 +86,26 @@ async function searchCcUsers(kw: string) {
+         :label="t('oa.designer.conditionExpr')"
+       >
+         <el-input
+           v-model="local.condition"
+           type="textarea"
+           :rows="2"
+           :placeholder="t('oa.designer.conditionPlaceholder')"
+         />
+       </el-form-item>
+ 
++      <!-- 失败边（IsError）：服务任务失败耗尽时走此边（D-T3）-->
++      <el-form-item>
++        <el-checkbox v-model="local.isError">{{ t('oa.designer.svc.errorEdge') }}</el-checkbox>
++      </el-form-item>
++      <div class="edge-error-hint">{{ t('oa.designer.svc.errorEdgeHint') }}</div>
++
+       <!-- 知會人員 -->
+       <el-form-item :label="t('oa.designer.ccUsers')">
+         <el-select
+           v-model="local.ccUsers"
+           style="width: 100%"
+           multiple
+           filterable
+           remote
+           :remote-method="searchCcUsers"
+           :loading="ccUserSearchLoading"
+@@ -142,11 +148,18 @@ async function searchCcUsers(kw: string) {
+ .prop-form :deep(.el-form-item) {
+   margin-bottom: 10px;
+ }
+ 
+ .prop-form :deep(.el-form-item__label) {
+   font-size: 12px;
+   color: var(--cp-text);
+   padding-bottom: 2px;
+   line-height: 1.4;
+ }
++
++.edge-error-hint {
++  font-size: 12px;
++  color: var(--cp-text-muted);
++  line-height: 1.4;
++  margin: -4px 0 10px;
++}
+ </style>
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+index 94a5113..89589e1 100644
+--- a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+@@ -1,15 +1,17 @@
+ <script setup lang="ts">
+ import { ref, computed, watch, nextTick } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { userApi } from '@/api/sys/user'
+ import { roleApi } from '@/api/sys/role'
++import { designerApi } from '@/api/oa/designer'
++import type { ServiceCatalog } from '@/api/oa/designer'
+ import CpTag from '@/components/base/CpTag.vue'
+ import type { SchemaNode } from './designerModel'
+ 
+ const props = defineProps<{ node: SchemaNode }>()
+ const emit = defineEmits<{ update: [patch: Partial<SchemaNode>] }>()
+ const { t } = useI18n()
+ 
+ // ── Local copy (mirrors props.node; changes emit 'update') ────────
+ function cloneNode(n: SchemaNode): SchemaNode {
+   return {
+@@ -45,20 +47,41 @@ watch(
+ 
+ // ── Timeout: stored as hours, UI shows days ───────────────────────
+ const timeoutDays = computed({
+   get: () => (local.value.timeoutHours != null ? local.value.timeoutHours / 24 : 0),
+   set: (v: number | null) => {
+     local.value.timeoutHours = v != null && v > 0 ? Math.round(v * 24) : undefined
+   },
+ })
+ 
+ const isApproval = computed(() => local.value.type === 'approval')
++const isServiceTask = computed(() => local.value.type === 'serviceTask')
++
++// ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
++const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
++
++// 组件被 Vue 复用（node↔node 切换无 :key）时 onMounted 只跑一次，
++// 首挂非 serviceTask 会永久漏拉；改用 watch(immediate) + 已加载标记，失败可重试。
++const catalogLoaded = ref(false)
++watch(
++  isServiceTask,
++  async (v) => {
++    if (!v || catalogLoaded.value) return
++    catalogLoaded.value = true
++    try {
++      catalog.value = await designerApi.getServiceCatalog()
++    } catch {
++      catalogLoaded.value = false // HTTP interceptor toasts；允许下次重试
++    }
++  },
++  { immediate: true },
++)
+ 
+ // ── 串簽启用状态 ──────────────────────────────────────────────────
+ const stageEnabled = computed(
+   () => Array.isArray(local.value.stages) && local.value.stages.length > 0,
+ )
+ 
+ function toggleStages(v: boolean) {
+   if (v) {
+     local.value.stages = [{ kind: 'fixed', countersign: 'all' }]
+   } else {
+@@ -96,21 +119,21 @@ function moveStageUp(idx: number) {
+ 
+ function moveStageDown(idx: number) {
+   const arr = local.value.stages
+   if (!arr || idx >= arr.length - 1) return
+   const tmp = arr[idx + 1]!
+   arr[idx + 1] = arr[idx]!
+   arr[idx] = tmp
+ }
+ 
+ // ── Collapse ──────────────────────────────────────────────────────
+-const collapseActive = ref<string[]>(['basic', 'stages', 'advanced', 'cc'])
++const collapseActive = ref<string[]>(['basic', 'stages', 'service', 'advanced', 'cc'])
+ 
+ // ── User search (Specified approver, reused for stages) ──────────
+ interface UserOpt { label: string; value: string }
+ const userOptions = ref<UserOpt[]>([])
+ const userSearchLoading = ref(false)
+ 
+ async function searchUsers(kw: string) {
+   if (!kw) { userOptions.value = []; return }
+   userSearchLoading.value = true
+   try {
+@@ -302,20 +325,155 @@ async function searchCcUsers(kw: string) {
+               <el-select v-model="local.countersign" style="width: 100%" clearable>
+                 <el-option value="all"  :label="t('oa.designer.countersign.all')" />
+                 <el-option value="any"  :label="t('oa.designer.countersign.any')" />
+                 <el-option value="veto" :label="t('oa.designer.countersign.veto')" />
+               </el-select>
+             </el-form-item>
+           </template>
+         </el-form>
+       </el-collapse-item>
+ 
++      <!-- ── 服务任务配置（serviceTask 专属，按 serviceKind 切换）────── -->
++      <el-collapse-item
++        v-if="isServiceTask"
++        :title="t('oa.designer.svc.title')"
++        name="service"
++      >
++        <el-form label-position="top" size="small" class="prop-form">
++          <!-- 服务类型 -->
++          <el-form-item :label="t('oa.designer.svc.kind')">
++            <el-select v-model="local.serviceKind" style="width: 100%">
++              <el-option value="dataWriteback" :label="t('oa.designer.svc.kind.dataWriteback')" />
++              <el-option value="webApi"        :label="t('oa.designer.svc.kind.webApi')" />
++              <el-option value="timer"         :label="t('oa.designer.svc.kind.timer')" />
++            </el-select>
++          </el-form-item>
++
++          <!-- 数据回写：动作 / 模式 / 参数模板 -->
++          <template v-if="local.serviceKind === 'dataWriteback'">
++            <el-form-item :label="t('oa.designer.svc.action')">
++              <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
++                <el-option
++                  v-for="a in catalog.actions"
++                  :key="a.name"
++                  :value="a.name"
++                  :label="a.label || a.name"
++                />
++              </el-select>
++            </el-form-item>
++
++            <el-form-item :label="t('oa.designer.svc.mode')">
++              <el-select v-model="local.serviceMode" style="width: 100%" clearable>
++                <el-option value="sync"  :label="t('oa.designer.svc.mode.sync')" />
++                <el-option value="async" :label="t('oa.designer.svc.mode.async')" />
++              </el-select>
++            </el-form-item>
++
++            <el-form-item :label="t('oa.designer.svc.params')">
++              <el-input
++                v-model="local.serviceParamsJson"
++                type="textarea"
++                :rows="3"
++                :placeholder="t('oa.designer.svc.paramsHint')"
++              />
++            </el-form-item>
++          </template>
++
++          <!-- 接口调用：连接器 / 路径 / 参数 / 模式 -->
++          <template v-else-if="local.serviceKind === 'webApi'">
++            <el-form-item :label="t('oa.designer.svc.connector')">
++              <el-select v-model="local.serviceConnectorName" style="width: 100%" clearable>
++                <el-option
++                  v-for="c in catalog.connectors"
++                  :key="c.name"
++                  :value="c.name"
++                  :label="c.label || c.name"
++                />
++              </el-select>
++            </el-form-item>
++
++            <el-form-item :label="t('oa.designer.svc.path')">
++              <el-input
++                v-model="local.servicePath"
++                :placeholder="t('oa.designer.svc.pathHint')"
++                clearable
++              />
++            </el-form-item>
++
++            <el-form-item :label="t('oa.designer.svc.params')">
++              <el-input
++                v-model="local.serviceParamsJson"
++                type="textarea"
++                :rows="3"
++                :placeholder="t('oa.designer.svc.paramsHint')"
++              />
++            </el-form-item>
++
++            <el-form-item :label="t('oa.designer.svc.mode')">
++              <el-select v-model="local.serviceMode" style="width: 100%" clearable>
++                <el-option value="sync"  :label="t('oa.designer.svc.mode.sync')" />
++                <el-option value="async" :label="t('oa.designer.svc.mode.async')" />
++              </el-select>
++            </el-form-item>
++          </template>
++
++          <!-- 定时器：延时模式 / 延时值 / 可选到点动作 -->
++          <template v-else-if="local.serviceKind === 'timer'">
++            <el-form-item :label="t('oa.designer.svc.delayMode')">
++              <el-radio-group v-model="local.serviceDelayMode">
++                <el-radio value="duration">{{ t('oa.designer.svc.delayMode.duration') }}</el-radio>
++                <el-radio value="untilDate">{{ t('oa.designer.svc.delayMode.untilDate') }}</el-radio>
++                <el-radio value="untilExpr">{{ t('oa.designer.svc.delayMode.untilExpr') }}</el-radio>
++              </el-radio-group>
++            </el-form-item>
++
++            <el-form-item :label="t('oa.designer.svc.delayValue')">
++              <el-input
++                v-model="local.serviceDelayValue"
++                :placeholder="t('oa.designer.svc.delayValueHint')"
++                clearable
++              />
++            </el-form-item>
++
++            <el-form-item :label="t('oa.designer.svc.timerAction')">
++              <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
++                <el-option
++                  v-for="a in catalog.actions"
++                  :key="a.name"
++                  :value="a.name"
++                  :label="a.label || a.name"
++                />
++              </el-select>
++            </el-form-item>
++          </template>
++
++          <!-- 重试（三 kind 共用）-->
++          <el-form-item :label="t('oa.designer.svc.maxRetries')">
++            <el-input-number
++              v-model="local.serviceMaxRetries"
++              :min="0"
++              :max="10"
++              style="width: 100%"
++            />
++          </el-form-item>
++
++          <el-form-item :label="t('oa.designer.svc.backoff')">
++            <el-input-number
++              v-model="local.serviceRetryBackoffSec"
++              :min="0"
++              :step="5"
++              style="width: 100%"
++            />
++          </el-form-item>
++        </el-form>
++      </el-collapse-item>
++
+       <!-- ── 串簽档位（审批节点专属）──────────────────── -->
+       <el-collapse-item
+         v-if="isApproval"
+         :title="t('oa.designer.stagesSection')"
+         name="stages"
+       >
+         <el-form label-position="top" size="small" class="prop-form">
+           <!-- 启用开关 -->
+           <el-form-item>
+             <el-switch
+diff --git a/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts b/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts
+new file mode 100644
+index 0000000..2027862
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts
+@@ -0,0 +1,23 @@
++import { describe, it, expect } from 'vitest'
++import { schemaToGraph, graphToSchema, validateClient, NODE_PALETTE } from './designerModel'
++
++describe('serviceTask round-trip', () => {
++  it('palette has 3 serviceTask entries', () => {
++    const st = NODE_PALETTE.filter(p => p.type === 'serviceTask')
++    expect(st.map(p => (p as any).kind).sort()).toEqual(['dataWriteback','timer','webApi'])
++  })
++  it('schemaToGraph/graphToSchema preserves Service* fields', () => {
++    const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'webApi', serviceMode:'async',
++      serviceConnectorName:'erpEcho', servicePath:'/o', serviceParamsJson:'{}', serviceMaxRetries:3 }],
++      edges:[{ from:'s', to:'e', isError:true }] }
++    const back = graphToSchema(schemaToGraph(schema as any))
++    expect(back.nodes[0]!.serviceKind).toBe('webApi')
++    expect(back.nodes[0]!.serviceConnectorName).toBe('erpEcho')
++    expect(back.edges[0]!.isError).toBe(true)
++  })
++  it('validateClient flags incomplete serviceTask', () => {
++    const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'webApi' /* 缺 connector/path */ }], edges:[] }
++    const errs = validateClient(schema as any)
++    expect(errs.some(e => e.includes('errServiceConfig') || e.includes('服务'))).toBe(true)
++  })
++})
+diff --git a/cp6.web/src/views/oa/designer/designerModel.test.ts b/cp6.web/src/views/oa/designer/designerModel.test.ts
+index 684bd63..5f4e5a5 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.test.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.test.ts
+@@ -33,23 +33,23 @@ describe('designerModel', () => {
+   })
+ 
+   it('validateClient flags missing start + edge to unknown node', () => {
+     expect(validateClient(schema as any)).toEqual([])
+     const noStart = { ...schema, nodes: schema.nodes.filter(n => n.type !== 'start') }
+     expect(validateClient(noStart as any).length).toBeGreaterThan(0)
+     const ghost = { ...schema, edges: [...schema.edges, { from: 'a', to: 'zzz' }] }
+     expect(validateClient(ghost as any).length).toBeGreaterThan(0)
+   })
+ 
+-  it('NODE_PALETTE lists the 5 engine node types', () => {
+-    expect(NODE_PALETTE.map(p => p.type).sort())
+-      .toEqual(['approval', 'end', 'parallelJoin', 'parallelSplit', 'start'])
++  it('NODE_PALETTE lists the engine node types (incl. serviceTask)', () => {
++    expect([...new Set(NODE_PALETTE.map(p => p.type))].sort())
++      .toEqual(['approval', 'end', 'parallelJoin', 'parallelSplit', 'serviceTask', 'start'])
+   })
+ 
+   it('round-trips serial stages', () => {
+     const schema: FlowSchemaDto = { start: 'ap', nodes: [
+       { id: 'ap', type: 'approval', stages: [
+         { kind: 'fixed', approverStrategy: 'Specified', countersign: 'all', name: '档1' },
+         { kind: 'managerChain', maxLevels: 2, countersign: 'all', name: '逐级' },
+       ] },
+       { id: 'end', type: 'end' },
+     ], edges: [{ from: 'ap', to: 'end' }] }
+diff --git a/cp6.web/src/views/oa/designer/designerModel.ts b/cp6.web/src/views/oa/designer/designerModel.ts
+index f03c535..c5025f0 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.ts
+@@ -34,67 +34,94 @@ export interface SchemaNode {
+   approverStrategy?: string; approverLevels?: number; approverRoleId?: number; approverUserId?: string
+   countersign?: string; timeoutHours?: number; timeoutAction?: string
+   allowReject?: boolean                                // 允许退回
+   ccUsers?: string[]; ccRoleId?: number
+   stages?: ApprovalStageDto[]                          // 串簽多档审批配置
+   approverFieldName?: string
+   approverMapKey?: string
+   approverWhen?: string
+   approverFilter?: string
+   approverMembers?: ApproverSpecDto[]
++  // 服务任务（serviceTask）配置——镜像后端 FlowNode 的 Service* / IsError（后端 PascalCase，交换 JSON 用 camelCase）
++  serviceKind?: 'dataWriteback' | 'webApi' | 'timer'
++  serviceMode?: string                                 // sync | async
++  serviceActionName?: string                           // dataWriteback：服务目录 action
++  serviceConnectorName?: string                        // webApi：连接器
++  servicePath?: string                                 // webApi：路径
++  serviceParamsJson?: string
++  serviceDelayMode?: string                            // timer：固定/相对
++  serviceDelayValue?: string                           // timer：延时值（镜像后端 string? ServiceDelayValue，承载 "3d"/"PT2H"/日期串）
++  serviceMaxRetries?: number
++  serviceRetryBackoffSec?: number
+   x?: number; y?: number
+ }
+-export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[] }
++export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[]; isError?: boolean }
+ export interface FlowSchemaDto { start?: string; nodes: SchemaNode[]; edges: SchemaEdge[] }
+ 
+ // node-identity swatches (categorical, chart-color family §2.5). Rendering uses the
+ // tokenized `.dot-<type>` CSS classes in DesignerCanvas; this `color` field is legacy metadata.
+ export const NODE_PALETTE = [
+   { type: 'start',         label: '填單(发起)', color: '#67c23a' }, /* cp-chart-color */
+   { type: 'approval',      label: '審批',       color: '#409eff' }, /* cp-chart-color */
+   { type: 'parallelSplit', label: '并行分叉',   color: '#e6a23c' }, /* cp-chart-color */
+   { type: 'parallelJoin',  label: '并行汇聚',   color: '#e6a23c' }, /* cp-chart-color */
+   { type: 'end',           label: '結束',       color: '#909399' }, /* cp-chart-color */
++  // 服务任务三入口（同 type='serviceTask'，以 kind 区分）。色彩由组件层 `.dot-<type>` token 决定，
++  // 故不带 color 字段（OA 批次4 已裁定 color 为死字段；DesignerCanvas 只读 type/label）。
++  { type: 'serviceTask',   kind: 'dataWriteback', label: '数据回写' },
++  { type: 'serviceTask',   kind: 'webApi',        label: '接口调用' },
++  { type: 'serviceTask',   kind: 'timer',         label: '定时器' },
+ ] as const
+ 
+ /** FlowSchema → Vue Flow 图（节点带 position + data 全字段；边 source/target + data 条件/CC）。 */
+ export function schemaToGraph(schema: FlowSchemaDto): { nodes: VFNode[]; edges: VFEdge[] } {
+   const nodes: VFNode[] = (schema.nodes ?? []).map((n, i) => ({
+     id: n.id,
+     type: n.type || 'approval',
+     position: { x: n.x ?? 80, y: n.y ?? i * 120 },        // 无坐标→竖排兜底
+     data: { ...n },
+     label: n.name || n.id,
+   }))
+   const edges: VFEdge[] = (schema.edges ?? []).map(e => ({
+     id: `${e.from}__${e.to}`,
+     source: e.from,
+     target: e.to,
+-    data: { condition: e.condition, ccUsers: e.ccUsers },
++    data: { condition: e.condition, ccUsers: e.ccUsers, isError: e.isError },
+     label: e.condition || undefined,
+   }))
+   return { nodes, edges }
+ }
+ 
+-/** Vue Flow 图 → FlowSchema（start = type==='start' 的节点；回写 x/y）。 */
+-export function graphToSchema(nodes: VFNode[], edges: VFEdge[]): FlowSchemaDto {
++/**
++ * Vue Flow 图 → FlowSchema（start = type==='start' 的节点；回写 x/y）。
++ * 支持两种调用：`graphToSchema(nodes, edges)` 或 `graphToSchema(schemaToGraph(...))`。
++ */
++export function graphToSchema(graph: { nodes: VFNode[]; edges: VFEdge[] }): FlowSchemaDto
++export function graphToSchema(nodes: VFNode[], edges: VFEdge[]): FlowSchemaDto
++export function graphToSchema(
++  a: VFNode[] | { nodes: VFNode[]; edges: VFEdge[] },
++  b?: VFEdge[],
++): FlowSchemaDto {
++  const nodes: VFNode[] = Array.isArray(a) ? a : a.nodes
++  const edges: VFEdge[] = Array.isArray(a) ? (b ?? []) : a.edges
+   const sn: SchemaNode[] = nodes.map(n => ({
+     ...(n.data as SchemaNode),
+     id: n.id,
+     type: (n.data as SchemaNode)?.type || n.type || 'approval',
+     x: n.position?.x,
+     y: n.position?.y,
+   }))
+   const se: SchemaEdge[] = edges.map(e => ({
+     from: e.source, to: e.target,
+     condition: (e.data as any)?.condition || undefined,
+     ccUsers: (e.data as any)?.ccUsers || undefined,
++    isError: (e.data as any)?.isError || undefined,
+   }))
+   const start = sn.find(n => n.type === 'start')?.id
+   return { start, nodes: sn, edges: se }
+ }
+ 
+ /** 客户端基本校验（后端 FlowSchemaValidator 的轻量镜像；保存前预检）。返回错误文案 key 数组。 */
+ export function validateClient(schema: FlowSchemaDto): string[] {
+   const errs: string[] = []
+   const nodes = schema.nodes ?? [], edges = schema.edges ?? []
+   const ids = new Set(nodes.map(n => n.id))
+@@ -112,12 +139,24 @@ export function validateClient(schema: FlowSchemaDto): string[] {
+         if (!ruleOk || !csOk) { errs.push('oa.designer.errStageInvalid'); break }
+       }
+     }
+   }
+   for (const n of nodes) {
+     if (n.type !== 'approval') continue
+     if (n.approverStrategy === 'FormField' && !n.approverFieldName) errs.push('oa.designer.errApproverConfig')
+     if (n.approverStrategy === 'DataMap' && (!n.approverMapKey || !n.approverFieldName)) errs.push('oa.designer.errApproverConfig')
+     if (n.approverStrategy === 'Group' && !(n.approverMembers?.length)) errs.push('oa.designer.errApproverConfig')
+   }
++  // serviceTask 必填校验（镜像后端 E-WF-016）：webApi 缺 connector/path、dataWriteback 缺 action、timer 缺 delay。
++  for (const n of nodes) {
++    if (n.type !== 'serviceTask') continue
++    const ok = n.serviceKind === 'webApi'
++      ? !!n.serviceConnectorName && !!n.servicePath
++      : n.serviceKind === 'dataWriteback'
++        ? !!n.serviceActionName
++        : n.serviceKind === 'timer'
++          ? n.serviceDelayValue != null
++          : false                                        // 缺/未知 serviceKind 即配置不完整
++    if (!ok) errs.push('oa.designer.errServiceConfig')
++  }
+   return errs
+ }
+diff --git a/cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue b/cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue
+new file mode 100644
+index 0000000..6972a79
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue
+@@ -0,0 +1,91 @@
++<script setup lang="ts">
++import { computed } from 'vue'
++import { Handle, Position } from '@vue-flow/core'
++import type { NodeProps } from '@vue-flow/core'
++import { useI18n } from 'vue-i18n'
++
++const props = defineProps<NodeProps>()
++const { t } = useI18n()
++
++type ServiceKind = 'dataWriteback' | 'webApi' | 'timer'
++type NodeData = {
++  name?: string
++  serviceKind?: ServiceKind
++}
++
++// 机器节点双重编码之一：图标字符（不依赖色相辨识，与虚线笔触并列）。
++const KIND_ICON: Record<ServiceKind, string> = {
++  dataWriteback: '⤓',
++  webApi: '⚡',
++  timer: '⏱',
++}
++
++const kind = computed<ServiceKind>(() => {
++  const k = (props.data as NodeData)?.serviceKind
++  return k === 'webApi' || k === 'timer' ? k : 'dataWriteback'
++})
++const icon = computed(() => KIND_ICON[kind.value])
++const kindLabel = computed(() => t(`oa.designer.svc.kind.${kind.value}`))
++const name = computed(() => (props.data as NodeData)?.name || t('oa.designer.svc.title'))
++</script>
++
++<template>
++  <div :class="['vf-node-service', { 'vf-node--selected': props.selected }]">
++    <Handle type="target" :position="Position.Top" />
++    <div class="node-label">
++      <span class="node-kind-icon" aria-hidden="true">{{ icon }}</span>
++      <span class="node-label-text">{{ name }}</span>
++    </div>
++    <div class="node-strategy">{{ kindLabel }}</div>
++    <Handle type="source" :position="Position.Bottom" />
++  </div>
++</template>
++
++<style scoped>
++/* 机器节点（serviceTask）：虚线笔触区分人类节点（填單/審批）的实线；
++   三 kind 共用 brand 青，由图标+线型双重编码辨识，不发三色相。 */
++.vf-node-service {
++  background: var(--cp-brand-bg);
++  border: 2px dashed var(--cp-brand);
++  border-radius: var(--cp-r-sm);
++  padding: 8px 16px;
++  min-width: 130px;
++  text-align: center;
++  font-size: 13px;
++  color: var(--cp-text);
++  cursor: default;
++}
++.vf-node-service.vf-node--selected {
++  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-brand) 50%, transparent);
++}
++.node-label {
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  gap: 6px;
++  font-weight: 500;
++  white-space: nowrap;
++}
++.node-kind-icon {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 16px;
++  height: 16px;
++  flex-shrink: 0;
++  background: var(--cp-brand-bg);
++  border-radius: 4px;
++  font-size: 11px;
++  line-height: 1;
++  color: var(--cp-brand);
++}
++.node-label-text {
++  white-space: nowrap;
++}
++.node-strategy {
++  font-size: 11px;
++  color: var(--cp-brand);
++  margin-top: 2px;
++  white-space: nowrap;
++}
++</style>
+diff --git a/docs/superpowers/qa/wfs-service-task/README.md b/docs/superpowers/qa/wfs-service-task/README.md
+new file mode 100644
+index 0000000..129616a
+--- /dev/null
++++ b/docs/superpowers/qa/wfs-service-task/README.md
+@@ -0,0 +1,240 @@
++# WFS Service Task (E-T3) -- QA Runbook
++
++**Branch:** `feat/wfs-service-task-finish`
++**Date:** 2026-07-05
++**Feature scope:** serviceTask node full chain -- engine dispatch (sync / async / timer),
++async job queue + lease worker, dataWriteback + webApi executors, EchoConnector,
++timer due-time computation, error edges (`isError`), designer palette + property
++panel + validation (E-WF-016/017/018), service catalog endpoint, i18n.
++
++> **Status: written, not run.** This harness is authored per task E-T3 (write-only).
++> Live QA (spin up the backend against the isolated DB, run the ps1, drive the
++> designer in a real browser) is executed later by the main agent with a QA user
++> present. Nothing here has been executed.
++
++---
++
++## 1. What this harness covers
++
++Six runtime scenarios (HTTP e2e, `qa_service_task.ps1`) plus real-browser designer
++scenarios (manual, gstack). The three deliverables:
++
++| File | Purpose |
++| --- | --- |
++| `seed.sql` | 2 users + 1 FormDef + 6 FlowDefs (one per scenario), raw INSERT into `CP6DB_OA`. |
++| `qa_service_task.ps1` | HTTP e2e over the 6 scenarios against a running backend (ASCII data). |
++| `README.md` | This runbook: setup, scenario matrix, expected results, browser steps. |
++
++### Scenario matrix
++
++| # | FlowKey | serviceKind / mode | Action | Expected terminal outcome |
++| --- | --- | --- | --- | --- |
++| 1 | `svc-sync-writeback` | dataWriteback / sync | `sampleWriteback` | Instance **Approved** at submit; VarsJson has `writebackEcho`. |
++| 2 | `svc-async-webapi` | webApi / async | `erpEcho` `/erp/echo/{amount}` | Submit -> Running + 1 Pending job; after worker scan **Approved**; VarsJson has `echoedPath`. |
++| 3 | `svc-timer-wait` | timer / async (forced) | none (pure wait) | Submit -> Running; after 10s due + scan **Approved**. |
++| 4 | `svc-timer-action` | timer / async (forced) | `erpEcho` at due time | Submit -> Running; after due + scan **Approved**; VarsJson has `echoedPath`. |
++| 5 | `svc-fail-erroredge` | webApi / async | GHOST connector (unregistered) | Fail -> retries exhausted -> **IsError edge** -> human node; instance stays **Running**; `wf.serviceError` in VarsJson. |
++| 6 | `svc-fail-suspend` | webApi / async | GHOST connector (unregistered) | Fail -> retries exhausted -> no error edge -> **Suspended (4)**; `wf.serviceError` in VarsJson. |
++
++---
++
++## 2. Environment setup
++
++### 2.1 Isolated database
++
++Reuse the `CP6DB_OA` database from prior WFS QA sessions, or create fresh:
++
++```sql
++CREATE DATABASE CP6DB_OA;
++```
++
++Point the backend at it so QA data never touches live `CP6DB`.
++
++### 2.2 Apply migrations + seed
++
++On first boot `db.Database.Migrate()` applies all EF migrations, including
++`20260629142700_WfsServiceTask` which creates the **`Wf_ServiceJob`** table
++(columns: `Kind`, `ActionRefJson`, `DueAtUtc`, `Status`, `AttemptCount`,
++`MaxAttempts`, `NextAttemptAtUtc`, `LockedBy`/`LockedAtUtc`/`LockExpiresAtUtc`
++lease trio, `LastError`, `RowVersion`) plus indexes `IX_Wf_ServiceJob_Instance`,
++`IX_Wf_ServiceJob_Scan`, and the filtered unique index
++`UX_Wf_ServiceJob_LiveToken` on `(TenantId, TokenId, NodeId) WHERE Status IN (0,1)`.
++
++Confirm the migration applied, then seed (native shell, **not** git-bash):
++
++```
++sqlcmd -S "localhost\KOUSQLSERVER" -d CP6DB_OA -E -C -Q "SELECT MigrationId FROM __EFMigrationsHistory WHERE MigrationId LIKE '%WfsServiceTask%'"
++sqlcmd -S "localhost\KOUSQLSERVER" -d CP6DB_OA -E -C -i seed.sql
++```
++
++The seed prints a 9-row sanity report (2 users + 1 form + 6 flowdefs).
++
++### 2.3 Backend
++
++Prior sessions use ports 5177 (Space) / 5178 (serial) / 5179 (approver); start
++this one on **5180**:
++
++```powershell
++cd <repo>\CP6.WebApi
++$env:ConnectionStrings__DefaultConnection = "Server=localhost\KOUSQLSERVER;Database=CP6DB_OA;Trusted_Connection=True;TrustServerCertificate=True;"
++dotnet run --urls "http://localhost:5180"
++```
++
++The `WfServiceJobScanWorker` background service starts automatically and scans
++every **20 seconds** (`WfServiceJobScanWorker.Interval`). There is **no manual
++scan endpoint** -- async scenarios wait for the worker.
++
++---
++
++## 3. Running the HTTP e2e
++
++```powershell
++.\qa_service_task.ps1                                   # defaults to http://localhost:5180
++.\qa_service_task.ps1 -BaseUrl http://localhost:5180 -WaitSeconds 90 -PollSeconds 5
++```
++
++Both seeded users share password `123456` (admin's BCrypt hash cloned in seed).
++The script logs in `qa_svc_starter` (submits all flows) and `qa_svc_appr` (the
++error-branch approver for scenario 5), then walks scenarios 1-6, printing
++`PASS`/`FAIL`/`WARN` and a final tally. Async scenarios poll instance detail via
++`GET /api/oa/inbox/detail/{id}` until the expected status appears (bounded by
++`-WaitSeconds`, default 90; a full run can take ~2-3 minutes because of the 20s
++scan cadence + 10s timer durations).
++
++### Timing expectations
++
++- **Scenario 1** resolves *inside* the submit call (sync path runs the executor
++  inline and advances the token in the same transaction) -- no wait.
++- **Scenarios 2-6** park a token + enqueue a `Wf_ServiceJob`; settling requires
++  one worker scan (<=20s) for webApi/fail flows, or 10s due + one scan for timers.
++
++### Known assumptions
++
++- `qa_svc_starter` must be able to read its own Running/Suspended instance detail
++  via `GET /api/oa/inbox/detail/{id}`. `InboxService.DetailAsync` currently applies
++  **no userId/role filter** (any authenticated user can read any instance detail),
++  so this is safe today. If that endpoint ever gains an owner check, the status
++  polling in scenarios S2-S6 must be adjusted accordingly -- a 403/404 there is
++  this known assumption breaking, not a service-task bug.
++
++---
++
++## 4. Why the FlowDefs are seeded by raw INSERT (failure-flow principle)
++
++`DesignerService.SaveAsync` runs a **save-time registration check** (E-WF-018):
++a webApi node's `serviceConnectorName` must match a registered `IWfConnector.Name`,
++and a dataWriteback node's `serviceActionName` must match a registered
++dataWriteback executor `Key`. Scenarios 5 & 6 deliberately reference
++**`ghostConnector`**, which is *not* registered -- so saving them through the
++designer would throw **E-WF-018** and reject the flow.
++
++To stage the failure path we therefore **bypass the designer** and INSERT the
++FlowDef rows directly into `Wf_FlowDef` (exactly what `seed.sql` does). Key facts
++that make this work and matter for interpreting results:
++
++- `FlowSchemaValidator.Validate` runs **only** through `DesignerService.SaveAsync`.
++  A raw INSERT skips it entirely, so the seeded schemas stand as written. (This is
++  the same reason the *valid* flows 1-4 are also seeded raw -- consistency.)
++- The runtime failure we want is precisely the async worker calling
++  `WebApiExecutor` -> connector lookup miss -> `ServiceTaskResult.Fail("E-WF-018 ...")`.
++- **Retry tuning:** `serviceMaxRetries: 0` => `job.MaxAttempts = retries + 1 = 1`.
++  An async job enqueues with `AttemptCount = 0`; the first worker scan increments
++  to 1, fails, and `1 < 1` is false => retries exhausted on the **first scan** =>
++  immediate route (no 30s exponential-backoff wait). This keeps live QA fast.
++- On exhaustion, `FlowEngine.FailServiceTokenAsync` **direct-writes**
++  `wf.serviceError { nodeId, message, failedAtUtc }` into `inst.VarsJson` (the
++  reserved `wf.` namespace is written on this controlled path, unlike the
++  `MergeOutputVars` path which blocks `wf.*`), then routes along the `isError`
++  edge if one exists, else `Suspend`.
++
++> If a future EchoConnector gains a failure-injection switch, scenarios 5/6 could
++> instead use a *registered* connector forced to fail (savable through the
++> designer). As of this writing `EchoConnector.CallAsync` always returns `Ok`
++> (no failure switch), so the unregistered-connector approach is the one used.
++
++---
++
++## 5. Real-browser designer scenarios (manual, gstack)
++
++Component round-trip and drag-drop have **no unit coverage** -- these steps are
++the safety net (D-T2 review, 2026-07-05). Log in as `qa_svc_starter`, open the
++flow designer (`/api/oa/designer` REST behind the OA designer view).
++
++### 5.1 Palette -> canvas -> save -> reload round-trip (must pass)
++
++The left palette exposes **three** serviceTask entries (same node type, distinct
++preset `serviceKind`):
++
++- **数据回写** -> `serviceKind: dataWriteback`
++- **接口调用** -> `serviceKind: webApi`
++- **定时器** -> `serviceKind: timer`
++
++Steps:
++
++1. Drag all three onto the canvas (each drop preloads its `serviceKind` via the
++   palette `dragKey = serviceTask:<kind>`).
++2. Wire a minimal valid flow (start -> each serviceTask -> ... -> end) and fill
++   the required per-kind fields (see 5.2) so `FlowSchemaValidator` (E-WF-016) passes.
++3. **Save** the flow.
++4. **Reload** the flow (Load by flowKey).
++5. Confirm each of the three nodes retains its correct `serviceKind` after the
++   round-trip (schemaToGraph/graphToSchema must preserve the drop-point preset).
++
++### 5.2 Property panel per kind
++
++Select each serviceTask node and confirm the property panel shows kind-specific
++fields (camelCase in the schema):
++
++- **数据回写 (dataWriteback):** `serviceActionName` picker sourced from
++  `GET /api/oa/designer/service-catalog` -> `actions` (only dataWriteback
++  executors with `VisibleInDesigner=true`; `sampleWriteback` should appear,
++  `webApi` should **not**). Optional `serviceMode` sync/async.
++- **接口调用 (webApi):** `serviceConnectorName` picker from the catalog
++  `connectors` list (`erpEcho` / "ERP Echo (demo)" should appear) + `servicePath`
++  + optional `serviceParamsJson`. E-WF-016 requires both connector and path.
++- **定时器 (timer):** `serviceDelayMode` (`duration` / `untilDate` / `untilExpr`)
++  + `serviceDelayValue`. E-WF-016 requires both.
++
++### 5.3 Error-edge checkbox (E-WF-017)
++
++- On an edge leaving a serviceTask node, toggle the **error edge** (`isError`)
++  checkbox in the edge property panel.
++- Confirm: at most one `isError` edge per node is allowed; an `isError` edge is
++  permitted **only** from a serviceTask node (E-WF-017 rejects otherwise).
++- Confirm the client-side validator (`validateClient`) mirrors the server error
++  codes before save.
++
++### 5.4 Observation check (D-T2)
++
++Look at `ServiceTaskNode.vue` on canvas: the icon **chip** currently sits on the
++same brand background as the node body (brand-bg on brand-bg). Confirm whether
++this is visually acceptable. **If not acceptable**, change the chip background to
++`color-mix(in srgb, var(--cp-brand) 12%, var(--cp-brand-bg))` for separation.
++Record the verdict (accept / change) during live QA -- no code change is made in
++this write-only task.
++
++---
++
++## 6. Manual DB checks (post-run)
++
++```
++sqlcmd -S "localhost\KOUSQLSERVER" -d CP6DB_OA -E -C
++```
++
++```sql
++-- Job lifecycle (Status: 0 Pending,1 Running,2 Succeeded,3 Failed,4 Cancelled):
++SELECT InstanceId, NodeId, Kind, Status, AttemptCount, MaxAttempts, DueAtUtc, LastError
++FROM Wf_ServiceJob ORDER BY CreateDate;
++
++-- Scenario 5/6 error variable direct-written into VarsJson:
++SELECT Id, Status, VarsJson FROM Wf_FlowInstance
++WHERE FlowKey IN ('svc-fail-erroredge','svc-fail-suspend') ORDER BY CreateDate DESC;
++
++-- Scenario 5 error-branch human token parked at h1:
++SELECT t.InstanceId, t.NodeId, t.Status FROM Wf_FlowToken t
++JOIN Wf_FlowInstance i ON i.Id = t.InstanceId WHERE i.FlowKey = 'svc-fail-erroredge';
++```
++
++Expected: scenarios 1-4 -> one `Succeeded` (2) job each; scenarios 5-6 -> one
++`Failed` (3) job each; scenario 5 -> a token parked at node `h1` (Active) and the
++instance Running; scenario 6 -> instance Suspended (4).
+diff --git a/docs/superpowers/qa/wfs-service-task/qa_service_task.ps1 b/docs/superpowers/qa/wfs-service-task/qa_service_task.ps1
+new file mode 100644
+index 0000000..c845f7f
+--- /dev/null
++++ b/docs/superpowers/qa/wfs-service-task/qa_service_task.ps1
+@@ -0,0 +1,337 @@
++#Requires -Version 5.1
++<#
++.SYNOPSIS
++    WFS Service Task (E-T3) -- HTTP e2e QA script (scenarios 1-6).
++
++.DESCRIPTION
++    Exercises all 6 service-task scenarios against a RUNNING backend. Does NOT
++    start the server. Apply seed.sql first, then run the backend against the
++    isolated CP6DB_OA database:
++
++        sqlcmd -S "localhost\KOUSQLSERVER" -d CP6DB_OA -E -C -i seed.sql
++
++        cd <repo>\CP6.WebApi
++        $env:ConnectionStrings__DefaultConnection = "Server=localhost\KOUSQLSERVER;Database=CP6DB_OA;Trusted_Connection=True;TrustServerCertificate=True;"
++        dotnet run --urls "http://localhost:5180"
++
++    Then:
++        .\qa_service_task.ps1
++        .\qa_service_task.ps1 -BaseUrl http://localhost:5180 -WaitSeconds 90
++
++    IMPORTANT: the WfServiceJobScanWorker scans every 20s and timer flows use a
++    10s duration, so async scenarios (2-6) can take up to ~30-40s to settle.
++    -WaitSeconds bounds the poll loop; bump it on a slow box.
++
++.NOTES
++    PS5.1 compatibility (mirrors wfs-serial-signing/qa_serial.ps1):
++      - No && operator; sequential steps use explicit checks.
++      - Invoke-RestMethod throws WebException on non-2xx; body read via Read400Body.
++      - All request bodies use ASCII-only values (no CJK).
++      - JSON bodies built via ConvertTo-Json.
++      - CSRF disabled in dev (Security:Csrf:Enabled=false); JWT cp6_at cookie
++        flows automatically via -SessionVariable / -WebSession.
++
++    Envelope shape:
++      - All responses: { code: 0, message: "OK", data: <payload> }
++      - Submit:  $r.data.instanceId
++      - Pending: $r.data  (array of InboxPendingItem, item.instanceId)
++      - Detail:  $r.data  (InboxDetail: .instance.status, .instance.varsJson,
++                 .currentDataJson  -- both carry the merged flow variables)
++
++    Instance status codes (FlowInstanceStatus):
++      0 Running   1 Approved   2 Rejected   3 Withdrawn   4 Suspended   5 Draft
++#>
++
++param(
++    [string]$BaseUrl     = "http://localhost:5180",
++    [int]   $WaitSeconds = 90,
++    [int]   $PollSeconds = 5
++)
++
++$ErrorActionPreference = "Continue"
++$PASS = 0; $FAIL = 0; $WARN = 0
++
++# ── FlowKeys from seed.sql ──────────────────────────────────────────────────
++$FK_SYNC   = "svc-sync-writeback"
++$FK_ASYNC  = "svc-async-webapi"
++$FK_TWAIT  = "svc-timer-wait"
++$FK_TACT   = "svc-timer-action"
++$FK_FERR   = "svc-fail-erroredge"
++$FK_FSUS   = "svc-fail-suspend"
++
++# Status codes
++$ST_RUNNING   = 0
++$ST_APPROVED  = 1
++$ST_SUSPENDED = 4
++
++# ── Helpers ─────────────────────────────────────────────────────────────────
++
++function Chk {
++    param([string]$Label, $Expected, $Actual)
++    if ("$Expected" -eq "$Actual") {
++        Write-Host "  PASS  $Label (=$Actual)" -ForegroundColor Green
++        $script:PASS++
++    } else {
++        Write-Host "  FAIL  $Label  expected=[$Expected]  got=[$Actual]" -ForegroundColor Red
++        $script:FAIL++
++    }
++}
++
++function ChkContains {
++    param([string]$Label, [string]$Needle, [string]$Haystack)
++    if ("$Haystack".Contains($Needle)) {
++        Write-Host "  PASS  $Label (found '$Needle')" -ForegroundColor Green
++        $script:PASS++
++    } else {
++        Write-Host "  FAIL  $Label  '$Needle' not in [$Haystack]" -ForegroundColor Red
++        $script:FAIL++
++    }
++}
++
++function Warn([string]$msg) {
++    Write-Host "  WARN  $msg" -ForegroundColor Yellow
++    $script:WARN++
++}
++
++function Read400Body {
++    param($WebException)
++    try {
++        $stream = $WebException.Response.GetResponseStream()
++        $reader = New-Object System.IO.StreamReader($stream)
++        return $reader.ReadToEnd()
++    } catch { return "" }
++}
++
++function PostJson {
++    param([string]$Uri, $Body, $Session)
++    $json = $Body | ConvertTo-Json -Compress
++    try {
++        if ($Session) {
++            $r = Invoke-RestMethod -Method POST -Uri $Uri -ContentType "application/json" -Body $json -WebSession $Session
++        } else {
++            $r = Invoke-RestMethod -Method POST -Uri $Uri -ContentType "application/json" -Body $json
++        }
++        return @{ Code = 200; Data = $r }
++    } catch [System.Net.WebException] {
++        $status = [int]$_.Exception.Response.StatusCode
++        $rawBody = Read400Body $_.Exception
++        $parsed = $null
++        try { $parsed = $rawBody | ConvertFrom-Json } catch {}
++        return @{ Code = $status; Data = $parsed; Raw = $rawBody }
++    } catch {
++        return @{ Code = 0; Data = $null; Raw = $_.Exception.Message }
++    }
++}
++
++function GetJson {
++    param([string]$Uri, $Session)
++    try {
++        if ($Session) {
++            $r = Invoke-RestMethod -Method GET -Uri $Uri -WebSession $Session
++        } else {
++            $r = Invoke-RestMethod -Method GET -Uri $Uri
++        }
++        return @{ Code = 200; Data = $r }
++    } catch [System.Net.WebException] {
++        $status = [int]$_.Exception.Response.StatusCode
++        $rawBody = Read400Body $_.Exception
++        $parsed = $null
++        try { $parsed = $rawBody | ConvertFrom-Json } catch {}
++        return @{ Code = $status; Data = $parsed; Raw = $rawBody }
++    } catch {
++        return @{ Code = 0; Data = $null; Raw = $_.Exception.Message }
++    }
++}
++
++function Login {
++    param([string]$UserName, [string]$Password = "123456")
++    $body = @{ userName = $UserName; password = $Password }
++    try {
++        $r = Invoke-RestMethod -Method POST -Uri "$BaseUrl/api/auth/login" `
++            -ContentType "application/json" -Body ($body | ConvertTo-Json -Compress) `
++            -SessionVariable sess
++        return $sess
++    } catch [System.Net.WebException] {
++        $raw = Read400Body $_.Exception
++        Write-Host "  LOGIN FAILED for $UserName : $raw" -ForegroundColor Red
++        $script:FAIL++
++        return $null
++    }
++}
++
++# Submit a flow with a given varsJson string; returns instanceId or $null.
++function Submit {
++    param($Session, [string]$FlowKey, [string]$VarsJson = "{}")
++    $r = PostJson "$BaseUrl/api/wf/flow/submit" @{ flowKey = $FlowKey; varsJson = $VarsJson; bizType = $null; bizId = $null } $Session
++    Chk "Submit $FlowKey HTTP" 200 $r.Code
++    if ($r.Code -eq 200) {
++        $id = $r.Data.data.instanceId
++        if (-not $id) { $id = $r.Data.instanceId }
++        return "$id"
++    }
++    Write-Host "  Submit error: $($r.Raw)" -ForegroundColor Red
++    return $null
++}
++
++# Get InboxDetail data object (or $null). Contains .instance.status + .currentDataJson.
++function GetDetail {
++    param($Session, [string]$InstanceId)
++    $r = GetJson "$BaseUrl/api/oa/inbox/detail/$InstanceId" $Session
++    if ($r.Code -eq 200) { return $r.Data.data }
++    return $null
++}
++
++# Poll detail until instance.status == TargetStatus, or WaitSeconds elapse.
++# Returns the final detail object (may still be non-target on timeout).
++function WaitForStatus {
++    param($Session, [string]$InstanceId, [int]$TargetStatus)
++    $deadline = (Get-Date).AddSeconds($WaitSeconds)
++    $detail = $null
++    while ((Get-Date) -lt $deadline) {
++        $detail = GetDetail $Session $InstanceId
++        if ($null -ne $detail -and [int]$detail.instance.status -eq $TargetStatus) { return $detail }
++        Start-Sleep -Seconds $PollSeconds
++    }
++    return $detail
++}
++
++# Poll a user's pending inbox until an item for InstanceId appears, or timeout.
++# Returns the matching pending item (or $null).
++function WaitForPending {
++    param($Session, [string]$InstanceId)
++    $deadline = (Get-Date).AddSeconds($WaitSeconds)
++    while ((Get-Date) -lt $deadline) {
++        $r = GetJson "$BaseUrl/api/oa/inbox/pending" $Session
++        if ($r.Code -eq 200) {
++            $items = $r.Data.data
++            if ($null -ne $items) {
++                $hit = @($items | Where-Object { "$($_.instanceId)" -eq "$InstanceId" }) | Select-Object -First 1
++                if ($hit) { return $hit }
++            }
++        }
++        Start-Sleep -Seconds $PollSeconds
++    }
++    return $null
++}
++
++# Pull the flow-variable JSON blob out of a detail object (two field names cover
++# both wrapper depths / naming); returns "" if absent.
++function VarsOf {
++    param($Detail)
++    if ($null -eq $Detail) { return "" }
++    $v = $Detail.currentDataJson
++    if (-not $v) { $v = $Detail.instance.varsJson }
++    return "$v"
++}
++
++# ── Preflight: login the two seeded users ───────────────────────────────────
++Write-Host ""
++Write-Host "================================================================" -ForegroundColor Cyan
++Write-Host "WFS Service Task QA  ($BaseUrl)   wait<=${WaitSeconds}s poll=${PollSeconds}s" -ForegroundColor Cyan
++Write-Host "================================================================" -ForegroundColor Cyan
++
++$sess = Login "qa_svc_starter"
++if (-not $sess) { Write-Host "ABORT: cannot login as qa_svc_starter (seed applied?)" -ForegroundColor Red; exit 1 }
++$sessAppr = Login "qa_svc_appr"
++if (-not $sessAppr) { Warn "cannot login qa_svc_appr; scenario 5 pending check will be skipped" }
++
++# ── Scenario 1 : sync dataWriteback -> Approved immediately ─────────────────
++Write-Host ""
++Write-Host "-- Scenario 1 : sync dataWriteback (sampleWriteback) --" -ForegroundColor Cyan
++$i1 = Submit $sess $FK_SYNC '{"subject":"s1","amount":100}'
++if ($i1) {
++    Write-Host "  Instance: $i1" -ForegroundColor Gray
++    $d1 = GetDetail $sess $i1     # sync path finishes within the submit call
++    Chk "S1: instance Approved immediately" $ST_APPROVED ([int]$d1.instance.status)
++    ChkContains "S1: VarsJson has writebackEcho" "writebackEcho" (VarsOf $d1)
++} else { Warn "S1 skipped (submit failed)" }
++
++# ── Scenario 2 : async webApi (erpEcho) -> job -> worker -> Approved ─────────
++Write-Host ""
++Write-Host "-- Scenario 2 : async webApi (erpEcho) --" -ForegroundColor Cyan
++$i2 = Submit $sess $FK_ASYNC '{"subject":"s2","amount":42}'
++if ($i2) {
++    Write-Host "  Instance: $i2" -ForegroundColor Gray
++    $d2early = GetDetail $sess $i2
++    Chk "S2: Running before worker picks up job" $ST_RUNNING ([int]$d2early.instance.status)
++    Write-Host "  waiting for WfServiceJobScanWorker (<=${WaitSeconds}s)..." -ForegroundColor Gray
++    $d2 = WaitForStatus $sess $i2 $ST_APPROVED
++    Chk "S2: instance Approved after worker scan" $ST_APPROVED ([int]$d2.instance.status)
++    ChkContains "S2: VarsJson has echoedPath" "echoedPath" (VarsOf $d2)
++} else { Warn "S2 skipped (submit failed)" }
++
++# ── Scenario 3 : timer pure wait (PT10S) -> advance -> Approved ─────────────
++Write-Host ""
++Write-Host "-- Scenario 3 : timer pure wait (PT10S, none) --" -ForegroundColor Cyan
++$i3 = Submit $sess $FK_TWAIT '{"subject":"s3","amount":1}'
++if ($i3) {
++    Write-Host "  Instance: $i3" -ForegroundColor Gray
++    $d3early = GetDetail $sess $i3
++    Chk "S3: Running while timer pending" $ST_RUNNING ([int]$d3early.instance.status)
++    Write-Host "  waiting for timer due + worker scan (<=${WaitSeconds}s)..." -ForegroundColor Gray
++    $d3 = WaitForStatus $sess $i3 $ST_APPROVED
++    Chk "S3: instance Approved after timer fires" $ST_APPROVED ([int]$d3.instance.status)
++} else { Warn "S3 skipped (submit failed)" }
++
++# ── Scenario 4 : timer + webApi action (erpEcho) at due time ────────────────
++Write-Host ""
++Write-Host "-- Scenario 4 : timer + webApi action (PT10S + erpEcho) --" -ForegroundColor Cyan
++$i4 = Submit $sess $FK_TACT '{"subject":"s4","amount":7}'
++if ($i4) {
++    Write-Host "  Instance: $i4" -ForegroundColor Gray
++    Write-Host "  waiting for timer due + worker scan (<=${WaitSeconds}s)..." -ForegroundColor Gray
++    $d4 = WaitForStatus $sess $i4 $ST_APPROVED
++    Chk "S4: instance Approved after timer action" $ST_APPROVED ([int]$d4.instance.status)
++    ChkContains "S4: VarsJson has echoedPath (action ran)" "echoedPath" (VarsOf $d4)
++} else { Warn "S4 skipped (submit failed)" }
++
++# ── Scenario 5 : fail -> retry exhausted -> IsError edge -> human node ───────
++Write-Host ""
++Write-Host "-- Scenario 5 : fail -> error edge -> human (qa_svc_appr) --" -ForegroundColor Cyan
++$i5 = Submit $sess $FK_FERR '{"subject":"s5","amount":9}'
++if ($i5) {
++    Write-Host "  Instance: $i5" -ForegroundColor Gray
++    Write-Host "  waiting for fail-route to human node (<=${WaitSeconds}s)..." -ForegroundColor Gray
++    if ($sessAppr) {
++        $p5 = WaitForPending $sessAppr $i5
++        Chk "S5: qa_svc_appr has a pending task (routed to error edge)" $true ($null -ne $p5)
++    } else {
++        Warn "S5: appr session missing; cannot verify pending task"
++    }
++    $d5 = GetDetail $sess $i5
++    Chk "S5: instance still Running (not suspended -- error edge exists)" $ST_RUNNING ([int]$d5.instance.status)
++    ChkContains "S5: VarsJson has wf.serviceError" "serviceError" (VarsOf $d5)
++} else { Warn "S5 skipped (submit failed)" }
++
++# ── Scenario 6 : fail -> retry exhausted -> no error edge -> Suspend ────────
++Write-Host ""
++Write-Host "-- Scenario 6 : fail -> suspend (no error edge) --" -ForegroundColor Cyan
++$i6 = Submit $sess $FK_FSUS '{"subject":"s6","amount":9}'
++if ($i6) {
++    Write-Host "  Instance: $i6" -ForegroundColor Gray
++    Write-Host "  waiting for fail-route to suspend (<=${WaitSeconds}s)..." -ForegroundColor Gray
++    $d6 = WaitForStatus $sess $i6 $ST_SUSPENDED
++    Chk "S6: instance Suspended after fail with no error edge" $ST_SUSPENDED ([int]$d6.instance.status)
++    ChkContains "S6: VarsJson has wf.serviceError" "serviceError" (VarsOf $d6)
++} else { Warn "S6 skipped (submit failed)" }
++
++# ── Summary ─────────────────────────────────────────────────────────────────
++Write-Host ""
++Write-Host "================================================================" -ForegroundColor Cyan
++Write-Host "RESULTS: PASS=$PASS   FAIL=$FAIL   WARN=$WARN" -ForegroundColor $(if ($FAIL -gt 0) { "Red" } elseif ($WARN -gt 0) { "Yellow" } else { "Green" })
++Write-Host "================================================================" -ForegroundColor Cyan
++Write-Host ""
++Write-Host "MANUAL DB CHECKS (sqlcmd -S localhost\KOUSQLSERVER -d CP6DB_OA -E -C):"
++Write-Host "  -- Wf_ServiceJob lifecycle per instance (Status 2=Succeeded,3=Failed,4=Cancelled):"
++Write-Host "  SELECT InstanceId, NodeId, Kind, Status, AttemptCount, MaxAttempts, DueAtUtc, LastError"
++Write-Host "  FROM Wf_ServiceJob ORDER BY CreateDate;"
++Write-Host ""
++Write-Host "  -- Scenario 5/6 error variable (wf.serviceError injected into VarsJson):"
++Write-Host "  SELECT Id, Status, VarsJson FROM Wf_FlowInstance"
++Write-Host "  WHERE FlowKey IN ('svc-fail-erroredge','svc-fail-suspend') ORDER BY CreateDate DESC;"
++Write-Host ""
++Write-Host "  -- Scenario 5 error-branch human token parked at h1:"
++Write-Host "  SELECT t.InstanceId, t.NodeId, t.Status FROM Wf_FlowToken t"
++Write-Host "  JOIN Wf_FlowInstance i ON i.Id = t.InstanceId WHERE i.FlowKey = 'svc-fail-erroredge';"
++Write-Host ""
++if ($FAIL -gt 0) { exit 1 } else { exit 0 }
+diff --git a/docs/superpowers/qa/wfs-service-task/seed.sql b/docs/superpowers/qa/wfs-service-task/seed.sql
+new file mode 100644
+index 0000000..9ae2d98
+--- /dev/null
++++ b/docs/superpowers/qa/wfs-service-task/seed.sql
+@@ -0,0 +1,208 @@
++-- =====================================================================
++-- WFS Service Task (E-T3) -- QA seed (SQL Server CP6DB_OA)
++-- Branch: feat/wfs-service-task-finish
++-- Date:   2026-07-05
++--
++-- Creates:
++--   2 users  : qa_svc_starter (submits every scenario)
++--              qa_svc_appr    (error-branch human approver, scenario 5)
++--   1 FormDef: svc-demo-form  (subject text + amount number; amount fuels dataWriteback)
++--   6 FlowDef: one per QA scenario (see table below)
++--
++--   FlowKey               Scenario                                   serviceKind / mode        action
++--   --------------------  -----------------------------------------  ------------------------  ---------------------------
++--   svc-sync-writeback    1. sync dataWriteback -> Approved           dataWriteback / sync      sampleWriteback
++--   svc-async-webapi      2. async webApi -> job -> worker -> Approved webApi / async           erpEcho  (path /erp/echo/{amount})
++--   svc-timer-wait        3. timer pure wait (PT10S) -> advance        timer  / async(forced)   none
++--   svc-timer-action      4. timer + webApi action -> advance          timer  / async(forced)   erpEcho  (path /erp/echo/{amount})
++--   svc-fail-erroredge    5. fail -> retry exhausted -> IsError edge    webApi / async          GHOST connector (unregistered)
++--   svc-fail-suspend      6. fail -> retry exhausted -> Suspend         webApi / async          GHOST connector (unregistered)
++--
++-- WHY the FlowDefs are INSERTed directly (NOT saved through the designer):
++--   Scenarios 5 & 6 reference a connector that is NOT registered
++--   ("ghostConnector"). DesignerService.SaveAsync runs a save-time
++--   registration check (CP6.Core/Services/Oa/DesignerService.cs) that throws
++--   E-WF-018 when a webApi node's ServiceConnectorName is not a registered
++--   IWfConnector.Name. That check would REJECT the failure flows at save time,
++--   so we bypass the designer entirely and INSERT the FlowDef rows straight
++--   into Wf_FlowDef. The runtime E-WF-018 ("connector not registered") is
++--   exactly the failure we want the async worker to hit -> retry -> route.
++--   For consistency all 6 flows are seeded the same way (raw INSERT).
++--   FlowSchemaValidator is NOT invoked on this path (it runs only through
++--   DesignerService.SaveAsync), so the seeded schemas stand as written.
++--
++-- Retry tuning for the failure flows:
++--   serviceMaxRetries=0  -> job.MaxAttempts = retries + 1 = 1.
++--   An async job enqueues with AttemptCount=0; the first worker scan does
++--   AttemptCount++ (=1), fails, and 1 < 1 is false -> retries exhausted on the
++--   FIRST scan -> immediate route (no 30s backoff wait). Keeps live QA fast.
++--
++-- Run from a NATIVE shell (cmd / PowerShell), NOT git-bash:
++--     sqlcmd -S "localhost\KOUSQLSERVER" -d CP6DB_OA -E -C -i seed.sql
++--
++-- Notes:
++--   - SET QUOTED_IDENTIFIER ON is required: Wf_FlowDef has filtered unique indexes.
++--   - Table names are SINGULAR: Wf_FlowDef / Wf_FormDef (plural names翻车 f90a138).
++--   - Both users clone admin's BCrypt hash (= password "123456").
++--   - Idempotent: IF NOT EXISTS guards on every insert.
++--   - Node schema fields are camelCase (serviceKind/serviceMode/serviceConnectorName/
++--     serviceActionName/servicePath/serviceParamsJson/serviceDelayMode/
++--     serviceDelayValue/serviceMaxRetries); edge failure flag is isError.
++--     FlowEngine deserialises with PropertyNameCaseInsensitive=true.
++-- =====================================================================
++
++SET QUOTED_IDENTIFIER ON;
++SET NOCOUNT ON;
++
++DECLARE @tenant uniqueidentifier = '00000000-0000-0000-0000-0000000000A1';  -- DefaultTenant
++
++-- Fixed GUIDs (referenced from FlowDef SchemaJson below -- must match)
++DECLARE @u_start uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000000B0';  -- qa_svc_starter (submits all flows)
++DECLARE @u_appr  uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000000A0';  -- qa_svc_appr    (error-branch approver)
++
++-- ── 1. Users (clone admin's BCrypt hash = password "123456") ────────────────
++
++-- qa_svc_starter: submits every scenario instance
++IF NOT EXISTS (SELECT 1 FROM Sys_Users WHERE Id = @u_start)
++  INSERT INTO Sys_Users (Id, UserName, Password, NickName, RoleId, Enable, Creator, CreateDate,
++      TenantId, FailedLoginCount, MustChangePassword, AllowPasswordFallback, TwoFactorEnabled, IsPlatformAdmin, PasswordChangedAt)
++  SELECT @u_start, 'qa_svc_starter', Password, 'QA Service Starter', RoleId, 1, 'qa-svctask-seed', GETDATE(),
++      @tenant, 0, 0, 0, 0, 0, GETDATE()
++  FROM Sys_Users WHERE UserName = 'admin';
++
++-- qa_svc_appr: fixed approver of the error-branch human node (scenario 5)
++IF NOT EXISTS (SELECT 1 FROM Sys_Users WHERE Id = @u_appr)
++  INSERT INTO Sys_Users (Id, UserName, Password, NickName, RoleId, Enable, Creator, CreateDate,
++      TenantId, FailedLoginCount, MustChangePassword, AllowPasswordFallback, TwoFactorEnabled, IsPlatformAdmin, PasswordChangedAt)
++  SELECT @u_appr, 'qa_svc_appr', Password, 'QA Error-Branch Approver', RoleId, 1, 'qa-svctask-seed', GETDATE(),
++      @tenant, 0, 0, 0, 0, 0, GETDATE()
++  FROM Sys_Users WHERE UserName = 'admin';
++
++-- ── 2. FormDef: svc-demo-form (amount feeds sampleWriteback / erpEcho path) ──
++
++IF NOT EXISTS (SELECT 1 FROM Wf_FormDef WHERE FormKey = 'svc-demo-form')
++  INSERT INTO Wf_FormDef (Id, FormKey, FormName, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
++  VALUES (
++    'DDDD0000-0000-0000-0000-0000000000F1',
++    'svc-demo-form',
++    'Service Task Demo Form',
++    '{"fields":[{"name":"subject","label":"Subject","type":"text","required":true},{"name":"amount","label":"Amount","type":"number","required":true}]}',
++    1, 1, 'qa-svctask-seed', GETDATE(), @tenant
++  );
++
++-- ── 3. FlowDef #1: svc-sync-writeback ───────────────────────────────────────
++--   start s -> serviceTask w1 (dataWriteback, sync, sampleWriteback) -> end
++--   Submit -> executor runs INLINE at submit time, merges writebackEcho into
++--   VarsJson, AdvanceToken -> end -> instance Approved (status 1) immediately.
++
++IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'svc-sync-writeback')
++  INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
++  VALUES (
++    'DDDD0000-0000-0000-0000-0000000000F2',
++    'svc-sync-writeback',
++    'SVC 1 - Sync DataWriteback',
++    'svc-demo-form',
++    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"w1","type":"serviceTask","name":"Sync Writeback","serviceKind":"dataWriteback","serviceMode":"sync","serviceActionName":"sampleWriteback"},{"id":"end","type":"end","name":"End"}],"edges":[{"from":"s","to":"w1"},{"from":"w1","to":"end"}]}',
++    1, 1, 'qa-svctask-seed', GETDATE(), @tenant
++  );
++
++-- ── 4. FlowDef #2: svc-async-webapi ─────────────────────────────────────────
++--   start s -> serviceTask w1 (webApi, async, erpEcho, path /erp/echo/{amount}) -> end
++--   Submit -> token parked + 1 Pending Wf_ServiceJob. Worker (20s scan) leases,
++--   runs erpEcho (echoes path), resumes token -> end -> instance Approved.
++--   VarsJson gains echoedPath + idempotencyKey.
++
++IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'svc-async-webapi')
++  INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
++  VALUES (
++    'DDDD0000-0000-0000-0000-0000000000F3',
++    'svc-async-webapi',
++    'SVC 2 - Async WebApi (erpEcho)',
++    'svc-demo-form',
++    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"w1","type":"serviceTask","name":"Async WebApi","serviceKind":"webApi","serviceMode":"async","serviceConnectorName":"erpEcho","servicePath":"/erp/echo/{amount}"},{"id":"end","type":"end","name":"End"}],"edges":[{"from":"s","to":"w1"},{"from":"w1","to":"end"}]}',
++    1, 1, 'qa-svctask-seed', GETDATE(), @tenant
++  );
++
++-- ── 5. FlowDef #3: svc-timer-wait ───────────────────────────────────────────
++--   start s -> serviceTask t1 (timer, duration PT10S, no action -> actionKind none) -> end
++--   Submit -> token parked + Pending job with DueAtUtc = now + 10s. After the due
++--   time a worker scan resumes the token (none = pure wait) -> end -> Approved.
++
++IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'svc-timer-wait')
++  INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
++  VALUES (
++    'DDDD0000-0000-0000-0000-0000000000F4',
++    'svc-timer-wait',
++    'SVC 3 - Timer Pure Wait (PT10S)',
++    'svc-demo-form',
++    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"t1","type":"serviceTask","name":"Timer Wait","serviceKind":"timer","serviceDelayMode":"duration","serviceDelayValue":"PT10S"},{"id":"end","type":"end","name":"End"}],"edges":[{"from":"s","to":"t1"},{"from":"t1","to":"end"}]}',
++    1, 1, 'qa-svctask-seed', GETDATE(), @tenant
++  );
++
++-- ── 6. FlowDef #4: svc-timer-action ─────────────────────────────────────────
++--   start s -> serviceTask t1 (timer, duration PT10S, erpEcho -> actionKind webApi) -> end
++--   Timer + ConnectorName => ActionRef.ActionKind = "webApi" (ServiceTaskActionRef.Snapshot).
++--   At due time the worker runs erpEcho then advances -> Approved. VarsJson gains echoedPath.
++
++IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'svc-timer-action')
++  INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
++  VALUES (
++    'DDDD0000-0000-0000-0000-0000000000F5',
++    'svc-timer-action',
++    'SVC 4 - Timer + WebApi Action (PT10S)',
++    'svc-demo-form',
++    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"t1","type":"serviceTask","name":"Timer + Echo","serviceKind":"timer","serviceDelayMode":"duration","serviceDelayValue":"PT10S","serviceConnectorName":"erpEcho","servicePath":"/erp/echo/{amount}"},{"id":"end","type":"end","name":"End"}],"edges":[{"from":"s","to":"t1"},{"from":"t1","to":"end"}]}',
++    1, 1, 'qa-svctask-seed', GETDATE(), @tenant
++  );
++
++-- ── 7. FlowDef #5: svc-fail-erroredge ───────────────────────────────────────
++--   start s -> serviceTask f1 (webApi, async, GHOST connector, serviceMaxRetries 0)
++--     success edge  f1 -> end
++--     error   edge  f1 -> h1  (isError:true)
++--   h1 (approval, Specified = qa_svc_appr) -> end
++--   Worker: connector unregistered -> Fail("E-WF-018 ...") -> maxAttempts=1 exhausted
++--     on first scan -> FailServiceTokenAsync writes wf.serviceError into VarsJson and
++--     routes along the IsError edge to h1. Instance stays Running; qa_svc_appr gets a
++--     Pending task. GHOST connector is only reachable because this flow was INSERTed
++--     directly (designer save would have thrown E-WF-018 -- see header).
++
++IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'svc-fail-erroredge')
++  INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
++  VALUES (
++    'DDDD0000-0000-0000-0000-0000000000F6',
++    'svc-fail-erroredge',
++    'SVC 5 - Fail -> Error Edge -> Human',
++    'svc-demo-form',
++    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"f1","type":"serviceTask","name":"Failing WebApi","serviceKind":"webApi","serviceMode":"async","serviceConnectorName":"ghostConnector","servicePath":"/nope","serviceMaxRetries":0},{"id":"h1","type":"approval","name":"Handle Failure","approverStrategy":"Specified","approverUserId":"CCCC0000-0000-0000-0000-0000000000A0","countersign":"all"},{"id":"end","type":"end","name":"End"}],"edges":[{"from":"s","to":"f1"},{"from":"f1","to":"end"},{"from":"f1","to":"h1","isError":true},{"from":"h1","to":"end"}]}',
++    1, 1, 'qa-svctask-seed', GETDATE(), @tenant
++  );
++
++-- ── 8. FlowDef #6: svc-fail-suspend ─────────────────────────────────────────
++--   start s -> serviceTask f1 (webApi, async, GHOST connector, serviceMaxRetries 0) -> end
++--   NO IsError edge. Worker: connector unregistered -> Fail -> exhausted on first scan
++--   -> FailServiceTokenAsync writes wf.serviceError, finds no error edge -> Suspend.
++--   Instance status becomes Suspended (4). VarsJson gains wf.serviceError.
++
++IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'svc-fail-suspend')
++  INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
++  VALUES (
++    'DDDD0000-0000-0000-0000-0000000000F7',
++    'svc-fail-suspend',
++    'SVC 6 - Fail -> Suspend (no error edge)',
++    'svc-demo-form',
++    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"f1","type":"serviceTask","name":"Failing WebApi","serviceKind":"webApi","serviceMode":"async","serviceConnectorName":"ghostConnector","servicePath":"/nope","serviceMaxRetries":0},{"id":"end","type":"end","name":"End"}],"edges":[{"from":"s","to":"f1"},{"from":"f1","to":"end"}]}',
++    1, 1, 'qa-svctask-seed', GETDATE(), @tenant
++  );
++
++-- ── 9. Sanity report ────────────────────────────────────────────────────────
++
++SELECT 'qa_svc_starter' AS seeded, CONVERT(varchar(36), Id) AS val FROM Sys_Users  WHERE UserName = 'qa_svc_starter'
++UNION ALL
++SELECT 'qa_svc_appr',              CONVERT(varchar(36), Id)        FROM Sys_Users  WHERE UserName = 'qa_svc_appr'
++UNION ALL
++SELECT 'svc-demo-form (FormDef)',  FormKey                         FROM Wf_FormDef WHERE FormKey = 'svc-demo-form'
++UNION ALL
++SELECT 'FlowDef:' + FlowKey,       CONVERT(varchar(36), Id)        FROM Wf_FlowDef
++  WHERE FlowKey IN ('svc-sync-writeback','svc-async-webapi','svc-timer-wait','svc-timer-action','svc-fail-erroredge','svc-fail-suspend');
++
++-- Expected: 2 users + 1 form + 6 flowdefs = 9 rows.

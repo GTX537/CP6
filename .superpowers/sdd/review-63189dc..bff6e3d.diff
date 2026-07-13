@@ -1,0 +1,552 @@
+# Review package: 63189dc..HEAD
+
+## Commits
+bff6e3d fix(wms): F1波F审查修复 ADJ豁免收窄至STOCKTAKE+MOVE双端预检
+191e83a feat(wms): F1波F 盘点开启冻结所涉库位出入库(WM-MSG-304)
+
+## Files changed
+ CP6.Core/Services/Wms/OutboundService.cs      |   9 +-
+ CP6.Core/Services/Wms/StockMovementService.cs |  46 ++++
+ CP6.Core/Services/Wms/StockTakeService.cs     |   6 +-
+ CP6.Tests/Wms/StockTakeFreezeTests.cs         | 354 ++++++++++++++++++++++++++
+ 4 files changed, 412 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Wms/OutboundService.cs b/CP6.Core/Services/Wms/OutboundService.cs
+index 7c6dfc0..49d2927 100644
+--- a/CP6.Core/Services/Wms/OutboundService.cs
++++ b/CP6.Core/Services/Wms/OutboundService.cs
+@@ -340,21 +340,28 @@ public class OutboundService : IOutboundService
+     private Task<Stock?> FindCandidateStockAsync(string warehouseCd, string productCd, decimal needed)
+     {
+         return _db.Stocks
+             .Where(s => s.ProductCd == productCd
+                         && s.WarehouseCd == warehouseCd
+                         && !s.IsDeleted
+                         && !s.RecallFlag
+                         && s.AvailableQty >= needed
+                         && s.OwnerType == StockOwnerType.Self
+                         && s.QcStatus != StockQcStatus.Failed
+-                        && s.QcStatus != StockQcStatus.Hold)
++                        && s.QcStatus != StockQcStatus.Hold
++                        // 棚卸凍結（波F）：進行中の棚卸に覆われたロケーションは引当候補から除外
++                        && !_db.StockTakeDetails.Any(d => !d.IsDeleted
++                            && d.WarehouseCd == s.WarehouseCd && d.LocationCd == s.LocationCd
++                            && _db.StockTakes.Any(h => h.StockTakeNo == d.StockTakeNo && !h.IsDeleted
++                                && (h.Status == StockTakeStatus.Counting
++                                    || h.Status == StockTakeStatus.DiffReview
++                                    || h.Status == StockTakeStatus.AwaitingApproval))))
+             .OrderBy(s => s.ExpiryDate ?? DateTime.MaxValue)
+             .ThenBy(s => s.ReceiveDate ?? DateTime.MaxValue)
+             .ThenBy(s => s.LotNo)
+             .FirstOrDefaultAsync();
+     }
+ 
+     public async Task AllocateAsync(string outboundNo, string? userName)
+     {
+         var header = await _db.OutboundOrders
+             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
+diff --git a/CP6.Core/Services/Wms/StockMovementService.cs b/CP6.Core/Services/Wms/StockMovementService.cs
+index d6cfb84..9be4e8b 100644
+--- a/CP6.Core/Services/Wms/StockMovementService.cs
++++ b/CP6.Core/Services/Wms/StockMovementService.cs
+@@ -32,20 +32,37 @@ public class StockMovementService : IStockMovementService
+         _db = db;
+         _seq = seq;
+         _notifier = notifier ?? new NoOpWmsNotifier();
+         _finBridge = finBridge ?? new NoOpStockFinBridge();
+     }
+ 
+     public async Task<string> ApplyAsync(StockMovementRequest req, CancellationToken ct = default)
+     {
+         Validate(req);
+ 
++        // 棚卸凍結ガード（波F）：進行中の棚卸（Counting/DiffReview/AwaitingApproval）が対象ロケーションを
++        // 覆っている間は物理数を動かす移動（IN/OUT/MOVE/ADJ）を拒否し、カウント基準の正確性を保護する。
++        // 豁免は「棚卸承認自身の差異調整」＝ ADJ かつ RelatedType=="STOCKTAKE" のみ（A.2 前提：ADJ で账实を収束）。
++        // 効期核銷（EXPIRY_DISPOSE）・RMA 調整等の他 ADJ は快照 BookQty を狂わせるため同様に拒否
++        //（判別子は StockFinBridge の (TxnType,RelatedType) 帰属フィルタと同源）。
++        // RSV/UNRSV は引当のみで物理数を動かさないため凍結対象外。
++        // 反冲（OUT/ISSUE, AllowNegativeOverride）も凍結ロケーションでは拒否＝盘点基线正确性优先
++        //（反冲は best-effort：呼出側 C.1/C.2 の二重闸が吞错＋归集跳过で吸収し後補償可能）。
++        var isStockTakeAdj = req.TxnType == WmsTxnType.ADJ && req.RelatedType == "STOCKTAKE";
++        if (!isStockTakeAdj
++            && (req.TxnType is WmsTxnType.IN or WmsTxnType.OUT or WmsTxnType.MOVE or WmsTxnType.ADJ)
++            && await IsLocationFrozenAsync(req.WarehouseCd, req.LocationCd, ct))
++        {
++            throw new InvalidOperationException(
++                $"WM-MSG-304: 棚卸進行中のロケーション（{req.WarehouseCd} / {req.LocationCd}）は入出庫できません");
++        }
++
+         // SQL Server のみトランザクションを張る（InMemory は SupportsTransactions=false）
+         IDbContextTransaction? tx = null;
+         if (_db.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+         {
+             tx = await _db.Database.BeginTransactionAsync(ct);
+         }
+ 
+         try
+         {
+             // 在庫行を取得 or 新規（業務 UK で一意）
+@@ -168,20 +185,30 @@ public class StockMovementService : IStockMovementService
+         }
+     }
+ 
+     public async Task<(string OutTxnNo, string InTxnNo)> MoveAsync(StockMoveRequest req, CancellationToken ct = default)
+     {
+         if (req.Qty <= 0)
+             throw new ArgumentException("WM-MSG-011: 移動数量は0より大きい値を指定してください。");
+         if (string.Equals(req.FromLocationCd, req.ToLocationCd, StringComparison.OrdinalIgnoreCase))
+             throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");
+ 
++        // 棚卸凍結の双端予検（波F）：MOVE は 2 腿非原子（源 OUT commit 後に先 IN が弾かれると在庫が宙吊り）。
++        // 腿1発行前に移動先の凍結を先読みして早期拒否する（移動元は腿1の ApplyAsync 内ガードが検査）。
++        // TOCTOU（予検通過後に凍結開始）は残るが、窓は極小かつ StartCountAsync 時点の快照 BookQty が
++        // 腿2前の在庫を反映するため棚卸収束は破れない。
++        if (await IsLocationFrozenAsync(req.WarehouseCd, req.ToLocationCd, ct))
++        {
++            throw new InvalidOperationException(
++                $"WM-MSG-304: 棚卸進行中のロケーション（{req.WarehouseCd} / {req.ToLocationCd}）は入出庫できません");
++        }
++
+         // 源 OUT 側：物理在庫を減らす（StockTransaction には MOVE 種別 + Qty=-X で記録）
+         var outNo = await ApplyAsync(new StockMovementRequest
+         {
+             TxnType = WmsTxnType.MOVE,
+             WarehouseCd = req.WarehouseCd,
+             LocationCd = req.FromLocationCd,
+             ProductCd = req.ProductCd,
+             LotNo = req.LotNo,
+             Qty = -req.Qty,
+             OperatorCd = req.OperatorCd,
+@@ -202,20 +229,39 @@ public class StockMovementService : IStockMovementService
+             Remark = req.Remark ?? $"MOVE ← {req.FromLocationCd}",
+             RelatedType = "MOVE",
+             RelatedNo = outNo,
+         }, ct);
+ 
+         return (outNo, inNo);
+     }
+ 
+     // ───────── 内部ヘルパー ─────────
+ 
++    /// <summary>
++    /// 指定ロケーションが進行中の棚卸（Counting/DiffReview/AwaitingApproval）に覆われ、凍結中かを判定する（波F）。
++    /// カバレッジ粒度 = StockTakeDetail（倉庫＋ロケーション）。承認（ApproveAndApplyAsync）or 取消（CancelAsync）で
++    /// ヘッダ状態が Completed/Cancelled へ遷移すれば、活性单クエリが空になり自然解凍される（状態の巻き戻し書込は不要）。
++    /// 性能：AnyAsync による存在判定のみ（等値条件でインデックス親和）。ApplyAsync 1 件あたり物理入出庫時に最小 1 クエリ。
++    /// </summary>
++    private Task<bool> IsLocationFrozenAsync(string warehouseCd, string locationCd, CancellationToken ct = default)
++    {
++        return (from d in _db.StockTakeDetails
++                join h in _db.StockTakes on d.StockTakeNo equals h.StockTakeNo
++                where !d.IsDeleted && !h.IsDeleted
++                      && d.WarehouseCd == warehouseCd && d.LocationCd == locationCd
++                      && (h.Status == StockTakeStatus.Counting
++                          || h.Status == StockTakeStatus.DiffReview
++                          || h.Status == StockTakeStatus.AwaitingApproval)
++                select d.LineNo)
++            .AnyAsync(ct);
++    }
++
+     private static void Validate(StockMovementRequest req)
+     {
+         if (string.IsNullOrWhiteSpace(req.TxnType))
+             throw new ArgumentException("TxnType is required.");
+         if (string.IsNullOrWhiteSpace(req.WarehouseCd))
+             throw new ArgumentException("WarehouseCd is required.");
+         if (string.IsNullOrWhiteSpace(req.LocationCd))
+             throw new ArgumentException("LocationCd is required.");
+         if (string.IsNullOrWhiteSpace(req.ProductCd))
+             throw new ArgumentException("ProductCd is required.");
+diff --git a/CP6.Core/Services/Wms/StockTakeService.cs b/CP6.Core/Services/Wms/StockTakeService.cs
+index 1f381ef..a7fdb2e 100644
+--- a/CP6.Core/Services/Wms/StockTakeService.cs
++++ b/CP6.Core/Services/Wms/StockTakeService.cs
+@@ -4,22 +4,24 @@ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Wms;
+ 
+ /// <summary>
+ /// 棚卸サービス実装。
+ /// </summary>
+ /// <remarks>
+ /// 仕様書 §10。
+ /// 採番：ST（YYYYMMDD-NNN 形式）。3 桁の月内連番。
+ /// 在庫調整は StockMovementService.ApplyAsync(ADJ, Qty=diff) 経由。
+-/// 第一版では「棚卸中フラグ」（Stock 凍結）は未実装。運用上の注意として
+-/// 棚卸期間中の出庫はカウント結果に影響する旨をオペレータに周知する。
++/// 【波F】「棚卸中フラグ」＝凍結は活性单クエリ方式で実装済み：進行中（Counting/DiffReview/
++/// AwaitingApproval）の棚卸が覆うロケーションは StockMovementService 側で物理入出庫（IN/OUT/MOVE）を
++/// WM-MSG-304 で拒否し、OutboundService 引当候補からも除外する（承認自身の ADJ は放行）。
++/// 承認完了 or 取消で状態が遷移すれば活性单クエリが空になり自然解凍される（状態の巻き戻し書込は不要）。
+ /// </remarks>
+ public class StockTakeService : IStockTakeService
+ {
+     private readonly CP6Context _db;
+     private readonly IWmsSequenceService _seq;
+     private readonly IStockMovementService _stock;
+ 
+     private const string Prefix = "ST";
+ 
+     public StockTakeService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock)
+diff --git a/CP6.Tests/Wms/StockTakeFreezeTests.cs b/CP6.Tests/Wms/StockTakeFreezeTests.cs
+new file mode 100644
+index 0000000..b5d51cb
+--- /dev/null
++++ b/CP6.Tests/Wms/StockTakeFreezeTests.cs
+@@ -0,0 +1,354 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Common;
++using CP6.Core.Services.Fin;
++using CP6.Core.Services.Integration;
++using CP6.Core.Services.Mes;
++using CP6.Core.Services.Wms;
++using CP6.Entity.DomainModels.Erp;
++using CP6.Entity.DomainModels.Fin;
++using CP6.Entity.DomainModels.Mes;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Microsoft.Extensions.Logging.Abstractions;
++
++namespace CP6.Tests.Wms;
++
++/// <summary>
++/// F1 財務油路 波F — 棚卸開始で所涉ロケーションを凍結（出入庫拒否）。
++///
++/// StockTakeService.cs 自認「棚卸中フラグ未実装」の補装。過账基线正确性の前置：
++///  ① 進行中の棚卸（Counting/DiffReview/AwaitingApproval）に覆われたロケーションでは
++///     物理入出庫（IN/OUT/MOVE）を <c>WM-MSG-304</c> で拒否。
++///  ② 棚卸承認自身の差異調整（ADJ）は放行（盘盈亏凭证照旧）。
++///  ③ 承認完了 or 取消で自然解凍（活性单クエリが空 → 出庫可）。
++///  ④ AllocateAsync は凍結ロケーションを引当候補から除外。
++///  ⑤ 完工反冲（OUT/ISSUE）が凍結ロケーションに撞る → 報工成功＋反冲被拒＋成本归集跳过（C.2 闸1）。
++///
++/// 凍結粒度 = StockTakeDetail（倉庫＋ロケーション）。全て真链（真 StockMovement/StockTake/Outbound/
++/// Backflush/ProductionResult/FinBridge + InMemory）。
++/// </summary>
++public class StockTakeFreezeTests
++{
++    // ProductionResultService.WriteAsync は明示トランザクションを使うため InMemory 警告を抑止。
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++        .Options);
++
++    private static CP6Context NewDbWithWarehouse()
++    {
++        var db = TestHelper.CreateInMemoryContext();
++        db.Warehouses.Add(new Warehouse
++        {
++            WarehouseCd = "W01", WarehouseName = "メイン倉庫",
++            WarehouseType = WarehouseType.RawMaterial, AllowNegative = false,
++        });
++        db.SaveChanges();
++        return db;
++    }
++
++    private static async Task SeedStockInAsync(StockMovementService stock,
++        string product, string lot, string location, decimal qty, decimal? unitPrice = null)
++    {
++        await stock.ApplyAsync(new StockMovementRequest
++        {
++            TxnType = WmsTxnType.IN, WarehouseCd = "W01",
++            LocationCd = location, ProductCd = product, LotNo = lot,
++            Qty = qty, UnitPrice = unitPrice,
++        });
++    }
++
++    /// <summary>W01 全域の棚卸を作成し Counting へ（＝所涉ロケーションを凍結）。棚卸番号を返す。</summary>
++    private static async Task<string> FreezeWarehouseAsync(CP6Context db, StockMovementService stock)
++    {
++        var seq = new WmsSequenceService(db);
++        var take = new StockTakeService(db, seq, stock);
++        var no = await take.CreatePlanAsync(new StockTakePlanDto { TargetWarehouseCd = "W01" }, "u1");
++        await take.StartCountAsync(no, "u1");
++        return no;
++    }
++
++    // ═════════ ① IN/OUT/MOVE 拒否（WM-MSG-304） ═════════
++
++    [Fact]
++    public async Task Frozen_Out_Rejected_WithMsg304()
++    {
++        using var db = NewDbWithWarehouse();
++        var stock = new StockMovementService(db, new WmsSequenceService(db));
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        await FreezeWarehouseAsync(db, stock);
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => stock.ApplyAsync(new StockMovementRequest
++        {
++            TxnType = WmsTxnType.OUT, WarehouseCd = "W01", LocationCd = "LOC1",
++            ProductCd = "P001", LotNo = "L1", Qty = 10m,
++        }));
++        Assert.Contains("WM-MSG-304", ex.Message);
++
++        // 出庫は弾かれ在庫は不変（100 のまま）
++        var s = await db.Stocks.SingleAsync(x => x.ProductCd == "P001");
++        Assert.Equal(100m, s.PhysicalQty);
++    }
++
++    [Fact]
++    public async Task Frozen_In_Rejected_WithMsg304()
++    {
++        using var db = NewDbWithWarehouse();
++        var stock = new StockMovementService(db, new WmsSequenceService(db));
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        await FreezeWarehouseAsync(db, stock);
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => stock.ApplyAsync(new StockMovementRequest
++        {
++            TxnType = WmsTxnType.IN, WarehouseCd = "W01", LocationCd = "LOC1",
++            ProductCd = "P001", LotNo = "L1", Qty = 10m,
++        }));
++        Assert.Contains("WM-MSG-304", ex.Message);
++    }
++
++    [Fact]
++    public async Task Frozen_Move_Rejected_WithMsg304()
++    {
++        using var db = NewDbWithWarehouse();
++        var stock = new StockMovementService(db, new WmsSequenceService(db));
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        await FreezeWarehouseAsync(db, stock);
++
++        // MoveAsync は源 OUT を LOC1（凍結中）で発行 → WM-MSG-304 で弾かれる
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => stock.MoveAsync(new StockMoveRequest
++        {
++            WarehouseCd = "W01", FromLocationCd = "LOC1", ToLocationCd = "LOC2",
++            ProductCd = "P001", LotNo = "L1", Qty = 10m,
++        }));
++        Assert.Contains("WM-MSG-304", ex.Message);
++    }
++
++    // ═════════ ② 棚卸承認の ADJ は放行（盘盈亏凭证照旧） ═════════
++
++    [Fact]
++    public async Task Frozen_ApproveApplyAdj_Allowed_StockConverges()
++    {
++        using var db = NewDbWithWarehouse();
++        var seq = new WmsSequenceService(db);
++        var stock = new StockMovementService(db, seq);
++        var take = new StockTakeService(db, seq, stock);
++
++        // 帳簿 100 → 実盘 97（-3 の棚卸減）。棚卸は全域凍結中に承認 ADJ を発行する。
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        var no = await take.CreatePlanAsync(new StockTakePlanDto { TargetWarehouseCd = "W01" }, "u1");
++        await take.StartCountAsync(no, "u1"); // ← ここで LOC1 凍結
++        await take.UpdateCountsAsync(no, new() { new() { LineNo = 1, CountedQty = 97m, DiffReasonCd = "SHRINK" } }, "u1");
++        await take.SubmitForReviewAsync(no, "u1"); // → DiffReview（依然凍結中）
++        await take.ApproveAndApplyAsync(no, "u1");  // ← ADJ 放行、凍結中でも通る
++
++        // 账实一致：ADJ で 97 に収束（盘亏凭证の基となる ADJ 台帳が発行される）
++        var s = await db.Stocks.SingleAsync(x => x.ProductCd == "P001");
++        Assert.Equal(97m, s.PhysicalQty);
++        var adj = await db.StockTransactions.SingleAsync(t => t.TxnType == WmsTxnType.ADJ);
++        Assert.Equal(-3m, adj.Qty);
++        Assert.Equal("STOCKTAKE", adj.RelatedType);
++    }
++
++    // ── 豁免収窄（審査 Important）：ADJ 放行は RelatedType=="STOCKTAKE" のみ。
++    //    効期核銷（EXPIRY_DISPOSE）等の他 ADJ は凍結中の快照 BookQty を狂わせるため同様に拒否。
++    //    STOCKTAKE ADJ の放行側は上の Frozen_ApproveApplyAdj_Allowed_StockConverges が既に鎖定。──
++    [Fact]
++    public async Task Frozen_NonStockTakeAdj_Rejected_WithMsg304()
++    {
++        using var db = NewDbWithWarehouse();
++        var stock = new StockMovementService(db, new WmsSequenceService(db));
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        await FreezeWarehouseAsync(db, stock);
++
++        // 効期核銷を模した ADJ（ExpiryService.cs と同型：ADJ + RelatedType=EXPIRY_DISPOSE）
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => stock.ApplyAsync(new StockMovementRequest
++        {
++            TxnType = WmsTxnType.ADJ, WarehouseCd = "W01", LocationCd = "LOC1",
++            ProductCd = "P001", LotNo = "L1", Qty = -5m, RelatedType = "EXPIRY_DISPOSE",
++        }));
++        Assert.Contains("WM-MSG-304", ex.Message);
++
++        // RelatedType 無指定の生 ADJ も同様に拒否
++        var ex2 = await Assert.ThrowsAsync<InvalidOperationException>(() => stock.ApplyAsync(new StockMovementRequest
++        {
++            TxnType = WmsTxnType.ADJ, WarehouseCd = "W01", LocationCd = "LOC1",
++            ProductCd = "P001", LotNo = "L1", Qty = -5m,
++        }));
++        Assert.Contains("WM-MSG-304", ex2.Message);
++
++        // 在庫不変（快照 BookQty=100 が守られる）＋ ADJ 台帳ゼロ
++        Assert.Equal(100m, (await db.Stocks.SingleAsync(x => x.ProductCd == "P001")).PhysicalQty);
++        Assert.Equal(0, await db.StockTransactions.CountAsync(t => t.TxnType == WmsTxnType.ADJ));
++    }
++
++    // ── MoveAsync 双端予検（審査 Minor）：移動先のみ凍結でも腿1（源 OUT）発行前に拒否＝在庫宙吊りを防ぐ ──
++    [Fact]
++    public async Task Move_ToFrozenDestination_RejectedBeforeLeg1_NoPartialMove()
++    {
++        using var db = NewDbWithWarehouse();
++        var seq = new WmsSequenceService(db);
++        var stock = new StockMovementService(db, seq);
++        var take = new StockTakeService(db, seq, stock);
++
++        // LOC1（移動元、凍結なし）と LOC2（移動先）に在庫を積み、LOC2 のみ棚卸凍結
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        await SeedStockInAsync(stock, "P002", "L2", "LOC2", 50m, 5m);
++        var no = await take.CreatePlanAsync(new StockTakePlanDto
++        {
++            TargetWarehouseCd = "W01", TargetLocationPrefix = "LOC2",
++        }, "u1");
++        await take.StartCountAsync(no, "u1"); // ← LOC2 のみ凍結
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => stock.MoveAsync(new StockMoveRequest
++        {
++            WarehouseCd = "W01", FromLocationCd = "LOC1", ToLocationCd = "LOC2",
++            ProductCd = "P001", LotNo = "L1", Qty = 10m,
++        }));
++        Assert.Contains("WM-MSG-304", ex.Message);
++
++        // 腿1が発行されていない：源在庫不変 + MOVE 台帳ゼロ（宙吊りなし）
++        Assert.Equal(100m, (await db.Stocks.SingleAsync(x => x.ProductCd == "P001")).PhysicalQty);
++        Assert.Equal(0, await db.StockTransactions.CountAsync(t => t.TxnType == WmsTxnType.MOVE));
++    }
++
++    // ═════════ ③ 承認完了 / 取消で解凍 ═════════
++
++    [Fact]
++    public async Task AfterApprove_Unfrozen_OutAllowed()
++    {
++        using var db = NewDbWithWarehouse();
++        var seq = new WmsSequenceService(db);
++        var stock = new StockMovementService(db, seq);
++        var take = new StockTakeService(db, seq, stock);
++
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        var no = await take.CreatePlanAsync(new StockTakePlanDto { TargetWarehouseCd = "W01" }, "u1");
++        await take.StartCountAsync(no, "u1");
++        // 差異 0 で承認 → Completed（解凍）
++        await take.UpdateCountsAsync(no, new() { new() { LineNo = 1, CountedQty = 100m } }, "u1");
++        await take.SubmitForReviewAsync(no, "u1");
++        await take.ApproveAndApplyAsync(no, "u1");
++        Assert.Equal(StockTakeStatus.Completed, (await db.StockTakes.SingleAsync()).Status);
++
++        // 解凍後は OUT 可
++        var txnNo = await stock.ApplyAsync(new StockMovementRequest
++        {
++            TxnType = WmsTxnType.OUT, WarehouseCd = "W01", LocationCd = "LOC1",
++            ProductCd = "P001", LotNo = "L1", Qty = 10m,
++        });
++        Assert.False(string.IsNullOrEmpty(txnNo));
++        Assert.Equal(90m, (await db.Stocks.SingleAsync(x => x.ProductCd == "P001")).PhysicalQty);
++    }
++
++    [Fact]
++    public async Task AfterCancel_Unfrozen_OutAllowed()
++    {
++        using var db = NewDbWithWarehouse();
++        var seq = new WmsSequenceService(db);
++        var stock = new StockMovementService(db, seq);
++        var take = new StockTakeService(db, seq, stock);
++
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        var no = await FreezeWarehouseAsync(db, stock);
++        await take.CancelAsync(no, "u1"); // → Cancelled（解凍）
++        Assert.Equal(StockTakeStatus.Cancelled, (await db.StockTakes.SingleAsync()).Status);
++
++        var txnNo = await stock.ApplyAsync(new StockMovementRequest
++        {
++            TxnType = WmsTxnType.OUT, WarehouseCd = "W01", LocationCd = "LOC1",
++            ProductCd = "P001", LotNo = "L1", Qty = 10m,
++        });
++        Assert.False(string.IsNullOrEmpty(txnNo));
++    }
++
++    // ═════════ ④ AllocateAsync は凍結ロケーションを引当候補から除外 ═════════
++
++    [Fact]
++    public async Task Allocate_ExcludesFrozenLocation_ThenRecoversAfterCancel()
++    {
++        using var db = NewDbWithWarehouse();
++        var seq = new WmsSequenceService(db);
++        var stock = new StockMovementService(db, seq);
++        var take = new StockTakeService(db, seq, stock);
++        var outbound = new OutboundService(db, seq, stock);
++
++        await SeedStockInAsync(stock, "P001", "L1", "LOC1", 100m, 5m);
++        var no = await FreezeWarehouseAsync(db, stock); // LOC1 凍結
++
++        var outNo = await outbound.CreateOrderAsync(new OutboundOrderDto
++        {
++            OutboundType = OutboundType.Material, WarehouseCd = "W01", PlannedDate = DateTime.Today,
++            Details = new() { new() { ProductCd = "P001", RequiredQty = 30m } },
++        }, "u");
++        await outbound.ConfirmOrderAsync(outNo, "u");
++
++        // 凍結中は唯一の在庫が候補から除外 → 引当不能
++        await Assert.ThrowsAsync<InsufficientStockException>(() => outbound.AllocateAsync(outNo, "u"));
++
++        // 棚卸取消で解凍 → 同一在庫が引当できる
++        await take.CancelAsync(no, "u1");
++        await outbound.AllocateAsync(outNo, "u");
++        var d = await db.OutboundOrderDetails.SingleAsync(x => x.OutboundNo == outNo);
++        Assert.Equal(30m, d.AllocatedQty);
++        Assert.Equal("LOC1", d.LocationCd);
++    }
++
++    // ═════════ ⑤ 完工反冲が凍結ロケーションに撞る → 報工成功＋反冲被拒＋归集跳过 ═════════
++
++    private static async Task SeedCoaAndPostingRulesAsync(CP6Context db)
++    {
++        var gl = new GlAccountService(db);
++        await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "seed");
++        PostingRuleSeed.EnsureSeeded(db);
++    }
++
++    [Fact]
++    public async Task Backflush_HitsFrozenLocation_ReportSucceeds_NoReversal_CostCollectSkipped()
++    {
++        using var db = NewDb();
++        await SeedCoaAndPostingRulesAsync(db);
++
++        // 発行済指図 1 工程 + 定额料 BOM + 材料在庫（W01/LF）
++        db.Set<WorkOrder>().Add(new WorkOrder { Id = Guid.NewGuid(), WorkOrderNo = "WOF", ProductCd = "P1", Status = 2, ProductionQty = 10m, CompletedQty = 0m });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WOF", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        db.Set<ProductMaterial>().Add(new ProductMaterial { Id = Guid.NewGuid(), ProductCd = "P1", ProcessCd = "OP1", MaterialCd = "M1", MaterialTypeDiv = "3", UsageType = 2, UnitUsage = 2m, SupplyPrice = 5m });
++        db.Set<Stock>().Add(new Stock { WarehouseCd = "W01", LocationCd = "LF", ProductCd = "M1", LotNo = "", PhysicalQty = 100m, AllocatedQty = 0m, AvailableQty = 100m, OwnerType = StockOwnerType.Self, UnitPrice = 5m });
++        await db.SaveChangesAsync();
++
++        var seq = new WmsSequenceService(db);
++        var stock = new StockMovementService(db, seq);
++        // 材料在庫のロケーション LF を棚卸で凍結
++        await FreezeWarehouseAsync(db, stock);
++
++        // 真链：ProductionResult → Backflush（反冲 OUT が LF に撞る）→ FinBridge 归集
++        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
++        var collect = new CostCollectService(db, new FinSequenceService(db), new ProcessCostRateService(db));
++        var settle = new CostSettleService(db, journal);
++        var ar = new ArInvoiceService(db, new AutoVoucherEngine(db, journal), journal, new FinSequenceService(db));
++        var finHook = new FinBridgeHook(db, ar, collect, settle, NullLogger<FinBridgeHook>.Instance);
++        var backflush = new BackflushService(db, stock, new MaterialUsageCalculator());
++        var mesSeq = new MesSequenceService(db);
++        var woService = new WorkOrderService(db, mesSeq, new NoOpWmsBridgeHook());
++        var prService = new ProductionResultService(db, mesSeq, woService, new NoOpMesNotifier(), new NoOpWmsBridgeHook(), backflush, finHook);
++
++        // 報工は成功（反冲失敗は吞まれる）
++        var resultNo = await prService.CompleteAsync(new ProductionResultRequest
++        {
++            WorkOrderNo = "WOF", ProcessCd = "OP1", OperatorCd = "OP", GoodQty = 10m,
++        }, "mes");
++        Assert.False(string.IsNullOrEmpty(resultNo));
++        Assert.Equal(WorkOrderStatus.Completed, (await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WOF")).Status);
++
++        // 反冲被拒：ISSUE 移動なし＋材料在庫は不変（100）
++        Assert.Equal(0, await db.StockTransactions.CountAsync(t => t.RelatedType == "ISSUE"));
++        Assert.Equal(100m, (await db.Stocks.SingleAsync(s => s.ProductCd == "M1")).PhysicalQty);
++
++        // 実績消費未回写（ActualQty 行なし）
++        Assert.Equal(0, await db.WorkOrderMaterials.CountAsync(m => m.WorkOrderNo == "WOF"));
++
++        // 成本归集跳过（C.2 闸1）：CostSheet 生成されず、Cost 凭证ゼロ
++        Assert.Equal(0, await db.CostSheets.CountAsync(s => s.WorkOrderNo == "WOF"));
++        Assert.Equal(0, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
++    }
++}

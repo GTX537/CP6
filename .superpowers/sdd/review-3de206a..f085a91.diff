@@ -1,0 +1,1110 @@
+# Review package: 3de206a..HEAD
+
+## Commits
+f085a91 fix(wms): CrossDock xDockNo 字段大小写修正 + Slotting 清理(死CSS/reload接线/重复戻る)
+9cb0005 refactor(ui): WMS 迁移批次8——Kit/StockDwell + 模块硬编码清扫
+
+## Files changed
+ cp6.web/src/types/wms/wms.ts                    |   2 +-
+ cp6.web/src/views/wms/CrossDockView.vue         |   6 +-
+ cp6.web/src/views/wms/InboundOrderView.vue      |   2 +-
+ cp6.web/src/views/wms/InboundReceiptView.vue    |   2 +-
+ cp6.web/src/views/wms/KitView.vue               | 283 +++++++++++++-----------
+ cp6.web/src/views/wms/LotTraceView.vue          |   4 +-
+ cp6.web/src/views/wms/SlottingView.vue          |  13 +-
+ cp6.web/src/views/wms/StockDwellView.vue        |  51 +++--
+ docs/superpowers/plans/2026-07-04-ui-restyle.md |  15 ++
+ 9 files changed, 215 insertions(+), 163 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/types/wms/wms.ts b/cp6.web/src/types/wms/wms.ts
+index 329175a..5f4127b 100644
+--- a/cp6.web/src/types/wms/wms.ts
++++ b/cp6.web/src/types/wms/wms.ts
+@@ -665,21 +665,21 @@ export interface KitOrderSearchQuery {
+   direction?: string
+   status?: number
+   page?: number
+   pageSize?: number
+ }
+ 
+ // ───────── クロスドック（WM130） ─────────
+ 
+ export interface CrossDockOrder {
+   id?: string
+-  xdockNo?: string
++  xDockNo?: string  // 后端实体 XDockNo → camelCase 序列化为 xDockNo（大写 D）
+   inboundNo?: string
+   outboundNo?: string
+   productCd: string
+   productName?: string
+   qty: number
+   supplierCd?: string
+   customerCd?: string
+   fromDock?: string
+   toDock?: string
+   warehouseCd: string
+diff --git a/cp6.web/src/views/wms/CrossDockView.vue b/cp6.web/src/views/wms/CrossDockView.vue
+index 69b0000..7226b86 100644
+--- a/cp6.web/src/views/wms/CrossDockView.vue
++++ b/cp6.web/src/views/wms/CrossDockView.vue
+@@ -93,21 +93,21 @@ const statusMap = computed<Record<number, string>>(() => ({
+ }))
+ // 原 statusTagOf(info/success/danger) → 设计系统 Tone（保色）
+ function statusTone(s: number): Tone {
+   return ({ 0: 'muted', 1: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
+ }
+ function codeLabel(m: Record<number, string>, v: unknown): string {
+   return m[v as number] || (v == null ? '' : String(v))
+ }
+ 
+ const columns = computed<ListColumn[]>(() => [
+-  { prop: 'xdockNo', label: t('wms.xdock.fld.no'), kind: 'mono', width: 180 },
++  { prop: 'xDockNo', label: t('wms.xdock.fld.no'), kind: 'mono', width: 180 },
+   { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
+     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
+   { prop: 'productCd', label: t('wms.common.product'), width: 120 },
+   { prop: 'qty', label: t('wms.common.qty'), width: 100, align: 'right' },
+   { prop: 'supplierCd', label: t('wms.inbound.fld.supplierCd'), width: 120 },
+   { prop: 'customerCd', label: t('wms.outbound.fld.customerCd'), width: 120 },
+   { prop: 'fromDock', label: t('wms.xdock.fld.fromDock'), width: 140 },
+   { prop: 'toDock', label: t('wms.xdock.fld.toDock'), width: 140 },
+   { prop: 'tempLocationCd', label: t('wms.xdock.fld.tempLoc'), width: 140 },
+   { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), width: 160 },
+@@ -163,29 +163,29 @@ function openCreate() {
+ }
+ 
+ async function onSave() {
+   const res = await crossDockApi.create(form)
+   ElMessage.success(`${t('wms.common.success')}: ${res.data.xdockNo}`)
+ }
+ 
+ async function onExecute(row: CrossDockOrder) {
+   try {
+     await ElMessageBox.confirm(t('wms.xdock.msg.executeAsk'), t('wms.common.confirm'), { type: 'warning' })
+-    await crossDockApi.execute(row.xdockNo!)
++    await crossDockApi.execute(row.xDockNo!)
+     ElMessage.success(t('wms.common.success'))
+     reloadList()
+   } catch { /* */ }
+ }
+ 
+ async function onCancel(row: CrossDockOrder) {
+   try {
+     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
+-    await crossDockApi.cancel(row.xdockNo!)
++    await crossDockApi.cancel(row.xDockNo!)
+     ElMessage.success(t('wms.common.success'))
+     reloadList()
+   } catch { /* */ }
+ }
+ </script>
+ 
+ <style scoped>
+ .cp-dash { color: var(--cp-muted); }
+ </style>
+diff --git a/cp6.web/src/views/wms/InboundOrderView.vue b/cp6.web/src/views/wms/InboundOrderView.vue
+index d027589..6aeb71c 100644
+--- a/cp6.web/src/views/wms/InboundOrderView.vue
++++ b/cp6.web/src/views/wms/InboundOrderView.vue
+@@ -211,13 +211,13 @@ function goReceive() { router.push({ path: '/wms/inbound-receipt', query: { inbo
+ 
+ onMounted(async () => {
+   const no = route.query.no as string | undefined
+   if (no) await loadByNo(no)
+ })
+ </script>
+ 
+ <style scoped>
+ .wms-inbound-order { padding: 16px; padding-bottom: 60px; }
+ .header-card :deep(.el-card__header) { padding: 10px 16px; }
+-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
++.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
+ .action-bar > * { margin-left: 8px; }
+ </style>
+diff --git a/cp6.web/src/views/wms/InboundReceiptView.vue b/cp6.web/src/views/wms/InboundReceiptView.vue
+index 6090df0..48d67cf 100644
+--- a/cp6.web/src/views/wms/InboundReceiptView.vue
++++ b/cp6.web/src/views/wms/InboundReceiptView.vue
+@@ -184,13 +184,13 @@ onMounted(async () => {
+   const inboundNo = route.query.inboundNo as string | undefined
+   if (inboundNo) {
+     form.inboundNo = inboundNo
+     await loadOrder()
+   }
+ })
+ </script>
+ 
+ <style scoped>
+ .wms-inbound-receipt { padding: 16px; padding-bottom: 60px; }
+-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
++.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
+ .action-bar > * { margin-left: 8px; }
+ </style>
+diff --git a/cp6.web/src/views/wms/KitView.vue b/cp6.web/src/views/wms/KitView.vue
+index a9c485d..a8f7251 100644
+--- a/cp6.web/src/views/wms/KitView.vue
++++ b/cp6.web/src/views/wms/KitView.vue
+@@ -1,57 +1,54 @@
++<!--
++  キット (Kit) —— WMS 迁移批次8。el-tabs 双模块（マスタ管理 / 組立指示），各模块 list+detail 双态。
++  list 态 → CpListPage（状態/種別/ON-OFF=kind:'tag'+map；数量/実行日時=col slot；新規=toolbar slot）；
++    list を v-if で detail 时卸载 → 戻る时重挂 auto-fetch（RmaView 先例のフレッシュネス）。
++  detail 态（新規/閲覧兼用の編集フォーム + BOM 編集テーブル）→ 特殊エディタ領域：ヘッダ状態を CpTag 化、
++    action-bar を token 化、BOM は el-table を維持（行内編集の子表は模板表达不能）。
++  組立指示の kitSku ドロップダウンはマスタ一覧と別ソース（activeMasters）を onMounted ＋ マスタ変更後にロード。
++-->
+ <template>
+   <div class="wms-kit">
+     <el-tabs v-model="activeTab">
+       <!-- ─── マスタ管理 ─── -->
+       <el-tab-pane :label="t('wms.kit.tab.master')" name="master">
+-        <el-card v-if="masterMode === 'list'" shadow="never" class="search-card">
+-          <el-form inline size="small">
+-            <el-form-item :label="t('wms.kit.fld.kitSku')"><el-input v-model="masterKeyword" clearable style="width: 200px" /></el-form-item>
+-            <el-form-item>
+-              <el-button type="primary" @click="reloadMasters" :loading="masterLoading">{{ t('wms.common.search') }}</el-button>
+-              <el-button @click="openMasterCreate">{{ t('wms.common.create') }}</el-button>
+-            </el-form-item>
+-          </el-form>
+-        </el-card>
+-
+-        <el-card v-if="masterMode === 'list'" shadow="never">
+-          <el-table :data="masters" border stripe size="small" max-height="500" highlight-current-row>
+-            <el-table-column prop="kitSku" :label="t('wms.kit.fld.kitSku')" width="180" />
+-            <el-table-column prop="kitName" :label="t('wms.kit.fld.kitName')" min-width="200" />
+-            <el-table-column prop="defaultWarehouseCd" :label="t('wms.kit.fld.defaultWh')" width="140" />
+-            <el-table-column :label="t('wms.kit.fld.active')" width="100" align="center">
+-              <template #default="{ row }">
+-                <el-tag v-if="row.activeFlg" type="success" size="small">ON</el-tag>
+-                <el-tag v-else type="info" size="small">OFF</el-tag>
+-              </template>
+-            </el-table-column>
+-            <el-table-column :label="t('wms.common.action')" width="160" fixed="right">
+-              <template #default="{ row }">
+-                <el-button link type="primary" size="small" @click="openMasterEdit(row.kitSku)">{{ t('wms.common.open') }}</el-button>
+-                <el-button link type="danger" size="small" @click="onMasterDelete(row.kitSku)">{{ t('wms.common.delete') }}</el-button>
+-              </template>
+-            </el-table-column>
+-          </el-table>
+-        </el-card>
+-
+-        <template v-if="masterMode === 'detail' && currentMaster">
++        <!-- 一覧 -->
++        <CpListPage
++          v-if="masterMode === 'list'"
++          ref="masterListRef"
++          :columns="masterColumns"
++          :fetch="fetchMasters"
++          :search-fields="masterSearchFields"
++          :filter-labels="filterLabels"
++        >
++          <template #toolbar>
++            <el-button @click="openMasterCreate">{{ t('wms.common.create') }}</el-button>
++          </template>
++          <template #col-_action="{ row }">
++            <el-button link type="primary" size="small" @click="openMasterEdit(row.kitSku)">{{ t('wms.common.open') }}</el-button>
++            <el-button link type="danger" size="small" @click="onMasterDelete(row.kitSku)">{{ t('wms.common.delete') }}</el-button>
++          </template>
++        </CpListPage>
++
++        <!-- 詳細 / 新規 -->
++        <template v-else-if="masterMode === 'detail' && currentMaster">
+           <el-card shadow="never">
+             <template #header>
+-              <span style="font-weight: 600">
+-                {{ isNewMaster ? t('wms.kit.titleNew') : `${t('wms.kit.title')} [${currentMaster.kitSku}]` }}
++              <span class="hd-title">
++                {{ masterIsNew ? t('wms.kit.titleNew') : `${t('wms.kit.title')} [${currentMaster.kitSku}]` }}
+               </span>
+             </template>
+             <el-form :model="currentMaster" label-width="160px" size="small">
+               <el-row :gutter="16">
+                 <el-col :span="8">
+                   <el-form-item :label="t('wms.kit.fld.kitSku')" required>
+-                    <el-input v-model="currentMaster.kitSku" :disabled="!isNewMaster" maxlength="20" />
++                    <el-input v-model="currentMaster.kitSku" :disabled="!masterIsNew" maxlength="20" />
+                   </el-form-item>
+                 </el-col>
+                 <el-col :span="8">
+                   <el-form-item :label="t('wms.kit.fld.kitName')" required>
+                     <el-input v-model="currentMaster.kitName" maxlength="100" />
+                   </el-form-item>
+                 </el-col>
+                 <el-col :span="8">
+                   <el-form-item :label="t('wms.kit.fld.defaultWh')">
+                     <el-input v-model="currentMaster.defaultWarehouseCd" maxlength="10" />
+@@ -66,22 +63,22 @@
+                   <el-form-item :label="t('wms.common.remarks')">
+                     <el-input v-model="currentMaster.remarks" type="textarea" :rows="2" />
+                   </el-form-item>
+                 </el-col>
+               </el-row>
+             </el-form>
+           </el-card>
+ 
+           <el-card shadow="never" style="margin-top: 12px">
+             <template #header>
+-              <div style="display: flex; justify-content: space-between; align-items: center">
+-                <span style="font-weight: 600">{{ t('wms.kit.bom.title') }}</span>
++              <div class="card-hd hd-between">
++                <span class="hd-title">{{ t('wms.kit.bom.title') }}</span>
+                 <el-button type="primary" size="small" @click="addBomLine">{{ t('wms.common.addLine') }}</el-button>
+               </div>
+             </template>
+             <el-table :data="currentMaster.components" border size="small">
+               <el-table-column type="index" :label="t('wms.common.line')" width="60" align="center" />
+               <el-table-column :label="t('wms.kit.bom.componentCd')" min-width="140">
+                 <template #default="{ row }"><el-input v-model="row.componentProductCd" maxlength="20" /></template>
+               </el-table-column>
+               <el-table-column :label="t('wms.kit.bom.componentName')" min-width="180">
+                 <template #default="{ row }"><el-input v-model="row.componentName" maxlength="100" /></template>
+@@ -105,83 +102,50 @@
+           <el-affix position="bottom" :offset="0">
+             <div class="action-bar">
+               <el-button @click="masterMode = 'list'">{{ t('wms.common.back') }}</el-button>
+               <el-button type="primary" @click="onMasterSave" :loading="saving">{{ t('wms.common.save') }}</el-button>
+             </div>
+           </el-affix>
+         </template>
+       </el-tab-pane>
+ 
+       <!-- ─── 組立指示 ─── -->
+-      <el-tab-pane :label="t('wms.kit.tab.order')" name="order">
+-        <el-card v-if="orderMode === 'list'" shadow="never" class="search-card">
+-          <el-form :model="orderQuery" inline size="small">
+-            <el-form-item :label="t('wms.kit.fld.orderNo')"><el-input v-model="orderQuery.kitOrderNo" clearable style="width: 180px" /></el-form-item>
+-            <el-form-item :label="t('wms.kit.fld.kitSku')"><el-input v-model="orderQuery.kitSku" clearable style="width: 160px" /></el-form-item>
+-            <el-form-item :label="t('wms.kit.fld.direction')">
+-              <el-select v-model="orderQuery.direction" clearable style="width: 140px">
+-                <el-option v-for="(l, v) in directionMap" :key="v" :label="l" :value="v" />
+-              </el-select>
+-            </el-form-item>
+-            <el-form-item :label="t('wms.common.status')">
+-              <el-select v-model="orderQuery.status" clearable style="width: 120px">
+-                <el-option v-for="(l, v) in orderStatusMap" :key="v" :label="l" :value="Number(v)" />
+-              </el-select>
+-            </el-form-item>
+-            <el-form-item>
+-              <el-button type="primary" @click="reloadOrders" :loading="orderLoading">{{ t('wms.common.search') }}</el-button>
+-              <el-button @click="openOrderCreate">{{ t('wms.common.create') }}</el-button>
+-            </el-form-item>
+-          </el-form>
+-        </el-card>
+-
+-        <el-card v-if="orderMode === 'list'" shadow="never">
+-          <el-table :data="orders" border stripe size="small" max-height="500" highlight-current-row>
+-            <el-table-column prop="kitOrderNo" :label="t('wms.kit.fld.orderNo')" width="180" />
+-            <el-table-column :label="t('wms.kit.fld.direction')" width="120">
+-              <template #default="{ row }">
+-                <el-tag :type="row.direction === 'ASSEMBLE' ? 'success' : 'warning'" size="small">{{ directionMap[row.direction] }}</el-tag>
+-              </template>
+-            </el-table-column>
+-            <el-table-column :label="t('wms.common.status')" width="100">
+-              <template #default="{ row }">
+-                <el-tag :type="orderStatusTagOf(row.status)" size="small">{{ orderStatusMap[row.status] }}</el-tag>
+-              </template>
+-            </el-table-column>
+-            <el-table-column prop="kitSku" :label="t('wms.kit.fld.kitSku')" width="160" />
+-            <el-table-column prop="kitName" :label="t('wms.kit.fld.kitName')" min-width="180" show-overflow-tooltip />
+-            <el-table-column prop="qty" :label="t('wms.common.qty')" width="100" align="right">
+-              <template #default="{ row }">{{ formatQty(row.qty) }}</template>
+-            </el-table-column>
+-            <el-table-column prop="warehouseCd" :label="t('wms.common.warehouse')" width="90" />
+-            <el-table-column prop="kitLocationCd" :label="t('wms.kit.fld.kitLoc')" width="140" />
+-            <el-table-column prop="kitLotNo" :label="t('wms.kit.fld.kitLot')" width="160" />
+-            <el-table-column prop="executedAt" :label="t('wms.kit.fld.executedAt')" width="160">
+-              <template #default="{ row }">{{ row.executedAt?.replace('T', ' ').slice(0, 16) || '—' }}</template>
+-            </el-table-column>
+-            <el-table-column :label="t('wms.common.action')" width="100" fixed="right">
+-              <template #default="{ row }">
+-                <el-button link type="primary" size="small" @click="openOrderDetail(row.kitOrderNo)">{{ t('wms.common.open') }}</el-button>
+-              </template>
+-            </el-table-column>
+-          </el-table>
+-        </el-card>
+-
+-        <template v-if="orderMode === 'detail' && currentOrder">
++      <el-tab-pane :label="t('wms.kit.tab.order')" name="order" lazy>
++        <!-- 一覧 -->
++        <CpListPage
++          v-if="orderMode === 'list'"
++          ref="orderListRef"
++          :columns="orderColumns"
++          :fetch="fetchOrders"
++          :search-fields="orderSearchFields"
++          :filter-labels="filterLabels"
++        >
++          <template #toolbar>
++            <el-button @click="openOrderCreate">{{ t('wms.common.create') }}</el-button>
++          </template>
++          <template #col-qty="{ row }">{{ formatQty(row.qty) }}</template>
++          <template #col-executedAt="{ row }">{{ row.executedAt?.replace('T', ' ').slice(0, 16) || '—' }}</template>
++          <template #col-_action="{ row }">
++            <el-button link type="primary" size="small" @click="openOrderDetail(row.kitOrderNo)">{{ t('wms.common.open') }}</el-button>
++          </template>
++        </CpListPage>
++
++        <!-- 詳細 / 新規 -->
++        <template v-else-if="orderMode === 'detail' && currentOrder">
+           <el-card shadow="never">
+             <template #header>
+-              <div style="display: flex; align-items: center; gap: 12px">
+-                <span style="font-weight: 600">
++              <div class="card-hd">
++                <span class="hd-title">
+                   {{ isNewOrder ? t('wms.kit.orderTitleNew') : `${t('wms.kit.orderTitle')} [${currentOrder.kitOrderNo}]` }}
+                 </span>
+-                <el-tag v-if="!isNewOrder" :type="orderStatusTagOf(currentOrder.status)" size="small">{{ orderStatusMap[currentOrder.status] }}</el-tag>
+-                <el-tag :type="currentOrder.direction === 'ASSEMBLE' ? 'success' : 'warning'" size="small">{{ directionMap[currentOrder.direction] }}</el-tag>
++                <CpTag v-if="!isNewOrder" :tone="orderStatusTone(currentOrder.status)">{{ orderStatusMap[currentOrder.status] }}</CpTag>
++                <CpTag :tone="currentOrder.direction === 'ASSEMBLE' ? 'ok' : 'warn'">{{ directionMap[currentOrder.direction] }}</CpTag>
+               </div>
+             </template>
+             <el-form :model="currentOrder" label-width="160px" size="small">
+               <el-row :gutter="16">
+                 <el-col :span="8">
+                   <el-form-item :label="t('wms.kit.fld.kitSku')" required>
+                     <el-select v-model="currentOrder.kitSku" :disabled="!isNewOrder" filterable style="width: 100%">
+                       <el-option v-for="m in activeMasters" :key="m.kitSku" :label="`${m.kitSku} - ${m.kitName}`" :value="m.kitSku" />
+                     </el-select>
+                   </el-form-item>
+@@ -216,86 +180,118 @@
+                 <el-col :span="24">
+                   <el-form-item :label="t('wms.common.remarks')">
+                     <el-input v-model="currentOrder.remarks" type="textarea" :rows="2" :disabled="!isNewOrder" />
+                   </el-form-item>
+                 </el-col>
+               </el-row>
+               <el-alert v-if="currentOrder.executedTxnNos" type="success" :closable="false" style="margin-top: 8px">
+                 <template #title>
+                   {{ t('wms.kit.msg.txnCount', { n: currentOrder.executedTxnNos.split(';').length }) }}
+                 </template>
+-                <div style="font-size: 12px; color: #606266; word-break: break-all">{{ currentOrder.executedTxnNos }}</div>
++                <div class="txn-list">{{ currentOrder.executedTxnNos }}</div>
+               </el-alert>
+             </el-form>
+           </el-card>
+ 
+           <el-affix position="bottom" :offset="0">
+             <div class="action-bar">
+               <el-button @click="orderMode = 'list'">{{ t('wms.common.back') }}</el-button>
+               <el-button v-if="isNewOrder" type="primary" @click="onOrderSave" :loading="saving">{{ t('wms.common.save') }}</el-button>
+               <el-button v-if="canExecute" type="success" @click="onOrderExecute" :loading="saving">{{ t('wms.kit.btn.execute') }}</el-button>
+               <el-button v-if="canCancelOrder" type="danger" plain @click="onOrderCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+             </div>
+           </el-affix>
+         </template>
+       </el-tab-pane>
+     </el-tabs>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, reactive, computed, onMounted, watch } from 'vue'
++import { ref, computed, onMounted } from 'vue'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { kittingApi } from '@/api/wms/kitting'
+ import type { KitMaster, KitMasterComponent, KitOrder, KitOrderSearchQuery } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+ const activeTab = ref<'master' | 'order'>('master')
+ const saving = ref(false)
+ 
++const filterLabels = computed(() => ({ search: t('wms.common.search'), reset: t('wms.common.clear') }))
++
++// —— 码值映射（i18n 反応式）——
+ const directionMap = computed<Record<string, string>>(() => ({
+   ASSEMBLE: t('wms.kit.dir.assemble'),
+   DISASSEMBLE: t('wms.kit.dir.disassemble'),
+ }))
+ const orderStatusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.kit.status.draft'),
+   1: t('wms.kit.status.executed'),
+   9: t('wms.kit.status.cancelled'),
+ }))
++// 原 orderStatusTagOf(info/success/danger) → 设计系统 Tone（info=グレー→muted で保色）
++function orderStatusTone(s: number): Tone {
++  return ({ 0: 'muted', 1: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
++}
++function codeLabel(m: Record<number, string>, v: unknown): string {
++  return m[v as number] || (v == null ? '' : String(v))
++}
+ 
+-// ─── マスタ ───
++// —— 組立指示 kitSku ドロップダウン用の有効マスタ（一覧とは別ソース）——
++const activeMasters = ref<KitMaster[]>([])
++async function loadActiveMasters() {
++  activeMasters.value = ((await kittingApi.searchMasters()).data || []).filter(m => m.activeFlg)
++}
++
++// ─────────────────────── マスタ ───────────────────────
+ const masterMode = ref<'list' | 'detail'>('list')
+-const masterKeyword = ref('')
+-const masters = ref<KitMaster[]>([])
+-const masterLoading = ref(false)
++const masterIsNew = ref(false)
+ const currentMaster = ref<KitMaster | null>(null)
+-const isNewMaster = computed(() => currentMaster.value !== null && !masters.value.some(m => m.kitSku === currentMaster.value!.kitSku))
++const masterListRef = ref<InstanceType<typeof CpListPage>>()
++
++const masterColumns = computed<ListColumn[]>(() => [
++  { prop: 'kitSku', label: t('wms.kit.fld.kitSku'), kind: 'mono', width: 180 },
++  { prop: 'kitName', label: t('wms.kit.fld.kitName'), minWidth: 200, overflowTooltip: true },
++  { prop: 'defaultWarehouseCd', label: t('wms.kit.fld.defaultWh'), width: 140 },
++  { prop: 'activeFlg', label: t('wms.kit.fld.active'), width: 100, align: 'center', kind: 'tag',
++    map: (v) => ({ label: v ? 'ON' : 'OFF', tone: v ? 'ok' : 'muted' }) },
++  { prop: '_action', label: t('wms.common.action'), width: 160, fixed: 'right' },
++])
+ 
+-const activeMasters = computed(() => masters.value.filter(m => m.activeFlg))
++const masterSearchFields = computed<FilterField[]>(() => [
++  { key: 'kitSku', label: t('wms.kit.fld.kitSku'), type: 'text' },
++])
+ 
+-async function reloadMasters() {
+-  masterLoading.value = true
+-  try { masters.value = (await kittingApi.searchMasters(masterKeyword.value || undefined)).data || [] }
+-  finally { masterLoading.value = false }
++const fetchMasters: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const kw = f.kitSku ? String(f.kitSku) : undefined
++  const all = (await kittingApi.searchMasters(kw)).data || []
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
+ function openMasterCreate() {
+   currentMaster.value = { kitSku: '', kitName: '', activeFlg: true, components: [] }
++  masterIsNew.value = true
+   masterMode.value = 'detail'
+ }
+ 
+ async function openMasterEdit(kitSku: string) {
+   const res = await kittingApi.getMaster(kitSku)
+   currentMaster.value = res.data
++  masterIsNew.value = false
+   masterMode.value = 'detail'
+ }
+ 
+ function addBomLine() {
+   if (!currentMaster.value) return
+   currentMaster.value.components.push({
+     lineNo: currentMaster.value.components.length + 1,
+     componentProductCd: '', requiredQty: 0,
+   } as KitMasterComponent)
+ }
+@@ -304,62 +300,93 @@ function removeBomLine(idx: number) {
+   currentMaster.value.components.splice(idx, 1)
+   currentMaster.value.components.forEach((c, i) => (c.lineNo = i + 1))
+ }
+ 
+ async function onMasterSave() {
+   if (!currentMaster.value) return
+   if (!currentMaster.value.kitSku || !currentMaster.value.kitName) { ElMessage.warning(t('wms.common.required')); return }
+   if (currentMaster.value.components.length === 0) { ElMessage.warning(t('wms.inbound.msg.noDetail')); return }
+   saving.value = true
+   try {
+-    if (isNewMaster.value) {
++    if (masterIsNew.value) {
+       await kittingApi.createMaster(currentMaster.value)
+     } else {
+       await kittingApi.updateMaster(currentMaster.value.kitSku, currentMaster.value)
+     }
+     ElMessage.success(t('wms.common.success'))
+-    masterMode.value = 'list'
+-    await reloadMasters()
++    masterMode.value = 'list' // v-if 再挂 auto-fetch
++    await loadActiveMasters()
+   } finally { saving.value = false }
+ }
+ 
+ async function onMasterDelete(kitSku: string) {
+   try {
+     await ElMessageBox.confirm(`${t('wms.common.confirmDelete')} [${kitSku}]`, t('wms.common.confirm'), { type: 'warning' })
+     await kittingApi.deleteMaster(kitSku)
+     ElMessage.success(t('wms.common.success'))
+-    await reloadMasters()
++    masterListRef.value?.reload()
++    await loadActiveMasters()
+   } catch { /* */ }
+ }
+ 
+-// ─── 指示 ───
++// ─────────────────────── 指示 ───────────────────────
+ const orderMode = ref<'list' | 'detail'>('list')
+-const orderQuery = reactive<KitOrderSearchQuery>({ pageSize: 100 })
+-const orders = ref<KitOrder[]>([])
+-const orderLoading = ref(false)
+ const currentOrder = ref<KitOrder | null>(null)
++const orderListRef = ref<InstanceType<typeof CpListPage>>()
++
+ const isNewOrder = computed(() => currentOrder.value !== null && !currentOrder.value.kitOrderNo)
+ const canExecute = computed(() => currentOrder.value && currentOrder.value.kitOrderNo && currentOrder.value.status === 0)
+ const canCancelOrder = computed(() => currentOrder.value && currentOrder.value.kitOrderNo && currentOrder.value.status === 0)
+ 
+ const kitLotHint = computed(() => currentOrder.value?.direction === 'DISASSEMBLE'
+   ? t('wms.kit.msg.kitLotRequiredDisassemble')
+   : t('wms.kit.msg.kitLotAutoGen'))
+ 
+-function orderStatusTagOf(s: number): 'info' | 'success' | 'danger' {
+-  return ({ 0: 'info', 1: 'success', 9: 'danger' } as const)[s as 0] || 'info'
+-}
++const orderColumns = computed<ListColumn[]>(() => [
++  { prop: 'kitOrderNo', label: t('wms.kit.fld.orderNo'), kind: 'mono', width: 180 },
++  { prop: 'direction', label: t('wms.kit.fld.direction'), width: 120, kind: 'tag',
++    map: (v) => ({ label: directionMap.value[v as string] ?? '', tone: v === 'ASSEMBLE' ? 'ok' : 'warn' }) },
++  { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
++    map: (v) => ({ label: codeLabel(orderStatusMap.value, v), tone: orderStatusTone(v as number) }) },
++  { prop: 'kitSku', label: t('wms.kit.fld.kitSku'), width: 160 },
++  { prop: 'kitName', label: t('wms.kit.fld.kitName'), minWidth: 180, overflowTooltip: true },
++  { prop: 'qty', label: t('wms.common.qty'), width: 100, align: 'right' },
++  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 90 },
++  { prop: 'kitLocationCd', label: t('wms.kit.fld.kitLoc'), width: 140 },
++  { prop: 'kitLotNo', label: t('wms.kit.fld.kitLot'), width: 160 },
++  { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), width: 160 },
++  { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
++])
++
++const orderSearchFields = computed<FilterField[]>(() => [
++  { key: 'kitOrderNo', label: t('wms.kit.fld.orderNo'), type: 'text' },
++  { key: 'kitSku', label: t('wms.kit.fld.kitSku'), type: 'text' },
++  {
++    key: 'direction', label: t('wms.kit.fld.direction'), type: 'select',
++    options: Object.entries(directionMap.value).map(([v, l]) => ({ label: l, value: v })),
++  },
++  {
++    key: 'status', label: t('wms.common.status'), type: 'select',
++    options: Object.entries(orderStatusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
++  },
++])
+ 
+-async function reloadOrders() {
+-  orderLoading.value = true
+-  try { orders.value = (await kittingApi.searchOrders(orderQuery)).data || [] }
+-  finally { orderLoading.value = false }
++const fetchOrders: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const q: KitOrderSearchQuery = { pageSize: 100 }
++  if (f.kitOrderNo) q.kitOrderNo = String(f.kitOrderNo)
++  if (f.kitSku) q.kitSku = String(f.kitSku)
++  if (f.direction) q.direction = String(f.direction)
++  if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
++  const all = (await kittingApi.searchOrders(q)).data || []
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
+ }
+ 
+ function openOrderCreate() {
+   currentOrder.value = {
+     kitSku: '', qty: 0, direction: 'ASSEMBLE',
+     warehouseCd: '', kitLocationCd: '', status: 0,
+   }
+   orderMode.value = 'detail'
+ }
+ 
+@@ -399,22 +426,22 @@ async function onOrderCancel() {
+   if (!currentOrder.value) return
+   try {
+     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await kittingApi.cancel(currentOrder.value.kitOrderNo!)
+     ElMessage.success(t('wms.common.success'))
+     await openOrderDetail(currentOrder.value.kitOrderNo!)
+   } catch { /* */ }
+ }
+ 
+ // ─── ライフサイクル ───
+-onMounted(reloadMasters)
+-watch(activeTab, (v) => {
+-  if (v === 'order' && orders.value.length === 0) reloadOrders()
+-})
++onMounted(loadActiveMasters)
+ </script>
+ 
+ <style scoped>
+ .wms-kit { padding: 16px; padding-bottom: 60px; }
+-.search-card { margin-bottom: 12px; }
+-.action-bar { background: var(--el-bg-color); border-top: 1px solid var(--el-border-color-lighter); padding: 12px 16px; text-align: right; }
++.card-hd { display: flex; align-items: center; gap: 12px; }
++.hd-between { justify-content: space-between; }
++.hd-title { font-weight: 600; }
++.txn-list { font-size: var(--cp-fs-xs); color: var(--cp-muted); word-break: break-all; }
++.action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line-soft); padding: 12px 16px; text-align: right; }
+ .action-bar > * { margin-left: 8px; }
+ </style>
+diff --git a/cp6.web/src/views/wms/LotTraceView.vue b/cp6.web/src/views/wms/LotTraceView.vue
+index 1b8f3a0..7c25ea5 100644
+--- a/cp6.web/src/views/wms/LotTraceView.vue
++++ b/cp6.web/src/views/wms/LotTraceView.vue
+@@ -167,13 +167,13 @@ async function setRecall(flag: boolean) {
+     const res = await lotTraceApi.recall(productCd.value, lotNo.value, flag)
+     ElMessage.success(t('wms.lotTrace.msg.recallApplied', { n: res.data.affectedStocks }))
+     await loadSummary()
+   } catch { /* */ }
+ }
+ </script>
+ 
+ <style scoped>
+ .wms-lot-trace { padding: 16px; }
+ .search-card { margin-bottom: 12px; }
+-.qty-in { color: var(--el-color-success); }
+-.qty-out { color: var(--el-color-danger); }
++.qty-in { color: var(--cp-ok); }
++.qty-out { color: var(--cp-danger); }
+ </style>
+diff --git a/cp6.web/src/views/wms/SlottingView.vue b/cp6.web/src/views/wms/SlottingView.vue
+index d653e1a..f133d56 100644
+--- a/cp6.web/src/views/wms/SlottingView.vue
++++ b/cp6.web/src/views/wms/SlottingView.vue
+@@ -1,21 +1,21 @@
+ <!--
+   スロッティング計画 —— WMS 迁移批次2。一覧/明细双态同一组件：
+   一覧态 → CpPageShell + CpListPage（状態 tag map / 数字列 num / 実行日時 map；操作 col slot 開く）；分析用 CpFormDialog（default slot）。
+   明细态 → CpDetailPanel（基本情報）＋ 推薦 el-table（特殊子表：ABCランク/要移動 用 CpTag，保留 el-table 承载静态推薦数据）＋ el-affix 操作条。
+   CpListPage 用 v-show 常挂（切明细不卸载），保留筛选/页码上下文；模式与原页 mode ref 一致，功能零丢失。
+ -->
+ <template>
+   <CpPageShell :title="t('wms.slotting.title')" :count="mode === 'list' ? total : undefined">
+     <template #actions>
+       <el-button v-if="mode === 'list'" @click="analyzeDialog = true">{{ t('wms.slotting.btn.analyze') }}</el-button>
+-      <el-button v-else @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
++      <el-button v-else @click="backToList">{{ t('wms.common.back') }}</el-button>
+     </template>
+ 
+     <!-- 一覧态（常挂，切明细用 v-show 隐藏以保留筛选上下文） -->
+     <div v-show="mode === 'list'">
+       <CpListPage
+         ref="listRef"
+         :columns="columns"
+         :fetch="fetchList"
+         :search-fields="searchFields"
+         :filter-labels="filterLabels"
+@@ -64,21 +64,20 @@
+                 <CpTag v-if="row.needsRelocation" tone="warn">{{ t('wms.common.confirm') }}</CpTag>
+                 <span v-else class="cp-dash">—</span>
+               </template>
+             </el-table-column>
+           </el-table>
+         </div>
+       </div>
+ 
+       <el-affix position="bottom" :offset="0">
+         <div class="action-bar">
+-          <el-button @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
+           <el-button v-if="currentResult.plan.status === 1" type="success" @click="onApprove">{{ t('wms.stocktake.btn.approve') }}</el-button>
+           <el-button v-if="currentResult.plan.status !== 9 && currentResult.plan.status !== 2" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+         </div>
+       </el-affix>
+     </template>
+ 
+     <!-- 分析 -->
+     <CpFormDialog
+       v-model="analyzeDialog"
+       :title="t('wms.slotting.btn.analyze')"
+@@ -112,20 +111,27 @@ import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
+ import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { slottingApi } from '@/api/wms/logistics'
+ import type { SlottingPlanResult } from '@/types/wms/wms'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ const mode = ref<'list' | 'detail'>('list')
+ const total = ref<number>()
+ const listRef = ref<InstanceType<typeof CpListPage>>()
+ const currentResult = ref<SlottingPlanResult | null>(null)
++// 明细内承認/取消后置脏标记：返回一覧时命令式刷新 CpListPage（v-show 常挂不自动重取）
++const listDirty = ref(false)
++
++function backToList() {
++  if (listDirty.value) { listRef.value?.reload(); listDirty.value = false }
++  mode.value = 'list'
++}
+ 
+ // —— 码值映射 ——
+ const statusMap = computed<Record<number, string>>(() => ({
+   0: t('wms.slotting.status.analyzing'),
+   1: t('wms.slotting.status.recommended'),
+   2: t('wms.slotting.status.approved'),
+   9: t('wms.slotting.status.cancelled'),
+ }))
+ function statusTone(s: number): Tone {
+   return ({ 0: 'muted', 1: 'info', 2: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
+@@ -208,33 +214,34 @@ async function submitAnalyze() {
+   await openDetail(res.data.slottingPlanNo)
+ }
+ 
+ // —— 明细操作 ——
+ async function onApprove() {
+   if (!currentResult.value) return
+   try {
+     await ElMessageBox.confirm(t('wms.slotting.msg.approveAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await slottingApi.approve(currentResult.value.plan.slottingPlanNo)
+     ElMessage.success(t('wms.common.success'))
++    listDirty.value = true
+     await openDetail(currentResult.value.plan.slottingPlanNo)
+   } catch { /* */ }
+ }
+ async function onCancel() {
+   if (!currentResult.value) return
+   try {
+     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
+     await slottingApi.cancel(currentResult.value.plan.slottingPlanNo)
+     ElMessage.success(t('wms.common.success'))
++    listDirty.value = true
+     await openDetail(currentResult.value.plan.slottingPlanNo)
+   } catch { /* */ }
+ }
+ </script>
+ 
+ <style scoped>
+-.wms-slotting { padding: 16px; }
+ /* 卡片壳（复用设计系统卡片 token；非硬编码） */
+ .cp-card { background: var(--cp-card); border-radius: var(--cp-r-md); box-shadow: var(--cp-shadow-1); overflow: hidden; }
+ .cp-card-body { padding: 16px 20px; }
+ .cp-dash { color: var(--cp-muted); }
+ .action-bar { background: var(--cp-card); border-top: 1px solid var(--cp-line); padding: 12px 16px; text-align: right; }
+ .action-bar > * { margin-left: 8px; }
+ </style>
+diff --git a/cp6.web/src/views/wms/StockDwellView.vue b/cp6.web/src/views/wms/StockDwellView.vue
+index 830e392..da82941 100644
+--- a/cp6.web/src/views/wms/StockDwellView.vue
++++ b/cp6.web/src/views/wms/StockDwellView.vue
+@@ -64,21 +64,21 @@
+           <div class="kpi-label">{{ t('wms.stockDwell.kpi.totalValue') }}</div>
+           <div class="kpi-value">{{ formatAmount(summary?.totalValue) }}</div>
+         </el-card>
+       </el-col>
+     </el-row>
+ 
+     <el-card shadow="never" class="chart-card">
+       <template #header>
+         <div class="panel-header">
+           <span>{{ t('wms.stockDwell.chart.title') }}</span>
+-          <el-tag size="small" type="info">{{ t('wms.stockDwell.filter.asOfDate') }}: {{ formatDate(summary?.asOfDate) }}</el-tag>
++          <CpTag tone="info">{{ t('wms.stockDwell.filter.asOfDate') }}: {{ formatDate(summary?.asOfDate) }}</CpTag>
+         </div>
+       </template>
+ 
+       <div v-if="barRows.length" class="bucket-list">
+         <div v-for="row in barRows" :key="row.groupKey" class="bucket-row">
+           <div class="bucket-label">
+             <span>{{ row.groupLabel }}</span>
+             <strong>{{ formatQty(row.totalQty) }}</strong>
+           </div>
+           <div class="bucket-bar" :aria-label="row.groupLabel">
+@@ -98,26 +98,26 @@
+               :style="segmentStyle(row.bucket61To90Qty, row.totalQty)"
+             />
+             <span
+               v-if="row.bucketOver90Qty > 0"
+               class="bucket-segment b3"
+               :style="segmentStyle(row.bucketOver90Qty, row.totalQty)"
+             />
+           </div>
+         </div>
+       </div>
+-      <el-empty v-else :description="t('wms.stockDwell.empty')" :image-size="70" />
++      <CpEmpty v-else :text="t('wms.stockDwell.empty')" />
+     </el-card>
+ 
+     <el-card shadow="never" class="table-card">
+       <div class="table-toolbar">
+-        <el-tag size="small">{{ t('wms.common.total') }}: {{ rows.length }}</el-tag>
++        <CpTag tone="info">{{ t('wms.common.total') }}: {{ rows.length }}</CpTag>
+       </div>
+ 
+       <el-table
+         v-if="!isMobile"
+         :data="rows"
+         border
+         stripe
+         size="small"
+         max-height="560"
+         v-loading="loading"
+@@ -141,48 +141,50 @@
+         <el-table-column :label="t('wms.stockDwell.bucket.b3')" width="105" align="right">
+           <template #default="{ row }">
+             <span class="over90-text">{{ formatQty(row.bucketOver90Qty) }}</span>
+           </template>
+         </el-table-column>
+         <el-table-column :label="t('wms.stockDwell.col.oldest')" width="150">
+           <template #default="{ row }">{{ formatDate(row.oldestReceiveDate) }}</template>
+         </el-table-column>
+         <el-table-column :label="t('wms.stockDwell.col.oldestAge')" width="120" align="right">
+           <template #default="{ row }">
+-            <el-tag :type="row.oldestAgeDays > 90 ? 'danger' : 'info'" size="small">
++            <CpTag :tone="row.oldestAgeDays > 90 ? 'danger' : 'info'">
+               {{ row.oldestAgeDays }}
+-            </el-tag>
++            </CpTag>
+           </template>
+         </el-table-column>
+       </el-table>
+ 
+       <div v-else class="mobile-list" v-loading="loading">
+         <div v-for="row in rows" :key="row.groupKey" class="mobile-row">
+           <div class="mobile-main">
+             <span>{{ row.groupLabel }}</span>
+             <strong>{{ formatQty(row.totalQty) }}</strong>
+           </div>
+           <div class="mobile-meta">
+             <span>{{ t('wms.stockDwell.bucket.b3') }}: <b>{{ formatQty(row.bucketOver90Qty) }}</b></span>
+             <span>{{ t('wms.stockDwell.col.oldestAge') }}: {{ row.oldestAgeDays }}</span>
+           </div>
+         </div>
+-        <el-empty v-if="!rows.length && !loading" :description="t('wms.stockDwell.empty')" :image-size="70" />
++        <CpEmpty v-if="!rows.length && !loading" :text="t('wms.stockDwell.empty')" />
+       </div>
+     </el-card>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { computed, onMounted, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { Refresh, Search } from '@element-plus/icons-vue'
++import CpTag from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
+ import { stockDwellApi } from '@/api/wms/stockDwell'
+ import { useBreakpoint } from '@/composables/useBreakpoint'
+ import type { StockDwellQuery, StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
+ import { formatQty as fmtQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ const { isMobile } = useBreakpoint()
+ 
+ const query = reactive<StockDwellQuery>({
+   groupBy: 'product',
+@@ -270,57 +272,57 @@ onMounted(load)
+ .stock-dwell {
+   padding: 12px;
+ }
+ 
+ .page-header {
+   margin-bottom: 12px;
+ }
+ 
+ .page-header h2 {
+   margin: 0;
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 20px;
+   font-weight: 650;
+   line-height: 1.3;
+ }
+ 
+ .search-card,
+ .kpi-row,
+ .chart-card {
+   margin-bottom: 12px;
+ }
+ 
+ .kpi-card {
+   min-height: 86px;
+-  border-left: 4px solid #409eff;
++  border-left: 4px solid var(--cp-info);
+ }
+ 
+ .kpi-card.danger {
+-  border-left-color: #f56c6c;
++  border-left-color: var(--cp-danger);
+ }
+ 
+ .kpi-card.warning {
+-  border-left-color: #e6a23c;
++  border-left-color: var(--cp-warn);
+ }
+ 
+ .kpi-card.value {
+-  border-left-color: #67c23a;
++  border-left-color: var(--cp-ok);
+ }
+ 
+ .kpi-label {
+-  color: #606266;
++  color: var(--cp-muted);
+   font-size: 12px;
+   margin-bottom: 8px;
+ }
+ 
+ .kpi-value {
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 24px;
+   font-weight: 650;
+   line-height: 1.15;
+   word-break: break-word;
+ }
+ 
+ .panel-header,
+ .table-toolbar {
+   display: flex;
+   justify-content: space-between;
+@@ -340,109 +342,110 @@ onMounted(load)
+   grid-template-columns: minmax(150px, 220px) 1fr;
+   gap: 12px;
+   align-items: center;
+ }
+ 
+ .bucket-label {
+   min-width: 0;
+   display: flex;
+   justify-content: space-between;
+   gap: 8px;
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 13px;
+ }
+ 
+ .bucket-label span {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+ }
+ 
+ .bucket-label strong {
+-  color: #606266;
++  color: var(--cp-muted);
+   font-weight: 600;
+   flex-shrink: 0;
+ }
+ 
+ .bucket-bar {
+   height: 18px;
+   display: flex;
+   overflow: hidden;
+   border-radius: 6px;
+-  background: #eef2f7;
++  background: var(--cp-line-soft);
+ }
+ 
+ .bucket-segment {
+   min-width: 3px;
+ }
+ 
++/* 滞留日数バケット＝意味づけ色（新鮮→期限超過）。設計トークンに直接対応するため §2.5 図表免除は使わずトークン化 */
+ .bucket-segment.b0 {
+-  background: #67c23a;
++  background: var(--cp-ok);
+ }
+ 
+ .bucket-segment.b1 {
+-  background: #409eff;
++  background: var(--cp-info);
+ }
+ 
+ .bucket-segment.b2 {
+-  background: #e6a23c;
++  background: var(--cp-warn);
+ }
+ 
+ .bucket-segment.b3 {
+-  background: #f56c6c;
++  background: var(--cp-danger);
+ }
+ 
+ .over90-text {
+-  color: #d93026;
++  color: var(--cp-danger);
+   font-weight: 650;
+ }
+ 
+ .mobile-list {
+   display: flex;
+   flex-direction: column;
+ }
+ 
+ .mobile-row {
+   padding: 12px 0;
+-  border-bottom: 1px solid #ebeef5;
++  border-bottom: 1px solid var(--cp-line);
+ }
+ 
+ .mobile-row:last-child {
+   border-bottom: none;
+ }
+ 
+ .mobile-main,
+ .mobile-meta {
+   display: flex;
+   justify-content: space-between;
+   gap: 10px;
+   align-items: center;
+ }
+ 
+ .mobile-main {
+-  color: #303133;
++  color: var(--cp-ink);
+   font-size: 14px;
+   margin-bottom: 6px;
+ }
+ 
+ .mobile-main span {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+ }
+ 
+ .mobile-main strong {
+   flex-shrink: 0;
+ }
+ 
+ .mobile-meta {
+-  color: #606266;
++  color: var(--cp-muted);
+   font-size: 12px;
+ }
+ 
+ @media (max-width: 767px) {
+   .stock-dwell {
+     padding: 8px;
+   }
+ 
+   .bucket-row {
+     grid-template-columns: 1fr;
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 949d1f5..5a1896c 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -664,20 +664,35 @@ describe('CpListPage', () => {
+ 
+ 批次7（BridgeHealth/OutboundRouting/MaterialShortage/WmsDashboard/InkLot）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：OutboundRouting/MaterialShortage=查询列表页（CpPageShell+CpListPage，码值列 map，前者 paginated=false、后者服务端分页，复合 create/action ダイアログ保持 el-dialog）；BridgeHealth=监控仪表盘特殊页（KPI×3→CpStatCard、パネルヘッダ→CpSectionHeader、状態 el-tag→CpTag，保留 30s ポーリング/timer cleanup、el-progress/el-table）；WmsDashboard=仪表盘特殊页（KPI×8→CpStatCard、カードヘッダ→CpSectionHeader、状態/TXN el-tag→CpTag，保留 SignalR リアルタイム/棒グラフ/タイムライン/明細テーブル；棒グラフ系列色→--cp-ok/danger/muted token）；InkLot=タブ式ワークベンチ特殊页（2 リスト+4 ダイアログ、tabs は模板契約外——token 化 + 状態 el-tag→CpTag、expiry 色→--cp-danger/warn，el-tabs/el-form/el-table/dialogs 保持）。真栈：BridgeHealth KPI(0.0%/0/0)+2 パネル No Data；OutboundRouting count 0 空态+新規ルール ダイアログ+プレビューカード；MaterialShortage KPI(未対応 0)+検索/クリア reload+Total 0 分页；WmsDashboard KPI×8+未接続 pill+トレンド/倉庫別/アラート表；InkLot 2 タブ切替+検索フォーム No Data。console 无新 error（WmsDashboard 的 SignalR CSRF 403 negotiate 失败=環境既有基础设施问题，SignalR コード原様保持未改，非本批引入，未接続 pill 正确反映）。以下为唯一新增缺口：
+ 
+ 17. **CpListPage / CpFilterBar 无初始 filter 值（无法 seed 默认查询条件）**（Minor）
+     - 现象：MaterialShortage 原 `query.status` 初期値 = 'OPEN'（欠品トリアージのため既定で未対応のみ表示）、resetQuery も 'OPEN' に戻す。CpFilterBar 的 filters 内部初始化为 `{}`，各字段起始 undefined，无 prop 可 seed 初始值。
+     - 代偿：`fetchList` 内 `status = filters.status === undefined ? 'OPEN' : filters.status`——初回/リセット(undefined)→OPEN、''→全件、明示選択はそのまま。功能等价保全（初期表示=未対応、リセット=未対応、全件は ALL 選択で到達）；唯一の齟齬は初回に status セレクトが空表示（実データは OPEN 絞込）——cosmetic、記录在案。
+     - 建议：CpListPage 增 `initialFilters?: Record<string,unknown>`（或 CpFilterBar `defaultValue`）透传初始 filters，恢复默认查询条件的可视回填。
+ 
+ （注：MaterialShortage 采用 CpListPage 标准分页，page-sizes 从原 [50,100,200]/默认 50 变为模板 [20,50,100]/默认 20——属既定模板契约，非缺口。BridgeHealth/WmsDashboard 系监控·仪表盘特殊页，InkLot 系 tabs 工作台特殊页，均按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3/4 处置一致。WmsDashboard SignalR CSRF negotiate 403 为測試環境基础设施既有问题，非本批引入。）
+ 
++### WMS 迁移批次8 复盘（模块收尾，无新增模板缺口）
++
++批次8（模块收尾）迁移完成，功能零丢失、真栈验收通过。本批 = Part A 末两页（模块最大）+ Part B 模块级硬编码清扫 + Part C 累积清理。分类与处置：
++
++- **KitView**（キット，420 行）= el-tabs 双模块（マスタ / 組立指示）× list+detail 双态。list 态迁 CpListPage（状態/種別/ON-OFF=kind:'tag'+map；数量/実行日時=col slot；新規=toolbar slot #15），list 用 `v-if` 随 mode 切换卸载 → 戻る时重挂 auto-fetch（RmaView 先例のフレッシュネス）；detail 态 = 新規/閲覧兼用の編集フォーム + BOM 編集テーブル（特殊エディタ領域，保留 el-card/el-form/el-table/el-affix），ヘッダ状態を CpTag 化、action-bar/txn-list を token 化。組立指示の kitSku ドロップダウンはマスタ一覧と別ソース（`activeMasters` を onMounted＋マスタ変更後にロード）で疎結合化。el-tabs は模板契約外の特殊ナビ——CpPageShell は被せず、原页无页头を踏襲。
++- **StockDwellView**（在庫滞留レポート，456 行）= 仪表盘/分析特殊页（KPI×4 + 滞留バケット横棒グラフ + 明細テーブル + モバイル表示）。按「非表格特殊页只做 token 化 + 基础件替换」处置：el-tag→CpTag、el-empty→CpEmpty、内联全色値（#303133/#606266/#409eff/#f56c6c/#e6a23c/#67c23a/#d93026/#eef2f7/#ebeef5）→ `--cp-ink/muted/info/danger/warn/ok/line/line-soft` token 化。滞留バケット 4 色は「意味づけ色（新鮮→期限超過）」で設計トークンに 1:1 対応するため §2.5 図表色免除は使わずトークン化（grep が `/* cp-chart-color */` 免除行ゼロ＝完全クリーンで返る）。
++
++**Part B 模块硬编码清扫**：全 `#hex`/`rgba()` 真彩值仅 StockDwell + KitView 内联残留（其余 wms 页 grep 命中均为 `template #default` 正则误报——"defa" 4 位十六进制字符，非色值），已随两页迁移清零。`var(--el-*)` 残留 5 处一并 token 化：InboundReceipt/InboundOrder/Kit 的 action-bar（`--el-bg-color`/`--el-border-color-lighter`→`--cp-card`/`--cp-line-soft`，与 Slotting 统一）、LotTrace 的 `.qty-in/.qty-out`（`--el-color-success`/`--el-color-danger`→`--cp-ok`/`--cp-danger`）。最终 grep：非 `#default` 误报行 = 0。
++
++**Part C 累积清理**（并入 fix commit ②）：① SlottingView 删除死 CSS `.wms-slotting{padding:16px}`（模板根为 CpPageShell，该类无宿主）；`listRef` 从悬空改为接线——新增 `listDirty` 脏标记，onApprove/onCancel 成功后置位，`backToList()` 在返回一覧时命令式 `reload()`（CpListPage 为 `v-show` 常挂不自动重取，故手动刷新，等价 RmaView `v-if` 重挂的フレッシュネス；真栈证实：承認後戻る→`GET /wms/slotting` 触发、一覧显示 SLP2026070001/承認済/admin）。② 删除 detail action-bar 重复「戻る」（保留 header #actions 版）。③ **CrossDock xDockNo 大小写修正**：后端实体 `XDockNo` camelCase 序列化为 `xDockNo`（大写 D），前端行读取用了 `xdockNo`（小写 d）→ 単号列空白 + 実行/取消 POST `/cross-dock/undefined/execute`。修正 CrossDockView 列 prop + onExecute/onCancel 行读取 + `CrossDockOrder` 类型定义三处为 `xDockNo`（create 响应体后端返回的是字面 `{ xdockNo }` 匿名对象，保持不变；search 过滤键 `xdockNo` 走后端大小写不敏感模型绑定，工作正常，未动）。真栈证实：単号列显示 XD2026070001、`POST /api/wms/cross-dock/XD2026070001/execute → 200`（原为 `/undefined/execute → 400`）。
++
++真栈证据（截图存 `.superpowers/sdd/shots/`）：Kit マスタ一覧（Total 2 + ON pill + 開く/削除）/マスタ detail（フォーム+BOM 編集+行追加）/組立一覧（Total 3 + 方向/状態 pill）/組立 detail（下書き=muted・組立=ok の CpTag ヘッダ + 実行/取消 action-bar）；StockDwell（KPI×4 トークン枠色 + バケット横棒 --cp-ok/info + 基準日 CpTag）；CrossDock（単号 XD2026070001 + 実行 200）；Slotting（承認→戻る→一覧リロード=承認済 反映）。console 无本批新 error（SignalR CSRF 403 / EP small·label 弃用警告 = 環境·既有基础设施，非本批引入）。type-check 0 error、`npm run test` 304 全绿。
++
++**本批无新增模板缺口**——两页均落在既有契约（CpListPage toolbar/col slot #15/#16、default-filter-in-fetch #17）与「特殊页 token 化」处置内，未触发新的模板扩展需求。
++
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+ 

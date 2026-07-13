@@ -1,0 +1,229 @@
+# Review package: f593f19..HEAD
+
+## Commits
+7d9d61a feat(wfs-service-task): C-T3 service-catalog 端点（按 Kind/VisibleInDesigner 过滤）
+
+## Files changed
+ CP6.Core/Services/Oa/DesignerModels.cs          |  8 +++
+ CP6.Core/Services/Oa/DesignerService.cs         | 17 +++++-
+ CP6.Core/Services/Oa/IDesignerService.cs        |  1 +
+ CP6.Tests/Oa/DesignerServiceTests.cs            |  3 +-
+ CP6.Tests/Wf/ServiceCatalogTests.cs             | 71 +++++++++++++++++++++++++
+ CP6.WebApi/Controllers/Oa/DesignerController.cs |  4 ++
+ 6 files changed, 102 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Oa/DesignerModels.cs b/CP6.Core/Services/Oa/DesignerModels.cs
+index 611ec51..0cd6828 100644
+--- a/CP6.Core/Services/Oa/DesignerModels.cs
++++ b/CP6.Core/Services/Oa/DesignerModels.cs
+@@ -1,7 +1,15 @@
++using System.Collections.Generic;
++
+ namespace CP6.Core.Services.Oa;
+ 
+ public record SaveFlowRequest(string FlowKey, string FlowName, string FormKey,
+     string? FunctionId, string? FlowCode, string SchemaJson);
+ public record CloneRequest(string SourceFlowKey, string NewFlowKey, string NewFlowName);
+ public record FlowDefSummary(string FlowKey, string FlowName, string FormKey,
+     string? FunctionId, string? FlowCode, int Version, bool Enable);
++
++// 服务目录（P1-6）：设计器拉取可绑定的回写动作 + 连接器。每项 {name, label(DisplayName)}。
++public record ServiceCatalogItem(string Name, string Label);
++public record ServiceCatalog(
++    IReadOnlyList<ServiceCatalogItem> Actions,
++    IReadOnlyList<ServiceCatalogItem> Connectors);
+diff --git a/CP6.Core/Services/Oa/DesignerService.cs b/CP6.Core/Services/Oa/DesignerService.cs
+index 9490fea..6c43181 100644
+--- a/CP6.Core/Services/Oa/DesignerService.cs
++++ b/CP6.Core/Services/Oa/DesignerService.cs
+@@ -1,23 +1,38 @@
+ using CP6.Core.EFDbContext;
+ using CP6.Core.Services.Wf;
+ using Microsoft.EntityFrameworkCore;
++using System.Collections.Generic;
++using System.Linq;
+ using System.Text.Json;
+ 
+ namespace CP6.Core.Services.Oa;
+ 
+ public class DesignerService : IDesignerService
+ {
+     private static readonly JsonSerializerOptions JsonOpts = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = true };
+     private readonly CP6Context _db;
+     private readonly IFlowDefService _flowDef;
+-    public DesignerService(CP6Context db, IFlowDefService flowDef) { _db = db; _flowDef = flowDef; }
++    private readonly IEnumerable<IServiceTaskExecutor> _execs;
++    private readonly IEnumerable<IWfConnector> _connectors;
++    public DesignerService(CP6Context db, IFlowDefService flowDef,
++        IEnumerable<IServiceTaskExecutor> execs, IEnumerable<IWfConnector> connectors)
++    {
++        _db = db; _flowDef = flowDef; _execs = execs; _connectors = connectors;
++    }
++
++    /// <summary>P1-6 服务目录：actions 只含 Kind==dataWriteback 且 VisibleInDesigner 的执行器
++    /// （WebApiExecutor 被排除）；connectors 含全部注册连接器。每项 {name, label(DisplayName)}。</summary>
++    public ServiceCatalog GetServiceCatalog() => new(
++        _execs.Where(e => e.Kind == ServiceKind.DataWriteback && e.VisibleInDesigner)
++              .Select(e => new ServiceCatalogItem(e.Key, e.DisplayName)).ToList(),
++        _connectors.Select(c => new ServiceCatalogItem(c.Name, c.DisplayName)).ToList());
+ 
+     public async Task<IReadOnlyList<FlowDefSummary>> ListAsync(string? functionId = null)
+     {
+         var q = _db.Wf_FlowDefs.AsQueryable();
+         if (!string.IsNullOrWhiteSpace(functionId)) q = q.Where(d => d.FunctionId == functionId);
+         return await q.OrderBy(d => d.FunctionId).ThenBy(d => d.FlowKey)
+             .Select(d => new FlowDefSummary(d.FlowKey, d.FlowName, d.FormKey, d.FunctionId, d.FlowCode, d.Version, d.Enable))
+             .ToListAsync();
+     }
+ 
+diff --git a/CP6.Core/Services/Oa/IDesignerService.cs b/CP6.Core/Services/Oa/IDesignerService.cs
+index f1d956e..d1183c5 100644
+--- a/CP6.Core/Services/Oa/IDesignerService.cs
++++ b/CP6.Core/Services/Oa/IDesignerService.cs
+@@ -1,10 +1,11 @@
+ namespace CP6.Core.Services.Oa;
+ 
+ /// <summary>流程设计器服务（umbrella §4.8）。校验 + 身份唯一 + upsert（消费 IFlowDefService）+ 模板克隆。</summary>
+ public interface IDesignerService
+ {
+     Task<IReadOnlyList<FlowDefSummary>> ListAsync(string? functionId = null);  // functionId 非空=按功能筛
+     Task<FlowDefSummary?> LoadAsync(string flowKey);                            // 取定义摘要（schema 经 GetDef 取）
+     Task SaveAsync(SaveFlowRequest req, string? user);                          // 校验 E-WF-010 + 唯一 E-WF-009 + SaveDef
+     Task CloneAsync(CloneRequest req, string? user);                           // 独立副本
++    ServiceCatalog GetServiceCatalog();                                        // P1-6 服务目录：可见回写动作 + 全部连接器
+ }
+diff --git a/CP6.Tests/Oa/DesignerServiceTests.cs b/CP6.Tests/Oa/DesignerServiceTests.cs
+index 4a85885..2220fe6 100644
+--- a/CP6.Tests/Oa/DesignerServiceTests.cs
++++ b/CP6.Tests/Oa/DesignerServiceTests.cs
+@@ -6,21 +6,22 @@ using Microsoft.EntityFrameworkCore;
+ using Microsoft.EntityFrameworkCore.Diagnostics;
+ using System.Text.Json;
+ 
+ namespace CP6.Tests;
+ 
+ public class DesignerServiceTests
+ {
+     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString())
+         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
+-    private static IDesignerService Svc(CP6Context db) => new DesignerService(db, new FlowDefService(db));
++    private static IDesignerService Svc(CP6Context db) => new DesignerService(db, new FlowDefService(db),
++        Array.Empty<IServiceTaskExecutor>(), Array.Empty<IWfConnector>());
+ 
+     private static string ValidSchema() => JsonSerializer.Serialize(new FlowSchema
+     {
+         Start = "s",
+         Nodes = { new FlowNode { Id = "s", Type = "start" },
+                   new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
+                   new FlowNode { Id = "e", Type = "end" } },
+         Edges = { new FlowEdge { From = "s", To = "a" }, new FlowEdge { From = "a", To = "e" } },
+     });
+ 
+diff --git a/CP6.Tests/Wf/ServiceCatalogTests.cs b/CP6.Tests/Wf/ServiceCatalogTests.cs
+new file mode 100644
+index 0000000..f732fa0
+--- /dev/null
++++ b/CP6.Tests/Wf/ServiceCatalogTests.cs
+@@ -0,0 +1,71 @@
++// CP6.Tests/Wf/ServiceCatalogTests.cs
++using System;
++using System.Threading.Tasks;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Oa;
++using CP6.Core.Services.Wf;
++using CP6.Core.Services.Wf.Executors;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++public class ServiceCatalogTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++
++    // fake executor to cover the rest of the filter matrix (dataWriteback-but-hidden / wrong-kind)
++    private sealed class FakeExec : IServiceTaskExecutor
++    {
++        public string Key { get; init; } = "";
++        public string Kind { get; init; } = "";
++        public bool VisibleInDesigner { get; init; }
++        public string DisplayName { get; init; } = "";
++        public Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx) => Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    private sealed class FakeConnector : IWfConnector
++    {
++        public string Name { get; init; } = "";
++        public string DisplayName { get; init; } = "";
++        public Task<ServiceTaskResult> CallAsync(string pathTemplate, string? paramsJson, ServiceTaskContext ctx)
++            => Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    [Fact]
++    public void GetServiceCatalog_FiltersWebApiExecutor_From_Actions()
++    {
++        using var db = NewDb();
++
++        var execs = new IServiceTaskExecutor[]
++        {
++            new SampleDataWritebackExecutor(),                                   // dataWriteback + visible → 入
++            new WebApiExecutor(Array.Empty<IWfConnector>()),                     // webApi + invisible → 出（反例）
++            new FakeExec { Key = "hiddenWb",      Kind = ServiceKind.DataWriteback, VisibleInDesigner = false, DisplayName = "隐藏回写" }, // dataWriteback 但不可见 → 出
++            new FakeExec { Key = "internalThing", Kind = "internal",               VisibleInDesigner = true,  DisplayName = "内部件"   }, // 非 dataWriteback → 出
++        };
++        var conns = new IWfConnector[]
++        {
++            new EchoConnector(),                                                 // erpEcho / ERP Echo (demo)
++            new FakeConnector { Name = "erp2", DisplayName = "ERP Two" },
++        };
++
++        var svc = new DesignerService(db, new FlowDefService(db), execs, conns);
++
++        var catalog = svc.GetServiceCatalog();
++
++        // actions: 只含 Kind==dataWriteback && VisibleInDesigner 的 → 恰好 sampleWriteback
++        var action = Assert.Single(catalog.Actions);
++        Assert.Equal("sampleWriteback", action.Name);
++        Assert.Equal("样例数据回写", action.Label);   // label = DisplayName
++        Assert.DoesNotContain(catalog.Actions, a => a.Name == "webApi");        // WebApiExecutor 不出现
++
++        // connectors: 含全部；每项 {name, label(DisplayName)}
++        Assert.Equal(2, catalog.Connectors.Count);
++        Assert.Contains(catalog.Connectors, c => c.Name == "erpEcho" && c.Label == "ERP Echo (demo)");
++        Assert.Contains(catalog.Connectors, c => c.Name == "erp2"    && c.Label == "ERP Two");
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Oa/DesignerController.cs b/CP6.WebApi/Controllers/Oa/DesignerController.cs
+index 918d245..f7ddbb0 100644
+--- a/CP6.WebApi/Controllers/Oa/DesignerController.cs
++++ b/CP6.WebApi/Controllers/Oa/DesignerController.cs
+@@ -26,20 +26,24 @@ public class DesignerController : LocalizedControllerBase
+         _ctx = ctx;
+     }
+ 
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet("list")]
+     public async Task<IActionResult> List([FromQuery] string? functionId)
+         => Ok2(await _designer.ListAsync(functionId));
+ 
++    [HttpGet("service-catalog")]
++    public IActionResult ServiceCatalog()
++        => Ok2(_designer.GetServiceCatalog());   // P1-6：按 Kind/VisibleInDesigner 过滤的回写动作 + 连接器
++
+     [HttpGet("load/{flowKey}")]
+     public async Task<IActionResult> Load(string flowKey)
+     {
+         var summary = await _designer.LoadAsync(flowKey);
+         if (summary is null) return NotFound(new { code = 404, message = "E-WF-006" });
+         var def = await _flowDef.GetDefAsync(flowKey);
+         return Ok2(new { summary, schemaJson = def?.SchemaJson ?? "{}" });
+     }
+ 
+     public record SaveReq(string FlowKey, string FlowName, string FormKey, string? FunctionId, string? FlowCode, string SchemaJson);

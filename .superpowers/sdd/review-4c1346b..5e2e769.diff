@@ -1,0 +1,307 @@
+# Review package: 4c1346b..HEAD
+
+## Commits
+5e2e769 feat(wfs-hardening): A-T4 FlowGraph配对辅助+FlowSchemaValidator E-WF-020/021+OnBranchReject POCO
+
+## Files changed
+ CP6.Core/Services/Wf/FlowGraph.cs           |  75 +++++++++++++++++
+ CP6.Core/Services/Wf/FlowSchema.cs          |   4 +
+ CP6.Core/Services/Wf/FlowSchemaValidator.cs |  30 +++++++
+ CP6.Tests/Wf/InclusiveValidatorTests.cs     | 123 ++++++++++++++++++++++++++++
+ 4 files changed, 232 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/FlowGraph.cs b/CP6.Core/Services/Wf/FlowGraph.cs
+new file mode 100644
+index 0000000..ebf5aca
+--- /dev/null
++++ b/CP6.Core/Services/Wf/FlowGraph.cs
+@@ -0,0 +1,75 @@
++namespace CP6.Core.Services.Wf;
++
++/// <summary>schema 图论辅助。校验（E-WF-021 配对）与退回作用域分析（SendBackScopeAnalyzer）
++/// 共用同一「最近公共汇聚 join」口径（spec §5.3 单一口径要求）。全部 BFS，环路安全（visited）。</summary>
++internal static class FlowGraph
++{
++    internal static bool IsJoinType(FlowNode n)
++        => (n.Type ?? "").Trim().ToLowerInvariant() is "paralleljoin" or "inclusivejoin";
++
++    /// <summary>从 startId 正向可达节点集（含自身）。</summary>
++    public static HashSet<string> ReachableFrom(FlowSchema schema, string startId)
++    {
++        var seen = new HashSet<string> { startId };
++        var q = new Queue<string>(); q.Enqueue(startId);
++        while (q.Count > 0)
++        {
++            var cur = q.Dequeue();
++            foreach (var e in schema.Edges.Where(e => e.From == cur))
++                if (seen.Add(e.To)) q.Enqueue(e.To);
++        }
++        return seen;
++    }
++
++    /// <summary>split 的配对 join = 各出边（IsError!=true）可达集交集中的 join 型节点里、距 split BFS 最近者。
++    /// 无出边 / 无公共 join → null（校验报 E-WF-021；退回作用域分析保守拒 E-WF-012）。</summary>
++    public static FlowNode? NearestCommonJoin(FlowSchema schema, FlowNode split)
++    {
++        var outs = schema.Edges.Where(e => e.From == split.Id && e.IsError != true).ToList();
++        if (outs.Count == 0) return null;
++        HashSet<string>? common = null;
++        foreach (var e in outs)
++        {
++            var r = ReachableFrom(schema, e.To);
++            if (common is null) common = r; else common.IntersectWith(r);
++        }
++        if (common is null || common.Count == 0) return null;
++
++        // 距 split 最近（BFS 深度）且为 join 型
++        var depth = new Dictionary<string, int> { [split.Id] = 0 };
++        var q = new Queue<string>(); q.Enqueue(split.Id);
++        while (q.Count > 0)
++        {
++            var cur = q.Dequeue();
++            foreach (var e in schema.Edges.Where(e => e.From == cur))
++                if (!depth.ContainsKey(e.To)) { depth[e.To] = depth[cur] + 1; q.Enqueue(e.To); }
++        }
++        FlowNode? best = null; int bestD = int.MaxValue;
++        foreach (var n in schema.Nodes)
++        {
++            if (!common.Contains(n.Id) || !IsJoinType(n)) continue;
++            if (depth.TryGetValue(n.Id, out var d) && d < bestD) { best = n; bestD = d; }
++        }
++        return best;
++    }
++
++    /// <summary>分支域：从 split 某出边目标出发的正向可达集（含该目标），<b>不进入、不穿过</b> 配对 join。
++    /// 退回作用域分析用（SameBranch/SiblingBranch 判定）。</summary>
++    public static HashSet<string> BranchDomain(FlowSchema schema, string edgeTargetId, string pairedJoinId)
++    {
++        var seen = new HashSet<string>();
++        if (edgeTargetId == pairedJoinId) return seen;
++        seen.Add(edgeTargetId);
++        var q = new Queue<string>(); q.Enqueue(edgeTargetId);
++        while (q.Count > 0)
++        {
++            var cur = q.Dequeue();
++            foreach (var e in schema.Edges.Where(e => e.From == cur))
++            {
++                if (e.To == pairedJoinId) continue;   // 到配对 join 即分支域边界
++                if (seen.Add(e.To)) q.Enqueue(e.To);
++            }
++        }
++        return seen;
++    }
++}
+diff --git a/CP6.Core/Services/Wf/FlowSchema.cs b/CP6.Core/Services/Wf/FlowSchema.cs
+index 4f91320..97e89a5 100644
+--- a/CP6.Core/Services/Wf/FlowSchema.cs
++++ b/CP6.Core/Services/Wf/FlowSchema.cs
+@@ -77,20 +77,24 @@ public class FlowNode
+     public string? ServicePath { get; set; }            // webApi:相对 baseURL 的路径模板
+     public string? ServiceParamsJson { get; set; }      // 参数模板:JSON,键→表达式(§3.6 语法)
+ 
+     // timer 专属
+     public string? ServiceDelayMode { get; set; }       // "duration" | "untilDate" | "untilExpr"
+     public string? ServiceDelayValue { get; set; }      // "3d"/"PT2H" | "2026-07-01" | 表达式
+ 
+     // 重试策略(设计器口径:重试次数;映射到 job.MaxAttempts = retries + 1)
+     public int? ServiceMaxRetries { get; set; }         // 默认 3(= 首次后再重试 3 次)
+     public int? ServiceRetryBackoffSec { get; set; }    // 默认 30,指数退避基数
++
++    // ── 内核 hardening（spec §2.1，可空向后兼容） ──
++    /// <summary>分支驳回策略（仅 parallelSplit/inclusiveSplit 有意义）：null/"cascade"=连坐（现状）；"prune"=剪枝。</summary>
++    public string? OnBranchReject { get; set; }
+ }
+ 
+ public class FlowEdge
+ {
+     public string From { get; set; } = string.Empty;
+     public string To { get; set; } = string.Empty;
+ 
+     /// <summary>流转条件表达式（空 = 无条件直达）。C-3 用 ConditionEvaluator 求值，多条件边按声明序取首个为真</summary>
+     public string? Condition { get; set; }
+ 
+diff --git a/CP6.Core/Services/Wf/FlowSchemaValidator.cs b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+index e14f030..b4e36ba 100644
+--- a/CP6.Core/Services/Wf/FlowSchemaValidator.cs
++++ b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+@@ -100,20 +100,50 @@ public static class FlowSchemaValidator
+                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServiceParamsJson)   // 票4：参数模板不得含数组下标
+                 || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
+             if (bad) { errs.Add("E-WF-016"); break; }
+         }
+ 
+         // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边仅允许出自 serviceTask 节点。
+         var serviceIds = schema.Nodes.Where(n => T(n) == "servicetask").Select(n => n.Id).ToHashSet();
+         if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
+         if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
+ 
++        // ⑩ inclusive 网关（hardening E-WF-020/021）
++        // E-WF-020：inclusiveSplit 出边（非错误边）须 ≥2 且恰好一条无条件 default 兜底边
++        foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivesplit"))
++        {
++            var outs = schema.Edges.Where(e => e.From == n.Id && e.IsError != true).ToList();
++            var dflt = outs.Count(e => string.IsNullOrWhiteSpace(e.Condition));
++            if (outs.Count < 2 || dflt != 1) { errs.Add("E-WF-020"); break; }
++        }
++
++        // E-WF-021a：每个 inclusiveSplit 的最近公共汇聚须存在且类型为 inclusiveJoin
++        var pairedJoinIds = new HashSet<string>();
++        foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivesplit"))
++        {
++            var join = FlowGraph.NearestCommonJoin(schema, n);
++            if (join is null || T(join) != "inclusivejoin") { errs.Add("E-WF-021"); continue; }
++            pairedJoinIds.Add(join.Id);
++        }
++        // E-WF-021b：inclusiveJoin 入边 ≥2 且被至少一个 inclusiveSplit 配对（孤立 join 报错）
++        foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivejoin"))
++            if (schema.Edges.Count(e => e.To == n.Id) < 2 || !pairedJoinIds.Contains(n.Id))
++            { errs.Add("E-WF-021"); break; }
++        // E-WF-021c：onBranchReject 值域 ∈ {cascade, prune}（大小写不敏感）且仅允许写在 split 型节点上
++        foreach (var n in schema.Nodes)
++        {
++            if (string.IsNullOrWhiteSpace(n.OnBranchReject)) continue;
++            var v = n.OnBranchReject.Trim().ToLowerInvariant();
++            bool onSplit = T(n) is "parallelsplit" or "inclusivesplit";
++            if (!onSplit || (v != "cascade" && v != "prune")) { errs.Add("E-WF-021"); break; }
++        }
++
+         // ④ 从 start 可达某 end（BFS）
+         var start = schema.Nodes.FirstOrDefault(n => T(n) == "start");
+         if (start is not null)
+         {
+             var adj = schema.Edges.GroupBy(e => e.From).ToDictionary(g => g.Key, g => g.Select(e => e.To).ToList());
+             var seen = new HashSet<string> { start.Id };
+             var q = new Queue<string>(); q.Enqueue(start.Id);
+             bool reachedEnd = false;
+             while (q.Count > 0)
+             {
+diff --git a/CP6.Tests/Wf/InclusiveValidatorTests.cs b/CP6.Tests/Wf/InclusiveValidatorTests.cs
+new file mode 100644
+index 0000000..452de53
+--- /dev/null
++++ b/CP6.Tests/Wf/InclusiveValidatorTests.cs
+@@ -0,0 +1,123 @@
++using CP6.Core.Services.Wf;
++
++namespace CP6.Tests.Wf;
++
++/// <summary>E-WF-020/021 静态校验（hardening spec §6）。构造模式沿既有 ServiceTaskValidatorTests。</summary>
++public class InclusiveValidatorTests
++{
++    // 合法基准：isplit → a["x > 0"], d[default] → ijoin → end
++    private static FlowSchema Valid()
++    {
++        var s = new FlowSchema
++        {
++            Start = "s",
++            Nodes =
++            {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "isplit", Type = "inclusiveSplit" },
++                new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "d", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "ijoin", Type = "inclusiveJoin" },
++                new FlowNode { Id = "end", Type = "end" },
++            },
++            Edges =
++            {
++                new FlowEdge { From = "s", To = "isplit" },
++                new FlowEdge { From = "isplit", To = "a", Condition = "x > 0" },
++                new FlowEdge { From = "isplit", To = "d" },
++                new FlowEdge { From = "a", To = "ijoin" }, new FlowEdge { From = "d", To = "ijoin" },
++                new FlowEdge { From = "ijoin", To = "end" },
++            },
++        };
++        return s;
++    }
++
++    [Fact]
++    public void ValidInclusivePair_Passes()
++        => Assert.Empty(FlowSchemaValidator.Validate(Valid()));
++
++    [Fact]
++    public void NoDefaultEdge_E_WF_020()
++    {
++        var s = Valid();
++        s.Edges.First(e => e.From == "isplit" && e.To == "d").Condition = "y > 0";   // 两条全带条件，无 default
++        Assert.Contains("E-WF-020", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void TwoDefaultEdges_E_WF_020()
++    {
++        var s = Valid();
++        s.Edges.First(e => e.From == "isplit" && e.To == "a").Condition = null;      // 两条都无条件
++        Assert.Contains("E-WF-020", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void SingleOutEdge_E_WF_020()
++    {
++        var s = Valid();
++        s.Edges.RemoveAll(e => e.From == "isplit" && e.To == "a");
++        s.Edges.RemoveAll(e => e.From == "a");
++        s.Nodes.RemoveAll(n => n.Id == "a");
++        Assert.Contains("E-WF-020", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void PairedWithParallelJoin_E_WF_021()
++    {
++        var s = Valid();
++        s.Nodes.First(n => n.Id == "ijoin").Type = "parallelJoin";   // 最近公共汇聚类型错
++        Assert.Contains("E-WF-021", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void OrphanInclusiveJoin_E_WF_021()
++    {
++        // 无 split 配对的 inclusiveJoin（线性抵达）
++        var s = new FlowSchema
++        {
++            Start = "s",
++            Nodes =
++            {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "b", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "ijoin", Type = "inclusiveJoin" },
++                new FlowNode { Id = "end", Type = "end" },
++            },
++            Edges =
++            {
++                new FlowEdge { From = "s", To = "a" },
++                new FlowEdge { From = "a", To = "ijoin" }, new FlowEdge { From = "b", To = "ijoin" },
++                new FlowEdge { From = "ijoin", To = "end" },
++            },
++        };
++        Assert.Contains("E-WF-021", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void OnBranchReject_BadValue_E_WF_021()
++    {
++        var s = Valid();
++        s.Nodes.First(n => n.Id == "isplit").OnBranchReject = "explode";
++        Assert.Contains("E-WF-021", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void OnBranchReject_OnNonSplitNode_E_WF_021()
++    {
++        var s = Valid();
++        s.Nodes.First(n => n.Id == "a").OnBranchReject = "prune";    // 写在 approval 上
++        Assert.Contains("E-WF-021", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void OnBranchReject_ValidValues_Pass()
++    {
++        var s = Valid();
++        s.Nodes.First(n => n.Id == "isplit").OnBranchReject = "prune";
++        Assert.Empty(FlowSchemaValidator.Validate(s));
++        s.Nodes.First(n => n.Id == "isplit").OnBranchReject = "cascade";
++        Assert.Empty(FlowSchemaValidator.Validate(s));
++    }
++}

@@ -1,0 +1,1346 @@
+# Review package: e10e86c..159efaa
+
+## Commits
+159efaa docs(sdd): M-PUR T3过审(opus零必修)台账——三任务全完成待终审
+877d20c test(pur): M-PUR T3 fail-closed 权限反射守卫(8控制器/24贴点/豁免0) + 403高危拒绝用例
+4197a37 docs(sdd): M-PUR T2过审(opus零必修)台账
+5fe9a77 feat(pur): M-PUR T2 裸控制器贴 RequirePermission(14) + 705/706/707 MenuKey 显式赋值 + 接线 PurPermissionSeed
+aa274fd feat(pur): M-PUR T2 逐租户 PurPermissionSeed（全24键）+ 幂等/覆盖/锚定单测
+2ba4fd8 docs(sdd): M-PUR T1过审(opus独立复核全绿)——§3b标题计数直修+台账
+0a20284 docs(sdd): M-PUR T1 权限键清单真相源(§一~§七, 8控制器24端点/既有10+新14/豁免1/键24/高危7)
+41c320b docs(sdd): M-PUR波开工台账段+T1简报(交接材料,新窗口开工)
+
+## Files changed
+ .superpowers/sdd/progress.md                       |   8 +
+ .superpowers/sdd/pur-t1-brief.md                   |  18 ++
+ .superpowers/sdd/pur-t1-report.md                  |  30 +++
+ .superpowers/sdd/pur-t3-report.md                  |  70 +++++++
+ CP6.Tests/Pur/PurHighRiskDenialTests.cs            | 144 +++++++++++++++
+ CP6.Tests/PurPermissionAttributeTests.cs           | 204 +++++++++++++++++++++
+ CP6.Tests/PurPermissionSeedTests.cs                | 186 +++++++++++++++++++
+ .../Controllers/Pur/PurchaseRequestController.cs   |   4 +
+ CP6.WebApi/Controllers/Pur/RfqController.cs        |   8 +
+ .../Controllers/Pur/SubcontractController.cs       |   5 +
+ CP6.WebApi/Program.cs                              |  28 +--
+ CP6.WebApi/Seed/PurPermissionSeed.cs               | 108 +++++++++++
+ docs/seeds/pur-permission-keys.md                  | 187 +++++++++++++++++++
+ 13 files changed, 979 insertions(+), 21 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/progress.md b/.superpowers/sdd/progress.md
+index 01b04eb..5c2214c 100644
+--- a/.superpowers/sdd/progress.md
++++ b/.superpowers/sdd/progress.md
+@@ -217,10 +217,18 @@ M-MES 合并+部署: complete (main=afe9252 --no-ff已push, 分支留远端; 镜
+ M-OA/WF T1: complete (commit 90bfbd3, Spec ✅ + Approved[opus审,16控制器33非GET全量重数1:1吻合零漏扫]; 33=31真写+2豁免(Forecast纯读schema遍历/Query AsQueryable投影均读证)/7 menu-key(733-739)/23资源键/9高危(全部审批写路径batch·transfer·sendback·addsign·act·委派无一降级)/「标记已读」「收藏」「保存偏好」全判写不豁免经代码证实; §六命门坐实: OA菜单733-739在:1446插入未设MenuKey且全局回填块:908更早→洁净首启OA/WF全403,T2硬前置(WMS/ERP/MES各有显式赋值块OA独无); 双栈孤儿路由裁决材料经独立复核为真(router:46-47 viewModules有映射无菜单行→addDynamicRoutes:334永不注册,旧栈Flow/Form.SaveDef写Wf_FlowDef/FormDef已被oa-designer:*键覆盖不裸奔)——退役/收编留用户拍板; 真相源=docs/seeds/oawf-permission-keys.md. 主控拍板(采审查者建议): 委派双键合一为oa-settings:delegate(权限面统一防一处授一处漏)/oa-flow-admin:enable维持状态级(可逆不动在途). Minor: 「唯一回填块」宜作「唯一全局回填块」/§六标题740混入(父组行非锚定))
+ M-OA/WF T2: complete (commit 8efc132, Spec ✅ + Approved[opus审,五具名风险全证]; 7键锚定733-739与合一后真相源逐字双向一致/740父行null; 接线Program.cs:863<全局回填块:915无条件路径命门解除; 「矫正恒no-op」claim逐键核算属实(OA RoutePath派生键与锚定键全等,矫正纯防御非load-bearing); 委派合一五处真相源同步无残留(三delegate端点统一锚737/oa-settings,高危9→8资源键23→22,menu-key仍7); 与MesMenuSeed逐字同构含缺行补建; OawfMenuSeedTests 6/6含mutation红证; 1764绿[1758+6]. Minor: 注释行号漂移(:857实为:863/:908实为:915)排序不变式成立. 波间运维: 执行中C盘再遭WU缓存2.7GB撑满(第二次)——已加计划任务CP6-WUCache-Guard每4h自愈(scripts/wu-cache-guard.ps1, e87a609), 扩容仍是治本)
+ M-OA/WF T3a: complete (commit 55b58ee, Spec ✅ + Approved[opus审零issue,31全量逐行双向核验]; Inbox审批族(batch→approve/transfer/sendback/read)与Wf旧栈(Flow.SaveDef→oa-designer:edit归并新栈/Form.SaveDef→form-save/Flow.Act→oa-inbox:approve)键逐字全中; 三delegate统一oa-settings:delegate零残留; 8高危独立不降级; 豁免面干净(Forecast/Query各仅1写端点无顺带漏); 16控制器无遗漏(14贴+2豁免); 零方法体改动; 顺手项Program.cs注释去行号化落地; 1764绿持平)
+ # 🔴用户裁决 2026-07-12: 双栈孤儿路由=收编(补Sys_Menu行使旧设计器/wf/form-designer与/wf/flow-designer可达,双栈并存,不删旧栈端点)——T2追补任务落实(T3b后派): OawfMenuSeed加两收编行(段位先查占用,MenuKey留null由回填派生[无RoleAction引用无害],RoleMenu授admin),照ERP五孤儿收编先例; 权限面不变(旧栈端点已贴oa-designer:*锚738)
+ M-OA/WF T3b: complete (commit 5fe2a70, Spec ✅ + Approved[opus审零issue,独立grep+手工去重复现31→20→20]; 跨控制器归并面为四波最大且全落实(inbox:read四端点/approve双栈/sendback双栈/form-catalog:submit四端点/delegate三端点/designer:edit双栈); 元组三方(种子/oracle/SQL)双向相等漏0多0; MenuId 6键733-739逐行核+736只读正确排除+740父行不种; 四要件源码证真(IgnoreQueryFilters在:406,420查重上); oracle独立(private Actions无法引用,双向集合相等); 接入OawfMenuSeed后无条件路径; 1769绿[1764+5])
+ M-OA/WF T2追补(收编): complete (commits ac733ee+锚定表直修, Approved after doc-fix[sonnet审+主控直修]; 核心实现五项全verified: 741/742段位查证无占用[迁移文件名时间戳误命中已排除]/RoutePath与viewModules:46-47逐字符一致/MenuKey null+注释+矫正块continue跳过不共键738/RoleMenu授admin+幂等/2新测试真实(误删误共键会红)/真相源三处追记同步; 审查Important=锚定表:16「未裁决」与:52「不动路由」两处残留与新收编节自相矛盾(T3b输入文件误导风险)→主控照审查处方直修两行; OawfMenuSeedTests 8/8; 1771绿[1769+2]. 双栈收编用户裁决落地完毕)
+ M-OA/WF T4: complete (commit 1e75f38, Spec ✅ + Approved[sonnet审零issue,五风险源码级交叉核对]; discovery双命名空间16精确(Oa11+Wf5无子空间无多类); 33=31贴点+2豁免咬合无缝(差集恰为Forecast.Preview/Query.Search); Assert.Equal精确计数+反向验证删Inbox.Batch双重失败结构自洽; 14 action词逐词相等; 基类claim据实(15经LocalizedControllerBase零HttpXxx声明/1直继,DeclaredOnly安全,非MES式注释失实); RequirePermission构造参数顺序无错位; 仅新增测试零生产改动; 1775绿[1771+4])
+ M-OA/WF T5: complete (commits 372677e+afef783证据补记, Approved after evidence-fix[sonnet审+主控抽验]; 目录全量17实体=纳入5(FlowDef/ApprovalBinding/FormDef治理配置+FlowDelegate/ApproverMap权限授予面)+豁免12零漏[WfNotificationType静态类非实体核实]; 纳入5纯标记单行零迁移; 豁免12逐条源码注释+负测试,审查者独立重跑21/21; 审查Important=Wf_FlowTask.AssigneeId两条改写路径(TransferAsync改派:94/超时escalate:85)未在豁免证据中论证——审查者追查出补偿留痕(Wf_FlowFormTo结构化新行ExpectedHandlerId+Wf_FlowHistory升级文本)结论成立但推演未落交付物→修复=注释扩写点名两路径+留痕依据+裁决表同步,四处代码引用核实属实; 1796绿[1775+21]. M-OA/WF T1/T2/T2b/T3a/T3b/T4/T5 全部完成, 下=fable全支终审)
+ M-OA/WF 全支终审: complete (fable终审 Ready=Yes零代码必修, 1796绿终审者亲跑实证[基线增量6+5+2+4+21=38精确]; 四层键六方全量对账零失配[31贴点↔真相源↔20元组↔种子↔oracle↔SQL,双栈/三delegate/审批族归并每层收敛同键零残留]; 启动链四模块种子并存幂等无冲突; 741/742收编无害推理独立验证成立[零RoleAction引用/前端viewModules既存无需重建cp6-web]; T4反射闸四波最完善/T5论证质量高[AssigneeId补偿留痕逐处溯源属实,5纳入实体全低频治理面写入无忧]; 无Critical[风险3裁定: 普通用户403非锁死——DoD明文行为+恢复路径RolePermController在,降级为部署硬步骤]; Important×2全records: ①普通角色授权=部署编排一等公民[本波锁全员面,放权顺序在票②后] ②🔴引擎审批归属校验缺失[ActOnceAsync/AdvancedFlow三方法不校验actorId=AssigneeId,旧栈本波前是全员裸口本波净改善为admin-only,但放开approve即越权代批复活——高优先票必须先于普通角色放权]; 票据triage关闭2/记票3; 跟踪票落档plan文末M-OA/WF完成记录小节)
+ M-OA/WF 合并+部署: complete (main=5f3819a --no-ff已push, 分支留远端; 镜像重建部署; 线上实证: 733-739七oa-*键就位/740 null/741-742收编行在且回填派生wf-*-designer键[无害推理线上证实]/Sys_RoleAction OA段80=20元组×4租户精确/两高危端点无认证403(inbox/batch + designer/save)/admin+CSRF穿透模型校验层(双400); 普通角色授权按终审硬序**暂缓**——引擎归属校验票(plan M-OA/WF票#1)落地前维持admin-only安全态. M-OA/WF 波完成. 剩余波: M-PUR→M-PLAN/PUB)
++
++# ═══ M-PUR 横切接线波(branch=feat/m-pur-crosscutting, base=e10e86c)2026-07-12 ═══
++# 依据: plan M-PUR段(T1补齐裸控制器) + docs/00-横切接线规范.md; 基线1796绿
++# 实况: Pur 8控制器, 4已部分贴点(PurchaseOrder3/GoodsReceipt2/SupplierPrice2/ThreeWayMatch3=10处), 4裸(PurchaseRequest/Rfq/Subcontract+计划未点名的PurReconcile); Pur菜单701-704有局部回填块(:1499一带)
++# 小波压缩三任务: T1真相源(含既有10贴点键面审计+裸4定键) → T2贴点+菜单锚定+逐租户种子(一体) → T3反射测试+403拒绝用例
++M-PUR T1: complete (commit 0a20284+标题数直修, Spec 5项全✅ + Approved[opus审,独立枚举24非GET端点双向闭环/10既有键面逐字核/豁免Service实读零写证真/两§六硬前置亲验Program.cs成立: ①回填:1513只盖701-704且全局:922早于Pur插入:1385→705-707首启MenuKey=null 403 ②内联种子:1518-1531仅默认租户RoleId=1]; 键面24=既有10+新14全连字符锚定701-707, 高危7/状态5/豁免1; 唯一Minor=§3b标题共4个应为5→主控直修; concerns: 5边界端点分级属判断留§五改判口径/租户数以运行时Sys_Tenants为准)
++M-PUR T2: complete (commits aa274fd+5fe9a77, Spec 4项+边界全✅ + Approved[opus审零Critical/Important; 键面14贴点+24种子元组与真相源双向逐字对账零漂移; 705/706/707 MenuKey插入时内联显式赋值(Program.cs:434/441/448)首启就位,701-704回填块保留且范围锁死不越界,708 GET-only正确留空; PurPermissionSeed逐租户(运行时枚举Sys_Tenants+显式TenantId+IgnoreQueryFilters三列判存)覆盖24键,旧内联块全删由EnsureSeeded取代且跨替换幂等(旧默认租户行被判存跳过零重复); 显式TenantId不被StampTenant覆盖有专测(load-bearing); RED证据=注掉(705,convert)双测红]; 1802绿[1796+6]; Minor×3记档: ①单测MenuKey断言自指非生产检查(归T3反射域) ②种子逐行Any()启动查询~24×N×2(4租户无害,先例一致) ③oracle与生产同构同源转录风险(审查者已亲对真相源双方均§一精确); T2 concern=已部署库705-707 MenuKey靠:922回填自愈下次启动,部署冒烟须查非null)
++M-PUR T3: complete (commit 877d20c, Spec 3项全✅ + Approved[opus审零Critical/Important; 四具名风险全过: oracle 24元组与§一双向逐一1:1且零生产常量引用/发现=真动态命名空间扫描(Assembly.GetTypes+Namespace==Pur,第9控制器即红,非硬编码)/403走真生产RequirePermissionAttribute.OnAuthorizationAsync+真PermissionAggregator链(照PermissionChainIntegrationTests先例逐行同构,含正控制测试防同义反复)/基类注释据实(8控制器全直继ControllerBase,grep逐一核,无M-MES失实注释重演); RED=移除Rfq.Convert三闸齐红(计数23/oracle失配/403交叉)与报告Failed:3精确一致; 豁免表空断言(reconcile已贴view不进旁路)]; 1808绿[1802+6]; 403口径=有认证无权限身份→真链403覆盖§三高危7键,无认证401进程内不可行已书面取舍(先例分工=反射闸+部署冒烟); Minor×3记档: ①IsMutating不含PATCH(四前波同型潜在fail-open,跨波票候选) ②种子删除不在本闸(=既有「贴点⊆种子」互锁跨模块票) ③反射测试在Tests根/403在Tests\Pur摆位不对称无害. 三任务全完成, 下=fable全支终审)
+diff --git a/.superpowers/sdd/pur-t1-brief.md b/.superpowers/sdd/pur-t1-brief.md
+new file mode 100644
+index 0000000..3f3845a
+--- /dev/null
++++ b/.superpowers/sdd/pur-t1-brief.md
+@@ -0,0 +1,18 @@
++# M-PUR T1 任务简报：权限键清单(真相源)
++
++## 背景与位置
++M-PUR 横切接线波首任务(第五波,前四波已上线)。计划原文: 「补齐三个裸控制器(PurchaseRequest create/submit/convert、Rfq 7 POST、Subcontract 4 POST)逐端点贴 [RequirePermission]——键名对齐同目录 PurchaseOrderController 既有风格 + MenuAction 种子 + 权限拒绝用例(403 断言)」。实况: Pur 目录 8 控制器,4 个已部分贴点(10 处),裸的还有计划未点名的 PurReconcileController——一并入面。
++
++## 必读(按顺序)
++1. `docs/00-横切接线规范.md`
++2. 同型先例: `docs/seeds/oawf-permission-keys.md`(§一~§七 结构照抄)
++3. 既有风格: CP6.WebApi/Controllers/Pur/PurchaseOrderController.cs 等 4 个已贴控制器的键面(先读,新键对齐其风格)
++
++## 需求
++1. **全量扫描**: 8 控制器全部非 GET 端点(含已贴 10 处)逐方法列表,双向计数闭环。
++2. **既有 10 贴点键面审计**: 键格式(连字符?)、是否锚定到有 MenuKey 的菜单行(Pur 菜单 701-704,局部回填块在 Program.cs :1499 一带——查这些行的 MenuKey 现状与派生键是否与既有贴点键一致,前波命门式排查)、是否有对应 MenuAction/RoleAction 种子(已知存量 Fin/Sys C#种子仅默认租户是缺口——Pur 既有键有没有种子?哪种范围?)。发现失配/无种子即记 §六 硬前置。
++3. **裸 4 控制器逐端点定键**: 键名对齐既有风格;高危独立佐证(convert 转单/发注确定类);只读 POST 豁免逐条 Service 读证。
++4. **交付**: `docs/seeds/pur-permission-keys.md`(§一~§七,计数自洽)。纯文档零代码。
++
++## 报告契约
++报告写入 `C:\CP6\.superpowers\sdd\pur-t1-report.md`。回复只返回: 状态、commit、一行计数摘要(8控制器/既有N+新M真写/豁免K/键J/高危数)、§六硬前置一行、concerns(15 行内)。单 commit 即 push。
+\ No newline at end of file
+diff --git a/.superpowers/sdd/pur-t1-report.md b/.superpowers/sdd/pur-t1-report.md
+new file mode 100644
+index 0000000..5967a42
+--- /dev/null
++++ b/.superpowers/sdd/pur-t1-report.md
+@@ -0,0 +1,30 @@
++# M-PUR T1 报告：权限键清单(真相源)
++
++## 交付
++- `docs/seeds/pur-permission-keys.md`（§一~§七，纯文档零代码），双向计数闭环自洽。
++
++## 做了什么
++1. 按简报必读序读齐：`docs/00-横切接线规范.md`、同型先例 `docs/seeds/oawf-permission-keys.md`（§一~§七结构照抄）、4 个既贴控制器键面。
++2. 全量扫描 Pur 8 控制器全部非 GET 端点 = **24 行**（既有贴点 10 + 裸控制器新增 14）。逐 Service 实读判定写/只读。
++3. 审计既有 10 贴点键面（格式/锚定/种子范围），定 4 裸控制器（PR/Rfq/Subcontract/PurReconcile）的键，含高危独立佐证与只读 POST 豁免读证。
++
++## 证据高亮（均实读 file:line）
++- **既有 10 键面**：全连字符、锚定 701–704、回填派生键与贴点键+内联种子(Program.cs:1520-1523)三方 1:1 吻合，零错配。
++- **只读 POST 豁免 1 个**：`pur-subcontract:view`（SubcontractService.ReconcileConsignAsync :185-235 全方法无 Add/Update/Remove/SaveChanges，纯读+内存反推）。
++- **防望文生义**：Rfq `rank` 看似只读实为写（持久化 Rank，RfqService.cs:246/257+263）→ 不豁免。Subcontract `finished-cost` 本体无 SaveChanges 但下沉 `_finCost` 写成本凭证 → 高危真写。
++- **高危 7 个**：`pur-gr:add`（不可逆入库）、`pur-match:add`/`pur-match:release`（建 AP 财务负债）、`pur-pr:convert`/`pur-rfq:convert`（转单建 PO 承诺）、`pur-subcontract:issue`（WMS 实物出库）、`pur-subcontract:cost`（成本入账）。逐条附 Service 读证。
++- **PurReconcile GET-only**：仅 1 GET，0 写端点 → 0 权限键（菜单708 靠可见性控制）。
++
++## §六 硬前置（两条，均带 file:line）
++1. **MenuKey 回填范围漏 705/706/707**：Pur 局部回填 Program.cs:1513 只覆盖 701–704，全局回填 :922 在 Pur 菜单插入(:1385)之前跑 → 洁净首启 pur-rfq/pur-pr/pur-subcontract 三菜单 MenuKey=null → 全键 join 不出 → 首启 fail-closed 403。T2 须对 705/706/707 显式赋 MenuKey 或扩回填范围至 701..707。
++2. **既有种子仅默认租户**：Program.cs:1518-1531 只 `RoleId=1` 无 TenantId/无租户循环 → StampTenant 落默认租户一份 → 其余 3 租户 admin 也 403（Sys_RoleAction:BaseTenantEntity）。T2 须建 `PurPermissionSeed` 照 WmsPermissionSeed 逐租户模式，一次覆盖既有 10 + 新 14 键。
++
++## 自查
++- 完整性：每个非 GET 端点恰好计一次（§七逐控制器双向核对表，控制器→表/表→控制器双向零缺漏）。
++- 双向计数：非 GET 24 = 豁免 1 + 真写 23；逐控制器真写累加 23、非 GET 累加 24；既有 10 + 新 14 = 24；资源键 24 = 高危7+状态5+view1+基础/个性化11；表行 #1–#24 无跳号。全部对平。
++- 豁免均有 Service 级读证（file:line）；每条硬前置均有 file:line 证据。
++
++## Concerns
++- 高危/状态分级对既有 5 个端点（gr:qc、po:submit/cancel、match:reject）为判断非硬事实，§五已给可改判理由，留 T2 审计复核（尤其 gr:qc「验收即锁定可付款量」是否提级）。
++- Rfq 7 动作按操作分权（未聚合），若 T2 认为过细可归并，§五注2 已留口径。
++- 租户数以「全 4 租户」记忆为据；T2 以运行时 `Sys_Tenants` 枚举为准（WmsPermissionSeed 先例，无需硬编码）。
+diff --git a/.superpowers/sdd/pur-t3-report.md b/.superpowers/sdd/pur-t3-report.md
+new file mode 100644
+index 0000000..d0ee81f
+--- /dev/null
++++ b/.superpowers/sdd/pur-t3-report.md
+@@ -0,0 +1,70 @@
++# M-PUR T3 报告：反射 fail-closed 测试 + 403 拒绝用例
++
++分支 `feat/m-pur-crosscutting`。纯测试任务，**零生产代码改动**（RED 反向验证的临时注释已还原，`git status CP6.WebApi/` 干净）。真相源 `docs/seeds/pur-permission-keys.md` 未动，T2 交付物未动，无 BLOCKED。
++
++## 必读完成（按 brief 顺序）
++1. 真相源 §一(24 行)/§二(7 键)/§三(高危 7)/§四(reconcile 已按 view **贴点** 非旁路)/§七(计数) 全读。
++2. 前波先例 `OawfPermissionAttributeTests`（commit 1e75f38）+ `MesPermissionAttributeTests` 精读，结构照抄按 Pur 实况调整。
++3. 403 先例 `RequirePermissionFilterTests`（filter 单元）/`PermissionChainIntegrationTests` + `FourGranularityIntegrationTests`（真实聚合链 InMemory DB → 403）读透，403 口径照抄后者。
++4. T2 报告 concerns（reconcile = attr-view 非豁免表条目）落实到测试：豁免表 = 空。
++
++## 实现清单
++
++### 需求1 · 反射 fail-closed 测试 —— `CP6.Tests/PurPermissionAttributeTests.cs`（4 用例）
++- **discovery 守卫**：`CP6.WebApi.Controllers.Pur` 下继承 ControllerBase 非抽象类 == **8**（防空扫假绿）。
++- **fail-closed 核心闸** `EveryMutatingAction_IsGuarded_WithConventionalKey`：每个非 GET 端点必须带 `[RequirePermission]`；**豁免表 = 空**（reconcile 已贴 view，走核心闸，不进旁路——与 MES/OA 波 2 豁免不同，源码内 factual 注明）。贴点精确 == **24**。menu 匹配 `^pur-[a-z0-9-]+$` + ∈ 7 键白名单；action 逐词落 `ActionVocabulary`（17 词，**含 view**——本波 view 是贴点 action）。
++- **键面 oracle 双向相等** `ResourceKeys_MatchIndependentOracle_Exactly`：24 收集集 ↔ 测试内独立 `ExpectedResourceKeys`（24，誊自 §一，零引用生产常量）双向 Except 相等 + 计数 24 + 资源键 1:1 无重复 + 前缀 ∈ 7 键 + 零下划线。
++- **只读 GET 误贴防护** `NoReadOnlyGetAction_HasRequirePermission`。
++- **基类扫描口径据实**：8 控制器**全部直接 `: ControllerBase`**（逐类 grep 核实，见源码 XML 注释），ControllerBase 无 [HttpXxx] 声明 → DeclaredOnly 不漏扫；注释写明未来引入共享基类需改策略（照先例，非失实抄袭）。
++
++### 需求2 · 403 拒绝用例 —— `CP6.Tests/Pur/PurHighRiskDenialTests.cs`（2 用例）
++- 覆盖真相源 §三**高危 7 键全部**：`pur-gr:add`/`pur-match:add`/`pur-match:release`/`pur-pr:convert`/`pur-rfq:convert`/`pur-subcontract:issue`/`pur-subcontract:cost`。
++- `UnauthorizedUser_Is403_OnEveryHighRiskEndpoint`：走**真实后端聚合链**（PermissionAggregator→CurrentPermissionContext→PermissionService，InMemory DB），登录用户 "u" **仅授 pur-po:add** 一个良性键 → 对每个高危键经生产 `RequirePermissionAttribute.OnAuthorizationAsync` 请求 → 断言 `StatusCodes.Status403Forbidden`。外加**反射交叉核验**：每个 (控制器.方法) 确携该 (menu,action)，端点改名/改键则 403 oracle 亦破。
++- `BenignGrantedAction_PassesChain`：正控——有 pur-po:add 的请求放行（证明链非全盘拒绝假绿）。
++
++## TDD 证据
++
++**RED**（临时注释 `RfqController.Convert` 的 `[RequirePermission("pur-rfq","convert")]`）：
++```
++dotnet test --filter "...PurPermissionAttributeTests|...PurHighRiskDenialTests"
++Failed! - Failed: 3, Passed: 3, Total: 6
++  EveryMutatingAction_IsGuarded_WithConventionalKey [FAIL]   （taggedCount 24→23 + offender）
++  ResourceKeys_MatchIndependentOracle_Exactly [FAIL]         （oracle 有但源码缺（漏贴/改键））
++  UnauthorizedUser_Is403_OnEveryHighRiskEndpoint [FAIL]
++    RfqController.Convert：生产端点 [RequirePermission] = 无，与高危 oracle (pur-rfq,convert) 不符
++```
++即 brief 要求的「移除任一贴点 → 双重失败」：反射测试的计数闸 + oracle 闸同破，且 403 交叉核验亦捕获。三闸皆有牙。
++
++**GREEN**（还原该贴点后）：
++```
++dotnet test --filter "...PurPermissionAttributeTests|...PurHighRiskDenialTests"
++Passed! - Failed: 0, Passed: 6, Skipped: 0, Total: 6
++```
++还原后 `git status CP6.WebApi/` 空——最终交付零生产改动。
++
++## 403 用例口径与依据
++口径 = **已登录但无该操作权的用户 → 真实聚合链 → 生产 RequirePermissionAttribute → 403**，逐字照 `PermissionChainIntegrationTests.UngrantedAction_Returns403ThroughWholeChain` / `FourGranularityIntegrationTests`（授一无关键放行 + 目标键 403）。
++**「无认证 401」取舍**：本仓 [Authorize] 认证层（401）在 HTTP 传输层，进程内 RequirePermission 过滤器不经它；且 `CurrentPermissionContext.GetAsync` 对无 Identity.Name 会 throw "未登录"（非返回 401）。故按 brief 明列的可行口径「无权限身份 → 403」落地，与既有两先例断言口径一致，非静默缩水。
++
++## 全量结果
++```
++dotnet test CP6.Tests/CP6.Tests.csproj
++Passed! - Failed: 0, Passed: 1808, Skipped: 5, Total: 1813, Duration: 57 s
++```
++基线 1802 + 新增 6 = **1808 绿**。5 skip 为既存结构性跳过，非本任务引入。构建 0 error；测试输出无本任务引入的 xUnit 警告（初版 xUnit1031 阻塞警告已改 async 消除）。
++
++## 文件变更
++- 新增 `CP6.Tests/PurPermissionAttributeTests.cs`（反射 fail-closed，4 用例）
++- 新增 `CP6.Tests/Pur/PurHighRiskDenialTests.cs`（403 高危拒绝，2 用例）
++
++## 自审
++- **oracle 独立**：`ExpectedResourceKeys`/`ActionVocabulary`/`MenuKeyWhitelist`/`HighRiskKeys` 全为测试内字面量，零引用 PurPermissionSeed.Actions 或控制器常量。
++- **豁免表空且断言**：核心闸无豁免旁路分支，reconcile 走 view 贴点被核心闸校验；注释显式记「豁免 0」。
++- **计数精确 24 + 反向验证**：taggedCount==24 与 oracle==24 双闸，RED 实证移除即双破。
++- **基类口径据实**：grep 核实 8 控制器全 `: ControllerBase`，注释与源一致（无 MES 那类失实注释）。
++- **403 覆盖 7 高危键**：与先例断言口径（ObjectResult.StatusCode==403）一致 + 交叉核验绑真实端点。
++- 测试输出干净。
++
++## Concerns
++1. **403 为进程内链路测**（非 HTTP e2e）：与本仓既有 403 先例同构，不经 Kestrel/[Authorize]；线上 401/403 由部署冒烟另证（沿用本项目历波「反射闸 + 部署冒烟」分工）。这是既定口径而非本任务缺口。
++2. 无其它 concern。反射闸此后锁死 Pur 权限面，可交 fable 终审。
+diff --git a/CP6.Tests/Pur/PurHighRiskDenialTests.cs b/CP6.Tests/Pur/PurHighRiskDenialTests.cs
+new file mode 100644
+index 0000000..83ce9df
+--- /dev/null
++++ b/CP6.Tests/Pur/PurHighRiskDenialTests.cs
+@@ -0,0 +1,144 @@
++using System.Reflection;
++using System.Security.Claims;
++using CP6.Core.Auth;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Sys;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Controllers.Pur;
++using Microsoft.AspNetCore.Http;
++using Microsoft.AspNetCore.Mvc;
++using Microsoft.AspNetCore.Mvc.Abstractions;
++using Microsoft.AspNetCore.Mvc.Filters;
++using Microsoft.AspNetCore.Routing;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Microsoft.Extensions.DependencyInjection;
++
++namespace CP6.Tests.Pur;
++
++/// <summary>
++/// M-PUR Task 3 权限拒绝用例（403 断言）——覆盖真相源 §三高危 7 键对应端点。
++/// 口径照仓内既有先例 <c>PermissionChainIntegrationTests</c> / <c>FourGranularityIntegrationTests</c>：
++/// 走**真实后端聚合链**（PermissionAggregator → CurrentPermissionContext → PermissionService，InMemory DB），
++/// 一个**已登录但无该操作权**的用户经生产 <see cref="RequirePermissionAttribute"/> 请求高危端点 → 断言 403。
++///
++/// 关于「无认证 401」口径取舍：本仓 [Authorize] 认证层（401）在 HTTP 传输层，进程内 <c>RequirePermission</c>
++/// 过滤器不经它；且 <c>CurrentPermissionContext.GetAsync</c> 对无 Identity.Name 会 throw "未登录"（非返回 401）。
++/// 故遵循 brief 明列的可行口径「**无权限身份 → 403**」——与既有两先例逐字一致（授一无关键放行 + 目标键 403）。
++///
++/// 高危 7 键（真相源 §三）以**测试内独立字面量**声明；并经反射交叉核验：每个 (控制器.方法) 确实携带该 (menu,action)
++/// [RequirePermission]——若生产端点改名/改键，本用例的 403 oracle 亦随之破（不会静默漂移）。
++/// </summary>
++public class PurHighRiskDenialTests
++{
++    /// <summary>真相源 §三高危 7 键：(控制器名.方法名, menu-key, action)。独立字面量，非引用生产常量。</summary>
++    private static readonly (string endpoint, string menu, string action)[] HighRiskKeys =
++    {
++        ("GoodsReceiptController.Confirm",     "pur-gr",          "add"),      // 确认收货=不可逆入库
++        ("ThreeWayMatchController.Match",      "pur-match",       "add"),      // 三单匹配容差内自动建 AP
++        ("ThreeWayMatchController.Release",    "pur-match",       "release"),  // 超容差人工放行建 AP
++        ("PurchaseRequestController.Convert",  "pur-pr",          "convert"),  // PR→PO 转单建采购承诺
++        ("RfqController.Convert",              "pur-rfq",         "convert"),  // RFQ 选中报价转 PO
++        ("SubcontractController.Issue",        "pur-subcontract", "issue"),    // 发支給材=委托 WMS 实物出库
++        ("SubcontractController.FinishedCost", "pur-subcontract", "cost"),     // 外注成品成本入账
++    };
++
++    /// <summary>无关的「良性放行键」——证明链非「全盘拒绝」假绿（有此键的请求必须放行）。</summary>
++    private const string BenignMenu = "pur-po";
++    private const string BenignAction = "add";
++
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    /// <summary>登录用户 "u"（RoleId=1），**仅授 pur-po:add** 一个良性键——高危 7 键一概未授。</summary>
++    private static ServiceProvider BuildProvider()
++    {
++        var db = NewDb();
++        db.Sys_Users.Add(new Sys_User { Id = Guid.NewGuid(), UserName = "u", Password = "x", RoleId = 1 });
++        // 良性键锚定菜单（pur-po 有 MenuKey 才能 join 出 ActionKeys）
++        db.Sys_Menus.Add(new Sys_Menu { MenuId = 702, MenuName = "采购订单", MenuKey = BenignMenu });
++        db.Sys_RoleActions.Add(new Sys_RoleAction { Id = Guid.NewGuid(), RoleId = 1, MenuId = 702, ActionCode = BenignAction });
++        db.SaveChanges();
++
++        var services = new ServiceCollection();
++        services.AddSingleton(db);
++        services.AddMemoryCache();
++        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
++        services.AddScoped<IPermissionAggregator, PermissionAggregator>();
++        services.AddScoped<ICurrentPermissionContext, CurrentPermissionContext>();
++        services.AddScoped<IPermissionService, PermissionService>();
++        var provider = services.BuildServiceProvider();
++
++        var http = new DefaultHttpContext
++        {
++            RequestServices = provider,
++            User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "u") }, "test"))
++        };
++        provider.GetRequiredService<IHttpContextAccessor>().HttpContext = http;
++        return provider;
++    }
++
++    private static AuthorizationFilterContext AuthCtx(ServiceProvider provider) =>
++        new(new ActionContext(
++                provider.GetRequiredService<IHttpContextAccessor>().HttpContext!,
++                new RouteData(), new ActionDescriptor()),
++            new List<IFilterMetadata>());
++
++    private static (string menu, string action)? ReadEndpointPermission(string endpoint)
++    {
++        var parts = endpoint.Split('.');
++        var ctrl = typeof(PurchaseOrderController).Assembly.GetTypes()
++            .FirstOrDefault(t => t.Namespace == "CP6.WebApi.Controllers.Pur" && t.Name == parts[0]);
++        var m = ctrl?.GetMethod(parts[1], BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
++        if (m == null) return null;
++        var data = CustomAttributeData.GetCustomAttributes(m)
++            .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
++        if (data == null) return null;
++        var args = data.ConstructorArguments;
++        return ((string)args[0].Value!, (string)args[1].Value!);
++    }
++
++    [Fact]
++    public async Task BenignGrantedAction_PassesChain()
++    {
++        // 正控：有 pur-po:add 的用户请求该键 → 放行（证明链非全盘拒绝，403 用例才有意义）。
++        var provider = BuildProvider();
++        var ctx = AuthCtx(provider);
++        await new RequirePermissionAttribute(BenignMenu, BenignAction).OnAuthorizationAsync(ctx);
++        Assert.Null(ctx.Result);
++    }
++
++    [Fact]
++    public async Task UnauthorizedUser_Is403_OnEveryHighRiskEndpoint()
++    {
++        var provider = BuildProvider();
++        var failures = new List<string>();
++
++        foreach (var (endpoint, menu, action) in HighRiskKeys)
++        {
++            // 交叉核验：该高危键确实贴在对应生产端点上（防端点改名/改键使 403 oracle 静默漂移）。
++            var onEndpoint = ReadEndpointPermission(endpoint);
++            if (onEndpoint != (menu, action))
++            {
++                failures.Add($"{endpoint}：生产端点 [RequirePermission] = {onEndpoint?.ToString() ?? "无"}，与高危 oracle ({menu},{action}) 不符");
++                continue;
++            }
++
++            // 无该操作权的登录用户经生产过滤器请求高危端点 → 必须 403。
++            var ctx = AuthCtx(provider);
++            await new RequirePermissionAttribute(menu, action).OnAuthorizationAsync(ctx);
++            var result = ctx.Result as ObjectResult;
++            if (result?.StatusCode != StatusCodes.Status403Forbidden)
++                failures.Add($"{endpoint} ({menu}:{action})：期望 403，实际 {result?.StatusCode?.ToString() ?? "放行(null)"}");
++        }
++
++        Assert.True(failures.Count == 0, "高危端点未 fail-closed:\n" + string.Join("\n", failures));
++        Assert.Equal(7, HighRiskKeys.Length);   // 收口：覆盖真相源 §三全 7 高危键
++    }
++}
+diff --git a/CP6.Tests/PurPermissionAttributeTests.cs b/CP6.Tests/PurPermissionAttributeTests.cs
+new file mode 100644
+index 0000000..41f9d82
+--- /dev/null
++++ b/CP6.Tests/PurPermissionAttributeTests.cs
+@@ -0,0 +1,204 @@
++using System.Reflection;
++using System.Text.RegularExpressions;
++using CP6.Core.Auth;
++using CP6.WebApi.Controllers.Pur;
++using Microsoft.AspNetCore.Mvc;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// 反射守卫（M-PUR 横切接线波 Task 3，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
++/// Controllers.Pur 命名空间全部 controller，锁死「未来新增 Pur 写端点漏贴权限键即红」。
++/// 与已合并的 <c>MesPermissionAttributeTests</c> / <c>OawfPermissionAttributeTests</c> /
++/// <c>ErpPermissionAttributeTests</c> / <c>WmsPermissionAttributeTests</c> 同型。
++/// 真相源：docs/seeds/pur-permission-keys.md（8 控制器扫描面 / 24 非GET端点 / 24 贴点 / **0 只读 POST 豁免**）。
++///
++/// ① discovery 守卫：断言扫到 8 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
++/// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**必须**带 [RequirePermission]。
++///    本波**豁免表 = 空**——真相源 §四那条只读 POST（Subcontract.Reconcile 防吞料对账）已按 view **贴点**
++///    （`[RequirePermission("pur-subcontract","view")]`），走核心闸校键，不进旁路豁免。故贴点数精确 == 24、
++///    豁免命中数精确 == 0（24 = 24 + 0 收口）。将来谁新增 Pur 写端点忘贴权限，本用例立刻红。
++/// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
++///    ^pur-[a-z0-9-]+$（连字符，禁下划线，全仓约定），action **逐词相等**落在真相源实际使用的 action 集合内。
++/// ④ 键面 oracle 双向相等：24 个 (menu-key, action) 元组与测试内**独立写死**的 oracle 集合双向相等
++///    （测试内字面量誊自真相源 §一/§二，零引用 PurPermissionSeed.Actions/控制器常量），且资源键 ∈ 7 键白名单。
++///
++/// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
++/// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
++/// 继承说明：8 个 Pur 控制器**全部直接继承 ControllerBase**（无 LocalizedControllerBase 或任何中间抽象
++/// 基类；已逐类自查类头——GoodsReceipt/PurchaseOrder/PurchaseRequest/PurReconcile/Rfq/Subcontract/
++/// SupplierPrice/ThreeWayMatch 均 `: ControllerBase`）。ControllerBase 自身不声明任何 [HttpXxx] action，
++/// 故所有写端点均为各子类手写声明方法，BindingFlags.DeclaredOnly 反射不会漏扫端点。
++/// 若未来引入共享基类（如 LocalizedControllerBase）并在其上声明 [HttpXxx] 方法，DeclaredOnly 会静默
++/// 漏扫该端点——届时须调整扫描策略（如改用非 DeclaredOnly 并按声明类型过滤）。
++/// </summary>
++public class PurPermissionAttributeTests
++{
++    /// <summary>menu 键约定：pur- 前缀 + 小写字母数字连字符（全仓连字符约定，禁下划线）。</summary>
++    private static readonly Regex MenuPattern = new("^pur-[a-z0-9-]+$", RegexOptions.Compiled);
++
++    /// <summary>资源键（menu-key）白名单，共 7（真相源 §二；708 pur-reconcile GET-only 承载 0 action 键，不在内）。</summary>
++    private static readonly HashSet<string> MenuKeyWhitelist = new()
++    {
++        "pur-supplier-price", "pur-po", "pur-gr", "pur-match",
++        "pur-pr", "pur-rfq", "pur-subcontract",
++    };
++
++    /// <summary>
++    /// 真相源 §一 实际使用的 action 集合（从已贴的 24 个 [RequirePermission] 逐词读出，非凭空造）。
++    /// **含 view**——本波 view 是**贴点** action（Subcontract.Reconcile 只读 POST 归 view 但已打属性，走核心闸），
++    /// 与 MES/OA 波「view 未贴、不入集」不同。逐词相等，多一词/少一词即红；新 action 词须显式加入本集合。
++    /// </summary>
++    private static readonly HashSet<string> ActionVocabulary = new()
++    {
++        "add", "delete", "view",                    // 基粒度写（delete=Pur 域删除词，非 WMS 的 del）+ view（reconcile 只读 POST 归 view，已贴）
++        "submit", "cancel", "qc", "reject",         // 状态键：PO 送审/取消、GR 检收应用、Match 拒绝（真相源 §3b）
++        "convert", "issue", "cost", "release",      // 高危键：PR/RFQ 转单、外注发料/成本入账、Match 超容差放行（真相源 §三；add 亦复用于 gr/match 高危）
++        "invite", "quote", "rank", "select", "writeback",  // Rfq 域个性化写（询价→比价全流程按操作分权，真相源 §五.2）
++        "consign",                                  // 外注登记支給材（真相源 #21）
++    };
++
++    /// <summary>
++    /// 键面 oracle（独立写死，誊自真相源 §一表 24 行 / §二汇总）：24 个 "menu-key:action" 资源键。
++    /// **零引用生产常量**（PurPermissionSeed.Actions/控制器 [RequirePermission] 字面量）——反向验证的第二道闸：
++    /// 任一贴点被误删/误改，收集集与本 oracle 双向相等即破。
++    /// </summary>
++    private static readonly HashSet<string> ExpectedResourceKeys = new()
++    {
++        "pur-supplier-price:add", "pur-supplier-price:delete",              // #1-2
++        "pur-po:add", "pur-po:submit", "pur-po:cancel",                    // #3-5
++        "pur-gr:add", "pur-gr:qc",                                          // #6-7
++        "pur-match:add", "pur-match:release", "pur-match:reject",          // #8-10
++        "pur-pr:add", "pur-pr:submit", "pur-pr:convert",                   // #11-13
++        "pur-rfq:add", "pur-rfq:invite", "pur-rfq:quote", "pur-rfq:rank",  // #14-17
++        "pur-rfq:select", "pur-rfq:writeback", "pur-rfq:convert",          // #18-20
++        "pur-subcontract:consign", "pur-subcontract:issue",               // #21-22
++        "pur-subcontract:cost", "pur-subcontract:view",                   // #23-24 (view = reconcile 只读 POST 贴点)
++    };
++
++    private static IEnumerable<Type> PurControllers =>
++        typeof(PurchaseOrderController).Assembly.GetTypes()
++            .Where(t => t.Namespace == "CP6.WebApi.Controllers.Pur"
++                        && typeof(ControllerBase).IsAssignableFrom(t)
++                        && !t.IsAbstract)
++            .OrderBy(t => t.Name);
++
++    private static IEnumerable<MethodInfo> ActionMethods(Type t) =>
++        t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
++            .Where(m => !m.IsSpecialName);
++
++    private static bool IsMutating(MethodInfo m) =>
++        m.GetCustomAttributes<HttpPostAttribute>().Any()
++        || m.GetCustomAttributes<HttpPutAttribute>().Any()
++        || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
++
++    private static bool IsGet(MethodInfo m) => m.GetCustomAttributes<HttpGetAttribute>().Any();
++
++    private static string Key(Type c, MethodInfo m) => $"{c.Name}.{m.Name}";
++
++    /// <summary>经 CustomAttributeData 读构造参数 (menu, action)；无特性返回 null。</summary>
++    private static (string menu, string action)? ReadPermission(MethodInfo m)
++    {
++        var data = CustomAttributeData.GetCustomAttributes(m)
++            .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
++        if (data == null) return null;
++        var args = data.ConstructorArguments;
++        return ((string)args[0].Value!, (string)args[1].Value!);
++    }
++
++    [Fact]
++    public void PurControllers_AreDiscovered()
++    {
++        // 守卫：CP6.WebApi.Controllers.Pur 下继承 ControllerBase 的非抽象类共 8
++        //      （含 PurReconcile GET-only 无真写控制器）。防命名空间/程序集变动导致空扫假绿。
++        Assert.Equal(8, PurControllers.Count());
++    }
++
++    [Fact]
++    public void EveryMutatingAction_IsGuarded_WithConventionalKey()
++    {
++        // 本波豁免表 = 空：每个变更端点必须带 [RequirePermission]（reconcile 已贴 view，不进旁路）。
++        var offenders = new List<string>();
++        var taggedCount = 0;
++
++        foreach (var c in PurControllers)
++        foreach (var m in ActionMethods(c).Where(IsMutating))
++        {
++            var key = Key(c, m);
++            var perm = ReadPermission(m);
++
++            if (perm == null)
++            {
++                offenders.Add($"{key}：变更端点缺 [RequirePermission]（本波无只读 POST 豁免旁路，reconcile 已贴 view）");
++                continue;
++            }
++
++            taggedCount++;
++            if (!MenuPattern.IsMatch(perm.Value.menu))
++                offenders.Add($"{key}：menu '{perm.Value.menu}' 不符约定 ^pur-[a-z0-9-]+$");
++            if (!MenuKeyWhitelist.Contains(perm.Value.menu))
++                offenders.Add($"{key}：menu '{perm.Value.menu}' 不在 7 键白名单（真相源 §二）");
++            if (!ActionVocabulary.Contains(perm.Value.action))
++                offenders.Add($"{key}：action '{perm.Value.action}' 不在真相源 action 集（疑似 typo，须显式加入）");
++        }
++
++        Assert.True(offenders.Count == 0,
++            "变更端点权限点缺失/键不合约定:\n" + string.Join("\n", offenders));
++
++        // 收口断言：贴点精确 24 = 全 24 非GET端点，精确吻合真相源 §七（豁免 0）。
++        Assert.Equal(24, taggedCount);
++    }
++
++    [Fact]
++    public void ResourceKeys_MatchIndependentOracle_Exactly()
++    {
++        // 键面 oracle 双向相等：从 24 贴点收集的 (menu:action) 集合 == 测试内独立 oracle（24）。
++        // 反向验证：误删/误改任一贴点 → 收集集 ≠ oracle → 破（与计数断言双重失败）。
++        var collected = new HashSet<string>();
++        var dupes = new List<string>();
++
++        foreach (var c in PurControllers)
++        foreach (var m in ActionMethods(c).Where(IsMutating))
++        {
++            var perm = ReadPermission(m);
++            if (perm == null) continue;
++            var rk = $"{perm.Value.menu}:{perm.Value.action}";
++            if (!collected.Add(rk))
++                dupes.Add($"{Key(c, m)} → {rk}（资源键跨端点重复，端点↔资源键须 1:1）");
++        }
++
++        Assert.True(dupes.Count == 0, "资源键重复:\n" + string.Join("\n", dupes));
++
++        // 双向相等：oracle 里有但源码缺 = 漏贴/改键；源码有但 oracle 缺 = 新增未登记
++        var missingInSource = ExpectedResourceKeys.Except(collected).ToList();
++        var missingInOracle = collected.Except(ExpectedResourceKeys).ToList();
++        Assert.True(missingInSource.Count == 0, "oracle 有但源码缺（漏贴/改键）:\n" + string.Join("\n", missingInSource));
++        Assert.True(missingInOracle.Count == 0, "源码有但 oracle 缺（新增未登记）:\n" + string.Join("\n", missingInOracle));
++
++        Assert.Equal(24, collected.Count);
++        Assert.Equal(24, ExpectedResourceKeys.Count);
++
++        // 资源键前缀 ∈ 7 键白名单，零下划线
++        foreach (var rk in collected)
++        {
++            var menu = rk[..rk.IndexOf(':')];
++            Assert.Contains(menu, MenuKeyWhitelist);
++            Assert.DoesNotContain('_', rk);
++        }
++    }
++
++    [Fact]
++    public void NoReadOnlyGetAction_HasRequirePermission()
++    {
++        // 只读误贴防护：纯 HttpGet（且非变更）端点不应带 [RequirePermission]（本波未给 GET 贴）。
++        var offenders = new List<string>();
++        foreach (var c in PurControllers)
++        foreach (var m in ActionMethods(c))
++        {
++            var readOnly = IsGet(m) && !IsMutating(m);
++            if (readOnly && ReadPermission(m) != null)
++                offenders.Add($"{Key(c, m)}：只读 GET 端点误贴 [RequirePermission]");
++        }
++        Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
++    }
++}
+diff --git a/CP6.Tests/PurPermissionSeedTests.cs b/CP6.Tests/PurPermissionSeedTests.cs
+new file mode 100644
+index 0000000..da93591
+--- /dev/null
++++ b/CP6.Tests/PurPermissionSeedTests.cs
+@@ -0,0 +1,186 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-PUR 横切接线 Task 2：PurPermissionSeed 逐租户 Sys_MenuAction/Sys_RoleAction 幂等种子断言。
++///
++/// 三数闭环（真相源 docs/seeds/pur-permission-keys.md §一/§七 + 控制器 grep）：
++///   24 写端点（既有贴点 10 + 裸控制器新键 14）→ 无跨控制器归并 → 24 去重 (menu-key, action) 元组 → 24 种子元组。
++///   覆盖 7 个 menu-key（701–707）；708 pur-reconcile 为 GET-only 承载 0 action，不入种子。
++///   subcontract reconcile 只读 POST 归 view（真相源 §四），入种子占 707:view 一键。
++/// MenuId 锚定 Program.cs Pur 菜单 701–707；RoleAction 挂 admin RoleId=1。
++///
++/// ★ ExpectedTuples 为独立硬编码 oracle（非引用 PurPermissionSeed 内部常量），防自证假绿。
++///   本 oracle 直接誊自真相源 §一/§二，任何生产端误删/误改键即红。
++/// </summary>
++public class PurPermissionSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 期望的 24 去重种子元组（MenuId 锚定 Pur 菜单 701–707；action 逐字誊自真相源 §一，独立于生产常量）。
++    private static readonly (int MenuId, string Code)[] ExpectedTuples =
++    {
++        // 701 pur-supplier-price（既有）
++        (701, "add"), (701, "delete"),
++        // 702 pur-po（既有）
++        (702, "add"), (702, "submit"), (702, "cancel"),
++        // 703 pur-gr（既有）
++        (703, "add"), (703, "qc"),
++        // 704 pur-match（既有）
++        (704, "add"), (704, "release"), (704, "reject"),
++        // 706 pur-pr（新增）
++        (706, "add"), (706, "submit"), (706, "convert"),
++        // 705 pur-rfq（新增）
++        (705, "add"), (705, "invite"), (705, "quote"), (705, "rank"),
++        (705, "select"), (705, "writeback"), (705, "convert"),
++        // 707 pur-subcontract（新增，含 view 只读豁免键）
++        (707, "consign"), (707, "issue"), (707, "cost"), (707, "view"),
++    };
++
++    // 菜单键锚定表（701–707 ↔ pur-* 连字符，逐字誊自真相源 §二），供菜单锚定断言。
++    private static readonly (int MenuId, string RoutePath, string MenuKey)[] PurMenus =
++    {
++        (701, "/pur/supplier-price", "pur-supplier-price"),
++        (702, "/pur/po", "pur-po"),
++        (703, "/pur/gr", "pur-gr"),
++        (704, "/pur/match", "pur-match"),
++        (705, "/pur/rfq", "pur-rfq"),
++        (706, "/pur/pr", "pur-pr"),
++        (707, "/pur/subcontract", "pur-subcontract"),
++    };
++
++    private static readonly Guid TenantA = Guid.Parse("11111111-1111-1111-1111-111111111111");
++    private static readonly Guid TenantB = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static void SeedTenantsAndMenus(CP6Context db)
++    {
++        // 锚定菜单行须先在（RoleAction 挂 MenuId）。模拟 Program.cs Pur 菜单插入 + 705/706/707 MenuKey 显式赋值。
++        foreach (var (menuId, routePath, menuKey) in PurMenus)
++            db.Sys_Menus.Add(new Sys_Menu { MenuId = menuId, RoutePath = routePath, MenuKey = menuKey, Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantA, TenantCode = "TA", TenantName = "TenantA", Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantB, TenantCode = "TB", TenantName = "TenantB", Enable = true });
++        db.SaveChanges();
++    }
++
++    [Fact]
++    public void EnsureSeeded_SeedsExactly24TuplesPerTenant_ForBothMenuAndRoleAction()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        PurPermissionSeed.EnsureSeeded(db);
++
++        foreach (var tid in new[] { TenantA, TenantB })
++        {
++            var menuActions = db.Sys_MenuActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid).ToList();
++            var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
++
++            // 元组闭环计数：每租户各得全套 24。
++            Assert.Equal(24, menuActions.Count);
++            Assert.Equal(24, roleActions.Count);
++
++            // 逐元组精确匹配（漏种 0 / 多种 0）。
++            var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var expected = ExpectedTuples.ToHashSet();
++            Assert.Equal(expected, maSet);
++            Assert.Equal(expected, raSet);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_SecondCallNoNewRows()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        PurPermissionSeed.EnsureSeeded(db);
++        var ma1 = db.Sys_MenuActions.IgnoreQueryFilters().Count();
++        var ra1 = db.Sys_RoleActions.IgnoreQueryFilters().Count();
++
++        PurPermissionSeed.EnsureSeeded(db);   // 二次调用
++        Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++
++        // 2 租户 × 24 元组 = 48。
++        Assert.Equal(48, ma1);
++        Assert.Equal(48, ra1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        PurPermissionSeed.EnsureSeeded(db);
++
++        var anchoredMenuIds = ExpectedTuples.Select(t => t.MenuId).ToHashSet();
++        var roleActions = db.Sys_RoleActions.IgnoreQueryFilters().ToList();
++
++        Assert.NotEmpty(roleActions);
++        Assert.All(roleActions, ra => Assert.Equal(1, ra.RoleId));
++        // 每个 RoleAction.MenuId 必来自锚定表，且该菜单行存在、MenuKey 非 null 且 pur- 前缀连字符。
++        Assert.All(roleActions, ra => Assert.Contains(ra.MenuId, anchoredMenuIds));
++        foreach (var menuId in anchoredMenuIds)
++        {
++            var menu = db.Sys_Menus.Single(m => m.MenuId == menuId);
++            Assert.NotNull(menu.MenuKey);
++            Assert.StartsWith("pur-", menu.MenuKey!);
++            Assert.DoesNotContain('_', menu.MenuKey!);   // 全仓约定：连字符，禁下划线
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        PurPermissionSeed.EnsureSeeded(db);
++
++        // 逐租户显式 TenantId：两租户各得独立行，无一被盖成默认租户。
++        var tenantsSeen = db.Sys_RoleActions.IgnoreQueryFilters()
++            .Select(x => x.TenantId).Distinct().ToList();
++        Assert.Contains(TenantA, tenantsSeen);
++        Assert.Contains(TenantB, tenantsSeen);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTenants_NoOp()
++    {
++        using var db = NewDb();
++        // 菜单在，但无 Sys_Tenants 行。
++        foreach (var (menuId, routePath, menuKey) in PurMenus)
++            db.Sys_Menus.Add(new Sys_Menu { MenuId = menuId, RoutePath = routePath, MenuKey = menuKey, Enable = true });
++        db.SaveChanges();
++
++        PurPermissionSeed.EnsureSeeded(db);
++
++        Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++    }
++
++    [Fact]
++    public void ExpectedOracle_Covers24Tuples_Over7MenuKeys_NoDuplicates()
++    {
++        // oracle 自洽：24 元组、7 menu-key、无重复。
++        Assert.Equal(24, ExpectedTuples.Length);
++        Assert.Equal(24, ExpectedTuples.ToHashSet().Count);
++        Assert.Equal(7, ExpectedTuples.Select(t => t.MenuId).Distinct().Count());
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Pur/PurchaseRequestController.cs b/CP6.WebApi/Controllers/Pur/PurchaseRequestController.cs
+index 1f62005..6ecfb68 100644
+--- a/CP6.WebApi/Controllers/Pur/PurchaseRequestController.cs
++++ b/CP6.WebApi/Controllers/Pur/PurchaseRequestController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Pur;
+ using CP6.Entity.DomainModels.Pur;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Pur;
+ 
+ /// <summary>采购申请 REST —— 采购章05 §4/§5。/api/pur/pr。手工建单 + 送审 + PR→PO 按建议供应商分组转单。</summary>
+ [ApiController]
+ [Route("api/pur/pr")]
+@@ -23,32 +24,35 @@ public class PurchaseRequestController : ControllerBase
+         => Ok2(await _svc.ListAsync(status, source));
+ 
+     [HttpGet("{prNo}")]
+     public async Task<IActionResult> Get(string prNo)
+     {
+         var pr = await _svc.GetAsync(prNo);
+         return pr == null ? Err(new InvalidOperationException("E-PUR-056")) : Ok2(pr);
+     }
+ 
+     [HttpPost]
++    [RequirePermission("pur-pr", "add")]
+     public async Task<IActionResult> Create([FromBody] PrCreateDto dto)
+     {
+         try { return Ok2(await _svc.CreateAsync(dto, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>送审（草稿 → 审批 → 已批）。</summary>
+     [HttpPost("{prNo}/submit")]
++    [RequirePermission("pur-pr", "submit")]
+     public async Task<IActionResult> Submit(string prNo)
+     {
+         try { return Ok2(await _svc.SubmitForApprovalAsync(prNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>转 PO（仅已批；按建议供应商分组拆单，回填 ConvertedPoNo）。</summary>
+     [HttpPost("{prNo}/convert")]
++    [RequirePermission("pur-pr", "convert")]
+     public async Task<IActionResult> Convert(string prNo)
+     {
+         try { return Ok2(await _svc.ConvertToPoAsync(prNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ }
+diff --git a/CP6.WebApi/Controllers/Pur/RfqController.cs b/CP6.WebApi/Controllers/Pur/RfqController.cs
+index ab57479..eb92e74 100644
+--- a/CP6.WebApi/Controllers/Pur/RfqController.cs
++++ b/CP6.WebApi/Controllers/Pur/RfqController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Pur;
+ using CP6.Entity.DomainModels.Pur;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Pur;
+ 
+ /// <summary>
+ /// 询价 RFQ REST —— 采购章06。/api/pur/rfq。
+ /// 价格发现全流程：从 PR 发起 → 邀供应商 → 收报价 → 比价排名 → 按行选定 → 回写价表(Source=rfq) → 选中转 PO。
+@@ -27,68 +28,75 @@ public class RfqController : ControllerBase
+ 
+     [HttpGet("{rfqNo}")]
+     public async Task<IActionResult> Get(string rfqNo)
+     {
+         var rfq = await _svc.GetAsync(rfqNo);
+         return rfq == null ? Err(new InvalidOperationException("E-PUR-061")) : Ok2(rfq);
+     }
+ 
+     /// <summary>从 PR 发起询价（汇未定供应商的 PR 行，行级追溯）。</summary>
+     [HttpPost("from-pr/{prNo}")]
++    [RequirePermission("pur-rfq", "add")]
+     public async Task<IActionResult> CreateFromPr(string prNo)
+     {
+         try { return Ok2(await _svc.CreateFromPrAsync(prNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>邀请供应商（发注先，幂等，状态→邀请中）。</summary>
+     [HttpPost("{rfqNo}/suppliers")]
++    [RequirePermission("pur-rfq", "invite")]
+     public async Task<IActionResult> AddSuppliers(string rfqNo, [FromBody] List<string> supplierIds)
+     {
+         try { return Ok2(await _svc.AddSuppliersAsync(rfqNo, supplierIds ?? new(), CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>收报价（按行 upsert 报价矩阵，状态→报价中）。</summary>
+     [HttpPost("{rfqNo}/quote")]
++    [RequirePermission("pur-rfq", "quote")]
+     public async Task<IActionResult> RecordQuote(string rfqNo, [FromBody] RecordQuoteRequest req)
+     {
+         try { return Ok2(await _svc.RecordQuoteAsync(rfqNo, req.SupplierId, req.Lines ?? new(), CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>比价排名（按行，剔除过期，价格优先→交期；Rank 仅建议）。</summary>
+     [HttpPost("{rfqNo}/rank")]
++    [RequirePermission("pur-rfq", "rank")]
+     public async Task<IActionResult> Rank(string rfqNo, [FromBody] RankRequest? req)
+     {
+         try { return Ok2(await _svc.RankQuotesAsync(rfqNo, req?.AsOf, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>选定（按行可拆不同供应商，一行一选，校验未过期；全行选中→已选定）。</summary>
+     [HttpPost("{rfqNo}/select")]
++    [RequirePermission("pur-rfq", "select")]
+     public async Task<IActionResult> Select(string rfqNo, [FromBody] List<RfqSelectionDto> selections)
+     {
+         try { return Ok2(await _svc.SelectAsync(rfqNo, selections ?? new(), CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>回写采购价表（选中报价 Source=rfq，沉淀进价表）。</summary>
+     [HttpPost("{rfqNo}/writeback")]
++    [RequirePermission("pur-rfq", "writeback")]
+     public async Task<IActionResult> WriteBack(string rfqNo)
+     {
+         try { return Ok2(await _svc.WriteBackPricesAsync(rfqNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>选中报价转 PO（按选中供应商分组，用成交价；全行转出→已转 PO）。</summary>
+     [HttpPost("{rfqNo}/convert")]
++    [RequirePermission("pur-rfq", "convert")]
+     public async Task<IActionResult> Convert(string rfqNo)
+     {
+         try { return Ok2(await _svc.ConvertToPoAsync(rfqNo, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ }
+ 
+ /// <summary>收报价请求体：一个供应商对若干行的报价。</summary>
+ public class RecordQuoteRequest
+ {
+diff --git a/CP6.WebApi/Controllers/Pur/SubcontractController.cs b/CP6.WebApi/Controllers/Pur/SubcontractController.cs
+index 6256420..53e8be2 100644
+--- a/CP6.WebApi/Controllers/Pur/SubcontractController.cs
++++ b/CP6.WebApi/Controllers/Pur/SubcontractController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Pur;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Pur;
+ 
+ /// <summary>
+ /// 外注加工 REST —— 采购章07。/api/pur/subcontract。
+ /// 外注闭环：外注 PO(Type=2 成品行=加工费) → 登记/发支給材(IssuedQty 防吞料) → 收成品成本核算(加工费+料并入) → 防吞料对账。
+ /// </summary>
+@@ -24,44 +25,48 @@ public class SubcontractController : ControllerBase
+     [HttpGet("orders")]
+     public async Task<IActionResult> ListOrders() => Ok2(await _svc.ListOrdersAsync());
+ 
+     /// <summary>取某外注 PO（可指定行）的支給材清单。</summary>
+     [HttpGet("{poNo}/consign")]
+     public async Task<IActionResult> GetConsign(string poNo, [FromQuery] int? lineNo)
+         => Ok2(await _svc.GetConsignAsync(poNo, lineNo));
+ 
+     /// <summary>登记外注成品行的支給材（按成品 BOM 应发料，校验外注 Type=2，幂等 upsert）。</summary>
+     [HttpPost("{poNo}/{lineNo:int}/consign")]
++    [RequirePermission("pur-subcontract", "consign")]
+     public async Task<IActionResult> AddConsign(string poNo, int lineNo, [FromBody] List<ConsignMaterialDto> items)
+     {
+         try { return Ok2(await _svc.AddConsignAsync(poNo, lineNo, items ?? new(), CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>发支給材（委托 WMS 出库 Purpose=subcontract，累加 IssuedQty；body 为空→一次发齐剩余，否则分批）。</summary>
+     [HttpPost("{poNo}/{lineNo:int}/issue")]
++    [RequirePermission("pur-subcontract", "issue")]
+     public async Task<IActionResult> Issue(string poNo, int lineNo, [FromBody] List<ConsignIssueDto>? issuances)
+     {
+         try { return Ok2(await _svc.IssueConsignAsync(poNo, lineNo, issuances, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>收成品成本核算（加工费 + 支給材成本并入，接财务 06）。</summary>
+     [HttpPost("{poNo}/{lineNo:int}/finished-cost")]
++    [RequirePermission("pur-subcontract", "cost")]
+     public async Task<IActionResult> FinishedCost(string poNo, int lineNo, [FromBody] FinishedCostRequest req)
+     {
+         try { return Ok2(await _svc.CalcFinishedCostAsync(poNo, lineNo, req.FinishedQty, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>防吞料对账（实发 vs 成品反推应耗，超损耗容差→挂起核查）。</summary>
+     [HttpPost("{poNo}/{lineNo:int}/reconcile")]
++    [RequirePermission("pur-subcontract", "view")]   // 只读 POST 豁免归 view（真相源 §四：全方法无写副作用）
+     public async Task<IActionResult> Reconcile(string poNo, int lineNo, [FromBody] ReconcileRequest req)
+     {
+         try { return Ok2(await _svc.ReconcileConsignAsync(poNo, lineNo, req.FinishedQty, req.TolerancePct, CurrentUser)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ }
+ 
+ /// <summary>成品成本核算请求体。</summary>
+ public class FinishedCostRequest
+ {
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 13df614..3a24b9d 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -1407,33 +1407,33 @@ using (var scope = app.Services.CreateScope())
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 704))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 704, MenuName = "三单匹配", RoutePath = "/pur/match", Icon = "Connection", ParentId = 700, OrderNo = 704, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 704 });
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 705))
+     {
+-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 705, MenuName = "询价比价", RoutePath = "/pur/rfq", Icon = "Histogram", ParentId = 700, OrderNo = 705, Enable = true });
++        db.Sys_Menus.Add(new Sys_Menu { MenuId = 705, MenuName = "询价比价", RoutePath = "/pur/rfq", MenuKey = "pur-rfq", Icon = "Histogram", ParentId = 700, OrderNo = 705, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 705 });
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 706))
+     {
+-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 706, MenuName = "采购申请", RoutePath = "/pur/pr", Icon = "Tickets", ParentId = 700, OrderNo = 706, Enable = true });
++        db.Sys_Menus.Add(new Sys_Menu { MenuId = 706, MenuName = "采购申请", RoutePath = "/pur/pr", MenuKey = "pur-pr", Icon = "Tickets", ParentId = 700, OrderNo = 706, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 706 });
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 707))
+     {
+-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 707, MenuName = "外注加工", RoutePath = "/pur/subcontract", Icon = "SetUp", ParentId = 700, OrderNo = 707, Enable = true });
++        db.Sys_Menus.Add(new Sys_Menu { MenuId = 707, MenuName = "外注加工", RoutePath = "/pur/subcontract", MenuKey = "pur-subcontract", Icon = "SetUp", ParentId = 700, OrderNo = 707, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 707 });
+         db.SaveChanges();
+     }
+     if (!db.Sys_Menus.Any(m => m.MenuId == 708))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 708, MenuName = "采购对账", RoutePath = "/pur/reconcile", Icon = "Finished", ParentId = 700, OrderNo = 708, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 708 });
+         db.SaveChanges();
+     }
+     // 计划中台（Plan）P1 MRP 菜单（730 组）—— 置于采购之后（OrderNo 246）
+@@ -1501,43 +1501,29 @@ using (var scope = app.Services.CreateScope())
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 738 });
+         db.SaveChanges();
+     }
+     // WFS 审批人解析：审批人映射维护菜单（739）—— 幂等，置于 C′ 738 之后
+     if (!db.Sys_Menus.Any(m => m.MenuId == 739))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 739, MenuName = "approverMap", RoutePath = "/oa/approver-map", Icon = "Edit", ParentId = 740, OrderNo = 739, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 739 });
+         db.SaveChanges();
+     }
+-    // 采购功能权限点：MenuKey 回填（派生 pur-* 对齐各控制器 [RequirePermission]）+ 操作点 seed + 授权 admin(RoleId=1)。幂等。
++    // 采购功能权限点：701–704 MenuKey 回填（705/706/707 已在菜单插入时显式赋值，首启即就位，不依赖 :922 全局回填）。
+     {
+         foreach (var pm in db.Sys_Menus.Where(m => m.MenuKey == null && m.RoutePath != null && m.MenuId >= 701 && m.MenuId <= 704).ToList())
+             pm.MenuKey = pm.RoutePath!.Trim('/').Replace('/', '-');
+         db.SaveChanges();
+-
+-        // (MenuId, ActionCode, ActionName) —— 与各控制器 [RequirePermission(menuKey, action)] 一一对应
+-        var purActions = new (int MenuId, string Code, string Name)[]
+-        {
+-            (701, "add", "新增/更新"), (701, "delete", "删除"),
+-            (702, "add", "建单"), (702, "submit", "送审"), (702, "cancel", "取消"),
+-            (703, "add", "确认收货"), (703, "qc", "检收应用"),
+-            (704, "add", "匹配建票"), (704, "release", "放行"), (704, "reject", "拒绝"),
+-        };
+-        foreach (var (menuId, code, name) in purActions)
+-        {
+-            if (!db.Sys_MenuActions.Any(x => x.MenuId == menuId && x.ActionCode == code))
+-                db.Sys_MenuActions.Add(new Sys_MenuAction { MenuId = menuId, ActionCode = code, ActionName = name, Sort = 0 });
+-            if (!db.Sys_RoleActions.Any(x => x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
+-                db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = menuId, ActionCode = code });
+-        }
+-        db.SaveChanges();
+     }
++    // 逐租户播 Pur 全 24 权限键（既有 10 + 新 14，含 subcontract:view）+ 授 admin(RoleId=1)。
++    // 取代原仅默认租户的内联块（真相源 docs/seeds/pur-permission-keys.md §六 硬前置②）；须置于 Pur 菜单 + 705/706/707 MenuKey 之后（RoleAction 挂锚定 MenuId 701–707）。
++    CP6.WebApi.Seed.PurPermissionSeed.EnsureSeeded(db);
+ 
+     // ═══════════════════════════════════════════════════════════
+     //  MSBBME010〜090 MES 製造執行 菜单
+     // ═══════════════════════════════════════════════════════════
+     if (!db.Sys_Menus.Any(m => m.MenuId == 300))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 300, MenuName = "製造執行(MES)", Icon = "SetUp", OrderNo = 300, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 300 });
+         db.SaveChanges();
+     }
+diff --git a/CP6.WebApi/Seed/PurPermissionSeed.cs b/CP6.WebApi/Seed/PurPermissionSeed.cs
+new file mode 100644
+index 0000000..ae848ba
+--- /dev/null
++++ b/CP6.WebApi/Seed/PurPermissionSeed.cs
+@@ -0,0 +1,108 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// 采购(Pur)権限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（M-PUR 横切接线 Task 2）。
++///
++/// 背景：Pur 8 控制器（7 含真写）逐写端点贴 <c>[RequirePermission("键","action")]</c>，但
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator</c> 以
++/// <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}"</c>
++/// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
++/// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
++///
++/// 取代 Program.cs 原内联块（仅默认租户、仅既有 10 键）：本 Seed 一次覆盖**全部 24 资源键**
++/// （既有 10：supplier-price/po/gr/match；新增 14：pr/rfq/subcontract），逐租户播齐——
++/// 修复真相源 docs/seeds/pur-permission-keys.md §六 头号硬前置②「既有种子仅默认租户」。
++///
++/// 数据来源（执行真相，与真相源 §一 24 行 1:1）：下方 <see cref="Actions"/> 清单逐字照
++/// docs/seeds/pur-permission-keys.md §一/§二；MenuId 锚定 Program.cs Pur 菜单 701–707。
++///
++/// 逐租户机制（照 WmsPermissionSeed 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表，非行级过滤）全部租户 Id，对每租户各插一份。
++///  - 显式设 <c>TenantId=tid</c> → <c>CP6Context.StampTenant</c> 仅盖 <c>TenantId==Guid.Empty</c>，不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，使跨租户既存行对当前上下文（默认租户作用域）可见，避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 Pur 菜单插入 + 705/706/707 MenuKey 显式赋值 **之后**调用（锚定菜单行须先在，RoleAction 挂 MenuId）。
++/// 幂等：重启不重复插（(TenantId,MenuId,ActionCode) 判存守卫）。
++/// </summary>
++public static class PurPermissionSeed
++{
++    /// <summary>
++    /// (MenuId, ActionCode, ActionName) —— 与 docs/seeds/pur-permission-keys.md §一 24 行逐字 1:1。
++    /// MenuId 锚定 Program.cs Pur 菜单 701–707；ActionName 为中文显示名。
++    /// 计 24 条，覆盖 7 个 menu-key（既有 10 键 + 新增 14 键，含 subcontract:view 只读豁免键）。
++    /// </summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        // 701 pur-supplier-price — 供应商价表（既有）
++        (701, "add", "新增/更新"), (701, "delete", "删除"),
++        // 702 pur-po — 采购订单（既有）
++        (702, "add", "建单"), (702, "submit", "送审"), (702, "cancel", "取消"),
++        // 703 pur-gr — 采购收货（既有）
++        (703, "add", "确认收货"), (703, "qc", "检收应用"),
++        // 704 pur-match — 三单匹配（既有）
++        (704, "add", "匹配建票"), (704, "release", "放行"), (704, "reject", "拒绝"),
++        // 706 pur-pr — 采购申请（新增）
++        (706, "add", "建单"), (706, "submit", "送审"), (706, "convert", "转PO"),
++        // 705 pur-rfq — 询价比价（新增）
++        (705, "add", "发起询价"), (705, "invite", "邀请供应商"), (705, "quote", "收报价"),
++        (705, "rank", "比价排名"), (705, "select", "选定"), (705, "writeback", "回写价表"),
++        (705, "convert", "转PO"),
++        // 707 pur-subcontract — 外注加工（新增，含只读豁免 view）
++        (707, "consign", "登记支給材"), (707, "issue", "发支給材"),
++        (707, "cost", "成品成本核算"), (707, "view", "对账查看"),
++    };
++
++    /// <summary>
++    /// 逐租户幂等播种 Pur 全部权限点 + 授管理员（RoleId=1）。
++    /// 须在 Pur 菜单插入 + 705/706/707 MenuKey 显式赋值之后调用（锚定菜单行须先在）。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖（仅盖 Guid.Empty）
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/pur-permission-keys.md b/docs/seeds/pur-permission-keys.md
+new file mode 100644
+index 0000000..6a6a92c
+--- /dev/null
++++ b/docs/seeds/pur-permission-keys.md
+@@ -0,0 +1,187 @@
++# 采购(Pur)写端点 × 権限键清单（M-PUR Task 1 真相源）
++
++> 生成于 2026-07-12。本表是 **M-PUR 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 显式赋值/回填）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、反射 fail-closed 测试 + 403 用例均以本表为准。
++> 依据：`docs/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/oawf-permission-keys.md`（§一~§七 结构照抄）+ 现有 Pur 菜单种子 `CP6.WebApi/Program.cs` MenuId 700–708 + 逐 Service 实现读证的只读 POST 豁免判定。
++> 扫描范围：`CP6.WebApi/Controllers/Pur/`（**8 控制器全量**：SupplierPrice / PurchaseOrder / GoodsReceipt / ThreeWayMatch / PurchaseRequest / Rfq / Subcontract / PurReconcile）。
++> **本任务只产出本文档，不改任何控制器/种子/测试/前端代码。**
++
++## 约定
++
++- **资源键 = `{menu-key}:{action}`**，**menu-key 一律连字符小写、绝对禁止下划线**（全仓 100% RequirePermission 用连字符；已核 4 个既贴控制器键面均连字符：`pur-po`/`pur-gr`/`pur-supplier-price`/`pur-match`）。本波统一冠 `pur-` 业务域前缀。
++- **键锚定「消费页菜单」的 MenuKey**：Pur 8 控制器与菜单 701–708 一一对应，RoutePath 与键天然对齐（`/pur/po`→`pur-po` …）。逐键给出锚定菜单 MenuId/RoutePath。
++- **资源键必须能锚定到一个 `Sys_Menu` 行**（`PermissionAggregator = Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → {MenuKey}:{ActionCode}`）。
++- **`高危?` 列三值**（沿用 WMS/ERP/MES/OA 定义）：
++  - `是` = 触及**不可逆写 / 财务负债或成本入账 / 库存实物移动 / 转单建采购承诺**。这些一次误授即他人可越权制造付款义务、发出实物或下达采购承诺，T3 贴点与审计**最高优先级**，绝不可与 view/edit 混授。
++  - `状态` = 独立工作流状态流转（送审/取消/检收判定应用），单独成键、不塞 edit/view。
++  - `否` = 四基粒度 `view/add/edit/delete`（+ 域内个性化写）之一。
++- **只读 POST 豁免**：纯查询/计算类 POST 归 `view`，表内标 `只读POST→view`，§四逐条附**读 Service 实现证得的**无写副作用依据（文件:行）。GET 端点一律不列。
++
++---
++
++## 一、写端点映射表（POST/PUT/DELETE，共 24 行）
++
++| # | 控制器 | HTTP方法 + 路由 | 方法名 | 建议 menu-key | action | 高危? | 备注 |
++|---|---|---|---|---|---|---|---|
++| 1 | SupplierPriceController | POST `/api/pur/supplier-price` | Save | `pur-supplier-price` | add | 否 | 价表 upsert（阶梯价）。**既有贴点**。菜单701 |
++| 2 | SupplierPriceController | DELETE `/api/pur/supplier-price/{id}` | Delete | `pur-supplier-price` | delete | 否 | 删除价表行。**既有贴点**（Pur 域用 `delete` 非 `del`，全波沿用） |
++| 3 | PurchaseOrderController | POST `/api/pur/po` | Create | `pur-po` | add | 否 | 建 PO（草稿，未生效）。**既有贴点**。菜单702 |
++| 4 | PurchaseOrderController | POST `/api/pur/po/{poNo}/submit` | Submit | `pur-po` | submit | 状态 | 送审（草稿→审批；桩即时通过则直达 Confirmed，真实流程置 PendingApproval 待 OA 回调）。**既有贴点**。发注确定实际由 OA `oa-inbox:approve` 放行，故此处归 `状态`（PurchaseOrderService.cs:148-169） |
++| 5 | PurchaseOrderController | POST `/api/pur/po/{poNo}/cancel` | Cancel | `pur-po` | cancel | 状态 | 取消（仅草稿/送审/确认且未收货可取消）。可逆业务状态。**既有贴点**（PurchaseOrderService.cs:193-204） |
++| 6 | GoodsReceiptController | POST `/api/pur/gr` | Confirm | `pur-gr` | add | **是** | **确认收货=不可逆入库**：委托 WMS 收货、库存实物增加（详§三）。**既有贴点**。菜单703 |
++| 7 | GoodsReceiptController | POST `/api/pur/gr/{grNo}/apply-qc` | ApplyQc | `pur-gr` | qc | 状态 | 应用检收判定（回写 PO 验收锚 AcceptedQty，驱动后续可开票量）。质量判定应用、不新建财务/库存移动，归 `状态`。**既有贴点**（GoodsReceiptService.cs:134-） |
++| 8 | ThreeWayMatchController | POST `/api/pur/match` | Match | `pur-match` | add | **是** | **三单匹配→容差内自动建应付(AP)**：制造财务负债（详§三）。**既有贴点**。菜单704 |
++| 9 | ThreeWayMatchController | POST `/api/pur/match/{matchNo}/release` | Release | `pur-match` | release | **是** | **人工放行挂起单→接受超容差差异建 AP**：越容差控制的财务负债生成（详§三）。**既有贴点** |
++| 10 | ThreeWayMatchController | POST `/api/pur/match/{matchNo}/reject` | Reject | `pur-match` | reject | 状态 | 拒绝挂起单（仅置状态 Rejected，不建票、不动锚）。**既有贴点**（ThreeWayMatchService.cs:180-191） |
++| 11 | PurchaseRequestController | POST `/api/pur/pr` | Create | `pur-pr` | add | 否 | 手工建 PR（草稿）。**裸控制器新键**。菜单706 |
++| 12 | PurchaseRequestController | POST `/api/pur/pr/{prNo}/submit` | Submit | `pur-pr` | submit | 状态 | 送审（草稿→审批；PurchaseRequestService.cs:105-126）。**裸控制器新键** |
++| 13 | PurchaseRequestController | POST `/api/pur/pr/{prNo}/convert` | Convert | `pur-pr` | convert | **是** | **PR→PO 转单**：按建议供应商分组建 PO=创建采购承诺（详§三，计划点名）。**裸控制器新键** |
++| 14 | RfqController | POST `/api/pur/rfq/from-pr/{prNo}` | CreateFromPr | `pur-rfq` | add | 否 | 从 PR 发起询价（建 Rfq+行，RfqService.cs:68-116）。**裸控制器新键**。菜单705 |
++| 15 | RfqController | POST `/api/pur/rfq/{rfqNo}/suppliers` | AddSuppliers | `pur-rfq` | invite | 否 | 邀请供应商（写 RfqSupplier，状态→邀请中，RfqService.cs:119-162） |
++| 16 | RfqController | POST `/api/pur/rfq/{rfqNo}/quote` | RecordQuote | `pur-rfq` | quote | 否 | 收报价（按行 upsert RfqQuote 矩阵，RfqService.cs:165-229） |
++| 17 | RfqController | POST `/api/pur/rfq/{rfqNo}/rank` | Rank | `pur-rfq` | rank | 否 | **比价排名=写**（持久化 `q.Rank`，RfqService.cs:246/257 + SaveChanges:263）。**看似只读实为写，不豁免**（§四复核） |
++| 18 | RfqController | POST `/api/pur/rfq/{rfqNo}/select` | Select | `pur-rfq` | select | 否 | 选定（写 RfqQuote.IsSelected，RfqService.cs:268-311） |
++| 19 | RfqController | POST `/api/pur/rfq/{rfqNo}/writeback` | WriteBack | `pur-rfq` | writeback | 否 | 回写价表（选中报价 Source=rfq upsert 进价表，RfqService.cs:314-348）。改主数据但可逆，归 `否` |
++| 20 | RfqController | POST `/api/pur/rfq/{rfqNo}/convert` | Convert | `pur-rfq` | convert | **是** | **选中报价转 PO**：按供应商分组建 PO=创建采购承诺（详§三，成交价直落，RfqService.cs:351-404） |
++| 21 | SubcontractController | POST `/api/pur/subcontract/{poNo}/{lineNo}/consign` | AddConsign | `pur-subcontract` | consign | 否 | 登记外注支給材（按 BOM 应发料 upsert PoConsignMaterial，SubcontractService.cs:25-69）。**裸控制器新键**。菜单707 |
++| 22 | SubcontractController | POST `/api/pur/subcontract/{poNo}/{lineNo}/issue` | Issue | `pur-subcontract` | issue | **是** | **发支給材=委托 WMS 实物出库**：不可逆库存移动，累加 IssuedQty 防吞料锚（详§三，SubcontractService.cs:97-141） |
++| 23 | SubcontractController | POST `/api/pur/subcontract/{poNo}/{lineNo}/finished-cost` | FinishedCost | `pur-subcontract` | cost | **是** | **外注成品成本入账**：`_finCost.PostSubcontractCostAsync` 生成成本凭证、接财务（详§三，SubcontractService.cs:144-182） |
++| 24 | SubcontractController | POST `/api/pur/subcontract/{poNo}/{lineNo}/reconcile` | Reconcile | `pur-subcontract` | view | 只读POST→view | 防吞料对账：纯读+内存反推算差异返回 DTO，**全方法无 Add/Update/Remove/SaveChanges**（§四，SubcontractService.cs:185-235）。POST 仅为传 finishedQty/tolerancePct |
++
++> **GET-only 控制器（无 POST/PUT/DELETE，不在上表）**：
++> - `PurReconcileController`（1 GET `/api/pur/reconcile/{poNo}`，三方对账诊断表，纯读；无写端点 → 0 权限键；页面 `/pur/reconcile` 菜单708 靠菜单可见性控制，无 action 键）。
++>
++> **有 POST 端点但全豁免（真写=0，不占「含真写控制器」计数，见 §七）**：无（每个含 POST 的控制器都至少 1 个真写）。Subcontract 有 1 只读豁免但另 3 端点真写，仍计入含真写控制器。
++
++---
++
++## 二、menu-key 汇总清单（去重，共 7 个）
++
++| # | menu-key | 锚定菜单（Program.cs MenuId / RoutePath） | 承载 action | 说明 |
++|---|---|---|---|---|
++| 1 | `pur-supplier-price` | 701 供应商价表 `/pur/supplier-price` | add, delete | ✅有菜单行。回填=`pur-supplier-price` ✅一致。**既有**（701–704 由 Program.cs:1513 Pur 块回填） |
++| 2 | `pur-po` | 702 采购订单 `/pur/po` | add, submit, cancel | ✅。回填=`pur-po` ✅一致。**既有** |
++| 3 | `pur-gr` | 703 采购收货 `/pur/gr` | add, qc | ✅。回填=`pur-gr` ✅一致。**既有** |
++| 4 | `pur-match` | 704 三单匹配 `/pur/match` | add, release, reject | ✅。回填=`pur-match` ✅一致。**既有** |
++| 5 | `pur-pr` | 706 采购申请 `/pur/pr` | add, submit, convert | ✅有菜单行 706。**但 706 不在 Pur 回填范围(701-704) → 洁净首启 MenuKey=null**（§六头号命门） |
++| 6 | `pur-rfq` | 705 询价比价 `/pur/rfq` | add, invite, quote, rank, select, writeback, convert | ✅有菜单行 705。**同上：705 不在回填范围 → 首启失配**（§六头号命门） |
++| 7 | `pur-subcontract` | 707 外注加工 `/pur/subcontract` | consign, issue, cost, view | ✅有菜单行 707。**同上：707 不在回填范围 → 首启失配**（§六头号命门） |
++
++> **零孤儿 menu-key**：7 个键均对应实在菜单行（701–707），RoutePath 派生键与本表逐字一致，无 MES `machine-list` 那种错配。
++> **第 8 个 Pur 菜单 708 `pur-reconcile`（`/pur/reconcile`）承载 0 个 action 键**（PurReconcile 控制器 GET-only），不在本清单。
++> **命门：705/706/707 三菜单不在既有 Pur MenuKey 回填范围**（Program.cs:1513 只回填 `MenuId 701..704`），且全局回填块 Program.cs:922 在 Pur 菜单插入(:1385)**之前**执行 → 洁净库首启这三菜单 MenuKey 留 null → `pur-rfq/pur-pr/pur-subcontract` 全键 join 不出 → **首启即 fail-closed 403**。§六头号硬前置。
++
++---
++
++## 三、高危动作清单（`是`：财务负债/成本入账/库存实物移动/转单建承诺，共 7 个资源键）
++
++> T3 贴 `[RequirePermission]` 与审计的**第一优先级**，**绝不可**与 view/edit 混授。Pur 域高危集中在**制造付款义务（AP/成本凭证）**、**发出实物（WMS 出库/入库）**、**下达采购承诺（转单建 PO）**——一次误授即他人可越权制造财务/实物后果。
++
++| 资源键 | 端点# | 为何高危独立（读证 文件:行） |
++|---|---|---|
++| `pur-gr:add` | 6 | **确认收货=不可逆库存增加**：GoodsReceiptService.ConfirmReceiveAsync 建 GoodsReceipt 并委托 WMS 收货（对标 WMS `wms-inbound-receipt:post` 高危）。入库后驱动可开票量、成本，回退代价高。GoodsReceiptService.cs:51-132 |
++| `pur-match:add` | 8 | **三单匹配容差内自动建应付**：ThreeWayMatchService.MatchInvoiceAsync→BuildApAsync→`_finAp.CreateApInvoiceAsync` 生成 AP 发票=供应商付款义务，并累加 PO InvoicedQty。ThreeWayMatchService.cs:118-150,196-211 |
++| `pur-match:release` | 9 | **人工放行超容差挂起单→建 AP**：越过容差控制强行建应付（`match.Status=Released`+BuildApAsync），是绕开自动控制的最敏感写。ThreeWayMatchService.cs:153-177 |
++| `pur-pr:convert` | 13 | **PR→PO 转单**：ConvertToPoAsync 按建议供应商分组 `_po.CreateAsync` 建 PO=创建采购承诺、回填 ConvertedPoNo。计划点名转单类。PurchaseRequestService.cs:150-204 |
++| `pur-rfq:convert` | 20 | **RFQ 选中报价转 PO**：ConvertToPoAsync 按供应商分组 `_po.CreateAsync`，成交价直落 PO 单价=创建采购承诺。RfqService.cs:351-404 |
++| `pur-subcontract:issue` | 22 | **发支給材=委托 WMS 实物出库**：IssueConsignAsync→`_wmsIssue.IssueAsync(Purpose=subcontract)` 出库实物，`c.IssuedQty += wms.IssuedQty` 记防吞料锚。不可逆库存移动。SubcontractService.cs:97-141 |
++| `pur-subcontract:cost` | 23 | **外注成品成本入账**：CalcFinishedCostAsync→`_finCost.PostSubcontractCostAsync` 生成成本凭证(CostVoucherNo)、接财务 06（加工费+支給材成本并入）。SubcontractService.cs:144-182 |
++
++### 3b. 独立状态流转动作键（`状态`，共 5 个，仍单独成键、不塞 edit/view）
++
++`pur-po:submit`（PO 送审，#4）· `pur-po:cancel`（PO 取消，#5）· `pur-gr:qc`（检收判定应用回写验收锚，#7）· `pur-pr:submit`（PR 送审，#12）· `pur-match:reject`（拒绝挂起单，#10）。
++
++> 更正计数：状态键 = **5** 个（`pur-po:submit`、`pur-po:cancel`、`pur-gr:qc`、`pur-pr:submit`、`pur-match:reject`）。其余端点走 `add/delete/view` 四基粒度 + Rfq 域个性化写键（invite/quote/rank/select/writeback）。
++
++---
++
++## 四、只读 POST 豁免清单（归 view，共 1 个 —— 逐条读 Service 实现证得无写）
++
++| # | 端点（方法） | 豁免依据（读 Service 实现，文件:行） |
++|---|---|---|
++| 1 | POST `/api/pur/subcontract/{poNo}/{lineNo}/reconcile`（SubcontractService.ReconcileConsignAsync） | 仅 `_db.PurchaseOrders.FirstOrDefault` + `_db.PurchaseOrderLines.FirstOrDefault` + `_db.PoConsignMaterials.Where(...).ToListAsync()` 三处读 → 内存反推单耗/应耗/差异 → 返回 `ConsignReconcileResult` DTO，**全方法无 `Add/Update/Remove/SaveChanges`**（SubcontractService.cs:185-235）。POST 仅为传 finishedQty/tolerancePct 计算入参 |
++
++> **复核结论（防望文生义）**：以下「看似查询/排名/对账」的 POST **确为写端点，不豁免**——
++> - `POST /api/pur/rfq/{rfqNo}/rank`：**「比价排名」持久化 `RfqQuote.Rank`**（RfqService.cs:246/257 写 Rank + :263 SaveChanges）→ 归 `pur-rfq:rank` 写键。
++> - `POST /api/pur/subcontract/.../finished-cost`：虽 SubcontractService 本体无 SaveChanges，但 `_finCost.PostSubcontractCostAsync` 下沉写成本凭证（SubcontractService.cs:163-173）→ 真写、且高危。
++> - `POST /api/pur/match`（Match）：容差内自动建 AP（下沉 `_finAp`）→ 真写、高危，非「查询匹配结果」。
++> - GET `/api/pur/reconcile/{poNo}`（PurReconcile）是纯 **GET**，本就不列（非 POST 豁免范畴）。
++
++---
++
++## 五、命名归并判断与疑点（供 T2/T3 复核）
++
++1. **Pur 域删除动作用 `delete` 非 `del`**：既有 `pur-supplier-price:delete` 贴点(#2)与 Program.cs:1520 种子均用 `delete`；全 Pur 波沿用 `delete`（与 WMS 波 `del` 不同，各模块沿用自身既定风格，勿混改）。
++2. **Rfq 七动作按业务语义各成键**（`add/invite/quote/rank/select/writeback/convert`）：价格发现全流程每步语义独立、审批面需分权（如可授「收报价」不授「转 PO」），照 ThreeWayMatch `add/release/reject` 分权先例逐操作成键，不聚合。若 T2 审计认为过细，可将 invite/quote/rank/select 归并为单一 `edit`——**当前按操作分权**。
++3. **`convert` 跨控制器同名不同锚**：`pur-pr:convert`(#13) 与 `pur-rfq:convert`(#20) 是各自菜单(706/705)下的转单键，**不归并**（不同 menu-key，天然独立资源键；均高危）。
++4. **`pur-po:submit` vs 发注确定**：submit 仅送审；真正「发注确定」(PO→Confirmed) 在真实流程由 OA 审批放行(`oa-inbox:approve`)触发回调 `ConfirmFromApprovalAsync`（PurchaseOrderService.cs:172-）。桩环境 submit 即时确认属测试便利，不改「submit=状态、approve=高危」的分层。故 submit 归 `状态`。
++5. **`pur-gr:qc`（检收应用）判 `状态` 而非高危**：仅应用已定 QC 判定、回写验收锚，不新建财务/库存移动；下游开票受其影响但开票本身另有 `pur-match:add` 高危闸把关。若 T2 审计认为「验收即锁定可付款量」应提级，可改判——**当前 `状态`**。
++6. **`pur-rfq:writeback`（回写价表）判 `否`**：写供应商价表(Source=rfq)属主数据沉淀、可逆可覆盖，不制造付款/实物后果，归基础写 `否`。与 `pur-supplier-price:add`(#1) 同风险层。
++
++---
++
++## 六、命门与遗留（T2 硬前置）
++
++### 头号硬前置·MenuKey 回填范围漏 705/706/707（洁净首启 pur-rfq/pur-pr/pur-subcontract 全 403）
++
++**证据链**：
++- Pur 菜单 700–708 在 Program.cs :1385–1438 插入，**插入时均未设 MenuKey**（如 :1417 `new Sys_Menu{...RoutePath="/pur/rfq"...}` 无 MenuKey 字段）。
++- 唯一的 Pur 局部回填块 Program.cs :1513 **只覆盖 `MenuId >= 701 && MenuId <= 704`** → 705(pur-rfq)/706(pur-pr)/707(pur-subcontract)/708(pur-reconcile) **不在范围**。
++- 全局回填块 Program.cs :922（`menusNoKey = Sys_Menus.Where(MenuKey==null && RoutePath!=null)`）在 Pur 菜单插入(:1385)**之前**执行 → 洁净库首启时 705–708 尚不存在 → 跳过；随后插入的 705–708 MenuKey 留 **null**。
++- 结果：`PermissionAggregator` 过滤 MenuKey==null → `pur-rfq/pur-pr/pur-subcontract` 全 action 键 join 不出 → **首启即 fail-closed 403，须二次重启由 :922 回填才生效**（对标 OA 头号命门、MES 命门#1、WMS「TenantAdmin 新租户重启前 403」平台票）。
++- **注**：既有 701–704 因 :1513 回填在其插入(:1391)**之后**同一 pass 执行，故首启即拿到 MenuKey，不受此命门影响——命门专属新扩的 705–707。
++- → **T2 必须**在 Pur 菜单插入块对 705/706/707 各行**显式赋 `MenuKey`**（`pur-rfq`/`pur-pr`/`pur-subcontract`），或把 :1513 回填范围从 `701..704` 扩为 `701..707`（708 GET-only 可含可不含）。**不做则洁净部署首启这三控制器全 403。**
++
++### 头号硬前置·既有 Pur 种子仅默认租户（其余租户 admin 也 403）
++
++**证据链**：
++- 既有 Pur MenuAction/RoleAction 种子在 Program.cs :1518–1531，`purActions` 10 条只 `new Sys_RoleAction { RoleId = 1, MenuId, ActionCode }`——**无 `TenantId`、无租户循环**。
++- `Sys_RoleAction : BaseTenantEntity`（CP6.Entity/DomainModels/Sys/Sys_RoleAction.cs:11）→ 未显式设 TenantId 时由 `CP6Context.StampTenant` 盖**当前(默认)租户** → 该种子实际只落**默认租户一份**。
++- 结果：其余 3 个租户（共 4 租户）下 admin(RoleId=1) 无任何 Pur RoleAction → **Pur 既有 10 键在非默认租户 admin 也 403**（与会话记忆已知 Fin/Sys C# 种子仅默认租户缺口同型）。
++- → **T2 必须**新建 `PurPermissionSeed.EnsureSeeded(db)`，照 `CP6.WebApi/Seed/WmsPermissionSeed.cs` 逐租户模式（枚举 `Sys_Tenants` 全 Id，对每租户显式 `TenantId=tid` 播 MenuAction+RoleAction，`IgnoreQueryFilters()` 幂等判存），**一次覆盖既有 10 键 + 新增 14 键（含 view）**，并在 Program.cs 于 Pur 菜单+MenuKey 之后调用。旧内联 :1518–1531 块应由新 Seed 取代或补齐逐租户（否则新键仍只默认租户）。
++
++### 注·既有 10 贴点键面审计结论（格式/锚定/一致性）
++
++- **键格式**：4 既贴控制器 10 键全部**连字符**（`pur-po`/`pur-gr`/`pur-supplier-price`/`pur-match`），零下划线，符合全仓约定。
++- **锚定**：10 键锚定 701–704，均有菜单行、回填派生键与贴点键**逐字一致**（`/pur/po`→`pur-po` …），零错配。
++- **内联种子键面吻合**：Program.cs:1520–1523 `purActions` 与 4 控制器 `[RequirePermission]` **1:1 吻合**（701 add/delete；702 add/submit/cancel；703 add/qc；704 add/release/reject）——无缺、无多。唯一缺陷是上文「仅默认租户」范围问题，非键面失配。
++- **新键零种子**：705/706/707 三菜单的 action（14 键含 view）当前**无任何 MenuAction/RoleAction 种子**——T2 全新播。
++
++---
++
++## 七、计数收口
++
++- **扫描控制器**：8（SupplierPrice / PurchaseOrder / GoodsReceipt / ThreeWayMatch / PurchaseRequest / Rfq / Subcontract / PurReconcile）。与计划「Pur 目录 8 控制器」精确吻合。
++- **GET-only 控制器（0 非 GET）**：1（PurReconcile，仅 1 GET）。
++- **有 POST 但全豁免（真写=0）**：0。
++- **含真写端点控制器**：7（除 PurReconcile）。
++- **POST/PUT/DELETE 端点行总数**：**24**（= §一表行数，精确吻合）。
++  - 其中**既有贴点**：**10**（#1–#10）。
++  - **裸控制器新端点**：**14**（#11–#24）。
++  - 其中**只读 POST 豁免（→view）**：**1**（#24 subcontract reconcile）。
++  - **真·写端点**：**23**（既有 10 全真写 + 新 13 真写）。
++- **menu-key（去重，承载 action 键）**：**7**（701–707；708 pur-reconcile GET-only 承载 0 键，另计）。
++- **资源键（去重，含 view）**：**24**（每端点唯一 `menu-key:action`，无跨控制器归并 → 端点 24 ↔ 资源键 24，1:1）。其中既有 10、新 14。
++- **高危键（是）**：**7**：`pur-gr:add`、`pur-match:add`、`pur-match:release`、`pur-pr:convert`、`pur-rfq:convert`、`pur-subcontract:issue`、`pur-subcontract:cost`。
++- **状态键**：**5**：`pur-po:submit`、`pur-po:cancel`、`pur-gr:qc`、`pur-pr:submit`、`pur-match:reject`。
++- **只读豁免键（view）**：**1**：`pur-subcontract:view`。
++
++### 逐控制器双向核对（控制器→表 / 表→控制器，零缺漏零 GET 误列）
++
++| 控制器 | POST/PUT/DELETE 端点数 | 其中豁免 | 真写 | 既有贴点 | 表内 # |
++|---|---|---|---|---|---|
++| SupplierPriceController | 2（Save/Delete；GET List/Resolve 不列） | 0 | 2 | 2 | 1–2 |
++| PurchaseOrderController | 3（Create/Submit/Cancel；GET List/Get 不列） | 0 | 3 | 3 | 3–5 |
++| GoodsReceiptController | 2（Confirm/ApplyQc；GET List/Get 不列） | 0 | 2 | 2 | 6–7 |
++| ThreeWayMatchController | 3（Match/Release/Reject；GET List/Get 不列） | 0 | 3 | 3 | 8–10 |
++| PurchaseRequestController | 3（Create/Submit/Convert；GET List/Get 不列） | 0 | 3 | 0 | 11–13 |
++| RfqController | 7（CreateFromPr/AddSuppliers/RecordQuote/Rank/Select/WriteBack/Convert；GET List/Get 不列） | 0 | 7 | 0 | 14–20 |
++| SubcontractController | 4（AddConsign/Issue/FinishedCost/Reconcile；GET ListOrders/GetConsign 不列） | 1 | 3 | 0 | 21–24 |
++| PurReconcileController | 0（仅 GET `/{poNo}`） | 0 | 0 | 0 | — |
++| **合计** | **24** | **1** | **23** | **10** | **24 ✅** |
++
++> 自洽核验：
++> - 总非 GET 端点 24 = 只读豁免 1 + 真写 23 ✅；
++> - 逐控制器真写累加 2+3+2+3+3+7+3+0 = 23 ✅；逐控制器非 GET 累加 2+3+2+3+3+7+4+0 = 24 ✅；
++> - 既有贴点累加 2+3+2+3+0+0+0+0 = 10 ✅（= 计划「4 已部分贴点 10 处」）；新端点 24-10 = 14 ✅（= PR 3 + Rfq 7 + Subcontract 4，与计划口径精确吻合）；
++> - 资源键 24 = 高危 7 + 状态 5 + view 1 + 基础/个性化写 11 = 24 ✅；其中基础/个性化 11 = add×4（supplier-price/po/pr/rfq）+ delete×1（supplier-price）+ consign×1（subcontract）+ Rfq 个性化 5（invite/quote/rank/select/writeback）；
++> - 表行 #1–#24 连续无跳号 ✅。

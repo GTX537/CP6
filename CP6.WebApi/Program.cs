@@ -131,6 +131,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelSplitNodeHandler>(); // WFS T5 节点处理器：并行分叉
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelJoinNodeHandler>();  // WFS T5 节点处理器：并行汇聚
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ServiceTaskNodeHandler>();    // WFS A-T6 节点处理器：服务任务（注入 IEnumerable<IServiceTaskExecutor>，未注册时为空）
+builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.InclusiveSplitNodeHandler>();  // hardening A-T3 节点处理器：包容分叉
+builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.InclusiveJoinNodeHandler>();   // hardening A-T3 节点处理器：包容汇聚
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
@@ -1942,6 +1944,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaSerialSignScreenSeed.Items)  // WFS 串簽 退回选择器 oa.detail.sendback.* + oa.sendback.* + oa.timeline.sentBack + 设计器档位 oa.designer.stage.* + E-WF-011/012/013
             .Concat(CP6.WebApi.Seed.I18nOaApproverScreenSeed.Items)  // 审批人解析高级策略 oa.designer.strategy.*/oa.approverMap.*/nav.739/E-WF-014/015
             .Concat(CP6.WebApi.Seed.I18nOaServiceTaskScreenSeed.Items)  // WFS 服务任务 oa.designer.svc.* + oa.designer.errServiceConfig + E-WF-016/017/018
+            .Concat(CP6.WebApi.Seed.I18nOaKernelHardeningScreenSeed.Items)  // 内核 hardening oa.designer.gw.* + errInclusive*/errBranchReject + E-WF-019/020/021
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突

@@ -1,0 +1,597 @@
+# Review package: 87cc371..5fe2a70
+
+## Commits
+5fe2a70 feat(oawf): M-OA/WF T3b 逐租户MenuAction/RoleAction权限种子(31→20→20)
+
+## Files changed
+ .superpowers/sdd/oawf-t3b-report.md   |  77 ++++++++++++++++
+ .superpowers/sdd/progress.md          |   1 +
+ CP6.Tests/OawfPermissionSeedTests.cs  | 162 ++++++++++++++++++++++++++++++++++
+ CP6.WebApi/Program.cs                 |   7 ++
+ CP6.WebApi/Seed/OawfPermissionSeed.cs | 118 +++++++++++++++++++++++++
+ docs/seeds/oawf-permission-seed.sql   | 153 ++++++++++++++++++++++++++++++++
+ 6 files changed, 518 insertions(+)
+
+## Diff
+diff --git a/.superpowers/sdd/oawf-t3b-report.md b/.superpowers/sdd/oawf-t3b-report.md
+new file mode 100644
+index 0000000..0834892
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t3b-report.md
+@@ -0,0 +1,77 @@
++# M-OA/WF T3b 执行报告：逐租户 MenuAction/RoleAction 权限种子
++
++生成于 2026-07-12。分支 `feat/m-oawf-crosscutting`。样板 = MesPermissionSeed。
++
++## 交付物
++
++| 文件 | 角色 |
++|---|---|
++| `CP6.WebApi/Seed/OawfPermissionSeed.cs` | 正本：20 元组逐租户幂等种子（MenuAction+RoleAction，RoleId=1） |
++| `CP6.WebApi/Program.cs`（OawfMenuSeed 之后） | 接入点：紧随菜单锚定，每启动幂等 |
++| `CP6.Tests/OawfPermissionSeedTests.cs` | 5 断言，ExpectedTuples 独立硬编码 oracle |
++| `docs/seeds/oawf-permission-seed.sql` | 文档留档（CROSS JOIN + NOT EXISTS，头声明 C# 为正本） |
++
++## 三数闭环对账（31 → 20 → 20，漏 0 多 0）
++
++**① 控制器真写端点 = 31**（grep `Controllers/Oa/*.cs` 21 + `Controllers/Wf/*.cs` 10 的 `[RequirePermission]`）：
++
++Oa 21：Pref edit / Draft add,edit,submit,del / Catalog favorite / Notification read×2 / Designer edit,add /
++Inbox read×2,approve,transfer,sendback / ApproverMap add,edit,del / Delegate delegate×2 / FlowAdmin enable。
++
++Wf 10：Task withdraw / Approval submit / Form form-save,submit / AdvancedFlow sendback,addsign,delegate /
++Flow edit,submit,approve。
++
++**② 去重 (menu-key, action) = 20**（跨控制器归并消解 11 处重复，真相源 §五）：
++- `oa-inbox:read` 覆 Inbox task/cc-read + Notification read/read-all（4→1）
++- `oa-inbox:approve` 覆 Inbox batch + Flow act（2→1）
++- `oa-inbox:sendback` 覆 Inbox + AdvancedFlow（2→1）
++- `oa-form-catalog:submit` 覆 Draft submit + Approval submit + Form data + Flow submit（4→1）
++- `oa-settings:delegate` 覆 Delegate add/remove + AdvancedFlow delegate（3→1，T2 委派合一拍板1）
++- `oa-designer:edit` 覆 Designer save + Flow def（2→1）
++
++31 − 11 归并 = 20 唯一元组。
++
++**③ 种子元组 = 20**（`OawfPermissionSeed.Actions`）：
++
++| MenuId | menu-key | actions | 计 |
++|---|---|---|---|
++| 733 | oa-inbox | read, approve, transfer, sendback, addsign, withdraw | 6 |
++| 734 | oa-flow-admin | enable | 1 |
++| 735 | oa-form-catalog | add, edit, submit, del, favorite | 5 |
++| 737 | oa-settings | edit, delegate | 2 |
++| 738 | oa-designer | edit, add, form-save | 3 |
++| 739 | oa-approver-map | add, edit, del | 3 |
++| | | **合计** | **20** |
++
++**闭环：31 真写端点 → 20 去重元组 → 20 种子元组。漏种 0 / 多种 0 ✅**
++
++## 覆盖与豁免
++
++- 覆盖 **6** 个有写端点 menu-key（733/734/735/737/738/739）。
++- `oa-form-search`(736) 仅 1 只读 POST（Query search 豁免→view，未贴点），无键可种，故不在本种子——与 7 键总数不矛盾。
++- 2 只读 POST 豁免（Forecast preview→`oa-form-catalog:view` / Query search→`oa-form-search:view`）未入种子。
++- 资源键总 22（真相源 §七）= 本 20 写键 + 2 view 豁免键 ✅ 自洽。
++
++## 四要件核对（照 MesPermissionSeed）
++
++1. 枚举 `Sys_Tenants` 显式 TenantId ✅（`tenantIds` foreach，每租户各插一份）
++2. `IgnoreQueryFilters()` 查重 ✅（跨租户可见，避默认租户作用域误判）
++3. MenuAction + RoleAction 双种 RoleId=1 ✅
++4. StampTenant 不覆盖显式 TenantId ✅（显式设 tid，拦截器仅盖 Guid.Empty）
++
++## TDD Evidence
++
++| 阶段 | 命令 | 结果 |
++|---|---|---|
++| 🔴 红 | `dotnet test --filter OawfPermissionSeedTests`（种子未建） | CS0103 `OawfPermissionSeed` 不存在 —— 编译失败 |
++| 🟢 绿 | 同上（种子建成 + 接入） | **Passed 5 / Failed 0**（20/租户元组集合相等 + 幂等行数级 40 + RoleId=1 & MenuId 锚定 & oa- 前缀 + 逐租户显式 TenantId + 无租户 no-op） |
++| 全量 | `dotnet test CP6.Tests` | **Passed 1769 / Failed 0 / Skipped 5**（基线 1764 + 新增 5，无跌） |
++
++## Oracle 独立性
++
++`ExpectedTuples` 为测试内独立硬编码 20 元组常量（非引用 `OawfPermissionSeed.Actions`），
++两侧各自从真相源手抄，集合相等断言（`Assert.Equal(expected, maSet/raSet)`）双向校验，防自证假绿。
++
++## SQL 头声明
++
++`docs/seeds/oawf-permission-seed.sql` 头注明「★正本は C#：OawfPermissionSeed.cs，本 SQL は同一集合の文書留档，乖離時は C# を正とする」。CROSS JOIN Sys_Tenants + NOT EXISTS 幂等，与 C# 20 元组 1:1。
+diff --git a/.superpowers/sdd/progress.md b/.superpowers/sdd/progress.md
+index 8f4f7ec..cfd4513 100644
+--- a/.superpowers/sdd/progress.md
++++ b/.superpowers/sdd/progress.md
+@@ -210,10 +210,11 @@ M-MES 全支终审: complete (fable终审 Ready=Yes零必修——质量高于ER
+ M-MES 合并+部署: complete (main=afe9252 --no-ff已push, 分支留远端; 镜像重建部署; 线上实证: 10锚定键300段就位[310=mes-machine错配已矫,非锚定行回填*-list后缀不碰撞设计内]/Sys_RoleAction MES段100=25元组×4租户精确/两高危端点无认证403(production-results/complete + process-cost-rate/upsert)/admin+CSRF穿透业务层(complete→400 ME-MSG-001/upsert→400模型校验); Important#1落地=scripts/audit-log-monitor.ps1+计划任务CP6-AuditLog-Monitor每4h容量告警[基线835行/0.6MB,阈值100万行/500MB],归档策略本体留票待用户裁决. M-MES 波完成. 下一波=M-OA/WF)
+ 
+ # ═══ M-OA/WF 横切接线波(branch=feat/m-oawf-crosscutting, base=2041b3a)2026-07-12 ═══
+ # 依据: plan M-OA/WF段 + docs/00-横切接线规范.md; 基线1758绿; Oa 11控制器+Wf 5控制器
+ # 任务重排(照M-ERP/M-MES): T1权限键清单→T2菜单MenuKey锚定→T3a贴RequirePermission→T3b逐租户种子→T4反射测试→T5 IAuditable(Wf_FlowDef/Wf_ApprovalBinding)→T6按需(计划无测试补网任务)
+ # ⚠计划T4孤儿路由(/wf/form-designer /wf/flow-designer)新旧双栈裁决须问用户——旧栈退役则删路由而非补菜单; T1先摸清现状留档,裁决点等用户回来拍板,不阻塞其余任务
+ # 计划周知: 与审批解耦包对齐(IApprovalService+Wf_ApprovalBinding已落地非待建,无并行冲突)
+ M-OA/WF T1: complete (commit 90bfbd3, Spec ✅ + Approved[opus审,16控制器33非GET全量重数1:1吻合零漏扫]; 33=31真写+2豁免(Forecast纯读schema遍历/Query AsQueryable投影均读证)/7 menu-key(733-739)/23资源键/9高危(全部审批写路径batch·transfer·sendback·addsign·act·委派无一降级)/「标记已读」「收藏」「保存偏好」全判写不豁免经代码证实; §六命门坐实: OA菜单733-739在:1446插入未设MenuKey且全局回填块:908更早→洁净首启OA/WF全403,T2硬前置(WMS/ERP/MES各有显式赋值块OA独无); 双栈孤儿路由裁决材料经独立复核为真(router:46-47 viewModules有映射无菜单行→addDynamicRoutes:334永不注册,旧栈Flow/Form.SaveDef写Wf_FlowDef/FormDef已被oa-designer:*键覆盖不裸奔)——退役/收编留用户拍板; 真相源=docs/seeds/oawf-permission-keys.md. 主控拍板(采审查者建议): 委派双键合一为oa-settings:delegate(权限面统一防一处授一处漏)/oa-flow-admin:enable维持状态级(可逆不动在途). Minor: 「唯一回填块」宜作「唯一全局回填块」/§六标题740混入(父组行非锚定))
+ M-OA/WF T2: complete (commit 8efc132, Spec ✅ + Approved[opus审,五具名风险全证]; 7键锚定733-739与合一后真相源逐字双向一致/740父行null; 接线Program.cs:863<全局回填块:915无条件路径命门解除; 「矫正恒no-op」claim逐键核算属实(OA RoutePath派生键与锚定键全等,矫正纯防御非load-bearing); 委派合一五处真相源同步无残留(三delegate端点统一锚737/oa-settings,高危9→8资源键23→22,menu-key仍7); 与MesMenuSeed逐字同构含缺行补建; OawfMenuSeedTests 6/6含mutation红证; 1764绿[1758+6]. Minor: 注释行号漂移(:857实为:863/:908实为:915)排序不变式成立. 波间运维: 执行中C盘再遭WU缓存2.7GB撑满(第二次)——已加计划任务CP6-WUCache-Guard每4h自愈(scripts/wu-cache-guard.ps1, e87a609), 扩容仍是治本)
+ M-OA/WF T3a: complete (commit 55b58ee, Spec ✅ + Approved[opus审零issue,31全量逐行双向核验]; Inbox审批族(batch→approve/transfer/sendback/read)与Wf旧栈(Flow.SaveDef→oa-designer:edit归并新栈/Form.SaveDef→form-save/Flow.Act→oa-inbox:approve)键逐字全中; 三delegate统一oa-settings:delegate零残留; 8高危独立不降级; 豁免面干净(Forecast/Query各仅1写端点无顺带漏); 16控制器无遗漏(14贴+2豁免); 零方法体改动; 顺手项Program.cs注释去行号化落地; 1764绿持平)
++# 🔴用户裁决 2026-07-12: 双栈孤儿路由=收编(补Sys_Menu行使旧设计器/wf/form-designer与/wf/flow-designer可达,双栈并存,不删旧栈端点)——T2追补任务落实(T3b后派): OawfMenuSeed加两收编行(段位先查占用,MenuKey留null由回填派生[无RoleAction引用无害],RoleMenu授admin),照ERP五孤儿收编先例; 权限面不变(旧栈端点已贴oa-designer:*锚738)
+diff --git a/CP6.Tests/OawfPermissionSeedTests.cs b/CP6.Tests/OawfPermissionSeedTests.cs
+new file mode 100644
+index 0000000..d23b80b
+--- /dev/null
++++ b/CP6.Tests/OawfPermissionSeedTests.cs
+@@ -0,0 +1,162 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-OA/WF 横切接线 Task 3b：OawfPermissionSeed 逐租户 Sys_MenuAction/Sys_RoleAction 幂等种子断言。
++///
++/// 三数闭环（真相源 docs/seeds/oawf-permission-keys.md §一/§七 + 控制器 grep）：
++///   31 写端点（[RequirePermission] 贴点：Oa 21 + Wf 10）→ 去重 (menu-key, action) 20 元组 → 20 种子元组（漏种 0 / 多种 0）。
++///   多处跨控制器归并消解重复（真相源 §五）：
++///     oa-inbox:read 覆 Inbox task/cc-read + Notification read/read-all（4→1）；
++///     oa-inbox:approve 覆 Inbox batch + Flow act（2→1）；oa-inbox:sendback 覆 Inbox + AdvancedFlow（2→1）；
++///     oa-form-catalog:submit 覆 Draft submit + Approval submit + Form data + Flow submit（4→1）；
++///     oa-settings:delegate 覆 Delegate add/remove + AdvancedFlow delegate（3→1，T2 委派合一拍板1）；
++///     oa-designer:edit 覆 Designer save + Flow def（2→1）。
++///   2 只读 POST 豁免（Forecast preview→oa-form-catalog:view / Query search→oa-form-search:view）未贴点＝不入种子。
++///   → 覆盖 6 有写端点 menu-key（733/734/735/737/738/739）；oa-form-search(736) 仅 view 豁免故不种，非 7。
++/// MenuId 经锚定表 docs/seeds/oawf-key-menu-anchor.md 映射；RoleAction 挂 admin RoleId=1。
++///
++/// ★ ExpectedTuples 为独立硬编码 oracle（非引用 OawfPermissionSeed 内部常量），防自证假绿。
++/// </summary>
++public class OawfPermissionSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 期望的 20 去重种子元组（MenuId 来自锚定表 oawf-key-menu-anchor.md；action 来自 T3a 控制器贴点，逐字核对）。
++    private static readonly (int MenuId, string Code)[] ExpectedTuples =
++    {
++        // 733 oa-inbox（信箱 + /wf 引擎审批动作）
++        (733, "read"), (733, "approve"), (733, "transfer"), (733, "sendback"), (733, "addsign"), (733, "withdraw"),
++        // 734 oa-flow-admin
++        (734, "enable"),
++        // 735 oa-form-catalog（填單：收藏 + 草稿 CRUD + 起流程/提交）
++        (735, "add"), (735, "edit"), (735, "submit"), (735, "del"), (735, "favorite"),
++        // 737 oa-settings（设定：偏好 + 委派合一）
++        (737, "edit"), (737, "delegate"),
++        // 738 oa-designer（设计器：新栈 save/clone + 旧栈 flow/form def）
++        (738, "edit"), (738, "add"), (738, "form-save"),
++        // 739 oa-approver-map
++        (739, "add"), (739, "edit"), (739, "del"),
++    };
++
++    private static readonly Guid TenantA = Guid.Parse("11111111-1111-1111-1111-111111111111");
++    private static readonly Guid TenantB = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static void SeedTenantsAndMenus(CP6Context db)
++    {
++        // 锚定菜单行须先在（RoleAction 挂 MenuId；OawfMenuSeed 缺行补建并显式赋 oa-* MenuKey）。
++        OawfMenuSeed.EnsureSeeded(db);
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantA, TenantCode = "TA", TenantName = "TenantA", Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantB, TenantCode = "TB", TenantName = "TenantB", Enable = true });
++        db.SaveChanges();
++    }
++
++    [Fact]
++    public void EnsureSeeded_SeedsExactly20TuplesPerTenant_ForBothMenuAndRoleAction()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        OawfPermissionSeed.EnsureSeeded(db);
++
++        foreach (var tid in new[] { TenantA, TenantB })
++        {
++            var menuActions = db.Sys_MenuActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid).ToList();
++            var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
++
++            // 元组闭环计数：每租户各得全套 20。
++            Assert.Equal(20, menuActions.Count);
++            Assert.Equal(20, roleActions.Count);
++
++            // 逐元组精确匹配（漏种 0 / 多种 0）。
++            var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var expected = ExpectedTuples.ToHashSet();
++            Assert.Equal(expected, maSet);
++            Assert.Equal(expected, raSet);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_SecondCallNoNewRows()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        OawfPermissionSeed.EnsureSeeded(db);
++        var ma1 = db.Sys_MenuActions.IgnoreQueryFilters().Count();
++        var ra1 = db.Sys_RoleActions.IgnoreQueryFilters().Count();
++
++        OawfPermissionSeed.EnsureSeeded(db);   // 二次调用
++        Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++
++        // 2 租户 × 20 元组 = 40。
++        Assert.Equal(40, ma1);
++        Assert.Equal(40, ra1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        OawfPermissionSeed.EnsureSeeded(db);
++
++        var anchoredMenuIds = ExpectedTuples.Select(t => t.MenuId).ToHashSet();
++        var roleActions = db.Sys_RoleActions.IgnoreQueryFilters().ToList();
++
++        Assert.NotEmpty(roleActions);
++        Assert.All(roleActions, ra => Assert.Equal(1, ra.RoleId));
++        // 每个 RoleAction.MenuId 必来自锚定表，且该菜单行确实存在且 MenuKey 非 null 且 oa- 前缀。
++        Assert.All(roleActions, ra => Assert.Contains(ra.MenuId, anchoredMenuIds));
++        foreach (var menuId in anchoredMenuIds)
++        {
++            var menu = db.Sys_Menus.Single(m => m.MenuId == menuId);
++            Assert.NotNull(menu.MenuKey);
++            Assert.StartsWith("oa-", menu.MenuKey!);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        OawfPermissionSeed.EnsureSeeded(db);
++
++        // 逐租户显式 TenantId：两租户各得独立行，无一被盖成默认租户。
++        var tenantsSeen = db.Sys_RoleActions.IgnoreQueryFilters()
++            .Select(x => x.TenantId).Distinct().ToList();
++        Assert.Contains(TenantA, tenantsSeen);
++        Assert.Contains(TenantB, tenantsSeen);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTenants_NoOp()
++    {
++        using var db = NewDb();
++        OawfMenuSeed.EnsureSeeded(db);   // 菜单在，但无 Sys_Tenants 行
++
++        OawfPermissionSeed.EnsureSeeded(db);
++
++        Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 96e9ab5..13df614 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -855,20 +855,27 @@ using (var scope = app.Services.CreateScope())
+     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。25 去重元组（28 写端点去重）覆盖 9 有写端点 menu-key（plan-achievement 仅 view 不种）。
+     CP6.WebApi.Seed.MesPermissionSeed.EnsureSeeded(db);
+ 
+     // M-OA/WF 横切接线 Task 2：OA/WF 菜单锚定 MenuKey（oa-*，真相源 §二 7 键）。紧随 MesPermissionSeed 之后执行。
+     // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」（全局回填块）之前：OA 菜单 733–740 由本文件下方 OA 菜单插入块
+     //   在全局回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → OA/WF 全 403
+     //   （真相源 §六头号命门）。本种子在回填前对 733–739 各显式设 oa-* MenuKey（含缺行补建）；740 父行留 null。
+     //   OA 派生键与真相源逐字一致（零错配，不同于 MES machine-list），命门纯为时序；矫正块严限 7 锚定行按 MenuId 定位。
+     CP6.WebApi.Seed.OawfMenuSeed.EnsureSeeded(db);
+ 
++    // M-OA/WF 横切接线 Task 3b：OA/WF 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
++    // Task 3a 给 16 控制器 31 真写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
++    // 须置于 OawfMenuSeed 之后（RoleAction 挂锚定 MenuId 733/734/735/737/738/739，菜单行须先在）。
++    // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。20 去重元组（31 写端点去重）覆盖 6 有写端点 menu-key
++    // （oa-form-search(736) 仅 Query search 只读豁免→view，不种）。
++    CP6.WebApi.Seed.OawfPermissionSeed.EnsureSeeded(db);
++
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+         db.SaveChanges();
+     }
+     // PUB 章00 组织模型：部门管理菜单
+     if (!db.Sys_Menus.Any(m => m.MenuId == 108))
+     {
+diff --git a/CP6.WebApi/Seed/OawfPermissionSeed.cs b/CP6.WebApi/Seed/OawfPermissionSeed.cs
+new file mode 100644
+index 0000000..3ab0438
+--- /dev/null
++++ b/CP6.WebApi/Seed/OawfPermissionSeed.cs
+@@ -0,0 +1,118 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// OA/WF 電子表单・工作流 権限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（M-OA/WF 横切接线 Task 3b）。
++///
++/// 背景：Task 3a 为 OA/WF 16 控制器的 31 个真写端点贴了 <c>[RequirePermission("键","action")]</c>（Oa 21 + Wf 10），但
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator.FillActionKeysAsync</c> 以
++/// <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}"</c>
++/// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
++/// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
++///
++/// 三数闭环（本 C# 为正本，与真相源 docs/seeds/oawf-permission-keys.md §一/§七 1:1）：
++///  - 控制器真写端点：<b>31</b>（grep <c>Controllers/Oa/*.cs</c> 21 + <c>Controllers/Wf/*.cs</c> 10 的 [RequirePermission]，逐字核对）。
++///  - 去重 (menu-key, action) 元组：<b>20</b>（多处跨控制器归并消解重复，真相源 §五）：
++///    <c>oa-inbox:read</c> 覆 Inbox task/cc-read + Notification read/read-all（4→1）；
++///    <c>oa-inbox:approve</c> 覆 Inbox batch + Flow act（2→1）；<c>oa-inbox:sendback</c> 覆 Inbox + AdvancedFlow（2→1）；
++///    <c>oa-form-catalog:submit</c> 覆 Draft submit + Approval submit + Form data + Flow submit（4→1）；
++///    <c>oa-settings:delegate</c> 覆 Delegate add/remove + AdvancedFlow delegate（3→1，T2 委派合一拍板1）；
++///    <c>oa-designer:edit</c> 覆 Designer save + Flow def（2→1）。
++///  - 种子元组：<b>20</b>（下方 <see cref="Actions"/>；漏种 0 / 多种 0）。
++///  - 覆盖 <b>6</b> 个 menu-key（有写端点者：733/734/735/737/738/739）。另 1 键 <c>oa-form-search</c>(736)
++///    仅有 1 只读 POST 端点（Query search 豁免→view，未贴点），无键可种，故不在本种子——与 7 键总数不矛盾。
++///  - 2 只读 POST 豁免（Forecast preview→<c>oa-form-catalog:view</c> / Query search→<c>oa-form-search:view</c>）
++///    未贴点＝不入种子。资源键总 22 = 本 20 写键 + 2 view 豁免键。
++///
++/// 数据来源（执行真相）：
++///  - MenuId 经锚定表 <c>docs/seeds/oawf-key-menu-anchor.md</c> 由 7 权限键映射而得（OA RoutePath 与键天然对齐，零错配）。
++///  - ActionCode 与 <c>Controllers/Oa|Wf/*.cs</c> 的 [RequirePermission] 第二实参逐字一致（差一字审批全链 403）。
++///  - 文档留档：<c>docs/seeds/oawf-permission-seed.sql</c>（本 C# 为正本，SQL 与此一致）。
++///
++/// 逐租户机制（照 MesPermissionSeed / ErpPermissionSeed / WmsPermissionSeed 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表，非行级过滤）全部租户 Id，对每租户各插一份。
++///  - 显式设 <c>TenantId=tid</c> → <c>CP6Context.StampTenant</c> 仅盖 <c>TenantId==Guid.Empty</c>，不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，使跨租户既存行对当前上下文（默认租户作用域）可见，避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 <see cref="OawfMenuSeed.EnsureSeeded"/> **之后**调用（锚定菜单行须先在，RoleAction 挂 MenuId）。
++/// 幂等：重启不重复插（(TenantId,MenuId,ActionCode) / (TenantId,RoleId,MenuId,ActionCode) 判存守卫）。
++/// </summary>
++public static class OawfPermissionSeed
++{
++    /// <summary>
++    /// (MenuId, ActionCode, ActionName) —— 与各 OA/WF 控制器 [RequirePermission(键, action)] 去重后 1:1。
++    /// MenuId 依 <c>docs/seeds/oawf-key-menu-anchor.md</c> 锚定；ActionName 为中文显示名（照 MES/ERP/WMS 种子风格，
++    /// 仅供 UI 显示，非权限判定依据——判定只看 ActionCode）。
++    /// 计 20 条，覆盖 6 个有写端点的 menu-key。
++    /// </summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        // 733 oa-inbox — 电子表单信箱 + /wf 引擎审批动作（read 归并 4 已读端点；approve/sendback 跨控制器归并）
++        (733, "read", "标记已读"), (733, "approve", "审批"), (733, "transfer", "转交"),
++        (733, "sendback", "退回"), (733, "addsign", "加签"), (733, "withdraw", "撤回"),
++        // 734 oa-flow-admin — 流程管理（enable 状态键，流程启停干预）
++        (734, "enable", "启停"),
++        // 735 oa-form-catalog — 填單（收藏 + 草稿 CRUD + 起流程/提交；submit 归并 4 起流程端点）
++        (735, "add", "新建"), (735, "edit", "编辑"), (735, "submit", "提交"),
++        (735, "del", "删除"), (735, "favorite", "收藏"),
++        // 737 oa-settings — 设定（偏好 edit + 委派合一 delegate，含 OA add/remove + AdvancedFlow delegate）
++        (737, "edit", "编辑"), (737, "delegate", "委派"),
++        // 738 oa-designer — 流程设计器（新栈 save/clone + 旧栈 flow/form def；edit 归并 Save+FlowDef）
++        (738, "edit", "编辑"), (738, "add", "克隆"), (738, "form-save", "表单保存"),
++        // 739 oa-approver-map — 审批人映射维护
++        (739, "add", "新建"), (739, "edit", "编辑"), (739, "del", "删除"),
++    };
++
++    /// <summary>
++    /// 逐租户幂等播种 OA/WF 全部权限点 + 授管理员（RoleId=1）。
++    /// 须在 <see cref="OawfMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖（仅盖 Guid.Empty）
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/oawf-permission-seed.sql b/docs/seeds/oawf-permission-seed.sql
+new file mode 100644
+index 0000000..c0bf75d
+--- /dev/null
++++ b/docs/seeds/oawf-permission-seed.sql
+@@ -0,0 +1,153 @@
++/* ============================================================
++ * OA/WF 電子表单・工作流 権限点（MenuAction / RoleAction）シードデータ（M-OA/WF 横切接線 Task 3b）
++ * ============================================================
++ * 対象 DB     : CP6DB (SQL Server)
++ * 対象テーブル : Sys_MenuAction（授権可能な操作点の登記）
++ *              Sys_RoleAction（管理者ロール RoleId=1 への全動作授権）
++ *
++ * ★正本は C#：CP6.WebApi/Seed/OawfPermissionSeed.cs（起動時逐租户冪等種子）。
++ *   本 SQL は同一集合の文書留档・手動投入用であり、C# と 1:1 一致。乖離時は C# を正とする。
++ *
++ * 前提:
++ *   OA/WF メニュー 733/734/735/737/738/739 は Task 2 種子
++ *   （OawfMenuSeed / docs/seeds/oawf-menu-seed.sql）で MenuKey=oa-* 锚定済みであること。
++ *   （OA は RoutePath 派生キー＝真相源キー逐字一致、零錯配。命門は回填時序＝OawfMenuSeed が回填前に明示赋値。）
++ *   RoleAction は当該 MenuId 上に挂かり、実行時 PermissionAggregator が
++ *   Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}" を組む。
++ *
++ * 三数閉環（真相源 docs/seeds/oawf-permission-keys.md §一/§七 + 控制器 grep）:
++ *   真写端点 31（Oa 21 + Wf 10）→ 去重 (menu-key, action) 20 元组 → 種子 20 元组（漏種 0 / 多種 0）。
++ *   多处跨控制器归并（§五）消解重复：
++ *     oa-inbox:read 覆 Inbox task/cc-read + Notification read/read-all（4→1）；
++ *     oa-inbox:approve 覆 Inbox batch + Flow act（2→1）；oa-inbox:sendback 覆 Inbox + AdvancedFlow（2→1）；
++ *     oa-form-catalog:submit 覆 Draft submit + Approval submit + Form data + Flow submit（4→1）；
++ *     oa-settings:delegate 覆 Delegate add/remove + AdvancedFlow delegate（3→1，T2 委派合一拍板1）；
++ *     oa-designer:edit 覆 Designer save + Flow def（2→1）。
++ *   2 只読 POST 豁免（Forecast preview→oa-form-catalog:view / Query search→oa-form-search:view）は未貼点＝不入種子
++ *   → 覆盖 6 有写端点 menu-key（oa-form-search(736) 仅 view 豁免故不種，非 7）。
++ *
++ * 動作定義（docs/seeds/oawf-key-menu-anchor.md 锚定 MenuId × 控制器 [RequirePermission] action 逐字）:
++ *   733 oa-inbox        : read / approve（高危）/ transfer（高危）/ sendback（高危）/ addsign（高危）/ withdraw（状态）
++ *   734 oa-flow-admin   : enable（状态）
++ *   735 oa-form-catalog : add / edit / submit（状态）/ del / favorite
++ *   737 oa-settings     : edit / delegate（高危・委派合一）
++ *   738 oa-designer     : edit（高危）/ add（高危・克隆）/ form-save（高危）
++ *   739 oa-approver-map : add / edit / del
++ *
++ * マルチテナント:
++ *   Sys_MenuAction / Sys_RoleAction は BaseTenantEntity（TenantId 必須・行級隔離）。
++ *   全テナントへ一括投入するため `CROSS JOIN (SELECT Id FROM Sys_Tenants) t` で逐租户展開。
++ *
++ * 実行方法:
++ *   sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/oawf-permission-seed.sql -b
++ *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
++ *
++ * 冪等性:
++ *   各 INSERT 前に NOT EXISTS チェック（TenantId+MenuId+ActionCode 単位）→ 重複実行安全。
++ * ============================================================ */
++
++SET NOCOUNT ON;
++SET XACT_ABORT ON;
++SET QUOTED_IDENTIFIER ON;
++SET ANSI_NULLS ON;
++BEGIN TRY
++BEGIN TRANSACTION;
++
++PRINT '=== OA/WF 権限点（MenuAction/RoleAction）シード 開始 ===';
++
++/* ------------------------------------------------------------
++ * 0. 動作定義テーブル（MenuId, ActionCode, ActionName, Sort）— 計 20 動作／租户
++ * ------------------------------------------------------------ */
++DECLARE @Actions TABLE (MenuId INT, ActionCode NVARCHAR(50), ActionName NVARCHAR(100), Sort INT);
++INSERT INTO @Actions (MenuId, ActionCode, ActionName, Sort) VALUES
++ (733, N'read',      N'标记已读',   0),
++ (733, N'approve',   N'审批',       0),
++ (733, N'transfer',  N'转交',       0),
++ (733, N'sendback',  N'退回',       0),
++ (733, N'addsign',   N'加签',       0),
++ (733, N'withdraw',  N'撤回',       0),
++ (734, N'enable',    N'启停',       0),
++ (735, N'add',       N'新建',       0),
++ (735, N'edit',      N'编辑',       0),
++ (735, N'submit',    N'提交',       0),
++ (735, N'del',       N'删除',       0),
++ (735, N'favorite',  N'收藏',       0),
++ (737, N'edit',      N'编辑',       0),
++ (737, N'delegate',  N'委派',       0),
++ (738, N'edit',      N'编辑',       0),
++ (738, N'add',       N'克隆',       0),
++ (738, N'form-save', N'表单保存',   0),
++ (739, N'add',       N'新建',       0),
++ (739, N'edit',      N'编辑',       0),
++ (739, N'del',       N'删除',       0);
++-- 合計 20 動作定義／租户
++
++/* ------------------------------------------------------------
++ * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_MenuAction (Id, MenuId, ActionCode, ActionName, Sort, CreateDate, TenantId)
++SELECT NEWID(), a.MenuId, a.ActionCode, a.ActionName, a.Sort, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_MenuAction ma
++    WHERE ma.TenantId = t.Id AND ma.MenuId = a.MenuId AND ma.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 2. Sys_RoleAction 管理者(RoleId=1) へ全動作授権（逐租户・冪等）
++ *    列序: (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_RoleAction (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++SELECT NEWID(), 1, a.MenuId, a.ActionCode, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_RoleAction ra
++    WHERE ra.TenantId = t.Id AND ra.RoleId = 1 AND ra.MenuId = a.MenuId AND ra.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 3. 結果確認（PRINT）
++ * ------------------------------------------------------------ */
++DECLARE @Tn INT, @Ma INT, @Ra INT;
++DECLARE @Menus TABLE (MenuId INT);
++INSERT INTO @Menus VALUES (733),(734),(735),(737),(738),(739);
++SELECT @Tn = COUNT(*) FROM Sys_Tenants;
++SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId IN (SELECT MenuId FROM @Menus);
++SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId IN (SELECT MenuId FROM @Menus) AND RoleId = 1;
++
++PRINT N'  租户数                  : ' + CAST(@Tn AS NVARCHAR(10));
++PRINT N'  MenuAction 件数(OA/WF)  : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 20 想定）';
++PRINT N'  RoleAction 件数(管理者) : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 20 想定）';
++
++COMMIT TRANSACTION;
++PRINT '=== OA/WF 権限点シード 完了 ===';
++END TRY
++BEGIN CATCH
++    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
++    PRINT 'ERROR: ' + ERROR_MESSAGE();
++    THROW;
++END CATCH;
++GO
++
++/* ============================================================
++ * 4. 動作確認クエリ（実行後の検証用、任意）
++ * ============================================================ */
++-- 管理者ロールの OA/WF 授権（RoleAction）一覧
++SELECT CONVERT(varchar(36), ra.TenantId) AS TenantId, ra.RoleId, ra.MenuId, ra.ActionCode
++FROM Sys_RoleAction ra
++WHERE ra.MenuId IN (733,734,735,737,738,739) AND ra.RoleId = 1
++ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
++
++/* ============================================================
++ * 5. ロールバック用（緊急時のみ使用）
++ * ============================================================
++ * 注意: RoleId=1 限定（本种子只授过管理员；不限定会连带删掉日后经 UI 授出的其他角色 OA/WF 授权）。
++ * ------------------------------------------------------------ */
++/*
++BEGIN TRANSACTION;
++DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId IN (733,734,735,737,738,739);
++DELETE FROM Sys_MenuAction WHERE MenuId IN (733,734,735,737,738,739);
++COMMIT TRANSACTION;
++*/

@@ -33,13 +33,14 @@ public partial class FlowEngine : IFlowEngine
         _planner = planner ?? new ApprovalStagePlanner(_approver);   // 测试 Engine(db) 不传 → 内部 new,保 Wf 测绿
     }
 
-    // ★ T5：start/approval/end + parallelSplit/parallelJoin 五 handler。
-    // ★ 服务任务 A-T6：第 6 个 serviceTask handler（fallback 用空 executor 列表；DI 实例携真实 executor）。
+    // ★ T5：start/approval/end + parallelSplit/parallelJoin；A-T6：serviceTask；
+    // ★ hardening A-T3：inclusiveSplit/inclusiveJoin（第 7/8 个，spec D3）。八 handler。
     private static IEnumerable<INodeHandler> DefaultHandlers() => new INodeHandler[]
     {
         new StartNodeHandler(), new ApprovalNodeHandler(), new EndNodeHandler(),
         new ParallelSplitNodeHandler(), new ParallelJoinNodeHandler(),
         new ServiceTaskNodeHandler(Array.Empty<IServiceTaskExecutor>()),
+        new InclusiveSplitNodeHandler(), new InclusiveJoinNodeHandler(),
     };
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
@@ -220,9 +221,21 @@ public partial class FlowEngine : IFlowEngine
         }
         else
         {
-            inst.Status = FlowInstanceStatus.Rejected;
-            CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
-            VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
+            // hardening B-T2 驳回分流（spec §4.1）：token 有 fork 血缘且本层 split 配 prune → 剪枝；否则既有连坐一行不改。
+            // ForkId==null 时不 LoadSchema（cascade 默认路径零额外开销）。
+            var rejTok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
+            var pruned = false;
+            if (rejTok is not null && rejTok.ForkId is not null)
+            {
+                var pruneSchema = await LoadSchemaAsync(inst.FlowKey);
+                pruned = await TryPruneBranchAsync(inst, pruneSchema, rejTok, actorId, comment);
+            }
+            if (!pruned)
+            {
+                inst.Status = FlowInstanceStatus.Rejected;
+                CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
+                VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
+            }
         }
         await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
         await _db.SaveChangesAsync();

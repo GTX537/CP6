@@ -1,0 +1,360 @@
+# Review package: be53c5d..05f46c7
+
+## Commits
+05f46c7 feat(space): WmsBinConsumer 真消费端替换 NoOp——发布闭环接通（ch04 §5 幂等 upsert）
+
+## Files changed
+ CP6.Core/Services/Wms/WmsBinConsumer.cs | 116 +++++++++++++++++++
+ CP6.Tests/WmsBinConsumerTests.cs        | 192 ++++++++++++++++++++++++++++++++
+ CP6.WebApi/Program.cs                   |   3 +-
+ 3 files changed, 310 insertions(+), 1 deletion(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Wms/WmsBinConsumer.cs b/CP6.Core/Services/Wms/WmsBinConsumer.cs
+new file mode 100644
+index 0000000..a4eb39d
+--- /dev/null
++++ b/CP6.Core/Services/Wms/WmsBinConsumer.cs
+@@ -0,0 +1,116 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels.Wms;
++using CP6.Entity.DTOs.Space;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Core.Services.Wms;
++
++/// <summary>
++/// WMS 库位消费端真实现（ch04 §5.1/§5.3 v1.1）：LocationPublished → T_WmsBin 幂等 upsert。
++/// 幂等判据：按 Id(=Space LocationId) 取行，incoming.Version &lt;= stored.Version → SKIPPED。
++/// 整批语义（§5.2）：任一 REJECTED → Success=false（整事件 Failed，Worker 重试/人工介入）；
++/// 其余项照常落库（部分失败返回逐项结果）。TenantId 由 SaveChanges 自动盖章。
++/// </summary>
++public class WmsBinConsumer : IWmsLocationConsumer
++{
++    private static readonly JsonSerializerOptions Json = new() { WriteIndented = false };
++    private readonly CP6Context _db;
++
++    public WmsBinConsumer(CP6Context db) => _db = db;
++
++    /// <inheritdoc/>
++    public async Task<WmsConsumeResult> ConsumeAsync(LocationPublishBatch batch)
++    {
++        var result = new WmsConsumeResult { Success = true };
++        foreach (var item in batch.Items)
++        {
++            var bin = await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == item.LocationId);
++
++            // 陈旧/重复事件 → 幂等跳过（§5.1 关键行，至少一次投递安全）
++            if (bin != null && item.Version <= bin.Version)
++            {
++                result.Items.Add(Item(item, "SKIPPED", "version<=lastVersion（幂等重复）"));
++                continue;
++            }
++
++            if (item.Op == "DEACTIVATE")
++            {
++                if (bin == null)
++                {
++                    // H6 乱序防护（对契约 §5.1 的修正）：对应 UPSERT 事件可能仍在重试队列，
++                    // 直接跳过会让迟到的旧版 UPSERT 复活已停用库位 → 落墓碑行（IsActive=false + Version 占位），
++                    // 版本单调判据自动掐死后到的旧版。无仓维度（建不了 join 锚）才退回幂等跳过。
++                    if (string.IsNullOrEmpty(item.WarehouseCd))
++                    {
++                        result.Items.Add(Item(item, "SKIPPED", "bin 不存在且缺 WarehouseCd，幂等无操作"));
++                        continue;
++                    }
++                    var tomb = new WmsBin
++                    {
++                        Id = item.LocationId,
++                        LocationCode = item.LocationCode,
++                        WarehouseCd = item.WarehouseCd,
++                        PathJson = JsonSerializer.Serialize(item.Path, Json),
++                        AttrsJson = JsonSerializer.Serialize(item.Attrs, Json),
++                        IsActive = false
++                    };
++                    Stamp(tomb, item.Version, batch.PublishedBy);
++                    _db.WmsBins.Add(tomb);
++                    result.Items.Add(Item(item, "DEACTIVATED", "墓碑落库（bin 未曾消费，防乱序复活）"));
++                    continue;
++                }
++                // TOCTOU 权威校验：库存真相在 WMS（§6），按 (WarehouseCd, LocationCode) 锚查
++                var qty = await _db.Stocks
++                    .Where(s => s.WarehouseCd == bin.WarehouseCd && s.LocationCd == bin.LocationCode)
++                    .SumAsync(s => s.PhysicalQty);
++                if (qty > 0)
++                {
++                    result.Items.Add(Item(item, "REJECTED", "W-SPACE-404 库存非0"));
++                    result.Success = false;
++                    continue;
++                }
++                bin.IsActive = false;
++                Stamp(bin, item.Version, batch.PublishedBy);
++                result.Items.Add(Item(item, "DEACTIVATED", null));
++                continue;
++            }
++
++            // UPSERT
++            if (string.IsNullOrEmpty(item.WarehouseCd))
++            {
++                // 无仓维度无法建 (WarehouseCd, LocationCode) join 锚（§3.4）→ 拒绝该条
++                result.Items.Add(Item(item, "REJECTED", "缺 WarehouseCd（SiteCode↔WarehouseCd 映射未命中）"));
++                result.Success = false;
++                continue;
++            }
++            if (bin == null)
++            {
++                bin = new WmsBin { Id = item.LocationId };
++                _db.WmsBins.Add(bin);
++            }
++            bin.LocationCode = item.LocationCode;   // 理论不变（发布后码冻结）
++            bin.WarehouseCd = item.WarehouseCd;
++            bin.PathJson = JsonSerializer.Serialize(item.Path, Json);
++            bin.AttrsJson = JsonSerializer.Serialize(item.Attrs, Json);
++            bin.IsActive = true;
++            Stamp(bin, item.Version, batch.PublishedBy);
++            result.Items.Add(Item(item, "UPSERTED", null));
++        }
++
++        await _db.SaveChangesAsync();
++        result.AllSkipped = result.Items.Count > 0 && result.Items.All(i => i.Status == "SKIPPED");
++        return result;
++    }
++
++    private static void Stamp(WmsBin bin, long version, string? publishedBy)
++    {
++        bin.Version = version;
++        bin.LastPublishedAt = DateTime.Now;
++        bin.LastPublishedBy = publishedBy;
++    }
++
++    private static WmsItemResult Item(LocationPublishItem i, string status, string? reason) =>
++        new() { LocationId = i.LocationId, Status = status, Reason = reason };
++}
+diff --git a/CP6.Tests/WmsBinConsumerTests.cs b/CP6.Tests/WmsBinConsumerTests.cs
+new file mode 100644
+index 0000000..989a709
+--- /dev/null
++++ b/CP6.Tests/WmsBinConsumerTests.cs
+@@ -0,0 +1,192 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Wms;
++using CP6.Entity.DomainModels.Wms;
++using CP6.Entity.DTOs.Space;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// WmsBinConsumer 测试（ch04 §5.1/§5.2/§5.3 幂等 upsert + 逐项结果）。[InMemory 仅测逻辑]
++/// </summary>
++public class WmsBinConsumerTests
++{
++    private static CP6Context Db() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
++
++    private static LocationPublishBatch Batch(params LocationPublishItem[] items) => new()
++    {
++        BatchNo = "LPUB-20260705-0001",
++        PublishedBy = "u",
++        Items = items.ToList()
++    };
++
++    private static LocationPublishItem Upsert(Guid id, string code, long version, string? warehouseCd = "WH1") => new()
++    {
++        Op = "UPSERT", LocationId = id, LocationCode = code, CodeOrigin = 1,
++        Version = version, WarehouseCd = warehouseCd,
++        Path = new LocationPath { SiteCode = "WH1", FloorLevel = 1, ZoneCode = "A", RackCode = "R1", Col = 1, Level = 1, Depth = 1 }
++    };
++
++    [Fact]
++    public async Task Upsert_NewLocation_CreatesBin()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++
++        var r = await new WmsBinConsumer(db).ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));
++
++        Assert.True(r.Success);
++        Assert.Equal("UPSERTED", r.Items.Single().Status);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.Equal(id, bin.Id);
++        Assert.Equal("A-01-01-01", bin.LocationCode);
++        Assert.Equal("WH1", bin.WarehouseCd);
++        Assert.Equal(1, bin.Version);
++        Assert.True(bin.IsActive);
++        Assert.Equal("u", bin.LastPublishedBy);
++        Assert.Contains("\"ZoneCode\":\"A\"", bin.PathJson);
++    }
++
++    [Fact]
++    public async Task Upsert_StaleVersion_Skipped_NoWrite()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 5)));
++
++        // 重复投递同版本（至少一次投递语义）→ 幂等跳过
++        var r = await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 5)));
++
++        Assert.True(r.Success);                       // 纯 Skipped 也算成功收敛（§5.2）
++        Assert.Equal("SKIPPED", r.Items.Single().Status);
++        Assert.True(r.AllSkipped);
++        Assert.Equal(5, (await db.WmsBins.SingleAsync()).Version);
++    }
++
++    [Fact]
++    public async Task Upsert_NewerVersion_UpdatesBin()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));
++
++        var item = Upsert(id, "A-01-01-01", 2);
++        item.Attrs["sizeW"] = 1200;
++        var r = await c.ConsumeAsync(Batch(item));
++
++        Assert.Equal("UPSERTED", r.Items.Single().Status);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.Equal(2, bin.Version);
++        Assert.Contains("1200", bin.AttrsJson);
++    }
++
++    [Fact]
++    public async Task Upsert_MissingWarehouseCd_Rejected_EventShouldFail()
++    {
++        using var db = Db();
++        var r = await new WmsBinConsumer(db).ConsumeAsync(
++            Batch(Upsert(Guid.NewGuid(), "A-01-01-01", 1, warehouseCd: null)));
++
++        Assert.False(r.Success);                      // 任一 Rejected → 整事件 Failed（§5.2）
++        Assert.Equal("REJECTED", r.Items.Single().Status);
++        Assert.Equal(0, await db.WmsBins.CountAsync());
++    }
++
++    [Fact]
++    public async Task Deactivate_NoBin_CreatesTombstone()
++    {
++        // H6 乱序防护（对契约 §5.1 的修正）：bin 不存在的 DEACTIVATE 落墓碑而非跳过，
++        // 否则迟到重试的旧版 UPSERT 会复活已停用库位。
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var item = Upsert(id, "A-01-01-01", 2);
++        item.Op = "DEACTIVATE";
++
++        var r = await new WmsBinConsumer(db).ConsumeAsync(Batch(item));
++
++        Assert.True(r.Success);
++        Assert.Equal("DEACTIVATED", r.Items.Single().Status);
++        var tomb = await db.WmsBins.SingleAsync();
++        Assert.False(tomb.IsActive);
++        Assert.Equal(2, tomb.Version);
++    }
++
++    [Fact]
++    public async Task Deactivate_NoBin_NoWarehouseCd_Skipped()
++    {
++        // 无仓维度建不了 (WarehouseCd, LocationCode) join 锚 → 退回幂等跳过（如采纳态无楼层归属）
++        using var db = Db();
++        var item = Upsert(Guid.NewGuid(), "A-01-01-01", 2, warehouseCd: null);
++        item.Op = "DEACTIVATE";
++
++        var r = await new WmsBinConsumer(db).ConsumeAsync(Batch(item));
++
++        Assert.True(r.Success);
++        Assert.Equal("SKIPPED", r.Items.Single().Status);
++        Assert.Equal(0, await db.WmsBins.CountAsync());
++    }
++
++    [Fact]
++    public async Task Deactivate_Tombstone_ThenLateUpsert_Skipped()
++    {
++        // H6 全链路：墓碑(v2) 落库后，重试队列里的旧版 UPSERT(v1) 到达 → 版本单调掐死，不复活
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        var deact = Upsert(id, "A-01-01-01", 2);
++        deact.Op = "DEACTIVATE";
++        await c.ConsumeAsync(Batch(deact));
++
++        var r = await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));   // 迟到的 v1 UPSERT
++
++        Assert.Equal("SKIPPED", r.Items.Single().Status);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.False(bin.IsActive);                          // 仍是停用态
++        Assert.Equal(2, bin.Version);
++    }
++
++    [Fact]
++    public async Task Deactivate_WithStock_Rejected()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));
++        db.Stocks.Add(new Stock
++        {
++            Id = Guid.NewGuid(), WarehouseCd = "WH1", LocationCd = "A-01-01-01",
++            ProductCd = "P1", LotNo = "", PhysicalQty = 5m
++        });
++        await db.SaveChangesAsync();
++
++        var item = Upsert(id, "A-01-01-01", 2);
++        item.Op = "DEACTIVATE";
++        var r = await c.ConsumeAsync(Batch(item));
++
++        Assert.False(r.Success);
++        Assert.Equal("REJECTED", r.Items.Single().Status);
++        Assert.True((await db.WmsBins.SingleAsync()).IsActive);   // 未停用
++    }
++
++    [Fact]
++    public async Task Deactivate_NoStock_SetsInactive_AndVersion()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));
++
++        var item = Upsert(id, "A-01-01-01", 2);
++        item.Op = "DEACTIVATE";
++        var r = await c.ConsumeAsync(Batch(item));
++
++        Assert.True(r.Success);
++        Assert.Equal("DEACTIVATED", r.Items.Single().Status);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.False(bin.IsActive);
++        Assert.Equal(2, bin.Version);
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index db51a4d..e4d9e9d 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -390,21 +390,22 @@ builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService, CP6.Core.
+ builder.Services.AddScoped<CP6.Core.Services.Space.ITemplateService, CP6.Core.Services.Space.TemplateService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISceneService, CP6.Core.Services.Space.SceneService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISceneIoService, CP6.Core.Services.Space.SceneIoService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.IConnectorService, CP6.Core.Services.Space.ConnectorService>();
+ // 4.x.3 Space ch06 viewer 定位查询（locate/search/detail）
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceLocateService, CP6.Core.Services.Space.SpaceLocateService>();
+ // 4.x.1 Space ch04 — 库位发布 + WMS 桩（SpaceBridgeHook 需同时注册具体类和接口，Dispatcher 注入接口）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.SpaceBridgeHook>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceBridgeHook, CP6.Core.Services.Integration.SpaceBridgeHook>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ILocationPublishService, CP6.Core.Services.Space.LocationPublishService>();
+-builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Integration.NoOpWmsLocationConsumer>();
++// ch04 v1.1 §5.3：真消费端（T_WmsBin 幂等 upsert，方案A 2026-07-05）。回滚开关：换回 NoOpWmsLocationConsumer 即断开。
++builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Wms.WmsBinConsumer>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsStockQuery, CP6.Core.Services.Wms.WmsStockQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsPickTaskQuery, CP6.Core.Services.Wms.WmsPickTaskQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsWorkloadQuery, CP6.Core.Services.Wms.WmsWorkloadQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsDeviceQuery, CP6.Core.Services.Wms.WmsDeviceQuery>();
+ 
+ // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
+ builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
+ builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
+ builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.Wms.IotService>();
+ 

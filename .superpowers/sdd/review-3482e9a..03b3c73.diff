@@ -1,0 +1,155 @@
+# Review package: 3482e9a..HEAD
+
+## Commits
+03b3c73 refactor(ui): ERP 迁移批次8——QuotationView token化 + 模块硬编码清扫与el-tag收尾
+
+## Files changed
+ cp6.web/src/views/erp/QuotationView.vue | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/erp/QuotationView.vue b/cp6.web/src/views/erp/QuotationView.vue
+index 9e6368a..5fc920b 100644
+--- a/cp6.web/src/views/erp/QuotationView.vue
++++ b/cp6.web/src/views/erp/QuotationView.vue
+@@ -1,21 +1,19 @@
+ <template>
+   <div class="quotation-view" :class="{ 'is-mobile': isMobile }">
+     <!-- ============ Top bar：操作种别 + No + 状态 ============ -->
+     <el-card shadow="never" class="header-card">
+       <div class="header-row">
+         <div class="header-left">
+           <el-tag :type="opTagType" :size="isMobile ? 'default' : 'large'" effect="dark">{{ opLabel }}</el-tag>
+           <span v-if="form.qtnNo" class="qtn-no">{{ t('御見積書 No.') }} {{ form.qtnNo }}</span>
+-          <el-tag v-if="statusLabel" :type="statusTagType" effect="plain" :size="isMobile ? 'small' : 'large'">
+-            {{ statusLabel }}
+-          </el-tag>
++          <CpTag v-if="statusLabel" :tone="statusTone">{{ statusLabel }}</CpTag>
+         </div>
+         <div class="header-right">
+           <el-radio-group v-model="opModel" size="small" :disabled="!form.qtnNo && op !== 10">
+             <el-radio-button :value="Op.New">{{ t('新規') }}</el-radio-button>
+             <el-radio-button :value="Op.Edit" :disabled="!form.qtnNo">{{ t('訂正') }}</el-radio-button>
+             <el-radio-button :value="Op.Copy" :disabled="!form.qtnNo">{{ t('流用') }}</el-radio-button>
+             <el-radio-button :value="Op.View" :disabled="!form.qtnNo">{{ t('照会') }}</el-radio-button>
+             <el-radio-button :value="Op.Delete" :disabled="!form.qtnNo">{{ t('削除') }}</el-radio-button>
+           </el-radio-group>
+         </div>
+@@ -370,21 +368,21 @@
+                     size="small"
+                     :disabled="isPageReadOnly || !!row.qtnCalcNo"
+                     @click="removeDetailRow($index)"
+                   >
+                     {{ t('削除') }}
+                   </el-button>
+                 </template>
+               </el-table-column>
+             </el-table>
+ 
+-            <div v-if="form.details.length === 0" style="text-align:center; padding: 16px; color:#909399">
++            <div v-if="form.details.length === 0" style="text-align:center; padding: 16px; color:var(--cp-muted)">
+               {{ t('明細がありません。「使用」チェック or 「行追加」で明細を追加してください。') }}
+             </div>
+           </el-tab-pane>
+ 
+           <!-- Tab5: 提出用計算書 ============================ -->
+           <el-tab-pane :label="t('⑤ 提出用計算書')" name="submit">
+             <el-row :gutter="12">
+               <el-col :span="24">
+                 <el-form-item :label="t('寸法印字')">
+                   <el-input v-model="form.dimensionPrint" />
+@@ -467,20 +465,21 @@ import type {
+   QuotationDto,
+   QuotationCalcCandidate,
+   QuotationCalcDto,
+   QuotationDetailDto,
+ } from '@/types/erp/quotation'
+ import { QuotationOperationType } from '@/types/erp/quotation'
+ import type { MasterBase, MasterStaff } from '@/types/erp/estimateCalc'
+ import type { AxiosError } from 'axios'
+ import { useBreakpoint } from '@/composables/useBreakpoint'
+ import { formatQty, formatNumber } from '@/utils/format'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ 
+ const { isMobile } = useBreakpoint()
+ const Op = QuotationOperationType
+ const route = useRoute()
+ const router = useRouter()
+ 
+ // ============== State ==============
+ const formRef = ref<FormInstance | null>(null)
+ const op = ref<QuotationOperationType>(Op.New)
+ const opModel = computed({
+@@ -537,23 +536,23 @@ const isPageReadOnly = computed(() => isView.value || isDelete.value)
+ const isPkRo = computed(() => isEdit.value || isView.value || isDelete.value)
+ 
+ /** 承認/確定状态标签 */
+ const isConfirmed = computed(() => form.masterConfirmFlg >= 2)
+ const statusLabel = computed(() => {
+   if (form.masterConfirmFlg >= 2) return t('見積確定済')
+   if (form.estimateCheckFlg >= 1) return t('承認済')
+   if (form.qtnNo) return t('未承認')
+   return ''
+ })
+-const statusTagType = computed<'info' | 'success' | 'warning' | 'primary'>(() => {
+-  if (form.masterConfirmFlg >= 2) return 'success'
+-  if (form.estimateCheckFlg >= 1) return 'warning'
++const statusTone = computed<Tone>(() => {
++  if (form.masterConfirmFlg >= 2) return 'ok'
++  if (form.estimateCheckFlg >= 1) return 'warn'
+   return 'info'
+ })
+ 
+ const opLabel = computed(() => {
+   switch (op.value) {
+     case Op.New: return t('新規')
+     case Op.Edit: return t('訂正')
+     case Op.Copy: return t('流用')
+     case Op.View: return t('照会')
+     case Op.Delete: return t('削除')
+@@ -1128,21 +1127,21 @@ onBeforeUnmount(() => {
+   align-items: center;
+ }
+ .header-left {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+ }
+ .qtn-no {
+   font-size: 16px;
+   font-weight: 600;
+-  color: #409eff;
++  color: var(--cp-brand);
+ }
+ .btn-row {
+   display: flex;
+   gap: 8px;
+   justify-content: flex-end;
+ }
+ .qtn-tabs :deep(.el-tabs__content) {
+   padding: 12px 4px;
+ }
+ .tab-badge {
+@@ -1192,21 +1191,21 @@ onBeforeUnmount(() => {
+   font-size: 12px;
+ }
+ .quotation-view.is-mobile .footer-card {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   margin: 0;
+   border-radius: 0;
+   z-index: 50;
+-  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
++  box-shadow: var(--cp-shadow-up);
+   padding-bottom: env(safe-area-inset-bottom, 0);
+ }
+ .quotation-view.is-mobile .footer-card :deep(.el-card__body) {
+   padding: 10px 12px;
+ }
+ .quotation-view.is-mobile .btn-row {
+   justify-content: stretch;
+   flex-wrap: wrap;
+   gap: 6px;
+ }

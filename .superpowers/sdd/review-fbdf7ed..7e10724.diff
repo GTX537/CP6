@@ -1,0 +1,242 @@
+# Review package: fbdf7ed..HEAD
+
+## Commits
+7e10724 fix(ui): ERP批次2修正——クリア联动清除工具栏checkbox(CpListPage reset透传=缺口#22)
+
+## Files changed
+ cp6.web/src/components/templates/CpListPage.vue       |  9 +++++++--
+ .../components/templates/__tests__/CpListPage.spec.ts | 19 +++++++++++++++++++
+ cp6.web/src/views/erp/OrderListView.vue               |  8 ++++++++
+ cp6.web/src/views/erp/ProductMasterListView.vue       |  1 +
+ docs/superpowers/plans/2026-07-04-ui-restyle.md       |  3 +++
+ 5 files changed, 38 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/components/templates/CpListPage.vue b/cp6.web/src/components/templates/CpListPage.vue
+index 508caa5..49bde87 100644
+--- a/cp6.web/src/components/templates/CpListPage.vue
++++ b/cp6.web/src/components/templates/CpListPage.vue
+@@ -29,21 +29,23 @@
+     - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key；tone 用 CpTag 共享 Tone。
+     - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
+     - highlightCurrentRow?: boolean 透传 el-table 当前行高亮；默认 true（迁移页默认保留原行为）。
+     - paginated?: boolean          默认 true。false 时隐藏分页器、page 锁定 1，fetch 收到 size=UNPAGED_SIZE(1000)
+                                    一次取全量（单表滚动 + 跨全量勾选形态，如賞味期限一括廃棄）。
+     - filterLabels?: FilterBarLabels 透传 CpFilterBar 按钮文案覆盖（业务侧接 i18n；缺省中文）。
+     - emptyText?: string           透传 CpEmpty 空状态文案（缺省「暂无数据」）。
+   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
+   Emits: selection-change(rows) ｜ total-change(n)（每次成功加载后携带最新 total，供 CpPageShell :count 接线；
+          受 seq 乱序守卫，过期响应不 emit）｜ sort-change({field,order})（排序状态变更时外发规范化值；
+-         取消排序时 field/order 均为 undefined）
++         取消排序时 field/order 均为 undefined）｜ reset()（CpFilterBar 重置时透传，**先于**重置触发的
++         load() 同步 emit——页面级外部筛选状态（toolbar checkbox 等，缺口 #22）可在监听器内清理自身 ref，
++         保证紧随其后的 fetch closure 读到的已是清理后的值）
+   Expose: reload()（仅此一项）——命令式重新 fetch，保留当前 filters / page / statusKey（页内 in-place 变更后刷新，
+           替代重挂载 :key 方案）。注意：删除当前页最后一行后 reload() 仍停留原 page，可能显示空页（不自动收拢页码，
+           与原页 reload() 行为一致，记录在案）。
+ 
+   使用示例：
+     <CpPageShell title="出庫指示一覧" :count="total">
+       <CpListPage
+         :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' },
+                    { prop:'st', label:'状态', kind:'tag', map: (v) => ({ label: stLabel(v), tone: stTone(v) }) }]"
+         :fetch="loadShipments"
+@@ -102,20 +104,21 @@ const props = withDefaults(defineProps<{
+   paginated?: boolean
+   lazy?: boolean
+   filterLabels?: FilterBarLabels
+   emptyText?: string
+ }>(), { highlightCurrentRow: true, paginated: true, lazy: false })
+ 
+ const emit = defineEmits<{
+   (e: 'selection-change', rows: unknown[]): void
+   (e: 'total-change', total: number): void
+   (e: 'sort-change', payload: { field?: string; order?: SortOrder }): void
++  (e: 'reset'): void
+ }>()
+ 
+ // —— 内部状态 ——
+ const page = ref(1)
+ const size = ref(20)
+ const filters = ref<Record<string, unknown>>({})
+ const statusKey = ref<string | undefined>(props.statusTabs?.[0]?.key)
+ const rows = ref<unknown[]>([])
+ const total = ref(0)
+ const loading = ref(false)
+@@ -153,21 +156,23 @@ async function load() {
+   }
+ }
+ onMounted(() => { if (!props.lazy) load() }) // lazy=true：search-first，首查由显式手势触发（见头注）
+ 
+ // —— 命令式刷新：保留当前 filters / page / statusKey 重新 fetch（页内 in-place 变更后调用）——
+ function reload() { return load() }
+ defineExpose({ reload }) // 仅暴露 reload，内部状态不外露
+ 
+ // —— 交互 ——
+ function onSearch() { page.value = 1; load() }
+-function onReset() { page.value = 1; load() } // CpFilterBar 已先回写清空后的 filters
++// CpFilterBar 已先回写清空后的 filters；emit('reset') 同步于 load() 之前——
++// 监听器（页面级 toolbar checkbox 等外部筛选，缺口 #22）先清自身 ref，随后的 fetch 才读到清理后的值
++function onReset() { page.value = 1; emit('reset'); load() }
+ function onStatus(key: string) { statusKey.value = key; page.value = 1; load() }
+ function onPageChange() { load() }
+ function onSizeChange() { page.value = 1; load() }
+ 
+ // —— 服务端排序（#19）：el-table @sort-change → 规范化 → page=1 重新 fetch + emit ——
+ // lazy 列表从未加载过时排序同样触发首查（用户手势=显式意图）。
+ function onSortChange({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) {
+   sortField.value = order == null ? undefined : prop
+   sortOrder.value = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : undefined
+   page.value = 1
+diff --git a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+index 1b10bbe..d94fe16 100644
+--- a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
++++ b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+@@ -393,20 +393,39 @@ describe('CpListPage 契约扩展三轮：#18 lazy search-first', () => {
+     expect(f).not.toHaveBeenCalled()
+     w.findComponent({ name: 'ElTable' }).vm.$emit('sort-change', { prop: 'no', order: 'ascending' })
+     await flushPromises()
+     expect(f).toHaveBeenCalledTimes(1)
+     expect(f).toHaveBeenLastCalledWith(
+       expect.objectContaining({ sortField: 'no', sortOrder: 'asc' })
+     )
+   })
+ })
+ 
++// —— ERP批次2 修正（#22 reset 透传）——
++describe('CpListPage 缺口 #22：reset 事件透传', () => {
++  it('reset 同步 emit 且先于重置触发的 load()——监听器清理的外部筛选 ref 不进入该次 fetch', async () => {
++    let external = true // 模拟页面级 toolbar checkbox（CpFilterBar 外部的筛选状态）
++    const seen: boolean[] = [] // fetch closure 每次读到的外部值
++    const f = vi.fn().mockImplementation(async () => { seen.push(external); return { rows: [], total: 0 } })
++    const w = mount(CpListPage, {
++      props: { columns: cols, fetch: f, searchFields, onReset: () => { external = false } }
++    })
++    await flushPromises()
++    expect(seen).toEqual([true]) // mount 自动 fetch 时外部 ref 尚未清理
++
++    await w.findAll('button').find((b) => b.text().includes('重置'))!.trigger('click')
++    await flushPromises()
++    expect(w.emitted('reset')).toHaveLength(1)
++    expect(seen).toEqual([true, false]) // reset 触发的 fetch 读到的已是清理后的值（emit 先于 load）
++  })
++})
++
+ describe("CpListPage 契约扩展三轮：#19 sortable:'custom' 服务端排序", () => {
+   const sortCols: ListColumn[] = [
+     { prop: 'no', label: '单号', kind: 'mono', sortable: 'custom' },
+     { prop: 'qty', label: '数量', kind: 'num' }
+   ]
+ 
+   it("sortable:'custom' 透传 el-table-column；未声明列不透传", async () => {
+     const w = mount(CpListPage, { props: { columns: sortCols, fetch: makeFetch() } })
+     await flushPromises()
+     const tcs = w.findAllComponents({ name: 'ElTableColumn' })
+diff --git a/cp6.web/src/views/erp/OrderListView.vue b/cp6.web/src/views/erp/OrderListView.vue
+index f5d6c14..97c6af0 100644
+--- a/cp6.web/src/views/erp/OrderListView.vue
++++ b/cp6.web/src/views/erp/OrderListView.vue
+@@ -12,20 +12,21 @@
+   <div class="order-list">
+     <CpListPage
+       ref="listRef"
+       lazy
+       :columns="columns"
+       :fetch="fetchList"
+       :search-fields="searchFields"
+       :filter-labels="filterLabels"
+       :empty-text="t('sales.err.E10008')"
+       @total-change="total = $event"
++      @reset="onFilterReset"
+     >
+       <template #toolbar>
+         <CpTag tone="info">{{ t('sales.list.totalCount', { n: total ?? 0 }) }}</CpTag>
+         <el-checkbox v-model="onlyConsignedSales" @change="listRef?.reload()">{{ t('sales.order.consignedSale') }}</el-checkbox>
+         <el-checkbox v-model="onlyMcUntransferred" @change="listRef?.reload()">{{ t('sales.order.mcUntransferred') }}</el-checkbox>
+         <div class="tb-spacer" />
+         <el-button :icon="Download" :loading="exporting" @click="onExportCsv">{{ t('sales.btn.exportCsv') }}</el-button>
+       </template>
+ 
+       <template #col-currency="{ row }">
+@@ -73,20 +74,27 @@ const { t } = useI18n()
+ const router = useRouter()
+ 
+ const listRef = ref<InstanceType<typeof CpListPage>>()
+ const total = ref<number>()
+ const exporting = ref(false)
+ 
+ // —— toolbar checkbox（#15）——
+ const onlyConsignedSales = ref(false)
+ const onlyMcUntransferred = ref(false)
+ 
++// クリア連動（#22 reset 透传）：原 resetQuery は onlyConsignedSales/onlyMcUntransferred も初期化していた。
++// emit は reset 起因の load() より先に同期発火するため、直後の fetch は既にクリア済みの値を読む。
++function onFilterReset() {
++  onlyConsignedSales.value = false
++  onlyMcUntransferred.value = false
++}
++
+ // —— CSV 出力用 stash（CpListPage 内包 filters を親が読めない代償）——
+ const lastFilters = ref<Record<string, unknown>>({})
+ const lastSort = ref<{ sortField?: string; sortOrder?: SortOrder }>({})
+ 
+ // —— Phase 6 取消ダイアログ ——
+ const cancelDialogVisible = ref(false)
+ const cancelTargetWebOrderNo = ref('')
+ function openCancelDialog(row: OrderListItemDto) {
+   cancelTargetWebOrderNo.value = row.webOrderNo
+   cancelDialogVisible.value = true
+diff --git a/cp6.web/src/views/erp/ProductMasterListView.vue b/cp6.web/src/views/erp/ProductMasterListView.vue
+index b973425..dc41d59 100644
+--- a/cp6.web/src/views/erp/ProductMasterListView.vue
++++ b/cp6.web/src/views/erp/ProductMasterListView.vue
+@@ -8,20 +8,21 @@
+   子タブ保存/削除 → postMessage → listRef.reload()。行ダブルクリック→照会は操作列「照会」ボタンに集約（row-click 未透過 #16）。
+   ページ標題キー無し（不臆造）のため CpPageShell 非適用。モバイルは設計システム標準（el-table 横スクロール）。
+ -->
+ <template>
+   <CpListPage
+     ref="listRef"
+     :columns="columns"
+     :fetch="fetchList"
+     :search-fields="searchFields"
+     :filter-labels="filterLabels"
++    @reset="statusSel = []"
+   >
+     <template #toolbar>
+       <el-checkbox-group v-model="statusSel" @change="listRef?.reload()">
+         <el-checkbox :value="0">{{ t('未承認') }}</el-checkbox>
+         <el-checkbox :value="1">{{ t('承認待') }}</el-checkbox>
+         <el-checkbox :value="9">{{ t('承認済/転送済') }}</el-checkbox>
+       </el-checkbox-group>
+       <div class="tb-spacer" />
+       <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
+       <el-button :icon="Download" :loading="exporting" @click="onExportCsv">{{ t('sales.btn.exportCsv') }}</el-button>
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index a11d7ad..5c6f27a 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -712,20 +712,23 @@ describe('CpListPage', () => {
+ 批次2（PlateMoldList/ProductMasterList/EstimateCalcList/CreditNoteList/OrderList）迁移完成，功能零丢失、真栈验收通过。本批首次 dogfood #18 lazy（OrderList）与 #19 sortable:'custom'（Order/Product/Estimate 真栈验证 sortField/sortOrder 透传）。分类：CreditNote=CpPageShell+CpListPage（唯一标题键）；Estimate/Product=CpListPage（自动取得+服务端排序，Product 另含 CSV filter-stash + status toolbar checkbox-group）；Order=CpListPage lazy（检索先行+排序+CSV stash+2 toolbar checkbox+受注取消 dialog 兄弟要素+追跡/詳細/取消 col slot）；PlateMold=token 化（行内発行チェックの一括ラベル発行＋picker 現在行選択＋5 ペア FROM≤TO 交差検証）。mobile 卡片分岐（Estimate/CreditNote/Order）撤去为 DS 标准横スクロール（main.css:222-225），非缺口。以下为新增缺口：
+ 
+ 20. **CpListPage 内包 filters 不外露 → 亲侧操作（CSV 出力等）拿不到当前检索条件**（Minor，本批 3 页 Product/Order/PlateMold）
+     - 现象：exportCsv(query) 需送含 CpFilterBar 各字段值的全 query，但 filters 闭于 CpListPage 内部 `filters.value`，亲级仅传 searchFields、读不到值。
+     - 代偿：fetch closure 每次收到的 `filters`（+sortField/sortOrder）stash 到 page-level ref（`lastFilters`/`lastSort`），export 侧 buildQuery 复用。唯一齟齬：初回 fetch 前 export → filters 空（lazy 页检索前 export 无意义故许容；auto-load 页 mount fetch 已 stash）。
+     - 建议契约：CpListPage `defineExpose({ reload, getFilters })`（或 filters snapshot API），让亲侧 CSV/一括操作读到当前检索条件。
+ 21. **CpListPage 无 @current-change（行高亮选择）透传 → picker-mode「返回选中行」形态无法表达**（Minor，PlateMold token 化决定打之一）
+     - 现象：PlateMold picker 模式用 highlight-current-row+@current-change 掴选中行，脚部「選択して戻る」返呼出元。CpListPage 仅透 selectable(checkbox) 的 selection-change，不出单行高亮选择事件。
+     - 代偿（token 化侧）：保留原机制。若 CpListPage 化可用操作列行内「選択」按钮（#16）代替，但与行内発行チェック一括操作合并后选 token 化。
+     - 建议契约：CpListPage 增 `@current-change(row)` 透传（与 #16 @row-click 对偶补齐行选择系事件）。
++22. **CpListPage 无 reset 事件透传 → クリア无法联动清理 CpFilterBar 外部的筛选状态（toolbar checkbox 等）**（评审指摘的未披露回归；本批 2 页 Order/Product）—— ✅ 已实现（最小扩展随修复 commit）：CpListPage 透传 `reset` 事件，页面外部筛选状态（工具栏 checkbox 等）可挂钩清理。
++    - 现象：原 Order resetQuery() 同时清 onlyConsignedSales/onlyMcUntransferred，原 Product onReset() 清 statusSel；迁移后这些筛选提为页面级 ref 放 toolbar slot（#15 代偿），而 CpFilterBar 的重置事件被 CpListPage 内部消化不外发——クリア后 checkbox 保持勾选且继续参与 fetch（功能回归）。
++    - 实现契约：emits 增 `reset()`，onReset 顺序 = 清内部 state（page=1，filters 已由 CpFilterBar 先回写清空）→ **同步 emit('reset')** → load()——监听器先清自身 ref，随后 fetch closure 读到的已是清理后的值（时序由专项测试锁定：监听器清理的外部 ref 不进入 reset 触发的 fetch query）。Order `@reset` 清两 checkbox、Product `@reset` 清 statusSel，与原页 reset 语义对齐。
+ 
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：

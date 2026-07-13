@@ -52,6 +52,8 @@ export interface SchemaNode {
   serviceDelayValue?: string                           // timer：延时值（镜像后端 string? ServiceDelayValue，承载 "3d"/"PT2H"/日期串）
   serviceMaxRetries?: number
   serviceRetryBackoffSec?: number
+  // 内核 hardening：分支驳回策略（仅 parallelSplit/inclusiveSplit；镜像后端 FlowNode.OnBranchReject，camelCase 契约）
+  onBranchReject?: 'cascade' | 'prune'
   x?: number; y?: number
 }
 export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[]; isError?: boolean }
@@ -64,6 +66,9 @@ export const NODE_PALETTE = [
   { type: 'approval',      label: '審批',       color: '#409eff' }, /* cp-chart-color */
   { type: 'parallelSplit', label: '并行分叉',   color: '#e6a23c' }, /* cp-chart-color */
   { type: 'parallelJoin',  label: '并行汇聚',   color: '#e6a23c' }, /* cp-chart-color */
+  // 包容网关两入口（色彩由组件层 `.dot-<type>` token 决定，不带 color 字段——对齐 serviceTask 先例）。
+  { type: 'inclusiveSplit', label: '包容分叉' },
+  { type: 'inclusiveJoin',  label: '包容汇聚' },
   { type: 'end',           label: '結束',       color: '#909399' }, /* cp-chart-color */
   // 服务任务三入口（同 type='serviceTask'，以 kind 区分）。色彩由组件层 `.dot-<type>` token 决定，
   // 故不带 color 字段（OA 批次4 已裁定 color 为死字段；DesignerCanvas 只读 type/label）。
@@ -161,6 +166,61 @@ export function validateClient(schema: FlowSchemaDto): string[] {
           ? n.serviceDelayValue != null && n.serviceDelayMode != null  // 镜像后端：值与模式(radio 无默认)双字段必填
           : false                                        // 缺/未知 serviceKind 即配置不完整
     if (!ok) errs.push('oa.designer.errServiceConfig')
+  }
+  // ── inclusive 网关镜像（后端 E-WF-020/021，kernel hardening）──
+  const nodeType = (id: string) => nodes.find(n => n.id === id)?.type
+  const isJoinType = (ty?: string) => ty === 'parallelJoin' || ty === 'inclusiveJoin'
+  const bfsDepths = (from: string): Map<string, number> => {
+    const depth = new Map<string, number>([[from, 0]])
+    const q = [from]
+    while (q.length) {
+      const cur = q.shift()!
+      for (const e of edges.filter(e => e.from === cur))
+        if (!depth.has(e.to)) { depth.set(e.to, depth.get(cur)! + 1); q.push(e.to) }
+    }
+    return depth
+  }
+  const nearestCommonJoin = (splitId: string): string | undefined => {
+    const outs = edges.filter(e => e.from === splitId && !e.isError)
+    if (!outs.length) return undefined
+    const sets = outs.map(e => new Set(bfsDepths(e.to).keys()))
+    const common = [...sets[0]!].filter(id => sets.every(s => s.has(id)))
+    const depths = bfsDepths(splitId)
+    let best: string | undefined
+    let bestD = Infinity
+    for (const id of common) {
+      const d = depths.get(id) ?? Infinity
+      if (isJoinType(nodeType(id)) && d < bestD) { best = id; bestD = d }
+    }
+    return best
+  }
+  // E-WF-020 镜像：inclusiveSplit 出边 ≥2 且恰好一条无条件 default 边
+  for (const n of nodes) {
+    if (n.type !== 'inclusiveSplit') continue
+    const outs = edges.filter(e => e.from === n.id && !e.isError)
+    const dflt = outs.filter(e => !e.condition?.trim())
+    if (outs.length < 2 || dflt.length !== 1) { errs.push('oa.designer.errInclusiveDefault'); break }
+  }
+  // E-WF-021a/b 镜像：split 最近公共汇聚须为 inclusiveJoin；inclusiveJoin 入边≥2 且被配对
+  const pairedJoins = new Set<string>()
+  let pairBad = false
+  for (const n of nodes) {
+    if (n.type !== 'inclusiveSplit') continue
+    const j = nearestCommonJoin(n.id)
+    if (!j || nodeType(j) !== 'inclusiveJoin') { pairBad = true; continue }
+    pairedJoins.add(j)
+  }
+  for (const n of nodes) {
+    if (n.type !== 'inclusiveJoin') continue
+    if (edges.filter(e => e.to === n.id).length < 2 || !pairedJoins.has(n.id)) pairBad = true
+  }
+  if (pairBad) errs.push('oa.designer.errInclusivePair')
+  // E-WF-021c 镜像：onBranchReject 值域 + 只许写在 split 型节点
+  for (const n of nodes) {
+    if (n.onBranchReject == null) continue
+    const ok = (n.type === 'parallelSplit' || n.type === 'inclusiveSplit')
+      && (n.onBranchReject === 'cascade' || n.onBranchReject === 'prune')
+    if (!ok) { errs.push('oa.designer.errBranchReject'); break }
   }
   return errs
 }

@@ -1,0 +1,166 @@
+# Review package: efb7459..804beef
+
+## Commits
+804beef fix(space): 波3终审修复——预检stale响应守卫+adopt后重预检+死代码清理
+
+## Files changed
+ cp6.web/src/views/space/lifecycle/SegmentsEditor.vue |  2 --
+ .../src/views/space/lifecycle/SpacePublishView.vue   | 13 ++++++++++++-
+ .../lifecycle/__tests__/SpacePublishView.spec.ts     | 20 ++++++++++++++++++++
+ 3 files changed, 32 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue b/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue
+index 736baba..adab332 100644
+--- a/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue
++++ b/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue
+@@ -142,22 +142,20 @@ function remove(i: number) { list.value.splice(i, 1); emitChange() }
+ function move(i: number, dir: -1 | 1) {
+   const j = i + dir
+   const arr = list.value
+   const a = arr[i]
+   const b = arr[j]
+   if (a === undefined || b === undefined) return // 越界守卫（同时满足 noUncheckedIndexedAccess）
+   arr[i] = b
+   arr[j] = a
+   emitChange()
+ }
+-
+-defineExpose({ seqFieldsEnabled, upperEnabled, fixedValueEnabled })
+ </script>
+ 
+ <style scoped>
+ .seg-editor { display: flex; flex-direction: column; gap: 10px; }
+ .seg-bar { display: flex; align-items: center; justify-content: space-between; }
+ .seg-title { font-weight: 700; color: var(--cp-ink); }
+ .seg-empty { color: var(--cp-muted); font-size: var(--cp-fs-sm); }
+ .seg-warn { display: flex; gap: 8px; padding: 8px 12px; border-radius: var(--cp-r-sm, 6px);
+   background: #fff7e6; border: 1px solid #ffd591; color: #ad6800; font-size: var(--cp-fs-sm); }
+ .seg-warn-ico { line-height: 1.5; }
+diff --git a/cp6.web/src/views/space/lifecycle/SpacePublishView.vue b/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+index af88ae1..ec2a4b2 100644
+--- a/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
++++ b/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+@@ -158,53 +158,63 @@ async function loadSites() {
+ }
+ loadSites()
+ 
+ watch(selSiteId, async (nv) => {
+   cFloors.value = []
+   cZones.value = []
+   selFloorId.value = undefined
+   selZoneId.value = undefined
+   if (nv) cFloors.value = await floorApi.list(nv).then((r) => r.data || []).catch(() => [])
+ })
++// 触发链：切楼层→floor watcher 清库区并「独家」跑一次预检（zone=undefined）；切库区→zone watcher 跑预检。
++// floor watcher 重置 selZoneId 会连锁触发 zone watcher，用 suppressZoneWatch 抑制该次连锁——否则同参双发。
++let suppressZoneWatch = false
+ watch(selFloorId, async (nv) => {
+   cZones.value = []
++  if (selZoneId.value !== undefined) suppressZoneWatch = true // 仅当确有变更（保证 zone watcher 必触发以复位标志）
+   selZoneId.value = undefined
+   // 切楼层重置停用搜索态
+   searchRows.value = []
+   searched.value = false
+   if (nv) {
+     cZones.value = await zoneApi.list(nv).then((r) => r.data || []).catch(() => [])
+     await runPrecheck()
+   } else {
+     precheck.value = null
+   }
+ })
+ watch(selZoneId, () => {
++  if (suppressZoneWatch) { suppressZoneWatch = false; return } // 来自切楼层的连锁重置，floor watcher 已跑预检
+   if (selFloorId.value) runPrecheck()
+ })
+ 
+ // —— ② 预检 ——
+ const precheck = ref<CodePrecheckResp | null>(null)
+ const precheckLoading = ref(false)
+ const emptyPc: CodePrecheckResp = { emptyCodeCount: 0, duplicateGroups: [], precheckErrors: [], unplacedDraftCount: 0 }
+ const pc = computed<CodePrecheckResp>(() => precheck.value || emptyPc)
+ 
++// seq 守卫乱序响应：快速切楼层/库区时，只有最新一次请求的结果生效（照 CpListPage.load 范式）
++let pcSeq = 0
+ async function runPrecheck() {
+   if (!selFloorId.value) { precheck.value = null; return }
++  const id = ++pcSeq
+   precheckLoading.value = true
+   try {
+     const res = await codeRuleApi.precheck(selFloorId.value, selZoneId.value || undefined)
++    if (id !== pcSeq) return // 已有更新的请求发出，丢弃本次过期响应
+     precheck.value = res.data
+   } catch {
++    if (id !== pcSeq) return
+     precheck.value = null // 错误 message 已由 http 拦截器提示
+   } finally {
+-    precheckLoading.value = false
++    if (id === pcSeq) precheckLoading.value = false
+   }
+ }
+ 
+ // —— ③ 生码 ——
+ const genMode = ref<'fill-empty' | 'rebuild'>('fill-empty')
+ const genLoading = ref(false)
+ async function onGenerate() {
+   if (!selFloorId.value) return
+   if (genMode.value === 'rebuild') {
+     try {
+@@ -259,20 +269,21 @@ function openAdopt() {
+   adoptResult.value = null
+   adoptVisible.value = true
+ }
+ async function onAdopt() {
+   const codes = adoptText.value.split('\n').map((s) => s.trim()).filter(Boolean)
+   if (!codes.length) { ElMessage.warning(t('space.publish.adoptEmpty')); return }
+   adoptLoading.value = true
+   try {
+     const res = await publishApi.adopt(codes.map((code) => ({ code })))
+     adoptResult.value = res.data
++    await runPrecheck() // 采纳新增已发布库位会使预检过期，重跑（runPrecheck 内部已守卫无楼层场景）
+   } catch (e) {
+     if ((e as { response?: { status?: number } })?.response?.status === 409) {
+       ElMessageBox.alert(t('space.publish.conflict409'))
+     }
+   } finally {
+     adoptLoading.value = false
+   }
+ }
+ 
+ // —— ⑤ 停用 ——
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+index ebdee8c..0d5b6f6 100644
+--- a/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+@@ -174,11 +174,31 @@ describe('SpacePublishView', () => {
+       (b) => b.textContent?.trim() === 'space.publish.adoptConfirm',
+     ) as HTMLButtonElement
+     expect(confirmBtn).toBeTruthy()
+     confirmBtn.click()
+     await flushPromises()
+     expect(publishApi.adopt).toHaveBeenCalledWith([{ code: 'X-1' }, { code: 'Y-2' }, { code: 'Z-3' }])
+     // 结果渲染在 teleport 到 body 的弹窗内
+     expect(document.body.textContent).toContain('3')
+     expect(document.body.textContent).toContain('DUP-9')
+   })
++
++  // ⑤ 乱序守卫：慢的楼层级预检后到，不得覆盖快的库区级结果（deferred promise 乱序，照 CpListPage.spec 先例）
++  it('乱序预检：慢的旧请求不得覆盖新库区结果', async () => {
++    const slowPc: CodePrecheckResp = { emptyCodeCount: 99, duplicateGroups: [], precheckErrors: [], unplacedDraftCount: 0 }
++    let resolveSlow!: (v: { code: number; message: string; data: CodePrecheckResp }) => void
++    vi.mocked(codeRuleApi.precheck)
++      .mockImplementationOnce(() => new Promise((r) => { resolveSlow = r })) // 楼层级：慢，pending
++      .mockResolvedValueOnce({ code: 0, message: '', data: dirtyPrecheck })  // 库区级：快，先到
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w) // 触发楼层级预检（挂起，未解析）
++    // 选库区 z1 → 触发库区级预检（快，先落）
++    w.findAllComponents(ElSelect)[2].vm.$emit('update:modelValue', 'z1')
++    await flushPromises()
++    expect(w.findAllComponents(CpStatCard)[0].props('value')).toBe(3) // 库区级 dirtyPrecheck 已落
++    // 楼层级慢请求此刻后到 → 应被 seq 守卫丢弃
++    resolveSlow({ code: 0, message: '', data: slowPc })
++    await flushPromises()
++    expect(w.findAllComponents(CpStatCard)[0].props('value')).toBe(3) // 仍为库区级 3，而非过期的 99
++  })
+ })

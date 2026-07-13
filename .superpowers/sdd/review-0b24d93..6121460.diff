@@ -1,0 +1,169 @@
+# Review package: 0b24d93..HEAD
+
+## Commits
+6121460 feat(ui): CpTag 状态 pill + CpSectionHeader
+
+## Files changed
+ cp6.web/src/components/base/CpSectionHeader.vue    | 31 ++++++++++++++++
+ cp6.web/src/components/base/CpTag.vue              | 41 ++++++++++++++++++++++
+ .../base/__tests__/CpSectionHeader.spec.ts         | 18 ++++++++++
+ .../src/components/base/__tests__/CpTag.spec.ts    | 20 +++++++++++
+ cp6.web/vitest.config.ts                           |  2 ++
+ 5 files changed, 112 insertions(+)
+
+## Diff
+diff --git a/cp6.web/src/components/base/CpSectionHeader.vue b/cp6.web/src/components/base/CpSectionHeader.vue
+new file mode 100644
+index 0000000..acac08e
+--- /dev/null
++++ b/cp6.web/src/components/base/CpSectionHeader.vue
+@@ -0,0 +1,31 @@
++<!--
++  CpSectionHeader —— 卡片/区块标题栏（设计系统 §11；样式参照 mockup .card-head / .sec-head）。
++
++  Props:
++    - title: string  区块标题（14.5px / 800 / ink）。
++  Slots:
++    - default  标题左侧插槽（如图标），置于 title 之前。
++    - extra    标题右侧插槽（如「查看全部 →」链接、操作按钮）。
++
++  使用示例：
++    <CpSectionHeader title="最近受注">
++      <template #extra><a href="#">查看全部 →</a></template>
++    </CpSectionHeader>
++-->
++<script setup lang="ts">
++defineProps<{ title: string }>()
++</script>
++<template>
++  <div class="cp-sec-head">
++    <h2 class="cp-sec-head__title"><slot />{{ title }}</h2>
++    <div class="cp-sec-head__extra"><slot name="extra" /></div>
++  </div>
++</template>
++<style scoped>
++.cp-sec-head { display:flex; align-items:center; justify-content:space-between;
++  padding:16px 20px; border-bottom:1px solid var(--cp-line-soft); }
++.cp-sec-head__title { font-size:14.5px; font-weight:800; color:var(--cp-ink);
++  display:flex; align-items:center; gap:9px; }
++.cp-sec-head__extra { display:flex; align-items:center; gap:9px;
++  font-size:12px; font-weight:800; color:var(--cp-brand-deep); }
++</style>
+diff --git a/cp6.web/src/components/base/CpTag.vue b/cp6.web/src/components/base/CpTag.vue
+new file mode 100644
+index 0000000..4611507
+--- /dev/null
++++ b/cp6.web/src/components/base/CpTag.vue
+@@ -0,0 +1,41 @@
++<!--
++  CpTag —— 状态 pill（圆点 + 文字，设计系统 §9.1）。
++
++  Props:
++    - status?: string  业务状态词；经 STATUS_TONE 集中映射到色调，未命中回退 muted。
++    - tone?: 'ok'|'warn'|'danger'|'info'|'muted'  显式指定色调，优先级高于 status。
++  Slots:
++    - default  标签文案；缺省时回退渲染 status 文本。
++  Export:
++    - STATUS_TONE  状态→色调映射表，供业务侧查询/复用。
++
++  使用示例：
++    <CpTag status="已出库">已出库</CpTag>
++    <CpTag status="拣货中" />            （info；文案回退 status）
++    <CpTag tone="danger">超期</CpTag>     （显式色调）
++-->
++<script lang="ts">
++export const STATUS_TONE: Record<string, string> = {
++  '已出库': 'ok', '已出货': 'ok', '已完成': 'ok', '已对账': 'ok', '已批准': 'ok',
++  '未出库': 'warn', '未出货': 'warn', '待审批': 'warn', '待处理': 'warn',
++  '拣货中': 'info', '进行中': 'info', '已发行': 'info',
++  '已取消': 'muted', '已作废': 'muted',
++  '超期': 'danger', '今日': 'danger', '已驳回': 'danger'
++}
++</script>
++<script setup lang="ts">
++import { computed } from 'vue'
++const props = defineProps<{ status?: string; tone?: 'ok'|'warn'|'danger'|'info'|'muted' }>()
++const t = computed(() => props.tone ?? (props.status && STATUS_TONE[props.status]) ?? 'muted')
++</script>
++<template><span class="cp-tag" :class="`t-${t}`"><slot>{{ status }}</slot></span></template>
++<style scoped>
++.cp-tag { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:800;
++  padding:3px 10px; border-radius:999px; }
++.cp-tag::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
++.t-ok { background:var(--cp-ok-bg); color:var(--cp-ok); }
++.t-warn { background:var(--cp-warn-bg); color:var(--cp-warn); }
++.t-danger { background:var(--cp-danger-bg); color:var(--cp-danger); }
++.t-info { background:var(--cp-info-bg); color:var(--cp-info); }
++.t-muted { background:var(--cp-line-soft); color:var(--cp-muted); }
++</style>
+diff --git a/cp6.web/src/components/base/__tests__/CpSectionHeader.spec.ts b/cp6.web/src/components/base/__tests__/CpSectionHeader.spec.ts
+new file mode 100644
+index 0000000..9173738
+--- /dev/null
++++ b/cp6.web/src/components/base/__tests__/CpSectionHeader.spec.ts
+@@ -0,0 +1,18 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import CpSectionHeader from '../CpSectionHeader.vue'
++
++describe('CpSectionHeader', () => {
++  it('renders the title', () => {
++    const w = mount(CpSectionHeader, { props: { title: '最近受注' } })
++    expect(w.get('.cp-sec-head__title').text()).toContain('最近受注')
++  })
++  it('exposes an extra slot outlet on the right', () => {
++    const w = mount(CpSectionHeader, {
++      props: { title: '最近受注' },
++      slots: { extra: '<a class="more">查看全部 →</a>' }
++    })
++    expect(w.get('.cp-sec-head__extra .more').text()).toBe('查看全部 →')
++  })
++})
+diff --git a/cp6.web/src/components/base/__tests__/CpTag.spec.ts b/cp6.web/src/components/base/__tests__/CpTag.spec.ts
+new file mode 100644
+index 0000000..a29908f
+--- /dev/null
++++ b/cp6.web/src/components/base/__tests__/CpTag.spec.ts
+@@ -0,0 +1,20 @@
++// @vitest-environment jsdom
++import { describe, it, expect } from 'vitest'
++import { mount } from '@vue/test-utils'
++import CpTag, { STATUS_TONE } from '../CpTag.vue'
++
++describe('CpTag', () => {
++  it('maps known status to tone class', () => {
++    const w = mount(CpTag, { props: { status: '已出库' }, slots: { default: '已出库' } })
++    expect(w.classes()).toContain('t-ok')
++  })
++  it('falls back to muted for unknown status', () => {
++    const w = mount(CpTag, { props: { status: '莫名状态' } })
++    expect(w.classes()).toContain('t-muted')
++  })
++  it('explicit tone overrides status', () => {
++    const w = mount(CpTag, { props: { status: '已出库', tone: 'danger' } })
++    expect(w.classes()).toContain('t-danger')
++  })
++  it('exports STATUS_TONE map', () => { expect(STATUS_TONE['拣货中']).toBe('info') })
++})
+diff --git a/cp6.web/vitest.config.ts b/cp6.web/vitest.config.ts
+index 6f65ce2..15e29f9 100644
+--- a/cp6.web/vitest.config.ts
++++ b/cp6.web/vitest.config.ts
+@@ -1,14 +1,16 @@
+ import { fileURLToPath, URL } from 'node:url'
+ import { defineConfig } from 'vitest/config'
++import vue from '@vitejs/plugin-vue'
+ 
+ export default defineConfig({
++  plugins: [vue()],
+   resolve: {
+     alias: {
+       '@': fileURLToPath(new URL('./src', import.meta.url)),
+     },
+   },
+   test: {
+     environment: 'jsdom',
+     include: ['src/**/*.{test,spec}.ts'],
+   },
+ })

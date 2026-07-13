@@ -1,0 +1,1514 @@
+# Review package: da7455b..HEAD
+
+## Commits
+3de206a refactor(ui): WMS 迁移批次7——BridgeHealth/OutboundRouting/MaterialShortage/WmsDashboard/InkLot
+
+## Files changed
+ cp6.web/src/views/wms/BridgeHealthView.vue      | 125 +++------
+ cp6.web/src/views/wms/InkLotView.vue            |   9 +-
+ cp6.web/src/views/wms/MaterialShortageView.vue  | 333 +++++++++---------------
+ cp6.web/src/views/wms/OutboundRoutingView.vue   | 176 ++++++-------
+ cp6.web/src/views/wms/WmsDashboardView.vue      | 155 ++++++-----
+ docs/superpowers/plans/2026-07-04-ui-restyle.md |  11 +
+ 6 files changed, 318 insertions(+), 491 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/wms/BridgeHealthView.vue b/cp6.web/src/views/wms/BridgeHealthView.vue
+index 8c681b5..7bbb7f2 100644
+--- a/cp6.web/src/views/wms/BridgeHealthView.vue
++++ b/cp6.web/src/views/wms/BridgeHealthView.vue
+@@ -1,64 +1,55 @@
++<!--
++  ブリッジ健全性モニタ —— 監視系特殊页（30s ポーリング）。模板不强套：KPI→CpStatCard、
++  パネルヘッダ→CpSectionHeader、状態 el-tag→CpTag、token 化。setInterval/clearInterval は原様保持。
++-->
+ <template>
+   <div class="bridge-health">
+     <div class="toolbar">
+       <div>
+         <h2>{{ t('wms.bridgeHealth.title') }}</h2>
+         <span class="window">{{ formatRange(metrics.windowStartUtc, metrics.windowEndUtc) }}</span>
+       </div>
+       <el-button :icon="Refresh" circle :loading="loading" @click="loadMetrics" />
+     </div>
+ 
+     <el-row :gutter="12">
+       <el-col :xs="24" :sm="8">
+-        <el-card shadow="never" class="kpi-card">
+-          <component :is="CircleCheckFilled" class="kpi-icon success" />
+-          <div>
+-            <div class="kpi-label">{{ t('wms.bridgeHealth.successRate') }}</div>
+-            <div class="kpi-value">{{ formatPercent(overallSuccessRate) }}</div>
+-          </div>
+-        </el-card>
++        <CpStatCard :label="t('wms.bridgeHealth.successRate')" :value="formatPercent(overallSuccessRate)" tone="brand">
++          <template #icon><CircleCheckFilled /></template>
++        </CpStatCard>
+       </el-col>
+       <el-col :xs="24" :sm="8">
+-        <el-card shadow="never" class="kpi-card" :class="{ warn: metrics.queueDepth > 0 }">
+-          <component :is="WarningFilled" class="kpi-icon warning" />
+-          <div>
+-            <div class="kpi-label">{{ t('wms.bridgeHealth.queueDepth') }}</div>
+-            <div class="kpi-value">{{ metrics.queueDepth }}</div>
+-          </div>
+-        </el-card>
++        <CpStatCard :label="t('wms.bridgeHealth.queueDepth')" :value="metrics.queueDepth" :tone="metrics.queueDepth > 0 ? 'warn' : 'info'">
++          <template #icon><WarningFilled /></template>
++        </CpStatCard>
+       </el-col>
+       <el-col :xs="24" :sm="8">
+-        <el-card shadow="never" class="kpi-card" :class="{ danger: metrics.deadLetterCount > 0 }">
+-          <component :is="BellFilled" class="kpi-icon danger" />
+-          <div>
+-            <div class="kpi-label">{{ t('wms.bridgeHealth.deadLetterCount') }}</div>
+-            <div class="kpi-value">{{ metrics.deadLetterCount }}</div>
+-          </div>
+-        </el-card>
++        <CpStatCard :label="t('wms.bridgeHealth.deadLetterCount')" :value="metrics.deadLetterCount" :tone="metrics.deadLetterCount > 0 ? 'danger' : 'info'">
++          <template #icon><BellFilled /></template>
++        </CpStatCard>
+       </el-col>
+     </el-row>
+ 
+     <el-card shadow="never" class="panel">
+       <template #header>
+-        <div class="panel-header">
+-          <span>{{ t('wms.bridgeHealth.hooks') }}</span>
+-          <el-tag size="small" type="info">{{ metrics.hooks.length }}</el-tag>
+-        </div>
++        <CpSectionHeader :title="t('wms.bridgeHealth.hooks')">
++          <template #extra><CpTag tone="info">{{ metrics.hooks.length }}</CpTag></template>
++        </CpSectionHeader>
+       </template>
+       <el-table :data="metrics.hooks" border stripe size="small" v-loading="loading">
+         <el-table-column prop="hookName" :label="t('wms.bridgeHealth.hookName')" min-width="220" show-overflow-tooltip />
+         <el-table-column :label="t('wms.bridgeHealth.sourceTarget')" width="150">
+           <template #default="{ row }">
+-            <el-tag size="small" type="info">{{ row.sourceModule }}</el-tag>
++            <CpTag tone="info">{{ row.sourceModule }}</CpTag>
+             <span class="arrow">→</span>
+-            <el-tag size="small">{{ row.targetModule }}</el-tag>
++            <CpTag tone="muted">{{ row.targetModule }}</CpTag>
+           </template>
+         </el-table-column>
+         <el-table-column prop="totalCount" :label="t('wms.bridgeHealth.totalCount')" width="90" align="right" />
+         <el-table-column :label="t('wms.bridgeHealth.successRate')" width="160" align="right">
+           <template #default="{ row }">
+             <el-progress
+               :percentage="progressPercent(row.successRate)"
+               :status="progressStatus(row.successRate)"
+               :stroke-width="10"
+             />
+@@ -69,31 +60,30 @@
+           <template #default="{ row }"><span :class="{ bad: row.failedCount > 0 }">{{ row.failedCount }}</span></template>
+         </el-table-column>
+         <el-table-column prop="deadLetterCount" :label="t('wms.bridgeHealth.deadCount')" width="90" align="right">
+           <template #default="{ row }"><span :class="{ bad: row.deadLetterCount > 0 }">{{ row.deadLetterCount }}</span></template>
+         </el-table-column>
+       </el-table>
+     </el-card>
+ 
+     <el-card shadow="never" class="panel">
+       <template #header>
+-        <div class="panel-header">
+-          <span>{{ t('wms.bridgeHealth.latestDeadLetters') }}</span>
+-          <el-tag size="small" type="danger">{{ metrics.deadLetters.length }}</el-tag>
+-        </div>
++        <CpSectionHeader :title="t('wms.bridgeHealth.latestDeadLetters')">
++          <template #extra><CpTag tone="danger">{{ metrics.deadLetters.length }}</CpTag></template>
++        </CpSectionHeader>
+       </template>
+       <el-table :data="metrics.deadLetters" border stripe size="small" v-loading="loading" empty-text=" ">
+         <el-table-column prop="hookName" :label="t('wms.bridgeHealth.hookName')" min-width="200" show-overflow-tooltip />
+         <el-table-column prop="sourceNo" :label="t('wms.bridgeHealth.sourceNo')" width="140" show-overflow-tooltip />
+         <el-table-column :label="t('wms.bridgeHealth.status')" width="110">
+           <template #default>
+-            <el-tag type="danger" size="small">{{ t('wms.bridgeHealth.status.DEAD') }}</el-tag>
++            <CpTag tone="danger">{{ t('wms.bridgeHealth.status.DEAD') }}</CpTag>
+           </template>
+         </el-table-column>
+         <el-table-column prop="attempts" :label="t('wms.bridgeHealth.attempts')" width="90" align="right" />
+         <el-table-column prop="lastError" :label="t('wms.bridgeHealth.lastError')" min-width="260" show-overflow-tooltip />
+         <el-table-column :label="t('wms.bridgeHealth.createDate')" width="170">
+           <template #default="{ row }">{{ formatDateTime(row.createDate) }}</template>
+         </el-table-column>
+         <el-table-column :label="t('wms.bridgeHealth.action')" width="150" fixed="right">
+           <template #default="{ row }">
+             <el-button
+@@ -110,20 +100,23 @@
+       </el-table>
+     </el-card>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
+ import { BellFilled, CircleCheckFilled, Refresh, WarningFilled } from '@element-plus/icons-vue'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { bridgeHealthApi } from '@/api/wms/bridgeHealth'
+ import type { BridgeHealthMetrics } from '@/types/wms/wms'
+ 
+ const { t } = useI18n()
+ 
+ const metrics = reactive<BridgeHealthMetrics>({
+   windowStartUtc: '',
+   windowEndUtc: '',
+   hooks: [],
+   queueDepth: 0,
+@@ -208,99 +201,41 @@ onUnmounted(() => {
+ }
+ 
+ .toolbar {
+   align-items: center;
+   display: flex;
+   justify-content: space-between;
+   margin-bottom: 12px;
+ }
+ 
+ .toolbar h2 {
+-  font-size: 18px;
++  font-size: var(--cp-fs-xl);
+   font-weight: 600;
+   line-height: 1.2;
+   margin: 0 0 4px;
+ }
+ 
+ .window {
+-  color: #606266;
+-  font-size: 12px;
+-}
+-
+-.kpi-card {
+-  align-items: center;
+-  border-left: 4px solid #409eff;
+-  display: flex;
+-  gap: 12px;
+-  min-height: 88px;
+-}
+-
+-.kpi-card.warn {
+-  border-left-color: #e6a23c;
+-}
+-
+-.kpi-card.danger {
+-  border-left-color: #f56c6c;
+-}
+-
+-.kpi-icon {
+-  flex: 0 0 auto;
+-  height: 30px;
+-  width: 30px;
+-}
+-
+-.kpi-icon.success {
+-  color: #67c23a;
+-}
+-
+-.kpi-icon.warning {
+-  color: #e6a23c;
+-}
+-
+-.kpi-icon.danger {
+-  color: #f56c6c;
+-}
+-
+-.kpi-label {
+-  color: #606266;
+-  font-size: 12px;
+-  margin-bottom: 4px;
+-}
+-
+-.kpi-value {
+-  color: #303133;
+-  font-size: 26px;
+-  font-weight: 650;
+-  line-height: 1;
++  color: var(--cp-muted);
++  font-size: var(--cp-fs-xs);
+ }
+ 
+ .panel {
+   margin-top: 12px;
+ }
+ 
+-.panel-header {
+-  align-items: center;
+-  display: flex;
+-  font-weight: 600;
+-  justify-content: space-between;
+-}
+-
+ .arrow {
+-  color: #909399;
++  color: var(--cp-muted);
+   margin: 0 6px;
+ }
+ 
+ .bad {
+-  color: #d93026;
++  color: var(--cp-danger);
+   font-weight: 600;
+ }
+ 
+ @media (max-width: 767px) {
+   .bridge-health {
+     padding: 8px;
+   }
+-
+-  .kpi-card {
+-    margin-bottom: 8px;
+-  }
+ }
+ </style>
+diff --git a/cp6.web/src/views/wms/InkLotView.vue b/cp6.web/src/views/wms/InkLotView.vue
+index eb56106..b00b5a2 100644
+--- a/cp6.web/src/views/wms/InkLotView.vue
++++ b/cp6.web/src/views/wms/InkLotView.vue
+@@ -35,21 +35,21 @@
+ 
+         <el-card shadow="never">
+           <el-table :data="lots" border stripe size="small" max-height="600" highlight-current-row>
+             <el-table-column prop="inkLotNo" :label="t('wms.ink.fld.lotNo')" width="180" />
+             <el-table-column prop="colorCode" :label="t('wms.ink.fld.colorCode')" width="120" />
+             <el-table-column :label="t('wms.ink.fld.inkType')" width="100">
+               <template #default="{ row }">{{ inkTypeMap[row.inkType] || row.inkType }}</template>
+             </el-table-column>
+             <el-table-column :label="t('wms.ink.fld.openStatus')" width="100">
+               <template #default="{ row }">
+-                <el-tag :type="row.openStatus === 'OPENED' ? 'warning' : 'success'" size="small">{{ openMap[row.openStatus] }}</el-tag>
++                <CpTag :tone="row.openStatus === 'OPENED' ? 'warn' : 'ok'">{{ openMap[row.openStatus] }}</CpTag>
+               </template>
+             </el-table-column>
+             <el-table-column prop="expiryDate" :label="t('wms.ink.fld.expiry')" width="120">
+               <template #default="{ row }">
+                 <span :class="expiryClass(row.expiryDate)">{{ row.expiryDate }}</span>
+               </template>
+             </el-table-column>
+             <el-table-column prop="quantity" :label="t('wms.common.qty')" width="90" align="right">
+               <template #default="{ row }">{{ formatQty(row.quantity) }} {{ row.unitCd }}</template>
+             </el-table-column>
+@@ -121,21 +121,21 @@
+       <template #footer>
+         <el-button @click="createDialog = false">{{ t('wms.common.cancel') }}</el-button>
+         <el-button type="primary" @click="onCreate" :loading="saving">{{ t('wms.common.save') }}</el-button>
+       </template>
+     </el-dialog>
+ 
+     <!-- ─── 開封 Dialog ─── -->
+     <el-dialog v-model="openDialog" :title="t('wms.ink.dlg.open') + ' — ' + openTarget?.inkLotNo" width="420">
+       <el-form label-width="160px" size="small">
+         <el-form-item :label="t('wms.ink.fld.expiry')">
+-          <el-tag>{{ openTarget?.expiryDate }}</el-tag>
++          <CpTag tone="info">{{ openTarget?.expiryDate }}</CpTag>
+         </el-form-item>
+         <el-form-item :label="t('wms.ink.fld.newExpiry')">
+           <el-date-picker v-model="openNewExpiry" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
+         </el-form-item>
+         <el-alert :title="t('wms.ink.msg.openHint')" type="info" :closable="false" show-icon />
+       </el-form>
+       <template #footer>
+         <el-button @click="openDialog = false">{{ t('wms.common.cancel') }}</el-button>
+         <el-button type="primary" @click="onOpenLot" :loading="saving">{{ t('wms.ink.btn.open') }}</el-button>
+       </template>
+@@ -177,20 +177,21 @@
+         <el-button type="primary" @click="onRecordMatch" :loading="saving">{{ t('wms.common.save') }}</el-button>
+       </template>
+     </el-dialog>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, reactive, computed, onMounted } from 'vue'
+ import { ElMessage } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpTag from '@/components/base/CpTag.vue'
+ import { inkApi } from '@/api/wms/paperIndustry'
+ import type { InkLot, InkLotSearchQuery, InkColorMatchHistory, MixInkRequest } from '@/types/wms/wms'
+ import { formatQty as fmtQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ const activeTab = ref<'lots' | 'matches'>('lots')
+ const loading = ref(false)
+ const saving = ref(false)
+ 
+ // Lots
+@@ -331,13 +332,13 @@ async function onRecordMatch() {
+     await reloadMatches()
+   } finally { saving.value = false }
+ }
+ 
+ onMounted(reloadLots)
+ </script>
+ 
+ <style scoped>
+ .wms-ink-lot { padding: 16px; }
+ .search-card { margin-bottom: 12px; }
+-.expiry-expired { color: #f56c6c; font-weight: bold; }
+-.expiry-soon { color: #e6a23c; font-weight: bold; }
++.expiry-expired { color: var(--cp-danger); font-weight: bold; }
++.expiry-soon { color: var(--cp-warn); font-weight: bold; }
+ </style>
+diff --git a/cp6.web/src/views/wms/MaterialShortageView.vue b/cp6.web/src/views/wms/MaterialShortageView.vue
+index 11c09f3..0733619 100644
+--- a/cp6.web/src/views/wms/MaterialShortageView.vue
++++ b/cp6.web/src/views/wms/MaterialShortageView.vue
+@@ -1,114 +1,60 @@
++<!--
++  材料欠品 —— 查询列表页。CpPageShell(:count) + CpStatCard(未解決件数) + CpListPage（サーバ分页、码値状態列 map）。
++  対応(解決/棄却)ダイアログは remark 入力の複合フォームのため el-dialog 保持。
++  status 既定値 OPEN は fetch 側で seed（CpFilterBar は初期 filter 値を持たない、缺口 #17）。
++-->
+ <template>
+-  <div class="material-shortage">
+-    <div class="page-header">
+-      <h2>{{ t('wms.materialShortage.title') }}</h2>
++  <CpPageShell :title="t('wms.materialShortage.title')" :count="total">
++    <div class="kpi-row">
++      <CpStatCard
++        :label="t('wms.materialShortage.kpi.openCount')"
++        :value="openCount"
++        :tone="openCount > 0 ? 'danger' : 'brand'"
++      />
+     </div>
+ 
+-    <el-card shadow="never" class="search-card">
+-      <el-form :model="query" inline size="small">
+-        <el-form-item :label="t('wms.materialShortage.search.workOrderNo')">
+-          <el-input v-model="query.workOrderNo" clearable style="width: 180px" />
+-        </el-form-item>
+-        <el-form-item :label="t('wms.materialShortage.search.status')">
+-          <el-select v-model="query.status" clearable style="width: 150px">
+-            <el-option :label="t('wms.materialShortage.status.ALL')" value="" />
+-            <el-option :label="t('wms.materialShortage.status.OPEN')" value="OPEN" />
+-            <el-option :label="t('wms.materialShortage.status.RESOLVED')" value="RESOLVED" />
+-            <el-option :label="t('wms.materialShortage.status.DISMISSED')" value="DISMISSED" />
+-          </el-select>
+-        </el-form-item>
+-        <el-form-item>
+-          <el-button type="primary" :loading="loading" @click="search">
+-            {{ t('wms.materialShortage.search.btnSearch') }}
+-          </el-button>
+-          <el-button @click="resetQuery">{{ t('wms.materialShortage.search.btnReset') }}</el-button>
+-        </el-form-item>
+-      </el-form>
+-    </el-card>
+-
+-    <el-row :gutter="12" class="kpi-row">
+-      <el-col :xs="24" :sm="8" :md="6">
+-        <el-card shadow="never" class="kpi-card" :class="{ danger: openCount > 0 }">
+-          <div class="kpi-label">{{ t('wms.materialShortage.kpi.openCount') }}</div>
+-          <div class="kpi-value">{{ openCount }}</div>
+-        </el-card>
+-      </el-col>
+-    </el-row>
+-
+-    <el-card shadow="never">
+-      <div class="table-toolbar">
+-        <el-tag size="small">{{ t('wms.common.total') }}: {{ total }}</el-tag>
+-      </div>
+-
+-      <el-table :data="rows" border stripe size="small" max-height="620" v-loading="loading">
+-        <el-table-column prop="detectedAt" :label="t('wms.materialShortage.col.detectedAt')" width="170">
+-          <template #default="{ row }">{{ formatDateTime(row.detectedAt) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="workOrderNo" :label="t('wms.materialShortage.col.wo')" width="160" show-overflow-tooltip />
+-        <el-table-column prop="relatedOutboundNo" :label="t('wms.materialShortage.col.outbound')" width="160" show-overflow-tooltip />
+-        <el-table-column prop="productCd" :label="t('wms.materialShortage.col.product')" width="130" show-overflow-tooltip />
+-        <el-table-column prop="lotNo" :label="t('wms.materialShortage.col.lot')" width="120" show-overflow-tooltip />
+-        <el-table-column prop="requiredQty" :label="t('wms.materialShortage.col.requiredQty')" width="120" align="right">
+-          <template #default="{ row }">{{ formatQty(row.requiredQty) }}</template>
+-        </el-table-column>
+-        <el-table-column prop="availableQty" :label="t('wms.materialShortage.col.availableQty')" width="120" align="right">
+-          <template #default="{ row }">{{ formatQty(row.availableQty) }}</template>
+-        </el-table-column>
+-        <el-table-column :label="t('wms.materialShortage.col.shortQty')" width="120" align="right">
+-          <template #default="{ row }">
+-            <span class="short-qty">{{ formatQty(shortQty(row)) }}</span>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="status" :label="t('wms.materialShortage.col.status')" width="120">
+-          <template #default="{ row }">
+-            <el-tag :type="statusTag(row.status)" size="small">
+-              {{ t(`wms.materialShortage.status.${row.status}`) }}
+-            </el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="remark" :label="t('wms.materialShortage.col.remark')" min-width="180" show-overflow-tooltip />
+-        <el-table-column :label="t('wms.materialShortage.col.action')" width="180" fixed="right">
+-          <template #default="{ row }">
+-            <el-button
+-              link
+-              type="success"
+-              size="small"
+-              :disabled="row.status !== 'OPEN'"
+-              @click="openAction(row, 'resolve')"
+-            >
+-              {{ t('wms.materialShortage.btn.resolve') }}
+-            </el-button>
+-            <el-button
+-              link
+-              type="info"
+-              size="small"
+-              :disabled="row.status !== 'OPEN'"
+-              @click="openAction(row, 'dismiss')"
+-            >
+-              {{ t('wms.materialShortage.btn.dismiss') }}
+-            </el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-
+-      <el-pagination
+-        v-model:current-page="query.page"
+-        v-model:page-size="query.pageSize"
+-        :total="total"
+-        :page-sizes="[50, 100, 200]"
+-        layout="total, sizes, prev, pager, next, jumper"
+-        style="margin-top: 12px; justify-content: flex-end"
+-        @current-change="reload"
+-        @size-change="reload"
+-      />
+-    </el-card>
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      @total-change="total = $event"
++    >
++      <template #col-detectedAt="{ row }">{{ formatDateTime(row.detectedAt) }}</template>
++      <template #col-requiredQty="{ row }">{{ formatQty(row.requiredQty) }}</template>
++      <template #col-availableQty="{ row }">{{ formatQty(row.availableQty) }}</template>
++      <template #col-shortQty="{ row }">
++        <span class="short-qty num">{{ formatQty(shortQty(row)) }}</span>
++      </template>
++      <template #col-_action="{ row }">
++        <el-button
++          link
++          type="success"
++          size="small"
++          :disabled="row.status !== 'OPEN'"
++          @click="openAction(row, 'resolve')"
++        >
++          {{ t('wms.materialShortage.btn.resolve') }}
++        </el-button>
++        <el-button
++          link
++          type="info"
++          size="small"
++          :disabled="row.status !== 'OPEN'"
++          @click="openAction(row, 'dismiss')"
++        >
++          {{ t('wms.materialShortage.btn.dismiss') }}
++        </el-button>
++      </template>
++    </CpListPage>
+ 
+     <el-dialog v-model="actionDialogVisible" :title="actionTitle" width="520">
+       <el-form label-position="top">
+         <el-form-item :label="t('wms.materialShortage.dlg.remarkLabel')">
+           <el-input
+             v-model="actionRemark"
+             type="textarea"
+             :rows="4"
+             maxlength="500"
+             show-word-limit
+@@ -118,61 +64,101 @@
+       </el-form>
+       <template #footer>
+         <el-button @click="actionDialogVisible = false" :disabled="actionSaving">
+           {{ t('wms.materialShortage.btn.cancel') }}
+         </el-button>
+         <el-button type="primary" :loading="actionSaving" @click="submitAction">
+           {{ t('wms.materialShortage.btn.confirm') }}
+         </el-button>
+       </template>
+     </el-dialog>
+-  </div>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { computed, onMounted, reactive, ref } from 'vue'
++import { computed, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type FilterField } from '@/components/templates/CpFilterBar.vue'
++import { type Tone } from '@/components/base/CpTag.vue'
+ import { materialShortageApi } from '@/api/wms/materialShortage'
+-import type { MaterialShortage, MaterialShortageQuery, MaterialShortageStatus } from '@/types/wms/materialShortage'
++import type { MaterialShortage, MaterialShortageStatus } from '@/types/wms/materialShortage'
+ import { formatQty as fmtQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+ type ActionType = 'resolve' | 'dismiss'
+ 
+-const query = reactive<Required<Pick<MaterialShortageQuery, 'page' | 'pageSize'>> & {
+-  status: MaterialShortageStatus | ''
+-  workOrderNo?: string
+-}>({
+-  status: 'OPEN',
+-  page: 1,
+-  pageSize: 50,
+-})
+-
+-const rows = ref<MaterialShortage[]>([])
+-const total = ref(0)
++const total = ref<number>()
+ const openCount = ref(0)
+-const loading = ref(false)
++const listRef = ref<InstanceType<typeof CpListPage>>()
+ 
+ const actionDialogVisible = ref(false)
+ const actionSaving = ref(false)
+ const actionType = ref<ActionType>('resolve')
+ const actionTarget = ref<MaterialShortage | null>(null)
+ const actionRemark = ref('')
+ 
+ const actionTitle = computed(() =>
+   actionType.value === 'resolve'
+     ? t('wms.materialShortage.dlg.resolveTitle')
+     : t('wms.materialShortage.dlg.dismissTitle'),
+ )
+ 
++const statusMap = computed<Record<string, string>>(() => ({
++  OPEN: t('wms.materialShortage.status.OPEN'),
++  RESOLVED: t('wms.materialShortage.status.RESOLVED'),
++  DISMISSED: t('wms.materialShortage.status.DISMISSED'),
++}))
++
++function statusTone(status: MaterialShortageStatus): Tone {
++  if (status === 'OPEN') return 'danger'
++  if (status === 'RESOLVED') return 'ok'
++  return 'muted'
++}
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'detectedAt', label: t('wms.materialShortage.col.detectedAt'), width: 170 },
++  { prop: 'workOrderNo', label: t('wms.materialShortage.col.wo'), width: 160, overflowTooltip: true },
++  { prop: 'relatedOutboundNo', label: t('wms.materialShortage.col.outbound'), width: 160, overflowTooltip: true },
++  { prop: 'productCd', label: t('wms.materialShortage.col.product'), width: 130, overflowTooltip: true },
++  { prop: 'lotNo', label: t('wms.materialShortage.col.lot'), width: 120, overflowTooltip: true },
++  { prop: 'requiredQty', label: t('wms.materialShortage.col.requiredQty'), width: 120, kind: 'num' },
++  { prop: 'availableQty', label: t('wms.materialShortage.col.availableQty'), width: 120, kind: 'num' },
++  { prop: 'shortQty', label: t('wms.materialShortage.col.shortQty'), width: 120, kind: 'num' },
++  { prop: 'status', label: t('wms.materialShortage.col.status'), width: 120, kind: 'tag',
++    map: (v) => ({ label: statusMap.value[v as string] || String(v ?? ''), tone: statusTone(v as MaterialShortageStatus) }) },
++  { prop: 'remark', label: t('wms.materialShortage.col.remark'), minWidth: 180, overflowTooltip: true },
++  { prop: '_action', label: t('wms.materialShortage.col.action'), width: 180, fixed: 'right' },
++])
++
++const filterLabels = computed(() => ({
++  search: t('wms.materialShortage.search.btnSearch'),
++  reset: t('wms.materialShortage.search.btnReset'),
++}))
++
++const searchFields = computed<FilterField[]>(() => [
++  { key: 'workOrderNo', label: t('wms.materialShortage.search.workOrderNo'), type: 'text' },
++  {
++    key: 'status', label: t('wms.materialShortage.search.status'), type: 'select',
++    options: [
++      { label: t('wms.materialShortage.status.ALL'), value: '' },
++      { label: t('wms.materialShortage.status.OPEN'), value: 'OPEN' },
++      { label: t('wms.materialShortage.status.RESOLVED'), value: 'RESOLVED' },
++      { label: t('wms.materialShortage.status.DISMISSED'), value: 'DISMISSED' },
++    ],
++  },
++])
++
+ function normalizePaged(res: any) {
+   const data = res?.data || {}
+   return {
+     items: (data.items || data.Items || []) as MaterialShortage[],
+     total: Number(data.total ?? data.Total ?? 0),
+   }
+ }
+ 
+ function formatQty(n: number | null | undefined): string {
+   if (n == null) return ''
+@@ -180,62 +166,36 @@ function formatQty(n: number | null | undefined): string {
+ }
+ 
+ function formatDateTime(value?: string): string {
+   return value ? value.replace('T', ' ').slice(0, 19) : ''
+ }
+ 
+ function shortQty(row: MaterialShortage): number {
+   return Math.max(0, Number(row.requiredQty || 0) - Number(row.availableQty || 0))
+ }
+ 
+-function statusTag(status: MaterialShortageStatus): 'success' | 'danger' | 'info' {
+-  if (status === 'OPEN') return 'danger'
+-  if (status === 'RESOLVED') return 'success'
+-  return 'info'
+-}
+-
+-async function reload() {
+-  loading.value = true
+-  try {
+-    const [listRes, openRes] = await Promise.all([
+-      materialShortageApi.search({
+-        status: query.status,
+-        workOrderNo: query.workOrderNo,
+-        page: query.page,
+-        pageSize: query.pageSize,
+-      }),
+-      materialShortageApi.search({
+-        status: 'OPEN',
+-        page: 1,
+-        pageSize: 1,
+-      }),
+-    ])
+-    const list = normalizePaged(listRes)
+-    const open = normalizePaged(openRes)
+-    rows.value = list.items
+-    total.value = list.total
+-    openCount.value = open.total
+-  } finally {
+-    loading.value = false
+-  }
+-}
+-
+-function search() {
+-  query.page = 1
+-  reload()
+-}
+-
+-function resetQuery() {
+-  query.status = 'OPEN'
+-  query.workOrderNo = undefined
+-  query.page = 1
+-  reload()
++// —— 取数：list + openCount(KPI) を並列取得。status 未指定(初期/リセット)は既定 OPEN、''は全件 ——
++const fetchList: ListFetch = async ({ page, size, filters }) => {
++  const f = filters as Record<string, unknown>
++  const status = f.status === undefined ? 'OPEN' : (f.status as MaterialShortageStatus | '')
++  const [listRes, openRes] = await Promise.all([
++    materialShortageApi.search({
++      status,
++      workOrderNo: (f.workOrderNo as string) || undefined,
++      page,
++      pageSize: size,
++    }),
++    materialShortageApi.search({ status: 'OPEN', page: 1, pageSize: 1 }),
++  ])
++  const list = normalizePaged(listRes)
++  openCount.value = normalizePaged(openRes).total
++  return { rows: list.items, total: list.total }
+ }
+ 
+ function openAction(row: MaterialShortage, type: ActionType) {
+   actionTarget.value = row
+   actionType.value = type
+   actionRemark.value = ''
+   actionDialogVisible.value = true
+ }
+ 
+ async function submitAction() {
+@@ -243,75 +203,28 @@ async function submitAction() {
+   actionSaving.value = true
+   try {
+     if (actionType.value === 'resolve') {
+       await materialShortageApi.resolve(actionTarget.value.id, { remark: actionRemark.value })
+       ElMessage.success(t('wms.materialShortage.msg.resolved'))
+     } else {
+       await materialShortageApi.dismiss(actionTarget.value.id, { remark: actionRemark.value })
+       ElMessage.success(t('wms.materialShortage.msg.dismissed'))
+     }
+     actionDialogVisible.value = false
+-    await reload()
++    listRef.value?.reload()
+   } finally {
+     actionSaving.value = false
+   }
+ }
+-
+-onMounted(reload)
+ </script>
+ 
+ <style scoped>
+-.material-shortage {
+-  padding: 12px;
+-}
+-
+-.page-header {
+-  margin-bottom: 12px;
+-}
+-
+-.page-header h2 {
+-  margin: 0;
+-  color: #303133;
+-  font-size: 20px;
+-  font-weight: 650;
+-  line-height: 1.3;
+-}
+-
+-.search-card {
+-  margin-bottom: 12px;
+-}
+-
+ .kpi-row {
+-  margin-bottom: 12px;
+-}
+-
+-.kpi-card {
+-  border-left: 4px solid #409eff;
+-  min-height: 84px;
+-}
+-
+-.kpi-card.danger {
+-  border-left-color: #f56c6c;
+-}
+-
+-.kpi-label {
+-  color: #606266;
+-  font-size: 12px;
+-  margin-bottom: 8px;
+-}
+-
+-.kpi-value {
+-  color: #303133;
+-  font-size: 28px;
+-  font-weight: 650;
+-  line-height: 1;
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(220px, 260px));
++  gap: 12px;
+ }
+-
+-.table-toolbar {
+-  margin-bottom: 8px;
+-}
+-
+ .short-qty {
+-  color: #d93026;
++  color: var(--cp-danger);
+   font-weight: 600;
+ }
+ </style>
+diff --git a/cp6.web/src/views/wms/OutboundRoutingView.vue b/cp6.web/src/views/wms/OutboundRoutingView.vue
+index ac31ca3..0b2ea35 100644
+--- a/cp6.web/src/views/wms/OutboundRoutingView.vue
++++ b/cp6.web/src/views/wms/OutboundRoutingView.vue
+@@ -1,61 +1,40 @@
++<!--
++  出庫ルーティング設定 —— 查询列表页。CpPageShell(:count) + CpListPage(paginated=false、码值列 map)。
++  候補倉庫プレビュー(設定検証ツール)と 作成/編集ダイアログ は複合フォームのため el-dialog/el-form 保持（token 化のみ）。
++  変更後 listRef.reload()（:key 再マウント不使用）。
++-->
+ <template>
+-  <div class="outbound-routing">
+-    <div class="page-header">
+-      <h2>{{ t('wms.outboundRouting.title') }}</h2>
+-      <span class="subtitle">{{ t('wms.outboundRouting.subtitle') }}</span>
+-    </div>
++  <CpPageShell :title="t('wms.outboundRouting.title')" :count="total">
++    <template #actions>
++      <el-button type="primary" @click="openCreate">{{ t('wms.outboundRouting.btn.create') }}</el-button>
++      <el-button @click="listRef?.reload()">{{ t('wms.outboundRouting.btn.refresh') }}</el-button>
++    </template>
+ 
+-    <el-card shadow="never">
+-      <div class="table-toolbar">
+-        <el-button type="primary" size="small" @click="openCreate">
+-          {{ t('wms.outboundRouting.btn.create') }}
+-        </el-button>
+-        <el-button size="small" @click="reload">{{ t('wms.outboundRouting.btn.refresh') }}</el-button>
+-        <el-tag size="small" type="info">{{ t('wms.common.total') }}: {{ rows.length }}</el-tag>
+-      </div>
++    <p class="subtitle">{{ t('wms.outboundRouting.subtitle') }}</p>
+ 
+-      <el-table :data="rows" border stripe size="small" max-height="560" v-loading="loading">
+-        <el-table-column prop="sortOrder" :label="t('wms.outboundRouting.col.sortOrder')" width="90" align="right" />
+-        <el-table-column prop="ruleName" :label="t('wms.outboundRouting.col.ruleName')" min-width="180" show-overflow-tooltip />
+-        <el-table-column prop="customerCd" :label="t('wms.outboundRouting.col.customerCd')" width="120">
+-          <template #default="{ row }">{{ row.customerCd || t('wms.outboundRouting.any') }}</template>
+-        </el-table-column>
+-        <el-table-column prop="productCdPrefix" :label="t('wms.outboundRouting.col.productPrefix')" width="130">
+-          <template #default="{ row }">{{ row.productCdPrefix || t('wms.outboundRouting.any') }}</template>
+-        </el-table-column>
+-        <el-table-column prop="outboundType" :label="t('wms.outboundRouting.col.outboundType')" width="120">
+-          <template #default="{ row }">
+-            {{ row.outboundType == null ? t('wms.outboundRouting.any') : t(`wms.outboundRouting.type.${row.outboundType}`) }}
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="targetWarehouseCd" :label="t('wms.outboundRouting.col.target')" width="130" show-overflow-tooltip />
+-        <el-table-column prop="enabled" :label="t('wms.outboundRouting.col.enabled')" width="100">
+-          <template #default="{ row }">
+-            <el-tag :type="row.enabled ? 'success' : 'info'" size="small">
+-              {{ row.enabled ? t('wms.outboundRouting.on') : t('wms.outboundRouting.off') }}
+-            </el-tag>
+-          </template>
+-        </el-table-column>
+-        <el-table-column prop="remarks" :label="t('wms.outboundRouting.col.remarks')" min-width="160" show-overflow-tooltip />
+-        <el-table-column :label="t('wms.outboundRouting.col.action')" width="150" fixed="right">
+-          <template #default="{ row }">
+-            <el-button link type="primary" size="small" @click="openEdit(row)">
+-              {{ t('wms.outboundRouting.btn.edit') }}
+-            </el-button>
+-            <el-button link type="danger" size="small" @click="remove(row)">
+-              {{ t('wms.outboundRouting.btn.delete') }}
+-            </el-button>
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-    </el-card>
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :paginated="false"
++      @total-change="total = $event"
++    >
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="openEdit(row)">
++          {{ t('wms.outboundRouting.btn.edit') }}
++        </el-button>
++        <el-button link type="danger" size="small" @click="remove(row)">
++          {{ t('wms.outboundRouting.btn.delete') }}
++        </el-button>
++      </template>
++    </CpListPage>
+ 
+     <!-- 候補倉庫プレビュー（設定検証ツール） -->
+     <el-card shadow="never" class="preview-card">
+       <template #header>{{ t('wms.outboundRouting.preview.title') }}</template>
+       <el-form :model="preview" inline size="small">
+         <el-form-item :label="t('wms.outboundRouting.preview.productCd')">
+           <el-input v-model="preview.productCd" style="width: 140px" />
+         </el-form-item>
+         <el-form-item :label="t('wms.outboundRouting.preview.customerCd')">
+           <el-input v-model="preview.customerCd" clearable style="width: 130px" />
+@@ -71,29 +50,28 @@
+           <el-input v-model="preview.fallbackWarehouseCd" clearable style="width: 120px" />
+         </el-form-item>
+         <el-form-item>
+           <el-button type="primary" :loading="previewLoading" @click="runPreview">
+             {{ t('wms.outboundRouting.preview.btn') }}
+           </el-button>
+         </el-form-item>
+       </el-form>
+       <div v-if="previewResult.length" class="preview-result">
+         <span class="preview-label">{{ t('wms.outboundRouting.preview.order') }}:</span>
+-        <el-tag
++        <CpTag
+           v-for="(wh, idx) in previewResult"
+           :key="wh + idx"
+-          :type="idx === 0 ? 'success' : 'info'"
+-          size="small"
++          :tone="idx === 0 ? 'ok' : 'info'"
+           class="preview-tag"
+         >
+           {{ idx + 1 }}. {{ wh }}
+-        </el-tag>
++        </CpTag>
+       </div>
+     </el-card>
+ 
+     <!-- 作成／編集ダイアログ -->
+     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="560">
+       <el-form :model="form" label-width="120px">
+         <el-form-item :label="t('wms.outboundRouting.col.ruleName')" required>
+           <el-input v-model="form.ruleName" maxlength="100" />
+         </el-form-item>
+         <el-form-item :label="t('wms.outboundRouting.col.sortOrder')">
+@@ -123,72 +101,89 @@
+         </el-form-item>
+         <el-form-item :label="t('wms.outboundRouting.col.remarks')">
+           <el-input v-model="form.remarks" type="textarea" :rows="2" maxlength="500" />
+         </el-form-item>
+       </el-form>
+       <template #footer>
+         <el-button @click="dialogVisible = false" :disabled="saving">{{ t('wms.outboundRouting.btn.cancel') }}</el-button>
+         <el-button type="primary" :loading="saving" @click="submit">{{ t('wms.outboundRouting.btn.confirm') }}</el-button>
+       </template>
+     </el-dialog>
+-  </div>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+ import { computed, onMounted, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage, ElMessageBox } from 'element-plus'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import CpTag from '@/components/base/CpTag.vue'
+ import { outboundRoutingApi } from '@/api/wms/outboundRouting'
+ import { warehouseApi } from '@/api/wms/warehouse'
+ import type { OutboundRoutingRule } from '@/types/wms/outboundRouting'
+ 
+ const { t } = useI18n()
+ 
+-const rows = ref<OutboundRoutingRule[]>([])
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage>>()
+ const warehouses = ref<{ warehouseCd: string; warehouseName: string }[]>([])
+-const loading = ref(false)
+ const saving = ref(false)
+ 
+ const dialogVisible = ref(false)
+ const editingId = ref<string | null>(null)
+ const dialogTitle = computed(() =>
+   editingId.value ? t('wms.outboundRouting.dlg.editTitle') : t('wms.outboundRouting.dlg.createTitle'),
+ )
+ 
++// —— 列定义（customerCd/productCdPrefix/outboundType は any フォールバックを map で文案置換；enabled は kind:'tag'+map） ——
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'sortOrder', label: t('wms.outboundRouting.col.sortOrder'), width: 90, kind: 'num' },
++  { prop: 'ruleName', label: t('wms.outboundRouting.col.ruleName'), minWidth: 180, overflowTooltip: true },
++  { prop: 'customerCd', label: t('wms.outboundRouting.col.customerCd'), width: 120,
++    map: (v) => ({ label: v ? String(v) : t('wms.outboundRouting.any') }) },
++  { prop: 'productCdPrefix', label: t('wms.outboundRouting.col.productPrefix'), width: 130,
++    map: (v) => ({ label: v ? String(v) : t('wms.outboundRouting.any') }) },
++  { prop: 'outboundType', label: t('wms.outboundRouting.col.outboundType'), width: 120,
++    map: (v) => ({ label: v == null ? t('wms.outboundRouting.any') : t(`wms.outboundRouting.type.${v}`) }) },
++  { prop: 'targetWarehouseCd', label: t('wms.outboundRouting.col.target'), width: 130, overflowTooltip: true },
++  { prop: 'enabled', label: t('wms.outboundRouting.col.enabled'), width: 100, kind: 'tag',
++    map: (v) => ({ label: v ? t('wms.outboundRouting.on') : t('wms.outboundRouting.off'), tone: v ? 'ok' : 'muted' }) },
++  { prop: 'remarks', label: t('wms.outboundRouting.col.remarks'), minWidth: 160, overflowTooltip: true },
++  { prop: '_action', label: t('wms.outboundRouting.col.action'), width: 150, fixed: 'right' },
++])
++
++// —— 取数：outboundRoutingApi.list(true) 扁平数组、无分页 → paginated=false 一次取全 ——
++const fetchList: ListFetch = async () => {
++  const res = await outboundRoutingApi.list(true)
++  const all = (res?.data || []) as OutboundRoutingRule[]
++  return { rows: all, total: all.length }
++}
++
+ function emptyForm(): OutboundRoutingRule {
+   return {
+     ruleName: '',
+     sortOrder: 100,
+     customerCd: null,
+     productCdPrefix: null,
+     outboundType: null,
+     targetWarehouseCd: '',
+     enabled: true,
+     remarks: null,
+   }
+ }
+ const form = reactive<OutboundRoutingRule>(emptyForm())
+ 
+ const preview = reactive({ productCd: '', customerCd: '', outboundType: 2, fallbackWarehouseCd: '' })
+ const previewResult = ref<string[]>([])
+ const previewLoading = ref(false)
+ 
+-async function reload() {
+-  loading.value = true
+-  try {
+-    const res = await outboundRoutingApi.list(true)
+-    rows.value = (res?.data || []) as OutboundRoutingRule[]
+-  } finally {
+-    loading.value = false
+-  }
+-}
+-
+ async function loadWarehouses() {
+   try {
+     const res = await warehouseApi.search({})
+     warehouses.value = (res?.data || []) as any
+   } catch {
+     warehouses.value = []
+   }
+ }
+ 
+ function openCreate() {
+@@ -218,36 +213,36 @@ async function submit() {
+       remarks: form.remarks || null,
+     }
+     if (editingId.value) {
+       await outboundRoutingApi.update(editingId.value, payload)
+       ElMessage.success(t('wms.outboundRouting.msg.updated'))
+     } else {
+       await outboundRoutingApi.create(payload)
+       ElMessage.success(t('wms.outboundRouting.msg.created'))
+     }
+     dialogVisible.value = false
+-    await reload()
++    listRef.value?.reload()
+   } finally {
+     saving.value = false
+   }
+ }
+ 
+ async function remove(row: OutboundRoutingRule) {
+   await ElMessageBox.confirm(
+     t('wms.outboundRouting.msg.deleteConfirm', { name: row.ruleName }),
+     t('wms.outboundRouting.btn.delete'),
+     { type: 'warning' },
+   )
+   if (!row.id) return
+   await outboundRoutingApi.remove(row.id)
+   ElMessage.success(t('wms.outboundRouting.msg.deleted'))
+-  await reload()
++  listRef.value?.reload()
+ }
+ 
+ async function runPreview() {
+   if (!preview.productCd?.trim()) {
+     ElMessage.warning(t('wms.outboundRouting.preview.needProduct'))
+     return
+   }
+   previewLoading.value = true
+   try {
+     const res = await outboundRoutingApi.preview({
+@@ -255,59 +250,40 @@ async function runPreview() {
+       customerCd: preview.customerCd || undefined,
+       outboundType: preview.outboundType,
+       fallbackWarehouseCd: preview.fallbackWarehouseCd || undefined,
+     })
+     previewResult.value = (res?.data || []) as string[]
+   } finally {
+     previewLoading.value = false
+   }
+ }
+ 
+-onMounted(() => {
+-  reload()
+-  loadWarehouses()
+-})
++onMounted(loadWarehouses)
+ </script>
+ 
+ <style scoped>
+-.outbound-routing {
+-  padding: 12px;
+-}
+-.page-header {
+-  margin-bottom: 12px;
+-}
+-.page-header h2 {
+-  margin: 0;
+-  color: #303133;
+-  font-size: 20px;
+-  font-weight: 650;
+-}
+ .subtitle {
+-  color: #909399;
+-  font-size: 12px;
+-}
+-.table-toolbar {
+-  margin-bottom: 8px;
+-  display: flex;
+-  gap: 8px;
+-  align-items: center;
++  color: var(--cp-muted);
++  font-size: var(--cp-fs-xs);
++  margin: -8px 0 0;
+ }
+ .preview-card {
+-  margin-top: 12px;
++  margin-top: 4px;
+ }
+ .preview-result {
+   margin-top: 8px;
++  display: flex;
++  flex-wrap: wrap;
++  align-items: center;
++  gap: 6px;
+ }
+ .preview-label {
+-  color: #606266;
+-  font-size: 13px;
+-  margin-right: 8px;
+-}
+-.preview-tag {
+-  margin-right: 6px;
++  color: var(--cp-muted);
++  font-size: var(--cp-fs-sm);
++  margin-right: 2px;
+ }
+ .hint {
+-  color: #909399;
+-  font-size: 12px;
++  color: var(--cp-muted);
++  font-size: var(--cp-fs-xs);
+   margin-left: 8px;
+ }
+ </style>
+diff --git a/cp6.web/src/views/wms/WmsDashboardView.vue b/cp6.web/src/views/wms/WmsDashboardView.vue
+index 578d99f..e316be8 100644
+--- a/cp6.web/src/views/wms/WmsDashboardView.vue
++++ b/cp6.web/src/views/wms/WmsDashboardView.vue
+@@ -1,148 +1,135 @@
++<!--
++  WMS ダッシュボード —— 特殊页（仪表盘 + SignalR リアルタイム）。模板不强套：
++  KPI×8→CpStatCard、カードヘッダ→CpSectionHeader、状態/TXN el-tag→CpTag、token 化。
++  トレンド棒グラフ / タイムライン / 明細テーブル / SignalR 接続・ハンドラ・タイマは原様保持。
++-->
+ <template>
+   <div class="wms-dashboard">
+     <el-row :gutter="12">
+       <el-col :span="6">
+-        <el-card shadow="hover" class="kpi-card">
+-          <div class="kpi-label">{{ t('wms.dashboard.kpi.totalValue') }}</div>
+-          <div class="kpi-value">¥{{ formatMoney(kpi.totalStockValue) }}</div>
+-          <div class="kpi-sub">{{ kpi.activeSkuCount }} SKU / {{ formatQty(kpi.totalPhysicalQty) }}</div>
+-        </el-card>
++        <CpStatCard :label="t('wms.dashboard.kpi.totalValue')" :value="`¥${formatMoney(kpi.totalStockValue)}`"
++          tone="brand" :sub="`${kpi.activeSkuCount} SKU / ${formatQty(kpi.totalPhysicalQty)}`" />
+       </el-col>
+       <el-col :span="6">
+-        <el-card shadow="hover" class="kpi-card kpi-warn">
+-          <div class="kpi-label">{{ t('wms.dashboard.kpi.dormant') }}</div>
+-          <div class="kpi-value">{{ kpi.stagnantSkuCount }}</div>
+-          <div class="kpi-sub">SKU</div>
+-        </el-card>
++        <CpStatCard :label="t('wms.dashboard.kpi.dormant')" :value="kpi.stagnantSkuCount" tone="warn" sub="SKU" />
+       </el-col>
+       <el-col :span="6">
+-        <el-card shadow="hover" class="kpi-card">
+-          <div class="kpi-label">{{ t('wms.dashboard.kpi.todayInbound') }}</div>
+-          <div class="kpi-value">{{ kpi.todayInboundPlanCount }}</div>
+-        </el-card>
++        <CpStatCard :label="t('wms.dashboard.kpi.todayInbound')" :value="kpi.todayInboundPlanCount" tone="brand" />
+       </el-col>
+       <el-col :span="6">
+-        <el-card shadow="hover" class="kpi-card">
+-          <div class="kpi-label">{{ t('wms.dashboard.kpi.todayShipping') }}</div>
+-          <div class="kpi-value">{{ kpi.todayShippingPlanCount }}</div>
+-        </el-card>
++        <CpStatCard :label="t('wms.dashboard.kpi.todayShipping')" :value="kpi.todayShippingPlanCount" tone="brand" />
+       </el-col>
+     </el-row>
+ 
+     <el-row :gutter="12" style="margin-top: 12px">
+       <el-col :span="6">
+-        <el-card shadow="hover" class="kpi-card">
+-          <div class="kpi-label">{{ t('wms.stock.col.allocated') }}</div>
+-          <div class="kpi-value">{{ formatQty(kpi.totalAllocatedQty) }}</div>
+-        </el-card>
++        <CpStatCard :label="t('wms.stock.col.allocated')" :value="formatQty(kpi.totalAllocatedQty)" tone="brand" />
+       </el-col>
+       <el-col :span="6">
+-        <el-card shadow="hover" class="kpi-card" :class="{ 'kpi-danger': kpi.openStockTakeCount > 0 }">
+-          <div class="kpi-label">{{ t('wms.stocktake.title') }}</div>
+-          <div class="kpi-value">{{ kpi.openStockTakeCount }}</div>
+-        </el-card>
++        <CpStatCard :label="t('wms.stocktake.title')" :value="kpi.openStockTakeCount"
++          :tone="kpi.openStockTakeCount > 0 ? 'danger' : 'brand'" />
+       </el-col>
+       <el-col :span="6">
+-        <el-card shadow="hover" class="kpi-card" :class="{ 'kpi-danger': alerts.expiryAlerts.length > 0 }">
+-          <div class="kpi-label">{{ t('wms.dashboard.alert.expiry') }}</div>
+-          <div class="kpi-value">{{ alerts.expiryAlerts.length }}</div>
+-        </el-card>
++        <CpStatCard :label="t('wms.dashboard.alert.expiry')" :value="alerts.expiryAlerts.length"
++          :tone="alerts.expiryAlerts.length > 0 ? 'danger' : 'brand'" />
+       </el-col>
+       <el-col :span="6">
+-        <el-card shadow="hover" class="kpi-card" :class="{ 'kpi-warn': alerts.delayedInbounds.length > 0 }">
+-          <div class="kpi-label">{{ t('wms.dashboard.alert.delayed') }}</div>
+-          <div class="kpi-value">{{ alerts.delayedInbounds.length }}</div>
+-        </el-card>
++        <CpStatCard :label="t('wms.dashboard.alert.delayed')" :value="alerts.delayedInbounds.length"
++          :tone="alerts.delayedInbounds.length > 0 ? 'warn' : 'brand'" />
+       </el-col>
+     </el-row>
+ 
+     <!-- リアルタイム タイムライン -->
+     <el-row :gutter="12" style="margin-top: 12px">
+       <el-col :span="24">
+         <el-card shadow="never">
+           <template #header>
+-            <div style="display: flex; justify-content: space-between; align-items: center">
+-              <span style="font-weight: 600">
+-                {{ t('wms.dashboard.realtime.title') }}
+-                <el-tag :type="rtTagType" size="small" style="margin-left: 12px">{{ rtStatus }}</el-tag>
+-              </span>
+-              <el-button v-if="events.length > 0" link size="small" @click="events = []">{{ t('wms.dashboard.realtime.clear') }}</el-button>
+-            </div>
++            <CpSectionHeader :title="t('wms.dashboard.realtime.title')">
++              <template #extra>
++                <CpTag :tone="rtTone">{{ rtStatus }}</CpTag>
++                <el-button v-if="events.length > 0" link size="small" @click="events = []">{{ t('wms.dashboard.realtime.clear') }}</el-button>
++              </template>
++            </CpSectionHeader>
+           </template>
+           <div v-if="events.length === 0" class="rt-empty">{{ t('wms.dashboard.realtime.noEvents') }}</div>
+           <el-timeline v-else>
+             <el-timeline-item v-for="(ev, idx) in events.slice(0, 10)" :key="idx"
+                 :type="txnTimelineTypeOf(ev.txnType)" :timestamp="formatTime(ev.txnAt)" size="normal" hollow>
+-              <el-tag :type="txnTagOf(ev.txnType)" size="small" style="margin-right: 8px">{{ ev.txnType }}</el-tag>
++              <CpTag :tone="txnTone(ev.txnType)" class="txn-tag">{{ ev.txnType }}</CpTag>
+               <strong>{{ ev.productCd }}</strong>
+               <span v-if="ev.lotNo"> / Lot:{{ ev.lotNo }}</span>
+               <span> @ {{ ev.warehouseCd }} - {{ ev.locationCd }}</span>
+-              <span :class="ev.qty < 0 ? 'qty-out' : 'qty-in'" style="margin-left: 8px; font-weight: 600">
++              <span :class="ev.qty < 0 ? 'qty-out' : 'qty-in'" class="qty-val">
+                 {{ ev.qty > 0 ? '+' : '' }}{{ formatQty(ev.qty) }}
+               </span>
+-              <span v-if="ev.relatedNo" style="color: #909399; margin-left: 8px">[{{ ev.relatedNo }}]</span>
++              <span v-if="ev.relatedNo" class="related-no">[{{ ev.relatedNo }}]</span>
+             </el-timeline-item>
+           </el-timeline>
+         </el-card>
+       </el-col>
+     </el-row>
+ 
+     <el-row :gutter="12" style="margin-top: 12px">
+       <el-col :span="16">
+         <el-card shadow="never">
+           <template #header>
+-            <div style="display: flex; justify-content: space-between; align-items: center">
+-              <span style="font-weight: 600">{{ t('wms.dashboard.chart.trend') }}（{{ trendDays }}）</span>
+-              <el-radio-group v-model="trendDays" size="small" @change="loadTrend">
+-                <el-radio-button :value="7">7</el-radio-button>
+-                <el-radio-button :value="30">30</el-radio-button>
+-                <el-radio-button :value="90">90</el-radio-button>
+-              </el-radio-group>
+-            </div>
++            <CpSectionHeader :title="`${t('wms.dashboard.chart.trend')}（${trendDays}）`">
++              <template #extra>
++                <el-radio-group v-model="trendDays" size="small" @change="loadTrend">
++                  <el-radio-button :value="7">7</el-radio-button>
++                  <el-radio-button :value="30">30</el-radio-button>
++                  <el-radio-button :value="90">90</el-radio-button>
++                </el-radio-group>
++              </template>
++            </CpSectionHeader>
+           </template>
+           <div v-if="trend.length === 0" class="empty">—</div>
+           <div v-else class="trend-chart">
+             <div v-for="(p, i) in trend" :key="i" class="trend-col" :title="`${p.date}\nIN: ${p.inQty}\nOUT: ${p.outQty}\nADJ: ${p.adjQty}`">
+               <div class="bar bar-in" :style="{ height: heightOf(p.inQty) + '%' }"></div>
+               <div class="bar bar-out" :style="{ height: heightOf(p.outQty) + '%' }"></div>
+               <div class="bar bar-adj" :style="{ height: heightOf(p.adjQty) + '%' }"></div>
+               <div class="trend-date" v-if="i % Math.ceil(trend.length / 10) === 0">{{ p.date.slice(5) }}</div>
+             </div>
+           </div>
+           <div class="legend">
+             <span><i class="dot bar-in"></i> IN</span>
+             <span><i class="dot bar-out"></i> OUT</span>
+             <span><i class="dot bar-adj"></i> ADJ</span>
+           </div>
+         </el-card>
+       </el-col>
+ 
+       <el-col :span="8">
+         <el-card shadow="never">
+-          <template #header><span style="font-weight: 600">{{ t('wms.dashboard.chart.warehouseValue') }}</span></template>
++          <template #header><CpSectionHeader :title="t('wms.dashboard.chart.warehouseValue')" /></template>
+           <el-table :data="warehouseValue" size="small" border>
+             <el-table-column prop="warehouseCd" :label="t('wms.warehouse.fld.cd')" width="100" />
+             <el-table-column prop="warehouseName" :label="t('wms.warehouse.fld.name')" />
+             <el-table-column prop="skuCount" label="SKU" width="70" align="right" />
+             <el-table-column :label="t('wms.dashboard.kpi.totalValue')" align="right">
+               <template #default="{ row }">¥{{ formatMoney(row.stockValue) }}</template>
+             </el-table-column>
+           </el-table>
+         </el-card>
+       </el-col>
+     </el-row>
+ 
+     <el-row :gutter="12" style="margin-top: 12px">
+       <el-col :span="12">
+         <el-card shadow="never">
+-          <template #header><span style="font-weight: 600; color: #e6a23c">{{ t('wms.dashboard.alert.expiry') }}</span></template>
++          <template #header>
++            <CpSectionHeader :title="t('wms.dashboard.alert.expiry')">
++              <template #extra><CpTag tone="warn">{{ alerts.expiryAlerts.length }}</CpTag></template>
++            </CpSectionHeader>
++          </template>
+           <el-table :data="alerts.expiryAlerts" size="small" border max-height="320">
+             <el-table-column prop="productCd" :label="t('wms.common.product')" width="120" />
+             <el-table-column prop="lotNo" :label="t('wms.common.lot')" width="120" />
+             <el-table-column prop="locationCd" :label="t('wms.common.location')" width="140" />
+             <el-table-column :label="t('wms.common.expiryDate')" width="120">
+               <template #default="{ row }">{{ row.expiryDate?.slice(0, 10) }}</template>
+             </el-table-column>
+             <el-table-column label="DDay" width="80" align="right">
+               <template #default="{ row }">
+                 <span :class="{ 'minus': row.daysUntilExpiry < 0, 'warn': row.daysUntilExpiry < 7 }">
+@@ -152,41 +139,48 @@
+             </el-table-column>
+             <el-table-column prop="physicalQty" :label="t('wms.common.qty')" align="right">
+               <template #default="{ row }">{{ formatQty(row.physicalQty) }}</template>
+             </el-table-column>
+           </el-table>
+         </el-card>
+       </el-col>
+ 
+       <el-col :span="12">
+         <el-card shadow="never">
+-          <template #header><span style="font-weight: 600; color: #f56c6c">{{ t('wms.dashboard.alert.delayed') }}</span></template>
++          <template #header>
++            <CpSectionHeader :title="t('wms.dashboard.alert.delayed')">
++              <template #extra><CpTag tone="danger">{{ alerts.delayedInbounds.length }}</CpTag></template>
++            </CpSectionHeader>
++          </template>
+           <el-table :data="alerts.delayedInbounds" size="small" border max-height="320">
+             <el-table-column prop="inboundNo" :label="t('wms.inbound.fld.no')" width="180" />
+             <el-table-column prop="supplierName" :label="t('wms.inbound.fld.supplierName')" />
+             <el-table-column :label="t('wms.inbound.fld.expectedArrival')" width="120">
+               <template #default="{ row }">{{ row.expectedArrivalDate?.slice(0, 10) }}</template>
+             </el-table-column>
+             <el-table-column label="DDay" width="100" align="right">
+               <template #default="{ row }"><span class="minus">{{ row.delayDays }}</span></template>
+             </el-table-column>
+           </el-table>
+         </el-card>
+       </el-col>
+     </el-row>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, reactive, onMounted, onBeforeUnmount, computed } from 'vue'
+ import { ElMessage } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+ import { wmsDashboardApi } from '@/api/wms/wmsDashboard'
+ import type { WmsKpi, WmsTrendPoint, WmsWarehouseValue, WmsAlerts } from '@/types/wms/wms'
+ import { getWmsConnection, startWmsConnection, type StockChangedPayload, type InboundReceivedPayload, type OutboundShippedPayload } from '@/utils/wmsHub'
+ import * as signalR from '@microsoft/signalr'
+ import { formatQty } from '@/utils/format'
+ 
+ const { t } = useI18n()
+ 
+ const kpi = reactive<WmsKpi>({
+   totalStockValue: 0, activeSkuCount: 0, totalPhysicalQty: 0,
+@@ -217,34 +211,34 @@ const events = ref<StockChangedPayload[]>([])
+ const rtState = ref<signalR.HubConnectionState>(signalR.HubConnectionState.Disconnected)
+ 
+ const rtStatus = computed(() => {
+   switch (rtState.value) {
+     case signalR.HubConnectionState.Connected: return t('wms.dashboard.realtime.connected')
+     case signalR.HubConnectionState.Connecting:
+     case signalR.HubConnectionState.Reconnecting: return t('wms.dashboard.realtime.connecting')
+     default: return t('wms.dashboard.realtime.disconnected')
+   }
+ })
+-const rtTagType = computed<'success' | 'warning' | 'info'>(() => {
++const rtTone = computed<Tone>(() => {
+   switch (rtState.value) {
+-    case signalR.HubConnectionState.Connected: return 'success'
++    case signalR.HubConnectionState.Connected: return 'ok'
+     case signalR.HubConnectionState.Connecting:
+-    case signalR.HubConnectionState.Reconnecting: return 'warning'
+-    default: return 'info'
++    case signalR.HubConnectionState.Reconnecting: return 'warn'
++    default: return 'muted'
+   }
+ })
+ 
+-function txnTagOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
+-  return ({ IN: 'success', OUT: 'danger', RSV: 'warning', UNRSV: 'info', MOVE: 'primary', ADJ: 'info' } as const)[t as 'IN'] || 'info'
++function txnTone(type: string): Tone {
++  return ({ IN: 'ok', OUT: 'danger', RSV: 'warn', UNRSV: 'info', MOVE: 'info', ADJ: 'muted' } as const)[type as 'IN'] || 'info'
+ }
+-function txnTimelineTypeOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
+-  return txnTagOf(t)
++function txnTimelineTypeOf(type: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
++  return ({ IN: 'success', OUT: 'danger', RSV: 'warning', UNRSV: 'info', MOVE: 'primary', ADJ: 'info' } as const)[type as 'IN'] || 'info'
+ }
+ function formatTime(s: string): string {
+   return s?.replace('T', ' ').slice(11, 19) || ''
+ }
+ 
+ // 高頻度イベント対策：300ms ごとに KPI/Alerts を最大1回再ロード
+ let kpiReloadTimer: number | null = null
+ function scheduleKpiReload() {
+   if (kpiReloadTimer) return
+   kpiReloadTimer = window.setTimeout(async () => {
+@@ -291,34 +285,31 @@ onBeforeUnmount(() => {
+   }
+   if (kpiReloadTimer) {
+     window.clearTimeout(kpiReloadTimer)
+     kpiReloadTimer = null
+   }
+ })
+ </script>
+ 
+ <style scoped>
+ .wms-dashboard { padding: 16px; }
+-.kpi-card { text-align: center; }
+-.kpi-label { font-size: 13px; color: #909399; }
+-.kpi-value { font-size: 28px; font-weight: 700; margin: 8px 0; color: #303133; }
+-.kpi-sub { font-size: 12px; color: #909399; }
+-.kpi-warn .kpi-value { color: #e6a23c; }
+-.kpi-danger .kpi-value { color: #f56c6c; }
+ 
+-.empty { text-align: center; padding: 40px 0; color: #909399; }
+-.trend-chart { display: flex; align-items: flex-end; gap: 2px; height: 200px; padding: 8px 0; border-bottom: 1px solid #eee; }
++.empty { text-align: center; padding: 40px 0; color: var(--cp-muted); }
++.trend-chart { display: flex; align-items: flex-end; gap: 2px; height: 200px; padding: 8px 0; border-bottom: 1px solid var(--cp-line-soft); }
+ .trend-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; min-width: 8px; }
+-.bar { width: 100%; min-height: 1px; transition: all 0.2s; }
+-.bar-in { background: #67c23a; }
+-.bar-out { background: #f56c6c; }
+-.bar-adj { background: #909399; }
+-.trend-date { position: absolute; bottom: -20px; font-size: 10px; color: #999; white-space: nowrap; transform: rotate(-45deg); transform-origin: top right; }
+-.legend { display: flex; gap: 16px; padding: 12px 0 0; font-size: 12px; color: #909399; justify-content: center; }
++.bar { width: 100%; min-height: 1px; transition: all var(--cp-t-base); }
++.bar-in { background: var(--cp-ok); }
++.bar-out { background: var(--cp-danger); }
++.bar-adj { background: var(--cp-muted); }
++.trend-date { position: absolute; bottom: -20px; font-size: 10px; color: var(--cp-muted); white-space: nowrap; transform: rotate(-45deg); transform-origin: top right; }
++.legend { display: flex; gap: 16px; padding: 12px 0 0; font-size: var(--cp-fs-xs); color: var(--cp-muted); justify-content: center; }
+ .legend i.dot { display: inline-block; width: 10px; height: 10px; margin-right: 4px; vertical-align: middle; }
+ 
+-.minus { color: var(--el-color-danger); font-weight: 600; }
+-.warn  { color: var(--el-color-warning); font-weight: 600; }
+-.rt-empty { padding: 20px 0; text-align: center; color: #909399; font-size: 13px; }
+-.qty-in { color: var(--el-color-success); }
+-.qty-out { color: var(--el-color-danger); }
++.minus { color: var(--cp-danger); font-weight: 600; }
++.warn  { color: var(--cp-warn); font-weight: 600; }
++.rt-empty { padding: 20px 0; text-align: center; color: var(--cp-muted); font-size: var(--cp-fs-sm); }
++.txn-tag { margin-right: 8px; }
++.qty-val { margin-left: 8px; font-weight: 600; }
++.qty-in { color: var(--cp-ok); }
++.qty-out { color: var(--cp-danger); }
++.related-no { color: var(--cp-muted); margin-left: 8px; }
+ </style>
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 9319985..949d1f5 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -653,20 +653,31 @@ describe('CpListPage', () => {
+ 
+ 批次4（WcsTask/StockTake/IotMonitor/ReportCenter/Carrier）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：WcsTask/Carrier=查询列表页（CpPageShell+CpListPage+CpFilterBar+3×CpFormDialog，码值状態列 kind:'tag'+map，客户端分页）；StockTake=棚卸明細/编辑特殊页（token 化：el-tag→CpTag+tone、内联 #aaa/el-var→--cp-* token、保留 el-descriptions+可编辑 el-table+el-affix action-bar）；IotMonitor=监控仪表盘特殊页（token 化 + CpTag/CpEmpty 基础件替换，保留 30s 轮询/アラート/行クリック履歴，新建/投入弹窗迁 CpFormDialog）；ReportCenter=帳票中心特殊页（token 化 + CpTag/CpEmpty，保留動的表单/多结果表/CSV）。真栈：WcsTask 5 行 + 状態/優先度 pill + 新建 CpFormDialog；Carrier 空态（Total 0）+ 新建必填标记；IotMonitor 1 alert/3 sensors + 投入/履歴弹窗；ReportCenter 在庫月報 16 行 + 件数 pill；StockTake 无数据故直达验证 default 渲染（計画/全棚卸 pill + action-bar）。以下为唯一新增缺口：
+ 
+ 16. **CpListPage 无 `@row-click` 透传（整行点击事件）**（Minor）
+     - 现象：Carrier 原表格 `@row-click` 整行点击打开「イベント履歴」详情弹窗。CpListPage 的 el-table 未透传 row-click，业务侧拿不到行点击事件。
+     - 代偿：详情能力下沉到操作列常驻「詳細」link 按钮（`openDetail(row)`），功能与 timeline 弹窗完整保全；仅丢失「整行可点」这一 UX affordance（highlight-current-row 仍默认开启，视觉高亮不受影响）。
+     - 建议：CpListPage 增 `@row-click(row)` 透传 el-table 同名事件，恢复整行点击进详情的交互。
+ 
+ （注：StockTake/IotMonitor/ReportCenter 三页为特殊页，按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3 处置一致。CpFormDialog 采用 `label-position:top`（设计系统标准），与原页 label-width 左标签的差异属既定契约，非缺口。Carrier/StockTake/stock-take-list 三处后端无种子数据，Carrier 验证空态 + 新建弹窗、StockTake 直达验证 default 渲染，已在报告注明。）
+ 
++### WMS 迁移批次7 复盘（编号接续，从 #17 起）
++
++批次7（BridgeHealth/OutboundRouting/MaterialShortage/WmsDashboard/InkLot）迁移完成，功能零丢失、真栈验收通过（5 页全路由直达）。分类：OutboundRouting/MaterialShortage=查询列表页（CpPageShell+CpListPage，码值列 map，前者 paginated=false、后者服务端分页，复合 create/action ダイアログ保持 el-dialog）；BridgeHealth=监控仪表盘特殊页（KPI×3→CpStatCard、パネルヘッダ→CpSectionHeader、状態 el-tag→CpTag，保留 30s ポーリング/timer cleanup、el-progress/el-table）；WmsDashboard=仪表盘特殊页（KPI×8→CpStatCard、カードヘッダ→CpSectionHeader、状態/TXN el-tag→CpTag，保留 SignalR リアルタイム/棒グラフ/タイムライン/明細テーブル；棒グラフ系列色→--cp-ok/danger/muted token）；InkLot=タブ式ワークベンチ特殊页（2 リスト+4 ダイアログ、tabs は模板契約外——token 化 + 状態 el-tag→CpTag、expiry 色→--cp-danger/warn，el-tabs/el-form/el-table/dialogs 保持）。真栈：BridgeHealth KPI(0.0%/0/0)+2 パネル No Data；OutboundRouting count 0 空态+新規ルール ダイアログ+プレビューカード；MaterialShortage KPI(未対応 0)+検索/クリア reload+Total 0 分页；WmsDashboard KPI×8+未接続 pill+トレンド/倉庫別/アラート表；InkLot 2 タブ切替+検索フォーム No Data。console 无新 error（WmsDashboard 的 SignalR CSRF 403 negotiate 失败=環境既有基础设施问题，SignalR コード原様保持未改，非本批引入，未接続 pill 正确反映）。以下为唯一新增缺口：
++
++17. **CpListPage / CpFilterBar 无初始 filter 值（无法 seed 默认查询条件）**（Minor）
++    - 现象：MaterialShortage 原 `query.status` 初期値 = 'OPEN'（欠品トリアージのため既定で未対応のみ表示）、resetQuery も 'OPEN' に戻す。CpFilterBar 的 filters 内部初始化为 `{}`，各字段起始 undefined，无 prop 可 seed 初始值。
++    - 代偿：`fetchList` 内 `status = filters.status === undefined ? 'OPEN' : filters.status`——初回/リセット(undefined)→OPEN、''→全件、明示選択はそのまま。功能等价保全（初期表示=未対応、リセット=未対応、全件は ALL 選択で到達）；唯一の齟齬は初回に status セレクトが空表示（実データは OPEN 絞込）——cosmetic、記录在案。
++    - 建议：CpListPage 增 `initialFilters?: Record<string,unknown>`（或 CpFilterBar `defaultValue`）透传初始 filters，恢复默认查询条件的可视回填。
++
++（注：MaterialShortage 采用 CpListPage 标准分页，page-sizes 从原 [50,100,200]/默认 50 变为模板 [20,50,100]/默认 20——属既定模板契约，非缺口。BridgeHealth/WmsDashboard 系监控·仪表盘特殊页，InkLot 系 tabs 工作台特殊页，均按「非表格特殊页只做 token 化 + 基础件替换，不强套模板」处置，未计入模板缺口——与批次2/3/4 处置一致。WmsDashboard SignalR CSRF negotiate 403 为測試環境基础设施既有问题，非本批引入。）
++
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+ 

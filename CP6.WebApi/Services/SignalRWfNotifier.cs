@@ -19,4 +19,6 @@ public class SignalRWfNotifier : IWfNotifier
     // Temporary no-op implementations — replaced by PersistentWfNotifier in N-T4.
     public Task FlowApprovedAsync(Guid starterId, Guid instanceId, string flowKey) => Task.CompletedTask;
     public Task FlowRejectedAsync(Guid starterId, Guid instanceId, string flowKey, string? comment) => Task.CompletedTask;
+    // no-op：分支剪枝通知由 PersistentWfNotifier 三渠道承载（内核 hardening）。
+    public Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment) => Task.CompletedTask;
 }

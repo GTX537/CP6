@@ -1,0 +1,328 @@
+# Review package: 065b1d1..HEAD
+
+## Commits
+657c692 feat(wfs-service-task): E-T1 FlowSchemaValidator+save 校验 E-WF-016/017/018
+
+## Files changed
+ CP6.Core/Services/Oa/DesignerService.cs     |  16 +++
+ CP6.Core/Services/Wf/FlowSchemaValidator.cs |  24 ++++
+ CP6.Tests/Wf/ServiceTaskValidatorTests.cs   | 201 ++++++++++++++++++++++++++++
+ 3 files changed, 241 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Oa/DesignerService.cs b/CP6.Core/Services/Oa/DesignerService.cs
+index 6c43181..b1886f8 100644
+--- a/CP6.Core/Services/Oa/DesignerService.cs
++++ b/CP6.Core/Services/Oa/DesignerService.cs
+@@ -41,20 +41,36 @@ public class DesignerService : IDesignerService
+             .Select(d => new FlowDefSummary(d.FlowKey, d.FlowName, d.FormKey, d.FunctionId, d.FlowCode, d.Version, d.Enable))
+             .FirstOrDefaultAsync();
+ 
+     public async Task SaveAsync(SaveFlowRequest req, string? user)
+     {
+         // ① schema 校验
+         var schema = JsonSerializer.Deserialize<FlowSchema>(req.SchemaJson, JsonOpts) ?? new FlowSchema();
+         var schemaErrs = FlowSchemaValidator.Validate(schema);
+         if (schemaErrs.Count > 0) throw new InvalidOperationException(schemaErrs[0]);
+ 
++        // ①b 服务任务引用注册名校验(E-WF-018)：dataWriteback 的 ActionName 须命中 Kind==dataWriteback 的执行器 Key；
++        //     webApi 的 ConnectorName 须命中连接器 Name。缺名属 E-WF-016(上一步已拦)，此处只查"引用了但未注册"。
++        var actionKeys = _execs.Where(e => e.Kind == ServiceKind.DataWriteback)
++            .Select(e => e.Key).ToHashSet(StringComparer.Ordinal);
++        var connNames = _connectors.Select(c => c.Name).ToHashSet(StringComparer.Ordinal);
++        foreach (var n in schema.Nodes.Where(n =>
++            string.Equals((n.Type ?? string.Empty).Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)))
++        {
++            if (n.ServiceKind == ServiceKind.DataWriteback && !string.IsNullOrWhiteSpace(n.ServiceActionName)
++                && !actionKeys.Contains(n.ServiceActionName))
++                throw new InvalidOperationException("E-WF-018");
++            if (n.ServiceKind == ServiceKind.WebApi && !string.IsNullOrWhiteSpace(n.ServiceConnectorName)
++                && !connNames.Contains(n.ServiceConnectorName))
++                throw new InvalidOperationException("E-WF-018");
++        }
++
+         // ② 身份码租户内唯一（排除自身 FlowKey）
+         if (!string.IsNullOrWhiteSpace(req.FunctionId) &&
+             await _db.Wf_FlowDefs.AnyAsync(d => d.FunctionId == req.FunctionId && d.FlowKey != req.FlowKey))
+             throw new InvalidOperationException("E-WF-009");
+         if (!string.IsNullOrWhiteSpace(req.FlowCode) &&
+             await _db.Wf_FlowDefs.AnyAsync(d => d.FlowCode == req.FlowCode && d.FlowKey != req.FlowKey))
+             throw new InvalidOperationException("E-WF-009");
+ 
+         // ③ upsert（SaveDef 升版） + 身份码落库
+         await _flowDef.SaveDefAsync(req.FlowKey, req.FlowName, req.FormKey, req.SchemaJson, user);
+diff --git a/CP6.Core/Services/Wf/FlowSchemaValidator.cs b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+index 8efe002..0af7bd5 100644
+--- a/CP6.Core/Services/Wf/FlowSchemaValidator.cs
++++ b/CP6.Core/Services/Wf/FlowSchemaValidator.cs
+@@ -1,18 +1,22 @@
+ namespace CP6.Core.Services.Wf;
+ 
+ /// <summary>流程 schema 静态校验（设计器保存前后端共用）。返回错误码列表（空=合法）。所有结构性问题统一 E-WF-010。</summary>
+ public static class FlowSchemaValidator
+ {
+     private static readonly HashSet<string> KnownStrategies =
+         new(new[] { "DirectManager", "DeptLeader", "Role", "Specified", "Starter", "FormField", "DataMap", "Group" }, StringComparer.OrdinalIgnoreCase);
+ 
++    // 服务任务合法 kind：引擎按 ServiceKind 常量精确匹配(ServiceTaskNodeHandler)，此处同用序数比较以对齐运行期语义。
++    private static readonly HashSet<string> KnownServiceKinds =
++        new(new[] { ServiceKind.DataWriteback, ServiceKind.WebApi, ServiceKind.Timer }, StringComparer.Ordinal);
++
+     public static IReadOnlyList<string> Validate(FlowSchema schema)
+     {
+         var errs = new List<string>();
+         if (schema is null || schema.Nodes.Count == 0) { errs.Add("E-WF-010"); return errs; }
+ 
+         string T(FlowNode n) => (n.Type ?? "approval").Trim().ToLowerInvariant();
+         var ids = schema.Nodes.Select(n => n.Id).ToHashSet();
+ 
+         // ① 恰一 start ② 至少一 end
+         if (schema.Nodes.Count(n => T(n) == "start") != 1) errs.Add("E-WF-010");
+@@ -68,20 +72,40 @@ public static class FlowSchemaValidator
+             }
+             if (stageBad014) { errs.Add("E-WF-014"); break; }
+         }
+ 
+         // ⑥ 并行网关入/出边数
+         foreach (var n in schema.Nodes.Where(n => T(n) == "parallelsplit"))
+             if (schema.Edges.Count(e => e.From == n.Id) < 2) { errs.Add("E-WF-010"); break; }
+         foreach (var n in schema.Nodes.Where(n => T(n) == "paralleljoin"))
+             if (schema.Edges.Count(e => e.To == n.Id) < 2) { errs.Add("E-WF-010"); break; }
+ 
++        // ⑧ 服务任务节点配置完整性(E-WF-016) + 非 end 须有成功出边(P2-3)。
++        //    kind 非法 / dataWriteback 缺 ActionName / webApi 缺 Connector|Path / timer 缺 DelayMode|DelayValue → E-WF-016。
++        //    serviceTask 必非 end，若无任何"非错误"出边则成功路径无后继(引擎会误结 Approved) → E-WF-016。
++        foreach (var n in schema.Nodes.Where(n => T(n) == "servicetask"))
++        {
++            var kind = (n.ServiceKind ?? string.Empty).Trim();
++            bool bad =
++                !KnownServiceKinds.Contains(kind)
++                || (kind == ServiceKind.DataWriteback && string.IsNullOrWhiteSpace(n.ServiceActionName))
++                || (kind == ServiceKind.WebApi && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
++                || (kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(n.ServiceDelayMode) || string.IsNullOrWhiteSpace(n.ServiceDelayValue)))
++                || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
++            if (bad) { errs.Add("E-WF-016"); break; }
++        }
++
++        // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边仅允许出自 serviceTask 节点。
++        var serviceIds = schema.Nodes.Where(n => T(n) == "servicetask").Select(n => n.Id).ToHashSet();
++        if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
++        if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
++
+         // ④ 从 start 可达某 end（BFS）
+         var start = schema.Nodes.FirstOrDefault(n => T(n) == "start");
+         if (start is not null)
+         {
+             var adj = schema.Edges.GroupBy(e => e.From).ToDictionary(g => g.Key, g => g.Select(e => e.To).ToList());
+             var seen = new HashSet<string> { start.Id };
+             var q = new Queue<string>(); q.Enqueue(start.Id);
+             bool reachedEnd = false;
+             while (q.Count > 0)
+             {
+diff --git a/CP6.Tests/Wf/ServiceTaskValidatorTests.cs b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+new file mode 100644
+index 0000000..9ff05e4
+--- /dev/null
++++ b/CP6.Tests/Wf/ServiceTaskValidatorTests.cs
+@@ -0,0 +1,201 @@
++// CP6.Tests/Wf/ServiceTaskValidatorTests.cs
++// E-T1: FlowSchemaValidator serviceTask 规则(E-WF-016/017) + DesignerService.save 注册校验(E-WF-018)。
++using System;
++using System.Linq;
++using System.Text.Json;
++using System.Threading.Tasks;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Oa;
++using CP6.Core.Services.Wf;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Xunit;
++
++namespace CP6.Tests.Wf;
++
++public class ServiceTaskValidatorTests
++{
++    // ── 基准合法 schema：webApi serviceTask，配齐 connector+path，1 成功出边 + 1 错误出边 ──
++    // s(start) → svc(serviceTask/webApi) → e(end,成功)  ；svc → ee(end) 标 IsError
++    private static FlowSchema Base() => new()
++    {
++        Start = "s",
++        Nodes =
++        {
++            new FlowNode { Id = "s", Type = "start" },
++            new FlowNode
++            {
++                Id = "svc", Type = "serviceTask",
++                ServiceKind = ServiceKind.WebApi,
++                ServiceConnectorName = "erpEcho",
++                ServicePath = "/orders/{{id}}",
++            },
++            new FlowNode { Id = "e", Type = "end" },
++            new FlowNode { Id = "ee", Type = "end" },
++        },
++        Edges =
++        {
++            new FlowEdge { From = "s", To = "svc" },
++            new FlowEdge { From = "svc", To = "e" },
++            new FlowEdge { From = "svc", To = "ee", IsError = true },
++        },
++    };
++
++    private static FlowNode Svc(FlowSchema s) => s.Nodes.First(n => n.Id == "svc");
++
++    // ── Step 1/3: FlowSchemaValidator serviceTask 规则 ──
++
++    [Fact]
++    public void WebApi_MissingConnector_E_WF_016()
++    {
++        var s = Base(); Svc(s).ServiceConnectorName = null;   // webApi 缺 connector
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void DataWriteback_MissingAction_E_WF_016()
++    {
++        var s = Base();
++        Svc(s).ServiceKind = ServiceKind.DataWriteback;
++        Svc(s).ServiceActionName = null;                       // dataWriteback 缺 action
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void Timer_MissingDelay_E_WF_016()
++    {
++        var s = Base();
++        Svc(s).ServiceKind = ServiceKind.Timer;
++        Svc(s).ServiceDelayMode = null;                        // timer 缺 delayMode
++        Svc(s).ServiceDelayValue = null;                       // 及 delayValue（后端双字段严查）
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void Timer_MissingOnlyDelayMode_E_WF_016()
++    {
++        var s = Base();
++        Svc(s).ServiceKind = ServiceKind.Timer;
++        Svc(s).ServiceDelayMode = null;                        // 只缺 mode（delayValue 有）→ 后端仍拦
++        Svc(s).ServiceDelayValue = "3d";
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void ServiceTask_NonEnd_NoSuccessEdge_E_WF_016()
++    {
++        // P2-3 最危险的洞：serviceTask 仅配错误出边 → 引擎成功路径无后继 → 误结 Approved。
++        var s = Base();
++        s.Edges.RemoveAll(e => e.From == "svc" && e.IsError != true);   // 删掉唯一成功出边
++        Assert.Contains("E-WF-016", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void MoreThanOneErrorEdge_E_WF_017()
++    {
++        var s = Base();
++        s.Nodes.Add(new FlowNode { Id = "ee2", Type = "end" });
++        s.Edges.Add(new FlowEdge { From = "svc", To = "ee2", IsError = true });   // 第 2 条错误出边
++        Assert.Contains("E-WF-017", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void ErrorEdge_FromNonServiceTask_E_WF_017()
++    {
++        // IsError 边出自 approval 节点 → 非法。
++        var s = new FlowSchema
++        {
++            Start = "s",
++            Nodes =
++            {
++                new FlowNode { Id = "s", Type = "start" },
++                new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = Guid.NewGuid() },
++                new FlowNode { Id = "e", Type = "end" },
++                new FlowNode { Id = "ee", Type = "end" },
++            },
++            Edges =
++            {
++                new FlowEdge { From = "s", To = "a" },
++                new FlowEdge { From = "a", To = "e" },
++                new FlowEdge { From = "a", To = "ee", IsError = true },   // 错误边来源非 serviceTask
++            },
++        };
++        Assert.Contains("E-WF-017", FlowSchemaValidator.Validate(s));
++    }
++
++    [Fact]
++    public void ValidServiceTask_Passes()
++    {
++        Assert.Empty(FlowSchemaValidator.Validate(Base()));
++    }
++
++    // ── Step 4: DesignerService.save 注册名校验(E-WF-018) ──
++
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
++
++    private sealed class FakeExec : IServiceTaskExecutor
++    {
++        public string Key { get; init; } = "";
++        public string Kind { get; init; } = "";
++        public bool VisibleInDesigner { get; init; } = true;
++        public string DisplayName { get; init; } = "";
++        public Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx) => Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    private sealed class FakeConnector : IWfConnector
++    {
++        public string Name { get; init; } = "";
++        public string DisplayName { get; init; } = "";
++        public Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext ctx) => Task.FromResult(ServiceTaskResult.Ok());
++    }
++
++    private static DesignerService SvcWith(CP6Context db, string actionKey, string connName) =>
++        new(db, new FlowDefService(db),
++            new IServiceTaskExecutor[] { new FakeExec { Key = actionKey, Kind = ServiceKind.DataWriteback, DisplayName = actionKey } },
++            new IWfConnector[] { new FakeConnector { Name = connName, DisplayName = connName } });
++
++    private static string Json(FlowSchema s) => JsonSerializer.Serialize(s);
++
++    private static FlowSchema DataWritebackSchema(string actionName)
++    {
++        var s = Base();
++        Svc(s).ServiceKind = ServiceKind.DataWriteback;
++        Svc(s).ServiceConnectorName = null;
++        Svc(s).ServicePath = null;
++        Svc(s).ServiceActionName = actionName;
++        return s;
++    }
++
++    [Fact]
++    public async Task Save_DataWriteback_UnregisteredAction_ThrowsE_WF_018()
++    {
++        using var db = NewDb();
++        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
++        var req = new SaveFlowRequest("dw", "回写流程", "leave", null, null, Json(DataWritebackSchema("ghostAction")));
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveAsync(req, null));
++        Assert.Equal("E-WF-018", ex.Message);
++    }
++
++    [Fact]
++    public async Task Save_WebApi_UnregisteredConnector_ThrowsE_WF_018()
++    {
++        using var db = NewDb();
++        var svc = SvcWith(db, actionKey: "realWb", connName: "realConn");
++        var s = Base(); Svc(s).ServiceConnectorName = "ghostConn";   // webApi 引用未注册连接器
++        var req = new SaveFlowRequest("wa", "webApi流程", "leave", null, null, Json(s));
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveAsync(req, null));
++        Assert.Equal("E-WF-018", ex.Message);
++    }
++
++    [Fact]
++    public async Task Save_RegisteredNames_Persists()
++    {
++        using var db = NewDb();
++        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
++        var req = new SaveFlowRequest("ok", "合法流程", "leave", null, null, Json(DataWritebackSchema("realWb")));
++        await svc.SaveAsync(req, "tester");                          // action 已注册 → 不抛
++        Assert.NotNull(await db.Wf_FlowDefs.SingleOrDefaultAsync(d => d.FlowKey == "ok"));
++    }
++}

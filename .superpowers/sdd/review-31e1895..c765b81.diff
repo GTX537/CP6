@@ -1,0 +1,496 @@
+# Review package: 31e1895..c765b81
+
+## Commits
+c765b81 feat(erp): M-ERP T3b ERP权限点逐租户种子——30元组×MenuAction/RoleAction
+
+## Files changed
+ CP6.Tests/ErpPermissionSeedTests.cs  | 153 +++++++++++++++++++++++++++++++++
+ CP6.WebApi/Program.cs                |   6 ++
+ CP6.WebApi/Seed/ErpPermissionSeed.cs | 120 ++++++++++++++++++++++++++
+ docs/seeds/erp-permission-seed.sql   | 161 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 440 insertions(+)
+
+## Diff
+diff --git a/CP6.Tests/ErpPermissionSeedTests.cs b/CP6.Tests/ErpPermissionSeedTests.cs
+new file mode 100644
+index 0000000..4b497a9
+--- /dev/null
++++ b/CP6.Tests/ErpPermissionSeedTests.cs
+@@ -0,0 +1,153 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using CP6.WebApi.Seed;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// M-ERP 横切接线 Task 3b：ErpPermissionSeed 逐租户 Sys_MenuAction/Sys_RoleAction 幂等种子断言。
++///
++/// 三数闭环（真相源 docs/seeds/erp-permission-keys.md + 控制器 grep）：
++///   35 写端点（[RequirePermission] 贴点）→ 去重 (menu-key, action) 30 元组 → 30 种子元组。
++///   （11 只读 POST 豁免不贴点、不入种子；erp-order-trace/erp-credit-note/erp-otd-report 三键只有
++///    view 端点被豁免或 GET-only，故无写元组，不在本种子——覆盖 11 键。）
++/// MenuId 经锚定表 docs/seeds/erp-key-menu-anchor.md 映射；RoleAction 挂 admin RoleId=1。
++/// </summary>
++public class ErpPermissionSeedTests
++{
++    private static CP6Context NewDb()
++    {
++        var options = new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString())
++            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++            .Options;
++        return new CP6Context(options);
++    }
++
++    // 期望的 30 去重种子元组（MenuId 来自锚定表；action 来自 T3a 控制器贴点，逐字核对）。
++    private static readonly (int MenuId, string Code)[] ExpectedTuples =
++    {
++        (202, "add"), (202, "edit"), (202, "del"),                                   // erp-estimate-calc
++        (204, "add"), (204, "edit"), (204, "del"), (204, "confirm"), (204, "issue"), // erp-quotation
++        (206, "add"), (206, "edit"), (206, "del"),                                   // erp-product
++        (208, "add"), (208, "edit"), (208, "del"), (208, "cancel"),                  // erp-order
++        (209, "correct"),                                                            // erp-order-price-correction
++        (210, "issue"),                                                              // erp-fsc-checklist
++        (212, "add"), (212, "edit"), (212, "del"),                                   // erp-business-partner
++        (213, "import"), (213, "edit"),                                              // erp-sheet-unit-price
++        (215, "add"), (215, "edit"), (215, "del"),                                   // erp-plate-mold
++        (218, "close"), (218, "split"),                                              // erp-backorder
++        (220, "add"), (220, "edit"), (220, "del"),                                   // erp-fx-rate
++    };
++
++    private static readonly Guid TenantA = Guid.Parse("11111111-1111-1111-1111-111111111111");
++    private static readonly Guid TenantB = Guid.Parse("22222222-2222-2222-2222-222222222222");
++
++    private static void SeedTenantsAndMenus(CP6Context db)
++    {
++        // 锚定菜单行须先在（RoleAction 挂 MenuId）。
++        ErpMenuSeed.EnsureSeeded(db);
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantA, TenantCode = "TA", TenantName = "TenantA", Enable = true });
++        db.Sys_Tenants.Add(new Sys_Tenant { Id = TenantB, TenantCode = "TB", TenantName = "TenantB", Enable = true });
++        db.SaveChanges();
++    }
++
++    [Fact]
++    public void EnsureSeeded_SeedsExactly30TuplesPerTenant_ForBothMenuAndRoleAction()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        ErpPermissionSeed.EnsureSeeded(db);
++
++        foreach (var tid in new[] { TenantA, TenantB })
++        {
++            var menuActions = db.Sys_MenuActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid).ToList();
++            var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
++                .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
++
++            // 元组闭环计数：每租户各得全套 30。
++            Assert.Equal(30, menuActions.Count);
++            Assert.Equal(30, roleActions.Count);
++
++            // 逐元组精确匹配（漏种 0 / 多种 0）。
++            var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
++            var expected = ExpectedTuples.ToHashSet();
++            Assert.Equal(expected, maSet);
++            Assert.Equal(expected, raSet);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_IsIdempotent_SecondCallNoNewRows()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        ErpPermissionSeed.EnsureSeeded(db);
++        var ma1 = db.Sys_MenuActions.IgnoreQueryFilters().Count();
++        var ra1 = db.Sys_RoleActions.IgnoreQueryFilters().Count();
++
++        ErpPermissionSeed.EnsureSeeded(db);   // 二次调用
++        Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++
++        // 2 租户 × 30 元组 = 60。
++        Assert.Equal(60, ma1);
++        Assert.Equal(60, ra1);
++    }
++
++    [Fact]
++    public void EnsureSeeded_RoleActionsAllAttachRoleId1_AndAnchoredMenuIds()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        ErpPermissionSeed.EnsureSeeded(db);
++
++        var anchoredMenuIds = ExpectedTuples.Select(t => t.MenuId).ToHashSet();
++        var roleActions = db.Sys_RoleActions.IgnoreQueryFilters().ToList();
++
++        Assert.NotEmpty(roleActions);
++        Assert.All(roleActions, ra => Assert.Equal(1, ra.RoleId));
++        // 每个 RoleAction.MenuId 必来自锚定表，且该菜单行确实存在且 MenuKey 非 null。
++        Assert.All(roleActions, ra => Assert.Contains(ra.MenuId, anchoredMenuIds));
++        foreach (var menuId in anchoredMenuIds)
++        {
++            var menu = db.Sys_Menus.Single(m => m.MenuId == menuId);
++            Assert.NotNull(menu.MenuKey);
++            Assert.StartsWith("erp-", menu.MenuKey!);
++        }
++    }
++
++    [Fact]
++    public void EnsureSeeded_ExplicitTenantId_NotOverwrittenByStampTenant()
++    {
++        using var db = NewDb();
++        SeedTenantsAndMenus(db);
++
++        ErpPermissionSeed.EnsureSeeded(db);
++
++        // 逐租户显式 TenantId：两租户各得独立行，无一被盖成默认租户。
++        var tenantsSeen = db.Sys_RoleActions.IgnoreQueryFilters()
++            .Select(x => x.TenantId).Distinct().ToList();
++        Assert.Contains(TenantA, tenantsSeen);
++        Assert.Contains(TenantB, tenantsSeen);
++    }
++
++    [Fact]
++    public void EnsureSeeded_NoTenants_NoOp()
++    {
++        using var db = NewDb();
++        ErpMenuSeed.EnsureSeeded(db);   // 菜单在，但无 Sys_Tenants 行
++
++        ErpPermissionSeed.EnsureSeeded(db);
++
++        Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
++        Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 3e39c59..8c986a5 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -824,20 +824,26 @@ using (var scope = app.Services.CreateScope())
+     //   而锚定行 MenuKey 非 null 不受回填影响（详见 WmsMenuSeed 注释）。
+     CP6.WebApi.Seed.WmsMenuSeed.EnsureSeeded(db);
+ 
+     // M-ERP 横切接线 Task 2：ERP 200 段菜单锚定 MenuKey（erp-*）+ 5 孤儿路由收编（216–220）。
+     // ★同样须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：既有 201–215 裸路径（/order…）
+     //   若被回填成 order/product… 无 erp- 前缀会与真相源 erp-* 键全体失配 → 全 ERP fail-closed 403。
+     //   本种子对 9 有菜单键 + 5 孤儿键各锚定一行显式设 erp-* MenuKey（一域两页仅锚定登録页，
+     //   一覧页留 null 由回填派生——因 MenuKey 有 IS NOT NULL 唯一索引，禁两行共键）。
+     CP6.WebApi.Seed.ErpMenuSeed.EnsureSeeded(db);
+ 
++    // M-ERP 横切接线 Task 3b：ERP 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
++    // Task 3a 给 10 控制器 35 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
++    // 须置于 ErpMenuSeed 之后（RoleAction 挂锚定 MenuId 202/204/206/208/209/210/212/213/215/218/220，菜单行须先在）。
++    // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。30 去重元组（35 写端点去重）覆盖 11 有写端点 menu-key。
++    CP6.WebApi.Seed.ErpPermissionSeed.EnsureSeeded(db);
++
+     // M-WMS 横切接线 Task 3b：WMS 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
+     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+ 
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+diff --git a/CP6.WebApi/Seed/ErpPermissionSeed.cs b/CP6.WebApi/Seed/ErpPermissionSeed.cs
+new file mode 100644
+index 0000000..5c71aca
+--- /dev/null
++++ b/CP6.WebApi/Seed/ErpPermissionSeed.cs
+@@ -0,0 +1,120 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// ERP 販売管理 権限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（M-ERP 横切接线 Task 3b）。
++///
++/// 背景：Task 3a 为 10 个 ERP 控制器的 35 个写端点贴了 <c>[RequirePermission("键","action")]</c>，但
++/// <c>PermissionService.HasActionAsync</c> 无 admin 旁路——不种 Sys_RoleAction 则 admin 也 403。
++/// 运行时 <c>PermissionAggregator.FillActionKeysAsync</c> 以
++/// <c>Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}"</c>
++/// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
++/// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
++///
++/// 三数闭环（本 C# 为正本，与真相源 1:1）：
++///  - 控制器写端点：<b>35</b>（grep <c>CP6.WebApi/Controllers/Erp/*.cs</c> 的 [RequirePermission]，逐字核对）。
++///  - 去重 (menu-key, action) 元组：<b>30</b>（Copy 复用 add、CancelConfirm 归并 confirm、Revise 归并 edit 等
++///    5 处重复消解：estimate-calc:add / quotation:add / quotation:confirm / product:add / plate-mold:edit 各出现两次）。
++///  - 种子元组：<b>30</b>（下方 <see cref="Actions"/>；漏种 0 / 多种 0）。
++///  - 覆盖 <b>11</b> 个 menu-key（有写端点者）。另 3 键 erp-order-trace / erp-credit-note / erp-otd-report
++///    仅有 view 端点（GET-only 或只读 POST 豁免），未贴点即无键可种，故不在本种子——与 14 键总数不矛盾。
++///
++/// 数据来源（执行真相）：
++///  - MenuId 经锚定表 <c>docs/seeds/erp-key-menu-anchor.md</c> 由权限键映射而得（14 键 → 锚定 MenuId）。
++///  - ActionCode 与 <c>CP6.WebApi/Controllers/Erp/*.cs</c> 的 [RequirePermission] 第二实参逐字一致（差一字全链 403）。
++///  - 文档留档：<c>docs/seeds/erp-permission-seed.sql</c>（本 C# 为正本，SQL 与此一致）。
++///
++/// 逐租户机制（关键，照 WmsPermissionSeed / space-roleaction-seed.sql 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表，非行级过滤）全部租户 Id，对每租户各插一份。
++///  - 显式设 <c>TenantId=tid</c> → <c>CP6Context.StampTenant</c> 仅盖 <c>TenantId==Guid.Empty</c>，不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>，使跨租户既存行对当前上下文（默认租户作用域）可见，避免误判缺失重复插。
++///
++/// 接入：Program.cs 于 <see cref="ErpMenuSeed.EnsureSeeded"/> **之后**调用（锚定菜单行须先在，RoleAction 挂 MenuId）。
++/// 幂等：重启不重复插（(TenantId,MenuId,ActionCode) / (TenantId,RoleId,MenuId,ActionCode) 判存守卫）。
++/// </summary>
++public static class ErpPermissionSeed
++{
++    /// <summary>
++    /// (MenuId, ActionCode, ActionName) —— 与各 ERP 控制器 [RequirePermission(键, action)] 去重后 1:1。
++    /// MenuId 依 <c>docs/seeds/erp-key-menu-anchor.md</c> 锚定；ActionName 为中文显示名（照 WMS/Fin 种子风格）。
++    /// 计 30 条，覆盖 11 个有写端点的 menu-key。
++    /// </summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        // 202 erp-estimate-calc — 見積計算書 登録（Create/Update/Delete/Copy；Copy 复用 add，Calculate 只读豁免）
++        (202, "add", "新建"), (202, "edit", "编辑"), (202, "del", "删除"),
++        // 204 erp-quotation — 御見積書 登録（confirm 含 CancelConfirm 归并）
++        (204, "add", "新建"), (204, "edit", "编辑"), (204, "del", "删除"),
++        (204, "confirm", "确定"), (204, "issue", "发行"),
++        // 206 erp-product — 製品マスタ 登録（Copy 复用 add）
++        (206, "add", "新建"), (206, "edit", "编辑"), (206, "del", "删除"),
++        // 208 erp-order — 受注入力（4 只读计算 POST 与未出荷子视图豁免；cancel 高危独立键）
++        (208, "add", "新建"), (208, "edit", "编辑"), (208, "del", "删除"), (208, "cancel", "受注取消"),
++        // 209 erp-order-price-correction — 単価訂正（跨菜单：OrderController.BatchUpdatePrice=correct 高危）
++        (209, "correct", "单价订正"),
++        // 210 erp-fsc-checklist — FSC チェックシート（Issue 写发行履历）
++        (210, "issue", "发行"),
++        // 212 erp-business-partner — 取引先マスタ 登録（del 另挂 Roles 闸，双闸并存）
++        (212, "add", "新建"), (212, "edit", "编辑"), (212, "del", "删除"),
++        // 213 erp-sheet-unit-price — シート単価マスタ（Import 状态键 / BatchUpdate=edit）
++        (213, "import", "取込"), (213, "edit", "编辑"),
++        // 215 erp-plate-mold — 版型/木型 登録（Revise 归并 edit；Label 只读豁免）
++        (215, "add", "新建"), (215, "edit", "编辑"), (215, "del", "删除"),
++        // 218 erp-backorder — 欠品・残数管理（close/split 两状态键，孤儿收编菜单）
++        (218, "close", "关闭残数"), (218, "split", "拆分新单"),
++        // 220 erp-fx-rate — 為替レートマスタ（add/edit/del，孤儿收编菜单）
++        (220, "add", "新建"), (220, "edit", "编辑"), (220, "del", "删除"),
++    };
++
++    /// <summary>
++    /// 逐租户幂等播种 ERP 全部权限点 + 授管理员（RoleId=1）。
++    /// 须在 <see cref="ErpMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
++    /// </summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖（仅盖 Guid.Empty）
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,           // 显式设 → StampTenant 不覆盖
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}
+diff --git a/docs/seeds/erp-permission-seed.sql b/docs/seeds/erp-permission-seed.sql
+new file mode 100644
+index 0000000..7cbbe7f
+--- /dev/null
++++ b/docs/seeds/erp-permission-seed.sql
+@@ -0,0 +1,161 @@
++/* ============================================================
++ * ERP 販売管理 権限点（MenuAction / RoleAction）シードデータ（M-ERP 横切接線 Task 3b）
++ * ============================================================
++ * 対象 DB     : CP6DB (SQL Server)
++ * 対象テーブル : Sys_MenuAction（授権可能な操作点の登記）
++ *              Sys_RoleAction（管理者ロール RoleId=1 への全動作授権）
++ *
++ * ★正本は C#：CP6.WebApi/Seed/ErpPermissionSeed.cs（起動時逐租户冪等種子）。
++ *   本 SQL は同一集合の文書留档・手動投入用であり、C# と 1:1 一致。乖離時は C# を正とする。
++ *
++ * 前提:
++ *   ERP メニュー 202/204/206/208/209/210/212/213/215/218/220 は Task 2 種子
++ *   （ErpMenuSeed / docs/seeds/erp-menu-seed.sql）で MenuKey=erp-* 锚定済みであること。
++ *   RoleAction は当該 MenuId 上に挂かり、実行時 PermissionAggregator が
++ *   Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null → "{MenuKey}:{ActionCode}" を組む。
++ *
++ * 三数閉環（真相源 docs/seeds/erp-permission-keys.md + 控制器 grep）:
++ *   写端点 35 → 去重 (menu-key, action) 30 元组 → 種子 30 元组（漏種 0 / 多種 0）。
++ *   11 只读 POST 豁免は未貼点＝不入種子。erp-order-trace / erp-credit-note / erp-otd-report
++ *   の 3 键は view 端点のみ（GET-only 或豁免）→ 写元组なし→本種子対象外。覆盖 11 有写端点 menu-key。
++ *
++ * 動作定義（docs/seeds/erp-key-menu-anchor.md 锚定 MenuId × 控制器 [RequirePermission] action 逐字）:
++ *   202 erp-estimate-calc           : add / edit / del
++ *   204 erp-quotation               : add / edit / del / confirm / issue
++ *   206 erp-product                 : add / edit / del
++ *   208 erp-order                   : add / edit / del / cancel（cancel 高危）
++ *   209 erp-order-price-correction  : correct（高危・跨菜单）
++ *   210 erp-fsc-checklist           : issue
++ *   212 erp-business-partner        : add / edit / del
++ *   213 erp-sheet-unit-price        : import / edit
++ *   215 erp-plate-mold              : add / edit / del
++ *   218 erp-backorder               : close / split
++ *   220 erp-fx-rate                 : add / edit / del
++ *
++ * マルチテナント:
++ *   Sys_MenuAction / Sys_RoleAction は BaseTenantEntity（TenantId 必須・行級隔離）。
++ *   全テナントへ一括投入するため `CROSS JOIN (SELECT Id FROM Sys_Tenants) t` で逐租户展開。
++ *
++ * 実行方法:
++ *   sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/erp-permission-seed.sql -b
++ *   又は SSMS / Azure Data Studio で本ファイルを開いて実行。
++ *
++ * 冪等性:
++ *   各 INSERT 前に NOT EXISTS チェック（TenantId+MenuId+ActionCode 単位）→ 重複実行安全。
++ * ============================================================ */
++
++SET NOCOUNT ON;
++SET XACT_ABORT ON;
++SET QUOTED_IDENTIFIER ON;
++SET ANSI_NULLS ON;
++BEGIN TRY
++BEGIN TRANSACTION;
++
++PRINT '=== ERP 権限点（MenuAction/RoleAction）シード 開始 ===';
++
++/* ------------------------------------------------------------
++ * 0. 動作定義テーブル（MenuId, ActionCode, ActionName, Sort）— 計 30 動作／租户
++ * ------------------------------------------------------------ */
++DECLARE @Actions TABLE (MenuId INT, ActionCode NVARCHAR(50), ActionName NVARCHAR(100), Sort INT);
++INSERT INTO @Actions (MenuId, ActionCode, ActionName, Sort) VALUES
++ (202, N'add',     N'新建',       0),
++ (202, N'edit',    N'编辑',       0),
++ (202, N'del',     N'删除',       0),
++ (204, N'add',     N'新建',       0),
++ (204, N'edit',    N'编辑',       0),
++ (204, N'del',     N'删除',       0),
++ (204, N'confirm', N'确定',       0),
++ (204, N'issue',   N'发行',       0),
++ (206, N'add',     N'新建',       0),
++ (206, N'edit',    N'编辑',       0),
++ (206, N'del',     N'删除',       0),
++ (208, N'add',     N'新建',       0),
++ (208, N'edit',    N'编辑',       0),
++ (208, N'del',     N'删除',       0),
++ (208, N'cancel',  N'受注取消',   0),
++ (209, N'correct', N'单价订正',   0),
++ (210, N'issue',   N'发行',       0),
++ (212, N'add',     N'新建',       0),
++ (212, N'edit',    N'编辑',       0),
++ (212, N'del',     N'删除',       0),
++ (213, N'import',  N'取込',       0),
++ (213, N'edit',    N'编辑',       0),
++ (215, N'add',     N'新建',       0),
++ (215, N'edit',    N'编辑',       0),
++ (215, N'del',     N'删除',       0),
++ (218, N'close',   N'关闭残数',   0),
++ (218, N'split',   N'拆分新单',   0),
++ (220, N'add',     N'新建',       0),
++ (220, N'edit',    N'编辑',       0),
++ (220, N'del',     N'删除',       0);
++-- 合計 30 動作定義／租户
++
++/* ------------------------------------------------------------
++ * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_MenuAction (Id, MenuId, ActionCode, ActionName, Sort, CreateDate, TenantId)
++SELECT NEWID(), a.MenuId, a.ActionCode, a.ActionName, a.Sort, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_MenuAction ma
++    WHERE ma.TenantId = t.Id AND ma.MenuId = a.MenuId AND ma.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 2. Sys_RoleAction 管理者(RoleId=1) へ全動作授権（逐租户・冪等）
++ *    列序: (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++ * ------------------------------------------------------------ */
++INSERT INTO Sys_RoleAction (Id, RoleId, MenuId, ActionCode, CreateDate, TenantId)
++SELECT NEWID(), 1, a.MenuId, a.ActionCode, SYSDATETIME(), t.Id
++FROM @Actions a
++CROSS JOIN (SELECT Id FROM Sys_Tenants) t
++WHERE NOT EXISTS (
++    SELECT 1 FROM Sys_RoleAction ra
++    WHERE ra.TenantId = t.Id AND ra.RoleId = 1 AND ra.MenuId = a.MenuId AND ra.ActionCode = a.ActionCode
++);
++
++/* ------------------------------------------------------------
++ * 3. 結果確認（PRINT）
++ * ------------------------------------------------------------ */
++DECLARE @Tn INT, @Ma INT, @Ra INT;
++DECLARE @Menus TABLE (MenuId INT);
++INSERT INTO @Menus VALUES (202),(204),(206),(208),(209),(210),(212),(213),(215),(218),(220);
++SELECT @Tn = COUNT(*) FROM Sys_Tenants;
++SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId IN (SELECT MenuId FROM @Menus);
++SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId IN (SELECT MenuId FROM @Menus) AND RoleId = 1;
++
++PRINT N'  租户数                  : ' + CAST(@Tn AS NVARCHAR(10));
++PRINT N'  MenuAction 件数(ERP)    : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 30 想定）';
++PRINT N'  RoleAction 件数(管理者) : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 30 想定）';
++
++COMMIT TRANSACTION;
++PRINT '=== ERP 権限点シード 完了 ===';
++END TRY
++BEGIN CATCH
++    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
++    PRINT 'ERROR: ' + ERROR_MESSAGE();
++    THROW;
++END CATCH;
++GO
++
++/* ============================================================
++ * 4. 動作確認クエリ（実行後の検証用、任意）
++ * ============================================================ */
++-- 管理者ロールの ERP 授権（RoleAction）一覧
++SELECT CONVERT(varchar(36), ra.TenantId) AS TenantId, ra.RoleId, ra.MenuId, ra.ActionCode
++FROM Sys_RoleAction ra
++WHERE ra.MenuId IN (202,204,206,208,209,210,212,213,215,218,220) AND ra.RoleId = 1
++ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
++
++/* ============================================================
++ * 5. ロールバック用（緊急時のみ使用）
++ * ============================================================
++ * 注意: RoleId=1 限定（本种子只授过管理员；不限定会连带删掉日后经 UI 授出的其他角色 ERP 授权）。
++ * ------------------------------------------------------------ */
++/*
++BEGIN TRANSACTION;
++DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId IN (202,204,206,208,209,210,212,213,215,218,220);
++DELETE FROM Sys_MenuAction WHERE MenuId IN (202,204,206,208,209,210,212,213,215,218,220);
++COMMIT TRANSACTION;
++*/

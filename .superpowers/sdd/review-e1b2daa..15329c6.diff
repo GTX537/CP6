@@ -1,0 +1,455 @@
+# Review package: e1b2daa..HEAD
+
+## Commits
+15329c6 feat(fin): 波0-T2 WMS→Fin 库存过账桥 IStockFinBridge + 实现 + DI
+
+## Files changed
+ .superpowers/sdd/progress.md                     |  10 ++
+ .superpowers/sdd/task-4-brief.md                 |  13 --
+ CP6.Core/Services/Fin/StockFinBridge.cs          | 135 +++++++++++++++++
+ CP6.Core/Services/Integration/IStockFinBridge.cs |  23 +++
+ CP6.Tests/Fin/StockFinBridgeTests.cs             | 185 +++++++++++++++++++++++
+ CP6.WebApi/Program.cs                            |  11 ++
+ 6 files changed, 364 insertions(+), 13 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/progress.md b/.superpowers/sdd/progress.md
+index f729fb3..c108b3a 100644
+--- a/.superpowers/sdd/progress.md
++++ b/.superpowers/sdd/progress.md
+@@ -137,10 +137,20 @@ M-WMS T4: complete (commit 0efb717, Spec ✅ + Approved[sonnet审四路独立复
+ M-WMS T6: complete (commit eb5fb51, Spec ✅ + Approved[sonnet审重跑]; 9实体贴IAuditable[StockTake/StockTakeDetail/InboundOrder/OutboundOrder/InboundReceipt/Warehouse/Location/RmaHeader/ReplenishOrder]纯标记接口单行追加; 确认无需迁移[无schema改动,Sys_FieldAuditLog已存在,运行时ChangeTracker捕获]; 豁免Stock[高频]/StockTransaction[追加型]源码注释坐实理由; WmsAuditTests 3/0真实断言[含负测试]. 无回归)
+ M-WMS T5(聚焦版): complete (commit 014325b, Spec ✅ + Approved[sonnet审源码级回溯]; 26页44条v-permission高危+删除全覆盖, 键逐字对齐后端[按按钮实际调用API端点键非页面名, ProductionInbound入庫確定=inbound-receipt:post/PackingShip=outbound-order:ship跨域复用正确]; 纯属性追加零逻辑/CJK改动; 范围克制未越界状态档; type-check exit0. Follow-up票: add/edit全覆盖+CJK清理+5处无按钮DELETE缺口. 疑点: wms-stock-qc:set前端已贴依赖T2菜单429[已补])
+ M-WMS T7测试补网: complete (commit 653a7fc, Spec ✅ + Approved[sonnet审逐行核服务源码]; 5用例StockTake承认+Outbound出库账实回归绑定真实计算[ADJ符号/台账双路对账/lot隔离/Confirmed守卫], 服务算错会真红; 不重复既有覆盖; 零生产改动; 148/148 Wms全绿. 全量回归1589绿[基线1578+11新]. Minor: 一用例数值边际重叠既有)
+ # M-WMS T1-T7全部完成并逐任务审查通过. 待: 全支终审→合并main→部署
+ M-WMS 全支终审+合并+部署: complete (fable终审 Ready=Yes[三处键一致性端到端零断链/前端全授权/fail-closed全覆盖/种子逐租户]; Minor#1修[菜单429 RoutePath→/wms/stock]; 平台Important记票[TenantAdminService不复制RoleAction→新租户admin重启前403,影响全模块,重启自愈]; 快进合并main=6745973; cp6-api镜像重建部署[宿主publish+薄镜像], 线上验证: 448 WMS RoleAction=112/租户×4逐租户落库/admin对warehouse:add空体400[权限放行到校验层]/无认证403[强校验生效]; cp6-web前端未重建[UX层后端已403, 6天旧属更广stale, 内存受限不冒险]). M-WMS 波完成.
+ 
+ # ═══ 会话交接点 2026-07-11：FIN 财务油路开工在即 ═══
+ # 本会话完成: ①全项目盘点(4路探查校准, 按难度×优先级)交付 ②M-WMS授权粒度收口波7任务全过审+fable终审+合并main=6745973+cp6-api重建部署+线上验证(448 RoleAction=112/租户×4/admin放行/无认证403) ③FIN两拍板(反冲负库存allow+warn/差异月末转COGS)锁spec=542bb61 ④FIN 4路探查摸清5子域真实API ⑤FIN码级plan出=docs/superpowers/plans/2026-07-11-fin-integration-loop.md commit f5e8d27(7波: 0地基/B出货AR/A库存GL/C反冲成本差异/F盘点冻结/D年结/E探测器+G横切)
+ # 下窗口入口: 说「FIN 开工」→ 按 fin-oil-route-execution 记忆开工令从波B起跑(subagent-driven Opus, 同M-WMS格式逐任务回写本台账). 过账归属三方分工设计已呈述用户待确认(无异议默认采纳).
+ # 未决呈用户: FIN过账归属(B收入COGS/C料工费WIP→FG/A采购入库+盘盈亏+报废)是否符合会计口径; 波次顺序默认B先(最高价值).
++
++# ═══ F1 财务油路接通波（branch=feat/fin-integration-loop, base=e043d57）2026-07-11 ═══
++# 依据: docs/superpowers/plans/2026-07-11-fin-integration-loop.md(f5e8d27) + specs/2026-07-07-fin-integration-loop-design.md(542bb61两拍板)
++# 波序: B(出货AR)→0(地基)→A(库存GL)→C(反冲成本差异)→F(盘点冻结)→D(年结)→E(E2E)→G(横切)→终审合并部署
++# 过账归属(用户已呈述无异议默认采纳): B=收入+COGS / C=料工费WIP→FG(CostSettle过账,反冲只扣物理量) / A=采购入库+盘盈亏+报废(ISSUE/FG/SHIP Skipped)
++# 预检记录: spec§2.2「同事务原子」vs plan「best-effort不阻断」分歧——按plan执行(07-11拍板①产线不因账停支持best-effort, plan为后出治理文本)
++FIN B.1: complete (commit e5b521a, Spec ✅ + Approved[opus审]; 点火位/幂等键/售价受注优先裁决精确落地+污染值999vs受注12.5测试证明; 生产DI实读核实[Program.cs:190+333可选参真注入]; shippedByLine快照捕获本轮出货量; 全量1592绿[基线1589+3]. Minor记终审: 回退价路径无测试/WorkOrderNo透传无断言/同品多受注明细FirstOrDefault取价边缘)
++FIN B.2: complete (commit 7d92d29, Spec ✅ + Approved[sonnet审]; 裁决1前提独立核实[FinBridgeHook:58-64无发票=Skipped优雅no-op]→Shipping型无条件点火低耦合成立; 裁决3可达性独立核实[Completed唯一设点=ShipAsync:513=唯一开票点,Cancel守卫:264→已开票可取消确不可达,非编造]; 全量1595绿[1592+3]. Follow-up票: 真红冲需完工后入口[RMA/退货撤销]. Minor: PartialAllocated分支无测试/新注释中日混排)
++# 波B完成(B.1+B.2). 下=波0地基
++FIN 0.1+0.1b: complete (commit e1b2daa, Spec ✅ + Approved[sonnet审]; VoucherSource.Inventory=10不动既有值/四规则借贷映射逐字/既有11规则未触; 偏离独立核实成立[CN2202/INTL2150确被AP_CONTROL/AR_ADVANCE占用→2204/2110合法邻码]; 两模板Role核对CN只缺GRNI+1行、INTL缺四全补; 测试断言真种子内容非套套逻辑; 1604绿[1595+9]. 🔴部署门票: 存量租户已导入COA不含新Role行→库存过账上线前需回填(否则老租户E-FIN-141), 照PENDING_PROPERTY_LOSS先例同类缺口, 波G/部署时收口. Minor: PostingRuleSeed.cs:14 XML注释陈旧[pre-existing])
+diff --git a/.superpowers/sdd/task-4-brief.md b/.superpowers/sdd/task-4-brief.md
+index 181672c..e69de29 100644
+--- a/.superpowers/sdd/task-4-brief.md
++++ b/.superpowers/sdd/task-4-brief.md
+@@ -1,13 +0,0 @@
+-### Task 4: 权限点接线（9 控制器 + 反射测试 + RoleAction 种子）
+-
+-**Files:**
+-- Modify: `CP6.WebApi/Controllers/Space/` 全部 9 控制器——按 Global Constraints 映射表贴 `[RequirePermission]`（`using CP6.Core.Auth;`），控制器头注释写权限约定一行
+-- Create: `CP6.Tests/Space/SpacePermissionAttributeTests.cs`——反射断言：9 控制器的全部 POST/PUT/DELETE action（HttpPost/HttpPut/HttpDelete 特性）都带 RequirePermissionAttribute 且 (menu,action) 在映射白名单内；GET action 都不带（防误贴）。豁免清单显式列出（如无）。
+-- Create: `docs/seeds/space-roleaction-seed.sql`——①`Sys_MenuAction` 登记各菜单可授权动作（902:add/edit/delete；903:add/edit/delete/edit（编辑器域并入 edit）；904:add/edit/delete/generate；905:publish/deactivate/adopt；906 无）幂等 NOT EXISTS，**逐租户**（`CROSS JOIN (SELECT Id FROM Sys_Tenants) t` 或按现有租户循环——先看 Sys_MenuAction 的 TenantId 语义与既有数据惯例，qa 种子 02_seed_roleaction_BC.sql 是显式 TenantId 先例）；②`Sys_RoleAction` 给 RoleId=1 全动作授权，列序 `(Id,RoleId,MenuId,ActionCode,CreateDate,TenantId)`、Id=NEWID()；③验证查询+回滚段+头注释（连接串 CP6DB 套路）。
+-
+-- [ ] Step 1: 反射测试先行（RED：0 个特性）→ 贴特性 → GREEN
+-- [ ] Step 2: 种子 SQL 人工双检；全量测试绿（RequirePermission 在单测无 HTTP 管道不触发——控制器单测若有直调 action 的，确认不受影响）
+-- [ ] Step 3: Commit `feat(space): 细粒度权限点——9 控制器 RequirePermission + MenuAction/RoleAction 种子`
+-
+----
+-
+diff --git a/CP6.Core/Services/Fin/StockFinBridge.cs b/CP6.Core/Services/Fin/StockFinBridge.cs
+new file mode 100644
+index 0000000..7d046db
+--- /dev/null
++++ b/CP6.Core/Services/Fin/StockFinBridge.cs
+@@ -0,0 +1,135 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels;
++using CP6.Entity.DomainModels.Fin;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.Extensions.Logging;
++
++namespace CP6.Core.Services.Fin;
++
++/// <summary>
++/// <see cref="IStockFinBridge"/> 标准实现（BridgeHookBase，Phase6 持久化）。库存移动 → 库存类自动凭证。
++/// </summary>
++/// <remarks>
++/// 过账归属过滤（主控裁决——避免与波B出货开票 / 波C反冲双记）：桥内建 <b>显式映射表</b>
++/// <c>(TxnType, RelatedType) → EventType 或 Skipped</c>，仅三类真过账：
++/// <list type="bullet">
++/// <item>采购入库：<c>IN + INBOUND</c> → <c>Inventory.Received</c>（借 INVENTORY / 贷 GRNI 暂估应付）</item>
++/// <item>盘盈亏：<c>ADJ + STOCKTAKE</c>，按 <see cref="StockTransaction.Qty"/> 符号 → <c>Inventory.AdjustGain</c>（+）/ <c>Inventory.AdjustLoss</c>（−）</item>
++/// <item>报废：<c>RelatedType=SCRAP</c>（现仓未有，后续引入）→ <c>Inventory.Scrapped</c></item>
++/// </list>
++/// 其余一切（生产领料 ISSUE / 完工 FG / 销售出库 OUTBOUND·SHIP / 库内 MOVE / RMA / 补充 REPLENISH /
++/// 套件 KIT_* / 越库 XDOCK_* / 过期废弃 EXPIRY_DISPOSE / 外注 SUBCONTRACT / 波次 WAVE_PICK / 未映射值）
++/// 一律 <see cref="FinBridgeResult.Skipped"/>（带 reason）——宁跳过不误记，过账正确性优先。
++/// 金额守卫：金额=<c>|Qty×UnitPrice|</c>（方向由 PostingRule 借贷两侧表达）；单价缺失或金额&lt;=0 → Skipped（禁零额凭证）。
++/// 幂等：<c>FinBizEvent{Source=Inventory, SourceDocNo=TxnNo}</c>，引擎按 Source+SourceDocNo+Posted 查重。
++/// Best-Effort：异常握住并落 IntegrationEvent（失败可重试），不向上抛出、不阻断库存主操作。
++/// </remarks>
++public class StockFinBridge : BridgeHookBase, IStockFinBridge
++{
++    private readonly IAutoVoucherEngine _engine;
++
++    public StockFinBridge(CP6Context db, IAutoVoucherEngine engine, ILogger<StockFinBridge> logger)
++        : base(db, logger)
++    {
++        _engine = engine;
++    }
++
++    public async Task<FinBridgeResult> OnStockMovedAsync(StockTransaction txn, string relatedType, string? userName)
++    {
++        var corrId = Guid.NewGuid();
++        var txnNo = txn?.TxnNo ?? "";
++        var payload = new { txnNo, txn?.TxnType, relatedType, txn?.Qty, txn?.UnitPrice };
++        try
++        {
++            var (eventType, skipReason) = Resolve(txn!.TxnType, relatedType, txn.Qty);
++            if (eventType == null)
++                return await SkipAsync(txnNo, skipReason ?? "unmapped", corrId, payload);
++
++            // —— 金额守卫：|Qty×UnitPrice|；单价缺失或非正额 → 跳过（禁零额凭证）——
++            if (txn.UnitPrice is not decimal unit)
++                return await SkipAsync(txnNo, "单价缺失，无法计价过账", corrId, payload);
++
++            var amount = Math.Abs(Math.Round(txn.Qty * unit, 2, MidpointRounding.AwayFromZero));
++            if (amount <= 0m)
++                return await SkipAsync(txnNo, "计价金额<=0，跳过（禁零额凭证）", corrId, payload);
++
++            var evt = new FinBizEvent
++            {
++                EventType = eventType,
++                Source = VoucherSource.Inventory,
++                SourceDocNo = txnNo,   // 幂等键 (Inventory, TxnNo)
++                BizDate = txn.TxnDateTime,
++                Description = $"库存移动自动过账 {txn.TxnType}/{relatedType} {txnNo}",
++            };
++            evt.HeaderAmounts["Amount"] = amount;
++
++            var r = await _engine.GenerateAsync(evt);
++            var status = r.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
++            await PersistEventAsync("WMS", "FIN", nameof(OnStockMovedAsync),
++                txnNo, r.Ok ? eventType : null, status, r.Ok ? null : r.Code, corrId, payload);
++            if (r.Ok) Logger.LogInformation("[Stock-Fin-Bridge] 库存移动 {Txn} {Evt} → 自动过账", txnNo, eventType);
++            return r.Ok ? FinBridgeResult.Ok(txnNo) : FinBridgeResult.Failed(r.Code ?? "fail");
++        }
++        catch (Exception ex)
++        {
++            Logger.LogError(ex, "[Stock-Fin-Bridge] 库存移动 {Txn} 自动过账异常", txnNo);
++            await PersistEventAsync("WMS", "FIN", nameof(OnStockMovedAsync),
++                txnNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++            return FinBridgeResult.Failed(ex.Message);
++        }
++    }
++
++    private async Task<FinBridgeResult> SkipAsync(string txnNo, string reason, Guid corrId, object payload)
++    {
++        await PersistEventAsync("WMS", "FIN", nameof(OnStockMovedAsync),
++            txnNo, null, IntegrationEventStatus.Skipped, reason, corrId, payload);
++        return FinBridgeResult.Skipped(reason);
++    }
++
++    /// <summary>
++    /// 显式映射表：<c>(TxnType, RelatedType)</c> → EventType 或 (null, skipReason)。
++    /// 逐值来自 RelatedType 实际取值清单（INBOUND/OUTBOUND/MOVE/STOCKTAKE/RMA/REPLENISH/KIT_*/XDOCK_*/
++    /// EXPIRY_DISPOSE/SUBCONTRACT/WAVE_PICK + 波C引入 ISSUE/FG + 报废 SCRAP）。
++    /// </summary>
++    private static (string? eventType, string? skipReason) Resolve(string? txnType, string? relatedType, decimal qty)
++    {
++        var tt = (txnType ?? "").Trim().ToUpperInvariant();
++        var rt = (relatedType ?? "").Trim().ToUpperInvariant();
++
++        // ① 报废：任意移动 RelatedType=SCRAP（现仓未有，波A/后续引入）
++        if (rt == "SCRAP") return ("Inventory.Scrapped", null);
++
++        // ② 采购入库暂估：IN + INBOUND
++        if (tt == WmsTxnType.IN && rt == "INBOUND") return ("Inventory.Received", null);
++
++        // ③ 盘盈/盘亏：ADJ + STOCKTAKE，按数量符号（金额取绝对值，方向由规则借贷表达）
++        if (tt == WmsTxnType.ADJ && rt == "STOCKTAKE")
++        {
++            if (qty > 0m) return ("Inventory.AdjustGain", null);
++            if (qty < 0m) return ("Inventory.AdjustLoss", null);
++            return (null, "STOCKTAKE 差异数量为0，无过账");
++        }
++
++        // ④ 其余一律 Skipped（各模块自行过账 / 无GL影响 / 未映射）——宁跳过不误记
++        return (null, SkipReasonFor(rt));
++    }
++
++    private static string SkipReasonFor(string rt) => rt switch
++    {
++        "OUTBOUND" => "销售/材料出库由波B开票或波C反冲过账，桥跳过避免双记",
++        "SHIP" => "出货由波B开票过账，桥跳过避免双记",
++        "ISSUE" => "生产领料由波C反冲过账，桥跳过避免双记",
++        "FG" => "完工入库由波C成本结转过账，桥跳过避免双记",
++        "MOVE" => "库内移库无GL影响，跳过",
++        "REPLENISH" => "补充移库无GL影响，跳过",
++        "RMA" => "退品返品暂不自动过账，跳过",
++        "KIT_ASSEMBLE" or "KIT_DISASSEMBLE" => "套件组立/拆解暂不自动过账，跳过",
++        "XDOCK_IN" or "XDOCK_OUT" => "越库暂不自动过账，跳过",
++        "EXPIRY_DISPOSE" => "过期废弃暂不自动过账（非SCRAP口径），跳过",
++        "SUBCONTRACT" => "外注支给发料由采购模块过账，桥跳过",
++        "WAVE_PICK" => "波次拣货无独立GL影响，跳过",
++        "" => "无关联伝票区分，未映射，跳过",
++        _ => $"未映射的关联伝票区分 {rt}，宁跳过不误记",
++    };
++}
+diff --git a/CP6.Core/Services/Integration/IStockFinBridge.cs b/CP6.Core/Services/Integration/IStockFinBridge.cs
+new file mode 100644
+index 0000000..43df29d
+--- /dev/null
++++ b/CP6.Core/Services/Integration/IStockFinBridge.cs
+@@ -0,0 +1,23 @@
++using CP6.Entity.DomainModels.Wms;
++
++namespace CP6.Core.Services.Integration;
++
++/// <summary>
++/// WMS 库存移动 → 财务（Fin）自动过账桥（章05 §5 / F1 波A）。
++/// 库存事务落库后（best-effort，事务提交之后）据 <c>(TxnType, RelatedType)</c> 显式映射表决定是否生成
++/// 库存类自动凭证（<c>Inventory.Received/AdjustGain/AdjustLoss/Scrapped</c>，<see cref="Fin.VoucherSource.Inventory"/>）。
++/// 过账归属过滤：仅采购入库/盘盈亏/报废三类真过账；生产领料·完工·销售出库·库内移库等一律 Skipped
++/// （由波B开票 / 波C反冲各自过账，桥不参与，避免双记）。幂等键 = <c>(Inventory, TxnNo)</c>，复用引擎 Source+SourceDocNo 查重。
++/// </summary>
++public interface IStockFinBridge
++{
++    /// <summary>库存移动后自动过账（幂等 TxnNo）。不属过账范围返回 <see cref="FinBridgeResult.Skipped"/>。</summary>
++    Task<FinBridgeResult> OnStockMovedAsync(StockTransaction txn, string relatedType, string? userName);
++}
++
++/// <summary>配置 StockFinBridge:Enabled=false 时的 no-op 实现。</summary>
++public class NoOpStockFinBridge : IStockFinBridge
++{
++    public Task<FinBridgeResult> OnStockMovedAsync(StockTransaction txn, string relatedType, string? userName)
++        => Task.FromResult(FinBridgeResult.Skipped("StockFinBridge:Enabled=false"));
++}
+diff --git a/CP6.Tests/Fin/StockFinBridgeTests.cs b/CP6.Tests/Fin/StockFinBridgeTests.cs
+new file mode 100644
+index 0000000..32225cc
+--- /dev/null
++++ b/CP6.Tests/Fin/StockFinBridgeTests.cs
+@@ -0,0 +1,185 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Fin;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels.Fin;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.Extensions.Logging.Abstractions;
++
++namespace CP6.Tests.Fin;
++
++/// <summary>
++/// F1 波0 Task 0.2：WMS→Fin 库存过账桥（StockFinBridge）。
++/// 过账归属过滤——仅 {IN+INBOUND→Received} / {ADJ+STOCKTAKE 按符号→AdjustGain/Loss} / {*+SCRAP→Scrapped}
++/// 三类生成凭证；OUTBOUND/ISSUE/MOVE 等一律 Skipped（波B/波C 各自过账，避免双记）。
++/// 金额=|Qty×UnitPrice|，缺单价或非正额→Skipped（禁零额凭证）。best-effort：引擎异常不抛出。
++/// 走真 AutoVoucherEngine + InMemory（同 FinBridgeHookTests 范式），断言凭证科目 Role + 金额。
++/// </summary>
++public class StockFinBridgeTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .Options);
++
++    private static readonly DateTime Biz = new(2026, 6, 15);
++
++    private static async Task<StockFinBridge> SetupAsync(CP6Context db)
++    {
++        var gl = new GlAccountService(db);
++        await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "t");
++        PostingRuleSeed.EnsureSeeded(db);
++        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
++        var engine = new AutoVoucherEngine(db, journal);
++        return new StockFinBridge(db, engine, NullLogger<StockFinBridge>.Instance);
++    }
++
++    private static StockTransaction Txn(string txnNo, string txnType, decimal qty, decimal? unitPrice) => new()
++    {
++        TxnNo = txnNo, TxnType = txnType, TxnDateTime = Biz, WarehouseCd = "W01", LocationCd = "L01",
++        ProductCd = "P1", LotNo = "", Qty = qty, UnitPrice = unitPrice,
++    };
++
++    // 凭证某 Role 科目上的借/贷发生额（走真引擎生成后回查）
++    private static async Task<(decimal debit, decimal credit)> RoleAmountAsync(CP6Context db, string role)
++    {
++        var accId = await db.GlAccounts.Where(a => a.Role == role && a.IsActive).Select(a => a.Id).SingleAsync();
++        var lines = await db.JournalLines.Where(l => l.AccountId == accId).ToListAsync();
++        return (lines.Sum(l => l.Debit), lines.Sum(l => l.Credit));
++    }
++
++    [Fact]
++    public async Task InboundPurchase_Generates_InventoryReceived_DebitInventory_CreditGrni()
++    {
++        using var db = NewDb();
++        var bridge = await SetupAsync(db);
++
++        var r = await bridge.OnStockMovedAsync(Txn("TXN-IN1", "IN", 10m, 30m), "INBOUND", "wms");
++        Assert.True(r.Success, r.Message);
++
++        // 借 INVENTORY 300 / 贷 GRNI 300（10×30）
++        var inv = await RoleAmountAsync(db, "INVENTORY");
++        var grni = await RoleAmountAsync(db, "GRNI");
++        Assert.Equal(300m, inv.debit);
++        Assert.Equal(0m, inv.credit);
++        Assert.Equal(300m, grni.credit);
++        Assert.Equal(0m, grni.debit);
++
++        // 单张 Inventory 来源凭证已过账 + Phase6 事件成功
++        Assert.Equal(1, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Inventory && j.Status == JournalStatus.Posted));
++        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.TargetModule == "FIN" && e.SourceNo == "TXN-IN1" && e.Status == "SUCCESS"));
++    }
++
++    [Fact]
++    public async Task OutboundShipment_Skipped_NoVoucher()
++    {
++        using var db = NewDb();
++        var bridge = await SetupAsync(db);
++
++        var r = await bridge.OnStockMovedAsync(Txn("TXN-OUT1", "OUT", 5m, 30m), "OUTBOUND", "wms");
++        Assert.False(r.Success);
++        Assert.Contains("SKIPPED", r.Message);
++
++        Assert.Equal(0, await db.JournalEntries.CountAsync());
++        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceNo == "TXN-OUT1" && e.Status == "SKIPPED"));
++    }
++
++    [Fact]
++    public async Task StockTake_PositiveQty_Generates_AdjustGain_DebitInventory_CreditNonOpIncome()
++    {
++        using var db = NewDb();
++        var bridge = await SetupAsync(db);
++
++        var r = await bridge.OnStockMovedAsync(Txn("TXN-ADJ+", "ADJ", 4m, 25m), "STOCKTAKE", "wms");
++        Assert.True(r.Success, r.Message);
++
++        var inv = await RoleAmountAsync(db, "INVENTORY");
++        var gain = await RoleAmountAsync(db, "NON_OP_INCOME");
++        Assert.Equal(100m, inv.debit);        // 4×25
++        Assert.Equal(100m, gain.credit);
++    }
++
++    [Fact]
++    public async Task StockTake_NegativeQty_Generates_AdjustLoss_DebitPendingLoss_CreditInventory_AbsAmount()
++    {
++        using var db = NewDb();
++        var bridge = await SetupAsync(db);
++
++        // 盘亏：数量为负，金额取绝对值，方向由规则借贷两侧表达
++        var r = await bridge.OnStockMovedAsync(Txn("TXN-ADJ-", "ADJ", -4m, 25m), "STOCKTAKE", "wms");
++        Assert.True(r.Success, r.Message);
++
++        var loss = await RoleAmountAsync(db, "PENDING_PROPERTY_LOSS");
++        var inv = await RoleAmountAsync(db, "INVENTORY");
++        Assert.Equal(100m, loss.debit);       // |−4|×25
++        Assert.Equal(100m, inv.credit);
++    }
++
++    [Fact]
++    public async Task Scrap_Generates_InventoryScrapped_DebitNonOpExpense_CreditInventory()
++    {
++        using var db = NewDb();
++        var bridge = await SetupAsync(db);
++
++        var r = await bridge.OnStockMovedAsync(Txn("TXN-SCR", "ADJ", -2m, 50m), "SCRAP", "wms");
++        Assert.True(r.Success, r.Message);
++
++        var exp = await RoleAmountAsync(db, "NON_OP_EXPENSE");
++        var inv = await RoleAmountAsync(db, "INVENTORY");
++        Assert.Equal(100m, exp.debit);        // |−2|×50
++        Assert.Equal(100m, inv.credit);
++    }
++
++    [Fact]
++    public async Task MissingUnitPrice_Skipped_NoVoucher()
++    {
++        using var db = NewDb();
++        var bridge = await SetupAsync(db);
++
++        var r = await bridge.OnStockMovedAsync(Txn("TXN-NP", "IN", 10m, null), "INBOUND", "wms");
++        Assert.False(r.Success);
++        Assert.Contains("SKIPPED", r.Message);
++        Assert.Equal(0, await db.JournalEntries.CountAsync());
++        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceNo == "TXN-NP" && e.Status == "SKIPPED"));
++    }
++
++    [Fact]
++    public async Task ZeroAmount_Skipped_NoVoucher()
++    {
++        using var db = NewDb();
++        var bridge = await SetupAsync(db);
++
++        var r = await bridge.OnStockMovedAsync(Txn("TXN-Z", "IN", 0m, 30m), "INBOUND", "wms");
++        Assert.False(r.Success);
++        Assert.Contains("SKIPPED", r.Message);
++        Assert.Equal(0, await db.JournalEntries.CountAsync());
++    }
++
++    [Fact]
++    public async Task Idempotent_SameTxnNo_NoDoubleVoucher()
++    {
++        using var db = NewDb();
++        var bridge = await SetupAsync(db);
++
++        await bridge.OnStockMovedAsync(Txn("TXN-IDEM", "IN", 10m, 30m), "INBOUND", "wms");
++        await bridge.OnStockMovedAsync(Txn("TXN-IDEM", "IN", 10m, 30m), "INBOUND", "wms");   // 重放同 TxnNo
++
++        Assert.Equal(1, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Inventory && j.Status == JournalStatus.Posted));
++    }
++
++    [Fact]
++    public async Task EngineThrows_ReturnsFailed_DoesNotThrow()
++    {
++        using var db = NewDb();
++        var bridge = new StockFinBridge(db, new ThrowingEngine(), NullLogger<StockFinBridge>.Instance);
++
++        // best-effort：引擎异常被握住，返回失败态而非抛出
++        var r = await bridge.OnStockMovedAsync(Txn("TXN-ERR", "IN", 10m, 30m), "INBOUND", "wms");
++        Assert.False(r.Success);
++        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceNo == "TXN-ERR" && e.Status == "FAILED"));
++    }
++
++    private sealed class ThrowingEngine : IAutoVoucherEngine
++    {
++        public Task<FinResult> GenerateAsync(FinBizEvent evt) => throw new InvalidOperationException("boom");
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 6a63c16..d70687e 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -181,20 +181,31 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IApMasterService, CP6.Core.Serv
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IArInvoiceService, CP6.Core.Services.Fin.ArInvoiceService>(); // 章04 §2 应收发票+出货自动开票+双凭证+销售红字
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IReceiptService, CP6.Core.Services.Fin.ReceiptService>(); // 章04 §3 收款+预收+撤销
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IArSettlementService, CP6.Core.Services.Fin.ArSettlementService>(); // 章04 §3 应收核销+尾差+汇差
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IArReconcileService, CP6.Core.Services.Fin.ArReconcileService>(); // 章04 §3 子账↔GL 勾稽
+ builder.Services.AddScoped<CP6.Core.Services.Fin.ICostCollectService, CP6.Core.Services.Fin.CostCollectService>(); // 章06 成本归集（料吃MES真实消耗×BOM单价+工费标准估算）
+ builder.Services.AddScoped<CP6.Core.Services.Fin.ICostSettleService, CP6.Core.Services.Fin.CostSettleService>(); // 章06 完工结转（料工费→WIP→FG凭证+FG单位成本）
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinReconciliationService, CP6.Core.Services.Fin.FinReconciliationService>(); // 章10 §5 每日对账（AP/AR子账↔GL+试算平衡）
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IArAgingService, CP6.Core.Services.Fin.ArAgingService>(); // 章04 §3 应收账龄
+ builder.Services.AddScoped<CP6.Core.Services.Fin.ICreditControlService, CP6.Core.Services.Fin.CreditControlService>(); // 章04 §3 信用控制（出货前反向约束）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IFinBridgeHook, CP6.Core.Services.Fin.FinBridgeHook>(); // F2-D4 出货→AR 自动开票/红冲（Phase6 桥，WMS|FIN 路由）
++// F1 波0 Task 0.2：库存移动→Fin 自动过账桥（采购入库/盘盈亏/报废，VoucherSource.Inventory）。
++// appsettings.json の StockFinBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
++var stockFinBridgeEnabled = builder.Configuration.GetValue<bool?>("StockFinBridge:Enabled") ?? true;
++if (stockFinBridgeEnabled)
++{
++    builder.Services.AddScoped<CP6.Core.Services.Integration.IStockFinBridge, CP6.Core.Services.Fin.StockFinBridge>();
++}
++else
++{
++    builder.Services.AddScoped<CP6.Core.Services.Integration.IStockFinBridge, CP6.Core.Services.Integration.NoOpStockFinBridge>();
++}
+ builder.Services.AddScoped<CP6.Core.Services.Fin.IFinAp>(sp => (CP6.Core.Services.Fin.IFinAp)sp.GetRequiredService<CP6.Core.Services.Fin.IApInvoiceService>()); // F2-D3 采购对外契约（同一 ApInvoiceService 实例）
+ 
+ // 4.0.3 采购（Pur）MVP 章01~04：主数据→PO→收货→三单匹配→自动建应付（补全财务 AP 前置）
+ builder.Services.AddScoped<CP6.Core.Services.Pur.ISupplierPriceService, CP6.Core.Services.Pur.SupplierPriceService>(); // 章01 §3/§4 采购价表 + 阶梯带价
+ builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IApprovalService, CP6.Core.Services.Pur.Contracts.ApprovalServiceAdapter>(); // P-D1 审批适配器（真实；PR/PO 经 Wf.IApprovalService 起 OA 流程，无绑定兜底自动放行）
+ builder.Services.AddScoped<CP6.Core.Services.Pur.IPurchaseOrderService, CP6.Core.Services.Pur.PurchaseOrderService>(); // 章02 PO 建单带出 + 派生状态机 + 送审
+ builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsReceiveService, CP6.Core.Services.Pur.Contracts.WmsReceiveServiceAdapter>(); // P-D1 WMS 入库适配器（真实；GR 收货委托 InboundService 完整入库流程，库存真增加，PoNo 钩子）
+ builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IWmsQcQuery, CP6.Core.Services.Pur.Contracts.WmsQcQueryAdapter>(); // P-D1 WMS 检收适配器（真实；按 InboundNo 查 QcInspection 判定，无记录→全合格保持桩语义）
+ builder.Services.AddScoped<CP6.Core.Services.Pur.IGoodsReceiptService, CP6.Core.Services.Pur.GoodsReceiptService>(); // 章03 双基准收货 + 委托入库 + 回写三累计锚
+ builder.Services.AddScoped<CP6.Core.Services.Pur.Contracts.IFinApService, CP6.Core.Services.Pur.Contracts.FinApServiceAdapter>(); // 章04 建应付适配器（委托财务 IFinAp，借方按 GL 角色 INVENTORY）

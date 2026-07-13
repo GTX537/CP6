@@ -160,6 +160,44 @@ public class PersistentWfNotifier : IWfNotifier
             await TrySendEmailAsync(starterId, title, body);
     }
 
+    // ── BranchPrunedAsync（内核 hardening）────────────────────────────────
+
+    /// <inheritdoc />
+    public async Task BranchPrunedAsync(Guid starterId, Guid instanceId, string flowKey, string nodeId, string? comment)
+    {
+        // 偏好：BranchPruned 是新类型键，现行 NotificationPrefs 无对应字段 → 缺键默认 true（信箱 spec §2.1 三态坍缩口径），
+        // 本方法 v1 不做偏好门控；偏好矩阵化由信箱 spec 落地时统一改造。
+        const string title = "您的申请有分支被驳回（其余分支继续）";
+        var body = string.IsNullOrWhiteSpace(comment)
+            ? $"流程 {flowKey} 的分支 {nodeId} 被驳回剪除，其余分支继续审批"
+            : $"流程 {flowKey} 的分支 {nodeId} 被驳回剪除（{comment}），其余分支继续审批";
+
+        await _notif.CreateAsync(
+            starterId, WfNotificationType.BranchPruned,
+            title, body, instanceId, taskId: null, flowKey);
+
+        try
+        {
+            await _hub.Clients.All.SendAsync("WfNotification", new
+            {
+                type       = WfNotificationType.BranchPruned,
+                userId     = starterId,
+                instanceId,
+                taskId     = (Guid?)null,
+                flowKey
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex,
+                "SignalR WfNotification(BranchPruned) 失败，忽略（用户 {UserId}）", starterId);
+        }
+
+        var prefs = await _pref.GetNotifyPrefsAsync(starterId);
+        if (prefs.Email)
+            await TrySendEmailAsync(starterId, title, body);
+    }
+
     // ── Private helpers ─────────────────────────────────────────────────
 
     /// <summary>

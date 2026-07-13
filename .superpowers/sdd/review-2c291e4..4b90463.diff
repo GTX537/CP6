@@ -1,0 +1,81 @@
+# Review package: 2c291e4..HEAD
+
+## Commits
+4b90463 fix(wfs-service-task): T9 错误边画布视觉区分（danger 虚线，Design System token）
+
+## Files changed
+ .../oa/designer/designerModel.serviceTask.spec.ts  | 26 ++++++++++++++++++++++
+ cp6.web/src/views/oa/designer/designerModel.ts     |  4 ++++
+ 2 files changed, 30 insertions(+)
+
+## Diff
+diff --git a/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts b/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts
+index 0e616c6..cb67cbe 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.serviceTask.spec.ts
+@@ -19,10 +19,36 @@ describe('serviceTask round-trip', () => {
+     const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'webApi' /* 缺 connector/path */ }], edges:[] }
+     const errs = validateClient(schema as any)
+     expect(errs.some(e => e.includes('errServiceConfig') || e.includes('服务'))).toBe(true)
+   })
+   it('validateClient flags timer with delayValue but no delayMode (radio 未点，镜像后端 E-WF-016)', () => {
+     const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'timer', serviceDelayValue:'3d' /* 缺 delayMode */ }], edges:[] }
+     const errs = validateClient(schema as any)
+     expect(errs).toContain('oa.designer.errServiceConfig')
+   })
+ })
++
++describe('error edge visual', () => {
++  it('isError edge gets danger dashed style; normal edge does not', () => {
++    const g = schemaToGraph({
++      nodes: [
++        { id: 'svc', type: 'serviceTask' } as any,
++        { id: 'end', type: 'end' } as any,
++        { id: 'h', type: 'approval' } as any,
++      ],
++      edges: [
++        { from: 'svc', to: 'end' },              // 普通边
++        { from: 'svc', to: 'h', isError: true }, // 失败边
++      ],
++    } as any)
++
++    const normal = g.edges.find(e => e.target === 'end')!
++    const err = g.edges.find(e => e.target === 'h')!
++
++    // 普通边无自定义 stroke；失败边用 danger token 虚线
++    expect((err.style as any)?.stroke).toBe('var(--cp-danger)')
++    expect((err.style as any)?.strokeDasharray).toBeTruthy()
++    expect((normal as any).style?.stroke).toBeUndefined()
++    // data.isError round-trip 不受影响
++    expect((err.data as any)?.isError).toBe(true)
++  })
++})
+diff --git a/cp6.web/src/views/oa/designer/designerModel.ts b/cp6.web/src/views/oa/designer/designerModel.ts
+index 6352fc0..e5802a3 100644
+--- a/cp6.web/src/views/oa/designer/designerModel.ts
++++ b/cp6.web/src/views/oa/designer/designerModel.ts
+@@ -80,20 +80,24 @@ export function schemaToGraph(schema: FlowSchemaDto): { nodes: VFNode[]; edges:
+     position: { x: n.x ?? 80, y: n.y ?? i * 120 },        // 无坐标→竖排兜底
+     data: { ...n },
+     label: n.name || n.id,
+   }))
+   const edges: VFEdge[] = (schema.edges ?? []).map(e => ({
+     id: `${e.from}__${e.to}`,
+     source: e.from,
+     target: e.to,
+     data: { condition: e.condition, ccUsers: e.ccUsers, isError: e.isError },
+     label: e.condition || undefined,
++    // 票9：失败边（IsError）用 danger 虚线视觉区分。颜色走 Design System token（禁硬编码色）。
++    ...(e.isError === true
++      ? { style: { stroke: 'var(--cp-danger)', strokeWidth: 2, strokeDasharray: '6 4' }, class: 'edge-error', animated: false }
++      : {}),
+   }))
+   return { nodes, edges }
+ }
+ 
+ /**
+  * Vue Flow 图 → FlowSchema（start = type==='start' 的节点；回写 x/y）。
+  * 支持两种调用：`graphToSchema(nodes, edges)` 或 `graphToSchema(schemaToGraph(...))`。
+  */
+ export function graphToSchema(graph: { nodes: VFNode[]; edges: VFEdge[] }): FlowSchemaDto
+ export function graphToSchema(nodes: VFNode[], edges: VFEdge[]): FlowSchemaDto

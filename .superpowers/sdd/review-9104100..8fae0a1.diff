@@ -1,0 +1,570 @@
+# Review package: 9104100..8fae0a1
+
+## Commits
+8fae0a1 test(mes): M-MES T6 測試補網——報工状態機5用例+PlanningBoard排産改期4用例
+
+## Files changed
+ .superpowers/sdd/mes-t6-report.md                  | 155 +++++++++++++++
+ CP6.Tests/Mes/PlanningBoardServiceTests.cs         | 169 ++++++++++++++++
+ CP6.Tests/Mes/ProductionResultStateMachineTests.cs | 216 +++++++++++++++++++++
+ 3 files changed, 540 insertions(+)
+
+## Diff
+diff --git a/.superpowers/sdd/mes-t6-report.md b/.superpowers/sdd/mes-t6-report.md
+new file mode 100644
+index 0000000..0b7f1b6
+--- /dev/null
++++ b/.superpowers/sdd/mes-t6-report.md
+@@ -0,0 +1,155 @@
++# M-MES T6 実施報告：測試補網（報工状態機 / PlanningBoard 排産改期）
++
++- 分支：`feat/m-mes-crosscutting`　基線：1749 緑
++- 結果：焦点 9 用例 全緑 → 全量 **1758 passed / 5 skipped**（＝1749 + 9、基線不跌）
++- 生産改動：**ゼロ**（新規テスト 2 ファイルのみ）
++  - `CP6.Tests/Mes/ProductionResultStateMachineTests.cs`（状態機 5 用例）
++  - `CP6.Tests/Mes/PlanningBoardServiceTests.cs`（排産改期 4 用例）
++
++---
++
++## 1. 既有覆盖盘点（重複回避の根拠）
++
++grep（ProductionResult/WorkOrder/PlanningBoard/Backflush/justCompleted/CostCollect）で既存テストを実読：
++
++| 対象 | 既存テスト | 本 T6 との棲み分け |
++|---|---|---|
++| 反冲（OUT/ISSUE）＋ActualQty 回写＋負在庫＋冪等＋部分失敗重放 | `CP6.Tests/Mes/BackflushTests.cs`（5 用例） | **除外**（F1 波 C.1 で錨定済）。状態機テストは backflush=null で注入せず |
++| 完工→反冲→成本归集→结转（料工費 WIP/FG/VAR 凭証・金額・冪等・2 闸） | `CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs`（6 用例） | **除外**（F1 波 C.2 で錨定済）。同ファイルは `NoOpWmsBridgeHook` を使用＝入庫フック発火契約は未検証 |
++| 工時派生（機時合併/人工累加/覆盖/中断控除） | `CP6.Tests/ProductionResultHourTests.cs`（4 用例） | **除外**（A2 で錨定済）。本 T6 は状態遷移・時間戳のみ |
++| 完成品入庫の在庫側真値（`InboundService.CreateFinishedGoodsFromWorkOrderAsync` → W01 完成品在庫・冪等） | `CP6.Tests/WmsErpClosedLoopTests.cs`（line 134-137） | **在庫側は錨定済**。本 T6 は「状態機が末工程完了で入庫フックを正しい良品累計で一度だけ発火するか」の**状態機側缺口のみ**を spy で補完 |
++| 報工状態機（開始/中断/再開/完了・非法/合法流転・トリガ発火） | **なし（審計 #7＝ゼロ）** | ← 本 T6 で新規 |
++| PlanningBoardService（Reschedule/AutoArrange） | **なし（審計 #7＝ゼロ）** | ← 本 T6 で新規 |
++
++結論：**反冲・成本归集・工時派生・入庫在庫真値は全て既存で錨定済**。本 T6 は状態機の遷移／ガード／トリガ発火契約と、排産改期の落库真値・並び替えロジックに限定し、既存とゼロ重複。
++
++---
++
++## 2. 報工状態機 用例（`ProductionResultStateMachineTests.cs`）
++
++`ProductionResultService.WriteAsync` は明示トランザクションを使うため、DB は `InMemoryEventId.TransactionIgnoredWarning` を抑止した `NewDb()` を使用（F1 テストと同姿勢）。backflush/finBridge は null 注入（F1 で錨定済のため）。
++
++### 用例① Complete_WhenNotStarted_Rejected_NothingPersisted（非法流転）
++- 入力：WO_A（Status=2 発行済）＋ 工程 OP1（ProcessStatus=0 未着手）に対し `CompleteAsync(good=5)`
++- 手算：case4 の先頭 `proc.ProcessStatus != 1` で mutation 前に throw。tx 未 commit → 何も落库しない。
++
++| 断言 | 手算期望 |
++|---|---|
++| 例外 message | `ME-MSG-042` |
++| ProductionResult 件数 | 0 |
++| proc.ProcessStatus | 0（不変） |
++| wo.Status | 2（不変） |
++
++### 用例② Start_WhenAlreadyStarted_Rejected（非法流転：重複開始）
++- 入力：WO_B ＋ OP1（ProcessStatus=1 着手中）に `StartAsync`
++- 手算：case1 先頭 `proc.ProcessStatus != 0` で throw。
++
++| 断言 | 手算期望 |
++|---|---|
++| 例外 message | `ME-MSG-042` |
++| ProductionResult 件数 | 0 |
++| proc.ProcessStatus | 1（不変） |
++
++### 用例③ FullLifecycle_Start_Suspend_Resume_Complete（合法全流転＋時間戳）
++唯一工程 OP1（初期 status0）に Start→Suspend(理由R01)→Resume→Complete(good=8) を順次実行。
++
++| ステップ | proc.ProcessStatus | wo.Status | 時間戳 / 数量 | PR type |
++|---|---|---|---|---|
++| Start | 0→**1** | →**3** InProgress | proc.ActualStartTime=NOW / wo.ActualStartDate=NOW | 1 |
++| Suspend | 1→**3** | →**5** Interrupted | — | 2 |
++| Resume | 3→**1** | →**3** InProgress | — | 3 |
++| Complete(8) | 1→**2** | →**4** Completed（全工程完了） | proc.ActualEndTime=NOW / proc.GoodQty=8 / wo.ActualEndDate=NOW / wo.CompletedQty=8 | 4 |
++
++- PR 合計 **4 件**、type 昇順 = `[1,2,3,4]`。全て断言済（時間戳は `>= t0` 手算下界で検証、套套回避）。
++
++### 用例④ Complete_LastProcess_FiresInboundHookOnce_WithAccumulatedGoodQty（全工程完了トリガ入庫）
++2 工程 OP1/OP2（両者 status1 着手中）、`RecordingWmsBridge` spy 注入。
++
++| 操作 | allDone? | wo.Status | wo.CompletedQty | フック発火 |
++|---|---|---|---|---|
++| Complete(OP1, 10) | OP2 が status1 → **false** | 3 のまま | 0→**10** | 0 回 |
++| Complete(OP2, 7) | OP1=2 & OP2=当該 → **true** | →**4** | 10→**17** | **1 回**：`OnProductionCompletedAsync("WO_D", 17, tester)` |
++
++- 断言：中間工程では spy.Calls=0・wo.Status=3；末工程で spy.Calls=**1**・LastWorkOrderNo="WO_D"・LastGoodQty=**17**（良品累計 10+7）・wo.ActualEndDate 非 null。
++- **状態機側缺口の補完**：既存 F1／端到端テストは `NoOpWmsBridgeHook` を使うため、この「末工程だけ・累計良品数で・一度だけ」発火契約は本 T6 が初めて錨定。入庫先の在庫真値は `WmsErpClosedLoopTests` が別途錨定済（重複回避）。
++
++### 用例⑤ Guards_SuspendNeedsReason_CompleteNeedsPositiveGood（境界ガード）
++- WO_E/OP1(status1) に `SuspendAsync`（理由なし）→ 手算：case2 で proc 変更前に理由空チェック → `ME-MSG-024`。proc.ProcessStatus=1 不変。
++- WO_F/OP1(status1) に `CompleteAsync(good=0)` → 手算：case4 で proc 変更前に `GoodQty<=0` チェック → `ME-MSG-012`。proc.ProcessStatus=1 不変。
++- 両 WO とも PR 0 件。
++
++---
++
++## 3. PlanningBoard 排産/改期 用例（`PlanningBoardServiceTests.cs`）
++
++`RescheduleAsync`/`AutoArrangeAsync` は明示トランザクション不使用のため素の InMemory（`TestHelper.CreateInMemoryContext`）で十分。
++
++### 用例① Reschedule_UnstartedProcess_PersistsNewTimesAndMachine（改期落库真値）
++- 入力：OP1（status0、旧 08:00-10:00、M0）を `Reschedule(2026-08-01 09:00 → 17:00, M9)`
++- 手算：Id 一致 → status0 通過 → start<end 通過 → 3 値上書き。
++
++| 断言 | 手算期望 |
++|---|---|
++| PlanStartTime | 2026-08-01 09:00 |
++| PlanEndTime | 2026-08-01 17:00 |
++| MachineCd | M9 |
++| Modifier | planner |
++
++### 用例② Reschedule_Guards_StartAfterEnd_Started_NotFound（改期3ガード）
++
++| 入力 | 手算期望 message |
++|---|---|
++| status0 工程に start(8/2) > end(8/1) | `ME-MSG-003` |
++| status1（着手中）工程に valid 改期 | `ME-MSG-042`（発行後ドラッグ不可） |
++| 不存在 Id | `ME-MSG-043` |
++
++### 用例③ Reschedule_PastDate_And_MachineOverlap_AreAccepted_NoConflictGuard（境界＝現状仕様 pin）
++- (a) status0 工程を **過去日付 2020-01-01 08:00-10:00** に改期 → 手算：過去日付ガード無し（`start<end` のみ検証）→ **受理**・落库。
++- (b) 同一号機 M1 上で既存工程 A(2026-07-15 08:00-10:00) と**完全重複**する 08:00-10:00 に改期 → 手算：号機衝突検知ロジック無し → **受理**・落库。A も 08:00-10:00 を占有し続ける（重複許容）。
++- **これは缺陷ではなく現状仕様の記録**：サーバは単にドラッグ位置を永続化し、過去/衝突は UI・計画側の責務（§2.3 コメント準拠）。自動衝突回避が要件化された場合の缺口として concerns に記載。
++
++### 用例④ AutoArrange_OrdersByPriorityDeliverySort_PacksPerMachine_SkipsStarted（自動配置真値）
++BaseDate=2026-07-15（baseTime=08:00）、DefaultHoursPerJob=2。
++
++対象工程（status0）：
++
++| 工程 | 所属WO(優先度/納期) | 号機 | Sort | LeadTime | 導出 hours |
++|---|---|---|---|---|---|
++| P_A | WO_HI(3 / 7-20) | M1 | 1 | null | default **2** |
++| P_C | WO_HI(3 / 7-20) | M2 | 2 | 1 日 | (int)max(1, 1×8)=**8** |
++| P_B | WO_LO(1 / 7-18) | M1 | 1 | null | default **2** |
++| P_D | WO_HI(3) | M1 | 3 | — | **対象外**（status1 着手済） |
++
++- 並び（優先度DESC→納期ASC→Sort）＝`[P_A, P_C, P_B]`（WO_HI 群が先、群内 Sort、最後に WO_LO）。
++- 号機別カーソル配置（初期 08:00）：
++
++| 工程 | 号機 | 開始 | 終了 | 号機 ptr 更新 |
++|---|---|---|---|---|
++| P_A | M1 | 08:00 | 10:00 | M1→10:00 |
++| P_C | M2 | 08:00 | 16:00（8h） | M2→16:00 |
++| P_B | M1 | 10:00（P_A の後に連続） | 12:00 | M1→12:00 |
++
++| 断言 | 手算期望 |
++|---|---|
++| changed | 3 |
++| P_A | 08:00-10:00 |
++| P_C | 08:00-16:00 |
++| P_B | 10:00-12:00 |
++| P_D | PlanStart/End とも null（不変） |
++
++全て一致。服務出力＝手算。
++
++---
++
++## 4. Self-review
++
++- 断言は全て手算固定値（状態値・時間戳・数量・並び位置・changed 件数・例外 message）。套套逻辑（サービス出力を再計算して同値比較）なし。時間戳は `>= t0` 手算下界で検証。
++- 既存カバレッジとゼロ重複（§1 の盘点根拠）。反冲・成本・工時・入庫在庫真値は全て除外。
++- 状態機：非法流転（②未開始完了/②重複開始）＋合法全流転（③）＋全工程完了トリガ入庫（④）＋境界ガード（⑤）を網羅。
++- PlanningBoard：改期落库真値（①）＋3ガード（②）＋境界現状仕様 pin（③）＋自動配置並び替え真値（④）。
++- 生産コード改動ゼロ。焦点 9/9 緑、全量 1758 緑（基線 1749 不跌）。
++
++## 5. Concerns（缺陷は修正せず記票）
++
++1. **[軽微・仕様記録] `RescheduleAsync` に過去日付ガード・号機衝突検知が無い**（用例③で pin 済）。現状は「サーバはドラッグ位置を永続化するだけ、衝突/過去は UI・計画側の責務」という設計。もし将来「同一号機の時間重複を自動回避／過去日付を拒否」が要件化されれば、ここが缺口になる。現時点では **by-design と判断**（§2.3 コメント準拠）、缺陷として修正せず記票のみ。
++2. **[観察] `AutoArrange` は既存の他工程の計画時間を無視して号機カーソルを baseTime から再構築する**。status0 の対象工程のみを並べ直すため、同一号機に既に status0 でない（着手中等）工程が別時間帯を占有していても、その占有を考慮せず 08:00 から詰める。用例④では対象外工程を検証済だが、「着手中工程の実占有と重ならないか」は保証しない。これも現状は計画者の目視前提の設計と解釈。缺陷判定は保留、記票のみ。
+diff --git a/CP6.Tests/Mes/PlanningBoardServiceTests.cs b/CP6.Tests/Mes/PlanningBoardServiceTests.cs
+new file mode 100644
+index 0000000..9df04bd
+--- /dev/null
++++ b/CP6.Tests/Mes/PlanningBoardServiceTests.cs
+@@ -0,0 +1,169 @@
++using CP6.Core.Services.Mes;
++using CP6.Entity.DomainModels.Mes;
++using CP6.Entity.DTOs.Mes;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests.Mes;
++
++/// <summary>
++/// M-MES T6 — 生産計画ボード（PlanningBoardService）排産/改期 核心用例。
++///
++/// 全局審計 #7：PlanningBoard 零テスト → 補網。真値錨定（期望値手算）。
++/// RescheduleAsync/AutoArrangeAsync は明示トランザクション不使用のため素の InMemory で十分。
++/// </summary>
++public class PlanningBoardServiceTests
++{
++    private static WorkOrderProcess Proc(string wo, string proc, int status, string? machine,
++        int sort = 1, decimal? leadTime = null, DateTime? planStart = null, DateTime? planEnd = null)
++        => new()
++        {
++            WorkOrderNo = wo, ProcessCd = proc, TaskCd = "T1", ProcessStatus = status,
++            MachineCd = machine, SortOrder = sort, LeadTime = leadTime,
++            PlanStartTime = planStart, PlanEndTime = planEnd,
++        };
++
++    // ══════════════════════════════════════════════════════════════════
++    //  Reschedule（ドラッグ改期）
++    // ══════════════════════════════════════════════════════════════════
++
++    // ── ① 改期落库真値：未着手(0)工程の計画日時＋号機が上書きされる ──
++    // 手算：Id 一致 → status0 通過 → start<end 通過 → PlanStart/PlanEnd/MachineCd を req 値で上書き。
++    [Fact]
++    public async Task Reschedule_UnstartedProcess_PersistsNewTimesAndMachine()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var p = Proc("WO1", "OP1", status: 0, machine: "M0",
++            planStart: new DateTime(2026, 7, 15, 8, 0, 0), planEnd: new DateTime(2026, 7, 15, 10, 0, 0));
++        db.Set<WorkOrderProcess>().Add(p);
++        await db.SaveChangesAsync();
++
++        var newStart = new DateTime(2026, 8, 1, 9, 0, 0);
++        var newEnd = new DateTime(2026, 8, 1, 17, 0, 0);
++        await new PlanningBoardService(db).RescheduleAsync(
++            new RescheduleRequest { Id = p.Id, PlanStartTime = newStart, PlanEndTime = newEnd, MachineCd = "M9" }, "planner");
++
++        var got = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == p.Id);
++        Assert.Equal(newStart, got.PlanStartTime);
++        Assert.Equal(newEnd, got.PlanEndTime);
++        Assert.Equal("M9", got.MachineCd);
++        Assert.Equal("planner", got.Modifier);
++    }
++
++    // ── ② 改期の3ガード：start>end(ME-MSG-003) / 着手済(ME-MSG-042) / 不存在(ME-MSG-043) ──
++    // 手算：
++    //   start>end → ME-MSG-003
++    //   ProcessStatus!=0（例：1 着手中）→ ME-MSG-042（発行後はドラッグ不可）
++    //   Id 不一致 → ME-MSG-043
++    [Fact]
++    public async Task Reschedule_Guards_StartAfterEnd_Started_NotFound()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        var pUnstarted = Proc("WO2", "OP1", status: 0, machine: "M1");
++        var pStarted = Proc("WO2", "OP2", status: 1, machine: "M1", sort: 2);
++        db.Set<WorkOrderProcess>().AddRange(pUnstarted, pStarted);
++        await db.SaveChangesAsync();
++        var svc = new PlanningBoardService(db);
++
++        // start > end（未着手でも日時逆転で拒否）
++        var ex3 = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.RescheduleAsync(
++            new RescheduleRequest { Id = pUnstarted.Id, PlanStartTime = new DateTime(2026, 8, 2), PlanEndTime = new DateTime(2026, 8, 1) }, "planner"));
++        Assert.Equal("ME-MSG-003", ex3.Message);
++
++        // 着手中 → 改期不可
++        var ex42 = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.RescheduleAsync(
++            new RescheduleRequest { Id = pStarted.Id, PlanStartTime = new DateTime(2026, 8, 1), PlanEndTime = new DateTime(2026, 8, 2) }, "planner"));
++        Assert.Equal("ME-MSG-042", ex42.Message);
++
++        // 不存在 Id
++        var ex43 = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.RescheduleAsync(
++            new RescheduleRequest { Id = Guid.NewGuid(), PlanStartTime = new DateTime(2026, 8, 1), PlanEndTime = new DateTime(2026, 8, 2) }, "planner"));
++        Assert.Equal("ME-MSG-043", ex43.Message);
++    }
++
++    // ── ③ 境界（服務の実語義を pin）：過去日付／同一号機の時間重複 いずれもガードなし＝受理 ──
++    // 手算：RescheduleAsync は start<end のみ検証。過去日付ガード無し・号機衝突検知無し → どちらも落库成功。
++    // ※これは「サーバは単にドラッグ位置を永続化するだけ、衝突/過去は UI/計画側の責務」という現状仕様の記録。
++    //   自動衝突回避が要件なら缺陷（concerns 参照）。
++    [Fact]
++    public async Task Reschedule_PastDate_And_MachineOverlap_AreAccepted_NoConflictGuard()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        // 既存：M1 上 2026-07-15 08:00-10:00 を占有する未着手工程 A
++        var a = Proc("WO3", "OP1", status: 0, machine: "M1",
++            planStart: new DateTime(2026, 7, 15, 8, 0, 0), planEnd: new DateTime(2026, 7, 15, 10, 0, 0));
++        var b = Proc("WO3", "OP2", status: 0, machine: "M1", sort: 2);
++        db.Set<WorkOrderProcess>().AddRange(a, b);
++        await db.SaveChangesAsync();
++        var svc = new PlanningBoardService(db);
++
++        // (a) 過去日付（2020 年）→ ガード無し、受理
++        await svc.RescheduleAsync(new RescheduleRequest
++        { Id = b.Id, PlanStartTime = new DateTime(2020, 1, 1, 8, 0, 0), PlanEndTime = new DateTime(2020, 1, 1, 10, 0, 0), MachineCd = "M1" }, "planner");
++        var afterPast = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == b.Id);
++        Assert.Equal(new DateTime(2020, 1, 1, 8, 0, 0), afterPast.PlanStartTime);
++
++        // (b) 号機 M1 上で A(08:00-10:00) と完全重複する 08:00-10:00 → 衝突検知無し、受理
++        await svc.RescheduleAsync(new RescheduleRequest
++        { Id = b.Id, PlanStartTime = new DateTime(2026, 7, 15, 8, 0, 0), PlanEndTime = new DateTime(2026, 7, 15, 10, 0, 0), MachineCd = "M1" }, "planner");
++        var afterOverlap = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == b.Id);
++        Assert.Equal(new DateTime(2026, 7, 15, 8, 0, 0), afterOverlap.PlanStartTime);
++        Assert.Equal(new DateTime(2026, 7, 15, 10, 0, 0), afterOverlap.PlanEndTime);
++        // A は依然 08:00-10:00 を占有（重複を許容）
++        var stillA = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == a.Id);
++        Assert.Equal(new DateTime(2026, 7, 15, 8, 0, 0), stillA.PlanStartTime);
++    }
++
++    // ══════════════════════════════════════════════════════════════════
++    //  AutoArrange（自動配置）
++    // ══════════════════════════════════════════════════════════════════
++
++    // ── ④ 自動配置：優先度降順→納期昇順→SortOrder で並べ、号機別に連続配置。着手済は対象外 ──
++    // 手算（BaseDate=2026-07-15、baseTime=07-15 08:00、DefaultHoursPerJob=2）：
++    //   対象（status0）を優先度DESC/納期ASC/SortOrder で並べる：
++    //     P_A: WO_HI(prio3), M1, sort1, LeadTime=null → hours=default2
++    //     P_C: WO_HI(prio3), M2, sort2, LeadTime=1日 → hours=(int)max(1,1*8)=8
++    //     P_B: WO_LO(prio1), M1, sort1, LeadTime=null → hours=default2
++    //   並び = [P_A, P_C, P_B]（WO_HI 群が先、群内は sort、最後に WO_LO）
++    //   配置（号機別カーソル、初期=08:00）：
++    //     P_A(M1): 08:00→10:00、M1 ptr=10:00
++    //     P_C(M2): 08:00→16:00（8h）、M2 ptr=16:00
++    //     P_B(M1): 10:00→12:00（M1 の続き）、M1 ptr=12:00
++    //   changed=3。着手済 P_D(status1,M1) は対象外＝計画日時 null のまま。
++    [Fact]
++    public async Task AutoArrange_OrdersByPriorityDeliverySort_PacksPerMachine_SkipsStarted()
++    {
++        using var db = TestHelper.CreateInMemoryContext();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_HI", ProductCd = "P1", Priority = 3, DeliveryDate = new DateTime(2026, 7, 20) });
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_LO", ProductCd = "P1", Priority = 1, DeliveryDate = new DateTime(2026, 7, 18) });
++
++        var pA = Proc("WO_HI", "OP1", status: 0, machine: "M1", sort: 1);
++        var pC = Proc("WO_HI", "OP2", status: 0, machine: "M2", sort: 2, leadTime: 1m);
++        var pB = Proc("WO_LO", "OP1", status: 0, machine: "M1", sort: 1);
++        var pD = Proc("WO_HI", "OP3", status: 1, machine: "M1", sort: 3); // 着手済 → 対象外
++        db.Set<WorkOrderProcess>().AddRange(pA, pC, pB, pD);
++        await db.SaveChangesAsync();
++
++        var changed = await new PlanningBoardService(db).AutoArrangeAsync(
++            new AutoArrangeRequest { BaseDate = new DateTime(2026, 7, 15), DefaultHoursPerJob = 2 }, "planner");
++
++        Assert.Equal(3, changed);
++
++        var gA = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == pA.Id);
++        var gB = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == pB.Id);
++        var gC = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == pC.Id);
++        var gD = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(x => x.Id == pD.Id);
++
++        // P_A(M1): 08:00-10:00
++        Assert.Equal(new DateTime(2026, 7, 15, 8, 0, 0), gA.PlanStartTime);
++        Assert.Equal(new DateTime(2026, 7, 15, 10, 0, 0), gA.PlanEndTime);
++        // P_C(M2): 08:00-16:00（LeadTime 1日=8h）
++        Assert.Equal(new DateTime(2026, 7, 15, 8, 0, 0), gC.PlanStartTime);
++        Assert.Equal(new DateTime(2026, 7, 15, 16, 0, 0), gC.PlanEndTime);
++        // P_B(M1): 10:00-12:00（M1 で P_A の後に連続）
++        Assert.Equal(new DateTime(2026, 7, 15, 10, 0, 0), gB.PlanStartTime);
++        Assert.Equal(new DateTime(2026, 7, 15, 12, 0, 0), gB.PlanEndTime);
++        // 着手済 P_D は不変（配置対象外）
++        Assert.Null(gD.PlanStartTime);
++        Assert.Null(gD.PlanEndTime);
++    }
++}
+diff --git a/CP6.Tests/Mes/ProductionResultStateMachineTests.cs b/CP6.Tests/Mes/ProductionResultStateMachineTests.cs
+new file mode 100644
+index 0000000..a574653
+--- /dev/null
++++ b/CP6.Tests/Mes/ProductionResultStateMachineTests.cs
+@@ -0,0 +1,216 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
++using CP6.Core.Services.Mes;
++using CP6.Entity.DomainModels.Mes;
++using CP6.Entity.DTOs.Mes;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace CP6.Tests.Mes;
++
++/// <summary>
++/// M-MES T6 — 報工状態機（ProductionResultService 開始/中断/再開/完了）核心用例。
++///
++/// 全局審計 #7：報工状態機 零テスト → 補網。真値錨定（期望値手算，服務算錯会红）。
++///
++/// 境界（F1 波との棲み分け）：
++///  ・反冲（OUT/ISSUE）＋成本归集+结转链は F1 波 BackflushTests / WorkOrderCompleteCostFlowTests が既に錨定済 → 本ファイルでは再現しない。
++///  ・完成品入庫の在庫側真値（InboundService.CreateFinishedGoodsFromWorkOrderAsync → W01 完成品在庫）は
++///    WmsErpClosedLoopTests が既に錨定済 → 本ファイルは「状態機が末工程完了で入庫フックを正しい良品累計で一度だけ発火するか」
++///    という状態機側の缺口のみを spy で検証（F1/端到端テストは NoOpWmsBridgeHook を使い、この発火契約は未検証だった）。
++/// </summary>
++public class ProductionResultStateMachineTests
++{
++    // WriteAsync は明示トランザクションを使うため InMemory の TransactionIgnoredWarning を抑止。
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++        .Options);
++
++    private static ProductionResultService NewService(CP6Context db, IWmsBridgeHook? wms = null)
++    {
++        var seq = new MesSequenceService(db);
++        var wo = new WorkOrderService(db, seq, new NoOpWmsBridgeHook());
++        // backflush/finBridge は null（反冲・成本链は F1 波で錨定済のため状態機テストでは注入しない）
++        return new ProductionResultService(db, seq, wo, new NoOpMesNotifier(), wms ?? new NoOpWmsBridgeHook());
++    }
++
++    private static ProductionResultRequest Req(string wo, string proc, decimal good = 0m,
++        decimal defect = 0m, string? suspendReason = null)
++        => new() { WorkOrderNo = wo, ProcessCd = proc, OperatorCd = "OP1", GoodQty = good, DefectQty = defect, SuspendReasonCd = suspendReason };
++
++    // ── ① 非法流転：未開始（ProcessStatus=0）で直接完了 → ME-MSG-042 で拒否、何も落库しない ──
++    // 手算：case4 の先頭 `proc.ProcessStatus != 1` で throw（mutation 前）。tx 未 commit → PR 0 件、proc/wo 不変。
++    [Fact]
++    public async Task Complete_WhenNotStarted_Rejected_NothingPersisted()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_A", ProductCd = "P1", Status = WorkOrderStatus.Issued });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_A", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 0 });
++        await db.SaveChangesAsync();
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => NewService(db).CompleteAsync(Req("WO_A", "OP1", good: 5m), "tester"));
++        Assert.Equal("ME-MSG-042", ex.Message);
++
++        Assert.Equal(0, await db.Set<ProductionResult>().CountAsync());
++        var proc = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_A");
++        Assert.Equal(0, proc.ProcessStatus);                                  // 未着手のまま
++        var wo = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_A");
++        Assert.Equal(WorkOrderStatus.Issued, wo.Status);                      // 指図も不変
++    }
++
++    // ── ② 非法流転：着手中（ProcessStatus=1）で再度開始 → ME-MSG-042 で拒否 ──
++    // 手算：case1 の先頭 `proc.ProcessStatus != 0` で throw。PR 0 件、proc 不変。
++    [Fact]
++    public async Task Start_WhenAlreadyStarted_Rejected()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_B", ProductCd = "P1", Status = WorkOrderStatus.InProgress });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_B", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        await db.SaveChangesAsync();
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => NewService(db).StartAsync(Req("WO_B", "OP1"), "tester"));
++        Assert.Equal("ME-MSG-042", ex.Message);
++
++        Assert.Equal(0, await db.Set<ProductionResult>().CountAsync());
++        var proc = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_B");
++        Assert.Equal(1, proc.ProcessStatus);                                  // 着手中のまま
++    }
++
++    // ── ③ 合法全流転：開始→中断→再開→完了（唯一工程 → 完了で指図=完了）──
++    // 手算（時系列）：
++    //   Start :  proc 0→1、proc.ActualStartTime=NOW、wo.Status→3、wo.ActualStartDate=NOW、PR type=1
++    //   Suspend: proc 1→3、wo.Status→5、PR type=2
++    //   Resume:  proc 3→1、wo.Status→3、PR type=3
++    //   Complete(good=8): proc 1→2、proc.ActualEndTime=NOW、proc.GoodQty 0→8、
++    //                     全工程完了 → wo.Status→4、wo.ActualEndDate=NOW、wo.CompletedQty 0→8、PR type=4
++    //   PR 合計 4 件（type 1/2/3/4 各 1）
++    [Fact]
++    public async Task FullLifecycle_Start_Suspend_Resume_Complete_TransitionsAndTimestamps()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_C", ProductCd = "P1", Status = WorkOrderStatus.Issued, ProductionQty = 8m });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_C", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 0 });
++        await db.SaveChangesAsync();
++        var svc = NewService(db);
++        var t0 = DateTime.Now.AddSeconds(-1);
++
++        await svc.StartAsync(Req("WO_C", "OP1"), "tester");
++        var p1 = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_C");
++        var w1 = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_C");
++        Assert.Equal(1, p1.ProcessStatus);
++        Assert.NotNull(p1.ActualStartTime);
++        Assert.True(p1.ActualStartTime >= t0);
++        Assert.Equal(WorkOrderStatus.InProgress, w1.Status);
++        Assert.NotNull(w1.ActualStartDate);
++
++        await svc.SuspendAsync(Req("WO_C", "OP1", suspendReason: "R01"), "tester");
++        var p2 = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_C");
++        var w2 = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_C");
++        Assert.Equal(3, p2.ProcessStatus);                                   // 中断
++        Assert.Equal(WorkOrderStatus.Interrupted, w2.Status);                // 5
++
++        await svc.ResumeAsync(Req("WO_C", "OP1"), "tester");
++        var p3 = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_C");
++        var w3 = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_C");
++        Assert.Equal(1, p3.ProcessStatus);                                   // 着手中に復帰
++        Assert.Equal(WorkOrderStatus.InProgress, w3.Status);                 // 3
++
++        await svc.CompleteAsync(Req("WO_C", "OP1", good: 8m), "tester");
++        var p4 = await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_C");
++        var w4 = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_C");
++        Assert.Equal(2, p4.ProcessStatus);                                   // 完了
++        Assert.NotNull(p4.ActualEndTime);
++        Assert.Equal(8m, p4.GoodQty);
++        Assert.Equal(WorkOrderStatus.Completed, w4.Status);                  // 4（全工程完了）
++        Assert.NotNull(w4.ActualEndDate);
++        Assert.Equal(8m, w4.CompletedQty);
++
++        // PR 4 件（type 1/2/3/4）
++        var prTypes = await db.Set<ProductionResult>().AsNoTracking().Where(r => r.WorkOrderNo == "WO_C")
++            .Select(r => r.ResultType).OrderBy(t => t).ToListAsync();
++        Assert.Equal(new[] { 1, 2, 3, 4 }, prTypes);
++    }
++
++    // ── ④ 全工程完了トリガ入庫：中間工程完了では発火せず、末工程完了で良品累計(=17)で一度だけ発火 ──
++    // 手算：2 工程 OP1/OP2 いずれも着手中(1)。
++    //   Complete(OP1,10): OP1 1→2。allDone? OP2 が status1 → false。wo.Status=3 のまま、フック 0 回。CompletedQty 0→10。
++    //   Complete(OP2, 7): OP2 1→2。allDone? OP1=2 & OP2=当該 → true。wo.Status→4、CompletedQty 10→17、
++    //                     justCompleted → OnProductionCompletedAsync(WO_D, 17, tester) 一度だけ発火。
++    [Fact]
++    public async Task Complete_LastProcess_FiresInboundHookOnce_WithAccumulatedGoodQty()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_D", ProductCd = "P1", Status = WorkOrderStatus.InProgress, ProductionQty = 17m });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_D", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_D", ProcessCd = "OP2", TaskCd = "T1", SortOrder = 2, ProcessStatus = 1 });
++        await db.SaveChangesAsync();
++
++        var spy = new RecordingWmsBridge();
++        var svc = NewService(db, spy);
++
++        // 中間工程 OP1 完了 → まだ全工程完了ではない
++        await svc.CompleteAsync(Req("WO_D", "OP1", good: 10m), "tester");
++        var wMid = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_D");
++        Assert.Equal(WorkOrderStatus.InProgress, wMid.Status);               // 3 のまま
++        Assert.Equal(10m, wMid.CompletedQty);
++        Assert.Equal(0, spy.Calls);                                          // フック未発火
++
++        // 末工程 OP2 完了 → 全工程完了 → 入庫フック発火
++        await svc.CompleteAsync(Req("WO_D", "OP2", good: 7m), "tester");
++        var wEnd = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WO_D");
++        Assert.Equal(WorkOrderStatus.Completed, wEnd.Status);               // 4
++        Assert.NotNull(wEnd.ActualEndDate);
++        Assert.Equal(17m, wEnd.CompletedQty);
++
++        Assert.Equal(1, spy.Calls);                                         // 一度だけ発火
++        Assert.Equal("WO_D", spy.LastWorkOrderNo);
++        Assert.Equal(17m, spy.LastGoodQty);                                // 良品累計（10+7）で入庫
++    }
++
++    // ── ⑤ 境界：中断は理由必須（ME-MSG-024）／完了は良品数>0 必須（ME-MSG-012）。拒否時は状態不変・PR 0 件 ──
++    // 手算：case2 は proc 変更前に理由空チェックで throw。case4 は proc 変更前に GoodQty<=0 チェックで throw。
++    [Fact]
++    public async Task Guards_SuspendNeedsReason_CompleteNeedsPositiveGood()
++    {
++        using var db = NewDb();
++        // 中断：理由なし → ME-MSG-024
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_E", ProductCd = "P1", Status = WorkOrderStatus.InProgress });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_E", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        // 完了：良品数 0 → ME-MSG-012
++        db.Set<WorkOrder>().Add(new WorkOrder { WorkOrderNo = "WO_F", ProductCd = "P1", Status = WorkOrderStatus.InProgress });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WO_F", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        await db.SaveChangesAsync();
++        var svc = NewService(db);
++
++        var exS = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SuspendAsync(Req("WO_E", "OP1"), "tester"));
++        Assert.Equal("ME-MSG-024", exS.Message);
++        Assert.Equal(1, (await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_E")).ProcessStatus);
++
++        var exC = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.CompleteAsync(Req("WO_F", "OP1", good: 0m), "tester"));
++        Assert.Equal("ME-MSG-012", exC.Message);
++        Assert.Equal(1, (await db.Set<WorkOrderProcess>().AsNoTracking().SingleAsync(p => p.WorkOrderNo == "WO_F")).ProcessStatus);
++
++        Assert.Equal(0, await db.Set<ProductionResult>().CountAsync());       // 両 WO とも PR 0 件
++    }
++
++    /// <summary>入庫フック発火の記録用 spy（実 InboundService/在庫側は WmsErpClosedLoopTests が別途錨定）。</summary>
++    private sealed class RecordingWmsBridge : IWmsBridgeHook
++    {
++        public int Calls;
++        public string? LastWorkOrderNo;
++        public decimal LastGoodQty;
++
++        public Task<WmsBridgeResult> OnWorkOrderIssuedAsync(string workOrderNo, string? userName)
++            => Task.FromResult(WmsBridgeResult.Skipped("n/a"));
++        public Task<WmsBridgeResult> OnOrderCreatedAsync(string webOrderNo, string? userName)
++            => Task.FromResult(WmsBridgeResult.Skipped("n/a"));
++        public Task<WmsBridgeResult> OnProductionCompletedAsync(string workOrderNo, decimal goodQty, string? userName)
++        {
++            Calls++;
++            LastWorkOrderNo = workOrderNo;
++            LastGoodQty = goodQty;
++            return Task.FromResult(WmsBridgeResult.Ok("RCPT-TEST"));
++        }
++    }
++}

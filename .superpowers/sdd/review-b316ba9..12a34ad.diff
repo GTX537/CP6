@@ -1,0 +1,410 @@
+# Review package: b316ba9..HEAD
+
+## Commits
+12a34ad fix(space-web): 波5 单格补码迁至属性面板rack分支——unplaced恒失败死UI撤除
+e445565 feat(space-web): 波5 单格补码UI——BindCodesDialog行内gen-code接线
+
+## Files changed
+ .../space/editor/__tests__/PropertiesPanel.spec.ts | 115 ++++++++++++++++++++-
+ .../views/space/editor/panels/PropertiesPanel.vue  |  91 +++++++++++++++-
+ docs/seeds/space-i18n-seed-2.sql                   |  10 +-
+ 3 files changed, 208 insertions(+), 8 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts b/cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts
+index d0c05a4..3a46381 100644
+--- a/cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts
++++ b/cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts
+@@ -1,21 +1,33 @@
+ // @vitest-environment jsdom
+ // 波5 属性面板单测：Zone 选中编辑走 EditZoneCmd（store 值变 + undo 生效）/ Aisle 一览渲染行数
+-import { describe, it, expect, beforeEach } from 'vitest'
+-import { mount } from '@vue/test-utils'
++// + rack 分支单格补码（genSingle 调用一次并消行 / 连点禁用 / 缺权移除）
++import { describe, it, expect, beforeEach, vi } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
+ import { createI18n } from 'vue-i18n'
+ import ElementPlus from 'element-plus'
+ import { setActivePinia, createPinia } from 'pinia'
+ import { useSpaceEditorStore } from '@/stores/spaceEditor'
++import { codeRuleApi } from '@/api/space/codeRule'
++import { permission } from '@/directives/permission'
+ import PropertiesPanel from '../panels/PropertiesPanel.vue'
+ import type { SelectionInfo } from '../panels/PropertiesPanel.vue'
+-import type { EditorScene, ZoneVO, AisleVO } from '@/types/space/scene'
++import type { EditorScene, ZoneVO, AisleVO, RackVO, LocationVO } from '@/types/space/scene'
++
++// v-permission store：默认全授权；单测内翻转 permHas.fn 隐藏指定键
++const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
++vi.mock('@/stores/permission', () => ({
++  usePermissionStore: () => ({ loaded: true, has: (k: string) => permHas.fn(k) }),
++}))
++vi.mock('@/api/space/codeRule', () => ({
++  codeRuleApi: { genSingle: vi.fn() },
++}))
+ 
+ const zone = (over: Partial<ZoneVO> = {}): ZoneVO => ({
+   id: 'z1', floorId: 'f1', zoneCode: 'Z-001', zoneName: '库区A',
+   zoneType: 1, polygon: '[[0,0],[1000,0],[1000,1000],[0,1000]]', color: null, enable: true, ...over,
+ })
+ 
+ const aisle = (over: Partial<AisleVO> = {}): AisleVO => ({
+   id: 'a1', zoneId: 'z1', aisleCode: 'A001',
+   polygon: '[[0,0],[1000,0],[1000,200],[0,200]]',
+   centerline: '[[0,100],[1000,100]]', ...over,
+@@ -23,24 +35,35 @@ const aisle = (over: Partial<AisleVO> = {}): AisleVO => ({
+ 
+ function makeScene(over: Partial<EditorScene> = {}): EditorScene {
+   return { floor: {} as any, zones: [], aisles: [], racks: [], locations: [], markers: [], ...over }
+ }
+ 
+ const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })
+ 
+ function mountPanel(selection: SelectionInfo) {
+   return mount(PropertiesPanel, {
+     props: { selection },
+-    global: { plugins: [i18n, ElementPlus] },
++    global: { plugins: [i18n, ElementPlus], directives: { permission } },
+   })
+ }
+ 
++const rackFx = (over: Partial<RackVO> = {}): RackVO => ({
++  id: 'r1', zoneId: 'z1', floorId: 'f1', rackCode: 'R001', x: 0, y: 0, z: 0, rotationZ: 0,
++  cols: 4, levels: 5, depthCount: 1, cellW: 1000, cellH: 1200, cellD: 800, ...over,
++})
++
++const locFx = (over: Partial<LocationVO> = {}): LocationVO => ({
++  id: 'L1', rackId: 'r1', floorId: 'f1', locationCode: null, codeOrigin: 0,
++  col: 1, level: 1, depth: 1, absX: 0, absY: 0, absZ: 0, sizeW: 1, sizeH: 1, sizeD: 1,
++  placed: true, status: 0, version: 1, ...over,
++})
++
+ describe('PropertiesPanel', () => {
+   beforeEach(() => {
+     setActivePinia(createPinia())
+   })
+ 
+   it('选中 zone 渲染名称输入，blur 后 store 值变 + 命令进栈可撤销', async () => {
+     const store = useSpaceEditorStore()
+     const z = zone()
+     store.load(makeScene({ zones: [z] }))
+ 
+@@ -103,10 +126,94 @@ describe('PropertiesPanel', () => {
+     store.load(makeScene())
+     const rack = {
+       id: 'r1', zoneId: 'z1', floorId: 'f1', rackCode: 'R001', x: 0, y: 0, z: 0, rotationZ: 0,
+       cols: 4, levels: 5, depthCount: 1, cellW: 1000, cellH: 1200, cellD: 800,
+     }
+     const w = mountPanel({ kind: 'rack', rack })
+     expect(w.find('[data-test="rack-code"]').text()).toBe('R001')
+     expect(w.text()).toContain('4 × 5 × 1')
+   })
+ })
++
++// ── rack 分支：单格补码（波5 修正——从 BindCodesDialog 迁入；对象=已落位且无码的子库位）──
++describe('PropertiesPanel rack 分支单格补码', () => {
++  beforeEach(() => {
++    setActivePinia(createPinia())
++    vi.clearAllMocks()
++    permHas.fn = () => true
++  })
++
++  function loadRackScene(locations: LocationVO[]) {
++    const store = useSpaceEditorStore()
++    store.load(makeScene({ racks: [rackFx()], locations }))
++    return store
++  }
++
++  it('选中 rack 只列已落位无码子库位（有码/未落位/他架不列）', () => {
++    loadRackScene([
++      locFx({ id: 'L1' }),                                          // placed 无码 → 列
++      locFx({ id: 'L2', col: 2, locationCode: 'A-01' }),            // 有码 → 不列
++      locFx({ id: 'L3', col: 3, placed: false }),                   // 未落位 → 不列
++      locFx({ id: 'L4', col: 4, rackId: 'r9' }),                    // 他架 → 不列
++    ])
++    const w = mountPanel({ kind: 'rack', rack: rackFx() })
++    expect(w.findAll('[data-test="uncoded-row"]').length).toBe(1)
++  })
++
++  it('点补码调用 genSingle(loc.id) 一次，成功更新 store code 并消行', async () => {
++    vi.mocked(codeRuleApi.genSingle).mockResolvedValue({ code: 0, message: '', data: { code: 'Z-01-01' } })
++    const store = loadRackScene([locFx({ id: 'L1' }), locFx({ id: 'L2', col: 2 })])
++    const w = mountPanel({ kind: 'rack', rack: rackFx() })
++    expect(w.findAll('[data-test="uncoded-row"]').length).toBe(2)
++
++    await w.findAll('[data-test="gen-btn"]')[0]!.trigger('click')
++    await flushPromises()
++
++    expect(codeRuleApi.genSingle).toHaveBeenCalledTimes(1)
++    expect(codeRuleApi.genSingle).toHaveBeenCalledWith('L1')
++    // store 直改（生码=后端持久化动作，不进命令栈）
++    expect(store.scene!.locations.find(l => l.id === 'L1')!.locationCode).toBe('Z-01-01')
++    expect(store.canUndo).toBe(false)
++    // 消行：无码列表只剩 L2
++    expect(w.findAll('[data-test="uncoded-row"]').length).toBe(1)
++  })
++
++  it('连点期间按钮禁用且 genSingle 只调用一次，完成后恢复', async () => {
++    let resolveGen!: (v: unknown) => void
++    vi.mocked(codeRuleApi.genSingle).mockReturnValue(
++      new Promise((r) => { resolveGen = r }) as ReturnType<typeof codeRuleApi.genSingle>,
++    )
++    loadRackScene([locFx({ id: 'L1' })])
++    const w = mountPanel({ kind: 'rack', rack: rackFx() })
++
++    const btn = () => w.find('[data-test="gen-btn"]')
++    await btn().trigger('click')
++    await flushPromises()
++
++    // 进行中：按钮禁用
++    expect((btn().element as HTMLButtonElement).disabled).toBe(true)
++
++    // 连点：disabled + 组件内重入守卫 → 不再触发
++    await btn().trigger('click')
++    await flushPromises()
++    expect(codeRuleApi.genSingle).toHaveBeenCalledTimes(1)
++
++    resolveGen({ code: 0, message: '', data: { code: 'X' } })
++    await flushPromises()
++    // 成功后该行已消，行数归零
++    expect(w.findAll('[data-test="uncoded-row"]').length).toBe(0)
++  })
++
++  it('缺 space-code-rule:generate 权时补码按钮从 DOM 移除，行仍在', () => {
++    permHas.fn = (k) => k !== 'space-code-rule:generate'
++    loadRackScene([locFx({ id: 'L1' })])
++    const w = mountPanel({ kind: 'rack', rack: rackFx() })
++    expect(w.findAll('[data-test="gen-btn"]').length).toBe(0)
++    expect(w.findAll('[data-test="uncoded-row"]').length).toBe(1)
++  })
++
++  it('无无码子库位时补码区不渲染', () => {
++    loadRackScene([locFx({ id: 'L1', locationCode: 'A-01' })])
++    const w = mountPanel({ kind: 'rack', rack: rackFx() })
++    expect(w.find('[data-test="uncoded-section"]').exists()).toBe(false)
++  })
++})
+diff --git a/cp6.web/src/views/space/editor/panels/PropertiesPanel.vue b/cp6.web/src/views/space/editor/panels/PropertiesPanel.vue
+index 2902c3c..6af6c34 100644
+--- a/cp6.web/src/views/space/editor/panels/PropertiesPanel.vue
++++ b/cp6.web/src/views/space/editor/panels/PropertiesPanel.vue
+@@ -1,18 +1,20 @@
+ <script setup lang="ts">
+ import { reactive, computed, watch } from 'vue'
+ import { useI18n } from 'vue-i18n'
++import { ElMessage } from 'element-plus'
+ import { useSpaceEditorStore } from '@/stores/spaceEditor'
++import { codeRuleApi } from '@/api/space/codeRule'
+ import { EditZoneCmd } from '@/space-editor/command/commands/EditZoneCmd'
+ import { EditMarkerCmd } from '@/space-editor/command/commands/EditMarkerCmd'
+ import { pointInPolygon } from '@/space-editor/interact/collide/CollisionHint'
+-import type { ZoneVO, MarkerVO, RackVO, AisleVO } from '@/types/space/scene'
++import type { ZoneVO, MarkerVO, RackVO, AisleVO, LocationVO } from '@/types/space/scene'
+ 
+ /** 选中态描述——FloorEditor 从 selectionIds 解析后注入。三分支 zone/marker/rack + 空态(Aisle 一览)。 */
+ export type SelectionInfo =
+   | { kind: 'none' }
+   | { kind: 'zone'; zone: ZoneVO }
+   | { kind: 'marker'; marker: MarkerVO }
+   | { kind: 'rack'; rack: RackVO }
+ 
+ const props = defineProps<{ selection: SelectionInfo }>()
+ /** 命令改 store 后通知父级重渲染画布（保存仍走既有场景保存通道）。 */
+@@ -90,20 +92,55 @@ function commitMarker(field: 'text' | 'markerType'): void {
+   if (field === 'text' && String(next).trim() === '') {
+     markerForm.text = m.text
+     return
+   }
+   const cmd = new EditMarkerCmd(m.id, { [field]: m[field] }, { [field]: next })
+   store.stack.exec(cmd, store.buildEditorContext())
+   store.updateUndoRedo()
+   emit('changed')
+ }
+ 
++// ── Rack 分支：单格补码（波5）────────────────────────────────────────────────
++// 对象 = 选中货架下「已落位(placed)且无码」的子库位。后端 GenSingleAsync 守卫
++// RackId!=null ∧ Placed==true，故此挂载面与契约吻合（unplaced 行恒失败，已弃）。
++const uncodedLocs = computed<LocationVO[]>(() => {
++  if (props.selection.kind !== 'rack') return []
++  const rid = props.selection.rack.id
++  return (store.scene?.locations ?? []).filter(
++    l => l.rackId === rid && l.placed && !(l.locationCode ?? '').trim(),
++  )
++})
++
++// per-loc 进行中集合防连点（按钮 loading+disabled + 重入守卫）
++const genInflight = reactive(new Set<string>())
++
++// 点「补码」→ genSingle(loc.id)。成功：直改 store 中该库位 code（生码是后端持久化动作，
++// 不属命令栈 undo 范畴）→ uncodedLocs 随之消行 + 成功 toast。失败：http 拦截器已弹，
++// catch 仅止崩（照生命周期页范式）。
++async function handleGenSingle(loc: LocationVO): Promise<void> {
++  if (genInflight.has(loc.id)) return
++  genInflight.add(loc.id)
++  try {
++    const res = await codeRuleApi.genSingle(loc.id)
++    const code = res.data?.code ?? ''
++    if (code) {
++      const target = store.scene?.locations.find(l => l.id === loc.id)
++      if (target) target.locationCode = code
++      ElMessage.success(t('space.rack.genDone', { code }))
++    }
++  } catch {
++    /* 拦截器已提示 */
++  } finally {
++    genInflight.delete(loc.id)
++  }
++}
++
+ // ── Aisle 一览（只读：方向 / 所属库区 / 命中库位数）───────────────────────────
+ const aisles = computed<AisleVO[]>(() => store.scene?.aisles ?? [])
+ 
+ function aisleDirection(a: AisleVO): string {
+   try {
+     const cl = JSON.parse(a.centerline) as number[][]
+     const p0 = cl[0]
+     const p1 = cl[cl.length - 1]
+     if (!p0 || !p1) return '—'
+     const dx = Math.abs((p1[0] ?? 0) - (p0[0] ?? 0))
+@@ -190,20 +227,44 @@ function aisleHitCount(a: AisleVO): number {
+     <!-- Rack 分支（只读尺寸；反向建模入口保持在工具栏）-->
+     <template v-else-if="selection.kind === 'rack'">
+       <div class="panel-title">{{ t('货架属性') }}</div>
+       <dl class="props-readonly">
+         <dt>{{ t('货架编码') }}</dt><dd data-test="rack-code">{{ selection.rack.rackCode }}</dd>
+         <dt>{{ t('列 × 层 × 深') }}</dt>
+         <dd>{{ selection.rack.cols }} × {{ selection.rack.levels }} × {{ selection.rack.depthCount }}</dd>
+         <dt>{{ t('单格尺寸mm') }}</dt>
+         <dd>{{ selection.rack.cellW }} × {{ selection.rack.cellH }} × {{ selection.rack.cellD }}</dd>
+       </dl>
++
++      <!-- 单格补码（波5）：已落位且无码的子库位逐行补码；无无码行时整区不渲染 -->
++      <div v-if="uncodedLocs.length > 0" class="gen-section" data-test="uncoded-section">
++        <div class="gen-title">{{ t('space.rack.uncodedTitle') }}</div>
++        <div
++          v-for="l in uncodedLocs"
++          :key="l.id"
++          class="gen-row"
++          data-test="uncoded-row"
++        >
++          <span class="gen-pos">{{ l.col }} - {{ l.level }} - {{ l.depth }}</span>
++          <el-button
++            v-permission="'space-code-rule:generate'"
++            size="small"
++            :loading="genInflight.has(l.id)"
++            :disabled="genInflight.has(l.id)"
++            data-test="gen-btn"
++            @click="handleGenSingle(l)"
++          >
++            {{ t('space.rack.genSingle') }}
++          </el-button>
++        </div>
++      </div>
++
+       <div class="panel-hint">{{ t('库位码绑定请用工具栏「反向建模」') }}</div>
+     </template>
+ 
+     <!-- 空态：Aisle 一览 -->
+     <template v-else>
+       <div class="panel-title">{{ t('巷道一览') }}</div>
+       <div v-if="aisles.length === 0" class="panel-hint">{{ t('暂无巷道（阵列生成时勾选「排间生成巷道」）') }}</div>
+       <div v-else class="aisle-table">
+         <div class="aisle-head">
+           <span>{{ t('巷道') }}</span>
+@@ -283,11 +344,39 @@ function aisleHitCount(a: AisleVO): number {
+ }
+ .a-code {
+   font-weight: 600;
+   color: var(--cp-ink);
+ }
+ .a-zone {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+ }
++
++/* 单格补码区（波5）——配色一律取面板既有主题变量，零硬编码色 */
++.gen-section {
++  margin-top: 10px;
++  padding-top: 8px;
++  border-top: 1px solid var(--cp-line);
++  font-size: var(--cp-fs-xs);
++}
++.gen-title {
++  color: var(--cp-muted);
++  font-weight: 600;
++  margin-bottom: 4px;
++}
++.gen-row {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 8px;
++  padding: 3px 2px;
++  border-bottom: 1px solid var(--cp-line-soft);
++}
++.gen-row:hover {
++  background: var(--cp-bg-hover);
++}
++.gen-pos {
++  color: var(--cp-text);
++  white-space: nowrap;
++}
+ </style>
+diff --git a/docs/seeds/space-i18n-seed-2.sql b/docs/seeds/space-i18n-seed-2.sql
+index 23173fc..fe6c863 100644
+--- a/docs/seeds/space-i18n-seed-2.sql
++++ b/docs/seeds/space-i18n-seed-2.sql
+@@ -5,21 +5,21 @@
+  * 対象テーブル：Sys_Langs（列 LangKey / ZhCN / ZhTW / En / Ja / Ko）
+  * 冪等：MERGE（既存キーは UPDATE、無ければ INSERT）
+  * 実行：sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/space-i18n-seed-2.sql -b
+  *
+  * キーの唯一の権威 = 3 コンポーネント実コード grep（Task 5 で対照済み）:
+  *   SpaceCodeRuleView.vue + SegmentsEditor.vue（space.rule.*・64 件）
+  *   SpacePublishView.vue（space.publish.*・47 件、波5 で goCodeRule/dupGroupTitle 追補）
+  *   SpaceEventsView.vue（space.events.*・20 件）
+  * ★ space.common.* は 波2 space-i18n-seed.sql で登録済みのため本ファイルには含めない
+  *   （edit/delete/cancel/save/action/required/success/confirmDelete/confirm 等は再利用）。
+- * 合計 131 キー = rule 64 + publish 47 + events 20。
++ * 合計 134 キー = rule 64 + publish 47 + events 20 + rack 3（波5 PropertiesPanel 単格採番 追補）。
+  * ============================================================ */
+ SET NOCOUNT ON; SET XACT_ABORT ON;
+ SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;
+ PRINT '=== Space i18n シード第2弾 開始 ===';
+ 
+ IF OBJECT_ID('tempdb..#i18n2') IS NOT NULL DROP TABLE #i18n2;
+ CREATE TABLE #i18n2 (
+     -- COLLATE DATABASE_DEFAULT: 一時テーブルが tempdb 既定照合順序（Latin1）を継承し
+     -- Sys_Langs.LangKey（Chinese_PRC_CI_AS）との MERGE 結合で照合順序衝突（Msg 468）を起こすのを回避。
+     LangKey nvarchar(200) COLLATE DATABASE_DEFAULT NOT NULL PRIMARY KEY,
+@@ -159,23 +159,27 @@ INSERT INTO #i18n2 VALUES
+   (N'space.events.col.targetModule', N'目标模块', N'目標模組',   N'Target',            N'連携先',              N'대상 모듈'),
+   (N'space.events.col.status',     N'状态',       N'狀態',       N'Status',            N'ステータス',          N'상태'),
+   (N'space.events.col.attempts',   N'尝试次数',   N'嘗試次數',   N'Attempts',          N'試行回数',            N'시도 횟수'),
+   (N'space.events.col.createDate', N'发生时间',   N'發生時間',   N'Created',           N'発生日時',            N'발생 일시'),
+   (N'space.events.col.lastError',  N'最新错误',   N'最新錯誤',   N'Last Error',        N'最終エラー',          N'최근 오류'),
+   (N'space.events.status.SUCCESS', N'成功',       N'成功',       N'Success',           N'成功',                N'성공'),
+   (N'space.events.status.SKIPPED', N'跳过',       N'跳過',       N'Skipped',           N'スキップ',            N'건너뜀'),
+   (N'space.events.status.PENDING', N'待处理',     N'待處理',     N'Pending',           N'保留中',              N'대기'),
+   (N'space.events.status.FAILED',  N'失败',       N'失敗',       N'Failed',            N'失敗',                N'실패'),
+   (N'space.events.status.DEAD',    N'死信',       N'死信',       N'Dead',              N'デッド',              N'데드'),
+-  (N'space.events.status.COMPENSATED', N'已补偿', N'已補償',     N'Compensated',       N'補償済',              N'보상됨');
++  (N'space.events.status.COMPENSATED', N'已补偿', N'已補償',     N'Compensated',       N'補償済',              N'보상됨'),
++  -- ── 波5：属性面板 rack 分支 单格补码（PropertiesPanel・3 件）──────────────
++  (N'space.rack.uncodedTitle',     N'无码库位（可补码）', N'無碼庫位（可補碼）', N'Uncoded locations (code-able)', N'未採番ロケーション（採番可）', N'미채번 로케이션 (코드 생성 가능)'),
++  (N'space.rack.genSingle',        N'补码',       N'補碼',       N'Gen Code',          N'採番',                N'코드 생성'),
++  (N'space.rack.genDone',          N'已生成编码：{code}', N'已產生編碼：{code}', N'Code generated: {code}', N'採番完了：{code}', N'코드 생성됨: {code}');
+ 
+ DECLARE @actionLog TABLE (act nvarchar(10));
+ MERGE Sys_Langs AS tgt USING #i18n2 AS src ON tgt.LangKey = src.LangKey
+ WHEN MATCHED THEN UPDATE SET tgt.ZhCN = src.ZhCN, tgt.ZhTW = src.ZhTW, tgt.En = src.En, tgt.Ja = src.Ja, tgt.Ko = src.Ko
+ WHEN NOT MATCHED BY TARGET THEN INSERT (LangKey, ZhCN, ZhTW, En, Ja, Ko) VALUES (src.LangKey, src.ZhCN, src.ZhTW, src.En, src.Ja, src.Ko)
+ OUTPUT $action INTO @actionLog;
+ 
+ DECLARE @ins INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'INSERT');
+ DECLARE @upd INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'UPDATE');
+-PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 131 キー想定）';
++PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 134 キー想定）';
+ DROP TABLE #i18n2;
+ PRINT '=== Done ===';

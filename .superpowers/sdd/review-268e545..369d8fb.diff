@@ -1,0 +1,398 @@
+# Review package: 268e545..HEAD
+
+## Commits
+369d8fb docs(sdd): Task 1 报告——波5对账漂移扫描worker(TDD RED/GREEN+1811绿)
+e98021d feat(space): 波5 对账漂移扫描worker(Status=1∧bin停用,只读告警)
+
+## Files changed
+ .superpowers/sdd/task-1-brief.md                   | 73 ++++++++++++++--------
+ .superpowers/sdd/task-1-report.md                  | 71 +++++++++++----------
+ CP6.Core/Services/Space/SpaceBinDriftScanner.cs    | 28 +++++++++
+ CP6.Tests/Space/SpaceBinDriftScannerTests.cs       | 64 +++++++++++++++++++
+ .../SpaceBinReconciliationWorker.cs                | 64 +++++++++++++++++++
+ CP6.WebApi/Program.cs                              |  2 +
+ 6 files changed, 243 insertions(+), 59 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-1-brief.md b/.superpowers/sdd/task-1-brief.md
+index b4cc9fa..295d177 100644
+--- a/.superpowers/sdd/task-1-brief.md
++++ b/.superpowers/sdd/task-1-brief.md
+@@ -1,35 +1,58 @@
+-# Task P0-T1: DataProtection 密钥环持久化到数据库
++### Task 1: 对账漂移扫描 Worker(Space.Status=1 ∧ T_WmsBin.IsActive=false)
+ 
+-（提取自 docs/superpowers/plans/2026-07-07-p0-platform-hardening.md）
++**Files:**
++- Create: `CP6.Core\Services\Space\SpaceBinDriftScanner.cs`
++- Create: `CP6.WebApi\BackgroundServices\SpaceBinReconciliationWorker.cs`
++- Modify: `CP6.WebApi\Program.cs`(照 `:503` FinReconciliationWorker 注册处,紧邻加一行)
++- Test: `CP6.Tests\Space\SpaceBinDriftScannerTests.cs`
+ 
+-**Goal（包级）:** 修掉平台级生产隐患：DataProtection 密钥不持久（SSO/2FA/CSRF 重启失效）。用户拍板（2026-07-07）：密钥环存数据库（EF）。
++**Interfaces:**
++- Produces: `SpaceBinDriftScanner.ScanAsync(CP6Context db, CancellationToken ct)` → `Task<List<SpaceBinDrift>>`;`record SpaceBinDrift(Guid LocationId, string? LocationCode, long BinVersion)`。
++- Worker 纯壳:照 `CP6.WebApi\BackgroundServices\FinReconciliationWorker.cs`(启动延迟 1min + 每 24h,`TenantScopeRunner.ForEachTenantAsync`,只读,漂移逐条 `LogError`,`ProcessOnceAsync` 公开可测)。
+ 
+-## Global Constraints
++**要点:** 两表以**主键等值 join**(`WmsBin.Id == Space_Location.Id`,跨系统同一 GUID)。漂移=已发布库位(Status=1, IsDeleted=0)对应 bin 存在且 IsActive=false。**只读不自愈**(对账 job 语义,与 FinReconciliationWorker 一致)。
+ 
+-- 基线不许跌：后端 `dotnet test` 全绿（当前 1565+）；每 commit 立即 push。
+-- 迁移命令：`dotnet ef migrations add <Name> --project CP6.Core --startup-project CP6.WebApi`；迁移文件必须只含预期变更，多出=模型漂移停下排查。
+-- 本包完成后 WFS 深化 engine-infra 的硬前置 D-T0 即满足。
++- [ ] **Step 1: 写失败测试**(InMemory context;三例:①Status=1+bin.IsActive=false→命中 ②Status=1+bin.IsActive=true→不命中 ③Status=2+bin.IsActive=false→不命中):
+ 
+-## Files
+-
+-- Modify: `CP6.WebApi/CP6.WebApi.csproj`（或 CP6.Core.csproj，包加在 DbContext 所在项目）
+-- Modify: `CP6.Core/EFDbContext/CP6Context.cs`
+-- Modify: `CP6.WebApi/Program.cs:518` 附近
+-- Test: `CP6.Tests/Platform/DataProtectionPersistenceTests.cs`（**已存在于工作树，上会话按 TDD 先写好，未提交**）
+-
+-## Steps
++```csharp
++[Fact]
++public async Task Scan_PublishedLocationWithInactiveBin_Reported()
++{
++    using var db = TestDb.Create(); // 照仓内既有 InMemory 先例
++    var id = Guid.NewGuid();
++    db.Space_Locations.Add(new Space_Location { Id = id, Status = 1, LocationCode = "A-01-01" });
++    db.WmsBins.Add(new WmsBin { Id = id, LocationCode = "A-01-01", WarehouseCd = "W1", IsActive = false });
++    await db.SaveChangesAsync();
++
++    var drifts = await SpaceBinDriftScanner.ScanAsync(db, default);
++
++    Assert.Single(drifts);
++    Assert.Equal(id, drifts[0].LocationId);
++}
++```
+ 
+-- [ ] Step 1: 引包 `Microsoft.AspNetCore.DataProtection.EntityFrameworkCore`（版本对齐项目 .NET 8 系列）。
+-- [ ] Step 2: `CP6Context` 实现 `IDataProtectionKeyContext`：加 `public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }`（`using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;`）。**注意**：`DataProtectionKey` 非 BaseTenantEntity，确认 CP6Context 的反射租户过滤只扫 `BaseTenantEntity` 子类（`CP6Context.cs:2062` 一带）不会误伤它——若按基类过滤则天然安全，写一个断言测试。
+-- [ ] Step 3: 迁移 `DataProtectionKeys`（一张表三列：Id/FriendlyName/Xml）。
+-- [ ] Step 4: `Program.cs:518` 改为：
++- [ ] **Step 2: 跑测试确认红**(`dotnet test --filter SpaceBinDriftScannerTests`)
++- [ ] **Step 3: 最小实现**:
+ 
+ ```csharp
+-builder.Services.AddDataProtection()
+-    .PersistKeysToDbContext<CP6Context>()
+-    .SetApplicationName("CP6");   // 多副本/重装后应用名一致才能解密旧密文
++public static class SpaceBinDriftScanner
++{
++    public record SpaceBinDrift(Guid LocationId, string? LocationCode, long BinVersion);
++
++    public static async Task<List<SpaceBinDrift>> ScanAsync(CP6Context db, CancellationToken ct)
++        => await db.Space_Locations
++            .Where(l => l.Status == 1 && !l.IsDeleted)
++            .Join(db.WmsBins.Where(b => !b.IsActive),
++                  l => l.Id, b => b.Id,
++                  (l, b) => new SpaceBinDrift(l.Id, l.LocationCode, b.Version))
++            .ToListAsync(ct);
++}
+ ```
+ 
+-- [ ] Step 5: 测试：①启动后 `DataProtectionKeys` 表出现至少一行；②用 `IDataProtectionProvider.CreateProtector("test").Protect/Unprotect` 往返；③新建第二个 ServiceProvider（模拟重启，同一 DB）能解密第一个加密的密文。
+-- [ ] Step 6: **回归关键点**：SSO ClientSecret 既有密文是旧临时密钥加密的，切换后**解不开**——写一步运维说明进 commit message：部署后需在 SSO 配置页重存一次 ClientSecret（PMS SsoConfig 页）。
+-- [ ] Step 7: 全量测试绿 → commit + push（`fix(platform): DataProtection 密钥环持久化到 DB——SSO/2FA/CSRF 重启存活(兼 WFS D-T0)`）。
++Worker(照 FinReconciliationWorker 全文逐字同构,把勾稽逻辑换成调 `ScanAsync` 后 `foreach (var d in drifts) _logger.LogError("[SpaceBinDrift] 已发布库位 {LocationId}({Code}) 对应 WMS bin 处于停用态(version={V})——发布/停用链路漂移,需人工核查", …)`),并在 Program.cs FinReconciliationWorker 注册行旁 `builder.Services.AddHostedService<SpaceBinReconciliationWorker>();`。
++
++- [ ] **Step 4: 跑测试确认绿 + 全量后端绿**
++- [ ] **Step 5: Commit + push**(`feat(space): 波5 对账漂移扫描worker(Status=1∧bin停用,只读告警)`)
++
++---
++
+diff --git a/.superpowers/sdd/task-1-report.md b/.superpowers/sdd/task-1-report.md
+index 5987751..6d50caa 100644
+--- a/.superpowers/sdd/task-1-report.md
++++ b/.superpowers/sdd/task-1-report.md
+@@ -1,51 +1,54 @@
+-# Task P0-T1 Report: DataProtection 密钥环持久化到数据库（EF）
++# Task 1 报告：Space 波5 对账漂移扫描 Worker
+ 
+-## What I implemented
++**Status: DONE** — commit `e98021d`（分支 feat/space-wave5，已 push）
+ 
+-- **Step 1 — Package**: Added `Microsoft.AspNetCore.DataProtection.EntityFrameworkCore` `8.0.12` to `CP6.Core/CP6.Core.csproj` (DbContext lives in CP6.Core; the reference flows transitively to CP6.WebApi and CP6.Tests, so no separate add needed there).
+-- **Step 2 — DbContext**: `CP6Context` now implements `IDataProtectionKeyContext` and exposes `public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }` (added `using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;`). Confirmed the reflection tenant filter at `CP6Context.cs:2062` only scans `BaseTenantEntity` subclasses (`typeof(BaseTenantEntity).IsAssignableFrom(...) && t.BaseType is null`), so `DataProtectionKey` is untouched — asserted by the `DataProtectionKey_Is_Not_TenantFiltered` test (`GetQueryFilter()` is null).
+-- **Step 3 — Migration**: `20260708085236_PersistDataProtectionKeys` — contains ONLY the `DataProtectionKeys` table (Id identity PK / FriendlyName / Xml, all nvarchar(max)). No model drift.
+-- **Step 4 — Program.cs**: `builder.Services.AddDataProtection().PersistKeysToDbContext<CP6Context>().SetApplicationName("CP6");` at ~line 519. Added `using Microsoft.AspNetCore.DataProtection;` for the `PersistKeysToDbContext` / `SetApplicationName` extension methods.
+-- **Step 5 — Tests**: pre-existing 5-test suite verifies interface contract, no tenant filter, key row lands in table after first Protect, Protect/Unprotect roundtrip, and cross-ServiceProvider (restart-sim, shared InMemory root) decrypt. Assertions match the brief; no changes needed.
+-- **Step 6 — Ops note**: captured in the commit body (SSO ClientSecret existing ciphertext was encrypted by the old ephemeral key and will NOT decrypt after switch — must be re-saved once on the PMS SsoConfig page post-deploy).
++## 实现内容
+ 
+-## What I tested and results
++只读对账扫描：Space 侧库位仍 `Status=1`（已发布、`IsDeleted=0`）而其 WMS 消费落点 `T_WmsBin` 已 `IsActive=false` 的漂移，逐条 LogError 告警，不自愈（与 FinReconciliationWorker 语义一致）。
+ 
+-- Focused: `dotnet test CP6.Tests/CP6.Tests.csproj --filter DataProtectionPersistenceTests` -> **Passed! Failed: 0, Passed: 5, Total: 5**.
+-- Full suite: `dotnet test CP6.slnx` -> **Passed! Failed: 0, Passed: 1570, Skipped: 5, Total: 1575** (baseline 1565+ held; +5 new tests).
++改动/新增文件：
++- **新增** `CP6.Core\Services\Space\SpaceBinDriftScanner.cs` — 静态扫描器。`ScanAsync(CP6Context db, CancellationToken ct)` → `Task<List<SpaceBinDrift>>`；嵌套 `record SpaceBinDrift(Guid LocationId, string? LocationCode, long BinVersion)`。两表主键等值 join（`Space_Location.Id == WmsBin.Id`，跨系统同一 GUID），过滤 `Status==1 && !IsDeleted` × `!IsActive`。租户过滤由 CP6Context 全局 query filter 施加。
++- **新增** `CP6.WebApi\BackgroundServices\SpaceBinReconciliationWorker.cs` — 照 FinReconciliationWorker 逐字同构：启动延迟 1min + 每 24h，`ProcessOnceAsync` 公开可测，经 `TenantScopeRunner.ForEachTenantAsync` 逐租户从 scope 取 `CP6Context` 调 `ScanAsync`，漂移逐条 `LogError`（含 tenant/LocationId/Code/version），无漂移记 Info。
++- **修改** `CP6.WebApi\Program.cs` :503 附近 — 在 FinReconciliationWorker 注册行旁加 `AddHostedService<SpaceBinReconciliationWorker>()`。
++- **新增** `CP6.Tests\Space\SpaceBinDriftScannerTests.cs` — 3 例（InMemory）。
+ 
+-## TDD Evidence
++## 测试与结果
+ 
+-### RED (before implementation — source changes stashed, untracked test kept)
+-Command: `dotnet build CP6.Tests/CP6.Tests.csproj --no-incremental`
++聚焦：`dotnet test --filter SpaceBinDriftScannerTests` → **Passed 3 / Failed 0**。
++全量：`dotnet test CP6.Tests/CP6.Tests.csproj` → **1811 passed / 5 skipped / 0 failed**（基线 1808+3 新增 = 1811，达标）。
++
++三例覆盖 brief 验收：
++1. `Scan_PublishedLocationWithInactiveBin_Reported`：Status=1 + bin.IsActive=false → 命中（并断言 LocationId/LocationCode/BinVersion 三字段回传正确）。
++2. `Scan_PublishedLocationWithActiveBin_NotReported`：Status=1 + bin.IsActive=true → 不命中。
++3. `Scan_UnpublishedLocationWithInactiveBin_NotReported`：Status=2（停用）+ bin.IsActive=false → 不命中。
++
++## TDD 证据
++
++**RED**（scanner 未实现，编译失败）：
+ ```
+-CP6.Tests\Platform\DataProtectionPersistenceTests.cs(4,43): error CS0234: The type or namespace name
+-'EntityFrameworkCore' does not exist in the namespace 'Microsoft.AspNetCore.DataProtection'
+-Build FAILED. 1 Error(s)
++error CS0103: The name 'SpaceBinDriftScanner' does not exist in the current context (×3)
+ ```
+-The test does not compile without the package + interface — this is the RED state written last session.
+ 
+-### GREEN (after implementation)
+-Command: `dotnet test CP6.Tests/CP6.Tests.csproj --filter DataProtectionPersistenceTests`
++**GREEN**（实现后）：
+ ```
+-Passed!  - Failed: 0, Passed: 5, Skipped: 0, Total: 5, Duration: 8 s - CP6.Tests.dll (net8.0)
++Passed!  - Failed: 0, Passed: 3, Skipped: 0, Total: 3 - CP6.Tests.dll
+ ```
+ 
+-## Files changed
++## 关键实现决策
+ 
+-- `CP6.Core/CP6.Core.csproj` — package reference
+-- `CP6.Core/EFDbContext/CP6Context.cs` — interface + DbSet + using
+-- `CP6.WebApi/Program.cs` — PersistKeysToDbContext + SetApplicationName + using
+-- `CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.cs` (+ .Designer.cs) — new migration
+-- `CP6.Core/Migrations/CP6ContextModelSnapshot.cs` — snapshot updated with DataProtectionKeys
+-- `CP6.Tests/Platform/DataProtectionPersistenceTests.cs` — test suite (was untracked, now committed)
++- **InMemory context 构造**：照仓内先例 `FinReconciliationServiceTests.NewDb()`——单参 `new CP6Context(options)`。CP6Context 单参时 `CurrentTenantId` 落 `DefaultTenant`，实体 SaveChanges 盖章为同租户，查询 query filter 亦按该租户 → 命中成立，无需显式绕租户。
++- **DbSet 名**：`Space_Locations` / `WmsBins`（已核对 CP6Context :427/:440）。
++- **Space_Location 必填补齐**：实体 `LocationCode` 可空、`Status` int，BaseBizEntity 提供 Id/TenantId/IsDeleted，InMemory 无需补其他字段即可存。
++- **BinVersion 用 `WmsBin.Version`**（已消费的最新发布版本，溯源用），与 brief 示例一致。
++- Worker 从 scope 直接 `GetRequiredService<CP6Context>()`（scanner 是静态方法、无独立服务接口），符合 TenantScopeRunner「同 scope 内 ITenantContext 与 CP6Context 同一份」的租户作用域约定。
+ 
+-## Self-review findings
++## 自审发现
+ 
+-- Migration verified to contain exactly one table, no unrelated changes -> no model drift.
+-- Package added only in CP6.Core (single source of truth); transitively available downstream — no redundant refs.
+-- Followed existing code/comment conventions in CP6Context and Program.cs.
++- **完整性**：三链路（命中/两不命中）全覆盖，字段级断言到位。
++- **YAGNI**：scanner 保持静态无状态，未引入 DI 接口/自愈逻辑（brief 明确只读不自愈）。
++- **测试真验证行为**：命中例断言了 LocationId + LocationCode + BinVersion 全部三字段的回传值，而非仅 `Single`，确保 join 投影正确。
++- **多租户正确性**：ScanAsync 不写 `.Where(TenantId==)`，依赖 CP6Context 全局过滤 + Worker 逐租户设 CurrentTenantId，与 FinReconciliationWorker 同构，无跨租户泄漏面。
+ 
+-## Issues / concerns
++## 疑虑
+ 
+-- Ops follow-up (not a code issue): after deploy, SSO ClientSecret must be re-saved once (old ciphertext undecryptable). Documented in commit body.
++无阻塞疑虑。一点说明：本次 commit 一并纳入了 `.superpowers\sdd\task-1-brief.md`（此前未跟踪的 sdd 任务简报），符合仓内 sdd 台账入库惯例。Worker 的运行时逐租户告警未做线上实证（本任务范畴为扫描逻辑 + 注册；行为由单测覆盖，Worker 为逐字同构壳）。
+diff --git a/CP6.Core/Services/Space/SpaceBinDriftScanner.cs b/CP6.Core/Services/Space/SpaceBinDriftScanner.cs
+new file mode 100644
+index 0000000..a703d1d
+--- /dev/null
++++ b/CP6.Core/Services/Space/SpaceBinDriftScanner.cs
+@@ -0,0 +1,28 @@
++using CP6.Core.EFDbContext;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Core.Services.Space;
++
++/// <summary>
++/// Space↔WMS 库位对账漂移扫描（波5，只读）。发布/停用链路乱序可能产生漂移：Space 侧库位仍
++/// Status=1（已发布、未软删）而其消费落点 T_WmsBin 已 IsActive=false。两表以主键等值 join
++/// （<c>WmsBin.Id == Space_Location.Id</c>，跨系统同一 GUID）。
++/// 只读对账、不自愈——与 FinReconciliationWorker 语义一致，漂移逐条告警交人工核查。
++/// </summary>
++public static class SpaceBinDriftScanner
++{
++    /// <param name="LocationId">漂移库位主键（= WmsBin.Id）</param>
++    /// <param name="LocationCode">库位编码（已发布必非空，草稿态不入本扫描）</param>
++    /// <param name="BinVersion">bin 已消费的最新发布版本（溯源用）</param>
++    public record SpaceBinDrift(Guid LocationId, string? LocationCode, long BinVersion);
++
++    /// <summary>扫描当前租户作用域内的漂移库位。租户过滤由 CP6Context 全局 query filter 施加，
++    /// 调用方（Worker）经 TenantScopeRunner 逐租户设当前租户后调用。</summary>
++    public static async Task<List<SpaceBinDrift>> ScanAsync(CP6Context db, CancellationToken ct)
++        => await db.Space_Locations
++            .Where(l => l.Status == 1 && !l.IsDeleted)
++            .Join(db.WmsBins.Where(b => !b.IsActive),
++                  l => l.Id, b => b.Id,
++                  (l, b) => new SpaceBinDrift(l.Id, l.LocationCode, b.Version))
++            .ToListAsync(ct);
++}
+diff --git a/CP6.Tests/Space/SpaceBinDriftScannerTests.cs b/CP6.Tests/Space/SpaceBinDriftScannerTests.cs
+new file mode 100644
+index 0000000..8ffe000
+--- /dev/null
++++ b/CP6.Tests/Space/SpaceBinDriftScannerTests.cs
+@@ -0,0 +1,64 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Space;
++using CP6.Entity.DomainModels.Space;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests.Space;
++
++/// <summary>
++/// Space 波5 对账漂移扫描（只读）：已发布库位（Status=1, IsDeleted=0）对应 WMS bin 存在且 IsActive=false
++/// → 发布/停用链路乱序漂移，命中告警。两表以主键等值 join（跨系统同一 GUID）。
++/// InMemory context 单参构造：实体 SaveChanges 盖章为 DefaultTenant，查询过滤同租户 → 命中。
++/// </summary>
++public class SpaceBinDriftScannerTests
++{
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .Options);
++
++    [Fact]
++    public async Task Scan_PublishedLocationWithInactiveBin_Reported()
++    {
++        using var db = NewDb();
++        var id = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location { Id = id, Status = 1, LocationCode = "A-01-01" });
++        db.WmsBins.Add(new WmsBin { Id = id, LocationCode = "A-01-01", WarehouseCd = "W1", IsActive = false, Version = 7 });
++        await db.SaveChangesAsync();
++
++        var drifts = await SpaceBinDriftScanner.ScanAsync(db, default);
++
++        Assert.Single(drifts);
++        Assert.Equal(id, drifts[0].LocationId);
++        Assert.Equal("A-01-01", drifts[0].LocationCode);
++        Assert.Equal(7, drifts[0].BinVersion);
++    }
++
++    [Fact]
++    public async Task Scan_PublishedLocationWithActiveBin_NotReported()
++    {
++        using var db = NewDb();
++        var id = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location { Id = id, Status = 1, LocationCode = "A-01-02" });
++        db.WmsBins.Add(new WmsBin { Id = id, LocationCode = "A-01-02", WarehouseCd = "W1", IsActive = true });
++        await db.SaveChangesAsync();
++
++        var drifts = await SpaceBinDriftScanner.ScanAsync(db, default);
++
++        Assert.Empty(drifts);
++    }
++
++    [Fact]
++    public async Task Scan_UnpublishedLocationWithInactiveBin_NotReported()
++    {
++        using var db = NewDb();
++        var id = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location { Id = id, Status = 2, LocationCode = "A-01-03" });
++        db.WmsBins.Add(new WmsBin { Id = id, LocationCode = "A-01-03", WarehouseCd = "W1", IsActive = false });
++        await db.SaveChangesAsync();
++
++        var drifts = await SpaceBinDriftScanner.ScanAsync(db, default);
++
++        Assert.Empty(drifts);
++    }
++}
+diff --git a/CP6.WebApi/BackgroundServices/SpaceBinReconciliationWorker.cs b/CP6.WebApi/BackgroundServices/SpaceBinReconciliationWorker.cs
+new file mode 100644
+index 0000000..9ccb88d
+--- /dev/null
++++ b/CP6.WebApi/BackgroundServices/SpaceBinReconciliationWorker.cs
+@@ -0,0 +1,64 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Space;
++
++namespace CP6.WebApi.BackgroundServices;
++
++/// <summary>
++/// Space↔WMS 库位对账后台服务（波5）。每日扫描已发布库位（Status=1）与其 WMS 消费 bin 的
++/// 停用漂移（bin.IsActive=false），只读不自愈，漂移逐条 LogError 告警交人工核查。
++/// 照 <see cref="FinReconciliationWorker"/> 同构：启动后延迟首跑，之后每 24h 一次，
++/// 经 <see cref="TenantScopeRunner"/> 逐租户作用域扫描。
++/// </summary>
++public class SpaceBinReconciliationWorker : BackgroundService
++{
++    private static readonly TimeSpan StartupDelay = TimeSpan.FromMinutes(1);
++    private static readonly TimeSpan Interval = TimeSpan.FromHours(24);
++
++    private readonly IServiceScopeFactory _scopeFactory;
++    private readonly ILogger<SpaceBinReconciliationWorker> _logger;
++
++    public SpaceBinReconciliationWorker(IServiceScopeFactory scopeFactory, ILogger<SpaceBinReconciliationWorker> logger)
++    {
++        _scopeFactory = scopeFactory;
++        _logger = logger;
++    }
++
++    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
++    {
++        _logger.LogInformation("Space 库位对账 worker 启动");
++        try
++        {
++            await Task.Delay(StartupDelay, stoppingToken);
++            while (!stoppingToken.IsCancellationRequested)
++            {
++                await ProcessOnceAsync(stoppingToken);
++                await Task.Delay(Interval, stoppingToken);
++            }
++        }
++        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
++        {
++        }
++        finally
++        {
++            _logger.LogInformation("Space 库位对账 worker 停止");
++        }
++    }
++
++    /// <summary>跑一次对账并记录结果——按租户循环：每租户独立作用域扫描其 Space↔WMS 漂移。
++    /// 单租户异常由 <see cref="TenantScopeRunner"/> 吞掉记日志，不影响其余租户与宿主。</summary>
++    public async Task ProcessOnceAsync(CancellationToken ct = default)
++    {
++        await TenantScopeRunner.ForEachTenantAsync(_scopeFactory, async (sp, tenantId, c) =>
++        {
++            var db = sp.GetRequiredService<CP6Context>();
++            var drifts = await SpaceBinDriftScanner.ScanAsync(db, c);
++            if (drifts.Count == 0)
++                _logger.LogInformation("[SpaceBinDrift] 租户 {Tenant} 库位对账：无漂移", tenantId);
++            else
++                foreach (var d in drifts)
++                    _logger.LogError(
++                        "[SpaceBinDrift] 租户 {Tenant} 已发布库位 {LocationId}({Code}) 对应 WMS bin 处于停用态(version={V})——发布/停用链路漂移，需人工核查",
++                        tenantId, d.LocationId, d.LocationCode, d.BinVersion);
++        }, _logger, ct);
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 3a24b9d..871b597 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -494,20 +494,22 @@ builder.Services.Configure<CP6.Core.Options.IntegrationEventOptions>(
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IIntegrationEventDispatcher, CP6.Core.Services.Integration.IntegrationEventDispatcher>();
+ 
+ // 4.15.4 DeadLetter 通知（SignalR + Sys_OperLog 双通知）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IDeadLetterNotifier, CP6.Core.Services.Integration.DeadLetterNotifier>();
+ 
+ // 4.15.5 Retry Worker — 60s ごとに Failed + NextRetryAt 到期 のイベントをリトライ
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEventRetryWorker>();
+ 
+ // 财务每日对账 worker（章10 §5）：每日跑 AP/AR 子账↔GL + 试算平衡勾稽，不一致告警
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.FinReconciliationWorker>();
++// Space 库位对账 worker（波5）：每日扫已发布库位(Status=1)↔WMS bin 停用漂移，只读告警不自愈
++builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.SpaceBinReconciliationWorker>();
+ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AssetDepreciationWorker>(); // A3 §6.2 月末折旧 Worker（备草稿不过账）
+ 
+ // 4.15.6 T15 / Gap 2.3 — Prometheus /metrics（ブリッジ業務指標）
+ //  - Snapshot Provider は T_IntegrationEvent を scrape 毎に集計（DB が単一の真実・再起動で値が消えない）。
+ //  - Collector は prometheus-net BeforeCollect への薄いアダプタ（Singleton）。
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IBridgeMetricsSnapshotProvider, CP6.Core.Services.Integration.BridgeMetricsSnapshotProvider>();
+ builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>();
+ 
+ // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
+ builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));

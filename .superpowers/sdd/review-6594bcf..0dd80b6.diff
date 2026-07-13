@@ -1,0 +1,147 @@
+# Review package: 6594bcf..HEAD
+
+## Commits
+0dd80b6 fix(wfs-service-task): T7 服务目录加载失败露显式重试（修复停在 serviceTask 节点时下拉永久空白）
+
+## Files changed
+ CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs     |  3 +-
+ .../src/views/oa/designer/NodePropertyPanel.vue    | 42 +++++++++++++++-------
+ 2 files changed, 32 insertions(+), 13 deletions(-)
+
+## Diff
+diff --git a/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs b/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
+index 569ed98..66275de 100644
+--- a/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
++++ b/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
+@@ -1,17 +1,17 @@
+ using CP6.Entity.DomainModels.Sys;
+ 
+ namespace CP6.WebApi.Seed;
+ 
+ /// <summary>服务任务(serviceTask)画面词条：oa.designer.svc.*（D-T2/D-T3 前端引用）+ 前端校验 oa.designer.errServiceConfig + 后端错误码 E-WF-016/017/018。
+ /// 键面以 cp6.web/src/views/oa/designer 实际引用为权威（ServiceTaskNode.vue / NodePropertyPanel.vue / EdgePropertyPanel.vue / designerModel.ts）。
+-/// 去重：本文件全部 25 个 svc.* + errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
++/// 去重：本文件全部 26 个 svc.*（含票7 reloadCatalog）+ errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
+ public static class I18nOaServiceTaskScreenSeed
+ {
+     public static readonly Sys_Lang[] Items =
+     {
+         // ── 面板标题 / 服务类型 (ServiceTaskNode.vue + NodePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.title",              ZhCN = "服务任务",       ZhTW = "服務任務",       En = "Service Task",   Ja = "サービスタスク",   Ko = "서비스 태스크" },
+         new() { LangKey = "oa.designer.svc.kind",               ZhCN = "服务类型",       ZhTW = "服務類型",       En = "Service Type",   Ja = "サービス種別",     Ko = "서비스 유형" },
+         new() { LangKey = "oa.designer.svc.kind.dataWriteback", ZhCN = "数据回写",       ZhTW = "資料回寫",       En = "Data Writeback", Ja = "データ書き戻し",   Ko = "데이터 기록" },
+         new() { LangKey = "oa.designer.svc.kind.webApi",        ZhCN = "接口调用",       ZhTW = "介面呼叫",       En = "API Call",       Ja = "API呼び出し",      Ko = "API 호출" },
+         new() { LangKey = "oa.designer.svc.kind.timer",         ZhCN = "定时器",         ZhTW = "計時器",         En = "Timer",          Ja = "タイマー",         Ko = "타이머" },
+@@ -34,20 +34,21 @@ public static class I18nOaServiceTaskScreenSeed
+         new() { LangKey = "oa.designer.svc.delayMode.duration", ZhCN = "时长",           ZhTW = "時長",           En = "Duration",       Ja = "期間",             Ko = "기간" },
+         new() { LangKey = "oa.designer.svc.delayMode.untilDate",ZhCN = "到指定时间",     ZhTW = "到指定時間",     En = "Until Date",     Ja = "指定日時まで",     Ko = "지정 일시까지" },
+         new() { LangKey = "oa.designer.svc.delayMode.untilExpr",ZhCN = "到表达式时间",   ZhTW = "到運算式時間",   En = "Until Expression", Ja = "式で指定した時刻まで", Ko = "표현식 시각까지" },
+         new() { LangKey = "oa.designer.svc.delayValue",         ZhCN = "延时值",         ZhTW = "延時值",         En = "Delay Value",    Ja = "遅延値",           Ko = "지연 값" },
+         new() { LangKey = "oa.designer.svc.delayValueHint",     ZhCN = "如 3d/2h/30m，或日期/表达式", ZhTW = "如 3d/2h/30m，或日期/運算式", En = "e.g. 3d/2h/30m, or a date/expression", Ja = "例 3d/2h/30m、または日付/式", Ko = "예 3d/2h/30m 또는 날짜/표현식" },
+         new() { LangKey = "oa.designer.svc.timerAction",        ZhCN = "到点动作",       ZhTW = "到點動作",       En = "On-Fire Action", Ja = "発火時アクション", Ko = "실행 시 액션" },
+ 
+         // ── 重试（三 kind 共用）(NodePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.maxRetries",         ZhCN = "最大重试次数",   ZhTW = "最大重試次數",   En = "Max Retries",    Ja = "最大リトライ回数", Ko = "최대 재시도 횟수" },
+         new() { LangKey = "oa.designer.svc.backoff",            ZhCN = "重试间隔（秒）", ZhTW = "重試間隔（秒）", En = "Retry Backoff (sec)", Ja = "リトライ間隔（秒）", Ko = "재시도 간격(초)" },
++        new() { LangKey = "oa.designer.svc.reloadCatalog",      ZhCN = "重新加载服务目录", ZhTW = "重新載入服務目錄", En = "Reload service catalog", Ja = "サービスカタログを再読み込み", Ko = "서비스 카탈로그 다시 불러오기" },
+ 
+         // ── 失败边 (EdgePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.errorEdge",          ZhCN = "失败边",         ZhTW = "失敗邊",         En = "Error Edge",     Ja = "失敗エッジ",       Ko = "실패 엣지" },
+         new() { LangKey = "oa.designer.svc.errorEdgeHint",      ZhCN = "服务任务重试耗尽后沿此边流转", ZhTW = "服務任務重試耗盡後沿此邊流轉", En = "Taken when the service task exhausts its retries", Ja = "サービスタスクのリトライを使い切ったときにこのエッジを通ります", Ko = "서비스 태스크가 재시도를 모두 소진하면 이 엣지로 진행됩니다" },
+ 
+         // ── 前端校验消息 (designerModel.ts validateClient) ──
+         new() { LangKey = "oa.designer.errServiceConfig",       ZhCN = "服务任务配置不完整", ZhTW = "服務任務配置不完整", En = "Service task config incomplete", Ja = "サービスタスクの設定が不完全です", Ko = "서비스 태스크 구성이 불완전합니다" },
+ 
+         // ── 后端错误码 (FlowSchemaValidator / DesignerService / Executors) ──
+         new() { LangKey = "E-WF-016", ZhCN = "服务任务节点配置不完整", ZhTW = "服務任務節點配置不完整", En = "Incomplete service task node configuration", Ja = "サービスタスクノードの設定が不完全です", Ko = "서비스 태스크 노드 구성이 불완전합니다" },
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+index 2e343d9..cc17393 100644
+--- a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+@@ -73,35 +73,38 @@ const timeoutDays = computed({
+   set: (v: number | null) => {
+     local.value.timeoutHours = v != null && v > 0 ? Math.round(v * 24) : undefined
+   },
+ })
+ 
+ const isApproval = computed(() => local.value.type === 'approval')
+ const isServiceTask = computed(() => local.value.type === 'serviceTask')
+ 
+ // ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
+ const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
+-
+-// 组件被 Vue 复用（node↔node 切换无 :key）时 onMounted 只跑一次，
+-// 首挂非 serviceTask 会永久漏拉；改用 watch(immediate) + 已加载标记，失败可重试。
+ const catalogLoaded = ref(false)
++const catalogFailed = ref(false)   // 票7：加载失败态，驱动模板露「重试」
++
++async function loadCatalog() {
++  catalogFailed.value = false
++  try {
++    catalog.value = await designerApi.getServiceCatalog()
++    catalogLoaded.value = true
++  } catch {
++    catalogFailed.value = true      // HTTP interceptor 已 toast；此处标失败让用户可主动重试
++  }
++}
++
++// 首拉：进入 serviceTask 节点时若未成功加载过，拉一次（组件被 Vue 复用无 :key，onMounted 只跑一次不可靠，
++// 故用 watch(immediate)）。票7：失败后不再依赖 isServiceTask 跳变——模板提供显式「重试」入口调 loadCatalog。
+ watch(
+   isServiceTask,
+-  async (v) => {
+-    if (!v || catalogLoaded.value) return
+-    catalogLoaded.value = true
+-    try {
+-      catalog.value = await designerApi.getServiceCatalog()
+-    } catch {
+-      catalogLoaded.value = false // HTTP interceptor toasts；允许下次重试
+-    }
+-  },
++  (v) => { if (v && !catalogLoaded.value) void loadCatalog() },
+   { immediate: true },
+ )
+ 
+ // ── 串簽启用状态 ──────────────────────────────────────────────────
+ const stageEnabled = computed(
+   () => Array.isArray(local.value.stages) && local.value.stages.length > 0,
+ )
+ 
+ function toggleStages(v: boolean) {
+   if (v) {
+@@ -363,20 +366,35 @@ async function searchCcUsers(kw: string) {
+         <el-form label-position="top" size="small" class="prop-form">
+           <!-- 服务类型 -->
+           <el-form-item :label="t('oa.designer.svc.kind')">
+             <el-select v-model="local.serviceKind" style="width: 100%">
+               <el-option value="dataWriteback" :label="t('oa.designer.svc.kind.dataWriteback')" />
+               <el-option value="webApi"        :label="t('oa.designer.svc.kind.webApi')" />
+               <el-option value="timer"         :label="t('oa.designer.svc.kind.timer')" />
+             </el-select>
+           </el-form-item>
+ 
++          <!-- 票7：目录加载失败时露显式重试（否则停在 serviceTask 节点将永久空下拉）-->
++          <el-alert
++            v-if="catalogFailed"
++            type="warning"
++            :closable="false"
++            show-icon
++            style="margin-bottom: 8px"
++          >
++            <template #title>
++              <el-button link type="primary" size="small" @click="loadCatalog">
++                {{ t('oa.designer.svc.reloadCatalog') }}
++              </el-button>
++            </template>
++          </el-alert>
++
+           <!-- 数据回写：动作 / 模式 / 参数模板 -->
+           <template v-if="local.serviceKind === 'dataWriteback'">
+             <el-form-item :label="t('oa.designer.svc.action')">
+               <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
+                 <el-option
+                   v-for="a in catalog.actions"
+                   :key="a.name"
+                   :value="a.name"
+                   :label="a.label || a.name"
+                 />

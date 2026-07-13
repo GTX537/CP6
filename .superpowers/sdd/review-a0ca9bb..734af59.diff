@@ -1,0 +1,534 @@
+# Review package: a0ca9bb..734af59
+
+## Commits
+734af59 refactor(ui): OA 迁移批次1——FlowAdmin/ApproverMap/FormCatalog/FormInitiate/FormQuery
+
+## Files changed
+ cp6.web/src/views/oa/admin/ApproverMapView.vue  |  16 ++-
+ cp6.web/src/views/oa/admin/FlowAdmin.vue        | 124 +++++++++++-------------
+ cp6.web/src/views/oa/catalog/FormCatalog.vue    |  14 ++-
+ cp6.web/src/views/oa/catalog/FormInitiate.vue   |  15 ++-
+ cp6.web/src/views/oa/query/FormQuery.vue        |  15 ++-
+ docs/superpowers/plans/2026-07-04-ui-restyle.md |  15 +++
+ 6 files changed, 107 insertions(+), 92 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/oa/admin/ApproverMapView.vue b/cp6.web/src/views/oa/admin/ApproverMapView.vue
+index 8e98e56..3bfe4ab 100644
+--- a/cp6.web/src/views/oa/admin/ApproverMapView.vue
++++ b/cp6.web/src/views/oa/admin/ApproverMapView.vue
+@@ -33,27 +33,28 @@ async function save(r: ApproverMap) {
+     ElMessage.success(t('common.saveSuccess'))
+     await loadKeys(); await loadRows()
+   } catch { /* http 拦截器已 toast E-WF-015 译文 */ }
+ }
+ async function del(r: ApproverMap) { if (r.id) { await approverMapApi.remove(r.id); await loadRows() } else { rows.value = rows.value.filter(x => x !== r) } }
+ 
+ onMounted(async () => { await loadKeys(); await loadRoles(); await loadRows() })
+ </script>
+ 
+ <template>
+-  <div style="padding:12px">
+-    <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center">
+-      <el-select v-model="curKey" filterable allow-create clearable :placeholder="t('oa.approverMap.key')" style="width:240px" @change="loadRows">
++  <div class="approver-map">
++    <div class="am-toolbar">
++      <el-select v-model="curKey" filterable allow-create clearable :placeholder="t('oa.approverMap.key')" class="am-key" @change="loadRows">
+         <el-option v-for="k in keys" :key="k" :label="k" :value="k" />
+       </el-select>
+       <el-button type="primary" @click="addRow">{{ t('oa.approverMap.addRow') }}</el-button>
+     </div>
++    <div class="tcard">
+     <el-table :data="rows" border size="small">
+       <el-table-column :label="t('oa.approverMap.matchValue')">
+         <template #default="{ row }"><el-input v-model="row.matchValue" /></template>
+       </el-table-column>
+       <el-table-column :label="t('oa.approverMap.approverUser')">
+         <template #default="{ row }">
+           <el-select v-model="row.approverUserId" filterable remote :remote-method="searchUsers" clearable style="width:100%">
+             <el-option v-for="u in userOpts" :key="u.value" :label="u.label" :value="u.value" />
+           </el-select>
+         </template>
+@@ -68,12 +69,21 @@ onMounted(async () => { await loadKeys(); await loadRoles(); await loadRows() })
+       <el-table-column :label="t('oa.approverMap.enable')" width="80">
+         <template #default="{ row }"><el-switch v-model="row.enable" /></template>
+       </el-table-column>
+       <el-table-column :label="t('common.operation')" width="140">
+         <template #default="{ row }">
+           <el-button link type="primary" size="small" @click="save(row)">{{ t('common.save') }}</el-button>
+           <el-button link type="danger" size="small" @click="del(row)">{{ t('common.delete') }}</el-button>
+         </template>
+       </el-table-column>
+     </el-table>
++    </div>
+   </div>
+ </template>
++
++<style scoped>
++.approver-map { display: flex; flex-direction: column; gap: 12px; padding: 12px; }
++.am-toolbar { display: flex; gap: 8px; align-items: center; }
++.am-key { width: 240px; }
++.tcard { background: var(--cp-card); border-radius: var(--cp-r-md);
++  box-shadow: var(--cp-shadow-1); overflow: hidden; }
++</style>
+diff --git a/cp6.web/src/views/oa/admin/FlowAdmin.vue b/cp6.web/src/views/oa/admin/FlowAdmin.vue
+index 102a435..721ce8d 100644
+--- a/cp6.web/src/views/oa/admin/FlowAdmin.vue
++++ b/cp6.web/src/views/oa/admin/FlowAdmin.vue
+@@ -1,109 +1,97 @@
++<!--
++  流程管理（OA Phase B，菜单734）—— CpPageShell + CpListPage 迁移。
++  单一 flowAdminApi.list() 全量（无搜索/无分页 → :paginated="false"，onMounted 自动 fetch）；
++  启停开关走 col-enable 插槽（行内 el-switch，per-row toggling 守卫 + 乐观回滚保留），
++  切换成功后 listRef.reload() 反映服务端联动（唯一启用互斥）；件数走 CpPageShell :count←@total-change。
++  el-alert 唯一性提示无 Cp 等价物，作为壳内首个子项保留。
++-->
+ <template>
+-  <div class="flow-admin">
+-    <div class="page-header"><h2>{{ t('oa.flowadmin.title') }}</h2></div>
++  <CpPageShell :title="t('oa.flowadmin.title')" :count="total">
++    <template #actions>
++      <el-button :icon="Refresh" circle :loading="refreshing" @click="refresh" />
++    </template>
+ 
+-    <el-alert type="info" :closable="false" show-icon class="hint-alert">
++    <el-alert type="info" :closable="false" show-icon>
+       {{ t('oa.flowadmin.uniqueHint') }}
+     </el-alert>
+ 
+-    <el-card shadow="never" class="table-card">
+-      <div class="table-toolbar">
+-        <el-tag size="small">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
+-        <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
+-      </div>
+-
+-      <el-table :data="rows" border stripe size="small" max-height="620" v-loading="loading">
+-        <el-table-column prop="flowKey" :label="t('oa.flowadmin.col.flowKey')" width="200" />
+-        <el-table-column prop="flowName" :label="t('oa.flowadmin.col.flowName')" min-width="160" />
+-        <el-table-column prop="formKey" :label="t('oa.flowadmin.col.formKey')" width="180" />
+-        <el-table-column prop="version" :label="t('oa.flowadmin.col.version')" width="80" />
+-        <el-table-column :label="t('oa.flowadmin.col.enable')" width="110">
+-          <template #default="{ row }">
+-            <el-switch
+-              v-model="row.enable"
+-              :loading="toggling.has(row.flowKey)"
+-              :disabled="toggling.has(row.flowKey)"
+-              @change="(val: boolean | string | number) => toggleEnable(row, val as boolean)"
+-            />
+-          </template>
+-        </el-table-column>
+-      </el-table>
+-
+-      <el-empty
+-        v-if="!rows.length && !loading"
+-        :description="t('oa.flowadmin.empty')"
+-        :image-size="80"
+-      />
+-    </el-card>
+-  </div>
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchFlows"
++      :paginated="false"
++      :empty-text="t('oa.flowadmin.empty')"
++      @total-change="total = $event"
++    >
++      <template #col-enable="{ row }">
++        <el-switch
++          v-model="(row as FlowAdminItem).enable"
++          :loading="toggling.has((row as FlowAdminItem).flowKey)"
++          :disabled="toggling.has((row as FlowAdminItem).flowKey)"
++          @change="(val: boolean | string | number) => toggleEnable(row as FlowAdminItem, val as boolean)"
++        />
++      </template>
++    </CpListPage>
++  </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { onMounted, reactive, ref } from 'vue'
++import { computed, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { Refresh } from '@element-plus/icons-vue'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+ import { flowAdminApi } from '@/api/oa/flowAdmin'
+ import type { FlowAdminItem } from '@/types/oa/inbox'
+ 
+ const { t } = useI18n()
+ 
+-const rows = ref<FlowAdminItem[]>([])
+-const loading = ref(false)
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++const refreshing = ref(false)
+ // per-row guard: flowKeys currently being toggled — prevents races and double-clicks
+ const toggling = reactive(new Set<string>())
+ 
+-async function load() {
+-  loading.value = true
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'flowKey', label: t('oa.flowadmin.col.flowKey'), width: 200, kind: 'mono' },
++  { prop: 'flowName', label: t('oa.flowadmin.col.flowName'), minWidth: 160 },
++  { prop: 'formKey', label: t('oa.flowadmin.col.formKey'), width: 180 },
++  { prop: 'version', label: t('oa.flowadmin.col.version'), width: 80 },
++  { prop: 'enable', label: t('oa.flowadmin.col.enable'), width: 110 },
++])
++
++// 单一取数：flowAdminApi.list() 返回全量（无 total）→ 客户端 total = 数组长度，配 :paginated="false"
++const fetchFlows: ListFetch = async () => {
++  const res = await flowAdminApi.list()
++  const data = res.data ?? []
++  return { rows: data, total: data.length }
++}
++
++async function refresh() {
++  refreshing.value = true
+   try {
+-    const res = await flowAdminApi.list()
+-    rows.value = res.data ?? []
++    await listRef.value?.reload()
+   } finally {
+-    loading.value = false
++    refreshing.value = false
+   }
+ }
+ 
+ async function toggleEnable(row: FlowAdminItem, newVal: boolean) {
+   // Guard against concurrent calls for the same row
+   if (toggling.has(row.flowKey)) return
+   toggling.add(row.flowKey)
+   try {
+     await flowAdminApi.enable(row.flowKey, newVal)
+     ElMessage.success(newVal ? t('oa.flowadmin.enabled') : t('oa.flowadmin.disabled'))
+     // Reload to reflect any server-side side-effects (e.g. another flow auto-disabled)
+-    await load()
++    await listRef.value?.reload()
+   } catch {
+     // The http interceptor (http.ts line 89) already toasts the error message for 400
+     // responses (including E-WF-008 conflicts). We only need to revert the switch.
+     row.enable = !newVal
+   } finally {
+     toggling.delete(row.flowKey)
+   }
+ }
+-
+-onMounted(load)
+ </script>
+-
+-<style scoped>
+-.flow-admin {
+-  padding: 16px;
+-}
+-.page-header {
+-  margin-bottom: 12px;
+-}
+-.page-header h2 {
+-  margin: 0;
+-  font-size: 20px;
+-  font-weight: 650;
+-  color: #303133;
+-}
+-.hint-alert {
+-  margin-bottom: 12px;
+-}
+-.table-toolbar {
+-  display: flex;
+-  align-items: center;
+-  gap: 10px;
+-  margin-bottom: 8px;
+-}
+-</style>
+diff --git a/cp6.web/src/views/oa/catalog/FormCatalog.vue b/cp6.web/src/views/oa/catalog/FormCatalog.vue
+index 0e47049..053f7a2 100644
+--- a/cp6.web/src/views/oa/catalog/FormCatalog.vue
++++ b/cp6.web/src/views/oa/catalog/FormCatalog.vue
+@@ -62,33 +62,30 @@
+                 <el-button type="primary" size="small" @click="goInitiate(card.formKey)">
+                   {{ t('oa.catalog.fill') }}
+                 </el-button>
+               </div>
+             </el-card>
+           </div>
+         </div>
+       </el-collapse-item>
+     </el-collapse>
+ 
+-    <el-empty
+-      v-else-if="!loading"
+-      :image-size="80"
+-      :description="t('oa.catalog.empty')"
+-    />
++    <CpEmpty v-else-if="!loading" :text="t('oa.catalog.empty')" />
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { computed, onMounted, ref } from 'vue'
+ import { useRouter } from 'vue-router'
+ import { useI18n } from 'vue-i18n'
+ import { Star, StarFilled } from '@element-plus/icons-vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
+ import { catalogApi } from '@/api/oa/catalog'
+ import type { CatalogNode, FormCard } from '@/types/oa/advanced'
+ 
+ const { t } = useI18n()
+ const router = useRouter()
+ 
+ const tree = ref<CatalogNode[]>([])
+ const loading = ref(false)
+ const openCategories = ref<string[]>([])
+ 
+@@ -145,34 +142,35 @@ onMounted(load)
+   gap: 14px;
+ }
+ 
+ .fav-card {
+   margin: 0;
+ }
+ 
+ .section-title {
+   font-weight: 600;
+   font-size: 14px;
++  color: var(--cp-ink);
+ }
+ 
+ .catalog-collapse {
+-  border: 1px solid var(--el-border-color-light);
+-  border-radius: 4px;
++  border: 1px solid var(--cp-line-soft);
++  border-radius: var(--cp-r-md);
+ }
+ 
+ .sub-section {
+   margin-bottom: 12px;
+ }
+ 
+ .sub-label {
+   font-size: 12px;
+-  color: var(--el-text-color-secondary);
++  color: var(--cp-muted);
+   font-weight: 500;
+   margin-bottom: 8px;
+   padding-left: 2px;
+ }
+ 
+ .card-grid {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 10px;
+ }
+diff --git a/cp6.web/src/views/oa/catalog/FormInitiate.vue b/cp6.web/src/views/oa/catalog/FormInitiate.vue
+index 7d173f8..62be4b6 100644
+--- a/cp6.web/src/views/oa/catalog/FormInitiate.vue
++++ b/cp6.web/src/views/oa/catalog/FormInitiate.vue
+@@ -18,25 +18,21 @@
+       <el-row :gutter="16" class="initiate-body">
+         <!-- LEFT: editable form -->
+         <el-col :span="forecastVisible ? 14 : 24" class="form-col">
+           <div class="panel-title">{{ t('oa.initiate.fillForm') }}</div>
+           <DynamicForm
+             v-if="schema.fields.length"
+             ref="dynamicFormRef"
+             :schema="schema"
+             v-model="model"
+           />
+-          <el-empty
+-            v-else
+-            :image-size="60"
+-            :description="t('oa.initiate.noFields')"
+-          />
++          <CpEmpty v-else :text="t('oa.initiate.noFields')" />
+         </el-col>
+ 
+         <!-- RIGHT: forecast timeline (shown after preview) -->
+         <el-col v-if="forecastVisible" :span="10" class="timeline-col">
+           <div class="panel-title">{{ t('oa.initiate.forecastTitle') }}</div>
+           <FlowTimeline :timeline="[]" :forecast="forecastSteps" />
+         </el-col>
+       </el-row>
+ 
+       <!-- Action bar -->
+@@ -64,20 +60,21 @@
+ import { onMounted, ref } from 'vue'
+ import { useRoute, useRouter } from 'vue-router'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { formApi } from '@/api/wf/form'
+ import { flowAdminApi } from '@/api/oa/flowAdmin'
+ import { forecastApi } from '@/api/oa/forecast'
+ import { draftApi } from '@/api/oa/draft'
+ import type { FormSchema } from '@/types/wf/wf'
+ import type { ForecastStep, FlowAdminItem } from '@/types/oa/inbox'
++import CpEmpty from '@/components/base/CpEmpty.vue'
+ import DynamicForm from '@/views/wf/DynamicForm.vue'
+ import FlowTimeline from '@/views/oa/inbox/FlowTimeline.vue'
+ 
+ const { t } = useI18n()
+ const route = useRoute()
+ const router = useRouter()
+ 
+ /** formKey from route query */
+ const formKey = (route.query.formKey as string) || ''
+ 
+@@ -201,36 +198,36 @@ onMounted(load)
+   min-height: 200px;
+ }
+ 
+ .initiate-body {
+   min-height: 200px;
+ }
+ 
+ .panel-title {
+   font-size: 13px;
+   font-weight: 600;
+-  color: var(--el-text-color-primary);
++  color: var(--cp-ink);
+   margin-bottom: 10px;
+   padding-bottom: 6px;
+-  border-bottom: 1px solid var(--el-border-color-light);
++  border-bottom: 1px solid var(--cp-line-soft);
+ }
+ 
+ .form-col {
+   padding-right: 16px;
+ }
+ 
+ .timeline-col {
+-  border-left: 1px solid var(--el-border-color-light);
++  border-left: 1px solid var(--cp-line-soft);
+   padding-left: 8px;
+   overflow-y: auto;
+   max-height: calc(100vh - 220px);
+ }
+ 
+ .action-bar {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   padding: 14px 0 4px;
+   margin-top: 16px;
+-  border-top: 1px solid var(--el-border-color-light);
++  border-top: 1px solid var(--cp-line-soft);
+ }
+ </style>
+diff --git a/cp6.web/src/views/oa/query/FormQuery.vue b/cp6.web/src/views/oa/query/FormQuery.vue
+index 29ba0e7..be5a9e9 100644
+--- a/cp6.web/src/views/oa/query/FormQuery.vue
++++ b/cp6.web/src/views/oa/query/FormQuery.vue
+@@ -117,62 +117,69 @@
+         stripe
+         style="width: 100%"
+         @row-click="onRowClick"
+       >
+         <el-table-column prop="instanceId" label="实例ID" width="220" show-overflow-tooltip />
+         <el-table-column prop="flowName"   label="流程类型" width="160" />
+         <el-table-column prop="starterName" label="发起人"  width="100" />
+         <el-table-column prop="currentNode" label="当前节点" width="140" show-overflow-tooltip />
+         <el-table-column label="状态" width="90">
+           <template #default="{ row }">
+-            <el-tag :type="instanceStatusType(row.status as number)" size="small">
++            <CpTag :tone="instanceStatusTone(row.status as number)">
+               {{ t(instanceStatusText(row.status as number)) }}
+-            </el-tag>
++            </CpTag>
+           </template>
+         </el-table-column>
+         <el-table-column prop="createDate" label="发起时间" min-width="160" show-overflow-tooltip />
+         <el-table-column label="操作" width="80" fixed="right">
+           <template #default="{ row }">
+             <el-button type="primary" link size="small" @click.stop="openDetail(row.instanceId)">
+               详情
+             </el-button>
+           </template>
+         </el-table-column>
+       </el-table>
+-      <el-empty v-if="!searching && rows.length === 0" description="暂无数据，请输入条件后查询" />
++      <CpEmpty v-if="!searching && rows.length === 0" text="暂无数据，请输入条件后查询" />
+     </el-card>
+ 
+     <!-- 详情抽屉 -->
+     <el-drawer
+       v-model="drawerVisible"
+       title="表单详情"
+       size="60%"
+       destroy-on-close
+     >
+       <FormDetail v-if="drawerInstanceId" :instance-id="drawerInstanceId" />
+     </el-drawer>
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { reactive, ref, onMounted } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { queryApi } from '@/api/oa/query'
+ import { flowAdminApi } from '@/api/oa/flowAdmin'
+ import { userApi } from '@/api/sys/user'
+-import { instanceStatusType, instanceStatusText } from '@/views/oa/inbox/inboxModel'
++import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
+ import FormDetail from '@/views/oa/inbox/FormDetail.vue'
+ import type { FormQueryFilter, FormQueryItem } from '@/types/oa/advanced'
+ import type { FlowAdminItem } from '@/types/oa/inbox'
+ 
+ const { t } = useI18n()
+ 
++/** 実例状態码 → CpTag 色調（对齐 inboxModel.instanceStatusType：warning/success/danger/info/info）。 */
++function instanceStatusTone(s: number): Tone {
++  return (['warn', 'ok', 'danger', 'info', 'info'] as Tone[])[s] ?? 'info'
++}
++
+ // ── 条件 ─────────────────────────────────────────────────────────
+ const filter = reactive<FormQueryFilter>({
+   starterId: undefined,
+   handlerId: undefined,
+   flowKey:   undefined,
+   keyword:   undefined,
+   status:    undefined,
+   from:      undefined,
+   to:        undefined,
+ })
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index ee169b2..98187e1 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -722,20 +722,35 @@ describe('CpListPage', () => {
+ 22. **CpListPage 无 reset 事件透传 → クリア无法联动清理 CpFilterBar 外部的筛选状态（toolbar checkbox 等）**（评审指摘的未披露回归；本批 2 页 Order/Product）—— ✅ 已实现（最小扩展随修复 commit）：CpListPage 透传 `reset` 事件，页面外部筛选状态（工具栏 checkbox 等）可挂钩清理。
+     - 现象：原 Order resetQuery() 同时清 onlyConsignedSales/onlyMcUntransferred，原 Product onReset() 清 statusSel；迁移后这些筛选提为页面级 ref 放 toolbar slot（#15 代偿），而 CpFilterBar 的重置事件被 CpListPage 内部消化不外发——クリア后 checkbox 保持勾选且继续参与 fetch（功能回归）。
+     - 实现契约：emits 增 `reset()`，onReset 顺序 = 清内部 state（page=1，filters 已由 CpFilterBar 先回写清空）→ **同步 emit('reset')** → load()——监听器先清自身 ref，随后 fetch closure 读到的已是清理后的值（时序由专项测试锁定：监听器清理的外部 ref 不进入 reset 触发的 fetch query）。Order `@reset` 清两 checkbox、Product `@reset` 清 statusSel，与原页 reset 语义对齐。
+ 
+ ### ERP批次3 复盘（编号接续，从 #23 起——本批无新增编号）
+ 
+ 批次3（QuotationList/BackorderList/OtdReport/OrderTrace/OrderCancelDialog）迁移完成，真栈验收通过（tests 316 保持）。分类：Quotation=CpListPage standalone（自动取得+服务端排序 #19+status toolbar checkbox #15+@reset #22）；Backorder=CpPageShell+CpListPage（paginated=false 单表全量）；OtdReport/OrderTrace=特殊页 token 化；OrderCancelDialog=working form dialog token 化（el-tag→CpTag，emits 契约保全）+ Phase-6 遗留可视性 bug 一行修复（`visible=ref(props.modelValue)`）。**本批无新增模板缺口编号**，以下为既知限制补记：
+ 
+ - **QuotationList 原 `@row-dblclick→照会` 手势丢失**（#21 家族既知限制，不另立新号）：CpListPage 无行激活钩子（行选择/行激活系事件缺口与 #16 行内按钮代偿、#21 @current-change 未透传同族）。照会仍在操作列一键可达，能力未丢，仅双击快捷手势降级——与批次2 EstimateCalc 同处置（row-dblclick→操作列集约）。
+ 
++### OA 迁移批次1 复盘（Milestone C 首模块，编号接续，从 #23 起）
++
++批次1（FlowAdmin/ApproverMapView/FormCatalog/FormInitiate/FormQuery）迁移完成，真栈验收通过（tests 316 保持）。分类与处置：
++- **FlowAdmin**=CpPageShell+CpListPage（`paginated=false` 单表全量、`col-enable` 行内 el-switch 启停守卫+乐观回滚、切换后 reload 反映服务端互斥、`@total-change`→计数 pill），scoped style 归零。
++- **FormQuery**=**特殊页保留原机制**（见下 #23）：仅无损基础件替换（el-tag→CpTag 附 instanceStatusTone 对齐 inboxModel、el-empty→CpEmpty），保留原 el-card 查询区 + el-table + 详情抽屉。
++- **FormCatalog / FormInitiate**=非表格特殊页 token 化（`--el-*`→`--cp-*`：line-soft/ink/muted；el-empty→CpEmpty），不强套模板。
++- **ApproverMapView**=行内编辑表格（inline el-input 行），特殊页 token 化：内联 style 提取为 class + `.tcard` 卡壳用 `--cp-card/--cp-r-md/--cp-shadow-1`。
++
++本批新增模板缺口 1 项：
++
++23. **CpFilterBar select 不支持 remote 远程搜索选项（异步 autocomplete）**（FormQuery 触发）
++   - 页面需要：FormQuery 的「发起人 / 处理人」两个查询字段是 `el-select filterable remote :remote-method`——随键盘输入调 `userApi.getList` 异步拉候选，非静态枚举。
++   - 模板缺：`FilterField` 的 `type:'select'` 只接受静态 `options[]`，无 `remote`/`remoteMethod`/`loading` 透传；若强改 CpFilterBar 会丢失用户远程搜索能力。加之本页还有 daterange+关键词共 6 字段、行点击→抽屉详情，整体判为「特殊页保留原机制保功能」，未强套 CpListPage/CpFilterBar（与 LocationList master-detail 保留同处置逻辑）。
++   - 建议契约扩展：`FilterField` 增可选 `remote?: boolean` + `remoteMethod?: (q:string)=>void` + `loading?: boolean`（或 `asyncOptions` 加载器），让远程搜索选择列也能声明式落入 CpFilterBar。
++
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+ 

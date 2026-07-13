@@ -1,0 +1,60 @@
+# Review package: 446b7a2..7a4e093
+
+## Commits
+7a4e093 fix(space): CodeEngine 预检 throw 补转 BizException（波4 Task3 仲裁）
+
+## Files changed
+ CP6.Core/Services/Space/CodeEngineService.cs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Space/CodeEngineService.cs b/CP6.Core/Services/Space/CodeEngineService.cs
+index 19d4447..fd47000 100644
+--- a/CP6.Core/Services/Space/CodeEngineService.cs
++++ b/CP6.Core/Services/Space/CodeEngineService.cs
+@@ -158,21 +158,21 @@ public class CodeEngineService : ICodeEngineService
+         var aisleById = aisles.ToDictionary(a => a.Id);
+ 
+         // ── 5. 每 Zone 命中规则做静态预检 ────────────────────────────
+ 
+         foreach (var z in zones)
+         {
+             var rule = PickRule(rules, z.Id, floorId);
+             var segs = DeserializeSegs(rule.Segments);
+             var errs = CodePrecheck.Validate(segs);
+             if (errs.Count > 0)
+-                throw new InvalidOperationException(errs[0]);  // E-303/305/306
++                throw new BizException(errs[0]);  // E-303/305/306
+         }
+ 
+         // ── 6. 组装候选码 ──────────────────────────────────────────────
+ 
+         var candidates = new List<(Space_Location Loc, string Code)>();
+         foreach (var l in drafts)
+         {
+             // fill-empty 模式：跳过已有码的库位，保留既有码不动
+             if (mode == "fill-empty" && l.LocationCode != null)
+                 continue;
+@@ -356,21 +356,21 @@ public class CodeEngineService : ICodeEngineService
+         var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == rack.FloorId);
+         var site  = floor != null
+             ? await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId)
+             : null;
+ 
+         var rules   = await _db.Space_CodeRules.ToListAsync();
+         var rule    = PickRule(rules, zone.Id, rack.FloorId);
+         var segs    = DeserializeSegs(rule.Segments);
+         var preErrs = CodePrecheck.Validate(segs);
+         if (preErrs.Count > 0)
+-            throw new InvalidOperationException(preErrs[0]);
++            throw new BizException(preErrs[0]);
+ 
+         // 简化序号字典（单格场景；完整 Zone 级排序见计划 §10）
+         var zoneSeq = new Dictionary<Guid, int> { [zone.Id] = 1 };
+         var rackSeq = new Dictionary<Guid, int> { [rack.Id] = 1 };
+ 
+         var code = Assemble(segs, site, floor, zone, aisle, rack,
+             loc.Col ?? 1, loc.Level ?? 1, loc.Depth ?? 1, zoneSeq, rackSeq);
+ 
+         loc.LocationCode = code;
+         await _db.SaveChangesAsync();

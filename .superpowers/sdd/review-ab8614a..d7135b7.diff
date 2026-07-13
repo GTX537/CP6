@@ -1,0 +1,344 @@
+# Review package: ab8614a..HEAD
+
+## Commits
+d7135b7 fix(wfs-service-task): T8 定时器到点动作补 webApi 连接器/路径变体 UI + 互斥清理（补 spec §5.3 缺口，防 Snapshot 误外呼）
+
+## Files changed
+ CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs     |   7 +-
+ .../oa/designer/NodePropertyPanel.timer.spec.ts    | 117 +++++++++++++++++++++
+ .../src/views/oa/designer/NodePropertyPanel.vue    |  73 +++++++++++--
+ 3 files changed, 188 insertions(+), 9 deletions(-)
+
+## Diff
+diff --git a/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs b/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
+index 66275de..c89ecd6 100644
+--- a/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
++++ b/CP6.WebApi/Seed/I18nOaServiceTaskScreenSeed.cs
+@@ -1,17 +1,17 @@
+ using CP6.Entity.DomainModels.Sys;
+ 
+ namespace CP6.WebApi.Seed;
+ 
+ /// <summary>服务任务(serviceTask)画面词条：oa.designer.svc.*（D-T2/D-T3 前端引用）+ 前端校验 oa.designer.errServiceConfig + 后端错误码 E-WF-016/017/018。
+ /// 键面以 cp6.web/src/views/oa/designer 实际引用为权威（ServiceTaskNode.vue / NodePropertyPanel.vue / EdgePropertyPanel.vue / designerModel.ts）。
+-/// 去重：本文件全部 26 个 svc.*（含票7 reloadCatalog）+ errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
++/// 去重：本文件全部 30 个 svc.*（含票7 reloadCatalog + 票8 timerActionKind 四键）+ errServiceConfig + 3 错误码在既有 I18nOaInbox/Advanced/Designer/SerialSign/Approver seed 中均无重复(已 grep 核实)。</summary>
+ public static class I18nOaServiceTaskScreenSeed
+ {
+     public static readonly Sys_Lang[] Items =
+     {
+         // ── 面板标题 / 服务类型 (ServiceTaskNode.vue + NodePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.title",              ZhCN = "服务任务",       ZhTW = "服務任務",       En = "Service Task",   Ja = "サービスタスク",   Ko = "서비스 태스크" },
+         new() { LangKey = "oa.designer.svc.kind",               ZhCN = "服务类型",       ZhTW = "服務類型",       En = "Service Type",   Ja = "サービス種別",     Ko = "서비스 유형" },
+         new() { LangKey = "oa.designer.svc.kind.dataWriteback", ZhCN = "数据回写",       ZhTW = "資料回寫",       En = "Data Writeback", Ja = "データ書き戻し",   Ko = "데이터 기록" },
+         new() { LangKey = "oa.designer.svc.kind.webApi",        ZhCN = "接口调用",       ZhTW = "介面呼叫",       En = "API Call",       Ja = "API呼び出し",      Ko = "API 호출" },
+         new() { LangKey = "oa.designer.svc.kind.timer",         ZhCN = "定时器",         ZhTW = "計時器",         En = "Timer",          Ja = "タイマー",         Ko = "타이머" },
+@@ -30,20 +30,25 @@ public static class I18nOaServiceTaskScreenSeed
+         new() { LangKey = "oa.designer.svc.pathHint",           ZhCN = "接口相对路径，如 /api/v1/orders", ZhTW = "介面相對路徑，如 /api/v1/orders", En = "API relative path, e.g. /api/v1/orders", Ja = "APIの相対パス（例 /api/v1/orders）", Ko = "API 상대 경로, 예 /api/v1/orders" },
+ 
+         // ── 定时器：延时模式 / 延时值 / 到点动作 (NodePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.delayMode",          ZhCN = "延时模式",       ZhTW = "延時模式",       En = "Delay Mode",     Ja = "遅延モード",       Ko = "지연 모드" },
+         new() { LangKey = "oa.designer.svc.delayMode.duration", ZhCN = "时长",           ZhTW = "時長",           En = "Duration",       Ja = "期間",             Ko = "기간" },
+         new() { LangKey = "oa.designer.svc.delayMode.untilDate",ZhCN = "到指定时间",     ZhTW = "到指定時間",     En = "Until Date",     Ja = "指定日時まで",     Ko = "지정 일시까지" },
+         new() { LangKey = "oa.designer.svc.delayMode.untilExpr",ZhCN = "到表达式时间",   ZhTW = "到運算式時間",   En = "Until Expression", Ja = "式で指定した時刻まで", Ko = "표현식 시각까지" },
+         new() { LangKey = "oa.designer.svc.delayValue",         ZhCN = "延时值",         ZhTW = "延時值",         En = "Delay Value",    Ja = "遅延値",           Ko = "지연 값" },
+         new() { LangKey = "oa.designer.svc.delayValueHint",     ZhCN = "如 3d/2h/30m，或日期/表达式", ZhTW = "如 3d/2h/30m，或日期/運算式", En = "e.g. 3d/2h/30m, or a date/expression", Ja = "例 3d/2h/30m、または日付/式", Ko = "예 3d/2h/30m 또는 날짜/표현식" },
+         new() { LangKey = "oa.designer.svc.timerAction",        ZhCN = "到点动作",       ZhTW = "到點動作",       En = "On-Fire Action", Ja = "発火時アクション", Ko = "실행 시 액션" },
++        // 票8：到点动作类型（none / 数据回写 / webApi 连接器）——补 spec §5.3「定时到点发 webApi」缺口
++        new() { LangKey = "oa.designer.svc.timerActionKind",       ZhCN = "到点动作类型",   ZhTW = "到點動作類型",   En = "On-Fire Action Type", Ja = "発火時アクション種別", Ko = "실행 시 액션 유형" },
++        new() { LangKey = "oa.designer.svc.timerActionKind.none",  ZhCN = "无（纯等待）",   ZhTW = "無（純等待）",   En = "None (pure wait)",    Ja = "なし（待機のみ）",     Ko = "없음(대기만)" },
++        new() { LangKey = "oa.designer.svc.timerActionKind.write", ZhCN = "数据回写动作",   ZhTW = "資料回寫動作",   En = "Data-writeback action", Ja = "データ書き戻しアクション", Ko = "데이터 기록 액션" },
++        new() { LangKey = "oa.designer.svc.timerActionKind.api",   ZhCN = "接口调用",       ZhTW = "介面呼叫",       En = "API call",            Ja = "API呼び出し",          Ko = "API 호출" },
+ 
+         // ── 重试（三 kind 共用）(NodePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.maxRetries",         ZhCN = "最大重试次数",   ZhTW = "最大重試次數",   En = "Max Retries",    Ja = "最大リトライ回数", Ko = "최대 재시도 횟수" },
+         new() { LangKey = "oa.designer.svc.backoff",            ZhCN = "重试间隔（秒）", ZhTW = "重試間隔（秒）", En = "Retry Backoff (sec)", Ja = "リトライ間隔（秒）", Ko = "재시도 간격(초)" },
+         new() { LangKey = "oa.designer.svc.reloadCatalog",      ZhCN = "重新加载服务目录", ZhTW = "重新載入服務目錄", En = "Reload service catalog", Ja = "サービスカタログを再読み込み", Ko = "서비스 카탈로그 다시 불러오기" },
+ 
+         // ── 失败边 (EdgePropertyPanel.vue) ──
+         new() { LangKey = "oa.designer.svc.errorEdge",          ZhCN = "失败边",         ZhTW = "失敗邊",         En = "Error Edge",     Ja = "失敗エッジ",       Ko = "실패 엣지" },
+         new() { LangKey = "oa.designer.svc.errorEdgeHint",      ZhCN = "服务任务重试耗尽后沿此边流转", ZhTW = "服務任務重試耗盡後沿此邊流轉", En = "Taken when the service task exhausts its retries", Ja = "サービスタスクのリトライを使い切ったときにこのエッジを通ります", Ko = "서비스 태스크가 재시도를 모두 소진하면 이 엣지로 진행됩니다" },
+ 
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.timer.spec.ts b/cp6.web/src/views/oa/designer/NodePropertyPanel.timer.spec.ts
+new file mode 100644
+index 0000000..0aafd7f
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.timer.spec.ts
+@@ -0,0 +1,117 @@
++// @vitest-environment jsdom
++// 票8：timer（定时器）到点动作补 webApi 连接器/路径变体 + 互斥清理。
++// 核心正确性：ServiceTaskActionRef.Snapshot 优先判 ConnectorName（timer + ConnectorName → webApi），
++// 故选「回写/无」时必须清空 serviceConnectorName，否则到点静默外呼用户以为已删的连接器。
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import ElementPlus from 'element-plus'
++import { nextTick } from 'vue'
++import type { SchemaNode } from './designerModel'
++
++vi.mock('@/api/oa/designer', () => ({
++  designerApi: {
++    getServiceCatalog: vi.fn().mockResolvedValue({
++      actions: [{ name: 'writeOrder', label: '写订单' }],
++      connectors: [{ name: 'erpEcho', label: 'ERP回声' }],
++    }),
++  },
++}))
++
++import NodePropertyPanel from './NodePropertyPanel.vue'
++
++const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })
++
++function timerNode(over: Partial<SchemaNode> = {}): SchemaNode {
++  return { id: 's1', type: 'serviceTask', serviceKind: 'timer', ...over } as SchemaNode
++}
++
++function mountPanel(node: SchemaNode) {
++  return mount(NodePropertyPanel, {
++    props: { node },
++    global: { plugins: [i18n, ElementPlus] },
++  })
++}
++
++function state(w: ReturnType<typeof mountPanel>) {
++  return (w.vm as unknown as { $: { setupState: Record<string, any> } }).$.setupState
++}
++
++describe('NodePropertyPanel timer 到点动作变体（票8）', () => {
++  beforeEach(() => vi.clearAllMocks())
++
++  it('timerActionKind getter：据已填字段派生 none/write/api', async () => {
++    const wNone = mountPanel(timerNode())
++    await flushPromises()
++    expect(state(wNone).timerActionKind).toBe('none')
++
++    const wWrite = mountPanel(timerNode({ serviceActionName: 'writeOrder' }))
++    await flushPromises()
++    expect(state(wWrite).timerActionKind).toBe('write')
++
++    const wApi = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    // Snapshot 优先 ConnectorName → 有连接器即 api（即便 actionName 也在也按 api）
++    expect(state(wApi).timerActionKind).toBe('api')
++  })
++
++  it('setter：选 write 清连接器/路径（防 Snapshot 误判 webApi 到点外呼）', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    state(w).timerActionKind = 'write'
++    await nextTick()
++    expect(state(w).local.serviceConnectorName).toBeUndefined()
++    expect(state(w).local.servicePath).toBeUndefined()
++  })
++
++  it('setter：选 api 清回写动作（互斥）', async () => {
++    const w = mountPanel(timerNode({ serviceActionName: 'writeOrder' }))
++    await flushPromises()
++    state(w).timerActionKind = 'api'
++    await nextTick()
++    expect(state(w).local.serviceActionName).toBeUndefined()
++  })
++
++  it('setter：选 none 清全部三字段', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o', serviceActionName: 'writeOrder' }))
++    await flushPromises()
++    state(w).timerActionKind = 'none'
++    await nextTick()
++    expect(state(w).local.serviceConnectorName).toBeUndefined()
++    expect(state(w).local.servicePath).toBeUndefined()
++    expect(state(w).local.serviceActionName).toBeUndefined()
++  })
++
++  it('清理 watch：切到 timer 不清连接器/路径/动作（timer 三者可能合法）', async () => {
++    const w = mountPanel(timerNode({ serviceKind: 'webApi', serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    state(w).local.serviceKind = 'timer'
++    await nextTick()
++    expect(state(w).local.serviceConnectorName).toBe('erpEcho')
++    expect(state(w).local.servicePath).toBe('/o')
++  })
++
++  it('清理 watch：切到 dataWriteback 清连接器/路径；切到 webApi 清到点动作', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    state(w).local.serviceKind = 'dataWriteback'
++    await nextTick()
++    expect(state(w).local.serviceConnectorName).toBeUndefined()
++    expect(state(w).local.servicePath).toBeUndefined()
++
++    const w2 = mountPanel(timerNode({ serviceActionName: 'writeOrder' }))
++    await flushPromises()
++    state(w2).local.serviceKind = 'webApi'
++    await nextTick()
++    expect(state(w2).local.serviceActionName).toBeUndefined()
++  })
++
++  it('模板：timerActionKind=api 渲染连接器 + 路径入口', async () => {
++    const w = mountPanel(timerNode({ serviceConnectorName: 'erpEcho', servicePath: '/o' }))
++    await flushPromises()
++    const labels = w.findAll('.el-form-item__label').map(n => n.text())
++    // 连接器/路径 label（i18n key，messages 空 → 回落 key 文本）
++    expect(labels).toContain('oa.designer.svc.connector')
++    expect(labels).toContain('oa.designer.svc.path')
++  })
++})
+diff --git a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+index cc17393..e5fcf89 100644
+--- a/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
++++ b/cp6.web/src/views/oa/designer/NodePropertyPanel.vue
+@@ -39,41 +39,67 @@ watch(
+ watch(
+   local,
+   () => {
+     if (syncing.value) return
+     emit('update', { ...local.value, ccUsers: [...(local.value.ccUsers ?? [])] })
+   },
+   { deep: true },
+ )
+ 
+ // ── serviceKind 切换时清理另一分支的残留字段 ──────────────────────
+-// cloneNode/emit 全量展开：用户把 serviceTask 从 webApi 切到 timer/dataWriteback 后，
+-// serviceConnectorName/servicePath 面板不再展示却仍残留在 emit 出的 patch 里。
++// cloneNode/emit 全量展开：用户切换 serviceKind 后，面板不再展示的字段仍残留在 emit 出的 patch 里。
+ // 运行期 ServiceTaskActionRef.Snapshot 的优先级规则（timer + ConnectorName → actionKind='webApi'，
+-// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:54-73）会据此到点静默外呼用户以为已删的连接器。
++// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:59-73）会据此到点静默外呼用户以为已删的连接器。
+ // 故切 kind 时必须主动清残留——切勿删除本清理，否则复现 timer 静默 webApi 外呼缺陷。
+-// 注意：timer 的 serviceActionName 是面板可见的“到点动作”，是合法配置，必须保留。
++// 票8：三 kind 的合法字段面不同——
++//   dataWriteback：仅 serviceActionName 合法，无连接器/路径。
++//   webApi：仅连接器/路径合法，无“到点动作”。
++//   timer：connector/path/actionName 三者均可能合法（由「到点动作类型」timerActionKind 互斥控制），
++//         故切「到」timer 时不在此清理；切「离」timer 才由目标 kind 规则清。
+ // syncing 守卫复用上方模式：初始 clone / 节点切换加载期间 local 被整体替换，此时不清理（避免误清）。
+ watch(
+   () => local.value.serviceKind,
+   (kind) => {
+     if (syncing.value) return
+     if (local.value.type !== 'serviceTask') return
+-    if (kind !== 'webApi') {
++    if (kind === 'dataWriteback') {
+       local.value.serviceConnectorName = undefined
+       local.value.servicePath = undefined
+-    } else {
++    } else if (kind === 'webApi') {
+       local.value.serviceActionName = undefined // 卫生对称：webApi 无“到点动作”
+     }
++    // kind === 'timer'：不在此清理；由 timerActionKind 切换负责清非选中变体（见下）。
+   },
+ )
+ 
++// ── 票8：timer「到点动作类型」——从当前已填字段派生，切换时清非选中变体的残留 ──
++// 派生优先级与 Snapshot 一致：有 ConnectorName 即 'api'（Snapshot 优先判 webApi），
++// 否则有 ActionName 即 'write'，否则 'none'。setter 保证互斥清理——选 write/none 时
++// 必须清 serviceConnectorName，否则到点会静默外呼（见上方 Snapshot 优先级说明）。
++const timerActionKind = computed<'none' | 'write' | 'api'>({
++  get: () => local.value.serviceConnectorName ? 'api'
++           : local.value.serviceActionName ? 'write'
++           : 'none',
++  set: (v) => {
++    if (v === 'api') {
++      local.value.serviceActionName = undefined            // 互斥：webApi 变体清回写动作
++    } else if (v === 'write') {
++      local.value.serviceConnectorName = undefined         // 互斥：回写变体清连接器/路径
++      local.value.servicePath = undefined
++    } else {
++      local.value.serviceConnectorName = undefined         // none：全清
++      local.value.servicePath = undefined
++      local.value.serviceActionName = undefined
++    }
++  },
++})
++
+ // ── Timeout: stored as hours, UI shows days ───────────────────────
+ const timeoutDays = computed({
+   get: () => (local.value.timeoutHours != null ? local.value.timeoutHours / 24 : 0),
+   set: (v: number | null) => {
+     local.value.timeoutHours = v != null && v > 0 ? Math.round(v * 24) : undefined
+   },
+ })
+ 
+ const isApproval = computed(() => local.value.type === 'approval')
+ const isServiceTask = computed(() => local.value.type === 'serviceTask')
+@@ -449,48 +475,79 @@ async function searchCcUsers(kw: string) {
+             </el-form-item>
+ 
+             <el-form-item :label="t('oa.designer.svc.mode')">
+               <el-select v-model="local.serviceMode" style="width: 100%" clearable>
+                 <el-option value="sync"  :label="t('oa.designer.svc.mode.sync')" />
+                 <el-option value="async" :label="t('oa.designer.svc.mode.async')" />
+               </el-select>
+             </el-form-item>
+           </template>
+ 
+-          <!-- 定时器：延时模式 / 延时值 / 可选到点动作 -->
++          <!-- 定时器：延时模式 / 延时值 / 到点动作（none | 回写 | webApi 变体，票8 补 spec §5.3 缺口）-->
+           <template v-else-if="local.serviceKind === 'timer'">
+             <el-form-item :label="t('oa.designer.svc.delayMode')">
+               <el-radio-group v-model="local.serviceDelayMode">
+                 <el-radio value="duration">{{ t('oa.designer.svc.delayMode.duration') }}</el-radio>
+                 <el-radio value="untilDate">{{ t('oa.designer.svc.delayMode.untilDate') }}</el-radio>
+                 <el-radio value="untilExpr">{{ t('oa.designer.svc.delayMode.untilExpr') }}</el-radio>
+               </el-radio-group>
+             </el-form-item>
+ 
+             <el-form-item :label="t('oa.designer.svc.delayValue')">
+               <el-input
+                 v-model="local.serviceDelayValue"
+                 :placeholder="t('oa.designer.svc.delayValueHint')"
+                 clearable
+               />
+             </el-form-item>
+ 
+-            <el-form-item :label="t('oa.designer.svc.timerAction')">
++            <!-- 到点动作类型（互斥：none / 回写 / webApi 连接器）-->
++            <el-form-item :label="t('oa.designer.svc.timerActionKind')">
++              <el-select v-model="timerActionKind" style="width: 100%">
++                <el-option value="none"  :label="t('oa.designer.svc.timerActionKind.none')" />
++                <el-option value="write" :label="t('oa.designer.svc.timerActionKind.write')" />
++                <el-option value="api"   :label="t('oa.designer.svc.timerActionKind.api')" />
++              </el-select>
++            </el-form-item>
++
++            <!-- 回写变体：动作下拉 -->
++            <el-form-item v-if="timerActionKind === 'write'" :label="t('oa.designer.svc.timerAction')">
+               <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
+                 <el-option
+                   v-for="a in catalog.actions"
+                   :key="a.name"
+                   :value="a.name"
+                   :label="a.label || a.name"
+                 />
+               </el-select>
+             </el-form-item>
++
++            <!-- webApi 变体：连接器 + 路径（票8 补齐 spec §5.3 缺口）-->
++            <template v-else-if="timerActionKind === 'api'">
++              <el-form-item :label="t('oa.designer.svc.connector')">
++                <el-select v-model="local.serviceConnectorName" style="width: 100%" clearable>
++                  <el-option
++                    v-for="c in catalog.connectors"
++                    :key="c.name"
++                    :value="c.name"
++                    :label="c.label || c.name"
++                  />
++                </el-select>
++              </el-form-item>
++              <el-form-item :label="t('oa.designer.svc.path')">
++                <el-input
++                  v-model="local.servicePath"
++                  :placeholder="t('oa.designer.svc.pathHint')"
++                  clearable
++                />
++              </el-form-item>
++            </template>
+           </template>
+ 
+           <!-- 重试（三 kind 共用）-->
+           <el-form-item :label="t('oa.designer.svc.maxRetries')">
+             <el-input-number
+               v-model="local.serviceMaxRetries"
+               :min="0"
+               :max="10"
+               style="width: 100%"
+             />

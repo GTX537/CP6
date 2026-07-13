@@ -1,0 +1,1903 @@
+efb7459 feat(space): 生命周期三页路由+菜单904-906/i18n种子二弹
+551d324 feat(space): 集成事件监视页（六态标签+无total翻页）
+706f69d feat(space): 发布中心页（预检/生码/发布/采纳/停用五区块）
+66c21a6 feat(space): 编码规则管理页（段编辑器+实时预览+作用域级联）
+37ca334 feat(space): 生命周期 API 层（codeRule/publish/zone + Segments 双向转换）
+b01c8de docs(space): 波3 生命周期UI执行计划（编码规则/发布中心/事件监视，6任务）
+
+ cp6.web/src/api/space/__tests__/codeRule.spec.ts   |  74 +++++
+ cp6.web/src/api/space/codeRule.ts                  |  98 ++++++
+ cp6.web/src/api/space/publish.ts                   |  31 ++
+ cp6.web/src/api/space/zone.ts                      |   9 +
+ cp6.web/src/router/index.ts                        |   4 +
+ cp6.web/src/types/space/scene.ts                   |  55 ++++
+ .../src/views/space/lifecycle/SegmentsEditor.vue   | 165 ++++++++++
+ .../views/space/lifecycle/SpaceCodeRuleView.vue    | 362 +++++++++++++++++++++
+ .../src/views/space/lifecycle/SpaceEventsView.vue  | 112 +++++++
+ .../src/views/space/lifecycle/SpacePublishView.vue | 349 ++++++++++++++++++++
+ .../lifecycle/__tests__/SpaceCodeRuleView.spec.ts  | 112 +++++++
+ .../lifecycle/__tests__/SpaceEventsView.spec.ts    |  87 +++++
+ .../lifecycle/__tests__/SpacePublishView.spec.ts   | 184 +++++++++++
+ .../lifecycle/__tests__/codeRuleValidate.spec.ts   |  49 +++
+ .../src/views/space/lifecycle/codeRuleValidate.ts  |  65 ++++
+ docs/seeds/space-i18n-seed-2.sql                   | 178 ++++++++++
+ docs/seeds/space-menu-seed-2.sql                   | 122 +++++++
+ docs/seeds/space-menu-seed.sql                     |   2 +-
+ .../plans/2026-07-06-space-wave3-lifecycle-ui.md   | 178 ++++++++++
+ 19 files changed, 2235 insertions(+), 1 deletion(-)
+
+=== diff 排除 docs/ ===
+diff --git a/cp6.web/src/api/space/__tests__/codeRule.spec.ts b/cp6.web/src/api/space/__tests__/codeRule.spec.ts
+new file mode 100644
+index 0000000..1e632d0
+--- /dev/null
++++ b/cp6.web/src/api/space/__tests__/codeRule.spec.ts
+@@ -0,0 +1,74 @@
++import { describe, it, expect } from 'vitest'
++import { parseRuleEntity } from '../codeRule'
++
++// GET /space/code-rule 直出实体：segments 是 JSON 字符串，经全局 camelCase 序列化后
++// 键为小写 `segments`。parseRuleEntity 把实体归一为 CodeRuleVO（segments 恒为数组）。
++describe('parseRuleEntity', () => {
++  const seg = {
++    key: 'zone',
++    name: '库区',
++    source: 'zone-code',
++    width: 2,
++    pad: '0',
++    start: 1,
++    step: 1,
++    sep: '-',
++    upper: true,
++    fixedValue: '',
++    optional: false,
++  }
++
++  it('合法 JSON 字符串 → segments 数组（小写键）', () => {
++    const vo = parseRuleEntity({
++      id: 'g1',
++      ruleName: 'R1',
++      scopeType: 1,
++      scopeId: 'f1',
++      isDefault: true,
++      segments: JSON.stringify([seg]),
++    })
++    expect(vo.segments).toHaveLength(1)
++    expect(vo.segments[0]).toMatchObject({ key: 'zone', width: 2, upper: true })
++    expect(vo.ruleName).toBe('R1')
++    expect(vo.scopeType).toBe(1)
++    expect(vo.scopeId).toBe('f1')
++    expect(vo.isDefault).toBe(true)
++    expect(vo.id).toBe('g1')
++  })
++
++  it('"[]" → 空数组', () => {
++    const vo = parseRuleEntity({ ruleName: 'R', scopeType: 0, isDefault: false, segments: '[]' })
++    expect(vo.segments).toEqual([])
++  })
++
++  it('空串 / undefined → 空数组', () => {
++    expect(parseRuleEntity({ segments: '' } as any).segments).toEqual([])
++    expect(parseRuleEntity({} as any).segments).toEqual([])
++  })
++
++  it('非法串不抛异常 → 空数组', () => {
++    expect(() => parseRuleEntity({ segments: '{not json' } as any)).not.toThrow()
++    expect(parseRuleEntity({ segments: '{not json' } as any).segments).toEqual([])
++  })
++
++  it('非数组 JSON（对象）→ 空数组', () => {
++    expect(parseRuleEntity({ segments: '{"a":1}' } as any).segments).toEqual([])
++  })
++
++  it('PascalCase 键容错（Segments/RuleName/…）', () => {
++    const vo = parseRuleEntity({
++      Id: 'g2',
++      RuleName: 'RP',
++      ScopeType: 2,
++      ScopeId: 'z9',
++      IsDefault: true,
++      Segments: JSON.stringify([seg]),
++    } as any)
++    expect(vo.segments).toHaveLength(1)
++    expect(vo.ruleName).toBe('RP')
++    expect(vo.scopeType).toBe(2)
++    expect(vo.scopeId).toBe('z9')
++    expect(vo.isDefault).toBe(true)
++    expect(vo.id).toBe('g2')
++  })
++})
+diff --git a/cp6.web/src/api/space/codeRule.ts b/cp6.web/src/api/space/codeRule.ts
+new file mode 100644
+index 0000000..2af25cf
+--- /dev/null
++++ b/cp6.web/src/api/space/codeRule.ts
+@@ -0,0 +1,98 @@
++import http from '../http'
++import type {
++  Envelope,
++  CodeRuleVO,
++  CodeSegmentDef,
++  CodePreviewResp,
++  CodePrecheckResp,
++} from '@/types/space/scene'
++
++// GET /space/code-rule 直出实体：segments 是 JSON 字符串（camelCase 序列化后键为小写
++// `segments`），其余字段亦为 camelCase。此处容错 PascalCase 键与非法串。
++type RawRuleEntity = {
++  id?: string
++  Id?: string
++  ruleName?: string
++  RuleName?: string
++  scopeType?: number
++  ScopeType?: number
++  scopeId?: string | null
++  ScopeId?: string | null
++  isDefault?: boolean
++  IsDefault?: boolean
++  segments?: string
++  Segments?: string
++  [k: string]: unknown
++}
++
++/**
++ * 实体 → VO 归一：segments 字符串 JSON.parse 为数组；空/"[]"/非法串/非数组 一律 []（不抛）。
++ * 兼容后端 camelCase（小写 segments）与偶发 PascalCase 键。
++ */
++export function parseRuleEntity(raw: RawRuleEntity): CodeRuleVO {
++  const rawSeg: unknown = raw.segments ?? raw.Segments
++  let segments: CodeSegmentDef[] = []
++  if (Array.isArray(rawSeg)) {
++    segments = rawSeg as CodeSegmentDef[]
++  } else if (typeof rawSeg === 'string' && rawSeg.trim()) {
++    try {
++      const parsed = JSON.parse(rawSeg)
++      if (Array.isArray(parsed)) segments = parsed as CodeSegmentDef[]
++    } catch {
++      segments = []
++    }
++  }
++  return {
++    id: (raw.id ?? raw.Id) as string | undefined,
++    ruleName: (raw.ruleName ?? raw.RuleName ?? '') as string,
++    scopeType: (raw.scopeType ?? raw.ScopeType ?? 0) as number,
++    scopeId: (raw.scopeId ?? raw.ScopeId ?? null) as string | null,
++    segments,
++    isDefault: (raw.isDefault ?? raw.IsDefault ?? false) as boolean,
++  }
++}
++
++export const codeRuleApi = {
++  // GET 直出实体列表 → 内部 parseRuleEntity 归一为 CodeRuleVO[]（segments 恒为数组）
++  async list(): Promise<Envelope<CodeRuleVO[]>> {
++    const res = await http.get<unknown, Envelope<RawRuleEntity[]>>('/space/code-rule')
++    return { ...res, data: (res.data ?? []).map(parseRuleEntity) }
++  },
++  // 提交 CodeRuleDto：segments 为数组直发（服务端序列化为 JSON 存库）
++  create(d: CodeRuleVO) {
++    return http.post<unknown, Envelope<{ id: string }>>('/space/code-rule', d)
++  },
++  update(id: string, d: CodeRuleVO) {
++    return http.put<unknown, Envelope<unknown>>(
++      `/space/code-rule/${encodeURIComponent(id)}`,
++      d,
++    )
++  },
++  remove(id: string) {
++    return http.delete<unknown, Envelope<unknown>>(`/space/code-rule/${encodeURIComponent(id)}`)
++  },
++  // 只发 segments，其余 CodePreviewReq 字段服务端不读
++  preview(segments: CodeSegmentDef[]) {
++    return http.post<unknown, Envelope<CodePreviewResp>>('/space/code-rule/preview', { segments })
++  },
++  // 批量生成库位编码；返回本次生成的编码列表
++  generate(floorId: string, mode: 'fill-empty' | 'rebuild', scopeZoneId?: string) {
++    return http.post<unknown, Envelope<string[]>>(
++      `/space/floor/${encodeURIComponent(floorId)}/generate-codes`,
++      { mode, scopeZoneId },
++    )
++  },
++  // 发布前编码预检（zoneId 可空 = 整层）
++  precheck(floorId: string, zoneId?: string) {
++    return http.get<unknown, Envelope<CodePrecheckResp>>(
++      `/space/floor/${encodeURIComponent(floorId)}/code-precheck`,
++      { params: { zoneId } },
++    )
++  },
++  // 单格生成
++  genSingle(locationId: string) {
++    return http.post<unknown, Envelope<{ code: string }>>(
++      `/space/location/${encodeURIComponent(locationId)}/gen-code`,
++    )
++  },
++}
+diff --git a/cp6.web/src/api/space/publish.ts b/cp6.web/src/api/space/publish.ts
+new file mode 100644
+index 0000000..3249daa
+--- /dev/null
++++ b/cp6.web/src/api/space/publish.ts
+@@ -0,0 +1,31 @@
++import http from '../http'
++import type { Envelope, SpaceEventVO } from '@/types/space/scene'
++
++export const publishApi = {
++  // 整层/库区发布（zoneId 可空 = 整层）；返回发布库位数
++  publishFloor(floorId: string, zoneId?: string) {
++    return http.post<unknown, Envelope<{ published: number }>>(
++      `/space/floor/${encodeURIComponent(floorId)}/publish`,
++      { zoneId },
++    )
++  },
++  // 停用已发布库位
++  deactivate(locationId: string) {
++    return http.put<unknown, Envelope<unknown>>(
++      `/space/location/${encodeURIComponent(locationId)}/deactivate`,
++    )
++  },
++  // 存量采纳导入
++  adopt(items: { code: string; attrs?: Record<string, unknown> }[]) {
++    return http.post<unknown, Envelope<{ imported: number; skipped: string[] }>>(
++      '/space/location/adopt',
++      { items },
++    )
++  },
++  // SPACE→WMS 集成事件（分页，无 total）
++  events(page: number, pageSize: number) {
++    return http.get<unknown, Envelope<SpaceEventVO[]>>('/space/publish/events', {
++      params: { page, pageSize },
++    })
++  },
++}
+diff --git a/cp6.web/src/api/space/zone.ts b/cp6.web/src/api/space/zone.ts
+new file mode 100644
+index 0000000..9e8518c
+--- /dev/null
++++ b/cp6.web/src/api/space/zone.ts
+@@ -0,0 +1,9 @@
++import http from '../http'
++import type { Envelope, ZoneVO } from '@/types/space/scene'
++
++export const zoneApi = {
++  // 列出楼层下全部库区
++  list(floorId: string) {
++    return http.get<unknown, Envelope<ZoneVO[]>>('/space/zone', { params: { floorId } })
++  },
++}
+diff --git a/cp6.web/src/router/index.ts b/cp6.web/src/router/index.ts
+index 3e69f6e..0284e62 100644
+--- a/cp6.web/src/router/index.ts
++++ b/cp6.web/src/router/index.ts
+@@ -169,20 +169,24 @@ const viewModules: Record<string, () => Promise<any>> = {
+   '/wms/mobile-task':          () => import('@/views/wms/MobileTaskView.vue'),
+   '/wms/wcs-task':             () => import('@/views/wms/WcsTaskView.vue'),
+   '/wms/carrier':              () => import('@/views/wms/CarrierView.vue'),
+   '/wms/iot-monitor':          () => import('@/views/wms/IotMonitorView.vue'),
+   // ───── Phase WM-8 帳票（占位） ─────
+   '/wms/report-center':        () => import('@/views/wms/ReportCenterView.vue'),
+   // ── Space 空間管理（波2 P0）─────────────────────────────
+   '/space/home': () => import('@/views/space/SpaceHomeView.vue'),
+   '/space/site': () => import('@/views/space/master/SpaceSiteView.vue'),
+   '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
++  // ── Space 波3 生命周期 ─────────────────────────────
++  '/space/code-rule': () => import('@/views/space/lifecycle/SpaceCodeRuleView.vue'),
++  '/space/publish': () => import('@/views/space/lifecycle/SpacePublishView.vue'),
++  '/space/events': () => import('@/views/space/lifecycle/SpaceEventsView.vue'),
+ }
+ 
+ // 静态路由：登录页 / Layout壳子 / 独立窗口
+ const staticRoutes: RouteRecordRaw[] = [
+   // ── OA Phase B 旧路由重定向（菜单条目可能仍为 /wf/*；redirect 确保无论何时均自动跳转至信箱）──
+   { path: '/wf/todo',            redirect: '/oa/inbox' },
+   { path: '/wf/my-applications', redirect: '/oa/inbox' },
+   {
+     path: '/login',
+     name: 'login',
+diff --git a/cp6.web/src/types/space/scene.ts b/cp6.web/src/types/space/scene.ts
+index 26067e8..05610ea 100644
+--- a/cp6.web/src/types/space/scene.ts
++++ b/cp6.web/src/types/space/scene.ts
+@@ -132,10 +132,65 @@ export interface SceneSaveDto {
+   }
+ }
+ 
+ export interface UnplacedLocationDto {
+   id: string
+   locationCode: string
+   status: number
+ }
+ 
+ export type Envelope<T> = { code: number; message: string; data: T }
++
++// ── 生命周期（ch03 编码规则 / ch04 发布）VO —— 镜像后端 CodeRuleDtos.cs ──
++
++/** 编码段定义（CodeRuleDtos.cs:7，11 字段 camelCase 对齐）。 */
++export interface CodeSegmentDef {
++  key: string
++  name: string
++  source: string
++  width: number
++  pad: string
++  start: number
++  step: number
++  sep: string
++  upper: boolean
++  fixedValue: string
++  optional: boolean
++}
++
++/** 编码规则 VO（segments 归一后恒为数组；对应后端 CodeRuleDto）。 */
++export interface CodeRuleVO {
++  id?: string
++  ruleName: string
++  scopeType: number
++  scopeId?: string | null
++  segments: CodeSegmentDef[]
++  isDefault: boolean
++}
++
++/** 实时预览响应（ch03 §8）。 */
++export interface CodePreviewResp {
++  structure: { key: string; name: string; source: string; optional: boolean }[]
++  samples: string[]
++  variableLen: { withAisle: string; withoutAisle: string }
++  precheck: { ok: boolean; errors: string[] }
++}
++
++/** 发布前编码预检响应（ch03 §9.2）。 */
++export interface CodePrecheckResp {
++  emptyCodeCount: number
++  duplicateGroups: string[][]
++  precheckErrors: string[]
++  unplacedDraftCount: number
++}
++
++/** SPACE→WMS 集成事件 VO（ch04 §2）。 */
++export interface SpaceEventVO {
++  id: string
++  hookName: string
++  sourceNo: string
++  targetModule: string
++  status: string
++  attempts: number
++  createDate: string
++  lastError?: string | null
++}
+diff --git a/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue b/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue
+new file mode 100644
+index 0000000..736baba
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/SegmentsEditor.vue
+@@ -0,0 +1,165 @@
++<!--
++  SegmentsEditor —— 编码规则「段」编辑器（波3 生命周期）。CodeRuleVO.segments 的 v-model 子组件。
++  列内编辑：key/name/source(12 值域分组下拉)/width/pad/start/step/sep/upper/fixedValue/optional。
++  字段启用联动（codeRuleValidate）：width·pad·start·step 仅序号源；upper 仅码源(fixed 无效)；
++  fixedValue 仅 fixed。切到巷道源(aisle-*)自动置 optional=true。行操作 上移/下移/删除；末尾「段追加」。
++  页脚黄条：本地镜像校验 E-303/305/306（不阻断保存——权威口径以后端 preview.precheck 为准）。
++  内部持本地 list（自 modelValue 同步 + 变更即 emit），既支持父级回写亦支持脱离父级独立渲染。
++-->
++<template>
++  <div class="seg-editor">
++    <div class="seg-bar">
++      <span class="seg-title">{{ t('space.rule.seg.title') }}</span>
++      <el-button size="small" @click="addSeg">{{ t('space.rule.seg.add') }}</el-button>
++    </div>
++
++    <el-table :data="list" size="small" border>
++      <el-table-column type="index" width="44" />
++      <el-table-column :label="t('space.rule.seg.key')" width="120">
++        <template #default="{ row }">
++          <el-input v-model="row.key" size="small" maxlength="20" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.name')" width="120">
++        <template #default="{ row }">
++          <el-input v-model="row.name" size="small" maxlength="30" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.source')" width="160">
++        <template #default="{ row }">
++          <el-select v-model="row.source" size="small" @change="onSourceChange(row)">
++            <el-option-group v-for="g in sourceGroups" :key="g.label" :label="g.label">
++              <el-option v-for="s in g.items" :key="s" :label="srcLabel(s)" :value="s" />
++            </el-option-group>
++          </el-select>
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.width')" width="90">
++        <template #default="{ row }">
++          <el-input-number v-model="row.width" size="small" :min="0" :max="20" :precision="0"
++            controls-position="right" :disabled="!seqFieldsEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.pad')" width="72">
++        <template #default="{ row }">
++          <el-input v-model="row.pad" size="small" maxlength="1"
++            :disabled="!seqFieldsEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.start')" width="90">
++        <template #default="{ row }">
++          <el-input-number v-model="row.start" size="small" :precision="0" controls-position="right"
++            :disabled="!seqFieldsEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.step')" width="90">
++        <template #default="{ row }">
++          <el-input-number v-model="row.step" size="small" :precision="0" controls-position="right"
++            :disabled="!seqFieldsEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.sep')" width="72">
++        <template #default="{ row }">
++          <el-input v-model="row.sep" size="small" maxlength="1" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.upper')" width="72" align="center">
++        <template #default="{ row }">
++          <el-checkbox v-model="row.upper" :disabled="!upperEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.fixedValue')" width="130">
++        <template #default="{ row }">
++          <el-input v-model="row.fixedValue" size="small" maxlength="20"
++            :disabled="!fixedValueEnabled(row.source)" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.optional')" width="80" align="center">
++        <template #default="{ row }">
++          <el-checkbox v-model="row.optional" @change="emitChange" />
++        </template>
++      </el-table-column>
++      <el-table-column :label="t('space.rule.seg.op')" width="120" fixed="right">
++        <template #default="{ $index }">
++          <el-button link size="small" :disabled="$index === 0" @click="move($index, -1)">↑</el-button>
++          <el-button link size="small" :disabled="$index === list.length - 1" @click="move($index, 1)">↓</el-button>
++          <el-button link type="danger" size="small" @click="remove($index)">{{ t('space.rule.seg.del') }}</el-button>
++        </template>
++      </el-table-column>
++
++      <template #empty>
++        <span class="seg-empty">{{ t('space.rule.seg.empty') }}</span>
++      </template>
++    </el-table>
++
++    <div v-if="warnings.length" class="seg-warn">
++      <span class="seg-warn-ico">⚠</span>
++      <ul>
++        <li v-for="code in warnings" :key="code">{{ t(`space.rule.err.${code}`) }}</li>
++      </ul>
++    </div>
++  </div>
++</template>
++
++<script setup lang="ts">
++import { ref, computed, watch } from 'vue'
++import { useI18n } from 'vue-i18n'
++import type { CodeSegmentDef } from '@/types/space/scene'
++import {
++  FIXED_SOURCE, CODE_SOURCES, SEQ_SOURCES, newSegment, validateSegmentsLocal,
++  seqFieldsEnabled, upperEnabled, fixedValueEnabled, isAisleSource,
++} from './codeRuleValidate'
++
++const props = defineProps<{ modelValue: CodeSegmentDef[] }>()
++const emit = defineEmits<{ (e: 'update:modelValue', v: CodeSegmentDef[]): void }>()
++const { t } = useI18n()
++
++// 本地工作副本：自 modelValue 同步；变更即 emit。父级回写同一引用时 watch 跳过（防抖动）。
++const list = ref<CodeSegmentDef[]>([...(props.modelValue || [])])
++watch(
++  () => props.modelValue,
++  (nv) => { if (nv !== list.value) list.value = [...(nv || [])] },
++)
++
++function emitChange() { emit('update:modelValue', list.value) }
++
++// el-select 含 t() 的选项 → computed 包裹（避免运行期告警/失响应）
++const sourceGroups = computed(() => [
++  { label: t('space.rule.src.group.fixed'), items: [FIXED_SOURCE] },
++  { label: t('space.rule.src.group.code'), items: [...CODE_SOURCES] },
++  { label: t('space.rule.src.group.seq'), items: [...SEQ_SOURCES] },
++])
++const srcLabel = (s: string) => t(`space.rule.src.${s}`)
++
++const warnings = computed(() => validateSegmentsLocal(list.value))
++
++function onSourceChange(row: CodeSegmentDef) {
++  if (isAisleSource(row.source)) row.optional = true // 巷道段 optional 应为 true（E-305）
++  emitChange()
++}
++function addSeg() { list.value.push(newSegment()); emitChange() }
++function remove(i: number) { list.value.splice(i, 1); emitChange() }
++function move(i: number, dir: -1 | 1) {
++  const j = i + dir
++  const arr = list.value
++  const a = arr[i]
++  const b = arr[j]
++  if (a === undefined || b === undefined) return // 越界守卫（同时满足 noUncheckedIndexedAccess）
++  arr[i] = b
++  arr[j] = a
++  emitChange()
++}
++
++defineExpose({ seqFieldsEnabled, upperEnabled, fixedValueEnabled })
++</script>
++
++<style scoped>
++.seg-editor { display: flex; flex-direction: column; gap: 10px; }
++.seg-bar { display: flex; align-items: center; justify-content: space-between; }
++.seg-title { font-weight: 700; color: var(--cp-ink); }
++.seg-empty { color: var(--cp-muted); font-size: var(--cp-fs-sm); }
++.seg-warn { display: flex; gap: 8px; padding: 8px 12px; border-radius: var(--cp-r-sm, 6px);
++  background: #fff7e6; border: 1px solid #ffd591; color: #ad6800; font-size: var(--cp-fs-sm); }
++.seg-warn-ico { line-height: 1.5; }
++.seg-warn ul { margin: 0; padding-left: 4px; list-style: none; }
++</style>
+diff --git a/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue b/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue
+new file mode 100644
+index 0000000..27dc8c6
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue
+@@ -0,0 +1,362 @@
++<!--
++  编码规则管理 —— CpPageShell + CpListPage + CpFormDialog（Space 波3 生命周期）。
++  套用 SpaceSiteView/FloorView 范式：codeRuleApi.list() 前端切片、in-place 变更后 listRef.reload()。
++  差异点：
++   - scopeId 显示名解析：list 后并发拉 site→floor(→zone) 建索引，scopeNames 反查显示；失败留裸 id 截断。
++   - 作用域级联表单：scopeType=1 站点→楼层；=2 站点→楼层→库区；=0 隐藏。编辑时以索引反查回填级联。
++   - SegmentsEditor（段编辑器，v-model form.segments）+ 本地镜像校验黄条（权威=后端 preview）。
++   - 预览弹窗：编辑中/行 segments 直接 POST preview，展示 samples / variableLen / precheck。
++   - isDefault 提示「设为默认将自动取消同作用域其他默认」（后端自动清，无冲突报错）。
++  删除失败的后端护栏 message 由 http 拦截器原样 ElMessage.error（此处 catch 仅止崩）。
++-->
++<template>
++  <CpPageShell :title="t('space.rule.title')" :count="total">
++    <template #actions>
++      <el-button @click="openCreate">{{ t('space.rule.create') }}</el-button>
++    </template>
++
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      @total-change="total = $event"
++    >
++      <template #col-scopeId="{ row }">
++        <span>{{ scopeDisplay(row) }}</span>
++      </template>
++      <template #col-_action="{ row }">
++        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('space.common.edit') }}</el-button>
++        <el-button link type="primary" size="small" @click="openPreview(row.segments)">{{ t('space.rule.preview') }}</el-button>
++        <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('space.common.delete') }}</el-button>
++      </template>
++    </CpListPage>
++
++    <CpFormDialog
++      v-model="dialogVisible"
++      :title="dialogTitle"
++      width="960"
++      :form="form"
++      :rules="rules"
++      :submit="onSave"
++      :labels="{ cancel: t('space.common.cancel'), confirm: t('space.common.save') }"
++      @saved="reloadList"
++    >
++      <el-form-item :label="t('space.rule.fld.ruleName')" prop="ruleName">
++        <el-input v-model="form.ruleName" maxlength="100" />
++      </el-form-item>
++
++      <el-form-item :label="t('space.rule.fld.scopeType')">
++        <el-select v-model="form.scopeType" style="width: 240px" @change="onScopeTypeChange">
++          <el-option v-for="o in scopeTypeOptions" :key="o.value" :label="o.label" :value="o.value" />
++        </el-select>
++      </el-form-item>
++
++      <template v-if="form.scopeType === 1">
++        <el-form-item :label="t('space.rule.fld.site')">
++          <el-select v-model="selSiteId" filterable style="width: 320px" :placeholder="t('space.rule.selectSite')">
++            <el-option v-for="s in cSites" :key="s.id" :label="`${s.siteCode}　${s.siteName}`" :value="s.id!" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('space.rule.fld.floor')" prop="scopeId">
++          <el-select v-model="form.scopeId" filterable style="width: 320px" :placeholder="t('space.rule.selectFloor')">
++            <el-option v-for="f in cFloors" :key="f.id" :label="`${f.floorCode}　${f.floorName}`" :value="f.id" />
++          </el-select>
++        </el-form-item>
++      </template>
++
++      <template v-else-if="form.scopeType === 2">
++        <el-form-item :label="t('space.rule.fld.site')">
++          <el-select v-model="selSiteId" filterable style="width: 320px" :placeholder="t('space.rule.selectSite')">
++            <el-option v-for="s in cSites" :key="s.id" :label="`${s.siteCode}　${s.siteName}`" :value="s.id!" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('space.rule.fld.floor')">
++          <el-select v-model="selFloorId" filterable style="width: 320px" :placeholder="t('space.rule.selectFloor')">
++            <el-option v-for="f in cFloors" :key="f.id" :label="`${f.floorCode}　${f.floorName}`" :value="f.id" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('space.rule.fld.zone')" prop="scopeId">
++          <el-select v-model="form.scopeId" filterable style="width: 320px" :placeholder="t('space.rule.selectZone')">
++            <el-option v-for="z in cZones" :key="z.id" :label="`${z.zoneCode}　${z.zoneName}`" :value="z.id" />
++          </el-select>
++        </el-form-item>
++      </template>
++
++      <el-form-item :label="t('space.rule.fld.isDefault')">
++        <el-checkbox v-model="form.isDefault">{{ t('space.rule.fld.isDefault') }}</el-checkbox>
++        <span class="rule-tip">{{ t('space.rule.isDefaultTip') }}</span>
++      </el-form-item>
++
++      <SegmentsEditor v-model="form.segments" />
++
++      <div class="rule-pv-actions">
++        <el-button @click="openPreview(form.segments)">{{ t('space.rule.preview') }}</el-button>
++      </div>
++    </CpFormDialog>
++
++    <!-- 预览弹窗（独立 el-dialog，不走 CpFormDialog） -->
++    <el-dialog v-model="previewVisible" :title="t('space.rule.pv.title')" width="560">
++      <div v-loading="previewLoading" class="rule-pv">
++        <template v-if="previewData">
++          <div class="pv-sec">
++            <div class="pv-label">{{ t('space.rule.pv.samples') }}</div>
++            <div class="pv-samples">
++              <span v-for="(s, i) in previewData.samples" :key="i" class="cp-mono pv-sample">{{ s }}</span>
++              <span v-if="!previewData.samples.length" class="pv-muted">—</span>
++            </div>
++          </div>
++
++          <div class="pv-sec">
++            <div class="pv-label">{{ t('space.rule.pv.variableLen') }}</div>
++            <div class="pv-vl">
++              <span class="pv-muted">{{ t('space.rule.pv.withAisle') }}:</span>
++              <span class="cp-mono">{{ previewData.variableLen.withAisle }}</span>
++            </div>
++            <div class="pv-vl">
++              <span class="pv-muted">{{ t('space.rule.pv.withoutAisle') }}:</span>
++              <span class="cp-mono">{{ previewData.variableLen.withoutAisle }}</span>
++            </div>
++          </div>
++
++          <div class="pv-sec">
++            <div class="pv-label">{{ t('space.rule.pv.precheck') }}</div>
++            <div v-if="previewData.precheck.ok" class="pv-ok">{{ t('space.rule.pv.ok') }}</div>
++            <ul v-else class="pv-errs">
++              <li v-for="(e, i) in previewData.precheck.errors" :key="i">{{ e }}</li>
++            </ul>
++          </div>
++        </template>
++        <div v-else-if="!previewLoading" class="pv-muted">{{ t('space.rule.pv.empty') }}</div>
++      </div>
++    </el-dialog>
++  </CpPageShell>
++</template>
++
++<script setup lang="ts">
++import { ref, reactive, computed, watch, nextTick } from 'vue'
++import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
++import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import CpFormDialog from '@/components/templates/CpFormDialog.vue'
++import type { Tone } from '@/components/base/CpTag.vue'
++import SegmentsEditor from './SegmentsEditor.vue'
++import { codeRuleApi } from '@/api/space/codeRule'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import { zoneApi } from '@/api/space/zone'
++import type { CodeRuleVO, CodeSegmentDef, CodePreviewResp, SiteVO, FloorVO, ZoneVO } from '@/types/space/scene'
++
++const { t } = useI18n()
++
++const total = ref<number>()
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++function reloadList() { listRef.value?.reload() }
++
++// —— 作用域显示名解析（list 后并发建索引；反查回填编辑级联）——
++const scopeNames = ref<Record<string, string>>({})
++const floorIndex = ref<Record<string, { siteId: string; name: string }>>({})
++const zoneIndex = ref<Record<string, { floorId: string; name: string }>>({})
++
++function truncId(id: string): string {
++  return id.length > 10 ? `${id.slice(0, 10)}…` : id
++}
++function scopeDisplay(row: CodeRuleVO): string {
++  if (row.scopeType === 0 || !row.scopeId) return '—'
++  return scopeNames.value[row.scopeId] || truncId(row.scopeId)
++}
++
++// best-effort：仅当存在 type1/2 规则才拉；任意子请求失败静默（留裸 id 截断）
++async function resolveScopeNames(rules: CodeRuleVO[]) {
++  const needFloor = rules.some((r) => r.scopeType === 1 || r.scopeType === 2)
++  const needZone = rules.some((r) => r.scopeType === 2)
++  if (!needFloor) return
++  try {
++    const sitesRes = await siteApi.list()
++    const sitesArr = sitesRes.data || []
++    const floorLists = await Promise.all(
++      sitesArr.map((s) => floorApi.list(s.id!).then((r) => r.data || []).catch(() => [] as FloorVO[])),
++    )
++    const allFloors = floorLists.flat()
++    const names: Record<string, string> = { ...scopeNames.value }
++    const fIdx: Record<string, { siteId: string; name: string }> = { ...floorIndex.value }
++    for (const f of allFloors) {
++      const nm = `${f.floorCode} ${f.floorName}`
++      fIdx[f.id] = { siteId: f.siteId, name: nm }
++      names[f.id] = nm
++    }
++    floorIndex.value = fIdx
++    if (needZone) {
++      const zoneLists = await Promise.all(
++        allFloors.map((f) => zoneApi.list(f.id).then((r) => r.data || []).catch(() => [] as ZoneVO[])),
++      )
++      const zIdx: Record<string, { floorId: string; name: string }> = { ...zoneIndex.value }
++      for (const z of zoneLists.flat()) {
++        const nm = `${z.zoneCode} ${z.zoneName}`
++        zIdx[z.id] = { floorId: z.floorId, name: nm }
++        names[z.id] = nm
++      }
++      zoneIndex.value = zIdx
++    }
++    scopeNames.value = names
++  } catch { /* best-effort：失败留裸 id 截断 */ }
++}
++
++const scopeTypeOptions = computed(() => [
++  { value: 0, label: t('space.rule.scope.0') },
++  { value: 1, label: t('space.rule.scope.1') },
++  { value: 2, label: t('space.rule.scope.2') },
++])
++const scopeTone = (v: number): Tone => (v === 1 ? 'info' : v === 2 ? 'warn' : 'muted')
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'ruleName', label: t('space.rule.fld.ruleName'), minWidth: 200 },
++  { prop: 'scopeType', label: t('space.rule.fld.scopeType'), width: 130, kind: 'tag',
++    map: (v) => ({ label: t(`space.rule.scope.${v as number}`), tone: scopeTone(v as number) }) },
++  { prop: 'scopeId', label: t('space.rule.fld.scopeId'), minWidth: 180 },
++  { prop: 'segments', label: t('space.rule.fld.segments'), width: 110, align: 'center',
++    map: (v) => ({ label: String((v as CodeSegmentDef[] | undefined)?.length ?? 0) }) },
++  { prop: 'isDefault', label: t('space.rule.fld.isDefault'), width: 110, align: 'center', kind: 'tag',
++    map: (v) => (v
++      ? { label: t('space.rule.default.yes'), tone: 'ok' }
++      : { label: t('space.rule.default.no'), tone: 'muted' }) },
++  { prop: '_action', label: t('space.common.action'), width: 220, fixed: 'right' },
++])
++
++// list 端点无分页 → 前端切片；并发触发显示名解析（fire-and-forget）
++const fetchList: ListFetch = async ({ page, size }) => {
++  const res = await codeRuleApi.list()
++  const all = res.data || []
++  void resolveScopeNames(all)
++  const start = (page - 1) * size
++  return { rows: all.slice(start, start + size), total: all.length }
++}
++
++// —— 新建/编辑对话框 ——
++const dialogVisible = ref(false)
++const form = reactive<CodeRuleVO>({ ruleName: '', scopeType: 0, scopeId: null, segments: [], isDefault: false })
++const dialogTitle = computed(() => (form.id ? t('space.rule.dlg.edit') : t('space.rule.dlg.create')))
++const rules = computed<FormRules>(() => ({
++  ruleName: [{ required: true, message: t('space.common.required'), trigger: 'blur' }],
++  ...(form.scopeType !== 0
++    ? { scopeId: [{ required: true, message: t('space.common.required'), trigger: 'change' }] }
++    : {}),
++}))
++
++// —— 级联选项与中间选择 ——
++const cSites = ref<SiteVO[]>([])
++const cFloors = ref<FloorVO[]>([])
++const cZones = ref<ZoneVO[]>([])
++const selSiteId = ref<string | undefined>()
++const selFloorId = ref<string | undefined>()
++const hydrating = ref(false) // 编辑回填期抑制级联联动清空
++
++async function loadSites() {
++  if (cSites.value.length) return
++  const res = await siteApi.list().catch(() => ({ data: [] as SiteVO[] }) as { data: SiteVO[] })
++  cSites.value = res.data || []
++}
++
++watch(selSiteId, async (nv) => {
++  cFloors.value = []
++  cZones.value = []
++  if (!hydrating.value) { selFloorId.value = undefined; form.scopeId = null }
++  if (nv) cFloors.value = await floorApi.list(nv).then((r) => r.data || []).catch(() => [])
++})
++watch(selFloorId, async (nv) => {
++  cZones.value = []
++  if (!hydrating.value && form.scopeType === 2) form.scopeId = null
++  if (nv) cZones.value = await zoneApi.list(nv).then((r) => r.data || []).catch(() => [])
++})
++
++function onScopeTypeChange() {
++  form.scopeId = null
++  selSiteId.value = undefined
++  selFloorId.value = undefined
++  cFloors.value = []
++  cZones.value = []
++}
++
++async function openCreate() {
++  Object.assign(form, { id: undefined, ruleName: '', scopeType: 0, scopeId: null, segments: [], isDefault: false })
++  selSiteId.value = undefined
++  selFloorId.value = undefined
++  await loadSites()
++  dialogVisible.value = true
++}
++
++async function openEdit(row: CodeRuleVO) {
++  Object.assign(form, {
++    id: row.id, ruleName: row.ruleName, scopeType: row.scopeType, scopeId: row.scopeId,
++    isDefault: row.isDefault, segments: (row.segments || []).map((s) => ({ ...s })), // 深拷贝段，避免直改列表行
++  })
++  hydrating.value = true
++  await loadSites()
++  if (row.scopeType === 1 && row.scopeId) {
++    selSiteId.value = floorIndex.value[row.scopeId]?.siteId
++    await nextTick()
++  } else if (row.scopeType === 2 && row.scopeId) {
++    const zi = zoneIndex.value[row.scopeId]
++    selSiteId.value = zi ? floorIndex.value[zi.floorId]?.siteId : undefined
++    await nextTick()
++    selFloorId.value = zi?.floorId
++    await nextTick()
++  }
++  hydrating.value = false
++  dialogVisible.value = true
++}
++
++async function onSave() {
++  const payload: CodeRuleVO = { ...form, segments: form.segments }
++  if (form.scopeType === 0) payload.scopeId = null
++  if (form.id) await codeRuleApi.update(form.id, payload)
++  else await codeRuleApi.create(payload)
++  ElMessage.success(t('space.common.success'))
++}
++
++async function onDelete(row: CodeRuleVO) {
++  try {
++    await ElMessageBox.confirm(`${t('space.common.confirmDelete')} [${row.ruleName}]`, t('space.common.confirm'), { type: 'warning' })
++    await codeRuleApi.remove(row.id!)
++    ElMessage.success(t('space.common.success'))
++    reloadList()
++  } catch { /* 取消 / 后端护栏错误（后者已由 http 拦截器原样提示） */ }
++}
++
++// —— 预览弹窗 ——
++const previewVisible = ref(false)
++const previewLoading = ref(false)
++const previewData = ref<CodePreviewResp | null>(null)
++async function openPreview(segments: CodeSegmentDef[]) {
++  previewVisible.value = true
++  previewLoading.value = true
++  previewData.value = null
++  try {
++    const res = await codeRuleApi.preview(segments || [])
++    previewData.value = res.data
++  } catch {
++    previewData.value = null // 错误 message 已由 http 拦截器提示
++  } finally {
++    previewLoading.value = false
++  }
++}
++</script>
++
++<style scoped>
++.rule-tip { margin-left: 12px; color: var(--cp-muted); font-size: var(--cp-fs-sm); }
++.rule-pv-actions { display: flex; justify-content: flex-end; margin-top: 12px; }
++
++.rule-pv { display: flex; flex-direction: column; gap: 16px; }
++.pv-sec { display: flex; flex-direction: column; gap: 6px; }
++.pv-label { font-weight: 700; color: var(--cp-ink); }
++.pv-samples { display: flex; flex-wrap: wrap; gap: 8px; }
++.pv-sample { padding: 2px 8px; background: var(--cp-brand-bg, #eef2ff); border-radius: 4px; }
++.pv-vl { display: flex; gap: 8px; align-items: baseline; }
++.pv-muted { color: var(--cp-muted); }
++.pv-ok { color: #389e0d; font-weight: 700; }
++.pv-errs { margin: 0; padding-left: 18px; color: #cf1322; }
++
++/* 本地补 .cp-mono（scoped；波2 前车之鉴——勿依赖模板全局类） */
++.cp-mono { font-family: var(--cp-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
++  font-weight: 700; color: var(--cp-brand-deep); }
++</style>
+diff --git a/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue b/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
+new file mode 100644
+index 0000000..505bafb
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
+@@ -0,0 +1,112 @@
++<!--
++  集成事件监视 —— SPACE→WMS 集成事件（outbox）只读监视页（波3 Task 4）。
++  套用 CpListPage 模板但走「无 total 游标翻页」形态：
++   - :paginated="false"（隐藏内置分页器，page 锁 1、size=UNPAGED_SIZE），本页自维护 page 游标 + 固定 pageSize=50。
++   - fetch 忽略模板传入的 page/size，改读本地 page 游标调 publishApi.events(page, 50)，返回当前页 rows（total=rows.length）。
++   - #toolbar 自制翻页：「前页」(page>1 启用) / 页码 / 「次页」(本页 rows.length===pageSize 才启用；无 total 无法预知末页)；
++     page 变更后 listRef.reload() 命令式重查。「刷新」按钮同 reload。
++   - 页面只读——FAILED 重试由后端 Worker 自动完成，本页不提供任何重试/干预入口。
++  状态六态色调：SUCCESS→ok / SKIPPED→muted / PENDING→info / FAILED→warn / DEAD→danger / COMPENSATED→muted
++  （CpTag Tone 域＝ ok|warn|danger|info|muted，全部合法）。lastError 有值给「詳細」按钮 → ElMessageBox.alert 全文。
++-->
++<template>
++  <CpPageShell :title="t('space.events.title')">
++    <CpListPage
++      ref="listRef"
++      :columns="columns"
++      :fetch="fetchList"
++      :paginated="false"
++      :empty-text="t('space.events.empty')"
++    >
++      <template #toolbar>
++        <el-button :loading="loading" @click="refresh">{{ t('space.events.refresh') }}</el-button>
++        <span class="tb-spacer" />
++        <el-button :disabled="page <= 1" @click="prevPage">{{ t('space.events.prevPage') }}</el-button>
++        <span class="ev-page">{{ t('space.events.pageLabel', { page }) }}</span>
++        <el-button :disabled="!hasNext" @click="nextPage">{{ t('space.events.nextPage') }}</el-button>
++      </template>
++
++      <template #col-lastError="{ row }">
++        <el-button v-if="row.lastError" link type="danger" size="small" @click="showError(row.lastError)">
++          {{ t('space.events.detail') }}
++        </el-button>
++        <span v-else>—</span>
++      </template>
++    </CpListPage>
++  </CpPageShell>
++</template>
++
++<script setup lang="ts">
++import { ref, computed } from 'vue'
++import { ElMessageBox } from 'element-plus'
++import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
++import { type Tone } from '@/components/base/CpTag.vue'
++import { publishApi } from '@/api/space/publish'
++import type { SpaceEventVO } from '@/types/space/scene'
++
++const { t } = useI18n()
++
++const PAGE_SIZE = 50
++const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
++const page = ref(1)
++const loading = ref(false)
++// 本页 rows.length===PAGE_SIZE 时才可能有下一页（无 total，游标翻页）
++const lastCount = ref(0)
++const hasNext = computed(() => lastCount.value === PAGE_SIZE)
++
++// 状态六态 → CpTag 色调
++const STATUS_TONE: Record<string, Tone> = {
++  SUCCESS: 'ok', SKIPPED: 'muted', PENDING: 'info', FAILED: 'warn', DEAD: 'danger', COMPENSATED: 'muted',
++}
++function statusTone(v: unknown): Tone {
++  return STATUS_TONE[String(v)] ?? 'muted'
++}
++
++const columns = computed<ListColumn[]>(() => [
++  { prop: 'sourceNo', label: t('space.events.col.sourceNo'), width: 160, kind: 'mono' },
++  { prop: 'hookName', label: t('space.events.col.hookName'), minWidth: 180, overflowTooltip: true },
++  { prop: 'targetModule', label: t('space.events.col.targetModule'), width: 120 },
++  { prop: 'status', label: t('space.events.col.status'), width: 130, kind: 'tag',
++    map: (v) => ({ label: t(`space.events.status.${v}`), tone: statusTone(v) }) },
++  { prop: 'attempts', label: t('space.events.col.attempts'), width: 90, kind: 'num' },
++  { prop: 'createDate', label: t('space.events.col.createDate'), width: 120, kind: 'date' },
++  { prop: 'lastError', label: t('space.events.col.lastError'), minWidth: 120 },
++])
++
++// fetch 忽略模板 page/size（paginated=false → 恒 1/1000），改读本地 page 游标；返回当前页 rows，total=rows.length
++const fetchList: ListFetch = async () => {
++  loading.value = true
++  try {
++    const res = await publishApi.events(page.value, PAGE_SIZE)
++    const rows = (res.data || []) as SpaceEventVO[]
++    lastCount.value = rows.length
++    return { rows, total: rows.length }
++  } finally {
++    loading.value = false
++  }
++}
++
++function refresh() {
++  listRef.value?.reload()
++}
++function prevPage() {
++  if (page.value <= 1) return
++  page.value -= 1
++  listRef.value?.reload()
++}
++function nextPage() {
++  if (!hasNext.value) return
++  page.value += 1
++  listRef.value?.reload()
++}
++function showError(msg: string) {
++  ElMessageBox.alert(msg, t('space.events.col.lastError'), { type: 'error' })
++}
++</script>
++
++<style scoped>
++.tb-spacer { flex: 1; }
++.ev-page { font-size: var(--cp-fs-sm); font-weight: 700; color: var(--cp-muted); min-width: 64px; text-align: center; }
++</style>
+diff --git a/cp6.web/src/views/space/lifecycle/SpacePublishView.vue b/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+new file mode 100644
+index 0000000..af88ae1
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/SpacePublishView.vue
+@@ -0,0 +1,349 @@
++<!--
++  发布中心 —— Space 波3 生命周期五区块（作用域/预检/生码/发布+采纳/停用）。
++  套用 SpaceCodeRuleView 范式：CpPageShell 壳 + 站点→楼层→库区级联下拉（顶栏，三块共用）。
++  关键行为：
++   - 选楼层即自动 codeRuleApi.precheck(floorId, zoneId?)；库区改动亦重跑。四张 CpStatCard。
++   - 生码 rebuild 先 ElMessageBox.confirm 警示；成功 toast 条数 + 自动重跑预检。
++   - 发布三门（空码/重复/规则错误任一非零）禁用；409 由本页 ElMessageBox.alert 兜（拦截器不 toast）；
++     其余业务错误码由 http 拦截器原样 ElMessage.error（此处 catch 仅止崩，勿重复弹）。
++   - 停用小节：码前缀 locateApi.search(prefix, floorId) → 表；仅 status=1 显示「停用」，409 同上。
++  CpStatCard tone 合法值＝ brand|info|warn|danger（以组件类型为准）：好态用 brand，告警用 danger，
++  未落位（不挡发布）用 warn。
++-->
++<template>
++  <CpPageShell :title="t('space.publish.title')">
++    <!-- ① 作用域选择 -->
++    <div class="pub-scope">
++      <div class="scope-field">
++        <span class="scope-lbl">{{ t('space.publish.site') }}</span>
++        <el-select v-model="selSiteId" filterable clearable style="width: 240px" :placeholder="t('space.publish.selectSite')">
++          <el-option v-for="s in cSites" :key="s.id" :label="`${s.siteCode}　${s.siteName}`" :value="s.id!" />
++        </el-select>
++      </div>
++      <div class="scope-field">
++        <span class="scope-lbl">{{ t('space.publish.floor') }}</span>
++        <el-select v-model="selFloorId" filterable clearable style="width: 240px" :placeholder="t('space.publish.selectFloor')">
++          <el-option v-for="f in cFloors" :key="f.id" :label="`${f.floorCode}　${f.floorName}`" :value="f.id" />
++        </el-select>
++      </div>
++      <div class="scope-field">
++        <span class="scope-lbl">{{ t('space.publish.zone') }}</span>
++        <el-select v-model="selZoneId" filterable clearable style="width: 240px" :disabled="!selFloorId" :placeholder="t('space.publish.wholeFloorHint')">
++          <el-option v-for="z in cZones" :key="z.id" :label="`${z.zoneCode}　${z.zoneName}`" :value="z.id" />
++        </el-select>
++      </div>
++    </div>
++
++    <CpEmpty v-if="!selFloorId" :text="t('space.publish.pickFloorFirst')" />
++
++    <template v-else>
++      <!-- ② 预检卡片 -->
++      <section class="pub-sec" v-loading="precheckLoading">
++        <div class="sec-head">
++          <span class="sec-title">{{ t('space.publish.precheckTitle') }}</span>
++          <el-button size="small" @click="runPrecheck">{{ t('space.publish.recheck') }}</el-button>
++        </div>
++        <div class="pub-cards">
++          <CpStatCard :label="t('space.publish.emptyCode')" :value="pc.emptyCodeCount" :tone="pc.emptyCodeCount > 0 ? 'danger' : 'brand'" />
++          <CpStatCard :label="t('space.publish.dupGroups')" :value="pc.duplicateGroups.length" :tone="pc.duplicateGroups.length > 0 ? 'danger' : 'brand'" />
++          <CpStatCard :label="t('space.publish.ruleErrors')" :value="pc.precheckErrors.length" :tone="pc.precheckErrors.length > 0 ? 'danger' : 'brand'" />
++          <CpStatCard :label="t('space.publish.unplaced')" :value="pc.unplacedDraftCount" :tone="pc.unplacedDraftCount > 0 ? 'warn' : 'brand'" :sub="t('space.publish.unplacedHint')" />
++        </div>
++        <ul v-if="pc.precheckErrors.length" class="pub-errs">
++          <li v-for="(e, i) in pc.precheckErrors" :key="i">{{ e }}</li>
++        </ul>
++      </section>
++
++      <!-- ③ 生码 -->
++      <section class="pub-sec">
++        <div class="sec-head"><span class="sec-title">{{ t('space.publish.genTitle') }}</span></div>
++        <div class="pub-row">
++          <el-radio-group v-model="genMode">
++            <el-radio value="fill-empty">{{ t('space.publish.mode.fillEmpty') }}</el-radio>
++            <el-radio value="rebuild">{{ t('space.publish.mode.rebuild') }}</el-radio>
++          </el-radio-group>
++          <el-button type="primary" :loading="genLoading" @click="onGenerate">{{ t('space.publish.genBtn') }}</el-button>
++        </div>
++      </section>
++
++      <!-- ④ 发布 + 存量采纳 -->
++      <section class="pub-sec">
++        <div class="sec-head"><span class="sec-title">{{ t('space.publish.publishTitle') }}</span></div>
++        <div class="pub-row">
++          <el-button type="primary" :loading="publishLoading" :disabled="!canPublish" @click="onPublish">{{ t('space.publish.doPublish') }}</el-button>
++          <span v-if="!canPublish" class="pub-gate">{{ t('space.publish.gateHint') }}</span>
++          <el-button @click="openAdopt">{{ t('space.publish.adoptBtn') }}</el-button>
++        </div>
++      </section>
++
++      <!-- ⑤ 停用小节 -->
++      <section class="pub-sec">
++        <div class="sec-head"><span class="sec-title">{{ t('space.publish.deactTitle') }}</span></div>
++        <div class="pub-row">
++          <el-input v-model="stopPrefix" class="stop-prefix" style="width: 260px" clearable :placeholder="t('space.publish.prefixPh')" @keyup.enter="runSearch" />
++          <el-button :loading="searchLoading" @click="runSearch">{{ t('space.publish.searchBtn') }}</el-button>
++        </div>
++        <el-table v-if="searchRows.length" :data="searchRows" size="small" border style="margin-top: 12px">
++          <el-table-column :label="t('space.publish.col.code')" min-width="200">
++            <template #default="{ row }"><span class="cp-mono">{{ row.locationCode || row.locationId }}</span></template>
++          </el-table-column>
++          <el-table-column :label="t('space.publish.col.status')" width="140">
++            <template #default="{ row }">
++              <CpTag :tone="statusTone(row.status)">{{ t(`space.publish.status.${row.status}`) }}</CpTag>
++            </template>
++          </el-table-column>
++          <el-table-column :label="t('space.common.action')" width="120" align="center">
++            <template #default="{ row }">
++              <el-button v-if="row.status === 1" link type="danger" size="small" @click="onDeactivate(row)">{{ t('space.publish.deactivate') }}</el-button>
++            </template>
++          </el-table-column>
++        </el-table>
++        <CpEmpty v-else-if="searched" :text="t('space.publish.noMatch')" />
++      </section>
++    </template>
++
++    <!-- 存量采纳弹窗 -->
++    <el-dialog v-model="adoptVisible" :title="t('space.publish.adoptTitle')" width="560">
++      <div class="adopt-codes">
++        <div class="adopt-hint">{{ t('space.publish.adoptHint') }}</div>
++        <el-input v-model="adoptText" type="textarea" :rows="8" :placeholder="t('space.publish.adoptPh')" />
++      </div>
++      <div v-if="adoptResult" class="adopt-result">
++        <div class="ar-imported">{{ t('space.publish.imported', { n: adoptResult.imported }) }}</div>
++        <div v-if="adoptResult.skipped.length" class="ar-skipped">
++          <div class="ar-skipped-lbl">{{ t('space.publish.skipped', { n: adoptResult.skipped.length }) }}</div>
++          <ul>
++            <li v-for="(c, i) in adoptResult.skipped" :key="i" class="cp-mono">{{ c }}</li>
++          </ul>
++        </div>
++      </div>
++      <template #footer>
++        <el-button @click="adoptVisible = false">{{ t('space.common.cancel') }}</el-button>
++        <el-button type="primary" :loading="adoptLoading" @click="onAdopt">{{ t('space.publish.adoptConfirm') }}</el-button>
++      </template>
++    </el-dialog>
++  </CpPageShell>
++</template>
++
++<script setup lang="ts">
++import { ref, reactive, computed, watch } from 'vue'
++import { ElMessage, ElMessageBox } from 'element-plus'
++import { useI18n } from 'vue-i18n'
++import CpPageShell from '@/components/templates/CpPageShell.vue'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++import CpTag, { type Tone } from '@/components/base/CpTag.vue'
++import { codeRuleApi } from '@/api/space/codeRule'
++import { publishApi } from '@/api/space/publish'
++import { zoneApi } from '@/api/space/zone'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import { locateApi } from '@/api/space/locate'
++import type { SiteVO, FloorVO, ZoneVO, CodePrecheckResp } from '@/types/space/scene'
++import type { LocateResult } from '@/types/space/viewer'
++
++const { t } = useI18n()
++
++// —— ① 作用域级联 ——
++const cSites = ref<SiteVO[]>([])
++const cFloors = ref<FloorVO[]>([])
++const cZones = ref<ZoneVO[]>([])
++const selSiteId = ref<string | undefined>()
++const selFloorId = ref<string | undefined>()
++const selZoneId = ref<string | undefined>()
++
++async function loadSites() {
++  const res = await siteApi.list().catch(() => ({ data: [] as SiteVO[] }) as { data: SiteVO[] })
++  cSites.value = res.data || []
++}
++loadSites()
++
++watch(selSiteId, async (nv) => {
++  cFloors.value = []
++  cZones.value = []
++  selFloorId.value = undefined
++  selZoneId.value = undefined
++  if (nv) cFloors.value = await floorApi.list(nv).then((r) => r.data || []).catch(() => [])
++})
++watch(selFloorId, async (nv) => {
++  cZones.value = []
++  selZoneId.value = undefined
++  // 切楼层重置停用搜索态
++  searchRows.value = []
++  searched.value = false
++  if (nv) {
++    cZones.value = await zoneApi.list(nv).then((r) => r.data || []).catch(() => [])
++    await runPrecheck()
++  } else {
++    precheck.value = null
++  }
++})
++watch(selZoneId, () => {
++  if (selFloorId.value) runPrecheck()
++})
++
++// —— ② 预检 ——
++const precheck = ref<CodePrecheckResp | null>(null)
++const precheckLoading = ref(false)
++const emptyPc: CodePrecheckResp = { emptyCodeCount: 0, duplicateGroups: [], precheckErrors: [], unplacedDraftCount: 0 }
++const pc = computed<CodePrecheckResp>(() => precheck.value || emptyPc)
++
++async function runPrecheck() {
++  if (!selFloorId.value) { precheck.value = null; return }
++  precheckLoading.value = true
++  try {
++    const res = await codeRuleApi.precheck(selFloorId.value, selZoneId.value || undefined)
++    precheck.value = res.data
++  } catch {
++    precheck.value = null // 错误 message 已由 http 拦截器提示
++  } finally {
++    precheckLoading.value = false
++  }
++}
++
++// —— ③ 生码 ——
++const genMode = ref<'fill-empty' | 'rebuild'>('fill-empty')
++const genLoading = ref(false)
++async function onGenerate() {
++  if (!selFloorId.value) return
++  if (genMode.value === 'rebuild') {
++    try {
++      await ElMessageBox.confirm(t('space.publish.rebuildWarn'), t('space.common.confirm'), { type: 'warning' })
++    } catch { return } // 取消
++  }
++  genLoading.value = true
++  try {
++    const res = await codeRuleApi.generate(selFloorId.value, genMode.value, selZoneId.value || undefined)
++    ElMessage.success(t('space.publish.genDone', { n: (res.data || []).length }))
++    await runPrecheck()
++  } catch {
++    /* 拦截器已提示 */
++  } finally {
++    genLoading.value = false
++  }
++}
++
++// —— ④ 发布 + 采纳 ——
++const publishLoading = ref(false)
++// 三门：空码/重复/规则错误任一非零则禁用；未落位不挡
++const canPublish = computed(() =>
++  !!precheck.value &&
++  pc.value.emptyCodeCount === 0 &&
++  pc.value.duplicateGroups.length === 0 &&
++  pc.value.precheckErrors.length === 0,
++)
++
++async function onPublish() {
++  if (!selFloorId.value || !canPublish.value) return
++  publishLoading.value = true
++  try {
++    const res = await publishApi.publishFloor(selFloorId.value, selZoneId.value || undefined)
++    ElMessage.success(t('space.publish.publishDone', { n: res.data?.published ?? 0 }))
++    await runPrecheck()
++  } catch (e) {
++    if ((e as { response?: { status?: number } })?.response?.status === 409) {
++      ElMessageBox.alert(t('space.publish.conflict409'))
++    }
++    // 其余错误拦截器已 toast
++  } finally {
++    publishLoading.value = false
++  }
++}
++
++const adoptVisible = ref(false)
++const adoptText = ref('')
++const adoptLoading = ref(false)
++const adoptResult = ref<{ imported: number; skipped: string[] } | null>(null)
++function openAdopt() {
++  adoptText.value = ''
++  adoptResult.value = null
++  adoptVisible.value = true
++}
++async function onAdopt() {
++  const codes = adoptText.value.split('\n').map((s) => s.trim()).filter(Boolean)
++  if (!codes.length) { ElMessage.warning(t('space.publish.adoptEmpty')); return }
++  adoptLoading.value = true
++  try {
++    const res = await publishApi.adopt(codes.map((code) => ({ code })))
++    adoptResult.value = res.data
++  } catch (e) {
++    if ((e as { response?: { status?: number } })?.response?.status === 409) {
++      ElMessageBox.alert(t('space.publish.conflict409'))
++    }
++  } finally {
++    adoptLoading.value = false
++  }
++}
++
++// —— ⑤ 停用 ——
++const stopPrefix = ref('')
++const searchLoading = ref(false)
++const searched = ref(false)
++const searchRows = ref<LocateResult[]>([])
++function statusTone(s: number): Tone {
++  return s === 1 ? 'ok' : s === 2 ? 'danger' : 'muted'
++}
++async function runSearch() {
++  const prefix = stopPrefix.value.trim()
++  if (!prefix) return
++  searchLoading.value = true
++  try {
++    const res = await locateApi.search(prefix, selFloorId.value)
++    searchRows.value = res.data || []
++    searched.value = true
++  } catch {
++    searchRows.value = []
++    searched.value = true
++  } finally {
++    searchLoading.value = false
++  }
++}
++async function onDeactivate(row: LocateResult) {
++  try {
++    await ElMessageBox.confirm(
++      t('space.publish.deactivateWarn', { code: row.locationCode || row.locationId }),
++      t('space.common.confirm'),
++      { type: 'warning' },
++    )
++  } catch { return } // 取消
++  try {
++    await publishApi.deactivate(row.locationId)
++    ElMessage.success(t('space.common.success'))
++    await runSearch()
++  } catch (e) {
++    if ((e as { response?: { status?: number } })?.response?.status === 409) {
++      ElMessageBox.alert(t('space.publish.conflict409'))
++    }
++    // 其余业务错误码由拦截器原样提示
++  }
++}
++</script>
++
++<style scoped>
++.pub-scope { display: flex; flex-wrap: wrap; gap: 20px; align-items: center;
++  background: var(--cp-card); border-radius: var(--cp-r-lg); box-shadow: var(--cp-shadow-1); padding: 16px 20px; }
++.scope-field { display: flex; align-items: center; gap: 10px; }
++.scope-lbl { font-size: var(--cp-fs-xs); font-weight: 800; color: var(--cp-muted); letter-spacing: .4px; }
++
++.pub-sec { background: var(--cp-card); border-radius: var(--cp-r-lg); box-shadow: var(--cp-shadow-1); padding: 16px 20px; }
++.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
++.sec-title { font-size: var(--cp-fs-base); font-weight: 800; color: var(--cp-ink); }
++.pub-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
++.pub-gate { font-size: var(--cp-fs-sm); color: var(--cp-danger); font-weight: 700; }
++
++.pub-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
++.pub-errs { margin: 14px 0 0; padding-left: 18px; color: #cf1322; font-size: var(--cp-fs-sm); }
++.pub-errs li { margin: 2px 0; }
++
++.adopt-codes { display: flex; flex-direction: column; gap: 8px; }
++.adopt-hint { font-size: var(--cp-fs-sm); color: var(--cp-muted); }
++.adopt-result { margin-top: 14px; font-size: var(--cp-fs-sm); }
++.ar-imported { color: #389e0d; font-weight: 700; }
++.ar-skipped { margin-top: 8px; }
++.ar-skipped-lbl { color: var(--cp-warn); font-weight: 700; margin-bottom: 4px; }
++.ar-skipped ul { margin: 0; padding-left: 18px; }
++
++/* 本地补 .cp-mono（scoped；波2 前车之鉴——勿依赖模板全局类） */
++.cp-mono { font-family: var(--cp-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
++  font-weight: 700; color: var(--cp-brand-deep); }
++</style>
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts
+new file mode 100644
+index 0000000..7b3b4fb
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts
+@@ -0,0 +1,112 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import ElementPlus from 'element-plus'
++import { codeRuleApi } from '@/api/space/codeRule'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import { zoneApi } from '@/api/space/zone'
++import SpaceCodeRuleView from '../SpaceCodeRuleView.vue'
++import SegmentsEditor from '../SegmentsEditor.vue'
++import { newSegment } from '../codeRuleValidate'
++import type { CodeRuleVO, CodeSegmentDef, CodePreviewResp, SiteVO, FloorVO } from '@/types/space/scene'
++
++vi.mock('@/api/space/codeRule', () => ({
++  codeRuleApi: { list: vi.fn(), create: vi.fn(), update: vi.fn(), remove: vi.fn(), preview: vi.fn() },
++}))
++vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
++vi.mock('@/api/space/floor', () => ({ floorApi: { list: vi.fn() } }))
++vi.mock('@/api/space/zone', () => ({ zoneApi: { list: vi.fn() } }))
++vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
++
++function seg(source: string, optional = false): CodeSegmentDef {
++  return { ...newSegment(), source, optional }
++}
++
++const rules: CodeRuleVO[] = [
++  { id: 'r1', ruleName: 'テナント既定ルール', scopeType: 0, scopeId: null, isDefault: true,
++    segments: [seg('zone-code'), seg('col')] },
++  { id: 'r2', ruleName: 'フロア専用ルール', scopeType: 1, scopeId: 'f1', isDefault: false,
++    segments: [seg('zone-code'), seg('aisle-code', true), seg('col')] },
++]
++const sites: SiteVO[] = [{ id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true }]
++const floors: FloorVO[] = [
++  { id: 'f1', siteId: 's1', level: 1, floorCode: 'FL1', floorName: '1階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++]
++const previewResp: CodePreviewResp = {
++  structure: [],
++  samples: ['A-01-01', 'A-01-02', 'A-02-01'],
++  variableLen: { withAisle: 'Z-AA-01-01', withoutAisle: 'Z-01-01' },
++  precheck: { ok: true, errors: [] },
++}
++
++function i18nPlugin() {
++  return createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
++}
++function mountView(opts: Record<string, unknown> = {}) {
++  return mount(SpaceCodeRuleView, { global: { plugins: [i18nPlugin()], ...(opts.global as object || {}) } })
++}
++
++describe('SpaceCodeRuleView', () => {
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(codeRuleApi.list).mockResolvedValue({ code: 0, message: '', data: rules })
++    vi.mocked(codeRuleApi.preview).mockResolvedValue({ code: 0, message: '', data: previewResp })
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
++    vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
++    vi.mocked(zoneApi.list).mockResolvedValue({ code: 0, message: '', data: [] })
++  })
++
++  // ① mock list → 渲染规则名与段数
++  it('挂载后渲染规则名与段数', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(codeRuleApi.list).toHaveBeenCalled()
++    expect(w.text()).toContain('テナント既定ルール')
++    expect(w.text()).toContain('フロア専用ルール')
++    // r2 有 3 段
++    expect(w.text()).toContain('3')
++  })
++
++  // ③ preview mock → samples 文本渲染
++  it('点行「预览」后渲染 preview samples 文本', async () => {
++    const w = mountView({ global: { plugins: [i18nPlugin()], stubs: { teleport: true } } })
++    await flushPromises()
++    const pvBtns = w.findAll('el-button').filter((b) => b.text() === 'space.rule.preview')
++    expect(pvBtns.length).toBeGreaterThan(0)
++    await pvBtns[0].trigger('click')
++    await flushPromises()
++    expect(codeRuleApi.preview).toHaveBeenCalled()
++    expect(w.text()).toContain('A-01-01')
++    expect(w.text()).toContain('A-02-01')
++  })
++})
++
++// ② 新建弹窗添加两段 → 本地校验提示出现（缺库位粒度段 E-306）——直接测 SegmentsEditor
++// SegmentsEditor 独立挂载须注册 ElementPlus（el-table 需其管理作用域插槽）。
++describe('SegmentsEditor 本地校验', () => {
++  function mountEditor(modelValue: CodeSegmentDef[]) {
++    return mount(SegmentsEditor, {
++      props: { modelValue, 'onUpdate:modelValue': (v: CodeSegmentDef[]) => (modelValue = v) },
++      global: { plugins: [i18nPlugin(), ElementPlus] },
++    })
++  }
++
++  it('添加两段（默认 zone-code，无库位粒度段）→ 出现 E-306 提示', async () => {
++    const w = mountEditor([])
++    const addBtn = w.findAll('button').find((b) => b.text().includes('space.rule.seg.add'))
++    expect(addBtn).toBeTruthy()
++    await addBtn!.trigger('click')
++    await addBtn!.trigger('click')
++    await flushPromises()
++    // 两段皆 zone-code，缺 col/level/depth → E-306 提示条出现
++    expect(w.text()).toContain('space.rule.err.E-306')
++  })
++
++  it('含库位粒度段时不出现 E-306 提示', async () => {
++    const w = mountEditor([seg('zone-code'), seg('col')])
++    await flushPromises()
++    expect(w.text()).not.toContain('space.rule.err.E-306')
++  })
++})
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts
+new file mode 100644
+index 0000000..bcd472c
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts
+@@ -0,0 +1,87 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import ElementPlus from 'element-plus'
++import { publishApi } from '@/api/space/publish'
++import CpTag from '@/components/base/CpTag.vue'
++import SpaceEventsView from '../SpaceEventsView.vue'
++import type { SpaceEventVO } from '@/types/space/scene'
++
++vi.mock('@/api/space/publish', () => ({ publishApi: { events: vi.fn() } }))
++vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
++
++function ev(over: Partial<SpaceEventVO>): SpaceEventVO {
++  return {
++    id: 'e', hookName: 'wms.location.sync', sourceNo: 'PUB-001', targetModule: 'WMS',
++    status: 'SUCCESS', attempts: 1, createDate: '2026-07-06T10:00:00', lastError: null, ...over,
++  }
++}
++
++// flatJson:true 匹配生产 i18n；仅给带插值的 key 供文案，其余缺失 key 原样返回（断言用 key 名）
++function i18nPlugin() {
++  return createI18n({
++    legacy: false, locale: 'ja', flatJson: true, missingWarn: false, fallbackWarn: false,
++    messages: { ja: { 'space.events.pageLabel': '{page} ページ' } },
++  })
++}
++function mountView() {
++  return mount(SpaceEventsView, {
++    global: { plugins: [i18nPlugin(), ElementPlus] },
++    attachTo: document.body,
++  })
++}
++
++describe('SpaceEventsView', () => {
++  afterEach(() => { document.body.innerHTML = '' })
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(publishApi.events).mockResolvedValue({ code: 0, message: '', data: [] })
++  })
++
++  // ① 两行事件 → 状态 tag（tone 映射）与行渲染
++  it('渲染事件行并按状态映射 tag 色调', async () => {
++    vi.mocked(publishApi.events).mockResolvedValue({
++      code: 0, message: '', data: [
++        ev({ id: 'e1', sourceNo: 'PUB-001', status: 'SUCCESS' }),
++        ev({ id: 'e2', sourceNo: 'PUB-002', status: 'FAILED', lastError: 'boom' }),
++      ],
++    })
++    const w = mountView()
++    await flushPromises()
++    expect(publishApi.events).toHaveBeenCalledWith(1, 50)
++    const tones = w.findAllComponents(CpTag).map((c) => c.props('tone'))
++    expect(tones).toContain('ok') // SUCCESS
++    expect(tones).toContain('warn') // FAILED
++    expect(w.text()).toContain('PUB-001')
++    expect(w.text()).toContain('PUB-002')
++  })
++
++  // ② 满页 50 行 → 次页按钮启用；点击后二次调用 page=2
++  it('满页时次页按钮启用并翻到 page=2', async () => {
++    const fullPage = Array.from({ length: 50 }, (_, i) => ev({ id: `e${i}`, sourceNo: `PUB-${i}` }))
++    vi.mocked(publishApi.events)
++      .mockResolvedValueOnce({ code: 0, message: '', data: fullPage })
++      .mockResolvedValueOnce({ code: 0, message: '', data: [] })
++    const w = mountView()
++    await flushPromises()
++    const nextBtn = w.findAll('button').find((b) => b.text() === 'space.events.nextPage')
++    expect(nextBtn).toBeTruthy()
++    expect(nextBtn!.attributes('disabled')).toBeUndefined()
++    await nextBtn!.trigger('click')
++    await flushPromises()
++    expect(publishApi.events).toHaveBeenLastCalledWith(2, 50)
++  })
++
++  // ③ 空页（不足 pageSize）→ 次页按钮禁用
++  it('未满页时次页按钮禁用', async () => {
++    vi.mocked(publishApi.events).mockResolvedValue({
++      code: 0, message: '', data: [ev({ id: 'e1' })],
++    })
++    const w = mountView()
++    await flushPromises()
++    const nextBtn = w.findAll('button').find((b) => b.text() === 'space.events.nextPage')
++    expect(nextBtn).toBeTruthy()
++    expect(nextBtn!.attributes('disabled')).toBeDefined()
++  })
++})
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+new file mode 100644
+index 0000000..ebdee8c
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts
+@@ -0,0 +1,184 @@
++// @vitest-environment jsdom
++import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
++import { mount, flushPromises } from '@vue/test-utils'
++import { createI18n } from 'vue-i18n'
++import ElementPlus, { ElSelect, ElMessageBox } from 'element-plus'
++import { codeRuleApi } from '@/api/space/codeRule'
++import { publishApi } from '@/api/space/publish'
++import { zoneApi } from '@/api/space/zone'
++import { siteApi } from '@/api/space/site'
++import { floorApi } from '@/api/space/floor'
++import { locateApi } from '@/api/space/locate'
++import CpStatCard from '@/components/templates/CpStatCard.vue'
++import SpacePublishView from '../SpacePublishView.vue'
++import type { SiteVO, FloorVO, ZoneVO, CodePrecheckResp } from '@/types/space/scene'
++import type { LocateResult } from '@/types/space/viewer'
++
++vi.mock('@/api/space/codeRule', () => ({
++  codeRuleApi: { precheck: vi.fn(), generate: vi.fn() },
++}))
++vi.mock('@/api/space/publish', () => ({
++  publishApi: { publishFloor: vi.fn(), deactivate: vi.fn(), adopt: vi.fn() },
++}))
++vi.mock('@/api/space/zone', () => ({ zoneApi: { list: vi.fn() } }))
++vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
++vi.mock('@/api/space/floor', () => ({ floorApi: { list: vi.fn() } }))
++vi.mock('@/api/space/locate', () => ({ locateApi: { search: vi.fn() } }))
++vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
++
++const sites: SiteVO[] = [{ id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true }]
++const floors: FloorVO[] = [
++  { id: 'f1', siteId: 's1', level: 1, floorCode: 'FL1', floorName: '1階', height: 6000, underlayOffsetX: 0, underlayOffsetY: 0, originX: 0, originY: 0 },
++]
++const zones: ZoneVO[] = [{ id: 'z1', floorId: 'f1', zoneCode: 'A', zoneName: 'Aゾーン', zoneType: 0, polygon: '' }]
++
++const cleanPrecheck: CodePrecheckResp = { emptyCodeCount: 0, duplicateGroups: [], precheckErrors: [], unplacedDraftCount: 0 }
++const dirtyPrecheck: CodePrecheckResp = {
++  emptyCodeCount: 3,
++  duplicateGroups: [['A-01', 'A-01']],
++  precheckErrors: ['E-401 コードルール未設定'],
++  unplacedDraftCount: 7,
++}
++
++// flatJson:true 匹配生产 i18n；仅给带插值的 key 提供文案，其余缺失 key 原样返回（断言用 key 名）
++function i18nPlugin() {
++  return createI18n({
++    legacy: false,
++    locale: 'ja',
++    flatJson: true,
++    missingWarn: false,
++    fallbackWarn: false,
++    messages: {
++      ja: {
++        'space.publish.imported': '取込 {n} 件',
++        'space.publish.skipped': 'スキップ {n} 件',
++      },
++    },
++  })
++}
++// attachTo document.body so el-dialog / ElMessageBox teleported content renders in jsdom
++function mountView() {
++  return mount(SpacePublishView, {
++    global: { plugins: [i18nPlugin(), ElementPlus] },
++    attachTo: document.body,
++  })
++}
++
++// 顶栏选择站点→楼层（emit update:modelValue 驱动 v-model；顺序：站点/楼层/库区）
++async function selectFloor(w: ReturnType<typeof mountView>) {
++  const selects = w.findAllComponents(ElSelect)
++  selects[0].vm.$emit('update:modelValue', 's1')
++  await flushPromises()
++  const s2 = w.findAllComponents(ElSelect)
++  s2[1].vm.$emit('update:modelValue', 'f1')
++  await flushPromises()
++}
++
++describe('SpacePublishView', () => {
++  afterEach(() => { document.body.innerHTML = '' })
++  beforeEach(() => {
++    vi.clearAllMocks()
++    vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
++    vi.mocked(floorApi.list).mockResolvedValue({ code: 0, message: '', data: floors })
++    vi.mocked(zoneApi.list).mockResolvedValue({ code: 0, message: '', data: zones })
++    vi.mocked(codeRuleApi.precheck).mockResolvedValue({ code: 0, message: '', data: cleanPrecheck })
++    vi.mocked(codeRuleApi.generate).mockResolvedValue({ code: 0, message: '', data: [] })
++    vi.mocked(publishApi.publishFloor).mockResolvedValue({ code: 0, message: '', data: { published: 0 } })
++    vi.mocked(publishApi.deactivate).mockResolvedValue({ code: 0, message: '', data: null })
++    vi.mocked(publishApi.adopt).mockResolvedValue({ code: 0, message: '', data: { imported: 0, skipped: [] } })
++    vi.mocked(locateApi.search).mockResolvedValue({ code: 0, message: '', data: [] })
++  })
++
++  // ① 选楼层自动 precheck → 四卡数值
++  it('选楼层后自动预检并渲染四张统计卡数值', async () => {
++    vi.mocked(codeRuleApi.precheck).mockResolvedValue({ code: 0, message: '', data: dirtyPrecheck })
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    expect(codeRuleApi.precheck).toHaveBeenCalledWith('f1', undefined)
++    const cards = w.findAllComponents(CpStatCard)
++    expect(cards.length).toBe(4)
++    expect(cards[0].props('value')).toBe(3) // 空码数
++    expect(cards[1].props('value')).toBe(1) // 重复码组数
++    expect(cards[2].props('value')).toBe(1) // 规则错误数
++    expect(cards[3].props('value')).toBe(7) // 未落位数
++  })
++
++  // ② 预检三门非零 → 发布按钮 disabled
++  it('预检存在空码时发布按钮禁用', async () => {
++    vi.mocked(codeRuleApi.precheck).mockResolvedValue({ code: 0, message: '', data: dirtyPrecheck })
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    const pubBtn = w.findAll('button').find((b) => b.text() === 'space.publish.doPublish')
++    expect(pubBtn).toBeTruthy()
++    expect(pubBtn!.attributes('disabled')).toBeDefined()
++  })
++
++  it('预检干净时发布按钮可用', async () => {
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    const pubBtn = w.findAll('button').find((b) => b.text() === 'space.publish.doPublish')
++    expect(pubBtn!.attributes('disabled')).toBeUndefined()
++  })
++
++  // ③ deactivate 拒绝 409 → ElMessageBox.alert 被调
++  it('停用返回 409 冲突时弹出 alert', async () => {
++    const row: LocateResult = { locationId: 'L1', locationCode: 'A-01-01', floorId: 'f1', absX: 0, absY: 0, absZ: 0, placed: true, status: 1 }
++    vi.mocked(locateApi.search).mockResolvedValue({ code: 0, message: '', data: [row] })
++    vi.mocked(publishApi.deactivate).mockRejectedValue({ response: { status: 409 } })
++    const confirmSpy = vi.spyOn(ElMessageBox, 'confirm').mockResolvedValue('confirm')
++    const alertSpy = vi.spyOn(ElMessageBox, 'alert').mockResolvedValue('confirm')
++
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    // 输入前缀并搜索
++    const inp = w.find('.stop-prefix input')
++    await inp.setValue('A')
++    const searchBtn = w.findAll('button').find((b) => b.text() === 'space.publish.searchBtn')
++    await searchBtn!.trigger('click')
++    await flushPromises()
++    expect(locateApi.search).toHaveBeenCalledWith('A', 'f1')
++    // 点停用
++    const deacBtn = w.findAll('button').find((b) => b.text() === 'space.publish.deactivate')
++    expect(deacBtn).toBeTruthy()
++    await deacBtn!.trigger('click')
++    await flushPromises()
++    expect(confirmSpy).toHaveBeenCalled()
++    expect(publishApi.deactivate).toHaveBeenCalledWith('L1')
++    expect(alertSpy).toHaveBeenCalled()
++    confirmSpy.mockRestore()
++    alertSpy.mockRestore()
++  })
++
++  // ④ adopt → imported / skipped 渲染
++  it('存量采纳后渲染 imported 与 skipped 明细', async () => {
++    vi.mocked(publishApi.adopt).mockResolvedValue({ code: 0, message: '', data: { imported: 3, skipped: ['DUP-9'] } })
++    const w = mountView()
++    await flushPromises()
++    await selectFloor(w)
++    // 打开采纳弹窗
++    const adoptBtn = w.findAll('button').find((b) => b.text() === 'space.publish.adoptBtn')
++    expect(adoptBtn).toBeTruthy()
++    await adoptBtn!.trigger('click')
++    await flushPromises()
++    // el-dialog teleports content to document.body — query & drive there
++    const ta = document.body.querySelector('.adopt-codes textarea') as HTMLTextAreaElement
++    expect(ta).toBeTruthy()
++    ta.value = 'X-1\nY-2\nZ-3'
++    ta.dispatchEvent(new Event('input'))
++    await flushPromises()
++    const confirmBtn = Array.from(document.body.querySelectorAll('.el-dialog button')).find(
++      (b) => b.textContent?.trim() === 'space.publish.adoptConfirm',
++    ) as HTMLButtonElement
++    expect(confirmBtn).toBeTruthy()
++    confirmBtn.click()
++    await flushPromises()
++    expect(publishApi.adopt).toHaveBeenCalledWith([{ code: 'X-1' }, { code: 'Y-2' }, { code: 'Z-3' }])
++    // 结果渲染在 teleport 到 body 的弹窗内
++    expect(document.body.textContent).toContain('3')
++    expect(document.body.textContent).toContain('DUP-9')
++  })
++})
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/codeRuleValidate.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/codeRuleValidate.spec.ts
+new file mode 100644
+index 0000000..2329e7a
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/__tests__/codeRuleValidate.spec.ts
+@@ -0,0 +1,49 @@
++import { describe, it, expect } from 'vitest'
++import { validateSegmentsLocal, newSegment } from '../codeRuleValidate'
++import type { CodeSegmentDef } from '@/types/space/scene'
++
++// 造段助手：以 newSegment 为底覆盖 source/optional
++function seg(source: string, optional = false): CodeSegmentDef {
++  return { ...newSegment(), source, optional }
++}
++
++describe('validateSegmentsLocal', () => {
++  // —— E-303 缺 Zone 区分段 ——
++  it('E-303 反例：有 zone-code 段则不报（另配库位粒度段避免 E-306 干扰）', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('col')])
++    expect(errs).not.toContain('E-303')
++  })
++  it('E-303 反例：site-code + floor-level 组合替代 Zone 段', () => {
++    const errs = validateSegmentsLocal([seg('site-code'), seg('floor-level'), seg('col')])
++    expect(errs).not.toContain('E-303')
++  })
++  it('E-303 正例：既无 Zone 段也无 site+floor 组合', () => {
++    const errs = validateSegmentsLocal([seg('rack-code'), seg('col')])
++    expect(errs).toContain('E-303')
++  })
++
++  // —— E-305 巷道段未 Optional ——
++  it('E-305 正例：aisle-code 段 optional=false', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('aisle-code', false), seg('col')])
++    expect(errs).toContain('E-305')
++  })
++  it('E-305 反例：aisle-seq 段 optional=true 不报', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('aisle-seq', true), seg('col')])
++    expect(errs).not.toContain('E-305')
++  })
++
++  // —— E-306 缺库位粒度段 ——
++  it('E-306 正例：col/level/depth 全无', () => {
++    const errs = validateSegmentsLocal([seg('zone-code')])
++    expect(errs).toContain('E-306')
++  })
++  it('E-306 反例：含 level 段不报', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('level')])
++    expect(errs).not.toContain('E-306')
++  })
++
++  it('全合规组合无任何错误码', () => {
++    const errs = validateSegmentsLocal([seg('zone-code'), seg('aisle-code', true), seg('col'), seg('level')])
++    expect(errs).toEqual([])
++  })
++})
+diff --git a/cp6.web/src/views/space/lifecycle/codeRuleValidate.ts b/cp6.web/src/views/space/lifecycle/codeRuleValidate.ts
+new file mode 100644
+index 0000000..40d5440
+--- /dev/null
++++ b/cp6.web/src/views/space/lifecycle/codeRuleValidate.ts
+@@ -0,0 +1,65 @@
++// 编码规则段——值域常量 + 字段启用联动 + 本地镜像校验（纯函数，便于单测）。
++// 权威校验在后端 preview（E-3xx 全量）；此处三条为编辑期即时提示（黄条不阻断保存）。
++import type { CodeSegmentDef } from '@/types/space/scene'
++
++/** 固定源（单独成组；仅 fixedValue 有效）。 */
++export const FIXED_SOURCE = 'fixed'
++
++/** 码源组（除 fixed 外）——upper 仅对这些启用；site-code/floor-level 参与 E-303 组合判定。 */
++export const CODE_SOURCES = ['site-code', 'floor-level', 'zone-code', 'aisle-code', 'rack-code'] as const
++
++/** 序号源组——width/pad/start/step 仅对这些启用。 */
++export const SEQ_SOURCES = ['zone-seq', 'aisle-seq', 'rack-seq', 'col', 'level', 'depth'] as const
++
++/** 下拉全 12 值域（渲染顺序：固定 → 码源 → 序号源）。 */
++export const ALL_SOURCES = [FIXED_SOURCE, ...CODE_SOURCES, ...SEQ_SOURCES] as const
++
++/** 巷道段（optional 应为 true——E-305）。 */
++export const AISLE_SOURCES = ['aisle-code', 'aisle-seq'] as const
++
++export const isFixedSource = (s: string): boolean => s === FIXED_SOURCE
++export const isCodeSource = (s: string): boolean => (CODE_SOURCES as readonly string[]).includes(s)
++export const isSeqSource = (s: string): boolean => (SEQ_SOURCES as readonly string[]).includes(s)
++export const isAisleSource = (s: string): boolean => (AISLE_SOURCES as readonly string[]).includes(s)
++
++/** width / pad / start / step —— 仅序号源启用。 */
++export const seqFieldsEnabled = (s: string): boolean => isSeqSource(s)
++/** upper —— 仅码源启用（fixed 无效）。 */
++export const upperEnabled = (s: string): boolean => isCodeSource(s)
++/** fixedValue —— 仅 fixed 启用。 */
++export const fixedValueEnabled = (s: string): boolean => isFixedSource(s)
++
++/**
++ * 本地镜像校验——返回错误码数组（空=无提示）。三条：
++ *  - E-303 缺 Zone 区分段：无 zone-code/zone-seq，且无 site-code + floor-level 组合。
++ *  - E-305 巷道段未 Optional：存在 aisle-code/aisle-seq 段但 optional=false。
++ *  - E-306 缺库位粒度段：col / level / depth 全无。
++ * 纯函数：无副作用、幂等；权威口径以后端 preview.precheck 为准。
++ */
++export function validateSegmentsLocal(segments: CodeSegmentDef[]): string[] {
++  const errs: string[] = []
++  const sources = (segments || []).map((s) => s.source)
++  const has = (s: string) => sources.includes(s)
++
++  // E-303：缺 Zone 区分段
++  const hasZoneSeg = has('zone-code') || has('zone-seq')
++  const hasSiteFloorCombo = has('site-code') && has('floor-level')
++  if (!hasZoneSeg && !hasSiteFloorCombo) errs.push('E-303')
++
++  // E-305：巷道段未 Optional
++  const aisleNotOptional = (segments || []).some((s) => isAisleSource(s.source) && !s.optional)
++  if (aisleNotOptional) errs.push('E-305')
++
++  // E-306：缺库位粒度段
++  if (!has('col') && !has('level') && !has('depth')) errs.push('E-306')
++
++  return errs
++}
++
++/** 新段初始值（对齐后端默认）。 */
++export function newSegment(): CodeSegmentDef {
++  return {
++    key: '', name: '', source: 'zone-code', width: 0, pad: '0',
++    start: 1, step: 1, sep: '-', upper: false, fixedValue: '', optional: false,
++  }
++}

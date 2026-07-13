@@ -1,0 +1,533 @@
+# Review package: c86ef6a..HEAD
+
+## Commits
+13c0df0 fix(fin): 审查Important修复——两道闸防零成本表单被auto-settle永久锁死
+87e0632 feat(fin): C.2 完工触发成本归集+结转两断点接线
+
+## Files changed
+ CP6.Core/Services/Fin/FinBridgeHook.cs           |  56 ++++-
+ CP6.Core/Services/Mes/ProductionResultService.cs |  26 ++-
+ CP6.Tests/Fin/FinBridgeHookTests.cs              |   5 +-
+ CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs  | 266 +++++++++++++++++++++++
+ 4 files changed, 339 insertions(+), 14 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Fin/FinBridgeHook.cs b/CP6.Core/Services/Fin/FinBridgeHook.cs
+index 6bf72a9..52b8a5b 100644
+--- a/CP6.Core/Services/Fin/FinBridgeHook.cs
++++ b/CP6.Core/Services/Fin/FinBridgeHook.cs
+@@ -8,26 +8,28 @@ using Microsoft.Extensions.Logging;
+ namespace CP6.Core.Services.Fin;
+ 
+ /// <summary>
+ /// <see cref="IFinBridgeHook"/> 标准实现（BridgeHookBase，Phase6 持久化）。出货确认→AR 自动开票，
+ /// 出货取消→红冲。Best-Effort：异常握住并落 IntegrationEvent（失败可重试），不阻断出货主操作。
+ /// </summary>
+ public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
+ {
+     private readonly IArInvoiceService _ar;
+     private readonly ICostCollectService _cost;
++    private readonly ICostSettleService _settle;
+ 
+-    public FinBridgeHook(CP6Context db, IArInvoiceService ar, ICostCollectService cost, ILogger<FinBridgeHook> logger)
++    public FinBridgeHook(CP6Context db, IArInvoiceService ar, ICostCollectService cost, ICostSettleService settle, ILogger<FinBridgeHook> logger)
+         : base(db, logger)
+     {
+         _ar = ar;
+         _cost = cost;
++        _settle = settle;
+     }
+ 
+     public async Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+         try
+         {
+             var (r, _, no) = await _ar.CreateFromShipmentAsync(request, userName ?? "system");
+             if (!r.Ok)
+             {
+@@ -73,30 +75,64 @@ public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
+             Logger.LogError(ex, "[FIN-Bridge] 出货 {Ship} 取消红冲异常", shipmentId);
+             await PersistEventAsync("WMS", "FIN", nameof(OnShipmentCancelledAsync),
+                 shipmentId, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
+             return FinBridgeResult.Failed(ex.Message);
+         }
+     }
+ 
+     public async Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName)
+     {
+         var corrId = Guid.NewGuid();
+-        var payload = new { workOrderNo, userName };
++        var user = userName ?? "system";
+         try
+         {
+-            // 工费留 0：自动归集只吃料真实消耗，工费/制费由财务补录标准估算后再结转（避免自动塞 0 工费即结转）
+-            var r = await _cost.CollectAsync(workOrderNo, 0m, 0m, userName ?? "system");
+-            var status = r.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
++            // ① 成本归集：工费留 0（自动归集只吃料真实反冲消耗，工费/制费由财务补录标准估算后再结转）。
++            var collect = await _cost.CollectAsync(workOrderNo, 0m, 0m, user);
++            if (!collect.Ok)
++            {
++                // E-FIN-402 = 成本单已结转（重复完工事件）→ 幂等跳过，不重复归集/结转。
++                if (collect.Code == "E-FIN-402")
++                {
++                    await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
++                        workOrderNo, null, IntegrationEventStatus.Skipped, collect.Code, corrId,
++                        new { workOrderNo, userName, step = "collect", note = "already settled" });
++                    return FinBridgeResult.Skipped("cost already settled");
++                }
++                await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
++                    workOrderNo, null, IntegrationEventStatus.Failed, collect.Code, corrId,
++                    new { workOrderNo, userName, step = "collect" });
++                return FinBridgeResult.Failed(collect.Code ?? "collect fail");
++            }
++
++            // ②′ 零成本守卫（闸2）：TotalActual<=0 时不结转——CostSettle 会把零额单直接标 Settled 无凭证，
++            // 之后归集恒 E-FIN-402 → 永久锁死。留在 Collected 态，待反冲补偿/工费补录后重放可恢复。
++            var sheet = await Db.CostSheets.AsNoTracking().FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo);
++            if (sheet == null || sheet.TotalActual <= 0m)
++            {
++                await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
++                    workOrderNo, null, IntegrationEventStatus.Skipped, "zero total cost", corrId,
++                    new { workOrderNo, userName, step = "settle-guard", total = sheet?.TotalActual ?? 0m });
++                Logger.LogWarning("[FIN-Bridge] 工单 {Wo} 归集后总成本<=0，跳过结转（成本单留在 Collected 可重试）", workOrderNo);
++                return FinBridgeResult.Skipped("zero total cost, settle skipped");
++            }
++
++            // ② 完工结转：料工费→WIP + WIP→FG 两凭证（借贷/科目照 CostSettle 既有实现）。归集成功才结转。
++            var settle = await _settle.SettleAsync(workOrderNo, user);
++            var status = settle.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
+             await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+-                workOrderNo, null, status, r.Ok ? null : r.Code, corrId, payload);
+-            if (r.Ok) Logger.LogInformation("[FIN-Bridge] 工单 {Wo} 完工 → 成本自动归集（料真实消耗）", workOrderNo);
+-            return r.Ok ? FinBridgeResult.Ok(workOrderNo) : FinBridgeResult.Failed(r.Code ?? "fail");
++                workOrderNo, null, status, settle.Ok ? null : settle.Code, corrId,
++                new { workOrderNo, userName, step = settle.Ok ? "settled" : "settle" });
++            if (settle.Ok)
++                Logger.LogInformation("[FIN-Bridge] 工单 {Wo} 完工 → 成本归集+结转（料真实消耗→WIP→FG）", workOrderNo);
++            else
++                Logger.LogWarning("[FIN-Bridge] 工单 {Wo} 成本已归集但结转失败 {Code}（成本单停在 Collected 待重试）", workOrderNo, settle.Code);
++            return settle.Ok ? FinBridgeResult.Ok(workOrderNo) : FinBridgeResult.Failed(settle.Code ?? "settle fail");
+         }
+         catch (Exception ex)
+         {
+-            Logger.LogError(ex, "[FIN-Bridge] 工单 {Wo} 成本自动归集异常", workOrderNo);
++            Logger.LogError(ex, "[FIN-Bridge] 工单 {Wo} 成本归集/结转异常", workOrderNo);
+             await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync),
+-                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload);
++                workOrderNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, new { workOrderNo, userName });
+             return FinBridgeResult.Failed(ex.Message);
+         }
+     }
+ }
+diff --git a/CP6.Core/Services/Mes/ProductionResultService.cs b/CP6.Core/Services/Mes/ProductionResultService.cs
+index c401c16..a0acb58 100644
+--- a/CP6.Core/Services/Mes/ProductionResultService.cs
++++ b/CP6.Core/Services/Mes/ProductionResultService.cs
+@@ -1,41 +1,46 @@
+ using CP6.Core.EFDbContext;
+ using CP6.Entity.DomainModels.Mes;
+ using CP6.Entity.DTOs.Mes;
+ using Microsoft.EntityFrameworkCore;
++using Microsoft.Extensions.Logging;
+ 
+ namespace CP6.Core.Services.Mes;
+ 
+ /// <summary>
+ /// MSBBME040 / 050 — 製造実績 業務サービス実装
+ /// </summary>
+ /// <remarks>
+ /// 実績種別：1=開始 2=中断 3=中断解除 4=完了 5=数量報告
+ /// </remarks>
+ public class ProductionResultService : IProductionResultService
+ {
+     private readonly CP6Context _db;
+     private readonly IMesSequenceService _seq;
+     private readonly IWorkOrderService _woService;
+     private readonly IMesNotifier _notifier;
+     private readonly IWmsBridgeHook _wmsBridge;
+     private readonly IBackflushService? _backflush;
++    private readonly IFinBridgeHook? _finBridge;
++    private readonly ILogger<ProductionResultService>? _logger;
+     private const string ResultSeqKey = "PR";
+ 
+-    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null)
++    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null, IFinBridgeHook? finBridge = null, ILogger<ProductionResultService>? logger = null)
+     {
+         _db = db;
+         _seq = seq;
+         _woService = woService;
+         _notifier = notifier;
+         _wmsBridge = wmsBridge;
+         _backflush = backflush;
++        _finBridge = finBridge;
++        _logger = logger;
+     }
+ 
+     /// <summary>
+     /// 工時再計算専用の軽量コンストラクタ（spec §4.3）。
+     /// RecalculateProcessHoursAsync は _db のみ使用するため、他依存無しで利用可能。
+     /// </summary>
+     public ProductionResultService(CP6Context db)
+     {
+         _db = db;
+         _seq = null!;
+@@ -256,24 +261,41 @@ public class ProductionResultService : IProductionResultService
+         catch { /* notifier 失敗は業務に影響させない */ }
+ 
+         // ERP→MES→WMS 接缝：全工程完了時、完成品（累計良品数）を WMS へ自動入庫（best-effort）
+         if (justCompleted)
+         {
+             await _wmsBridge.OnProductionCompletedAsync(req.WorkOrderNo, wo.CompletedQty, userName);
+ 
+             // F1 波C.1：完工点で BOM 定额の原料を反冲（OUT/ISSUE）＋実績消費回写。
+             // best-effort（コミット後）：反冲失敗は既提交の報工をロールバックしない
+             // （拍板①：账实差异は棚卸で吸収。不足時も負在庫＋告警で通す）。
++            var backflushOk = true;
+             if (_backflush != null)
+             {
+                 try { await _backflush.BackflushAsync(req.WorkOrderNo, userName); }
+-                catch { /* 反冲失敗は報工本体に影響させない */ }
++                catch (Exception ex)
++                {
++                    // 反冲失敗は報工本体に影響させない。ただし本轮 fin hook はスキップ
++                    //（ActualQty 未回写のまま归集すると零/陈旧成本が auto-settle で Settled に固化し恒 E-FIN-402 → 不可恢复）。
++                    backflushOk = false;
++                    _logger?.LogWarning(ex, "[MES] 工单 {Wo} 反冲失败，本轮跳过成本归集/结转（料耗未记，待补偿后重放）", req.WorkOrderNo);
++                }
++            }
++
++            // F1 波C.2：反冲回写 ActualQty の後に成本归集+结转をトリガ（順序 load-bearing：
++            // CollectAsync は WorkOrderMaterial.ActualQty を読むため、必ず反冲の後）。
++            // 闸1：反冲失敗时本轮跳过（料耗没记上就先不归集，待后续补偿）。
++            // best-effort（コミット後）：归集/结转失敗は既提交の報工をロールバックしない。
++            if (_finBridge != null && backflushOk)
++            {
++                try { await _finBridge.OnWorkOrderCompletedAsync(req.WorkOrderNo, userName); }
++                catch { /* 成本归集/结转失敗は報工本体に影響させない */ }
+             }
+         }
+ 
+         // A2 §4.3：完了(4)/数量報告(5) の後に工序双工時を派生・物化（覆盖態はスキップ）
+         // best-effort（コミット後）：派生失敗は報工本体に影響させない。工時は冪等に後続報工で再計算される
+         try
+         {
+             if (resultType == 4 || resultType == 5)
+                 await RecalculateProcessHoursAsync(req.WorkOrderNo, req.ProcessCd, req.TaskCd ?? proc.TaskCd, userName);
+         }
+diff --git a/CP6.Tests/Fin/FinBridgeHookTests.cs b/CP6.Tests/Fin/FinBridgeHookTests.cs
+index 801f19a..26ca59d 100644
+--- a/CP6.Tests/Fin/FinBridgeHookTests.cs
++++ b/CP6.Tests/Fin/FinBridgeHookTests.cs
+@@ -21,21 +21,22 @@ public class FinBridgeHookTests
+ 
+     private static async Task<FinBridgeHook> SetupAsync(CP6Context db)
+     {
+         var gl = new GlAccountService(db);
+         await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "t");
+         PostingRuleSeed.EnsureSeeded(db);
+         var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
+         var engine = new AutoVoucherEngine(db, journal);
+         var ar = new ArInvoiceService(db, engine, journal, new FinSequenceService(db));
+         var cost = new CostCollectService(db, new FinSequenceService(db), new CP6.Core.Services.Mes.ProcessCostRateService(db));
+-        return new FinBridgeHook(db, ar, cost, NullLogger<FinBridgeHook>.Instance);
++        var settle = new CostSettleService(db, journal);
++        return new FinBridgeHook(db, ar, cost, settle, NullLogger<FinBridgeHook>.Instance);
+     }
+ 
+     private static FinShipmentInvoiceRequest Req() => new()
+     {
+         ShipmentId = "OUT-1", OrderId = "ORD-1", CustomerId = "CUST1", InvoiceDate = Biz, DueDate = Biz.AddDays(30),
+         EstimatedCost = 700m,
+         Lines = { new FinShipmentInvoiceLine { ItemId = "P1", Qty = 1, UnitPrice = 1000 } },
+     };
+ 
+     [Fact]
+@@ -127,14 +128,14 @@ public class FinBridgeHookTests
+         db.Set<ProductMaterial>().Add(new ProductMaterial { Id = Guid.NewGuid(), ProductCd = "P1", ProcessCd = "OP1", MaterialCd = "M1", SupplyPrice = 5m });
+         db.Set<WorkOrderMaterial>().Add(new WorkOrderMaterial { Id = Guid.NewGuid(), WorkOrderNo = "WO9", ProcessCd = "OP1", MaterialCd = "M1", PlanQty = 100m, ActualQty = 110m });
+         await db.SaveChangesAsync();
+ 
+         var r = await hook.OnWorkOrderCompletedAsync("WO9", "mes");
+         Assert.True(r.Success, r.Message);
+ 
+         var cs = await db.CostSheets.SingleAsync(x => x.WorkOrderNo == "WO9");
+         Assert.Equal(550m, cs.MaterialActual);     // 110×5 料真实消耗
+         Assert.Equal(0m, cs.LaborActual);          // 工费留 0 待财务补录
+-        Assert.Equal(CostSheetStatus.Collected, cs.Status);   // 仅归集未结转
++        Assert.Equal(CostSheetStatus.Settled, cs.Status);   // C.2：归集后自动结转（料→WIP→FG）
+         Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceModule == "MES" && e.TargetModule == "FIN" && e.SourceNo == "WO9" && e.Status == "SUCCESS"));
+     }
+ }
+diff --git a/CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs b/CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs
+new file mode 100644
+index 0000000..72990be
+--- /dev/null
++++ b/CP6.Tests/Fin/WorkOrderCompleteCostFlowTests.cs
+@@ -0,0 +1,266 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Fin;
++using CP6.Core.Services.Integration;
++using CP6.Core.Services.Mes;
++using CP6.Core.Services.Wms;
++using CP6.Entity.DomainModels.Fin;
++using CP6.Entity.DomainModels.Mes;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Microsoft.Extensions.Logging.Abstractions;
++
++namespace CP6.Tests.Fin;
++
++/// <summary>
++/// F1 財務油路 波C.2 — 完工触发成本归集 + 结转（两断点接线的端到端验证）。
++///
++/// 断点1：ProductionResultService 完工(justCompleted) → BackflushService 反冲回写 ActualQty → 之后触发
++///        IFinBridgeHook.OnWorkOrderCompletedAsync（顺序 load-bearing：CollectAsync 读 ActualQty）。
++/// 断点2：FinBridgeHook.OnWorkOrderCompletedAsync → CollectAsync 成功后继续 CostSettleService.SettleAsync
++///        （料工费→WIP + WIP→FG 两凭证）。Collect 失败则不 Settle。
++///
++/// 全走真链（真 ProductionResultService/BackflushService/FinBridgeHook/CostCollect/CostSettle/引擎 + InMemory），
++/// 断言凭证内容（WIP/FG/INVENTORY 科目 Role + 金额）非 mock。
++/// </summary>
++public class WorkOrderCompleteCostFlowTests
++{
++    // ProductionResultService.WriteAsync は明示トランザクションを使うため、
++    // InMemory の TransactionIgnoredWarning を抑止（端到端テストで必須）。
++    private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString())
++        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
++        .Options);
++
++    private sealed class Kit
++    {
++        public required CP6Context Db;
++        public required GlAccountService Gl;
++        public required FinBridgeHook Hook;
++    }
++
++    /// <summary>真 GL + 真 CostCollect/CostSettle + 真 FinBridgeHook（工费留 0 走 collect 默认）。</summary>
++    private static async Task<Kit> SetupHookAsync(CP6Context db)
++    {
++        var gl = new GlAccountService(db);
++        await gl.ImportTemplateAsync(FinCoaTemplate.CnGaap, "seed");
++        PostingRuleSeed.EnsureSeeded(db);
++        var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
++        var engine = new AutoVoucherEngine(db, journal);
++        var ar = new ArInvoiceService(db, engine, journal, new FinSequenceService(db));
++        var collect = new CostCollectService(db, new FinSequenceService(db), new ProcessCostRateService(db));
++        var settle = new CostSettleService(db, journal);
++        var hook = new FinBridgeHook(db, ar, collect, settle, NullLogger<FinBridgeHook>.Instance);
++        return new Kit { Db = db, Gl = gl, Hook = hook };
++    }
++
++    private static void SeedWoWithActual(CP6Context db, string wo, decimal supplyPrice, decimal actualQty)
++    {
++        db.Set<WorkOrder>().Add(new WorkOrder { Id = Guid.NewGuid(), WorkOrderNo = wo, ProductCd = "P1", CompletedQty = 10m, Status = WorkOrderStatus.Completed });
++        db.Set<ProductMaterial>().Add(new ProductMaterial { Id = Guid.NewGuid(), ProductCd = "P1", ProcessCd = "OP1", MaterialCd = "M1", SupplyPrice = supplyPrice });
++        db.Set<WorkOrderMaterial>().Add(new WorkOrderMaterial { Id = Guid.NewGuid(), WorkOrderNo = wo, ProcessCd = "OP1", MaterialCd = "M1", PlanQty = 100m, ActualQty = actualQty });
++    }
++
++    // ════════════════════════════════════════════════════════════════════════
++    //  断点2：Hook 归集 → 结转两凭证（精确科目 Role + 金额）
++    // ════════════════════════════════════════════════════════════════════════
++    [Fact]
++    public async Task Hook_CollectThenSettle_PostsWipAndFgVouchers_ByRole_MarksSettled()
++    {
++        using var db = NewDb();
++        var k = await SetupHookAsync(db);
++        SeedWoWithActual(db, "WO1", supplyPrice: 5m, actualQty: 110m);   // 料真实消耗 110×5 = 550
++        await db.SaveChangesAsync();
++
++        var r = await k.Hook.OnWorkOrderCompletedAsync("WO1", "mes");
++        Assert.True(r.Success, r.Message);
++
++        var cs = await db.CostSheets.SingleAsync(s => s.WorkOrderNo == "WO1");
++        Assert.Equal(550m, cs.MaterialActual);                 // 反冲量×SupplyPrice 真值
++        Assert.Equal(CostSheetStatus.Settled, cs.Status);      // 归集后已结转
++        Assert.NotNull(cs.JournalEntryId);
++
++        var wip = (await k.Gl.GetByRoleAsync("WIP"))!.Id;
++        var fg = (await k.Gl.GetByRoleAsync("FG"))!.Id;
++        var inv = (await k.Gl.GetByRoleAsync("INVENTORY"))!.Id;
++
++        // ① 料工费 → WIP：借 WIP 550 / 贷 原材料(INVENTORY) 550
++        var collect = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#WIP"));
++        Assert.Equal(VoucherSource.Cost, collect.Source);
++        Assert.Equal(550m, collect.Lines.Single(l => l.AccountId == wip).Debit);
++        Assert.Equal(550m, collect.Lines.Single(l => l.AccountId == inv).Credit);
++
++        // ② WIP → FG：借 库存商品(FG) 550 / 贷 在制品(WIP) 550
++        var settle = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
++        Assert.Equal(550m, settle.Lines.Single(l => l.AccountId == fg).Debit);
++        Assert.Equal(550m, settle.Lines.Single(l => l.AccountId == wip).Credit);
++    }
++
++    // ── Collect 失败（工单不存在 → E-FIN-401）则不 Settle：零凭证 ──
++    [Fact]
++    public async Task Hook_CollectFails_NoSettle_NoVouchers()
++    {
++        using var db = NewDb();
++        var k = await SetupHookAsync(db);   // 未 seed 工单
++
++        var r = await k.Hook.OnWorkOrderCompletedAsync("NOPE", "mes");
++        Assert.False(r.Success);
++
++        Assert.Equal(0, await db.CostSheets.CountAsync());
++        Assert.Equal(0, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
++        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceNo == "NOPE" && e.Status == "FAILED"));
++    }
++
++    // ── 重复触发：不重复凭证（第二次幂等跳过）──
++    [Fact]
++    public async Task Hook_RepeatTrigger_NoDuplicateVouchers()
++    {
++        using var db = NewDb();
++        var k = await SetupHookAsync(db);
++        SeedWoWithActual(db, "WO1", supplyPrice: 5m, actualQty: 110m);
++        await db.SaveChangesAsync();
++
++        var r1 = await k.Hook.OnWorkOrderCompletedAsync("WO1", "mes");
++        Assert.True(r1.Success, r1.Message);
++        var r2 = await k.Hook.OnWorkOrderCompletedAsync("WO1", "mes");   // 重放同完工事件
++
++        // 仍只有 1 张 #WIP + 1 张 #FG（共 2 张 Cost 凭证）
++        Assert.Equal(2, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
++        Assert.Equal(1, await db.CostSheets.CountAsync(s => s.WorkOrderNo == "WO1"));
++        Assert.False(r2.Success);   // 已结转 → 幂等跳过（非重复过账）
++    }
++
++    // ════════════════════════════════════════════════════════════════════════
++    //  断点1：真 ProductionResultService 完工 → 反冲回写 → 触发归集+结转（端到端）
++    // ════════════════════════════════════════════════════════════════════════
++    [Fact]
++    public async Task Complete_ThroughRealProductionResultService_BackflushThenCollectThenSettle()
++    {
++        using var db = NewDb();
++        var k = await SetupHookAsync(db);
++
++        // 発行済（Status=2）指図 1 工程（着手中 ProcessStatus=1）
++        db.Set<WorkOrder>().Add(new WorkOrder { Id = Guid.NewGuid(), WorkOrderNo = "WOE", ProductCd = "P1", Status = 2, ProductionQty = 10m, CompletedQty = 0m });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WOE", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        // BOM：定额料 UnitUsage=2、SupplyPrice=5 → 反冲量 = 2×完工10 = 20、料成本 = 20×5 = 100
++        db.Set<ProductMaterial>().Add(new ProductMaterial { Id = Guid.NewGuid(), ProductCd = "P1", ProcessCd = "OP1", MaterialCd = "M1", MaterialTypeDiv = "3", UsageType = 2, UnitUsage = 2m, SupplyPrice = 5m });
++        db.Set<Stock>().Add(new Stock { WarehouseCd = "W01", LocationCd = "L1", ProductCd = "M1", LotNo = "", PhysicalQty = 100m, AllocatedQty = 0m, AvailableQty = 100m, OwnerType = StockOwnerType.Self, UnitPrice = 5m });
++        await db.SaveChangesAsync();
++
++        // 真 ProductionResultService（真 BackflushService + 真 FinBridgeHook 注入）
++        var stock = new StockMovementService(db, new WmsSequenceService(db));
++        var backflush = new BackflushService(db, stock, new MaterialUsageCalculator());
++        var mesSeq = new MesSequenceService(db);
++        var woService = new WorkOrderService(db, mesSeq, new NoOpWmsBridgeHook());
++        var prService = new ProductionResultService(db, mesSeq, woService, new NoOpMesNotifier(), new NoOpWmsBridgeHook(), backflush, k.Hook);
++
++        await prService.CompleteAsync(new ProductionResultRequest
++        {
++            WorkOrderNo = "WOE", ProcessCd = "OP1", OperatorCd = "OP", GoodQty = 10m,
++        }, "mes");
++
++        // ① 反冲回写：ActualQty = 20
++        var wom = await db.WorkOrderMaterials.AsNoTracking().SingleAsync(m => m.WorkOrderNo == "WOE" && m.MaterialCd == "M1");
++        Assert.Equal(20m, wom.ActualQty);
++
++        // ② 归集：CostSheet.MaterialActual = 反冲量20 × SupplyPrice5 = 100（真值对齐）
++        var cs = await db.CostSheets.SingleAsync(s => s.WorkOrderNo == "WOE");
++        Assert.Equal(100m, cs.MaterialActual);
++        Assert.Equal(CostSheetStatus.Settled, cs.Status);   // ③ 结转完成
++
++        // ④ 两凭证：WIP/FG 各 100，WIP 借贷净零
++        var wip = (await k.Gl.GetByRoleAsync("WIP"))!.Id;
++        var fg = (await k.Gl.GetByRoleAsync("FG"))!.Id;
++        var collect = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#WIP"));
++        Assert.Equal(100m, collect.Lines.Single(l => l.AccountId == wip).Debit);
++        var fgVoucher = await db.JournalEntries.Include(e => e.Lines).SingleAsync(e => e.SourceDocNo!.EndsWith("#FG"));
++        Assert.Equal(100m, fgVoucher.Lines.Single(l => l.AccountId == fg).Debit);
++
++        var wipLines = await db.JournalLines.Where(l => l.AccountId == wip).ToListAsync();
++        Assert.Equal(wipLines.Sum(l => l.Debit), wipLines.Sum(l => l.Credit));   // WIP 净零
++    }
++
++    // ════════════════════════════════════════════════════════════════════════
++    //  审查修复：两道闸（backflush 失败不触发 fin hook / 零成本不结转防锁死）
++    // ════════════════════════════════════════════════════════════════════════
++
++    private sealed class ThrowingBackflush : IBackflushService
++    {
++        public Task BackflushAsync(string workOrderNo, string? userName)
++            => throw new InvalidOperationException("backflush boom");
++    }
++
++    private sealed class RecordingFinHook : IFinBridgeHook
++    {
++        public int WorkOrderCompletedCalls;
++        public Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
++            => Task.FromResult(FinBridgeResult.Ok(null));
++        public Task<FinBridgeResult> OnShipmentCancelledAsync(string shipmentId, string? userName)
++            => Task.FromResult(FinBridgeResult.Ok(null));
++        public Task<FinBridgeResult> OnWorkOrderCompletedAsync(string workOrderNo, string? userName)
++        {
++            WorkOrderCompletedCalls++;
++            return Task.FromResult(FinBridgeResult.Ok(workOrderNo));
++        }
++    }
++
++    // ── 闸1：反冲抛错 → fin hook 本轮不触发（避免零/陈旧 ActualQty 被归集+auto-settle 锁死），报工本体照常成功 ──
++    [Fact]
++    public async Task Complete_BackflushThrows_FinHookNotTriggered_ReportStillSucceeds()
++    {
++        using var db = NewDb();
++        db.Set<WorkOrder>().Add(new WorkOrder { Id = Guid.NewGuid(), WorkOrderNo = "WOB", ProductCd = "P1", Status = 2, ProductionQty = 10m, CompletedQty = 0m });
++        db.Set<WorkOrderProcess>().Add(new WorkOrderProcess { WorkOrderNo = "WOB", ProcessCd = "OP1", TaskCd = "T1", SortOrder = 1, ProcessStatus = 1 });
++        await db.SaveChangesAsync();
++
++        var mesSeq = new MesSequenceService(db);
++        var woService = new WorkOrderService(db, mesSeq, new NoOpWmsBridgeHook());
++        var finHook = new RecordingFinHook();
++        var prService = new ProductionResultService(db, mesSeq, woService, new NoOpMesNotifier(), new NoOpWmsBridgeHook(), new ThrowingBackflush(), finHook);
++
++        // 反冲抛错被吞、报工不抛错
++        var resultNo = await prService.CompleteAsync(new ProductionResultRequest
++        {
++            WorkOrderNo = "WOB", ProcessCd = "OP1", OperatorCd = "OP", GoodQty = 10m,
++        }, "mes");
++        Assert.False(string.IsNullOrEmpty(resultNo));
++
++        // 完工照常落账，但 fin hook 本轮被跳过（0 次调用）
++        var wo = await db.Set<WorkOrder>().AsNoTracking().SingleAsync(w => w.WorkOrderNo == "WOB");
++        Assert.Equal(WorkOrderStatus.Completed, wo.Status);
++        Assert.Equal(0, finHook.WorkOrderCompletedCalls);
++    }
++
++    // ── 闸2：归集后 TotalActual<=0 → 不结转（否则 CostSettle 会把零额单直接标 Settled 无凭证 → 恒 E-FIN-402 永久锁死）──
++    [Fact]
++    public async Task Hook_ZeroTotalActual_SkipsSettle_SheetStaysCollected()
++    {
++        using var db = NewDb();
++        var k = await SetupHookAsync(db);
++        SeedWoWithActual(db, "WOZ", supplyPrice: 5m, actualQty: 0m);   // 反冲未回写 → 料消耗 0 → TotalActual = 0
++        await db.SaveChangesAsync();
++
++        var r = await k.Hook.OnWorkOrderCompletedAsync("WOZ", "mes");
++        Assert.False(r.Success);
++        Assert.Contains("SKIPPED", r.Message);
++
++        // 成本单留在 Collected（可重试），未被标 Settled，零凭证
++        var cs = await db.CostSheets.SingleAsync(s => s.WorkOrderNo == "WOZ");
++        Assert.Equal(CostSheetStatus.Collected, cs.Status);
++        Assert.Null(cs.JournalEntryId);
++        Assert.Equal(0, await db.JournalEntries.CountAsync(j => j.Source == VoucherSource.Cost));
++
++        // IntegrationEvent 留 Skipped 痕
++        Assert.True(await db.IntegrationEvents.AnyAsync(e => e.SourceNo == "WOZ" && e.Status == "SKIPPED"));
++
++        // 反冲补偿回写后重放 → 可恢复：正常归集+结转
++        var wom = await db.WorkOrderMaterials.SingleAsync(m => m.WorkOrderNo == "WOZ");
++        wom.ActualQty = 10m;
++        await db.SaveChangesAsync();
++        var r2 = await k.Hook.OnWorkOrderCompletedAsync("WOZ", "mes");
++        Assert.True(r2.Success, r2.Message);
++        var cs2 = await db.CostSheets.SingleAsync(s => s.WorkOrderNo == "WOZ");
++        Assert.Equal(CostSheetStatus.Settled, cs2.Status);
++        Assert.Equal(50m, cs2.MaterialActual);   // 10 × 5
++    }
++}

@@ -2950,3 +2950,19 @@ H-E: E-T1 → E-T2 → E-T3        （紧跟 H-D，不留窗口）
 
 
 
+
+---
+
+## 波② 完成记录（2026-07-13, 主控追记）
+
+15任务全过逐任务审查 + E-T3 DoD验收 + fable全支终审（With fixes→修复022d525→复核Ready=Yes）。终审唯一Critical=A-T2动态计票×split单相spawn接缝：split出边直连join的合法schema下join提前放行（审批旁路）+双重放行+实例永久Running（终审者双拓扑独立repro实证，属波前parallel行为回归）→修复=两阶段spawn（先全部SpawnToken再逐一EnterNode，ParallelSplit/InclusiveSplit两handler，join侧零触碰）+direct-edge×2回归测试+E-WF-012重排pin测试+doc孤儿归位。复核确认：双直连极端Consume幂等成立（ConsumeToken Active守卫+arrivedCount==0早退）、无新缝隙、sync serviceTask同类提前放行被隐式一并修复（正向副产品）。最终门禁：后端1890绿/5skip（1887+3）+EF clean+前端420/type-check 0/build过+27不变量零改+零迁移零Space污染。
+
+### 跟踪票（波②遗留）
+
+1. **生产库存量扫描（部署清单项）**：对各租户库 `Wf_FlowDef.SchemaJson` 扫一次「split出边直连join」形状——存量流程有此形状即修复前就会双放行的高危单，需人工核对履历。
+2. **QA harness 第8剧本**：direct-edge拓扑（parallel+inclusive）+ sync serviceTask冲join同类形态，入 docs/superpowers/qa/wfs-kernel-hardening 剧本池（终审建议）。
+3. **B-T3 pre-existing**：默认cascade驳回留兄弟Pending孤儿待办（status gate使其无害；坍缩路径现比默认路径干净的有意不对称）——引擎清洁度票。
+4. **B-T1 UX措辞**：剪枝通知文案「被驳回」与整单驳回易混——信箱spec时统一措辞。
+5. **D-T1 021c**：前端onBranchReject值比较大小写敏感未trim（后端归一化）——设计器恒发精确值今日无害，JSON导入硬化票一并收。
+6. **复核备忘（不记票级）**：双直连极端下第二次Enter回写inst.CurrentNode漂移——既有展示层小瑕疵非本波引入。
+7. **live QA**：E-T2 harness 7剧本 written-not-run，待用户在场执行（隔离库CP6DB_OA）。

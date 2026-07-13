@@ -1,0 +1,146 @@
+# Review package: 917ac04..HEAD
+
+## Commits
+02e30a7 fix(space): 波5 E-SPACE-601/004 BizException化——定位端点统一走中间件翻译
+
+## Files changed
+ .superpowers/sdd/task-5-brief.md                   | 13 +++--
+ CP6.Tests/Space/SpaceLocateControllerTests.cs      | 56 ++++++++++++++++++++++
+ .../Controllers/Space/SpaceLocateController.cs     |  5 +-
+ 3 files changed, 67 insertions(+), 7 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/task-5-brief.md b/.superpowers/sdd/task-5-brief.md
+index a13dbc4..cfee061 100644
+--- a/.superpowers/sdd/task-5-brief.md
++++ b/.superpowers/sdd/task-5-brief.md
+@@ -1,11 +1,14 @@
+-### Task 5: 前端 v-permission 接线（4 页按钮）
++### Task 5: SpaceLocateController 裸 BadRequest → BizException(E-SPACE-601/004)
+ 
+-**Files:** SpaceSiteView/SpaceFloorView/SpaceCodeRuleView/SpacePublishView（+spec 各 1 断言）
++**Files:**
++- Modify: `CP6.WebApi\Controllers\Space\SpaceLocateController.cs:27,41`
++- Test: 既有 SpaceLocate 测试(若断言了裸 400 信封需同步改断言为 BizException 语义)
+ 
+-规格：按钮贴 `v-permission="'<menuKey>:<action>'"`，键与 Task 4 映射表逐字一致——site 页新建/编辑/削除（add/edit/delete）；floor 页同（编辑器跳转按钮**不贴**——页面级菜单权限已管）；code-rule 页新建/编辑/削除/生码相关（预览只读不贴）；publish 页生成编码（space-code-rule:generate）/发布（space-publish:publish）/停用（deactivate）/采纳（adopt）。指令 fail-open（store 未加载保留元素）——admin 全授权下 UI 无变化。
+-测试：每页 spec 加 1 断言——mock permission store `loaded=true` 且缺某键时对应按钮从 DOM 移除（v-permission mounted 移除元素；照 directives/permission.ts 行为；store mock 用 pinia testing 或直接 stub usePermissionStore——看既有 spec 有无先例，无则最小 stub）。
++**要点:** 两处 `return BadRequest(new { code=400, message="E-SPACE-xxx" })` 改 `throw new BizException("E-SPACE-601")` / `("E-SPACE-004")`,走 BizExceptionMiddleware 按 culture 翻译(词条已在 seed,零新增)。
+ 
+-- [ ] Step 1: TDD → 实现 → type-check/vitest/build 三件套 → Commit `feat(space): 管理与发布页按钮接入 v-permission`
++- [ ] **Step 1: 失败/改写测试**(断言 message 不再是裸码——单测层面断言抛 BizException 且 code 正确)
++- [ ] **Step 2: 红 → 实现 → 绿 → 全量绿**
++- [ ] **Step 3: Commit + push**(`fix(space): 波5 E-SPACE-601/004 BizException化——定位端点统一走中间件翻译`)
+ 
+ ---
+ 
+diff --git a/CP6.Tests/Space/SpaceLocateControllerTests.cs b/CP6.Tests/Space/SpaceLocateControllerTests.cs
+new file mode 100644
+index 0000000..3fce91c
+--- /dev/null
++++ b/CP6.Tests/Space/SpaceLocateControllerTests.cs
+@@ -0,0 +1,56 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Space;
++using CP6.Entity.DomainModels.Space;
++using CP6.WebApi.Controllers.Space;
++using CP6.WebApi.Localization;
++using Microsoft.AspNetCore.Mvc;
++using Microsoft.EntityFrameworkCore;
++using Xunit;
++
++namespace CP6.Tests.Space;
++
++/// <summary>
++/// SpaceLocateController 端到端（直构 new SpaceLocateController(svc) 绕过 [Authorize]）。
++/// 波5：未命中不再裸 BadRequest(code=400,message="E-SPACE-xxx")，而是 throw BizException
++/// 走 BizExceptionMiddleware 按 culture 翻译。断言抛出 + Code 正确。
++/// </summary>
++public class SpaceLocateControllerTests
++{
++    private static (SpaceLocateController ctrl, CP6Context db) Make()
++    {
++        var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
++        return (new SpaceLocateController(new SpaceLocateService(db)), db);
++    }
++
++    [Fact]
++    public async Task Locate_NotFound_ThrowsBizException_601()
++    {
++        var (ctrl, _) = Make();
++        var ex = await Assert.ThrowsAsync<BizException>(() => ctrl.Locate("NOPE-999"));
++        Assert.Equal("E-SPACE-601", ex.Code);
++    }
++
++    [Fact]
++    public async Task Detail_NotFound_ThrowsBizException_004()
++    {
++        var (ctrl, _) = Make();
++        var ex = await Assert.ThrowsAsync<BizException>(() => ctrl.Detail(Guid.NewGuid()));
++        Assert.Equal("E-SPACE-004", ex.Code);
++    }
++
++    [Fact]
++    public async Task Locate_Found_ReturnsOkEnvelope()
++    {
++        var (ctrl, db) = Make();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = Guid.NewGuid(), FloorId = Guid.NewGuid(), LocationCode = "A-03-02-05",
++            Placed = true, Status = 1, AbsX = 100, AbsY = 200, AbsZ = 300
++        });
++        await db.SaveChangesAsync();
++
++        var result = await ctrl.Locate("A-03-02-05");
++        Assert.IsType<OkObjectResult>(result);
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Space/SpaceLocateController.cs b/CP6.WebApi/Controllers/Space/SpaceLocateController.cs
+index f55b1ab..1b9ac36 100644
+--- a/CP6.WebApi/Controllers/Space/SpaceLocateController.cs
++++ b/CP6.WebApi/Controllers/Space/SpaceLocateController.cs
+@@ -1,11 +1,12 @@
+ using CP6.Core.Services.Space;
++using CP6.WebApi.Localization;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Space;
+ 
+ /// <summary>
+ /// Space 定位查询 Web API（ch06 §8）。按编码定位/前缀搜索/详情，全只读。
+ /// 路由前缀 /api/space；与 SpaceMasterController 的 /location 端点（literal 段优先）不冲突。
+ /// </summary>
+ [ApiController]
+@@ -17,28 +18,28 @@ public class SpaceLocateController : ControllerBase
+     public SpaceLocateController(ISpaceLocateService svc) => _svc = svc;
+ 
+     private IActionResult Ok2(object? data = null, string msg = "OK") =>
+         Ok(new { code = 0, message = msg, data });
+ 
+     /// <summary>按编码精确定位（未命中→E-SPACE-601）。命中 Placed=false 时前端提示 W-SPACE-601。</summary>
+     [HttpGet("location/locate")]
+     public async Task<IActionResult> Locate([FromQuery] string code)
+     {
+         var r = await _svc.LocateAsync(code);
+-        if (r == null) return BadRequest(new { code = 400, message = "E-SPACE-601" });
++        if (r == null) throw new BizException("E-SPACE-601");
+         return Ok2(r);
+     }
+ 
+     /// <summary>按编码前缀模糊搜索（可选限本楼层）。</summary>
+     [HttpGet("location/search")]
+     public async Task<IActionResult> Search([FromQuery] string prefix, [FromQuery] Guid? floorId) =>
+         Ok2(await _svc.SearchAsync(prefix, floorId));
+ 
+     /// <summary>库位详情（含变长层级路径）。</summary>
+     [HttpGet("location/{id:guid}/detail")]
+     public async Task<IActionResult> Detail(Guid id)
+     {
+         var r = await _svc.DetailAsync(id);
+-        if (r == null) return BadRequest(new { code = 400, message = "E-SPACE-004" });
++        if (r == null) throw new BizException("E-SPACE-004");
+         return Ok2(r);
+     }
+ }

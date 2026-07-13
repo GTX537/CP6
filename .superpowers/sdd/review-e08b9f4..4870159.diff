@@ -1,0 +1,278 @@
+# Review package: e08b9f4..HEAD
+
+## Commits
+4870159 feat(wfs-service-task): D-T2 ServiceTaskNode 自定义节点+画布接线
+
+## Files changed
+ cp6.web/src/views/oa/designer/DesignerCanvas.vue   | 38 ++++++---
+ .../views/oa/designer/nodes/ServiceTaskNode.vue    | 91 ++++++++++++++++++++++
+ 2 files changed, 118 insertions(+), 11 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/oa/designer/DesignerCanvas.vue b/cp6.web/src/views/oa/designer/DesignerCanvas.vue
+index d9f2f76..281aad3 100644
+--- a/cp6.web/src/views/oa/designer/DesignerCanvas.vue
++++ b/cp6.web/src/views/oa/designer/DesignerCanvas.vue
+@@ -10,20 +10,21 @@ import { Controls } from '@vue-flow/controls'
+ import '@vue-flow/core/dist/style.css'
+ import '@vue-flow/core/dist/theme-default.css'
+ import { useI18n } from 'vue-i18n'
+ 
+ import { schemaToGraph, graphToSchema, NODE_PALETTE } from './designerModel'
+ import type { FlowSchemaDto } from './designerModel'
+ import StartNode from './nodes/StartNode.vue'
+ import ApprovalNode from './nodes/ApprovalNode.vue'
+ import GatewayNode from './nodes/GatewayNode.vue'
+ import EndNode from './nodes/EndNode.vue'
++import ServiceTaskNode from './nodes/ServiceTaskNode.vue'
+ 
+ // ── Props & emits ──────────────────────────────────────────────────
+ const props = defineProps<{ modelValue: FlowSchemaDto }>()
+ const emit = defineEmits<{
+   'update:modelValue': [value: FlowSchemaDto]
+   'select': [val: { kind: 'node' | 'edge' | null; id: string | null }]
+ }>()
+ 
+ const { t } = useI18n()
+ 
+@@ -174,53 +175,63 @@ function onKeydown(e: KeyboardEvent) {
+ 
+ onMounted(() => {
+   document.addEventListener('keydown', onKeydown)
+   pushHistory()
+ })
+ onUnmounted(() => {
+   document.removeEventListener('keydown', onKeydown)
+ })
+ 
+ // ── Palette drag-and-drop ──────────────────────────────────────────
+-let dragType = ''
++// dragKey uniquely identifies a palette entry: `type` for single-type nodes,
++// `serviceTask:<kind>` for the three serviceTask entries (same type, distinct kind).
++let dragKey = ''
+ 
+-function onPaletteDragStart(e: DragEvent, type: string) {
+-  dragType = type
+-  e.dataTransfer?.setData('text/plain', type)
++function paletteKey(item: (typeof NODE_PALETTE)[number]): string {
++  return 'kind' in item ? `${item.type}:${item.kind}` : item.type
++}
++
++function onPaletteDragStart(e: DragEvent, item: (typeof NODE_PALETTE)[number]) {
++  dragKey = paletteKey(item)
++  e.dataTransfer?.setData('text/plain', dragKey)
+ }
+ 
+ function onCanvasDragOver(e: DragEvent) {
+   e.preventDefault()
+   if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy'
+ }
+ 
+ function onCanvasDrop(e: DragEvent) {
+   e.preventDefault()
+-  const type = dragType || e.dataTransfer?.getData('text/plain') || ''
+-  if (!type) return
++  const key = dragKey || e.dataTransfer?.getData('text/plain') || ''
++  if (!key) return
+   const el = vfWrapperRef.value
+   if (!el) return
+   const rect = el.getBoundingClientRect()
+   // project(): converts VueFlow-container-relative coordinates to flow coordinates
+   const pos = project({ x: e.clientX - rect.left, y: e.clientY - rect.top })
+-  const palette = NODE_PALETTE.find((p) => p.type === type)
++  const palette = NODE_PALETTE.find((p) => paletteKey(p) === key)
++  if (!palette) { dragKey = ''; return }
++  const type = palette.type
++  // serviceTask 落点预置 serviceKind（D-T1 graphToSchema 会随 data 透传，保证 round-trip）。
++  const serviceKind = 'kind' in palette ? palette.kind : undefined
+   pushHistory()
+   addNodes([
+     {
+       id: `n${Date.now()}`,
+       type,
+       position: pos,
+-      label: palette?.label ?? type,
+-      data: { type, name: palette?.label ?? type },
++      label: palette.label,
++      data: { type, name: palette.label, ...(serviceKind ? { serviceKind } : {}) },
+     } satisfies Node,
+   ])
+-  dragType = ''
++  dragKey = ''
+ }
+ 
+ // ── Auto layout (BFS from start node) ─────────────────────────────
+ function autoLayout() {
+   const ns = nodes.value
+   const es = edges.value
+   if (!ns.length) return
+ 
+   const startNode = ns.find((n) => n.type === 'start') ?? ns[0]
+   if (!startNode) return                     // guarded by ns.length check above; keeps TS happy
+@@ -337,21 +348,21 @@ function focusNode(nodeId: string) {
+         </div>
+ 
+         <div class="palette-label">{{ t('oa.designer.palette') }}</div>
+ 
+         <!-- Palette node types -->
+         <div
+           v-for="item in NODE_PALETTE"
+           :key="item.label"
+           class="palette-item"
+           draggable="true"
+-          @dragstart="onPaletteDragStart($event, item.type)"
++          @dragstart="onPaletteDragStart($event, item)"
+         >
+           <span class="palette-dot" :class="`dot-${item.type}`" />
+           {{ item.label }}
+         </div>
+       </div>
+ 
+       <!-- VueFlow canvas wrapper -->
+       <div
+         ref="vfWrapperRef"
+         class="canvas-flow-wrap"
+@@ -375,20 +386,23 @@ function focusNode(nodeId: string) {
+           </template>
+           <template #node-parallelSplit="nodeProps">
+             <GatewayNode v-bind="nodeProps" />
+           </template>
+           <template #node-parallelJoin="nodeProps">
+             <GatewayNode v-bind="nodeProps" />
+           </template>
+           <template #node-end="nodeProps">
+             <EndNode v-bind="nodeProps" />
+           </template>
++          <template #node-serviceTask="nodeProps">
++            <ServiceTaskNode v-bind="nodeProps" />
++          </template>
+ 
+           <!-- Background & Controls -->
+           <Background v-if="showGrid" variant="lines" />
+           <Controls />
+         </VueFlow>
+       </div>
+     </div>
+   </div>
+ </template>
+ 
+@@ -495,20 +509,22 @@ function focusNode(nodeId: string) {
+   border-radius: 50%;
+   flex-shrink: 0;
+ }
+ /* Palette legend swatches — node-type semantic colors, kept in lockstep
+    with the rendered node borders (StartNode/ApprovalNode/GatewayNode/EndNode). */
+ .dot-start { background: var(--cp-ok); }
+ .dot-approval { background: var(--cp-info); }
+ .dot-parallelSplit,
+ .dot-parallelJoin { background: var(--cp-warn); }
+ .dot-end { background: var(--cp-muted); }
++/* serviceTask 三 kind 共用 brand 青，与 ServiceTaskNode 节点身份一致（虚线机器节点）。 */
++.dot-serviceTask { background: var(--cp-brand); }
+ 
+ .canvas-flow-wrap {
+   flex: 1;
+   min-width: 0;
+   min-height: 0;
+   position: relative;
+ }
+ 
+ /* VueFlow fills the wrapper */
+ .canvas-flow-wrap :deep(.vue-flow) {
+diff --git a/cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue b/cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue
+new file mode 100644
+index 0000000..6972a79
+--- /dev/null
++++ b/cp6.web/src/views/oa/designer/nodes/ServiceTaskNode.vue
+@@ -0,0 +1,91 @@
++<script setup lang="ts">
++import { computed } from 'vue'
++import { Handle, Position } from '@vue-flow/core'
++import type { NodeProps } from '@vue-flow/core'
++import { useI18n } from 'vue-i18n'
++
++const props = defineProps<NodeProps>()
++const { t } = useI18n()
++
++type ServiceKind = 'dataWriteback' | 'webApi' | 'timer'
++type NodeData = {
++  name?: string
++  serviceKind?: ServiceKind
++}
++
++// 机器节点双重编码之一：图标字符（不依赖色相辨识，与虚线笔触并列）。
++const KIND_ICON: Record<ServiceKind, string> = {
++  dataWriteback: '⤓',
++  webApi: '⚡',
++  timer: '⏱',
++}
++
++const kind = computed<ServiceKind>(() => {
++  const k = (props.data as NodeData)?.serviceKind
++  return k === 'webApi' || k === 'timer' ? k : 'dataWriteback'
++})
++const icon = computed(() => KIND_ICON[kind.value])
++const kindLabel = computed(() => t(`oa.designer.svc.kind.${kind.value}`))
++const name = computed(() => (props.data as NodeData)?.name || t('oa.designer.svc.title'))
++</script>
++
++<template>
++  <div :class="['vf-node-service', { 'vf-node--selected': props.selected }]">
++    <Handle type="target" :position="Position.Top" />
++    <div class="node-label">
++      <span class="node-kind-icon" aria-hidden="true">{{ icon }}</span>
++      <span class="node-label-text">{{ name }}</span>
++    </div>
++    <div class="node-strategy">{{ kindLabel }}</div>
++    <Handle type="source" :position="Position.Bottom" />
++  </div>
++</template>
++
++<style scoped>
++/* 机器节点（serviceTask）：虚线笔触区分人类节点（填單/審批）的实线；
++   三 kind 共用 brand 青，由图标+线型双重编码辨识，不发三色相。 */
++.vf-node-service {
++  background: var(--cp-brand-bg);
++  border: 2px dashed var(--cp-brand);
++  border-radius: var(--cp-r-sm);
++  padding: 8px 16px;
++  min-width: 130px;
++  text-align: center;
++  font-size: 13px;
++  color: var(--cp-text);
++  cursor: default;
++}
++.vf-node-service.vf-node--selected {
++  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cp-brand) 50%, transparent);
++}
++.node-label {
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  gap: 6px;
++  font-weight: 500;
++  white-space: nowrap;
++}
++.node-kind-icon {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 16px;
++  height: 16px;
++  flex-shrink: 0;
++  background: var(--cp-brand-bg);
++  border-radius: 4px;
++  font-size: 11px;
++  line-height: 1;
++  color: var(--cp-brand);
++}
++.node-label-text {
++  white-space: nowrap;
++}
++.node-strategy {
++  font-size: 11px;
++  color: var(--cp-brand);
++  margin-top: 2px;
++  white-space: nowrap;
++}
++</style>

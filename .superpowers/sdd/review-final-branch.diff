@@ -1,0 +1,1790 @@
+6af7c8b fix(space): 场景保存状态机护栏——Status/CodeOrigin 拒绝 DTO 覆盖，新建强制草稿（评审 H1）
+d2153af fix(space): 停用库存校验带仓维度（评审 H7）+ 并发冲突映射 409 E-SPACE-009（评审 H8）
+1c62c56 fix(space): 按库区发布真实现——zoneId 过滤 + 闸门同步收窄（评审 H5）
+fed150f fix(space): 发布包事务原子提交 + 重试路径不重复落 IntegrationEvent
+d27c066 feat(space): 停用改同步 RPC 决策模型（ch04 §6 v1.1）——消灭孤儿库位与乐观回滚
+05f46c7 feat(space): WmsBinConsumer 真消费端替换 NoOp——发布闭环接通（ch04 §5 幂等 upsert）
+be53c5d feat(space): 发布载荷补 WarehouseCd（ch04 v1.1 §3.4 SiteCode↔WarehouseCd 映射，默认=SiteCode）
+fe74607 feat(space): T_WmsBin 消费表 + Space_Site.WarehouseCd 映射列（ch04 v1.1 §5.3/§3.4，方案A）
+7266585 docs(space): 波1 发布闭环执行计划（T_WmsBin+真消费端+停用RPC+评审修订H1/H5-H8，9任务）
+
+ CP6.Core/EFDbContext/CP6Context.cs                 |    13 +
+ .../20260705172214_SpaceWave1WmsBin.Designer.cs    | 17490 +++++++++++++++++++
+ .../Migrations/20260705172214_SpaceWave1WmsBin.cs  |    65 +
+ CP6.Core/Migrations/CP6ContextModelSnapshot.cs     |    73 +
+ .../Services/Integration/IWmsBinDeactivator.cs     |    31 +
+ CP6.Core/Services/Integration/IWmsStockQuery.cs    |     6 +-
+ .../Integration/IntegrationEventDispatcher.cs      |     3 +-
+ CP6.Core/Services/Integration/SpaceBridgeHook.cs   |    29 +-
+ CP6.Core/Services/Space/CodeEngineService.cs       |    20 +-
+ CP6.Core/Services/Space/ICodeEngineService.cs      |     4 +-
+ CP6.Core/Services/Space/LocationPublishService.cs  |   136 +-
+ CP6.Core/Services/Space/SceneService.cs            |     8 +-
+ CP6.Core/Services/Wms/WmsBinConsumer.cs            |   116 +
+ CP6.Core/Services/Wms/WmsBinDeactivator.cs         |    61 +
+ CP6.Core/Services/Wms/WmsStockQuery.cs             |     8 +-
+ CP6.Entity/DTOs/Space/LocationPublishBatch.cs      |     2 +
+ CP6.Entity/DomainModels/Space/Space_Site.cs        |     4 +
+ CP6.Entity/DomainModels/Wms/WmsBin.cs              |    41 +
+ CP6.Tests/LocationPublishServiceTests.cs           |   180 +-
+ CP6.Tests/SceneServiceTests.cs                     |    46 +
+ CP6.Tests/SpaceBridgeHookTests.cs                  |    15 +
+ CP6.Tests/WmsBinConsumerTests.cs                   |   192 +
+ CP6.Tests/WmsStockQueryTests.cs                    |    15 +
+ CP6.WebApi/Controllers/Space/CodeRuleController.cs |     4 +-
+ .../Controllers/Space/LocationPublishController.cs |    15 +
+ CP6.WebApi/Program.cs                              |     4 +-
+ .../plans/2026-07-05-space-wave1-publish-loop.md   |  1625 ++
+ 27 files changed, 20125 insertions(+), 81 deletions(-)
+
+=== diff 排除 EF 生成文件(*.Designer.cs/CP6ContextModelSnapshot.cs)与计划文档(docs/),仅 stat 可见 ===
+diff --git a/CP6.Core/EFDbContext/CP6Context.cs b/CP6.Core/EFDbContext/CP6Context.cs
+index 7a6f0aa..bdf26dd 100644
+--- a/CP6.Core/EFDbContext/CP6Context.cs
++++ b/CP6.Core/EFDbContext/CP6Context.cs
+@@ -421,20 +421,24 @@ public class CP6Context : DbContext
+     /// <summary>模板（Space 章01，批量生成蓝本）</summary>
+     public DbSet<Space_Template> Space_Templates { get; set; }
+     /// <summary>编码规则（Space 章03，可配置编码引擎）</summary>
+     public DbSet<Space_CodeRule> Space_CodeRules { get; set; }
+     /// <summary>标注（Space 章02，打点文字/图标/区域）</summary>
+     public DbSet<Space_Marker> Space_Markers { get; set; }
+     // ───── Space P4 多层路由 ─────
+     public DbSet<Space_Connector> Space_Connectors { get; set; }
+     public DbSet<Space_ConnectorStop> Space_ConnectorStops { get; set; }
+ 
++    // ───── Space ch04 v1.1 §5.3 发布落点（WMS 侧消费表，方案A 2026-07-05 拍板）─────
++    /// <summary>WMS 库位消费表（Space 发布落点，幂等判据 lastVersion 存放处）</summary>
++    public DbSet<CP6.Entity.DomainModels.Wms.WmsBin> WmsBins { get; set; }
++
+     // ───── 财务（Fin）章01 总账内核 ─────
+     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
+     public DbSet<GlAccount> GlAccounts { get; set; }
+     /// <summary>成本中心（章01，机台/工序/部门分析维度）</summary>
+     public DbSet<CostCenter> CostCenters { get; set; }
+     /// <summary>记账凭证头（章01，maker-checker 状态机 + 红冲）</summary>
+     public DbSet<JournalEntry> JournalEntries { get; set; }
+     /// <summary>记账凭证分录行（章01，借贷本位币 decimal）</summary>
+     public DbSet<JournalLine> JournalLines { get; set; }
+     /// <summary>财务采番计数器（章01，凭证号按月采番）</summary>
+@@ -2034,20 +2038,29 @@ public class CP6Context : DbContext
+         });
+         modelBuilder.Entity<Space_ConnectorStop>(e =>
+         {
+             e.HasIndex(x => new { x.TenantId, x.ConnectorId, x.FloorId }).IsUnique();
+             e.HasIndex(x => new { x.TenantId, x.ConnectorId });
+         });
+         modelBuilder.Entity<Space_CodeRule>()
+             .HasIndex(x => new { x.TenantId, x.ScopeType, x.ScopeId });
+         modelBuilder.Entity<Space_Marker>()
+             .HasIndex(x => new { x.TenantId, x.FloorId });
++        modelBuilder.Entity<CP6.Entity.DomainModels.Wms.WmsBin>(e =>
++        {
++            // Id = Space LocationId，由发布方给定，禁止自动生成（ch04 §5.3）
++            e.Property(x => x.Id).ValueGeneratedNever();
++            // join 锚：同租户同仓内 code 唯一（ch04 §3.4）
++            e.HasIndex(x => new { x.TenantId, x.WarehouseCd, x.LocationCode }).IsUnique();
++            e.Property(x => x.PathJson).HasColumnType("nvarchar(max)");
++            e.Property(x => x.AttrsJson).HasColumnType("nvarchar(max)");
++        });
+ 
+         // ═══════════════════════════════════════════════════════════
+         //  章10 多租户：对所有 BaseTenantEntity 反射批量注册全局查询过滤（防漏命门，OA4-D1/D3）
+         //  WHERE TenantId == CurrentTenantId —— 闭包到本上下文实例，EF 每次查询重读当前租户。
+         // ═══════════════════════════════════════════════════════════
+         foreach (var et in modelBuilder.Model.GetEntityTypes()
+                      .Where(t => typeof(BaseTenantEntity).IsAssignableFrom(t.ClrType) && t.BaseType is null))
+         {
+             var p = Expression.Parameter(et.ClrType, "e");
+             var body = Expression.Equal(
+diff --git a/CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.cs b/CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.cs
+new file mode 100644
+index 0000000..40f88e4
+--- /dev/null
++++ b/CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.cs
+@@ -0,0 +1,65 @@
++﻿using System;
++using Microsoft.EntityFrameworkCore.Migrations;
++
++#nullable disable
++
++namespace CP6.Core.Migrations
++{
++    /// <inheritdoc />
++    public partial class SpaceWave1WmsBin : Migration
++    {
++        /// <inheritdoc />
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<string>(
++                name: "WarehouseCd",
++                table: "Space_Site",
++                type: "nvarchar(10)",
++                maxLength: 10,
++                nullable: true);
++
++            migrationBuilder.CreateTable(
++                name: "T_WmsBin",
++                columns: table => new
++                {
++                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
++                    LocationCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
++                    WarehouseCd = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
++                    Version = table.Column<long>(type: "bigint", nullable: false),
++                    PathJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
++                    AttrsJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
++                    IsActive = table.Column<bool>(type: "bit", nullable: false),
++                    LastPublishedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
++                    LastPublishedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
++                    Creator = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
++                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
++                    Modifier = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
++                    ModifyDate = table.Column<DateTime>(type: "datetime2", nullable: true),
++                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
++                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
++                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
++                },
++                constraints: table =>
++                {
++                    table.PrimaryKey("PK_T_WmsBin", x => x.Id);
++                });
++
++            migrationBuilder.CreateIndex(
++                name: "IX_T_WmsBin_TenantId_WarehouseCd_LocationCode",
++                table: "T_WmsBin",
++                columns: new[] { "TenantId", "WarehouseCd", "LocationCode" },
++                unique: true);
++        }
++
++        /// <inheritdoc />
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropTable(
++                name: "T_WmsBin");
++
++            migrationBuilder.DropColumn(
++                name: "WarehouseCd",
++                table: "Space_Site");
++        }
++    }
++}
+diff --git a/CP6.Core/Services/Integration/IWmsBinDeactivator.cs b/CP6.Core/Services/Integration/IWmsBinDeactivator.cs
+new file mode 100644
+index 0000000..9c47ed4
+--- /dev/null
++++ b/CP6.Core/Services/Integration/IWmsBinDeactivator.cs
+@@ -0,0 +1,31 @@
++namespace CP6.Core.Services.Integration;
++
++/// <summary>
++/// 停用同步 RPC 契约（ch04 §6 v1.1，Space 侧定义、WMS 实现，与 IWmsStockQuery 同构的单向抽象）。
++/// Space 停用前同步调用，WMS 按实时库存权威判定（TOCTOU 防护）；
++/// Space 据同步返回决定本地 Status——成功才 1→2，不再乐观翻转+回滚（§6.3 无孤儿库位）。
++/// </summary>
++public interface IWmsBinDeactivator
++{
++    Task<WmsDeactivateResult> DeactivateAsync(WmsDeactivateRequest req, CancellationToken ct = default);
++}
++
++/// <summary>停用同步请求（对应契约 POST /api/wms/bins/deactivate 的进程内形态）。</summary>
++public sealed class WmsDeactivateRequest
++{
++    public Guid LocationId { get; set; }
++    public string LocationCode { get; set; } = "";
++    /// <summary>仓库维度（§3.4 映射；bin 已落库时以 bin 记录为准）</summary>
++    public string? WarehouseCd { get; set; }
++    /// <summary>停用后的新版本号（= Space 侧 Version+1），成功时写入 T_WmsBin.Version</summary>
++    public long Version { get; set; }
++    public string? User { get; set; }
++}
++
++/// <summary>停用同步返回。</summary>
++public sealed class WmsDeactivateResult
++{
++    public bool Success { get; set; }
++    /// <summary>拒绝原因（如 W-SPACE-404 库存非0）</summary>
++    public string? Reason { get; set; }
++}
+diff --git a/CP6.Core/Services/Integration/IWmsStockQuery.cs b/CP6.Core/Services/Integration/IWmsStockQuery.cs
+index a0db073..e6878f8 100644
+--- a/CP6.Core/Services/Integration/IWmsStockQuery.cs
++++ b/CP6.Core/Services/Integration/IWmsStockQuery.cs
+@@ -7,22 +7,22 @@ namespace CP6.Core.Services.Integration;
+ public interface IWmsStockQuery
+ {
+     /// <summary>批量按库位编码查库存（叠加主力）。未命中编码不在结果集。</summary>
+     Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
+         IReadOnlyCollection<string> locationCodes, CancellationToken ct = default);
+ 
+     /// <summary>按物料/批次/容器反查"哪些库位有它"（D8 P2 半）。</summary>
+     Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
+         StockLocateQuery query, CancellationToken ct = default);
+ 
+-    /// <summary>单库位库存量（= 批量的单元素特例；04 停用前置 0 库存校验用）。</summary>
+-    Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default);
++    /// <summary>单库位库存量（04 停用前置校验用）。warehouseCd 给定时按 (仓,码) 锚查（§3.4 多仓防串仓）。</summary>
++    Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default);
+ }
+ 
+ /// <summary>库位库存叠加 DTO（join key=LocationCode）。</summary>
+ public sealed class WmsStockDto
+ {
+     public string  LocationCode { get; set; } = "";
+     public int     BinStatus    { get; set; }   // 0空 1有货 2满 3锁定 4在拣
+     public decimal Qty          { get; set; }   // ΣPhysicalQty
+     public decimal AllocatedQty { get; set; }   // ΣAllocatedQty
+     public decimal? Capacity    { get; set; }   // Location.CapacityQty（0/未设→null）
+@@ -50,13 +50,13 @@ public sealed class WmsLocationHit
+ public sealed class StubWmsStockQuery : IWmsStockQuery
+ {
+     public Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
+         IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
+         => Task.FromResult<IReadOnlyList<WmsStockDto>>(Array.Empty<WmsStockDto>());
+ 
+     public Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
+         StockLocateQuery query, CancellationToken ct = default)
+         => Task.FromResult<IReadOnlyList<WmsLocationHit>>(Array.Empty<WmsLocationHit>());
+ 
+-    public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default)
++    public Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default)
+         => Task.FromResult(0m);
+ }
+diff --git a/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs b/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
+index ecc02f0..88c33e6 100644
+--- a/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
++++ b/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
+@@ -61,21 +61,22 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
+         },
+         [RouteKey("MES", "FIN", "OnWorkOrderCompletedAsync")] = async ctx =>
+         {
+             var p = ctx.GetPayload<OnWorkOrderCompletedFinPayload>();
+             var r = await ctx.Fin.OnWorkOrderCompletedAsync(p.WorkOrderNo, p.UserName);
+             return r.Success;
+         },
+         [RouteKey("SPACE", "WMS", "OnLocationPublishedAsync")] = async ctx =>
+         {
+             var p = ctx.GetPayload<LocationPublishBatch>();
+-            var r = await ctx.Space.OnLocationPublishedAsync(p, Guid.NewGuid());
++            // 重试路径不重复落事件：Worker 负责更新原 IntegrationEvent 行的 Status/Attempts
++            var r = await ctx.Space.OnLocationPublishedAsync(p, Guid.NewGuid(), persistEvent: false);
+             return r.Success;
+         },
+     };
+ 
+     private readonly IMesBridgeHook _mes;
+     private readonly IWmsBridgeHook _wms;
+     private readonly IErpBridgeHook _erp;
+     private readonly IOrderCancelBridgeHook _cancel;
+     private readonly IFinBridgeHook _fin;
+     private readonly ISpaceBridgeHook _space;
+diff --git a/CP6.Core/Services/Integration/SpaceBridgeHook.cs b/CP6.Core/Services/Integration/SpaceBridgeHook.cs
+index 48a58b8..5c71c00 100644
+--- a/CP6.Core/Services/Integration/SpaceBridgeHook.cs
++++ b/CP6.Core/Services/Integration/SpaceBridgeHook.cs
+@@ -1,21 +1,23 @@
+ using CP6.Core.EFDbContext;
+ using CP6.Entity.DomainModels;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.Extensions.Logging;
+ 
+ namespace CP6.Core.Services.Integration;
+ 
+ /// <summary>Space 发布 bridge hook 契约（ch04 §2.1）。</summary>
+ public interface ISpaceBridgeHook
+ {
+-    Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId);
++    /// <param name="persistEvent">true=末尾落 IntegrationEvent（首发路径）；false=不落（Worker 重试路径，
++    /// 由 Worker 更新原事件行，避免每次重试新插一行导致事件表翻倍增长）。</param>
++    Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId, bool persistEvent = true);
+ }
+ 
+ /// <summary>Space bridge hook 调用结果。</summary>
+ public class SpaceBridgeResult
+ {
+     public bool Success { get; set; }
+     public string? Message { get; set; }
+ }
+ 
+ /// <summary>
+@@ -26,21 +28,21 @@ public class SpaceBridgeHook : BridgeHookBase, ISpaceBridgeHook
+ {
+     private readonly IWmsLocationConsumer _wms;
+ 
+     public SpaceBridgeHook(CP6Context db, ILogger<SpaceBridgeHook> logger, IWmsLocationConsumer wms)
+         : base(db, logger)
+     {
+         _wms = wms;
+     }
+ 
+     /// <summary>发布批次到 WMS，落 IntegrationEvent 持久化记录。</summary>
+-    public async Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId)
++    public async Task<SpaceBridgeResult> OnLocationPublishedAsync(LocationPublishBatch batch, Guid correlationId, bool persistEvent = true)
+     {
+         string status;
+         string? error = null;
+         bool ok = false;
+         try
+         {
+             var res = await _wms.ConsumeAsync(batch);
+             ok = res.Success;
+             status = !res.Success
+                 ? IntegrationEventStatus.Failed
+@@ -48,28 +50,31 @@ public class SpaceBridgeHook : BridgeHookBase, ISpaceBridgeHook
+                     ? IntegrationEventStatus.Skipped
+                     : IntegrationEventStatus.Success;
+             if (!res.Success) error = "WMS consume returned failure";
+         }
+         catch (Exception ex)
+         {
+             status = IntegrationEventStatus.Failed;
+             error = ex.ToString();
+         }
+ 
+-        await PersistEventAsync(
+-            sourceModule: "SPACE",
+-            targetModule: "WMS",
+-            hookName: nameof(OnLocationPublishedAsync),
+-            sourceNo: batch.BatchNo,
+-            targetNo: null,
+-            status: status,
+-            error: error,
+-            correlationId: correlationId,
+-            payload: batch);
++        if (persistEvent)
++        {
++            await PersistEventAsync(
++                sourceModule: "SPACE",
++                targetModule: "WMS",
++                hookName: nameof(OnLocationPublishedAsync),
++                sourceNo: batch.BatchNo,
++                targetNo: null,
++                status: status,
++                error: error,
++                correlationId: correlationId,
++                payload: batch);
++        }
+ 
+         return new SpaceBridgeResult
+         {
+             Success = ok && status != IntegrationEventStatus.Failed,
+             Message = error
+         };
+     }
+ }
+diff --git a/CP6.Core/Services/Space/CodeEngineService.cs b/CP6.Core/Services/Space/CodeEngineService.cs
+index 6eb1105..c88c2ed 100644
+--- a/CP6.Core/Services/Space/CodeEngineService.cs
++++ b/CP6.Core/Services/Space/CodeEngineService.cs
+@@ -272,42 +272,48 @@ public class CodeEngineService : ICodeEngineService
+ 
+         await Task.CompletedTask;
+         return resp;
+     }
+ 
+     // ══════════════════════════════════════════════════════════════════════
+     // PrecheckAsync — 发布前编码预检（ch03 §9.2）
+     // ══════════════════════════════════════════════════════════════════════
+ 
+     /// <inheritdoc/>
+-    public async Task<CodePrecheckResp> PrecheckAsync(Guid floorId)
++    public async Task<CodePrecheckResp> PrecheckAsync(Guid floorId, Guid? zoneId = null)
+     {
+         var resp = new CodePrecheckResp();
+ 
+-        // 拉 floor 内全部草稿库位
+-        var locs = await _db.Space_Locations
+-            .Where(l => l.FloorId == floorId && l.Status == 0)
+-            .ToListAsync();
++        // 拉 floor（或指定库区）内全部草稿库位——库区归属经 Rack.ZoneId 推导
++        var locQuery = _db.Space_Locations.Where(l => l.FloorId == floorId && l.Status == 0);
++        if (zoneId != null)
++        {
++            var rackIds = await _db.Space_Racks.Where(r => r.ZoneId == zoneId).Select(r => r.Id).ToListAsync();
++            locQuery = locQuery.Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value));
++        }
++        var locs = await locQuery.ToListAsync();
+ 
+         resp.EmptyCodeCount = locs.Count(l => l.LocationCode == null);
+ 
+         resp.DuplicateGroups = locs
+             .Where(l => l.LocationCode != null)
+             .GroupBy(l => l.LocationCode!, StringComparer.OrdinalIgnoreCase)
+             .Where(g => g.Count() > 1)
+             .Select(g => g.Select(x => x.Id).ToList())
+             .ToList();
+ 
+         resp.UnplacedDraftCount = locs.Count(l => l.LocationCode != null && !l.Placed);
+ 
+-        // 规则完备性：对 floor 内各 Zone 跑静态预检，汇总错误码（去重）
+-        var zones = await _db.Space_Zones.Where(z => z.FloorId == floorId).ToListAsync();
++        // 规则完备性：对 floor（或指定库区）跑静态预检，汇总错误码（去重）
++        var zoneQuery = _db.Space_Zones.Where(z => z.FloorId == floorId);
++        if (zoneId != null) zoneQuery = zoneQuery.Where(z => z.Id == zoneId);
++        var zones = await zoneQuery.ToListAsync();
+         var rules = await _db.Space_CodeRules.ToListAsync();
+         var precheckErrs = new HashSet<string>(StringComparer.Ordinal);
+ 
+         foreach (var z in zones)
+         {
+             try
+             {
+                 var rule = PickRule(rules, z.Id, floorId);
+                 var segs = DeserializeSegs(rule.Segments);
+                 foreach (var err in CodePrecheck.Validate(segs))
+diff --git a/CP6.Core/Services/Space/ICodeEngineService.cs b/CP6.Core/Services/Space/ICodeEngineService.cs
+index 53aa4bf..1839a6c 100644
+--- a/CP6.Core/Services/Space/ICodeEngineService.cs
++++ b/CP6.Core/Services/Space/ICodeEngineService.cs
+@@ -31,23 +31,23 @@ public interface ICodeEngineService
+     Task<List<string>> GenerateAsync(Guid floorId, string mode, Guid? scopeZoneId);
+ 
+     // ── 预览（ch03 §8）──────────────────────────────────────────────────
+ 
+     /// <summary>实时预览（ch03 §8）。合成虚拟层级数据返回两路样例，不写库。</summary>
+     Task<CodePreviewResp> PreviewAsync(CodePreviewReq req);
+ 
+     // ── 发布前预检（ch03 §9.2）─────────────────────────────────────────
+ 
+     /// <summary>
+-    /// 发布前编码预检（ch03 §9.2，04 闸门入口）。
++    /// 发布前编码预检（ch03 §9.2，04 闸门入口）。zoneId 给定时按库区收窄（H5：库位经 Rack.ZoneId 归属）。
+     /// 检查：空码草稿数 / 重复码组 / 规则静态错误 / 未落位草稿数。
+     /// </summary>
+-    Task<CodePrecheckResp> PrecheckAsync(Guid floorId);
++    Task<CodePrecheckResp> PrecheckAsync(Guid floorId, Guid? zoneId = null);
+ 
+     // ── 单格生成（ch03 §10，可推迟）────────────────────────────────────
+ 
+     /// <summary>
+     /// 单格生成（ch03 §10）。对单个库位走同样的 Assemble 路径写回 LocationCode。
+     /// 最小实现：rackSeq 简化为 1；后续补全参见计划 §10。
+     /// </summary>
+     Task<string> GenSingleAsync(Guid locationId);
+ }
+diff --git a/CP6.Core/Services/Space/LocationPublishService.cs b/CP6.Core/Services/Space/LocationPublishService.cs
+index 2399405..d3f4c45 100644
+--- a/CP6.Core/Services/Space/LocationPublishService.cs
++++ b/CP6.Core/Services/Space/LocationPublishService.cs
+@@ -1,127 +1,160 @@
+ using CP6.Core.EFDbContext;
+ using CP6.Core.Services.Common;
+ using CP6.Core.Services.Integration;
+ using CP6.Entity.DomainModels.Space;
+ using CP6.Entity.DTOs.Space;
+ using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Storage;
+ 
+ namespace CP6.Core.Services.Space;
+ 
+ /// <summary>
+ /// 库位发布、停用、采纳服务实现（ch04）。
+ ///
+ /// v1.1 多租户约定：
+ ///   · 构造注入 ITenantContext 仅用于 LocationPublishBatch.TenantId DTO 字段（不被 EF 盖章）。
+ ///   · 查询不写 .Where(TenantId)——全局过滤自动按当前租户隔离。
+ ///   · 创建实体不写 TenantId——SaveChanges 盖章自动补当前租户。
+ /// </summary>
+ public class LocationPublishService : ILocationPublishService
+ {
+     private readonly CP6Context _db;
+     private readonly ITenantContext _t;
+     private readonly ICodeEngineService _code;
+     private readonly ISpaceBridgeHook _hook;
+     private readonly IWmsStockQuery _stock;
++    private readonly IWmsBinDeactivator _deactivator;
+ 
+     public LocationPublishService(
+         CP6Context db,
+         ITenantContext t,
+         ICodeEngineService code,
+         ISpaceBridgeHook hook,
+-        IWmsStockQuery stock)
++        IWmsStockQuery stock,
++        IWmsBinDeactivator deactivator)
+     {
+         _db = db;
+         _t = t;
+         _code = code;
+         _hook = hook;
+         _stock = stock;
++        _deactivator = deactivator;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<int> PublishFloorAsync(Guid floorId, Guid? zoneId, string? user)
+     {
+-        // 1. 闸门（ch03 §9.2）
+-        var pre = await _code.PrecheckAsync(floorId);
+-        if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
+-            throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
+-
+-        // 2. 取 Status=0 且编码就绪的库位
+-        var locs = await _db.Space_Locations
+-            .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null)
+-            .ToListAsync();
++        // InMemory 安全事务守卫（惯例见 SceneService）：真库开事务，InMemory 降级无事务。
++        // 事务范围＝闸门→翻状态→WMS 消费(T_WmsBin 写入)→事件落库，全部同库原子提交，
++        // 修复"翻了状态但事件静默丢失"的窗口（同一 CP6Context 实例，hook 内 SaveChanges 同事务）。
++        IDbContextTransaction? tx = _db.Database.IsRelational()
++            ? await _db.Database.BeginTransactionAsync()
++            : null;
++        try
++        {
++            // 1. 闸门（ch03 §9.2；zoneId 给定时按库区收窄，H5）
++            var pre = await _code.PrecheckAsync(floorId, zoneId);
++            if (pre.EmptyCodeCount > 0 || pre.DuplicateGroups.Count > 0 || pre.PrecheckErrors.Count > 0)
++                throw new InvalidOperationException("E-SPACE-307: 楼层存在空码、重码或其他预检错误，无法发布");
+ 
+-        if (locs.Count == 0) return 0;
++            // 2. 取 Status=0 且编码就绪的库位（zoneId 给定时经 Rack.ZoneId 收窄）
++            var locQuery = _db.Space_Locations
++                .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null);
++            if (zoneId != null)
++            {
++                var rackIds = await _db.Space_Racks.Where(r => r.ZoneId == zoneId).Select(r => r.Id).ToListAsync();
++                locQuery = locQuery.Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value));
++            }
++            var locs = await locQuery.ToListAsync();
+ 
+-        // 3. 批号（D-E）
+-        var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
+-        var batchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}";
++            if (locs.Count == 0) return 0;
+ 
+-        // 4. 翻状态 + 升版 + 组载荷
+-        var batch = new LocationPublishBatch
+-        {
+-            BatchNo = batchNo,
+-            TenantId = _t.CurrentTenantId,  // DTO 字段，不被 EF 盖章，必须显式赋值
+-            PublishedBy = user
+-        };
+-        foreach (var l in locs)
++            // 3. 批号（D-E）
++            var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
++            var batchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}";
++
++            // 4. 翻状态 + 升版 + 组载荷
++            var batch = new LocationPublishBatch
++            {
++                BatchNo = batchNo,
++                TenantId = _t.CurrentTenantId,  // DTO 字段，不被 EF 盖章，必须显式赋值
++                PublishedBy = user
++            };
++            foreach (var l in locs)
++            {
++                l.Status = 1;
++                l.Version += 1;
++                l.Modifier = user;
++                l.ModifyDate = DateTime.Now;
++                batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
++            }
++            await _db.SaveChangesAsync();
++
++            // 5. 发事件（hook 内部吞消费异常→Failed 事件落库，由 Worker 重试；不影响本事务提交）
++            await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
++
++            if (tx != null) await tx.CommitAsync();
++            return locs.Count;
++        }
++        finally
+         {
+-            l.Status = 1;
+-            l.Version += 1;
+-            l.Modifier = user;
+-            l.ModifyDate = DateTime.Now;
+-            batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
++            if (tx != null) await tx.DisposeAsync();   // 未 Commit 即 Dispose = 回滚
+         }
+-        await _db.SaveChangesAsync();
+-
+-        // 5. 发事件
+-        await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+-        return locs.Count;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task DeactivateAsync(Guid locationId, string? user)
+     {
+         var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId)
+                 ?? throw new InvalidOperationException("E-SPACE-004: 库位不存在");
+         if (l.Status != 1)
+             throw new InvalidOperationException("E-SPACE-004: 库位未处于已发布状态");
+ 
+-        // D6 前置校验：查 WMS 库存
+-        var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "");
++        // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
++        var warehouseCd = await ResolveWarehouseCdAsync(l);
++        var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
+         if (qty > 0)
+             throw new InvalidOperationException("E-SPACE-401: 库位仍有库存，无法停用");
+ 
++        // ② 同步 RPC：WMS 按实时库存权威判定（TOCTOU 防护；ch04 §6.1② v1.1）
++        var newVersion = l.Version + 1;
++        var resp = await _deactivator.DeactivateAsync(new WmsDeactivateRequest
++        {
++            LocationId = l.Id,
++            LocationCode = l.LocationCode ?? "",
++            WarehouseCd = warehouseCd,
++            Version = newVersion,
++            User = user
++        });
++
++        // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
++        if (!resp.Success)
++            throw new InvalidOperationException("W-SPACE-404: WMS 侧仍有库存，停用未生效");
++
+         l.Status = 2;
+-        l.Version += 1;
++        l.Version = newVersion;
+         l.Modifier = user;
+         l.ModifyDate = DateTime.Now;
+ 
+         var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
+         var batch = new LocationPublishBatch
+         {
+             BatchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}",
+             TenantId = _t.CurrentTenantId,
+             PublishedBy = user
+         };
+         batch.Items.Add(await BuildItemAsync(l, "DEACTIVATE"));
+         await _db.SaveChangesAsync();
+ 
+-        var r = await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+-        if (!r.Success)
+-        {
+-            // WMS 拒绝 → 回滚状态
+-            l.Status = 1;
+-            l.Version += 1;
+-            await _db.SaveChangesAsync();
+-            throw new InvalidOperationException("W-SPACE-404: WMS 拒绝停用，已回滚");
+-        }
++        // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
++        await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<(int imported, List<string> skipped)> AdoptAsync(
+         IEnumerable<(string code, Dictionary<string, object?>? attrs)> items, string? user)
+     {
+         var existing = await _db.Space_Locations
+             .Where(l => l.LocationCode != null)
+             .Select(l => l.LocationCode!)
+             .ToListAsync();
+@@ -196,15 +229,30 @@ public class LocationPublishService : ILocationPublishService
+         if (l.SizeH.HasValue) attrs["sizeH"] = l.SizeH;
+         if (l.SizeD.HasValue) attrs["sizeD"] = l.SizeD;
+ 
+         return new LocationPublishItem
+         {
+             Op = op,
+             LocationId = l.Id,
+             LocationCode = l.LocationCode ?? "",
+             CodeOrigin = l.CodeOrigin,
+             Version = l.Version,
++            WarehouseCd = await ResolveWarehouseCdAsync(l),
+             Path = path,
+             Attrs = attrs
+         };
+     }
++
++    /// <summary>
++    /// SiteCode↔WarehouseCd 映射（ch04 §3.4）：Site.WarehouseCd 显式配置优先，空则默认 = SiteCode。
++    /// 走 FloorId → Site 链（比 Rack 链短，且停用未落位库位也可能有 FloorId）；无楼层归属返回 null。
++    /// </summary>
++    private async Task<string?> ResolveWarehouseCdAsync(Space_Location l)
++    {
++        if (l.FloorId == null) return null;
++        var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == l.FloorId);
++        if (floor == null) return null;
++        var site = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId);
++        if (site == null) return null;
++        return string.IsNullOrEmpty(site.WarehouseCd) ? site.SiteCode : site.WarehouseCd;
++    }
+ }
+diff --git a/CP6.Core/Services/Space/SceneService.cs b/CP6.Core/Services/Space/SceneService.cs
+index 08e5b44..3c2e577 100644
+--- a/CP6.Core/Services/Space/SceneService.cs
++++ b/CP6.Core/Services/Space/SceneService.cs
+@@ -204,38 +204,38 @@ public class SceneService : ISceneService
+                 var existing = ld.Id.HasValue
+                     ? await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == ld.Id.Value)
+                     : null;
+                 if (existing != null)
+                 {
+                     existing.RackId     = ld.RackId;
+                     existing.Col        = ld.Col;
+                     existing.Level      = ld.Level;
+                     existing.Depth      = ld.Depth;
+                     existing.Placed     = ld.Placed;
+-                    existing.Status     = ld.Status;
+-                    existing.CodeOrigin = ld.CodeOrigin;
++                    // H1 状态机护栏：Status/CodeOrigin 不接受场景保存覆盖——
++                    // 状态只经 publish/deactivate 通道流转（ch04 §4），来源标签只在生码/采纳时落定
+                     existing.Modifier   = user;
+                     existing.ModifyDate = DateTime.Now;
+                 }
+                 else
+                 {
+                     _db.Space_Locations.Add(new Space_Location
+                     {
+                         Id         = ld.Id ?? Guid.NewGuid(),
+                         RackId     = ld.RackId,
+                         FloorId    = floorId,
+                         Col        = ld.Col,
+                         Level      = ld.Level,
+                         Depth      = ld.Depth,
+                         Placed     = ld.Placed,
+-                        Status     = ld.Status,
+-                        CodeOrigin = ld.CodeOrigin,
++                        Status     = 0,   // H1：编辑器新建恒草稿（发布走 publish、采纳走 adopt/bind-codes）
++                        CodeOrigin = 1,
+                         Creator    = user,
+                         CreateDate = DateTime.Now
+                     });
+                 }
+             }
+ 
+             // ── Deletes ────────────────────────────────────────────
+             foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
+             {
+                 if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId))
+diff --git a/CP6.Core/Services/Wms/WmsBinConsumer.cs b/CP6.Core/Services/Wms/WmsBinConsumer.cs
+new file mode 100644
+index 0000000..a4eb39d
+--- /dev/null
++++ b/CP6.Core/Services/Wms/WmsBinConsumer.cs
+@@ -0,0 +1,116 @@
++using System.Text.Json;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels.Wms;
++using CP6.Entity.DTOs.Space;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Core.Services.Wms;
++
++/// <summary>
++/// WMS 库位消费端真实现（ch04 §5.1/§5.3 v1.1）：LocationPublished → T_WmsBin 幂等 upsert。
++/// 幂等判据：按 Id(=Space LocationId) 取行，incoming.Version &lt;= stored.Version → SKIPPED。
++/// 整批语义（§5.2）：任一 REJECTED → Success=false（整事件 Failed，Worker 重试/人工介入）；
++/// 其余项照常落库（部分失败返回逐项结果）。TenantId 由 SaveChanges 自动盖章。
++/// </summary>
++public class WmsBinConsumer : IWmsLocationConsumer
++{
++    private static readonly JsonSerializerOptions Json = new() { WriteIndented = false };
++    private readonly CP6Context _db;
++
++    public WmsBinConsumer(CP6Context db) => _db = db;
++
++    /// <inheritdoc/>
++    public async Task<WmsConsumeResult> ConsumeAsync(LocationPublishBatch batch)
++    {
++        var result = new WmsConsumeResult { Success = true };
++        foreach (var item in batch.Items)
++        {
++            var bin = await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == item.LocationId);
++
++            // 陈旧/重复事件 → 幂等跳过（§5.1 关键行，至少一次投递安全）
++            if (bin != null && item.Version <= bin.Version)
++            {
++                result.Items.Add(Item(item, "SKIPPED", "version<=lastVersion（幂等重复）"));
++                continue;
++            }
++
++            if (item.Op == "DEACTIVATE")
++            {
++                if (bin == null)
++                {
++                    // H6 乱序防护（对契约 §5.1 的修正）：对应 UPSERT 事件可能仍在重试队列，
++                    // 直接跳过会让迟到的旧版 UPSERT 复活已停用库位 → 落墓碑行（IsActive=false + Version 占位），
++                    // 版本单调判据自动掐死后到的旧版。无仓维度（建不了 join 锚）才退回幂等跳过。
++                    if (string.IsNullOrEmpty(item.WarehouseCd))
++                    {
++                        result.Items.Add(Item(item, "SKIPPED", "bin 不存在且缺 WarehouseCd，幂等无操作"));
++                        continue;
++                    }
++                    var tomb = new WmsBin
++                    {
++                        Id = item.LocationId,
++                        LocationCode = item.LocationCode,
++                        WarehouseCd = item.WarehouseCd,
++                        PathJson = JsonSerializer.Serialize(item.Path, Json),
++                        AttrsJson = JsonSerializer.Serialize(item.Attrs, Json),
++                        IsActive = false
++                    };
++                    Stamp(tomb, item.Version, batch.PublishedBy);
++                    _db.WmsBins.Add(tomb);
++                    result.Items.Add(Item(item, "DEACTIVATED", "墓碑落库（bin 未曾消费，防乱序复活）"));
++                    continue;
++                }
++                // TOCTOU 权威校验：库存真相在 WMS（§6），按 (WarehouseCd, LocationCode) 锚查
++                var qty = await _db.Stocks
++                    .Where(s => s.WarehouseCd == bin.WarehouseCd && s.LocationCd == bin.LocationCode)
++                    .SumAsync(s => s.PhysicalQty);
++                if (qty > 0)
++                {
++                    result.Items.Add(Item(item, "REJECTED", "W-SPACE-404 库存非0"));
++                    result.Success = false;
++                    continue;
++                }
++                bin.IsActive = false;
++                Stamp(bin, item.Version, batch.PublishedBy);
++                result.Items.Add(Item(item, "DEACTIVATED", null));
++                continue;
++            }
++
++            // UPSERT
++            if (string.IsNullOrEmpty(item.WarehouseCd))
++            {
++                // 无仓维度无法建 (WarehouseCd, LocationCode) join 锚（§3.4）→ 拒绝该条
++                result.Items.Add(Item(item, "REJECTED", "缺 WarehouseCd（SiteCode↔WarehouseCd 映射未命中）"));
++                result.Success = false;
++                continue;
++            }
++            if (bin == null)
++            {
++                bin = new WmsBin { Id = item.LocationId };
++                _db.WmsBins.Add(bin);
++            }
++            bin.LocationCode = item.LocationCode;   // 理论不变（发布后码冻结）
++            bin.WarehouseCd = item.WarehouseCd;
++            bin.PathJson = JsonSerializer.Serialize(item.Path, Json);
++            bin.AttrsJson = JsonSerializer.Serialize(item.Attrs, Json);
++            bin.IsActive = true;
++            Stamp(bin, item.Version, batch.PublishedBy);
++            result.Items.Add(Item(item, "UPSERTED", null));
++        }
++
++        await _db.SaveChangesAsync();
++        result.AllSkipped = result.Items.Count > 0 && result.Items.All(i => i.Status == "SKIPPED");
++        return result;
++    }
++
++    private static void Stamp(WmsBin bin, long version, string? publishedBy)
++    {
++        bin.Version = version;
++        bin.LastPublishedAt = DateTime.Now;
++        bin.LastPublishedBy = publishedBy;
++    }
++
++    private static WmsItemResult Item(LocationPublishItem i, string status, string? reason) =>
++        new() { LocationId = i.LocationId, Status = status, Reason = reason };
++}
+diff --git a/CP6.Core/Services/Wms/WmsBinDeactivator.cs b/CP6.Core/Services/Wms/WmsBinDeactivator.cs
+new file mode 100644
+index 0000000..55cc4d5
+--- /dev/null
++++ b/CP6.Core/Services/Wms/WmsBinDeactivator.cs
+@@ -0,0 +1,61 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels.Wms;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Core.Services.Wms;
++
++/// <summary>
++/// 停用同步 RPC 真实现（ch04 §6.1② v1.1）：再查一次实时库存做 TOCTOU 权威校验，
++/// 无库存 → T_WmsBin.IsActive=false + Version 落定；有库存 → 拒绝 W-SPACE-404。
++/// bin 尚未消费落库（如 UPSERT 事件还在重试）→ 无库存即放行，异步兜底事件会幂等收敛（§6.1④）。
++/// </summary>
++public class WmsBinDeactivator : IWmsBinDeactivator
++{
++    private readonly CP6Context _db;
++
++    public WmsBinDeactivator(CP6Context db) => _db = db;
++
++    /// <inheritdoc/>
++    public async Task<WmsDeactivateResult> DeactivateAsync(WmsDeactivateRequest req, CancellationToken ct = default)
++    {
++        var bin = await _db.WmsBins.FirstOrDefaultAsync(b => b.Id == req.LocationId, ct);
++
++        // 权威库存判定：优先按 bin 落库的 (WarehouseCd, LocationCode) 锚；bin 未落库退回请求携带的键
++        var warehouseCd = bin?.WarehouseCd ?? req.WarehouseCd;
++        var code = bin?.LocationCode ?? req.LocationCode;
++        var stocks = _db.Stocks.Where(s => s.LocationCd == code);
++        if (!string.IsNullOrEmpty(warehouseCd))
++            stocks = stocks.Where(s => s.WarehouseCd == warehouseCd);
++        var qty = await stocks.SumAsync(s => s.PhysicalQty, ct);
++        if (qty > 0)
++            return new WmsDeactivateResult { Success = false, Reason = "W-SPACE-404 库存非0" };
++
++        if (bin != null)
++        {
++            bin.IsActive = false;
++            bin.Version = req.Version;
++            bin.LastPublishedAt = DateTime.Now;
++            bin.LastPublishedBy = req.User;
++            await _db.SaveChangesAsync(ct);
++        }
++        else if (!string.IsNullOrEmpty(req.WarehouseCd))
++        {
++            // H6 乱序防护墓碑：同步 RPC 是权威停用时点。bin 未曾消费（UPSERT 事件可能仍在重试）
++            // 也要占住 (Id, Version)，防止迟到的旧版 UPSERT 事后复活该库位。
++            _db.WmsBins.Add(new WmsBin
++            {
++                Id = req.LocationId,
++                LocationCode = req.LocationCode,
++                WarehouseCd = req.WarehouseCd,
++                IsActive = false,
++                Version = req.Version,
++                LastPublishedAt = DateTime.Now,
++                LastPublishedBy = req.User
++            });
++            await _db.SaveChangesAsync(ct);
++        }
++        // bin 不存在且无仓维度（如采纳态无楼层归属）→ 无库存即放行，异步兜底事件幂等收敛
++        return new WmsDeactivateResult { Success = true };
++    }
++}
+diff --git a/CP6.Core/Services/Wms/WmsStockQuery.cs b/CP6.Core/Services/Wms/WmsStockQuery.cs
+index a828551..04420ff 100644
+--- a/CP6.Core/Services/Wms/WmsStockQuery.cs
++++ b/CP6.Core/Services/Wms/WmsStockQuery.cs
+@@ -4,22 +4,26 @@ using CP6.Entity.DomainModels.Wms;
+ using Microsoft.EntityFrameworkCore;
+ 
+ namespace CP6.Core.Services.Wms;
+ 
+ /// <summary>WMS 库存只读查询接真实现（读 T_Stock/T_Location/T_OutboundOrder*；纯读，多租户全局过滤自动隔离）。</summary>
+ public class WmsStockQuery : IWmsStockQuery
+ {
+     private readonly CP6Context _db;
+     public WmsStockQuery(CP6Context db) => _db = db;
+ 
+-    public async Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default)
+-        => await _db.Stocks.Where(s => s.LocationCd == locationCode).SumAsync(s => s.PhysicalQty, ct);
++    public async Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default)
++    {
++        var q = _db.Stocks.Where(s => s.LocationCd == locationCode);
++        if (!string.IsNullOrEmpty(warehouseCd)) q = q.Where(s => s.WarehouseCd == warehouseCd);
++        return await q.SumAsync(s => s.PhysicalQty, ct);
++    }
+ 
+     public async Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
+         IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
+     {
+         var codes = locationCodes.Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+         if (codes.Count == 0) return Array.Empty<WmsStockDto>();
+ 
+         var stockRows = await _db.Stocks.Where(s => codes.Contains(s.LocationCd)).ToListAsync(ct);
+         var stockByLoc = stockRows.GroupBy(s => s.LocationCd).ToDictionary(g => g.Key, g => new
+         {
+diff --git a/CP6.Entity/DTOs/Space/LocationPublishBatch.cs b/CP6.Entity/DTOs/Space/LocationPublishBatch.cs
+index 6f06d74..c31c85e 100644
+--- a/CP6.Entity/DTOs/Space/LocationPublishBatch.cs
++++ b/CP6.Entity/DTOs/Space/LocationPublishBatch.cs
+@@ -12,20 +12,22 @@ public class LocationPublishBatch
+ /// <summary>单条库位发布记录。Op: UPSERT | DEACTIVATE。</summary>
+ public class LocationPublishItem
+ {
+     /// <summary>操作类型：UPSERT（新建/更新）| DEACTIVATE（停用）</summary>
+     public string Op { get; set; } = "UPSERT";
+     public Guid LocationId { get; set; }
+     public string LocationCode { get; set; } = "";
+     /// <summary>编码来源：1 引擎生成 / 2 采纳导入</summary>
+     public int CodeOrigin { get; set; }
+     public long Version { get; set; }
++    /// <summary>仓库编码（v1.1 §3.4：发布 hook 投递前按 SiteCode↔WarehouseCd 映射填好；(WarehouseCd, LocationCode) 是跨系统 join 锚）</summary>
++    public string? WarehouseCd { get; set; }
+     public LocationPath Path { get; set; } = new();
+     /// <summary>业务属性（仅 size 等，★绝不含 AbsX/Y/Z 几何坐标）</summary>
+     public Dictionary<string, object?> Attrs { get; set; } = new();
+ }
+ 
+ /// <summary>变长路径（有巷道填 AisleCode，无巷道为 null）。</summary>
+ public class LocationPath
+ {
+     public string? SiteCode { get; set; }
+     public int FloorLevel { get; set; }
+diff --git a/CP6.Entity/DomainModels/Space/Space_Site.cs b/CP6.Entity/DomainModels/Space/Space_Site.cs
+index 6475f91..b2f4b53 100644
+--- a/CP6.Entity/DomainModels/Space/Space_Site.cs
++++ b/CP6.Entity/DomainModels/Space/Space_Site.cs
+@@ -23,11 +23,15 @@ public class Space_Site : BaseBizEntity
+     public string? Address { get; set; }
+ 
+     /// <summary>经度（可选，地图定位）</summary>
+     public double? Lng { get; set; }
+ 
+     /// <summary>纬度（可选，地图定位）</summary>
+     public double? Lat { get; set; }
+ 
+     /// <summary>是否启用</summary>
+     public bool Enable { get; set; } = true;
++
++    /// <summary>WMS 仓库编码映射（ch04 §3.4 SiteCode↔WarehouseCd；空=默认规则 WarehouseCd=SiteCode）</summary>
++    [MaxLength(10)]
++    public string? WarehouseCd { get; set; }
+ }
+diff --git a/CP6.Entity/DomainModels/Wms/WmsBin.cs b/CP6.Entity/DomainModels/Wms/WmsBin.cs
+new file mode 100644
+index 0000000..125c19b
+--- /dev/null
++++ b/CP6.Entity/DomainModels/Wms/WmsBin.cs
+@@ -0,0 +1,41 @@
++using System.ComponentModel.DataAnnotations;
++using System.ComponentModel.DataAnnotations.Schema;
++
++namespace CP6.Entity.DomainModels.Wms;
++
++/// <summary>
++/// WMS 侧库位消费表（Space ch04 §5.3 v1.1）。接收 Space LocationPublished 发布的库位目录，
++/// 是发布的物理落点与幂等判据 lastVersion 的存放处。
++/// Id = Space LocationId（稳定主键，跨系统同一身份，由发布方给定、非自动生成）。
++/// 与 T_Stock 靠 (WarehouseCd, LocationCode) 逻辑关联，不加物理 FK（库位目录与库存事务解耦演进）。
++/// </summary>
++[Table("T_WmsBin")]
++public class WmsBin : BaseBizEntity
++{
++    /// <summary>冻结的 join key（发布后不变，ch04 §3.1）</summary>
++    [Required, MaxLength(100)]
++    public string LocationCode { get; set; } = string.Empty;
++
++    /// <summary>仓库维度（SiteCode↔WarehouseCd 映射得来，ch04 §3.4，多仓防串仓）</summary>
++    [Required, MaxLength(10)]
++    public string WarehouseCd { get; set; } = string.Empty;
++
++    /// <summary>已消费的最新发布版本（= lastVersion，幂等判据，ch04 §3.3）</summary>
++    public long Version { get; set; }
++
++    /// <summary>变长层级路径 JSON（区/巷/架…，不含坐标几何，ch04 §3.2）</summary>
++    public string PathJson { get; set; } = "{}";
++
++    /// <summary>业务属性 JSON（格口尺寸等，ch04 §3.1）</summary>
++    public string AttrsJson { get; set; } = "{}";
++
++    /// <summary>是否启用（DEACTIVATE 置 false，ch04 §6）</summary>
++    public bool IsActive { get; set; } = true;
++
++    /// <summary>最近一次成功消费时间</summary>
++    public DateTime? LastPublishedAt { get; set; }
++
++    /// <summary>最近一次发布人（payload publishedBy，溯源，ch04 §2.1）</summary>
++    [MaxLength(100)]
++    public string? LastPublishedBy { get; set; }
++}
+diff --git a/CP6.Tests/LocationPublishServiceTests.cs b/CP6.Tests/LocationPublishServiceTests.cs
+index d9e89f9..a0697e7 100644
+--- a/CP6.Tests/LocationPublishServiceTests.cs
++++ b/CP6.Tests/LocationPublishServiceTests.cs
+@@ -14,27 +14,29 @@ namespace CP6.Tests;
+ /// LocationPublishService 测试（ch04 D-3/D-4/D-5）。[InMemory 仅测逻辑]
+ /// </summary>
+ public class LocationPublishServiceTests
+ {
+     private static CP6Context Db() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+ 
+     private static LocationPublishService MakePublishSvc(
+         CP6Context db,
+         IWmsStockQuery? stock = null,
+-        ISpaceBridgeHook? hook = null)
++        ISpaceBridgeHook? hook = null,
++        IWmsBinDeactivator? deact = null)
+     {
+         var t = new TenantContext();
+         var code = new CodeEngineService(db);
+         hook ??= new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
+         stock ??= new StubWmsStockQuery();
+-        return new LocationPublishService(db, t, code, hook, stock);
++        deact ??= new CP6.Core.Services.Wms.WmsBinDeactivator(db);
++        return new LocationPublishService(db, t, code, hook, stock, deact);
+     }
+ 
+     // ── D-3: 整层发布 ──────────────────────────────────────────────────────
+ 
+     private static string ValidSegmentsJson() => JsonSerializer.Serialize(new[]
+     {
+         new CodeSegmentDef { Key = "zone", Source = "zone-code", Sep = "-" },
+         new CodeSegmentDef { Key = "col",  Source = "col",       Sep = "" }
+     });
+ 
+@@ -106,20 +108,110 @@ public class LocationPublishServiceTests
+ 
+     [Fact]
+     public async Task Publish_NoLocations_Returns0()
+     {
+         using var db = Db();
+         var floorId = Guid.NewGuid();
+         var n = await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
+         Assert.Equal(0, n);
+     }
+ 
++    // ── v1.1 §3.4: SiteCode↔WarehouseCd 映射 ─────────────────────────────
++
++    private static (Guid floorId, Guid rackId) SeedHierarchy(CP6Context db, string? siteWarehouseCd)
++    {
++        var floorId = Guid.NewGuid();
++        var rackId = Guid.NewGuid();
++        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1", WarehouseCd = siteWarehouseCd };
++        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
++        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
++        var rack = new Space_Rack { Id = rackId, ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        db.Space_CodeRules.Add(new Space_CodeRule
++        {
++            Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true,
++            Segments = ValidSegmentsJson()
++        });
++        db.Space_Sites.Add(site);
++        db.Space_Floors.Add(floor);
++        db.Space_Zones.Add(zone);
++        db.Space_Racks.Add(rack);
++        return (floorId, rackId);
++    }
++
++    [Fact]
++    public async Task Publish_SiteWithoutMapping_ItemWarehouseCd_DefaultsToSiteCode()
++    {
++        using var db = Db();
++        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
++            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1
++        });
++        await db.SaveChangesAsync();
++
++        await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
++
++        var evt = await db.IntegrationEvents.SingleAsync();
++        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
++        // 默认规则：WarehouseCd = SiteCode（ch04 §3.4）
++        Assert.Equal("WH1", payload.GetProperty("Items")[0].GetProperty("WarehouseCd").GetString());
++    }
++
++    [Fact]
++    public async Task Publish_SiteWithMapping_ItemWarehouseCd_UsesMappedValue()
++    {
++        using var db = Db();
++        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: "W9");
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
++            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1
++        });
++        await db.SaveChangesAsync();
++
++        await MakePublishSvc(db).PublishFloorAsync(floorId, null, "u");
++
++        var evt = await db.IntegrationEvents.SingleAsync();
++        var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
++        Assert.Equal("W9", payload.GetProperty("Items")[0].GetProperty("WarehouseCd").GetString());
++    }
++
++    [Fact]
++    public async Task Publish_WithZoneId_OnlyPublishesThatZone_GateZoneScoped()
++    {
++        using var db = Db();
++        var floorId = Guid.NewGuid();
++        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "WH1", SiteName = "S1" };
++        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
++        var zoneA = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZA", ZoneName = "A" };
++        var zoneB = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "ZB", ZoneName = "B" };
++        var rackA = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneA.Id, FloorId = floorId, RackCode = "RA", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        var rackB = new Space_Rack { Id = Guid.NewGuid(), ZoneId = zoneB.Id, FloorId = floorId, RackCode = "RB", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        db.Space_CodeRules.Add(new Space_CodeRule { Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true, Segments = ValidSegmentsJson() });
++        db.AddRange(site, floor, zoneA, zoneB, rackA, rackB);
++        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rackA.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "ZA-01", Col = 1, Level = 1, Depth = 1 });
++        // Zone B 留一个空码草稿——整层闸门会拦（E-307），库区闸门必须放行 Zone A
++        db.Space_Locations.Add(new Space_Location { Id = Guid.NewGuid(), FloorId = floorId, RackId = rackB.Id, Placed = true, Status = 0, CodeOrigin = 1, LocationCode = null, Col = 1, Level = 1, Depth = 1 });
++        await db.SaveChangesAsync();
++
++        var n = await MakePublishSvc(db).PublishFloorAsync(floorId, zoneA.Id, "u");
++
++        Assert.Equal(1, n);
++        var a = await db.Space_Locations.SingleAsync(l => l.RackId == rackA.Id);
++        var b = await db.Space_Locations.SingleAsync(l => l.RackId == rackB.Id);
++        Assert.Equal(1, a.Status);
++        Assert.Equal(0, b.Status);   // Zone B 未被波及
++    }
++
+     // ── D-4: 停用 ──────────────────────────────────────────────────────────
+ 
+     [Fact]
+     public async Task Deactivate_StockZero_Success_EmitsDeactivateEvent()
+     {
+         using var db = Db();
+         var floorId = Guid.NewGuid();
+         var rackId = Guid.NewGuid();
+         var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "S1", SiteName = "S1" };
+         var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
+@@ -232,19 +324,101 @@ public class LocationPublishServiceTests
+         var (imported, skipped) = await svc.AdoptAsync(items, "u");
+         Assert.Equal(1, imported);
+         Assert.Single(skipped);
+         Assert.Contains("EXT-001", skipped);
+     }
+ 
+     private sealed class FixedStockQuery : IWmsStockQuery
+     {
+         private readonly decimal _qty;
+         public FixedStockQuery(int qty) => _qty = qty;
+-        public Task<decimal> GetStockQtyAsync(string locationCode, CancellationToken ct = default) => Task.FromResult(_qty);
++        public Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default) => Task.FromResult(_qty);
+         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>> GetStockByLocationsAsync(
+             IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
+             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>>(Array.Empty<CP6.Core.Services.Integration.WmsStockDto>());
+         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>> FindLocationsAsync(
+             CP6.Core.Services.Integration.StockLocateQuery query, CancellationToken ct = default)
+             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>>(Array.Empty<CP6.Core.Services.Integration.WmsLocationHit>());
+     }
++
++    private sealed class RejectingDeactivator : IWmsBinDeactivator
++    {
++        public Task<WmsDeactivateResult> DeactivateAsync(WmsDeactivateRequest req, CancellationToken ct = default)
++            => Task.FromResult(new WmsDeactivateResult { Success = false, Reason = "W-SPACE-404 库存非0" });
++    }
++
++    [Fact]
++    public async Task Deactivate_WmsRejects_StatusStays1_NoEvent()
++    {
++        using var db = Db();
++        var locId = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
++            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1, Version = 1
++        });
++        await db.SaveChangesAsync();
++
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++            () => MakePublishSvc(db, deact: new RejectingDeactivator()).DeactivateAsync(locId, "u"));
++
++        Assert.StartsWith("W-SPACE-404", ex.Message);
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(1, loc.Status);            // §6.3：不前进、无翻转回滚
++        Assert.Equal(1, loc.Version);           // 版本不动
++        Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 决策失败不发兜底事件
++    }
++
++    [Fact]
++    public async Task Deactivate_Success_WmsBinInactive_VersionSynced()
++    {
++        using var db = Db();
++        var locId = Guid.NewGuid();
++        // 预置已消费的 bin（模拟此前 UPSERT 已落库）
++        db.WmsBins.Add(new CP6.Entity.DomainModels.Wms.WmsBin
++        {
++            Id = locId, LocationCode = "A-01-01-01", WarehouseCd = "WH1", Version = 1, IsActive = true
++        });
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = Guid.NewGuid(), RackId = Guid.NewGuid(),
++            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1, Version = 1
++        });
++        await db.SaveChangesAsync();
++
++        await MakePublishSvc(db).DeactivateAsync(locId, "u");
++
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(2, loc.Status);
++        Assert.Equal(2, loc.Version);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.False(bin.IsActive);
++        Assert.Equal(2, bin.Version);           // 同步 RPC 落定的新版本
++        Assert.Equal(1, await db.IntegrationEvents.CountAsync());   // ④ 兜底事件已补发
++    }
++
++    [Fact]
++    public async Task Deactivate_NoBinYet_SyncRpc_WritesTombstone()
++    {
++        // H6：UPSERT 事件尚未消费（bin 不存在）时停用 → 同步 RPC 落墓碑占住 (Id, Version)
++        using var db = Db();
++        var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);   // WarehouseCd 默认=SiteCode "WH1"
++        var locId = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = floorId, RackId = rackId,
++            Placed = true, Status = 1, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1, Version = 1
++        });
++        await db.SaveChangesAsync();
++
++        await MakePublishSvc(db).DeactivateAsync(locId, "u");
++
++        var tomb = await db.WmsBins.SingleAsync();
++        Assert.False(tomb.IsActive);
++        Assert.Equal(2, tomb.Version);
++        Assert.Equal("WH1", tomb.WarehouseCd);
++        Assert.Equal(2, (await db.Space_Locations.SingleAsync()).Status);
++    }
+ }
+diff --git a/CP6.Tests/SceneServiceTests.cs b/CP6.Tests/SceneServiceTests.cs
+index 6cee6a0..685b482 100644
+--- a/CP6.Tests/SceneServiceTests.cs
++++ b/CP6.Tests/SceneServiceTests.cs
+@@ -155,11 +155,57 @@ public class SceneServiceTests
+ 
+         var dto = new SceneSaveDto
+         {
+             Deletes = new Deletes { Racks = new List<Guid> { rackId } }
+         };
+ 
+         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+             () => svc.SaveSceneAsync(floorId, dto, "u"));
+         Assert.Equal("E-SPACE-003", ex.Message);
+     }
++
++    [Fact]
++    public async Task SaveScene_CannotFlipPublishedStatus_OrCodeOrigin()
++    {
++        // H1：场景保存曾可任意覆盖 Status/CodeOrigin——绕过 publish/deactivate 状态机的后门
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++        var locId = Guid.NewGuid();
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = locId, FloorId = floorId, RackId = null,
++            Placed = false, Status = 1, CodeOrigin = 2, LocationCode = "EXT-001", Version = 3
++        });
++        await db.SaveChangesAsync();
++
++        await svc.SaveSceneAsync(floorId, new SceneSaveDto
++        {
++            Locations = new List<SceneLocationSaveDto>
++            {
++                new SceneLocationSaveDto { Id = locId, RackId = Guid.Empty, Col = 1, Level = 1, Depth = 1, Placed = false, Status = 0, CodeOrigin = 1 }
++            }
++        }, "u");
++
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(1, loc.Status);       // 发布状态不被场景保存改写
++        Assert.Equal(2, loc.CodeOrigin);   // 来源标签（对账依据）同理
++    }
++
++    [Fact]
++    public async Task SaveScene_NewLocation_ForcedDraft()
++    {
++        var (db, svc) = Make();
++        var floorId = Guid.NewGuid();
++
++        await svc.SaveSceneAsync(floorId, new SceneSaveDto
++        {
++            Locations = new List<SceneLocationSaveDto>
++            {
++                new SceneLocationSaveDto { Id = Guid.NewGuid(), RackId = Guid.Empty, Col = 1, Level = 1, Depth = 1, Placed = false, Status = 1, CodeOrigin = 2 }
++            }
++        }, "u");
++
++        var loc = await db.Space_Locations.SingleAsync();
++        Assert.Equal(0, loc.Status);       // 编辑器新建恒草稿；发布走 publish、采纳走 adopt
++        Assert.Equal(1, loc.CodeOrigin);
++    }
+ }
+diff --git a/CP6.Tests/SpaceBridgeHookTests.cs b/CP6.Tests/SpaceBridgeHookTests.cs
+index d6f3064..facfd46 100644
+--- a/CP6.Tests/SpaceBridgeHookTests.cs
++++ b/CP6.Tests/SpaceBridgeHookTests.cs
+@@ -49,20 +49,35 @@ public class SpaceBridgeHookTests
+         {
+             BatchNo = "LPUB-20260613-0002",
+             Items = { new LocationPublishItem { Op = "UPSERT", LocationId = locId, LocationCode = "B-01-01-01", Version = 1 } }
+         };
+         var r = await hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+         Assert.True(r.Success); // still ok (skipped is not failure)
+         var evt = await db.IntegrationEvents.SingleAsync();
+         Assert.Equal(IntegrationEventStatus.Skipped, evt.Status);
+     }
+ 
++    [Fact]
++    public async Task Hook_PersistEventFalse_DoesNotInsertEventRow()
++    {
++        using var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
++        var hook = new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
++        var batch = new LocationPublishBatch { BatchNo = "LPUB-20260705-0001" };
++
++        var r = await hook.OnLocationPublishedAsync(batch, Guid.NewGuid(), persistEvent: false);
++
++        Assert.True(r.Success);
++        // 重试路径（Dispatcher）走此分支：Worker 更新原事件行，hook 不得再新插一行
++        Assert.Equal(0, await db.IntegrationEvents.CountAsync());
++    }
++
+     private sealed class AllSkippedConsumer : IWmsLocationConsumer
+     {
+         public Task<WmsConsumeResult> ConsumeAsync(LocationPublishBatch batch) =>
+             Task.FromResult(new WmsConsumeResult
+             {
+                 Success = true,
+                 AllSkipped = true,
+                 Items = batch.Items.ConvertAll(i => new WmsItemResult { LocationId = i.LocationId, Status = "SKIPPED" })
+             });
+     }
+diff --git a/CP6.Tests/WmsBinConsumerTests.cs b/CP6.Tests/WmsBinConsumerTests.cs
+new file mode 100644
+index 0000000..989a709
+--- /dev/null
++++ b/CP6.Tests/WmsBinConsumerTests.cs
+@@ -0,0 +1,192 @@
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Wms;
++using CP6.Entity.DomainModels.Wms;
++using CP6.Entity.DTOs.Space;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// WmsBinConsumer 测试（ch04 §5.1/§5.2/§5.3 幂等 upsert + 逐项结果）。[InMemory 仅测逻辑]
++/// </summary>
++public class WmsBinConsumerTests
++{
++    private static CP6Context Db() => new(new DbContextOptionsBuilder<CP6Context>()
++        .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
++
++    private static LocationPublishBatch Batch(params LocationPublishItem[] items) => new()
++    {
++        BatchNo = "LPUB-20260705-0001",
++        PublishedBy = "u",
++        Items = items.ToList()
++    };
++
++    private static LocationPublishItem Upsert(Guid id, string code, long version, string? warehouseCd = "WH1") => new()
++    {
++        Op = "UPSERT", LocationId = id, LocationCode = code, CodeOrigin = 1,
++        Version = version, WarehouseCd = warehouseCd,
++        Path = new LocationPath { SiteCode = "WH1", FloorLevel = 1, ZoneCode = "A", RackCode = "R1", Col = 1, Level = 1, Depth = 1 }
++    };
++
++    [Fact]
++    public async Task Upsert_NewLocation_CreatesBin()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++
++        var r = await new WmsBinConsumer(db).ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));
++
++        Assert.True(r.Success);
++        Assert.Equal("UPSERTED", r.Items.Single().Status);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.Equal(id, bin.Id);
++        Assert.Equal("A-01-01-01", bin.LocationCode);
++        Assert.Equal("WH1", bin.WarehouseCd);
++        Assert.Equal(1, bin.Version);
++        Assert.True(bin.IsActive);
++        Assert.Equal("u", bin.LastPublishedBy);
++        Assert.Contains("\"ZoneCode\":\"A\"", bin.PathJson);
++    }
++
++    [Fact]
++    public async Task Upsert_StaleVersion_Skipped_NoWrite()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 5)));
++
++        // 重复投递同版本（至少一次投递语义）→ 幂等跳过
++        var r = await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 5)));
++
++        Assert.True(r.Success);                       // 纯 Skipped 也算成功收敛（§5.2）
++        Assert.Equal("SKIPPED", r.Items.Single().Status);
++        Assert.True(r.AllSkipped);
++        Assert.Equal(5, (await db.WmsBins.SingleAsync()).Version);
++    }
++
++    [Fact]
++    public async Task Upsert_NewerVersion_UpdatesBin()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));
++
++        var item = Upsert(id, "A-01-01-01", 2);
++        item.Attrs["sizeW"] = 1200;
++        var r = await c.ConsumeAsync(Batch(item));
++
++        Assert.Equal("UPSERTED", r.Items.Single().Status);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.Equal(2, bin.Version);
++        Assert.Contains("1200", bin.AttrsJson);
++    }
++
++    [Fact]
++    public async Task Upsert_MissingWarehouseCd_Rejected_EventShouldFail()
++    {
++        using var db = Db();
++        var r = await new WmsBinConsumer(db).ConsumeAsync(
++            Batch(Upsert(Guid.NewGuid(), "A-01-01-01", 1, warehouseCd: null)));
++
++        Assert.False(r.Success);                      // 任一 Rejected → 整事件 Failed（§5.2）
++        Assert.Equal("REJECTED", r.Items.Single().Status);
++        Assert.Equal(0, await db.WmsBins.CountAsync());
++    }
++
++    [Fact]
++    public async Task Deactivate_NoBin_CreatesTombstone()
++    {
++        // H6 乱序防护（对契约 §5.1 的修正）：bin 不存在的 DEACTIVATE 落墓碑而非跳过，
++        // 否则迟到重试的旧版 UPSERT 会复活已停用库位。
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var item = Upsert(id, "A-01-01-01", 2);
++        item.Op = "DEACTIVATE";
++
++        var r = await new WmsBinConsumer(db).ConsumeAsync(Batch(item));
++
++        Assert.True(r.Success);
++        Assert.Equal("DEACTIVATED", r.Items.Single().Status);
++        var tomb = await db.WmsBins.SingleAsync();
++        Assert.False(tomb.IsActive);
++        Assert.Equal(2, tomb.Version);
++    }
++
++    [Fact]
++    public async Task Deactivate_NoBin_NoWarehouseCd_Skipped()
++    {
++        // 无仓维度建不了 (WarehouseCd, LocationCode) join 锚 → 退回幂等跳过（如采纳态无楼层归属）
++        using var db = Db();
++        var item = Upsert(Guid.NewGuid(), "A-01-01-01", 2, warehouseCd: null);
++        item.Op = "DEACTIVATE";
++
++        var r = await new WmsBinConsumer(db).ConsumeAsync(Batch(item));
++
++        Assert.True(r.Success);
++        Assert.Equal("SKIPPED", r.Items.Single().Status);
++        Assert.Equal(0, await db.WmsBins.CountAsync());
++    }
++
++    [Fact]
++    public async Task Deactivate_Tombstone_ThenLateUpsert_Skipped()
++    {
++        // H6 全链路：墓碑(v2) 落库后，重试队列里的旧版 UPSERT(v1) 到达 → 版本单调掐死，不复活
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        var deact = Upsert(id, "A-01-01-01", 2);
++        deact.Op = "DEACTIVATE";
++        await c.ConsumeAsync(Batch(deact));
++
++        var r = await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));   // 迟到的 v1 UPSERT
++
++        Assert.Equal("SKIPPED", r.Items.Single().Status);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.False(bin.IsActive);                          // 仍是停用态
++        Assert.Equal(2, bin.Version);
++    }
++
++    [Fact]
++    public async Task Deactivate_WithStock_Rejected()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));
++        db.Stocks.Add(new Stock
++        {
++            Id = Guid.NewGuid(), WarehouseCd = "WH1", LocationCd = "A-01-01-01",
++            ProductCd = "P1", LotNo = "", PhysicalQty = 5m
++        });
++        await db.SaveChangesAsync();
++
++        var item = Upsert(id, "A-01-01-01", 2);
++        item.Op = "DEACTIVATE";
++        var r = await c.ConsumeAsync(Batch(item));
++
++        Assert.False(r.Success);
++        Assert.Equal("REJECTED", r.Items.Single().Status);
++        Assert.True((await db.WmsBins.SingleAsync()).IsActive);   // 未停用
++    }
++
++    [Fact]
++    public async Task Deactivate_NoStock_SetsInactive_AndVersion()
++    {
++        using var db = Db();
++        var id = Guid.NewGuid();
++        var c = new WmsBinConsumer(db);
++        await c.ConsumeAsync(Batch(Upsert(id, "A-01-01-01", 1)));
++
++        var item = Upsert(id, "A-01-01-01", 2);
++        item.Op = "DEACTIVATE";
++        var r = await c.ConsumeAsync(Batch(item));
++
++        Assert.True(r.Success);
++        Assert.Equal("DEACTIVATED", r.Items.Single().Status);
++        var bin = await db.WmsBins.SingleAsync();
++        Assert.False(bin.IsActive);
++        Assert.Equal(2, bin.Version);
++    }
++}
+diff --git a/CP6.Tests/WmsStockQueryTests.cs b/CP6.Tests/WmsStockQueryTests.cs
+index 881bb61..aa78fbd 100644
+--- a/CP6.Tests/WmsStockQueryTests.cs
++++ b/CP6.Tests/WmsStockQueryTests.cs
+@@ -171,20 +171,35 @@ public class WmsStockQueryTests
+         Assert.Equal("A-09", Assert.Single(hits).LocationCode);
+     }
+ 
+     [Fact]
+     public async Task FindLocations_AllEmpty_ReturnsEmpty()
+     {
+         using var db = NewDb();
+         Assert.Empty(await Stock(db).FindLocationsAsync(new StockLocateQuery()));
+     }
+ 
++    [Fact]
++    public async Task GetStockQty_WarehouseScoped_ExcludesOtherWarehouses()
++    {
++        // H7：多仓同码时不带仓维度会跨仓求和 → 误拦他仓同码库位的停用
++        using var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
++            .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
++        db.Stocks.Add(new Stock { Id = Guid.NewGuid(), WarehouseCd = "W1", LocationCd = "A-01", ProductCd = "P", LotNo = "", PhysicalQty = 3m });
++        db.Stocks.Add(new Stock { Id = Guid.NewGuid(), WarehouseCd = "W2", LocationCd = "A-01", ProductCd = "P", LotNo = "", PhysicalQty = 7m });
++        await db.SaveChangesAsync();
++
++        var q = new WmsStockQuery(db);
++        Assert.Equal(10m, await q.GetStockQtyAsync("A-01"));        // 兼容：不带仓维度=跨仓求和
++        Assert.Equal(3m, await q.GetStockQtyAsync("A-01", "W1"));   // 带仓维度只算本仓
++    }
++
+     [Fact]
+     public async Task GetStockByLocations_TenantIsolated()
+     {
+         var dbName = Guid.NewGuid().ToString();
+         var optsA = new DbContextOptionsBuilder<CP6Context>().UseInMemoryDatabase(dbName).Options;
+         var t2 = new CP6.Core.Services.Common.TenantContext { CurrentTenantId = Guid.NewGuid() };
+ 
+         // 租户2 播一条
+         using (var db2 = new CP6Context(optsA, t2))
+         {
+diff --git a/CP6.WebApi/Controllers/Space/CodeRuleController.cs b/CP6.WebApi/Controllers/Space/CodeRuleController.cs
+index ef179a8..8890f28 100644
+--- a/CP6.WebApi/Controllers/Space/CodeRuleController.cs
++++ b/CP6.WebApi/Controllers/Space/CodeRuleController.cs
+@@ -75,23 +75,23 @@ public class CodeRuleController : ControllerBase
+         catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+     }
+ 
+     // ── 发布前编码预检 ─────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 发布前编码预检（ch03 §9.2，04 发布闸门）。
+     /// 返回：空码数 / 重复码组 / 规则静态错误 / 未落位数。
+     /// </summary>
+     [HttpGet("floor/{id:guid}/code-precheck")]
+-    public async Task<IActionResult> CodePrecheck(Guid id)
++    public async Task<IActionResult> CodePrecheck(Guid id, [FromQuery] Guid? zoneId = null)
+     {
+-        try { return Ok2(await _svc.PrecheckAsync(id)); }
++        try { return Ok2(await _svc.PrecheckAsync(id, zoneId)); }
+         catch (InvalidOperationException e) { return BadRequest(new { code = 400, message = e.Message }); }
+     }
+ 
+     // ── 单格生成 ───────────────────────────────────────────────────────────
+ 
+     /// <summary>
+     /// 单格生成（ch03 §10）。对单个库位走同样的 Assemble 路径写回 LocationCode。
+     /// </summary>
+     [HttpPost("location/{id:guid}/gen-code")]
+     public async Task<IActionResult> GenCode(Guid id)
+diff --git a/CP6.WebApi/Controllers/Space/LocationPublishController.cs b/CP6.WebApi/Controllers/Space/LocationPublishController.cs
+index cb95dd6..ac254d9 100644
+--- a/CP6.WebApi/Controllers/Space/LocationPublishController.cs
++++ b/CP6.WebApi/Controllers/Space/LocationPublishController.cs
+@@ -37,55 +37,70 @@ public class LocationPublishController : ControllerBase
+     {
+         try
+         {
+             var count = await _svc.PublishFloorAsync(id, req?.ZoneId, CurrentUser);
+             return Ok2(new { published = count });
+         }
+         catch (InvalidOperationException e)
+         {
+             return BadRequest(new { code = 400, message = e.Message });
+         }
++        catch (DbUpdateConcurrencyException)
++        {
++            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
++            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
++        }
+     }
+ 
+     // ── PUT /api/space/location/{id}/deactivate ───────────────────────────
+ 
+     /// <summary>停用已发布库位（ch04 §6）。</summary>
+     [HttpPut("location/{id:guid}/deactivate")]
+     public async Task<IActionResult> Deactivate(Guid id)
+     {
+         try
+         {
+             await _svc.DeactivateAsync(id, CurrentUser);
+             return Ok2();
+         }
+         catch (InvalidOperationException e)
+         {
+             return BadRequest(new { code = 400, message = e.Message });
+         }
++        catch (DbUpdateConcurrencyException)
++        {
++            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
++            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
++        }
+     }
+ 
+     // ── POST /api/space/location/adopt ────────────────────────────────────
+ 
+     /// <summary>存量采纳导入（ch04 §8.1）。</summary>
+     [HttpPost("location/adopt")]
+     public async Task<IActionResult> Adopt([FromBody] AdoptRequest req)
+     {
+         try
+         {
+             var items = req.Items.Select(i => (i.Code, (Dictionary<string, object?>?)i.Attrs));
+             var (imported, skipped) = await _svc.AdoptAsync(items, CurrentUser);
+             return Ok2(new { imported, skipped });
+         }
+         catch (InvalidOperationException e)
+         {
+             return BadRequest(new { code = 400, message = e.Message });
+         }
++        catch (DbUpdateConcurrencyException)
++        {
++            // ch04 §11 E-SPACE-009：RowVersion 乐观并发冲突 → 409（此前落到 500）
++            return Conflict(new { code = 409, message = "E-SPACE-009: 数据已被他人修改，请刷新重试" });
++        }
+     }
+ 
+     // ── GET /api/space/publish/events ─────────────────────────────────────
+ 
+     /// <summary>列出 SPACE→WMS 集成事件（ch04 §2）。</summary>
+     [HttpGet("publish/events")]
+     public async Task<IActionResult> ListEvents([FromQuery] int page = 1, [FromQuery] int pageSize = 50)
+     {
+         var events = await _db.IntegrationEvents
+             .Where(e => e.SourceModule == "SPACE")
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index db51a4d..479f416 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -390,21 +390,23 @@ builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService, CP6.Core.
+ builder.Services.AddScoped<CP6.Core.Services.Space.ITemplateService, CP6.Core.Services.Space.TemplateService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISceneService, CP6.Core.Services.Space.SceneService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISceneIoService, CP6.Core.Services.Space.SceneIoService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.IConnectorService, CP6.Core.Services.Space.ConnectorService>();
+ // 4.x.3 Space ch06 viewer 定位查询（locate/search/detail）
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceLocateService, CP6.Core.Services.Space.SpaceLocateService>();
+ // 4.x.1 Space ch04 — 库位发布 + WMS 桩（SpaceBridgeHook 需同时注册具体类和接口，Dispatcher 注入接口）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.SpaceBridgeHook>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceBridgeHook, CP6.Core.Services.Integration.SpaceBridgeHook>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ILocationPublishService, CP6.Core.Services.Space.LocationPublishService>();
+-builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Integration.NoOpWmsLocationConsumer>();
++// ch04 v1.1 §5.3：真消费端（T_WmsBin 幂等 upsert，方案A 2026-07-05）。回滚开关：换回 NoOpWmsLocationConsumer 即断开。
++builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Wms.WmsBinConsumer>();
++builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsBinDeactivator, CP6.Core.Services.Wms.WmsBinDeactivator>(); // ch04 §6 v1.1 停用同步 RPC 真实现（TOCTOU 权威库存判定 + T_WmsBin 停用/墓碑）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsStockQuery, CP6.Core.Services.Wms.WmsStockQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsPickTaskQuery, CP6.Core.Services.Wms.WmsPickTaskQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsWorkloadQuery, CP6.Core.Services.Wms.WmsWorkloadQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsDeviceQuery, CP6.Core.Services.Wms.WmsDeviceQuery>();
+ 
+ // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
+ builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
+ builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
+ builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.Wms.IotService>();
+ 

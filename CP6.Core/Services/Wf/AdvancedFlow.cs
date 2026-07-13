@@ -128,9 +128,31 @@ public partial class FlowEngine
         if (IsType(target, "end") || target.Id == task.NodeId) throw new InvalidOperationException("E-WF-012");
         var tt = (target.Type ?? "approval").Trim().ToLowerInvariant();
         if (tt != "approval" && tt != "start") throw new InvalidOperationException("E-WF-012");
-        if (!IsUpstreamReachable(schema, target.Id, task.NodeId)) throw new InvalidOperationException("E-WF-012");
-        if (CrossesParallelBlock(schema, target.Id, task.NodeId)) throw new InvalidOperationException("E-WF-012");
 
+        // hardening C-T3 三规则（spec §5）：作用域判定取代旧 CrossesParallelBlock 一刀切禁令。
+        // 先校验后写：SiblingBranch 拒绝发生在任何状态突变之前。旧数据无 token 维度 → 现行为全清场。
+        // 作用域先于上游可达闸：兄弟支目标天然不在 current 上游（IsUpstreamReachable=false），
+        // 须让 SiblingBranch → E-WF-019 抢先命中，再由上游闸兜住 BeforeSplit/SameBranch 的伪目标（E-WF-012）。
+        var all = SnapshotTokens(inst.Id);
+        var curTok = task.TokenId is Guid tid ? all.FirstOrDefault(t => t.Id == tid) : null;
+        var (scope, strip) = curTok is null
+            ? (SendBackScope.BeforeSplit, (Wf_FlowToken?)null)
+            : SendBackScopeAnalyzer.Analyze(schema, all, curTok, task.NodeId, target.Id);
+        if (scope == SendBackScope.SiblingBranch) throw new InvalidOperationException("E-WF-019");
+        if (!IsUpstreamReachable(schema, target.Id, task.NodeId)) throw new InvalidOperationException("E-WF-012");
+
+        if (scope == SendBackScope.SameBranch && strip is not null)
+        {
+            // 分支内剥离：只清剥离层子树（含内层 fork 兄弟），外层兄弟分支零扰动；
+            // 重生 token 接管剥离层血缘 → 外层 join 认亲不破坏（spec §5.2 ★）
+            CancelTokenSubtree(inst.Id, strip.Id);
+            AddHistory(inst.Id, task.NodeId, actorId, "sendback", comment ?? $"退回至 {target.Id}");
+            var reborn = SpawnToken(inst, target, parent: strip.ParentTokenId, fork: strip.ForkId);
+            await EnterNodeAsync(inst, schema, target, reborn);
+            return;
+        }
+
+        // BeforeSplit（含线性流 fork 栈为空）：既有全清场路径，逐字保留
         var live = await _db.Wf_FlowTasks
             .Where(t => t.InstanceId == inst.Id && (t.Status == FlowTaskStatus.Pending || t.Status == FlowTaskStatus.Suspended))
             .ToListAsync();
@@ -190,22 +212,5 @@ public partial class FlowEngine
             }
         }
         return false;
-    }
-
-    /// <summary>v1:target→current 路径若经过 parallelSplit/parallelJoin 则视为跨并行块,禁止。</summary>
-    private static bool CrossesParallelBlock(FlowSchema schema, string targetId, string currentId)
-    {
-        var between = NodesBetween(schema, targetId, currentId);
-        return between.Any(id => schema.Nodes.Any(n => n.Id == id &&
-            ((n.Type ?? "").Equals("parallelSplit", StringComparison.OrdinalIgnoreCase) ||
-             (n.Type ?? "").Equals("parallelJoin", StringComparison.OrdinalIgnoreCase))));
-    }
-
-    private static HashSet<string> NodesBetween(FlowSchema schema, string fromId, string toId)
-    {
-        var fwd = new HashSet<string>(); var q = new Queue<string>(); q.Enqueue(fromId);
-        while (q.Count > 0) { var c = q.Dequeue(); foreach (var e in schema.Edges.Where(e => e.From == c)) if (fwd.Add(e.To)) q.Enqueue(e.To); }
-        fwd.Remove(toId);
-        return fwd;
     }
 }

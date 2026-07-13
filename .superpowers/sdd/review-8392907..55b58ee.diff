@@ -1,0 +1,887 @@
+# Review package: 8392907..55b58ee
+
+## Commits
+55b58ee feat(oawf): M-OA/WF T3a 16控制器31写端点贴 [RequirePermission]
+
+## Files changed
+ .superpowers/sdd/oawf-t3a-report.md                | 75 ++++++++++++++++++++++
+ CP6.WebApi/Controllers/Oa/ApproverMapController.cs |  4 ++
+ CP6.WebApi/Controllers/Oa/CatalogController.cs     |  2 +
+ CP6.WebApi/Controllers/Oa/DelegateController.cs    |  3 +
+ CP6.WebApi/Controllers/Oa/DesignerController.cs    |  3 +
+ CP6.WebApi/Controllers/Oa/DraftController.cs       |  5 ++
+ CP6.WebApi/Controllers/Oa/FlowAdminController.cs   |  2 +
+ CP6.WebApi/Controllers/Oa/InboxController.cs       |  6 ++
+ .../Controllers/Oa/NotificationController.cs       |  3 +
+ CP6.WebApi/Controllers/Oa/PrefController.cs        |  2 +
+ .../Controllers/Wf/AdvancedFlowController.cs       |  4 ++
+ CP6.WebApi/Controllers/Wf/ApprovalController.cs    |  2 +
+ CP6.WebApi/Controllers/Wf/FlowController.cs        |  4 ++
+ CP6.WebApi/Controllers/Wf/FormController.cs        |  3 +
+ CP6.WebApi/Controllers/Wf/TaskController.cs        |  2 +
+ CP6.WebApi/Program.cs                              |  6 +-
+ 16 files changed, 123 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/oawf-t3a-report.md b/.superpowers/sdd/oawf-t3a-report.md
+new file mode 100644
+index 0000000..8d751a3
+--- /dev/null
++++ b/.superpowers/sdd/oawf-t3a-report.md
+@@ -0,0 +1,75 @@
++# M-OA/WF T3a 执行报告：16 控制器 31 写端点贴 [RequirePermission]
++
++生成于 2026-07-12。基线 1764 绿。分支 `feat/m-oawf-crosscutting`。
++
++## 结论
++
++- **贴点 31/31 全贴**，键值逐字取自 T1 真相源 `docs/seeds/oawf-permission-keys.md`（合一后版本）。
++- **2 豁免未贴**：ForecastController.Preview、QueryController.Search（只读 POST→view，无 `using CP6.Core.Auth;`、无属性）。
++- **三 delegate 端点统一键** `("oa-settings","delegate")`：OA Delegate.Add / Delegate.Remove + AdvancedFlow.Delegate（§注4 委派双键合一）。
++- **8 高危键全独立不降级**：`oa-inbox:approve/transfer/sendback/addsign` + `oa-settings:delegate` + `oa-designer:edit/add/form-save`。
++- **零方法体改动**：纯注解叠加；类级 `[Authorize]` 16 控制器全保留；未删改任何路由/端点（双栈 Flow/Form.SaveDef 照真相源贴 `oa-designer:edit`/`oa-designer:form-save`，不删不改）。
++- **顺手项**：Program.cs OawfMenuSeed 接线注释去行号化（`:908`/`:1446–1496` 硬编码行号改为「紧随 MesPermissionSeed 之后」「全局回填块之前」「本文件下方 OA 菜单插入块」内容描述）。
++
++## 逐控制器 1:1 对账表（31 真写 + 2 豁免）
++
++| # | 控制器 | 方法 | menu-key | action | 高危 | 已贴 |
++|---|---|---|---|---|---|---|
++| 1 | ApproverMap | Create | oa-approver-map | add | 否 | ✅ |
++| 2 | ApproverMap | Update | oa-approver-map | edit | 否 | ✅ |
++| 3 | ApproverMap | Delete | oa-approver-map | del | 否 | ✅ |
++| 4 | Catalog | Favorite | oa-form-catalog | favorite | 否 | ✅ |
++| 5 | Delegate | Add | oa-settings | delegate | **是** | ✅ |
++| 6 | Delegate | Remove | oa-settings | delegate | **是** | ✅ |
++| 7 | Designer | Save | oa-designer | edit | **是** | ✅ |
++| 8 | Designer | Clone | oa-designer | add | **是** | ✅ |
++| 9 | Draft | Save | oa-form-catalog | add | 否 | ✅ |
++| 10 | Draft | Update | oa-form-catalog | edit | 否 | ✅ |
++| 11 | Draft | Submit | oa-form-catalog | submit | 状态 | ✅ |
++| 12 | Draft | Delete | oa-form-catalog | del | 否 | ✅ |
++| 13 | FlowAdmin | Enable | oa-flow-admin | enable | 状态 | ✅ |
++| 14 | Forecast | Preview | — | (view) | 豁免 | ⛔不贴 |
++| 15 | Inbox | MarkTaskRead | oa-inbox | read | 否 | ✅ |
++| 16 | Inbox | MarkCcRead | oa-inbox | read | 否 | ✅ |
++| 17 | Inbox | Batch | oa-inbox | approve | **是** | ✅ |
++| 18 | Inbox | Transfer | oa-inbox | transfer | **是** | ✅ |
++| 19 | Inbox | SendBack | oa-inbox | sendback | **是** | ✅ |
++| 20 | Notification | Read | oa-inbox | read | 否 | ✅ |
++| 21 | Notification | ReadAll | oa-inbox | read | 否 | ✅ |
++| 22 | Pref | Save | oa-settings | edit | 否 | ✅ |
++| 23 | Query | Search | — | (view) | 豁免 | ⛔不贴 |
++| 24 | AdvancedFlow | SendBack | oa-inbox | sendback | **是** | ✅ |
++| 25 | AdvancedFlow | AddSign | oa-inbox | addsign | **是** | ✅ |
++| 26 | AdvancedFlow | Delegate | oa-settings | delegate | **是** | ✅ |
++| 27 | Approval | Submit | oa-form-catalog | submit | 状态 | ✅ |
++| 28 | Flow | SaveDef | oa-designer | edit | **是** | ✅ |
++| 29 | Flow | Submit | oa-form-catalog | submit | 状态 | ✅ |
++| 30 | Flow | Act | oa-inbox | approve | **是** | ✅ |
++| 31 | Form | SaveDef | oa-designer | form-save | **是** | ✅ |
++| 32 | Form | SubmitData | oa-form-catalog | submit | 状态 | ✅ |
++| 33 | Task | Withdraw | oa-inbox | withdraw | 状态 | ✅ |
++
++自洽：33 非 GET 端点 = 31 真写贴点 + 2 豁免。grep `RequirePermission("oa-` = 31（跨 14 控制器；Forecast/Query 各 0）。
++
++### 逐控制器贴点数核对（grep 计数）
++PrefController 1 / NotificationController 2 / InboxController 5 / FlowAdminController 1 / DraftController 4 / TaskController 1 / FormController 2 / FlowController 3 / ApprovalController 1 / AdvancedFlowController 3 / DesignerController 2 / ApproverMapController 3 / CatalogController 1 / DelegateController 2 = **31** ✅
++
++## 验证
++
++- `dotnet build CP6.WebApi`：**Build succeeded, 0 Error**（1 既有 warning，与本任务无关）。
++- `dotnet test`（全量）：**Passed! Failed: 0, Passed: 1764, Skipped: 5, Total: 1769**。基线 1764 零跌。
++
++## 自查（六问）
++
++1. 31 全贴逐字？✅ 键值逐字对齐真相源 §一表。
++2. 2 豁免未贴？✅ Forecast/Query 无属性、无 using。
++3. 三 delegate 统一键？✅ 均 `("oa-settings","delegate")`。
++4. 零方法体改动？✅ 仅 `using` + 属性行；方法体、类级 [Authorize] 未动。
++5. 高危未降级？✅ 8 高危键独立，approve/transfer/sendback/addsign/delegate 未与 read/edit/view 混授。
++6. 逐控制器对账？✅ 见上表（33=31+2）。
++
++## 交接给下游
++
++- T3b：逐租户 `Sys_MenuAction`/`Sys_RoleAction` 种子（本任务不种；PermissionService 无 admin 旁路，未种前 admin 亦 403）。
++- T4：反射 fail-closed 测试。
++- 双栈孤儿路由 `/wf/form-designer`、`/wf/flow-designer`（真相源 §六头号裁决点）仍待用户裁决退役/收编——本任务照真相源贴 `oa-designer:*`，退役时属性随端点一并删无冲突。
+diff --git a/CP6.WebApi/Controllers/Oa/ApproverMapController.cs b/CP6.WebApi/Controllers/Oa/ApproverMapController.cs
+index 06440da..c6f5f76 100644
+--- a/CP6.WebApi/Controllers/Oa/ApproverMapController.cs
++++ b/CP6.WebApi/Controllers/Oa/ApproverMapController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>审批人映射维护(②b Menu 数据驱动)。/api/oa/approver-map。</summary>
+ [ApiController]
+ [Route("api/oa/approver-map")]
+ [Authorize]
+@@ -19,26 +20,29 @@ public class ApproverMapController : LocalizedControllerBase
+     public record CreateReq(string MapKey, string MatchValue, Guid? ApproverUserId, int? ApproverRoleId, int OrderNo);
+     public record UpdateReq(string MatchValue, Guid? ApproverUserId, int? ApproverRoleId, int OrderNo, bool Enable);
+ 
+     [HttpGet("list")]
+     public async Task<IActionResult> List([FromQuery] string? mapKey) => Ok2(await _svc.ListAsync(mapKey));
+ 
+     [HttpGet("keys")]
+     public async Task<IActionResult> Keys() => Ok2(await _svc.DistinctKeysAsync());
+ 
+     [HttpPost]
++    [RequirePermission("oa-approver-map", "add")]
+     public async Task<IActionResult> Create([FromBody] CreateReq r)
+     {
+         try { return Ok2(await _svc.CreateAsync(r.MapKey, r.MatchValue, r.ApproverUserId, r.ApproverRoleId, r.OrderNo)); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpPut("{id}")]
++    [RequirePermission("oa-approver-map", "edit")]
+     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateReq r)
+     {
+         try { await _svc.UpdateAsync(id, r.MatchValue, r.ApproverUserId, r.ApproverRoleId, r.OrderNo, r.Enable); return Ok2(); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpDelete("{id}")]
++    [RequirePermission("oa-approver-map", "del")]
+     public async Task<IActionResult> Delete(Guid id) { await _svc.DeleteAsync(id); return Ok2(); }
+ }
+diff --git a/CP6.WebApi/Controllers/Oa/CatalogController.cs b/CP6.WebApi/Controllers/Oa/CatalogController.cs
+index 42a7d06..683f1f3 100644
+--- a/CP6.WebApi/Controllers/Oa/CatalogController.cs
++++ b/CP6.WebApi/Controllers/Oa/CatalogController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 表单分类目录 REST（Phase C）。/api/oa/catalog — 分类树（含收藏标注）/ 收藏切换。
+ /// </summary>
+@@ -35,20 +36,21 @@ public class CatalogController : LocalizedControllerBase
+     {
+         var me = await CurrentUserIdAsync();
+         return Ok2(await _catalog.CatalogAsync(me));
+     }
+ 
+     // ── 收藏 / 取消收藏 ──
+ 
+     public record FavoriteReq(string FormKey, bool On);
+ 
+     [HttpPost("favorite")]
++    [RequirePermission("oa-form-catalog", "favorite")]
+     public async Task<IActionResult> Favorite([FromBody] FavoriteReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             if (r.On)
+                 await _favorite.AddAsync(me, r.FormKey);
+             else
+                 await _favorite.RemoveAsync(me, r.FormKey);
+             return Ok2();
+diff --git a/CP6.WebApi/Controllers/Oa/DelegateController.cs b/CP6.WebApi/Controllers/Oa/DelegateController.cs
+index 7634fd8..8d4f9de 100644
+--- a/CP6.WebApi/Controllers/Oa/DelegateController.cs
++++ b/CP6.WebApi/Controllers/Oa/DelegateController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 代理授权管理 REST（Phase C）。/api/oa/delegate — 我能代理谁/我授出的委派/增删。
+ /// act-as 授权方向：Wf_FlowDelegate{GrantorId=委托人, DelegateId=代理人}。
+@@ -43,36 +44,38 @@ public class DelegateController : LocalizedControllerBase
+     {
+         var me = await CurrentUserIdAsync();
+         return Ok2(await _delegate.ListMyDelegatesAsync(me));
+     }
+ 
+     // ── 新增委派 ──
+ 
+     public record AddDelegateReq(Guid DelegateId, DateTime ValidFrom, DateTime ValidTo, string? Scope, string? Remark);
+ 
+     [HttpPost("add")]
++    [RequirePermission("oa-settings", "delegate")]
+     public async Task<IActionResult> Add([FromBody] AddDelegateReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             var id = await _delegate.AddDelegateAsync(me, r.DelegateId, r.ValidFrom, r.ValidTo, r.Scope, r.Remark);
+             return Ok2(new { id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 删除委派 ──
+ 
+     public record RemoveDelegateReq(Guid Id);
+ 
+     [HttpPost("remove")]
++    [RequirePermission("oa-settings", "delegate")]
+     public async Task<IActionResult> Remove([FromBody] RemoveDelegateReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _delegate.RemoveDelegateAsync(me, r.Id);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Oa/DesignerController.cs b/CP6.WebApi/Controllers/Oa/DesignerController.cs
+index f7ddbb0..3edb123 100644
+--- a/CP6.WebApi/Controllers/Oa/DesignerController.cs
++++ b/CP6.WebApi/Controllers/Oa/DesignerController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 流程设计器 REST（Phase C′）。/api/oa/designer — 列表/加载/保存/克隆。
+@@ -42,34 +43,36 @@ public class DesignerController : LocalizedControllerBase
+     {
+         var summary = await _designer.LoadAsync(flowKey);
+         if (summary is null) return NotFound(new { code = 404, message = "E-WF-006" });
+         var def = await _flowDef.GetDefAsync(flowKey);
+         return Ok2(new { summary, schemaJson = def?.SchemaJson ?? "{}" });
+     }
+ 
+     public record SaveReq(string FlowKey, string FlowName, string FormKey, string? FunctionId, string? FlowCode, string SchemaJson);
+ 
+     [HttpPost("save")]
++    [RequirePermission("oa-designer", "edit")]
+     public async Task<IActionResult> Save([FromBody] SaveReq r)
+     {
+         try
+         {
+             var user = (await _ctx.GetAsync()).UserId.ToString();
+             await _designer.SaveAsync(new SaveFlowRequest(r.FlowKey, r.FlowName, r.FormKey, r.FunctionId, r.FlowCode, r.SchemaJson), user);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     public record CloneReq(string SourceFlowKey, string NewFlowKey, string NewFlowName);
+ 
+     [HttpPost("clone")]
++    [RequirePermission("oa-designer", "add")]
+     public async Task<IActionResult> Clone([FromBody] CloneReq r)
+     {
+         try
+         {
+             var user = (await _ctx.GetAsync()).UserId.ToString();
+             await _designer.CloneAsync(new CloneRequest(r.SourceFlowKey, r.NewFlowKey, r.NewFlowName), user);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Oa/DraftController.cs b/CP6.WebApi/Controllers/Oa/DraftController.cs
+index bdbe45a..0790549 100644
+--- a/CP6.WebApi/Controllers/Oa/DraftController.cs
++++ b/CP6.WebApi/Controllers/Oa/DraftController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 草稿（暂存）REST（Phase B）。/api/oa/draft — 新建/更新/列表/删除/提交草稿。
+ /// 草稿 = Wf_FlowInstance.Status=Draft；提交后经 L0 引擎推进。
+@@ -32,62 +33,66 @@ public class DraftController : LocalizedControllerBase
+     [HttpGet("list")]
+     public async Task<IActionResult> List()
+     {
+         var me = await CurrentUserIdAsync();
+         return Ok2(await _draft.ListDraftsAsync(me));
+     }
+ 
+     // ── 新建草稿 ──
+ 
+     [HttpPost("save")]
++    [RequirePermission("oa-form-catalog", "add")]
+     public async Task<IActionResult> Save([FromBody] SaveDraftReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             var id = await _draft.SaveDraftAsync(me, r.FlowKey, r.VarsJson ?? "{}");
+             return Ok2(new { id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 更新草稿 ──
+ 
+     [HttpPost("update")]
++    [RequirePermission("oa-form-catalog", "edit")]
+     public async Task<IActionResult> Update([FromBody] UpdateDraftReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _draft.UpdateDraftAsync(me, r.Id, r.VarsJson ?? "{}");
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 提交草稿 ──
+ 
+     [HttpPost("submit")]
++    [RequirePermission("oa-form-catalog", "submit")]
+     public async Task<IActionResult> Submit([FromBody] IdReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _draft.SubmitDraftAsync(me, r.Id);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 删除草稿 ──
+ 
+     [HttpPost("delete")]
++    [RequirePermission("oa-form-catalog", "del")]
+     public async Task<IActionResult> Delete([FromBody] IdReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _draft.DeleteDraftAsync(me, r.Id);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Oa/FlowAdminController.cs b/CP6.WebApi/Controllers/Oa/FlowAdminController.cs
+index c4f5207..5d810af 100644
+--- a/CP6.WebApi/Controllers/Oa/FlowAdminController.cs
++++ b/CP6.WebApi/Controllers/Oa/FlowAdminController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 轻量流程管理 REST（Phase B）。/api/oa/flow-admin — 流程列表/启停（每表单1:1）。
+ /// 流程管理面向平台管理员，[Authorize] 登录态即可（P1 不加细粒度权限属性）。
+ /// </summary>
+@@ -38,20 +39,21 @@ public class FlowAdminController : LocalizedControllerBase
+     {
+         var item = await _admin.GetFlowAsync(flowKey);
+         return item is null
+             ? NotFound(new { code = 404, message = "E-WF-006" })
+             : Ok2(item);
+     }
+ 
+     // ── 启停 ──
+ 
+     [HttpPost("enable")]
++    [RequirePermission("oa-flow-admin", "enable")]
+     public async Task<IActionResult> Enable([FromBody] EnableReq r)
+     {
+         try
+         {
+             await _admin.SetEnabledAsync(r.FlowKey, r.Enabled);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+diff --git a/CP6.WebApi/Controllers/Oa/InboxController.cs b/CP6.WebApi/Controllers/Oa/InboxController.cs
+index fa9f733..e07792e 100644
+--- a/CP6.WebApi/Controllers/Oa/InboxController.cs
++++ b/CP6.WebApi/Controllers/Oa/InboxController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 电子表单信箱 REST（Phase B + C）。/api/oa/inbox — 未处理/在途/已处理/详情/批量办理/转交。
+@@ -125,70 +126,75 @@ public class InboxController : LocalizedControllerBase
+             return detail is null
+                 ? NotFound(new { code = 404, message = "E-WF-007" })
+                 : Ok2(detail);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 已读标记 ──
+ 
+     [HttpPost("task/read")]
++    [RequirePermission("oa-inbox", "read")]
+     public async Task<IActionResult> MarkTaskRead([FromBody] IdReq r)
+     {
+         var me = await CurrentUserIdAsync();
+         await _inbox.MarkTaskReadAsync(me, r.Id);
+         return Ok2(new { success = true });
+     }
+ 
+     [HttpPost("cc/read")]
++    [RequirePermission("oa-inbox", "read")]
+     public async Task<IActionResult> MarkCcRead([FromBody] IdReq r)
+     {
+         var me = await CurrentUserIdAsync();
+         await _inbox.MarkCcReadAsync(me, r.Id);
+         return Ok2(new { success = true });
+     }
+ 
+     // ── 批量办理（act-as 版）──
+ 
+     [HttpPost("batch")]
++    [RequirePermission("oa-inbox", "approve")]
+     public async Task<IActionResult> Batch([FromBody] BatchReq r)
+     {
+         try
+         {
+             var me = (await _ctx.GetAsync()).UserId;
+             var (eff, onBehalf) = await EffectiveAsync();
+             return Ok2(await _inbox.ActBatchAsAsync(me, onBehalf, r.TaskIds, r.Approve, r.Comment));
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 转交 ──
+ 
+     public record TransferReq(Guid TaskId, Guid ToUserId, string? Comment);
+ 
+     [HttpPost("transfer")]
++    [RequirePermission("oa-inbox", "transfer")]
+     public async Task<IActionResult> Transfer([FromBody] TransferReq r)
+     {
+         try
+         {
+             var (eff, _) = await EffectiveAsync();   // 转出人=有效用户（act-as 时=被代理人）
+             await _engine.TransferAsync(r.TaskId, eff, r.ToUserId, r.Comment);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     // ── 退回 ──
+ 
+     public record SendBackReq(Guid TaskId, string Kind, string? NodeId, string? Comment);
+ 
+     [HttpPost("sendback")]
++    [RequirePermission("oa-inbox", "sendback")]
+     public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
+     {
+         try
+         {
+             var (eff, _) = await EffectiveAsync();   // 退回人=有效用户（act-as 时=被代理人）
+             await _engine.SendBackAsync(r.TaskId, eff, new SendBackTarget(r.Kind, r.NodeId), r.Comment);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Oa/NotificationController.cs b/CP6.WebApi/Controllers/Oa/NotificationController.cs
+index 3919972..882f38a 100644
+--- a/CP6.WebApi/Controllers/Oa/NotificationController.cs
++++ b/CP6.WebApi/Controllers/Oa/NotificationController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 通知中心 REST（OA Phase D-1 §通知中心 N-T6）。
+ /// /api/oa/notification — 列表/未读数/标记已读/全部已读。
+@@ -44,29 +45,31 @@ public class NotificationController : LocalizedControllerBase
+     [HttpGet("unread-count")]
+     public async Task<IActionResult> UnreadCount()
+     {
+         var me = await CurrentUserIdAsync();
+         return Ok2(new { count = await _notif.UnreadCountAsync(me) });
+     }
+ 
+     // ── 标记单条已读 ──
+ 
+     [HttpPost("read")]
++    [RequirePermission("oa-inbox", "read")]
+     public async Task<IActionResult> Read([FromBody] IdReq r)
+     {
+         var me = await CurrentUserIdAsync();
+         await _notif.MarkReadAsync(me, r.Id);
+         return Ok2();
+     }
+ 
+     // ── 全部标记已读 ──
+ 
+     [HttpPost("read-all")]
++    [RequirePermission("oa-inbox", "read")]
+     public async Task<IActionResult> ReadAll()
+     {
+         var me = await CurrentUserIdAsync();
+         await _notif.MarkAllReadAsync(me);
+         return Ok2();
+     }
+ 
+     public record IdReq(Guid Id);
+ }
+diff --git a/CP6.WebApi/Controllers/Oa/PrefController.cs b/CP6.WebApi/Controllers/Oa/PrefController.cs
+index ba875fd..cb1e68c 100644
+--- a/CP6.WebApi/Controllers/Oa/PrefController.cs
++++ b/CP6.WebApi/Controllers/Oa/PrefController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Oa;
+ using CP6.Core.Services.Sys;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Oa;
+ 
+ /// <summary>
+ /// 用户偏好设置 REST（Phase C）。/api/oa/pref — 读取 / 保存 JSON 格式偏好（主题、列宽、排序等）。
+ /// </summary>
+@@ -34,20 +35,21 @@ public class PrefController : LocalizedControllerBase
+         var me = await CurrentUserIdAsync();
+         var prefsJson = await _pref.GetAsync(me);
+         return Ok2(new { prefsJson });
+     }
+ 
+     // ── 保存偏好 ──
+ 
+     public record SavePrefReq(string PrefsJson);
+ 
+     [HttpPost("save")]
++    [RequirePermission("oa-settings", "edit")]
+     public async Task<IActionResult> Save([FromBody] SavePrefReq r)
+     {
+         try
+         {
+             var me = await CurrentUserIdAsync();
+             await _pref.SaveAsync(me, r.PrefsJson);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Wf/AdvancedFlowController.cs b/CP6.WebApi/Controllers/Wf/AdvancedFlowController.cs
+index 18a427e..9d6d061 100644
+--- a/CP6.WebApi/Controllers/Wf/AdvancedFlowController.cs
++++ b/CP6.WebApi/Controllers/Wf/AdvancedFlowController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>
+ /// 高级流程动作 REST（OA 章07）。/api/wf/advanced —— 退回 / 加签 / 委派维护。
+ /// 发起人/操作人取登录用户（不接受客户端传 id）。
+@@ -21,46 +22,49 @@ public class AdvancedFlowController : LocalizedControllerBase
+     {
+         _engine = engine;
+         _ctx = ctx;
+     }
+ 
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     /// <summary>退回到目标节点（章07 §2）。</summary>
+     [HttpPost("sendback")]
++    [RequirePermission("oa-inbox", "sendback")]
+     public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
+     {
+         try
+         {
+             var actor = (await _ctx.GetAsync()).UserId;
+             await _engine.SendBackAsync(r.TaskId, actor, r.TargetNodeId, r.Comment);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>加签（章07 §3）。source: before(前) / after(后)。</summary>
+     [HttpPost("addsign")]
++    [RequirePermission("oa-inbox", "addsign")]
+     public async Task<IActionResult> AddSign([FromBody] AddSignReq r)
+     {
+         try
+         {
+             var actor = (await _ctx.GetAsync()).UserId;
+             var id = await _engine.AddSignAsync(r.TaskId, actor, r.AddSigneeId, r.Source, r.Comment);
+             return Ok2(new { taskId = id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     /// <summary>登记委派（章07 §5）。委托人=登录用户。</summary>
+     [HttpPost("delegate")]
++    [RequirePermission("oa-settings", "delegate")]
+     public async Task<IActionResult> Delegate([FromBody] DelegateReq r)
+     {
+         try
+         {
+             var grantor = (await _ctx.GetAsync()).UserId;
+             var id = await _engine.SetDelegateAsync(grantor, r.DelegateId, r.ValidFrom, r.ValidTo, r.Scope, r.Remark);
+             return Ok2(new { delegateId = id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Wf/ApprovalController.cs b/CP6.WebApi/Controllers/Wf/ApprovalController.cs
+index 1c6b06a..f28ba6c 100644
+--- a/CP6.WebApi/Controllers/Wf/ApprovalController.cs
++++ b/CP6.WebApi/Controllers/Wf/ApprovalController.cs
+@@ -1,11 +1,12 @@
+ using System.Text.Json;
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>
+ /// 审批集成 REST（OA 章05 阶段2）。/api/wf/approval —— 业务模块接入 OA 的入口：
+ /// 起业务审批（按绑定选流程）+ 查业务单据审批状态。发起人取登录用户（不接受客户端传 id）。
+@@ -22,20 +23,21 @@ public class ApprovalController : LocalizedControllerBase
+     {
+         _approval = approval;
+         _ctx = ctx;
+     }
+ 
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     /// <summary>起业务审批（按 bizType 绑定的流程）。返回流程实例 Id。</summary>
+     [HttpPost("submit")]
++    [RequirePermission("oa-form-catalog", "submit")]
+     public async Task<IActionResult> Submit([FromBody] ApprovalSubmitReq r)
+     {
+         try
+         {
+             var starter = (await _ctx.GetAsync()).UserId;
+             // formSnapshot 透传为对象（已是 JsonElement / 由业务侧序列化）
+             object? snapshot = r.FormSnapshot.ValueKind == JsonValueKind.Undefined ? null : r.FormSnapshot;
+             var id = await _approval.SubmitAsync(r.BizType, r.BizId, starter, snapshot);
+             return Ok2(new { instanceId = id });
+         }
+diff --git a/CP6.WebApi/Controllers/Wf/FlowController.cs b/CP6.WebApi/Controllers/Wf/FlowController.cs
+index 98535c2..f17dcb2 100644
+--- a/CP6.WebApi/Controllers/Wf/FlowController.cs
++++ b/CP6.WebApi/Controllers/Wf/FlowController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>
+ /// 流程 REST（OA 章03/04）。/api/wf —— 定义 CRUD + 起流程 + 办理 + 实例详情。
+ /// 发起人/办理人一律取登录用户（不接受客户端传 id，防冒充）。执行委托 IFlowEngine。
+@@ -26,48 +27,51 @@ public class FlowController : LocalizedControllerBase
+     }
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private async Task<Guid> CurrentUserIdAsync() => (await _ctx.GetAsync()).UserId;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     // ── 流程定义 ──
+ 
+     [HttpPost("flow/def")]
++    [RequirePermission("oa-designer", "edit")]
+     public async Task<IActionResult> SaveDef([FromBody] FlowDefReq r)
+     {
+         try { return Ok2(new { id = await _defSvc.SaveDefAsync(r.FlowKey, r.FlowName, r.FormKey, r.SchemaJson, CurrentUser) }); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpGet("flow/def/{flowKey}")]
+     public async Task<IActionResult> GetDef(string flowKey)
+     {
+         var def = await _defSvc.GetDefAsync(flowKey);
+         return def is null ? NotFound(new { code = 404, message = Localizer["流程定义不存在"] }) : Ok2(def);
+     }
+ 
+     // ── 起流程 / 办理 ──
+ 
+     [HttpPost("flow/submit")]
++    [RequirePermission("oa-form-catalog", "submit")]
+     public async Task<IActionResult> Submit([FromBody] SubmitReq r)
+     {
+         try
+         {
+             var starter = await CurrentUserIdAsync();
+             var id = await _engine.SubmitAsync(r.FlowKey, starter, r.VarsJson ?? "{}", r.BizType, r.BizId);
+             return Ok2(new { instanceId = id });
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpPost("task/{id}/act")]
++    [RequirePermission("oa-inbox", "approve")]
+     public async Task<IActionResult> Act(Guid id, [FromBody] ActReq r)
+     {
+         try
+         {
+             var actor = await CurrentUserIdAsync();
+             await _engine.ActAsync(id, actor, r.Approve, r.Comment);
+             return Ok2();
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+diff --git a/CP6.WebApi/Controllers/Wf/FormController.cs b/CP6.WebApi/Controllers/Wf/FormController.cs
+index 53b9161..dc84bfd 100644
+--- a/CP6.WebApi/Controllers/Wf/FormController.cs
++++ b/CP6.WebApi/Controllers/Wf/FormController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>表单 REST（OA 章02）。/api/wf —— 表单定义建取 + 数据提交（服务端 schema 复核）。</summary>
+ [ApiController]
+ [Route("api/wf")]
+@@ -12,33 +13,35 @@ namespace CP6.WebApi.Controllers.Wf;
+ public class FormController : LocalizedControllerBase
+ {
+     private readonly IFormService _svc;
+     public FormController(IFormService svc) => _svc = svc;
+ 
+     private string? CurrentUser => User?.Identity?.Name;
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpPost("form/def")]
++    [RequirePermission("oa-designer", "form-save")]
+     public async Task<IActionResult> SaveDef([FromBody] FormDefReq r)
+     {
+         try { return Ok2(new { id = await _svc.SaveDefAsync(r.FormKey, r.FormName, r.SchemaJson, CurrentUser) }); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     [HttpGet("form/def/{formKey}")]
+     public async Task<IActionResult> GetDef(string formKey)
+     {
+         var def = await _svc.GetDefAsync(formKey);
+         return def is null ? NotFound(new { code = 404, message = Localizer["表单定义不存在"] }) : Ok2(def);
+     }
+ 
+     [HttpPost("form/data")]
++    [RequirePermission("oa-form-catalog", "submit")]
+     public async Task<IActionResult> SubmitData([FromBody] FormDataReq r)
+     {
+         try { return Ok2(new { id = await _svc.SubmitDataAsync(r.FormKey, r.BizId, r.DataJson, CurrentUser) }); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
+     public record FormDefReq(string FormKey, string FormName, string SchemaJson);
+     public record FormDataReq(string FormKey, string? BizId, string DataJson);
+ }
+diff --git a/CP6.WebApi/Controllers/Wf/TaskController.cs b/CP6.WebApi/Controllers/Wf/TaskController.cs
+index c35c763..59719d1 100644
+--- a/CP6.WebApi/Controllers/Wf/TaskController.cs
++++ b/CP6.WebApi/Controllers/Wf/TaskController.cs
+@@ -1,10 +1,11 @@
++using CP6.Core.Auth;
+ using CP6.Core.Services.Sys;
+ using CP6.Core.Services.Wf;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Wf;
+ 
+ /// <summary>待办中心 REST（OA 章04）。/api/wf —— 我的待办 / 我的申请 / 撤回。用户取登录上下文。</summary>
+ [ApiController]
+ [Route("api/wf")]
+@@ -24,16 +25,17 @@ public class TaskController : ControllerBase
+     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+ 
+     [HttpGet("my-todos")]
+     public async Task<IActionResult> MyTodos() => Ok2(await _svc.MyTodosAsync(await MeAsync()));
+ 
+     [HttpGet("my-applications")]
+     public async Task<IActionResult> MyApplications() => Ok2(await _svc.MyApplicationsAsync(await MeAsync()));
+ 
+     [HttpPost("flow/{id}/withdraw")]
++    [RequirePermission("oa-inbox", "withdraw")]
+     public async Task<IActionResult> Withdraw(Guid id)
+     {
+         try { await _svc.WithdrawAsync(id, await MeAsync()); return Ok2(); }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ }
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 7c7603f..96e9ab5 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -848,23 +848,23 @@ using (var scope = app.Services.CreateScope())
+     //   本种子在回填前对 10 有菜单键各锚定一行显式设 mes-* MenuKey（含缺行补建），并防御矫正历史回填错配
+     //   （尤其 310 /mes/machine-list 回填得 mes-machine-list ≠ 真相源 mes-machine）。MES 无孤儿路由，纯锚定。
+     CP6.WebApi.Seed.MesMenuSeed.EnsureSeeded(db);
+ 
+     // M-MES 横切接线 Task 3b：MES 权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子。
+     // Task 3a 给 9 控制器 28 写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 MesMenuSeed 之后（RoleAction 挂锚定 MenuId 301/302/304/306/308/310/311/314/315，菜单行须先在）。
+     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。25 去重元组（28 写端点去重）覆盖 9 有写端点 menu-key（plan-achievement 仅 view 不种）。
+     CP6.WebApi.Seed.MesPermissionSeed.EnsureSeeded(db);
+ 
+-    // M-OA/WF 横切接线 Task 2：OA/WF 菜单锚定 MenuKey（oa-*，真相源 §二 7 键）。
+-    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块（:908）之前：OA 菜单 733–740 由本文件 :1446–1496
+-    //   在回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → OA/WF 全 403
++    // M-OA/WF 横切接线 Task 2：OA/WF 菜单锚定 MenuKey（oa-*，真相源 §二 7 键）。紧随 MesPermissionSeed 之后执行。
++    // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」（全局回填块）之前：OA 菜单 733–740 由本文件下方 OA 菜单插入块
++    //   在全局回填块之后 Add 且未设 MenuKey → 洁净首启 MenuKey=null 被 PermissionAggregator 过滤 → OA/WF 全 403
+     //   （真相源 §六头号命门）。本种子在回填前对 733–739 各显式设 oa-* MenuKey（含缺行补建）；740 父行留 null。
+     //   OA 派生键与真相源逐字一致（零错配，不同于 MES machine-list），命门纯为时序；矫正块严限 7 锚定行按 MenuId 定位。
+     CP6.WebApi.Seed.OawfMenuSeed.EnsureSeeded(db);
+ 
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+         db.SaveChanges();

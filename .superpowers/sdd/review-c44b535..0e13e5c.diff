@@ -1,0 +1,666 @@
+# Review package: c44b535..HEAD
+
+## Commits
+0e13e5c feat(ui): CpListPage 契约扩展——total-change/minWidth·fixed·tooltip/highlightCurrentRow/map列映射/Tone共享类型/date kind + 试点页回填
+
+## Files changed
+ cp6.web/src/components/base/CpTag.vue              |  11 +-
+ cp6.web/src/components/templates/CpListPage.vue    |  61 ++++++++---
+ cp6.web/src/components/templates/CpStatusStrip.vue |  14 +--
+ .../templates/__tests__/CpListPage.spec.ts         | 115 +++++++++++++++++++++
+ cp6.web/src/views/wms/OutboundOrderListView.vue    |  63 +++++------
+ docs/superpowers/plans/2026-07-04-ui-restyle.md    |  10 +-
+ 6 files changed, 216 insertions(+), 58 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/components/base/CpTag.vue b/cp6.web/src/components/base/CpTag.vue
+index c89ae3d..4e807a9 100644
+--- a/cp6.web/src/components/base/CpTag.vue
++++ b/cp6.web/src/components/base/CpTag.vue
+@@ -1,38 +1,41 @@
+ <!--
+   CpTag —— 状态 pill（圆点 + 文字，设计系统 §9.1）。
+ 
+   Props:
+     - status?: string  业务状态词；经 STATUS_TONE 集中映射到色调，空串/未命中均回退 muted。
+-    - tone?: 'ok'|'warn'|'danger'|'info'|'muted'  显式指定色调，优先级高于 status。
++    - tone?: Tone      显式指定色调，优先级高于 status。
+   Slots:
+     - default  标签文案；缺省时回退渲染 status 文本。
+   Export:
+-    - STATUS_TONE  状态→色调映射表，供业务侧查询/复用。
++    - type Tone   语义色调联合类型 'ok'|'warn'|'danger'|'info'|'muted'（库内唯一事实来源，
++                  CpStatusStrip / CpListPage(StatusTab·ListColumn.map) 及业务页 tone 逻辑均复用）。
++    - STATUS_TONE 状态→色调映射表（Record<string, Tone>），供业务侧查询/复用。
+ 
+   使用示例：
+     <CpTag status="已出库">已出库</CpTag>
+     <CpTag status="拣货中" />            （info；文案回退 status）
+     <CpTag tone="danger">超期</CpTag>     （显式色调）
+ -->
+ <script lang="ts">
+-export const STATUS_TONE: Record<string, string> = {
++export type Tone = 'ok' | 'warn' | 'danger' | 'info' | 'muted'
++export const STATUS_TONE: Record<string, Tone> = {
+   '已出库': 'ok', '已出货': 'ok', '已完成': 'ok', '已对账': 'ok', '已批准': 'ok',
+   '未出库': 'warn', '未出货': 'warn', '待审批': 'warn', '待处理': 'warn',
+   '拣货中': 'info', '进行中': 'info', '已发行': 'info',
+   '已取消': 'muted', '已作废': 'muted',
+   '超期': 'danger', '今日': 'danger', '已驳回': 'danger'
+ }
+ </script>
+ <script setup lang="ts">
+ import { computed } from 'vue'
+-const props = defineProps<{ status?: string; tone?: 'ok'|'warn'|'danger'|'info'|'muted' }>()
++const props = defineProps<{ status?: string; tone?: Tone }>()
+ // status='' 或未命中 → || 'muted' 兜底（?? 无法拦截空串这类 falsy-非 nullish 值，会漏出 't-' 空色调）
+ const t = computed(() => props.tone ?? ((props.status && STATUS_TONE[props.status]) || 'muted'))
+ </script>
+ <template><span class="cp-tag" :class="`t-${t}`"><slot>{{ status }}</slot></span></template>
+ <style scoped>
+ .cp-tag { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:800;
+   padding:3px 10px; border-radius:999px; white-space:nowrap; }
+ .cp-tag::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
+ .t-ok { background:var(--cp-ok-bg); color:var(--cp-ok); }
+ .t-warn { background:var(--cp-warn-bg); color:var(--cp-warn); }
+diff --git a/cp6.web/src/components/templates/CpListPage.vue b/cp6.web/src/components/templates/CpListPage.vue
+index 6cbb27d..f08e60a 100644
+--- a/cp6.web/src/components/templates/CpListPage.vue
++++ b/cp6.web/src/components/templates/CpListPage.vue
+@@ -1,77 +1,96 @@
+ <!--
+   CpListPage —— 业务查询页核心模板（设计系统 §9.2；130+ 查询页的目标模板）。
+   组合结构：CpStatusStrip?（状态速览）→ CpFilterBar?（查询区）→ 表格卡 .tcard（toolbar slot + el-table + 分页）。
+   行为：mounted 自动 fetch；search/reset/翻页/切状态卡重新 fetch（search/reset/切卡均重置 page=1）；
+   fetch 期间 v-loading；fetch reject → ElMessage.error 且保留旧数据；rows 空 → CpEmpty；乱序响应只取最新。
+ 
+   Props:
+-    - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag / date→暂原样）。
++    - columns: ListColumn[]        列声明；kind 控制格式化（num→.num 右对齐 / mono→单号样式 / tag→CpTag /
++                                   date→String(val).slice(0,10)，null/undefined 渲染空）。
++                                   列级透传：width / minWidth→min-width / overflowTooltip→show-overflow-tooltip /
++                                   fixed:'left'|'right'→fixed（钉列）。
++                                   map?: (val,row)=>{ label, tone? }：码值列声明式映射——label 替换单元格文案（任意 kind 生效）；
++                                   kind:'tag' 时按 tone 渲染 CpTag（tone 缺省 muted）。col-<prop> 插槽优先级高于 map。
+     - fetch: ListFetch             数据源：({ page,size,filters,statusKey? }) => Promise<{ rows,total }>。
+     - searchFields?: FilterField[] 有值时渲染 CpFilterBar。
+-    - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key。
++    - statusTabs?: StatusTab[]     有值时渲染 CpStatusStrip；初始 statusKey 取第一项 key；tone 用 CpTag 共享 Tone。
+     - selectable?: boolean         勾选列；rowKey?: string 透传 el-table row-key。
++    - highlightCurrentRow?: boolean 透传 el-table 当前行高亮；默认 true（迁移页默认保留原行为）。
+     - filterLabels?: FilterBarLabels 透传 CpFilterBar 按钮文案覆盖（业务侧接 i18n；缺省中文）。
+     - emptyText?: string           透传 CpEmpty 空状态文案（缺省「暂无数据」）。
+   Slots: toolbar（批量操作区）｜ col-<prop>（自定义列，scope={row}）｜ expand（展开行，scope={row}）
+-  Emits: selection-change(rows)
++  Emits: selection-change(rows) ｜ total-change(n)（每次成功加载后携带最新 total，供 CpPageShell :count 接线；
++         受 seq 乱序守卫，过期响应不 emit）
+ 
+   使用示例：
+     <CpPageShell title="出庫指示一覧" :count="total">
+       <CpListPage
+-        :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' }]"
++        :columns="[{ prop:'no', label:'单号', kind:'mono' }, { prop:'qty', label:'数量', kind:'num' },
++                   { prop:'st', label:'状态', kind:'tag', map: (v) => ({ label: stLabel(v), tone: stTone(v) }) }]"
+         :fetch="loadShipments"
+         :search-fields="[{ key:'q', label:'单号', type:'text' }]"
+         :status-tabs="[{ key:'all', label:'全部', count:28 }]"
+         selectable row-key="id"
+-        @selection-change="onSel">
++        @selection-change="onSel"
++        @total-change="total = $event">
+         <template #toolbar><el-button>批量出库</el-button></template>
+       </CpListPage>
+     </CpPageShell>
+ -->
+ <script lang="ts">
++import type { Tone } from '@/components/base/CpTag.vue'
++
+ export interface ListColumn {
+   prop: string
+   label: string
+   width?: number
++  minWidth?: number
+   align?: 'left' | 'right' | 'center'
+   kind?: 'text' | 'num' | 'mono' | 'tag' | 'date'
++  overflowTooltip?: boolean
++  fixed?: 'left' | 'right'
++  map?: (val: unknown, row: unknown) => { label: string; tone?: Tone }
+ }
+ export type ListFetch = (q: {
+   page: number
+   size: number
+   filters: Record<string, unknown>
+   statusKey?: string
+ }) => Promise<{ rows: unknown[]; total: number }>
+-export interface StatusTab { key: string; label: string; count: number; tone?: string }
++export interface StatusTab { key: string; label: string; count: number; tone?: Tone }
+ </script>
+ 
+ <script setup lang="ts">
+ import { onMounted, ref } from 'vue'
+ import { ElMessage, ElPagination, ElTable, ElTableColumn, vLoading } from 'element-plus'
+ import CpStatusStrip from './CpStatusStrip.vue'
+ import CpFilterBar, { type FilterField, type FilterBarLabels } from './CpFilterBar.vue'
+ import CpTag from '@/components/base/CpTag.vue'
+ import CpEmpty from '@/components/base/CpEmpty.vue'
+ 
+-const props = defineProps<{
++const props = withDefaults(defineProps<{
+   columns: ListColumn[]
+   fetch: ListFetch
+   searchFields?: FilterField[]
+   statusTabs?: StatusTab[]
+   selectable?: boolean
+   rowKey?: string
++  highlightCurrentRow?: boolean
+   filterLabels?: FilterBarLabels
+   emptyText?: string
+-}>()
++}>(), { highlightCurrentRow: true })
+ 
+-const emit = defineEmits<{ (e: 'selection-change', rows: unknown[]): void }>()
++const emit = defineEmits<{
++  (e: 'selection-change', rows: unknown[]): void
++  (e: 'total-change', total: number): void
++}>()
+ 
+ // —— 内部状态 ——
+ const page = ref(1)
+ const size = ref(20)
+ const filters = ref<Record<string, unknown>>({})
+ const statusKey = ref<string | undefined>(props.statusTabs?.[0]?.key)
+ const rows = ref<unknown[]>([])
+ const total = ref(0)
+ const loading = ref(false)
+ 
+@@ -83,20 +102,21 @@ async function load() {
+   try {
+     const res = await props.fetch({
+       page: page.value,
+       size: size.value,
+       filters: filters.value,
+       statusKey: statusKey.value
+     })
+     if (id !== seq) return // 已有更新的请求发出，丢弃本次结果
+     rows.value = res.rows
+     total.value = res.total
++    emit('total-change', res.total) // 仅最新请求成功后 emit（供 CpPageShell :count 接线）
+   } catch (e) {
+     if (id !== seq) return
+     ElMessage.error((e as Error)?.message ?? String(e)) // 保留旧 rows/total（与 CpFormDialog 同一错误硬化契约）
+   } finally {
+     if (id === seq) loading.value = false
+   }
+ }
+ onMounted(load)
+ 
+ // —— 交互 ——
+@@ -106,20 +126,30 @@ function onStatus(key: string) { statusKey.value = key; page.value = 1; load() }
+ function onPageChange() { load() }
+ function onSizeChange() { page.value = 1; load() }
+ 
+ // —— 列渲染 ——
+ function cell(row: unknown, prop: string): unknown {
+   return (row as Record<string, unknown>)?.[prop]
+ }
+ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
+   return c.align ?? (c.kind === 'num' ? 'right' : 'left')
+ }
++// 单元格文案：map.label > date 截断(yyyy-MM-dd) > 原值
++function display(c: ListColumn, row: unknown): unknown {
++  const v = cell(row, c.prop)
++  if (c.map) return c.map(v, row).label
++  if (c.kind === 'date') return v == null ? '' : String(v).slice(0, 10)
++  return v
++}
++function mapTone(c: ListColumn, row: unknown): Tone | undefined {
++  return c.map?.(cell(row, c.prop), row).tone
++}
+ </script>
+ 
+ <template>
+   <div class="cp-list">
+     <CpStatusStrip
+       v-if="statusTabs?.length"
+       :items="statusTabs"
+       :model-value="statusKey ?? ''"
+       @update:model-value="onStatus"
+     />
+@@ -133,42 +163,47 @@ function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
+       @reset="onReset"
+     />
+ 
+     <div class="tcard">
+       <div v-if="$slots.toolbar" class="toolbar"><slot name="toolbar" /></div>
+ 
+       <el-table
+         v-loading="loading"
+         :data="rows"
+         :row-key="rowKey"
++        :highlight-current-row="highlightCurrentRow"
+         @selection-change="emit('selection-change', $event)"
+       >
+         <el-table-column v-if="$slots.expand" type="expand">
+           <template #default="{ row }"><slot name="expand" :row="row" /></template>
+         </el-table-column>
+ 
+         <el-table-column v-if="selectable" type="selection" width="44" />
+ 
+         <el-table-column
+           v-for="c in columns"
+           :key="c.prop"
+           :prop="c.prop"
+           :label="c.label"
+           :width="c.width"
++          :min-width="c.minWidth"
++          :show-overflow-tooltip="c.overflowTooltip"
++          :fixed="c.fixed"
+           :align="colAlign(c)"
+         >
+           <template #default="{ row }">
+             <slot :name="`col-${c.prop}`" :row="row">
+-              <CpTag v-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
+-              <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ cell(row, c.prop) }}</span>
+-              <span v-else-if="c.kind === 'num'" class="num">{{ cell(row, c.prop) }}</span>
+-              <template v-else>{{ cell(row, c.prop) }}</template>
++              <CpTag v-if="c.kind === 'tag' && c.map" :tone="mapTone(c, row)">{{ display(c, row) }}</CpTag>
++              <CpTag v-else-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
++              <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ display(c, row) }}</span>
++              <span v-else-if="c.kind === 'num'" class="num">{{ display(c, row) }}</span>
++              <template v-else>{{ display(c, row) }}</template>
+             </slot>
+           </template>
+         </el-table-column>
+ 
+         <template #empty>
+           <CpEmpty v-if="!loading" :text="emptyText" />
+         </template>
+       </el-table>
+ 
+       <div class="pager">
+diff --git a/cp6.web/src/components/templates/CpStatusStrip.vue b/cp6.web/src/components/templates/CpStatusStrip.vue
+index 27dcdc6..e1f58bf 100644
+--- a/cp6.web/src/components/templates/CpStatusStrip.vue
++++ b/cp6.web/src/components/templates/CpStatusStrip.vue
+@@ -1,42 +1,44 @@
+ <!--
+   CpStatusStrip —— 状态速览条（点击即筛选，设计系统 §9.2）。
+   横向排列的 pill 卡，每张展示「圆点 + 文字 + 计数」；点击某卡即把该卡 key 回写为当前筛选值。
+ 
+   Props:
+-    - items: { key:string; label:string; count:number; tone?:string }[]
+-        速览项；tone（ok|warn|danger|info|muted）着色圆点与计数，缺省为中性 ink。
++    - items: { key:string; label:string; count:number; tone?:Tone }[]
++        速览项；tone（CpTag 导出的共享 Tone：ok|warn|danger|info|muted）着色圆点与计数，缺省为中性 ink。
+     - modelValue: string   当前选中的 key；与之相等的卡获得 `on` 高亮态。
+   Emits:
+     - update:modelValue (key: string)   点击某卡时抛出该卡 key（供 v-model 双向绑定）。
+ 
+   使用示例：
+     <CpStatusStrip
+       v-model="status"
+       :items="[
+         { key:'all',  label:'全部',  count:28 },
+         { key:'wait', label:'未出库', count:9, tone:'warn' },
+         { key:'done', label:'已出库', count:12, tone:'ok' }
+       ]" />
+ -->
+ <script setup lang="ts">
+-interface StatusItem { key: string; label: string; count: number; tone?: string }
++import type { Tone } from '@/components/base/CpTag.vue'
++
++interface StatusItem { key: string; label: string; count: number; tone?: Tone }
+ 
+ defineProps<{ items: StatusItem[]; modelValue: string }>()
+ defineEmits<{ (e: 'update:modelValue', key: string): void }>()
+ 
+-const TONE_VAR: Record<string, string> = {
++const TONE_VAR: Record<Tone, string> = {
+   ok: 'var(--cp-ok)', warn: 'var(--cp-warn)', danger: 'var(--cp-danger)',
+   info: 'var(--cp-info)', muted: 'var(--cp-muted)'
+ }
+-// tone 缺省或未命中 → 中性 ink；命中 → 对应语义色
+-const toneColor = (tone?: string) => (tone && TONE_VAR[tone]) || 'var(--cp-ink)'
++// tone 缺省 → 中性 ink；有值 → 对应语义色（Tone 联合类型保证必命中）
++const toneColor = (tone?: Tone) => (tone && TONE_VAR[tone]) || 'var(--cp-ink)'
+ </script>
+ 
+ <template>
+   <div class="cp-status-strip">
+     <button
+       v-for="it in items"
+       :key="it.key"
+       type="button"
+       class="ss"
+       :class="{ on: it.key === modelValue }"
+diff --git a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+index 0652e13..b655c40 100644
+--- a/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
++++ b/cp6.web/src/components/templates/__tests__/CpListPage.spec.ts
+@@ -165,10 +165,125 @@ describe('CpListPage 行为契约补充', () => {
+   it('col-<prop> slot 优先于默认渲染', async () => {
+     const w = mount(CpListPage, {
+       props: { columns: cols, fetch: makeFetch() },
+       slots: { 'col-no': `<template #col-no="{ row }"><b class="custom">C-{{ row.no }}</b></template>` }
+     })
+     await flushPromises()
+     expect(w.find('.custom').text()).toBe('C-SHP-1')
+     expect(w.find('.cp-mono').exists()).toBe(false)
+   })
+ })
++
++// —— Milestone C 契约扩展：total-change / minWidth·fixed·tooltip / highlightCurrentRow / map / date ——
++import type { ListColumn } from '../CpListPage.vue'
++import type { Tone } from '@/components/base/CpTag.vue'
++
++describe('CpListPage 契约扩展（Milestone C）', () => {
++  it('total-change：成功加载后 emit 最新 total', async () => {
++    const w = mount(CpListPage, {
++      props: { columns: cols, fetch: makeFetch([{ no: 'A', qty: 1 }, { no: 'B', qty: 2 }]) }
++    })
++    await flushPromises()
++    expect(w.emitted('total-change')).toEqual([[2]])
++  })
++
++  it('total-change：过期响应不 emit（seq 守卫）', async () => {
++    let resolveFirst!: (v: { rows: unknown[]; total: number }) => void
++    const f = vi.fn()
++      .mockImplementationOnce(() => new Promise((r) => { resolveFirst = r }))
++      .mockResolvedValueOnce({ rows: [{ no: 'SHP-NEW', qty: 2 }], total: 7 })
++    const w = mount(CpListPage, { props: { columns: cols, fetch: f,
++      statusTabs: [{ key: 'all', label: '全部', count: 1 }, { key: 'wait', label: '未出库', count: 1 }] } })
++    await flushPromises()
++    await w.findAll('.ss')[1].trigger('click')
++    await flushPromises()
++    expect(w.emitted('total-change')).toEqual([[7]]) // 只有最新请求的 total
++
++    resolveFirst({ rows: [{ no: 'SHP-OLD', qty: 1 }], total: 99 })
++    await flushPromises()
++    expect(w.emitted('total-change')).toEqual([[7]]) // 过期响应不得追加 emit
++  })
++
++  it('minWidth / overflowTooltip / fixed 透传 el-table-column', async () => {
++    const c: ListColumn[] = [
++      { prop: 'customerName', label: '客先名', minWidth: 160, overflowTooltip: true },
++      { prop: '_action', label: '操作', width: 100, fixed: 'right' }
++    ]
++    const w = mount(CpListPage, {
++      props: { columns: c, fetch: makeFetch([{ customerName: 'X', _action: '' }]) }
++    })
++    await flushPromises()
++    const tcs = w.findAllComponents({ name: 'ElTableColumn' })
++    const cust = tcs.find((tc) => tc.props('label') === '客先名')!
++    expect(cust.props('minWidth')).toBe(160)
++    expect(cust.props('showOverflowTooltip')).toBe(true)
++    const act = tcs.find((tc) => tc.props('label') === '操作')!
++    expect(act.props('fixed')).toBe('right')
++  })
++
++  it('highlightCurrentRow：默认 true，可显式关闭', async () => {
++    const w1 = mount(CpListPage, { props: { columns: cols, fetch: makeFetch() } })
++    await flushPromises()
++    expect(w1.findComponent({ name: 'ElTable' }).props('highlightCurrentRow')).toBe(true)
++
++    const w2 = mount(CpListPage, {
++      props: { columns: cols, fetch: makeFetch(), highlightCurrentRow: false }
++    })
++    await flushPromises()
++    expect(w2.findComponent({ name: 'ElTable' }).props('highlightCurrentRow')).toBe(false)
++  })
++
++  it('map + kind:tag：渲染 label 与 tone 的 CpTag', async () => {
++    const c: ListColumn[] = [{
++      prop: 'st', label: '状态', kind: 'tag',
++      map: (v) => ({ label: `状態${v}`, tone: 'warn' as Tone })
++    }]
++    const f = vi.fn().mockResolvedValue({ rows: [{ st: 3 }], total: 1 })
++    const w = mount(CpListPage, { props: { columns: c, fetch: f } })
++    await flushPromises()
++    const tag = w.find('td .cp-tag')
++    expect(tag.exists()).toBe(true)
++    expect(tag.text()).toBe('状態3')
++    expect(tag.classes()).toContain('t-warn')
++  })
++
++  it('map 无 kind:tag：仅替换文本 label，不渲染 CpTag（码值文本列免插槽）', async () => {
++    const c: ListColumn[] = [{ prop: 'pr', label: '優先度', map: (v) => ({ label: v === 2 ? '緊急' : '通常' }) }]
++    const f = vi.fn().mockResolvedValue({ rows: [{ pr: 2 }], total: 1 })
++    const w = mount(CpListPage, { props: { columns: c, fetch: f } })
++    await flushPromises()
++    expect(w.find('td .cp-tag').exists()).toBe(false)
++    expect(w.text()).toContain('緊急')
++  })
++
++  it('col-<prop> slot 优先于 map', async () => {
++    const c: ListColumn[] = [{
++      prop: 'st', label: '状态', kind: 'tag', map: () => ({ label: 'MAP', tone: 'ok' as Tone })
++    }]
++    const f = vi.fn().mockResolvedValue({ rows: [{ st: 1 }], total: 1 })
++    const w = mount(CpListPage, {
++      props: { columns: c, fetch: f },
++      slots: { 'col-st': `<template #col-st="{ row }"><i class="via-slot">S-{{ row.st }}</i></template>` }
++    })
++    await flushPromises()
++    expect(w.find('.via-slot').text()).toBe('S-1')
++    expect(w.find('td .cp-tag').exists()).toBe(false)
++    expect(w.text()).not.toContain('MAP')
++  })
++
++  it("kind:'date'：非空值 slice(0,10)，null/undefined 渲染空", async () => {
++    const c: ListColumn[] = [
++      { prop: 'no', label: '单号', kind: 'mono' },
++      { prop: 'd', label: '日付', kind: 'date' }
++    ]
++    const f = vi.fn().mockResolvedValue({
++      rows: [{ no: 'A', d: '2026-07-04T00:00:00' }, { no: 'B', d: null }],
++      total: 2
++    })
++    const w = mount(CpListPage, { props: { columns: c, fetch: f } })
++    await flushPromises()
++    expect(w.text()).toContain('2026-07-04')
++    expect(w.text()).not.toContain('2026-07-04T')
++    // 第二行日期单元格为空（null → ''，不出现 "null"）
++    expect(w.text()).not.toContain('null')
++  })
++})
+diff --git a/cp6.web/src/views/wms/OutboundOrderListView.vue b/cp6.web/src/views/wms/OutboundOrderListView.vue
+index 7b7843a..738584b 100644
+--- a/cp6.web/src/views/wms/OutboundOrderListView.vue
++++ b/cp6.web/src/views/wms/OutboundOrderListView.vue
+@@ -1,39 +1,31 @@
+ <!--
+-  出庫指示一覧 —— CpListPage 模板首个真实消费者（Task 11 / Milestone B 试点）。
+-  结构：CpPageShell（标题 + actions：新建 / 桥接展开）→ CpListPage（搜索区 + 表格卡 + 分页）。
++  出庫指示一覧 —— CpListPage 模板首个真实消费者（Task 11 / Milestone B 试点；Milestone C 契约扩展回填）。
++  结构：CpPageShell（标题 + 计数 pill(:count←@total-change) + actions：新建 / 桥接展开）→ CpListPage。
++  码值列（種別/状態/優先度）与日期列走 ListColumn map / kind:'date' 声明式映射（不再用 col-<prop> 插槽）；
++  優先度沿用原纯文本呈现（无 tone），故只用 map 不设 kind:'tag'。
+   数据源 outboundOrderApi.search 返回扁平数组且无 total，故 fetch 包装内做客户端分页（见 fetchList）。
+ -->
+ <template>
+-  <CpPageShell :title="t('wms.outbound.titleList')">
++  <CpPageShell :title="t('wms.outbound.titleList')" :count="total">
+     <template #actions>
+       <el-button @click="goCreate">{{ t('wms.common.create') }}</el-button>
+       <el-button type="warning" @click="bridgeDialog = true">{{ t('wms.outbound.bridge.title') }}</el-button>
+     </template>
+ 
+-    <CpListPage :columns="columns" :fetch="fetchList" :search-fields="searchFields" :filter-labels="filterLabels">
+-      <!-- 種別 -->
+-      <template #col-outboundType="{ row }">
+-        <CpTag :tone="row.outboundType === 1 ? 'info' : 'warn'">
+-          {{ typeMap[row.outboundType] || row.outboundType }}
+-        </CpTag>
+-      </template>
+-      <!-- 状態 -->
+-      <template #col-status="{ row }">
+-        <CpTag :tone="statusTone(row.status)">
+-          {{ statusMap[row.status] || row.status }}
+-        </CpTag>
+-      </template>
+-      <!-- 計画出庫日（切到 yyyy-MM-dd） -->
+-      <template #col-plannedDate="{ row }">{{ row.plannedDate?.slice(0, 10) }}</template>
+-      <!-- 優先度 -->
+-      <template #col-priority="{ row }">{{ priorityMap[row.priority] || row.priority }}</template>
++    <CpListPage
++      :columns="columns"
++      :fetch="fetchList"
++      :search-fields="searchFields"
++      :filter-labels="filterLabels"
++      @total-change="total = $event"
++    >
+       <!-- 操作 -->
+       <template #col-_action="{ row }">
+         <el-button link type="primary" size="small" @click="goEdit(row)">{{ t('wms.common.open') }}</el-button>
+       </template>
+     </CpListPage>
+ 
+     <!-- 桥接展开：MES 製造指図 / PA 受注 → 出庫指示（保留原对话框，CpListPage 无对应契约） -->
+     <el-dialog v-model="bridgeDialog" :title="t('wms.outbound.bridge.title')" width="500">
+       <el-form size="small" label-width="160px">
+         <el-form-item :label="t('wms.outbound.bridge.fromWo')">
+@@ -57,27 +49,30 @@
+ </template>
+ 
+ <script setup lang="ts">
+ import { ref, computed } from 'vue'
+ import { useRouter } from 'vue-router'
+ import { ElMessage } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
+ import CpPageShell from '@/components/templates/CpPageShell.vue'
+ import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+ import { type FilterField } from '@/components/templates/CpFilterBar.vue'
+-import CpTag from '@/components/base/CpTag.vue'
++import { type Tone } from '@/components/base/CpTag.vue'
+ import { outboundOrderApi } from '@/api/wms/outboundOrder'
+ import type { OutboundOrder, OutboundOrderSearchQuery } from '@/types/wms/wms'
+ 
+ const router = useRouter()
+ const { t } = useI18n()
+ 
++// —— 头部计数 pill：CpListPage @total-change 回填 ——
++const total = ref<number>()
++
+ // —— 桥接展开对话框状态 ——
+ const bridgeDialog = ref(false)
+ const bridgeWoNo = ref('')
+ const bridgeOrderNo = ref('')
+ const bridging = ref(false)
+ 
+ // —— 码值映射（i18n 反应式） ——
+ const typeMap = computed<Record<number, string>>(() => ({
+   1: t('wms.outbound.type.material'),
+   2: t('wms.outbound.type.shipping'),
+@@ -91,37 +86,45 @@ const statusMap = computed<Record<number, string>>(() => ({
+   3: t('wms.outbound.status.picking'),
+   4: t('wms.outbound.status.completed'),
+   9: t('wms.outbound.status.cancelled'),
+ }))
+ const priorityMap = computed<Record<number, string>>(() => ({
+   1: t('wms.outbound.priority.normal'),
+   2: t('wms.outbound.priority.urgent'),
+   3: t('wms.outbound.priority.express'),
+ }))
+ 
+-// status 码 → CpTag 语义色调（沿用原 statusTagOf 意图，映射到设计系统 tone）
+-function statusTone(s: number): 'ok' | 'warn' | 'danger' | 'info' | 'muted' {
++// status 码 → CpTag 语义色调（沿用原 statusTagOf 意图，映射到设计系统共享 Tone）
++function statusTone(s: number): Tone {
+   return ({ 0: 'muted', 1: 'warn', 2: 'warn', 3: 'info', 4: 'ok', 9: 'muted' } as const)[s as 0] || 'muted'
+ }
+ 
+-// —— 列定义 ——（種別/状態/計画出庫日/優先度/操作 走具名列插槽） ——
++// 码值 → 文案；未命中回退原值（null/undefined → 空，与原插槽插值行为一致）
++function codeLabel(m: Record<number, string>, v: unknown): string {
++  return m[v as number] || (v == null ? '' : String(v))
++}
++
++// —— 列定义 ——（種別/状態/優先度 走 map 声明式映射；計画出庫日 走 kind:'date'；操作 走具名插槽） ——
+ const columns = computed<ListColumn[]>(() => [
+   { prop: 'outboundNo', label: t('wms.outbound.fld.no'), kind: 'mono', width: 180 },
+-  { prop: 'outboundType', label: t('wms.common.type'), width: 90 },
+-  { prop: 'status', label: t('wms.common.status'), width: 110 },
++  { prop: 'outboundType', label: t('wms.common.type'), width: 90, kind: 'tag',
++    map: (v) => ({ label: codeLabel(typeMap.value, v), tone: v === 1 ? 'info' : 'warn' }) },
++  { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
++    map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
+   { prop: 'workOrderNo', label: t('wms.outbound.fld.workOrderNo'), width: 160 },
+   { prop: 'webOrderNo', label: t('wms.outbound.fld.webOrderNo'), width: 160 },
+-  { prop: 'customerName', label: t('wms.outbound.fld.customerName') },
++  { prop: 'customerName', label: t('wms.outbound.fld.customerName'), minWidth: 160, overflowTooltip: true },
+   { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 80 },
+-  { prop: 'plannedDate', label: t('wms.outbound.fld.plannedDate'), width: 110 },
+-  { prop: 'priority', label: t('wms.outbound.fld.priority'), width: 80 },
+-  { prop: '_action', label: t('wms.common.action'), width: 100 },
++  { prop: 'plannedDate', label: t('wms.outbound.fld.plannedDate'), width: 110, kind: 'date' },
++  { prop: 'priority', label: t('wms.outbound.fld.priority'), width: 80,
++    map: (v) => ({ label: codeLabel(priorityMap.value, v) }) }, // 原页即纯文本，无 tone → 不设 kind:'tag'
++  { prop: '_action', label: t('wms.common.action'), width: 100, fixed: 'right' },
+ ])
+ 
+ // —— CpFilterBar 按钮文案接 i18n（沿用现有词条；expand/collapse 无对应 key，留组件默认） ——
+ const filterLabels = computed(() => ({
+   search: t('wms.common.search'),
+   reset: t('wms.common.clear'),
+ }))
+ 
+ // —— 搜索字段 ——（对应原 el-form 6 个查询项） ——
+ const searchFields = computed<FilterField[]>(() => [
+diff --git a/docs/superpowers/plans/2026-07-04-ui-restyle.md b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+index 4b40f66..1580973 100644
+--- a/docs/superpowers/plans/2026-07-04-ui-restyle.md
++++ b/docs/superpowers/plans/2026-07-04-ui-restyle.md
+@@ -599,48 +599,48 @@ describe('CpListPage', () => {
+ ## Self-Review 记录
+ 
+ - 规范覆盖：设计系统 §1~§11 全部有对应任务（§2~§7→Task 1；§8 图标→Task 2/3 沿用 EP 图标；§9.1→Task 6/9/10 + overrides；§9.2→Task 7~10；§10→Task 1；§11 命名→各任务文件路径；§12 暗色→Task 1 Step 2 占位；§13→Milestone 结构本身）。CpInput/CpSelect/CpDatePicker 薄封装按 YAGNI 暂缓：全局 overrides 已覆盖其视觉，待模板出现重复默认值需求时再引入（此为对设计系统 §9.1 的显式偏差，记录在案）。
+ - 占位符扫描：无 TBD/TODO；「抄 mockup 对应 class」均指向已入库的具体文件与类名，属引用而非占位。
+ - 类型一致性：FilterField 定义于 CpFilterBar 并被 CpListPage/CpFormDialog 复用；ListColumn.kind 与 CpDetailPanel.items.kind 枚举一致（text/num/mono/tag）。
+ 
+ ## 模板缺口（Task 11 试点复盘）
+ 
+ 第一位真实消费者 `views/wms/OutboundOrderListView.vue`（出庫指示一覧）迁移完成，功能零丢失、真栈验收通过。CpPageShell + CpListPage + CpFilterBar + CpTag 的组合（本页状态筛选沿用原下拉，无 statusTabs，未用到 CpStatusStrip）足以承载「搜索区 + 表格卡 + 分页 + 行操作 + 头部动作 + 自定义列」这套标准查询页形态，未改动任何已评审模板组件。以下为发现的缺口，建议进 Milestone C 前先扩 CpListPage 契约：
+ 
+-1. **total 不外露 → PageShell 计数 pill 无法接线**（本次影响最大）。
++1. **total 不外露 → PageShell 计数 pill 无法接线**（本次影响最大）—— ✅ 已实现（契约扩展 commit）：CpListPage 新增 `@total-change(n)`，仅最新请求（seq 守卫）成功后 emit；试点页已接 CpPageShell `:count`（真栈 37）。
+    - 页面需要：mockup 头部「28 单」计数 pill（CpPageShell `:count`）。
+    - 模板缺：CpListPage 内部持有 `total` 但既不 emit 也不暴露，父级 CpPageShell 拿不到值，只能省略 `:count`。
+    - 建议契约扩展：CpListPage 增 `@total-change(n:number)`（或 `v-model:total` / `#count` 作用域插槽），让业务页把总数回填到 PageShell。本次为遵守「不擅改已评审组件」而省略计数 pill，记为缺口而非页内 hack。
+ 
+-2. **ListColumn / 表格级配置缺字段：`minWidth`、`overflowTooltip`、`fixed`、`highlight-current-row`**。
++2. **ListColumn / 表格级配置缺字段：`minWidth`、`overflowTooltip`、`fixed`、`highlight-current-row`**—— ✅ 已实现（契约扩展 commit）：ListColumn 增 `minWidth/overflowTooltip/fixed` 透传 el-table-column；CpListPage 增 `highlightCurrentRow`（默认 true）透传 el-table；试点页三项行为已回补。
+    - 页面需要：客先名列原为 `min-width:160 + show-overflow-tooltip`（长客户名省略号 + 悬浮全文）；操作列原为 `fixed="right"`（横向滚动时行按钮钉在右侧）；表格原有 `highlight-current-row`（点击行高亮当前行）。
+    - 模板缺：ListColumn 仅有 `width`，无最小宽 / 无溢出 tooltip / 无 `fixed`；CpListPage 也不透传表格级 `highlight-current-row`。迁移后这三项行为丢失（undocumented behavior change，本次试点复盘补记）：横向滚动时操作按钮不再钉住、当前行不再高亮。
+    - 建议契约扩展：ListColumn 增 `minWidth?: number`、`overflowTooltip?: boolean`、`fixed?: 'left' | 'right'`，透传 el-table-column 的 `min-width` / `show-overflow-tooltip` / `fixed`；CpListPage 增 `highlightCurrentRow?: boolean`（或直接默认开启）透传 el-table。
+ 
+-3. **kind:'tag' 仅认「已是 CpTag 状态词」的原始值，码值状态列仍需自绘插槽**。
++3. **kind:'tag' 仅认「已是 CpTag 状态词」的原始值，码值状态列仍需自绘插槽**—— ✅ 已实现（契约扩展 commit）：ListColumn 增 `map?: (val,row)=>{label,tone?}`——label 替换任意 kind 的单元格文案，`kind:'tag'` 时按 tone 渲染 CpTag；`col-<prop>` 插槽仍优先。试点页 区分/ステータス 改 `kind:'tag'`+map、優先度 改纯 map（原页即纯文本无 tone），三个插槽已删。
+    - 页面需要：区分 / ステータス / 優先度 三列是数字码（0..9），要「码→i18n 文案」+「码→语义 tone」两步映射。
+    - 模板缺：kind:'tag' 直接把单元格原值当 CpTag `status`，对数字码既显不出文案也命不中 tone；只能改用 `col-<prop>` 插槽 + `<CpTag :tone>` 自绘（功能已保全，但每个码值列都要重复样板）。
+    - 建议契约扩展：ListColumn 增可选 `map?: (val, row) => { label: string; tone?: Tone }`（或 `valueMap` 字典），让码值状态/枚举列声明式着色，免去逐列插槽。
+ 
+ 4. **CpTag 文本在窄列内换行**（小视觉缺陷）—— ✅ 已修复（终审 hardening commit）。
+    - 现象：区分列 90px / 状态列 110px 下，「ピッキング」被折成「ピッキン グ」，pill 竖向撑高。
+    - 修复：CpTag `.cp-tag` 已加 `white-space:nowrap`（纯样式微调，未改契约）。
+ 
+ 5. **数据源无 total，ListFetch 只能客户端分页**（记录而非模板缺口——受「不改后端/API 契约」约束）。
+    - 现象：`outboundOrderApi.search` 返回扁平数组无总数，而 ListFetch 契约要求 `{ rows, total }`。
+    - 适配：fetch 包装以 `pageSize:500` 取一批，`total = 数组长度`，按 page/size 客户端切片（真栈验证 37 条 → 20/页 2 页、翻页正确）。
+    - 后续：待后端补 `WmsPaged<T>`（total/page/pageSize 已有类型）后，fetch 包装可直接透传 page/size 做服务端分页；无需改模板。
+ 
+ 6. **CpFilterBar 按钮文案硬编码中文 → i18n 回归**（Important，评审补记）—— ⏳ 部分修复（终审 hardening commit）。
+    - 页面需要：原页面查询/重置按钮走 `t('wms.common.search')` 等词条，随语言切换；默认语言为 ja。
+    - 已做：CpFilterBar 增 `labels?: { search?; reset?; expand?; collapse? }`，CpFormDialog 增 `labels?: { cancel?; confirm? }` + `requiredMessage?`，CpEmpty 沿用既有 `text?`；CpListPage 透传 `filterLabels?` / `emptyText?`。试点页 `OutboundOrderListView.vue` 已就现有词条接线（`search→wms.common.search`、`reset→wms.common.clear`）；`expand/collapse` 无对应 key，保留组件内中文默认（未臆造 Sys_Langs 词条）。
+    - 剩余 follow-up（Milestone C）：采用共享词条（如 `common.search/reset/expandMore/collapse`）或组件内直接 `t()`，让 expand/collapse 等也随语言切换、免每页手动传 labels。
+ 
+-7. **共享 `Tone` 类型导出 + STATUS_TONE 强类型**（终审提出，Milestone C 票，未在本次修复）。
++7. **共享 `Tone` 类型导出 + STATUS_TONE 强类型**（终审提出，Milestone C 票）—— ✅ 已实现（契约扩展 commit）：CpTag.vue 导出 `export type Tone`，`STATUS_TONE: Record<string, Tone>`；CpStatusStrip.items.tone、CpListPage StatusTab.tone / ListColumn.map、试点页 statusTone() 全部复用，库公开类型不再残留 string tone。
+    - 现状：`CpTag` 的 tone 联合类型 `'ok'|'warn'|'danger'|'info'|'muted'` 内联在 props；`STATUS_TONE` 值为宽松 `Record<string,string>`；`ListColumn.map`（缺口#3 提案）、`StatusTab.tone`、页面 `statusTone()` 等各处对 tone 各写各的字面量，无单一事实来源。
+    - 建议：从 `CpTag.vue` 导出 `export type Tone = ...`，`STATUS_TONE: Record<string, Tone>`，各消费点复用该类型，编译期约束非法 tone。
+ 
+-8. **`kind:'date'` 死词汇**（终审提出，Milestone C 前实现或删除）。
++8. **`kind:'date'` 死词汇**（终审提出，Milestone C 前实现或删除）—— ✅ 已实现（契约扩展 commit）：date 分支落地为 `String(val).slice(0,10)`（null/undefined 渲染空，与试点页原插槽约定一致）；头注已去「date→暂原样」；试点页 plannedDate 改 `kind:'date'` 并删插槽。
+    - 现状：`ListColumn.kind` 声明含 `'date'`，但 CpListPage 列渲染分支未实现 date 格式化（落到 `<template v-else>` 原样输出），头注也写「date→暂原样」。试点页日期列走 `col-plannedDate` 插槽自行 `slice`，`kind:'date'` 从未生效——属死词汇。
+    - 建议：Milestone C 前二选一——要么实现 date 格式化分支（按 i18n `d()`/`format`），要么从 `kind` 联合类型删除 `'date'`，避免误导后续迁移页声明无效 kind。
+ 
+ 模板本次「够用」的原因：CpListPage 的 `col-<prop>` 具名插槽是逃生舱——凡 kind 表达不了的列（码值 tag、日期截断、行操作按钮、自定义 tone）都能落到插槽里保功能，因此上述缺口都不是阻塞项，而是「省样板 / 补计数」的契约增强。

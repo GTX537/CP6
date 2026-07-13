@@ -1,0 +1,121 @@
+# Review package: c1a7f66..HEAD
+
+## Commits
+76ed5d3 feat(space-p5): 对比面板双值（堆叠 timeSavingsPct/单层派生时间行）
+
+## Files changed
+ cp6.web/src/views/space/stacked/StackedViewer.vue | 16 ++++++++++------
+ cp6.web/src/views/space/viewer/FloorViewer.vue    |  7 ++++---
+ 2 files changed, 14 insertions(+), 9 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/views/space/stacked/StackedViewer.vue b/cp6.web/src/views/space/stacked/StackedViewer.vue
+index 919f970..0ba8292 100644
+--- a/cp6.web/src/views/space/stacked/StackedViewer.vue
++++ b/cp6.web/src/views/space/stacked/StackedViewer.vue
+@@ -91,42 +91,46 @@ const compareInfo = ref('')
+ function onToggleFloor(floorId: string, visible: boolean): void {
+   floorVisible[floorId] = visible
+   viewer?.setFloorVisible(floorId, visible)
+ }
+ 
+ async function onLoadPath(taskNo: string): Promise<void> {
+   if (!taskNo || !pathAnimator) return
+   try {
+     const env = await advancedApi.sitePickPath(siteId, taskNo)
+     const d = env.data
+-    const mfFloors = d.floors.map((f) => ({ floorId: f.floorId, z: f.z }))
++    const mfFloors = d.floors.map((f) => ({ floorId: f.floorId, z: f.z, level: f.level }))
+     const aislesByFloor = new Map<string, { aisleCode: string; centerline: string }[]>()
+     for (const a of d.aisles) {
+       if (!aislesByFloor.has(a.floorId)) aislesByFloor.set(a.floorId, [])
+       aislesByFloor.get(a.floorId)!.push({ aisleCode: a.aisleCode, centerline: a.centerline })
+     }
+-    const connectors = d.connectors.map((c) => ({ connectorCode: c.connectorCode, type: c.type, stops: c.stops }))
++    const connectors = d.connectors.map((c) => ({
++      connectorCode: c.connectorCode, type: c.type,
++      waitSec: c.waitSec, travelSecPerFloor: c.travelSecPerFloor,
++      stops: c.stops,
++    }))
+     const stops = [...d.stops]
+       .sort((a, b) => a.seq - b.seq)
+       .filter((s) => s.floorId != null && s.absX != null && s.absY != null)
+       .map((s) => ({ floorId: s.floorId as string, x: s.absX as number, y: s.absY as number }))
+     if (stops.length < 2) { ElMessage.info(t('该拣货单跨层可定位拣货点不足')); return }
+     const cmp = planPickComparisonMF(mfFloors, aislesByFloor, connectors, stops)
+     comparison.value = cmp
+     pathAnimator.setPath(cmp.actual.points)
+     showOptimized.value = false
+     pathAnimator.setComparisonPath(null)
+     pathLoaded.value = true
+-    compareInfo.value = t('实际 {a} 米 / 优化 {o} 米 / 省 {p}%')
+-      .replace('{a}', (cmp.actualMm / 1000).toFixed(1))
+-      .replace('{o}', (cmp.optimizedMm / 1000).toFixed(1))
+-      .replace('{p}', cmp.savingsPct.toFixed(0))
++    compareInfo.value = t('实际 {am} 米 / {as} 秒 ・ 优化 {om} 米 / {os} 秒 ・ 省 {p}%')
++      .replace('{am}', (cmp.actualMm / 1000).toFixed(1)).replace('{as}', cmp.actualSec.toFixed(0))
++      .replace('{om}', (cmp.optimizedMm / 1000).toFixed(1)).replace('{os}', cmp.optimizedSec.toFixed(0))
++      .replace('{p}', cmp.timeSavingsPct.toFixed(0))
+     if (cmp.actual.degraded) ElMessage.warning(t('跨层路径不连通，近似直连显示'))
+   } catch {
+     ElMessage.warning(t('跨层拣货路径获取失败'))
+   }
+ }
+ 
+ function onPathPlay(): void { pathAnimator?.play() }
+ function onPathPause(): void { pathAnimator?.pause() }
+ function onPathReplay(): void { pathAnimator?.replay() }
+ 
+diff --git a/cp6.web/src/views/space/viewer/FloorViewer.vue b/cp6.web/src/views/space/viewer/FloorViewer.vue
+index 4a6e891..140cea1 100644
+--- a/cp6.web/src/views/space/viewer/FloorViewer.vue
++++ b/cp6.web/src/views/space/viewer/FloorViewer.vue
+@@ -87,20 +87,21 @@ import { StockOverlay } from '@/space-viewer/overlay/StockOverlay'
+ import { stockApi } from '@/api/space/stock'
+ import type { OverlayMode, WmsStockDto } from '@/types/space/overlay'
+ import InfoCard from './InfoCard.vue'
+ import FloorList from './FloorList.vue'
+ import SearchBox from './SearchBox.vue'
+ import StockLegend from './StockLegend.vue'
+ import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
+ import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
+ import { DeviceLayer } from '@/space-viewer/advanced/DeviceLayer'
+ import { planPickComparison, type Pt, type PickComparison } from '@/space-viewer/advanced/PickPathPlanner'
++import { mmToSec } from '@/space-viewer/advanced/cost'
+ import { advancedApi } from '@/api/space/advanced'
+ import AdvancedPanel from './AdvancedPanel.vue'
+ 
+ const { t } = useI18n()
+ const route = useRoute()
+ 
+ const canvasRef = ref<HTMLCanvasElement | null>(null)
+ const loading = ref(false)
+ const progressText = ref('')
+ const errorMsg = ref('')
+@@ -269,23 +270,23 @@ async function onLoadPath(taskNo: string): Promise<void> {
+     if (stopPts.length < 2) { ElMessage.info(t('该拣货单无可定位拣货点')); return }
+     const cmp = planPickComparison(data.aisles, stopPts)
+     comparison.value = cmp
+     pathAnimator.setPath(cmp.actual.points)                       // 青线 + 小车 = 实际 LineNo 序
+     showOptimized.value = false
+     pathAnimator.setComparisonPath(null)
+     pathLoaded.value = true
+     pathInfo.value = t('拣货路径：{n} 点，总距 {d} 米')
+       .replace('{n}', String(stopPts.length))
+       .replace('{d}', (cmp.actualMm / 1000).toFixed(1))           // I-SPACE-801
+-    compareInfo.value = t('实际 {a} 米 / 优化 {o} 米 / 省 {p}%')
+-      .replace('{a}', (cmp.actualMm / 1000).toFixed(1))
+-      .replace('{o}', (cmp.optimizedMm / 1000).toFixed(1))
++    compareInfo.value = t('实际 {am} 米 / {as} 秒 ・ 优化 {om} 米 / {os} 秒 ・ 省 {p}%')
++      .replace('{am}', (cmp.actualMm / 1000).toFixed(1)).replace('{as}', mmToSec(cmp.actualMm).toFixed(0))
++      .replace('{om}', (cmp.optimizedMm / 1000).toFixed(1)).replace('{os}', mmToSec(cmp.optimizedMm).toFixed(0))
+       .replace('{p}', cmp.savingsPct.toFixed(0))
+     if (cmp.actual.degraded) ElMessage.warning(t('巷道路径不连通，近似直连显示'))  // W-SPACE-801
+   } catch {
+     ElMessage.warning(t('高级可视化数据获取失败'))   // W-SPACE-802
+   }
+ }
+ 
+ function onToggleOptimized(): void {
+   showOptimized.value = !showOptimized.value
+   pathAnimator?.setComparisonPath(showOptimized.value ? (comparison.value?.optimized.points ?? null) : null)

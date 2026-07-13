@@ -1,0 +1,761 @@
+# Review package: 54f4080..e2ddf74
+
+## Commits
+e2ddf74 feat(space): SpaceHub 发布推送 + 事件页自动刷新（ISpaceNotifier 接口注入）
+
+## Files changed
+ CP6.Core/Services/Integration/ISpaceNotifier.cs    | 30 +++++++++++
+ CP6.Core/Services/Space/LocationPublishService.cs  | 13 ++++-
+ CP6.Tests/BindCodesTests.cs                        |  2 +-
+ CP6.Tests/LocationPublishServiceTests.cs           | 62 +++++++++++++++++++++-
+ CP6.Tests/SceneServiceTests.cs                     |  2 +-
+ CP6.Tests/SignalRSpaceNotifierTests.cs             | 59 ++++++++++++++++++++
+ CP6.Tests/SpaceMasterServiceTests.cs               |  2 +-
+ CP6.WebApi/Hubs/SpaceHub.cs                        | 34 ++++++++++++
+ CP6.WebApi/Program.cs                              |  2 +
+ CP6.WebApi/Services/SignalRSpaceNotifier.cs        | 38 +++++++++++++
+ cp6.web/src/utils/spaceHub.ts                      | 61 +++++++++++++++++++++
+ .../src/views/space/lifecycle/SpaceEventsView.vue  | 19 ++++++-
+ .../lifecycle/__tests__/SpaceEventsView.spec.ts    | 26 ++++++++-
+ 13 files changed, 342 insertions(+), 8 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Integration/ISpaceNotifier.cs b/CP6.Core/Services/Integration/ISpaceNotifier.cs
+new file mode 100644
+index 0000000..6bb4247
+--- /dev/null
++++ b/CP6.Core/Services/Integration/ISpaceNotifier.cs
+@@ -0,0 +1,30 @@
++namespace CP6.Core.Services.Integration;
++
++/// <summary>
++/// Space リアルタイム通知契約（発布/停用の SignalR プッシュ）。
++///
++/// 消費者 Space 側で定義、WebApi 側で SignalR 実装（<c>SignalRSpaceNotifier</c>）を注入。
++/// 照 <see cref="IWmsStockQuery"/> のインターフェース注入範式（反射不使用）。
++///
++/// ★契約：実装は決して例外を投げてはならない（best-effort）。プッシュ失敗は業務トランザクションに
++/// 一切影響させない ── 実装層で try/catch し、ログのみ。サービス層は commit 後に直接呼ぶ。
++/// </summary>
++public interface ISpaceNotifier
++{
++    /// <summary>
++    /// 库位発布/停用の完了を全クライアントへ通知（低頻・全播、グループ無し）。
++    /// </summary>
++    /// <param name="batchNo">発布バッチ番号（LPUB-yyyyMMdd-nnnn）。</param>
++    /// <param name="count">対象库位件数（発布=locs.Count、停用=1）。</param>
++    /// <param name="status">結果ステータス（"SUCCESS" 等）。</param>
++    Task NotifyLocationPublishedAsync(string batchNo, int count, string status);
++}
++
++/// <summary>
++/// 空実装（テスト／降級用）。何もしない ── プッシュ経路が無い環境でも業務は素通り。
++/// </summary>
++public sealed class NoOpSpaceNotifier : ISpaceNotifier
++{
++    public Task NotifyLocationPublishedAsync(string batchNo, int count, string status)
++        => Task.CompletedTask;
++}
+diff --git a/CP6.Core/Services/Space/LocationPublishService.cs b/CP6.Core/Services/Space/LocationPublishService.cs
+index 6fd09af..890e335 100644
+--- a/CP6.Core/Services/Space/LocationPublishService.cs
++++ b/CP6.Core/Services/Space/LocationPublishService.cs
+@@ -18,35 +18,38 @@ namespace CP6.Core.Services.Space;
+ ///   · 创建实体不写 TenantId——SaveChanges 盖章自动补当前租户。
+ /// </summary>
+ public class LocationPublishService : ILocationPublishService
+ {
+     private readonly CP6Context _db;
+     private readonly ITenantContext _t;
+     private readonly ICodeEngineService _code;
+     private readonly ISpaceBridgeHook _hook;
+     private readonly IWmsStockQuery _stock;
+     private readonly IWmsBinDeactivator _deactivator;
++    private readonly ISpaceNotifier _notifier;
+ 
+     public LocationPublishService(
+         CP6Context db,
+         ITenantContext t,
+         ICodeEngineService code,
+         ISpaceBridgeHook hook,
+         IWmsStockQuery stock,
+-        IWmsBinDeactivator deactivator)
++        IWmsBinDeactivator deactivator,
++        ISpaceNotifier notifier)
+     {
+         _db = db;
+         _t = t;
+         _code = code;
+         _hook = hook;
+         _stock = stock;
+         _deactivator = deactivator;
++        _notifier = notifier;
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<int> PublishFloorAsync(Guid floorId, Guid? zoneId, string? user)
+     {
+         // InMemory 安全事务守卫（惯例见 SceneService）：真库开事务，InMemory 降级无事务。
+         // 事务范围＝闸门→翻状态→WMS 消费(T_WmsBin 写入)→事件落库，全部同库原子提交，
+         // 修复"翻了状态但事件静默丢失"的窗口（同一 CP6Context 实例，hook 内 SaveChanges 同事务）。
+         IDbContextTransaction? tx = _db.Database.IsRelational()
+             ? await _db.Database.BeginTransactionAsync()
+@@ -88,20 +91,24 @@ public class LocationPublishService : ILocationPublishService
+                 l.Modifier = user;
+                 l.ModifyDate = DateTime.Now;
+                 batch.Items.Add(await BuildItemAsync(l, "UPSERT"));
+             }
+             await _db.SaveChangesAsync();
+ 
+             // 5. 发事件（hook 内部吞消费异常→Failed 事件落库，由 Worker 重试；不影响本事务提交）
+             await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+ 
+             if (tx != null) await tx.CommitAsync();
++
++            // 6. SignalR プッシュ（★事務 Commit 後：確定済みイベントのみ通知、推送不進事務。
++            //    実装は例外を投げない契約 ── 万一落ちても業務は既に確定済み、return を妨げない）
++            await _notifier.NotifyLocationPublishedAsync(batchNo, locs.Count, "SUCCESS");
+             return locs.Count;
+         }
+         finally
+         {
+             if (tx != null) await tx.DisposeAsync();   // 未 Commit 即 Dispose = 回滚
+         }
+     }
+ 
+     /// <inheritdoc/>
+     public async Task DeactivateAsync(Guid locationId, string? user)
+@@ -142,20 +149,24 @@ public class LocationPublishService : ILocationPublishService
+         {
+             BatchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}",
+             TenantId = _t.CurrentTenantId,
+             PublishedBy = user
+         };
+         batch.Items.Add(await BuildItemAsync(l, "DEACTIVATE"));
+         await _db.SaveChangesAsync();
+ 
+         // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
+         await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
++
++        // ⑤ SignalR プッシュ（兜底事件 hook 後：本地 Status 已 SaveChanges 確定。
++        //    実装は例外を投げない契約 ── 推送失敗絕不坏业务）
++        await _notifier.NotifyLocationPublishedAsync(batch.BatchNo, 1, "SUCCESS");
+     }
+ 
+     /// <inheritdoc/>
+     public async Task<int> RepublishAsync(IReadOnlyCollection<Guid> locationIds, string? user)
+     {
+         if (locationIds.Count == 0) return 0;
+ 
+         // 嵌套事务守卫：本方法会被 SceneService 场景保存事务（H4 改挂）或删除放行路径包裹调用；
+         // 已有环境事务时直接加入（同连接嵌套 BeginTransaction 会抛），无事务时自开（惯例守卫）。
+         var ownsTx = _db.Database.IsRelational() && _db.Database.CurrentTransaction == null;
+diff --git a/CP6.Tests/BindCodesTests.cs b/CP6.Tests/BindCodesTests.cs
+index 4319456..8b8bf7f 100644
+--- a/CP6.Tests/BindCodesTests.cs
++++ b/CP6.Tests/BindCodesTests.cs
+@@ -14,21 +14,21 @@ namespace CP6.Tests;
+ /// </summary>
+ public class BindCodesTests
+ {
+     private static (CP6Context db, SceneService svc) Make()
+     {
+         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+         var geo = new LocationGeometryService(db);
+         var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
+             new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
+-            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
++            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db), new NoOpSpaceNotifier());
+         return (db, new SceneService(db, geo, publish));
+     }
+ 
+     [Fact]
+     public async Task BindCodes_SetsPlacedRackIdAbsX_DoesNotChangeCodeIdVersion()
+     {
+         var (db, svc) = Make();
+ 
+         var rackId  = Guid.NewGuid();
+         var floorId = Guid.NewGuid();
+diff --git a/CP6.Tests/LocationPublishServiceTests.cs b/CP6.Tests/LocationPublishServiceTests.cs
+index b5f6f3e..f897f67 100644
+--- a/CP6.Tests/LocationPublishServiceTests.cs
++++ b/CP6.Tests/LocationPublishServiceTests.cs
+@@ -16,28 +16,47 @@ namespace CP6.Tests;
+ /// </summary>
+ public class LocationPublishServiceTests
+ {
+     private static CP6Context Db() => new(new DbContextOptionsBuilder<CP6Context>()
+         .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+ 
+     private static LocationPublishService MakePublishSvc(
+         CP6Context db,
+         IWmsStockQuery? stock = null,
+         ISpaceBridgeHook? hook = null,
+-        IWmsBinDeactivator? deact = null)
++        IWmsBinDeactivator? deact = null,
++        ISpaceNotifier? notifier = null)
+     {
+         var t = new TenantContext();
+         var code = new CodeEngineService(db);
+         hook ??= new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
+         stock ??= new StubWmsStockQuery();
+         deact ??= new CP6.Core.Services.Wms.WmsBinDeactivator(db);
+-        return new LocationPublishService(db, t, code, hook, stock, deact);
++        notifier ??= new NoOpSpaceNotifier();
++        return new LocationPublishService(db, t, code, hook, stock, deact, notifier);
++    }
++
++    /// <summary>发布/停用后 SignalR プッシュが呼ばれたか記録する桩（実装契約通り例外を投げない）。</summary>
++    private sealed class RecordingSpaceNotifier : ISpaceNotifier
++    {
++        public int Calls;
++        public string? LastBatchNo;
++        public int LastCount;
++        public string? LastStatus;
++        public Task NotifyLocationPublishedAsync(string batchNo, int count, string status)
++        {
++            Calls++;
++            LastBatchNo = batchNo;
++            LastCount = count;
++            LastStatus = status;
++            return Task.CompletedTask;
++        }
+     }
+ 
+     // ── D-3: 整层发布 ──────────────────────────────────────────────────────
+ 
+     private static string ValidSegmentsJson() => JsonSerializer.Serialize(new[]
+     {
+         new CodeSegmentDef { Key = "zone", Source = "zone-code", Sep = "-" },
+         new CodeSegmentDef { Key = "col",  Source = "col",       Sep = "" }
+     });
+ 
+@@ -78,20 +97,59 @@ public class LocationPublishServiceTests
+         Assert.Equal(1, loc.Status);
+         Assert.Equal(1, loc.Version);
+ 
+         var evt = await db.IntegrationEvents.SingleAsync();
+         Assert.Equal("SPACE", evt.SourceModule);
+         var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+         var firstOp = payload.GetProperty("Items")[0].GetProperty("Op").GetString();
+         Assert.Equal("UPSERT", firstOp);
+     }
+ 
++    [Fact]
++    public async Task Publish_GatePassed_NotifiesSignalR()
++    {
++        using var db = Db();
++        var floorId = Guid.NewGuid();
++        var rackId = Guid.NewGuid();
++        var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "S1", SiteName = "S1" };
++        var floor = new Space_Floor { Id = floorId, SiteId = site.Id, Level = 1, FloorCode = "F1", FloorName = "F1" };
++        var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
++        var rack = new Space_Rack { Id = rackId, ZoneId = zone.Id, FloorId = floorId, RackCode = "R1", Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000 };
++        db.Space_CodeRules.Add(new Space_CodeRule
++        {
++            Id = Guid.NewGuid(), RuleName = "default", ScopeType = 0, IsDefault = true,
++            Segments = ValidSegmentsJson()
++        });
++        db.Space_Sites.Add(site);
++        db.Space_Floors.Add(floor);
++        db.Space_Zones.Add(zone);
++        db.Space_Racks.Add(rack);
++        db.Space_Locations.Add(new Space_Location
++        {
++            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId,
++            Placed = true, Status = 0, CodeOrigin = 1, LocationCode = "A-01-01-01",
++            Col = 1, Level = 1, Depth = 1
++        });
++        await db.SaveChangesAsync();
++
++        var rec = new RecordingSpaceNotifier();
++        var svc = MakePublishSvc(db, notifier: rec);
++        var n = await svc.PublishFloorAsync(floorId, zoneId: null, user: "u");
++
++        Assert.Equal(1, n);
++        Assert.Equal(1, rec.Calls);
++        Assert.False(string.IsNullOrEmpty(rec.LastBatchNo));
++        Assert.StartsWith("LPUB-", rec.LastBatchNo);
++        Assert.Equal(1, rec.LastCount);
++        Assert.Equal("SUCCESS", rec.LastStatus);
++    }
++
+     [Fact]
+     public async Task Publish_EmptyCode_Throws_E307_NoEvent()
+     {
+         using var db = Db();
+         var floorId = Guid.NewGuid();
+         // Zone without a code rule → PrecheckAsync returns PrecheckErrors, triggering E-307
+         // Alternatively, add a location with null code → EmptyCodeCount > 0 → E-307
+         var zone = new Space_Zone { Id = Guid.NewGuid(), FloorId = floorId, ZoneCode = "Z1", ZoneName = "Z1" };
+         db.Space_Zones.Add(zone);
+         db.Space_Locations.Add(new Space_Location
+diff --git a/CP6.Tests/SceneServiceTests.cs b/CP6.Tests/SceneServiceTests.cs
+index 1e98d4f..8b6ab32 100644
+--- a/CP6.Tests/SceneServiceTests.cs
++++ b/CP6.Tests/SceneServiceTests.cs
+@@ -15,21 +15,21 @@ namespace CP6.Tests;
+ /// </summary>
+ public class SceneServiceTests
+ {
+     private static (CP6Context db, SceneService svc) Make()
+     {
+         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+         var geo = new LocationGeometryService(db);
+         var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
+             new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
+-            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
++            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db), new NoOpSpaceNotifier());
+         return (db, new SceneService(db, geo, publish));
+     }
+ 
+     [Fact]
+     public async Task SaveScene_NewRack_PersistedAndAbsXRecalculated()
+     {
+         var (db, svc) = Make();
+         var floorId = Guid.NewGuid();
+         var zoneId  = Guid.NewGuid();
+         var rackId  = Guid.NewGuid();
+diff --git a/CP6.Tests/SignalRSpaceNotifierTests.cs b/CP6.Tests/SignalRSpaceNotifierTests.cs
+new file mode 100644
+index 0000000..6b44d58
+--- /dev/null
++++ b/CP6.Tests/SignalRSpaceNotifierTests.cs
+@@ -0,0 +1,59 @@
++using CP6.WebApi.Hubs;
++using CP6.WebApi.Services;
++using Microsoft.AspNetCore.SignalR;
++using Microsoft.Extensions.Logging.Abstractions;
++using Moq;
++
++namespace CP6.Tests;
++
++/// <summary>
++/// SignalRSpaceNotifier 側効果テスト（照 DeadLetterNotifierTests の Mock&lt;IHubContext&gt; 範式）。
++/// </summary>
++public class SignalRSpaceNotifierTests
++{
++    private static (SignalRSpaceNotifier Notifier, Mock<IClientProxy> ClientProxy) NewNotifier()
++    {
++        var clientProxy = new Mock<IClientProxy>();
++        var clients = new Mock<IHubClients>();
++        var hub = new Mock<IHubContext<SpaceHub>>();
++        clients.Setup(c => c.All).Returns(clientProxy.Object);
++        hub.Setup(h => h.Clients).Returns(clients.Object);
++
++        return (new SignalRSpaceNotifier(
++            hub.Object,
++            NullLogger<SignalRSpaceNotifier>.Instance), clientProxy);
++    }
++
++    [Fact]
++    public async Task Notify_PushesLocationPublishedToAllClients()
++    {
++        var (notifier, clientProxy) = NewNotifier();
++
++        await notifier.NotifyLocationPublishedAsync("LPUB-20260707-0001", 3, "SUCCESS");
++
++        clientProxy.Verify(c => c.SendCoreAsync(
++            "LocationPublished",
++            It.IsAny<object[]>(),
++            It.IsAny<CancellationToken>()), Times.Once);
++    }
++
++    [Fact]
++    public async Task Notify_SwallowsHubException_DoesNotPropagate()
++    {
++        var clientProxy = new Mock<IClientProxy>();
++        clientProxy
++            .Setup(c => c.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
++            .ThrowsAsync(new InvalidOperationException("hub down"));
++        var clients = new Mock<IHubClients>();
++        var hub = new Mock<IHubContext<SpaceHub>>();
++        clients.Setup(c => c.All).Returns(clientProxy.Object);
++        hub.Setup(h => h.Clients).Returns(clients.Object);
++
++        var notifier = new SignalRSpaceNotifier(hub.Object, NullLogger<SignalRSpaceNotifier>.Instance);
++
++        // 契約：例外を投げない（吞錯）── 呼び出しが素通りすれば合格
++        var ex = await Record.ExceptionAsync(
++            () => notifier.NotifyLocationPublishedAsync("LPUB-20260707-0002", 1, "SUCCESS"));
++        Assert.Null(ex);
++    }
++}
+diff --git a/CP6.Tests/SpaceMasterServiceTests.cs b/CP6.Tests/SpaceMasterServiceTests.cs
+index 9ccea38..2f232f8 100644
+--- a/CP6.Tests/SpaceMasterServiceTests.cs
++++ b/CP6.Tests/SpaceMasterServiceTests.cs
+@@ -24,21 +24,21 @@ public class SpaceMasterServiceTests
+     /// 全局过滤 + 写入盖章均按默认租户，测试自洽，无需显式设 TenantId。
+     /// </summary>
+     private static (CP6Context, SpaceMasterService) Make()
+     {
+         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
+             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+         var geo = new LocationGeometryService(db);
+         // publish 依赖组装同 SceneServiceTests.Make()（Task 2 已升级）——删巷道放行路径/改挂 re-publish 需要
+         var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
+             new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
+-            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db));
++            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db), new NoOpSpaceNotifier());
+         return (db, new SpaceMasterService(db, geo, publish));
+     }
+ 
+     // ── B-3: Site/Zone 唯一校验 + 多边形顶点数 ────────────────────────────
+ 
+     [Fact]
+     public async Task CreateSite_DuplicateCode_Throws_E001()
+     {
+         var (_, svc) = Make();
+         await svc.CreateSiteAsync(new SiteDto { SiteCode = "WH1", SiteName = "a" }, "u");
+diff --git a/CP6.WebApi/Hubs/SpaceHub.cs b/CP6.WebApi/Hubs/SpaceHub.cs
+new file mode 100644
+index 0000000..dccea4c
+--- /dev/null
++++ b/CP6.WebApi/Hubs/SpaceHub.cs
+@@ -0,0 +1,34 @@
++using Microsoft.AspNetCore.SignalR;
++
++namespace CP6.WebApi.Hubs;
++
++/// <summary>
++/// Space SignalR Hub — 库位ライフサイクルのリアルタイムイベント。
++/// </summary>
++/// <remarks>
++/// 推送事件：
++/// - LocationPublished：库位発布/停用が完了（{ batchNo, count, status }）
++///
++/// クライアント接続：
++///   const conn = new HubConnectionBuilder().withUrl('/hubs/space').build()
++///   conn.on('LocationPublished', payload => { /* events 页 reload */ })
++///
++/// 購読グループ：無し ── Space イベントは低頻・全播で十分（YAGNI）。
++/// </remarks>
++public class SpaceHub : Hub
++{
++    private readonly ILogger<SpaceHub> _logger;
++    public SpaceHub(ILogger<SpaceHub> logger) => _logger = logger;
++
++    public override Task OnConnectedAsync()
++    {
++        _logger.LogInformation("Space Hub 接続: {ConnectionId}", Context.ConnectionId);
++        return base.OnConnectedAsync();
++    }
++
++    public override Task OnDisconnectedAsync(Exception? exception)
++    {
++        _logger.LogInformation("Space Hub 切断: {ConnectionId}", Context.ConnectionId);
++        return base.OnDisconnectedAsync(exception);
++    }
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 3d89287..ab5a707 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -390,20 +390,21 @@ builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService, CP6.Core.
+ builder.Services.AddScoped<CP6.Core.Services.Space.ITemplateService, CP6.Core.Services.Space.TemplateService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISceneService, CP6.Core.Services.Space.SceneService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISceneIoService, CP6.Core.Services.Space.SceneIoService>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.IConnectorService, CP6.Core.Services.Space.ConnectorService>();
+ // 4.x.3 Space ch06 viewer 定位查询（locate/search/detail）
+ builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceLocateService, CP6.Core.Services.Space.SpaceLocateService>();
+ // 4.x.1 Space ch04 — 库位发布 + WMS 桩（SpaceBridgeHook 需同时注册具体类和接口，Dispatcher 注入接口）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.SpaceBridgeHook>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceBridgeHook, CP6.Core.Services.Integration.SpaceBridgeHook>();
+ builder.Services.AddScoped<CP6.Core.Services.Space.ILocationPublishService, CP6.Core.Services.Space.LocationPublishService>();
++builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceNotifier, CP6.WebApi.Services.SignalRSpaceNotifier>(); // 库位発布/停用 SignalR プッシュ（SpaceHub 全播）
+ // ch04 v1.1 §5.3：真消费端（T_WmsBin 幂等 upsert，方案A 2026-07-05）。回滚开关：换回 NoOpWmsLocationConsumer 即断开。
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Wms.WmsBinConsumer>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsBinDeactivator, CP6.Core.Services.Wms.WmsBinDeactivator>(); // ch04 §6 v1.1 停用同步 RPC 真实现（TOCTOU 权威库存判定 + T_WmsBin 停用/墓碑）
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsStockQuery, CP6.Core.Services.Wms.WmsStockQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsPickTaskQuery, CP6.Core.Services.Wms.WmsPickTaskQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsWorkloadQuery, CP6.Core.Services.Wms.WmsWorkloadQuery>();
+ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsDeviceQuery, CP6.Core.Services.Wms.WmsDeviceQuery>();
+ 
+ // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
+ builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
+@@ -2516,16 +2517,17 @@ app.UseMiddleware<CP6.WebApi.Middleware.BizExceptionMiddleware>();
+ app.UseMiddleware<CP6.WebApi.Middleware.CsrfMiddleware>();
+ app.UseMiddleware<CP6.WebApi.Middleware.MustChangePasswordMiddleware>();
+ 
+ app.UseAuthorization();
+ app.MapControllers();
+ 
+ // SignalR Hub 路由
+ app.MapHub<NotifyHub>("/hubs/notify");
+ app.MapHub<CP6.WebApi.Hubs.MesHub>("/hubs/mes");
+ app.MapHub<CP6.WebApi.Hubs.WmsHub>("/hubs/wms");
++app.MapHub<CP6.WebApi.Hubs.SpaceHub>("/hubs/space");
+ 
+ // T15 / Gap 2.3 — Prometheus 公開エンドポイント /metrics ＋ ブリッジ業務指標コレクタ起動
+ app.MapMetrics();   // GET /metrics（Prometheus テキスト形式）
+ app.Services.GetRequiredService<CP6.WebApi.Observability.BridgeMetricsCollector>().Register();
+ 
+ app.Run();
+diff --git a/CP6.WebApi/Services/SignalRSpaceNotifier.cs b/CP6.WebApi/Services/SignalRSpaceNotifier.cs
+new file mode 100644
+index 0000000..e32e8c4
+--- /dev/null
++++ b/CP6.WebApi/Services/SignalRSpaceNotifier.cs
+@@ -0,0 +1,38 @@
++using CP6.Core.Services.Integration;
++using CP6.WebApi.Hubs;
++using Microsoft.AspNetCore.SignalR;
++
++namespace CP6.WebApi.Services;
++
++/// <summary>
++/// <see cref="ISpaceNotifier"/> の SignalR 実装。
++///
++/// <see cref="SpaceHub"/> の全クライアントへ "LocationPublished" を配信する（低頻・全播、グループ無し）。
++/// 照 <see cref="SignalRWmsNotifier"/>。
++///
++/// ★契約通り例外を投げない：try/catch で吞み、ログのみ ── プッシュ失敗は業務トランザクションに
++/// 一切影響させない（サービス層は commit 後に呼ぶため、ここで落ちても既に確定済み）。
++/// </summary>
++public class SignalRSpaceNotifier : ISpaceNotifier
++{
++    private readonly IHubContext<SpaceHub> _hub;
++    private readonly ILogger<SignalRSpaceNotifier> _logger;
++
++    public SignalRSpaceNotifier(IHubContext<SpaceHub> hub, ILogger<SignalRSpaceNotifier> logger)
++    {
++        _hub = hub;
++        _logger = logger;
++    }
++
++    public async Task NotifyLocationPublishedAsync(string batchNo, int count, string status)
++    {
++        try
++        {
++            await _hub.Clients.All.SendAsync("LocationPublished", new { batchNo, count, status });
++        }
++        catch (Exception ex)
++        {
++            _logger.LogWarning(ex, "Space 発布プッシュに失敗（旁路、無視）: {BatchNo}", batchNo);
++        }
++    }
++}
+diff --git a/cp6.web/src/utils/spaceHub.ts b/cp6.web/src/utils/spaceHub.ts
+new file mode 100644
+index 0000000..f2bd1ed
+--- /dev/null
++++ b/cp6.web/src/utils/spaceHub.ts
+@@ -0,0 +1,61 @@
++import * as signalR from '@microsoft/signalr'
++
++/**
++ * Space SignalR Hub クライアント（独立 connection）
++ *
++ * /hubs/space に接続して以下イベントを購読：
++ *   LocationPublished … 库位発布/停用が完了（{ batchNo, count, status }）
++ *
++ * 既存の /hubs/notify・/hubs/mes・/hubs/wms と完全独立 — Hub ごとに connection 分離。
++ * 照 wmsHub.ts：cookie 隐式認証（accessTokenFactory 無し）＋ withAutomaticReconnect ＋ 状態守卫。
++ * グループ無し（Space イベントは低頻・全播）。
++ */
++
++export interface LocationPublishedPayload {
++  batchNo: string
++  count: number
++  status: string
++}
++
++let spaceConn: signalR.HubConnection | null = null
++
++export function getSpaceConnection(): signalR.HubConnection {
++  if (!spaceConn) {
++    spaceConn = new signalR.HubConnectionBuilder()
++      .withUrl('/hubs/space')
++      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
++      .configureLogging(signalR.LogLevel.Warning)
++      .build()
++  }
++  return spaceConn
++}
++
++export async function startSpaceConnection() {
++  const c = getSpaceConnection()
++  if (c.state === signalR.HubConnectionState.Disconnected) {
++    try {
++      await c.start()
++      console.log('[Space-Hub] Connected')
++    } catch (err) {
++      console.warn('[Space-Hub] Connection failed, will retry:', err)
++    }
++  }
++  return c
++}
++
++export function stopSpaceConnection() {
++  if (spaceConn) {
++    spaceConn.stop()
++    spaceConn = null
++  }
++}
++
++/** LocationPublished 購読登録（singleton connection 上に .on） */
++export function onLocationPublished(cb: (payload: LocationPublishedPayload) => void) {
++  getSpaceConnection().on('LocationPublished', cb)
++}
++
++/** LocationPublished 購読解除（onUnmounted 時のクリーンアップ） */
++export function offLocationPublished(cb: (payload: LocationPublishedPayload) => void) {
++  getSpaceConnection().off('LocationPublished', cb)
++}
+diff --git a/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue b/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
+index 505bafb..00c4244 100644
+--- a/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
++++ b/cp6.web/src/views/space/lifecycle/SpaceEventsView.vue
+@@ -30,28 +30,32 @@
+         <el-button v-if="row.lastError" link type="danger" size="small" @click="showError(row.lastError)">
+           {{ t('space.events.detail') }}
+         </el-button>
+         <span v-else>—</span>
+       </template>
+     </CpListPage>
+   </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+-import { ref, computed } from 'vue'
++import { ref, computed, onMounted, onUnmounted } from 'vue'
+ import { ElMessageBox } from 'element-plus'
+ import { useI18n } from 'vue-i18n'
+ import CpPageShell from '@/components/templates/CpPageShell.vue'
+ import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+ import { type Tone } from '@/components/base/CpTag.vue'
+ import { publishApi } from '@/api/space/publish'
+ import type { SpaceEventVO } from '@/types/space/scene'
++import {
++  startSpaceConnection, onLocationPublished, offLocationPublished,
++  type LocationPublishedPayload,
++} from '@/utils/spaceHub'
+ 
+ const { t } = useI18n()
+ 
+ const PAGE_SIZE = 50
+ const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+ const page = ref(1)
+ const loading = ref(false)
+ // 本页 rows.length===PAGE_SIZE 时才可能有下一页（无 total，游标翻页）
+ const lastCount = ref(0)
+ const hasNext = computed(() => lastCount.value === PAGE_SIZE)
+@@ -97,16 +101,29 @@ function prevPage() {
+   listRef.value?.reload()
+ }
+ function nextPage() {
+   if (!hasNext.value) return
+   page.value += 1
+   listRef.value?.reload()
+ }
+ function showError(msg: string) {
+   ElMessageBox.alert(msg, t('space.events.col.lastError'), { type: 'error' })
+ }
++
++// SignalR：発布/停用プッシュ受信 → 第 1 頁へ戻して再取得（低頻イベント、全播）
++function onPublished(_payload: LocationPublishedPayload) {
++  page.value = 1
++  listRef.value?.reload()
++}
++onMounted(() => {
++  startSpaceConnection()
++  onLocationPublished(onPublished)
++})
++onUnmounted(() => {
++  offLocationPublished(onPublished)
++})
+ </script>
+ 
+ <style scoped>
+ .tb-spacer { flex: 1; }
+ .ev-page { font-size: var(--cp-fs-sm); font-weight: 700; color: var(--cp-muted); min-width: 64px; text-align: center; }
+ </style>
+diff --git a/cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts b/cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts
+index bcd472c..230a08d 100644
+--- a/cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts
++++ b/cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts
+@@ -4,20 +4,28 @@ import { mount, flushPromises } from '@vue/test-utils'
+ import { createI18n } from 'vue-i18n'
+ import ElementPlus from 'element-plus'
+ import { publishApi } from '@/api/space/publish'
+ import CpTag from '@/components/base/CpTag.vue'
+ import SpaceEventsView from '../SpaceEventsView.vue'
+ import type { SpaceEventVO } from '@/types/space/scene'
+ 
+ vi.mock('@/api/space/publish', () => ({ publishApi: { events: vi.fn() } }))
+ vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
+ 
++// spaceHub をモック：onLocationPublished に渡されたコールバックを捕捉し、テストから発火できるようにする
++let publishedCb: ((p: unknown) => void) | null = null
++vi.mock('@/utils/spaceHub', () => ({
++  startSpaceConnection: vi.fn(),
++  onLocationPublished: vi.fn((cb: (p: unknown) => void) => { publishedCb = cb }),
++  offLocationPublished: vi.fn(() => { publishedCb = null }),
++}))
++
+ function ev(over: Partial<SpaceEventVO>): SpaceEventVO {
+   return {
+     id: 'e', hookName: 'wms.location.sync', sourceNo: 'PUB-001', targetModule: 'WMS',
+     status: 'SUCCESS', attempts: 1, createDate: '2026-07-06T10:00:00', lastError: null, ...over,
+   }
+ }
+ 
+ // flatJson:true 匹配生产 i18n；仅给带插值的 key 供文案，其余缺失 key 原样返回（断言用 key 名）
+ function i18nPlugin() {
+   return createI18n({
+@@ -26,23 +34,24 @@ function i18nPlugin() {
+   })
+ }
+ function mountView() {
+   return mount(SpaceEventsView, {
+     global: { plugins: [i18nPlugin(), ElementPlus] },
+     attachTo: document.body,
+   })
+ }
+ 
+ describe('SpaceEventsView', () => {
+-  afterEach(() => { document.body.innerHTML = '' })
++  afterEach(() => { document.body.innerHTML = ''; publishedCb = null })
+   beforeEach(() => {
+     vi.clearAllMocks()
++    publishedCb = null
+     vi.mocked(publishApi.events).mockResolvedValue({ code: 0, message: '', data: [] })
+   })
+ 
+   // ① 两行事件 → 状态 tag（tone 映射）与行渲染
+   it('渲染事件行并按状态映射 tag 色调', async () => {
+     vi.mocked(publishApi.events).mockResolvedValue({
+       code: 0, message: '', data: [
+         ev({ id: 'e1', sourceNo: 'PUB-001', status: 'SUCCESS' }),
+         ev({ id: 'e2', sourceNo: 'PUB-002', status: 'FAILED', lastError: 'boom' }),
+       ],
+@@ -77,11 +86,26 @@ describe('SpaceEventsView', () => {
+   it('未满页时次页按钮禁用', async () => {
+     vi.mocked(publishApi.events).mockResolvedValue({
+       code: 0, message: '', data: [ev({ id: 'e1' })],
+     })
+     const w = mountView()
+     await flushPromises()
+     const nextBtn = w.findAll('button').find((b) => b.text() === 'space.events.nextPage')
+     expect(nextBtn).toBeTruthy()
+     expect(nextBtn!.attributes('disabled')).toBeDefined()
+   })
++
++  // ④ SignalR LocationPublished 受信 → events を再取得（二次呼び出し）
++  it('SignalR 発布プッシュ受信で一覧を再取得する', async () => {
++    const w = mountView()
++    await flushPromises()
++    expect(publishApi.events).toHaveBeenCalledTimes(1) // 初回 mount
++    expect(publishedCb).toBeTruthy() // onLocationPublished でコールバック登録済み
++
++    publishedCb!({ batchNo: 'LPUB-20260707-0001', count: 3, status: 'SUCCESS' })
++    await flushPromises()
++
++    expect(publishApi.events).toHaveBeenCalledTimes(2) // reload で二次取得
++    expect(publishApi.events).toHaveBeenLastCalledWith(1, 50) // 第 1 頁へ戻る
++    w.unmount()
++  })
+ })
