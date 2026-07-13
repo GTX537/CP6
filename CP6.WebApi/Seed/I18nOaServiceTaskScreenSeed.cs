@@ -10,14 +10,14 @@ public static class I18nOaServiceTaskScreenSeed
     public static readonly Sys_Lang[] Items =
     {
         // ── 面板标题 / 服务类型 (ServiceTaskNode.vue + NodePropertyPanel.vue) ──
-        new() { LangKey = "oa.designer.svc.title",              ZhCN = "服务任务",       ZhTW = "服務任務",       En = "Service Task",   Ja = "サービスタスク",   Ko = "서비스 태스크" },
+        new() { LangKey = "oa.designer.svc.title",              ZhCN = "服务任务",       ZhTW = "服務任務",       En = "Service Task",   Ja = "サービスタスク",   Ko = "서비스 작업" },
         new() { LangKey = "oa.designer.svc.kind",               ZhCN = "服务类型",       ZhTW = "服務類型",       En = "Service Type",   Ja = "サービス種別",     Ko = "서비스 유형" },
-        new() { LangKey = "oa.designer.svc.kind.dataWriteback", ZhCN = "数据回写",       ZhTW = "資料回寫",       En = "Data Writeback", Ja = "データ書き戻し",   Ko = "데이터 기록" },
+        new() { LangKey = "oa.designer.svc.kind.dataWriteback", ZhCN = "数据回写",       ZhTW = "資料回寫",       En = "Data Writeback", Ja = "データ書き戻し",   Ko = "데이터 쓰기" },
         new() { LangKey = "oa.designer.svc.kind.webApi",        ZhCN = "接口调用",       ZhTW = "介面呼叫",       En = "API Call",       Ja = "API呼び出し",      Ko = "API 호출" },
         new() { LangKey = "oa.designer.svc.kind.timer",         ZhCN = "定时器",         ZhTW = "計時器",         En = "Timer",          Ja = "タイマー",         Ko = "타이머" },
 
         // ── 数据回写：动作 / 模式 / 参数模板 (NodePropertyPanel.vue) ──
-        new() { LangKey = "oa.designer.svc.action",             ZhCN = "动作",           ZhTW = "動作",           En = "Action",         Ja = "アクション",       Ko = "액션" },
+        new() { LangKey = "oa.designer.svc.action",             ZhCN = "动作",           ZhTW = "動作",           En = "Action",         Ja = "アクション",       Ko = "동작" },
         new() { LangKey = "oa.designer.svc.mode",               ZhCN = "执行模式",       ZhTW = "執行模式",       En = "Execution Mode", Ja = "実行モード",       Ko = "실행 모드" },
         new() { LangKey = "oa.designer.svc.mode.sync",          ZhCN = "同步",           ZhTW = "同步",           En = "Synchronous",    Ja = "同期",             Ko = "동기" },
         new() { LangKey = "oa.designer.svc.mode.async",         ZhCN = "异步",           ZhTW = "非同步",         En = "Asynchronous",   Ja = "非同期",           Ko = "비동기" },
@@ -36,7 +36,7 @@ public static class I18nOaServiceTaskScreenSeed
         new() { LangKey = "oa.designer.svc.delayMode.untilExpr",ZhCN = "到表达式时间",   ZhTW = "到運算式時間",   En = "Until Expression", Ja = "式で指定した時刻まで", Ko = "표현식 시각까지" },
         new() { LangKey = "oa.designer.svc.delayValue",         ZhCN = "延时值",         ZhTW = "延時值",         En = "Delay Value",    Ja = "遅延値",           Ko = "지연 값" },
         new() { LangKey = "oa.designer.svc.delayValueHint",     ZhCN = "如 3d/2h/30m，或日期/表达式", ZhTW = "如 3d/2h/30m，或日期/運算式", En = "e.g. 3d/2h/30m, or a date/expression", Ja = "例 3d/2h/30m、または日付/式", Ko = "예 3d/2h/30m 또는 날짜/표현식" },
-        new() { LangKey = "oa.designer.svc.timerAction",        ZhCN = "到点动作",       ZhTW = "到點動作",       En = "On-Fire Action", Ja = "発火時アクション", Ko = "실행 시 액션" },
+        new() { LangKey = "oa.designer.svc.timerAction",        ZhCN = "到点动作",       ZhTW = "到點動作",       En = "On-Fire Action", Ja = "発火時アクション", Ko = "실행 시 동작" },
         // 票8：到点动作类型（none / 数据回写 / webApi 连接器）——补 spec §5.3「定时到点发 webApi」缺口
         new() { LangKey = "oa.designer.svc.timerActionKind",       ZhCN = "到点动作类型",   ZhTW = "到點動作類型",   En = "On-Fire Action Type", Ja = "発火時アクション種別", Ko = "실행 시 액션 유형" },
         new() { LangKey = "oa.designer.svc.timerActionKind.none",  ZhCN = "无（纯等待）",   ZhTW = "無（純等待）",   En = "None (pure wait)",    Ja = "なし（待機のみ）",     Ko = "없음(대기만)" },
@@ -49,8 +49,8 @@ public static class I18nOaServiceTaskScreenSeed
         new() { LangKey = "oa.designer.svc.reloadCatalog",      ZhCN = "重新加载服务目录", ZhTW = "重新載入服務目錄", En = "Reload service catalog", Ja = "サービスカタログを再読み込み", Ko = "서비스 카탈로그 다시 불러오기" },
 
         // ── 失败边 (EdgePropertyPanel.vue) ──
-        new() { LangKey = "oa.designer.svc.errorEdge",          ZhCN = "失败边",         ZhTW = "失敗邊",         En = "Error Edge",     Ja = "失敗エッジ",       Ko = "실패 엣지" },
-        new() { LangKey = "oa.designer.svc.errorEdgeHint",      ZhCN = "服务任务重试耗尽后沿此边流转", ZhTW = "服務任務重試耗盡後沿此邊流轉", En = "Taken when the service task exhausts its retries", Ja = "サービスタスクのリトライを使い切ったときにこのエッジを通ります", Ko = "서비스 태스크가 재시도를 모두 소진하면 이 엣지로 진행됩니다" },
+        new() { LangKey = "oa.designer.svc.errorEdge",          ZhCN = "失败边",         ZhTW = "失敗邊",         En = "Error Edge",     Ja = "失敗エッジ",       Ko = "실패 분기" },
+        new() { LangKey = "oa.designer.svc.errorEdgeHint",      ZhCN = "服务任务重试耗尽后沿此边流转", ZhTW = "服務任務重試耗盡後沿此邊流轉", En = "Taken when the service task exhausts its retries", Ja = "サービスタスクのリトライを使い切ったときにこのエッジを通ります", Ko = "서비스 태스크가 재시도를 모두 소진하면 이 분기로 진행됩니다" },
 
         // ── 前端校验消息 (designerModel.ts validateClient) ──
         new() { LangKey = "oa.designer.errServiceConfig",       ZhCN = "服务任务配置不完整", ZhTW = "服務任務配置不完整", En = "Service task config incomplete", Ja = "サービスタスクの設定が不完全です", Ko = "서비스 태스크 구성이 불완전합니다" },
