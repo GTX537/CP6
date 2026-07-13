@@ -1,5 +1,5 @@
 /* ============================================================
- * Space 空間管理 i18n シード 第2弾（波3 生命周期・3 画面）
+ * Space 空間管理 i18n シード 第2弾（波3 生命周期・3 画面 + 波5 追補）
  * ============================================================
  * 範囲：space.rule.* / space.publish.* / space.events.*
  * 対象テーブル：Sys_Langs（列 LangKey / ZhCN / ZhTW / En / Ja / Ko）
@@ -8,11 +8,11 @@
  *
  * キーの唯一の権威 = 3 コンポーネント実コード grep（Task 5 で対照済み）:
  *   SpaceCodeRuleView.vue + SegmentsEditor.vue（space.rule.*・64 件）
- *   SpacePublishView.vue（space.publish.*・45 件）
+ *   SpacePublishView.vue（space.publish.*・47 件、波5 で goCodeRule/dupGroupTitle 追補）
  *   SpaceEventsView.vue（space.events.*・20 件）
  * ★ space.common.* は 波2 space-i18n-seed.sql で登録済みのため本ファイルには含めない
  *   （edit/delete/cancel/save/action/required/success/confirmDelete/confirm 等は再利用）。
- * 合計 129 キー = rule 64 + publish 45 + events 20。
+ * 合計 131 キー = rule 64 + publish 47 + events 20。
  * ============================================================ */
 SET NOCOUNT ON; SET XACT_ABORT ON;
 SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;
@@ -97,7 +97,7 @@ INSERT INTO #i18n2 VALUES
   (N'space.rule.pv.precheck',      N'预检',       N'預檢',       N'Precheck',          N'事前チェック',        N'사전 검사'),
   (N'space.rule.pv.ok',            N'校验通过',   N'校驗通過',   N'OK',                N'問題なし',            N'정상'),
   (N'space.rule.pv.empty',         N'暂无预览',   N'尚無預覽',   N'No preview',        N'プレビューなし',      N'미리보기 없음'),
-  -- ══ space.publish.*（SpacePublishView・45 件）══════════════════════════════
+  -- ══ space.publish.*（SpacePublishView・47 件）══════════════════════════════
   (N'space.publish.title',         N'发布中心',   N'發佈中心',   N'Publish Center',    N'発行センター',        N'게시 센터'),
   (N'space.publish.site',          N'站点',       N'站點',       N'Site',              N'拠点',                N'거점'),
   (N'space.publish.floor',         N'楼层',       N'樓層',       N'Floor',             N'フロア',              N'층'),
@@ -143,6 +143,9 @@ INSERT INTO #i18n2 VALUES
   (N'space.publish.status.0',      N'草稿',       N'草稿',       N'Draft',             N'下書き',              N'초안'),
   (N'space.publish.status.1',      N'已发布',     N'已發佈',     N'Published',         N'発行済',              N'게시됨'),
   (N'space.publish.status.2',      N'已停用',     N'已停用',     N'Deactivated',       N'停止済',              N'비활성'),
+  -- ── 波5：错误呈现统一（重复码明细展开 + 去编码规则页引导）──
+  (N'space.publish.goCodeRule',    N'去编码规则页', N'前往編碼規則頁', N'Go to Code Rules', N'採番ルールへ',        N'코드 규칙으로 이동'),
+  (N'space.publish.dupGroupTitle', N'重复组 {n}（{c} 个库位）', N'重複組 {n}（{c} 個庫位）', N'Duplicate group {n} ({c} locations)', N'重複グループ {n}（{c} 件）', N'중복 그룹 {n} ({c}개 로케이션)'),
   -- ══ space.events.*（SpaceEventsView・20 件）══════════════════════════════
   (N'space.events.title',          N'集成事件监视', N'整合事件監視', N'Integration Events', N'連携イベント監視', N'연동 이벤트 모니터'),
   (N'space.events.refresh',        N'刷新',       N'重新整理',   N'Refresh',           N'更新',                N'새로고침'),
@@ -173,6 +176,6 @@ OUTPUT $action INTO @actionLog;
 
 DECLARE @ins INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'INSERT');
 DECLARE @upd INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'UPDATE');
-PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 129 キー想定）';
+PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 131 キー想定）';
 DROP TABLE #i18n2;
 PRINT '=== Done ===';

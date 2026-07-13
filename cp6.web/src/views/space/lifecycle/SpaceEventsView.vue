@@ -44,6 +44,7 @@ import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
 import { publishApi } from '@/api/space/publish'
+import { useTOr } from '@/i18n/tOr'
 import type { SpaceEventVO } from '@/types/space/scene'
 import {
   startSpaceConnection, onLocationPublished, offLocationPublished,
@@ -51,6 +52,8 @@ import {
 } from '@/utils/spaceHub'
 
 const { t } = useI18n()
+// lastError 可能是 E-SPACE 码：注册了词条即本地化，否则原样透出
+const tr = useTOr()
 
 const PAGE_SIZE = 50
 const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
@@ -106,7 +109,7 @@ function nextPage() {
   listRef.value?.reload()
 }
 function showError(msg: string) {
-  ElMessageBox.alert(msg, t('space.events.col.lastError'), { type: 'error' })
+  ElMessageBox.alert(tr(msg), t('space.events.col.lastError'), { type: 'error' })
 }
 
 // SignalR：発布/停用プッシュ受信 → 第 1 頁へ戻して再取得（低頻イベント、全播）
