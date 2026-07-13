@@ -24,17 +24,21 @@ internal sealed class InclusiveSplitNodeHandler : INodeHandler
         var active = truthy.Count > 0 ? truthy : defaults.Take(1).ToList();
 
         var forkId = Guid.NewGuid();
+        // 两阶段（终审 Critical#1，与 ParallelSplitNodeHandler 同款）：先全量 SpawnToken 再逐个 EnterNodeAsync，
+        // 防「激活边直连 join 先处理」时首枚子 token 看不到未生兄弟 → join 提前放行+二次放行+孤儿 Active 永泊。
         var activated = new List<string>();
+        var spawned = new List<(FlowNode Target, Wf_FlowToken Child)>();
         foreach (var edge in active)
         {
             var target = FlowEngine.FindNode(schema, edge.To);
             if (target is null) continue;
-            var child = eng.SpawnToken(inst, target, parent: ctx.Token.Id, fork: forkId);
+            spawned.Add((target, eng.SpawnToken(inst, target, parent: ctx.Token.Id, fork: forkId)));
             activated.Add(edge.To);
-            await eng.EnterNodeAsync(inst, schema, target, child);
         }
         if (activated.Count == 0)   // 防御式兜底：校验漏网（无 default 且全假 / 激活边目标缺失）
             throw new InvalidOperationException($"E-WF-020: inclusiveSplit {node.Id} 无可激活出边");
+        foreach (var (target, child) in spawned)
+            await eng.EnterNodeAsync(inst, schema, target, child);
         eng.AddHistory(inst.Id, node.Id, inst.StarterId, "inclusiveSplit",
             "activated: " + string.Join(",", activated));
     }

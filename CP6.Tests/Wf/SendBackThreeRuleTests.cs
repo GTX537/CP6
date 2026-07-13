@@ -198,6 +198,40 @@ public class SendBackThreeRuleTests
     }
 
     [Fact]
+    public async Task UnreachableTarget_Throws_E_WF_012_NothingMutated()
+    {
+        // 终审 pin：C-T3 把 SiblingBranch 判定挪到 IsUpstreamReachable 之前——本测锁死
+        // 「非上游、非兄弟」的幽灵目标（join 下游 approval）仍被 E-WF-012 在任何状态突变之前拦截。
+        // s → n0 → split → ( a1 → a2 , b1 ) → join → post → end；从 a2 退回 post（下游=上游不可达）
+        using var db = NewDb();
+        Guid u0 = Guid.NewGuid(), ua1 = Guid.NewGuid(), ua2 = Guid.NewGuid(), ub = Guid.NewGuid(), up = Guid.NewGuid();
+        var schema = P(u0, ua1, ua2, ub);
+        schema.Nodes.Add(new FlowNode { Id = "post", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = up });
+        schema.Edges.RemoveAll(e => e.From == "join");
+        schema.Edges.Add(new FlowEdge { From = "join", To = "post" });
+        schema.Edges.Add(new FlowEdge { From = "post", To = "end" });
+        db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "ghost", FlowName = "x", FormKey = "f",
+            SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
+        await db.SaveChangesAsync();
+        await Engine(db).SubmitAsync("ghost", Guid.NewGuid(), "{}");
+        var t0 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == u0 && t.Status == FlowTaskStatus.Pending);
+        await Engine(db).ActAsync(t0.Id, u0, approve: true);
+        var t1 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua1 && t.Status == FlowTaskStatus.Pending);
+        await Engine(db).ActAsync(t1.Id, ua1, approve: true);            // a 支到 a2
+
+        var t2 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua2 && t.Status == FlowTaskStatus.Pending);
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => Engine(db).SendBackAsync(t2.Id, ua2, new SendBackTarget("node", "post")));
+        Assert.Contains("E-WF-012", ex.Message);
+
+        // 先校验后写：拒绝发生在任何状态突变之前（与 E-WF-019 零突变断言同款）
+        Assert.True(await db.Wf_FlowTasks.AnyAsync(t => t.Id == t2.Id && t.Status == FlowTaskStatus.Pending));
+        Assert.True(await db.Wf_FlowTokens.AnyAsync(t => t.NodeId == "a2" && t.Status == FlowTokenStatus.Active));
+        Assert.True(await db.Wf_FlowTokens.AnyAsync(t => t.NodeId == "b1" && t.Status == FlowTokenStatus.Active));
+        Assert.Equal(0, await db.Wf_FlowHistories.CountAsync(h => h.Action == "sendback"));
+    }
+
+    [Fact]
     public async Task Nested_SameBranch_OuterStripLayer_InnerSiblingsKilled_OuterSiblingSurvives()
     {
         // s → outer → ( h1 → inner → (x1,x2) → ij , b ) → oj → end；x1 上退回 h1 → 剥离外层支（含 x2）、b 不倒
