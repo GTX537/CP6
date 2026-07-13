@@ -46,26 +46,52 @@ watch(
 )
 
 // ── serviceKind 切换时清理另一分支的残留字段 ──────────────────────
-// cloneNode/emit 全量展开：用户把 serviceTask 从 webApi 切到 timer/dataWriteback 后，
-// serviceConnectorName/servicePath 面板不再展示却仍残留在 emit 出的 patch 里。
+// cloneNode/emit 全量展开：用户切换 serviceKind 后，面板不再展示的字段仍残留在 emit 出的 patch 里。
 // 运行期 ServiceTaskActionRef.Snapshot 的优先级规则（timer + ConnectorName → actionKind='webApi'，
-// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:54-73）会据此到点静默外呼用户以为已删的连接器。
+// 见 CP6.Core/Services/Wf/ServiceTaskActionRef.cs:59-73）会据此到点静默外呼用户以为已删的连接器。
 // 故切 kind 时必须主动清残留——切勿删除本清理，否则复现 timer 静默 webApi 外呼缺陷。
-// 注意：timer 的 serviceActionName 是面板可见的“到点动作”，是合法配置，必须保留。
+// 票8：三 kind 的合法字段面不同——
+//   dataWriteback：仅 serviceActionName 合法，无连接器/路径。
+//   webApi：仅连接器/路径合法，无“到点动作”。
+//   timer：connector/path/actionName 三者均可能合法（由「到点动作类型」timerActionKind 互斥控制），
+//         故切「到」timer 时不在此清理；切「离」timer 才由目标 kind 规则清。
 // syncing 守卫复用上方模式：初始 clone / 节点切换加载期间 local 被整体替换，此时不清理（避免误清）。
 watch(
   () => local.value.serviceKind,
   (kind) => {
     if (syncing.value) return
     if (local.value.type !== 'serviceTask') return
-    if (kind !== 'webApi') {
+    if (kind === 'dataWriteback') {
       local.value.serviceConnectorName = undefined
       local.value.servicePath = undefined
-    } else {
+    } else if (kind === 'webApi') {
       local.value.serviceActionName = undefined // 卫生对称：webApi 无“到点动作”
     }
+    // kind === 'timer'：不在此清理；由 timerActionKind 切换负责清非选中变体（见下）。
   },
 )
+
+// ── 票8：timer「到点动作类型」——从当前已填字段派生，切换时清非选中变体的残留 ──
+// 派生优先级与 Snapshot 一致：有 ConnectorName 即 'api'（Snapshot 优先判 webApi），
+// 否则有 ActionName 即 'write'，否则 'none'。setter 保证互斥清理——选 write/none 时
+// 必须清 serviceConnectorName，否则到点会静默外呼（见上方 Snapshot 优先级说明）。
+const timerActionKind = computed<'none' | 'write' | 'api'>({
+  get: () => local.value.serviceConnectorName ? 'api'
+           : local.value.serviceActionName ? 'write'
+           : 'none',
+  set: (v) => {
+    if (v === 'api') {
+      local.value.serviceActionName = undefined            // 互斥：webApi 变体清回写动作
+    } else if (v === 'write') {
+      local.value.serviceConnectorName = undefined         // 互斥：回写变体清连接器/路径
+      local.value.servicePath = undefined
+    } else {
+      local.value.serviceConnectorName = undefined         // none：全清
+      local.value.servicePath = undefined
+      local.value.serviceActionName = undefined
+    }
+  },
+})
 
 // ── Timeout: stored as hours, UI shows days ───────────────────────
 const timeoutDays = computed({
@@ -456,7 +482,7 @@ async function searchCcUsers(kw: string) {
             </el-form-item>
           </template>
 
-          <!-- 定时器：延时模式 / 延时值 / 可选到点动作 -->
+          <!-- 定时器：延时模式 / 延时值 / 到点动作（none | 回写 | webApi 变体，票8 补 spec §5.3 缺口）-->
           <template v-else-if="local.serviceKind === 'timer'">
             <el-form-item :label="t('oa.designer.svc.delayMode')">
               <el-radio-group v-model="local.serviceDelayMode">
@@ -474,7 +500,17 @@ async function searchCcUsers(kw: string) {
               />
             </el-form-item>
 
-            <el-form-item :label="t('oa.designer.svc.timerAction')">
+            <!-- 到点动作类型（互斥：none / 回写 / webApi 连接器）-->
+            <el-form-item :label="t('oa.designer.svc.timerActionKind')">
+              <el-select v-model="timerActionKind" style="width: 100%">
+                <el-option value="none"  :label="t('oa.designer.svc.timerActionKind.none')" />
+                <el-option value="write" :label="t('oa.designer.svc.timerActionKind.write')" />
+                <el-option value="api"   :label="t('oa.designer.svc.timerActionKind.api')" />
+              </el-select>
+            </el-form-item>
+
+            <!-- 回写变体：动作下拉 -->
+            <el-form-item v-if="timerActionKind === 'write'" :label="t('oa.designer.svc.timerAction')">
               <el-select v-model="local.serviceActionName" style="width: 100%" clearable>
                 <el-option
                   v-for="a in catalog.actions"
@@ -484,6 +520,27 @@ async function searchCcUsers(kw: string) {
                 />
               </el-select>
             </el-form-item>
+
+            <!-- webApi 变体：连接器 + 路径（票8 补齐 spec §5.3 缺口）-->
+            <template v-else-if="timerActionKind === 'api'">
+              <el-form-item :label="t('oa.designer.svc.connector')">
+                <el-select v-model="local.serviceConnectorName" style="width: 100%" clearable>
+                  <el-option
+                    v-for="c in catalog.connectors"
+                    :key="c.name"
+                    :value="c.name"
+                    :label="c.label || c.name"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="t('oa.designer.svc.path')">
+                <el-input
+                  v-model="local.servicePath"
+                  :placeholder="t('oa.designer.svc.pathHint')"
+                  clearable
+                />
+              </el-form-item>
+            </template>
           </template>
 
           <!-- 重试（三 kind 共用）-->
