@@ -16,6 +16,7 @@ import type { FlowSchemaDto } from './designerModel'
 import StartNode from './nodes/StartNode.vue'
 import ApprovalNode from './nodes/ApprovalNode.vue'
 import GatewayNode from './nodes/GatewayNode.vue'
+import InclusiveGatewayNode from './nodes/InclusiveGatewayNode.vue'
 import EndNode from './nodes/EndNode.vue'
 import ServiceTaskNode from './nodes/ServiceTaskNode.vue'
 
@@ -390,6 +391,12 @@ function focusNode(nodeId: string) {
           <template #node-parallelJoin="nodeProps">
             <GatewayNode v-bind="nodeProps" />
           </template>
+          <template #node-inclusiveSplit="nodeProps">
+            <InclusiveGatewayNode v-bind="nodeProps" />
+          </template>
+          <template #node-inclusiveJoin="nodeProps">
+            <InclusiveGatewayNode v-bind="nodeProps" />
+          </template>
           <template #node-end="nodeProps">
             <EndNode v-bind="nodeProps" />
           </template>
@@ -515,6 +522,9 @@ function focusNode(nodeId: string) {
 .dot-approval { background: var(--cp-info); }
 .dot-parallelSplit,
 .dot-parallelJoin { background: var(--cp-warn); }
+/* inclusive 网关：空心 dot 区分 parallel 实心（BPMN 记号一致性）。 */
+.dot-inclusiveSplit,
+.dot-inclusiveJoin { background: transparent; border: 2px solid var(--cp-warn); }
 .dot-end { background: var(--cp-muted); }
 /* serviceTask 三 kind 共用 brand 青，与 ServiceTaskNode 节点身份一致（虚线机器节点）。 */
 .dot-serviceTask { background: var(--cp-brand); }

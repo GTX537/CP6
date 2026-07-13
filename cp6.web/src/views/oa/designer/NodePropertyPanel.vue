@@ -122,6 +122,19 @@ const timeoutDays = computed({
 const isApproval = computed(() => local.value.type === 'approval')
 const isServiceTask = computed(() => local.value.type === 'serviceTask')
 
+// 分支驳回策略（parallelSplit/inclusiveSplit 专属，hardening D-T2）
+const isSplitGateway = computed(
+  () => local.value.type === 'parallelSplit' || local.value.type === 'inclusiveSplit',
+)
+
+// 默认 cascade 不落 schema（旧流程零污染，与后端 null=cascade 语义一致）
+const branchReject = computed({
+  get: () => local.value.onBranchReject ?? 'cascade',
+  set: (v: 'cascade' | 'prune') => {
+    local.value.onBranchReject = v === 'cascade' ? undefined : v
+  },
+})
+
 // ── 服务目录（C-T3）：serviceTask 节点的动作/连接器下拉数据源 ────────
 const catalog = ref<ServiceCatalog>({ actions: [], connectors: [] })
 const catalogLoaded = ref(false)
@@ -273,6 +286,17 @@ async function searchCcUsers(kw: string) {
           <el-form-item :label="t('oa.designer.nodeType')">
             <CpTag tone="muted">{{ local.type }}</CpTag>
           </el-form-item>
+
+          <!-- ── 分支驳回策略（parallelSplit/inclusiveSplit 专属，hardening D-T2）────── -->
+          <template v-if="isSplitGateway">
+            <el-form-item :label="t('oa.designer.gw.branchReject')">
+              <el-select v-model="branchReject" style="width: 100%">
+                <el-option value="cascade" :label="t('oa.designer.gw.branchReject.cascade')" />
+                <el-option value="prune"   :label="t('oa.designer.gw.branchReject.prune')" />
+              </el-select>
+              <span class="gw-hint">{{ t('oa.designer.gw.branchRejectHint') }}</span>
+            </el-form-item>
+          </template>
 
           <!-- approval-specific fields (single-stage; hidden when 串簽 enabled) -->
           <template v-if="isApproval && !stageEnabled">
@@ -845,6 +869,14 @@ async function searchCcUsers(kw: string) {
   overflow-y: auto;
   height: 100%;
   box-sizing: border-box;
+}
+
+.gw-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--cp-muted);
 }
 
 .panel-title {
