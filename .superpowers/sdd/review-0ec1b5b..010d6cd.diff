@@ -1,0 +1,94 @@
+# Review package: 0ec1b5b..010d6cd
+
+## Commits
+010d6cd feat(wfs-trigger): D-T1 WfApiKeyHelper 32字节随机+SHA-256入库+常量时间校验
+
+## Files changed
+ CP6.Core/Services/Wf/WfApiKeyHelper.cs | 28 ++++++++++++++++++++++
+ CP6.Tests/Wf/WfApiKeyHelperTests.cs    | 43 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/WfApiKeyHelper.cs b/CP6.Core/Services/Wf/WfApiKeyHelper.cs
+new file mode 100644
+index 0000000..79851bd
+--- /dev/null
++++ b/CP6.Core/Services/Wf/WfApiKeyHelper.cs
+@@ -0,0 +1,28 @@
++// CP6.Core/Services/Wf/WfApiKeyHelper.cs
++using System.Security.Cryptography;
++using System.Text;
++
++namespace CP6.Core.Services.Wf;
++
++/// <summary>message 触发器 API key 基建（spec §3.4）：32 字节高熵随机，明文只在创建/重置响应显示一次，
++/// 库内仅存 SHA-256 hex（泄库不可还原）；校验常量时间比较。复刻 RefreshTokenService/TwoFactorService 先例。</summary>
++public static class WfApiKeyHelper
++{
++    public static string NewRawKey() => Base64Url(RandomNumberGenerator.GetBytes(32));
++
++    public static string HashOf(string raw)
++        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(raw)));
++
++    public static bool Verify(string raw, string? storedHash)
++    {
++        if (string.IsNullOrEmpty(raw) || string.IsNullOrEmpty(storedHash)) return false;
++        var candidate = HashOf(raw);
++        var stored = storedHash.ToUpperInvariant();            // ToHexString 恒大写，防御性归一
++        if (candidate.Length != stored.Length) return false;   // FixedTimeEquals 要求等长
++        return CryptographicOperations.FixedTimeEquals(
++            Encoding.ASCII.GetBytes(candidate), Encoding.ASCII.GetBytes(stored));
++    }
++
++    private static string Base64Url(byte[] b)
++        => Convert.ToBase64String(b).TrimEnd('=').Replace('+', '-').Replace('/', '_');
++}
+diff --git a/CP6.Tests/Wf/WfApiKeyHelperTests.cs b/CP6.Tests/Wf/WfApiKeyHelperTests.cs
+new file mode 100644
+index 0000000..d22fce7
+--- /dev/null
++++ b/CP6.Tests/Wf/WfApiKeyHelperTests.cs
+@@ -0,0 +1,43 @@
++// CP6.Tests/Wf/WfApiKeyHelperTests.cs
++using CP6.Core.Services.Wf;
++using Xunit;
++
++public class WfApiKeyHelperTests
++{
++    [Fact]
++    public void NewRawKey_Is32ByteHighEntropy_Base64Url()
++    {
++        var a = WfApiKeyHelper.NewRawKey();
++        var b = WfApiKeyHelper.NewRawKey();
++        Assert.NotEqual(a, b);
++        Assert.True(a.Length >= 43);                       // 32 字节 base64url ≈ 43 字符
++        Assert.DoesNotContain("+", a); Assert.DoesNotContain("/", a); Assert.DoesNotContain("=", a);
++    }
++
++    [Fact]
++    public void HashOf_Sha256Hex_64Chars_Deterministic()
++    {
++        var h1 = WfApiKeyHelper.HashOf("k");
++        var h2 = WfApiKeyHelper.HashOf("k");
++        Assert.Equal(h1, h2);
++        Assert.Equal(64, h1.Length);
++        Assert.NotEqual("k", h1);
++    }
++
++    [Fact]
++    public void Verify_RoundTrip_True_WrongKey_False()
++    {
++        var raw = WfApiKeyHelper.NewRawKey();
++        var hash = WfApiKeyHelper.HashOf(raw);
++        Assert.True(WfApiKeyHelper.Verify(raw, hash));
++        Assert.False(WfApiKeyHelper.Verify(raw + "x", hash));
++        Assert.False(WfApiKeyHelper.Verify("", hash));
++    }
++
++    [Fact]
++    public void Verify_NullOrEmptyStoredHash_False()
++    {
++        Assert.False(WfApiKeyHelper.Verify("any", null));
++        Assert.False(WfApiKeyHelper.Verify("any", ""));
++    }
++}

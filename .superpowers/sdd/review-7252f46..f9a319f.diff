@@ -1,0 +1,231 @@
+# Review package: 7252f46..f9a319f
+
+## Commits
+f9a319f feat(wfs-trigger): C-T2 dispatcher 目标泛化 fallback(唯一 Integration 触点)+Echo 样例事件源
+
+## Files changed
+ .../Integration/IntegrationEventDispatcher.cs      | 22 ++++-
+ CP6.Tests/Wf/WfTriggerDispatchTests.cs             | 93 ++++++++++++++++++++++
+ .../Integration/WfTriggerEchoController.cs         | 32 ++++++++
+ 3 files changed, 144 insertions(+), 3 deletions(-)
+
+## Diff
+diff --git a/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs b/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
+index 88c33e6..954900c 100644
+--- a/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
++++ b/CP6.Core/Services/Integration/IntegrationEventDispatcher.cs
+@@ -73,58 +73,74 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
+             return r.Success;
+         },
+     };
+ 
+     private readonly IMesBridgeHook _mes;
+     private readonly IWmsBridgeHook _wms;
+     private readonly IErpBridgeHook _erp;
+     private readonly IOrderCancelBridgeHook _cancel;
+     private readonly IFinBridgeHook _fin;
+     private readonly ISpaceBridgeHook _space;
++    private readonly IWfTriggerBridgeHook _wfTrigger;
+ 
+     public IntegrationEventDispatcher(
+         IMesBridgeHook mes,
+         IWmsBridgeHook wms,
+         IErpBridgeHook erp,
+         IOrderCancelBridgeHook cancel,
+         IFinBridgeHook fin,
+-        ISpaceBridgeHook space)
++        ISpaceBridgeHook space,
++        // 可选：既有 6 参构造点（测试）零改动仍编译；DI 已注册 IWfTriggerBridgeHook 会注入真实 hook。
++        IWfTriggerBridgeHook? wfTrigger = null)
+     {
+         _mes = mes;
+         _wms = wms;
+         _erp = erp;
+         _cancel = cancel;
+         _fin = fin;
+         _space = space;
++        _wfTrigger = wfTrigger ?? new NoOpWfTriggerBridgeHook();
+     }
+ 
+     /// <summary>
+     /// Builds the dispatcher route key from source, target, and hook name.
+     /// </summary>
+     public static string RouteKey(string source, string target, string hook)
+         => $"{source}|{target}|{hook}";
+ 
+     /// <inheritdoc />
+-    public Task<bool> DispatchAsync(IntegrationEvent evt, CancellationToken ct = default)
++    public async Task<bool> DispatchAsync(IntegrationEvent evt, CancellationToken ct = default)
+     {
+         ct.ThrowIfCancellationRequested();
+ 
+         var key = RouteKey(evt.SourceModule, evt.TargetModule, evt.HookName);
++
++        // WF 触发器目标泛化路由（spec §3.3）：target=WF & hook=OnEventAsync 不看 source 直接路由。
++        // 走 ReplayEventAsync（重放不再写新 outbox 行，映射表⑦）；DISPATCH-404 语义对其余路由不变。
++        if (evt.TargetModule == "WF" && evt.HookName == nameof(IWfTriggerBridgeHook.OnEventAsync))
++        {
++            var p = JsonSerializer.Deserialize<WfTriggerEventPayload>(evt.PayloadJson,
++                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
++                    ?? throw new InvalidOperationException("DISPATCH-400: empty WfTrigger payload");
++            var r = await _wfTrigger.ReplayEventAsync(p.EventKey, p.EventId, p.PayloadJson, p.UserName);
++            return r.Success;
++        }
++
+         if (!Routes.TryGetValue(key, out var route))
+         {
+             throw new InvalidOperationException(
+                 $"DISPATCH-404: unknown route {evt.SourceModule}->{evt.TargetModule}.{evt.HookName}");
+         }
+ 
+         var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
+         var context = new DispatchContext(_mes, _wms, _erp, _cancel, _fin, _space, payload);
+-        return route(context);
++        return await route(context);
+     }
+ 
+     private sealed class DispatchContext
+     {
+         public DispatchContext(
+             IMesBridgeHook mes,
+             IWmsBridgeHook wms,
+             IErpBridgeHook erp,
+             IOrderCancelBridgeHook cancel,
+             IFinBridgeHook fin,
+diff --git a/CP6.Tests/Wf/WfTriggerDispatchTests.cs b/CP6.Tests/Wf/WfTriggerDispatchTests.cs
+new file mode 100644
+index 0000000..d0da677
+--- /dev/null
++++ b/CP6.Tests/Wf/WfTriggerDispatchTests.cs
+@@ -0,0 +1,93 @@
++// CP6.Tests/Wf/WfTriggerDispatchTests.cs
++// dispatcher 用 NoOp 六 hook + 可断言的 FakeWfTriggerHook（记录收到的参数、可控返回）构造。
++// NoOp 类名照 CP6.Core/Services/Integration 实际（六个家族各有 NoOp——侦察已核）。
++using System;
++using System.Text.Json;
++using System.Threading.Tasks;
++using CP6.Core.Services.Integration;
++using CP6.Entity.DomainModels.Integration;
++using Moq;
++using Xunit;
++
++namespace CP6.Tests;
++
++public class WfTriggerDispatchTests
++{
++    private sealed class FakeWfTriggerHook : IWfTriggerBridgeHook
++    {
++        public string? LastMethod, LastEventKey, LastEventId, LastPayload, LastUser;
++        public bool NextSuccess = true;
++
++        public Task<WfTriggerBridgeResult> OnEventAsync(string eventKey, string eventId, string payloadJson, string? userName)
++            => Record("OnEventAsync", eventKey, eventId, payloadJson, userName);
++        public Task<WfTriggerBridgeResult> ReplayEventAsync(string eventKey, string eventId, string payloadJson, string? userName)
++            => Record("ReplayEventAsync", eventKey, eventId, payloadJson, userName);
++
++        private Task<WfTriggerBridgeResult> Record(string method, string k, string id, string p, string? u)
++        {
++            LastMethod = method; LastEventKey = k; LastEventId = id; LastPayload = p; LastUser = u;
++            return Task.FromResult(NextSuccess ? WfTriggerBridgeResult.Ok(1, 1) : WfTriggerBridgeResult.Failed("boom"));
++        }
++    }
++
++    private static (IntegrationEventDispatcher Dispatcher, FakeWfTriggerHook Fake) NewDispatcher()
++    {
++        var fake = new FakeWfTriggerHook();
++        // Space 家族无 NoOp（其余五家族有）——沿用既有 dispatcher 测试的 Mock.Of<ISpaceBridgeHook>() 口径。
++        var d = new IntegrationEventDispatcher(
++            new NoOpMesBridgeHook(), new NoOpWmsBridgeHook(), new NoOpErpBridgeHook(),
++            new NoOpOrderCancelBridgeHook(), new NoOpFinBridgeHook(), Mock.Of<ISpaceBridgeHook>(),
++            fake);
++        return (d, fake);
++    }
++
++    private static IntegrationEvent Evt(string source, string target, string hook, string payloadJson) => new()
++    {
++        Id = Guid.NewGuid(), SourceModule = source, TargetModule = target,
++        HookName = hook, PayloadJson = payloadJson, Status = IntegrationEventStatus.Failed, Attempts = 1,
++    };
++
++    [Fact]
++    public async Task Dispatch_TargetWF_OnEventAsync_RoutesToReplay_AnySource()
++    {
++        var (d, fake) = NewDispatcher();
++        var payload = JsonSerializer.Serialize(
++            new WfTriggerEventPayload("SPACE|OnLocationPublishedAsync", "EV-7", "{\"binNo\":\"B1\"}", "u"));
++
++        var ok = await d.DispatchAsync(Evt("SPACE", "WF", "OnEventAsync", payload));
++
++        Assert.True(ok);
++        Assert.Equal("ReplayEventAsync", fake.LastMethod);          // 重放入口，不是 OnEventAsync（映射表⑦）
++        Assert.Equal("SPACE|OnLocationPublishedAsync", fake.LastEventKey);
++        Assert.Equal("EV-7", fake.LastEventId);                     // eventId 原样复用（spec §2.2）
++        Assert.Equal("{\"binNo\":\"B1\"}", fake.LastPayload);
++        Assert.Equal("u", fake.LastUser);
++    }
++
++    [Fact]
++    public async Task Dispatch_TargetWF_OtherHookName_Still404()
++    {
++        var (d, _) = NewDispatcher();
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++            () => d.DispatchAsync(Evt("SPACE", "WF", "OnSomethingElse", "{}")));
++        Assert.Contains("DISPATCH-404", ex.Message);                // fallback 只认 OnEventAsync
++    }
++
++    [Fact]
++    public async Task Dispatch_ExistingRoutes_Unchanged_Unknown404()
++    {
++        var (d, _) = NewDispatcher();
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++            () => d.DispatchAsync(Evt("X", "Y", "Z", "{}")));
++        Assert.Contains("DISPATCH-404", ex.Message);                // 既有语义不变
++    }
++
++    [Fact]
++    public async Task Dispatch_TargetWF_BadPayload_Throws400()
++    {
++        var (d, _) = NewDispatcher();
++        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
++            () => d.DispatchAsync(Evt("SPACE", "WF", "OnEventAsync", "null")));
++        Assert.Contains("DISPATCH-400", ex.Message);                // 对齐 GetPayload 空负载语义
++    }
++}
+diff --git a/CP6.WebApi/Controllers/Integration/WfTriggerEchoController.cs b/CP6.WebApi/Controllers/Integration/WfTriggerEchoController.cs
+new file mode 100644
+index 0000000..216136d
+--- /dev/null
++++ b/CP6.WebApi/Controllers/Integration/WfTriggerEchoController.cs
+@@ -0,0 +1,32 @@
++using CP6.Core.Services.Integration;
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++
++namespace CP6.WebApi.Controllers.Integration;
++
++/// <summary>Echo 样例事件源（QA harness 用，对齐 ServiceTask EchoConnector 先例，spec §3.3）。
++/// 业务模块接入真实事件 = 与本控制器同款「一行调用」IWfTriggerBridgeHook.OnEventAsync。
++/// 落 Controllers.Integration（与 BridgeHealthController 同族）：本控制器是 Integration 桥接 hook
++/// 的 QA 触点，非业务 OA 写端点，不进 OA/WF 权限键守卫扫描面（OawfPermissionAttributeTests 计数锁 16）。</summary>
++[ApiController]
++[Route("api/oa/wf-trigger-echo")]
++[Authorize]
++public class WfTriggerEchoController : ControllerBase
++{
++    private readonly IWfTriggerBridgeHook _hook;
++
++    public WfTriggerEchoController(IWfTriggerBridgeHook hook) { _hook = hook; }
++
++    [HttpPost("fire")]
++    public async Task<IActionResult> Fire([FromBody] EchoEventReq r)
++    {
++        var result = await _hook.OnEventAsync(
++            string.IsNullOrWhiteSpace(r.EventKey) ? "QA|OnEchoAsync" : r.EventKey,
++            string.IsNullOrWhiteSpace(r.EventId) ? Guid.NewGuid().ToString("N") : r.EventId,
++            r.PayloadJson ?? "{}",
++            User.Identity?.Name);
++        return Ok(new { code = 0, message = "OK", data = new { result.Success, result.MatchedCount, result.FiredCount, result.Message } });
++    }
++
++    public record EchoEventReq(string? EventKey, string? EventId, string? PayloadJson);
++}

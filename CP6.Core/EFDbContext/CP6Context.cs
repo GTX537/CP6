@@ -411,6 +411,10 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     public DbSet<Wf_ApproverMap> Wf_ApproverMaps { get; set; }
     /// <summary>服务任务异步停泊作业台账（服务任务节点增量,§2.3）</summary>
     public DbSet<Wf_ServiceJob> Wf_ServiceJobs { get; set; }
+    /// <summary>流程触发器配置（事件触发 start 增量，spec §2.1）</summary>
+    public DbSet<Wf_FlowTrigger> Wf_FlowTriggers { get; set; }
+    /// <summary>触发流水（审计+幂等闸，spec §2.2）</summary>
+    public DbSet<Wf_TriggerFire> Wf_TriggerFires { get; set; }
 
     // ───── Space 空间数字底座 P1（ch00 9 表）─────
     /// <summary>站点（Space 章00，6 层模型顶层）</summary>
@@ -774,6 +778,21 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             b.HasIndex(x => new { x.TenantId, x.TokenId, x.NodeId })
                 .IsUnique().HasFilter("[Status] IN (0, 1)")
                 .HasDatabaseName("UX_Wf_ServiceJob_LiveToken");
+        });
+
+        // 流程触发器配置(spec §2.1):按流程查 / 全局扫描到期 / 事件键匹配
+        modelBuilder.Entity<Wf_FlowTrigger>(b =>
+        {
+            b.HasIndex(x => new { x.TenantId, x.FlowKey }).HasDatabaseName("IX_Wf_FlowTrigger_Flow");
+            // 扫描索引（spec §2.1 原文列序，不含 TenantId——worker 逐租户 scope 下全局过滤补 TenantId 条件）
+            b.HasIndex(x => new { x.Enabled, x.TriggerType, x.NextDueUtc }).HasDatabaseName("IX_Wf_FlowTrigger_Scan");
+            b.HasIndex(x => new { x.TenantId, x.EventKey }).HasDatabaseName("IX_Wf_FlowTrigger_Event");
+        });
+        // 触发流水(spec §2.2):复合唯一索引=幂等闸;键非空必填→无需 filtered(D7)
+        modelBuilder.Entity<Wf_TriggerFire>(b =>
+        {
+            b.HasIndex(x => new { x.TenantId, x.TriggerId, x.IdempotencyKey })
+                .IsUnique().HasDatabaseName("UX_Wf_TriggerFire_Idem");
         });
 
         // ═══════════════════════════════════════════════════════════

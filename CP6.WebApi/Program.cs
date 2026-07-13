@@ -125,6 +125,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverMapService, CP6.Core.Se
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
 builder.Services.AddScoped<CP6.Core.Services.Wf.FlowEngine>();                                                // 章03 流程引擎状态机（会签/条件/幂等）；WfServiceJobService ctor 注入具体类型（internal Resume/FailServiceTokenAsync 不在接口上）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine>(sp => sp.GetRequiredService<CP6.Core.Services.Wf.FlowEngine>()); // 接口与具体类共享同一 scoped 实例
+builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowTriggerService, CP6.Core.Services.Wf.FlowTriggerService>(); // 事件触发 start：三入口单一出口（D2）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowTriggerAdminService, CP6.Core.Services.Wf.FlowTriggerAdminService>(); // E-T1 触发器管理后端（CRUD/启停/手动试发/流水/key 重置/cron 预览）
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.StartNodeHandler>();      // WFS T4 节点处理器：开始
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ApprovalNodeHandler>();   // WFS T4 节点处理器：审批
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.EndNodeHandler>();        // WFS T4 节点处理器：结束
@@ -154,6 +156,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfTimeoutService, CP6.Core.Serv
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWorker>();                         // 章07 §4 超时扫描 Worker（周期扫到期待办，v1 单实例）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfServiceJobService, CP6.Core.Services.Wf.WfServiceJobService>();  // B-T2 服务任务异步底座扫描服务（spec §4.1）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobScanWorker>();                          // B-T2 服务任务扫描 Worker（20s 周期，lease 抢占，v1 单实例）
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTriggerWorker>();                                 // B-T3 事件触发 start：timer 扫描（30s 周期，RowVersion+占坑抢占，无 lease）
 // C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
@@ -482,6 +485,9 @@ else
 {
     builder.Services.AddScoped<CP6.Core.Services.Integration.IMesBridgeHook, CP6.Core.Services.Integration.NoOpMesBridgeHook>();
 }
+
+// 事件触发 start：WF 触发器桥接 hook（BridgeHook 家族，D4；NoOpWfTriggerBridgeHook 备配置停用切换）
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWfTriggerBridgeHook, CP6.Core.Services.Wf.WfTriggerBridgeHook>();
 
 // MES 実時間通知（SignalR 実装）
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesNotifier, CP6.WebApi.Services.SignalRMesNotifier>();
@@ -897,6 +903,10 @@ using (var scope = app.Services.CreateScope())
     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。20 去重元组（31 写端点去重）覆盖 6 有写端点 menu-key
     // （oa-form-search(736) 仅 Query search 只读豁免→view，不种）。
     CP6.WebApi.Seed.OawfPermissionSeed.EnsureSeeded(db);
+
+    // WFS 波③ 事件触发 F-T2：流程触发器权限点 FlowTrigger.View/Edit（菜单 734 oa-flow-admin）逐租户幂等种子。
+    // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 MenuKey 回填）之后。「贴点⊆种子」互锁。
+    CP6.WebApi.Seed.FlowTriggerPermissionSeed.EnsureSeeded(db);
 
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
@@ -1945,6 +1955,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaApproverScreenSeed.Items)  // 审批人解析高级策略 oa.designer.strategy.*/oa.approverMap.*/nav.739/E-WF-014/015
             .Concat(CP6.WebApi.Seed.I18nOaServiceTaskScreenSeed.Items)  // WFS 服务任务 oa.designer.svc.* + oa.designer.errServiceConfig + E-WF-016/017/018
             .Concat(CP6.WebApi.Seed.I18nOaKernelHardeningScreenSeed.Items)  // 内核 hardening oa.designer.gw.* + errInclusive*/errBranchReject + E-WF-019/020/021
+            .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突

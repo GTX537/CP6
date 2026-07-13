@@ -1,0 +1,387 @@
+# Review package: 82befb2..6f399c7
+
+## Commits
+6f399c7 fix(wfs-trigger): 终审C-1 CSRF形状精确豁免fire端点+I-1永不触发cron保存拒绝+顺手M-2/M-4/harness勘误
+
+## Files changed
+ .superpowers/sdd/w3-fixround-report.md             | 64 ++++++++++++++++++++++
+ CP6.Core/Services/Wf/FlowTriggerValidator.cs       |  4 ++
+ CP6.Tests/OawfPermissionAttributeTests.cs          |  4 +-
+ CP6.Tests/Wf/CsrfHubExemptionTests.cs              | 19 +++++++
+ CP6.Tests/Wf/FlowTriggerValidatorTests.cs          | 11 ++++
+ .../Integration/WfTriggerEchoController.cs         |  2 +-
+ CP6.WebApi/Middleware/CsrfMiddleware.cs            | 25 ++++++++-
+ cp6.web/src/views/oa/admin/FlowTriggerPanel.vue    |  6 +-
+ docs/superpowers/qa/wfs-flow-trigger/README.md     |  9 ++-
+ .../qa/wfs-flow-trigger/qa_flow_trigger.ps1        |  5 +-
+ 10 files changed, 141 insertions(+), 8 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/w3-fixround-report.md b/.superpowers/sdd/w3-fixround-report.md
+new file mode 100644
+index 0000000..7b06c0b
+--- /dev/null
++++ b/.superpowers/sdd/w3-fixround-report.md
+@@ -0,0 +1,64 @@
++# WFS 波③ 终审修复轮报告（feat/wfs-event-trigger）
++
++日期：2026-07-13 ｜ 实施者：终审修复轮 subagent ｜ 范围：C-1 / I-1 / M-4 / M-2 / harness 勘误（严格五项，零越界）
++
++## 一、TDD RED 实证
++
++靶向命令：`dotnet test CP6.Tests --filter "FullyQualifiedName~CsrfHubExemptionTests|FullyQualifiedName~FlowTriggerValidatorTests"`
++
++修复前（RED）：**Failed: 3, Passed: 22, Total: 25**，红的恰好是三个新用例：
++
++| 用例 | RED 失败点 |
++| --- | --- |
++| `CsrfHubExemptionTests.FlowTriggerFirePath_ShapeExactExemption("/api/oa/flow-triggers/3fa85f64-…-2c963f66afa6/fire", true)` | 现行 IsExempt 只豁免 /api/auth/login 与 /hubs → 返回 false，断言失败（= 生产 403 E-SEC-010 的测试面复现） |
++| 同上大写变体 `/API/OA/FLOW-TRIGGERS/…/FIRE` | 同上（大小写不敏感一并锁定） |
++| `FlowTriggerValidatorTests.Timer_NeverFiringCron_EWF022`（cron `0 0 30 2 *`） | 校验器只查 IsValid，语法合法即放行，不抛 E-WF-022 → Assert.ThrowsAsync 失败 |
++
++其余 7 个负例（裸集合 / {guid} / manual-fire / enable / reset-key / 非 GUID id / fire 后多余段）在 RED 轮即绿——证明它们是防回归护栏而非现状描述。
++
++## 二、修复内容
++
++### C-1（Critical）CSRF 形状精确豁免 fire 端点
++`CP6.WebApi/Middleware/CsrfMiddleware.cs`：
++- `IsExempt` 增加第三分支 `IsFlowTriggerFirePath(path)`；
++- 新增 `internal static bool IsFlowTriggerFirePath`：前缀 `/api/oa/flow-triggers/` + 字面尾 `/fire`（均 OrdinalIgnoreCase，与既有 PathMatches 风格一致）+ 中段 `Guid.TryParse` 判据（与路由约束 `{id:guid}` 同判据；含 `/` 必然解析失败，杜绝多段穿透）+ 长度护栏（防 `/api/oa/flow-triggers/fire` 这类重叠路径的负长 Substring）；
++- 注释落安全论据：fire 端点以自定义头 X-Api-Key 认证（跨站 HTML 无法设置自定义头）且无环境 cookie 凭据，CSRF 攻击模型不成立；同级管理端点（create/update/enable/reset-key/manual-fire）cookie 认证，严禁放宽为前缀豁免。
++
++### I-1（Important）永不触发 cron 保存拒绝
++`CP6.Core/Services/Wf/FlowTriggerValidator.cs` Timer 分支 IsValid 之后追加：
++```csharp
++if (WfCronHelper.NextUtc(cfg.Cron, DateTime.UtcNow) == null)
++    throw new InvalidOperationException("E-WF-022: cron 表达式永不触发");
++```
++堵死「语法合法但 NextDueUtc=null 入库静默死掉（无流水、无报错、扫描永不拾取）」路径。
++
++### M-4 陈旧计数注释（纯注释）
++- `WfTriggerEchoController.cs:10`：计数锁 16 → **17**；
++- `OawfPermissionAttributeTests.cs:33-34`：16 个控制器 → **17**、其余 15 个（Oa 全 11…）→ **其余 16 个（Oa 全 12…）**。断言零改动。
++
++### M-2 resetKey 未捕获 rejection（纯前端）
++`cp6.web/src/views/oa/admin/FlowTriggerPanel.vue`：`ElMessageBox.confirm` 包 try/catch，**catch 即 return**（不能用 `.catch(() => {})` 吞掉后继续——取消后绝不能继续 reset-key）。
++
++### Harness 勘误（纯注释/文档）
++- `qa_flow_trigger.ps1:30-35`：改述为「fire 端点在生产 CSRF 开启下能通，靠的是中间件形状精确豁免（终审 C-1），CSRF 对兄弟管理端点仍然适用」；
++- `README.md` §2.3：同口径修正 + 新增**部署冒烟必做项**：部署后从无 cookie 外部进程（curl 全新会话，仅 X-Api-Key + Idempotency-Key 头，真实 API key）打一发期望 201——这正是三层测试全部漏掉的生产路径。
++
++## 三、GREEN 全闸实证
++
++| 闸 | 结果 |
++| --- | --- |
++| 靶向两测试类 | 25/25 绿（RED 时 22/25） |
++| 全量 `dotnet test CP6.slnx` | **Passed 1979, Failed 0, Skipped 5**（1969 + 新增 10 = 9 CSRF InlineData + 1 校验器用例） |
++| `bun run test -- --run` | **425/425 绿**（64 文件） |
++| `bun run type-check`（NODE_OPTIONS=8192） | exit 0 |
++| `bun run build` | exit 0（仅既有 chunk>500kB 警告） |
++| `dotnet ef migrations has-pending-model-changes` | No changes（零迁移） |
++
++## 四、改动面核对
++
++git diff --stat = 恰好简报允许的 9 文件，77 插入 / 8 删除；引擎零 diff、零迁移、既有断言零改动（仅注释）。
++
++## 五、遗留关注
++
++- C-1 的**线上实证**待部署后按 README 新增冒烟项执行（无 cookie curl → 201）——本轮只有单元层面（IsExempt 纯函数）证据，与波① T11 hub 豁免同款局限。
++- `IsFlowTriggerFirePath` 用 `Guid.TryParse`（接受 N/B/P 格式），与 ASP.NET `{id:guid}` 路由约束判据一致；若未来路由约束收紧为 D 格式，此处须同步。
+diff --git a/CP6.Core/Services/Wf/FlowTriggerValidator.cs b/CP6.Core/Services/Wf/FlowTriggerValidator.cs
+index 47d4fea..868d46d 100644
+--- a/CP6.Core/Services/Wf/FlowTriggerValidator.cs
++++ b/CP6.Core/Services/Wf/FlowTriggerValidator.cs
+@@ -23,20 +23,24 @@ public static class FlowTriggerValidator
+             throw new InvalidOperationException("E-WF-022: StarterUserId 必填");
+ 
+         // ── 分型（spec §2.3）──
+         switch (req.TriggerType)
+         {
+             case WfTriggerType.Timer:
+             {
+                 var cfg = WfTriggerConfig.ParseTimer(req.ConfigJson);
+                 if (!WfCronHelper.IsValid(cfg.Cron))
+                     throw new InvalidOperationException("E-WF-022: cron 解析失败（NCrontab 标准 5 段）");
++                // 波③终审 I-1：语法合法但永不触发（如 "0 0 30 2 *"，2/30 不存在）——NextUtc 返回 null，
++                // 若放行则 enabled 触发器带 NextDueUtc=null 入库静默死掉（无流水、无报错、扫描永不拾取）。
++                if (WfCronHelper.NextUtc(cfg.Cron, DateTime.UtcNow) == null)
++                    throw new InvalidOperationException("E-WF-022: cron 表达式永不触发");
+                 if (!string.IsNullOrWhiteSpace(cfg.VarsJson) && !IsJsonObject(cfg.VarsJson))
+                     throw new InvalidOperationException("E-WF-022: varsJson 须为 JSON 对象");
+                 break;
+             }
+             case WfTriggerType.Event:
+             {
+                 if (string.IsNullOrWhiteSpace(req.EventKey) || !EventKeyPattern.IsMatch(req.EventKey))
+                     throw new InvalidOperationException("E-WF-022: eventKey 格式错（应为 \"{SourceModule}|{HookName}\"）");
+                 var cfg = WfTriggerConfig.ParseEvent(req.ConfigJson);
+                 foreach (var (k, v) in cfg.VarsMap ?? new())
+diff --git a/CP6.Tests/OawfPermissionAttributeTests.cs b/CP6.Tests/OawfPermissionAttributeTests.cs
+index 59b904b..854b5dc 100644
+--- a/CP6.Tests/OawfPermissionAttributeTests.cs
++++ b/CP6.Tests/OawfPermissionAttributeTests.cs
+@@ -23,22 +23,22 @@ namespace CP6.Tests;
+ ///    豁免命中数精确 == 2（39 = 37 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
+ /// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
+ ///    ^oa-[a-z0-9-]+$（连字符，禁下划线）。**注**：Wf 命名空间 5 控制器（Flow/Form/Task/AdvancedFlow/
+ ///    Approval）无自己菜单行，其键锚定「消费页」OA 菜单，故 **全部键仍为 oa-* 前缀**（真相源 §一/§二）——
+ ///    本波不存在 wf-* 键。action **逐词相等**落在真相源实际使用的 action 集合内。
+ /// ④ 豁免防腐：每条豁免必须确为「变更端点 且 未贴权限」——防豁免清单变陈旧（端点改名/被贴/被删）
+ ///    却仍白名单遮蔽某个真·写端点丢键。
+ ///
+ /// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
+ /// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
+-/// 继承说明：16 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 15 个
+-/// （Oa 全 11 + Wf 的 AdvancedFlow/Approval/Flow/Form）经 <c>LocalizedControllerBase</c>（抽象基类，
++/// 继承说明：17 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 16 个
++/// （Oa 全 12 + Wf 的 AdvancedFlow/Approval/Flow/Form）经 <c>LocalizedControllerBase</c>（抽象基类，
+ /// 仅惰性暴露 Localizer 属性，**零 [HttpXxx] action 声明**）继承 ControllerBase；因各级基类均无端点
+ /// 声明，写端点均为子类手写声明方法，故 BindingFlags.DeclaredOnly 反射不会漏扫端点（逐类自查类头，
+ /// 见 oawf-t4-report.md 继承链核对）。若未来在共享基类（LocalizedControllerBase 或 ControllerBase
+ /// 派生链上）新增 [HttpXxx] 方法，DeclaredOnly 会静默漏扫该端点——届时须调整扫描策略（如改用非
+ /// DeclaredOnly 并按声明类型过滤）。
+ /// </summary>
+ public class OawfPermissionAttributeTests
+ {
+     /// <summary>
+     /// menu 键约定：**oa-** 前缀 + 小写字母数字连字符。Wf 命名空间控制器键锚定 OA 消费页菜单，
+diff --git a/CP6.Tests/Wf/CsrfHubExemptionTests.cs b/CP6.Tests/Wf/CsrfHubExemptionTests.cs
+index a9805bf..7b487b8 100644
+--- a/CP6.Tests/Wf/CsrfHubExemptionTests.cs
++++ b/CP6.Tests/Wf/CsrfHubExemptionTests.cs
+@@ -14,11 +14,30 @@ public class CsrfHubExemptionTests
+     [InlineData("/hubs/notify", true)]
+     [InlineData("/hubs/notify/negotiate", true)]
+     [InlineData("/hubs/mes/negotiate", true)]
+     [InlineData("/hubs/wms", true)]
+     [InlineData("/hubs/space/negotiate", true)]   // 波4 SpaceHub：/hubs 前缀一并覆盖
+     [InlineData("/api/auth/login", true)]          // 既有豁免仍在
+     [InlineData("/api/oa/designer/save", false)]   // 业务写请求仍受 CSRF 约束
+     [InlineData("/hubsxxx/notify", false)]         // 段边界：非 /hubs/ 前缀不豁免
+     public void HubPaths_AreExempt(string path, bool expectExempt)
+         => Assert.Equal(expectExempt, CsrfMiddleware.IsExempt(path));
++
++    /// <summary>
++    /// 波③终审 C-1：外部系统调 POST /api/oa/flow-triggers/{guid}/fire 仅带 X-Api-Key +
++    /// Idempotency-Key 头、无任何 cookie —— 生产 Csrf.Enabled=true 下被 403 E-SEC-010 拦死。
++    /// 豁免须**形状精确**（GUID 段 + 字面 /fire 尾），杜绝把 /api/oa/flow-triggers 前缀整段豁免
++    /// ——create/update/enable/reset-key/manual-fire 等管理端点走 cookie 认证，必须留在 CSRF 保护面。
++    /// </summary>
++    [Theory]
++    [InlineData("/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c963f66afa6/fire", true)]   // 消息触发 fire：形状精确豁免
++    [InlineData("/API/OA/FLOW-TRIGGERS/3FA85F64-5717-4562-B3FC-2C963F66AFA6/FIRE", true)]   // 大小写不敏感（与中间件既有风格一致）
++    [InlineData("/api/oa/flow-triggers", false)]                                             // 裸集合端点（create）不豁免
++    [InlineData("/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c963f66afa6", false)]        // update 不豁免
++    [InlineData("/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c963f66afa6/manual-fire", false)] // 管理侧手动触发不豁免
++    [InlineData("/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c963f66afa6/enable", false)] // enable 不豁免
++    [InlineData("/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c963f66afa6/reset-key", false)] // reset-key 不豁免
++    [InlineData("/api/oa/flow-triggers/abc/fire", false)]                                    // 非 GUID id 不豁免
++    [InlineData("/api/oa/flow-triggers/3fa85f64-5717-4562-b3fc-2c963f66afa6/fire/x", false)] // fire 后多余段不豁免
++    public void FlowTriggerFirePath_ShapeExactExemption(string path, bool expectExempt)
++        => Assert.Equal(expectExempt, CsrfMiddleware.IsExempt(path));
+ }
+diff --git a/CP6.Tests/Wf/FlowTriggerValidatorTests.cs b/CP6.Tests/Wf/FlowTriggerValidatorTests.cs
+index ecdf754..1e5d8fe 100644
+--- a/CP6.Tests/Wf/FlowTriggerValidatorTests.cs
++++ b/CP6.Tests/Wf/FlowTriggerValidatorTests.cs
+@@ -78,20 +78,31 @@ public class FlowTriggerValidatorTests
+         // FlowKey 不存在
+         await AssertThrowsCodeAsync(conn,
+             Req(WfTriggerType.Timer, starter, "{\"cron\":\"0 9 * * *\"}", flowKey: "nope"), "E-WF-023");
+         // FlowKey 存在但停用
+         using var conn2 = NewSqliteWithSchema();
+         var (starter2, _) = await SeedFlowAndUsersAsync(conn2, flowEnabled: false);
+         await AssertThrowsCodeAsync(conn2,
+             Req(WfTriggerType.Timer, starter2, "{\"cron\":\"0 9 * * *\"}"), "E-WF-023");
+     }
+ 
++    /// <summary>波③终审 I-1：语法合法但永不触发的 cron（2/30 不存在）——B-T1 修后 NextUtc 返回 null，
++    /// 若保存侧只查 IsValid 则 enabled 触发器带 NextDueUtc=null 入库静默死掉（无流水、无报错、扫描永不拾取）。</summary>
++    [Fact]
++    public async Task Timer_NeverFiringCron_EWF022()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn);
++        await AssertThrowsCodeAsync(conn,
++            Req(WfTriggerType.Timer, starter, "{\"cron\":\"0 0 30 2 *\"}"), "E-WF-022");
++    }
++
+     [Fact]
+     public async Task Timer_BadVarsJson_EWF022()
+     {
+         using var conn = NewSqliteWithSchema();
+         var (starter, _) = await SeedFlowAndUsersAsync(conn);
+         await AssertThrowsCodeAsync(conn,
+             Req(WfTriggerType.Timer, starter, "{\"cron\":\"0 9 * * *\",\"varsJson\":\"not-json\"}"), "E-WF-022");
+     }
+ 
+     [Fact]
+diff --git a/CP6.WebApi/Controllers/Integration/WfTriggerEchoController.cs b/CP6.WebApi/Controllers/Integration/WfTriggerEchoController.cs
+index 216136d..b83df98 100644
+--- a/CP6.WebApi/Controllers/Integration/WfTriggerEchoController.cs
++++ b/CP6.WebApi/Controllers/Integration/WfTriggerEchoController.cs
+@@ -1,20 +1,20 @@
+ using CP6.Core.Services.Integration;
+ using Microsoft.AspNetCore.Authorization;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.WebApi.Controllers.Integration;
+ 
+ /// <summary>Echo 样例事件源（QA harness 用，对齐 ServiceTask EchoConnector 先例，spec §3.3）。
+ /// 业务模块接入真实事件 = 与本控制器同款「一行调用」IWfTriggerBridgeHook.OnEventAsync。
+ /// 落 Controllers.Integration（与 BridgeHealthController 同族）：本控制器是 Integration 桥接 hook
+-/// 的 QA 触点，非业务 OA 写端点，不进 OA/WF 权限键守卫扫描面（OawfPermissionAttributeTests 计数锁 16）。</summary>
++/// 的 QA 触点，非业务 OA 写端点，不进 OA/WF 权限键守卫扫描面（OawfPermissionAttributeTests 计数锁 17）。</summary>
+ [ApiController]
+ [Route("api/oa/wf-trigger-echo")]
+ [Authorize]
+ public class WfTriggerEchoController : ControllerBase
+ {
+     private readonly IWfTriggerBridgeHook _hook;
+ 
+     public WfTriggerEchoController(IWfTriggerBridgeHook hook) { _hook = hook; }
+ 
+     [HttpPost("fire")]
+diff --git a/CP6.WebApi/Middleware/CsrfMiddleware.cs b/CP6.WebApi/Middleware/CsrfMiddleware.cs
+index fc36df3..e6dfd78 100644
+--- a/CP6.WebApi/Middleware/CsrfMiddleware.cs
++++ b/CP6.WebApi/Middleware/CsrfMiddleware.cs
+@@ -39,20 +39,41 @@ public class CsrfMiddleware
+     }
+ 
+     /// <summary>CSRF 豁免路径（段边界匹配，杜绝同前缀误豁免）：
+     /// ① 登录端点（登录时尚无 csrf cookie，杜绝 /api/auth/login-xxx 这类同前缀端点被静默豁免）；
+     /// ② SignalR hub 路径（negotiate 是 POST 但不改业务状态）——豁免安全论据：
+     ///    (a) 现有 4 个 hub(notify/mes/wms/space)均无状态变更方法，仅 Subscribe/Unsubscribe 组操作
+     ///        (Groups.Add/RemoveToGroupAsync)，即便被跨站触发也无业务副作用；
+     ///    (b) CORS 显式 allowlist（Program.cs WithOrigins + AllowCredentials，无通配源）挡跨站 negotiate。
+     ///    ⚠ 前瞻警示：未来若给任一 hub 加可 invoke 的状态变更方法，须重新评估此豁免（届时应移除 /hubs 整段
+     ///      豁免或改为仅豁免 negotiate 端点），否则跨站可经 hub 方法绕过 CSRF。
+-    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub。</summary>
++    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub。
++    /// ③ 消息触发器 fire 端点（波③终审 C-1，**形状精确**匹配 /api/oa/flow-triggers/{guid}/fire）——豁免安全论据：
++    ///    该端点以自定义头 X-Api-Key 认证（跨站 HTML 表单/img 无法设置自定义头），且调用方不带任何环境
++    ///    cookie 凭据（[AllowAnonymous] + 外部系统进程调用），CSRF 攻击模型不成立；反之若不豁免，
++    ///    生产 Csrf.Enabled=true 下外部系统（无 cookie）被 403 E-SEC-010 拦死，消息触发功能整体失效。
++    ///    ⚠ 严禁放宽为 /api/oa/flow-triggers 前缀豁免：同级管理端点（create/update/enable/reset-key/
++    ///    manual-fire）走 cookie 认证，必须留在 CSRF 保护面。</summary>
+     internal static bool IsExempt(string path)
+         => PathMatches(path, "/api/auth/login")
+-           || PathMatches(path, "/hubs");
++           || PathMatches(path, "/hubs")
++           || IsFlowTriggerFirePath(path);
++
++    /// <summary>形状精确匹配 /api/oa/flow-triggers/{guid}/fire：前缀+字面 /fire 尾+中段须为单一 GUID 段
++    /// （Guid.TryParse 与路由约束 {id:guid} 同判据；含 '/' 必然解析失败，杜绝多段穿透）。大小写不敏感与
++    /// PathMatches 风格一致。非 GUID id、manual-fire/enable/reset-key 等兄弟端点、fire 后多余段均不命中。</summary>
++    internal static bool IsFlowTriggerFirePath(string path)
++    {
++        const string prefix = "/api/oa/flow-triggers/";
++        const string suffix = "/fire";
++        if (path.Length <= prefix.Length + suffix.Length) return false;
++        if (!path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return false;
++        if (!path.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) return false;
++        var idSegment = path.Substring(prefix.Length, path.Length - prefix.Length - suffix.Length);
++        return Guid.TryParse(idSegment, out _);
++    }
+ 
+     /// <summary>路径段边界匹配：path == prefix 或 path 以 "prefix/" 起头（避免同前缀误匹配）。</summary>
+     internal static bool PathMatches(string path, string prefix)
+         => path.Equals(prefix, StringComparison.OrdinalIgnoreCase)
+            || path.StartsWith(prefix + "/", StringComparison.OrdinalIgnoreCase);
+ }
+diff --git a/cp6.web/src/views/oa/admin/FlowTriggerPanel.vue b/cp6.web/src/views/oa/admin/FlowTriggerPanel.vue
+index b9f6f19..c65a6cd 100644
+--- a/cp6.web/src/views/oa/admin/FlowTriggerPanel.vue
++++ b/cp6.web/src/views/oa/admin/FlowTriggerPanel.vue
+@@ -125,21 +125,25 @@ async function manualFire(row: FlowTriggerItem) {
+   try {
+     const r = await flowTriggerApi.manualFire(row.id)
+     ElMessage.success(`${t('oa.flowtrigger.fired')}: ${r.instanceId ?? ''}`)
+     await reload()
+   } catch {
+     // http 拦截器已 toast，无需重复提示
+   }
+ }
+ 
+ async function resetKey(row: FlowTriggerItem) {
+-  await ElMessageBox.confirm(t('oa.flowtrigger.resetKeyConfirm'), t('oa.flowtrigger.resetKey'))
++  try { await ElMessageBox.confirm(t('oa.flowtrigger.resetKeyConfirm'), t('oa.flowtrigger.resetKey')) }
++  catch {
++    // 取消即静默返回（confirm 取消以 reject 收场，不接住会抛 unhandled rejection）
++    return
++  }
+   const r = await flowTriggerApi.resetKey(row.id)
+   showKeyOnce(r.apiKeyPlain)
+ }
+ 
+ async function openFires(row: FlowTriggerItem) {
+   firesVisible.value = true
+   firesLoading.value = true
+   try { fires.value = await flowTriggerApi.fires(row.id, 20) } finally { firesLoading.value = false }
+ }
+ </script>
+diff --git a/docs/superpowers/qa/wfs-flow-trigger/README.md b/docs/superpowers/qa/wfs-flow-trigger/README.md
+index 709df9e..5b882bd 100644
+--- a/docs/superpowers/qa/wfs-flow-trigger/README.md
++++ b/docs/superpowers/qa/wfs-flow-trigger/README.md
+@@ -81,21 +81,28 @@ Prior WFS QA sessions used ports 5177-5181; this harness defaults to **5181**:
+ 
+ ```powershell
+ cd <repo>\CP6.WebApi
+ $env:ConnectionStrings__DefaultConnection = "Server=localhost\KOUSQLSERVER;Database=CP6DB_OA;Trusted_Connection=True;TrustServerCertificate=True;"
+ dotnet run --urls "http://localhost:5181"
+ ```
+ 
+ - The `WfTriggerWorker` hosted service starts automatically (scenario 3 depends on it).
+ - Dev CSRF must be **disabled** (`Security:Csrf:Enabled=false`, the dev default): the admin
+   POSTs are cookie-auth'd and would 403 under CSRF. The message `/fire` endpoint is
+-  `[AllowAnonymous]` + `X-Api-Key` header (no cookie, no CSRF).
++  `[AllowAnonymous]` + `X-Api-Key` header and is **CSRF-exempt by a shape-exact middleware
++  exemption** for `/api/oa/flow-triggers/{guid}/fire` (wave-③ final-review C-1) -- without
++  that exemption production `Csrf.Enabled=true` would 403 it; the sibling admin endpoints
++  stay CSRF-protected.
++- **Deployment smoke (mandatory)**: after deploy, fire the endpoint once from a **cookie-less
++  external process** (e.g. `curl` in a fresh session, only `X-Api-Key` + `Idempotency-Key`
++  headers, real API key) expecting `201 { instanceId }` -- this is the exact production path
++  (no cookie + CSRF enabled) that all three test layers missed in wave ③.
+ 
+ ---
+ 
+ ## 3. Running the HTTP e2e
+ 
+ ```powershell
+ .\qa_flow_trigger.ps1
+ .\qa_flow_trigger.ps1 -BaseUrl http://localhost:5181
+ ```
+ 
+diff --git a/docs/superpowers/qa/wfs-flow-trigger/qa_flow_trigger.ps1 b/docs/superpowers/qa/wfs-flow-trigger/qa_flow_trigger.ps1
+index e576d68..31a82c7 100644
+--- a/docs/superpowers/qa/wfs-flow-trigger/qa_flow_trigger.ps1
++++ b/docs/superpowers/qa/wfs-flow-trigger/qa_flow_trigger.ps1
+@@ -22,21 +22,24 @@
+     executed later by the main agent with a QA user present. Nothing here has run.
+ 
+ .NOTES
+     PS5.1 compatibility (mirrors wfs-kernel-hardening/qa_kernel_hardening.ps1):
+       - No && operator; sequential steps use explicit checks.
+       - HttpSend wraps Invoke-WebRequest -UseBasicParsing and captures the REAL status
+         code (needed to tell 201 new from 200 replay, and 400/401/404 apart).
+       - All request bodies use ASCII-only values (no CJK).
+       - Dev backend MUST have CSRF disabled (Security:Csrf:Enabled=false) -- the admin
+         POSTs are cookie-auth'd; the JWT cp6_at cookie flows via -WebSession. The message
+-        /fire endpoint is [AllowAnonymous] + X-Api-Key header (no cookie, no CSRF).
++        /fire endpoint is [AllowAnonymous] + X-Api-Key header; under production CSRF
++        (Enabled=true) it works ONLY because CsrfMiddleware carries a SHAPE-EXACT exemption
++        for /api/oa/flow-triggers/{guid}/fire (wave-3 final-review C-1) -- CSRF *does*
++        apply to all sibling admin endpoints, which stay cookie-auth'd and protected.
+ 
+     Cross-checked endpoints (file:line in report):
+       - Login       : POST /api/auth/login                         { userName, password } -> cp6_at cookie
+       - Create      : POST /api/oa/flow-triggers                    -> data.{ id, apiKeyPlain }   [FlowTrigger.Edit]
+       - Enable      : POST /api/oa/flow-triggers/{id}/enable        { enabled }                   [FlowTrigger.Edit]
+       - ResetKey    : POST /api/oa/flow-triggers/{id}/reset-key     -> data.apiKeyPlain           [FlowTrigger.Edit]
+       - ManualFire  : POST /api/oa/flow-triggers/{id}/manual-fire   -> 200 data.instanceId / 400 message  [FlowTrigger.Edit]
+       - Fires       : GET  /api/oa/flow-triggers/{id}/fires         -> data: TriggerFireListItem[] [Authorize]
+       - CronPreview : POST /api/oa/flow-triggers/cron-preview       { cron } -> data.next[5] / 400 [FlowTrigger.View]
+       - MsgFire     : POST /api/oa/flow-triggers/{id}/fire          X-Api-Key + Idempotency-Key headers

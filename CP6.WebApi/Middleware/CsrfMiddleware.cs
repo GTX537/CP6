@@ -46,10 +46,31 @@ public class CsrfMiddleware
     ///    (b) CORS 显式 allowlist（Program.cs WithOrigins + AllowCredentials，无通配源）挡跨站 negotiate。
     ///    ⚠ 前瞻警示：未来若给任一 hub 加可 invoke 的状态变更方法，须重新评估此豁免（届时应移除 /hubs 整段
     ///      豁免或改为仅豁免 negotiate 端点），否则跨站可经 hub 方法绕过 CSRF。
-    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub。</summary>
+    /// 票11：否则 /hubs/*/negotiate 被 403 拦，实时通知连不上。/hubs 前缀覆盖 notify/mes/wms/space 全部 hub。
+    /// ③ 消息触发器 fire 端点（波③终审 C-1，**形状精确**匹配 /api/oa/flow-triggers/{guid}/fire）——豁免安全论据：
+    ///    该端点以自定义头 X-Api-Key 认证（跨站 HTML 表单/img 无法设置自定义头），且调用方不带任何环境
+    ///    cookie 凭据（[AllowAnonymous] + 外部系统进程调用），CSRF 攻击模型不成立；反之若不豁免，
+    ///    生产 Csrf.Enabled=true 下外部系统（无 cookie）被 403 E-SEC-010 拦死，消息触发功能整体失效。
+    ///    ⚠ 严禁放宽为 /api/oa/flow-triggers 前缀豁免：同级管理端点（create/update/enable/reset-key/
+    ///    manual-fire）走 cookie 认证，必须留在 CSRF 保护面。</summary>
     internal static bool IsExempt(string path)
         => PathMatches(path, "/api/auth/login")
-           || PathMatches(path, "/hubs");
+           || PathMatches(path, "/hubs")
+           || IsFlowTriggerFirePath(path);
+
+    /// <summary>形状精确匹配 /api/oa/flow-triggers/{guid}/fire：前缀+字面 /fire 尾+中段须为单一 GUID 段
+    /// （Guid.TryParse 与路由约束 {id:guid} 同判据；含 '/' 必然解析失败，杜绝多段穿透）。大小写不敏感与
+    /// PathMatches 风格一致。非 GUID id、manual-fire/enable/reset-key 等兄弟端点、fire 后多余段均不命中。</summary>
+    internal static bool IsFlowTriggerFirePath(string path)
+    {
+        const string prefix = "/api/oa/flow-triggers/";
+        const string suffix = "/fire";
+        if (path.Length <= prefix.Length + suffix.Length) return false;
+        if (!path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return false;
+        if (!path.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) return false;
+        var idSegment = path.Substring(prefix.Length, path.Length - prefix.Length - suffix.Length);
+        return Guid.TryParse(idSegment, out _);
+    }
 
     /// <summary>路径段边界匹配：path == prefix 或 path 以 "prefix/" 起头（避免同前缀误匹配）。</summary>
     internal static bool PathMatches(string path, string prefix)

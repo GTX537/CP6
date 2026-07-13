@@ -9,16 +9,18 @@ namespace CP6.Tests;
 
 /// <summary>
 /// 反射守卫（M-OA/WF 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
-/// **两个命名空间** Controllers.Oa（11）+ Controllers.Wf（5）= 16 controller，锁死
+/// **两个命名空间** Controllers.Oa（12）+ Controllers.Wf（5）= 17 controller，锁死
 /// 「未来新增 OA/WF 写端点漏贴权限键即红」。与已合并的 <c>WmsPermissionAttributeTests</c> /
 /// <c>ErpPermissionAttributeTests</c> / <c>MesPermissionAttributeTests</c> 同型三件套。
-/// 真相源：docs/seeds/oawf-permission-keys.md（16 控制器扫描面 / 33 非GET端点 / 31 贴点 / 2 只读 POST 豁免）。
+/// 真相源：docs/seeds/oawf-permission-keys.md（17 控制器扫描面 / 39 非GET端点 / 37 贴点 / 2 只读 POST 豁免）。
+/// **F-T2（WFS 波③ 事件触发，E-T1 交接票）**：FlowTriggerAdminController 由 Controllers.Integration 收编回
+/// Controllers.Oa 纳入本守卫，贡献 6 变更端点（Edit×5 + View×1=CronPreview），计数 16→17 / 贴点 31→37 / 33→39 非GET。
 ///
-/// ① discovery 守卫：断言扫到 16 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
-///    谓词覆盖 **两个** 命名空间（Oa ∪ Wf），计数断言 16 防单侧空扫。
+/// ① discovery 守卫：断言扫到 17 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
+///    谓词覆盖 **两个** 命名空间（Oa ∪ Wf），计数断言 17 防单侧空扫。
 /// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
-///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 31、
-///    豁免命中数精确 == 2（33 = 31 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
+///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 37、
+///    豁免命中数精确 == 2（39 = 37 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
 /// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
 ///    ^oa-[a-z0-9-]+$（连字符，禁下划线）。**注**：Wf 命名空间 5 控制器（Flow/Form/Task/AdvancedFlow/
 ///    Approval）无自己菜单行，其键锚定「消费页」OA 菜单，故 **全部键仍为 oa-* 前缀**（真相源 §一/§二）——
@@ -28,8 +30,8 @@ namespace CP6.Tests;
 ///
 /// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
 /// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
-/// 继承说明：16 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 15 个
-/// （Oa 全 11 + Wf 的 AdvancedFlow/Approval/Flow/Form）经 <c>LocalizedControllerBase</c>（抽象基类，
+/// 继承说明：17 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 16 个
+/// （Oa 全 12 + Wf 的 AdvancedFlow/Approval/Flow/Form）经 <c>LocalizedControllerBase</c>（抽象基类，
 /// 仅惰性暴露 Localizer 属性，**零 [HttpXxx] action 声明**）继承 ControllerBase；因各级基类均无端点
 /// 声明，写端点均为子类手写声明方法，故 BindingFlags.DeclaredOnly 反射不会漏扫端点（逐类自查类头，
 /// 见 oawf-t4-report.md 继承链核对）。若未来在共享基类（LocalizedControllerBase 或 ControllerBase
@@ -45,7 +47,7 @@ public class OawfPermissionAttributeTests
     private static readonly Regex MenuPattern = new("^oa-[a-z0-9-]+$", RegexOptions.Compiled);
 
     /// <summary>
-    /// 真相源实际使用的 action 集合（从已贴的 31 个 [RequirePermission] 逐词读出的真实 action，非凭空造）。
+    /// 真相源实际使用的 action 集合（从已贴的 37 个 [RequirePermission] 逐词读出的真实 action，非凭空造）。
     /// 只读 POST 豁免归 view 但**不贴键**（未打属性），故本集合**不含 view**——逐词相等，多一词/少一词即红。
     /// 新 action 词若出现须显式加入本集合，否则视为疑似 typo 报错。
     /// </summary>
@@ -61,6 +63,9 @@ public class OawfPermissionAttributeTests
         "addsign",                                  // 高危键：oa-inbox:addsign 加签改审批链（§三）
         "delegate",                                 // 高危键：oa-settings:delegate 委派授权（合一 OA #5/#6 + AdvancedFlow #26，§三/§六注4）
         "form-save",                                // 高危键：oa-designer:form-save 表单定义保存（旧栈 Form.SaveDef，§三）
+        // WFS 波③ 事件触发 F-T2（E-T1 交接票）：FlowTriggerAdminController 由 Integration 收编回 Controllers.Oa，
+        // 纳入本 fail-closed 守卫扫描面。Edit=增改/启停/试发/重置key（5 端点），View=cron 预览（1 端点，POST）。
+        "FlowTrigger.View", "FlowTrigger.Edit",     // oa-flow-admin:FlowTrigger.*（点式 action，与 spec §6 权限点名逐字一致）
     };
 
     /// <summary>
@@ -107,9 +112,9 @@ public class OawfPermissionAttributeTests
     [Fact]
     public void OawfControllers_AreDiscovered()
     {
-        // 守卫：Controllers.Oa（11）+ Controllers.Wf（5）下继承 ControllerBase 的非抽象类共 16
-        //      （含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
-        Assert.Equal(16, OawfControllers.Count());
+        // 守卫：Controllers.Oa（12，含 F-T2 收编的 FlowTriggerAdminController）+ Controllers.Wf（5）下
+        //      继承 ControllerBase 的非抽象类共 17（含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
+        Assert.Equal(17, OawfControllers.Count());
     }
 
     [Fact]
@@ -149,8 +154,8 @@ public class OawfPermissionAttributeTests
         Assert.True(offenders.Count == 0,
             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
 
-        // 收口断言：贴点 31 + 豁免命中 2 = 全 33 非GET端点，精确吻合真相源 §七。
-        Assert.Equal(31, taggedCount);
+        // 收口断言：贴点 37 + 豁免命中 2 = 全 39 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 端点。
+        Assert.Equal(37, taggedCount);
         Assert.Equal(2, exemptHit.Count);
     }
 

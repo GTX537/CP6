@@ -12954,6 +12954,80 @@ namespace CP6.Core.Migrations
                     b.ToTable("Wf_FlowToken");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowTrigger", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApiKeyHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ConfigJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("EventKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("FlowKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("LastFiredUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NextDueUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("StarterUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TriggerType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "EventKey")
+                        .HasDatabaseName("IX_Wf_FlowTrigger_Event");
+
+                    b.HasIndex("TenantId", "FlowKey")
+                        .HasDatabaseName("IX_Wf_FlowTrigger_Flow");
+
+                    b.HasIndex("Enabled", "TriggerType", "NextDueUtc")
+                        .HasDatabaseName("IX_Wf_FlowTrigger_Scan");
+
+                    b.ToTable("Wf_FlowTrigger");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormData", b =>
                 {
                     b.Property<Guid>("Id")
@@ -13298,6 +13372,63 @@ namespace CP6.Core.Migrations
                         .HasFilter("[Status] IN (0, 1)");
 
                     b.ToTable("Wf_ServiceJob");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_TriggerFire", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("FiredUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("InstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PayloadHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TriggerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "TriggerId", "IdempotencyKey")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_TriggerFire_Idem");
+
+                    b.ToTable("Wf_TriggerFire");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.CarrierShipment", b =>

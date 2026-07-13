@@ -1,0 +1,587 @@
+# Review package: 1839a14..ffe5c17
+
+## Commits
+ffe5c17 feat(wfs-trigger): A-T2 IFlowTriggerService.FireAsync 幂等闸+占坑复用+E-WF-022/023/024 运行时双检+SubmitAsync 原子接缝+DI
+
+## Files changed
+ CP6.Core/Services/Wf/FlowTriggerService.cs | 132 +++++++++++++++++
+ CP6.Core/Services/Wf/WfTriggerConfig.cs    |  25 ++++
+ CP6.Tests/Wf/FlowTriggerConfigTests.cs     |  36 +++++
+ CP6.Tests/Wf/FlowTriggerFireTests.cs       | 220 +++++++++++++++++++++++++++++
+ CP6.Tests/Wf/FlowTriggerTestHarness.cs     | 103 ++++++++++++++
+ CP6.WebApi/Program.cs                      |   1 +
+ 6 files changed, 517 insertions(+)
+
+## Diff
+diff --git a/CP6.Core/Services/Wf/FlowTriggerService.cs b/CP6.Core/Services/Wf/FlowTriggerService.cs
+new file mode 100644
+index 0000000..88a29d5
+--- /dev/null
++++ b/CP6.Core/Services/Wf/FlowTriggerService.cs
+@@ -0,0 +1,132 @@
++// CP6.Core/Services/Wf/FlowTriggerService.cs
++using System.Security.Cryptography;
++using System.Text;
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Wf;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Core.Services.Wf;
++
++public class TriggerFireResult
++{
++    public bool Success { get; init; }
++    /// <summary>幂等撞键命中既有成功流水（HTTP 层据此回 200 而非 201）</summary>
++    public bool Replayed { get; init; }
++    public Guid? InstanceId { get; init; }
++    public string? Error { get; init; }
++    public static TriggerFireResult Ok(Guid instanceId, bool replayed = false)
++        => new() { Success = true, InstanceId = instanceId, Replayed = replayed };
++    public static TriggerFireResult Fail(string error) => new() { Success = false, Error = error };
++}
++
++public interface IFlowTriggerService
++{
++    /// <summary>统一发起（D2，spec §3.1）：Enabled 检查 → 幂等闸（撞键幂等返回既有 InstanceId 不报错）
++    /// → 运行时双检 E-WF-022/023 → 变量构造由调用方完成 → SubmitAsync(trigger.StarterUserId) → 写流水 → 更新水位。</summary>
++    Task<TriggerFireResult> FireAsync(Wf_FlowTrigger trigger, string? varsJson,
++                                      int source, string idempotencyKey, CancellationToken ct);
++
++    /// <summary>timer 扫描一轮（worker 复用；lease 语义 = RowVersion 乐观并发 + NextDueUtc 前移即抢占）。</summary>
++    Task<int> ScanTimersOnceAsync(CancellationToken ct);
++}
++
++public class FlowTriggerService : IFlowTriggerService
++{
++    /// <summary>占坑补跑宽限：FiredUtc 早于此宽限仍未回填的占坑行才补跑（避免与正在进行的第二段抢跑）</summary>
++    public static readonly TimeSpan RecoveryGrace = TimeSpan.FromMinutes(2);
++    private const int BatchSize = 50;
++
++    private readonly CP6Context _db;
++    private readonly IFlowEngine _engine;
++
++    public FlowTriggerService(CP6Context db, IFlowEngine engine)
++    {
++        _db = db;
++        _engine = engine;
++    }
++
++    public async Task<TriggerFireResult> FireAsync(Wf_FlowTrigger trigger, string? varsJson,
++                                                   int source, string idempotencyKey, CancellationToken ct)
++    {
++        // ① Enabled 检查（spec §3.1 顺序：先于幂等闸）
++        if (!trigger.Enabled) return TriggerFireResult.Fail("触发器已停用");
++
++        // ② 幂等闸：先查既有流水（Local + 库，防同 context 二次调用漏变更追踪器）
++        var fire = _db.Wf_TriggerFires.Local
++                       .FirstOrDefault(f => f.TriggerId == trigger.Id && f.IdempotencyKey == idempotencyKey)
++                   ?? await _db.Wf_TriggerFires
++                       .FirstOrDefaultAsync(f => f.TriggerId == trigger.Id && f.IdempotencyKey == idempotencyKey, ct);
++        if (fire == null)
++        {
++            fire = new Wf_TriggerFire
++            {
++                TriggerId = trigger.Id,
++                IdempotencyKey = idempotencyKey,
++                FiredUtc = DateTime.UtcNow,
++                Source = source,
++                PayloadHash = source == WfTriggerType.Timer ? null : HashOrNull(varsJson),
++            };
++            _db.Wf_TriggerFires.Add(fire);
++            try { await _db.SaveChangesAsync(ct); }
++            catch (DbUpdateException)
++            {
++                // 并发撞唯一索引：让位既有行（另一实例先占坑），转入撞键分支
++                _db.Entry(fire).State = EntityState.Detached;
++                fire = await _db.Wf_TriggerFires
++                    .FirstAsync(f => f.TriggerId == trigger.Id && f.IdempotencyKey == idempotencyKey, ct);
++            }
++        }
++        if (fire.InstanceId != null)
++            return TriggerFireResult.Ok(fire.InstanceId.Value, replayed: true);   // 幂等成功不是错误（spec §3.1）
++        // InstanceId==null（占坑未完成或上次失败）→ 补跑第二段（共享契约末条语义）
++
++        // ③ 运行时双检（spec §5：发起人/流程可能在保存后被停用）
++        var starterOk = await _db.Sys_Users.AnyAsync(u => u.Id == trigger.StarterUserId && u.Enable, ct);
++        if (!starterOk) return await FailFireAsync(fire, "E-WF-022: 发起人不存在或已停用", ct);
++        var flowOk = await _db.Wf_FlowDefs.AnyAsync(d => d.FlowKey == trigger.FlowKey && d.Enable, ct);
++        if (!flowOk) return await FailFireAsync(fire, "E-WF-023: 目标流程不存在或未启用", ct);
++
++        // ④ 第二段：SubmitAsync + 流水回填 + 水位 同一显式事务（映射表⑥，引擎原子接缝）
++        //    trigger 可能被上游 ChangeTracker.Clear 失联 → 用库内跟踪实例回写水位
++        var trackedTrigger = await _db.Wf_FlowTriggers.FirstOrDefaultAsync(t => t.Id == trigger.Id, ct) ?? trigger;
++        try
++        {
++            await using var tx = await _db.Database.BeginTransactionAsync(ct);
++            var instanceId = await _engine.SubmitAsync(trackedTrigger.FlowKey, trackedTrigger.StarterUserId, varsJson ?? "{}");
++            fire.InstanceId = instanceId;
++            fire.Error = null;                              // 失败重试成功 → 清错
++            trackedTrigger.LastFiredUtc = DateTime.UtcNow;  // 水位
++            await _db.SaveChangesAsync(ct);
++            await tx.CommitAsync(ct);
++            return TriggerFireResult.Ok(instanceId);
++        }
++        catch (Exception ex)
++        {
++            // SubmitAsync 半途实体已随事务回滚，但仍挂在变更追踪器上 → 清追踪器后重查流水行回填 Error
++            _db.ChangeTracker.Clear();
++            var fresh = await _db.Wf_TriggerFires.FirstAsync(f => f.Id == fire.Id, ct);
++            fresh.Error = Trunc($"E-WF-024: {ex.Message}");
++            await _db.SaveChangesAsync(ct);
++            return TriggerFireResult.Fail(fresh.Error);
++        }
++    }
++
++    public Task<int> ScanTimersOnceAsync(CancellationToken ct)
++        => ScanTimersOnceAsync(DateTime.UtcNow, ct);
++
++    /// <summary>测试重载（注入 nowUtc，映射表⑤）——B-T2 实现。</summary>
++    public Task<int> ScanTimersOnceAsync(DateTime nowUtc, CancellationToken ct)
++        => throw new NotImplementedException("B-T2");
++
++    private async Task<TriggerFireResult> FailFireAsync(Wf_TriggerFire fire, string error, CancellationToken ct)
++    {
++        fire.Error = Trunc(error);
++        await _db.SaveChangesAsync(ct);
++        return TriggerFireResult.Fail(error);
++    }
++
++    private static string? HashOrNull(string? s)
++        => s == null ? null : Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(s)));
++
++    private static string Trunc(string s) => s.Length <= 1000 ? s : s[..1000];
++}
+diff --git a/CP6.Core/Services/Wf/WfTriggerConfig.cs b/CP6.Core/Services/Wf/WfTriggerConfig.cs
+new file mode 100644
+index 0000000..3abfd73
+--- /dev/null
++++ b/CP6.Core/Services/Wf/WfTriggerConfig.cs
+@@ -0,0 +1,25 @@
++// CP6.Core/Services/Wf/WfTriggerConfig.cs
++using System.Text.Json;
++
++namespace CP6.Core.Services.Wf;
++
++public class WfTimerTriggerConfig { public string Cron { get; set; } = ""; public string? VarsJson { get; set; } }
++public class WfEventTriggerConfig { public Dictionary<string, string>? VarsMap { get; set; } }
++public class WfMessageTriggerConfig { public List<string>? VarsSchema { get; set; } }
++
++/// <summary>ConfigJson 分型解析（spec §2.3）。坏 JSON → 空配置（校验在 FlowTriggerValidator，解析不抛）。</summary>
++public static class WfTriggerConfig
++{
++    private static readonly JsonSerializerOptions Opts = new() { PropertyNameCaseInsensitive = true };
++
++    public static WfTimerTriggerConfig ParseTimer(string? json) => Parse<WfTimerTriggerConfig>(json) ?? new();
++    public static WfEventTriggerConfig ParseEvent(string? json) => Parse<WfEventTriggerConfig>(json) ?? new();
++    public static WfMessageTriggerConfig ParseMessage(string? json) => Parse<WfMessageTriggerConfig>(json) ?? new();
++
++    private static T? Parse<T>(string? json) where T : class
++    {
++        if (string.IsNullOrWhiteSpace(json)) return null;
++        try { return JsonSerializer.Deserialize<T>(json, Opts); }
++        catch (JsonException) { return null; }
++    }
++}
+diff --git a/CP6.Tests/Wf/FlowTriggerConfigTests.cs b/CP6.Tests/Wf/FlowTriggerConfigTests.cs
+new file mode 100644
+index 0000000..a2f01c1
+--- /dev/null
++++ b/CP6.Tests/Wf/FlowTriggerConfigTests.cs
+@@ -0,0 +1,36 @@
++// CP6.Tests/Wf/FlowTriggerConfigTests.cs
++using CP6.Core.Services.Wf;
++using Xunit;
++
++public class FlowTriggerConfigTests
++{
++    [Fact]
++    public void ParseTimer_ReadsCronAndVars()
++    {
++        var c = WfTriggerConfig.ParseTimer("{\"cron\":\"0 0 25 * *\",\"varsJson\":\"{\\\"a\\\":1}\"}");
++        Assert.Equal("0 0 25 * *", c.Cron);
++        Assert.Equal("{\"a\":1}", c.VarsJson);
++    }
++
++    [Fact]
++    public void ParseEvent_ReadsVarsMap()
++    {
++        var c = WfTriggerConfig.ParseEvent("{\"varsMap\":{\"orderNo\":\"$.OutboundNo\"}}");
++        Assert.Equal("$.OutboundNo", c.VarsMap!["orderNo"]);
++    }
++
++    [Fact]
++    public void ParseMessage_ReadsVarsSchema()
++    {
++        var c = WfTriggerConfig.ParseMessage("{\"varsSchema\":[\"orderNo\",\"amount\"]}");
++        Assert.Equal(new[] { "orderNo", "amount" }, c.VarsSchema);
++    }
++
++    [Fact]
++    public void Parse_EmptyOrBadJson_YieldsEmptyConfig()
++    {
++        Assert.Null(WfTriggerConfig.ParseTimer("{}").Cron == "" ? null : "x"); // Cron 默认空串
++        Assert.Null(WfTriggerConfig.ParseEvent("not-json").VarsMap);
++        Assert.Null(WfTriggerConfig.ParseMessage("").VarsSchema);
++    }
++}
+diff --git a/CP6.Tests/Wf/FlowTriggerFireTests.cs b/CP6.Tests/Wf/FlowTriggerFireTests.cs
+new file mode 100644
+index 0000000..e43a6d3
+--- /dev/null
++++ b/CP6.Tests/Wf/FlowTriggerFireTests.cs
+@@ -0,0 +1,220 @@
++// CP6.Tests/Wf/FlowTriggerFireTests.cs
++using System;
++using System.Threading;
++using System.Threading.Tasks;
++using CP6.Core.Services.Wf;
++using CP6.Entity.DomainModels.Wf;
++using Microsoft.EntityFrameworkCore;
++using Xunit;
++using static CP6.Tests.FlowTriggerTestHarness;
++
++namespace CP6.Tests;
++
++public class FlowTriggerFireTests
++{
++    [Fact]
++    public async Task Fire_Success_CreatesInstance_WritesFire_UpdatesLastFired()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn);
++        using var db = Ctx(conn);
++        var trig = NewTrigger("fk-trig", WfTriggerType.Message, starter);
++        db.Wf_FlowTriggers.Add(trig);
++        await db.SaveChangesAsync();
++
++        var r = await Service(db).FireAsync(trig, "{}", WfTriggerType.Message, "k1", CancellationToken.None);
++
++        Assert.True(r.Success);
++        Assert.False(r.Replayed);
++        Assert.NotNull(r.InstanceId);
++        Assert.Equal(1, await db.Wf_FlowInstances.CountAsync());
++        var fire = await db.Wf_TriggerFires.AsNoTracking().SingleAsync();
++        Assert.Equal(r.InstanceId, fire.InstanceId);
++        Assert.Null(fire.Error);
++        Assert.Equal(WfTriggerType.Message, fire.Source);
++        Assert.Equal("k1", fire.IdempotencyKey);
++        Assert.NotNull((await db.Wf_FlowTriggers.AsNoTracking().SingleAsync()).LastFiredUtc);
++    }
++
++    [Fact]
++    public async Task Fire_SameKey_Replays_ExistingInstance_NoSecondInstance()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn);
++        using var db = Ctx(conn);
++        var trig = NewTrigger("fk-trig", WfTriggerType.Message, starter);
++        db.Wf_FlowTriggers.Add(trig);
++        await db.SaveChangesAsync();
++        var svc = Service(db);
++
++        var r1 = await svc.FireAsync(trig, "{}", WfTriggerType.Message, "k1", CancellationToken.None);
++        var r2 = await svc.FireAsync(trig, "{}", WfTriggerType.Message, "k1", CancellationToken.None);
++
++        Assert.True(r2.Success);
++        Assert.True(r2.Replayed);                        // 幂等成功不是错误（spec §3.1/§8）
++        Assert.Equal(r1.InstanceId, r2.InstanceId);
++        Assert.Equal(1, await db.Wf_FlowInstances.CountAsync());
++        Assert.Equal(1, await db.Wf_TriggerFires.CountAsync());
++    }
++
++    [Fact]
++    public async Task Fire_Disabled_Rejected_NoFireRow()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn);
++        using var db = Ctx(conn);
++        var trig = NewTrigger("fk-trig", WfTriggerType.Message, starter, enabled: false);
++        db.Wf_FlowTriggers.Add(trig);
++        await db.SaveChangesAsync();
++
++        var r = await Service(db).FireAsync(trig, "{}", WfTriggerType.Message, "k1", CancellationToken.None);
++
++        Assert.False(r.Success);
++        Assert.Equal(0, await db.Wf_TriggerFires.CountAsync());   // Enabled 检查先于幂等闸（spec §3.1 顺序）
++        Assert.Equal(0, await db.Wf_FlowInstances.CountAsync());
++    }
++
++    [Fact]
++    public async Task Fire_StarterDisabled_EWF022_ErrorBackfilled()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn, starterEnabled: false);
++        using var db = Ctx(conn);
++        var trig = NewTrigger("fk-trig", WfTriggerType.Message, starter);
++        db.Wf_FlowTriggers.Add(trig);
++        await db.SaveChangesAsync();
++
++        var r = await Service(db).FireAsync(trig, "{}", WfTriggerType.Message, "k1", CancellationToken.None);
++
++        Assert.False(r.Success);
++        Assert.Contains("E-WF-022", r.Error);
++        var fire = await db.Wf_TriggerFires.AsNoTracking().SingleAsync();
++        Assert.Contains("E-WF-022", fire.Error);          // 流水行保留供排障
++        Assert.Null(fire.InstanceId);
++        Assert.Equal(0, await db.Wf_FlowInstances.CountAsync());
++    }
++
++    [Fact]
++    public async Task Fire_FlowDisabled_EWF023_ErrorBackfilled()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn, flowEnabled: false);
++        using var db = Ctx(conn);
++        var trig = NewTrigger("fk-trig", WfTriggerType.Message, starter);
++        db.Wf_FlowTriggers.Add(trig);
++        await db.SaveChangesAsync();
++
++        var r = await Service(db).FireAsync(trig, "{}", WfTriggerType.Message, "k1", CancellationToken.None);
++
++        Assert.False(r.Success);
++        Assert.Contains("E-WF-023", r.Error);
++        Assert.Contains("E-WF-023", (await db.Wf_TriggerFires.AsNoTracking().SingleAsync()).Error);
++    }
++
++    [Fact]
++    public async Task Fire_SubmitThrows_EWF024_ErrorBackfilled_RowKept()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn);   // 先 seed 合法用户
++        using (var seed = Ctx(conn))
++        {
++            // 空 schema（无节点）的 enabled 流程 → SubmitAsync 抛"无节点" → E-WF-024 包装
++            seed.Wf_FlowDefs.Add(new Wf_FlowDef
++            {
++                Id = Guid.NewGuid(), FlowKey = "fk-bad", FlowName = "fk-bad", FormKey = "f",
++                SchemaJson = "{\"Start\":null,\"Nodes\":[],\"Edges\":[]}", Version = 1, Enable = true,
++            });
++            await seed.SaveChangesAsync();
++        }
++        using var db = Ctx(conn);
++        var trig = NewTrigger("fk-bad", WfTriggerType.Message, starter);
++        db.Wf_FlowTriggers.Add(trig);
++        await db.SaveChangesAsync();
++
++        var r = await Service(db).FireAsync(trig, "{}", WfTriggerType.Message, "k1", CancellationToken.None);
++
++        Assert.False(r.Success);
++        Assert.Contains("E-WF-024", r.Error);
++        var fire = await db.Wf_TriggerFires.AsNoTracking().SingleAsync();
++        Assert.Contains("E-WF-024", fire.Error);          // 流水行保留 Error 回填（spec §3.1）
++        Assert.Null(fire.InstanceId);
++        Assert.Equal(0, await db.Wf_FlowInstances.CountAsync());
++    }
++
++    [Fact]
++    public async Task Fire_ResumesUnfinishedSlot_BackfillsInstance()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn);
++        using var db = Ctx(conn);
++        var trig = NewTrigger("fk-trig", WfTriggerType.Timer, starter);
++        db.Wf_FlowTriggers.Add(trig);
++        await db.SaveChangesAsync();
++        // 预插占坑行（模拟第一段已提交、第二段未跑）
++        db.Wf_TriggerFires.Add(new Wf_TriggerFire
++        {
++            TriggerId = trig.Id, IdempotencyKey = "slot-1",
++            FiredUtc = DateTime.UtcNow.AddMinutes(-5), Source = WfTriggerType.Timer,
++        });
++        await db.SaveChangesAsync();
++
++        var r = await Service(db).FireAsync(trig, "{}", WfTriggerType.Timer, "slot-1", CancellationToken.None);
++
++        Assert.True(r.Success);
++        var fire = await db.Wf_TriggerFires.AsNoTracking().SingleAsync();   // 复用该行，不新增
++        Assert.Equal(r.InstanceId, fire.InstanceId);
++        Assert.Equal(1, await db.Wf_FlowInstances.CountAsync());
++    }
++
++    [Fact]
++    public async Task Fire_RetriesFailedSlot_ClearsError()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn, flowEnabled: false);
++        using var db = Ctx(conn);
++        var trig = NewTrigger("fk-trig", WfTriggerType.Event, starter);
++        db.Wf_FlowTriggers.Add(trig);
++        await db.SaveChangesAsync();
++        var svc = Service(db);
++
++        // 第一发：流程停用 → E-WF-023 失败流水
++        var r1 = await svc.FireAsync(trig, "{}", WfTriggerType.Event, "ev-1:k", CancellationToken.None);
++        Assert.False(r1.Success);
++
++        // 启用流程 → 同 key 重发（event outbox 重放 / message 客户端重试语义，映射表⑦）
++        using (var fix = Ctx(conn))
++        {
++            (await fix.Wf_FlowDefs.SingleAsync(d => d.FlowKey == "fk-trig")).Enable = true;
++            await fix.SaveChangesAsync();
++        }
++        var r2 = await svc.FireAsync(trig, "{}", WfTriggerType.Event, "ev-1:k", CancellationToken.None);
++
++        Assert.True(r2.Success);
++        var fire = await db.Wf_TriggerFires.AsNoTracking().SingleAsync();   // 同一行：Error 清空、InstanceId 回填
++        Assert.Null(fire.Error);
++        Assert.Equal(r2.InstanceId, fire.InstanceId);
++        Assert.Equal(1, await db.Wf_FlowInstances.CountAsync());
++    }
++
++    [Fact]
++    public async Task Fire_PayloadHash_SetForNonTimer()
++    {
++        using var conn = NewSqliteWithSchema();
++        var (starter, _) = await SeedFlowAndUsersAsync(conn);
++        using var db = Ctx(conn);
++        var msgTrig = NewTrigger("fk-trig", WfTriggerType.Message, starter);
++        var timerTrig = NewTrigger("fk-trig", WfTriggerType.Timer, starter);
++        db.Wf_FlowTriggers.AddRange(msgTrig, timerTrig);
++        await db.SaveChangesAsync();
++        var svc = Service(db);
++
++        await svc.FireAsync(msgTrig, "{\"a\":1}", WfTriggerType.Message, "km", CancellationToken.None);
++        await svc.FireAsync(timerTrig, "{}", WfTriggerType.Timer, "kt", CancellationToken.None);
++
++        var msgFire = await db.Wf_TriggerFires.AsNoTracking().SingleAsync(f => f.TriggerId == msgTrig.Id);
++        var timerFire = await db.Wf_TriggerFires.AsNoTracking().SingleAsync(f => f.TriggerId == timerTrig.Id);
++        Assert.NotNull(msgFire.PayloadHash);
++        Assert.Equal(64, msgFire.PayloadHash!.Length);     // SHA-256 hex
++        Assert.Null(timerFire.PayloadHash);                // timer 无负载哈希（spec §2.2）
++    }
++}
+diff --git a/CP6.Tests/Wf/FlowTriggerTestHarness.cs b/CP6.Tests/Wf/FlowTriggerTestHarness.cs
+new file mode 100644
+index 0000000..59f3632
+--- /dev/null
++++ b/CP6.Tests/Wf/FlowTriggerTestHarness.cs
+@@ -0,0 +1,103 @@
++// CP6.Tests/Wf/FlowTriggerTestHarness.cs —— 共享基座：GenerateCreateScript + TEXT 替换建库 +
++// AFTER UPDATE 触发器模拟 rowversion（本波额外给 Wf_FlowTrigger 建同款触发器，B-T2 双 worker 抢占用）
++using System;
++using System.Text.Json;
++using System.Text.RegularExpressions;
++using System.Threading.Tasks;
++using CP6.Core.EFDbContext;
++using CP6.Core.Services.Wf;
++using CP6.Entity.DomainModels.Sys;
++using CP6.Entity.DomainModels.Wf;
++using Microsoft.Data.Sqlite;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.Tests;
++
++internal static class FlowTriggerTestHarness
++{
++    /// <summary>测试专用子类：声明两表带 rowversion 触发器（EF Core 8 SQLite 关 RETURNING 改 SELECT 读回，
++    /// 令 [Timestamp] 并发令牌在 SQLite 基座真正生效——照 FlowConcurrencyTests 口径）。</summary>
++    internal sealed class SqliteCP6Context : CP6Context
++    {
++        public SqliteCP6Context(DbContextOptions<CP6Context> o) : base(o) { }
++        protected override void OnModelCreating(ModelBuilder mb)
++        {
++            base.OnModelCreating(mb);
++            mb.Entity<Wf_FlowInstance>().ToTable(t => t.HasTrigger("trg_Wf_FlowInstance_RowVersion"));
++            mb.Entity<Wf_FlowTrigger>().ToTable(t => t.HasTrigger("trg_Wf_FlowTrigger_RowVersion"));
++        }
++    }
++
++    public static SqliteCP6Context Ctx(SqliteConnection c)
++        => new(new DbContextOptionsBuilder<CP6Context>().UseSqlite(c).Options);
++
++    public static FlowEngine Engine(CP6Context db) => new(db, new ApproverResolver(db));
++
++    public static FlowTriggerService Service(CP6Context db) => new(db, Engine(db));
++
++    public static SqliteConnection NewSqliteWithSchema()
++    {
++        var conn = new SqliteConnection("DataSource=:memory:");
++        conn.Open();
++        using (var setup = Ctx(conn))
++        {
++            var script = Regex.Replace(setup.Database.GenerateCreateScript(),
++                                       "n?varchar\\(max\\)", "TEXT", RegexOptions.IgnoreCase);
++            Exec(conn, script);
++        }
++        Exec(conn,
++            "CREATE TRIGGER trg_Wf_FlowInstance_RowVersion AFTER UPDATE ON \"Wf_FlowInstance\" " +
++            "BEGIN UPDATE \"Wf_FlowInstance\" SET \"RowVersion\" = randomblob(8) WHERE \"Id\" = NEW.\"Id\"; END;");
++        Exec(conn,
++            "CREATE TRIGGER trg_Wf_FlowTrigger_RowVersion AFTER UPDATE ON \"Wf_FlowTrigger\" " +
++            "BEGIN UPDATE \"Wf_FlowTrigger\" SET \"RowVersion\" = randomblob(8) WHERE \"Id\" = NEW.\"Id\"; END;");
++        return conn;
++    }
++
++    private static void Exec(SqliteConnection c, string sql)
++    {
++        using var cmd = c.CreateCommand();
++        cmd.CommandText = sql;
++        cmd.ExecuteNonQuery();
++    }
++
++    /// <summary>最小 schema：start → approval(指定人) → end（形状照 FlowConcurrencyTests.ForkSchema）。</summary>
++    public static string MinimalSchemaJson(Guid approver) => JsonSerializer.Serialize(new FlowSchema
++    {
++        Start = "s",
++        Nodes =
++        {
++            new FlowNode { Id = "s", Type = "start" },
++            new FlowNode { Id = "a", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = approver },
++            new FlowNode { Id = "end", Type = "end" },
++        },
++        Edges = { new FlowEdge { From = "s", To = "a" }, new FlowEdge { From = "a", To = "end" } },
++    });
++
++    /// <summary>seed：一个流程定义（默认 enabled，flowKey 默认 "fk-trig"）+ 发起人 + 审批人。</summary>
++    public static async Task<(Guid StarterId, Guid ApproverId)> SeedFlowAndUsersAsync(
++        SqliteConnection conn, string flowKey = "fk-trig", bool flowEnabled = true, bool starterEnabled = true)
++    {
++        var starter = Guid.NewGuid();
++        var approver = Guid.NewGuid();
++        using var db = Ctx(conn);
++        db.Sys_Users.AddRange(
++            new Sys_User { Id = starter, UserName = $"st{starter:N}", Password = "x", RoleId = 1, Enable = starterEnabled },
++            new Sys_User { Id = approver, UserName = $"ap{approver:N}", Password = "x", RoleId = 1, Enable = true });
++        db.Wf_FlowDefs.Add(new Wf_FlowDef
++        {
++            Id = Guid.NewGuid(), FlowKey = flowKey, FlowName = flowKey, FormKey = "f",
++            SchemaJson = MinimalSchemaJson(approver), Version = 1, Enable = flowEnabled,
++        });
++        await db.SaveChangesAsync();
++        return (starter, approver);
++    }
++
++    public static Wf_FlowTrigger NewTrigger(string flowKey, int type, Guid starterId,
++        bool enabled = true, string configJson = "{}", string? eventKey = null)
++        => new()
++        {
++            FlowKey = flowKey, TriggerType = type, StarterUserId = starterId,
++            Enabled = enabled, ConfigJson = configJson, EventKey = eventKey,
++        };
++}
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 39cee8d..9038947 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -118,20 +118,21 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
+ // 4.0 PUB 章00 组织模型
+ builder.Services.AddScoped<CP6.Core.Services.Sys.IDeptService, CP6.Core.Services.Sys.DeptService>();
+ 
+ // 4.0a OA(Wf) 阶段1 运行时
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverResolver, CP6.Core.Services.Wf.ApproverResolver>(); // 章01 审批人解析（消费 PUB 组织）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalStagePlanner, CP6.Core.Services.Wf.ApprovalStagePlanner>(); // 串簽 T2 档展平服务
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverMapService, CP6.Core.Services.Wf.ApproverMapService>(); // ②b 审批人映射维护
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.FlowEngine>();                                                // 章03 流程引擎状态机（会签/条件/幂等）；WfServiceJobService ctor 注入具体类型（internal Resume/FailServiceTokenAsync 不在接口上）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine>(sp => sp.GetRequiredService<CP6.Core.Services.Wf.FlowEngine>()); // 接口与具体类共享同一 scoped 实例
++builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowTriggerService, CP6.Core.Services.Wf.FlowTriggerService>(); // 事件触发 start：三入口单一出口（D2）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.StartNodeHandler>();      // WFS T4 节点处理器：开始
+ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ApprovalNodeHandler>();   // WFS T4 节点处理器：审批
+ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.EndNodeHandler>();        // WFS T4 节点处理器：结束
+ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelSplitNodeHandler>(); // WFS T5 节点处理器：并行分叉
+ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ParallelJoinNodeHandler>();  // WFS T5 节点处理器：并行汇聚
+ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ServiceTaskNodeHandler>();    // WFS A-T6 节点处理器：服务任务（注入 IEnumerable<IServiceTaskExecutor>，未注册时为空）
+ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.InclusiveSplitNodeHandler>();  // hardening A-T3 节点处理器：包容分叉
+ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.InclusiveJoinNodeHandler>();   // hardening A-T3 节点处理器：包容汇聚
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
+ builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）

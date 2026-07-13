@@ -80,6 +80,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
     private readonly IOrderCancelBridgeHook _cancel;
     private readonly IFinBridgeHook _fin;
     private readonly ISpaceBridgeHook _space;
+    private readonly IWfTriggerBridgeHook _wfTrigger;
 
     public IntegrationEventDispatcher(
         IMesBridgeHook mes,
@@ -87,7 +88,9 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         IErpBridgeHook erp,
         IOrderCancelBridgeHook cancel,
         IFinBridgeHook fin,
-        ISpaceBridgeHook space)
+        ISpaceBridgeHook space,
+        // 可选：既有 6 参构造点（测试）零改动仍编译；DI 已注册 IWfTriggerBridgeHook 会注入真实 hook。
+        IWfTriggerBridgeHook? wfTrigger = null)
     {
         _mes = mes;
         _wms = wms;
@@ -95,6 +98,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         _cancel = cancel;
         _fin = fin;
         _space = space;
+        _wfTrigger = wfTrigger ?? new NoOpWfTriggerBridgeHook();
     }
 
     /// <summary>
@@ -104,11 +108,23 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         => $"{source}|{target}|{hook}";
 
     /// <inheritdoc />
-    public Task<bool> DispatchAsync(IntegrationEvent evt, CancellationToken ct = default)
+    public async Task<bool> DispatchAsync(IntegrationEvent evt, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
 
         var key = RouteKey(evt.SourceModule, evt.TargetModule, evt.HookName);
+
+        // WF 触发器目标泛化路由（spec §3.3）：target=WF & hook=OnEventAsync 不看 source 直接路由。
+        // 走 ReplayEventAsync（重放不再写新 outbox 行，映射表⑦）；DISPATCH-404 语义对其余路由不变。
+        if (evt.TargetModule == "WF" && evt.HookName == nameof(IWfTriggerBridgeHook.OnEventAsync))
+        {
+            var p = JsonSerializer.Deserialize<WfTriggerEventPayload>(evt.PayloadJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                    ?? throw new InvalidOperationException("DISPATCH-400: empty WfTrigger payload");
+            var r = await _wfTrigger.ReplayEventAsync(p.EventKey, p.EventId, p.PayloadJson, p.UserName);
+            return r.Success;
+        }
+
         if (!Routes.TryGetValue(key, out var route))
         {
             throw new InvalidOperationException(
@@ -117,7 +133,7 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
 
         var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
         var context = new DispatchContext(_mes, _wms, _erp, _cancel, _fin, _space, payload);
-        return route(context);
+        return await route(context);
     }
 
     private sealed class DispatchContext

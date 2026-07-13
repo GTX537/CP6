@@ -6,32 +6,39 @@
   el-alert 唯一性提示无 Cp 等价物，作为壳内首个子项保留。
 -->
 <template>
-  <CpPageShell :title="t('oa.flowadmin.title')" :count="total">
+  <CpPageShell :title="t('oa.flowadmin.title')" :count="activeTab === 'flows' ? total : undefined">
     <template #actions>
-      <el-button :icon="Refresh" circle :loading="refreshing" @click="refresh" />
+      <el-button v-if="activeTab === 'flows'" :icon="Refresh" circle :loading="refreshing" @click="refresh" />
     </template>
 
-    <el-alert type="info" :closable="false" show-icon>
-      {{ t('oa.flowadmin.uniqueHint') }}
-    </el-alert>
+    <el-tabs v-model="activeTab">
+      <el-tab-pane :label="t('oa.flowadmin.tab.flows')" name="flows">
+        <el-alert type="info" :closable="false" show-icon>
+          {{ t('oa.flowadmin.uniqueHint') }}
+        </el-alert>
 
-    <CpListPage
-      ref="listRef"
-      :columns="columns"
-      :fetch="fetchFlows"
-      :paginated="false"
-      :empty-text="t('oa.flowadmin.empty')"
-      @total-change="total = $event"
-    >
-      <template #col-enable="{ row }">
-        <el-switch
-          v-model="(row as FlowAdminItem).enable"
-          :loading="toggling.has((row as FlowAdminItem).flowKey)"
-          :disabled="toggling.has((row as FlowAdminItem).flowKey)"
-          @change="(val: boolean | string | number) => toggleEnable(row as FlowAdminItem, val as boolean)"
-        />
-      </template>
-    </CpListPage>
+        <CpListPage
+          ref="listRef"
+          :columns="columns"
+          :fetch="fetchFlows"
+          :paginated="false"
+          :empty-text="t('oa.flowadmin.empty')"
+          @total-change="total = $event"
+        >
+          <template #col-enable="{ row }">
+            <el-switch
+              v-model="(row as FlowAdminItem).enable"
+              :loading="toggling.has((row as FlowAdminItem).flowKey)"
+              :disabled="toggling.has((row as FlowAdminItem).flowKey)"
+              @change="(val: boolean | string | number) => toggleEnable(row as FlowAdminItem, val as boolean)"
+            />
+          </template>
+        </CpListPage>
+      </el-tab-pane>
+      <el-tab-pane :label="t('oa.flowtrigger.tab')" name="triggers" lazy>
+        <FlowTriggerPanel />
+      </el-tab-pane>
+    </el-tabs>
   </CpPageShell>
 </template>
 
@@ -42,11 +49,13 @@ import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import FlowTriggerPanel from './FlowTriggerPanel.vue'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
 import type { FlowAdminItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
 
+const activeTab = ref<'flows' | 'triggers'>('flows')
 const total = ref<number>()
 const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
 const refreshing = ref(false)

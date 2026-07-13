@@ -69,3 +69,11 @@ public static class ServiceMode
     public const string Sync = "sync";
     public const string Async = "async";
 }
+
+/// <summary>流程触发器类型（事件触发 start 增量，spec §2.1）。</summary>
+public static class WfTriggerType
+{
+    public const int Timer = 0;
+    public const int Event = 1;
+    public const int Message = 2;
+}
