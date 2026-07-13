@@ -26,6 +26,7 @@
         </div>
 
         <el-table
+          v-if="!isMobile"
           ref="reviewTableRef"
           :data="reviewRows"
           border
@@ -45,6 +46,31 @@
             <template #default="{ row }">{{ formatTime(row.sentAt) }}</template>
           </el-table-column>
         </el-table>
+
+        <div v-if="isMobile" class="mobile-list" v-loading="reviewLoading">
+          <div
+            v-for="row in reviewRows"
+            :key="row.taskId"
+            class="mobile-row"
+            :class="{ 'row-unread': !row.isRead }"
+            @click="onReviewRowClick(row)"
+          >
+            <div class="mobile-main">
+              <el-checkbox
+                :model-value="isSelected(row)"
+                @click.stop
+                @change="toggleMobileSelect(row)"
+              />
+              <span class="mobile-flow">{{ row.flowName }}</span>
+              <CpTag tone="info">{{ row.stageName || row.nodeId }}</CpTag>
+            </div>
+            <div class="mobile-meta">
+              <span class="mobile-key">{{ row.flowKey }}</span>
+              <span>{{ row.starterName }}</span>
+              <span>{{ formatTime(row.sentAt) }}</span>
+            </div>
+          </div>
+        </div>
         <CpEmpty v-if="!reviewLoading && !reviewRows.length" :text="t('oa.pending.empty')" />
       </el-tab-pane>
 
@@ -55,6 +81,7 @@
           <el-button :icon="Refresh" circle size="small" :loading="ccLoading" @click="loadCc" />
         </div>
         <el-table
+          v-if="!isMobile"
           :data="ccRows"
           border
           stripe
@@ -71,6 +98,19 @@
             <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
           </el-table-column>
         </el-table>
+
+        <div v-if="isMobile" class="mobile-list" v-loading="ccLoading">
+          <div v-for="row in ccRows" :key="row.ccId" class="mobile-row" @click="onCcRowClick(row)">
+            <div class="mobile-main">
+              <span class="mobile-flow">{{ row.flowName }}</span>
+              <CpTag tone="info">{{ row.atNodeId }}</CpTag>
+            </div>
+            <div class="mobile-meta">
+              <span>{{ row.starterName }}</span>
+              <span>{{ formatTime(row.createDate) }}</span>
+            </div>
+          </div>
+        </div>
         <CpEmpty v-if="!ccLoading && !ccRows.length" :text="t('oa.pending.ccEmpty')" />
       </el-tab-pane>
     </el-tabs>
@@ -87,9 +127,22 @@ import { inboxApi } from '@/api/oa/inbox'
 import CpTag from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { PendingItem, CcItem, BatchResultItem } from '@/types/oa/inbox'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { t } = useI18n()
 const emit = defineEmits<{ 'open-detail': [id: string] }>()
+const { isMobile } = useBreakpoint()
+
+/** 移动端卡片多选：直接维护同一 selected 数组（批量条 doBatch 复用零改动） */
+function isSelected(row: PendingItem): boolean {
+  return selected.value.some((r) => r.taskId === row.taskId)
+}
+
+function toggleMobileSelect(row: PendingItem) {
+  selected.value = isSelected(row)
+    ? selected.value.filter((r) => r.taskId !== row.taskId)
+    : [...selected.value, row]
+}
 
 // ── Tabs ────────────────────────────────────────────────────────
 const activeTab = ref('review')
@@ -211,5 +264,63 @@ onMounted(loadReview)
 }
 :deep(.row-unread td) {
   font-weight: 600;
+}
+
+.mobile-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-row {
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--cp-line);
+  cursor: pointer;
+}
+
+.mobile-row:last-child {
+  border-bottom: none;
+}
+
+.mobile-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cp-ink);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.mobile-flow {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--cp-muted);
+  font-size: 12px;
+}
+
+.mobile-key {
+  font-family: monospace;
+}
+
+.mobile-row.row-unread .mobile-flow {
+  font-weight: 650;
+}
+
+@media (max-width: 767px) {
+  .batch-bar {
+    flex-wrap: wrap;
+  }
+
+  .batch-bar .el-input {
+    width: 100% !important;
+    order: 3;
+  }
 }
 </style>

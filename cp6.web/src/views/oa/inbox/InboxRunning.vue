@@ -6,6 +6,7 @@
     </div>
 
     <el-table
+      v-if="!isMobile"
       :data="rows"
       border
       stripe
@@ -31,6 +32,19 @@
         <template #default="{ row }">{{ formatTime(row.createDate) }}</template>
       </el-table-column>
     </el-table>
+
+    <div v-if="isMobile" class="mobile-list" v-loading="loading">
+      <div v-for="row in rows" :key="row.instanceId" class="mobile-row" @click="onRowClick(row)">
+        <div class="mobile-main">
+          <span class="mobile-flow">{{ row.flowName }}</span>
+          <CpTag :tone="instanceStatusTone(row.status)">{{ t(instanceStatusText(row.status)) }}</CpTag>
+        </div>
+        <div class="mobile-meta">
+          <span>{{ row.currentNode }} · {{ row.currentHandlers.join('、') }}</span>
+          <span>{{ formatTime(row.createDate) }}</span>
+        </div>
+      </div>
+    </div>
     <CpEmpty v-if="!loading && !rows.length" :text="t('oa.running.empty')" />
   </div>
 </template>
@@ -44,9 +58,11 @@ import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { RunningItem } from '@/types/oa/inbox'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { t } = useI18n()
 const emit = defineEmits<{ 'open-detail': [id: string] }>()
+const { isMobile } = useBreakpoint()
 
 /** 実例状態码 → CpTag 色調（对齐 inboxModel.instanceStatusType：warning/success/danger/info/info）。 */
 function instanceStatusTone(s: number): Tone {
@@ -86,5 +102,44 @@ onMounted(load)
   align-items: center;
   gap: 10px;
   margin-bottom: 8px;
+}
+
+.mobile-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-row {
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--cp-line);
+  cursor: pointer;
+}
+
+.mobile-row:last-child {
+  border-bottom: none;
+}
+
+.mobile-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cp-ink);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.mobile-flow {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--cp-muted);
+  font-size: 12px;
 }
 </style>

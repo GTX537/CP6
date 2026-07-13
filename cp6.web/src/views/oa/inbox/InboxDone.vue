@@ -1,7 +1,7 @@
 <template>
   <div class="inbox-done">
     <!-- Controls: month picker + tabs -->
-    <div class="done-controls">
+    <div v-if="!isMobile" class="done-controls">
       <el-date-picker
         v-model="selectedMonth"
         type="month"
@@ -22,9 +22,30 @@
     <div class="table-toolbar">
       <CpTag>{{ t('共 {n} 条', { n: rows.length }) }}</CpTag>
       <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
+      <el-button v-if="isMobile" :icon="Filter" size="small" round @click="filterDrawer = true">
+        {{ t('oa.inbox.mobileFilter') }}
+      </el-button>
     </div>
 
+    <!-- 移动端：筛选底部抽屉 -->
+    <el-drawer v-model="filterDrawer" direction="btt" size="40%" :title="t('oa.inbox.mobileFilter')">
+      <el-form label-width="90px">
+        <el-form-item :label="t('oa.done.allMonths')">
+          <el-date-picker v-model="selectedMonth" type="month" value-format="YYYY-MM"
+            :placeholder="t('oa.done.allMonths')" clearable style="width: 100%" @change="load" />
+        </el-form-item>
+        <el-form-item>
+          <el-radio-group v-model="activeTab" @change="load">
+            <el-radio-button label="mine">{{ t('oa.done.mine') }}</el-radio-button>
+            <el-radio-button label="all">{{ t('oa.done.all') }}</el-radio-button>
+            <el-radio-button label="cc">{{ t('oa.done.cc') }}</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+    </el-drawer>
+
     <el-table
+      v-if="!isMobile"
       :data="rows"
       border
       stripe
@@ -47,6 +68,19 @@
         <template #default="{ row }">{{ formatTime(row.doneAt) }}</template>
       </el-table-column>
     </el-table>
+
+    <div v-if="isMobile" class="mobile-list" v-loading="loading">
+      <div v-for="row in rows" :key="row.instanceId" class="mobile-row" @click="onRowClick(row)">
+        <div class="mobile-main">
+          <span class="mobile-flow">{{ row.flowName }}</span>
+          <CpTag :tone="formToStatusTone(row.formToStatus)">{{ t(formToStatusText(row.formToStatus)) }}</CpTag>
+        </div>
+        <div class="mobile-meta">
+          <span>{{ row.starterName }}</span>
+          <span>{{ formatTime(row.doneAt) }}</span>
+        </div>
+      </div>
+    </div>
     <CpEmpty v-if="!loading && !rows.length" :text="t('oa.done.empty')" />
   </div>
 </template>
@@ -54,15 +88,18 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Refresh } from '@element-plus/icons-vue'
+import { Filter, Refresh } from '@element-plus/icons-vue'
 import { inboxApi } from '@/api/oa/inbox'
 import { formToStatusText } from '@/views/oa/inbox/inboxModel'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { DoneItem } from '@/types/oa/inbox'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { t } = useI18n()
 const emit = defineEmits<{ 'open-detail': [id: string] }>()
+const { isMobile } = useBreakpoint()
+const filterDrawer = ref(false)
 
 const rows = ref<DoneItem[]>([])
 const loading = ref(false)
@@ -129,5 +166,44 @@ onMounted(load)
   gap: 10px;
   margin-bottom: 8px;
   margin-top: 8px;
+}
+
+.mobile-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-row {
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--cp-line);
+  cursor: pointer;
+}
+
+.mobile-row:last-child {
+  border-bottom: none;
+}
+
+.mobile-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cp-ink);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.mobile-flow {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--cp-muted);
+  font-size: 12px;
 }
 </style>

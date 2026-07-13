@@ -44,9 +44,23 @@
       </el-button>
     </el-header>
 
+    <!-- 移动端文件夹横滑条（替代左侧菜单） -->
+    <div v-if="isMobile" class="mobile-folder-bar">
+      <el-button
+        v-for="f in folderList"
+        :key="f.key"
+        size="small"
+        round
+        :type="folder === f.key ? 'primary' : 'default'"
+        @click="onSelect(f.key)"
+      >
+        {{ f.label }}<template v-if="f.key === 'pending' && stats?.pendingCount"> ({{ stats.pendingCount }})</template>
+      </el-button>
+    </div>
+
     <!-- 左侧菜单 + 右侧内容 -->
     <el-container class="inbox-body">
-      <el-aside width="200px" class="inbox-aside">
+      <el-aside v-if="!isMobile" width="200px" class="inbox-aside">
         <el-menu
           :default-active="folder"
           class="inbox-menu"
@@ -85,7 +99,7 @@
     <!-- 表单详情抽屉 -->
     <el-drawer
       v-model="drawerVisible"
-      size="60%"
+      :size="isMobile ? '100%' : '60%'"
       :title="t('oa.inbox.detailTitle')"
       destroy-on-close
     >
@@ -139,9 +153,21 @@ import InboxDone from './InboxDone.vue'
 import InboxDraft from './InboxDraft.vue'
 import FormDetail from './FormDetail.vue'
 import CpTag from '@/components/base/CpTag.vue'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { t } = useI18n()
 const router = useRouter()
+const { isMobile } = useBreakpoint()
+
+/** 移动端文件夹横滑条（含流程管理路由项） */
+const folderList = computed(() => [
+  { key: 'dashboard',  label: t('oa.inbox.dashboard') },
+  { key: 'pending',    label: t('oa.inbox.pending') },
+  { key: 'running',    label: t('oa.inbox.running') },
+  { key: 'done',       label: t('oa.inbox.done') },
+  { key: 'draft',      label: t('oa.inbox.draft') },
+  { key: 'flow-admin', label: t('oa.inbox.flowAdmin') },
+])
 
 // ── act-as 态机 ──────────────────────────────────────────────────
 const actingAs = ref<ActingAs | null>(getActingAs())
@@ -308,5 +334,35 @@ async function openNewDialog() {
   margin-top: 12px;
   font-size: 12px;
   color: var(--cp-faint);
+}
+
+.mobile-folder-bar {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  background: var(--cp-card);
+  border-bottom: 1px solid var(--cp-line-soft);
+  flex-shrink: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-folder-bar .el-button {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+@media (max-width: 767px) {
+  .inbox-header {
+    padding: 0 12px;
+  }
+
+  .inbox-title {
+    font-size: 14px;
+  }
+
+  .inbox-main {
+    padding: 10px;
+  }
 }
 </style>
