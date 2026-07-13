@@ -115,8 +115,89 @@ public class FlowTriggerService : IFlowTriggerService
         => ScanTimersOnceAsync(DateTime.UtcNow, ct);
 
     /// <summary>测试重载（注入 nowUtc，映射表⑤）——B-T2 实现。</summary>
-    public Task<int> ScanTimersOnceAsync(DateTime nowUtc, CancellationToken ct)
-        => throw new NotImplementedException("B-T2");
+    public async Task<int> ScanTimersOnceAsync(DateTime nowUtc, CancellationToken ct)
+    {
+        var processed = 0;
+
+        // ── ① 补跑扫描（spec §3.2 崩溃恢复）：宽限期外仍未完成的占坑行 → 补第二段 ──
+        var staleIds = await _db.Wf_TriggerFires
+            .Where(f => f.Source == WfTriggerType.Timer && f.InstanceId == null && f.Error == null
+                        && f.FiredUtc < nowUtc - RecoveryGrace)
+            .OrderBy(f => f.FiredUtc)
+            .Take(BatchSize)
+            .Select(f => f.Id)
+            .ToListAsync(ct);
+        foreach (var fireId in staleIds)
+        {
+            ct.ThrowIfCancellationRequested();
+            // 每条重查（FireAsync 失败路径 ChangeTracker.Clear 会使批量实体失联——调用方契约）
+            var fire = await _db.Wf_TriggerFires.FirstOrDefaultAsync(f => f.Id == fireId, ct);
+            if (fire == null || fire.InstanceId != null || fire.Error != null) continue;   // 已被别人完成
+            var trig = await _db.Wf_FlowTriggers.FirstOrDefaultAsync(t => t.Id == fire.TriggerId, ct);
+            if (trig == null) continue;
+            var cfg = WfTriggerConfig.ParseTimer(trig.ConfigJson);
+            await FireAsync(trig, cfg.VarsJson, WfTriggerType.Timer, fire.IdempotencyKey, ct);
+            processed++;
+        }
+
+        // ── ② 到期扫描 + 占坑两段式 ──
+        var dueIds = await _db.Wf_FlowTriggers
+            .Where(t => t.Enabled && t.TriggerType == WfTriggerType.Timer
+                        && t.NextDueUtc != null && t.NextDueUtc <= nowUtc)
+            .OrderBy(t => t.NextDueUtc)
+            .Take(BatchSize)
+            .Select(t => t.Id)
+            .ToListAsync(ct);
+        foreach (var id in dueIds)
+        {
+            ct.ThrowIfCancellationRequested();
+            var trig = await _db.Wf_FlowTriggers.FirstOrDefaultAsync(t => t.Id == id, ct);   // 逐条重查（同上契约）
+            if (trig == null || !trig.Enabled || trig.NextDueUtc == null || trig.NextDueUtc > nowUtc) continue;
+
+            var dueUtc = trig.NextDueUtc.Value;
+            var key = $"{trig.Id}:{dueUtc:O}";
+            var cfg = WfTriggerConfig.ParseTimer(trig.ConfigJson);
+
+            // 第一段：抢占 + 占坑，单 SaveChanges（隐式单事务）＝「NextDueUtc 前移 + INSERT 占坑行」原子提交。
+            // misfire：NextUtc 从 nowUtc 起算严格未来下一个 → 跨过的历史到期点只补最近（本次），不追积压（spec §3.2）。
+            var next = WfCronHelper.NextUtc(cfg.Cron, nowUtc);
+            var fire = new Wf_TriggerFire
+            {
+                TriggerId = trig.Id, IdempotencyKey = key,
+                FiredUtc = nowUtc, Source = WfTriggerType.Timer,
+            };
+            if (next == null)
+            {
+                // 保存后被改坏的 cron：停摆 + 记错（不占坑发起，不无限重扫）
+                trig.NextDueUtc = null;
+                fire.Error = "E-WF-022: cron 解析失败";
+                _db.Wf_TriggerFires.Add(fire);
+                await _db.SaveChangesAsync(ct);
+                processed++;
+                continue;
+            }
+            trig.NextDueUtc = next;
+            _db.Wf_TriggerFires.Add(fire);
+            try { await _db.SaveChangesAsync(ct); }
+            catch (DbUpdateException)   // 含 DbUpdateConcurrencyException：RowVersion 被抢 / 占坑撞唯一键 → 让位
+            {
+                _db.Entry(fire).State = EntityState.Detached;
+                _db.Entry(trig).State = EntityState.Detached;
+                continue;
+            }
+
+            // 第一段提交后：库内 RowVersion 已被写触达（真库=OUTPUT 回读；SQLite 测试基座=AFTER UPDATE
+            // 触发器刷新但 HasTrigger 关 RETURNING → 追踪实例仍持旧令牌）。从追踪器移除，令第二段 FireAsync
+            // 重查到带当前 RowVersion 的鲜活实例，避免同上下文二次写触达（LastFiredUtc）撞乐观并发自误伤。
+            _db.Entry(trig).State = EntityState.Detached;
+
+            // 第二段：完成（FireAsync 复用占坑行回填 InstanceId/Error；两半各自幂等）
+            await FireAsync(trig, cfg.VarsJson, WfTriggerType.Timer, key, ct);
+            processed++;
+        }
+
+        return processed;
+    }
 
     private async Task<TriggerFireResult> FailFireAsync(Wf_TriggerFire fire, string error, CancellationToken ct)
     {
