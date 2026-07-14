@@ -75,6 +75,10 @@ public class DesignerService : IDesignerService
                 throw new InvalidOperationException("E-WF-028");
         }
 
+        // ①d 子流程引用校验(E-WF-025/026,子流程 spec §5)：FlowKey 存在且启用 + 引用环 DFS(深度 8,当前已发布版快照)。
+        //     brief 原定接线位 ①c 已被波⑤ E-WF-028 租约校验占用,顺延为 ①d(报告说明)。仅挂 SaveAsync,不影响旧数据读取。
+        SubFlowRefValidator.Validate(_db, req.FlowKey, schema);
+
         // ② 身份码租户内唯一（排除自身 FlowKey）
         if (!string.IsNullOrWhiteSpace(req.FunctionId) &&
             await _db.Wf_FlowDefs.AnyAsync(d => d.FunctionId == req.FunctionId && d.FlowKey != req.FlowKey))

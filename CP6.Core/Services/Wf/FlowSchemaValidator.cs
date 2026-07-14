@@ -133,6 +133,24 @@ public static class FlowSchemaValidator
         foreach (var n in schema.Nodes.Where(n => string.Equals(n.TimeoutAction, "errorEdge", StringComparison.OrdinalIgnoreCase)))
             if (!schema.Edges.Any(e => e.From == n.Id && e.IsError == true)) { errs.Add("E-WF-027"); break; }
 
+        // ⑪ 子流程节点(E-WF-025,子流程 spec §5)：SubFlowKey 非空;非错误出边必有(对齐 serviceTask E-WF-016 同款);
+        //    SubCompletionPolicy ∈ {null,all,any};SubCollectionVar 非空串;SubVarsIn/OutJson 合法映射且无下标。
+        //    FlowKey 存在性/启用/防环交 DI 层 SubFlowRefValidator（静态无 DB 查不了）。※本 infra 波已占 ⑩=inclusive，故编号 ⑪。
+        foreach (var n in schema.Nodes.Where(n => T(n) == "subflow"))
+        {
+            var pol = (n.SubCompletionPolicy ?? SubFlowCompletionPolicy.All).Trim().ToLowerInvariant();
+            bool bad =
+                string.IsNullOrWhiteSpace(n.SubFlowKey)
+                || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true)
+                || (pol != SubFlowCompletionPolicy.All && pol != SubFlowCompletionPolicy.Any)
+                || (n.SubCollectionVar is not null && string.IsNullOrWhiteSpace(n.SubCollectionVar))
+                || !SubFlowVarsMapper.TryParseMap(n.SubVarsInJson, out _)
+                || !SubFlowVarsMapper.TryParseMap(n.SubVarsOutJson, out _)
+                || ServiceVarsHelper.ContainsUnsupportedSubscript(n.SubVarsInJson)
+                || ServiceVarsHelper.ContainsUnsupportedSubscript(n.SubVarsOutJson);
+            if (bad) { errs.Add("E-WF-025"); break; }
+        }
+
         // ⑩ inclusive 网关（hardening E-WF-020/021）
         // E-WF-020：inclusiveSplit 出边（非错误边）须 ≥2 且恰好一条无条件 default 兜底边
         foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivesplit"))
