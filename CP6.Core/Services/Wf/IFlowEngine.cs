@@ -52,4 +52,9 @@ public interface IFlowEngine
     /// <summary>转交（umbrella §4.5）：把 Pending 待办改派给同租户 toUserId（保 TokenId/NodeId，不流转）。
     /// 履历原行 Transferred + 受让人新 Pending 行 + AddHistory("transfer") + 通知。非待办/目标非法 → E-WF-002。</summary>
     Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null);
+
+    /// <summary>approval 超时走失败边（infra ②，spec §3）：作废该节点在途待办（节点级，仿退回口径，不连坐兄弟）
+    /// + 注入 timeoutError 变量 + 沿 IsError 出边路由。<b>幂等</b>：任务非 Pending / 实例非 Running / 无 Active token → 零动作。
+    /// 不 SaveChanges——由调用方（<see cref="IWfTimeoutService.ScanOnceAsync"/> 尾）统一保存。</summary>
+    Task TimeoutAdvanceErrorEdgeAsync(Guid taskId, Guid actorId, CancellationToken ct = default);
 }

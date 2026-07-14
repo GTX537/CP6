@@ -18,6 +18,7 @@ public interface IWfTimeoutService
 /// <item>remind — 软动作：重发催办 + 把 DueAt 顺延（可重复，不置 TimeoutHandled）</item>
 /// <item>approve / reject — 硬动作：以系统身份调 <see cref="FlowEngine.ActAsync"/>（本身幂等）推进/否决</item>
 /// <item>escalate — 硬动作：把 assignee 升级给 EscalateTo + 双痕，原人不再持有</item>
+/// <item>errorEdge — 硬动作：作废节点在途待办 + 注入 timeoutError 变量，沿 IsError 失败边路由（不硬批/硬驳）</item>
 /// </list>
 /// <b>双幂等</b>：TimeoutHandled 标记（硬动作处理后置位，扫描不再碰）+ ActAsync 自身幂等闸门。
 /// </summary>
@@ -86,6 +87,12 @@ public class WfTimeoutService : IWfTimeoutService
                         task.DueAt = null;   // 升级后清限时，避免再触发
                         await _notifier.TodoCreatedAsync(up, inst.Id, task.Id, inst.FlowKey);
                     }
+                    task.TimeoutHandled = true;
+                    break;
+
+                case "erroredge": // 硬：审批超时走失败边（infra ②），委托引擎节点级清场+路由；置 Handled 防反复扫
+                                  // （action 已 ToLowerInvariant → 匹配小写 "erroredge"，对齐既有 case 约定）
+                    await _engine.TimeoutAdvanceErrorEdgeAsync(task.Id, SystemActor, ct);
                     task.TimeoutHandled = true;
                     break;
 

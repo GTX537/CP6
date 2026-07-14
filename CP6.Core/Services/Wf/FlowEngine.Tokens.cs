@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wf;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wf;
 
@@ -184,5 +185,38 @@ public partial class FlowEngine
         }
         var node = FindNode(schema, token.NodeId);
         if (node is not null) Suspend(inst, node, "服务任务失败且无错误边");
+    }
+
+    /// <summary>approval 超时走失败边（infra ②，spec §3）。作废该节点在途待办（<b>节点级</b>，仿退回口径
+    /// <see cref="AdvancedFlow"/> §5.2，不用实例级驳回连坐，绝不误伤兄弟分支）+ 注入 timeoutError 变量 +
+    /// <see cref="AdvanceAlongErrorEdge"/> 路由。<b>幂等</b>：任务非 Pending / 实例非 Running / 无 Active token → 零动作
+    /// （防超时扫描重投二次推进）。不 SaveChanges——由 <see cref="WfTimeoutService.ScanOnceAsync"/> 尾统一保存。</summary>
+    public async Task TimeoutAdvanceErrorEdgeAsync(Guid taskId, Guid actorId, CancellationToken ct = default)
+    {
+        var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId, ct);
+        if (task is null || task.Status != FlowTaskStatus.Pending) return;
+        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId, ct);
+        if (inst is null || inst.Status != FlowInstanceStatus.Running) return;
+        var schema = Deserialize((await _db.Wf_FlowDefs.FirstAsync(d => d.FlowKey == inst.FlowKey, ct)).SchemaJson);
+        var token = await _db.Wf_FlowTokens.FirstOrDefaultAsync(
+            t => t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.Status == FlowTokenStatus.Active, ct);
+        if (token is null) return;
+
+        // ① 节点级作废在途待办（对齐退回清理口径 AdvancedFlow.cs SameBranch，不用实例级驳回连坐）
+        var cur = await _db.Wf_FlowTasks
+            .Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.Status == FlowTaskStatus.Pending).ToListAsync(ct);
+        foreach (var t in cur) t.Status = FlowTaskStatus.Cancelled;
+        VoidPendingFormTos(inst.Id, task.NodeId, token.Id, task.StageIndex, task.StageRound, FlowFormToStatus.SentBack);
+
+        // ② 注入错误变量（口径同 serviceTask 失败：结构化 key）
+        inst.VarsJson = ServiceVarsHelper.MergeOutputVars(inst.VarsJson, new Dictionary<string, object?>
+        {
+            ["timeoutError"] = new { nodeId = task.NodeId, dueAt = task.DueAt },
+        }).VarsJson;
+        AddHistory(inst.Id, task.NodeId, actorId, "timeoutErrorEdge", $"审批超时走失败边（node={task.NodeId}）");
+
+        // ③ 沿错误边路由（无边则 Suspend——但 E-WF-027 静态已保证有边）
+        await AdvanceAlongErrorEdge(inst, schema, token);
+        // 不 SaveChanges——WfTimeoutService.ScanOnceAsync 尾统一保存
     }
 }
