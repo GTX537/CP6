@@ -198,13 +198,18 @@ public partial class FlowEngine
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId, ct);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) return;
         var schema = Deserialize((await _db.Wf_FlowDefs.FirstAsync(d => d.FlowKey == inst.FlowKey, ct)).SchemaJson);
+        // 定位「本任务自己的」token（终审 Important#1）：按 task.TokenId 精确取，不按 (NodeId,Active) 泛取——
+        // 畸形但合法 schema（split 双边汇入同一 approval）下同节点可有两枚 Active token，泛取可能选中兄弟 token
+        // → 路由/作废/void 全打错支。三面（lookup/cancel/void）同源 task.TokenId。
         var token = await _db.Wf_FlowTokens.FirstOrDefaultAsync(
-            t => t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.Status == FlowTokenStatus.Active, ct);
+            t => t.Id == task.TokenId && t.NodeId == task.NodeId && t.Status == FlowTokenStatus.Active, ct);
         if (token is null) return;
 
-        // ① 节点级作废在途待办（对齐退回清理口径 AdvancedFlow.cs SameBranch，不用实例级驳回连坐）
+        // ① 节点级作废在途待办（对齐退回清理口径 AdvancedFlow.cs SameBranch，不用实例级驳回连坐）；
+        //    带 TokenId 过滤（终审 Important#1）——与下行 void 五元组同源，兄弟 token 同节点待办零扰动
         var cur = await _db.Wf_FlowTasks
-            .Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.Status == FlowTaskStatus.Pending).ToListAsync(ct);
+            .Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.TokenId == token.Id
+                        && t.Status == FlowTaskStatus.Pending).ToListAsync(ct);
         foreach (var t in cur) t.Status = FlowTaskStatus.Cancelled;
         VoidPendingFormTos(inst.Id, task.NodeId, token.Id, task.StageIndex, task.StageRound, FlowFormToStatus.SentBack);
 
