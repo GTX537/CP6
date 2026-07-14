@@ -2827,3 +2827,20 @@ A-T1 → A-T2 → A-T3 → A-T4（波内顺序）；B-T1 → B-T2 → B-T3；C-T
 
 
 
+
+---
+
+## 波④完成记录（2026-07-13，fable 终审 Ready 零必修，终审报告 .superpowers/sdd/w4-final-review-report.md）
+
+14 任务全完成；后端 2028 绿/5 skip、前端 434 绿/type-check 0/build 过；六项硬不变量（引擎零改动/零迁移零 Entity/零跨模块/桌面像素零回归/C1~C8 登记口径/全量闸）终审亲证；接缝 a~h 全过。
+
+### 跟踪票（6 项）
+
+1. **B-T1 preview UX**：TaskIds 模式脏项入 Total 不入 Sample + Sample 排序继承 Pending 降序非「前10」直觉序（UX 呈现层，B-T3 retryGone 已部分缓解）。
+2. **真相源计数漂移**：`docs/seeds/oawf-permission-keys.md` 计数 37/39→39/41 待补（B-T2 重基线后未随波更新，既有惯例缺口）。
+3. **移动端 4px 缝隙**：C-T2 钉底栏 margin -16px vs EP drawer padding 20px——并入 live QA 真机 375px 走查票。
+4. **前端整洁 sweep（可并单）**：A-T4 `InboxSettings.savePref` merged/storedRaw 死变量 + `BatchTransferDialog.retryOne` 无 catch（unhandled rejection 控制台噪音）+ InboxPending 跨断点回填全 stale 极窄边界（watch 内先按 ids 过滤 reviewRows 再回填可闭）。
+5. **StatsAsync pendingCount 语义**：随 C5 默认 merged 从「任务数」变「实例数」（同实例多待办同人场景可见）——并入 live QA 走查确认产品预期。
+6. **live QA 待用户在场**：harness 三件套（docs/superpowers/qa/wfs-inbox-ux/）6 剧本 + 移动端 375px 三页走查 + 桌面像素走查 + 上述 #3/#5 确认项，隔离库 CP6DB_OA。
+
+放行项（不记票）与逐条依据见终审报告 Minor Triage 小节。
