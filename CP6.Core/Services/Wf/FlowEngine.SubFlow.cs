@@ -163,6 +163,31 @@ public partial class FlowEngine
         }
     }
 
+    /// <summary>提交后 fast path（spec §3.2 两入口之一）：扫本上下文 Local 中 Pending 的 subFlowResume 凭据
+    /// 逐条复核并标 Succeeded（worker 迟到看见已完成 → 状态闸零动作）。外层 for 让「复核推进父 → 父又终态 →
+    /// 再入队祖父凭据」的嵌套链同请求收敛，上限与深度守卫同口径。撞 job RowVersion（worker 已抢走）→ 让给 worker。
+    /// 对无 subFlow 的请求 = Local 空集 O(1) no-op。</summary>
+    internal async Task FastPathSubFlowResumeAsync(CancellationToken ct = default)
+    {
+        for (int round = 0; round < SubFlowLimits.MaxDepth; round++)
+        {
+            var jobs = _db.Wf_ServiceJobs.Local
+                .Where(j => j.Kind == WfJobKind.SubFlowResume && j.Status == ServiceJobStatus.Pending)
+                .ToList();
+            if (jobs.Count == 0) return;
+            foreach (var job in jobs)
+            {
+                var payload = SubFlowResumePayload.Parse(job.ActionRefJson);
+                if (payload is null) continue;                       // 载荷坏 → 留给 worker 标 Failed（唯一记账处）
+                await CheckSubFlowGroupAsync(payload.ParentTokenId, ct);
+                job.Status = ServiceJobStatus.Succeeded;             // 凭据已消费（组未齐也算——组齐由各子终态各自凭据保证）
+                job.CompletedAtUtc = DateTime.UtcNow;
+                try { await _db.SaveChangesAsync(ct); }
+                catch (DbUpdateConcurrencyException) { await _db.Entry(job).ReloadAsync(ct); }
+            }
+        }
+    }
+
     /// <summary>恢复路径（spec §3.2 第 2 步）：SubVarsOutJson 回注父 vars（MergeOutputVars 保留前缀同款拦截）
     /// → 恢复父 token 沿非错误出边推进。</summary>
     private async Task ResumeSubFlowAsync(Wf_FlowInstance inst, FlowSchema schema, FlowNode node, Wf_FlowToken token,
