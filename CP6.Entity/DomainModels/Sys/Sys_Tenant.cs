@@ -32,4 +32,9 @@ public class Sys_Tenant : BaseEntity, IAuditable
 
     /// <summary>租户 2FA 策略：0=关闭 1=可选 2=强制。默认 0。</summary>
     public int TwoFactorMode { get; set; }
+
+    /// <summary>租户时区（IANA/Windows id，TimeZoneInfo.FindSystemTimeZoneById 可解析）。
+    /// null=沿用 app 默认（Wfs:DefaultTimeZone→服务器本地），存量行为完全不变（WFS infra ⑥）。</summary>
+    [MaxLength(64)]
+    public string? TimeZoneId { get; set; }
 }
