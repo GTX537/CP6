@@ -35,6 +35,14 @@ public record ServiceTaskActionRef
     [JsonPropertyName("paramsJson")]
     public string? ParamsJson { get; init; }
 
+    /// <summary>webApi 节点级 HTTP method 覆盖(E-T1);null=用连接器默认。固化快照,防定义漂移。</summary>
+    [JsonPropertyName("httpMethod")]
+    public string? HttpMethod { get; init; }
+
+    /// <summary>webApi 节点级单次调用超时秒覆盖(E-T1);null=用连接器 TimeoutSec。固化快照。</summary>
+    [JsonPropertyName("timeoutSec")]
+    public int? TimeoutSec { get; init; }
+
     /// <summary>timer 专属延时配置;非 timer 节点时为 null。</summary>
     [JsonPropertyName("timer")]
     public TimerConfig? Timer { get; init; }
@@ -92,6 +100,8 @@ public record ServiceTaskActionRef
             ConnectorName = node.ServiceConnectorName,
             Path          = node.ServicePath,
             ParamsJson    = node.ServiceParamsJson,
+            HttpMethod    = node.ServiceHttpMethod,   // E-T1 节点级覆盖固化(null→WhenWritingNull 省略)
+            TimeoutSec    = node.ServiceTimeoutSec,
             Timer         = timer,
         };
         return JsonSerializer.Serialize(r, _opts);

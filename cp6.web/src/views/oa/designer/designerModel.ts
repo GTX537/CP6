@@ -48,6 +48,8 @@ export interface SchemaNode {
   serviceConnectorName?: string                        // webApi：连接器
   servicePath?: string                                 // webApi：路径
   serviceParamsJson?: string
+  serviceHttpMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE' // webApi：节点级 HTTP method 覆盖（镜像后端 FlowNode.ServiceHttpMethod）
+  serviceTimeoutSec?: number                           // webApi：节点级单次调用超时秒覆盖（镜像后端 FlowNode.ServiceTimeoutSec）
   serviceDelayMode?: string                            // timer：固定/相对
   serviceDelayValue?: string                           // timer：延时值（镜像后端 string? ServiceDelayValue，承载 "3d"/"PT2H"/日期串）
   serviceMaxRetries?: number
@@ -186,6 +188,17 @@ export function validateClient(schema: FlowSchemaDto): string[] {
             && (n.serviceDelayMode !== 'workdays' || /^[1-9]\d*$/.test(String(n.serviceDelayValue).trim()))
           : false                                        // 缺/未知 serviceKind 即配置不完整
     if (!ok) errs.push('oa.designer.errServiceConfig')
+  }
+  // E-WF-028 镜像（节点级 HTTP 覆盖值域，E-T1）：serviceHttpMethod ∈ {GET,POST,PUT,DELETE}；
+  //   serviceTimeoutSec 有值须正整数且 <=3600。租约下界（>=lease）属后端保存侧服务层，前端无租约常量故不镜像。
+  const HTTP_METHODS = new Set(['GET', 'POST', 'PUT', 'DELETE'])
+  for (const n of nodes) {
+    if (n.type !== 'serviceTask') continue
+    const m = n.serviceHttpMethod
+    const t = n.serviceTimeoutSec
+    const methodBad = m != null && !HTTP_METHODS.has(String(m).trim().toUpperCase())
+    const timeoutBad = t != null && (!Number.isInteger(t) || t <= 0 || t > 3600)
+    if (methodBad || timeoutBad) { errs.push('oa.designer.errHttpOverride'); break }
   }
   // ── inclusive 网关镜像（后端 E-WF-020/021，kernel hardening）──
   const nodeType = (id: string) => nodes.find(n => n.id === id)?.type

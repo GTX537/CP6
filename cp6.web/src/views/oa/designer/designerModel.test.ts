@@ -71,6 +71,32 @@ describe('designerModel', () => {
     expect(validateClient(schema)).toContain('oa.designer.errStageInvalid')
   })
 
+  it('round-trips node-level HTTP override (serviceHttpMethod/serviceTimeoutSec) — E-T1', () => {
+    const schema: FlowSchemaDto = { start: 's', nodes: [
+      { id: 's', type: 'start' },
+      { id: 'svc', type: 'serviceTask', serviceKind: 'webApi', serviceConnectorName: 'c',
+        servicePath: 'api/x', serviceHttpMethod: 'PUT', serviceTimeoutSec: 42 },
+      { id: 'e', type: 'end' },
+    ], edges: [{ from: 's', to: 'svc' }, { from: 'svc', to: 'e' }] }
+    const g = schemaToGraph(schema)
+    const back = graphToSchema(g.nodes, g.edges)
+    const svc = back.nodes.find(n => n.id === 'svc')!
+    expect(svc.serviceHttpMethod).toBe('PUT')
+    expect(svc.serviceTimeoutSec).toBe(42)
+  })
+
+  it('validateClient flags illegal HTTP method / out-of-range timeout — E-T1', () => {
+    const base = (over: Partial<any>): FlowSchemaDto => ({ start: 's', nodes: [
+      { id: 's', type: 'start' },
+      { id: 'svc', type: 'serviceTask', serviceKind: 'webApi', serviceConnectorName: 'c', servicePath: 'api/x', ...over },
+      { id: 'e', type: 'end' },
+    ], edges: [{ from: 's', to: 'svc' }, { from: 'svc', to: 'e' }] })
+    expect(validateClient(base({ serviceHttpMethod: 'PATCH' }))).toContain('oa.designer.errHttpOverride')
+    expect(validateClient(base({ serviceTimeoutSec: 3601 }))).toContain('oa.designer.errHttpOverride')
+    expect(validateClient(base({ serviceTimeoutSec: 0 }))).toContain('oa.designer.errHttpOverride')
+    expect(validateClient(base({ serviceHttpMethod: 'PUT', serviceTimeoutSec: 5 }))).not.toContain('oa.designer.errHttpOverride')
+  })
+
   it('validateClient passes valid serial stages', () => {
     const schema: FlowSchemaDto = { start: 'start', nodes: [
       { id: 'start', type: 'start' },

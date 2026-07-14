@@ -63,18 +63,36 @@ public sealed class DbWfConnector : IWfConnector
             return ServiceTaskResult.Fail($"webApiCallFailed|badUrl:{ex.GetType().Name}");
         }
 
+        // 节点级 HTTP 覆盖（E-T1）：从固化快照 ctx.ActionRefJson（现有承载点，drift-proof）读 method/timeout。
+        // 覆盖优先级：节点 method/timeout（有值）→ 连接器默认（method 按 hasBody 推断 / timeout=行 TimeoutSec）。
+        string? methodOverride = null;
+        int? timeoutOverride = null;
+        if (!string.IsNullOrEmpty(ctx.ActionRefJson))
+        {
+            try
+            {
+                var aref = ServiceTaskActionRef.Parse(ctx.ActionRefJson);
+                methodOverride = aref.HttpMethod;
+                timeoutOverride = aref.TimeoutSec;
+            }
+            catch { /* 快照畸形 → 静默用连接器默认，不炸调用 */ }
+        }
+
         var hasBody = !string.IsNullOrEmpty(paramsJson) && paramsJson != "{}";
-        var method = hasBody ? HttpMethod.Post : HttpMethod.Get;
+        var method = !string.IsNullOrWhiteSpace(methodOverride)
+            ? new HttpMethod(methodOverride.Trim().ToUpperInvariant())   // 节点覆盖优先（值域由 E-WF-028 静态守）
+            : (hasBody ? HttpMethod.Post : HttpMethod.Get);              // 默认：有 body→POST，否则 GET
+        var attachBody = hasBody && method != HttpMethod.Get;           // GET 不带 body（即使有 params）
 
         using var req = new HttpRequestMessage(method, url);
         // 幂等键（P1-2）：executor at-least-once，崩溃可能重投，下游按此去重
         req.Headers.TryAddWithoutValidation("Idempotency-Key", $"wf-service-job-{ctx.JobId}");
         ApplyAuth(req);
-        if (hasBody)
+        if (attachBody)
             req.Content = new StringContent(paramsJson!, Encoding.UTF8, "application/json");
 
         var client = _httpFactory.CreateClient("wf-connector");
-        client.Timeout = TimeSpan.FromSeconds(_timeoutSec);
+        client.Timeout = TimeSpan.FromSeconds(timeoutOverride is > 0 ? timeoutOverride.Value : _timeoutSec);
 
         HttpResponseMessage resp;
         try

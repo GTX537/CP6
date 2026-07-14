@@ -71,6 +71,8 @@ watch(
     if (kind === 'dataWriteback') {
       local.value.serviceConnectorName = undefined
       local.value.servicePath = undefined
+      local.value.serviceHttpMethod = undefined   // E-T1：webApi-only 覆盖，切离 webApi 一并清（卫生对称）
+      local.value.serviceTimeoutSec = undefined
     } else if (kind === 'webApi') {
       local.value.serviceActionName = undefined // 卫生对称：webApi 无“到点动作”
     } else if (kind === 'timer') {
@@ -522,6 +524,22 @@ async function searchCcUsers(kw: string) {
                 <el-option value="sync"  :label="t('oa.designer.svc.mode.sync')" />
                 <el-option value="async" :label="t('oa.designer.svc.mode.async')" />
               </el-select>
+            </el-form-item>
+
+            <!-- E-T1：节点级 HTTP 覆盖（两可选输入；留空=用连接器默认）。值域镜像后端 E-WF-028。-->
+            <el-form-item :label="t('oa.designer.svc.httpMethod')">
+              <el-select v-model="local.serviceHttpMethod" style="width: 100%" clearable
+                         :placeholder="t('oa.designer.svc.httpMethodHint')">
+                <el-option value="GET"    label="GET" />
+                <el-option value="POST"   label="POST" />
+                <el-option value="PUT"    label="PUT" />
+                <el-option value="DELETE" label="DELETE" />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item :label="t('oa.designer.svc.timeoutSec')">
+              <el-input-number v-model="local.serviceTimeoutSec" :min="1" :max="3600"
+                               :value-on-clear="undefined" controls-position="right" style="width: 100%" />
             </el-form-item>
           </template>
 

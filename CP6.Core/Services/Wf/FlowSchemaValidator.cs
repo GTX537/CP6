@@ -21,6 +21,10 @@ public static class FlowSchemaValidator
     internal static readonly HashSet<string> ErrorEdgeSourceTypes =
         new(StringComparer.OrdinalIgnoreCase) { "serviceTask", "approval", "subFlow" };
 
+    /// <summary>节点级 HTTP method 覆盖合法值域（E-T1 / E-WF-028 静态）。OrdinalIgnoreCase 对齐连接器 ToUpperInvariant 规整。</summary>
+    internal static readonly HashSet<string> HttpMethods =
+        new(StringComparer.OrdinalIgnoreCase) { "GET", "POST", "PUT", "DELETE" };
+
     public static IReadOnlyList<string> Validate(FlowSchema schema)
     {
         var errs = new List<string>();
@@ -106,6 +110,17 @@ public static class FlowSchemaValidator
                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServiceParamsJson)   // 票4：参数模板不得含数组下标
                 || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
             if (bad) { errs.Add("E-WF-016"); break; }
+        }
+
+        // ⑧b E-WF-028 静态（节点级 HTTP 覆盖值域，E-T1）：ServiceTimeoutSec 有值须 >0 且 <=上限(3600)；
+        //     ServiceHttpMethod 有值须 ∈ {GET,POST,PUT,DELETE}（大小写不敏感，镜像连接器 ToUpperInvariant）。
+        //     租约下界（TimeoutSec >= 租约 → 拒）属保存侧服务层（DesignerService.SaveAsync，与连接器 ValidateLease 同源常量）。
+        foreach (var n in schema.Nodes.Where(n => T(n) == "servicetask"))
+        {
+            bool bad028 =
+                (n.ServiceTimeoutSec is int ts && (ts <= 0 || ts > 3600))
+                || (!string.IsNullOrWhiteSpace(n.ServiceHttpMethod) && !HttpMethods.Contains(n.ServiceHttpMethod.Trim()));
+            if (bad028) { errs.Add("E-WF-028"); break; }
         }
 
         // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边来源类型 ∈ ErrorEdgeSourceTypes

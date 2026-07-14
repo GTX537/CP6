@@ -64,6 +64,17 @@ public class DesignerService : IDesignerService
                 throw new InvalidOperationException("E-WF-018");
         }
 
+        // ①c E-WF-028 保存侧（节点 HTTP 超时 >= 租约 → 拒，E-T1）：与 WfConnectorService.ValidateLease 同源常量
+        //     WfServiceJobService.LeaseDuration（单次调用须严格短于租约，否则 reaper 误判崩溃重投→重复外呼）。
+        //     静态值域（>0 且 <=3600）已由 FlowSchemaValidator 前置；此处只加租约下界。仅挂 SaveAsync，不影响旧数据读取。
+        var leaseSec = (int)WfServiceJobService.LeaseDuration.TotalSeconds;
+        foreach (var n in schema.Nodes.Where(n =>
+            string.Equals((n.Type ?? string.Empty).Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)))
+        {
+            if (n.ServiceTimeoutSec is int ts && ts >= leaseSec)
+                throw new InvalidOperationException("E-WF-028");
+        }
+
         // ② 身份码租户内唯一（排除自身 FlowKey）
         if (!string.IsNullOrWhiteSpace(req.FunctionId) &&
             await _db.Wf_FlowDefs.AnyAsync(d => d.FunctionId == req.FunctionId && d.FlowKey != req.FlowKey))
