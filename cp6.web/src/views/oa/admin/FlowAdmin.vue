@@ -41,6 +41,9 @@
       <el-tab-pane :label="t('oa.flowtrigger.tab')" name="triggers" lazy>
         <FlowTriggerPanel />
       </el-tab-pane>
+      <el-tab-pane :label="t('oa.connector.tab')" name="connectors" lazy>
+        <WfConnectorPanel />
+      </el-tab-pane>
     </el-tabs>
 
     <BatchTransferDialog v-model="batchTransferVisible" />
@@ -55,13 +58,14 @@ import { Refresh } from '@element-plus/icons-vue'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
 import FlowTriggerPanel from './FlowTriggerPanel.vue'
+import WfConnectorPanel from './WfConnectorPanel.vue'
 import BatchTransferDialog from './BatchTransferDialog.vue'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
 import type { FlowAdminItem } from '@/types/oa/inbox'
 
 const { t } = useI18n()
 
-const activeTab = ref<'flows' | 'triggers'>('flows')
+const activeTab = ref<'flows' | 'triggers' | 'connectors'>('flows')
 const batchTransferVisible = ref(false)
 const total = ref<number>()
 const listRef = ref<InstanceType<typeof CpListPage> | null>(null)

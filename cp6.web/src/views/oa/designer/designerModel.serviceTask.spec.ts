@@ -25,6 +25,26 @@ describe('serviceTask round-trip', () => {
     const errs = validateClient(schema as any)
     expect(errs).toContain('oa.designer.errServiceConfig')
   })
+  it('workdays 是第四合法延时模式：正整数值 round-trip 保真且校验通过', () => {
+    const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'timer',
+      serviceDelayMode:'workdays', serviceDelayValue:'2' }], edges:[] }
+    const back = graphToSchema(schemaToGraph(schema as any))
+    expect(back.nodes[0]!.serviceDelayMode).toBe('workdays')
+    expect(back.nodes[0]!.serviceDelayValue).toBe('2')
+    expect(validateClient(schema as any)).not.toContain('oa.designer.errServiceConfig')
+  })
+  it('workdays 值非正整数（0/负/小数/非数字/duration 简写）→ 校验拒（镜像后端并入 E-WF-016）', () => {
+    for (const bad of ['0', '-1', '1.5', 'abc', '3d', '']) {
+      const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'timer',
+        serviceDelayMode:'workdays', serviceDelayValue: bad }], edges:[] }
+      expect(validateClient(schema as any)).toContain('oa.designer.errServiceConfig')
+    }
+  })
+  it('非 workdays 模式不受正整数约束（duration 简写 "3d" 仍合法）', () => {
+    const schema = { nodes:[{ id:'s', type:'serviceTask', serviceKind:'timer',
+      serviceDelayMode:'duration', serviceDelayValue:'3d' }], edges:[] }
+    expect(validateClient(schema as any)).not.toContain('oa.designer.errServiceConfig')
+  })
 })
 
 describe('error edge visual', () => {

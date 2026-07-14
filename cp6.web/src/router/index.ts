@@ -40,6 +40,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/oa/designer':        () => import('@/views/oa/designer/DesignerView.vue'),   // OA Phase C′ T10 流程设计器（菜单738）
   // ───── WFS 审批人解析：审批人映射维护（菜单 739）─────
   '/oa/approver-map':    () => import('@/views/oa/admin/ApproverMapView.vue'),   // WFS T15 审批人映射维护（菜单739）
+  '/oa/work-calendar':   () => import('@/views/oa/admin/WorkCalendar.vue'),      // WFS 波⑤ A-T4 工作日历（年历）管理（菜单/权限种子归 F-T1）
   // ───── OA Phase C：起草发起（子页，非菜单，始终挂载）─────
   '/oa/form-initiate':   () => import('@/views/oa/catalog/FormInitiate.vue'),     // OA Phase C T13 起草发起
   // ───── OA 审批工作流 (Wf) — 旧设计器保留，旧待办/申请已迁移至 /oa/inbox ─────

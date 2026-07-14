@@ -77,6 +77,10 @@ public class FlowNode
     public string? ServicePath { get; set; }            // webApi:相对 baseURL 的路径模板
     public string? ServiceParamsJson { get; set; }      // 参数模板:JSON,键→表达式(§3.6 语法)
 
+    // webApi 节点级 HTTP 覆盖(E-T1,POCO 零迁移;null=用连接器默认)。经 ActionRefJson 固化快照承载→ DbWfConnector 读取。
+    public string? ServiceHttpMethod { get; set; }      // "GET"|"POST"|"PUT"|"DELETE":覆盖连接器默认 method(静态 E-WF-028 校值域)
+    public int? ServiceTimeoutSec { get; set; }         // 单次调用超时秒:覆盖连接器 TimeoutSec(静态值域>0&&<=3600;保存侧<租约)
+
     // timer 专属
     public string? ServiceDelayMode { get; set; }       // "duration" | "untilDate" | "untilExpr"
     public string? ServiceDelayValue { get; set; }      // "3d"/"PT2H" | "2026-07-01" | 表达式

@@ -23,10 +23,20 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
     private const int DefaultBackoffSec = 30;    // spec §2.1：退避基数默认 30s
 
     private readonly IReadOnlyDictionary<string, IServiceTaskExecutor> _executors;
+    private readonly IWorkdayCalculator? _workdays;    // I-A workdays 第四延时模式（缺则降级立即）
+    private readonly int _workdayFireHour;             // WfsInfraOptions.WorkdayFireHour，落点小时（默认 9）
+    private readonly ITenantClock? _clock;             // I-E 租户时区源（缺则回落服务器本地=现状字节等价）
 
-    public ServiceTaskNodeHandler(IEnumerable<IServiceTaskExecutor>? executors)
-        => _executors = (executors ?? Array.Empty<IServiceTaskExecutor>())
+    // ctor 追加 workdays/opts/clock（均带默认值 → DI 自动注入；FlowEngine.DefaultHandlers fallback 与既有单测 new(...) 零破坏）
+    public ServiceTaskNodeHandler(IEnumerable<IServiceTaskExecutor>? executors,
+        IWorkdayCalculator? workdays = null, WfsInfraOptions? opts = null, ITenantClock? clock = null)
+    {
+        _executors = (executors ?? Array.Empty<IServiceTaskExecutor>())
             .ToDictionary(e => e.Key, StringComparer.OrdinalIgnoreCase);
+        _workdays = workdays;
+        _workdayFireHour = opts?.WorkdayFireHour ?? 9;
+        _clock = clock;
+    }
 
     public string Type => "serviceTask";
 
@@ -97,7 +107,9 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
         }
 
         // ── async / timer：停泊 token + 入队（不 advance，像 ApprovalNodeHandler 等 ActAsync）──
-        var dueAtUtc = (kind == ServiceKind.Timer) ? ComputeDueUtc(node, inst.VarsJson) : nowUtc;
+        var dueAtUtc = (kind == ServiceKind.Timer)
+            ? await ComputeTimerDueUtcAsync(node, inst.VarsJson, ct: default)
+            : nowUtc;
         EnqueueServiceJob(ctx, node, token, kind, actionRefJson,
             dueAtUtc: dueAtUtc, attemptCount: 0, maxAttempts: maxAttempts,
             nextAttemptAtUtc: dueAtUtc);
@@ -151,6 +163,11 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
     /// </list>
     /// 输入非法/缺失一律降级为「立即」（now），不让坏配置炸引擎。</summary>
     internal static DateTime ComputeDueUtc(FlowNode node, string? varsJson)
+        => ComputeDueUtc(node, varsJson, TimeZoneInfo.Local);   // 无 tz 上下文（既有静态调用点）→ 服务器本地（字节等价）
+
+    /// <summary>三延时模式（duration/untilDate/untilExpr）算 UTC 到期。<paramref name="tz"/> 为「本地时刻」的解释时区
+    /// （I-E：untilDate/untilExpr 从服务器本地换租户时区；duration 与时区无关）。</summary>
+    internal static DateTime ComputeDueUtc(FlowNode node, string? varsJson, TimeZoneInfo tz)
     {
         var nowUtc = DateTime.UtcNow;
         var value = node.ServiceDelayValue;
@@ -162,27 +179,74 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
                 return nowUtc + ParseDuration(value);
 
             case "untilDate":
-                return ParseLocalDateToUtc(value, nowUtc);
+                return ParseLocalDateToUtc(value, nowUtc, tz);
 
             case "untilExpr":
                 // 最小实现：表达式求值出日期串（$.var / 字面量）→ 同 untilDate 转 UTC
                 var resolved = ServiceVarsHelper.ResolveValue(value,
                     new ServiceTemplateCtx(varsJson, "", "", "", nowUtc.ToString("O")));
-                return string.IsNullOrWhiteSpace(resolved) ? nowUtc : ParseLocalDateToUtc(resolved, nowUtc);
+                return string.IsNullOrWhiteSpace(resolved) ? nowUtc : ParseLocalDateToUtc(resolved, nowUtc, tz);
 
             default:
                 return nowUtc;
         }
     }
 
-    /// <summary>把「app 默认时区（服务器本地 tz）下的日期/时间」字符串转 UTC。解析失败 → fallback。</summary>
-    private static DateTime ParseLocalDateToUtc(string value, DateTime fallback)
+    /// <summary>timer 到期计算（含 <c>workdays</c> 第四模式，spec §2.3）。<c>workdays</c> 走 <see cref="IWorkdayCalculator"/>
+    /// 顺延 N 工作日后落到当日 <see cref="_workdayFireHour"/> 时整点；其余三模式委托 <see cref="ComputeDueUtc(FlowNode,string,TimeZoneInfo)"/>。
+    /// I-E：tz 源＝<c>ITenantClock.GetTenantTimeZone()</c>（缺 clock → 服务器本地＝现状字节等价）；<c>nowLocal</c> 按同一 tz
+    /// 从 UTC 换算（跨零点当日边界随租户时区）。缺服务/值非正整数 → 降级立即（坏配置不炸引擎，值校验并入 E-WF-016 家族）。</summary>
+    private Task<DateTime> ComputeTimerDueUtcAsync(FlowNode node, string? varsJson, CancellationToken ct)
+    {
+        var tz = _clock?.GetTenantTimeZone() ?? TimeZoneInfo.Local;
+        var nowLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+        return ComputeTimerDueUtcCoreAsync(node, varsJson, nowLocal, tz, ct);
+    }
+
+    /// <summary>测试专用重载（注入 <paramref name="nowLocal"/>，A-T3/E-T2 复用）。tz 仍取 clock（缺→本地），
+    /// 令注入的 <paramref name="nowLocal"/> 与回转 tz 一致，DST 口径可定点验证。</summary>
+    internal Task<DateTime> ComputeTimerDueUtcForTestAsync(FlowNode node, string? varsJson, DateTime nowLocal, CancellationToken ct)
+    {
+        var tz = _clock?.GetTenantTimeZone() ?? TimeZoneInfo.Local;
+        return ComputeTimerDueUtcCoreAsync(node, varsJson, nowLocal, tz, ct);
+    }
+
+    private async Task<DateTime> ComputeTimerDueUtcCoreAsync(FlowNode node, string? varsJson, DateTime nowLocal, TimeZoneInfo tz, CancellationToken ct)
+    {
+        if (node.ServiceDelayMode == "workdays")
+        {
+            if (_workdays == null || !int.TryParse(node.ServiceDelayValue, out var n) || n <= 0)
+                return DateTime.UtcNow;   // 降级立即（值非正并入 E-WF-016 家族，运行期不炸引擎）
+            var dueDay = await _workdays.AddWorkdaysAsync(nowLocal.Date, n, ct);
+            var fireLocal = DateTime.SpecifyKind(dueDay.Date.AddHours(_workdayFireHour), DateTimeKind.Unspecified);
+            return ConvertLocalToUtcWithDstPolicy(fireLocal, tz);
+        }
+        return ComputeDueUtc(node, varsJson, tz);   // duration/untilDate/untilExpr
+    }
+
+    /// <summary>把「指定时区 <paramref name="tz"/> 下的本地时刻」字符串转 UTC。解析失败 → <paramref name="fallback"/>。</summary>
+    private static DateTime ParseLocalDateToUtc(string value, DateTime fallback, TimeZoneInfo tz)
     {
         if (!DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
             return fallback;
-        var unspecified = DateTime.SpecifyKind(parsed, DateTimeKind.Unspecified);
-        try { return TimeZoneInfo.ConvertTimeToUtc(unspecified, TimeZoneInfo.Local); }
-        catch { return DateTime.SpecifyKind(unspecified, DateTimeKind.Utc); }   // tz 边界异常兜底
+        return ConvertLocalToUtcWithDstPolicy(DateTime.SpecifyKind(parsed, DateTimeKind.Unspecified), tz);
+    }
+
+    /// <summary>本地时刻 → UTC，含 <b>DST 口径（写死，spec §2.3）</b>：
+    /// <list type="bullet">
+    ///   <item><b>春跳缺口</b>（本地时刻不存在，<see cref="TimeZoneInfo.IsInvalidTime"/>）→ 逐时前移取下一有效本地瞬间
+    ///         （即 +DST 偏移，通常 1h；上限 6 步防呆）。</item>
+    ///   <item><b>秋拨歧义</b>（本地时刻重复出现）→ <see cref="TimeZoneInfo.ConvertTimeToUtc(DateTime,TimeZoneInfo)"/>
+    ///         默认按<b>标准时</b>解释（取标准时那次），不特殊处理。</item>
+    /// </list>
+    /// 极端边界仍抛 → 按 UTC 兜底（不炸引擎，同既有 ParseLocalDateToUtc 姿态）。日本无 DST，此策略对其为恒等。</summary>
+    private static DateTime ConvertLocalToUtcWithDstPolicy(DateTime unspecified, TimeZoneInfo tz)
+    {
+        var t = DateTime.SpecifyKind(unspecified, DateTimeKind.Unspecified);
+        for (var i = 0; i < 6 && tz.IsInvalidTime(t); i++)
+            t = t.AddHours(1);   // 缺口内：前移到下一有效本地瞬间
+        try { return TimeZoneInfo.ConvertTimeToUtc(t, tz); }
+        catch { return DateTime.SpecifyKind(t, DateTimeKind.Utc); }   // tz 边界异常兜底
     }
 
     /// <summary>解析延时时长：ISO-8601（"PT2H"/"P3D"，经 <see cref="XmlConvert.ToTimeSpan"/>）

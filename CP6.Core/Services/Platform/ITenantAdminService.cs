@@ -13,7 +13,7 @@ public interface ITenantAdminService
     Task<PagedResult<TenantRow>> ListAsync(string? keyword, bool? enable, int page, int pageSize);
     Task<TenantDetail?> GetAsync(Guid id);
     Task<CreateTenantResult> CreateAsync(string code, string name, DateTime? expire, string? remark, string adminUserName);
-    Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark);
+    Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId = null);
     Task SuspendAsync(Guid id);
     Task ReactivateAsync(Guid id);
 }
@@ -24,8 +24,8 @@ public record PagedResult<T>(IReadOnlyList<T> Rows, int Total);
 /// <summary>租户列表行（含跨租户用户数统计）。</summary>
 public record TenantRow(Guid Id, string TenantCode, string TenantName, bool Enable, DateTime? ExpireDate, int UserCount, DateTime CreateDate);
 
-/// <summary>租户详情（含备注 + 用户数）。</summary>
-public record TenantDetail(Guid Id, string TenantCode, string TenantName, bool Enable, DateTime? ExpireDate, string? Remark, int UserCount);
+/// <summary>租户详情（含备注 + 用户数 + 时区 id）。</summary>
+public record TenantDetail(Guid Id, string TenantCode, string TenantName, bool Enable, DateTime? ExpireDate, string? Remark, int UserCount, string? TimeZoneId = null);
 
 /// <summary>建租户结果：新租户 Id + 首个 admin 账号 + 一次性临时明文密码（仅本次返回）。</summary>
 public record CreateTenantResult(Guid TenantId, string AdminUserName, string TempPassword);

@@ -1765,3 +1765,27 @@ git add -A && git commit -m "feat(wfs-infra): F-T1 五语i18n seed(年历/连接
 ---
 
 *生成于 2026-07-05，由 spec `2026-07-05-wfs-engine-infra-design.md`（唯一权威）细化。执行铁律：worker 照抄 `TenantScopeRunner` 口径；errorEdge 节点级清场不连坐；一次迁移 `WfsInfra`；错误边来源集合单一常量（本波写全集含 subFlow，子流程 spec 只加测试）；E 波紧跟 D 波；零跨模块污染；零硬编码色。DataProtection 密钥环持久化（D-T0）是连接器加密硬前置。*
+
+---
+
+## 波⑤完成记录（2026-07-14，fable 终审 Ready [含 Important#1 修复复核]，终审报告 .superpowers/sdd/w5-final-review-report.md）
+
+14 任务全完成（D-T0 由 P0-T1 满足跳过）；后端 2111 绿/5 skip、前端 463 绿/type-check 0/build 过；恰一次迁移 WfsInfra；接缝 a~i 全过。终审 Important#1（errorEdge 作废谓词缺 TokenId 致畸形双 token 形状下兄弟支永挂）已合并前修复 bbbcf8c2（三面同源 task.TokenId 根修+parallelSplit 兄弟存活测试 RED 实录），终审者复核通过关闭。
+
+### 跟踪票（6 项）
+
+1. **workdays 校验/降级合票**（A-T3 M2 + 终审 N2）：①workdays+calculator==null（DefaultHandlers 真实 fallback 路径）降级立即无专测 ②后端 FlowSchemaValidator 对 ServiceDelayValue 只查非空不查正整数（前端镜像比后端严，API 直存 "abc" 运行期静默降级）——一并补静态校验+专测。
+2. **年历 normal 文案消歧**（A-T4）：周末 openDay 对话框 radio「工作日」语义含糊（选它=回默认周末休），`oa.workcal.kind.normal` 对话框场景改中性「默认」，五语一并。
+3. **Suspend 兜底测试**（B-T1 #3，低优）：运行期无错误边旧 schema 走 AdvanceAlongErrorEdge→Suspend 兜底无测试锁（E-WF-027 静态已拦新增面）。
+4. **连接器服务端入参校验**（终审 N1）：WfConnectorService.Create/Update 无 Name/BaseUrl 非空校验；重名撞 UX_Wf_Connector_Name→DbUpdateException 500 非友好 400/409（前端有校验，API 直呼可绕；写端点受 Connector.Edit 守卫非安全洞）。
+5. **命名 HttpClient 注册**（D-T1）：`CreateClient("wf-connector")` 未注册取裸默认 client——配统一 handler/重试/超时策略时补 `AddHttpClient("wf-connector")`，顺带 ResolveAsync 透传 CancellationToken。
+6. **common.* 全局 i18n seed 跨切票**（F-T1，维持后置立项）：`common.edit/cancel/save` 等全库无 seed 定义（纯 DB 驱动无静态兜底），30 既有页（space/wms/oa）+本波连接器/年历页裸显 key——一次全模块覆盖。
+
+### 观测项（不记票）
+
+- C-T1：终态但 CompletedAtUtc==null 的 ServiceJob 脏行永不清理（保守正确方向），量大时运维观测。
+- DataProtection 密钥环无生产动作待办（P0-T1 DB 持久化已覆盖；runbook:112 已标注消解；B1/C1 SSO 存量密文重存为 P0 既有残留非本波）。
+
+### live QA（待用户在场）
+
+harness `docs/superpowers/qa/wfs-engine-infra/`（seed.sql+qa_infra.ps1+README，隔离库 CP6DB_OA）8 场景：年历导入/勾选、E-WF-027 设计器双向、连接器掩码+028 message/detail 拆分+403、per-node 覆盖、租户时区 028、workdays DueAt/errorEdge 运行时/清理 worker 三项走 README SQL 回拨姿态；浏览器走查=年历页 743/连接器 tab/设计器三新面板/时区下拉。

@@ -102,7 +102,9 @@ public class ServiceTaskValidatorTests
     [Fact]
     public void ErrorEdge_FromNonServiceTask_E_WF_017()
     {
-        // IsError 边出自 approval 节点 → 非法。
+        // B-T1 放宽后 IsError 边合法来源 = {serviceTask, approval, subFlow}（ErrorEdgeSourceTypes）。
+        // 本用例改用 start 节点作错误边来源（∉ 合法集）验证「非法来源仍拦 E-WF-017」这一不变量
+        // （原用例用 approval 作来源，approval 现已是合法来源——该正向放行由 ErrorEdgeSourceValidatorTests 覆盖）。
         var s = new FlowSchema
         {
             Start = "s",
@@ -117,7 +119,7 @@ public class ServiceTaskValidatorTests
             {
                 new FlowEdge { From = "s", To = "a" },
                 new FlowEdge { From = "a", To = "e" },
-                new FlowEdge { From = "a", To = "ee", IsError = true },   // 错误边来源非 serviceTask
+                new FlowEdge { From = "s", To = "ee", IsError = true },   // 错误边来源为 start（∉ 合法来源集）→ 非法
             },
         };
         Assert.Contains("E-WF-017", FlowSchemaValidator.Validate(s));

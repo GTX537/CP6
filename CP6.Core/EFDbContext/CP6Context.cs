@@ -411,6 +411,10 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     public DbSet<Wf_ApproverMap> Wf_ApproverMaps { get; set; }
     /// <summary>服务任务异步停泊作业台账（服务任务节点增量,§2.3）</summary>
     public DbSet<Wf_ServiceJob> Wf_ServiceJobs { get; set; }
+    /// <summary>工作日历例外（WFS infra ①，spec §2.1）</summary>
+    public DbSet<Sys_WorkCalendar> Sys_WorkCalendars { get; set; }
+    /// <summary>租户级连接器（WFS infra ④，spec §5.1）</summary>
+    public DbSet<Wf_Connector> Wf_Connectors { get; set; }
     /// <summary>流程触发器配置（事件触发 start 增量，spec §2.1）</summary>
     public DbSet<Wf_FlowTrigger> Wf_FlowTriggers { get; set; }
     /// <summary>触发流水（审计+幂等闸，spec §2.2）</summary>
@@ -778,6 +782,16 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             b.HasIndex(x => new { x.TenantId, x.TokenId, x.NodeId })
                 .IsUnique().HasFilter("[Status] IN (0, 1)")
                 .HasDatabaseName("UX_Wf_ServiceJob_LiveToken");
+        });
+
+        // 引擎基建六件套(WFS infra):工作日历例外 unique(TenantId,Date) / 租户连接器 unique(TenantId,Name)
+        modelBuilder.Entity<Sys_WorkCalendar>(b =>
+        {
+            b.HasIndex(x => new { x.TenantId, x.Date }).IsUnique().HasDatabaseName("UX_Sys_WorkCalendar_Date");
+        });
+        modelBuilder.Entity<Wf_Connector>(b =>
+        {
+            b.HasIndex(x => new { x.TenantId, x.Name }).IsUnique().HasDatabaseName("UX_Wf_Connector_Name");
         });
 
         // 流程触发器配置(spec §2.1):按流程查 / 全局扫描到期 / 事件键匹配

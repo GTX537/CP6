@@ -9,11 +9,18 @@ namespace CP6.Tests;
 
 /// <summary>
 /// 反射守卫（M-OA/WF 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
-/// **两个命名空间** Controllers.Oa（12）+ Controllers.Wf（5）= 17 controller，锁死
+/// **两个命名空间** Controllers.Oa（14）+ Controllers.Wf（5）= 19 controller，锁死
 /// 「未来新增 OA/WF 写端点漏贴权限键即红」。与已合并的 <c>WmsPermissionAttributeTests</c> /
 /// <c>ErpPermissionAttributeTests</c> / <c>MesPermissionAttributeTests</c> 同型三件套。
-/// 真相源：docs/seeds/oawf-permission-keys.md（17 控制器扫描面 / 41 非GET端点 / 39 贴点 / 2 只读 POST 豁免；
-/// 39 = 37 M-OA/WF·F-T2 + 2 波④ B-T2 batch-transfer/preview）。
+/// 真相源：docs/seeds/oawf-permission-keys.md（19 控制器扫描面 / 47 非GET端点 / 45 贴点 / 2 只读 POST 豁免；
+/// 45 = 37 M-OA/WF·F-T2 + 2 波④ B-T2 batch-transfer/preview + 3 波⑤ A-T4 WorkCalendar toggle/clear/import-jp
+/// + 3 波⑤ D-T2 WfConnector create/update/enabled）。
+/// **A-T4（WFS 波⑤ 引擎基建，年历管理页）**：WorkCalendarController 新增至 Controllers.Oa 纳入本守卫，
+/// 贡献 3 变更端点（Calendar.Edit×3：POST toggle / DELETE {date} / POST import-jp），计数 17→18 / 贴点 39→42 /
+/// 41→44 非GET；只读 GET List 循 OA 兄弟约定不贴键（NoReadOnlyGetAction 守卫）。菜单/权限种子落库归 F-T1 收口。
+/// **D-T2（WFS 波⑤ 引擎基建，连接器管理页）**：WfConnectorController 新增至 Controllers.Oa 纳入本守卫，
+/// 贡献 3 变更端点（Connector.Edit×3：POST create / PUT {id} / POST {id}/enabled），计数 18→19 / 贴点 42→45 /
+/// 44→47 非GET；只读 GET List/{id} 循同约定不贴键。菜单/权限种子落库归 F-T1 收口。
 /// **F-T2（WFS 波③ 事件触发，E-T1 交接票）**：FlowTriggerAdminController 由 Controllers.Integration 收编回
 /// Controllers.Oa 纳入本守卫，贡献 6 变更端点（Edit×5 + View×1=CronPreview），计数 16→17 / 贴点 31→37 / 33→39 非GET。
 ///
@@ -69,6 +76,12 @@ public class OawfPermissionAttributeTests
         // WFS 波③ 事件触发 F-T2（E-T1 交接票）：FlowTriggerAdminController 由 Integration 收编回 Controllers.Oa，
         // 纳入本 fail-closed 守卫扫描面。Edit=增改/启停/试发/重置key（5 端点），View=cron 预览（1 端点，POST）。
         "FlowTrigger.View", "FlowTrigger.Edit",     // oa-flow-admin:FlowTrigger.*（点式 action，与 spec §6 权限点名逐字一致）
+        // WFS 波⑤ 引擎基建 A-T4：WorkCalendarController（年历管理页）。Edit=反转/清除/导入（3 写端点同键）；
+        // View=只读列一年（GET 不贴键，故本集合仅含 Edit——与 spec §2 权限点名逐字一致；种子落库归 F-T1）。
+        "Calendar.Edit", "Calendar.View",           // oa-work-calendar:Calendar.*（点式 action）
+        // WFS 波⑤ 引擎基建 D-T2：WfConnectorController（连接器管理页，挂 oa-flow-admin 菜单）。Edit=新建/编辑/启停
+        // （3 写端点同键）；View=只读列表/取单（GET 不贴键，故本集合仅含 Edit——照 A-T4 处理方式 View 亦入词表约定）。
+        "Connector.Edit", "Connector.View",          // oa-flow-admin:Connector.*（点式 action，与 spec §5 权限点名逐字一致）
     };
 
     /// <summary>
@@ -115,9 +128,10 @@ public class OawfPermissionAttributeTests
     [Fact]
     public void OawfControllers_AreDiscovered()
     {
-        // 守卫：Controllers.Oa（12，含 F-T2 收编的 FlowTriggerAdminController）+ Controllers.Wf（5）下
-        //      继承 ControllerBase 的非抽象类共 17（含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
-        Assert.Equal(17, OawfControllers.Count());
+        // 守卫：Controllers.Oa（14，含 F-T2 收编的 FlowTriggerAdminController + A-T4 WorkCalendarController
+        //      + D-T2 WfConnectorController）+ Controllers.Wf（5）下继承 ControllerBase 的非抽象类共 19
+        //      （含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
+        Assert.Equal(19, OawfControllers.Count());
     }
 
     [Fact]
@@ -157,8 +171,8 @@ public class OawfPermissionAttributeTests
         Assert.True(offenders.Count == 0,
             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
 
-        // 收口断言：贴点 39 + 豁免命中 2 = 全 41 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 端点 + B-T2 新增 2 端点。
-        Assert.Equal(39, taggedCount);
+        // 收口断言：贴点 45 + 豁免命中 2 = 全 47 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 + B-T2 新增 2 + A-T4 新增 3 + D-T2 新增 3。
+        Assert.Equal(45, taggedCount);
         Assert.Equal(2, exemptHit.Count);
     }
 

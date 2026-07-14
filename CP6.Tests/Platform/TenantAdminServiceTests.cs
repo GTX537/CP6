@@ -205,6 +205,38 @@ public class TenantAdminServiceTests
         Assert.Equal(TenantContext.DefaultTenant, log.TenantId);
     }
 
+    // ── E-T2：Update 保存可解析 TimeZoneId → 落库 + Get 回读；空串→null（沿用默认）。
+    [Fact]
+    public async Task Update_PersistsResolvableTimeZoneId()
+    {
+        var (svc, db, _) = Make(currentTenant: SomeOtherTenant);
+        var created = await svc.CreateAsync("TZ1", "tz", null, null, "tz1");
+
+        await svc.UpdateAsync(created.TenantId, "tz", null, null, "Asia/Tokyo");
+        Assert.Equal("Asia/Tokyo", (await db.Sys_Tenants.FirstAsync(t => t.Id == created.TenantId)).TimeZoneId);
+        Assert.Equal("Asia/Tokyo", (await svc.GetAsync(created.TenantId))!.TimeZoneId);
+
+        // 空串 → 视作清空（null，沿用 app 默认）
+        await svc.UpdateAsync(created.TenantId, "tz", null, null, "");
+        Assert.Null((await db.Sys_Tenants.FirstAsync(t => t.Id == created.TenantId)).TimeZoneId);
+    }
+
+    // ── E-T2：Update 保存不可解析 TimeZoneId → E-WF-028 拒绝，租户不落改动。
+    [Fact]
+    public async Task Update_UnresolvableTimeZoneId_Throws_EWf028()
+    {
+        var (svc, db, _) = Make(currentTenant: SomeOtherTenant);
+        var created = await svc.CreateAsync("TZ2", "tz", null, null, "tz2");
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.UpdateAsync(created.TenantId, "renamed", null, null, "Mars/Olympus"));
+        Assert.Equal("E-WF-028", ex.Message);
+        // 拒绝保存：名称与时区均未变更
+        var t = await db.Sys_Tenants.FirstAsync(x => x.Id == created.TenantId);
+        Assert.Equal("tz", t.TenantName);
+        Assert.Null(t.TimeZoneId);
+    }
+
     // ── Get 含 userCount + null 缺。
     [Fact]
     public async Task Get_ReturnsDetailWithUserCount_OrNull()

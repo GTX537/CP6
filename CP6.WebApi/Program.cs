@@ -157,10 +157,35 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTimeoutScanWor
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfServiceJobService, CP6.Core.Services.Wf.WfServiceJobService>();  // B-T2 服务任务异步底座扫描服务（spec §4.1）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobScanWorker>();                          // B-T2 服务任务扫描 Worker（20s 周期，lease 抢占，v1 单实例）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTriggerWorker>();                                 // B-T3 事件触发 start：timer 扫描（30s 周期，RowVersion+占坑抢占，无 lease）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfCleanupService, CP6.Core.Services.Wf.WfCleanupService>();        // C-T1 终态 job/流水清理服务（保留期 180 天硬删终态，在途/占坑永不清，老化告警）
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobCleanupWorker>();                       // C-T1 终态清理 Worker（每日 03:00 UTC 一轮，逐租户，幂等窗口=保留期）
 // C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
-builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
+// D-T1 解析改造：WebApiExecutor 注入 TenantConnectorResolver（先租户表 Wf_Connector Enabled 行 → DbWfConnector，
+//   未命中回落 app 级 IWfConnector 字典）。app 级注册（EchoConnector 等）零改动，进 resolver 兜底字典。
+builder.Services.AddScoped<CP6.Core.Services.Wf.Executors.TenantConnectorResolver>(sp =>
+    new CP6.Core.Services.Wf.Executors.TenantConnectorResolver(
+        sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetServices<CP6.Core.Services.Wf.IWfConnector>(),           // app 级注册（EchoConnector 等）
+        sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>(),
+        sp.GetRequiredService<System.Net.Http.IHttpClientFactory>()));
+builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor>(sp =>
+    new CP6.Core.Services.Wf.Executors.WebApiExecutor(
+        sp.GetRequiredService<CP6.Core.Services.Wf.Executors.TenantConnectorResolver>())); // D-T1 webApi 执行器（租户优先 app 兜底，不自做 HTTP，D4 安全边界）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
+// D-T1 连接器管理服务（DataProtection 加密写 purpose="Wfs.Connector.Auth" + 掩码读 + E-WF-028；租约与 WfServiceJobService 同源）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnectorService>(sp =>
+    new CP6.Core.Services.Wf.WfConnectorService(
+        sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>(),
+        sp.GetRequiredService<CP6.Core.Services.Wf.WfsInfraOptions>(),
+        (int)CP6.Core.Services.Wf.WfServiceJobService.LeaseDuration.TotalSeconds));
 builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.SampleDataWritebackExecutor>(); // C-T2 样例 dataWriteback 执行器（设计器可见，黄金模板；纯计算回写，不落库）
+// A-T2 引擎基建①：工作日历纯查询服务 + WFS infra 配置（绑 Wfs 段，FireHour/保留期/时区）
+builder.Services.AddSingleton(builder.Configuration.GetSection("Wfs").Get<CP6.Core.Services.Wf.WfsInfraOptions>()
+    ?? new CP6.Core.Services.Wf.WfsInfraOptions());
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkdayCalculator, CP6.Core.Services.Wf.WorkdayCalculator>();
+builder.Services.AddScoped<CP6.Core.Services.Wf.ITenantClock, CP6.Core.Services.Wf.TenantClock>(); // E-T2 租户时区源（workdays/untilDate 本地时刻解释；Sys_Tenant.TimeZoneId→Wfs:DefaultTimeZone→服务器本地）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkCalendarService, CP6.Core.Services.Wf.WorkCalendarService>(); // A-T4 年历管理页后端（例外表 CRUD/空态导入日本假日）
 
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
@@ -798,6 +823,17 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 
+    // A-T2 引擎基建①：默认租户日本法定假日植入（2026–2027 共 35 日期，全 IsWorkday=false）。
+    // 每启动跑、幂等（按 (TenantId,Date) Any 去重）；置于默认租户 seed 之后，确保租户已落库。
+    {
+        foreach (var row in CP6.WebApi.Seed.JapaneseHolidaySeed.For(TenantContext.DefaultTenant))
+        {
+            if (!db.Sys_WorkCalendars.Any(c => c.TenantId == row.TenantId && c.Date == row.Date))
+                db.Sys_WorkCalendars.Add(row);
+        }
+        db.SaveChanges();
+    }
+
     // P0-T3：Sys_Role 已租户化（复合主键 (TenantId,RoleId)）→ 确保每个启用租户都拥有默认管理员角色（RoleId=1）。
     // 迁移已对存量库逐租户回填；本块为启动幂等安全网（覆盖迁移后新建/遗漏的租户，照逐租户种子先例）。
     {
@@ -911,6 +947,11 @@ using (var scope = app.Services.CreateScope())
     // WFS 波④ 信箱体验 B-T2：OA 信箱批量改派权限点 batch-transfer（菜单 733 oa-inbox）逐租户幂等种子。
     // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 733 MenuKey 回填）之后。「贴点⊆种子」互锁。
     CP6.WebApi.Seed.InboxBatchTransferPermissionSeed.EnsureSeeded(db);
+
+    // WFS 波⑤ 引擎基建 F-T1：年历管理页新菜单 743(oa-work-calendar，插入时显式赋 MenuKey) + 逐租户
+    // Calendar.View/Edit（743）+ Connector.View/Edit（挂既有 734 oa-flow-admin）权限点幂等种子。
+    // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 锚定）之后、:1005 回填块之前。「贴点⊆种子」互锁。
+    CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(db);
 
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
@@ -1962,6 +2003,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Concat(CP6.WebApi.Seed.I18nOaInboxUxScreenSeed.Items)  // WFS 波④ 信箱体验：通知矩阵/批量改派/rowMode/移动端 oa.notify.matrix.*/oa.notify.type.*/oa.bt.*/oa.inbox.rowMode.*/oa.inbox.mobileFilter/oa.pref.errBadJson
+            .Concat(CP6.WebApi.Seed.I18nOaEngineInfraScreenSeed.Items)  // WFS 波⑤ 引擎基建：年历 oa.workcal.*+nav.743 / 连接器 oa.connector.* / 设计器新键 oa.designer.svc.httpMethod|timeoutSec|delayMode.workdays·timeout.errorEdge·err* / E-WF-027/028
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();

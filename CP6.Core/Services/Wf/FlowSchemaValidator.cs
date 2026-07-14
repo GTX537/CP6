@@ -15,6 +15,16 @@ public static class FlowSchemaValidator
     private static readonly HashSet<string> KnownServiceModes =
         new(new[] { ServiceMode.Sync, ServiceMode.Async }, StringComparer.Ordinal);
 
+    /// <summary>IsError 边合法来源类型（跨 spec 单一常量：本 infra 波写全集含 subFlow；
+    /// 子流程 spec 2026-07-05-wfs-subflow-design §5 只加放行测试，不重复定义——两处注释互指）。
+    /// <c>T(n)</c> 输出小写序数值，故用 <see cref="StringComparer.OrdinalIgnoreCase"/> 比较令 servicetask/approval/subflow 全命中。</summary>
+    internal static readonly HashSet<string> ErrorEdgeSourceTypes =
+        new(StringComparer.OrdinalIgnoreCase) { "serviceTask", "approval", "subFlow" };
+
+    /// <summary>节点级 HTTP method 覆盖合法值域（E-T1 / E-WF-028 静态）。OrdinalIgnoreCase 对齐连接器 ToUpperInvariant 规整。</summary>
+    internal static readonly HashSet<string> HttpMethods =
+        new(StringComparer.OrdinalIgnoreCase) { "GET", "POST", "PUT", "DELETE" };
+
     public static IReadOnlyList<string> Validate(FlowSchema schema)
     {
         var errs = new List<string>();
@@ -102,10 +112,26 @@ public static class FlowSchemaValidator
             if (bad) { errs.Add("E-WF-016"); break; }
         }
 
-        // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边仅允许出自 serviceTask 节点。
-        var serviceIds = schema.Nodes.Where(n => T(n) == "servicetask").Select(n => n.Id).ToHashSet();
+        // ⑧b E-WF-028 静态（节点级 HTTP 覆盖值域，E-T1）：ServiceTimeoutSec 有值须 >0 且 <=上限(3600)；
+        //     ServiceHttpMethod 有值须 ∈ {GET,POST,PUT,DELETE}（大小写不敏感，镜像连接器 ToUpperInvariant）。
+        //     租约下界（TimeoutSec >= 租约 → 拒）属保存侧服务层（DesignerService.SaveAsync，与连接器 ValidateLease 同源常量）。
+        foreach (var n in schema.Nodes.Where(n => T(n) == "servicetask"))
+        {
+            bool bad028 =
+                (n.ServiceTimeoutSec is int ts && (ts <= 0 || ts > 3600))
+                || (!string.IsNullOrWhiteSpace(n.ServiceHttpMethod) && !HttpMethods.Contains(n.ServiceHttpMethod.Trim()));
+            if (bad028) { errs.Add("E-WF-028"); break; }
+        }
+
+        // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边来源类型 ∈ ErrorEdgeSourceTypes
+        //    （放宽：由「仅 serviceTask」→ {serviceTask, approval, subFlow}，供 approval 超时 errorEdge / 子流程失败路由复用）。
+        var errorSourceIds = schema.Nodes.Where(n => ErrorEdgeSourceTypes.Contains(T(n))).Select(n => n.Id).ToHashSet();
         if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
-        if (schema.Edges.Any(e => e.IsError == true && !serviceIds.Contains(e.From))) errs.Add("E-WF-017");
+        if (schema.Edges.Any(e => e.IsError == true && !errorSourceIds.Contains(e.From))) errs.Add("E-WF-017");
+
+        // E-WF-027：TimeoutAction=errorEdge 的节点必须有 IsError 出边（否则超时无处路由 → 只能 Suspend，设计期拦下）
+        foreach (var n in schema.Nodes.Where(n => string.Equals(n.TimeoutAction, "errorEdge", StringComparison.OrdinalIgnoreCase)))
+            if (!schema.Edges.Any(e => e.From == n.Id && e.IsError == true)) { errs.Add("E-WF-027"); break; }
 
         // ⑩ inclusive 网关（hardening E-WF-020/021）
         // E-WF-020：inclusiveSplit 出边（非错误边）须 ≥2 且恰好一条无条件 default 兜底边
