@@ -34,13 +34,15 @@ public partial class FlowEngine : IFlowEngine
     }
 
     // ★ T5：start/approval/end + parallelSplit/parallelJoin；A-T6：serviceTask；
-    // ★ hardening A-T3：inclusiveSplit/inclusiveJoin（第 7/8 个，spec D3）。八 handler。
+    // ★ hardening A-T3：inclusiveSplit/inclusiveJoin（第 7/8 个，spec D3）；
+    // ★ subflow B-T1：subFlow（第 9 个，spec §3.1）。九 handler。
     private static IEnumerable<INodeHandler> DefaultHandlers() => new INodeHandler[]
     {
         new StartNodeHandler(), new ApprovalNodeHandler(), new EndNodeHandler(),
         new ParallelSplitNodeHandler(), new ParallelJoinNodeHandler(),
         new ServiceTaskNodeHandler(Array.Empty<IServiceTaskExecutor>()),
         new InclusiveSplitNodeHandler(), new InclusiveJoinNodeHandler(),
+        new SubFlowNodeHandler(),   // ★ 子流程 B-T1：第 9 个（缺省上限 100；DI 实例携 app 配置）
     };
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)

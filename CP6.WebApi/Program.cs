@@ -135,6 +135,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ServiceTaskNodeHandler>();    // WFS A-T6 节点处理器：服务任务（注入 IEnumerable<IServiceTaskExecutor>，未注册时为空）
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.InclusiveSplitNodeHandler>();  // hardening A-T3 节点处理器：包容分叉
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.InclusiveJoinNodeHandler>();   // hardening A-T3 节点处理器：包容汇聚
+builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler>(sp => new CP6.Core.Services.Wf.SubFlowNodeHandler(
+    sp.GetRequiredService<IConfiguration>().GetValue<int?>("Wfs:SubFlowMaxInstances")));   // 子流程 B-T1 节点处理器（N 上限可配，缺省 100）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
