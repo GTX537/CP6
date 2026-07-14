@@ -344,3 +344,4 @@ WFS波④ 合并+部署: complete (main=2cd4b0f --no-ff已push, 分支feat/wfs-i
 #  ③权限种子现行=逐租户sibling seed模式(波③F-T2/波④B-T2先例),非计划引的Program.cs:850-856内联范本; 新增两OA控制器(WorkCalendar/WfConnector)→OawfPermissionAttributeTests守卫重基线17→19+词表扩充,循先例
 #  ④i18n concat链尾现=Program.cs:1964 I18nOaInboxUxScreenSeed(计划"末行ServiceTask"过时)→F-T1追加此后
 # 预检核实仍成立: el-calendar全仓零使用(A-T4绿地)/Wf_TriggerFire实体已在(波③已并,C-T1直接消费无需存在性守卫)/AdvanceAlongErrorEdge=FlowEngine.Tokens.cs:174(internal,行号较计划:113漂移属正常,以grep为准)/E-WF-017来源校验=FlowSchemaValidator.cs:105-108/WfTimeoutService escalate case在:77
+WFS波⑤ A-T1: complete (commit 7662079, Spec ✅ + Approved[sonnet审零issue; 实体三处/DbSet/双unique索引/迁移Up恰三处Down净反向/snapshot仅107行精确对应/测试与brief逐字非骨架全核; 审查者亲跑WfsInfraModelTests 3/3+Wf|Sys子集437绿+drift clean]; 全量2031绿[2028+3]/5skip实现者跑; 恰一次迁移WfsInfra落地, 本波后续任何实体改动=破戒)
