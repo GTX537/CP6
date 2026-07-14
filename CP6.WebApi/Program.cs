@@ -2006,6 +2006,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Concat(CP6.WebApi.Seed.I18nOaInboxUxScreenSeed.Items)  // WFS 波④ 信箱体验：通知矩阵/批量改派/rowMode/移动端 oa.notify.matrix.*/oa.notify.type.*/oa.bt.*/oa.inbox.rowMode.*/oa.inbox.mobileFilter/oa.pref.errBadJson
             .Concat(CP6.WebApi.Seed.I18nOaEngineInfraScreenSeed.Items)  // WFS 波⑤ 引擎基建：年历 oa.workcal.*+nav.743 / 连接器 oa.connector.* / 设计器新键 oa.designer.svc.httpMethod|timeoutSec|delayMode.workdays·timeout.errorEdge·err* / E-WF-027/028
+            .Concat(CP6.WebApi.Seed.I18nOaSubFlowScreenSeed.Items)  // WFS 波⑥ 子流程 oa.designer.subflow.* + oa.designer.errSubFlowConfig + oa.detail.parentFlow/subFlows + E-WF-025/026
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();
