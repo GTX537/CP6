@@ -56,6 +56,12 @@ export interface SchemaNode {
   serviceRetryBackoffSec?: number
   // 内核 hardening：分支驳回策略（仅 parallelSplit/inclusiveSplit；镜像后端 FlowNode.OnBranchReject，camelCase 契约）
   onBranchReject?: 'cascade' | 'prune'
+  // 子流程（subFlow）配置——镜像后端 FlowNode 的 Sub*（子流程 spec §2.1;交换 JSON 用 camelCase）
+  subFlowKey?: string                                  // 目标已发布流程 FlowKey
+  subVarsInJson?: string                               // 父→子映射 {"子var":"$.父var路径"}
+  subVarsOutJson?: string                              // 子→父回注映射 {"父var":"$.子var路径"}
+  subCollectionVar?: string                            // 多实例集合变量名(空=单实例)
+  subCompletionPolicy?: string                         // all | any
   x?: number; y?: number
 }
 export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[]; isError?: boolean }
@@ -77,6 +83,8 @@ export const NODE_PALETTE = [
   { type: 'serviceTask',   kind: 'dataWriteback', label: '数据回写' },
   { type: 'serviceTask',   kind: 'webApi',        label: '接口调用' },
   { type: 'serviceTask',   kind: 'timer',         label: '定时器' },
+  // 子流程入口（色彩由组件层 `.dot-subFlow` token 决定，不带 color 字段——对齐 serviceTask 先例）。
+  { type: 'subFlow',       label: '子流程' },
 ] as const
 
 /** FlowSchema → Vue Flow 图（节点带 position + data 全字段；边 source/target + data 条件/CC）。 */
@@ -270,6 +278,25 @@ export function validateClient(schema: FlowSchemaDto): string[] {
     const ok = (n.type === 'parallelSplit' || n.type === 'inclusiveSplit')
       && (n.onBranchReject === 'cascade' || n.onBranchReject === 'prune')
     if (!ok) { errs.push('oa.designer.errBranchReject'); break }
+  }
+  // subFlow 静态镜像（后端 E-WF-025 静态部分,子流程 spec §5）：key 必填/策略值域/集合变量非空串/映射合法无下标/非错误出边必有
+  const validMap = (s?: string): boolean => {
+    if (s == null || s.trim() === '') return true
+    if (/[$.{][A-Za-z0-9_.]*\[/.test(s)) return false          // 不支持数组下标
+    try {
+      const o = JSON.parse(s)
+      return !!o && typeof o === 'object' && !Array.isArray(o)
+        && Object.values(o).every(v => typeof v === 'string')
+    } catch { return false }
+  }
+  for (const n of nodes) {
+    if (n.type !== 'subFlow') continue
+    const ok = !!n.subFlowKey?.trim()
+      && (!n.subCompletionPolicy || ['all', 'any'].includes(n.subCompletionPolicy))
+      && (n.subCollectionVar == null || n.subCollectionVar.trim() !== '')
+      && validMap(n.subVarsInJson) && validMap(n.subVarsOutJson)
+      && edges.some(e => e.from === n.id && e.isError !== true)
+    if (!ok) errs.push('oa.designer.errSubFlowConfig')
   }
   return errs
 }
