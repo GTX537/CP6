@@ -210,3 +210,51 @@ AdvancedFlow `/api/wf/advanced/delegate`(#26) 与 OA `/api/oa/delegate/add`/`rem
 | **合计** | **33** | **2** | **31** | **33 ✅** |
 
 > 自洽核验：总非 GET 端点 33 = 只读豁免 2 + 真写 31 ✅；逐控制器真写累加 3+1+2+2+4+1+0+5+2+1+0+3+1+3+2+1 = 31 ✅；表行 #1–#33 连续无跳号 ✅。
+
+---
+
+## 八、WFS 二/三期波增量（波③ 事件触发 / 波④ 信箱体验 / 波⑤ 引擎基建；F-T1 收口 D-T2 遗留欠账）
+
+> §一–§七 为 M-OA/WF 横切接线波（2026-07-12）的 16 控制器 / 33 非GET 快照。此后各 WFS 波新增控制器与端点，键面/贴点/计数在此增量收口。**权威计数以守卫 `OawfPermissionAttributeTests` 为准**（19 控制器 / 47 非GET / 45 贴点 / 2 只读 POST 豁免），本节与其逐字对齐。
+
+### 8.1 新增控制器（16 → 19）
+
+| 控制器 | 波次 | 非GET 端点 | 贴点 action | 锚定菜单 |
+|---|---|---|---|---|
+| FlowTriggerAdminController | 波③ F-T2 | 6（Create/Update/Enable/ResetKey/ManualFire + CronPreview） | `FlowTrigger.Edit`×5 + `FlowTrigger.View`×1（CronPreview 只算不写） | 734 oa-flow-admin |
+| WorkCalendarController | 波⑤ A-T4 | 3（POST toggle / DELETE {date} / POST import-jp） | `Calendar.Edit`×3；GET list 只读不贴 | **743 oa-work-calendar（本波新建）** |
+| WfConnectorController | 波⑤ D-T2 | 3（POST create / PUT {id} / POST {id}/enabled） | `Connector.Edit`×3；GET list/{id} 只读不贴 | 734 oa-flow-admin（连接器 tab） |
+
+> 另 InboxController（既有）波④ B-T2 新增 2 非GET（batch-transfer + preview），同贴 `oa-inbox:batch-transfer`（preview 同键，只算不写不豁免）。
+
+### 8.2 新增资源键（键面）
+
+| 资源键 | action 语义 | 高危? | 落库种子 |
+|---|---|---|---|
+| `oa-inbox:batch-transfer` | 在途批量改派（波④，preview 同键） | **是** | `InboxBatchTransferPermissionSeed`（733） |
+| `oa-flow-admin:FlowTrigger.View` / `.Edit` | 触发器查看 / 增改·启停·试发·重置 key（波③） | Edit=**是** | `FlowTriggerPermissionSeed`（734） |
+| `oa-work-calendar:Calendar.View` / `.Edit` | 年历查看 / 反转·清除·导入日本假日（波⑤） | 否 | `WorkCalendarConnectorPermissionSeed`（**新菜单 743**） |
+| `oa-flow-admin:Connector.View` / `.Edit` | 连接器查看 / CRUD·启停·凭证加密写（波⑤） | Edit=**是**（凭证/外呼配置写） | `WorkCalendarConnectorPermissionSeed`（734） |
+
+> `.View` 键循守卫 `NoReadOnlyGetAction` 约定：只读 GET 不贴键，View 仅登记词表 + MenuAction/RoleAction 供 UI 可见性/未来只读授权用（照 A-T4 处理 Calendar.View 方式）。
+
+### 8.3 新增菜单（7 → 8 个 menu-key）
+
+| menu-key | 菜单行 | 说明 |
+|---|---|---|
+| `oa-work-calendar` | **743 工作日历 `/oa/work-calendar`（ParentId=740，Icon=Calendar，MenuKey 插入时显式赋值）** | 波⑤ A-T4 年历管理页。`WorkCalendarConnectorPermissionSeed` 就地插入 Sys_Menu 743 + 授管理员 RoleMenu；侧栏导航键 `nav.743`（i18n 五语）。743 全库无占用（OawfMenuSeed 止于 742）。 |
+
+### 8.4 i18n 键面（五语，落 `I18nOaEngineInfraScreenSeed`；平台时区键落 `I18nTenantComplianceSeed`）
+
+- 年历 `oa.workcal.*`（13 键，含动态 `oa.workcal.kind.{makeup|closed|weekend|normal}` + `{n}` 插值 `oa.workcal.imported`）+ `nav.743`。
+- 连接器 `oa.connector.*`（22 键：tab/new/empty/authYes/authNo + col.* 7 + form.* 11）。
+- 设计器新键 8：`oa.designer.svc.httpMethod/.httpMethodHint/.timeoutSec/.delayMode.workdays`、`oa.designer.timeout.errorEdge`、`oa.designer.errHttpOverride/.errErrorEdgeSource/.errTimeoutErrorEdge`。
+- 错误码 `E-WF-027`（超时走失败边节点缺失败边）/`E-WF-028`（超时配置或时区非法）。
+- 平台时区 `platform.tenant.timeZone/.timeZonePlaceholder/.timeZoneHint`（E-T2，归 `I18nTenantComplianceSeed` platform.* 家族）。
+- 复用既有全局键（不重复种）：`common.edit/cancel/save`、`取消`/`确定`——**跨模块既有全局键（common.* 系 main 上 space/wms/oa 多页既用）；键面对账视为既有归属，非本波欠账**。
+
+### 8.5 计数收口（与守卫逐字对齐）
+
+- 控制器：**19**（Oa 14 + Wf 5）。非GET 端点：**47**。贴点：**45**（M-OA/WF·F-T2 收编 37 + 波④ batch-transfer/preview 2 + 波⑤ A-T4 WorkCalendar 3 + D-T2 WfConnector 3）。只读 POST 豁免：**2**（Forecast/Query，不变）。
+- menu-key（去重）：**8**（733–739 七锚定 + 743 oa-work-calendar）。
+- 逐租户 Sys_MenuAction/Sys_RoleAction 种子文件：`OawfPermissionSeed`（20 元组）+ `FlowTriggerPermissionSeed`（2）+ `InboxBatchTransferPermissionSeed`（1）+ `WorkCalendarConnectorPermissionSeed`（4：Calendar.View/Edit + Connector.View/Edit）。

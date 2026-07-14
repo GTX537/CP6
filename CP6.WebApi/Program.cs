@@ -948,6 +948,11 @@ using (var scope = app.Services.CreateScope())
     // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 733 MenuKey 回填）之后。「贴点⊆种子」互锁。
     CP6.WebApi.Seed.InboxBatchTransferPermissionSeed.EnsureSeeded(db);
 
+    // WFS 波⑤ 引擎基建 F-T1：年历管理页新菜单 743(oa-work-calendar，插入时显式赋 MenuKey) + 逐租户
+    // Calendar.View/Edit（743）+ Connector.View/Edit（挂既有 734 oa-flow-admin）权限点幂等种子。
+    // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 锚定）之后、:1005 回填块之前。「贴点⊆种子」互锁。
+    CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {
@@ -1998,6 +2003,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Concat(CP6.WebApi.Seed.I18nOaInboxUxScreenSeed.Items)  // WFS 波④ 信箱体验：通知矩阵/批量改派/rowMode/移动端 oa.notify.matrix.*/oa.notify.type.*/oa.bt.*/oa.inbox.rowMode.*/oa.inbox.mobileFilter/oa.pref.errBadJson
+            .Concat(CP6.WebApi.Seed.I18nOaEngineInfraScreenSeed.Items)  // WFS 波⑤ 引擎基建：年历 oa.workcal.*+nav.743 / 连接器 oa.connector.* / 设计器新键 oa.designer.svc.httpMethod|timeoutSec|delayMode.workdays·timeout.errorEdge·err* / E-WF-027/028
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();

@@ -55,6 +55,10 @@ public static class I18nTenantComplianceSeed
         new Sys_Lang { LangKey = "platform.tenant.tempPassword", ZhCN = "临时密码", ZhTW = "臨時密碼", En = "Temporary Password", Ja = "仮パスワード", Ko = "임시 비밀번호" },
         new Sys_Lang { LangKey = "platform.tenant.tempPasswordHint", ZhCN = "此临时密码仅显示一次，请立即复制并妥善保管", ZhTW = "此臨時密碼僅顯示一次，請立即複製並妥善保管", En = "This temporary password is shown only once; copy and store it securely now", Ja = "この仮パスワードは一度だけ表示されます。今すぐコピーして安全に保管してください", Ko = "이 임시 비밀번호는 한 번만 표시됩니다. 지금 복사하여 안전하게 보관하세요" },
         new Sys_Lang { LangKey = "platform.tenant.userCount", ZhCN = "用户数", ZhTW = "使用者數", En = "Users", Ja = "ユーザー数", Ko = "사용자 수" },
+        // WFS 波⑤ E-T2：租户时区（TenantListView.vue 编辑对话框时区下拉 + 自愈口径提示）
+        new Sys_Lang { LangKey = "platform.tenant.timeZone", ZhCN = "时区", ZhTW = "時區", En = "Time Zone", Ja = "タイムゾーン", Ko = "시간대" },
+        new Sys_Lang { LangKey = "platform.tenant.timeZonePlaceholder", ZhCN = "选择时区（留空＝沿用默认）", ZhTW = "選擇時區（留空＝沿用預設）", En = "Select time zone (empty = use default)", Ja = "タイムゾーンを選択（空欄＝既定を使用）", Ko = "시간대 선택(비우면 기본값 사용)" },
+        new Sys_Lang { LangKey = "platform.tenant.timeZoneHint", ZhCN = "改时区不批量重算既有触发器到期时刻，下次发火后按新时区自愈（最多一次按旧时区发火）。", ZhTW = "改時區不批次重算既有觸發器到期時刻，下次發火後按新時區自癒（最多一次按舊時區發火）。", En = "Changing the time zone does not recompute existing triggers' due times; each self-heals to the new zone after its next fire (at most one fire on the old zone).", Ja = "タイムゾーンを変更しても既存トリガーの期限は一括再計算されません。次回発火後に新しいタイムゾーンで自己修復します（旧タイムゾーンでの発火は最大1回）。", Ko = "시간대를 변경해도 기존 트리거의 만료 시각은 일괄 재계산되지 않으며, 각 트리거는 다음 발화 후 새 시간대로 자가 치유됩니다(이전 시간대 발화는 최대 1회).", },
 
         // 平台超管授撤
         new Sys_Lang { LangKey = "platform.admin.title", ZhCN = "平台超管", ZhTW = "平台超管", En = "Platform Admins", Ja = "プラットフォーム管理者", Ko = "플랫폼 관리자" },
