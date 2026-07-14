@@ -3213,3 +3213,19 @@ S-F: F-T1 → F-T2 → F-T3                 （紧跟 S-E，不留窗口）
 
 
 
+
+---
+
+## 波⑥完成记录（2026-07-14，fable 终审 Ready 零必修，终审报告 .superpowers/sdd/w6-final-review-report.md）
+
+16 任务全完成；后端 2181 绿/5 skip、前端 481 绿/type-check 0/build 过；五硬不变量终审亲验（恰一次迁移/D5 铁律=EnqueueIfChild 恰2调用点+唯二 SaveChanges 例外/默认路径零漂移/零污染零硬编码色/全量闸）；接缝 a~j+波⑤接缝全过。修复轮记录：B-T1 深度守卫 Local∪DB（brief bug）/B-T2 修 A-T2 mapper 多实例并集求值（brief 级缺陷）/C-T2 补 SameBranch 嵌套并行 e2e（审查 Important 闭合）/E-T1 validateClient 镜像等价两处/E-T2 subMulti backing ref（brief 鸡生蛋缺陷）——全部经复核关闭。
+
+### 跟踪票（3 项）
+
+1. **B-T1 停泊重入履历噪声抑制**：childIds 空且槽位已存在时仍 AddHistory("subFlowStarted", children=[])——misfire 重扫场景纯履历噪声，加 `childIds.Count==0 && exists` 抑制。
+2. **D-T1 DFS memoization**：SubFlowRefValidator.Walk 无记忆化，宽 DAG（多 subFlow 汇聚共享深子树）最坏随分支度指数（受深度 8 钳）——大扇出场景加 per-save visited 缓存。
+3. **palette label i18n 跨波票**：NODE_PALETTE 全族 label（含 '子流程'）硬编码中文——设计器 palette 统一 i18n 化，跨波一次收口。
+
+### live QA（待用户在场）
+
+harness `docs/superpowers/qa/wfs-subflow/`（seed.sql+qa_subflow.ps1+README，隔离库 CP6DB_OA）7+1 剧本；**重点=剧本 8 撤回 fast path（TaskCenterService 可选 ctor DI 注线的唯一 live 实证）**；剧本 2/7 为 gstack browse 真浏览器走查（父子互链+设计器 palette/面板/E-WF-026 五语文案）。
