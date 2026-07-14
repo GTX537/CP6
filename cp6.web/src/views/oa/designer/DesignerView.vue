@@ -315,6 +315,7 @@ function doValidateClick() { doValidate() }
         <NodePropertyPanel
           v-if="selState.kind === 'node' && selNode"
           :node="selNode"
+          :current-flow-key="flowKey"
           @update="patchNode"
         />
         <EdgePropertyPanel

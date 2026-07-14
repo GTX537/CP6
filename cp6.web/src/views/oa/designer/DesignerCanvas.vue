@@ -19,6 +19,7 @@ import GatewayNode from './nodes/GatewayNode.vue'
 import InclusiveGatewayNode from './nodes/InclusiveGatewayNode.vue'
 import EndNode from './nodes/EndNode.vue'
 import ServiceTaskNode from './nodes/ServiceTaskNode.vue'
+import SubFlowNode from './nodes/SubFlowNode.vue'
 
 // ── Props & emits ──────────────────────────────────────────────────
 const props = defineProps<{ modelValue: FlowSchemaDto }>()
@@ -403,6 +404,9 @@ function focusNode(nodeId: string) {
           <template #node-serviceTask="nodeProps">
             <ServiceTaskNode v-bind="nodeProps" />
           </template>
+          <template #node-subFlow="nodeProps">
+            <SubFlowNode v-bind="nodeProps" />
+          </template>
 
           <!-- Background & Controls -->
           <Background v-if="showGrid" variant="lines" />
@@ -528,6 +532,9 @@ function focusNode(nodeId: string) {
 .dot-end { background: var(--cp-muted); }
 /* serviceTask 三 kind 共用 brand 青，与 ServiceTaskNode 节点身份一致（虚线机器节点）。 */
 .dot-serviceTask { background: var(--cp-brand); }
+/* subFlow 子流程：info 蓝 + 方形 dot（border-radius 小），与 SubFlowNode 双线容器节点身份一致，
+   方形记号区分 approval 同色圆形 dot（形状双重编码，不发新色相）。 */
+.dot-subFlow { background: var(--cp-info); border-radius: 2px; }
 
 .canvas-flow-wrap {
   flex: 1;
