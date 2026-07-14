@@ -1,7 +1,7 @@
 # D-T2 报告：连接器管理 tab（CRUD/启停/凭证不回显 UI）+ Connector.View/Edit 权限点
 
 - **分支**：`feat/wfs-engine-infra`
-- **Commit**：`<填入>`（已 push）
+- **Commit**：`7e49997`（已 push）
 - **测试**：后端 2071 → **2075 绿 / 5 skip**（新增 4：WfConnectorControllerTests×4）；前端 453 → **456 绿**（新增 3：wfConnector.spec×3）
 - **type-check**：clean（NODE_OPTIONS=8192，vue-tsc --build 零错）／**build**：clean
 - **EF**：`has-pending-model-changes` = clean（零迁移零实体改动；引擎/Program.cs 零 diff——服务 DI 由 D-T1 已注册）
