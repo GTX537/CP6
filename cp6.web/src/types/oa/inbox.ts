@@ -117,6 +117,8 @@ export interface InboxDetail {
   snapshots: SnapshotRow[]
   forecast: ForecastStep[]
   cc: CcRow[]
+  subFlowParent?: { instanceId: string; flowKey: string; flowName?: string } | null
+  subFlows?: Array<{ instanceId: string; subIndex: number; flowKey: string; flowName?: string; status: number; nodeId: string }>
 }
 
 export interface BatchResultItem {

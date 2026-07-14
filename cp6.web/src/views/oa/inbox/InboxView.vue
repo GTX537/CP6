@@ -103,7 +103,7 @@
       :title="t('oa.inbox.detailTitle')"
       destroy-on-close
     >
-      <FormDetail v-if="detail.id" :instance-id="detail.id" />
+      <FormDetail v-if="detail.id" :instance-id="detail.id" @open-instance="openDetail" />
     </el-drawer>
 
     <!-- 新建/填单对话框（占位；起草功能后续实现） -->

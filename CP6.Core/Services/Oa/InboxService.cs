@@ -257,8 +257,27 @@ public class InboxService : IInboxService
             ? (await _forecast.ForecastAsync(inst.FlowKey, inst.VarsJson, inst.StarterId, fromNodeId: inst.CurrentNode)).Steps
             : Array.Empty<ForecastStep>();
 
+        // ── 子流程互链（spec §4.5）：向上=父实例链接;向下=本实例名下子实例组（按停泊 token 的 NodeId 归组）──
+        SubFlowParentRow? subFlowParent = null;
+        if (inst.ParentInstanceId is Guid parentId)
+        {
+            var p = await _db.Wf_FlowInstances.FirstOrDefaultAsync(x => x.Id == parentId);
+            var pDef = p is null ? null : await _db.Wf_FlowDefs.FirstOrDefaultAsync(d => d.FlowKey == p.FlowKey);
+            if (p is not null) subFlowParent = new SubFlowParentRow(p.Id, p.FlowKey, pDef?.FlowName);
+        }
+        var childRows = await (
+            from c in _db.Wf_FlowInstances
+            where c.ParentInstanceId == instanceId
+            join tk in _db.Wf_FlowTokens on c.ParentTokenId equals tk.Id
+            join cd in _db.Wf_FlowDefs on c.FlowKey equals cd.FlowKey into cds
+            from cd in cds.DefaultIfEmpty()
+            orderby tk.NodeId, c.SubIndex
+            select new SubFlowChildRow(c.Id, c.SubIndex ?? 0, c.FlowKey, cd != null ? cd.FlowName : null, c.Status, tk.NodeId)
+        ).ToListAsync();
+
         return new InboxDetail(inst, def?.FlowName, def?.FormKey, formSchema,
-            inst.VarsJson, timeline, snapshots, forecast, ccRows);
+            inst.VarsJson, timeline, snapshots, forecast, ccRows,
+            subFlowParent, childRows);
     }
 
     public async Task<IReadOnlyList<FormQueryItem>> QueryAsync(FormQueryFilter f)
