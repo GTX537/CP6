@@ -28,7 +28,19 @@ public class WfConnectorController : LocalizedControllerBase
     public WfConnectorController(IWfConnectorService svc) { _svc = svc; }
 
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
-    private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+
+    /// <summary>服务层抛 <c>"E-WF-028|timeoutGteLease:60&gt;=300"</c> 形态（码｜诊断后缀）。前端 http.ts
+    /// 对 message 整串裸 <c>t(raw)</c>（不拆 <c>|</c>），带后缀则命不中 i18n seed 键。此处按 <c>|</c> 拆分：
+    /// 前缀（纯错误码）作 message → 可命中 seed 本地化；后缀诊断入附加字段 detail（不丢，供前端/日志诊断）。
+    /// 不改服务层抛出形态（后缀对日志/测试有诊断价值）。（F-T1 审查 Important 修复。）</summary>
+    private IActionResult Err(InvalidOperationException e)
+    {
+        var raw = e.Message ?? "";
+        var sep = raw.IndexOf('|');
+        var code = sep >= 0 ? raw[..sep] : raw;
+        var detail = sep >= 0 ? raw[(sep + 1)..] : null;
+        return BadRequest(new { code = 400, message = code, detail });
+    }
 
     /// <summary>列当前租户全部连接器（掩码；无明文凭证）。</summary>
     [HttpGet]

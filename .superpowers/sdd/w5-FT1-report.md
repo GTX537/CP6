@@ -16,7 +16,7 @@
 |---|---|---|---|
 | `oa.workcal.*` | 13 | WorkCalendar.vue | 含动态 `kind.{makeup\|closed\|weekend\|normal}` 全 4 值域（line 38 日格 + line 48 radio）+ `{n}` 插值 `imported` |
 | `nav.743` | 1 | MenuTreeItem.vue `te('nav.'+id)?t():menuName` | 新菜单 743 侧栏标签 |
-| `oa.connector.*` | 22 | WfConnectorPanel/Dialog.vue + FlowAdmin.vue(tab) | tab/new/empty/authYes/authNo + col.×7 + form.×11 |
+| `oa.connector.*` | 22 | WfConnectorPanel/Dialog.vue + FlowAdmin.vue(tab) | tab/new/empty/authYes/authNo + col.×7 + form.×10 |
 | `oa.designer.svc.httpMethod/.httpMethodHint/.timeoutSec` | 3 | NodePropertyPanel.vue（E-T1） | |
 | `oa.designer.svc.delayMode.workdays` | 1 | NodePropertyPanel.vue（A-T3） | |
 | `oa.designer.timeout.errorEdge` | 1 | designerModel.ts（B-T2 标签） | |
@@ -58,3 +58,11 @@
 ## concerns（复核人知会）
 1. **`common.edit/cancel/save` 全库未落 Sys_Lang 却被 10+ 页（含 main 上 space/wms/oa）消费**：i18n 纯 DB 驱动（`/lang/{lang}`，无前端静态字典），故这些键当前**回退裸显 key**。这是**跨模块既有缺口**（预 main、非本波引入），且主控口径明示「common.* 不重复放」——故不种，记为待裁跨切票（建议后置全局 `common.*` seed 任务，一次覆盖 space/wms/oa 全模块）。连接器沿用此既有模式，与先例一致。
 2. **doc §八为增量追加而非重写**：`oawf-permission-keys.md` §一–§七 是 M-OA/WF 16 控制器/33 非GET 快照，波③④⑤ 增量在新增 §八 收口（19/47/45/8 menu-key），与守卫逐字对齐；未改动历史快照表避免误伤。
+
+## 追加：E-WF-028 裸码缺陷披露 + 修复（F-T1 审查 Important，跨任务·根在 D-T1/D-T2 呈现层）
+
+**缺陷**：连接器保存侧校验 `WfConnectorService.ValidateLease`（`WfConnectorService.cs:148/151`）抛 `InvalidOperationException("E-WF-028|timeoutGteLease:60>=300")`（码｜诊断后缀形态）→ 控制器 `WfConnectorController.Err`（原 :31）把 `e.Message` **整串**塞入响应 `message` → 前端 `cp6.web/src/api/http.ts:94-95` 对整串裸 `t(raw)`（不拆 `|`）→ 命不中 i18n seed 键 `E-WF-028`，用户看到原始码串「E-WF-028|timeoutGteLease:60>=300」而非本地化「超时配置或时区非法」。对照：节点侧 `DesignerService.cs:75` 抛**裸** `"E-WF-028"`，能正常本地化——故本波键面表第 25 行 `E-WF-028` 键**存在且正确**，缺陷纯在呈现层未拆分（非键面欠账）。
+
+**修复（外科式，仅动后端呈现层）**：`WfConnectorController.Err` 按 `|` 拆分——前缀（纯错误码）作 `message`（可命中 seed 本地化），后缀诊断入**新增附加字段 `detail`**（不丢，供前端/日志诊断，additive 不破坏前端契约）。**不改** `WfConnectorService` 抛出形态（后缀对日志/测试有诊断价值）；**不碰** `http.ts`（跨模块面）。三写端点（Create/Update/SetEnabled）共用此 `Err`，一处修全覆盖。
+
+**测试**：强化既有 `WfConnectorControllerTests.Create_TimeoutAtOrAboveLease_E028_Returns400`——由 `Assert.Contains("E-WF-028", msg)` 收紧为 `Assert.Equal("E-WF-028", msg)`（断言恰为纯码可 t() 命中）+ 断言 `detail` 非空且含 `timeoutGteLease`。`--filter WfConnectorControllerTests` 4/4 绿；全量 **2110 绿 / 5 skip**（零回归，强化断言非净增测试故计数持平基线）。

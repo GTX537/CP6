@@ -61,8 +61,13 @@ public class WfConnectorControllerTests
         var ctrl = Ctrl(conn, leaseSec: 60);
         var res = await ctrl.Create(Req("slow", null, timeout: 120), CancellationToken.None);   // 120 ≥ 60 租约
         var bad = Assert.IsType<BadRequestObjectResult>(res);
+        // message 恰为纯错误码（可命中 i18n seed 键 E-WF-028，前端 http.ts 裸 t(raw) 不拆 |）；
+        // 诊断后缀入 detail 不丢。（F-T1 审查 Important 修复。）
         var msg = (string)bad.Value!.GetType().GetProperty("message")!.GetValue(bad.Value)!;
-        Assert.Contains("E-WF-028", msg);
+        Assert.Equal("E-WF-028", msg);
+        var detail = (string?)bad.Value!.GetType().GetProperty("detail")!.GetValue(bad.Value);
+        Assert.NotNull(detail);
+        Assert.Contains("timeoutGteLease", detail);
     }
 
     [Fact]
