@@ -195,7 +195,7 @@ if ($timerId) {
     $mf = PostJson "$BaseUrl/api/oa/flow-triggers/$timerId/manual-fire" $s @{}
     Chk "manual: manual-fire HTTP 200" 200 $mf.Status
     ChkTrue "manual: response carries instanceId" ($null -ne $mf.Json.data.instanceId)
-    $fires = FiresList $s $timerId
+    $fires = @(FiresList $s $timerId)
     ChkTrue "manual: fire log has >=1 row" ($fires.Count -ge 1)
     if ($fires.Count -ge 1) {
         ChkTrue "manual: top fire row has instanceId (success)" ($null -ne $fires[0].instanceId)
@@ -288,7 +288,7 @@ if ($msgId -and $apiKey) {
 # =============================================================================
 Write-Host ""
 Write-Host "-- event echo linkage (scenario 4) --" -ForegroundColor Cyan
-$firesBefore = (FiresList $s $T_EVENT).Count
+$firesBefore = @(FiresList $s $T_EVENT).Count
 $evId = "QA-EV-" + [guid]::NewGuid().ToString("N")
 $echo1 = PostJson "$BaseUrl/api/oa/wf-trigger-echo/fire" $s @{ eventKey = "QA|OnEchoAsync"; eventId = $evId; payloadJson = '{"OutboundNo":"OB-1"}' }
 Chk "event: echo fire HTTP 200" 200 $echo1.Status
@@ -296,14 +296,14 @@ if ($echo1.Json) {
     ChkTrue "event: matchedCount >= 1 (wtr-event matched)" ([int]$echo1.Json.data.matchedCount -ge 1)
     ChkTrue "event: firedCount   >= 1 (instance started)"   ([int]$echo1.Json.data.firedCount -ge 1)
 }
-$firesAfter1 = (FiresList $s $T_EVENT).Count
+$firesAfter1 = @(FiresList $s $T_EVENT).Count
 ChkTrue "event: a new fire row was written" ($firesAfter1 -gt $firesBefore)
 
 # resend SAME eventId -> idempotent: firedCount still counts it, but NO new fire row / instance
 $echo2 = PostJson "$BaseUrl/api/oa/wf-trigger-echo/fire" $s @{ eventKey = "QA|OnEchoAsync"; eventId = $evId; payloadJson = '{"OutboundNo":"OB-1"}' }
 Chk "event: resend same eventId HTTP 200" 200 $echo2.Status
 if ($echo2.Json) { ChkTrue "event: resend firedCount still >= 1 (idempotent skip counts)" ([int]$echo2.Json.data.firedCount -ge 1) }
-$firesAfter2 = (FiresList $s $T_EVENT).Count
+$firesAfter2 = @(FiresList $s $T_EVENT).Count
 Chk "event: resend adds NO new fire row (idempotent {eventId}:{triggerId})" $firesAfter1 $firesAfter2
 Write-Host "        (verify in DB: VarsJson of the started instance = {\"outboundNo\":\"OB-1\"} via varsMap)" -ForegroundColor DarkGray
 
@@ -315,7 +315,7 @@ Write-Host "-- fire log failure row (scenario 8) --" -ForegroundColor Cyan
 $mfBad = PostJson "$BaseUrl/api/oa/flow-triggers/$T_BADSTARTER/manual-fire" $s @{}
 Chk "log: manual-fire bad-starter -> 400" 400 $mfBad.Status
 ChkContains "log: 400 body carries E-WF-022" "E-WF-022" "$($mfBad.Content)"
-$badFires = FiresList $s $T_BADSTARTER
+$badFires = @(FiresList $s $T_BADSTARTER)
 ChkTrue "log: bad-starter fire log has >=1 row" ($badFires.Count -ge 1)
 if ($badFires.Count -ge 1) {
     ChkTrue "log: top row has NO instanceId (failed)" ($null -eq $badFires[0].instanceId)
@@ -330,7 +330,7 @@ Write-Host "-- timer short-cycle auto-fire (scenario 3, needs worker; <= ${WaitS
 $deadline = (Get-Date).AddSeconds($WaitSeconds)
 $hit = $null
 while ((Get-Date) -lt $deadline) {
-    $sc = FiresList $s $T_SHORT
+    $sc = @(FiresList $s $T_SHORT)
     $hit = @($sc | Where-Object { $null -ne $_.instanceId }) | Select-Object -First 1
     if ($hit) { break }
     Start-Sleep -Seconds $PollSeconds
