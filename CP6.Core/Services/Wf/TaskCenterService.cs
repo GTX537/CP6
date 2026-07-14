@@ -51,6 +51,9 @@ public class TaskCenterService : ITaskCenterService
             .ToListAsync();
         foreach (var t in activeTokens) t.Status = FlowTokenStatus.Cancelled;   // 在途 token → Cancelled
 
+        // ── 子流程 C-T1（spec §3.3 路径①）：撤回 = terminate,就地循环不经 CancelAllActiveTokens → 此处补级联 ──
+        foreach (var t in activeTokens) SubFlowCascade.CancelChildrenOfToken(_db, t.Id);
+
         var pendingFormTos = await _db.Wf_FlowFormTos
             .Where(f => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending)
             .ToListAsync();

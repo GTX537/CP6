@@ -34,6 +34,8 @@ public partial class FlowEngine
 
     /// <summary>剪本支：token → Pruned；本支任务 Cancelled、Pending FormTo → Voided（tokenId 过滤复用）；
     /// 记 branchPruned 履历 + BranchPruned 通知；再做 join 补放行探测与全剪光递归上弹。</summary>
+    // 子流程接缝（spec §3.3）：本方法只剪「被驳任务的 token」，停泊 subFlow token 无任务不会流入此处；
+    // 其级联取消由 CancelAllActiveTokens / CancelTokenSubtree / WithdrawAsync 三钩子负责——见 SubFlowCascade 类注释。
     private async Task PruneTokenAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken token,
         Guid actorId, string? comment)
     {

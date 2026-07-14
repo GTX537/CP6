@@ -48,14 +48,15 @@ public partial class FlowEngine
     /// <c>Status==Running</c> 的 job 不强杀——由 B-T1 <c>ScanOnceAsync</c> 执行前状态闸（§4.2 P0-5）在 worker 侧处理。</para></summary>
     internal void CancelAllActiveTokens(Guid instanceId)
     {
-        // ── token 清场（既有逻辑，字节等价） ──
+        // ── token 清场（既有逻辑，字节等价；C-T1 只多收集被取消 id 供子流程级联） ──
+        var cancelledTokenIds = new List<Guid>();
         foreach (var t in _db.Wf_FlowTokens.Local
             .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active).ToList())
-            t.Status = FlowTokenStatus.Cancelled;
+        { t.Status = FlowTokenStatus.Cancelled; cancelledTokenIds.Add(t.Id); }
         var localIds = _db.Wf_FlowTokens.Local.Where(t => t.InstanceId == instanceId).Select(t => t.Id).ToHashSet();
         foreach (var t in _db.Wf_FlowTokens
             .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active && !localIds.Contains(t.Id)).ToList())
-            t.Status = FlowTokenStatus.Cancelled;
+        { t.Status = FlowTokenStatus.Cancelled; cancelledTokenIds.Add(t.Id); }
 
         // ── B-T3: Pending 服务任务 job 清场（同款 Local + localIds-exclusion 惯用法） ──
         var now = DateTime.UtcNow;
@@ -73,6 +74,9 @@ public partial class FlowEngine
             j.Status = ServiceJobStatus.Cancelled;
             j.CompletedAtUtc = now;
         }
+
+        // ── 子流程 C-T1（spec §3.3 路径①/坍缩路径）：本次被取消的 token 若停泊着 subFlow 组 → 级联取消子实例（递归）──
+        foreach (var id in cancelledTokenIds) SubFlowCascade.CancelChildrenOfToken(_db, id);
     }
 
     /// <summary>本 token 的在途/挂起任务 → Cancelled（剪枝/子树清场用）。Local + localIds-exclusion 惯用法。</summary>
@@ -90,7 +94,9 @@ public partial class FlowEngine
 
     /// <summary>剥离层子树清场（hardening spec §5.2 SameBranch）：root 及其 ParentTokenId 后代闭包内
     /// Active token → Cancelled；这些 token 的 Pending/Suspended 任务 → Cancelled、Pending FormTo → Voided、
-    /// Pending ServiceJob → Cancelled。绝不触碰子树外（兄弟分支零扰动）、绝不改 inst.Status。
+    /// Pending ServiceJob → Cancelled、停泊 subFlow 组的子实例 → 级联取消（五清，子流程 spec §3.3 路径②）。
+    /// 绝不触碰子树外（兄弟分支零扰动）、绝不改 inst.Status。
+    /// 接缝注释：第五清的语义与消费清单见 <see cref="SubFlowCascade"/> 类注释。
     /// 闭包正确性：join 续 token 血缘「上弹一层」重挂剥离层同级，故任何在途延续 token 要么在闭包内、
     /// 要么本身就是作用域分析选出的剥离层（侦察结论表第 3 行论证）。</summary>
     internal void CancelTokenSubtree(Guid instanceId, Guid rootTokenId)
@@ -112,6 +118,7 @@ public partial class FlowEngine
             CancelPendingTasksOfToken(instanceId, id);
             VoidPendingFormTos(instanceId, tokenId: id);
             CancelPendingServiceJobsOfToken(instanceId, id);
+            SubFlowCascade.CancelChildrenOfToken(_db, id);   // ★ 第五清（子流程 spec §3.3）：停泊 subFlow token → 子实例组级联
         }
     }
 
