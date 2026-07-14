@@ -358,8 +358,8 @@ if ($i5) {
         $t_a2 = FindTask $sC $i5 "a2"
         ChkTrue "S5: a2 todo present after a1" ($null -ne $t_a2)
         if ($t_a2) {
-            $sb = SendBack $sC $t_a2.taskId "a1" "same-branch back"
-            Chk "S5: send-back a2 -> a1 HTTP" 200 $sb.Code
+            $sbkResp = SendBack $sC $t_a2.taskId "a1" "same-branch back"
+            Chk "S5: send-back a2 -> a1 HTTP" 200 $sbkResp.Code
             Chk "S5: instance still Running" $ST_RUNNING (GetStatus $sStart $i5)
             ChkTrue "S5: sibling b1 todo NOT disturbed" ($null -ne (FindTask $sB $i5 "b1"))
             $t_a1r = FindTask $sA $i5 "a1"
