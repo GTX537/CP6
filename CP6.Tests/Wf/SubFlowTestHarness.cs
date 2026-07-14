@@ -1,5 +1,8 @@
 // CP6.Tests/Wf/SubFlowTestHarness.cs —— 共享基座：GenerateCreateScript + TEXT 替换建库 +
-// AFTER UPDATE 触发器模拟 rowversion（Wf_FlowInstance=恰一次恢复闸；Wf_ServiceJob=fast path/worker 抢 job）
+// Wf_FlowInstance AFTER UPDATE 触发器模拟 rowversion（恰一次恢复闸，ANY 竞态用例依赖）。
+// 注：Wf_ServiceJob 不装 rowversion 触发器——无用例竞逐同一 job 的 lease（单 worker），且 job lease 并发-skip
+// 是 SQL Server 生产特性、单测按 WfServiceJobService 口径不依赖（InMemory 同）；装了反而令 worker 分支
+// 「lease→标 Succeeded」同上下文两次 UPDATE 撞 EF Core 8 SQLite 触发器回读缺口 → 伪 DbUpdateConcurrencyException。
 using System;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -22,7 +25,6 @@ internal static class SubFlowTestHarness
         {
             base.OnModelCreating(mb);
             mb.Entity<Wf_FlowInstance>().ToTable(t => t.HasTrigger("trg_Wf_FlowInstance_RowVersion"));
-            mb.Entity<Wf_ServiceJob>().ToTable(t => t.HasTrigger("trg_Wf_ServiceJob_RowVersion"));
         }
     }
 
@@ -41,12 +43,10 @@ internal static class SubFlowTestHarness
                                        "n?varchar\\(max\\)", "TEXT", RegexOptions.IgnoreCase);
             Exec(conn, script);
         }
+        // Wf_FlowInstance rowversion 触发器：ANY 竞态用例靠它令「迟到复核方双恢复」撞父行 RowVersion → 状态闸零动作。
         Exec(conn,
             "CREATE TRIGGER trg_Wf_FlowInstance_RowVersion AFTER UPDATE ON \"Wf_FlowInstance\" " +
             "BEGIN UPDATE \"Wf_FlowInstance\" SET \"RowVersion\" = randomblob(8) WHERE \"Id\" = NEW.\"Id\"; END;");
-        Exec(conn,
-            "CREATE TRIGGER trg_Wf_ServiceJob_RowVersion AFTER UPDATE ON \"Wf_ServiceJob\" " +
-            "BEGIN UPDATE \"Wf_ServiceJob\" SET \"RowVersion\" = randomblob(8) WHERE \"Id\" = NEW.\"Id\"; END;");
         return conn;
     }
 
