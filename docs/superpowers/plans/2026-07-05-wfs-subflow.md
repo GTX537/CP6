@@ -3181,7 +3181,8 @@ git add -A && git commit -m "test(wfs-subflow): F-T2 gstack QA harness(7剧本+s
 | fast path 崩溃后 worker 兜底补唤醒 | B-T4 `FastPathCrash_WorkerScan_RescuesWakeup`（+ B-T3 InMemory 版） |
 | fast path 与 worker 兜底各自幂等 / 父 token 已恢复后迟到复核零动作 | B-T2 `TokenAlreadyResumed_LateCheck_ZeroAction` + B-T3 job Succeeded 断言 + B-T4 撞版测试 |
 | 剪枝停泊 subFlow token → 子实例组级联取消（第五清） | C-T1 `CancelTokenSubtree_FifthClean_*` |
-| SameBranch/BeforeSplit 退回 → 旧批取消+新批起且不并跑 | C-T2 `BeforeSplitSendBack_OldBatchCancelled_*` |
+| BeforeSplit 退回（跨 split 整块重来）→ 旧批取消+新批起且不并跑 | C-T2 `BeforeSplitSendBack_OldBatchCancelled_*` |
+| SameBranch 退回（嵌套内层剥离级联+兄弟支零扰动）→ 旧批取消+新批起且不并跑 | C-T2 `SameBranchSendBack_StripLayerCascadesOldChild_*`（C-T2 审查 Important 补缺，真判 SameBranch） |
 | 孙 subFlow 递归恢复 | B-T3 `GrandChild_NestedResume_PropagatesTwoLevels` |
 | 收件箱父子互链 | E-T3 `SubFlowInboxDetailTests` + QA 剧本 2 |
 | 设计器面板/round-trip/validateClient 镜像 | E-T1 `designerModel.subflow.spec.ts` + QA 剧本 7 |
