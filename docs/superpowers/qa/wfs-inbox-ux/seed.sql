@@ -66,8 +66,8 @@ SET NOCOUNT ON;
 DECLARE @tenant uniqueidentifier = '00000000-0000-0000-0000-0000000000A1';  -- DefaultTenant A1
 
 -- Fixed GUIDs (referenced from FlowDef SchemaJson + ps1 constants -- must match qa_inbox_ux.ps1)
-DECLARE @u_admin   uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000000A0';  -- qa_bt_admin
-DECLARE @u_starter uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000000B0';  -- qa_bt_starter
+DECLARE @u_admin   uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000BB0A0';  -- qa_bt_admin
+DECLARE @u_starter uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000BB0B0';  -- qa_bt_starter
 DECLARE @u_from    uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000000C0';  -- qa_bt_from
 DECLARE @u_to      uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000000D0';  -- qa_bt_to
 DECLARE @u_par     uniqueidentifier = 'CCCC0000-0000-0000-0000-0000000000E0';  -- qa_bt_par
@@ -171,6 +171,6 @@ UNION ALL SELECT 'FlowDef:' + FlowKey,        CONVERT(varchar(36), Id)       FRO
 -- Expected: 6 users + 1 form + 2 flowdefs = 9 rows.
 -- Verify (oa-inbox, batch-transfer) IS granted to RoleId=1 but NOT RoleId=2 in this tenant:
 SELECT ra.RoleId, ra.MenuId, ra.ActionCode
-FROM Sys_RoleActions ra
+FROM Sys_RoleAction ra
 WHERE ra.TenantId = @tenant AND ra.MenuId = 733 AND ra.ActionCode = 'batch-transfer';
 -- Expected: exactly one row, RoleId=1 (seeded by InboxBatchTransferPermissionSeed). RoleId=2 absent -> 403.
