@@ -19,7 +19,7 @@
 | 6 连接器全流程 | create→`{id}`；list `hasAuth` 掩码 `authJson` 恒 null；`TimeoutSec>=lease`→400；403 | `WfConnectorController.cs:22`（`[Route("api/oa/wf-connector")]`）/`:46-55`（GET 掩码）/`:57-64`（create，`Connector.Edit`）；`WfConnectorView.AuthJson=>null` `WfConnectorService.cs:34`，`HasAuth` `:32`；`SaveReq` 字段 `name/displayName/baseUrl/authJson/timeoutSec/enabled` `:10-19` |
 | 6 E-WF-028 呈现 | message=`"E-WF-028"`（纯码）+ `detail` 后缀 | `WfConnectorController.cs:36-43`（`Err` 按 `\|` 拆：message=码，detail=诊断）；服务抛 `"E-WF-028\|timeoutGteLease:.."`（D-T1 `WfConnectorService.ValidateLease`；lease=`WfServiceJobService.LeaseDuration`=300） |
 | 6 403 文案 | 非 RoleId=1 → 403 含 `Connector.Edit` | `RequirePermissionAttribute`（fail-closed，无 admin bypass）；权限 seed `WorkCalendarConnectorPermissionSeed` 授 RoleId=1（F-T1） |
-| 7 节点 HTTP 覆盖 | `serviceTimeoutSec>=lease`→400；method∉{GET,POST,PUT,DELETE}→400；PUT+5→200 | 静态 `FlowSchemaValidator.cs:115-124`（⑧b：timeout `>0&&<=3600`、method 值域 E-WF-028）；保存侧 `DesignerService.SaveAsync`（`ServiceTimeoutSec>=租约`→抛裸 `"E-WF-028"`，E-T1 报告）；节点字段 `FlowSchema.cs:81-82`（`ServiceHttpMethod`/`ServiceTimeoutSec`）；webApi 必填 `ServiceConnectorName`+`ServicePath` `:76-77`（避 E-WF-016 抢先，`Validator:106`） |
+| 7 节点 HTTP 覆盖 | `serviceTimeoutSec>=lease`→400；method∉{GET,POST,PUT,DELETE}→400；PUT+5→200 | 静态 `FlowSchemaValidator.cs:115-124`（⑧b：timeout `>0&&<=3600`、method 值域 E-WF-028）；保存侧 `DesignerService.SaveAsync`（`ServiceTimeoutSec>=租约`→抛裸 `"E-WF-028"`，E-T1 报告）；节点字段 `FlowSchema.cs:81-82`（`ServiceHttpMethod`/`ServiceTimeoutSec`）；webApi 必填 `ServiceConnectorName`+`ServicePath` `:76-77`（避 E-WF-016 抢先，`Validator:106`）；**连接器名用 app 级 `erpEcho`**——`DesignerService.cs:51-64`（①b E-WF-018 注册名校验先于 ①c 租约校验，只认 DI 注册 `IWfConnector`；租户连接器运行期才由 `TenantConnectorResolver` 解析，静态面不可见）（审查修复②） |
 | 8 租户时区 E-WF-028 | 不可解析→400 含 `E-WF-028`；Asia/Tokyo→200 | `TenantController.cs:15`（`[Route("api/platform/tenant")]`）/`:17`（`[RequirePlatformAdmin]`）/`:59-70`（Update，catch→`BizException(ex.Message)`）/`:104`（`UpdateTenantRequest{...,TimeZoneId=null}`）；服务 `TenantAdminService.UpdateAsync` 非空 `FindSystemTimeZoneById` 失败抛 `"E-WF-028"`（E-T2 报告） |
 | flow submit/act | `POST /api/wf/flow/submit {flowKey,varsJson}`；`POST /api/wf/task/{id}/act` | `FlowController.cs:53-64`（submit，`oa-form-catalog:submit`）/`:66-77`（act，`oa-inbox:approve`）/`:89-90`（record 形状） |
 
@@ -33,13 +33,23 @@
 
 ## 三、DoD 自查结论（照 plan Global Constraints）
 
-README §8 给全量对照表。F-T2 系 docs-only，代码级闸由各前置任务报告佐证、主控全量闸复跑；harness 自身贡献＝末行「gstack QA harness 齐（8 剧本）」。**结论**：三件套完整、与实码逐条 cross-check（§一表 file:line）；唯一带生产动作的未决项＝**DataProtection 密钥环持久化（D-T0）**——已在 README §2.3 + 本报告 watch items 标注为部署闸前必落项。其余后端 2110 绿/5 skip（F-T1）、前端 463 绿（E-T2）、EF 恰一次迁移 `WfsInfra`、五语 seed 齐、零硬编码色、JP 35 日幂等，均在前置任务边界已绿。
+README §8 给全量对照表。F-T2 系 docs-only，代码级闸由各前置任务报告佐证、主控全量闸复跑；harness 自身贡献＝末行「gstack QA harness 齐（8 剧本）」。**结论**：三件套完整、与实码逐条 cross-check（§一表 file:line）；**全部 DoD 项无待决生产动作**——DataProtection 密钥环已由 P0-T1 提前消解（DB 持久化，README §2.3 + runbook:112 标注已订正，见修复①）。其余后端 2110 绿/5 skip（F-T1）、前端 463 绿（E-T2）、EF 恰一次迁移 `WfsInfra`、五语 seed 齐、零硬编码色、JP 35 日幂等，均在前置任务边界已绿。
 
 ## 四、watch items（复核/live QA 须知）
 
-1. **🔴 DataProtection 密钥环（D-T0）**：Dev 单实例默认位置可跑；**生产上线前必配 `DataProtection:KeyPath`（`PersistKeysToFileSystem` 共享卷）+ `SetApplicationName`**，否则容器重建/多实例后既有连接器密文解不开（同 SSO ClientSecret 换机隐患 `runbook.md:112`）。live QA 期间勿中途重建容器。
+1. **DataProtection 密钥环（已消解，无生产动作）**（审查修复①订正）：P0-T1（2155fb1）已落 DB 持久化 `AddDataProtection().PersistKeysToDbContext<CP6Context>().SetApplicationName("CP6")`（`Program.cs:585-587`），线上验证跨重启复用、多实例天然共享——连接器密文换机/重建即安全，**代码中不存在读 `DataProtection:KeyPath` 的逻辑**（初版指引为无效操作，已订正）。`runbook.md:112` 过时警示已补「已被 P0-T1 消解」标注。残留一次性事项＝P0-T1 前旧临时键加密的 B1/C1 SSO ClientSecret 重存（既有 P0 台账票，非本波；连接器表晚于 P0-T1 无存量问题）。
 2. **oa-designer:edit / oa-form-catalog:submit / oa-inbox:approve 授权假设**：ps1 designer/submit/act 端点依赖 RoleId=1 已被既有 OA seed 授这三键（非本波种）。若 QA 库这些键缺失，相关剧本会 403——README §2.1 已注明「须 role 1」，属既有 OA 权限面，非本波欠账。
 3. **erpEcho 租户优先无 HTTP 断言面**：D-T2 未暴露合并目录端点，租户优先由单测 `Catalog_MergesBothSources`/`Resolve_TenantRowPreferred` + 真实外呼佐证（README §6.2），非 ps1 断言。
 4. **节点覆盖上线线**：ps1 只证保存侧 E-WF-028 值域；PUT/5s 真达下游由 `NodeHttpOverrideTests` 捕获式 handler + live 真外呼佐证（README §6.3）。
 5. **common.edit/cancel/save 跨模块缺 seed**（F-T1 concern 承接）：DB 驱动 i18n 下回退裸 key，连接器 dialog 沿此既有模式；记为全局 `common.*` seed 后置票，非本波。
 6. **live QA 8 剧本用户在场**：隔离库 CP6DB_OA 起后端+前端 → ps1（2/3/6/7/8）+ DB/worker（1/3-runtime/4/5）+ gstack 真浏览器（1/2/3/6/7/8）。抓 bug 当场 TDD 修入 `CP6.Tests/Wf/**` 或 `cp6.web` vitest。
+
+## 五、审查修复（Needs fixes → 三处，docs-only）
+
+| # | 级别 | 缺陷 | 修复 |
+|---|---|---|---|
+| ① | Important | README §2.3「生产须设 `DataProtection:KeyPath`」为无效指引——密钥环已由 P0-T1（2155fb1）DB 持久化（`Program.cs:585-587` `PersistKeysToDbContext<CP6Context>()+SetApplicationName("CP6")`），代码无 KeyPath 读取逻辑；且 brief DoD 明文的 runbook:112 警示补注欠账 | README §2.3 重写为准确表述（DB 持久化/无生产动作/SSO 同 provider 受益/B1/C1 存量密文重存为唯一残留）；README §8 DoD 表对应行+结论改「已消解」；`deploy/runbook.md:112` 补「✅ 已被 P0-T1 消解」标注（原警示划除保留痕迹）；本报告 watch-item #1 同步订正 |
+| ② | Important | ps1 场景7 `SvcSchema` 用租户连接器名 `qaInfConn` → `DesignerService.SaveAsync` ①b E-WF-018 注册名校验（`DesignerService.cs:51-64`，先于 ①c 租约校验）只认 DI 注册 app 级连接器（仅 erpEcho），租户连接器运行期才解析——7a 撞 018 非 028、7c 预期 200 实际 400 | `SvcSchema` 连接器名改 `erpEcho` + ps1 就地注释说明；README §6.3 补「保存侧静态校验仅认 app 级连接器名，租户连接器运行期解析」口径注记；§一 cross-check 表场景7 行补锚点 |
+| ③ | Minor | seed.sql/README QUOTED_IDENTIFIER 理由张冠李戴（「FlowKey WHERE Enable=1」不存在） | 理由改对：`Wf_FlowDef` 真实过滤唯一索引＝`(TenantId,FunctionId) WHERE FunctionId IS NOT NULL` + `(TenantId,FlowCode) WHERE FlowCode IS NOT NULL`（`CP6Context.cs:712-718`）；指令本身保留 |
+
+修复后 `git show --stat` 复核仍 docs-only（README/seed.sql/qa_infra.ps1/runbook.md/本报告，零 .cs/.vue/迁移）。

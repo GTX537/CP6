@@ -252,8 +252,13 @@ Write-Host "-- per-node HTTP override validation (scenario 7, E-WF-028) --" -For
 
 # A minimal serviceTask webApi node. serviceTimeoutSec >= lease(300) is rejected save-side; an
 # out-of-domain method (PATCH) is rejected by the static validator. A PUT + 5s override saves.
+# NOTE connector name = "erpEcho" (the DI-registered app-level EchoConnector), NOT the tenant
+# connector created in scenario 6: DesignerService.SaveAsync's E-WF-018 registered-name check
+# (step 1b, DesignerService.cs:51-64, runs BEFORE the 1c lease check) only sees DI-registered
+# IWfConnector names -- tenant Wf_Connector rows resolve at RUNTIME via TenantConnectorResolver,
+# invisible to the save-side check. "qaInfConn" here would 400 with E-WF-018, not E-WF-028.
 function SvcSchema { param([string]$Method, $TimeoutSec)
-    $node = '{"id":"t","type":"serviceTask","name":"Call","serviceKind":"webApi","serviceMode":"async","serviceConnectorName":"qaInfConn","servicePath":"/ping"'
+    $node = '{"id":"t","type":"serviceTask","name":"Call","serviceKind":"webApi","serviceMode":"async","serviceConnectorName":"erpEcho","servicePath":"/ping"'
     if ($Method)     { $node += ',"serviceHttpMethod":"' + $Method + '"' }
     if ($null -ne $TimeoutSec) { $node += ',"serviceTimeoutSec":' + $TimeoutSec }
     $node += '}'

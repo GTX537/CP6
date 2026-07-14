@@ -109,7 +109,7 @@ cd /opt/cp6 && docker compose up -d --build   # 空库 → Migrate 建全表 →
 
 ## 4. 还原后必查清单（搬数据尤其这几条）
 
-- [ ] **🔴 DataProtection 密钥环**：SSO 把租户 `ClientSecret` 用 DataProtection 加密。若密钥环存在容器本地文件系统（未持久化到卷/DB）→ **新环境/容器重建后解不开，SSO 配置失效**。搬迁前确认 keyring 持久化位置，并随迁移带过去。（**这也是个潜在既有隐患，值得单独排查一次。**）
+- [ ] **DataProtection 密钥环（✅ 已被 P0-T1 消解，2155fb1）**：SSO 把租户 `ClientSecret` 用 DataProtection 加密。~~若密钥环存在容器本地文件系统（未持久化到卷/DB）→ 新环境/容器重建后解不开，SSO 配置失效~~ → 密钥环已持久化到 **DB**（`AddDataProtection().PersistKeysToDbContext<CP6Context>().SetApplicationName("CP6")`，Program.cs:585-587；线上验证跨重启复用，多实例天然共享）。搬迁只需随库带走（`.bak` 天然包含），无独立 keyring 文件要迁。残留一次性事项：P0-T1 之前用旧临时键加密的存量密文（B1/C1 SSO ClientSecret）解不开，须 PMS SSO 配置页重存一次。WFS 波⑤ 连接器密文（`Wf_Connector.AuthJsonEncrypted`）同 provider 受益，表晚于 P0-T1 无存量问题。
 - [ ] **登录/授权**：当前应用用 `sa` 连库（docker-compose 注入）→ **无孤儿用户问题**。若日后改成最小权限专用登录，则还原后要在新实例 `CREATE LOGIN` + `ALTER USER … WITH LOGIN` 重映射 + 按 schema `GRANT`（见 §6 分 schema 后）。
 - [ ] **`.env` 密钥**：新服务器要有同套 `.env`（`MSSQL_SA_PASSWORD` / `JWT_SECRET` / `RABBITMQ_PASSWORD` …）。`JWT_SECRET` 换了会使旧 token 全失效（一般可接受）。
 - [ ] **collation**：`.bak` 还原保留源库 collation；CJK 词条列是 `nvarchar`（Unicode），存储不受 collation 影响，安全。

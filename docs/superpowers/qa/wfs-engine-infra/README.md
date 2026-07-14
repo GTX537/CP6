@@ -85,7 +85,9 @@ confirming `Connector.Edit` / `Calendar.Edit` are granted to RoleId=1 only, and 
 work-calendar row count. All users share password `123456` (admin's BCrypt hash cloned).
 `qa_inf_admin` is **RoleId=1** (drives the OA admin surface); `qa_inf_padmin` is
 **IsPlatformAdmin=1** (drives `/api/platform/tenant`, which is `[RequirePlatformAdmin]`).
-`SET QUOTED_IDENTIFIER ON` is set (required by the filtered unique index on `Wf_FlowDef`).
+`SET QUOTED_IDENTIFIER ON` is set (required because `Wf_FlowDef` carries filtered unique indexes:
+`(TenantId,FunctionId) WHERE FunctionId IS NOT NULL` and `(TenantId,FlowCode) WHERE FlowCode IS NOT
+NULL`, `CP6Context.cs:712-718`).
 
 ### 2.3 Backend
 
@@ -103,13 +105,18 @@ dotnet run --urls "http://localhost:5181"
   designer / tenant POSTs are cookie-auth'd (the JWT `cp6_at` cookie flows via `-WebSession`) and
   would 403 on the CSRF double-submit otherwise. In **production** posture those POSTs require
   cookie + `X-Csrf-Token`. The scenario-6 403 is a **permission** 403, distinct from any CSRF 403.
-- **DataProtection key ring (D-T0, mandatory before production)**: connector `AuthJsonEncrypted` is a
-  DataProtection ciphertext (`purpose="Wfs.Connector.Auth"`). `AddDataProtection()` is registered but
-  in Dev the keys land in the default per-instance location; **production must configure
-  `DataProtection:KeyPath` (`PersistKeysToFileSystem` on a shared volume) + `SetApplicationName`**, or
-  a container rebuild / second instance can no longer decrypt existing connector credentials (same
-  root risk `deploy/runbook.md:112` flags for the SSO ClientSecret). For QA on a single Dev instance
-  the default location works; just don't rebuild the container mid-session.
+- **DataProtection key ring -- already persisted, no production action pending**: connector
+  `AuthJsonEncrypted` is a DataProtection ciphertext (`purpose="Wfs.Connector.Auth"`). The key ring
+  was persisted to the **database** by P0-T1 (commit `2155fb1`):
+  `AddDataProtection().PersistKeysToDbContext<CP6Context>().SetApplicationName("CP6")`
+  (`Program.cs:585-587`), verified live to survive restarts; multiple instances share it naturally
+  (same DB). So connector credentials survive container rebuilds / second instances out of the box --
+  the D-T0 "hard prerequisite" was satisfied before this wave, and there is **no**
+  `DataProtection:KeyPath` (or any file-system key path) setting in the codebase. The SSO
+  `ClientSecret` risk that `deploy/runbook.md:112` used to flag is resolved by the same provider
+  (the runbook line now carries a "resolved by P0-T1" note). The only residual caveat is historical:
+  ciphertexts written **before** P0-T1 under the old temporary key (B1/C1 SSO ClientSecret, per the
+  P0 ledger) need a one-time re-save -- no connector row can be in that state (the table postdates P0-T1).
 
 ---
 
@@ -329,6 +336,14 @@ into this directory.
   real-outbound check (`DbWfConnector.CallAsync` reads `ctx.ActionRefJson`; unit-pinned by
   `NodeHttpOverrideTests` with a capturing `HttpMessageHandler`). Drive a real service task against a
   reachable echo endpoint and inspect the outbound method/timeout.
+  **Save-side connector-name caveat:** `DesignerService.SaveAsync`'s E-WF-018 registered-name check
+  (`DesignerService.cs:51-64`, step ①b, which runs **before** the ①c lease check) only sees
+  **DI-registered app-level** `IWfConnector` names (`erpEcho`); tenant `Wf_Connector` rows are
+  resolved at **runtime** by `TenantConnectorResolver` and are invisible to the save-side check.
+  Hence the ps1's scenario-7 schemas reference `erpEcho` -- a tenant-connector name there would be
+  rejected `E-WF-018` before the E-WF-028 checks are reached. (A designer flow that targets a
+  tenant-only connector must therefore reuse an app-registered name -- exactly the
+  tenant-preferred-shadowing shape of 6.2.)
 - **6.4 tz self-heal**: changing the tenant tz does not rewrite existing `Wf_FlowTrigger.NextDueUtc`;
   the next fire recomputes under the new tz (at most one fire under the old tz). This is a runtime
   timer observation, not a save assertion.
@@ -373,11 +388,11 @@ last row (gstack QA harness present). Status column: what F-T2 can attest vs wha
 | Five-language seed complete (ZhCN/ZhTW/En/Ja/Ko), no duplicate LangKey; `Calendar.View/Edit` + `Connector.View/Edit` seed + RoleId=1 grant | F-T1: `I18nOaEngineInfraScreenSeedTests` (46-key oracle, missing/orphan + real Ja/Ko), `WorkCalendarConnectorPermissionSeedTests` (per-tenant 4-tuple, idempotent). |
 | Zero hardcoded colors (CpTag tone / Design-System token) | Held (F-T1 note; views use `t()` + tokens). |
 | JP holiday seed 35 dates (2026×18 + 2027×17, incl. 振替 + 2026-09-22 国民の休日), idempotent on `(TenantId,Date)` | `JapaneseHolidaySeedTests` (`Items_Cover2026And2027_35Dates_AllDistinct`, `ImportJapaneseHolidays_Idempotent_35Rows`). |
-| DataProtection key-ring persistence landed (D-T0; prod `DataProtection:KeyPath`); runbook:112 note | See sec 2.3 -- **production must set `DataProtection:KeyPath`** before relying on tenant connectors across restarts/instances. **Watch item for the deploy step.** |
+| DataProtection key-ring persistence landed (D-T0); runbook:112 note updated | **Done before this wave** by P0-T1 (`PersistKeysToDbContext<CP6Context>()` + `SetApplicationName("CP6")`, `Program.cs:585-587`, verified live across restarts; DB-shared for multi-instance). `deploy/runbook.md:112` now carries the "resolved by P0-T1" note (this task). No production action pending. |
 | gstack QA harness present (8 scenarios) + live QA all-pass (QA user present, isolated CP6DB_OA) | **This harness** (`seed.sql` + `qa_infra.ps1` + this README): ps1 covers 2/3/6/7/8, DB/worker drills cover 1/3-runtime/4/5, browser covers 1/2/3/6/7/8. **Live pass pending** (write-only). |
 
 **F-T2 self-check conclusion:** the harness is complete and cross-checked against shipped code
-(sec 3 envelope references + `w5-FT2-report.md` file:line table). The only DoD item with a
-production-time action outstanding is **DataProtection key-ring persistence** (D-T0) -- flagged here
-and in the report as the deploy watch item. All backend/frontend/EF/i18n gates were green at the
-prior task boundaries; the main agent runs the full-suite gate and the live 8-scenario pass.
+(sec 3 envelope references + `w5-FT2-report.md` file:line table). Every DoD item is either green at
+the prior task boundaries (backend/frontend/EF/i18n/seed gates) or already satisfied pre-wave
+(DataProtection key ring, P0-T1). Nothing carries a pending production action; the main agent runs
+the full-suite gate and the live 8-scenario pass.

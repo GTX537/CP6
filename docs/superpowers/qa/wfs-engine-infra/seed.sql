@@ -61,7 +61,9 @@
 --     sqlcmd -S "localhost\KOUSQLSERVER" -d CP6DB_OA -E -C -i seed.sql
 --
 -- Notes:
---   - SET QUOTED_IDENTIFIER ON (Wf_FlowDef has a filtered unique index on FlowKey WHERE Enable=1).
+--   - SET QUOTED_IDENTIFIER ON (Wf_FlowDef carries filtered unique indexes: (TenantId,FunctionId)
+--     WHERE FunctionId IS NOT NULL and (TenantId,FlowCode) WHERE FlowCode IS NOT NULL,
+--     CP6Context.cs:712-718 -- inserting into a table with filtered indexes requires QI ON).
 --   - Table names are SINGULAR: Wf_FlowDef / Wf_FormDef / Sys_Users / Sys_WorkCalendar / Wf_Connector.
 --   - Wf_Connector.RowVersion is a rowversion (auto) column -- never inserted (and no connector is seeded anyway).
 --   - Idempotent: IF NOT EXISTS guards on every insert.
