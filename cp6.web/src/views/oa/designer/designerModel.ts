@@ -129,6 +129,24 @@ export function graphToSchema(
   return { start, nodes: sn, edges: se }
 }
 
+// ── 超时到点动作枚举（NodePropertyPanel 下拉数据源；导出以便单测/防漂移）──
+// 值镜像后端 FlowNode.TimeoutAction；`errorEdge`＝「超时走失败边」（B-T1/E-WF-027）。
+// 标签为 i18n key，t() 解析——`errorEdge` 用 `oa.designer.timeout.errorEdge`
+// （键文本入库归 F-T1，落库前 t() 回退键名，属既定中间态）；余四项沿旧 `timeoutAction.*` 前缀。
+export const TIMEOUT_ACTIONS: { value: string; label: string }[] = [
+  { value: 'remind',    label: 'oa.designer.timeoutAction.remind' },
+  { value: 'approve',   label: 'oa.designer.timeoutAction.approve' },
+  { value: 'reject',    label: 'oa.designer.timeoutAction.reject' },
+  { value: 'escalate',  label: 'oa.designer.timeoutAction.escalate' },
+  { value: 'errorEdge', label: 'oa.designer.timeout.errorEdge' },
+]
+
+// ── 失败边（IsError）来源节点类型集合——前端等价常量，镜像后端
+// `FlowSchemaValidator.ErrorEdgeSourceTypes = {serviceTask, approval, subFlow}`（OrdinalIgnoreCase）。
+// B-T1 由「仅 serviceTask」放宽含 approval（本波超时走失败边）+ subFlow（三期 A 波子流程零改动）。
+// 存小写形态，比较前 toLowerCase 归一——对齐后端 OrdinalIgnoreCase 姿态。
+export const ERROR_EDGE_SOURCE_TYPES = new Set<string>(['servicetask', 'approval', 'subflow'])
+
 /** 客户端基本校验（后端 FlowSchemaValidator 的轻量镜像；保存前预检）。返回错误文案 key 数组。 */
 export function validateClient(schema: FlowSchemaDto): string[] {
   const errs: string[] = []
@@ -217,6 +235,22 @@ export function validateClient(schema: FlowSchemaDto): string[] {
     if (edges.filter(e => e.to === n.id).length < 2 || !pairedJoins.has(n.id)) pairBad = true
   }
   if (pairBad) errs.push('oa.designer.errInclusivePair')
+  // ── 失败边镜像（后端 FlowSchemaValidator，B-T1）──
+  // E-WF-017 镜像：IsError 边来源类型须 ∈ ErrorEdgeSourceTypes；任一节点 IsError 出边不得 >1。
+  let errEdgeSrcBad = false
+  for (const n of nodes) {
+    const errOuts = edges.filter(e => e.from === n.id && e.isError === true)
+    if (!errOuts.length) continue
+    if (errOuts.length > 1) errEdgeSrcBad = true
+    if (!ERROR_EDGE_SOURCE_TYPES.has((n.type ?? '').toLowerCase())) errEdgeSrcBad = true
+  }
+  if (errEdgeSrcBad) errs.push('oa.designer.errErrorEdgeSource')
+  // E-WF-027 镜像：TimeoutAction=errorEdge 的节点必须有 IsError 出边（否则超时无处可去）。
+  for (const n of nodes) {
+    if (n.timeoutAction !== 'errorEdge') continue
+    const hasErrOut = edges.some(e => e.from === n.id && e.isError === true)
+    if (!hasErrOut) { errs.push('oa.designer.errTimeoutErrorEdge'); break }
+  }
   // E-WF-021c 镜像：onBranchReject 值域 + 只许写在 split 型节点
   for (const n of nodes) {
     if (n.onBranchReject == null) continue

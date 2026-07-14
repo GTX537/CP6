@@ -7,6 +7,7 @@ import { designerApi } from '@/api/oa/designer'
 import type { ServiceCatalog } from '@/api/oa/designer'
 import CpTag from '@/components/base/CpTag.vue'
 import type { SchemaNode } from './designerModel'
+import { TIMEOUT_ACTIONS } from './designerModel'
 
 const props = defineProps<{ node: SchemaNode }>()
 const emit = defineEmits<{ update: [patch: Partial<SchemaNode>] }>()
@@ -819,10 +820,12 @@ async function searchCcUsers(kw: string) {
 
           <el-form-item :label="t('oa.designer.timeoutAction')">
             <el-select v-model="local.timeoutAction" style="width: 100%" clearable>
-              <el-option value="remind"   :label="t('oa.designer.timeoutAction.remind')" />
-              <el-option value="approve"  :label="t('oa.designer.timeoutAction.approve')" />
-              <el-option value="reject"   :label="t('oa.designer.timeoutAction.reject')" />
-              <el-option value="escalate" :label="t('oa.designer.timeoutAction.escalate')" />
+              <el-option
+                v-for="a in TIMEOUT_ACTIONS"
+                :key="a.value"
+                :value="a.value"
+                :label="t(a.label)"
+              />
             </el-select>
           </el-form-item>
 
