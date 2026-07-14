@@ -164,6 +164,8 @@ export function validateClient(schema: FlowSchemaDto): string[] {
         ? !!n.serviceActionName
         : n.serviceKind === 'timer'
           ? n.serviceDelayValue != null && n.serviceDelayMode != null  // 镜像后端：值与模式(radio 无默认)双字段必填
+            // workdays 模式：值须正整数（镜像后端 ComputeTimerDueUtcAsync 降级立即，并入 E-WF-016 家族）
+            && (n.serviceDelayMode !== 'workdays' || /^[1-9]\d*$/.test(String(n.serviceDelayValue).trim()))
           : false                                        // 缺/未知 serviceKind 即配置不完整
     if (!ok) errs.push('oa.designer.errServiceConfig')
   }

@@ -531,6 +531,7 @@ async function searchCcUsers(kw: string) {
                 <el-radio value="duration">{{ t('oa.designer.svc.delayMode.duration') }}</el-radio>
                 <el-radio value="untilDate">{{ t('oa.designer.svc.delayMode.untilDate') }}</el-radio>
                 <el-radio value="untilExpr">{{ t('oa.designer.svc.delayMode.untilExpr') }}</el-radio>
+                <el-radio value="workdays">{{ t('oa.designer.svc.delayMode.workdays') }}</el-radio>
               </el-radio-group>
             </el-form-item>
 

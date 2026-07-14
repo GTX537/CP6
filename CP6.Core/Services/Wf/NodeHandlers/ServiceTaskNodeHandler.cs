@@ -23,10 +23,18 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
     private const int DefaultBackoffSec = 30;    // spec §2.1：退避基数默认 30s
 
     private readonly IReadOnlyDictionary<string, IServiceTaskExecutor> _executors;
+    private readonly IWorkdayCalculator? _workdays;    // I-A workdays 第四延时模式（缺则降级立即）
+    private readonly int _workdayFireHour;             // WfsInfraOptions.WorkdayFireHour，落点小时（默认 9）
 
-    public ServiceTaskNodeHandler(IEnumerable<IServiceTaskExecutor>? executors)
-        => _executors = (executors ?? Array.Empty<IServiceTaskExecutor>())
+    // ctor 追加 workdays/opts（均带默认值 → DI 自动注入；FlowEngine.DefaultHandlers fallback 与既有单测 new(...) 零破坏）
+    public ServiceTaskNodeHandler(IEnumerable<IServiceTaskExecutor>? executors,
+        IWorkdayCalculator? workdays = null, WfsInfraOptions? opts = null)
+    {
+        _executors = (executors ?? Array.Empty<IServiceTaskExecutor>())
             .ToDictionary(e => e.Key, StringComparer.OrdinalIgnoreCase);
+        _workdays = workdays;
+        _workdayFireHour = opts?.WorkdayFireHour ?? 9;
+    }
 
     public string Type => "serviceTask";
 
@@ -97,7 +105,9 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
         }
 
         // ── async / timer：停泊 token + 入队（不 advance，像 ApprovalNodeHandler 等 ActAsync）──
-        var dueAtUtc = (kind == ServiceKind.Timer) ? ComputeDueUtc(node, inst.VarsJson) : nowUtc;
+        var dueAtUtc = (kind == ServiceKind.Timer)
+            ? await ComputeTimerDueUtcAsync(node, inst.VarsJson, DateTime.Now, ct: default)
+            : nowUtc;
         EnqueueServiceJob(ctx, node, token, kind, actionRefJson,
             dueAtUtc: dueAtUtc, attemptCount: 0, maxAttempts: maxAttempts,
             nextAttemptAtUtc: dueAtUtc);
@@ -174,6 +184,29 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
                 return nowUtc;
         }
     }
+
+    /// <summary>timer 到期计算（含 <c>workdays</c> 第四模式，spec §2.3）。<c>workdays</c> 走 <see cref="IWorkdayCalculator"/>
+    /// 顺延 N 工作日后落到当日 <see cref="_workdayFireHour"/> 时整点；其余三模式委托既有 <see cref="ComputeDueUtc"/>（字节等价）。
+    /// I-A：workdays 用<b>服务器本地 tz 作 app 默认时区</b>占位（与 untilDate 的 <see cref="ParseLocalDateToUtc"/> 同款演进——
+    /// 字段带 <c>Utc</c>、未来接 per-tenant tz 零 schema 返工）；I-E 把 <paramref name="nowLocal"/> 的 tz 源与回转 tz 换成
+    /// <c>ITenantClock.GetTenantTimeZone()</c>。缺服务/值非正整数 → 降级立即（既有铁律：坏配置不炸引擎，值校验并入 E-WF-016 家族）。</summary>
+    private async Task<DateTime> ComputeTimerDueUtcAsync(FlowNode node, string? varsJson, DateTime nowLocal, CancellationToken ct)
+    {
+        if (node.ServiceDelayMode == "workdays")
+        {
+            if (_workdays == null || !int.TryParse(node.ServiceDelayValue, out var n) || n <= 0)
+                return DateTime.UtcNow;   // 降级立即（值非正并入 E-WF-016 家族，运行期不炸引擎）
+            var dueDay = await _workdays.AddWorkdaysAsync(nowLocal.Date, n, ct);
+            var fireLocal = DateTime.SpecifyKind(dueDay.Date.AddHours(_workdayFireHour), DateTimeKind.Unspecified);
+            try { return TimeZoneInfo.ConvertTimeToUtc(fireLocal, TimeZoneInfo.Local); }   // I-E 换 _clock.GetTenantTimeZone()
+            catch { return DateTime.SpecifyKind(fireLocal, DateTimeKind.Utc); }             // tz 边界异常兜底（同 ParseLocalDateToUtc）
+        }
+        return ComputeDueUtc(node, varsJson);   // duration/untilDate/untilExpr（既有静态，字节等价）
+    }
+
+    /// <summary>测试专用重载（注入 <paramref name="nowLocal"/>，A-T3/E-T2 复用）。</summary>
+    internal Task<DateTime> ComputeTimerDueUtcForTestAsync(FlowNode node, string? varsJson, DateTime nowLocal, CancellationToken ct)
+        => ComputeTimerDueUtcAsync(node, varsJson, nowLocal, ct);
 
     /// <summary>把「app 默认时区（服务器本地 tz）下的日期/时间」字符串转 UTC。解析失败 → fallback。</summary>
     private static DateTime ParseLocalDateToUtc(string value, DateTime fallback)
