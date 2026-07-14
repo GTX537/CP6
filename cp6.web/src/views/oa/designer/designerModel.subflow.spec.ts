@@ -47,6 +47,11 @@ describe('designerModel subFlow', () => {
       .toContain('oa.designer.errSubFlowConfig')
   })
 
+  it('validateClient: 策略大小写/空白归一化放行（镜像后端 Trim+ToLowerInvariant，审查探针转正）', () => {
+    expect(validateClient(schemaWith(subNode({ subCompletionPolicy: 'All' })))).toEqual([])
+    expect(validateClient(schemaWith(subNode({ subCompletionPolicy: ' all ' })))).toEqual([])
+  })
+
   it('validateClient: 集合变量空串 → errSubFlowConfig', () => {
     expect(validateClient(schemaWith(subNode({ subCollectionVar: '  ' }))))
       .toContain('oa.designer.errSubFlowConfig')
@@ -57,6 +62,10 @@ describe('designerModel subFlow', () => {
       .toContain('oa.designer.errSubFlowConfig')
     expect(validateClient(schemaWith(subNode({ subVarsOutJson: '{"a":"$.items[0]"}' }))))
       .toContain('oa.designer.errSubFlowConfig')
+  })
+
+  it('validateClient: 值内普通点串带方括号放行（镜像后端 ContainsUnsupportedSubscript 双正则，审查探针转正）', () => {
+    expect(validateClient(schemaWith(subNode({ subVarsInJson: '{"note":"file.test[old]"}' })))).toEqual([])
   })
 
   it('validateClient: 无非错误出边 → errSubFlowConfig（镜像后端 E-WF-025 静态部分）', () => {

@@ -282,7 +282,11 @@ export function validateClient(schema: FlowSchemaDto): string[] {
   // subFlow 静态镜像（后端 E-WF-025 静态部分,子流程 spec §5）：key 必填/策略值域/集合变量非空串/映射合法无下标/非错误出边必有
   const validMap = (s?: string): boolean => {
     if (s == null || s.trim() === '') return true
-    if (/[$.{][A-Za-z0-9_.]*\[/.test(s)) return false          // 不支持数组下标
+    // 逐字镜像后端 ServiceVarsHelper.ContainsUnsupportedSubscript 双正则（任一命中即拒）：
+    //   ① $.path[...] —— 字面 $. 序列后出现下标括号；② {placeholder[...]} —— 花括号占位内出现下标括号（须闭合 }）。
+    //   字面 JSON 数组值/普通点串（如 "file.test[old]"）不误伤。
+    if (/\$\.[A-Za-z0-9_.]*[\[\]]/.test(s)) return false
+    if (/\{[A-Za-z0-9_.]*[\[\]][^}]*\}/.test(s)) return false
     try {
       const o = JSON.parse(s)
       return !!o && typeof o === 'object' && !Array.isArray(o)
@@ -291,8 +295,11 @@ export function validateClient(schema: FlowSchemaDto): string[] {
   }
   for (const n of nodes) {
     if (n.type !== 'subFlow') continue
+    // 策略比较镜像后端 ⑪：`(SubCompletionPolicy ?? "all").Trim().ToLowerInvariant()` ——
+    // 仅 null/undefined 兜底 all；空串归一化后为 '' 不在值域 → 拒（与后端 ?? 只接 null 语义全等）。
+    const pol = n.subCompletionPolicy == null ? 'all' : String(n.subCompletionPolicy).trim().toLowerCase()
     const ok = !!n.subFlowKey?.trim()
-      && (!n.subCompletionPolicy || ['all', 'any'].includes(n.subCompletionPolicy))
+      && ['all', 'any'].includes(pol)
       && (n.subCollectionVar == null || n.subCollectionVar.trim() !== '')
       && validMap(n.subVarsInJson) && validMap(n.subVarsOutJson)
       && edges.some(e => e.from === n.id && e.isError !== true)
