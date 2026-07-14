@@ -46,3 +46,14 @@ export function groupByBranch<T extends { tokenId?: string }>(rows: T[]): Map<st
   }
   return m
 }
+
+/** rowMode 显示偏好解析（wfs-inbox-ux §5）：PrefsJson 顶层 rowMode 键；缺省/非法/畸形 → merged。 */
+export function parseRowMode(prefsJson: string | undefined): 'merged' | 'expanded' {
+  if (!prefsJson) return 'merged'
+  try {
+    const parsed = JSON.parse(prefsJson)
+    return parsed?.rowMode === 'expanded' ? 'expanded' : 'merged'
+  } catch {
+    return 'merged'
+  }
+}

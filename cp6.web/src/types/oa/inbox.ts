@@ -132,3 +132,29 @@ export interface FlowAdminItem {
   version: number
   enable: boolean
 }
+
+// ── 在途批量转单（wfs-inbox-ux §3）──
+export interface BatchTransferReq {
+  fromUserId: string
+  toUserId: string
+  comment?: string
+  filter?: { flowKey?: string; beforeUtc?: string; taskIds?: string[] }
+}
+
+export interface BatchTransferItemResult {
+  taskId: string
+  flowKey: string
+  ok: boolean
+  error?: string
+}
+
+export interface BatchTransferReport {
+  total: number
+  succeeded: number
+  failed: BatchTransferItemResult[]
+}
+
+export interface BatchTransferPreview {
+  total: number
+  sample: PendingItem[]
+}

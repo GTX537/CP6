@@ -16,7 +16,7 @@ public class InboxService : IInboxService
         _db = db; _engine = engine; _forecast = forecast;
     }
 
-    public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId)
+    public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId, string rowMode = "merged", int? page = null, int? pageSize = null)
     {
         var rows = await (from t in _db.Wf_FlowTasks
                           where t.AssigneeId == userId && t.Status == FlowTaskStatus.Pending
@@ -28,6 +28,15 @@ public class InboxService : IInboxService
                           from s in ss.DefaultIfEmpty()
                           orderby t.CreateDate descending
                           select new { t, i, FlowName = d == null ? null : d.FlowName, Starter = s }).ToListAsync();
+
+        // ── rowMode（wfs-inbox-ux §5）：merged=同实例合并取最新（照 DoneAsync 既有口径）；分组先于分页 ──
+        if (rowMode != "expanded")
+            rows = rows.GroupBy(x => x.i.Id)
+                       .Select(g => g.OrderByDescending(x => x.t.CreateDate).First())
+                       .OrderByDescending(x => x.t.CreateDate)
+                       .ToList();
+        if (page is { } p && pageSize is { } ps && p >= 1 && ps >= 1)
+            rows = rows.Skip((p - 1) * ps).Take(ps).ToList();
 
         // Batch-load frozen stage plans for tokens that carry multi-stage plans
         var tokenIds = rows.Where(x => x.t.TokenId.HasValue).Select(x => x.t.TokenId!.Value).Distinct().ToList();
@@ -297,5 +306,82 @@ public class InboxService : IInboxService
 
         return new InboxStats(pending.Count, running.Count, doneMine.Count, rejectedBack,
             trend, pending.Take(5).ToList());
+    }
+
+    // ── 在途批量转单（wfs-inbox-ux §3，D3：逐条独立事务 + 汇总报告）──────────
+
+    private const int MaxBatchTransfer = 500;
+
+    /// <summary>
+    /// 候选查询。常规路径：from 的全部 Pending 待办（Running 实例）按 filter 收窄；
+    /// BeforeUtc 直接比对 CreateDate（库内为服务器本地时，C7）。
+    /// <b>TaskIds 显式点名（=单条重试口径，spec §3.2）</b>：不预筛任务/实例状态，让引擎
+    /// TransferAsync 裁决——已办结等脏数据以失败明细行（E-WF-002）呈现，不特殊处理；
+    /// 仍保留 AssigneeId==from 归属过滤（已被转走的任务不再属 from，绝不能改派他人任务）。
+    /// </summary>
+    private async Task<List<(Guid TaskId, string FlowKey)>> QueryTransferCandidatesAsync(Guid fromUserId, BatchTransferFilter? f)
+    {
+        if (f?.TaskIds is { Count: > 0 } ids)
+        {
+            var named = await (from t in _db.Wf_FlowTasks
+                               where t.AssigneeId == fromUserId && ids.Contains(t.Id)
+                               join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
+                               orderby t.CreateDate
+                               select new { t.Id, i.FlowKey }).ToListAsync();
+            return named.Select(x => (x.Id, x.FlowKey)).ToList();
+        }
+
+        var q = from t in _db.Wf_FlowTasks
+                where t.AssigneeId == fromUserId && t.Status == FlowTaskStatus.Pending
+                join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
+                where i.Status == FlowInstanceStatus.Running
+                select new { t.Id, i.FlowKey, t.CreateDate };
+        if (!string.IsNullOrWhiteSpace(f?.FlowKey)) q = q.Where(x => x.FlowKey == f.FlowKey);
+        if (f?.BeforeUtc is { } before) q = q.Where(x => x.CreateDate < before);
+        var rows = await q.OrderBy(x => x.CreateDate).ToListAsync();
+        return rows.Select(x => (x.Id, x.FlowKey)).ToList();
+    }
+
+    /// <inheritdoc/>
+    public async Task<BatchTransferReport> BatchTransferAsync(
+        Guid actorId, Guid fromUserId, Guid toUserId, string? comment, BatchTransferFilter? filter = null)
+    {
+        // 前置校验（入参级，400 口径，不占 E-WF 码）
+        if (fromUserId == toUserId)
+            throw new InvalidOperationException("oa.bt.errSameUser");
+        var to = await _db.Sys_Users.FirstOrDefaultAsync(u => u.Id == toUserId);   // 全局租户过滤器：跨租户查不到（R3）
+        if (to is null || !to.Enable)
+            throw new InvalidOperationException("oa.bt.errTargetInvalid");
+
+        var candidates = await QueryTransferCandidatesAsync(fromUserId, filter);
+        if (candidates.Count > MaxBatchTransfer)
+            throw new InvalidOperationException("oa.bt.errTooMany");               // 超上限 → 提示分批（防长事务假象与超时）
+
+        var failed = new List<BatchTransferItemResult>();
+        var succeeded = 0;
+        foreach (var (taskId, flowKey) in candidates)
+        {
+            try
+            {
+                // 引擎动作只调用不改动：内部校验 + FormTo 双行 + history + 通知 + 单次 SaveChanges（=单条独立事务）
+                await _engine.TransferAsync(taskId, actorId, toUserId, comment);
+                succeeded++;
+            }
+            catch (InvalidOperationException e)                                    // 单条失败不中断后续（D3）
+            {
+                failed.Add(new BatchTransferItemResult(taskId, flowKey, false, e.Message));
+            }
+        }
+        return new BatchTransferReport(candidates.Count, succeeded, failed);
+    }
+
+    /// <inheritdoc/>
+    public async Task<BatchTransferPreview> BatchTransferPreviewAsync(Guid fromUserId, BatchTransferFilter? filter = null)
+    {
+        var candidates = await QueryTransferCandidatesAsync(fromUserId, filter);
+        var candidateIds = candidates.Select(c => c.TaskId).Take(10).ToHashSet();
+        var all = await PendingAsync(fromUserId, rowMode: "expanded");             // 逐任务行拿展示字段（C5：merged 现为默认，preview 须显式 expanded 保 sample 逐任务口径，R5）
+        var sample = all.Where(p => candidateIds.Contains(p.TaskId)).ToList();
+        return new BatchTransferPreview(candidates.Count, sample);
     }
 }

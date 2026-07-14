@@ -1,0 +1,238 @@
+# Review package: 85971c9..18aa6c6
+
+## Commits
+18aa6c6 docs(sdd): A-T1 NotifyMatrix 完成报告
+d8e4909 feat(wfs-inbox): A-T1 NotifyMatrix 三态坍缩+遗留扁平兼容+反射类型轴
+
+## Files changed
+ .superpowers/sdd/w4-AT1-report.md    | 38 ++++++++++++++++
+ CP6.Core/Services/Oa/NotifyMatrix.cs | 88 ++++++++++++++++++++++++++++++++++++
+ CP6.Tests/Oa/NotifyMatrixTests.cs    | 81 +++++++++++++++++++++++++++++++++
+ 3 files changed, 207 insertions(+)
+
+## Diff
+diff --git a/.superpowers/sdd/w4-AT1-report.md b/.superpowers/sdd/w4-AT1-report.md
+new file mode 100644
+index 0000000..428ed27
+--- /dev/null
++++ b/.superpowers/sdd/w4-AT1-report.md
+@@ -0,0 +1,38 @@
++# Task A-T1 报告：NotifyMatrix 纯函数（三态坍缩 + 遗留兼容 + 反射类型轴）
++
++**状态：DONE**
++**Commit：** `d8e49097acb54b405ebaea461484eb41e053b748`（分支 `feat/wfs-inbox-ux`，已 push）
++**测试小结：** NotifyMatrixTests 10/10 绿；全量 `dotnet test CP6.slnx` = 1989 passed / 5 skipped（1979 基线 + 10 新增）。
++
++## 交付物
++- `CP6.Core/Services/Oa/NotifyMatrix.cs`（新建，88 行）—— `record NotifyMatrixRow`、`static class NotifyMatrix`（`ChannelInApp`/`ChannelEmail`、`IsEnabled`、`Rows`），逐字转写自简报 Step 3。
++- `CP6.Tests/Oa/NotifyMatrixTests.cs`（新建，81 行）—— 逐字转写简报 Step 1，外加一条 BranchPruned 补正断言（见下）。
++
++## TDD 记录
++- **RED（Step 2）：** 写测试后 `dotnet test --filter NotifyMatrixTests` 编译失败 `CS0103: The name 'NotifyMatrix' does not exist`（15 处引用全报错）—— 符合预期（类型未建）。
++- **GREEN（Step 4）：** 落最小实现后同命令 `Passed! 10/10, 0 failed`。
++- **回归闸（Step 5）：** 全量 `CP6.slnx` 1989 passed / 5 skipped，零失败。
++
++## BranchPruned 适配详情（控制器授权，非静默漂移）
++简报 R1 摘录称 `BranchPruned` "尚未合入"，属预检漂移 —— 实读证实已由内核 hardening 波合入：
++- `CP6.Entity/DomainModels/Wf/WfNotificationType.cs:22` —— `public const int BranchPruned = 5;` 已在位（现共 5 个常量）。
++- `CP6.WebApi/Services/PersistentWfNotifier.cs:166-199` —— `BranchPrunedAsync` 已实现，其 `:196-198` 与 `FlowRejected` 完全同款邮件动作（`GetNotifyPrefsAsync` → `prefs.Email` → `TrySendEmailAsync`）。**故 `branchPruned` 支持标志 = (inApp:true, email:true) 是正确的**，与简报 Step 3 `Support` 字典的预留项一致，实现无需改动。
++
++**测试适配（唯一一处）：** 简报给定的 `Rows_ReflectsEnum_WithSupportFlags` 本已前向兼容——它对 4 个已知类型用 `Assert.Contains` 正向断言，对 `branchPruned` 仅用 forgiving `foreach`（存在时才断言双通道 true，不做存在性负断言）。**它并未硬断言"恰好 4 行"，也未枚举行集**，因此严格意义上无需修改。鉴于 BranchPruned 现已确定在位，我**追加一条正向断言**强化覆盖：
++```csharp
++Assert.Contains(rows, r => r is { TypeKey: "branchPruned", TypeValue: 5, InAppSupported: true, EmailSupported: true });
++```
++该断言现在为绿（反射轴此刻确含 5 行）。这是控制器授权的增强，已在测试内以注释标注来由。原 `foreach` 保留（防御任意合并顺序）。
++
++## 自审
++- **三态坍缩**：空串/`{}`/`{"notify":{}}`/类型对象无通道键/畸形 JSON → 全部 true。畸形 JSON 由 `try/catch(JsonException)` 兜底，与 `PrefService.ParseNotifyPrefs`（`:38-62`）畸形回落 Default 语义一致。
++- **遗留扁平逐位等价（C2）**：类型键非对象时经 `LegacyKeyMap` 回落——事件键=false→双通道关；全局 `email`=false→仅邮件关（`eventOn && emailOn`）。与 `ParseNotifyPrefs` 的 `Get()`（仅字面 `false` 为关，缺键/true/非布尔→true）逐位对齐。新类型（无遗留映射）→ 直接 true。
++- **新形态优先**：类型键为 `Object` 即走新矩阵分支，无视同级遗留 `email` 全局开关（测试 `IsEnabled_NewShapeWinsOverLegacy` 覆盖）。
++- **反射类型轴数据驱动**：`Rows()` 反射 `WfNotificationType` 全部 `public const int`，PascalCase→camelCase，按 `TypeValue` 排序。新增枚举常量将自动长出行。
++- **零迁移 / 零引擎改动 / 零跨模块污染**：仅新增两文件，均为纯函数/测试，无 DbContext/实体/DI 触碰。`dotnet ef migrations has-pending-model-changes` = "No changes"。
++- **surgical git add**：`git show --stat HEAD` 仅两个简报文件（169 insertions），启动时既存的 `.superpowers/sdd/*.md` 未污染本 commit。
++
++## 关注点 / 交接
++- 无阻塞。A-T2/A-T3/A-T4 可直接消费 `NotifyMatrix.IsEnabled` / `Rows()` / `ChannelInApp` / `ChannelEmail` / `NotifyMatrixRow`（共享契约名字精确匹配）。
++- `timeout` 行双通道禁用（`Support` = (false,false)），R1 核定其全库无生产者；将来接独立发送路径时改 `Support` 字典即自动点亮，无需动 UI。
++- 本报告文件（`.superpowers/sdd/w4-AT1-report.md`）不在功能 commit 内，按台账惯例另行入库。
+diff --git a/CP6.Core/Services/Oa/NotifyMatrix.cs b/CP6.Core/Services/Oa/NotifyMatrix.cs
+new file mode 100644
+index 0000000..cc8a789
+--- /dev/null
++++ b/CP6.Core/Services/Oa/NotifyMatrix.cs
+@@ -0,0 +1,88 @@
++using System.Reflection;
++using System.Text.Json;
++using CP6.Entity.DomainModels.Wf;
++
++namespace CP6.Core.Services.Oa;
++
++/// <summary>通知矩阵一行（类型轴 = WfNotificationType 反射；Supported 标志驱动 UI 格子禁用）。</summary>
++public record NotifyMatrixRow(string TypeKey, int TypeValue, bool InAppSupported, bool EmailSupported);
++
++/// <summary>
++/// 通知偏好矩阵纯函数（wfs-inbox-ux §2）。
++/// PrefsJson.notify 新形态：{"notify":{"todoCreated":{"inApp":bool,"email":bool},...}}。
++/// 三态坍缩：无行/无 notify 键/无类型键/无通道键/解析失败 → true（默认全开，D2 零迁移）。
++/// 遗留扁平形态（{"notify":{"todo":bool,...,"email":bool}}）兼容：类型键非对象时回落——
++/// 事件键=false → 双通道关；全局 email=false → 仅邮件关（与既有 ParseNotifyPrefs 语义逐位等价）。
++/// </summary>
++public static class NotifyMatrix
++{
++    public const string ChannelInApp = "inApp";
++    public const string ChannelEmail = "email";
++
++    /// <summary>新类型键 → 遗留扁平键 映射（仅既有四类型有遗留形态）。</summary>
++    private static readonly Dictionary<string, string> LegacyKeyMap = new()
++    {
++        ["todoCreated"] = "todo",
++        ["flowApproved"] = "approved",
++        ["flowRejected"] = "rejected",
++        ["timeout"] = "timeout",
++    };
++
++    /// <summary>
++    /// 通道支持清单（2026-07-05 实读核定，R1）：
++    /// todoCreated/flowApproved/flowRejected = PersistentWfNotifier 三方法，站内+邮件双动作；
++    /// timeout = 全库无生产者（超时提醒以 TodoCreated 发出）→ 双禁用；
++    /// branchPruned = hardening spec §4.2 预留（合入 IWfNotifier.BranchPrunedAsync 即双通道生效）。
++    /// 未登记的新类型默认 (inApp:true, email:false)——站内可开关、邮件保守禁用。
++    /// </summary>
++    private static readonly Dictionary<string, (bool InApp, bool Email)> Support = new()
++    {
++        ["todoCreated"]  = (true, true),
++        ["flowApproved"] = (true, true),
++        ["flowRejected"] = (true, true),
++        ["timeout"]      = (false, false),
++        ["branchPruned"] = (true, true),
++    };
++
++    public static bool IsEnabled(string prefsJson, string type, string channel)
++    {
++        if (string.IsNullOrWhiteSpace(prefsJson)) return true;
++        try
++        {
++            using var doc = JsonDocument.Parse(prefsJson);
++            if (!doc.RootElement.TryGetProperty("notify", out var notify) || notify.ValueKind != JsonValueKind.Object)
++                return true;                                                      // 无 notify 键 → 默认开
++
++            if (notify.TryGetProperty(type, out var typeEl) && typeEl.ValueKind == JsonValueKind.Object)
++            {
++                // 新矩阵形态：仅字面 false 为关；缺通道键/true/非布尔 → 开
++                return !(typeEl.TryGetProperty(channel, out var ch) && ch.ValueKind == JsonValueKind.False);
++            }
++
++            // 遗留扁平形态回落（C2）
++            if (!LegacyKeyMap.TryGetValue(type, out var legacyKey)) return true;  // 新类型无遗留形态 → 开
++            var eventOn = !(notify.TryGetProperty(legacyKey, out var ev) && ev.ValueKind == JsonValueKind.False);
++            if (channel == ChannelInApp) return eventOn;
++            var emailOn = !(notify.TryGetProperty("email", out var em) && em.ValueKind == JsonValueKind.False);
++            return eventOn && emailOn;                                            // 既有语义：事件关→整跳；email 关→仅邮件跳
++        }
++        catch (JsonException)
++        {
++            return true;                                                          // 畸形 JSON → 默认开（与 ParseNotifyPrefs 一致）
++        }
++    }
++
++    /// <summary>类型轴 = 反射 WfNotificationType 全部 public const int（BranchPruned 合入即自动长出）。</summary>
++    public static IReadOnlyList<NotifyMatrixRow> Rows() =>
++        typeof(WfNotificationType)
++            .GetFields(BindingFlags.Public | BindingFlags.Static)
++            .Where(f => f.IsLiteral && f.FieldType == typeof(int))
++            .Select(f =>
++            {
++                var key = char.ToLowerInvariant(f.Name[0]) + f.Name[1..];         // TodoCreated → todoCreated
++                var (inApp, email) = Support.TryGetValue(key, out var s) ? s : (true, false);
++                return new NotifyMatrixRow(key, (int)f.GetRawConstantValue()!, inApp, email);
++            })
++            .OrderBy(r => r.TypeValue)
++            .ToList();
++}
+diff --git a/CP6.Tests/Oa/NotifyMatrixTests.cs b/CP6.Tests/Oa/NotifyMatrixTests.cs
+new file mode 100644
+index 0000000..ac38795
+--- /dev/null
++++ b/CP6.Tests/Oa/NotifyMatrixTests.cs
+@@ -0,0 +1,81 @@
++// CP6.Tests/Oa/NotifyMatrixTests.cs
++using CP6.Core.Services.Oa;
++using Xunit;
++
++namespace CP6.Tests.Oa;
++
++public class NotifyMatrixTests
++{
++    // ── 三态坍缩：缺行/缺键/缺通道键 → true（spec §2.1）──
++    [Theory]
++    [InlineData("")]                                            // 空串（等价无行）
++    [InlineData("{}")]                                          // 无 notify 键
++    [InlineData("""{"notify":{}}""")]                           // notify 空对象（无类型键）
++    [InlineData("""{"notify":{"todoCreated":{}}}""")]           // 类型对象存在但无通道键
++    [InlineData("NOT_VALID_JSON{{{")]                           // 畸形 JSON 回落 true 不抛
++    public void IsEnabled_ThreeStateCollapse_DefaultsTrue(string prefsJson)
++    {
++        Assert.True(NotifyMatrix.IsEnabled(prefsJson, "todoCreated", NotifyMatrix.ChannelInApp));
++        Assert.True(NotifyMatrix.IsEnabled(prefsJson, "todoCreated", NotifyMatrix.ChannelEmail));
++    }
++
++    [Fact]
++    public void IsEnabled_NewMatrixShape_PerTypePerChannel()
++    {
++        const string json = """{"notify":{"flowRejected":{"inApp":true,"email":false},"todoCreated":{"inApp":false}}}""";
++        Assert.True (NotifyMatrix.IsEnabled(json, "flowRejected", "inApp"));
++        Assert.False(NotifyMatrix.IsEnabled(json, "flowRejected", "email"));
++        Assert.False(NotifyMatrix.IsEnabled(json, "todoCreated",  "inApp"));
++        Assert.True (NotifyMatrix.IsEnabled(json, "todoCreated",  "email"));   // 缺通道键 → true
++        Assert.True (NotifyMatrix.IsEnabled(json, "flowApproved", "inApp"));   // 缺类型键 → true
++    }
++
++    // ── 遗留扁平形态兼容（C2：既有 notify.{todo,...,email} 语义逐位等价）──
++    [Fact]
++    public void IsEnabled_LegacyFlat_EventOff_KillsBothChannels()
++    {
++        const string json = """{"notify":{"todo":false,"email":true}}""";
++        Assert.False(NotifyMatrix.IsEnabled(json, "todoCreated", "inApp"));
++        Assert.False(NotifyMatrix.IsEnabled(json, "todoCreated", "email"));   // 现状：事件关 → 整跳（含邮件）
++        Assert.True (NotifyMatrix.IsEnabled(json, "flowApproved", "inApp")); // 其他事件不受影响
++    }
++
++    [Fact]
++    public void IsEnabled_LegacyFlat_GlobalEmailOff_KillsOnlyEmail()
++    {
++        const string json = """{"notify":{"todo":true,"approved":true,"email":false}}""";
++        Assert.True (NotifyMatrix.IsEnabled(json, "todoCreated",  "inApp"));
++        Assert.False(NotifyMatrix.IsEnabled(json, "todoCreated",  "email"));
++        Assert.False(NotifyMatrix.IsEnabled(json, "flowApproved", "email"));
++        Assert.False(NotifyMatrix.IsEnabled(json, "flowRejected", "email"));  // 缺 rejected 键也吃全局 email
++    }
++
++    [Fact]
++    public void IsEnabled_NewShapeWinsOverLegacy_WhenTypeObjectPresent()
++    {
++        // 同一 notify 里新旧混存：类型键为对象 → 走新形态，无视遗留 email 全局开关
++        const string json = """{"notify":{"email":false,"todoCreated":{"inApp":true,"email":true}}}""";
++        Assert.True(NotifyMatrix.IsEnabled(json, "todoCreated", "email"));
++    }
++
++    // ── 类型轴（反射枚举，数据驱动）+ 邮件动作核定（R1）──
++    [Fact]
++    public void Rows_ReflectsEnum_WithSupportFlags()
++    {
++        var rows = NotifyMatrix.Rows();
++        Assert.Contains(rows, r => r is { TypeKey: "todoCreated",  TypeValue: 1, InAppSupported: true,  EmailSupported: true });
++        Assert.Contains(rows, r => r is { TypeKey: "flowApproved", TypeValue: 2, InAppSupported: true,  EmailSupported: true });
++        Assert.Contains(rows, r => r is { TypeKey: "flowRejected", TypeValue: 3, InAppSupported: true,  EmailSupported: true });
++        Assert.Contains(rows, r => r is { TypeKey: "timeout",      TypeValue: 4, InAppSupported: false, EmailSupported: false }); // 无发送路径（R1）
++        // BranchPruned 未合入时不出现；合入后（hardening spec §4.2）自动长出且双通道 true——不对存在性做负断言，保证两 spec 任意合并顺序都绿
++        foreach (var r in rows.Where(r => r.TypeKey == "branchPruned"))
++        {
++            Assert.True(r.InAppSupported);
++            Assert.True(r.EmailSupported);
++        }
++        // 控制器授权适配（w4-AT1-brief 预检漂移修正）：BranchPruned=5 已由内核 hardening 波合入，
++        // PersistentWfNotifier.BranchPrunedAsync(:196-198) 与 FlowRejected 同样有邮件动作 → 双通道 true。
++        // 此处补正断言：反射轴此刻必含 branchPruned 行（typeValue 5，双通道支持）。
++        Assert.Contains(rows, r => r is { TypeKey: "branchPruned", TypeValue: 5, InAppSupported: true, EmailSupported: true });
++    }
++}

@@ -1,0 +1,263 @@
+# Review package: 46d4fc9..6bfcbfb
+
+## Commits
+6bfcbfb feat(wfs-inbox): B-T2 batch-transfer/preview 端点+RequirePermission(oa-inbox,batch-transfer)+权限点seed
+
+## Files changed
+ CP6.Tests/OawfPermissionAttributeTests.cs          | 13 ++--
+ CP6.WebApi/Controllers/Oa/InboxController.cs       | 32 +++++++++
+ CP6.WebApi/Program.cs                              |  4 ++
+ .../Seed/InboxBatchTransferPermissionSeed.cs       | 79 ++++++++++++++++++++++
+ 4 files changed, 123 insertions(+), 5 deletions(-)
+
+## Diff
+diff --git a/CP6.Tests/OawfPermissionAttributeTests.cs b/CP6.Tests/OawfPermissionAttributeTests.cs
+index 854b5dc..03ecaa8 100644
+--- a/CP6.Tests/OawfPermissionAttributeTests.cs
++++ b/CP6.Tests/OawfPermissionAttributeTests.cs
+@@ -5,29 +5,30 @@ using CP6.WebApi.Controllers.Oa;
+ using CP6.WebApi.Controllers.Wf;
+ using Microsoft.AspNetCore.Mvc;
+ 
+ namespace CP6.Tests;
+ 
+ /// <summary>
+ /// 反射守卫（M-OA/WF 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
+ /// **两个命名空间** Controllers.Oa（12）+ Controllers.Wf（5）= 17 controller，锁死
+ /// 「未来新增 OA/WF 写端点漏贴权限键即红」。与已合并的 <c>WmsPermissionAttributeTests</c> /
+ /// <c>ErpPermissionAttributeTests</c> / <c>MesPermissionAttributeTests</c> 同型三件套。
+-/// 真相源：docs/seeds/oawf-permission-keys.md（17 控制器扫描面 / 39 非GET端点 / 37 贴点 / 2 只读 POST 豁免）。
++/// 真相源：docs/seeds/oawf-permission-keys.md（17 控制器扫描面 / 41 非GET端点 / 39 贴点 / 2 只读 POST 豁免；
++/// 39 = 37 M-OA/WF·F-T2 + 2 波④ B-T2 batch-transfer/preview）。
+ /// **F-T2（WFS 波③ 事件触发，E-T1 交接票）**：FlowTriggerAdminController 由 Controllers.Integration 收编回
+ /// Controllers.Oa 纳入本守卫，贡献 6 变更端点（Edit×5 + View×1=CronPreview），计数 16→17 / 贴点 31→37 / 33→39 非GET。
+ ///
+ /// ① discovery 守卫：断言扫到 17 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
+ ///    谓词覆盖 **两个** 命名空间（Oa ∪ Wf），计数断言 17 防单侧空扫。
+ /// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
+-///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 37、
+-///    豁免命中数精确 == 2（39 = 37 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
++///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 39、
++///    豁免命中数精确 == 2（41 = 39 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
+ /// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
+ ///    ^oa-[a-z0-9-]+$（连字符，禁下划线）。**注**：Wf 命名空间 5 控制器（Flow/Form/Task/AdvancedFlow/
+ ///    Approval）无自己菜单行，其键锚定「消费页」OA 菜单，故 **全部键仍为 oa-* 前缀**（真相源 §一/§二）——
+ ///    本波不存在 wf-* 键。action **逐词相等**落在真相源实际使用的 action 集合内。
+ /// ④ 豁免防腐：每条豁免必须确为「变更端点 且 未贴权限」——防豁免清单变陈旧（端点改名/被贴/被删）
+ ///    却仍白名单遮蔽某个真·写端点丢键。
+ ///
+ /// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
+ /// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
+ /// 继承说明：17 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 16 个
+@@ -56,20 +57,22 @@ public class OawfPermissionAttributeTests
+         "add", "edit", "del",                       // 四基粒度写（view 未贴，不入集）
+         "favorite",                                 // 低危个性化写：oa-form-catalog:favorite 收藏表单
+         "read",                                     // 低危写：oa-inbox:read 标记已读（归并 Inbox/CC/Notification，§五归并4）
+         "submit",                                   // 状态键：oa-form-catalog:submit 起流程/提交（归并 Draft/Flow/Approval/Form，§五归并3）
+         "enable",                                   // 状态键：oa-flow-admin:enable 流程启停干预（§五归并6）
+         "withdraw",                                 // 状态键：oa-inbox:withdraw 撤回申请
+         "approve", "transfer", "sendback",          // 高危键：审批办理/转交/退回（§三，归并 Inbox+Flow/AdvancedFlow）
+         "addsign",                                  // 高危键：oa-inbox:addsign 加签改审批链（§三）
+         "delegate",                                 // 高危键：oa-settings:delegate 委派授权（合一 OA #5/#6 + AdvancedFlow #26，§三/§六注4）
+         "form-save",                                // 高危键：oa-designer:form-save 表单定义保存（旧栈 Form.SaveDef，§三）
++        // WFS 波④ 信箱体验 B-T2：InboxController 新增 batch-transfer/preview 两个 POST，同贴 oa-inbox:batch-transfer。
++        "batch-transfer",                           // 高危键：oa-inbox:batch-transfer 在途批量改派（spec OA.Inbox.BatchTransfer；preview 同键，C8）
+         // WFS 波③ 事件触发 F-T2（E-T1 交接票）：FlowTriggerAdminController 由 Integration 收编回 Controllers.Oa，
+         // 纳入本 fail-closed 守卫扫描面。Edit=增改/启停/试发/重置key（5 端点），View=cron 预览（1 端点，POST）。
+         "FlowTrigger.View", "FlowTrigger.Edit",     // oa-flow-admin:FlowTrigger.*（点式 action，与 spec §6 权限点名逐字一致）
+     };
+ 
+     /// <summary>
+     /// 只读 POST 豁免清单（真相源 §四，共 2 条 —— 均逐条读 Service 实现证得无写副作用；归 view，不贴权限键）。
+     /// 键 = "ControllerName.MethodName"。每条带真相源编号 + 豁免依据。
+     /// </summary>
+     private static readonly HashSet<string> ReadOnlyPostExemptions = new()
+@@ -147,22 +150,22 @@ public class OawfPermissionAttributeTests
+             taggedCount++;
+             if (!MenuPattern.IsMatch(perm.Value.menu))
+                 offenders.Add($"{key}：menu '{perm.Value.menu}' 不符约定 ^oa-[a-z0-9-]+$");
+             if (!ActionVocabulary.Contains(perm.Value.action))
+                 offenders.Add($"{key}：action '{perm.Value.action}' 不在真相源 action 集（疑似 typo，须显式加入）");
+         }
+ 
+         Assert.True(offenders.Count == 0,
+             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
+ 
+-        // 收口断言：贴点 37 + 豁免命中 2 = 全 39 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 端点。
+-        Assert.Equal(37, taggedCount);
++        // 收口断言：贴点 39 + 豁免命中 2 = 全 41 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 端点 + B-T2 新增 2 端点。
++        Assert.Equal(39, taggedCount);
+         Assert.Equal(2, exemptHit.Count);
+     }
+ 
+     [Fact]
+     public void ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints()
+     {
+         // 豁免防腐：清单每一条都必须实存、确为变更端点、且当前未贴权限键。
+         // 防清单变陈旧（端点被改名/删除/后来贴了键）却仍白名单遮蔽某真·写端点丢键。
+         var byKey = OawfControllers
+             .SelectMany(c => ActionMethods(c).Select(m => (key: Key(c, m), method: m)))
+diff --git a/CP6.WebApi/Controllers/Oa/InboxController.cs b/CP6.WebApi/Controllers/Oa/InboxController.cs
+index e07792e..885b389 100644
+--- a/CP6.WebApi/Controllers/Oa/InboxController.cs
++++ b/CP6.WebApi/Controllers/Oa/InboxController.cs
+@@ -192,13 +192,45 @@ public class InboxController : LocalizedControllerBase
+     {
+         try
+         {
+             var (eff, _) = await EffectiveAsync();   // 退回人=有效用户（act-as 时=被代理人）
+             await _engine.SendBackAsync(r.TaskId, eff, new SendBackTarget(r.Kind, r.NodeId), r.Comment);
+             return Ok2(true);
+         }
+         catch (InvalidOperationException e) { return Err(e); }
+     }
+ 
++    // ── 在途批量转单（wfs-inbox-ux §3；权限点 = spec OA.Inbox.BatchTransfer → (oa-inbox, batch-transfer)）──
++    // 审计：OperLogFilter 全局记 POST 请求体（操作者/from/to）+ 引擎 Wf_FlowHistory/Wf_FlowFormTo 逐条记录（R3）。
++
++    public record BatchTransferFilterReq(string? FlowKey, DateTime? BeforeUtc, List<Guid>? TaskIds);
++    public record BatchTransferReq(Guid FromUserId, Guid ToUserId, string? Comment, BatchTransferFilterReq? Filter);
++
++    private static BatchTransferFilter? ToFilter(BatchTransferFilterReq? f) =>
++        f is null ? null : new BatchTransferFilter(f.FlowKey, f.BeforeUtc, f.TaskIds);
++
++    [HttpPost("batch-transfer")]
++    [RequirePermission("oa-inbox", "batch-transfer")]
++    public async Task<IActionResult> BatchTransfer([FromBody] BatchTransferReq r)
++    {
++        try
++        {
++            var me = await CurrentUserIdAsync();   // 操作者=登录管理员本人（管理动作不走 act-as）
++            return Ok2(await _inbox.BatchTransferAsync(me, r.FromUserId, r.ToUserId, r.Comment, ToFilter(r.Filter)));
++        }
++        catch (InvalidOperationException e) { return Err(e); }
++    }
++
++    [HttpPost("batch-transfer/preview")]
++    [RequirePermission("oa-inbox", "batch-transfer")]
++    public async Task<IActionResult> BatchTransferPreview([FromBody] BatchTransferReq r)
++    {
++        try
++        {
++            return Ok2(await _inbox.BatchTransferPreviewAsync(r.FromUserId, ToFilter(r.Filter)));
++        }
++        catch (InvalidOperationException e) { return Err(e); }
++    }
++
+     public record IdReq(Guid Id);
+     public record BatchReq(List<Guid> TaskIds, bool Approve, string? Comment);
+ }
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index 3eaee7f..ecd8ed6 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -901,20 +901,24 @@ using (var scope = app.Services.CreateScope())
+     // Task 3a 给 16 控制器 31 真写端点贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
+     // 须置于 OawfMenuSeed 之后（RoleAction 挂锚定 MenuId 733/734/735/737/738/739，菜单行须先在）。
+     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。20 去重元组（31 写端点去重）覆盖 6 有写端点 menu-key
+     // （oa-form-search(736) 仅 Query search 只读豁免→view，不种）。
+     CP6.WebApi.Seed.OawfPermissionSeed.EnsureSeeded(db);
+ 
+     // WFS 波③ 事件触发 F-T2：流程触发器权限点 FlowTrigger.View/Edit（菜单 734 oa-flow-admin）逐租户幂等种子。
+     // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 MenuKey 回填）之后。「贴点⊆种子」互锁。
+     CP6.WebApi.Seed.FlowTriggerPermissionSeed.EnsureSeeded(db);
+ 
++    // WFS 波④ 信箱体验 B-T2：OA 信箱批量改派权限点 batch-transfer（菜单 733 oa-inbox）逐租户幂等种子。
++    // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 733 MenuKey 回填）之后。「贴点⊆种子」互锁。
++    CP6.WebApi.Seed.InboxBatchTransferPermissionSeed.EnsureSeeded(db);
++
+     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
+     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
+     {
+         db.Sys_Menus.Add(new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true });
+         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 107 });
+         db.SaveChanges();
+     }
+     // PUB 章00 组织模型：部门管理菜单
+     if (!db.Sys_Menus.Any(m => m.MenuId == 108))
+     {
+diff --git a/CP6.WebApi/Seed/InboxBatchTransferPermissionSeed.cs b/CP6.WebApi/Seed/InboxBatchTransferPermissionSeed.cs
+new file mode 100644
+index 0000000..efa7f07
+--- /dev/null
++++ b/CP6.WebApi/Seed/InboxBatchTransferPermissionSeed.cs
+@@ -0,0 +1,79 @@
++using CP6.Core.EFDbContext;
++using CP6.Entity.DomainModels.Sys;
++using Microsoft.EntityFrameworkCore;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>
++/// OA 信箱批量改派权限点（Sys_MenuAction + Sys_RoleAction）逐租户启动幂等种子（WFS 波④ 信箱体验 B-T2）。
++///
++/// 背景：波④ InboxController 新增两个在途批量转单 POST 端点
++///  - <c>POST /api/oa/inbox/batch-transfer</c>（执行批量改派）
++///  - <c>POST /api/oa/inbox/batch-transfer/preview</c>（预览，只算不写，同请求体）
++/// 二者同贴 <c>[RequirePermission("oa-inbox", "batch-transfer")]</c>（spec <c>OA.Inbox.BatchTransfer</c> → (oa-inbox,
++/// batch-transfer) 的落地映射，C4/C8：preview 同权限点）。<c>PermissionService.HasActionAsync</c> 无 admin 旁路
++/// ——不种 Sys_RoleAction 则 admin 亦 403。
++///
++/// 「贴点⊆种子」互锁：InboxController 实际用到的新 action 集 {batch-transfer} 恰为本种子登记集，无孤儿键、无漏种。
++/// 菜单 733 <c>MenuKey="oa-inbox"</c> 回填已由 <see cref="OawfMenuSeed"/> 落地（M-OA/WF 波，锚定行显式赋值），
++/// 本种子仅挂 Sys_MenuAction/Sys_RoleAction，不重做 MenuKey 回填。
++///
++/// 逐租户机制（照 <see cref="FlowTriggerPermissionSeed"/> / <see cref="OawfPermissionSeed"/> 先例）：
++///  - 枚举 <c>Sys_Tenants</c>（共享表）全部租户 Id，对每租户各插一份，显式 <c>TenantId=tid</c>
++///    → <c>CP6Context.StampTenant</c> 仅盖 Guid.Empty 不覆盖显式值。
++///  - 幂等判存用 <c>IgnoreQueryFilters()</c>（跨租户可见），避免默认租户作用域误判缺失重复插。
++///
++/// 接入：Program.cs 于 <see cref="OawfPermissionSeed.EnsureSeeded"/> **之后**调用（锚定菜单 733 须先在）。
++/// </summary>
++public static class InboxBatchTransferPermissionSeed
++{
++    /// <summary>(MenuId, ActionCode, ActionName) —— 与 InboxController [RequirePermission] 第二实参逐字一致。</summary>
++    private static readonly (int MenuId, string Code, string Name)[] Actions =
++    {
++        (733, "batch-transfer", "批量改派"),
++    };
++
++    /// <summary>逐租户幂等播种 batch-transfer 权限点 + 授管理员（RoleId=1）。须在 OawfPermissionSeed 之后调用。</summary>
++    public static void EnsureSeeded(CP6Context db)
++    {
++        var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
++        if (tenantIds.Count == 0) return;
++
++        var changed = false;
++        foreach (var tid in tenantIds)
++        {
++            foreach (var (menuId, code, name) in Actions)
++            {
++                if (!db.Sys_MenuActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_MenuActions.Add(new Sys_MenuAction
++                    {
++                        TenantId = tid,
++                        MenuId = menuId,
++                        ActionCode = code,
++                        ActionName = name,
++                        Sort = 0,
++                    });
++                    changed = true;
++                }
++
++                if (!db.Sys_RoleActions.IgnoreQueryFilters()
++                        .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
++                {
++                    db.Sys_RoleActions.Add(new Sys_RoleAction
++                    {
++                        TenantId = tid,
++                        RoleId = 1,
++                        MenuId = menuId,
++                        ActionCode = code,
++                    });
++                    changed = true;
++                }
++            }
++        }
++
++        if (changed)
++            db.SaveChanges();
++    }
++}

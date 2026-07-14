@@ -1,0 +1,396 @@
+# Review package: 7b0a3f0..bbfe445
+
+## Commits
+bbfe445 feat(wfs-inbox): B-T3 批量改派对话框(预览+结果报告+单条重试)+流程管理入口
+
+## Files changed
+ cp6.web/src/api/oa/inbox.ts                        |   3 +
+ cp6.web/src/types/oa/inbox.ts                      |  26 +++
+ cp6.web/src/views/oa/admin/BatchTransferDialog.vue | 242 +++++++++++++++++++++
+ cp6.web/src/views/oa/admin/FlowAdmin.vue           |   7 +
+ 4 files changed, 278 insertions(+)
+
+## Diff
+diff --git a/cp6.web/src/api/oa/inbox.ts b/cp6.web/src/api/oa/inbox.ts
+index efd304d..09c56a4 100644
+--- a/cp6.web/src/api/oa/inbox.ts
++++ b/cp6.web/src/api/oa/inbox.ts
+@@ -1,16 +1,19 @@
+ import http from '../http'
++import type { BatchTransferReq } from '@/types/oa/inbox'
+ 
+ export const inboxApi = {
+   pending:   () => http.get('/oa/inbox/pending'),
+   pendingCc: () => http.get('/oa/inbox/pending-cc'),
+   running:   () => http.get('/oa/inbox/running'),
+   done:      (p: { year?: number; month?: number; tab?: string }) => http.get('/oa/inbox/done', { params: p }),
+   stats:     () => http.get('/oa/inbox/stats'),
+   detail:    (instanceId: string) => http.get(`/oa/inbox/detail/${instanceId}`),
+   markTaskRead: (id: string) => http.post('/oa/inbox/task/read', { id }),
+   markCcRead:   (id: string) => http.post('/oa/inbox/cc/read', { id }),
+   batch: (taskIds: string[], approve: boolean, comment?: string) =>
+     http.post('/oa/inbox/batch', { taskIds, approve, comment }),
+   sendBack: (taskId: string, kind: 'prevStage' | 'starter' | 'node', nodeId?: string, comment?: string) =>
+     http.post('/oa/inbox/sendback', { taskId, kind, nodeId, comment }),
++  batchTransfer: (p: BatchTransferReq) => http.post('/oa/inbox/batch-transfer', p),
++  batchTransferPreview: (p: BatchTransferReq) => http.post('/oa/inbox/batch-transfer/preview', p),
+ }
+diff --git a/cp6.web/src/types/oa/inbox.ts b/cp6.web/src/types/oa/inbox.ts
+index e13ffb7..d316c44 100644
+--- a/cp6.web/src/types/oa/inbox.ts
++++ b/cp6.web/src/types/oa/inbox.ts
+@@ -125,10 +125,36 @@ export interface BatchResultItem {
+   error?: string
+ }
+ 
+ export interface FlowAdminItem {
+   flowKey: string
+   flowName: string
+   formKey: string
+   version: number
+   enable: boolean
+ }
++
++// ── 在途批量转单（wfs-inbox-ux §3）──
++export interface BatchTransferReq {
++  fromUserId: string
++  toUserId: string
++  comment?: string
++  filter?: { flowKey?: string; beforeUtc?: string; taskIds?: string[] }
++}
++
++export interface BatchTransferItemResult {
++  taskId: string
++  flowKey: string
++  ok: boolean
++  error?: string
++}
++
++export interface BatchTransferReport {
++  total: number
++  succeeded: number
++  failed: BatchTransferItemResult[]
++}
++
++export interface BatchTransferPreview {
++  total: number
++  sample: PendingItem[]
++}
+diff --git a/cp6.web/src/views/oa/admin/BatchTransferDialog.vue b/cp6.web/src/views/oa/admin/BatchTransferDialog.vue
+new file mode 100644
+index 0000000..de6717a
+--- /dev/null
++++ b/cp6.web/src/views/oa/admin/BatchTransferDialog.vue
+@@ -0,0 +1,242 @@
++<!-- cp6.web/src/views/oa/admin/BatchTransferDialog.vue
++     在途批量改派（wfs-inbox-ux §3.2）：选 from/to → 预览待转清单 → 确认 → 结果报告（失败行单条重试）。
++     重试走同一 batch-transfer 端点 + filter.taskIds（同 TransferAsync、同失败明细口径）。 -->
++<template>
++  <el-dialog
++    :model-value="modelValue"
++    :title="t('oa.bt.title')"
++    :width="isMobile ? '100vw' : '640px'"
++    :fullscreen="isMobile"
++    @close="onClose"
++  >
++    <!-- Step 1: 表单 + 预览 -->
++    <template v-if="!report">
++      <el-form label-width="100px">
++        <el-form-item :label="t('oa.bt.fromUser')">
++          <el-select v-model="fromUserId" filterable remote :remote-method="searchFrom"
++            :loading="fromLoading" :placeholder="t('oa.transfer.userHint')" style="width: 100%" clearable
++            @change="preview = null">
++            <el-option v-for="u in fromOptions" :key="u.value" :label="u.label" :value="u.value" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('oa.bt.toUser')">
++          <el-select v-model="toUserId" filterable remote :remote-method="searchTo"
++            :loading="toLoading" :placeholder="t('oa.transfer.userHint')" style="width: 100%" clearable>
++            <el-option v-for="u in toOptions" :key="u.value" :label="u.label" :value="u.value" />
++          </el-select>
++        </el-form-item>
++        <el-form-item :label="t('oa.bt.filterFlowKey')">
++          <el-input v-model="filterFlowKey" clearable @change="preview = null" />
++        </el-form-item>
++        <el-form-item :label="t('oa.bt.filterBefore')">
++          <el-date-picker v-model="filterBefore" type="datetime" value-format="YYYY-MM-DDTHH:mm:ss"
++            style="width: 100%" clearable @change="preview = null" />
++        </el-form-item>
++        <el-form-item :label="t('oa.bt.comment')">
++          <el-input v-model="comment" type="textarea" :rows="2" :placeholder="t('oa.bt.commentHint')" />
++        </el-form-item>
++      </el-form>
++
++      <div v-if="preview" class="bt-preview">
++        <CpTag tone="info">{{ t('oa.bt.previewTotal', { n: preview.total }) }}</CpTag>
++        <el-table v-if="preview.sample.length" :data="preview.sample" size="small" border max-height="220">
++          <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="140" />
++          <el-table-column prop="starterName" :label="t('oa.col.starter')" width="110" />
++          <el-table-column :label="t('oa.col.sentAt')" width="160">
++            <template #default="{ row }">{{ formatTime(row.sentAt) }}</template>
++          </el-table-column>
++        </el-table>
++        <CpEmpty v-else :text="t('oa.bt.previewEmpty')" />
++      </div>
++    </template>
++
++    <!-- Step 2: 结果报告 -->
++    <template v-else>
++      <div class="bt-result">
++        <CpTag :tone="report.failed.length ? 'warn' : 'ok'">
++          {{ t('oa.bt.resultSummary', { total: report.total, ok: report.succeeded, fail: report.failed.length }) }}
++        </CpTag>
++        <el-table v-if="report.failed.length" :data="report.failed" size="small" border max-height="260">
++          <el-table-column :label="t('oa.bt.colTask')" width="120">
++            <template #default="{ row }">{{ row.taskId.slice(0, 8) }}</template>
++          </el-table-column>
++          <el-table-column prop="flowKey" :label="t('oa.bt.colFlow')" min-width="110" />
++          <el-table-column :label="t('oa.bt.colError')" min-width="140">
++            <template #default="{ row }">{{ t(row.error ?? '') }}</template>
++          </el-table-column>
++          <el-table-column width="90" fixed="right">
++            <template #default="{ row }">
++              <el-button size="small" link type="primary" :loading="retrying.has(row.taskId)"
++                @click="retryOne(row)">
++                {{ t('oa.bt.retry') }}
++              </el-button>
++            </template>
++          </el-table-column>
++        </el-table>
++      </div>
++    </template>
++
++    <template #footer>
++      <el-button @click="onClose">{{ t('common.cancel') }}</el-button>
++      <template v-if="!report">
++        <el-button :disabled="!fromUserId" :loading="previewing" @click="doPreview">
++          {{ t('oa.bt.preview') }}
++        </el-button>
++        <el-button type="warning" :loading="submitting"
++          :disabled="!fromUserId || !toUserId || !preview || preview.total === 0"
++          @click="doTransfer">
++          {{ t('oa.bt.confirm') }}
++        </el-button>
++      </template>
++    </template>
++  </el-dialog>
++</template>
++
++<script setup lang="ts">
++import { reactive, ref } from 'vue'
++import { useI18n } from 'vue-i18n'
++import { ElMessage } from 'element-plus'
++import { inboxApi } from '@/api/oa/inbox'
++import { userApi } from '@/api/sys/user'
++import { useBreakpoint } from '@/composables/useBreakpoint'
++import CpTag from '@/components/base/CpTag.vue'
++import CpEmpty from '@/components/base/CpEmpty.vue'
++import type { BatchTransferItemResult, BatchTransferPreview, BatchTransferReport, BatchTransferReq } from '@/types/oa/inbox'
++
++defineProps<{ modelValue: boolean }>()
++const emit = defineEmits<{ 'update:modelValue': [val: boolean] }>()
++
++const { t } = useI18n()
++const { isMobile } = useBreakpoint()
++
++const fromUserId = ref('')
++const toUserId = ref('')
++const comment = ref('')
++const filterFlowKey = ref('')
++const filterBefore = ref('')
++const preview = ref<BatchTransferPreview | null>(null)
++const report = ref<BatchTransferReport | null>(null)
++const previewing = ref(false)
++const submitting = ref(false)
++const retrying = reactive(new Set<string>())
++
++// ── 用户远程搜索（同 TransferDialog.vue 模式）──
++interface UserOption { label: string; value: string }
++const fromOptions = ref<UserOption[]>([])
++const toOptions = ref<UserOption[]>([])
++const fromLoading = ref(false)
++const toLoading = ref(false)
++
++async function searchUsers(keyword: string, into: typeof fromOptions, loading: typeof fromLoading) {
++  if (!keyword) { into.value = []; return }
++  loading.value = true
++  try {
++    const res: any = await userApi.getList({ page: 1, pageSize: 20, keyword })
++    into.value = (res.rows ?? []).map((u: any) => ({ label: u.nickName || u.userName, value: u.id }))
++  } catch {
++    // HTTP interceptor already toasts the error
++  } finally {
++    loading.value = false
++  }
++}
++const searchFrom = (kw: string) => searchUsers(kw, fromOptions, fromLoading)
++const searchTo = (kw: string) => searchUsers(kw, toOptions, toLoading)
++
++function buildReq(taskIds?: string[]): BatchTransferReq {
++  return {
++    fromUserId: fromUserId.value,
++    toUserId: toUserId.value,
++    comment: comment.value || undefined,
++    filter: {
++      flowKey: filterFlowKey.value || undefined,
++      beforeUtc: filterBefore.value || undefined,
++      taskIds,
++    },
++  }
++}
++
++async function doPreview() {
++  previewing.value = true
++  try {
++    const res: any = await inboxApi.batchTransferPreview(buildReq())
++    preview.value = res.data as BatchTransferPreview
++  } catch {
++    // 400（errSameUser/errTargetInvalid 等）由拦截器 t(raw) 自动 toast
++  } finally {
++    previewing.value = false
++  }
++}
++
++async function doTransfer() {
++  submitting.value = true
++  try {
++    const res: any = await inboxApi.batchTransfer(buildReq())
++    report.value = res.data as BatchTransferReport
++    if (!report.value.failed.length) ElMessage.success(t('oa.bt.allOk'))
++  } catch {
++    // 拦截器 toast（含 oa.bt.errTooMany 分批提示）
++  } finally {
++    submitting.value = false
++  }
++}
++
++/** 单条重试：同端点 + filter.taskIds=[id]（同 TransferAsync、同失败明细口径，spec §3.2） */
++async function retryOne(row: BatchTransferItemResult) {
++  if (retrying.has(row.taskId) || !report.value) return
++  retrying.add(row.taskId)
++  try {
++    const res: any = await inboxApi.batchTransfer(buildReq([row.taskId]))
++    const r = res.data as BatchTransferReport
++    if (r.succeeded === 1) {
++      report.value = {
++        ...report.value,
++        succeeded: report.value.succeeded + 1,
++        failed: report.value.failed.filter((f) => f.taskId !== row.taskId),
++      }
++      ElMessage.success(t('oa.bt.retryOk'))
++    } else {
++      // 重试仍失败（可能已被他人办结/转走）→ 用最新明细行替换（同口径呈现）
++      const latest = r.failed.find((f) => f.taskId === row.taskId)
++      report.value = {
++        ...report.value,
++        failed: report.value.failed.map((f) =>
++          f.taskId === row.taskId && latest ? latest : f),
++      }
++      if (r.total === 0) {
++        // 已不在 from 名下（他人办结/已转走）→ 从失败清单移除并提示
++        report.value = { ...report.value, failed: report.value.failed.filter((f) => f.taskId !== row.taskId) }
++        ElMessage.info(t('oa.bt.retryGone'))
++      }
++    }
++  } finally {
++    retrying.delete(row.taskId)
++  }
++}
++
++function formatTime(s: string): string {
++  return s ? s.replace('T', ' ').slice(0, 19) : ''
++}
++
++function onClose() {
++  emit('update:modelValue', false)
++  fromUserId.value = ''
++  toUserId.value = ''
++  comment.value = ''
++  filterFlowKey.value = ''
++  filterBefore.value = ''
++  preview.value = null
++  report.value = null
++  fromOptions.value = []
++  toOptions.value = []
++}
++</script>
++
++<style scoped>
++.bt-preview,
++.bt-result {
++  display: flex;
++  flex-direction: column;
++  gap: 10px;
++  margin-top: 4px;
++}
++</style>
+diff --git a/cp6.web/src/views/oa/admin/FlowAdmin.vue b/cp6.web/src/views/oa/admin/FlowAdmin.vue
+index 6a7e72e..1f7afd4 100644
+--- a/cp6.web/src/views/oa/admin/FlowAdmin.vue
++++ b/cp6.web/src/views/oa/admin/FlowAdmin.vue
+@@ -1,20 +1,23 @@
+ <!--
+   流程管理（OA Phase B，菜单734）—— CpPageShell + CpListPage 迁移。
+   单一 flowAdminApi.list() 全量（无搜索/无分页 → :paginated="false"，onMounted 自动 fetch）；
+   启停开关走 col-enable 插槽（行内 el-switch，per-row toggling 守卫 + 乐观回滚保留），
+   切换成功后 listRef.reload() 反映服务端联动（唯一启用互斥）；件数走 CpPageShell :count←@total-change。
+   el-alert 唯一性提示无 Cp 等价物，作为壳内首个子项保留。
+ -->
+ <template>
+   <CpPageShell :title="t('oa.flowadmin.title')" :count="activeTab === 'flows' ? total : undefined">
+     <template #actions>
++      <el-button v-if="activeTab === 'flows'" type="warning" plain @click="batchTransferVisible = true">
++        {{ t('oa.bt.entry') }}
++      </el-button>
+       <el-button v-if="activeTab === 'flows'" :icon="Refresh" circle :loading="refreshing" @click="refresh" />
+     </template>
+ 
+     <el-tabs v-model="activeTab">
+       <el-tab-pane :label="t('oa.flowadmin.tab.flows')" name="flows">
+         <el-alert type="info" :closable="false" show-icon>
+           {{ t('oa.flowadmin.uniqueHint') }}
+         </el-alert>
+ 
+         <CpListPage
+@@ -32,37 +35,41 @@
+               :disabled="toggling.has((row as FlowAdminItem).flowKey)"
+               @change="(val: boolean | string | number) => toggleEnable(row as FlowAdminItem, val as boolean)"
+             />
+           </template>
+         </CpListPage>
+       </el-tab-pane>
+       <el-tab-pane :label="t('oa.flowtrigger.tab')" name="triggers" lazy>
+         <FlowTriggerPanel />
+       </el-tab-pane>
+     </el-tabs>
++
++    <BatchTransferDialog v-model="batchTransferVisible" />
+   </CpPageShell>
+ </template>
+ 
+ <script setup lang="ts">
+ import { computed, reactive, ref } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { Refresh } from '@element-plus/icons-vue'
+ import CpPageShell from '@/components/templates/CpPageShell.vue'
+ import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+ import FlowTriggerPanel from './FlowTriggerPanel.vue'
++import BatchTransferDialog from './BatchTransferDialog.vue'
+ import { flowAdminApi } from '@/api/oa/flowAdmin'
+ import type { FlowAdminItem } from '@/types/oa/inbox'
+ 
+ const { t } = useI18n()
+ 
+ const activeTab = ref<'flows' | 'triggers'>('flows')
++const batchTransferVisible = ref(false)
+ const total = ref<number>()
+ const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+ const refreshing = ref(false)
+ // per-row guard: flowKeys currently being toggled — prevents races and double-clicks
+ const toggling = reactive(new Set<string>())
+ 
+ const columns = computed<ListColumn[]>(() => [
+   { prop: 'flowKey', label: t('oa.flowadmin.col.flowKey'), width: 200, kind: 'mono' },
+   { prop: 'flowName', label: t('oa.flowadmin.col.flowName'), minWidth: 160 },
+   { prop: 'formKey', label: t('oa.flowadmin.col.formKey'), width: 180 },

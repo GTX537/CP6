@@ -13,7 +13,7 @@
     <template v-else>
       <el-row :gutter="16" class="detail-body">
         <!-- LEFT: read-only form (~55%) -->
-        <el-col :span="14" class="detail-left">
+        <el-col :xs="24" :sm="14" class="detail-left">
           <div class="panel-title">{{ t('oa.detail.formPanel') }}</div>
           <DynamicForm
             v-if="parsedSchema.fields.length"
@@ -28,7 +28,7 @@
         </el-col>
 
         <!-- RIGHT: timeline + CC (~45%) -->
-        <el-col :span="10" class="detail-right">
+        <el-col :xs="24" :sm="10" class="detail-right">
           <div class="panel-title">{{ t('oa.detail.timeline') }}</div>
           <FlowTimeline
             :timeline="detail.timeline"
@@ -169,7 +169,7 @@ async function loadDetail() {
   try {
     const [detailRes, pendingRes] = await Promise.all([
       inboxApi.detail(props.instanceId),
-      inboxApi.pending(),
+      inboxApi.pending('expanded'),
     ])
     detail.value = (detailRes as any).data as InboxDetail
     const pendingList: PendingItem[] =
@@ -283,5 +283,35 @@ watch(() => props.instanceId, loadDetail)
   padding: 14px 0 4px;
   margin-top: 16px;
   border-top: 1px solid var(--cp-line);
+}
+
+@media (max-width: 767px) {
+  .detail-left {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .detail-right {
+    max-height: none;
+    padding-left: 0;
+    margin-top: 16px;
+    overflow-y: visible;
+  }
+
+  /* 审批操作钉底栏（安全区适配，spec §4） */
+  .action-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    flex-wrap: wrap;
+    background: var(--cp-card);
+    box-shadow: var(--cp-shadow-up);
+    margin: 16px -16px 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .action-bar .el-input {
+    width: 100% !important;   /* 覆盖行内 280px（同 OtdReportView 既有 !important 口径） */
+  }
 }
 </style>

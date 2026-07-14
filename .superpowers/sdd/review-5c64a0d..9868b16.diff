@@ -1,0 +1,269 @@
+# Review package: 5c64a0d..9868b16
+
+## Commits
+9868b16 feat(wfs-inbox): D-T2 待办工具栏rowMode切换开关+偏好写回+详情页expanded保真
+
+## Files changed
+ cp6.web/src/api/oa/inbox.ts                   |  2 +-
+ cp6.web/src/views/oa/inbox/FormDetail.vue     |  2 +-
+ cp6.web/src/views/oa/inbox/InboxPending.vue   | 37 +++++++++++++++++++++++++--
+ cp6.web/src/views/oa/inbox/inboxModel.test.ts | 16 +++++++++++-
+ cp6.web/src/views/oa/inbox/inboxModel.ts      | 11 ++++++++
+ 5 files changed, 63 insertions(+), 5 deletions(-)
+
+## Diff
+diff --git a/cp6.web/src/api/oa/inbox.ts b/cp6.web/src/api/oa/inbox.ts
+index 09c56a4..ea25d12 100644
+--- a/cp6.web/src/api/oa/inbox.ts
++++ b/cp6.web/src/api/oa/inbox.ts
+@@ -1,15 +1,15 @@
+ import http from '../http'
+ import type { BatchTransferReq } from '@/types/oa/inbox'
+ 
+ export const inboxApi = {
+-  pending:   () => http.get('/oa/inbox/pending'),
++  pending:   (rowMode?: 'merged' | 'expanded') => http.get('/oa/inbox/pending', { params: { rowMode } }),
+   pendingCc: () => http.get('/oa/inbox/pending-cc'),
+   running:   () => http.get('/oa/inbox/running'),
+   done:      (p: { year?: number; month?: number; tab?: string }) => http.get('/oa/inbox/done', { params: p }),
+   stats:     () => http.get('/oa/inbox/stats'),
+   detail:    (instanceId: string) => http.get(`/oa/inbox/detail/${instanceId}`),
+   markTaskRead: (id: string) => http.post('/oa/inbox/task/read', { id }),
+   markCcRead:   (id: string) => http.post('/oa/inbox/cc/read', { id }),
+   batch: (taskIds: string[], approve: boolean, comment?: string) =>
+     http.post('/oa/inbox/batch', { taskIds, approve, comment }),
+   sendBack: (taskId: string, kind: 'prevStage' | 'starter' | 'node', nodeId?: string, comment?: string) =>
+diff --git a/cp6.web/src/views/oa/inbox/FormDetail.vue b/cp6.web/src/views/oa/inbox/FormDetail.vue
+index 085f7f4..04e3b56 100644
+--- a/cp6.web/src/views/oa/inbox/FormDetail.vue
++++ b/cp6.web/src/views/oa/inbox/FormDetail.vue
+@@ -162,21 +162,21 @@ const readonlyMask = computed((): FieldMask =>
+ // ── Data loading ─────────────────────────────────────────────────
+ async function loadDetail() {
+   if (!props.instanceId) return
+   loading.value = true
+   detail.value = null
+   myTaskId.value = null
+   myPendingItem.value = null
+   try {
+     const [detailRes, pendingRes] = await Promise.all([
+       inboxApi.detail(props.instanceId),
+-      inboxApi.pending(),
++      inboxApi.pending('expanded'),
+     ])
+     detail.value = (detailRes as any).data as InboxDetail
+     const pendingList: PendingItem[] =
+       ((pendingRes as any).data as PendingItem[]) || []
+     const match = pendingList.find((p) => p.instanceId === props.instanceId)
+     myTaskId.value = match?.taskId ?? null
+     myPendingItem.value = match ?? null
+     formData.value = safeParseObject(detail.value?.currentDataJson)
+   } catch {
+     // HTTP errors already shown by the http interceptor
+diff --git a/cp6.web/src/views/oa/inbox/InboxPending.vue b/cp6.web/src/views/oa/inbox/InboxPending.vue
+index 2968890..6e8c6b0 100644
+--- a/cp6.web/src/views/oa/inbox/InboxPending.vue
++++ b/cp6.web/src/views/oa/inbox/InboxPending.vue
+@@ -1,18 +1,22 @@
+ <template>
+   <div class="inbox-pending">
+     <el-tabs v-model="activeTab" @tab-change="onTabChange">
+       <!-- 待審核 -->
+       <el-tab-pane :label="t('oa.pending.toReview')" name="review">
+         <div class="table-toolbar">
+           <CpTag>{{ t('共 {n} 条', { n: reviewRows.length }) }}</CpTag>
+           <el-button :icon="Refresh" circle size="small" :loading="reviewLoading" @click="loadReview" />
++          <el-radio-group v-model="rowMode" size="small" class="rowmode-toggle" @change="onRowModeChange">
++            <el-radio-button label="merged">{{ t('oa.inbox.rowMode.merged') }}</el-radio-button>
++            <el-radio-button label="expanded">{{ t('oa.inbox.rowMode.expanded') }}</el-radio-button>
++          </el-radio-group>
+         </div>
+ 
+         <!-- Batch action bar -->
+         <div v-if="selected.length" class="batch-bar">
+           <span class="batch-info">{{ t('oa.pending.selected', { n: selected.length }) }}</span>
+           <el-input
+             v-model="batchComment"
+             :placeholder="t('oa.pending.commentHint')"
+             size="small"
+             style="width: 220px"
+@@ -117,20 +121,22 @@
+   </div>
+ </template>
+ 
+ <script setup lang="ts">
+ import { nextTick, onMounted, ref, watch } from 'vue'
+ import { useI18n } from 'vue-i18n'
+ import { ElMessage } from 'element-plus'
+ import { Refresh } from '@element-plus/icons-vue'
+ import type { ElTable } from 'element-plus'
+ import { inboxApi } from '@/api/oa/inbox'
++import { prefApi } from '@/api/oa/pref'
++import { parseRowMode } from '@/views/oa/inbox/inboxModel'
+ import CpTag from '@/components/base/CpTag.vue'
+ import CpEmpty from '@/components/base/CpEmpty.vue'
+ import type { PendingItem, CcItem, BatchResultItem } from '@/types/oa/inbox'
+ import { useBreakpoint } from '@/composables/useBreakpoint'
+ 
+ const { t } = useI18n()
+ const emit = defineEmits<{ 'open-detail': [id: string] }>()
+ const { isMobile } = useBreakpoint()
+ 
+ /** 移动端卡片多选：直接维护同一 selected 数组（批量条 doBatch 复用零改动） */
+@@ -152,24 +158,45 @@ function onTabChange(name: string | number) {
+ }
+ 
+ // ── Review tab ──────────────────────────────────────────────────
+ const reviewRows = ref<PendingItem[]>([])
+ const reviewLoading = ref(false)
+ const reviewTableRef = ref<InstanceType<typeof ElTable> | null>(null)
+ const selected = ref<PendingItem[]>([])
+ const batchComment = ref('')
+ const batchActing = ref(false)
+ 
++// ── rowMode（wfs-inbox-ux §5：切换即写回偏好 + 重载列表）──
++const rowMode = ref<'merged' | 'expanded'>('merged')
++
++async function initRowMode() {
++  try {
++    const res: any = await prefApi.get()
++    rowMode.value = parseRowMode(res.data?.prefsJson)
++  } catch {
++    // 默认 merged
++  }
++}
++
++async function onRowModeChange() {
++  try {
++    await prefApi.saveMerge(JSON.stringify({ rowMode: rowMode.value }))   // 顶层键合并：不碰 notify/pageSize 等
++  } catch {
++    // HTTP interceptor auto-toasts；写回失败不阻塞本次切换显示
++  }
++  await loadReview()
++}
++
+ async function loadReview() {
+   reviewLoading.value = true
+   try {
+-    const res = await inboxApi.pending()
++    const res = await inboxApi.pending(rowMode.value)
+     reviewRows.value = ((res as any).data as PendingItem[]) || []
+   } finally {
+     reviewLoading.value = false
+   }
+ }
+ 
+ function onSelectionChange(rows: PendingItem[]) {
+   selected.value = rows
+ }
+ 
+@@ -244,33 +271,39 @@ async function onCcRowClick(row: CcItem) {
+     // ignore
+   }
+   emit('open-detail', row.instanceId)
+ }
+ 
+ // ── Helpers ─────────────────────────────────────────────────────
+ function formatTime(s: string): string {
+   return s ? s.replace('T', ' ').slice(0, 19) : ''
+ }
+ 
+-onMounted(loadReview)
++onMounted(async () => {
++  await initRowMode()
++  await loadReview()
++})
+ </script>
+ 
+ <style scoped>
+ .inbox-pending {
+   padding: 0;
+ }
+ .table-toolbar {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 8px;
+ }
++.rowmode-toggle {
++  margin-left: auto;
++}
+ .batch-bar {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   padding: 8px 12px;
+   background: var(--cp-brand-bg);
+   border: 1px solid color-mix(in srgb, var(--cp-brand) 24%, transparent);
+   border-radius: var(--cp-r-sm);
+   margin-bottom: 8px;
+ }
+diff --git a/cp6.web/src/views/oa/inbox/inboxModel.test.ts b/cp6.web/src/views/oa/inbox/inboxModel.test.ts
+index eba092d..92591bd 100644
+--- a/cp6.web/src/views/oa/inbox/inboxModel.test.ts
++++ b/cp6.web/src/views/oa/inbox/inboxModel.test.ts
+@@ -1,12 +1,12 @@
+ import { describe, it, expect } from 'vitest'
+-import { formToStatusText, instanceStatusType, mergeTimeline, groupByBranch } from './inboxModel'
++import { formToStatusText, instanceStatusType, mergeTimeline, groupByBranch, parseRowMode } from './inboxModel'
+ import type { TimelineRow, ForecastStep } from '@/types/oa/inbox'
+ 
+ describe('inboxModel', () => {
+   it('formToStatusText maps known codes', () => {
+     expect(formToStatusText(0)).toBe('oa.formto.pending')
+     expect(formToStatusText(1)).toBe('oa.formto.approved')
+     expect(formToStatusText(6)).toBe('oa.formto.voided')
+   })
+ 
+   it('instanceStatusType maps to el-tag types', () => {
+@@ -26,10 +26,24 @@ describe('inboxModel', () => {
+     expect(merged[1]!.nodeId).toBe('n2')
+   })
+ 
+   it('groupByBranch groups rows by tokenId', () => {
+     const rows: any[] = [{ tokenId: 't1', nodeId: 'a' }, { tokenId: 't1', nodeId: 'b' }, { tokenId: 't2', nodeId: 'c' }]
+     const groups = groupByBranch(rows)
+     expect(groups.size).toBe(2)
+     expect(groups.get('t1')).toHaveLength(2)
+   })
+ })
++
++describe('parseRowMode', () => {
++  it('缺省/缺键/非法/畸形 → merged', () => {
++    expect(parseRowMode(undefined)).toBe('merged')
++    expect(parseRowMode('')).toBe('merged')
++    expect(parseRowMode('{}')).toBe('merged')
++    expect(parseRowMode('{"rowMode":"weird"}')).toBe('merged')
++    expect(parseRowMode('NOT_JSON{{{')).toBe('merged')
++  })
++  it('expanded 显式识别', () => {
++    expect(parseRowMode('{"rowMode":"expanded"}')).toBe('expanded')
++    expect(parseRowMode('{"rowMode":"merged"}')).toBe('merged')
++  })
++})
+diff --git a/cp6.web/src/views/oa/inbox/inboxModel.ts b/cp6.web/src/views/oa/inbox/inboxModel.ts
+index f6bde95..b221118 100644
+--- a/cp6.web/src/views/oa/inbox/inboxModel.ts
++++ b/cp6.web/src/views/oa/inbox/inboxModel.ts
+@@ -39,10 +39,21 @@ export function mergeTimeline(rows: TimelineRow[], forecast: ForecastStep[]): Me
+ 
+ /** 按 TokenId 分支分组（并行履历各成一串；无 token 归 '_'）。 */
+ export function groupByBranch<T extends { tokenId?: string }>(rows: T[]): Map<string, T[]> {
+   const m = new Map<string, T[]>()
+   for (const r of rows) {
+     const k = r.tokenId ?? '_'
+     ;(m.get(k) ?? m.set(k, []).get(k)!).push(r)
+   }
+   return m
+ }
++
++/** rowMode 显示偏好解析（wfs-inbox-ux §5）：PrefsJson 顶层 rowMode 键；缺省/非法/畸形 → merged。 */
++export function parseRowMode(prefsJson: string | undefined): 'merged' | 'expanded' {
++  if (!prefsJson) return 'merged'
++  try {
++    const parsed = JSON.parse(prefsJson)
++    return parsed?.rowMode === 'expanded' ? 'expanded' : 'merged'
++  } catch {
++    return 'merged'
++  }
++}

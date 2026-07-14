@@ -1,0 +1,165 @@
+# Review package: ed162a8..e7a9ce6
+
+## Commits
+e7a9ce6 feat(wfs-inbox): E-T1 I18nOaInboxUxScreenSeed 五语39键+concat
+
+## Files changed
+ .superpowers/sdd/w4-ET1-report.md          | 45 +++++++++++++++++++
+ CP6.WebApi/Program.cs                      |  1 +
+ CP6.WebApi/Seed/I18nOaInboxUxScreenSeed.cs | 70 ++++++++++++++++++++++++++++++
+ 3 files changed, 116 insertions(+)
+
+## Diff
+diff --git a/.superpowers/sdd/w4-ET1-report.md b/.superpowers/sdd/w4-ET1-report.md
+new file mode 100644
+index 0000000..0806585
+--- /dev/null
++++ b/.superpowers/sdd/w4-ET1-report.md
+@@ -0,0 +1,45 @@
++# Task E-T1 报告 — I18nOaInboxUxScreenSeed 五语 seed + Program.cs concat
++
++## 状态
++DONE。五语 i18n seed 文件已建、Program.cs concat 链已接线、全量测试绿、迁移洁净。
++
++## 交付文件（仅本任务两文件 + 本报告）
++- 新建 `CP6.WebApi/Seed/I18nOaInboxUxScreenSeed.cs`（39 键，五列 ZhCN/ZhTW/En/Ja/Ko，ja/ko 真译）
++- 修改 `CP6.WebApi/Program.cs`（concat 链尾部追加一行，在 `I18nSpaceScreenSeed` 之后；尾部既有 `.Where(!existingKeys)` + `GroupBy(LangKey)` 双层去重兜底）
++
++## 真实键数 = 39（计划估计 39，双向对账吻合）
++主控交接注记提示 branchPruned 是计划后长出的第 5 行「键数可能 >39」，但计划附带的 seed 清单已含 branchPruned，故最终确为 39，无偏差。
++
++## 键面权威 = 四波实际 t()/错误码引用（双向 grep 对账，零缺零孤儿）
++
++| 前缀 | 键数 | 消费来源（实际引用） | seed 行 |
++|---|---|---|---|
++| oa.notify.matrix.* | 7 | InboxSettings.vue（colType/colInApp/colEmail/unsupported/reset/resetOk/saveOk） | ✅ 7/7 |
++| oa.notify.type.* | 5 | InboxSettings.vue:51 `t('oa.notify.type.'+row.typeKey)`；typeKey 源自后端 `NotifyMatrix.Rows()`：todoCreated/flowApproved/flowRejected/timeout/branchPruned | ✅ 5/5 |
++| oa.bt.* | 23 | BatchTransferDialog.vue（20）+ FlowAdmin.vue:12 entry + InboxService.cs 三错误码 errSameUser/errTargetInvalid/errTooMany | ✅ 23/23 |
++| oa.inbox.rowMode.* | 2 | InboxPending.vue:10-11（merged/expanded） | ✅ 2/2 |
++| oa.inbox.mobileFilter | 1 | InboxDone.vue:26,31 | ✅ 1/1 |
++| oa.pref.errBadJson | 1 | PrefService.cs:57,61（抛出） | ✅ 1/1 |
++| **合计** | **39** | | **✅ 39/39** |
++
++### 逐键对账（零孤儿：每 seed 行都有消费者）
++- **通知矩阵 7 键**：colType, colInApp, colEmail, unsupported, reset, resetOk, saveOk — 全部 InboxSettings.vue 实引。
++- **通知类型 5 键**：todoCreated, flowApproved, flowRejected, timeout, branchPruned — 与后端 `NotifyMatrix.Rows()` 反射生成的 5 个 TypeKey 逐位对齐（`NotifyMatrix.cs:40-44` 支持映射表五行）。矩阵行由后端 API 数据驱动，故键源为后端权威。
++- **oa.bt 23 键**：entry, title, fromUser, toUser, comment, commentHint, filterFlowKey, filterBefore, preview, previewTotal, previewEmpty, confirm, resultSummary, allOk, colTask, colFlow, colError, retry, retryOk, retryGone（前端 20）+ errSameUser, errTargetInvalid, errTooMany（后端 InboxService.cs:351/354/358 抛出）。
++  - 注：errSameUser/errTargetInvalid 前端无 t() 引用（经拦截器 toast 呈现后端错误码）；errTooMany 前端仅 BatchTransferDialog.vue:177 注释提及，实际由拦截器 toast。三者均须播种。
++- **rowMode 2 + mobileFilter 1 + errBadJson 1** — 全部实引/实抛。
++
++### 去重（零冲突）
++- 全部为新前缀（`oa.notify.matrix.*` / `oa.notify.type.*` / `oa.bt.*` / `oa.inbox.rowMode.*` / `oa.inbox.mobileFilter` / `oa.pref.errBadJson`）。
++- `CP6.WebApi/**/*.cs` 全库 grep 这些前缀 → 除本 seed 外零命中，既有 seed（oa.notify.settings.*/oa.transfer.*/oa.flowadmin.*/common.* 等）无一撞键。
++- SeedLangs insert-only：全新键在已部署库启动时洁净套用，无需 SQL 补丁。
++
++## 门禁验证
++1. `dotnet build CP6.WebApi` → **Build succeeded, 0 Error**（1 既有 warning，非本任务）。
++2. `dotnet ef migrations has-pending-model-changes` → **No changes**（零迁移）。
++3. `dotnet test CP6.slnx` → **Passed! Failed: 0, Passed: 2028, Skipped: 5, Total: 2033**（精确匹配基线 2028/5）。
++4. 双向对账表见上（零缺零孤儿，真实键数 39）。
++
++## 关注点
++- 无。seed 纯新键 insert-only，部署库启动即生效，无回填风险。
++- branchPruned 类型的 IsEnabled 后端已默认双通道 true（NotifyMatrix.cs:44），前端 t 标签本 seed 已备；生产者 `IWfNotifier.BranchPrunedAsync` 由 hardening 波接入后即端到端可用，标签无需再改。
+diff --git a/CP6.WebApi/Program.cs b/CP6.WebApi/Program.cs
+index ecd8ed6..34a7bc5 100644
+--- a/CP6.WebApi/Program.cs
++++ b/CP6.WebApi/Program.cs
+@@ -1954,20 +1954,21 @@ using (var scope = app.Services.CreateScope())
+             .Concat(CP6.WebApi.Seed.I18nOaInboxScreenSeed.Items)   // OA Phase B 电子表单信箱 oa.*/E-WF-001~008/nav.733/734/740
+             .Concat(CP6.WebApi.Seed.I18nOaAdvancedScreenSeed.Items) // OA Phase C 填單/查詢/設定/轉交 oa.catalog.*/oa.initiate.*/oa.settings.*/oa.transfer.*/nav.735/736/737
+             .Concat(CP6.WebApi.Seed.I18nOaDesignerScreenSeed.Items) // OA Phase C′ 流程设计器 oa.designer.*/nav.738
+             .Concat(CP6.WebApi.Seed.I18nOaNotifyScreenSeed.Items)  // OA Phase D-1 通知中心 oa.notify.*/oa.notify.settings.*
+             .Concat(CP6.WebApi.Seed.I18nOaSerialSignScreenSeed.Items)  // WFS 串簽 退回选择器 oa.detail.sendback.* + oa.sendback.* + oa.timeline.sentBack + 设计器档位 oa.designer.stage.* + E-WF-011/012/013
+             .Concat(CP6.WebApi.Seed.I18nOaApproverScreenSeed.Items)  // 审批人解析高级策略 oa.designer.strategy.*/oa.approverMap.*/nav.739/E-WF-014/015
+             .Concat(CP6.WebApi.Seed.I18nOaServiceTaskScreenSeed.Items)  // WFS 服务任务 oa.designer.svc.* + oa.designer.errServiceConfig + E-WF-016/017/018
+             .Concat(CP6.WebApi.Seed.I18nOaKernelHardeningScreenSeed.Items)  // 内核 hardening oa.designer.gw.* + errInclusive*/errBranchReject + E-WF-019/020/021
+             .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
+             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
++            .Concat(CP6.WebApi.Seed.I18nOaInboxUxScreenSeed.Items)  // WFS 波④ 信箱体验：通知矩阵/批量改派/rowMode/移动端 oa.notify.matrix.*/oa.notify.type.*/oa.bt.*/oa.inbox.rowMode.*/oa.inbox.mobileFilter/oa.pref.errBadJson
+             .Where(i => !existingKeys.Contains(i.LangKey))
+             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
+             .ToList();
+         if (toAdd.Count > 0)
+         {
+             SeedLangs(toAdd.ToArray());
+             db.SaveChanges();
+         }
+ 
+         // vue-i18n の特殊文字（@ | { }）はメッセージ編集でコンパイル失敗→画面/タブが空白になる。
+diff --git a/CP6.WebApi/Seed/I18nOaInboxUxScreenSeed.cs b/CP6.WebApi/Seed/I18nOaInboxUxScreenSeed.cs
+new file mode 100644
+index 0000000..da5e0b8
+--- /dev/null
++++ b/CP6.WebApi/Seed/I18nOaInboxUxScreenSeed.cs
+@@ -0,0 +1,70 @@
++using CP6.Entity.DomainModels.Sys;
++
++namespace CP6.WebApi.Seed;
++
++/// <summary>WFS 波④ 信箱体验增强（wfs-inbox-ux）五语键：通知矩阵（A-T4）/ 批量改派（B-T3）/
++/// rowMode + 移动端（C-T1·C-T2·D-T2）/ 后端错误码（InboxService 三改派错误 + PrefService errBadJson）。
++/// 键面以四波实际 t()/错误码引用为权威——双向 grep 对账零缺零孤儿，真实键数 = 39：
++///   oa.notify.matrix.* ×7（InboxSettings.vue 矩阵卡片）
++/// + oa.notify.type.*  ×5（数据驱动 t('oa.notify.type.'+row.typeKey)；typeKey 源自后端 NotifyMatrix.Rows()：
++///     todoCreated/flowApproved/flowRejected/timeout/branchPruned——branchPruned 为波②反射轴自增第 5 行）
++/// + oa.bt.*           ×23（BatchTransferDialog.vue + FlowAdmin.vue 入口 + InboxService 三错误码 errSameUser/errTargetInvalid/errTooMany）
++/// + oa.inbox.rowMode.* ×2（InboxPending.vue 合并/逐任务开关）
++/// + oa.inbox.mobileFilter ×1（InboxDone.vue 移动端筛选）
++/// + oa.pref.errBadJson ×1（PrefService 抛出）。
++/// 全部新前缀，与既有 seed 全库 grep 零冲突；SeedLangs 对既有键 insert-only，部署库洁净套用。
++/// Program.cs concat 链尾部 .Where(!existingKeys)+GroupBy(LangKey) 双层去重兜底。</summary>
++public static class I18nOaInboxUxScreenSeed
++{
++    public static readonly Sys_Lang[] Items = new[]
++    {
++        // ── 通知矩阵（设置页 notify tab，A-T4）──
++        new Sys_Lang { LangKey = "oa.notify.matrix.colType", ZhCN = "通知类型", ZhTW = "通知類型", En = "Type", Ja = "通知タイプ", Ko = "알림 유형" },
++        new Sys_Lang { LangKey = "oa.notify.matrix.colInApp", ZhCN = "站内", ZhTW = "站內", En = "In-app", Ja = "アプリ内", Ko = "앱 내" },
++        new Sys_Lang { LangKey = "oa.notify.matrix.colEmail", ZhCN = "邮件", ZhTW = "郵件", En = "Email", Ja = "メール", Ko = "이메일" },
++        new Sys_Lang { LangKey = "oa.notify.matrix.unsupported", ZhCN = "该类型暂无此通道动作", ZhTW = "該類型暫無此通道動作", En = "No action wired for this channel", Ja = "このチャネルの動作は未接続です", Ko = "이 채널에 연결된 동작이 없습니다" },
++        new Sys_Lang { LangKey = "oa.notify.matrix.reset", ZhCN = "恢复默认", ZhTW = "恢復預設", En = "Reset to default", Ja = "デフォルトに戻す", Ko = "기본값 복원" },
++        new Sys_Lang { LangKey = "oa.notify.matrix.resetOk", ZhCN = "已恢复默认（全部开启）", ZhTW = "已恢復預設（全部開啟）", En = "Reset to default (all on)", Ja = "デフォルト（すべてオン）に戻しました", Ko = "기본값(모두 켜짐)으로 복원했습니다" },
++        new Sys_Lang { LangKey = "oa.notify.matrix.saveOk", ZhCN = "通知设定已保存", ZhTW = "通知設定已儲存", En = "Notification settings saved", Ja = "通知設定を保存しました", Ko = "알림 설정을 저장했습니다" },
++
++        // ── 通知类型行标签（数据驱动 t('oa.notify.type.'+typeKey)；typeKey 源自后端 NotifyMatrix.Rows()）──
++        new Sys_Lang { LangKey = "oa.notify.type.todoCreated", ZhCN = "新待办", ZhTW = "新待辦", En = "New to-do", Ja = "新規TODO", Ko = "새 할 일" },
++        new Sys_Lang { LangKey = "oa.notify.type.flowApproved", ZhCN = "签核通过", ZhTW = "簽核通過", En = "Flow approved", Ja = "承認完了", Ko = "승인 완료" },
++        new Sys_Lang { LangKey = "oa.notify.type.flowRejected", ZhCN = "流程驳回", ZhTW = "流程駁回", En = "Flow rejected", Ja = "却下", Ko = "반려" },
++        new Sys_Lang { LangKey = "oa.notify.type.timeout", ZhCN = "超时提醒", ZhTW = "超時提醒", En = "Timeout reminder", Ja = "タイムアウト通知", Ko = "시간 초과 알림" },
++        new Sys_Lang { LangKey = "oa.notify.type.branchPruned", ZhCN = "分支剪枝", ZhTW = "分支剪枝", En = "Branch pruned", Ja = "ブランチ剪定", Ko = "분기 정리" },
++
++        // ── 偏好保存（PrefService 抛出）──
++        new Sys_Lang { LangKey = "oa.pref.errBadJson", ZhCN = "偏好格式错误", ZhTW = "偏好格式錯誤", En = "Invalid preferences payload", Ja = "設定の形式が不正です", Ko = "설정 형식이 잘못되었습니다" },
++
++        // ── 批量改派（B-T3）──
++        new Sys_Lang { LangKey = "oa.bt.entry", ZhCN = "批量改派", ZhTW = "批次改派", En = "Batch transfer", Ja = "一括再割当", Ko = "일괄 재배정" },
++        new Sys_Lang { LangKey = "oa.bt.title", ZhCN = "在途批量改派", ZhTW = "在途批次改派", En = "Batch transfer pending tasks", Ja = "進行中タスクの一括再割当", Ko = "진행 중 작업 일괄 재배정" },
++        new Sys_Lang { LangKey = "oa.bt.fromUser", ZhCN = "转出人", ZhTW = "轉出人", En = "From user", Ja = "移譲元", Ko = "이관자" },
++        new Sys_Lang { LangKey = "oa.bt.toUser", ZhCN = "接收人", ZhTW = "接收人", En = "To user", Ja = "移譲先", Ko = "수신자" },
++        new Sys_Lang { LangKey = "oa.bt.comment", ZhCN = "备注", ZhTW = "備註", En = "Comment", Ja = "コメント", Ko = "비고" },
++        new Sys_Lang { LangKey = "oa.bt.commentHint", ZhCN = "例如：离职移交", ZhTW = "例如：離職移交", En = "e.g. offboarding handover", Ja = "例：退職引継ぎ", Ko = "예: 퇴사 인수인계" },
++        new Sys_Lang { LangKey = "oa.bt.filterFlowKey", ZhCN = "限定流程", ZhTW = "限定流程", En = "Flow filter", Ja = "対象フロー", Ko = "대상 플로우" },
++        new Sys_Lang { LangKey = "oa.bt.filterBefore", ZhCN = "此时间前发出", ZhTW = "此時間前發出", En = "Sent before", Ja = "この時刻以前に送付", Ko = "이 시각 이전 발송" },
++        new Sys_Lang { LangKey = "oa.bt.preview", ZhCN = "预览待转清单", ZhTW = "預覽待轉清單", En = "Preview", Ja = "対象をプレビュー", Ko = "대상 미리보기" },
++        new Sys_Lang { LangKey = "oa.bt.previewTotal", ZhCN = "待转 {n} 条", ZhTW = "待轉 {n} 條", En = "{n} task(s) to transfer", Ja = "移譲対象 {n} 件", Ko = "이관 대상 {n}건" },
++        new Sys_Lang { LangKey = "oa.bt.previewEmpty", ZhCN = "无符合条件的待办", ZhTW = "無符合條件的待辦", En = "No matching pending tasks", Ja = "条件に合うタスクがありません", Ko = "조건에 맞는 작업이 없습니다" },
++        new Sys_Lang { LangKey = "oa.bt.confirm", ZhCN = "确认改派", ZhTW = "確認改派", En = "Transfer", Ja = "再割当を実行", Ko = "재배정 실행" },
++        new Sys_Lang { LangKey = "oa.bt.resultSummary", ZhCN = "共 {total} 条，成功 {ok} 条，失败 {fail} 条", ZhTW = "共 {total} 條，成功 {ok} 條，失敗 {fail} 條", En = "{total} total, {ok} succeeded, {fail} failed", Ja = "全 {total} 件、成功 {ok} 件、失敗 {fail} 件", Ko = "총 {total}건, 성공 {ok}건, 실패 {fail}건" },
++        new Sys_Lang { LangKey = "oa.bt.allOk", ZhCN = "全部改派成功", ZhTW = "全部改派成功", En = "All transferred", Ja = "すべて再割当しました", Ko = "모두 재배정했습니다" },
++        new Sys_Lang { LangKey = "oa.bt.colTask", ZhCN = "任务", ZhTW = "任務", En = "Task", Ja = "タスク", Ko = "작업" },
++        new Sys_Lang { LangKey = "oa.bt.colFlow", ZhCN = "流程", ZhTW = "流程", En = "Flow", Ja = "フロー", Ko = "플로우" },
++        new Sys_Lang { LangKey = "oa.bt.colError", ZhCN = "失败原因", ZhTW = "失敗原因", En = "Error", Ja = "失敗理由", Ko = "실패 사유" },
++        new Sys_Lang { LangKey = "oa.bt.retry", ZhCN = "重试", ZhTW = "重試", En = "Retry", Ja = "再試行", Ko = "재시도" },
++        new Sys_Lang { LangKey = "oa.bt.retryOk", ZhCN = "重试成功", ZhTW = "重試成功", En = "Retry succeeded", Ja = "再試行に成功しました", Ko = "재시도 성공" },
++        new Sys_Lang { LangKey = "oa.bt.retryGone", ZhCN = "该任务已被办结或转走", ZhTW = "該任務已被辦結或轉走", En = "Task already handled or transferred", Ja = "タスクは既に処理済みまたは移譲済みです", Ko = "이미 처리되었거나 이관된 작업입니다" },
++        new Sys_Lang { LangKey = "oa.bt.errSameUser", ZhCN = "转出人与接收人不能相同", ZhTW = "轉出人與接收人不能相同", En = "From and to user must differ", Ja = "移譲元と移譲先は同一にできません", Ko = "이관자와 수신자는 같을 수 없습니다" },
++        new Sys_Lang { LangKey = "oa.bt.errTargetInvalid", ZhCN = "接收人不存在或已停用", ZhTW = "接收人不存在或已停用", En = "Target user missing or disabled", Ja = "移譲先が存在しないか無効です", Ko = "수신자가 없거나 비활성화되었습니다" },
++        new Sys_Lang { LangKey = "oa.bt.errTooMany", ZhCN = "待转数量超过单批上限 500，请用过滤条件分批", ZhTW = "待轉數量超過單批上限 500，請用過濾條件分批", En = "Over the 500-per-batch cap, narrow with filters", Ja = "1回の上限500件を超えています。条件で分割してください", Ko = "1회 상한 500건을 초과했습니다. 필터로 나눠 주세요" },
++
++        // ── rowMode + 移动端（C-T1 / C-T2 / D-T2）──
++        new Sys_Lang { LangKey = "oa.inbox.rowMode.merged", ZhCN = "合并显示", ZhTW = "合併顯示", En = "Merged", Ja = "集約表示", Ko = "병합 표시" },
++        new Sys_Lang { LangKey = "oa.inbox.rowMode.expanded", ZhCN = "逐任务显示", ZhTW = "逐任務顯示", En = "Per task", Ja = "タスク別表示", Ko = "작업별 표시" },
++        new Sys_Lang { LangKey = "oa.inbox.mobileFilter", ZhCN = "筛选", ZhTW = "篩選", En = "Filters", Ja = "絞り込み", Ko = "필터" },
++    };
++}

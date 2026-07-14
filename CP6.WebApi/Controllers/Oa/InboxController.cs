@@ -21,14 +21,16 @@ public class InboxController : LocalizedControllerBase
     private readonly ICurrentPermissionContext _ctx;
     private readonly IDelegateService _delegate;
     private readonly IFlowEngine _engine;
+    private readonly IPrefService _pref;
 
     public InboxController(IInboxService inbox, ICurrentPermissionContext ctx,
-        IDelegateService @delegate, IFlowEngine engine)
+        IDelegateService @delegate, IFlowEngine engine, IPrefService pref)
     {
         _inbox = inbox;
         _ctx = ctx;
         _delegate = @delegate;
         _engine = engine;
+        _pref = pref;
     }
 
     private async Task<Guid> CurrentUserIdAsync() => (await _ctx.GetAsync()).UserId;
@@ -53,12 +55,16 @@ public class InboxController : LocalizedControllerBase
     // ── 未处理 ──
 
     [HttpGet("pending")]
-    public async Task<IActionResult> Pending()
+    public async Task<IActionResult> Pending([FromQuery] string? rowMode = null,
+        [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
     {
         try
         {
             var (eff, _) = await EffectiveAsync();
-            return Ok2(await _inbox.PendingAsync(eff));
+            // 显示偏好属查看者本人（me），与 act-as 被代理人（eff）无关
+            var me = await CurrentUserIdAsync();
+            var mode = rowMode is "merged" or "expanded" ? rowMode : await _pref.GetRowModeAsync(me);
+            return Ok2(await _inbox.PendingAsync(eff, mode, page, pageSize));
         }
         catch (InvalidOperationException e) { return Err(e); }
     }
@@ -195,6 +201,38 @@ public class InboxController : LocalizedControllerBase
             var (eff, _) = await EffectiveAsync();   // 退回人=有效用户（act-as 时=被代理人）
             await _engine.SendBackAsync(r.TaskId, eff, new SendBackTarget(r.Kind, r.NodeId), r.Comment);
             return Ok2(true);
+        }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
+
+    // ── 在途批量转单（wfs-inbox-ux §3；权限点 = spec OA.Inbox.BatchTransfer → (oa-inbox, batch-transfer)）──
+    // 审计：OperLogFilter 全局记 POST 请求体（操作者/from/to）+ 引擎 Wf_FlowHistory/Wf_FlowFormTo 逐条记录（R3）。
+
+    public record BatchTransferFilterReq(string? FlowKey, DateTime? BeforeUtc, List<Guid>? TaskIds);
+    public record BatchTransferReq(Guid FromUserId, Guid ToUserId, string? Comment, BatchTransferFilterReq? Filter);
+
+    private static BatchTransferFilter? ToFilter(BatchTransferFilterReq? f) =>
+        f is null ? null : new BatchTransferFilter(f.FlowKey, f.BeforeUtc, f.TaskIds);
+
+    [HttpPost("batch-transfer")]
+    [RequirePermission("oa-inbox", "batch-transfer")]
+    public async Task<IActionResult> BatchTransfer([FromBody] BatchTransferReq r)
+    {
+        try
+        {
+            var me = await CurrentUserIdAsync();   // 操作者=登录管理员本人（管理动作不走 act-as）
+            return Ok2(await _inbox.BatchTransferAsync(me, r.FromUserId, r.ToUserId, r.Comment, ToFilter(r.Filter)));
+        }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
+
+    [HttpPost("batch-transfer/preview")]
+    [RequirePermission("oa-inbox", "batch-transfer")]
+    public async Task<IActionResult> BatchTransferPreview([FromBody] BatchTransferReq r)
+    {
+        try
+        {
+            return Ok2(await _inbox.BatchTransferPreviewAsync(r.FromUserId, ToFilter(r.Filter)));
         }
         catch (InvalidOperationException e) { return Err(e); }
     }

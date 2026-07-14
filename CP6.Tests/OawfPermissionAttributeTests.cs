@@ -12,15 +12,16 @@ namespace CP6.Tests;
 /// **两个命名空间** Controllers.Oa（12）+ Controllers.Wf（5）= 17 controller，锁死
 /// 「未来新增 OA/WF 写端点漏贴权限键即红」。与已合并的 <c>WmsPermissionAttributeTests</c> /
 /// <c>ErpPermissionAttributeTests</c> / <c>MesPermissionAttributeTests</c> 同型三件套。
-/// 真相源：docs/seeds/oawf-permission-keys.md（17 控制器扫描面 / 39 非GET端点 / 37 贴点 / 2 只读 POST 豁免）。
+/// 真相源：docs/seeds/oawf-permission-keys.md（17 控制器扫描面 / 41 非GET端点 / 39 贴点 / 2 只读 POST 豁免；
+/// 39 = 37 M-OA/WF·F-T2 + 2 波④ B-T2 batch-transfer/preview）。
 /// **F-T2（WFS 波③ 事件触发，E-T1 交接票）**：FlowTriggerAdminController 由 Controllers.Integration 收编回
 /// Controllers.Oa 纳入本守卫，贡献 6 变更端点（Edit×5 + View×1=CronPreview），计数 16→17 / 贴点 31→37 / 33→39 非GET。
 ///
 /// ① discovery 守卫：断言扫到 17 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
 ///    谓词覆盖 **两个** 命名空间（Oa ∪ Wf），计数断言 17 防单侧空扫。
 /// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
-///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 37、
-///    豁免命中数精确 == 2（39 = 37 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
+///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 39、
+///    豁免命中数精确 == 2（41 = 39 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
 /// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
 ///    ^oa-[a-z0-9-]+$（连字符，禁下划线）。**注**：Wf 命名空间 5 控制器（Flow/Form/Task/AdvancedFlow/
 ///    Approval）无自己菜单行，其键锚定「消费页」OA 菜单，故 **全部键仍为 oa-* 前缀**（真相源 §一/§二）——
@@ -63,6 +64,8 @@ public class OawfPermissionAttributeTests
         "addsign",                                  // 高危键：oa-inbox:addsign 加签改审批链（§三）
         "delegate",                                 // 高危键：oa-settings:delegate 委派授权（合一 OA #5/#6 + AdvancedFlow #26，§三/§六注4）
         "form-save",                                // 高危键：oa-designer:form-save 表单定义保存（旧栈 Form.SaveDef，§三）
+        // WFS 波④ 信箱体验 B-T2：InboxController 新增 batch-transfer/preview 两个 POST，同贴 oa-inbox:batch-transfer。
+        "batch-transfer",                           // 高危键：oa-inbox:batch-transfer 在途批量改派（spec OA.Inbox.BatchTransfer；preview 同键，C8）
         // WFS 波③ 事件触发 F-T2（E-T1 交接票）：FlowTriggerAdminController 由 Integration 收编回 Controllers.Oa，
         // 纳入本 fail-closed 守卫扫描面。Edit=增改/启停/试发/重置key（5 端点），View=cron 预览（1 端点，POST）。
         "FlowTrigger.View", "FlowTrigger.Edit",     // oa-flow-admin:FlowTrigger.*（点式 action，与 spec §6 权限点名逐字一致）
@@ -154,8 +157,8 @@ public class OawfPermissionAttributeTests
         Assert.True(offenders.Count == 0,
             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
 
-        // 收口断言：贴点 37 + 豁免命中 2 = 全 39 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 端点。
-        Assert.Equal(37, taggedCount);
+        // 收口断言：贴点 39 + 豁免命中 2 = 全 41 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 端点 + B-T2 新增 2 端点。
+        Assert.Equal(39, taggedCount);
         Assert.Equal(2, exemptHit.Count);
     }
 

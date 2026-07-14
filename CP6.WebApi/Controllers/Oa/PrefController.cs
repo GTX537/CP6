@@ -39,7 +39,9 @@ public class PrefController : LocalizedControllerBase
 
     // ── 保存偏好 ──
 
-    public record SavePrefReq(string PrefsJson);
+    /// <summary>Merge=false：整串覆盖（既有行为不变）；Merge=true：服务端顶层键合并写（wfs-inbox-ux §6）。</summary>
+    /// <remarks>加默认参 Merge=false：既有前端只传 { prefsJson }，JSON 绑定缺字段取默认 → 既有调用方零变化。</remarks>
+    public record SavePrefReq(string PrefsJson, bool Merge = false);
 
     [HttpPost("save")]
     [RequirePermission("oa-settings", "edit")]
@@ -48,9 +50,15 @@ public class PrefController : LocalizedControllerBase
         try
         {
             var me = await CurrentUserIdAsync();
-            await _pref.SaveAsync(me, r.PrefsJson);
+            if (r.Merge) await _pref.SaveMergeAsync(me, r.PrefsJson);
+            else await _pref.SaveAsync(me, r.PrefsJson);
             return Ok2();
         }
         catch (InvalidOperationException e) { return Err(e); }
     }
+
+    // ── 通知矩阵元数据（类型轴 + 通道支持标志，驱动设置 UI 格子禁用）──
+
+    [HttpGet("notify-matrix")]
+    public IActionResult NotifyMatrixRows() => Ok2(NotifyMatrix.Rows());
 }

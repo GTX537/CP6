@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formToStatusText, instanceStatusType, mergeTimeline, groupByBranch } from './inboxModel'
+import { formToStatusText, instanceStatusType, mergeTimeline, groupByBranch, parseRowMode } from './inboxModel'
 import type { TimelineRow, ForecastStep } from '@/types/oa/inbox'
 
 describe('inboxModel', () => {
@@ -31,5 +31,19 @@ describe('inboxModel', () => {
     const groups = groupByBranch(rows)
     expect(groups.size).toBe(2)
     expect(groups.get('t1')).toHaveLength(2)
+  })
+})
+
+describe('parseRowMode', () => {
+  it('缺省/缺键/非法/畸形 → merged', () => {
+    expect(parseRowMode(undefined)).toBe('merged')
+    expect(parseRowMode('')).toBe('merged')
+    expect(parseRowMode('{}')).toBe('merged')
+    expect(parseRowMode('{"rowMode":"weird"}')).toBe('merged')
+    expect(parseRowMode('NOT_JSON{{{')).toBe('merged')
+  })
+  it('expanded 显式识别', () => {
+    expect(parseRowMode('{"rowMode":"expanded"}')).toBe('expanded')
+    expect(parseRowMode('{"rowMode":"merged"}')).toBe('merged')
   })
 })
