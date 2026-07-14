@@ -161,6 +161,10 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTriggerWorker>
 builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.SampleDataWritebackExecutor>(); // C-T2 样例 dataWriteback 执行器（设计器可见，黄金模板；纯计算回写，不落库）
+// A-T2 引擎基建①：工作日历纯查询服务 + WFS infra 配置（绑 Wfs 段，FireHour/保留期/时区）
+builder.Services.AddSingleton(builder.Configuration.GetSection("Wfs").Get<CP6.Core.Services.Wf.WfsInfraOptions>()
+    ?? new CP6.Core.Services.Wf.WfsInfraOptions());
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkdayCalculator, CP6.Core.Services.Wf.WorkdayCalculator>();
 
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
@@ -795,6 +799,17 @@ using (var scope = app.Services.CreateScope())
             TenantName = "默认租户",
             Enable = true
         });
+        db.SaveChanges();
+    }
+
+    // A-T2 引擎基建①：默认租户日本法定假日植入（2026–2027 共 35 日期，全 IsWorkday=false）。
+    // 每启动跑、幂等（按 (TenantId,Date) Any 去重）；置于默认租户 seed 之后，确保租户已落库。
+    {
+        foreach (var row in CP6.WebApi.Seed.JapaneseHolidaySeed.For(TenantContext.DefaultTenant))
+        {
+            if (!db.Sys_WorkCalendars.Any(c => c.TenantId == row.TenantId && c.Date == row.Date))
+                db.Sys_WorkCalendars.Add(row);
+        }
         db.SaveChanges();
     }
 
