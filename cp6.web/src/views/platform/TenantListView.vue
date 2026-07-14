@@ -119,6 +119,23 @@
         <el-form-item :label="t('platform.tenant.expire')">
           <el-date-picker v-model="editForm.expire" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
         </el-form-item>
+        <el-form-item :label="t('platform.tenant.timeZone')">
+          <el-select
+            v-model="editForm.timeZoneId"
+            filterable
+            clearable
+            :placeholder="t('platform.tenant.timeZonePlaceholder')"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="tz in TIMEZONE_OPTIONS"
+              :key="tz.value"
+              :label="tz.label"
+              :value="tz.value"
+            />
+          </el-select>
+          <div class="tz-hint">{{ t('platform.tenant.timeZoneHint') }}</div>
+        </el-form-item>
         <el-form-item :label="t('platform.tenant.remark')">
           <el-input v-model="editForm.remark" type="textarea" :rows="2" />
         </el-form-item>
@@ -137,6 +154,7 @@ import { useI18n } from 'vue-i18n'
 import { Search, Plus, CopyDocument } from '@element-plus/icons-vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { tenantApi } from '@/api/platform/tenant'
+import { TIMEZONE_OPTIONS, normalizeTimeZoneId } from '@/api/platform/timezones'
 import type { TenantRow, CreateTenantResult } from '@/types/platform/platform'
 
 const { t } = useI18n()
@@ -229,14 +247,29 @@ async function copyTempPwd() {
 // ── 编辑 ────────────────────────────────────────────
 const editVisible = ref(false)
 const saving = ref(false)
-const editForm = reactive({ id: '', name: '', expire: '' as string | null, remark: '' as string | null })
+const editForm = reactive({
+  id: '',
+  name: '',
+  expire: '' as string | null,
+  remark: '' as string | null,
+  timeZoneId: '' as string | null
+})
 
-function openEdit(row: TenantRow) {
+async function openEdit(row: TenantRow) {
   editForm.id = row.id
   editForm.name = row.tenantName
   editForm.expire = row.expireDate ? row.expireDate.slice(0, 10) : ''
   editForm.remark = ''
+  editForm.timeZoneId = ''
   editVisible.value = true
+  // 拉详情回填 remark + 当前时区（列表行不含此二者）
+  try {
+    const d = await tenantApi.get(row.id)
+    editForm.remark = d.remark ?? ''
+    editForm.timeZoneId = d.timeZoneId ?? ''
+  } catch {
+    // 详情拉取失败不阻断编辑（拦截器已提示）
+  }
 }
 
 async function doUpdate() {
@@ -245,7 +278,8 @@ async function doUpdate() {
     await tenantApi.update(editForm.id, {
       name: editForm.name.trim(),
       expire: editForm.expire || null,
-      remark: editForm.remark || null
+      remark: editForm.remark || null,
+      timeZoneId: normalizeTimeZoneId(editForm.timeZoneId)
     })
     editVisible.value = false
     ElMessage.success(t('platform.saved'))
@@ -311,5 +345,11 @@ onMounted(() => loadData())
   font-weight: 600;
   color: #b45309;
   letter-spacing: 0.04em;
+}
+.tz-hint {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--el-text-color-secondary);
 }
 </style>

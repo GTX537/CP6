@@ -184,6 +184,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.S
 builder.Services.AddSingleton(builder.Configuration.GetSection("Wfs").Get<CP6.Core.Services.Wf.WfsInfraOptions>()
     ?? new CP6.Core.Services.Wf.WfsInfraOptions());
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkdayCalculator, CP6.Core.Services.Wf.WorkdayCalculator>();
+builder.Services.AddScoped<CP6.Core.Services.Wf.ITenantClock, CP6.Core.Services.Wf.TenantClock>(); // E-T2 租户时区源（workdays/untilDate 本地时刻解释；Sys_Tenant.TimeZoneId→Wfs:DefaultTimeZone→服务器本地）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkCalendarService, CP6.Core.Services.Wf.WorkCalendarService>(); // A-T4 年历管理页后端（例外表 CRUD/空态导入日本假日）
 
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）

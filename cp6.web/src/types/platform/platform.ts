@@ -30,6 +30,7 @@ export interface TenantDetail {
   expireDate: string | null
   remark: string | null
   userCount: number
+  timeZoneId: string | null
 }
 
 export interface CreateTenantResult {

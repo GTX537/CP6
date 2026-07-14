@@ -70,7 +70,7 @@ public class TenantAdminService : ITenantAdminService
         var t = await _db.Sys_Tenants.FirstOrDefaultAsync(x => x.Id == id);
         if (t == null) return null;
         var userCount = await _db.Sys_Users.IgnoreQueryFilters().CountAsync(u => u.TenantId == id);
-        return new TenantDetail(t.Id, t.TenantCode, t.TenantName, t.Enable, t.ExpireDate, t.Remark, userCount);
+        return new TenantDetail(t.Id, t.TenantCode, t.TenantName, t.Enable, t.ExpireDate, t.Remark, userCount, t.TimeZoneId);
     }
 
     public async Task<CreateTenantResult> CreateAsync(string code, string name, DateTime? expire, string? remark, string adminUserName)
@@ -147,13 +147,23 @@ public class TenantAdminService : ITenantAdminService
         return new CreateTenantResult(tenant.Id, adminUserName, tempPwd);
     }
 
-    public async Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark)
+    public async Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId = null)
     {
         var t = await _db.Sys_Tenants.FirstOrDefaultAsync(x => x.Id == id)
             ?? throw new InvalidOperationException("E-SEC-032");
+        // E-T2：TimeZoneId 保存前校验（E-WF-028 家族）。空串/空白 → 清空（沿用 app 默认）；
+        // 非空且不可解析（既非 IANA 亦非 Windows id）→ 拒绝保存，不落任一字段。
+        var normalizedTz = string.IsNullOrWhiteSpace(timeZoneId) ? null : timeZoneId.Trim();
+        if (normalizedTz != null)
+        {
+            try { TimeZoneInfo.FindSystemTimeZoneById(normalizedTz); }
+            catch (Exception ex) when (ex is TimeZoneNotFoundException or InvalidTimeZoneException)
+            { throw new InvalidOperationException("E-WF-028"); }
+        }
         t.TenantName = name;
         t.ExpireDate = expire;
         t.Remark = remark;
+        t.TimeZoneId = normalizedTz;
         await _db.SaveChangesAsync();
 
         using (new TenantScope(_tenant, TenantContext.DefaultTenant))

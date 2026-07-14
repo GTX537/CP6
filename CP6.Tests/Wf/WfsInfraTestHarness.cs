@@ -1,12 +1,19 @@
 using System;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Tests;
+
+/// <summary>租户上下文桩（E-T2 TenantClock 测试用）：直接持一个可设定的 CurrentTenantId。</summary>
+internal sealed class StubTenantContext : ITenantContext
+{
+    public Guid CurrentTenantId { get; set; }
+}
 
 internal static class WfsInfraTestHarness
 {

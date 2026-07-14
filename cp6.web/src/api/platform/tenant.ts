@@ -24,7 +24,10 @@ export const tenantApi = {
   }): Promise<CreateTenantResult> {
     return http.post('/platform/tenant', body) as unknown as Promise<CreateTenantResult>
   },
-  update(id: string, body: { name: string; expire?: string | null; remark?: string | null }): Promise<unknown> {
+  update(
+    id: string,
+    body: { name: string; expire?: string | null; remark?: string | null; timeZoneId?: string | null }
+  ): Promise<unknown> {
     return http.put(`/platform/tenant/${id}`, body) as unknown as Promise<unknown>
   },
   suspend(id: string): Promise<unknown> {

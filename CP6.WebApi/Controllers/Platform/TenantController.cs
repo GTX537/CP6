@@ -61,12 +61,12 @@ public class TenantController : ControllerBase
     {
         try
         {
-            await _svc.UpdateAsync(id, req.Name, req.Expire, req.Remark);
+            await _svc.UpdateAsync(id, req.Name, req.Expire, req.Remark, req.TimeZoneId);
             return Ok(new { code = 0 });
         }
         catch (InvalidOperationException ex)
         {
-            throw new BizException(ex.Message);   // E-SEC-032（不存在）
+            throw new BizException(ex.Message);   // E-SEC-032（不存在）/ E-WF-028（时区不可解析）
         }
     }
 
@@ -101,5 +101,5 @@ public class TenantController : ControllerBase
     }
 
     public record CreateTenantRequest(string Code, string Name, DateTime? Expire, string? Remark, string AdminUserName);
-    public record UpdateTenantRequest(string Name, DateTime? Expire, string? Remark);
+    public record UpdateTenantRequest(string Name, DateTime? Expire, string? Remark, string? TimeZoneId = null);
 }
