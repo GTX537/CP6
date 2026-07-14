@@ -48,13 +48,28 @@ internal static class SubFlowVarsMapper
     }
 
     /// <summary>构造子实例 varsJson（spec §3.1 第 3 步）：SubVarsInJson 映射自父 vars ∪ {"item","itemIndex"}
-    /// （单实例 item==null 时不注入两键）。映射源缺失 → 该键写 null（子流程可空感知）。</summary>
+    /// （单实例 item==null 时不注入两键，映射源=纯父 vars）。映射源缺失 → 该键写 null（子流程可空感知）。
+    /// <para>★ 多实例：映射源上下文 = 父 vars 叠加逐元素 item/itemIndex，令 SubVarsInJson 可用 $.item/$.itemIndex
+    /// 引用当前元素（BPMN call-activity 逐实例注入口径；B-T2 复核回注测试坐实——原 A-T2 实现只对纯父 vars
+    /// 求值，与本方法契约「映射自父 vars ∪ {item,itemIndex}」不符，此处补正）。子 vars 仍显式带 item/itemIndex 两键。</para></summary>
     public static string BuildChildVars(string? subVarsInJson, string parentVarsJson, JsonNode? item, int? itemIndex)
     {
+        // 多实例：解析源上下文 = 父 vars ∪ {item,itemIndex}（供 $.item/$.itemIndex 映射引用）
+        string source = parentVarsJson;
+        if (item is not null)
+        {
+            JsonObject ctx;
+            try   { ctx = JsonNode.Parse(parentVarsJson)?.AsObject() ?? new JsonObject(); }
+            catch { ctx = new JsonObject(); }
+            ctx["item"] = item.DeepClone();
+            ctx["itemIndex"] = itemIndex;
+            source = ctx.ToJsonString();
+        }
+
         var child = new JsonObject();
         if (TryParseMap(subVarsInJson, out var map))
             foreach (var (childVar, path) in map)
-                child[childVar] = ResolveNode(path, parentVarsJson)?.DeepClone();
+                child[childVar] = ResolveNode(path, source)?.DeepClone();
         if (item is not null)
         {
             child["item"] = item.DeepClone();

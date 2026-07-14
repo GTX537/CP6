@@ -91,4 +91,91 @@ public partial class FlowEngine
         };
         return root.ToJsonString();
     }
+
+    /// <summary>第二段复核（spec §3.2，幂等，fast path 与 worker 兜底共用）。恰一次保证：
+    /// ① 三重状态闸（token Active + 停在 subFlow 节点 / 父实例 Running）；② 恢复/错误处置动作
+    /// 触达父实例行（VarsJson 或 ModifyDate）→ SaveChanges 走 RowVersion 乐观并发，撞版 → 重读 → 闸零动作；
+    /// ③ 计票前对子实例组逐行 Reload（「重读已提交数据」——身份映射会让同上下文旧读呈陈旧态，侦察结论 #6）。
+    /// 丢唤醒由第一段原子入队闭合：每个子终态各自持凭据各自复核，后提交者必见完整组。</summary>
+    internal async Task CheckSubFlowGroupAsync(Guid parentTokenId, CancellationToken ct = default)
+    {
+        for (int attempt = 0; ; attempt++)
+        {
+            try
+            {
+                var token = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == parentTokenId, ct);
+                if (token is null || token.Status != FlowTokenStatus.Active) return;          // 停泊状态闸：已恢复/已剪/已取消
+                var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == token.InstanceId, ct);
+                if (inst is null || inst.Status != FlowInstanceStatus.Running) return;        // 父实例状态闸：级联 Withdrawn 不回注
+                var schema = await LoadSchemaAsync(inst.FlowKey);
+                var node = FindNode(schema, token.NodeId);
+                if (node is null || string.IsNullOrWhiteSpace(node.SubFlowKey)) return;       // token 已离开 subFlow 节点
+
+                var children = await _db.Wf_FlowInstances
+                    .Where(i => i.ParentTokenId == parentTokenId)
+                    .OrderBy(i => i.SubIndex).ToListAsync(ct);
+                if (children.Count == 0) return;                                              // 空集在 handler 已直通，此处组不存在
+                foreach (var c in children.Where(c => _db.Entry(c).State == EntityState.Unchanged))
+                    await _db.Entry(c).ReloadAsync(ct);                                       // ★ 重读已提交数据（防身份映射陈旧态）
+
+                bool any = string.Equals((node.SubCompletionPolicy ?? SubFlowCompletionPolicy.All).Trim(),
+                    SubFlowCompletionPolicy.Any, StringComparison.OrdinalIgnoreCase);
+                var approved = children.Where(c => c.Status == FlowInstanceStatus.Approved).ToList();
+                var dead     = children.Where(c => c.Status is FlowInstanceStatus.Rejected or FlowInstanceStatus.Withdrawn).ToList();
+                var inFlight = children.Where(c => c.Status is FlowInstanceStatus.Running or FlowInstanceStatus.Suspended
+                                                             or FlowInstanceStatus.Draft).ToList();
+
+                if (!any)
+                {
+                    if (dead.Count > 0)
+                    {
+                        foreach (var c in inFlight) SubFlowCascade.CancelInstanceTree(_db, c);   // all：任一死→级联取消其余在途
+                        await SubFlowErrorDisposeAsync(inst, schema, node, token,
+                            null, dead[0].SubIndex ?? 0, dead[0].Id, dead[0].Status);
+                    }
+                    else if (inFlight.Count == 0)
+                        await ResumeSubFlowAsync(inst, schema, node, token, approved, aggregate: node.SubCollectionVar != null);
+                    else return;   // all 未齐——等下一个子终态的凭据
+                }
+                else
+                {
+                    if (approved.Count > 0)
+                    {
+                        foreach (var c in inFlight) SubFlowCascade.CancelInstanceTree(_db, c);   // any：恢复时级联撤回其余在途
+                        await ResumeSubFlowAsync(inst, schema, node, token,
+                            new List<Wf_FlowInstance> { approved[0] }, aggregate: false);        // 首个= SubIndex 最小的 Approved（确定性）
+                    }
+                    else if (inFlight.Count == 0 && dead.Count == children.Count)
+                        await SubFlowErrorDisposeAsync(inst, schema, node, token,
+                            null, dead[0].SubIndex ?? 0, dead[0].Id, dead[0].Status);
+                    else return;   // any 未决
+                }
+
+                inst.ModifyDate = DateTime.Now;   // ★ 写触达父行 → RowVersion 乐观并发（恰一次闸，仿 ActOnceAsync Task6/Fix4）
+                await DispatchIfFinishedAsync(inst, inst.StarterId, null);   // 错误处置可打出终态；父自身是子实例时递归入队（孙 subFlow）
+                await _db.SaveChangesAsync(ct);
+                return;
+            }
+            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            {
+                foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync(ct);   // 撞版 → 重读 → 状态闸零动作
+            }
+        }
+    }
+
+    /// <summary>恢复路径（spec §3.2 第 2 步）：SubVarsOutJson 回注父 vars（MergeOutputVars 保留前缀同款拦截）
+    /// → 恢复父 token 沿非错误出边推进。</summary>
+    private async Task ResumeSubFlowAsync(Wf_FlowInstance inst, FlowSchema schema, FlowNode node, Wf_FlowToken token,
+        IReadOnlyList<Wf_FlowInstance> approved, bool aggregate)
+    {
+        var outVars = SubFlowVarsMapper.BuildOutMerge(node.SubVarsOutJson,
+            approved.Select(c => (c.SubIndex ?? 0, c.VarsJson)).ToList(), aggregate);
+        if (outVars.Count > 0)
+        {
+            var merged = ServiceVarsHelper.MergeOutputVars(inst.VarsJson, outVars);
+            inst.VarsJson = merged.VarsJson;
+        }
+        AddHistory(inst.Id, node.Id, inst.StarterId, "subFlowResumed", $"approved={approved.Count}");
+        await AdvanceToken(inst, schema, token);   // 沿非错误出边（IsError != true）
+    }
 }
