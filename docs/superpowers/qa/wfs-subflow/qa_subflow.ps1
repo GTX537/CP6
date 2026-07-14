@@ -282,7 +282,7 @@ $i1 = Submit $sStart $FK_SINGLE '{"subject":"s1"}'
 if ($i1) {
     Write-Host "  Parent instance: $i1" -ForegroundColor Gray
     Chk "S1: parent Running while parked on sub-flow" $ST_RUNNING (GetStatus $sStart $i1)
-    $kids1 = GetSubFlows $sStart $i1 1
+    $kids1 = @(GetSubFlows $sStart $i1 1)
     Chk "S1: parent detail shows 1 sub-flow instance" 1 $kids1.Count
     if ($kids1.Count -ge 1) {
         $c1 = "$($kids1[0].instanceId)"
@@ -312,7 +312,7 @@ Write-Host "-- Scenario 3 : multi-instance ALL, out-of-order finish, array write
 $i3 = Submit $sStart $FK_ALL '{"subject":"s3","items":["itemA","itemB","itemC"]}'
 if ($i3) {
     Write-Host "  Parent instance: $i3" -ForegroundColor Gray
-    $kids3 = GetSubFlows $sStart $i3 3
+    $kids3 = @(GetSubFlows $sStart $i3 3)
     Chk "S3: 3 child instances spawned (one per collection element)" 3 $kids3.Count
     if ($kids3.Count -eq 3) {
         # Approve OUT OF ORDER: subIndex 2 first, then 0, then 1. Write-back must still be
@@ -340,7 +340,7 @@ Write-Host "-- Scenario 4 : multi-instance ALL, reject one -> cascade + subFlowE
 $i4 = Submit $sStart $FK_ALL '{"subject":"s4","items":["p","q","r"]}'
 if ($i4) {
     Write-Host "  Parent instance: $i4" -ForegroundColor Gray
-    $kids4 = GetSubFlows $sStart $i4 3
+    $kids4 = @(GetSubFlows $sStart $i4 3)
     Chk "S4: 3 child instances spawned" 3 $kids4.Count
     if ($kids4.Count -eq 3) {
         $ordered4 = $kids4 | Sort-Object { [int]$_.subIndex }
@@ -353,7 +353,7 @@ if ($i4) {
             Chk "S4: parent Rejected (all-policy dead branch, no error edge, no ForkId)" $ST_REJECTED (GetStatus $sStart $i4)
             ChkContains "S4: parent vars carry subFlowError" "subFlowError" (GetVarsCompact $sStart $i4)
             # the other two in-flight children were cascade-withdrawn.
-            $after = GetSubFlows $sStart $i4 3
+            $after = @(GetSubFlows $sStart $i4 3)
             $withdrawn = @($after | Where-Object { [int]$_.status -eq $ST_WITHDRAWN }).Count
             $rejected  = @($after | Where-Object { [int]$_.status -eq $ST_REJECTED }).Count
             Chk "S4: rejected child count = 1" 1 $rejected
@@ -368,7 +368,7 @@ Write-Host "-- Scenario 5 : multi-instance ANY, first approval resumes, rest wit
 $i5 = Submit $sStart $FK_ANY '{"subject":"s5","items":["x","y","z"]}'
 if ($i5) {
     Write-Host "  Parent instance: $i5" -ForegroundColor Gray
-    $kids5 = GetSubFlows $sStart $i5 3
+    $kids5 = @(GetSubFlows $sStart $i5 3)
     Chk "S5: 3 child instances spawned" 3 $kids5.Count
     if ($kids5.Count -eq 3) {
         $ordered5 = $kids5 | Sort-Object { [int]$_.subIndex }
@@ -380,7 +380,7 @@ if ($i5) {
             Chk "S5: approve first child HTTP" 200 $ro.Code
             Chk "S5: parent resumed to 'pa' (any first-pass)" $true ($null -ne (FindTask $sParent $i5 "pa"))
             Chk "S5: parent still Running (resumed, not terminal)" $ST_RUNNING (GetStatus $sStart $i5)
-            $after5 = GetSubFlows $sStart $i5 3
+            $after5 = @(GetSubFlows $sStart $i5 3)
             $approved5  = @($after5 | Where-Object { [int]$_.status -eq $ST_APPROVED }).Count
             $withdrawn5 = @($after5 | Where-Object { [int]$_.status -eq $ST_WITHDRAWN }).Count
             Chk "S5: exactly 1 child Approved" 1 $approved5
@@ -398,7 +398,7 @@ Write-Host "-- Scenario 6 : parallel onBranchReject=prune + sub-flow branch --" 
 $i6 = Submit $sStart $FK_COMBO '{"subject":"s6"}'
 if ($i6) {
     Write-Host "  Parent instance: $i6" -ForegroundColor Gray
-    $kids6 = GetSubFlows $sStart $i6 1
+    $kids6 = @(GetSubFlows $sStart $i6 1)
     Chk "S6: sub-flow branch spawned 1 child" 1 $kids6.Count
     $tb6 = FindTask $sB $i6 "bAppr"
     ChkTrue "S6: sibling branch B task present" ($null -ne $tb6)
@@ -427,7 +427,7 @@ Write-Host "-- Scenario 8 : withdraw child instance -> parent fast-path (B-T3 DI
 $i8 = Submit $sStart $FK_SINGLE '{"subject":"s8"}'
 if ($i8) {
     Write-Host "  Parent instance: $i8" -ForegroundColor Gray
-    $kids8 = GetSubFlows $sStart $i8 1
+    $kids8 = @(GetSubFlows $sStart $i8 1)
     Chk "S8: 1 child instance spawned (parked at ca)" 1 $kids8.Count
     if ($kids8.Count -ge 1) {
         $c8 = "$($kids8[0].instanceId)"

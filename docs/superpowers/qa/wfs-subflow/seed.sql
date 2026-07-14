@@ -59,10 +59,10 @@ SET NOCOUNT ON;
 DECLARE @tenant uniqueidentifier = '00000000-0000-0000-0000-0000000000A1';  -- DefaultTenant A1
 
 -- Fixed user GUIDs (referenced from FlowDef SchemaJson below -- must match)
-DECLARE @u_start  uniqueidentifier = 'DDDD0000-0000-0000-0000-0000000000B0';  -- sf_starter  (submits all parents; is the child instances' starter too)
-DECLARE @u_parent uniqueidentifier = 'DDDD0000-0000-0000-0000-0000000000A1';  -- sf_parent   (approves the parent-side approval node 'pa')
-DECLARE @u_child  uniqueidentifier = 'DDDD0000-0000-0000-0000-0000000000A2';  -- sf_child    (approves/rejects the child approval node 'ca')
-DECLARE @u_b      uniqueidentifier = 'DDDD0000-0000-0000-0000-0000000000A3';  -- sf_b        (approves the combo sibling branch 'bAppr')
+DECLARE @u_start  uniqueidentifier = 'DDDD0000-0000-0000-0000-0000000FF0B0';  -- sf_starter  (submits all parents; is the child instances' starter too)
+DECLARE @u_parent uniqueidentifier = 'DDDD0000-0000-0000-0000-0000000FF0A1';  -- sf_parent   (approves the parent-side approval node 'pa')
+DECLARE @u_child  uniqueidentifier = 'DDDD0000-0000-0000-0000-0000000FF0A2';  -- sf_child    (approves/rejects the child approval node 'ca')
+DECLARE @u_b      uniqueidentifier = 'DDDD0000-0000-0000-0000-0000000FF0A3';  -- sf_b        (approves the combo sibling branch 'bAppr')
 
 -- ---------------------------------------------------------------------------
 -- 1. Users (clone admin's BCrypt hash = password "123456" and admin's RoleId)
@@ -103,7 +103,7 @@ IF NOT EXISTS (SELECT 1 FROM Sys_Users WHERE Id = @u_b)
 IF NOT EXISTS (SELECT 1 FROM Wf_FormDef WHERE FormKey = 'sf-demo-form')
   INSERT INTO Wf_FormDef (Id, FormKey, FormName, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (
-    'DDDD0000-0000-0000-0000-0000000000F0',
+    'DDDD0000-0000-0000-0000-0000000FF0F0',
     'sf-demo-form',
     'Sub-flow Demo Form',
     '{"fields":[{"name":"subject","label":"Subject","type":"text","required":true}]}',
@@ -120,11 +120,11 @@ IF NOT EXISTS (SELECT 1 FROM Wf_FormDef WHERE FormKey = 'sf-demo-form')
 IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-child-approve')
   INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (
-    'DDDD0000-0000-0000-0000-0000000000F1',
+    'DDDD0000-0000-0000-0000-0000000FF0F1',
     'sf-child-approve',
     'SF Child - single approval',
     'sf-demo-form',
-    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"ca","type":"approval","name":"Child Approval","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000000A2"},{"id":"ce","type":"end","name":"End"}],"edges":[{"from":"s","to":"ca"},{"from":"ca","to":"ce"}]}',
+    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"ca","type":"approval","name":"Child Approval","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000FF0A2"},{"id":"ce","type":"end","name":"End"}],"edges":[{"from":"s","to":"ca"},{"from":"ca","to":"ce"}]}',
     1, 1, 'qa-sf-seed', GETDATE(), @tenant
   );
 
@@ -142,11 +142,11 @@ IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-child-approve')
 IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-parent-single')
   INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (
-    'DDDD0000-0000-0000-0000-0000000000F2',
+    'DDDD0000-0000-0000-0000-0000000FF0F2',
     'sf-parent-single',
     'SF Parent - single sub-flow',
     'sf-demo-form',
-    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"sub","type":"subFlow","name":"Sub Call","subFlowKey":"sf-child-approve","subCompletionPolicy":"all"},{"id":"pa","type":"approval","name":"Parent Approval","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000000A1"},{"id":"pe","type":"end","name":"End"}],"edges":[{"from":"s","to":"sub"},{"from":"sub","to":"pa"},{"from":"pa","to":"pe"}]}',
+    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"sub","type":"subFlow","name":"Sub Call","subFlowKey":"sf-child-approve","subCompletionPolicy":"all"},{"id":"pa","type":"approval","name":"Parent Approval","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000FF0A1"},{"id":"pe","type":"end","name":"End"}],"edges":[{"from":"s","to":"sub"},{"from":"sub","to":"pa"},{"from":"pa","to":"pe"}]}',
     1, 1, 'qa-sf-seed', GETDATE(), @tenant
   );
 
@@ -163,11 +163,11 @@ IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-parent-single')
 IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-multi-all')
   INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (
-    'DDDD0000-0000-0000-0000-0000000000F3',
+    'DDDD0000-0000-0000-0000-0000000FF0F3',
     'sf-multi-all',
     'SF Parent - multi instance ALL',
     'sf-demo-form',
-    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"sub","type":"subFlow","name":"Sub Multi All","subFlowKey":"sf-child-approve","subCompletionPolicy":"all","subCollectionVar":"items","subVarsOutJson":"{\"results\":\"$.item\"}"},{"id":"pa","type":"approval","name":"Parent Approval","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000000A1"},{"id":"pe","type":"end","name":"End"}],"edges":[{"from":"s","to":"sub"},{"from":"sub","to":"pa"},{"from":"pa","to":"pe"}]}',
+    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"sub","type":"subFlow","name":"Sub Multi All","subFlowKey":"sf-child-approve","subCompletionPolicy":"all","subCollectionVar":"items","subVarsOutJson":"{\"results\":\"$.item\"}"},{"id":"pa","type":"approval","name":"Parent Approval","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000FF0A1"},{"id":"pe","type":"end","name":"End"}],"edges":[{"from":"s","to":"sub"},{"from":"sub","to":"pa"},{"from":"pa","to":"pe"}]}',
     1, 1, 'qa-sf-seed', GETDATE(), @tenant
   );
 
@@ -181,11 +181,11 @@ IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-multi-all')
 IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-multi-any')
   INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (
-    'DDDD0000-0000-0000-0000-0000000000F4',
+    'DDDD0000-0000-0000-0000-0000000FF0F4',
     'sf-multi-any',
     'SF Parent - multi instance ANY',
     'sf-demo-form',
-    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"sub","type":"subFlow","name":"Sub Multi Any","subFlowKey":"sf-child-approve","subCompletionPolicy":"any","subCollectionVar":"items"},{"id":"pa","type":"approval","name":"Parent Approval","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000000A1"},{"id":"pe","type":"end","name":"End"}],"edges":[{"from":"s","to":"sub"},{"from":"sub","to":"pa"},{"from":"pa","to":"pe"}]}',
+    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"sub","type":"subFlow","name":"Sub Multi Any","subFlowKey":"sf-child-approve","subCompletionPolicy":"any","subCollectionVar":"items"},{"id":"pa","type":"approval","name":"Parent Approval","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000FF0A1"},{"id":"pe","type":"end","name":"End"}],"edges":[{"from":"s","to":"sub"},{"from":"sub","to":"pa"},{"from":"pa","to":"pe"}]}',
     1, 1, 'qa-sf-seed', GETDATE(), @tenant
   );
 
@@ -203,11 +203,11 @@ IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-multi-any')
 IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'sf-combo-prune')
   INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (
-    'DDDD0000-0000-0000-0000-0000000000F5',
+    'DDDD0000-0000-0000-0000-0000000FF0F5',
     'sf-combo-prune',
     'SF Parent - parallel + prune + sub-flow',
     'sf-demo-form',
-    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"split","type":"parallelSplit","name":"Split (prune)","onBranchReject":"prune"},{"id":"sub","type":"subFlow","name":"Sub Branch","subFlowKey":"sf-child-approve","subCompletionPolicy":"all"},{"id":"bAppr","type":"approval","name":"Branch B","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000000A3"},{"id":"join","type":"parallelJoin","name":"Join"},{"id":"e","type":"end","name":"End"}],"edges":[{"from":"s","to":"split"},{"from":"split","to":"sub"},{"from":"split","to":"bAppr"},{"from":"sub","to":"join"},{"from":"bAppr","to":"join"},{"from":"join","to":"e"}]}',
+    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"split","type":"parallelSplit","name":"Split (prune)","onBranchReject":"prune"},{"id":"sub","type":"subFlow","name":"Sub Branch","subFlowKey":"sf-child-approve","subCompletionPolicy":"all"},{"id":"bAppr","type":"approval","name":"Branch B","approverStrategy":"Specified","approverUserId":"DDDD0000-0000-0000-0000-0000000FF0A3"},{"id":"join","type":"parallelJoin","name":"Join"},{"id":"e","type":"end","name":"End"}],"edges":[{"from":"s","to":"split"},{"from":"split","to":"sub"},{"from":"split","to":"bAppr"},{"from":"sub","to":"join"},{"from":"bAppr","to":"join"},{"from":"join","to":"e"}]}',
     1, 1, 'qa-sf-seed', GETDATE(), @tenant
   );
 
