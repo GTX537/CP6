@@ -1,55 +1,18 @@
 using System;
 using System.Linq;
+using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Sys;
 
 namespace CP6.WebApi.Seed;
 
-/// <summary>日本法定假日 seed（WFS infra ①，spec §2.1；2026–2027 两年逐日期，含振替休日与国民の休日）。
-/// 振替休日＝法定假日落周日则顺延至次一非假日（2026-05-03(日)→05-06、2027-03-21(日)→03-22）；
-/// 国民の休日＝两法定假日之间夹一平日（2026-09-21 敬老の日 与 09-23 秋分の日 之间的 09-22）。
-/// 春分/秋分逐年官报确定：2026 春分 3/20·秋分 9/23；2027 春分 3/21·秋分 9/23。</summary>
+/// <summary>日本法定假日 seed（WFS infra ①，spec §2.1）。启动期默认租户植入 + <c>For(tenantId)</c> 生成器。
+/// ★A-T4 起原始 35 日期下沉至 <see cref="JapaneseHolidayData"/>（CP6.Core），本类的 <see cref="Items"/> 委托同源，
+///   使 Core 侧 <c>WorkCalendarService.ImportJapaneseHolidaysAsync</c> 与本 WebApi seed 复用单一事实来源、零漂移
+///   （Core 不可反向引用 WebApi.Seed，故数据必须在 Core）。日期依据与逐年官报计算说明见 <see cref="JapaneseHolidayData"/>。</summary>
 public static class JapaneseHolidaySeed
 {
-    public static readonly (int Y, int M, int D, string Note)[] Items =
-    {
-        // ── 2026（18）──
-        (2026, 1, 1, "元日"),
-        (2026, 1, 12, "成人の日"),          // 1 月第 2 月曜
-        (2026, 2, 11, "建国記念の日"),
-        (2026, 2, 23, "天皇誕生日"),
-        (2026, 3, 20, "春分の日"),
-        (2026, 4, 29, "昭和の日"),
-        (2026, 5, 3, "憲法記念日"),          // 日曜
-        (2026, 5, 4, "みどりの日"),
-        (2026, 5, 5, "こどもの日"),
-        (2026, 5, 6, "振替休日"),            // 5/3(日)の振替
-        (2026, 7, 20, "海の日"),             // 7 月第 3 月曜
-        (2026, 8, 11, "山の日"),
-        (2026, 9, 21, "敬老の日"),           // 9 月第 3 月曜
-        (2026, 9, 22, "国民の休日"),         // 9/21 と 9/23 に挟まれた平日
-        (2026, 9, 23, "秋分の日"),
-        (2026, 10, 12, "スポーツの日"),      // 10 月第 2 月曜
-        (2026, 11, 3, "文化の日"),
-        (2026, 11, 23, "勤労感謝の日"),
-        // ── 2027（17）──
-        (2027, 1, 1, "元日"),
-        (2027, 1, 11, "成人の日"),           // 1 月第 2 月曜
-        (2027, 2, 11, "建国記念の日"),
-        (2027, 2, 23, "天皇誕生日"),
-        (2027, 3, 21, "春分の日"),           // 日曜
-        (2027, 3, 22, "振替休日"),           // 3/21(日)の振替
-        (2027, 4, 29, "昭和の日"),
-        (2027, 5, 3, "憲法記念日"),
-        (2027, 5, 4, "みどりの日"),
-        (2027, 5, 5, "こどもの日"),
-        (2027, 7, 19, "海の日"),             // 7 月第 3 月曜
-        (2027, 8, 11, "山の日"),
-        (2027, 9, 20, "敬老の日"),           // 9 月第 3 月曜
-        (2027, 9, 23, "秋分の日"),
-        (2027, 10, 11, "スポーツの日"),      // 10 月第 2 月曜
-        (2027, 11, 3, "文化の日"),
-        (2027, 11, 23, "勤労感謝の日"),
-    };
+    /// <summary>委托 <see cref="JapaneseHolidayData.Items"/>（单一事实来源，CP6.Core）。</summary>
+    public static (int Y, int M, int D, string Note)[] Items => JapaneseHolidayData.Items;
 
     /// <summary>盖某租户 → Sys_WorkCalendar[]（全 IsWorkday=false）。幂等去重由调用方按 (TenantId,Date) Any 判定。</summary>
     public static Sys_WorkCalendar[] For(Guid tenantId) => Items
