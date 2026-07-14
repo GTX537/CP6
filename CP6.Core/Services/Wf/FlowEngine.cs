@@ -34,13 +34,15 @@ public partial class FlowEngine : IFlowEngine
     }
 
     // ★ T5：start/approval/end + parallelSplit/parallelJoin；A-T6：serviceTask；
-    // ★ hardening A-T3：inclusiveSplit/inclusiveJoin（第 7/8 个，spec D3）。八 handler。
+    // ★ hardening A-T3：inclusiveSplit/inclusiveJoin（第 7/8 个，spec D3）；
+    // ★ subflow B-T1：subFlow（第 9 个，spec §3.1）。九 handler。
     private static IEnumerable<INodeHandler> DefaultHandlers() => new INodeHandler[]
     {
         new StartNodeHandler(), new ApprovalNodeHandler(), new EndNodeHandler(),
         new ParallelSplitNodeHandler(), new ParallelJoinNodeHandler(),
         new ServiceTaskNodeHandler(Array.Empty<IServiceTaskExecutor>()),
         new InclusiveSplitNodeHandler(), new InclusiveJoinNodeHandler(),
+        new SubFlowNodeHandler(),   // ★ 子流程 B-T1：第 9 个（缺省上限 100；DI 实例携 app 配置）
     };
 
     public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
@@ -69,6 +71,7 @@ public partial class FlowEngine : IFlowEngine
         await EnterNodeAsync(inst, schema, first, root);
         await DispatchIfFinishedAsync(inst, starterId, null);   // 极少数"起即终态"（如 start→end）也分发，决策人记发起人
         await _db.SaveChangesAsync();
+        await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path：无 subFlow 请求=Local 空集 O(1) no-op
         return inst.Id;
     }
 
@@ -96,6 +99,7 @@ public partial class FlowEngine : IFlowEngine
         await EnterNodeAsync(inst, schema, first, root);
         await DispatchIfFinishedAsync(inst, actorId, null);
         await _db.SaveChangesAsync();
+        await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（起即终态子实例即时收敛；无 subFlow=O(1) no-op）
     }
 
     /// <summary>
@@ -108,13 +112,14 @@ public partial class FlowEngine : IFlowEngine
     {
         for (int attempt = 0; ; attempt++)
         {
-            try { await ActOnceAsync(taskId, actorId, approve, comment); return; }
+            try { await ActOnceAsync(taskId, actorId, approve, comment); break; }
             catch (DbUpdateConcurrencyException) when (attempt < 2)
             {
                 // 败方重读全部追踪实体（拿到胜方已落库的 token/inst RowVersion）→ 重试重算 join 计数
                 foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
             }
         }
+        await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path：非子终态办理时 Local 空集 O(1) no-op
     }
 
     /// <summary>
@@ -126,12 +131,13 @@ public partial class FlowEngine : IFlowEngine
     {
         for (int attempt = 0; ; attempt++)
         {
-            try { await ActOnceAsync(taskId, actorId, approve, comment, onBehalfOf); return; }
+            try { await ActOnceAsync(taskId, actorId, approve, comment, onBehalfOf); break; }
             catch (DbUpdateConcurrencyException) when (attempt < 2)
             {
                 foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
             }
         }
+        await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（同 ActAsync）
     }
 
     private async Task ActOnceAsync(Guid taskId, Guid actorId, bool approve, string? comment = null,
@@ -247,6 +253,10 @@ public partial class FlowEngine : IFlowEngine
     /// </summary>
     private async Task DispatchIfFinishedAsync(Wf_FlowInstance inst, Guid decidedBy, string? reason)
     {
+        // ★ 子流程第一段（spec D5）：子终态窗口内只原子入队唤醒凭据（Withdrawn 走 TaskCenterService.WithdrawAsync 的对称钩子）
+        if (inst.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)
+            SubFlowResume.EnqueueIfChild(_db, inst);
+
         if (inst.Status == FlowInstanceStatus.Approved)
         {
             await _dispatcher.OnInstanceFinishedAsync(inst, approved: true, decidedBy, reason: null);
@@ -345,6 +355,7 @@ public partial class FlowEngine : IFlowEngine
                 await AdvanceToken(inst, schema, token);   // 沿成功边（跳 IsError）
                 await DispatchIfFinishedAsync(inst, inst.StarterId, null);
                 await _db.SaveChangesAsync();
+                await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（服务任务恢复触达子终态时收敛；内部吞并发冲突不触外层重试）
                 return;
             }
             catch (DbUpdateConcurrencyException) when (attempt < 2)
@@ -385,6 +396,7 @@ public partial class FlowEngine : IFlowEngine
 
                 await DispatchIfFinishedAsync(inst, inst.StarterId, reason);
                 await _db.SaveChangesAsync();
+                await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（服务任务失败路由触达子终态时收敛；同上）
                 return;
             }
             catch (DbUpdateConcurrencyException) when (attempt < 2)

@@ -91,6 +91,29 @@ public sealed class WfServiceJobService : IWfServiceJobService
             //    由后续扫描的 reaper（租约过期）回收重投。lease-claim 自身在本 try 之外（已有并发-skip 的 continue）。
             try
             {
+                // ── 子流程内部 Kind 短路（子流程 spec §3.2 worker 兜底入口）：不进 executor 注册表、不走状态闸④
+                //    （job.TokenId=子实例 Id 哨兵，绝不能走闸④否则被误 Cancelled）。复核幂等：组未齐/已处理 →
+                //    引擎内状态闸零动作，凭据照常消费。
+                if (job.Kind == WfJobKind.SubFlowResume)
+                {
+                    var subPayload = SubFlowResumePayload.Parse(job.ActionRefJson);
+                    if (subPayload is null)
+                    {
+                        job.Status = ServiceJobStatus.Failed;
+                        job.LastError = Trunc("E-WF-025 subFlowResume 载荷非法");
+                        job.CompletedAtUtc = nowUtc;
+                    }
+                    else
+                    {
+                        await _engine.CheckSubFlowGroupAsync(subPayload.ParentTokenId, ct);
+                        job.Status = ServiceJobStatus.Succeeded;
+                        job.CompletedAtUtc = nowUtc;
+                    }
+                    await _db.SaveChangesAsync(ct);
+                    processed++;
+                    continue;
+                }
+
                 // ④ 执行前状态闸（P0-5）：实例 Running 且 token Active 且仍在 job.NodeId，否则 Cancelled 不执行
                 var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == job.InstanceId, ct);
                 var tok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == job.TokenId, ct);

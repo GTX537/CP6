@@ -29,11 +29,48 @@
 
         <!-- RIGHT: timeline + CC (~45%) -->
         <el-col :xs="24" :sm="10" class="detail-right">
+          <!-- 子流程互链：父流程链接（spec §4.5） -->
+          <div v-if="detail.subFlowParent" class="subflow-parent">
+            <el-link
+              type="primary"
+              :underline="false"
+              @click="openInstance(detail.subFlowParent.instanceId)"
+            >
+              {{ t('oa.detail.parentFlow') }}:
+              {{ detail.subFlowParent.flowName || detail.subFlowParent.flowKey }}
+            </el-link>
+          </div>
+
           <div class="panel-title">{{ t('oa.detail.timeline') }}</div>
           <FlowTimeline
             :timeline="detail.timeline"
             :forecast="detail.forecast"
           />
+
+          <!-- 子流程互链：子实例列表（spec §4.5） -->
+          <template v-if="detail.subFlows?.length">
+            <div class="subflow-title">{{ t('oa.detail.subFlows') }}</div>
+            <div class="subflow-list">
+              <div
+                v-for="s in detail.subFlows"
+                :key="s.instanceId"
+                class="subflow-row"
+              >
+                <span class="subflow-idx">#{{ s.subIndex }}</span>
+                <el-link
+                  type="primary"
+                  :underline="false"
+                  @click="openInstance(s.instanceId)"
+                >
+                  {{ s.flowName || s.flowKey }}
+                </el-link>
+                <CpTag :tone="instanceStatusTone(s.status)">
+                  {{ t(instanceStatusText(s.status)) }}
+                </CpTag>
+              </div>
+            </div>
+          </template>
+
           <template v-if="detail.cc?.length">
             <div class="cc-title">{{ t('oa.detail.cc') }}</div>
             <div class="cc-tags">
@@ -124,13 +161,24 @@ import { buildFieldMask, safeParseObject } from '@/views/wf/fieldMask'
 import FlowTimeline from './FlowTimeline.vue'
 import TransferDialog from './TransferDialog.vue'
 import SendBackDialog from './SendBackDialog.vue'
-import CpTag from '@/components/base/CpTag.vue'
+import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
+import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 
 const props = defineProps<{ instanceId: string }>()
-const emit = defineEmits<{ done: [] }>()
+const emit = defineEmits<{ done: []; 'open-instance': [id: string] }>()
 
 const { t } = useI18n()
+
+/** 実例状態码 → CpTag 色調（对齐 inboxModel.instanceStatusType：warn/ok/danger/info/info，沿 InboxRunning 口径）。 */
+function instanceStatusTone(s: number): Tone {
+  return (['warn', 'ok', 'danger', 'info', 'info'] as Tone[])[s] ?? 'info'
+}
+
+/** 子流程互链跳转：沿宿主既有实例打开机制（InboxView drawer 由 open-detail 驱动），发 open-instance 事件由宿主处理，不发明新导航。 */
+function openInstance(id: string) {
+  emit('open-instance', id)
+}
 
 // ── State ────────────────────────────────────────────────────────
 const loading = ref(false)
@@ -262,6 +310,35 @@ watch(() => props.instanceId, loadDetail)
   padding-left: 8px;
   overflow-y: auto;
   max-height: calc(100vh - 220px);
+}
+
+.subflow-parent {
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.subflow-title {
+  font-size: 12px;
+  color: var(--cp-muted);
+  margin: 14px 0 6px;
+}
+
+.subflow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.subflow-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subflow-idx {
+  font-size: 12px;
+  color: var(--cp-muted);
+  min-width: 28px;
 }
 
 .cc-title {

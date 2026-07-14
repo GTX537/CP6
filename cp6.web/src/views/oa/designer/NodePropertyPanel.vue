@@ -5,11 +5,13 @@ import { userApi } from '@/api/sys/user'
 import { roleApi } from '@/api/sys/role'
 import { designerApi } from '@/api/oa/designer'
 import type { ServiceCatalog } from '@/api/oa/designer'
+import type { FlowDefSummary } from '@/types/oa/designer'
 import CpTag from '@/components/base/CpTag.vue'
 import type { SchemaNode } from './designerModel'
 import { TIMEOUT_ACTIONS } from './designerModel'
 
-const props = defineProps<{ node: SchemaNode }>()
+// currentFlowKey：由 DesignerView 下传的当前编辑流程 FlowKey（只读），用于子流程下拉排除自身。
+const props = defineProps<{ node: SchemaNode; currentFlowKey?: string }>()
 const emit = defineEmits<{ update: [patch: Partial<SchemaNode>] }>()
 const { t } = useI18n()
 
@@ -37,6 +39,9 @@ watch(
     // 的 pending 选择弹回 'none'（纯 computed 版的鸡生蛋缺陷，审查已点名）。
     const derived = deriveTimerActionKind(local.value)
     if (idChanged || derived !== 'none') timerActionKindState.value = derived
+    // subFlow 多实例开关：换节点时按新节点 subCollectionVar 重派生 backing ref（纯布尔派生，直接覆盖，
+    // 无 timerActionKind 的 pending 鸡生蛋问题——subMulti 无中间「未填集合变量」的驻留态）。
+    subMultiState.value = deriveSubMulti(local.value)
     await nextTick()
     syncing.value = false
   },
@@ -124,6 +129,7 @@ const timeoutDays = computed({
 
 const isApproval = computed(() => local.value.type === 'approval')
 const isServiceTask = computed(() => local.value.type === 'serviceTask')
+const isSubFlow = computed(() => local.value.type === 'subFlow')
 
 // 分支驳回策略（parallelSplit/inclusiveSplit 专属，hardening D-T2）
 const isSplitGateway = computed(
@@ -160,6 +166,55 @@ watch(
   (v) => { if (v && !catalogLoaded.value) void loadCatalog() },
   { immediate: true },
 )
+
+// ── 子流程（subFlow，E-T2）：目标已发布流程目录（懒加载，仿服务目录 catalog 模式）──
+// 数据源 GET /api/oa/designer/list（designerApi.list()）；面板过滤 enable && flowKey!==当前流程自身。
+// 返回体剥壳沿 DesignerView 约定（interceptor 可能返 {data:[...]} 或 [...]）。
+const publishedFlows = ref<Array<{ flowKey: string; flowName: string }>>([])
+const flowsLoaded = ref(false)
+
+async function loadPublishedFlows() {
+  try {
+    const res = await designerApi.list() as any
+    const list: FlowDefSummary[] = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
+    publishedFlows.value = list.filter(d => d.enable && d.flowKey !== props.currentFlowKey)
+    flowsLoaded.value = true
+  } catch {
+    flowsLoaded.value = false   // HTTP interceptor 已 toast；失败可经重新进入节点再拉
+  }
+}
+
+watch(
+  isSubFlow,
+  (v) => { if (v && !flowsLoaded.value) void loadPublishedFlows() },
+  { immediate: true },
+)
+
+// ── 多实例开关 subMulti —— backing ref（审查修复模式，同 timerActionKind）──
+// 纯 computed（getter 从 subCollectionVar 派生 / setter 开启时置 ''）在新建 subFlow 上开启后，
+// getter 因 subCollectionVar==='' 立即弹回 false，多实例子表单永不渲染（波⑤ 631f0e2 同款鸡生蛋）。
+// 故改 backing ref：用户开关直接驻留；字段派生只用于初始化/换节点同步。
+function deriveSubMulti(n: SchemaNode): boolean {
+  return n.type === 'subFlow' && n.subCollectionVar != null && n.subCollectionVar !== ''
+}
+
+const subMultiState = ref<boolean>(deriveSubMulti(local.value))
+
+// setter 保证关闭时清残留——关闭多实例必清 subCollectionVar + subCompletionPolicy，
+// 否则残留策略/集合变量随 emit 全量展开落 schema（对齐「切换清残留」终审教训，不留静默配置）。
+const subMulti = computed<boolean>({
+  get: () => subMultiState.value,
+  set: (v) => {
+    subMultiState.value = v                                    // 用户选择驻留（不再从字段反推弹回）
+    if (v) {
+      local.value.subCompletionPolicy = local.value.subCompletionPolicy || 'all'
+      // 不强塞 subCollectionVar='' —— 空串既非法（validateClient 拒）又会误触 getter；留待用户填。
+    } else {
+      local.value.subCollectionVar = undefined
+      local.value.subCompletionPolicy = undefined
+    }
+  },
+})
 
 // ── 串簽启用状态 ──────────────────────────────────────────────────
 const stageEnabled = computed(
@@ -211,7 +266,7 @@ function moveStageDown(idx: number) {
 }
 
 // ── Collapse ──────────────────────────────────────────────────────
-const collapseActive = ref<string[]>(['basic', 'stages', 'service', 'advanced', 'cc'])
+const collapseActive = ref<string[]>(['basic', 'stages', 'service', 'subflow', 'advanced', 'cc'])
 
 // ── User search (Specified approver, reused for stages) ──────────
 interface UserOpt { label: string; value: string }
@@ -623,6 +678,67 @@ async function searchCcUsers(kw: string) {
               style="width: 100%"
             />
           </el-form-item>
+        </el-form>
+      </el-collapse-item>
+
+      <!-- ── 子流程配置（subFlow 专属，子流程 spec §4；E-T2）──────────── -->
+      <el-collapse-item
+        v-if="isSubFlow"
+        :title="t('oa.designer.subflow.title')"
+        name="subflow"
+      >
+        <el-form label-position="top" size="small" class="prop-form">
+          <!-- 目标流程：已发布清单下拉（懒加载，排除自身/停用）-->
+          <el-form-item :label="t('oa.designer.subflow.target')">
+            <el-select v-model="local.subFlowKey" filterable clearable style="width: 100%">
+              <el-option
+                v-for="d in publishedFlows"
+                :key="d.flowKey"
+                :value="d.flowKey"
+                :label="`${d.flowName} (${d.flowKey})`"
+              />
+            </el-select>
+            <div class="gw-hint">{{ t('oa.designer.subflow.targetHint') }}</div>
+          </el-form-item>
+
+          <!-- 父→子变量映射 -->
+          <el-form-item :label="t('oa.designer.subflow.varsIn')">
+            <el-input
+              v-model="local.subVarsInJson"
+              type="textarea"
+              :rows="2"
+              placeholder='{"childVar":"$.parentVar"}'
+            />
+          </el-form-item>
+
+          <!-- 子→父变量回注 -->
+          <el-form-item :label="t('oa.designer.subflow.varsOut')">
+            <el-input
+              v-model="local.subVarsOutJson"
+              type="textarea"
+              :rows="2"
+              placeholder='{"parentVar":"$.childVar"}'
+            />
+            <div class="gw-hint">{{ t('oa.designer.subflow.varsHint') }}</div>
+          </el-form-item>
+
+          <!-- 多实例开关（backing ref；关闭清 collectionVar+policy 残留）-->
+          <el-form-item :label="t('oa.designer.subflow.multi')">
+            <el-switch v-model="subMulti" />
+          </el-form-item>
+
+          <template v-if="subMulti">
+            <el-form-item :label="t('oa.designer.subflow.collectionVar')">
+              <el-input v-model="local.subCollectionVar" placeholder="items" clearable />
+            </el-form-item>
+            <el-form-item :label="t('oa.designer.subflow.policy')">
+              <el-radio-group v-model="local.subCompletionPolicy">
+                <el-radio value="all">{{ t('oa.designer.subflow.policy.all') }}</el-radio>
+                <el-radio value="any">{{ t('oa.designer.subflow.policy.any') }}</el-radio>
+              </el-radio-group>
+              <div class="gw-hint">{{ t('oa.designer.subflow.policyHint') }}</div>
+            </el-form-item>
+          </template>
         </el-form>
       </el-collapse-item>
 

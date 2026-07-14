@@ -77,3 +77,27 @@ public static class WfTriggerType
     public const int Event = 1;
     public const int Message = 2;
 }
+
+/// <summary>Wf_ServiceJob.Kind 的内部值域扩展（子流程 spec §3.2）。不进 <see cref="ServiceKind"/>：
+/// 设计器目录（GetServiceCatalog）、节点校验（FlowSchemaValidator.KnownServiceKinds）永不见此值；
+/// 扫描 worker 在 lease 后按 Kind 短路分派，不进 executor 注册表。</summary>
+public static class WfJobKind
+{
+    public const string SubFlowResume = "subFlowResume";
+}
+
+/// <summary>子流程完成策略（spec §2.1 SubCompletionPolicy 值域）。</summary>
+public static class SubFlowCompletionPolicy
+{
+    public const string All = "all";   // 默认:全部 Approved 才过;任一 Rejected/Withdrawn → 错误处置
+    public const string Any = "any";   // 首个 Approved 即过(级联撤回其余);全驳/撤才错误处置
+}
+
+/// <summary>子流程守卫常量（spec §3.1/§5）。</summary>
+public static class SubFlowLimits
+{
+    /// <summary>嵌套深度上限（E-WF-026）：保存时 DFS 与运行时 ParentInstanceId 链上溯同口径。</summary>
+    public const int MaxDepth = 8;
+    /// <summary>多实例 N 上限缺省（app 配置键 Wfs:SubFlowMaxInstances 可覆盖）。</summary>
+    public const int DefaultMaxInstances = 100;
+}

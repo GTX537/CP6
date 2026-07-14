@@ -8,7 +8,8 @@ namespace CP6.Core.Services.Wf;
 public class TaskCenterService : ITaskCenterService
 {
     private readonly CP6Context _db;
-    public TaskCenterService(CP6Context db) => _db = db;
+    private readonly FlowEngine? _engine;   // 子流程 fast path 用；null（既有测试构造）= 交 worker 20s 兜底
+    public TaskCenterService(CP6Context db, FlowEngine? engine = null) { _db = db; _engine = engine; }
 
     public async Task<List<TodoItem>> MyTodosAsync(Guid userId)
     {
@@ -50,6 +51,9 @@ public class TaskCenterService : ITaskCenterService
             .ToListAsync();
         foreach (var t in activeTokens) t.Status = FlowTokenStatus.Cancelled;   // 在途 token → Cancelled
 
+        // ── 子流程 C-T1（spec §3.3 路径①）：撤回 = terminate,就地循环不经 CancelAllActiveTokens → 此处补级联 ──
+        foreach (var t in activeTokens) SubFlowCascade.CancelChildrenOfToken(_db, t.Id);
+
         var pendingFormTos = await _db.Wf_FlowFormTos
             .Where(f => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending)
             .ToListAsync();
@@ -66,6 +70,10 @@ public class TaskCenterService : ITaskCenterService
         var withdrawNow = DateTime.UtcNow;
         foreach (var j in pendingJobs) { j.Status = ServiceJobStatus.Cancelled; j.CompletedAtUtc = withdrawNow; }
 
+        // ★ 子流程第一段（Withdrawn 与 Approved/Rejected 对称,spec §3.3 末条「手工撤回入计票」）。
+        //    置于本方法 pendingJobs 清理之后：本凭据 InstanceId=父实例,不会被上面按本实例（子）的清理误杀。
+        SubFlowResume.EnqueueIfChild(_db, inst);
+
         _db.Wf_FlowHistories.Add(new Wf_FlowHistory
         {
             Id = Guid.NewGuid(),
@@ -75,5 +83,6 @@ public class TaskCenterService : ITaskCenterService
             Action = "withdraw",
         });
         await _db.SaveChangesAsync();
+        if (_engine is not null) await _engine.FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（null=worker 兜底）
     }
 }

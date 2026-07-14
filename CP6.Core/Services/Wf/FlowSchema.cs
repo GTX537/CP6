@@ -92,6 +92,18 @@ public class FlowNode
     // ── 内核 hardening（spec §2.1，可空向后兼容） ──
     /// <summary>分支驳回策略（仅 parallelSplit/inclusiveSplit 有意义）：null/"cascade"=连坐（现状）；"prune"=剪枝。</summary>
     public string? OnBranchReject { get; set; }
+
+    // ── 子流程节点(子流程 spec §2.1,全可空向后兼容,null=非 subFlow 节点) ──
+    /// <summary>子流程引用（Type="subFlow" 专用）：目标已发布流程的 FlowKey。</summary>
+    public string? SubFlowKey { get; set; }
+    /// <summary>父→子变量映射 JSON：{"子var":"$.父var路径"}（ServiceVarsHelper 点路径口径，含其已记档限制）。null=不传。</summary>
+    public string? SubVarsInJson { get; set; }
+    /// <summary>子终态→父回注映射 JSON：{"父var":"$.子var路径"}。null=不回注。多实例时回注值为数组（按子实例序号）。</summary>
+    public string? SubVarsOutJson { get; set; }
+    /// <summary>多实例集合变量名（父 vars 中的 JSON 数组）。null=单实例。每个元素注入对应子实例 vars 的 "item" 键（含 "itemIndex"）。</summary>
+    public string? SubCollectionVar { get; set; }
+    /// <summary>完成策略："all"(默认,全部 Approved 才过) | "any"(首个 Approved 即过,级联撤回其余)。</summary>
+    public string? SubCompletionPolicy { get; set; }
 }
 
 public class FlowEdge

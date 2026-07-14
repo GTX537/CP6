@@ -135,6 +135,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.ServiceTaskNodeHandler>();    // WFS A-T6 节点处理器：服务任务（注入 IEnumerable<IServiceTaskExecutor>，未注册时为空）
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.InclusiveSplitNodeHandler>();  // hardening A-T3 节点处理器：包容分叉
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.Wf.InclusiveJoinNodeHandler>();   // hardening A-T3 节点处理器：包容汇聚
+builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler>(sp => new CP6.Core.Services.Wf.SubFlowNodeHandler(
+    sp.GetRequiredService<IConfiguration>().GetValue<int?>("Wfs:SubFlowMaxInstances")));   // 子流程 B-T1 节点处理器（N 上限可配，缺省 100）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
@@ -2004,6 +2006,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Concat(CP6.WebApi.Seed.I18nOaInboxUxScreenSeed.Items)  // WFS 波④ 信箱体验：通知矩阵/批量改派/rowMode/移动端 oa.notify.matrix.*/oa.notify.type.*/oa.bt.*/oa.inbox.rowMode.*/oa.inbox.mobileFilter/oa.pref.errBadJson
             .Concat(CP6.WebApi.Seed.I18nOaEngineInfraScreenSeed.Items)  // WFS 波⑤ 引擎基建：年历 oa.workcal.*+nav.743 / 连接器 oa.connector.* / 设计器新键 oa.designer.svc.httpMethod|timeoutSec|delayMode.workdays·timeout.errorEdge·err* / E-WF-027/028
+            .Concat(CP6.WebApi.Seed.I18nOaSubFlowScreenSeed.Items)  // WFS 波⑥ 子流程 oa.designer.subflow.* + oa.designer.errSubFlowConfig + oa.detail.parentFlow/subFlows + E-WF-025/026
             .Where(i => !existingKeys.Contains(i.LangKey))
             .GroupBy(i => i.LangKey).Select(g => g.First())     // 跨/内部 seed 去重，防 UX_Sys_Lang_Tenant_Key 唯一键冲突
             .ToList();

@@ -40,9 +40,14 @@ public record TimelineRow(int StepSeq, Guid? TokenId, string NodeId, string? Nod
 public record SnapshotRow(int StepSeq, string NodeId, string DataJson);
 public record CcRow(Guid RecipientId, string RecipientName, string? AtNodeId, bool IsRead);
 
+// ── 子流程互链（spec §4.5）──
+public record SubFlowParentRow(Guid InstanceId, string FlowKey, string? FlowName);
+public record SubFlowChildRow(Guid InstanceId, int SubIndex, string FlowKey, string? FlowName, int Status, string NodeId);
+
 public record InboxDetail(Wf_FlowInstance Instance, string? FlowName, string? FormKey, string? FormSchemaJson,
     string CurrentDataJson, IReadOnlyList<TimelineRow> Timeline, IReadOnlyList<SnapshotRow> Snapshots,
-    IReadOnlyList<ForecastStep> Forecast, IReadOnlyList<CcRow> Cc);
+    IReadOnlyList<ForecastStep> Forecast, IReadOnlyList<CcRow> Cc,
+    SubFlowParentRow? SubFlowParent = null, IReadOnlyList<SubFlowChildRow>? SubFlows = null);
 
 // ── 预计流程（ForecastService 产出，置此便于 InboxDetail 引用）──
 public record ForecastStep(string NodeId, string? NodeName, string Type, IReadOnlyList<string> Approvers,

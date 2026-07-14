@@ -721,6 +721,11 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => x.StarterId).HasDatabaseName("IX_Wf_FlowInstance_Starter");   // 我的申请
             e.HasIndex(x => new { x.FlowKey, x.Status }).HasDatabaseName("IX_Wf_FlowInstance_FlowStatus");
+            e.HasIndex(x => new { x.TenantId, x.ParentInstanceId }).HasDatabaseName("IX_Wf_FlowInstance_Parent");   // 子流程:父详情列子实例组
+            // filtered unique: 停泊重入防重复起子的幂等闸(子流程 spec §2.2)。SQLite 经 GenerateCreateScript 生成 WHERE;
+            // 代码级 SubFlowNodeHandler 先查兜底(InMemory 无索引语义,B-T1)
+            e.HasIndex(x => new { x.TenantId, x.ParentTokenId, x.SubIndex }).IsUnique()
+                .HasFilter("[ParentTokenId] IS NOT NULL").HasDatabaseName("UX_Wf_FlowInstance_SubSlot");
         });
         modelBuilder.Entity<Wf_FlowTask>(e =>
         {
