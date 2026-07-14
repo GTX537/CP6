@@ -77,12 +77,12 @@ DECLARE @tenant uniqueidentifier = '00000000-0000-0000-0000-0000000000A1';  -- D
 
 -- Fixed GUIDs (referenced from FlowDef SchemaJson + ps1 constants -- must match qa_infra.ps1)
 DECLARE @u_admin  uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000000A0';  -- qa_inf_admin
-DECLARE @u_appr   uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000000B0';  -- qa_inf_appr
+DECLARE @u_appr   uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000EE0B0';  -- qa_inf_appr
 DECLARE @u_norole uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000000C0';  -- qa_inf_norole (RoleId=2)
 DECLARE @u_padmin uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000000D0';  -- qa_inf_padmin (IsPlatformAdmin=1)
 
-DECLARE @form  uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000000F1';  -- qa-inf-form
-DECLARE @fErr  uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000000F2';  -- qa-inf-erroredge
+DECLARE @form  uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000EE0F1';  -- qa-inf-form
+DECLARE @fErr  uniqueidentifier = 'EEEE0000-0000-0000-0000-0000000EE0F2';  -- qa-inf-erroredge
 
 -- -- 1. Users (Password cloned from admin's BCrypt hash = "123456") -----------------
 
@@ -138,7 +138,7 @@ IF NOT EXISTS (SELECT 1 FROM Wf_FormDef WHERE FormKey = 'qa-inf-form')
 IF NOT EXISTS (SELECT 1 FROM Wf_FlowDef WHERE FlowKey = 'qa-inf-erroredge')
   INSERT INTO Wf_FlowDef (Id, FlowKey, FlowName, FormKey, SchemaJson, Version, Enable, Creator, CreateDate, TenantId)
   VALUES (@fErr, 'qa-inf-erroredge', 'Engine Infra ErrorEdge Approval', 'qa-inf-form',
-    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"a1","type":"approval","name":"Approve","approverStrategy":"Specified","approverUserId":"EEEE0000-0000-0000-0000-0000000000B0","timeoutHours":1,"timeoutAction":"errorEdge"},{"id":"handler","type":"approval","name":"Timeout Handler","approverStrategy":"Specified","approverUserId":"EEEE0000-0000-0000-0000-0000000000B0"},{"id":"end","type":"end","name":"End"}],"edges":[{"from":"s","to":"a1"},{"from":"a1","to":"end"},{"from":"a1","to":"handler","isError":true},{"from":"handler","to":"end"}]}',
+    '{"start":"s","nodes":[{"id":"s","type":"start","name":"Start"},{"id":"a1","type":"approval","name":"Approve","approverStrategy":"Specified","approverUserId":"EEEE0000-0000-0000-0000-0000000EE0B0","timeoutHours":1,"timeoutAction":"errorEdge"},{"id":"handler","type":"approval","name":"Timeout Handler","approverStrategy":"Specified","approverUserId":"EEEE0000-0000-0000-0000-0000000EE0B0"},{"id":"end","type":"end","name":"End"}],"edges":[{"from":"s","to":"a1"},{"from":"a1","to":"end"},{"from":"a1","to":"handler","isError":true},{"from":"handler","to":"end"}]}',
     1, 1, 'qa-inf-seed', GETDATE(), @tenant);
 
 -- -- 4. Sanity report ------------------------------------------------------------
@@ -155,8 +155,8 @@ UNION ALL SELECT 'FlowDef:qa-inf-erroredge',     CONVERT(varchar(36), Id)       
 -- Verify Connector.Edit / Calendar.Edit ARE granted to RoleId=1 (WorkCalendarConnectorPermissionSeed)
 -- but NOT to RoleId=2 in this tenant (the 403 test rests on this):
 SELECT ra.RoleId, m.MenuKey, ra.ActionCode
-FROM Sys_RoleActions ra
-JOIN Sys_Menus m ON m.Id = ra.MenuId
+FROM Sys_RoleAction ra
+JOIN Sys_Menus m ON m.MenuId = ra.MenuId
 WHERE ra.TenantId = @tenant
   AND ((m.MenuKey = 'oa-flow-admin'  AND ra.ActionCode = 'Connector.Edit')
     OR (m.MenuKey = 'oa-work-calendar' AND ra.ActionCode = 'Calendar.Edit'))
