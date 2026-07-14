@@ -160,8 +160,25 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfTriggerWorker>
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfCleanupService, CP6.Core.Services.Wf.WfCleanupService>();        // C-T1 终态 job/流水清理服务（保留期 180 天硬删终态，在途/占坑永不清，老化告警）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobCleanupWorker>();                       // C-T1 终态清理 Worker（每日 03:00 UTC 一轮，逐租户，幂等窗口=保留期）
 // C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
-builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.WebApiExecutor>(); // C-T1 webApi 执行器（委托给 IWfConnector，不自做 HTTP，D4 安全边界）
+// D-T1 解析改造：WebApiExecutor 注入 TenantConnectorResolver（先租户表 Wf_Connector Enabled 行 → DbWfConnector，
+//   未命中回落 app 级 IWfConnector 字典）。app 级注册（EchoConnector 等）零改动，进 resolver 兜底字典。
+builder.Services.AddScoped<CP6.Core.Services.Wf.Executors.TenantConnectorResolver>(sp =>
+    new CP6.Core.Services.Wf.Executors.TenantConnectorResolver(
+        sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetServices<CP6.Core.Services.Wf.IWfConnector>(),           // app 级注册（EchoConnector 等）
+        sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>(),
+        sp.GetRequiredService<System.Net.Http.IHttpClientFactory>()));
+builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor>(sp =>
+    new CP6.Core.Services.Wf.Executors.WebApiExecutor(
+        sp.GetRequiredService<CP6.Core.Services.Wf.Executors.TenantConnectorResolver>())); // D-T1 webApi 执行器（租户优先 app 兜底，不自做 HTTP，D4 安全边界）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
+// D-T1 连接器管理服务（DataProtection 加密写 purpose="Wfs.Connector.Auth" + 掩码读 + E-WF-028；租约与 WfServiceJobService 同源）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnectorService>(sp =>
+    new CP6.Core.Services.Wf.WfConnectorService(
+        sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>(),
+        sp.GetRequiredService<CP6.Core.Services.Wf.WfsInfraOptions>(),
+        (int)CP6.Core.Services.Wf.WfServiceJobService.LeaseDuration.TotalSeconds));
 builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor, CP6.Core.Services.Wf.Executors.SampleDataWritebackExecutor>(); // C-T2 样例 dataWriteback 执行器（设计器可见，黄金模板；纯计算回写，不落库）
 // A-T2 引擎基建①：工作日历纯查询服务 + WFS infra 配置（绑 Wfs 段，FireHour/保留期/时区）
 builder.Services.AddSingleton(builder.Configuration.GetSection("Wfs").Get<CP6.Core.Services.Wf.WfsInfraOptions>()

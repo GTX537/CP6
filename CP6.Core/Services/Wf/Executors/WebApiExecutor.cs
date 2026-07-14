@@ -15,18 +15,22 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
     public bool   VisibleInDesigner => false;
     public string DisplayName      => "WebAPI";
 
-    // 按 Name（OrdinalIgnoreCase）索引已注册连接器
-    private readonly Dictionary<string, IWfConnector> _connectors;
+    // D5 解析合并：先租户表（Wf_Connector Enabled 行 → DbWfConnector）→ 未命中回落 app 字典。
+    private readonly TenantConnectorResolver _resolver;
 
-    public WebApiExecutor(IEnumerable<IWfConnector> connectors)
+    /// <summary>生产构造（DI）：注入租户感知解析器（内部持 CP6Context + app 字典 + DataProtection + HttpClientFactory）。</summary>
+    public WebApiExecutor(TenantConnectorResolver resolver)
     {
-        _connectors = new Dictionary<string, IWfConnector>(System.StringComparer.OrdinalIgnoreCase);
-        foreach (var c in connectors)
-            _connectors[c.Name] = c;
+        _resolver = resolver;
     }
 
+    /// <summary>兼容构造（app-only）：仅 app 级连接器、无租户表，供既有单测零改写复用。
+    /// 内部包成 db=null 的 app-only 解析器（解析永不触碰租户表）。</summary>
+    public WebApiExecutor(IEnumerable<IWfConnector> connectors)
+        : this(new TenantConnectorResolver(null, connectors)) { }
+
     /// <summary>
-    /// 解析 ctx.ActionRefJson → 找连接器 → 委托 CallAsync。
+    /// 解析 ctx.ActionRefJson → 经解析器找连接器（租户优先 app 兜底）→ 委托 CallAsync。
     /// 本执行器不做 HTTP，不持有 HttpClient——HTTP 由各连接器实现决定（D4/P1-5）。
     /// </summary>
     public async System.Threading.Tasks.Task<ServiceTaskResult> ExecuteAsync(ServiceTaskContext ctx)
@@ -42,7 +46,11 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
         { return ServiceTaskResult.Fail($"E-WF-018|parseError:{ex.GetType().Name}"); }
 
         var connectorName = r.ConnectorName;
-        if (string.IsNullOrEmpty(connectorName) || !_connectors.TryGetValue(connectorName, out var connector))
+        if (string.IsNullOrEmpty(connectorName))
+            return ServiceTaskResult.Fail($"E-WF-018|{connectorName}");
+
+        var connector = await _resolver.ResolveAsync(connectorName);
+        if (connector == null)
             return ServiceTaskResult.Fail($"E-WF-018|{connectorName}");
 
         // 把 path/paramsJson 原样传给连接器；连接器自己决定模板求值/method/headers/response-map（P1-5）
