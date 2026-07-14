@@ -41,4 +41,13 @@ public class Wf_FlowInstance : BaseTenantEntity
     /// <summary>乐观并发标记（WFS P1）：并行分支近同时办结时序列化（后续 Task 6 用）。</summary>
     [Timestamp]
     public byte[]? RowVersion { get; set; }
+
+    /// <summary>父流程实例（子流程 call-activity 回指；null=顶层实例）。</summary>
+    public Guid? ParentInstanceId { get; set; }
+
+    /// <summary>父流程停泊 token（子终态回注/恢复的定位键）。</summary>
+    public Guid? ParentTokenId { get; set; }
+
+    /// <summary>多实例序号（0 起；单实例=0）。与 ParentTokenId 组成防重唯一键。</summary>
+    public int? SubIndex { get; set; }
 }
