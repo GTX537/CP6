@@ -42,6 +42,10 @@ namespace CP6.Tests;
 /// <c>oa-form-search:view</c>(Query.Search)：二者均**只读 POST 豁免、未贴 [RequirePermission]**
 /// （见 OawfPermissionAttributeTests.ReadOnlyPostExemptions），故不产生贴点元组、天然不入本互锁面，
 /// 无需豁免登记（贴点无→不参与⊆检查）。将来谁贴键忘种，本测试立即红。
+///
+/// 范围注记：<c>pub-*</c> 键族是拆分的——本面只覆盖 Controllers.Pub 下的 pub-codegen/pub-seq
+/// （M-PLAN/PUB 波产物）；pub-dept/pub-role-perm/pub-data-scope/pub-field-perm 系 Controllers.Sys
+/// 平台面（菜单 108-111，Sys 内联播种），蓄意不在六模块互锁面内，勿误读为全 pub-* 覆盖。
 /// </summary>
 public class PermissionSeedInterlockTests
 {
@@ -57,8 +61,9 @@ public class PermissionSeedInterlockTests
                         && !t.IsAbstract)
             .OrderBy(t => t.Name);
 
+    // 不加 DeclaredOnly：中间基类若声明端点也须入扫（ControllerBase 自带方法无 Http* 特性，被 IsMutating 滤除）。
     private static IEnumerable<MethodInfo> ActionMethods(Type t) =>
-        t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+        t.GetMethods(BindingFlags.Public | BindingFlags.Instance)
             .Where(m => !m.IsSpecialName);
 
     // 变更端点谓词：POST/PUT/PATCH/DELETE（含 PATCH——X-SWEEP T1 已在八波反射谓词齐补，本波同口径）。
@@ -68,15 +73,13 @@ public class PermissionSeedInterlockTests
         || m.GetCustomAttributes<HttpPatchAttribute>().Any()
         || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
 
-    /// <summary>经 CustomAttributeData 读 [RequirePermission] 构造参数 (menu, action)；无特性返回 null。</summary>
-    private static (string menu, string action)? ReadPermission(MethodInfo m)
-    {
-        var data = CustomAttributeData.GetCustomAttributes(m)
-            .FirstOrDefault(d => d.AttributeType == typeof(RequirePermissionAttribute));
-        if (data == null) return null;
-        var args = data.ConstructorArguments;
-        return ((string)args[0].Value!, (string)args[1].Value!);
-    }
+    /// <summary>经 CustomAttributeData 读成员（方法或控制器类）上**全部** [RequirePermission] 的
+    /// 构造参数 (menu, action)——特性 AllowMultiple，不许只取首个。</summary>
+    private static IEnumerable<(string menu, string action)> ReadPermissions(MemberInfo m) =>
+        CustomAttributeData.GetCustomAttributes(m)
+            .Where(d => d.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(d => ((string)d.ConstructorArguments[0].Value!,
+                          (string)d.ConstructorArguments[1].Value!));
 
     /// <summary>反射读种子类 private static readonly Actions 字段，投影 (MenuId, ActionCode)。
     /// 用 <see cref="ITuple"/> 逐元素取 [0]/[1]——对 (int,string) 或 (int,string,string) 等形状皆容忍。</summary>
@@ -191,27 +194,31 @@ public class PermissionSeedInterlockTests
         var collected = new HashSet<(string menu, string action)>();
 
         foreach (var c in ControllersIn(f.Namespaces))
-        foreach (var m in ActionMethods(c).Where(IsMutating))
         {
-            var perm = ReadPermission(m);
-            if (perm == null) continue;   // 未贴键的变更端点 = 组件/只读POST豁免，由 *PermissionAttributeTests 管，不参与⊆
-            var (menu, action) = perm.Value;
-            collected.Add((menu, action));
+            // 类级贴点对控制器内全部端点生效——与方法级并集（当前全仓零类级，此路系防将来形态）。
+            var classPerms = ReadPermissions(c).ToArray();
 
-            // 锚定表须能解析该 menu-key（新键漏登记锚定表即红——防静默跳过）。
-            if (!f.Anchor.TryGetValue(menu, out var menuId))
+            foreach (var m in ActionMethods(c).Where(IsMutating))
+            foreach (var (menu, action) in ReadPermissions(m).Concat(classPerms))
             {
-                offenders.Add($"{c.Name}.{m.Name}：menu-key '{menu}' 不在测试锚定表——新键须补锚定表（menu-key→MenuId）");
-                continue;
-            }
+                // 完全未贴键的变更端点 = 组件/只读POST豁免，由 *PermissionAttributeTests 管，不参与⊆
+                collected.Add((menu, action));
 
-            if (!seed.Contains((menuId, action)))
-            {
-                // ⊆ 破：贴了键但种子无对应行 → 现网 admin 403。唯有显式豁免（既知缺陷）才放行。
-                if (!f.Exemptions.Contains($"{menu}:{action}"))
-                    offenders.Add(
-                        $"{c.Name}.{m.Name}：贴点 ({menu}={menuId}, {action}) 在 {string.Join("∪", f.SeedTypes.Select(t => t.Name))} 中无对应 (MenuId,ActionCode) 行"
-                        + "——种子漏行，admin 将 403（若属既知缺陷须登记豁免表并附票号）");
+                // 锚定表须能解析该 menu-key（新键漏登记锚定表即红——防静默跳过）。
+                if (!f.Anchor.TryGetValue(menu, out var menuId))
+                {
+                    offenders.Add($"{c.Name}.{m.Name}：menu-key '{menu}' 不在测试锚定表——新键须补锚定表（menu-key→MenuId）");
+                    continue;
+                }
+
+                if (!seed.Contains((menuId, action)))
+                {
+                    // ⊆ 破：贴了键但种子无对应行 → 现网 admin 403。唯有显式豁免（既知缺陷）才放行。
+                    if (!f.Exemptions.Contains($"{menu}:{action}"))
+                        offenders.Add(
+                            $"{c.Name}.{m.Name}：贴点 ({menu}={menuId}, {action}) 在 {string.Join("∪", f.SeedTypes.Select(t => t.Name))} 中无对应 (MenuId,ActionCode) 行"
+                            + "——种子漏行，admin 将 403（若属既知缺陷须登记豁免表并附票号）");
+                }
             }
         }
 
