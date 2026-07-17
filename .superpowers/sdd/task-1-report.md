@@ -1,54 +1,121 @@
-# Task 1 报告：Space 波5 对账漂移扫描 Worker
+# Task 1 Report — 引擎归属闸四方法 + E-WF-029 (TDD)
 
-**Status: DONE** — commit `e98021d`（分支 feat/space-wave5，已 push）
+**Branch:** feat/wf-actor-ownership
+**Commit:** fd85127e (pushed to origin)
+**Status:** DONE
 
-## 实现内容
+## Summary
 
-只读对账扫描：Space 侧库位仍 `Status=1`（已发布、`IsDeleted=0`）而其 WMS 消费落点 `T_WmsBin` 已 `IsActive=false` 的漂移，逐条 LogError 告警，不自愈（与 FinReconciliationWorker 语义一致）。
+Closed the P0 越权代批 hole (M-OA/WF #1) at the engine layer. Added a single ownership
+assertion helper `AssertActorMayHandleAsync(Wf_FlowTask, Guid actorId, Guid? onBehalfOf)`
+in a new partial `FlowEngine.Ownership.cs`, and wired it before every state mutation in the
+four mutating engine methods: `ActOnceAsync` / `TransferAsync` / `AddSignAsync` /
+`SendBackAsync` (SendBackTarget overload = single entry covering node/prevstage/starter).
 
-改动/新增文件：
-- **新增** `CP6.Core\Services\Space\SpaceBinDriftScanner.cs` — 静态扫描器。`ScanAsync(CP6Context db, CancellationToken ct)` → `Task<List<SpaceBinDrift>>`；嵌套 `record SpaceBinDrift(Guid LocationId, string? LocationCode, long BinVersion)`。两表主键等值 join（`Space_Location.Id == WmsBin.Id`，跨系统同一 GUID），过滤 `Status==1 && !IsDeleted` × `!IsActive`。租户过滤由 CP6Context 全局 query filter 施加。
-- **新增** `CP6.WebApi\BackgroundServices\SpaceBinReconciliationWorker.cs` — 照 FinReconciliationWorker 逐字同构：启动延迟 1min + 每 24h，`ProcessOnceAsync` 公开可测，经 `TenantScopeRunner.ForEachTenantAsync` 逐租户从 scope 取 `CP6Context` 调 `ScanAsync`，漂移逐条 `LogError`（含 tenant/LocationId/Code/version），无漂移记 Info。
-- **修改** `CP6.WebApi\Program.cs` :503 附近 — 在 FinReconciliationWorker 注册行旁加 `AddHostedService<SpaceBinReconciliationWorker>()`。
-- **新增** `CP6.Tests\Space\SpaceBinDriftScannerTests.cs` — 3 例（InMemory）。
+Three allow paths: assignee self / act-as with engine-side re-verified active delegate grant /
+SystemActor (Guid.Empty). Violation → `E-WF-029`; act-as without a valid grant → `E-WF-001`.
+`TransferAsync` gained `bool bypassOwnership = false`; only `InboxService.BatchTransferAsync`
+passes `true`.
 
-## 测试与结果
+## Files changed
 
-聚焦：`dotnet test --filter SpaceBinDriftScannerTests` → **Passed 3 / Failed 0**。
-全量：`dotnet test CP6.Tests/CP6.Tests.csproj` → **1811 passed / 5 skipped / 0 failed**（基线 1808+3 新增 = 1811，达标）。
+- **New** `CP6.Core/Services/Wf/FlowEngine.Ownership.cs` — gate helper + `SystemActor` const.
+- `CP6.Core/Services/Wf/FlowEngine.cs` — gate inserted in `ActOnceAsync` (after inst-Running
+  check, before `task.Status = ...`); corrected now-false "引擎不查委派" doc-comment.
+- `CP6.Core/Services/Wf/AdvancedFlow.cs` — `TransferAsync` signature + gate (bypass-guarded);
+  gate in `AddSignAsync` and `SendBackAsync(SendBackTarget)`.
+- `CP6.Core/Services/Wf/IFlowEngine.cs` — `TransferAsync` signature updated; line ~21
+  `ActAsAsync` doc-comment "引擎不查委派" corrected to "控制器先闸, 引擎复验(防御纵深)".
+- `CP6.Core/Services/Oa/InboxService.cs` — `BatchTransferAsync` call passes `bypassOwnership: true`.
+- `CP6.WebApi/Seed/I18nOaInboxScreenSeed.cs` — E-WF-029 five-language row after E-WF-008.
+- **New** `CP6.Tests/Wf/FlowActorOwnershipTests.cs` — 14 tests (brief code, adapted).
+- `CP6.Tests/Oa/ActAsServiceTests.cs` — existing-test correction (see below).
 
-三例覆盖 brief 验收：
-1. `Scan_PublishedLocationWithInactiveBin_Reported`：Status=1 + bin.IsActive=false → 命中（并断言 LocationId/LocationCode/BinVersion 三字段回传正确）。
-2. `Scan_PublishedLocationWithActiveBin_NotReported`：Status=1 + bin.IsActive=true → 不命中。
-3. `Scan_UnpublishedLocationWithInactiveBin_NotReported`：Status=2（停用）+ bin.IsActive=false → 不命中。
+Test-code adaptations vs brief: `Sys_User.Enable` is `bool` (brief used `1`) and there is no
+`UserTrueName` field — used `new Sys_User { Id, UserName="to", NickName="to", Enable=true }`
+via a `SeedUser` helper. `Password` has a default (`""`) so it was not required. DbSet names
+(`Wf_FlowDelegates`, `Wf_FlowHistories`, `Sys_Users`) matched the brief verbatim.
 
-## TDD 证据
+## RED evidence (Step 2)
 
-**RED**（scanner 未实现，编译失败）：
+New class run with `Transfer_BypassOwnership_*` temporarily commented (param did not yet exist):
+
 ```
-error CS0103: The name 'SpaceBinDriftScanner' does not exist in the current context (×3)
+Failed!  - Failed:     8, Passed:     5, Skipped:     0, Total:    13
 ```
 
-**GREEN**（实现后）：
+The 8 failures = all violation/negative cases ("No exception was thrown"):
+Act_ByNonAssignee, ActAs_OnBehalfOfNotAssignee, ActAs_WithoutGrant,
+ActAs_ExpiredOrDisabledGrant, Act_DelegateDirect_WithoutActAs,
+Transfer_ByNonAssignee, SendBack_ByNonAssignee, AddSign_ByNonAssignee.
+The 5 passes = positive/system paths (ByAssignee ×3, SystemActor, ActAs_DelegateWithActiveGrant).
+
+## GREEN evidence (Step 4)
+
+After implementing the gate and restoring the bypass test:
+
 ```
-Passed!  - Failed: 0, Passed: 3, Skipped: 0, Total: 3 - CP6.Tests.dll
+Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14 - CP6.Tests.dll
 ```
 
-## 关键实现决策
+## Full suite (Step 5)
 
-- **InMemory context 构造**：照仓内先例 `FinReconciliationServiceTests.NewDb()`——单参 `new CP6Context(options)`。CP6Context 单参时 `CurrentTenantId` 落 `DefaultTenant`，实体 SaveChanges 盖章为同租户，查询 query filter 亦按该租户 → 命中成立，无需显式绕租户。
-- **DbSet 名**：`Space_Locations` / `WmsBins`（已核对 CP6Context :427/:440）。
-- **Space_Location 必填补齐**：实体 `LocationCode` 可空、`Status` int，BaseBizEntity 提供 Id/TenantId/IsDeleted，InMemory 无需补其他字段即可存。
-- **BinVersion 用 `WmsBin.Version`**（已消费的最新发布版本，溯源用），与 brief 示例一致。
-- Worker 从 scope 直接 `GetRequiredService<CP6Context>()`（scanner 是静态方法、无独立服务接口），符合 TenantScopeRunner「同 scope 内 ITenantContext 与 CP6Context 同一份」的租户作用域约定。
+First full run surfaced exactly one red:
 
-## 自审发现
+```
+Failed!  - Failed:     1, Passed:  2211, Skipped:     5, Total:  2217
+  Failed CP6.Tests.ActAsServiceTests.ActAs_RecordsActualHandler_AndOnBehalfOf
+```
 
-- **完整性**：三链路（命中/两不命中）全覆盖，字段级断言到位。
-- **YAGNI**：scanner 保持静态无状态，未引入 DI 接口/自愈逻辑（brief 明确只读不自愈）。
-- **测试真验证行为**：命中例断言了 LocationId + LocationCode + BinVersion 全部三字段的回传值，而非仅 `Single`，确保 join 投影正确。
-- **多租户正确性**：ScanAsync 不写 `.Where(TenantId==)`，依赖 CP6Context 全局过滤 + Worker 逐租户设 CurrentTenantId，与 FinReconciliationWorker 同构，无跨租户泄漏面。
+After the actor correction below, final:
 
-## 疑虑
+```
+Passed!  - Failed:     0, Passed:  2212, Skipped:     5, Total:  2217 - CP6.Tests.dll (net8.0)
+```
 
-无阻塞疑虑。一点说明：本次 commit 一并纳入了 `.superpowers\sdd\task-1-brief.md`（此前未跟踪的 sdd 任务简报），符合仓内 sdd 台账入库惯例。Worker 的运行时逐租户告警未做线上实证（本任务范畴为扫描逻辑 + 注册；行为由单测覆盖，Worker 为逐字同构壳）。
+2198 baseline passed + 14 new = 2212. (The brief's "+15 / ≥2213" over-counted the provided
+test file by one — the code in the brief defines 14 `[Fact]` methods, not 15. No test was
+dropped; the count is fully accounted for.)
+
+## Existing-test actor corrections (1)
+
+**`CP6.Tests/Oa/ActAsServiceTests.cs:38-42` — `ActAs_RecordsActualHandler_AndOnBehalfOf`**
+- Old: `me` calls `ActAsAsync(task, actorId: me, onBehalfOf: grantor, ...)` with **no
+  `Wf_FlowDelegate` grant seeded**. Under the new engine-side re-verification this correctly
+  throws `E-WF-001`.
+- Correction: seeded an active `Wf_FlowDelegate { GrantorId = grantor, DelegateId = me,
+  Enable = true, ValidFrom = now-1d, ValidTo = now+1d }` before the act-as call.
+- Attribution: **test modeling gap, not a product path.** In production the controller's
+  `AssertActiveGrant` guarantees an active grant exists on any real act-as; the test omitted
+  seeding it. No gate was weakened — the fix models the real handler's precondition. The
+  sibling test `ActAs_NullOnBehalf_EquivalentToActAsync` (actor == assignee `grantor`,
+  onBehalfOf null → self path) needed no change and stayed green.
+
+No red revealed a product internal caller passing a non-assignee outside the two known
+exceptions (WfTimeoutService SystemActor, BatchTransferAsync bypass). No BLOCKED condition.
+
+## Self-review
+
+- Gate precedes every state mutation in all four methods:
+  - `ActOnceAsync` — after `inst.Status != Running` early-return, before `task.Status = ...`.
+  - `TransferAsync` — after inst check, before target-user lookup / `task.AssigneeId = ...`;
+    wrapped in `if (!bypassOwnership)`.
+  - `AddSignAsync` — after inst check, before add-sign count and the `before`-suspend mutation.
+  - `SendBackAsync(SendBackTarget)` — after inst check, before `LoadSchemaAsync` and the
+    node/prevstage/starter switch, so all three send-back kinds are covered from one entry.
+    The legacy 3-arg overload forwards to this overload, so it is covered too.
+- IFlowEngine doc-comment (line ~21) and the mirror comment in FlowEngine.cs both corrected.
+- Diff limited to the eight in-scope files; staged explicitly (not `git add -A`) to avoid the
+  pre-existing untracked `PermissionSeedInterlockTests.cs` / any stray file.
+- `SystemActor` newly defined on the FlowEngine partial (Guid.Empty), matching
+  `WfTimeoutService.SystemActor`; no prior definition on FlowEngine, no collision (build clean).
+
+## Concerns
+
+- **Count expectation:** final passed = 2212, not the brief's ≥2213. Root cause is the brief's
+  own test file defining 14 `[Fact]`s while the prose said 15; 2198 + 14 = 2212 is internally
+  consistent and 0-fail. Flagging only so Task 2 does not treat 2212 as a shortfall.
+- **Out-of-scope-by-design:** `TimeoutAdvanceErrorEdgeAsync` is a fifth mutating engine method
+  but is invoked only by `WfTimeoutService` with `SystemActor`, so it is not an越权 surface and
+  was intentionally left ungated per the brief's four-method scope.
+- LF→CRLF warnings on the two new files (cosmetic, Windows checkout normalization).
