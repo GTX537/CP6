@@ -416,3 +416,4 @@ WF-OWN T2: complete (部署+冒烟; main=002ef385 合并点; cp6-api镜像重建
 # ═══ GR-VP 普通角色放开+v-permission全模块(2026-07-17, feat/general-role-vperm, base=main 632fe70c) ═══
 # 依据: WF-OWN解锁的放开波+v-permission不对称UX票; 用户拍板=①种子预置标准角色 ②全模块一次铺完
 # plan=docs/superpowers/plans/2026-07-17-general-role-vperm.md; 七任务=T1角色种子+T2-6前端五模块组+T7部署冒烟; 基线2213绿/5skip, 前端vitest全绿
+GR-VP T1: complete (commit ddcfa1ac, Spec ✅ + Approved[opus审零Critical/Important; 三具名风险全核: 种子机制逐字镜像PurPermissionSeed[租户枚举/显式盖章/IgnoreQueryFilters/changed门SaveChanges]/Program.cs插点在WorkCalendarConnector链尾之后正确/Fact7用户挂链与聚合器真实解析(UserRoles∪User.RoleId)吻合; SeedAsync→EnsureSeeded偏差裁定正当=邻居同款优先于brief示意; Minor×3记档: ①RoleId=10异名撞名假设未加护[现库仅1/2/3/9002] ②部分预存行路径无专测 ③Fact7冗余断言]; 2220绿[2213+7]/5skip; ⚠记票=insert-only地板语义: admin删基线键重启被种回[加键不受影响], 待用户裁决是否改首建后不补)
