@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Pub;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,7 @@ public class SeqController : LocalizedControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("pub-seq", "add")]
     public async Task<IActionResult> Add([FromBody] Pub_DocSequence entity)
     {
         if (await _db.Pub_DocSequences.AnyAsync(x => x.BizKey == entity.BizKey))
@@ -39,6 +41,7 @@ public class SeqController : LocalizedControllerBase
     }
 
     [HttpPut]
+    [RequirePermission("pub-seq", "edit")]
     public async Task<IActionResult> Update([FromBody] Pub_DocSequence entity)
     {
         var cur = await _db.Pub_DocSequences.FindAsync(entity.Id);
@@ -53,6 +56,7 @@ public class SeqController : LocalizedControllerBase
     }
 
     [HttpDelete]
+    [RequirePermission("pub-seq", "delete")]
     public async Task<IActionResult> Delete([FromBody] Guid[] ids)
     {
         var rows = await _db.Pub_DocSequences.Where(x => ids.Contains(x.Id)).ToListAsync();

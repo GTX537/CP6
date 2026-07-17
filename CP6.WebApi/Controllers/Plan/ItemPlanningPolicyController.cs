@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Plan;
 using CP6.Entity.DomainModels.Plan;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +28,7 @@ public class ItemPlanningPolicyController : ControllerBase
         => Ok2(await _svc.GetPolicyAsync(itemCd));
 
     [HttpPost]
+    [RequirePermission("plan-item-policy", "add")]
     public async Task<IActionResult> Upsert([FromBody] Plan_ItemPlanningPolicy dto)
     {
         try { await _svc.UpsertAsync(dto, CurrentUser); return Ok2(); }
@@ -34,6 +36,7 @@ public class ItemPlanningPolicyController : ControllerBase
     }
 
     [HttpDelete("{itemCd}")]
+    [RequirePermission("plan-item-policy", "delete")]
     public async Task<IActionResult> Delete(string itemCd)
     {
         try { await _svc.DeleteAsync(itemCd, CurrentUser); return Ok2(); }

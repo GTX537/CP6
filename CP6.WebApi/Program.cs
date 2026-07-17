@@ -1531,13 +1531,13 @@ using (var scope = app.Services.CreateScope())
     }
     if (!db.Sys_Menus.Any(m => m.MenuId == 731))
     {
-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 731, MenuName = "MRP运算看板", RoutePath = "/plan/mrp", Icon = "Histogram", ParentId = 730, OrderNo = 731, Enable = true });
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 731, MenuName = "MRP运算看板", RoutePath = "/plan/mrp", MenuKey = "plan-mrp", Icon = "Histogram", ParentId = 730, OrderNo = 731, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 731 });
         db.SaveChanges();
     }
     if (!db.Sys_Menus.Any(m => m.MenuId == 732))
     {
-        db.Sys_Menus.Add(new Sys_Menu { MenuId = 732, MenuName = "计划主数据", RoutePath = "/plan/item-policy", Icon = "Setting", ParentId = 730, OrderNo = 732, Enable = true });
+        db.Sys_Menus.Add(new Sys_Menu { MenuId = 732, MenuName = "计划主数据", RoutePath = "/plan/item-policy", MenuKey = "plan-item-policy", Icon = "Setting", ParentId = 730, OrderNo = 732, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 732 });
         db.SaveChanges();
     }
@@ -1603,6 +1603,10 @@ using (var scope = app.Services.CreateScope())
     // 逐租户播 Pur 全 24 权限键（既有 10 + 新 14，含 subcontract:view）+ 授 admin(RoleId=1)。
     // 取代原仅默认租户的内联块（真相源 docs/seeds/pur-permission-keys.md §六 硬前置②）；须置于 Pur 菜单 + 705/706/707 MenuKey 之后（RoleAction 挂锚定 MenuId 701–707）。
     CP6.WebApi.Seed.PurPermissionSeed.EnsureSeeded(db);
+
+    // 逐租户播 Plan/Pub 全 11 权限键（plan-mrp ×4 / plan-item-policy ×2 / pub-codegen ×2[含 view] / pub-seq ×3）+ 授 admin(RoleId=1)。
+    // 真相源 docs/seeds/planpub-permission-keys.md §六 次硬前置②；须置于 Plan 菜单 + 731/732 MenuKey 之后（RoleAction 挂锚定 MenuId 731/732/113/112，Pub 112/113 :1008 全局回填已就位）。Attachment 三端点组件豁免不入种子。
+    CP6.WebApi.Seed.PlanPubPermissionSeed.EnsureSeeded(db);
 
     // ═══════════════════════════════════════════════════════════
     //  MSBBME010〜090 MES 製造執行 菜单
