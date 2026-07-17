@@ -6,7 +6,7 @@
 <template>
   <div class="wf-connector-panel">
     <div class="panel-actions">
-      <el-button type="primary" @click="openCreate">{{ t('oa.connector.new') }}</el-button>
+      <el-button v-permission="'oa-flow-admin:Connector.Edit'" type="primary" @click="openCreate">{{ t('oa.connector.new') }}</el-button>
       <el-button :icon="Refresh" circle @click="reload" />
     </div>
 
@@ -26,13 +26,13 @@
       </el-table-column>
       <el-table-column :label="t('oa.connector.col.enabled')" width="90">
         <template #default="{ row }">
-          <el-switch :model-value="row.enabled" :loading="toggling.has(row.id)"
+          <el-switch v-permission="'oa-flow-admin:Connector.Edit'" :model-value="row.enabled" :loading="toggling.has(row.id)"
                      @change="(v: boolean | string | number) => toggleEnable(row, v as boolean)" />
         </template>
       </el-table-column>
       <el-table-column :label="t('oa.connector.col.actions')" width="120" fixed="right">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openEdit(row)">{{ t('common.edit') }}</el-button>
+          <el-button v-permission="'oa-flow-admin:Connector.Edit'" link type="primary" @click="openEdit(row)">{{ t('common.edit') }}</el-button>
         </template>
       </el-table-column>
     </el-table>

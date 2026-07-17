@@ -296,8 +296,8 @@ function doValidateClick() { doValidate() }
 
       <!-- Actions -->
       <el-button type="info"    @click="doValidateClick">{{ t('oa.designer.validate') }}</el-button>
-      <el-button type="primary" :loading="saving" @click="doSave">{{ t('oa.designer.save') }}</el-button>
-      <el-button                @click="openCloneDialog">{{ t('oa.designer.clone') }}</el-button>
+      <el-button v-permission="'oa-designer:edit'" type="primary" :loading="saving" @click="doSave">{{ t('oa.designer.save') }}</el-button>
+      <el-button v-permission="'oa-designer:add'" @click="openCloneDialog">{{ t('oa.designer.clone') }}</el-button>
     </div>
 
     <!-- ── Main area: canvas + property panel ──────────────────── -->

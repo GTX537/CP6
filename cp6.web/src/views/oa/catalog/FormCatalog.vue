@@ -15,6 +15,7 @@
           <div class="card-header">
             <span class="form-name">{{ card.formName }}</span>
             <el-button
+              v-permission="'oa-form-catalog:favorite'"
               :icon="card.favorite ? StarFilled : Star"
               link
               :type="card.favorite ? 'warning' : 'default'"
@@ -52,6 +53,7 @@
               <div class="card-header">
                 <span class="form-name">{{ card.formName }}</span>
                 <el-button
+                  v-permission="'oa-form-catalog:favorite'"
                   :icon="card.favorite ? StarFilled : Star"
                   link
                   :type="card.favorite ? 'warning' : 'default'"

@@ -40,10 +40,11 @@
         <el-button size="small" :loading="previewing" @click="doPreview">
           {{ t('oa.initiate.preview') }}
         </el-button>
-        <el-button size="small" :loading="saving" @click="doSave">
+        <el-button v-permission="'oa-form-catalog:add'" size="small" :loading="saving" @click="doSave">
           {{ t('oa.initiate.saveDraft') }}
         </el-button>
         <el-button
+          v-permission="'oa-form-catalog:submit'"
           type="primary"
           size="small"
           :loading="submitting"

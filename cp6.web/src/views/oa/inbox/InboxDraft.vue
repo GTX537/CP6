@@ -12,13 +12,13 @@
       </el-table-column>
       <el-table-column :label="t('oa.col.actions')" width="200" fixed="right">
         <template #default="{ row }">
-          <el-button type="primary" link size="small" @click.stop="openEdit(row)">
+          <el-button v-permission="'oa-form-catalog:edit'" type="primary" link size="small" @click.stop="openEdit(row)">
             {{ t('oa.draft.edit') }}
           </el-button>
-          <el-button type="success" link size="small" :loading="row._submitting" @click.stop="submitDraft(row)">
+          <el-button v-permission="'oa-form-catalog:submit'" type="success" link size="small" :loading="row._submitting" @click.stop="submitDraft(row)">
             {{ t('oa.draft.submit') }}
           </el-button>
-          <el-button type="danger" link size="small" @click.stop="removeDraft(row)">
+          <el-button v-permission="'oa-form-catalog:del'" type="danger" link size="small" @click.stop="removeDraft(row)">
             {{ t('oa.draft.delete') }}
           </el-button>
         </template>

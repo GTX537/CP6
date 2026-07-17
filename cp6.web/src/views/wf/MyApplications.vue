@@ -24,6 +24,7 @@
             <el-button type="primary" link size="small" @click="openTrace(row)">{{ t('痕迹') }}</el-button>
             <el-button
               v-if="row.status === 0"
+              v-permission="'oa-inbox:withdraw'"
               type="warning"
               link
               size="small"

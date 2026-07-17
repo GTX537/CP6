@@ -96,6 +96,7 @@
           clearable
         />
         <el-button
+          v-permission="'oa-inbox:approve'"
           type="primary"
           size="small"
           :loading="acting"
@@ -104,6 +105,7 @@
           {{ t('oa.detail.approve') }}
         </el-button>
         <el-button
+          v-permission="'oa-inbox:approve'"
           type="danger"
           size="small"
           :loading="acting"
@@ -112,6 +114,7 @@
           {{ t('oa.detail.reject') }}
         </el-button>
         <el-button
+          v-permission="'oa-inbox:transfer'"
           type="warning"
           size="small"
           @click="transferVisible = true"
@@ -119,6 +122,7 @@
           {{ t('oa.detail.transfer') }}
         </el-button>
         <el-button
+          v-permission="'oa-inbox:sendback'"
           type="danger"
           size="small"
           plain

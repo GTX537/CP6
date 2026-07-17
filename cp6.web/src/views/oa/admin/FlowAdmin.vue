@@ -8,7 +8,7 @@
 <template>
   <CpPageShell :title="t('oa.flowadmin.title')" :count="activeTab === 'flows' ? total : undefined">
     <template #actions>
-      <el-button v-if="activeTab === 'flows'" type="warning" plain @click="batchTransferVisible = true">
+      <el-button v-if="activeTab === 'flows'" v-permission="'oa-inbox:batch-transfer'" type="warning" plain @click="batchTransferVisible = true">
         {{ t('oa.bt.entry') }}
       </el-button>
       <el-button v-if="activeTab === 'flows'" :icon="Refresh" circle :loading="refreshing" @click="refresh" />
@@ -30,6 +30,7 @@
         >
           <template #col-enable="{ row }">
             <el-switch
+              v-permission="'oa-flow-admin:enable'"
               v-model="(row as FlowAdminItem).enable"
               :loading="toggling.has((row as FlowAdminItem).flowKey)"
               :disabled="toggling.has((row as FlowAdminItem).flowKey)"

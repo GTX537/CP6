@@ -14,7 +14,7 @@
     <!-- 空态：引导导入 -->
     <div v-if="isEmpty" class="wc-empty">
       <el-empty :description="t('oa.workcal.empty')">
-        <el-button type="primary" :loading="importing" @click="importJp">
+        <el-button v-permission="'oa-work-calendar:Calendar.Edit'" type="primary" :loading="importing" @click="importJp">
           {{ t('oa.workcal.importJp') }}
         </el-button>
       </el-empty>
@@ -57,7 +57,7 @@
       />
       <template #footer>
         <el-button @click="dialogVisible = false">{{ t('取消') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="saveDay">{{ t('确定') }}</el-button>
+        <el-button v-permission="'oa-work-calendar:Calendar.Edit'" type="primary" :loading="saving" @click="saveDay">{{ t('确定') }}</el-button>
       </template>
     </el-dialog>
   </CpPageShell>
