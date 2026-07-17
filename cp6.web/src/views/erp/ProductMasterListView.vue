@@ -24,7 +24,7 @@
         <el-checkbox :value="9">{{ t('承認済/転送済') }}</el-checkbox>
       </el-checkbox-group>
       <div class="tb-spacer" />
-      <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
+      <el-button v-permission="'erp-product:add'" type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
       <el-button :icon="Download" :loading="exporting" @click="onExportCsv">{{ t('sales.btn.exportCsv') }}</el-button>
     </template>
 
@@ -41,9 +41,9 @@
     </template>
     <template #col-_action="{ row }">
       <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
-      <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
-      <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
-      <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
+      <el-button v-permission="'erp-product:edit'" link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+      <el-button v-permission="'erp-product:add'" link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+      <el-button v-permission="'erp-product:del'" link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
     </template>
   </CpListPage>
 </template>

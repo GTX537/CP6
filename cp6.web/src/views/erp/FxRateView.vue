@@ -9,7 +9,7 @@
 <template>
   <CpPageShell :title="t('erp.fxRate.title')" :count="total">
     <template #actions>
-      <el-button type="primary" @click="openCreate">{{ t('erp.fxRate.btn.create') }}</el-button>
+      <el-button v-permission="'erp-fx-rate:add'" type="primary" @click="openCreate">{{ t('erp.fxRate.btn.create') }}</el-button>
     </template>
 
     <CpListPage
@@ -30,8 +30,8 @@
       </template>
 
       <template #col-_action="{ row }">
-        <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('erp.fxRate.btn.edit') }}</el-button>
-        <el-button link type="danger" size="small" @click="remove(row)">{{ t('erp.fxRate.btn.delete') }}</el-button>
+        <el-button v-permission="'erp-fx-rate:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('erp.fxRate.btn.edit') }}</el-button>
+        <el-button v-permission="'erp-fx-rate:del'" link type="danger" size="small" @click="remove(row)">{{ t('erp.fxRate.btn.delete') }}</el-button>
       </template>
     </CpListPage>
 

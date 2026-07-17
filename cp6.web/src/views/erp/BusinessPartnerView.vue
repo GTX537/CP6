@@ -53,8 +53,8 @@
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
         <el-button @click="onClear">{{ t('sales.btn.clear') }}</el-button>
-        <el-button v-if="store.canEdit" type="primary" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
-        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onDelete">{{ t('sales.btn.delete') }}</el-button>
+        <el-button v-if="store.canEdit" v-permission="'erp-business-partner:add'" type="primary" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
+        <el-button v-if="store.isDelete" v-permission="'erp-business-partner:del'" type="danger" :loading="saving" @click="onDelete">{{ t('sales.btn.delete') }}</el-button>
       </div>
     </el-card>
   </div>

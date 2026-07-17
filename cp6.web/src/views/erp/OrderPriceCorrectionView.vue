@@ -50,7 +50,7 @@
         <el-form-item>
           <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
           <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
-          <el-button type="success" @click="onSubmit" :loading="submitting" :disabled="selectedRows.length === 0">
+          <el-button v-permission="'erp-order-price-correction:correct'" type="success" @click="onSubmit" :loading="submitting" :disabled="selectedRows.length === 0">
             {{ t('sales.pc.updateSelected') }}（{{ selectedRows.length }}）
           </el-button>
         </el-form-item>

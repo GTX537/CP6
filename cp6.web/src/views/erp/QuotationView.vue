@@ -418,11 +418,12 @@
     <!-- ============ Footer 操作按钮 ============ -->
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
-        <el-button v-if="showSave" type="success" :loading="saving" @click="onSave">
+        <el-button v-if="showSave" v-permission="'erp-quotation:add'" type="success" :loading="saving" @click="onSave">
           {{ t('保存') }}
         </el-button>
         <el-button
           v-if="showConfirm"
+          v-permission="'erp-quotation:confirm'"
           type="warning"
           :loading="saving"
           @click="onConfirm"
@@ -431,6 +432,7 @@
         </el-button>
         <el-button
           v-if="showCancelConfirm"
+          v-permission="'erp-quotation:confirm'"
           :loading="saving"
           @click="onCancelConfirm"
         >
@@ -438,13 +440,14 @@
         </el-button>
         <el-button
           v-if="showIssue"
+          v-permission="'erp-quotation:issue'"
           type="primary"
           :loading="saving"
           @click="onIssue"
         >
           {{ t('発行') }}
         </el-button>
-        <el-button v-if="showDelete" type="danger" :loading="saving" @click="onDelete">
+        <el-button v-if="showDelete" v-permission="'erp-quotation:del'" type="danger" :loading="saving" @click="onDelete">
           {{ t('削除') }}
         </el-button>
         <el-button @click="onClose">{{ isStandalone ? t('閉じる') : t('戻る') }}</el-button>

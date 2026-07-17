@@ -173,8 +173,8 @@
       <div class="btn-row">
         <el-button v-if="store.isView" :icon="Document" @click="onIssueLabel">{{ t('sales.btn.label') }}</el-button>
         <el-button v-if="store.isView" :icon="Document" @click="onPurchaseOrder">{{ t('sales.btn.purchaseOrder') }}</el-button>
-        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onSave">{{ t('sales.btn.delete') }}</el-button>
-        <el-button v-else-if="store.canEdit" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
+        <el-button v-if="store.isDelete" v-permission="'erp-plate-mold:del'" type="danger" :loading="saving" @click="onSave">{{ t('sales.btn.delete') }}</el-button>
+        <el-button v-else-if="store.canEdit" v-permission="'erp-plate-mold:add'" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
         <el-button @click="onClear">{{ t('sales.btn.clear') }}</el-button>
       </div>
     </el-card>

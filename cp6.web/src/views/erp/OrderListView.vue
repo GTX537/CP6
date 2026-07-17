@@ -41,7 +41,7 @@
         <el-button link type="primary" size="small" :icon="Connection" @click.stop="goTrace(row.webOrderNo)">
           {{ t('erp.orderTrace.btn.trace') }}
         </el-button>
-        <el-button link type="danger" size="small" @click.stop="openCancelDialog(row)">
+        <el-button v-permission="'erp-order:cancel'" link type="danger" size="small" @click.stop="openCancelDialog(row)">
           {{ t('sales.cancel.btn') }}
         </el-button>
       </template>

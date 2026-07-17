@@ -35,10 +35,10 @@
 
       <template #col-_action="{ row }">
         <div class="row-actions">
-          <el-button type="warning" link size="small" :icon="Check" @click="openAction(row, 'close')">
+          <el-button v-permission="'erp-backorder:close'" type="warning" link size="small" :icon="Check" @click="openAction(row, 'close')">
             {{ t('erp.backorder.btn.close') }}
           </el-button>
-          <el-button type="primary" link size="small" :icon="CopyDocument" @click="openAction(row, 'split')">
+          <el-button v-permission="'erp-backorder:split'" type="primary" link size="small" :icon="CopyDocument" @click="openAction(row, 'split')">
             {{ t('erp.backorder.btn.split') }}
           </el-button>
         </div>

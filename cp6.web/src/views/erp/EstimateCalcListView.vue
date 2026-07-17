@@ -16,13 +16,13 @@
     :filter-labels="filterLabels"
   >
     <template #toolbar>
-      <el-button type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
+      <el-button v-permission="'erp-estimate-calc:add'" type="success" :icon="Plus" @click="onNew">{{ t('sales.btn.new') }}</el-button>
     </template>
     <template #col-_action="{ row }">
       <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
-      <el-button link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
-      <el-button link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
-      <el-button link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
+      <el-button v-permission="'erp-estimate-calc:edit'" link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
+      <el-button v-permission="'erp-estimate-calc:add'" link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
+      <el-button v-permission="'erp-estimate-calc:del'" link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
     </template>
   </CpListPage>
 </template>
