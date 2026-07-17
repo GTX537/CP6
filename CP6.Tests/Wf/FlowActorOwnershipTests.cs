@@ -230,7 +230,23 @@ public class FlowActorOwnershipTests
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => Engine(db).AddSignAsync(t.Id, intruder, signee, "after"));
         Assert.Equal("E-WF-029", ex.Message);
-        Assert.Equal(FlowTaskStatus.Pending, (await db.Wf_FlowTasks.SingleAsync(x => x.Id == t.Id)).Status);   // before 挂起未发生
+        Assert.Equal(FlowTaskStatus.Pending, (await db.Wf_FlowTasks.SingleAsync(x => x.Id == t.Id)).Status);
+    }
+
+    [Fact]
+    public async Task AddSign_Before_ByNonAssignee_ThrowsE029_OriginalNotSuspended()
+    {
+        // 终审 Minor#1：before 加签在闸后才挂起原任务——违规拒绝时原任务必须仍 Pending（非 Suspended）。
+        // 若未来重构把挂起挪到闸前，本测试即红。
+        using var db = NewDb();
+        var a = Guid.NewGuid(); var b = Guid.NewGuid(); var intruder = Guid.NewGuid(); var signee = Guid.NewGuid();
+        var t = await SubmitAndGetTaskAsync(db, a, b);
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => Engine(db).AddSignAsync(t.Id, intruder, signee, "before"));
+        Assert.Equal("E-WF-029", ex.Message);
+        var after = await db.Wf_FlowTasks.SingleAsync(x => x.Id == t.Id);
+        Assert.Equal(FlowTaskStatus.Pending, after.Status);   // 未被挂起
+        Assert.False(await db.Wf_FlowTasks.AnyAsync(x => x.AssigneeId == signee));   // 加签任务未产生
     }
 
     [Fact]
