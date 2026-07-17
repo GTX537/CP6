@@ -471,6 +471,9 @@ progress.md 记 T2 冒烟证据；MEMORY.md 交接点更新：「OA/WF 引擎审
 
 1. 普通角色授权放开波（本票解锁的后续）：给非 admin 角色配 `oa-inbox:*` 键的种子/页面策略——独立立项。
 2. QA harness 若有 admin 代批他人任务的剧本，随下次 live QA 矫正为 assignee 本人/act-as。
+3. 【终审 Minor#2】`FlowEngine.SystemActor` 与 `WfTimeoutService.SystemActor` 双 `Guid.Empty` 常量——下次触碰任一文件时合并为单一引用（漂移风险纯理论，注释已互指）。
+4. 【任务审 Minor#2】`Wf_FlowDelegate.Scope` 字段全平台不参与判定（控制器 `Active()`/引擎复验同样忽略）——scope 语义启用时须两处同步落地。
+5. 【终审观察记档】ActOnce/SendBack 幂等静默返回先于闸：非本人探测已办结任务得静默 200 而非 E-WF-029（零突变、不泄露归属，Transfer 同探测则 E-WF-002——已知不对称形态，非缺陷）。
 
 ## Self-Review 记录
 
