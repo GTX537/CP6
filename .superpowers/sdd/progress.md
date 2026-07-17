@@ -405,3 +405,4 @@ M-PLAN/PUB 合并+部署: complete (main=5205747e --no-ff已push, 分支feat/m-p
 # ═══ X-SWEEP 跨波双票(2026-07-17, feat/xwave-authz-test-sweep, base=main 8fc7f5e4) ═══
 # 依据: 六波收官解锁的两张跨波票(M-PUR票#2 HttpPatch sweep + M-ERP票#3系互锁扩六模块, plan文末各完成记录); 纯测试两任务; 基线2190绿/5skip
 # 开工盘点: 反射测试文件实为8个(六模块波+Fin/Space两先行者), 7个零HttpPatch+PlanPub仅自检提及; 种子面=六模块种子+OA侧三附加种子(InboxBatchTransfer/FlowTrigger/WorkCalendarConnector)须并集对账
+X-SWEEP T1: complete (commit 7c8f1bc7, Spec ✅ + Approved[sonnet审零Critical/Important; 八文件+1行逐个核实全落在各自IsMutating或链Put与Delete之间非decoy列表/PlanPub断言体纯上下文行零diff+头注释失实语一并矫正(合理扩展非越权)/零生产代码入库=stat仅8测试+报告/审查者独立grep证Controllers零HttpPatch→谓词补丁系当前扫描面逻辑no-op与2190持平自洽免重跑; Minor×2放行=8行同款尾注释系统一样式微进口+PlanPub三处同理由注释冗余但互不矛盾]; 全量2190绿/5skip持平; RED双风格实弹(Erp豁免表风格/Space白名单风格各精确报offender)实录在报告,探针还原git status净; 中断注记=实现者曾遭API 529中断,SendMessage续命从断点接续零损; 下=T2贴点⊆种子互锁)
