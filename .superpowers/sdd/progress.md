@@ -410,3 +410,4 @@ X-SWEEP T2: complete (commits d3e6fcb5+3afc16b4加固, Spec ✅ + Approved[opus�
 # ═══ WF-OWN 引擎审批归属校验P0(2026-07-17, feat/wf-actor-ownership, base=main 3161407e) ═══
 # 依据: M-OA/WF票#1(crosscutting plan:121, fable终审Important#2); 落地前普通角色授权暂缓的唯一挡板
 # plan=docs/superpowers/plans/2026-07-17-wf-actor-ownership.md; 两任务=T1引擎闸TDD+T2部署冒烟; 基线2198绿/5skip
+WF-OWN T1: complete (commits fd85127e+b9f3a4c8注释精修, Spec ✅ + Approved[opus审零Critical/Important; 三具名风险全核: (a)TransferAsync新签名全调用方过编译且仅BatchTransferAsync传bypassOwnership:true (b)四闸方法全部生产调用方无非assignee actor越闸[ActBatch双预筛/控制器eff/SystemActor=Empty实证] (c)闸先于全部状态突变含SendBack三路共享入口; TimeoutAdvanceErrorEdge不贴闸正确=仅SystemActor调用; Minor×2: #1已修b9f3a4c8=头注释精确化引擎委派复验仅Act路径 #2记票=Scope字段不参与判定系全平台既有残留(控制器Active()同样忽略)]; 2212绿[2198+14]/5skip; 既有测试矫正仅1处=ActAsServiceTests补种委派授权行[测试建模缺口, 恰证引擎侧复验生效]; 下=fable终审→合并→T2部署冒烟)
