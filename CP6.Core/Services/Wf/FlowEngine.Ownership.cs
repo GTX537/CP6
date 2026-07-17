@@ -9,7 +9,9 @@ namespace CP6.Core.Services.Wf;
 ///   ① 本人：actorId == task.AssigneeId；
 ///   ② act-as 委派：onBehalfOf == task.AssigneeId 且 Wf_FlowDelegates 存在有效授权
 ///      （Enable && ValidFrom&lt;=now&lt;=ValidTo，谓词与 DelegateService.Active() 同款）——引擎侧复验，
-///      不再仅信控制器 AssertActiveGrant（防御纵深：未来新调用方绕过控制器闸也拦得住）；
+///      不再仅信控制器 AssertActiveGrant（防御纵深：未来新调用方绕过控制器闸也拦得住）。
+///      注意：引擎侧委派复验仅存在于 Act/ActAs 路径（唯它携带 onBehalfOf）；Transfer/SendBack 的
+///      act-as 由控制器 EffectiveAsync 解析为被代理人后走①本人路径，委派真伪仍由控制器闸把关；
 ///   ③ 系统身份：actorId == SystemActor(Guid.Empty)——超时 worker 硬动作（WfTimeoutService）。
 ///      JWT 登录用户 UserId 恒非 Empty，该路径不可从 HTTP 面伪造。
 /// 违规抛 E-WF-029（非本人待办）；act-as 无效委派抛 E-WF-001（复用既有码）。
