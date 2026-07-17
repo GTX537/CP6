@@ -38,6 +38,14 @@ public class ActAsServiceTests
         var starter = Guid.NewGuid(); var grantor = Guid.NewGuid(); var me = Guid.NewGuid();
         var task = await SeedAsync(db, starter, grantor);
 
+        // 引擎归属闸复验有效委派（防御纵深，P0 票#1）：模拟真实 act-as 处理人须持 grantor→me 的有效授权
+        db.Wf_FlowDelegates.Add(new Wf_FlowDelegate
+        {
+            Id = Guid.NewGuid(), GrantorId = grantor, DelegateId = me, Enable = true,
+            ValidFrom = DateTime.Now.AddDays(-1), ValidTo = DateTime.Now.AddDays(1),
+        });
+        await db.SaveChangesAsync();
+
         // me 代 grantor 批准（task 归属 grantor）
         await Engine(db).ActAsAsync(task, actorId: me, onBehalfOf: grantor, approve: true, "代签同意");
 

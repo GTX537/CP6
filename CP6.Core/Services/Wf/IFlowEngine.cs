@@ -18,7 +18,7 @@ public interface IFlowEngine
     /// <summary>
     /// act-as 办理：actorId（代理人 me）代 onBehalfOf（被代理人 X）办理其待办。
     /// 办理逻辑与 ActAsync 等价，但履历 ActualHandlerId = actorId、OnBehalfOfId = onBehalfOf。
-    /// onBehalfOf = null 时行为同 ActAsync。授权由控制器 AssertActiveGrant 把关，引擎不查委派。
+    /// onBehalfOf = null 时行为同 ActAsync。控制器 AssertActiveGrant 先闸，引擎 AssertActorMayHandleAsync 复验（防御纵深）。
     /// </summary>
     Task ActAsAsync(Guid taskId, Guid actorId, Guid? onBehalfOf, bool approve, string? comment = null);
 
@@ -51,7 +51,7 @@ public interface IFlowEngine
 
     /// <summary>转交（umbrella §4.5）：把 Pending 待办改派给同租户 toUserId（保 TokenId/NodeId，不流转）。
     /// 履历原行 Transferred + 受让人新 Pending 行 + AddHistory("transfer") + 通知。非待办/目标非法 → E-WF-002。</summary>
-    Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null);
+    Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null, bool bypassOwnership = false);
 
     /// <summary>approval 超时走失败边（infra ②，spec §3）：作废该节点在途待办（节点级，仿退回口径，不连坐兄弟）
     /// + 注入 timeoutError 变量 + 沿 IsError 出边路由。<b>幂等</b>：任务非 Pending / 实例非 Running / 无 Active token → 零动作。

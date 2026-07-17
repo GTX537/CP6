@@ -383,7 +383,7 @@ public class InboxService : IInboxService
             try
             {
                 // 引擎动作只调用不改动：内部校验 + FormTo 双行 + history + 通知 + 单次 SaveChanges（=单条独立事务）
-                await _engine.TransferAsync(taskId, actorId, toUserId, comment);
+                await _engine.TransferAsync(taskId, actorId, toUserId, comment, bypassOwnership: true);
                 succeeded++;
             }
             catch (InvalidOperationException e)                                    // 单条失败不中断后续（D3）

@@ -25,6 +25,8 @@ public partial class FlowEngine
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("流程已结束，不能加签");
 
+        await AssertActorMayHandleAsync(task, actorId);   // ★ 归属闸（P0 票#1）：只有本任务处理人可发起加签
+
         // 加签层数上限（本节点现有加签任务数）
         var addSignCount = await _db.Wf_FlowTasks.CountAsync(t =>
             t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.AddSignSource != null);
@@ -75,7 +77,8 @@ public partial class FlowEngine
         return d.Id;
     }
 
-    public async Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null)
+    public async Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null,
+        bool bypassOwnership = false)
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
                    ?? throw new InvalidOperationException("E-WF-002");
@@ -83,6 +86,10 @@ public partial class FlowEngine
 
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("E-WF-002");
+
+        // ★ 归属闸（P0 票#1）。bypassOwnership 唯一可信调用方=InboxService.BatchTransferAsync
+        //（admin 批量转单：控制器 oa-inbox:batch-transfer 闸 + AssigneeId==from 预筛已把关）。
+        if (!bypassOwnership) await AssertActorMayHandleAsync(task, actorId);
 
         // 目标须同租户真实用户、且非当前处理人（同租户由全局过滤器保证；查不到=越租户/不存在）
         var toExists = await _db.Sys_Users.AnyAsync(u => u.Id == toUserId);
@@ -109,6 +116,9 @@ public partial class FlowEngine
 
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) return;
+
+        await AssertActorMayHandleAsync(task, actorId);   // ★ 归属闸（P0 票#1）：只有本任务处理人可退回
+
         var schema = await LoadSchemaAsync(inst.FlowKey);
 
         switch ((target.Kind ?? "node").Trim().ToLowerInvariant())

@@ -125,7 +125,7 @@ public partial class FlowEngine : IFlowEngine
     /// <summary>
     /// act-as 办理：actorId（代理人 me）代 onBehalfOf（被代理人 X）办理其待办。
     /// 办理逻辑与 ActAsync 等价（推进/计票），但履历 ActualHandlerId = actorId (me)、OnBehalfOfId = onBehalfOf (X)。
-    /// onBehalfOf = null 时行为同 ActAsync（既有路径零改）。授权由控制器 AssertActiveGrant 把关，引擎不查委派。
+    /// onBehalfOf = null 时行为同 ActAsync（既有路径零改）。控制器 AssertActiveGrant 先闸，引擎 AssertActorMayHandleAsync 复验（防御纵深）。
     /// </summary>
     public async Task ActAsAsync(Guid taskId, Guid actorId, Guid? onBehalfOf, bool approve, string? comment = null)
     {
@@ -149,6 +149,8 @@ public partial class FlowEngine : IFlowEngine
 
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) return;   // 实例已结束/挂起
+
+        await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
 
         task.Status = approve ? FlowTaskStatus.Approved : FlowTaskStatus.Rejected;
         task.Comment = comment;
