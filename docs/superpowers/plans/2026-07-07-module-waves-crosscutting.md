@@ -136,3 +136,16 @@ M-WMS → M-ERP → M-MES → M-OA/WF → M-PUR → M-PLAN/PUB。波间不并行
 3. **「贴点⊆种子」互锁测试跨模块票扩容为五模块**（WMS/ERP/MES/OAWF/PUR，并 M-MES 票#3/M-OA/WF 票#3）：种子行被删任何测试闸不红。
 4. Minor 合票（忽略级周知）：708 pur-reconcile MenuKey 首启 null 至下次 :922 全局回填（零键锚定无 403 影响）；T2 种子单测 MenuKey 断言自指（生产正确性由显式赋值代码+部署冒烟承载）；种子逐行 Any() 启动查询（4 租户无害，Wms 先例一致）。
 5. **部署清单（合并后）**：重建 cp6-api（宿主 publish→删 Local/Development 配置→薄 Dockerfile→compose up）→ SQL 验 705-707 MenuKey=pur-rfq/pur-pr/pur-subcontract 非空 → Sys_RoleActions Pur 段（701-707,RoleId=1）=24×4 租户=96 且默认租户恰 24（内联→种子替换零重复证据），Sys_MenuActions 同 96 → 无认证 POST /api/pur/match/x/release 与 /api/pur/subcontract/x/1/issue → 401/403 → admin+CSRF POST /api/pur/pr/x/convert 穿透授权层（400/业务错非 403）→ **非默认租户 admin 重复穿透**（本波逐租户种子修复的具体证明，波前既有 10 键在非默认租户 admin 也 403）→ 可选：仅授 pur-subcontract:view 用户 POST reconcile → 200（豁免归 view 端到端）。
+
+---
+
+## M-PLAN/PUB 完成记录 + 跟踪票（2026-07-17，六模块波收官）
+
+**M-PLAN/PUB 已完成**（feat/m-planpub-crosscutting，3 任务 T1/T2/T3 逐任务过审[opus 独立复核均零 Critical/Important] + fable 终审 Ready=Yes 零代码必修）：基线 2181→2190 绿/5 skip（终审者亲跑确认）。五源全量对账精确零漂移（11 贴点↔真相源§一/§七↔PlanPubPermissionSeed.Actions↔T3 oracle↔菜单锚定 731/732/113/112）；两硬前置根治（731/732 MenuKey 插入行本体显式赋值——终审加验：值与 :1008 回填算法字节同一，存量已回填行与洁净首启行收敛同键无 split-brain；逐租户 PlanPubPermissionSeed 11 键照 PurPermissionSeed 逐行克隆）；豁免双形态=PreviewInline 按 view 贴点非旁路 + Attachment 3 端点组件豁免显式表（附防腐测试：豁免项仍存在仍 mutating 仍未贴，陈旧豁免不遮蔽真漏贴）；反射闸六波最强形态（发现闸==5 防静默空转 + 计数闸 11+3=14 + HttpPut 专测钉死唯一 PUT + NoPatchEndpoints 自检钉跨波票）；403 用例兼作无 admin 旁路证明（RoleId=1 仅授良性键仍 403 高危 3 键）；M-PUR 票#1 已解除（plan-mrp:convert 闸先于真实实现落地，IPlanToPrService 现桩后换真键面不变）。
+
+**M-PLAN/PUB 跟踪票**：
+1. **记票：Attachment 写端点仅登录闸**（终审 Minor#3）：upload/delete/rebind 组件豁免（无菜单可锚，铸键即死键）架构裁定成立，但 delete 属高危形态——follow-up=扩 `Attachment:EnforceBizPermission` 至三写端点（真相源 §五.4/§六 已载）。
+2. **记票：前端 v-permission 覆盖**（终审 Minor#4）：11 新键零 v-permission，无权用户可见 MRP 运行/转单、代码生成保存按钮点击 403——并入既有「v-permission 不对称 + cp6-web stale」跨模块 UX 票（M-WMS 票#1 族），M-PLAN/PUB 入其范围。
+3. **跨波票解锁周知**：六波 P0 至此收官，两张跨波票具备全仓开跑条件——①IsMutating+HttpPatch sweep（六反射测试文件齐补）②「贴点⊆种子」互锁测试扩六模块（WMS/ERP/MES/OAWF/PUR/PLANPUB）。
+4. Minor 放行周知（终审 triage）：计数闸 ==11/==3/==5 故意脆性系 fail-closed 设计（加端点须同步 oracle）；403 为进程内真实链非 HTTP e2e（六波同构口径，传输层由部署冒烟承载）；ReadPermission 只读首 attr（叠贴场景失效方向仅可用性 403 永不旁路）；plan 文内 PrGenerationService 行号 :213 已漂移至 ~:263（内容锚定仍准）。
+5. **部署清单（合并后）**：重建 cp6-api（宿主 publish→删 Local/Development 配置→薄 Dockerfile→compose up）→ SQL 验 731/732 MenuKey=plan-mrp/plan-item-policy 非空+112/113=pub-seq/pub-codegen 在位 → Sys_RoleActions Plan/Pub 段（731/732/113/112, RoleId=1）=11×4 租户=44 且 Sys_MenuActions 同 44 → 无认证 POST /api/plan/mrp/run 与 /api/pub/codegen/save → 403 → admin+CSRF 穿透授权层（业务响应非 403）。既有边界周知：TenantAdminService 不复制 RoleAction（平台票）；非默认租户 admin 运行时穿透不可测（全库仅 A1 有 admin 用户，数据面 SQL 实证）。
