@@ -23,6 +23,7 @@ public static class I18nOaInboxScreenSeed
         new Sys_Lang { LangKey = "E-WF-006", ZhCN = "流程不存在或已停用", ZhTW = "流程不存在或已停用", En = "Flow does not exist or is disabled", Ja = "フローが存在しないか無効化されています", Ko = "플로우가 존재하지 않거나 비활성화되어 있습니다" },
         new Sys_Lang { LangKey = "E-WF-007", ZhCN = "实例不存在", ZhTW = "實例不存在", En = "Instance does not exist", Ja = "インスタンスが存在しません", Ko = "인스턴스가 존재하지 않습니다" },
         new Sys_Lang { LangKey = "E-WF-008", ZhCN = "该表单已绑定其他启用流程", ZhTW = "該表單已綁定其他啟用流程", En = "This form is already bound to another active flow", Ja = "このフォームは別の有効なフローに紐付けられています", Ko = "이 양식은 이미 다른 활성 플로우에 바인딩되어 있습니다" },
+        new Sys_Lang { LangKey = "E-WF-029", ZhCN = "非本人待办，无权办理", ZhTW = "非本人待辦，無權辦理", En = "You are not the assignee of this task", Ja = "本人の未処理タスクではないため操作できません", Ko = "본인의 대기 작업이 아니므로 처리할 수 없습니다" },
 
         // ── oa.formto.* 传签状态（七态）──
         new Sys_Lang { LangKey = "oa.formto.pending",     ZhCN = "未處理",   ZhTW = "未處理",   En = "Pending",     Ja = "未処理",       Ko = "미처리" },

@@ -1,3 +1,37 @@
+# WF 引擎审批归属校验（P0 越权代批封堵）Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** 在流程引擎四个变更方法（`ActOnceAsync`/`TransferAsync`/`SendBackAsync`/`AddSignAsync`）补归属校验——actor 非任务 AssigneeId（且非有效委派代理、非系统身份）即拒——使「给普通角色放 `oa-inbox:approve` 的那一刻旧栈越权代批复活」的 P0 缺口在引擎层永久闭合。
+
+**Architecture:** 引擎级单一断言助手 `AssertActorMayHandleAsync`（新 partial `FlowEngine.Ownership.cs`），四方法各插一行调用。三条放行路径：本人（actorId==AssigneeId）/ act-as 委派（onBehalfOf==AssigneeId 且引擎侧复验 `Wf_FlowDelegates` 有效授权——防御纵深，不再仅信控制器 `AssertActiveGrant`）/ 系统身份（`Guid.Empty`，超时 worker 硬动作；JWT 登录用户恒非 Empty 不可伪造）。admin 批量转单是唯一可信旁路（`TransferAsync` 新增 `bypassOwnership` 参数，仅 `InboxService.BatchTransferAsync` 传 true——它自带 `AssigneeId==from` 预筛+控制器 `oa-inbox:batch-transfer` admin 闸）。新错误码 **E-WF-029**（028 已占）。
+
+**Tech Stack:** .NET 8 / EF Core（InMemory 单测）/ xUnit。零迁移（不动 schema）；i18n 新键走启动 `SeedLangs` insert-only 自动入库（新键会插，免 SQL 补丁——wfs 波① T10 教训只限「改既有行」）。
+
+## Global Constraints
+
+- 票源：`docs/superpowers/plans/2026-07-07-module-waves-crosscutting.md:121` M-OA/WF 票#1（fable 终审 Important#2）。**此票落地前普通角色授权维持 admin-only**；本票即解锁前置。
+- 引擎（CP6.Core）**不做权限概念判断**（不查角色/不豁免 admin）——admin 经旧栈代批他人任务正是本洞，闸后 admin 同样被拒（冒烟以此实证）。
+- 委派语义收紧为设计决策：**旧栈直办（onBehalfOf=null 且 actor 系委派代理人）不放行**——代理人必须走新栈 X-Acting-As（act-as）路径，否则履历缺 OnBehalfOfId 审计歧义。E-WF-029 拒之。
+- 既有测试若以非 assignee 身份办理而变红：**矫正测试的 actor（让测试模拟真实办理人），严禁弱化闸**。每处矫正在报告中列明归因。
+- 错误码词表：`E-WF-029` 入 `CP6.WebApi/Seed/I18nOaInboxScreenSeed.cs`（五语）。复用既有 `E-WF-001`（委派授权无效）不新造。
+- 每 commit 立即 push。commit 前缀 `feat(wf):` / `test(wf):`。分支 `feat/wf-actor-ownership`（base=main）。
+- 全量绿基线：**2198 绿 / 5 skip**（X-SWEEP 后 main）。
+
+## 漏洞面（开工盘点已实证，实现者免重查）
+
+| 入口 | 路径 | 现状 |
+|---|---|---|
+| `FlowController.Act` `/api/wf/task/{id}/act` | → `ActAsync`→`ActOnceAsync` | 零归属校验：持 `oa-inbox:approve` 者可批任何人待办 |
+| `InboxController.Transfer` `/api/oa/inbox/transfer` | → `TransferAsync` | 只查 toUserId 存在，可抢走任何人任务 |
+| `InboxController.SendBack` + `AdvancedFlowController.SendBack` | → `SendBackAsync` | 零归属校验，可退回任何人任务（全清场副作用） |
+| `AdvancedFlowController.AddSign` | → `AddSignAsync` | 零归属校验，可在任何人任务上加签（before 加签还会挂起原任务） |
+
+已有闸（勿动）：`InboxService.ActBatch(As)Async`（AssigneeId→E-WF-004）、`BatchTransferAsync`（AssigneeId==from 预筛）、控制器 `AssertActiveGrantAsync`（E-WF-001）、`StartDraftAsync`（StarterId→E-WF-003）。
+系统调用方（闸须放行）：`WfTimeoutService.cs:69/74` 以 `SystemActor=Guid.Empty` 调 `ActAsync`（超时自动同意/驳回）。`TimeoutAdvanceErrorEdgeAsync` 不经四方法，不在面内。
+
+---
+
 ### Task 1: 引擎归属闸四方法 + E-WF-029（TDD）
 
 **Files:**
@@ -398,3 +432,52 @@ git push
 
 ---
 
+### Task 2: 部署上线 + 冒烟实证
+
+**Files:** 无代码改动（部署+验证任务）。产物=冒烟记录入台账。
+
+**Interfaces:**
+- Consumes: Task 1 合并后的 main；既有部署降级路线（[new-env-setup-2026-07] 记忆）。
+- Produces: 线上 E-WF-029 实证 + 超时 worker 健康证据。
+
+- [ ] **Step 1: 重建 cp6-api 镜像并部署**
+
+```
+dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o publish-docker
+# 删 publish-docker 里 appsettings.Local.json / appsettings.Development.json（否则遮蔽 docker env）
+docker build -t cp6-cp6-api:latest ./publish-docker
+docker compose up -d cp6-api
+```
+
+- [ ] **Step 2: 词表就位验证**
+
+启动日志无 seed 报错后，SQL 实证：`SELECT LangKey FROM Sys_Langs WHERE LangKey='E-WF-029'`（四租户库/单库按现网拓扑）→ 行存在。
+
+- [ ] **Step 3: 冒烟——闸生效实证（admin 也被拒）**
+
+1. admin 登录 A1，起一条测试流程，审批人指定**非 admin 用户**（A1 租户若无第二用户，用 approver-map/Specified 指向任意真实非 admin UserId；无则起两条流程，一条审批人=admin）。
+2. admin 对「审批人≠admin」的待办调 `POST /api/wf/task/{id}/act` → 预期 **400 E-WF-029**（闸生效铁证——部署前同请求会 200）。
+3. admin 对「审批人=admin」的待办同请求 → 预期 200（本人路径无回归）。
+4. `docker logs cp6-api` 查超时 worker 无新异常（SystemActor 路径健康）。
+5. 测试流程数据清理（驳回/作废测试实例）。
+
+- [ ] **Step 4: 台账收口**
+
+progress.md 记 T2 冒烟证据；MEMORY.md 交接点更新：「OA/WF 引擎审批归属校验票✅落地——普通角色授权解锁」。commit+push。
+
+---
+
+## 完成后跟踪票（plan 文末记录，不在本波做）
+
+1. 普通角色授权放开波（本票解锁的后续）：给非 admin 角色配 `oa-inbox:*` 键的种子/页面策略——独立立项。
+2. QA harness 若有 admin 代批他人任务的剧本，随下次 live QA 矫正为 assignee 本人/act-as。
+3. 【终审 Minor#2】`FlowEngine.SystemActor` 与 `WfTimeoutService.SystemActor` 双 `Guid.Empty` 常量——下次触碰任一文件时合并为单一引用（漂移风险纯理论，注释已互指）。
+4. 【任务审 Minor#2】`Wf_FlowDelegate.Scope` 字段全平台不参与判定（控制器 `Active()`/引擎复验同样忽略）——scope 语义启用时须两处同步落地。
+5. 【终审观察记档】ActOnce/SendBack 幂等静默返回先于闸：非本人探测已办结任务得静默 200 而非 E-WF-029（零突变、不泄露归属，Transfer 同探测则 E-WF-002——已知不对称形态，非缺陷）。
+
+## Self-Review 记录
+
+- 票面四方法全覆盖（ActOnce/Transfer/SendBack/AddSign）；SendBack 三路（node/prevstage/starter）共走 SendBackTarget 入口单点插闸；SendBackAsync(string) 旧重载转发新重载，天然同闸。
+- 系统调用方两处已核（WfTimeoutService.ActAsync=SystemActor 放行；TimeoutAdvanceErrorEdgeAsync 不经四方法）。BatchTransferAsync 旁路显式化。ActBatch(As)Async 走 ActAsync/ActAsAsync——其服务层已有 AssigneeId 预筛，引擎闸系冗余防御，语义一致不红。
+- 类型一致性：AssertActorMayHandleAsync 签名在 Task 1 内定义与四处调用一致；TransferAsync 新签名接口/实现/InboxService/测试四处同步。
+- 无 placeholder；测试代码完整可编译（Sys_User/DbSet 形状按实体微调已注记）。

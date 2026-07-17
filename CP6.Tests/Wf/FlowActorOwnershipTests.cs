@@ -1,27 +1,7 @@
-### Task 1: 引擎归属闸四方法 + E-WF-029（TDD）
-
-**Files:**
-- Create: `CP6.Core/Services/Wf/FlowEngine.Ownership.cs`
-- Modify: `CP6.Core/Services/Wf/FlowEngine.cs:143-151`（ActOnceAsync 插闸）
-- Modify: `CP6.Core/Services/Wf/AdvancedFlow.cs`（TransferAsync/AddSignAsync/SendBackAsync 插闸；TransferAsync 加参）
-- Modify: `CP6.Core/Services/Wf/IFlowEngine.cs:54`（TransferAsync 签名）
-- Modify: `CP6.Core/Services/Wf/IFlowEngine.cs:21`（ActAsAsync 注释「引擎不查委派」失实语同步矫正）
-- Modify: `CP6.Core/Services/Oa/InboxService.cs`（BatchTransferAsync 调用点传 `bypassOwnership: true`）
-- Modify: `CP6.WebApi/Seed/I18nOaInboxScreenSeed.cs`（E-WF-029 五语行）
-- Test: `CP6.Tests/Wf/FlowActorOwnershipTests.cs`（新文件）
-
-**Interfaces:**
-- Consumes: `FlowEngine`（partial，`_db` 字段）、`Wf_FlowDelegate`（Enable/GrantorId/DelegateId/ValidFrom/ValidTo）、`WfTimeoutService.SystemActor == Guid.Empty`。
-- Produces: `IFlowEngine.TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null, bool bypassOwnership = false)`；引擎内部 `Task AssertActorMayHandleAsync(Wf_FlowTask task, Guid actorId, Guid? onBehalfOf = null)`；错误码 `E-WF-029`。
-
-- [ ] **Step 1: 写失败测试（RED）**
-
-新建 `CP6.Tests/Wf/FlowActorOwnershipTests.cs`（沿用 `AdvancedFlowTests` 的 NewDb/Engine/SeedFlow 模式）：
-
-```csharp
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wf;
+using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -81,6 +61,12 @@ public class FlowActorOwnershipTests
             Id = Guid.NewGuid(), GrantorId = grantor, DelegateId = delegateId, Enable = enable,
             ValidFrom = from ?? DateTime.Now.AddDays(-1), ValidTo = to ?? DateTime.Now.AddDays(1),
         });
+        db.SaveChanges();
+    }
+
+    private static void SeedUser(CP6Context db, Guid id)
+    {
+        db.Sys_Users.Add(new Sys_User { Id = id, UserName = "to", NickName = "to", Enable = true });
         db.SaveChanges();
     }
 
@@ -187,8 +173,7 @@ public class FlowActorOwnershipTests
         using var db = NewDb();
         var a = Guid.NewGuid(); var b = Guid.NewGuid(); var intruder = Guid.NewGuid(); var to = Guid.NewGuid();
         var t = await SubmitAndGetTaskAsync(db, a, b);
-        db.Sys_Users.Add(new Sys_User { Id = to, UserName = "to", UserTrueName = "to", Enable = 1 });
-        await db.SaveChangesAsync();
+        SeedUser(db, to);
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => Engine(db).TransferAsync(t.Id, intruder, to));
         Assert.Equal("E-WF-029", ex.Message);
@@ -201,8 +186,7 @@ public class FlowActorOwnershipTests
         using var db = NewDb();
         var a = Guid.NewGuid(); var b = Guid.NewGuid(); var to = Guid.NewGuid();
         var t = await SubmitAndGetTaskAsync(db, a, b);
-        db.Sys_Users.Add(new Sys_User { Id = to, UserName = "to", UserTrueName = "to", Enable = 1 });
-        await db.SaveChangesAsync();
+        SeedUser(db, to);
         await Engine(db).TransferAsync(t.Id, a, to);
         Assert.Equal(to, (await db.Wf_FlowTasks.SingleAsync(x => x.Id == t.Id)).AssigneeId);
     }
@@ -213,8 +197,7 @@ public class FlowActorOwnershipTests
         using var db = NewDb();
         var a = Guid.NewGuid(); var b = Guid.NewGuid(); var admin = Guid.NewGuid(); var to = Guid.NewGuid();
         var t = await SubmitAndGetTaskAsync(db, a, b);
-        db.Sys_Users.Add(new Sys_User { Id = to, UserName = "to", UserTrueName = "to", Enable = 1 });
-        await db.SaveChangesAsync();
+        SeedUser(db, to);
         await Engine(db).TransferAsync(t.Id, admin, to, comment: null, bypassOwnership: true);
         Assert.Equal(to, (await db.Wf_FlowTasks.SingleAsync(x => x.Id == t.Id)).AssigneeId);
     }
@@ -247,7 +230,23 @@ public class FlowActorOwnershipTests
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => Engine(db).AddSignAsync(t.Id, intruder, signee, "after"));
         Assert.Equal("E-WF-029", ex.Message);
-        Assert.Equal(FlowTaskStatus.Pending, (await db.Wf_FlowTasks.SingleAsync(x => x.Id == t.Id)).Status);   // before 挂起未发生
+        Assert.Equal(FlowTaskStatus.Pending, (await db.Wf_FlowTasks.SingleAsync(x => x.Id == t.Id)).Status);
+    }
+
+    [Fact]
+    public async Task AddSign_Before_ByNonAssignee_ThrowsE029_OriginalNotSuspended()
+    {
+        // 终审 Minor#1：before 加签在闸后才挂起原任务——违规拒绝时原任务必须仍 Pending（非 Suspended）。
+        // 若未来重构把挂起挪到闸前，本测试即红。
+        using var db = NewDb();
+        var a = Guid.NewGuid(); var b = Guid.NewGuid(); var intruder = Guid.NewGuid(); var signee = Guid.NewGuid();
+        var t = await SubmitAndGetTaskAsync(db, a, b);
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => Engine(db).AddSignAsync(t.Id, intruder, signee, "before"));
+        Assert.Equal("E-WF-029", ex.Message);
+        var after = await db.Wf_FlowTasks.SingleAsync(x => x.Id == t.Id);
+        Assert.Equal(FlowTaskStatus.Pending, after.Status);   // 未被挂起
+        Assert.False(await db.Wf_FlowTasks.AnyAsync(x => x.AssigneeId == signee));   // 加签任务未产生
     }
 
     [Fact]
@@ -260,141 +259,3 @@ public class FlowActorOwnershipTests
         Assert.Equal(signee, (await db.Wf_FlowTasks.SingleAsync(x => x.Id == addId)).AssigneeId);
     }
 }
-```
-
-注意：`Sys_User` 的必填字段以实体真实形状为准（编译报缺什么补什么，Enable 可能是 `int` 或 `bool`——照 `TransferAsync` 现有查询 `u.Enable` 用法与既有测试用例改）。`Wf_FlowHistories` DbSet 名同理（照 `AddHistory` 实现）。
-
-- [ ] **Step 2: 跑新测试确认 RED**
-
-```
-dotnet build CP6.Tests/CP6.Tests.csproj -m:1 --nologo -v q
-dotnet test CP6.Tests/CP6.Tests.csproj --no-build --nologo --filter "FullyQualifiedName~FlowActorOwnershipTests"
-```
-预期：`Transfer_BypassOwnership_*` 编译失败（无该参数）→ 先注释该测试跑其余：负面用例（ThrowsE029/E001）全 FAIL（现状引擎不抛），正面用例（ByAssignee/SystemActor）PASS。记录 RED 证据。
-
-- [ ] **Step 3: 实现归属闸**
-
-新建 `CP6.Core/Services/Wf/FlowEngine.Ownership.cs`：
-
-```csharp
-using CP6.Entity.DomainModels.Wf;
-using Microsoft.EntityFrameworkCore;
-
-namespace CP6.Core.Services.Wf;
-
-/// <summary>
-/// 引擎归属闸（P0 越权代批封堵，M-OA/WF 票#1）：四变更方法（ActOnce/Transfer/SendBack/AddSign）
-/// 统一断言 actor 有权处置该任务。放行三路径：
-///   ① 本人：actorId == task.AssigneeId；
-///   ② act-as 委派：onBehalfOf == task.AssigneeId 且 Wf_FlowDelegates 存在有效授权
-///      （Enable && ValidFrom<=now<=ValidTo，谓词与 DelegateService.Active() 同款）——引擎侧复验，
-///      不再仅信控制器 AssertActiveGrant（防御纵深：未来新调用方绕过控制器闸也拦得住）；
-///   ③ 系统身份：actorId == SystemActor(Guid.Empty)——超时 worker 硬动作（WfTimeoutService）。
-///      JWT 登录用户 UserId 恒非 Empty，该路径不可从 HTTP 面伪造。
-/// 违规抛 E-WF-029（非本人待办）；act-as 无效委派抛 E-WF-001（复用既有码）。
-/// 设计决策：委派代理人旧栈直办（onBehalfOf=null）不放行——必须走 act-as，否则履历缺
-/// OnBehalfOfId 审计歧义（拒 E-WF-029）。admin 亦不豁免（引擎无权限概念；批量转单走
-/// TransferAsync bypassOwnership 显式可信旁路）。
-/// </summary>
-public partial class FlowEngine
-{
-    /// <summary>系统身份（超时 worker 等引擎内部硬动作）。与 WfTimeoutService.SystemActor 同值。</summary>
-    internal static readonly Guid SystemActor = Guid.Empty;
-
-    private async Task AssertActorMayHandleAsync(Wf_FlowTask task, Guid actorId, Guid? onBehalfOf = null)
-    {
-        if (actorId == SystemActor) return;                               // ③ 系统硬动作
-        var owner = onBehalfOf ?? actorId;
-        if (owner != task.AssigneeId) throw new InvalidOperationException("E-WF-029");
-        if (owner == actorId) return;                                     // ① 本人
-        var granted = await _db.Wf_FlowDelegates.AnyAsync(d => d.Enable   // ② act-as 复验
-            && d.GrantorId == owner && d.DelegateId == actorId
-            && d.ValidFrom <= DateTime.Now && d.ValidTo >= DateTime.Now);
-        if (!granted) throw new InvalidOperationException("E-WF-001");
-    }
-}
-```
-
-`FlowEngine.cs` ActOnceAsync 插闸（幂等静默返回之后、首次状态突变之前）：
-
-```csharp
-        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
-        if (inst is null || inst.Status != FlowInstanceStatus.Running) return;   // 实例已结束/挂起
-
-        await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
-
-        task.Status = approve ? FlowTaskStatus.Approved : FlowTaskStatus.Rejected;
-```
-
-`AdvancedFlow.cs` 三处（各在 task+inst 校验之后、任何状态突变之前插一行）：
-
-TransferAsync——签名加参并插闸：
-```csharp
-    public async Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null,
-        bool bypassOwnership = false)
-    {
-        var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
-                   ?? throw new InvalidOperationException("E-WF-002");
-        if (task.Status != FlowTaskStatus.Pending) throw new InvalidOperationException("E-WF-002");
-
-        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
-        if (inst is null || inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("E-WF-002");
-
-        // ★ 归属闸（P0 票#1）。bypassOwnership 唯一可信调用方=InboxService.BatchTransferAsync
-        //（admin 批量转单：控制器 oa-inbox:batch-transfer 闸 + AssigneeId==from 预筛已把关）。
-        if (!bypassOwnership) await AssertActorMayHandleAsync(task, actorId);
-```
-
-AddSignAsync——`if (inst is null || inst.Status != FlowInstanceStatus.Running) throw ...("流程已结束，不能加签");` 之后插：
-```csharp
-        await AssertActorMayHandleAsync(task, actorId);   // ★ 归属闸（P0 票#1）：只有本任务处理人可发起加签
-```
-
-SendBackAsync（SendBackTarget 重载，node/prevstage/starter 三路共同入口）——`if (inst is null || inst.Status != FlowInstanceStatus.Running) return;` 之后插：
-```csharp
-        await AssertActorMayHandleAsync(task, actorId);   // ★ 归属闸（P0 票#1）：只有本任务处理人可退回
-```
-
-`IFlowEngine.cs:54` 同步签名：
-```csharp
-    Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null, bool bypassOwnership = false);
-```
-`IFlowEngine.cs:21` 注释失实语矫正：「授权由控制器 AssertActiveGrant 把关，引擎不查委派」→「控制器 AssertActiveGrant 先闸，引擎 AssertActorMayHandleAsync 复验（防御纵深）」。
-
-`InboxService.BatchTransferAsync` 调用点：
-```csharp
-                await _engine.TransferAsync(taskId, actorId, toUserId, comment, bypassOwnership: true);
-```
-
-`I18nOaInboxScreenSeed.cs` 在 E-WF-004 行后加：
-```csharp
-        new Sys_Lang { LangKey = "E-WF-029", ZhCN = "非本人待办，无权办理", ZhTW = "非本人待辦，無權辦理", En = "You are not the assignee of this task", Ja = "本人の未処理タスクではないため操作できません", Ko = "본인의 대기 작업이 아니므로 처리할 수 없습니다" },
-```
-（字段名/形状照该文件既有行原样；若 Seed 类形状不同以文件为准。）
-
-- [ ] **Step 4: 跑新测试确认 GREEN**
-
-```
-dotnet build CP6.Tests/CP6.Tests.csproj -m:1 --nologo -v q
-dotnet test CP6.Tests/CP6.Tests.csproj --no-build --nologo --filter "FullyQualifiedName~FlowActorOwnershipTests"
-```
-预期：全部 PASS（解除 Step 2 的注释）。
-
-- [ ] **Step 5: 全量回归 + 既有测试 actor 矫正**
-
-```
-dotnet test CP6.Tests/CP6.Tests.csproj --no-build --nologo
-```
-预期红点全部落在「测试以非 assignee 身份办理」的既有用例（含 `FlowConcurrencyTests`、`AdvancedFlowTests`、子流程/剪枝/超时等波次测试）。**逐个矫正 actor 为该任务 assignee（或 SystemActor 若模拟系统路径），严禁改闸**。每处矫正记录在报告（文件:行 + 原 actor→新 actor + 归因「测试建模瑕疵非产品路径」）。若发现某红点实为**产品内部调用方以非 assignee 过闸**（除已知 WfTimeoutService/BatchTransfer 外），BLOCKED 报回附证据勿自行放水。
-终态：全量 **≥2198+15 绿 / 5 skip / 0 fail**。
-
-- [ ] **Step 6: Commit + push**
-
-```
-git add -A
-git commit -m "feat(wf): 引擎归属闸四方法——非本人/非委派/非系统即 E-WF-029, 越权代批引擎层永久闭合(M-OA/WF票#1)"
-git push
-```
-
----
-
