@@ -394,3 +394,6 @@ WFS波⑥ 合并+部署: complete (main=5005418c --no-ff已push, 分支feat/wfs-
 # 系统性教训记票: (a)⭐harness种子GUID命名空间无跨波协调——五波共用DDDD/EEEE/CCCC虚荣前缀互撞,QA库多波共存必炸; 建议票=各波seed迁移到按波哈希的GUID段+种子对账脚本 (b)PS5.1单元素数组return解包=harness编写规范应强制调用点@()包裹(两波中招) (c)QA后端日志EF命令级verbosity刷爆磁盘(50GB机C盘归零致后端崩)→已fstrim+diskpart compact vhdx(12.1→10.1GB)回3.4GB+后端Logging__LogLevel降Warning; 磁盘扩容仍是治本(7/12事故复发面)
 # 环境事故2则(均已恢复): 主控启动包装Select-Object -First N掐管道连带杀dotnet进程(误判产品崩溃,实为包装缺陷); 磁盘满致后端崩(上条c)
 # 遗留手工面(待续): 浏览器走查=波②S7设计器/波③S1管理页/波④S5-6移动375px+桌面/波⑥S2互链+S7设计器E-WF-026五语; DB drill=波⑤S1 workdays+S4超时三动作回归+S5清理worker/波⑥worker-fallback停worker姿态
+
+# ═══ M-PLAN/PUB 波(2026-07-17, feat/m-planpub-crosscutting, base=main 543088a8) ═══
+M-PLAN/PUB T1: complete (commit 1ae429d1, Spec ✅ + Approved[opus审零issue; 亲数5控制器14非GET端点逐行对账/豁免PreviewInline:66-68纯内存读证/硬前置时序亲证731:1534,732:1540无MenuKey晚于:1008回填而112:996,113:1003早于就位/PrGenerationService结论精确=convert委托PlanToPrServiceStub:327非Pur死代码:263/计数三重闭环14=3组件豁免+1view+10铸键,键11=3高危+2状态+1view+5基础]; 真相源docs/seeds/planpub-permission-keys.md落库; 硬前置两项交T2: 731/732显式赋MenuKey+PlanPubPermissionSeed四菜单11键逐租户; T3注记: 反射测试须显式覆盖HttpPut(pub-seq:edit唯一PUT)+HttpPatch跨波票)
