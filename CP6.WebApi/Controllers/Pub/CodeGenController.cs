@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Pub;
 using CP6.Entity.DomainModels.Pub;
@@ -24,6 +25,7 @@ public class CodeGenController : ControllerBase
 
     /// <summary>保存表元数据 + 列（整体 upsert）</summary>
     [HttpPost("save")]
+    [RequirePermission("pub-codegen", "save")]
     public async Task<IActionResult> Save([FromBody] GenSaveReq req)
     {
         var t = req.Table;
@@ -64,6 +66,7 @@ public class CodeGenController : ControllerBase
 
     /// <summary>即时预览（不持久化，body 直接给元数据）</summary>
     [HttpPost("preview")]
+    [RequirePermission("pub-codegen", "view")]
     public IActionResult PreviewInline([FromBody] GenSaveReq req) =>
         Ok(new { code = 0, data = _gen.Generate(req.Table, req.Columns) });
 

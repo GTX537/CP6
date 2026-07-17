@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Plan;
 using CP6.Entity.DomainModels.Erp;
@@ -50,6 +51,7 @@ public class MrpController : ControllerBase
 
     /// <summary>运行 MRP（显式需求 或 开口受注派生）→ 返回运算批次。</summary>
     [HttpPost("run")]
+    [RequirePermission("plan-mrp", "run")]
     public async Task<IActionResult> Run([FromBody] MrpRunRequestDto dto)
     {
         var demands = dto.FromOpenOrders
@@ -87,6 +89,7 @@ public class MrpController : ControllerBase
 
     /// <summary>确认计划订单（建议 → 已确认，进供给）。</summary>
     [HttpPost("planned-order/{id}/confirm")]
+    [RequirePermission("plan-mrp", "confirm")]
     public async Task<IActionResult> Confirm(Guid id)
     {
         try { await _convert.ConfirmAsync(id, CurrentUser); return Ok2(); }
@@ -95,6 +98,7 @@ public class MrpController : ControllerBase
 
     /// <summary>转单（采购类 → PR、生产类 → 工单；回填单号、置已转单）。</summary>
     [HttpPost("planned-order/{id}/convert")]
+    [RequirePermission("plan-mrp", "convert")]
     public async Task<IActionResult> Convert(Guid id)
     {
         try { return Ok2(new { docNo = await _convert.ConvertAsync(id, CurrentUser) }); }
@@ -103,6 +107,7 @@ public class MrpController : ControllerBase
 
     /// <summary>忽略计划订单（置已忽略，不计供给）。</summary>
     [HttpPost("planned-order/{id}/ignore")]
+    [RequirePermission("plan-mrp", "ignore")]
     public async Task<IActionResult> Ignore(Guid id)
     {
         try { await _convert.IgnoreAsync(id, CurrentUser); return Ok2(); }
