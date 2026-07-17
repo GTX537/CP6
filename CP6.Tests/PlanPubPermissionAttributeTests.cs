@@ -104,12 +104,14 @@ public class PlanPubPermissionAttributeTests
         t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
             .Where(m => !m.IsSpecialName);
 
-    // 变更端点谓词：HttpPost/HttpPut/HttpDelete。**含 HttpPut**（SeqController.Update=pub-seq:edit 唯一 PUT，
-    // 见 HttpPut_Endpoint_IsScannedAndGuarded 显式钉死）。HttpPatch 未含——全仓五波谓词均未含 PATCH，已立
-    // 跨波 sweep 票；本波 5 控制器零 PATCH 端点（NoPatchEndpoints_InScope 自检钉死），故不扩、不影响完备性。
+    // 变更端点谓词：HttpPost/HttpPut/HttpPatch/HttpDelete。**含 HttpPut**（SeqController.Update=pub-seq:edit
+    // 唯一 PUT，见 HttpPut_Endpoint_IsScannedAndGuarded 显式钉死）。**含 HttpPatch**——X-SWEEP T1 跨波 sweep 票
+    // 已于本 sweep 落地（八波反射谓词齐补 PATCH），杜绝未来 [HttpPatch] 写端点静默逃出扫描面（fail-open）。
+    // 本波 5 控制器现仍零 PATCH 端点（NoPatchEndpoints_InScope 现状 pin）。
     private static bool IsMutating(MethodInfo m) =>
         m.GetCustomAttributes<HttpPostAttribute>().Any()
         || m.GetCustomAttributes<HttpPutAttribute>().Any()
+        || m.GetCustomAttributes<HttpPatchAttribute>().Any()   // X-SWEEP T1：补 PATCH，杜绝未来 [HttpPatch] 写端点静默逃出扫描面
         || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
 
     private static bool IsGet(MethodInfo m) => m.GetCustomAttributes<HttpGetAttribute>().Any();
@@ -261,9 +263,10 @@ public class PlanPubPermissionAttributeTests
     [Fact]
     public void NoPatchEndpoints_InScope()
     {
-        // 诚实自检：IsMutating 未含 HttpPatch（全仓五波谓词均未含 PATCH，已立跨波 sweep 票，本波不扩）。
-        // 断言本波扫描面 PATCH 端点数 == 0，证明「不扩 PATCH」不损本波完备性。
-        // 若未来 Plan/Pub 引入 PATCH 端点，本断言即红——提示须同步扩 IsMutating 含 HttpPatch（并解跨波 sweep 票）。
+        // 现状 pin（跨波 sweep 票已落地）：X-SWEEP T1 已将 HttpPatch 补入 IsMutating 谓词（八波齐补），
+        // 谓词现含 PATCH，未来任何 [HttpPatch] 写端点漏贴权限会被核心闸抓红（不再 fail-open）。
+        // 本自检从『钉票』转为『现状 pin』：断言本波扫描面 PATCH 端点数当前 == 0（全仓零 PATCH 端点的事实快照）。
+        // 若未来 Plan/Pub 引入 PATCH 端点，本断言即红——提示更新此现状快照（谓词已就位，无需再动 IsMutating）。
         var patchCount = PlanPubControllers
             .SelectMany(ActionMethods)
             .Count(m => m.GetCustomAttributes<HttpPatchAttribute>().Any());

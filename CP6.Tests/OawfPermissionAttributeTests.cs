@@ -109,6 +109,7 @@ public class OawfPermissionAttributeTests
     private static bool IsMutating(MethodInfo m) =>
         m.GetCustomAttributes<HttpPostAttribute>().Any()
         || m.GetCustomAttributes<HttpPutAttribute>().Any()
+        || m.GetCustomAttributes<HttpPatchAttribute>().Any()   // X-SWEEP T1：补 PATCH，杜绝未来 [HttpPatch] 写端点静默逃出扫描面
         || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
 
     private static bool IsGet(MethodInfo m) => m.GetCustomAttributes<HttpGetAttribute>().Any();
