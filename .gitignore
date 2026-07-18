@@ -184,6 +184,7 @@ CP6.WebApi/wwwroot/i18n/
 
 # SQL Server 备份文件
 *.bak
+!/migration/database/*.bak
 
 # P0-T4 宿主发布产物（降级构建路线：宿主 dotnet publish + 薄 Dockerfile 组装）
 publish-docker/
