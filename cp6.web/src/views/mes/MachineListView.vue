@@ -22,7 +22,7 @@
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
           <el-button @click="reset">{{ t('クリア') }}</el-button>
-          <el-button type="success" @click="openCreate">{{ t('新規') }}</el-button>
+          <el-button v-permission="'mes-machine:add'" type="success" @click="openCreate">{{ t('新規') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -77,9 +77,9 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="220" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('編集') }}</el-button>
-            <el-button link type="warning" size="small" @click="openDowntime(row)">{{ t('停止登録') }}</el-button>
-            <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
+            <el-button v-permission="'mes-machine:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('編集') }}</el-button>
+            <el-button v-permission="'mes-machine:downtime'" link type="warning" size="small" @click="openDowntime(row)">{{ t('停止登録') }}</el-button>
+            <el-button v-permission="'mes-machine:del'" link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -180,7 +180,8 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">{{ t('キャンセル') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+        <el-button v-if="isEdit" v-permission="'mes-machine:edit'" type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+        <el-button v-else type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
       </template>
     </el-dialog>
 

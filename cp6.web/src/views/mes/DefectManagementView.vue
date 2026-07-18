@@ -35,7 +35,7 @@
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
           <el-button @click="reset">{{ t('クリア') }}</el-button>
-          <el-button type="success" @click="openCreate">{{ t('手動起票') }}</el-button>
+          <el-button v-permission="'mes-defect:add'" type="success" @click="openCreate">{{ t('手動起票') }}</el-button>
           <el-button type="warning" @click="exportCsv">{{ t('CSV出力') }}</el-button>
         </el-form-item>
       </el-form>
@@ -77,8 +77,8 @@
         <el-table-column prop="defectDescription" :label="t('不良内容')" min-width="220" />
         <el-table-column :label="t('操作')" width="160" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('編集') }}</el-button>
-            <el-button link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
+            <el-button v-permission="'mes-defect:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('編集') }}</el-button>
+            <el-button v-permission="'mes-defect:del'" link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

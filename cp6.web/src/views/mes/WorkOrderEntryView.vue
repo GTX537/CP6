@@ -49,8 +49,9 @@
         <el-button v-if="step > 0" @click="step--">← {{ t('戻る') }}</el-button>
         <el-button v-if="step < 2" type="primary" @click="next">{{ t('次画面') }} →</el-button>
         <template v-if="step === 2">
-          <el-button type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
-          <el-button v-if="canIssue" type="success" :loading="saving" @click="onIssue">{{ t('指図発行') }}</el-button>
+          <el-button v-if="isEdit" v-permission="'mes-work-order:edit'" type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+          <el-button v-else v-permission="'mes-work-order:add'" type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+          <el-button v-if="canIssue" v-permission="'mes-work-order:issue'" type="success" :loading="saving" @click="onIssue">{{ t('指図発行') }}</el-button>
         </template>
       </div>
     </el-card>

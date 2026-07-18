@@ -61,11 +61,11 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="380" align="center" fixed="right">
           <template #default="{ row }">
-            <el-button v-if="row.processStatus === 0" size="small" type="primary" @click="openDialog(row, 1)">{{ t('開始') }}</el-button>
-            <el-button v-if="row.processStatus === 1" size="small" type="warning" @click="openDialog(row, 2)">{{ t('中断') }}</el-button>
-            <el-button v-if="row.processStatus === 3" size="small" type="success" @click="openDialog(row, 3)">{{ t('中断解除') }}</el-button>
-            <el-button v-if="row.processStatus === 1" size="small" type="success" @click="openDialog(row, 4)">{{ t('完了') }}</el-button>
-            <el-button v-if="row.processStatus === 1 || row.processStatus === 2" size="small" type="info" @click="openDialog(row, 5)">{{ t('数量追加報告') }}</el-button>
+            <el-button v-if="row.processStatus === 0" v-permission="'mes-production-result:start'" size="small" type="primary" @click="openDialog(row, 1)">{{ t('開始') }}</el-button>
+            <el-button v-if="row.processStatus === 1" v-permission="'mes-production-result:suspend'" size="small" type="warning" @click="openDialog(row, 2)">{{ t('中断') }}</el-button>
+            <el-button v-if="row.processStatus === 3" v-permission="'mes-production-result:suspend'" size="small" type="success" @click="openDialog(row, 3)">{{ t('中断解除') }}</el-button>
+            <el-button v-if="row.processStatus === 1" v-permission="'mes-production-result:complete'" size="small" type="success" @click="openDialog(row, 4)">{{ t('完了') }}</el-button>
+            <el-button v-if="row.processStatus === 1 || row.processStatus === 2" v-permission="'mes-production-result:report'" size="small" type="info" @click="openDialog(row, 5)">{{ t('数量追加報告') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

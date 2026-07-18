@@ -33,7 +33,7 @@
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="reload">{{ t('検索') }}</el-button>
           <el-button @click="resetQuery">{{ t('クリア') }}</el-button>
-          <el-button type="warning" :icon="MagicStick" :loading="arranging" @click="onAutoArrange">{{ t('自動配置') }}</el-button>
+          <el-button v-permission="'mes-planning-board:arrange'" type="warning" :icon="MagicStick" :loading="arranging" @click="onAutoArrange">{{ t('自動配置') }}</el-button>
         </el-form-item>
       </el-form>
 
@@ -156,7 +156,7 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">{{ t('キャンセル') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="onReschedule" :disabled="!canEdit">{{ t('保存') }}</el-button>
+        <el-button v-permission="'mes-planning-board:reschedule'" type="primary" :loading="saving" @click="onReschedule" :disabled="!canEdit">{{ t('保存') }}</el-button>
       </template>
     </el-dialog>
   </div>

@@ -41,7 +41,7 @@
         <el-form-item :label="t('受注Web NO')">
           <el-input v-model="model.webOrderNo" :disabled="!isEditable">
             <template #append>
-              <el-button :icon="Search" @click="onExpand" :disabled="!isEditable || !model.webOrderNo" />
+              <el-button v-permission="'mes-work-order:add'" :icon="Search" @click="onExpand" :disabled="!isEditable || !model.webOrderNo" />
             </template>
           </el-input>
         </el-form-item>

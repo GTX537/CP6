@@ -9,7 +9,7 @@
       <div class="table-toolbar">
         <el-input v-model="filterWgCd" size="small" style="width: 220px" :placeholder="t('工作中心')" clearable @keyup.enter="reload" />
         <el-button type="primary" size="small" @click="reload">{{ t('查询') }}</el-button>
-        <el-button size="small" @click="openCreate">{{ t('新增') }}</el-button>
+        <el-button v-permission="'mes-process-cost-rate:edit'" size="small" @click="openCreate">{{ t('新增') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
 
@@ -25,8 +25,8 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="140" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
-            <el-button link type="danger" size="small" @click="doDelete(row)">{{ t('删除') }}</el-button>
+            <el-button v-permission="'mes-process-cost-rate:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
+            <el-button v-permission="'mes-process-cost-rate:del'" link type="danger" size="small" @click="doDelete(row)">{{ t('删除') }}</el-button>
           </template>
         </el-table-column>
         <template #empty><span>{{ t('暂无数据') }}</span></template>

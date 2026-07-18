@@ -52,7 +52,7 @@
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
           <el-button @click="resetQuery">{{ t('クリア') }}</el-button>
-          <el-button type="success" @click="onCreate">{{ t('新規作成') }}</el-button>
+          <el-button v-permission="'mes-work-order:add'" type="success" @click="onCreate">{{ t('新規作成') }}</el-button>
           <el-button type="warning" @click="exportCsv">{{ t('CSV出力') }}</el-button>
         </el-form-item>
       </el-form>
@@ -123,7 +123,7 @@
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="goDetail(row)">{{ t('詳細') }}</el-button>
             <el-button link type="success" size="small" @click="goResult(row)">{{ t('実績') }}</el-button>
-            <el-button v-if="row.status <= 1" link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
+            <el-button v-if="row.status <= 1" v-permission="'mes-work-order:del'" link type="danger" size="small" @click="onDelete(row)">{{ t('削除') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

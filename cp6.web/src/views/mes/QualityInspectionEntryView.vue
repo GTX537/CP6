@@ -193,7 +193,8 @@
         </el-row>
 
         <div style="text-align: right; margin-top: 12px;">
-          <el-button type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+          <el-button v-if="isEdit" v-permission="'mes-quality-inspection:edit'" type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+          <el-button v-else v-permission="'mes-quality-inspection:add'" type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
         </div>
       </el-form>
     </el-card>

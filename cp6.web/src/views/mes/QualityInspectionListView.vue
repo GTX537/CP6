@@ -33,7 +33,7 @@
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="search">{{ t('検索') }}</el-button>
           <el-button @click="reset">{{ t('クリア') }}</el-button>
-          <el-button type="success" @click="goNew">{{ t('新規検査') }}</el-button>
+          <el-button v-permission="'mes-quality-inspection:add'" type="success" @click="goNew">{{ t('新規検査') }}</el-button>
           <el-button type="warning" @click="exportCsv">{{ t('CSV出力') }}</el-button>
         </el-form-item>
       </el-form>

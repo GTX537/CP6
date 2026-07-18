@@ -13,7 +13,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="loadAll">{{ t('検索') }}</el-button>
-          <el-button type="success" :loading="recalcing" @click="onRecalc">{{ t('本日 OEE 再計算') }}</el-button>
+          <el-button v-permission="'mes-oee:recalculate'" type="success" :loading="recalcing" @click="onRecalc">{{ t('本日 OEE 再計算') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
