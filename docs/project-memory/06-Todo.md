@@ -4,13 +4,12 @@
 
 权威计划：`docs/superpowers/plans/2026-07-17-general-role-vperm.md`。
 
-1. T4：扫描 `cp6.web/src/views/mes`，按 MES 权限键事实源建立按钮映射，只增加 `v-permission`。
-2. T5：扫描 `views/fin`，以 FIN 权限反射测试/键清单为准铺设指令。
-3. T6：扫描 `views/pur`、`views/plan` 及独立 PLAN/PUB 页，铺设 PUR/PLAN/PUB 指令。
-4. 每任务运行 `vue-tsc`、Vitest、前端 build，写 SDD 报告并单独提交。
-5. T7：全波终审、合并 main、重建 API/Web 镜像、权限种子 SQL 验证和真实一般用户端到端冒烟。
+1. T5：扫描 `views/fin`，以 FIN 权限反射测试/键清单为准铺设指令。
+2. T6：扫描 `views/pur`、`views/plan` 及独立 PLAN/PUB 页，铺设 PUR/PLAN/PUB 指令。
+3. 每任务运行 `vue-tsc`、Vitest、前端 build，写 SDD 报告并单独提交。
+4. T7：在 main 上全波终审、重建 API/Web 镜像、权限种子 SQL 验证和真实一般用户端到端冒烟。
 
-共同规程：纯读按钮不贴；对话框确认若入口已守则不重复；一个按钮多端点使用主动作键并记录偏差；任务范围仅 template 指令，不顺手重构。
+共同规程：纯读按钮不贴；对话框确认若入口已守则不重复；新增/编辑双模式按钮优先用静态 `v-if`/`v-else` 分支逐键守权；任务范围仅 template 指令，不顺手重构。
 
 ## P1：GR-VP 收口票
 

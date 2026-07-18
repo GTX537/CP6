@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-07-18：GR-VP 合入 main 与 MES T4
+
+- `8e696d2`：`feat/general-role-vperm` 以 no-ff merge 合入并推送 `main`；合并后后端 build 通过，2220 passed / 5 skipped / 0 failed。
+- `6e4ade1`：MES 31 条 `v-permission` 覆盖 12 个视图、24 个真实写权限键；设备、工单、质检的新增/编辑模式精确分流。
+- T4 前端验证：type-check 0、71 files / 481 tests、生产 build、Chrome denied/edit-only/add-only 三角色场景全部通过；独立复审 0 findings。
+- 下一任务改为 T5 FIN；T6 PUR/PLAN/PUB 与 T7 部署冒烟随后执行。
+
 ## 2026-07-18：开发环境迁移与知识固化
 
 - 三个 SQL Server 数据库生成压缩 checksum 备份并通过 VERIFYONLY。

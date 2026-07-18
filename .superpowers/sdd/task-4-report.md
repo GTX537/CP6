@@ -1,27 +1,49 @@
-### Task 4 报告: Space 波5 UpdateSite 锚护栏(E-SPACE-406)
+### Task 4 报告：MES v-permission 铺设
 
-**Status:** ✅ 完成
+**Status:** ✅ 完成并推送至 `origin/main`
 
-**Commit:** c79c97e (feat/space-wave5, 已 push)
+**Commit:** `6e4ade1`
 
-**改动文件:**
-- `CP6.Core/Services/Space/SpaceMasterService.cs` — UpdateSiteAsync 加锚护栏(取实体后、赋值前)
-- `CP6.WebApi/Seed/I18nSpaceScreenSeed.cs` — E-SPACE-406 五语词条(发布/停用/删除段, E-405 与 E-407 之间)
-- `CP6.Tests/SpaceMasterServiceTests.cs` — 3 测 + SeedSiteWithPublishedLocationAsync 帮手(挨着既有 Site 测试)
+## 覆盖结果
 
-**实现要点:**
-- 护栏条件: `e.SiteCode != d.SiteCode || e.WarehouseCd != d.WarehouseCd` 才查询(锚未变不跑, 避免每次改名多两查)
-- 命中查询: `Space_Floors.Where(SiteId==id).Select(Id)` → `Space_Locations.AnyAsync(FloorId∈floors && Status==1 && !IsDeleted)` → 抛 `BizException("E-SPACE-406")`(默认 400)
-- 实体链: Space_Location 无 SiteId, 走 Location.FloorId → Space_Floor.SiteId(brief 指定路径)
-- SiteName/Address/坐标/Enable 改动不受限
+| 视图 | 指令数 | 权限动作 |
+|---|---:|---|
+| `DefectManagementView.vue` | 3 | add / edit / del |
+| `MachineListView.vue` | 5 | add / edit（入口+编辑态保存）/ downtime / del |
+| `OeeAnalysisView.vue` | 1 | recalculate |
+| `PlanningBoardView.vue` | 2 | arrange / reschedule |
+| `ProcessCostRateView.vue` | 3 | edit（新增+编辑）/ del |
+| `ProductionResultEntryView.vue` | 5 | start / suspend（中断+恢复）/ complete / report |
+| `QualityInspectionEntryView.vue` | 2 | add / edit（按模式拆分保存） |
+| `QualityInspectionListView.vue` | 1 | add |
+| `WorkCenterView.vue` | 3 | edit（新增+编辑）/ del |
+| `WorkOrderEntryView.vue` | 3 | add / edit（按模式拆分保存）/ issue |
+| `WorkOrderListView.vue` | 2 | add / del |
+| `WoStep1BasicInfo.vue` | 1 | work-order add |
 
-**测试:** 全量 1816 passed / 5 skipped(基线 1813+3 新, 达标)。三测 TDD 红(2 guard fail, SiteName-only pass)→ 实现 → 绿。
+合计 **31 条指令 × 12 个视图 × 24 个唯一权限键**。全部键均与 MES Controller、种子键表和 `MesPermissionAttributeTests` 逐字一致。
 
-**Self-review:**
-- ja 词条用 brief 指定原文「公開済みロケーションが存在するため、サイトコード/倉庫コードは変更できません」✓
-- 连字符键 E-SPACE-406(仓约定)✓；词条位置在发布/停用/删除段 ✓
-- `!IsDeleted` 显式保留(Space_Location : BaseBizEntity 有 IsDeleted; 全局软删过滤存在时冗余但无害, 与 brief 口径一致)
-- 拒绝后锚字段原样(测试断言 SiteCode/WarehouseCd 未变)✓
-- 护栏置于 FirstOrDefault(取实体)之后、字段赋值之前——锚字段仍持旧值可比对 ✓
+## 关键判断与豁免
 
-**疑虑:** 无。InMemory 测试口径与既有 SpaceMasterServiceTests 一致; 真库集成非本任务范畴。
+- 设备状态卡同时承载 OEE、状态、当前工单等只读信息，因此不隐藏卡片；只在 `isEdit` 分支给弹窗保存贴 `mes-machine:edit`。
+- 工单和质检的共享保存按钮按 `isEdit` 拆成两个静态字面量分支，避免 edit-only/add-only 角色按钮与后端权限不一致。
+- `PlanAchievement` 的 summary/export-csv 是事实源明确标记的只读 POST，不贴。
+- Control Tower、MES Dashboard、Production Result List 的纯读动作不贴；搜索、刷新、本地导出、导航和本地数组编辑不贴。
+- `mes-machine:status` 与 downtime close 当前没有 Vue 触发点，正确不贴。
+- 已由受权入口守住的普通弹窗确认按钮不重复贴。
+
+## 验证证据
+
+- `npx vue-tsc --noEmit`：通过，0 error。
+- `npx vitest run`：71/71 files，481/481 tests passed。
+- `npm run build`：通过；仅既有的 >500 kB chunk 警告。
+- 真实 Chrome + Playwright 三角色场景：
+  - denied：表格动作 0、新增按钮隐藏、设备卡仍可读、编辑弹窗仅取消；
+  - edit-only：仅编辑动作可见，编辑弹窗保存可见；
+  - add-only：仅新增可见，从设备卡进入编辑后保存不可见；
+  - 三场景 console errors 均为 0。
+- 独立 diff review：0 blockers，0 findings；`git diff --check` 通过。
+
+## 工具说明
+
+GStack 的 Windows 浏览器安装包只有 Linux ELF，且缺少 `server.ts/setup`，无法启动；按 skill 回退规则改用项目现成 Playwright 驱动系统 Chrome 完成同等真实浏览器验证。该环境问题未引入项目文件或依赖清单变更。
